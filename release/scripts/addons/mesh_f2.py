@@ -22,8 +22,8 @@ bl_info = {
     "name": "F2",
     "author": "Bart Crouch, Alexander Nedovizin, Paul Kotelevets "
               "(concept design)",
-    "version": (1, 7, 2),
-    "blender": (2, 70, 0),
+    "version": (1, 7, 3),
+    "blender": (2, 80, 0),
     "location": "Editmode > F",
     "warning": "",
     "description": "Extends the 'Make Edge/Face' functionality",
@@ -38,31 +38,6 @@ import bpy
 import itertools
 import mathutils
 from bpy_extras import view3d_utils
-
-
-# returns a custom data layer of the UV map, or None
-def get_uv_layer(ob, bm, mat_index):
-    uv = None
-    uv_layer = None
-    if not ob.material_slots:
-        me = ob.data
-        if me.uv_textures:
-            uv = me.uv_textures.active.name
-    else:
-        mat = ob.material_slots[mat_index].material
-        if mat is not None:
-            slot = mat.texture_slots[mat.active_texture_index]
-            if slot and slot.uv_layer:
-                uv = slot.uv_layer
-            else:
-                for tex_slot in mat.texture_slots:
-                    if tex_slot and tex_slot.uv_layer:
-                        uv = tex_slot.uv_layer
-                        break
-    if uv:
-        uv_layer = bm.loops.layers.uv.get(uv)
-
-    return(uv_layer)
 
 
 # create a face from a single selected edge
@@ -87,7 +62,7 @@ def quad_from_edge(bm, edge_sel, context, event):
         min_dist = False
         for edge in edges:
             vert = [vert for vert in edge.verts if not vert.select][0]
-            world_pos = ob.matrix_world * vert.co.copy()
+            world_pos = ob.matrix_world @ vert.co.copy()
             screen_pos = view3d_utils.location_3d_to_region_2d(region,
                 region_3d, world_pos)
             dist = (mouse_pos - screen_pos).length
@@ -177,8 +152,7 @@ def quad_from_edge(bm, edge_sel, context, event):
     if __name__ != '__main__':
         addon_prefs = context.user_preferences.addons[__name__].preferences
         if addon_prefs.adjustuv:
-            uv_layer = get_uv_layer(ob, bm, mat_index)
-            if uv_layer:
+            for (key, uv_layer) in bm.loops.layers.uv.items():
                 uv_ori = {}
                 for vert in [v1, v2, v3, v4]:
                     for loop in vert.link_loops:
@@ -214,7 +188,7 @@ def quad_from_vertex(bm, vert_sel, context, event):
         mid_other = (other_verts[0].co.copy() + other_verts[1].co.copy()) \
             / 2
         new_pos = 2 * (mid_other - vert_sel.co.copy()) + vert_sel.co.copy()
-        world_pos = ob.matrix_world * new_pos
+        world_pos = ob.matrix_world @ new_pos
         screen_pos = view3d_utils.location_3d_to_region_2d(region, region_3d,
             world_pos)
         dist = (mouse_pos - screen_pos).length
@@ -277,8 +251,7 @@ def quad_from_vertex(bm, vert_sel, context, event):
     if __name__ != '__main__':
         addon_prefs = context.user_preferences.addons[__name__].preferences
         if addon_prefs.adjustuv:
-            uv_layer = get_uv_layer(ob, bm, mat_index)
-            if uv_layer:
+            for (key, uv_layer) in bm.loops.layers.uv.items():
                 uv_others = {}
                 uv_sel = None
                 uv_new = None
@@ -317,11 +290,11 @@ def quad_from_vertex(bm, vert_sel, context, event):
 # autograb preference in addons panel
 class F2AddonPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
-    adjustuv = bpy.props.BoolProperty(
+    adjustuv: bpy.props.BoolProperty(
         name = "Adjust UV",
         description = "Automatically update UV unwrapping",
         default = True)
-    autograb = bpy.props.BoolProperty(
+    autograb: bpy.props.BoolProperty(
         name = "Auto Grab",
         description = "Automatically puts a newly created vertex in grab mode",
         default = False)

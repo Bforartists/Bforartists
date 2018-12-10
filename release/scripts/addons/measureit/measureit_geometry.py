@@ -26,8 +26,6 @@
 # noinspection PyUnresolvedReferences
 import bpy
 # noinspection PyUnresolvedReferences
-import bgl
-# noinspection PyUnresolvedReferences
 import blf
 from blf import ROTATION
 from math import fabs, degrees, radians, sqrt, cos, sin, pi
@@ -36,13 +34,16 @@ from bmesh import from_edit_mesh
 from bpy_extras import view3d_utils, mesh_utils
 import bpy_extras.object_utils as object_utils
 from sys import exc_info
+# GPU
+import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
+shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
 # -------------------------------------------------------------
 # Draw segments
 #
-# rgb: Color
-# fsize: Font size
 # -------------------------------------------------------------
 # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
 def draw_segments(context, myobj, op, region, rv3d):
@@ -60,6 +61,7 @@ def draw_segments(context, myobj, op, region, rv3d):
         ovrline = scene.measureit_ovr_width
         units = scene.measureit_units
         fang = get_angle_in_rad(scene.measureit_font_rotation)
+
         # --------------------
         # Scene Scale
         # --------------------
@@ -72,6 +74,7 @@ def draw_segments(context, myobj, op, region, rv3d):
             draw_text(myobj, pos_2d,
                       tx_scale, scene.measureit_scale_color, scene.measureit_scale_font,
                       text_rot=fang)
+
         # --------------------
         # Loop
         # --------------------
@@ -96,9 +99,10 @@ def draw_segments(context, myobj, op, region, rv3d):
                 # noinspection PyBroadException
                 try:
                     if ovr is False:
-                        rgb = ms.glcolor
+                        rgba = ms.glcolor
                     else:
-                        rgb = ovrcolor
+                        rgba = ovrcolor
+
                     # ----------------------
                     # Segment or Label
                     # ----------------------
@@ -108,6 +112,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                         if ms.glpointa <= len(obverts) and ms.glpointb <= len(obverts):
                             a_p1 = get_point(obverts[ms.glpointa].co, myobj)
                             b_p1 = get_point(obverts[ms.glpointb].co, myobj)
+
                     # ----------------------
                     # Segment or Label
                     # ----------------------
@@ -326,8 +331,6 @@ def draw_segments(context, myobj, op, region, rv3d):
                     else:
                         bgl.glLineWidth(ovrline)
 
-                    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
-
                     # ------------------------------------
                     # Text (distance)
                     # ------------------------------------
@@ -366,7 +369,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                             if scene.measureit_gl_show_n is True and ms.glnames is True:
                                 msg += ms.gltxt
                             if scene.measureit_gl_show_d is True or scene.measureit_gl_show_n is True:
-                                draw_text(myobj, txtpoint2d, msg, rgb, fsize, faln, fang)
+                                draw_text(myobj, txtpoint2d, msg, rgba, fsize, faln, fang)
 
                             # ------------------------------
                             # if axis loc, show a indicator
@@ -381,7 +384,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                                 if ms.glocz is True:
                                     txt += "Z"
                                 txt += "]"
-                                draw_text(myobj, txtpoint2d, txt, rgb, fsize - 1, text_rot=fang)
+                                draw_text(myobj, txtpoint2d, txt, rgba, fsize - 1, text_rot=fang)
 
                         except:
                             pass
@@ -445,7 +448,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                                     tmp_point = get_2d_point(region, rv3d, gap3d)
                                     if tmp_point is not None:
                                         txtpoint2d = tmp_point[0] + ms.glfontx, tmp_point[1] + ms.glfonty
-                                        draw_text(myobj, txtpoint2d, msg, rgb, fsize, faln, fang)
+                                        draw_text(myobj, txtpoint2d, msg, rgba, fsize, faln, fang)
                                 # Radius
                                 if scene.measureit_gl_show_d is True and ms.gldist is True and \
                                         ms.glarc_rad is True:
@@ -461,7 +464,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                             tmp_point = get_2d_point(region, rv3d, gap3d)
                             if tmp_point is not None:
                                 txtpoint2d = tmp_point[0] + ms.glfontx, tmp_point[1] + ms.glfonty
-                                draw_text(myobj, txtpoint2d, tx_dist, rgb, fsize, faln, fang)
+                                draw_text(myobj, txtpoint2d, tx_dist, rgba, fsize, faln, fang)
                         except:
                             pass
                     # ------------------------------------
@@ -475,31 +478,30 @@ def draw_segments(context, myobj, op, region, rv3d):
                         tmp_point = get_2d_point(region, rv3d, gap3d)
                         if tmp_point is not None:
                             txtpoint2d = tmp_point[0] + ms.glfontx, tmp_point[1] + ms.glfonty
-                            draw_text(myobj, txtpoint2d, tx_dist, rgb, fsize, faln, fang)
+                            draw_text(myobj, txtpoint2d, tx_dist, rgba, fsize, faln, fang)
 
                     # ------------------------------------
                     # Draw lines
                     # ------------------------------------
                     bgl.glEnable(bgl.GL_BLEND)
-                    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
 
                     if ms.gltype == 1:  # Segment
-                        draw_line(screen_point_ap1, screen_point_v11)
-                        draw_line(screen_point_bp1, screen_point_v22)
-                        draw_arrow(screen_point_v1, screen_point_v2, a_size, a_type, b_type)
+                        draw_line(screen_point_ap1, screen_point_v11, rgba)
+                        draw_line(screen_point_bp1, screen_point_v22, rgba)
+                        draw_arrow(screen_point_v1, screen_point_v2, rgba, a_size, a_type, b_type)
 
                     if ms.gltype == 12 or ms.gltype == 13 or ms.gltype == 14:  # Segment to origin
-                        draw_line(screen_point_ap1, screen_point_v11)
-                        draw_line(screen_point_bp1, screen_point_v22)
-                        draw_arrow(screen_point_v1, screen_point_v2, a_size, a_type, b_type)
+                        draw_line(screen_point_ap1, screen_point_v11, rgba)
+                        draw_line(screen_point_bp1, screen_point_v22, rgba)
+                        draw_arrow(screen_point_v1, screen_point_v2, rgba, a_size, a_type, b_type)
 
                     if ms.gltype == 2:  # Label
-                        draw_line(screen_point_v11a, screen_point_v11b)
-                        draw_arrow(screen_point_ap1, screen_point_v11, a_size, a_type, b_type)
+                        draw_line(screen_point_v11a, screen_point_v11b, rgba)
+                        draw_arrow(screen_point_ap1, screen_point_v11, rgba, a_size, a_type, b_type)
 
                     if ms.gltype == 3 or ms.gltype == 4 or ms.gltype == 5 or ms.gltype == 8 \
                             or ms.gltype == 6 or ms.gltype == 7:  # Origin and Links
-                        draw_arrow(screen_point_ap1, screen_point_bp1, a_size, a_type, b_type)
+                        draw_arrow(screen_point_ap1, screen_point_bp1, rgba, a_size, a_type, b_type)
 
                     if ms.gltype == 9:  # Angle
                         dist, distloc = distance(an_p1, an_p2)
@@ -512,16 +514,16 @@ def draw_segments(context, myobj, op, region, rv3d):
                         screen_point_an_p2 = get_2d_point(region, rv3d, an_p2)
                         screen_point_an_p3 = get_2d_point(region, rv3d, mp2)
 
-                        draw_line(screen_point_an_p1, screen_point_an_p2)
-                        draw_line(screen_point_an_p2, screen_point_an_p3)
-                        draw_line(screen_point_an_p1, screen_point_an_p3)
+                        draw_line(screen_point_an_p1, screen_point_an_p2, rgba)
+                        draw_line(screen_point_an_p2, screen_point_an_p3, rgba)
+                        draw_line(screen_point_an_p1, screen_point_an_p3, rgba)
 
                     if ms.gltype == 11:  # arc
                         # draw line from center of arc second point
                         c = Vector(a_p1)
                         if ms.glarc_rad is True:
                             if ms.glarc_extrad is False:
-                                draw_arrow(screen_point_ap1, screen_point_bp1, a_size, a_type, b_type)
+                                draw_arrow(screen_point_ap1, screen_point_bp1, rgba, a_size, a_type, b_type)
                             else:
                                 vne = Vector((b_p1[0] - a_p1[0],
                                               b_p1[1] - a_p1[1],
@@ -530,7 +532,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                                 vie = vne * ms.glspace
                                 pe = (b_p1[0] + vie[0], b_p1[1] + vie[1], b_p1[2] + vie[2])
                                 screen_point_pe = get_2d_point(region, rv3d, pe)
-                                draw_arrow(screen_point_ap1, screen_point_pe, a_size, a_type, b_type)
+                                draw_arrow(screen_point_ap1, screen_point_pe, rgba, a_size, a_type, b_type)
 
                         # create arc around the centerpoint
                         # rotation matrix around normal vector at center point
@@ -558,7 +560,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                         p_02b = None
                         # draw the arc
                         for i in range(int(n_step)):
-                            p2 = mat_trans2 * mat_rot1 * mat_trans1 * p1
+                            p2 = mat_trans2 @ mat_rot1 @ mat_trans1 @ p1
                             p1_ = (p1[0] + vi[0], p1[1] + vi[1], p1[2] + vi[2])
                             # First Point
                             if i == 0:
@@ -577,11 +579,11 @@ def draw_segments(context, myobj, op, region, rv3d):
                             screen_point_p1 = get_2d_point(region, rv3d, p1_)
                             screen_point_p2 = get_2d_point(region, rv3d, p2_)
                             if i == 0:
-                                draw_arrow(screen_point_p1, screen_point_p2, ms.glarc_s, ms.glarc_a, "99")
+                                draw_arrow(screen_point_p1, screen_point_p2, rgba, ms.glarc_s, ms.glarc_a, "99")
                             elif i == int(n_step) - 1:
-                                draw_arrow(screen_point_p1, screen_point_p2, ms.glarc_s, "99", ms.glarc_b)
+                                draw_arrow(screen_point_p1, screen_point_p2, rgba, ms.glarc_s, "99", ms.glarc_b)
                             else:
-                                draw_line(screen_point_p1, screen_point_p2)
+                                draw_line(screen_point_p1, screen_point_p2, rgba)
 
                             p1 = p2.copy()
 
@@ -597,8 +599,8 @@ def draw_segments(context, myobj, op, region, rv3d):
                             screen_point_p2a = get_2d_point(region, rv3d, p_02a)
                             screen_point_p2b = get_2d_point(region, rv3d, p_02b)
 
-                            draw_line(screen_point_p1a, screen_point_p1b)
-                            draw_line(screen_point_p2a, screen_point_p2b)
+                            draw_line(screen_point_p1a, screen_point_p1b, rgba)
+                            draw_line(screen_point_p2a, screen_point_p2b, rgba)
 
                     if ms.gltype == 20:  # Area
                         obverts = get_mesh_vertices(myobj)
@@ -608,7 +610,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                             for v in face.measureit_index:
                                 myvertices.append(v.glidx)
 
-                            area = get_area_and_paint(myvertices, myobj, obverts, region, rv3d)
+                            area = get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba)
                             tot += area
                         # Draw Area number over first face
                         if len(ms.measureit_faces) > 0:
@@ -657,7 +659,7 @@ def draw_segments(context, myobj, op, region, rv3d):
 # Get polygon area and paint area
 #
 # ------------------------------------------
-def get_area_and_paint(myvertices, myobj, obverts, region, rv3d):
+def get_area_and_paint(myvertices, myobj, obverts, region, rv3d, rgba):
     mymesh = myobj.data
     totarea = 0
     if len(myvertices) > 3:
@@ -680,9 +682,11 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d):
             screen_point_p1 = get_2d_point(region, rv3d, p1)
             screen_point_p2 = get_2d_point(region, rv3d, p2)
             screen_point_p3 = get_2d_point(region, rv3d, p3)
-            draw_triangle(screen_point_p1, screen_point_p2, screen_point_p3)
+
+            draw_triangle(screen_point_p1, screen_point_p2, screen_point_p3, rgba)
 
             # Area
+
             area = get_triangle_area(p1, p2, p3)
 
             totarea += area
@@ -695,7 +699,7 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d):
         screen_point_p1 = get_2d_point(region, rv3d, p1)
         screen_point_p2 = get_2d_point(region, rv3d, p2)
         screen_point_p3 = get_2d_point(region, rv3d, p3)
-        draw_triangle(screen_point_p1, screen_point_p2, screen_point_p3)
+        draw_triangle(screen_point_p1, screen_point_p2, screen_point_p3, rgba)
 
         # Area
         area = get_triangle_area(p1, p2, p3)
@@ -798,7 +802,7 @@ def get_group_sum(myobj, tag):
 # Create OpenGL text
 #
 # -------------------------------------------------------------
-def draw_text(myobj, pos2d, display_text, rgb, fsize, align='L', text_rot=0.0):
+def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
     if pos2d is None:
         return
 
@@ -843,7 +847,7 @@ def draw_text(myobj, pos2d, display_text, rgb, fsize, align='L', text_rot=0.0):
         new_y = y_pos + (mheight * idx)
         # Draw
         blf.position(font_id, newx, new_y, 0)
-        bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
+        blf.color(font_id, rgba[0], rgba[1], rgba[2], rgba[3])
         blf.draw(font_id, " " + line)
         # sub line
         idx -= 1
@@ -861,14 +865,16 @@ def draw_text(myobj, pos2d, display_text, rgb, fsize, align='L', text_rot=0.0):
 # Draw an OpenGL line
 #
 # -------------------------------------------------------------
-def draw_line(v1, v2):
+def draw_line(v1, v2, rgba):
+    coords = [(v1[0], v1[1]), (v2[0], v2[1])]
+    batch = batch_for_shader(shader, 'LINES', {"pos": coords})
+
     # noinspection PyBroadException
     try:
         if v1 is not None and v2 is not None:
-            bgl.glBegin(bgl.GL_LINES)
-            bgl.glVertex2f(*v1)
-            bgl.glVertex2f(*v2)
-            bgl.glEnd()
+            shader.bind()
+            shader.uniform_float("color", rgba)
+            batch.draw(shader)
     except:
         pass
 
@@ -877,15 +883,16 @@ def draw_line(v1, v2):
 # Draw an OpenGL triangle
 #
 # -------------------------------------------------------------
-def draw_triangle(v1, v2, v3):
+def draw_triangle(v1, v2, v3, rgba):
+    coords = [(v1[0], v1[1]), (v2[0], v2[1]), (v3[0], v3[1])]
+    batch = batch_for_shader(shader, 'TRIS', {"pos": coords})
+
     # noinspection PyBroadException
     try:
         if v1 is not None and v2 is not None and v3 is not None:
-            bgl.glBegin(bgl.GL_TRIANGLES)
-            bgl.glVertex2f(*v1)
-            bgl.glVertex2f(*v2)
-            bgl.glVertex2f(*v3)
-            bgl.glEnd()
+            shader.bind()
+            shader.uniform_float("color", rgba)
+            batch.draw(shader)
     except:
         pass
 
@@ -894,7 +901,7 @@ def draw_triangle(v1, v2, v3):
 # Draw an Arrow
 #
 # -------------------------------------------------------------
-def draw_arrow(v1, v2, size=20, a_typ="1", b_typ="1"):
+def draw_arrow(v1, v2, rgba, size=20, a_typ="1", b_typ="1"):
     if v1 is None or v2 is None:
         return
 
@@ -938,19 +945,19 @@ def draw_arrow(v1, v2, size=20, a_typ="1", b_typ="1"):
 
     # Triangle o Lines
     if a_typ == "1" or a_typ == "3":
-        draw_line(v1, v1a)
-        draw_line(v1, v1b)
+        draw_line(v1, v1a, rgba)
+        draw_line(v1, v1b, rgba)
 
     if b_typ == "1" or b_typ == "3":
-        draw_line(v2, v2a)
-        draw_line(v2, v2b)
+        draw_line(v2, v2a, rgba)
+        draw_line(v2, v2b, rgba)
 
     if a_typ == "2":
-        draw_triangle(v1, v1a, v1b)
+        draw_triangle(v1, v1a, v1b, rgba)
     if b_typ == "2":
-        draw_triangle(v2, v2a, v2b)
+        draw_triangle(v2, v2a, v2b, rgba)
 
-    draw_line(v1, v2)
+    draw_line(v1, v2, rgba)
 
 
 # -------------------------------------------------------------
@@ -958,16 +965,16 @@ def draw_arrow(v1, v2, size=20, a_typ="1", b_typ="1"):
 #
 # v1, v2 are corners (bottom left / top right)
 # -------------------------------------------------------------
-def draw_rectangle(v1, v2):
+def draw_rectangle(v1, v2, rgba):
     # noinspection PyBroadException
     try:
         if v1 is not None and v2 is not None:
             v1b = (v2[0], v1[1])
             v2b = (v1[0], v2[1])
-            draw_line(v1, v1b)
-            draw_line(v1b, v2)
-            draw_line(v2, v2b)
-            draw_line(v2b, v1)
+            draw_line(v1, v1b, rgba)
+            draw_line(v1b, v2, rgba)
+            draw_line(v2, v2b, rgba)
+            draw_line(v2b, v1, rgba)
     except:
         pass
 
@@ -996,7 +1003,7 @@ def format_point(mypoint, pr):
 # noinspection PyUnresolvedReferences,PyUnboundLocalVariable,PyUnusedLocal
 def draw_object(context, myobj, region, rv3d):
     scene = bpy.context.scene
-    rgb = scene.measureit_debug_obj_color
+    rgba = scene.measureit_debug_obj_color
     fsize = scene.measureit_debug_font
     precision = scene.measureit_debug_precision
     # --------------------
@@ -1010,8 +1017,6 @@ def draw_object(context, myobj, region, rv3d):
             if objs[o].select is False:
                 continue
         a_p1 = Vector(get_location(objs[o]))
-        # colour
-        bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
         # Text
         txt = ''
         if scene.measureit_debug_objects is True:
@@ -1020,7 +1025,7 @@ def draw_object(context, myobj, region, rv3d):
             txt += format_point(a_p1, precision)
         # converting to screen coordinates
         txtpoint2d = get_2d_point(region, rv3d, a_p1)
-        draw_text(myobj, txtpoint2d, txt, rgb, fsize)
+        draw_text(myobj, txtpoint2d, txt, rgba, fsize)
     return
 
 
@@ -1035,7 +1040,7 @@ def draw_vertices(context, myobj, region, rv3d):
         return
 
     scene = bpy.context.scene
-    rgb = scene.measureit_debug_vert_color
+    rgba = scene.measureit_debug_vert_color
     fsize = scene.measureit_debug_font
     precision = scene.measureit_debug_precision
     # --------------------
@@ -1044,7 +1049,7 @@ def draw_vertices(context, myobj, region, rv3d):
     if scene.measureit_debug_vert_loc_toggle == '1':
         co_mult = lambda c: c
     else:  # if global, convert local c to global
-        co_mult = lambda c: myobj.matrix_world * c
+        co_mult = lambda c: myobj.matrix_world @ c
 
     if myobj.mode == 'EDIT':
         bm = from_edit_mesh(myobj.data)
@@ -1060,8 +1065,6 @@ def draw_vertices(context, myobj, region, rv3d):
         # noinspection PyBroadException
         # try:
         a_p1 = get_point(v.co, myobj)
-        # colour
-        bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
         # converting to screen coordinates
         txtpoint2d = get_2d_point(region, rv3d, a_p1)
         # Text
@@ -1070,7 +1073,7 @@ def draw_vertices(context, myobj, region, rv3d):
             txt += str(v.index)
         if scene.measureit_debug_vert_loc is True:
             txt += format_point(co_mult(v.co), precision)
-        draw_text(myobj, txtpoint2d, txt, rgb, fsize)
+        draw_text(myobj, txtpoint2d, txt, rgba, fsize)
         # except:
         #     print("Unexpected error:" + str(exc_info()))
         #     pass
@@ -1089,7 +1092,7 @@ def draw_edges(context, myobj, region, rv3d):
         return
 
     scene = bpy.context.scene
-    rgb = scene.measureit_debug_edge_color
+    rgba = scene.measureit_debug_edge_color
     fsize = scene.measureit_debug_font
     precision = scene.measureit_debug_precision
     # --------------------
@@ -1115,11 +1118,9 @@ def draw_edges(context, myobj, region, rv3d):
                 continue
         a_mp = midf(e, obverts)
         a_p1 = get_point(a_mp, myobj)
-        # colour
-        bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
         # converting to screen coordinates
         txtpoint2d = get_2d_point(region, rv3d, a_p1)
-        draw_text(myobj, txtpoint2d, str(e.index), rgb, fsize)
+        draw_text(myobj, txtpoint2d, str(e.index), rgba, fsize)
     return
 
 
@@ -1134,8 +1135,8 @@ def draw_faces(context, myobj, region, rv3d):
         return
 
     scene = bpy.context.scene
-    rgb = scene.measureit_debug_face_color
-    rgb2 = scene.measureit_debug_norm_color
+    rgba = scene.measureit_debug_face_color
+    rgba2 = scene.measureit_debug_norm_color
     fsize = scene.measureit_debug_font
     ln = scene.measureit_debug_normal_size
     th = scene.measureit_debug_width
@@ -1166,21 +1167,19 @@ def draw_faces(context, myobj, region, rv3d):
                 a_p1 = get_point(f.center, myobj)
 
             a_p2 = (a_p1[0] + normal[0] * ln, a_p1[1] + normal[1] * ln, a_p1[2] + normal[2] * ln)
-            # colour + line setup
+            # line setup
             bgl.glEnable(bgl.GL_BLEND)
             bgl.glLineWidth(th)
-            bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
             # converting to screen coordinates
             txtpoint2d = get_2d_point(region, rv3d, a_p1)
             point2 = get_2d_point(region, rv3d, a_p2)
             # Text
             if scene.measureit_debug_faces is True:
-                draw_text(myobj, txtpoint2d, str(f.index), rgb, fsize)
+                draw_text(myobj, txtpoint2d, str(f.index), rgba, fsize)
             # Draw Normal
             if scene.measureit_debug_normals is True:
                 bgl.glEnable(bgl.GL_BLEND)
-                bgl.glColor4f(rgb2[0], rgb2[1], rgb2[2], rgb2[3])
-                draw_arrow(txtpoint2d, point2, 10, "99", "1")
+                draw_arrow(txtpoint2d, point2, rgba, 10, "99", "1")
 
                 if len(obverts) > 2 and scene.measureit_debug_normal_details is True:
                     if myobj.mode == 'EDIT':
@@ -1200,11 +1199,11 @@ def draw_faces(context, myobj, region, rv3d):
                     b2d = get_2d_point(region, rv3d, a_p2)
                     c2d = get_2d_point(region, rv3d, a_p3)
                     # draw vectors
-                    draw_arrow(a2d, b2d, 10, "99", "1")
-                    draw_arrow(b2d, c2d, 10, "99", "1")
+                    draw_arrow(a2d, b2d, rgba, 10, "99", "1")
+                    draw_arrow(b2d, c2d, rgba, 10, "99", "1")
                     # Normal vector data
                     txt = format_point(normal, precision)
-                    draw_text(myobj, point2, txt, rgb2, fsize)
+                    draw_text(myobj, point2, txt, rgba2, fsize)
 
         except:
             print("Unexpected error:" + str(exc_info()))
@@ -1271,7 +1270,7 @@ def get_point(v1, mainobject):
     # Using World Matrix
     vt = Vector((v1[0], v1[1], v1[2], 1))
     m4 = mainobject.matrix_world
-    vt2 = m4 * vt
+    vt2 = m4 @ vt
     v2 = [vt2[0], vt2[1], vt2[2]]
 
     return v2

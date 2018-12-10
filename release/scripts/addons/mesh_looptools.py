@@ -426,9 +426,9 @@ def face_edgekeys(face):
 
 
 # calculate input loops
-def get_connected_input(object, bm, scene, input):
+def get_connected_input(object, bm, input):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # calculate selected loops
     edge_keys = [edgekey(edge) for edge in bm_mod.edges if edge.select and not edge.hide]
@@ -515,7 +515,7 @@ def get_connected_selections(edge_keys):
 
 
 # get the derived mesh data, if there is a mirror modifier
-def get_derived_bmesh(object, bm, scene):
+def get_derived_bmesh(object, bm):
     # check for mirror modifiers
     if 'MIRROR' in [mod.type for mod in object.modifiers if mod.show_viewport]:
         derived = True
@@ -526,7 +526,7 @@ def get_derived_bmesh(object, bm, scene):
                 mod.show_viewport = False
         # get derived mesh
         bm_mod = bmesh.new()
-        mesh_mod = object.to_mesh(scene, True, 'PREVIEW')
+        mesh_mod = object.to_mesh(bpy.context.depsgraph, True)
         bm_mod.from_mesh(mesh_mod)
         bpy.context.blend_data.meshes.remove(mesh_mod)
         # re-enable other modifiers
@@ -1981,9 +1981,9 @@ def circle_flatten_singles(bm_mod, com, p, q, normal, single_loop):
 
 
 # calculate input loops
-def circle_get_input(object, bm, scene):
+def circle_get_input(object, bm):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # create list of edge-keys based on selection state
     faces = False
@@ -2318,9 +2318,9 @@ def curve_cut_boundaries(bm_mod, loops):
 
 
 # calculate input loops
-def curve_get_input(object, bm, boundaries, scene):
+def curve_get_input(object, bm, boundaries):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # vertices that still need a loop to run through it
     verts_unsorted = [
@@ -3488,11 +3488,11 @@ class Circle(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Circle",
             object, bm, False, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
             derived, bm_mod, single_vertices, single_loops, loops = \
-                circle_get_input(object, bm, context.scene)
+                circle_get_input(object, bm)
             mapping = get_mapping(derived, bm, bm_mod, single_vertices,
                 False, loops)
             single_loops, loops = circle_check_loops(single_loops, loops,
@@ -3652,11 +3652,10 @@ class Curve(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Curve",
             object, bm, False, self.boundaries)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = curve_get_input(object, bm,
-                self.boundaries, context.scene)
+            derived, bm_mod, loops = curve_get_input(object, bm, self.boundaries)
             mapping = get_mapping(derived, bm, bm_mod, False, True, loops)
             loops = check_loops(loops, mapping, bm_mod)
         verts_selected = [
@@ -4011,13 +4010,12 @@ class GStretch(Operator):
                 bm_mod.faces.ensure_lookup_table()
                 strokes = gstretch_get_fake_strokes(object, bm_mod, loops)
             if not straightening:
-                derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+                derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # get loops and strokes
             if get_grease_pencil(object, context):
                 # find loops
-                derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, input='selected')
+                derived, bm_mod, loops = get_connected_input(object, bm, input='selected')
                 mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
                 loops = check_loops(loops, mapping, bm_mod)
                 # get strokes
@@ -4163,11 +4161,10 @@ class Relax(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Relax",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
         knots, points = relax_calculate_knots(loops)
@@ -4286,11 +4283,10 @@ class Space(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Space",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
 

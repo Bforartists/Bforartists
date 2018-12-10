@@ -821,9 +821,9 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
                 # If there are leaves then we need a new vertex group so they will attach to the bone
                 if not leafAnim:
                     if (len(levelCount) > 1) and (i >= levelCount[-2]) and leafObj:
-                        leafObj.vertex_groups.new(boneName)
+                        leafObj.vertex_groups.new(name=boneName)
                     elif (len(levelCount) == 1) and leafObj:
-                        leafObj.vertex_groups.new(boneName)
+                        leafObj.vertex_groups.new(name=boneName)
                 """
                 # If this is first point of the spline then it must be parented to the level above it
                 if n == 0:
@@ -997,7 +997,7 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
                                         )
 
         for group in vertexGroups:
-            leafObj.vertex_groups.new(group)
+            leafObj.vertex_groups.new(name=group)
             leafObj.vertex_groups[group].add(vertexGroups[group], 1.0, 'ADD')
 
     # Now we need the rotation mode to be 'XYZ' to ensure correct rotation
@@ -1988,7 +1988,7 @@ def addTree(props):
         treeMesh.from_pydata(treeVerts, treeEdges, ())
 
         for group in vertexGroups:
-            treeObj.vertex_groups.new(group)
+            treeObj.vertex_groups.new(name=group)
             treeObj.vertex_groups[group].add(vertexGroups[group], 1.0, 'ADD')
 
         # add armature

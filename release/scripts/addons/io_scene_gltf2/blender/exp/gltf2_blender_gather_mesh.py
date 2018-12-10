@@ -17,15 +17,17 @@ from typing import Optional, Dict, List, Any
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
 from io_scene_gltf2.io.com import gltf2_io
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_primitives
+from io_scene_gltf2.blender.exp import gltf2_blender_generate_extras
 
 
 @cached
 def gather_mesh(blender_mesh: bpy.types.Mesh,
                 vertex_groups: Optional[bpy.types.VertexGroups],
                 modifiers: Optional[bpy.types.ObjectModifiers],
+                skip_filter: bool,
                 export_settings
                 ) -> Optional[gltf2_io.Mesh]:
-    if not __filter_mesh(blender_mesh, vertex_groups, modifiers, export_settings):
+    if not skip_filter and not __filter_mesh(blender_mesh, vertex_groups, modifiers, export_settings):
         return None
 
     mesh = gltf2_io.Mesh(
@@ -62,6 +64,8 @@ def __gather_extras(blender_mesh: bpy.types.Mesh,
                     modifiers: Optional[bpy.types.ObjectModifiers],
                     export_settings
                     ) -> Optional[Dict[Any, Any]]:
+    if export_settings['gltf_extras']:
+        return gltf2_blender_generate_extras.generate_extras(blender_mesh)
     return None
 
 
