@@ -42,7 +42,8 @@ class NODE_HT_header(Header):
         toolsettings = context.tool_settings
 
         row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         # Now expanded via the 'ui_type'
         # layout.prop(snode, "tree_type", text="")
@@ -156,6 +157,18 @@ class NODE_HT_header(Header):
         if toolsettings.snap_node_element != 'GRID':
             row.prop(toolsettings, "snap_target", text="")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class NODE_MT_editor_menus(Menu):
     bl_idname = "NODE_MT_editor_menus"
@@ -568,6 +581,7 @@ def node_draw_tree_view(layout, context):
 
 
 classes = (
+    ALL_MT_editormenu,
     NODE_HT_header,
     NODE_MT_editor_menus,
     NODE_MT_add,

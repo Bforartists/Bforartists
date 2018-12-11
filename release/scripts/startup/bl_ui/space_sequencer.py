@@ -84,7 +84,8 @@ class SEQUENCER_HT_header(Header):
         scene = context.scene
 
         row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.prop(st, "view_type", text="")
 
@@ -129,6 +130,19 @@ class SEQUENCER_HT_header(Header):
                 row.prop(toolsettings, "proportional_edit", icon_only=True)
                 if toolsettings.proportional_edit != 'DISABLED':
                     row.prop(toolsettings, "proportional_edit_falloff", icon_only=True)
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class SEQUENCER_MT_editor_menus(Menu):
@@ -1367,6 +1381,7 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
 
 
 classes = (
+    ALL_MT_editormenu,
     SEQUENCER_HT_header,
     SEQUENCER_MT_editor_menus,
     SEQUENCER_MT_view,
