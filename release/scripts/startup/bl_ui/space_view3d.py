@@ -47,17 +47,18 @@ class VIEW3D_HT_header(Header):
         overlay = view.overlay
         tool_settings = context.tool_settings
 
-        row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         object_mode = 'OBJECT' if obj is None else obj.mode
 
         act_mode_item = bpy.types.Object.bl_rna.properties["mode"].enum_items[object_mode]
-
+        
+        row = layout.row(align=True)
         row.separator()
 
         sub = row.row()
-        sub.ui_units_x = 5.5
+        #sub.ui_units_x = 5.5 # width of mode edit box
         sub.operator_menu_enum("object.mode_set", "mode", text=act_mode_item.name, icon=act_mode_item.icon)
         del act_mode_item
 
@@ -111,7 +112,6 @@ class VIEW3D_HT_header(Header):
                     panel="VIEW3D_PT_tools_grease_pencil_interpolate",
                     text="Interpolate"
                 )
-
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.separator_spacer()
@@ -288,6 +288,19 @@ class VIEW3D_HT_header(Header):
         sub = row.row(align=True)
         sub.enabled = shading.type != 'RENDERED'
         sub.popover(panel="VIEW3D_PT_shading")
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class VIEW3D_MT_editor_menus(Menu):
@@ -5409,6 +5422,7 @@ class TOPBAR_PT_gpencil_materials(GreasePencilMaterialsPanel, Panel):
 
 classes = (
     VIEW3D_HT_header,
+    ALL_MT_editormenu,
     VIEW3D_MT_editor_menus,
     VIEW3D_MT_transform,
     VIEW3D_MT_transform_base,
