@@ -522,7 +522,8 @@ class IMAGE_HT_header(Header):
         show_maskedit = sima.show_maskedit
 
         row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if sima.mode != 'UV':
             layout.prop(sima, "ui_mode", text="")
@@ -601,6 +602,18 @@ class IMAGE_HT_header(Header):
             if ima.type == 'COMPOSITE' and ima.source in {'MOVIE', 'SEQUENCE'}:
                 row.operator("image.play_composite", icon='PLAY')
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class MASK_MT_editor_menus(Menu):
     bl_idname = "MASK_MT_editor_menus"
@@ -1315,6 +1328,7 @@ class IMAGE_PT_grease_pencil(AnnotationDataPanel, Panel):
 
 
 classes = (
+    ALL_MT_editormenu,
     IMAGE_MT_view,
     IMAGE_MT_view_zoom,
     IMAGE_MT_select,

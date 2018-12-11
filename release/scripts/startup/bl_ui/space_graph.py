@@ -36,7 +36,8 @@ class GRAPH_HT_header(Header):
         st = context.space_data
 
         row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         # Now a exposed as a sub-space type
         # layout.prop(st, "mode", text="")
@@ -75,6 +76,18 @@ class GRAPH_HT_header(Header):
 
         layout.prop(st, "pivot_point", icon_only=True)
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
     bl_space_type = 'GRAPH_EDITOR'
@@ -431,6 +444,7 @@ class GRAPH_MT_channel_specials(Menu):
 
 
 classes = (
+    ALL_MT_editormenu,
     GRAPH_HT_header,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,

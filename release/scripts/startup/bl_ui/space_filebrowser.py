@@ -31,7 +31,8 @@ class FILEBROWSER_HT_header(Header):
         params = st.params
 
         if st.active_operator is None:
-            layout.template_header()
+            #layout.template_header()
+            ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.menu("FILEBROWSER_MT_view")
 
@@ -88,6 +89,18 @@ class FILEBROWSER_HT_header(Header):
             row.separator()
             row.prop(params, "filter_search", text="", icon='VIEWZOOM')
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class FILEBROWSER_UL_dir(UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
@@ -259,6 +272,7 @@ class FILEBROWSER_MT_view(Menu):
 
 
 classes = (
+    ALL_MT_editormenu,
     FILEBROWSER_HT_header,
     FILEBROWSER_UL_dir,
     FILEBROWSER_PT_system_folders,
