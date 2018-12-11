@@ -32,8 +32,8 @@ class TEXT_HT_header(Header):
         text = st.text
 
         row = layout.row(align=True)
-        row.template_header()
-
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         if text and text.is_modified:
@@ -85,6 +85,18 @@ class TEXT_HT_header(Header):
                 row = layout.row()
                 row.operator("text.run_script")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
@@ -344,6 +356,7 @@ class TEXT_MT_toolbox(Menu):
 
 
 classes = (
+    ALL_MT_editormenu,
     TEXT_HT_header,
     TEXT_MT_edit,
     TEXT_MT_editor_menus,

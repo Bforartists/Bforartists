@@ -268,7 +268,8 @@ class CLIP_HT_header(Header):
         sc = context.space_data
 
         row = layout.row(align=True)
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.prop(sc, "mode", text="")
         if sc.mode == 'TRACKING':
@@ -276,7 +277,18 @@ class CLIP_HT_header(Header):
             self._draw_tracking(context)
         else:
             self._draw_masking(context)
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
 
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class CLIP_MT_tracking_editor_menus(Menu):
     bl_idname = "CLIP_MT_tracking_editor_menus"
@@ -1527,6 +1539,7 @@ class CLIP_MT_pivot_pie(Menu):
 
 
 classes = (
+    ALL_MT_editormenu,
     CLIP_UL_tracking_objects,
     CLIP_HT_header,
     CLIP_PT_display,
