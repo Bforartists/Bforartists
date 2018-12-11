@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 import bpy
-from bpy.types import Header, Panel
+from bpy.types import Header, Panel, Menu
 
 
 class PROPERTIES_HT_header(Header):
@@ -28,7 +28,8 @@ class PROPERTIES_HT_header(Header):
         layout = self.layout
 
         row = layout.row()
-        row.template_header()
+        #row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
 
 class PROPERTIES_PT_navigation_bar(Panel):
@@ -46,8 +47,22 @@ class PROPERTIES_PT_navigation_bar(Panel):
         layout.scale_y = 1.4
         layout.prop_tabs_enum(view, "context", icon_only=True)
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
+
 
 classes = (
+    ALL_MT_editormenu,
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
 )

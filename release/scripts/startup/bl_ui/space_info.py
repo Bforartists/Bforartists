@@ -26,11 +26,24 @@ class INFO_HT_header(Header):
 
     def draw(self, context):
         layout = self.layout
-        layout.template_header()
+        #layout.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         # Empty for now until info editor gets turned into log editor
         pass
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 # Not really info, just add to re-usable location.
 class INFO_MT_area(Menu):
@@ -57,6 +70,7 @@ class INFO_MT_area(Menu):
 
 
 classes = (
+    ALL_MT_editormenu,
     INFO_HT_header,
     INFO_MT_area,
 )
