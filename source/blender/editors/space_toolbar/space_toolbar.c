@@ -52,10 +52,10 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
+#include "GPU_framebuffer.h"
 
-static SpaceLink *toolbar_new(const bContext *C)
+static SpaceLink *toolbar_new(const ScrArea *toolbar_new, const Scene *scene)
 {
-	ScrArea *sa = CTX_wm_area(C);
 	ARegion *ar;
 	SpaceToolbar *stoolbar;
 
@@ -67,7 +67,7 @@ static SpaceLink *toolbar_new(const bContext *C)
 
 	BLI_addtail(&stoolbar->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = RGN_ALIGN_TOP;
 
 	/* main area */
 	ar = MEM_callocN(sizeof(ARegion), "main area for toolbar");
@@ -93,7 +93,7 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *ar)
 
 	/* clear and setup matrix */
 	UI_ThemeClearColor(TH_BACK);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GPU_clear(GPU_COLOR_BIT);
 
 	/* works best with no view2d matrix set */
 	UI_view2d_view_ortho(v2d);
@@ -102,7 +102,6 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *ar)
 	UI_view2d_view_restore(C);
 
 	/* scrollers */
-	//scrollers = UI_view2d_scrollers_calc(C, v2d, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_GRID_CLAMP); // not enough arguments?
 	scrollers = UI_view2d_scrollers_calc(C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
 	UI_view2d_scrollers_draw(C, v2d, scrollers);
 	UI_view2d_scrollers_free(scrollers);
@@ -119,7 +118,9 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *ar)
 	ED_region_header(C, ar);
 }
 
-static void toolbar_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void toolbar_main_area_listener(
+	wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+	wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	// SpaceInfo *sinfo = sa->spacedata.first;
 
@@ -134,7 +135,9 @@ static void toolbar_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa),
 	}
 }
 
-static void toolbar_header_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void toolbar_header_listener(
+	wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+	wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
