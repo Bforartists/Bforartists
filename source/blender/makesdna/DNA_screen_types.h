@@ -273,6 +273,9 @@ typedef struct ScrArea {
 
 	rcti totrct;			/* rect bound by v1 v2 v3 v4 */
 
+	int flag; /* bfa - short to int, we need int for our flags*/
+	int region_active_win;          /* bfa -short to int - index of last used region of 'RGN_TYPE_WINDOW' */
+
 	char spacetype;     /* eSpace_Type (SPACE_FOO) */
 	/* Temporarily used while switching area type, otherwise this should be
 	 * SPACE_EMPTY. Also, versioning uses it to nicely replace deprecated
@@ -284,10 +287,8 @@ typedef struct ScrArea {
 
 	char headertype DNA_DEPRECATED;/* OLD! 0=no header, 1= down, 2= up */
 	char do_refresh;				/* private, for spacetype refresh callback */
-	short flag;
-	short region_active_win;		/* index of last used region of 'RGN_TYPE_WINDOW'
-									 * runtime variable, updated by executing operators */
-	char temp, pad;
+
+	char temp, pad[5]; /* bfa - changed to allow int*/
 
 	struct SpaceType *type;		/* callbacks for this space type */
 
@@ -305,7 +306,7 @@ typedef struct ScrArea {
 	ListBase regionbase; /* ARegion */
 	ListBase handlers;   /* wmEventHandler */
 
-	ListBase actionzones;	/* AZone */
+	ListBase actionzones;   /* AZone */
 
 	ScrArea_Runtime runtime;
 } ScrArea;
