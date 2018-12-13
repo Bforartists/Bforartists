@@ -2968,6 +2968,9 @@ static void write_area_regions(WriteData *wd, ScrArea *area)
 		else if (sl->spacetype == SPACE_INFO) {
 			writestruct(wd, DATA, SpaceInfo, 1, sl);
 		}
+		else if (sl->spacetype == SPACE_TOOLBAR) {
+			writestruct(wd, DATA, SpaceToolbar, 1, sl);
+		}
 	}
 }
 
