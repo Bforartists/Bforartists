@@ -980,7 +980,6 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "tools_group")
         layout.prop(addon_prefs, "tools_parent")
         layout.prop(addon_prefs, "tools_objectdata")
         layout.prop(addon_prefs, "tools_link_to_scn")
@@ -1019,18 +1018,6 @@ class TOOLBAR_MT_tools(Menu):
             mode = obj.mode
 
             if mode == 'OBJECT':
-
-                if addon_prefs.tools_group:
-
-                    row = layout.row(align=True)
-
-                    row.operator("group.create", icon='NEW_GROUP', text="")
-                    row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
-                    row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
-
-                    row = layout.row(align=True)
-                    row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
-                    row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
 
                 if addon_prefs.tools_parent:
 

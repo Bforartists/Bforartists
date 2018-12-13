@@ -98,7 +98,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Tools
 
-    tools_group : BoolProperty(name="Group", default=True, description = "Display the Group Toolbar\nDisplay is mode and content dependant", )
     tools_parent : BoolProperty(name="Parent", default=True, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
     tools_objectdata : BoolProperty(name="Object Data", default=False, description = "Display the Object Data Toolbar\nDisplay is mode and content dependant", )
     tools_link_to_scn : BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
@@ -225,7 +224,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "tools_group")
         row.prop(self, "tools_parent")
         row.prop(self, "tools_objectdata")
         row.prop(self, "tools_link_to_scn")
