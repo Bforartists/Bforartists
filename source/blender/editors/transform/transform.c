@@ -582,7 +582,7 @@ static void viewRedrawForce(const bContext *C, TransInfo *t)
 	if (t->options & CTX_GPENCIL_STROKES) {
 		bGPdata *gpd = ED_gpencil_data_get_active(C);
 		if (gpd) {
-			DEG_id_tag_update(&gpd->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
 		}
 		WM_event_add_notifier(C, NC_GPENCIL | NA_EDITED, NULL);
 	}
@@ -830,6 +830,13 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
 {
 	const TransInfo *t = op->customdata;
 	switch (value) {
+		case TFM_MODAL_CANCEL:
+		{
+			if ((t->flag & T_RELEASE_CONFIRM) && ISMOUSE(t->launch_event)) {
+				return false;
+			}
+			break;
+		}
 		case TFM_MODAL_PROPSIZE:
 		case TFM_MODAL_PROPSIZE_UP:
 		case TFM_MODAL_PROPSIZE_DOWN:
@@ -6114,7 +6121,7 @@ static void slide_origdata_interp_data_vert(
 		BMLoop *l;
 
 		BM_ITER_ELEM_INDEX (l, &liter, sv->v, BM_LOOPS_OF_VERT, j) {
-			BM_face_calc_center_mean(l->f, faces_center[j]);
+			BM_face_calc_center_median(l->f, faces_center[j]);
 		}
 
 		BM_ITER_ELEM_INDEX (l, &liter, sv->v, BM_LOOPS_OF_VERT, j) {
@@ -6124,7 +6131,7 @@ static void slide_origdata_interp_data_vert(
 			BMLoop *l_other;
 			int j_other;
 
-			BM_face_calc_center_mean(f_copy, f_copy_center);
+			BM_face_calc_center_median(f_copy, f_copy_center);
 
 			BM_ITER_ELEM_INDEX (l_other, &liter_other, sv->v, BM_LOOPS_OF_VERT, j_other) {
 				BM_face_interp_multires_ex(
@@ -6304,7 +6311,7 @@ static bool bm_loop_calc_opposite_co(BMLoop *l_tmp,
  * Given 2 edges and a loop, step over the loops
  * and calculate a direction to slide along.
  *
- * \param r_slide_vec the direction to slide,
+ * \param r_slide_vec: the direction to slide,
  * the length of the vector defines the slide distance.
  */
 static BMLoop *get_next_loop(BMVert *v, BMLoop *l,

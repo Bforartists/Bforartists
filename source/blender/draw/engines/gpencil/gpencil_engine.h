@@ -133,10 +133,13 @@ typedef struct GPENCIL_Storage {
 	bool reset_cache;
 	bool buffer_stroke;
 	bool buffer_fill;
+	bool buffer_ctrlpoint;
 	const float *pixsize;
 	float render_pixsize;
 	int tonemapping;
 	short multisamples;
+
+	short framebuffer_flag; /* flag what framebuffer need to create */
 
 	int blend_mode;
 	int clamp_layer;
@@ -158,6 +161,12 @@ typedef struct GPENCIL_Storage {
 
 	Object *camera; /* camera pointer for render mode */
 } GPENCIL_Storage;
+
+typedef enum eGpencilFramebuffer_Flag {
+	GP_FRAMEBUFFER_MULTISAMPLE = (1 << 0),
+	GP_FRAMEBUFFER_BASIC       = (1 << 1),
+	GP_FRAMEBUFFER_DRAW        = (1 << 2),
+} eGpencilFramebuffer_Flag;
 
 typedef struct GPENCIL_StorageList {
 	struct GPENCIL_Storage *storage;
@@ -291,6 +300,7 @@ typedef struct GPENCIL_e_data {
 	/* for buffer only one batch is nedeed because the drawing is only of one stroke */
 	GPUBatch *batch_buffer_stroke;
 	GPUBatch *batch_buffer_fill;
+	GPUBatch *batch_buffer_ctrlpoint;
 
 	/* grid geometry */
 	GPUBatch *batch_grid;
@@ -378,12 +388,15 @@ void DRW_gpencil_get_edlin_geom(struct GpencilBatchCacheElem *be, struct bGPDstr
 struct GPUBatch *DRW_gpencil_get_buffer_stroke_geom(struct bGPdata *gpd, short thickness);
 struct GPUBatch *DRW_gpencil_get_buffer_fill_geom(struct bGPdata *gpd);
 struct GPUBatch *DRW_gpencil_get_buffer_point_geom(struct bGPdata *gpd, short thickness);
+struct GPUBatch *DRW_gpencil_get_buffer_ctrlpoint_geom(struct bGPdata *gpd);
 struct GPUBatch *DRW_gpencil_get_grid(Object *ob);
 
 /* object cache functions */
 struct tGPencilObjectCache *gpencil_object_cache_add(
         struct tGPencilObjectCache *cache_array, struct Object *ob,
         int *gp_cache_size, int *gp_cache_used);
+
+bool DRW_gpencil_onion_active(struct bGPdata *gpd);
 
 /* shading groups cache functions */
 struct GpencilBatchGroup *gpencil_group_cache_add(

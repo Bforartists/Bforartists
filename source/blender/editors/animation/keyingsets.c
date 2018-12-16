@@ -962,6 +962,7 @@ int ANIM_apply_keyingset(bContext *C, ListBase *dsources, bAction *act, KeyingSe
 	Scene *scene = CTX_data_scene(C);
 	ReportList *reports = CTX_wm_reports(C);
 	KS_Path *ksp;
+	ListBase nla_cache = {NULL, NULL};
 	const short base_kflags = ANIM_get_keyframing_flags(scene, 1);
 	const char *groupname = NULL;
 	short kflag = 0, success = 0;
@@ -1039,7 +1040,7 @@ int ANIM_apply_keyingset(bContext *C, ListBase *dsources, bAction *act, KeyingSe
 		for (; i < arraylen; i++) {
 			/* action to take depends on mode */
 			if (mode == MODIFYKEY_MODE_INSERT)
-				success += insert_keyframe(bmain, depsgraph, reports, ksp->id, act, groupname, ksp->rna_path, i, cfra, keytype, kflag2);
+				success += insert_keyframe(bmain, depsgraph, reports, ksp->id, act, groupname, ksp->rna_path, i, cfra, keytype, &nla_cache, kflag2);
 			else if (mode == MODIFYKEY_MODE_DELETE)
 				success += delete_keyframe(bmain, reports, ksp->id, act, groupname, ksp->rna_path, i, cfra, kflag2);
 		}
@@ -1051,17 +1052,19 @@ int ANIM_apply_keyingset(bContext *C, ListBase *dsources, bAction *act, KeyingSe
 				Object *ob = (Object *)ksp->id;
 
 				// XXX: only object transforms?
-				DEG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA);
+				DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 				break;
 			}
 			default:
-				DEG_id_tag_update(ksp->id, DEG_TAG_COPY_ON_WRITE);
+				DEG_id_tag_update(ksp->id, ID_RECALC_COPY_ON_WRITE);
 				break;
 		}
 
 		/* send notifiers for updates (this doesn't require context to work!) */
 		WM_main_add_notifier(NC_ANIMATION | ND_KEYFRAME | NA_ADDED, NULL);
 	}
+
+	BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 
 	/* return the number of channels successfully affected */
 	return success;

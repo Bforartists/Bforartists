@@ -138,6 +138,7 @@ typedef struct tGPDinterpolate {
 
 /* Temporary primitive operation data */
 typedef struct tGPDprimitive {
+	struct Main *bmain;               /* main database pointer */
 	struct Depsgraph *depsgraph;
 	struct wmWindow *win;             /* window where painting originated */
 	struct Scene *scene;              /* current scene from context */
@@ -154,25 +155,34 @@ typedef struct tGPDprimitive {
 	struct bGPDlayer *gpl;            /* layer */
 	struct bGPDframe *gpf;            /* frame */
 	int type;                         /* type of primitive */
-	short cyclic;                       /* cyclic option */
-	short flip;                         /* flip option */
+	int orign_type;                   /* original type of primitive */
+	bool curve;                       /* type of primitive is a curve */
+	short flip;                       /* flip option */
+	tGPspoint *points;                /* array of data-points for stroke */
+	int point_count;                  /* number of edges allocated */
+	int tot_stored_edges;             /* stored number of polygon edges */
 	int tot_edges;                    /* number of polygon edges */
-	int top[2];                       /* first box corner */
-	int bottom[2];                    /* last box corner */
-	int origin[2];                    /* initial box corner */
+	float origin[2];                  /* initial box corner */
+	float start[2];                   /* first box corner */
+	float end[2];                     /* last box corner */
+	float midpoint[2];                /* midpoint box corner */
+	float cp1[2];                     /* first control point */
+	float cp2[2];                     /* second control point */
+	int sel_cp;                       /* flag to determine control point is selected */
 	int flag;                         /* flag to determine operations in progress */
+	float mval[2];                    /* recorded mouse-position */
+	float mvalo[2];                   /* previous recorded mouse-position */
 
 	int lock_axis;                    /* lock to viewport axis */
+	struct RNG *rng;
 
 	NumInput num;                     /* numeric input */
-	void *draw_handle_3d;             /* handle for drawing strokes while operator is running 3d stuff */
 } tGPDprimitive;
 
 
 /* Modal Operator Drawing Callbacks ------------------------ */
 
 void ED_gp_draw_interpolation(const struct bContext *C, struct tGPDinterpolate *tgpi, const int type);
-void ED_gp_draw_primitives(const struct bContext *C, struct tGPDprimitive *tgpi, const int type);
 void ED_gp_draw_fill(struct tGPDdraw *tgpw);
 
 /* ***************************************************** */
@@ -196,7 +206,7 @@ typedef struct GP_SpaceConversion {
 } GP_SpaceConversion;
 
 bool gp_stroke_inside_circle(
-        const int mval[2], const int UNUSED(mvalo[2]),
+        const float mval[2], const float UNUSED(mvalo[2]),
         int rad, int x0, int y0, int x1, int y1);
 
 void gp_point_conversion_init(struct bContext *C, GP_SpaceConversion *r_gsc);
@@ -228,13 +238,6 @@ void gp_stroke_convertcoords_tpoint(
         bGPDlayer *gpl, const struct tGPspoint *point2D,
         float *depth, float out[3]);
 
-/* helper to convert 2d to 3d for primitive. See: D4030 */
-void gp_stroke_convertcoords_tpoint_primitive(
-        struct Scene *scene, struct ARegion *ar,
-        struct Object *ob,
-        bGPDlayer *gpl, const struct tPGPspoint *point2D,
-        float out[3]);
-
 /* Poll Callbacks ------------------------------------ */
 /* gpencil_utils.c */
 
@@ -258,9 +261,6 @@ void gp_stroke_delete_tagged_points(
         int tag_flags, bool select);
 int gp_delete_selected_point_wrap(bContext *C);
 
-bool gp_smooth_stroke(bGPDstroke *gps, int i, float inf, bool affect_pressure);
-bool gp_smooth_stroke_strength(bGPDstroke *gps, int i, float inf);
-bool gp_smooth_stroke_thickness(bGPDstroke *gps, int i, float inf);
 void gp_subdivide_stroke(bGPDstroke *gps, const int subdivide);
 void gp_randomize_stroke(bGPDstroke *gps, Brush *brush, struct RNG *rng);
 
@@ -379,7 +379,8 @@ enum {
 	GP_STROKE_BOX = -1,
 	GP_STROKE_LINE = 1,
 	GP_STROKE_CIRCLE = 2,
-	GP_STROKE_ARC = 3
+	GP_STROKE_ARC = 3,
+	GP_STROKE_CURVE = 4
 };
 
 
@@ -395,6 +396,7 @@ void GPENCIL_OT_stroke_simplify(struct wmOperatorType *ot);
 void GPENCIL_OT_stroke_simplify_fixed(struct wmOperatorType *ot);
 void GPENCIL_OT_stroke_separate(struct wmOperatorType *ot);
 void GPENCIL_OT_stroke_split(struct wmOperatorType *ot);
+void GPENCIL_OT_stroke_smooth(struct wmOperatorType *ot);
 
 void GPENCIL_OT_brush_presets_create(struct wmOperatorType *ot);
 
@@ -494,9 +496,9 @@ struct GP_EditableStrokes_Iter {
  * stopping on each usable layer + stroke pair (i.e. gpl and gps)
  * to perform some operations on the stroke.
  *
- * \param gpl  The identifier to use for the layer of the stroke being processed.
+ * \param gpl: The identifier to use for the layer of the stroke being processed.
  *                    Choose a suitable value to avoid name clashes.
- * \param gps The identifier to use for current stroke being processed.
+ * \param gps: The identifier to use for current stroke being processed.
  *                    Choose a suitable value to avoid name clashes.
  */
 #define GP_EDITABLE_STROKES_BEGIN(gpstroke_iter, C, gpl, gps)                           \

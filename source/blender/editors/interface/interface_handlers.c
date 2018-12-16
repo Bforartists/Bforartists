@@ -64,6 +64,8 @@
 #include "BKE_unit.h"
 #include "BKE_paint.h"
 
+#include "IMB_colormanagement.h"
+
 #include "ED_screen.h"
 #include "ED_undo.h"
 
@@ -2582,7 +2584,7 @@ static bool ui_textedit_delete_selection(uiBut *but, uiHandleButtonData *data)
 }
 
 /**
- * \param x  Screen space cursor location - #wmEvent.x
+ * \param x: Screen space cursor location - #wmEvent.x
  *
  * \note ``but->block->aspect`` is used here, so drawing button style is getting scaled too.
  */
@@ -3830,8 +3832,7 @@ static int ui_do_but_HOTKEYEVT(
 		ED_region_tag_redraw(data->region);
 
 		if (event->val == KM_PRESS) {
-			if (ISHOTKEY(event->type)) {
-
+			if (ISHOTKEY(event->type) && (event->type != ESCKEY)) {
 				if (WM_key_event_string(event->type, false)[0])
 					ui_but_value_set(but, event->type);
 				else
@@ -5314,7 +5315,7 @@ static int ui_do_but_COLOR(
 
 						if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
 							RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
-							ui_block_cm_to_scene_linear_v3(but->block, target);
+							IMB_colormanagement_srgb_to_scene_linear_v3(target);
 						}
 						else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
 							RNA_property_float_get_array(&but->rnapoin, but->rnaprop, target);
@@ -5327,7 +5328,7 @@ static int ui_do_but_COLOR(
 						}
 						else if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
 							RNA_property_float_get_array(&but->rnapoin, but->rnaprop, color);
-							ui_block_cm_to_display_space_v3(but->block, color);
+							IMB_colormanagement_scene_linear_to_srgb_v3(color);
 							BKE_brush_color_set(scene, brush, color);
 						}
 					}
@@ -5441,7 +5442,6 @@ static bool ui_numedit_but_HSVCUBE(
 	float x, y;
 	float mx_fl, my_fl;
 	bool changed = true;
-	bool use_display_colorspace = ui_but_is_colorpicker_display_space(but);
 
 	ui_mouse_scale_warp(data, mx, my, &mx_fl, &my_fl, shift);
 
@@ -5455,9 +5455,7 @@ static bool ui_numedit_but_HSVCUBE(
 #endif
 
 	ui_but_v3_get(but, rgb);
-
-	if (use_display_colorspace)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
+	ui_scene_linear_to_color_picker_space(but, rgb);
 
 	ui_rgb_to_color_picker_HSVCUBE_compat_v(but, rgb, hsv);
 
@@ -5470,8 +5468,7 @@ static bool ui_numedit_but_HSVCUBE(
 
 		/* calculate original hsv again */
 		copy_v3_v3(rgb, data->origvec);
-		if (use_display_colorspace)
-			ui_block_cm_to_display_space_v3(but->block, rgb);
+		ui_scene_linear_to_color_picker_space(but, rgb);
 
 		copy_v3_v3(hsvo, hsv);
 
@@ -5519,9 +5516,6 @@ static bool ui_numedit_but_HSVCUBE(
 		{
 			/* vertical 'value' strip */
 			float min = but->softmin, max = but->softmax;
-			if (use_display_colorspace) {
-				ui_block_cm_to_display_space_range(but->block, &min, &max);
-			}
 			/* exception only for value strip - use the range set in but->min/max */
 			hsv[2] = y * (max - min) + min;
 			break;
@@ -5538,9 +5532,7 @@ static bool ui_numedit_but_HSVCUBE(
 	}
 
 	ui_color_picker_to_rgb_HSVCUBE_v(but, hsv, rgb);
-
-	if (use_display_colorspace)
-		ui_block_cm_to_scene_linear_v3(but->block, rgb);
+	ui_color_picker_to_scene_linear_space(but, rgb);
 
 	/* clamp because with color conversion we can exceed range [#34295] */
 	if (but->a1 == UI_GRAD_V_ALT) {
@@ -5566,13 +5558,9 @@ static void ui_ndofedit_but_HSVCUBE(
 	const float hsv_v_max = max_ff(hsv[2], but->softmax);
 	float rgb[3];
 	float sensitivity = (shift ? 0.15f : 0.3f) * ndof->dt;
-	bool use_display_colorspace = ui_but_is_colorpicker_display_space(but);
 
 	ui_but_v3_get(but, rgb);
-
-	if (use_display_colorspace)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
-
+	ui_scene_linear_to_color_picker_space(but, rgb);
 	ui_rgb_to_color_picker_HSVCUBE_compat_v(but, rgb, hsv);
 
 	switch ((int)but->a1) {
@@ -5621,9 +5609,7 @@ static void ui_ndofedit_but_HSVCUBE(
 	hsv_clamp_v(hsv, hsv_v_max);
 
 	ui_color_picker_to_rgb_HSVCUBE_v(but, hsv, rgb);
-
-	if (use_display_colorspace)
-		ui_block_cm_to_scene_linear_v3(but->block, rgb);
+	ui_color_picker_to_scene_linear_space(but, rgb);
 
 	copy_v3_v3(data->vec, rgb);
 	ui_but_v3_set(but, data->vec);
@@ -5738,7 +5724,6 @@ static bool ui_numedit_but_HSVCIRCLE(
 	float rgb[3];
 	ColorPicker *cpicker = but->custom_data;
 	float *hsv = cpicker->color_data;
-	bool use_display_colorspace = ui_but_is_colorpicker_display_space(but);
 
 	ui_mouse_scale_warp(data, mx, my, &mx_fl, &my_fl, shift);
 
@@ -5761,9 +5746,7 @@ static bool ui_numedit_but_HSVCIRCLE(
 	BLI_rcti_rctf_copy(&rect, &but->rect);
 
 	ui_but_v3_get(but, rgb);
-	if (use_display_colorspace)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
-
+	ui_scene_linear_to_color_picker_space(but, rgb);
 	ui_rgb_to_color_picker_compat_v(rgb, hsv);
 
 	/* exception, when using color wheel in 'locked' value state:
@@ -5785,9 +5768,7 @@ static bool ui_numedit_but_HSVCIRCLE(
 		/* calculate original hsv again */
 		copy_v3_v3(hsvo, hsv);
 		copy_v3_v3(rgbo, data->origvec);
-		if (use_display_colorspace)
-			ui_block_cm_to_display_space_v3(but->block, rgbo);
-
+		ui_scene_linear_to_color_picker_space(but, rgbo);
 		ui_rgb_to_color_picker_compat_v(rgbo, hsvo);
 
 		/* and original position */
@@ -5813,9 +5794,7 @@ static bool ui_numedit_but_HSVCIRCLE(
 		normalize_v3_length(rgb, but->a2);
 	}
 
-	if (use_display_colorspace)
-		ui_block_cm_to_scene_linear_v3(but->block, rgb);
-
+	ui_color_picker_to_scene_linear_space(but, rgb);
 	ui_but_v3_set(but, rgb);
 
 	data->draglastx = mx;
@@ -5832,14 +5811,12 @@ static void ui_ndofedit_but_HSVCIRCLE(
 {
 	ColorPicker *cpicker = but->custom_data;
 	float *hsv = cpicker->color_data;
-	bool use_display_colorspace = ui_but_is_colorpicker_display_space(but);
 	float rgb[3];
 	float phi, r /*, sqr */ /* UNUSED */, v[2];
 	float sensitivity = (shift ? 0.06f : 0.3f) * ndof->dt;
 
 	ui_but_v3_get(but, rgb);
-	if (use_display_colorspace)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
+	ui_scene_linear_to_color_picker_space(but, rgb);
 	ui_rgb_to_color_picker_compat_v(rgb, hsv);
 
 	/* Convert current color on hue/sat disc to circular coordinates phi, r */
@@ -5890,9 +5867,7 @@ static void ui_ndofedit_but_HSVCIRCLE(
 		normalize_v3_length(data->vec, but->a2);
 	}
 
-	if (use_display_colorspace)
-		ui_block_cm_to_scene_linear_v3(but->block, data->vec);
-
+	ui_color_picker_to_scene_linear_space(but, data->vec);
 	ui_but_v3_set(but, data->vec);
 }
 #endif /* WITH_INPUT_NDOF */
@@ -6905,7 +6880,7 @@ static bool ui_but_find_select_in_enum__cmp(const uiBut *but_a, const uiBut *but
 /**
  * Finds the pressed button in an aligned row (typically an expanded enum).
  *
- * \param direction  Use when there may be multiple buttons pressed.
+ * \param direction: Use when there may be multiple buttons pressed.
  */
 uiBut *ui_but_find_select_in_enum(uiBut *but, int direction)
 {

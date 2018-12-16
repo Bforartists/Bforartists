@@ -850,7 +850,7 @@ bool nodeIsChildOf(const bNode *parent, const bNode *child)
  * Iterate over a chain of nodes, starting with \a node_start, executing
  * \a callback for each node (which can return false to end iterator).
  *
- * \param reversed for backwards iteration
+ * \param reversed: for backwards iteration
  * \note Recursive
  */
 void nodeChainIter(
@@ -1302,7 +1302,7 @@ bNodeTree *ntreeAddTree(Main *bmain, const char *name, const char *idname)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_node_tree_copy_data(Main *UNUSED(bmain), bNodeTree *ntree_dst, const bNodeTree *ntree_src, const int flag)
 {
@@ -1870,8 +1870,24 @@ void ntreeFreeTree(bNodeTree *ntree)
 	if (ntree->duplilock)
 		BLI_mutex_free(ntree->duplilock);
 
-	/* if ntree is not part of library, free the libblock data explicitly */
-	if (ntree->id.tag & LIB_TAG_NO_MAIN) {
+	if (ntree->id.tag & LIB_TAG_LOCALIZED) {
+		BKE_libblock_free_data(&ntree->id, true);
+	}
+}
+
+void ntreeFreeNestedTree(bNodeTree *ntree)
+{
+	ntreeFreeTree(ntree);
+	BKE_libblock_free_data(&ntree->id, true);
+}
+
+void ntreeFreeLocalTree(bNodeTree *ntree)
+{
+	if (ntree->id.tag & LIB_TAG_LOCALIZED) {
+		ntreeFreeTree(ntree);
+	}
+	else {
+		ntreeFreeTree(ntree);
 		BKE_libblock_free_data(&ntree->id, true);
 	}
 }

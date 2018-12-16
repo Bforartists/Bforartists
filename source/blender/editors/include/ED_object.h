@@ -69,7 +69,15 @@ struct uiLayout;
 /* object_edit.c */
 struct Object *ED_object_context(struct bContext *C);               /* context.object */
 struct Object *ED_object_active_context(struct bContext *C); /* context.object or context.active_object */
-void ED_hide_collections_menu_draw(const struct bContext *C, struct uiLayout *layout);
+void ED_collection_hide_menu_draw(const struct bContext *C, struct uiLayout *layout);
+
+/* object_utils.c */
+bool ED_object_calc_active_center_for_editmode(
+        struct Object *obedit, const bool select_only, float r_center[3]);
+bool ED_object_calc_active_center_for_posemode(
+        struct Object *ob, const bool select_only, float r_center[3]);
+bool ED_object_calc_active_center(
+        struct Object *ob, const bool select_only, float r_center[3]);
 
 /* object_ops.c */
 void ED_operatortypes_object(void);
@@ -135,9 +143,6 @@ bool ED_object_editmode_enter_ex(struct Main *bmain, struct Scene *scene, struct
 bool ED_object_editmode_enter(struct bContext *C, int flag);
 bool ED_object_editmode_load(struct Main *bmain, struct Object *obedit);
 
-bool ED_object_editmode_calc_active_center(struct Object *obedit, const bool select_only, float r_center[3]);
-
-
 void ED_object_vpaintmode_enter_ex(
         struct Main *bmain, struct Depsgraph *depsgraph, struct wmWindowManager *wm,
         struct Scene *scene, struct Object *ob);
@@ -178,14 +183,15 @@ void ED_object_add_unit_props_size(struct wmOperatorType *ot);
 void ED_object_add_unit_props_radius(struct wmOperatorType *ot);
 void ED_object_add_generic_props(struct wmOperatorType *ot, bool do_editmode);
 void ED_object_add_mesh_props(struct wmOperatorType *ot);
-bool ED_object_add_generic_get_opts(struct bContext *C, struct wmOperator *op, const char view_align_axis,
-                                    float loc[3], float rot[3],
-                                    bool *enter_editmode, bool *is_view_aligned);
+bool ED_object_add_generic_get_opts(
+        struct bContext *C, struct wmOperator *op, const char view_align_axis,
+        float loc[3], float rot[3],
+        bool *enter_editmode, unsigned short *local_view_bits, bool *is_view_aligned);
 
 struct Object *ED_object_add_type(
         struct bContext *C,
         int type, const char *name, const float loc[3], const float rot[3],
-        bool enter_editmode)
+        bool enter_editmode, unsigned short local_view_bits)
         ATTR_NONNULL(1) ATTR_RETURNS_NONNULL;
 
 void ED_object_single_users(struct Main *bmain, struct Scene *scene, const bool full, const bool copy_groups);

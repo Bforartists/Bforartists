@@ -97,6 +97,11 @@ static void do_versions_theme(UserDef *userdef, bTheme *btheme)
 		copy_v4_v4_char(btheme->tuserpref.navigation_bar, U_theme_default.tuserpref.navigation_bar);
 	}
 
+	if (!USER_VERSION_ATLEAST(280, 36)) {
+		copy_v4_v4_char(btheme->tui.wcol_state.inner_changed, U_theme_default.tui.wcol_state.inner_changed);
+		copy_v4_v4_char(btheme->tui.wcol_state.inner_changed_sel, U_theme_default.tui.wcol_state.inner_changed_sel);
+	}
+
 #undef USER_VERSION_ATLEAST
 }
 
@@ -355,7 +360,7 @@ void BLO_version_defaults_userpref_blend(Main *bmain, UserDef *userdef)
 		    USER_FLAG_DEPRECATED_6 | USER_FLAG_DEPRECATED_7 |
 		    USER_FLAG_DEPRECATED_9 | USER_DEVELOPER_UI);
 		userdef->uiflag &= ~(
-		    USER_UIFLAG_DEPRECATED_7);
+		    USER_HEADER_BOTTOM);
 		userdef->transopts &= ~(
 		    USER_TR_DEPRECATED_2 | USER_TR_DEPRECATED_3 | USER_TR_DEPRECATED_4 |
 		    USER_TR_DEPRECATED_6 | USER_TR_DEPRECATED_7);

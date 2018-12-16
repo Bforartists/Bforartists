@@ -515,6 +515,11 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
 		immUnbindProgram();
 	}
 
+	/* When overlays are disabled, only show camera outline & passepartout. */
+	if (v3d->flag2 & V3D_RENDER_OVERRIDE) {
+		return;
+	}
+
 	/* And now, the dashed lines! */
 	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
 
@@ -537,7 +542,7 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
 		imm_draw_box_wire_2d(shdr_pos, x1i, y1i, x2i, y2i);
 	}
 
-	/* border */
+	/* Render Border. */
 	if (scene->r.mode & R_BORDER) {
 		float x3, y3, x4, y4;
 
@@ -664,7 +669,7 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *ar, View
 	/* end dashed lines */
 
 	/* camera name - draw in highlighted text color */
-	if (ca && (ca->flag & CAM_SHOWNAME)) {
+	if (ca && ((v3d->overlay.flag & V3D_OVERLAY_HIDE_TEXT) == 0) && (ca->flag & CAM_SHOWNAME)) {
 		UI_FontThemeColor(BLF_default(), TH_TEXT_HI);
 		BLF_draw_default(
 		        x1i, y1i - (0.7f * U.widget_unit), 0.0f,
@@ -802,7 +807,7 @@ float ED_view3d_grid_view_scale(
 		}
 	}
 
-	return v3d->grid * grid_scale;
+	return grid_scale;
 }
 
 static void draw_view_axis(RegionView3D *rv3d, const rcti *rect)
@@ -877,7 +882,7 @@ static void draw_view_axis(RegionView3D *rv3d, const rcti *rect)
 
 #ifdef WITH_INPUT_NDOF
 /* draw center and axis of rotation for ongoing 3D mouse navigation */
-static void UNUSED_FUNCTION(draw_rotation_guide)(RegionView3D *rv3d)
+static void draw_rotation_guide(const RegionView3D *rv3d)
 {
 	float o[3];    /* center of rotation */
 	float end[3];  /* endpoints for drawing */
@@ -1245,6 +1250,16 @@ void view3d_draw_region_info(const bContext *C, ARegion *ar)
 	View3D *v3d = CTX_wm_view3d(C);
 	Scene *scene = CTX_data_scene(C);
 	wmWindowManager *wm = CTX_wm_manager(C);
+
+#ifdef WITH_INPUT_NDOF
+	if ((U.ndof_flag & NDOF_SHOW_GUIDE) &&
+	    ((rv3d->viewlock & RV3D_LOCKED) == 0) &&
+	    (rv3d->persp != RV3D_CAMOB))
+	{
+		/* TODO: draw something else (but not this) during fly mode */
+		draw_rotation_guide(rv3d);
+	}
+#endif
 
 	/* correct projection matrix */
 	ED_region_pixelspace(ar);

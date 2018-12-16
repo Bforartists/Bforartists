@@ -87,6 +87,10 @@ void DRW_globals_update(void)
 	UI_GetThemeColor4fv(TH_FACE_DOT, ts.colorFaceDot);
 	UI_GetThemeColor4fv(TH_BACK, ts.colorBackground);
 
+	/* Custom median color to slightly affect the edit mesh colors. */
+	interp_v4_v4v4(ts.colorEditMeshMiddle, ts.colorVertexSelect, ts.colorWireEdit, 0.35f);
+	copy_v3_fl(ts.colorEditMeshMiddle, dot_v3v3(ts.colorEditMeshMiddle, (float[3]){0.3333f, 0.3333f, 0.3333f})); /* Desaturate */
+
 #ifdef WITH_FREESTYLE
 	UI_GetThemeColor4fv(TH_FREESTYLE_EDGE_MARK, ts.colorEdgeFreestyle);
 	UI_GetThemeColor4fv(TH_FREESTYLE_FACE_MARK, ts.colorFaceFreestyle);
@@ -159,29 +163,28 @@ void DRW_globals_update(void)
 
 	DRW_uniformbuffer_update(globals_ubo, &ts);
 
-	ColorBand ramp = {0};
-	float *colors;
-	int col_size;
+	if (!globals_ramp) {
+		ColorBand ramp = {0};
+		float *colors;
+		int col_size;
 
-	ramp.tot = 3;
-	ramp.data[0].a = 1.0f;
-	ramp.data[0].b = 1.0f;
-	ramp.data[0].pos = 0.0f;
-	ramp.data[1].a = 1.0f;
-	ramp.data[1].g = 1.0f;
-	ramp.data[1].pos = 0.5f;
-	ramp.data[2].a = 1.0f;
-	ramp.data[2].r = 1.0f;
-	ramp.data[2].pos = 1.0f;
+		ramp.tot = 3;
+		ramp.data[0].a = 1.0f;
+		ramp.data[0].b = 1.0f;
+		ramp.data[0].pos = 0.0f;
+		ramp.data[1].a = 1.0f;
+		ramp.data[1].g = 1.0f;
+		ramp.data[1].pos = 0.5f;
+		ramp.data[2].a = 1.0f;
+		ramp.data[2].r = 1.0f;
+		ramp.data[2].pos = 1.0f;
 
-	BKE_colorband_evaluate_table_rgba(&ramp, &colors, &col_size);
+		BKE_colorband_evaluate_table_rgba(&ramp, &colors, &col_size);
 
-	if (globals_ramp) {
-		GPU_texture_free(globals_ramp);
+		globals_ramp = GPU_texture_create_1D(col_size, GPU_RGBA8, colors, NULL);
+
+		MEM_freeN(colors);
 	}
-	globals_ramp = GPU_texture_create_1D(col_size, GPU_RGBA8, colors, NULL);
-
-	MEM_freeN(colors);
 
 	/* Weight Painting color ramp texture */
 	bool user_weight_ramp = (U.flag & USER_CUSTOM_RANGE) != 0;
@@ -366,7 +369,6 @@ DRWShadingGroup *shgroup_instance_screenspace(DRWPass *pass, struct GPUBatch *ge
 	DRW_shgroup_uniform_float(grp, "size", size, 1);
 	DRW_shgroup_uniform_float(grp, "pixel_size", DRW_viewport_pixelsize_get(), 1);
 	DRW_shgroup_uniform_vec3(grp, "screen_vecs[0]", DRW_viewport_screenvecs_get(), 2);
-	DRW_shgroup_state_enable(grp, DRW_STATE_STIPPLE_3);
 
 	return grp;
 }
@@ -876,9 +878,11 @@ int DRW_object_wire_theme_get(Object *ob, ViewLayer *view_layer, float **r_color
 	 * note: no theme yet for 'colindex' */
 	int theme_id = is_edit ? TH_WIRE_EDIT : TH_WIRE;
 
-	if (//(scene->obedit == NULL) &&
-	    ((G.moving & G_TRANSFORM_OBJ) != 0) &&
-	    ((ob->base_flag & BASE_SELECTED) != 0))
+	if (is_edit) {
+		/* fallback to TH_WIRE */
+	}
+	else if (((G.moving & G_TRANSFORM_OBJ) != 0) &&
+	         ((ob->base_flag & BASE_SELECTED) != 0))
 	{
 		theme_id = TH_TRANSFORM;
 	}

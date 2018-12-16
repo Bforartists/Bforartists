@@ -188,6 +188,7 @@ ToolSettings *BKE_toolsettings_copy(ToolSettings *toolsettings, const int flag)
 	ts->gp_interpolate.custom_ipo = curvemapping_copy(ts->gp_interpolate.custom_ipo);
 	/* duplicate Grease Pencil multiframe fallof */
 	ts->gp_sculpt.cur_falloff = curvemapping_copy(ts->gp_sculpt.cur_falloff);
+	ts->gp_sculpt.cur_primitive = curvemapping_copy(ts->gp_sculpt.cur_primitive);
 	return ts;
 }
 
@@ -226,6 +227,9 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
 	if (toolsettings->gp_sculpt.cur_falloff) {
 		curvemapping_free(toolsettings->gp_sculpt.cur_falloff);
 	}
+	if (toolsettings->gp_sculpt.cur_primitive) {
+		curvemapping_free(toolsettings->gp_sculpt.cur_primitive);
+	}
 
 	MEM_freeN(toolsettings);
 }
@@ -236,7 +240,7 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, const int flag)
 {
@@ -470,7 +474,7 @@ void BKE_scene_free_ex(Scene *sce, const bool do_id_user)
 
 	/* is no lib link block, but scene extension */
 	if (sce->nodetree) {
-		ntreeFreeTree(sce->nodetree);
+		ntreeFreeNestedTree(sce->nodetree);
 		MEM_freeN(sce->nodetree);
 		sce->nodetree = NULL;
 	}
@@ -662,7 +666,7 @@ void BKE_scene_init(Scene *sce)
 	sce->toolsettings->autokey_mode = U.autokey_mode;
 
 
-	sce->toolsettings->transform_pivot_point = V3D_AROUND_CENTER_MEAN;
+	sce->toolsettings->transform_pivot_point = V3D_AROUND_CENTER_MEDIAN;
 	sce->toolsettings->snap_mode = SCE_SNAP_MODE_INCREMENT;
 	sce->toolsettings->snap_node_mode = SCE_SNAP_MODE_GRID;
 	sce->toolsettings->snap_uv_mode = SCE_SNAP_MODE_INCREMENT;
@@ -697,6 +701,14 @@ void BKE_scene_init(Scene *sce)
 	curvemap_reset(gp_falloff_curve->cm,
 		&gp_falloff_curve->clipr,
 		CURVE_PRESET_GAUSS,
+		CURVEMAP_SLOPE_POSITIVE);
+
+	sce->toolsettings->gp_sculpt.cur_primitive = curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
+	CurveMapping *gp_primitive_curve = sce->toolsettings->gp_sculpt.cur_primitive;
+	curvemapping_initialize(gp_primitive_curve);
+	curvemap_reset(gp_primitive_curve->cm,
+		&gp_primitive_curve->clipr,
+		CURVE_PRESET_BELL,
 		CURVEMAP_SLOPE_POSITIVE);
 
 	sce->physics_settings.gravity[0] = 0.0f;
@@ -763,8 +775,8 @@ void BKE_scene_init(Scene *sce)
 	colorspace_name = IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DEFAULT_SEQUENCER);
 
 	BKE_color_managed_display_settings_init(&sce->display_settings);
-	BKE_color_managed_view_settings_init(&sce->view_settings,
-	                                     &sce->display_settings);
+	BKE_color_managed_view_settings_init_render(&sce->view_settings,
+	                                            &sce->display_settings);
 	BLI_strncpy(sce->sequencer_colorspace_settings.name, colorspace_name,
 	            sizeof(sce->sequencer_colorspace_settings.name));
 
@@ -1201,7 +1213,7 @@ int BKE_scene_camera_switch_update(Scene *scene)
 	Object *camera = BKE_scene_camera_switch_find(scene);
 	if (camera) {
 		scene->camera = camera;
-		DEG_id_tag_update(&scene->id, DEG_TAG_COPY_ON_WRITE);
+		DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
 		return 1;
 	}
 #else
