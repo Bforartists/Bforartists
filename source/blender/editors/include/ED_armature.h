@@ -159,6 +159,10 @@ bool ED_armature_pose_select_pick_with_buffer(
         bool extend, bool deselect, bool toggle, bool do_nearest);
 bool ED_armature_edit_select_pick(
         struct bContext *C, const int mval[2], bool extend, bool deselect, bool toggle);
+
+bool ED_armature_edit_select_op_from_tagged(
+        struct bArmature *arm, const int sel_op);
+
 int join_armature_exec(struct bContext *C, struct wmOperator *op);
 float ED_armature_ebone_roll_to_vector(const EditBone *bone, const float new_up_axis[3], const bool axis_only);
 EditBone *ED_armature_ebone_find_name(const struct ListBase *edbo, const char *name);
@@ -238,7 +242,6 @@ struct Object *ED_pose_object_from_context(struct bContext *C);
 
 /* meshlaplacian.c */
 void ED_mesh_deform_bind_callback(
-        struct Scene *scene,
         struct MeshDeformModifierData *mmd,
         struct Mesh *cagemesh,
         float *vertexcos, int totvert, float cagemat[4][4]);

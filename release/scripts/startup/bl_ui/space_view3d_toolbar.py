@@ -76,7 +76,7 @@ def draw_vpaint_symmetry(layout, vpaint):
 def is_not_gpencil_edit_mode(context):
     is_gpmode = (
         context.active_object and
-        context.active_object.mode in {'GPENCIL_EDIT', 'GPENCIL_PAINT', 'GPENCIL_SCULPT', 'GPENCIL_WEIGHT'}
+        context.active_object.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}
     )
     return not is_gpmode
 
@@ -1485,12 +1485,13 @@ class VIEW3D_PT_tools_grease_pencil_brush(View3DPanel, Panel):
 
         col = row.column()
         brush = context.active_gpencil_brush
-        gp_settings = brush.gpencil_settings
 
         sub = col.column(align=True)
         sub.operator("gpencil.brush_presets_create", icon='HELP', text="")
 
         if brush is not None:
+            gp_settings = brush.gpencil_settings
+
             # XXX: Items in "sub" currently show up beside the brush selector in a separate column
             if brush.gpencil_tool == 'ERASE':
                 sub.prop(gp_settings, "use_default_eraser", text="")

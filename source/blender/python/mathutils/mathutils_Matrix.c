@@ -969,7 +969,7 @@ static void matrix_invert_with_det_n_internal(float *mat_dst, const float *mat_s
 }
 
 /**
- * \param r_mat can be from ``self->matrix`` or not.
+ * \param r_mat: can be from ``self->matrix`` or not.
  */
 static bool matrix_invert_internal(const MatrixObject *self, float *r_mat)
 {
@@ -988,7 +988,7 @@ static bool matrix_invert_internal(const MatrixObject *self, float *r_mat)
 
 /**
  * Similar to ``matrix_invert_internal`` but should never error.
- * \param r_mat can be from ``self->matrix`` or not.
+ * \param r_mat: can be from ``self->matrix`` or not.
  */
 static void matrix_invert_safe_internal(const MatrixObject *self, float *r_mat)
 {
@@ -2550,7 +2550,7 @@ static PyObject *Matrix_imatmul(PyObject *m1, PyObject *m2)
 		}
 
 		/* copy matrix back */
-		memcpy(mat1->matrix, mat, mat1->num_row * mat1->num_col);
+		memcpy(mat1->matrix, mat, (mat1->num_row * mat1->num_col) * sizeof(float));
 	}
 	else {
 		PyErr_Format(PyExc_TypeError,

@@ -326,7 +326,7 @@ class GreasePencilAppearancePanel:
 
         ob = context.active_object
 
-        if ob.mode == 'GPENCIL_PAINT':
+        if ob.mode == 'PAINT_GPENCIL':
             brush = context.active_gpencil_brush
             gp_settings = brush.gpencil_settings
 
@@ -347,7 +347,7 @@ class GreasePencilAppearancePanel:
             if brush.gpencil_tool == 'FILL':
                 layout.prop(brush, "cursor_color_add", text="Color")
 
-        elif ob.mode in {'GPENCIL_SCULPT', 'GPENCIL_WEIGHT'}:
+        elif ob.mode in {'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}:
             settings = context.tool_settings.gpencil_sculpt
             brush = settings.brush
             tool = settings.sculpt_tool
@@ -645,6 +645,7 @@ class GPENCIL_MT_gpencil_draw_specials(Menu):
         layout.operator("gpencil.primitive", text="Rectangle", icon='UV_FACESEL').type = 'BOX'
         layout.operator("gpencil.primitive", text="Circle", icon='ANTIALIASED').type = 'CIRCLE'
         layout.operator("gpencil.primitive", text="Arc", icon='SPHERECURVE').type = 'ARC'
+        layout.operator("gpencil.primitive", text="Curve", icon='CURVE_BEZCURVE').type = 'CURVE'
 
 
 class GPENCIL_MT_gpencil_draw_delete(Menu):
@@ -855,7 +856,6 @@ class GreasePencilOnionPanel:
         layout.prop(gp, "use_ghosts_always", text="View In Render")
 
         col = layout.column(align=True)
-        col.active = gp.use_onion_skinning
         col.prop(gp, "use_onion_fade", text="Fade")
         if hasattr(gp, "use_onion_loop"):  # XXX
             sub = layout.column()
@@ -982,7 +982,7 @@ class GPENCIL_UL_layer(UIList):
 
             row = layout.row(align=True)
             row.prop(gpl, "clamp_layer", text="",
-                        icon='MOD_MASK' if gpl.clamp_layer else 'ONIONSKIN_OFF',
+                        icon='MOD_MASK' if gpl.clamp_layer else 'LAYER_ACTIVE',
                         emboss=False)
 
             row.prop(gpl, "lock", text="", emboss=False)
@@ -995,7 +995,6 @@ class GPENCIL_UL_layer(UIList):
                 icon='ONIONSKIN_ON' if gpl.use_onion_skinning else 'ONIONSKIN_OFF',
                 emboss=False,
             )
-            subrow.active = gpd.use_onion_skinning
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
             layout.label(

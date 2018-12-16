@@ -289,7 +289,7 @@ class SubdivisionSet(Operator):
                         for _ in range(level):
                             bpy.ops.object.multires_subdivide(modifier="Multires")
                 else:
-                    mod = obj.modifiers.new("Subsurf", 'SUBSURF')
+                    mod = obj.modifiers.new("Subdivision", 'SUBSURF')
                     mod.levels = level
             except:
                 self.report({'WARNING'},
@@ -883,6 +883,10 @@ class LoadImageAsEmpty:
         name="Align to view",
         default=True
     )
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode == "OBJECT"
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)

@@ -384,7 +384,7 @@ static void layer_collections_copy_data(
 /**
  * Only copy internal data of ViewLayer from source to already allocated/initialized destination.
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_view_layer_copy_data(
         Scene *scene_dst, const Scene *UNUSED(scene_src),
@@ -861,7 +861,7 @@ void BKE_main_collection_sync_remap(const Main *bmain)
 
 	for (Collection *collection = bmain->collection.first; collection; collection = collection->id.next) {
 		BKE_collection_object_cache_free(collection);
-		DEG_id_tag_update_ex((Main *)bmain, &collection->id, DEG_TAG_COPY_ON_WRITE);
+		DEG_id_tag_update_ex((Main *)bmain, &collection->id, ID_RECALC_COPY_ON_WRITE);
 	}
 
 	BKE_main_collection_sync(bmain);

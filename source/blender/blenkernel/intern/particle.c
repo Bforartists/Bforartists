@@ -469,6 +469,7 @@ void free_hair(Object *object, ParticleSystem *psys, int dynamics)
 	if (psys->clmd) {
 		if (dynamics) {
 			modifier_free((ModifierData *)psys->clmd);
+			psys->clmd = NULL;
 			PTCacheID pid;
 			BKE_ptcache_id_from_particles(&pid, object, psys);
 			BKE_ptcache_id_clear(&pid, PTCACHE_CLEAR_ALL, 0);
@@ -1321,13 +1322,13 @@ static void psys_origspace_to_w(OrigSpaceFace *osface, int quad, const float w[4
  * Find the final derived mesh tessface for a particle, from its original tessface index.
  * This is slow and can be optimized but only for many lookups.
  *
- * \param dm_final final DM, it may not have the same topology as original mesh.
- * \param dm_deformed deformed-only DM, it has the exact same topology as original mesh.
- * \param findex_orig the input tessface index.
- * \param fw face weights (position of the particle inside the \a findex_orig tessface).
- * \param poly_nodes may be NULL, otherwise an array of linked list, one for each final DM polygon, containing all
- *                   its tessfaces indices.
- * \return the DM tessface index.
+ * \param mesh_final: Final mesh, it may not have the same topology as original mesh.
+ * \param mesh_original: Original mesh, use for accessing #MPoly to #MFace mapping.
+ * \param findex_orig: The input tessface index.
+ * \param fw: Face weights (position of the particle inside the \a findex_orig tessface).
+ * \param poly_nodes: May be NULL, otherwise an array of linked list,
+ * one for each final \a mesh_final polygon, containing all its tessfaces indices.
+ * \return The \a mesh_final tessface index.
  */
 int psys_particle_dm_face_lookup(
         Mesh *mesh_final, Mesh *mesh_original,
@@ -3087,7 +3088,7 @@ ModifierData *object_add_particle_system(Main *bmain, Scene *scene, Object *ob, 
 	psys->cfra = BKE_scene_frame_get_from_ctime(scene, CFRA + 1);
 
 	DEG_relations_tag_update(bmain);
-	DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
 	return md;
 }
@@ -3133,10 +3134,10 @@ void object_remove_particle_system(Main *bmain, Scene *UNUSED(scene), Object *ob
 		ob->mode &= ~OB_MODE_PARTICLE_EDIT;
 
 	DEG_relations_tag_update(bmain);
-	DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
 	/* Flush object mode. */
-	DEG_id_tag_update(&ob->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 }
 
 static void default_particle_settings(ParticleSettings *part)
@@ -3285,7 +3286,7 @@ void BKE_particlesettings_twist_curve_init(ParticleSettings *part)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_particlesettings_copy_data(
         Main *UNUSED(bmain), ParticleSettings *part_dst, const ParticleSettings *part_src, const int UNUSED(flag))

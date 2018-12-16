@@ -35,6 +35,7 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
+#include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_gpencil.h"
 #include "BKE_main.h"
@@ -1440,6 +1441,10 @@ void ED_gpencil_create_monkey(bContext *C, float mat[4][4])
 
 	/* set first color as active */
 	ob->actcol = color_Black + 1;
+	Material *ma = give_current_material(ob, ob->actcol);
+	if (ma != NULL) {
+		BKE_brush_update_material(bmain, ma, NULL);
+	}
 
 	/* layers */
 	/* NOTE: For now, we just add new layers, to make it easier to separate out old/new instances */
@@ -1561,7 +1566,7 @@ void ED_gpencil_create_monkey(bContext *C, float mat[4][4])
 	BKE_gpencil_stroke_add_points(gps, data35, 261, mat);
 
 	/* update depsgraph */
-	DEG_id_tag_update(&gpd->id, OB_RECALC_OB | OB_RECALC_DATA);
+	DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 	gpd->flag |= GP_DATA_CACHE_IS_DIRTY;
 }
 

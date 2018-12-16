@@ -78,7 +78,7 @@ void(*BKE_gpencil_batch_cache_free_cb)(bGPdata *gpd) = NULL;
 void BKE_gpencil_batch_cache_dirty_tag(bGPdata *gpd)
 {
 	if (gpd) {
-		DEG_id_tag_update(&gpd->id, OB_RECALC_DATA);
+		DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
 		BKE_gpencil_batch_cache_dirty_tag_cb(gpd);
 	}
 }
@@ -381,8 +381,6 @@ bGPDlayer *BKE_gpencil_layer_addnew(bGPdata *gpd, const char *name, bool setacti
 		/* thickness parameter represents "thickness change", not absolute thickness */
 		gpl->thickness = 0;
 		gpl->opacity = 1.0f;
-		/* onion-skinning settings */
-		gpl->onion_flag |= GP_LAYER_ONIONSKIN;
 	}
 
 	/* auto-name */
@@ -415,7 +413,8 @@ bGPdata *BKE_gpencil_data_addnew(Main *bmain, const char name[])
 	/* general flags */
 	gpd->flag |= GP_DATA_VIEWALIGN;
 	gpd->flag |= GP_DATA_STROKE_FORCE_RECALC;
-
+	/* always enable object onion skin swith */
+	gpd->flag |= GP_DATA_SHOW_ONIONSKINS;
 	/* GP object specific settings */
 	ARRAY_SET_ITEMS(gpd->line_color, 0.6f, 0.6f, 0.6f, 0.5f);
 
@@ -448,8 +447,8 @@ bGPdata *BKE_gpencil_data_addnew(Main *bmain, const char name[])
 /**
  * Populate stroke with point data from data buffers
  *
- * \param array Flat array of point data values. Each entry has GP_PRIM_DATABUF_SIZE values
- * \param mat   4x4 transform matrix to transform points into the right coordinate space
+ * \param array: Flat array of point data values. Each entry has GP_PRIM_DATABUF_SIZE values
+ * \param mat: 4x4 transform matrix to transform points into the right coordinate space
  */
 void BKE_gpencil_stroke_add_points(bGPDstroke *gps, const float *array, const int totpoints, const float mat[4][4])
 {
@@ -622,7 +621,7 @@ bGPDlayer *BKE_gpencil_layer_duplicate(const bGPDlayer *gpl_src)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_gpencil_copy_data(bGPdata *gpd_dst, const bGPdata *gpd_src, const int UNUSED(flag))
 {
@@ -1219,7 +1218,7 @@ void BKE_gpencil_vgroup_remove(Object *ob, bDeformGroup *defgroup)
 
 	/* Remove the group */
 	BLI_freelinkN(&ob->defbase, defgroup);
-	DEG_id_tag_update(&gpd->id, OB_RECALC_OB | OB_RECALC_DATA);
+	DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 }
 
 
@@ -1234,9 +1233,9 @@ void BKE_gpencil_dvert_ensure(bGPDstroke *gps)
 
 /**
  * Apply smooth to stroke point
- * \param gps              Stroke to smooth
- * \param i                Point index
- * \param inf              Amount of smoothing to apply
+ * \param gps: Stroke to smooth
+ * \param i: Point index
+ * \param inf: Amount of smoothing to apply
  */
 bool BKE_gpencil_smooth_stroke(bGPDstroke *gps, int i, float inf)
 {
@@ -1413,9 +1412,9 @@ bool BKE_gpencil_smooth_stroke_uv(bGPDstroke *gps, int point_index, float influe
  * Get range of selected frames in layer.
  * Always the active frame is considered as selected, so if no more selected the range
  * will be equal to the current active frame.
- * \param gpl              Layer
- * \param r_initframe      Number of first selected frame
- * \param r_endframe       Number of last selected frame
+ * \param gpl: Layer
+ * \param r_initframe: Number of first selected frame
+ * \param r_endframe: Number of last selected frame
  */
 void BKE_gpencil_get_range_selected(bGPDlayer *gpl, int *r_initframe, int *r_endframe)
 {
@@ -1436,11 +1435,11 @@ void BKE_gpencil_get_range_selected(bGPDlayer *gpl, int *r_initframe, int *r_end
 
 /**
  * Get Falloff factor base on frame range
- * \param gpf          Frame
- * \param actnum       Number of active frame in layer
- * \param f_init       Number of first selected frame
- * \param f_end        Number of last selected frame
- * \param cur_falloff  Curve with falloff factors
+ * \param gpf: Frame
+ * \param actnum: Number of active frame in layer
+ * \param f_init: Number of first selected frame
+ * \param f_end: Number of last selected frame
+ * \param cur_falloff: Curve with falloff factors
  */
 float BKE_gpencil_multiframe_falloff_calc(bGPDframe *gpf, int actnum, int f_init, int f_end, CurveMapping *cur_falloff)
 {

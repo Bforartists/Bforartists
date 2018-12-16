@@ -96,7 +96,7 @@ static void gizmo_empty_image_prop_matrix_set(
 	Object *ob = igzgroup->state.ob;
 
 	ob->empty_drawsize = matrix[0][0];
-	DEG_id_tag_update(&ob->id, DEG_TAG_TRANSFORM);
+	DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
 
 	float dims[2];
 	RNA_float_get_array(gz->ptr, "dimensions", dims);
@@ -122,7 +122,7 @@ static bool WIDGETGROUP_empty_image_poll(const bContext *C, wmGizmoGroupType *UN
 
 	if (ob && ob->type == OB_EMPTY) {
 		if (ob->empty_drawtype == OB_EMPTY_IMAGE) {
-			return BKE_image_empty_visible_in_view3d(ob, rv3d);
+			return BKE_object_empty_image_is_visible_in_view3d(ob, rv3d);
 		}
 	}
 	return false;

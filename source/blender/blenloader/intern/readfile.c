@@ -117,6 +117,7 @@
 #include "BLI_math.h"
 #include "BLI_threads.h"
 #include "BLI_mempool.h"
+#include "BLI_ghash.h"
 
 #include "BLT_translation.h"
 
@@ -177,7 +178,6 @@
 #include "RE_engine.h"
 
 #include "readfile.h"
-
 
 #include <errno.h>
 
@@ -246,21 +246,6 @@
 #  define DEBUG_PRINTF(...)
 #endif
 
-/***/
-
-typedef struct OldNew {
-	const void *old;
-	void *newp;
-	int nr;
-} OldNew;
-
-typedef struct OldNewMap {
-	OldNew *entries;
-	int nentries, entriessize;
-	bool sorted;
-	int lasthit;
-} OldNewMap;
-
 
 /* local prototypes */
 static void *read_struct(FileData *fd, BHead *bh, const char *blockname);
@@ -306,49 +291,126 @@ static const char *library_parent_filepath(Library *lib)
 	return lib->parent ? lib->parent->filepath : "<direct>";
 }
 
+
+/* ************** OldNewMap ******************* */
+
+typedef struct OldNew {
+	const void *oldp;
+	void *newp;
+	/* `nr` is "user count" for data, and ID code for libdata. */
+	int nr;
+} OldNew;
+
+typedef struct OldNewMap {
+	/* Array that stores the actual entries. */
+	OldNew *entries;
+	int nentries;
+	/* Hashmap that stores indices into the `entries` array. */
+	int32_t *map;
+
+	int capacity_exp;
+} OldNewMap;
+
+#define ENTRIES_CAPACITY(onm) (1 << (onm)->capacity_exp)
+#define MAP_CAPACITY(onm) (1 << ((onm)->capacity_exp + 1))
+#define SLOT_MASK(onm) (MAP_CAPACITY(onm) - 1)
+#define DEFAULT_SIZE_EXP 6
+#define PERTURB_SHIFT 5
+
+/* based on the probing algorithm used in Python dicts. */
+#define ITER_SLOTS(onm, KEY, SLOT_NAME, INDEX_NAME) \
+	uint32_t hash = BLI_ghashutil_ptrhash(KEY); \
+	uint32_t mask = SLOT_MASK(onm); \
+	uint perturb = hash; \
+	int SLOT_NAME = mask & hash; \
+	int INDEX_NAME = onm->map[SLOT_NAME]; \
+	for (;;SLOT_NAME = mask & ((5 * SLOT_NAME) + 1 + perturb), perturb >>= PERTURB_SHIFT, INDEX_NAME = onm->map[SLOT_NAME])
+
+static void oldnewmap_insert_index_in_map(OldNewMap *onm, const void *ptr, int index)
+{
+	ITER_SLOTS(onm, ptr, slot, stored_index) {
+		if (stored_index == -1) {
+			onm->map[slot] = index;
+			break;
+		}
+	}
+}
+
+static void oldnewmap_insert_or_replace(OldNewMap *onm, OldNew entry)
+{
+	ITER_SLOTS(onm, entry.oldp, slot, index) {
+		if (index == -1) {
+			onm->entries[onm->nentries] = entry;
+			onm->map[slot] = onm->nentries;
+			onm->nentries++;
+			break;
+		}
+		else if (onm->entries[index].oldp == entry.oldp) {
+			onm->entries[index] = entry;
+			break;
+		}
+	}
+}
+
+static OldNew *oldnewmap_lookup_entry(const OldNewMap *onm, const void *addr)
+{
+	ITER_SLOTS(onm, addr, slot, index) {
+		if (index >= 0) {
+			OldNew *entry = &onm->entries[index];
+			if (entry->oldp == addr) {
+				return entry;
+			}
+		}
+		else {
+			return NULL;
+		}
+	}
+}
+
+static void oldnewmap_clear_map(OldNewMap *onm)
+{
+	memset(onm->map, 0xFF, MAP_CAPACITY(onm) * sizeof(*onm->map));
+}
+
+static void oldnewmap_increase_size(OldNewMap *onm)
+{
+	onm->capacity_exp++;
+	onm->entries = MEM_reallocN(onm->entries, sizeof(*onm->entries) * ENTRIES_CAPACITY(onm));
+	onm->map = MEM_reallocN(onm->map, sizeof(*onm->map) * MAP_CAPACITY(onm));
+	oldnewmap_clear_map(onm);
+	for (int i = 0; i < onm->nentries; i++) {
+		oldnewmap_insert_index_in_map(onm, onm->entries[i].oldp, i);
+	}
+}
+
+
+/* Public OldNewMap API */
+
 static OldNewMap *oldnewmap_new(void)
 {
 	OldNewMap *onm = MEM_callocN(sizeof(*onm), "OldNewMap");
 
-	onm->entriessize = 1024;
-	onm->entries = MEM_malloc_arrayN(onm->entriessize, sizeof(*onm->entries), "OldNewMap.entries");
+	onm->capacity_exp = DEFAULT_SIZE_EXP;
+	onm->entries = MEM_malloc_arrayN(ENTRIES_CAPACITY(onm), sizeof(*onm->entries), "OldNewMap.entries");
+	onm->map = MEM_malloc_arrayN(MAP_CAPACITY(onm), sizeof(*onm->map), "OldNewMap.map");
+	oldnewmap_clear_map(onm);
 
 	return onm;
 }
 
-static int verg_oldnewmap(const void *v1, const void *v2)
-{
-	const struct OldNew *x1 = v1, *x2 = v2;
-
-	if (x1->old > x2->old) return 1;
-	else if (x1->old < x2->old) return -1;
-	return 0;
-}
-
-
-static void oldnewmap_sort(FileData *fd)
-{
-	BLI_assert(fd->libmap->sorted == false);
-	qsort(fd->libmap->entries, fd->libmap->nentries, sizeof(OldNew), verg_oldnewmap);
-	fd->libmap->sorted = 1;
-}
-
-/* nr is zero for data, and ID code for libdata */
 static void oldnewmap_insert(OldNewMap *onm, const void *oldaddr, void *newaddr, int nr)
 {
-	OldNew *entry;
-
 	if (oldaddr == NULL || newaddr == NULL) return;
 
-	if (UNLIKELY(onm->nentries == onm->entriessize)) {
-		onm->entriessize *= 2;
-		onm->entries = MEM_reallocN(onm->entries, sizeof(*onm->entries) * onm->entriessize);
+	if (UNLIKELY(onm->nentries == ENTRIES_CAPACITY(onm))) {
+		oldnewmap_increase_size(onm);
 	}
 
-	entry = &onm->entries[onm->nentries++];
-	entry->old = oldaddr;
-	entry->newp = newaddr;
-	entry->nr = nr;
+	OldNew entry;
+	entry.oldp = oldaddr;
+	entry.newp = newaddr;
+	entry.nr = nr;
+	oldnewmap_insert_or_replace(onm, entry);
 }
 
 void blo_do_versions_oldnewmap_insert(OldNewMap *onm, const void *oldaddr, void *newaddr, int nr)
@@ -356,125 +418,28 @@ void blo_do_versions_oldnewmap_insert(OldNewMap *onm, const void *oldaddr, void 
 	oldnewmap_insert(onm, oldaddr, newaddr, nr);
 }
 
-/**
- * Do a full search (no state).
- *
- * \param lasthit: Use as a reference position to avoid a full search
- * from either end of the array, giving more efficient lookups.
- *
- * \note This would seem an ideal case for hash or btree lookups.
- * However the data is written in-order, using the \a lasthit will normally avoid calling this function.
- * Creating a btree/hash structure adds overhead for the common-case to optimize the corner-case
- * (since most entries will never be retrieved).
- * So just keep full lookups as a fall-back.
- */
-static int oldnewmap_lookup_entry_full(const OldNewMap *onm, const void *addr, int lasthit)
-{
-	const int nentries = onm->nentries;
-	const OldNew *entries = onm->entries;
-	int i;
-
-	/* search relative to lasthit where possible */
-	if (lasthit >= 0 && lasthit < nentries) {
-
-		/* search forwards */
-		i = lasthit;
-		while (++i != nentries) {
-			if (entries[i].old == addr) {
-				return i;
-			}
-		}
-
-		/* search backwards */
-		i = lasthit + 1;
-		while (i--) {
-			if (entries[i].old == addr) {
-				return i;
-			}
-		}
-	}
-	else {
-		/* search backwards (full) */
-		i = nentries;
-		while (i--) {
-			if (entries[i].old == addr) {
-				return i;
-			}
-		}
-	}
-
-	return -1;
-}
-
 static void *oldnewmap_lookup_and_inc(OldNewMap *onm, const void *addr, bool increase_users)
 {
-	int i;
-
-	if (addr == NULL) return NULL;
-
-	if (onm->lasthit < onm->nentries - 1) {
-		OldNew *entry = &onm->entries[++onm->lasthit];
-
-		if (entry->old == addr) {
-			if (increase_users)
-				entry->nr++;
-			return entry->newp;
-		}
-	}
-
-	i = oldnewmap_lookup_entry_full(onm, addr, onm->lasthit);
-	if (i != -1) {
-		OldNew *entry = &onm->entries[i];
-		BLI_assert(entry->old == addr);
-		onm->lasthit = i;
-		if (increase_users)
-			entry->nr++;
-		return entry->newp;
-	}
-
-	return NULL;
+	OldNew *entry = oldnewmap_lookup_entry(onm, addr);
+	if (entry == NULL) return NULL;
+	if (increase_users) entry->nr++;
+	return entry->newp;
 }
 
-/* for libdata, nr has ID code, no increment */
+/* for libdata, OldNew.nr has ID code, no increment */
 static void *oldnewmap_liblookup(OldNewMap *onm, const void *addr, const void *lib)
 {
-	if (addr == NULL) {
-		return NULL;
-	}
+	if (addr == NULL) return NULL;
 
-	/* lasthit works fine for non-libdata, linking there is done in same sequence as writing */
-	if (onm->sorted) {
-		const OldNew entry_s = {.old = addr};
-		OldNew *entry = bsearch(&entry_s, onm->entries, onm->nentries, sizeof(OldNew), verg_oldnewmap);
-		if (entry) {
-			ID *id = entry->newp;
-
-			if (id && (!lib || id->lib)) {
-				return id;
-			}
-		}
-	}
-	else {
-		/* note, this can be a bottle neck when loading some files */
-		const int i = oldnewmap_lookup_entry_full(onm, addr, -1);
-		if (i != -1) {
-			OldNew *entry = &onm->entries[i];
-			ID *id = entry->newp;
-			BLI_assert(entry->old == addr);
-			if (id && (!lib || id->lib)) {
-				return id;
-			}
-		}
-	}
-
+	ID *id = oldnewmap_lookup_and_inc(onm, addr, false);
+	if (id == NULL) return NULL;
+	if (!lib || id->lib) return id;
 	return NULL;
 }
 
 static void oldnewmap_free_unused(OldNewMap *onm)
 {
-	int i;
-
-	for (i = 0; i < onm->nentries; i++) {
+	for (int i = 0; i < onm->nentries; i++) {
 		OldNew *entry = &onm->entries[i];
 		if (entry->nr == 0) {
 			MEM_freeN(entry->newp);
@@ -485,15 +450,24 @@ static void oldnewmap_free_unused(OldNewMap *onm)
 
 static void oldnewmap_clear(OldNewMap *onm)
 {
+	onm->capacity_exp = DEFAULT_SIZE_EXP;
+	oldnewmap_clear_map(onm);
 	onm->nentries = 0;
-	onm->lasthit = 0;
 }
 
 static void oldnewmap_free(OldNewMap *onm)
 {
 	MEM_freeN(onm->entries);
+	MEM_freeN(onm->map);
 	MEM_freeN(onm);
 }
+
+#undef ENTRIES_CAPACITY
+#undef MAP_CAPACITY
+#undef SLOT_MASK
+#undef DEFAULT_SIZE_EXP
+#undef PERTURB_SHIFT
+#undef ITER_SLOTS
 
 /***/
 
@@ -1362,7 +1336,7 @@ void blo_freefiledata(FileData *fd)
 /**
  * Check whether given path ends with a blend file compatible extension (.blend, .ble or .blend.gz).
  *
- * \param str The path to check.
+ * \param str: The path to check.
  * \return true is this path ends with a blender file extension.
  */
 bool BLO_has_bfile_extension(const char *str)
@@ -1374,11 +1348,11 @@ bool BLO_has_bfile_extension(const char *str)
 /**
  * Try to explode given path into its 'library components' (i.e. a .blend file, id type/group, and datablock itself).
  *
- * \param path the full path to explode.
- * \param r_dir the string that'll contain path up to blend file itself ('library' path).
+ * \param path: the full path to explode.
+ * \param r_dir: the string that'll contain path up to blend file itself ('library' path).
  *              WARNING! Must be FILE_MAX_LIBEXTRA long (it also stores group and name strings)!
- * \param r_group the string that'll contain 'group' part of the path, if any. May be NULL.
- * \param r_name the string that'll contain data's name part of the path, if any. May be NULL.
+ * \param r_group: the string that'll contain 'group' part of the path, if any. May be NULL.
+ * \param r_name: the string that'll contain data's name part of the path, if any. May be NULL.
  * \return true if path contains a blend file.
  */
 bool BLO_library_path_explode(const char *path, char *r_dir, char **r_group, char **r_name)
@@ -1443,7 +1417,7 @@ bool BLO_library_path_explode(const char *path, char *r_dir, char **r_group, cha
 /**
  * Does a very light reading of given .blend file to extract its stored thumbnail.
  *
- * \param filepath The path of the file to extract thumbnail from.
+ * \param filepath: The path of the file to extract thumbnail from.
  * \return The raw thumbnail
  *         (MEM-allocated, as stored in file, use BKE_main_thumbnail_to_imbuf() to convert it to ImBuf image).
  */
@@ -1484,31 +1458,6 @@ BlendThumbnail *BLO_thumbnail_from_file(const char *filepath)
 static void *newdataadr(FileData *fd, const void *adr)      /* only direct databocks */
 {
 	return oldnewmap_lookup_and_inc(fd->datamap, adr, true);
-}
-
-/* This is a special version of newdataadr() which allows us to keep lasthit of
- * map unchanged. In certain cases this makes file loading time significantly
- * faster.
- *
- * Use this function in cases like restoring pointer from one list element to
- * another list element, but keep lasthit value so we can continue restoring
- * pointers efficiently.
- *
- * Example of this could be found in direct_link_fcurves() which restores the
- * fcurve group pointer and keeps lasthit optimal for linking all further
- * fcurves.
- */
-static void *newdataadr_ex(FileData *fd, const void *adr, bool increase_lasthit)        /* only direct databocks */
-{
-	if (increase_lasthit) {
-		return newdataadr(fd, adr);
-	}
-	else {
-		int lasthit = fd->datamap->lasthit;
-		void *newadr = newdataadr(fd, adr);
-		fd->datamap->lasthit = lasthit;
-		return newadr;
-	}
 }
 
 static void *newdataadr_no_us(FileData *fd, const void *adr)        /* only direct databocks */
@@ -1593,12 +1542,7 @@ static void *newlibadr_real_us(FileData *fd, const void *lib, const void *adr)  
 
 static void change_idid_adr_fd(FileData *fd, const void *old, void *new)
 {
-	int i;
-
-	/* use a binary search if we have a sorted libmap, for now it's not needed. */
-	BLI_assert(fd->libmap->sorted == false);
-
-	for (i = 0; i < fd->libmap->nentries; i++) {
+	for (int i = 0; i < fd->libmap->nentries; i++) {
 		OldNew *entry = &fd->libmap->entries[i];
 
 		if (old == entry->newp && entry->nr == ID_ID) {
@@ -2669,7 +2613,7 @@ static void direct_link_fcurves(FileData *fd, ListBase *list)
 		fcu->rna_path = newdataadr(fd, fcu->rna_path);
 
 		/* group */
-		fcu->grp = newdataadr_ex(fd, fcu->grp, false);
+		fcu->grp = newdataadr(fd, fcu->grp);
 
 		/* clear disabled flag - allows disabled drivers to be tried again ([#32155]),
 		 * but also means that another method for "reviving disabled F-Curves" exists
@@ -3607,7 +3551,7 @@ static void lib_link_pose(FileData *fd, Main *bmain, Object *ob, bPose *pose)
 
 
 	if (rebuild) {
-		DEG_id_tag_update_ex(bmain, &ob->id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
+		DEG_id_tag_update_ex(bmain, &ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
 		BKE_pose_tag_recalc(bmain, pose);
 	}
 }
@@ -6174,6 +6118,10 @@ static void lib_link_scene(FileData *fd, Main *main)
 				lib_link_view_layer(fd, sce->id.lib, view_layer);
 			}
 
+			if (sce->r.bake.cage_object) {
+				sce->r.bake.cage_object = newlibadr(fd, sce->id.lib, sce->r.bake.cage_object);
+			}
+
 #ifdef USE_SETSCENE_CHECK
 			if (sce->set != NULL) {
 				/* link flag for scenes with set would be reset later,
@@ -6326,6 +6274,11 @@ static void direct_link_scene(FileData *fd, Scene *sce)
 		sce->toolsettings->gp_sculpt.cur_falloff = newdataadr(fd, sce->toolsettings->gp_sculpt.cur_falloff);
 		if (sce->toolsettings->gp_sculpt.cur_falloff) {
 			direct_link_curvemapping(fd, sce->toolsettings->gp_sculpt.cur_falloff);
+		}
+		/* relink grease pencil primitive curve */
+		sce->toolsettings->gp_sculpt.cur_primitive = newdataadr(fd, sce->toolsettings->gp_sculpt.cur_primitive);
+		if (sce->toolsettings->gp_sculpt.cur_primitive) {
+			direct_link_curvemapping(fd, sce->toolsettings->gp_sculpt.cur_primitive);
 		}
 	}
 
@@ -6808,7 +6761,7 @@ static void direct_link_area(FileData *fd, ScrArea *area)
 			SpaceIpo *sipo = (SpaceIpo *)sl;
 
 			sipo->ads = newdataadr(fd, sipo->ads);
-			BLI_listbase_clear(&sipo->ghostCurves);
+			BLI_listbase_clear(&sipo->runtime.ghost_curves);
 		}
 		else if (sl->spacetype == SPACE_NLA) {
 			SpaceNla *snla = (SpaceNla *)sl;
@@ -7491,7 +7444,7 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map, Main
 					/* force recalc of list of channels (i.e. includes calculating F-Curve colors)
 					 * thus preventing the "black curves" problem post-undo
 					 */
-					sipo->flag |= SIPO_TEMP_NEEDCHANSYNC;
+					sipo->runtime.flag |= SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR;
 				}
 				else if (sl->spacetype == SPACE_BUTS) {
 					SpaceButs *sbuts = (SpaceButs *)sl;
@@ -7522,7 +7475,7 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map, Main
 					/* force recalc of list of channels, potentially updating the active action
 					 * while we're at it (as it can only be updated that way) [#28962]
 					 */
-					saction->flag |= SACTION_TEMP_NEEDCHANSYNC;
+					saction->runtime.flag |= SACTION_RUNTIME_FLAG_NEED_CHAN_SYNC;
 				}
 				else if (sl->spacetype == SPACE_IMAGE) {
 					SpaceImage *sima = (SpaceImage *)sl;
@@ -8861,8 +8814,6 @@ static void do_versions_after_linking(Main *main)
 
 static void lib_link_all(FileData *fd, Main *main)
 {
-	oldnewmap_sort(fd);
-
 	lib_link_id(fd, main);
 
 	/* No load UI for undo memfiles */
@@ -10021,6 +9972,10 @@ static void expand_scene(FileData *fd, Main *mainvar, Scene *sce)
 	if (sce->master_collection) {
 		expand_collection(fd, mainvar, sce->master_collection);
 	}
+
+	if (sce->r.bake.cage_object) {
+		expand_doit(fd, mainvar, sce->r.bake.cage_object);
+	}
 }
 
 static void expand_camera(FileData *fd, Main *mainvar, Camera *ca)
@@ -10152,7 +10107,7 @@ static void expand_workspace(FileData *fd, Main *mainvar, WorkSpace *workspace)
 /**
  * Set the callback func used over all ID data found by \a BLO_expand_main func.
  *
- * \param expand_doit_func Called for each ID block it finds.
+ * \param expand_doit_func: Called for each ID block it finds.
  */
 void BLO_main_expander(BLOExpandDoitCallback expand_doit_func)
 {
@@ -10163,8 +10118,8 @@ void BLO_main_expander(BLOExpandDoitCallback expand_doit_func)
  * Loop over all ID data in Main to mark relations.
  * Set (id->tag & LIB_TAG_NEED_EXPAND) to mark expanding. Flags get cleared after expanding.
  *
- * \param fdhandle usually filedata, or own handle.
- * \param mainvar the Main database to expand.
+ * \param fdhandle: usually filedata, or own handle.
+ * \param mainvar: the Main database to expand.
  */
 void BLO_expand_main(void *fdhandle, Main *mainvar)
 {
@@ -10384,7 +10339,7 @@ static void add_collections_to_scene(
 				}
 
 				BKE_scene_object_base_flag_sync_from_base(base);
-				DEG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
+				DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
 				view_layer->basact = base;
 
 				/* Assign the collection. */
@@ -10554,10 +10509,10 @@ static ID *link_named_part_ex(
 /**
  * Link a named datablock from an external blend file.
  *
- * \param mainl The main database to link from (not the active one).
- * \param bh The blender file handle.
- * \param idcode The kind of datablock to link.
- * \param name The name of the datablock (without the 2 char ID prefix).
+ * \param mainl: The main database to link from (not the active one).
+ * \param bh: The blender file handle.
+ * \param idcode: The kind of datablock to link.
+ * \param name: The name of the datablock (without the 2 char ID prefix).
  * \return the linked ID when found.
  */
 ID *BLO_library_link_named_part(Main *mainl, BlendHandle **bh, const short idcode, const char *name)
@@ -10570,13 +10525,13 @@ ID *BLO_library_link_named_part(Main *mainl, BlendHandle **bh, const short idcod
  * Link a named datablock from an external blend file.
  * Optionally instantiate the object/collection in the scene when the flags are set.
  *
- * \param mainl The main database to link from (not the active one).
- * \param bh The blender file handle.
- * \param idcode The kind of datablock to link.
- * \param name The name of the datablock (without the 2 char ID prefix).
- * \param flag Options for linking, used for instantiating.
- * \param scene The scene in which to instantiate objects/collections (if NULL, no instantiation is done).
- * \param v3d The active View3D (only to define active layers for instantiated objects & collections, can be NULL).
+ * \param mainl: The main database to link from (not the active one).
+ * \param bh: The blender file handle.
+ * \param idcode: The kind of datablock to link.
+ * \param name: The name of the datablock (without the 2 char ID prefix).
+ * \param flag: Options for linking, used for instantiating.
+ * \param scene: The scene in which to instantiate objects/collections (if NULL, no instantiation is done).
+ * \param v3d: The active View3D (only to define active layers for instantiated objects & collections, can be NULL).
  * \return the linked ID when found.
  */
 ID *BLO_library_link_named_part_ex(
@@ -10660,9 +10615,9 @@ static Main *library_link_begin(Main *mainvar, FileData **fd, const char *filepa
 /**
  * Initialize the BlendHandle for linking library data.
  *
- * \param mainvar The current main database, e.g. G_MAIN or CTX_data_main(C).
- * \param bh A blender file handle as returned by \a BLO_blendhandle_from_file or \a BLO_blendhandle_from_memory.
- * \param filepath Used for relative linking, copied to the \a lib->name.
+ * \param mainvar: The current main database, e.g. G_MAIN or CTX_data_main(C).
+ * \param bh: A blender file handle as returned by \a BLO_blendhandle_from_file or \a BLO_blendhandle_from_memory.
+ * \param filepath: Used for relative linking, copied to the \a lib->name.
  * \return the library Main, to be passed to \a BLO_library_append_named_part as \a mainl.
  */
 Main *BLO_library_link_begin(Main *mainvar, BlendHandle **bh, const char *filepath)
@@ -10778,12 +10733,12 @@ static void library_link_end(Main *mainl, FileData **fd, const short flag, Main 
  * Optionally instance the indirect object/collection in the scene when the flags are set.
  * \note Do not use \a bh after calling this function, it may frees it.
  *
- * \param mainl The main database to link from (not the active one).
- * \param bh The blender file handle (WARNING! may be freed by this function!).
- * \param flag Options for linking, used for instantiating.
- * \param bmain The main database in which to instantiate objects/collections
- * \param scene The scene in which to instantiate objects/collections (if NULL, no instantiation is done).
- * \param view_layer The scene layer in which to instantiate objects/collections (if NULL, no instantiation is done).
+ * \param mainl: The main database to link from (not the active one).
+ * \param bh: The blender file handle (WARNING! may be freed by this function!).
+ * \param flag: Options for linking, used for instantiating.
+ * \param bmain: The main database in which to instantiate objects/collections
+ * \param scene: The scene in which to instantiate objects/collections (if NULL, no instantiation is done).
+ * \param view_layer: The scene layer in which to instantiate objects/collections (if NULL, no instantiation is done).
  */
 void BLO_library_link_end(Main *mainl, BlendHandle **bh, int flag, Main *bmain, Scene *scene, ViewLayer *view_layer)
 {

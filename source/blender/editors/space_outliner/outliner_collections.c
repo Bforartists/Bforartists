@@ -195,7 +195,7 @@ static int collection_new_exec(bContext *C, wmOperator *op)
 		}
 	}
 
-	if (!data.collection && (soops->outlinevis == SO_VIEW_LAYER)) {
+	if (data.collection == NULL) {
 		data.collection = BKE_collection_master(scene);
 	}
 
@@ -204,7 +204,7 @@ static int collection_new_exec(bContext *C, wmOperator *op)
 	            data.collection,
 	            NULL);
 
-	DEG_id_tag_update(&data.collection->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&data.collection->id, ID_RECALC_COPY_ON_WRITE);
 	DEG_relations_tag_update(bmain);
 
 	outliner_cleanup_tree(soops);
@@ -288,7 +288,7 @@ static int collection_delete_exec(bContext *C, wmOperator *op)
 
 	BLI_gset_free(data.collections_to_edit, NULL);
 
-	DEG_id_tag_update(&scene->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
 	DEG_relations_tag_update(bmain);
 
 	WM_main_add_notifier(NC_SCENE | ND_LAYER, NULL);
@@ -365,7 +365,7 @@ static int collection_objects_select_exec(bContext *C, wmOperator *op)
 	BKE_layer_collection_objects_select(view_layer, layer_collection, deselect);
 
 	Scene *scene = CTX_data_scene(C);
-	DEG_id_tag_update(&scene->id, DEG_TAG_SELECT_UPDATE);
+	DEG_id_tag_update(&scene->id, ID_RECALC_SELECT);
 	WM_main_add_notifier(NC_SCENE | ND_OB_SELECT, scene);
 
 	return OPERATOR_FINISHED;
@@ -505,7 +505,7 @@ static int collection_link_exec(bContext *C, wmOperator *UNUSED(op))
 
 	BLI_gset_free(data.collections_to_edit, NULL);
 
-	DEG_id_tag_update(&active_collection->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&active_collection->id, ID_RECALC_COPY_ON_WRITE);
 	DEG_relations_tag_update(bmain);
 
 	WM_main_add_notifier(NC_SCENE | ND_LAYER, NULL);
@@ -558,7 +558,7 @@ static int collection_instance_exec(bContext *C, wmOperator *UNUSED(op))
 	/* Effectively instance the collections. */
 	GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
 		Collection *collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
-		Object *ob = ED_object_add_type(C, OB_EMPTY, collection->id.name + 2, scene->cursor.location, NULL, false);
+		Object *ob = ED_object_add_type(C, OB_EMPTY, collection->id.name + 2, scene->cursor.location, NULL, false, 0);
 		ob->dup_group = collection;
 		ob->transflag |= OB_DUPLICOLLECTION;
 		id_lib_extern(&collection->id);
@@ -822,9 +822,9 @@ void OUTLINER_OT_collection_indirect_only_clear(wmOperatorType *ot)
 }
 
 /**
- * Populates the \param objects ListBase with all the outliner selected objects
+ * Populates the \param objects: ListBase with all the outliner selected objects
  * We store it as (Object *)LinkData->data
- * \param objects expected to be empty
+ * \param objects: expected to be empty
  */
 void ED_outliner_selected_objects_get(const bContext *C, ListBase *objects)
 {
