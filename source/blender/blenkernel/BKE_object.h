@@ -221,6 +221,10 @@ void BKE_object_tfm_protected_restore(
         const ObjectTfmProtectedChannels *obtfm,
         const short protectflag);
 
+
+void BKE_object_eval_reset(
+        struct Object *ob_eval);
+
 /* Dependency graph evaluation callbacks. */
 void BKE_object_eval_local_transform(
         struct Depsgraph *depsgraph,
@@ -349,7 +353,9 @@ bool BKE_object_modifier_update_subframe(
         struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob,
         bool update_mesh, int parent_recursion, float frame, int type);
 
-bool BKE_image_empty_visible_in_view3d(const struct Object *ob, const struct RegionView3D *rv3d);
+void BKE_object_type_set_empty_for_versioning(struct Object *ob);
+
+bool BKE_object_empty_image_is_visible_in_view3d(const struct Object *ob, const struct RegionView3D *rv3d);
 
 #ifdef __cplusplus
 }

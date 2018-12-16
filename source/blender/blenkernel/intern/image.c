@@ -64,6 +64,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_math_vector.h"
 #include "BLI_mempool.h"
+#include "BLI_system.h"
 #include "BLI_threads.h"
 #include "BLI_timecode.h"  /* for stamp timecode format */
 #include "BLI_utildefines.h"
@@ -386,7 +387,7 @@ static void copy_image_packedfiles(ListBase *lb_dst, const ListBase *lb_src)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_image_copy_data(Main *UNUSED(bmain), Image *ima_dst, const Image *ima_src, const int flag)
 {
@@ -1402,8 +1403,8 @@ void BKE_imformat_defaults(ImageFormatData *im_format)
 	im_format->compress = 15;
 
 	BKE_color_managed_display_settings_init(&im_format->display_settings);
-	BKE_color_managed_view_settings_init(&im_format->view_settings,
-	                                     &im_format->display_settings);
+	BKE_color_managed_view_settings_init_default(&im_format->view_settings,
+	                                             &im_format->display_settings);
 }
 
 void BKE_imbuf_to_image_format(struct ImageFormatData *im_format, const ImBuf *imbuf)
@@ -1545,6 +1546,7 @@ typedef struct StampData {
 	char strip[STAMP_NAME_SIZE];
 	char rendertime[STAMP_NAME_SIZE];
 	char memory[STAMP_NAME_SIZE];
+	char hostname[512];
 
 	/* Custom fields are used to put extra meta information header from render
 	 * engine to the result image.
@@ -1704,6 +1706,16 @@ static void stampdata(Scene *scene, Object *camera, StampData *stamp_data, int d
 	else {
 		stamp_data->frame_range[0] = '\0';
 	}
+
+	if (scene->r.stamp & R_STAMP_HOSTNAME) {
+		char hostname[500];    /* sizeof(stamp_data->hostname) minus some bytes for a label. */
+		BLI_hostname_get(hostname, sizeof(hostname));
+		SNPRINTF(stamp_data->hostname, do_prefix ? "Hostname %s" : "%s", hostname);
+	}
+	else {
+		stamp_data->hostname[0] = '\0';
+	}
+
 }
 
 /* Will always add prefix. */
@@ -1782,6 +1794,12 @@ static void stampdata_from_template(StampData *stamp_data,
 	}
 	else {
 		stamp_data->memory[0] = '\0';
+	}
+	if (scene->r.stamp & R_STAMP_HOSTNAME) {
+		SNPRINTF(stamp_data->hostname, "Hostname %s", stamp_data_template->hostname);
+	}
+	else {
+		stamp_data->hostname[0] = '\0';
 	}
 }
 
@@ -1910,7 +1928,22 @@ void BKE_image_stamp_buf(
 		y -= BUFF_MARGIN_Y * 2;
 	}
 
-	/* Top left corner, below File, Date, Memory, Rendertime */
+	/* Top left corner, below File, Date, Rendertime, Memory */
+	if (TEXT_SIZE_CHECK(stamp_data.hostname, w, h)) {
+		y -= h;
+
+		/* and space for background. */
+		buf_rectfill_area(rect, rectf, width, height, scene->r.bg_stamp, display,
+		                  0, y - BUFF_MARGIN_Y, w + BUFF_MARGIN_X, y + h + BUFF_MARGIN_Y);
+
+		BLF_position(mono, x, y + y_ofs, 0.0);
+		BLF_draw_buffer(mono, stamp_data.hostname, BLF_DRAW_STR_DUMMY_MAX);
+
+		/* the extra pixel for background. */
+		y -= BUFF_MARGIN_Y * 2;
+	}
+
+	/* Top left corner, below File, Date, Memory, Rendertime, Hostname */
 	BLF_enable(mono, BLF_WORD_WRAP);
 	if (TEXT_SIZE_CHECK_WORD_WRAP(stamp_data.note, w, h)) {
 		y -= h;
@@ -2091,6 +2124,7 @@ void BKE_stamp_info_callback(void *data, struct StampData *stamp_data, StampCall
 	CALL(strip, "Strip");
 	CALL(rendertime, "RenderTime");
 	CALL(memory, "Memory");
+	CALL(hostname, "Hostname");
 
 	LISTBASE_FOREACH(StampDataCustomField *, custom_field, &stamp_data->custom_fields) {
 		if (noskip || custom_field->value[0]) {

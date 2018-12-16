@@ -38,6 +38,7 @@
 
 #include "edit_mesh_mode_intern.h" /* own include */
 
+#include "BKE_editmesh.h"
 #include "BKE_object.h"
 
 #include "BLI_dynstr.h"
@@ -59,7 +60,6 @@ extern char datatoc_edit_mesh_overlay_geom_edge_glsl[];
 extern char datatoc_edit_mesh_overlay_points_vert_glsl[];
 extern char datatoc_edit_mesh_overlay_facedot_frag_glsl[];
 extern char datatoc_edit_mesh_overlay_facedot_vert_glsl[];
-extern char datatoc_edit_mesh_overlay_ghost_clear_vert_glsl[];
 extern char datatoc_edit_mesh_overlay_mix_frag_glsl[];
 extern char datatoc_edit_mesh_overlay_facefill_vert_glsl[];
 extern char datatoc_edit_mesh_overlay_facefill_frag_glsl[];
@@ -70,6 +70,7 @@ extern char datatoc_common_globals_lib_glsl[];
 extern char datatoc_gpu_shader_uniform_color_frag_glsl[];
 extern char datatoc_gpu_shader_flat_color_frag_glsl[];
 extern char datatoc_gpu_shader_point_varying_color_frag_glsl[];
+extern char datatoc_gpu_shader_depth_only_frag_glsl[];
 
 /* *********** LISTS *********** */
 typedef struct EDIT_MESH_PassList {
@@ -135,17 +136,14 @@ typedef struct EDIT_MESH_PrivateData {
 	DRWShadingGroup *vnormals_shgrp;
 	DRWShadingGroup *lnormals_shgrp;
 
-	DRWShadingGroup *face_overlay_shgrp;
-	DRWShadingGroup *verts_overlay_shgrp;
-	DRWShadingGroup *ledges_overlay_shgrp;
-	DRWShadingGroup *lverts_overlay_shgrp;
-	DRWShadingGroup *facedot_overlay_shgrp;
+	DRWShadingGroup *face_shgrp;
+	DRWShadingGroup *face_cage_shgrp;
 
-	DRWShadingGroup *face_occluded_shgrp;
-	DRWShadingGroup *verts_occluded_shgrp;
-	DRWShadingGroup *ledges_occluded_shgrp;
-	DRWShadingGroup *lverts_occluded_shgrp;
-	DRWShadingGroup *facedot_occluded_shgrp;
+	DRWShadingGroup *verts_shgrp;
+	DRWShadingGroup *ledges_shgrp;
+	DRWShadingGroup *lverts_shgrp;
+	DRWShadingGroup *facedot_shgrp;
+
 	DRWShadingGroup *facefill_occluded_shgrp;
 
 	int data_mask[4];
@@ -329,8 +327,7 @@ static void EDIT_MESH_engine_init(void *vedata)
 		e_data.depth_sh = DRW_shader_create_3D_depth_only();
 	}
 	if (!e_data.ghost_clear_depth_sh) {
-		e_data.ghost_clear_depth_sh = DRW_shader_create(datatoc_edit_mesh_overlay_ghost_clear_vert_glsl,
-		                                                NULL, NULL, NULL);
+		e_data.ghost_clear_depth_sh = DRW_shader_create_fullscreen(datatoc_gpu_shader_depth_only_frag_glsl, NULL);
 	}
 
 }
@@ -338,7 +335,8 @@ static void EDIT_MESH_engine_init(void *vedata)
 static DRWPass *edit_mesh_create_overlay_pass(
         float *face_alpha, float *edge_width_scale, int *data_mask, bool do_edges, bool xray,
         DRWState statemod,
-        DRWShadingGroup **r_face_shgrp, DRWShadingGroup **r_verts_shgrp, DRWShadingGroup **r_ledges_shgrp,
+        DRWShadingGroup **r_face_shgrp, DRWShadingGroup **r_face_cage_shgrp,
+        DRWShadingGroup **r_verts_shgrp, DRWShadingGroup **r_ledges_shgrp,
         DRWShadingGroup **r_lverts_shgrp, DRWShadingGroup **r_facedot_shgrp)
 {
 	GPUShader *tri_sh, *ledge_sh;
@@ -361,12 +359,14 @@ static DRWPass *edit_mesh_create_overlay_pass(
 		DRW_shgroup_uniform_vec2(*r_lverts_shgrp, "viewportSize", DRW_viewport_size_get(), 1);
 		DRW_shgroup_uniform_float(*r_lverts_shgrp, "edgeScale", edge_width_scale, 1);
 		DRW_shgroup_state_enable(*r_lverts_shgrp, DRW_STATE_WRITE_DEPTH);
+		DRW_shgroup_state_disable(*r_lverts_shgrp, DRW_STATE_BLEND);
 
 		*r_verts_shgrp = DRW_shgroup_create(e_data.overlay_vert_sh, pass);
 		DRW_shgroup_uniform_block(*r_verts_shgrp, "globalsBlock", globals_ubo);
 		DRW_shgroup_uniform_vec2(*r_verts_shgrp, "viewportSize", DRW_viewport_size_get(), 1);
 		DRW_shgroup_uniform_float(*r_verts_shgrp, "edgeScale", edge_width_scale, 1);
 		DRW_shgroup_state_enable(*r_verts_shgrp, DRW_STATE_WRITE_DEPTH);
+		DRW_shgroup_state_disable(*r_verts_shgrp, DRW_STATE_BLEND);
 	}
 
 	if ((tsettings->selectmode & SCE_SELECT_FACE) != 0) {
@@ -386,6 +386,13 @@ static DRWPass *edit_mesh_create_overlay_pass(
 	if (!fast_mode) {
 		DRW_shgroup_uniform_bool_copy(*r_face_shgrp, "isXray", xray);
 	}
+	else {
+		/* To be able to use triple load. */
+		DRW_shgroup_state_enable(*r_face_shgrp, DRW_STATE_FIRST_VERTEX_CONVENTION);
+	}
+	/* Cage geom needs to be offseted to avoid Z-fighting. */
+	*r_face_cage_shgrp = DRW_shgroup_create_sub(*r_face_shgrp);
+	DRW_shgroup_state_enable(*r_face_cage_shgrp, DRW_STATE_OFFSET_NEGATIVE);
 
 	*r_ledges_shgrp = DRW_shgroup_create(ledge_sh, pass);
 	DRW_shgroup_uniform_block(*r_ledges_shgrp, "globalsBlock", globals_ubo);
@@ -521,22 +528,24 @@ static void EDIT_MESH_cache_init(void *vedata)
 		psl->edit_face_overlay = edit_mesh_create_overlay_pass(
 		        &face_mod, &stl->g_data->edge_width_scale, stl->g_data->data_mask, stl->g_data->do_edges, false,
 		        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND,
-		        &stl->g_data->face_overlay_shgrp,
-		        &stl->g_data->verts_overlay_shgrp,
-		        &stl->g_data->ledges_overlay_shgrp,
-		        &stl->g_data->lverts_overlay_shgrp,
-		        &stl->g_data->facedot_overlay_shgrp);
+		        &stl->g_data->face_shgrp,
+		        &stl->g_data->face_cage_shgrp,
+		        &stl->g_data->verts_shgrp,
+		        &stl->g_data->ledges_shgrp,
+		        &stl->g_data->lverts_shgrp,
+		        &stl->g_data->facedot_shgrp);
 	}
 	else {
 		/* We render all wires with depth and opaque to a new fbo and blend the result based on depth values */
 		psl->edit_face_occluded = edit_mesh_create_overlay_pass(
 		        &zero, &stl->g_data->edge_width_scale, stl->g_data->data_mask, stl->g_data->do_edges, true,
 		        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WRITE_DEPTH,
-		        &stl->g_data->face_occluded_shgrp,
-		        &stl->g_data->verts_occluded_shgrp,
-		        &stl->g_data->ledges_occluded_shgrp,
-		        &stl->g_data->lverts_occluded_shgrp,
-		        &stl->g_data->facedot_occluded_shgrp);
+		        &stl->g_data->face_shgrp,
+		        &stl->g_data->face_cage_shgrp,
+		        &stl->g_data->verts_shgrp,
+		        &stl->g_data->ledges_shgrp,
+		        &stl->g_data->lverts_shgrp,
+		        &stl->g_data->facedot_shgrp);
 
 		/* however we loose the front faces value (because we need the depth of occluded wires and
 		 * faces are alpha blended ) so we recover them in a new pass. */
@@ -564,40 +573,48 @@ static void EDIT_MESH_cache_init(void *vedata)
 
 static void edit_mesh_add_ob_to_pass(
         Scene *scene, Object *ob,
-        DRWShadingGroup *face_shgrp,
-        DRWShadingGroup *verts_shgrp,
-        DRWShadingGroup *ledges_shgrp,
-        DRWShadingGroup *lverts_shgrp,
+        EDIT_MESH_PrivateData *g_data,
         DRWShadingGroup *facedot_shgrp,
         DRWShadingGroup *facefill_shgrp)
 {
-	struct GPUBatch *geo_ovl_tris, *geo_ovl_verts, *geo_ovl_lnor, *geo_ovl_ledges, *geo_ovl_lverts, *geo_ovl_fcenter;
-	struct GPUTexture *data_texture;
+	struct GPUBatch *geom_tris, *geom_verts, *geom_ledges, *geom_ledges_nor, *geom_lverts, *geom_fcenter;
 	ToolSettings *tsettings = scene->toolsettings;
 
-	DRW_cache_mesh_wire_overlay_get(ob, &geo_ovl_tris, &geo_ovl_ledges, &geo_ovl_lverts, &data_texture);
+	bool has_edit_mesh_cage = false;
+	/* TODO: Should be its own function. */
+	Mesh *me = (Mesh *)ob->data;
+	BMEditMesh *embm = me->edit_btmesh;
+	if (embm) {
+		has_edit_mesh_cage = embm->mesh_eval_cage && (embm->mesh_eval_cage != embm->mesh_eval_final);
+	}
 
-	face_shgrp = DRW_shgroup_create_sub(face_shgrp);
-	DRW_shgroup_uniform_texture(face_shgrp, "dataBuffer", data_texture);
-	DRW_shgroup_call_add(face_shgrp, geo_ovl_tris, ob->obmat);
+	DRWShadingGroup *face_shgrp = (has_edit_mesh_cage) ? g_data->face_cage_shgrp : g_data->face_shgrp;
+	DRWShadingGroup *verts_shgrp = g_data->verts_shgrp;
+	DRWShadingGroup *ledges_shgrp = g_data->ledges_shgrp;
+	DRWShadingGroup *lverts_shgrp = g_data->lverts_shgrp;
 
-	DRW_shgroup_call_add(ledges_shgrp, geo_ovl_ledges, ob->obmat);
+	geom_tris = DRW_mesh_batch_cache_get_edit_triangles(ob->data);
+	geom_ledges = DRW_mesh_batch_cache_get_edit_loose_edges(ob->data);
+	DRW_shgroup_call_add(face_shgrp, geom_tris, ob->obmat);
+	DRW_shgroup_call_add(ledges_shgrp, geom_ledges, ob->obmat);
 
 	if (facefill_shgrp) {
-		DRW_shgroup_call_add(facefill_shgrp, geo_ovl_tris, ob->obmat);
+		DRW_shgroup_call_add(facefill_shgrp, geom_tris, ob->obmat);
 	}
 
 	if ((tsettings->selectmode & SCE_SELECT_VERTEX) != 0) {
 		/* Thoses are point batches. */
-		DRW_cache_mesh_normals_overlay_get(ob, &geo_ovl_verts, &geo_ovl_lnor, &geo_ovl_ledges, &geo_ovl_lverts);
-		DRW_shgroup_call_add(verts_shgrp, geo_ovl_verts, ob->obmat);
-		DRW_shgroup_call_add(lverts_shgrp, geo_ovl_ledges, ob->obmat);
-		DRW_shgroup_call_add(lverts_shgrp, geo_ovl_lverts, ob->obmat);
+		geom_verts = DRW_mesh_batch_cache_get_edit_vertices(ob->data);
+		geom_ledges_nor = DRW_mesh_batch_cache_get_edit_loose_edges_nor(ob->data);
+		geom_lverts = DRW_mesh_batch_cache_get_edit_loose_verts(ob->data);
+		DRW_shgroup_call_add(verts_shgrp, geom_verts, ob->obmat);
+		DRW_shgroup_call_add(lverts_shgrp, geom_ledges_nor, ob->obmat);
+		DRW_shgroup_call_add(lverts_shgrp, geom_lverts, ob->obmat);
 	}
 
 	if (facedot_shgrp && (tsettings->selectmode & SCE_SELECT_FACE) != 0 ) {
-		geo_ovl_fcenter = DRW_cache_face_centers_get(ob);
-		DRW_shgroup_call_add(facedot_shgrp, geo_ovl_fcenter, ob->obmat);
+		geom_fcenter = DRW_mesh_batch_cache_get_edit_facedots(ob->data);
+		DRW_shgroup_call_add(facedot_shgrp, geom_fcenter, ob->obmat);
 	}
 }
 
@@ -649,44 +666,33 @@ static void EDIT_MESH_cache_populate(void *vedata, Object *ob)
 				DRW_shgroup_call_add(stl->g_data->depth_shgrp_hidden_wire, geom, ob->obmat);
 			}
 
-			if (fnormals_do) {
-				geom = DRW_cache_face_centers_get(ob);
-				DRW_shgroup_call_add(stl->g_data->fnormals_shgrp, geom, ob->obmat);
+			if (vnormals_do) {
+				geom = DRW_mesh_batch_cache_get_edit_triangles_nor(ob->data);
+				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
+				geom = DRW_mesh_batch_cache_get_edit_loose_verts(ob->data);
+				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
+				geom = DRW_mesh_batch_cache_get_edit_loose_edges_nor(ob->data);
+				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
 			}
-
-			if (vnormals_do || lnormals_do) {
-				struct GPUBatch *geo_ovl_tris, *geo_ovl_lnor, *geo_ovl_ledges, *geo_ovl_lverts;
-				DRW_cache_mesh_normals_overlay_get(ob, &geo_ovl_tris, &geo_ovl_lnor, &geo_ovl_ledges, &geo_ovl_lverts);
-
-				if (vnormals_do) {
-					DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geo_ovl_tris, ob->obmat);
-					DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geo_ovl_ledges, ob->obmat);
-					DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geo_ovl_lverts, ob->obmat);
-				}
-
-				if (lnormals_do) {
-					DRW_shgroup_call_add(stl->g_data->lnormals_shgrp, geo_ovl_lnor, ob->obmat);
-				}
+			if (lnormals_do) {
+				geom = DRW_mesh_batch_cache_get_edit_triangles_lnor(ob->data);
+				DRW_shgroup_call_add(stl->g_data->lnormals_shgrp, geom, ob->obmat);
+			}
+			if (fnormals_do) {
+				geom = DRW_mesh_batch_cache_get_edit_facedots(ob->data);
+				DRW_shgroup_call_add(stl->g_data->fnormals_shgrp, geom, ob->obmat);
 			}
 
 			if (stl->g_data->do_zbufclip) {
 				edit_mesh_add_ob_to_pass(
-				        scene, ob,
-				        stl->g_data->face_occluded_shgrp,
-				        stl->g_data->verts_occluded_shgrp,
-				        stl->g_data->ledges_occluded_shgrp,
-				        stl->g_data->lverts_occluded_shgrp,
-				        stl->g_data->facedot_occluded_shgrp,
+				        scene, ob, stl->g_data,
+				        stl->g_data->facedot_shgrp,
 				        (stl->g_data->do_faces) ? stl->g_data->facefill_occluded_shgrp : NULL);
 			}
 			else {
 				edit_mesh_add_ob_to_pass(
-				        scene, ob,
-				        stl->g_data->face_overlay_shgrp,
-				        stl->g_data->verts_overlay_shgrp,
-				        stl->g_data->ledges_overlay_shgrp,
-				        stl->g_data->lverts_overlay_shgrp,
-				        (show_face_dots) ? stl->g_data->facedot_overlay_shgrp : NULL,
+				        scene, ob, stl->g_data,
+				        (show_face_dots) ? stl->g_data->facedot_shgrp : NULL,
 				        NULL);
 			}
 

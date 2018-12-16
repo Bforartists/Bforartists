@@ -154,7 +154,7 @@ static bool is_cursor_visible(const DRWContextState *draw_ctx, Scene *scene, Vie
 		/* no exception met? then don't draw cursor! */
 		return false;
 	}
-	else if (draw_ctx->object_mode & OB_MODE_GPENCIL_WEIGHT) {
+	else if (draw_ctx->object_mode & OB_MODE_WEIGHT_GPENCIL) {
 		/* grease pencil hide always in some modes */
 		return false;
 	}
@@ -182,7 +182,7 @@ void DRW_draw_cursor(void)
 			RegionView3D *rv3d = ar->regiondata;
 
 			/* Draw nice Anti Aliased cursor. */
-			glLineWidth(1.0f);
+			GPU_line_width(1.0f);
 			glEnable(GL_BLEND);
 			glEnable(GL_LINE_SMOOTH);
 
@@ -227,6 +227,9 @@ void DRW_draw_cursor(void)
 				immUnbindProgram();
 			}
 
+			float original_proj[4][4];
+			GPU_matrix_projection_get(original_proj);
+			GPU_matrix_push();
 			ED_region_pixelspace(ar);
 			GPU_matrix_translate_2f(co[0] + 0.5f, co[1] + 0.5f);
 			GPU_matrix_scale_2f(U.widget_unit, U.widget_unit);
@@ -239,6 +242,8 @@ void DRW_draw_cursor(void)
 
 			glDisable(GL_BLEND);
 			glDisable(GL_LINE_SMOOTH);
+			GPU_matrix_pop();
+			GPU_matrix_projection_set(original_proj);
 		}
 	}
 }

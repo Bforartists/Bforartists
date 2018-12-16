@@ -93,6 +93,7 @@ extern char datatoc_object_grid_vert_glsl[];
 extern char datatoc_object_empty_image_frag_glsl[];
 extern char datatoc_object_empty_image_vert_glsl[];
 extern char datatoc_object_lightprobe_grid_vert_glsl[];
+extern char datatoc_object_loose_points_frag_glsl[];
 extern char datatoc_object_particle_prim_vert_glsl[];
 extern char datatoc_object_particle_dot_vert_glsl[];
 extern char datatoc_object_particle_dot_frag_glsl[];
@@ -306,6 +307,7 @@ static struct {
 	GPUShader *part_prim_sh;
 	GPUShader *part_axis_sh;
 	GPUShader *lightprobe_grid_sh;
+	GPUShader *loose_points_sh;
 	float camera_pos[3];
 	float screenvecs[3][4];
 	float grid_settings[5];
@@ -457,6 +459,9 @@ static void OBJECT_engine_init(void *vedata)
 		/* Lightprobes */
 		e_data.lightprobe_grid_sh = DRW_shader_create(
 		        datatoc_object_lightprobe_grid_vert_glsl, NULL, datatoc_gpu_shader_flat_id_frag_glsl, NULL);
+
+		/* Loose Points */
+		e_data.loose_points_sh = DRW_shader_create_3D(datatoc_object_loose_points_frag_glsl, NULL);
 	}
 
 	{
@@ -686,6 +691,7 @@ static void OBJECT_engine_free(void)
 	DRW_SHADER_FREE_SAFE(e_data.part_axis_sh);
 	DRW_SHADER_FREE_SAFE(e_data.part_dot_sh);
 	DRW_SHADER_FREE_SAFE(e_data.lightprobe_grid_sh);
+	DRW_SHADER_FREE_SAFE(e_data.loose_points_sh);
 }
 
 static DRWShadingGroup *shgroup_outline(DRWPass *pass, const int *ofs, GPUShader *sh)
@@ -710,6 +716,7 @@ static DRWShadingGroup *shgroup_points(DRWPass *pass, const float col[4], GPUSha
 {
 	DRWShadingGroup *grp = DRW_shgroup_create(sh, pass);
 	DRW_shgroup_uniform_vec4(grp, "color", col, 1);
+	DRW_shgroup_uniform_vec4(grp, "innerColor", ts.colorEditMeshMiddle, 1);
 
 	return grp;
 }
@@ -820,14 +827,12 @@ static DRWShadingGroup *shgroup_theme_id_to_point_or(
 	}
 }
 
-static void image_calc_aspect(Image *ima, ImageUser *iuser, float r_image_aspect[2])
+static void image_calc_aspect(Image *ima, const int size[2], float r_image_aspect[2])
 {
 	float ima_x, ima_y;
 	if (ima) {
-		int w, h;
-		BKE_image_get_size(ima, iuser, &w, &h);
-		ima_x = w;
-		ima_y = h;
+		ima_x = size[0];
+		ima_y = size[1];
 	}
 	else {
 		/* if no image, make it a 1x1 empty square, honor scale & offset */
@@ -861,15 +866,27 @@ static void DRW_shgroup_empty_image(
 {
 	/* TODO: 'StereoViews', see draw_empty_image. */
 
-	if (!BKE_image_empty_visible_in_view3d(ob, rv3d))
+	if (!BKE_object_empty_image_is_visible_in_view3d(ob, rv3d))
 		return;
 
-	GPUTexture *tex = ob->data ?
-	        GPU_texture_from_blender(ob->data, ob->iuser, GL_TEXTURE_2D, false, 0.0f) :
-	        NULL;
+	/* Calling 'BKE_image_get_size' may free the texture. Get the size from 'tex' instead, see: T59347 */
+	int size[2] = {0};
+
+	GPUTexture *tex = NULL;
+
+	if (ob->data != NULL) {
+		tex = GPU_texture_from_blender(ob->data, ob->iuser, GL_TEXTURE_2D, false, 0.0f);
+		if (tex) {
+			size[0] = GPU_texture_width(tex);
+			size[1] = GPU_texture_height(tex);
+		}
+	}
+
+	CLAMP_MIN(size[0], 1);
+	CLAMP_MIN(size[1], 1);
 
 	float image_aspect[2];
-	image_calc_aspect(ob->data, ob->iuser, image_aspect);
+	image_calc_aspect(ob->data, size, image_aspect);
 
 	/* OPTI(fclem) We need sorting only for transparent images. If an image as no alpha channel and
 	 * ob->col[3] == 1.0f,  we could remove it from the sorting pass. */
@@ -1192,11 +1209,15 @@ static void OBJECT_cache_init(void *vedata)
 		sgl->wire_active = shgroup_wire(sgl->non_meshes, ts.colorActive, sh);
 
 		/* Points (loose points) */
-		sh = GPU_shader_get_builtin_shader(GPU_SHADER_3D_POINT_FIXED_SIZE_UNIFORM_COLOR);
+		sh = e_data.loose_points_sh;
 		sgl->points = shgroup_points(sgl->non_meshes, ts.colorWire, sh);
 		sgl->points_select = shgroup_points(sgl->non_meshes, ts.colorSelect, sh);
 		sgl->points_transform = shgroup_points(sgl->non_meshes, ts.colorTransform, sh);
 		sgl->points_active = shgroup_points(sgl->non_meshes, ts.colorActive, sh);
+		DRW_shgroup_state_disable(sgl->points, DRW_STATE_BLEND);
+		DRW_shgroup_state_disable(sgl->points_select, DRW_STATE_BLEND);
+		DRW_shgroup_state_disable(sgl->points_transform, DRW_STATE_BLEND);
+		DRW_shgroup_state_disable(sgl->points_active, DRW_STATE_BLEND);
 
 		/* Metaballs Handles */
 		sgl->mball_handle = shgroup_instance_mball_handles(sgl->non_meshes);
@@ -2250,7 +2271,7 @@ static void DRW_shgroup_relationship_lines(
         Object *ob)
 {
 	if (ob->parent && DRW_object_is_visible_in_active_context(ob->parent)) {
-		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->parent->obmat[3]);
+		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->orig);
 		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->obmat[3]);
 	}
 
@@ -2661,7 +2682,21 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 			break;
 		}
 		case OB_SURF:
+		{
+			if (hide_object_extra) {
+				break;
+			}
+			struct GPUBatch *geom = DRW_cache_surf_edge_wire_get(ob);
+			if (geom == NULL) {
+				break;
+			}
+			if (theme_id == TH_UNDEFINED) {
+				theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
+			}
+			DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+			DRW_shgroup_call_object_add(shgroup, geom, ob);
 			break;
+		}
 		case OB_LATTICE:
 		{
 			if (ob != draw_ctx->object_edit && !BKE_object_is_in_editmode(ob)) {

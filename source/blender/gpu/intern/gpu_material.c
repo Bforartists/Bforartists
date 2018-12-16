@@ -242,7 +242,8 @@ GPUUniformBuffer *GPU_material_uniform_buffer_get(GPUMaterial *material)
 
 /**
  * Create dynamic UBO from parameters
- * \param ListBase of BLI_genericNodeN(GPUInput)
+ *
+ * \param inputs: Items are #LinkData, data is #GPUInput (`BLI_genericNodeN(GPUInput)`).
  */
 void GPU_material_uniform_buffer_create(GPUMaterial *material, ListBase *inputs)
 {
@@ -713,7 +714,7 @@ GPUMaterial *GPU_material_from_nodetree(
 
 	/* Only free after GPU_pass_shader_get where GPUUniformBuffer
 	 * read data from the local tree. */
-	ntreeFreeTree(localtree);
+	ntreeFreeLocalTree(localtree);
 	MEM_freeN(localtree);
 
 	/* note that even if building the shader fails in some way, we still keep

@@ -283,9 +283,9 @@ typedef enum {
 	DRW_STATE_CULL_FRONT    = (1 << 9),
 	DRW_STATE_WIRE          = (1 << 10),
 	DRW_STATE_POINT         = (1 << 11),
-	DRW_STATE_STIPPLE_2     = (1 << 12),
-	DRW_STATE_STIPPLE_3     = (1 << 13),
-	DRW_STATE_STIPPLE_4     = (1 << 14),
+	DRW_STATE_OFFSET_POSITIVE = (1 << 12), /* Polygon offset. Does not work with lines and points. */
+	DRW_STATE_OFFSET_NEGATIVE = (1 << 13), /* Polygon offset. Does not work with lines and points. */
+	/* DRW_STATE_STIPPLE_4     = (1 << 14), */ /* Not used */
 	DRW_STATE_BLEND         = (1 << 15),
 	DRW_STATE_ADDITIVE      = (1 << 16),
 	DRW_STATE_MULTIPLY      = (1 << 17),
@@ -296,6 +296,7 @@ typedef enum {
 	DRW_STATE_WIRE_SMOOTH   = (1 << 22),
 	DRW_STATE_TRANS_FEEDBACK = (1 << 23),
 	DRW_STATE_BLEND_OIT     = (1 << 24),
+	DRW_STATE_FIRST_VERTEX_CONVENTION = (1 << 25),
 
 	DRW_STATE_WRITE_STENCIL          = (1 << 27),
 	DRW_STATE_WRITE_STENCIL_SHADOW_PASS   = (1 << 28),
