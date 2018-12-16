@@ -178,7 +178,7 @@ const EnumPropertyItem rna_enum_space_action_mode_items[] = {
 #define SI_ITEM_MASK \
 	{SI_MODE_MASK, "MASK", ICON_MOD_MASK, "Mask", "Mask editing"}
 
-static const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
+const EnumPropertyItem rna_enum_space_image_mode_all_items[] = {
 	SI_ITEM_VIEW("View", ICON_FILE_IMAGE),
 	SI_ITEM_UV,
 	SI_ITEM_PAINT,
@@ -513,7 +513,7 @@ static void rna_GPencil_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *UN
 	/* need set all caches as dirty to recalculate onion skinning */
 	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ob->type == OB_GPENCIL) {
-			DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		}
 	}
 	WM_main_add_notifier(NC_GPENCIL | NA_EDITED, NULL);
@@ -680,7 +680,7 @@ static void rna_3DViewShading_type_update(Main *bmain, Scene *UNUSED(scene), Poi
 		 * the meshes itself.
 		 * This hack just tag BKE_MESH_BATCH_DIRTY_SHADING for every mesh that
 		 * have a material. (see T55059) */
-		DEG_id_tag_update(&ma->id, DEG_TAG_SHADING_UPDATE);
+		DEG_id_tag_update(&ma->id, ID_RECALC_SHADING);
 	}
 
 	bScreen *screen = ptr->id.data;
@@ -1192,7 +1192,7 @@ static const EnumPropertyItem *rna_SpaceImageEditor_pivot_itemf(
 {
 	static const EnumPropertyItem pivot_items[] = {
 		{V3D_AROUND_CENTER_BOUNDS, "CENTER", ICON_PIVOT_BOUNDBOX, "Bounding Box Center", ""},
-		{V3D_AROUND_CENTER_MEAN, "MEDIAN", ICON_PIVOT_MEDIAN, "Median Point", ""},
+		{V3D_AROUND_CENTER_MEDIAN, "MEDIAN", ICON_PIVOT_MEDIAN, "Median Point", ""},
 		{V3D_AROUND_CURSOR, "CURSOR", ICON_PIVOT_CURSOR, "2D Cursor", ""},
 		{V3D_AROUND_LOCAL_ORIGINS, "INDIVIDUAL_ORIGINS", ICON_PIVOT_INDIVIDUAL,
 		            "Individual Origins", "Pivot around each selected island's own median point"},
@@ -1535,7 +1535,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
 		}
 
 		/* force depsgraph flush too */
-		DEG_id_tag_update(&obact->id, OB_RECALC_OB | OB_RECALC_DATA);
+		DEG_id_tag_update(&obact->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 		/* Update relations as well, so new time source dependency is added. */
 		DEG_relations_tag_update(bmain);
 	}
@@ -1594,7 +1594,7 @@ static void rna_SpaceDopeSheetEditor_mode_update(bContext *C, PointerRNA *ptr)
 	}
 
 	/* recalculate extents of channel list */
-	saction->flag |= SACTION_TEMP_NEEDCHANSYNC;
+	saction->runtime.flag |= SACTION_RUNTIME_FLAG_NEED_CHAN_SYNC;
 
 	/* store current mode as "old mode", so that returning from other editors doesn't always reset to "Action Editor" */
 	if (saction->mode != SACTCONT_TIMELINE) {
@@ -1624,7 +1624,7 @@ static void rna_SpaceGraphEditor_display_mode_update(bContext *C, PointerRNA *pt
 static bool rna_SpaceGraphEditor_has_ghost_curves_get(PointerRNA *ptr)
 {
 	SpaceIpo *sipo = (SpaceIpo *)(ptr->data);
-	return (BLI_listbase_is_empty(&sipo->ghostCurves) == false);
+	return (BLI_listbase_is_empty(&sipo->runtime.ghost_curves) == false);
 }
 
 static void rna_SpaceConsole_rect_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
@@ -2750,7 +2750,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "show_bones", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "overlay.flag", V3D_OVERLAY_HIDE_BONES);
-	RNA_def_property_ui_text(prop, "Show Bones", "Display bones");
+	RNA_def_property_ui_text(prop, "Show Bones", "Display bones (disable to show motion paths only)");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "show_face_orientation", PROP_BOOLEAN, PROP_NONE);
@@ -2935,8 +2935,9 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "normals_length", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "overlay.normals_length");
 	RNA_def_property_ui_text(prop, "Normal Size", "Display size for normals in the 3D view");
-	RNA_def_property_range(prop, 0.00001, 1000.0);
-	RNA_def_property_ui_range(prop, 0.01, 10.0, 10.0, 2);
+	RNA_def_property_range(prop, 0.00001, 100000.0);
+	RNA_def_property_ui_range(prop, 0.01, 2.0, 1, 2);
+	RNA_def_property_float_default(prop, 0.02);
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "backwire_opacity", PROP_FLOAT, PROP_FACTOR);
@@ -4097,7 +4098,7 @@ static void rna_def_space_graph(BlenderRNA *brna)
 		{V3D_AROUND_CENTER_BOUNDS, "BOUNDING_BOX_CENTER", ICON_PIVOT_BOUNDBOX, "Bounding Box Center", ""},
 		{V3D_AROUND_CURSOR, "CURSOR", ICON_PIVOT_CURSOR, "2D Cursor", ""},
 		{V3D_AROUND_LOCAL_ORIGINS, "INDIVIDUAL_ORIGINS", ICON_PIVOT_INDIVIDUAL, "Individual Centers", ""},
-		/*{V3D_AROUND_CENTER_MEAN, "MEDIAN_POINT", 0, "Median Point", ""}, */
+		/*{V3D_AROUND_CENTER_MEDIAN, "MEDIAN_POINT", 0, "Median Point", ""}, */
 		/*{V3D_AROUND_ACTIVE, "ACTIVE_ELEMENT", 0, "Active Element", ""}, */
 		{0, NULL, 0, NULL, NULL}
 	};
@@ -5005,7 +5006,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
 		{V3D_AROUND_CURSOR, "CURSOR", ICON_PIVOT_CURSOR, "2D Cursor", "Pivot around the 2D cursor"},
 		{V3D_AROUND_LOCAL_ORIGINS, "INDIVIDUAL_ORIGINS", ICON_CENTER_ONLY,
 		            "Individual Origins", "Pivot around each object's own origin"},
-		{V3D_AROUND_CENTER_MEAN, "MEDIAN_POINT", ICON_PIVOT_MEDIAN, "Median Point",
+		{V3D_AROUND_CENTER_MEDIAN, "MEDIAN_POINT", ICON_PIVOT_MEDIAN, "Median Point",
 		               "Pivot around the median point of selected objects"},
 		{0, NULL, 0, NULL, NULL}
 	};

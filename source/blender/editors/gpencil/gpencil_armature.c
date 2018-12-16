@@ -491,6 +491,10 @@ bool ED_gpencil_add_armature_weights(
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 
+	if (ob == NULL) {
+		return false;
+	}
+
 	/* if no armature modifier, add a new one */
 	GpencilModifierData *md = BKE_gpencil_modifiers_findByType(ob, eGpencilModifierType_Armature);
 	if (md == NULL) {
@@ -502,7 +506,7 @@ bool ED_gpencil_add_armature_weights(
 			           "Unable to add a new Armature modifier to object");
 			return false;
 		}
-		DEG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA);
+		DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 	}
 
 	/* verify armature */
@@ -527,6 +531,10 @@ bool ED_gpencil_add_armature_weights(
 static bool gpencil_generate_weights_poll(bContext *C)
 {
 	Object *ob = CTX_data_active_object(C);
+
+	if (ob == NULL) {
+		return false;
+	}
 
 	if (ob->type != OB_GPENCIL) {
 		return false;
@@ -600,7 +608,7 @@ static int gpencil_generate_weights_exec(bContext *C, wmOperator *op)
 	gpencil_object_vgroup_calc_from_armature(C, ob, ob_arm, mode, ratio, decay);
 
 	/* notifiers */
-	DEG_id_tag_update(&gpd->id, OB_RECALC_OB | OB_RECALC_DATA);
+	DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 	WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
 	return OPERATOR_FINISHED;

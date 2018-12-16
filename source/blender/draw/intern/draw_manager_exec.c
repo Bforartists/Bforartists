@@ -282,33 +282,6 @@ void drw_state_set(DRWState state)
 		}
 	}
 
-	/* Line Stipple */
-	{
-		int test;
-		if (CHANGED_ANY_STORE_VAR(
-		        DRW_STATE_STIPPLE_2 | DRW_STATE_STIPPLE_3 | DRW_STATE_STIPPLE_4,
-		        test))
-		{
-			if (test) {
-				if ((state & DRW_STATE_STIPPLE_2) != 0) {
-					setlinestyle(2);
-				}
-				else if ((state & DRW_STATE_STIPPLE_3) != 0) {
-					setlinestyle(3);
-				}
-				else if ((state & DRW_STATE_STIPPLE_4) != 0) {
-					setlinestyle(4);
-				}
-				else {
-					BLI_assert(0);
-				}
-			}
-			else {
-				setlinestyle(0);
-			}
-		}
-	}
-
 	/* Stencil */
 	{
 		DRWState test;
@@ -352,6 +325,46 @@ void drw_state_set(DRWState state)
 				glStencilMask(0x00);
 				glStencilFunc(GL_ALWAYS, 0, 0xFF);
 				glDisable(GL_STENCIL_TEST);
+			}
+		}
+	}
+
+	/* Provoking Vertex */
+	{
+		int test;
+		if ((test = CHANGED_TO(DRW_STATE_FIRST_VERTEX_CONVENTION))) {
+			if (test == 1) {
+				glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
+			}
+			else {
+				glProvokingVertex(GL_LAST_VERTEX_CONVENTION);
+			}
+		}
+	}
+
+	/* Polygon Offset */
+	{
+		int test;
+		if (CHANGED_ANY_STORE_VAR(
+		        DRW_STATE_OFFSET_POSITIVE |
+		        DRW_STATE_OFFSET_NEGATIVE,
+		        test))
+		{
+			if (test) {
+				glEnable(GL_POLYGON_OFFSET_FILL);
+				/* Stencil Write */
+				if ((state & DRW_STATE_OFFSET_POSITIVE) != 0) {
+					glPolygonOffset(1.0f, 1.0f);
+				}
+				else if ((state & DRW_STATE_OFFSET_NEGATIVE) != 0) {
+					glPolygonOffset(-1.0f, -1.0f);
+				}
+				else {
+					BLI_assert(0);
+				}
+			}
+			else {
+				glDisable(GL_POLYGON_OFFSET_FILL);
 			}
 		}
 	}

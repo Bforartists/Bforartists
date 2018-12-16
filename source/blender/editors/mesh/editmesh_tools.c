@@ -4059,7 +4059,7 @@ static int edbm_separate_exec(bContext *C, wmOperator *op)
 						            .calc_object_remap = true,
 						        }));
 
-						DEG_id_tag_update(&me->id, OB_RECALC_DATA);
+						DEG_id_tag_update(&me->id, ID_RECALC_GEOMETRY);
 						WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
 					}
 
@@ -4648,9 +4648,9 @@ static int edbm_poke_face_exec(bContext *C, wmOperator *op)
 void MESH_OT_poke(wmOperatorType *ot)
 {
 	static const EnumPropertyItem poke_center_modes[] = {
-		{BMOP_POKE_MEAN_WEIGHTED, "MEAN_WEIGHTED", 0, "Weighted Mean", "Weighted Mean Face Center"},
-		{BMOP_POKE_MEAN, "MEAN", 0, "Mean", "Mean Face Center"},
-		{BMOP_POKE_BOUNDS, "BOUNDS", 0, "Bounds", "Face Bounds Center"},
+		{BMOP_POKE_MEDIAN_WEIGHTED, "MEDIAN_WEIGHTED", 0, "Weighted Median", "Weighted median face center"},
+		{BMOP_POKE_MEDIAN, "MEDIAN", 0, "Median", "Median face center"},
+		{BMOP_POKE_BOUNDS, "BOUNDS", 0, "Bounds", "Face bounds center"},
 		{0, NULL, 0, NULL, NULL}};
 
 
@@ -4668,7 +4668,7 @@ void MESH_OT_poke(wmOperatorType *ot)
 
 	RNA_def_float_distance(ot->srna, "offset", 0.0f, -1e3f, 1e3f, "Poke Offset", "Poke Offset", -1.0f, 1.0f);
 	RNA_def_boolean(ot->srna, "use_relative_offset", false, "Offset Relative", "Scale the offset by surrounding geometry");
-	RNA_def_enum(ot->srna, "center_mode", poke_center_modes, BMOP_POKE_MEAN_WEIGHTED,
+	RNA_def_enum(ot->srna, "center_mode", poke_center_modes, BMOP_POKE_MEDIAN_WEIGHTED,
 	             "Poke Center", "Poke Face Center Calculation");
 }
 
@@ -5711,7 +5711,7 @@ static void sort_bmelem_flag(
 			BM_ITER_MESH_INDEX (fa, &iter, em->bm, BM_FACES_OF_MESH, i) {
 				if (BM_elem_flag_test(fa, flag)) {
 					float co[3];
-					BM_face_calc_center_mean(fa, co);
+					BM_face_calc_center_median(fa, co);
 					mul_m4_v3(mat, co);
 
 					pb[i] = false;
@@ -5777,7 +5777,7 @@ static void sort_bmelem_flag(
 			BM_ITER_MESH_INDEX (fa, &iter, em->bm, BM_FACES_OF_MESH, i) {
 				if (BM_elem_flag_test(fa, flag)) {
 					float co[3];
-					BM_face_calc_center_mean(fa, co);
+					BM_face_calc_center_median(fa, co);
 
 					pb[i] = false;
 					sb[affected[2]].org_idx = i;
@@ -6049,7 +6049,7 @@ static void sort_bmelem_flag(
 	}
 
 	BM_mesh_remap(em->bm, map[0], map[1], map[2]);
-	DEG_id_tag_update(ob->data, OB_RECALC_DATA);
+	DEG_id_tag_update(ob->data, ID_RECALC_GEOMETRY);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 
 	for (j = 3; j--; ) {
@@ -6975,7 +6975,7 @@ static int edbm_mark_freestyle_edge_exec(bContext *C, wmOperator *op)
 			}
 		}
 
-		DEG_id_tag_update(obedit->data, OB_RECALC_DATA);
+		DEG_id_tag_update(obedit->data, ID_RECALC_GEOMETRY);
 		WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 	}
 	MEM_freeN(objects);
@@ -7052,7 +7052,7 @@ static int edbm_mark_freestyle_face_exec(bContext *C, wmOperator *op)
 			}
 		}
 
-		DEG_id_tag_update(obedit->data, OB_RECALC_DATA);
+		DEG_id_tag_update(obedit->data, ID_RECALC_GEOMETRY);
 		WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 	}
 	MEM_freeN(objects);
@@ -7368,7 +7368,7 @@ static int edbm_point_normals_modal(bContext *C, wmOperator *op, const wmEvent *
 				new_mode = EDBM_CLNOR_POINTTO_MODE_COORDINATES;
 				view3d_operator_needs_opengl(C);
 				if (EDBM_select_pick(C, event->mval, false, false, false)) {
-					ED_object_editmode_calc_active_center(obedit, false, target);  /* Point to newly selected active. */
+					ED_object_calc_active_center_for_editmode(obedit, false, target);  /* Point to newly selected active. */
 					add_v3_v3(target, obedit->loc);
 					ret = OPERATOR_RUNNING_MODAL;
 				}
@@ -7401,7 +7401,7 @@ static int edbm_point_normals_modal(bContext *C, wmOperator *op, const wmEvent *
 						break;
 					}
 
-					case V3D_AROUND_CENTER_MEAN:
+					case V3D_AROUND_CENTER_MEDIAN:
 					{
 						bmesh_selected_verts_center_calc(bm, target);
 						add_v3_v3(target, obedit->loc);
@@ -7413,7 +7413,7 @@ static int edbm_point_normals_modal(bContext *C, wmOperator *op, const wmEvent *
 						break;
 
 					case V3D_AROUND_ACTIVE:
-						if (!ED_object_editmode_calc_active_center(obedit, false, target)) {
+						if (!ED_object_calc_active_center_for_editmode(obedit, false, target)) {
 							zero_v3(target);
 						}
 						add_v3_v3(target, obedit->loc);

@@ -33,6 +33,7 @@
 
 #include "BLF_api.h"
 
+#include "BKE_colortools.h"
 #include "BKE_global.h"
 #include "BKE_mesh.h"
 #include "BKE_object.h"
@@ -269,10 +270,19 @@ void DRW_transform_to_display(GPUTexture *tex, bool use_view_settings)
 	if (!(DST.options.is_image_render && !DST.options.is_scene_render)) {
 		Scene *scene = DST.draw_ctx.scene;
 		ColorManagedDisplaySettings *display_settings = &scene->display_settings;
-		ColorManagedViewSettings *view_settings = (use_view_settings) ? &scene->view_settings : NULL;
-
+		ColorManagedViewSettings *active_view_settings;
+		ColorManagedViewSettings default_view_settings;
+		if (use_view_settings) {
+			active_view_settings = &scene->view_settings;
+		}
+		else {
+			BKE_color_managed_view_settings_init_render(
+			        &default_view_settings,
+			        display_settings);
+			active_view_settings = &default_view_settings;
+		}
 		use_ocio = IMB_colormanagement_setup_glsl_draw_from_space(
-		        view_settings, display_settings, NULL, dither, false);
+		        active_view_settings, display_settings, NULL, dither, false);
 	}
 
 	if (!use_ocio) {
@@ -1008,6 +1018,10 @@ static void drw_engines_cache_populate(Object *ob)
 		}
 	}
 
+	/* TODO: in the future it would be nice to generate once for all viewports.
+	 * But we need threaded DRW manager first. */
+	drw_batch_cache_generate_requested(ob);
+
 	/* ... and clearing it here too because theses draw data are
 	 * from a mempool and must not be free individually by depsgraph. */
 	drw_drawdata_unlink_dupli((ID *)ob);
@@ -1241,10 +1255,10 @@ static void drw_engines_enable_from_mode(int mode)
 		case CTX_MODE_PAINT_VERTEX:
 		case CTX_MODE_PAINT_TEXTURE:
 		case CTX_MODE_OBJECT:
-		case CTX_MODE_GPENCIL_PAINT:
-		case CTX_MODE_GPENCIL_EDIT:
-		case CTX_MODE_GPENCIL_SCULPT:
-		case CTX_MODE_GPENCIL_WEIGHT:
+		case CTX_MODE_PAINT_GPENCIL:
+		case CTX_MODE_EDIT_GPENCIL:
+		case CTX_MODE_SCULPT_GPENCIL:
+		case CTX_MODE_WEIGHT_GPENCIL:
 			break;
 		default:
 			BLI_assert(!"Draw mode invalid");

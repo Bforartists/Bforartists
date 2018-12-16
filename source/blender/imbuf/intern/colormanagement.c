@@ -93,10 +93,12 @@ static int global_tot_display = 0;
 static int global_tot_view = 0;
 static int global_tot_looks = 0;
 
-/* Set to ITU-BT.709 / sRGB primaries weight. Brute force stupid, but only
- * option with no colormanagement in place.
- */
-float imbuf_luma_coefficients[3] = { 0.2126f, 0.7152f, 0.0722f };
+/* Luma coefficients and XYZ to RGB to be initialized by OCIO. */
+float imbuf_luma_coefficients[3] = {0.0f};
+float imbuf_xyz_to_rgb[3][3] = {{0.0f}};
+float imbuf_rgb_to_xyz[3][3] = {{0.0f}};
+float imbuf_xyz_to_linear_srgb[3][3] = {{0.0f}};
+float imbuf_linear_srgb_to_xyz[3][3] = {{0.0f}};
 
 /* lock used by pre-cached processors getters, so processor wouldn't
  * be created several times
@@ -130,7 +132,14 @@ static struct global_glsl_state {
 	/* Container for GLSL state needed for OCIO module. */
 	struct OCIO_GLSLDrawState *ocio_glsl_state;
 	struct OCIO_GLSLDrawState *transform_ocio_glsl_state;
-} global_glsl_state;
+} global_glsl_state = {NULL};
+
+static struct global_color_picking_state {
+	/* Cached processor for color picking conversion. */
+	OCIO_ConstProcessorRcPtr *processor_to;
+	OCIO_ConstProcessorRcPtr *processor_from;
+	bool failed;
+} global_color_picking_state = {NULL};
 
 /*********************** Color managed cache *************************/
 
@@ -556,6 +565,10 @@ static void colormanage_load_config(OCIO_ConstConfigRcPtr *config)
 
 	/* Load luminance coefficients. */
 	OCIO_configGetDefaultLumaCoefs(config, imbuf_luma_coefficients);
+	OCIO_configGetXYZtoRGB(config, imbuf_xyz_to_rgb);
+	invert_m3_m3(imbuf_rgb_to_xyz, imbuf_xyz_to_rgb);
+	copy_m3_m3(imbuf_xyz_to_linear_srgb, OCIO_XYZ_TO_LINEAR_SRGB);
+	invert_m3_m3(imbuf_linear_srgb_to_xyz, imbuf_xyz_to_linear_srgb);
 }
 
 static void colormanage_free_config(void)
@@ -698,6 +711,15 @@ void colormanagement_exit(void)
 
 	if (global_glsl_state.transform_ocio_glsl_state)
 		OCIO_freeOGLState(global_glsl_state.transform_ocio_glsl_state);
+
+	if (global_color_picking_state.processor_to)
+		OCIO_processorRelease(global_color_picking_state.processor_to);
+
+	if (global_color_picking_state.processor_from)
+		OCIO_processorRelease(global_color_picking_state.processor_from);
+
+	memset(&global_glsl_state, 0, sizeof(global_glsl_state));
+	memset(&global_color_picking_state, 0, sizeof(global_color_picking_state));
 
 	colormanage_free_config();
 }
@@ -930,23 +952,33 @@ static OCIO_ConstProcessorRcPtr *display_to_scene_linear_processor(ColorManagedD
 	return (OCIO_ConstProcessorRcPtr *) display->to_scene_linear;
 }
 
-static void init_default_view_settings(const ColorManagedDisplaySettings *display_settings,
-                                       ColorManagedViewSettings *view_settings)
+void IMB_colormanagement_init_default_view_settings(
+        ColorManagedViewSettings *view_settings,
+        const ColorManagedDisplaySettings *display_settings)
 {
-	ColorManagedDisplay *display;
-	ColorManagedView *default_view = NULL;
-
-	display = colormanage_display_get_named(display_settings->display_device);
-
-	if (display)
-		default_view = colormanage_view_get_default(display);
-
-	if (default_view)
-		BLI_strncpy(view_settings->view_transform, default_view->name, sizeof(view_settings->view_transform));
-	else
+	/* First, try use "Default" view transform of the requested device. */
+	ColorManagedView *default_view = colormanage_view_get_named_for_display(
+	        display_settings->display_device, "Default");
+	/* If that fails, we fall back to the default view transform of the display
+	 * as per OCIO configuration. */
+	if (default_view == NULL) {
+		ColorManagedDisplay *display = colormanage_display_get_named(
+		        display_settings->display_device);
+		if (display != NULL) {
+			default_view = colormanage_view_get_default(display);
+		}
+	}
+	if (default_view != NULL) {
+		BLI_strncpy(view_settings->view_transform,
+		            default_view->name,
+		            sizeof(view_settings->view_transform));
+	}
+	else {
 		view_settings->view_transform[0] = '\0';
-
+	}
+	/* TODO(sergey): Find a way to safely/reliable un-hardcode this. */
 	BLI_strncpy(view_settings->look, "None", sizeof(view_settings->look));
+	/* Initialize rest of the settings. */
 	view_settings->flag = 0;
 	view_settings->gamma = 1.0f;
 	view_settings->exposure = 0.0f;
@@ -1901,6 +1933,78 @@ void IMB_colormanagement_colorspace_to_scene_linear(float *buffer, int width, in
 	}
 }
 
+/* Conversion between color picking role. Typically we would expect such a
+ * requirements:
+ * - It is approximately perceptually linear, so that the HSV numbers and
+ *   the HSV cube/circle have an intuitive distribution.
+ * - It has the same gamut as the scene linear color space.
+ * - Color picking values 0..1 map to scene linear values in the 0..1 range,
+ *   so that picked albedo values are energy conserving.
+ */
+void IMB_colormanagement_scene_linear_to_color_picking_v3(float pixel[3])
+{
+	if (!global_color_picking_state.processor_to && !global_color_picking_state.failed) {
+		/* Create processor if none exists. */
+		BLI_mutex_lock(&processor_lock);
+
+		if (!global_color_picking_state.processor_to && !global_color_picking_state.failed) {
+			global_color_picking_state.processor_to =
+				create_colorspace_transform_processor(global_role_scene_linear,
+				                                      global_role_color_picking);
+
+			if (!global_color_picking_state.processor_to) {
+				global_color_picking_state.failed = true;
+			}
+		}
+
+		BLI_mutex_unlock(&processor_lock);
+	}
+
+	if (global_color_picking_state.processor_to) {
+		OCIO_processorApplyRGB(global_color_picking_state.processor_to, pixel);
+	}
+}
+
+void IMB_colormanagement_color_picking_to_scene_linear_v3(float pixel[3])
+{
+	if (!global_color_picking_state.processor_from && !global_color_picking_state.failed) {
+		/* Create processor if none exists. */
+		BLI_mutex_lock(&processor_lock);
+
+		if (!global_color_picking_state.processor_from && !global_color_picking_state.failed) {
+			global_color_picking_state.processor_from =
+				create_colorspace_transform_processor(global_role_color_picking,
+				                                      global_role_scene_linear);
+
+			if (!global_color_picking_state.processor_from) {
+				global_color_picking_state.failed = true;
+			}
+		}
+
+		BLI_mutex_unlock(&processor_lock);
+	}
+
+	if (global_color_picking_state.processor_from) {
+		OCIO_processorApplyRGB(global_color_picking_state.processor_from, pixel);
+	}
+}
+
+/* Conversion between sRGB, for rare cases like hex color or copy/pasting
+ * between UI theme and scene linear colors. */
+void IMB_colormanagement_scene_linear_to_srgb_v3(float pixel[3])
+{
+	mul_m3_v3(imbuf_rgb_to_xyz, pixel);
+	mul_m3_v3(imbuf_xyz_to_linear_srgb, pixel);
+	linearrgb_to_srgb_v3_v3(pixel, pixel);
+}
+
+void IMB_colormanagement_srgb_to_scene_linear_v3(float pixel[3])
+{
+	srgb_to_linearrgb_v3_v3(pixel, pixel);
+	mul_m3_v3(imbuf_linear_srgb_to_xyz, pixel);
+	mul_m3_v3(imbuf_xyz_to_rgb, pixel);
+}
+
 /* convert pixel from scene linear to display space using default view
  * used by performance-critical areas such as color-related widgets where we want to reduce
  * amount of per-widget allocations
@@ -2138,11 +2242,10 @@ unsigned char *IMB_display_buffer_acquire(ImBuf *ibuf, const ColorManagedViewSet
 		applied_view_settings = view_settings;
 	}
 	else {
-		/* if no view settings were specified, use default display transformation
-		 * this happens for images which don't want to be displayed with render settings
-		 */
-
-		init_default_view_settings(display_settings,  &default_view_settings);
+		/* If no view settings were specified, use default ones, which will
+		 * attempt not to do any extra color correction. */
+		IMB_colormanagement_init_default_view_settings(
+		        &default_view_settings, display_settings);
 		applied_view_settings = &default_view_settings;
 	}
 
@@ -2425,6 +2528,22 @@ ColorManagedView *colormanage_view_get_indexed(int index)
 {
 	/* view transform indices are 1-based */
 	return BLI_findlink(&global_views, index - 1);
+}
+
+ColorManagedView *colormanage_view_get_named_for_display(
+        const char *display_name, const char *name)
+{
+	ColorManagedDisplay *display = colormanage_display_get_named(display_name);
+	if (display == NULL) {
+		return NULL;
+	}
+	LISTBASE_FOREACH(LinkData *, view_link, &display->views) {
+		ColorManagedView *view = view_link->data;
+		if (STRCASEEQ(name, view->name)) {
+			return view;
+		}
+	}
+	return NULL;
 }
 
 int IMB_colormanagement_view_get_named_index(const char *name)
@@ -3144,7 +3263,8 @@ ColormanageProcessor *IMB_colormanagement_display_processor_new(const ColorManag
 		applied_view_settings = view_settings;
 	}
 	else {
-		init_default_view_settings(display_settings,  &default_view_settings);
+		IMB_colormanagement_init_default_view_settings(
+		        &default_view_settings, display_settings);
 		applied_view_settings = &default_view_settings;
 	}
 
@@ -3441,11 +3561,10 @@ bool IMB_colormanagement_setup_glsl_draw_from_space(const ColorManagedViewSettin
 		applied_view_settings = view_settings;
 	}
 	else {
-		/* if no view settings were specified, use default display transformation
-		 * this happens for images which don't want to be displayed with render settings
-		 */
-
-		init_default_view_settings(display_settings,  &default_view_settings);
+		/* If no view settings were specified, use default ones, which will
+		 * attempt not to do any extra color correction. */
+		IMB_colormanagement_init_default_view_settings(
+		        &default_view_settings, display_settings);
 		applied_view_settings = &default_view_settings;
 	}
 

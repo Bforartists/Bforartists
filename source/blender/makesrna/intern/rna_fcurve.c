@@ -143,7 +143,7 @@ static void rna_ChannelDriver_update_data(Main *bmain, Scene *scene, PointerRNA 
 
 	/* TODO: this really needs an update guard... */
 	DEG_relations_tag_update(bmain);
-	DEG_id_tag_update(id, OB_RECALC_OB | OB_RECALC_DATA);
+	DEG_id_tag_update(id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 
 	WM_main_add_notifier(NC_SCENE | ND_FRAME, scene);
 }
@@ -482,6 +482,11 @@ static void rna_FCurve_update_data(Main *UNUSED(bmain), Scene *UNUSED(scene), Po
 	rna_FCurve_update_data_ex((FCurve *)ptr->data);
 }
 
+static void rna_FCurve_update_data_relations(Main *bmain, Scene *UNUSED(scene), PointerRNA *UNUSED(ptr))
+{
+	DEG_relations_tag_update(bmain);
+}
+
 /* RNA update callback for F-Curves to indicate that there are copy-on-write tagging/flushing needed
  * (e.g. for properties that affect how animation gets evaluated)
  */
@@ -490,7 +495,7 @@ static void rna_FCurve_update_eval(Main *UNUSED(bmain), Scene *UNUSED(scene), Po
 	IdAdtTemplate *iat = (IdAdtTemplate *)ptr->id.data;
 	if (iat && iat->adt && iat->adt->action) {
 		/* action is separate datablock, needs separate tag */
-		DEG_id_tag_update(&iat->adt->action->id, DEG_TAG_COPY_ON_WRITE);
+		DEG_id_tag_update(&iat->adt->action->id, ID_RECALC_COPY_ON_WRITE);
 	}
 }
 
@@ -604,18 +609,18 @@ static void rna_FModifier_update(Main *UNUSED(bmain), Scene *UNUSED(scene), Poin
 	FModifier *fcm = (FModifier *)ptr->data;
 	AnimData *adt = BKE_animdata_from_id(id);
 
-	DEG_id_tag_update(id, (GS(id->name) == ID_OB) ? OB_RECALC_OB : OB_RECALC_DATA);
+	DEG_id_tag_update(id, (GS(id->name) == ID_OB) ? ID_RECALC_TRANSFORM : ID_RECALC_GEOMETRY);
 
 	/* tag datablock for time update so that animation is recalculated,
 	 * as FModifiers affect how animation plays...
 	 */
-	DEG_id_tag_update(id, DEG_TAG_TIME);
+	DEG_id_tag_update(id, ID_RECALC_ANIMATION);
 	if (adt != NULL) {
 		adt->recalc |= ADT_RECALC_ANIM;
 
 		if (adt->action != NULL) {
 			/* action is separate datablock, needs separate tag */
-			DEG_id_tag_update(&adt->action->id, DEG_TAG_COPY_ON_WRITE);
+			DEG_id_tag_update(&adt->action->id, ID_RECALC_COPY_ON_WRITE);
 		}
 	}
 
@@ -1962,14 +1967,14 @@ static void rna_def_fcurve(BlenderRNA *brna)
 	                              "rna_FCurve_RnaPath_set");
 	RNA_def_property_ui_text(prop, "Data Path", "RNA Path to property affected by F-Curve");
 	/* XXX need an update callback for this to that animation gets evaluated */
-	RNA_def_property_update(prop, NC_ANIMATION, NULL);
+	RNA_def_property_update(prop, NC_ANIMATION, "rna_FCurve_update_data_relations");
 
 	/* called 'index' when given as function arg */
 	prop = RNA_def_property(srna, "array_index", PROP_INT, PROP_NONE);
 	RNA_def_property_ui_text(prop, "RNA Array Index",
 	                         "Index to the specific property affected by F-Curve if applicable");
 	/* XXX need an update callback for this so that animation gets evaluated */
-	RNA_def_property_update(prop, NC_ANIMATION, NULL);
+	RNA_def_property_update(prop, NC_ANIMATION, "rna_FCurve_update_data_relations");
 
 	/* Color */
 	prop = RNA_def_property(srna, "color_mode", PROP_ENUM, PROP_NONE);
