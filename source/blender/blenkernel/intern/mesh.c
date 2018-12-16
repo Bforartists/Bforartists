@@ -529,7 +529,7 @@ Mesh *BKE_mesh_add(Main *bmain, const char *name)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_mesh_copy_data(Main *bmain, Mesh *me_dst, const Mesh *me_src, const int flag)
 {
@@ -662,6 +662,8 @@ static Mesh *mesh_new_nomain_from_template_ex(
 	me_dst->totloop = loops_len;
 	me_dst->totpoly = polys_len;
 
+	me_dst->cd_flag = me_src->cd_flag;
+
 	CustomData_copy(&me_src->vdata, &me_dst->vdata, mask, CD_CALLOC, verts_len);
 	CustomData_copy(&me_src->edata, &me_dst->edata, mask, CD_CALLOC, edges_len);
 	CustomData_copy(&me_src->ldata, &me_dst->ldata, mask, CD_CALLOC, loops_len);
@@ -699,7 +701,8 @@ Mesh *BKE_mesh_copy_for_eval(struct Mesh *source, bool reference)
 	int flags = (LIB_ID_CREATE_NO_MAIN |
 	             LIB_ID_CREATE_NO_USER_REFCOUNT |
 	             LIB_ID_CREATE_NO_DEG_TAG |
-	             LIB_ID_COPY_NO_PREVIEW);
+	             LIB_ID_COPY_NO_PREVIEW |
+	             LIB_ID_COPY_RUNTIME);
 
 	if (reference) {
 		flags |= LIB_ID_COPY_CD_REFERENCE;
@@ -920,7 +923,10 @@ BoundBox *BKE_mesh_boundbox_get(Object *ob)
 		float min[3], max[3];
 
 		INIT_MINMAX(min, max);
-		BKE_mesh_minmax(me, min, max);
+		if (!BKE_mesh_minmax(me, min, max)) {
+			min[0] = min[1] = min[2] = -1.0f;
+			max[0] = max[1] = max[2] = 1.0f;
+		}
 
 		if (ob->bb == NULL) {
 			ob->bb = MEM_mallocN(sizeof(*ob->bb), __func__);
@@ -1593,7 +1599,7 @@ void BKE_mesh_apply_vert_normals(Mesh *mesh, short (*vertNormals)[3])
 /**
  * Compute 'split' (aka loop, or per face corner's) normals.
  *
- * \param r_lnors_spacearr Allows to get computed loop normal space array. That data, among other things,
+ * \param r_lnors_spacearr: Allows to get computed loop normal space array. That data, among other things,
  *                         contains 'smooth fan' info, useful e.g. to split geometry along sharp edges...
  */
 void BKE_mesh_calc_normals_split_ex(Mesh *mesh, MLoopNorSpaceArray *r_lnors_spacearr)

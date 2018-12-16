@@ -146,7 +146,7 @@ typedef struct uiWidgetType {
 	/* converted colors for state */
 	uiWidgetColors wcol;
 
-	void (*state)(struct uiWidgetType *, int state);
+	void (*state)(struct uiWidgetType *, int state, int drawflag);
 	void (*draw)(uiWidgetColors *, rcti *, int state, int roundboxalign);
 	void (*custom)(uiBut *, uiWidgetColors *, rcti *, int state, int roundboxalign);
 	void (*text)(uiFontStyle *, uiWidgetColors *, uiBut *, rcti *);
@@ -2231,7 +2231,7 @@ static void widget_active_color(char cp[3])
 }
 
 /* copy colors from theme, and set changes in it based on state */
-static void widget_state(uiWidgetType *wt, int state)
+static void widget_state(uiWidgetType *wt, int state, int drawflag)
 {
 	uiWidgetStateColors *wcol_state = wt->wcol_state;
 
@@ -2249,8 +2249,9 @@ static void widget_state(uiWidgetType *wt, int state)
 
 	if (state & UI_SELECT) {
 		copy_v4_v4_char(wt->wcol.inner, wt->wcol.inner_sel);
-
-		if (state & UI_BUT_ANIMATED_KEY)
+		if (drawflag & UI_BUT_ANIMATED_CHANGED)
+			widget_state_blend(wt->wcol.inner, wcol_state->inner_changed_sel, wcol_state->blend);
+		else if (state & UI_BUT_ANIMATED_KEY)
 			widget_state_blend(wt->wcol.inner, wcol_state->inner_key_sel, wcol_state->blend);
 		else if (state & UI_BUT_ANIMATED)
 			widget_state_blend(wt->wcol.inner, wcol_state->inner_anim_sel, wcol_state->blend);
@@ -2265,7 +2266,9 @@ static void widget_state(uiWidgetType *wt, int state)
 			SWAP(short, wt->wcol.shadetop, wt->wcol.shadedown);
 	}
 	else {
-		if (state & UI_BUT_ANIMATED_KEY)
+		if (drawflag & UI_BUT_ANIMATED_CHANGED)
+			widget_state_blend(wt->wcol.inner, wcol_state->inner_changed, wcol_state->blend);
+		else if (state & UI_BUT_ANIMATED_KEY)
 			widget_state_blend(wt->wcol.inner, wcol_state->inner_key, wcol_state->blend);
 		else if (state & UI_BUT_ANIMATED)
 			widget_state_blend(wt->wcol.inner, wcol_state->inner_anim, wcol_state->blend);
@@ -2303,19 +2306,21 @@ static void widget_state(uiWidgetType *wt, int state)
 }
 
 /* sliders use special hack which sets 'item' as inner when drawing filling */
-static void widget_state_numslider(uiWidgetType *wt, int state)
+static void widget_state_numslider(uiWidgetType *wt, int state, int drawflag)
 {
 	uiWidgetStateColors *wcol_state = wt->wcol_state;
 	float blend = wcol_state->blend - 0.2f; /* XXX special tweak to make sure that bar will still be visible */
 
 	/* call this for option button */
-	widget_state(wt, state);
+	widget_state(wt, state, drawflag);
 
 	/* now, set the inner-part so that it reflects state settings too */
 	/* TODO: maybe we should have separate settings for the blending colors used for this case? */
 	if (state & UI_SELECT) {
 
-		if (state & UI_BUT_ANIMATED_KEY)
+		if (drawflag & UI_BUT_ANIMATED_CHANGED)
+			widget_state_blend(wt->wcol.item, wcol_state->inner_changed_sel, blend);
+		else if (state & UI_BUT_ANIMATED_KEY)
 			widget_state_blend(wt->wcol.item, wcol_state->inner_key_sel, blend);
 		else if (state & UI_BUT_ANIMATED)
 			widget_state_blend(wt->wcol.item, wcol_state->inner_anim_sel, blend);
@@ -2328,7 +2333,9 @@ static void widget_state_numslider(uiWidgetType *wt, int state)
 			SWAP(short, wt->wcol.shadetop, wt->wcol.shadedown);
 	}
 	else {
-		if (state & UI_BUT_ANIMATED_KEY)
+		if (drawflag & UI_BUT_ANIMATED_CHANGED)
+			widget_state_blend(wt->wcol.item, wcol_state->inner_changed, blend);
+		else if (state & UI_BUT_ANIMATED_KEY)
 			widget_state_blend(wt->wcol.item, wcol_state->inner_key, blend);
 		else if (state & UI_BUT_ANIMATED)
 			widget_state_blend(wt->wcol.item, wcol_state->inner_anim, blend);
@@ -2340,12 +2347,12 @@ static void widget_state_numslider(uiWidgetType *wt, int state)
 }
 
 /* labels use theme colors for text */
-static void widget_state_option_menu(uiWidgetType *wt, int state)
+static void widget_state_option_menu(uiWidgetType *wt, int state, int drawflag)
 {
 	bTheme *btheme = UI_GetTheme(); /* XXX */
 
 	/* call this for option button */
-	widget_state(wt, state);
+	widget_state(wt, state, drawflag);
 
 	/* if not selected we get theme from menu back */
 	if (state & UI_SELECT)
@@ -2355,19 +2362,19 @@ static void widget_state_option_menu(uiWidgetType *wt, int state)
 }
 
 
-static void widget_state_nothing(uiWidgetType *wt, int UNUSED(state))
+static void widget_state_nothing(uiWidgetType *wt, int UNUSED(state), int UNUSED(drawflag))
 {
 	wt->wcol = *(wt->wcol_theme);
 }
 
 /* special case, button that calls pulldown */
-static void widget_state_pulldown(uiWidgetType *wt, int UNUSED(state))
+static void widget_state_pulldown(uiWidgetType *wt, int UNUSED(state), int UNUSED(drawflag))
 {
 	wt->wcol = *(wt->wcol_theme);
 }
 
 /* special case, pie menu items */
-static void widget_state_pie_menu_item(uiWidgetType *wt, int state)
+static void widget_state_pie_menu_item(uiWidgetType *wt, int state, int UNUSED(drawflag))
 {
 	wt->wcol = *(wt->wcol_theme);
 
@@ -2399,7 +2406,7 @@ static void widget_state_pie_menu_item(uiWidgetType *wt, int state)
 }
 
 /* special case, menu items */
-static void widget_state_menu_item(uiWidgetType *wt, int state)
+static void widget_state_menu_item(uiWidgetType *wt, int state, int UNUSED(drawflag))
 {
 	wt->wcol = *(wt->wcol_theme);
 
@@ -2574,23 +2581,16 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, uiWidgetColors *wcol, const rcti *
 	float radius = (float)min_ii(BLI_rcti_size_x(rect), BLI_rcti_size_y(rect)) / 2.0f;
 
 	ColorPicker *cpicker = but->custom_data;
-	const float *hsv_ptr = cpicker->color_data;
-	float rgb[3], hsvo[3], hsv[3], col[3], colcent[3];
-	bool color_profile = ui_but_is_colorpicker_display_space(but);
+	float rgb[3], hsv[3], rgb_center[3];
+	bool is_color_gamma = ui_but_is_color_gamma(but);
 
-	/* color */
+	/* Initialize for compatibility. */
+	copy_v3_v3(hsv, cpicker->color_data);
+
+	/* Compute current hue. */
 	ui_but_v3_get(but, rgb);
-
-	/* since we use compat functions on both 'hsv' and 'hsvo', they need to be initialized */
-	hsvo[0] = hsv[0] = hsv_ptr[0];
-	hsvo[1] = hsv[1] = hsv_ptr[1];
-	hsvo[2] = hsv[2] = hsv_ptr[2];
-
-	if (color_profile)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
-
+	ui_scene_linear_to_color_picker_space(but, rgb);
 	ui_rgb_to_color_picker_compat_v(rgb, hsv);
-	copy_v3_v3(hsvo, hsv);
 
 	CLAMP(hsv[2], 0.0f, 1.0f); /* for display only */
 
@@ -2604,7 +2604,13 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, uiWidgetColors *wcol, const rcti *
 			hsv[2] = 0.5f;
 	}
 
-	ui_color_picker_to_rgb(0.0f, 0.0f, hsv[2], colcent, colcent + 1, colcent + 2);
+	const float hsv_center[3] = {0.0f, 0.0f, hsv[2]};
+	ui_color_picker_to_rgb_v(hsv_center, rgb_center);
+	ui_color_picker_to_scene_linear_space(but, rgb_center);
+
+	if (!is_color_gamma) {
+		ui_block_cm_to_display_space_v3(but->block, rgb_center);
+	}
 
 	GPUVertFormat *format = immVertexFormat();
 	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
@@ -2613,19 +2619,27 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, uiWidgetColors *wcol, const rcti *
 	immBindBuiltinProgram(GPU_SHADER_2D_SMOOTH_COLOR);
 
 	immBegin(GPU_PRIM_TRI_FAN, tot + 2);
-	immAttr3fv(color, colcent);
+	immAttr3fv(color, rgb_center);
 	immVertex2f(pos, centx, centy);
 
 	float ang = 0.0f;
 	for (int a = 0; a <= tot; a++, ang += radstep) {
 		float si = sinf(ang);
 		float co = cosf(ang);
+		float hsv_ang[3];
+		float rgb_ang[3];
 
-		ui_hsvcircle_vals_from_pos(hsv, hsv + 1, rect, centx + co * radius, centy + si * radius);
+		ui_hsvcircle_vals_from_pos(hsv_ang, hsv_ang + 1, rect, centx + co * radius, centy + si * radius);
+		hsv_ang[2] = hsv[2];
 
-		ui_color_picker_to_rgb_v(hsv, col);
+		ui_color_picker_to_rgb_v(hsv_ang, rgb_ang);
+		ui_color_picker_to_scene_linear_space(but, rgb_ang);
 
-		immAttr3fv(color, col);
+		if (!is_color_gamma) {
+			ui_block_cm_to_display_space_v3(but->block, rgb_ang);
+		}
+
+		immAttr3fv(color, rgb_ang);
 		immVertex2f(pos, centx + co * radius, centy + si * radius);
 	}
 	immEnd();
@@ -2649,8 +2663,13 @@ static void ui_draw_but_HSVCIRCLE(uiBut *but, uiWidgetColors *wcol, const rcti *
 	GPU_line_smooth(false);
 
 	/* cursor */
+	copy_v3_v3(hsv, cpicker->color_data);
+	ui_but_v3_get(but, rgb);
+	ui_scene_linear_to_color_picker_space(but, rgb);
+	ui_rgb_to_color_picker_compat_v(rgb, hsv);
+
 	float xpos, ypos;
-	ui_hsvcircle_pos_from_vals(but, rect, hsvo, &xpos, &ypos);
+	ui_hsvcircle_pos_from_vals(but, rect, hsv, &xpos, &ypos);
 	ui_hsv_cursor(xpos, ypos);
 }
 
@@ -2805,18 +2824,6 @@ void ui_draw_gradient(const rcti *rect, const float hsv[3], const int type, cons
 	immUnbindProgram();
 }
 
-bool ui_but_is_colorpicker_display_space(uiBut *but)
-{
-	bool color_profile = but->block->color_profile;
-
-	if (but->rnaprop) {
-		if (RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA)
-			color_profile = false;
-	}
-
-	return color_profile;
-}
-
 void ui_hsvcube_pos_from_vals(uiBut *but, const rcti *rect, float *hsv, float *xp, float *yp)
 {
 	float x = 0.0f, y = 0.0f;
@@ -2858,15 +2865,12 @@ static void ui_draw_but_HSVCUBE(uiBut *but, const rcti *rect)
 	ColorPicker *cpicker = but->custom_data;
 	float *hsv = cpicker->color_data;
 	float hsv_n[3];
-	bool use_display_colorspace = ui_but_is_colorpicker_display_space(but);
 
+	/* Initialize for compatibility. */
 	copy_v3_v3(hsv_n, hsv);
 
 	ui_but_v3_get(but, rgb);
-
-	if (use_display_colorspace)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
-
+	ui_scene_linear_to_color_picker_space(but, rgb);
 	rgb_to_hsv_compat_v(rgb, hsv_n);
 
 	ui_draw_gradient(rect, hsv_n, but->a1, 1.0f);
@@ -2894,15 +2898,9 @@ static void ui_draw_but_HSV_v(uiBut *but, const rcti *rect)
 	const float rad = wcol->roundness * BLI_rcti_size_x(rect);
 	float x, y;
 	float rgb[3], hsv[3], v;
-	bool color_profile = but->block->color_profile;
-
-	if (but->rnaprop && RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA)
-		color_profile = false;
 
 	ui_but_v3_get(but, rgb);
-
-	if (color_profile)
-		ui_block_cm_to_display_space_v3(but->block, rgb);
+	ui_scene_linear_to_color_picker_space(but, rgb);
 
 	if (but->a1 == UI_GRAD_L_ALT)
 		rgb_to_hsl_v(rgb, hsv);
@@ -2913,9 +2911,6 @@ static void ui_draw_but_HSV_v(uiBut *but, const rcti *rect)
 	/* map v from property range to [0,1] */
 	if (but->a1 == UI_GRAD_V_ALT) {
 		float min = but->softmin, max = but->softmax;
-		if (color_profile) {
-			ui_block_cm_to_display_space_range(but->block, &min, &max);
-		}
 		v = (v - min) / (max - min);
 	}
 
@@ -3371,15 +3366,11 @@ static void widget_swatch(uiBut *but, uiWidgetColors *wcol, rcti *rect, int stat
 {
 	uiWidgetBase wtb;
 	float rad, col[4];
-	bool color_profile = but->block->color_profile;
 
 	col[3] = 1.0f;
 
 	if (but->rnaprop) {
 		BLI_assert(but->rnaindex == -1);
-
-		if (RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA)
-			color_profile = false;
 
 		if (RNA_property_array_length(&but->rnapoin, but->rnaprop) == 4) {
 			col[3] = RNA_property_float_get_index(&but->rnapoin, but->rnaprop, 3);
@@ -3393,7 +3384,9 @@ static void widget_swatch(uiBut *but, uiWidgetColors *wcol, rcti *rect, int stat
 
 	ui_but_v3_get(but, col);
 
-	if (state & (UI_BUT_ANIMATED | UI_BUT_ANIMATED_KEY | UI_BUT_DRIVEN | UI_BUT_OVERRIDEN | UI_BUT_REDALERT)) {
+	if ((state & (UI_BUT_ANIMATED | UI_BUT_ANIMATED_KEY | UI_BUT_DRIVEN | UI_BUT_OVERRIDEN | UI_BUT_REDALERT)) ||
+	    (but->drawflag & UI_BUT_ANIMATED_CHANGED))
+	{
 		/* draw based on state - color for keyed etc */
 		widgetbase_draw(&wtb, wcol);
 
@@ -3406,7 +3399,7 @@ static void widget_swatch(uiBut *but, uiWidgetColors *wcol, rcti *rect, int stat
 		round_box_edges(&wtb, roundboxalign, rect, rad);
 	}
 
-	if (color_profile)
+	if (!ui_but_is_color_gamma(but))
 		ui_block_cm_to_display_space_v3(but->block, col);
 
 	rgba_float_to_uchar((unsigned char *)wcol->inner, col);
@@ -3642,18 +3635,18 @@ static void widget_optionbut(uiWidgetColors *wcol, rcti *rect, int state, int UN
 }
 
 /* labels use Editor theme colors for text */
-static void widget_state_label(uiWidgetType *wt, int state)
+static void widget_state_label(uiWidgetType *wt, int state, int drawflag)
 {
 	if (state & UI_BUT_LIST_ITEM) {
 		/* Override default label theme's colors. */
 		bTheme *btheme = UI_GetTheme();
 		wt->wcol_theme = &btheme->tui.wcol_list_item;
 		/* call this for option button */
-		widget_state(wt, state);
+		widget_state(wt, state, drawflag);
 	}
 	else {
 		/* call this for option button */
-		widget_state(wt, state);
+		widget_state(wt, state, drawflag);
 		if (state & UI_SELECT)
 			UI_GetThemeColor3ubv(TH_TEXT_HI, (unsigned char *)wt->wcol.text);
 		else
@@ -4314,13 +4307,14 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 
 	if (wt) {
 		//rcti disablerect = *rect; /* rect gets clipped smaller for text */
-		int roundboxalign, state;
+		int roundboxalign, state, drawflag;
 		bool disabled = false;
 
 		roundboxalign = widget_roundbox_set(but, rect);
 
 		/* Mask out flags re-used for local state. */
 		state = but->flag & ~UI_STATE_FLAGS_ALL;
+		drawflag = but->drawflag;
 
 		if (state & UI_SELECT_DRAW) {
 			state |= UI_SELECT;
@@ -4352,7 +4346,7 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 		if (disabled)
 			ui_widget_color_disabled(wt);
 
-		wt->state(wt, state);
+		wt->state(wt, state, drawflag);
 		if (wt->custom)
 			wt->custom(but, &wt->wcol, rect, state, roundboxalign);
 		else if (wt->draw)
@@ -4366,7 +4360,7 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 			if ((state & UI_ACTIVE) && ui_but_is_popover_once_compat(but)) {
 				uiWidgetType wt_back = *wt;
 				uiWidgetType *wt_temp = widget_type(UI_WTYPE_MENU_ITEM);
-				wt_temp->state(wt_temp, state);
+				wt_temp->state(wt_temp, state, drawflag);
 				copy_v4_v4_char(wt->wcol.inner, wt->wcol.inner_sel);
 				wt->wcol.inner[3] = 128;
 				wt->wcol.roundness = 0.5f;
@@ -4415,7 +4409,7 @@ void ui_draw_menu_back(uiStyle *UNUSED(style), uiBlock *block, rcti *rect)
 {
 	uiWidgetType *wt = widget_type(UI_WTYPE_MENU_BACK);
 
-	wt->state(wt, 0);
+	wt->state(wt, 0, 0);
 	if (block)
 		wt->draw(&wt->wcol, rect, block->flag, block->direction);
 	else
@@ -4489,7 +4483,7 @@ void ui_draw_popover_back(ARegion *ar, uiStyle *UNUSED(style), uiBlock *block, r
 		ui_draw_popover_back_impl(wt->wcol_theme, rect, block->direction, U.widget_unit / block->aspect,  mval_origin);
 	}
 	else {
-		wt->state(wt, 0);
+		wt->state(wt, 0, 0);
 		wt->draw(&wt->wcol, rect, 0, 0);
 	}
 
@@ -4641,7 +4635,7 @@ void ui_draw_widget_back_color(
 	}
 
 	rcti rect_copy = *rect;
-	wt->state(wt, 0);
+	wt->state(wt, 0, 0);
 	if (color) {
 		rgba_float_to_uchar((unsigned char *)wt->wcol.inner, color);
 	}
@@ -4655,7 +4649,7 @@ void ui_draw_widget_back(uiWidgetTypeEnum type, bool use_shadow, const rcti *rec
 void ui_draw_tooltip_background(uiStyle *UNUSED(style), uiBlock *UNUSED(block), rcti *rect)
 {
 	uiWidgetType *wt = widget_type(UI_WTYPE_TOOLTIP);
-	wt->state(wt, 0);
+	wt->state(wt, 0, 0);
 	/* wt->draw ends up using same function to draw the tooltip as menu_back */
 	wt->draw(&wt->wcol, rect, 0, 0);
 }
@@ -4668,7 +4662,7 @@ void ui_draw_menu_item(uiFontStyle *fstyle, rcti *rect, const char *name, int ic
 	rcti _rect = *rect;
 	char *cpoin = NULL;
 
-	wt->state(wt, state);
+	wt->state(wt, state, 0);
 	wt->draw(&wt->wcol, rect, 0, 0);
 
 	UI_fontstyle_set(fstyle);
@@ -4748,7 +4742,7 @@ void ui_draw_preview_item(uiFontStyle *fstyle, rcti *rect, const char *name, int
 	uiWidgetType *wt = widget_type(UI_WTYPE_MENU_ITEM);
 
 	/* drawing button background */
-	wt->state(wt, state);
+	wt->state(wt, state, 0);
 	wt->draw(&wt->wcol, rect, 0, 0);
 
 	/* draw icon in rect above the space reserved for the label */

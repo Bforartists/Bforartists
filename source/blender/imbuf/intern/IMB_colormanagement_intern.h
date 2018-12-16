@@ -42,6 +42,8 @@ struct OCIO_ConstProcessorRcPtr;
 struct ImBuf;
 
 extern float imbuf_luma_coefficients[3];
+extern float imbuf_xyz_to_rgb[3][3];
+extern float imbuf_rgb_to_xyz[3][3];
 
 #define MAX_COLORSPACE_NAME          64
 #define MAX_COLORSPACE_DESCRIPTION  512
@@ -103,6 +105,8 @@ struct ColorManagedView *colormanage_view_get_default(const ColorManagedDisplay 
 struct ColorManagedView *colormanage_view_add(const char *name);
 struct ColorManagedView *colormanage_view_get_indexed(int index);
 struct ColorManagedView *colormanage_view_get_named(const char *name);
+struct ColorManagedView *colormanage_view_get_named_for_display(
+        const char *display_name, const char *name);
 
 struct ColorSpace *colormanage_colorspace_add(const char *name, const char *description, bool is_invertible, bool is_data);
 struct ColorSpace *colormanage_colorspace_get_named(const char *name);

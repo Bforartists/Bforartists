@@ -54,6 +54,7 @@
 
 #include "BLT_translation.h"
 
+#include "BKE_animsys.h"
 #include "BKE_context.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
@@ -345,7 +346,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
 	int filter;
 
 	/* free existing ghost curves */
-	free_fcurves(&sipo->ghostCurves);
+	free_fcurves(&sipo->runtime.ghost_curves);
 
 	/* sanity check */
 	if (start >= end) {
@@ -396,7 +397,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
 		gcu->color[2] = fcu->color[2] - 0.07f;
 
 		/* store new ghost curve */
-		BLI_addtail(&sipo->ghostCurves, gcu);
+		BLI_addtail(&sipo->runtime.ghost_curves, gcu);
 
 		/* restore driver */
 		fcu->driver = driver;
@@ -463,11 +464,11 @@ static int graphkeys_clear_ghostcurves_exec(bContext *C, wmOperator *UNUSED(op))
 	sipo = (SpaceIpo *)ac.sl;
 
 	/* if no ghost curves, don't do anything */
-	if (BLI_listbase_is_empty(&sipo->ghostCurves))
+	if (BLI_listbase_is_empty(&sipo->runtime.ghost_curves)) {
 		return OPERATOR_CANCELLED;
-
+	}
 	/* free ghost curves */
-	free_fcurves(&sipo->ghostCurves);
+	free_fcurves(&sipo->runtime.ghost_curves);
 
 	/* update this editor only */
 	ED_area_tag_redraw(CTX_wm_area(C));
@@ -521,6 +522,7 @@ static const EnumPropertyItem prop_graphkeys_insertkey_types[] = {
 static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 {
 	ListBase anim_data = {NULL, NULL};
+	ListBase nla_cache = {NULL, NULL};
 	bAnimListElem *ale;
 	int filter;
 	size_t num_items;
@@ -602,7 +604,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 			 */
 			if (ale->id && !ale->owner && !fcu->driver) {
 				insert_keyframe(ac->bmain, depsgraph, reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
-				                fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, flag);
+				                fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, &nla_cache, flag);
 			}
 			else {
 				AnimData *adt = ANIM_nla_mapping_get(ac, ale);
@@ -620,6 +622,8 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 			ale->update |= ANIM_UPDATE_DEFAULT;
 		}
 	}
+
+	BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 
 	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
