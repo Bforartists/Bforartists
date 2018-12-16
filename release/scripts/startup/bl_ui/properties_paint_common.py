@@ -116,9 +116,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
     if brush.image_tool in {'DRAW', 'FILL'}:
         if brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
             if not brush.use_gradient:
-                #Hidable color picker
-                if not addon_prefs.brushpanel_hide_colorpicker:
-                    panel.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+                panel.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
 
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
