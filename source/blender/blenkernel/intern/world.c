@@ -68,7 +68,7 @@ void BKE_world_free(World *wrld)
 
 	/* is no lib link block, but world extension */
 	if (wrld->nodetree) {
-		ntreeFreeTree(wrld->nodetree);
+		ntreeFreeNestedTree(wrld->nodetree);
 		MEM_freeN(wrld->nodetree);
 		wrld->nodetree = NULL;
 	}
@@ -112,7 +112,7 @@ World *BKE_world_add(Main *bmain, const char *name)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_world_copy_data(Main *bmain, World *wrld_dst, const World *wrld_src, const int flag)
 {

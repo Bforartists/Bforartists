@@ -56,12 +56,14 @@
 #include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_node.h"
+#include "BKE_object.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RE_engine.h"
 #include "RE_pipeline.h"
@@ -653,18 +655,19 @@ static int bake(
         const char *custom_cage, const char *filepath, const int width, const int height,
         const char *identifier, ScrArea *sa, const char *uv_layer)
 {
+	/* We build a depsgraph for the baking, so we don't need to change the original data to adjust visibility and modifiers. */
 	Depsgraph *depsgraph = DEG_graph_new(scene, view_layer, DAG_EVAL_RENDER);
+	DEG_graph_build_from_view_layer(depsgraph, bmain, scene, view_layer);
 
 	int op_result = OPERATOR_CANCELLED;
 	bool ok = false;
 
 	Object *ob_cage = NULL;
+	Object *ob_cage_eval = NULL;
+	Object *ob_low_eval = NULL;
 
 	BakeHighPolyData *highpoly = NULL;
 	int tot_highpoly = 0;
-
-	char restrict_flag_low = ob_low->restrictflag;
-	char restrict_flag_cage = 0;
 
 	Mesh *me_low = NULL;
 	Mesh *me_cage = NULL;
@@ -777,8 +780,9 @@ static int bake(
 				goto cleanup;
 			}
 			else {
-				restrict_flag_cage = ob_cage->restrictflag;
-				ob_cage->restrictflag |= OB_RESTRICT_RENDER;
+				ob_cage_eval = DEG_get_evaluated_object(depsgraph, ob_cage);
+				ob_cage_eval->restrictflag |= OB_RESTRICT_RENDER;
+				ob_cage_eval->base_flag &= ~(BASE_VISIBLE | BASE_ENABLED_RENDER);
 			}
 		}
 	}
@@ -797,8 +801,8 @@ static int bake(
 	}
 
 	/* Make sure depsgraph is up to date. */
-	DEG_graph_build_from_view_layer(depsgraph, bmain, scene, view_layer);
 	BKE_scene_graph_update_tagged(depsgraph, bmain);
+	ob_low_eval = DEG_get_evaluated_object(depsgraph, ob_low);
 
 	/* get the mesh as it arrives in the renderer */
 	me_low = bake_mesh_new_from_object(depsgraph, bmain, scene, ob_low);
@@ -810,8 +814,6 @@ static int bake(
 
 	if (is_selected_to_active) {
 		CollectionPointerLink *link;
-		ModifierData *md, *nmd;
-		ListBase modifiers_tmp, modifiers_original;
 		int i = 0;
 
 		/* prepare cage mesh */
@@ -825,30 +827,25 @@ static int bake(
 			}
 		}
 		else if (is_cage) {
-			modifiers_original = ob_low->modifiers;
-			BLI_listbase_clear(&modifiers_tmp);
+			ModifierData *md = ob_low_eval->modifiers.first;
+			while (md) {
+				ModifierData *md_next = md->next;
 
-			for (md = ob_low->modifiers.first; md; md = md->next) {
 				/* Edge Split cannot be applied in the cage,
 				 * the cage is supposed to have interpolated normals
 				 * between the faces unless the geometry is physically
 				 * split. So we create a copy of the low poly mesh without
 				 * the eventual edge split.*/
 
-				if (md->type == eModifierType_EdgeSplit)
-					continue;
-
-				nmd = modifier_new(md->type);
-				BLI_strncpy(nmd->name, md->name, sizeof(nmd->name));
-				modifier_copyData(md, nmd);
-				BLI_addtail(&modifiers_tmp, nmd);
+				if (md->type == eModifierType_EdgeSplit) {
+					BLI_remlink(&ob_low_eval->modifiers, md);
+					modifier_free(md);
+				}
+				md = md_next;
 			}
 
-			/* temporarily replace the modifiers */
-			ob_low->modifiers = modifiers_tmp;
-
-			/* get the cage mesh as it arrives in the renderer */
-			me_cage = bake_mesh_new_from_object(depsgraph, bmain, scene, ob_low);
+			BKE_object_eval_reset(ob_low_eval);
+			me_cage = bake_mesh_new_from_object(depsgraph, bmain, scene, ob_low_eval);
 			RE_bake_pixels_populate(me_cage, pixel_array_low, num_pixels, &bake_images, uv_layer);
 		}
 
@@ -856,7 +853,6 @@ static int bake(
 
 		/* populate highpoly array */
 		for (link = selected_objects->first; link; link = link->next) {
-			TriangulateModifierData *tmd;
 			Object *ob_iter = link->ptr.data;
 
 			if (ob_iter == ob_low)
@@ -864,18 +860,10 @@ static int bake(
 
 			/* initialize highpoly_data */
 			highpoly[i].ob = ob_iter;
-			highpoly[i].restrict_flag = ob_iter->restrictflag;
-
-			/* triangulating so BVH returns the primitive_id that will be used for rendering */
-			highpoly[i].tri_mod = ED_object_modifier_add(
-			        reports, bmain, scene, highpoly[i].ob,
-			        "TmpTriangulate", eModifierType_Triangulate);
-			tmd = (TriangulateModifierData *)highpoly[i].tri_mod;
-			tmd->quad_method = MOD_TRIANGULATE_QUAD_FIXED;
-			tmd->ngon_method = MOD_TRIANGULATE_NGON_EARCLIP;
-
 			highpoly[i].me = bake_mesh_new_from_object(depsgraph, bmain, scene, highpoly[i].ob);
-			highpoly[i].ob->restrictflag &= ~OB_RESTRICT_RENDER;
+			highpoly[i].ob_eval = DEG_get_evaluated_object(depsgraph, ob_iter);
+			highpoly[i].ob_eval->restrictflag &= ~OB_RESTRICT_RENDER;
+			highpoly[i].ob_eval->base_flag |= (BASE_VISIBLE | BASE_ENABLED_RENDER);
 
 			/* lowpoly to highpoly transformation matrix */
 			copy_m4_m4(highpoly[i].obmat, highpoly[i].ob->obmat);
@@ -888,7 +876,13 @@ static int bake(
 
 		BLI_assert(i == tot_highpoly);
 
-		ob_low->restrictflag |= OB_RESTRICT_RENDER;
+
+		if (ob_cage != NULL) {
+			ob_cage_eval->restrictflag |= OB_RESTRICT_RENDER;
+			ob_cage_eval->base_flag &= ~(BASE_VISIBLE | BASE_ENABLED_RENDER);
+		}
+		ob_low_eval->restrictflag |= OB_RESTRICT_RENDER;
+		ob_low_eval->base_flag &= ~(BASE_VISIBLE | BASE_ENABLED_RENDER);
 
 		/* populate the pixel arrays with the corresponding face data for each high poly object */
 		if (!RE_bake_pixels_populate_from_objects(
@@ -896,7 +890,7 @@ static int bake(
 		            cage_extrusion, ob_low->obmat, (ob_cage ? ob_cage->obmat : ob_low->obmat), me_cage))
 		{
 			BKE_report(reports, RPT_ERROR, "Error handling selected objects");
-			goto cage_cleanup;
+			goto cleanup;
 		}
 
 		/* the baking itself */
@@ -905,27 +899,13 @@ static int bake(
 			                    num_pixels, depth, pass_type, pass_filter, result);
 			if (!ok) {
 				BKE_reportf(reports, RPT_ERROR, "Error baking from object \"%s\"", highpoly[i].ob->id.name + 2);
-				goto cage_cleanup;
+				goto cleanup;
 			}
-		}
-
-cage_cleanup:
-		/* reverting data back */
-		if ((ob_cage == NULL) && is_cage) {
-			ob_low->modifiers = modifiers_original;
-
-			while ((md = BLI_pophead(&modifiers_tmp))) {
-				modifier_free(md);
-			}
-		}
-
-		if (!ok) {
-			goto cleanup;
 		}
 	}
 	else {
-		/* make sure low poly renders */
-		ob_low->restrictflag &= ~OB_RESTRICT_RENDER;
+		/* If low poly is not renderable it should have failed long ago. */
+		BLI_assert((ob_low->restrictflag & OB_RESTRICT_RENDER) == 0);
 
 		if (RE_bake_has_engine(re)) {
 			ok = RE_bake_engine(re, depsgraph, ob_low, 0, pixel_array_low, num_pixels, depth, pass_type, pass_filter, result);
@@ -1089,24 +1069,14 @@ cleanup:
 	if (highpoly) {
 		int i;
 		for (i = 0; i < tot_highpoly; i++) {
-			highpoly[i].ob->restrictflag = highpoly[i].restrict_flag;
-
-			if (highpoly[i].tri_mod)
-				ED_object_modifier_remove(reports, bmain, highpoly[i].ob, highpoly[i].tri_mod);
-
 			if (highpoly[i].me)
 				BKE_libblock_free(bmain, highpoly[i].me);
 		}
 		MEM_freeN(highpoly);
 	}
 
-	ob_low->restrictflag = restrict_flag_low;
-
 	if (mmd_low)
 		mmd_low->flags = mmd_flags_low;
-
-	if (ob_cage)
-		ob_cage->restrictflag = restrict_flag_cage;
 
 	if (pixel_array_low)
 		MEM_freeN(pixel_array_low);
@@ -1358,7 +1328,9 @@ static void bake_set_props(wmOperator *op, Scene *scene)
 
 	prop = RNA_struct_find_property(op->ptr, "cage_object");
 	if (!RNA_property_is_set(op->ptr, prop)) {
-		RNA_property_string_set(op->ptr, prop, bake->cage);
+		if (bake->cage_object) {
+			RNA_property_string_set(op->ptr, prop, bake->cage_object->id.name + 2);
+		}
 	}
 
 	prop = RNA_struct_find_property(op->ptr, "normal_space");

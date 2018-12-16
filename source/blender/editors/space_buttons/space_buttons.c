@@ -73,7 +73,7 @@ static SpaceLink *buttons_new(const ScrArea *UNUSED(area), const Scene *UNUSED(s
 
 	BLI_addtail(&sbuts->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_TOP;
+	ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
 	/* navigation bar */
 	ar = MEM_callocN(sizeof(ARegion), "navigation bar for buts");
@@ -258,13 +258,13 @@ static void buttons_main_region_layout_tool(const bContext *C, ARegion *ar)
 			case CTX_MODE_OBJECT:
 				ARRAY_SET_ITEMS(contexts, ".objectmode");
 				break;
-			case CTX_MODE_GPENCIL_PAINT:
+			case CTX_MODE_PAINT_GPENCIL:
 				ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
 				break;
-			case CTX_MODE_GPENCIL_SCULPT:
+			case CTX_MODE_SCULPT_GPENCIL:
 				ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
 				break;
-			case CTX_MODE_GPENCIL_WEIGHT:
+			case CTX_MODE_WEIGHT_GPENCIL:
 				ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
 				break;
 		}
@@ -290,16 +290,16 @@ static void buttons_main_region_layout_tool(const bContext *C, ARegion *ar)
 	 * workspace->tools_space_type because this value is not available
 	 */
 	switch (mode) {
-		case CTX_MODE_GPENCIL_PAINT:
+		case CTX_MODE_PAINT_GPENCIL:
 			ARRAY_SET_ITEMS(contexts, ".greasepencil_paint");
 			break;
-		case CTX_MODE_GPENCIL_SCULPT:
+		case CTX_MODE_SCULPT_GPENCIL:
 			ARRAY_SET_ITEMS(contexts, ".greasepencil_sculpt");
 			break;
-		case CTX_MODE_GPENCIL_WEIGHT:
+		case CTX_MODE_WEIGHT_GPENCIL:
 			ARRAY_SET_ITEMS(contexts, ".greasepencil_weight");
 			break;
-		case CTX_MODE_GPENCIL_EDIT:
+		case CTX_MODE_EDIT_GPENCIL:
 			ARRAY_SET_ITEMS(contexts, ".greasepencil_edit");
 			break;
 	}
@@ -429,6 +429,21 @@ static void buttons_navigation_bar_region_draw(const bContext *C, ARegion *ar)
 	ED_region_panels_layout(C, ar);
 	ar->v2d.scroll &= ~V2D_SCROLL_VERTICAL; /* ED_region_panels_layout adds vertical scrollbars, we don't want them. */
 	ED_region_panels_draw(C, ar);
+}
+
+static void buttons_navigation_bar_region_message_subscribe(
+        const bContext *UNUSED(C),
+        WorkSpace *UNUSED(workspace), Scene *UNUSED(scene),
+        bScreen *UNUSED(screen), ScrArea *UNUSED(sa), ARegion *ar,
+        struct wmMsgBus *mbus)
+{
+	wmMsgSubscribeValue msg_sub_value_region_tag_redraw = {
+		.owner = ar,
+		.user_data = ar,
+		.notify = ED_region_do_msg_notify_tag_redraw,
+	};
+
+	WM_msg_subscribe_rna_anon_prop(mbus, Window, view_layer, &msg_sub_value_region_tag_redraw);
 }
 
 /* draw a certain button set only if properties area is currently
@@ -732,6 +747,7 @@ void ED_spacetype_buttons(void)
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->init = buttons_navigation_bar_region_init;
 	art->draw = buttons_navigation_bar_region_draw;
+	art->message_subscribe = buttons_navigation_bar_region_message_subscribe;
 	BLI_addhead(&st->regiontypes, art);
 
 	BKE_spacetype_register(st);

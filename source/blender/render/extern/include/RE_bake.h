@@ -59,9 +59,8 @@ typedef struct BakePixel {
 
 typedef struct BakeHighPolyData {
 	struct Object *ob;
-	struct ModifierData *tri_mod;
+	struct Object *ob_eval;
 	struct Mesh *me;
-	char restrict_flag;
 	bool is_flip_object;
 
 	float obmat[4][4];

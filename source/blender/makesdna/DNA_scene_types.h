@@ -521,7 +521,7 @@ typedef struct BakeData {
 	char save_mode;
 	char pad[3];
 
-	char cage[64];  /* MAX_NAME */
+	struct Object *cage_object;
 } BakeData;
 
 /* BakeData.normal_swizzle (char) */
@@ -1035,6 +1035,7 @@ typedef struct GP_Sculpt_Settings {
 	int weighttype;               /* eGP_Sculpt_Types (weight paint) */
 	char pad[4];
 	struct CurveMapping *cur_falloff; /* multiframe edit falloff effect by frame */
+	struct CurveMapping *cur_primitive; /* Curve used for primitve tools */
 } GP_Sculpt_Settings;
 
 /* GP_Sculpt_Settings.flag */
@@ -1053,6 +1054,8 @@ typedef enum eGP_Sculpt_SettingsFlag {
 	GP_SCULPT_SETT_FLAG_FRAME_FALLOFF = (1 << 5),
 	/* apply brush to uv data */
 	GP_SCULPT_SETT_FLAG_APPLY_UV = (1 << 6),
+	/* apply primitve curve */
+	GP_SCULPT_SETT_FLAG_PRIMITIVE_CURVE = (1 << 7),
 } eGP_Sculpt_SettingsFlag;
 
 /* Settings for GP Interpolation Operators */
@@ -1585,6 +1588,7 @@ typedef struct Scene {
 	/* Physics simulation settings */
 	struct PhysicsSettings physics_settings;
 
+	void *pad8;
 	uint64_t customdata_mask;	/* XXX. runtime flag for drawing, actually belongs in the window, only used by BKE_object_handle_update() */
 	uint64_t customdata_mask_modal; /* XXX. same as above but for temp operator use (gl renders) */
 
@@ -1723,10 +1727,11 @@ enum {
 #define R_STAMP_MEMORY		0x2000
 #define R_STAMP_HIDE_LABELS	0x4000
 #define R_STAMP_FRAME_RANGE	0x8000
+#define R_STAMP_HOSTNAME	0x10000
 #define R_STAMP_ALL (R_STAMP_TIME|R_STAMP_FRAME|R_STAMP_DATE|R_STAMP_CAMERA|R_STAMP_SCENE| \
                      R_STAMP_NOTE|R_STAMP_MARKER|R_STAMP_FILENAME|R_STAMP_SEQSTRIP|        \
                      R_STAMP_RENDERTIME|R_STAMP_CAMERALENS|R_STAMP_MEMORY|                 \
-                     R_STAMP_HIDE_LABELS|R_STAMP_FRAME_RANGE)
+                     R_STAMP_HIDE_LABELS|R_STAMP_FRAME_RANGE|R_STAMP_HOSTNAME)
 
 /* RenderData.alphamode */
 #define R_ADDSKY		0

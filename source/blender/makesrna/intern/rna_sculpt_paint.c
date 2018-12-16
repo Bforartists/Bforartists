@@ -69,11 +69,11 @@ const EnumPropertyItem rna_enum_gpencil_sculpt_brush_items[] = {
 	{GP_SCULPT_TYPE_SMOOTH, "SMOOTH", ICON_GPBRUSH_SMOOTH, "Smooth", "Smooth stroke points"},
 	{GP_SCULPT_TYPE_THICKNESS, "THICKNESS", ICON_GPBRUSH_THICKNESS, "Thickness", "Adjust thickness of strokes"},
 	{GP_SCULPT_TYPE_STRENGTH, "STRENGTH", ICON_GPBRUSH_STRENGTH, "Strength", "Adjust color strength of strokes" },
+	{GP_SCULPT_TYPE_RANDOMIZE, "RANDOMIZE", ICON_GPBRUSH_RANDOMIZE, "Randomize", "Introduce jitter/randomness into strokes"},
 	{GP_SCULPT_TYPE_GRAB, "GRAB", ICON_GPBRUSH_GRAB, "Grab", "Translate the set of points initially within the brush circle" },
 	{GP_SCULPT_TYPE_PUSH, "PUSH", ICON_GPBRUSH_PUSH, "Push", "Move points out of the way, as if combing them"},
 	{GP_SCULPT_TYPE_TWIST, "TWIST", ICON_GPBRUSH_TWIST, "Twist", "Rotate points around the midpoint of the brush"},
 	{GP_SCULPT_TYPE_PINCH, "PINCH", ICON_GPBRUSH_PINCH, "Pinch", "Pull points towards the midpoint of the brush"},
-	{GP_SCULPT_TYPE_RANDOMIZE, "RANDOMIZE", ICON_GPBRUSH_RANDOMIZE, "Randomize", "Introduce jitter/randomness into strokes"},
 	{GP_SCULPT_TYPE_CLONE, "CLONE", ICON_GPBRUSH_CLONE, "Clone", "Paste copies of the strokes stored on the clipboard"},
 	{ 0, NULL, 0, NULL, NULL }
 };
@@ -131,7 +131,7 @@ static void rna_GPencil_update(Main *UNUSED(bmain), Scene *scene, PointerRNA *UN
 			if (ob->type == OB_GPENCIL) {
 				bGPdata *gpd = (bGPdata *)ob->data;
 				gpd->flag |= GP_DATA_CACHE_IS_DIRTY;
-				DEG_id_tag_update(&gpd->id, OB_RECALC_OB | OB_RECALC_DATA);
+				DEG_id_tag_update(&gpd->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 			}
 		}
 		FOREACH_COLLECTION_OBJECT_RECURSIVE_END;
@@ -185,11 +185,11 @@ static void rna_ParticleEdit_redo(bContext *C, PointerRNA *UNUSED(ptr))
 	if (!edit)
 		return;
 
-	if (ob) DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	if (ob) DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
 	BKE_particle_batch_cache_dirty_tag(edit->psys, BKE_PARTICLE_BATCH_DIRTY_ALL);
 	psys_free_path_cache(edit->psys, edit);
-	DEG_id_tag_update(&CTX_data_scene(C)->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&CTX_data_scene(C)->id, ID_RECALC_COPY_ON_WRITE);
 }
 
 static void rna_ParticleEdit_update(bContext *C, PointerRNA *UNUSED(ptr))
@@ -197,10 +197,10 @@ static void rna_ParticleEdit_update(bContext *C, PointerRNA *UNUSED(ptr))
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Object *ob = OBACT(view_layer);
 
-	if (ob) DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	if (ob) DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
 	/* Sync tool setting changes from original to evaluated scenes. */
-	DEG_id_tag_update(&CTX_data_scene(C)->id, DEG_TAG_COPY_ON_WRITE);
+	DEG_id_tag_update(&CTX_data_scene(C)->id, ID_RECALC_COPY_ON_WRITE);
 }
 
 static void rna_ParticleEdit_tool_set(PointerRNA *ptr, int value)
@@ -211,7 +211,7 @@ static void rna_ParticleEdit_tool_set(PointerRNA *ptr, int value)
 	if ((pset->brushtype == PE_BRUSH_WEIGHT || value == PE_BRUSH_WEIGHT) && pset->object) {
 		Object *ob = pset->object;
 		if (ob) {
-			DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 			WM_main_add_notifier(NC_OBJECT | ND_PARTICLE | NA_EDITED, NULL);
 		}
 	}
@@ -342,7 +342,7 @@ static bool rna_Brush_mode_with_tool_poll(PointerRNA *ptr, PointerRNA value)
 		if (slot_index != brush->gpencil_tool) {
 			return false;
 		}
-		mode = OB_MODE_GPENCIL_PAINT;
+		mode = OB_MODE_PAINT_GPENCIL;
 	}
 
 	return brush->ob_mode & mode;
@@ -355,7 +355,7 @@ static void rna_Sculpt_update(bContext *C, PointerRNA *UNUSED(ptr))
 	Object *ob = OBACT(view_layer);
 
 	if (ob) {
-		DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob);
 
 		if (ob->sculpt) {
@@ -1250,12 +1250,27 @@ static void rna_def_gpencil_sculpt(BlenderRNA *brna)
 	RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, 0);
 	RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
 
+	prop = RNA_def_property(srna, "use_thickness_curve", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", GP_SCULPT_SETT_FLAG_PRIMITIVE_CURVE);
+	RNA_def_property_ui_text(prop, "Use Curve", "Use curve to define primitive stroke thickness");
+	RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, 0);
+	RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
+
 	/* custom falloff curve */
 	prop = RNA_def_property(srna, "multiframe_falloff_curve", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "cur_falloff");
 	RNA_def_property_struct_type(prop, "CurveMapping");
 	RNA_def_property_ui_text(prop, "Curve",
 		"Custom curve to control falloff of brush effect by Grease Pencil frames");
+	RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, 0);
+	RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
+
+	/* custom primitive curve */
+	prop = RNA_def_property(srna, "thickness_primitive_curve", PROP_POINTER, PROP_NONE);
+	RNA_def_property_pointer_sdna(prop, NULL, "cur_primitive");
+	RNA_def_property_struct_type(prop, "CurveMapping");
+	RNA_def_property_ui_text(prop, "Curve",
+		"Custom curve to control primitive thickness");
 	RNA_def_parameter_clear_flags(prop, PROP_ANIMATABLE, 0);
 	RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
 

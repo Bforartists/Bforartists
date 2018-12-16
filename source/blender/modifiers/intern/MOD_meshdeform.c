@@ -45,6 +45,7 @@
 #include "BKE_library.h"
 #include "BKE_library_query.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_runtime.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 #include "BKE_editmesh.h"
@@ -286,13 +287,15 @@ static void meshdeformModifier_do(
 	Mesh *cagemesh;
 	MDeformVert *dvert = NULL;
 	float imat[4][4], cagemat[4][4], iobmat[4][4], icagemat[3][3], cmat[4][4];
-	float co[3], (*dco)[3], (*bindcagecos)[3];
+	float co[3], (*dco)[3] = NULL, (*bindcagecos)[3];
 	int a, totvert, totcagevert, defgrp_index;
-	float (*cagecos)[3];
+	float (*cagecos)[3] = NULL;
 	MeshdeformUserdata data;
 	bool free_cagemesh = false;
 
-	if (!mmd->object || (!mmd->bindcagecos && !mmd->bindfunc))
+	static int recursive_bind_sentinel = 0;
+
+	if (mmd->object == NULL || (mmd->bindcagecos == NULL && mmd->bindfunc == NULL))
 		return;
 
 	/* Get cage mesh.
@@ -305,15 +308,23 @@ static void meshdeformModifier_do(
 	 *
 	 * We'll support this case once granular dependency graph is landed.
 	 */
-	cagemesh = BKE_modifier_get_evaluated_mesh_from_evaluated_object(mmd->object, &free_cagemesh);
-
+	Object *ob_target = DEG_get_evaluated_object(ctx->depsgraph, mmd->object);
+	cagemesh = BKE_modifier_get_evaluated_mesh_from_evaluated_object(ob_target, &free_cagemesh);
+#if 0  /* This shall not be needed if we always get evaluated target object... */
+	if (cagemesh == NULL && mmd->bindcagecos == NULL && ob == DEG_get_original_object(ob)) {
+		/* Special case, binding happens outside of depsgraph evaluation, so we can build our own
+		 * target mesh if needed. */
+		cagemesh = mesh_create_eval_final_view(ctx->depsgraph, DEG_get_input_scene(ctx->depsgraph), mmd->object, 0);
+		free_cagemesh = cagemesh != NULL;
+	}
+#endif
 	if (cagemesh == NULL) {
 		modifier_setError(md, "Cannot get mesh from cage object");
 		return;
 	}
 
 	/* compute matrices to go in and out of cage object space */
-	invert_m4_m4(imat, mmd->object->obmat);
+	invert_m4_m4(imat, ob_target->obmat);
 	mul_m4_m4m4(cagemat, imat, ob->obmat);
 	mul_m4_m4m4(cmat, mmd->bindmat, cagemat);
 	invert_m4_m4(iobmat, cmat);
@@ -321,22 +332,20 @@ static void meshdeformModifier_do(
 
 	/* bind weights if needed */
 	if (!mmd->bindcagecos) {
-		static int recursive = 0;
-
 		/* progress bar redraw can make this recursive .. */
-		if (!recursive) {
-			/* Write binding data to original modifier. */
-			Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
-			Object *ob_orig = DEG_get_original_object(ob);
-			MeshDeformModifierData *mmd_orig = (MeshDeformModifierData *)modifiers_findByName(
-			        ob_orig, mmd->modifier.name);
+		if (!recursive_bind_sentinel) {
+			if (ob != DEG_get_original_object(ob)) {
+				BLI_assert(!"Trying to bind inside of depsgraph evaluation");
+				modifier_setError(md, "Trying to bind inside of depsgraph evaluation");
+				goto finally;
+			}
 
-			recursive = 1;
-			mmd->bindfunc(scene, mmd_orig, cagemesh, (float *)vertexCos, numVerts, cagemat);
-			recursive = 0;
+			recursive_bind_sentinel = 1;
+			mmd->bindfunc(mmd, cagemesh, (float *)vertexCos, numVerts, cagemat);
+			recursive_bind_sentinel = 0;
 		}
 
-		return;
+		goto finally;
 	}
 
 	/* verify we have compatible weights */
@@ -345,18 +354,15 @@ static void meshdeformModifier_do(
 
 	if (mmd->totvert != totvert) {
 		modifier_setError(md, "Verts changed from %d to %d", mmd->totvert, totvert);
-		if (free_cagemesh) BKE_id_free(NULL, cagemesh);
-		return;
+		goto finally;
 	}
 	else if (mmd->totcagevert != totcagevert) {
 		modifier_setError(md, "Cage verts changed from %d to %d", mmd->totcagevert, totcagevert);
-		if (free_cagemesh) BKE_id_free(NULL, cagemesh);
-		return;
+		goto finally;
 	}
 	else if (mmd->bindcagecos == NULL) {
 		modifier_setError(md, "Bind data missing");
-		if (free_cagemesh) BKE_id_free(NULL, cagemesh);
-		return;
+		goto finally;
 	}
 
 	/* setup deformation data */
@@ -377,8 +383,9 @@ static void meshdeformModifier_do(
 			/* compute difference with world space bind coord */
 			sub_v3_v3v3(dco[a], co, bindcagecos[a]);
 		}
-		else
+		else {
 			copy_v3_v3(dco[a], co);
+		}
 	}
 
 	MOD_get_vgroup(ob, mesh, mmd->defgrp_name, &dvert, &defgrp_index);
@@ -401,9 +408,9 @@ static void meshdeformModifier_do(
 	                        meshdeform_vert_task,
 	                        &settings);
 
-	/* release cage mesh */
-	MEM_freeN(dco);
-	MEM_freeN(cagecos);
+finally:
+	MEM_SAFE_FREE(dco);
+	MEM_SAFE_FREE(cagecos);
 	if (cagemesh != NULL && free_cagemesh) {
 		BKE_id_free(NULL, cagemesh);
 	}

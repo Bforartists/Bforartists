@@ -420,11 +420,11 @@ bool ABC_export(
 /**
  * Generates an AbcObjectReader for this Alembic object and its children.
  *
- * \param object The Alembic IObject to visit.
- * \param readers The created AbcObjectReader * will be appended to this vector.
- * \param settings Import settings, not used directly but passed to the
+ * \param object: The Alembic IObject to visit.
+ * \param readers: The created AbcObjectReader * will be appended to this vector.
+ * \param settings: Import settings, not used directly but passed to the
  *                 AbcObjectReader subclass constructors.
- * \param r_assign_as_parent Return parameter, contains a list of reader
+ * \param r_assign_as_parent: Return parameter, contains a list of reader
  *                 pointers, whose parent pointer should still be set.
  *                 This is filled when this call to visit_object() didn't create
  *                 a reader that should be the parent.
@@ -818,12 +818,12 @@ static void import_endjob(void *user_data)
 			/* TODO: is setting active needed? */
 			BKE_view_layer_base_select_and_set_active(view_layer, base);
 
-			DEG_id_tag_update(&lc->collection->id, DEG_TAG_COPY_ON_WRITE);
+			DEG_id_tag_update(&lc->collection->id, ID_RECALC_COPY_ON_WRITE);
 			DEG_id_tag_update_ex(data->bmain, &ob->id,
-			                     OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME | DEG_TAG_BASE_FLAGS_UPDATE);
+			                     ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION | ID_RECALC_BASE_FLAGS);
 		}
 
-		DEG_id_tag_update(&data->scene->id, DEG_TAG_BASE_FLAGS_UPDATE);
+		DEG_id_tag_update(&data->scene->id, ID_RECALC_BASE_FLAGS);
 		DEG_relations_tag_update(data->bmain);
 	}
 

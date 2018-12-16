@@ -194,6 +194,11 @@ class USERPREF_PT_interface(Panel):
         sub.prop(view, "pie_menu_confirm")
         col.separator()
 
+        col.label(text="Header:")
+        sub = col.split()
+        sub.label(text="Default Position")
+        sub.row().prop(view, "header_align_default", expand=True)
+
         col.prop(view, "show_splash")
 
         col.label(text="Warnings:")
@@ -754,6 +759,8 @@ class USERPREF_PT_theme(Panel):
             colsub.row().prop(ui_state, "inner_key_sel")
             colsub.row().prop(ui_state, "inner_overridden")
             colsub.row().prop(ui_state, "inner_overridden_sel")
+            colsub.row().prop(ui_state, "inner_changed")
+            colsub.row().prop(ui_state, "inner_changed_sel")
 
             col.separator()
             col.separator()

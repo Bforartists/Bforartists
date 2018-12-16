@@ -471,10 +471,10 @@ static void data_dir_add(ListBase *lb, const char *member, const bool use_all)
 }
 
 /**
- * \param C Context
- * \param use_store Use 'C->wm.store'
- * \param use_rna Use Include the properties from 'RNA_Context'
- * \param use_all Don't skip values (currently only "scene")
+ * \param C: Context
+ * \param use_store: Use 'C->wm.store'
+ * \param use_rna: Use Include the properties from 'RNA_Context'
+ * \param use_all: Don't skip values (currently only "scene")
  */
 ListBase CTX_data_dir_get_ex(const bContext *C, const bool use_store, const bool use_rna, const bool use_all)
 {
@@ -1016,10 +1016,10 @@ int CTX_data_mode_enum_ex(const Object *obedit, const Object *ob, const eObjectM
 			else if (object_mode & OB_MODE_VERTEX_PAINT) return CTX_MODE_PAINT_VERTEX;
 			else if (object_mode & OB_MODE_TEXTURE_PAINT) return CTX_MODE_PAINT_TEXTURE;
 			else if (object_mode & OB_MODE_PARTICLE_EDIT) return CTX_MODE_PARTICLE;
-			else if (object_mode & OB_MODE_GPENCIL_PAINT) return CTX_MODE_GPENCIL_PAINT;
-			else if (object_mode & OB_MODE_GPENCIL_EDIT) return CTX_MODE_GPENCIL_EDIT;
-			else if (object_mode & OB_MODE_GPENCIL_SCULPT) return CTX_MODE_GPENCIL_SCULPT;
-			else if (object_mode & OB_MODE_GPENCIL_WEIGHT) return CTX_MODE_GPENCIL_WEIGHT;
+			else if (object_mode & OB_MODE_PAINT_GPENCIL) return CTX_MODE_PAINT_GPENCIL;
+			else if (object_mode & OB_MODE_EDIT_GPENCIL) return CTX_MODE_EDIT_GPENCIL;
+			else if (object_mode & OB_MODE_SCULPT_GPENCIL) return CTX_MODE_SCULPT_GPENCIL;
+			else if (object_mode & OB_MODE_WEIGHT_GPENCIL) return CTX_MODE_WEIGHT_GPENCIL;
 		}
 	}
 
