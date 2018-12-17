@@ -1531,7 +1531,9 @@ class TOOLBAR_MT_misc(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
+        window = context.window
+        screen = context.screen
+        scene = window.scene
         obj = context.object
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
@@ -1564,7 +1566,7 @@ class TOOLBAR_MT_misc(Menu):
 
             row = layout.row(align=True)
 
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+            layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
 
         if addon_prefs.misc_misc:
 
