@@ -1003,6 +1003,7 @@ void uiLayoutSetUnitsY(uiLayout *layout, float unit);
 void uiLayoutSetEmboss(uiLayout *layout, char emboss);
 void uiLayoutSetPropSep(uiLayout *layout, bool is_sep);
 void uiLayoutSetPropDecorate(uiLayout *layout, bool is_sep);
+int uiLayoutGetLocalDir(const uiLayout *layout);
 
 int uiLayoutGetOperatorContext(uiLayout *layout);
 bool uiLayoutGetActive(uiLayout *layout);
@@ -1190,6 +1191,7 @@ void uiItemsFullEnumO_items(
 void uiItemL(uiLayout *layout, const char *name, int icon); /* label */
 void uiItemLDrag(uiLayout *layout, struct PointerRNA *ptr, const char *name, int icon); /* label icon for dragging */
 void uiItemM(uiLayout *layout, const char *menuname, const char *name, int icon); /* menu */
+void uiItemMContents(uiLayout *layout, const char *menuname); /* menu contents */
 void uiItemV(uiLayout *layout, const char *name, int icon, int argval); /* value */
 void uiItemS(uiLayout *layout); /* separator */
 void uiItemS_ex(uiLayout *layout, float factor);
