@@ -926,10 +926,10 @@ class LoadBackgroundImage(LoadImageAsEmpty, Operator):
     bl_label = "Load Background Image"
 
     def set_settings(self, context, obj):
-        obj.empty_image_depth = "BACK"
-        obj.show_empty_image_backside = False
+        obj.empty_image_depth = 'BACK'
+        obj.empty_image_side = 'FRONT'
 
-        if context.space_data.type == "VIEW_3D":
+        if context.space_data.type == 'VIEW_3D':
             if not context.space_data.region_3d.is_perspective:
                 obj.show_empty_image_perspective = False
 
@@ -941,6 +941,49 @@ class LoadReferenceImage(LoadImageAsEmpty, Operator):
 
     def set_settings(self, context, obj):
         pass
+
+
+class OBJECT_OT_assign_property_defaults(Operator):
+    """Assign the current values of custom properties as their defaults, for use as part of the rest pose state in NLA track mixing"""
+    bl_idname = "object.assign_property_defaults"
+    bl_label = "Assign Custom Property Values as Default"
+    bl_options = {'UNDO', 'REGISTER'}
+
+    process_data: BoolProperty(name="Process data properties", default=True)
+    process_bones: BoolProperty(name="Process bone properties", default=True)
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj is not None and obj.library is None and obj.mode in {'POSE', 'OBJECT'}
+
+    @staticmethod
+    def assign_defaults(obj):
+        from rna_prop_ui import rna_idprop_ui_prop_default_set
+
+        rna_properties = {'_RNA_UI'} | {prop.identifier for prop in obj.bl_rna.properties if prop.is_runtime}
+
+        for prop, value in obj.items():
+            if prop not in rna_properties:
+                rna_idprop_ui_prop_default_set(obj, prop, value)
+
+    def execute(self, context):
+        obj = context.active_object
+
+        self.assign_defaults(obj)
+
+        if self.process_bones and obj.pose:
+            for pbone in obj.pose.bones:
+                self.assign_defaults(pbone)
+
+        if self.process_data and obj.data and obj.data.library is None:
+            self.assign_defaults(obj.data)
+
+            if self.process_bones and isinstance(obj.data, bpy.types.Armature):
+                for bone in obj.data.bones:
+                    self.assign_defaults(bone)
+
+        return {'FINISHED'}
 
 
 classes = (
@@ -958,4 +1001,5 @@ classes = (
     SubdivisionSet,
     TransformsToDeltas,
     TransformsToDeltasAnim,
+    OBJECT_OT_assign_property_defaults,
 )

@@ -250,7 +250,7 @@ class DOPESHEET_HT_editor_buttons(Header):
     @staticmethod
     def draw_header(context, layout):
         st = context.space_data
-        toolsettings = context.tool_settings
+        tool_settings = context.tool_settings
 
         if st.mode in {'ACTION', 'SHAPEKEY'}:
             # TODO: These buttons need some tidying up - Probably by using a popover, and bypassing the template_id() here
@@ -297,10 +297,10 @@ class DOPESHEET_HT_editor_buttons(Header):
             layout.prop(st, "auto_snap", text="")
 
         row = layout.row(align=True)
-        row.prop(toolsettings, "use_proportional_action", text="", icon_only=True)
+        row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
         sub = row.row(align=True)
-        sub.active = toolsettings.use_proportional_action
-        sub.prop(toolsettings, "proportional_edit_falloff", text="", icon_only=True)
+        sub.active = tool_settings.use_proportional_action
+        sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
 
 class DOPESHEET_MT_editor_menus(Menu):
@@ -308,10 +308,7 @@ class DOPESHEET_MT_editor_menus(Menu):
     bl_label = ""
 
     def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
+        layout = self.layout
         st = context.space_data
 
         layout.menu("DOPESHEET_MT_view")
@@ -438,6 +435,7 @@ class DOPESHEET_MT_marker(Menu):
 
 #######################################
 # Keyframe Editing
+
 
 class DOPESHEET_MT_channel(Menu):
     bl_label = "Channel"
