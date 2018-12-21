@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -22,14 +22,17 @@ bl_info = {
     "name": "BioVision Motion Capture (BVH) format",
     "author": "Campbell Barton",
     "version": (1, 0, 0),
-    "blender": (2, 74, 0),
+    "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "Import-Export BVH from armature objects",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/BVH_Importer_Exporter",
+    "wiki_url": (
+        "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+        "Scripts/Import-Export/BVH_Importer_Exporter"
+    ),
     "support": 'OFFICIAL',
-    "category": "Import-Export"}
+    "category": "Import-Export",
+}
 
 if "bpy" in locals():
     import importlib
@@ -40,100 +43,107 @@ if "bpy" in locals():
 
 import bpy
 from bpy.props import (
-        StringProperty,
-        FloatProperty,
-        IntProperty,
-        BoolProperty,
-        EnumProperty,
-        )
+    StringProperty,
+    FloatProperty,
+    IntProperty,
+    BoolProperty,
+    EnumProperty,
+)
 from bpy_extras.io_utils import (
-        ImportHelper,
-        ExportHelper,
-        orientation_helper_factory,
-        axis_conversion,
-        )
+    ImportHelper,
+    ExportHelper,
+    orientation_helper,
+    axis_conversion,
+)
 
 
-ImportBVHOrientationHelper = orientation_helper_factory("ImportBVHOrientationHelper", axis_forward='-Z', axis_up='Y')
-
-
-class ImportBVH(bpy.types.Operator, ImportHelper, ImportBVHOrientationHelper):
+@orientation_helper(axis_forward='-Z', axis_up='Y')
+class ImportBVH(bpy.types.Operator, ImportHelper):
     """Load a BVH motion capture file"""
     bl_idname = "import_anim.bvh"
     bl_label = "Import BVH"
     bl_options = {'REGISTER', 'UNDO'}
 
     filename_ext = ".bvh"
-    filter_glob = StringProperty(default="*.bvh", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.bvh", options={'HIDDEN'})
 
-    target = EnumProperty(items=(
+    target: EnumProperty(
+        items=(
             ('ARMATURE', "Armature", ""),
             ('OBJECT', "Object", ""),
-            ),
-                name="Target",
-                description="Import target type",
-                default='ARMATURE')
-
-    global_scale = FloatProperty(
-            name="Scale",
-            description="Scale the BVH by this value",
-            min=0.0001, max=1000000.0,
-            soft_min=0.001, soft_max=100.0,
-            default=1.0,
-            )
-    frame_start = IntProperty(
-            name="Start Frame",
-            description="Starting frame for the animation",
-            default=1,
-            )
-    use_fps_scale = BoolProperty(
-            name="Scale FPS",
-            description=("Scale the framerate from the BVH to the current scenes, "
-                         "otherwise each BVH frame maps directly to a Blender frame"),
-            default=False,
-            )
-    update_scene_fps = BoolProperty(
-            name="Update Scene FPS",
-            description="Set the scene framerate to that of the BVH file (note that this "
-                        "nullifies the 'Scale FPS' option, as the scale will be 1:1)",
-            default=False
-            )
-    update_scene_duration = BoolProperty(
-            name="Update Scene Duration",
-            description="Extend the scene's duration to the BVH duration (never shortens the scene)",
-            default=False,
-            )
-    use_cyclic = BoolProperty(
-            name="Loop",
-            description="Loop the animation playback",
-            default=False,
-            )
-    rotate_mode = EnumProperty(
-            name="Rotation",
-            description="Rotation conversion",
-            items=(('QUATERNION', "Quaternion",
-                    "Convert rotations to quaternions"),
-                   ('NATIVE', "Euler (Native)",
-                              "Use the rotation order defined in the BVH file"),
-                   ('XYZ', "Euler (XYZ)", "Convert rotations to euler XYZ"),
-                   ('XZY', "Euler (XZY)", "Convert rotations to euler XZY"),
-                   ('YXZ', "Euler (YXZ)", "Convert rotations to euler YXZ"),
-                   ('YZX', "Euler (YZX)", "Convert rotations to euler YZX"),
-                   ('ZXY', "Euler (ZXY)", "Convert rotations to euler ZXY"),
-                   ('ZYX', "Euler (ZYX)", "Convert rotations to euler ZYX"),
-                   ),
-            default='NATIVE',
-            )
+        ),
+        name="Target",
+        description="Import target type",
+        default='ARMATURE',
+    )
+    global_scale: FloatProperty(
+        name="Scale",
+        description="Scale the BVH by this value",
+        min=0.0001, max=1000000.0,
+        soft_min=0.001, soft_max=100.0,
+        default=1.0,
+    )
+    frame_start: IntProperty(
+        name="Start Frame",
+        description="Starting frame for the animation",
+        default=1,
+    )
+    use_fps_scale: BoolProperty(
+        name="Scale FPS",
+        description=(
+            "Scale the framerate from the BVH to the current scenes, "
+            "otherwise each BVH frame maps directly to a Blender frame"
+        ),
+        default=False,
+    )
+    update_scene_fps: BoolProperty(
+        name="Update Scene FPS",
+        description=(
+            "Set the scene framerate to that of the BVH file (note that this "
+            "nullifies the 'Scale FPS' option, as the scale will be 1:1)"
+        ),
+        default=False,
+    )
+    update_scene_duration: BoolProperty(
+        name="Update Scene Duration",
+        description="Extend the scene's duration to the BVH duration (never shortens the scene)",
+        default=False,
+    )
+    use_cyclic: BoolProperty(
+        name="Loop",
+        description="Loop the animation playback",
+        default=False,
+    )
+    rotate_mode: EnumProperty(
+        name="Rotation",
+        description="Rotation conversion",
+        items=(
+            ('QUATERNION', "Quaternion",
+             "Convert rotations to quaternions"),
+            ('NATIVE', "Euler (Native)",
+             "Use the rotation order defined in the BVH file"),
+            ('XYZ', "Euler (XYZ)", "Convert rotations to euler XYZ"),
+            ('XZY', "Euler (XZY)", "Convert rotations to euler XZY"),
+            ('YXZ', "Euler (YXZ)", "Convert rotations to euler YXZ"),
+            ('YZX', "Euler (YZX)", "Convert rotations to euler YZX"),
+            ('ZXY', "Euler (ZXY)", "Convert rotations to euler ZXY"),
+            ('ZYX', "Euler (ZYX)", "Convert rotations to euler ZYX"),
+        ),
+        default='NATIVE',
+    )
 
     def execute(self, context):
-        keywords = self.as_keywords(ignore=("axis_forward",
-                                            "axis_up",
-                                            "filter_glob",
-                                            ))
-
-        global_matrix = axis_conversion(from_forward=self.axis_forward,
-                                        from_up=self.axis_up,
-                                        ).to_4x4()
+        keywords = self.as_keywords(
+            ignore=(
+                "axis_forward",
+                "axis_up",
+                "filter_glob",
+            )
+        )
+        global_matrix = axis_conversion(
+            from_forward=self.axis_forward,
+            from_up=self.axis_up,
+        ).to_4x4()
 
         keywords["global_matrix"] = global_matrix
 
@@ -147,47 +157,48 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
     bl_label = "Export BVH"
 
     filename_ext = ".bvh"
-    filter_glob = StringProperty(
-            default="*.bvh",
-            options={'HIDDEN'},
-            )
+    filter_glob: StringProperty(
+        default="*.bvh",
+        options={'HIDDEN'},
+    )
 
-    global_scale = FloatProperty(
-            name="Scale",
-            description="Scale the BVH by this value",
-            min=0.0001, max=1000000.0,
-            soft_min=0.001, soft_max=100.0,
-            default=1.0,
-            )
-    frame_start = IntProperty(
-            name="Start Frame",
-            description="Starting frame to export",
-            default=0,
-            )
-    frame_end = IntProperty(
-            name="End Frame",
-            description="End frame to export",
-            default=0,
-            )
-    rotate_mode = EnumProperty(
-            name="Rotation",
-            description="Rotation conversion",
-            items=(('NATIVE', "Euler (Native)",
-                              "Use the rotation order defined in the BVH file"),
-                   ('XYZ', "Euler (XYZ)", "Convert rotations to euler XYZ"),
-                   ('XZY', "Euler (XZY)", "Convert rotations to euler XZY"),
-                   ('YXZ', "Euler (YXZ)", "Convert rotations to euler YXZ"),
-                   ('YZX', "Euler (YZX)", "Convert rotations to euler YZX"),
-                   ('ZXY', "Euler (ZXY)", "Convert rotations to euler ZXY"),
-                   ('ZYX', "Euler (ZYX)", "Convert rotations to euler ZYX"),
-                   ),
-            default='NATIVE',
-            )
-    root_transform_only = BoolProperty(
-            name="Root Translation Only",
-            description="Only write out translation channels for the root bone",
-            default=False,
-            )
+    global_scale: FloatProperty(
+        name="Scale",
+        description="Scale the BVH by this value",
+        min=0.0001, max=1000000.0,
+        soft_min=0.001, soft_max=100.0,
+        default=1.0,
+    )
+    frame_start: IntProperty(
+        name="Start Frame",
+        description="Starting frame to export",
+        default=0,
+    )
+    frame_end: IntProperty(
+        name="End Frame",
+        description="End frame to export",
+        default=0,
+    )
+    rotate_mode: EnumProperty(
+        name="Rotation",
+        description="Rotation conversion",
+        items=(
+            ('NATIVE', "Euler (Native)",
+             "Use the rotation order defined in the BVH file"),
+            ('XYZ', "Euler (XYZ)", "Convert rotations to euler XYZ"),
+            ('XZY', "Euler (XZY)", "Convert rotations to euler XZY"),
+            ('YXZ', "Euler (YXZ)", "Convert rotations to euler YXZ"),
+            ('YZX', "Euler (YZX)", "Convert rotations to euler YZX"),
+            ('ZXY', "Euler (ZXY)", "Convert rotations to euler ZXY"),
+            ('ZYX', "Euler (ZYX)", "Convert rotations to euler ZYX"),
+        ),
+        default='NATIVE',
+    )
+    root_transform_only: BoolProperty(
+        name="Root Translation Only",
+        description="Only write out translation channels for the root bone",
+        default=False,
+    )
 
     @classmethod
     def poll(cls, context):
@@ -205,32 +216,46 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
             self.frame_start = context.scene.frame_start
             self.frame_end = context.scene.frame_end
 
-        keywords = self.as_keywords(ignore=("check_existing", "filter_glob"))
+        keywords = self.as_keywords(
+            ignore=(
+                "axis_forward",
+                "axis_up",
+                "check_existing",
+                "filter_glob",
+            )
+        )
 
         from . import export_bvh
-        return export_bvh.save(self, context, **keywords)
+        return export_bvh.save(context, **keywords)
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon='LOAD_BVH')
+    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon='SAVE_BVH')
+    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)")
 
+
+classes = (
+    ImportBVH,
+    ExportBVH
+)
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 if __name__ == "__main__":
     register()

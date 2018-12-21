@@ -55,9 +55,9 @@
 
 /* ***************************************** */
 /* NOTE ABOUT THIS FILE:
- *  This file contains code for editing Grease Pencil data in the Action Editor
- *  as a 'keyframes', so that a user can adjust the timing of Grease Pencil drawings.
- *  Therefore, this file mostly contains functions for selecting Grease-Pencil frames.
+ * This file contains code for editing Grease Pencil data in the Action Editor
+ * as a 'keyframes', so that a user can adjust the timing of Grease Pencil drawings.
+ * Therefore, this file mostly contains functions for selecting Grease-Pencil frames.
  */
 /* ***************************************** */
 /* Generics - Loopers */
@@ -191,7 +191,7 @@ void ED_gpencil_select_frame(bGPDlayer *gpl, int selx, short select_mode)
 }
 
 /* select the frames in this layer that occur within the bounds specified */
-void ED_gplayer_frames_select_border(bGPDlayer *gpl, float min, float max, short select_mode)
+void ED_gplayer_frames_select_box(bGPDlayer *gpl, float min, float max, short select_mode)
 {
 	bGPDframe *gpf;
 
@@ -288,7 +288,7 @@ void ED_gplayer_frames_duplicate(bGPDlayer *gpl)
 }
 
 /* Set keyframe type for selected frames from given gp-layer
- * \param type The type of keyframe (eBezTriple_KeyframeType) to set selected frames to
+ * \param type: The type of keyframe (eBezTriple_KeyframeType) to set selected frames to
  */
 void ED_gplayer_frames_keytype_set(bGPDlayer *gpl, short type)
 {
@@ -308,10 +308,10 @@ void ED_gplayer_frames_keytype_set(bGPDlayer *gpl, short type)
 /* -------------------------------------- */
 /* Copy and Paste Tools */
 /* - The copy/paste buffer currently stores a set of GP_Layers, with temporary
- *	GP_Frames with the necessary strokes
+ *   GP_Frames with the necessary strokes
  * - Unless there is only one element in the buffer, names are also tested to check for compatibility.
  * - All pasted frames are offset by the same amount. This is calculated as the difference in the times of
- *	the current frame and the 'first keyframe' (i.e. the earliest one in all channels).
+ *   the current frame and the 'first keyframe' (i.e. the earliest one in all channels).
  * - The earliest frame is calculated per copy operation.
  */
 
@@ -477,21 +477,25 @@ bool ED_gpencil_anim_copybuf_paste(bAnimContext *ac, const short offset_mode)
 			gpfs->framenum += offset;
 
 			/* get frame to copy data into (if no frame returned, then just ignore) */
-			gpf = BKE_gpencil_layer_getframe(gpld, gpfs->framenum, 1);
+			gpf = BKE_gpencil_layer_getframe(gpld, gpfs->framenum, GP_GETFRAME_ADD_NEW);
 			if (gpf) {
 				bGPDstroke *gps, *gpsn;
 
 				/* This should be the right frame... as it may be a pre-existing frame,
 				 * must make sure that only compatible stroke types get copied over
-				 *	- We cannot just add a duplicate frame, as that would cause errors
-				 *  - For now, we don't check if the types will be compatible since we
-				 *    don't have enough info to do so. Instead, we simply just paste,
-				 *    af it works, it will show up.
+				 * - We cannot just add a duplicate frame, as that would cause errors
+				 * - For now, we don't check if the types will be compatible since we
+				 *   don't have enough info to do so. Instead, we simply just paste,
+				 *   if it works, it will show up.
 				 */
 				for (gps = gpfs->strokes.first; gps; gps = gps->next) {
 					/* make a copy of stroke, then of its points array */
 					gpsn = MEM_dupallocN(gps);
 					gpsn->points = MEM_dupallocN(gps->points);
+					if (gps->dvert != NULL) {
+						gpsn->dvert = MEM_dupallocN(gps->dvert);
+						BKE_gpencil_stroke_weights_duplicate(gps, gpsn);
+					}
 					/* duplicate triangle information */
 					gpsn->triangles = MEM_dupallocN(gps->triangles);
 					/* append stroke to frame */

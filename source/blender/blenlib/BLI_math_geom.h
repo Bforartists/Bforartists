@@ -121,11 +121,14 @@ float dist_squared_ray_to_seg_v3(
         const float v0[3], const float v1[3],
         float r_point[3], float *r_depth);
 
+void aabb_get_near_far_from_plane(
+        const float plane_no[3], const float bbmin[3], const float bbmax[3],
+        float bb_near[3], float bb_afar[3]);
+
 struct DistRayAABB_Precalc {
 	float ray_origin[3];
 	float ray_direction[3];
 	float ray_inv_dir[3];
-	bool sign[3];
 };
 void dist_squared_ray_to_aabb_v3_precalc(
         struct DistRayAABB_Precalc *neasrest_precalc,
@@ -139,6 +142,24 @@ float dist_squared_ray_to_aabb_v3_simple(
         const float ray_origin[3], const float ray_direction[3],
         const float bb_min[3], const float bb_max[3],
         float r_point[3], float *r_depth);
+
+struct DistProjectedAABBPrecalc {
+	float ray_origin[3];
+	float ray_direction[3];
+	float ray_inv_dir[3];
+	float pmat[4][4];
+	float mval[2];
+};
+void dist_squared_to_projected_aabb_precalc(
+        struct DistProjectedAABBPrecalc *precalc,
+        const float projmat[4][4], const float winsize[2], const float mval[2]);
+float dist_squared_to_projected_aabb(
+        struct DistProjectedAABBPrecalc *data,
+        const float bbmin[3], const float bbmax[3],
+        bool r_axis_closest[3]);
+float dist_squared_to_projected_aabb_simple(
+        const float projmat[4][4], const float winsize[2], const float mval[2],
+        const float bbmin[3], const float bbmax[3]);
 
 float closest_to_line_v2(float r_close[2], const float p[2], const float l1[2], const float l2[2]);
 float closest_to_line_v3(float r_close[3], const float p[3], const float l1[3], const float l2[3]);
@@ -186,6 +207,11 @@ void limit_dist_v3(float v1[3], float v2[3], const float dist);
 #define ISECT_LINE_LINE_CROSS        2
 
 int  isect_seg_seg_v2(const float a1[2], const float a2[2], const float b1[2], const float b2[2]);
+void isect_seg_seg_v3(
+        const float a0[3], const float a1[3],
+        const float b0[3], const float b1[3],
+        float r_a[3], float r_b[3]);
+
 int  isect_seg_seg_v2_int(const int a1[2], const int a2[2], const int b1[2], const int b2[2]);
 int  isect_seg_seg_v2_point_ex(
         const float v0[2], const float v1[2], const float v2[2], const float v3[2], const float endpoint_bias,
@@ -223,6 +249,9 @@ bool isect_ray_plane_v3(
         float *r_lambda, const bool clip);
 
 bool isect_point_planes_v3(float (*planes)[4], int totplane, const float p[3]);
+bool isect_point_planes_v3_negated(
+        const float (*planes)[4], const int totplane, const float p[3]);
+
 bool isect_line_plane_v3(
         float r_isect_co[3], const float l1[3], const float l2[3],
         const float plane_co[3], const float plane_no[3]) ATTR_WARN_UNUSED_RESULT;
@@ -291,6 +320,11 @@ bool isect_ray_seg_v2(
         const float v0[2], const float v1[2],
         float *r_lambda, float *r_u);
 
+bool isect_ray_seg_v3(
+        const float ray_origin[3], const float ray_direction[3],
+        const float v0[3], const float v1[3],
+        float *r_lambda);
+
 /* point in polygon */
 bool isect_point_poly_v2(const float pt[2], const float verts[][2], const unsigned int nr, const bool use_holes);
 bool isect_point_poly_v2_int(const int pt[2], const int verts[][2], const unsigned int nr, const bool use_holes);
@@ -326,6 +360,14 @@ bool isect_ray_aabb_v3_simple(
         float *tmin, float *tmax);
 
 /* other */
+#define ISECT_AABB_PLANE_BEHIND_ANY   0
+#define ISECT_AABB_PLANE_CROSS_ANY    1
+#define ISECT_AABB_PLANE_IN_FRONT_ALL 2
+
+int isect_aabb_planes_v3(
+        const float (*planes)[4], const int totplane,
+        const float bbmin[3], const float bbmax[3]);
+
 bool isect_sweeping_sphere_tri_v3(const float p1[3], const float p2[3], const float radius,
                                   const float v0[3], const float v1[3], const float v2[3], float *r_lambda, float ipoint[3]);
 
@@ -335,6 +377,8 @@ bool clip_segment_v3_plane(
 bool clip_segment_v3_plane_n(
         const float p1[3], const float p2[3], const float plane_array[][4], const int plane_tot,
         float r_p1[3], float r_p2[3]);
+
+bool point_in_slice_seg(float p[3], float l1[3], float l2[3]);
 
 /****************************** Interpolation ********************************/
 void interp_weights_tri_v3(float w[3], const float a[3], const float b[3], const float c[3], const float p[3]);

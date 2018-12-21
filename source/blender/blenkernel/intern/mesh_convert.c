@@ -22,9 +22,11 @@
  *  \ingroup bke
  */
 
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_scene_types.h"
+#include "DNA_key_types.h"
 #include "DNA_material_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_object_types.h"
@@ -39,23 +41,32 @@
 #include "BKE_main.h"
 #include "BKE_DerivedMesh.h"
 #include "BKE_global.h"
+#include "BKE_key.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_runtime.h"
+#include "BKE_modifier.h"
 #include "BKE_displist.h"
 #include "BKE_library.h"
 #include "BKE_material.h"
-#include "BKE_modifier.h"
 #include "BKE_mball.h"
-#include "BKE_depsgraph.h"
+/* these 2 are only used by conversion functions */
 #include "BKE_curve.h"
 /* -- */
 #include "BKE_object.h"
 
 #include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 /* Define for cases when you want extra validation of mesh
  * after certain modifications.
  */
 // #undef VALIDATE_MESH
+
+#ifdef VALIDATE_MESH
+#  define ASSERT_IS_VALID_MESH(mesh) (BLI_assert((mesh == NULL) || (BKE_mesh_is_valid(mesh) == true)))
+#else
+#  define ASSERT_IS_VALID_MESH(mesh)
+#endif
 
 void BKE_mesh_from_metaball(ListBase *lb, Mesh *me)
 {
@@ -145,7 +156,7 @@ static void make_edges_mdata_extend(
 	totedge_new = BLI_edgehash_len(eh);
 
 #ifdef DEBUG
-	/* ensure that theres no overlap! */
+	/* ensure that there's no overlap! */
 	if (totedge_new) {
 		MEdge *medge = *r_alledge;
 		for (i = 0; i < totedge; i++, medge++) {
@@ -171,7 +182,7 @@ static void make_edges_mdata_extend(
 		     BLI_edgehashIterator_step(ehi), ++medge, e_index++)
 		{
 			BLI_edgehashIterator_getKey(ehi, &medge->v1, &medge->v2);
-			BLI_edgehashIterator_setValue(ehi, SET_UINT_IN_POINTER(e_index));
+			BLI_edgehashIterator_setValue(ehi, POINTER_FROM_UINT(e_index));
 
 			medge->crease = medge->bweight = 0;
 			medge->flag = ME_EDGEDRAW | ME_EDGERENDER;
@@ -187,7 +198,7 @@ static void make_edges_mdata_extend(
 			int j;
 			for (j = 0; j < mp->totloop; j++, l++) {
 				/* lookup hashed edge index */
-				l_prev->e = GET_UINT_FROM_POINTER(BLI_edgehash_lookup(eh, l_prev->v, l->v));
+				l_prev->e = POINTER_AS_UINT(BLI_edgehash_lookup(eh, l_prev->v, l->v));
 				l_prev = l;
 			}
 		}
@@ -206,8 +217,8 @@ int BKE_mesh_nurbs_to_mdata(
 {
 	ListBase disp = {NULL, NULL};
 
-	if (ob->curve_cache) {
-		disp = ob->curve_cache->disp;
+	if (ob->runtime.curve_cache) {
+		disp = ob->runtime.curve_cache->disp;
 	}
 
 	return BKE_mesh_nurbs_displist_to_mdata(
@@ -480,13 +491,65 @@ int BKE_mesh_nurbs_displist_to_mdata(
 	return 0;
 }
 
+Mesh *BKE_mesh_new_nomain_from_curve_displist(Object *ob, ListBase *dispbase)
+{
+	Curve *cu = ob->data;
+	Mesh *mesh;
+	MVert *allvert;
+	MEdge *alledge;
+	MLoop *allloop;
+	MPoly *allpoly;
+	MLoopUV *alluv = NULL;
+	int totvert, totedge, totloop, totpoly;
+	bool use_orco_uv = (cu->flag & CU_UV_ORCO) != 0;
+
+	if (BKE_mesh_nurbs_displist_to_mdata(
+	        ob, dispbase, &allvert, &totvert, &alledge,
+	        &totedge, &allloop, &allpoly, (use_orco_uv) ? &alluv : NULL,
+	        &totloop, &totpoly) != 0)
+	{
+		/* Error initializing mdata. This often happens when curve is empty */
+		return BKE_mesh_new_nomain(0, 0, 0, 0, 0);
+	}
+
+	mesh = BKE_mesh_new_nomain(totvert, totedge, 0, totloop, totpoly);
+	mesh->runtime.cd_dirty_vert |= CD_MASK_NORMAL;
+
+	memcpy(mesh->mvert, allvert, totvert * sizeof(MVert));
+	memcpy(mesh->medge, alledge, totedge * sizeof(MEdge));
+	memcpy(mesh->mloop, allloop, totloop * sizeof(MLoop));
+	memcpy(mesh->mpoly, allpoly, totpoly * sizeof(MPoly));
+
+	if (alluv) {
+		const char *uvname = "Orco";
+		CustomData_add_layer_named(&mesh->ldata, CD_MLOOPUV, CD_ASSIGN, alluv, totloop, uvname);
+	}
+
+	MEM_freeN(allvert);
+	MEM_freeN(alledge);
+	MEM_freeN(allloop);
+	MEM_freeN(allpoly);
+
+	return mesh;
+}
+
+Mesh *BKE_mesh_new_nomain_from_curve(Object *ob)
+{
+	ListBase disp = {NULL, NULL};
+
+	if (ob->runtime.curve_cache) {
+		disp = ob->runtime.curve_cache->disp;
+	}
+
+	return BKE_mesh_new_nomain_from_curve_displist(ob, &disp);
+}
 
 /* this may fail replacing ob->data, be sure to check ob->type */
 void BKE_mesh_from_nurbs_displist(
-        Main *bmain, Object *ob, ListBase *dispbase, const bool use_orco_uv, const char *obdata_name)
+        Main *bmain, Object *ob, ListBase *dispbase, const bool use_orco_uv, const char *obdata_name, bool temporary)
 {
 	Object *ob1;
-	DerivedMesh *dm = ob->derivedFinal;
+	Mesh *me_eval = ob->runtime.mesh_eval;
 	Mesh *me;
 	Curve *cu;
 	MVert *allvert = NULL;
@@ -498,7 +561,7 @@ void BKE_mesh_from_nurbs_displist(
 
 	cu = ob->data;
 
-	if (dm == NULL) {
+	if (me_eval == NULL) {
 		if (BKE_mesh_nurbs_displist_to_mdata(
 		            ob, dispbase, &allvert, &totvert,
 		            &alledge, &totedge, &allloop,
@@ -523,7 +586,6 @@ void BKE_mesh_from_nurbs_displist(
 
 		if (alluv) {
 			const char *uvname = "Orco";
-			me->mtpoly = CustomData_add_layer_named(&me->pdata, CD_MTEXPOLY, CD_DEFAULT, NULL, me->totpoly, uvname);
 			me->mloopuv = CustomData_add_layer_named(&me->ldata, CD_MLOOPUV, CD_ASSIGN, alluv, me->totloop, uvname);
 		}
 
@@ -531,7 +593,8 @@ void BKE_mesh_from_nurbs_displist(
 	}
 	else {
 		me = BKE_mesh_add(bmain, obdata_name);
-		DM_to_mesh(dm, me, ob, CD_MASK_MESH, false);
+		ob->runtime.mesh_eval = NULL;
+		BKE_mesh_nomain_to_mesh(me_eval, me, ob, CD_MASK_MESH, false);
 	}
 
 	me->totcol = cu->totcol;
@@ -570,7 +633,16 @@ void BKE_mesh_from_nurbs_displist(
 		ob1 = ob1->id.next;
 	}
 
-	BKE_libblock_free_us(bmain, cu);
+	if (temporary) {
+		/* For temporary objects in BKE_mesh_new_from_object don't remap
+		 * the entire scene with associated depsgraph updates, which are
+		 * problematic for renderers exporting data. */
+		id_us_min(&cu->id);
+		BKE_libblock_free(bmain, cu);
+	}
+	else {
+		BKE_libblock_free_us(bmain, cu);
+	}
 }
 
 void BKE_mesh_from_nurbs(Main *bmain, Object *ob)
@@ -579,11 +651,11 @@ void BKE_mesh_from_nurbs(Main *bmain, Object *ob)
 	bool use_orco_uv = (cu->flag & CU_UV_ORCO) != 0;
 	ListBase disp = {NULL, NULL};
 
-	if (ob->curve_cache) {
-		disp = ob->curve_cache->disp;
+	if (ob->runtime.curve_cache) {
+		disp = ob->runtime.curve_cache->disp;
 	}
 
-	BKE_mesh_from_nurbs_displist(bmain, ob, &disp, use_orco_uv, cu->id.name);
+	BKE_mesh_from_nurbs_displist(bmain, ob, &disp, use_orco_uv, cu->id.name, false);
 }
 
 typedef struct EdgeLink {
@@ -610,15 +682,15 @@ static void appendPolyLineVert(ListBase *lb, unsigned int index)
 	BLI_addtail(lb, vl);
 }
 
-void BKE_mesh_to_curve_nurblist(DerivedMesh *dm, ListBase *nurblist, const int edge_users_test)
+void BKE_mesh_to_curve_nurblist(const Mesh *me, ListBase *nurblist, const int edge_users_test)
 {
-	MVert       *mvert = dm->getVertArray(dm);
-	MEdge *med, *medge = dm->getEdgeArray(dm);
-	MPoly *mp,  *mpoly = dm->getPolyArray(dm);
-	MLoop       *mloop = dm->getLoopArray(dm);
+	MVert       *mvert = me->mvert;
+	MEdge *med, *medge = me->medge;
+	MPoly *mp,  *mpoly = me->mpoly;
+	MLoop       *mloop = me->mloop;
 
-	int dm_totedge = dm->getNumEdges(dm);
-	int dm_totpoly = dm->getNumPolys(dm);
+	int medge_len = me->totedge;
+	int mpoly_len = me->totpoly;
 	int totedges = 0;
 	int i;
 
@@ -628,8 +700,8 @@ void BKE_mesh_to_curve_nurblist(DerivedMesh *dm, ListBase *nurblist, const int e
 	ListBase edges = {NULL, NULL};
 
 	/* get boundary edges */
-	edge_users = MEM_calloc_arrayN(dm_totedge, sizeof(int), __func__);
-	for (i = 0, mp = mpoly; i < dm_totpoly; i++, mp++) {
+	edge_users = MEM_calloc_arrayN(medge_len, sizeof(int), __func__);
+	for (i = 0, mp = mpoly; i < mpoly_len; i++, mp++) {
 		MLoop *ml = &mloop[mp->loopstart];
 		int j;
 		for (j = 0; j < mp->totloop; j++, ml++) {
@@ -639,7 +711,7 @@ void BKE_mesh_to_curve_nurblist(DerivedMesh *dm, ListBase *nurblist, const int e
 
 	/* create edges from all faces (so as to find edges not in any faces) */
 	med = medge;
-	for (i = 0; i < dm_totedge; i++, med++) {
+	for (i = 0; i < medge_len; i++, med++) {
 		if (edge_users[i] == edge_users_test) {
 			EdgeLink *edl = MEM_callocN(sizeof(EdgeLink), "EdgeLink");
 			edl->edge = med;
@@ -743,15 +815,16 @@ void BKE_mesh_to_curve_nurblist(DerivedMesh *dm, ListBase *nurblist, const int e
 	}
 }
 
-void BKE_mesh_to_curve(Main *bmain, Scene *scene, Object *ob)
+void BKE_mesh_to_curve(Main *bmain, Depsgraph *depsgraph, Scene *UNUSED(scene), Object *ob)
 {
 	/* make new mesh data from the original copy */
-	DerivedMesh *dm = mesh_get_derived_final(scene, ob, CD_MASK_MESH);
+	Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
+	Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+	Mesh *me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, CD_MASK_MESH);
 	ListBase nurblist = {NULL, NULL};
-	bool needsFree = false;
 
-	BKE_mesh_to_curve_nurblist(dm, &nurblist, 0);
-	BKE_mesh_to_curve_nurblist(dm, &nurblist, 1);
+	BKE_mesh_to_curve_nurblist(me_eval, &nurblist, 0);
+	BKE_mesh_to_curve_nurblist(me_eval, &nurblist, 1);
 
 	if (nurblist.first) {
 		Curve *cu = BKE_curve_add(bmain, ob->id.name + 2, OB_CURVE);
@@ -763,33 +836,19 @@ void BKE_mesh_to_curve(Main *bmain, Scene *scene, Object *ob)
 		ob->data = cu;
 		ob->type = OB_CURVE;
 
-		/* curve objects can't contain DM in usual cases, we could free memory */
-		needsFree = true;
-	}
-
-	dm->needsFree = needsFree;
-	dm->release(dm);
-
-	if (needsFree) {
-		ob->derivedFinal = NULL;
-
-		/* curve object could have got bounding box only in special cases */
-		if (ob->bb) {
-			MEM_freeN(ob->bb);
-			ob->bb = NULL;
-		}
+		BKE_object_free_derived_caches(ob);
 	}
 }
 
 /* settings: 1 - preview, 2 - render */
 Mesh *BKE_mesh_new_from_object(
-        Main *bmain, Scene *sce, Object *ob,
-        int apply_modifiers, int settings, int calc_tessface, int calc_undeformed)
+        Depsgraph *depsgraph, Main *bmain, Scene *sce, Object *ob,
+        const bool apply_modifiers, const bool calc_undeformed)
 {
 	Mesh *tmpmesh;
 	Curve *tmpcu = NULL, *copycu;
 	int i;
-	const bool render = (settings == eModifierMode_Render);
+	const bool render = (DEG_get_mode(depsgraph) == DAG_EVAL_RENDER);
 	const bool cage = !apply_modifiers;
 	bool do_mat_id_data_us = true;
 
@@ -800,15 +859,14 @@ Mesh *BKE_mesh_new_from_object(
 		case OB_SURF:
 		{
 			ListBase dispbase = {NULL, NULL};
-			DerivedMesh *derivedFinal = NULL;
+			Mesh *me_eval_final = NULL;
 			int uv_from_orco;
 
 			/* copies object and modifiers (but not the data) */
 			Object *tmpobj;
 			/* TODO: make it temp copy outside bmain! */
-			BKE_id_copy_ex(bmain, &ob->id, (ID **)&tmpobj, LIB_ID_COPY_CACHES, false);
+			BKE_id_copy_ex(bmain, &ob->id, (ID **)&tmpobj, LIB_ID_COPY_CACHES | LIB_ID_CREATE_NO_DEG_TAG, false);
 			tmpcu = (Curve *)tmpobj->data;
-			id_us_min(&tmpcu->id);
 
 			/* Copy cached display list, it might be needed by the stack evaluation.
 			 * Ideally stack should be able to use render-time display list, but doing
@@ -816,11 +874,11 @@ Mesh *BKE_mesh_new_from_object(
 			 *
 			 * TODO(sergey): Look into more proper solution.
 			 */
-			if (ob->curve_cache != NULL) {
-				if (tmpobj->curve_cache == NULL) {
-					tmpobj->curve_cache = MEM_callocN(sizeof(CurveCache), "CurveCache for curve types");
+			if (ob->runtime.curve_cache != NULL) {
+				if (tmpobj->runtime.curve_cache == NULL) {
+					tmpobj->runtime.curve_cache = MEM_callocN(sizeof(CurveCache), "CurveCache for curve types");
 				}
-				BKE_displist_copy(&tmpobj->curve_cache->disp, &ob->curve_cache->disp);
+				BKE_displist_copy(&tmpobj->runtime.curve_cache->disp, &ob->runtime.curve_cache->disp);
 			}
 
 			/* if getting the original caged mesh, delete object modifiers */
@@ -828,7 +886,8 @@ Mesh *BKE_mesh_new_from_object(
 				BKE_object_free_modifiers(tmpobj, 0);
 
 			/* copies the data */
-			copycu = tmpobj->data = BKE_curve_copy(bmain, (Curve *) ob->data);
+			BKE_id_copy_ex(bmain, ob->data, (ID **)&copycu, LIB_ID_CREATE_NO_DEG_TAG, false);
+			tmpobj->data = copycu;
 
 			/* make sure texture space is calculated for a copy of curve,
 			 * it will be used for the final result.
@@ -842,16 +901,16 @@ Mesh *BKE_mesh_new_from_object(
 			copycu->editnurb = tmpcu->editnurb;
 
 			/* get updated display list, and convert to a mesh */
-			BKE_displist_make_curveTypes_forRender(sce, tmpobj, &dispbase, &derivedFinal, false, render);
+			BKE_displist_make_curveTypes_forRender(depsgraph, sce, tmpobj, &dispbase, &me_eval_final, false, render);
 
 			copycu->editfont = NULL;
 			copycu->editnurb = NULL;
 
-			tmpobj->derivedFinal = derivedFinal;
+			tmpobj->runtime.mesh_eval = me_eval_final;
 
 			/* convert object type to mesh */
 			uv_from_orco = (tmpcu->flag & CU_UV_ORCO) != 0;
-			BKE_mesh_from_nurbs_displist(bmain, tmpobj, &dispbase, uv_from_orco, tmpcu->id.name + 2);
+			BKE_mesh_from_nurbs_displist(bmain, tmpobj, &dispbase, uv_from_orco, tmpcu->id.name + 2, true);
 
 			tmpmesh = tmpobj->data;
 
@@ -861,11 +920,11 @@ Mesh *BKE_mesh_new_from_object(
 			 * if it didn't the curve did not have any segments or otherwise
 			 * would have generated an empty mesh */
 			if (tmpobj->type != OB_MESH) {
-				BKE_libblock_free_us(bmain, tmpobj);
+				BKE_libblock_free(bmain, tmpobj);
 				return NULL;
 			}
 
-			BKE_libblock_free_us(bmain, tmpobj);
+			BKE_libblock_free(bmain, tmpobj);
 
 			/* XXX The curve to mesh conversion is convoluted... But essentially, BKE_mesh_from_nurbs_displist()
 			 *     already transfers the ownership of materials from the temp copy of the Curve ID to the new
@@ -878,7 +937,7 @@ Mesh *BKE_mesh_new_from_object(
 		case OB_MBALL:
 		{
 			/* metaballs don't have modifiers, so just convert to mesh */
-			Object *basis_ob = BKE_mball_basis_find(bmain, bmain->eval_ctx, sce, ob);
+			Object *basis_ob = BKE_mball_basis_find(sce, ob);
 			/* todo, re-generatre for render-res */
 			/* metaball_polygonize(scene, ob) */
 
@@ -891,20 +950,14 @@ Mesh *BKE_mesh_new_from_object(
 
 			if (render) {
 				ListBase disp = {NULL, NULL};
-				/* TODO(sergey): This is gonna to work for until EvaluationContext
-				 *               only contains for_render flag. As soon as CoW is
-				 *               implemented, this is to be rethought.
-				 */
-				EvaluationContext eval_ctx;
-				DEG_evaluation_context_init(&eval_ctx, DAG_EVAL_RENDER);
-				BKE_displist_make_mball_forRender(bmain, &eval_ctx, sce, ob, &disp);
+				BKE_displist_make_mball_forRender(depsgraph, sce, ob, &disp);
 				BKE_mesh_from_metaball(&disp, tmpmesh);
 				BKE_displist_free(&disp);
 			}
 			else {
 				ListBase disp = {NULL, NULL};
-				if (ob->curve_cache) {
-					disp = ob->curve_cache->disp;
+				if (ob->runtime.curve_cache) {
+					disp = ob->runtime.curve_cache->disp;
 				}
 				BKE_mesh_from_metaball(&disp, tmpmesh);
 			}
@@ -926,7 +979,7 @@ Mesh *BKE_mesh_new_from_object(
 			/* if not getting the original caged mesh, get final derived mesh */
 			else {
 				/* Make a dummy mesh, saves copying */
-				DerivedMesh *dm;
+				Mesh *me_eval;
 				/* CustomDataMask mask = CD_MASK_BAREMESH|CD_MASK_MTFACE|CD_MASK_MCOL; */
 				CustomDataMask mask = CD_MASK_MESH; /* this seems more suitable, exporter,
 				                                     * for example, needs CD_MASK_MDEFORMVERT */
@@ -934,14 +987,15 @@ Mesh *BKE_mesh_new_from_object(
 				if (calc_undeformed)
 					mask |= CD_MASK_ORCO;
 
-				/* Write the display mesh into the dummy mesh */
-				if (render)
-					dm = mesh_create_derived_render(sce, ob, mask);
-				else
-					dm = mesh_create_derived_view(sce, ob, mask);
+				if (render) {
+					me_eval = mesh_create_eval_final_render(depsgraph, sce, ob, mask);
+				}
+				else {
+					me_eval = mesh_create_eval_final_view(depsgraph, sce, ob, mask);
+				}
 
 				tmpmesh = BKE_mesh_add(bmain, ((ID *)ob->data)->name + 2);
-				DM_to_mesh(dm, tmpmesh, ob, mask, true);
+				BKE_mesh_nomain_to_mesh(me_eval, tmpmesh, ob, mask, true);
 
 				/* Copy autosmooth settings from original mesh. */
 				Mesh *me = (Mesh *)ob->data;
@@ -1019,10 +1073,345 @@ Mesh *BKE_mesh_new_from_object(
 			break;
 	} /* end copy materials */
 
-	if (calc_tessface) {
-		/* cycles and exporters rely on this still */
-		BKE_mesh_tessface_ensure(tmpmesh);
+	return tmpmesh;
+}
+
+
+static void add_shapekey_layers(Mesh *mesh_dest, Mesh *mesh_src)
+{
+	KeyBlock *kb;
+	Key *key = mesh_src->key;
+	int i;
+
+	if (!mesh_src->key)
+		return;
+
+	/* ensure we can use mesh vertex count for derived mesh custom data */
+	if (mesh_src->totvert != mesh_dest->totvert) {
+		fprintf(stderr,
+		        "%s: vertex size mismatch (mesh/dm) '%s' (%d != %d)\n",
+		        __func__, mesh_src->id.name + 2, mesh_src->totvert, mesh_dest->totvert);
+		return;
 	}
 
-	return tmpmesh;
+	for (i = 0, kb = key->block.first; kb; kb = kb->next, i++) {
+		int ci;
+		float *array;
+
+		if (mesh_src->totvert != kb->totelem) {
+			fprintf(stderr,
+			        "%s: vertex size mismatch (Mesh '%s':%d != KeyBlock '%s':%d)\n",
+			        __func__, mesh_src->id.name + 2, mesh_src->totvert, kb->name, kb->totelem);
+			array = MEM_calloc_arrayN((size_t)mesh_src->totvert, 3 * sizeof(float), __func__);
+		}
+		else {
+			array = MEM_malloc_arrayN((size_t)mesh_src->totvert, 3 * sizeof(float), __func__);
+			memcpy(array, kb->data, (size_t)mesh_src->totvert * 3 * sizeof(float));
+		}
+
+		CustomData_add_layer_named(&mesh_dest->vdata, CD_SHAPEKEY, CD_ASSIGN, array, mesh_dest->totvert, kb->name);
+		ci = CustomData_get_layer_index_n(&mesh_dest->vdata, CD_SHAPEKEY, i);
+
+		mesh_dest->vdata.layers[ci].uid = kb->uid;
+	}
+}
+
+
+Mesh *BKE_mesh_create_derived_for_modifier(
+        struct Depsgraph *depsgraph, Scene *scene, Object *ob,
+        ModifierData *md, int build_shapekey_layers)
+{
+	Mesh *me = ob->data;
+	const ModifierTypeInfo *mti = modifierType_getInfo(md->type);
+	Mesh *result;
+	KeyBlock *kb;
+	ModifierEvalContext mectx = {depsgraph, ob, 0};
+
+	if (!(md->mode & eModifierMode_Realtime)) {
+		return NULL;
+	}
+
+	if (mti->isDisabled && mti->isDisabled(scene, md, 0)) {
+		return NULL;
+	}
+
+	if (build_shapekey_layers && me->key && (kb = BLI_findlink(&me->key->block, ob->shapenr - 1))) {
+		BKE_keyblock_convert_to_mesh(kb, me);
+	}
+
+	if (mti->type == eModifierTypeType_OnlyDeform) {
+		int numVerts;
+		float (*deformedVerts)[3] = BKE_mesh_vertexCos_get(me, &numVerts);
+
+		mti->deformVerts(md, &mectx, NULL, deformedVerts, numVerts);
+		BKE_id_copy_ex(
+		        NULL, &me->id, (ID **)&result,
+		        LIB_ID_CREATE_NO_MAIN |
+		        LIB_ID_CREATE_NO_USER_REFCOUNT |
+		        LIB_ID_CREATE_NO_DEG_TAG |
+		        LIB_ID_COPY_NO_PREVIEW,
+		        false);
+		BKE_mesh_apply_vert_coords(result, deformedVerts);
+
+		if (build_shapekey_layers)
+			add_shapekey_layers(result, me);
+
+		MEM_freeN(deformedVerts);
+	}
+	else {
+		Mesh *mesh_temp;
+		BKE_id_copy_ex(
+		        NULL, &me->id, (ID **)&mesh_temp,
+		        LIB_ID_CREATE_NO_MAIN |
+		        LIB_ID_CREATE_NO_USER_REFCOUNT |
+		        LIB_ID_CREATE_NO_DEG_TAG |
+		        LIB_ID_COPY_NO_PREVIEW,
+		        false);
+
+		if (build_shapekey_layers)
+			add_shapekey_layers(mesh_temp, me);
+
+		result = mti->applyModifier(md, &mectx, mesh_temp);
+		ASSERT_IS_VALID_MESH(result);
+
+		if (mesh_temp != result) {
+			BKE_id_free(NULL, mesh_temp);
+		}
+	}
+
+	return result;
+}
+
+/* This is a Mesh-based copy of the same function in DerivedMesh.c */
+static void shapekey_layers_to_keyblocks(Mesh *mesh_src, Mesh *mesh_dst, int actshape_uid)
+{
+	KeyBlock *kb;
+	int i, j, tot;
+
+	if (!mesh_dst->key)
+		return;
+
+	tot = CustomData_number_of_layers(&mesh_src->vdata, CD_SHAPEKEY);
+	for (i = 0; i < tot; i++) {
+		CustomDataLayer *layer = &mesh_src->vdata.layers[CustomData_get_layer_index_n(&mesh_src->vdata, CD_SHAPEKEY, i)];
+		float (*cos)[3], (*kbcos)[3];
+
+		for (kb = mesh_dst->key->block.first; kb; kb = kb->next) {
+			if (kb->uid == layer->uid)
+				break;
+		}
+
+		if (!kb) {
+			kb = BKE_keyblock_add(mesh_dst->key, layer->name);
+			kb->uid = layer->uid;
+		}
+
+		if (kb->data)
+			MEM_freeN(kb->data);
+
+		cos = CustomData_get_layer_n(&mesh_src->vdata, CD_SHAPEKEY, i);
+		kb->totelem = mesh_src->totvert;
+
+		kb->data = kbcos = MEM_malloc_arrayN(kb->totelem, 3 * sizeof(float), __func__);
+		if (kb->uid == actshape_uid) {
+			MVert *mvert = mesh_src->mvert;
+
+			for (j = 0; j < mesh_src->totvert; j++, kbcos++, mvert++) {
+				copy_v3_v3(*kbcos, mvert->co);
+			}
+		}
+		else {
+			for (j = 0; j < kb->totelem; j++, cos++, kbcos++) {
+				copy_v3_v3(*kbcos, *cos);
+			}
+		}
+	}
+
+	for (kb = mesh_dst->key->block.first; kb; kb = kb->next) {
+		if (kb->totelem != mesh_src->totvert) {
+			if (kb->data)
+				MEM_freeN(kb->data);
+
+			kb->totelem = mesh_src->totvert;
+			kb->data = MEM_calloc_arrayN(kb->totelem, 3 * sizeof(float), __func__);
+			fprintf(stderr, "%s: lost a shapekey layer: '%s'! (bmesh internal error)\n", __func__, kb->name);
+		}
+	}
+}
+
+
+/* This is a Mesh-based copy of DM_to_mesh() */
+void BKE_mesh_nomain_to_mesh(Mesh *mesh_src, Mesh *mesh_dst, Object *ob, CustomDataMask mask, bool take_ownership)
+{
+	/* mesh_src might depend on mesh_dst, so we need to do everything with a local copy */
+	/* TODO(Sybren): the above claim came from DM_to_mesh(); check whether it is still true with Mesh */
+	Mesh tmp = *mesh_dst;
+	int totvert, totedge /*, totface */ /* UNUSED */, totloop, totpoly;
+	int did_shapekeys = 0;
+	eCDAllocType alloctype = CD_DUPLICATE;
+
+	if (take_ownership /* && dm->type == DM_TYPE_CDDM && dm->needsFree */) {
+		bool has_any_referenced_layers =
+		        CustomData_has_referenced(&mesh_src->vdata) ||
+		        CustomData_has_referenced(&mesh_src->edata) ||
+		        CustomData_has_referenced(&mesh_src->ldata) ||
+		        CustomData_has_referenced(&mesh_src->fdata) ||
+		        CustomData_has_referenced(&mesh_src->pdata);
+		if (!has_any_referenced_layers) {
+			alloctype = CD_ASSIGN;
+		}
+	}
+	CustomData_reset(&tmp.vdata);
+	CustomData_reset(&tmp.edata);
+	CustomData_reset(&tmp.fdata);
+	CustomData_reset(&tmp.ldata);
+	CustomData_reset(&tmp.pdata);
+
+	BKE_mesh_ensure_normals(mesh_src);
+
+	totvert = tmp.totvert = mesh_src->totvert;
+	totedge = tmp.totedge = mesh_src->totedge;
+	totloop = tmp.totloop = mesh_src->totloop;
+	totpoly = tmp.totpoly = mesh_src->totpoly;
+	tmp.totface = 0;
+
+	CustomData_copy(&mesh_src->vdata, &tmp.vdata, mask, alloctype, totvert);
+	CustomData_copy(&mesh_src->edata, &tmp.edata, mask, alloctype, totedge);
+	CustomData_copy(&mesh_src->ldata, &tmp.ldata, mask, alloctype, totloop);
+	CustomData_copy(&mesh_src->pdata, &tmp.pdata, mask, alloctype, totpoly);
+	tmp.cd_flag = mesh_src->cd_flag;
+	tmp.runtime.deformed_only = mesh_src->runtime.deformed_only;
+
+	if (CustomData_has_layer(&mesh_src->vdata, CD_SHAPEKEY)) {
+		KeyBlock *kb;
+		int uid;
+
+		if (ob) {
+			kb = BLI_findlink(&mesh_dst->key->block, ob->shapenr - 1);
+			if (kb) {
+				uid = kb->uid;
+			}
+			else {
+				printf("%s: error - could not find active shapekey %d!\n",
+				       __func__, ob->shapenr - 1);
+
+				uid = INT_MAX;
+			}
+		}
+		else {
+			/* if no object, set to INT_MAX so we don't mess up any shapekey layers */
+			uid = INT_MAX;
+		}
+
+		shapekey_layers_to_keyblocks(mesh_src, mesh_dst, uid);
+		did_shapekeys = 1;
+	}
+
+	/* copy texture space */
+	if (ob) {
+		BKE_mesh_texspace_copy_from_object(&tmp, ob);
+	}
+
+	/* not all DerivedMeshes store their verts/edges/faces in CustomData, so
+	 * we set them here in case they are missing */
+	/* TODO(Sybren): we could probably replace CD_ASSIGN with alloctype and always directly pass mesh_src->mxxx,
+	 * instead of using a ternary operator. */
+	if (!CustomData_has_layer(&tmp.vdata, CD_MVERT)) {
+		CustomData_add_layer(
+		        &tmp.vdata, CD_MVERT, CD_ASSIGN,
+		        (alloctype == CD_ASSIGN) ? mesh_src->mvert : MEM_dupallocN(mesh_src->mvert),
+		        totvert);
+	}
+	if (!CustomData_has_layer(&tmp.edata, CD_MEDGE)) {
+		CustomData_add_layer(
+		        &tmp.edata, CD_MEDGE, CD_ASSIGN,
+		        (alloctype == CD_ASSIGN) ? mesh_src->medge : MEM_dupallocN(mesh_src->medge),
+		        totedge);
+	}
+	if (!CustomData_has_layer(&tmp.pdata, CD_MPOLY)) {
+		/* TODO(Sybren): assignment to tmp.mxxx is probably not necessary due to the
+		 * BKE_mesh_update_customdata_pointers() call below. */
+		tmp.mloop = (alloctype == CD_ASSIGN) ? mesh_src->mloop : MEM_dupallocN(mesh_src->mloop);
+		tmp.mpoly = (alloctype == CD_ASSIGN) ? mesh_src->mpoly : MEM_dupallocN(mesh_src->mpoly);
+
+		CustomData_add_layer(&tmp.ldata, CD_MLOOP, CD_ASSIGN, tmp.mloop, tmp.totloop);
+		CustomData_add_layer(&tmp.pdata, CD_MPOLY, CD_ASSIGN, tmp.mpoly, tmp.totpoly);
+	}
+
+	/* object had got displacement layer, should copy this layer to save sculpted data */
+	/* NOTE: maybe some other layers should be copied? nazgul */
+	if (CustomData_has_layer(&mesh_dst->ldata, CD_MDISPS)) {
+		if (totloop == mesh_dst->totloop) {
+			MDisps *mdisps = CustomData_get_layer(&mesh_dst->ldata, CD_MDISPS);
+			CustomData_add_layer(&tmp.ldata, CD_MDISPS, alloctype, mdisps, totloop);
+		}
+	}
+
+	/* yes, must be before _and_ after tessellate */
+	BKE_mesh_update_customdata_pointers(&tmp, false);
+
+	/* since 2.65 caller must do! */
+	// BKE_mesh_tessface_calc(&tmp);
+
+	CustomData_free(&mesh_dst->vdata, mesh_dst->totvert);
+	CustomData_free(&mesh_dst->edata, mesh_dst->totedge);
+	CustomData_free(&mesh_dst->fdata, mesh_dst->totface);
+	CustomData_free(&mesh_dst->ldata, mesh_dst->totloop);
+	CustomData_free(&mesh_dst->pdata, mesh_dst->totpoly);
+
+	/* ok, this should now use new CD shapekey data,
+	 * which should be fed through the modifier
+	 * stack */
+	if (tmp.totvert != mesh_dst->totvert && !did_shapekeys && mesh_dst->key) {
+		printf("%s: YEEK! this should be recoded! Shape key loss!: ID '%s'\n", __func__, tmp.id.name);
+		if (tmp.key && !(tmp.id.tag & LIB_TAG_NO_MAIN)) {
+			id_us_min(&tmp.key->id);
+		}
+		tmp.key = NULL;
+	}
+
+	/* Clear selection history */
+	MEM_SAFE_FREE(tmp.mselect);
+	tmp.totselect = 0;
+	BLI_assert(ELEM(tmp.bb, NULL, mesh_dst->bb));
+	if (mesh_dst->bb) {
+		MEM_freeN(mesh_dst->bb);
+		tmp.bb = NULL;
+	}
+
+	/* skip the listbase */
+	MEMCPY_STRUCT_OFS(mesh_dst, &tmp, id.prev);
+
+	if (take_ownership) {
+		if (alloctype == CD_ASSIGN) {
+			CustomData_free_typemask(&mesh_src->vdata, mesh_src->totvert, ~mask);
+			CustomData_free_typemask(&mesh_src->edata, mesh_src->totedge, ~mask);
+			CustomData_free_typemask(&mesh_src->ldata, mesh_src->totloop, ~mask);
+			CustomData_free_typemask(&mesh_src->pdata, mesh_src->totpoly, ~mask);
+		}
+		BKE_id_free(NULL, mesh_src);
+	}
+}
+
+/* This is a Mesh-based copy of DM_to_meshkey() */
+void BKE_mesh_nomain_to_meshkey(Mesh *mesh_src, Mesh *mesh_dst, KeyBlock *kb)
+{
+	int a, totvert = mesh_src->totvert;
+	float *fp;
+	MVert *mvert;
+
+	if (totvert == 0 || mesh_dst->totvert == 0 || mesh_dst->totvert != totvert) {
+		return;
+	}
+
+	if (kb->data) MEM_freeN(kb->data);
+	kb->data = MEM_malloc_arrayN(mesh_dst->key->elemsize, mesh_dst->totvert, "kb->data");
+	kb->totelem = totvert;
+
+	fp = kb->data;
+	mvert = mesh_src->mvert;
+
+	for (a = 0; a < kb->totelem; a++, fp += 3, mvert++) {
+		copy_v3_v3(fp, mvert->co);
+	}
 }

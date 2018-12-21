@@ -42,6 +42,7 @@
 
 #include "DNA_listBase.h"
 #include "DNA_userdef_types.h"
+#include "DNA_workspace_types.h"
 
 #include "BKE_context.h"
 #include "BKE_global.h"
@@ -156,6 +157,23 @@ void WM_cursor_set(wmWindow *win, int curs)
 	}
 }
 
+bool WM_cursor_set_from_tool(struct wmWindow *win, const ScrArea *sa, const ARegion *ar)
+{
+	if (ar && (ar->regiontype != RGN_TYPE_WINDOW)) {
+		return false;
+	}
+
+	bToolRef_Runtime *tref_rt = (sa && sa->runtime.tool) ? sa->runtime.tool->runtime : NULL;
+	if (tref_rt && tref_rt->cursor != CURSOR_STD) {
+		if (win->modalcursor == 0) {
+			WM_cursor_set(win, tref_rt->cursor);
+			win->cursor = tref_rt->cursor;
+			return true;
+		}
+	}
+	return false;
+}
+
 void WM_cursor_modal_set(wmWindow *win, int val)
 {
 	if (win->lastcursor == 0)
@@ -191,7 +209,7 @@ void WM_cursor_wait(bool val)
 }
 
 /**
- * \param bounds can be NULL
+ * \param bounds: can be NULL
  */
 void WM_cursor_grab_enable(wmWindow *win, bool wrap, bool hide, int bounds[4])
 {
@@ -274,7 +292,7 @@ bool wm_cursor_arrow_move(wmWindow *win, const wmEvent *event)
 }
 
 
-/* afer this you can call restore too */
+/* after this you can call restore too */
 void WM_cursor_time(wmWindow *win, int nr)
 {
 	/* 10 8x8 digits */

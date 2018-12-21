@@ -23,7 +23,10 @@ set(INC
 	../../blenfont
 	../../blenkernel
 	../../blenlib
+	../../blenloader
 	../../blentranslation
+	../../depsgraph
+	../../draw
 	../../gpu
 	../../imbuf
 	../../makesdna
@@ -52,13 +55,16 @@ set(SRC
 	interface_eyedropper_driver.c
 	interface_handlers.c
 	interface_icons.c
+	interface_icons_event.c
 	interface_layout.c
 	interface_ops.c
 	interface_panel.c
 	interface_query.c
 	interface_region_color_picker.c
+	interface_region_hud.c
 	interface_region_menu_pie.c
 	interface_region_menu_popup.c
+	interface_region_popover.c
 	interface_region_popup.c
 	interface_region_search.c
 	interface_region_tooltip.c

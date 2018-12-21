@@ -52,6 +52,7 @@ def block_data(data, i_start):
     # done with block comment, still go onto do regular replace
     return max(i_end, i_start + 1)
 
+
 i = 0
 while i < len(data):
     i = block_data(data, i)
@@ -62,7 +63,7 @@ while "//" not in data[i] and i > len(data):
 
 
 for i, l in enumerate(data):
-    if "//" in l:  # should check if its in a string.
+    if "//" in l:  # should check if it's in a string.
 
         text, comment = l.split("//", 1)
 

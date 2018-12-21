@@ -95,7 +95,7 @@ bool nla_panel_context(const bContext *C, PointerRNA *adt_ptr, PointerRNA *nlt_p
 		return false;
 
 	/* extract list of active channel(s), of which we should only take the first one
-	 *	- we need the channels flag to get the active AnimData block when there are no NLA Tracks
+	 * - we need the channels flag to get the active AnimData block when there are no NLA Tracks
 	 */
 	// XXX: double-check active!
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_ACTIVE | ANIMFILTER_LIST_CHANNELS);
@@ -145,6 +145,7 @@ bool nla_panel_context(const bContext *C, PointerRNA *adt_ptr, PointerRNA *nlt_p
 			case ANIMTYPE_DSLINESTYLE:
 			case ANIMTYPE_DSSPK:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_PALETTE:
 			{
 				/* for these channels, we only do AnimData */
 				if (ale->adt && adt_ptr) {
@@ -276,7 +277,7 @@ static void nla_panel_animdata(const bContext *C, Panel *pa)
 		uiLayoutSetAlignment(row, UI_LAYOUT_ALIGN_LEFT);
 
 		uiItemL(row, id->name + 2, RNA_struct_ui_icon(id_ptr.type));  /* id-block (src) */
-		uiItemL(row, "", VICO_SMALL_TRI_RIGHT_VEC);                   /* expander */
+		uiItemL(row, "", ICON_SMALL_TRI_RIGHT_VEC);                   /* expander */
 		uiItemL(row, IFACE_("Animation Data"), ICON_ANIM_DATA);       /* animdata */
 
 		uiItemS(layout);
@@ -287,7 +288,7 @@ static void nla_panel_animdata(const bContext *C, Panel *pa)
 	row = uiLayoutRow(layout, true);
 	uiTemplateID(
 	        row, (bContext *)C, &adt_ptr, "action",
-	        "ACTION_OT_new", NULL, "NLA_OT_action_unlink", UI_TEMPLATE_ID_FILTER_ALL);
+	        "ACTION_OT_new", NULL, "NLA_OT_action_unlink", UI_TEMPLATE_ID_FILTER_ALL, false);
 
 	/* extrapolation */
 	row = uiLayoutRow(layout, true);
@@ -366,7 +367,7 @@ static void nla_panel_properties(const bContext *C, Panel *pa)
 		uiItemR(row, &strip_ptr, "blend_type", 0, NULL, ICON_NONE);
 
 		/* blend in/out + autoblending
-		 *	- blend in/out can only be set when autoblending is off
+		 * - blend in/out can only be set when autoblending is off
 		 */
 		column = uiLayoutColumn(layout, true);
 		uiLayoutSetActive(column, RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
@@ -574,7 +575,7 @@ static int nla_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 
 void NLA_OT_properties(wmOperatorType *ot)
 {
-	ot->name = "Properties";
+	ot->name = "Toggle Sidebar";
 	ot->idname = "NLA_OT_properties";
 	ot->description = "Properties\nToggle display properties panel";
 

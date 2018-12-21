@@ -229,7 +229,7 @@ def cmake_flag_buildtype_suffix(flag, build_type):
 # CMakeCache.txt is converted into a dict
 # the key is the cache ID
 # the value is a triple (type, value, description, internal)
-# where the discription is the comment above conforming to the CMake convention.
+# where the description is the comment above conforming to the CMake convention.
 #
 #
 def cmakecache_to_py(filepath, native=True):
@@ -248,7 +248,7 @@ def cmakecache_to_py(filepath, native=True):
             else:
                 break
 
-        # incase its not set
+        # in case it's not set
         cmake_descr = ""
         cmake_internal = False
 
@@ -275,7 +275,7 @@ def cmakecache_to_py(filepath, native=True):
 
                 cmake_cache[cmake_name] = (cmake_type, cmake_value, cmake_descr, cmake_internal)
 
-                # incase its not set
+                # in case it's not set
                 cmake_descr = ""
 
     return cmake_header, cmake_cache

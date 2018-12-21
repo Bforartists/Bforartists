@@ -43,7 +43,7 @@ else:
     #import addon_utils # To use some other addons
     import nodeitems_utils #for Nodes
     from nodeitems_utils import NodeCategory, NodeItem #for Nodes
-    from bl_operators.presets import AddPresetBase    
+    from bl_operators.presets import AddPresetBase
     from bpy.types import (
             AddonPreferences,
             PropertyGroup,
@@ -91,7 +91,7 @@ class RenderPovSettingsScene(PropertyGroup):
             default=True)
     pov_editor = BoolProperty(
             name="POV-Ray editor",
-            description="Don't Close POV-Ray editor after rendering (Overriden"
+            description="Don't Close POV-Ray editor after rendering (Overridden"
                         " by /EXIT command)",
             default=False)
     deletefiles_enable = BoolProperty(
@@ -137,13 +137,13 @@ class RenderPovSettingsScene(PropertyGroup):
             name="Enable Media",
             description="Enable POV-Rays atmospheric media",
             default=False)
-            
+
     media_samples = IntProperty(
             name="Samples",
             description="Number of samples taken from camera to first object "
                         "encountered along ray path for media calculation",
             min=1, max=100, default=35)
-            
+
     media_scattering_type = EnumProperty(
             name="Scattering Type",
             description="Scattering model",
@@ -181,14 +181,14 @@ class RenderPovSettingsScene(PropertyGroup):
                                               "values of e (or smaller values "
                                               "in the negative case) increase "
                                               "the directional property of the"
-                                              " scattering.")),                   
+                                              " scattering.")),
             default='1')
-           
+
     media_diffusion_scale = FloatProperty(
             name="Scale", description="Scale factor of Media Diffusion Color",
             precision=12, step=0.00000001, min=0.000000001, max=1.0,
             default=(1.0))
-            
+
     media_diffusion_color = FloatVectorProperty(
             name="Media Diffusion Color", description="The atmospheric media color",
             precision=4, step=0.01, min=0, soft_max=1,
@@ -201,13 +201,13 @@ class RenderPovSettingsScene(PropertyGroup):
                                       "use 1/depth of media volume in meters",
             precision=12, step=0.000001, min=0.000000001, max=1.0,
             default=(0.00002))
-            
+
     media_absorption_color = FloatVectorProperty(
             name="Media Absorption Color", description="The atmospheric media absorption color",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0),
             options={'ANIMATABLE'},
-            subtype='COLOR')            
+            subtype='COLOR')
 
     media_eccentricity = FloatProperty(
             name="Media Eccenticity Factor", description="Positive values lead"
@@ -218,7 +218,7 @@ class RenderPovSettingsScene(PropertyGroup):
             precision=2, step=0.01, min=-1.0, max=1.0,
             default=(0.0),
             options={'ANIMATABLE'})
-                       
+
     baking_enable = BoolProperty(
             name="Enable Baking",
             description="Enable POV-Rays texture baking",
@@ -1699,7 +1699,7 @@ class RenderPovSettingsObject(PropertyGroup):
             default=(0.001, 0.001, 0.5),
             options={'ANIMATABLE'},
             subtype='XYZ')
-            
+
     # Importance sampling
     importance_value = FloatProperty(
             name="Radiosity Importance",
@@ -1746,7 +1746,7 @@ class RenderPovSettingsObject(PropertyGroup):
         default=(0.0, 0.0, 2.0))
 
     unlock_parameters = BoolProperty(name="Lock",default = False)
-    
+
     # not in UI yet but used for sor (lathe) / prism... pov primitives
     curveshape = EnumProperty(
             name="Povray Shape Type",
@@ -2138,7 +2138,7 @@ class RenderPovSettingsObject(PropertyGroup):
                     description = "",
                     default = 1.0)
 
-                    
+
 ###############################################################################
 # Modifiers POV properties.
 ###############################################################################
@@ -2150,7 +2150,7 @@ class RenderPovSettingsObject(PropertyGroup):
                    ("CARVE", "Use the Carve Boolean Solver", ""),
                    ("POV", "Use Pov-Ray Constructive Solid Geometry", "")),
             default="BMESH")
-                    
+
 #################Avogadro
     # filename_ext = ".png"
 
@@ -2172,7 +2172,7 @@ class RenderPovSettingsCamera(PropertyGroup):
     dof_aperture = FloatProperty(
             name="Aperture",
             description="Similar to a real camera's aperture effect over focal blur (though not "
-                        "in physical units and independant of focal length). "
+                        "in physical units and independent of focal length). "
                         "Increase to get more blur",
             min=0.01, max=1.00, default=0.50)
 
@@ -2199,7 +2199,7 @@ class RenderPovSettingsCamera(PropertyGroup):
             min=0.01, max=0.99, default=0.20)
 
     normal_enable = BoolProperty(name="Perturbated Camera", default=False)
-    cam_normal = FloatProperty(name="Normal Strenght", min=0.0, max=1.0, default=0.0)
+    cam_normal = FloatProperty(name="Normal Strength", min=0.0, max=1.0, default=0.0)
     normal_patterns = EnumProperty(
             name="Pattern",
             description="",
@@ -2274,12 +2274,12 @@ class PovrayPreferences(AddonPreferences):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_add.prepend(ui.menu_func_add)
-    bpy.types.INFO_MT_file_import.append(ui.menu_func_import)
+    bpy.types.VIEW3D_MT_add.prepend(ui.menu_func_add)
+    bpy.types.TOPBAR_MT_file_import.append(ui.menu_func_import)
     bpy.types.TEXT_MT_templates.append(ui.menu_func_templates)
     bpy.types.RENDER_PT_povray_radiosity.prepend(ui.rad_panel_func)
-    bpy.types.LAMP_PT_POV_lamp.prepend(ui.lamp_panel_func)
-    bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)    
+    bpy.types.LIGHT_PT_POV_light.prepend(ui.light_panel_func)
+    bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)
     # was used for parametric objects but made the other addon unreachable on
     # unregister for other tools to use created a user action call instead
     #addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
@@ -2301,7 +2301,7 @@ def register():
 def unregister():
     del bpy.types.Scene.pov
     del bpy.types.Material.pov
-    #del bpy.types.Modifier.pov 
+    #del bpy.types.Modifier.pov
     del bpy.types.Texture.pov
     del bpy.types.Object.pov
     del bpy.types.Camera.pov
@@ -2312,11 +2312,11 @@ def unregister():
     #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_povray_type)
     #addon_utils.disable("add_mesh_extra_objects", default_set=False)
     bpy.types.WORLD_PT_world.remove(ui.world_panel_func)
-    bpy.types.LAMP_PT_POV_lamp.remove(ui.lamp_panel_func)    
+    bpy.types.LIGHT_PT_POV_light.remove(ui.light_panel_func)
     bpy.types.RENDER_PT_povray_radiosity.remove(ui.rad_panel_func)
     bpy.types.TEXT_MT_templates.remove(ui.menu_func_templates)
-    bpy.types.INFO_MT_file_import.remove(ui.menu_func_import)
-    bpy.types.INFO_MT_add.remove(ui.menu_func_add)
+    bpy.types.TOPBAR_MT_file_import.remove(ui.menu_func_import)
+    bpy.types.VIEW3D_MT_add.remove(ui.menu_func_add)
     bpy.utils.unregister_module(__name__)
 
 

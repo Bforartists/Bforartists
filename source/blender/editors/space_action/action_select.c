@@ -51,6 +51,7 @@
 #include "BKE_fcurve.h"
 #include "BKE_nla.h"
 #include "BKE_context.h"
+#include "BKE_gpencil.h"
 
 #include "UI_view2d.h"
 
@@ -61,6 +62,7 @@
 #include "ED_keyframes_edit.h"
 #include "ED_markers.h"
 #include "ED_screen.h"
+#include "ED_select_utils.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -73,16 +75,16 @@
 
 /* ******************** Deselect All Operator ***************************** */
 /* This operator works in one of three ways:
- *	1) (de)select all (AKEY) - test if select all or deselect all
- *	2) invert all (CTRL-IKEY) - invert selection of all keyframes
- *	3) (de)select all - no testing is done; only for use internal tools as normal function...
+ * 1) (de)select all (AKEY) - test if select all or deselect all
+ * 2) invert all (CTRL-IKEY) - invert selection of all keyframes
+ * 3) (de)select all - no testing is done; only for use internal tools as normal function...
  */
 
 /* Deselects keyframes in the action editor
- *	- This is called by the deselect all operator, as well as other ones!
+ * - This is called by the deselect all operator, as well as other ones!
  *
- *  - test: check if select or deselect all
- *	- sel: how to select keyframes (SELECT_*)
+ * - test: check if select or deselect all
+ * - sel: how to select keyframes (SELECT_*)
  */
 static void deselect_action_keys(bAnimContext *ac, short test, short sel)
 {
@@ -134,15 +136,20 @@ static void deselect_action_keys(bAnimContext *ac, short test, short sel)
 
 	/* Now set the flags */
 	for (ale = anim_data.first; ale; ale = ale->next) {
-		if (ale->type == ANIMTYPE_GPLAYER)
+		if (ale->type == ANIMTYPE_GPLAYER) {
 			ED_gplayer_frame_select_set(ale->data, sel);
-		else if (ale->type == ANIMTYPE_MASKLAYER)
+			ale->update |= ANIM_UPDATE_DEPS;
+		}
+		else if (ale->type == ANIMTYPE_MASKLAYER) {
 			ED_masklayer_frame_select_set(ale->data, sel);
-		else
+		}
+		else {
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, sel_cb, NULL);
+		}
 	}
 
 	/* Cleanup */
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -157,10 +164,24 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 
 	/* 'standard' behavior - check if selected, then apply relevant selection */
-	if (RNA_boolean_get(op->ptr, "invert"))
-		deselect_action_keys(&ac, 0, SELECT_INVERT);
-	else
-		deselect_action_keys(&ac, 1, SELECT_ADD);
+	const int action = RNA_enum_get(op->ptr, "action");
+	switch (action) {
+		case SEL_TOGGLE:
+			deselect_action_keys(&ac, 1, SELECT_ADD);
+			break;
+		case SEL_SELECT:
+			deselect_action_keys(&ac, 0, SELECT_ADD);
+			break;
+		case SEL_DESELECT:
+			deselect_action_keys(&ac, 0, SELECT_SUBTRACT);
+			break;
+		case SEL_INVERT:
+			deselect_action_keys(&ac, 0, SELECT_INVERT);
+			break;
+		default:
+			BLI_assert(0);
+			break;
+	}
 
 	/* set notifier that keyframe selection have changed */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
@@ -168,11 +189,11 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
-void ACTION_OT_select_all_toggle(wmOperatorType *ot)
+void ACTION_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select All";
-	ot->idname = "ACTION_OT_select_all_toggle";
+	ot->idname = "ACTION_OT_select_all";
 	ot->description = "Select All\nToggle selection of all keyframes";
 
 	/* api callbacks */
@@ -182,28 +203,27 @@ void ACTION_OT_select_all_toggle(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	/* props */
-	ot->prop = RNA_def_boolean(ot->srna, "invert", 0, "Invert", "");
-	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
+	/* properties */
+	WM_operator_properties_select_all(ot);
 }
 
-/* ******************** Border Select Operator **************************** */
+/* ******************** Box Select Operator **************************** */
 /* This operator currently works in one of three ways:
- *	-> BKEY     - 1) all keyframes within region are selected (ACTKEYS_BORDERSEL_ALLKEYS)
- *	-> ALT-BKEY - depending on which axis of the region was larger...
- *		-> 2) x-axis, so select all frames within frame range (ACTKEYS_BORDERSEL_FRAMERANGE)
- *		-> 3) y-axis, so select all frames within channels that region included (ACTKEYS_BORDERSEL_CHANNELS)
+ * -> BKEY     - 1) all keyframes within region are selected (ACTKEYS_BORDERSEL_ALLKEYS)
+ * -> ALT-BKEY - depending on which axis of the region was larger...
+ *  -> 2) x-axis, so select all frames within frame range (ACTKEYS_BORDERSEL_FRAMERANGE)
+ *  -> 3) y-axis, so select all frames within channels that region included (ACTKEYS_BORDERSEL_CHANNELS)
  */
 
-/* defines for borderselect mode */
+/* defines for box_select mode */
 enum {
 	ACTKEYS_BORDERSEL_ALLKEYS   = 0,
 	ACTKEYS_BORDERSEL_FRAMERANGE,
 	ACTKEYS_BORDERSEL_CHANNELS,
-} /*eActKeys_BorderSelect_Mode*/;
+} /*eActKeys_BoxSelect_Mode*/;
 
 
-static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, short selectmode)
+static void box_select_action(bAnimContext *ac, const rcti rect, short mode, short selectmode)
 {
 	ListBase anim_data = {NULL, NULL};
 	bAnimListElem *ale;
@@ -234,7 +254,7 @@ static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, s
 	/* init editing data */
 	memset(&ked, 0, sizeof(KeyframeEditData));
 
-	/* loop over data, doing border select */
+	/* loop over data, doing box select */
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
@@ -268,25 +288,29 @@ static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, s
 					bGPdata *gpd = ale->data;
 					bGPDlayer *gpl;
 					for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
-						ED_gplayer_frames_select_border(gpl, rectf.xmin, rectf.xmax, selectmode);
+						ED_gplayer_frames_select_box(gpl, rectf.xmin, rectf.xmax, selectmode);
 					}
+					ale->update |= ANIM_UPDATE_DEPS;
 					break;
 				}
 #endif
 				case ANIMTYPE_GPLAYER:
-					ED_gplayer_frames_select_border(ale->data, rectf.xmin, rectf.xmax, selectmode);
+				{
+					ED_gplayer_frames_select_box(ale->data, rectf.xmin, rectf.xmax, selectmode);
+					ale->update |= ANIM_UPDATE_DEPS;
 					break;
+				}
 				case ANIMTYPE_MASKDATABLOCK:
 				{
 					Mask *mask = ale->data;
 					MaskLayer *masklay;
 					for (masklay = mask->masklayers.first; masklay; masklay = masklay->next) {
-						ED_masklayer_frames_select_border(masklay, rectf.xmin, rectf.xmax, selectmode);
+						ED_masklayer_frames_select_box(masklay, rectf.xmin, rectf.xmax, selectmode);
 					}
 					break;
 				}
 				case ANIMTYPE_MASKLAYER:
-					ED_masklayer_frames_select_border(ale->data, rectf.xmin, rectf.xmax, selectmode);
+					ED_masklayer_frames_select_box(ale->data, rectf.xmin, rectf.xmax, selectmode);
 					break;
 				default:
 					ANIM_animchannel_keyframes_loop(&ked, ac->ads, ale, ok_cb, select_cb, NULL);
@@ -299,12 +323,13 @@ static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, s
 	}
 
 	/* cleanup */
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
 /* ------------------- */
 
-static int actkeys_borderselect_exec(bContext *C, wmOperator *op)
+static int actkeys_box_select_exec(bContext *C, wmOperator *op)
 {
 	bAnimContext ac;
 	rcti rect;
@@ -331,12 +356,12 @@ static int actkeys_borderselect_exec(bContext *C, wmOperator *op)
 		selectmode = SELECT_SUBTRACT;
 	}
 
-	/* selection 'mode' depends on whether borderselect region only matters on one axis */
+	/* selection 'mode' depends on whether box_select region only matters on one axis */
 	if (RNA_boolean_get(op->ptr, "axis_range")) {
 		/* mode depends on which axis of the range is larger to determine which axis to use
-		 *	- checking this in region-space is fine, as it's fundamentally still going to be a different rect size
-		 *	- the frame-range select option is favored over the channel one (x over y), as frame-range one is often
-		 *	  used for tweaking timing when "blocking", while channels is not that useful...
+		 * - checking this in region-space is fine, as it's fundamentally still going to be a different rect size
+		 * - the frame-range select option is favored over the channel one (x over y), as frame-range one is often
+		 *   used for tweaking timing when "blocking", while channels is not that useful...
 		 */
 		if (BLI_rcti_size_x(&rect) >= BLI_rcti_size_y(&rect))
 			mode = ACTKEYS_BORDERSEL_FRAMERANGE;
@@ -346,8 +371,8 @@ static int actkeys_borderselect_exec(bContext *C, wmOperator *op)
 	else
 		mode = ACTKEYS_BORDERSEL_ALLKEYS;
 
-	/* apply borderselect action */
-	borderselect_action(&ac, rect, mode, selectmode);
+	/* apply box_select action */
+	box_select_action(&ac, rect, mode, selectmode);
 
 	/* set notifier that keyframe selection have changed */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
@@ -355,18 +380,18 @@ static int actkeys_borderselect_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
-void ACTION_OT_select_border(wmOperatorType *ot)
+void ACTION_OT_select_box(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Border Select";
-	ot->idname = "ACTION_OT_select_border";
-	ot->description = "Border Select\nBorder Select selects all keyframes that are inside the rectangle\nBorder Axis Range selects all keyframes within the width of the rectangle";
+	ot->name = "Box Select";
+	ot->idname = "ACTION_OT_select_box";
+	ot->description = "Box Select\nSelect all keyframes within the specified region";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
-	ot->exec = actkeys_borderselect_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->invoke = WM_gesture_box_invoke;
+	ot->exec = actkeys_box_select_exec;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = ED_operator_action_active;
 
@@ -374,7 +399,7 @@ void ACTION_OT_select_border(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* rna */
-	WM_operator_properties_gesture_border_select(ot);
+	WM_operator_properties_gesture_box_select(ot);
 
 	ot->prop = RNA_def_boolean(ot->srna, "axis_range", 0, "Axis Range", "");
 }
@@ -480,6 +505,7 @@ static void region_select_action_keys(bAnimContext *ac, const rctf *rectf_view, 
 				case ANIMTYPE_GPLAYER:
 				{
 					ED_gplayer_frames_select_region(&ked, ale->data, mode, selectmode);
+					ale->update |= ANIM_UPDATE_DEPS;
 					break;
 				}
 				case ANIMTYPE_MASKDATABLOCK:
@@ -507,6 +533,7 @@ static void region_select_action_keys(bAnimContext *ac, const rctf *rectf_view, 
 	}
 
 	/* cleanup */
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -546,7 +573,7 @@ static int actkeys_lassoselect_exec(bContext *C, wmOperator *op)
 	BLI_lasso_boundbox(&rect, data_lasso.mcords, data_lasso.mcords_tot);
 	BLI_rctf_rcti_copy(&rect_fl, &rect);
 
-	/* apply borderselect action */
+	/* apply box_select action */
 	region_select_action_keys(&ac, &rect_fl, BEZT_OK_CHANNEL_LASSO, selectmode, &data_lasso);
 
 	MEM_freeN((void *)data_lasso.mcords);
@@ -637,10 +664,10 @@ void ACTION_OT_select_circle(wmOperatorType *ot)
 
 /* ******************** Column Select Operator **************************** */
 /* This operator works in one of four ways:
- *	- 1) select all keyframes in the same frame as a selected one  (KKEY)
- *	- 2) select all keyframes in the same frame as the current frame marker (CTRL-KKEY)
- *	- 3) select all keyframes in the same frame as a selected markers (SHIFT-KKEY)
- *	- 4) select all keyframes that occur between selected markers (ALT-KKEY)
+ * - 1) select all keyframes in the same frame as a selected one  (KKEY)
+ * - 2) select all keyframes in the same frame as the current frame marker (CTRL-KKEY)
+ * - 3) select all keyframes in the same frame as a selected markers (SHIFT-KKEY)
+ * - 4) select all keyframes that occur between selected markers (ALT-KKEY)
  */
 
 /* defines for column-select mode */
@@ -693,10 +720,11 @@ static void markers_selectkeys_between(bAnimContext *ac)
 			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
 		}
 		else if (ale->type == ANIMTYPE_GPLAYER) {
-			ED_gplayer_frames_select_border(ale->data, min, max, SELECT_ADD);
+			ED_gplayer_frames_select_box(ale->data, min, max, SELECT_ADD);
+			ale->update |= ANIM_UPDATE_DEPS;
 		}
 		else if (ale->type == ANIMTYPE_MASKLAYER) {
-			ED_masklayer_frames_select_border(ale->data, min, max, SELECT_ADD);
+			ED_masklayer_frames_select_box(ale->data, min, max, SELECT_ADD);
 		}
 		else {
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, ok_cb, select_cb, NULL);
@@ -704,6 +732,7 @@ static void markers_selectkeys_between(bAnimContext *ac)
 	}
 
 	/* Cleanup */
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -773,7 +802,7 @@ static void columnselect_action_keys(bAnimContext *ac, short mode)
 		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
 		/* loop over cfraelems (stored in the KeyframeEditData->list)
-		 *	- we need to do this here, as we can apply fewer NLA-mapping conversions
+		 * - we need to do this here, as we can apply fewer NLA-mapping conversions
 		 */
 		for (ce = ked.list.first; ce; ce = ce->next) {
 			/* set frame for validation callback to refer to */
@@ -783,17 +812,23 @@ static void columnselect_action_keys(bAnimContext *ac, short mode)
 				ked.f1 = ce->cfra;
 
 			/* select elements with frame number matching cfraelem */
-			if (ale->type == ANIMTYPE_GPLAYER)
+			if (ale->type == ANIMTYPE_GPLAYER) {
 				ED_gpencil_select_frame(ale->data, ce->cfra, SELECT_ADD);
-			else if (ale->type == ANIMTYPE_MASKLAYER)
+				ale->update |= ANIM_UPDATE_DEPS;
+			}
+			else if (ale->type == ANIMTYPE_MASKLAYER) {
 				ED_mask_select_frame(ale->data, ce->cfra, SELECT_ADD);
-			else
+			}
+			else {
 				ANIM_fcurve_keyframes_loop(&ked, ale->key_data, ok_cb, select_cb, NULL);
+			}
 		}
 	}
 
 	/* free elements */
 	BLI_freelistN(&ked.list);
+
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -1068,12 +1103,16 @@ static void actkeys_select_leftright(bAnimContext *ac, short leftright, short se
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, ok_cb, select_cb, NULL);
 			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
 		}
-		else if (ale->type == ANIMTYPE_GPLAYER)
-			ED_gplayer_frames_select_border(ale->data, ked.f1, ked.f2, select_mode);
-		else if (ale->type == ANIMTYPE_MASKLAYER)
-			ED_masklayer_frames_select_border(ale->data, ked.f1, ked.f2, select_mode);
-		else
+		else if (ale->type == ANIMTYPE_GPLAYER) {
+			ED_gplayer_frames_select_box(ale->data, ked.f1, ked.f2, select_mode);
+			ale->update |= ANIM_UPDATE_DEPS;
+		}
+		else if (ale->type == ANIMTYPE_MASKLAYER) {
+			ED_masklayer_frames_select_box(ale->data, ked.f1, ked.f2, select_mode);
+		}
+		else {
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, ok_cb, select_cb, NULL);
+		}
 	}
 
 	/* Sync marker support */
@@ -1098,6 +1137,7 @@ static void actkeys_select_leftright(bAnimContext *ac, short leftright, short se
 	}
 
 	/* Cleanup */
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -1188,10 +1228,10 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
 
 /* ******************** Mouse-Click Select Operator *********************** */
 /* This operator works in one of three ways:
- *	- 1) keyframe under mouse - no special modifiers
- *	- 2) all keyframes on the same side of current frame indicator as mouse - ALT modifier
- *	- 3) column select all keyframes in frame under mouse - CTRL modifier
- *  - 4) all keyframes in channel under mouse - CTRL+ALT modifiers
+ * - 1) keyframe under mouse - no special modifiers
+ * - 2) all keyframes on the same side of current frame indicator as mouse - ALT modifier
+ * - 3) column select all keyframes in frame under mouse - CTRL modifier
+ * - 4) all keyframes in channel under mouse - CTRL+ALT modifiers
  *
  * In addition to these basic options, the SHIFT modifier can be used to toggle the
  * selection mode between replacing the selection (without) and inverting the selection (with).
@@ -1214,6 +1254,7 @@ static void actkeys_mselect_single(bAnimContext *ac, bAnimListElem *ale, short s
 	/* select the nominated keyframe on the given frame */
 	if (ale->type == ANIMTYPE_GPLAYER) {
 		ED_gpencil_select_frame(ale->data, selx, select_mode);
+		ale->update |= ANIM_UPDATE_DEPS;
 	}
 	else if (ale->type == ANIMTYPE_MASKLAYER) {
 		ED_mask_select_frame(ale->data, selx, select_mode);
@@ -1231,12 +1272,14 @@ static void actkeys_mselect_single(bAnimContext *ac, bAnimListElem *ale, short s
 			for (ale = anim_data.first; ale; ale = ale->next) {
 				if (ale->type == ANIMTYPE_GPLAYER) {
 					ED_gpencil_select_frame(ale->data, selx, select_mode);
+					ale->update |= ANIM_UPDATE_DEPS;
 				}
 				else if (ale->type == ANIMTYPE_MASKLAYER) {
 					ED_mask_select_frame(ale->data, selx, select_mode);
 				}
 			}
 
+			ANIM_animdata_update(ac, &anim_data);
 			ANIM_animdata_freelist(&anim_data);
 		}
 		else {
@@ -1281,16 +1324,22 @@ static void actkeys_mselect_column(bAnimContext *ac, short select_mode, float se
 			ked.f1 = selx;
 
 		/* select elements with frame number matching cfra */
-		if (ale->type == ANIMTYPE_GPLAYER)
+		if (ale->type == ANIMTYPE_GPLAYER) {
 			ED_gpencil_select_frame(ale->key_data, selx, select_mode);
-		else if (ale->type == ANIMTYPE_MASKLAYER)
+			ale->update |= ANIM_UPDATE_DEPS;
+		}
+		else if (ale->type == ANIMTYPE_MASKLAYER) {
 			ED_mask_select_frame(ale->key_data, selx, select_mode);
-		else
+		}
+		else {
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, ok_cb, select_cb, NULL);
+		}
 	}
 
 	/* free elements */
 	BLI_freelistN(&ked.list);
+
+	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
 
@@ -1305,6 +1354,7 @@ static void actkeys_mselect_channel_only(bAnimContext *ac, bAnimListElem *ale, s
 	/* select all keyframes in this channel */
 	if (ale->type == ANIMTYPE_GPLAYER) {
 		ED_gpencil_select_frames(ale->data, select_mode);
+		ale->update = ANIM_UPDATE_DEPS;
 	}
 	else if (ale->type == ANIMTYPE_MASKLAYER) {
 		ED_mask_select_frames(ale->data, select_mode);
@@ -1322,12 +1372,14 @@ static void actkeys_mselect_channel_only(bAnimContext *ac, bAnimListElem *ale, s
 			for (ale = anim_data.first; ale; ale = ale->next) {
 				if (ale->type == ANIMTYPE_GPLAYER) {
 					ED_gpencil_select_frames(ale->data, select_mode);
+					ale->update |= ANIM_UPDATE_DEPS;
 				}
 				else if (ale->type == ANIMTYPE_MASKLAYER) {
 					ED_mask_select_frames(ale->data, select_mode);
 				}
 			}
 
+			ANIM_animdata_update(ac, &anim_data);
 			ANIM_animdata_freelist(&anim_data);
 		}
 		else {
@@ -1356,7 +1408,7 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 	rctf rectf;
 
 	/* get dopesheet info */
-	if (ac->datatype == ANIMCONT_DOPESHEET)
+	if (ELEM(ac->datatype, ANIMCONT_DOPESHEET, ANIMCONT_TIMELINE))
 		ads = ac->data;
 
 	/* use View2D to determine the index of the channel (i.e a row in the list) where keyframe was */
@@ -1367,7 +1419,7 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 	 * on either side of mouse click (size of keyframe icon)
 	 */
 	key_hsize = ACHANNEL_HEIGHT(ac) * 0.8f;    /* standard channel height (to allow for some slop) */
-	key_hsize = roundf(key_hsize / 2.0f);      /* half-size (for either side), but rounded up to nearest int (for easier targetting) */
+	key_hsize = roundf(key_hsize / 2.0f);      /* half-size (for either side), but rounded up to nearest int (for easier targeting) */
 
 	UI_view2d_region_to_view(v2d, mval[0] - (int)key_hsize, mval[1], &rectf.xmin, &rectf.ymin);
 	UI_view2d_region_to_view(v2d, mval[0] + (int)key_hsize, mval[1], &rectf.xmax, &rectf.ymax);
@@ -1397,37 +1449,37 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 				case ALE_SCE:
 				{
 					Scene *scene = (Scene *)ale->key_data;
-					scene_to_keylist(ads, scene, &anim_keys, NULL);
+					scene_to_keylist(ads, scene, &anim_keys, 0);
 					break;
 				}
 				case ALE_OB:
 				{
 					Object *ob = (Object *)ale->key_data;
-					ob_to_keylist(ads, ob, &anim_keys, NULL);
+					ob_to_keylist(ads, ob, &anim_keys, 0);
 					break;
 				}
 				case ALE_ACT:
 				{
 					bAction *act = (bAction *)ale->key_data;
-					action_to_keylist(adt, act, &anim_keys, NULL);
+					action_to_keylist(adt, act, &anim_keys, 0);
 					break;
 				}
 				case ALE_FCURVE:
 				{
 					FCurve *fcu = (FCurve *)ale->key_data;
-					fcurve_to_keylist(adt, fcu, &anim_keys, NULL);
+					fcurve_to_keylist(adt, fcu, &anim_keys, 0);
 					break;
 				}
 			}
 		}
 		else if (ale->type == ANIMTYPE_SUMMARY) {
 			/* dopesheet summary covers everything */
-			summary_to_keylist(ac, &anim_keys, NULL);
+			summary_to_keylist(ac, &anim_keys, 0);
 		}
 		else if (ale->type == ANIMTYPE_GROUP) {
 			// TODO: why don't we just give groups key_data too?
 			bActionGroup *agrp = (bActionGroup *)ale->data;
-			agroup_to_keylist(adt, agrp, &anim_keys, NULL);
+			agroup_to_keylist(adt, agrp, &anim_keys, 0);
 		}
 		else if (ale->type == ANIMTYPE_GPLAYER) {
 			// TODO: why don't we just give gplayers key_data too?
@@ -1460,6 +1512,7 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 
 		/* remove active channel from list of channels for separate treatment (since it's needed later on) */
 		BLI_remlink(&anim_data, ale);
+		ale->next = ale->prev = NULL;
 
 		/* cleanup temporary lists */
 		BLI_dlrbTree_free(&anim_keys);
@@ -1477,7 +1530,7 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 		deselect_action_keys(ac, 0, SELECT_SUBTRACT);
 
 		/* highlight channel clicked on */
-		if (ELEM(ac->datatype, ANIMCONT_ACTION, ANIMCONT_DOPESHEET)) {
+		if (ELEM(ac->datatype, ANIMCONT_ACTION, ANIMCONT_DOPESHEET, ANIMCONT_TIMELINE)) {
 			/* deselect all other channels first */
 			ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, 0, ACHANNEL_SETFLAG_CLEAR);
 
@@ -1544,6 +1597,12 @@ static void mouse_action_keys(bAnimContext *ac, const int mval[2], short select_
 			}
 		}
 
+		/* flush tagged updates
+		 * NOTE: We temporarily add this channel back to the list so that this can happen
+		 */
+		anim_data.first = anim_data.last = ale;
+		ANIM_animdata_update(ac, &anim_data);
+
 		/* free this channel */
 		MEM_freeN(ale);
 	}
@@ -1590,9 +1649,9 @@ void ACTION_OT_clickselect(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Mouse Select Keys";
+	ot->name = "Select Keyframes";
 	ot->idname = "ACTION_OT_clickselect";
-	ot->description = "Mouse Select Keys\nSelect keyframes by clicking on them";
+	ot->description = "Select Keyframes\nSelect keyframes by clicking on them";
 
 	/* callbacks */
 	ot->invoke = actkeys_clickselect_invoke;

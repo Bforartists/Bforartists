@@ -47,8 +47,14 @@ static void rna_Curve_transform(Curve *cu, float *mat, bool shape_keys)
 {
 	BKE_curve_transform(cu, (float (*)[4])mat, shape_keys, true);
 
-	DAG_id_tag_update(&cu->id, 0);
+	DEG_id_tag_update(&cu->id, 0);
 }
+
+static void rna_Curve_update_gpu_tag(Curve *cu)
+{
+	BKE_curve_batch_cache_dirty_tag(cu, BKE_CURVE_BATCH_DIRTY_ALL);
+}
+
 static float rna_Nurb_calc_length(Nurb *nu, int resolution_u)
 {
 	return BKE_nurb_calc_length(nu, resolution_u);
@@ -72,6 +78,8 @@ void RNA_api_curve(StructRNA *srna)
 	                                "has had invalid indices corrected (to default 0)");
 	parm = RNA_def_boolean(func, "result", 0, "Result", "");
 	RNA_def_function_return(func, parm);
+
+	RNA_def_function(srna, "update_gpu_tag", "rna_Curve_update_gpu_tag");
 }
 
 void RNA_api_curve_nurb(StructRNA *srna)

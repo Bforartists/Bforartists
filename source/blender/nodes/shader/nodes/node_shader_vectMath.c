@@ -111,7 +111,7 @@ static int gpu_shader_vect_math(GPUMaterial *mat, bNode *node, bNodeExecData *UN
 		case 2:
 		case 3:
 		case 4:
-			GPU_stack_link(mat, names[node->custom1], in, out);
+			GPU_stack_link(mat, node, names[node->custom1], in, out);
 			break;
 		case 5:
 			if (in[0].hasinput || !in[1].hasinput) {
@@ -119,14 +119,14 @@ static int gpu_shader_vect_math(GPUMaterial *mat, bNode *node, bNodeExecData *UN
 				GPUNodeStack tmp_in[2];
 				memcpy(&tmp_in[0], &in[0], sizeof(GPUNodeStack));
 				memcpy(&tmp_in[1], &in[2], sizeof(GPUNodeStack));
-				GPU_stack_link(mat, names[node->custom1], tmp_in, out);
+				GPU_stack_link(mat, node, names[node->custom1], tmp_in, out);
 			}
 			else {
 				/* use only second item and terminator */
 				GPUNodeStack tmp_in[2];
 				memcpy(&tmp_in[0], &in[1], sizeof(GPUNodeStack));
 				memcpy(&tmp_in[1], &in[2], sizeof(GPUNodeStack));
-				GPU_stack_link(mat, names[node->custom1], tmp_in, out);
+				GPU_stack_link(mat, node, names[node->custom1], tmp_in, out);
 			}
 			break;
 		default:
@@ -141,7 +141,6 @@ void register_node_type_sh_vect_math(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_VECT_MATH, "Vector Math", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_vect_math_in, sh_node_vect_math_out);
 	node_type_label(&ntype, node_vect_math_label);
 	node_type_storage(&ntype, "", NULL, NULL);

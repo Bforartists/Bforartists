@@ -698,7 +698,7 @@ static int text_refresh_pyconstraints_exec(bContext *UNUSED(C), wmOperator *UNUS
 		}
 
 		if (update) {
-			DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		}
 	}
 #endif
@@ -1949,7 +1949,7 @@ static int text_jump_exec(bContext *C, wmOperator *op)
 
 static int text_jump_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
-	return WM_operator_props_dialog_popup(C, op, 10 * UI_UNIT_X, 5 * UI_UNIT_Y);
+	return WM_operator_props_dialog_popup(C, op, 200, 100);
 
 }
 
@@ -2070,7 +2070,9 @@ void TEXT_OT_delete(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
+	PropertyRNA *prop;
+	prop = RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
+	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /******************* toggle overwrite operator **********************/
@@ -2304,7 +2306,6 @@ void TEXT_OT_scroll(wmOperatorType *ot)
 	 * scroll_bar. Both do basically the same thing (aside
 	 * from keymaps).*/
 	ot->idname = "TEXT_OT_scroll";
-	ot->description = "";
 
 	/* api callbacks */
 	ot->exec = text_scroll_exec;
@@ -2396,7 +2397,6 @@ void TEXT_OT_scroll_bar(wmOperatorType *ot)
 	 * scroll. Both do basically the same thing (aside
 	 * from keymaps).*/
 	ot->idname = "TEXT_OT_scroll_bar";
-	ot->description = "";
 
 	/* api callbacks */
 	ot->invoke = text_scroll_bar_invoke;
@@ -3193,7 +3193,7 @@ static int text_resolve_conflict_invoke(bContext *C, wmOperator *op, const wmEve
 	switch (BKE_text_file_modified_check(text)) {
 		case 1:
 			if (text->flags & TXT_ISDIRTY) {
-				/* modified locally and externally, ahhh. offer more possibilites. */
+				/* modified locally and externally, ahhh. offer more possibilities. */
 				pup = UI_popup_menu_begin(C, IFACE_("File Modified Outside and Inside Blender"), ICON_NONE);
 				layout = UI_popup_menu_layout(pup);
 				uiItemEnumO_ptr(layout, op->type, IFACE_("Reload from disk (ignore local changes)"),

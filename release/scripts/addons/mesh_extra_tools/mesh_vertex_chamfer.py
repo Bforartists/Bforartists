@@ -53,7 +53,7 @@ class VertexChamfer(Operator):
             )
     relative = BoolProperty(
             name="Relative",
-            description="If Relative, Champfer size is relative to the edge lenght",
+            description="If Relative, Champfer size is relative to the edge length",
             default=True
             )
     dissolve = BoolProperty(
@@ -144,7 +144,7 @@ class VertexChamfer(Operator):
             else:
                 v.co += displace * v.normal
 
-        me.calc_tessface()
+        me.calc_loop_triangles()
 
         return {'FINISHED'}
 

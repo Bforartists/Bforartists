@@ -257,7 +257,7 @@ BLACK_ID = {
 
 
 """
-Most sytems:
+Most systems:
 Non-dropframe: 1:00:00:00 - colon in last position
 Dropframe: 1:00:00;00 - semicolon in last position
 PAL/SECAM: 1:00:00:00 - colon in last position

@@ -76,7 +76,7 @@ static uiBlock *ui_block_func_PIE(bContext *UNUSED(C), uiPopupBlockHandle *handl
 	uiPieMenu *pie = arg_pie;
 	int minwidth, width, height;
 
-	minwidth = 50;
+	minwidth = UI_MENU_WIDTH_MIN;
 	block = pie->block_radial;
 
 	/* in some cases we create the block before the region,
@@ -87,6 +87,7 @@ static uiBlock *ui_block_func_PIE(bContext *UNUSED(C), uiPopupBlockHandle *handl
 	UI_block_layout_resolve(block, &width, &height);
 
 	UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_NUMSELECT);
+	UI_block_theme_style_set(block, UI_BLOCK_THEME_STYLE_POPUP);
 
 	block->minbounds = minwidth;
 	block->bounds = 1;
@@ -104,7 +105,7 @@ static float ui_pie_menu_title_width(const char *name, int icon)
 {
 	const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
 	return (UI_fontstyle_string_width(fstyle, name) +
-	         (UI_UNIT_X * (1.50f + (icon ? 0.25f : 0.0f))));
+	        (UI_UNIT_X * (1.50f + (icon ? 0.25f : 0.0f))));
 }
 
 uiPieMenu *UI_pie_menu_begin(struct bContext *C, const char *title, int icon, const wmEvent *event)
@@ -151,15 +152,9 @@ uiPieMenu *UI_pie_menu_begin(struct bContext *C, const char *title, int icon, co
 
 	pie->layout = UI_block_layout(pie->block_radial, UI_LAYOUT_VERTICAL, UI_LAYOUT_PIEMENU, 0, 0, 200, 0, 0, style);
 
-	/* Open from where we started dragging. */
-	if (event->val == KM_CLICK_DRAG) {
-		pie->mx = event->prevclickx;
-		pie->my = event->prevclicky;
-	}
-	else {
-		pie->mx = event->x;
-		pie->my = event->y;
-	}
+	/* Note event->x/y is where we started dragging in case of KM_CLICK_DRAG. */
+	pie->mx = event->x;
+	pie->my = event->y;
 
 	/* create title button */
 	if (title[0]) {
@@ -202,7 +197,6 @@ void UI_pie_menu_end(bContext *C, uiPieMenu *pie)
 	        menu, WM_HANDLER_ACCEPT_DBL_CLICK);
 	WM_event_add_mousemove(C);
 
-	menu->can_refresh = false;
 	MEM_freeN(pie);
 }
 

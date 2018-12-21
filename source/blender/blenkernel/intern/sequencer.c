@@ -63,9 +63,9 @@
 #include "BLT_translation.h"
 
 #include "BKE_animsys.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_image.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_sequencer.h"
 #include "BKE_movieclip.h"
@@ -74,6 +74,9 @@
 #include "BKE_mask.h"
 #include "BKE_library.h"
 #include "BKE_idprop.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RNA_access.h"
 
@@ -89,8 +92,10 @@
 #include "BKE_context.h"
 #include "BKE_sound.h"
 
+#include "RE_engine.h"
+
 #ifdef WITH_AUDASPACE
-#  include AUD_SPECIAL_H
+#  include <AUD_Special.h>
 #endif
 
 /* mutable state for sequencer */
@@ -413,7 +418,7 @@ void BKE_sequence_clipboard_pointers_restore(Sequence *seq, Main *bmain)
 	seqclipboard_ptr_restore(bmain, (ID **)&seq->sound);
 }
 
-/* recursive versions of funcions above */
+/* recursive versions of functions above */
 void BKE_sequencer_base_clipboard_pointers_free(ListBase *seqbase)
 {
 	Sequence *seq;
@@ -469,8 +474,7 @@ void BKE_sequencer_editing_free(Scene *scene, const bool do_id_user)
 	{
 		/* handle cache freeing above */
 		BKE_sequence_free_ex(scene, seq, false, do_id_user);
-	}
-	SEQ_END
+	} SEQ_END;
 
 	BLI_freelistN(&ed->metastack);
 
@@ -588,17 +592,17 @@ void BKE_sequencer_pixel_from_sequencer_space_v4(struct Scene *scene, float pixe
 /*********************** sequencer pipeline functions *************************/
 
 void BKE_sequencer_new_render_data(
-        EvaluationContext *eval_ctx,
-        Main *bmain, Scene *scene, int rectx, int recty,
-        int preview_render_size,
+        Main *bmain, struct Depsgraph *depsgraph, Scene *scene, int rectx, int recty,
+        int preview_render_size, int for_render,
         SeqRenderData *r_context)
 {
-	r_context->eval_ctx = eval_ctx;
 	r_context->bmain = bmain;
+	r_context->depsgraph = depsgraph;
 	r_context->scene = scene;
 	r_context->rectx = rectx;
 	r_context->recty = recty;
 	r_context->preview_render_size = preview_render_size;
+	r_context->for_render = for_render;
 	r_context->motion_blur_samples = 0;
 	r_context->motion_blur_shutter = 0;
 	r_context->skip_cache = false;
@@ -1060,7 +1064,7 @@ void BKE_sequencer_sort(Scene *scene)
 	*(ed->seqbasep) = seqbase;
 }
 
-/** Comparision function suitable to be used with BLI_listbase_sort()... */
+/** Comparison function suitable to be used with BLI_listbase_sort()... */
 int BKE_sequencer_cmp_time_startdisp(const void *a, const void *b)
 {
 	const Sequence *seq_a = a;
@@ -1458,6 +1462,7 @@ typedef struct SeqIndexBuildContext {
 	int view_id;
 
 	Main *bmain;
+	Depsgraph *depsgraph;
 	Scene *scene;
 	Sequence *seq, *orig_seq;
 } SeqIndexBuildContext;
@@ -1590,12 +1595,8 @@ static void seq_open_anim_file(Scene *scene, Sequence *seq, bool openfile)
 				}
 
 				if (sanim->anim) {
-#if 0
-					seq_anim_add_suffix(scene, sanim->anim, i);
-#else
 					/* we already have the suffix */
 					IMB_suffix_anim(sanim->anim, suffix);
-#endif
 				}
 				else {
 					if (openfile) {
@@ -1946,7 +1947,9 @@ static int seq_proxy_context_count(Sequence *seq, Scene *scene)
 	return num_views;
 }
 
-void BKE_sequencer_proxy_rebuild_context(Main *bmain, Scene *scene, Sequence *seq, struct GSet *file_list, ListBase *queue)
+void BKE_sequencer_proxy_rebuild_context(
+        Main *bmain, Depsgraph *depsgraph, Scene *scene,
+        Sequence *seq, struct GSet *file_list, ListBase *queue)
 {
 	SeqIndexBuildContext *context;
 	Sequence *nseq;
@@ -1978,6 +1981,7 @@ void BKE_sequencer_proxy_rebuild_context(Main *bmain, Scene *scene, Sequence *se
 		context->overwrite = (nseq->strip->proxy->build_flags & SEQ_PROXY_SKIP_EXISTING) == 0;
 
 		context->bmain = bmain;
+		context->depsgraph = depsgraph;
 		context->scene = scene;
 		context->orig_seq = seq;
 		context->seq = nseq;
@@ -2031,9 +2035,10 @@ void BKE_sequencer_proxy_rebuild(SeqIndexBuildContext *context, short *stop, sho
 	/* fail safe code */
 
 	BKE_sequencer_new_render_data(
-	        bmain->eval_ctx, bmain, context->scene,
+	        bmain, context->depsgraph, context->scene,
 	        (scene->r.size * (float) scene->r.xsch) / 100.0f + 0.5f,
 	        (scene->r.size * (float) scene->r.ysch) / 100.0f + 0.5f, 100,
+	        false,
 	        &render_context);
 
 	render_context.skip_cache = true;
@@ -2410,21 +2415,21 @@ void BKE_sequencer_color_balance_apply(StripColorBalance *cb, ImBuf *ibuf, float
 }
 
 /*
- *  input preprocessing for SEQ_TYPE_IMAGE, SEQ_TYPE_MOVIE, SEQ_TYPE_MOVIECLIP and SEQ_TYPE_SCENE
+ * input preprocessing for SEQ_TYPE_IMAGE, SEQ_TYPE_MOVIE, SEQ_TYPE_MOVIECLIP and SEQ_TYPE_SCENE
  *
- *  Do all the things you can't really do afterwards using sequence effects
- *  (read: before rescaling to render resolution has been done)
+ * Do all the things you can't really do afterwards using sequence effects
+ * (read: before rescaling to render resolution has been done)
  *
- *  Order is important!
+ * Order is important!
  *
- *  - Deinterlace
- *  - Crop and transform in image source coordinate space
- *  - Flip X + Flip Y (could be done afterwards, backward compatibility)
- *  - Promote image to float data (affects pipeline operations afterwards)
- *  - Color balance (is most efficient in the byte -> float
- *    (future: half -> float should also work fine!)
- *    case, if done on load, since we can use lookup tables)
- *  - Premultiply
+ * - Deinterlace
+ * - Crop and transform in image source coordinate space
+ * - Flip X + Flip Y (could be done afterwards, backward compatibility)
+ * - Promote image to float data (affects pipeline operations afterwards)
+ * - Color balance (is most efficient in the byte -> float
+ *   (future: half -> float should also work fine!)
+ *   case, if done on load, since we can use lookup tables)
+ * - Premultiply
  */
 
 bool BKE_sequencer_input_have_to_preprocess(const SeqRenderData *context, Sequence *seq, float UNUSED(cfra))
@@ -2753,17 +2758,12 @@ static ImBuf *seq_render_effect_strip_impl(
 
 	if (seq->flag & SEQ_USE_EFFECT_DEFAULT_FADE) {
 		sh.get_default_fac(seq, cfra, &fac, &facf);
-
-		if ((scene->r.mode & R_FIELDS) == 0)
-			facf = fac;
+		facf = fac;
 	}
 	else {
 		fcu = id_data_find_fcurve(&scene->id, seq, &RNA_Sequence, "effect_fader", 0, NULL);
 		if (fcu) {
 			fac = facf = evaluate_fcurve(fcu, cfra);
-			if (scene->r.mode & R_FIELDS) {
-				facf = evaluate_fcurve(fcu, cfra + 0.5f);
-			}
 		}
 		else {
 			fac = facf = seq->effect_fader;
@@ -3131,7 +3131,7 @@ static ImBuf *seq_render_mask(const SeqRenderData *context, Mask *mask, float nr
 
 		/* anim-data */
 		adt = BKE_animdata_from_id(&mask->id);
-		BKE_animsys_evaluate_animdata(context->scene, &mask_temp->id, adt, nr, ADT_RECALC_ANIM);
+		BKE_animsys_evaluate_animdata(context->depsgraph, context->scene, &mask_temp->id, adt, nr, ADT_RECALC_ANIM);
 
 		maskbuf = MEM_mallocN(sizeof(float) * context->rectx * context->recty, __func__);
 
@@ -3268,6 +3268,11 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 	// have_seq = (scene->r.scemode & R_DOSEQ) && scene->ed && scene->ed->seqbase.first);  /* UNUSED */
 	have_comp = (scene->r.scemode & R_DOCOMP) && scene->use_nodes && scene->nodetree;
 
+	/* Get view layer for the strip. */
+	ViewLayer *view_layer = BKE_view_layer_default_render(scene);
+	/* Depsgraph will be NULL when doing rendering. */
+	Depsgraph *depsgraph = NULL;
+
 	orig_data.scemode = scene->r.scemode;
 	orig_data.cfra = scene->r.cfra;
 	orig_data.subframe = scene->r.subframe;
@@ -3323,12 +3328,16 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 			context->scene->r.seq_prev_type = 3 /* == OB_SOLID */;
 
 		/* opengl offscreen render */
-		BKE_scene_update_for_newframe(context->eval_ctx, context->bmain, scene, scene->lay);
+		depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
+		BKE_scene_graph_update_for_newframe(depsgraph, context->bmain);
 		ibuf = sequencer_view3d_cb(
 		        /* set for OpenGL render (NULL when scrubbing) */
-		        context->bmain, scene, camera, width, height, IB_rect, draw_flags, context->scene->r.seq_prev_type,
+		        depsgraph, scene,
+		        context->scene->r.seq_prev_type,
+		        camera, width, height, IB_rect,
+		        draw_flags,
 		        scene->r.alphamode, context->gpu_samples, viewname,
-		        context->gpu_fx, context->gpu_offscreen, err_out);
+		        context->gpu_offscreen, err_out);
 		if (ibuf == NULL) {
 			fprintf(stderr, "seq_render_scene_strip failed to get opengl buffer: %s\n", err_out);
 		}
@@ -3349,12 +3358,11 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 		 * When rendering from command line renderer is called from main thread, in this
 		 * case it's always safe to render scene here
 		 */
-		if (!is_thread_main || is_rendering == false || is_background || context->eval_ctx->mode == DAG_EVAL_RENDER) {
+		if (!is_thread_main || is_rendering == false || is_background || context->for_render) {
 			if (re == NULL)
 				re = RE_NewSceneRender(scene);
 
-			BKE_scene_update_for_newframe(context->eval_ctx, context->bmain, scene, scene->lay);
-			RE_BlenderFrame(re, context->bmain, scene, NULL, camera, scene->lay, frame, false);
+			RE_BlenderFrame(re, context->bmain, scene, view_layer, camera, frame, false);
 
 			/* restore previous state after it was toggled on & off by RE_BlenderFrame */
 			G.is_rendering = is_rendering;
@@ -3412,8 +3420,8 @@ finally:
 	scene->r.cfra = orig_data.cfra;
 	scene->r.subframe = orig_data.subframe;
 
-	if (is_frame_update) {
-		BKE_scene_update_for_newframe(context->eval_ctx, context->bmain, scene, scene->lay);
+	if (is_frame_update && (depsgraph != NULL)) {
+		BKE_scene_graph_update_for_newframe(depsgraph, context->bmain);
 	}
 
 #ifdef DURIAN_CAMERA_SWITCH
@@ -3503,7 +3511,7 @@ static ImBuf *do_render_strip_uncached(
 				ibuf = seq_render_scene_strip(context, seq, nr, cfra);
 
 				/* Scene strips update all animation, so we need to restore original state.*/
-				BKE_animsys_evaluate_all_animation(context->bmain, context->scene, cfra);
+				BKE_animsys_evaluate_all_animation(context->bmain, context->depsgraph, context->scene, cfra);
 
 				copy_to_ibuf_still(context, seq, nr, ibuf);
 			}
@@ -4507,7 +4515,7 @@ Sequence *BKE_sequencer_foreground_frame_get(Scene *scene, int frame)
 	return best_seq;
 }
 
-/* return 0 if there werent enough space */
+/* return 0 if there weren't enough space */
 bool BKE_sequence_base_shuffle_ex(ListBase *seqbasep, Sequence *test, Scene *evil_scene, int channel_delta)
 {
 	const int orig_machine = test->machine;
@@ -5240,11 +5248,6 @@ Sequence *BKE_sequencer_add_sound_strip(bContext *C, ListBase *seqbasep, SeqLoad
 
 	if (sound->playback_handle == NULL) {
 		BKE_libblock_free(bmain, sound);
-#if 0
-		if (op)
-			BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");
-#endif
-
 		return NULL;
 	}
 
@@ -5252,10 +5255,6 @@ Sequence *BKE_sequencer_add_sound_strip(bContext *C, ListBase *seqbasep, SeqLoad
 
 	if (info.specs.channels == AUD_CHANNELS_INVALID) {
 		BKE_libblock_free(bmain, sound);
-#if 0
-		if (op)
-			BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");
-#endif
 		return NULL;
 	}
 

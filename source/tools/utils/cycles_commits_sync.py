@@ -14,11 +14,11 @@ import tempfile
 # - Explicitly ignore some of the commits.
 # - Move the synchronization point forward.
 IGNORE_HASHES = {
-    }
+}
 
 # Start revisions from both repositories.
-CYCLES_START_COMMIT=b"c9ae7449faff"
-BLENDER_START_COMMIT=b"2dd0cb4964e8"
+CYCLES_START_COMMIT = b"b6cb165"
+BLENDER_START_COMMIT = b"aa844ad"
 
 # Prefix which is common for all the subjects.
 GIT_SUBJECT_COMMON_PREFIX = b"Subject: [PATCH] "
@@ -36,7 +36,7 @@ SUBJECT_SKIP_PREFIX = (
     b"Cycles Standalone: ",
     b"Cycles standalone: ",
     b"cycles standalone: ",
-    )
+)
 
 
 def subject_strip(common_prefix, subject):
@@ -86,7 +86,7 @@ def cleanup_patch(patch, accept_prefix, replace_prefix):
         elif line.startswith(GIT_PATCHSET_END_MARKER):
             do_skip = False
         elif line.startswith(b"---") or line.startswith(b"+++"):
-                line = replace_file_prefix(line, accept_prefix, replace_prefix)
+            line = replace_file_prefix(line, accept_prefix, replace_prefix)
 
         if not do_skip:
             clean_content.append(line)
@@ -154,7 +154,7 @@ def transfer_commits(commit_hashes,
             b"--start-number", str(patch_index),
             b"-o", to_repository,
             commit_hash,
-            )
+        )
         patch_file = subprocess.check_output(command).rstrip(b"\n")
         if dst_is_cycles:
             cleanup_patch(patch_file, b"intern/cycles", b"src")
@@ -182,6 +182,7 @@ def main():
     print("Check them and if they're all fine run:")
     print("")
     print("  git am *.path")
+
 
 if __name__ == '__main__':
     main()

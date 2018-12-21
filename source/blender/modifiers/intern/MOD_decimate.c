@@ -33,15 +33,17 @@
  */
 
 #include "DNA_object_types.h"
+#include "DNA_mesh_types.h"
+#include "DNA_meshdata_types.h"
 
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
 #include "MEM_guardedalloc.h"
 
-#include "BKE_modifier.h"
 #include "BKE_deform.h"
-#include "BKE_cdderivedmesh.h"
+#include "BKE_mesh.h"
+#include "BKE_library.h"
 
 #include "bmesh.h"
 #include "bmesh_tools.h"
@@ -77,13 +79,12 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 	return dataMask;
 }
 
-static DerivedMesh *applyModifier(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
-        ModifierApplyFlag UNUSED(flag))
+static Mesh *applyModifier(
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *meshData)
 {
 	DecimateModifierData *dmd = (DecimateModifierData *) md;
-	DerivedMesh *dm = derivedData, *result = NULL;
+	Mesh *mesh = meshData, *result = NULL;
 	BMesh *bm;
 	bool calc_face_normal;
 	float *vweights = NULL;
@@ -93,34 +94,34 @@ static DerivedMesh *applyModifier(
 #endif
 
 	/* set up front so we dont show invalid info in the UI */
-	dmd->face_count = dm->getNumPolys(dm);
+	dmd->face_count = mesh->totpoly;
 
 	switch (dmd->mode) {
 		case MOD_DECIM_MODE_COLLAPSE:
 			if (dmd->percent == 1.0f) {
-				return dm;
+				return mesh;
 			}
 			calc_face_normal = true;
 			break;
 		case MOD_DECIM_MODE_UNSUBDIV:
 			if (dmd->iter == 0) {
-				return dm;
+				return mesh;
 			}
 			calc_face_normal = false;
 			break;
 		case MOD_DECIM_MODE_DISSOLVE:
 			if (dmd->angle == 0.0f) {
-				return dm;
+				return mesh;
 			}
 			calc_face_normal = true;
 			break;
 		default:
-			return dm;
+			return mesh;
 	}
 
 	if (dmd->face_count <= 3) {
 		modifier_setError(md, "Modifier requires more than 3 input faces");
-		return dm;
+		return mesh;
 	}
 
 	if (dmd->mode == MOD_DECIM_MODE_COLLAPSE) {
@@ -128,10 +129,10 @@ static DerivedMesh *applyModifier(
 			MDeformVert *dvert;
 			int defgrp_index;
 
-			modifier_get_vgroup(ob, dm, dmd->defgrp_name, &dvert, &defgrp_index);
+			MOD_get_vgroup(ctx->object, mesh, dmd->defgrp_name, &dvert, &defgrp_index);
 
 			if (dvert) {
-				const unsigned int vert_tot = dm->getNumVerts(dm);
+				const unsigned int vert_tot = mesh->totvert;
 				unsigned int i;
 
 				vweights = MEM_malloc_arrayN(vert_tot, sizeof(float), __func__);
@@ -150,7 +151,13 @@ static DerivedMesh *applyModifier(
 		}
 	}
 
-	bm = DM_to_bmesh(dm, calc_face_normal);
+	bm = BKE_mesh_to_bmesh_ex(
+	        mesh,
+	        &(struct BMeshCreateParams){0},
+	        &(struct BMeshFromMeshParams){
+	            .calc_face_normal = calc_face_normal,
+	            .cd_mask_extra = CD_MASK_ORIGINDEX,
+	        });
 
 	switch (dmd->mode) {
 		case MOD_DECIM_MODE_COLLAPSE:
@@ -182,7 +189,7 @@ static DerivedMesh *applyModifier(
 
 	/* update for display only */
 	dmd->face_count = bm->totface;
-	result = CDDM_from_bmesh(bm, false);
+	result = BKE_mesh_from_bmesh_for_eval_nomain(bm, 0);
 	BLI_assert(bm->vtoolflagpool == NULL &&
 	           bm->etoolflagpool == NULL &&
 	           bm->ftoolflagpool == NULL);  /* make sure we never alloc'd these */
@@ -196,7 +203,7 @@ static DerivedMesh *applyModifier(
 	TIMEIT_END(decim);
 #endif
 
-	result->dirty = DM_DIRTY_NORMALS;
+	result->runtime.cd_dirty_vert |= CD_MASK_NORMAL;
 
 	return result;
 }
@@ -208,18 +215,25 @@ ModifierTypeInfo modifierType_Decimate = {
 	/* type */              eModifierTypeType_Nonconstructive,
 	/* flags */             eModifierTypeFlag_AcceptsMesh |
 	                        eModifierTypeFlag_AcceptsCVs,
+
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     applyModifier,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        NULL,
-	/* updateDepgraph */    NULL,
 	/* updateDepsgraph */   NULL,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

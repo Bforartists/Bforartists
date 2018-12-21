@@ -24,8 +24,8 @@ bl_info = {
 "name": "Smart Delete bfa",
 "description": "Auto detect a delete elements",
 "author": "Reiner 'Tiles' Prokein",
-"version": (0,1),
-"blender": (2, 7, 6),
+"version": (0,2.1),
+"blender": (2, 80, 0),
 "category": "Mesh",
 }
  
@@ -36,7 +36,7 @@ def find_connected_verts(me, found_index):
     #print('connecting_edges',len(connecting_edges)) # Do not want to polute the console.
     return len(connecting_edges)  
  
-class MeshDissolveContextual_bfa(bpy.types.Operator):
+class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
     """ Dissolves mesh elements based on context instead
     of forcing the user to select from a menu what
     it should dissolve.
@@ -45,7 +45,7 @@ class MeshDissolveContextual_bfa(bpy.types.Operator):
     bl_label = "Smart Delete"
     bl_options = {'UNDO'}
    
-    use_verts = bpy.props.BoolProperty(name="Use Verts", default=False)
+    use_verts : bpy.props.BoolProperty(name="Use Verts", default=False)
     
     mymode = 0 # The script changes the modes at one point. We want to store the mode before the operation.
  
@@ -127,18 +127,24 @@ class MeshDissolveContextual_bfa(bpy.types.Operator):
                 bpy.ops.mesh.select_mode(type='EDGE')
                         
         return {'FINISHED'}
-
+classes = (SDEL_OT_meshdissolvecontextual, )
 
 def menu_func(self, context):
-    self.layout.operator(MeshDissolveContextual_bfa.bl_idname, icon = "DELETE")
+    self.layout.operator(SDEL_OT_meshdissolvecontextual.bl_idname)
 
 def register():
-    bpy.utils.register_class(MeshDissolveContextual_bfa)
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
+    #bpy.utils.register_class(SDEL_OT_meshdissolvecontextual)#the old way
     bpy.types.VIEW3D_MT_edit_mesh.append(menu_func)
     
 
 def unregister():
-    bpy.utils.unregister_class(MeshDissolveContextual_bfa)
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
+    #bpy.utils.unregister_class(SDEL_OT_meshdissolvecontextual)#the old way
     bpy.types.VIEW3D_MT_edit_mesh.remove(menu_func)
 
 

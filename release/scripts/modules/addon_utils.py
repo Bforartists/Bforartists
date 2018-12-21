@@ -352,7 +352,7 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
             mod.__time__ = os.path.getmtime(mod.__file__)
             mod.__addon_enabled__ = False
         except Exception as ex:
-            # if the addon doesn't exist, dont print full traceback
+            # if the addon doesn't exist, don't print full traceback
             if type(ex) is ImportError and ex.name == module_name:
                 print("addon not found:", repr(module_name))
             else:
@@ -362,8 +362,31 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
                 _addon_remove(module_name)
             return None
 
+        # 1.1) fail when add-on is too old
+        # This is a temporary 2.8x migration check, so we can manage addons that are supported.
+
+        # Silent default, we know these need updating.
+        if module_name in {
+            "io_scene_3ds",
+            "io_scene_x3d",
+        }:
+            return None
+
+        try:
+            if mod.bl_info.get("blender", (0, 0, 0)) < (2, 80, 0):
+                raise Exception(f"Add-on '{module_name:s}' has not been upgraded to 2.8, ignoring")
+        except Exception as ex:
+            handle_error(ex)
+            return None
+
         # 2) try register collected modules
         # removed, addons need to handle own registration now.
+
+        use_owner = mod.bl_info.get("use_owner", True)
+        if use_owner:
+            from _bpy import _bl_owner_id_get, _bl_owner_id_set
+            owner_id_prev = _bl_owner_id_get()
+            _bl_owner_id_set(module_name)
 
         # 3) try run the modules register function
         try:
@@ -378,6 +401,9 @@ def enable(module_name, *, default_set=False, persistent=False, handle_error=Non
             if default_set:
                 _addon_remove(module_name)
             return None
+        finally:
+            if use_owner:
+                _bl_owner_id_set(owner_id_prev)
 
     # * OK loaded successfully! *
     mod.__addon_enabled__ = True
@@ -472,7 +498,12 @@ def reset_all(*, reload_scripts=False):
 
 def disable_all():
     import sys
-    for mod_name, mod in sys.modules.items():
+    # Collect modules to disable first because dict can be modified as we disable.
+    addon_modules = [
+        item for item in sys.modules.items()
+        if getattr(item[1], "__addon_enabled__", False)
+    ]
+    for mod_name, mod in addon_modules:
         if getattr(mod, "__addon_enabled__", False):
             disable(mod_name)
 
@@ -491,6 +522,7 @@ def module_bl_info(mod, info_basis=None):
             "category": "",
             "warning": "",
             "show_expanded": False,
+            "use_owner": True,
         }
 
     addon_info = getattr(mod, "bl_info", {})
@@ -507,6 +539,10 @@ def module_bl_info(mod, info_basis=None):
 
     if not addon_info["name"]:
         addon_info["name"] = mod.__name__
+
+    # Temporary auto-magic, don't use_owner for import export menus.
+    if mod.bl_info["category"] == "Import-Export":
+        mod.bl_info["use_owner"] = False
 
     addon_info["_init"] = None
     return addon_info

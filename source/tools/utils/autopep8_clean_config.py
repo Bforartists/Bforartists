@@ -13,6 +13,9 @@ PATHS = (
 BLACKLIST = (
     "source/tools/svn_rev_map/sha1_to_rev.py",
     "source/tools/svn_rev_map/rev_to_sha1.py",
+    "source/tools/svn_rev_map/rev_to_sha1.py",
+    "release/scripts/modules/bl_i18n_utils/settings.py",
+    "release/scripts/modules/bl_i18n_utils/utils_rtl.py",
 )
 
 SOURCE_DIR = os.path.normpath(os.path.abspath(os.path.normpath(
@@ -27,6 +30,7 @@ BLACKLIST = set(
     os.path.join(SOURCE_DIR, p.replace("/", os.sep))
     for p in BLACKLIST
 )
+
 
 def files(path, test_fn):
     for dirpath, dirnames, filenames in os.walk(path):

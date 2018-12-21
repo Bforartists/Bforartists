@@ -21,14 +21,15 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
-    "version": (3, 1, 1),
-    "blender": (2, 78, 0),
+    "version": (3, 2, 1),
+    "blender": (2, 80, 0),
     "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Add_Mesh/Planes_from_Images",
+    "support": 'OFFICIAL',
     "category": "Import-Export",
 }
 
@@ -179,7 +180,6 @@ def load_images(filenames, directory, force_reload=False, frame_start=1, find_se
             frames = image.frame_duration
 
         elif frames > 1:  # Not movie, but multiple frames -> image sequence
-            image.use_animation = True
             image.source = 'SEQUENCE'
 
         yield ImageSpec(image, size, frame_start, offset - 1, frames)
@@ -200,11 +200,10 @@ def offset_planes(planes, gap, axis):
     prior = planes[0]
     offset = Vector()
     for current in planes[1:]:
-
-        local_offset = abs((prior.dimensions + current.dimensions) * axis) / 2.0 + gap
+        local_offset = abs((prior.dimensions + current.dimensions).dot(axis)) / 2.0 + gap
 
         offset += local_offset * axis
-        current.location = current.matrix_world * offset
+        current.location = current.matrix_world @ offset
 
         prior = current
 
@@ -242,7 +241,7 @@ def compute_camera_size(context, center, fill_mode, aspect):
 
 
 def center_in_camera(scene, camera, obj, axis=(1, 1)):
-    """Center object along specified axiis of the camera"""
+    """Center object along specified axis of the camera"""
     camera_matrix_col = camera.matrix_world.col
     location = obj.location
 
@@ -250,11 +249,11 @@ def center_in_camera(scene, camera, obj, axis=(1, 1)):
     delta = camera_matrix_col[3].xyz - location
 
     # How far off center we are along the camera's local X
-    camera_x_mag = delta * camera_matrix_col[0].xyz * axis[0]
+    camera_x_mag = delta.dot(camera_matrix_col[0].xyz) * axis[0]
     # How far off center we are along the camera's local Y
-    camera_y_mag = delta * camera_matrix_col[1].xyz * axis[1]
+    camera_y_mag = delta.dot(camera_matrix_col[1].xyz) * axis[1]
 
-    # Now offet only along camera local axiis
+    # Now offset only along camera local axis
     offset = camera_matrix_col[0].xyz * camera_x_mag + \
         camera_matrix_col[1].xyz * camera_y_mag
 
@@ -262,7 +261,7 @@ def center_in_camera(scene, camera, obj, axis=(1, 1)):
 
 
 # -----------------------------------------------------------------------------
-# Cycles utils
+# Cycles/Eevee utils
 
 def get_input_nodes(node, links):
     """Get nodes that are a inputs to the given node"""
@@ -327,7 +326,7 @@ def clean_node_tree(node_tree):
 
 
 def get_shadeless_node(dest_node_tree):
-    """Return a "shadless" cycles node, creating a node group if nonexistant"""
+    """Return a "shadless" cycles/eevee node, creating a node group if nonexistent"""
     try:
         node_tree = bpy.data.node_groups['IAP_SHADELESS']
 
@@ -458,7 +457,7 @@ def register_watched_object(obj):
 def find_plane_corner(object_name, x, y, axis, camera=None, *args, **kwargs):
     """Find the location in camera space of a plane's corner"""
     if args or kwargs:
-        # I've added args / kwargs as a compatability measure with future versions
+        # I've added args / kwargs as a compatibility measure with future versions
         warnings.warn("Unknown Parameters Passed to \"Images as Planes\".  Maybe you need to upgrade?")
 
     plane = bpy.data.objects[object_name]
@@ -474,7 +473,7 @@ def find_plane_corner(object_name, x, y, axis, camera=None, *args, **kwargs):
     v = plane.dimensions.copy()
     v.x *= x / scale.x
     v.y *= y / scale.y
-    v = plane.matrix_world * v
+    v = plane.matrix_world @ v
 
     camera_vertex = world_to_camera_view(
         bpy.context.scene, camera, v)
@@ -606,7 +605,7 @@ def setup_compositing(context, plane, img_spec):
 # Operator
 
 class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
-    """Create mesh plane(s) from image files with the appropiate aspect ratio"""
+    """Create mesh plane(s) from image files with the appropriate aspect ratio"""
 
     bl_idname = "import_image.to_plane"
     bl_label = "Import Images as Planes"
@@ -614,22 +613,22 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
     # ----------------------
     # File dialog properties
-    files = CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
+    files: CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
 
-    directory = StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
+    directory: StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
 
-    filter_image = BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
-    filter_movie = BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
-    filter_folder = BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
+    filter_image: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
+    filter_movie: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
+    filter_folder: BoolProperty(default=True, options={'HIDDEN', 'SKIP_SAVE'})
 
     # ----------------------
     # Properties - Importing
-    force_reload = BoolProperty(
+    force_reload: BoolProperty(
         name="Force Reload", default=False,
         description="Force reloading of the image if already opened elsewhere in Blender"
     )
 
-    image_sequence = BoolProperty(
+    image_sequence: BoolProperty(
         name="Animate Image Sequences", default=False,
         description="Import sequentially numbered images as an animated "
                     "image sequence instead of separate planes"
@@ -646,7 +645,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         'Z-': Vector(( 0,  0, -1)),
     }
 
-    offset = BoolProperty(name="Offset Planes", default=True, description="Offset Planes From Each Other")
+    offset: BoolProperty(name="Offset Planes", default=True, description="Offset Planes From Each Other")
 
     OFFSET_MODES = (
         ('X+', "X+", "Side by Side to the Left"),
@@ -656,12 +655,12 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('Y-', "Y-", "Side by Side, Upward"),
         ('Z-', "Z-", "Stacked Below"),
     )
-    offset_axis = EnumProperty(
+    offset_axis: EnumProperty(
         name="Orientation", default='X+', items=OFFSET_MODES,
         description="How planes are oriented relative to each others' local axis"
     )
 
-    offset_amount = FloatProperty(
+    offset_amount: FloatProperty(
         name="Offset", soft_min=0, default=0.1, description="Space between planes",
         subtype='DISTANCE', unit='LENGTH'
     )
@@ -676,14 +675,14 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('CAM', "Face Camera", "Facing Camera"),
         ('CAM_AX', "Main Axis", "Facing the Camera's dominant axis"),
     )
-    align_axis = EnumProperty(
+    align_axis: EnumProperty(
         name="Align", default='CAM_AX', items=AXIS_MODES,
         description="How to align the planes"
     )
     # prev_align_axis is used only by update_size_model
-    prev_align_axis = EnumProperty(
+    prev_align_axis: EnumProperty(
         items=AXIS_MODES + (('NONE', '', ''),), default='NONE', options={'HIDDEN', 'SKIP_SAVE'})
-    align_track = BoolProperty(
+    align_track: BoolProperty(
         name="Track Camera", default=False, description="Always face the camera"
     )
 
@@ -707,7 +706,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('DPI', "Dpi", "Use definition of the image as dots per inch"),
         ('DPBU', "Dots/BU", "Use definition of the image as dots per Blender Unit"),
     )
-    size_mode = EnumProperty(
+    size_mode: EnumProperty(
         name="Size Mode", default='ABSOLUTE', items=SIZE_MODES,
         update=update_size_mode,
         description="How the size of the plane is computed")
@@ -716,13 +715,13 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('FILL', "Fill", "Fill camera frame, spilling outside the frame"),
         ('FIT', "Fit", "Fit entire image within the camera frame"),
     )
-    fill_mode = EnumProperty(name="Scale", default='FILL', items=FILL_MODES,
+    fill_mode: EnumProperty(name="Scale", default='FILL', items=FILL_MODES,
                              description="How large in the camera frame is the plane")
 
-    height = FloatProperty(name="Height", description="Height of the created plane",
+    height: FloatProperty(name="Height", description="Height of the created plane",
                            default=1.0, min=0.001, soft_min=0.001, subtype='DISTANCE', unit='LENGTH')
 
-    factor = FloatProperty(name="Definition", min=1.0, default=600.0,
+    factor: FloatProperty(name="Definition", min=1.0, default=600.0,
                            description="Number of pixels per inch or Blender Unit")
 
     # ------------------------------
@@ -732,40 +731,37 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         ('SHADELESS', "Shadeless", "Only visible to camera and reflections."),
         ('EMISSION', "Emit", "Emission Shader"),
     )
-    shader = EnumProperty(name="Shader", items=SHADERS, default='DIFFUSE', description="Node shader to use")
+    shader: EnumProperty(name="Shader", items=SHADERS, default='DIFFUSE', description="Node shader to use")
 
-    emit_strength = FloatProperty(
+    emit_strength: FloatProperty(
         name="Strength", min=0.0, default=1.0, soft_max=10.0,
         step=100, description="Brightness of Emission Texture")
 
-    overwrite_material = BoolProperty(
+    overwrite_material: BoolProperty(
         name="Overwrite Material", default=True,
         description="Overwrite existing Material (based on material name)")
 
-    compositing_nodes = BoolProperty(
+    compositing_nodes: BoolProperty(
         name="Setup Corner Pin", default=False,
         description="Build Compositor Nodes to reference this image "
                     "without re-rendering")
 
     # ------------------
     # Properties - Image
-    use_transparency = BoolProperty(
+    use_transparency: BoolProperty(
         name="Use Alpha", default=True,
         description="Use alphachannel for transparency")
 
     t = bpy.types.Image.bl_rna.properties["alpha_mode"]
     alpha_mode_items = tuple((e.identifier, e.name, e.description) for e in t.enum_items)
-    alpha_mode = EnumProperty(
+    alpha_mode: EnumProperty(
         name=t.name, items=alpha_mode_items, default=t.default,
         description=t.description)
 
-    t = bpy.types.Image.bl_rna.properties["use_fields"]
-    use_fields = BoolProperty(name=t.name, default=False, description=t.description)
-
     t = bpy.types.ImageUser.bl_rna.properties["use_auto_refresh"]
-    use_auto_refresh = BoolProperty(name=t.name, default=True, description=t.description)
+    use_auto_refresh: BoolProperty(name=t.name, default=True, description=t.description)
 
-    relative = BoolProperty(name="Relative Paths", default=True, description="Use relative file paths")
+    relative: BoolProperty(name="Relative Paths", default=True, description="Use relative file paths")
 
     # -------
     # Draw UI
@@ -774,7 +770,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         layout = self.layout
         box = layout.box()
 
-        box.label("Import Options:", icon='IMPORT')
+        box.label(text="Import Options:", icon='IMPORT')
         row = box.row()
         row.active = bpy.data.is_saved
         row.prop(self, "relative")
@@ -787,29 +783,28 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         layout = self.layout
         box = layout.box()
 
-        box.label("Compositing Nodes:", icon='RENDERLAYERS')
-        box.prop(self, 'compositing_nodes')
+        box.label(text="Compositing Nodes:", icon='RENDERLAYERS')
+        box.prop(self, "compositing_nodes")
 
-        box.label("Material Settings:", icon='MATERIAL')
+        box.label(text="Material Settings:", icon='MATERIAL')
 
         row = box.row()
         row.prop(self, 'shader', expand=True)
         if self.shader == 'EMISSION':
-            box.prop(self, 'emit_strength')
+            box.prop(self, "emit_strength")
 
         engine = context.scene.render.engine
-        if engine not in ('CYCLES', 'BLENDER_RENDER'):
-            box.label("%s is not supported" % engine, icon='ERROR')
+        if engine not in ('CYCLES', 'BLENDER_EEVEE', 'BLENDER_OPENGL'):
+            box.label(text="%s is not supported" % engine, icon='ERROR')
 
-        box.prop(self, 'overwrite_material')
+        box.prop(self, "overwrite_material")
 
-        box.label("Texture Settings:", icon='TEXTURE')
+        box.label(text="Texture Settings:", icon='TEXTURE')
         row = box.row()
         row.prop(self, "use_transparency")
         sub = row.row()
         sub.active = self.use_transparency
         sub.prop(self, "alpha_mode", text="")
-        box.prop(self, "use_fields")
         box.prop(self, "use_auto_refresh")
 
     def draw_spatial_config(self, context):
@@ -817,34 +812,34 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         layout = self.layout
         box = layout.box()
 
-        box.label("Position:", icon='SNAP_GRID')
-        box.prop(self, 'offset')
+        box.label(text="Position:", icon='SNAP_GRID')
+        box.prop(self, "offset")
         col = box.column()
         row = col.row()
-        row.prop(self, 'offset_axis', expand=True)
+        row.prop(self, "offset_axis", expand=True)
         row = col.row()
-        row.prop(self, 'offset_amount')
+        row.prop(self, "offset_amount")
         col.enabled = self.offset
 
-        box.label("Plane dimensions:", icon='ARROW_LEFTRIGHT')
+        box.label(text="Plane dimensions:", icon='ARROW_LEFTRIGHT')
         row = box.row()
         row.prop(self, "size_mode", expand=True)
         if self.size_mode == 'ABSOLUTE':
             box.prop(self, "height")
         elif self.size_mode == 'CAMERA':
             row = box.row()
-            row.prop(self, 'fill_mode', expand=True)
+            row.prop(self, "fill_mode", expand=True)
         else:
             box.prop(self, "factor")
 
-        box.label("Orientation:", icon='MANIPUL')
+        box.label(text="Orientation:")
         row = box.row()
         row.enabled = 'CAM' not in self.size_mode
-        row.prop(self, 'align_axis')
+        row.prop(self, "align_axis")
         row = box.row()
         row.enabled = 'CAM' in self.align_axis
         row.alignment = 'RIGHT'
-        row.prop(self, 'align_track')
+        row.prop(self, "align_track")
 
     def draw(self, context):
 
@@ -857,9 +852,13 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
     # Core functionality
     def invoke(self, context, event):
         engine = context.scene.render.engine
-        if engine not in ('CYCLES', 'BLENDER_RENDER', 'BLENDER_GAME'):
-            # Use default blender texture, but acknowledge things may not work
-            self.report({'WARNING'}, "Cannot generate materials for unknown %s render engine" % engine)
+        if engine not in {'CYCLES', 'BLENDER_EEVEE'}:
+            if engine not in {'BLENDER_OPENGL'}:
+                self.report({'ERROR'}, "Cannot generate materials for unknown %s render engine" % engine)
+                return {'CANCELLED'}
+            else:
+                self.report({'WARNING'},
+                            "Generating Cycles/EEVEE compatible material, but won't be visible with %s engine" % engine)
 
         # Open file browser
         context.window_manager.fileselect_add(self)
@@ -910,7 +909,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         # setup new selection
         for plane in planes:
-            plane.select = True
+            plane.select_set(True)
 
         # all done!
         self.report({'INFO'}, "Added {} Image Plane(s)".format(len(planes)))
@@ -923,22 +922,14 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         # Configure material
         engine = context.scene.render.engine
-        if engine == 'CYCLES':
+        if engine in {'CYCLES', 'BLENDER_EEVEE', 'BLENDER_OPENGL'}:
             material = self.create_cycles_material(context, img_spec)
-        else:
-            tex = self.create_image_textures(context, img_spec)
-            material = self.create_material_for_texture(tex)
-
-        # Game Engine Material Settings
-        material.game_settings.use_backface_culling = False
-        material.game_settings.alpha_blend = 'ALPHA'
 
         # Create and position plane object
         plane = self.create_image_plane(context, material.name, img_spec)
 
         # Assign Material
         plane.data.materials.append(material)
-        plane.data.uv_textures[0].data[0].image = img_spec.image
 
         # If applicable, setup Corner Pin node
         if self.compositing_nodes:
@@ -949,7 +940,6 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
     def apply_image_options(self, image):
         image.use_alpha = self.use_transparency
         image.alpha_mode = self.alpha_mode
-        image.use_fields = self.use_fields
 
         if self.relative:
             try:  # can't always find the relative path (between drive letters on windows)
@@ -970,48 +960,6 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             image_user.use_auto_refresh = True
 
         texture.extension = 'CLIP'  # Default of "Repeat" can cause artifacts
-
-    # -------------------------------------------------------------------------
-    # Blender Internal Material
-    def create_image_textures(self, context, img_spec):
-        image = img_spec.image
-        fn_full = os.path.normpath(bpy.path.abspath(image.filepath))
-
-        # look for texture referencing this file
-        for texture in bpy.data.textures:
-            if texture.type == 'IMAGE':
-                tex_img = texture.image
-                if (tex_img is not None) and (tex_img.library is None):
-                    fn_tex_full = os.path.normpath(bpy.path.abspath(tex_img.filepath))
-                    if fn_full == fn_tex_full:
-                        if self.overwrite_material:
-                            self.apply_texture_options(texture, img_spec)
-                        return texture
-
-        # if no texture is found: create one
-        name_compat = bpy.path.display_name_from_filepath(image.filepath)
-        texture = bpy.data.textures.new(name=name_compat, type='IMAGE')
-        texture.image = image
-        self.apply_texture_options(texture, img_spec)
-        return texture
-
-    def create_material_for_texture(self, texture):
-        # look for material with the needed texture
-        for material in bpy.data.materials:
-            slot = material.texture_slots[0]
-            if slot and slot.texture == texture:
-                if self.overwrite_material:
-                    self.apply_material_options(material, slot)
-                return material
-
-        # if no material found: create one
-        name_compat = bpy.path.display_name_from_filepath(texture.image.filepath)
-        material = bpy.data.materials.new(name=name_compat)
-        slot = material.texture_slots.add()
-        slot.texture = texture
-        slot.texture_coords = 'UV'
-        self.apply_material_options(material, slot)
-        return material
 
     def apply_material_options(self, material, slot):
         shader = self.shader
@@ -1034,7 +982,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         material.emit = self.emit_strength if shader == 'EMISSION' else 0.0
 
     # -------------------------------------------------------------------------
-    # Cycles
+    # Cycles/Eevee
     def create_cycles_texnode(self, context, node_tree, img_spec):
         tex_image = node_tree.nodes.new('ShaderNodeTexImage')
         tex_image.image = img_spec.image
@@ -1092,14 +1040,13 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         # Create new mesh
         bpy.ops.mesh.primitive_plane_add('INVOKE_REGION_WIN')
-        plane = context.scene.objects.active
+        plane = context.active_object
         # Why does mesh.primitive_plane_add leave the object in edit mode???
         if plane.mode is not 'OBJECT':
             bpy.ops.object.mode_set(mode='OBJECT')
         plane.dimensions = width, height, 0.0
         plane.data.name = plane.name = name
         bpy.ops.object.transform_apply(scale=True)
-        plane.data.uv_textures.new()
 
         # If sizing for camera, also insert into the camera's field of view
         if self.size_mode == 'CAMERA':
@@ -1148,7 +1095,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             camera = context.scene.camera
             if (camera):
                 # Find the axis that best corresponds to the camera's view direction
-                axis = camera.matrix_world * \
+                axis = camera.matrix_world @ \
                     Vector((0, 0, 1)) - camera.matrix_world.col[3].xyz
                 # pick the axis with the greatest magnitude
                 mag = max(map(abs, axis))
@@ -1165,7 +1112,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             # Axis-aligned
             axis = self.axis_id_to_vector[self.align_axis]
 
-        # rotate accodingly for x/y axiis
+        # rotate accordingly for x/y axiis
         if not axis.z:
             plane.rotation_euler.x = pi / 2
 
@@ -1213,16 +1160,16 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.INFO_MT_file_import.append(import_images_button)
-    bpy.types.INFO_MT_mesh_add.append(import_images_button)
+    bpy.types.TOPBAR_MT_file_import.append(import_images_button)
+    bpy.types.VIEW3D_MT_image_add.append(import_images_button)
 
     bpy.app.handlers.load_post.append(register_driver)
     register_driver()
 
 
 def unregister():
-    bpy.types.INFO_MT_file_import.remove(import_images_button)
-    bpy.types.INFO_MT_mesh_add.remove(import_images_button)
+    bpy.types.TOPBAR_MT_file_import.remove(import_images_button)
+    bpy.types.VIEW3D_MT_image_add.remove(import_images_button)
 
     # This will only exist if drivers are active
     if check_drivers in bpy.app.handlers.scene_update_post:

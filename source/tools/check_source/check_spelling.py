@@ -94,7 +94,7 @@ def words_from_text(text):
             return False
 
         # check for code in comments
-        for c in "<>{}[]():._0123456789\&*":
+        for c in r"<>{}[]():._0123456789\&*":
             if c in w:
                 return False
 

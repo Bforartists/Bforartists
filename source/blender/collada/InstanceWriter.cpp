@@ -41,68 +41,35 @@ extern "C" {
 #include "collada_internal.h"
 #include "collada_utils.h"
 
-void InstanceWriter::add_material_bindings(COLLADASW::BindMaterial& bind_material, Object *ob, bool active_uv_only, BC_export_texture_type export_texture_type)
+void InstanceWriter::add_material_bindings(COLLADASW::BindMaterial& bind_material, Object *ob, bool active_uv_only)
 {
-	bool all_uv_layers = !active_uv_only;
-	COLLADASW::InstanceMaterialList& iml = bind_material.getInstanceMaterialList();
+	for (int a = 0; a < ob->totcol; a++) {
+		Material *ma = give_current_material(ob, a + 1);
 
-	if (export_texture_type == BC_TEXTURE_TYPE_UV)
-	{
-		std::set<Image *> uv_images = bc_getUVImages(ob, all_uv_layers);
-		std::set<Image *>::iterator uv_images_iter;
-		for (uv_images_iter = uv_images.begin();
-		     uv_images_iter != uv_images.end();
-		     uv_images_iter++)
-		{
-			Image *ima = *uv_images_iter;
-			std::string matid(id_name(ima));
-			matid = get_material_id_from_id(matid);
+		COLLADASW::InstanceMaterialList& iml = bind_material.getInstanceMaterialList();
+
+		if (ma) {
+			std::string matid(get_material_id(ma));
+			matid = translate_id(matid);
 			std::ostringstream ostr;
 			ostr << matid;
 			COLLADASW::InstanceMaterial im(ostr.str(), COLLADASW::URI(COLLADABU::Utils::EMPTY_STRING, matid));
 
 			// create <bind_vertex_input> for each uv map
 			Mesh *me = (Mesh *)ob->data;
-			int totlayer = CustomData_number_of_layers(&me->fdata, CD_MTFACE);
+
+			int num_layers = CustomData_number_of_layers(&me->ldata, CD_MLOOPUV);
 
 			int map_index = 0;
-			int active_uv_index = CustomData_get_active_layer_index(&me->fdata, CD_MTFACE) - 1;
-			for (int b = 0; b < totlayer; b++) {
+			int active_uv_index = CustomData_get_active_layer_index(&me->ldata, CD_MLOOPUV);
+			for (int b = 0; b < num_layers; b++) {
 				if (!active_uv_only || b == active_uv_index) {
-					char *name = bc_CustomData_get_layer_name(&me->fdata, CD_MTFACE, b);
+					char *name = bc_CustomData_get_layer_name(&me->ldata, CD_MLOOPUV, b);
 					im.push_back(COLLADASW::BindVertexInput(name, "TEXCOORD", map_index++));
 				}
 			}
 
 			iml.push_back(im);
-		}
-	}
-
-	else {
-		for (int a = 0; a < ob->totcol; a++) {
-			Material *ma = give_current_material(ob, a + 1);
-			if (ma) {
-				std::string matid(get_material_id(ma));
-				matid = translate_id(matid);
-				std::ostringstream ostr;
-				ostr << matid;
-				COLLADASW::InstanceMaterial im(ostr.str(), COLLADASW::URI(COLLADABU::Utils::EMPTY_STRING, matid));
-
-				// create <bind_vertex_input> for each uv map
-				Mesh *me = (Mesh *)ob->data;
-				int totlayer = CustomData_number_of_layers(&me->fdata, CD_MTFACE);
-
-				int map_index = 0;
-				int active_uv_index = CustomData_get_active_layer_index(&me->fdata, CD_MTFACE) - 1;
-				for (int b = 0; b < totlayer; b++) {
-					if (!active_uv_only || b == active_uv_index) {
-						char *name = bc_CustomData_get_layer_name(&me->fdata, CD_MTFACE, b);
-						im.push_back(COLLADASW::BindVertexInput(name, "TEXCOORD", map_index++));
-					}
-				}
-
-				iml.push_back(im);
-			}
 		}
 	}
 }

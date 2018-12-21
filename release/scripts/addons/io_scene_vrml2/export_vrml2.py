@@ -163,7 +163,7 @@ def save_object(fw, global_matrix,
         if is_editmode:
             bpy.ops.object.editmode_toggle()
 
-        me = obj.to_mesh(scene, True, 'PREVIEW', calc_tessface=False)
+        me = obj.to_mesh(scene, True, 'PREVIEW')
         bm = bmesh.new()
         bm.from_mesh(me)
 

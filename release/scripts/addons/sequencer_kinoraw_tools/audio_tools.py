@@ -202,7 +202,7 @@ class ExternalAudioReloadOperator(Operator):
     bl_idname = "sequencer.external_audio_reload"
     bl_label = "Reload External audio"
     bl_description = ("Reload external audio synced to selected movie strip "
-                      "acording to info from a text file")
+                      "according to info from a text file")
 
     @staticmethod
     def has_sequencer(context):

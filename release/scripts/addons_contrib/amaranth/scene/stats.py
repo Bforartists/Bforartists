@@ -55,8 +55,8 @@ def stats_scene(self, context):
 
 
 def register():
-    bpy.types.INFO_HT_header.append(stats_scene)
+    bpy.types.STATUSBAR_HT_header.append(stats_scene)
 
 
 def unregister():
-    bpy.types.INFO_HT_header.remove(stats_scene)
+    bpy.types.STATUSBAR_HT_header.remove(stats_scene)

@@ -216,7 +216,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     myctrl.location.x = 0
     myctrl.location.y = -mp.depth * 3 / 2
     myctrl.location.z = 0
-    myctrl.draw_type = 'BOUNDS'
+    myctrl.display_type = 'BOUNDS'
     myctrl.hide = False
     myctrl.hide_render = True
     if bpy.context.scene.render.engine == 'CYCLES':
@@ -1123,29 +1123,29 @@ def create_rail_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
                          (0, -p - rail, z),
                          (x, -p - rail, z)])
         side *= -1  # reverse
-        # Faces
-        myfaces.extend([(v + 10, v + 6, v + 7, v + 11), (v + 9, v + 8, v + 4, v + 5),
-                        (v + 13, v + 12, v + 8, v + 9), (v + 14, v + 10, v + 11, v + 15),
-                        (v + 6, v + 10, v + 9, v + 5),
-                        (v + 9, v + 10, v + 14, v + 13), (v + 11, v + 7, v + 4, v + 8), (v + 12, v + 15, v + 11, v + 8),
-                        (v + 3, v + 7, v + 6, v + 2),
-                        (v + 5, v + 4, v + 0, v + 1),
-                        (v + 4, v + 7, v + 3, v + 0), (v + 5, v + 1, v + 2, v + 6), (v + 17, v + 16, v + 12, v + 13),
-                        (v + 15, v + 19, v + 18, v + 14),
-                        (v + 15, v + 12, v + 16, v + 19),
-                        (v + 14, v + 18, v + 17, v + 13), (v + 29, v + 2, v + 1, v + 28),
-                        (v + 35, v + 34, v + 17, v + 18), (v + 35, v + 33, v + 32, v + 34),
-                        (v + 31, v + 29, v + 28, v + 30),
-                        (v + 33, v + 31, v + 30, v + 32), (v + 25, v + 24, v + 22, v + 23),
-                        (v + 19, v + 16, v + 26, v + 27),
-                        (v + 3, v + 21, v + 20, v + 0), (v + 25, v + 27, v + 26, v + 24),
-                        (v + 23, v + 22, v + 20, v + 21), (v + 3, v + 2, v + 29, v + 21),
-                        (v + 19, v + 27, v + 35, v + 18),
-                        (v + 31, v + 33, v + 25, v + 23), (v + 32, v + 30, v + 22, v + 24),
-                        (v + 16, v + 17, v + 34, v + 26), (v + 0, v + 20, v + 28, v + 1)])
-        # Glass
-        if z == 0:
-            myfaces.extend([(v + 10, v + 9, v + 8, v + 11)])
+
+    # Faces
+    myfaces.extend([(v + 10, v + 6, v + 7, v + 11), (v + 9, v + 8, v + 4, v + 5),
+                    (v + 13, v + 12, v + 8, v + 9), (v + 14, v + 10, v + 11, v + 15),
+                    (v + 6, v + 10, v + 9, v + 5),
+                    (v + 9, v + 10, v + 14, v + 13), (v + 11, v + 7, v + 4, v + 8), (v + 12, v + 15, v + 11, v + 8),
+                    (v + 3, v + 7, v + 6, v + 2),
+                    (v + 5, v + 4, v + 0, v + 1),
+                    (v + 4, v + 7, v + 3, v + 0), (v + 5, v + 1, v + 2, v + 6), (v + 17, v + 16, v + 12, v + 13),
+                    (v + 15, v + 19, v + 18, v + 14),
+                    (v + 15, v + 12, v + 16, v + 19),
+                    (v + 14, v + 18, v + 17, v + 13), (v + 29, v + 2, v + 1, v + 28),
+                    (v + 35, v + 34, v + 17, v + 18), (v + 35, v + 33, v + 32, v + 34),
+                    (v + 31, v + 29, v + 28, v + 30),
+                    (v + 33, v + 31, v + 30, v + 32), (v + 25, v + 24, v + 22, v + 23),
+                    (v + 19, v + 16, v + 26, v + 27),
+                    (v + 3, v + 21, v + 20, v + 0), (v + 25, v + 27, v + 26, v + 24),
+                    (v + 23, v + 22, v + 20, v + 21), (v + 3, v + 2, v + 29, v + 21),
+                    (v + 19, v + 27, v + 35, v + 18),
+                    (v + 31, v + 33, v + 25, v + 23), (v + 32, v + 30, v + 22, v + 24),
+                    (v + 16, v + 17, v + 34, v + 26), (v + 0, v + 20, v + 28, v + 1)])
+    # Glass
+    myfaces.extend([(v + 10, v + 9, v + 8, v + 11)])
 
     v = len(myvertex)
 
@@ -1233,14 +1233,6 @@ def create_rail_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
         mywindow.data.materials.append(glass)
         select_faces(mywindow, 32, True)
         set_material_faces(mywindow, 1)
-        # Plastic
-        plastic = create_diffuse_material("Plastic_material", False, 0.01, 0.01, 0.01, 0.1, 0.1, 0.1, 0.01)
-        mywindow.data.materials.append(plastic)
-        select_faces(mywindow, 65, True)
-        for fa in range(66, 104):
-            select_faces(mywindow, fa, False)
-
-        set_material_faces(mywindow, 2)
 
     return mywindow
 

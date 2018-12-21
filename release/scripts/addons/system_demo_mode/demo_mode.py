@@ -44,23 +44,26 @@ DEMO_CFG = "demo.py"
 # populate from script
 global_config_files = []
 
-global_config = dict(anim_cycles=1,
-                     anim_render=False,
-                     anim_screen_switch=0.0,
-                     anim_time_max=60.0,
-                     anim_time_min=4.0,
-                     mode='AUTO',
-                     display_render=4.0)
+global_config = dict(
+    anim_cycles=1,
+    anim_render=False,
+    anim_screen_switch=0.0,
+    anim_time_max=60.0,
+    anim_time_min=4.0,
+    mode='AUTO',
+    display_render=4.0,
+)
 
 # switch to the next file in 2 sec.
-global_config_fallback = dict(anim_cycles=1,
-                              anim_render=False,
-                              anim_screen_switch=0.0,
-                              anim_time_max=60.0,
-                              anim_time_min=4.0,
-                              mode='AUTO',
-                              display_render=4.0)
-
+global_config_fallback = dict(
+    anim_cycles=1,
+    anim_render=False,
+    anim_screen_switch=0.0,
+    anim_time_max=60.0,
+    anim_time_min=4.0,
+    mode='AUTO',
+    display_render=4.0,
+)
 
 global_state = {
     "init_time": 0.0,
@@ -154,7 +157,7 @@ def demo_mode_next_file(step=1):
 
 
 def demo_mode_timer_add():
-    global_state["timer"] = bpy.context.window_manager.event_timer_add(0.8, bpy.context.window)
+    global_state["timer"] = bpy.context.window_manager.event_timer_add(0.8, window=bpy.context.window)
 
 
 def demo_mode_timer_remove():
@@ -253,9 +256,10 @@ def demo_mode_update():
             demo_mode_next_file()
             return
         # above cycles and minimum display time
-        if  (time_total > global_config["anim_time_min"]) and \
-            (global_state["anim_cycles"] > global_config["anim_cycles"]):
-
+        if (
+                (time_total > global_config["anim_time_min"]) and
+                (global_state["anim_cycles"] > global_config["anim_cycles"])
+        ):
             # looped enough now.
             demo_mode_next_file()
             return
@@ -418,12 +422,12 @@ class DemoModeControl(bpy.types.Operator):
     bl_idname = "wm.demo_mode_control"
     bl_label = "Control"
 
-    mode = bpy.props.EnumProperty(items=(
-            ('PREV', "Prev", ""),
-            ('PAUSE', "Pause", ""),
-            ('NEXT', "Next", ""),
-            ),
-                name="Mode")
+    mode: bpy.props.EnumProperty(
+        items=(('PREV', "Prev", ""),
+               ('PAUSE', "Pause", ""),
+               ('NEXT', "Next", "")),
+        name="Mode"
+    )
 
     def execute(self, context):
         mode = self.mode
@@ -441,7 +445,7 @@ def menu_func(self, context):
     layout = self.layout
     layout.operator_context = 'EXEC_DEFAULT'
     row = layout.row(align=True)
-    row.label("Demo Mode:")
+    row.label(text="Demo Mode:")
     if not DemoMode.enabled:
         row.operator("wm.demo_mode", icon='PLAY', text="")
     else:
@@ -526,7 +530,7 @@ def load_config(cfg_name=DEMO_CFG):
 
             blend_lookup.update(dict(blend_dict_items(demo_search_path)))
 
-        # fallback to orginal file
+        # fallback to original file
         return blend_lookup.get(filename, filepath)
     # done with search lookup
 

@@ -54,11 +54,13 @@ void BKE_material_init(struct Material *ma);
 void BKE_material_remap_object(struct Object *ob, const unsigned int *remap);
 void BKE_material_remap_object_calc(struct  Object *ob_dst, struct Object *ob_src, short *remap_src_to_dst);
 struct Material *BKE_material_add(struct Main *bmain, const char *name);
+struct Material *BKE_material_add_gpencil(struct Main *bmain, const char *name);
 void BKE_material_copy_data(struct Main *bmain, struct Material *ma_dst, const struct Material *ma_src, const int flag);
 struct Material *BKE_material_copy(struct Main *bmain, const struct Material *ma);
 struct Material *BKE_material_localize(struct Material *ma);
 struct Material *give_node_material(struct Material *ma); /* returns node material or self */
 void BKE_material_make_local(struct Main *bmain, struct Material *ma, const bool lib_local);
+void BKE_material_init_gpencil_settings(struct Material *ma);
 
 /* UNUSED */
 // void automatname(struct Material *);
@@ -87,6 +89,8 @@ short BKE_object_material_slot_find_index(struct Object *ob, struct Material *ma
 bool  BKE_object_material_slot_add(struct Main *bmain, struct Object *ob);
 bool  BKE_object_material_slot_remove(struct Main *bmain, struct Object *ob);
 
+struct MaterialGPencilStyle *BKE_material_gpencil_settings_get(struct Object *ob, short act);
+
 void BKE_texpaint_slot_refresh_cache(struct Scene *scene, struct Material *ma);
 void BKE_texpaint_slots_refresh_object(struct Scene *scene, struct Object *ob);
 
@@ -97,17 +101,7 @@ struct Material *BKE_material_pop_id(struct Main *bmain, struct ID *id, int inde
 void BKE_material_clear_id(struct Main *bmain, struct ID *id, bool update_data);
 /* rendering */
 
-void init_render_material(struct Main *bmain, struct Material *, int, float *);
-void init_render_materials(struct Main *, int r_mode, float *amd, bool do_default_material);
-void end_render_material(struct Material *);
-void end_render_materials(struct Main *);
-
-bool material_in_material(struct Material *parmat, struct Material *mat);
-
 void ramp_blend(int type, float r_col[3], const float fac, const float col[3]);
-
-/* driver update hacks */
-void material_drivers_update(struct Scene *scene, struct Material *mat, float ctime);
 
 /* copy/paste */
 void clear_matcopybuf(void);
@@ -115,8 +109,11 @@ void free_matcopybuf(void);
 void copy_matcopybuf(struct Main *bmain, struct Material *ma);
 void paste_matcopybuf(struct Main *bmain, struct Material *ma);
 
-/* handle backward compatibility for tface/materials called from doversion */
-int do_version_tface(struct Main *main);
+/* Evaluation. */
+
+struct Depsgraph;
+
+void BKE_material_eval(struct Depsgraph *depsgraph, struct Material *material);
 
 #ifdef __cplusplus
 }

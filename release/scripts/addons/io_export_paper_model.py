@@ -245,7 +245,7 @@ class Unfolder:
 
     def save(self, properties):
         """Export the document"""
-        # Note about scale: input is direcly in blender length
+        # Note about scale: input is directly in blender length
         # Mesh.scale_islands multiplies everything by a user-defined ratio
         # exporters (SVG or PDF) multiply everything by 1000 (output in millimeters)
         Exporter = SVG if properties.file_format == 'SVG' else PDF
@@ -472,7 +472,7 @@ class Mesh:
     def generate_stickers(self, default_width, do_create_numbers=True):
         """Add sticker faces where they are needed."""
         def uvedge_priority(uvedge):
-            """Retuns whether it is a good idea to stick something on this edge's face"""
+            """Returns whether it is a good idea to stick something on this edge's face"""
             # TODO: it should take into account overlaps with faces and with other stickers
             return uvedge.uvface.face.area / sum((vb.co - va.co).length for (va, vb) in pairs(uvedge.uvface.vertices))
 
@@ -2238,8 +2238,8 @@ class ExportPaperModel(bpy.types.Operator):
 
         row = layout.row(align=True)
         row.menu("VIEW3D_MT_paper_model_presets", text=bpy.types.VIEW3D_MT_paper_model_presets.bl_label)
-        row.operator("export_mesh.paper_model_preset_add", text="", icon='ZOOMIN')
-        row.operator("export_mesh.paper_model_preset_add", text="", icon='ZOOMOUT').remove_active = True
+        row.operator("export_mesh.paper_model_preset_add", text="", icon='ADD')
+        row.operator("export_mesh.paper_model_preset_add", text="", icon='REMOVE').remove_active = True
 
         # a little hack: this prints out something like "Scale: 1: 72"
         layout.prop(self.properties, "scale", text="Scale: 1")
@@ -2357,7 +2357,7 @@ class AddPresetPaperModel(bl_operators.presets.AddPresetBase, bpy.types.Operator
     @property
     def preset_values(self):
         op = bpy.ops.export_mesh.paper_model
-        properties = op.get_rna().bl_rna.properties.items()
+        properties = op.get_rna_type().properties.items()
         blacklist = bpy.types.Operator.bl_rna.properties.keys()
         return [
             "op.{}".format(prop_id) for (prop_id, prop) in properties
@@ -2582,12 +2582,12 @@ def register():
     bpy.types.Mesh.paper_island_index = bpy.props.IntProperty(
         name="Island List Index",
         default=-1, min=-1, max=100, options={'SKIP_SAVE'})
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
     if display_islands.handle:
         bpy.types.SpaceView3D.draw_handler_remove(display_islands.handle, 'WINDOW')
         display_islands.handle = None

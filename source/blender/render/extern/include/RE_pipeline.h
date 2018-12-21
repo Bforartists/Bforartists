@@ -34,9 +34,11 @@
 
 #include "DNA_listBase.h"
 #include "DNA_vec_types.h"
+#include "DEG_depsgraph.h"
 
 struct bMovieHandle;
 struct bNodeTree;
+struct Depsgraph;
 struct Image;
 struct ImageFormatData;
 struct Main;
@@ -46,8 +48,7 @@ struct RenderData;
 struct RenderResult;
 struct ReportList;
 struct Scene;
-struct SceneRenderLayer;
-struct EnvMap;
+struct ViewLayer;
 struct StampData;
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -105,11 +106,7 @@ typedef struct RenderLayer {
 
 	/* copy of RenderData */
 	char name[RE_MAXNAME];
-	unsigned int lay, lay_zmask, lay_exclude;
 	int layflag, passflag, pass_xor;
-
-	struct Material *mat_override;
-	struct Group *light_override;
 
 	/* MULTIVIEW_TODO: acolrect and scolrect are not supported by multiview at the moment.
 	 * If they are really required they should be in RenderView instead */
@@ -224,6 +221,7 @@ void RE_ReleaseResultImageViews(struct Render *re, struct RenderResult *rr);
 void RE_AcquireResultImage(struct Render *re, struct RenderResult *rr, const int view_id);
 void RE_ReleaseResultImage(struct Render *re);
 void RE_SwapResult(struct Render *re, struct RenderResult **rr);
+void RE_ClearResult(struct Render *re);
 struct RenderStats *RE_GetStats(struct Render *re);
 
 void RE_ResultGet32(struct Render *re, unsigned int *rect);
@@ -243,7 +241,7 @@ struct RenderPass *RE_create_gp_pass(struct RenderResult *rr, const char *layern
 
 /* obligatory initialize call, disprect is optional */
 void RE_InitState(struct Render *re, struct Render *source, struct RenderData *rd,
-                  struct SceneRenderLayer *srl,
+                  struct ListBase *render_layers, struct ViewLayer *single_layer,
                   int winx, int winy, rcti *disprect);
 void RE_ChangeResolution(struct Render *re, int winx, int winy, rcti *disprect);
 void RE_ChangeModeFlag(struct Render *re, int flag, bool clear);
@@ -252,10 +250,8 @@ void RE_ChangeModeFlag(struct Render *re, int flag, bool clear);
 struct Object *RE_GetCamera(struct Render *re); /* return camera override if set */
 void RE_SetOverrideCamera(struct Render *re, struct Object *camera);
 void RE_SetCamera(struct Render *re, struct Object *camera);
-void RE_SetEnvmapCamera(struct Render *re, struct Object *cam_ob, float viewscale, float clipsta, float clipend);
 void RE_SetWindow(struct Render *re, const rctf *viewplane, float clipsta, float clipend);
 void RE_SetOrtho(struct Render *re, const rctf *viewplane, float clipsta, float clipend);
-void RE_SetPixelSize(struct Render *re, float pixsize);
 
 /* option to set viewmatrix before making dbase */
 void RE_SetView(struct Render *re, float mat[4][4]);
@@ -265,22 +261,12 @@ void RE_GetView(struct Render *re, float mat[4][4]);
 void RE_GetViewPlane(struct Render *re, rctf *r_viewplane, rcti *r_disprect);
 
 /* make or free the dbase */
-void RE_Database_FromScene(
+void RE_Database_CameraOnly(
         struct Render *re, struct Main *bmain, struct Scene *scene,
-        unsigned int lay, int use_camera_view);
-void RE_Database_Preprocess(struct Render *re);
-void RE_Database_Free(struct Render *re);
-
-/* project dbase again, when viewplane/perspective changed */
-void RE_DataBase_ApplyWindow(struct Render *re);
-/* rotate scene again, for incremental render */
-void RE_DataBase_IncrementalView(struct Render *re, float viewmat[4][4], int restore);
+        int use_camera_view);
 
 /* set the render threads based on the commandline and autothreads setting */
 void RE_init_threadcount(Render *re);
-
-/* the main processor, assumes all was set OK! */
-void RE_TileProcessor(struct Render *re);
 
 bool RE_WriteRenderViewsImage(
         struct ReportList *reports, struct RenderResult *rr, struct Scene *scene, const bool stamp, char *name);
@@ -291,10 +277,11 @@ bool RE_WriteRenderViewsMovie(
 
 /* only RE_NewRender() needed, main Blender render calls */
 void RE_BlenderFrame(struct Render *re, struct Main *bmain, struct Scene *scene,
-                     struct SceneRenderLayer *srl, struct Object *camera_override,
-                     unsigned int lay_override, int frame, const bool write_still);
-void RE_BlenderAnim(struct Render *re, struct Main *bmain, struct Scene *scene, struct Object *camera_override,
-                    unsigned int lay_override, int sfra, int efra, int tfra);
+                     struct ViewLayer *single_layer, struct Object *camera_override,
+                     int frame, const bool write_still);
+void RE_BlenderAnim(struct Render *re, struct Main *bmain, struct Scene *scene,
+                    struct ViewLayer *single_layer, struct Object *camera_override,
+                    int sfra, int efra, int tfra);
 #ifdef WITH_FREESTYLE
 void RE_RenderFreestyleStrokes(struct Render *re, struct Main *bmain, struct Scene *scene, int render);
 void RE_RenderFreestyleExternal(struct Render *re);
@@ -316,14 +303,6 @@ bool RE_WriteRenderResult(
 struct RenderResult *RE_MultilayerConvert(
         void *exrhandle, const char *colorspace, bool predivide, int rectx, int recty);
 
-extern const float default_envmap_layout[];
-bool RE_WriteEnvmapResult(
-        struct ReportList *reports, struct Scene *scene, struct EnvMap *env,
-        const char *relpath, const char imtype, float layout[12]);
-
-/* do a full sample buffer compo */
-void RE_MergeFullSample(struct Render *re, struct Main *bmain, struct Scene *sce, struct bNodeTree *ntree);
-
 /* display and event callbacks */
 void RE_display_init_cb	(struct Render *re, void *handle, void (*f)(void *handle, RenderResult *rr));
 void RE_display_clear_cb(struct Render *re, void *handle, void (*f)(void *handle, RenderResult *rr));
@@ -333,6 +312,11 @@ void RE_progress_cb	(struct Render *re, void *handle, void (*f)(void *handle, fl
 void RE_draw_lock_cb		(struct Render *re, void *handle, void (*f)(void *handle, int));
 void RE_test_break_cb	(struct Render *re, void *handle, int (*f)(void *handle));
 void RE_current_scene_update_cb(struct Render *re, void *handle, void (*f)(void *handle, struct Scene *scene));
+
+void  RE_gl_context_create(Render *re);
+void  RE_gl_context_destroy(Render *re);
+void *RE_gl_context_get(Render *re);
+void *RE_gpu_context_get(Render *re);
 
 /* should move to kernel once... still unsure on how/where */
 float RE_filter_value(int type, float x);
@@ -346,42 +330,19 @@ struct RenderPass *RE_pass_find_by_name(volatile struct RenderLayer *rl, const c
 struct RenderPass *RE_pass_find_by_type(volatile struct RenderLayer *rl, int passtype, const char *viewname);
 
 /* shaded view or baking options */
-#define RE_BAKE_LIGHT				0	/* not listed in rna_scene.c -> can't be enabled! */
-#define RE_BAKE_ALL					1
+#define RE_BAKE_NORMALS				0
+#define RE_BAKE_DISPLACEMENT		1
 #define RE_BAKE_AO					2
-#define RE_BAKE_NORMALS				3
-#define RE_BAKE_TEXTURE				4
-#define RE_BAKE_DISPLACEMENT		5
-#define RE_BAKE_SHADOW				6
-#define RE_BAKE_SPEC_COLOR			7
-#define RE_BAKE_SPEC_INTENSITY		8
-#define RE_BAKE_MIRROR_COLOR		9
-#define RE_BAKE_MIRROR_INTENSITY	10
-#define RE_BAKE_ALPHA				11
-#define RE_BAKE_EMIT				12
-#define RE_BAKE_DERIVATIVE			13
-#define RE_BAKE_VERTEX_COLORS		14
 
-void RE_Database_Baking(
-        struct Render *re, struct Main *bmain, struct Scene *scene,
-        unsigned int lay, const int type, struct Object *actob);
-
-void RE_DataBase_GetView(struct Render *re, float mat[4][4]);
 void RE_GetCameraWindow(struct Render *re, struct Object *camera, int frame, float mat[4][4]);
+void RE_GetCameraWindowWithOverscan(struct Render *re, float mat[4][4], float overscan);
 void RE_GetCameraModelMatrix(struct Render *re, struct Object *camera, float r_mat[4][4]);
 struct Scene *RE_GetScene(struct Render *re);
+void RE_SetScene(struct Render *re, struct Scene *sce);
 
-bool RE_force_single_renderlayer(struct Scene *scene);
-bool RE_is_rendering_allowed(struct Scene *scene, struct Object *camera_override, struct ReportList *reports);
+bool RE_is_rendering_allowed(struct Scene *scene, struct ViewLayer *single_layer, struct Object *camera_override, struct ReportList *reports);
 
 bool RE_allow_render_generic_object(struct Object *ob);
-
-/* RE_updateRenderInstances flag */
-enum {
-	RE_OBJECT_INSTANCES_UPDATE_VIEW  = (1 << 0),
-	RE_OBJECT_INSTANCES_UPDATE_OBMAT = (1 << 1)
-};
-void RE_updateRenderInstances(Render *re, int flag);
 
 /******* defined in render_result.c *********/
 

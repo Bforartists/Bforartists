@@ -57,6 +57,12 @@
 
 #include "GHOST_Debug.h"
 
+#if defined(WITH_GL_EGL)
+#  include "GHOST_ContextEGL.h"
+#else
+#  include "GHOST_ContextGLX.h"
+#endif
+
 #ifdef WITH_XF86KEYSYM
 #include <X11/XF86keysym.h>
 #endif
@@ -119,6 +125,7 @@ GHOST_SystemX11(
       m_xkb_descr(NULL),
       m_start_time(0)
 {
+	XInitThreads();
 	m_display = XOpenDisplay(NULL);
 
 	if (!m_display) {
@@ -397,6 +404,97 @@ createWindow(const STR_String& title,
 bool GHOST_SystemX11::supportsNativeDialogs(void)
 {
 	return false;
+}
+
+/**
+ * Create a new offscreen context.
+ * Never explicitly delete the context, use disposeContext() instead.
+ * \return  The new context (or 0 if creation failed).
+ */
+GHOST_IContext *
+GHOST_SystemX11::
+createOffscreenContext()
+{
+	// During development:
+	//   try 4.x compatibility profile
+	//   try 3.3 compatibility profile
+	//   fall back to 3.0 if needed
+	//
+	// Final Blender 2.8:
+	//   try 4.x core profile
+	//   try 3.3 core profile
+	//   no fallbacks
+
+#if defined(WITH_GL_PROFILE_CORE)
+	{
+		const char *version_major = (char*)glewGetString(GLEW_VERSION_MAJOR);
+		if (version_major != NULL && version_major[0] == '1') {
+			fprintf(stderr, "Error: GLEW version 2.0 and above is required.\n");
+			abort();
+		}
+	}
+#endif
+
+	const int profile_mask =
+#if defined(WITH_GL_PROFILE_CORE)
+		GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
+#elif defined(WITH_GL_PROFILE_COMPAT)
+		GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+#else
+#  error // must specify either core or compat at build time
+#endif
+
+	GHOST_Context *context;
+
+	for (int minor = 5; minor >= 0; --minor) {
+		context = new GHOST_ContextGLX(
+		        false,
+		        0,
+		        (Window)NULL,
+		        m_display,
+		        (GLXFBConfig)NULL,
+		        profile_mask,
+		        4, minor,
+		        GHOST_OPENGL_GLX_CONTEXT_FLAGS | (false ? GLX_CONTEXT_DEBUG_BIT_ARB : 0),
+		        GHOST_OPENGL_GLX_RESET_NOTIFICATION_STRATEGY);
+
+		if (context->initializeDrawingContext())
+			return context;
+		else
+			delete context;
+	}
+
+	context = new GHOST_ContextGLX(
+	        false,
+	        0,
+	        (Window)NULL,
+	        m_display,
+	        (GLXFBConfig)NULL,
+	        profile_mask,
+	        3, 3,
+	        GHOST_OPENGL_GLX_CONTEXT_FLAGS | (false ? GLX_CONTEXT_DEBUG_BIT_ARB : 0),
+	        GHOST_OPENGL_GLX_RESET_NOTIFICATION_STRATEGY);
+
+	if (context->initializeDrawingContext())
+		return context;
+	else
+		delete context;
+
+	return NULL;
+}
+
+/**
+ * Dispose of a context.
+ * \param   context Pointer to the context to be disposed.
+ * \return  Indication of success.
+ */
+GHOST_TSuccess
+GHOST_SystemX11::
+disposeContext(GHOST_IContext *context)
+{
+	delete context;
+
+	return GHOST_kSuccess;
 }
 
 #if defined(WITH_X11_XINPUT) && defined(X_HAVE_UTF8_STRING)
@@ -2163,11 +2261,8 @@ int GHOST_X11_ApplicationIOErrorHandler(Display * /*display*/)
 }
 
 #ifdef WITH_X11_XINPUT
-/* These C functions are copied from Wine 1.1.13's wintab.c */
-#define BOOL int
-#define TRUE 1
-#define FALSE 0
 
+/* These C functions are copied from Wine 3.12's wintab.c */
 static bool match_token(const char *haystack, const char *needle)
 {
 	const char *p, *q;
@@ -2180,14 +2275,13 @@ static bool match_token(const char *haystack, const char *needle)
 		for (q = needle; *q && *p && tolower(*p) == tolower(*q); q++)
 			p++;
 		if (!*q && (isspace(*p) || !*p))
-			return TRUE;
+			return true;
 
 		while (*p && !isspace(*p))
 			p++;
 	}
-	return FALSE;
+	return false;
 }
-
 
 /* Determining if an X device is a Tablet style device is an imperfect science.
  * We rely on common conventions around device names as well as the type reported
@@ -2199,63 +2293,39 @@ static bool match_token(const char *haystack, const char *needle)
  * Wacoms x11 config "cursor" refers to its device slot (which we mirror with
  * our gSysCursors) for puck like devices (tablet mice essentially).
  */
-#if 0 // unused
-static BOOL is_tablet_cursor(const char *name, const char *type)
+static GHOST_TTabletMode tablet_mode_from_name(const char *name, const char *type)
 {
 	int i;
-	static const char *tablet_cursor_whitelist[] = {
-		"wacom",
-		"wizardpen",
-		"acecad",
-		"tablet",
-		"cursor",
-		"stylus",
-		"eraser",
-		"pad",
-		NULL
-	};
-
-	for (i = 0; tablet_cursor_whitelist[i] != NULL; i++) {
-		if (name && match_token(name, tablet_cursor_whitelist[i]))
-			return TRUE;
-		if (type && match_token(type, tablet_cursor_whitelist[i]))
-			return TRUE;
-	}
-	return FALSE;
-}
-#endif
-static BOOL is_stylus(const char *name, const char *type)
-{
-	int i;
-	static const char *tablet_stylus_whitelist[] = {
+	static const char* tablet_stylus_whitelist[] = {
 		"stylus",
 		"wizardpen",
 		"acecad",
+		"pen",
 		NULL
 	};
 
-	for (i = 0; tablet_stylus_whitelist[i] != NULL; i++) {
-		if (name && match_token(name, tablet_stylus_whitelist[i]))
-			return TRUE;
-		if (type && match_token(type, tablet_stylus_whitelist[i]))
-			return TRUE;
+	/* First check device type to avoid cases where name is "Pen and Eraser" and type is "ERASER" */
+	for (i=0; tablet_stylus_whitelist[i] != NULL; i++) {
+		if (type && match_token(type, tablet_stylus_whitelist[i])) {
+			return GHOST_kTabletModeStylus;
+		}
+	}
+	if (type && match_token(type, "eraser")) {
+		return GHOST_kTabletModeEraser;
+	}
+	for (i=0; tablet_stylus_whitelist[i] != NULL; i++) {
+		if (name && match_token(name, tablet_stylus_whitelist[i])) {
+			return GHOST_kTabletModeStylus;
+		}
+	}
+	if (name && match_token(name, "eraser")) {
+		return GHOST_kTabletModeEraser;
 	}
 
-	return FALSE;
+	return GHOST_kTabletModeNone;
 }
 
-static BOOL is_eraser(const char *name, const char *type)
-{
-	if (name && match_token(name, "eraser"))
-		return TRUE;
-	if (type && match_token(type, "eraser"))
-		return TRUE;
-	return FALSE;
-}
-#undef BOOL
-#undef TRUE
-#undef FALSE
-/* end code copied from wine */
+/* End code copied from Wine. */
 
 void GHOST_SystemX11::refreshXInputDevices()
 {
@@ -2284,9 +2354,11 @@ void GHOST_SystemX11::refreshXInputDevices()
 
 //				printf("Tablet type:'%s', name:'%s', index:%d\n", device_type, device_info[i].name, i);
 
+				GHOST_TTabletMode tablet_mode = tablet_mode_from_name(device_info[i].name, device_type);
 
 				if ((m_xtablet.StylusDevice == NULL) &&
-				    (is_stylus(device_info[i].name, device_type) || (device_info[i].type == m_atom.TABLET)))
+				    ((tablet_mode == GHOST_kTabletModeStylus) && (device_info[i].type != m_atom.TABLET)))
+				    /* for libinput to work reliable, only lookup ValuatorClass in Tablet type:'STYLUS' */
 				{
 //					printf("\tfound stylus\n");
 					m_xtablet.StylusID = device_info[i].id;
@@ -2295,6 +2367,8 @@ void GHOST_SystemX11::refreshXInputDevices()
 					if (m_xtablet.StylusDevice != NULL) {
 						/* Find how many pressure levels tablet has */
 						XAnyClassPtr ici = device_info[i].inputclassinfo;
+						bool found_valuator_class = false;
+
 						for (int j = 0; j < m_xtablet.StylusDevice->num_classes; ++j) {
 							if (ici->c_class == ValuatorClass) {
 //								printf("\t\tfound ValuatorClass\n");
@@ -2312,10 +2386,22 @@ void GHOST_SystemX11::refreshXInputDevices()
 									m_xtablet.YtiltLevels = 0;
 								}
 
+								found_valuator_class = true;
+
 								break;
 							}
 
 							ici = (XAnyClassPtr)(((char *)ici) + ici->length);
+						}
+
+						if (!found_valuator_class) {
+							/* In case our name matching detects a device that
+							 * isn't actually a stylus. For example there can
+							 * be "XPPEN Tablet" and "XPPEN Tablet Pen", but
+							 * only the latter is a stylus. */
+							XCloseDevice(m_display, m_xtablet.StylusDevice);
+							m_xtablet.StylusDevice = NULL;
+							m_xtablet.StylusID = 0;
 						}
 					}
 					else {
@@ -2323,7 +2409,7 @@ void GHOST_SystemX11::refreshXInputDevices()
 					}
 				}
 				else if ((m_xtablet.EraserDevice == NULL) &&
-				         (is_eraser(device_info[i].name, device_type)))
+				         (tablet_mode == GHOST_kTabletModeEraser))
 				{
 //					printf("\tfound eraser\n");
 					m_xtablet.EraserID = device_info[i].id;

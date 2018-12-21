@@ -41,7 +41,6 @@ void ED_spacemacros_init(void);
 
 /* calls for registering default spaces */
 void ED_spacetype_outliner(void);
-void ED_spacetype_time(void);
 void ED_spacetype_view3d(void);
 void ED_spacetype_ipo(void);
 void ED_spacetype_image(void);
@@ -58,6 +57,8 @@ void ED_spacetype_logic(void);
 void ED_spacetype_console(void);
 void ED_spacetype_userpref(void);
 void ED_spacetype_clip(void);
+void ED_spacetype_statusbar(void);
+void ED_spacetype_topbar(void);
 void ED_spacetype_toolbar(void);
 
 /* calls for instancing and freeing spacetype static data
@@ -75,7 +76,6 @@ void *ED_region_draw_cb_activate(struct ARegionType *,
                                  void *custumdata, int type);
 void ED_region_draw_cb_draw(const struct bContext *, struct ARegion *, int);
 void ED_region_draw_cb_exit(struct ARegionType *, void *);
-void *ED_region_draw_cb_customdata(void *handle);
 /* generic callbacks */
 /* ed_util.c */
 void ED_region_draw_mouse_line_cb(const struct bContext *C, struct ARegion *ar, void *arg_info);

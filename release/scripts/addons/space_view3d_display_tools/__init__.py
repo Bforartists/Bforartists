@@ -80,7 +80,7 @@ class DisplayToolsPanel(Panel):
     bl_category = "Display"
     bl_options = {'DEFAULT_CLOSED'}
 
-    draw_type_icons = {
+    display_type_icons = {
             'BOUNDS': 'BBOX',
             'WIRE': 'WIRE',
             'SOLID': 'SOLID',
@@ -142,7 +142,7 @@ class DisplayToolsPanel(Panel):
             col.prop(view, "show_all_objects_origin", toggle=True)
             col.prop(view, "show_backface_culling", toggle=True)
             if obj:
-                col.prop(obj, "show_x_ray", text="X-Ray", toggle=True)
+                col.prop(obj, "show_in_front", text="X-Ray", toggle=True)
 
             if obj and obj_type == 'MESH':
                 col.prop(obj, "show_transparent", text="Transparency", toggle=True)
@@ -176,8 +176,8 @@ class DisplayToolsPanel(Panel):
             if obj:
                 col = layout.column(align=True)
                 col.alignment = 'EXPAND'
-                col.label(text="Maximum:")
-                col.prop(obj, "draw_type", text="", icon=self.draw_type_icons[obj.draw_type])
+                col.label(text="Display As:")
+                col.prop(obj, "display_type", text="", icon=self.display_type_icons[obj.display_type])
 
             col = layout.column(align=True)
             col.alignment = 'CENTER'
@@ -394,7 +394,7 @@ class DisplayToolsPanel(Panel):
         row.prop(display_tools, "UiTabDrop", index=4, text="Selection", icon=icon_active_4)
 
         if not SELECT2DROP:
-            row.operator("view3d.select_border", text="", icon="MESH_PLANE")
+            row.operator("view3d.select_box", text="", icon="MESH_PLANE")
             row.operator("view3d.select_circle", text="", icon="MESH_CIRCLE")
             row.label(text="", icon="BLANK1")
         else:

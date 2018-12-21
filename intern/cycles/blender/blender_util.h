@@ -20,6 +20,7 @@
 #include "render/mesh.h"
 
 #include "util/util_algorithm.h"
+#include "util/util_array.h"
 #include "util/util_map.h"
 #include "util/util_path.h"
 #include "util/util_set.h"
@@ -32,7 +33,7 @@
 
 extern "C" {
 size_t BLI_timecode_string_from_time_simple(char *str, size_t maxlen, double time_seconds);
-void BKE_image_user_frame_calc(void *iuser, int cfra, int fieldnr);
+void BKE_image_user_frame_calc(void *iuser, int cfra);
 void BKE_image_user_file_path(void *iuser, void *ima, char *path);
 unsigned char *BKE_image_get_pixels_for_frame(void *image, int frame);
 float *BKE_image_get_float_pixels_for_frame(void *image, int frame);
@@ -45,15 +46,15 @@ void python_thread_state_restore(void **python_thread_state);
 
 static inline BL::Mesh object_to_mesh(BL::BlendData& data,
                                       BL::Object& object,
-                                      BL::Scene& scene,
+                                      BL::Depsgraph& depsgraph,
                                       bool apply_modifiers,
-                                      bool render,
                                       bool calc_undeformed,
                                       Mesh::SubdivisionType subdivision_type)
 {
 	bool subsurf_mod_show_render = false;
 	bool subsurf_mod_show_viewport = false;
 
+	/* TODO: make this work with copy-on-write, modifiers are already evaluated. */
 	if(subdivision_type != Mesh::SUBDIVISION_NONE) {
 		BL::Modifier subsurf_mod = object.modifiers[object.modifiers.length()-1];
 
@@ -64,7 +65,7 @@ static inline BL::Mesh object_to_mesh(BL::BlendData& data,
 		subsurf_mod.show_viewport(false);
 	}
 
-	BL::Mesh me = data.meshes.new_from_object(scene, object, apply_modifiers, (render)? 2: 1, false, calc_undeformed);
+	BL::Mesh me = data.meshes.new_from_object(depsgraph, object, apply_modifiers, calc_undeformed);
 
 	if(subdivision_type != Mesh::SUBDIVISION_NONE) {
 		BL::Modifier subsurf_mod = object.modifiers[object.modifiers.length()-1];
@@ -83,7 +84,7 @@ static inline BL::Mesh object_to_mesh(BL::BlendData& data,
 			}
 		}
 		if(subdivision_type == Mesh::SUBDIVISION_NONE) {
-			me.calc_tessface(true);
+			me.calc_loop_triangles();
 		}
 	}
 	return me;
@@ -220,14 +221,14 @@ static inline string image_user_file_path(BL::ImageUser& iuser,
                                           int cfra)
 {
 	char filepath[1024];
-	BKE_image_user_frame_calc(iuser.ptr.data, cfra, 0);
+	BKE_image_user_frame_calc(iuser.ptr.data, cfra);
 	BKE_image_user_file_path(iuser.ptr.data, ima.ptr.data, filepath);
 	return string(filepath);
 }
 
 static inline int image_user_frame_number(BL::ImageUser& iuser, int cfra)
 {
-	BKE_image_user_frame_calc(iuser.ptr.data, cfra, 0);
+	BKE_image_user_frame_calc(iuser.ptr.data, cfra);
 	return iuser.frame_current();
 }
 
@@ -242,6 +243,12 @@ static inline float *image_get_float_pixels_for_frame(BL::Image& image,
 {
 	return BKE_image_get_float_pixels_for_frame(image.ptr.data, frame);
 }
+
+static inline void render_add_metadata(BL::RenderResult& b_rr, string name, string value)
+{
+	b_rr.stamp_data_add_field(name.c_str(), value.c_str());
+}
+
 
 /* Utilities */
 
@@ -307,7 +314,7 @@ static inline uint get_layer(const BL::Array<bool, 20>& array)
 static inline uint get_layer(const BL::Array<bool, 20>& array,
                              const BL::Array<bool, 8>& local_array,
                              bool is_light = false,
-                             uint scene_layers = (1 << 20) - 1)
+                             uint view_layers = (1 << 20) - 1)
 {
 	uint layer = 0;
 
@@ -319,7 +326,7 @@ static inline uint get_layer(const BL::Array<bool, 20>& array,
 		/* Consider light is visible if it was visible without layer
 		 * override, which matches behavior of Blender Internal.
 		 */
-		if(layer & scene_layers) {
+		if(layer & view_layers) {
 			for(uint i = 0; i < 8; i++)
 				layer |= (1 << (20+i));
 		}
@@ -832,4 +839,4 @@ protected:
 
 CCL_NAMESPACE_END
 
-#endif /* __BLENDER_UTIL_H__ */
+#endif  /* __BLENDER_UTIL_H__ */

@@ -436,7 +436,7 @@ def __sort_loop_pairs(uv_layer, pairs, closed):
         diff = p2[-1][uv_layer].uv - p1[0][uv_layer].uv
         if diff.length < 0.000000001:
             # all UVs are not separated
-            return None, "All UVs are not separted"
+            return None, "All UVs are not separated"
 
     return sorted_pairs, ""
 
@@ -553,7 +553,7 @@ def __get_loop_sequence_internal(uv_layer, pairs, island_info, closed):
 
             # check if the UVs are already parsed.
             # this check is needed for the mesh which has the circular
-            # sequence of the verticies
+            # sequence of the vertices
             matched = False
             for p1 in seqs:
                 p2 = nplp

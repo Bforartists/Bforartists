@@ -56,8 +56,9 @@
 
 #include "DNA_movieclip_types.h"
 
-#include "BKE_depsgraph.h"
 #include "BKE_mask.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 
@@ -68,7 +69,7 @@ static void rna_Mask_update_data(Main *UNUSED(bmain), Scene *UNUSED(scene), Poin
 	Mask *mask = ptr->id.data;
 
 	WM_main_add_notifier(NC_MASK | ND_DATA, mask);
-	DAG_id_tag_update( &mask->id, 0);
+	DEG_id_tag_update( &mask->id, 0);
 }
 
 static void rna_Mask_update_parent(Main *bmain, Scene *scene, PointerRNA *ptr)
@@ -448,7 +449,7 @@ static void rna_MaskLayer_spline_remove(ID *id, MaskLayer *mask_layer, ReportLis
 
 	RNA_POINTER_INVALIDATE(spline_ptr);
 
-	DAG_id_tag_update(&mask->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&mask->id, ID_RECALC_GEOMETRY);
 }
 
 static void rna_Mask_start_frame_set(PointerRNA *ptr, int value)
@@ -522,7 +523,7 @@ static void rna_MaskSpline_points_add(ID *id, MaskSpline *spline, int count)
 	}
 
 	WM_main_add_notifier(NC_MASK | ND_DATA, mask);
-	DAG_id_tag_update(&mask->id, 0);
+	DEG_id_tag_update(&mask->id, 0);
 }
 
 static void rna_MaskSpline_point_remove(ID *id, MaskSpline *spline, ReportList *reports, PointerRNA *point_ptr)
@@ -582,7 +583,7 @@ static void rna_MaskSpline_point_remove(ID *id, MaskSpline *spline, ReportList *
 	BKE_mask_layer_shape_changed_remove(layer, BKE_mask_layer_shape_spline_to_index(layer, spline) + point_index, 1);
 
 	WM_main_add_notifier(NC_MASK | ND_DATA, mask);
-	DAG_id_tag_update(&mask->id, 0);
+	DEG_id_tag_update(&mask->id, 0);
 
 	RNA_POINTER_INVALIDATE(point_ptr);
 }
@@ -810,7 +811,8 @@ static void rna_def_maskSplinePoints(BlenderRNA *brna)
 	func = RNA_def_function(srna, "add", "rna_MaskSpline_points_add");
 	RNA_def_function_flag(func, FUNC_USE_SELF_ID);
 	RNA_def_function_ui_description(func, "Add a number of point to this spline");
-	RNA_def_int(func, "count", 1, 0, INT_MAX, "Number", "Number of points to add to the spline", 0, INT_MAX);
+	parm = RNA_def_int(func, "count", 1, 0, INT_MAX, "Number", "Number of points to add to the spline", 0, INT_MAX);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	/* Remove the point */
 	func = RNA_def_function(srna, "remove", "rna_MaskSpline_point_remove");
@@ -931,19 +933,19 @@ static void rna_def_mask_layer(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "hide", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", MASK_RESTRICT_VIEW);
 	RNA_def_property_ui_text(prop, "Restrict View", "Restrict visibility in the viewport");
-	RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, 1);
+	RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, -1);
 	RNA_def_property_update(prop, NC_MASK | ND_DRAW, NULL);
 
 	prop = RNA_def_property(srna, "hide_select", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", MASK_RESTRICT_SELECT);
 	RNA_def_property_ui_text(prop, "Restrict Select", "Restrict selection in the viewport");
-	RNA_def_property_ui_icon(prop, ICON_RESTRICT_SELECT_OFF, 1);
+	RNA_def_property_ui_icon(prop, ICON_RESTRICT_SELECT_OFF, -1);
 	RNA_def_property_update(prop, NC_MASK | ND_DRAW, NULL);
 
 	prop = RNA_def_property(srna, "hide_render", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", MASK_RESTRICT_RENDER);
 	RNA_def_property_ui_text(prop, "Restrict Render", "Restrict renderability");
-	RNA_def_property_ui_icon(prop, ICON_RESTRICT_RENDER_OFF, 1);
+	RNA_def_property_ui_icon(prop, ICON_RESTRICT_RENDER_OFF, -1);
 	RNA_def_property_update(prop, NC_MASK | NA_EDITED, NULL);
 
 	/* select (for dopesheet)*/

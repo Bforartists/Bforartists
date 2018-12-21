@@ -272,7 +272,7 @@ class C3DImporter(bpy.types.Operator):
             unames[name] = o.name
             bpy.ops.transform.resize(value=empty_size)
             o.show_name = self.properties.show_names
-            o.show_x_ray = self.properties.x_ray
+            o.show_in_front = self.properties.x_ray
         for name in unames.values():
             bpy.context.scene.objects[name].select = True
         return unames
@@ -291,7 +291,7 @@ class C3DImporter(bpy.types.Operator):
             arm = bpy.context.active_object
             arm.name = os.path.basename(self.properties.filepath)
             arm.data.show_names = self.properties.show_names
-            arm.show_x_ray = self.properties.x_ray
+            arm.show_in_front = self.properties.x_ray
             for idx, ml in enumerate(ms.markerLabels):
                 name = self.properties.prefix + ml
                 bpy.ops.armature.select_all(action='DESELECT')
@@ -354,12 +354,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 
 if __name__ == "__main__":

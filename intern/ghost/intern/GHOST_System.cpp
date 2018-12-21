@@ -48,6 +48,7 @@
 
 GHOST_System::GHOST_System()
     : m_nativePixel(false),
+      m_windowFocus(true),
       m_displayManager(NULL),
       m_timerManager(NULL),
       m_windowManager(NULL),
@@ -219,10 +220,12 @@ bool GHOST_System::getFullScreen(void)
 void GHOST_System::dispatchEvents()
 {
 #ifdef WITH_INPUT_NDOF
+  #ifndef WIN32
 	// NDOF Motion event is sent only once per dispatch, so do it now:
 	if (m_ndofManager) {
 		m_ndofManager->sendMotionEvent();
 	}
+  #endif
 #endif
 
 	if (m_eventManager) {
@@ -297,7 +300,9 @@ GHOST_TSuccess GHOST_System::getButtonState(GHOST_TButtonMask mask, bool& isDown
 #ifdef WITH_INPUT_NDOF
 void GHOST_System::setNDOFDeadZone(float deadzone)
 {
-	this->m_ndofManager->setDeadZone(deadzone);
+	if (this->m_ndofManager) {
+		this->m_ndofManager->setDeadZone(deadzone);
+	}
 }
 #endif
 
@@ -389,4 +394,9 @@ bool GHOST_System::useNativePixel(void)
 {
 	m_nativePixel = true;
 	return 1;
+}
+
+void GHOST_System::useWindowFocus(const bool use_focus)
+{
+	m_windowFocus = use_focus;
 }

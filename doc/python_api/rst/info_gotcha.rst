@@ -145,8 +145,8 @@ that happens to redraw but is more flexible and integrates better with Blenders 
 
 **Ok, Ok! I still want to draw from Python**
 
-If you insist - yes its possible, but scripts that use this hack wont be considered
-for inclusion in Blender and any issues with using it wont be considered bugs,
+If you insist - yes its possible, but scripts that use this hack won't be considered
+for inclusion in Blender and any issues with using it won't be considered bugs,
 this is also not guaranteed to work in future releases.
 
 .. code-block:: python
@@ -173,25 +173,25 @@ In this situation you can...
 
 .. _info_gotcha_mesh_faces:
 
-N-Gons and Tessellation Faces
-=============================
+N-Gons and Tessellation
+=======================
 
 Since 2.63 NGons are supported, this adds some complexity
-since in some cases you need to access triangles/quads still (some exporters for example).
+since in some cases you need to access triangles still (some exporters for example).
 
 There are now 3 ways to access faces:
 
 - :class:`bpy.types.MeshPolygon` -
   this is the data structure which now stores faces in object mode
   (access as ``mesh.polygons`` rather than ``mesh.faces``).
-- :class:`bpy.types.MeshTessFace` -
-  the result of triangulating (tessellated) polygons,
-  the main method of face access in 2.62 or older (access as ``mesh.tessfaces``).
+- :class:`bpy.types.MeshLoopTriangle` -
+  the result of tessellating polygons into triangles
+  (access as ``mesh.loop_triangles``).
 - :class:`bmesh.types.BMFace` -
   the polygons as used in editmode.
 
 For the purpose of the following documentation,
-these will be referred to as polygons, tessfaces and bmesh-faces respectively.
+these will be referred to as polygons, loop triangles and bmesh-faces respectively.
 
 5+ sided faces will be referred to as ``ngons``.
 
@@ -205,8 +205,8 @@ Support Overview
 
    * - Usage
      - :class:`bpy.types.MeshPolygon`
-     - :class:`bpy.types.MeshTessFace` 
-     - :class:`bmesh.types.BMFace` 
+     - :class:`bpy.types.MeshTessFace`
+     - :class:`bmesh.types.BMFace`
    * - Import/Create
      - Poor *(inflexible)*
      - Good *(supported as upgrade path)*
@@ -234,13 +234,8 @@ All 3 datatypes can be used for face creation.
 
 - polygons are the most efficient way to create faces but the data structure is _very_ rigid and inflexible,
   you must have all your vertes and faces ready and create them all at once.
-  This is further complicated by the fact that each polygon does not store its own verts (as with tessfaces),
+  This is further complicated by the fact that each polygon does not store its own verts,
   rather they reference an index and size in :class:`bpy.types.Mesh.loops` which are a fixed array too.
-- tessfaces ideally should not be used for creating faces since they are really only tessellation cache of polygons,
-  however for scripts upgrading from 2.62 this is by far the most straightforward option.
-  This works by creating tessfaces and when finished -
-  they can be converted into polygons by calling :class:`bpy.types.Mesh.update`.
-  The obvious limitation is ngons can't be created this way.
 - bmesh-faces are most likely the easiest way for new scripts to create faces,
   since faces can be added one by one and the api has features intended for mesh manipulation.
   While :class:`bmesh.types.BMesh` uses more memory it can be managed by only operating on one mesh at a time.
@@ -265,34 +260,10 @@ All 3 data types can be used for exporting,
 the choice mostly depends on whether the target format supports ngons or not.
 
 - Polygons are the most direct & efficient way to export providing they convert into the output format easily enough.
-- Tessfaces work well for exporting to formats which dont support ngons,
+- Tessfaces work well for exporting to formats which don't support ngons,
   in fact this is the only place where their use is encouraged.
 - BMesh-Faces can work for exporting too but may not be necessary if polygons can be used
   since using bmesh gives some overhead because its not the native storage format in object mode.
-
-
-Upgrading Importers from 2.62
------------------------------
-
-Importers can be upgraded to work with only minor changes.
-
-The main change to be made is used the tessellation versions of each attribute.
-
-- mesh.faces --> :class:`bpy.types.Mesh.tessfaces`
-- mesh.uv_textures --> :class:`bpy.types.Mesh.tessface_uv_textures`
-- mesh.vertex_colors --> :class:`bpy.types.Mesh.tessface_vertex_colors`
-
-Once the data is created call :class:`bpy.types.Mesh.update` to convert the tessfaces into polygons.
-
-
-Upgrading Exporters from 2.62
------------------------------
-
-For exporters the most direct way to upgrade is to use tessfaces as with importing
-however its important to know that tessfaces may **not** exist for a mesh,
-the array will be empty as if there are no faces.
-
-So before accessing tessface data call: :class:`bpy.types.Mesh.update` ``(calc_tessface=True)``.
 
 
 EditBones, PoseBones, Bone... Bones
@@ -317,7 +288,7 @@ Example using :class:`bpy.types.EditBone` in armature editmode:
 
 This is only possible in edit mode.
 
-   >>> bpy.context.object.data.edit_bones["Bone"].head = Vector((1.0, 2.0, 3.0)) 
+   >>> bpy.context.object.data.edit_bones["Bone"].head = Vector((1.0, 2.0, 3.0))
 
 This will be empty outside of editmode.
 
@@ -362,7 +333,7 @@ Examples using :class:`bpy.types.PoseBone` in object or pose mode:
 .. code-block:: python
 
    # Gets the name of the first constraint (if it exists)
-   bpy.context.object.pose.bones["Bone"].constraints[0].name 
+   bpy.context.object.pose.bones["Bone"].constraints[0].name
 
    # Gets the last selected pose bone (pose mode only)
    bpy.context.active_pose_bone
@@ -407,7 +378,7 @@ This can cause bugs when you add some data (normally imported) then reference it
 .. code-block:: python
 
    bpy.data.meshes.new(name=meshid)
-   
+
    # normally some code, function calls...
    bpy.data.meshes[meshid]
 
@@ -417,7 +388,7 @@ Or with name assignment...
 .. code-block:: python
 
    obj.name = objname
-   
+
    # normally some code, function calls...
    obj = bpy.data.meshes[objname]
 
@@ -437,12 +408,12 @@ this way you don't run this risk of referencing existing data from the blend fil
 
    # typically declared in the main body of the function.
    mesh_name_mapping = {}
-   
+
    mesh = bpy.data.meshes.new(name=meshid)
    mesh_name_mapping[meshid] = mesh
-   
+
    # normally some code, or function calls...
-   
+
    # use own dictionary rather than bpy.data
    mesh = mesh_name_mapping[meshid]
 
@@ -551,7 +522,7 @@ to avoid getting stuck too deep in encoding problems - here are some suggestions
 
 .. note::
 
-   Sometimes it's preferrable to avoid string encoding issues by using bytes instead of Python strings,
+   Sometimes it's preferable to avoid string encoding issues by using bytes instead of Python strings,
    when reading some input its less trouble to read it as binary data
    though you will still need to decide how to treat any strings you want to use with Blender,
    some importers do this.
@@ -770,7 +741,7 @@ Removing Data
 
 **Any** data that you remove shouldn't be modified or accessed afterwards,
 this includes f-curves, drivers, render layers, timeline markers, modifiers, constraints
-along with objects, scenes, groups, bones.. etc.
+along with objects, scenes, collections, bones.. etc.
 
 The ``remove()`` api calls will invalidate the data they free to prevent common mistakes.
 

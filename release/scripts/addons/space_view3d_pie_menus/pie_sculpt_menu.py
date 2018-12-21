@@ -23,7 +23,7 @@ bl_info = {
     "description": "Sculpt Brush Menu",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 0),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "W key",
     "warning": "",
     "wiki_url": "",
@@ -123,7 +123,7 @@ class PieSculptthree(Menu):
         layout.operator("paint.brush_select",
                         text='Snakehook', icon='BRUSH_SNAKE_HOOK').sculpt_tool = 'SNAKE_HOOK'
         layout.operator("paint.brush_select",
-                        text='Twist', icon='BRUSH_ROTATE').sculpt_tool = 'ROTATE'
+                        text='Twist', icon='BRUSH_ROTATE').sculpt_tool = 'NONE'
 
 
 classes = (

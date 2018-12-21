@@ -234,7 +234,7 @@ class Ms3dImporter():
 
         blender_scene = blender_context.scene
 
-        blender_group = blender_context.blend_data.groups.new(
+        blender_group = blender_context.blend_data.collections.new(
                 FORMAT_GROUP.format(ms3d_model.name))
         blender_empty_object = blender_context.blend_data.objects.new(
                 FORMAT_EMPTY_OBJECT.format(ms3d_model.name), None)
@@ -690,14 +690,14 @@ class Ms3dImporter():
         blender_armature = blender_context.blend_data.armatures.new(
                 ms3d_armature_name)
         blender_armature.ms3d.name = ms3d_model.name
-        blender_armature.draw_type = 'STICK'
+        blender_armature.display_type = 'STICK'
         blender_armature.show_axes = True
         blender_armature.use_auto_ik = True
         blender_armature_object = blender_context.blend_data.objects.new(
                 ms3d_armature_object_name, blender_armature)
         blender_scene.objects.link(blender_armature_object)
         #blender_armature_object.location = blender_scene.cursor_location
-        blender_armature_object.show_x_ray = True
+        blender_armature_object.show_in_front = True
 
         ##########################
         # create new modifier
@@ -771,7 +771,7 @@ class Ms3dImporter():
                 in ms3d_to_blender_vertex_groups.items():
             ms3d_name = ms3d_model.joints[ms3d_bone_id].name
             blender_vertex_group = blender_mesh_object.vertex_groups.new(
-                    ms3d_name)
+                    name=ms3d_name)
             for blender_vertex_id_weight in blender_vertex_index_weight_list:
                 blender_vertex_index = blender_vertex_id_weight[0]
                 blender_vertex_weight = blender_vertex_id_weight[1]
