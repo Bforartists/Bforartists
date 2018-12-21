@@ -165,7 +165,7 @@ class Rig:
             eb[ mch  ].length /= 4
             eb[ ctrl ].length /= 2
 
-        # Contraints
+        # Constraints
         if self.limb_type == 'paw':
 
             for i,b in enumerate( tweaks['mch'] ):

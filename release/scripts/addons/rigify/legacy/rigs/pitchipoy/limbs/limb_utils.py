@@ -11,11 +11,11 @@ def orient_bone( cls, eb, axis, scale = 1.0, reverse = False ):
     setattr(v,axis,scale)
 
     if reverse:
-        tail_vec = v * cls.obj.matrix_world
+        tail_vec = v @ cls.obj.matrix_world
         eb.head[:] = eb.tail
         eb.tail[:] = eb.head + tail_vec
     else:
-        tail_vec = v * cls.obj.matrix_world
+        tail_vec = v @ cls.obj.matrix_world
         eb.tail[:] = eb.head + tail_vec
 
     eb.roll = 0.0
@@ -29,7 +29,7 @@ def make_constraint( cls, bone, constraint ):
 
     constraint['target'] = cls.obj
 
-    # filter contraint props to those that actually exist in the currnet
+    # filter constraint props to those that actually exist in the currnet
     # type of constraint, then assign values to each
     for p in [ k for k in constraint.keys() if k in dir(const) ]:
         if p in dir( const ):

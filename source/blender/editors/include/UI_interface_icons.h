@@ -49,6 +49,8 @@ typedef struct IconFile {
 #define ICON_DEFAULT_HEIGHT 16
 #define ICON_DEFAULT_WIDTH  16
 
+#define ICON_DEFAULT_HEIGHT_TOOLBAR 32
+
 #define ICON_DEFAULT_HEIGHT_SCALE ((int)(UI_UNIT_Y * 0.8f))
 #define ICON_DEFAULT_WIDTH_SCALE  ((int)(UI_UNIT_X * 0.8f))
 
@@ -57,7 +59,7 @@ typedef struct IconFile {
 /*
  * Resizable Icons for Blender
  */
-void UI_icons_init(int first_dyn_id);
+void UI_icons_init(void);
 int UI_icon_get_width(int icon_id);
 int UI_icon_get_height(int icon_id);
 
@@ -66,15 +68,20 @@ void UI_id_icon_render(
 int UI_preview_render_size(enum eIconSizes size);
 
 void UI_icon_draw(float x, float y, int icon_id);
+void UI_icon_draw_alpha(float x, float y, int icon_id, float alpha);
 void UI_icon_draw_preview(float x, float y, int icon_id);
 void UI_icon_draw_preview_aspect(float x, float y, int icon_id, float aspect);
 void UI_icon_draw_preview_aspect_size(float x, float y, int icon_id, float aspect, float alpha, int size);
 
-void UI_icon_draw_aspect(float x, float y, int icon_id, float aspect, float alpha);
-void UI_icon_draw_aspect_color(float x, float y, int icon_id, float aspect, const float rgb[3]);
+void UI_icon_draw_aspect(float x, float y, int icon_id, float aspect, float alpha, const char mono_color[4]);
+void UI_icon_draw_aspect_color(float x, float y, int icon_id, float aspect, const float rgb[3], const char mono_color[4]);
 void UI_icon_draw_size(float x, float y, int size, int icon_id, float alpha);
+void UI_icon_draw_desaturate(float x, float y, int icon_id, float aspect, float alpha, float desaturate, const char mono_color[4]);
 void UI_icons_free(void);
 void UI_icons_free_drawinfo(void *drawinfo);
+
+void UI_icon_draw_cache_begin(void);
+void UI_icon_draw_cache_end(void);
 
 struct ListBase *UI_iconfile_list(void);
 int UI_iconfile_get_index(const char *filename);

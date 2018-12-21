@@ -249,7 +249,7 @@ class MapClass:
             return True
         else:
             self.textureless = False
-            
+
         # S.L. fix to use any relative path
         dir_path = os.path.dirname(os.path.realpath(__file__))
         self.image.name = dir_path + os.path.sep + file_name

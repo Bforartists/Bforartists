@@ -18,40 +18,46 @@
 
 # <pep8 compliant>
 
+import os
+
 if "bpy" in locals():
     import importlib
     importlib.reload(settings_i18n)
 else:
     import bpy
+    from bpy.types import (
+        Operator,
+        AddonPreferences,
+    )
     from bpy.props import (
-            BoolProperty,
-            CollectionProperty,
-            EnumProperty,
-            FloatProperty,
-            FloatVectorProperty,
-            IntProperty,
-            PointerProperty,
-            StringProperty,
-            )
+        BoolProperty,
+        StringProperty,
+    )
     from bl_i18n_utils import settings as settings_i18n
-
-
-import os
 
 
 settings = settings_i18n.I18nSettings()
 
 
-class UI_OT_i18n_settings_load(bpy.types.Operator):
+# Operators ###################################################################
+
+class UI_OT_i18n_settings_load(Operator):
     """Load translations' settings from a persistent JSon file"""
     bl_idname = "ui.i18n_settings_load"
     bl_label = "I18n Load Settings"
     bl_option = {'REGISTER'}
 
-    # "Parameters"
-    filepath = StringProperty(description="Path to the saved settings file",
-                              subtype='FILE_PATH')
-    filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
+    # Operator Arguments
+    filepath: StringProperty(
+        subtype='FILE_PATH',
+        description="Path to the saved settings file",
+    )
+
+    filter_glob: StringProperty(
+        default="*.json",
+        options={'HIDDEN'}
+    )
+    # /End Operator Arguments
 
     def invoke(self, context, event):
         if not self.properties.is_property_set("filepath"):
@@ -67,16 +73,23 @@ class UI_OT_i18n_settings_load(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class UI_OT_i18n_settings_save(bpy.types.Operator):
+class UI_OT_i18n_settings_save(Operator):
     """Save translations' settings in a persistent JSon file"""
     bl_idname = "ui.i18n_settings_save"
     bl_label = "I18n Save Settings"
     bl_option = {'REGISTER'}
 
-    # "Parameters"
-    filepath = StringProperty(description="Path to the saved settings file",
-                              subtype='FILE_PATH')
-    filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
+    # Operator Arguments
+    filepath: StringProperty(
+        description="Path to the saved settings file",
+        subtype='FILE_PATH',
+    )
+
+    filter_glob: StringProperty(
+        default="*.json",
+        options={'HIDDEN'},
+    )
+    # /End Operator Arguments
 
     def invoke(self, context, event):
         if not self.properties.is_property_set("filepath"):
@@ -92,18 +105,20 @@ class UI_OT_i18n_settings_save(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# Addon Preferences ###########################################################
+
 def _setattr(self, name, val):
     print(self, name, val)
     setattr(self, name, val)
 
 
-class UI_AP_i18n_settings(bpy.types.AddonPreferences):
+class UI_AP_i18n_settings(AddonPreferences):
     bl_idname = __name__.split(".")[0]  # We want "top" module name!
     bl_option = {'REGISTER'}
 
     _settings = settings
 
-    WARN_MSGID_NOT_CAPITALIZED = BoolProperty(
+    WARN_MSGID_NOT_CAPITALIZED: BoolProperty(
         name="Warn Msgid Not Capitalized",
         description="Warn about messages not starting by a capitalized letter (with a few allowed exceptions!)",
         default=True,
@@ -111,7 +126,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: _setattr(self._settings, "WARN_MSGID_NOT_CAPITALIZED", val),
     )
 
-    GETTEXT_MSGFMT_EXECUTABLE = StringProperty(
+    GETTEXT_MSGFMT_EXECUTABLE: StringProperty(
         name="Gettext 'msgfmt' executable",
         description="The gettext msgfmt 'compiler'. You’ll likely have to edit it if you’re under Windows",
         subtype='FILE_PATH',
@@ -120,7 +135,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "GETTEXT_MSGFMT_EXECUTABLE", val),
     )
 
-    FRIBIDI_LIB = StringProperty(
+    FRIBIDI_LIB: StringProperty(
         name="Fribidi Library",
         description="The FriBidi C compiled library (.so under Linux, .dll under windows...), you’ll likely have "
                     "to edit it if you’re under Windows, e.g. using the one included in svn's libraries repository",
@@ -130,7 +145,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "FRIBIDI_LIB", val),
     )
 
-    SOURCE_DIR = StringProperty(
+    SOURCE_DIR: StringProperty(
         name="Source Root",
         description="The Blender source root path",
         subtype='FILE_PATH',
@@ -139,7 +154,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "SOURCE_DIR", val),
     )
 
-    I18N_DIR = StringProperty(
+    I18N_DIR: StringProperty(
         name="Translation Root",
         description="The bf-translation repository",
         subtype='FILE_PATH',
@@ -148,7 +163,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "I18N_DIR", val),
     )
 
-    SPELL_CACHE = StringProperty(
+    SPELL_CACHE: StringProperty(
         name="Spell Cache",
         description="A cache storing validated msgids, to avoid re-spellchecking them",
         subtype='FILE_PATH',
@@ -157,7 +172,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "SPELL_CACHE", val),
     )
 
-    PY_SYS_PATHS = StringProperty(
+    PY_SYS_PATHS: StringProperty(
         name="Import Paths",
         description="Additional paths to add to sys.path (';' separated)",
         default="",
@@ -165,7 +180,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         set=lambda self, val: setattr(self._settings, "PY_SYS_PATHS", val),
     )
 
-    persistent_data_path = StringProperty(
+    persistent_data_path: StringProperty(
         name="Persistent Data Path",
         description="The name of a json file storing those settings (unfortunately, Blender's system "
                     "does not work here)",
@@ -187,7 +202,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         layout.prop(self, "PY_SYS_PATHS")
 
         layout.separator()
-        split = layout.split(0.75)
+        split = layout.split(factor=0.75)
         col = split.column()
         col.prop(self, "persistent_data_path")
         row = col.row()

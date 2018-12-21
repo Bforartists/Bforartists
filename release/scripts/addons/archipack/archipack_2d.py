@@ -253,10 +253,10 @@ class Line(Projection):
             t: param t of intersection on current line
         """
         c = line.cross_z
-        d = self.v * c
+        d = self.v.dot(c)
         if d == 0:
             return False, 0, 0
-        t = (c * (line.p - self.p)) / d
+        t = c.dot(line.p - self.p) / d
         return True, self.lerp(t), t
 
     def intersect_ext(self, line):
@@ -264,13 +264,13 @@ class Line(Projection):
             same as intersect, but return param t on both lines
         """
         c = line.cross_z
-        d = self.v * c
+        d = self.v.dot(c)
         if d == 0:
             return False, 0, 0, 0
         dp = line.p - self.p
         c2 = self.cross_z
-        u = (c * dp) / d
-        v = (c2 * dp) / d
+        u = c.dot(dp) / d
+        v = c2.dot(dp) / d
         return u > 0 and v > 0 and u < 1 and v < 1, self.lerp(u), u, v
 
     def point_sur_segment(self, pt):
@@ -284,7 +284,7 @@ class Line(Projection):
         if dl == 0:
             return dp.length < 0.00001, 0, 0
         d = (self.v.x * dp.y - self.v.y * dp.x) / dl
-        t = (self.v * dp) / (dl * dl)
+        t = self.v.dot(dp) / (dl * dl)
         return t > 0 and t < 1, d, t
 
     def steps(self, len):
@@ -328,7 +328,7 @@ class Line(Projection):
         self.v = Matrix([
             [ca, -sa],
             [sa, ca]
-            ]) * self.v
+            ]) @ self.v
         return self
 
     def scale(self, length):
@@ -354,8 +354,8 @@ class Line(Projection):
             x, y, z = p
             spline.points[i].co = (x, y, 0, 1)
         curve_obj = bpy.data.objects.new('LINE', curve)
-        context.scene.objects.link(curve_obj)
-        curve_obj.select = True
+        context.scene.collection.objects.link(curve_obj)
+        curve_obj.select_set(state=True)
 
     def make_offset(self, offset, last=None):
         """
@@ -399,13 +399,13 @@ class Line(Projection):
             # intersect line / line
             # 1 line -> 2 line
             c = line.cross_z
-            d = last.v * c
+            d = last.v.dot(c)
             if d == 0:
                 return line
             v = line.p - last.p
-            t = (c * v) / d
+            t = c.dot(v) / d
             c2 = last.cross_z
-            u = (c2 * v) / d
+            u = c2.dot(v) / d
             # intersect past this segment end
             # or before last segment start
             # print("u:%s t:%s" % (u, t))
@@ -431,9 +431,9 @@ class Circle(Projection):
 
     def intersect(self, line):
         v = line.p - self.c
-        A = line.v * line.v
-        B = 2 * v * line.v
-        C = v * v - self.r2
+        A = line.v.dot(line.v)
+        B = 2 * v.dot(line.v)
+        C = v.dot(v) - self.r2
         d = B * B - 4 * A * C
         if A <= 0.0000001 or d < 0:
             # dosent intersect, find closest point of line
@@ -549,7 +549,7 @@ class Arc(Circle):
         u = self.p0 - self.p1
         v = p0 - self.p1
         scale, rM = self.scale_rot_matrix(u, v)
-        self.c = self.p1 + rM * (self.c - self.p1)
+        self.c = self.p1 + rM @ (self.c - self.p1)
         self.r *= scale
         self.r2 = self.r * self.r
         dp = p0 - self.c
@@ -566,7 +566,7 @@ class Arc(Circle):
         v = p1 - p0
 
         scale, rM = self.scale_rot_matrix(u, v)
-        self.c = p0 + rM * (self.c - p0)
+        self.c = p0 + rM @ (self.c - p0)
         self.r *= scale
         self.r2 = self.r * self.r
         dp = p0 - self.c
@@ -674,7 +674,7 @@ class Arc(Circle):
 
     def tangeant(self, t, length):
         """
-            Tangeant line so we are able to chain Circle and lines
+            Tangent line so we are able to chain Circle and lines
             Beware, counterpart on Line does return an Arc !
         """
         a = self.a0 + t * self.da
@@ -688,7 +688,7 @@ class Arc(Circle):
 
     def tangeant_unit_vector(self, t):
         """
-            Return Tangeant vector of length 1
+            Return Tangent vector of length 1
         """
         a = self.a0 + t * self.da
         ca = cos(a)
@@ -700,7 +700,7 @@ class Arc(Circle):
 
     def straight(self, length, t=1):
         """
-            Return a tangeant Line
+            Return a tangent Line
             Counterpart on Line also return a Line
         """
         return self.tangeant(t, length)
@@ -721,7 +721,7 @@ class Arc(Circle):
 
     def rotate(self, a):
         """
-            Rotate center so we rotate ccw arround p0
+            Rotate center so we rotate ccw around p0
         """
         ca = cos(a)
         sa = sin(a)
@@ -730,7 +730,7 @@ class Arc(Circle):
             [sa, ca]
             ])
         p0 = self.p0
-        self.c = p0 + rM * (self.c - p0)
+        self.c = p0 + rM @ (self.c - p0)
         dp = p0 - self.c
         self.a0 = atan2(dp.y, dp.x)
         return self
@@ -842,8 +842,8 @@ class Arc(Circle):
             x, y = p
             spline.points[i].co = (x, y, 0, 1)
         curve_obj = bpy.data.objects.new('ARC', curve)
-        context.scene.objects.link(curve_obj)
-        curve_obj.select = True
+        context.scene.collection.objects.link(curve_obj)
+        curve_obj.select_set(state=True)
 
 
 class Line3d(Line):
@@ -941,7 +941,7 @@ class Line3d(Line):
     def sized_normal(self, t, size):
         """
             3d Line perpendicular on plane defined by z_axis and of given size
-            positionned at t in current line
+            positioned at t in current line
             lie on the right side
             p1
             |--x

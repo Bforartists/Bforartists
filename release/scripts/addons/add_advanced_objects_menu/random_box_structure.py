@@ -94,8 +94,8 @@ class makestructure(Operator):
         rsdchange = self.rsd
         oblst = []
         uvyes = 0
-        bpy.ops.group.create(name='Cubagrouper')
-        bpy.ops.group.objects_remove()
+        bpy.ops.collection.create(name='Cubagrouper')
+        bpy.ops.collection.objects_remove()
 
         for ob in bpy.context.selected_objects:
             oblst.append(ob)
@@ -107,7 +107,7 @@ class makestructure(Operator):
                 uvyes = 1
             else:
                 uvyes = 0
-            bpy.ops.object.group_link(group='Cubagrouper')
+            bpy.ops.object.collection_link(group='Cubagrouper')
             dim = obj.dimensions
             rot = obj.rotation_euler
             if self.uf is True:
@@ -155,7 +155,7 @@ class makestructure(Operator):
                     )
                 bpy.ops.object.mode_set(mode='OBJECT')
                 select = bpy.context.object  # This is used to keep something selected for poll()
-                bpy.ops.object.group_link(group='Cubagrouper')
+                bpy.ops.object.collection_link(group='Cubagrouper')
                 rsdchange += 3
             bpy.ops.object.select_grouped(type='GROUP')
             bpy.ops.transform.rotate(
@@ -180,7 +180,7 @@ class makestructure(Operator):
             if uvyes == 1:
                 bpy.ops.object.join_uvs()
 
-            bpy.ops.group.objects_remove()
+            bpy.ops.collection.objects_remove()
             bpy.context.scene.objects.active = select
 
             if self.dc is True:

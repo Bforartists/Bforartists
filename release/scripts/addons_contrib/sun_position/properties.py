@@ -306,7 +306,7 @@ class SunPosSettings(PropertyGroup):
 
 
 class SunPosPreferences(PropertyGroup):
-    
+
     UsageMode = EnumProperty(
         name="Usage mode",
         description="operate in normal mode or environment texture mode",

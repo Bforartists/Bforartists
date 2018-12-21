@@ -25,7 +25,8 @@ class NODES_PT_Prop(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_label = "Display"  
+    bl_label = "Display"
+    bl_category = "Iconortext"
     
     @staticmethod
     def draw(self, context):
@@ -46,7 +47,7 @@ class NODES_PT_Input_connect(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Connect"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -105,7 +106,7 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -160,7 +161,7 @@ class NODES_PT_Input_input_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     
     @classmethod
@@ -263,7 +264,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -319,7 +320,7 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -446,7 +447,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -512,7 +513,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Common"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -652,7 +653,7 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Advanced"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -743,7 +744,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -870,7 +871,7 @@ class NODES_PT_Input_input_advanced_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -940,7 +941,7 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -993,7 +994,7 @@ class NODES_PT_Input_pattern(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Pattern"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1046,7 +1047,7 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1136,7 +1137,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1226,7 +1227,7 @@ class NODES_PT_Input_color_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color Advanced"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1313,7 +1314,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -1394,7 +1395,7 @@ class NODES_PT_Input_output_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -1475,7 +1476,7 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Input"
 
     @classmethod
@@ -1530,7 +1531,7 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Matte"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
 
     @classmethod
@@ -1677,7 +1678,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Filter"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1835,7 +1836,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
 
     @classmethod
@@ -2012,7 +2013,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2161,7 +2162,7 @@ class NODES_PT_Modify_converter_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2334,7 +2335,7 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
 
     @classmethod
@@ -2415,7 +2416,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2499,7 +2500,7 @@ class NODES_PT_Modify_vector_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2582,7 +2583,7 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2651,7 +2652,7 @@ class NODES_PT_Modify_distort_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2807,7 +2808,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2907,7 +2908,7 @@ class NODES_PT_Modify_script(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Script"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Modify"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2954,7 +2955,7 @@ class NODES_PT_Relations_group(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Group"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Relations"
     
     @staticmethod
@@ -3005,7 +3006,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Layout"
     bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = "Relations"
     
     @staticmethod

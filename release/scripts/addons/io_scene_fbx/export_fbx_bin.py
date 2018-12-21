@@ -27,7 +27,6 @@ import math
 import os
 import time
 
-from collections import OrderedDict
 from itertools import zip_longest, chain
 
 if "bpy" in locals():
@@ -41,6 +40,7 @@ if "bpy" in locals():
 
 import bpy
 import bpy_extras
+from bpy_extras import node_shader_utils
 from mathutils import Vector, Matrix
 
 from . import encode_bin, data_types, fbx_utils
@@ -75,6 +75,7 @@ from .fbx_utils import (
     get_blender_bindpose_key, get_blender_armature_skin_key, get_blender_bone_cluster_key,
     get_blender_anim_id_base, get_blender_anim_stack_key, get_blender_anim_layer_key,
     get_blender_anim_curve_node_key, get_blender_anim_curve_key,
+    get_blender_nodetexture_key,
     # FBX element data.
     elem_empty,
     elem_data_single_bool, elem_data_single_int16, elem_data_single_int32, elem_data_single_int64,
@@ -110,7 +111,7 @@ convert_rad_to_deg_iter = units_convertor_iter("radian", "degree")
 # TODO: check all those "default" values, they should match Blender's default as much as possible, I guess?
 
 def fbx_template_def_globalsettings(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict()
+    props = {}
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"GlobalSettings", b"", props, nbr_users, [False])
@@ -118,91 +119,91 @@ def fbx_template_def_globalsettings(scene, settings, override_defaults=None, nbr
 
 def fbx_template_def_model(scene, settings, override_defaults=None, nbr_users=0):
     gscale = settings.global_scale
-    props = OrderedDict((
-        # Name,                   Value, Type, Animatable
-        (b"QuaternionInterpolate", (0, "p_enum", False)),  # 0 = no quat interpolation.
-        (b"RotationOffset", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"RotationPivot", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"ScalingOffset", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"ScalingPivot", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"TranslationActive", (False, "p_bool", False)),
-        (b"TranslationMin", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"TranslationMax", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"TranslationMinX", (False, "p_bool", False)),
-        (b"TranslationMinY", (False, "p_bool", False)),
-        (b"TranslationMinZ", (False, "p_bool", False)),
-        (b"TranslationMaxX", (False, "p_bool", False)),
-        (b"TranslationMaxY", (False, "p_bool", False)),
-        (b"TranslationMaxZ", (False, "p_bool", False)),
-        (b"RotationOrder", (0, "p_enum", False)),  # we always use 'XYZ' order.
-        (b"RotationSpaceForLimitOnly", (False, "p_bool", False)),
-        (b"RotationStiffnessX", (0.0, "p_double", False)),
-        (b"RotationStiffnessY", (0.0, "p_double", False)),
-        (b"RotationStiffnessZ", (0.0, "p_double", False)),
-        (b"AxisLen", (10.0, "p_double", False)),
-        (b"PreRotation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"PostRotation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"RotationActive", (False, "p_bool", False)),
-        (b"RotationMin", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"RotationMax", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"RotationMinX", (False, "p_bool", False)),
-        (b"RotationMinY", (False, "p_bool", False)),
-        (b"RotationMinZ", (False, "p_bool", False)),
-        (b"RotationMaxX", (False, "p_bool", False)),
-        (b"RotationMaxY", (False, "p_bool", False)),
-        (b"RotationMaxZ", (False, "p_bool", False)),
-        (b"InheritType", (0, "p_enum", False)),  # RrSs
-        (b"ScalingActive", (False, "p_bool", False)),
-        (b"ScalingMin", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"ScalingMax", ((1.0, 1.0, 1.0), "p_vector_3d", False)),
-        (b"ScalingMinX", (False, "p_bool", False)),
-        (b"ScalingMinY", (False, "p_bool", False)),
-        (b"ScalingMinZ", (False, "p_bool", False)),
-        (b"ScalingMaxX", (False, "p_bool", False)),
-        (b"ScalingMaxY", (False, "p_bool", False)),
-        (b"ScalingMaxZ", (False, "p_bool", False)),
-        (b"GeometricTranslation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"GeometricRotation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"GeometricScaling", ((1.0, 1.0, 1.0), "p_vector_3d", False)),
-        (b"MinDampRangeX", (0.0, "p_double", False)),
-        (b"MinDampRangeY", (0.0, "p_double", False)),
-        (b"MinDampRangeZ", (0.0, "p_double", False)),
-        (b"MaxDampRangeX", (0.0, "p_double", False)),
-        (b"MaxDampRangeY", (0.0, "p_double", False)),
-        (b"MaxDampRangeZ", (0.0, "p_double", False)),
-        (b"MinDampStrengthX", (0.0, "p_double", False)),
-        (b"MinDampStrengthY", (0.0, "p_double", False)),
-        (b"MinDampStrengthZ", (0.0, "p_double", False)),
-        (b"MaxDampStrengthX", (0.0, "p_double", False)),
-        (b"MaxDampStrengthY", (0.0, "p_double", False)),
-        (b"MaxDampStrengthZ", (0.0, "p_double", False)),
-        (b"PreferedAngleX", (0.0, "p_double", False)),
-        (b"PreferedAngleY", (0.0, "p_double", False)),
-        (b"PreferedAngleZ", (0.0, "p_double", False)),
-        (b"LookAtProperty", (None, "p_object", False)),
-        (b"UpVectorProperty", (None, "p_object", False)),
-        (b"Show", (True, "p_bool", False)),
-        (b"NegativePercentShapeSupport", (True, "p_bool", False)),
-        (b"DefaultAttributeIndex", (-1, "p_integer", False)),
-        (b"Freeze", (False, "p_bool", False)),
-        (b"LODBox", (False, "p_bool", False)),
-        (b"Lcl Translation", ((0.0, 0.0, 0.0), "p_lcl_translation", True)),
-        (b"Lcl Rotation", ((0.0, 0.0, 0.0), "p_lcl_rotation", True)),
-        (b"Lcl Scaling", ((1.0, 1.0, 1.0), "p_lcl_scaling", True)),
-        (b"Visibility", (1.0, "p_visibility", True)),
-        (b"Visibility Inheritance", (1, "p_visibility_inheritance", False)),
-    ))
+    props = {
+        # Name,                  Value, Type, Animatable
+        b"QuaternionInterpolate": (0, "p_enum", False),  # 0 = no quat interpolation.
+        b"RotationOffset": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"RotationPivot": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"ScalingOffset": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"ScalingPivot": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"TranslationActive": (False, "p_bool", False),
+        b"TranslationMin": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"TranslationMax": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"TranslationMinX": (False, "p_bool", False),
+        b"TranslationMinY": (False, "p_bool", False),
+        b"TranslationMinZ": (False, "p_bool", False),
+        b"TranslationMaxX": (False, "p_bool", False),
+        b"TranslationMaxY": (False, "p_bool", False),
+        b"TranslationMaxZ": (False, "p_bool", False),
+        b"RotationOrder": (0, "p_enum", False),  # we always use 'XYZ' order.
+        b"RotationSpaceForLimitOnly": (False, "p_bool", False),
+        b"RotationStiffnessX": (0.0, "p_double", False),
+        b"RotationStiffnessY": (0.0, "p_double", False),
+        b"RotationStiffnessZ": (0.0, "p_double", False),
+        b"AxisLen": (10.0, "p_double", False),
+        b"PreRotation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"PostRotation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"RotationActive": (False, "p_bool", False),
+        b"RotationMin": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"RotationMax": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"RotationMinX": (False, "p_bool", False),
+        b"RotationMinY": (False, "p_bool", False),
+        b"RotationMinZ": (False, "p_bool", False),
+        b"RotationMaxX": (False, "p_bool", False),
+        b"RotationMaxY": (False, "p_bool", False),
+        b"RotationMaxZ": (False, "p_bool", False),
+        b"InheritType": (0, "p_enum", False),  # RrSs
+        b"ScalingActive": (False, "p_bool", False),
+        b"ScalingMin": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"ScalingMax": ((1.0, 1.0, 1.0), "p_vector_3d", False),
+        b"ScalingMinX": (False, "p_bool", False),
+        b"ScalingMinY": (False, "p_bool", False),
+        b"ScalingMinZ": (False, "p_bool", False),
+        b"ScalingMaxX": (False, "p_bool", False),
+        b"ScalingMaxY": (False, "p_bool", False),
+        b"ScalingMaxZ": (False, "p_bool", False),
+        b"GeometricTranslation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"GeometricRotation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"GeometricScaling": ((1.0, 1.0, 1.0), "p_vector_3d", False),
+        b"MinDampRangeX": (0.0, "p_double", False),
+        b"MinDampRangeY": (0.0, "p_double", False),
+        b"MinDampRangeZ": (0.0, "p_double", False),
+        b"MaxDampRangeX": (0.0, "p_double", False),
+        b"MaxDampRangeY": (0.0, "p_double", False),
+        b"MaxDampRangeZ": (0.0, "p_double", False),
+        b"MinDampStrengthX": (0.0, "p_double", False),
+        b"MinDampStrengthY": (0.0, "p_double", False),
+        b"MinDampStrengthZ": (0.0, "p_double", False),
+        b"MaxDampStrengthX": (0.0, "p_double", False),
+        b"MaxDampStrengthY": (0.0, "p_double", False),
+        b"MaxDampStrengthZ": (0.0, "p_double", False),
+        b"PreferedAngleX": (0.0, "p_double", False),
+        b"PreferedAngleY": (0.0, "p_double", False),
+        b"PreferedAngleZ": (0.0, "p_double", False),
+        b"LookAtProperty": (None, "p_object", False),
+        b"UpVectorProperty": (None, "p_object", False),
+        b"Show": (True, "p_bool", False),
+        b"NegativePercentShapeSupport": (True, "p_bool", False),
+        b"DefaultAttributeIndex": (-1, "p_integer", False),
+        b"Freeze": (False, "p_bool", False),
+        b"LODBox": (False, "p_bool", False),
+        b"Lcl Translation": ((0.0, 0.0, 0.0), "p_lcl_translation", True),
+        b"Lcl Rotation": ((0.0, 0.0, 0.0), "p_lcl_rotation", True),
+        b"Lcl Scaling": ((1.0, 1.0, 1.0), "p_lcl_scaling", True),
+        b"Visibility": (1.0, "p_visibility", True),
+        b"Visibility Inheritance": (1, "p_visibility_inheritance", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Model", b"FbxNode", props, nbr_users, [False])
 
 
 def fbx_template_def_null(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict((
-        (b"Color", ((0.8, 0.8, 0.8), "p_color_rgb", False)),
-        (b"Size", (100.0, "p_double", False)),
-        (b"Look", (1, "p_enum", False)),  # Cross (0 is None, i.e. invisible?).
-    ))
+    props = {
+        b"Color": ((0.8, 0.8, 0.8), "p_color_rgb", False),
+        b"Size": (100.0, "p_double", False),
+        b"Look": (1, "p_enum", False),  # Cross (0 is None, i.e. invisible?).
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"NodeAttribute", b"FbxNull", props, nbr_users, [False])
@@ -210,17 +211,17 @@ def fbx_template_def_null(scene, settings, override_defaults=None, nbr_users=0):
 
 def fbx_template_def_light(scene, settings, override_defaults=None, nbr_users=0):
     gscale = settings.global_scale
-    props = OrderedDict((
-        (b"LightType", (0, "p_enum", False)),  # Point light.
-        (b"CastLight", (True, "p_bool", False)),
-        (b"Color", ((1.0, 1.0, 1.0), "p_color", True)),
-        (b"Intensity", (100.0, "p_number", True)),  # Times 100 compared to Blender values...
-        (b"DecayType", (2, "p_enum", False)),  # Quadratic.
-        (b"DecayStart", (30.0 * gscale, "p_double", False)),
-        (b"CastShadows", (True, "p_bool", False)),
-        (b"ShadowColor", ((0.0, 0.0, 0.0), "p_color", True)),
-        (b"AreaLightShape", (0, "p_enum", False)),  # Rectangle.
-    ))
+    props = {
+        b"LightType": (0, "p_enum", False),  # Point light.
+        b"CastLight": (True, "p_bool", False),
+        b"Color": ((1.0, 1.0, 1.0), "p_color", True),
+        b"Intensity": (100.0, "p_number", True),  # Times 100 compared to Blender values...
+        b"DecayType": (2, "p_enum", False),  # Quadratic.
+        b"DecayStart": (30.0 * gscale, "p_double", False),
+        b"CastShadows": (True, "p_bool", False),
+        b"ShadowColor": ((0.0, 0.0, 0.0), "p_color", True),
+        b"AreaLightShape": (0, "p_enum", False),  # Rectangle.
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"NodeAttribute", b"FbxLight", props, nbr_users, [False])
@@ -228,137 +229,137 @@ def fbx_template_def_light(scene, settings, override_defaults=None, nbr_users=0)
 
 def fbx_template_def_camera(scene, settings, override_defaults=None, nbr_users=0):
     r = scene.render
-    props = OrderedDict((
-        (b"Color", ((0.8, 0.8, 0.8), "p_color_rgb", False)),
-        (b"Position", ((0.0, 0.0, -50.0), "p_vector", True)),
-        (b"UpVector", ((0.0, 1.0, 0.0), "p_vector", True)),
-        (b"InterestPosition", ((0.0, 0.0, 0.0), "p_vector", True)),
-        (b"Roll", (0.0, "p_roll", True)),
-        (b"OpticalCenterX", (0.0, "p_opticalcenterx", True)),
-        (b"OpticalCenterY", (0.0, "p_opticalcentery", True)),
-        (b"BackgroundColor", ((0.63, 0.63, 0.63), "p_color", True)),
-        (b"TurnTable", (0.0, "p_number", True)),
-        (b"DisplayTurnTableIcon", (False, "p_bool", False)),
-        (b"UseMotionBlur", (False, "p_bool", False)),
-        (b"UseRealTimeMotionBlur", (True, "p_bool", False)),
-        (b"Motion Blur Intensity", (1.0, "p_number", True)),
-        (b"AspectRatioMode", (0, "p_enum", False)),  # WindowSize.
-        (b"AspectWidth", (320.0, "p_double", False)),
-        (b"AspectHeight", (200.0, "p_double", False)),
-        (b"PixelAspectRatio", (1.0, "p_double", False)),
-        (b"FilmOffsetX", (0.0, "p_number", True)),
-        (b"FilmOffsetY", (0.0, "p_number", True)),
-        (b"FilmWidth", (0.816, "p_double", False)),
-        (b"FilmHeight", (0.612, "p_double", False)),
-        (b"FilmAspectRatio", (1.3333333333333333, "p_double", False)),
-        (b"FilmSqueezeRatio", (1.0, "p_double", False)),
-        (b"FilmFormatIndex", (0, "p_enum", False)),  # Assuming this is ApertureFormat, 0 = custom.
-        (b"PreScale", (1.0, "p_number", True)),
-        (b"FilmTranslateX", (0.0, "p_number", True)),
-        (b"FilmTranslateY", (0.0, "p_number", True)),
-        (b"FilmRollPivotX", (0.0, "p_number", True)),
-        (b"FilmRollPivotY", (0.0, "p_number", True)),
-        (b"FilmRollValue", (0.0, "p_number", True)),
-        (b"FilmRollOrder", (0, "p_enum", False)),  # 0 = rotate first (default).
-        (b"ApertureMode", (2, "p_enum", False)),  # 2 = Vertical.
-        (b"GateFit", (0, "p_enum", False)),  # 0 = no resolution gate fit.
-        (b"FieldOfView", (25.114999771118164, "p_fov", True)),
-        (b"FieldOfViewX", (40.0, "p_fov_x", True)),
-        (b"FieldOfViewY", (40.0, "p_fov_y", True)),
-        (b"FocalLength", (34.89327621672628, "p_number", True)),
-        (b"CameraFormat", (0, "p_enum", False)),  # Custom camera format.
-        (b"UseFrameColor", (False, "p_bool", False)),
-        (b"FrameColor", ((0.3, 0.3, 0.3), "p_color_rgb", False)),
-        (b"ShowName", (True, "p_bool", False)),
-        (b"ShowInfoOnMoving", (True, "p_bool", False)),
-        (b"ShowGrid", (True, "p_bool", False)),
-        (b"ShowOpticalCenter", (False, "p_bool", False)),
-        (b"ShowAzimut", (True, "p_bool", False)),
-        (b"ShowTimeCode", (False, "p_bool", False)),
-        (b"ShowAudio", (False, "p_bool", False)),
-        (b"AudioColor", ((0.0, 1.0, 0.0), "p_vector_3d", False)),  # Yep, vector3d, not corlorgb… :cry:
-        (b"NearPlane", (10.0, "p_double", False)),
-        (b"FarPlane", (4000.0, "p_double", False)),
-        (b"AutoComputeClipPanes", (False, "p_bool", False)),
-        (b"ViewCameraToLookAt", (True, "p_bool", False)),
-        (b"ViewFrustumNearFarPlane", (False, "p_bool", False)),
-        (b"ViewFrustumBackPlaneMode", (2, "p_enum", False)),  # 2 = show back plane if texture added.
-        (b"BackPlaneDistance", (4000.0, "p_number", True)),
-        (b"BackPlaneDistanceMode", (1, "p_enum", False)),  # 1 = relative to camera.
-        (b"ViewFrustumFrontPlaneMode", (2, "p_enum", False)),  # 2 = show front plane if texture added.
-        (b"FrontPlaneDistance", (10.0, "p_number", True)),
-        (b"FrontPlaneDistanceMode", (1, "p_enum", False)),  # 1 = relative to camera.
-        (b"LockMode", (False, "p_bool", False)),
-        (b"LockInterestNavigation", (False, "p_bool", False)),
+    props = {
+        b"Color": ((0.8, 0.8, 0.8), "p_color_rgb", False),
+        b"Position": ((0.0, 0.0, -50.0), "p_vector", True),
+        b"UpVector": ((0.0, 1.0, 0.0), "p_vector", True),
+        b"InterestPosition": ((0.0, 0.0, 0.0), "p_vector", True),
+        b"Roll": (0.0, "p_roll", True),
+        b"OpticalCenterX": (0.0, "p_opticalcenterx", True),
+        b"OpticalCenterY": (0.0, "p_opticalcentery", True),
+        b"BackgroundColor": ((0.63, 0.63, 0.63), "p_color", True),
+        b"TurnTable": (0.0, "p_number", True),
+        b"DisplayTurnTableIcon": (False, "p_bool", False),
+        b"UseMotionBlur": (False, "p_bool", False),
+        b"UseRealTimeMotionBlur": (True, "p_bool", False),
+        b"Motion Blur Intensity": (1.0, "p_number", True),
+        b"AspectRatioMode": (0, "p_enum", False),  # WindowSize.
+        b"AspectWidth": (320.0, "p_double", False),
+        b"AspectHeight": (200.0, "p_double", False),
+        b"PixelAspectRatio": (1.0, "p_double", False),
+        b"FilmOffsetX": (0.0, "p_number", True),
+        b"FilmOffsetY": (0.0, "p_number", True),
+        b"FilmWidth": (0.816, "p_double", False),
+        b"FilmHeight": (0.612, "p_double", False),
+        b"FilmAspectRatio": (1.3333333333333333, "p_double", False),
+        b"FilmSqueezeRatio": (1.0, "p_double", False),
+        b"FilmFormatIndex": (0, "p_enum", False),  # Assuming this is ApertureFormat, 0 = custom.
+        b"PreScale": (1.0, "p_number", True),
+        b"FilmTranslateX": (0.0, "p_number", True),
+        b"FilmTranslateY": (0.0, "p_number", True),
+        b"FilmRollPivotX": (0.0, "p_number", True),
+        b"FilmRollPivotY": (0.0, "p_number", True),
+        b"FilmRollValue": (0.0, "p_number", True),
+        b"FilmRollOrder": (0, "p_enum", False),  # 0 = rotate first (default).
+        b"ApertureMode": (2, "p_enum", False),  # 2 = Vertical.
+        b"GateFit": (0, "p_enum", False),  # 0 = no resolution gate fit.
+        b"FieldOfView": (25.114999771118164, "p_fov", True),
+        b"FieldOfViewX": (40.0, "p_fov_x", True),
+        b"FieldOfViewY": (40.0, "p_fov_y", True),
+        b"FocalLength": (34.89327621672628, "p_number", True),
+        b"CameraFormat": (0, "p_enum", False),  # Custom camera format.
+        b"UseFrameColor": (False, "p_bool", False),
+        b"FrameColor": ((0.3, 0.3, 0.3), "p_color_rgb", False),
+        b"ShowName": (True, "p_bool", False),
+        b"ShowInfoOnMoving": (True, "p_bool", False),
+        b"ShowGrid": (True, "p_bool", False),
+        b"ShowOpticalCenter": (False, "p_bool", False),
+        b"ShowAzimut": (True, "p_bool", False),
+        b"ShowTimeCode": (False, "p_bool", False),
+        b"ShowAudio": (False, "p_bool", False),
+        b"AudioColor": ((0.0, 1.0, 0.0), "p_vector_3d", False),  # Yep, vector3d, not corlorgb… :cry:
+        b"NearPlane": (10.0, "p_double", False),
+        b"FarPlane": (4000.0, "p_double", False),
+        b"AutoComputeClipPanes": (False, "p_bool", False),
+        b"ViewCameraToLookAt": (True, "p_bool", False),
+        b"ViewFrustumNearFarPlane": (False, "p_bool", False),
+        b"ViewFrustumBackPlaneMode": (2, "p_enum", False),  # 2 = show back plane if texture added.
+        b"BackPlaneDistance": (4000.0, "p_number", True),
+        b"BackPlaneDistanceMode": (1, "p_enum", False),  # 1 = relative to camera.
+        b"ViewFrustumFrontPlaneMode": (2, "p_enum", False),  # 2 = show front plane if texture added.
+        b"FrontPlaneDistance": (10.0, "p_number", True),
+        b"FrontPlaneDistanceMode": (1, "p_enum", False),  # 1 = relative to camera.
+        b"LockMode": (False, "p_bool", False),
+        b"LockInterestNavigation": (False, "p_bool", False),
         # BackPlate... properties **arggggg!**
-        (b"FitImage", (False, "p_bool", False)),
-        (b"Crop", (False, "p_bool", False)),
-        (b"Center", (True, "p_bool", False)),
-        (b"KeepRatio", (True, "p_bool", False)),
+        b"FitImage": (False, "p_bool", False),
+        b"Crop": (False, "p_bool", False),
+        b"Center": (True, "p_bool", False),
+        b"KeepRatio": (True, "p_bool", False),
         # End of BackPlate...
-        (b"BackgroundAlphaTreshold", (0.5, "p_double", False)),
-        (b"ShowBackplate", (True, "p_bool", False)),
-        (b"BackPlaneOffsetX", (0.0, "p_number", True)),
-        (b"BackPlaneOffsetY", (0.0, "p_number", True)),
-        (b"BackPlaneRotation", (0.0, "p_number", True)),
-        (b"BackPlaneScaleX", (1.0, "p_number", True)),
-        (b"BackPlaneScaleY", (1.0, "p_number", True)),
-        (b"Background Texture", (None, "p_object", False)),
-        (b"FrontPlateFitImage", (True, "p_bool", False)),
-        (b"FrontPlateCrop", (False, "p_bool", False)),
-        (b"FrontPlateCenter", (True, "p_bool", False)),
-        (b"FrontPlateKeepRatio", (True, "p_bool", False)),
-        (b"Foreground Opacity", (1.0, "p_double", False)),
-        (b"ShowFrontplate", (True, "p_bool", False)),
-        (b"FrontPlaneOffsetX", (0.0, "p_number", True)),
-        (b"FrontPlaneOffsetY", (0.0, "p_number", True)),
-        (b"FrontPlaneRotation", (0.0, "p_number", True)),
-        (b"FrontPlaneScaleX", (1.0, "p_number", True)),
-        (b"FrontPlaneScaleY", (1.0, "p_number", True)),
-        (b"Foreground Texture", (None, "p_object", False)),
-        (b"DisplaySafeArea", (False, "p_bool", False)),
-        (b"DisplaySafeAreaOnRender", (False, "p_bool", False)),
-        (b"SafeAreaDisplayStyle", (1, "p_enum", False)),  # 1 = rounded corners.
-        (b"SafeAreaAspectRatio", (1.3333333333333333, "p_double", False)),
-        (b"Use2DMagnifierZoom", (False, "p_bool", False)),
-        (b"2D Magnifier Zoom", (100.0, "p_number", True)),
-        (b"2D Magnifier X", (50.0, "p_number", True)),
-        (b"2D Magnifier Y", (50.0, "p_number", True)),
-        (b"CameraProjectionType", (0, "p_enum", False)),  # 0 = perspective, 1 = orthogonal.
-        (b"OrthoZoom", (1.0, "p_double", False)),
-        (b"UseRealTimeDOFAndAA", (False, "p_bool", False)),
-        (b"UseDepthOfField", (False, "p_bool", False)),
-        (b"FocusSource", (0, "p_enum", False)),  # 0 = camera interest, 1 = distance from camera interest.
-        (b"FocusAngle", (3.5, "p_double", False)),  # ???
-        (b"FocusDistance", (200.0, "p_double", False)),
-        (b"UseAntialiasing", (False, "p_bool", False)),
-        (b"AntialiasingIntensity", (0.77777, "p_double", False)),
-        (b"AntialiasingMethod", (0, "p_enum", False)),  # 0 = oversampling, 1 = hardware.
-        (b"UseAccumulationBuffer", (False, "p_bool", False)),
-        (b"FrameSamplingCount", (7, "p_integer", False)),
-        (b"FrameSamplingType", (1, "p_enum", False)),  # 0 = uniform, 1 = stochastic.
-    ))
+        b"BackgroundAlphaTreshold": (0.5, "p_double", False),
+        b"ShowBackplate": (True, "p_bool", False),
+        b"BackPlaneOffsetX": (0.0, "p_number", True),
+        b"BackPlaneOffsetY": (0.0, "p_number", True),
+        b"BackPlaneRotation": (0.0, "p_number", True),
+        b"BackPlaneScaleX": (1.0, "p_number", True),
+        b"BackPlaneScaleY": (1.0, "p_number", True),
+        b"Background Texture": (None, "p_object", False),
+        b"FrontPlateFitImage": (True, "p_bool", False),
+        b"FrontPlateCrop": (False, "p_bool", False),
+        b"FrontPlateCenter": (True, "p_bool", False),
+        b"FrontPlateKeepRatio": (True, "p_bool", False),
+        b"Foreground Opacity": (1.0, "p_double", False),
+        b"ShowFrontplate": (True, "p_bool", False),
+        b"FrontPlaneOffsetX": (0.0, "p_number", True),
+        b"FrontPlaneOffsetY": (0.0, "p_number", True),
+        b"FrontPlaneRotation": (0.0, "p_number", True),
+        b"FrontPlaneScaleX": (1.0, "p_number", True),
+        b"FrontPlaneScaleY": (1.0, "p_number", True),
+        b"Foreground Texture": (None, "p_object", False),
+        b"DisplaySafeArea": (False, "p_bool", False),
+        b"DisplaySafeAreaOnRender": (False, "p_bool", False),
+        b"SafeAreaDisplayStyle": (1, "p_enum", False),  # 1 = rounded corners.
+        b"SafeAreaAspectRatio": (1.3333333333333333, "p_double", False),
+        b"Use2DMagnifierZoom": (False, "p_bool", False),
+        b"2D Magnifier Zoom": (100.0, "p_number", True),
+        b"2D Magnifier X": (50.0, "p_number", True),
+        b"2D Magnifier Y": (50.0, "p_number", True),
+        b"CameraProjectionType": (0, "p_enum", False),  # 0 = perspective, 1 = orthogonal.
+        b"OrthoZoom": (1.0, "p_double", False),
+        b"UseRealTimeDOFAndAA": (False, "p_bool", False),
+        b"UseDepthOfField": (False, "p_bool", False),
+        b"FocusSource": (0, "p_enum", False),  # 0 = camera interest, 1 = distance from camera interest.
+        b"FocusAngle": (3.5, "p_double", False),  # ???
+        b"FocusDistance": (200.0, "p_double", False),
+        b"UseAntialiasing": (False, "p_bool", False),
+        b"AntialiasingIntensity": (0.77777, "p_double", False),
+        b"AntialiasingMethod": (0, "p_enum", False),  # 0 = oversampling, 1 = hardware.
+        b"UseAccumulationBuffer": (False, "p_bool", False),
+        b"FrameSamplingCount": (7, "p_integer", False),
+        b"FrameSamplingType": (1, "p_enum", False),  # 0 = uniform, 1 = stochastic.
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"NodeAttribute", b"FbxCamera", props, nbr_users, [False])
 
 
 def fbx_template_def_bone(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict()
+    props = {}
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"NodeAttribute", b"LimbNode", props, nbr_users, [False])
 
 
 def fbx_template_def_geometry(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict((
-        (b"Color", ((0.8, 0.8, 0.8), "p_color_rgb", False)),
-        (b"BBoxMin", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"BBoxMax", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"Primary Visibility", (True, "p_bool", False)),
-        (b"Casts Shadows", (True, "p_bool", False)),
-        (b"Receive Shadows", (True, "p_bool", False)),
-    ))
+    props = {
+        b"Color": ((0.8, 0.8, 0.8), "p_color_rgb", False),
+        b"BBoxMin": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"BBoxMax": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"Primary Visibility": (True, "p_bool", False),
+        b"Casts Shadows": (True, "p_bool", False),
+        b"Receive Shadows": (True, "p_bool", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Geometry", b"FbxMesh", props, nbr_users, [False])
@@ -366,37 +367,37 @@ def fbx_template_def_geometry(scene, settings, override_defaults=None, nbr_users
 
 def fbx_template_def_material(scene, settings, override_defaults=None, nbr_users=0):
     # WIP...
-    props = OrderedDict((
-        (b"ShadingModel", ("Phong", "p_string", False)),
-        (b"MultiLayer", (False, "p_bool", False)),
+    props = {
+        b"ShadingModel": ("Phong", "p_string", False),
+        b"MultiLayer": (False, "p_bool", False),
         # Lambert-specific.
-        (b"EmissiveColor", ((0.0, 0.0, 0.0), "p_color", True)),
-        (b"EmissiveFactor", (1.0, "p_number", True)),
-        (b"AmbientColor", ((0.2, 0.2, 0.2), "p_color", True)),
-        (b"AmbientFactor", (1.0, "p_number", True)),
-        (b"DiffuseColor", ((0.8, 0.8, 0.8), "p_color", True)),
-        (b"DiffuseFactor", (1.0, "p_number", True)),
-        (b"TransparentColor", ((0.0, 0.0, 0.0), "p_color", True)),
-        (b"TransparencyFactor", (0.0, "p_number", True)),
-        (b"Opacity", (1.0, "p_number", True)),
-        (b"NormalMap", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"Bump", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"BumpFactor", (1.0, "p_double", False)),
-        (b"DisplacementColor", ((0.0, 0.0, 0.0), "p_color_rgb", False)),
-        (b"DisplacementFactor", (1.0, "p_double", False)),
-        (b"VectorDisplacementColor", ((0.0, 0.0, 0.0), "p_color_rgb", False)),
-        (b"VectorDisplacementFactor", (1.0, "p_double", False)),
+        b"EmissiveColor": ((0.0, 0.0, 0.0), "p_color", True),
+        b"EmissiveFactor": (1.0, "p_number", True),
+        b"AmbientColor": ((0.2, 0.2, 0.2), "p_color", True),
+        b"AmbientFactor": (1.0, "p_number", True),
+        b"DiffuseColor": ((0.8, 0.8, 0.8), "p_color", True),
+        b"DiffuseFactor": (1.0, "p_number", True),
+        b"TransparentColor": ((0.0, 0.0, 0.0), "p_color", True),
+        b"TransparencyFactor": (0.0, "p_number", True),
+        b"Opacity": (1.0, "p_number", True),
+        b"NormalMap": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"BumpFactor": (1.0, "p_double", False),
+        b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb", False),
+        b"DisplacementFactor": (1.0, "p_double", False),
+        b"VectorDisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb", False),
+        b"VectorDisplacementFactor": (1.0, "p_double", False),
         # Phong-specific.
-        (b"SpecularColor", ((0.2, 0.2, 0.2), "p_color", True)),
-        (b"SpecularFactor", (1.0, "p_number", True)),
+        b"SpecularColor": ((0.2, 0.2, 0.2), "p_color", True),
+        b"SpecularFactor": (1.0, "p_number", True),
         # Not sure about the name, importer uses this (but ShininessExponent for tex prop name!)
         # And in fbx exported by sdk, you have one in template, the other in actual material!!! :/
         # For now, using both.
-        (b"Shininess", (20.0, "p_number", True)),
-        (b"ShininessExponent", (20.0, "p_number", True)),
-        (b"ReflectionColor", ((0.0, 0.0, 0.0), "p_color", True)),
-        (b"ReflectionFactor", (1.0, "p_number", True)),
-    ))
+        b"Shininess": (20.0, "p_number", True),
+        b"ShininessExponent": (20.0, "p_number", True),
+        b"ReflectionColor": ((0.0, 0.0, 0.0), "p_color", True),
+        b"ReflectionFactor": (1.0, "p_number", True),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Material", b"FbxSurfacePhong", props, nbr_users, [False])
@@ -405,26 +406,26 @@ def fbx_template_def_material(scene, settings, override_defaults=None, nbr_users
 def fbx_template_def_texture_file(scene, settings, override_defaults=None, nbr_users=0):
     # WIP...
     # XXX Not sure about all names!
-    props = OrderedDict((
-        (b"TextureTypeUse", (0, "p_enum", False)),  # Standard.
-        (b"AlphaSource", (2, "p_enum", False)),  # Black (i.e. texture's alpha), XXX name guessed!.
-        (b"Texture alpha", (1.0, "p_double", False)),
-        (b"PremultiplyAlpha", (True, "p_bool", False)),
-        (b"CurrentTextureBlendMode", (1, "p_enum", False)),  # Additive...
-        (b"CurrentMappingType", (0, "p_enum", False)),  # UV.
-        (b"UVSet", ("default", "p_string", False)),  # UVMap name.
-        (b"WrapModeU", (0, "p_enum", False)),  # Repeat.
-        (b"WrapModeV", (0, "p_enum", False)),  # Repeat.
-        (b"UVSwap", (False, "p_bool", False)),
-        (b"Translation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"Rotation", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"Scaling", ((1.0, 1.0, 1.0), "p_vector_3d", False)),
-        (b"TextureRotationPivot", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
-        (b"TextureScalingPivot", ((0.0, 0.0, 0.0), "p_vector_3d", False)),
+    props = {
+        b"TextureTypeUse": (0, "p_enum", False),  # Standard.
+        b"AlphaSource": (2, "p_enum", False),  # Black (i.e. texture's alpha), XXX name guessed!.
+        b"Texture alpha": (1.0, "p_double", False),
+        b"PremultiplyAlpha": (True, "p_bool", False),
+        b"CurrentTextureBlendMode": (1, "p_enum", False),  # Additive...
+        b"CurrentMappingType": (0, "p_enum", False),  # UV.
+        b"UVSet": ("default", "p_string", False),  # UVMap name.
+        b"WrapModeU": (0, "p_enum", False),  # Repeat.
+        b"WrapModeV": (0, "p_enum", False),  # Repeat.
+        b"UVSwap": (False, "p_bool", False),
+        b"Translation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"Rotation": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"Scaling": ((1.0, 1.0, 1.0), "p_vector_3d", False),
+        b"TextureRotationPivot": ((0.0, 0.0, 0.0), "p_vector_3d", False),
+        b"TextureScalingPivot": ((0.0, 0.0, 0.0), "p_vector_3d", False),
         # Not sure about those two...
-        (b"UseMaterial", (False, "p_bool", False)),
-        (b"UseMipMap", (False, "p_bool", False)),
-    ))
+        b"UseMaterial": (False, "p_bool", False),
+        b"UseMipMap": (False, "p_bool", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Texture", b"FbxFileTexture", props, nbr_users, [False])
@@ -432,86 +433,86 @@ def fbx_template_def_texture_file(scene, settings, override_defaults=None, nbr_u
 
 def fbx_template_def_video(scene, settings, override_defaults=None, nbr_users=0):
     # WIP...
-    props = OrderedDict((
+    props = {
         # All pictures.
-        (b"Width", (0, "p_integer", False)),
-        (b"Height", (0, "p_integer", False)),
-        (b"Path", ("", "p_string_url", False)),
-        (b"AccessMode", (0, "p_enum", False)),  # Disk (0=Disk, 1=Mem, 2=DiskAsync).
+        b"Width": (0, "p_integer", False),
+        b"Height": (0, "p_integer", False),
+        b"Path": ("", "p_string_url", False),
+        b"AccessMode": (0, "p_enum", False),  # Disk (0=Disk, 1=Mem, 2=DiskAsync).
         # All videos.
-        (b"StartFrame", (0, "p_integer", False)),
-        (b"StopFrame", (0, "p_integer", False)),
-        (b"Offset", (0, "p_timestamp", False)),
-        (b"PlaySpeed", (0.0, "p_double", False)),
-        (b"FreeRunning", (False, "p_bool", False)),
-        (b"Loop", (False, "p_bool", False)),
-        (b"InterlaceMode", (0, "p_enum", False)),  # None, i.e. progressive.
+        b"StartFrame": (0, "p_integer", False),
+        b"StopFrame": (0, "p_integer", False),
+        b"Offset": (0, "p_timestamp", False),
+        b"PlaySpeed": (0.0, "p_double", False),
+        b"FreeRunning": (False, "p_bool", False),
+        b"Loop": (False, "p_bool", False),
+        b"InterlaceMode": (0, "p_enum", False),  # None, i.e. progressive.
         # Image sequences.
-        (b"ImageSequence", (False, "p_bool", False)),
-        (b"ImageSequenceOffset", (0, "p_integer", False)),
-        (b"FrameRate", (0.0, "p_double", False)),
-        (b"LastFrame", (0, "p_integer", False)),
-    ))
+        b"ImageSequence": (False, "p_bool", False),
+        b"ImageSequenceOffset": (0, "p_integer", False),
+        b"FrameRate": (0.0, "p_double", False),
+        b"LastFrame": (0, "p_integer", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Video", b"FbxVideo", props, nbr_users, [False])
 
 
 def fbx_template_def_pose(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict()
+    props = {}
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Pose", b"", props, nbr_users, [False])
 
 
 def fbx_template_def_deformer(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict()
+    props = {}
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"Deformer", b"", props, nbr_users, [False])
 
 
 def fbx_template_def_animstack(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict((
-        (b"Description", ("", "p_string", False)),
-        (b"LocalStart", (0, "p_timestamp", False)),
-        (b"LocalStop", (0, "p_timestamp", False)),
-        (b"ReferenceStart", (0, "p_timestamp", False)),
-        (b"ReferenceStop", (0, "p_timestamp", False)),
-    ))
+    props = {
+        b"Description": ("", "p_string", False),
+        b"LocalStart": (0, "p_timestamp", False),
+        b"LocalStop": (0, "p_timestamp", False),
+        b"ReferenceStart": (0, "p_timestamp", False),
+        b"ReferenceStop": (0, "p_timestamp", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"AnimationStack", b"FbxAnimStack", props, nbr_users, [False])
 
 
 def fbx_template_def_animlayer(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict((
-        (b"Weight", (100.0, "p_number", True)),
-        (b"Mute", (False, "p_bool", False)),
-        (b"Solo", (False, "p_bool", False)),
-        (b"Lock", (False, "p_bool", False)),
-        (b"Color", ((0.8, 0.8, 0.8), "p_color_rgb", False)),
-        (b"BlendMode", (0, "p_enum", False)),
-        (b"RotationAccumulationMode", (0, "p_enum", False)),
-        (b"ScaleAccumulationMode", (0, "p_enum", False)),
-        (b"BlendModeBypass", (0, "p_ulonglong", False)),
-    ))
+    props = {
+        b"Weight": (100.0, "p_number", True),
+        b"Mute": (False, "p_bool", False),
+        b"Solo": (False, "p_bool", False),
+        b"Lock": (False, "p_bool", False),
+        b"Color": ((0.8, 0.8, 0.8), "p_color_rgb", False),
+        b"BlendMode": (0, "p_enum", False),
+        b"RotationAccumulationMode": (0, "p_enum", False),
+        b"ScaleAccumulationMode": (0, "p_enum", False),
+        b"BlendModeBypass": (0, "p_ulonglong", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"AnimationLayer", b"FbxAnimLayer", props, nbr_users, [False])
 
 
 def fbx_template_def_animcurvenode(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict((
-        (FBX_ANIM_PROPSGROUP_NAME.encode(), (None, "p_compound", False)),
-    ))
+    props = {
+        FBX_ANIM_PROPSGROUP_NAME.encode(): (None, "p_compound", False),
+    }
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"AnimationCurveNode", b"FbxAnimCurveNode", props, nbr_users, [False])
 
 
 def fbx_template_def_animcurve(scene, settings, override_defaults=None, nbr_users=0):
-    props = OrderedDict()
+    props = {}
     if override_defaults is not None:
         props.update(override_defaults)
     return FBXTemplate(b"AnimationCurve", b"", props, nbr_users, [False])
@@ -571,13 +572,13 @@ def fbx_data_empty_elements(root, empty, scene_data):
     # No custom properties, already saved with object (Model).
 
 
-def fbx_data_lamp_elements(root, lamp, scene_data):
+def fbx_data_light_elements(root, lamp, scene_data):
     """
     Write the Lamp data block.
     """
     gscale = scene_data.settings.global_scale
 
-    lamp_key = scene_data.data_lamps[lamp]
+    light_key = scene_data.data_lights[lamp]
     do_light = True
     decay_type = FBX_LIGHT_DECAY_TYPES['CONSTANT']
     do_shadow = False
@@ -585,11 +586,11 @@ def fbx_data_lamp_elements(root, lamp, scene_data):
     if lamp.type not in {'HEMI'}:
         if lamp.type not in {'SUN', 'AREA'}:
             decay_type = FBX_LIGHT_DECAY_TYPES[lamp.falloff_type]
-        do_light = (not lamp.use_only_shadow) and (lamp.use_specular or lamp.use_diffuse)
-        do_shadow = lamp.shadow_method not in {'NOSHADOW'}
+        do_light = True
+        do_shadow = lamp.use_shadow
         shadow_color = lamp.shadow_color
 
-    light = elem_data_single_int64(root, b"NodeAttribute", get_fbx_uuid_from_key(lamp_key))
+    light = elem_data_single_int64(root, b"NodeAttribute", get_fbx_uuid_from_key(light_key))
     light.add_string(fbx_name_class(lamp.name.encode(), b"NodeAttribute"))
     light.add_string(b"Light")
 
@@ -629,8 +630,8 @@ def fbx_data_camera_elements(root, cam_obj, scene_data):
     # Real data now, good old camera!
     # Object transform info.
     loc, rot, scale, matrix, matrix_rot = cam_obj.fbx_object_tx(scene_data)
-    up = matrix_rot * Vector((0.0, 1.0, 0.0))
-    to = matrix_rot * Vector((0.0, 0.0, -1.0))
+    up = matrix_rot @ Vector((0.0, 1.0, 0.0))
+    to = matrix_rot @ Vector((0.0, 0.0, -1.0))
     # Render settings.
     # TODO We could export much more...
     render = scene_data.scene.render
@@ -1025,7 +1026,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
                 uv_names = [uvlayer.name for uvlayer in me.uv_layers]
                 for name in uv_names:
-                    me.calc_tangents(name)
+                    me.calc_tangents(uvmap=name)
                 for idx, uvlayer in enumerate(me.uv_layers):
                     name = uvlayer.name
                     # Loop bitangents (aka binormals).
@@ -1111,38 +1112,39 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         del _uvtuples_gen
 
     # Face's materials.
-    me_fbxmats_idx = scene_data.mesh_mat_indices.get(me)
-    if me_fbxmats_idx is not None:
-        me_blmats = me.materials
-        if me_fbxmats_idx and me_blmats:
-            lay_mat = elem_data_single_int32(geom, b"LayerElementMaterial", 0)
-            elem_data_single_int32(lay_mat, b"Version", FBX_GEOMETRY_MATERIAL_VERSION)
-            elem_data_single_string(lay_mat, b"Name", b"")
-            nbr_mats = len(me_fbxmats_idx)
+    me_fbxmaterials_idx = scene_data.mesh_material_indices.get(me)
+    if me_fbxmaterials_idx is not None:
+        me_blmaterials = me.materials
+        if me_fbxmaterials_idx and me_blmaterials:
+            lay_ma = elem_data_single_int32(geom, b"LayerElementMaterial", 0)
+            elem_data_single_int32(lay_ma, b"Version", FBX_GEOMETRY_MATERIAL_VERSION)
+            elem_data_single_string(lay_ma, b"Name", b"")
+            nbr_mats = len(me_fbxmaterials_idx)
             if nbr_mats > 1:
                 t_pm = array.array(data_types.ARRAY_INT32, (0,)) * len(me.polygons)
                 me.polygons.foreach_get("material_index", t_pm)
 
                 # We have to validate mat indices, and map them to FBX indices.
                 # Note a mat might not be in me_fbxmats_idx (e.g. node mats are ignored).
-                blmats_to_fbxmats_idxs = [me_fbxmats_idx[m] for m in me_blmats if m in me_fbxmats_idx]
-                mat_idx_limit = len(blmats_to_fbxmats_idxs)
-                def_mat = blmats_to_fbxmats_idxs[0]
-                _gen = (blmats_to_fbxmats_idxs[m] if m < mat_idx_limit else def_mat for m in t_pm)
+                blmaterials_to_fbxmaterials_idxs = [me_fbxmaterials_idx[m]
+                                                    for m in me_blmaterials if m in me_fbxmaterials_idx]
+                ma_idx_limit = len(blmaterials_to_fbxmaterials_idxs)
+                def_ma = blmaterials_to_fbxmaterials_idxs[0]
+                _gen = (blmaterials_to_fbxmaterials_idxs[m] if m < ma_idx_limit else def_ma for m in t_pm)
                 t_pm = array.array(data_types.ARRAY_INT32, _gen)
 
-                elem_data_single_string(lay_mat, b"MappingInformationType", b"ByPolygon")
+                elem_data_single_string(lay_ma, b"MappingInformationType", b"ByPolygon")
                 # XXX Logically, should be "Direct" reference type, since we do not have any index array, and have one
                 #     value per polygon...
                 #     But looks like FBX expects it to be IndexToDirect here (maybe because materials are already
                 #     indices??? *sigh*).
-                elem_data_single_string(lay_mat, b"ReferenceInformationType", b"IndexToDirect")
-                elem_data_single_int32_array(lay_mat, b"Materials", t_pm)
+                elem_data_single_string(lay_ma, b"ReferenceInformationType", b"IndexToDirect")
+                elem_data_single_int32_array(lay_ma, b"Materials", t_pm)
                 del t_pm
             else:
-                elem_data_single_string(lay_mat, b"MappingInformationType", b"AllSame")
-                elem_data_single_string(lay_mat, b"ReferenceInformationType", b"IndexToDirect")
-                elem_data_single_int32_array(lay_mat, b"Materials", [0])
+                elem_data_single_string(lay_ma, b"MappingInformationType", b"AllSame")
+                elem_data_single_string(lay_ma, b"ReferenceInformationType", b"IndexToDirect")
+                elem_data_single_int32_array(lay_ma, b"Materials", [0])
 
     # And the "layer TOC"...
 
@@ -1171,10 +1173,10 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
         lay_uv = elem_empty(layer, b"LayerElement")
         elem_data_single_string(lay_uv, b"Type", b"LayerElementUV")
         elem_data_single_int32(lay_uv, b"TypedIndex", 0)
-    if me_fbxmats_idx is not None:
-        lay_mat = elem_empty(layer, b"LayerElement")
-        elem_data_single_string(lay_mat, b"Type", b"LayerElementMaterial")
-        elem_data_single_int32(lay_mat, b"TypedIndex", 0)
+    if me_fbxmaterials_idx is not None:
+        lay_ma = elem_empty(layer, b"LayerElement")
+        elem_data_single_string(lay_ma, b"Type", b"LayerElementMaterial")
+        elem_data_single_int32(lay_ma, b"TypedIndex", 0)
 
     # Add other uv and/or vcol layers...
     for vcolidx, uvidx, tspaceidx in zip_longest(range(1, vcolnumber), range(1, uvnumber), range(1, tspacenumber),
@@ -1204,76 +1206,70 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     done_meshes.add(me_key)
 
 
-def check_skip_material(mat):
-    """Simple helper to check whether we actually support exporting that material or not"""
-    return mat.type not in {'SURFACE'}
-
-
-def fbx_data_material_elements(root, mat, scene_data):
+def fbx_data_material_elements(root, ma, scene_data):
     """
     Write the Material data block.
     """
+
     ambient_color = (0.0, 0.0, 0.0)
     if scene_data.data_world:
-        ambient_color = next(iter(scene_data.data_world.keys())).ambient_color
+        ambient_color = next(iter(scene_data.data_world.keys())).color
 
-    mat_key, _objs = scene_data.data_materials[mat]
-    skip_mat = check_skip_material(mat)
-    node_mat = mat.use_nodes
-    mat_type = b"Phong"
-    # Approximation...
-    if not skip_mat and not node_mat and mat.specular_shader not in {'COOKTORR', 'PHONG', 'BLINN'}:
-        mat_type = b"Lambert"
+    ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma, is_readonly=True)
+    ma_key, _objs = scene_data.data_materials[ma]
+    ma_type = b"Phong"
 
-    fbx_mat = elem_data_single_int64(root, b"Material", get_fbx_uuid_from_key(mat_key))
-    fbx_mat.add_string(fbx_name_class(mat.name.encode(), b"Material"))
-    fbx_mat.add_string(b"")
+    fbx_ma = elem_data_single_int64(root, b"Material", get_fbx_uuid_from_key(ma_key))
+    fbx_ma.add_string(fbx_name_class(ma.name.encode(), b"Material"))
+    fbx_ma.add_string(b"")
 
-    elem_data_single_int32(fbx_mat, b"Version", FBX_MATERIAL_VERSION)
+    elem_data_single_int32(fbx_ma, b"Version", FBX_MATERIAL_VERSION)
     # those are not yet properties, it seems...
-    elem_data_single_string(fbx_mat, b"ShadingModel", mat_type)
-    elem_data_single_int32(fbx_mat, b"MultiLayer", 0)  # Should be bool...
+    elem_data_single_string(fbx_ma, b"ShadingModel", ma_type)
+    elem_data_single_int32(fbx_ma, b"MultiLayer", 0)  # Should be bool...
 
     tmpl = elem_props_template_init(scene_data.templates, b"Material")
-    props = elem_properties(fbx_mat)
+    props = elem_properties(fbx_ma)
 
-    if not skip_mat:
-        elem_props_template_set(tmpl, props, "p_string", b"ShadingModel", mat_type.decode())
-        elem_props_template_set(tmpl, props, "p_color", b"DiffuseColor", mat.diffuse_color)
-        elem_props_template_set(tmpl, props, "p_number", b"DiffuseFactor", mat.diffuse_intensity)
-        if not node_mat:
-            elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", mat.diffuse_color)
-            elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", mat.emit)
-            elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
-            elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", mat.ambient)
-            elem_props_template_set(tmpl, props, "p_color", b"TransparentColor",
-                                    mat.diffuse_color if mat.use_transparency else (1.0, 1.0, 1.0))
-            elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor",
-                                    1.0 - mat.alpha if mat.use_transparency else 0.0)
-            elem_props_template_set(tmpl, props, "p_number", b"Opacity", mat.alpha if mat.use_transparency else 1.0)
-            elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
-            # Not sure about those...
-            """
-            b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
-            b"BumpFactor": (1.0, "p_double"),
-            b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
-            b"DisplacementFactor": (0.0, "p_double"),
-            """
-            if mat_type == b"Phong":
-                elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", mat.specular_color)
-                elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", mat.specular_intensity / 2.0)
-                # See Material template about those two!
-                elem_props_template_set(tmpl, props, "p_number", b"Shininess", (mat.specular_hardness - 1.0) / 5.10)
-                elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", (mat.specular_hardness - 1.0) / 5.10)
-                elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", mat.mirror_color)
-                elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor",
-                                        mat.raytrace_mirror.reflect_factor if mat.raytrace_mirror.use else 0.0)
+    elem_props_template_set(tmpl, props, "p_string", b"ShadingModel", ma_type.decode())
+    elem_props_template_set(tmpl, props, "p_color", b"DiffuseColor", ma_wrap.base_color)
+    # Not in Principled BSDF, so assuming always 1
+    elem_props_template_set(tmpl, props, "p_number", b"DiffuseFactor", 1.0)
+    # Not in Principled BSDF, so assuming always 0
+    elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", ma_wrap.base_color)
+    elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", 0.0)
+    # Not in Principled BSDF, so assuming always 0
+    elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
+    elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", 0.0)
+    elem_props_template_set(tmpl, props, "p_color", b"TransparentColor", ma_wrap.base_color)
+    elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor", ma_wrap.transmission)
+    elem_props_template_set(tmpl, props, "p_number", b"Opacity", 1.0 - ma_wrap.transmission)
+    elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
+    # Not sure about those...
+    """
+    b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
+    b"BumpFactor": (1.0, "p_double"),
+    b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
+    b"DisplacementFactor": (0.0, "p_double"),
+    """
+    # TODO: use specular tint?
+    elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", ma_wrap.base_color)
+    elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", ma_wrap.specular / 2.0)
+    # See Material template about those two!
+    # XXX Totally empirical conversion, trying to adapt it
+    #     (from 0.0 - 100.0 FBX shininess range to 1.0 - 0.0 Principled BSDF range)...
+    shininess = (1.0 - ma_wrap.roughness) * 10
+    shininess *= shininess
+    elem_props_template_set(tmpl, props, "p_number", b"Shininess", shininess)
+    elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", shininess)
+    elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", ma_wrap.base_color)
+    elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor", ma_wrap.metallic)
 
     elem_props_template_finalize(tmpl, props)
 
     # Custom properties.
     if scene_data.settings.use_custom_props:
-        fbx_data_element_custom_properties(props, mat)
+        fbx_data_element_custom_properties(props, ma)
 
 
 def _gen_vid_path(img, scene_data):
@@ -1284,7 +1280,7 @@ def _gen_vid_path(img, scene_data):
     return fname_abs, fname_rel
 
 
-def fbx_data_texture_file_elements(root, tex, scene_data):
+def fbx_data_texture_file_elements(root, blender_tex_key, scene_data):
     """
     Write the (file) Texture data block.
     """
@@ -1292,45 +1288,50 @@ def fbx_data_texture_file_elements(root, tex, scene_data):
     #     Textures do not seem to use properties as much as they could.
     #     For now assuming most logical and simple stuff.
 
-    tex_key, _mats = scene_data.data_textures[tex]
-    img = tex.texture.image
+    ma, sock_name = blender_tex_key
+    ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma, is_readonly=True)
+    tex_key, _fbx_prop = scene_data.data_textures[blender_tex_key]
+    tex = getattr(ma_wrap, sock_name)
+    img = tex.image
     fname_abs, fname_rel = _gen_vid_path(img, scene_data)
 
     fbx_tex = elem_data_single_int64(root, b"Texture", get_fbx_uuid_from_key(tex_key))
-    fbx_tex.add_string(fbx_name_class(tex.name.encode(), b"Texture"))
+    fbx_tex.add_string(fbx_name_class(sock_name.encode(), b"Texture"))
     fbx_tex.add_string(b"")
 
     elem_data_single_string(fbx_tex, b"Type", b"TextureVideoClip")
     elem_data_single_int32(fbx_tex, b"Version", FBX_TEXTURE_VERSION)
-    elem_data_single_string(fbx_tex, b"TextureName", fbx_name_class(tex.name.encode(), b"Texture"))
+    elem_data_single_string(fbx_tex, b"TextureName", fbx_name_class(sock_name.encode(), b"Texture"))
     elem_data_single_string(fbx_tex, b"Media", fbx_name_class(img.name.encode(), b"Video"))
     elem_data_single_string_unicode(fbx_tex, b"FileName", fname_abs)
     elem_data_single_string_unicode(fbx_tex, b"RelativeFilename", fname_rel)
 
     alpha_source = 0  # None
     if img.use_alpha:
-        if tex.texture.use_calculate_alpha:
-            alpha_source = 1  # RGBIntensity as alpha.
-        else:
-            alpha_source = 2  # Black, i.e. alpha channel.
+        # ~ if tex.texture.use_calculate_alpha:
+            # ~ alpha_source = 1  # RGBIntensity as alpha.
+        # ~ else:
+            # ~ alpha_source = 2  # Black, i.e. alpha channel.
+        alpha_source = 2  # Black, i.e. alpha channel.
     # BlendMode not useful for now, only affects layered textures afaics.
     mapping = 0  # UV.
     uvset = None
-    if tex.texture_coords in {'ORCO'}:  # XXX Others?
-        if tex.mapping in {'FLAT'}:
+    if tex.texcoords == 'ORCO':  # XXX Others?
+        if tex.projection == 'FLAT':
             mapping = 1  # Planar
-        elif tex.mapping in {'CUBE'}:
+        elif tex.projection == 'CUBE':
             mapping = 4  # Box
-        elif tex.mapping in {'TUBE'}:
+        elif tex.projection == 'TUBE':
             mapping = 3  # Cylindrical
-        elif tex.mapping in {'SPHERE'}:
+        elif tex.projection == 'SPHERE':
             mapping = 2  # Spherical
-    elif tex.texture_coords in {'UV'}:
+    elif tex.texcoords == 'UV':
         mapping = 0  # UV
         # Yuck, UVs are linked by mere names it seems... :/
-        uvset = tex.uv_layer
+        # XXX TODO how to get that now???
+        # uvset = tex.uv_layer
     wrap_mode = 1  # Clamp
-    if tex.texture.extension in {'REPEAT'}:
+    if tex.extension == 'REPEAT':
         wrap_mode = 0  # Repeat
 
     tmpl = elem_props_template_init(scene_data.templates, b"TextureFile")
@@ -1343,16 +1344,15 @@ def fbx_data_texture_file_elements(root, tex, scene_data):
         elem_props_template_set(tmpl, props, "p_string", b"UVSet", uvset)
     elem_props_template_set(tmpl, props, "p_enum", b"WrapModeU", wrap_mode)
     elem_props_template_set(tmpl, props, "p_enum", b"WrapModeV", wrap_mode)
-    elem_props_template_set(tmpl, props, "p_vector_3d", b"Translation", tex.offset)
-    elem_props_template_set(tmpl, props, "p_vector_3d", b"Scaling", tex.scale)
+    elem_props_template_set(tmpl, props, "p_vector_3d", b"Translation", tex.translation)
+    elem_props_template_set(tmpl, props, "p_vector_3d", b"Rotation", (-r for r in tex.rotation))
+    elem_props_template_set(tmpl, props, "p_vector_3d", b"Scaling", (((1.0 / s) if s != 0.0 else 1.0) for s in tex.scale))
     # UseMaterial should always be ON imho.
     elem_props_template_set(tmpl, props, "p_bool", b"UseMaterial", True)
-    elem_props_template_set(tmpl, props, "p_bool", b"UseMipMap", tex.texture.use_mipmap)
+    elem_props_template_set(tmpl, props, "p_bool", b"UseMipMap", False)
     elem_props_template_finalize(tmpl, props)
 
-    # Custom properties.
-    if scene_data.settings.use_custom_props:
-        fbx_data_element_custom_properties(props, tex.texture)
+    # No custom properties, since that's not a data-block anymore.
 
 
 def fbx_data_video_elements(root, vid, scene_data):
@@ -1462,7 +1462,7 @@ def fbx_data_armature_elements(root, arm_obj, scene_data):
             bo_vg_idx = {bo_obj.bdata.name: ob.vertex_groups[bo_obj.bdata.name].index
                          for bo_obj in clusters.keys() if bo_obj.bdata.name in ob.vertex_groups}
             valid_idxs = set(bo_vg_idx.values())
-            vgroups = {vg.index: OrderedDict() for vg in ob.vertex_groups}
+            vgroups = {vg.index: {} for vg in ob.vertex_groups}
             verts_vgroups = (sorted(((vg.group, vg.weight) for vg in v.groups if vg.weight and vg.group in valid_idxs),
                                     key=lambda e: e[1], reverse=True)
                              for v in me.vertices)
@@ -1497,7 +1497,7 @@ def fbx_data_armature_elements(root, arm_obj, scene_data):
                 #          http://area.autodesk.com/forum/autodesk-fbx/fbx-sdk/why-the-values-return-
                 #                 by-fbxcluster-gettransformmatrix-x-not-same-with-the-value-in-ascii-fbx-file/
                 elem_data_single_float64_array(fbx_clstr, b"Transform",
-                                               matrix4_to_array(mat_world_bones[bo_obj].inverted_safe() * mat_world_obj))
+                                               matrix4_to_array(mat_world_bones[bo_obj].inverted_safe() @ mat_world_obj))
                 elem_data_single_float64_array(fbx_clstr, b"TransformLink", matrix4_to_array(mat_world_bones[bo_obj]))
                 elem_data_single_float64_array(fbx_clstr, b"TransformAssociateModel", matrix4_to_array(mat_world_arm))
 
@@ -1570,7 +1570,7 @@ def fbx_data_object_elements(root, ob_obj, scene_data):
             obj_type = b"Null"
     elif (ob_obj.type in BLENDER_OBJECT_TYPES_MESHLIKE):
         obj_type = b"Mesh"
-    elif (ob_obj.type == 'LAMP'):
+    elif (ob_obj.type == 'LIGHT'):
         obj_type = b"Light"
     elif (ob_obj.type == 'CAMERA'):
         obj_type = b"Camera"
@@ -1717,46 +1717,30 @@ def fbx_data_animation_elements(root, scene_data):
 
 # ##### Top-level FBX data container. #####
 
-def fbx_mat_properties_from_texture(tex):
-    """
-    Returns a set of FBX metarial properties that are affected by the given texture.
-    Quite obviously, this is a fuzzy and far-from-perfect mapping! Amounts of influence are completely lost, e.g.
-    Note tex is actually expected to be a texture slot.
-    """
-    # Mapping Blender -> FBX (blend_use_name, blend_fact_name, fbx_name).
-    blend_to_fbx = (
-        # Lambert & Phong...
-        ("diffuse", "diffuse", b"DiffuseFactor"),
-        ("color_diffuse", "diffuse_color", b"DiffuseColor"),
-        ("alpha", "alpha", b"TransparencyFactor"),
-        ("diffuse", "diffuse", b"TransparentColor"),  # Uses diffuse color in Blender!
-        ("emit", "emit", b"EmissiveFactor"),
-        ("diffuse", "diffuse", b"EmissiveColor"),  # Uses diffuse color in Blender!
-        ("ambient", "ambient", b"AmbientFactor"),
-        # ("", "", b"AmbientColor"),  # World stuff in Blender, for now ignore...
-        ("normal", "normal", b"NormalMap"),
-        # Note: unsure about those... :/
-        # ("", "", b"Bump"),
-        # ("", "", b"BumpFactor"),
-        # ("", "", b"DisplacementColor"),
-        # ("", "", b"DisplacementFactor"),
-        # Phong only.
-        ("specular", "specular", b"SpecularFactor"),
-        ("color_spec", "specular_color", b"SpecularColor"),
-        # See Material template about those two!
-        ("hardness", "hardness", b"Shininess"),
-        ("hardness", "hardness", b"ShininessExponent"),
-        ("mirror", "mirror", b"ReflectionColor"),
-        ("raymir", "raymir", b"ReflectionFactor"),
-    )
-
-    tex_fbx_props = set()
-    for use_map_name, name_factor, fbx_prop_name in blend_to_fbx:
-        # Always export enabled textures, even if they have a null influence...
-        if getattr(tex, "use_map_" + use_map_name):
-            tex_fbx_props.add(fbx_prop_name)
-
-    return tex_fbx_props
+# Mapping Blender -> FBX (principled_socket_name, fbx_name).
+PRINCIPLED_TEXTURE_SOCKETS_TO_FBX = (
+    # ("diffuse", "diffuse", b"DiffuseFactor"),
+    ("base_color_texture", b"DiffuseColor"),
+    ("transmission_texture", b"TransparencyFactor"),
+    # ("base_color_texture", b"TransparentColor"),  # Uses diffuse color in Blender!
+    # ("emit", "emit", b"EmissiveFactor"),
+    # ("diffuse", "diffuse", b"EmissiveColor"),  # Uses diffuse color in Blender!
+    # ("ambient", "ambient", b"AmbientFactor"),
+    # ("", "", b"AmbientColor"),  # World stuff in Blender, for now ignore...
+    ("normalmap_texture", b"NormalMap"),
+    # Note: unsure about those... :/
+    # ("", "", b"Bump"),
+    # ("", "", b"BumpFactor"),
+    # ("", "", b"DisplacementColor"),
+    # ("", "", b"DisplacementFactor"),
+    ("specular_texture", b"SpecularFactor"),
+    # ("base_color", b"SpecularColor"),  # TODO: use tint?
+    # See Material template about those two!
+    ("roughness_texture", b"Shininess"),
+    ("roughness_texture", b"ShininessExponent"),
+    # ("mirror", "mirror", b"ReflectionColor"),
+    ("metallic_texture", b"ReflectionFactor"),
+)
 
 
 def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
@@ -1771,7 +1755,7 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
     data_empties[arm_obj] = get_blender_empty_key(arm_obj.bdata)
 
     arm_data = arm_obj.bdata.data
-    bones = OrderedDict()
+    bones = {}
     for bo in arm_obj.bones:
         if settings.use_armature_deform_only:
             if bo.bdata.use_deform:
@@ -1785,7 +1769,7 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
         else:
             bones[bo] = True
 
-    bones = OrderedDict((bo, None) for bo, use in bones.items() if use)
+    bones = {bo: None for bo, use in bones.items() if use}
 
     if not bones:
         return
@@ -1813,8 +1797,8 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
         # Note: bindpose have no relations at all (no connections), so no need for any preprocess for them.
         # Create skin & clusters relations (note skins are connected to geometry, *not* model!).
         _key, me, _free = data_meshes[ob_obj]
-        clusters = OrderedDict((bo, get_blender_bone_cluster_key(arm_obj.bdata, me, bo.bdata)) for bo in bones)
-        data_deformers_skin.setdefault(arm_obj, OrderedDict())[me] = (get_blender_armature_skin_key(arm_obj.bdata, me),
+        clusters = {bo: get_blender_bone_cluster_key(arm_obj.bdata, me, bo.bdata) for bo in bones}
+        data_deformers_skin.setdefault(arm_obj, {})[me] = (get_blender_armature_skin_key(arm_obj.bdata, me),
                                                                       ob_obj, clusters)
 
         # We don't want a regular parent relationship for those in FBX...
@@ -1849,9 +1833,9 @@ def fbx_generate_leaf_bones(settings, data_bones):
         bone_length = (parent.bdata.tail_local - parent.bdata.head_local).length
         matrix = Matrix.Translation((0, bone_length, 0))
         if settings.bone_correction_matrix_inv:
-            matrix = settings.bone_correction_matrix_inv * matrix
+            matrix = settings.bone_correction_matrix_inv @ matrix
         if settings.bone_correction_matrix:
-            matrix = matrix * settings.bone_correction_matrix
+            matrix = matrix @ settings.bone_correction_matrix
         leaf_bones.append((node_name, parent_uuid, node_uuid, attr_uuid, matrix, hide, size))
 
     return leaf_bones
@@ -1864,6 +1848,7 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     bake_step = scene_data.settings.bake_anim_step
     simplify_fac = scene_data.settings.bake_anim_simplify_factor
     scene = scene_data.scene
+    depsgraph = scene_data.depsgraph
     force_keying = scene_data.settings.bake_anim_use_all_bones
     force_sek = scene_data.settings.bake_anim_force_startend_keying
 
@@ -1874,16 +1859,14 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
                 continue
             if ob_obj.type == 'ARMATURE':
                 objects |= {bo_obj for bo_obj in ob_obj.bones if bo_obj in scene_data.objects}
-            ob_obj.dupli_list_create(scene, 'RENDER')
-            for dp_obj in ob_obj.dupli_list:
+            for dp_obj in ob_obj.dupli_list_gen(depsgraph):
                 if dp_obj in scene_data.objects:
                     objects.add(dp_obj)
-            ob_obj.dupli_list_clear()
     else:
         objects = scene_data.objects
 
     back_currframe = scene.frame_current
-    animdata_ob = OrderedDict()
+    animdata_ob = {}
     p_rots = {}
 
     for ob_obj in objects:
@@ -1899,8 +1882,8 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
         p_rots[ob_obj] = rot
 
     force_key = (simplify_fac == 0.0)
+    animdata_shapes = {}
 
-    animdata_shapes = OrderedDict()
     for me, (me_key, _shapes_key, shapes) in scene_data.data_deformers_shape.items():
         # Ignore absolute shape keys for now!
         if not me.shape_keys.use_relative:
@@ -1911,7 +1894,7 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             acnode.add_group(me_key, shape.name, shape.name, (shape.name,))
             animdata_shapes[channel_key] = (acnode, me, shape)
 
-    animdata_cameras = OrderedDict()
+    animdata_cameras = {}
     for cam_obj, cam_key in scene_data.data_cameras.items():
         cam = cam_obj.bdata.data
         acnode = AnimationCurveNodeWrapper(cam_key, 'CAMERA_FOCAL', force_key, force_sek, (cam.lens,))
@@ -1920,10 +1903,10 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     currframe = f_start
     while currframe <= f_end:
         real_currframe = currframe - f_start if start_zero else currframe
-        scene.frame_set(int(currframe), currframe - int(currframe))
+        scene.frame_set(int(currframe), subframe=currframe - int(currframe))
 
-        for ob_obj in animdata_ob:
-            ob_obj.dupli_list_create(scene, 'RENDER')
+        for dp_obj in ob_obj.dupli_list_gen(depsgraph):
+            pass  # Merely updating dupli matrix of ObjectWrapper...
         for ob_obj, (anim_loc, anim_rot, anim_scale) in animdata_ob.items():
             # We compute baked loc/rot/scale for all objects (rot being euler-compat with previous value!).
             p_rot = p_rots.get(ob_obj, None)
@@ -1932,17 +1915,15 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             anim_loc.add_keyframe(real_currframe, loc)
             anim_rot.add_keyframe(real_currframe, tuple(convert_rad_to_deg_iter(rot)))
             anim_scale.add_keyframe(real_currframe, scale)
-        for ob_obj in objects:
-            ob_obj.dupli_list_clear()
         for anim_shape, me, shape in animdata_shapes.values():
             anim_shape.add_keyframe(real_currframe, (shape.value * 100.0,))
         for anim_camera, camera in animdata_cameras.values():
             anim_camera.add_keyframe(real_currframe, (camera.lens,))
         currframe += bake_step
 
-    scene.frame_set(back_currframe, 0.0)
+    scene.frame_set(back_currframe, subframe=0.0)
 
-    animations = OrderedDict()
+    animations = {}
 
     # And now, produce final data (usable by FBX export code)
     # Objects-like loc/rot/scale...
@@ -1952,34 +1933,28 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             if not anim:
                 continue
             for obj_key, group_key, group, fbx_group, fbx_gname in anim.get_final_data(scene, ref_id, force_keep):
-                anim_data = animations.get(obj_key)
-                if anim_data is None:
-                    anim_data = animations[obj_key] = ("dummy_unused_key", OrderedDict())
+                anim_data = animations.setdefault(obj_key, ("dummy_unused_key", {}))
                 anim_data[1][fbx_group] = (group_key, group, fbx_gname)
 
     # And meshes' shape keys.
     for channel_key, (anim_shape, me, shape) in animdata_shapes.items():
-        final_keys = OrderedDict()
+        final_keys = {}
         anim_shape.simplify(simplify_fac, bake_step, force_keep)
         if not anim_shape:
             continue
         for elem_key, group_key, group, fbx_group, fbx_gname in anim_shape.get_final_data(scene, ref_id, force_keep):
-                anim_data = animations.get(elem_key)
-                if anim_data is None:
-                    anim_data = animations[elem_key] = ("dummy_unused_key", OrderedDict())
-                anim_data[1][fbx_group] = (group_key, group, fbx_gname)
+            anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
+            anim_data[1][fbx_group] = (group_key, group, fbx_gname)
 
     # And cameras' lens keys.
     for cam_key, (anim_camera, camera) in animdata_cameras.items():
-        final_keys = OrderedDict()
+        final_keys = {}
         anim_camera.simplify(simplify_fac, bake_step, force_keep)
         if not anim_camera:
             continue
         for elem_key, group_key, group, fbx_group, fbx_gname in anim_camera.get_final_data(scene, ref_id, force_keep):
-                anim_data = animations.get(elem_key)
-                if anim_data is None:
-                    anim_data = animations[elem_key] = ("dummy_unused_key", OrderedDict())
-                anim_data[1][fbx_group] = (group_key, group, fbx_gname)
+            anim_data = animations.setdefault(elem_key, ("dummy_unused_key", {}))
+            anim_data[1][fbx_group] = (group_key, group, fbx_gname)
 
     astack_key = get_blender_anim_stack_key(scene, ref_id)
     alayer_key = get_blender_anim_layer_key(scene, ref_id)
@@ -2045,7 +2020,7 @@ def fbx_animations(scene_data):
             add_anim(animations, animated,
                      fbx_animations_do(scene_data, strip, strip.frame_start, strip.frame_end, True, force_keep=True))
             strip.mute = True
-            scene.frame_set(scene.frame_current, 0.0)
+            scene.frame_set(scene.frame_current, subframe=0.0)
 
         for strip in strips:
             strip.mute = False
@@ -2072,14 +2047,14 @@ def fbx_animations(scene_data):
                 'location', 'rotation_quaternion', 'rotation_axis_angle', 'rotation_euler', 'rotation_mode', 'scale',
                 'delta_location', 'delta_rotation_euler', 'delta_rotation_quaternion', 'delta_scale',
                 'lock_location', 'lock_rotation', 'lock_rotation_w', 'lock_rotations_4d', 'lock_scale',
-                'tag', 'layers', 'select', 'track_axis', 'up_axis', 'active_material', 'active_material_index',
-                'matrix_parent_inverse', 'empty_draw_type', 'empty_draw_size', 'empty_image_offset', 'pass_index',
-                'color', 'hide', 'hide_select', 'hide_render', 'use_slow_parent', 'slow_parent_offset',
-                'use_extra_recalc_object', 'use_extra_recalc_data', 'dupli_type', 'use_dupli_frames_speed',
-                'use_dupli_vertices_rotation', 'use_dupli_faces_scale', 'dupli_faces_scale', 'dupli_group',
-                'dupli_frames_start', 'dupli_frames_end', 'dupli_frames_on', 'dupli_frames_off',
-                'draw_type', 'show_bounds', 'draw_bounds_type', 'show_name', 'show_axis', 'show_texture_space',
-                'show_wire', 'show_all_edges', 'show_transparent', 'show_x_ray',
+                'tag', 'track_axis', 'up_axis', 'active_material', 'active_material_index',
+                'matrix_parent_inverse', 'empty_display_type', 'empty_display_size', 'empty_image_offset', 'pass_index',
+                'color', 'hide_viewport', 'hide_select', 'hide_render', 'use_slow_parent', 'slow_parent_offset',
+                'instance_type', 'use_instance_frames_speed',
+                'use_instance_vertices_rotation', 'use_instance_faces_scale', 'instance_faces_scale',
+                'instance_frames_start', 'instance_frames_end', 'instance_frames_on', 'instance_frames_off',
+                'display_type', 'show_bounds', 'display_bounds_type', 'show_name', 'show_axis', 'show_texture_space',
+                'show_wire', 'show_all_edges', 'show_transparent', 'show_in_front',
                 'show_only_shape_key', 'use_shape_key_edit_mode', 'active_shape_key_index',
             )
             for p in props:
@@ -2124,7 +2099,7 @@ def fbx_animations(scene_data):
                         pbo.matrix_basis = mat.copy()
                 ob.animation_data.action = org_act
                 restore_object(ob, ob_copy)
-                scene.frame_set(scene.frame_current, 0.0)
+                scene.frame_set(scene.frame_current, subframe=0.0)
 
             if pbones_matrices is not ...:
                 for pbo, mat in zip(ob.pose.bones, pbones_matrices):
@@ -2132,19 +2107,19 @@ def fbx_animations(scene_data):
             ob.animation_data.action = org_act
 
             bpy.data.objects.remove(ob_copy)
-            scene.frame_set(scene.frame_current, 0.0)
+            scene.frame_set(scene.frame_current, subframe=0.0)
 
     # Global (containing everything) animstack, only if not exporting NLA strips and/or all actions.
     if not scene_data.settings.bake_anim_use_nla_strips and not scene_data.settings.bake_anim_use_all_actions:
         add_anim(animations, animated, fbx_animations_do(scene_data, None, scene.frame_start, scene.frame_end, False))
 
     # Be sure to update all matrices back to org state!
-    scene.frame_set(scene.frame_current, 0.0)
+    scene.frame_set(scene.frame_current, subframe=0.0)
 
     return animations, animated, frame_start, frame_end
 
 
-def fbx_data_from_scene(scene, settings):
+def fbx_data_from_scene(scene, depsgraph, settings):
     """
     Do some pre-processing over scene's data...
     """
@@ -2159,34 +2134,32 @@ def fbx_data_from_scene(scene, settings):
 
     # This is rather simple for now, maybe we could end generating templates with most-used values
     # instead of default ones?
-    objects = OrderedDict()  # Because we do not have any ordered set...
+    objects = {}  # Because we do not have any ordered set...
     for ob in settings.context_objects:
         if ob.type not in objtypes:
             continue
         ob_obj = ObjectWrapper(ob)
         objects[ob_obj] = None
         # Duplis...
-        ob_obj.dupli_list_create(scene, 'RENDER')
-        for dp_obj in ob_obj.dupli_list:
+        for dp_obj in ob_obj.dupli_list_gen(depsgraph):
             if dp_obj.type not in dp_objtypes:
                 continue
             objects[dp_obj] = None
-        ob_obj.dupli_list_clear()
 
     perfmon.step("FBX export prepare: Wrapping Data (lamps, cameras, empties)...")
 
-    data_lamps = OrderedDict((ob_obj.bdata.data, get_blenderID_key(ob_obj.bdata.data))
-                             for ob_obj in objects if ob_obj.type == 'LAMP')
+    data_lights = {ob_obj.bdata.data: get_blenderID_key(ob_obj.bdata.data)
+                   for ob_obj in objects if ob_obj.type == 'LIGHT'}
     # Unfortunately, FBX camera data contains object-level data (like position, orientation, etc.)...
-    data_cameras = OrderedDict((ob_obj, get_blenderID_key(ob_obj.bdata.data))
-                               for ob_obj in objects if ob_obj.type == 'CAMERA')
+    data_cameras = {ob_obj: get_blenderID_key(ob_obj.bdata.data)
+                    for ob_obj in objects if ob_obj.type == 'CAMERA'}
     # Yep! Contains nothing, but needed!
-    data_empties = OrderedDict((ob_obj, get_blender_empty_key(ob_obj.bdata))
-                               for ob_obj in objects if ob_obj.type == 'EMPTY')
+    data_empties = {ob_obj: get_blender_empty_key(ob_obj.bdata)
+                    for ob_obj in objects if ob_obj.type == 'EMPTY'}
 
     perfmon.step("FBX export prepare: Wrapping Meshes...")
 
-    data_meshes = OrderedDict()
+    data_meshes = {}
     for ob_obj in objects:
         if ob_obj.type not in BLENDER_OBJECT_TYPES_MESHLIKE:
             continue
@@ -2218,10 +2191,8 @@ def fbx_data_from_scene(scene, settings):
                         use_org_data = False
             if not use_org_data:
                 tmp_me = ob.to_mesh(
-                    scene,
-                    apply_modifiers=settings.use_mesh_modifiers,
-                    settings='RENDER' if settings.use_mesh_modifiers_render else 'PREVIEW',
-                )
+                    depsgraph,
+                    apply_modifiers=settings.use_mesh_modifiers)
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Re-enable temporary disabled modifiers.
             for mod, show_render in tmp_mods:
@@ -2236,7 +2207,7 @@ def fbx_data_from_scene(scene, settings):
     perfmon.step("FBX export prepare: Wrapping ShapeKeys...")
 
     # ShapeKeys.
-    data_deformers_shape = OrderedDict()
+    data_deformers_shape = {}
     geom_mat_co = settings.global_matrix if settings.bake_space_transform else None
     for me_key, me, _free in data_meshes.values():
         if not (me.shape_keys and len(me.shape_keys.key_blocks) > 1):  # We do not want basis-only relative skeys...
@@ -2274,13 +2245,13 @@ def fbx_data_from_scene(scene, settings):
                 continue
             channel_key, geom_key = get_blender_mesh_shape_channel_key(me, shape)
             data = (channel_key, geom_key, shape_verts_co, shape_verts_idx)
-            data_deformers_shape.setdefault(me, (me_key, shapes_key, OrderedDict()))[2][shape] = data
+            data_deformers_shape.setdefault(me, (me_key, shapes_key, {}))[2][shape] = data
 
     perfmon.step("FBX export prepare: Wrapping Armatures...")
 
     # Armatures!
-    data_deformers_skin = OrderedDict()
-    data_bones = OrderedDict()
+    data_deformers_skin = {}
+    data_bones = {}
     arm_parents = set()
     for ob_obj in tuple(objects):
         if not (ob_obj.is_object and ob_obj.type in {'ARMATURE'}):
@@ -2297,71 +2268,51 @@ def fbx_data_from_scene(scene, settings):
 
     # Some world settings are embedded in FBX materials...
     if scene.world:
-        data_world = OrderedDict(((scene.world, get_blenderID_key(scene.world)),))
+        data_world = {scene.world: get_blenderID_key(scene.world)}
     else:
-        data_world = OrderedDict()
+        data_world = {}
 
     perfmon.step("FBX export prepare: Wrapping Materials...")
 
-    # TODO: Check all the mat stuff works even when mats are linked to Objects
+    # TODO: Check all the material stuff works even when they are linked to Objects
     #       (we can then have the same mesh used with different materials...).
     #       *Should* work, as FBX always links its materials to Models (i.e. objects).
     #       XXX However, material indices would probably break...
-    data_materials = OrderedDict()
+    data_materials = {}
     for ob_obj in objects:
         # If obj is not a valid object for materials, wrapper will just return an empty tuple...
-        for mat_s in ob_obj.material_slots:
-            mat = mat_s.material
-            if mat is None:
+        for ma_s in ob_obj.material_slots:
+            ma = ma_s.material
+            if ma is None:
                 continue  # Empty slots!
             # Note theoretically, FBX supports any kind of materials, even GLSL shaders etc.
             # However, I doubt anything else than Lambert/Phong is really portable!
-            # We support any kind of 'surface' shader though, better to have some kind of default Lambert than nothing.
-            # Note we want to keep a 'dummy' empty mat even when we can't really support it, see T41396.
-            mat_data = data_materials.get(mat)
-            if mat_data is not None:
-                mat_data[1].append(ob_obj)
-            else:
-                data_materials[mat] = (get_blenderID_key(mat), [ob_obj])
+            # Note we want to keep a 'dummy' empty material even when we can't really support it, see T41396.
+            ma_data = data_materials.setdefault(ma, (get_blenderID_key(ma), []))
+            ma_data[1].append(ob_obj)
 
     perfmon.step("FBX export prepare: Wrapping Textures...")
 
     # Note FBX textures also hold their mapping info.
     # TODO: Support layers?
-    data_textures = OrderedDict()
+    data_textures = {}
     # FbxVideo also used to store static images...
-    data_videos = OrderedDict()
+    data_videos = {}
     # For now, do not use world textures, don't think they can be linked to anything FBX wise...
-    for mat in data_materials.keys():
-        if check_skip_material(mat):
-            continue
-        for tex, use_tex in zip(mat.texture_slots, mat.use_textures):
-            if tex is None or tex.texture is None or not use_tex:
+    for ma in data_materials.keys():
+        # Note: with nodal shaders, we'll could be generating much more textures, but that's kind of unavoidable,
+        #       given that textures actually do not exist anymore in material context in Blender...
+        ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma, is_readonly=True)
+        for sock_name, fbx_name in PRINCIPLED_TEXTURE_SOCKETS_TO_FBX:
+            tex = getattr(ma_wrap, sock_name)
+            if tex is None or tex.image is None:
                 continue
-            # For now, only consider image textures.
-            # Note FBX does has support for procedural, but this is not portable at all (opaque blob),
-            # so not useful for us.
-            # TODO I think ENVIRONMENT_MAP should be usable in FBX as well, but for now let it aside.
-            # if tex.texture.type not in {'IMAGE', 'ENVIRONMENT_MAP'}:
-            if tex.texture.type not in {'IMAGE'}:
-                continue
-            img = tex.texture.image
-            if img is None:
-                continue
-            # Find out whether we can actually use this texture for this material, in FBX context.
-            tex_fbx_props = fbx_mat_properties_from_texture(tex)
-            if not tex_fbx_props:
-                continue
-            tex_data = data_textures.get(tex)
-            if tex_data is not None:
-                tex_data[1][mat] = tex_fbx_props
-            else:
-                data_textures[tex] = (get_blenderID_key(tex), OrderedDict(((mat, tex_fbx_props),)))
-            vid_data = data_videos.get(img)
-            if vid_data is not None:
-                vid_data[1].append(tex)
-            else:
-                data_videos[img] = (get_blenderID_key(img), [tex])
+            blender_tex_key = (ma, sock_name)
+            data_textures[blender_tex_key] = (get_blender_nodetexture_key(*blender_tex_key), fbx_name)
+
+            img = tex.image
+            vid_data = data_videos.setdefault(img, (get_blenderID_key(img), []))
+            vid_data[1].append(blender_tex_key)
 
     perfmon.step("FBX export prepare: Wrapping Animations...")
 
@@ -2375,8 +2326,8 @@ def fbx_data_from_scene(scene, settings):
         # Kind of hack, we need a temp scene_data for object's space handling to bake animations...
         tmp_scdata = FBXExportData(
             None, None, None,
-            settings, scene, objects, None, None, 0.0, 0.0,
-            data_empties, data_lamps, data_cameras, data_meshes, None,
+            settings, scene, depsgraph, objects, None, None, 0.0, 0.0,
+            data_empties, data_lights, data_cameras, data_meshes, None,
             data_bones, data_leaf_bones, data_deformers_skin, data_deformers_shape,
             data_world, data_materials, data_textures, data_videos,
         )
@@ -2386,14 +2337,14 @@ def fbx_data_from_scene(scene, settings):
 
     perfmon.step("FBX export prepare: Generating templates...")
 
-    templates = OrderedDict()
+    templates = {}
     templates[b"GlobalSettings"] = fbx_template_def_globalsettings(scene, settings, nbr_users=1)
 
     if data_empties:
         templates[b"Null"] = fbx_template_def_null(scene, settings, nbr_users=len(data_empties))
 
-    if data_lamps:
-        templates[b"Light"] = fbx_template_def_light(scene, settings, nbr_users=len(data_lamps))
+    if data_lights:
+        templates[b"Light"] = fbx_template_def_light(scene, settings, nbr_users=len(data_lights))
 
     if data_cameras:
         templates[b"Camera"] = fbx_template_def_camera(scene, settings, nbr_users=len(data_cameras))
@@ -2491,9 +2442,9 @@ def fbx_data_from_scene(scene, settings):
             bo_data_key = data_bones[ob_obj]
             connections.append((b"OO", get_fbx_uuid_from_key(bo_data_key), ob_obj.fbx_uuid, None))
         else:
-            if ob_obj.type == 'LAMP':
-                lamp_key = data_lamps[ob_obj.bdata.data]
-                connections.append((b"OO", get_fbx_uuid_from_key(lamp_key), ob_obj.fbx_uuid, None))
+            if ob_obj.type == 'LIGHT':
+                light_key = data_lights[ob_obj.bdata.data]
+                connections.append((b"OO", get_fbx_uuid_from_key(light_key), ob_obj.fbx_uuid, None))
             elif ob_obj.type == 'CAMERA':
                 cam_key = data_cameras[ob_obj]
                 connections.append((b"OO", get_fbx_uuid_from_key(cam_key), ob_obj.fbx_uuid, None))
@@ -2533,35 +2484,33 @@ def fbx_data_from_scene(scene, settings):
                 connections.append((b"OO", bo_obj.fbx_uuid, get_fbx_uuid_from_key(clstr_key), None))
 
     # Materials
-    mesh_mat_indices = OrderedDict()
+    mesh_material_indices = {}
     _objs_indices = {}
-    for mat, (mat_key, ob_objs) in data_materials.items():
+    for ma, (ma_key, ob_objs) in data_materials.items():
         for ob_obj in ob_objs:
-            connections.append((b"OO", get_fbx_uuid_from_key(mat_key), ob_obj.fbx_uuid, None))
-            # Get index of this mat for this object (or dupliobject).
-            # Mat indices for mesh faces are determined by their order in 'mat to ob' connections.
-            # Only mats for meshes currently...
-            # Note in case of dupliobjects a same me/mat idx will be generated several times...
+            connections.append((b"OO", get_fbx_uuid_from_key(ma_key), ob_obj.fbx_uuid, None))
+            # Get index of this material for this object (or dupliobject).
+            # Material indices for mesh faces are determined by their order in 'ma to ob' connections.
+            # Only materials for meshes currently...
+            # Note in case of dupliobjects a same me/ma idx will be generated several times...
             # Should not be an issue in practice, and it's needed in case we export duplis but not the original!
             if ob_obj.type not in BLENDER_OBJECT_TYPES_MESHLIKE:
                 continue
             _mesh_key, me, _free = data_meshes[ob_obj]
             idx = _objs_indices[ob_obj] = _objs_indices.get(ob_obj, -1) + 1
-            mesh_mat_indices.setdefault(me, OrderedDict())[mat] = idx
+            mesh_material_indices.setdefault(me, {})[ma] = idx
     del _objs_indices
 
     # Textures
-    for tex, (tex_key, mats) in data_textures.items():
-        for mat, fbx_mat_props in mats.items():
-            mat_key, _ob_objs = data_materials[mat]
-            for fbx_prop in fbx_mat_props:
-                # texture -> material properties
-                connections.append((b"OP", get_fbx_uuid_from_key(tex_key), get_fbx_uuid_from_key(mat_key), fbx_prop))
+    for (ma, sock_name), (tex_key, fbx_prop) in data_textures.items():
+        ma_key, _ob_objs = data_materials[ma]
+        # texture -> material properties
+        connections.append((b"OP", get_fbx_uuid_from_key(tex_key), get_fbx_uuid_from_key(ma_key), fbx_prop))
 
     # Images
-    for vid, (vid_key, texs) in data_videos.items():
-        for tex in texs:
-            tex_key, _texs = data_textures[tex]
+    for vid, (vid_key, blender_tex_keys) in data_videos.items():
+        for blender_tex_key in blender_tex_keys:
+            tex_key, _fbx_prop = data_textures[blender_tex_key]
             connections.append((b"OO", get_fbx_uuid_from_key(vid_key), get_fbx_uuid_from_key(tex_key), None))
 
     # Animations
@@ -2593,8 +2542,8 @@ def fbx_data_from_scene(scene, settings):
 
     return FBXExportData(
         templates, templates_users, connections,
-        settings, scene, objects, animations, animated, frame_start, frame_end,
-        data_empties, data_lamps, data_cameras, data_meshes, mesh_mat_indices,
+        settings, scene, depsgraph, objects, animations, animated, frame_start, frame_end,
+        data_empties, data_lights, data_cameras, data_meshes, mesh_material_indices,
         data_bones, data_leaf_bones, data_deformers_skin, data_deformers_shape,
         data_world, data_materials, data_textures, data_videos,
     )
@@ -2803,10 +2752,10 @@ def fbx_objects_elements(root, scene_data):
     for empty in scene_data.data_empties:
         fbx_data_empty_elements(objects, empty, scene_data)
 
-    perfmon.step("FBX export fetch lamps (%d)..." % len(scene_data.data_lamps))
+    perfmon.step("FBX export fetch lamps (%d)..." % len(scene_data.data_lights))
 
-    for lamp in scene_data.data_lamps:
-        fbx_data_lamp_elements(objects, lamp, scene_data)
+    for lamp in scene_data.data_lights:
+        fbx_data_light_elements(objects, lamp, scene_data)
 
     perfmon.step("FBX export fetch cameras (%d)..." % len(scene_data.data_cameras))
 
@@ -2827,12 +2776,10 @@ def fbx_objects_elements(root, scene_data):
         if ob_obj.is_dupli:
             continue
         fbx_data_object_elements(objects, ob_obj, scene_data)
-        ob_obj.dupli_list_create(scene_data.scene, 'RENDER')
-        for dp_obj in ob_obj.dupli_list:
+        for dp_obj in ob_obj.dupli_list_gen(scene_data.depsgraph):
             if dp_obj not in scene_data.objects:
                 continue
             fbx_data_object_elements(objects, dp_obj, scene_data)
-        ob_obj.dupli_list_clear()
 
     perfmon.step("FBX export fetch remaining...")
 
@@ -2844,11 +2791,11 @@ def fbx_objects_elements(root, scene_data):
     if scene_data.data_leaf_bones:
         fbx_data_leaf_bone_elements(objects, scene_data)
 
-    for mat in scene_data.data_materials:
-        fbx_data_material_elements(objects, mat, scene_data)
+    for ma in scene_data.data_materials:
+        fbx_data_material_elements(objects, ma, scene_data)
 
-    for tex in scene_data.data_textures:
-        fbx_data_texture_file_elements(objects, tex, scene_data)
+    for blender_tex_key in scene_data.data_textures:
+        fbx_data_texture_file_elements(objects, blender_tex_key, scene_data)
 
     for vid in scene_data.data_videos:
         fbx_data_video_elements(objects, vid, scene_data)
@@ -2897,7 +2844,7 @@ def fbx_takes_elements(root, scene_data):
 # ##### "Main" functions. #####
 
 # This func can be called with just the filepath
-def save_single(operator, scene, filepath="",
+def save_single(operator, scene, depsgraph, filepath="",
                 global_matrix=Matrix(),
                 apply_unit_scale=False,
                 global_scale=1.0,
@@ -2935,7 +2882,7 @@ def save_single(operator, scene, filepath="",
     ObjectWrapper.cache_clear()
 
     if object_types is None:
-        object_types = {'EMPTY', 'CAMERA', 'LAMP', 'ARMATURE', 'MESH', 'OTHER'}
+        object_types = {'EMPTY', 'CAMERA', 'LIGHT', 'ARMATURE', 'MESH', 'OTHER'}
 
     if 'OTHER' in object_types:
         object_types |= BLENDER_OTHER_OBJECT_TYPES
@@ -2943,12 +2890,12 @@ def save_single(operator, scene, filepath="",
     # Default Blender unit is equivalent to meter, while FBX one is centimeter...
     unit_scale = units_blender_to_fbx_factor(scene) if apply_unit_scale else 100.0
     if apply_scale_options == 'FBX_SCALE_NONE':
-        global_matrix = Matrix.Scale(unit_scale * global_scale, 4) * global_matrix
+        global_matrix = Matrix.Scale(unit_scale * global_scale, 4) @ global_matrix
         unit_scale = 1.0
     elif apply_scale_options == 'FBX_SCALE_UNITS':
-        global_matrix = Matrix.Scale(global_scale, 4) * global_matrix
+        global_matrix = Matrix.Scale(global_scale, 4) @ global_matrix
     elif apply_scale_options == 'FBX_SCALE_CUSTOM':
-        global_matrix = Matrix.Scale(unit_scale, 4) * global_matrix
+        global_matrix = Matrix.Scale(unit_scale, 4) @ global_matrix
         unit_scale = global_scale
     else: # if apply_scale_options == 'FBX_SCALE_ALL':
         unit_scale = global_scale * unit_scale
@@ -2962,7 +2909,7 @@ def save_single(operator, scene, filepath="",
     if embed_textures and path_mode != 'COPY':
         embed_textures = False
 
-    # Calcuate bone correction matrix
+    # Calculate bone correction matrix
     bone_correction_matrix = None  # Default is None = no change
     bone_correction_matrix_inv = None
     if (primary_bone_axis, secondary_bone_axis) != ('Y', 'X'):
@@ -3004,7 +2951,7 @@ def save_single(operator, scene, filepath="",
     start_time = time.process_time()
 
     # Generate some data about exported scene...
-    scene_data = fbx_data_from_scene(scene, settings)
+    scene_data = fbx_data_from_scene(scene, depsgraph, settings)
 
     root = elem_empty(None, b"")  # Root element has no id, as it is not saved per se!
 
@@ -3048,7 +2995,6 @@ def save_single(operator, scene, filepath="",
 def defaults_unity3d():
     return {
         # These options seem to produce the same result as the old Ascii exporter in Unity3D:
-        "version": 'BIN7400',
         "axis_up": 'Y',
         "axis_forward": '-Z',
         "global_matrix": Matrix.Rotation(-math.pi / 2.0, 4, 'X'),
@@ -3087,18 +3033,19 @@ def defaults_unity3d():
 def save(operator, context,
          filepath="",
          use_selection=False,
+         use_active_collection=False,
          batch_mode='OFF',
          use_batch_own_dir=False,
          **kwargs
          ):
     """
-    This is a wrapper around save_single, which handles multi-scenes (or groups) cases, when batch-exporting a whole
-    .blend file.
+    This is a wrapper around save_single, which handles multi-scenes (or collections) cases, when batch-exporting
+    a whole .blend file.
     """
 
-    ret = None
+    ret = {'FINISHED'}
 
-    active_object = context.scene.objects.active
+    active_object = context.view_layer.objects.active
 
     org_mode = None
     if active_object and active_object.mode != 'OBJECT' and bpy.ops.object.mode_set.poll():
@@ -3107,37 +3054,59 @@ def save(operator, context,
 
     if batch_mode == 'OFF':
         kwargs_mod = kwargs.copy()
-        if use_selection:
-            kwargs_mod["context_objects"] = context.selected_objects
+        if use_active_collection:
+            if use_selection:
+                ctx_objects = tuple(obj
+                                    for obj in context.view_layer.active_layer_collection.collection.all_objects
+                                    if obj.select_get())
+            else:
+                ctx_objects = context.view_layer.active_layer_collection.collection.all_objects
         else:
-            kwargs_mod["context_objects"] = context.scene.objects
+            if use_selection:
+                ctx_objects = context.selected_objects
+            else:
+                ctx_objects = context.view_layer.objects
+        kwargs_mod["context_objects"] = ctx_objects
 
-        ret = save_single(operator, context.scene, filepath, **kwargs_mod)
+        ret = save_single(operator, context.scene, context.depsgraph, filepath, **kwargs_mod)
     else:
+        # XXX We need a way to generate a depsgraph for inactive view_layers first...
+        # XXX Also, what to do in case of batch-exporting scenes, when there is more than one view layer?
+        #     Scenes have no concept of 'active' view layer, that's on window level...
         fbxpath = filepath
 
         prefix = os.path.basename(fbxpath)
         if prefix:
             fbxpath = os.path.dirname(fbxpath)
 
-        if batch_mode == 'GROUP':
-            data_seq = tuple(grp for grp in bpy.data.groups if grp.objects)
+        if batch_mode == 'COLLECTION':
+            data_seq = tuple((coll, coll.name, 'objects') for coll in bpy.data.collections if coll.objects)
+        elif batch_mode in {'SCENE_COLLECTION', 'ACTIVE_SCENE_COLLECTION'}:
+            scenes = [context.scene] if batch_mode == 'ACTIVE_SCENE_COLLECTION' else bpy.data.scenes
+            data_seq = []
+            for scene in scenes:
+                if not scene.objects:
+                    continue
+                #                                      Needed to avoid having tens of 'Master Collection' entries.
+                todo_collections = [(scene.collection, "_".join((scene.name, scene.collection.name)))]
+                while todo_collections:
+                    coll, coll_name = todo_collections.pop()
+                    todo_collections.extend(((c, c.name) for c in coll.children if c.all_objects))
+                    data_seq.append((coll, coll_name, 'all_objects'))
         else:
-            data_seq = bpy.data.scenes
+            data_seq = tuple((scene, scene.name, 'objects') for scene in bpy.data.scenes if scene.objects)
 
         # call this function within a loop with BATCH_ENABLE == False
-        # no scene switching done at the moment.
-        # orig_sce = context.scene
 
         new_fbxpath = fbxpath  # own dir option modifies, we need to keep an original
-        for data in data_seq:  # scene or group
-            newname = "_".join((prefix, bpy.path.clean_name(data.name))) if prefix else bpy.path.clean_name(data.name)
+        for data, data_name, data_obj_propname in data_seq:  # scene or collection
+            newname = "_".join((prefix, bpy.path.clean_name(data_name))) if prefix else bpy.path.clean_name(data_name)
 
             if use_batch_own_dir:
                 new_fbxpath = os.path.join(fbxpath, newname)
-                # path may already exist
-                # TODO - might exist but be a file. unlikely but should probably account for it.
-
+                # path may already exist... and be a file.
+                while os.path.isfile(new_fbxpath):
+                    new_fbxpath = "_".join((new_fbxpath, "dir"))
                 if not os.path.exists(new_fbxpath):
                     os.makedirs(new_fbxpath)
 
@@ -3145,18 +3114,14 @@ def save(operator, context,
 
             print('\nBatch exporting %s as...\n\t%r' % (data, filepath))
 
-            if batch_mode == 'GROUP':  # group
-                # group, so objects update properly, add a dummy scene.
+            if batch_mode in {'COLLECTION', 'SCENE_COLLECTION', 'ACTIVE_SCENE_COLLECTION'}:
+                # Collection, so that objects update properly, add a dummy scene.
                 scene = bpy.data.scenes.new(name="FBX_Temp")
-                scene.layers = [True] * 20
-                # bpy.data.scenes.active = scene # XXX, cant switch
                 src_scenes = {}  # Count how much each 'source' scenes are used.
-                for ob_base in data.objects:
-                    for src_sce in ob_base.users_scene:
-                        if src_sce not in src_scenes:
-                            src_scenes[src_sce] = 0
-                        src_scenes[src_sce] += 1
-                    scene.objects.link(ob_base)
+                for obj in getattr(data, data_obj_propname):
+                    for src_sce in obj.users_scene:
+                        src_scenes[src_sce] = src_scenes.setdefault(src_sce, 0) + 1
+                    scene.collection.objects.link(obj)
 
                 # Find the 'most used' source scene, and use its unit settings. This is somewhat weak, but should work
                 # fine in most cases, and avoids stupid issues like T41931.
@@ -3176,20 +3141,17 @@ def save(operator, context,
                 scene = data
 
             kwargs_batch = kwargs.copy()
-            kwargs_batch["context_objects"] = data.objects
+            kwargs_batch["context_objects"] = getattr(data, data_obj_propname)
 
-            save_single(operator, scene, filepath, **kwargs_batch)
+            save_single(operator, scene, scene.view_layers[0].depsgraph, filepath, **kwargs_batch)
 
-            if batch_mode == 'GROUP':
-                # remove temp group scene
+            if batch_mode in {'COLLECTION', 'SCENE_COLLECTION', 'ACTIVE_SCENE_COLLECTION'}:
+                # Remove temp collection scene.
                 bpy.data.scenes.remove(scene)
 
-        # no active scene changing!
-        # bpy.data.scenes.active = orig_sce
-
-        ret = {'FINISHED'}  # so the script wont run after we have batch exported.
-
-    if active_object and org_mode and bpy.ops.object.mode_set.poll():
-        bpy.ops.object.mode_set(mode=org_mode)
+    if active_object and org_mode:
+        context.view_layer.objects.active = active_object
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode=org_mode)
 
     return ret

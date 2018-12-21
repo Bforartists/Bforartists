@@ -38,8 +38,6 @@ DEF_PREFIX = "DEF-"  # Prefix of deformation bones.
 WGT_PREFIX = "WGT-"  # Prefix for widget objects
 ROOT_NAME = "root"   # Name of the root bone.
 
-WGT_LAYERS = [x == 19 for x in range(0, 20)]  # Widgets go on the last scene layer.
-
 MODULE_NAME = "rigify"  # Windows/Mac blender is weird, so __package__ doesn't work
 
 outdated_types = {"pitchipoy.limbs.super_limb": "limbs.super_limb",
@@ -420,7 +418,7 @@ def obj_to_bone(obj, rig, bone_name):
 
     bone = rig.data.bones[bone_name]
 
-    mat = rig.matrix_world * bone.matrix_local
+    mat = rig.matrix_world @ bone.matrix_local
 
     obj.location = mat.to_translation()
 
@@ -440,6 +438,7 @@ def create_widget(rig, bone_name, bone_transform_name=None):
 
     obj_name = WGT_PREFIX + rig.name + '_' + bone_name
     scene = bpy.context.scene
+    collection = bpy.context.collection
     id_store = bpy.context.window_manager
 
     # Check if it already exists in the scene
@@ -460,14 +459,13 @@ def create_widget(rig, bone_name, bone_transform_name=None):
         # Create mesh object
         mesh = bpy.data.meshes.new(obj_name)
         obj = bpy.data.objects.new(obj_name, mesh)
-        scene.objects.link(obj)
+        collection.objects.link(obj)
 
         # Move object to bone position and set layers
         obj_to_bone(obj, rig, bone_transform_name)
         wgts_group_name = 'WGTS_' + rig.name
         if wgts_group_name in bpy.data.objects.keys():
             obj.parent = bpy.data.objects[wgts_group_name]
-        obj.layers = WGT_LAYERS
 
         return obj
 
@@ -802,8 +800,8 @@ def align_bone_roll(obj, bone1, bone2):
     rot_mat = Matrix.Rotation(angle, 3, axis)
 
     # Roll factor
-    x3 = rot_mat * x1
-    dot = x2 * x3
+    x3 = rot_mat @ x1
+    dot = x2 @ x3
     if dot > 1.0:
         dot = 1.0
     elif dot < -1.0:
@@ -814,8 +812,8 @@ def align_bone_roll(obj, bone1, bone2):
     bone1_e.roll = roll
 
     # Check if we rolled in the right direction
-    x3 = rot_mat * bone1_e.x_axis
-    check = x2 * x3
+    x3 = rot_mat @ bone1_e.x_axis
+    check = x2 @ x3
 
     # If not, reverse
     if check < 0.9999:
@@ -959,7 +957,7 @@ def has_connected_children(bone):
 
 
 def get_layers(layers):
-    """ Does it's best to exctract a set of layers from any data thrown at it.
+    """ Does it's best to extract a set of layers from any data thrown at it.
     """
     if type(layers) == int:
         return [x == layers for x in range(0, 32)]
@@ -1026,11 +1024,11 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
         for i in range(len(arm.rigify_layers)):
             name = arm.rigify_layers[i].name
             row = arm.rigify_layers[i].row
-            set = arm.rigify_layers[i].set
+            selset = arm.rigify_layers[i].selset
             group = arm.rigify_layers[i].group
             code.append('    arm.rigify_layers[' + str(i) + '].name = "' + name + '"')
             code.append('    arm.rigify_layers[' + str(i) + '].row = ' + str(row))
-            code.append('    arm.rigify_layers[' + str(i) + '].set = ' + str(set))
+            code.append('    arm.rigify_layers[' + str(i) + '].selset = ' + str(selset))
             code.append('    arm.rigify_layers[' + str(i) + '].group = ' + str(group))
 
     # write parents first
@@ -1262,3 +1260,43 @@ def overwrite_prop_animation(rig, bone, prop_name, value, frames):
     for kp in curve.keyframe_points:
         if kp.co[0] in frames:
             kp.co[1] = value
+
+
+def find_layer_collection_by_collection(layer_collection, collection):
+    if collection == layer_collection.collection:
+        return layer_collection
+
+    # go recursive
+    for child in layer_collection.children:
+        layer_collection = find_layer_collection_by_collection(child, collection)
+        if layer_collection:
+            return layer_collection
+
+
+def ensure_widget_collection(context):
+    wgts_collection_name = "Widgets"
+
+    view_layer = context.view_layer
+    layer_collection = bpy.context.layer_collection
+    collection = layer_collection.collection
+
+    widget_collection = bpy.data.collections.get(wgts_collection_name)
+    if not widget_collection:
+        # ------------------------------------------
+        # Create the widget collection
+        widget_collection = bpy.data.collections.new(wgts_collection_name)
+        widget_collection.hide_viewport = True
+        widget_collection.hide_render = True
+
+        widget_layer_collection = None
+    else:
+        widget_layer_collection = find_layer_collection_by_collection(view_layer.layer_collection, widget_collection)
+
+    if not widget_layer_collection:
+        # Add the widget collection to the tree
+        collection.children.link(widget_collection)
+        widget_layer_collection = [c for c in layer_collection.children if c.collection == widget_collection][0]
+
+    # Make the widget the active collection for the upcoming added (widget) objects
+    view_layer.active_layer_collection = widget_layer_collection
+    return widget_collection

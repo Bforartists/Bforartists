@@ -3,7 +3,7 @@ from .__init__ import *
 from time import clock
 
 # uvs :
-# 
+#
 def write(me, uvs, matimage = False) :
     t = clock()
     uvs, nest = nested(uvs)
@@ -13,9 +13,9 @@ def write(me, uvs, matimage = False) :
 
         uv = me.uv_textures.new()
         uv.name = 'UV%s'%uvi
-        
+
         uvlayer = me.uv_layers[-1].data
-        
+
         for uvfi, uvface in enumerate(uvlist) :
             #uv.data[uvfi].use_twoside = True # 2.60 changes mat ways
             mslotid = me.polygons[uvfi].material_index
@@ -24,17 +24,17 @@ def write(me, uvs, matimage = False) :
                 if matimage[mslotid] :
                     img = matimage[mslotid]
                     uv.data[uvfi].image=img
-            
+
             vi = 0
             for fi in me.polygons[uvfi].loop_indices :
                 uvlayer[fi].uv = Vector((uvface[vi],uvface[vi+1]))
                 vi += 2
-                
+
         newuvs.append(uv)
     print('uvs in ',clock() - t)
     if nest : return newuvs
     return newuvs[0]
-    
+
 ## WAY faster
 def flatwrite(me, uvs, matimage = False) :
     #t = clock()
@@ -56,7 +56,7 @@ def flatwrite(me, uvs, matimage = False) :
     #print('uvs in ',clock() - t)
     return newuvs
 
-# face are squared or rectangular, 
+# face are squared or rectangular,
 # any orientation
 # vert order width then height 01 and 23 = x 12 and 03 = y
 # normal default when face has been built

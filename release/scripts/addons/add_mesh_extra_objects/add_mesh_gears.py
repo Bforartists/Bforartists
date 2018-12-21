@@ -461,7 +461,7 @@ def add_spokes(teethNum, radius, De, base, width=1, conangle=0, rack=0,
 # crown ... Inward pointing extend of crown teeth
 #
 # @todo: Fix teethNum. Some numbers are not possible yet
-# @todo: Create start & end geoemtry (closing faces)
+# @todo: Create start & end geometry (closing faces)
 
 def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
              width=1, skew=radians(11.25), crown=0.0):
@@ -666,10 +666,10 @@ class AddGear(Operator):
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
             # Create vertex groups from stored vertices.
-            tipGroup = obj.vertex_groups.new('Tips')
+            tipGroup = obj.vertex_groups.new(name='Tips')
             tipGroup.add(verts_tip, 1.0, 'ADD')
 
-            valleyGroup = obj.vertex_groups.new('Valleys')
+            valleyGroup = obj.vertex_groups.new(name='Valleys')
             valleyGroup.add(verts_valley, 1.0, 'ADD')
 
         return {'FINISHED'}
@@ -790,7 +790,7 @@ class AddWormGear(Operator):
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
             # Create vertex groups from stored vertices.
-            tipGroup = obj.vertex_groups.new('Tips')
+            tipGroup = obj.vertex_groups.new(name='Tips')
             tipGroup.add(verts_tip, 1.0, 'ADD')
 
             valleyGroup = obj.vertex_groups.new('Valleys')

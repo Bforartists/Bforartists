@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -19,8 +19,15 @@
 # <pep8 compliant>
 
 import bpy
-from bpy.types import Menu, Operator
+from bpy.types import Menu, Operator, Panel, WindowManager
 from bpy.props import StringProperty, BoolProperty
+
+# For preset popover menu
+WindowManager.preset_name = StringProperty(
+    name="Preset Name",
+    description="Name for new preset",
+    default="New Preset"
+)
 
 
 class AddPresetBase:
@@ -34,22 +41,20 @@ class AddPresetBase:
     # only because invoke_props_popup requires. Also do not add to search menu.
     bl_options = {'REGISTER', 'INTERNAL'}
 
-    name = StringProperty(
+    name: StringProperty(
         name="Name",
         description="Name of the preset, used to make the path name",
         maxlen=64,
         options={'SKIP_SAVE'},
     )
-    remove_active = BoolProperty(
+    remove_name: BoolProperty(
         default=False,
         options={'HIDDEN', 'SKIP_SAVE'},
     )
-
-    # needed for mix-ins
-    order = [
-        "name",
-        "remove_active",
-    ]
+    remove_active: BoolProperty(
+        default=False,
+        options={'HIDDEN', 'SKIP_SAVE'},
+    )
 
     @staticmethod
     def as_filename(name):  # could reuse for other presets
@@ -85,10 +90,16 @@ class AddPresetBase:
         else:
             ext = ".py"
 
-        if not self.remove_active:
-            name = self.name.strip()
+        name = self.name.strip()
+        if not (self.remove_name or self.remove_active):
+
             if not name:
                 return {'FINISHED'}
+
+            # Reset preset name
+            wm = bpy.data.window_managers[0]
+            if name == wm.preset_name:
+                wm.preset_name = 'New Preset'
 
             filename = self.as_filename(name)
 
@@ -155,15 +166,16 @@ class AddPresetBase:
             preset_menu_class.bl_label = bpy.path.display_name(filename)
 
         else:
-            preset_active = preset_menu_class.bl_label
+            if self.remove_active:
+                name = preset_menu_class.bl_label
 
             # fairly sloppy but convenient.
-            filepath = bpy.utils.preset_find(preset_active,
+            filepath = bpy.utils.preset_find(name,
                                              self.preset_subdir,
                                              ext=ext)
 
             if not filepath:
-                filepath = bpy.utils.preset_find(preset_active,
+                filepath = bpy.utils.preset_find(name,
                                                  self.preset_subdir,
                                                  display_name=True,
                                                  ext=ext)
@@ -194,7 +206,7 @@ class AddPresetBase:
         self.name = self.as_filename(self.name.strip())
 
     def invoke(self, context, event):
-        if not self.remove_active:
+        if not (self.remove_active or self.remove_name):
             wm = context.window_manager
             return wm.invoke_props_dialog(self)
         else:
@@ -202,15 +214,15 @@ class AddPresetBase:
 
 
 class ExecutePreset(Operator):
-    """Execute a Python Preset\nExecute a Python preset"""
+    """Execute a preset"""
     bl_idname = "script.execute_preset"
     bl_label = "Execute a Python Preset"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         subtype='FILE_PATH',
         options={'SKIP_SAVE'},
     )
-    menu_idname = StringProperty(
+    menu_idname: StringProperty(
         name="Menu ID Name",
         description="ID name of the menu this was called from",
         options={'SKIP_SAVE'},
@@ -226,33 +238,76 @@ class ExecutePreset(Operator):
 
         ext = splitext(filepath)[1].lower()
 
-        # execute the preset using script.python_file_run
+        if ext not in {".py", ".xml"}:
+            self.report({'ERROR'}, "unknown filetype: %r" % ext)
+            return {'CANCELLED'}
+
+        if hasattr(preset_class, "reset_cb"):
+            preset_class.reset_cb(context)
+
         if ext == ".py":
-            bpy.ops.script.python_file_run(filepath=filepath)
+            try:
+                bpy.utils.execfile(filepath)
+            except Exception as ex:
+                self.report({'ERROR'}, "Failed to execute the preset: " + repr(ex))
+
         elif ext == ".xml":
             import rna_xml
             rna_xml.xml_file_run(context,
                                  filepath,
                                  preset_class.preset_xml_map)
-        else:
-            self.report({'ERROR'}, "unknown filetype: %r" % ext)
-            return {'CANCELLED'}
+
+        if hasattr(preset_class, "post_cb"):
+            preset_class.post_cb(context)
 
         return {'FINISHED'}
+
+
+class PresetMenu(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'HEADER'
+    bl_label = "Presets"
+    path_menu = Menu.path_menu
+
+    @classmethod
+    def draw_panel_header(cls, layout):
+        layout.emboss = 'NONE'
+        layout.popover(
+            panel=cls.__name__,
+            icon='PRESET',
+            text="",
+        )
+
+    @classmethod
+    def draw_menu(cls, layout, text=None):
+        if text is None:
+            text = cls.bl_label
+
+        layout.popover(
+            panel=cls.__name__,
+            icon='PRESET',
+            text=text,
+        )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.emboss = 'PULLDOWN_MENU'
+        layout.operator_context = 'EXEC_DEFAULT'
+
+        Menu.draw_preset(self, context)
 
 
 class AddPresetRender(AddPresetBase, Operator):
     """Add Render Preset\nAdd or remove a Render Preset"""
     bl_idname = "render.preset_add"
     bl_label = "Add Render Preset"
-    preset_menu = "RENDER_MT_presets"
+    preset_menu = "RENDER_PT_presets"
 
     preset_defines = [
         "scene = bpy.context.scene"
     ]
 
     preset_values = [
-        "scene.render.field_order",
         "scene.render.fps",
         "scene.render.fps_base",
         "scene.render.pixel_aspect_x",
@@ -260,8 +315,6 @@ class AddPresetRender(AddPresetBase, Operator):
         "scene.render.resolution_percentage",
         "scene.render.resolution_x",
         "scene.render.resolution_y",
-        "scene.render.use_fields",
-        "scene.render.use_fields_still",
     ]
 
     preset_subdir = "render"
@@ -271,7 +324,7 @@ class AddPresetCamera(AddPresetBase, Operator):
     """Add Camera Preset\nAdd or remove a Camera Preset"""
     bl_idname = "camera.preset_add"
     bl_label = "Add Camera Preset"
-    preset_menu = "CAMERA_MT_presets"
+    preset_menu = "CAMERA_PT_presets"
 
     preset_defines = [
         "cam = bpy.context.camera"
@@ -279,7 +332,7 @@ class AddPresetCamera(AddPresetBase, Operator):
 
     preset_subdir = "camera"
 
-    use_focal_length = BoolProperty(
+    use_focal_length: BoolProperty(
         name="Include Focal Length",
         description="Include focal length into the preset",
         options={'SKIP_SAVE'},
@@ -302,7 +355,7 @@ class AddPresetSafeAreas(AddPresetBase, Operator):
     """Add Safe Area Preset\nAdd or remove a Safe Areas Preset"""
     bl_idname = "safe_areas.preset_add"
     bl_label = "Add Safe Area Preset"
-    preset_menu = "SAFE_AREAS_MT_presets"
+    preset_menu = "SAFE_AREAS_PT_presets"
 
     preset_defines = [
         "safe_areas = bpy.context.scene.safe_areas"
@@ -318,39 +371,11 @@ class AddPresetSafeAreas(AddPresetBase, Operator):
     preset_subdir = "safe_areas"
 
 
-class AddPresetSSS(AddPresetBase, Operator):
-    """Add SSS Preset\nAdd or remove a Subsurface Scattering Preset"""
-    bl_idname = "material.sss_preset_add"
-    bl_label = "Add SSS Preset"
-    preset_menu = "MATERIAL_MT_sss_presets"
-
-    preset_defines = [
-        ("material = "
-         "bpy.context.material.active_node_material "
-         "if bpy.context.material.active_node_material "
-         "else bpy.context.material")
-    ]
-
-    preset_values = [
-        "material.subsurface_scattering.back",
-        "material.subsurface_scattering.color",
-        "material.subsurface_scattering.color_factor",
-        "material.subsurface_scattering.error_threshold",
-        "material.subsurface_scattering.front",
-        "material.subsurface_scattering.ior",
-        "material.subsurface_scattering.radius",
-        "material.subsurface_scattering.scale",
-        "material.subsurface_scattering.texture_factor",
-    ]
-
-    preset_subdir = "sss"
-
-
 class AddPresetCloth(AddPresetBase, Operator):
     """Add Cloth Preset\nAdd or remove a Cloth Preset"""
     bl_idname = "cloth.preset_add"
     bl_label = "Add Cloth Preset"
-    preset_menu = "CLOTH_MT_presets"
+    preset_menu = "CLOTH_PT_presets"
 
     preset_defines = [
         "cloth = bpy.context.cloth"
@@ -372,7 +397,7 @@ class AddPresetFluid(AddPresetBase, Operator):
     """Add Fluid Preset\nAdd or remove a Fluid Preset"""
     bl_idname = "fluid.preset_add"
     bl_label = "Add Fluid Preset"
-    preset_menu = "FLUID_MT_presets"
+    preset_menu = "FLUID_PT_presets"
 
     preset_defines = [
         "fluid = bpy.context.fluid"
@@ -390,7 +415,7 @@ class AddPresetHairDynamics(AddPresetBase, Operator):
     """Add Hair Dynamics Preset\nAdd or remove a Hair Dynamics Preset"""
     bl_idname = "particle.hair_dynamics_preset_add"
     bl_label = "Add Hair Dynamics Preset"
-    preset_menu = "PARTICLE_MT_hair_dynamics_presets"
+    preset_menu = "PARTICLE_PT_hair_dynamics_presets"
 
     preset_defines = [
         "psys = bpy.context.particle_system",
@@ -416,66 +441,11 @@ class AddPresetHairDynamics(AddPresetBase, Operator):
     ]
 
 
-class AddPresetSunSky(AddPresetBase, Operator):
-    """Add Sunsky Preset\nAdd or remove a Sky & Atmosphere Preset"""
-    bl_idname = "lamp.sunsky_preset_add"
-    bl_label = "Add Sunsky Preset"
-    preset_menu = "LAMP_MT_sunsky_presets"
-
-    preset_defines = [
-        "sky = bpy.context.lamp.sky"
-    ]
-
-    preset_values = [
-        "sky.atmosphere_extinction",
-        "sky.atmosphere_inscattering",
-        "sky.atmosphere_turbidity",
-        "sky.backscattered_light",
-        "sky.horizon_brightness",
-        "sky.spread",
-        "sky.sun_brightness",
-        "sky.sun_intensity",
-        "sky.sun_size",
-        "sky.sky_blend",
-        "sky.sky_blend_type",
-        "sky.sky_color_space",
-        "sky.sky_exposure",
-    ]
-
-    preset_subdir = "sunsky"
-
-
-class AddPresetInteraction(AddPresetBase, Operator):
-    """Add Interaction Preset\nAdd or remove an Application Interaction Preset"""
-    bl_idname = "wm.interaction_preset_add"
-    bl_label = "Add Interaction Preset"
-    preset_menu = "USERPREF_MT_interaction_presets"
-
-    preset_defines = [
-        "user_preferences = bpy.context.user_preferences"
-    ]
-
-    preset_values = [
-        "user_preferences.edit.use_drag_immediately",
-        "user_preferences.edit.use_insertkey_xyz_to_rgb",
-        "user_preferences.inputs.invert_mouse_zoom",
-        "user_preferences.inputs.select_mouse",
-        "user_preferences.inputs.use_emulate_numpad",
-        "user_preferences.inputs.use_mouse_continuous",
-        "user_preferences.inputs.use_mouse_emulate_3_button",
-        "user_preferences.inputs.view_rotate_method",
-        "user_preferences.inputs.view_zoom_axis",
-        "user_preferences.inputs.view_zoom_method",
-    ]
-
-    preset_subdir = "interaction"
-
-
 class AddPresetTrackingCamera(AddPresetBase, Operator):
     """Add Camera Preset\nAdd or remove a Tracking Camera Intrinsics Preset"""
     bl_idname = "clip.camera_preset_add"
     bl_label = "Add Camera Preset"
-    preset_menu = "CLIP_MT_camera_presets"
+    preset_menu = "CLIP_PT_camera_presets"
 
     preset_defines = [
         "camera = bpy.context.edit_movieclip.tracking.camera"
@@ -483,7 +453,7 @@ class AddPresetTrackingCamera(AddPresetBase, Operator):
 
     preset_subdir = "tracking_camera"
 
-    use_focal_length = BoolProperty(
+    use_focal_length: BoolProperty(
         name="Include Focal Length",
         description="Include focal length into the preset",
         options={'SKIP_SAVE'},
@@ -509,7 +479,7 @@ class AddPresetTrackingTrackColor(AddPresetBase, Operator):
     """Add Track Color Preset\nAdd or remove a Clip Track Color Preset"""
     bl_idname = "clip.track_color_preset_add"
     bl_label = "Add Track Color Preset"
-    preset_menu = "CLIP_MT_track_color_presets"
+    preset_menu = "CLIP_PT_track_color_presets"
 
     preset_defines = [
         "track = bpy.context.edit_movieclip.tracking.tracks.active"
@@ -527,7 +497,7 @@ class AddPresetTrackingSettings(AddPresetBase, Operator):
     """Add Tracking Settings Preset\nAdd or remove a motion tracking settings preset"""
     bl_idname = "clip.tracking_settings_preset_add"
     bl_label = "Add Tracking Settings Preset"
-    preset_menu = "CLIP_MT_tracking_settings_presets"
+    preset_menu = "CLIP_PT_tracking_settings_presets"
 
     preset_defines = [
         "settings = bpy.context.edit_movieclip.tracking.settings"
@@ -557,7 +527,7 @@ class AddPresetNodeColor(AddPresetBase, Operator):
     """Add Node Color Preset\nAdd or remove a Node Color Preset"""
     bl_idname = "node.node_color_preset_add"
     bl_label = "Add Node Color Preset"
-    preset_menu = "NODE_MT_node_color_presets"
+    preset_menu = "NODE_PT_node_color_presets"
 
     preset_defines = [
         "node = bpy.context.active_node"
@@ -608,7 +578,7 @@ class AddPresetOperator(AddPresetBase, Operator):
     bl_label = "Operator Preset"
     preset_menu = "WM_MT_operator_presets"
 
-    operator = StringProperty(
+    operator: StringProperty(
         name="Operator",
         maxlen=64,
         options={'HIDDEN', 'SKIP_SAVE'},
@@ -666,22 +636,85 @@ class WM_MT_operator_presets(Menu):
     preset_operator = "script.execute_preset"
 
 
-class AddPresetUnitsLength(AddPresetBase, Operator):
-    """Add or remove length units preset"""
-    bl_idname = "scene.units_length_preset_add"
-    bl_label = "Add Length Units Preset"
-    preset_menu = "SCENE_MT_units_length_presets"
+class AddPresetGpencilBrush(AddPresetBase, Operator):
+    """Add or remove grease pencil brush preset"""
+    bl_idname = "scene.gpencil_brush_preset_add"
+    bl_label = "Add Grease Pencil Brush Preset"
+    preset_menu = "VIEW3D_PT_gpencil_brush_presets"
 
     preset_defines = [
-        "scene = bpy.context.scene"
+        "brush = bpy.context.active_gpencil_brush",
+        "settings = brush.gpencil_settings"
     ]
 
     preset_values = [
-        "scene.unit_settings.system",
-        "scene.unit_settings.scale_length",
+        "settings.input_samples",
+        "settings.active_smooth_factor",
+        "settings.angle",
+        "settings.angle_factor",
+        "settings.use_settings_stabilizer",
+        "brush.smooth_stroke_radius",
+        "brush.smooth_stroke_factor",
+        "settings.pen_smooth_factor",
+        "settings.pen_smooth_steps",
+        "settings.pen_thick_smooth_factor",
+        "settings.pen_thick_smooth_steps",
+        "settings.pen_subdivision_steps",
+        "settings.random_subdiv",
+        "settings.use_settings_random",
+        "settings.random_pressure",
+        "settings.random_strength",
+        "settings.uv_random",
+        "settings.pen_jitter",
+        "settings.use_jitter_pressure",
     ]
 
-    preset_subdir = "units_length"
+    preset_subdir = "gpencil_brush"
+
+
+class AddPresetGpencilMaterial(AddPresetBase, Operator):
+    """Add or remove grease pencil material preset"""
+    bl_idname = "scene.gpencil_material_preset_add"
+    bl_label = "Add Grease Pencil Material Preset"
+    preset_menu = "MATERIAL_PT_gpencil_material_presets"
+
+    preset_defines = [
+        "material = bpy.context.object.active_material",
+        "gpcolor = material.grease_pencil"
+    ]
+
+    preset_values = [
+        "gpcolor.mode",
+        "gpcolor.stroke_style",
+        "gpcolor.color",
+        "gpcolor.stroke_image",
+        "gpcolor.pixel_size",
+        "gpcolor.use_stroke_pattern",
+        "gpcolor.fill_style",
+        "gpcolor.fill_color",
+        "gpcolor.fill_image",
+        "gpcolor.gradient_type",
+        "gpcolor.mix_color",
+        "gpcolor.mix_factor",
+        "gpcolor.flip",
+        "gpcolor.pattern_shift",
+        "gpcolor.pattern_scale",
+        "gpcolor.pattern_radius",
+        "gpcolor.pattern_angle",
+        "gpcolor.pattern_gridsize",
+        "gpcolor.use_fill_pattern",
+        "gpcolor.texture_offset",
+        "gpcolor.texture_scale",
+        "gpcolor.texture_angle",
+        "gpcolor.texture_opacity",
+        "gpcolor.texture_clamp",
+        "gpcolor.texture_mix",
+        "gpcolor.mix_factor",
+        "gpcolor.show_stroke",
+        "gpcolor.show_fill",
+    ]
+
+    preset_subdir = "gpencil_material"
 
 
 classes = (
@@ -689,19 +722,17 @@ classes = (
     AddPresetCloth,
     AddPresetFluid,
     AddPresetHairDynamics,
-    AddPresetInteraction,
     AddPresetInterfaceTheme,
     AddPresetKeyconfig,
     AddPresetNodeColor,
     AddPresetOperator,
     AddPresetRender,
-    AddPresetSSS,
     AddPresetSafeAreas,
-    AddPresetSunSky,
     AddPresetTrackingCamera,
     AddPresetTrackingSettings,
     AddPresetTrackingTrackColor,
-    AddPresetUnitsLength,
+    AddPresetGpencilBrush,
+    AddPresetGpencilMaterial,
     ExecutePreset,
     WM_MT_operator_presets,
 )

@@ -317,7 +317,7 @@ class bam_session:
 
         sys.stdout.write("  operating on: %r\n" % blendfile_abs)
         sys.stdout.flush()
-        # we don't want to read, just edit whats there.
+        # we don't want to read, just edit what's there.
         with open(blendfile_abs, 'rb+') as fh_blend:
             for ofs, data in binary_edits:
                 # sys.stdout.write("\n%r\n" % data)

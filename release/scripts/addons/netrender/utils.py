@@ -447,6 +447,16 @@ def getFileInfo(filepath, infos):
     return values
 
 
+def sendFile(conn, url, filepath, headers={}):
+    file_size = os.path.getsize(filepath)
+    if not 'content-length' in headers:
+        headers['content-length'] = file_size
+    with open(filepath, "rb") as f:
+        with ConnectionContext():
+            conn.request("PUT", url, f, headers=headers)
+    return responseStatus(conn)
+
+
 if __name__ == "__main__":
     try:
         start = sys.argv.index("--") + 1

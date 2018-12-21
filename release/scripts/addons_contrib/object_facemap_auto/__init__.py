@@ -36,7 +36,7 @@ submodules = (
 )
 
 # reload at runtime, for development.
-USE_RELOAD = True
+USE_RELOAD = False
 USE_VERBOSE = False
 
 from bpy.utils import register_submodule_factory

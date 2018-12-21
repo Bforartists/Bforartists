@@ -3,6 +3,7 @@ import os
 PATHS = (
     "build_files/build_environment/cmake",
     "build_files/cmake",
+    "doc/python_api",
     "intern/clog",
     "intern/cycles",
     "intern/ghost",

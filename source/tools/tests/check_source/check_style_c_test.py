@@ -14,9 +14,7 @@ sys.path.append(
 
 import unittest
 
-warnings = []
 import check_style_c
-check_style_c.print = warnings.append
 
 # ----
 parser = check_style_c.create_parser()
@@ -36,8 +34,8 @@ FUNC_END = """
 
 
 def test_code(code):
-    warnings.clear()
-    check_style_c.scan_source("test.c", code, args)
+    warnings = []
+    check_style_c.scan_source("test.c", code, args, warnings.append)
     err_found = [w.split(":", 3)[2].strip() for w in warnings]
     # print(warnings)
     return err_found
@@ -320,6 +318,24 @@ void func(void)
 \tswitch (value) {
 \t\tcase 0:
 \t\t\tcall();
+\t\t\tbreak;
+\t}""" + FUNC_END
+        err_found = test_code(code)
+        self.assertWarning(err_found)
+
+    def test_switch_with_turnary(self):
+        # --------------------------------------------------------------------
+        code = FUNC_BEGIN + """
+\tswitch (value) {
+\t\tcase ABC : a = b ? c : d; break;
+\t\t\tbreak;
+\t}""" + FUNC_END
+        err_found = test_code(code)
+        self.assertWarning(err_found, "E132")
+
+        code = FUNC_BEGIN + """
+\tswitch (value) {
+\t\tcase ABC: a = b ? c : d; break;
 \t\t\tbreak;
 \t}""" + FUNC_END
         err_found = test_code(code)

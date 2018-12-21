@@ -81,4 +81,3 @@ def export_pdb(obj_type, filepath_pdb):
     pdb_file_p.close()
 
     return True
-

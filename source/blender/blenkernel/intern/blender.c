@@ -48,20 +48,25 @@
 #include "BKE_addon.h"
 #include "BKE_blender.h"  /* own include */
 #include "BKE_blender_version.h"  /* own include */
+#include "BKE_blender_user_menu.h"
 #include "BKE_blendfile.h"
 #include "BKE_brush.h"
 #include "BKE_cachefile.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_image.h"
+#include "BKE_layer.h"
 #include "BKE_library.h"
+#include "BKE_main.h"
 #include "BKE_node.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 #include "BKE_sequencer.h"
+#include "BKE_studiolight.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RE_pipeline.h"
 #include "RE_render_ext.h"
@@ -80,6 +85,8 @@ char versionstr[48] = "";
 void BKE_blender_free(void)
 {
 	/* samples are in a global list..., also sets G_MAIN->sound->sample NULL */
+
+	BKE_studiolight_free(); /* needs to run before main free as wm is still referenced for icons preview jobs */
 	BKE_main_free(G_MAIN);
 	G_MAIN = NULL;
 
@@ -92,7 +99,7 @@ void BKE_blender_free(void)
 	IMB_exit();
 	BKE_cachefiles_exit();
 	BKE_images_exit();
-	DAG_exit();
+	DEG_free_node_types();
 
 	BKE_brush_system_exit();
 	RE_texture_rng_exit();
@@ -201,6 +208,26 @@ static void userdef_free_keymaps(UserDef *userdef)
 	BLI_listbase_clear(&userdef->user_keymaps);
 }
 
+static void userdef_free_keyconfig_prefs(UserDef *userdef)
+{
+	for (wmKeyConfigPref *kpt = userdef->user_keyconfig_prefs.first, *kpt_next; kpt; kpt = kpt_next) {
+		kpt_next = kpt->next;
+		IDP_FreeProperty(kpt->prop);
+		MEM_freeN(kpt->prop);
+		MEM_freeN(kpt);
+	}
+	BLI_listbase_clear(&userdef->user_keyconfig_prefs);
+}
+
+static void userdef_free_user_menus(UserDef *userdef)
+{
+	for (bUserMenu *um = userdef->user_menus.first, *um_next; um; um = um_next) {
+		um_next = um->next;
+		BKE_blender_user_menu_item_free_list(&um->items);
+		MEM_freeN(um);
+	}
+}
+
 static void userdef_free_addons(UserDef *userdef)
 {
 	for (bAddon *addon = userdef->addons.first, *addon_next; addon; addon = addon_next) {
@@ -221,6 +248,8 @@ void BKE_blender_userdef_data_free(UserDef *userdef, bool clear_fonts)
 #endif
 
 	userdef_free_keymaps(userdef);
+	userdef_free_keyconfig_prefs(userdef);
+	userdef_free_user_menus(userdef);
 	userdef_free_addons(userdef);
 
 	if (clear_fonts) {
@@ -235,6 +264,7 @@ void BKE_blender_userdef_data_free(UserDef *userdef, bool clear_fonts)
 	BLI_freelistN(&userdef->uistyles);
 	BLI_freelistN(&userdef->uifonts);
 	BLI_freelistN(&userdef->themes);
+
 
 #undef U
 }
@@ -277,17 +307,17 @@ void BKE_blender_userdef_app_template_data_swap(UserDef *userdef_a, UserDef *use
 	LIST_SWAP(addons);
 	LIST_SWAP(user_keymaps);
 
-	DATA_SWAP(light);
-
 	DATA_SWAP(font_path_ui);
 	DATA_SWAP(font_path_ui_mono);
 	DATA_SWAP(keyconfigstr);
 
+	DATA_SWAP(gizmo_flag);
 	DATA_SWAP(app_flag);
 
 	/* We could add others. */
 	FLAG_SWAP(uiflag, int, USER_QUIT_PROMPT);
 
+#undef SWAP_TYPELESS
 #undef DATA_SWAP
 #undef LIST_SWAP
 #undef FLAG_SWAP

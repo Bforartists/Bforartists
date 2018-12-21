@@ -23,7 +23,7 @@ bl_info = {
     "description": "V/E/F Align tools",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 2),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "Mesh Edit Mode",
     "warning": "",
     "wiki_url": "",
@@ -68,7 +68,7 @@ class PieAlign(Menu):
         box = pie.split().box().column()
 
         row = box.row(align=True)
-        row.label("X")
+        row.label(text="X")
         align_1 = row.operator("alignxyz.all", text="Neg")
         align_1.axis = '0'
         align_1.side = 'NEGATIVE'
@@ -77,7 +77,7 @@ class PieAlign(Menu):
         align_2.side = 'POSITIVE'
 
         row = box.row(align=True)
-        row.label("Y")
+        row.label(text="Y")
         align_3 = row.operator("alignxyz.all", text="Neg")
         align_3.axis = '1'
         align_3.side = 'NEGATIVE'
@@ -86,7 +86,7 @@ class PieAlign(Menu):
         align_4.side = 'POSITIVE'
 
         row = box.row(align=True)
-        row.label("Z")
+        row.label(text="Z")
         align_5 = row.operator("alignxyz.all", text="Neg")
         align_5.axis = '2'
         align_5.side = 'NEGATIVE'
@@ -102,7 +102,7 @@ class AlignSelectedXYZ(Operator):
     bl_description = "Align Selected Along the chosen axis"
     bl_options = {'REGISTER', 'UNDO'}
 
-    axis = EnumProperty(
+    axis: EnumProperty(
         name="Axis",
         items=[
             ('X', "X", "X Axis"),
@@ -147,7 +147,7 @@ class AlignToXYZ0(Operator):
     bl_description = "Align Active Object To a chosen X, Y or Z equals 0 Location"
     bl_options = {'REGISTER', 'UNDO'}
 
-    axis = EnumProperty(
+    axis: EnumProperty(
             name="Axis",
             items=[
                 ('0', "X", "X Axis"),
@@ -181,7 +181,7 @@ class AlignXYZAll(Operator):
     bl_description = "Align to a Front or Back along the chosen Axis"
     bl_options = {'REGISTER', 'UNDO'}
 
-    axis = EnumProperty(
+    axis: EnumProperty(
             name="Axis",
             items=[
                 ('0', "X", "X Axis"),
@@ -191,7 +191,7 @@ class AlignXYZAll(Operator):
             description="Choose an axis for alignment",
             default='0'
             )
-    side = EnumProperty(
+    side: EnumProperty(
             name="Side",
             items=[
                 ('POSITIVE', "Front", "Align on the positive chosen axis"),

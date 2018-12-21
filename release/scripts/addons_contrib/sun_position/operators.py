@@ -162,7 +162,7 @@ class SunPos_OT_Controller(bpy.types.Operator):
             Sun.SP.IsActive = False
         except:
             pass
-            
+
     def modal(self, context, event):
 
         if Display.PANEL:

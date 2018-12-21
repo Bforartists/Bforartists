@@ -47,12 +47,13 @@
 #include "BKE_animsys.h"
 #include "BKE_action.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_gpencil.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
 #include "BKE_sequencer.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 
@@ -77,7 +78,16 @@ void ANIM_list_elem_update(Main *bmain, Scene *scene, bAnimListElem *ale)
 	adt = BKE_animdata_from_id(id);
 	if (adt) {
 		adt->recalc |= ADT_RECALC_ANIM;
-		DAG_id_tag_update(id, OB_RECALC_TIME);
+		DEG_id_tag_update(id, ID_RECALC_ANIMATION);
+		if (adt->action != NULL) {
+			DEG_id_tag_update(&adt->action->id, ID_RECALC_COPY_ON_WRITE);
+		}
+	}
+
+	/* Tag copy on the main object if updating anything directly inside AnimData */
+	if (ELEM(ale->type, ANIMTYPE_ANIMDATA, ANIMTYPE_NLAACTION, ANIMTYPE_NLATRACK, ANIMTYPE_NLACURVE)) {
+		DEG_id_tag_update(id, ID_RECALC_ANIMATION | ID_RECALC_COPY_ON_WRITE);
+		return;
 	}
 
 	/* update data */
@@ -98,13 +108,13 @@ void ANIM_list_elem_update(Main *bmain, Scene *scene, bAnimListElem *ale)
 	else {
 		/* in other case we do standard depsgraph update, ideally
 		 * we'd be calling property update functions here too ... */
-		DAG_id_tag_update(id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME); // XXX or do we want something more restrictive?
+		DEG_id_tag_update(id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION); // XXX or do we want something more restrictive?
 	}
 }
 
 /* tags the given ID block for refreshes (if applicable) due to
  * Animation Editor editing */
-void ANIM_id_update(Scene *UNUSED(scene), ID *id)
+void ANIM_id_update(Main *bmain, ID *id)
 {
 	if (id) {
 		AnimData *adt = BKE_animdata_from_id(id);
@@ -114,7 +124,7 @@ void ANIM_id_update(Scene *UNUSED(scene), ID *id)
 			adt->recalc |= ADT_RECALC_ANIM;
 
 		/* set recalc flags */
-		DAG_id_tag_update(id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME); // XXX or do we want something more restrictive?
+		DEG_id_tag_update_ex(bmain, id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION); // XXX or do we want something more restrictive?
 	}
 }
 
@@ -404,6 +414,10 @@ void ANIM_animdata_update(bAnimContext *ac, ListBase *anim_data)
 				ale->update &= ~ANIM_UPDATE_DEPS;
 				ANIM_list_elem_update(ac->bmain, ac->scene, ale);
 			}
+			/* disable handles to avoid crash */
+			if (ale->update & ANIM_UPDATE_HANDLES) {
+				ale->update &= ~ANIM_UPDATE_HANDLES;
+			}
 		}
 		else if (ale->datatype == ALE_FCURVE) {
 			FCurve *fcu = ale->key_data;
@@ -425,11 +439,21 @@ void ANIM_animdata_update(bAnimContext *ac, ListBase *anim_data)
 				ANIM_list_elem_update(ac->bmain, ac->scene, ale);
 			}
 		}
-		else if (ale->datatype == ALE_NLASTRIP) {
+		else if (ELEM(ale->type, ANIMTYPE_ANIMDATA, ANIMTYPE_NLAACTION, ANIMTYPE_NLATRACK, ANIMTYPE_NLACURVE)) {
 			if (ale->update & ANIM_UPDATE_DEPS) {
 				ale->update &= ~ANIM_UPDATE_DEPS;
 				ANIM_list_elem_update(ac->bmain, ac->scene, ale);
 			}
+		}
+		else if (ale->update) {
+#if 0
+			if (G.debug & G_DEBUG) {
+				printf("%s: Unhandled animchannel updates (%d) for type=%d (%p)\n",
+				       __func__, ale->update, ale->type, ale->data);
+			}
+#endif
+			/* Prevent crashes in cases where it can't be handled */
+			ale->update = 0;
 		}
 
 		BLI_assert(ale->update == 0);

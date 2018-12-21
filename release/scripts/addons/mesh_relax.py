@@ -1,4 +1,4 @@
-﻿# mesh_relax.py Copyright (C) 2010, Fabian Fricke
+# mesh_relax.py Copyright (C) 2010, Fabian Fricke
 #
 # Relaxes selected vertices while retaining the shape as much as possible
 #
@@ -22,11 +22,11 @@
 # ***** END GPL LICENCE BLOCK *****
 
 bl_info = {
-    "name": "Relax - Bforartists version",
+    "name": "Relax",
     "author": "Fabian Fricke",
     "version": (1, 1),
     "blender": (2, 57, 0),
-    "location": "Edit Mode > View3D > Specials > Relax / Tools Panel > Vertices Tools",
+    "location": "View3D > Specials > Relax ",
     "description": "Relax the selected verts while retaining the shape",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -91,7 +91,7 @@ def relax_mesh(context):
     bpy.ops.object.mode_set(mode='EDIT')
 
 class Relax(bpy.types.Operator):
-    """Relax\nRelaxes selected vertices while retaining the shape """ \
+    """Relaxes selected vertices while retaining the shape """ \
     """as much as possible"""
     bl_idname = 'mesh.relax'
     bl_label = 'Relax'
@@ -119,14 +119,13 @@ def register():
     bpy.utils.register_module(__name__)
 
     bpy.types.VIEW3D_MT_edit_mesh_specials.append(menu_func)
-    bpy.types.VIEW3D_PT_edit_mesh_vertices_panel.append(menu_func)
-
+    bpy.types.VIEW3D_MT_edit_mesh_vertices.append(menu_func)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
     bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
-    bpy.types.VIEW3D_PT_edit_mesh_vertices_panel.append(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_vertices.remove(menu_func)
 
 if __name__ == "__main__":
     register()

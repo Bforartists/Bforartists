@@ -786,7 +786,7 @@ class OffsetEdges(Operator):
 
     def restore_original_and_free(self, context):
         self.caches_valid = False  # Make caches invalid
-        context.area.header_text_set()
+        context.area.header_text_set(None)
 
         me = context.edit_object.data
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -794,7 +794,7 @@ class OffsetEdges(Operator):
         bpy.ops.object.mode_set(mode="EDIT")
 
         self._bm_orig.free()
-        context.area.header_text_set()
+        context.area.header_text_set(None)
 
     def invoke(self, context, event):
         # In edit mode

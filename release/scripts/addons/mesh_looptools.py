@@ -20,7 +20,7 @@ bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch",
     "version": (4, 6, 7),
-    "blender": (2, 72, 2),
+    "blender": (2, 80, 0),
     "location": "View3D > Toolbar and View3D > Specials (W-key)",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
@@ -110,10 +110,11 @@ loops, derived, mapping):
         del looptools_cache[tool]
     # prepare values to be saved to cache
     input = [v.index for v in bm.verts if v.select and not v.hide]
-    modifiers = [mod.name for mod in object.modifiers if mod.show_viewport and
-                 mod.type == 'MIRROR']
+    modifiers = [mod.name for mod in object.modifiers if mod.show_viewport
+    and mod.type == 'MIRROR']
     # update cache
-    looptools_cache[tool] = {"input": input, "object": object.name,
+    looptools_cache[tool] = {
+        "input": input, "object": object.name,
         "input_method": input_method, "boundaries": boundaries,
         "single_loops": single_loops, "loops": loops,
         "derived": derived, "mapping": mapping, "modifiers": modifiers}
@@ -276,7 +277,7 @@ def calculate_plane(bm_mod, loop, method="best_fit", object=False):
             vec2 = mathutils.Vector((1.0, 1.0, 1.0))
             for i in range(itermax):
                 vec = vec2
-                vec2 = mat * vec
+                vec2 = mat @ vec
                 if vec2.length != 0:
                     vec2 /= vec2.length
                 if vec2 == vec:
@@ -425,9 +426,9 @@ def face_edgekeys(face):
 
 
 # calculate input loops
-def get_connected_input(object, bm, scene, input):
+def get_connected_input(object, bm, input):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # calculate selected loops
     edge_keys = [edgekey(edge) for edge in bm_mod.edges if edge.select and not edge.hide]
@@ -514,7 +515,7 @@ def get_connected_selections(edge_keys):
 
 
 # get the derived mesh data, if there is a mirror modifier
-def get_derived_bmesh(object, bm, scene):
+def get_derived_bmesh(object, bm):
     # check for mirror modifiers
     if 'MIRROR' in [mod.type for mod in object.modifiers if mod.show_viewport]:
         derived = True
@@ -525,7 +526,7 @@ def get_derived_bmesh(object, bm, scene):
                 mod.show_viewport = False
         # get derived mesh
         bm_mod = bmesh.new()
-        mesh_mod = object.to_mesh(scene, True, 'PREVIEW')
+        mesh_mod = object.to_mesh(bpy.context.depsgraph, True)
         bm_mod.from_mesh(mesh_mod)
         bpy.context.blend_data.meshes.remove(mesh_mod)
         # re-enable other modifiers
@@ -831,7 +832,7 @@ def terminate(global_undo):
     # update editmesh cached data
     obj = bpy.context.active_object
     if obj.mode == 'EDIT':
-        bmesh.update_edit_mesh(obj.data, tessface=True, destructive=True)
+        bmesh.update_edit_mesh(obj.data, loop_triangles=True, destructive=True)
 
     bpy.context.user_preferences.edit.use_global_undo = global_undo
 
@@ -1043,11 +1044,11 @@ def bridge_calculate_lines(bm, loops, mode, twist, reverse):
             itermax = 500
             iter = 0
             vec = mathutils.Vector((1.0, 1.0, 1.0))
-            vec2 = (mat * vec) / (mat * vec).length
+            vec2 = (mat @ vec) / (mat @ vec).length
             while vec != vec2 and iter < itermax:
                 iter += 1
                 vec = vec2
-                vec2 = mat * vec
+                vec2 = mat @ vec
                 if vec2.length != 0:
                     vec2 /= vec2.length
             if vec2.length == 0:
@@ -1079,7 +1080,7 @@ def bridge_calculate_lines(bm, loops, mode, twist, reverse):
 
         # match start vertex of loop1 with loop2
         target_vector = bm.verts[loop2[0]].co - center2
-        dif_angles = [[(rotation_matrix * (bm.verts[vertex].co - center1)
+        dif_angles = [[(rotation_matrix @ (bm.verts[vertex].co - center1)
                        ).angle(target_vector, 0), False, i] for
                        i, vertex in enumerate(loop1)]
         dif_angles.sort()
@@ -1161,7 +1162,7 @@ def bridge_calculate_lines(bm, loops, mode, twist, reverse):
                     shifting = False
                     break
                 to_last, to_first = [
-                    (rotation_matrix * (bm.verts[loop1[-1]].co - center1)).angle(
+                    (rotation_matrix @ (bm.verts[loop1[-1]].co - center1)).angle(
                     (bm.verts[loop2[i]].co - center2), 0) for i in [-1, 0]
                     ]
                 if to_first < to_last:
@@ -1802,7 +1803,7 @@ def circle_calculate_best_fit(locs_2d):
             jmat2.invert()
         except:
             pass
-        dx0, dy0, dr = jmat2 * k2
+        dx0, dy0, dr = jmat2 @ k2
         x0 += dx0
         y0 += dy0
         r += dr
@@ -1980,9 +1981,9 @@ def circle_flatten_singles(bm_mod, com, p, q, normal, single_loop):
 
 
 # calculate input loops
-def circle_get_input(object, bm, scene):
+def circle_get_input(object, bm):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # create list of edge-keys based on selection state
     faces = False
@@ -2317,9 +2318,9 @@ def curve_cut_boundaries(bm_mod, loops):
 
 
 # calculate input loops
-def curve_get_input(object, bm, boundaries, scene):
+def curve_get_input(object, bm, boundaries):
     # get mesh with modifiers applied
-    derived, bm_mod = get_derived_bmesh(object, bm, scene)
+    derived, bm_mod = get_derived_bmesh(object, bm)
 
     # vertices that still need a loop to run through it
     verts_unsorted = [
@@ -2610,7 +2611,7 @@ def gstretch_align_pairs(ls_pairs, object, bm_mod, method):
             else:
                 relative_distance = relative_lengths[i]
 
-            loc1 = object.matrix_world * bm_mod.verts[v_index].co
+            loc1 = object.matrix_world @ bm_mod.verts[v_index].co
             loc2, stroke_lengths_cache = gstretch_eval_stroke(stroke,
                 relative_distance, stroke_lengths_cache)
             total_distance += (loc2 - loc1).length
@@ -2683,7 +2684,7 @@ def gstretch_calculate_verts(loop, stroke, object, bm_mod, method):
                 relative_distance = relative_lengths[i]
             loc, stroke_lengths_cache = gstretch_eval_stroke(stroke,
                 relative_distance, stroke_lengths_cache)
-            loc = matrix_inverse * loc
+            loc = matrix_inverse @ loc
             move.append([v_index, loc])
 
     return(move)
@@ -2828,8 +2829,8 @@ def gstretch_eval_stroke(stroke, distance, stroke_lengths_cache=False):
 def gstretch_get_fake_strokes(object, bm_mod, loops):
     strokes = []
     for loop in loops:
-        p1 = object.matrix_world * bm_mod.verts[loop[0][0]].co
-        p2 = object.matrix_world * bm_mod.verts[loop[0][-1]].co
+        p1 = object.matrix_world @ bm_mod.verts[loop[0][0]].co
+        p2 = object.matrix_world @ bm_mod.verts[loop[0][-1]].co
         strokes.append(gstretch_fake_stroke([p1, p2]))
 
     return(strokes)
@@ -2866,7 +2867,7 @@ def gstretch_match_loops_strokes(loops, strokes, object, bm_mod):
         for v_index in loop[0]:
             center += bm_mod.verts[v_index].co
         center /= len(loop[0])
-        center = object.matrix_world * center
+        center = object.matrix_world @ center
         loop_centers.append([center, loop])
 
     # calculate stroke centers
@@ -3189,14 +3190,14 @@ class Bridge(Operator):
     bl_description = "Bridge two, or loft several, loops of vertices"
     bl_options = {'REGISTER', 'UNDO'}
 
-    cubic_strength = FloatProperty(
+    cubic_strength: FloatProperty(
         name="Strength",
         description="Higher strength results in more fluid curves",
         default=1.0,
         soft_min=-3.0,
         soft_max=3.0
         )
-    interpolation = EnumProperty(
+    interpolation: EnumProperty(
         name="Interpolation mode",
         items=(('cubic', "Cubic", "Gives curved results"),
             ('linear', "Linear", "Basic, fast, straight interpolation")),
@@ -3204,18 +3205,18 @@ class Bridge(Operator):
                     "segments",
         default='cubic'
         )
-    loft = BoolProperty(
+    loft: BoolProperty(
         name="Loft",
         description="Loft multiple loops, instead of considering them as "
                     "a multi-input for bridging",
         default=False
         )
-    loft_loop = BoolProperty(
+    loft_loop: BoolProperty(
         name="Loop",
         description="Connect the first and the last loop with each other",
         default=False
         )
-    min_width = IntProperty(
+    min_width: IntProperty(
         name="Minimum width",
         description="Segments with an edge smaller than this are merged "
                     "(compared to base edge)",
@@ -3224,32 +3225,32 @@ class Bridge(Operator):
         max=100,
         subtype='PERCENTAGE'
         )
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="Mode",
         items=(('basic', "Basic", "Fast algorithm"),
                ('shortest', "Shortest edge", "Slower algorithm with better vertex matching")),
         description="Algorithm used for bridging",
         default='shortest'
         )
-    remove_faces = BoolProperty(
+    remove_faces: BoolProperty(
         name="Remove faces",
         description="Remove faces that are internal after bridging",
         default=True
         )
-    reverse = BoolProperty(
+    reverse: BoolProperty(
         name="Reverse",
         description="Manually override the direction in which the loops "
                     "are bridged. Only use if the tool gives the wrong result",
         default=False
         )
-    segments = IntProperty(
+    segments: IntProperty(
         name="Segments",
         description="Number of segments used to bridge the gap (0=automatic)",
         default=1,
         min=0,
         soft_max=20
         )
-    twist = IntProperty(
+    twist: IntProperty(
         name="Twist",
         description="Twist what vertices are connected to each other",
         default=0
@@ -3367,7 +3368,7 @@ class Bridge(Operator):
             if self.remove_faces and old_selected_faces:
                 bridge_remove_internal_faces(bm, old_selected_faces)
             # make sure normals are facing outside
-            bmesh.update_edit_mesh(object.data, tessface=False,
+            bmesh.update_edit_mesh(object.data, loop_triangles=False,
                 destructive=True)
             bpy.ops.mesh.normals_make_consistent()
 
@@ -3384,24 +3385,24 @@ class Circle(Operator):
     bl_description = "Move selected vertices into a circle shape"
     bl_options = {'REGISTER', 'UNDO'}
 
-    custom_radius = BoolProperty(
+    custom_radius: BoolProperty(
         name="Radius",
         description="Force a custom radius",
         default=False
         )
-    fit = EnumProperty(
+    fit: EnumProperty(
         name="Method",
         items=(("best", "Best fit", "Non-linear least squares"),
                ("inside", "Fit inside", "Only move vertices towards the center")),
         description="Method used for fitting a circle to the vertices",
         default='best'
         )
-    flatten = BoolProperty(
+    flatten: BoolProperty(
         name="Flatten",
         description="Flatten the circle, instead of projecting it on the mesh",
         default=True
         )
-    influence = FloatProperty(
+    influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -3410,28 +3411,28 @@ class Circle(Operator):
         precision=1,
         subtype='PERCENTAGE'
         )
-    lock_x = BoolProperty(
+    lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    lock_y = BoolProperty(
+    lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    lock_z = BoolProperty(name="Lock Z",
+    lock_z: BoolProperty(name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="Custom radius for circle",
         default=1.0,
         min=0.0,
         soft_max=1000.0
         )
-    regular = BoolProperty(
+    regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the circle",
         default=True
@@ -3487,11 +3488,11 @@ class Circle(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Circle",
             object, bm, False, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
             derived, bm_mod, single_vertices, single_loops, loops = \
-                circle_get_input(object, bm, context.scene)
+                circle_get_input(object, bm)
             mapping = get_mapping(derived, bm, bm_mod, single_vertices,
                 False, loops)
             single_loops, loops = circle_check_loops(single_loops, loops,
@@ -3557,12 +3558,12 @@ class Curve(Operator):
     bl_description = "Turn a loop into a smooth curve"
     bl_options = {'REGISTER', 'UNDO'}
 
-    boundaries = BoolProperty(
+    boundaries: BoolProperty(
         name="Boundaries",
         description="Limit the tool to work within the boundaries of the selected vertices",
         default=False
         )
-    influence = FloatProperty(
+    influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -3571,34 +3572,34 @@ class Curve(Operator):
         precision=1,
         subtype='PERCENTAGE'
         )
-    interpolation = EnumProperty(
+    interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
               ("linear", "Linear", "Simple and fast linear algorithm")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    lock_x = BoolProperty(
+    lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    lock_y = BoolProperty(
+    lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    lock_z = BoolProperty(
+    lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    regular = BoolProperty(
+    regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the curve",
         default=True
         )
-    restriction = EnumProperty(
+    restriction: EnumProperty(
         name="Restriction",
         items=(("none", "None", "No restrictions on vertex movement"),
               ("extrude", "Extrude only", "Only allow extrusions (no indentations)"),
@@ -3651,11 +3652,10 @@ class Curve(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Curve",
             object, bm, False, self.boundaries)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = curve_get_input(object, bm,
-                self.boundaries, context.scene)
+            derived, bm_mod, loops = curve_get_input(object, bm, self.boundaries)
             mapping = get_mapping(derived, bm, bm_mod, False, True, loops)
             loops = check_loops(loops, mapping, bm_mod)
         verts_selected = [
@@ -3702,7 +3702,7 @@ class Flatten(Operator):
     bl_description = "Flatten vertices on a best-fitting plane"
     bl_options = {'REGISTER', 'UNDO'}
 
-    influence = FloatProperty(
+    influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -3711,21 +3711,21 @@ class Flatten(Operator):
         precision=1,
         subtype='PERCENTAGE'
         )
-    lock_x = BoolProperty(
+    lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    lock_y = BoolProperty(
+    lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    lock_z = BoolProperty(name="Lock Z",
+    lock_z: BoolProperty(name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    plane = EnumProperty(
+    plane: EnumProperty(
         name="Plane",
         items=(("best_fit", "Best fit", "Calculate a best fitting plane"),
               ("normal", "Normal", "Derive plane from averaging vertex normals"),
@@ -3733,7 +3733,7 @@ class Flatten(Operator):
         description="Plane on which vertices are flattened",
         default='best_fit'
         )
-    restriction = EnumProperty(
+    restriction: EnumProperty(
         name="Restriction",
         items=(("none", "None", "No restrictions on vertex movement"),
                ("bounding_box", "Bounding box", "Vertices are restricted to "
@@ -3841,7 +3841,7 @@ class GStretch(Operator):
     bl_description = "Stretch selected vertices to Grease Pencil stroke"
     bl_options = {'REGISTER', 'UNDO'}
 
-    conversion = EnumProperty(
+    conversion: EnumProperty(
         name="Conversion",
         items=(("distance", "Distance", "Set the distance between vertices "
                 "of the converted grease pencil stroke"),
@@ -3856,7 +3856,7 @@ class GStretch(Operator):
                     "use this simplification method",
         default='limit_vertices'
         )
-    conversion_distance = FloatProperty(
+    conversion_distance: FloatProperty(
         name="Distance",
         description="Absolute distance between vertices along the converted "
                     "grease pencil stroke",
@@ -3865,7 +3865,7 @@ class GStretch(Operator):
         soft_min=0.01,
         soft_max=100
         )
-    conversion_max = IntProperty(
+    conversion_max: IntProperty(
         name="Max Vertices",
         description="Maximum number of vertices grease pencil strokes will "
                     "have, when they are converted to geomtery",
@@ -3874,7 +3874,7 @@ class GStretch(Operator):
         soft_max=500,
         update=gstretch_update_min
         )
-    conversion_min = IntProperty(
+    conversion_min: IntProperty(
         name="Min Vertices",
         description="Minimum number of vertices grease pencil strokes will "
                     "have, when they are converted to geomtery",
@@ -3883,7 +3883,7 @@ class GStretch(Operator):
         soft_max=500,
         update=gstretch_update_max
         )
-    conversion_vertices = IntProperty(
+    conversion_vertices: IntProperty(
         name="Vertices",
         description="Number of vertices grease pencil strokes will "
                     "have, when they are converted to geometry. If strokes have less "
@@ -3892,13 +3892,13 @@ class GStretch(Operator):
         min=3,
         soft_max=500
         )
-    delete_strokes = BoolProperty(
+    delete_strokes: BoolProperty(
         name="Delete strokes",
         description="Remove Grease Pencil strokes if they have been used "
                     "for Gstretch. WARNING: DOES NOT SUPPORT UNDO",
         default=False
         )
-    influence = FloatProperty(
+    influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -3907,22 +3907,22 @@ class GStretch(Operator):
         precision=1,
         subtype='PERCENTAGE'
         )
-    lock_x = BoolProperty(
+    lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    lock_y = BoolProperty(
+    lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    lock_z = BoolProperty(
+    lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    method = EnumProperty(
+    method: EnumProperty(
         name="Method",
         items=(("project", "Project", "Project vertices onto the stroke, "
                  "using vertex normals and connected edges"),
@@ -4010,13 +4010,12 @@ class GStretch(Operator):
                 bm_mod.faces.ensure_lookup_table()
                 strokes = gstretch_get_fake_strokes(object, bm_mod, loops)
             if not straightening:
-                derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+                derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # get loops and strokes
             if get_grease_pencil(object, context):
                 # find loops
-                derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, input='selected')
+                derived, bm_mod, loops = get_connected_input(object, bm, input='selected')
                 mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
                 loops = check_loops(loops, mapping, bm_mod)
                 # get strokes
@@ -4086,7 +4085,7 @@ class GStretch(Operator):
             lock = [self.lock_x, self.lock_y, self.lock_z]
         else:
             lock = False
-        bmesh.update_edit_mesh(object.data, tessface=True, destructive=True)
+        bmesh.update_edit_mesh(object.data, loop_triangles=True, destructive=True)
         move_verts(object, bm, mapping, move, lock, self.influence)
 
         # cleaning up
@@ -4104,7 +4103,7 @@ class Relax(Operator):
     bl_description = "Relax the loop, so it is smoother"
     bl_options = {'REGISTER', 'UNDO'}
 
-    input = EnumProperty(
+    input: EnumProperty(
         name="Input",
         items=(("all", "Parallel (all)", "Also use non-selected "
                "parallel loops as input"),
@@ -4112,14 +4111,14 @@ class Relax(Operator):
         description="Loops that are relaxed",
         default='selected'
         )
-    interpolation = EnumProperty(
+    interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
                ("linear", "Linear", "Simple and fast linear algorithm")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    iterations = EnumProperty(
+    iterations: EnumProperty(
         name="Iterations",
         items=(("1", "1", "One"),
                ("3", "3", "Three"),
@@ -4129,7 +4128,7 @@ class Relax(Operator):
         description="Number of times the loop is relaxed",
         default="1"
         )
-    regular = BoolProperty(
+    regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the loop",
         default=True
@@ -4162,11 +4161,10 @@ class Relax(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Relax",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
         knots, points = relax_calculate_knots(loops)
@@ -4203,7 +4201,7 @@ class Space(Operator):
     bl_description = "Space the vertices in a regular distrubtion on the loop"
     bl_options = {'REGISTER', 'UNDO'}
 
-    influence = FloatProperty(
+    influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -4212,7 +4210,7 @@ class Space(Operator):
         precision=1,
         subtype='PERCENTAGE'
         )
-    input = EnumProperty(
+    input: EnumProperty(
         name="Input",
         items=(("all", "Parallel (all)", "Also use non-selected "
                 "parallel loops as input"),
@@ -4220,24 +4218,24 @@ class Space(Operator):
         description="Loops that are spaced",
         default='selected'
         )
-    interpolation = EnumProperty(
+    interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
               ("linear", "Linear", "Vertices are projected on existing edges")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    lock_x = BoolProperty(
+    lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    lock_y = BoolProperty(
+    lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    lock_z = BoolProperty(
+    lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
@@ -4285,11 +4283,10 @@ class Space(Operator):
         cached, single_loops, loops, derived, mapping = cache_read("Space",
             object, bm, self.input, False)
         if cached:
-            derived, bm_mod = get_derived_bmesh(object, bm, context.scene)
+            derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # find loops
-            derived, bm_mod, loops = get_connected_input(object, bm,
-                context.scene, self.input)
+            derived, bm_mod, loops = get_connected_input(object, bm, self.input)
             mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
             loops = check_loops(loops, mapping, bm_mod)
 
@@ -4347,8 +4344,8 @@ class VIEW3D_MT_edit_mesh_looptools(Menu):
 # panel containing all tools
 class VIEW3D_PT_tools_looptools(Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = 'Tools'
+    bl_region_type = 'UI'
+    bl_category = 'View'
     bl_context = "mesh_edit"
     bl_label = "LoopTools"
     bl_options = {'DEFAULT_CLOSED'}
@@ -4359,7 +4356,7 @@ class VIEW3D_PT_tools_looptools(Panel):
         lt = context.window_manager.looptools
 
         # bridge - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_bridge:
             split.prop(lt, "display_bridge", text="", icon='DOWNARROW_HLT')
         else:
@@ -4395,7 +4392,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             row.prop(lt, "bridge_reverse")
 
         # circle - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_circle:
             split.prop(lt, "display_circle", text="", icon='DOWNARROW_HLT')
         else:
@@ -4433,7 +4430,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             col_move.prop(lt, "circle_influence")
 
         # curve - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_curve:
             split.prop(lt, "display_curve", text="", icon='DOWNARROW_HLT')
         else:
@@ -4465,7 +4462,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             col_move.prop(lt, "curve_influence")
 
         # flatten - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_flatten:
             split.prop(lt, "display_flatten", text="", icon='DOWNARROW_HLT')
         else:
@@ -4495,7 +4492,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             col_move.prop(lt, "flatten_influence")
 
         # gstretch - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_gstretch:
             split.prop(lt, "display_gstretch", text="", icon='DOWNARROW_HLT')
         else:
@@ -4536,7 +4533,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             box.operator("remove.gp", text="Delete GP Strokes")
 
         # loft - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_loft:
             split.prop(lt, "display_loft", text="", icon='DOWNARROW_HLT')
         else:
@@ -4573,7 +4570,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             row.prop(lt, "bridge_reverse")
 
         # relax - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_relax:
             split.prop(lt, "display_relax", text="", icon='DOWNARROW_HLT')
         else:
@@ -4588,7 +4585,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             box.prop(lt, "relax_regular")
 
         # space - first line
-        split = col.split(percentage=0.15, align=True)
+        split = col.split(factor=0.15, align=True)
         if lt.display_space:
             split.prop(lt, "display_space", text="", icon='DOWNARROW_HLT')
         else:
@@ -4625,74 +4622,74 @@ class LoopToolsProps(PropertyGroup):
     bpy.context.window_manager.looptools
     """
     # general display properties
-    display_bridge = BoolProperty(
+    display_bridge: BoolProperty(
         name="Bridge settings",
         description="Display settings of the Bridge tool",
         default=False
         )
-    display_circle = BoolProperty(
+    display_circle: BoolProperty(
         name="Circle settings",
         description="Display settings of the Circle tool",
         default=False
         )
-    display_curve = BoolProperty(
+    display_curve: BoolProperty(
         name="Curve settings",
         description="Display settings of the Curve tool",
         default=False
         )
-    display_flatten = BoolProperty(
+    display_flatten: BoolProperty(
         name="Flatten settings",
         description="Display settings of the Flatten tool",
         default=False
         )
-    display_gstretch = BoolProperty(
+    display_gstretch: BoolProperty(
         name="Gstretch settings",
         description="Display settings of the Gstretch tool",
         default=False
         )
-    display_loft = BoolProperty(
+    display_loft: BoolProperty(
         name="Loft settings",
         description="Display settings of the Loft tool",
         default=False
         )
-    display_relax = BoolProperty(
+    display_relax: BoolProperty(
         name="Relax settings",
         description="Display settings of the Relax tool",
         default=False
         )
-    display_space = BoolProperty(
+    display_space: BoolProperty(
         name="Space settings",
         description="Display settings of the Space tool",
         default=False
         )
 
     # bridge properties
-    bridge_cubic_strength = FloatProperty(
+    bridge_cubic_strength: FloatProperty(
         name="Strength",
         description="Higher strength results in more fluid curves",
         default=1.0,
         soft_min=-3.0,
         soft_max=3.0
         )
-    bridge_interpolation = EnumProperty(
+    bridge_interpolation: EnumProperty(
         name="Interpolation mode",
         items=(('cubic', "Cubic", "Gives curved results"),
                 ('linear', "Linear", "Basic, fast, straight interpolation")),
         description="Interpolation mode: algorithm used when creating segments",
         default='cubic'
         )
-    bridge_loft = BoolProperty(
+    bridge_loft: BoolProperty(
         name="Loft",
         description="Loft multiple loops, instead of considering them as "
                     "a multi-input for bridging",
         default=False
         )
-    bridge_loft_loop = BoolProperty(
+    bridge_loft_loop: BoolProperty(
         name="Loop",
         description="Connect the first and the last loop with each other",
         default=False
         )
-    bridge_min_width = IntProperty(
+    bridge_min_width: IntProperty(
         name="Minimum width",
         description="Segments with an edge smaller than this are merged "
                     "(compared to base edge)",
@@ -4701,7 +4698,7 @@ class LoopToolsProps(PropertyGroup):
         max=100,
         subtype='PERCENTAGE'
         )
-    bridge_mode = EnumProperty(
+    bridge_mode: EnumProperty(
         name="Mode",
         items=(('basic', "Basic", "Fast algorithm"),
                  ('shortest', "Shortest edge", "Slower algorithm with "
@@ -4709,49 +4706,49 @@ class LoopToolsProps(PropertyGroup):
         description="Algorithm used for bridging",
         default='shortest'
         )
-    bridge_remove_faces = BoolProperty(
+    bridge_remove_faces: BoolProperty(
         name="Remove faces",
         description="Remove faces that are internal after bridging",
         default=True
         )
-    bridge_reverse = BoolProperty(
+    bridge_reverse: BoolProperty(
         name="Reverse",
         description="Manually override the direction in which the loops "
                     "are bridged. Only use if the tool gives the wrong result",
         default=False
         )
-    bridge_segments = IntProperty(
+    bridge_segments: IntProperty(
         name="Segments",
         description="Number of segments used to bridge the gap (0=automatic)",
         default=1,
         min=0,
         soft_max=20
         )
-    bridge_twist = IntProperty(
+    bridge_twist: IntProperty(
         name="Twist",
         description="Twist what vertices are connected to each other",
         default=0
         )
 
     # circle properties
-    circle_custom_radius = BoolProperty(
+    circle_custom_radius: BoolProperty(
         name="Radius",
         description="Force a custom radius",
         default=False
         )
-    circle_fit = EnumProperty(
+    circle_fit: EnumProperty(
         name="Method",
         items=(("best", "Best fit", "Non-linear least squares"),
             ("inside", "Fit inside", "Only move vertices towards the center")),
         description="Method used for fitting a circle to the vertices",
         default='best'
         )
-    circle_flatten = BoolProperty(
+    circle_flatten: BoolProperty(
         name="Flatten",
         description="Flatten the circle, instead of projecting it on the mesh",
         default=True
         )
-    circle_influence = FloatProperty(
+    circle_influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -4760,41 +4757,41 @@ class LoopToolsProps(PropertyGroup):
         precision=1,
         subtype='PERCENTAGE'
         )
-    circle_lock_x = BoolProperty(
+    circle_lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    circle_lock_y = BoolProperty(
+    circle_lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    circle_lock_z = BoolProperty(
+    circle_lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    circle_radius = FloatProperty(
+    circle_radius: FloatProperty(
         name="Radius",
         description="Custom radius for circle",
         default=1.0,
         min=0.0,
         soft_max=1000.0
         )
-    circle_regular = BoolProperty(
+    circle_regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the circle",
         default=True
         )
     # curve properties
-    curve_boundaries = BoolProperty(
+    curve_boundaries: BoolProperty(
         name="Boundaries",
         description="Limit the tool to work within the boundaries of the "
                     "selected vertices",
         default=False
         )
-    curve_influence = FloatProperty(
+    curve_influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -4803,34 +4800,34 @@ class LoopToolsProps(PropertyGroup):
         precision=1,
         subtype='PERCENTAGE'
         )
-    curve_interpolation = EnumProperty(
+    curve_interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
             ("linear", "Linear", "Simple and fast linear algorithm")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    curve_lock_x = BoolProperty(
+    curve_lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    curve_lock_y = BoolProperty(
+    curve_lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    curve_lock_z = BoolProperty(
+    curve_lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    curve_regular = BoolProperty(
+    curve_regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the curve",
         default=True
         )
-    curve_restriction = EnumProperty(
+    curve_restriction: EnumProperty(
         name="Restriction",
         items=(("none", "None", "No restrictions on vertex movement"),
             ("extrude", "Extrude only", "Only allow extrusions (no indentations)"),
@@ -4840,7 +4837,7 @@ class LoopToolsProps(PropertyGroup):
         )
 
     # flatten properties
-    flatten_influence = FloatProperty(
+    flatten_influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -4849,20 +4846,20 @@ class LoopToolsProps(PropertyGroup):
         precision=1,
         subtype='PERCENTAGE'
         )
-    flatten_lock_x = BoolProperty(
+    flatten_lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False)
-    flatten_lock_y = BoolProperty(name="Lock Y",
+    flatten_lock_y: BoolProperty(name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    flatten_lock_z = BoolProperty(
+    flatten_lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    flatten_plane = EnumProperty(
+    flatten_plane: EnumProperty(
         name="Plane",
         items=(("best_fit", "Best fit", "Calculate a best fitting plane"),
             ("normal", "Normal", "Derive plane from averaging vertex "
@@ -4872,7 +4869,7 @@ class LoopToolsProps(PropertyGroup):
         description="Plane on which vertices are flattened",
         default='best_fit'
         )
-    flatten_restriction = EnumProperty(
+    flatten_restriction: EnumProperty(
         name="Restriction",
         items=(("none", "None", "No restrictions on vertex movement"),
             ("bounding_box", "Bounding box", "Vertices are restricted to "
@@ -4882,7 +4879,7 @@ class LoopToolsProps(PropertyGroup):
         )
 
     # gstretch properties
-    gstretch_conversion = EnumProperty(
+    gstretch_conversion: EnumProperty(
         name="Conversion",
         items=(("distance", "Distance", "Set the distance between vertices "
             "of the converted grease pencil stroke"),
@@ -4897,7 +4894,7 @@ class LoopToolsProps(PropertyGroup):
                     "use this simplification method",
         default='limit_vertices'
         )
-    gstretch_conversion_distance = FloatProperty(
+    gstretch_conversion_distance: FloatProperty(
         name="Distance",
         description="Absolute distance between vertices along the converted "
                     "grease pencil stroke",
@@ -4906,7 +4903,7 @@ class LoopToolsProps(PropertyGroup):
         soft_min=0.01,
         soft_max=100
         )
-    gstretch_conversion_max = IntProperty(
+    gstretch_conversion_max: IntProperty(
         name="Max Vertices",
         description="Maximum number of vertices grease pencil strokes will "
                     "have, when they are converted to geomtery",
@@ -4915,7 +4912,7 @@ class LoopToolsProps(PropertyGroup):
         soft_max=500,
         update=gstretch_update_min
         )
-    gstretch_conversion_min = IntProperty(
+    gstretch_conversion_min: IntProperty(
         name="Min Vertices",
         description="Minimum number of vertices grease pencil strokes will "
                     "have, when they are converted to geomtery",
@@ -4924,7 +4921,7 @@ class LoopToolsProps(PropertyGroup):
         soft_max=500,
         update=gstretch_update_max
         )
-    gstretch_conversion_vertices = IntProperty(
+    gstretch_conversion_vertices: IntProperty(
         name="Vertices",
         description="Number of vertices grease pencil strokes will "
                     "have, when they are converted to geometry. If strokes have less "
@@ -4933,13 +4930,13 @@ class LoopToolsProps(PropertyGroup):
         min=3,
         soft_max=500
         )
-    gstretch_delete_strokes = BoolProperty(
+    gstretch_delete_strokes: BoolProperty(
         name="Delete strokes",
         description="Remove Grease Pencil strokes if they have been used "
                     "for Gstretch. WARNING: DOES NOT SUPPORT UNDO",
         default=False
         )
-    gstretch_influence = FloatProperty(
+    gstretch_influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -4948,22 +4945,22 @@ class LoopToolsProps(PropertyGroup):
         precision=1,
         subtype='PERCENTAGE'
         )
-    gstretch_lock_x = BoolProperty(
+    gstretch_lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    gstretch_lock_y = BoolProperty(
+    gstretch_lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    gstretch_lock_z = BoolProperty(
+    gstretch_lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
         )
-    gstretch_method = EnumProperty(
+    gstretch_method: EnumProperty(
         name="Method",
         items=(("project", "Project", "Project vertices onto the stroke, "
                 "using vertex normals and connected edges"),
@@ -4977,21 +4974,21 @@ class LoopToolsProps(PropertyGroup):
         )
 
     # relax properties
-    relax_input = EnumProperty(name="Input",
+    relax_input: EnumProperty(name="Input",
         items=(("all", "Parallel (all)", "Also use non-selected "
                                            "parallel loops as input"),
                 ("selected", "Selection", "Only use selected vertices as input")),
         description="Loops that are relaxed",
         default='selected'
         )
-    relax_interpolation = EnumProperty(
+    relax_interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
                 ("linear", "Linear", "Simple and fast linear algorithm")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    relax_iterations = EnumProperty(name="Iterations",
+    relax_iterations: EnumProperty(name="Iterations",
         items=(("1", "1", "One"),
                 ("3", "3", "Three"),
                 ("5", "5", "Five"),
@@ -5000,14 +4997,14 @@ class LoopToolsProps(PropertyGroup):
         description="Number of times the loop is relaxed",
         default="1"
         )
-    relax_regular = BoolProperty(
+    relax_regular: BoolProperty(
         name="Regular",
         description="Distribute vertices at constant distances along the loop",
         default=True
         )
 
     # space properties
-    space_influence = FloatProperty(
+    space_influence: FloatProperty(
         name="Influence",
         description="Force of the tool",
         default=100.0,
@@ -5016,7 +5013,7 @@ class LoopToolsProps(PropertyGroup):
         precision=1,
         subtype='PERCENTAGE'
         )
-    space_input = EnumProperty(
+    space_input: EnumProperty(
         name="Input",
         items=(("all", "Parallel (all)", "Also use non-selected "
                 "parallel loops as input"),
@@ -5024,24 +5021,24 @@ class LoopToolsProps(PropertyGroup):
         description="Loops that are spaced",
         default='selected'
         )
-    space_interpolation = EnumProperty(
+    space_interpolation: EnumProperty(
         name="Interpolation",
         items=(("cubic", "Cubic", "Natural cubic spline, smooth results"),
             ("linear", "Linear", "Vertices are projected on existing edges")),
         description="Algorithm used for interpolation",
         default='cubic'
         )
-    space_lock_x = BoolProperty(
+    space_lock_x: BoolProperty(
         name="Lock X",
         description="Lock editing of the x-coordinate",
         default=False
         )
-    space_lock_y = BoolProperty(
+    space_lock_y: BoolProperty(
         name="Lock Y",
         description="Lock editing of the y-coordinate",
         default=False
         )
-    space_lock_z = BoolProperty(
+    space_lock_z: BoolProperty(
         name="Lock Z",
         description="Lock editing of the z-coordinate",
         default=False
@@ -5083,7 +5080,7 @@ class LoopPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",
@@ -5100,7 +5097,7 @@ class LoopPreferences(AddonPreferences):
 
 
 # define classes for registration
-classes = [
+classes = (
     VIEW3D_MT_edit_mesh_looptools,
     VIEW3D_PT_tools_looptools,
     LoopToolsProps,
@@ -5113,13 +5110,13 @@ classes = [
     Space,
     LoopPreferences,
     RemoveGP,
-    ]
+)
 
 
 # registering and menu integration
 def register():
-    for c in classes:
-        bpy.utils.register_class(c)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
     bpy.types.WindowManager.looptools = PointerProperty(type=LoopToolsProps)
     update_panel(None, bpy.context)
@@ -5127,12 +5124,13 @@ def register():
 
 # unregistering and removing menus
 def unregister():
-    for c in classes:
-        bpy.utils.unregister_class(c)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
     bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
     try:
         del bpy.types.WindowManager.looptools
-    except:
+    except Exception as e:
+        print('unregister fail:\n', e)
         pass
 
 

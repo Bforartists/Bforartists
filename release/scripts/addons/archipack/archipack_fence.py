@@ -157,7 +157,7 @@ class FenceGenerator():
     def param_t(self, angle_limit, post_spacing):
         """
             setup corners and fences dz
-            compute index of fences wich belong to each group of fences between corners
+            compute index of fences which belong to each group of fences between corners
             compute t of each fence
         """
         # segments are group of parts separated by limit angle
@@ -268,7 +268,7 @@ class FenceGenerator():
             co.z *= self.user_defined_post_scale.z
             if 'Slope' in g:
                 co.z += co.y * slope
-            verts.append(tM * co)
+            verts.append(tM @ co)
         matids += self.user_defined_mat
         faces += [tuple([i + f for i in p.vertices]) for p in m.polygons]
         uvs += self.user_defined_uvs
@@ -341,7 +341,7 @@ class FenceGenerator():
             if s < n_sections:
                 v1 = subs[s + 1][0].v.normalized()
             dir = (v0 + v1).normalized()
-            scale = 1 / cos(0.5 * acos(min(1, max(-1, v0 * v1))))
+            scale = 1 / cos(0.5 * acos(min(1, max(-1, v0.dot(v1)))))
             for p in profile:
                 x, y = n.p + scale * p.x * dir
                 z = zl + p.y + altitude
@@ -556,7 +556,7 @@ class FenceGenerator():
                 if s < n_sections:
                     v1 = sections[s + 1][0].v.normalized()
                 dir = (v0 + v1).normalized()
-                scale = min(10, 1 / cos(0.5 * acos(min(1, max(-1, v0 * v1)))))
+                scale = min(10, 1 / cos(0.5 * acos(min(1, max(-1, v0.dot(v1) )))))
                 for p in profile:
                     # x, y = n.p + scale * (x_offset + p.x) * dir
                     x, y = n.p + scale * p.x * dir
@@ -673,7 +673,7 @@ materials_enum = (
 
 
 class archipack_fence_material(PropertyGroup):
-    index = EnumProperty(
+    index : EnumProperty(
         items=materials_enum,
         default='0',
         update=update
@@ -684,7 +684,7 @@ class archipack_fence_material(PropertyGroup):
             find witch selected object this instance belongs to
             provide support for "copy to selected"
         """
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             props = archipack_fence.datablock(o)
             if props:
@@ -700,7 +700,7 @@ class archipack_fence_material(PropertyGroup):
 
 
 class archipack_fence_part(PropertyGroup):
-    type = EnumProperty(
+    type : EnumProperty(
             items=(
                 ('S_FENCE', 'Straight fence', '', 0),
                 ('C_FENCE', 'Curved fence', '', 1),
@@ -708,21 +708,21 @@ class archipack_fence_part(PropertyGroup):
             default='S_FENCE',
             update=update_type
             )
-    length = FloatProperty(
+    length : FloatProperty(
             name="Length",
             min=0.01,
             default=2.0,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             min=0.01,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    da = FloatProperty(
+    da : FloatProperty(
             name="Angle",
             min=-pi,
             max=pi,
@@ -730,7 +730,7 @@ class archipack_fence_part(PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    a0 = FloatProperty(
+    a0 : FloatProperty(
             name="Start angle",
             min=-2 * pi,
             max=2 * pi,
@@ -738,20 +738,20 @@ class archipack_fence_part(PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    dz = FloatProperty(
+    dz : FloatProperty(
             name="delta z",
             default=0,
             unit='LENGTH', subtype='DISTANCE'
             )
 
-    manipulators = CollectionProperty(type=archipack_manipulator)
+    manipulators : CollectionProperty(type=archipack_manipulator)
 
     def find_datablock_in_selection(self, context):
         """
             find witch selected object this instance belongs to
             provide support for "copy to selected"
         """
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             props = archipack_fence.datablock(o)
             if props is not None:
@@ -783,43 +783,43 @@ class archipack_fence_part(PropertyGroup):
 
 class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
 
-    parts = CollectionProperty(type=archipack_fence_part)
-    user_defined_path = StringProperty(
+    parts : CollectionProperty(type=archipack_fence_part)
+    user_defined_path : StringProperty(
             name="User defined",
             update=update_path
             )
-    user_defined_spline = IntProperty(
+    user_defined_spline : IntProperty(
             name="Spline index",
             min=0,
             default=0,
             update=update_path
             )
-    user_defined_resolution = IntProperty(
+    user_defined_resolution : IntProperty(
             name="Resolution",
             min=1,
             max=128,
             default=12, update=update_path
             )
-    n_parts = IntProperty(
+    n_parts : IntProperty(
             name="Parts",
             min=1,
             default=1, update=update_manipulators
             )
-    x_offset = FloatProperty(
+    x_offset : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
 
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             min=0.01,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    da = FloatProperty(
+    da : FloatProperty(
             name="Angle",
             min=-pi,
             max=pi,
@@ -827,7 +827,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    angle_limit = FloatProperty(
+    angle_limit : FloatProperty(
             name="Angle",
             min=0,
             max=2 * pi,
@@ -835,7 +835,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update_manipulators
             )
-    shape = EnumProperty(
+    shape : EnumProperty(
             items=(
                 ('RECTANGLE', 'Straight', '', 0),
                 ('CIRCLE', 'Curved ', '', 1)
@@ -843,106 +843,106 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             default='RECTANGLE',
             update=update
             )
-    post = BoolProperty(
+    post : BoolProperty(
             name='Enable',
             default=True,
             update=update
             )
-    post_spacing = FloatProperty(
+    post_spacing : FloatProperty(
             name="Spacing",
             min=0.1,
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_x = FloatProperty(
+    post_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_y = FloatProperty(
+    post_y : FloatProperty(
             name="Length",
             min=0.001, max=1000,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_z = FloatProperty(
+    post_z : FloatProperty(
             name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_alt = FloatProperty(
+    post_alt : FloatProperty(
             name="Altitude",
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    user_defined_post_enable = BoolProperty(
+    user_defined_post_enable : BoolProperty(
             name="User",
             update=update,
             default=True
             )
-    user_defined_post = StringProperty(
+    user_defined_post : StringProperty(
             name="User defined",
             update=update
             )
-    idmat_post = EnumProperty(
+    idmat_post : EnumProperty(
             name="Post",
             items=materials_enum,
             default='1',
             update=update
             )
-    subs = BoolProperty(
+    subs : BoolProperty(
             name='Enable',
             default=False,
             update=update
             )
-    subs_spacing = FloatProperty(
+    subs_spacing : FloatProperty(
             name="Spacing",
             min=0.05,
             default=0.10, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_x = FloatProperty(
+    subs_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_y = FloatProperty(
+    subs_y : FloatProperty(
             name="Length",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_z = FloatProperty(
+    subs_z : FloatProperty(
             name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_alt = FloatProperty(
+    subs_alt : FloatProperty(
             name="Altitude",
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_offset_x = FloatProperty(
+    subs_offset_x : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_bottom = EnumProperty(
+    subs_bottom : EnumProperty(
             name="Bottom",
             items=(
                 ('STEP', 'Follow step', '', 0),
@@ -951,78 +951,78 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             default='STEP',
             update=update
             )
-    user_defined_subs_enable = BoolProperty(
+    user_defined_subs_enable : BoolProperty(
             name="User",
             update=update,
             default=True
             )
-    user_defined_subs = StringProperty(
+    user_defined_subs : StringProperty(
             name="User defined",
             update=update
             )
-    idmat_subs = EnumProperty(
+    idmat_subs : EnumProperty(
             name="Subs",
             items=materials_enum,
             default='1',
             update=update
             )
-    panel = BoolProperty(
+    panel : BoolProperty(
             name='Enable',
             default=True,
             update=update
             )
-    panel_alt = FloatProperty(
+    panel_alt : FloatProperty(
             name="Altitude",
             default=0.25, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_x = FloatProperty(
+    panel_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.01, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_z = FloatProperty(
+    panel_z : FloatProperty(
             name="Height",
             min=0.001,
             default=0.6, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_dist = FloatProperty(
+    panel_dist : FloatProperty(
             name="Spacing",
             min=0.001,
             default=0.05, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_offset_x = FloatProperty(
+    panel_offset_x : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    idmat_panel = EnumProperty(
+    idmat_panel : EnumProperty(
             name="Panels",
             items=materials_enum,
             default='2',
             update=update
             )
-    rail = BoolProperty(
+    rail : BoolProperty(
             name="Enable",
             update=update,
             default=False
             )
-    rail_n = IntProperty(
+    rail_n : IntProperty(
             name="#",
             default=1,
             min=0,
             max=31,
             update=update
             )
-    rail_x = FloatVectorProperty(
+    rail_x : FloatVectorProperty(
             name="Width",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -1036,7 +1036,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_z = FloatVectorProperty(
+    rail_z : FloatVectorProperty(
             name="Height",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -1050,7 +1050,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_offset = FloatVectorProperty(
+    rail_offset : FloatVectorProperty(
             name="Offset",
             default=[
                 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1063,7 +1063,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_alt = FloatVectorProperty(
+    rail_alt : FloatVectorProperty(
             name="Altitude",
             default=[
                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -1076,43 +1076,43 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_mat = CollectionProperty(type=archipack_fence_material)
+    rail_mat : CollectionProperty(type=archipack_fence_material)
 
-    handrail = BoolProperty(
+    handrail : BoolProperty(
             name="Enable",
             update=update,
             default=True
             )
-    handrail_offset = FloatProperty(
+    handrail_offset : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_alt = FloatProperty(
+    handrail_alt : FloatProperty(
             name="Altitude",
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_extend = FloatProperty(
+    handrail_extend : FloatProperty(
             name="Extend",
             min=0,
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_slice = BoolProperty(
+    handrail_slice : BoolProperty(
             name='Slice',
             default=True,
             update=update
             )
-    handrail_slice_right = BoolProperty(
+    handrail_slice_right : BoolProperty(
             name='Slice',
             default=True,
             update=update
             )
-    handrail_profil = EnumProperty(
+    handrail_profil : EnumProperty(
             name="Profil",
             items=(
                 ('SQUARE', 'Square', '', 0),
@@ -1122,28 +1122,28 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             default='SQUARE',
             update=update
             )
-    handrail_x = FloatProperty(
+    handrail_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_y = FloatProperty(
+    handrail_y : FloatProperty(
             name="Height",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_radius = FloatProperty(
+    handrail_radius : FloatProperty(
             name="Radius",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    idmat_handrail = EnumProperty(
+    idmat_handrail : EnumProperty(
             name="Handrail",
             items=materials_enum,
             default='0',
@@ -1151,25 +1151,25 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # UI layout related
-    parts_expand = BoolProperty(
+    parts_expand : BoolProperty(
             default=False
             )
-    rail_expand = BoolProperty(
+    rail_expand : BoolProperty(
             default=False
             )
-    idmats_expand = BoolProperty(
+    idmats_expand : BoolProperty(
             default=False
             )
-    handrail_expand = BoolProperty(
+    handrail_expand : BoolProperty(
             default=False
             )
-    post_expand = BoolProperty(
+    post_expand : BoolProperty(
             default=False
             )
-    panel_expand = BoolProperty(
+    panel_expand : BoolProperty(
             default=False
             )
-    subs_expand = BoolProperty(
+    subs_expand : BoolProperty(
             default=False
             )
 
@@ -1178,7 +1178,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
     # .auto_update = False
     # bulk changes
     # .auto_update = True
-    auto_update = BoolProperty(
+    auto_update : BoolProperty(
             options={'SKIP_SAVE'},
             default=True,
             update=update_manipulators
@@ -1226,7 +1226,6 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
         # add parts
         for i in range(len(self.parts), self.n_parts):
             self.parts.add()
-
         self.setup_manipulators()
 
     def interpolate_bezier(self, pts, wM, p0, p1, resolution):
@@ -1234,18 +1233,18 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
         # since this can lower points count by a resolution factor
         # use normalized to handle non linear t
         if resolution == 0:
-            pts.append(wM * p0.co.to_3d())
+            pts.append(wM @ p0.co.to_3d())
         else:
             v = (p1.co - p0.co).normalized()
             d1 = (p0.handle_right - p0.co).normalized()
             d2 = (p1.co - p1.handle_left).normalized()
             if d1 == v and d2 == v:
-                pts.append(wM * p0.co.to_3d())
+                pts.append(wM @ p0.co.to_3d())
             else:
-                seg = interpolate_bezier(wM * p0.co,
-                    wM * p0.handle_right,
-                    wM * p1.handle_left,
-                    wM * p1.co,
+                seg = interpolate_bezier(wM @ p0.co,
+                    wM @ p0.handle_right,
+                    wM @ p1.handle_left,
+                    wM @ p1.co,
                     resolution + 1)
                 for i in range(resolution):
                     pts.append(seg[i].to_3d())
@@ -1264,7 +1263,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
         pts = []
         if spline.type == 'POLY':
             pt = spline.points[0].co
-            pts = [wM * p.co.to_3d() for p in spline.points]
+            pts = [wM @ p.co.to_3d() for p in spline.points]
             if spline.use_cyclic_u:
                 pts.append(pts[0])
         elif spline.type == 'BEZIER':
@@ -1280,7 +1279,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
                 self.interpolate_bezier(pts, wM, p0, p1, resolution)
                 pts.append(pts[0])
             else:
-                pts.append(wM * points[-1].co)
+                pts.append(wM @ points[-1].co)
         auto_update = self.auto_update
         self.auto_update = False
 
@@ -1305,15 +1304,10 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
 
         self.auto_update = auto_update
 
-        o.matrix_world = tM * Matrix([
-            [1, 0, 0, pt.x],
-            [0, 1, 0, pt.y],
-            [0, 0, 1, pt.z],
-            [0, 0, 0, 1]
-            ])
+        o.matrix_world = tM @ Matrix.Translation(pt)
 
     def update_path(self, context):
-        path = context.scene.objects.get(self.user_defined_path)
+        path = context.scene.objects.get(self.user_defined_path.strip())
         if path is not None and path.type == 'CURVE':
             splines = path.data.splines
             if len(splines) > self.user_defined_spline:
@@ -1335,7 +1329,6 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
         return g
 
     def update(self, context, manipulable_refresh=False):
-
         o = self.find_in_selection(context, self.auto_update)
 
         if o is None:
@@ -1359,7 +1352,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
 
         if self.user_defined_post_enable:
             # user defined posts
-            user_def_post = context.scene.objects.get(self.user_defined_post)
+            user_def_post = context.scene.objects.get(self.user_defined_post.strip())
             if user_def_post is not None and user_def_post.type == 'MESH':
                 g.setup_user_defined_post(user_def_post, self.post_x, self.post_y, self.post_z)
 
@@ -1373,7 +1366,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
 
         # user defined subs
         if self.user_defined_subs_enable:
-            user_def_subs = context.scene.objects.get(self.user_defined_subs)
+            user_def_subs = context.scene.objects.get(self.user_defined_subs.strip())
             if user_def_subs is not None and user_def_subs.type == 'MESH':
                 g.setup_user_defined_post(user_def_subs, self.subs_x, self.subs_y, self.subs_z)
 
@@ -1465,7 +1458,7 @@ class ARCHIPACK_PT_fence(Panel):
     bl_label = "Fence"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -1478,13 +1471,13 @@ class ARCHIPACK_PT_fence(Panel):
         scene = context.scene
         layout = self.layout
         row = layout.row(align=True)
-        row.operator('archipack.fence_manipulate', icon='HAND')
+        row.operator('archipack.fence_manipulate', icon='VIEW_PAN')
         box = layout.box()
         # box.label(text="Styles")
         row = box.row(align=True)
         row.operator("archipack.fence_preset_menu", text=bpy.types.ARCHIPACK_OT_fence_preset_menu.bl_label)
-        row.operator("archipack.fence_preset", text="", icon='ZOOMIN')
-        row.operator("archipack.fence_preset", text="", icon='ZOOMOUT').remove_active = True
+        row.operator("archipack.fence_preset", text="", icon='ADD')
+        row.operator("archipack.fence_preset", text="", icon='REMOVE').remove_active = True
         box = layout.box()
         row = box.row(align=True)
         row.operator("archipack.fence_curve_update", text="", icon='FILE_REFRESH')
@@ -1619,15 +1612,18 @@ class ARCHIPACK_OT_fence(ArchipackCreateTool, Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def create(self, context):
+
         m = bpy.data.meshes.new("Fence")
         o = bpy.data.objects.new("Fence", m)
         d = m.archipack_fence.add()
         # make manipulators selectable
+
         d.manipulable_selectable = True
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         self.load_preset(d)
+
         self.add_material(o)
         return o
 
@@ -1635,9 +1631,9 @@ class ARCHIPACK_OT_fence(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.location = bpy.context.scene.cursor_location
-            o.select = True
-            context.scene.objects.active = o
+            o.location = context.scene.cursor_location
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             self.manipulate()
             return {'FINISHED'}
         else:
@@ -1663,7 +1659,7 @@ class ARCHIPACK_OT_fence_curve_update(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def execute(self, context):
         if context.mode == "OBJECT":
@@ -1689,7 +1685,7 @@ class ARCHIPACK_OT_fence_from_curve(ArchipackCreateTool, Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def create(self, context):
         o = None
@@ -1709,8 +1705,8 @@ class ARCHIPACK_OT_fence_from_curve(ArchipackCreateTool, Operator):
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
             if o is not None:
-                o.select = True
-                context.scene.objects.active = o
+                o.select_set(state=True)
+                context.view_layer.objects.active = o
             # self.manipulate()
             return {'FINISHED'}
         else:

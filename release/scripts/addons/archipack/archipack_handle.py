@@ -26,23 +26,24 @@
 # ----------------------------------------------------------
 
 import bpy
+from .archipack_object import ArchipackCollectionManager
 
 
 def create_handle(context, parent, mesh):
     old = context.active_object
     handle = bpy.data.objects.new("Handle", mesh)
     handle['archipack_handle'] = True
-    context.scene.objects.link(handle)
+    ArchipackCollectionManager.link_object_to_scene(context, handle)
     modif = handle.modifiers.new('Subsurf', 'SUBSURF')
     modif.render_levels = 4
     modif.levels = 1
     handle.parent = parent
     handle.matrix_world = parent.matrix_world.copy()
-    context.scene.objects.active = handle
+    context.view_layer.objects.active = handle
     m = handle.archipack_material.add()
     m.category = 'handle'
     m.material = 'DEFAULT'
-    context.scene.objects.active = old
+    context.view_layer.objects.active = old
     return handle
 
 

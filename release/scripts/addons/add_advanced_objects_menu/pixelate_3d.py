@@ -28,7 +28,7 @@ def pix(self, obj):
     mes.transform(obj.matrix_world)
     dup = bpy.data.objects.new('dup', mes)
     sce.objects.link(dup)
-    dup.dupli_type = 'VERTS'
+    dup.instance_type = 'VERTS'
     sce.objects.active = dup
     bpy.ops.object.mode_set()
     ver = mes.vertices

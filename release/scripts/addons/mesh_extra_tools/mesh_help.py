@@ -3,7 +3,7 @@
 # Note:  this script contains the Help Operator used by the various functions
 # Usage: add a key string to the dictionary in this file with the list of strings to pass to labels
 #        and call the operator from the add-on UI draw function by passing the help_ids parameter
-#        If the size of the pop-up if needed, define popup_size in the call by using varibles
+#        If the size of the pop-up if needed, define popup_size in the call by using variables
 #        Example (with using the variable props):
 #        props = layout.row("mesh.extra_tools_help")
 #        props.help_ids = "default"

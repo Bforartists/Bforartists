@@ -32,7 +32,10 @@
 #define __MOD_WEIGHTVG_UTIL_H__
 
 struct CurveMapping;
-struct DerivedMesh;
+struct MDeformVert;
+struct MDeformWeight;
+struct Mesh;
+struct ModifierEvalContext;
 struct Object;
 struct Tex;
 struct Scene;
@@ -41,7 +44,7 @@ struct RNG;
 /*
  * XXX I'd like to make modified weights visible in WeightPaint mode,
  *     but couldn't figure a way to do this...
- *     Maybe this will need changes in mesh_calc_modifiers (DerivedMesh.c)?
+ *     Maybe this will need changes in mesh_calc_modifiers?
  *     Or the WeightPaint mode code itself?
  */
 
@@ -71,9 +74,10 @@ void weightvg_do_map(int num, float *new_w, short mode, struct CurveMapping *cma
  * XXX The standard "factor" value is assumed in [0.0, 1.0] range. Else, weird results might appear.
  */
 void weightvg_do_mask(
-        int num, const int *indices, float *org_w, const float *new_w, Object *ob,
-        DerivedMesh *dm, float fact, const char defgrp_name[MAX_VGROUP_NAME],
-        struct Scene *scene, Tex *texture, int tex_use_channel, int tex_mapping,
+        const ModifierEvalContext *ctx,
+        const int num, const int *indices, float *org_w, const float *new_w, Object *ob,
+        struct Mesh *mesh, const float fact, const char defgrp_name[MAX_VGROUP_NAME],
+        struct Scene *scene, Tex *texture, const int tex_use_channel, const int tex_mapping,
         Object *tex_map_object, const char *tex_uvlayer_name);
 
 /* Applies weights to given vgroup (defgroup), and optionally add/remove vertices from the group.
@@ -81,7 +85,7 @@ void weightvg_do_mask(
  * vertex index (in case the weight table does not cover the whole vertices...).
  */
 void weightvg_update_vg(
-        MDeformVert *dvert, int defgrp_idx, MDeformWeight **dws, int num,
+        struct MDeformVert *dvert, int defgrp_idx, struct MDeformWeight **dws, int num,
         const int *indices, const float *weights, const bool do_add,
         const float add_thresh, const bool do_rem, const float rem_thresh);
 

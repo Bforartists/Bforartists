@@ -42,10 +42,8 @@ static PyStructSequence_Field app_builtopts_info_fields[] = {
 	{(char *)"cycles", NULL},
 	{(char *)"cycles_osl", NULL},
 	{(char *)"freestyle", NULL},
-	{(char *)"gameengine", NULL},
 	{(char *)"image_cineon", NULL},
 	{(char *)"image_dds", NULL},
-	{(char *)"image_frameserver", NULL},
 	{(char *)"image_hdr", NULL},
 	{(char *)"image_openexr", NULL},
 	{(char *)"image_openjpeg", NULL},
@@ -64,7 +62,6 @@ static PyStructSequence_Field app_builtopts_info_fields[] = {
 	{(char *)"mod_smoke", NULL},
 	{(char *)"collada", NULL},
 	{(char *)"opencolorio", NULL},
-	{(char *)"player", NULL},
 	{(char *)"openmp", NULL},
 	{(char *)"openvdb", NULL},
 	{(char *)"alembic", NULL},
@@ -140,12 +137,6 @@ static PyObject *make_builtopts_info(void)
 	SetObjIncref(Py_False);
 #endif
 
-#ifdef WITH_GAMEENGINE
-	SetObjIncref(Py_True);
-#else
-	SetObjIncref(Py_False);
-#endif
-
 #ifdef WITH_CINEON
 	SetObjIncref(Py_True);
 #else
@@ -153,12 +144,6 @@ static PyObject *make_builtopts_info(void)
 #endif
 
 #ifdef WITH_DDS
-	SetObjIncref(Py_True);
-#else
-	SetObjIncref(Py_False);
-#endif
-
-#ifdef WITH_FRAMESERVER
 	SetObjIncref(Py_True);
 #else
 	SetObjIncref(Py_False);
@@ -267,12 +252,6 @@ static PyObject *make_builtopts_info(void)
 #endif
 
 #ifdef WITH_OCIO
-	SetObjIncref(Py_True);
-#else
-	SetObjIncref(Py_False);
-#endif
-
-#ifdef WITH_PLAYER
 	SetObjIncref(Py_True);
 #else
 	SetObjIncref(Py_False);

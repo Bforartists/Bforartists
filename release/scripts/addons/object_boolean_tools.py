@@ -159,9 +159,9 @@ def Operation(context, _operation):
                             obj.modifiers.remove(mod)
             """
             if useWire:
-                selObj.draw_type = "WIRE"
+                selObj.display_type = "WIRE"
             else:
-                selObj.draw_type = "BOUNDS"
+                selObj.display_type = "BOUNDS"
 
             cyclesVis.camera = False
             cyclesVis.diffuse = False
@@ -169,7 +169,7 @@ def Operation(context, _operation):
             cyclesVis.shadow = False
             cyclesVis.transmission = False
             if _operation == "SLICE":
-                # copies dupli_group property(empty), but group property is empty (users_group = None)
+                # copies instance_collection property(empty), but group property is empty (users_group = None)
                 clone = context.active_object.copy()
                 # clone.select = True
                 context.scene.objects.link(clone)
@@ -200,7 +200,7 @@ def Remove(context, thisObj_name, Prop):
             # if it's the brush object
             if obj.name == _thisObj_name:
                 cyclesVis = obj.cycles_visibility
-                obj.draw_type = "TEXTURED"
+                obj.display_type = "TEXTURED"
                 del obj["BoolToolBrush"]
                 del obj["BoolTool_FTransform"]
                 cyclesVis.camera = True
@@ -229,7 +229,7 @@ def Remove(context, thisObj_name, Prop):
                         if (actObj.name in mod.name):
                             Canvas.modifiers.remove(mod)
             cyclesVis = actObj.cycles_visibility
-            actObj.draw_type = "TEXTURED"
+            actObj.display_type = "TEXTURED"
             del actObj["BoolToolBrush"]
             del actObj["BoolTool_FTransform"]
             cyclesVis.camera = True
@@ -387,7 +387,7 @@ def GCollector(_obj):
             del _obj["BoolToolRoot"]
 
 
-# Handle the callbacks when modifing things in the scene
+# Handle the callbacks when modifying things in the scene
 @persistent
 def HandleScene(scene):
     if bpy.data.objects.is_updated:
@@ -509,9 +509,9 @@ class BTool_FastTransform(Operator):
             if isBrush(actObj) and actObj["BoolTool_FTransform"] == "True":
                 EnableThisBrush(bpy.context, "False")
                 if useWire:
-                    actObj.draw_type = "WIRE"
+                    actObj.display_type = "WIRE"
                 else:
-                    actObj.draw_type = "BOUNDS"
+                    actObj.display_type = "BOUNDS"
 
             if self.operator == "Translate":
                 bpy.ops.transform.translate('INVOKE_DEFAULT')
@@ -523,13 +523,13 @@ class BTool_FastTransform(Operator):
         if event.type == 'LEFTMOUSE':
             if isBrush(actObj):
                 EnableThisBrush(bpy.context, "True")
-                actObj.draw_type = "WIRE"
+                actObj.display_type = "WIRE"
             return {'FINISHED'}
 
         if event.type in {'RIGHTMOUSE', 'ESC'}:
             if isBrush(actObj):
                 EnableThisBrush(bpy.context, "True")
-                actObj.draw_type = "WIRE"
+                actObj.display_type = "WIRE"
             return {'CANCELLED'}
 
         return {'RUNNING_MODAL'}
@@ -914,18 +914,18 @@ class VIEW3D_MT_booltool_menu(Menu):
         layout = self.layout
 
         layout.label("Auto Boolean:")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon="ROTACTIVE")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon="ROTATECOLLECTION")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon="ROTATECENTER")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon="ROTATECENTER")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon="ROTACTIVE")
+        layout.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon='PIVOT_ACTIVE')
+        layout.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon='PIVOT_INDIVIDUAL')
+        layout.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon='PIVOT_MEDIAN')
+        layout.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon='PIVOT_MEDIAN')
+        layout.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon='PIVOT_ACTIVE')
         layout.separator()
 
         layout.label("Brush Boolean:")
-        layout.operator(BTool_Diff.bl_idname, icon="ROTACTIVE")
-        layout.operator(BTool_Union.bl_idname, icon="ROTATECOLLECTION")
-        layout.operator(BTool_Inters.bl_idname, icon="ROTATECENTER")
-        layout.operator(BTool_Slice.bl_idname, icon="ROTATECENTER")
+        layout.operator(BTool_Diff.bl_idname, icon='PIVOT_ACTIVE')
+        layout.operator(BTool_Union.bl_idname, icon='PIVOT_INDIVIDUAL')
+        layout.operator(BTool_Inters.bl_idname, icon='PIVOT_MEDIAN')
+        layout.operator(BTool_Slice.bl_idname, icon='PIVOT_MEDIAN')
 
         if (isCanvas(context.active_object)):
             layout.separator()
@@ -977,16 +977,16 @@ class VIEW3D_PT_booltool_tools(Panel):
         col.enabled = obs_len > 1
         col.label("Auto Boolean:", icon="MODIFIER")
         col.separator()
-        col.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon="ROTACTIVE")
-        col.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon="ROTATECOLLECTION")
-        col.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon="ROTATECENTER")
+        col.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon='PIVOT_ACTIVE')
+        col.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon='PIVOT_INDIVIDUAL')
+        col.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon='PIVOT_MEDIAN')
 
         main.separator()
 
         col = main.column(align=True)
         col.enabled = obs_len == 2
-        col.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon="ROTATECENTER")
-        col.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon="ROTACTIVE")
+        col.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon='PIVOT_MEDIAN')
+        col.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon='PIVOT_ACTIVE')
 
         main.separator()
 
@@ -994,10 +994,10 @@ class VIEW3D_PT_booltool_tools(Panel):
         col.enabled = obs_len > 1
         col.label("Brush Boolean:", icon="MODIFIER")
         col.separator()
-        col.operator(BTool_Diff.bl_idname, text="Difference", icon="ROTACTIVE")
-        col.operator(BTool_Union.bl_idname, text="Union", icon="ROTATECOLLECTION")
-        col.operator(BTool_Inters.bl_idname, text="Intersect", icon="ROTATECENTER")
-        col.operator(BTool_Slice.bl_idname, text="Slice", icon="ROTATECENTER")
+        col.operator(BTool_Diff.bl_idname, text="Difference", icon='PIVOT_ACTIVE')
+        col.operator(BTool_Union.bl_idname, text="Union", icon='PIVOT_INDIVIDUAL')
+        col.operator(BTool_Inters.bl_idname, text="Intersect", icon='PIVOT_MEDIAN')
+        col.operator(BTool_Slice.bl_idname, text="Slice", icon='PIVOT_MEDIAN')
 
         main.separator()
 
@@ -1259,7 +1259,7 @@ class PREFS_BoolTool_Props(AddonPreferences):
             name="Make Boundary",
             default=False,
             description="When Apply a Brush to the Object it will create a\n"
-                        "new vertex group of the bondary boolean area",
+                        "new vertex group of the boundary boolean area",
             )
     use_wire = BoolProperty(
             name="Use Bmesh",

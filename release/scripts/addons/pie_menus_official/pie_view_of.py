@@ -38,14 +38,14 @@ class VIEW3D_PIE_view_of(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator_enum("VIEW3D_OT_viewnumpad", "type")
+        pie.operator_enum("VIEW3D_OT_view_axis", "type")
         pie.operator("wm.call_menu_pie", text="More", icon='PLUS').name = "VIEW3D_PIE_view_more_of"
 
 
-classes = [
+classes = (
     VIEW3D_PIE_view_more_of,
     VIEW3D_PIE_view_of,
-    ]
+)
 
 addon_keymaps = []
 

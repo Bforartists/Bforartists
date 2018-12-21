@@ -46,7 +46,6 @@
 /* since we have versioning code here */
 #define DNA_DEPRECATED_ALLOW
 
-#include "DNA_actuator_types.h"
 #include "DNA_anim_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_camera_types.h"
@@ -146,17 +145,6 @@ static AdrBit2Path ob_layer_bits[] = {
 	{(1 << 19), "layers", 19}
 };
 
-/* Material mode */
-static AdrBit2Path ma_mode_bits[] = {
-//	{MA_TRACEBLE, "traceable", 0},
-//  {MA_SHADOW, "shadow", 0},
-//	{MA_SHLESS, "shadeless", 0},
-//  ...
-	{MA_RAYTRANSP, "transparency", 0},
-	{MA_RAYMIRROR, "raytrace_mirror.enabled", 0},
-//	{MA_HALO, "type", MA_TYPE_HALO}
-};
-
 /* ----------------- */
 
 /* quick macro for returning the appropriate array for adrcode_bitmaps_to_paths() */
@@ -172,9 +160,6 @@ static AdrBit2Path *adrcode_bitmaps_to_paths(int blocktype, int adrcode, int *to
 	/* Object layers */
 	if ((blocktype == ID_OB) && (adrcode == OB_LAY)) {
 		RET_ABP(ob_layer_bits);
-	}
-	else if ((blocktype == ID_MA) && (adrcode == MA_MODE)) {
-		RET_ABP(ma_mode_bits);
 	}
 	// XXX TODO: add other types...
 
@@ -1767,23 +1752,6 @@ void do_versions_ipos_to_animato(Main *bmain)
 				ipo_to_animdata(bmain, id, ob->ipo, NULL, NULL, NULL);
 				/* No need to id_us_min ipo ID here, ipo_to_animdata already does it. */
 				ob->ipo = NULL;
-
-				{
-					/* If we have any empty action actuators, assume they were
-					 * converted IPO Actuators using the object IPO */
-					bActuator *act;
-					bActionActuator *aa;
-
-					for (act = ob->actuators.first; act; act = act->next) {
-						/* Any actuators set to ACT_IPO at this point are actually Action Actuators that
-						 * need this converted IPO to finish converting the actuator. */
-						if (act->type == ACT_IPO) {
-							aa = (bActionActuator *)act->data;
-							aa->act = ob->adt->action;
-							act->type = ACT_ACTION;
-						}
-					}
-				}
 			}
 		}
 
@@ -2029,7 +1997,7 @@ void do_versions_ipos_to_animato(Main *bmain)
 	for (id = bmain->lamp.first; id; id = id->next) {
 		Lamp *la = (Lamp *)id;
 
-		if (G.debug & G_DEBUG) printf("\tconverting lamp %s\n", id->name + 2);
+		if (G.debug & G_DEBUG) printf("\tconverting light %s\n", id->name + 2);
 
 		/* we're only interested in the IPO */
 		if (la->ipo) {

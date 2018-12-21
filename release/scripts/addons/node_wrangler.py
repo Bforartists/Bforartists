@@ -20,7 +20,7 @@ bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
     "version": (3, 35),
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "location": "Node Editor Toolbar or Ctrl-Space",
     "description": "Various tools to enhance and speed up node-based workflow",
     "warning": "",
@@ -115,7 +115,7 @@ shaders_input_nodes_props = (
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
 shaders_output_nodes_props = (
     ('ShaderNodeOutputMaterial', 'OUTPUT_MATERIAL', 'Material Output'),
-    ('ShaderNodeOutputLamp', 'OUTPUT_LAMP', 'Lamp Output'),
+    ('ShaderNodeOutputLight', 'OUTPUT_LIGHT', 'Light Output'),
     ('ShaderNodeOutputWorld', 'OUTPUT_WORLD', 'World Output'),
 )
 # (rna_type.identifier, type, rna_type.name)
@@ -332,7 +332,7 @@ compo_layout_nodes_props = (
 blender_mat_input_nodes_props = (
     ('ShaderNodeMaterial', 'MATERIAL', 'Material'),
     ('ShaderNodeCameraData', 'CAMERA', 'Camera Data'),
-    ('ShaderNodeLampData', 'LAMP', 'Lamp Data'),
+    ('ShaderNodeLightData', 'LIGHT', 'Light Data'),
     ('ShaderNodeValue', 'VALUE', 'Value'),
     ('ShaderNodeRGB', 'RGB', 'RGB'),
     ('ShaderNodeTexture', 'TEXTURE', 'Texture'),
@@ -547,13 +547,16 @@ draw_color_sets = {
 }
 
 
+def is_cycles_or_eevee(context):
+    return context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}
+
+
 def nice_hotkey_name(punc):
     # convert the ugly string name into the actual character
     pairs = (
         ('LEFTMOUSE', "LMB"),
         ('MIDDLEMOUSE', "MMB"),
         ('RIGHTMOUSE', "RMB"),
-        ('SELECTMOUSE', "Select"),
         ('WHEELUPMOUSE', "Wheel Up"),
         ('WHEELDOWNMOUSE', "Wheel Down"),
         ('WHEELINMOUSE', "Wheel In"),
@@ -1000,39 +1003,39 @@ def get_nodes_links(context):
 
 # Principled prefs
 class NWPrincipledPreferences(bpy.types.PropertyGroup):
-    base_color = StringProperty(
+    base_color: StringProperty(
         name='Base Color',
         default='diffuse diff albedo base col color',
         description='Naming Components for Base Color maps')
-    sss_color = StringProperty(
+    sss_color: StringProperty(
         name='Subsurface Color',
         default='sss subsurface',
         description='Naming Components for Subsurface Color maps')
-    metallic = StringProperty(
+    metallic: StringProperty(
         name='Metallic',
         default='metallic metalness metal mtl',
         description='Naming Components for metallness maps')
-    specular = StringProperty(
+    specular: StringProperty(
         name='Specular',
         default='specularity specular spec spc',
         description='Naming Components for Specular maps')
-    normal = StringProperty(
+    normal: StringProperty(
         name='Normal',
         default='normal nor nrm nrml norm',
         description='Naming Components for Normal maps')
-    bump = StringProperty(
+    bump: StringProperty(
         name='Bump',
         default='bump bmp',
         description='Naming Components for bump maps')
-    rough = StringProperty(
+    rough: StringProperty(
         name='Roughness',
         default='roughness rough rgh',
         description='Naming Components for roughness maps')
-    gloss = StringProperty(
+    gloss: StringProperty(
         name='Gloss',
         default='gloss glossy glossyness',
         description='Naming Components for glossy maps')
-    displacement = StringProperty(
+    displacement: StringProperty(
         name='Displacement',
         default='displacement displace disp dsp height heightmap',
         description='Naming Components for displacement maps')
@@ -1041,7 +1044,7 @@ class NWPrincipledPreferences(bpy.types.PropertyGroup):
 class NWNodeWrangler(bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    merge_hide = EnumProperty(
+    merge_hide: EnumProperty(
         name="Hide Mix nodes",
         items=(
             ("ALWAYS", "Always", "Always collapse the new merge nodes"),
@@ -1049,32 +1052,32 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
             ("NEVER", "Never", "Never collapse the new merge nodes")
         ),
         default='NON_SHADER',
-        description="When merging nodes with the Ctrl+Numpad0 hotkey (and similar) specifiy whether to collapse them or show the full node with options expanded")
-    merge_position = EnumProperty(
+        description="When merging nodes with the Ctrl+Numpad0 hotkey (and similar) specify whether to collapse them or show the full node with options expanded")
+    merge_position: EnumProperty(
         name="Mix Node Position",
         items=(
             ("CENTER", "Center", "Place the Mix node between the two nodes"),
             ("BOTTOM", "Bottom", "Place the Mix node at the same height as the lowest node")
         ),
         default='CENTER',
-        description="When merging nodes with the Ctrl+Numpad0 hotkey (and similar) specifiy the position of the new nodes")
+        description="When merging nodes with the Ctrl+Numpad0 hotkey (and similar) specify the position of the new nodes")
 
-    show_hotkey_list = BoolProperty(
+    show_hotkey_list: BoolProperty(
         name="Show Hotkey List",
         default=False,
         description="Expand this box into a list of all the hotkeys for functions in this addon"
     )
-    hotkey_list_filter = StringProperty(
+    hotkey_list_filter: StringProperty(
         name="        Filter by Name",
         default="",
         description="Show only hotkeys that have this text in their name"
     )
-    show_principled_lists = BoolProperty(
+    show_principled_lists: BoolProperty(
         name="Show Principled naming tags",
         default=False,
         description="Expand this box into a list of all naming tags for principled texture setup"
     )
-    principled_tags = bpy.props.PointerProperty(type=NWPrincipledPreferences)
+    principled_tags: bpy.props.PointerProperty(type=NWPrincipledPreferences)
 
     def draw(self, context):
         layout = self.layout
@@ -1113,7 +1116,7 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
 
                     if self.hotkey_list_filter.lower() in hotkey_name.lower():
                         row = col.row(align=True)
-                        row.label(hotkey_name)
+                        row.label(text=hotkey_name)
                         keystr = nice_hotkey_name(hotkey[1])
                         if hotkey[4]:
                             keystr = "Shift " + keystr
@@ -1121,7 +1124,7 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
                             keystr = "Alt " + keystr
                         if hotkey[3]:
                             keystr = "Ctrl " + keystr
-                        row.label(keystr)
+                        row.label(text=keystr)
 
 
 
@@ -1223,7 +1226,7 @@ class NWLazyConnect(Operator, NWBase):
     bl_idname = "node.nw_lazy_connect"
     bl_label = "Lazy Connect"
     bl_options = {'REGISTER', 'UNDO'}
-    with_menu = BoolProperty()
+    with_menu: BoolProperty()
 
     def modal(self, context, event):
         context.area.tag_redraw()
@@ -1329,12 +1332,12 @@ class NWDeleteUnused(Operator, NWBase):
     bl_label = 'Delete Unused Nodes'
     bl_options = {'REGISTER', 'UNDO'}
 
-    delete_muted = BoolProperty(name="Delete Muted", description="Delete (but reconnect, like Ctrl-X) all muted nodes", default=True)
-    delete_frames = BoolProperty(name="Delete Empty Frames", description="Delete all frames that have no nodes inside them", default=True)
+    delete_muted: BoolProperty(name="Delete Muted", description="Delete (but reconnect, like Ctrl-X) all muted nodes", default=True)
+    delete_frames: BoolProperty(name="Delete Empty Frames", description="Delete all frames that have no nodes inside them", default=True)
 
     def is_unused_node(self, node):
         end_types = ['OUTPUT_MATERIAL', 'OUTPUT', 'VIEWER', 'COMPOSITE', \
-                'SPLITVIEWER', 'OUTPUT_FILE', 'LEVELS', 'OUTPUT_LAMP', \
+                'SPLITVIEWER', 'OUTPUT_FILE', 'LEVELS', 'OUTPUT_LIGHT', \
                 'OUTPUT_WORLD', 'GROUP_INPUT', 'GROUP_OUTPUT', 'FRAME']
         if node.type in end_types:
             return False
@@ -1558,8 +1561,8 @@ class NWResetBG(Operator, NWBase):
 
     def execute(self, context):
         context.space_data.backdrop_zoom = 1
-        context.space_data.backdrop_x = 0
-        context.space_data.backdrop_y = 0
+        context.space_data.backdrop_offset[0] = 0
+        context.space_data.backdrop_offset[1] = 0
         return {'FINISHED'}
 
 
@@ -1567,8 +1570,9 @@ class NWAddAttrNode(Operator, NWBase):
     """Add an Attribute node with this name"""
     bl_idname = 'node.nw_add_attr_node'
     bl_label = 'Add UV map'
-    attr_name = StringProperty()
     bl_options = {'REGISTER', 'UNDO'}
+
+    attr_name: StringProperty()
 
     def execute(self, context):
         bpy.ops.node.add_node('INVOKE_DEFAULT', use_transform=True, type="ShaderNodeAttribute")
@@ -1585,7 +1589,7 @@ class NWEmissionViewer(Operator, NWBase):
 
     @classmethod
     def poll(cls, context):
-        is_cycles = context.scene.render.engine == 'CYCLES'
+        is_cycles = is_cycles_or_eevee(context)
         if nw_check(context):
             space = context.space_data
             if space.tree_type == 'ShaderNodeTree' and is_cycles:
@@ -1600,13 +1604,13 @@ class NWEmissionViewer(Operator, NWBase):
         space = context.space_data
         shader_type = space.shader_type
         if shader_type == 'OBJECT':
-            if space.id not in [lamp for lamp in bpy.data.lamps]:  # cannot use bpy.data.lamps directly as iterable
+            if space.id not in [light for light in bpy.data.lights]:  # cannot use bpy.data.lights directly as iterable
                 shader_output_type = "OUTPUT_MATERIAL"
                 shader_output_ident = "ShaderNodeOutputMaterial"
                 shader_viewer_ident = "ShaderNodeEmission"
             else:
-                shader_output_type = "OUTPUT_LAMP"
-                shader_output_ident = "ShaderNodeOutputLamp"
+                shader_output_type = "OUTPUT_LIGHT"
+                shader_output_ident = "ShaderNodeOutputLight"
                 shader_viewer_ident = "ShaderNodeEmission"
 
         elif shader_type == 'WORLD':
@@ -1734,9 +1738,19 @@ class NWFrameSelected(Operator, NWBase):
     bl_label = "Frame Selected"
     bl_description = "Add a frame node and parent the selected nodes to it"
     bl_options = {'REGISTER', 'UNDO'}
-    label_prop = StringProperty(name='Label', default=' ', description='The visual name of the frame node')
-    color_prop = FloatVectorProperty(name="Color", description="The color of the frame node", default=(0.6, 0.6, 0.6),
-                                     min=0, max=1, step=1, precision=3, subtype='COLOR_GAMMA', size=3)
+
+    label_prop: StringProperty(
+        name='Label',
+        description='The visual name of the frame node',
+        default=' '
+    )
+    color_prop: FloatVectorProperty(
+        name="Color",
+        description="The color of the frame node",
+        default=(0.6, 0.6, 0.6),
+        min=0, max=1, step=1, precision=3,
+        subtype='COLOR_GAMMA', size=3
+    )
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -1795,7 +1809,7 @@ class NWSwitchNodeType(Operator, NWBase):
     bl_label = "Switch Node Type"
     bl_options = {'REGISTER', 'UNDO'}
 
-    to_type = EnumProperty(
+    to_type: EnumProperty(
         name="Switch to type",
         items=list(shaders_input_nodes_props) +
         list(shaders_output_nodes_props) +
@@ -2009,12 +2023,12 @@ class NWMergeNodes(Operator, NWBase):
     bl_description = "Merge Selected Nodes"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="mode",
         description="All possible blend types and math operations",
         items=blend_types + [op for op in operations if op not in blend_types],
     )
-    merge_type = EnumProperty(
+    merge_type: EnumProperty(
         name="merge type",
         description="Type of Merge to be used",
         items=(
@@ -2260,11 +2274,11 @@ class NWBatchChangeNodes(Operator, NWBase):
     bl_description = "Batch Change Blend Type and Math Operation"
     bl_options = {'REGISTER', 'UNDO'}
 
-    blend_type = EnumProperty(
+    blend_type: EnumProperty(
         name="Blend Type",
         items=blend_types + navs,
     )
-    operation = EnumProperty(
+    operation: EnumProperty(
         name="Operation",
         items=operations + navs,
     )
@@ -2326,7 +2340,7 @@ class NWChangeMixFactor(Operator, NWBase):
     # option: Change factor.
     # If option is 1.0 or 0.0 - set to 1.0 or 0.0
     # Else - change factor by option value.
-    option = FloatProperty()
+    option: FloatProperty()
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2462,7 +2476,7 @@ class NWCopyLabel(Operator, NWBase):
     bl_label = "Copy Label"
     bl_options = {'REGISTER', 'UNDO'}
 
-    option = EnumProperty(
+    option: EnumProperty(
         name="option",
         description="Source of name of label",
         items=(
@@ -2506,7 +2520,7 @@ class NWClearLabel(Operator, NWBase):
     bl_label = "Clear Label"
     bl_options = {'REGISTER', 'UNDO'}
 
-    option = BoolProperty()
+    option: BoolProperty()
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2528,16 +2542,16 @@ class NWModifyLabels(Operator, NWBase):
     bl_label = "Modify Labels"
     bl_options = {'REGISTER', 'UNDO'}
 
-    prepend = StringProperty(
+    prepend: StringProperty(
         name="Add to Beginning"
     )
-    append = StringProperty(
+    append: StringProperty(
         name="Add to End"
     )
-    replace_from = StringProperty(
+    replace_from: StringProperty(
         name="Text to Replace"
     )
-    replace_to = StringProperty(
+    replace_to: StringProperty(
         name="Replace with"
     )
 
@@ -2561,14 +2575,14 @@ class NWAddTextureSetup(Operator, NWBase):
     bl_description = "Add Texture Node Setup to Selected Shaders"
     bl_options = {'REGISTER', 'UNDO'}
 
-    add_mapping = BoolProperty(name="Add Mapping Nodes", description="Create coordinate and mapping nodes for the texture (ignored for selected texture nodes)", default=True)
+    add_mapping: BoolProperty(name="Add Mapping Nodes", description="Create coordinate and mapping nodes for the texture (ignored for selected texture nodes)", default=True)
 
     @classmethod
     def poll(cls, context):
         valid = False
         if nw_check(context):
             space = context.space_data
-            if space.tree_type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES':
+            if space.tree_type == 'ShaderNodeTree' and is_cycles_or_eevee(context):
                 valid = True
         return valid
 
@@ -2639,26 +2653,28 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
     bl_description = "Add Texture Node Setup for Principled BSDF"
     bl_options = {'REGISTER', 'UNDO'}
 
-    directory = StringProperty(
-                    name='Directory',
-                    subtype='DIR_PATH',
-                    default='',
-                    description='Folder to search in for image files')
-    files = CollectionProperty(
-                    type=bpy.types.OperatorFileListElement,
-                    options={'HIDDEN', 'SKIP_SAVE'})
+    directory: StringProperty(
+        name='Directory',
+        subtype='DIR_PATH',
+        default='',
+        description='Folder to search in for image files'
+    )
+    files: CollectionProperty(
+        type=bpy.types.OperatorFileListElement,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
 
     order = [
         "filepath",
         "files",
-        ]
+    ]
 
     @classmethod
     def poll(cls, context):
         valid = False
         if nw_check(context):
             space = context.space_data
-            if space.tree_type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES':
+            if space.tree_type == 'ShaderNodeTree' and is_cycles_or_eevee(context):
                 valid = True
         return valid
 
@@ -2685,7 +2701,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
             fname = path.splitext(fname)[0]
             # Remove digits
             fname = ''.join(i for i in fname if not i.isdigit())
-            # Seperate CamelCase by space
+            # Separate CamelCase by space
             fname = re.sub("([a-z])([A-Z])","\g<1> \g<2>",fname)
             # Replace common separators with SPACE
             seperators = ['_', '.', '-', '__', '--', '#']
@@ -2752,35 +2768,18 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 disp_texture.color_space = 'NONE'
 
                 # Add displacement offset nodes
-                math_sub = nodes.new(type='ShaderNodeMath')
-                math_sub.operation = 'SUBTRACT'
-                math_sub.label = 'Offset'
-                math_sub.location = active_node.location + Vector((0, -560))
-                math_mul = nodes.new(type='ShaderNodeMath')
-                math_mul.operation = 'MULTIPLY'
-                math_mul.label = 'Strength'
-                math_mul.location = math_sub.location + Vector((200, 0))
-                link = links.new(math_mul.inputs[0], math_sub.outputs[0])
-                link = links.new(math_sub.inputs[0], disp_texture.outputs[0])
+                disp_node = nodes.new(type='ShaderNodeDisplacement')
+                disp_node.location = active_node.location + Vector((0, -560))
+                link = links.new(disp_node.inputs[0], disp_texture.outputs[0])
 
-                # Turn on true displacement in the material
+                # TODO Turn on true displacement in the material
                 # Too complicated for now
 
-                '''
-                # Frame. Does not update immediatly
-                # Seems to need an editor redraw
-                frame = nodes.new(type='NodeFrame')
-                frame.label = 'Displacement'
-                math_sub.parent = frame
-                math_mul.parent = frame
-                frame.update()
-                '''
-
-                #find ouput node
+                # Find output node
                 output_node = [n for n in nodes if n.bl_idname == 'ShaderNodeOutputMaterial']
                 if output_node:
                     if not output_node[0].inputs[2].is_linked:
-                        link = links.new(output_node[0].inputs[2], math_mul.outputs[0])
+                        link = links.new(output_node[0].inputs[2], disp_node.outputs[0])
 
                 continue
 
@@ -2847,23 +2846,24 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
         # Alignment
         for i, texture_node in enumerate(texture_nodes):
-            offset = Vector((-400, (i * -260) + 200))
+            offset = Vector((-550, (i * -280) + 200))
             texture_node.location = active_node.location + offset
 
         if normal_node:
             # Extra alignment if normal node was added
-            normal_node.location = normal_node_texture.location + Vector((200, 0))
+            normal_node.location = normal_node_texture.location + Vector((300, 0))
 
         if roughness_node:
             # Alignment of invert node if glossy map
-            invert_node.location = roughness_node.location + Vector((200, 0))
+            invert_node.location = roughness_node.location + Vector((300, 0))
 
         # Add texture input + mapping
         mapping = nodes.new(type='ShaderNodeMapping')
-        mapping.location = active_node.location + Vector((-900, 0))
+        mapping.location = active_node.location + Vector((-1050, 0))
         if len(texture_nodes) > 1:
             # If more than one texture add reroute node in between
             reroute = nodes.new(type='NodeReroute')
+            texture_nodes.append(reroute)
             tex_coords = Vector((texture_nodes[0].location.x, sum(n.location.y for n in texture_nodes)/len(texture_nodes)))
             reroute.location = tex_coords + Vector((-50, -120))
             for texture_node in texture_nodes:
@@ -2876,6 +2876,20 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
         texture_input = nodes.new(type='ShaderNodeTexCoord')
         texture_input.location = mapping.location + Vector((-200, 0))
         link = links.new(mapping.inputs[0], texture_input.outputs[2])
+
+        # Create frame around tex coords and mapping
+        frame = nodes.new(type='NodeFrame')
+        frame.label = 'Mapping'
+        mapping.parent = frame
+        texture_input.parent = frame
+        frame.update()
+
+        # Create frame around texture nodes
+        frame = nodes.new(type='NodeFrame')
+        frame.label = 'Textures'
+        for tnode in texture_nodes:
+            tnode.parent = frame
+        frame.update()
 
         # Just to be sure
         active_node.select = False
@@ -2892,7 +2906,7 @@ class NWAddReroutes(Operator, NWBase):
     bl_description = "Add Reroutes to Outputs"
     bl_options = {'REGISTER', 'UNDO'}
 
-    option = EnumProperty(
+    option: EnumProperty(
         name="option",
         items=[
             ('ALL', 'to all', 'Add to all outputs'),
@@ -2992,9 +3006,9 @@ class NWLinkActiveToSelected(Operator, NWBase):
     bl_label = "Link Active Node to Selected"
     bl_options = {'REGISTER', 'UNDO'}
 
-    replace = BoolProperty()
-    use_node_name = BoolProperty()
-    use_outputs_names = BoolProperty()
+    replace: BoolProperty()
+    use_node_name: BoolProperty()
+    use_outputs_names: BoolProperty()
 
     @classmethod
     def poll(cls, context):
@@ -3072,7 +3086,7 @@ class NWAlignNodes(Operator, NWBase):
     bl_idname = "node.nw_align_nodes"
     bl_label = "Align Nodes"
     bl_options = {'REGISTER', 'UNDO'}
-    margin = IntProperty(name='Margin', default=50, description='The amount of space between nodes')
+    margin: IntProperty(name='Margin', default=50, description='The amount of space between nodes')
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3090,7 +3104,7 @@ class NWAlignNodes(Operator, NWBase):
         elif nodes.active in selection:
             active_loc = copy(nodes.active.location)  # make a copy, not a reference
 
-        # Check if nodes should be layed out horizontally or vertically
+        # Check if nodes should be laid out horizontally or vertically
         x_locs = [n.location.x + (n.dimensions.x / 2) for n in selection]  # use dimension to get center of node, not corner
         y_locs = [n.location.y - (n.dimensions.y / 2) for n in selection]
         x_range = max(x_locs) - min(x_locs)
@@ -3142,7 +3156,7 @@ class NWSelectParentChildren(Operator, NWBase):
     bl_label = "Select Parent or Children"
     bl_options = {'REGISTER', 'UNDO'}
 
-    option = EnumProperty(
+    option: EnumProperty(
         name="option",
         items=(
             ('PARENT', 'Select Parent', 'Select Parent Frame'),
@@ -3225,7 +3239,7 @@ class NWLinkToOutputNode(Operator, NWBase):
         if not output_node:
             bpy.ops.node.select_all(action="DESELECT")
             if tree_type == 'ShaderNodeTree':
-                if context.scene.render.engine == 'CYCLES':
+                if is_cycles_or_eevee(context):
                     output_node = nodes.new('ShaderNodeOutputMaterial')
                 else:
                     output_node = nodes.new('ShaderNodeOutput')
@@ -3246,7 +3260,7 @@ class NWLinkToOutputNode(Operator, NWBase):
                     break
 
             out_input_index = 0
-            if tree_type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES':
+            if tree_type == 'ShaderNodeTree' and is_cycles_or_eevee(context):
                 if active.outputs[output_index].name == 'Volume':
                     out_input_index = 1
                 elif active.outputs[output_index].type != 'SHADER':  # connect to displacement if not a shader
@@ -3263,8 +3277,8 @@ class NWMakeLink(Operator, NWBase):
     bl_idname = 'node.nw_make_link'
     bl_label = 'Make Link'
     bl_options = {'REGISTER', 'UNDO'}
-    from_socket = IntProperty()
-    to_socket = IntProperty()
+    from_socket: IntProperty()
+    to_socket: IntProperty()
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3284,7 +3298,7 @@ class NWCallInputsMenu(Operator, NWBase):
     bl_idname = 'node.nw_call_inputs_menu'
     bl_label = 'Make Link'
     bl_options = {'REGISTER', 'UNDO'}
-    from_socket = IntProperty()
+    from_socket: IntProperty()
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3305,9 +3319,17 @@ class NWAddSequence(Operator, ImportHelper):
     bl_idname = 'node.nw_add_sequence'
     bl_label = 'Import Image Sequence'
     bl_options = {'REGISTER', 'UNDO'}
-    directory = StringProperty(subtype="DIR_PATH")
-    filename = StringProperty(subtype="FILE_NAME")
-    files = CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
+
+    directory: StringProperty(
+        subtype="DIR_PATH"
+    )
+    filename: StringProperty(
+        subtype="FILE_NAME"
+    )
+    files: CollectionProperty(
+        type=bpy.types.OperatorFileListElement,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3399,8 +3421,13 @@ class NWAddMultipleImages(Operator, ImportHelper):
     bl_idname = 'node.nw_add_multiple_images'
     bl_label = 'Open Selected Images'
     bl_options = {'REGISTER', 'UNDO'}
-    directory = StringProperty(subtype="DIR_PATH")
-    files = CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
+    directory: StringProperty(
+        subtype="DIR_PATH"
+    )
+    files: CollectionProperty(
+        type=bpy.types.OperatorFileListElement,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -3447,8 +3474,8 @@ class NWViewerFocus(bpy.types.Operator):
     bl_idname = "node.nw_viewer_focus"
     bl_label = "Viewer Focus"
 
-    x = bpy.props.IntProperty()
-    y = bpy.props.IntProperty()
+    x: bpy.props.IntProperty()
+    y: bpy.props.IntProperty()
 
     @classmethod
     def poll(cls, context):
@@ -3502,8 +3529,8 @@ class NWSaveViewer(bpy.types.Operator, ExportHelper):
     """Save the current viewer node to an image file"""
     bl_idname = "node.nw_save_viewer"
     bl_label = "Save This Image"
-    filepath = StringProperty(subtype="FILE_PATH")
-    filename_ext = EnumProperty(
+    filepath: StringProperty(subtype="FILE_PATH")
+    filename_ext: EnumProperty(
             name="Format",
             description="Choose the file format to save to",
             items=(('.bmp', "PNG", ""),
@@ -3681,7 +3708,7 @@ def drawlayout(context, layout, mode='non-panel'):
     col.menu(NWSwitchNodeTypeMenu.bl_idname, text="Switch Node Type")
     col.separator()
 
-    if tree_type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES':
+    if tree_type == 'ShaderNodeTree' and is_cycles_or_eevee(context):
         col = layout.column(align=True)
         col.operator(NWAddTextureSetup.bl_idname, text="Add Texture Setup", icon='NODE_SEL')
         col.operator(NWAddPrincipledSetup.bl_idname, text="Add Principled Setup", icon='NODE_SEL')
@@ -3722,7 +3749,7 @@ def drawlayout(context, layout, mode='non-panel'):
     col.separator()
 
     col = layout.column(align=True)
-    col.operator(NWAlignNodes.bl_idname, icon='ALIGN')
+    col.operator(NWAlignNodes.bl_idname, icon='CENTER_ONLY')
     col.separator()
 
     col = layout.column(align=True)
@@ -3734,14 +3761,14 @@ class NodeWranglerPanel(Panel, NWBase):
     bl_idname = "NODE_PT_nw_node_wrangler"
     bl_space_type = 'NODE_EDITOR'
     bl_label = "Node Wrangler"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Node Wrangler"
 
-    prepend = StringProperty(
+    prepend: StringProperty(
         name='prepend',
     )
-    append = StringProperty()
-    remove = StringProperty()
+    append: StringProperty()
+    remove: StringProperty()
 
     def draw(self, context):
         self.layout.label(text="(Quick access: Ctrl+Space)")
@@ -3766,7 +3793,7 @@ class NWMergeNodesMenu(Menu, NWBase):
     def draw(self, context):
         type = context.space_data.tree_type
         layout = self.layout
-        if type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES':
+        if type == 'ShaderNodeTree' and is_cycles_or_eevee(context):
             layout.menu(NWMergeShadersMenu.bl_idname, text="Use Shaders")
         layout.menu(NWMergeMixMenu.bl_idname, text="Use Mix Nodes")
         layout.menu(NWMergeMathMenu.bl_idname, text="Use Math Nodes")
@@ -3990,7 +4017,7 @@ class NWVertColMenu(bpy.types.Menu):
         valid = False
         if nw_check(context):
             snode = context.space_data
-            valid = snode.tree_type == 'ShaderNodeTree' and context.scene.render.engine == 'CYCLES'
+            valid = snode.tree_type == 'ShaderNodeTree' and is_cycles_or_eevee(context)
         return valid
 
     def draw(self, context):
@@ -4025,7 +4052,7 @@ class NWSwitchNodeTypeMenu(Menu, NWBase):
         layout = self.layout
         tree = context.space_data.node_tree
         if tree.type == 'SHADER':
-            if context.scene.render.engine == 'CYCLES':
+            if is_cycles_or_eevee(context):
                 layout.menu(NWSwitchShadersInputSubmenu.bl_idname)
                 layout.menu(NWSwitchShadersOutputSubmenu.bl_idname)
                 layout.menu(NWSwitchShadersShaderSubmenu.bl_idname)
@@ -4034,7 +4061,7 @@ class NWSwitchNodeTypeMenu(Menu, NWBase):
                 layout.menu(NWSwitchShadersVectorSubmenu.bl_idname)
                 layout.menu(NWSwitchShadersConverterSubmenu.bl_idname)
                 layout.menu(NWSwitchShadersLayoutSubmenu.bl_idname)
-            if context.scene.render.engine != 'CYCLES':
+            else:
                 layout.menu(NWSwitchMatInputSubmenu.bl_idname)
                 layout.menu(NWSwitchMatOutputSubmenu.bl_idname)
                 layout.menu(NWSwitchMatColorSubmenu.bl_idname)
@@ -4621,7 +4648,7 @@ kmi_defs = (
     (NWResetBG.bl_idname, 'Z', 'PRESS', False, False, False, None, "Reset backdrop image zoom"),
     # Delete unused
     (NWDeleteUnused.bl_idname, 'X', 'PRESS', False, False, True, None, "Delete unused nodes"),
-    # Frame Seleted
+    # Frame Selected
     (NWFrameSelected.bl_idname, 'P', 'PRESS', False, True, False, None, "Frame selected nodes"),
     # Swap Outputs
     (NWSwapLinks.bl_idname, 'S', 'PRESS', False, False, True, None, "Swap Outputs"),
@@ -4778,13 +4805,10 @@ def register():
     # menu items
     bpy.types.NODE_MT_select.append(select_parent_children_buttons)
     bpy.types.NODE_MT_category_SH_NEW_INPUT.prepend(attr_nodes_menu_func)
-    bpy.types.NODE_PT_category_SH_NEW_INPUT.prepend(attr_nodes_menu_func)
     bpy.types.NODE_PT_backdrop.append(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.append(save_viewer_menu_func)
     bpy.types.NODE_MT_category_SH_NEW_TEXTURE.prepend(multipleimages_menu_func)
-    bpy.types.NODE_PT_category_SH_NEW_TEXTURE.prepend(multipleimages_menu_func)
     bpy.types.NODE_MT_category_CMP_INPUT.prepend(multipleimages_menu_func)
-    bpy.types.NODE_PT_category_CMP_INPUT.prepend(multipleimages_menu_func)
     bpy.types.NODE_PT_active_node_generic.prepend(reset_nodes_button)
     bpy.types.NODE_MT_node.prepend(reset_nodes_button)
 
@@ -4806,13 +4830,10 @@ def unregister():
     # menuitems
     bpy.types.NODE_MT_select.remove(select_parent_children_buttons)
     bpy.types.NODE_MT_category_SH_NEW_INPUT.remove(attr_nodes_menu_func)
-    bpy.types.NODE_PT_category_SH_NEW_INPUT.remove(attr_nodes_menu_func)
     bpy.types.NODE_PT_backdrop.remove(bgreset_menu_func)
     bpy.types.NODE_PT_active_node_generic.remove(save_viewer_menu_func)
     bpy.types.NODE_MT_category_SH_NEW_TEXTURE.remove(multipleimages_menu_func)
-    bpy.types.NODE_PT_category_SH_NEW_TEXTURE.remove(multipleimages_menu_func)
     bpy.types.NODE_MT_category_CMP_INPUT.remove(multipleimages_menu_func)
-    bpy.types.NODE_PT_category_CMP_INPUT.remove(multipleimages_menu_func)
     bpy.types.NODE_PT_active_node_generic.remove(reset_nodes_button)
     bpy.types.NODE_MT_node.remove(reset_nodes_button)
 

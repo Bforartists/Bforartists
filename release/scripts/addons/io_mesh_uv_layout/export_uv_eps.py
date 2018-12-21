@@ -21,66 +21,72 @@
 import bpy
 
 
-def write(fw, mesh, image_width, image_height, opacity, face_iter_func):
-    fw("%!PS-Adobe-3.0 EPSF-3.0\n")
-    fw("%%%%Creator: Blender %s\n" % bpy.app.version_string)
-    fw("%%Pages: 1\n")
-    fw("%%Orientation: Portrait\n")
-    fw("%%%%BoundingBox: 0 0 %d %d\n" % (image_width, image_height))
-    fw("%%%%HiResBoundingBox: 0.0 0.0 %.4f %.4f\n" %
-       (image_width, image_height))
-    fw("%%EndComments\n")
-    fw("%%Page: 1 1\n")
-    fw("0 0 translate\n")
-    fw("1.0 1.0 scale\n")
-    fw("0 0 0 setrgbcolor\n")
-    fw("[] 0 setdash\n")
-    fw("1 setlinewidth\n")
-    fw("1 setlinejoin\n")
-    fw("1 setlinecap\n")
+def export(filepath, face_data, colors, width, height, opacity):
+    with open(filepath, "w") as file:
+        for text in get_file_parts(face_data, colors, width, height, opacity):
+            file.write(text)
 
-    polys = mesh.polygons
-
+def get_file_parts(face_data, colors, width, height, opacity):
+    yield from header(width, height)
     if opacity > 0.0:
-        for i, mat in enumerate(mesh.materials if mesh.materials else [None]):
-            fw("/DRAW_%d {" % i)
-            fw("gsave\n")
-            if mat:
-                color = tuple((1.0 - ((1.0 - c) * opacity))
-                              for c in mat.diffuse_color)
-            else:
-                color = 1.0, 1.0, 1.0
-            fw("%.3g %.3g %.3g setrgbcolor\n" % color)
-            fw("fill\n")
-            fw("grestore\n")
-            fw("0 setgray\n")
-            fw("} def\n")
+        name_by_color = {}
+        yield from prepare_colors(colors, name_by_color)
+        yield from draw_colored_polygons(face_data, name_by_color, width, height)
+    yield from draw_lines(face_data, width, height)
+    yield from footer()
 
-        # fill
-        for i, uvs in face_iter_func():
-            fw("newpath\n")
-            for j, uv in enumerate(uvs):
-                uv_scale = (uv[0] * image_width, uv[1] * image_height)
-                if j == 0:
-                    fw("%.5f %.5f moveto\n" % uv_scale)
-                else:
-                    fw("%.5f %.5f lineto\n" % uv_scale)
 
-            fw("closepath\n")
-            fw("DRAW_%d\n" % polys[i].material_index)
+def header(width, height):
+    yield "%!PS-Adobe-3.0 EPSF-3.0\n"
+    yield f"%%Creator: Blender {bpy.app.version_string}\n"
+    yield "%%Pages: 1\n"
+    yield "%%Orientation: Portrait\n"
+    yield f"%%BoundingBox: 0 0 {width} {height}\n"
+    yield f"%%HiResBoundingBox: 0.0 0.0 {width:.4f} {height:.4f}\n"
+    yield "%%EndComments\n"
+    yield "%%Page: 1 1\n"
+    yield "0 0 translate\n"
+    yield "1.0 1.0 scale\n"
+    yield "0 0 0 setrgbcolor\n"
+    yield "[] 0 setdash\n"
+    yield "1 setlinewidth\n"
+    yield "1 setlinejoin\n"
+    yield "1 setlinecap\n"
 
-    # stroke only
-    for i, uvs in face_iter_func():
-        fw("newpath\n")
-        for j, uv in enumerate(uvs):
-            uv_scale = (uv[0] * image_width, uv[1] * image_height)
-            if j == 0:
-                fw("%.5f %.5f moveto\n" % uv_scale)
-            else:
-                fw("%.5f %.5f lineto\n" % uv_scale)
+def prepare_colors(colors, out_name_by_color):
+    for i, color in enumerate(colors):
+        name = f"COLOR_{i}"
+        yield "/%s {" % name
+        out_name_by_color[color] = name
 
-        fw("closepath\n")
-        fw("stroke\n")
+        yield "gsave\n"
+        yield "%.3g %.3g %.3g setrgbcolor\n" % color
+        yield "fill\n"
+        yield "grestore\n"
+        yield "0 setgray\n"
+        yield "} def\n"
 
-    fw("showpage\n")
-    fw("%%EOF\n")
+def draw_colored_polygons(face_data, name_by_color, width, height):
+    for uvs, color in face_data:
+        yield from draw_polygon_path(uvs, width, height)
+        yield "closepath\n"
+        yield "%s\n" % name_by_color[color]
+
+def draw_lines(face_data, width, height):
+    for uvs, _ in face_data:
+        yield from draw_polygon_path(uvs, width, height)
+        yield "closepath\n"
+        yield "stroke\n"
+
+def draw_polygon_path(uvs, width, height):
+    yield "newpath\n"
+    for j, uv in enumerate(uvs):
+        uv_scale = (uv[0] * width, uv[1] * height)
+        if j == 0:
+            yield "%.5f %.5f moveto\n" % uv_scale
+        else:
+            yield "%.5f %.5f lineto\n" % uv_scale
+
+def footer():
+    yield "showpage\n"
+    yield "%%EOF\n"

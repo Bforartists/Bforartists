@@ -44,12 +44,12 @@ def save_mesh(filepath,
     file = open(filepath, "w", encoding="utf8", newline="\n")
     fw = file.write
 
-    # Be sure tessface & co are available!
-    if not mesh.tessfaces and mesh.polygons:
-        mesh.calc_tessface()
+    # Be sure tessellated loop trianlges are available!
+    if not mesh.loop_triangles and mesh.polygons:
+        mesh.calc_loop_triangles()
 
-    has_uv = bool(mesh.tessface_uv_textures)
-    has_vcol = bool(mesh.tessface_vertex_colors)
+    has_uv = bool(mesh.uv_layers)
+    has_vcol = bool(mesh.vertex_colors)
 
     if not has_uv:
         use_uv_coords = False
@@ -62,7 +62,7 @@ def save_mesh(filepath,
         has_vcol = False
 
     if has_uv:
-        active_uv_layer = mesh.tessface_uv_textures.active
+        active_uv_layer = mesh.uv_layers.active
         if not active_uv_layer:
             use_uv_coords = False
             has_uv = False
@@ -70,7 +70,7 @@ def save_mesh(filepath,
             active_uv_layer = active_uv_layer.data
 
     if has_vcol:
-        active_col_layer = mesh.tessface_vertex_colors.active
+        active_col_layer = mesh.vertex_colors.active
         if not active_col_layer:
             use_colors = False
             has_vcol = False
@@ -84,9 +84,9 @@ def save_mesh(filepath,
     ply_verts = []  # list of dictionaries
     # vdict = {} # (index, normal, uv) -> new index
     vdict = [{} for i in range(len(mesh_verts))]
-    ply_faces = [[] for f in range(len(mesh.tessfaces))]
+    ply_faces = [[] for f in range(len(mesh.loop_triangles))]
     vert_count = 0
-    for i, f in enumerate(mesh.tessfaces):
+    for i, f in enumerate(mesh.loop_triangles):
 
         smooth = not use_normals or f.use_smooth
         if not smooth:
@@ -94,16 +94,12 @@ def save_mesh(filepath,
             normal_key = rvec3d(normal)
 
         if has_uv:
-            uv = active_uv_layer[i]
-            uv = uv.uv1, uv.uv2, uv.uv3, uv.uv4
+            uv = [active_uv_layer[l].uv[:] for l in f.loops]
         if has_vcol:
-            col = active_col_layer[i]
-            col = col.color1[:], col.color2[:], col.color3[:], col.color4[:]
-
-        f_verts = f.vertices
+            col = [active_col_layer[l].color[:] for l in f.loops]
 
         pf = ply_faces[i]
-        for j, vidx in enumerate(f_verts):
+        for j, vidx in enumerate(f.vertices):
             v = mesh_verts[vidx]
 
             if smooth:
@@ -119,6 +115,7 @@ def save_mesh(filepath,
                 color = (int(color[0] * 255.0),
                          int(color[1] * 255.0),
                          int(color[2] * 255.0),
+                         255
                          )
             key = normal_key, uvcoord_key, color
 
@@ -157,7 +154,7 @@ def save_mesh(filepath,
            "property uchar blue\n"
            "property uchar alpha\n")
 
-    fw("element face %d\n" % len(mesh.tessfaces))
+    fw("element face %d\n" % len(mesh.loop_triangles))
     fw("property list uchar uint vertex_indices\n")
     fw("end_header\n")
 
@@ -193,7 +190,6 @@ def save(operator,
          global_matrix=None
          ):
 
-    scene = context.scene
     obj = context.active_object
 
     if global_matrix is None:
@@ -204,14 +200,15 @@ def save(operator,
         bpy.ops.object.mode_set(mode='OBJECT')
 
     if use_mesh_modifiers and obj.modifiers:
-        mesh = obj.to_mesh(scene, True, 'PREVIEW')
+        mesh = obj.to_mesh(context.depsgraph, True)
+
     else:
         mesh = obj.data.copy()
 
     if not mesh:
         raise Exception("Error, could not get mesh data from active object")
 
-    mesh.transform(global_matrix * obj.matrix_world)
+    mesh.transform(global_matrix @ obj.matrix_world)
     if use_normals:
         mesh.calc_normals()
 
@@ -221,7 +218,6 @@ def save(operator,
                     use_colors=use_colors,
                     )
 
-    if use_mesh_modifiers:
-        bpy.data.meshes.remove(mesh)
+    bpy.data.meshes.remove(mesh)
 
     return ret

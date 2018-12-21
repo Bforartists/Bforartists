@@ -105,16 +105,14 @@ def register_node_categories(identifier, cat_list):
         raise KeyError("Node categories list '%s' already registered" % identifier)
         return
 
-    # works as draw function for both menus and panels
+    # works as draw function for menus
     def draw_node_item(self, context):
         layout = self.layout
         col = layout.column()
-
         for item in self.category.items(context):
             item.draw(item, col, context)
 
     menu_types = []
-    panel_types = []
     for cat in cat_list:
         menu_type = type("NODE_MT_category_" + cat.identifier, (bpy.types.Menu,), {
             "bl_space_type": 'NODE_EDITOR',
@@ -123,23 +121,10 @@ def register_node_categories(identifier, cat_list):
             "poll": cat.poll,
             "draw": draw_node_item,
         })
-        panel_type = type("NODE_PT_category_" + cat.identifier, (bpy.types.Panel,), {
-            "bl_space_type": 'NODE_EDITOR',
-            "bl_region_type": 'HEADER', #BFA- changed from tools to header to get rid of the many tabs
-            "bl_label": cat.name,
-            "bl_category": cat.name,
-            "category": cat,
-            "poll": cat.poll,
-            "draw": draw_node_item,
-            "bl_options": {'DEFAULT_CLOSED'}
-            })
 
-        # bfa - disabling the many tabs in the node editor tool shelf.
         menu_types.append(menu_type)
-        panel_types.append(panel_type)
 
         bpy.utils.register_class(menu_type)
-        bpy.utils.register_class(panel_type)
 
     def draw_add_menu(self, context):
         layout = self.layout
@@ -148,8 +133,8 @@ def register_node_categories(identifier, cat_list):
             if cat.poll(context):
                 layout.menu("NODE_MT_category_%s" % cat.identifier)
 
-    # stores: (categories list, menu draw function, submenu types, panel types)
-    _node_categories[identifier] = (cat_list, draw_add_menu, menu_types, panel_types)
+    # stores: (categories list, menu draw function, submenu types)
+    _node_categories[identifier] = (cat_list, draw_add_menu, menu_types)
 
 
 def node_categories_iter(context):
@@ -168,8 +153,6 @@ def node_items_iter(context):
 def unregister_node_cat_types(cats):
     for mt in cats[2]:
         bpy.utils.unregister_class(mt)
-    for pt in cats[3]:
-        bpy.utils.unregister_class(pt)
 
 
 def unregister_node_categories(identifier=None):

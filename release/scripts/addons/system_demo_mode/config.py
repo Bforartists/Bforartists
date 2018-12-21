@@ -65,7 +65,7 @@ def as_string(dirpath, random_order, exit, **kwargs):
         "\n",
         "exit = %r\n" % exit,
         "\n",
-        ]
+    ]
 
     # All these work but use nicest formatting!
     if 0:  # works but not nice to edit.
