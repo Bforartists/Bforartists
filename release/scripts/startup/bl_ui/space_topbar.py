@@ -110,7 +110,7 @@ class TOPBAR_HT_lower_bar(Header):
         # Object Mode Options
         # -------------------
 
-        # Example of how toolsettings can be accessed as pop-overs.
+        # Example of how tool_settings can be accessed as pop-overs.
 
         # TODO(campbell): editing options should be after active tool options
         # (obviously separated for from the users POV)
@@ -339,14 +339,15 @@ class _draw_left_context_mode:
                 row.prop(gp_settings, "use_material_pin", text="")
 
             row = layout.row(align=True)
-            ts = context.scene.tool_settings
-            settings = ts.gpencil_paint
+            tool_settings = context.scene.tool_settings
+            settings = tool_settings.gpencil_paint
             row.template_ID_preview(settings, "brush", rows=3, cols=8, hide_buttons=True)
 
             if brush.gpencil_tool == 'ERASE':
                 row = layout.row(align=True)
                 row.prop(brush, "size", text="Radius")
                 row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
+                row.prop(gp_settings, "use_occlude_eraser", text="", icon='XRAY')
                 if gp_settings.eraser_mode == 'SOFT':
                     row = layout.row(align=True)
                     row.prop(gp_settings, "pen_strength", slider=True)
@@ -539,7 +540,7 @@ class TOPBAR_PT_gpencil_layers(Panel):
             srow = col.row(align=True)
             srow.prop(gpl, "opacity", text="Opacity", slider=True)
             srow.prop(gpl, "clamp_layer", text="",
-                     icon='MOD_MASK' if gpl.clamp_layer else 'LAYER_ACTIVE')
+                      icon='MOD_MASK' if gpl.clamp_layer else 'LAYER_ACTIVE')
 
         col = row.column()
 
@@ -570,10 +571,7 @@ class TOPBAR_MT_editor_menus(Menu):
     bl_label = ""
 
     def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
+        layout = self.layout
         layout.menu("TOPBAR_MT_file")
         layout.menu("TOPBAR_MT_edit")
 
@@ -611,7 +609,7 @@ class TOPBAR_MT_file(Menu):
         layout.operator_context = 'INVOKE_AREA'
 
         if any(bpy.utils.app_template_paths()):
-            app_template = context.user_preferences.app_template
+            app_template = context.preferences.app_template
         else:
             app_template = None
 
@@ -649,7 +647,7 @@ class TOPBAR_MT_file(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        if bpy.data.is_dirty and context.user_preferences.view.use_quit_dialog:
+        if bpy.data.is_dirty and context.preferences.view.use_quit_dialog:
             layout.operator_context = 'INVOKE_SCREEN'  # quit dialog
         layout.operator("wm.quit_blender", text="Quit", icon='QUIT')
 
@@ -896,7 +894,7 @@ class TOPBAR_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        show_developer = context.user_preferences.view.show_developer_ui
+        show_developer = context.preferences.view.show_developer_ui
 
         layout.operator(
             "wm.url_open", text="Manual", icon='HELP',
