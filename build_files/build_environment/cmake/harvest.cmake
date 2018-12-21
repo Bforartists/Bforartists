@@ -57,7 +57,7 @@ if(BUILD_MODE STREQUAL Release)
 				# hidapi
 				${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/hidapi/ ${HARVEST_TARGET}/hidapi/ &&
 				# webp, straight up copy
-				${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/webp ${HARVEST_TARGET}/webp
+				${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/webp ${HARVEST_TARGET}/webp &&
 		DEPENDS
 	)
 endif()
@@ -110,6 +110,7 @@ endfunction()
 
 harvest(alembic/include alembic/include "*.h")
 harvest(alembic/lib/libAlembic.a alembic/lib/libAlembic.a)
+harvest(alembic/bin alembic/bin "*")
 harvest(boost/include boost/include "*")
 harvest(boost/lib boost/lib "*.a")
 harvest(ffmpeg/include ffmpeg/include "*.h")
@@ -190,5 +191,7 @@ harvest(vpx/lib ffmpeg/lib "*.a")
 harvest(webp/lib ffmpeg/lib "*.a")
 harvest(x264/lib ffmpeg/lib "*.a")
 harvest(xvidcore/lib ffmpeg/lib "*.a")
+harvest(embree/include embree/include "*.h")
+harvest(embree/lib embree/lib "*.a")
 
 endif()

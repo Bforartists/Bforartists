@@ -42,14 +42,14 @@ class OperatorCallContext():
         # store active/selected state to restore it after operator execution
         self.curact = scene.objects.active
         self.cursel = { ob : ob.select for ob in scene.objects }
-        
+
         # undo can store files a lot when running operators internally,
         # disable since we only need one undo step after main operators anyway
         self.use_global_undo = prefs.edit.use_global_undo
         prefs.edit.use_global_undo = False
 
         return (self.curact, self.cursel)
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         scene = bpy.context.scene
         prefs = bpy.context.user_preferences
@@ -63,7 +63,7 @@ class OperatorCallContext():
 
 def select_single_object(ob):
     scene = bpy.context.scene
-    
+
     scene.objects.active = ob
     for tob in scene.objects:
         tob.select = (tob == ob)

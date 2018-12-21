@@ -13,9 +13,8 @@ def exportLamp(ob, mx, mw, **common):
     [p] = toGlobalOrigin([p])
 
     entities = []
-    c = lamp_as_list[GUI_A['lamp_as'].val]
+    c = light_as_list[GUI_A['light_as'].val]
     if c=="POINT": # export as POINT
         dxfPOINT = DXF.Point(points=[p],**common)
         entities.append(dxfPOINT)
     return entities
-

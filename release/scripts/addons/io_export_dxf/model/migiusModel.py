@@ -119,4 +119,3 @@ class MigiusDXFLibDrawing(DxfDrawing):
         elif type=='Face':
             for e in ents:
                 drawing.append(DXF.Face(**e))
-

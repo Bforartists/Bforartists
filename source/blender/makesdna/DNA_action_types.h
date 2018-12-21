@@ -43,7 +43,7 @@
 
 struct SpaceLink;
 struct Object;
-struct Group;
+struct Collection;
 struct GHash;
 
 /* ************************************************ */
@@ -61,13 +61,14 @@ typedef struct bMotionPathVert {
 /* bMotionPathVert->flag */
 typedef enum eMotionPathVert_Flag {
 	/* vert is selected */
-	MOTIONPATH_VERT_SEL     = (1 << 0)
+	MOTIONPATH_VERT_SEL     = (1 << 0),
+	MOTIONPATH_VERT_KEY     = (1 << 1),
 } eMotionPathVert_Flag;
 
 /* ........ */
 
 /* Motion Path data cache (mpath)
- *  - for elements providing transforms (i.e. Objects or PoseChannels)
+ * - for elements providing transforms (i.e. Objects or PoseChannels)
  */
 typedef struct bMotionPath {
 	bMotionPathVert *points;    /* path samples */
@@ -79,6 +80,12 @@ typedef struct bMotionPath {
 	float color[3];	            /* optional custom color */
 	int line_thickness;         /* line thickness */
 	int flag;                   /* baking settings - eMotionPath_Flag */
+
+	/* Used for drawing. */
+	struct GPUVertBuf *points_vbo;
+	struct GPUBatch *batch_line;
+	struct GPUBatch *batch_points;
+	void *pad;
 } bMotionPath;
 
 /* bMotionPath->flag */
@@ -180,6 +187,34 @@ typedef enum eMotionPaths_BakeFlag {
 	MOTIONPATH_BAKE_HAS_PATHS       = (1 << 2)
 } eMotionPath_BakeFlag;
 
+/* runtime */
+#
+#
+typedef struct bPoseChannelDrawData {
+	float solid_color[4];
+	float wire_color[4];
+
+	int bbone_matrix_len;
+	/* keep last */
+	float bbone_matrix[0][4][4];
+} bPoseChannelDrawData;
+
+struct Mat4;
+struct DualQuat;
+
+typedef struct bPoseChannelRuntime {
+	int bbone_segments;
+	char pad[4];
+
+	/* Rest and posed matrices for segments. */
+	struct Mat4 *bbone_rest_mats;
+	struct Mat4 *bbone_pose_mats;
+
+	/* Delta from rest to pose in matrix and DualQuat form. */
+	struct Mat4 *bbone_deform_mats;
+	struct DualQuat *bbone_dual_quats;
+} bPoseChannelRuntime;
+
 /* ************************************************ */
 /* Poses */
 
@@ -205,7 +240,7 @@ typedef struct bPoseChannel {
 	char constflag;                 /* for quick detecting which constraints affect this channel */
 	char selectflag;                /* copy of bone flag, so you can work with library armatures, not for runtime use */
 	char drawflag;
-	char bboneflag;
+	char bboneflag DNA_DEPRECATED;
 	char pad0[4];
 
 	struct Bone         *bone;      /* set on read file or rebuild pose */
@@ -238,6 +273,8 @@ typedef struct bPoseChannel {
 	float chan_mat[4][4];           /* matrix result of loc/quat/size, and where we put deform in, see next line */
 	float pose_mat[4][4];           /* constraints accumulate here. in the end, pose_mat = bone->arm_mat * chan_mat
 	                                 * this matrix is object space */
+	float disp_mat[4][4];           /* for display, pose_mat with bone length applied */
+	float disp_tail_mat[4][4];      /* for display, pose_mat with bone length applied and translated to tail*/
 	float constinv[4][4];           /* inverse result of constraints.
 	                                 * doesn't include effect of restposition, parent, and local transform*/
 
@@ -257,10 +294,18 @@ typedef struct bPoseChannel {
 	float ease1, ease2;
 	float scaleIn, scaleOut;
 
-	struct bPoseChannel *bbone_prev; /* next/prev bones to use as handle references when calculating bbones (optional) */
+	struct bPoseChannel *bbone_prev; /* B-Bone custom handles; set on read file or rebuild pose based on pchan->bone data */
 	struct bPoseChannel *bbone_next;
 
 	void        *temp;              /* use for outliner */
+	/* Runtime data for color and bbone segment matrix. */
+	bPoseChannelDrawData *draw_data;
+
+	/* Points to an original pose channel. */
+	struct bPoseChannel *orig_pchan;
+
+	/* Runtime data. */
+	struct bPoseChannelRuntime runtime;
 } bPoseChannel;
 
 
@@ -335,6 +380,7 @@ typedef enum ePchan_DrawFlag {
 #define PCHAN_CUSTOM_DRAW_SIZE(pchan) \
 	(pchan)->custom_scale * (((pchan)->drawflag & PCHAN_DRAW_NO_CUSTOM_BONE_SIZE) ? 1.0f : (pchan)->bone->length)
 
+#ifdef DNA_DEPRECATED_ALLOW
 /* PoseChannel->bboneflag */
 typedef enum ePchan_BBoneFlag {
 	/* Use custom reference bones (for roll and handle alignment), instead of immediate neighbors */
@@ -344,6 +390,7 @@ typedef enum ePchan_BBoneFlag {
 	/* Evaluate end handle as being "relative" */
 	PCHAN_BBONE_CUSTOM_END_REL    = (1 << 3),
 } ePchan_BBoneFlag;
+#endif
 
 /* PoseChannel->rotmode and Object->rotmode */
 typedef enum eRotationModes {
@@ -418,8 +465,7 @@ typedef enum ePose_Flags {
 	POSE_RECALCPATHS = (1 << 4),
 	/* set by BKE_pose_rebuild to give a chance to the IK solver to rebuild IK tree */
 	POSE_WAS_REBUILT = (1 << 5),
-	/* set by game_copy_pose to indicate that this pose is used in the game engine */
-	POSE_GAME_ENGINE = (1 << 6),
+	POSE_FLAG_DEPRECATED = (1 << 6), /* deprecated. */
 	/* pose constraint flags needs to be updated */
 	POSE_CONSTRAINTS_NEED_UPDATE_FLAGS = (1 << 7),
 } ePose_Flags;
@@ -573,8 +619,8 @@ typedef struct bDopeSheet {
 	ID      *source;            /* currently ID_SCE (for Dopesheet), and ID_SC (for Grease Pencil) */
 	ListBase chanbase; /* cache for channels (only initialized when pinned) */           // XXX not used!
 
-	struct Group *filter_grp;   /* object group for ADS_FILTER_ONLYOBGROUP filtering option */
-	char searchstr[64];         /* string to search for in displayed names of F-Curves for ADS_FILTER_BY_FCU_NAME filtering option */
+	struct Collection *filter_grp;   /* object group for option to only include objects that belong to this Collection */
+	char searchstr[64];         /* string to search for in displayed names of F-Curves, or NlaTracks/GP Layers/etc. */
 
 	int filterflag;             /* flags to use for filtering data */
 	int flag;                   /* standard flags */
@@ -596,7 +642,6 @@ typedef enum eDopeSheet_FilterFlag {
 
 	/* general filtering */
 	ADS_FILTER_SUMMARY          = (1 << 4),   /* for 'DopeSheet' Editors - include 'summary' line */
-	ADS_FILTER_ONLYOBGROUP      = (1 << 5),   /* only the objects in the specified object group get used */
 
 	/* datatype-based filtering */
 	ADS_FILTER_NOSHAPEKEYS      = (1 << 6),
@@ -625,7 +670,6 @@ typedef enum eDopeSheet_FilterFlag {
 
 	/* general filtering 3 */
 	ADS_FILTER_INCL_HIDDEN      = (1 << 26),  /* include 'hidden' channels too (i.e. those from hidden Objects/Bones) */
-	ADS_FILTER_BY_FCU_NAME      = (1 << 27),  /* for F-Curves, filter by the displayed name (i.e. to isolate all Location curves only) */
 	ADS_FILTER_ONLY_ERRORS		= (1 << 28),  /* show only F-Curves which are disabled/have errors - for debugging drivers */
 
 	/* GPencil Mode */
@@ -648,6 +692,11 @@ typedef enum eDopeSheet_Flag {
 
 
 
+typedef struct SpaceAction_Runtime {
+	char flag;
+	char _pad0[7];
+} SpaceAction_Runtime;
+
 /* Action Editor Space. This is defined here instead of in DNA_space_types.h */
 typedef struct SpaceAction {
 	struct SpaceLink *next, *prev;
@@ -662,9 +711,18 @@ typedef struct SpaceAction {
 	bAction     *action;        /* the currently active action */
 	bDopeSheet ads;             /* the currently active context (when not showing action) */
 
-	char mode, autosnap;        /* mode: editing context; autosnap: automatic keyframe snapping mode   */
-	short flag;                 /* flag: bitmapped settings; */
 	float timeslide;            /* for Time-Slide transform mode drawing - current frame? */
+
+	short flag;
+	/* Editing context */
+	char mode;
+	/* Storage for sub-space types. */
+	char mode_prev;
+	char autosnap;              /* automatic keyframe snapping mode   */
+	char cache_display;         /* (eTimeline_Cache_Flag) */
+	char _pad1[6];
+
+	SpaceAction_Runtime runtime;
 } SpaceAction;
 
 /* SpaceAction flag */
@@ -687,13 +745,22 @@ typedef enum eSAction_Flag {
 	SACTION_NODRAWGCOLORS = (1 << 7),
 	/* don't draw current frame number beside frame indicator */
 	SACTION_NODRAWCFRANUM = (1 << 8),
-	/* temporary flag to force channel selections to be synced with main */
-	SACTION_TEMP_NEEDCHANSYNC = (1 << 9),
 	/* don't perform realtime updates */
 	SACTION_NOREALTIMEUPDATES = (1 << 10),
 	/* move markers as well as keyframes */
-	SACTION_MARKERS_MOVE = (1 << 11)
+	SACTION_MARKERS_MOVE = (1 << 11),
+	/* show interpolation type */
+	SACTION_SHOW_INTERPOLATION = (1 << 12),
+	/* show extremes */
+	SACTION_SHOW_EXTREMES = (1 << 13),
 } eSAction_Flag;
+
+
+/* SpaceAction_Runtime.flag */
+typedef enum eSAction_Runtime_Flag {
+	/** Temporary flag to force channel selections to be synced with main */
+	SACTION_RUNTIME_FLAG_NEED_CHAN_SYNC = (1 << 0),
+} eSAction_Runtime_Flag;
 
 /* SpaceAction Mode Settings */
 typedef enum eAnimEdit_Context {
@@ -709,6 +776,8 @@ typedef enum eAnimEdit_Context {
 	SACTCONT_MASK = 4,
 	/* cache file */
 	SACTCONT_CACHEFILE = 5,
+	/* timeline - replacement for the standalone "timeline editor" */
+	SACTCONT_TIMELINE = 6,
 } eAnimEdit_Context;
 
 /* SpaceAction AutoSnap Settings (also used by other Animation Editors) */
@@ -726,6 +795,17 @@ typedef enum eAnimEdit_AutoSnap {
 	/* snap to 1.0 second increments */
 	SACTSNAP_TSTEP = 5
 } eAnimEdit_AutoSnap;
+
+/* SAction->cache_display */
+typedef enum eTimeline_Cache_Flag {
+	TIME_CACHE_DISPLAY       = (1 << 0),
+	TIME_CACHE_SOFTBODY      = (1 << 1),
+	TIME_CACHE_PARTICLES     = (1 << 2),
+	TIME_CACHE_CLOTH         = (1 << 3),
+	TIME_CACHE_SMOKE         = (1 << 4),
+	TIME_CACHE_DYNAMICPAINT  = (1 << 5),
+	TIME_CACHE_RIGIDBODY     = (1 << 6),
+} eTimeline_Cache_Flag;
 
 
 /* ************************************************ */

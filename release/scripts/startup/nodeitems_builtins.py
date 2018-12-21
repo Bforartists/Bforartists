@@ -43,18 +43,10 @@ class CompositorNodeCategory(SortedNodeCategory):
         return (context.space_data.tree_type == 'CompositorNodeTree')
 
 
-class ShaderNewNodeCategory(SortedNodeCategory):
+class ShaderNodeCategory(SortedNodeCategory):
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree' and
-                context.scene.render.use_shading_nodes)
-
-
-class ShaderOldNodeCategory(SortedNodeCategory):
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree' and
-                not context.scene.render.use_shading_nodes)
+        return (context.space_data.tree_type == 'ShaderNodeTree')
 
 
 class TextureNodeCategory(SortedNodeCategory):
@@ -142,62 +134,39 @@ def object_shader_nodes_poll(context):
             snode.shader_type == 'OBJECT')
 
 
+def cycles_shader_nodes_poll(context):
+    return context.engine == 'CYCLES'
+
+
+def eevee_shader_nodes_poll(context):
+    return context.engine == 'BLENDER_EEVEE'
+
+
+def eevee_cycles_shader_nodes_poll(context):
+    return (cycles_shader_nodes_poll(context) or
+            eevee_shader_nodes_poll(context))
+
+
+def object_cycles_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            cycles_shader_nodes_poll(context))
+
+
+def object_eevee_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            eevee_shader_nodes_poll(context))
+
+
+def object_eevee_cycles_shader_nodes_poll(context):
+    return (object_shader_nodes_poll(context) and
+            eevee_cycles_shader_nodes_poll(context))
+
+
 # All standard node categories currently used in nodes.
 
 shader_node_categories = [
-    # Shader Nodes
-    ShaderOldNodeCategory("SH_INPUT", "Input", items=[
-        NodeItem("ShaderNodeMaterial"),
-        NodeItem("ShaderNodeCameraData"),
-        NodeItem("ShaderNodeFresnel"),
-        NodeItem("ShaderNodeLayerWeight"),
-        NodeItem("ShaderNodeLampData"),
-        NodeItem("ShaderNodeValue"),
-        NodeItem("ShaderNodeRGB"),
-        NodeItem("ShaderNodeTexture"),
-        NodeItem("ShaderNodeGeometry"),
-        NodeItem("ShaderNodeExtendedMaterial"),
-        NodeItem("ShaderNodeParticleInfo"),
-        NodeItem("ShaderNodeObjectInfo"),
-        NodeItem("NodeGroupInput", poll=group_input_output_item_poll),
-    ]),
-    ShaderOldNodeCategory("SH_OUTPUT", "Output", items=[
-        NodeItem("ShaderNodeOutput"),
-        NodeItem("NodeGroupOutput", poll=group_input_output_item_poll),
-    ]),
-    ShaderOldNodeCategory("SH_OP_COLOR", "Color", items=[
-        NodeItem("ShaderNodeMixRGB"),
-        NodeItem("ShaderNodeRGBCurve"),
-        NodeItem("ShaderNodeInvert"),
-        NodeItem("ShaderNodeHueSaturation"),
-        NodeItem("ShaderNodeGamma"),
-    ]),
-    ShaderOldNodeCategory("SH_OP_VECTOR", "Vector", items=[
-        NodeItem("ShaderNodeNormal"),
-        NodeItem("ShaderNodeMapping"),
-        NodeItem("ShaderNodeVectorCurve"),
-        NodeItem("ShaderNodeVectorTransform"),
-        NodeItem("ShaderNodeNormalMap"),
-    ]),
-    ShaderOldNodeCategory("SH_CONVERTOR", "Converter", items=[
-        NodeItem("ShaderNodeValToRGB"),
-        NodeItem("ShaderNodeRGBToBW"),
-        NodeItem("ShaderNodeMath"),
-        NodeItem("ShaderNodeVectorMath"),
-        NodeItem("ShaderNodeSqueeze"),
-        NodeItem("ShaderNodeSeparateRGB"),
-        NodeItem("ShaderNodeCombineRGB"),
-        NodeItem("ShaderNodeSeparateHSV"),
-        NodeItem("ShaderNodeCombineHSV"),
-    ]),
-    ShaderOldNodeCategory("SH_GROUP", "Group", items=node_group_items),
-    ShaderOldNodeCategory("SH_LAYOUT", "Layout", items=[
-        NodeItem("NodeFrame"),
-        NodeItem("NodeReroute"),
-    ]),
-
-    # New Shader Nodes (Cycles)
-    ShaderNewNodeCategory("SH_NEW_INPUT", "Input", items=[
+    # Shader Nodes (Cycles and Eevee)
+    ShaderNodeCategory("SH_NEW_INPUT", "Input", items=[
         NodeItem("ShaderNodeTexCoord"),
         NodeItem("ShaderNodeAttribute"),
         NodeItem("ShaderNodeLightPath"),
@@ -218,37 +187,38 @@ shader_node_categories = [
         NodeItem("ShaderNodeUVAlongStroke", poll=line_style_shader_nodes_poll),
         NodeItem("NodeGroupInput", poll=group_input_output_item_poll),
     ]),
-    ShaderNewNodeCategory("SH_NEW_OUTPUT", "Output", items=[
-        NodeItem("ShaderNodeOutputMaterial", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeOutputLamp", poll=object_shader_nodes_poll),
+    ShaderNodeCategory("SH_NEW_OUTPUT", "Output", items=[
+        NodeItem("ShaderNodeOutputMaterial", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeOutputLight", poll=object_cycles_shader_nodes_poll),
         NodeItem("ShaderNodeOutputWorld", poll=world_shader_nodes_poll),
         NodeItem("ShaderNodeOutputLineStyle", poll=line_style_shader_nodes_poll),
         NodeItem("NodeGroupOutput", poll=group_input_output_item_poll),
     ]),
-    ShaderNewNodeCategory("SH_NEW_SHADER", "Shader", items=[
-        NodeItem("ShaderNodeMixShader"),
-        NodeItem("ShaderNodeAddShader"),
-        NodeItem("ShaderNodeBsdfDiffuse", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfPrincipled", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfGlossy", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfTransparent", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfRefraction", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfGlass", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfTranslucent", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfAnisotropic", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfVelvet", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfToon", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeSubsurfaceScattering", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeEmission", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeBsdfHair", poll=object_shader_nodes_poll),
+    ShaderNodeCategory("SH_NEW_SHADER", "Shader", items=[
+        NodeItem("ShaderNodeMixShader", poll=eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeAddShader", poll=eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfDiffuse", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfPrincipled", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfGlossy", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfTransparent", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfRefraction", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfGlass", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfTranslucent", poll=object_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfAnisotropic", poll=object_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfVelvet", poll=object_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfToon", poll=object_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeSubsurfaceScattering", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeEmission", poll=object_eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeBsdfHair", poll=object_cycles_shader_nodes_poll),
         NodeItem("ShaderNodeBackground", poll=world_shader_nodes_poll),
-        NodeItem("ShaderNodeHoldout", poll=object_shader_nodes_poll),
-        NodeItem("ShaderNodeVolumeAbsorption"),
-        NodeItem("ShaderNodeVolumeScatter"),
+        NodeItem("ShaderNodeHoldout", poll=object_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeVolumeAbsorption", poll=eevee_cycles_shader_nodes_poll),
+        NodeItem("ShaderNodeVolumeScatter", poll=eevee_cycles_shader_nodes_poll),
         NodeItem("ShaderNodeVolumePrincipled"),
+        NodeItem("ShaderNodeEeveeSpecular", poll=object_eevee_shader_nodes_poll),
         NodeItem("ShaderNodeBsdfHairPrincipled", poll=object_shader_nodes_poll)
     ]),
-    ShaderNewNodeCategory("SH_NEW_TEXTURE", "Texture", items=[
+    ShaderNodeCategory("SH_NEW_TEXTURE", "Texture", items=[
         NodeItem("ShaderNodeTexImage"),
         NodeItem("ShaderNodeTexEnvironment"),
         NodeItem("ShaderNodeTexSky"),
@@ -263,7 +233,7 @@ shader_node_categories = [
         NodeItem("ShaderNodeTexPointDensity"),
         NodeItem("ShaderNodeTexIES"),
     ]),
-    ShaderNewNodeCategory("SH_NEW_OP_COLOR", "Color", items=[
+    ShaderNodeCategory("SH_NEW_OP_COLOR", "Color", items=[
         NodeItem("ShaderNodeMixRGB"),
         NodeItem("ShaderNodeRGBCurve"),
         NodeItem("ShaderNodeInvert"),
@@ -272,7 +242,7 @@ shader_node_categories = [
         NodeItem("ShaderNodeGamma"),
         NodeItem("ShaderNodeBrightContrast"),
     ]),
-    ShaderNewNodeCategory("SH_NEW_OP_VECTOR", "Vector", items=[
+    ShaderNodeCategory("SH_NEW_OP_VECTOR", "Vector", items=[
         NodeItem("ShaderNodeMapping"),
         NodeItem("ShaderNodeBump"),
         NodeItem("ShaderNodeDisplacement"),
@@ -282,10 +252,11 @@ shader_node_categories = [
         NodeItem("ShaderNodeVectorCurve"),
         NodeItem("ShaderNodeVectorTransform"),
     ]),
-    ShaderNewNodeCategory("SH_NEW_CONVERTOR", "Converter", items=[
+    ShaderNodeCategory("SH_NEW_CONVERTOR", "Converter", items=[
         NodeItem("ShaderNodeMath"),
         NodeItem("ShaderNodeValToRGB"),
         NodeItem("ShaderNodeRGBToBW"),
+        NodeItem("ShaderNodeShaderToRGB", poll=object_eevee_shader_nodes_poll),
         NodeItem("ShaderNodeVectorMath"),
         NodeItem("ShaderNodeSeparateRGB"),
         NodeItem("ShaderNodeCombineRGB"),
@@ -296,11 +267,11 @@ shader_node_categories = [
         NodeItem("ShaderNodeWavelength"),
         NodeItem("ShaderNodeBlackbody"),
     ]),
-    ShaderNewNodeCategory("SH_NEW_SCRIPT", "Script", items=[
+    ShaderNodeCategory("SH_NEW_SCRIPT", "Script", items=[
         NodeItem("ShaderNodeScript"),
     ]),
-    ShaderNewNodeCategory("SH_NEW_GROUP", "Group", items=node_group_items),
-    ShaderNewNodeCategory("SH_NEW_LAYOUT", "Layout", items=[
+    ShaderNodeCategory("SH_NEW_GROUP", "Group", items=node_group_items),
+    ShaderNodeCategory("SH_NEW_LAYOUT", "Layout", items=[
         NodeItem("NodeFrame"),
         NodeItem("NodeReroute"),
     ]),

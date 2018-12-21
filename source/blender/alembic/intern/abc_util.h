@@ -48,13 +48,13 @@ struct ImportSettings;
 
 struct ID;
 struct Object;
+struct Base;
 
 std::string get_id_name(const ID * const id);
 std::string get_id_name(const Object * const ob);
 std::string get_object_dag_path_name(const Object * const ob, Object *dupli_parent);
 
-bool object_selected(Object *ob);
-bool parent_selected(Object *ob);
+bool object_selected(const Base * const ob_base);
 
 Imath::M44d convert_matrix(float mat[4][4]);
 
@@ -167,7 +167,7 @@ typedef enum {
 } AbcAxisSwapMode;
 
 /* Create a rotation matrix for each axis from euler angles.
- * Euler angles are swaped to change coordinate system. */
+ * Euler angles are swapped to change coordinate system. */
 void create_swapped_rotation_matrix(
         float rot_x_mat[3][3], float rot_y_mat[3][3],
         float rot_z_mat[3][3], const float euler[3],
@@ -197,7 +197,7 @@ public:
 /* *************************** */
 
 /**
- * Utility class whose purpose is to more easily log related informations. An
+ * Utility class whose purpose is to more easily log related information. An
  * instance of the SimpleLogger can be created in any context, and will hold a
  * copy of all the strings passed to its output stream.
  *

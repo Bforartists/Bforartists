@@ -29,8 +29,8 @@ from data_overrides.override import *
 '''
 def id_data_children(id_data):
     if isinstance(id_data, bpy.types.Object):
-        if id_data.dupli_type == 'GROUP' and id_data.dupli_group:
-            yield id_data.dupli_group
+        if id_data.instance_type == 'COLLECTION' and id_data.instance_collection:
+            yield id_data.instance_collection
     elif isinstance(id_data, bpy.types.Group):
         for ob in id_data.objects:
             yield ob
@@ -99,7 +99,7 @@ class SCENE_OT_Override_Add(Operator):
 
         id_data = id_data_from_enum(self.id_block)
         add_override(scene, id_data)
-        
+
         return {'FINISHED'}
 
 

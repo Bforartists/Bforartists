@@ -135,14 +135,14 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.INFO_MT_file_external_data.append(menu_func)
+    bpy.types.TOPBAR_MT_file_external_data.append(menu_func)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    bpy.types.INFO_MT_file_external_data.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_external_data.remove(menu_func)
 
 
 if __name__ == "__main__":

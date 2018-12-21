@@ -45,6 +45,9 @@
 #include "BIF_glutil.h"
 
 #include "BKE_context.h"
+#include "BKE_idcode.h"
+
+#include "GPU_shader.h"
 
 #include "IMB_imbuf_types.h"
 
@@ -96,7 +99,8 @@ ListBase *WM_dropboxmap_find(const char *idname, int spaceid, int regionid)
 
 
 wmDropBox *WM_dropbox_add(
-        ListBase *lb, const char *idname, bool (*poll)(bContext *, wmDrag *, const wmEvent *),
+        ListBase *lb, const char *idname,
+        bool (*poll)(bContext *, wmDrag *, const wmEvent *, const char **),
         void (*copy)(wmDrag *, wmDropBox *))
 {
 	wmDropBox *drop = MEM_callocN(sizeof(wmDropBox), "wmDropBox");
@@ -152,10 +156,17 @@ wmDrag *WM_event_start_drag(struct bContext *C, int icon, int type, void *poin, 
 	drag->flags = flags;
 	drag->icon = icon;
 	drag->type = type;
-	if (type == WM_DRAG_PATH)
+	if (type == WM_DRAG_PATH) {
 		BLI_strncpy(drag->path, poin, FILE_MAX);
-	else
+	}
+	else if (type == WM_DRAG_ID) {
+		if (poin) {
+			WM_drag_add_ID(drag, poin, NULL);
+		}
+	}
+	else {
 		drag->poin = poin;
+	}
 	drag->value = value;
 
 	return drag;
@@ -175,6 +186,7 @@ void WM_drag_free(wmDrag *drag)
 		MEM_freeN(drag->poin);
 	}
 
+	BLI_freelistN(&drag->ids);
 	MEM_freeN(drag);
 }
 
@@ -186,6 +198,7 @@ void WM_drag_free_list(struct ListBase *lb)
 	}
 }
 
+
 static const char *dropbox_active(bContext *C, ListBase *handlers, wmDrag *drag, const wmEvent *event)
 {
 	wmEventHandler *handler = handlers->first;
@@ -193,10 +206,12 @@ static const char *dropbox_active(bContext *C, ListBase *handlers, wmDrag *drag,
 		if (handler->dropboxes) {
 			wmDropBox *drop = handler->dropboxes->first;
 			for (; drop; drop = drop->next) {
-				if (drop->poll(C, drag, event))
+				const char *tooltip = NULL;
+				if (drop->poll(C, drag, event, &tooltip)) {
 					/* XXX Doing translation here might not be ideal, but later we have no more
 					 *     access to ot (and hence op context)... */
-					return RNA_struct_ui_name(drop->ot->srna);
+					return (tooltip) ? tooltip : RNA_struct_ui_name(drop->ot->srna);
+				}
 			}
 		}
 	}
@@ -264,15 +279,66 @@ void wm_drags_check_ops(bContext *C, const wmEvent *event)
 	}
 }
 
+/* ************** IDs ***************** */
+
+void WM_drag_add_ID(wmDrag *drag, ID *id, ID *from_parent)
+{
+	/* Don't drag the same ID twice. */
+	for (wmDragID *drag_id = drag->ids.first; drag_id; drag_id = drag_id->next) {
+		if (drag_id->id == id) {
+			if (drag_id->from_parent == NULL) {
+				drag_id->from_parent = from_parent;
+			}
+			return;
+		}
+		else if (GS(drag_id->id->name) != GS(id->name)) {
+			BLI_assert(!"All dragged IDs must have the same type");
+			return;
+		}
+	}
+
+	/* Add to list. */
+	wmDragID *drag_id = MEM_callocN(sizeof(wmDragID), __func__);
+	drag_id->id = id;
+	drag_id->from_parent = from_parent;
+	BLI_addtail(&drag->ids, drag_id);
+}
+
+ID *WM_drag_ID(const wmDrag *drag, short idcode)
+{
+	if (drag->type != WM_DRAG_ID) {
+		return NULL;
+	}
+
+	wmDragID *drag_id = drag->ids.first;
+	if (!drag_id) {
+		return NULL;
+	}
+
+	ID *id = drag_id->id;
+	return (idcode == 0 || GS(id->name) == idcode) ? id : NULL;
+
+}
+
+ID *WM_drag_ID_from_event(const wmEvent *event, short idcode)
+{
+	if (event->custom != EVT_DATA_DRAGDROP) {
+		return NULL;
+	}
+
+	ListBase *lb = event->customdata;
+	return WM_drag_ID(lb->first, idcode);
+}
+
 /* ************** draw ***************** */
 
 static void wm_drop_operator_draw(const char *name, int x, int y)
 {
 	const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
-	const unsigned char fg[4] = {255, 255, 255, 255};
-	const unsigned char bg[4] = {0, 0, 0, 50};
+	const float col_fg[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	const float col_bg[4] = {0.0f, 0.0f, 0.0f, 0.2f};
 
-	UI_fontstyle_draw_simple_backdrop(fstyle, x, y, name, fg, bg);
+	UI_fontstyle_draw_simple_backdrop(fstyle, x, y, name, col_fg, col_bg);
 }
 
 static const char *wm_drag_name(wmDrag *drag)
@@ -280,8 +346,16 @@ static const char *wm_drag_name(wmDrag *drag)
 	switch (drag->type) {
 		case WM_DRAG_ID:
 		{
-			ID *id = drag->poin;
-			return id->name + 2;
+			ID *id = WM_drag_ID(drag, 0);
+			bool single = (BLI_listbase_count_at_most(&drag->ids, 2) == 1);
+
+			if (single) {
+				return id->name + 2;
+			}
+			else if (id) {
+				return BKE_idcode_to_name_plural(GS(id->name));
+			}
+			break;
 		}
 		case WM_DRAG_PATH:
 		case WM_DRAG_NAME:
@@ -322,6 +396,7 @@ void wm_drags_draw(bContext *C, wmWindow *win, rcti *rect)
 	/* XXX todo, multiline drag draws... but maybe not, more types mixed wont work well */
 	glEnable(GL_BLEND);
 	for (drag = wm->drags.first; drag; drag = drag->next) {
+		const char text_col[] = {255, 255, 255, 255};
 		int iconsize = UI_DPI_ICON_SIZE;
 		int padding = 4 * UI_DPI_FAC;
 
@@ -333,8 +408,10 @@ void wm_drags_draw(bContext *C, wmWindow *win, rcti *rect)
 			if (rect)
 				drag_rect_minmax(rect, x, y, x + drag->sx, y + drag->sy);
 			else {
-				glColor4f(1.0, 1.0, 1.0, 0.65); /* this blends texture */
-				glaDrawPixelsTexScaled(x, y, drag->imb->x, drag->imb->y, GL_RGBA, GL_UNSIGNED_BYTE, GL_NEAREST, drag->imb->rect, drag->scale, drag->scale);
+				float col[4] = {1.0f, 1.0f, 1.0f, 0.65f}; /* this blends texture */
+				IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_COLOR);
+				immDrawPixelsTexScaled(&state, x, y, drag->imb->x, drag->imb->y, GL_RGBA, GL_UNSIGNED_BYTE, GL_NEAREST,
+				                       drag->imb->rect, drag->scale, drag->scale, 1.0f, 1.0f, col);
 			}
 		}
 		else {
@@ -344,7 +421,7 @@ void wm_drags_draw(bContext *C, wmWindow *win, rcti *rect)
 			if (rect)
 				drag_rect_minmax(rect, x, y, x + iconsize, y + iconsize);
 			else
-				UI_icon_draw_aspect(x, y, drag->icon, 1.0f / UI_DPI_FAC, 0.8);
+				UI_icon_draw_aspect(x, y, drag->icon, 1.0f / UI_DPI_FAC, 0.8, text_col);
 		}
 
 		/* item name */
@@ -362,8 +439,7 @@ void wm_drags_draw(bContext *C, wmWindow *win, rcti *rect)
 			drag_rect_minmax(rect, x, y, x + w, y + iconsize);
 		}
 		else {
-			glColor4ub(255, 255, 255, 255);
-			UI_fontstyle_draw_simple(fstyle, x, y, wm_drag_name(drag));
+			UI_fontstyle_draw_simple(fstyle, x, y, wm_drag_name(drag), (uchar *)text_col);
 		}
 
 		/* operator name with roundbox */

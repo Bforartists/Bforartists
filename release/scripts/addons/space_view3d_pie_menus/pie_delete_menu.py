@@ -23,7 +23,7 @@ bl_info = {
     "description": "Edit mode V/E/F Delete Modes",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 0),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "Mesh Edit Mode",
     "warning": "",
     "wiki_url": "",
@@ -57,13 +57,13 @@ class PieDelete(Menu):
         # 1 - BOTTOM - LEFT
         box = pie.split().column()
         box.operator("mesh.dissolve_limited", text="Limited Dissolve", icon='STICKY_UVS_LOC')
-        box.operator("mesh.delete_edgeloop", text="Delete Edge Loops", icon='BORDER_LASSO')
+        box.operator("mesh.delete_edgeloop", text="Delete Edge Loops", icon='NONE')
         box.operator("mesh.edge_collapse", text="Edge Collapse", icon='UV_EDGESEL')
         # 3 - BOTTOM - RIGHT
         box = pie.split().column()
-        box.operator("mesh.delete", text="Only Edge & Faces", icon='SPACE2').type = 'EDGE_FACE'
+        box.operator("mesh.delete", text="Only Edge & Faces", icon='NONE').type = 'EDGE_FACE'
         box.operator("mesh.delete", text="Only Faces", icon='UV_FACESEL').type = 'ONLY_FACE'
-        box.operator("mesh.remove_doubles", text="Remove Doubles", icon='ORTHO')
+        box.operator("mesh.remove_doubles", text="Remove Doubles", icon='NONE')
 
 
 classes = (

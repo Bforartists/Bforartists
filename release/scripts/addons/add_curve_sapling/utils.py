@@ -501,7 +501,7 @@ def growSpline(n, stem, numSplit, splitAng, splitAngV, splineList,
             # If this isn't the last point on a stem, then we need to add it
             # to the list of stems to continue growing
             # print(stem.seg != stem.segMax, stem.seg, stem.segMax)
-            # if stem.seg != stem.segMax: # if probs not nessesary
+            # if stem.seg != stem.segMax: # if probs not necessary
             nstem = stemSpline(
                         newSpline, stem.curv, stem.curvV, stem.vertAtt, stem.seg + 1,
                         stem.segMax, stemL, stem.children,
@@ -735,13 +735,13 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
     newAction = bpy.data.actions.new(name='windAction')
     armOb.animation_data_create()
     armOb.animation_data.action = newAction
-    arm.draw_type = 'STICK'
+    arm.display_type = 'STICK'
     arm.use_deform_delay = True
     # Add the armature modifier to the curve
     armMod = treeOb.modifiers.new('windSway', 'ARMATURE')
     if previewArm:
         armMod.show_viewport = False
-        arm.draw_type = 'WIRE'
+        arm.display_type = 'WIRE'
         treeOb.hide = True
     armMod.use_apply_on_spline = True
     armMod.object = armOb
@@ -821,9 +821,9 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
                 # If there are leaves then we need a new vertex group so they will attach to the bone
                 if not leafAnim:
                     if (len(levelCount) > 1) and (i >= levelCount[-2]) and leafObj:
-                        leafObj.vertex_groups.new(boneName)
+                        leafObj.vertex_groups.new(name=boneName)
                     elif (len(levelCount) == 1) and leafObj:
-                        leafObj.vertex_groups.new(boneName)
+                        leafObj.vertex_groups.new(name=boneName)
                 """
                 # If this is first point of the spline then it must be parented to the level above it
                 if n == 0:
@@ -997,7 +997,7 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
                                         )
 
         for group in vertexGroups:
-            leafObj.vertex_groups.new(group)
+            leafObj.vertex_groups.new(name=group)
             leafObj.vertex_groups[group].add(vertexGroups[group], 1.0, 'ADD')
 
     # Now we need the rotation mode to be 'XYZ' to ensure correct rotation
@@ -1334,7 +1334,7 @@ def perform_pruning(baseSize, baseSplits, childP, cu, currentMax, currentMin, cu
                     numSplit = 0
                 elif (k == 1) and (n == 0):
                     numSplit = baseSplits
-                # allways split at splitHeight
+                # always split at splitHeight
                 elif (n == 0) and (k == int((curveRes[n] - 1) * splitHeight) + 1) and (splitVal > 0):
                     numSplit = 1
                 else:
@@ -1430,7 +1430,7 @@ def perform_pruning(baseSize, baseSplits, childP, cu, currentMax, currentMin, cu
     return ratio, splineToBone
 
 
-# calculate taper automaticly
+# calculate taper automatically
 def findtaper(length, taper, shape, shapeS, levels, customShape):
     taperS = []
     for i, t in enumerate(length):
@@ -1684,7 +1684,7 @@ def addTree(props):
             kickstart_trunk(addstem, levels, leaves, branches, cu, curve, curveRes,
                             curveV, attractUp, length, lengthV, ratio, ratioPower, resU,
                             scale0, scaleV0, scaleVal, taper, minRadius, rootFlare)
-        # If this isn't the trunk then we may have multiple stem to intialise
+        # If this isn't the trunk then we may have multiple stem to initialise
         else:
             # For each of the points defined in the list of stem starting points we need to grow a stem.
             fabricate_stems(addsplinetobone, addstem, baseSize, branches, childP, cu, curve, curveBack,
@@ -1797,17 +1797,17 @@ def addTree(props):
 
         # enable duplication
         if leafShape == 'dFace':
-            leafObj.dupli_type = "FACES"
-            leafObj.use_dupli_faces_scale = True
-            leafObj.dupli_faces_scale = 10.0
+            leafObj.instance_type = "FACES"
+            leafObj.use_instance_faces_scale = True
+            leafObj.instance_faces_scale = 10.0
             try:
                 if leafDupliObj not in "NONE":
                     bpy.data.objects[leafDupliObj].parent = leafObj
             except KeyError:
                 pass
         elif leafShape == 'dVert':
-            leafObj.dupli_type = "VERTS"
-            leafObj.use_dupli_vertices_rotation = True
+            leafObj.instance_type = "VERTS"
+            leafObj.use_instance_vertices_rotation = True
             try:
                 if leafDupliObj not in "NONE":
                     bpy.data.objects[leafDupliObj].parent = leafObj
@@ -1988,7 +1988,7 @@ def addTree(props):
         treeMesh.from_pydata(treeVerts, treeEdges, ())
 
         for group in vertexGroups:
-            treeObj.vertex_groups.new(group)
+            treeObj.vertex_groups.new(name=group)
             treeObj.vertex_groups[group].add(vertexGroups[group], 1.0, 'ADD')
 
         # add armature
@@ -1996,7 +1996,7 @@ def addTree(props):
             armMod = treeObj.modifiers.new('windSway', 'ARMATURE')
             if previewArm:
                 bpy.data.objects['treeArm'].hide = True
-                bpy.data.armatures['tree'].draw_type = 'STICK'
+                bpy.data.armatures['tree'].display_type = 'STICK'
             armMod.object = bpy.data.objects['treeArm']
             armMod.use_bone_envelopes = False
             armMod.use_vertex_groups = True

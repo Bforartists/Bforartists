@@ -28,7 +28,7 @@
  *  \ingroup collada
  */
 #ifdef WITH_COLLADA
-#include "DNA_scene_types.h"
+#include "DNA_space_types.h"
 
 #include "BLT_translation.h"
 
@@ -36,11 +36,12 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
-#include "BKE_report.h"
 #include "BKE_object.h"
+#include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_screen.h"
 #include "ED_object.h"
@@ -93,10 +94,12 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	int deform_bones_only;
 
 	int include_animations;
-	int sample_animations;
+	int include_all_actions;
 	int sampling_rate;
+	int keep_smooth_curves;
+	int keep_keyframes;
 
-	int export_texture_type;
+	int export_animation_type;
 	int use_texture_copies;
 	int active_uv_only;
 
@@ -111,6 +114,7 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	int keep_bind_info;
 
 	int export_count;
+	int sample_animations;
 
 	if (!RNA_struct_property_is_set(op->ptr, "filepath")) {
 		BKE_report(op->reports, RPT_ERROR, "No filename given");
@@ -147,12 +151,15 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	include_shapekeys        = RNA_boolean_get(op->ptr, "include_shapekeys");
 
 	include_animations       = RNA_boolean_get(op->ptr, "include_animations");
-	sample_animations        = RNA_boolean_get(op->ptr, "sample_animations");
+	include_all_actions      = RNA_boolean_get(op->ptr, "include_all_actions");
+	export_animation_type    = RNA_enum_get(op->ptr, "export_animation_type_selection");
+	sample_animations        = (export_animation_type == BC_ANIMATION_EXPORT_SAMPLES);
 	sampling_rate            = (sample_animations) ? RNA_int_get(op->ptr, "sampling_rate") : 0;
+	keep_smooth_curves       = RNA_boolean_get(op->ptr, "keep_smooth_curves");
+	keep_keyframes           = RNA_boolean_get(op->ptr, "keep_keyframes");
 
 	deform_bones_only        = RNA_boolean_get(op->ptr, "deform_bones_only");
 
-	export_texture_type      = RNA_enum_get(op->ptr, "export_texture_type_selection");
 	use_texture_copies       = RNA_boolean_get(op->ptr, "use_texture_copies");
 	active_uv_only           = RNA_boolean_get(op->ptr, "active_uv_only");
 
@@ -171,8 +178,8 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	/* get editmode results */
 	ED_object_editmode_load(bmain, CTX_data_edit_object(C));
 
-	EvaluationContext *eval_ctx = bmain->eval_ctx;
-	Scene *scene = CTX_data_scene(C);
+	//Scene *scene = CTX_data_scene(C);
+
 	ExportSettings export_settings;
 
 	export_settings.filepath = filepath;
@@ -184,18 +191,36 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	export_settings.include_armatures = include_armatures != 0;
 	export_settings.include_shapekeys = include_shapekeys != 0;
 	export_settings.deform_bones_only = deform_bones_only != 0;
-	export_settings.include_animations = include_animations;
+	export_settings.include_animations = include_animations != 0;
+	export_settings.include_all_actions = include_all_actions != 0;
 	export_settings.sampling_rate = sampling_rate;
+	export_settings.keep_keyframes = keep_keyframes != 0 || sampling_rate < 1;
 
 	export_settings.active_uv_only = active_uv_only != 0;
-	export_settings.export_texture_type = export_texture_type;
+	export_settings.export_animation_type = export_animation_type;
 	export_settings.use_texture_copies = use_texture_copies != 0;
 
 	export_settings.triangulate = triangulate != 0;
 	export_settings.use_object_instantiation = use_object_instantiation != 0;
 	export_settings.use_blender_profile = use_blender_profile != 0;
 	export_settings.sort_by_name = sort_by_name != 0;
-	export_settings.export_transformation_type = export_transformation_type;
+
+	if (export_animation_type == BC_ANIMATION_EXPORT_SAMPLES) {
+		export_settings.export_transformation_type = export_transformation_type;
+	}
+	else {
+		// When curves are exported then we can not export as matrix
+		export_settings.export_transformation_type = BC_TRANSFORMATION_TYPE_TRANSROTLOC;
+	}
+
+	if (export_settings.export_transformation_type == BC_TRANSFORMATION_TYPE_TRANSROTLOC) {
+		export_settings.keep_smooth_curves = keep_smooth_curves != 0;
+	}
+	else {
+		// Can not export smooth curves when Matrix export is enabled.
+		export_settings.keep_smooth_curves = false;
+	}
+
 	export_settings.open_sim = open_sim != 0;
 	export_settings.limit_precision = limit_precision != 0;
 	export_settings.keep_bind_info = keep_bind_info != 0;
@@ -204,12 +229,10 @@ static int wm_collada_export_exec(bContext *C, wmOperator *op)
 	if (export_settings.include_armatures) includeFilter |= OB_REL_MOD_ARMATURE;
 	if (export_settings.include_children) includeFilter |= OB_REL_CHILDREN_RECURSIVE;
 
-
 	export_count = collada_export(
 	                   C,
-	                   eval_ctx,
-	                   scene,
-	                   &export_settings);
+	                   &export_settings
+	);
 
 	if (export_count == 0) {
 		BKE_report(op->reports, RPT_WARNING, "No objects selected -- Created empty export file");
@@ -231,96 +254,134 @@ static void uiCollada_exportSettings(uiLayout *layout, PointerRNA *imfptr)
 {
 	uiLayout *box, *row, *col, *split;
 	bool include_animations = RNA_boolean_get(imfptr, "include_animations");
+	int ui_section = RNA_enum_get(imfptr, "prop_bc_export_ui_section");
+
+	BC_export_animation_type animation_type = RNA_enum_get(imfptr, "export_animation_type_selection");
+	BC_export_transformation_type transformation_type = RNA_enum_get(imfptr, "export_transformation_type_selection");
+
+	bool sampling = animation_type == BC_ANIMATION_EXPORT_SAMPLES;
 
 	/* Export Options: */
 	box = uiLayoutBox(layout);
-	row = uiLayoutRow(box, false);
-	uiItemL(row, IFACE_("Export Data Options:"), ICON_MESH_DATA);
 
 	row = uiLayoutRow(box, false);
-	split = uiLayoutSplit(row, 0.6f, UI_LAYOUT_ALIGN_RIGHT);
-	col   = uiLayoutColumn(split, false);
-	uiItemR(col, imfptr, "apply_modifiers", 0, NULL, ICON_NONE);
-	col   = uiLayoutColumn(split, false);
-	uiItemR(col, imfptr, "export_mesh_type_selection", 0, "", ICON_NONE);
-	uiLayoutSetEnabled(col, RNA_boolean_get(imfptr, "apply_modifiers"));
+	uiItemR(row, imfptr, "prop_bc_export_ui_section", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "selected", 0, NULL, ICON_NONE);
+	if (ui_section == BC_UI_SECTION_MAIN) {
+		/* =================== */
+		/* Export Data options */
+		/* =================== */
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "include_children", 0, NULL, ICON_NONE);
-	uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "selected", 0, NULL, ICON_NONE);
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "include_armatures", 0, NULL, ICON_NONE);
-	uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "include_children", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "include_shapekeys", 0, NULL, ICON_NONE);
-	uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "include_armatures", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "include_animations", 0, NULL, ICON_NONE);
-	row = uiLayoutRow(box, false);
-	if (include_animations) {
-		uiItemR(row, imfptr, "sample_animations", 0, NULL, ICON_NONE);
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "include_shapekeys", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "selected"));
+
+		/* Texture options */
+		box = uiLayoutBox(layout);
+		row = uiLayoutRow(box, false);
+		uiItemL(row, IFACE_("Texture Options:"), ICON_TEXTURE_DATA);
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "active_uv_only", 0, NULL, ICON_NONE);
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "use_texture_copies", 1, NULL, ICON_NONE);
+
+	}
+	else if (ui_section == BC_UI_SECTION_GEOMETRY) {
+		row = uiLayoutRow(box, false);
+		uiItemL(row, IFACE_("Export Data Options:"), ICON_MESH_DATA);
+
+		row = uiLayoutRow(box, false);
+		split = uiLayoutSplit(row, 0.6f, UI_LAYOUT_ALIGN_RIGHT);
+		col = uiLayoutColumn(split, false);
+		uiItemR(col, imfptr, "apply_modifiers", 0, NULL, ICON_NONE);
+		col = uiLayoutColumn(split, false);
+		uiItemR(col, imfptr, "export_mesh_type_selection", 0, "", ICON_NONE);
+		uiLayoutSetEnabled(col, RNA_boolean_get(imfptr, "apply_modifiers"));
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "triangulate", 1, NULL, ICON_NONE);
+	}
+	else if (ui_section == BC_UI_SECTION_ARMATURE) {
+		/* Armature options */
+		box = uiLayoutBox(layout);
+		row = uiLayoutRow(box, false);
+		uiItemL(row, IFACE_("Armature Options:"), ICON_ARMATURE_DATA);
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "deform_bones_only", 0, NULL, ICON_NONE);
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "open_sim", 0, NULL, ICON_NONE);
+	}
+	else if (ui_section == BC_UI_SECTION_ANIMATION) {
+
+		/* ====================== */
+		/* Animation Data options */
+		/* ====================== */
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "include_animations", 0, NULL, ICON_NONE);
+
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "export_animation_type_selection", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+
+		row = uiLayoutRow(box, false);
+		split = uiLayoutSplit(row, 0.6f, UI_LAYOUT_ALIGN_RIGHT);
+		uiItemL(split, IFACE_("Transformation Type"), ICON_NONE);
+		uiItemR(split, imfptr, "export_transformation_type_selection", 0, "", ICON_NONE);
+		uiLayoutSetEnabled(row, animation_type == BC_ANIMATION_EXPORT_SAMPLES);
+
+		row = uiLayoutColumn(box, false);
+		uiItemR(row, imfptr, "keep_smooth_curves", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, include_animations &&
+			(transformation_type == BC_TRANSFORMATION_TYPE_TRANSROTLOC || animation_type == BC_ANIMATION_EXPORT_KEYS));
+
 		row = uiLayoutColumn(box, false);
 		uiItemR(row, imfptr, "sampling_rate", 0, NULL, ICON_NONE);
-		uiLayoutSetEnabled(row, RNA_boolean_get(imfptr, "sample_animations"));
+		uiLayoutSetEnabled(row, sampling && include_animations);
+
+		row = uiLayoutColumn(box, false);
+		uiItemR(row, imfptr, "keep_keyframes", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, sampling && include_animations);
+
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "include_all_actions", 0, NULL, ICON_NONE);
+		uiLayoutSetEnabled(row, include_animations);
+
 	}
+	else if (ui_section == BC_UI_SECTION_COLLADA) {
+		/* Collada options: */
+		box = uiLayoutBox(layout);
+		row = uiLayoutRow(box, false);
+		uiItemL(row, IFACE_("Collada Options:"), ICON_MODIFIER);
 
-	/* Texture options */
-	box = uiLayoutBox(layout);
-	row = uiLayoutRow(box, false);
-	uiItemL(row, IFACE_("Texture Options:"), ICON_TEXTURE_DATA);
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "use_object_instantiation", 1, NULL, ICON_NONE);
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "use_blender_profile", 1, NULL, ICON_NONE);
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "active_uv_only", 0, NULL, ICON_NONE);
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "sort_by_name", 0, NULL, ICON_NONE);
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "export_texture_type_selection", 0, "", ICON_NONE);
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "keep_bind_info", 0, NULL, ICON_NONE);
 
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "use_texture_copies", 1, NULL, ICON_NONE);
-
-
-	/* Armature options */
-	box = uiLayoutBox(layout);
-	row = uiLayoutRow(box, false);
-	uiItemL(row, IFACE_("Armature Options:"), ICON_ARMATURE_DATA);
-
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "deform_bones_only", 0, NULL, ICON_NONE);
-
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "open_sim", 0, NULL, ICON_NONE);
-
-	/* Collada options: */
-	box = uiLayoutBox(layout);
-	row = uiLayoutRow(box, false);
-	uiItemL(row, IFACE_("Collada Options:"), ICON_MODIFIER);
-
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "triangulate", 1, NULL, ICON_NONE);
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "use_object_instantiation", 1, NULL, ICON_NONE);
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "use_blender_profile", 1, NULL, ICON_NONE);
-
-	row = uiLayoutRow(box, false);
-	split = uiLayoutSplit(row, 0.6f, UI_LAYOUT_ALIGN_RIGHT);
-	uiItemL(split, IFACE_("Transformation Type"), ICON_NONE);
-	uiItemR(split, imfptr, "export_transformation_type_selection", 0, "", ICON_NONE);
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "sort_by_name", 0, NULL, ICON_NONE);
-
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "keep_bind_info", 0, NULL, ICON_NONE);
-
-	row = uiLayoutRow(box, false);
-	uiItemR(row, imfptr, "limit_precision", 0, NULL, ICON_NONE);
-
+		row = uiLayoutRow(box, false);
+		uiItemR(row, imfptr, "limit_precision", 0, NULL, ICON_NONE);
+	}
 }
 
 static void wm_collada_export_draw(bContext *UNUSED(C), wmOperator *op)
@@ -361,11 +422,21 @@ void WM_OT_collada_export(wmOperatorType *ot)
 		{ 0, NULL, 0, NULL, NULL }
 	};
 
-	static const EnumPropertyItem prop_bc_export_texture_type[] = {
-		{ BC_TEXTURE_TYPE_MAT, "mat", 0, "Materials", "Export Materials" },
-		{ BC_TEXTURE_TYPE_UV, "uv", 0, "UV Textures", "Export UV Textures (Face textures) as materials" },
-		{ 0, NULL, 0, NULL, NULL }
+	static const EnumPropertyItem prop_bc_export_animation_type[] = {
+	{ BC_ANIMATION_EXPORT_SAMPLES, "sample", 0, "Samples", "Export Sampled points guided by sampling rate" },
+	{ BC_ANIMATION_EXPORT_KEYS, "keys", 0, "Curves", "Export Curves\n Note: guided by curve keys" },
+	{ 0, NULL, 0, NULL, NULL }
 	};
+
+	static const EnumPropertyItem prop_bc_export_ui_section[] = {
+	{ BC_UI_SECTION_MAIN, "main", 0, "Main", "Data Export Section" },
+	{ BC_UI_SECTION_GEOMETRY, "geometry", 0, "Geom", "Geometry Export Section" },
+	{ BC_UI_SECTION_ARMATURE, "armature", 0, "Arm", "Armature Export Section" },
+	{ BC_UI_SECTION_ANIMATION, "animation", 0, "Anim", "Animation Export Section" },
+	{ BC_UI_SECTION_COLLADA, "collada", 0, "Extra", "Collada Export Section" },
+	{ 0, NULL, 0, NULL, NULL }
+	};
+
 
 	ot->name = "Export COLLADA";
 	ot->description = "Export COLLADA\nSave a Collada file";
@@ -383,6 +454,9 @@ void WM_OT_collada_export(wmOperatorType *ot)
 	WM_operator_properties_filesel(
 	        ot, FILE_TYPE_FOLDER | FILE_TYPE_COLLADA, FILE_BLENDER, FILE_SAVE,
 	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+
+	RNA_def_enum(func, "prop_bc_export_ui_section", prop_bc_export_ui_section, 0,
+		"Export Section", "Only for User Interface Organisation");
 
 	RNA_def_boolean(func,
 	                "apply_modifiers", 0, "Apply Modifiers",
@@ -409,14 +483,25 @@ void WM_OT_collada_export(wmOperatorType *ot)
 	RNA_def_boolean(func, "deform_bones_only", false, "Deform Bones only",
 	            	"Only export deforming bones with armatures");
 
+
+
 	RNA_def_boolean(func, "include_animations", true,
 		"Include Animations", "Export Animations if available.\nExporting Animations will enforce the decomposition of node transforms\ninto  <translation> <rotation> and <scale> components");
 
-	RNA_def_boolean(func, "sample_animations", 0,
-		"Sample Animations", "Auto-generate keyframes with a frame distance set by 'Sampling Rate'.\nWhen disabled, export only the keyframes defined in the animation f-curves (may be less accurate)");
+	RNA_def_boolean(func, "include_all_actions", true,
+		"Include all Actions", "Export also unassigned actions.\nThis allows you to export entire animation libraries for your charater(s)");
+
+	RNA_def_enum(func, "export_animation_type_selection", prop_bc_export_animation_type, 0,
+		"Key Type", "Type for exported animations (use sample keys or Curve keys)");
 
 	RNA_def_int(func, "sampling_rate", 1, 1, INT_MAX,
 		"Sampling Rate", "The distance between 2 keyframes. 1 means: Every frame is keyed", 1, INT_MAX);
+
+	RNA_def_boolean(func, "keep_smooth_curves", 0,
+		"Keep Smooth curves", "Export also the curve handles (if available).\nThis does only work when the inverse parent matrix is the Unity matrix\nOtherwise you may end up with odd results\n");
+
+	RNA_def_boolean(func, "keep_keyframes", 0,
+		"Keep Keyframes", "Use existing keyframes as additional sample points.\nThis helps when you want to keep manual tweeks");
 
 	RNA_def_boolean(func, "active_uv_only", 0, "Only Selected UV Map",
 	                "Export only the selected UV Map");
@@ -437,20 +522,11 @@ void WM_OT_collada_export(wmOperatorType *ot)
 	RNA_def_boolean(func, "sort_by_name", 0, "Sort by Object name",
 	                "Sort exported data by Object name");
 
-
 	RNA_def_int(func, "export_transformation_type", 0, INT_MIN, INT_MAX,
-		"Transform", "Transformation type for translation, scale and rotation", INT_MIN, INT_MAX);
+	            "Transform", "Transformation type for translation, scale and rotation", INT_MIN, INT_MAX);
 
 	RNA_def_enum(func, "export_transformation_type_selection", prop_bc_export_transformation_type, 0,
-		"Transform", "Transformation type for translation, scale and rotation");
-
-
-	RNA_def_int(func, "export_texture_type", 0, INT_MIN, INT_MAX,
-		"Texture Type", "Type for exported Textures (UV or MAT)", INT_MIN, INT_MAX);
-
-	RNA_def_enum(func, "export_texture_type_selection", prop_bc_export_texture_type, 0,
-		"Texture Type", "Type for exported Textures (UV or MAT)");
-
+	             "Transform", "Transformation type for translation, scale and rotation");
 
 	RNA_def_boolean(func, "open_sim", 0, "Export to SL/OpenSim",
 	                "Compatibility mode for SL, OpenSim and other compatible online worlds");
@@ -503,10 +579,11 @@ static int wm_collada_import_exec(bContext *C, wmOperator *op)
 	import_settings.keep_bind_info = keep_bind_info != 0;
 
 	if (collada_import(C, &import_settings)) {
+		DEG_id_tag_update(&CTX_data_scene(C)->id, ID_RECALC_BASE_FLAGS);
 		return OPERATOR_FINISHED;
 	}
 	else {
-		BKE_report(op->reports, RPT_ERROR, "Errors found during parsing COLLADA document (see console for details)");
+		BKE_report(op->reports, RPT_ERROR, "Parsing errors in Document (see Blender Console)");
 		return OPERATOR_CANCELLED;
 	}
 }

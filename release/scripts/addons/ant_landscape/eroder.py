@@ -145,7 +145,7 @@ class Grid:
     @staticmethod
     def fromRaw(filename):
         """initialize a grid from a Blender .raw file.
-        currenly suports just rectangular grids of all triangles
+        currently supports just rectangular grids of all triangles
         """
         g = Grid.fromFile(filename)
         # we assume tris and an axis aligned grid
@@ -156,7 +156,7 @@ class Grid:
 
     def _sort(self, expfact):
         # keep unique vertices only by creating a set and sort first on x then on y coordinate
-        # using rather slow python sort but couldn;t wrap my head around np.lexsort
+        # using rather slow python sort but couldn't wrap my head around np.lexsort
         verts = sorted(list({ tuple(t) for t in self.center[::] }))
         x = set(c[0] for c in verts)
         y = set(c[1] for c in verts)
@@ -461,7 +461,7 @@ class Grid:
 
     def analyze(self):
         self.neighborgrid()
-        # just looking at up and left to avoid needless doubel calculations
+        # just looking at up and left to avoid needless double calculations
         slopes=np.concatenate((np.abs(self.left - self.center),np.abs(self.up - self.center)))
         return '\n'.join(["%-15s: %.3f"%t for t in [
                 ('height average', np.average(self.center)),
@@ -542,7 +542,7 @@ if __name__ == "__main__":
     parser.add_argument('-Gm', dest='gridmesa', type=float, default=0, help='Add mesa with given height')
     parser.add_argument('-Gr', dest='gridrandom', type=float, default=0, help='Add random values between 0 and given value')
     parser.add_argument('-m', dest='threads', type=int, default=1, help='number of threads to use')
-    parser.add_argument('-u', action='store_true', dest='unittest', default=False, help='perfom unittests')
+    parser.add_argument('-u', action='store_true', dest='unittest', default=False, help='perform unittests')
     parser.add_argument('-a', action='store_true', dest='analyze', default=False, help='show some statistics of input and output meshes')
     parser.add_argument('-d', action='store_true', dest='dump', default=False, help='show sediment and water meshes at end of run')
     parser.add_argument('-n', action='store_true', dest='usenumexpr', default=False, help='use numexpr optimizations')

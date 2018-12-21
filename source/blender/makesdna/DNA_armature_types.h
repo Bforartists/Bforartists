@@ -78,8 +78,10 @@ typedef struct Bone {
 	int          layer;          /* layers that bone appears on */
 	short        segments;       /*  for B-bones */
 
-	short		 pad1;
-
+	char         bbone_prev_type;	/* Type of next/prev bone handles */
+	char         bbone_next_type;
+	struct Bone *bbone_prev;	/* Next/prev bones to use as handle references when calculating bbones (optional) */
+	struct Bone *bbone_next;
 } Bone;
 
 typedef struct bArmature {
@@ -99,8 +101,6 @@ typedef struct bArmature {
 	Bone       *act_bone;               /* active bone */
 	struct EditBone *act_edbone;        /* active editbone (in editmode) */
 
-	void       *sketch;                 /* sketch struct for etch-a-ton */
-
 	int         flag;
 	int         drawtype;
 	int         gevertdeformer;         /* how vertex deformation is handled in the ge */
@@ -111,7 +111,7 @@ typedef struct bArmature {
 	unsigned int layer_used;             /* for UI, to show which layers are there */
 	unsigned int layer, layer_protected; /* for buttons to work, both variables in this order together */
 
-// XXX deprecated... old animaton system (armature only viz) ---
+// XXX deprecated... old animation system (armature only viz) ---
 	short       ghostep, ghostsize;     /* number of frames to ghosts to show, and step between them  */
 	short       ghosttype, pathsize;        /* ghost drawing options and number of frames between points of path */
 	int         ghostsf, ghostef;       /* start and end frames of ghost-drawing range */
@@ -215,6 +215,14 @@ typedef enum eBone_Flag {
 	BONE_ADD_PARENT_END_ROLL    = (1 << 24)   /* it will add the parent end roll to the inroll */
 
 } eBone_Flag;
+
+/* bone->bbone_prev_type, bbone_next_type */
+typedef enum eBone_BBoneHandleType {
+	BBONE_HANDLE_AUTO = 0,	/* Default mode based on parents & children. */
+	BBONE_HANDLE_ABSOLUTE,	/* Custom handle in absolute position mode. */
+	BBONE_HANDLE_RELATIVE,	/* Custom handle in relative position mode. */
+	BBONE_HANDLE_TANGENT,	/* Custom handle in tangent mode (use direction, not location). */
+} eBone_BBoneHandleType;
 
 #define MAXBONENAME 64
 

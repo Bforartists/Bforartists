@@ -43,7 +43,7 @@ def get_py_class_from_op(opname):
     opid = opname.split(".")
     opmod = getattr(bpy.ops, opid[0])
     op = getattr(opmod, opid[1])
-    id = op.get_rna().bl_rna.identifier
+    id = op.get_rna_type().identifier
     # C operators won't be added
     return getattr(bpy.types, id, None)
 

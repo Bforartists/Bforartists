@@ -42,102 +42,11 @@
 #include "BLI_math_vector.h"
 
 #include "BKE_deform.h"
-#include "BKE_library.h"
 
 #include "bmesh_py_types_meshdata.h"
 
 #include "../generic/py_capi_utils.h"
 #include "../generic/python_utildefines.h"
-
-
-/* Mesh BMTexPoly
- * ************** */
-
-#define BPy_BMTexPoly_Check(v)  (Py_TYPE(v) == &BPy_BMTexPoly_Type)
-
-typedef struct BPy_BMTexPoly {
-	PyObject_VAR_HEAD
-	MTexPoly *data;
-} BPy_BMTexPoly;
-
-extern PyObject *pyrna_id_CreatePyObject(ID *id);
-extern bool      pyrna_id_FromPyObject(PyObject *obj, ID **id);
-
-PyDoc_STRVAR(bpy_bmtexpoly_image_doc,
-"Image or None.\n\n:type: :class:`bpy.types.Image`"
-);
-static PyObject *bpy_bmtexpoly_image_get(BPy_BMTexPoly *self, void *UNUSED(closure))
-{
-	return pyrna_id_CreatePyObject((ID *)self->data->tpage);
-}
-
-static int bpy_bmtexpoly_image_set(BPy_BMTexPoly *self, PyObject *value, void *UNUSED(closure))
-{
-	ID *id;
-
-	if (value == Py_None) {
-		id = NULL;
-	}
-	else if (pyrna_id_FromPyObject(value, &id) && id && GS(id->name) == ID_IM) {
-		/* pass */
-	}
-	else {
-		PyErr_Format(PyExc_KeyError, "BMTexPoly.image = x"
-		             "expected an image or None, not '%.200s'",
-		             Py_TYPE(value)->tp_name);
-		return -1;
-	}
-
-	id_lib_extern(id);
-	self->data->tpage = (struct Image *)id;
-
-	return 0;
-}
-
-static PyGetSetDef bpy_bmtexpoly_getseters[] = {
-	/* attributes match rna_def_mtpoly  */
-	{(char *)"image", (getter)bpy_bmtexpoly_image_get, (setter)bpy_bmtexpoly_image_set, (char *)bpy_bmtexpoly_image_doc, NULL},
-
-	{NULL, NULL, NULL, NULL, NULL} /* Sentinel */
-};
-
-static PyTypeObject BPy_BMTexPoly_Type; /* bm.loops.layers.uv.active */
-
-static void bm_init_types_bmtexpoly(void)
-{
-	BPy_BMTexPoly_Type.tp_basicsize = sizeof(BPy_BMTexPoly);
-
-	BPy_BMTexPoly_Type.tp_name = "BMTexPoly";
-
-	BPy_BMTexPoly_Type.tp_doc = NULL; // todo
-
-	BPy_BMTexPoly_Type.tp_getset = bpy_bmtexpoly_getseters;
-
-	BPy_BMTexPoly_Type.tp_flags = Py_TPFLAGS_DEFAULT;
-
-	PyType_Ready(&BPy_BMTexPoly_Type);
-}
-
-int BPy_BMTexPoly_AssignPyObject(struct MTexPoly *mtpoly, PyObject *value)
-{
-	if (UNLIKELY(!BPy_BMTexPoly_Check(value))) {
-		PyErr_Format(PyExc_TypeError, "expected BMTexPoly, not a %.200s", Py_TYPE(value)->tp_name);
-		return -1;
-	}
-	else {
-		*((MTexPoly *)mtpoly) = *(((BPy_BMTexPoly *)value)->data);
-		return 0;
-	}
-}
-
-PyObject *BPy_BMTexPoly_CreatePyObject(struct MTexPoly *mtpoly)
-{
-	BPy_BMTexPoly *self = PyObject_New(BPy_BMTexPoly, &BPy_BMTexPoly_Type);
-	self->data = mtpoly;
-	return (PyObject *)self;
-}
-
-/* --- End Mesh BMTexPoly --- */
 
 /* Mesh Loop UV
  * ************ */
@@ -182,13 +91,13 @@ PyDoc_STRVAR(bpy_bmloopuv_flag__select_edge_doc,
 
 static PyObject *bpy_bmloopuv_flag_get(BPy_BMLoopUV *self, void *flag_p)
 {
-	const int flag = GET_INT_FROM_POINTER(flag_p);
+	const int flag = POINTER_AS_INT(flag_p);
 	return PyBool_FromLong(self->data->flag & flag);
 }
 
 static int bpy_bmloopuv_flag_set(BPy_BMLoopUV *self, PyObject *value, void *flag_p)
 {
-	const int flag = GET_INT_FROM_POINTER(flag_p);
+	const int flag = POINTER_AS_INT(flag_p);
 
 	switch (PyC_Long_AsBool(value)) {
 		case true:
@@ -290,13 +199,13 @@ PyDoc_STRVAR(bpy_bmvertskin_flag__use_loose_doc,
 
 static PyObject *bpy_bmvertskin_flag_get(BPy_BMVertSkin *self, void *flag_p)
 {
-	const int flag = GET_INT_FROM_POINTER(flag_p);
+	const int flag = POINTER_AS_INT(flag_p);
 	return PyBool_FromLong(self->data->flag & flag);
 }
 
 static int bpy_bmvertskin_flag_set(BPy_BMVertSkin *self, PyObject *value, void *flag_p)
 {
-	const int flag = GET_INT_FROM_POINTER(flag_p);
+	const int flag = POINTER_AS_INT(flag_p);
 
 	switch (PyC_Long_AsBool(value)) {
 		case true:
@@ -478,7 +387,7 @@ PyObject *BPy_BMLoopColor_CreatePyObject(struct MLoopCol *data)
  * This type could eventually be used to access lattice weights.
  *
  * \note: Many of blender-api's dict-like-wrappers act like ordered dicts,
- * This is intentional _not_ ordered, the weights can be in any order and it wont matter,
+ * This is intentionally _not_ ordered, the weights can be in any order and it won't matter,
  * the order should not be used in the api in any meaningful way (as with a python dict)
  * only expose as mapping, not a sequence.
  */
@@ -797,7 +706,6 @@ PyObject *BPy_BMDeformVert_CreatePyObject(struct MDeformVert *dvert)
 /* call to init all types */
 void BPy_BM_init_types_meshdata(void)
 {
-	bm_init_types_bmtexpoly();
 	bm_init_types_bmloopuv();
 	bm_init_types_bmloopcol();
 	bm_init_types_bmdvert();

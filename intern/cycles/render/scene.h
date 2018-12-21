@@ -166,7 +166,6 @@ public:
 	bool use_bvh_spatial_split;
 	bool use_bvh_unaligned_nodes;
 	int num_bvh_time_steps;
-
 	bool persistent_data;
 	int texture_limit;
 
@@ -197,6 +196,9 @@ public:
 
 class Scene {
 public:
+	/* Optional name. Is used for logging and reporting. */
+	string name;
+
 	/* data */
 	Camera *camera;
 	Camera *dicing_camera;
@@ -269,4 +271,4 @@ protected:
 
 CCL_NAMESPACE_END
 
-#endif /*  __SCENE_H__ */
+#endif  /*  __SCENE_H__ */

@@ -53,9 +53,9 @@ static void node_shader_exec_sephsv(void *UNUSED(data), int UNUSED(thread), bNod
 	           &out[0]->vec[0], &out[1]->vec[0], &out[2]->vec[0]);
 }
 
-static int gpu_shader_sephsv(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_sephsv(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "separate_hsv", in, out);
+	return GPU_stack_link(mat, node, "separate_hsv", in, out);
 }
 
 void register_node_type_sh_sephsv(void)
@@ -63,7 +63,6 @@ void register_node_type_sh_sephsv(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_SEPHSV, "Separate HSV", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_sephsv_in, sh_node_sephsv_out);
 	node_type_exec(&ntype, NULL, NULL, node_shader_exec_sephsv);
 	node_type_gpu(&ntype, gpu_shader_sephsv);
@@ -94,9 +93,9 @@ static void node_shader_exec_combhsv(void *UNUSED(data), int UNUSED(thread), bNo
 	hsv_to_rgb(h, s, v, &out[0]->vec[0], &out[0]->vec[1], &out[0]->vec[2]);
 }
 
-static int gpu_shader_combhsv(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_combhsv(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "combine_hsv", in, out);
+	return GPU_stack_link(mat, node, "combine_hsv", in, out);
 }
 
 void register_node_type_sh_combhsv(void)
@@ -104,7 +103,6 @@ void register_node_type_sh_combhsv(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_COMBHSV, "Combine HSV", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_combhsv_in, sh_node_combhsv_out);
 	node_type_exec(&ntype, NULL, NULL, node_shader_exec_combhsv);
 	node_type_gpu(&ntype, gpu_shader_combhsv);

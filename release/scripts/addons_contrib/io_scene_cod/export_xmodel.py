@@ -371,7 +371,7 @@ def _write(self, context, filepath,
                 b_matrix = a_matrix * bone.matrix_local
                 #from mathutils import Matrix
                 #b_matrix = bone.matrix_local * a_matrix * Matrix(((1,-0,0),(0,0,-1),(-0,1,0)))
-                
+
             if use_version == '5':
                 file.write("OFFSET %.6f %.6f %.6f\n" % (b_tail[0], b_tail[1], b_tail[2]))
                 file.write("SCALE 1.000000 1.000000 1.000000\n") # Is this even supported by CoD?
@@ -401,7 +401,7 @@ def _write(self, context, filepath,
                                                             use_weight_min,
                                                             use_weight_min_threshold
                                                             )
-            # Get bones by vertex_group names, bind to root if can't find one 
+            # Get bones by vertex_group names, bind to root if can't find one
             groupIndices = [bone_mapping.get(g, -1) for g in groupNames]
 
             weight_group_list = []
@@ -427,7 +427,7 @@ def _write(self, context, filepath,
                 mesh_matrix[2][1] * v.co[1] + \
                 mesh_matrix[2][2] * v.co[2] + \
                 mesh_matrix[2][3]
-                
+
             #print("%.6f %.6f %.6f single calced xyz\n%.6f %.6f %.6f mat mult" % (x, y, z, ))
 
             file.write("VERT %i\n" % (i_vert + v_count))
@@ -541,7 +541,7 @@ def _write(self, context, filepath,
                     uv1 = uv.data[f.index].uv[vi][0]
                     uv2 = 1 - uv.data[f.index].uv[vi][1] # Flip!
 
-                    #if 0 > uv1 > 1 
+                    #if 0 > uv1 > 1
                     # TODO: Warn if accidentally tiling ( uv <0 or >1 )
 
                     # Remap vert indices used by face
@@ -673,7 +673,7 @@ def _write(self, context, filepath,
     # Remove meshes, which were made by to_mesh()
     for mesh in meshes:
         mesh.user_clear()
-        bpy.data.meshes.remove(mesh)    
+        bpy.data.meshes.remove(mesh)
 
     # Quit with no errors
     return

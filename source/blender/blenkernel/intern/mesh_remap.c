@@ -28,6 +28,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
 #include "BLI_utildefines.h"
@@ -41,10 +42,10 @@
 
 #include "BKE_bvhutils.h"
 #include "BKE_customdata.h"
-#include "BKE_DerivedMesh.h"
 #include "BKE_mesh.h"
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_remap.h"  /* own include */
+#include "BKE_mesh_runtime.h"
 
 #include "BLI_strict_flags.h"
 
@@ -121,8 +122,8 @@ static bool mesh_remap_bvhtree_query_raycast(
  * In other words, beyond a certain (relatively small) distance, all differences have more or less the same weight
  * in final result, which allows to reduce influence of a few high differences, in favor of a global good matching.
  */
-float BKE_mesh_remap_calc_difference_from_dm(
-        const SpaceTransform *space_transform, const MVert *verts_dst, const int numverts_dst, DerivedMesh *dm_src)
+float BKE_mesh_remap_calc_difference_from_mesh(
+        const SpaceTransform *space_transform, const MVert *verts_dst, const int numverts_dst, Mesh *me_src)
 {
 	BVHTreeFromMesh treedata = {NULL};
 	BVHTreeNearest nearest = {0};
@@ -131,7 +132,7 @@ float BKE_mesh_remap_calc_difference_from_dm(
 	float result = 0.0f;
 	int i;
 
-	bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
+	BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_VERTS, 2);
 	nearest.index = -1;
 
 	for (i = 0; i < numverts_dst; i++) {
@@ -250,8 +251,8 @@ static void mesh_calc_eigen_matrix(
 /**
  * Set r_space_transform so that best bbox of dst matches best bbox of src.
  */
-void BKE_mesh_remap_find_best_match_from_dm(
-        const MVert *verts_dst, const int numverts_dst, DerivedMesh *dm_src, SpaceTransform *r_space_transform)
+void BKE_mesh_remap_find_best_match_from_mesh(
+        const MVert *verts_dst, const int numverts_dst, Mesh *me_src, SpaceTransform *r_space_transform)
 {
 	/* Note that those are done so that we successively get actual mirror matrix (by multiplication of columns)... */
 	const float mirrors[][3] = {
@@ -269,26 +270,25 @@ void BKE_mesh_remap_find_best_match_from_dm(
 	float mat_src[4][4], mat_dst[4][4], best_mat_dst[4][4];
 	float best_match = FLT_MAX, match;
 
-	const int numverts_src = dm_src->getNumVerts(dm_src);
-	float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)numverts_src, __func__);
-	dm_src->getVertCos(dm_src, vcos_src);
+	const int numverts_src = me_src->totvert;
+	float (*vcos_src)[3] = BKE_mesh_vertexCos_get(me_src, NULL);
 
 	mesh_calc_eigen_matrix(NULL, (const float (*)[3])vcos_src, numverts_src, mat_src);
 	mesh_calc_eigen_matrix(verts_dst, NULL, numverts_dst, mat_dst);
 
 	BLI_space_transform_global_from_matrices(r_space_transform, mat_dst, mat_src);
-	match = BKE_mesh_remap_calc_difference_from_dm(r_space_transform, verts_dst, numverts_dst, dm_src);
+	match = BKE_mesh_remap_calc_difference_from_mesh(r_space_transform, verts_dst, numverts_dst, me_src);
 	best_match = match;
 	copy_m4_m4(best_mat_dst, mat_dst);
 
-	/* And now, we have to check the otehr sixth possible mirrored versions... */
+	/* And now, we have to check the other sixth possible mirrored versions... */
 	for (mirr = mirrors; (*mirr)[0]; mirr++) {
 		mul_v3_fl(mat_dst[0], (*mirr)[0]);
 		mul_v3_fl(mat_dst[1], (*mirr)[1]);
 		mul_v3_fl(mat_dst[2], (*mirr)[2]);
 
 		BLI_space_transform_global_from_matrices(r_space_transform, mat_dst, mat_src);
-		match = BKE_mesh_remap_calc_difference_from_dm(r_space_transform, verts_dst, numverts_dst, dm_src);
+		match = BKE_mesh_remap_calc_difference_from_mesh(r_space_transform, verts_dst, numverts_dst, me_src);
 		if (match < best_match) {
 			best_match = match;
 			copy_m4_m4(best_mat_dst, mat_dst);
@@ -430,9 +430,9 @@ typedef struct IslandResult {
 /* Will be enough in 99% of cases. */
 #define MREMAP_DEFAULT_BUFSIZE 32
 
-void BKE_mesh_remap_calc_verts_from_dm(
+void BKE_mesh_remap_calc_verts_from_mesh(
         const int mode, const SpaceTransform *space_transform, const float max_dist, const float ray_radius,
-        const MVert *verts_dst, const int numverts_dst, const bool UNUSED(dirty_nors_dst), DerivedMesh *dm_src,
+        const MVert *verts_dst, const int numverts_dst, const bool UNUSED(dirty_nors_dst), Mesh *me_src,
         MeshPairRemap *r_map)
 {
 	const float full_weight = 1.0f;
@@ -444,7 +444,7 @@ void BKE_mesh_remap_calc_verts_from_dm(
 	BKE_mesh_remap_init(r_map, numverts_dst);
 
 	if (mode == MREMAP_MODE_TOPOLOGY) {
-		BLI_assert(numverts_dst == dm_src->getNumVerts(dm_src));
+		BLI_assert(numverts_dst == me_src->totvert);
 		for (i = 0; i < numverts_dst; i++) {
 			mesh_remap_item_define(r_map, i, FLT_MAX, 0, 1, &i, &full_weight);
 		}
@@ -457,7 +457,7 @@ void BKE_mesh_remap_calc_verts_from_dm(
 		float tmp_co[3], tmp_no[3];
 
 		if (mode == MREMAP_MODE_VERT_NEAREST) {
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_VERTS, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numverts_dst; i++) {
@@ -478,11 +478,10 @@ void BKE_mesh_remap_calc_verts_from_dm(
 			}
 		}
 		else if (ELEM(mode, MREMAP_MODE_VERT_EDGE_NEAREST, MREMAP_MODE_VERT_EDGEINTERP_NEAREST)) {
-			MEdge *edges_src = dm_src->getEdgeArray(dm_src);
-			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
-			dm_src->getVertCos(dm_src, vcos_src);
+			MEdge *edges_src = me_src->medge;
+			float (*vcos_src)[3] = BKE_mesh_vertexCos_get(me_src, NULL);
 
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_EDGES, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numverts_dst; i++) {
@@ -530,18 +529,16 @@ void BKE_mesh_remap_calc_verts_from_dm(
 		else if (ELEM(mode, MREMAP_MODE_VERT_POLY_NEAREST, MREMAP_MODE_VERT_POLYINTERP_NEAREST,
 		                    MREMAP_MODE_VERT_POLYINTERP_VNORPROJ))
 		{
-			MPoly *polys_src = dm_src->getPolyArray(dm_src);
-			MLoop *loops_src = dm_src->getLoopArray(dm_src);
-			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
+			MPoly *polys_src = me_src->mpoly;
+			MLoop *loops_src = me_src->mloop;
+			float (*vcos_src)[3] = BKE_mesh_vertexCos_get(me_src, NULL);
 
 			size_t tmp_buff_size = MREMAP_DEFAULT_BUFSIZE;
 			float (*vcos)[3] = MEM_mallocN(sizeof(*vcos) * tmp_buff_size, __func__);
 			int *indices = MEM_mallocN(sizeof(*indices) * tmp_buff_size, __func__);
 			float *weights = MEM_mallocN(sizeof(*weights) * tmp_buff_size, __func__);
 
-			dm_src->getVertCos(dm_src, vcos_src);
-
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_LOOPTRI, 2);
 
 			if (mode == MREMAP_MODE_VERT_POLYINTERP_VNORPROJ) {
 				for (i = 0; i < numverts_dst; i++) {
@@ -625,10 +622,10 @@ void BKE_mesh_remap_calc_verts_from_dm(
 	}
 }
 
-void BKE_mesh_remap_calc_edges_from_dm(
+void BKE_mesh_remap_calc_edges_from_mesh(
         const int mode, const SpaceTransform *space_transform, const float max_dist, const float ray_radius,
         const MVert *verts_dst, const int numverts_dst, const MEdge *edges_dst, const int numedges_dst,
-        const bool UNUSED(dirty_nors_dst), DerivedMesh *dm_src, MeshPairRemap *r_map)
+        const bool UNUSED(dirty_nors_dst), Mesh *me_src, MeshPairRemap *r_map)
 {
 	const float full_weight = 1.0f;
 	const float max_dist_sq = max_dist * max_dist;
@@ -639,7 +636,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 	BKE_mesh_remap_init(r_map, numedges_dst);
 
 	if (mode == MREMAP_MODE_TOPOLOGY) {
-		BLI_assert(numedges_dst == dm_src->getNumEdges(dm_src));
+		BLI_assert(numedges_dst == me_src->totedge);
 		for (i = 0; i < numedges_dst; i++) {
 			mesh_remap_item_define(r_map, i, FLT_MAX, 0, 1, &i, &full_weight);
 		}
@@ -652,10 +649,10 @@ void BKE_mesh_remap_calc_edges_from_dm(
 		float tmp_co[3], tmp_no[3];
 
 		if (mode == MREMAP_MODE_EDGE_VERT_NEAREST) {
-			const int num_verts_src = dm_src->getNumVerts(dm_src);
-			const int num_edges_src = dm_src->getNumEdges(dm_src);
-			MEdge *edges_src = dm_src->getEdgeArray(dm_src);
-			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
+			const int num_verts_src = me_src->totvert;
+			const int num_edges_src = me_src->totedge;
+			MEdge *edges_src = me_src->medge;
+			float (*vcos_src)[3] = BKE_mesh_vertexCos_get(me_src, NULL);
 
 			MeshElemMap *vert_to_edge_src_map;
 			int         *vert_to_edge_src_map_mem;
@@ -673,9 +670,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			        &vert_to_edge_src_map, &vert_to_edge_src_map_mem,
 			        edges_src, num_verts_src, num_edges_src);
 
-			dm_src->getVertCos(dm_src, vcos_src);
-
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_VERTS, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numedges_dst; i++) {
@@ -775,7 +770,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			MEM_freeN(vert_to_edge_src_map_mem);
 		}
 		else if (mode == MREMAP_MODE_EDGE_NEAREST) {
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_EDGES, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numedges_dst; i++) {
@@ -796,13 +791,12 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			}
 		}
 		else if (mode == MREMAP_MODE_EDGE_POLY_NEAREST) {
-			MEdge *edges_src = dm_src->getEdgeArray(dm_src);
-			MPoly *polys_src = dm_src->getPolyArray(dm_src);
-			MLoop *loops_src = dm_src->getLoopArray(dm_src);
-			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
+			MEdge *edges_src = me_src->medge;
+			MPoly *polys_src = me_src->mpoly;
+			MLoop *loops_src = me_src->mloop;
+			float (*vcos_src)[3] = BKE_mesh_vertexCos_get(me_src, NULL);
 
-			dm_src->getVertCos(dm_src, vcos_src);
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_LOOPTRI, 2);
 
 			for (i = 0; i < numedges_dst; i++) {
 				interp_v3_v3v3(tmp_co, verts_dst[edges_dst[i].v1].co, verts_dst[edges_dst[i].v2].co, 0.5f);
@@ -821,9 +815,9 @@ void BKE_mesh_remap_calc_edges_from_dm(
 					int best_eidx_src = -1;
 
 					for (; nloops--; ml_src++) {
-						MEdge *me_src = &edges_src[ml_src->e];
-						float *co1_src = vcos_src[me_src->v1];
-						float *co2_src = vcos_src[me_src->v2];
+						MEdge *med_src = &edges_src[ml_src->e];
+						float *co1_src = vcos_src[med_src->v1];
+						float *co2_src = vcos_src[med_src->v2];
 						float co_src[3];
 						float dist_sq;
 
@@ -848,14 +842,14 @@ void BKE_mesh_remap_calc_edges_from_dm(
 		}
 		else if (mode == MREMAP_MODE_EDGE_EDGEINTERP_VNORPROJ) {
 			const int num_rays_min = 5, num_rays_max = 100;
-			const int numedges_src = dm_src->getNumEdges(dm_src);
+			const int numedges_src = me_src->totedge;
 
 			/* Subtleness - this one we can allocate only max number of cast rays per edges! */
 			int *indices = MEM_mallocN(sizeof(*indices) * (size_t)min_ii(numedges_src, num_rays_max), __func__);
 			/* Here it's simpler to just allocate for all edges :/ */
 			float *weights = MEM_mallocN(sizeof(*weights) * (size_t)numedges_src, __func__);
 
-			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
+			BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_EDGES, 2);
 
 			for (i = 0; i < numedges_dst; i++) {
 				/* For each dst edge, we sample some rays from it (interpolated from its vertices)
@@ -972,7 +966,7 @@ static void mesh_island_to_astar_graph_edge_process(
 		const int pidx = edge_to_poly_map[edge_idx].indices[i];
 		MPoly *mp = &polys[pidx];
 		const int pidx_isld = islands ? poly_island_index_map[pidx] : pidx;
-		void *custom_data = is_edge_innercut ? SET_INT_IN_POINTER(edge_idx) : SET_INT_IN_POINTER(-1);
+		void *custom_data = is_edge_innercut ? POINTER_FROM_INT(edge_idx) : POINTER_FROM_INT(-1);
 
 		if (UNLIKELY(islands && (islands->items_to_islands[mp->loopstart] != island_index))) {
 			/* poly not in current island, happens with border edges... */
@@ -1088,12 +1082,12 @@ static float mesh_remap_calc_loops_astar_f_cost(
 {
 	float *co_next, *co_dest;
 
-	if (link && (GET_INT_FROM_POINTER(link->custom_data) != -1)) {
+	if (link && (POINTER_AS_INT(link->custom_data) != -1)) {
 		/* An innercut edge... We tag our solution as potentially crossing innercuts.
 		 * Note it might not be the case in the end (AStar will explore around optimal path), but helps
 		 * trimming off some processing later... */
-		if (!GET_INT_FROM_POINTER(as_solution->custom_data)) {
-			as_solution->custom_data = SET_INT_IN_POINTER(true);
+		if (!POINTER_AS_INT(as_solution->custom_data)) {
+			as_solution->custom_data = POINTER_FROM_INT(true);
 		}
 	}
 
@@ -1108,13 +1102,13 @@ static float mesh_remap_calc_loops_astar_f_cost(
 #define ASTAR_STEPS_MAX 64
 
 
-void BKE_mesh_remap_calc_loops_from_dm(
+void BKE_mesh_remap_calc_loops_from_mesh(
         const int mode, const SpaceTransform *space_transform, const float max_dist, const float ray_radius,
         MVert *verts_dst, const int numverts_dst, MEdge *edges_dst, const int numedges_dst,
         MLoop *loops_dst, const int numloops_dst, MPoly *polys_dst, const int numpolys_dst,
         CustomData *ldata_dst, CustomData *pdata_dst,
         const bool use_split_nors_dst, const float split_angle_dst, const bool dirty_nors_dst,
-        DerivedMesh *dm_src, const bool use_split_nors_src, const float split_angle_src,
+        Mesh *me_src,
         MeshRemapIslandsCalc gen_islands_src, const float islands_precision_src, MeshPairRemap *r_map)
 {
 	const float full_weight = 1.0f;
@@ -1129,7 +1123,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 	if (mode == MREMAP_MODE_TOPOLOGY) {
 		/* In topology mapping, we assume meshes are identical, islands included! */
-		BLI_assert(numloops_dst == dm_src->getNumLoops(dm_src));
+		BLI_assert(numloops_dst == me_src->totloop);
 		for (i = 0; i < numloops_dst; i++) {
 			mesh_remap_item_define(r_map, i, FLT_MAX, 0, 1, &i, &full_weight);
 		}
@@ -1172,19 +1166,15 @@ void BKE_mesh_remap_calc_loops_from_dm(
 		/* Unlike above, those are one-to-one mappings, simpler! */
 		int *loop_to_poly_map_src = NULL;
 
-		bool verts_allocated_src;
-		MVert *verts_src = DM_get_vert_array(dm_src, &verts_allocated_src);
-		const int num_verts_src = dm_src->getNumVerts(dm_src);
+		MVert *verts_src = me_src->mvert;
+		const int num_verts_src = me_src->totvert;
 		float (*vcos_src)[3] = NULL;
-		bool edges_allocated_src;
-		MEdge *edges_src = DM_get_edge_array(dm_src, &edges_allocated_src);
-		const int num_edges_src = dm_src->getNumEdges(dm_src);
-		bool loops_allocated_src;
-		MLoop *loops_src = DM_get_loop_array(dm_src, &loops_allocated_src);
-		const int num_loops_src = dm_src->getNumLoops(dm_src);
-		bool polys_allocated_src;
-		MPoly *polys_src = DM_get_poly_array(dm_src, &polys_allocated_src);
-		const int num_polys_src = dm_src->getNumPolys(dm_src);
+		MEdge *edges_src = me_src->medge;
+		const int num_edges_src = me_src->totedge;
+		MLoop *loops_src = me_src->mloop;
+		const int num_loops_src = me_src->totloop;
+		MPoly *polys_src = me_src->mpoly;
+		const int num_polys_src = me_src->totpoly;
 		const MLoopTri *looptri_src = NULL;
 		int num_looptri_src = 0;
 
@@ -1201,8 +1191,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 		size_t islands_res_buff_size = MREMAP_DEFAULT_BUFSIZE;
 
 		if (!use_from_vert) {
-			vcos_src = MEM_mallocN(sizeof(*vcos_src) * (size_t)num_verts_src, __func__);
-			dm_src->getVertCos(dm_src, vcos_src);
+			vcos_src = BKE_mesh_vertexCos_get(me_src, NULL);
 
 			vcos_interp = MEM_mallocN(sizeof(*vcos_interp) * buff_size_interp, __func__);
 			indices_interp = MEM_mallocN(sizeof(*indices_interp) * buff_size_interp, __func__);
@@ -1218,11 +1207,12 @@ void BKE_mesh_remap_calc_loops_from_dm(
 			if (need_pnors_dst) {
 				/* Cache poly nors into a temp CDLayer. */
 				poly_nors_dst = CustomData_get_layer(pdata_dst, CD_NORMAL);
+				const bool do_poly_nors_dst = (poly_nors_dst == NULL);
 				if (!poly_nors_dst) {
 					poly_nors_dst = CustomData_add_layer(pdata_dst, CD_NORMAL, CD_CALLOC, NULL, numpolys_dst);
 					CustomData_set_layer_flag(pdata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 				}
-				if (dirty_nors_dst) {
+				if (dirty_nors_dst || do_poly_nors_dst) {
 					BKE_mesh_calc_normals_poly(
 					        verts_dst, NULL, numverts_dst, loops_dst, polys_dst,
 					        numloops_dst, numpolys_dst, poly_nors_dst, true);
@@ -1233,11 +1223,12 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 				/* Cache poly nors into a temp CDLayer. */
 				loop_nors_dst = CustomData_get_layer(ldata_dst, CD_NORMAL);
-				if (dirty_nors_dst || !loop_nors_dst) {
-					if (!loop_nors_dst) {
-						loop_nors_dst = CustomData_add_layer(ldata_dst, CD_NORMAL, CD_CALLOC, NULL, numloops_dst);
-						CustomData_set_layer_flag(ldata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
-					}
+				const bool do_loop_nors_dst = (loop_nors_dst == NULL);
+				if (!loop_nors_dst) {
+					loop_nors_dst = CustomData_add_layer(ldata_dst, CD_NORMAL, CD_CALLOC, NULL, numloops_dst);
+					CustomData_set_layer_flag(ldata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
+				}
+				if (dirty_nors_dst || do_loop_nors_dst) {
 					BKE_mesh_normals_loop_split(
 					        verts_dst, numverts_dst, edges_dst, numedges_dst,
 					        loops_dst, loop_nors_dst, numloops_dst,
@@ -1247,13 +1238,17 @@ void BKE_mesh_remap_calc_loops_from_dm(
 			}
 			if (need_pnors_src || need_lnors_src) {
 				/* Simpler for now, calcNormals never stores pnors :( */
-				dm_src->calcLoopNormals(dm_src, use_split_nors_src, split_angle_src);
+				if (!CustomData_has_layer(&me_src->pdata, CD_NORMAL)) {
+					CustomData_add_layer(&me_src->pdata, CD_NORMAL, CD_CALLOC, NULL, me_src->totpoly);
+					CustomData_set_layer_flag(&me_src->pdata, CD_NORMAL, CD_FLAG_TEMPORARY);
+				}
+				BKE_mesh_calc_normals_split(me_src);
 
 				if (need_pnors_src) {
-					poly_nors_src = dm_src->getPolyDataArray(dm_src, CD_NORMAL);
+					poly_nors_src = CustomData_get_layer(&me_src->pdata, CD_NORMAL);
 				}
 				if (need_lnors_src) {
-					loop_nors_src = dm_src->getLoopDataArray(dm_src, CD_NORMAL);
+					loop_nors_src = CustomData_get_layer(&me_src->ldata, CD_NORMAL);
 				}
 			}
 		}
@@ -1352,38 +1347,25 @@ void BKE_mesh_remap_calc_loops_from_dm(
 							}
 						}
 					}
-					/* verts 'ownership' is transfered to treedata here, which will handle its freeing. */
 					bvhtree_from_mesh_verts_ex(
-					        &treedata[tindex], verts_src, num_verts_src, verts_allocated_src,
+					        &treedata[tindex], verts_src, num_verts_src, false,
 					        verts_active, num_verts_active, 0.0, 2, 6);
-					if (verts_allocated_src) {
-						verts_allocated_src = false;  /* Only 'give' our verts once, to first tree! */
-					}
 				}
 
 				MEM_freeN(verts_active);
 			}
 			else {
 				BLI_assert(num_trees == 1);
-				bvhtree_from_mesh_get(&treedata[0], dm_src, BVHTREE_FROM_VERTS, 2);
+				BKE_bvhtree_from_mesh_get(&treedata[0], me_src, BVHTREE_FROM_VERTS, 2);
 			}
 		}
 		else {  /* We use polygons. */
 			if (use_islands) {
 				/* bvhtree here uses looptri faces... */
-				const unsigned int dirty_tess_flag = dm_src->dirty & DM_DIRTY_TESS_CDLAYERS;
 				BLI_bitmap *looptri_active;
 
-				/* We do not care about tessellated data here, only geometry itself is important. */
-				if (dirty_tess_flag) {
-					dm_src->dirty &= ~dirty_tess_flag;
-				}
-				if (dirty_tess_flag) {
-					dm_src->dirty |= dirty_tess_flag;
-				}
-
-				looptri_src = dm_src->getLoopTriArray(dm_src);
-				num_looptri_src = dm_src->getNumLoopTri(dm_src);
+				looptri_src = BKE_mesh_runtime_looptri_ensure(me_src);
+				num_looptri_src = me_src->runtime.looptris.len;
 				looptri_active = BLI_BITMAP_NEW((size_t)num_looptri_src, __func__);
 
 				for (tindex = 0; tindex < num_trees; tindex++) {
@@ -1396,26 +1378,19 @@ void BKE_mesh_remap_calc_loops_from_dm(
 							num_looptri_active++;
 						}
 					}
-					/* verts and faces 'ownership' is transfered to treedata here, which will handle its freeing. */
 					bvhtree_from_mesh_looptri_ex(
 					        &treedata[tindex],
-					        verts_src, verts_allocated_src,
-					        loops_src, loops_allocated_src,
+					        verts_src, false,
+					        loops_src, false,
 					        looptri_src, num_looptri_src, false,
 					        looptri_active, num_looptri_active, 0.0, 2, 6);
-					if (verts_allocated_src) {
-						verts_allocated_src = false;  /* Only 'give' our verts once, to first tree! */
-					}
-					if (loops_allocated_src) {
-						loops_allocated_src = false;  /* Only 'give' our loops once, to first tree! */
-					}
 				}
 
 				MEM_freeN(looptri_active);
 			}
 			else {
 				BLI_assert(num_trees == 1);
-				bvhtree_from_mesh_get(&treedata[0], dm_src, BVHTREE_FROM_LOOPTRI, 2);
+				BKE_bvhtree_from_mesh_get(&treedata[0], me_src, BVHTREE_FROM_LOOPTRI, 2);
 			}
 		}
 
@@ -1691,7 +1666,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 						continue;
 					}
 
-					as_solution.custom_data = SET_INT_IN_POINTER(false);
+					as_solution.custom_data = POINTER_FROM_INT(false);
 
 					isld_res = &islands_res[best_island_index][plidx_dst];
 					if (use_from_vert) {
@@ -1714,7 +1689,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 								BLI_astar_graph_solve(
 								        as_graph, pidx_isld_src_prev, pidx_isld_src,
 								        mesh_remap_calc_loops_astar_f_cost, &as_solution, isld_steps_src);
-								if (GET_INT_FROM_POINTER(as_solution.custom_data) && (as_solution.steps > 0)) {
+								if (POINTER_AS_INT(as_solution.custom_data) && (as_solution.steps > 0)) {
 									/* Find first 'cutting edge' on path, and bring back lidx_src on poly just
 									 * before that edge.
 									 * Note we could try to be much smarter (like e.g. storing a whole poly's indices,
@@ -1726,7 +1701,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 									/* Note we go backward here, from dest to src poly. */
 									for (i = as_solution.steps - 1; i--;) {
 										BLI_AStarGNLink *as_link = as_solution.prev_links[pidx_isld_src];
-										const int eidx = GET_INT_FROM_POINTER(as_link->custom_data);
+										const int eidx = POINTER_AS_INT(as_link->custom_data);
 										pidx_isld_src = as_solution.prev_nodes[pidx_isld_src];
 										BLI_assert(pidx_isld_src != -1);
 										if (eidx != -1) {
@@ -1799,7 +1774,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 								BLI_astar_graph_solve(
 								        as_graph, pidx_isld_src_prev, pidx_isld_src,
 								        mesh_remap_calc_loops_astar_f_cost, &as_solution, isld_steps_src);
-								if (GET_INT_FROM_POINTER(as_solution.custom_data) && (as_solution.steps > 0)) {
+								if (POINTER_AS_INT(as_solution.custom_data) && (as_solution.steps > 0)) {
 									/* Find first 'cutting edge' on path, and bring back lidx_src on poly just
 									 * before that edge.
 									 * Note we could try to be much smarter (like e.g. storing a whole poly's indices,
@@ -1811,7 +1786,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 									/* Note we go backward here, from dest to src poly. */
 									for (i = as_solution.steps - 1; i--;) {
 										BLI_AStarGNLink *as_link = as_solution.prev_links[pidx_isld_src];
-										int eidx = GET_INT_FROM_POINTER(as_link->custom_data);
+										int eidx = POINTER_AS_INT(as_link->custom_data);
 
 										pidx_isld_src = as_solution.prev_nodes[pidx_isld_src];
 										BLI_assert(pidx_isld_src != -1);
@@ -1918,20 +1893,8 @@ void BKE_mesh_remap_calc_loops_from_dm(
 			BLI_astar_solution_free(&as_solution);
 		}
 
-		if (verts_allocated_src) {
-			MEM_freeN(verts_src);
-		}
 		if (vcos_src) {
 			MEM_freeN(vcos_src);
-		}
-		if (edges_allocated_src) {
-			MEM_freeN(edges_src);
-		}
-		if (loops_allocated_src) {
-			MEM_freeN(loops_src);
-		}
-		if (polys_allocated_src) {
-			MEM_freeN(polys_src);
 		}
 		if (vert_to_loop_map_src) {
 			MEM_freeN(vert_to_loop_map_src);
@@ -1975,11 +1938,11 @@ void BKE_mesh_remap_calc_loops_from_dm(
 	}
 }
 
-void BKE_mesh_remap_calc_polys_from_dm(
+void BKE_mesh_remap_calc_polys_from_mesh(
         const int mode, const SpaceTransform *space_transform, const float max_dist, const float ray_radius,
         MVert *verts_dst, const int numverts_dst, MLoop *loops_dst, const int numloops_dst,
         MPoly *polys_dst, const int numpolys_dst, CustomData *pdata_dst, const bool dirty_nors_dst,
-        DerivedMesh *dm_src, MeshPairRemap *r_map)
+        Mesh *me_src, MeshPairRemap *r_map)
 {
 	const float full_weight = 1.0f;
 	const float max_dist_sq = max_dist * max_dist;
@@ -2006,7 +1969,7 @@ void BKE_mesh_remap_calc_polys_from_dm(
 	BKE_mesh_remap_init(r_map, numpolys_dst);
 
 	if (mode == MREMAP_MODE_TOPOLOGY) {
-		BLI_assert(numpolys_dst == dm_src->getNumPolys(dm_src));
+		BLI_assert(numpolys_dst == me_src->totpoly);
 		for (i = 0; i < numpolys_dst; i++) {
 			mesh_remap_item_define(r_map, i, FLT_MAX, 0, 1, &i, &full_weight);
 		}
@@ -2017,7 +1980,7 @@ void BKE_mesh_remap_calc_polys_from_dm(
 		BVHTreeRayHit rayhit = {0};
 		float hit_dist;
 
-		bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
+		BKE_bvhtree_from_mesh_get(&treedata, me_src, BVHTREE_FROM_LOOPTRI, 2);
 
 		if (mode == MREMAP_MODE_POLY_NEAREST) {
 			nearest.index = -1;
@@ -2082,7 +2045,7 @@ void BKE_mesh_remap_calc_polys_from_dm(
 			 */
 			RNG *rng = BLI_rng_new(0);
 
-			const size_t numpolys_src = (size_t)dm_src->getNumPolys(dm_src);
+			const size_t numpolys_src = (size_t)me_src->totpoly;
 
 			/* Here it's simpler to just allocate for all polys :/ */
 			int *indices = MEM_mallocN(sizeof(*indices) * numpolys_src, __func__);

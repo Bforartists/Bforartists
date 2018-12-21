@@ -27,9 +27,9 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
     # table_w             # table width                   default: 0.530
     # crown_h             # crown height                  default: 0.162
     # girdle_t            # girdle thickness              default: 0.017
-    # pavi_d              # pavillion depth               default: 0.431
+    # pavi_d              # pavilion depth               default: 0.431
     # bezel_f             # bezel factor                  default: 0.250
-    # pavi_f              # pavillion factor              default: 0.400
+    # pavi_f              # pavilion factor              default: 0.400
     # culet               # culet size                    default: 0.000
     # girdle_real         # type of girdle flat/real      default: True
     # g_real_smooth       # smooth or flat shading        default: False
@@ -197,7 +197,7 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
         else:
             va(culet / ca, pavi_d * (-2), 2 * ang, ang, int(s / 2))
 
-    # make pavillion facet face
+    # make pavilion facet face
     l5 = len(Verts)             # 4*s / 10*s  //if !culet: 3.5*s+1 / 9.5*s+1
     for i in range(l5):
         if i > 0 and i < s - 1 and i % 2 == 0:
@@ -266,7 +266,7 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
         for i, p in enumerate(dp):
             pls.extend(p.vertices)                  # list all verts of girdle
 
-        for i, e in enumerate(obj.data.edges):      # select egdes to mark sharp
+        for i, e in enumerate(obj.data.edges):      # select edges to mark sharp
             if e.vertices[0] in pls and e.vertices[1] in pls and abs(
                             ov[e.vertices[0]].co.x - ov[e.vertices[1]].co.x):
                 obj.data.edges[i].select = True
@@ -301,7 +301,7 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
 class MESH_OT_primitive_brilliant_add(Operator):
     bl_idname = "mesh.primitive_brilliant_add"
     bl_label = "Custom Brilliant"
-    bl_description = "Contruct a custom brilliant mesh"
+    bl_description = "Construct a custom brilliant mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     # set user options
@@ -324,7 +324,7 @@ class MESH_OT_primitive_brilliant_add(Operator):
             )
     crown_h = FloatProperty(
             name="Crown height",
-            description="Heigth of crown",
+            description="Height of crown",
             min=0.0,
             max=1.0,
             default=0.162,
@@ -350,7 +350,7 @@ class MESH_OT_primitive_brilliant_add(Operator):
             )
     pavi_d = FloatProperty(
             name="Pavilion depth",
-            description="Height of pavillion",
+            description="Height of pavilion",
             min=0.0,
             max=1.0,
             default=0.431,
@@ -366,7 +366,7 @@ class MESH_OT_primitive_brilliant_add(Operator):
             )
     pavi_f = FloatProperty(
             name="Lower facet factor",
-            description="Determines the form of pavillion and lower girdle facets",
+            description="Determines the form of pavilion and lower girdle facets",
             min=0.001,
             max=1.0,
             default=0.400,
@@ -382,7 +382,7 @@ class MESH_OT_primitive_brilliant_add(Operator):
             )
     keep_lga = BoolProperty(
             name="Retain lower angle",
-            description="If culet > 0, retains angle of pavillion facets",
+            description="If culet > 0, retains angle of pavilion facets",
             default=False
             )
 

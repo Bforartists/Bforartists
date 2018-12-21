@@ -16,22 +16,23 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Contributor:
- *		Jeroen Bakker
- *		Monique Dewanchand
- *		Lukas Tönne
- *		Dalai Felinto
+ *      Jeroen Bakker
+ *      Monique Dewanchand
+ *      Lukas Tönne
+ *      Dalai Felinto
  */
 
 #include "COM_OutputFileOperation.h"
 #include "COM_OutputFileMultiViewOperation.h"
 
 #include <string.h>
+
 #include "BLI_listbase.h"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
-#include "BKE_image.h"
+
 #include "BKE_global.h"
-#include "BKE_library.h"
+#include "BKE_image.h"
 #include "BKE_main.h"
 #include "BKE_scene.h"
 

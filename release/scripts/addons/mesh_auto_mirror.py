@@ -1,6 +1,6 @@
 # ########################################################### #
 #   An simple add-on to auto cut in two and mirror an object  #
-#   Actualy partialy uncommented (see further version)        #
+#   Actually partially uncommented (see further version)        #
 #   Author: Lapineige                                         #
 #   License: GPL v3                                           #
 # ########################################################### #

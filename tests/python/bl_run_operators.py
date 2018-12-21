@@ -81,7 +81,6 @@ op_blacklist = (
     "wm.operator_cheat_sheet",
     "wm.interface_theme_*",
     "wm.previews_ensure",       # slow - but harmless
-    "wm.appconfig_*",           # just annoying - but harmless
     "wm.keyitem_add",           # just annoying - but harmless
     "wm.keyconfig_activate",    # just annoying - but harmless
     "wm.keyconfig_preset_add",  # just annoying - but harmless
@@ -136,13 +135,13 @@ def filter_op_list(operators):
 def reset_blend():
     bpy.ops.wm.read_factory_settings()
     for scene in bpy.data.scenes:
-        # reduce range so any bake action doesnt take too long
+        # reduce range so any bake action doesn't take too long
         scene.frame_start = 1
         scene.frame_end = 5
 
     if USE_RANDOM_SCREEN:
         import random
-        for i in range(random.randint(0, len(bpy.data.screens))):
+        for _ in range(random.randint(0, len(bpy.data.screens))):
             bpy.ops.screen.delete()
         print("Scree IS", bpy.context.screen)
 
@@ -238,7 +237,7 @@ if USE_ATTRSET:
             seq = getattr(bpy.data, attr)
             if seq.__class__.__name__ == 'bpy_prop_collection':
                 for id_data in seq:
-                    for val, prop, tp in id_walk(id_data, bpy.data):
+                    for val, prop, _tp in id_walk(id_data, bpy.data):
                         # print(id_data)
                         for val_rnd in _random_values:
                             try:

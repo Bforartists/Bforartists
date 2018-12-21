@@ -103,7 +103,7 @@ static bool eyedropper_init(bContext *C, wmOperator *op)
 		display_device = scene->display_settings.display_device;
 		eye->display = IMB_colormanagement_display_get_named(display_device);
 
-		/* store inital color */
+		/* store initial color */
 		RNA_property_float_get_array(&eye->ptr, eye->prop, col);
 		if (eye->display) {
 			IMB_colormanagement_display_to_scene_linear_v3(col, eye->display);
@@ -137,8 +137,8 @@ void eyedropper_color_sample_fl(bContext *C, int mx, int my, float r_col[3])
 {
 	/* we could use some clever */
 	Main *bmain = CTX_data_main(C);
-	wmWindow *win = CTX_wm_window(C);
-	ScrArea *sa = BKE_screen_find_area_xy(win->screen, SPACE_TYPE_ANY, mx, my);
+	bScreen *screen = CTX_wm_screen(C);
+	ScrArea *sa = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, mx, my);
 	const char *display_device = CTX_data_scene(C)->display_settings.display_device;
 	struct ColorManagedDisplay *display = IMB_colormanagement_display_get_named(display_device);
 

@@ -28,7 +28,7 @@
 
 #ifdef WITH_INPUT_NDOF
 //#  define NDOF_FLY_DEBUG
-//#  define NDOF_FLY_DRAW_TOOMUCH  /* is this needed for ndof? - commented so redraw doesnt thrash - campbell */
+//#  define NDOF_FLY_DRAW_TOOMUCH  /* is this needed for ndof? - commented so redraw doesn't thrash - campbell */
 #endif /* WITH_INPUT_NDOF */
 
 #include "DNA_object_types.h"
@@ -55,6 +55,10 @@
 
 #include "UI_interface.h"
 #include "UI_resources.h"
+
+#include "GPU_immediate.h"
+
+#include "DEG_depsgraph.h"
 
 #include "view3d_intern.h"  /* own include */
 
@@ -133,56 +137,6 @@ void fly_modal_keymap(wmKeyConfig *keyconf)
 
 	keymap = WM_modalkeymap_add(keyconf, "View3D Fly Modal", modal_items);
 
-	/* items for modal map */
-	WM_modalkeymap_add_item(keymap, RIGHTMOUSE, KM_ANY, KM_ANY, 0, FLY_MODAL_CANCEL);
-	WM_modalkeymap_add_item(keymap, ESCKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_CANCEL);
-
-	WM_modalkeymap_add_item(keymap, LEFTMOUSE, KM_ANY, KM_ANY, 0, FLY_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, RETKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, SPACEKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, PADENTER, KM_PRESS, KM_ANY, 0, FLY_MODAL_CONFIRM);
-
-	WM_modalkeymap_add_item(keymap, PADPLUSKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_ACCELERATE);
-	WM_modalkeymap_add_item(keymap, PADMINUS, KM_PRESS, KM_ANY, 0, FLY_MODAL_DECELERATE);
-	WM_modalkeymap_add_item(keymap, WHEELUPMOUSE, KM_PRESS, KM_ANY, 0, FLY_MODAL_ACCELERATE);
-	WM_modalkeymap_add_item(keymap, WHEELDOWNMOUSE, KM_PRESS, KM_ANY, 0, FLY_MODAL_DECELERATE);
-
-	WM_modalkeymap_add_item(keymap, MOUSEPAN, 0, 0, 0, FLY_MODAL_SPEED);
-
-	WM_modalkeymap_add_item(keymap, MIDDLEMOUSE, KM_PRESS, KM_ANY, 0, FLY_MODAL_PAN_ENABLE);
-	/* XXX - Bug in the event system, middle mouse release doesnt work */
-	WM_modalkeymap_add_item(keymap, MIDDLEMOUSE, KM_RELEASE, KM_ANY, 0, FLY_MODAL_PAN_DISABLE);
-
-	/* WASD */
-	WM_modalkeymap_add_item(keymap, WKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_FORWARD);
-	WM_modalkeymap_add_item(keymap, SKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_BACKWARD);
-	WM_modalkeymap_add_item(keymap, AKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_LEFT);
-	WM_modalkeymap_add_item(keymap, DKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_RIGHT);
-	WM_modalkeymap_add_item(keymap, EKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_UP);
-	WM_modalkeymap_add_item(keymap, QKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_DOWN);
-
-	/* for legacy reasons, leave R/F working */
-	WM_modalkeymap_add_item(keymap, RKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_UP);
-	WM_modalkeymap_add_item(keymap, FKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_DOWN);
-
-	WM_modalkeymap_add_item(keymap, UPARROWKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_FORWARD);
-	WM_modalkeymap_add_item(keymap, DOWNARROWKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_BACKWARD);
-	WM_modalkeymap_add_item(keymap, LEFTARROWKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_LEFT);
-	WM_modalkeymap_add_item(keymap, RIGHTARROWKEY, KM_PRESS, 0, 0, FLY_MODAL_DIR_RIGHT);
-
-	WM_modalkeymap_add_item(keymap, XKEY, KM_PRESS, 0, 0, FLY_MODAL_AXIS_LOCK_X);
-	WM_modalkeymap_add_item(keymap, ZKEY, KM_PRESS, 0, 0, FLY_MODAL_AXIS_LOCK_Z);
-
-	WM_modalkeymap_add_item(keymap, LEFTALTKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_PRECISION_ENABLE);
-	WM_modalkeymap_add_item(keymap, LEFTALTKEY, KM_RELEASE, KM_ANY, 0, FLY_MODAL_PRECISION_DISABLE);
-
-	/* for legacy reasons, leave shift working */
-	WM_modalkeymap_add_item(keymap, LEFTSHIFTKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_PRECISION_ENABLE);
-	WM_modalkeymap_add_item(keymap, LEFTSHIFTKEY, KM_RELEASE, KM_ANY, 0, FLY_MODAL_PRECISION_DISABLE);
-
-	WM_modalkeymap_add_item(keymap, LEFTCTRLKEY, KM_PRESS, KM_ANY, 0, FLY_MODAL_FREELOOK_ENABLE);
-	WM_modalkeymap_add_item(keymap, LEFTCTRLKEY, KM_RELEASE, KM_ANY, 0, FLY_MODAL_FREELOOK_DISABLE);
-
 	/* assign map to operators */
 	WM_modalkeymap_assign(keymap, "VIEW3D_OT_fly");
 }
@@ -192,6 +146,7 @@ typedef struct FlyInfo {
 	RegionView3D *rv3d;
 	View3D *v3d;
 	ARegion *ar;
+	struct Depsgraph *depsgraph;
 	Scene *scene;
 
 	wmTimer *timer; /* needed for redraws */
@@ -240,8 +195,8 @@ static void drawFlyPixel(const struct bContext *UNUSED(C), ARegion *UNUSED(ar), 
 	int xoff, yoff;
 	float x1, x2, y1, y2;
 
-	if (fly->scene->camera) {
-		ED_view3d_calc_camera_border(fly->scene, fly->ar, fly->v3d, fly->rv3d, &viewborder, false);
+	if (ED_view3d_cameracontrol_object_get(fly->v3d_camera_control)) {
+		ED_view3d_calc_camera_border(fly->scene, fly->depsgraph, fly->ar, fly->v3d, fly->rv3d, &viewborder, false);
 		xoff = viewborder.xmin;
 		yoff = viewborder.ymin;
 	}
@@ -258,36 +213,45 @@ static void drawFlyPixel(const struct bContext *UNUSED(C), ARegion *UNUSED(ar), 
 	x2 = xoff + 0.55f * fly->width;
 	y2 = yoff + 0.55f * fly->height;
 
-	UI_ThemeColor(TH_VIEW_OVERLAY);
-	glBegin(GL_LINES);
-	/* bottom left */
-	glVertex2f(x1, y1);
-	glVertex2f(x1, y1 + 5);
+	GPUVertFormat *format = immVertexFormat();
+	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-	glVertex2f(x1, y1);
-	glVertex2f(x1 + 5, y1);
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	immUniformThemeColor(TH_VIEW_OVERLAY);
+
+	immBegin(GPU_PRIM_LINES, 16);
+
+	/* bottom left */
+	immVertex2f(pos, x1, y1);
+	immVertex2f(pos, x1, y1 + 5);
+
+	immVertex2f(pos, x1, y1);
+	immVertex2f(pos, x1 + 5, y1);
 
 	/* top right */
-	glVertex2f(x2, y2);
-	glVertex2f(x2, y2 - 5);
+	immVertex2f(pos, x2, y2);
+	immVertex2f(pos, x2, y2 - 5);
 
-	glVertex2f(x2, y2);
-	glVertex2f(x2 - 5, y2);
+	immVertex2f(pos, x2, y2);
+	immVertex2f(pos, x2 - 5, y2);
 
 	/* top left */
-	glVertex2f(x1, y2);
-	glVertex2f(x1, y2 - 5);
+	immVertex2f(pos, x1, y2);
+	immVertex2f(pos, x1, y2 - 5);
 
-	glVertex2f(x1, y2);
-	glVertex2f(x1 + 5, y2);
+	immVertex2f(pos, x1, y2);
+	immVertex2f(pos, x1 + 5, y2);
 
 	/* bottom right */
-	glVertex2f(x2, y1);
-	glVertex2f(x2, y1 + 5);
+	immVertex2f(pos, x2, y1);
+	immVertex2f(pos, x2, y1 + 5);
 
-	glVertex2f(x2, y1);
-	glVertex2f(x2 - 5, y1);
-	glEnd();
+	immVertex2f(pos, x2, y1);
+	immVertex2f(pos, x2 - 5, y1);
+
+	immEnd();
+	immUnbindProgram();
 }
 
 static void fly_update_header(bContext *C, wmOperator *op, FlyInfo *fly)
@@ -320,7 +284,7 @@ static void fly_update_header(bContext *C, wmOperator *op, FlyInfo *fly)
 
 #undef WM_MODALKEY
 
-	ED_area_headerprint(CTX_wm_area(C), header);
+	ED_workspace_status_text(C, header);
 }
 
 /* FlyInfo->state */
@@ -341,6 +305,7 @@ static bool initFlyInfo(bContext *C, FlyInfo *fly, wmOperator *op, const wmEvent
 	fly->rv3d = CTX_wm_region_view3d(C);
 	fly->v3d = CTX_wm_view3d(C);
 	fly->ar = CTX_wm_region(C);
+	fly->depsgraph = CTX_data_depsgraph(C);
 	fly->scene = CTX_data_scene(C);
 
 #ifdef NDOF_FLY_DEBUG
@@ -407,12 +372,12 @@ static bool initFlyInfo(bContext *C, FlyInfo *fly, wmOperator *op, const wmEvent
 	}
 
 	fly->v3d_camera_control = ED_view3d_cameracontrol_acquire(
-	        fly->scene, fly->v3d, fly->rv3d,
+	        CTX_data_depsgraph(C), fly->scene, fly->v3d, fly->rv3d,
 	        (U.uiflag & USER_CAM_LOCK_NO_PARENT) == 0);
 
 	/* calculate center */
-	if (fly->scene->camera) {
-		ED_view3d_calc_camera_border(fly->scene, fly->ar, fly->v3d, fly->rv3d, &viewborder, false);
+	if (ED_view3d_cameracontrol_object_get(fly->v3d_camera_control)) {
+		ED_view3d_calc_camera_border(fly->scene, fly->depsgraph, fly->ar, fly->v3d, fly->rv3d, &viewborder, false);
 
 		fly->width = BLI_rctf_size_x(&viewborder);
 		fly->height = BLI_rctf_size_y(&viewborder);
@@ -730,7 +695,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 	RegionView3D *rv3d = fly->rv3d;
 
 	float mat[3][3]; /* 3x3 copy of the view matrix so we can move along the view axis */
-	float dvec[3] = {0, 0, 0}; /* this is the direction thast added to the view offset per redraw */
+	float dvec[3] = {0, 0, 0}; /* this is the direction that's added to the view offset per redraw */
 
 	/* Camera Uprighting variables */
 	float moffset[2]; /* mouse offset from the views center */
@@ -1067,7 +1032,7 @@ static int fly_modal(bContext *C, wmOperator *op, const wmEvent *event)
 	}
 
 	if (ELEM(exit_code, OPERATOR_FINISHED, OPERATOR_CANCELLED))
-		ED_area_headerprint(CTX_wm_area(C), NULL);
+		ED_workspace_status_text(C, NULL);
 
 	return exit_code;
 }

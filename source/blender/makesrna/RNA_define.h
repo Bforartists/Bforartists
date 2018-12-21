@@ -25,7 +25,9 @@
 
 /** \file RNA_define.h
  *  \ingroup RNA
- *  Functions used during preprocess and runtime, for defining the RNA. */
+ *
+ * Functions used during preprocess and runtime, for defining the RNA.
+ */
 
 #include <float.h>
 #include <limits.h>
@@ -36,6 +38,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifdef UNIT_TEST
+#define RNA_MAX_ARRAY_LENGTH 64
+#else
+#define RNA_MAX_ARRAY_LENGTH 32
+#endif
+
+#define RNA_MAX_ARRAY_DIMENSION 3
 
 /* Blender RNA */
 
@@ -141,6 +151,8 @@ void RNA_def_property_collection_sdna(PropertyRNA *prop, const char *structname,
 
 void RNA_def_property_flag(PropertyRNA *prop, PropertyFlag flag);
 void RNA_def_property_clear_flag(PropertyRNA *prop, PropertyFlag flag);
+void RNA_def_property_override_flag(PropertyRNA *prop, PropertyOverrideFlag flag);
+void RNA_def_property_override_clear_flag(PropertyRNA *prop, PropertyOverrideFlag flag);
 void RNA_def_property_tags(PropertyRNA *prop, int tags);
 void RNA_def_property_subtype(PropertyRNA *prop, PropertySubType subtype);
 void RNA_def_property_array(PropertyRNA *prop, int length);
@@ -163,11 +175,13 @@ void RNA_def_property_string_default(PropertyRNA *prop, const char *value);
 
 void RNA_def_property_ui_text(PropertyRNA *prop, const char *name, const char *description);
 void RNA_def_property_ui_range(PropertyRNA *prop, double min, double max, double step, int precision);
-void RNA_def_property_ui_icon(PropertyRNA *prop, int icon, bool consecutive);
+void RNA_def_property_ui_icon(PropertyRNA *prop, int icon, int consecutive);
 
 void RNA_def_property_update(PropertyRNA *prop, int noteflag, const char *updatefunc);
 void RNA_def_property_editable_func(PropertyRNA *prop, const char *editable);
 void RNA_def_property_editable_array_func(PropertyRNA *prop, const char *editable);
+
+void RNA_def_property_override_funcs(PropertyRNA *prop, const char *diff, const char *store, const char *apply);
 
 void RNA_def_property_update_runtime(PropertyRNA *prop, const void *func);
 void RNA_def_property_poll_runtime(PropertyRNA *prop, const void *func);

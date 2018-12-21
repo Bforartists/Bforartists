@@ -45,7 +45,7 @@ classes = (
 )
 
 def register():
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
     from bpy.utils import register_class
     for cls in classes:
@@ -53,7 +53,7 @@ def register():
 
 
 def unregister():
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
     from bpy.utils import unregister_class
     for cls in reversed(classes):

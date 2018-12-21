@@ -16,8 +16,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Contributor:
- *		Jeroen Bakker
- *		Monique Dewanchand
+ *      Jeroen Bakker
+ *      Monique Dewanchand
  */
 
 #ifndef __COM_SCREENLENSDISTORTIONOPERATION_H__
@@ -31,6 +31,7 @@ private:
 	 * Cached reference to the inputProgram
 	 */
 	SocketReader *m_inputProgram;
+	struct RNG *m_rng;
 
 	bool m_fit;
 	bool m_jitter;

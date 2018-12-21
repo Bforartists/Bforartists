@@ -847,7 +847,7 @@ static PyObject *Vector_orthogonal(VectorObject *self)
 /**
  * Vector.reflect(mirror): return a reflected vector on the mirror normal.
  * <pre>
- *  vec - ((2 * dot(vec, mirror)) * mirror)
+ * vec - ((2 * dot(vec, mirror)) * mirror)
  * </pre>
  */
 PyDoc_STRVAR(Vector_reflect_doc,
@@ -1650,7 +1650,7 @@ static PyObject *Vector_isub(PyObject *v1, PyObject *v2)
 
 
 /**
- *  column vector multiplication (Matrix * Vector)
+ * Column vector multiplication (Matrix * Vector).
  * <pre>
  * [1][4][7]   [a]
  * [2][5][8] * [b]
@@ -1706,11 +1706,132 @@ static PyObject *vector_mul_float(VectorObject *vec, const float scalar)
 	mul_vn_vn_fl(tvec, vec->vec, vec->size, scalar);
 	return Vector_CreatePyObject_alloc(tvec, vec->size, Py_TYPE(vec));
 }
+#ifdef USE_MATHUTILS_ELEM_MUL
+static PyObject *vector_mul_vec(VectorObject *vec1, VectorObject *vec2)
+{
+	float *tvec = PyMem_Malloc(vec1->size * sizeof(float));
+	if (tvec == NULL) {
+		PyErr_SetString(PyExc_MemoryError,
+		                "vec * vec: "
+		                "problem allocating pointer space");
+		return NULL;
+	}
 
+	mul_vn_vnvn(tvec, vec1->vec, vec2->vec, vec1->size);
+	return Vector_CreatePyObject_alloc(tvec, vec1->size, Py_TYPE(vec1));
+}
+#endif
 static PyObject *Vector_mul(PyObject *v1, PyObject *v2)
 {
 	VectorObject *vec1 = NULL, *vec2 = NULL;
 	float scalar;
+
+	if (VectorObject_Check(v1)) {
+		vec1 = (VectorObject *)v1;
+		if (BaseMath_ReadCallback(vec1) == -1)
+			return NULL;
+	}
+	if (VectorObject_Check(v2)) {
+		vec2 = (VectorObject *)v2;
+		if (BaseMath_ReadCallback(vec2) == -1)
+			return NULL;
+	}
+
+
+	/* Intentionally don't support (Quaternion) here, uses reverse order instead. */
+
+	/* make sure v1 is always the vector */
+	if (vec1 && vec2) {
+#ifdef USE_MATHUTILS_ELEM_MUL
+		if (vec1->size != vec2->size) {
+			PyErr_SetString(PyExc_ValueError,
+			                "Vector multiplication: "
+			                "vectors must have the same dimensions for this operation");
+			return NULL;
+		}
+
+		/* element-wise product */
+		return vector_mul_vec(vec1, vec2);
+#endif
+	}
+	else if (vec1) {
+		if (((scalar = PyFloat_AsDouble(v2)) == -1.0f && PyErr_Occurred()) == 0) { /* VEC * FLOAT */
+			return vector_mul_float(vec1, scalar);
+		}
+	}
+	else if (vec2) {
+		if (((scalar = PyFloat_AsDouble(v1)) == -1.0f && PyErr_Occurred()) == 0) { /* FLOAT * VEC */
+			return vector_mul_float(vec2, scalar);
+		}
+	}
+
+	PyErr_Format(PyExc_TypeError,
+	             "Element-wise multiplication: "
+	             "not supported between '%.200s' and '%.200s' types",
+	             Py_TYPE(v1)->tp_name, Py_TYPE(v2)->tp_name);
+	return NULL;
+}
+
+/* multiplication in-place: obj *= obj */
+static PyObject *Vector_imul(PyObject *v1, PyObject *v2)
+{
+	VectorObject *vec1 = NULL, *vec2 = NULL;
+	float scalar;
+
+	if (VectorObject_Check(v1)) {
+		vec1 = (VectorObject *)v1;
+		if (BaseMath_ReadCallback(vec1) == -1)
+			return NULL;
+	}
+	if (VectorObject_Check(v2)) {
+		vec2 = (VectorObject *)v2;
+		if (BaseMath_ReadCallback(vec2) == -1)
+			return NULL;
+	}
+
+	if (BaseMath_ReadCallback_ForWrite(vec1) == -1)
+		return NULL;
+
+	/* Intentionally don't support (Quaternion, Matrix) here, uses reverse order instead. */
+
+	if (vec1 && vec2) {
+#ifdef USE_MATHUTILS_ELEM_MUL
+		if (vec1->size != vec2->size) {
+			PyErr_SetString(PyExc_ValueError,
+			                "Vector multiplication: "
+			                "vectors must have the same dimensions for this operation");
+			return NULL;
+		}
+
+		/* element-wise product inplace */
+		mul_vn_vn(vec1->vec, vec2->vec, vec1->size);
+#else
+		PyErr_Format(PyExc_TypeError,
+		             "Inplace element-wise multiplication: "
+		             "not supported between '%.200s' and '%.200s' types",
+		             Py_TYPE(v1)->tp_name, Py_TYPE(v2)->tp_name);
+		return NULL;
+#endif
+	}
+	else if (vec1 && (((scalar = PyFloat_AsDouble(v2)) == -1.0f && PyErr_Occurred()) == 0)) { /* VEC *= FLOAT */
+		mul_vn_fl(vec1->vec, vec1->size, scalar);
+	}
+	else {
+		PyErr_Format(PyExc_TypeError,
+		             "Inplace element-wise multiplication: "
+		             "not supported between '%.200s' and '%.200s' types",
+		             Py_TYPE(v1)->tp_name, Py_TYPE(v2)->tp_name);
+		return NULL;
+	}
+
+	(void)BaseMath_WriteCallback(vec1);
+	Py_INCREF(v1);
+	return v1;
+}
+
+static PyObject *Vector_matmul(PyObject *v1, PyObject *v2)
+{
+	VectorObject *vec1 = NULL, *vec2 = NULL;
 	int vec_size;
 
 	if (VectorObject_Check(v1)) {
@@ -1741,7 +1862,7 @@ static PyObject *Vector_mul(PyObject *v1, PyObject *v2)
 	}
 	else if (vec1) {
 		if (MatrixObject_Check(v2)) {
-			/* VEC * MATRIX */
+			/* VEC @ MATRIX */
 			float tvec[MAX_DIMENSIONS];
 
 			if (BaseMath_ReadCallback((MatrixObject *)v2) == -1)
@@ -1759,17 +1880,6 @@ static PyObject *Vector_mul(PyObject *v1, PyObject *v2)
 
 			return Vector_CreatePyObject(tvec, vec_size, Py_TYPE(vec1));
 		}
-		else if (((scalar = PyFloat_AsDouble(v2)) == -1.0f && PyErr_Occurred()) == 0) { /* VEC * FLOAT */
-			return vector_mul_float(vec1, scalar);
-		}
-	}
-	else if (vec2) {
-		if (((scalar = PyFloat_AsDouble(v1)) == -1.0f && PyErr_Occurred()) == 0) { /* FLOAT * VEC */
-			return vector_mul_float(vec2, scalar);
-		}
-	}
-	else {
-		BLI_assert(!"internal error");
 	}
 
 	PyErr_Format(PyExc_TypeError,
@@ -1779,33 +1889,13 @@ static PyObject *Vector_mul(PyObject *v1, PyObject *v2)
 	return NULL;
 }
 
-/* multiplication in-place: obj *= obj */
-static PyObject *Vector_imul(PyObject *v1, PyObject *v2)
+static PyObject *Vector_imatmul(PyObject *v1, PyObject *v2)
 {
-	VectorObject *vec = (VectorObject *)v1;
-	float scalar;
-
-	if (BaseMath_ReadCallback_ForWrite(vec) == -1)
-		return NULL;
-
-	/* Intentionally don't support (Quaternion, Matrix) here, uses reverse order instead. */
-
-	/* only support 'vec *= float'
-	 *  vec*=vec result is a float so that wont work */
-	if (((scalar = PyFloat_AsDouble(v2)) == -1.0f && PyErr_Occurred()) == 0) { /* VEC *= FLOAT */
-		mul_vn_fl(vec->vec, vec->size, scalar);
-	}
-	else {
-		PyErr_Format(PyExc_TypeError,
-		             "Vector multiplication: (%s *= %s) "
-		             "invalid type for this operation",
-		             Py_TYPE(v1)->tp_name, Py_TYPE(v2)->tp_name);
-		return NULL;
-	}
-
-	(void)BaseMath_WriteCallback(vec);
-	Py_INCREF(v1);
-	return v1;
+	PyErr_Format(PyExc_TypeError,
+	             "Inplace vector multiplication: "
+	             "not supported between '%.200s' and '%.200s' types",
+	             Py_TYPE(v1)->tp_name, Py_TYPE(v2)->tp_name);
+	return NULL;
 }
 
 /* divid: obj / obj */
@@ -2119,6 +2209,8 @@ static PyNumberMethods Vector_NumMethods = {
 	NULL,                       /* nb_inplace_floor_divide */
 	Vector_idiv,                /* nb_inplace_true_divide */
 	NULL,                       /* nb_index */
+	(binaryfunc) Vector_matmul, /* nb_matrix_multiply */
+	(binaryfunc) Vector_imatmul, /* nb_inplace_matrix_multiply */
 };
 
 /*------------------PY_OBECT DEFINITION--------------------------*/
@@ -2132,12 +2224,12 @@ PyDoc_STRVAR(Vector_axis_w_doc, "Vector W axis (4D Vectors only).\n\n:type: floa
 
 static PyObject *Vector_axis_get(VectorObject *self, void *type)
 {
-	return vector_item_internal(self, GET_INT_FROM_POINTER(type), true);
+	return vector_item_internal(self, POINTER_AS_INT(type), true);
 }
 
 static int Vector_axis_set(VectorObject *self, PyObject *value, void *type)
 {
-	return vector_ass_item_internal(self, GET_INT_FROM_POINTER(type), value, true);
+	return vector_ass_item_internal(self, POINTER_AS_INT(type), value, true);
 }
 
 /* vector.length */
@@ -2280,7 +2372,7 @@ static PyObject *Vector_swizzle_get(VectorObject *self, void *closure)
 
 	/* Unpack the axes from the closure into an array. */
 	axis_to = 0;
-	swizzleClosure = GET_INT_FROM_POINTER(closure);
+	swizzleClosure = POINTER_AS_INT(closure);
 	while (swizzleClosure & SWIZZLE_VALID_AXIS) {
 		axis_from = swizzleClosure & SWIZZLE_AXIS;
 		if (axis_from >= self->size) {
@@ -2299,7 +2391,7 @@ static PyObject *Vector_swizzle_get(VectorObject *self, void *closure)
 }
 
 /**
- *  Set the items of this vector using a swizzle.
+ * Set the items of this vector using a swizzle.
  * - If value is a vector or list this operates like an array copy, except that
  *   the destination is effectively re-ordered as defined by the swizzle. At
  *   most min(len(source), len(dest)) values will be copied.
@@ -2327,7 +2419,7 @@ static int Vector_swizzle_set(VectorObject *self, PyObject *value, void *closure
 
 	/* Check that the closure can be used with this vector: even 2D vectors have
 	 * swizzles defined for axes z and w, but they would be invalid. */
-	swizzleClosure = GET_INT_FROM_POINTER(closure);
+	swizzleClosure = POINTER_AS_INT(closure);
 	axis_from = 0;
 
 	while (swizzleClosure & SWIZZLE_VALID_AXIS) {
@@ -2366,7 +2458,7 @@ static int Vector_swizzle_set(VectorObject *self, PyObject *value, void *closure
 
 	/* Copy vector contents onto swizzled axes. */
 	axis_from = 0;
-	swizzleClosure = GET_INT_FROM_POINTER(closure);
+	swizzleClosure = POINTER_AS_INT(closure);
 
 	/* We must first copy current vec into tvec, else some org values may be lost.
 	 * See [#31760].
@@ -2396,9 +2488,9 @@ static int Vector_swizzle_set(VectorObject *self, PyObject *value, void *closure
 #define _SWIZZLE3(a, b, c)    (_SWIZZLE2(a, b)    | (((c) | SWIZZLE_VALID_AXIS) << (SWIZZLE_BITS_PER_AXIS * 2)))
 #define _SWIZZLE4(a, b, c, d) (_SWIZZLE3(a, b, c) | (((d) | SWIZZLE_VALID_AXIS) << (SWIZZLE_BITS_PER_AXIS * 3)))
 
-#define SWIZZLE2(a, b)       SET_INT_IN_POINTER(_SWIZZLE2(a, b))
-#define SWIZZLE3(a, b, c)    SET_INT_IN_POINTER(_SWIZZLE3(a, b, c))
-#define SWIZZLE4(a, b, c, d) SET_INT_IN_POINTER(_SWIZZLE4(a, b, c, d))
+#define SWIZZLE2(a, b)       POINTER_FROM_INT(_SWIZZLE2(a, b))
+#define SWIZZLE3(a, b, c)    POINTER_FROM_INT(_SWIZZLE3(a, b, c))
+#define SWIZZLE4(a, b, c, d) POINTER_FROM_INT(_SWIZZLE4(a, b, c, d))
 
 /*****************************************************************************/
 /* Python attributes get/set structure:                                      */

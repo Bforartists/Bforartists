@@ -46,15 +46,20 @@
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_customdata.h"
-#include "BKE_depsgraph.h"
 #include "BKE_editmesh.h"
 #include "BKE_main.h"
 #include "BKE_mesh_mapping.h"
 #include "BKE_paint.h"
 
+#include "DEG_depsgraph.h"
+
 #include "ED_screen.h"
 #include "ED_image.h"
 #include "ED_mesh.h"
+
+#include "GPU_immediate.h"
+#include "GPU_immediate_util.h"
+#include "GPU_state.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -64,9 +69,6 @@
 
 #include "paint_intern.h"
 #include "uvedit_intern.h"
-
-#include "BIF_gl.h"
-#include "BIF_glutil.h"
 
 #include "UI_view2d.h"
 
@@ -213,18 +215,17 @@ static void brush_drawcursor_uvsculpt(bContext *C, int x, int y, void *UNUSED(cu
 			alpha *= (size - PX_SIZE_FADE_MIN) / (PX_SIZE_FADE_MAX - PX_SIZE_FADE_MIN);
 		}
 
-		glPushMatrix();
+		uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+		immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+		immUniformColor3fvAlpha(brush->add_col, alpha);
 
-		glTranslatef((float)x, (float)y, 0.0f);
+		GPU_line_smooth(true);
+		GPU_blend(true);
+		imm_draw_circle_wire_2d(pos, (float)x, (float)y, size, 40);
+		GPU_blend(false);
+		GPU_line_smooth(false);
 
-		glColor4f(brush->add_col[0], brush->add_col[1], brush->add_col[2], alpha);
-		glEnable(GL_LINE_SMOOTH);
-		glEnable(GL_BLEND);
-		glutil_draw_lined_arc(0, (float)(M_PI * 2.0), size, 40);
-		glDisable(GL_BLEND);
-		glDisable(GL_LINE_SMOOTH);
-
-		glPopMatrix();
+		immUnbindProgram();
 	}
 #undef PX_SIZE_FADE_MAX
 #undef PX_SIZE_FADE_MIN
@@ -235,19 +236,18 @@ void ED_space_image_uv_sculpt_update(Main *bmain, wmWindowManager *wm, Scene *sc
 {
 	ToolSettings *settings = scene->toolsettings;
 	if (settings->use_uv_sculpt) {
-		if (!settings->uvsculpt) {
-			settings->uvsculpt = MEM_callocN(sizeof(*settings->uvsculpt), "UV Smooth paint");
+		if (settings->uvsculpt == NULL) {
 			settings->uv_sculpt_tool = UV_SCULPT_TOOL_GRAB;
 			settings->uv_sculpt_settings = UV_SCULPT_LOCK_BORDERS | UV_SCULPT_ALL_ISLANDS;
 			settings->uv_relax_method = UV_SCULPT_TOOL_RELAX_LAPLACIAN;
-			/* Uv sculpting does not include explicit brush view control yet, always enable */
-			settings->uvsculpt->paint.flags |= PAINT_SHOW_BRUSH;
 		}
-
-		BKE_paint_init(bmain, scene, ePaintSculptUV, PAINT_CURSOR_SCULPT);
+		BKE_paint_ensure(settings, (Paint **)&settings->uvsculpt);
+		BKE_paint_init(bmain, scene, PAINT_MODE_SCULPT_UV, PAINT_CURSOR_SCULPT);
 
 		settings->uvsculpt->paint.paint_cursor = WM_paint_cursor_activate(
-		        wm, uv_sculpt_brush_poll,
+		        wm,
+		        SPACE_IMAGE, RGN_TYPE_WINDOW,
+		        uv_sculpt_brush_poll,
 		        brush_drawcursor_uvsculpt, NULL);
 	}
 	else {
@@ -654,7 +654,7 @@ static UvSculptData *uv_sculpt_stroke_init(bContext *C, wmOperator *op, const wm
 			UvElement *element;
 			UvNearestHit hit = UV_NEAREST_HIT_INIT;
 			Image *ima = CTX_data_edit_image(C);
-			uv_find_nearest_vert(scene, ima, em, co, 0.0f, &hit);
+			uv_find_nearest_vert(scene, ima, obedit, co, 0.0f, &hit);
 
 			element = BM_uv_element_get(data->elementMap, hit.efa, hit.l);
 			island_index = element->island;
@@ -901,7 +901,7 @@ static int uv_sculpt_stroke_modal(bContext *C, wmOperator *op, const wmEvent *ev
 
 	ED_region_tag_redraw(CTX_wm_region(C));
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
-	DAG_id_tag_update(obedit->data, 0);
+	DEG_id_tag_update(obedit->data, 0);
 	return OPERATOR_RUNNING_MODAL;
 }
 

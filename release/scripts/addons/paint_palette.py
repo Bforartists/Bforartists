@@ -462,12 +462,12 @@ def color_palette_draw(self, context):
 
     row = layout.row(align=True)
     row.menu("PALETTE_MT_menu", text=PALETTE_MT_menu.bl_label)
-    row.operator("palette.preset_add", text="", icon="ZOOMIN").remove_active = False
-    row.operator("palette.preset_add", text="", icon="ZOOMOUT").remove_active = True
+    row.operator("palette.preset_add", text="", icon='ADD').remove_active = False
+    row.operator("palette.preset_add", text="", icon='REMOVE').remove_active = True
 
     col = layout.column(align=True)
     row = col.row(align=True)
-    row.operator("palette_props.add_color", icon="ZOOMIN")
+    row.operator("palette_props.add_color", icon='ADD')
     row.prop(palette_props, "index")
     row.operator("palette_props.remove_color", icon="PANEL_CLOSE")
 
@@ -644,7 +644,7 @@ class VIEW3D_OT_reset_weight_palette(Operator):
 
         except Exception as e:
             self.report({'WARNING'},
-                        "Reset Weight pallete could not be completed (See Console for more info)")
+                        "Reset Weight palette could not be completed (See Console for more info)")
             print("\n[Paint Palette]\nOperator: paint.reset_weight_palette\nError: %s\n" % e)
 
             return {'CANCELLED'}

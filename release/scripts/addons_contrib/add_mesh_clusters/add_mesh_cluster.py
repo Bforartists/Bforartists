@@ -171,14 +171,14 @@ class CLASS_atom_cluster_Elements(object):
         self.radii_ionic = radii_ionic
 
 # This is the class, which stores the properties of one atom.
-class CLASS_atom_cluster_atom(object):  
+class CLASS_atom_cluster_atom(object):
     __slots__ = ('location')
     def __init__(self, location):
         self.location = location
 
 # -----------------------------------------------------------------------------
 #                                                                Read atom data
-        
+
 def DEF_atom_read_atom_data():
 
     del ATOM_CLUSTER_ELEMENTS[:]
@@ -195,7 +195,7 @@ def DEF_atom_read_atom_data():
                                          radii,radii_ionic)
         ATOM_CLUSTER_ELEMENTS.append(li)
 
-  
+
 # -----------------------------------------------------------------------------
 #                                                           Routines for shapes
 
@@ -217,19 +217,19 @@ def vec_in_parabole(atom_pos, height, diameter):
 
     regular = True
     inner   = True
-      
-    px = atom_pos[0]  
-    py = atom_pos[1]  
+
+    px = atom_pos[0]
+    py = atom_pos[1]
     pz = atom_pos[2] + height/2.0
-    
+
     a = diameter / sqrt(4 * height)
-    
-    
+
+
     if pz < 0.0:
         return (False, False)
     if px == 0.0 and py == 0.0:
         return (True, True)
-         
+
     if py == 0.0:
         y = 0.0
         x = a * a * pz / px
@@ -238,17 +238,17 @@ def vec_in_parabole(atom_pos, height, diameter):
         y = pz * py * a * a / (px*px + py*py)
         x = y * px / py
         z = (x*x + y*y) / (a * a)
-    
+
     if( atom_pos.length > sqrt(x*x+y*y+z*z) ):
         regular = False
-    
+
     return (regular, inner)
 
 
 def vec_in_pyramide_square(atom_pos, size, skin):
-    
+
     """
-    Please, if possible leave all this! The code documents the 
+    Please, if possible leave all this! The code documents the
     mathemetical way of cutting a pyramide with square base.
 
     P1 = Vector((-size/2, 0.0, -size/4))
@@ -262,7 +262,7 @@ def vec_in_pyramide_square(atom_pos, size, skin):
     v12 = P1 - P6
     n1 = v11.cross(v12)
     g1 = -n1 * P1
-    
+
     # Second face
     v21 = P6 - P4
     v22 = P6 - P5
@@ -274,20 +274,20 @@ def vec_in_pyramide_square(atom_pos, size, skin):
     v32 = P1 - P6
     n3 = v32.cross(v31)
     g3 = -n3 * P1
-    
+
     # Forth face
     v41 = P6 - P2
     v42 = P2 - P4
     n4 = v41.cross(v42)
     g4 = -n4 * P2
-    
+
     # Fith face, base
     v51 = P2 - P1
     v52 = P2 - P4
     n5 = v51.cross(v52)
     g5 = -n5 * P2
     """
- 
+
     # A much faster way for calculation:
     size2 = size  * size
     size3 = size2 * size
@@ -300,7 +300,7 @@ def vec_in_pyramide_square(atom_pos, size, skin):
     n4 = Vector(( 1/4, -1/4,  1/4)) * size2
     g4 = g1
     n5 = Vector(( 0.0,  0.0, -1/2)) * size2
-    g5 = -1/8 * size3  
+    g5 = -1/8 * size3
 
     distance_plane_1 = abs((n1 * atom_pos - g1)/n1.length)
     on_plane_1 = (atom_pos - n1 * (distance_plane_1/n1.length)).length
@@ -330,7 +330,7 @@ def vec_in_pyramide_square(atom_pos, size, skin):
         return (regular, inner)
 
     size = size * (1.0 - skin)
-    
+
     size2 = size  * size
     size3 = size2 * size
     n1 = Vector((-1/4, -1/4,  1/4)) * size2
@@ -342,7 +342,7 @@ def vec_in_pyramide_square(atom_pos, size, skin):
     n4 = Vector(( 1/4, -1/4,  1/4)) * size2
     g4 = g1
     n5 = Vector(( 0.0,  0.0, -1/2)) * size2
-    g5 = -1/8 * size3  
+    g5 = -1/8 * size3
 
     distance_plane_1 = abs((n1 * atom_pos - g1)/n1.length)
     on_plane_1 = (atom_pos - n1 * (distance_plane_1/n1.length)).length
@@ -354,7 +354,7 @@ def vec_in_pyramide_square(atom_pos, size, skin):
     on_plane_4 = (atom_pos - n4 * (distance_plane_4/n4.length)).length
     distance_plane_5 = abs((n5 * atom_pos - g5)/n5.length)
     on_plane_5 = (atom_pos - n5 * (distance_plane_5/n5.length)).length
-    
+
     inner = False
     if(atom_pos.length > on_plane_1):
         inner = True
@@ -371,22 +371,22 @@ def vec_in_pyramide_square(atom_pos, size, skin):
 
 
 def vec_in_pyramide_hex_abc(atom_pos, size, skin):
-    
+
     a = size/2.0
     #c = size/2.0*cos((30/360)*2.0*pi)
     c = size * 0.4330127020
-    #s = size/2.0*sin((30/360)*2.0*pi)  
-    s = size * 0.25   
+    #s = size/2.0*sin((30/360)*2.0*pi)
+    s = size * 0.25
     #h = 2.0 * (sqrt(6.0)/3.0) * c
     h = 1.632993162 * c
 
     """
-    Please, if possible leave all this! The code documents the 
+    Please, if possible leave all this! The code documents the
     mathemetical way of cutting a tetraeder.
 
     P1 = Vector((0.0,   a, 0.0))
     P2 = Vector(( -c,  -s, 0.0))
-    P3 = Vector((  c,  -s, 0.0))    
+    P3 = Vector((  c,  -s, 0.0))
     P4 = Vector((0.0, 0.0,  h))
     C = (P1+P2+P3+P4)/4.0
     P1 = P1 - C
@@ -399,7 +399,7 @@ def vec_in_pyramide_hex_abc(atom_pos, size, skin):
     v12 = P1 - P4
     n1 = v11.cross(v12)
     g1 = -n1 * P1
-    
+
     # Second face
     v21 = P2 - P3
     v22 = P2 - P4
@@ -411,7 +411,7 @@ def vec_in_pyramide_hex_abc(atom_pos, size, skin):
     v32 = P3 - P4
     n3 = v31.cross(v32)
     g3 = -n3 * P3
-    
+
     # Forth face
     v41 = P2 - P1
     v42 = P2 - P3
@@ -452,12 +452,12 @@ def vec_in_pyramide_hex_abc(atom_pos, size, skin):
         return (regular, inner)
 
     size = size * (1.0 - skin)
-    
+
     a = size/2.0
     #c = size/2.0*cos((30/360)*2.0*pi)
     c= size * 0.4330127020
-    #s = size/2.0*sin((30/360)*2.0*pi)  
-    s = size * 0.25   
+    #s = size/2.0*sin((30/360)*2.0*pi)
+    s = size * 0.25
     #h = 2.0 * (sqrt(6.0)/3.0) * c
     h = 1.632993162 * c
 
@@ -478,7 +478,7 @@ def vec_in_pyramide_hex_abc(atom_pos, size, skin):
     on_plane_3 = (atom_pos - n3 * (distance_plane_3/n3.length)).length
     distance_plane_4 = abs((n4 * atom_pos - g4)/n4.length)
     on_plane_4 = (atom_pos - n4 * (distance_plane_4/n4.length)).length
-    
+
     inner = False
     if(atom_pos.length > on_plane_1):
         inner = True
@@ -490,7 +490,7 @@ def vec_in_pyramide_hex_abc(atom_pos, size, skin):
         inner = True
 
     return (regular, inner)
-    
+
 
 
 def vec_in_octahedron(atom_pos,size, skin):
@@ -499,7 +499,7 @@ def vec_in_octahedron(atom_pos,size, skin):
     inner   = True
 
     """
-    Please, if possible leave all this! The code documents the 
+    Please, if possible leave all this! The code documents the
     mathemetical way of cutting an octahedron.
 
     P1 = Vector((-size/2, 0.0, 0.0))
@@ -514,19 +514,19 @@ def vec_in_octahedron(atom_pos,size, skin):
     v12 = P2 - P3
     n1 = v11.cross(v12)
     g1 = -n1 * P2
-    
+
     # Second face
     v21 = P1 - P5
     v22 = P1 - P3
     n2 = v21.cross(v22)
-    g2 = -n2 * P1 
-    
+    g2 = -n2 * P1
+
     # Third face
     v31 = P1 - P2
     v32 = P1 - P6
     n3 = v31.cross(v32)
     g3 = -n3 * P1
-    
+
     # Forth face
     v41 = P6 - P2
     v42 = P2 - P4
@@ -557,7 +557,7 @@ def vec_in_octahedron(atom_pos,size, skin):
     n8 = v82.cross(v81)
     g8 = -n8 * P1
     """
- 
+
     # A much faster way for calculation:
     size2 = size  * size
     size3 = size2 * size
@@ -720,12 +720,12 @@ def vec_in_truncated_octahedron(atom_pos,size, skin):
     # pp = (size/2.0) - (sqrt(2.0)/2.0) * ((size/sqrt(2.0))/3.0)
     pp = size / 3.0
 
-    n_1 = Vector((1.0,0.0,0.0)) 
-    n_2 = Vector((-1.0,0.0,0.0))           
-    n_3 = Vector((0.0,1.0,0.0))    
+    n_1 = Vector((1.0,0.0,0.0))
+    n_2 = Vector((-1.0,0.0,0.0))
+    n_3 = Vector((0.0,1.0,0.0))
     n_4 = Vector((0.0,-1.0,0.0))
-    n_5 = Vector((0.0,0.0,1.0))    
-    n_6 = Vector((0.0,0.0,-1.0))   
+    n_5 = Vector((0.0,0.0,1.0))
+    n_6 = Vector((0.0,0.0,-1.0))
 
     distance_plane_1b = abs((n_1 * atom_pos + pp)/n_1.length)
     on_plane_1b = (atom_pos - n_1 * (distance_plane_1b/n_1.length)).length
@@ -773,7 +773,7 @@ def vec_in_truncated_octahedron(atom_pos,size, skin):
         return (regular, inner)
 
     size = size * (1.0 - skin)
-    
+
     # The normal octahedron
     size2 = size  * size
     size3 = size2 * size
@@ -815,13 +815,13 @@ def vec_in_truncated_octahedron(atom_pos,size, skin):
     # pp = (size/2.0) - (sqrt(2.0)/2.0) * ((size/sqrt(2.0))/3.0)
     pp = size / 3.0
 
-    n_1 = Vector((1.0,0.0,0.0)) 
-    n_2 = Vector((-1.0,0.0,0.0))           
-    n_3 = Vector((0.0,1.0,0.0))    
+    n_1 = Vector((1.0,0.0,0.0))
+    n_2 = Vector((-1.0,0.0,0.0))
+    n_3 = Vector((0.0,1.0,0.0))
     n_4 = Vector((0.0,-1.0,0.0))
-    n_5 = Vector((0.0,0.0,1.0))    
-    n_6 = Vector((0.0,0.0,-1.0))   
-    
+    n_5 = Vector((0.0,0.0,1.0))
+    n_6 = Vector((0.0,0.0,-1.0))
+
     distance_plane_1b = abs((n_1 * atom_pos + pp)/n_1.length)
     on_plane_1b = (atom_pos - n_1 * (distance_plane_1b/n_1.length)).length
     distance_plane_2b = abs((n_2 * atom_pos + pp)/n_2.length)
@@ -865,7 +865,7 @@ def vec_in_truncated_octahedron(atom_pos,size, skin):
         inner = True
     if(atom_pos.length > on_plane_6b):
         inner = True
-    
+
     return (regular, inner)
 
 # -----------------------------------------------------------------------------
@@ -906,11 +906,11 @@ def create_hexagonal_abcabc_lattice(ctype, size, skin, lattice):
     for k in range(-number_z,number_z+1):
         for j in range(-number_y,number_y+1):
             for i in range(-number_x,number_x+1):
-                atom = Vector((float(i)*e,float(j)*f,float(k)*g)) 
+                atom = Vector((float(i)*e,float(j)*f,float(k)*g))
 
                 if y_displ == 1:
                     if z_displ == 1:
-                        atom[0] += e/2.0  
+                        atom[0] += e/2.0
                     else:
                         atom[0] -= e/2.0
                 if z_displ == 1:
@@ -926,7 +926,7 @@ def create_hexagonal_abcabc_lattice(ctype, size, skin, lattice):
                     # size = height, skin = diameter
                     message = vec_in_pyramide_hex_abc(atom, size, skin)
                 elif ctype == "parabolid_abc":
-                    message = vec_in_parabole(atom, size, skin)          
+                    message = vec_in_parabole(atom, size, skin)
 
                 if message[0] == True and message[1] == True:
                     atom_add = CLASS_atom_cluster_atom(atom)
@@ -934,8 +934,8 @@ def create_hexagonal_abcabc_lattice(ctype, size, skin, lattice):
                     atom_number_total += 1
                     atom_number_drawn += 1
                 if message[0] == True and message[1] == False:
-                    atom_number_total += 1                 
-          
+                    atom_number_total += 1
+
             if y_displ == 1:
                 y_displ = 0
             else:
@@ -990,10 +990,10 @@ def create_hexagonal_abab_lattice(ctype, size, skin, lattice):
             for i in range(-number_x,number_x+1):
 
                 atom = Vector((float(i)*e,float(j)*f,float(k)*g))
-          
+
                 if "odd" in y_displ:
                     if "odd" in z_displ:
-                        atom[0] += e/2.0  
+                        atom[0] += e/2.0
                     else:
                         atom[0] -= e/2.0
                 if "odd" in z_displ:
@@ -1004,16 +1004,16 @@ def create_hexagonal_abab_lattice(ctype, size, skin, lattice):
                     message = vec_in_sphere(atom, size, skin)
                 elif ctype == "parabolid_ab":
                     # size = height, skin = diameter
-                    message = vec_in_parabole(atom, size, skin)          
-          
+                    message = vec_in_parabole(atom, size, skin)
+
                 if message[0] == True and message[1] == True:
                     atom_add = CLASS_atom_cluster_atom(atom)
                     ATOM_CLUSTER_ALL_ATOMS.append(atom_add)
                     atom_number_total += 1
                     atom_number_drawn += 1
                 if message[0] == True and message[1] == False:
-                    atom_number_total += 1  
-          
+                    atom_number_total += 1
+
             if "even" in y_displ:
                 y_displ = "odd"
             else:
@@ -1034,7 +1034,7 @@ def create_square_lattice(ctype, size, skin, lattice):
 
     atom_number_total = 0
     atom_number_drawn = 0
-    
+
     if ctype == "parabolid_square":
         # size = height, skin = diameter
         number_k = int(size/(2.0*lattice))
@@ -1043,14 +1043,14 @@ def create_square_lattice(ctype, size, skin, lattice):
     else:
         number_k = int(size/(2.0*lattice))
         number_j = int(size/(2.0*lattice))
-        number_i = int(size/(2.0*lattice))       
+        number_i = int(size/(2.0*lattice))
 
 
     for k in range(-number_k,number_k+1):
         for j in range(-number_j,number_j+1):
             for i in range(-number_i,number_i+1):
 
-                atom = Vector((float(i),float(j),float(k))) * lattice 
+                atom = Vector((float(i),float(j),float(k))) * lattice
 
                 if ctype == "sphere_square":
                     message = vec_in_sphere(atom, size, skin)
@@ -1058,9 +1058,9 @@ def create_square_lattice(ctype, size, skin, lattice):
                     message = vec_in_pyramide_square(atom, size, skin)
                 elif ctype == "parabolid_square":
                     # size = height, skin = diameter
-                    message = vec_in_parabole(atom, size, skin)          
+                    message = vec_in_parabole(atom, size, skin)
                 elif ctype == "octahedron":
-                    message = vec_in_octahedron(atom, size, skin)            
+                    message = vec_in_octahedron(atom, size, skin)
                 elif ctype == "truncated_octahedron":
                     message = vec_in_truncated_octahedron(atom,size, skin)
 
@@ -1070,7 +1070,7 @@ def create_square_lattice(ctype, size, skin, lattice):
                     atom_number_total += 1
                     atom_number_drawn += 1
                 if message[0] == True and message[1] == False:
-                    atom_number_total += 1 
+                    atom_number_total += 1
 
     print("Atom positions calculated")
 
@@ -1092,7 +1092,7 @@ def create_square_lattice(ctype, size, skin, lattice):
 
 # The following code is a translation from an existing Fortran code into Python.
 # The Fortran code has been created by Christine Mottet and translated by me
-# (Clemens Barth). 
+# (Clemens Barth).
 
 # Although a couple of code lines are non-typical for Python, it is best to
 # leave the code as is.
@@ -1138,7 +1138,7 @@ def create_icosahedron(size, lattice):
         z[i]   = 0.0
         y[i+4] = 0.0
         x[i+8] = 0.0
-    
+
     for i in range(2, 3+1):
         x[i]    =  tdef
         x[i+2]  = -tdef
@@ -1171,7 +1171,7 @@ def create_icosahedron(size, lattice):
             for i in range(1, 12+1):
                 for j in range(1, 12+1):
                     naret[i][j] = 0
-                    for k in range (1, 12+1): 
+                    for k in range (1, 12+1):
                         nfacet[i][j][k] = 0
 
             nl1 = 6
@@ -1195,7 +1195,7 @@ def create_icosahedron(size, lattice):
                 for j in range(2, 12+1):
                     if j <= i:
                         continue
-                    
+
                     xij = xs[j] - xs[i]
                     yij = ys[j] - ys[i]
                     zij = zs[j] - zs[i]
@@ -1208,11 +1208,11 @@ def create_icosahedron(size, lattice):
                     diffij = abs(dij2-dssn2)
                     if diffij >= epsi:
                         continue
-                    
+
                     for k in range(3, 12+1):
                         if k <= j:
                             continue
-                        
+
                         xjk = xs[k] - xs[j]
                         yjk = ys[k] - ys[j]
                         zjk = zs[k] - zs[j]
@@ -1223,7 +1223,7 @@ def create_icosahedron(size, lattice):
                         diffjk = abs(djk2-dssn2)
                         if diffjk >= epsi:
                             continue
-                        
+
                         xik = xs[k] - xs[i]
                         yik = ys[k] - ys[i]
                         zik = zs[k] - zs[i]
@@ -1234,7 +1234,7 @@ def create_icosahedron(size, lattice):
                         diffik = abs(dik2-dssn2)
                         if diffik >= epsi:
                             continue
-                        
+
                         if nfacet[i][j][k] != 0:
                             continue
 
@@ -1294,7 +1294,7 @@ def create_icosahedron(size, lattice):
 
     for i in range (1,natot+1):
 
-        atom = Vector((x[i],y[i],z[i])) * lattice 
+        atom = Vector((x[i],y[i],z[i])) * lattice
 
         atom_add = CLASS_atom_cluster_atom(atom)
         ATOM_CLUSTER_ALL_ATOMS.append(atom_add)
@@ -1302,20 +1302,3 @@ def create_icosahedron(size, lattice):
         atom_number_drawn += 1
 
     return (atom_number_total, atom_number_drawn)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -724,7 +724,7 @@ def makeCyclesFromBI(cmat):
     createEmissionNodes(cmat, texCoordNode, mainShader, materialOutput)
 
     # Texture coordinates
-    # list all nodes conected to outputs
+    # list all nodes connected to outputs
     mappingNodes = [link.to_node for output in texCoordNode.outputs for link in output.links]
     mappingNodesCount = len(mappingNodes)
 

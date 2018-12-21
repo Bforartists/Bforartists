@@ -51,9 +51,9 @@
 
 /* ***************************************** */
 /* NOTE ABOUT THIS FILE:
- *  This file contains code for editing Mask data in the Action Editor
- *  as a 'keyframes', so that a user can adjust the timing of Mask shapekeys.
- *  Therefore, this file mostly contains functions for selecting Mask frames (shapekeys).
+ * This file contains code for editing Mask data in the Action Editor
+ * as a 'keyframes', so that a user can adjust the timing of Mask shapekeys.
+ * Therefore, this file mostly contains functions for selecting Mask frames (shapekeys).
  */
 /* ***************************************** */
 /* Generics - Loopers */
@@ -187,7 +187,7 @@ void ED_mask_select_frame(MaskLayer *masklay, int selx, short select_mode)
 }
 
 /* select the frames in this layer that occur within the bounds specified */
-void ED_masklayer_frames_select_border(MaskLayer *masklay, float min, float max, short select_mode)
+void ED_masklayer_frames_select_box(MaskLayer *masklay, float min, float max, short select_mode)
 {
 	MaskLayerShape *masklay_shape;
 

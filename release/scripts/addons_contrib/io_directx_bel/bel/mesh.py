@@ -16,9 +16,9 @@ no : create
 yes :
     naming_method = 0   blender default (increment name)
     naming_method = 1   do nothing, abort creation and use existing
-    naming_method = 2   create new, rename existing, 
+    naming_method = 2   create new, rename existing,
     naming_method = 3   create new, remove existing
-    
+
 for now, and mesh data, 0 2 or 3
 '''
 
@@ -27,7 +27,7 @@ given name < 21
 if material name exists :
 naming_method = 0   blender default (increment name)
 naming_method = 1   do nothing, abort creation and use existing
-naming_method = 2   create new, rename existing, 
+naming_method = 2   create new, rename existing,
 naming_method = 3   create new, replace existing
 '''
 
@@ -42,7 +42,7 @@ def new(name, naming_method=0) :
         me = bpy.data.meshes.new(name=name)
         me.name = name
         return me
-    
+
     # naming_method = 3 : replace, keep users
     me = bpy.data.meshes[name]
     bm = bmesh.new()
@@ -51,15 +51,15 @@ def new(name, naming_method=0) :
 
 ## material listed in matslots must exist before creation of material slots
 
-def write(obname,name, 
-          verts=[], edges=[], faces=[], 
-          matslots=[], mats=[], uvs=[], 
+def write(obname,name,
+          verts=[], edges=[], faces=[],
+          matslots=[], mats=[], uvs=[],
           groupnames=[], vindices=[], vweights=[],
           smooth=False,
           naming_method = 0,
           ) :
 
-    
+
     obj = bpy.data.objects[obname] if obname in bpy.data.objects else False
     me = bpy.data.meshes[name] if name in bpy.data.meshes else False
 
@@ -69,19 +69,19 @@ def write(obname,name,
     if naming_method == 1 and me and obj and obj.data == me :
         #print('%s and %s exist, reuse'%(obj.name,me.name))
         return obj
-       
+
     if naming_method == 3 :
-        if obj : 
+        if obj :
             #print('remove ob %s'%obj.name)
             bob.remove(obj,False)
         if me :
             #print('remove me %s'%me.name)
             bob.removeData(me)
-    
+
 
     me = bpy.data.meshes.new(name)
     if naming_method == 2 : me.name = name
-    
+
     me.from_pydata(verts, edges, faces)
     me.update()
 
@@ -126,26 +126,26 @@ def write(obname,name,
     obj = bpy.data.objects.new(name=obname, object_data=me)
     if naming_method != 0 :
         obj.name = obname
-            
+
     '''
     else :
         ob = bpy.data.objects[name]
         ob.data = me
-        if naming_method == 2 : ob.name = 
+        if naming_method == 2 : ob.name =
         ob.parent = None
         ob.matrix_local = Matrix()
         print('  reuse object %s'%ob.name)
     '''
-            
+
     # vertexgroups
     if len(groupnames) > 0 :
         for gpi, groupname in enumerate(groupnames) :
             weightsadd(obj, groupname, vindices[gpi], vweights[gpi])
-    
+
     # scene link check
     if obj.name not in bpy.context.scene.objects.keys() :
         bpy.context.scene.objects.link(obj)
-        
+
     return obj
 
 def shadesmooth(me,lst=True) :
@@ -155,7 +155,7 @@ def shadesmooth(me,lst=True) :
     else :
         for fi,face in enumerate(me.polygons) :
             face.use_smooth = True
- 
+
 def shadeflat(me,lst=True) :
     if type(lst) == list :
         for fi in lst :
@@ -185,7 +185,7 @@ def objectBuild(elm, verts, edges=[], faces=[], matslots=[], mats=[], uvs=[] ) :
     city = bpy.context.scene.city
     # apply current scale
     verts = metersToBu(verts)
-    
+
     if type(elm) != str :
         obname = elm.objectName()
         if obname == 'not built' :
@@ -232,5 +232,3 @@ def materialsCheck(bld) :
                     method = 'random'
                     mat.diffuse_color=( random.uniform(0.0,1.0),random.uniform(0.0,1.0),random.uniform(0.0,1.0))
                 dprint('Created missing material %s (%s)'%(matname,method),2)
-
-

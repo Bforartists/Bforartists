@@ -26,7 +26,7 @@ class VIEW3D_manipulator_set_of(Operator):
     bl_label = "Set Manipulator"
     bl_idname = "view3d.manipulator_set"
 
-    type = EnumProperty(
+    type: EnumProperty(
             name="Type",
             items=(('TRANSLATE', "Translate", "Use the manipulator for movement transformations"),
                    ('ROTATE', "Rotate", "Use the manipulator for rotation transformations"),
@@ -36,7 +36,7 @@ class VIEW3D_manipulator_set_of(Operator):
 
     def execute(self, context):
         # show manipulator if user selects an option
-        context.space_data.show_manipulator = True
+        context.space_data.show_gizmo = True
         context.space_data.transform_manipulators = {self.type}
 
         return {'FINISHED'}
@@ -50,10 +50,10 @@ class VIEW3D_PIE_manipulator_of(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.operator("view3d.manipulator_set", icon='MAN_TRANS', text="Translate").type = 'TRANSLATE'
-        pie.operator("view3d.manipulator_set", icon='MAN_ROT', text="Rotate").type = 'ROTATE'
-        pie.operator("view3d.manipulator_set", icon='MAN_SCALE', text="Scale").type = 'SCALE'
-        pie.prop(context.space_data, "show_manipulator")
+        pie.operator("wm.tool_set_by_name", icon='MAN_TRANS', text="Translate").name = "Move"
+        pie.operator("wm.tool_set_by_name", icon='MAN_ROT', text="Rotate").name = "Rotate"
+        pie.operator("wm.tool_set_by_name", icon='MAN_SCALE', text="Scale").name = "Scale"
+        pie.prop(context.space_data, "show_gizmo")
 
 
 classes = (

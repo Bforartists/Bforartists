@@ -1618,7 +1618,7 @@ def update_bevel(context):
                         mod.limit_method = 'WEIGHT'
                         mod.width = 0.01
                         mod.profile = 0.699099
-                        mod.use_clamp_overlap = False
+                        mod.use_clight_overlap = False
                         mod.segments = 3
                         mod.loop_slide = False
 
@@ -1676,7 +1676,7 @@ def CreateBevel(context, CurrentObject):
         mod.limit_method = 'WEIGHT'
         mod.width = 0.01
         mod.profile = 0.699099
-        mod.use_clamp_overlap = False
+        mod.use_clight_overlap = False
         mod.segments = 3
         mod.loop_slide = False
 
@@ -1707,7 +1707,7 @@ def Picking(context, event):
             if obj.type == 'MESH':
                 yield (obj, obj.matrix_world.copy())
 
-            if obj.dupli_type != 'NONE':
+            if obj.instance_type != 'NONE':
                 obj.dupli_list_create(scene)
                 for dob in obj.dupli_list:
                     obj_dupli = dob.object
@@ -1964,12 +1964,12 @@ def duplicateObject(self):
     ob_new.rotation_quaternion = qRot
     ob_new.rotation_mode = 'XYZ'
 
-    if (ob_new.draw_type == "WIRE") and (self.BrushSolidify is False):
+    if (ob_new.display_type == "WIRE") and (self.BrushSolidify is False):
         ob_new.hide = True
 
     if self.BrushSolidify:
-        ob_new.draw_type = "SOLID"
-        ob_new.show_x_ray = False
+        ob_new.display_type = "SOLID"
+        ob_new.show_in_front = False
 
     for o in bpy.context.selected_objects:
         UndoAdd(self, "DUPLICATE", o)
@@ -2070,20 +2070,20 @@ def boolean_operation(bool_type="DIFFERENCE"):
                     )
     BoolMod.object = bpy.context.selected_objects[sel_index]
     BoolMod.operation = bool_type
-    bpy.context.selected_objects[sel_index].draw_type = 'WIRE'
+    bpy.context.selected_objects[sel_index].display_type = 'WIRE'
 
 
 def Rebool(context, self):
     LastObj = context.active_object
 
     Brush = context.selected_objects[0]
-    Brush.draw_type = "WIRE"
+    Brush.display_type = "WIRE"
     obj = context.selected_objects[1]
 
     bpy.ops.object.select_all(action='TOGGLE')
 
     context.scene.objects.active = obj
-    obj.draw_type = "SOLID"
+    obj.display_type = "SOLID"
     obj.select = True
     bpy.ops.object.duplicate_move(
         OBJECT_OT_duplicate={
@@ -2124,7 +2124,7 @@ def Rebool(context, self):
             mb.show_viewport = False
 
     if self.ObjectBrush or self.ProfileBrush:
-        LastObjectCreated.show_x_ray = False
+        LastObjectCreated.show_in_front = False
         try:
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
         except:
@@ -2177,7 +2177,7 @@ def createMeshFromData(self):
         scn.objects.active = ob
         ob.select = True
         ob.location = Vector((10000.0, 0.0, 0.0))
-        ob.draw_type = "WIRE"
+        ob.display_type = "WIRE"
 
         self.SolidifyPossible = True
     else:
@@ -2390,7 +2390,7 @@ class Carver(bpy.types.Operator):
                     self.ProfileBrush.select = True
                     context.scene.objects.active = self.ProfileBrush
                     # Set xRay
-                    self.ProfileBrush.show_x_ray = True
+                    self.ProfileBrush.show_in_front = True
 
                     bpy.ops.object.modifier_add(type='SOLIDIFY')
                     context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
@@ -2407,8 +2407,8 @@ class Carver(bpy.types.Operator):
                                 self.ObjectBrush.scale = self.InitBrushScale
                                 self.ObjectBrush.rotation_quaternion = self.InitBrushQRotation
                                 self.ObjectBrush.rotation_euler = self.InitBrushERotation
-                                self.ObjectBrush.draw_type = self.ObjectBrush_DT
-                                self.ObjectBrush.show_x_ray = self.XRay
+                                self.ObjectBrush.display_type = self.ObjectBrush_DT
+                                self.ObjectBrush.show_in_front = self.XRay
 
                                 # Remove solidify modifier
                                 Selection_Save(self)
@@ -2430,7 +2430,7 @@ class Carver(bpy.types.Operator):
                                 self.ObjectBrush.select = True
                                 context.scene.objects.active = self.ObjectBrush
                                 # Set xRay
-                                self.ObjectBrush.show_x_ray = True
+                                self.ObjectBrush.show_in_front = True
                                 bpy.ops.object.modifier_add(type='SOLIDIFY')
                                 context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
                                 context.object.modifiers["CT_SOLIDIFY"].thickness = 0.1
@@ -2529,12 +2529,12 @@ class Carver(bpy.types.Operator):
                                     self.ObjectBrush.select = True
                                     context.scene.objects.active = self.ObjectBrush
                                     # Active le xray
-                                    self.ObjectBrush.show_x_ray = True
+                                    self.ObjectBrush.show_in_front = True
                                 else:
                                     self.ProfileBrush.select = True
                                     context.scene.objects.active = self.ProfileBrush
                                     # Active le xray
-                                    self.ProfileBrush.show_x_ray = True
+                                    self.ProfileBrush.show_in_front = True
 
                                 bpy.ops.object.modifier_add(type='SOLIDIFY')
                                 context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
@@ -2773,8 +2773,8 @@ class Carver(bpy.types.Operator):
                                     self.ObjectBrush.scale = self.InitBrushScale
                                     self.ObjectBrush.rotation_quaternion = self.InitBrushQRotation
                                     self.ObjectBrush.rotation_euler = self.InitBrushERotation
-                                    self.ObjectBrush.draw_type = self.ObjectBrush_DT
-                                    self.ObjectBrush.show_x_ray = self.XRay
+                                    self.ObjectBrush.display_type = self.ObjectBrush_DT
+                                    self.ObjectBrush.show_in_front = self.XRay
 
                                     # remove solidify
                                     Selection_Save(self)
@@ -2844,8 +2844,8 @@ class Carver(bpy.types.Operator):
                     self.ObjectBrush.scale = self.InitBrushScale
                     self.ObjectBrush.rotation_quaternion = self.InitBrushQRotation
                     self.ObjectBrush.rotation_euler = self.InitBrushERotation
-                    self.ObjectBrush.draw_type = self.ObjectBrush_DT
-                    self.ObjectBrush.show_x_ray = self.XRay
+                    self.ObjectBrush.display_type = self.ObjectBrush_DT
+                    self.ObjectBrush.show_in_front = self.XRay
 
                     # Remove solidify modifier
                     Selection_Save(self)
@@ -2884,7 +2884,7 @@ class Carver(bpy.types.Operator):
             traceback.print_exc()
 
             context.window.cursor_modal_set("DEFAULT")
-            context.area.header_text_set()
+            context.area.header_text_set(None)
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
             self.report({'WARNING'},
@@ -2893,7 +2893,7 @@ class Carver(bpy.types.Operator):
             return {'FINISHED'}
 
     def cancel(self, context):
-        # Note: used to prevent memory leaks on quiting Blender while the modal operator
+        # Note: used to prevent memory leaks on quitting Blender while the modal operator
         # is still running, gets called on return {"CANCELLED"}
         bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
@@ -3089,8 +3089,8 @@ class Carver(bpy.types.Operator):
             self.InitBrushScale = self.ObjectBrush.scale.copy()
             self.InitBrushQRotation = self.ObjectBrush.rotation_quaternion.copy()
             self.InitBrushERotation = self.ObjectBrush.rotation_euler.copy()
-            self.ObjectBrush_DT = self.ObjectBrush.draw_type
-            self.XRay = self.ObjectBrush.show_x_ray
+            self.ObjectBrush_DT = self.ObjectBrush.display_type
+            self.XRay = self.ObjectBrush.show_in_front
             # Test if flat object
             z = self.ObjectBrush.data.vertices[0].co.z
             ErrorMarge = 0.01
@@ -3363,7 +3363,7 @@ class Carver(bpy.types.Operator):
                 bpy.ops.object.delete(use_global=False)
             else:
                 if self.ObjectMode:
-                    self.ObjectBrush.draw_type = self.ObjectBrush_DT
+                    self.ObjectBrush.display_type = self.ObjectBrush_DT
 
         if len(context.selected_objects) > 0:
             bpy.ops.object.select_all(action='TOGGLE')
@@ -3392,9 +3392,9 @@ class Carver(bpy.types.Operator):
         # If object has children, set "Wire" draw type
         if self.ObjectBrush is not None:
             if len(self.ObjectBrush.children) > 0:
-                self.ObjectBrush.draw_type = "WIRE"
+                self.ObjectBrush.display_type = "WIRE"
         if self.ProfileMode:
-            self.ProfileBrush.draw_type = "WIRE"
+            self.ProfileBrush.display_type = "WIRE"
 
         if bLocalView:
             bpy.ops.view3d.localview()

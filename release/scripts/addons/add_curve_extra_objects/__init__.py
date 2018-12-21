@@ -225,9 +225,9 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
                      icon="LAYER_USED")
 
 
-class INFO_MT_curve_knots_add(Menu):
+class VIEW3D_MT_curve_knots_add(Menu):
     # Define the "Extras" menu
-    bl_idname = "INFO_MT_curve_knots_add"
+    bl_idname = "VIEW3D_MT_curve_knots_add"
     bl_label = "Plants"
 
     def draw(self, context):
@@ -253,7 +253,7 @@ def menu_func(self, context):
                               icon='CURVE_DATA')
     layout.separator()
 
-    layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
+    layout.menu(VIEW3D_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
     layout.separator()
     layout.operator("curve.curlycurve", text="Curly Curve",
                     icon='CURVE_DATA')
@@ -282,17 +282,17 @@ def register():
     bpy.utils.register_module(__name__)
 
     # Add "Extras" menu to the "Add Curve" menu
-    bpy.types.INFO_MT_curve_add.append(menu_func)
+    bpy.types.VIEW3D_MT_curve_add.append(menu_func)
     # Add "Extras" menu to the "Add Surface" menu
-    bpy.types.INFO_MT_surface_add.append(menu_surface)
+    bpy.types.VIEW3D_MT_surface_add.append(menu_surface)
 
 
 def unregister():
     add_curve_simple.unregister()
     # Remove "Extras" menu from the "Add Curve" menu.
-    bpy.types.INFO_MT_curve_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
     # Remove "Extras" menu from the "Add Surface" menu.
-    bpy.types.INFO_MT_surface_add.remove(menu_surface)
+    bpy.types.VIEW3D_MT_surface_add.remove(menu_surface)
 
     bpy.utils.unregister_module(__name__)
 

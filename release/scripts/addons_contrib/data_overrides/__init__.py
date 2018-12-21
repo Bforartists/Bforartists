@@ -33,7 +33,7 @@ bl_info = {
 
 import bpy
 from data_overrides import override, ui
- 
+
 def register():
     override.register()
     ui.register()

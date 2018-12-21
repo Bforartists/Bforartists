@@ -32,25 +32,29 @@
  *  \ingroup modifiers
  */
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_cdderivedmesh.h"
+#include "BKE_editmesh.h"
+#include "BKE_mesh.h"
+#include "BKE_library.h"
 #include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 
-
-#include "depsgraph_private.h"
+#include "DEG_depsgraph_query.h"
 
 #include "MOD_util.h"
 
+#include "bmesh.h"
+
 #define BEND_EPS 0.000001f
 
-/* Re-maps the indicies for X Y Z by shifting them up and wrapping, such that
+/* Re-maps the indices for X Y Z by shifting them up and wrapping, such that
  * X = Y, Y = Z, Z = X (for X axis), and X = Z, Y = X, Z = Y (for Y axis). This
  * exists because the deformations (excluding bend) are based on the Z axis.
  * Having this helps avoid long, drawn out switches. */
@@ -184,11 +188,11 @@ static void simpleDeform_bend(const float factor, const int axis, const float dc
 
 /* simple deform modifier */
 static void SimpleDeformModifier_do(
-        SimpleDeformModifierData *smd, struct Object *ob, struct DerivedMesh *dm,
+        SimpleDeformModifierData *smd, const ModifierEvalContext *ctx,
+        struct Object *ob, struct Mesh *mesh,
         float (*vertexCos)[3], int numVerts)
 {
 	const float base_limit[2] = {0.0f, 0.0f};
-
 	int i;
 	float smd_limit[2], smd_factor;
 	SpaceTransform *transf = NULL, tmp_transf;
@@ -199,7 +203,7 @@ static void SimpleDeformModifier_do(
 	/* This is historically the lock axis, _not_ the deform axis as the name would imply */
 	const int deform_axis = smd->deform_axis;
 	int lock_axis = smd->axis;
-	if (smd->mode == MOD_SIMPLEDEFORM_MODE_BEND) { /* Bend mode shouln't have any lock axis */
+	if (smd->mode == MOD_SIMPLEDEFORM_MODE_BEND) { /* Bend mode shouldn't have any lock axis */
 		lock_axis = 0;
 	}
 	else {
@@ -226,9 +230,9 @@ static void SimpleDeformModifier_do(
 	smd->limit[0] = min_ff(smd->limit[0], smd->limit[1]);  /* Upper limit >= than lower limit */
 
 	/* Calculate matrixs do convert between coordinate spaces */
-	if (smd->origin) {
+	if (smd->origin != NULL) {
 		transf = &tmp_transf;
-		BLI_SPACE_TRANSFORM_SETUP(transf, ob, smd->origin);
+		BLI_SPACE_TRANSFORM_SETUP(transf, ob, DEG_get_evaluated_object(ctx->depsgraph, smd->origin));
 	}
 
 	/* Update limits if needed */
@@ -263,7 +267,7 @@ static void SimpleDeformModifier_do(
 		}
 
 
-		/* SMD values are normalized to the BV, calculate the absolut values */
+		/* SMD values are normalized to the BV, calculate the absolute values */
 		smd_limit[1] = lower + (upper - lower) * smd->limit[1];
 		smd_limit[0] = lower + (upper - lower) * smd->limit[0];
 
@@ -285,7 +289,7 @@ static void SimpleDeformModifier_do(
 		}
 	}
 
-	modifier_get_vgroup(ob, dm, smd->vgroup_name, &dvert, &vgroup);
+	MOD_get_vgroup(ob, mesh, smd->vgroup_name, &dvert, &vgroup);
 	const bool invert_vgroup = (smd->flag & MOD_SIMPLEDEFORM_FLAG_INVERT_VGROUP) != 0;
 	const uint *axis_map = axis_map_table[(smd->mode != MOD_SIMPLEDEFORM_MODE_BEND) ? deform_axis : 2];
 
@@ -370,62 +374,56 @@ static void foreachObjectLink(
 	walk(userData, ob, &smd->origin, IDWALK_CB_NOP);
 }
 
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	SimpleDeformModifierData *smd  = (SimpleDeformModifierData *)md;
-
-	if (smd->origin)
-		dag_add_relation(ctx->forest, dag_get_node(ctx->forest, smd->origin), ctx->obNode, DAG_RL_OB_DATA, "SimpleDeform Modifier");
-}
-
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	SimpleDeformModifierData *smd  = (SimpleDeformModifierData *)md;
 	if (smd->origin != NULL) {
 		DEG_add_object_relation(ctx->node, smd->origin, DEG_OB_COMP_TRANSFORM, "SimpleDeform Modifier");
+		DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "SimpleDeform Modifier");
 	}
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
-        float (*vertexCos)[3],
-        int numVerts,
-        ModifierApplyFlag UNUSED(flag))
-{
-	DerivedMesh *dm = derivedData;
-	CustomDataMask dataMask = requiredDataMask(ob, md);
-
-	/* we implement requiredDataMask but thats not really useful since
-	 * mesh_calc_modifiers pass a NULL derivedData */
-	if (dataMask)
-		dm = get_dm(ob, NULL, dm, NULL, false, false);
-
-	SimpleDeformModifier_do((SimpleDeformModifierData *)md, ob, dm, vertexCos, numVerts);
-
-	if (dm != derivedData)
-		dm->release(dm);
-}
-
-static void deformVertsEM(
-        ModifierData *md, Object *ob,
-        struct BMEditMesh *editData,
-        DerivedMesh *derivedData,
+        ModifierData *md, const ModifierEvalContext *ctx,
+        struct Mesh *mesh,
         float (*vertexCos)[3],
         int numVerts)
 {
-	DerivedMesh *dm = derivedData;
-	CustomDataMask dataMask = requiredDataMask(ob, md);
+	SimpleDeformModifierData *sdmd = (SimpleDeformModifierData *)md;
+	Mesh *mesh_src = NULL;
 
-	/* we implement requiredDataMask but thats not really useful since
-	 * mesh_calc_modifiers pass a NULL derivedData */
-	if (dataMask)
-		dm = get_dm(ob, editData, dm, NULL, false, false);
+	if (ctx->object->type == OB_MESH && sdmd->vgroup_name[0] != '\0') {
+		/* mesh_src is only needed for vgroups. */
+		mesh_src = MOD_deform_mesh_eval_get(ctx->object, NULL, mesh, NULL, numVerts, false, false);
+	}
 
-	SimpleDeformModifier_do((SimpleDeformModifierData *)md, ob, dm, vertexCos, numVerts);
+	SimpleDeformModifier_do(sdmd, ctx, ctx->object, mesh_src, vertexCos, numVerts);
 
-	if (dm != derivedData)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
+}
+
+static void deformVertsEM(
+        ModifierData *md, const ModifierEvalContext *ctx,
+        struct BMEditMesh *editData,
+        struct Mesh *mesh,
+        float (*vertexCos)[3],
+        int numVerts)
+{
+	SimpleDeformModifierData *sdmd = (SimpleDeformModifierData *)md;
+	Mesh *mesh_src = NULL;
+
+	if (ctx->object->type == OB_MESH && sdmd->vgroup_name[0] != '\0') {
+		/* mesh_src is only needed for vgroups. */
+		mesh_src = MOD_deform_mesh_eval_get(ctx->object, editData, mesh, NULL, numVerts, false, false);
+	}
+
+	SimpleDeformModifier_do(sdmd, ctx, ctx->object, mesh_src, vertexCos, numVerts);
+
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 
@@ -442,17 +440,23 @@ ModifierTypeInfo modifierType_SimpleDeform = {
 	                        eModifierTypeFlag_EnableInEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        NULL,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

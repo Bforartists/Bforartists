@@ -39,7 +39,7 @@ camera{
         location PdV
         angle 65 //   direction z*2
         up y
-        right x*image_width/image_height // keep propotions with any aspect ratio  //right 8*x/3
+        right x*image_width/image_height // keep proportions with any aspect ratio  //right 8*x/3
         look_at <-20, 30, 0>
 }
 

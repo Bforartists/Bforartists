@@ -62,9 +62,89 @@ static void node_shader_init_volume_principled(bNodeTree *UNUSED(ntree), bNode *
 	}
 }
 
-static int node_shader_gpu_volume_principled(GPUMaterial *UNUSED(mat), bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *UNUSED(in), GPUNodeStack *UNUSED(out))
+static void node_shader_gpu_volume_attribute(GPUMaterial *mat, const char *name, GPUNodeLink **outcol, GPUNodeLink **outvec, GPUNodeLink **outf)
 {
-	return false;
+	if (strcmp(name, "density") == 0) {
+		GPU_link(mat, "node_attribute_volume_density",
+		         GPU_builtin(GPU_VOLUME_DENSITY),
+		         outcol, outvec, outf);
+	}
+	else if (strcmp(name, "color") == 0) {
+		GPU_link(mat, "node_attribute_volume_color",
+		         GPU_builtin(GPU_VOLUME_DENSITY),
+		         outcol, outvec, outf);
+	}
+	else if (strcmp(name, "flame") == 0) {
+		GPU_link(mat, "node_attribute_volume_flame",
+		         GPU_builtin(GPU_VOLUME_FLAME),
+		         outcol, outvec, outf);
+	}
+	else if (strcmp(name, "temperature") == 0) {
+		GPU_link(mat, "node_attribute_volume_temperature",
+		         GPU_builtin(GPU_VOLUME_FLAME),
+		         GPU_builtin(GPU_VOLUME_TEMPERATURE),
+		         outcol, outvec, outf);
+	}
+	else {
+		*outcol = *outvec = *outf = NULL;
+	}
+}
+
+static int node_shader_gpu_volume_principled(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+{
+	/* Test if blackbody intensity is enabled. */
+	bool use_blackbody = (in[8].link || in[8].vec[0] != 0.0f);
+
+	/* Get volume attributes. */
+	GPUNodeLink *density = NULL, *color = NULL, *temperature = NULL;
+
+	for (bNodeSocket *sock = node->inputs.first; sock; sock = sock->next) {
+		if (sock->typeinfo->type != SOCK_STRING) {
+			continue;
+		}
+
+		bNodeSocketValueString *value = sock->default_value;
+		GPUNodeLink *outcol, *outvec, *outf;
+
+		if (STREQ(sock->name, "Density Attribute")) {
+			node_shader_gpu_volume_attribute(mat, value->value, &outcol, &outvec, &density);
+		}
+		else if (STREQ(sock->name, "Color Attribute")) {
+			node_shader_gpu_volume_attribute(mat, value->value, &color, &outvec, &outf);
+		}
+		else if (use_blackbody && STREQ(sock->name, "Temperature Attribute")) {
+			node_shader_gpu_volume_attribute(mat, value->value, &outcol, &outvec, &temperature);
+		}
+	}
+
+	/* Default values if attributes not found. */
+	if (!density) {
+		static float one = 1.0f;
+		density = GPU_constant(&one);
+	}
+	if (!color) {
+		static float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+		color = GPU_constant(white);
+	}
+	if (!temperature) {
+		static float one = 1.0f;
+		temperature = GPU_constant(&one);
+	}
+
+	/* Create blackbody spectrum. */
+	const int size = CM_TABLE + 1;
+	float *data, layer;
+	if (use_blackbody) {
+		data = MEM_mallocN(sizeof(float) * size * 4, "blackbody texture");
+		blackbody_temperature_to_rgb_table(data, size, 965.0f, 12000.0f);
+	}
+	else {
+		data = MEM_callocN(sizeof(float) * size * 4, "blackbody black");
+	}
+	GPUNodeLink *spectrummap = GPU_color_band(mat, size, data, &layer);
+
+	return GPU_stack_link(mat, node, "node_volume_principled", in, out, density, color, temperature, spectrummap,
+	                                                           GPU_constant(&layer));
 }
 
 /* node type definition */
@@ -73,7 +153,6 @@ void register_node_type_sh_volume_principled(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_VOLUME_PRINCIPLED, "Principled Volume", NODE_CLASS_SHADER, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_volume_principled_in, sh_node_volume_principled_out);
 	node_type_size_preset(&ntype, NODE_SIZE_LARGE);
 	node_type_init(&ntype, node_shader_init_volume_principled);

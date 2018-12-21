@@ -296,7 +296,7 @@ static int gpu_shader_math(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(
 		case NODE_MATH_GREATER:
 		case NODE_MATH_MOD:
 		case NODE_MATH_ATAN2:
-			GPU_stack_link(mat, names[node->custom1], in, out);
+			GPU_stack_link(mat, node, names[node->custom1], in, out);
 			break;
 		case NODE_MATH_SIN:
 		case NODE_MATH_COS:
@@ -315,14 +315,14 @@ static int gpu_shader_math(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(
 				GPUNodeStack tmp_in[2];
 				memcpy(&tmp_in[0], &in[0], sizeof(GPUNodeStack));
 				memcpy(&tmp_in[1], &in[2], sizeof(GPUNodeStack));
-				GPU_stack_link(mat, names[node->custom1], tmp_in, out);
+				GPU_stack_link(mat, node, names[node->custom1], tmp_in, out);
 			}
 			else {
 				/* use only second item and terminator */
 				GPUNodeStack tmp_in[2];
 				memcpy(&tmp_in[0], &in[1], sizeof(GPUNodeStack));
 				memcpy(&tmp_in[1], &in[2], sizeof(GPUNodeStack));
-				GPU_stack_link(mat, names[node->custom1], tmp_in, out);
+				GPU_stack_link(mat, node, names[node->custom1], tmp_in, out);
 			}
 			break;
 		default:
@@ -332,7 +332,7 @@ static int gpu_shader_math(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(
 	if (node->custom2 & SHD_MATH_CLAMP) {
 		float min[3] = {0.0f, 0.0f, 0.0f};
 		float max[3] = {1.0f, 1.0f, 1.0f};
-		GPU_link(mat, "clamp_val", out[0].link, GPU_uniform(min), GPU_uniform(max), &out[0].link);
+		GPU_link(mat, "clamp_val", out[0].link, GPU_constant(min), GPU_constant(max), &out[0].link);
 	}
 
 	return 1;
@@ -343,7 +343,6 @@ void register_node_type_sh_math(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_MATH, "Math", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_math_in, sh_node_math_out);
 	node_type_label(&ntype, node_math_label);
 	node_type_storage(&ntype, "", NULL, NULL);

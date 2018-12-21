@@ -56,11 +56,14 @@ void ED_operatortypes_render(void)
 	WM_operatortype_append(MATERIAL_OT_copy);
 	WM_operatortype_append(MATERIAL_OT_paste);
 
-	WM_operatortype_append(SCENE_OT_render_layer_add);
-	WM_operatortype_append(SCENE_OT_render_layer_remove);
+	WM_operatortype_append(SCENE_OT_view_layer_add);
+	WM_operatortype_append(SCENE_OT_view_layer_remove);
 
 	WM_operatortype_append(SCENE_OT_render_view_add);
 	WM_operatortype_append(SCENE_OT_render_view_remove);
+
+	WM_operatortype_append(SCENE_OT_light_cache_bake);
+	WM_operatortype_append(SCENE_OT_light_cache_free);
 
 #ifdef WITH_FREESTYLE
 	WM_operatortype_append(SCENE_OT_freestyle_module_add);
@@ -85,9 +88,6 @@ void ED_operatortypes_render(void)
 	WM_operatortype_append(TEXTURE_OT_slot_copy);
 	WM_operatortype_append(TEXTURE_OT_slot_paste);
 	WM_operatortype_append(TEXTURE_OT_slot_move);
-	WM_operatortype_append(TEXTURE_OT_envmap_save);
-	WM_operatortype_append(TEXTURE_OT_envmap_clear);
-	WM_operatortype_append(TEXTURE_OT_envmap_clear_all);
 
 	/* render_internal.c */
 	WM_operatortype_append(RENDER_OT_view_show);

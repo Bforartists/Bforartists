@@ -43,11 +43,11 @@ class add_cycles_scene(Operator):
                     )
             cam = bpy.context.active_object.data
             cam.lens = 35
-            cam.draw_size = 0.1
+            cam.display_size = 0.1
             bpy.ops.view3d.viewnumpad(type='CAMERA')
 
             # add point lamp
-            bpy.ops.object.lamp_add(
+            bpy.ops.object.light_add(
                     type="POINT", location=(4.07625, 1.00545, 5.90386),
                     rotation=(0.650328, 0.055217, 1.866391)
                     )
@@ -59,7 +59,7 @@ class add_cycles_scene(Operator):
             lamp1.use_sphere = True
 
             # add point lamp2
-            bpy.ops.object.lamp_add(
+            bpy.ops.object.light_add(
                     type="POINT", location=(-0.57101, -4.24586, 5.53674),
                     rotation=(1.571, 0, 0.785)
                     )

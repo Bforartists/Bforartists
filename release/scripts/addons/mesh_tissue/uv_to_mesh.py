@@ -141,7 +141,7 @@ class uv_to_mesh(Operator):
             try:
                 for group in ob0.vertex_groups:
                     index = group.index
-                    ob.vertex_groups.new(group.name)
+                    ob.vertex_groups.new(name=group.name)
                     for p in me0.polygons:
                         for vert, loop in zip(p.vertices, p.loop_indices):
                             ob.vertex_groups[index].add([loop], group.weight(vert), "ADD")

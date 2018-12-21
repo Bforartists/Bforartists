@@ -18,10 +18,10 @@
 
 # ------------------------- COLORS / GROUPS EXCHANGER ------------------------ #
 #                                                                              #
-# Vertex Color to Vertex Group allow you to convert colors channles to weight  #
+# Vertex Color to Vertex Group allow you to convert colors channels to weight  #
 # maps.                                                                        #
 # The main purpose is to use vertex colors to store information when importing #
-# files from other softwares. The script works with the active vertex color    #
+# files from other software. The script works with the active vertex color    #
 # slot.                                                                        #
 # For use the command "Vertex Clors to Vertex Groups" use the search bar       #
 # (space bar).                                                                 #

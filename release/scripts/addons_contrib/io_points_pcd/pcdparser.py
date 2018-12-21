@@ -4,7 +4,7 @@
 #  modify it under the terms of the GNU General Public License
 #  as published by the Free Software Foundation; either version 2
 #  of the License, or (at your option) any later version.
-#   
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -93,8 +93,8 @@ class PCDParser:
                 if line_split[0] == 'VERSION' and len(line_split) > 1:
                     version = line_split[1]
                     break
-      
-        if version == ".7" or version == "0.7": 
+
+        if version == ".7" or version == "0.7":
             return PCDParser_v0_7(filepath, PointClass)
         else:
             return None
@@ -111,10 +111,10 @@ class PCDParser:
 
     def parserWarning(self, msg):
         print("[WARNING] ", msg)
-    
+
 
     def rmComment(self, line):
-        return line[:line.find('#')] 
+        return line[:line.find('#')]
 
 
     def parseFile(self):
@@ -145,7 +145,7 @@ class PCDParser:
         keyword = split[0]
         self.parserWarning("Uknown header Keyword '" + keyword + "' gets ignored")
 
-    
+
     def finalizeHeader(self):
         pass
 
@@ -270,8 +270,8 @@ class PCDParser_v0_7(PCDParser):
     def parseASCII(self):
         parsedPoints = 0
         while parsedPoints < self.numPoints:
-           
-            try: 
+
+            try:
                 b = self.file.readline()
                 line = encodeASCIILine(b)
             except:
@@ -306,9 +306,9 @@ class PCDParser_v0_7(PCDParser):
 
 
     def parseBINARY_COMPRESSED(self):
-        """ BROKEN!!! - There seem to be uncompatiblities 
+        """ BROKEN!!! - There seem to be uncompatiblities
             with pcl LZF and liblzf"""
-        max_size = 1024**3 # 1GB 
+        max_size = 1024**3 # 1GB
         fs = '<i'
         compressed_len = struct.unpack('<i', self.file.read(4))[0]
         decompressed_len = struct.unpack('<i', self.file.read(4))[0]
@@ -322,7 +322,7 @@ class PCDParser_v0_7(PCDParser):
 
 
     def parseBINARY(self, infile=""):
-        
+
         if infile == "":
             infile = self.file
 
@@ -416,4 +416,3 @@ def test():
             print(point.x, point.y, point.z)
     else:
         print("Can't create parser for this file")
-

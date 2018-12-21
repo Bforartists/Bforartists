@@ -53,11 +53,11 @@ def remove(ob,with_data=True) :
                     and_data=False
             except :
                 and_data=False # empties
-                
+
             # odd (pre 2.60) :
             # ob=bpy.data.objects[ob.name]
-            # if the ob (board) argument comes from bpy.data.groups['aGroup'].objects,
-            #  bpy.data.groups['board'].objects['board'].users_scene
+            # if the ob (board) argument comes from bpy.data.collections['aGroup'].objects,
+            #  bpy.data.collections['board'].objects['board'].users_scene
             ob.name = '_dead'
             for sc in ob.users_scene :
                 sc.objects.unlink(ob)
@@ -78,12 +78,12 @@ def remove(ob,with_data=True) :
 ## or rename it _dead if there's still users
 def removeData(data) :
     #print('%s has %s user(s) !'%(data.name,data.users))
-    
+
     if data.users <= 0 :
 
             #data.user_clear()
             data_type = type(data)
-            
+
             # mesh
             if data_type == Mesh :
                 bpy.data.meshes.remove(data)
@@ -113,4 +113,3 @@ def removeData(data) :
     else :
         #print('  not done, %s has %s user'%(data.name,data.users))
         data.name = '_dead'
-        
