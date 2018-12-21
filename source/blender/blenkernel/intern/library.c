@@ -518,25 +518,25 @@ static int id_copy_libmanagement_cb(void *user_data, ID *UNUSED(id_self), ID **i
 	return IDWALK_RET_NOP;
 }
 
-static void id_copy_clear_runtime_if_needed(ID *id, int flag)
+static void id_copy_clear_runtime_pointers(ID *id, int UNUSED(flag))
 {
 	if (id == NULL) {
 		return;
 	}
-	if (flag & LIB_ID_COPY_RUNTIME) {
-		return;
-	}
+	/* TODO(sergey): We might want to do a deep-copy of all the pointers inside.
+	 * This isn't currently needed, and is quite involved change (to cover all
+	 * things like batch cache and such). */
 	switch ((ID_Type)GS(id->name)) {
 		case ID_OB:
 		{
 			Object *object = (Object *)id;
-			BKE_object_runtime_reset(object);
+			BKE_object_runtime_reset_on_copy(object);
 			break;
 		}
 		case ID_ME:
 		{
 			Mesh *mesh = (Mesh *)id;
-			BKE_mesh_runtime_reset(mesh);
+			BKE_mesh_runtime_reset_on_copy(mesh);
 			break;
 		}
 		default:
@@ -709,7 +709,7 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 		(*r_newid)->lib = id->lib;
 	}
 
-	id_copy_clear_runtime_if_needed(*r_newid, flag);
+	id_copy_clear_runtime_pointers(*r_newid, flag);
 
 	return true;
 }
@@ -2209,12 +2209,16 @@ void BKE_id_full_name_ui_prefix_get(char name[MAX_ID_FULL_NAME_UI], const ID *id
  */
 char *BKE_id_to_unique_string_key(const struct ID *id)
 {
-	char name[MAX_ID_FULL_NAME + 2];
-	name[0] = id->name[0];
-	name[1] = id->name[1];
-	BKE_id_full_name_get(name + 2, id);
-
-	return BLI_strdup(name);
+	if (id->lib == NULL) {
+		return BLI_strdup(id->name);
+	}
+	else {
+		/* Prefix with an ascii character in the range of 32..96 (visible)
+		 * this ensures we can't have a library ID pair that collide.
+		 * Where 'LIfooOBbarOBbaz' could be ('LIfoo, OBbarOBbaz') or ('LIfooOBbar', 'OBbaz'). */
+		const char ascii_len = strlen(id->lib->id.name + 2) + 32;
+		return BLI_sprintfN("%c%s%s", ascii_len, id->lib->id.name, id->name);
+	}
 }
 
 void BKE_library_filepath_set(Main *bmain, Library *lib, const char *filepath)

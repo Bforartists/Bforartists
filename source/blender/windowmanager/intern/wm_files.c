@@ -678,7 +678,7 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
 
 }
 
-struct {
+static struct {
 	char app_template[64];
 	bool override;
 } wm_init_state_app_template = {{0}};
@@ -2423,9 +2423,9 @@ static uiBlock *block_create_autorun_warning(struct bContext *C, struct ARegion 
 
 	uiItemS(layout);
 
-	PointerRNA userpref_ptr;
-	RNA_pointer_create(NULL, &RNA_UserPreferencesSystem, &U, &userpref_ptr);
-	uiItemR(layout, &userpref_ptr, "use_scripts_auto_execute", 0, IFACE_("Permanently allow execution of scripts"), ICON_NONE);
+	PointerRNA pref_ptr;
+	RNA_pointer_create(NULL, &RNA_PreferencesSystem, &U, &pref_ptr);
+	uiItemR(layout, &pref_ptr, "use_scripts_auto_execute", 0, IFACE_("Permanently allow execution of scripts"), ICON_NONE);
 
 	uiItemS(layout);
 
