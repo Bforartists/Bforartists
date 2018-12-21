@@ -726,7 +726,7 @@ class ExpandID:
             del dup_group
 
         yield block.get_pointer(b'proxy')
-        yield block.get_pointer(b'proxy_group')
+        yield block.get_pointer(b'proxy_collection')
 
         if USE_ALEMBIC_BRANCH:
             if has_dup_group:

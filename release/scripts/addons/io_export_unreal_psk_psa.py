@@ -169,7 +169,7 @@ from struct import pack
 # U = x / sqrt(x^2 + y^2 + z^2)
 # V = y / sqrt(x^2 + y^2 + z^2)
 #
-# Triangles specifed counter clockwise for front face
+# Triangles specified counter clockwise for front face
 #
 # defines for sizeofs
 SIZE_FQUAT = 16
@@ -804,7 +804,7 @@ def is_1d_face(face, mesh):
 
 # ===========================================================================
 # Smoothing group
-# (renamed to seperate it from VVertex.SmoothGroup)
+# (renamed to separate it from VVertex.SmoothGroup)
 # ===========================================================================
 class SmoothingGroup:
 
@@ -1201,8 +1201,8 @@ def parse_mesh(mesh, psk):
                 # does with the mesh Y coordinates. this is otherwise known as MAGIC-2
                 uv[1] = 1.0 - uv[1]
 
-                # clamp UV coords if udk_option_clamp_uv is True
-                if bpy.context.scene.udk_option_clamp_uv:
+                # clamp UV coords if udk_option_clight_uv is True
+                if bpy.context.scene.udk_option_clight_uv:
                     if (uv[0] > 1):
                         uv[0] = 1
                     if (uv[0] < 0):
@@ -1540,7 +1540,7 @@ def parse_animation(armature, udk_bones, actions_to_export, psa):
     restoreAction = armature.animation_data.action    # Q: is animation_data always valid?
     # we already do this in export_proxy, but we'll do it here too for now
     restoreFrame = context.scene.frame_current
-    raw_frame_index = 0  # used to set FirstRawFrame, seperating actions in the raw keyframe array
+    raw_frame_index = 0  # used to set FirstRawFrame, separating actions in the raw keyframe array
 
     # action loop...
     for action in actions_to_export:
@@ -2170,7 +2170,7 @@ def rebuildmesh(obj):
 
     # vertices weight groups
     for vgroup in vertGroups:
-        group = obmesh.vertex_groups.new(vgroup)
+        group = obmesh.vertex_groups.new(name=vgroup)
         for v in vertGroups[vgroup]:
             group.add([v[0]], v[1], 'ADD')  # group.add(array[vertex id],weight,add)
     bpy.context.scene.objects.link(obmesh)
@@ -2422,7 +2422,7 @@ class Panel_UDKExport(Panel):
             object_name = context.active_object.name
         row10 = layout.row()
         row10.prop(context.scene, "udk_option_smoothing_groups")
-        row10.prop(context.scene, "udk_option_clamp_uv")
+        row10.prop(context.scene, "udk_option_clight_uv")
         row10.prop(context.scene, "udk_option_verbose")
 
         row = layout.row()
@@ -2716,7 +2716,7 @@ class OBJECT_OT_ActionSetAnimUpdate(Operator):
                 # print("remove :",actionlist.name)
                 removeactions.append(actionlist.name)
         # print("Not in the action data list:",len(removeactions))
-        # remove list or chnages in the name the template list
+        # remove list or changes in the name the template list
         for actname in removeactions:
             actioncount = 0
             for actionlist in my_sett:
@@ -2792,7 +2792,7 @@ class ExportUDKAnimData(Operator):
         scene = context.scene
 
         layout.prop(scene, "udk_option_smoothing_groups")
-        layout.prop(scene, "udk_option_clamp_uv")
+        layout.prop(scene, "udk_option_clight_uv")
         layout.prop(scene, "udk_option_verbose")
         layout.prop(scene, "udk_option_filename_src")
         layout.prop(scene, "udk_option_export")
@@ -2865,7 +2865,7 @@ class PskAddonPreferences(AddonPreferences):
 def register():
 
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
     update_panel(None, bpy.context)
 
     # Added by [MGVS]
@@ -2888,7 +2888,7 @@ def register():
             description="Boolean for exporting psa format (Animation Data)",
             default=True
             )
-    bpy.types.Scene.udk_option_clamp_uv = BoolProperty(
+    bpy.types.Scene.udk_option_clight_uv = BoolProperty(
             name="Clamp UV",
             description="True is to limit Clamp UV co-ordinates to [0-1]. False is unrestricted (x,y)",
             default=False
@@ -2972,12 +2972,12 @@ def register():
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
     del bpy.types.Scene.udk_option_filename_src
     del bpy.types.Scene.udk_option_export_psk
     del bpy.types.Scene.udk_option_export_psa
-    del bpy.types.Scene.udk_option_clamp_uv
+    del bpy.types.Scene.udk_option_clight_uv
     del bpy.types.Scene.udk_copy_merge
     del bpy.types.Scene.udk_option_export
     del bpy.types.Scene.udk_option_verbose

@@ -18,8 +18,9 @@
 
 # <pep8 compliant>
 import bpy
-from bpy.types import Panel, Menu
+from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
+from bl_operators.presets import PresetMenu
 
 
 class CameraButtonsPanel:
@@ -29,30 +30,30 @@ class CameraButtonsPanel:
 
     @classmethod
     def poll(cls, context):
-        engine = context.scene.render.engine
+        engine = context.engine
         return context.camera and (engine in cls.COMPAT_ENGINES)
 
 
-class CAMERA_MT_presets(Menu):
+class CAMERA_PT_presets(PresetMenu):
     bl_label = "Camera Presets"
     preset_subdir = "camera"
     preset_operator = "script.execute_preset"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-    draw = Menu.draw_preset
+    preset_add_operator = "camera.preset_add"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
 
-class SAFE_AREAS_MT_presets(Menu):
+class SAFE_AREAS_PT_presets(PresetMenu):
     bl_label = "Camera Presets"
     preset_subdir = "safe_areas"
     preset_operator = "script.execute_preset"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-    draw = Menu.draw_preset
+    preset_add_operator = "safe_areas.preset_add"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
 
 class DATA_PT_context_camera(CameraButtonsPanel, Panel):
     bl_label = ""
     bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
@@ -61,83 +62,78 @@ class DATA_PT_context_camera(CameraButtonsPanel, Panel):
         cam = context.camera
         space = context.space_data
 
-        split = layout.split(percentage=0.65)
         if ob:
-            split.template_ID(ob, "data")
-            split.separator()
+            layout.template_ID(ob, "data")
         elif cam:
-            split.template_ID(space, "pin_id")
-            split.separator()
+            layout.template_ID(space, "pin_id")
 
 
 class DATA_PT_lens(CameraButtonsPanel, Panel):
     bl_label = "Lens"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         cam = context.camera
 
-        layout.row().prop(cam, "type", expand=True)
+        layout.prop(cam, "type")
 
-        split = layout.split()
+        col = layout.column()
+        col.separator()
 
-        col = split.column()
         if cam.type == 'PERSP':
-            row = col.row()
+            col = layout.column()
             if cam.lens_unit == 'MILLIMETERS':
-                row.prop(cam, "lens")
+                col.prop(cam, "lens")
             elif cam.lens_unit == 'FOV':
-                row.prop(cam, "angle")
-            row.prop(cam, "lens_unit", text="")
+                col.prop(cam, "angle")
+            col.prop(cam, "lens_unit")
 
         elif cam.type == 'ORTHO':
             col.prop(cam, "ortho_scale")
 
         elif cam.type == 'PANO':
-            engine = context.scene.render.engine
+            engine = context.engine
             if engine == 'CYCLES':
                 ccam = cam.cycles
-                col.prop(ccam, "panorama_type", text="Type")
+                col.prop(ccam, "panorama_type")
                 if ccam.panorama_type == 'FISHEYE_EQUIDISTANT':
                     col.prop(ccam, "fisheye_fov")
                 elif ccam.panorama_type == 'FISHEYE_EQUISOLID':
-                    row = layout.row()
-                    row.prop(ccam, "fisheye_lens", text="Lens")
-                    row.prop(ccam, "fisheye_fov")
+                    col.prop(ccam, "fisheye_lens", text="Lens")
+                    col.prop(ccam, "fisheye_fov")
                 elif ccam.panorama_type == 'EQUIRECTANGULAR':
-                    row = layout.row()
-                    sub = row.column(align=True)
-                    sub.prop(ccam, "latitude_min")
-                    sub.prop(ccam, "latitude_max")
-                    sub = row.column(align=True)
-                    sub.prop(ccam, "longitude_min")
-                    sub.prop(ccam, "longitude_max")
-            elif engine == 'BLENDER_RENDER':
-                row = col.row()
+                    sub = col.column(align=True)
+                    sub.prop(ccam, "latitude_min", text="Latitute Min")
+                    sub.prop(ccam, "latitude_max", text="Max")
+                    sub = col.column(align=True)
+                    sub.prop(ccam, "longitude_min", text="Longiture Min")
+                    sub.prop(ccam, "longitude_max", text="Max")
+            elif engine in {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}:
                 if cam.lens_unit == 'MILLIMETERS':
-                    row.prop(cam, "lens")
+                    col.prop(cam, "lens")
                 elif cam.lens_unit == 'FOV':
-                    row.prop(cam, "angle")
-                row.prop(cam, "lens_unit", text="")
+                    col.prop(cam, "angle")
+                col.prop(cam, "lens_unit")
 
-        split = layout.split()
+        col = layout.column()
+        col.separator()
 
-        col = split.column(align=True)
-        col.label(text="Shift:")
-        col.prop(cam, "shift_x", text="X")
-        col.prop(cam, "shift_y", text="Y")
+        sub = col.column(align=True)
+        sub.prop(cam, "shift_x", text="Shift X")
+        sub.prop(cam, "shift_y", text="Y")
 
-        col = split.column(align=True)
-        col.label(text="Clipping:")
-        col.prop(cam, "clip_start", text="Near")
-        col.prop(cam, "clip_end", text="Far")
+        col.separator()
+        sub = col.column(align=True)
+        sub.prop(cam, "clip_start", text="Clip Start")
+        sub.prop(cam, "clip_end", text="End")
 
 
 class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
     bl_label = "Stereoscopy"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
@@ -147,6 +143,8 @@ class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+
         render = context.scene.render
         st = context.camera.stereo
         cam = context.camera
@@ -154,9 +152,9 @@ class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
         is_spherical_stereo = cam.type != 'ORTHO' and render.use_spherical_stereo
         use_spherical_stereo = is_spherical_stereo and st.use_spherical_stereo
 
-        col = layout.column()
-        col.row().prop(st, "convergence_mode", expand=True)
+        layout.prop(st, "convergence_mode")
 
+        col = layout.column()
         sub = col.column()
         sub.active = st.convergence_mode != 'PARALLEL'
         sub.prop(st, "convergence_distance")
@@ -165,124 +163,250 @@ class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
 
         if is_spherical_stereo:
             col.separator()
-            row = col.row()
-            row.prop(st, "use_spherical_stereo")
-            sub = row.row()
+            col.prop(st, "use_spherical_stereo")
+            sub = col.column()
             sub.active = st.use_spherical_stereo
             sub.prop(st, "use_pole_merge")
-            row = col.row(align=True)
-            row.active = st.use_pole_merge
-            row.prop(st, "pole_merge_angle_from")
-            row.prop(st, "pole_merge_angle_to")
 
-        col.label(text="Pivot:")
-        row = col.row()
-        row.active = not use_spherical_stereo
-        row.prop(st, "pivot", expand=True)
+            sub = col.column(align=True)
+            sub.active = st.use_pole_merge
+            sub.prop(st, "pole_merge_angle_from", text="Pole Merge Angle Start")
+            sub.prop(st, "pole_merge_angle_to", text="End")
+
+        col = layout.column()
+        col.active = not use_spherical_stereo
+        col.separator()
+        col.prop(st, "pivot")
 
 
 class DATA_PT_camera(CameraButtonsPanel, Panel):
     bl_label = "Camera"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw_header_preset(self, context):
+        CAMERA_PT_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
         layout = self.layout
 
         cam = context.camera
 
-        row = layout.row(align=True)
+        layout.use_property_split = True
 
-        row.menu("CAMERA_MT_presets", text=bpy.types.CAMERA_MT_presets.bl_label)
-        row.operator("camera.preset_add", text="", icon='ZOOMIN')
-        row.operator("camera.preset_add", text="", icon='ZOOMOUT').remove_active = True
+        col = layout.column()
+        col.prop(cam, "sensor_fit")
 
-        layout.label(text="Sensor:")
-
-        split = layout.split()
-
-        col = split.column(align=True)
         if cam.sensor_fit == 'AUTO':
-            col.prop(cam, "sensor_width", text="Size")
+            col.prop(cam, "sensor_width")
         else:
             sub = col.column(align=True)
             sub.active = cam.sensor_fit == 'HORIZONTAL'
             sub.prop(cam, "sensor_width", text="Width")
+
             sub = col.column(align=True)
             sub.active = cam.sensor_fit == 'VERTICAL'
             sub.prop(cam, "sensor_height", text="Height")
 
-        col = split.column(align=True)
-        col.prop(cam, "sensor_fit", text="")
-
 
 class DATA_PT_camera_dof(CameraButtonsPanel, Panel):
     bl_label = "Depth of Field"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+
+        cam = context.camera
+
+        col = layout.column()
+        col.prop(cam, "dof_object", text="Focus on Object")
+        sub = col.column()
+        sub.active = (cam.dof_object is None)
+        sub.prop(cam, "dof_distance", text="Focus Distance")
+
+
+class DATA_PT_camera_dof_aperture(CameraButtonsPanel, Panel):
+    bl_label = "Aperture"
+    bl_parent_id = "DATA_PT_camera_dof"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
 
         cam = context.camera
         dof_options = cam.gpu_dof
 
-        split = layout.split()
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-        col = split.column()
-        col.label(text="Focus:")
-        col.prop(cam, "dof_object", text="")
-        sub = col.column()
-        sub.active = (cam.dof_object is None)
-        sub.prop(cam, "dof_distance", text="Distance")
+        if context.engine == 'BLENDER_EEVEE':
+            col = flow.column()
+            col.prop(dof_options, "fstop")
+            col.prop(dof_options, "blades")
 
-        hq_support = dof_options.is_hq_supported
-        col = split.column(align=True)
-        col.label("Viewport:")
-        sub = col.column()
-        sub.active = hq_support
-        sub.prop(dof_options, "use_high_quality")
-        col.prop(dof_options, "fstop")
-        if dof_options.use_high_quality and hq_support:
+            col = flow.column()
+            col.prop(dof_options, "rotation")
+            col.prop(dof_options, "ratio")
+        else:
+            col = flow.column()
+            col.label(text="Viewport")
+            col.prop(dof_options, "fstop")
             col.prop(dof_options, "blades")
 
 
-class DATA_PT_camera_display(CameraButtonsPanel, Panel):
-    bl_label = "Display"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):
+    bl_label = "Background Images"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw_header(self, context):
+        cam = context.camera
+
+        self.layout.prop(cam, "show_background_images", text="")
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        cam = context.camera
+        use_multiview = context.scene.render.use_multiview
+
+        col = layout.column()
+        col.operator("view3d.background_image_add", text="Add Image")
+
+        for i, bg in enumerate(cam.background_images):
+            layout.active = cam.show_background_images
+            box = layout.box()
+            row = box.row(align=True)
+            row.prop(bg, "show_expanded", text="", emboss=False)
+            if bg.source == 'IMAGE' and bg.image:
+                row.prop(bg.image, "name", text="", emboss=False)
+            elif bg.source == 'MOVIE_CLIP' and bg.clip:
+                row.prop(bg.clip, "name", text="", emboss=False)
+            elif bg.source and bg.use_camera_clip:
+                row.label(text="Camera Clip")
+            else:
+                row.label(text="Not Set")
+
+            row.prop(
+                bg,
+                "show_background_image",
+                text="",
+                emboss=False,
+                icon='RESTRICT_VIEW_OFF' if bg.show_background_image else 'RESTRICT_VIEW_ON',
+            )
+
+            row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
+
+            if bg.show_expanded:
+                row = box.row()
+                row.prop(bg, "source", expand=True)
+
+                has_bg = False
+                if bg.source == 'IMAGE':
+                    row = box.row()
+                    row.template_ID(bg, "image", open="image.open")
+                    if bg.image is not None:
+                        box.template_image(bg, "image", bg.image_user, compact=True)
+                        has_bg = True
+
+                        if use_multiview and bg.view_axis in {'CAMERA', 'ALL'}:
+                            box.prop(bg.image, "use_multiview")
+
+                            column = box.column()
+                            column.active = bg.image.use_multiview
+
+                            column.label(text="Views Format:")
+                            column.row().prop(bg.image, "views_format", expand=True)
+
+                            sub = column.box()
+                            sub.active = bg.image.views_format == 'STEREO_3D'
+                            sub.template_image_stereo_3d(bg.image.stereo_3d_format)
+
+                elif bg.source == 'MOVIE_CLIP':
+                    box.prop(bg, "use_camera_clip")
+
+                    column = box.column()
+                    column.active = not bg.use_camera_clip
+                    column.template_ID(bg, "clip", open="clip.open")
+
+                    if bg.clip:
+                        column.template_movieclip(bg, "clip", compact=True)
+
+                    if bg.use_camera_clip or bg.clip:
+                        has_bg = True
+
+                    column = box.column()
+                    column.active = has_bg
+                    column.prop(bg.clip_user, "use_render_undistorted")
+                    column.prop(bg.clip_user, "proxy_render_size")
+
+                if has_bg:
+                    col = box.column()
+                    col.prop(bg, "alpha", slider=True)
+                    col.row().prop(bg, "display_depth", expand=True)
+
+                    col.row().prop(bg, "frame_method", expand=True)
+
+                    row = box.row()
+                    row.prop(bg, "offset")
+
+                    col = box.column()
+                    col.prop(bg, "rotation")
+                    col.prop(bg, "scale")
+
+                    col.prop(bg, "use_flip_x")
+                    col.prop(bg, "use_flip_y")
+
+
+class DATA_PT_camera_display(CameraButtonsPanel, Panel):
+    bl_label = "Viewport Display"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
 
         cam = context.camera
 
         split = layout.split()
+        split.label()
+        split.prop_menu_enum(cam, "show_guide")
 
-        col = split.column()
-        col.prop(cam, "show_limits", text="Limits")
-        col.prop(cam, "show_mist", text="Mist")
+        col = layout.column(align=True)
 
-        col.prop(cam, "show_sensor", text="Sensor")
-        col.prop(cam, "show_name", text="Name")
-
-        col = split.column()
-        col.prop_menu_enum(cam, "show_guide")
         col.separator()
-        col.prop(cam, "draw_size", text="Size")
+        col.prop(cam, "display_size", text="Size")
         col.separator()
         col.prop(cam, "show_passepartout", text="Passepartout")
         sub = col.column()
         sub.active = cam.show_passepartout
         sub.prop(cam, "passepartout_alpha", text="Alpha", slider=True)
 
+        col.separator()
+
+        col.prop(cam, "show_limits", text="Limits")
+        col.prop(cam, "show_mist", text="Mist")
+        col.prop(cam, "show_sensor", text="Sensor")
+        col.prop(cam, "show_name", text="Name")
+
 
 class DATA_PT_camera_safe_areas(CameraButtonsPanel, Panel):
     bl_label = "Safe Areas"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw_header(self, context):
         cam = context.camera
 
         self.layout.prop(cam, "show_safe_areas", text="")
+
+    def draw_header_preset(self, context):
+        SAFE_AREAS_PT_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
         layout = self.layout
@@ -293,7 +417,7 @@ class DATA_PT_camera_safe_areas(CameraButtonsPanel, Panel):
 
 
 class DATA_PT_custom_props_camera(CameraButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     _context_path = "object.data"
     _property_type = bpy.types.Camera
 
@@ -302,39 +426,37 @@ def draw_display_safe_settings(layout, safe_data, settings):
     show_safe_areas = settings.show_safe_areas
     show_safe_center = settings.show_safe_center
 
-    split = layout.split()
+    layout.use_property_split = True
 
-    col = split.column()
-    row = col.row(align=True)
-    row.menu("SAFE_AREAS_MT_presets", text=bpy.types.SAFE_AREAS_MT_presets.bl_label)
-    row.operator("safe_areas.preset_add", text="", icon='ZOOMIN')
-    row.operator("safe_areas.preset_add", text="", icon='ZOOMOUT').remove_active = True
+    col = layout.column()
+    col.active = show_safe_areas
 
-    col = split.column()
+    sub = col.column()
+    sub.prop(safe_data, "title", slider=True)
+    sub.prop(safe_data, "action", slider=True)
+
+    col.separator()
+
     col.prop(settings, "show_safe_center", text="Center-Cut Safe Areas")
 
-    split = layout.split()
-    col = split.column()
-    col.active = show_safe_areas
-    col.prop(safe_data, "title", slider=True)
-    col.prop(safe_data, "action", slider=True)
-
-    col = split.column()
-    col.active = show_safe_areas and show_safe_center
-    col.prop(safe_data, "title_center", slider=True)
-    col.prop(safe_data, "action_center", slider=True)
+    sub = col.column()
+    sub.active = show_safe_areas and show_safe_center
+    sub.prop(safe_data, "title_center", slider=True)
+    sub.prop(safe_data, "action_center", slider=True)
 
 
 classes = (
-    CAMERA_MT_presets,
-    SAFE_AREAS_MT_presets,
+    CAMERA_PT_presets,
+    SAFE_AREAS_PT_presets,
     DATA_PT_context_camera,
     DATA_PT_lens,
+    DATA_PT_camera_dof,
+    DATA_PT_camera_dof_aperture,
     DATA_PT_camera,
     DATA_PT_camera_stereoscopy,
-    DATA_PT_camera_dof,
-    DATA_PT_camera_display,
     DATA_PT_camera_safe_areas,
+    DATA_PT_camera_background_image,
+    DATA_PT_camera_display,
     DATA_PT_custom_props_camera,
 )
 

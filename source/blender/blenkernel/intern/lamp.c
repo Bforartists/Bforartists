@@ -59,47 +59,37 @@ void BKE_lamp_init(Lamp *la)
 	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(la, id));
 
 	la->r = la->g = la->b = la->k = 1.0f;
-	la->haint = la->energy = 1.0f;
+	la->energy = 10.0f;
 	la->dist = 25.0f;
 	la->spotsize = DEG2RADF(45.0f);
 	la->spotblend = 0.15f;
 	la->att2 = 1.0f;
-	la->mode = LA_SHAD_BUF;
+	la->mode = LA_SHADOW;
 	la->bufsize = 512;
 	la->clipsta = 0.5f;
 	la->clipend = 40.0f;
+	la->bleedexp = 2.5f;
 	la->samp = 3;
 	la->bias = 1.0f;
 	la->soft = 3.0f;
-	la->compressthresh = 0.05f;
-	la->ray_samp = la->ray_sampy = la->ray_sampz = 1;
-	la->area_size = la->area_sizey = la->area_sizez = 0.1f;
+	la->area_size = la->area_sizey = la->area_sizez = 0.25f;
 	la->buffers = 1;
-	la->buftype = LA_SHADBUF_HALFWAY;
-	la->ray_samp_method = LA_SAMP_HALTON;
-	la->adapt_thresh = 0.001f;
 	la->preview = NULL;
 	la->falloff_type = LA_FALLOFF_INVSQUARE;
 	la->coeff_const = 1.0f;
 	la->coeff_lin = 0.0f;
 	la->coeff_quad = 0.0f;
 	la->curfalloff = curvemapping_add(1, 0.0f, 1.0f, 1.0f, 0.0f);
-	la->sun_effect_type = 0;
-	la->horizon_brightness = 1.0;
-	la->spread = 1.0;
-	la->sun_brightness = 1.0;
-	la->sun_size = 1.0;
-	la->backscattered_light = 1.0f;
-	la->atm_turbidity = 2.0f;
-	la->atm_inscattering_factor = 1.0f;
-	la->atm_extinction_factor = 1.0f;
-	la->atm_distance_factor = 1.0f;
-	la->sun_intensity = 1.0f;
-	la->skyblendtype = MA_RAMP_ADD;
-	la->skyblendfac = 1.0f;
-	la->sky_colorspace = BLI_XYZ_CIE;
-	la->sky_exposure = 1.0f;
-	la->shadow_frustum_size = 10.0f;
+	la->cascade_max_dist = 200.0f;
+	la->cascade_count = 4;
+	la->cascade_exponent = 0.8f;
+	la->cascade_fade = 0.1f;
+	la->contact_dist = 0.2f;
+	la->contact_bias = 0.03f;
+	la->contact_spread = 0.2f;
+	la->contact_thickness = 0.2f;
+	la->spec_fac = 1.0f;
+	la->att_dist = 40.0f;
 
 	curvemapping_initialize(la->curfalloff);
 }
@@ -121,17 +111,10 @@ Lamp *BKE_lamp_add(Main *bmain, const char *name)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_lamp_copy_data(Main *bmain, Lamp *la_dst, const Lamp *la_src, const int flag)
 {
-	for (int a = 0; a < MAX_MTEX; a++) {
-		if (la_dst->mtex[a]) {
-			la_dst->mtex[a] = MEM_mallocN(sizeof(*la_dst->mtex[a]), __func__);
-			*la_dst->mtex[a] = *la_src->mtex[a];
-		}
-	}
-
 	la_dst->curfalloff = curvemapping_copy(la_src->curfalloff);
 
 	if (la_src->nodetree) {
@@ -157,24 +140,17 @@ Lamp *BKE_lamp_copy(Main *bmain, const Lamp *la)
 
 Lamp *BKE_lamp_localize(Lamp *la)
 {
-	/* TODO replace with something like
-	 * 	Lamp *la_copy;
-	 * 	BKE_id_copy_ex(bmain, &la->id, (ID **)&la_copy, LIB_ID_COPY_NO_MAIN | LIB_ID_COPY_NO_PREVIEW | LIB_ID_COPY_NO_USER_REFCOUNT, false);
-	 * 	return la_copy;
+	/* TODO(bastien): Replace with something like:
 	 *
-	 * ... Once f*** nodes are fully converted to that too :( */
+	 *   Lamp *la_copy;
+	 *   BKE_id_copy_ex(bmain, &la->id, (ID **)&la_copy,
+	 *                  LIB_ID_COPY_NO_MAIN | LIB_ID_COPY_NO_PREVIEW | LIB_ID_COPY_NO_USER_REFCOUNT,
+	 *                  false);
+	 *   return la_copy;
+	 *
+	 * NOTE: Only possible once nested node trees are fully converted to that too. */
 
-	Lamp *lan;
-	int a;
-
-	lan = BKE_libblock_copy_nolib(&la->id, false);
-
-	for (a = 0; a < MAX_MTEX; a++) {
-		if (lan->mtex[a]) {
-			lan->mtex[a] = MEM_mallocN(sizeof(MTex), __func__);
-			memcpy(lan->mtex[a], la->mtex[a], sizeof(MTex));
-		}
-	}
+	Lamp *lan = BKE_libblock_copy_for_localize(&la->id);
 
 	lan->curfalloff = curvemapping_copy(la->curfalloff);
 
@@ -182,6 +158,8 @@ Lamp *BKE_lamp_localize(Lamp *la)
 		lan->nodetree = ntreeLocalize(la->nodetree);
 
 	lan->preview = NULL;
+
+	lan->id.tag |= LIB_TAG_LOCALIZED;
 
 	return lan;
 }
@@ -193,19 +171,13 @@ void BKE_lamp_make_local(Main *bmain, Lamp *la, const bool lib_local)
 
 void BKE_lamp_free(Lamp *la)
 {
-	int a;
-
-	for (a = 0; a < MAX_MTEX; a++) {
-		MEM_SAFE_FREE(la->mtex[a]);
-	}
-
 	BKE_animdata_free((ID *)la, false);
 
 	curvemapping_free(la->curfalloff);
 
 	/* is no lib link block, but lamp extension */
 	if (la->nodetree) {
-		ntreeFreeTree(la->nodetree);
+		ntreeFreeNestedTree(la->nodetree);
 		MEM_freeN(la->nodetree);
 		la->nodetree = NULL;
 	}
@@ -213,41 +185,4 @@ void BKE_lamp_free(Lamp *la)
 	BKE_previewimg_free(&la->preview);
 	BKE_icon_id_delete(&la->id);
 	la->id.icon_id = 0;
-}
-
-/* Calculate all drivers for lamps, see material_drivers_update for why this is a bad hack */
-
-static void lamp_node_drivers_update(Scene *scene, bNodeTree *ntree, float ctime)
-{
-	bNode *node;
-
-	/* nodetree itself */
-	if (ntree->adt && ntree->adt->drivers.first)
-		BKE_animsys_evaluate_animdata(scene, &ntree->id, ntree->adt, ctime, ADT_RECALC_DRIVERS);
-
-	/* nodes */
-	for (node = ntree->nodes.first; node; node = node->next)
-		if (node->id && node->type == NODE_GROUP)
-			lamp_node_drivers_update(scene, (bNodeTree *)node->id, ctime);
-}
-
-void lamp_drivers_update(Scene *scene, Lamp *la, float ctime)
-{
-	/* Prevent infinite recursion by checking (and tagging the lamp) as having been visited already
-	 * (see BKE_scene_update_tagged()). This assumes la->id.tag & LIB_TAG_DOIT isn't set by anything else
-	 * in the meantime... [#32017] */
-	if (la->id.tag & LIB_TAG_DOIT)
-		return;
-
-	la->id.tag |= LIB_TAG_DOIT;
-
-	/* lamp itself */
-	if (la->adt && la->adt->drivers.first)
-		BKE_animsys_evaluate_animdata(scene, &la->id, la->adt, ctime, ADT_RECALC_DRIVERS);
-
-	/* nodes */
-	if (la->nodetree)
-		lamp_node_drivers_update(scene, la->nodetree, ctime);
-
-	la->id.tag &= ~LIB_TAG_DOIT;
 }

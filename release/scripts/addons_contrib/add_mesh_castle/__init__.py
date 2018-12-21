@@ -62,13 +62,13 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.INFO_MT_mesh_add.append(menu_func_castle)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func_castle)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    bpy.types.INFO_MT_mesh_add.remove(menu_func_castle)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_castle)
 
 
 if __name__ == "__main__":

@@ -150,5 +150,6 @@ def check_duplicates():
 def main():
     check_duplicates()
 
+
 if __name__ == "__main__":
     main()

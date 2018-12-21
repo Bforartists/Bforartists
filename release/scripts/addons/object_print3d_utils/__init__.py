@@ -21,7 +21,7 @@
 bl_info = {
     "name": "3D Print Toolbox",
     "author": "Campbell Barton",
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "3D View > Toolbox",
     "description": "Utilities for 3D printing",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -59,101 +59,66 @@ else:
 
 
 class Print3D_Scene_Props(PropertyGroup):
-    export_format = EnumProperty(
-            name="Format",
-            description="Format type to export to",
-            items=(('STL', "STL", ""),
-                   ('PLY', "PLY", ""),
-                   ('WRL', "VRML2", ""),
-                   ('X3D', "X3D", ""),
-                   ('OBJ', "OBJ", "")),
-            default='STL',
-            )
-    use_export_texture = BoolProperty(
-            name="Copy Textures",
-            description="Copy textures on export to the output path",
-            default=False,
-            )
-    use_apply_scale = BoolProperty(
-            name="Apply Scale",
-            description="Apply scene scale setting on export",
-            default=False,
-            )
-    export_path = StringProperty(
-            name="Export Directory",
-            description="Path to directory where the files are created",
-            default="//", maxlen=1024, subtype="DIR_PATH",
-            )
-    thickness_min = FloatProperty(
-            name="Thickness",
-            description="Minimum thickness",
-            subtype='DISTANCE',
-            default=0.001,  # 1mm
-            min=0.0, max=10.0,
-            )
-    threshold_zero = FloatProperty(
-            name="Threshold",
-            description="Limit for checking zero area/length",
-            default=0.0001,
-            precision=5,
-            min=0.0, max=0.2,
-            )
-    angle_distort = FloatProperty(
-            name="Angle",
-            description="Limit for checking distorted faces",
-            subtype='ANGLE',
-            default=math.radians(45.0),
-            min=0.0, max=math.radians(180.0),
-            )
-    angle_sharp = FloatProperty(
-            name="Angle",
-            subtype='ANGLE',
-            default=math.radians(160.0),
-            min=0.0, max=math.radians(180.0),
-            )
-    angle_overhang = FloatProperty(
-            name="Angle",
-            subtype='ANGLE',
-            default=math.radians(45.0),
-            min=0.0, max=math.radians(90.0),
-            )
-
-
-# Update panel category name
-panels = (
-    ui.VIEW3D_PT_Print3D_Object,
-    ui.VIEW3D_PT_Print3D_Mesh,
+    export_format: EnumProperty(
+        name="Format",
+        description="Format type to export to",
+        items=(
+            ('STL', "STL", ""),
+            ('PLY', "PLY", ""),
+            ('WRL', "VRML2", ""),
+            ('X3D', "X3D", ""),
+            ('OBJ', "OBJ", ""),
+        ),
+        default='STL',
     )
-
-
-def update_panels(self, context):
-    try:
-        for panel in panels:
-            if "bl_rna" in panel.__dict__:
-                bpy.utils.unregister_class(panel)
-
-        for panel in panels:
-            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
-            bpy.utils.register_class(panel)
-
-    except Exception as e:
-        message = "3D Print Toolbox: Updating Panel locations has failed"
-        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
-
-
-class Print3D_Preferences(AddonPreferences):
-    bl_idname = __name__
-
-    category = StringProperty(
-            name="Tab Category",
-            description="Choose a name for the category of the panel",
-            default="3D Printing",
-            update=update_panels,
-            )
-
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(self, "category")
+    use_export_texture: BoolProperty(
+        name="Copy Textures",
+        description="Copy textures on export to the output path",
+        default=False,
+    )
+    use_apply_scale: BoolProperty(
+        name="Apply Scale",
+        description="Apply scene scale setting on export",
+        default=False,
+    )
+    export_path: StringProperty(
+        name="Export Directory",
+        description="Path to directory where the files are created",
+        default="//", maxlen=1024, subtype="DIR_PATH",
+    )
+    thickness_min: FloatProperty(
+        name="Thickness",
+        description="Minimum thickness",
+        subtype='DISTANCE',
+        default=0.001,  # 1mm
+        min=0.0, max=10.0,
+    )
+    threshold_zero: FloatProperty(
+        name="Threshold",
+        description="Limit for checking zero area/length",
+        default=0.0001,
+        precision=5,
+        min=0.0, max=0.2,
+    )
+    angle_distort: FloatProperty(
+        name="Angle",
+        description="Limit for checking distorted faces",
+        subtype='ANGLE',
+        default=math.radians(45.0),
+        min=0.0, max=math.radians(180.0),
+    )
+    angle_sharp: FloatProperty(
+        name="Angle",
+        subtype='ANGLE',
+        default=math.radians(160.0),
+        min=0.0, max=math.radians(180.0),
+    )
+    angle_overhang: FloatProperty(
+        name="Angle",
+        subtype='ANGLE',
+        default=math.radians(45.0),
+        min=0.0, max=math.radians(90.0),
+    )
 
 
 classes = (
@@ -185,8 +150,7 @@ classes = (
     operators.MESH_OT_Print3D_Export,
 
     Print3D_Scene_Props,
-    Print3D_Preferences,
-    )
+)
 
 
 def register():
@@ -194,8 +158,6 @@ def register():
         bpy.utils.register_class(cls)
 
     bpy.types.Scene.print_3d = PointerProperty(type=Print3D_Scene_Props)
-
-    update_panels(None, bpy.context)
 
 
 def unregister():

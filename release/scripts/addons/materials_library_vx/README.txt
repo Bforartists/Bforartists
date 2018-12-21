@@ -43,13 +43,13 @@ Example: D:\Blender\2.72\scripts\addon\
 
 Updates:
 v 0.5.61
-- Libraries arent read on each draw call, only on startup or when added. This fixes potential crashes and is less stressful, but  when a library is deleted blender should be restarted.
--Moved the addon from "System" category to "Materials"
+- Libraries aren't read on each draw call, only on startup or when added. This fixes potential crashes and is less stressful, but when a library is deleted blender should be restarted.
+- Moved the addon from "System" category to "Materials"
 
 v 0.5.6
 - Create new libraries.
 	Libraries are read from the matlib folder. If you want to change this behaviour, edit the variable "matlib_path" at line 40. (Untested)
-	
+
 	To delete a library delete the blend file within the matlib folder.
 
 - Apply material to all selected objects.
@@ -66,10 +66,8 @@ v 0.5.6
 - Options Added:
 	- Force Import. False By default.
 		This option helps to avoid material duplicates when the same material its applied several times.
-		When this option is disabled the script will try to find the selected material within the working scene, instead of importing a new one from the library. 
+		When this option is disabled the script will try to find the selected material within the working scene, instead of importing a new one from the library.
 	- Linked.
 		Import the material by making a link to the library.
 	- Hide search.
 		Shows or hides the search box.
-
-

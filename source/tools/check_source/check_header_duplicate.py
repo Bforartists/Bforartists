@@ -104,5 +104,6 @@ def main():
     is_restore = ("--restore" in sys.argv[1:])
     scan_source_recursive(sys.argv[-1], is_restore)
 
+
 if __name__ == "__main__":
     main()

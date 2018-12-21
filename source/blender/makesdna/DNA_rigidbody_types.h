@@ -35,12 +35,22 @@
 
 #include "DNA_listBase.h"
 
-struct Group;
+struct Collection;
 
 struct EffectorWeights;
 
 /* ******************************** */
 /* RigidBody World */
+
+/* Container for data shared by original and evaluated copies of RigidBodyWorld */
+typedef struct RigidBodyWorld_Shared {
+	/* cache */
+	struct PointCache *pointcache;
+	struct ListBase ptcaches;
+
+	/* References to Physics Sim objects. Exist at runtime only ---------------------- */
+	void *physics_world;		/* Physics sim world (i.e. btDiscreteDynamicsWorld) */
+} RigidBodyWorld_Shared;
 
 /* RigidBodyWorld (rbw)
  *
@@ -50,17 +60,17 @@ typedef struct RigidBodyWorld {
 	/* Sim World Settings ------------------------------------------------------------- */
 	struct EffectorWeights *effector_weights; /* effectors info */
 
-	struct Group *group;		/* Group containing objects to use for Rigid Bodies */
+	struct Collection *group;		/* Group containing objects to use for Rigid Bodies */
 	struct Object **objects;	/* Array to access group objects by index, only used at runtime */
 
-	struct Group *constraints;	/* Group containing objects to use for Rigid Body Constraints*/
+	struct Collection *constraints;	/* Group containing objects to use for Rigid Body Constraints*/
 
 	int pad;
 	float ltime;				/* last frame world was evaluated for (internal) */
 
-	/* cache */
-	struct PointCache *pointcache;
-	struct ListBase ptcaches;
+	struct RigidBodyWorld_Shared *shared; /* This pointer is shared between all evaluated copies */
+	struct PointCache *pointcache DNA_DEPRECATED; /* Moved to shared->pointcache */
+	struct ListBase ptcaches DNA_DEPRECATED; /* Moved to shared->ptcaches */
 	int numbodies;              /* number of objects in rigid body group */
 
 	short steps_per_second;		/* number of simulation steps thaken per second */
@@ -68,9 +78,6 @@ typedef struct RigidBodyWorld {
 
 	int flag;					/* (eRigidBodyWorld_Flag) settings for this RigidBodyWorld */
 	float time_scale;			/* used to speed up or slow down the simulation */
-
-	/* References to Physics Sim objects. Exist at runtime only ---------------------- */
-	void *physics_world;		/* Physics sim world (i.e. btDiscreteDynamicsWorld) */
 } RigidBodyWorld;
 
 /* Flags for RigidBodyWorld */
@@ -86,6 +93,18 @@ typedef enum eRigidBodyWorld_Flag {
 /* ******************************** */
 /* RigidBody Object */
 
+/* Container for data that is shared among CoW copies.
+ *
+ * This is placed in a separate struct so that, for example, the physics_shape
+ * pointer can be replaced without having to update all CoW copies. */
+#
+#
+typedef struct RigidBodyOb_Shared {
+	/* References to Physics Sim objects. Exist at runtime only */
+	void *physics_object;	/* Physics object representation (i.e. btRigidBody) */
+	void *physics_shape;	/* Collision shape used by physics sim (i.e. btCollisionShape) */
+} RigidBodyOb_Shared;
+
 /* RigidBodyObject (rbo)
  *
  * Represents an object participating in a RigidBody sim.
@@ -93,16 +112,12 @@ typedef enum eRigidBodyWorld_Flag {
  * participating in a sim.
  */
 typedef struct RigidBodyOb {
-	/* References to Physics Sim objects. Exist at runtime only */
-	void *physics_object;	/* Physics object representation (i.e. btRigidBody) */
-	void *physics_shape;	/* Collision shape used by physics sim (i.e. btCollisionShape) */
-
 	/* General Settings for this RigidBodyOb */
 	short type;				/* (eRigidBodyOb_Type) role of RigidBody in sim  */
 	short shape;			/* (eRigidBody_Shape) collision shape to use */
 
 	int flag;				/* (eRigidBodyOb_Flag) */
-	int col_groups;			/* Collision groups that determines wich rigid bodies can collide with each other */
+	int col_groups;			/* Collision groups that determines which rigid bodies can collide with each other */
 	short mesh_source;		/* (eRigidBody_MeshSource) mesh source for mesh based collision shapes */
 	short pad;
 
@@ -123,6 +138,8 @@ typedef struct RigidBodyOb {
 	float orn[4];			/* rigid body orientation */
 	float pos[3];			/* rigid body position */
 	float pad1;
+
+	struct RigidBodyOb_Shared *shared; /* This pointer is shared between all evaluated copies */
 } RigidBodyOb;
 
 

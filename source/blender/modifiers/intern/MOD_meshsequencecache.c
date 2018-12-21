@@ -26,20 +26,18 @@
 
 #include "DNA_cachefile_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_meshdata_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
 #include "BKE_cachefile.h"
-#include "BKE_DerivedMesh.h"
-#include "BKE_cdderivedmesh.h"
-#include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_library_query.h"
 #include "BKE_scene.h"
 
-#include "depsgraph_private.h"
 #include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph_query.h"
 
 #include "MOD_modifiertypes.h"
 
@@ -57,14 +55,14 @@ static void initData(ModifierData *md)
 	mcmd->read_flag = MOD_MESHSEQ_READ_ALL;
 }
 
-static void copyData(const ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target, const int flag)
 {
 #if 0
 	const MeshSeqCacheModifierData *mcmd = (const MeshSeqCacheModifierData *)md;
 #endif
 	MeshSeqCacheModifierData *tmcmd = (MeshSeqCacheModifierData *)target;
 
-	modifier_copyData_generic(md, target);
+	modifier_copyData_generic(md, target, flag);
 
 	tmcmd->reader = NULL;
 }
@@ -81,7 +79,7 @@ static void freeData(ModifierData *md)
 	}
 }
 
-static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(useRenderParams))
 {
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
 
@@ -89,75 +87,84 @@ static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 	return (mcmd->cache_file == NULL) || (mcmd->object_path[0] == '\0');
 }
 
-static DerivedMesh *applyModifier(
-        ModifierData *md, Object *ob,
-        DerivedMesh *dm,
-        ModifierApplyFlag UNUSED(flag))
+static Mesh *applyModifier(
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *mesh)
 {
 #ifdef WITH_ALEMBIC
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
 
 	/* Only used to check whether we are operating on org data or not... */
-	Mesh *me = (ob->type == OB_MESH) ? ob->data : NULL;
-	DerivedMesh *org_dm = dm;
+	Mesh *me = (ctx->object->type == OB_MESH) ? ctx->object->data : NULL;
+	Mesh *org_mesh = mesh;
 
-	Scene *scene = md->scene;
-	const float frame = BKE_scene_frame_get(scene);
+	Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
+	const float frame = DEG_get_ctime(ctx->depsgraph);
 	const float time = BKE_cachefile_time_offset(mcmd->cache_file, frame, FPS);
 	const char *err_str = NULL;
 
-	CacheFile *cache_file = mcmd->cache_file;
+	CacheFile *cache_file = (CacheFile *)DEG_get_original_id(&mcmd->cache_file->id);
 
 	BKE_cachefile_ensure_handle(G.main, cache_file);
 
 	if (!mcmd->reader) {
 		mcmd->reader = CacheReader_open_alembic_object(cache_file->handle,
 		                                               NULL,
-		                                               ob,
+		                                               ctx->object,
 		                                               mcmd->object_path);
 		if (!mcmd->reader) {
 			modifier_setError(md, "Could not create Alembic reader for file %s", cache_file->filepath);
-			return dm;
+			return mesh;
 		}
 	}
 
 	if (me != NULL) {
-		MVert *mvert = dm->getVertArray(dm);
-		MEdge *medge = dm->getEdgeArray(dm);
-		MPoly *mpoly = dm->getPolyArray(dm);
+		MVert *mvert = mesh->mvert;
+		MEdge *medge = mesh->medge;
+		MPoly *mpoly = mesh->mpoly;
 		if ((me->mvert == mvert) || (me->medge == medge) || (me->mpoly == mpoly)) {
 			/* We need to duplicate data here, otherwise we'll modify org mesh, see T51701. */
-			dm = CDDM_copy(dm);
+			BKE_id_copy_ex(NULL, &mesh->id, (ID **)&mesh,
+			               LIB_ID_CREATE_NO_MAIN |
+			               LIB_ID_CREATE_NO_USER_REFCOUNT |
+			               LIB_ID_CREATE_NO_DEG_TAG |
+			               LIB_ID_COPY_NO_PREVIEW,
+			               false);
 		}
 	}
 
-	DerivedMesh *result = ABC_read_mesh(mcmd->reader,
-	                                    ob,
-	                                    dm,
-	                                    time,
-	                                    &err_str,
-	                                    mcmd->read_flag);
+	Mesh *result = ABC_read_mesh(mcmd->reader,
+	                             ctx->object,
+	                             mesh,
+	                             time,
+	                             &err_str,
+	                             mcmd->read_flag);
 
 	if (err_str) {
 		modifier_setError(md, "%s", err_str);
 	}
 
-	if (!ELEM(result, NULL, dm) && (dm != org_dm)) {
-		dm->release(dm);
-		dm = org_dm;
+	if (!ELEM(result, NULL, mesh) && (mesh != org_mesh)) {
+		BKE_id_free(NULL, mesh);
+		mesh = org_mesh;
 	}
 
-	return result ? result : dm;
+	return result ? result : mesh;
 #else
-	return dm;
-	UNUSED_VARS(md, ob);
+	UNUSED_VARS(ctx, md);
+	return mesh;
 #endif
 }
 
 static bool dependsOnTime(ModifierData *md)
 {
+#ifdef WITH_ALEMBIC
+	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
+	return (mcmd->cache_file != NULL);
+#else
 	UNUSED_VARS(md);
-	return true;
+	return false;
+#endif
 }
 
 static void foreachIDLink(
@@ -170,18 +177,6 @@ static void foreachIDLink(
 }
 
 
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
-
-	if (mcmd->cache_file != NULL) {
-		DagNode *curNode = dag_get_node(ctx->forest, mcmd->cache_file);
-
-		dag_add_relation(ctx->forest, curNode, ctx->obNode,
-		                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Cache File Modifier");
-	}
-}
-
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
@@ -192,28 +187,35 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 }
 
 ModifierTypeInfo modifierType_MeshSequenceCache = {
-    /* name */              "Mesh Sequence Cache",
-    /* structName */        "MeshSeqCacheModifierData",
-    /* structSize */        sizeof(MeshSeqCacheModifierData),
-    /* type */              eModifierTypeType_Constructive,
-    /* flags */             eModifierTypeFlag_AcceptsMesh |
-                            eModifierTypeFlag_AcceptsCVs,
-    /* copyData */          copyData,
-    /* deformVerts */       NULL,
-    /* deformMatrices */    NULL,
-    /* deformVertsEM */     NULL,
-    /* deformMatricesEM */  NULL,
-    /* applyModifier */     applyModifier,
-    /* applyModifierEM */   NULL,
-    /* initData */          initData,
-    /* requiredDataMask */  NULL,
-    /* freeData */          freeData,
-    /* isDisabled */        isDisabled,
-    /* updateDepgraph */    updateDepgraph,
-    /* updateDepsgraph */   updateDepsgraph,
-    /* dependsOnTime */     dependsOnTime,
-    /* dependsOnNormals */  NULL,
-    /* foreachObjectLink */ NULL,
-    /* foreachIDLink */     foreachIDLink,
-    /* foreachTexLink */    NULL,
+	/* name */              "Mesh Sequence Cache",
+	/* structName */        "MeshSeqCacheModifierData",
+	/* structSize */        sizeof(MeshSeqCacheModifierData),
+	/* type */              eModifierTypeType_Constructive,
+	/* flags */             eModifierTypeFlag_AcceptsMesh |
+	                        eModifierTypeFlag_AcceptsCVs,
+
+	/* copyData */          copyData,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
+	/* deformVerts */       NULL,
+	/* deformMatrices */    NULL,
+	/* deformVertsEM */     NULL,
+	/* deformMatricesEM */  NULL,
+	/* applyModifier */     applyModifier,
+
+	/* initData */          initData,
+	/* requiredDataMask */  NULL,
+	/* freeData */          freeData,
+	/* isDisabled */        isDisabled,
+	/* updateDepsgraph */   updateDepsgraph,
+	/* dependsOnTime */     dependsOnTime,
+	/* dependsOnNormals */  NULL,
+	/* foreachObjectLink */ NULL,
+	/* foreachIDLink */     foreachIDLink,
+	/* foreachTexLink */    NULL,
 };

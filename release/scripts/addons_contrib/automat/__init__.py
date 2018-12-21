@@ -46,14 +46,14 @@ operator  and the AdjustableOperatorFromTexture operator.  """
 
 	bpy.utils.register_class(AutoOp.AutomatOperatorFromTexture)
 	bpy.utils.register_class(AdjOp.AdjustableOperatorFromTexture)
-	bpy.types.INFO_MT_file_import.append(menu_draw)
+	bpy.types.TOPBAR_MT_file_import.append(menu_draw)
 
 def unregister():
 
 	"""This method unregisters the AutomatOperatorFromTexture
 operator and the AdjustableOperatorFromTexture operator.  """
 
-	bpy.types.INFO_MT_file_import.remove(menu_draw)
+	bpy.types.TOPBAR_MT_file_import.remove(menu_draw)
 	bpy.utils.unregister_class(AutoOp.AutomatOperatorFromTexture)
 	bpy.utils.unregister_class(AdjOp.AdjustableOperatorFromTexture)
 

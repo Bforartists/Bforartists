@@ -91,63 +91,15 @@ void nodestack_get_vec(float *in, short type_in, bNodeStack *ns)
 }
 
 
-/* go over all used Geometry and Texture nodes, and return a texco flag */
-/* no group inside needed, this function is called for groups too */
-void ntreeShaderGetTexcoMode(bNodeTree *ntree, int r_mode, short *texco, int *mode)
-{
-	bNode *node;
-	bNodeSocket *sock;
-	int a;
-
-	for (node = ntree->nodes.first; node; node = node->next) {
-		if (node->type == SH_NODE_TEXTURE) {
-			if ((r_mode & R_OSA) && node->id) {
-				Tex *tex = (Tex *)node->id;
-				if (ELEM(tex->type, TEX_IMAGE, TEX_ENVMAP)) {
-					*texco |= TEXCO_OSA | NEED_UV;
-				}
-			}
-			/* usability exception... without input we still give the node orcos */
-			sock = node->inputs.first;
-			if (sock == NULL || sock->link == NULL)
-				*texco |= TEXCO_ORCO | NEED_UV;
-		}
-		else if (node->type == SH_NODE_GEOMETRY) {
-			/* note; sockets always exist for the given type! */
-			for (a = 0, sock = node->outputs.first; sock; sock = sock->next, a++) {
-				if (sock->flag & SOCK_IN_USE) {
-					switch (a) {
-						case GEOM_OUT_GLOB:
-							*texco |= TEXCO_GLOB | NEED_UV; break;
-						case GEOM_OUT_VIEW:
-							*texco |= TEXCO_VIEW | NEED_UV; break;
-						case GEOM_OUT_ORCO:
-							*texco |= TEXCO_ORCO | NEED_UV; break;
-						case GEOM_OUT_UV:
-							*texco |= TEXCO_UV | NEED_UV; break;
-						case GEOM_OUT_NORMAL:
-							*texco |= TEXCO_NORM | NEED_UV; break;
-						case GEOM_OUT_VCOL:
-							*texco |= NEED_UV; *mode |= MA_VERTEXCOL; break;
-						case GEOM_OUT_VCOL_ALPHA:
-							*texco |= NEED_UV; *mode |= MA_VERTEXCOL; break;
-					}
-				}
-			}
-		}
-	}
-}
-
 void node_gpu_stack_from_data(struct GPUNodeStack *gs, int type, bNodeStack *ns)
 {
 	memset(gs, 0, sizeof(*gs));
 
 	if (ns == NULL) {
-		/* node_get_stack() will generate NULL bNodeStack pointers for unknown/unsuported types of sockets... */
+		/* node_get_stack() will generate NULL bNodeStack pointers for unknown/unsupported types of sockets... */
 		zero_v4(gs->vec);
 		gs->link = NULL;
 		gs->type = GPU_NONE;
-		gs->name = "";
 		gs->hasinput = false;
 		gs->hasoutput = false;
 		gs->sockettype = type;
@@ -163,11 +115,10 @@ void node_gpu_stack_from_data(struct GPUNodeStack *gs, int type, bNodeStack *ns)
 		else if (type == SOCK_RGBA)
 			gs->type = GPU_VEC4;
 		else if (type == SOCK_SHADER)
-			gs->type = GPU_VEC4;
+			gs->type = GPU_CLOSURE;
 		else
 			gs->type = GPU_NONE;
 
-		gs->name = "";
 		gs->hasinput = ns->hasinput && ns->data;
 		/* XXX Commented out the ns->data check here, as it seems it's not always set,
 		 *     even though there *is* a valid connection/output... But that might need
@@ -193,7 +144,7 @@ static void gpu_stack_from_data_list(GPUNodeStack *gs, ListBase *sockets, bNodeS
 	for (sock = sockets->first, i = 0; sock; sock = sock->next, i++)
 		node_gpu_stack_from_data(&gs[i], sock->type, ns[i]);
 
-	gs[i].type = GPU_NONE;
+	gs[i].end = true;
 }
 
 static void data_from_gpu_stack_list(ListBase *sockets, bNodeStack **ns, GPUNodeStack *gs)
@@ -256,7 +207,7 @@ bNode *nodeGetActiveTexture(bNodeTree *ntree)
 	return inactivenode;
 }
 
-void ntreeExecGPUNodes(bNodeTreeExec *exec, GPUMaterial *mat, int do_outputs, short compatibility)
+void ntreeExecGPUNodes(bNodeTreeExec *exec, GPUMaterial *mat, int do_outputs)
 {
 	bNodeExec *nodeexec;
 	bNode *node;
@@ -275,9 +226,8 @@ void ntreeExecGPUNodes(bNodeTreeExec *exec, GPUMaterial *mat, int do_outputs, sh
 		do_it = false;
 		/* for groups, only execute outputs for edited group */
 		if (node->typeinfo->nclass == NODE_CLASS_OUTPUT) {
-			if (node->typeinfo->compatibility & compatibility)
-				if (do_outputs && (node->flag & NODE_DO_OUTPUT))
-					do_it = true;
+			if (do_outputs && (node->flag & NODE_DO_OUTPUT))
+				do_it = true;
 		}
 		else {
 			do_it = true;
@@ -303,13 +253,18 @@ void node_shader_gpu_tex_mapping(GPUMaterial *mat, bNode *node, GPUNodeStack *in
 	float domax = (texmap->flag & TEXMAP_CLIP_MAX) != 0;
 
 	if (domin || domax || !(texmap->flag & TEXMAP_UNIT_MATRIX)) {
-		GPUNodeLink *tmat = GPU_uniform((float *)texmap->mat);
-		GPUNodeLink *tmin = GPU_uniform(texmap->min);
-		GPUNodeLink *tmax = GPU_uniform(texmap->max);
-		GPUNodeLink *tdomin = GPU_uniform(&domin);
-		GPUNodeLink *tdomax = GPU_uniform(&domax);
+		static float max[3] = { FLT_MAX,  FLT_MAX,  FLT_MAX};
+		static float min[3] = {-FLT_MAX, -FLT_MAX, -FLT_MAX};
+		GPUNodeLink *tmin, *tmax, *tmat0, *tmat1, *tmat2, *tmat3;
 
-		GPU_link(mat, "mapping", in[0].link, tmat, tmin, tmax, tdomin, tdomax, &in[0].link);
+		tmin = GPU_uniform((domin) ? texmap->min : min);
+		tmax = GPU_uniform((domax) ? texmap->max : max);
+		tmat0 = GPU_uniform((float *)texmap->mat[0]);
+		tmat1 = GPU_uniform((float *)texmap->mat[1]);
+		tmat2 = GPU_uniform((float *)texmap->mat[2]);
+		tmat3 = GPU_uniform((float *)texmap->mat[3]);
+
+		GPU_link(mat, "mapping", in[0].link, tmat0, tmat1, tmat2, tmat3, tmin, tmax, &in[0].link);
 
 		if (texmap->type == TEXMAP_TYPE_NORMAL)
 			GPU_link(mat, "texco_norm", in[0].link, &in[0].link);

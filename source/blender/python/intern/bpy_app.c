@@ -47,11 +47,16 @@
 #include "bpy_app_handlers.h"
 #include "bpy_driver.h"
 
+/* modules */
+#include "bpy_app_icons.h"
+#include "bpy_app_timers.h"
+
 #include "BLI_utildefines.h"
 
 #include "BKE_appdir.h"
 #include "BKE_blender_version.h"
 #include "BKE_global.h"
+#include "BKE_library_override.h"
 
 #include "DNA_ID.h"
 
@@ -117,6 +122,10 @@ static PyStructSequence_Field app_info_fields[] = {
 	{(char *)"build_options", (char *)"A set containing most important enabled optional build features"},
 	{(char *)"handlers", (char *)"Application handler callbacks"},
 	{(char *)"translations", (char *)"Application and addons internationalization API"},
+
+	/* Modules (not struct sequence). */
+	{(char *)"icons", (char *)"Manage custom icons"},
+	{(char *)"timers", (char *)"Manage timers"},
 	{NULL},
 };
 
@@ -129,6 +138,8 @@ PyDoc_STRVAR(bpy_app_doc,
 "   :maxdepth: 1\n"
 "\n"
 "   bpy.app.handlers.rst\n"
+"   bpy.app.icons.rst\n"
+"   bpy.app.timers.rst\n"
 "   bpy.app.translations.rst\n"
 );
 
@@ -210,6 +221,10 @@ static PyObject *make_app_info(void)
 	SetObjItem(BPY_app_handlers_struct());
 	SetObjItem(BPY_app_translations_struct());
 
+	/* modules */
+	SetObjItem(BPY_app_icons_module());
+	SetObjItem(BPY_app_timers_module());
+
 #undef SetIntItem
 #undef SetStrItem
 #undef SetBytesItem
@@ -230,13 +245,13 @@ PyDoc_STRVAR(bpy_app_debug_doc,
 );
 static PyObject *bpy_app_debug_get(PyObject *UNUSED(self), void *closure)
 {
-	const int flag = GET_INT_FROM_POINTER(closure);
+	const int flag = POINTER_AS_INT(closure);
 	return PyBool_FromLong(G.debug & flag);
 }
 
 static int bpy_app_debug_set(PyObject *UNUSED(self), PyObject *value, void *closure)
 {
-	const int flag = GET_INT_FROM_POINTER(closure);
+	const int flag = POINTER_AS_INT(closure);
 	const int param = PyObject_IsTrue(value);
 
 	if (param == -1) {
@@ -307,7 +322,7 @@ static int bpy_app_debug_value_set(PyObject *UNUSED(self), PyObject *value, void
 
 static PyObject *bpy_app_global_flag_get(PyObject *UNUSED(self), void *closure)
 {
-	const int flag = GET_INT_FROM_POINTER(closure);
+	const int flag = POINTER_AS_INT(closure);
 	return PyBool_FromLong(G.f & flag);
 }
 
@@ -339,12 +354,35 @@ PyDoc_STRVAR(bpy_app_preview_render_size_doc,
 );
 static PyObject *bpy_app_preview_render_size_get(PyObject *UNUSED(self), void *closure)
 {
-	return PyLong_FromLong((long)UI_preview_render_size(GET_INT_FROM_POINTER(closure)));
+	return PyLong_FromLong((long)UI_preview_render_size(POINTER_AS_INT(closure)));
 }
 
 static PyObject *bpy_app_autoexec_fail_message_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
 	return PyC_UnicodeFromByte(G.autoexec_fail);
+}
+
+
+PyDoc_STRVAR(bpy_app_use_static_override_doc,
+"Boolean, whether static override is exposed in UI or not."
+);
+static PyObject *bpy_app_use_static_override_get(PyObject *UNUSED(self), void *UNUSED(closure))
+{
+	return PyBool_FromLong((long)BKE_override_static_is_enabled());
+}
+
+static int bpy_app_use_static_override_set(PyObject *UNUSED(self), PyObject *value, void *UNUSED(closure))
+{
+	const int param = PyC_Long_AsBool(value);
+
+	if (param == -1 && PyErr_Occurred()) {
+		PyErr_SetString(PyExc_TypeError, "bpy.app.use_static_override must be a boolean");
+		return -1;
+	}
+
+	BKE_override_static_enable((const bool)param);
+
+	return 0;
 }
 
 
@@ -364,6 +402,9 @@ static PyGetSetDef bpy_app_getsets[] = {
 	{(char *)"debug_depsgraph_pretty", bpy_app_debug_get, bpy_app_debug_set, (char *)bpy_app_debug_doc, (void *)G_DEBUG_DEPSGRAPH_PRETTY},
 	{(char *)"debug_simdata",   bpy_app_debug_get, bpy_app_debug_set, (char *)bpy_app_debug_doc, (void *)G_DEBUG_SIMDATA},
 	{(char *)"debug_gpumem",    bpy_app_debug_get, bpy_app_debug_set, (char *)bpy_app_debug_doc, (void *)G_DEBUG_GPU_MEM},
+	{(char *)"debug_io",        bpy_app_debug_get, bpy_app_debug_set, (char *)bpy_app_debug_doc, (void *)G_DEBUG_IO},
+
+	{(char *)"use_static_override", bpy_app_use_static_override_get, bpy_app_use_static_override_set, (char *)bpy_app_use_static_override_doc, NULL},
 
 	{(char *)"binary_path_python", bpy_app_binary_path_python_get, NULL, (char *)bpy_app_binary_path_python_doc, NULL},
 

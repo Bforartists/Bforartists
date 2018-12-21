@@ -60,7 +60,7 @@ class LengthSet(Operator):
     bl_idname = "object.mesh_edge_length_set"
     bl_label = "Set edge length"
     bl_description = ("Change one selected edge length by a specified target,\n"
-                      "existing lenght and different modes\n"
+                      "existing length and different modes\n"
                       "Note: works only with Edges that not share a vertex")
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -68,35 +68,35 @@ class LengthSet(Operator):
             name="Original length",
             options={'HIDDEN'},
             )
-    set_lenght_type = EnumProperty(
+    set_length_type = EnumProperty(
             items=[
                 ('manual', "Manual",
-                 "Input manually the desired Target Lenght"),
-                ('existing', "Existing Lenght",
+                 "Input manually the desired Target Length"),
+                ('existing', "Existing Length",
                  "Use existing geometry Edges' characteristics"),
             ],
             name="Set Type of Input",
             )
     target_length = FloatProperty(
             name="Target Length",
-            description="Input a value for an Edges Lenght target",
+            description="Input a value for an Edges Length target",
             default=1.00,
             unit='LENGTH',
             precision=5
             )
-    existing_lenght = EnumProperty(
+    existing_length = EnumProperty(
             items=[
                 ('min', "Shortest",
                  "Set all to shortest Edge of selection"),
                 ('max', "Longest",
                  "Set all to the longest Edge of selection"),
                 ('average', "Average",
-                 "Set all to the average Edge lenght of selection"),
+                 "Set all to the average Edge length of selection"),
                 ('active', "Active",
                  "Set all to the active Edge's one\n"
                  "Needs a selection to be done in Edge Select mode"),
             ],
-            name="Existing lenght"
+            name="Existing length"
             )
     mode = EnumProperty(
             items=[
@@ -119,7 +119,7 @@ class LengthSet(Operator):
             )
 
     originary_edge_length_dict = {}
-    edge_lenghts = []
+    edge_lengths = []
     selected_edges = ()
 
     @classmethod
@@ -132,14 +132,14 @@ class LengthSet(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Original Active lenght is: {:.3f}".format(self.old_length))
+        layout.label("Original Active length is: {:.3f}".format(self.old_length))
 
         layout.label("Input Mode:")
-        layout.prop(self, "set_lenght_type", expand=True)
-        if self.set_lenght_type == 'manual':
+        layout.prop(self, "set_length_type", expand=True)
+        if self.set_length_type == 'manual':
             layout.prop(self, "target_length")
         else:
-            layout.prop(self, "existing_lenght", text="")
+            layout.prop(self, "existing_length", text="")
 
         layout.label("Mode:")
         layout.prop(self, "mode", text="")
@@ -147,14 +147,14 @@ class LengthSet(Operator):
         layout.label("Resize Behavior:")
         layout.prop(self, "behaviour", text="")
 
-    def get_existing_edge_lenght(self, bm):
-        if self.existing_lenght != "active":
-            if self.existing_lenght == "min":
-                return min(self.edge_lenghts)
-            if self.existing_lenght == "max":
-                return max(self.edge_lenghts)
-            elif self.existing_lenght == "average":
-                return sum(self.edge_lenghts) / float(len(self.selected_edges))
+    def get_existing_edge_length(self, bm):
+        if self.existing_length != "active":
+            if self.existing_length == "min":
+                return min(self.edge_lengths)
+            if self.existing_length == "max":
+                return max(self.edge_lengths)
+            elif self.existing_length == "average":
+                return sum(self.edge_lengths) / float(len(self.selected_edges))
         else:
             bm.edges.ensure_lookup_table()
             active_edge_length = None
@@ -168,7 +168,7 @@ class LengthSet(Operator):
         return 0.0
 
     def invoke(self, context, event):
-        wm = context.window_manager
+        wm = context.window_managerlength
 
         obj = context.edit_object
         bm = bmesh.from_edit_mesh(obj.data)
@@ -197,7 +197,7 @@ class LengthSet(Operator):
                 # warning, it's a constant !
                 verts_index = ''.join((str(edge.verts[0].index), str(edge.verts[1].index)))
                 self.originary_edge_length_dict[verts_index] = vector
-                self.edge_lenghts.append(vector.length)
+                self.edge_lengths.append(vector.length)
                 self.old_length = vector.length
         else:
             self.report({'ERROR'}, _error_message)
@@ -233,21 +233,21 @@ class LengthSet(Operator):
             # what we should see in original length dialog field
             self.old_length = vector.length
 
-            if self.set_lenght_type == 'manual':
+            if self.set_length_type == 'manual':
                 vector.length = abs(self.target_length)
             else:
-                get_lenghts = self.get_existing_edge_lenght(bm)
+                get_lengths = self.get_existing_edge_length(bm)
                 # check for edit mode
-                if not get_lenghts:
+                if not get_lengths:
                     self.report({'WARNING'},
                                 "Operation Cancelled. "
                                 "Active Edge could not be determined (needs selection in Edit Mode)")
                     return {'CANCELLED'}
 
-                vector.length = get_lenghts
+                vector.length = get_lengths
 
             if vector.length == 0.0:
-                self.report({'ERROR'}, "Operation cancelled. Target lenght is set to zero")
+                self.report({'ERROR'}, "Operation cancelled. Target length is set to zero")
                 return {'CANCELLED'}
 
             center_vector = get_center_vector((edge.verts[0].co, edge.verts[1].co))

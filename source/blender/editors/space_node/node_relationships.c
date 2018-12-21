@@ -532,7 +532,7 @@ static void node_link_update_header(bContext *C, bNodeLinkDrag *UNUSED(nldrag))
 	char header[UI_MAX_DRAW_STR];
 
 	BLI_strncpy(header, IFACE_("LMB: drag node link, RMB: cancel"), sizeof(header));
-	ED_area_headerprint(CTX_wm_area(C), header);
+	ED_workspace_status_text(C, header);
 }
 
 static int node_count_links(bNodeTree *ntree, bNodeSocket *sock)
@@ -729,7 +729,7 @@ static int node_link_modal(bContext *C, wmOperator *op, const wmEvent *event)
 			if (event->val == KM_RELEASE) {
 				node_link_exit(C, op, true);
 
-				ED_area_headerprint(CTX_wm_area(C), NULL);
+				ED_workspace_status_text(C, NULL);
 				ED_region_tag_redraw(ar);
 				return OPERATOR_FINISHED;
 			}
@@ -1161,7 +1161,7 @@ static void node_join_attach_recursive(bNode *node, bNode *frame)
 		if (node->parent->done & NODE_JOIN_IS_DESCENDANT)
 			node->done |= NODE_JOIN_IS_DESCENDANT;
 		else if (node->flag & NODE_TEST) {
-			/* if parent is not an decendant of the frame, reattach the node */
+			/* if parent is not an descendant of the frame, reattach the node */
 			nodeDetachNode(node);
 			nodeAttachNode(node, frame);
 			node->done |= NODE_JOIN_IS_DESCENDANT;
@@ -1327,7 +1327,7 @@ static void node_detach_recursive(bNode *node)
 		if (node->parent->done & NODE_DETACH_IS_DESCENDANT)
 			node->done |= NODE_DETACH_IS_DESCENDANT;
 		else if (node->flag & NODE_SELECT) {
-			/* if parent is not a decendant of a selected node, detach */
+			/* if parent is not a descendant of a selected node, detach */
 			nodeDetachNode(node);
 			node->done |= NODE_DETACH_IS_DESCENDANT;
 		}
@@ -1590,7 +1590,7 @@ static void node_link_insert_offset_frame_chains(
 
 /**
  * Callback that applies NodeInsertOfsData.offset_x to a node or its parent,
- * considering the logic needed for offseting nodes after link insert
+ * considering the logic needed for offsetting nodes after link insert
  */
 static bool node_link_insert_offset_chain_cb(
         bNode *fromnode, bNode *tonode,
@@ -1648,7 +1648,7 @@ static void node_link_insert_offset_ntree(
 	/* insert->totr isn't updated yet, so totr_insert is used to get the correct worldspace coords */
 	node_to_updated_rect(insert, &totr_insert);
 
-	/* frame attachement was't handled yet so we search the frame that the node will be attached to later */
+	/* frame attachment wasn't handled yet so we search the frame that the node will be attached to later */
 	insert->parent = node_find_frame_to_attach(ar, ntree, mouse_xy);
 
 	/* this makes sure nodes are also correctly offset when inserting a node on top of a frame

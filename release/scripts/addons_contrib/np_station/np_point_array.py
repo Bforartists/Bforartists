@@ -1211,4 +1211,3 @@ def unregister():
     #bpy.utils.unregister_class(NPPAPreferences)
     #bpy.utils.unregister_module(__name__)
     bpy.app.handlers.scene_update_post.remove(NPPA_scene_update)
-

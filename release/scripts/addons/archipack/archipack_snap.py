@@ -43,7 +43,7 @@
             sp.delta
 
         action_callback(context, event, state, sp)
-            state in {'SUCCESS', 'CANCEL'}
+            state in {'RUNNING', 'SUCCESS', 'CANCEL'}
             sp.takeloc
             sp.placeloc
             sp.delta
@@ -64,6 +64,9 @@
 import bpy
 from bpy.types import Operator
 from mathutils import Vector, Matrix
+import logging
+
+logger = logging.getLogger("archipack")
 
 
 def dumb_callback(context, event, state, sp):
@@ -81,8 +84,8 @@ class SnapStore:
     callback = None
     draw = None
     helper = None
-    takeloc = Vector((0, 0, 0))
-    placeloc = Vector((0, 0, 0))
+    takeloc = Vector()
+    placeloc = Vector()
     constraint_axis = (True, True, False)
     helper_matrix = Matrix()
     transform_orientation = 'GLOBAL'
@@ -93,20 +96,20 @@ class SnapStore:
     act = None
     sel = []
     use_snap = False
-    snap_element = None
+    snap_elements = None
     snap_target = None
     pivot_point = None
     trans_orientation = None
 
 
 def snap_point(takeloc=None,
-                draw=dumb_draw,
-                callback=dumb_callback,
-                takemat=None,
-                constraint_axis=(True, True, False),
-                transform_orientation='GLOBAL',
-                mode='OBJECT',
-                release_confirm=True):
+               draw=None,
+               callback=dumb_callback,
+               takemat=None,
+               constraint_axis=(True, True, False),
+               transform_orientation='GLOBAL',
+               mode='OBJECT',
+               release_confirm=True):
     """
         Invoke op from outside world
         in a convenient importable function
@@ -126,16 +129,19 @@ def snap_point(takeloc=None,
     SnapStore.callback = callback
     SnapStore.constraint_axis = constraint_axis
     SnapStore.release_confirm = release_confirm
+
     if takemat is not None:
         SnapStore.helper_matrix = takemat
-        takeloc = takemat.translation
+        takeloc = takemat.translation.copy()
         transform_orientation = 'LOCAL'
     elif takeloc is not None:
-        SnapStore.helper_matrix = Matrix().Translation(takeloc)
+        SnapStore.helper_matrix = Matrix.Translation(takeloc)
     else:
         raise ValueError("ArchipackSnap: Either takeloc or takemat must be defined")
+
     SnapStore.takeloc = takeloc
-    SnapStore.placeloc = takeloc
+    SnapStore.placeloc = takeloc.copy()
+
     SnapStore.transform_orientation = transform_orientation
 
     # @NOTE: unused mode var to switch between OBJECT and EDIT mode
@@ -160,53 +166,56 @@ class ArchipackSnapBase():
         - takeloc
         - placeloc
     """
+
     def __init__(self):
         self._draw_handler = None
 
     def init(self, context, event):
         # Store context data
-        if SnapStore.instances_running < 1:
-            SnapStore.sel = [o for o in context.selected_objects]
-            SnapStore.act = context.active_object
-            bpy.ops.object.select_all(action="DESELECT")
-            SnapStore.use_snap = context.tool_settings.use_snap
-            SnapStore.snap_element = context.tool_settings.snap_element
-            SnapStore.snap_target = context.tool_settings.snap_target
-            SnapStore.pivot_point = context.space_data.pivot_point
-            SnapStore.trans_orientation = context.space_data.transform_orientation
+        # if SnapStore.instances_running < 1:
+        SnapStore.sel = context.selected_objects[:]
+        SnapStore.act = context.object
+        bpy.ops.object.select_all(action="DESELECT")
+        ts = context.tool_settings
+        SnapStore.use_snap = ts.use_snap
+        SnapStore.snap_elements = ts.snap_elements
+        SnapStore.snap_target = ts.snap_target
+        SnapStore.pivot_point = ts.transform_pivot_point
+        SnapStore.trans_orientation = context.scene.transform_orientation
         self.create_helper(context)
-        SnapStore.instances_running += 1
-        # print("ArchipackSnapBase init: %s" % (SnapStore.instances_running))
-        self.set_transform_orientation(context)
-        args = (self, context)
-        self._draw_handler = bpy.types.SpaceView3D.draw_handler_add(SnapStore.draw, args, 'WINDOW', 'POST_PIXEL')
+        # Use a timer to broadcast a TIMER event while transform.translate is running
+        self._timer = context.window_manager.event_timer_add(0.1, window=context.window)
+
+        if SnapStore.draw is not None:
+            args = (self, context)
+            self._draw_handler = bpy.types.SpaceView3D.draw_handler_add(SnapStore.draw, args, 'WINDOW', 'POST_PIXEL')
+
+    def remove_timer(self, context):
+        if self._timer is not None:
+            context.window_manager.event_timer_remove(self._timer)
 
     def exit(self, context):
-        bpy.types.SpaceView3D.draw_handler_remove(self._draw_handler, 'WINDOW')
-        # trick to allow launch 2nd instance
-        # via callback, preserve context as it
-        SnapStore.instances_running -= 1
-        # print("ArchipackSnapBase exit: %s" % (SnapStore.instances_running))
-        if SnapStore.instances_running > 0:
-            return
 
-        self.destroy_helper(context)
+        self.remove_timer(context)
+
+        if self._draw_handler is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(self._draw_handler, 'WINDOW')
+
         # Restore original context
-        context.tool_settings.use_snap = SnapStore.use_snap
-        context.tool_settings.snap_element = SnapStore.snap_element
-        context.tool_settings.snap_target = SnapStore.snap_target
-        context.space_data.pivot_point = SnapStore.pivot_point
-        context.space_data.transform_orientation = SnapStore.trans_orientation
+        if hasattr(context, "tool_settings"):
+            ts = context.tool_settings
+            ts.use_snap = SnapStore.use_snap
+            ts.snap_elements = SnapStore.snap_elements
+            ts.snap_target = SnapStore.snap_target
+            ts.transform_pivot_point = SnapStore.pivot_point
+        context.scene.transform_orientation = SnapStore.trans_orientation
         for o in SnapStore.sel:
-            o.select = True
+            o.select_set(state=True)
         if SnapStore.act is not None:
-            context.scene.objects.active = SnapStore.act
-
-    def set_transform_orientation(self, context):
-        """
-            Allow local constraint orientation to be set
-        """
-        context.space_data.transform_orientation = SnapStore.transform_orientation
+            SnapStore.act.select_set(state=True)
+            context.view_layer.objects.active = SnapStore.act
+        self.destroy_helper(context)
+        logger.debug("Snap.exit %s", context.object.name)
 
     def create_helper(self, context):
         """
@@ -217,23 +226,25 @@ class ArchipackSnapBase():
             Do target helper be linked to scene in order to work ?
 
         """
-
-        helper_idx = bpy.data.objects.find('Archipack_snap_helper')
-        if helper_idx > -1:
-            helper = bpy.data.objects[helper_idx]
-            if context.scene.objects.find('Archipack_snap_helper') < 0:
-                context.scene.objects.link(helper)
+        helper = bpy.data.objects.get('Archipack_snap_helper')
+        if helper is not None:
+            print("helper found")
+            if context.scene.objects.get('Archipack_snap_helper') is None:
+                print("link helper")
+                # self.link_object_to_scene(context, helper)
+                context.scene.collection.objects.link(helper)
         else:
-            bpy.ops.object.add(type='MESH')
-            helper = context.active_object
-            helper.name = 'Archipack_snap_helper'
+            print("create helper")
+            m = bpy.data.meshes.new("Archipack_snap_helper")
+            m.vertices.add(count=1)
+            helper = bpy.data.objects.new("Archipack_snap_helper", m)
+            context.scene.collection.objects.link(helper)
             helper.use_fake_user = True
             helper.data.use_fake_user = True
-        # hide snap helper
-        # helper.hide = True
+
         helper.matrix_world = SnapStore.helper_matrix
-        helper.select = True
-        context.scene.objects.active = helper
+        helper.select_set(state=True)
+        context.view_layer.objects.active = helper
         SnapStore.helper = helper
 
     def destroy_helper(self, context):
@@ -242,7 +253,8 @@ class ArchipackSnapBase():
             currently only support OBJECT mode
         """
         if SnapStore.helper is not None:
-            context.scene.objects.unlink(SnapStore.helper)
+            # @TODO: Fix this
+            # self.unlink_object_from_scene(context, SnapStore.helper)
             SnapStore.helper = None
 
     @property
@@ -266,35 +278,61 @@ class ArchipackSnapBase():
 class ARCHIPACK_OT_snap(ArchipackSnapBase, Operator):
     bl_idname = 'archipack.snap'
     bl_label = 'Archipack snap'
-    bl_options = {'UNDO'}
+    bl_options = {'INTERNAL'}  # , 'UNDO'
 
     def modal(self, context, event):
-        # print("Snap.modal event %s %s" % (event.type, event.value))
+
+        if SnapStore.helper is not None:
+            logger.debug("Snap.modal event %s %s location:%s",
+                         event.type,
+                         event.value,
+                         SnapStore.helper.location)
+
         context.area.tag_redraw()
-        # NOTE: this part only run after transform LEFTMOUSE RELEASE
-        # or with ESC and RIGHTMOUSE
-        if event.type not in {'ESC', 'RIGHTMOUSE', 'LEFTMOUSE', 'MOUSEMOVE'}:
-            # print("Snap.modal skip unknown event %s %s" % (event.type, event.value))
-            # self.report({'WARNING'}, "ARCHIPACK_OT_snap unknown event")
-            return{'PASS_THROUGH'}
+
+        if event.type in ('TIMER', 'NOTHING'):
+            SnapStore.callback(context, event, 'RUNNING', self)
+            return {'PASS_THROUGH'}
+
+        if event.type not in ('ESC', 'RIGHTMOUSE', 'LEFTMOUSE', 'MOUSEMOVE', 'INBETWEEN_MOUSEMOVE'):
+            return {'PASS_THROUGH'}
+
         if event.type in ('ESC', 'RIGHTMOUSE'):
             SnapStore.callback(context, event, 'CANCEL', self)
         else:
             SnapStore.placeloc = SnapStore.helper.location
-            SnapStore.callback(context, event, 'SUCCESS', self)
+            # on tt modal exit with right click, the delta is 0 so exit
+            if self.delta.length == 0:
+                SnapStore.callback(context, event, 'CANCEL', self)
+            else:
+                SnapStore.callback(context, event, 'SUCCESS', self)
+
         self.exit(context)
         # self.report({'INFO'}, "ARCHIPACK_OT_snap exit")
-        return{'FINISHED'}
+        return {'FINISHED'}
 
     def invoke(self, context, event):
         if context.area.type == 'VIEW_3D':
-            # print("Snap.invoke event %s %s" % (event.type, event.value))
+
+            if event.type in ('ESC', 'RIGHTMOUSE'):
+                return {'FINISHED'}
+
             self.init(context, event)
+
+            logger.debug("Snap.invoke event %s %s location:%s act:%s",
+                         event.type,
+                         event.value,
+                         SnapStore.helper.location, context.object.name)
+
             context.window_manager.modal_handler_add(self)
+
             bpy.ops.transform.translate('INVOKE_DEFAULT',
-                constraint_axis=SnapStore.constraint_axis,
-                constraint_orientation=SnapStore.transform_orientation,
-                release_confirm=SnapStore.release_confirm)
+                                        constraint_axis=SnapStore.constraint_axis,
+                                        constraint_orientation=SnapStore.transform_orientation,
+                                        release_confirm=SnapStore.release_confirm)
+
+            logger.debug("Snap.invoke transform.translate done")
+
             return {'RUNNING_MODAL'}
         else:
             self.report({'WARNING'}, "View3D not found, cannot run operator")

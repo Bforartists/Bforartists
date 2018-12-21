@@ -19,10 +19,10 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Copy Settings",
+    "name": "Copy Render Settings",
     "author": "Bastien Montagne",
-    "version": (0, 1, 7),
-    "blender": (2, 79, 1),
+    "version": (1, 0, 0),
+    "blender": (2, 80, 0),
     "location": "Render buttons (Properties window)",
     "description": "Allows to copy a selection of render settings "
                    "from current scene to others.",

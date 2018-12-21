@@ -11,7 +11,7 @@
 # note above.
 # if opening width == indent*2 the edge blocks fail (row of blocks cross opening).
 # if openings overlap fills inverse with blocks - see h/v slots.
-# Negative grout width creates a pair of phantom blocks, seperated by grout
+# Negative grout width creates a pair of phantom blocks, separated by grout
 # width, inside the edges.
 # if block width variance is 0, and edging is on, right edge blocks create a "vertical seam"
 
@@ -401,7 +401,7 @@ def MakeAKeystone(xpos, width, zpos, ztop, zbtm, thick, bevel, vll=0, FaceExclud
     faces.append([5, 4, 0, 1])
     faces.append([6, 5, 1, 2])
     faces.append([7, 6, 2, 3])
-    # Offset the vertex numbers by the number of verticies already in the list
+    # Offset the vertex numbers by the number of vertices already in the list
     for i in range(len(faces)):
         for j in range(len(faces[i])):
             faces[i][j] += vll
@@ -415,7 +415,7 @@ def circ(offs=0., r=1.):
     __doc__ = """\
     offs is the distance perpendicular to the line to the center of the circle
     r is the radius of the circle
-    circ returns the distance paralell to the line to the center of the circle at the intercept.
+    circ returns the distance parallel to the line to the center of the circle at the intercept.
     """
     offs = abs(offs)
     if offs > r:
@@ -769,7 +769,7 @@ class rowOb:
         self.h = float(rowheight)
         self.EdgeOffset = float(edgeoffset)
 
-    # THIS INITILIZATION IS IMPORTANT!  OTHERWISE ALL OBJECTS WILL HAVE THE SAME LISTS!
+    # THIS INITIALIZATION IS IMPORTANT!  OTHERWISE ALL OBJECTS WILL HAVE THE SAME LISTS!
         self.BlocksEdge = []
         self.RowSegments = []
         self.BlocksNorm = []
@@ -904,7 +904,7 @@ def sketch():
                                         x['v'], x['t'], x['vl'], x['tl'], x['b']))
         else:
             boundlist.append(opening(x['x'], x['z'], x['w'], x['h'], x['v'], x['t'], x['vl'], x['tl'], x['b']))
-        # check for overlaping edges?
+        # check for overlapping edges?
 
     return boundlist
 
@@ -946,7 +946,7 @@ def wedgeBlocks(row, opening, leftPos, rightPos, edgeBinary, r1):
         # Wedges are on btm = blank,  off,  blank,  off
         ThisBlockOffsets = [[0, 0, LeftVertOffset]] * 2 + [[0] * 3] * 2 + [[0, 0, RightVertOffset]] * 2
 
-        # Instert or append "blank" for top or bottom wedges.
+        # Insert or append "blank" for top or bottom wedges.
         if edgeBinary == 1:
             ThisBlockOffsets = ThisBlockOffsets + [[0] * 3] * 2
         else:
@@ -1086,7 +1086,7 @@ def rowProcessing(row, Thesketch, WallBoundaries):
         LDiff = LBtm - LTop
         RDiff = RTop - RBtm
 
-        # which is furthur out on each side, top or bottom?
+        # which is further out on each side, top or bottom?
         if LDiff > 0:
             LNerEdge = LBtm  # the nearer edge left
             LEB = 1          # Left Edge Boolean, set to 1 if furthest edge is top, -1 if it is bottom
@@ -1180,7 +1180,7 @@ def rowProcessing(row, Thesketch, WallBoundaries):
             # this row is just two blocks! Left block, then right block
             # div is the x position of the dividing point between the two bricks
             div = InnerMid + (rndd() * settings['wv']) / r1
-            # set the grout distance, since we need grout seperation between the blocks
+            # set the grout distance, since we need grout separation between the blocks
             grt = (settings['g'] + rndc() * settings['gv']) / r1
             # set the x position and width for the left block
             x = (div + LNerEdge) / 2 - grt / 4
@@ -1330,7 +1330,7 @@ def archGeneration(hole, vlist, flist, sideSign):
     example, Upper arch:
     archGeneration(hole, vlist, flist, 1)
     hole is the opening object that the arch is for
-    add the verticies to vlist
+    add the vertices to vlist
     add the faces to flist
     sideSign is + or - 1, for the top or bottom arch. Other values may cause errors.
     """
@@ -1410,7 +1410,7 @@ def archGeneration(hole, vlist, flist, sideSign):
             BtmHt = - (hole.btm() - MidZ) - Grout
             TopHt = nearCorner
 
-        # set the amout to bevel the keystone
+        # set the amount to bevel the keystone
         keystoneBevel = (bevHt - v) * sideSign
         if Wdth >= settings['hm']:
             avlist, aflist = MakeAKeystone(x, Wdth, MidZ, TopHt, BtmHt, Dpth, keystoneBevel, len(vlist))
@@ -1572,7 +1572,7 @@ def build(Aplan):
             else:
                 r1 = 1
 
-            Tollerance = settings['g'] / r1
+            Tolerance = settings['g'] / r1
             idxThis = len(rows[rowidx].BlocksNorm[:]) - 1
             idxThat = len(rows[rowidx + 1].BlocksNorm[:]) - 1
 
@@ -1588,7 +1588,7 @@ def build(Aplan):
                 cx, cz, cw, ch, cd = blockThis[:5]
                 ox, oz, ow, oh, od = blockThat[:5]
 
-                if (abs(cw - ow) < Tollerance) and (abs(cx - ox) < Tollerance):
+                if (abs(cw - ow) < Tolerance) and (abs(cx - ox) < Tolerance):
                     if cw > ow:
                         BlockW = ow
                     else:
@@ -1781,7 +1781,7 @@ def build(Aplan):
 def createWall(radial, curve, openings, mergeBlox, shelf, shelfSide,
         steps, stepDir, stepBare, stepSide):
     __doc__ = """\
-    Call all the funcitons you need to make a wall, return the verts and faces.
+    Call all the functions you need to make a wall, return the verts and faces.
     """
     global radialized
     global slope

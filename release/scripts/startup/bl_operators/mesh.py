@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -30,10 +30,10 @@ from bpy.props import (
 class MeshMirrorUV(Operator):
     """Copy Mirrored UV coords\nCopy mirror UV coordinates on the X axis based on a mirrored mesh"""
     bl_idname = "mesh.faces_mirror_uv"
-    bl_label = "Copy Mirrored UV coords"
+    bl_label = "Copy Mirrored UV Coords"
     bl_options = {'REGISTER', 'UNDO'}
 
-    direction = EnumProperty(
+    direction: EnumProperty(
         name="Axis Direction",
         items=(
             ('POSITIVE', "Positive", ""),
@@ -41,7 +41,7 @@ class MeshMirrorUV(Operator):
         ),
     )
 
-    precision = IntProperty(
+    precision: IntProperty(
         name="Precision",
         description=("Tolerance for finding vertex duplicates"),
         min=1, max=16,
@@ -49,22 +49,14 @@ class MeshMirrorUV(Operator):
         default=3,
     )
 
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        return (obj and obj.type == 'MESH' and obj.data.uv_textures.active)
-
-    def execute(self, context):
-        DIR = (self.direction == 'NEGATIVE')
+    # Returns has_active_UV_layer, double_warn.
+    def do_mesh_mirror_UV(self, mesh, DIR):
         precision = self.precision
         double_warn = 0
 
-        ob = context.active_object
-        is_editmode = (ob.mode == 'EDIT')
-        if is_editmode:
-            bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-
-        mesh = ob.data
+        if not mesh.uv_layers.active:
+            # has_active_UV_layer, double_warn
+            return False, 0
 
         # mirror lookups
         mirror_gt = {}
@@ -144,13 +136,68 @@ class MeshMirrorUV(Operator):
                     k_map = v1.index(v2[k])
                     uv1[k].xy = - (uv2[k_map].x - 0.5) + 0.5, uv2[k_map].y
 
+        # has_active_UV_layer, double_warn
+        return True, double_warn
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.view_layer.objects.active
+        return (obj and obj.type == 'MESH')
+
+    def execute(self, context):
+        DIR = (self.direction == 'NEGATIVE')
+
+        total_no_active_UV = 0
+        total_duplicates = 0
+        meshes_with_duplicates = 0
+
+        ob = context.view_layer.objects.active
+        is_editmode = (ob.mode == 'EDIT')
+        if is_editmode:
+            bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+
+        meshes = [ob.data for ob in context.view_layer.objects.selected
+                  if ob.type == 'MESH' and ob.data.library is None]
+
+        for mesh in meshes:
+            mesh.tag = False
+
+        for mesh in meshes:
+            if mesh.tag:
+                continue
+
+            mesh.tag = True
+
+            has_active_UV_layer, double_warn = self.do_mesh_mirror_UV(mesh, DIR)
+
+            if not has_active_UV_layer:
+                total_no_active_UV = total_no_active_UV + 1
+
+            elif double_warn:
+                total_duplicates += double_warn
+                meshes_with_duplicates = meshes_with_duplicates + 1
+
         if is_editmode:
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
 
-        if double_warn:
-            self.report({'WARNING'},
-                        "%d duplicates found, mirror may be incomplete" %
-                        double_warn)
+        if total_duplicates and total_no_active_UV:
+            self.report({'WARNING'}, "%d %s with no active UV layer. "
+                        "%d duplicates found in %d %s, mirror may be incomplete."
+                        % (total_no_active_UV,
+                           "mesh" if total_no_active_UV == 1 else "meshes",
+                           total_duplicates,
+                           meshes_with_duplicates,
+                           "mesh" if meshes_with_duplicates == 1 else "meshes"))
+        elif total_no_active_UV:
+            self.report({'WARNING'}, "%d %s with no active UV layer."
+                        % (total_no_active_UV,
+                           "mesh" if total_no_active_UV == 1 else "meshes"))
+        elif total_duplicates:
+            self.report({'WARNING'}, "%d duplicates found in %d %s,"
+                        " mirror may be incomplete."
+                        % (total_duplicates,
+                           meshes_with_duplicates,
+                           "mesh" if meshes_with_duplicates == 1 else "meshes"))
 
         return {'FINISHED'}
 
@@ -205,57 +252,7 @@ class MeshSelectPrev(Operator):
         return {'FINISHED'}
 
 
-# XXX This is hackish (going forth and back from Object mode...), to be redone once we have proper support of
-#     custom normals in BMesh/edit mode.
-class MehsSetNormalsFromFaces(Operator):
-    """Set Normals from Faces\nSet the custom vertex normals from the selected faces ones\nThis tool requires to have Autosmooth activated"""
-    bl_idname = "mesh.set_normals_from_faces"
-    bl_label = "Set Normals From Faces"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    @classmethod
-    def poll(cls, context):
-        return (context.mode == 'EDIT_MESH' and context.edit_object.data.polygons)
-
-    def execute(self, context):
-        import mathutils
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        obj = context.active_object
-        me = obj.data
-
-        v2nors = {}
-        for p in me.polygons:
-            if not p.select:
-                continue
-            for lidx, vidx in zip(p.loop_indices, p.vertices):
-                assert(me.loops[lidx].vertex_index == vidx)
-                v2nors.setdefault(vidx, []).append(p.normal)
-
-        for nors in v2nors.values():
-            nors[:] = [sum(nors, mathutils.Vector((0, 0, 0))).normalized()]
-
-        if not me.has_custom_normals:
-            me.create_normals_split()
-        me.calc_normals_split()
-
-        normals = []
-        for l in me.loops:
-            nor = v2nors.get(l.vertex_index, [None])[0]
-            if nor is None:
-                nor = l.normal
-            normals.append(nor.to_tuple())
-
-        me.normals_split_custom_set(normals)
-
-        me.free_normals_split()
-        bpy.ops.object.mode_set(mode='EDIT')
-
-        return {'FINISHED'}
-
-
 classes = (
-    MehsSetNormalsFromFaces,
     MeshMirrorUV,
     MeshSelectNext,
     MeshSelectPrev,

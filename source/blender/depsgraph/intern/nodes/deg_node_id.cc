@@ -41,8 +41,12 @@ extern "C" {
 #include "DNA_anim_types.h"
 
 #include "BKE_animsys.h"
+#include "BKE_library.h"
 }
 
+#include "DEG_depsgraph.h"
+
+#include "intern/eval/deg_eval_copy_on_write.h"
 #include "intern/nodes/deg_node_time.h"
 #include "intern/depsgraph_intern.h"
 
@@ -58,8 +62,8 @@ IDDepsNode::ComponentIDKey::ComponentIDKey(eDepsNode_Type type,
 
 bool IDDepsNode::ComponentIDKey::operator== (const ComponentIDKey &other) const
 {
-    return type == other.type &&
-           STREQ(name, other.name);
+	return type == other.type &&
+		STREQ(name, other.name);
 }
 
 static unsigned int id_deps_node_hash_key(const void *key_v)
@@ -95,33 +99,89 @@ static void id_deps_node_hash_value_free(void *value_v)
 /* Initialize 'id' node - from pointer data given. */
 void IDDepsNode::init(const ID *id, const char *UNUSED(subdata))
 {
-	/* Store ID-pointer. */
 	BLI_assert(id != NULL);
-	this->id = (ID *)id;
-	this->layers = (1 << 20) - 1;
-	this->eval_flags = 0;
+	/* Store ID-pointer. */
+	id_orig = (ID *)id;
+	eval_flags = 0;
+	previous_eval_flags = 0;
+	customdata_mask = 0;
+	previous_customdata_mask = 0;
+	linked_state = DEG_ID_LINKED_INDIRECTLY;
+	is_directly_visible = true;
+	is_collection_fully_expanded = false;
 
-	/* For object we initialize layers to layer from base. */
-	if (GS(id->name) == ID_OB) {
-		this->layers = 0;
-	}
+	visible_components_mask = 0;
+	previously_visible_components_mask = 0;
 
 	components = BLI_ghash_new(id_deps_node_hash_key,
 	                           id_deps_node_hash_key_cmp,
 	                           "Depsgraph id components hash");
+}
 
-	/* NOTE: components themselves are created if/when needed.
-	 * This prevents problems with components getting added
-	 * twice if an ID-Ref needs to be created to house it...
+void IDDepsNode::init_copy_on_write(ID *id_cow_hint)
+{
+	/* Create pointer as early as possible, so we can use it for function
+	 * bindings. Rest of data we'll be copying to the new datablock when
+	 * it is actually needed.
 	 */
+	if (id_cow_hint != NULL) {
+		// BLI_assert(deg_copy_on_write_is_needed(id_orig));
+		if (deg_copy_on_write_is_needed(id_orig)) {
+			id_cow = id_cow_hint;
+		}
+		else {
+			id_cow = id_orig;
+		}
+	}
+	else if (deg_copy_on_write_is_needed(id_orig)) {
+		id_cow = (ID *)BKE_libblock_alloc_notest(GS(id_orig->name));
+		DEG_COW_PRINT("Create shallow copy for %s: id_orig=%p id_cow=%p\n",
+		              id_orig->name, id_orig, id_cow);
+		deg_tag_copy_on_write_id(id_cow, id_orig);
+	}
+	else {
+		id_cow = id_orig;
+	}
 }
 
 /* Free 'id' node. */
 IDDepsNode::~IDDepsNode()
 {
+	destroy();
+}
+
+void IDDepsNode::destroy()
+{
+	if (id_orig == NULL) {
+		return;
+	}
+
 	BLI_ghash_free(components,
 	               id_deps_node_hash_key_free,
 	               id_deps_node_hash_value_free);
+
+	/* Free memory used by this CoW ID. */
+	if (id_cow != id_orig && id_cow != NULL) {
+		deg_free_copy_on_write_datablock(id_cow);
+		MEM_freeN(id_cow);
+		id_cow = NULL;
+		DEG_COW_PRINT("Destroy CoW for %s: id_orig=%p id_cow=%p\n",
+		              id_orig->name, id_orig, id_cow);
+	}
+
+	/* Tag that the node is freed. */
+	id_orig = NULL;
+}
+
+string IDDepsNode::identifier() const
+{
+	char orig_ptr[24], cow_ptr[24];
+	BLI_snprintf(orig_ptr, sizeof(orig_ptr), "%p", id_orig);
+	BLI_snprintf(cow_ptr, sizeof(cow_ptr), "%p", id_cow);
+	return string(nodeTypeAsString(type)) + " : " + name +
+	        " (orig: " + orig_ptr + ", eval: " + cow_ptr +
+	        ", is_directly_visible " + (is_directly_visible ? "true"
+	                                                        : "false") + ")";
 }
 
 ComponentDepsNode *IDDepsNode::find_component(eDepsNode_Type type,
@@ -137,7 +197,7 @@ ComponentDepsNode *IDDepsNode::add_component(eDepsNode_Type type,
 	ComponentDepsNode *comp_node = find_component(type, name);
 	if (!comp_node) {
 		DepsNodeFactory *factory = deg_type_get_factory(type);
-		comp_node = (ComponentDepsNode *)factory->create_node(this->id, "", name);
+		comp_node = (ComponentDepsNode *)factory->create_node(this->id_orig, "", name);
 
 		/* Register. */
 		ComponentIDKey *key = OBJECT_GUARDED_NEW(ComponentIDKey, type, name);
@@ -147,33 +207,38 @@ ComponentDepsNode *IDDepsNode::add_component(eDepsNode_Type type,
 	return comp_node;
 }
 
-void IDDepsNode::tag_update(Depsgraph *graph)
+void IDDepsNode::tag_update(Depsgraph *graph, eDepsTag_Source source)
 {
 	GHASH_FOREACH_BEGIN(ComponentDepsNode *, comp_node, components)
 	{
-		/* TODO(sergey): What about drievrs? */
-		bool do_component_tag = comp_node->type != DEG_NODE_TYPE_ANIMATION;
-		if (comp_node->type == DEG_NODE_TYPE_ANIMATION) {
-			AnimData *adt = BKE_animdata_from_id(id);
-			/* Animation data might be null if relations are tagged for update. */
-			if (adt != NULL && (adt->recalc & ADT_RECALC_ANIM)) {
-				do_component_tag = true;
-			}
-		}
-		if (do_component_tag) {
-			comp_node->tag_update(graph);
-		}
+		comp_node->tag_update(graph, source);
 	}
 	GHASH_FOREACH_END();
 }
 
-void IDDepsNode::finalize_build()
+void IDDepsNode::finalize_build(Depsgraph *graph)
 {
+	/* Finalize build of all components. */
 	GHASH_FOREACH_BEGIN(ComponentDepsNode *, comp_node, components)
 	{
-		comp_node->finalize_build();
+		comp_node->finalize_build(graph);
 	}
 	GHASH_FOREACH_END();
+	visible_components_mask = get_visible_components_mask();
+}
+
+IDComponentsMask IDDepsNode::get_visible_components_mask() const {
+	IDComponentsMask result = 0;
+	GHASH_FOREACH_BEGIN(ComponentDepsNode *, comp_node, components)
+	{
+		if (comp_node->affects_directly_visible) {
+			const int component_type = comp_node->type;
+			BLI_assert(component_type < 64);
+			result |= (1ULL << component_type);
+		}
+	}
+	GHASH_FOREACH_END();
+	return result;
 }
 
 }  // namespace DEG

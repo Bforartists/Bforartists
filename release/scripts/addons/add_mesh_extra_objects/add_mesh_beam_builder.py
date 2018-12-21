@@ -186,7 +186,7 @@ def create_beam(sRef):
 def beamSlant(sRef, outV, inV):
     bTaper = 100 - sRef.edgeA
 
-    # calcuate variance & adjust vertex
+    # calculate variance & adjust vertex
     deltaV = ((inV - outV) / 100)
     adVert = outV + (deltaV * bTaper)
 

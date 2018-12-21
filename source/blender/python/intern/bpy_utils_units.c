@@ -204,7 +204,7 @@ static PyObject *bpyunits_to_value(PyObject *UNUSED(self), PyObject *args, PyObj
 
 	bUnit_ReplaceString(str, (int)str_len, uref, scale, usys, ucat);
 
-	if (!PyC_RunString_AsNumber(str, "<bpy_units_api>", &result)) {
+	if (!PyC_RunString_AsNumber(NULL, str, "<bpy_units_api>", &result)) {
 		if (PyErr_Occurred()) {
 			PyErr_Print();
 			PyErr_Clear();
@@ -323,7 +323,6 @@ PyObject *BPY_utils_units(void)
 
 	submodule = PyModule_Create(&bpyunits_module);
 	PyDict_SetItemString(PyImport_GetModuleDict(), bpyunits_module.m_name, submodule);
-	Py_INCREF(submodule);
 
 	/* Finalize our unit systems and types structseq definitions! */
 

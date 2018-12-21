@@ -19,39 +19,50 @@
 bl_info = {
     "name": "Batch Rename Datablocks",
     "author": "tstscr",
-    "version": (1, 0),
-    "blender": (2, 59, 0),
+    "version": (1, 1),
+    "blender": (2, 80, 0),
     "location": "Search > (rename)",
     "description": "Batch renaming of datablocks "
-        "(e.g. rename materials after objectnames)",
+    "(e.g. rename materials after objectnames)",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Object/Batch_Rename_Datablocks",
+    "Scripts/Object/Batch_Rename_Datablocks",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Object"}
 
 
 import bpy
-from bpy.props import *
+from bpy.props import (
+    EnumProperty,
+    StringProperty,
+    BoolProperty,
+)
+
 
 def get_first_material_name(ob):
     for m_slot in ob.material_slots:
         if m_slot.material:
             material_name = m_slot.material.name
             return material_name
+    return None
+
 
 def get_name(self, ob):
     if self.naming_base == 'Object':
         return ob.name
 
     if self.naming_base == 'Mesh':
-        if ob.data: return ob.data.name
-        else: return ob.name
+        if ob.data:
+            return ob.data.name
+        else:
+            return ob.name
 
     if self.naming_base == 'Material':
         material_name = get_first_material_name(ob)
-        if not material_name: return ob.name
-        else: return material_name
+        if not material_name:
+            return ob.name
+        else:
+            return material_name
 
     if self.naming_base == 'Custom':
         return self.rename_custom
@@ -63,17 +74,15 @@ def rename_datablocks_main(self, context):
         name = get_name(self, ob)
 
         if self.rename_object:
-            if (self.rename_use_prefix
-            and self.prefix_object):
+            if (self.rename_use_prefix and self.prefix_object):
                 ob.name = self.rename_prefix + name
             else:
                 ob.name = name
 
         if self.rename_data:
             if (ob.data
-            and ob.data.users == 1):
-                if (self.rename_use_prefix
-                and self.prefix_data):
+                    and ob.data.users == 1):
+                if (self.rename_use_prefix and self.prefix_data):
                     ob.data.name = self.rename_prefix + name
                 else:
                     ob.data.name = name
@@ -83,11 +92,11 @@ def rename_datablocks_main(self, context):
                 for m_slot in ob.material_slots:
                     if m_slot.material:
                         if m_slot.material.users == 1:
-                            if (self.rename_use_prefix
-                            and self.prefix_material):
+                            if (self.rename_use_prefix and self.prefix_material):
                                 m_slot.material.name = self.rename_prefix + name
                             else:
                                 m_slot.material.name = name
+
 
 class OBJECT_OT_batch_rename_datablocks(bpy.types.Operator):
     """Batch rename Datablocks"""
@@ -96,40 +105,50 @@ class OBJECT_OT_batch_rename_datablocks(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     name_origins = [
-                    ('Object', 'Object', 'Object'),
-                    ('Mesh', 'Mesh', 'Mesh'),
-                    ('Material', 'Material', 'Material'),
-                    ('Custom', 'Custom', 'Custom')
-                    ]
-    naming_base = EnumProperty(name='Name after:',
-                                items=name_origins)
-    rename_custom = StringProperty(name='Custom Name',
-                                default='New Name',
-                                description='Rename all with this String')
-    rename_object = BoolProperty(name='Rename Objects',
-                                default=False,
-                                description='Rename Objects')
-    rename_data = BoolProperty(name='Rename Data',
-                                default=True,
-                                description='Rename Object\'s Data')
-    rename_material = BoolProperty(name='Rename Materials',
-                                default=True,
-                                description='Rename Objects\' Materials')
-    rename_use_prefix = BoolProperty(name='Add Prefix',
-                                default=False,
-                                description='Prefix Objectnames with first Groups name')
-    rename_prefix = StringProperty(name='Prefix',
-                                default='',
-                                description='Prefix name with this string')
-    prefix_object = BoolProperty(name='Object',
-                                default=True,
-                                description='Prefix Object Names')
-    prefix_data = BoolProperty(name='Data',
-                                default=True,
-                                description='Prefix Data Names')
-    prefix_material = BoolProperty(name='Material',
-                                default=True,
-                                description='Prefix Material Names')
+        ('Object', 'Object', 'Use object name to rename other datablocks'),
+        ('Mesh', 'Mesh', 'Use mesh name to rename other datablocks'),
+        ('Material', 'Material', 'Use material name to rename other datablocks'),
+        ('Custom', 'Custom', 'Use new custom name to rename other datablocks')
+        ]
+    naming_base: EnumProperty(
+        name='Name after:',
+        items=name_origins)
+    rename_custom: StringProperty(
+        name='Custom Name',
+        default='New Name',
+        description='Custom new name')
+    rename_object: BoolProperty(
+        name='Rename Objects',
+        default=False,
+        description='Rename Objects')
+    rename_data: BoolProperty(
+        name='Rename Data',
+        default=True,
+        description='Rename Object\'s Data')
+    rename_material: BoolProperty(
+        name='Rename Materials',
+        default=True,
+        description='Rename Objects\' Materials')
+    rename_use_prefix: BoolProperty(
+        name='Add Prefix',
+        default=False,
+        description='Prefix Objectnames with first Groups name')
+    rename_prefix: StringProperty(
+        name='Prefix',
+        default='',
+        description='Prefix name with this string')
+    prefix_object: BoolProperty(
+        name='Object',
+        default=True,
+        description='Prefix Object Names')
+    prefix_data: BoolProperty(
+        name='Data',
+        default=True,
+        description='Prefix Data Names')
+    prefix_material: BoolProperty(
+        name='Material',
+        default=True,
+        description='Prefix Material Names')
 
     dialog_width = 260
 
@@ -145,7 +164,7 @@ class OBJECT_OT_batch_rename_datablocks(bpy.types.Operator):
         col.prop(self.properties, 'rename_custom')
 
         col.separator()
-        col.label('Datablocks to rename:')
+        col.label(text='Datablocks to rename:')
         col.prop(self.properties, 'rename_object')
         col.prop(self.properties, 'rename_data')
         col.prop(self.properties, 'rename_material')
@@ -173,15 +192,26 @@ class OBJECT_OT_batch_rename_datablocks(bpy.types.Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        wm.invoke_props_dialog(self, self.dialog_width)
+        wm.invoke_props_dialog(self, width=self.dialog_width)
         return {'RUNNING_MODAL'}
 
 
+classes = [
+    OBJECT_OT_batch_rename_datablocks,
+]
+
+
 def register():
-    bpy.utils.register_module(__name__)
-    pass
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    pass
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
+
 if __name__ == '__main__':
     register()

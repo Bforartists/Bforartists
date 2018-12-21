@@ -89,7 +89,7 @@ bool BlenderSync::object_is_light(BL::Object& b_ob)
 {
 	BL::ID b_ob_data = b_ob.data();
 
-	return (b_ob_data && b_ob_data.is_a(&RNA_Lamp));
+	return (b_ob_data && b_ob_data.is_a(&RNA_Light));
 }
 
 static uint object_ray_visibility(BL::Object& b_ob)
@@ -112,13 +112,14 @@ static uint object_ray_visibility(BL::Object& b_ob)
 void BlenderSync::sync_light(BL::Object& b_parent,
                              int persistent_id[OBJECT_PERSISTENT_ID_SIZE],
                              BL::Object& b_ob,
-                             BL::DupliObject& b_dupli_ob,
+                             BL::Object& b_ob_instance,
+                             int random_id,
                              Transform& tfm,
                              bool *use_portal)
 {
 	/* test if we need to sync */
 	Light *light;
-	ObjectKey key(b_parent, persistent_id, b_ob);
+	ObjectKey key(b_parent, persistent_id, b_ob_instance);
 
 	if(!light_map.sync(&light, b_ob, b_parent, key)) {
 		if(light->is_portal)
@@ -126,45 +127,60 @@ void BlenderSync::sync_light(BL::Object& b_parent,
 		return;
 	}
 
-	BL::Lamp b_lamp(b_ob.data());
+	BL::Light b_light(b_ob.data());
 
 	/* type */
-	switch(b_lamp.type()) {
-		case BL::Lamp::type_POINT: {
-			BL::PointLamp b_point_lamp(b_lamp);
-			light->size = b_point_lamp.shadow_soft_size();
+	switch(b_light.type()) {
+		case BL::Light::type_POINT: {
+			BL::PointLight b_point_light(b_light);
+			light->size = b_point_light.shadow_soft_size();
 			light->type = LIGHT_POINT;
 			break;
 		}
-		case BL::Lamp::type_SPOT: {
-			BL::SpotLamp b_spot_lamp(b_lamp);
-			light->size = b_spot_lamp.shadow_soft_size();
+		case BL::Light::type_SPOT: {
+			BL::SpotLight b_spot_light(b_light);
+			light->size = b_spot_light.shadow_soft_size();
 			light->type = LIGHT_SPOT;
-			light->spot_angle = b_spot_lamp.spot_size();
-			light->spot_smooth = b_spot_lamp.spot_blend();
+			light->spot_angle = b_spot_light.spot_size();
+			light->spot_smooth = b_spot_light.spot_blend();
 			break;
 		}
-		case BL::Lamp::type_HEMI: {
+		/* Hemi were removed from 2.8 */
+		// case BL::Light::type_HEMI: {
+		// 	light->type = LIGHT_DISTANT;
+		// 	light->size = 0.0f;
+		// 	break;
+		// }
+		case BL::Light::type_SUN: {
+			BL::SunLight b_sun_light(b_light);
+			light->size = b_sun_light.shadow_soft_size();
 			light->type = LIGHT_DISTANT;
-			light->size = 0.0f;
 			break;
 		}
-		case BL::Lamp::type_SUN: {
-			BL::SunLamp b_sun_lamp(b_lamp);
-			light->size = b_sun_lamp.shadow_soft_size();
-			light->type = LIGHT_DISTANT;
-			break;
-		}
-		case BL::Lamp::type_AREA: {
-			BL::AreaLamp b_area_lamp(b_lamp);
+		case BL::Light::type_AREA: {
+			BL::AreaLight b_area_light(b_light);
 			light->size = 1.0f;
 			light->axisu = transform_get_column(&tfm, 0);
 			light->axisv = transform_get_column(&tfm, 1);
-			light->sizeu = b_area_lamp.size();
-			if(b_area_lamp.shape() == BL::AreaLamp::shape_RECTANGLE)
-				light->sizev = b_area_lamp.size_y();
-			else
-				light->sizev = light->sizeu;
+			light->sizeu = b_area_light.size();
+			switch(b_area_light.shape()) {
+				case BL::AreaLight::shape_SQUARE:
+					light->sizev = light->sizeu;
+					light->round = false;
+					break;
+				case BL::AreaLight::shape_RECTANGLE:
+					light->sizev = b_area_light.size_y();
+					light->round = false;
+					break;
+				case BL::AreaLight::shape_DISK:
+					light->sizev = light->sizeu;
+					light->round = true;
+					break;
+				case BL::AreaLight::shape_ELLIPSE:
+					light->sizev = b_area_light.size_y();
+					light->round = true;
+					break;
+			}
 			light->type = LIGHT_AREA;
 			break;
 		}
@@ -177,32 +193,32 @@ void BlenderSync::sync_light(BL::Object& b_parent,
 
 	/* shader */
 	vector<Shader*> used_shaders;
-	find_shader(b_lamp, used_shaders, scene->default_light);
+	find_shader(b_light, used_shaders, scene->default_light);
 	light->shader = used_shaders[0];
 
 	/* shadow */
 	PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
-	PointerRNA clamp = RNA_pointer_get(&b_lamp.ptr, "cycles");
-	light->cast_shadow = get_boolean(clamp, "cast_shadow");
-	light->use_mis = get_boolean(clamp, "use_multiple_importance_sampling");
+	PointerRNA clight = RNA_pointer_get(&b_light.ptr, "cycles");
+	light->cast_shadow = get_boolean(clight, "cast_shadow");
+	light->use_mis = get_boolean(clight, "use_multiple_importance_sampling");
 
-	int samples = get_int(clamp, "samples");
+	int samples = get_int(clight, "samples");
 	if(get_boolean(cscene, "use_square_samples"))
 		light->samples = samples * samples;
 	else
 		light->samples = samples;
 
-	light->max_bounces = get_int(clamp, "max_bounces");
+	light->max_bounces = get_int(clight, "max_bounces");
 
-	if(b_dupli_ob) {
-		light->random_id = b_dupli_ob.random_id();
+	if(b_ob != b_ob_instance) {
+		light->random_id = random_id;
 	}
 	else {
 		light->random_id = hash_int_2d(hash_string(b_ob.name().c_str()), 0);
 	}
 
 	if(light->type == LIGHT_AREA)
-		light->is_portal = get_boolean(clamp, "is_portal");
+		light->is_portal = get_boolean(clight, "is_portal");
 	else
 		light->is_portal = false;
 
@@ -275,24 +291,46 @@ void BlenderSync::sync_background_light(bool use_portal)
 
 /* Object */
 
-Object *BlenderSync::sync_object(BL::Object& b_parent,
-                                 int persistent_id[OBJECT_PERSISTENT_ID_SIZE],
-                                 BL::DupliObject& b_dupli_ob,
-                                 Transform& tfm,
-                                 uint layer_flag,
+Object *BlenderSync::sync_object(BL::Depsgraph& b_depsgraph,
+                                 BL::ViewLayer& b_view_layer,
+                                 BL::DepsgraphObjectInstance& b_instance,
                                  float motion_time,
                                  bool hide_tris,
                                  BlenderObjectCulling& culling,
                                  bool *use_portal)
 {
-	BL::Object b_ob = (b_dupli_ob ? b_dupli_ob.object() : b_parent);
-	bool motion = motion_time != 0.0f;
+	const bool is_instance = b_instance.is_instance();
+	BL::Object b_ob = b_instance.object();
+	BL::Object b_parent = is_instance ? b_instance.parent()
+	                                  : b_instance.object();
+	BL::Object b_ob_instance = is_instance ? b_instance.instance_object()
+	                                       : b_ob;
+	const bool motion = motion_time != 0.0f;
+	/*const*/ Transform tfm = get_transform(b_ob.matrix_world());
+	int *persistent_id = NULL;
+	BL::Array<int, OBJECT_PERSISTENT_ID_SIZE> persistent_id_array;
+	if(is_instance) {
+		persistent_id_array = b_instance.persistent_id();
+		persistent_id = persistent_id_array.data;
+	}
 
 	/* light is handled separately */
-	if(object_is_light(b_ob)) {
-		/* don't use lamps for excluded layers used as mask layer */
-		if(!motion && !((layer_flag & render_layer.holdout_layer) && (layer_flag & render_layer.exclude_layer)))
-			sync_light(b_parent, persistent_id, b_ob, b_dupli_ob, tfm, use_portal);
+	if(!motion && object_is_light(b_ob)) {
+		/* TODO: don't use lights for excluded layers used as mask layer,
+		 * when dynamic overrides are back. */
+#if 0
+		if(!((layer_flag & view_layer.holdout_layer) &&
+		     (layer_flag & view_layer.exclude_layer)))
+#endif
+		{
+			sync_light(b_parent,
+			           persistent_id,
+			           b_ob,
+			           b_ob_instance,
+			           is_instance ? b_instance.random_id() : 0,
+			           tfm,
+			           use_portal);
+		}
 
 		return NULL;
 	}
@@ -309,21 +347,24 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 
 	/* Visibility flags for both parent and child. */
 	PointerRNA cobject = RNA_pointer_get(&b_ob.ptr, "cycles");
-	bool use_holdout = (layer_flag & render_layer.holdout_layer) != 0 ||
-	                   get_boolean(cobject, "is_holdout");
+	bool use_holdout = get_boolean(cobject, "is_holdout") ||
+	                   b_parent.holdout_get(b_view_layer);
 	uint visibility = object_ray_visibility(b_ob) & PATH_RAY_ALL_VISIBILITY;
 
 	if(b_parent.ptr.data != b_ob.ptr.data) {
 		visibility &= object_ray_visibility(b_parent);
 	}
 
-	/* Make holdout objects on excluded layer invisible for non-camera rays. */
-	if(use_holdout && (layer_flag & render_layer.exclude_layer)) {
+	/* TODO: make holdout objects on excluded layer invisible for non-camera rays. */
+#if 0
+	if(use_holdout && (layer_flag & view_layer.exclude_layer)) {
 		visibility &= ~(PATH_RAY_ALL_VISIBILITY - PATH_RAY_CAMERA);
 	}
+#endif
 
-	/* Hide objects not on render layer from camera rays. */
-	if(!(layer_flag & render_layer.layer)) {
+	/* Clear camera visibility for indirect only objects. */
+	bool use_indirect_only = b_parent.indirect_only_get(b_view_layer);
+	if(use_indirect_only) {
 		visibility &= ~PATH_RAY_CAMERA;
 	}
 
@@ -333,7 +374,7 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 	}
 
 	/* key to lookup object */
-	ObjectKey key(b_parent, persistent_id, b_ob);
+	ObjectKey key(b_parent, persistent_id, b_ob_instance);
 	Object *object;
 
 	/* motion vector case */
@@ -349,7 +390,7 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 
 			/* mesh deformation */
 			if(object->mesh)
-				sync_mesh_motion(b_ob, object, motion_time);
+				sync_mesh_motion(b_depsgraph, b_ob, object, motion_time);
 		}
 
 		return object;
@@ -362,7 +403,7 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 		object_updated = true;
 
 	/* mesh sync */
-	object->mesh = sync_mesh(b_ob, object_updated, hide_tris);
+	object->mesh = sync_mesh(b_depsgraph, b_ob, b_ob_instance, object_updated, hide_tris);
 
 	/* special case not tracked by object update flags */
 
@@ -381,6 +422,23 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 	bool is_shadow_catcher = get_boolean(cobject, "is_shadow_catcher");
 	if(is_shadow_catcher != object->is_shadow_catcher) {
 		object->is_shadow_catcher = is_shadow_catcher;
+		object_updated = true;
+	}
+
+	/* sync the asset name for Cryptomatte */
+	BL::Object parent = b_ob.parent();
+	ustring parent_name;
+	if(parent) {
+		while(parent.parent()) {
+			parent = parent.parent();
+		}
+		parent_name = parent.name();
+	}
+	else {
+		parent_name = b_ob.name();
+	}
+	if(object->asset_name != parent_name) {
+		object->asset_name = parent_name;
 		object_updated = true;
 	}
 
@@ -404,8 +462,8 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 
 			if(scene->need_motion() == Scene::MOTION_BLUR) {
 				motion_steps = object_motion_steps(b_parent, b_ob);
+				mesh->motion_steps = motion_steps;
 				if(motion_steps && object_use_deform_motion(b_parent, b_ob)) {
-					mesh->motion_steps = motion_steps;
 					mesh->use_motion_blur = true;
 				}
 			}
@@ -427,10 +485,13 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 		}
 
 		/* dupli texture coordinates and random_id */
-		if(b_dupli_ob) {
-			object->dupli_generated = 0.5f*get_float3(b_dupli_ob.orco()) - make_float3(0.5f, 0.5f, 0.5f);
-			object->dupli_uv = get_float2(b_dupli_ob.uv());
-			object->random_id = b_dupli_ob.random_id();
+		if(is_instance) {
+			object->dupli_generated = 0.5f*get_float3(b_instance.orco()) - make_float3(0.5f, 0.5f, 0.5f);
+			object->dupli_uv = get_float2(b_instance.uv());
+			object->random_id = b_instance.random_id();
+
+			/* Sync possible particle data. */
+			sync_dupli_particle(b_ob, b_instance, object);
 		}
 		else {
 			object->dupli_generated = make_float3(0.0f, 0.0f, 0.0f);
@@ -445,26 +506,28 @@ Object *BlenderSync::sync_object(BL::Object& b_parent,
 }
 
 static bool object_render_hide_original(BL::Object::type_enum ob_type,
-                                        BL::Object::dupli_type_enum dupli_type)
+                                        BL::Object::instance_type_enum dupli_type)
 {
 	/* metaball exception, they duplicate self */
 	if(ob_type == BL::Object::type_META)
 		return false;
 
-	return (dupli_type == BL::Object::dupli_type_VERTS ||
-	        dupli_type == BL::Object::dupli_type_FACES ||
-	        dupli_type == BL::Object::dupli_type_FRAMES);
+	return (dupli_type == BL::Object::instance_type_VERTS ||
+	        dupli_type == BL::Object::instance_type_FACES ||
+	        dupli_type == BL::Object::instance_type_FRAMES);
 }
 
 static bool object_render_hide(BL::Object& b_ob,
                                bool top_level,
                                bool parent_hide,
-                               bool& hide_triangles)
+                               bool& hide_triangles,
+                               BL::Depsgraph::mode_enum depsgraph_mode)
 {
 	/* check if we should render or hide particle emitter */
 	BL::Object::particle_systems_iterator b_psys;
 
 	bool hair_present = false;
+	bool has_particles = false;
 	bool show_emitter = false;
 	bool hide_emitter = false;
 	bool hide_as_dupli_parent = false;
@@ -474,26 +537,28 @@ static bool object_render_hide(BL::Object& b_ob,
 		if((b_psys->settings().render_type() == BL::ParticleSettings::render_type_PATH) &&
 		   (b_psys->settings().type()==BL::ParticleSettings::type_HAIR))
 			hair_present = true;
-
-		if(b_psys->settings().use_render_emitter())
-			show_emitter = true;
-		else
-			hide_emitter = true;
+		has_particles = true;
 	}
 
-	if(show_emitter)
-		hide_emitter = false;
+	/* Both mode_PREVIEW and mode_VIEWPORT are treated the same here.*/
+	const bool show_instancer = depsgraph_mode == BL::Depsgraph::mode_RENDER
+	                             ? b_ob.show_instancer_for_render()
+	                             : b_ob.show_instancer_for_viewport();
 
-	/* duplicators hidden by default, except dupliframes which duplicate self */
-	if(b_ob.is_duplicator())
-		if(top_level || b_ob.dupli_type() != BL::Object::dupli_type_FRAMES)
+	if(has_particles) {
+		show_emitter = show_instancer;
+		hide_emitter = !show_emitter;
+	} else if(b_ob.is_instancer()) {
+		if(top_level || show_instancer) {
 			hide_as_dupli_parent = true;
+		}
+	}
 
 	/* hide original object for duplis */
 	BL::Object parent = b_ob.parent();
 	while(parent) {
 		if(object_render_hide_original(b_ob.type(),
-		                               parent.dupli_type()))
+		                               parent.instance_type()))
 		{
 			if(parent_hide) {
 				hide_as_dupli_child_original = true;
@@ -516,19 +581,11 @@ static bool object_render_hide(BL::Object& b_ob,
 	}
 }
 
-static bool object_render_hide_duplis(BL::Object& b_ob)
-{
-	BL::Object parent = b_ob.parent();
-
-	return (parent && object_render_hide_original(b_ob.type(), parent.dupli_type()));
-}
-
 /* Object Loop */
 
-void BlenderSync::sync_objects(float motion_time)
+void BlenderSync::sync_objects(BL::Depsgraph& b_depsgraph, float motion_time)
 {
 	/* layer data */
-	uint scene_layer = render_layer.scene_layer;
 	bool motion = motion_time != 0.0f;
 
 	if(!motion) {
@@ -547,100 +604,40 @@ void BlenderSync::sync_objects(float motion_time)
 	BlenderObjectCulling culling(scene, b_scene);
 
 	/* object loop */
-	BL::Scene::object_bases_iterator b_base;
-	BL::Scene b_sce = b_scene;
-	/* modifier result type (not exposed as enum in C++ API)
-	 * 1 : DAG_EVAL_PREVIEW
-	 * 2 : DAG_EVAL_RENDER
-	 */
-	int dupli_settings = (render_layer.use_viewport_visibility) ? 1 : 2;
-
 	bool cancel = false;
 	bool use_portal = false;
 
-	uint layer_override = get_layer(b_engine.layer_override());
-	for(; b_sce && !cancel; b_sce = b_sce.background_set()) {
-		/* Render layer's scene_layer is affected by local view already,
-		 * which is not a desired behavior here.
-		 */
-		uint scene_layers = layer_override ? layer_override : get_layer(b_scene.layers());
-		for(b_sce.object_bases.begin(b_base); b_base != b_sce.object_bases.end() && !cancel; ++b_base) {
-			BL::Object b_ob = b_base->object();
-			bool hide = (render_layer.use_viewport_visibility)? b_ob.hide(): b_ob.hide_render();
-			uint ob_layer = get_layer(b_base->layers(),
-			                          b_base->layers_local_view(),
-			                          object_is_light(b_ob),
-			                          scene_layers);
-			hide = hide || !(ob_layer & scene_layer);
+	BL::ViewLayer b_view_layer = b_depsgraph.view_layer_eval();
+	BL::Depsgraph::mode_enum depsgraph_mode = b_depsgraph.mode();
 
-			if(!hide) {
-				progress.set_sync_status("Synchronizing object", b_ob.name());
+	BL::Depsgraph::object_instances_iterator b_instance_iter;
+	for(b_depsgraph.object_instances.begin(b_instance_iter);
+	    b_instance_iter != b_depsgraph.object_instances.end() && !cancel;
+	    ++b_instance_iter)
+	{
+		BL::DepsgraphObjectInstance b_instance = *b_instance_iter;
+		BL::Object b_ob = b_instance.object();
 
-				/* load per-object culling data */
-				culling.init_object(scene, b_ob);
+		progress.set_sync_status("Synchronizing object", b_ob.name());
 
-				if(b_ob.is_duplicator() && !object_render_hide_duplis(b_ob)) {
-					/* dupli objects */
-					b_ob.dupli_list_create(b_data, b_scene, dupli_settings);
+		/* load per-object culling data */
+		culling.init_object(scene, b_ob);
 
-					BL::Object::dupli_list_iterator b_dup;
+		/* test if object needs to be hidden */
+		bool hide_tris;
 
-					for(b_ob.dupli_list.begin(b_dup); b_dup != b_ob.dupli_list.end(); ++b_dup) {
-						Transform tfm = get_transform(b_dup->matrix());
-						BL::Object b_dup_ob = b_dup->object();
-						bool dup_hide = (render_layer.use_viewport_visibility)? b_dup_ob.hide(): b_dup_ob.hide_render();
-						bool in_dupli_group = (b_dup->type() == BL::DupliObject::type_GROUP);
-						bool hide_tris;
+		 if(!object_render_hide(b_ob, true, true, hide_tris, depsgraph_mode)) {
+			/* object itself */
+			sync_object(b_depsgraph,
+			            b_view_layer,
+			            b_instance,
+			            motion_time,
+			            hide_tris,
+			            culling,
+			            &use_portal);
+		 }
 
-						if(!(b_dup->hide() || dup_hide || object_render_hide(b_dup_ob, false, in_dupli_group, hide_tris))) {
-							/* the persistent_id allows us to match dupli objects
-							 * between frames and updates */
-							BL::Array<int, OBJECT_PERSISTENT_ID_SIZE> persistent_id = b_dup->persistent_id();
-
-							/* sync object and mesh or light data */
-							Object *object = sync_object(b_ob,
-							                             persistent_id.data,
-							                             *b_dup,
-							                             tfm,
-							                             ob_layer,
-							                             motion_time,
-							                             hide_tris,
-							                             culling,
-							                             &use_portal);
-
-							/* sync possible particle data, note particle_id
-							 * starts counting at 1, first is dummy particle */
-							if(!motion && object) {
-								sync_dupli_particle(b_ob, *b_dup, object);
-							}
-
-						}
-					}
-
-					b_ob.dupli_list_clear();
-				}
-
-				/* test if object needs to be hidden */
-				bool hide_tris;
-
-				if(!object_render_hide(b_ob, true, true, hide_tris)) {
-					/* object itself */
-					Transform tfm = get_transform(b_ob.matrix_world());
-					BL::DupliObject b_empty_dupli_ob(PointerRNA_NULL);
-					sync_object(b_ob,
-					            NULL,
-					            b_empty_dupli_ob,
-					            tfm,
-					            ob_layer,
-					            motion_time,
-					            hide_tris,
-					            culling,
-					            &use_portal);
-				}
-			}
-
-			cancel = progress.get_cancel();
-		}
+		cancel = progress.get_cancel();
 	}
 
 	progress.set_sync_status("");
@@ -664,6 +661,7 @@ void BlenderSync::sync_objects(float motion_time)
 }
 
 void BlenderSync::sync_motion(BL::RenderSettings& b_render,
+                              BL::Depsgraph& b_depsgraph,
                               BL::Object& b_override,
                               int width, int height,
                               void **python_thread_state)
@@ -693,6 +691,7 @@ void BlenderSync::sync_motion(BL::RenderSettings& b_render,
 			assert(scene->camera->motion_position == Camera::MOTION_POSITION_START);
 			frame_center_delta = shuttertime * 0.5f;
 		}
+
 		float time = frame_center + subframe_center + frame_center_delta;
 		int frame = (int)floorf(time);
 		float subframe = time - frame;
@@ -700,7 +699,7 @@ void BlenderSync::sync_motion(BL::RenderSettings& b_render,
 		b_engine.frame_set(frame, subframe);
 		python_thread_state_save(python_thread_state);
 		sync_camera_motion(b_render, b_cam, width, height, 0.0f);
-		sync_objects(0.0f);
+		sync_objects(b_depsgraph, 0.0f);
 	}
 
 	/* always sample these times for camera motion */
@@ -739,7 +738,7 @@ void BlenderSync::sync_motion(BL::RenderSettings& b_render,
 		}
 
 		/* sync object */
-		sync_objects(relative_time);
+		sync_objects(b_depsgraph, relative_time);
 	}
 
 	/* we need to set the python thread state again because this

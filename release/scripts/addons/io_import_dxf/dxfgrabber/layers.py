@@ -87,4 +87,3 @@ class LayerTable(Table):
             layer = Layer(entrytags)
             layers._table_entries[layer.name] = layer
         return layers
-

@@ -54,7 +54,7 @@ class AMNodeEditorMaterialSelect(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return context.active_object
-    
+
     def execute(self,context):
         bpy.context.active_object.active_material_index = int(self.material_select)
         return {'FINISHED'}

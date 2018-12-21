@@ -69,7 +69,7 @@ def unpack_face_list(list_of_tuples):
 Remove Doubles takes a list on Verts and a list of Faces and
 removes the doubles, much like Blender does in edit mode.
 It doesn’t have the range function  but it will round the corrdinates
-and remove verts that are very close togther.  The function
+and remove verts that are very close together.  The function
 is useful because you can perform a "Remove Doubles" with out
 having to enter Edit Mode. Having to enter edit mode has the
 disadvantage of not being able to interactively change the properties.
@@ -1482,7 +1482,7 @@ def add_Nylon_Head(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     INNER_HOLE = OUTSIDE_RADIUS - (OUTSIDE_RADIUS * (1.25 / 4.75))
     EDGE_THICKNESS = (OUTSIDE_RADIUS * (0.4 / 4.75))
     RAD1 = (OUTSIDE_RADIUS * (0.5 / 4.75))
-    OVER_ALL_HEIGTH = (OUTSIDE_RADIUS * (2.0 / 4.75))
+    OVER_ALL_HEIGHT = (OUTSIDE_RADIUS * (2.0 / 4.75))
 
     FaceStart = len(verts)
 
@@ -1491,13 +1491,13 @@ def add_Nylon_Head(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     Lowest_Z_Vert = 0
 
     x = INNER_HOLE
-    z = (Height_Offset - OVER_ALL_HEIGTH) + EDGE_THICKNESS
+    z = (Height_Offset - OVER_ALL_HEIGHT) + EDGE_THICKNESS
     verts.append([x, 0.0, z])
     Lowest_Z_Vert = min(Lowest_Z_Vert, z)
     Row += 1
 
     x = INNER_HOLE
-    z = (Height_Offset - OVER_ALL_HEIGTH)
+    z = (Height_Offset - OVER_ALL_HEIGHT)
     verts.append([x, 0.0, z])
     Lowest_Z_Vert = min(Lowest_Z_Vert, z)
     Row += 1
@@ -1505,7 +1505,7 @@ def add_Nylon_Head(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
     for i in range(180, 80, -10):
         x = sin(radians(i)) * RAD1
         z = cos(radians(i)) * RAD1
-        verts.append([(OUTSIDE_RADIUS - RAD1) + x, 0.0, ((Height_Offset - OVER_ALL_HEIGTH) + RAD1) + z])
+        verts.append([(OUTSIDE_RADIUS - RAD1) + x, 0.0, ((Height_Offset - OVER_ALL_HEIGHT) + RAD1) + z])
         Lowest_Z_Vert = min(Lowest_Z_Vert, z)
         Row += 1
 
@@ -1530,8 +1530,8 @@ def add_Nylon_Part(OUTSIDE_RADIUS, Z_LOCATION, DIV_COUNT):
 
     INNER_HOLE = OUTSIDE_RADIUS - (OUTSIDE_RADIUS * (1.5 / 4.75))
     EDGE_THICKNESS = (OUTSIDE_RADIUS * (0.4 / 4.75))
-    OVER_ALL_HEIGTH = (OUTSIDE_RADIUS * (2.0 / 4.75))
-    PART_THICKNESS = OVER_ALL_HEIGTH - EDGE_THICKNESS
+    OVER_ALL_HEIGHT = (OUTSIDE_RADIUS * (2.0 / 4.75))
+    PART_THICKNESS = OVER_ALL_HEIGHT - EDGE_THICKNESS
     PART_INNER_HOLE = (OUTSIDE_RADIUS * (2.5 / 4.75))
 
     FaceStart = len(verts)
@@ -2003,7 +2003,5 @@ def Create_New_Mesh(props, context):
     if is_not_mesh_valid:
         print("\n[BoltFactory]\nFunction: create_mesh_object\n"
               "Mesh is not Valid, correcting\n")
-        
+
     object_data_add(context, mesh, operator=props)
-
-

@@ -36,7 +36,7 @@ def curve_to_loops(ob):
 
     # Support 2.7x & 2.8x
     if bpy.app.version >= (2, 8):
-        me = ob.to_mesh(bpy.context.scene, bpy.context.view_layer, True, 'PREVIEW', calc_tessface=False)
+        me = ob.to_mesh(bpy.context.scene, bpy.context.view_layer, True, 'PREVIEW')
     else:
         me = ob.to_mesh(bpy.context.scene, True, 'PREVIEW', calc_tessface=False)
 

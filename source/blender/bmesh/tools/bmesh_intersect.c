@@ -81,12 +81,6 @@
 /* use accelerated overlap check */
 #define USE_BVH
 
-// #define USE_BOOLEAN_RAYCAST_DRAW
-
-#ifdef USE_BOOLEAN_RAYCAST_DRAW
-/* insert bl_debug_draw_quad_clear... here */
-#endif
-
 // #define USE_DUMP
 
 static void tri_v3_scale(
@@ -232,7 +226,7 @@ static void face_edges_add(
         BMEdge *e,
         const bool use_test)
 {
-	void *f_index_key = SET_INT_IN_POINTER(f_index);
+	void *f_index_key = POINTER_FROM_INT(f_index);
 	BLI_assert(e->head.htype == BM_EDGE);
 	BLI_assert(BM_edge_in_face(e, s->bm->ftable[f_index]) == false);
 	BLI_assert(BM_elem_index_get(s->bm->ftable[f_index]) == f_index);
@@ -977,7 +971,7 @@ static int isect_bvhtree_point_v3(
  * Intersect tessellated faces
  * leaving the resulting edges tagged.
  *
- * \param test_fn Return value: -1: skip, 0: tree_a, 1: tree_b (use_self == false)
+ * \param test_fn: Return value: -1: skip, 0: tree_a, 1: tree_b (use_self == false)
  * \param boolean_mode -1: no-boolean, 0: intersection... see #BMESH_ISECT_BOOLEAN_ISECT.
  * \return true if the mesh is changed (intersections cut or faces removed from boolean).
  */
@@ -1004,10 +998,6 @@ bool BM_mesh_intersect(
 	BVHTreeOverlap *overlap;
 #else
 	int i_a, i_b;
-#endif
-
-#ifdef USE_BOOLEAN_RAYCAST_DRAW
-	bl_debug_draw_quad_clear();
 #endif
 
 	s.bm = bm;
@@ -1488,7 +1478,7 @@ bool BM_mesh_intersect(
 		faces = bm->ftable;
 
 		GHASH_ITER (gh_iter, s.face_edges) {
-			const int f_index = GET_INT_FROM_POINTER(BLI_ghashIterator_getKey(&gh_iter));
+			const int f_index = POINTER_AS_INT(BLI_ghashIterator_getKey(&gh_iter));
 			BMFace *f;
 			struct LinkBase *e_ls_base = BLI_ghashIterator_getValue(&gh_iter);
 
@@ -1588,7 +1578,7 @@ bool BM_mesh_intersect(
 				BLI_assert(ELEM(side, 0, 1));
 				side = !side;
 
-				// BM_face_calc_center_mean(f, co);
+				// BM_face_calc_center_median(f, co);
 				BM_face_calc_point_in_face(f, co);
 
 				hits = isect_bvhtree_point_v3(tree_pair[side], looptri_coords, co);
@@ -1607,17 +1597,6 @@ bool BM_mesh_intersect(
 						do_flip = (side == 0);
 						break;
 				}
-
-#ifdef USE_BOOLEAN_RAYCAST_DRAW
-				{
-					uint colors[4] = {0x00000000, 0xffffffff, 0xff000000, 0x0000ff};
-					float co_other[3] = {UNPACK3(co)};
-					co_other[0] += 1000.0f;
-					bl_debug_color_set(colors[(hits & 1) == 1]);
-					bl_debug_draw_edge_add(co, co_other);
-				}
-#endif
-
 			}
 
 			if (do_remove) {

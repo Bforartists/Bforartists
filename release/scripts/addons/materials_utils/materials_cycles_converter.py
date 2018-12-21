@@ -133,7 +133,7 @@ def BakingText(tex, mode, tex_type=None):
     # switch temporarily to 'IMAGE EDITOR', other approaches are not reliable
     check_area = False
     store_area = bpy.context.area.type
-    collect_report("INFO: Temporarly switching context to Image Editor")
+    collect_report("INFO: Temporarily switching context to Image Editor")
     try:
         bpy.context.area.type = 'IMAGE_EDITOR'
         bpy.context.area.spaces[0].image = bpy.data.images["TMP_BAKING"]
@@ -195,7 +195,7 @@ def BakingText(tex, mode, tex_type=None):
 def AutoNodeInitiate(active=False, operator=None):
     # Checks with bpy.ops.material.check_converter_path
     # if it's possible to write in the output path
-    # if it passes procedes with calling AutoNode
+    # if it passes proceeds with calling AutoNode
 
     # if CheckImagePath(operator):
     check_path = bpy.ops.material.check_converter_path()
@@ -485,7 +485,7 @@ def AutoNode(active=False, operator=None):
                                 tex_node_collect.append(shtext)
                                 sT = True
                             else:
-                                collect_report("ERROR: A problem occured with loading an image for {} "
+                                collect_report("ERROR: A problem occurred with loading an image for {} "
                                                "(possibly missing)".format(tex.texture.name))
                         else:
                             if sc.mat_specials.EXTRACT_PTEX or (sc.mat_specials.EXTRACT_ALPHA and ma_alpha):

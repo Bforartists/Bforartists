@@ -10,7 +10,7 @@ def clean(path) :
     path = path.strip().replace('\\','/')
     if ('/') not in path : path = '//'+path
     return path
-    
+
 ## test for existence of a file or a dir
 def exist(path) :
     if isfile(path) or isdir(path) : return True
@@ -67,8 +67,7 @@ def saveOptions(op,operator_name, tokens, filename='last_run'):
                     value = value[:]
                 except:
                     pass
-    
+
                 file_preset.write("op.%s = %r\n" % (key, value))
 
         file_preset.close()
-    

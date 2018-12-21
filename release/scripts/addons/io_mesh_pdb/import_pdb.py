@@ -364,10 +364,10 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
     split_list = line.split(' ')
 
     # Go to the first entry
-    if "CONECT" not in split_list[0]:
+    if "CONNECT" not in split_list[0]:
         for line in filepath_pdb_p:
             split_list = line.split(' ')
-            if "CONECT" in split_list[0]:
+            if "CONNECT" in split_list[0]:
                 break
 
     Number_of_sticks = 0
@@ -379,8 +379,8 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
         # ... which is broken here (EOF) ...
         if line == "":
             break
-        # ... or here, when no 'CONECT' appears anymore.
-        if "CONECT" not in line:
+        # ... or here, when no 'CONNECT' appears anymore.
+        if "CONNECT" not in line:
             break
 
         # The strings of the atom numbers do have a clear position in the file
@@ -388,13 +388,13 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
         # this. One could also use the split function but then one gets into
         # trouble if there are lots of atoms: For instance, it may happen that
         # one has
-        #                   CONECT 11111  22244444
+        #                   CONNECT 11111  22244444
         #
         # In Fact it means that atom No. 11111 has a connection with atom
         # No. 222 but also with atom No. 44444. The split function would give
         # me only two numbers (11111 and 22244444), which is wrong.
 
-        # Cut spaces from the right and 'CONECT' at the beginning
+        # Cut spaces from the right and 'CONNECT' at the beginning
         line = line.rstrip()
         line = line[6:]
         # Amount of loops
@@ -474,7 +474,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
     return all_sticks
 
 
-# Function, which produces a cylinder. All is somewhat easy to undertsand.
+# Function, which produces a cylinder. All is somewhat easy to understand.
 def build_stick(radius, length, sectors):
 
     dphi = 2.0 * pi/(float(sectors)-1)
@@ -536,7 +536,7 @@ def build_stick(radius, length, sectors):
 
 # Function, which puts a camera and light source into the 3D scene
 def camera_light_source(use_camera,
-                        use_lamp,
+                        use_light,
                         object_center_vec,
                         object_size):
 
@@ -592,27 +592,27 @@ def camera_light_source(use_camera,
                                  release_confirm=False)
 
     # Here a lamp is put into the scene, if chosen.
-    if use_lamp == True:
+    if use_light == True:
 
         # This is the distance from the object measured in terms of %
         # of the camera distance. It is set onto 50% (1/2) distance.
-        lamp_dl = sqrt(object_size) * 15 * 0.5
+        light_dl = sqrt(object_size) * 15 * 0.5
         # This is a factor to which extend the lamp shall go to the right
         # (from the camera  point of view).
-        lamp_dy_right = lamp_dl * (3.0/4.0)
+        light_dy_right = light_dl * (3.0/4.0)
 
         # Create x, y and z for the lamp.
-        object_lamp_vec = Vector((lamp_dl,lamp_dy_right,lamp_dl))
-        lamp_xyz_vec = object_center_vec + object_lamp_vec
+        object_light_vec = Vector((light_dl,light_dy_right,light_dl))
+        light_xyz_vec = object_center_vec + object_light_vec
 
         # Create the lamp
         current_layers=bpy.context.scene.layers
-        lamp_data = bpy.data.lamps.new(name="A_lamp", type="POINT")
-        lamp_data.distance = 500.0
-        lamp_data.energy = 3.0
-        lamp_data.shadow_method = 'RAY_SHADOW'
-        lamp = bpy.data.objects.new("A_lamp", lamp_data)
-        lamp.location = lamp_xyz_vec
+        light_data = bpy.data.lights.new(name="A_light", type="POINT")
+        light_data.distance = 500.0
+        light_data.energy = 3.0
+        light_data.shadow_method = 'RAY_SHADOW'
+        lamp = bpy.data.objects.new("A_light", light_data)
+        lamp.location = light_xyz_vec
         lamp.layers = current_layers
         bpy.context.scene.objects.link(lamp)
 
@@ -685,7 +685,7 @@ def draw_atoms_one_type(draw_all_atoms_type,
         ball.name = "Ball_"+atom[0]
     ball.active_material = atom[1]
     ball.parent = new_atom_mesh
-    new_atom_mesh.dupli_type = 'VERTS'
+    new_atom_mesh.instance_type = 'VERTS'
     # The object is back translated to 'object_center_vec'.
     new_atom_mesh.location = object_center_vec
 
@@ -858,7 +858,7 @@ def draw_sticks_dupliverts(all_atoms,
         # Parenting the mesh to the cylinder.
         stick_cylinder.parent = new_mesh
         stick_cups.parent = new_mesh
-        new_mesh.dupli_type = 'FACES'
+        new_mesh.instance_type = 'FACES'
         new_mesh.location = center
         atom_object_list.append(new_mesh)
 
@@ -1145,7 +1145,7 @@ def import_pdb(Ball_type,
                Stick_diameter,
                put_to_center,
                use_camera,
-               use_lamp,
+               use_light,
                filepath_pdb):
 
 
@@ -1237,7 +1237,7 @@ def import_pdb(Ball_type,
 
     # It may happen that the structure in a PDB file already has an offset
     # If chosen, the structure is first put into the center of the scene
-    # (the offset is substracted).
+    # (the offset is subtracted).
 
     if put_to_center == True:
         sum_vec = Vector((0.0,0.0,0.0))
@@ -1245,7 +1245,7 @@ def import_pdb(Ball_type,
         sum_vec = sum([atom.location for atom in all_atoms], sum_vec)
         # Then the average is taken
         sum_vec = sum_vec / Number_of_total_atoms
-        # After, for each atom the center of gravity is substracted
+        # After, for each atom the center of gravity is subtracted
         for atom in all_atoms:
             atom.location -= sum_vec
 
@@ -1376,7 +1376,7 @@ def import_pdb(Ball_type,
     # CAMERA and LIGHT SOURCES
 
     camera_light_source(use_camera,
-                        use_lamp,
+                        use_light,
                         object_center_vec,
                         object_size)
 
@@ -1390,4 +1390,3 @@ def import_pdb(Ball_type,
     # activate the last selected object
     if obj:
         bpy.context.scene.objects.active = obj
-

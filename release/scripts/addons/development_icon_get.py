@@ -23,9 +23,9 @@ bl_info = {
     "name": "Icon Viewer",
     "description": "Click an icon to copy its name to the clipboard",
     "author": "roaoao",
-    "version": (1, 3, 2),
-    "blender": (2, 75, 0),
-    "location": "Spacebar > Icon Viewer, Text Editor > Properties",
+    "version": (1, 4, 0),
+    "blender": (2, 80, 0),
+    "location": "Search Menu > Icon Viewer, Text Editor > Properties",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6"
                 "/Py/Scripts/Development/Display_All_Icons",
     "category": "Development"
@@ -33,6 +33,10 @@ bl_info = {
 
 import bpy
 import math
+from bpy.props import (
+    BoolProperty,
+    StringProperty,
+)
 
 DPI = 72
 POPUP_PADDING = 10
@@ -88,6 +92,9 @@ class Icons:
                         not pr.show_brush_icons and "BRUSH_" in icon and \
                         icon != 'BRUSH_DATA' or \
                         not pr.show_matcap_icons and "MATCAP_" in icon or \
+                        not pr.show_event_icons and (
+                            "EVENT_" in icon or "MOUSE_" in icon
+                        ) or \
                         not pr.show_colorset_icons and "COLORSET_" in icon:
                     continue
                 self._filtered_icons.append(icon)
@@ -109,8 +116,8 @@ class Icons:
         else:
             filtered_icons = self.filtered_icons
 
-        column = layout.column(True)
-        row = column.row(True)
+        column = layout.column(align=True)
+        row = column.row(align=True)
         row.alignment = 'CENTER'
 
         selected_icon = self.selected_icon if self.is_popup else \
@@ -118,7 +125,7 @@ class Icons:
         col_idx = 0
         for i, icon in enumerate(filtered_icons):
             p = row.operator(
-                IV_OT_icon_select.bl_idname, "",
+                IV_OT_icon_select.bl_idname, text="",
                 icon=icon, emboss=icon == selected_icon)
             p.icon = icon
             p.force_copy_on_select = not self.is_popup
@@ -129,16 +136,15 @@ class Icons:
                     break
                 col_idx = 0
                 if i < len(filtered_icons) - 1:
-                    row = column.row(True)
+                    row = column.row(align=True)
                     row.alignment = 'CENTER'
 
         if col_idx != 0 and not icons and i >= num_cols:
-            sub = row.row(True)
-            sub.scale_x = num_cols - col_idx
-            sub.label("", icon='BLANK1')
+            for _ in range(num_cols - col_idx):
+                row.label(text="", icon='BLANK1')
 
         if not filtered_icons:
-            row.label("No icons were found")
+            row.label(text="No icons were found")
 
 
 class IV_Preferences(bpy.types.AddonPreferences):
@@ -154,47 +160,51 @@ class IV_Preferences(bpy.types.AddonPreferences):
     def set_panel_filter(self, value):
         self.panel_icons.filter = value
 
-    panel_filter = bpy.props.StringProperty(
+    panel_filter: StringProperty(
         description="Filter",
         default="",
         get=lambda s: s.panel_icons.filter,
         set=set_panel_filter,
         options={'TEXTEDIT_UPDATE'})
-    show_panel_icons = bpy.props.BoolProperty(
+    show_panel_icons: BoolProperty(
         name="Show Icons",
         description="Show icons", default=True)
-    show_history = bpy.props.BoolProperty(
+    show_history: BoolProperty(
         name="Show History",
         description="Show history", default=True)
-    show_brush_icons = bpy.props.BoolProperty(
+    show_brush_icons: BoolProperty(
         name="Show Brush Icons",
         description="Show brush icons", default=True,
         update=update_icons)
-    show_matcap_icons = bpy.props.BoolProperty(
+    show_matcap_icons: BoolProperty(
         name="Show Matcap Icons",
         description="Show matcap icons", default=True,
         update=update_icons)
-    show_colorset_icons = bpy.props.BoolProperty(
+    show_event_icons: BoolProperty(
+        name="Show Event Icons",
+        description="Show event icons", default=True,
+        update=update_icons)
+    show_colorset_icons: BoolProperty(
         name="Show Colorset Icons",
         description="Show colorset icons", default=True,
         update=update_icons)
-    copy_on_select = bpy.props.BoolProperty(
+    copy_on_select: BoolProperty(
         name="Copy Icon On Click",
         description="Copy icon on click", default=True)
-    close_on_select = bpy.props.BoolProperty(
+    close_on_select: BoolProperty(
         name="Close Popup On Click",
         description=(
             "Close the popup on click.\n"
             "Not supported by some windows (User Preferences, Render)"
-            ),
+        ),
         default=False)
-    auto_focus_filter = bpy.props.BoolProperty(
+    auto_focus_filter: BoolProperty(
         name="Auto Focus Input Field",
         description="Auto focus input field", default=True)
-    show_panel = bpy.props.BoolProperty(
+    show_panel: BoolProperty(
         name="Show Panel",
         description="Show the panel in the Text Editor", default=True)
-    show_header = bpy.props.BoolProperty(
+    show_header: BoolProperty(
         name="Show Header",
         description="Show the header in the Python Console",
         default=True)
@@ -207,29 +217,30 @@ class IV_Preferences(bpy.types.AddonPreferences):
 
         row = layout.row()
 
-        col = row.column(True)
-        col.label("Icons:")
+        col = row.column(align=True)
+        col.label(text="Icons:")
         col.prop(self, "show_matcap_icons")
         col.prop(self, "show_brush_icons")
         col.prop(self, "show_colorset_icons")
+        col.prop(self, "show_event_icons")
         col.separator()
         col.prop(self, "show_history")
 
-        col = row.column(True)
-        col.label("Popup:")
+        col = row.column(align=True)
+        col.label(text="Popup:")
         col.prop(self, "auto_focus_filter")
         col.prop(self, "copy_on_select")
         if self.copy_on_select:
             col.prop(self, "close_on_select")
 
-        col = row.column(True)
-        col.label("Panel:")
+        col = row.column(align=True)
+        col.label(text="Panel:")
         col.prop(self, "show_panel")
         if self.show_panel:
             col.prop(self, "show_panel_icons")
 
         col.separator()
-        col.label("Header:")
+        col.label(text="Header:")
         col.prop(self, "show_header")
 
 
@@ -253,12 +264,13 @@ class IV_PT_icons(bpy.types.Panel):
 
     def draw(self, context):
         pr = prefs()
-        row = self.layout.row(True)
+        row = self.layout.row(align=True)
         if pr.show_panel_icons:
-            row.prop(pr, "panel_filter", "", icon='VIEWZOOM')
+            row.prop(pr, "panel_filter", text="", icon='VIEWZOOM')
         else:
             row.operator(IV_OT_icons_show.bl_idname)
-        row.operator(IV_OT_panel_menu_call.bl_idname, "", icon='COLLAPSEMENU')
+        row.operator(
+            IV_OT_panel_menu_call.bl_idname, text="", icon='COLLAPSEMENU')
 
         _, y0 = context.region.view2d.region_to_view(0, 0)
         _, y1 = context.region.view2d.region_to_view(0, 10)
@@ -271,11 +283,11 @@ class IV_PT_icons(bpy.types.Panel):
 
         col = None
         if HISTORY and pr.show_history:
-            col = self.layout.column(True)
+            col = self.layout.column(align=True)
             pr.panel_icons.draw(col.box(), num_cols, HISTORY)
 
         if pr.show_panel_icons:
-            col = col or self.layout.column(True)
+            col = col or self.layout.column(align=True)
             pr.panel_icons.draw(col.box(), num_cols)
 
     @classmethod
@@ -313,9 +325,10 @@ class IV_OT_panel_menu_call(bpy.types.Operator):
         layout.prop(pr, "show_matcap_icons")
         layout.prop(pr, "show_brush_icons")
         layout.prop(pr, "show_colorset_icons")
+        layout.prop(pr, "show_event_icons")
 
     def execute(self, context):
-        context.window_manager.popup_menu(self.menu, "Icon Viewer")
+        context.window_manager.popup_menu(self.menu, title="Icon Viewer")
         return {'FINISHED'}
 
 
@@ -325,8 +338,8 @@ class IV_OT_icon_select(bpy.types.Operator):
     bl_description = "Select the icon"
     bl_options = {'INTERNAL'}
 
-    icon = bpy.props.StringProperty()
-    force_copy_on_select = bpy.props.BoolProperty()
+    icon: StringProperty()
+    force_copy_on_select: BoolProperty()
 
     def execute(self, context):
         pr = prefs()
@@ -362,17 +375,17 @@ class IV_OT_icons_show(bpy.types.Operator):
         if IV_OT_icons_show.instance:
             IV_OT_icons_show.instance.auto_focusable = False
 
-    filter_auto_focus = bpy.props.StringProperty(
+    filter_auto_focus: StringProperty(
         description="Filter",
         get=lambda s: prefs().popup_icons.filter,
         set=set_filter,
         options={'TEXTEDIT_UPDATE', 'SKIP_SAVE'})
-    filter = bpy.props.StringProperty(
+    filter: StringProperty(
         description="Filter",
         get=lambda s: prefs().popup_icons.filter,
         set=set_filter,
         options={'TEXTEDIT_UPDATE'})
-    selected_icon = bpy.props.StringProperty(
+    selected_icon: StringProperty(
         description="Selected Icon",
         get=lambda s: prefs().popup_icons.selected_icon,
         set=set_selected_icon)
@@ -383,36 +396,38 @@ class IV_OT_icons_show(bpy.types.Operator):
     def draw_header(self, layout):
         pr = prefs()
         header = layout.box()
-        header = header.split(0.75) if self.selected_icon else header.row()
-        row = header.row(True)
-        row.prop(pr, "show_matcap_icons", "", icon='SMOOTH')
-        row.prop(pr, "show_brush_icons", "", icon='BRUSH_DATA')
-        row.prop(pr, "show_colorset_icons", "", icon='COLOR')
+        header = header.split(factor=0.75) if self.selected_icon else \
+            header.row()
+        row = header.row(align=True)
+        row.prop(pr, "show_matcap_icons", text="", icon='SHADING_RENDERED')
+        row.prop(pr, "show_brush_icons", text="", icon='BRUSH_DATA')
+        row.prop(pr, "show_colorset_icons", text="", icon='COLOR')
+        row.prop(pr, "show_event_icons", text="", icon='HAND')
         row.separator()
 
         row.prop(
-            pr, "copy_on_select", "",
-            icon='BORDER_RECT', toggle=True)
+            pr, "copy_on_select", text="",
+            icon='COPYDOWN', toggle=True)
         if pr.copy_on_select:
-            sub = row.row(True)
+            sub = row.row(align=True)
             if bpy.context.window.screen.name == "temp":
                 sub.alert = True
             sub.prop(
-                pr, "close_on_select", "",
+                pr, "close_on_select", text="",
                 icon='RESTRICT_SELECT_OFF', toggle=True)
         row.prop(
-            pr, "auto_focus_filter", "",
+            pr, "auto_focus_filter", text="",
             icon='OUTLINER_DATA_FONT', toggle=True)
         row.separator()
 
         if self.auto_focusable and pr.auto_focus_filter:
-            row.prop(self, "filter_auto_focus", "", icon='VIEWZOOM')
+            row.prop(self, "filter_auto_focus", text="", icon='VIEWZOOM')
         else:
-            row.prop(self, "filter", "", icon='VIEWZOOM')
+            row.prop(self, "filter", text="", icon='VIEWZOOM')
 
         if self.selected_icon:
             row = header.row()
-            row.prop(self, "selected_icon", "", icon=self.selected_icon)
+            row.prop(self, "selected_icon", text="", icon=self.selected_icon)
 
     def draw(self, context):
         pr = prefs()
@@ -425,7 +440,7 @@ class IV_OT_icons_show(bpy.types.Operator):
             self.get_num_cols(len(pr.popup_icons.filtered_icons)),
             history_num_cols)
 
-        subcol = col.column(True)
+        subcol = col.column(align=True)
 
         if HISTORY and pr.show_history:
             pr.popup_icons.draw(subcol.box(), history_num_cols, HISTORY)
@@ -468,18 +483,31 @@ class IV_OT_icons_show(bpy.types.Operator):
             ui_scale() * (num_cols * ICON_SIZE + POPUP_PADDING),
             context.window.width - WIN_PADDING)
 
-        return context.window_manager.invoke_props_dialog(self, self.width)
+        return context.window_manager.invoke_props_dialog(
+            self, width=self.width)
+
+
+classes = (
+    IV_PT_icons,
+    IV_HT_icons,
+    IV_OT_panel_menu_call,
+    IV_OT_icon_select,
+    IV_OT_icons_show,
+    IV_Preferences,
+)
 
 
 def register():
     if bpy.app.background:
         return
 
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
     if bpy.app.background:
         return
 
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

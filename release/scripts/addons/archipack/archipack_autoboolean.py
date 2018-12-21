@@ -28,9 +28,9 @@ import bpy
 from bpy.types import Operator
 from bpy.props import EnumProperty
 from mathutils import Vector
+from . archipack_object import ArchipackCollectionManager
 
-
-class ArchipackBoolManager():
+class ArchipackBoolManager(ArchipackCollectionManager):
     """
         Handle three methods for booleans
         - interactive: one modifier for each hole right on wall
@@ -38,12 +38,11 @@ class ArchipackBoolManager():
         - mixed: merge holes with boolean and use result on wall
             may be slow, but is robust
     """
-    def __init__(self, mode, solver_mode='CARVE'):
+    def __init__(self, mode):
         """
             mode in 'ROBUST', 'INTERACTIVE', 'HYBRID'
         """
         self.mode = mode
-        self.solver_mode = solver_mode
         # internal variables
         self.itM = None
         self.min_x = 0
@@ -69,7 +68,7 @@ class ArchipackBoolManager():
             self.min_z + 0.5 * (self.max_z - self.min_z)))
 
     def _contains(self, pt):
-        p = self.itM * pt
+        p = self.itM @ pt
         return (p.x >= self.min_x and p.x <= self.max_x and
             p.y >= self.min_y and p.y <= self.max_y and
             p.z >= self.min_z and p.z <= self.max_z)
@@ -105,10 +104,10 @@ class ArchipackBoolManager():
         hole.lock_location = (True, True, True)
         hole.lock_rotation = (True, True, True)
         hole.lock_scale = (True, True, True)
-        hole.draw_type = 'WIRE'
+        hole.display_type = 'WIRE'
         hole.hide_render = True
         hole.hide_select = True
-        hole.select = True
+        hole.select_set(state=True)
         hole.cycles_visibility.camera = False
         hole.cycles_visibility.diffuse = False
         hole.cycles_visibility.glossy = False
@@ -135,7 +134,7 @@ class ArchipackBoolManager():
         if d is not None:
             if (self.itM is not None and (
                     self._contains(o.location) or
-                    self._contains(o.matrix_world * Vector((0, 0, 0.5 * d.z))))
+                    self._contains(o.matrix_world @ Vector((0, 0, 0.5 * d.z))))
                     ):
                 if self.mode != 'ROBUST':
                     hole = d.interactive_hole(context, o)
@@ -172,7 +171,7 @@ class ArchipackBoolManager():
             sort hole from center to borders by distance from center
             may improve nested booleans
         """
-        center = wall.matrix_world * self.center
+        center = wall.matrix_world @ self.center
         holes = [(o, (o.matrix_world.translation - center).length) for o in holes]
         self.quicksort(holes)
         return [o[0] for o in holes]
@@ -181,17 +180,12 @@ class ArchipackBoolManager():
         # print("difference %s" % (hole.name))
         m = basis.modifiers.new('AutoBoolean', 'BOOLEAN')
         m.operation = 'DIFFERENCE'
-        if solver is None:
-            m.solver = self.solver_mode
-        else:
-            m.solver = solver
         m.object = hole
 
     def union(self, basis, hole):
         # print("union %s" % (hole.name))
         m = basis.modifiers.new('AutoMerge', 'BOOLEAN')
         m.operation = 'UNION'
-        m.solver = self.solver_mode
         m.object = hole
 
     def remove_modif_and_object(self, context, o, to_delete):
@@ -202,7 +196,7 @@ class ArchipackBoolManager():
                     m.object = None
                 o.modifiers.remove(m)
             if h is not None:
-                context.scene.objects.unlink(h)
+                self.unlink_object_from_scene(h)
                 bpy.data.objects.remove(h, do_unlink=True)
 
     # Mixed
@@ -210,7 +204,7 @@ class ArchipackBoolManager():
         # print("create_merge_basis")
         h = bpy.data.meshes.new("AutoBoolean")
         hole_obj = bpy.data.objects.new("AutoBoolean", h)
-        context.scene.objects.link(hole_obj)
+        self.link_object_to_scene(context, hole_obj)
         hole_obj['archipack_hybridhole'] = True
         if wall.parent is not None:
             hole_obj.parent = wall.parent
@@ -226,9 +220,9 @@ class ArchipackBoolManager():
             remove holes not found in childs
 
             robust -> mixed:
-                there is only one object taged with "archipack_robusthole"
+                there is only one object tagged with "archipack_robusthole"
             interactive -> mixed:
-                many modifisers on wall taged with "archipack_hole"
+                many modifisers on wall tagged with "archipack_hole"
                 keep objects
         """
         existing = []
@@ -254,7 +248,6 @@ class ArchipackBoolManager():
         m = wall.modifiers.get("AutoMixedBoolean")
         if m is None:
             m = wall.modifiers.new('AutoMixedBoolean', 'BOOLEAN')
-            m.solver = self.solver_mode
             m.operation = 'DIFFERENCE'
 
         if m.object is None:
@@ -306,7 +299,7 @@ class ArchipackBoolManager():
                     to_delete.append([m, h])
             # remove modifier and holes not found in new list
             self.remove_modif_and_object(context, hole_obj, to_delete)
-            context.scene.objects.unlink(hole_obj)
+            self.unlink_object_from_scene(hole_obj)
             bpy.data.objects.remove(hole_obj, do_unlink=True)
 
         to_delete = []
@@ -388,12 +381,12 @@ class ArchipackBoolManager():
             # to support "revival" of applied modifiers
             m = wall.modifiers.get("Wall")
             if m is None:
-                wall.select = True
-                context.scene.objects.active = wall
+                wall.select_set(state=True)
+                context.view_layer.objects.active = wall
                 wall.data.archipack_wall2[0].update(context)
 
         bpy.ops.object.select_all(action='DESELECT')
-        context.scene.objects.active = None
+        context.view_layer.objects.active = None
         childs = []
         holes = []
         # get wall bounds to find what's inside
@@ -429,19 +422,19 @@ class ArchipackBoolManager():
         # parenting childs to wall reference point
         if wall.parent is None:
             x, y, z = wall.bound_box[0]
-            context.scene.cursor_location = wall.matrix_world * Vector((x, y, z))
+            context.scene.cursor_location = wall.matrix_world @ Vector((x, y, z))
             # fix issue #9
-            context.scene.objects.active = wall
+            context.view_layer.objects.active = wall
             bpy.ops.archipack.reference_point()
         else:
-            wall.parent.select = True
-            context.scene.objects.active = wall.parent
+            wall.parent.select_set(state=True)
+            context.view_layer.objects.active = wall.parent
 
-        wall.select = True
+        wall.select_set(state=True)
         for o in childs:
             if 'archipack_robusthole' in o:
                 o.hide_select = False
-            o.select = True
+            o.select_set(state=True)
 
         bpy.ops.archipack.parent_to_reference()
 
@@ -499,7 +492,6 @@ class ArchipackBoolManager():
             if m is None:
                 m = wall.modifiers.new('AutoMixedBoolean', 'BOOLEAN')
                 m.operation = 'DIFFERENCE'
-                m.solver = self.solver_mode
 
             if m.object is None:
                 hole_obj = self.create_merge_basis(context, wall)
@@ -513,21 +505,21 @@ class ArchipackBoolManager():
         # parenting childs to wall reference point
         if wall.parent is None:
             x, y, z = wall.bound_box[0]
-            context.scene.cursor_location = wall.matrix_world * Vector((x, y, z))
+            context.scene.cursor_location = wall.matrix_world @ Vector((x, y, z))
             # fix issue #9
-            context.scene.objects.active = wall
+            context.view_layer.objects.active = wall
             bpy.ops.archipack.reference_point()
         else:
-            context.scene.objects.active = wall.parent
+            context.view_layer.objects.active = wall.parent
 
         if hole_obj is not None:
-            hole_obj.select = True
+            hole_obj.select_set(state=True)
 
-        wall.select = True
-        o.select = True
+        wall.select_set(state=True)
+        o.select_set(state=True)
         bpy.ops.archipack.parent_to_reference()
-        wall.select = True
-        context.scene.objects.active = wall
+        wall.select_set(state=True)
+        context.view_layer.objects.active = wall
         if "archipack_wall2" in wall.data:
             d = wall.data.archipack_wall2[0]
             g = d.get_generator()
@@ -545,7 +537,7 @@ class ARCHIPACK_OT_single_boolean(Operator):
     bl_description = "Add single boolean for doors and windows"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
-    mode = EnumProperty(
+    mode : EnumProperty(
         name="Mode",
         items=(
             ('INTERACTIVE', 'INTERACTIVE', 'Interactive, fast but may fail', 0),
@@ -553,14 +545,6 @@ class ARCHIPACK_OT_single_boolean(Operator):
             ('HYBRID', 'HYBRID', 'Interactive, slow but robust', 2)
             ),
         default='HYBRID'
-        )
-    solver_mode = EnumProperty(
-        name="Solver",
-        items=(
-            ('CARVE', 'CARVE', 'Slow but robust (could be slow in hybrid mode with many holes)', 0),
-            ('BMESH', 'BMESH', 'Fast but more prone to errors', 1)
-            ),
-        default='BMESH'
         )
     """
         Wall must be active object
@@ -583,14 +567,14 @@ class ARCHIPACK_OT_single_boolean(Operator):
     def execute(self, context):
         if context.mode == "OBJECT":
             wall = context.active_object
-            manager = ArchipackBoolManager(mode=self.mode, solver_mode=self.solver_mode)
+            manager = ArchipackBoolManager(mode=self.mode)
             for o in context.selected_objects:
                 if o != wall:
                     manager.singleboolean(context, wall, o)
+                    o.select_set(state=False)
                     break
-            o.select = False
-            wall.select = True
-            context.scene.objects.active = wall
+            wall.select_set(state=True)
+            context.view_layer.objects.active = wall
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -603,7 +587,7 @@ class ARCHIPACK_OT_auto_boolean(Operator):
     bl_description = "Automatic boolean for doors and windows"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
-    mode = EnumProperty(
+    mode : EnumProperty(
         name="Mode",
         items=(
             ('INTERACTIVE', 'INTERACTIVE', 'Interactive, fast but may fail', 0),
@@ -612,39 +596,30 @@ class ARCHIPACK_OT_auto_boolean(Operator):
             ),
         default='HYBRID'
         )
-    solver_mode = EnumProperty(
-        name="Solver",
-        items=(
-            ('CARVE', 'CARVE', 'Slow but robust (could be slow in hybrid mode with many holes)', 0),
-            ('BMESH', 'BMESH', 'Fast but more prone to errors', 1)
-            ),
-        default='BMESH'
-        )
 
     def draw(self, context):
         layout = self.layout
         row = layout.row()
         row.prop(self, 'mode')
-        row.prop(self, 'solver_mode')
 
     def execute(self, context):
         if context.mode == "OBJECT":
-            manager = ArchipackBoolManager(mode=self.mode, solver_mode=self.solver_mode)
-            active = context.scene.objects.active
+            manager = ArchipackBoolManager(mode=self.mode)
+            active = context.view_layer.objects.active
             walls = [wall for wall in context.selected_objects if not manager.filter_wall(wall)]
             bpy.ops.object.select_all(action='DESELECT')
             for wall in walls:
                 manager.autoboolean(context, wall)
                 bpy.ops.object.select_all(action='DESELECT')
-                wall.select = True
-                context.scene.objects.active = wall
+                wall.select_set(state=True)
+                context.view_layer.objects.active = wall
                 if wall.data is not None and 'archipack_wall2' in wall.data:
                     bpy.ops.archipack.wall2_manipulate('EXEC_DEFAULT')
             # reselect walls
             bpy.ops.object.select_all(action='DESELECT')
             for wall in walls:
-                wall.select = True
-            context.scene.objects.active = active
+                wall.select_set(state=True)
+            context.view_layer.objects.active = active
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -668,13 +643,13 @@ class ARCHIPACK_OT_generate_hole(Operator):
                 self.report({'WARNING'}, "Archipack: active object must be a door, a window or a roof")
                 return {'CANCELLED'}
             bpy.ops.object.select_all(action='DESELECT')
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             hole = manager._generate_hole(context, o)
             manager.prepare_hole(hole)
-            hole.select = False
-            o.select = True
-            context.scene.objects.active = o
+            hole.select_set(state=False)
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")

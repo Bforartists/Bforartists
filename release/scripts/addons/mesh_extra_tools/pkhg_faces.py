@@ -749,7 +749,7 @@ def prepare(self, context, remove_start_faces=True):
 
 def make_one_inset(self, context, bm=None, ringvectors=None, center=None,
                    normal=None, t=None, base_height=0):
-    # a face will get 'inserted' faces to create (normaly) a hole if t is > 0 and < 1)
+    # a face will get 'inserted' faces to create (normally) a hole if t is > 0 and < 1)
     tmp = []
 
     for el in ringvectors:

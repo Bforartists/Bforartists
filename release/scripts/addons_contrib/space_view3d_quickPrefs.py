@@ -783,8 +783,8 @@ class PANEL(bpy.types.Panel):
 #Draw the buttons
             split = split.split()
             col = split.column()
-            col.operator("gllightpreset.action", icon="ZOOMIN", text="Add").button="add"
-            col.operator("gllightpreset.action", icon="ZOOMOUT", text="Delete").button="delete"
+            col.operator("gllightpreset.action", icon='ADD', text="Add").button="add"
+            col.operator("gllightpreset.action", icon='REMOVE', text="Delete").button="delete"
             col.operator("gllightpreset.action", icon="FILE_TICK", text="Save to Blend").button="save"
             col.operator("gllightpreset.action", icon="SORTALPHA", text="Sort").button="sort"
             col.operator("gllightpreset.action", icon="SHORTDISPLAY", text="Add Defaults").button="defaults"
@@ -832,12 +832,6 @@ class PANEL(bpy.types.Panel):
 
 
         if scn.interface:
-            #Select with
-            boxrow=box.row()
-            boxrow.label(text="Select With:")
-            boxrow=box.row()
-            boxrow.prop(inputs, "select_mouse", expand=True)
-
             #Orbit
             boxrow=box.row()
             boxrow.label(text="Orbit Style:")
@@ -962,8 +956,7 @@ def unregister():
     bpy.utils.unregister_class(gllightpreset)
     bpy.utils.unregister_class(SCENE_OT_gllightpreset)
     bpy.utils.unregister_class(quickprefproperties)
-    bpy.app.handlers.scene_update_pre.remove(setup) 
+    bpy.app.handlers.scene_update_pre.remove(setup)
 
 if __name__ == "__main__":
     register()
-

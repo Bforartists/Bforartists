@@ -53,15 +53,10 @@
 #include "BKE_image.h"
 
 #include "RE_render_ext.h"
+#include "RE_shader_ext.h"
 
 #include "render_types.h"
 #include "texture.h"
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-/* defined in pipeline.c, is hardcopy of active dynamic allocated Render */
-/* only to be used here in this file, it's for speed */
-extern struct Render R;
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 static void boxsample(ImBuf *ibuf, float minx, float miny, float maxx, float maxy, TexResult *texres, const short imaprepeat, const short imapextend);
 
@@ -211,11 +206,6 @@ int imagewrap(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], TexResul
 		}
 	}
 
-	/* warning, no return before setting back! */
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) ) {
-		ibuf->rect+= (ibuf->x*ibuf->y);
-	}
-
 	/* keep this before interpolation [#29761] */
 	if (ima) {
 		if ((tex->imaflag & TEX_USEALPHA) && (ima->flag & IMA_IGNORE_ALPHA) == 0) {
@@ -241,10 +231,6 @@ int imagewrap(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], TexResul
 	}
 	else { /* no filtering */
 		ibuf_get_color(&texres->tr, ibuf, x, y);
-	}
-
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) ) {
-		ibuf->rect-= (ibuf->x*ibuf->y);
 	}
 
 	if (texres->nor) {
@@ -887,29 +873,25 @@ static void alpha_clip_aniso(ImBuf *ibuf, float minx, float miny, float maxx, fl
 static void image_mipmap_test(Tex *tex, ImBuf *ibuf)
 {
 	if (tex->imaflag & TEX_MIPMAP) {
-		if ((ibuf->flags & IB_fields) == 0) {
-
-			if (ibuf->mipmap[0] && (ibuf->userflags & IB_MIPMAP_INVALID)) {
-				BLI_thread_lock(LOCK_IMAGE);
-				if (ibuf->userflags & IB_MIPMAP_INVALID) {
-					IMB_remakemipmap(ibuf, tex->imaflag & TEX_GAUSS_MIP);
-					ibuf->userflags &= ~IB_MIPMAP_INVALID;
-				}
-				BLI_thread_unlock(LOCK_IMAGE);
+		if (ibuf->mipmap[0] && (ibuf->userflags & IB_MIPMAP_INVALID)) {
+			BLI_thread_lock(LOCK_IMAGE);
+			if (ibuf->userflags & IB_MIPMAP_INVALID) {
+				IMB_remakemipmap(ibuf, tex->imaflag & TEX_GAUSS_MIP);
+				ibuf->userflags &= ~IB_MIPMAP_INVALID;
 			}
-			if (ibuf->mipmap[0] == NULL) {
-				BLI_thread_lock(LOCK_IMAGE);
-				if (ibuf->mipmap[0] == NULL)
-					IMB_makemipmap(ibuf, tex->imaflag & TEX_GAUSS_MIP);
-				BLI_thread_unlock(LOCK_IMAGE);
-			}
-			/* if no mipmap could be made, fall back on non-mipmap render */
-			if (ibuf->mipmap[0] == NULL) {
-				tex->imaflag &= ~TEX_MIPMAP;
-			}
+			BLI_thread_unlock(LOCK_IMAGE);
+		}
+		if (ibuf->mipmap[0] == NULL) {
+			BLI_thread_lock(LOCK_IMAGE);
+			if (ibuf->mipmap[0] == NULL)
+				IMB_makemipmap(ibuf, tex->imaflag & TEX_GAUSS_MIP);
+			BLI_thread_unlock(LOCK_IMAGE);
+		}
+		/* if no mipmap could be made, fall back on non-mipmap render */
+		if (ibuf->mipmap[0] == NULL) {
+			tex->imaflag &= ~TEX_MIPMAP;
 		}
 	}
-
 }
 
 static int imagewraposa_aniso(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], float dxt[2], float dyt[2], TexResult *texres, struct ImagePool *pool, const bool skip_load_image)
@@ -977,17 +959,6 @@ static int imagewraposa_aniso(Tex *tex, Image *ima, ImBuf *ibuf, const float tex
 	else {
 		fx = texvec[0];
 		fy = texvec[1];
-	}
-
-	if (ibuf->flags & IB_fields) {
-		if (R.r.mode & R_FIELDS) {			/* field render */
-			if (R.flag & R_SEC_FIELD) {		/* correction for 2nd field */
-				/* fac1= 0.5/( (float)ibuf->y ); */
-				/* fy-= fac1; */
-			}
-			else 	/* first field */
-				fy += 0.5f/( (float)ibuf->y );
-		}
 	}
 
 	/* pixel coordinates */
@@ -1128,10 +1099,6 @@ static int imagewraposa_aniso(Tex *tex, Image *ima, ImBuf *ibuf, const float tex
 	}
 
 	intpol = tex->imaflag & TEX_INTERPOL;
-
-	/* warning no return! */
-	if ((R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields))
-		ibuf->rect += ibuf->x*ibuf->y;
 
 	/* struct common data */
 	copy_v2_v2(AFD.dxt, dxt);
@@ -1311,9 +1278,6 @@ static int imagewraposa_aniso(Tex *tex, Image *ima, ImBuf *ibuf, const float tex
 		texres->tin = texres->ta;
 	if (tex->flag & TEX_NEGALPHA) texres->ta = 1.f - texres->ta;
 
-	if ((R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields))
-		ibuf->rect -= ibuf->x*ibuf->y;
-
 	if (texres->nor && (tex->imaflag & TEX_NORMALMAP)) {	/* normal from color */
 		/* The invert of the red channel is to make
 		 * the normal map compliant with the outside world.
@@ -1409,18 +1373,6 @@ int imagewraposa(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], const
 	else {
 		fx= texvec[0];
 		fy= texvec[1];
-	}
-
-	if (ibuf->flags & IB_fields) {
-		if (R.r.mode & R_FIELDS) {			/* field render */
-			if (R.flag & R_SEC_FIELD) {		/* correction for 2nd field */
-				/* fac1= 0.5/( (float)ibuf->y ); */
-				/* fy-= fac1; */
-			}
-			else {				/* first field */
-				fy+= 0.5f/( (float)ibuf->y );
-			}
-		}
 	}
 
 	/* pixel coordinates */
@@ -1580,11 +1532,6 @@ int imagewraposa(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], const
 		}
 	}
 
-	/* warning no return! */
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) ) {
-		ibuf->rect+= (ibuf->x*ibuf->y);
-	}
-
 	/* choice:  */
 	if (tex->imaflag & TEX_MIPMAP) {
 		ImBuf *previbuf, *curibuf;
@@ -1731,10 +1678,6 @@ int imagewraposa(Tex *tex, Image *ima, ImBuf *ibuf, const float texvec[3], const
 
 	if (tex->flag & TEX_NEGALPHA) texres->ta= 1.0f-texres->ta;
 
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) ) {
-		ibuf->rect-= (ibuf->x*ibuf->y);
-	}
-
 	if (texres->nor && (tex->imaflag & TEX_NORMALMAP)) {
 		/* qdn: normal from color
 		 * The invert of the red channel is to make
@@ -1772,15 +1715,9 @@ void image_sample(Image *ima, float fx, float fy, float dx, float dy, float resu
 		return;
 	}
 
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) )
-		ibuf->rect+= (ibuf->x*ibuf->y);
-
 	texres.talpha = true; /* boxsample expects to be initialized */
 	boxsample(ibuf, fx, fy, fx + dx, fy + dy, &texres, 0, 1);
 	copy_v4_v4(result, &texres.tr);
-
-	if ( (R.flag & R_SEC_FIELD) && (ibuf->flags & IB_fields) )
-		ibuf->rect-= (ibuf->x*ibuf->y);
 
 	ima->flag|= IMA_USED_FOR_RENDER;
 

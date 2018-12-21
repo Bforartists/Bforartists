@@ -43,15 +43,23 @@
 /* Types --------------------------------------------------------------- */
 
 #include "DNA_anim_types.h"
+#include "DNA_cachefile_types.h"
+#include "DNA_object_types.h"
 #include "DNA_screen_types.h"
+#include "DNA_scene_types.h"
 
 #include "BKE_action.h"
 #include "BKE_context.h"
+#include "BKE_pointcache.h"
 
 
 /* Everything from source (BIF, BDR, BSE) ------------------------------ */
 
 #include "BIF_gl.h"
+
+#include "GPU_immediate.h"
+#include "GPU_matrix.h"
+#include "GPU_state.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -156,32 +164,29 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 {
 	ListBase anim_data = {NULL, NULL};
 	bAnimListElem *ale;
-	int filter;
 
 	View2D *v2d = &ar->v2d;
 	bDopeSheet *ads = &saction->ads;
 	AnimData *adt = NULL;
 
 	float act_start, act_end, y;
-	size_t items;
-	int height;
 
-	unsigned char col1[3], col2[3];
-	unsigned char col1a[3], col2a[3];
-	unsigned char col1b[3], col2b[3];
+	unsigned char col1[4], col2[4];
+	unsigned char col1a[4], col2a[4];
+	unsigned char col1b[4], col2b[4];
 
 	const bool show_group_colors = !(saction->flag & SACTION_NODRAWGCOLORS);
 
 
 	/* get theme colors */
-	UI_GetThemeColor3ubv(TH_BACK, col2);
-	UI_GetThemeColor3ubv(TH_HILITE, col1);
+	UI_GetThemeColor4ubv(TH_SHADE2, col2);
+	UI_GetThemeColor4ubv(TH_HILITE, col1);
 
-	UI_GetThemeColor3ubv(TH_GROUP, col2a);
-	UI_GetThemeColor3ubv(TH_GROUP_ACTIVE, col1a);
+	UI_GetThemeColor4ubv(TH_GROUP, col2a);
+	UI_GetThemeColor4ubv(TH_GROUP_ACTIVE, col1a);
 
-	UI_GetThemeColor3ubv(TH_DOPESHEET_CHANNELOB, col1b);
-	UI_GetThemeColor3ubv(TH_DOPESHEET_CHANNELSUBOB, col2b);
+	UI_GetThemeColor4ubv(TH_DOPESHEET_CHANNELOB, col1b);
+	UI_GetThemeColor4ubv(TH_DOPESHEET_CHANNELSUBOB, col2b);
 
 	/* set view-mapping rect (only used for x-axis), for NLA-scaling mapping with less calculation */
 
@@ -194,10 +199,10 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 	}
 
 	/* build list of channels to draw */
-	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
-	items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+	int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
+	size_t items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
-	height = ((items * ACHANNEL_STEP(ac)) + (ACHANNEL_HEIGHT(ac)));
+	int height = ((items * ACHANNEL_STEP(ac)) + (ACHANNEL_HEIGHT(ac)));
 	/* don't use totrect set, as the width stays the same
 	 * (NOTE: this is ok here, the configuration is pretty straightforward)
 	 */
@@ -205,7 +210,13 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 
 	/* first backdrop strips */
 	y = (float)(-ACHANNEL_HEIGHT(ac));
-	glEnable(GL_BLEND);
+
+	GPUVertFormat *format = immVertexFormat();
+	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	GPU_blend(true);
 
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		const float yminc = (float)(y - ACHANNEL_HEIGHT_HALF(ac));
@@ -229,22 +240,20 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 						case ANIMTYPE_SUMMARY:
 						{
 							/* reddish color from NLA */
-							UI_ThemeColor4(TH_ANIM_ACTIVE);
+							immUniformThemeColor(TH_ANIM_ACTIVE);
 							break;
 						}
 						case ANIMTYPE_SCENE:
 						case ANIMTYPE_OBJECT:
 						{
-							if (sel) glColor4ub(col1b[0], col1b[1], col1b[2], 0x45);
-							else glColor4ub(col1b[0], col1b[1], col1b[2], 0x22);
+							immUniformColor3ubvAlpha(col1b, sel ? col1[3] : col1b[3]);
 							break;
 						}
 						case ANIMTYPE_FILLACTD:
 						case ANIMTYPE_DSSKEY:
 						case ANIMTYPE_DSWOR:
 						{
-							if (sel) glColor4ub(col2b[0], col2b[1], col2b[2], 0x45);
-							else glColor4ub(col2b[0], col2b[1], col2b[2], 0x22);
+							immUniformColor3ubvAlpha(col2b, sel ? col1[3] : col2b[3]);
 							break;
 						}
 						case ANIMTYPE_GROUP:
@@ -252,17 +261,14 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 							bActionGroup *agrp = ale->data;
 							if (show_group_colors && agrp->customCol) {
 								if (sel) {
-									unsigned char *cp = (unsigned char *)agrp->cs.select;
-									glColor4ub(cp[0], cp[1], cp[2], 0x45);
+									immUniformColor3ubvAlpha((unsigned char *)agrp->cs.select, col1a[3]);
 								}
 								else {
-									unsigned char *cp = (unsigned char *)agrp->cs.solid;
-									glColor4ub(cp[0], cp[1], cp[2], 0x1D);
+									immUniformColor3ubvAlpha((unsigned char *)agrp->cs.solid, col2a[3]);
 								}
 							}
 							else {
-								if (sel) glColor4ub(col1a[0], col1a[1], col1a[2], 0x22);
-								else glColor4ub(col2a[0], col2a[1], col2a[2], 0x22);
+								immUniformColor4ubv(sel ? col1a : col2a);
 							}
 							break;
 						}
@@ -270,66 +276,69 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 						{
 							FCurve *fcu = ale->data;
 							if (show_group_colors && fcu->grp && fcu->grp->customCol) {
-								unsigned char *cp = (unsigned char *)fcu->grp->cs.active;
-
-								if (sel) glColor4ub(cp[0], cp[1], cp[2], 0x65);
-								else glColor4ub(cp[0], cp[1], cp[2], 0x0B);
+								immUniformColor3ubvAlpha((unsigned char *)fcu->grp->cs.active, sel ? col1[3] : col2[3]);
 							}
 							else {
-								if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x22);
-								else glColor4ub(col2[0], col2[1], col2[2], 0x22);
+								immUniformColor4ubv(sel ? col1 : col2);
 							}
 							break;
 						}
 						default:
 						{
-							if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x22);
-							else glColor4ub(col2[0], col2[1], col2[2], 0x22);
-							break;
+							immUniformColor4ubv(sel ? col1 : col2);
 						}
 					}
 
 					/* draw region twice: firstly backdrop, then the current range */
-					glRectf(v2d->cur.xmin,  (float)y - ACHANNEL_HEIGHT_HALF(ac),  v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
+					immRectf(pos, v2d->cur.xmin,  (float)y - ACHANNEL_HEIGHT_HALF(ac),  v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
 
 					if (ac->datatype == ANIMCONT_ACTION)
-						glRectf(act_start,  (float)y - ACHANNEL_HEIGHT_HALF(ac),  act_end,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
+						immRectf(pos, act_start,  (float)y - ACHANNEL_HEIGHT_HALF(ac),  act_end,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
 				}
 				else if (ac->datatype == ANIMCONT_GPENCIL) {
 					/* frames less than one get less saturated background */
-					if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x22);
-					else glColor4ub(col2[0], col2[1], col2[2], 0x22);
-					glRectf(0.0f, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmin, (float)y + ACHANNEL_HEIGHT_HALF(ac));
+					unsigned char *color = sel ? col1 : col2;
+					immUniformColor4ubv(color);
+					immRectf(pos, 0.0f, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmin, (float)y + ACHANNEL_HEIGHT_HALF(ac));
 
 					/* frames one and higher get a saturated background */
-					if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x44);
-					else glColor4ub(col2[0], col2[1], col2[2], 0x44);
-					glRectf(v2d->cur.xmin, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
+					immUniformColor3ubvAlpha(color, MIN2(255, color[3] * 2));
+					immRectf(pos, v2d->cur.xmin, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
 				}
 				else if (ac->datatype == ANIMCONT_MASK) {
 					/* TODO --- this is a copy of gpencil */
 					/* frames less than one get less saturated background */
-					if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x22);
-					else glColor4ub(col2[0], col2[1], col2[2], 0x22);
-					glRectf(0.0f, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmin, (float)y + ACHANNEL_HEIGHT_HALF(ac));
+					unsigned char *color = sel ? col1 : col2;
+					immUniformColor4ubv(color);
+					immRectf(pos, 0.0f, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmin, (float)y + ACHANNEL_HEIGHT_HALF(ac));
 
 					/* frames one and higher get a saturated background */
-					if (sel) glColor4ub(col1[0], col1[1], col1[2], 0x44);
-					else glColor4ub(col2[0], col2[1], col2[2], 0x44);
-					glRectf(v2d->cur.xmin, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
+					immUniformColor3ubvAlpha(color, MIN2(255, color[3] * 2));
+					immRectf(pos, v2d->cur.xmin, (float)y - ACHANNEL_HEIGHT_HALF(ac), v2d->cur.xmax + EXTRA_SCROLL_PAD,  (float)y + ACHANNEL_HEIGHT_HALF(ac));
 				}
 			}
 		}
 
-		/*	Increment the step */
+		/* Increment the step */
 		y -= ACHANNEL_STEP(ac);
 	}
-	glDisable(GL_BLEND);
+	GPU_blend(false);
+
+	/* black line marking 'current frame' for Time-Slide transform mode */
+	if (saction->flag & SACTION_MOVING) {
+		immUniformColor3f(0.0f, 0.0f, 0.0f);
+
+		immBegin(GPU_PRIM_LINES, 2);
+		immVertex2f(pos, saction->timeslide, v2d->cur.ymin - EXTRA_SCROLL_PAD);
+		immVertex2f(pos, saction->timeslide, v2d->cur.ymax);
+		immEnd();
+	}
+	immUnbindProgram();
 
 	/* Draw keyframes
-	 *	1) Only channels that are visible in the Action Editor get drawn/evaluated.
-	 *	   This is to try to optimize this for heavier data sets
-	 *	2) Keyframes which are out of view horizontally are disregarded
+	 * 1) Only channels that are visible in the Action Editor get drawn/evaluated.
+	 *    This is to try to optimize this for heavier data sets
+	 * 2) Keyframes which are out of view horizontally are disregarded
 	 */
 	y = (float)(-ACHANNEL_HEIGHT(ac));
 
@@ -348,28 +357,28 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 				/* draw 'keyframes' for each specific datatype */
 				switch (ale->datatype) {
 					case ALE_ALL:
-						draw_summary_channel(v2d, ale->data, y, ac->yscale_fac);
+						draw_summary_channel(v2d, ale->data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_SCE:
-						draw_scene_channel(v2d, ads, ale->key_data, y, ac->yscale_fac);
+						draw_scene_channel(v2d, ads, ale->key_data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_OB:
-						draw_object_channel(v2d, ads, ale->key_data, y, ac->yscale_fac);
+						draw_object_channel(v2d, ads, ale->key_data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_ACT:
-						draw_action_channel(v2d, adt, ale->key_data, y, ac->yscale_fac);
+						draw_action_channel(v2d, adt, ale->key_data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_GROUP:
-						draw_agroup_channel(v2d, adt, ale->data, y, ac->yscale_fac);
+						draw_agroup_channel(v2d, adt, ale->data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_FCURVE:
-						draw_fcurve_channel(v2d, adt, ale->key_data, y, ac->yscale_fac);
+						draw_fcurve_channel(v2d, adt, ale->key_data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_GPFRAME:
-						draw_gpl_channel(v2d, ads, ale->data, y, ac->yscale_fac);
+						draw_gpl_channel(v2d, ads, ale->data, y, ac->yscale_fac, saction->flag);
 						break;
 					case ALE_MASKLAY:
-						draw_masklay_channel(v2d, ads, ale->data, y, ac->yscale_fac);
+						draw_masklay_channel(v2d, ads, ale->data, y, ac->yscale_fac, saction->flag);
 						break;
 				}
 			}
@@ -378,16 +387,157 @@ void draw_channel_strips(bAnimContext *ac, SpaceAction *saction, ARegion *ar)
 		y -= ACHANNEL_STEP(ac);
 	}
 
-	/* free tempolary channels used for drawing */
+	/* free temporary channels used for drawing */
 	ANIM_animdata_freelist(&anim_data);
-
-	/* black line marking 'current frame' for Time-Slide transform mode */
-	if (saction->flag & SACTION_MOVING) {
-		glColor3f(0.0f, 0.0f, 0.0f);
-
-		glBegin(GL_LINES);
-		glVertex2f(saction->timeslide, v2d->cur.ymin - EXTRA_SCROLL_PAD);
-		glVertex2f(saction->timeslide, v2d->cur.ymax);
-		glEnd();
-	}
 }
+
+/* ************************************************************************* */
+/* Timeline - Caches */
+
+void timeline_draw_cache(SpaceAction *saction, Object *ob, Scene *scene)
+{
+	PTCacheID *pid;
+	ListBase pidlist;
+	const float cache_draw_height = (4.0f * UI_DPI_FAC * U.pixelsize);
+	float yoffs = 0.f;
+
+	if (!(saction->cache_display & TIME_CACHE_DISPLAY) || (!ob))
+		return;
+
+	BKE_ptcache_ids_from_object(&pidlist, ob, scene, 0);
+
+	uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	/* iterate over pointcaches on the active object, and draw each one's range */
+	for (pid = pidlist.first; pid; pid = pid->next) {
+		float col[4];
+
+		switch (pid->type) {
+			case PTCACHE_TYPE_SOFTBODY:
+				if (!(saction->cache_display & TIME_CACHE_SOFTBODY)) continue;
+				break;
+			case PTCACHE_TYPE_PARTICLES:
+				if (!(saction->cache_display & TIME_CACHE_PARTICLES)) continue;
+				break;
+			case PTCACHE_TYPE_CLOTH:
+				if (!(saction->cache_display & TIME_CACHE_CLOTH)) continue;
+				break;
+			case PTCACHE_TYPE_SMOKE_DOMAIN:
+			case PTCACHE_TYPE_SMOKE_HIGHRES:
+				if (!(saction->cache_display & TIME_CACHE_SMOKE)) continue;
+				break;
+			case PTCACHE_TYPE_DYNAMICPAINT:
+				if (!(saction->cache_display & TIME_CACHE_DYNAMICPAINT)) continue;
+				break;
+			case PTCACHE_TYPE_RIGIDBODY:
+				if (!(saction->cache_display & TIME_CACHE_RIGIDBODY)) continue;
+				break;
+		}
+
+		if (pid->cache->cached_frames == NULL)
+			continue;
+
+		GPU_matrix_push();
+		GPU_matrix_translate_2f(0.0, (float)V2D_SCROLL_HEIGHT_TEXT + yoffs);
+		GPU_matrix_scale_2f(1.0, cache_draw_height);
+
+		switch (pid->type) {
+			case PTCACHE_TYPE_SOFTBODY:
+				col[0] = 1.0;   col[1] = 0.4;   col[2] = 0.02;
+				col[3] = 0.1;
+				break;
+			case PTCACHE_TYPE_PARTICLES:
+				col[0] = 1.0;   col[1] = 0.1;   col[2] = 0.02;
+				col[3] = 0.1;
+				break;
+			case PTCACHE_TYPE_CLOTH:
+				col[0] = 0.1;   col[1] = 0.1;   col[2] = 0.75;
+				col[3] = 0.1;
+				break;
+			case PTCACHE_TYPE_SMOKE_DOMAIN:
+			case PTCACHE_TYPE_SMOKE_HIGHRES:
+				col[0] = 0.2;   col[1] = 0.2;   col[2] = 0.2;
+				col[3] = 0.1;
+				break;
+			case PTCACHE_TYPE_DYNAMICPAINT:
+				col[0] = 1.0;   col[1] = 0.1;   col[2] = 0.75;
+				col[3] = 0.1;
+				break;
+			case PTCACHE_TYPE_RIGIDBODY:
+				col[0] = 1.0;   col[1] = 0.6;   col[2] = 0.0;
+				col[3] = 0.1;
+				break;
+			default:
+				col[0] = 1.0;   col[1] = 0.0;   col[2] = 1.0;
+				col[3] = 0.1;
+				BLI_assert(0);
+				break;
+		}
+
+		const int sta = pid->cache->startframe, end = pid->cache->endframe;
+
+		GPU_blend(true);
+
+		immUniformColor4fv(col);
+		immRectf(pos, (float)sta, 0.0, (float)end, 1.0);
+
+		col[3] = 0.4f;
+		if (pid->cache->flag & PTCACHE_BAKED) {
+			col[0] -= 0.4f; col[1] -= 0.4f; col[2] -= 0.4f;
+		}
+		else if (pid->cache->flag & PTCACHE_OUTDATED) {
+			col[0] += 0.4f; col[1] += 0.4f; col[2] += 0.4f;
+		}
+
+		immUniformColor4fv(col);
+
+		{
+			/* draw a quad for each chunk of consecutive cached frames */
+			const int chunk_tot = 32;
+			int chunk_len = 0;
+			int ista = 0, iend = -1;
+
+			for (int i = sta; i <= end; i++) {
+				if (pid->cache->cached_frames[i - sta]) {
+					if (chunk_len == 0) {
+						immBeginAtMost(GPU_PRIM_TRIS, chunk_tot * 6);
+					}
+					if (ista > iend) {
+						chunk_len++;
+						ista = i;
+					}
+					iend = i;
+				}
+				else {
+					if (ista <= iend) {
+						immRectf_fast(pos, (float)ista - 0.5f, 0.0f, (float)iend + 0.5f, 1.0f);
+						iend = ista - 1;
+					}
+					if (chunk_len >= chunk_tot) {
+						immEnd();
+						chunk_len = 0;
+					}
+				}
+			}
+			if (ista <= iend) {
+				immRectf_fast(pos, (float)ista - 0.5f, 0.0f, (float)iend + 0.5f, 1.0f);
+			}
+			if (chunk_len != 0) {
+				immEnd();
+			}
+		}
+
+		GPU_blend(false);
+
+		GPU_matrix_pop();
+
+		yoffs += cache_draw_height;
+	}
+
+	immUnbindProgram();
+
+	BLI_freelistN(&pidlist);
+}
+
+/* ************************************************************************* */

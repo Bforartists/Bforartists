@@ -107,9 +107,9 @@ from bpy.props import (
                 )
 
 
-class INFO_MT_mesh_vert_add(Menu):
+class VIEW3D_MT_mesh_vert_add(Menu):
     # Define the "Single Vert" menu
-    bl_idname = "INFO_MT_mesh_vert_add"
+    bl_idname = "VIEW3D_MT_mesh_vert_add"
     bl_label = "Single Vert"
 
     def draw(self, context):
@@ -126,9 +126,9 @@ class INFO_MT_mesh_vert_add(Menu):
                         text="Object Origin Mirrored")
 
 
-class INFO_MT_mesh_gears_add(Menu):
+class VIEW3D_MT_mesh_gears_add(Menu):
     # Define the "Gears" menu
-    bl_idname = "INFO_MT_mesh_gears_add"
+    bl_idname = "VIEW3D_MT_mesh_gears_add"
     bl_label = "Gears"
 
     def draw(self, context):
@@ -140,9 +140,9 @@ class INFO_MT_mesh_gears_add(Menu):
                         text="Worm")
 
 
-class INFO_MT_mesh_diamonds_add(Menu):
+class VIEW3D_MT_mesh_diamonds_add(Menu):
     # Define the "Diamonds" menu
-    bl_idname = "INFO_MT_mesh_diamonds_add"
+    bl_idname = "VIEW3D_MT_mesh_diamonds_add"
     bl_label = "Diamonds"
 
     def draw(self, context):
@@ -156,9 +156,9 @@ class INFO_MT_mesh_diamonds_add(Menu):
                         text="Gem")
 
 
-class INFO_MT_mesh_math_add(Menu):
+class VIEW3D_MT_mesh_math_add(Menu):
     # Define the "Math Function" menu
-    bl_idname = "INFO_MT_mesh_math_add"
+    bl_idname = "VIEW3D_MT_mesh_math_add"
     bl_label = "Math Functions"
 
     def draw(self, context):
@@ -172,29 +172,29 @@ class INFO_MT_mesh_math_add(Menu):
         self.layout.operator("mesh.make_triangle", icon="MESH_DATA")
 
 
-class INFO_MT_mesh_mech(Menu):
+class VIEW3D_MT_mesh_mech(Menu):
     # Define the "Math Function" menu
-    bl_idname = "INFO_MT_mesh_mech_add"
+    bl_idname = "VIEW3D_MT_mesh_mech_add"
     bl_label = "Mechanical"
 
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("INFO_MT_mesh_pipe_joints_add",
+        layout.menu("VIEW3D_MT_mesh_pipe_joints_add",
                 text="Pipe Joints", icon="SNAP_PEEL_OBJECT")
-        layout.menu("INFO_MT_mesh_gears_add",
+        layout.menu("VIEW3D_MT_mesh_gears_add",
                 text="Gears", icon="SCRIPTWIN")
 
 
-class INFO_MT_mesh_extras_add(Menu):
+class VIEW3D_MT_mesh_extras_add(Menu):
     # Define the "Extra Objects" menu
-    bl_idname = "INFO_MT_mesh_extras_add"
+    bl_idname = "VIEW3D_MT_mesh_extras_add"
     bl_label = "Extras"
 
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("INFO_MT_mesh_diamonds_add", text="Diamonds",
+        layout.menu("VIEW3D_MT_mesh_diamonds_add", text="Diamonds",
                     icon="PMARKER_SEL")
         layout.separator()
         layout.operator("mesh.add_beam",
@@ -214,9 +214,9 @@ class INFO_MT_mesh_extras_add(Menu):
                         text="Menger Sponge")
 
 
-class INFO_MT_mesh_torus_add(Menu):
+class VIEW3D_MT_mesh_torus_add(Menu):
     # Define the "Torus Objects" menu
-    bl_idname = "INFO_MT_mesh_torus_add"
+    bl_idname = "VIEW3D_MT_mesh_torus_add"
     bl_label = "Torus Objects"
 
     def draw(self, context):
@@ -230,9 +230,9 @@ class INFO_MT_mesh_torus_add(Menu):
                         text="Torus Knot")
 
 
-class INFO_MT_mesh_pipe_joints_add(Menu):
+class VIEW3D_MT_mesh_pipe_joints_add(Menu):
     # Define the "Pipe Joints" menu
-    bl_idname = "INFO_MT_mesh_pipe_joints_add"
+    bl_idname = "VIEW3D_MT_mesh_pipe_joints_add"
     bl_label = "Pipe Joints"
 
     def draw(self, context):
@@ -355,15 +355,15 @@ def menu_func(self, context):
     lay_out.operator_context = 'INVOKE_REGION_WIN'
 
     lay_out.separator()
-    lay_out.menu("INFO_MT_mesh_vert_add",
+    lay_out.menu("VIEW3D_MT_mesh_vert_add",
                 text="Single Vert", icon="LAYER_ACTIVE")
     lay_out.operator("mesh.primitive_round_cube_add",
                     text="Round Cube", icon="MOD_SUBSURF")
-    lay_out.menu("INFO_MT_mesh_math_add",
+    lay_out.menu("VIEW3D_MT_mesh_math_add",
                 text="Math Function", icon="PACKAGE")
-    lay_out.menu("INFO_MT_mesh_mech_add",
+    lay_out.menu("VIEW3D_MT_mesh_mech_add",
                 text="Mechanical", icon="SCRIPTWIN")
-    lay_out.menu("INFO_MT_mesh_torus_add",
+    lay_out.menu("VIEW3D_MT_mesh_torus_add",
                 text="Torus Objects", icon="MESH_TORUS")
     lay_out.separator()
     lay_out.operator("mesh.generate_geodesic_dome",
@@ -371,7 +371,7 @@ def menu_func(self, context):
     lay_out.operator("discombobulate.ops",
                     text="Discombobulator", icon="RETOPO")
     lay_out.separator()
-    lay_out.menu("INFO_MT_mesh_extras_add",
+    lay_out.menu("VIEW3D_MT_mesh_extras_add",
                 text="Extras", icon="MESH_DATA")
     lay_out.separator()
     lay_out.operator("object.parent_to_empty",
@@ -402,12 +402,12 @@ def register():
                                         )
 
     # Add "Extras" menu to the "Add Mesh" menu
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     # Remove "Extras" menu from the "Add Mesh" menu.
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
 
     del bpy.types.Scene.discomb
     del bpy.types.Scene.error_message

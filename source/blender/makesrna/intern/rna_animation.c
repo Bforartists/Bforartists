@@ -73,22 +73,30 @@ const EnumPropertyItem rna_enum_keying_flag_items[] = {
 #include "BLI_math_base.h"
 
 #include "BKE_animsys.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_nla.h"
 
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
+
 #include "DNA_object_types.h"
+
+#include "ED_anim_api.h"
 
 #include "WM_api.h"
 
-static void rna_AnimData_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
+static void rna_AnimData_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
 	ID *id = ptr->id.data;
 
-	/* tag for refresh so that scheduled updates (e.g. action changed) will
-	 * get computed and reflected in the scene [#34869]
-	 */
-	DAG_id_tag_update(id, OB_RECALC_OB | OB_RECALC_DATA);
+	ANIM_id_update(bmain, id);
+}
+
+static void rna_AnimData_dependency_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+	DEG_relations_tag_update(bmain);
+
+	rna_AnimData_update(bmain, scene, ptr);
 }
 
 static int rna_AnimData_action_editable(PointerRNA *ptr, const char **UNUSED(r_info))
@@ -105,17 +113,9 @@ static int rna_AnimData_action_editable(PointerRNA *ptr, const char **UNUSED(r_i
 static void rna_AnimData_action_set(PointerRNA *ptr, PointerRNA value)
 {
 	ID *ownerId = (ID *)ptr->id.data;
-	AnimData *adt;
 
 	/* set action */
 	BKE_animdata_set_action(NULL, ownerId, value.data);
-
-	/* force action to get evaluated [#34869] */
-	adt = BKE_animdata_from_id(ownerId);
-	if (adt) {
-		adt->recalc |= ADT_RECALC_ANIM;
-		DAG_id_tag_update(ownerId, OB_RECALC_TIME);
-	}
 }
 
 static void rna_AnimData_tweakmode_set(PointerRNA *ptr, const bool value)
@@ -517,16 +517,19 @@ static void rna_KeyingSet_paths_clear(KeyingSet *keyingset, ReportList *reports)
 }
 
 /* needs wrapper function to push notifier */
-static NlaTrack *rna_NlaTrack_new(AnimData *adt, bContext *C, NlaTrack *track)
+static NlaTrack *rna_NlaTrack_new(ID *id, AnimData *adt, Main *bmain, bContext *C, NlaTrack *track)
 {
 	NlaTrack *new_track = BKE_nlatrack_add(adt, track);
 
 	WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_ADDED, NULL);
 
+	DEG_relations_tag_update(bmain);
+	DEG_id_tag_update_ex(bmain, id, ID_RECALC_ANIMATION | ID_RECALC_COPY_ON_WRITE);
+
 	return new_track;
 }
 
-static void rna_NlaTrack_remove(AnimData *adt, bContext *C, ReportList *reports, PointerRNA *track_ptr)
+static void rna_NlaTrack_remove(ID *id, AnimData *adt, Main *bmain, bContext *C, ReportList *reports, PointerRNA *track_ptr)
 {
 	NlaTrack *track = track_ptr->data;
 
@@ -535,10 +538,13 @@ static void rna_NlaTrack_remove(AnimData *adt, bContext *C, ReportList *reports,
 		return;
 	}
 
-	BKE_nlatrack_free(&adt->nla_tracks, track);
+	BKE_nlatrack_free(&adt->nla_tracks, track, true);
 	RNA_POINTER_INVALIDATE(track_ptr);
 
 	WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_REMOVED, NULL);
+
+	DEG_relations_tag_update(bmain);
+	DEG_id_tag_update_ex(bmain, id, ID_RECALC_ANIMATION | ID_RECALC_COPY_ON_WRITE);
 }
 
 static PointerRNA rna_NlaTrack_active_get(PointerRNA *ptr)
@@ -582,6 +588,36 @@ static FCurve *rna_Driver_find(AnimData *adt, ReportList *reports, const char *d
 
 	/* Returns NULL if not found. */
 	return list_find_fcurve(&adt->drivers, data_path, index);
+}
+
+bool rna_AnimaData_override_apply(
+        Main *UNUSED(bmain),
+        PointerRNA *ptr_dst, PointerRNA *ptr_src, PointerRNA *ptr_storage,
+        PropertyRNA *prop_dst, PropertyRNA *prop_src, PropertyRNA *UNUSED(prop_storage),
+        const int len_dst, const int len_src, const int len_storage,
+        PointerRNA *UNUSED(ptr_item_dst), PointerRNA *UNUSED(ptr_item_src), PointerRNA *UNUSED(ptr_item_storage),
+        IDOverrideStaticPropertyOperation *opop)
+{
+	BLI_assert(len_dst == len_src && (!ptr_storage || len_dst == len_storage) && len_dst == 0);
+	BLI_assert(opop->operation == IDOVERRIDESTATIC_OP_REPLACE && "Unsupported RNA override operation on animdata pointer");
+	UNUSED_VARS_NDEBUG(ptr_storage, len_dst, len_src, len_storage, opop);
+
+	/* AnimData is a special case, since you cannot edit/replace it, it's either existent or not. */
+	AnimData *adt_dst = RNA_property_pointer_get(ptr_dst, prop_dst).data;
+	AnimData *adt_src = RNA_property_pointer_get(ptr_src, prop_src).data;
+
+	if (adt_dst == NULL && adt_src != NULL) {
+		/* Copy anim data from reference into final local ID. */
+		BKE_animdata_copy_id(NULL, ptr_dst->id.data, ptr_src->id.data, 0);
+		return true;
+	}
+	else if (adt_dst != NULL && adt_src == NULL) {
+		/* Override has cleared/removed anim data from its reference. */
+		BKE_animdata_free(ptr_dst->id.data, true);
+		return true;
+	}
+
+	return false;
 }
 
 #else
@@ -933,7 +969,7 @@ static void rna_api_animdata_nla_tracks(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_struct_ui_text(srna, "NLA Tracks", "Collection of NLA Tracks");
 
 	func = RNA_def_function(srna, "new", "rna_NlaTrack_new");
-	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+	RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_MAIN | FUNC_USE_CONTEXT);
 	RNA_def_function_ui_description(func, "Add a new NLA Track");
 	RNA_def_pointer(func, "prev", "NlaTrack", "", "NLA Track to add the new one after");
 	/* return type */
@@ -941,7 +977,7 @@ static void rna_api_animdata_nla_tracks(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_return(func, parm);
 
 	func = RNA_def_function(srna, "remove", "rna_NlaTrack_remove");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
+	RNA_def_function_flag(func, FUNC_USE_SELF_ID | FUNC_USE_REPORTS | FUNC_USE_MAIN | FUNC_USE_CONTEXT);
 	RNA_def_function_ui_description(func, "Remove a NLA Track");
 	parm = RNA_def_pointer(func, "track", "NlaTrack", "", "NLA Track to remove");
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
@@ -998,6 +1034,8 @@ void rna_def_animdata_common(StructRNA *srna)
 	prop = RNA_def_property(srna, "animation_data", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "adt");
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
+	RNA_def_property_override_funcs(prop, NULL, NULL, "rna_AnimaData_override_apply");
 	RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data-block");
 }
 
@@ -1022,10 +1060,11 @@ static void rna_def_animdata(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "action", PROP_POINTER, PROP_NONE);
 	/* this flag as well as the dynamic test must be defined for this to be editable... */
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
+	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 	RNA_def_property_pointer_funcs(prop, NULL, "rna_AnimData_action_set", NULL, "rna_Action_id_poll");
 	RNA_def_property_editable_func(prop, "rna_AnimData_action_editable");
 	RNA_def_property_ui_text(prop, "Action", "Active Action for this data-block");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_update");
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_dependency_update");
 
 	/* Active Action Settings */
 	prop = RNA_def_property(srna, "action_extrapolation", PROP_ENUM, PROP_NONE);
@@ -1033,14 +1072,14 @@ static void rna_def_animdata(BlenderRNA *brna)
 	RNA_def_property_enum_items(prop, rna_enum_nla_mode_extend_items);
 	RNA_def_property_ui_text(prop, "Action Extrapolation",
 	                         "Action to take for gaps past the Active Action's range (when evaluating with NLA)");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL);
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, "rna_AnimData_update");
 
 	prop = RNA_def_property(srna, "action_blend_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "act_blendmode");
 	RNA_def_property_enum_items(prop, rna_enum_nla_mode_blend_items);
 	RNA_def_property_ui_text(prop, "Action Blending",
 	                         "Method used for combining Active Action's result with result of NLA stack");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL); /* this will do? */
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, "rna_AnimData_update"); /* this will do? */
 
 	prop = RNA_def_property(srna, "action_influence", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "act_influence");
@@ -1048,12 +1087,13 @@ static void rna_def_animdata(BlenderRNA *brna)
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Action Influence",
 	                         "Amount the Active Action contributes to the result of the NLA stack");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL); /* this will do? */
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, "rna_AnimData_update"); /* this will do? */
 
 	/* Drivers */
 	prop = RNA_def_property(srna, "drivers", PROP_COLLECTION, PROP_NONE);
 	RNA_def_property_collection_sdna(prop, NULL, "drivers", NULL);
 	RNA_def_property_struct_type(prop, "FCurve");
+	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 	RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data-block");
 
 	rna_api_animdata_drivers(brna, prop);
@@ -1062,13 +1102,13 @@ static void rna_def_animdata(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_nla", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", ADT_NLA_EVAL_OFF);
 	RNA_def_property_ui_text(prop, "NLA Evaluation Enabled", "NLA stack is evaluated when evaluating this block");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL); /* this will do? */
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, "rna_AnimData_update"); /* this will do? */
 
 	prop = RNA_def_property(srna, "use_tweak_mode", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", ADT_NLA_EDIT_ON);
 	RNA_def_property_boolean_funcs(prop, NULL, "rna_AnimData_tweakmode_set");
 	RNA_def_property_ui_text(prop, "Use NLA Tweak Mode", "Whether to enable or disable tweak mode in NLA");
-	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL);
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, "rna_AnimData_update");
 }
 
 /* --- */

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ class TEXT_HT_header(Header):
         text = st.text
 
         row = layout.row(align=True)
-
+        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -41,8 +41,12 @@ class TEXT_HT_header(Header):
             sub.alert = True
             sub.operator("text.resolve_conflict", text="", icon='HELP')
 
+        layout.separator_spacer()
+
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
+
+        layout.separator_spacer()
 
         row = layout.row(align=True)
         row.prop(st, "show_line_numbers", text="")
@@ -52,35 +56,34 @@ class TEXT_HT_header(Header):
         if text:
             is_osl = text.name.endswith((".osl", ".osl"))
 
+            row = layout.row()
+            if text.filepath:
+                if text.is_dirty:
+                    row.label(
+                        text=iface_(f"File: *{text.filepath:s} (unsaved)"),
+                        translate=False,
+                    )
+                else:
+                    row.label(
+                        text=iface_(f"File: {text.filepath:s}"),
+                        translate=False,
+                    )
+            else:
+                row.label(
+                    text="Text: External"
+                    if text.library
+                    else "Text: Internal"
+                )
             if is_osl:
                 row = layout.row()
                 row.operator("node.shader_script_update")
             else:
                 row = layout.row()
-                row.operator("text.run_script")
-
-                row = layout.row()
                 row.active = text.name.endswith(".py")
                 row.prop(text, "use_module")
 
-            row = layout.row()
-            if text.filepath:
-                if text.is_dirty:
-                    row.label(
-                        iface_(f"File: *{text.filepath:s} (unsaved)"),
-                        translate=False,
-                    )
-                else:
-                    row.label(
-                        iface_(f"File: {text.filepath:s}"),
-                        translate=False,
-                    )
-            else:
-                row.label(
-                    "Text: External"
-                    if text.library
-                    else "Text: Internal"
-                )
+                row = layout.row()
+                row.operator("text.run_script")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -95,7 +98,6 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
     bl_label = ""
@@ -108,17 +110,20 @@ class TEXT_MT_editor_menus(Menu):
         st = context.space_data
         text = st.text
 
-        layout.menu("TEXT_MT_text")
         layout.menu("TEXT_MT_view")
+        layout.menu("TEXT_MT_text")
 
         if text:
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
 
+        layout.menu("TEXT_MT_templates")
+
 
 class TEXT_PT_properties(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
+    bl_category = "Text"
     bl_label = "Properties"
 
     def draw(self, context):
@@ -127,6 +132,9 @@ class TEXT_PT_properties(Panel):
         st = context.space_data
 
         flow = layout.column_flow()
+        flow.prop(st, "show_line_numbers")
+        flow.prop(st, "show_word_wrap")
+        flow.prop(st, "show_syntax_highlight")
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
 
@@ -139,16 +147,15 @@ class TEXT_PT_properties(Panel):
             flow.prop(text, "use_tabs_as_spaces")
 
         flow.prop(st, "show_margin")
-        
-        if st.show_margin:
-            col = flow.column()
-            col.active = st.show_margin
-            col.prop(st, "margin_column")
+        col = flow.column()
+        col.active = st.show_margin
+        col.prop(st, "margin_column")
 
 
 class TEXT_PT_find(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
+    bl_category = "Text"
     bl_label = "Find"
 
     def draw(self, context):
@@ -176,18 +183,6 @@ class TEXT_PT_find(Panel):
         row.prop(st, "use_find_wrap", text="Wrap")
         row.prop(st, "use_find_all", text="All")
 
-# Workaround to separate the tooltips for Toggle Maximize Area
-# Note that this id name also gets used in the other editors now.
-
-class TEXT_Toggle_Maximize_Area(bpy.types.Operator):
-    """Toggle Maximize Area\nToggle display selected area as maximized"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "screen.toggle_maximized_area"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Toggle Maximize Area"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.screen.screen_full_area(use_hide_panels = False)
-        return {'FINISHED'}  
 
 class TEXT_MT_view(Menu):
     bl_label = "View"
@@ -204,13 +199,11 @@ class TEXT_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the new separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
+        layout.menu("INFO_MT_area")
 
 
 class TEXT_MT_text(Menu):
-    bl_label = "File"
+    bl_label = "Text"
 
     def draw(self, context):
         layout = self.layout
@@ -231,9 +224,8 @@ class TEXT_MT_text(Menu):
             if text.filepath:
                 layout.operator("text.make_internal")
 
-        layout.separator()
-
-        layout.menu("TEXT_MT_templates")
+            layout.column()
+            layout.operator("text.run_script")
 
 
 class TEXT_MT_templates_py(Menu):
@@ -293,8 +285,7 @@ class TEXT_MT_format(Menu):
 
         layout.separator()
 
-        layout.operator("text.convert_whitespace", text = "Whitespace to Spaces", icon = "WHITESPACE_SPACES").type = 'SPACES'
-        layout.operator("text.convert_whitespace", text = "Whitespace to Tabs", icon = "WHITESPACE_TABS").type = 'TABS'
+        layout.operator_menu_enum("text.convert_whitespace", "type")
 
 
 class TEXT_MT_edit_to3d(Menu):
@@ -334,44 +325,17 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.select_all", icon = "SELECT_ALL")
-        layout.operator("text.select_line", icon = "SELECT_LINE")
+        layout.menu("TEXT_MT_edit_select")
 
         layout.separator()
 
-        layout.menu("TEXT_MT_edit_move_select")
-
-        layout.separator()
-
-        layout.menu("TEXT_MT_edit_delete")
-
-        layout.separator()
-
-        layout.operator("text.jump", icon = "GOTO")
-        layout.operator("text.start_find", text="Find", icon = "ZOOM_SET")
-        layout.operator("text.autocomplete", icon = "AUTOCOMPLETE")
+        layout.operator("text.jump")
+        layout.operator("text.start_find", text="Find...")
+        layout.operator("text.autocomplete")
 
         layout.separator()
 
         layout.menu("TEXT_MT_edit_to3d")
-
-# move_select submenu
-class TEXT_MT_edit_move_select(Menu):
-    bl_label = "Select Text"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("text.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
-        layout.operator("text.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
-        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
-        layout.operator("text.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
-        layout.operator("text.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
-        layout.operator("text.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
-        layout.operator("text.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
-        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
 class TEXT_MT_toolbox(Menu):
@@ -390,26 +354,14 @@ class TEXT_MT_toolbox(Menu):
 
         layout.operator("text.run_script")
 
-class TEXT_MT_edit_delete(Menu):
-    bl_label = "Delete"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("text.delete", text = "Next Character", icon = "DELETE").type = 'NEXT_CHARACTER'
-        layout.operator("text.delete", text = "Previous Character", icon = "DELETE").type = 'PREVIOUS_CHARACTER'
-        layout.operator("text.delete", text = "Next Word", icon = "DELETE").type = 'NEXT_WORD'
-        layout.operator("text.delete", text = "Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
 
 classes = (
-    TEXT_HT_header,
     ALL_MT_editormenu,
+    TEXT_HT_header,
     TEXT_MT_edit,
-    TEXT_MT_edit_move_select,
     TEXT_MT_editor_menus,
     TEXT_PT_properties,
     TEXT_PT_find,
-    TEXT_Toggle_Maximize_Area,
     TEXT_MT_view,
     TEXT_MT_text,
     TEXT_MT_templates,
@@ -419,7 +371,6 @@ classes = (
     TEXT_MT_format,
     TEXT_MT_edit_to3d,
     TEXT_MT_toolbox,
-    TEXT_MT_edit_delete,
 )
 
 if __name__ == "__main__":  # only for live edit.

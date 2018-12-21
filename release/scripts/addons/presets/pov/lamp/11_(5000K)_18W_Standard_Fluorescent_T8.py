@@ -1,4 +1,4 @@
-#since 1973 
+#since 1973
 
 import bpy
 bpy.context.object.data.type = 'AREA'

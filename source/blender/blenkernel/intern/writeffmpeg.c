@@ -45,8 +45,8 @@
 #include "BLI_blenlib.h"
 
 #ifdef WITH_AUDASPACE
-#  include AUD_DEVICE_H
-#  include AUD_SPECIAL_H
+#  include <AUD_Device.h>
+#  include <AUD_Special.h>
 #endif
 
 #include "BLI_utildefines.h"
@@ -54,6 +54,7 @@
 #include "BKE_global.h"
 #include "BKE_idprop.h"
 #include "BKE_image.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_report.h"
 #include "BKE_sound.h"
@@ -326,10 +327,6 @@ static int write_video_frame(FFMpegContext *context, RenderData *rd, int cfra, A
 
 	frame->pts = cfra;
 
-	if (rd->mode & R_FIELDS) {
-		frame->top_field_first = ((rd->mode & R_ODDFIELD) != 0);
-	}
-
 	ret = avcodec_encode_video2(c, &packet, frame, &got_output);
 
 	if (ret >= 0 && got_output) {
@@ -546,6 +543,9 @@ static AVStream *alloc_video_stream(FFMpegContext *context, RenderData *rd, int 
 	/* Set up the codec context */
 
 	c = st->codec;
+	c->thread_count = 0;
+	c->thread_type = FF_THREAD_FRAME;
+
 	c->codec_id = codec_id;
 	c->codec_type = AVMEDIA_TYPE_VIDEO;
 
@@ -611,14 +611,6 @@ static AVStream *alloc_video_stream(FFMpegContext *context, RenderData *rd, int 
 		}
 	}
 
-#if 0
-	/* this options are not set in ffmpeg.c and leads to artifacts with MPEG-4
-	 * see #33586: Encoding to mpeg4 makes first frame(s) blocky
-	 */
-	c->rc_initial_buffer_occupancy = rd->ffcodecdata.rc_buffer_size * 3 / 4;
-	c->rc_buffer_aggressivity = 1.0;
-#endif
-
 	/* Deprecated and not doing anything since July 2015, deleted in recent ffmpeg */
 	//c->me_method = ME_EPZS;
 
@@ -674,23 +666,9 @@ static AVStream *alloc_video_stream(FFMpegContext *context, RenderData *rd, int 
 		}
 	}
 
-	if ((of->oformat->flags & AVFMT_GLOBALHEADER)
-#if 0
-	    || STREQ(of->oformat->name, "mp4")
-	    || STREQ(of->oformat->name, "mov")
-	    || STREQ(of->oformat->name, "3gp")
-#endif
-	    )
-	{
+	if ((of->oformat->flags & AVFMT_GLOBALHEADER)) {
 		PRINT("Using global header\n");
 		c->flags |= CODEC_FLAG_GLOBAL_HEADER;
-	}
-
-	/* Determine whether we are encoding interlaced material or not */
-	if (rd->mode & R_FIELDS) {
-		PRINT("Encoding interlaced video\n");
-		c->flags |= CODEC_FLAG_INTERLACED_DCT;
-		c->flags |= CODEC_FLAG_INTERLACED_ME;
 	}
 
 	/* xasp & yasp got float lately... */
@@ -728,6 +706,9 @@ static AVStream *alloc_audio_stream(FFMpegContext *context, RenderData *rd, int 
 	st->id = 1;
 
 	c = st->codec;
+	c->thread_count = 0;
+	c->thread_type = FF_THREAD_FRAME;
+
 	c->codec_id = codec_id;
 	c->codec_type = AVMEDIA_TYPE_AUDIO;
 
@@ -735,6 +716,26 @@ static AVStream *alloc_audio_stream(FFMpegContext *context, RenderData *rd, int 
 	c->bit_rate = context->ffmpeg_audio_bitrate * 1000;
 	c->sample_fmt = AV_SAMPLE_FMT_S16;
 	c->channels = rd->ffcodecdata.audio_channels;
+
+#ifdef FFMPEG_HAVE_FRAME_CHANNEL_LAYOUT
+	switch (rd->ffcodecdata.audio_channels) {
+		case FFM_CHANNELS_MONO:
+			c->channel_layout = AV_CH_LAYOUT_MONO;
+			break;
+		case FFM_CHANNELS_STEREO:
+			c->channel_layout = AV_CH_LAYOUT_STEREO;
+			break;
+		case FFM_CHANNELS_SURROUND4:
+			c->channel_layout = AV_CH_LAYOUT_QUAD;
+			break;
+		case FFM_CHANNELS_SURROUND51:
+			c->channel_layout = AV_CH_LAYOUT_5POINT1_BACK;
+			break;
+		case FFM_CHANNELS_SURROUND71:
+			c->channel_layout = AV_CH_LAYOUT_7POINT1;
+			break;
+	}
+#endif
 
 	if (request_float_audio_buffer(codec_id)) {
 		/* mainly for AAC codec which is experimental */
@@ -1285,12 +1286,6 @@ int BKE_ffmpeg_append(void *context_v, RenderData *rd, int start_frame, int fram
 static void end_ffmpeg_impl(FFMpegContext *context, int is_autosplit)
 {
 	PRINT("Closing ffmpeg...\n");
-
-#if 0
-	if (context->audio_stream) { /* SEE UPPER */
-		write_audio_frames(context);
-	}
-#endif
 
 #ifdef WITH_AUDASPACE
 	if (is_autosplit == false) {

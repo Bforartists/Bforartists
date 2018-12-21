@@ -42,8 +42,8 @@ Face map manipulator:
 import bpy
 
 from bpy.types import (
-    ManipulatorGroup,
-    Manipulator,
+    GizmoGroup,
+    Gizmo,
 
     PoseBone,
     ShapeKey,
@@ -101,9 +101,9 @@ def pose_bone_get_color(pose_bone):
 
 
 # -----------------------------------------------------------------------------
-# Face-map manipulators
+# Face-map gizmos
 
-class AutoFaceMapWidget(Manipulator):
+class AutoFaceMapWidget(Gizmo):
     bl_idname = "VIEW3D_WT_auto_facemap"
 
     __slots__ = (
@@ -139,7 +139,7 @@ class AutoFaceMapWidget(Manipulator):
     def draw_select(self, context, select_id):
         if USE_VERBOSE:
             print("(draw_select)", self, context, select_id >> 8)
-        self.draw_preset_facemap(self.fmap_mesh_object, self.fmap_index, select_id)
+        self.draw_preset_facemap(self.fmap_mesh_object, self.fmap_index, select_id=select_id)
 
     def invoke(self, context, event):
         if USE_VERBOSE:
@@ -158,7 +158,7 @@ class AutoFaceMapWidget(Manipulator):
         # fmap_target = fmap_find_target(ob, fmap)
 
         mpr_list = [self]
-        for mpr in self.group.manipulators:
+        for mpr in self.group.gizmos:
             if mpr is not self:
                 if mpr.select:
                     mpr_list.append(mpr)
@@ -231,7 +231,7 @@ class AutoFaceMapWidget(Manipulator):
                 continue  # expected state
             raise Exception("for some reason the iterator lives on!")
         if not cancel:
-            bpy.ops.ed.undo_push(message="Tweak Manipulator")
+            bpy.ops.ed.undo_push(message="Tweak Gizmo")
 
     def modal(self, context, event, tweak):
         # failed case
@@ -251,7 +251,7 @@ class AutoFaceMapWidget(Manipulator):
         return {'RUNNING_MODAL'}
 
 
-class AutoFaceMapWidgetGroup(ManipulatorGroup):
+class AutoFaceMapWidgetGroup(GizmoGroup):
     bl_idname = "OBJECT_WGT_auto_facemap"
     bl_label = "Auto Face Map"
     bl_space_type = 'VIEW_3D'
@@ -313,7 +313,7 @@ class AutoFaceMapWidgetGroup(ManipulatorGroup):
         if fmap_target is None:
             return None
 
-        mpr = self.manipulators.new(AutoFaceMapWidget.bl_idname)
+        mpr = self.gizmos.new(AutoFaceMapWidget.bl_idname)
         mpr.fmap_index = i
         mpr.fmap = fmap
         mpr.fmap_mesh_object = fmap_mesh_object
@@ -324,13 +324,13 @@ class AutoFaceMapWidgetGroup(ManipulatorGroup):
 
         # foo;bar=baz;bonzo=bingo --> {"bar": baz", "bonzo": bingo}
         mpr.fmap_target_rules = dict(
-            item.partition("=")[::2] for item in fmap_rules,
+            item.partition("=")[::2] for item in fmap_rules
         )
 
         # XXX, we might want to have some way to extract a 'center' from a face-map
         # for now use the pose-bones location.
         if isinstance(fmap_target, PoseBone):
-            mpr.matrix_basis = (fmap_target.id_data.matrix_world * fmap_target.matrix).normalized()
+            mpr.matrix_basis = (fmap_target.id_data.matrix_world @ fmap_target.matrix).normalized()
 
         mpr.use_draw_hover = True
         mpr.use_draw_modal = True
@@ -358,7 +358,7 @@ class AutoFaceMapWidgetGroup(ManipulatorGroup):
         # For weak sanity check - detects undo
         if is_update and (self.last_active_object != context.active_object):
             is_update = False
-            self.manipulators.clear()
+            self.gizmos.clear()
 
         self.last_active_object = context.active_object
 
@@ -369,7 +369,7 @@ class AutoFaceMapWidgetGroup(ManipulatorGroup):
         else:
             # first attempt simple update
             force_full_update = False
-            mpr_iter_old = iter(self.manipulators)
+            mpr_iter_old = iter(self.gizmos)
             for fmap_mesh_object in self.mesh_objects_from_context(context):
                 for (i, fmap) in enumerate(fmap_mesh_object.face_maps):
                     mpr_old = next(mpr_iter_old, None)
@@ -386,7 +386,7 @@ class AutoFaceMapWidgetGroup(ManipulatorGroup):
             del mpr_iter_old
 
             if force_full_update:
-                self.manipulators.clear()
+                self.gizmos.clear()
                 # same as above
                 for fmap_mesh_object in self.mesh_objects_from_context(context):
                     for (i, fmap) in enumerate(fmap_mesh_object.face_maps):

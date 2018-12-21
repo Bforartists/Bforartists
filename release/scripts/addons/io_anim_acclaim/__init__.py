@@ -189,7 +189,7 @@ class StructureBuilder(DataStructure):
         self.armature = self.object.data
         self.object.name = self.name
         self.armature.name = self.name
-        self.armature.draw_type = 'STICK'
+        self.armature.display_type = 'STICK'
         self.object['source_file_path'] = self.file_path
         self.object['source_scale'] = self.user_def_scale
         self.object['MhxArmature'] = 'Daz'
@@ -530,16 +530,16 @@ def menu_func_me(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func_s)
-    bpy.types.INFO_MT_file_import.append(menu_func_mi)
-    bpy.types.INFO_MT_file_export.append(menu_func_me)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_s)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_mi)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_me)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func_s)
-    bpy.types.INFO_MT_file_import.remove(menu_func_mi)
-    bpy.types.INFO_MT_file_export.remove(menu_func_me)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_s)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_mi)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_me)
 
 
 if __name__ == "__main__":

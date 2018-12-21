@@ -114,7 +114,7 @@ class IO_Utils():
                 if str(type(val)) in ["<class 'bpy_prop_array'>"]:
                     # array
                     dict[prop.identifier] = [v for v in val]
-                # adress the pickle limitations of dealing with the Vector class
+                # address the pickle limitations of dealing with the Vector class
                 elif str(type(val)) in ["<class 'Vector'>",
                                        "<class 'Quaternion'>"]:
                     dict[prop.identifier] = [v for v in val]

@@ -797,7 +797,7 @@ class BProjection(Panel):
                     col.template_ID(tex, "image", open="image.open")
                     row = box.row(align=True)
                     row.operator('object.applyimage', text="Apply image", icon='FILE_TICK')
-                    row.prop(em, "custom_c3d", text="", icon='CURSOR')
+                    row.prop(em, "custom_c3d", text="", icon='PIVOT_CURSOR')
                     row = box.row(align=True)
                     row.label(text="Location:")
                     row = box.row(align=True)

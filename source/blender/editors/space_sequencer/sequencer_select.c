@@ -50,6 +50,7 @@
 
 #include "ED_screen.h"
 #include "ED_sequencer.h"
+#include "ED_select_utils.h"
 
 #include "UI_view2d.h"
 
@@ -381,8 +382,8 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
 				seq->flag |= SELECT;
 				recurs_sel_seq(seq);
 			}
-		}
-		SEQ_END
+		} SEQ_END;
+
 		{
 			SpaceSeq *sseq = CTX_wm_space_seq(C);
 			if (sseq && sseq->flag & SEQ_MARKER_TRANS) {
@@ -557,9 +558,9 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
 	};
 
 	/* identifiers */
-	ot->name = "Activate/Select";
+	ot->name = "Select";
 	ot->idname = "SEQUENCER_OT_select";
-	ot->description = "Activate/Select\nSelect a strip (last selected becomes the \"active strip\")";
+	ot->description = "Select\nSelect a strip (last selected becomes the \"active strip\")";
 
 	/* api callbacks */
 	ot->invoke = sequencer_select_invoke;
@@ -829,7 +830,7 @@ void SEQUENCER_OT_select_handles(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Handles";
 	ot->idname = "SEQUENCER_OT_select_handles";
-	ot->description = "Select Handles\nSelect manipulator handles on the sides of the selected strip";
+	ot->description = "Select Handles\nSelect gizmo handles on the sides of the selected strip";
 
 	/* api callbacks */
 	ot->exec = sequencer_select_handles_exec;
@@ -880,8 +881,8 @@ void SEQUENCER_OT_select_active_side(wmOperatorType *ot)
 }
 
 
-/* borderselect operator */
-static int sequencer_borderselect_exec(bContext *C, wmOperator *op)
+/* box_select operator */
+static int sequencer_box_select_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene = CTX_data_scene(C);
 	Editing *ed = BKE_sequencer_editing_get(scene, false);
@@ -918,19 +919,19 @@ static int sequencer_borderselect_exec(bContext *C, wmOperator *op)
 }
 
 
-/* ****** Border Select ****** */
-void SEQUENCER_OT_select_border(wmOperatorType *ot)
+/* ****** Box Select ****** */
+void SEQUENCER_OT_select_box(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Border Select";
-	ot->idname = "SEQUENCER_OT_select_border";
-	ot->description = "Border Select\nSelect strips using border selection";
+	ot->name = "Box Select";
+	ot->idname = "SEQUENCER_OT_select_box";
+	ot->description = "Box Select\nSelect strips using box selection";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
-	ot->exec = sequencer_borderselect_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->invoke = WM_gesture_box_invoke;
+	ot->exec = sequencer_box_select_exec;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = ED_operator_sequencer_active;
 
@@ -938,7 +939,7 @@ void SEQUENCER_OT_select_border(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* rna */
-	WM_operator_properties_gesture_border_select(ot);
+	WM_operator_properties_gesture_box_select(ot);
 }
 
 /* ****** Selected Grouped ****** */
@@ -1150,7 +1151,7 @@ static bool select_grouped_effect_link(Editing *ed, Sequence *actseq, const int 
 	}
 	SEQ_END;
 
-	actseq->tmp = SET_INT_IN_POINTER(true);
+	actseq->tmp = POINTER_FROM_INT(true);
 
 	for (BKE_sequence_iterator_begin(ed, &iter, true); iter.valid; BKE_sequence_iterator_next(&iter)) {
 		seq = iter.seq;
@@ -1166,7 +1167,7 @@ static bool select_grouped_effect_link(Editing *ed, Sequence *actseq, const int 
 			continue;
 		}
 
-		/* If the seq is an effect one, we need extra cheking! */
+		/* If the seq is an effect one, we need extra checking! */
 		if (SEQ_IS_EFFECT(seq) && ((seq->seq1 && seq->seq1->tmp) ||
 		                           (seq->seq2 && seq->seq2->tmp) ||
 		                           (seq->seq3 && seq->seq3->tmp)))
@@ -1175,7 +1176,7 @@ static bool select_grouped_effect_link(Editing *ed, Sequence *actseq, const int 
 			if (enddisp < seq->enddisp) enddisp = seq->enddisp;
 			if (machine < seq->machine) machine = seq->machine;
 
-			seq->tmp = SET_INT_IN_POINTER(true);
+			seq->tmp = POINTER_FROM_INT(true);
 
 			seq->flag |= SELECT;
 			changed = true;
@@ -1185,7 +1186,7 @@ static bool select_grouped_effect_link(Editing *ed, Sequence *actseq, const int 
 			BKE_sequence_iterator_begin(ed, &iter, true);
 		}
 
-		/* Video strips bellow active one, or any strip for audio (order do no matters here!). */
+		/* Video strips below active one, or any strip for audio (order do no matters here!). */
 		else if (seq->machine < machine || is_audio) {
 			seq->flag |= SELECT;
 			changed = true;

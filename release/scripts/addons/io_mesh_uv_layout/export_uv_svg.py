@@ -19,50 +19,46 @@
 # <pep8-80 compliant>
 
 import bpy
+from os.path import basename
+from xml.sax.saxutils import escape
 
+def export(filepath, face_data, colors, width, height, opacity):
+    with open(filepath, "w") as file:
+        for text in get_file_parts(face_data, colors, width, height, opacity):
+            file.write(text)
 
-def write(fw, mesh, image_width, image_height, opacity, face_iter_func):
-    # for making an XML compatible string
-    from xml.sax.saxutils import escape
-    from os.path import basename
+def get_file_parts(face_data, colors, width, height, opacity):
+    yield from header(width, height)
+    yield from draw_polygons(face_data, width, height, opacity)
+    yield from footer()
 
-    fw('<?xml version="1.0" standalone="no"?>\n')
-    fw('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \n')
-    fw('  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n')
-    fw('<svg width="%d" height="%d" viewBox="0 0 %d %d"\n' %
-       (image_width, image_height, image_width, image_height))
-    fw('     xmlns="http://www.w3.org/2000/svg" version="1.1">\n')
-    desc = ("%r, %s, (Blender %s)" %
-            (basename(bpy.data.filepath), mesh.name, bpy.app.version_string))
-    fw('<desc>%s</desc>\n' % escape(desc))
+def header(width, height):
+    yield '<?xml version="1.0" standalone="no"?>\n'
+    yield '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" \n'
+    yield '  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
+    yield f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}"\n'
+    yield '     xmlns="http://www.w3.org/2000/svg" version="1.1">\n'
+    desc = f"{basename(bpy.data.filepath)}, (Blender {bpy.app.version_string})"
+    yield f'<desc>{escape(desc)}</desc>\n'
 
-    # svg colors
-    fill_settings = []
-    fill_default = 'fill="grey"'
-    for mat in mesh.materials if mesh.materials else [None]:
-        if mat:
-            fill_settings.append('fill="rgb(%d, %d, %d)"' %
-                                 tuple(int(c * 255)
-                                 for c in mat.diffuse_color))
-        else:
-            fill_settings.append(fill_default)
+def draw_polygons(face_data, width, height, opacity):
+    for uvs, color in face_data:
+        fill = f'fill="{get_color_string(color)}"'
 
-    polys = mesh.polygons
-    for i, uvs in face_iter_func():
-        try:  # rare cases material index is invalid.
-            fill = fill_settings[polys[i].material_index]
-        except IndexError:
-            fill = fill_default
+        yield '<polygon stroke="black" stroke-width="1"'
+        yield f' {fill} fill-opacity="{opacity:.2g}"'
 
-        fw('<polygon stroke="black" stroke-width="1"')
-        if opacity > 0.0:
-            fw(' %s fill-opacity="%.2g"' % (fill, opacity))
+        yield ' points="'
 
-        fw(' points="')
-
-        for j, uv in enumerate(uvs):
+        for uv in uvs:
             x, y = uv[0], 1.0 - uv[1]
-            fw('%.3f,%.3f ' % (x * image_width, y * image_height))
-        fw('" />\n')
-    fw('\n')
-    fw('</svg>\n')
+            yield f'{x*width:.3f},{y*height:.3f} '
+        yield '" />\n'
+
+def get_color_string(color):
+    r, g, b = color
+    return f"rgb({round(r*255)}, {round(g*255)}, {round(b*255)})"
+
+def footer():
+    yield '\n'
+    yield '</svg>\n'

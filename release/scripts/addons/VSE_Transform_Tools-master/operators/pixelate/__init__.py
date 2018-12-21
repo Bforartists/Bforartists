@@ -1,1 +1,0 @@
-from .pixelate import Pixelate

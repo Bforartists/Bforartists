@@ -1,8 +1,8 @@
 #Starting from 1876 (first type of commercial lamps developed with electricity)
-#Carbon arc lamps were being phased out after the 1910s. 
-#For general lighting the lamp was replaced by the 1920s and 30s in most cities. 
+#Carbon arc lamps were being phased out after the 1910s.
+#For general lighting the lamp was replaced by the 1920s and 30s in most cities.
 #The lamp continued to be used for spot lights, film production lighting and film projector lamps.
-#Most of the remaining carbon arc lamps ceased production by the 1980s 
+#Most of the remaining carbon arc lamps ceased production by the 1980s
 
 import bpy
 bpy.context.object.data.type = 'SPOT'

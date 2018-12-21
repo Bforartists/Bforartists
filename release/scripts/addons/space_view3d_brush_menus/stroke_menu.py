@@ -169,7 +169,7 @@ class StrokeMethodMenu(Menu):
         layout.row().separator()
 
         if brush:
-            # add the menu items dynamicaly based on values in enum property
+            # add the menu items dynamically based on values in enum property
             for tool in brush.bl_rna.properties['stroke_method'].enum_items:
                 if tool.identifier in ('ANCHORED', 'DRAG_DOT') and \
                    utils_core.get_mode() in ('VERTEX_PAINT',

@@ -106,7 +106,7 @@ def _relpath_remap(
 def pack(
         # store the blendfile relative to this directory, can be:
         #    os.path.dirname(blendfile_src)
-        # but in some cases we wan't to use a path higher up.
+        # but in some cases we want to use a path higher up.
         # base_dir_src,
         blendfile_src, blendfile_dst,
 

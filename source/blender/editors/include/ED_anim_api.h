@@ -82,8 +82,10 @@ typedef struct bAnimContext {
 
 	struct bDopeSheet *ads; /* dopesheet data for editor (or which is being used) */
 
+	struct Depsgraph *depsgraph; /* active dependency graph */
 	struct Main *bmain;     /* Current Main */
 	struct Scene *scene;    /* active scene */
+	struct ViewLayer *view_layer; /* active scene layer */
 	struct Object *obact;   /* active object */
 	ListBase *markers;      /* active set of markers */
 
@@ -103,7 +105,8 @@ typedef enum eAnimCont_Types {
 	ANIMCONT_DRIVERS   = 6, /* drivers (bDopesheet) */
 	ANIMCONT_NLA       = 7, /* nla (bDopesheet) */
 	ANIMCONT_CHANNEL   = 8, /* animation channel (bAnimListElem) */
-	ANIMCONT_MASK      = 9  /* mask dopesheet */
+	ANIMCONT_MASK      = 9, /* mask dopesheet */
+	ANIMCONT_TIMELINE  = 10, /* "timeline" editor (bDopeSheet) */
 } eAnimCont_Types;
 
 /* --------------- Channels -------------------- */
@@ -193,6 +196,8 @@ typedef enum eAnim_ChannelType {
 
 	ANIMTYPE_NLATRACK,
 	ANIMTYPE_NLAACTION,
+
+	ANIMTYPE_PALETTE,
 
 	/* always as last item, the total number of channel types... */
 	ANIMTYPE_NUM_TYPES
@@ -344,6 +349,9 @@ typedef enum eAnimFilter_Flags {
 /* Movie clip only */
 #define EXPANDED_MCLIP(clip) (clip->flag & MCLIP_DATA_EXPAND)
 
+/* Palette only */
+#define EXPANDED_PALETTE(palette) (palette->flag & PALETTE_DATA_EXPAND)
+
 /* AnimData - NLA mostly... */
 #define SEL_ANIMDATA(adt) (adt->flag & ADT_UI_SELECTED)
 
@@ -468,7 +476,7 @@ typedef struct bAnimChannelType {
 	int (*setting_flag)(bAnimContext *ac, eAnimChannel_Settings setting, bool *neg);
 	/* get the pointer to int/short where data is stored,
 	 * with type being  sizeof(ptr_data) which should be fine for runtime use...
-	 *	- assume that setting has been checked to be valid for current context
+	 * - assume that setting has been checked to be valid for current context
 	 */
 	void *(*setting_ptr)(bAnimListElem *ale, eAnimChannel_Settings setting, short *type);
 } bAnimChannelType;
@@ -492,25 +500,25 @@ void ANIM_channel_draw_widgets(const struct bContext *C, bAnimContext *ac, bAnim
 /* Check if some setting for a channel is enabled
  * Returns: 1 = On, 0 = Off, -1 = Invalid
  *
- *  - setting: eAnimChannel_Settings
+ * - setting: eAnimChannel_Settings
  */
 short ANIM_channel_setting_get(bAnimContext *ac, bAnimListElem *ale, eAnimChannel_Settings setting);
 
 /* Change value of some setting for a channel
- *	- setting: eAnimChannel_Settings
- *	- mode: eAnimChannels_SetFlag
+ * - setting: eAnimChannel_Settings
+ * - mode: eAnimChannels_SetFlag
  */
 void ANIM_channel_setting_set(bAnimContext *ac, bAnimListElem *ale, eAnimChannel_Settings setting, eAnimChannels_SetFlag mode);
 
 
 /* Flush visibility (for Graph Editor) changes up/down hierarchy for changes in the given setting
- *	- anim_data: list of the all the anim channels that can be chosen
- *		-> filtered using ANIMFILTER_CHANNELS only, since if we took VISIBLE too,
- *		  then the channels under closed expanders get ignored...
- *	- ale_setting: the anim channel (not in the anim_data list directly, though occurring there)
- *		with the new state of the setting that we want flushed up/down the hierarchy
- *	- setting: type of setting to set
- *	- on: whether the visibility setting has been enabled or disabled
+ * - anim_data: list of the all the anim channels that can be chosen
+ *   -> filtered using ANIMFILTER_CHANNELS only, since if we took VISIBLE too,
+ *      then the channels under closed expanders get ignored...
+ * - ale_setting: the anim channel (not in the anim_data list directly, though occurring there)
+ *   with the new state of the setting that we want flushed up/down the hierarchy
+ * - setting: type of setting to set
+ * - on: whether the visibility setting has been enabled or disabled
  */
 void ANIM_flush_setting_anim_channels(bAnimContext *ac, ListBase *anim_data, bAnimListElem *ale_setting, eAnimChannel_Settings setting, eAnimChannels_SetFlag mode);
 
@@ -535,21 +543,28 @@ void ANIM_fcurve_delete_from_animdata(bAnimContext *ac, struct AnimData *adt, st
 enum eAnimEditDraw_CurrentFrame {
 	/* plain time indicator with no special indicators */
 	DRAWCFRA_PLAIN          = 0,
-	/* draw box indicating current frame number */
-	DRAWCFRA_SHOW_NUMBOX    = (1 << 0),
 	/* time indication in seconds or frames */
-	DRAWCFRA_UNIT_SECONDS   = (1 << 1),
+	DRAWCFRA_UNIT_SECONDS   = (1 << 0),
 	/* draw indicator extra wide (for timeline) */
-	DRAWCFRA_WIDE           = (1 << 2)
+	DRAWCFRA_WIDE           = (1 << 1)
 };
 
 /* main call to draw current-frame indicator in an Animation Editor */
 void ANIM_draw_cfra(const struct bContext *C, struct View2D *v2d, short flag);
 
+/* main call to draw "number box" in scrollbar for current frame indicator */
+void ANIM_draw_cfra_number(const struct bContext *C, struct View2D *v2d, short flag);
+
 /* ------------- Preview Range Drawing -------------- */
 
 /* main call to draw preview range curtains */
 void ANIM_draw_previewrange(const struct bContext *C, struct View2D *v2d, int end_frame_width);
+
+
+/* -------------- Frame Range Drawing --------------- */
+
+/* main call to draw normal frame range indicators */
+void ANIM_draw_framerange(struct Scene *scene, struct View2D *v2d);
 
 /* ************************************************* */
 /* F-MODIFIER TOOLS */
@@ -567,12 +582,12 @@ void ANIM_fmodifiers_copybuf_free(void);
 
 /* copy the given F-Modifiers to the buffer, returning whether anything was copied or not
  * assuming that the buffer has been cleared already with ANIM_fmodifiers_copybuf_free()
- *	- active: only copy the active modifier
+ * - active: only copy the active modifier
  */
 bool ANIM_fmodifiers_copy_to_buf(ListBase *modifiers, bool active);
 
 /* 'Paste' the F-Modifier(s) from the buffer to the specified list
- *	- replace: free all the existing modifiers to leave only the pasted ones
+ * - replace: free all the existing modifiers to leave only the pasted ones
  */
 bool ANIM_fmodifiers_paste_from_buf(ListBase *modifiers, bool replace, struct FCurve *curve);
 
@@ -647,9 +662,9 @@ float ANIM_unit_mapping_get_factor(struct Scene *scene, struct ID *id, struct FC
 #define BEZKEYTYPE(bezt) ((bezt)->hide)
 
 /* set/clear/toggle macro
- *	- channel - channel with a 'flag' member that we're setting
- *	- smode - 0=clear, 1=set, 2=invert
- *	- sflag - bitflag to set
+ * - channel - channel with a 'flag' member that we're setting
+ * - smode - 0=clear, 1=set, 2=invert
+ * - sflag - bitflag to set
  */
 #define ACHANNEL_SET_FLAG(channel, smode, sflag) \
 	{ \
@@ -659,9 +674,9 @@ float ANIM_unit_mapping_get_factor(struct Scene *scene, struct ID *id, struct FC
 	}
 
 /* set/clear/toggle macro, where the flag is negative
- *	- channel - channel with a 'flag' member that we're setting
- *	- smode - 0=clear, 1=set, 2=invert
- *	- sflag - bitflag to set
+ * - channel - channel with a 'flag' member that we're setting
+ * - smode - 0=clear, 1=set, 2=invert
+ * - sflag - bitflag to set
  */
 #define ACHANNEL_SET_FLAG_NEG(channel, smode, sflag) \
 	{ \
@@ -673,13 +688,14 @@ float ANIM_unit_mapping_get_factor(struct Scene *scene, struct ID *id, struct FC
 
 /* --------- anim_deps.c, animation updates -------- */
 
-void ANIM_id_update(struct Scene *scene, struct ID *id);
+void ANIM_id_update(struct Main *bmain, struct ID *id);
 void ANIM_list_elem_update(struct Main *bmain, struct Scene *scene, bAnimListElem *ale);
 
 /* data -> channels syncing */
 void ANIM_sync_animchannels_to_data(const struct bContext *C);
 
 void ANIM_center_frame(struct bContext *C, int smooth_viewtx);
+
 /* ************************************************* */
 /* OPERATORS */
 
@@ -705,6 +721,10 @@ struct AnimData *ED_actedit_animdata_from_context(struct bContext *C);
 void ED_animedit_unlink_action(struct bContext *C, struct ID *id,
                                struct AnimData *adt, struct bAction *act,
                                struct ReportList *reports, bool force_delete);
+
+
+/* Drivers Editor - Utility to set up UI correctly */
+void ED_drivers_editor_init(struct bContext *C, struct ScrArea *sa);
 
 /* ************************************************ */
 

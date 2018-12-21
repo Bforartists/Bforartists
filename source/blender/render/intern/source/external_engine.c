@@ -41,11 +41,19 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "DNA_object_types.h"
+
 #include "BKE_camera.h"
 #include "BKE_global.h"
 #include "BKE_colortools.h"
+#include "BKE_layer.h"
+#include "BKE_node.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_debug.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RNA_access.h"
 
@@ -57,45 +65,27 @@
 #include "RE_pipeline.h"
 #include "RE_bake.h"
 
+#include "DRW_engine.h"
+
 #include "initrender.h"
 #include "renderpipeline.h"
 #include "render_types.h"
 #include "render_result.h"
-#include "rendercore.h"
 
 /* Render Engine Types */
-
-static RenderEngineType internal_render_type = {
-	NULL, NULL,
-	"BLENDER_RENDER", N_("Blender Render"), RE_INTERNAL,
-	NULL, NULL, NULL, NULL, NULL, NULL, render_internal_update_passes,
-	{NULL, NULL, NULL}
-};
-
-#ifdef WITH_GAMEENGINE
-
-static RenderEngineType internal_game_type = {
-	NULL, NULL,
-	"BLENDER_GAME", N_("Blender Game"), RE_INTERNAL | RE_GAME,
-	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-	{NULL, NULL, NULL}
-};
-
-#endif
 
 ListBase R_engines = {NULL, NULL};
 
 void RE_engines_init(void)
 {
-	BLI_addtail(&R_engines, &internal_render_type);
-#ifdef WITH_GAMEENGINE
-	BLI_addtail(&R_engines, &internal_game_type);
-#endif
+	DRW_engines_register();
 }
 
 void RE_engines_exit(void)
 {
 	RenderEngineType *type, *next;
+
+	DRW_engines_free();
 
 	for (type = R_engines.first; type; type = next) {
 		next = type->next;
@@ -111,21 +101,35 @@ void RE_engines_exit(void)
 	}
 }
 
+void RE_engines_register(RenderEngineType *render_type)
+{
+	if (render_type->draw_engine) {
+		DRW_engine_register(render_type->draw_engine);
+	}
+	BLI_addtail(&R_engines, render_type);
+}
+
 RenderEngineType *RE_engines_find(const char *idname)
 {
 	RenderEngineType *type;
 
 	type = BLI_findstring(&R_engines, idname, offsetof(RenderEngineType, idname));
 	if (!type)
-		type = &internal_render_type;
+		type = BLI_findstring(&R_engines, "BLENDER_EEVEE", offsetof(RenderEngineType, idname));
 
 	return type;
 }
 
 bool RE_engine_is_external(Render *re)
 {
-	RenderEngineType *type = RE_engines_find(re->r.engine);
-	return (type && type->render);
+	return (re->engine && re->engine->type && re->engine->type->render);
+}
+
+bool RE_engine_is_opengl(RenderEngineType *render_type)
+{
+	/* TODO refine? Can we have ogl render engine without ogl render pipeline? */
+	return (render_type->draw_engine != NULL) &&
+	       DRW_engine_render_support(render_type->draw_engine);
 }
 
 /* Create, Free */
@@ -183,7 +187,8 @@ static RenderPart *get_part_from_result(Render *re, RenderResult *result)
 	return NULL;
 }
 
-RenderResult *RE_engine_begin_result(RenderEngine *engine, int x, int y, int w, int h, const char *layername, const char *viewname)
+RenderResult *RE_engine_begin_result(
+        RenderEngine *engine, int x, int y, int w, int h, const char *layername, const char *viewname)
 {
 	Render *re = engine->re;
 	RenderResult *result;
@@ -413,7 +418,8 @@ float RE_engine_get_camera_shift_x(RenderEngine *engine, Object *camera, bool us
 	return BKE_camera_multiview_shift_x(re ? &re->r : NULL, camera, re->viewname);
 }
 
-void RE_engine_get_camera_model_matrix(RenderEngine *engine, Object *camera, bool use_spherical_stereo, float *r_modelmat)
+void RE_engine_get_camera_model_matrix(
+        RenderEngine *engine, Object *camera, bool use_spherical_stereo, float *r_modelmat)
 {
 	Render *re = engine->re;
 
@@ -453,7 +459,7 @@ rcti* RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_
 		if (pa->status == PART_STATUS_IN_PROGRESS) {
 			if (total_tiles >= allocation_size) {
 				/* Just in case we're using crazy network rendering with more
-				 * slaves as BLENDER_MAX_THREADS.
+				 * workers than BLENDER_MAX_THREADS.
 				 */
 				allocation_size += allocation_step;
 				if (tiles == tiles_static) {
@@ -469,13 +475,6 @@ rcti* RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_
 			}
 			tiles[total_tiles] = pa->disprect;
 
-			if (pa->crop) {
-				tiles[total_tiles].xmin += pa->crop;
-				tiles[total_tiles].ymin += pa->crop;
-				tiles[total_tiles].xmax -= pa->crop;
-				tiles[total_tiles].ymax -= pa->crop;
-			}
-
 			total_tiles++;
 		}
 	}
@@ -487,6 +486,49 @@ rcti* RE_engine_get_current_tiles(Render *re, int *r_total_tiles, bool *r_needs_
 RenderData *RE_engine_get_render_data(Render *re)
 {
 	return &re->r;
+}
+
+/* Depsgraph */
+static void engine_depsgraph_init(RenderEngine *engine, ViewLayer *view_layer)
+{
+	Main *bmain = engine->re->main;
+	Scene *scene = engine->re->scene;
+
+	engine->depsgraph = DEG_graph_new(scene, view_layer, DAG_EVAL_RENDER);
+	DEG_debug_name_set(engine->depsgraph, "RENDER");
+
+	BKE_scene_graph_update_for_newframe(engine->depsgraph, bmain);
+}
+
+static void engine_depsgraph_free(RenderEngine *engine)
+{
+	DEG_graph_free(engine->depsgraph);
+
+	engine->depsgraph = NULL;
+}
+
+void RE_engine_frame_set(RenderEngine *engine, int frame, float subframe)
+{
+	if(!engine->depsgraph) {
+		return;
+	}
+
+#ifdef WITH_PYTHON
+	BPy_BEGIN_ALLOW_THREADS;
+#endif
+
+	Render *re = engine->re;
+	double cfra = (double)frame + (double)subframe;
+
+	CLAMP(cfra, MINAFRAME, MAXFRAME);
+	BKE_scene_frame_set(re->scene, cfra);
+	BKE_scene_graph_update_for_newframe(engine->depsgraph, re->main);
+
+	BKE_scene_camera_switch_update(re->scene);
+
+#ifdef WITH_PYTHON
+	BPy_END_ALLOW_THREADS;
+#endif
 }
 
 /* Bake */
@@ -504,7 +546,7 @@ bool RE_bake_has_engine(Render *re)
 }
 
 bool RE_bake_engine(
-        Render *re, Object *object,
+        Render *re, Depsgraph *depsgraph, Object *object,
         const int object_id, const BakePixel pixel_array[],
         const size_t num_pixels, const int depth,
         const eScenePassType pass_type, const int pass_filter,
@@ -535,16 +577,30 @@ bool RE_bake_engine(
 	engine->resolution_x = re->winx;
 	engine->resolution_y = re->winy;
 
-	RE_parts_init(re, false);
+	RE_parts_init(re);
 	engine->tile_x = re->r.tilex;
 	engine->tile_y = re->r.tiley;
 
-	/* update is only called so we create the engine.session */
-	if (type->update)
-		type->update(engine, re->main, re->scene);
+	if (type->bake) {
+		engine->depsgraph = depsgraph;
 
-	if (type->bake)
-		type->bake(engine, re->scene, object, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result);
+		/* update is only called so we create the engine.session */
+		if (type->update)
+			type->update(engine, re->main, engine->depsgraph);
+
+		type->bake(engine,
+		           engine->depsgraph,
+		           object,
+		           pass_type,
+		           pass_filter,
+		           object_id,
+		           pixel_array,
+		           num_pixels,
+		           depth,
+		           result);
+
+		engine->depsgraph = NULL;
+	}
 
 	engine->tile_x = 0;
 	engine->tile_y = 0;
@@ -567,41 +623,7 @@ bool RE_bake_engine(
 	return true;
 }
 
-void RE_engine_frame_set(RenderEngine *engine, int frame, float subframe)
-{
-	Render *re = engine->re;
-	Scene *scene = re->scene;
-	double cfra = (double)frame + (double)subframe;
-
-	CLAMP(cfra, MINAFRAME, MAXFRAME);
-	BKE_scene_frame_set(scene, cfra);
-
-#ifdef WITH_PYTHON
-	BPy_BEGIN_ALLOW_THREADS;
-#endif
-
-	/* It's possible that here we're including layers which were never visible before. */
-	BKE_scene_update_for_newframe_ex(re->eval_ctx, re->main, scene, (1 << 20) - 1, true);
-
-#ifdef WITH_PYTHON
-	BPy_END_ALLOW_THREADS;
-#endif
-
-	BKE_scene_camera_switch_update(scene);
-}
-
 /* Render */
-
-static bool render_layer_exclude_animated(Scene *scene, SceneRenderLayer *srl)
-{
-	PointerRNA ptr;
-	PropertyRNA *prop;
-
-	RNA_pointer_create(&scene->id, &RNA_SceneRenderLayer, srl, &ptr);
-	prop = RNA_struct_find_property(&ptr, "layers_exclude");
-
-	return RNA_property_animated(&ptr, prop);
-}
 
 int RE_engine_render(Render *re, int do_all)
 {
@@ -627,41 +649,7 @@ int RE_engine_render(Render *re, int do_all)
 	/* update animation here so any render layer animation is applied before
 	 * creating the render result */
 	if ((re->r.scemode & (R_NO_FRAME_UPDATE | R_BUTS_PREVIEW)) == 0) {
-		unsigned int lay = re->lay;
-
-		/* don't update layers excluded on all render layers */
-		if (type->flag & RE_USE_EXCLUDE_LAYERS) {
-			SceneRenderLayer *srl;
-			unsigned int non_excluded_lay = 0;
-
-			if (re->r.scemode & R_SINGLE_LAYER) {
-				srl = BLI_findlink(&re->r.layers, re->r.actlay);
-				if (srl) {
-					non_excluded_lay |= ~(srl->lay_exclude & ~srl->lay_zmask);
-
-					/* in this case we must update all because animation for
-					 * the scene has not been updated yet, and so may not be
-					 * up to date until after BKE_scene_update_for_newframe */
-					if (render_layer_exclude_animated(re->scene, srl))
-						non_excluded_lay |= ~0;
-				}
-			}
-			else {
-				for (srl = re->r.layers.first; srl; srl = srl->next) {
-					if (!(srl->layflag & SCE_LAY_DISABLE)) {
-						non_excluded_lay |= ~(srl->lay_exclude & ~srl->lay_zmask);
-
-						if (render_layer_exclude_animated(re->scene, srl))
-							non_excluded_lay |= ~0;
-					}
-				}
-			}
-
-			lay &= non_excluded_lay;
-		}
-
-		BKE_scene_update_for_newframe_ex(re->eval_ctx, re->main, re->scene, lay, true);
-		render_update_anim_renderdata(re, &re->scene->r);
+		render_update_anim_renderdata(re, &re->scene->r, &re->scene->view_layers);
 	}
 
 	/* create render result */
@@ -714,28 +702,60 @@ int RE_engine_render(Render *re, int do_all)
 	if (re->r.scemode & R_BUTS_PREVIEW)
 		engine->flag |= RE_ENGINE_PREVIEW;
 	engine->camera_override = re->camera_override;
-	engine->layer_override = re->layer_override;
 
 	engine->resolution_x = re->winx;
 	engine->resolution_y = re->winy;
 
-	RE_parts_init(re, false);
+	RE_parts_init(re);
 	engine->tile_x = re->partx;
 	engine->tile_y = re->party;
 
 	if (re->result->do_exr_tile)
 		render_result_exr_file_begin(re);
 
-	if (type->update)
-		type->update(engine, re->main, re->scene);
-
 	/* Clear UI drawing locks. */
 	if (re->draw_lock) {
 		re->draw_lock(re->dlh, 0);
 	}
 
-	if (type->render)
-		type->render(engine, re->scene);
+	if (type->render) {
+		FOREACH_VIEW_LAYER_TO_RENDER_BEGIN(re, view_layer_iter)
+		{
+			if (re->draw_lock) {
+				re->draw_lock(re->dlh, 1);
+			}
+
+			ViewLayer *view_layer = BLI_findstring(&re->scene->view_layers, view_layer_iter->name, offsetof(ViewLayer, name));
+			engine_depsgraph_init(engine, view_layer);
+
+			if (type->update) {
+				type->update(engine, re->main, engine->depsgraph);
+			}
+
+			if (re->draw_lock) {
+				re->draw_lock(re->dlh, 0);
+			}
+
+			type->render(engine, engine->depsgraph);
+
+			/* Grease pencil render over previous render result.
+			 *
+			 * NOTE: External engine might have been requested to free its
+			 * dependency graph, which is only allowed if there is no grease
+			 * pencil (pipeline is taking care of that).
+			 */
+			if (!RE_engine_test_break(engine) && engine->depsgraph != NULL) {
+				DRW_render_gpencil(engine, engine->depsgraph);
+			}
+
+			engine_depsgraph_free(engine);
+
+			if (RE_engine_test_break(engine)) {
+				break;
+			}
+		}
+		FOREACH_VIEW_LAYER_TO_RENDER_END;
+	}
 
 	engine->tile_x = 0;
 	engine->tile_y = 0;
@@ -778,12 +798,12 @@ int RE_engine_render(Render *re, int do_all)
 	return 1;
 }
 
-void RE_engine_register_pass(struct RenderEngine *engine, struct Scene *scene, struct SceneRenderLayer *srl,
+void RE_engine_register_pass(struct RenderEngine *engine, struct Scene *scene, struct ViewLayer *view_layer,
                              const char *name, int UNUSED(channels), const char *UNUSED(chanid), int type)
 {
 	/* The channel information is currently not used, but is part of the API in case it's needed in the future. */
 
-	if (!(scene && srl && engine)) {
+	if (!(scene && view_layer && engine)) {
 		return;
 	}
 
@@ -794,7 +814,22 @@ void RE_engine_register_pass(struct RenderEngine *engine, struct Scene *scene, s
 	 * unless we want to register that for every other temp Main we could generate??? */
 	for (Scene *sce = G_MAIN->scene.first; sce; sce = sce->id.next) {
 		if (sce->nodetree) {
-			ntreeCompositRegisterPass(sce->nodetree, scene, srl, name, type);
+			ntreeCompositRegisterPass(sce->nodetree, scene, view_layer, name, type);
 		}
 	}
+}
+
+void RE_engine_free_blender_memory(RenderEngine *engine)
+{
+	/* Weak way to save memory, but not crash grease pencil.
+	 *
+	 * TODO(sergey): Find better solution for this.
+	 * TODO(sergey): Try to find solution which does not involve looping over
+	 * all the objects.
+	 */
+	if (DRW_render_check_grease_pencil(engine->depsgraph)) {
+		return;
+	}
+	DEG_graph_free(engine->depsgraph);
+	engine->depsgraph = NULL;
 }

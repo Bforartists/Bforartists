@@ -51,7 +51,7 @@
 
 #include "BKE_animsys.h"
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
+
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_mask.h"
@@ -60,6 +60,8 @@
 #include "BKE_tracking.h"
 #include "BKE_movieclip.h"
 #include "BKE_image.h"
+
+#include "DEG_depsgraph_build.h"
 
 static struct {
 	ListBase splines;
@@ -817,7 +819,7 @@ Mask *BKE_mask_new(Main *bmain, const char *name)
 	mask->sfra = 1;
 	mask->efra = 100;
 
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	return mask;
 }
@@ -849,7 +851,7 @@ Mask *BKE_mask_copy_nolib(Mask *mask)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_mask_copy_data(Main *UNUSED(bmain), Mask *mask_dst, const Mask *mask_src, const int UNUSED(flag))
 {
@@ -1417,34 +1419,6 @@ void BKE_mask_evaluate(Mask *mask, const float ctime, const bool do_newframe)
  * for now re-evaluate all. eventually this might work differently */
 void BKE_mask_update_display(Mask *mask, float ctime)
 {
-#if 0
-	MaskLayer *masklay;
-
-	for (masklay = mask->masklayers.first; masklay; masklay = masklay->next) {
-		MaskSpline *spline;
-
-		for (spline = masklay->splines.first; spline; spline = spline->next) {
-			if (spline->points_deform) {
-				int i = 0;
-
-				for (i = 0; i < spline->tot_point; i++) {
-					MaskSplinePoint *point;
-
-					if (spline->points_deform) {
-						point = &spline->points_deform[i];
-						BKE_mask_point_free(point);
-					}
-				}
-				if (spline->points_deform) {
-					MEM_freeN(spline->points_deform);
-				}
-
-				spline->points_deform = NULL;
-			}
-		}
-	}
-#endif
-
 	BKE_mask_evaluate(mask, ctime, false);
 }
 
@@ -1454,18 +1428,6 @@ void BKE_mask_evaluate_all_masks(Main *bmain, float ctime, const bool do_newfram
 
 	for (mask = bmain->mask.first; mask; mask = mask->id.next) {
 		BKE_mask_evaluate(mask, ctime, do_newframe);
-	}
-}
-
-void BKE_mask_update_scene(Main *bmain, Scene *scene)
-{
-	Mask *mask;
-
-	for (mask = bmain->mask.first; mask; mask = mask->id.next) {
-		if (mask->id.recalc & ID_RECALC_ALL) {
-			bool do_new_frame = (mask->id.recalc & ID_RECALC_DATA) != 0;
-			BKE_mask_evaluate_all_masks(bmain, CFRA, do_new_frame);
-		}
 	}
 }
 
@@ -1666,19 +1628,6 @@ MaskLayerShape *BKE_mask_layer_shape_verify_frame(MaskLayer *masklay, const int 
 		BLI_addtail(&masklay->splines_shapes, masklay_shape);
 		BKE_mask_layer_shape_sort(masklay);
 	}
-
-#if 0
-	{
-		MaskLayerShape *masklay_shape;
-		int i = 0;
-		for (masklay_shape = masklay->splines_shapes.first;
-		     masklay_shape;
-		     masklay_shape = masklay_shape->next)
-		{
-			printf("mask %d, %d\n", i++, masklay_shape->frame);
-		}
-	}
-#endif
 
 	return masklay_shape;
 }

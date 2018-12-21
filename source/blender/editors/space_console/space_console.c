@@ -49,10 +49,11 @@
 #include "UI_view2d.h"
 
 #include "console_intern.h" // own include
+#include "GPU_framebuffer.h"
 
 /* ******************** default callbacks for console space ***************** */
 
-static SpaceLink *console_new(const bContext *UNUSED(C))
+static SpaceLink *console_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
 	ARegion *ar;
 	SpaceConsole *sconsole;
@@ -67,7 +68,7 @@ static SpaceLink *console_new(const bContext *UNUSED(C))
 
 	BLI_addtail(&sconsole->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
 
 	/* main region */
@@ -169,31 +170,24 @@ static void console_cursor(wmWindow *win, ScrArea *sa, ARegion *ar)
 
 /* ************* dropboxes ************* */
 
-static bool id_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
+static bool id_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
-//	SpaceConsole *sc = CTX_wm_space_console(C);
-	if (drag->type == WM_DRAG_ID)
-		return 1;
-	return 0;
+	return WM_drag_ID(drag, 0) != NULL;
 }
 
 static void id_drop_copy(wmDrag *drag, wmDropBox *drop)
 {
-	char *text;
-	ID *id = drag->poin;
+	ID *id = WM_drag_ID(drag, 0);
 
 	/* copy drag path to properties */
-	text = RNA_path_full_ID_py(id);
+	char *text = RNA_path_full_ID_py(id);
 	RNA_string_set(drop->ptr, "text", text);
 	MEM_freeN(text);
 }
 
-static bool path_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
+static bool path_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
-	// SpaceConsole *sc = CTX_wm_space_console(C);
-	if (drag->type == WM_DRAG_PATH)
-		return 1;
-	return 0;
+	return (drag->type == WM_DRAG_PATH);
 }
 
 static void path_drop_copy(wmDrag *drag, wmDropBox *drop)
@@ -227,7 +221,7 @@ static void console_main_region_draw(const bContext *C, ARegion *ar)
 
 	/* clear and setup matrix */
 	UI_ThemeClearColor(TH_BACK);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GPU_clear(GPU_COLOR_BIT);
 
 	/* worlks best with no view2d matrix set */
 	UI_view2d_view_ortho(v2d);
@@ -241,7 +235,7 @@ static void console_main_region_draw(const bContext *C, ARegion *ar)
 	UI_view2d_view_restore(C);
 
 	/* scrollers */
-	scrollers = UI_view2d_scrollers_calc(C, v2d, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_GRID_CLAMP);
+	scrollers = UI_view2d_scrollers_calc(C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_GRID_CLAMP);
 	UI_view2d_scrollers_draw(C, v2d, scrollers);
 	UI_view2d_scrollers_free(scrollers);
 }
@@ -271,88 +265,7 @@ static void console_operatortypes(void)
 
 static void console_keymap(struct wmKeyConfig *keyconf)
 {
-	wmKeyMap *keymap = WM_keymap_ensure(keyconf, "Console", SPACE_CONSOLE, 0);
-	wmKeyMapItem *kmi;
-
-#ifdef __APPLE__
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", LEFTARROWKEY, KM_PRESS, KM_OSKEY, 0)->ptr, "type", LINE_BEGIN);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", RIGHTARROWKEY, KM_PRESS, KM_OSKEY, 0)->ptr, "type", LINE_END);
-#endif
-
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", LEFTARROWKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", PREV_WORD);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", RIGHTARROWKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", NEXT_WORD);
-
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", HOMEKEY, KM_PRESS, 0, 0)->ptr, "type", LINE_BEGIN);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", ENDKEY, KM_PRESS, 0, 0)->ptr, "type", LINE_END);
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_cycle_int", WHEELUPMOUSE, KM_PRESS, KM_CTRL, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.font_size");
-	RNA_boolean_set(kmi->ptr, "reverse", false);
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_cycle_int", WHEELDOWNMOUSE, KM_PRESS, KM_CTRL, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.font_size");
-	RNA_boolean_set(kmi->ptr, "reverse", true);
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_cycle_int", PADPLUSKEY, KM_PRESS, KM_CTRL, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.font_size");
-	RNA_boolean_set(kmi->ptr, "reverse", false);
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_cycle_int", PADMINUS, KM_PRESS, KM_CTRL, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.font_size");
-	RNA_boolean_set(kmi->ptr, "reverse", true);
-
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", LEFTARROWKEY, KM_PRESS, 0, 0)->ptr, "type", PREV_CHAR);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", RIGHTARROWKEY, KM_PRESS, 0, 0)->ptr, "type", NEXT_CHAR);
-
-	RNA_boolean_set(WM_keymap_add_item(keymap, "CONSOLE_OT_history_cycle", UPARROWKEY, KM_PRESS, 0, 0)->ptr, "reverse", true);
-	RNA_boolean_set(WM_keymap_add_item(keymap, "CONSOLE_OT_history_cycle", DOWNARROWKEY, KM_PRESS, 0, 0)->ptr, "reverse", false);
-
-#if 0
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", LEFTARROWKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", PREV_WORD);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", RIGHTARROWKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", NEXT_WORD);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", UPARROWKEY, KM_PRESS, 0, 0)->ptr, "type", PREV_LINE);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", DOWNARROWKEY, KM_PRESS, 0, 0)->ptr, "type", NEXT_LINE);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", PAGEUPKEY, KM_PRESS, 0, 0)->ptr, "type", PREV_PAGE);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_move", PAGEDOWNKEY, KM_PRESS, 0, 0)->ptr, "type", NEXT_PAGE);
-#endif
-
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_delete", DELKEY, KM_PRESS, 0, 0)->ptr, "type", DEL_NEXT_CHAR);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_delete", BACKSPACEKEY, KM_PRESS, 0, 0)->ptr, "type", DEL_PREV_CHAR);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_delete", BACKSPACEKEY, KM_PRESS, KM_SHIFT, 0)->ptr, "type", DEL_PREV_CHAR);  /* same as above [#26623] */
-
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_delete", DELKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", DEL_NEXT_WORD);
-	RNA_enum_set(WM_keymap_add_item(keymap, "CONSOLE_OT_delete", BACKSPACEKEY, KM_PRESS, KM_CTRL, 0)->ptr, "type", DEL_PREV_WORD);
-
-	WM_keymap_add_item(keymap, "CONSOLE_OT_clear_line", RETKEY, KM_PRESS, KM_SHIFT, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_clear_line", PADENTER, KM_PRESS, KM_SHIFT, 0);
-
-#ifdef WITH_PYTHON
-	kmi = WM_keymap_add_item(keymap, "CONSOLE_OT_execute", RETKEY, KM_PRESS, 0, 0);
-	RNA_boolean_set(kmi->ptr, "interactive", true);
-	kmi = WM_keymap_add_item(keymap, "CONSOLE_OT_execute", PADENTER, KM_PRESS, 0, 0);
-	RNA_boolean_set(kmi->ptr, "interactive", true);
-
-	//WM_keymap_add_item(keymap, "CONSOLE_OT_autocomplete", TABKEY, KM_PRESS, 0, 0); /* python operator - space_text.py */
-	WM_keymap_add_item(keymap, "CONSOLE_OT_autocomplete", SPACEKEY, KM_PRESS, KM_CTRL, 0); /* python operator - space_text.py */
-#endif
-
-	WM_keymap_add_item(keymap, "CONSOLE_OT_copy_as_script", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_copy", CKEY, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_paste", VKEY, KM_PRESS, KM_CTRL, 0);
-#ifdef __APPLE__
-	WM_keymap_add_item(keymap, "CONSOLE_OT_copy", CKEY, KM_PRESS, KM_OSKEY, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_paste", VKEY, KM_PRESS, KM_OSKEY, 0);
-#endif
-
-	WM_keymap_add_item(keymap, "CONSOLE_OT_select_set", LEFTMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_select_word", LEFTMOUSE, KM_DBL_CLICK, 0, 0);
-
-	RNA_string_set(WM_keymap_add_item(keymap, "CONSOLE_OT_insert", TABKEY, KM_PRESS, KM_CTRL, 0)->ptr, "text", "\t"); /* fake tabs */
-
-	WM_keymap_add_item(keymap, "CONSOLE_OT_indent", TABKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "CONSOLE_OT_unindent", TABKEY, KM_PRESS, KM_SHIFT, 0);
-
-	WM_keymap_add_item(keymap, "CONSOLE_OT_insert", KM_TEXTINPUT, KM_ANY, KM_ANY, 0); // last!
+	WM_keymap_ensure(keyconf, "Console", SPACE_CONSOLE, 0);
 }
 
 /****************** header region ******************/
@@ -368,7 +281,9 @@ static void console_header_region_draw(const bContext *C, ARegion *ar)
 	ED_region_header(C, ar);
 }
 
-static void console_main_region_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion *ar, wmNotifier *wmn)
+static void console_main_region_listener(
+        wmWindow *UNUSED(win), ScrArea *sa, ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	// SpaceInfo *sinfo = sa->spacedata.first;
 

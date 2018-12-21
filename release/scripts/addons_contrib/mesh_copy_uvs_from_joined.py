@@ -197,9 +197,9 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    
+
     bpy.types.VIEW3D_MT_make_links.append(menu_func)
-    
+
 
 def unregister():
     bpy.utils.unregister_module(__name__)

@@ -68,13 +68,11 @@ void snode_group_offset(struct SpaceNode *snode, float *x, float *y);	/* transfo
 
 /* node_draw.c */
 int node_get_colorid(struct bNode *node);
-void node_socket_draw(
-        const struct bContext *C, struct bNodeTree *ntree, struct bNode *node,
-        struct bNodeSocket *sock, float size, bool highlight);
 int node_get_resize_cursor(int directions);
 void node_draw_shadow(struct SpaceNode *snode, struct bNode *node, float radius, float alpha);
 void node_draw_default(const struct bContext *C, struct ARegion *ar, struct SpaceNode *snode,
                        struct bNodeTree *ntree, struct bNode *node, bNodeInstanceKey key);
+void node_draw_sockets(struct View2D *v2d, const struct bContext *C, struct bNodeTree *ntree, struct bNode *node, bool draw_outputs, bool select_all);
 void node_update_default(const struct bContext *C, struct bNodeTree *ntree, struct bNode *node);
 int node_select_area_default(struct bNode *node, int x, int y);
 int node_tweak_area_default(struct bNode *node, int x, int y);
@@ -113,7 +111,7 @@ void NODE_OT_select(struct wmOperatorType *ot);
 void NODE_OT_select_all(struct wmOperatorType *ot);
 void NODE_OT_select_linked_to(struct wmOperatorType *ot);
 void NODE_OT_select_linked_from(struct wmOperatorType *ot);
-void NODE_OT_select_border(struct wmOperatorType *ot);
+void NODE_OT_select_box(struct wmOperatorType *ot);
 void NODE_OT_select_circle(struct wmOperatorType *ot);
 void NODE_OT_select_lasso(struct wmOperatorType *ot);
 void NODE_OT_select_grouped(struct wmOperatorType *ot);
@@ -133,8 +131,11 @@ void NODE_OT_backimage_fit(struct wmOperatorType *ot);
 void NODE_OT_backimage_sample(struct wmOperatorType *ot);
 
 /* drawnode.c */
+void nodelink_batch_start(struct SpaceNode *snode);
+void nodelink_batch_end(struct SpaceNode *snode);
+
 void node_draw_link(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link);
-void node_draw_link_bezier(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, int th_col1, bool do_shaded, int th_col2, bool do_triple, int th_col3);
+void node_draw_link_bezier(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, int th_col1, int th_col2, int th_col3);
 bool node_link_bezier_points(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, float coord_array[][2], int resol);
 // void node_draw_link_straight(View2D *v2d, SpaceNode *snode, bNodeLink *link, int th_col1, int do_shaded, int th_col2, int do_triple, int th_col3 );
 void draw_nodespace_back_pix(const struct bContext *C, struct ARegion *ar, struct SpaceNode *snode, bNodeInstanceKey parent_key);
@@ -199,8 +200,7 @@ void NODE_OT_preview_toggle(struct wmOperatorType *ot);
 void NODE_OT_options_toggle(struct wmOperatorType *ot);
 void NODE_OT_node_copy_color(struct wmOperatorType *ot);
 
-void NODE_OT_read_fullsamplelayers(struct wmOperatorType *ot);
-void NODE_OT_read_renderlayers(struct wmOperatorType *ot);
+void NODE_OT_read_viewlayers(struct wmOperatorType *ot);
 void NODE_OT_render_changed(struct wmOperatorType *ot);
 
 void NODE_OT_output_file_add_socket(struct wmOperatorType *ot);
@@ -222,6 +222,12 @@ void NODE_OT_shader_script_update(struct wmOperatorType *ot);
 void NODE_OT_viewer_border(struct wmOperatorType *ot);
 void NODE_OT_clear_viewer_border(struct wmOperatorType *ot);
 
+/* node_widgets.c */
+void NODE_GGT_backdrop_transform(struct wmGizmoGroupType *gzgt);
+void NODE_GGT_backdrop_crop(struct wmGizmoGroupType *gzgt);
+void NODE_GGT_backdrop_sun_beams(struct wmGizmoGroupType *gzgt);
+void NODE_GGT_backdrop_corner_pin(struct wmGizmoGroupType *gzgt);
+
 void NODE_OT_cryptomatte_layer_add(struct wmOperatorType *ot);
 void NODE_OT_cryptomatte_layer_remove(struct wmOperatorType *ot);
 
@@ -231,7 +237,7 @@ extern const char *node_context_dir[];
 
 // nodes draw without dpi - the view zoom is flexible
 #define HIDDEN_RAD      (0.75f * U.widget_unit)
-#define BASIS_RAD       (0.4f * U.widget_unit)
+#define BASIS_RAD       (0.2f * U.widget_unit)
 #define NODE_DYS        (U.widget_unit / 2)
 #define NODE_DY         U.widget_unit
 #define NODE_SOCKDY     (0.08f * U.widget_unit)

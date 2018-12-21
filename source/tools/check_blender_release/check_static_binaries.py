@@ -46,6 +46,11 @@ ALLOWED_LIBS = (
     "librt.so",
     "libutil.so",
 
+    # Libraries which are oart of default install,
+    "libcrypt.so",
+    "libnsl.so",
+    "libmvec.so.1",
+
     # X11 libraries we don't link statically,
     "libX11.so",
     "libXext.so",
@@ -133,7 +138,7 @@ def stripLibraryABI(lib_name):
     Example; libexample.so.1.0 => libexample.so
     """
     lib_name_no_abi = lib_name
-    # TOOD(sergey): Optimize this!
+    # TODO(sergey): Optimize this!
     while True:
         no_abi = re.sub(r"\.[0-9]+$", "", lib_name_no_abi)
         if lib_name_no_abi == no_abi:

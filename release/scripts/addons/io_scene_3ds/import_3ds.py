@@ -83,27 +83,27 @@ MAT_24BIT_COLOR = 0x0011  # color defined as 3 bytes
 
 #>------ sub defines of OBJECT
 OBJECT_MESH = 0x4100  # This lets us know that we are reading a new object
-OBJECT_LAMP = 0x4600  # This lets un know we are reading a light object
-OBJECT_LAMP_SPOT = 0x4610  # The light is a spotloght.
-OBJECT_LAMP_OFF = 0x4620  # The light off.
-OBJECT_LAMP_ATTENUATE = 0x4625
-OBJECT_LAMP_RAYSHADE = 0x4627
-OBJECT_LAMP_SHADOWED = 0x4630
-OBJECT_LAMP_LOCAL_SHADOW = 0x4640
-OBJECT_LAMP_LOCAL_SHADOW2 = 0x4641
-OBJECT_LAMP_SEE_CONE = 0x4650
-OBJECT_LAMP_SPOT_RECTANGULAR = 0x4651
-OBJECT_LAMP_SPOT_OVERSHOOT = 0x4652
-OBJECT_LAMP_SPOT_PROJECTOR = 0x4653
-OBJECT_LAMP_EXCLUDE = 0x4654
-OBJECT_LAMP_RANGE = 0x4655
-OBJECT_LAMP_ROLL = 0x4656
-OBJECT_LAMP_SPOT_ASPECT = 0x4657
-OBJECT_LAMP_RAY_BIAS = 0x4658
-OBJECT_LAMP_INNER_RANGE = 0x4659
-OBJECT_LAMP_OUTER_RANGE = 0x465A
-OBJECT_LAMP_MULTIPLIER = 0x465B
-OBJECT_LAMP_AMBIENT_LIGHT = 0x4680
+OBJECT_LIGHT = 0x4600  # This lets un know we are reading a light object
+OBJECT_LIGHT_SPOT = 0x4610  # The light is a spotloght.
+OBJECT_LIGHT_OFF = 0x4620  # The light off.
+OBJECT_LIGHT_ATTENUATE = 0x4625
+OBJECT_LIGHT_RAYSHADE = 0x4627
+OBJECT_LIGHT_SHADOWED = 0x4630
+OBJECT_LIGHT_LOCAL_SHADOW = 0x4640
+OBJECT_LIGHT_LOCAL_SHADOW2 = 0x4641
+OBJECT_LIGHT_SEE_CONE = 0x4650
+OBJECT_LIGHT_SPOT_RECTANGULAR = 0x4651
+OBJECT_LIGHT_SPOT_OVERSHOOT = 0x4652
+OBJECT_LIGHT_SPOT_PROJECTOR = 0x4653
+OBJECT_LIGHT_EXCLUDE = 0x4654
+OBJECT_LIGHT_RANGE = 0x4655
+OBJECT_LIGHT_ROLL = 0x4656
+OBJECT_LIGHT_SPOT_ASPECT = 0x4657
+OBJECT_LIGHT_RAY_BIAS = 0x4658
+OBJECT_LIGHT_INNER_RANGE = 0x4659
+OBJECT_LIGHT_OUTER_RANGE = 0x465A
+OBJECT_LIGHT_MULTIPLIER = 0x465B
+OBJECT_LIGHT_AMBIENT_LIGHT = 0x4680
 
 OBJECT_CAMERA = 0x4700  # This lets un know we are reading a camera object
 
@@ -596,7 +596,7 @@ def process_next_chunk(file, previous_chunk, importedObjects, IMAGE_SEARCH):
 
             new_chunk.bytes_read += temp_chunk.bytes_read
 
-        elif new_chunk.ID == OBJECT_LAMP:  # Basic lamp support.
+        elif new_chunk.ID == OBJECT_LIGHT:  # Basic lamp support.
 
             temp_data = file.read(STRUCT_SIZE_3FLOAT)
 
@@ -604,7 +604,7 @@ def process_next_chunk(file, previous_chunk, importedObjects, IMAGE_SEARCH):
             new_chunk.bytes_read += STRUCT_SIZE_3FLOAT
 
             # no lamp in dict that would be confusing
-            contextLamp[1] = bpy.data.lamps.new("Lamp", 'POINT')
+            contextLamp[1] = bpy.data.lights.new("Lamp", 'POINT')
             contextLamp[0] = ob = bpy.data.objects.new("Lamp", contextLamp[1])
 
             SCN.objects.link(ob)
@@ -828,7 +828,10 @@ def process_next_chunk(file, previous_chunk, importedObjects, IMAGE_SEARCH):
                 ob.parent = None
         else:
             if ob.parent != object_list[parent]:
-                ob.parent = object_list[parent]
+                if ob == object_list[parent]:
+                    print('   warning: Cannot assign self to parent ', ob)
+                else:
+                    ob.parent = object_list[parent]
 
             # pivot_list[ind] += pivot_list[parent]  # XXX, not sure this is correct, should parent space matrix be applied before combining?
     # fix pivots
@@ -946,8 +949,8 @@ def load_3ds(filepath,
 
     axis_min = [1000000000] * 3
     axis_max = [-1000000000] * 3
-    global_clamp_size = IMPORT_CONSTRAIN_BOUNDS
-    if global_clamp_size != 0.0:
+    global_clight_size = IMPORT_CONSTRAIN_BOUNDS
+    if global_clight_size != 0.0:
         # Get all object bounds
         for ob in importedObjects:
             for v in ob.bound_box:
@@ -963,7 +966,7 @@ def load_3ds(filepath,
                        axis_max[2] - axis_min[2])
         scale = 1.0
 
-        while global_clamp_size < max_axis * scale:
+        while global_clight_size < max_axis * scale:
             scale = scale / 10.0
 
         scale_mat = mathutils.Matrix.Scale(scale, 4)

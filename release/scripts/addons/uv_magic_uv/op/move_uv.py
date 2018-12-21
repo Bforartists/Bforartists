@@ -100,7 +100,10 @@ class MUV_MVUV(bpy.types.Operator):
         bmesh.update_edit_mesh(obj.data)
 
         # check mouse preference
-        if context.user_preferences.inputs.select_mouse == 'RIGHT':
+        wm = context.window_manager
+        keyconfig = wm.keyconfigs.active
+        select_mouse = getattr(keyconfig.preferences, "select_mouse", "LEFT")
+        if select_mouse == 'RIGHT':
             confirm_btn = 'LEFTMOUSE'
             cancel_btn = 'RIGHTMOUSE'
         else:

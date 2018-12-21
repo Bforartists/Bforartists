@@ -31,7 +31,7 @@ bl_info = {
     "name": "UI Pie Menu Official",
     "author": "Antony Riakiotakis, Sebastian Koenig",
     "version": (1, 1, 5),
-    "blender": (2, 7, 7),
+    "blender": (2, 80, 0),
     "description": "Individual Pie Menu Activation List",
     "location": "Addons Preferences",
     "warning": "",
@@ -129,42 +129,42 @@ class UIToolsPreferences(AddonPreferences):
             op = sub.operator('wm.context_toggle', text='', icon=icon,
                               emboss=False)
             op.data_path = 'addon_prefs.show_expanded_' + mod_name
-            sub.label('{}: {}'.format(info['category'], info['name']))
+            sub.label(text='{}: {}'.format(info['category'], info['name']))
             sub = row.row()
             sub.alignment = 'RIGHT'
             if info.get('warning'):
-                sub.label('', icon='ERROR')
+                sub.label(text='', icon='ERROR')
             sub.prop(self, 'use_' + mod_name, text='')
 
             # The second stage
             if expand:
                 if info.get('description'):
-                    split = col.row().split(percentage=0.15)
-                    split.label('Description:')
-                    split.label(info['description'])
+                    split = col.row().split(factor=0.15)
+                    split.label(text='Description:')
+                    split.label(text=info['description'])
                 if info.get('location'):
-                    split = col.row().split(percentage=0.15)
-                    split.label('Location:')
-                    split.label(info['location'])
+                    split = col.row().split(factor=0.15)
+                    split.label(text='Location:')
+                    split.label(text=info['location'])
                 """
                 if info.get('author'):
-                    split = col.row().split(percentage=0.15)
-                    split.label('Author:')
-                    split.label(info['author'])
+                    split = col.row().split(factor=0.15)
+                    split.label(text='Author:')
+                    split.label(text=info['author'])
                 """
                 if info.get('version'):
-                    split = col.row().split(percentage=0.15)
-                    split.label('Version:')
-                    split.label('.'.join(str(x) for x in info['version']),
+                    split = col.row().split(factor=0.15)
+                    split.label(text='Version:')
+                    split.label(text='.'.join(str(x) for x in info['version']),
                                 translate=False)
                 if info.get('warning'):
-                    split = col.row().split(percentage=0.15)
-                    split.label('Warning:')
-                    split.label('  ' + info['warning'], icon='ERROR')
+                    split = col.row().split(factor=0.15)
+                    split.label(text='Warning:')
+                    split.label(text='  ' + info['warning'], icon='ERROR')
 
                 tot_row = int(bool(info.get('wiki_url')))
                 if tot_row:
-                    split = col.row().split(percentage=0.15)
+                    split = col.row().split(factor=0.15)
                     split.label(text='Internet:')
                     if info.get('wiki_url'):
                         op = split.operator('wm.url_open',

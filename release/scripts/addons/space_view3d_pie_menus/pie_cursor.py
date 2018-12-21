@@ -23,7 +23,7 @@ bl_info = {
     "description": "Cursor Menu",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 0),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",
@@ -69,16 +69,16 @@ class Snap_CursorMenu(Menu):
                      icon='CLIPUV_HLT').use_offset = False
         # 6 - RIGHT
         pie.operator("view3d.snap_selected_to_cursor",
-                    text="Selection to Cursor (Offset)", icon='CURSOR').use_offset = True
+                    text="Selection to Cursor (Keep Offset)", icon='PIVOT_CURSOR').use_offset = True
         # 2 - BOTTOM
         pie.operator("view3d.snap_cursor_selected_to_center1",
-                    text="Selected & Cursor to Center", icon='ALIGN')
+                    text="Selected & Cursor to Center", icon='NONE')
         # 8 - TOP
-        pie.operator("view3d.snap_cursor_to_center", text="Cursor to Center", icon='CLIPUV_DEHLT')
+        pie.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon='CLIPUV_DEHLT')
         # 7 - TOP - LEFT
-        pie.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon='ROTACTIVE')
+        pie.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon='NONE')
         # 9 - TOP - RIGHT
-        pie.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon='BBOX')
+        pie.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon='NONE')
         # 1 - BOTTOM - LEFT
         pie.operator("view3d.snap_selected_to_grid", text="Selection to Grid", icon='GRID')
         # 3 - BOTTOM - RIGHT

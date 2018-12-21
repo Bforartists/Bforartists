@@ -55,7 +55,7 @@ def defRenderAll(frametype, scenes):
             scene.frame_start = FC
 
         for group, material in proptolist:
-            for object in bpy.data.groups[group].objects:
+            for object in bpy.data.collections[group].objects:
                 lenslots = len(object.material_slots)
                 if object.type in types:
                     if len(object.data.materials):
@@ -70,7 +70,7 @@ def defRenderAll(frametype, scenes):
                 for i in scene.render.layers:
                     i.use = False
                 layer.use = 1
-                
+
                 print("SCENE: %s" % scene.name)
                 print("LAYER: %s" % layer.name)
                 print("OVERRIDE: %s" % str(proptolist))
@@ -84,7 +84,7 @@ def defRenderAll(frametype, scenes):
                     "$Camera":scene.camera.name}
 
                 scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$Layer",tokens["$Layer"]).replace("$Camera",tokens["$Camera"])
-                
+
                 bpy.context.window.screen.scene = scene
                 bpy.ops.render.render(
                     animation=True,
@@ -218,15 +218,15 @@ def defoscBatchMaker(TYPE, BIN):
     SHFILE = os.path.join(
         bpy.data.filepath.rpartition(SYSBAR)[0],
         FILENAME + EXTSYS)
-        
-    renpath = bpy.context.scene.render.filepath    
+
+    renpath = bpy.context.scene.render.filepath
     tokens = {
         "$Scene":bpy.context.scene.name,
         "$File":os.path.basename(bpy.data.filepath).split(".")[0],
         "$Layer":bpy.context.scene.render.layers.active.name,
         "$Camera":bpy.context.scene.camera.name}
 
-    rfp = bpy.context.scene.render.filepath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$Layer",tokens["$Layer"]).replace("$Camera",tokens["$Camera"])        
+    rfp = bpy.context.scene.render.filepath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$Layer",tokens["$Layer"]).replace("$Camera",tokens["$Camera"])
     with open(SHFILE, "w") as FILE:
         # assign permission in linux
         if EXTSYS == ".sh":
@@ -404,7 +404,7 @@ while REPITE:
 class oscPythonBatchMaker (Operator):
     """It creates a file as “Make Render Batch” but it requires Phyton installed and """ \
     """the respective environment variables set up. """ \
-    """If the render crahses, the batch automatically erase the broken frame and writes it again. """ \
+    """If the render crashes, the batch automatically erase the broken frame and writes it again. """ \
     """Its not recommended if there is more than one machine rendering"""
     bl_idname = "file.create_batch_python"
     bl_label = "Make Batch Python"
@@ -509,5 +509,3 @@ class BrokenFramesPanel (Panel):
         colrow.operator("object.clear_broken_file")
         colrow = col.row(align=1)
         colrow.operator("object.delete_broken_file")
-
-

@@ -94,7 +94,7 @@ del sys
 import blendfile
 
 
-##### Utils (own json formating) #####
+##### Utils (own json formatting) #####
 
 
 def json_default(o):

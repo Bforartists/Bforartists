@@ -24,10 +24,12 @@
 # Author: Stephen Leger (s-leger)
 #
 # ----------------------------------------------------------
-
 import bgl
 import blf
+import gpu
+from gpu_extras.batch import batch_for_shader
 import bpy
+import numpy as np
 from math import sin, cos, atan2, pi
 from mathutils import Vector, Matrix
 from bpy_extras import view3d_utils, object_utils
@@ -44,6 +46,7 @@ class DefaultColorScheme:
         default to this when not found in addon prefs
         Colors are FloatVectorProperty of size 4 and type COLOR_GAMMA
     """
+    text_size = 14
     feedback_size_main = 16
     feedback_size_title = 14
     feedback_size_shortcut = 11
@@ -52,6 +55,167 @@ class DefaultColorScheme:
     feedback_colour_shortcut = (0.51, 0.51, 0.51, 1.0)
     feedback_shortcut_area = (0, 0.4, 0.6, 0.2)
     feedback_title_area = (0, 0.4, 0.6, 0.5)
+    handle_colour_normal = (1.0, 1.0, 1.0, 1.0)
+    handle_colour_hover = (1.0, 1.0, 0.0, 1.0)
+    handle_colour_active = (1.0, 0.0, 0.0, 1.0)
+    handle_colour_selected = (0.0, 0.0, 0.7, 1.0)
+    handle_colour_inactive = (0.3, 0.3, 0.3, 1.0)
+
+
+def get_prefs(context):
+    global __name__
+    try:
+        addon_name = __name__.split('.')[0]
+        prefs = context.user_preferences.addons[addon_name].preferences
+    except:
+        prefs = DefaultColorScheme
+        pass
+    return prefs
+
+
+g_poly = None
+g_image = None
+g_line = None
+
+
+line_vertSrc = '''
+uniform mat4 ModelViewProjectionMatrix;
+
+in vec2 pos;
+
+void main()
+{
+	gl_Position = ModelViewProjectionMatrix * vec4(pos, 0.0, 1.0);
+}
+
+'''
+
+line_fragSrc = '''
+uniform vec4 color;
+
+out vec4 fragColor;
+
+void main()
+{
+	fragColor = color;
+}
+'''
+
+"""
+# TESTS
+_format = gpu.types.GPUVertFormat()
+_pos_id = _format.attr_add(
+            id="pos",
+            comp_type="F32",
+            len=2,
+            fetch_mode="FLOAT")
+coords = [(0,0), (200,100)]
+vbo = gpu.types.GPUVertBuf(len=len(coords), format=_format)
+"""
+
+
+class GPU_Line:
+    def __init__(self):
+        # never call this in -b mode
+        if bpy.app.background:
+            return
+        self._format = gpu.types.GPUVertFormat()
+        self._pos_id = self._format.attr_add(
+            id="pos",
+            comp_type="F32",
+            len=2,
+            fetch_mode="FLOAT")
+        self.shader = gpu.types.GPUShader(line_vertSrc, line_fragSrc)
+        self.unif_color = self.shader.uniform_from_name("color")
+        self.color = np.array([0.0, 0.0, 0.0, 1.0], 'f')
+
+    def batch_line_strip_create(self, coords):
+        vbo = gpu.types.GPUVertBuf(len=len(coords), format=self._format)
+        vbo.attr_fill(id=self._pos_id, data=coords)
+        batch_lines = gpu.types.GPUBatch(type="LINE_STRIP", buf=vbo)
+        batch_lines.program_set(self.shader)
+        return batch_lines
+
+    def draw(self, color, list_verts_co):
+        if list_verts_co:
+            batch = self.batch_line_strip_create(list_verts_co)
+            self.color[0:4] = color[0:4]
+            self.shader.uniform_vector_float(self.unif_color, self.color, 4)
+            batch.draw()
+            del batch
+
+
+class GPU_Poly:
+
+    def __init__(self):
+        if bpy.app.background:
+            return
+        self._format = gpu.types.GPUVertFormat()
+        self._pos_id = self._format.attr_add(
+            id="pos",
+            comp_type="F32",
+            len=2,
+            fetch_mode="FLOAT")
+        self.shader = gpu.types.GPUShader(line_vertSrc, line_fragSrc)
+        self.unif_color = self.shader.uniform_from_name("color")
+        self.color = np.array([0.0, 0.0, 0.0, 0.5], 'f')
+
+    def batch_create(self, coords):
+        vbo = gpu.types.GPUVertBuf(len=len(coords), format=self._format)
+        vbo.attr_fill(id=self._pos_id, data=coords)
+        batch = gpu.types.GPUBatch(type="TRI_FAN", buf=vbo)
+        # batch.program_set(self.shader)
+        # batch = batch_for_shader(self.shader, 'TRI_FAN', {"position": coords})
+        return batch
+
+    def draw(self, color, list_verts_co):
+        if list_verts_co:
+            self.shader.bind()
+            batch = self.batch_create(list_verts_co)
+            self.color[0:4] = color[0:4]
+            self.shader.uniform_vector_float(self.unif_color, self.color, 4)
+            batch.draw(self.shader)
+
+
+class GPU_Image:
+    uvs = [(0, 0), (1, 0), (0, 1), (1, 1)]
+    indices = [(0, 1, 2), (2, 1, 3)]
+
+    def __init__(self):
+        if bpy.app.background:
+            return
+        self._format = gpu.types.GPUVertFormat()
+        self._pos_id = self._format.attr_add(
+            id="pos",
+            comp_type="F32",
+            len=2,
+            fetch_mode="FLOAT")
+        self.shader = gpu.shader.from_builtin('2D_IMAGE')
+
+    def batch_create(self, coords):
+        batch = batch_for_shader(self.shader, 'TRIS',
+                                 {"pos": coords,
+                                  "texCoord": self.uvs},
+                                 indices=self.indices)
+        return batch
+
+    def draw(self, texture_id, list_verts_co):
+        if list_verts_co:
+            batch = self.batch_create(list_verts_co)
+
+            # in case someone disabled it before
+            bgl.glEnable(bgl.GL_TEXTURE_2D)
+
+            # bind texture to image unit 0
+            bgl.glActiveTexture(bgl.GL_TEXTURE0)
+            bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture_id)
+
+            self.shader.bind()
+            # tell shader to use the image that is bound to image unit 0
+            self.shader.uniform_int("image", 0)
+            batch.draw(self.shader)
+
+            bgl.glDisable(bgl.GL_TEXTURE_2D)
 
 
 class Gl():
@@ -61,9 +225,22 @@ class Gl():
             3 to convert pos from 3d
             2 to keep pos as 2d absolute screen position
     """
+
     def __init__(self,
-            d=3,
-            colour=(0.0, 0.0, 0.0, 1.0)):
+                 d=3,
+                 colour=(0.0, 0.0, 0.0, 1.0)):
+
+        global g_poly, g_image, g_line
+
+        if g_poly is None:
+            g_poly = GPU_Poly()
+
+        if g_image is None:
+            g_image = GPU_Image()
+
+        if g_line is None:
+            g_line = GPU_Line()
+
         # nth dimensions of input coords 3=word coords 2=pixel screen coords
         self.d = d
         self.pos_2d = Vector((0, 0))
@@ -77,13 +254,13 @@ class Gl():
         """ coord given in local input coordsys
         """
         if self.d == 2:
-            return coord
+            return Vector(coord)
         if render:
             return self.get_render_location(context, coord)
         region = context.region
         rv3d = context.region_data
         loc = view3d_utils.location_3d_to_region_2d(region, rv3d, coord, self.pos_2d)
-        return loc
+        return Vector(loc)
 
     def get_render_location(self, context, coord):
         scene = context.scene
@@ -92,42 +269,32 @@ class Gl():
         render_scale = scene.render.resolution_percentage / 100
         render_size = (int(scene.render.resolution_x * render_scale),
                        int(scene.render.resolution_y * render_scale))
-        return [round(co_2d.x * render_size[0]), round(co_2d.y * render_size[1])]
-
-    def _end(self):
-
-        # print("_end")
-        bgl.glEnd()
-        bgl.glPopAttrib()
-        bgl.glLineWidth(1)
-        bgl.glDisable(bgl.GL_BLEND)
-        bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
-        # print("_end %s" % (type(self).__name__))
+        return Vector(round(co_2d.x * render_size[0]), round(co_2d.y * render_size[1]))
 
 
 class GlText(Gl):
 
     def __init__(self,
-            d=3,
-            label="",
-            value=None,
-            precision=2,
-            unit_mode='AUTO',
-            unit_type='SIZE',
-            dimension=1,
-            angle=0,
-            font_size=12,
-            colour=(1, 1, 1, 1),
-            z_axis=Vector((0, 0, 1))):
+                 d=3,
+                 label="",
+                 value=None,
+                 precision=4,
+                 unit_mode='AUTO',
+                 unit_type='SIZE',
+                 dimension=1,
+                 angle=0,
+                 font_size=None,
+                 colour=(1, 1, 1, 1),
+                 z_axis=Vector((0, 0, 1))):
         """
             d: [2|3] coords type: 2 for coords in screen pixels, 3 for 3d world location
             label : string label
             value : float value (will add unit according following settings)
             precision : integer rounding for values
             dimension : [1 - 3] nth dimension of unit (single, square, cubic)
-            unit_mode : ['AUTO','METER','CENTIMETER','MILIMETER','FEET','INCH','RADIANS','DEGREE']
+            unit_mode : ['ADAPTIVE','METER','CENTIMETER','MILIMETER','FEET','INCH','RADIANS','DEGREE']
                         unit type to use to postfix values
-                        auto use scene units setup
+                        ADAPTIVE use scene units setup
             unit_type : ['SIZE','ANGLE']
                         unit type to add to value
             angle : angle to rotate text
@@ -142,13 +309,17 @@ class GlText(Gl):
         self.dimension = dimension
         self.unit_type = unit_type
         self.unit_mode = unit_mode
-
-        self.font_size = font_size
+        if font_size is None:
+            prefs = get_prefs(bpy.context)
+            self.font_size = prefs.text_size
+        else:
+            self.font_size = font_size
         self.angle = angle
         Gl.__init__(self, d)
         self.colour_inactive = colour
         # store text with units
         self._text = ""
+        self.cbuff = bgl.Buffer(bgl.GL_FLOAT, 4)
 
     def text_size(self, context):
         """
@@ -177,20 +348,25 @@ class GlText(Gl):
     def add_units(self, context):
         if self.value is None:
             return ""
+        system = context.scene.unit_settings.system
         if self.unit_type == 'ANGLE':
             scale = 1
+            mode = 'ADAPTIVE'
         else:
             scale = context.scene.unit_settings.scale_length
+            mode = self.unit_mode
+            if mode == 'AUTO':
+                mode = context.scene.unit_settings.length_unit.upper()
 
         val = self.value * scale
-        mode = self.unit_mode
-        if mode == 'AUTO':
+
+        if mode == 'ADAPTIVE':
             if self.unit_type == 'ANGLE':
                 mode = context.scene.unit_settings.system_rotation
             else:
-                if context.scene.unit_settings.system == "IMPERIAL":
+                if system == "IMPERIAL":
                     if round(val * (3.2808399 ** self.dimension), 2) >= 1.0:
-                        mode = 'FEET'
+                        mode = 'FOOT'
                     else:
                         mode = 'INCH'
                 elif context.scene.unit_settings.system == "METRIC":
@@ -201,7 +377,10 @@ class GlText(Gl):
                             mode = 'CENTIMETER'
                         else:
                             mode = 'MILIMETER'
+
+        # TODO: support for separate units (through 2.8 api)
         # convert values
+        unit = ""
         if mode == 'METER':
             unit = "m"
         elif mode == 'CENTIMETER':
@@ -210,26 +389,38 @@ class GlText(Gl):
         elif mode == 'MILIMETER':
             val *= (1000 ** self.dimension)
             unit = 'mm'
+        elif mode in {'FOOT', 'FEET'}:
+            val *= (3.2808399 ** self.dimension)
+            unit = "ft"
         elif mode == 'INCH':
             val *= (39.3700787 ** self.dimension)
             unit = "in"
-        elif mode == 'FEET':
-            val *= (3.2808399 ** self.dimension)
-            unit = "ft"
         elif mode == 'RADIANS':
             unit = ""
         elif mode == 'DEGREES':
             val = self.value / pi * 180
             unit = "°"
-        else:
-            unit = ""
-        if self.dimension == 2:
-            unit += "\u00b2"  # Superscript two
-        elif self.dimension == 3:
-            unit += "\u00b3"  # Superscript three
+        if system == 'IMPERIAL':
+            if self.dimension == 2:
+                unit = "sq " + unit
+            elif self.dimension == 3:
+                unit = "cu " + unit
+        elif system == 'METRIC':
+            if self.dimension == 2:
+                unit += "\u00b2"  # Superscript two
+            elif self.dimension == 3:
+                unit += "\u00b3"  # Superscript three
 
-        fmt = "%1." + str(self.precision) + "f " + unit
-        return fmt % val
+        fmt = "%1." + str(self.precision) + "f"
+        # remove trailing zeros
+        res = fmt % val
+        while res[-1] == '0':
+            res = res[:-1]
+
+        if res[-1] == ".":
+            res = res + '0'
+
+        return "{} {}".format(res, unit)
 
     def set_pos(self, context, value, pos_3d, direction, angle=0, normal=Vector((0, 0, 1))):
         self.up_axis = direction.normalized()
@@ -243,66 +434,68 @@ class GlText(Gl):
 
         # print("draw_text %s %s" % (self.text, type(self).__name__))
         self.render = render
-        x, y = self.position_2d_from_coord(context, self.pts[0], render)
+        p = self.position_2d_from_coord(context, self.pts[0], render)
+
         # dirty fast assignment
         dpi, font_id = context.user_preferences.system.dpi, 0
-        bgl.glColor4f(*self.colour)
+
+        # self.cbuff[0:4] = self.colour
+
+        # bgl.glEnableClientState(bgl.GL_COLOR_ARRAY)
+        # bgl.glColorPointer(4, bgl.GL_FLOAT, 0, self.cbuff)
+        blf.color(0, *self.colour)
         if self.angle != 0:
             blf.enable(font_id, blf.ROTATION)
             blf.rotation(font_id, self.angle)
         blf.size(font_id, self.font_size, dpi)
-        blf.position(font_id, x, y, 0)
+        blf.position(font_id, p.x, p.y, 0)
         blf.draw(font_id, self.text)
         if self.angle != 0:
             blf.disable(font_id, blf.ROTATION)
+
+        # bgl.glDisableClientState(bgl.GL_COLOR_ARRAY)
 
 
 class GlBaseLine(Gl):
 
     def __init__(self,
-            d=3,
-            width=1,
-            style=bgl.GL_LINE,
-            closed=False):
+                 d=3,
+                 width=1,
+                 style=bgl.GL_LINE,
+                 closed=False,
+                 n_pts=2):
         Gl.__init__(self, d)
         # default line width
         self.width = width
         # default line style
         self.style = style
         # allow closed lines
-        self.closed = False
+        self.closed = closed
+
+        self.n_pts = n_pts
 
     def draw(self, context, render=False):
         """
             render flag when rendering
         """
-
-        # print("draw_line %s" % (type(self).__name__))
-        bgl.glPushAttrib(bgl.GL_ENABLE_BIT)
-        if self.style == bgl.GL_LINE_STIPPLE:
-            bgl.glLineStipple(1, 0x9999)
-        bgl.glEnable(self.style)
+        self.render = render
         bgl.glEnable(bgl.GL_BLEND)
-        if render:
-            # enable anti-alias on lines
-            bgl.glEnable(bgl.GL_LINE_SMOOTH)
-        bgl.glColor4f(*self.colour)
         bgl.glLineWidth(self.width)
+        list_verts_co = [
+            tuple(self.position_2d_from_coord(context, pt, render)[0:2])
+            for i, pt in enumerate(self.pts)]
         if self.closed:
-            bgl.glBegin(bgl.GL_LINE_LOOP)
-        else:
-            bgl.glBegin(bgl.GL_LINE_STRIP)
-
-        for pt in self.pts:
-            x, y = self.position_2d_from_coord(context, pt, render)
-            bgl.glVertex2f(x, y)
-        self._end()
+            list_verts_co.append(list_verts_co[0])
+        g_line.draw(self.colour, list_verts_co)
+        bgl.glLineWidth(1.0)
+        bgl.glDisable(bgl.GL_BLEND)
 
 
 class GlLine(GlBaseLine):
     """
         2d/3d Line
     """
+
     def __init__(self, d=3, p=None, v=None, p0=None, p1=None, z_axis=None):
         """
             d=3 use 3d coords, d=2 use 2d pixels coords
@@ -322,13 +515,13 @@ class GlLine(GlBaseLine):
             self.p = Vector(p0)
             self.v = Vector(p1) - self.p
         else:
-            self.p = Vector((0, 0, 0))
-            self.v = Vector((0, 0, 0))
+            self.p = Vector()
+            self.v = Vector()
         if z_axis is not None:
             self.z_axis = z_axis
         else:
             self.z_axis = Vector((0, 0, 1))
-        GlBaseLine.__init__(self, d)
+        GlBaseLine.__init__(self, d, n_pts=2)
 
     @property
     def p0(self):
@@ -425,7 +618,7 @@ class GlLine(GlBaseLine):
         v2d = self.v.to_2d()
         dl = v2d.length
         d = (self.v.x * dp.y - self.v.y * dp.x) / dl
-        t = (v2d * dp) / (dl * dl)
+        t = v2d.dot(dp) / (dl * dl)
         return t > 0 and t < 1, d, t
 
     @property
@@ -436,10 +629,10 @@ class GlLine(GlBaseLine):
 class GlCircle(GlBaseLine):
 
     def __init__(self,
-            d=3,
-            radius=0,
-            center=Vector((0, 0, 0)),
-            z_axis=Vector((0, 0, 1))):
+                 d=3,
+                 radius=0,
+                 center=Vector((0, 0, 0)),
+                 z_axis=Vector((0, 0, 1))):
 
         self.r = radius
         self.c = center
@@ -460,18 +653,19 @@ class GlCircle(GlBaseLine):
         self.z_axis = z
         self.a0 = 0
         self.da = 2 * pi
-        GlBaseLine.__init__(self, d)
+        GlBaseLine.__init__(self, d, n_pts=60)
 
     def lerp(self, t):
         """
             Linear interpolation
         """
         a = self.a0 + t * self.da
-        return self.c + self.rM * Vector((self.r * cos(a), self.r * sin(a), 0))
+        return self.c + self.rM @ Vector((self.r * cos(a), self.r * sin(a), 0))
 
     @property
     def pts(self):
         n_pts = max(1, int(round(abs(self.da) / pi * 30, 0)))
+        self.n_pts = n_pts
         t_step = 1 / n_pts
         return [self.lerp(i * t_step) for i in range(n_pts + 1)]
 
@@ -479,12 +673,12 @@ class GlCircle(GlBaseLine):
 class GlArc(GlCircle):
 
     def __init__(self,
-            d=3,
-            radius=0,
-            center=Vector((0, 0, 0)),
-            z_axis=Vector((0, 0, 1)),
-            a0=0,
-            da=0):
+                 d=3,
+                 radius=0,
+                 center=Vector((0, 0, 0)),
+                 z_axis=Vector((0, 0, 1)),
+                 a0=0,
+                 da=0):
         """
             a0 and da arguments are in radians
             a0 = 0   on the x+ axis side
@@ -526,8 +720,8 @@ class GlArc(GlCircle):
         ca = cos(a)
         sa = sin(a)
         n = GlLine(d=self.d, z_axis=self.z_axis)
-        n.p = self.c + self.rM * Vector((self.r * ca, self.r * sa, 0))
-        n.v = self.rM * Vector((length * sa, -length * ca, 0))
+        n.p = self.c + self.rM @ Vector((self.r * ca, self.r * sa, 0))
+        n.v = self.rM @ Vector((length * sa, -length * ca, 0))
         if self.da > 0:
             n.v = -n.v
         return n
@@ -541,21 +735,22 @@ class GlArc(GlCircle):
         else:
             radius = self.r - offset
         return GlArc(d=self.d,
-            radius=radius,
-            center=self.c,
-            a0=self.a0,
-            da=self.da,
-            z_axis=self.z_axis)
+                     radius=radius,
+                     center=self.c,
+                     a0=self.a0,
+                     da=self.da,
+                     z_axis=self.z_axis)
 
 
 class GlPolygon(Gl):
 
     def __init__(self,
-            colour=(0.0, 0.0, 0.0, 1.0),
-            d=3):
-
+                 colour=(0.3, 0.3, 0.3, 1.0),
+                 d=3, n_pts=60):
         self.pts_3d = []
         Gl.__init__(self, d, colour)
+
+        self.n_pts = min(n_pts, 60)
 
     def set_pos(self, pts_3d):
         self.pts_3d = pts_3d
@@ -568,52 +763,53 @@ class GlPolygon(Gl):
         """
             render flag when rendering
         """
+        # return
 
-        # print("draw_polygon")
         self.render = render
-        bgl.glPushAttrib(bgl.GL_ENABLE_BIT)
-        bgl.glEnable(bgl.GL_BLEND)
-        if render:
-            # enable anti-alias on polygons
-            bgl.glEnable(bgl.GL_POLYGON_SMOOTH)
-        bgl.glColor4f(*self.colour)
-        bgl.glBegin(bgl.GL_POLYGON)
+        if self.n_pts == 0:
+            return
 
-        for pt in self.pts:
-            x, y = self.position_2d_from_coord(context, pt, render)
-            bgl.glVertex2f(x, y)
-        self._end()
+        pts = self.pts
+
+        g_vertices = [
+            tuple(self.position_2d_from_coord(context, pt, render)[0:2])
+            for i, pt in enumerate(pts)]
+        bgl.glEnable(bgl.GL_BLEND)
+        g_poly.draw(self.colour, g_vertices)
+        bgl.glDisable(bgl.GL_BLEND)
 
 
 class GlRect(GlPolygon):
     def __init__(self,
-            colour=(0.0, 0.0, 0.0, 1.0),
-            d=2):
-        GlPolygon.__init__(self, colour, d)
+                 colour=(0.0, 0.0, 0.0, 1.0),
+                 d=2):
+        GlPolygon.__init__(self, colour, d, n_pts=4)
+
+    @property
+    def pts(self):
+        return self.pts_2d
 
     def draw(self, context, render=False):
-
-        self.render = render
-        bgl.glPushAttrib(bgl.GL_ENABLE_BIT)
-        bgl.glEnable(bgl.GL_BLEND)
-        if render:
-            # enable anti-alias on polygons
-            bgl.glEnable(bgl.GL_POLYGON_SMOOTH)
-        bgl.glColor4f(*self.colour)
-        p0 = self.pts[0]
-        p1 = self.pts[1]
-        bgl.glRectf(p0.x, p0.y, p1.x, p1.y)
-        self._end()
+        pts = [
+            self.position_2d_from_coord(context, pt, render)
+            for pt in self.pts_3d
+        ]
+        x0, y0 = pts[0]
+        x1, y1 = pts[1]
+        self.pts_2d = [Vector((x, y)) for x, y in [(x0, y0), (x0, y1), (x1, y1), (x1, y0)]]
+        GlPolygon.draw(self, context, render)
 
 
 class GlImage(Gl):
     def __init__(self,
-        d=2,
-        image=None):
+                 d=2,
+                 image=None):
+        # GImage bindcode[0]
         self.image = image
         self.colour_inactive = (1, 1, 1, 1)
         Gl.__init__(self, d)
         self.pts_2d = [Vector((0, 0)), Vector((10, 10))]
+        self.n_pts = 4
 
     def set_pos(self, pts):
         self.pts_2d = pts
@@ -625,38 +821,17 @@ class GlImage(Gl):
     def draw(self, context, render=False):
         if self.image is None:
             return
-        bgl.glPushAttrib(bgl.GL_ENABLE_BIT)
+
         p0 = self.pts[0]
         p1 = self.pts[1]
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glColor4f(*self.colour)
-        bgl.glRectf(p0.x, p0.y, p1.x, p1.y)
-        self.image.gl_load()
-        bgl.glEnable(bgl.GL_BLEND)
-        bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.image.bindcode[0])
-        bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
-        bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_NEAREST)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glBlendFunc(bgl.GL_SRC_ALPHA, bgl.GL_ONE_MINUS_SRC_ALPHA)
-        # bgl.glColor4f(1, 1, 1, 1)
-        bgl.glBegin(bgl.GL_QUADS)
-        bgl.glTexCoord2d(0, 0)
-        bgl.glVertex2d(p0.x, p0.y)
-        bgl.glTexCoord2d(0, 1)
-        bgl.glVertex2d(p0.x, p1.y)
-        bgl.glTexCoord2d(1, 1)
-        bgl.glVertex2d(p1.x, p1.y)
-        bgl.glTexCoord2d(1, 0)
-        bgl.glVertex2d(p1.x, p0.y)
-        bgl.glEnd()
-        self.image.gl_free()
-        bgl.glDisable(bgl.GL_TEXTURE_2D)
+        coords = [(p0.x, p0.y), (p1.x, p0.y), (p0.x, p1.y), (p1.x, p1.y)]
+        g_image.draw(self.image.bindcode, coords)
 
 
 class GlPolyline(GlBaseLine):
-    def __init__(self, colour, d=3):
+    def __init__(self, colour, d=3, n_pts=60):
         self.pts_3d = []
-        GlBaseLine.__init__(self, d)
+        GlBaseLine.__init__(self, d, n_pts=n_pts)
         self.colour_inactive = colour
 
     def set_pos(self, pts_3d):
@@ -670,17 +845,25 @@ class GlPolyline(GlBaseLine):
 
 class GlHandle(GlPolygon):
 
-    def __init__(self, sensor_size, size, draggable=False, selectable=False, d=3):
+    def __init__(self, sensor_size, size, draggable=False, selectable=False, d=3, n_pts=4):
         """
             sensor_size : 2d size in pixels of sensor area
             size : 3d size of handle
         """
-        GlPolygon.__init__(self, d=d)
-        self.colour_active = (1.0, 0.0, 0.0, 1.0)
-        self.colour_hover = (1.0, 1.0, 0.0, 1.0)
-        self.colour_normal = (1.0, 1.0, 1.0, 1.0)
-        self.colour_selected = (0.0, 0.0, 0.7, 1.0)
+        GlPolygon.__init__(self, d=d, n_pts=n_pts)
+        prefs = get_prefs(bpy.context)
+        self.colour_active = prefs.handle_colour_active
+        self.colour_hover = prefs.handle_colour_hover
+        self.colour_normal = prefs.handle_colour_normal
+        self.colour_selected = prefs.handle_colour_selected
+        self.colour_inactive = prefs.handle_colour_inactive
+        # variable symbol size in world coords
         self.size = size
+        # constant symbol size in pixels
+        self.symbol_size = sensor_size
+        # scale factor for constant symbol pixel size
+        self.scale = 1
+        # sensor size in pixels
         self.sensor_width = sensor_size
         self.sensor_height = sensor_size
         self.pos_3d = Vector((0, 0, 0))
@@ -692,11 +875,38 @@ class GlHandle(GlPolygon):
         self.selectable = selectable
         self.selected = False
 
+    def scale_factor(self, context, pts):
+        """
+         Compute screen scale factor for symbol
+         given 2 points in symbol direction (eg start and end of arrow)
+        """
+        prefs = get_prefs(context)
+        if not prefs.constant_handle_size:
+            return 1
+
+        p2d = []
+        for pt in pts:
+            p2d.append(self.position_2d_from_coord(context, pt))
+        sx = [p.x for p in p2d]
+        sy = [p.y for p in p2d]
+        x = max(sx) - min(sx)
+        y = max(sy) - min(sy)
+        s = max(x, y)
+        if s > 0:
+            fac = self.symbol_size / s
+        else:
+            fac = 1
+        return fac
+
     def set_pos(self, context, pos_3d, direction, normal=Vector((0, 0, 1))):
         self.up_axis = direction.normalized()
         self.c_axis = self.up_axis.cross(normal)
         self.pos_3d = pos_3d
         self.pos_2d = self.position_2d_from_coord(context, self.sensor_center)
+        x = self.up_axis * 0.5 * self.size
+        y = self.c_axis * 0.5 * self.size
+        pts = [self.sensor_center + v for v in [-x, x, -y, y]]
+        self.scale = self.scale_factor(context, pts)
 
     def check_hover(self, pos_2d):
         if self.draggable:
@@ -737,7 +947,7 @@ class GlHandle(GlPolygon):
 class SquareHandle(GlHandle):
 
     def __init__(self, sensor_size, size, draggable=False, selectable=False):
-        GlHandle.__init__(self, sensor_size, size, draggable, selectable)
+        GlHandle.__init__(self, sensor_size, size, draggable, selectable, n_pts=4)
 
     @property
     def pts(self):
@@ -747,15 +957,15 @@ class SquareHandle(GlHandle):
             scale = 1
         else:
             scale = 0.5
-        x = n * self.size * scale
-        y = c * self.size * scale
+        x = n * self.scale * self.size * scale
+        y = c * self.scale * self.size * scale
         return [self.pos_3d - x - y, self.pos_3d + x - y, self.pos_3d + x + y, self.pos_3d - x + y]
 
 
 class TriHandle(GlHandle):
 
     def __init__(self, sensor_size, size, draggable=False, selectable=False):
-        GlHandle.__init__(self, sensor_size, size, draggable, selectable)
+        GlHandle.__init__(self, sensor_size, size, draggable, selectable, n_pts=3)
 
     @property
     def pts(self):
@@ -767,9 +977,108 @@ class TriHandle(GlHandle):
         scale = 1
         # else:
         #    scale = 0.5
-        x = n * self.size * 4 * scale
-        y = c * self.size * scale
+        x = n * self.scale * self.size * 4 * scale
+        y = c * self.scale * self.size * scale
         return [self.pos_3d - x + y, self.pos_3d - x - y, self.pos_3d]
+
+
+class CruxHandle(GlHandle):
+
+    def __init__(self, sensor_size, size, draggable=True, selectable=False):
+        GlHandle.__init__(self, sensor_size, size, draggable, selectable, n_pts=0)
+        self.branch_0 = GlPolygon((1, 1, 1, 1), d=3, n_pts=4)
+        self.branch_1 = GlPolygon((1, 1, 1, 1), d=3, n_pts=4)
+
+    def set_pos(self, context, pos_3d, direction, normal=Vector((0, 0, 1))):
+        self.pos_3d = pos_3d
+        self.pos_2d = self.position_2d_from_coord(context, self.sensor_center)
+        o = self.pos_3d
+        d = 0.5 * self.size
+        x = direction.normalized()
+        y = x.cross(normal)
+
+        sx = x * 0.5 * self.size
+        sy = y * 0.5 * self.size
+        pts = [o + v for v in [-sx, sx, -sy, sy]]
+        self.scale = self.scale_factor(context, pts)
+
+        c = self.scale * d / 1.4242
+        w = self.scale * self.size
+        s = w - c
+
+        xs = x * s
+        xw = x * w
+        ys = y * s
+        yw = y * w
+        p0 = o + xs + yw
+        p1 = o + xw + ys
+        p2 = o - xs - yw
+        p3 = o - xw - ys
+        p4 = o - xs + yw
+        p5 = o + xw - ys
+        p6 = o + xs - yw
+        p7 = o - xw + ys
+
+        self.branch_0.set_pos([p0, p1, p2, p3])
+        self.branch_1.set_pos([p4, p5, p6, p7])
+
+    @property
+    def pts(self):
+        return [self.pos_3d]
+
+    def draw(self, context, render=False):
+        self.render = render
+        self.branch_0.colour_inactive = self.colour
+        self.branch_1.colour_inactive = self.colour
+        self.branch_0.draw(context)
+        self.branch_1.draw(context)
+
+
+class PlusHandle(GlHandle):
+
+    def __init__(self, sensor_size, size, draggable=True, selectable=False):
+        GlHandle.__init__(self, sensor_size, size, draggable, selectable, n_pts=0)
+        self.branch_0 = GlPolygon((1, 1, 1, 1), d=3, n_pts=4)
+        self.branch_1 = GlPolygon((1, 1, 1, 1), d=3, n_pts=4)
+
+    def set_pos(self, context, pos_3d, direction, normal=Vector((0, 0, 1))):
+        self.pos_3d = pos_3d
+        self.pos_2d = self.position_2d_from_coord(context, self.sensor_center)
+        o = self.pos_3d
+        x = direction.normalized()
+        y = x.cross(normal)
+        sx = x * 0.5 * self.size
+        sy = y * 0.5 * self.size
+        pts = [o + v for v in [-sx, sx, -sy, sy]]
+        self.scale = self.scale_factor(context, pts)
+        w = self.scale * self.size
+        s = self.scale * 0.25 * w
+
+        xs = x * s
+        xw = x * w
+        ys = y * s
+        yw = y * w
+        p0 = o - xw + ys
+        p1 = o + xw + ys
+        p2 = o + xw - ys
+        p3 = o - xw - ys
+        p4 = o - xs + yw
+        p5 = o + xs + yw
+        p6 = o + xs - yw
+        p7 = o - xs - yw
+        self.branch_0.set_pos([p0, p1, p2, p3])
+        self.branch_1.set_pos([p4, p5, p6, p7])
+
+    @property
+    def pts(self):
+        return [self.pos_3d]
+
+    def draw(self, context, render=False):
+        self.render = render
+        self.branch_0.colour_inactive = self.colour
+        self.branch_1.colour_inactive = self.colour
+        self.branch_0.draw(context)
+        self.branch_1.draw(context)
 
 
 class EditableText(GlText, GlHandle):
@@ -783,10 +1092,10 @@ class EditableText(GlText, GlHandle):
         self.pos_3d = pos_3d
         self.value = value
         self._text = self.add_units(context)
-        x, y = self.text_size(context)
+        ts = self.text_size(context)
         self.pos_2d = self.position_2d_from_coord(context, pos_3d)
-        self.pos_2d.x += 0.5 * x
-        self.sensor_width, self.sensor_height = 0.5 * x, y
+        self.pos_2d.x += 0.5 * ts.x
+        self.sensor_width, self.sensor_height = 0.5 * ts.x, ts.y
 
     @property
     def sensor_center(self):
@@ -796,10 +1105,10 @@ class EditableText(GlText, GlHandle):
 class ThumbHandle(GlHandle):
 
     def __init__(self, size_2d, label, image=None, draggable=False, selectable=False, d=2):
-        GlHandle.__init__(self, size_2d, size_2d, draggable, selectable, d)
+        GlHandle.__init__(self, size_2d, size_2d, draggable, selectable, d, n_pts=4)
         self.image = GlImage(image=image)
         self.label = GlText(d=2, label=label.replace("_", " ").capitalize())
-        self.frame = GlPolyline((1, 1, 1, 1), d=2)
+        self.frame = GlPolyline((1, 1, 1, 1), d=2, n_pts=4)
         self.frame.closed = True
         self.size_2d = size_2d
         self.sensor_width = 0.5 * size_2d.x
@@ -830,7 +1139,7 @@ class ThumbHandle(GlHandle):
     def draw(self, context, render=False):
         self.render = render
         self.image.colour_inactive = self.colour
-        GlHandle.draw(self, context, render=False)
+        # GlHandle.draw(self, context, render=False)
         self.image.draw(context, render=False)
         self.label.draw(context, render=False)
         self.frame.draw(context, render=False)
@@ -849,10 +1158,9 @@ class Screen():
         y_max = h - self.margin
         x_min = self.margin
         x_max = w - self.margin
-        if (system.use_region_overlap and
-                system.window_draw_method in {'TRIPLE_BUFFER', 'AUTOMATIC'}):
+        if system.use_region_overlap:
+            #    system.window_draw_method in {'TRIPLE_BUFFER', 'ADAPTIVEMATIC'}):
             area = context.area
-
             for r in area.regions:
                 if r.type == 'TOOLS':
                     x_min += r.width
@@ -866,29 +1174,30 @@ class FeedbackPanel():
         Feed-back panel
         inspired by np_station
     """
+
     def __init__(self, title='Archipack'):
 
-        prefs = self.get_prefs(bpy.context)
+        prefs = get_prefs(bpy.context)
 
         self.main_title = GlText(d=2,
-            label=title + " : ",
-            font_size=prefs.feedback_size_main,
-            colour=prefs.feedback_colour_main
-            )
+                                 label=title + " : ",
+                                 font_size=prefs.feedback_size_main,
+                                 colour=prefs.feedback_colour_main
+                                 )
         self.title = GlText(d=2,
-            font_size=prefs.feedback_size_title,
-            colour=prefs.feedback_colour_main
-            )
+                            font_size=prefs.feedback_size_title,
+                            colour=prefs.feedback_colour_main
+                            )
         self.spacing = Vector((
             0.5 * prefs.feedback_size_shortcut,
             0.5 * prefs.feedback_size_shortcut))
         self.margin = 50
         self.explanation = GlText(d=2,
-            font_size=prefs.feedback_size_shortcut,
-            colour=prefs.feedback_colour_main
-            )
-        self.shortcut_area = GlPolygon(colour=prefs.feedback_shortcut_area, d=2)
-        self.title_area = GlPolygon(colour=prefs.feedback_title_area, d=2)
+                                  font_size=prefs.feedback_size_shortcut,
+                                  colour=prefs.feedback_colour_main
+                                  )
+        self.shortcut_area = GlPolygon(colour=prefs.feedback_shortcut_area, d=2, n_pts=4)
+        self.title_area = GlPolygon(colour=prefs.feedback_title_area, d=2, n_pts=4)
         self.shortcuts = []
         self.on = False
         self.show_title = True
@@ -903,22 +1212,11 @@ class FeedbackPanel():
     def enable(self):
         self.on = True
 
-    def get_prefs(self, context):
-        global __name__
-        try:
-            # retrieve addon name from imports
-            addon_name = __name__.split('.')[0]
-            prefs = context.user_preferences.addons[addon_name].preferences
-        except:
-            prefs = DefaultColorScheme
-            pass
-        return prefs
-
     def instructions(self, context, title, explanation, shortcuts):
         """
             position from bottom to top
         """
-        prefs = self.get_prefs(context)
+        prefs = get_prefs(context)
 
         self.explanation.label = explanation
         self.title.label = title
@@ -927,16 +1225,17 @@ class FeedbackPanel():
 
         for key, label in shortcuts:
             key = GlText(d=2, label=key,
-                font_size=prefs.feedback_size_shortcut,
-                colour=prefs.feedback_colour_key)
+                         font_size=prefs.feedback_size_shortcut,
+                         colour=prefs.feedback_colour_key)
             label = GlText(d=2, label=' : ' + label,
-                font_size=prefs.feedback_size_shortcut,
-                colour=prefs.feedback_colour_shortcut)
+                           font_size=prefs.feedback_size_shortcut,
+                           colour=prefs.feedback_colour_shortcut)
             ks = key.text_size(context)
             ls = label.text_size(context)
             self.shortcuts.append([key, ks, label, ls])
 
     def draw(self, context, render=False):
+
         if self.on:
             """
                 draw from bottom to top
@@ -992,7 +1291,7 @@ class FeedbackPanel():
                 (x_max, self.margin),
                 (x_max, pos.y),
                 (x_min, pos.y)
-                ]
+            ]
 
             # small space between shortcut area and main title bar
             if n_shortcuts > 0:
@@ -1003,7 +1302,7 @@ class FeedbackPanel():
                 (x_max, pos.y),
                 (x_max, pos.y + main_title_size.y + 2 * self.spacing.y),
                 (x_min, pos.y + main_title_size.y + 2 * self.spacing.y)
-                ]
+            ]
             pos.y += self.spacing.y
 
             title_size = self.title.text_size(context)
@@ -1047,12 +1346,13 @@ class GlCursorFence():
     """
         Cursor crossing Fence
     """
-    def __init__(self, width=1, colour=(1.0, 1.0, 1.0, 0.5), style=bgl.GL_LINE_STIPPLE):
-        self.line_x = GlLine(d=2)
+
+    def __init__(self, width=1, colour=(1.0, 1.0, 1.0, 0.5), style=2852):
+        self.line_x = GlLine(d=2, n_pts=2)
         self.line_x.style = style
         self.line_x.width = width
         self.line_x.colour_inactive = colour
-        self.line_y = GlLine(d=2)
+        self.line_y = GlLine(d=2, n_pts=2)
         self.line_y.style = style
         self.line_y.width = width
         self.line_y.colour_inactive = colour
@@ -1061,7 +1361,8 @@ class GlCursorFence():
     def set_location(self, context, location):
         w = context.region.width
         h = context.region.height
-        x, y = location
+        p = Vector(location)
+        x, y = p.x, p.y
         self.line_x.p = Vector((0, y))
         self.line_x.v = Vector((w, 0))
         self.line_y.p = Vector((x, 0))
@@ -1081,27 +1382,29 @@ class GlCursorFence():
 
 class GlCursorArea():
     def __init__(self,
-                width=1,
-                bordercolour=(1.0, 1.0, 1.0, 0.5),
-                areacolour=(0.5, 0.5, 0.5, 0.08),
-                style=bgl.GL_LINE_STIPPLE):
+                 width=1,
+                 bordercolour=(1.0, 1.0, 1.0, 0.5),
+                 areacolour=(0.5, 0.5, 0.5, 0.08),
+                 style=2852):
 
-        self.border = GlPolyline(bordercolour, d=2)
+        self.border = GlPolyline(bordercolour, d=2, n_pts=4)
         self.border.style = style
         self.border.width = width
         self.border.closed = True
-        self.area = GlPolygon(areacolour, d=2)
+        self.area = GlPolygon(areacolour, d=2, n_pts=4)
         self.min = Vector((0, 0))
         self.max = Vector((0, 0))
         self.on = False
 
     def in_area(self, pt):
         return (self.min.x <= pt.x and self.max.x >= pt.x and
-            self.min.y <= pt.y and self.max.y >= pt.y)
+                self.min.y <= pt.y and self.max.y >= pt.y)
 
     def set_location(self, context, p0, p1):
-        x0, y0 = p0
-        x1, y1 = p1
+        p = Vector(p0)
+        x0, y0 = p.x, p.y
+        p = Vector(p1)
+        x1, y1 = p.x, p.y
         if x0 > x1:
             x1, x0 = x0, x1
         if y0 > y1:
