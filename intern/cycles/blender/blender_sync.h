@@ -43,6 +43,7 @@ class Mesh;
 class Object;
 class ParticleSystem;
 class Scene;
+class ViewLayer;
 class Shader;
 class ShaderGraph;
 class ShaderNode;
@@ -58,16 +59,16 @@ public:
 	~BlenderSync();
 
 	/* sync */
-	bool sync_recalc();
+	void sync_recalc(BL::Depsgraph& b_depsgraph);
 	void sync_data(BL::RenderSettings& b_render,
+	               BL::Depsgraph& b_depsgraph,
 	               BL::SpaceView3D& b_v3d,
 	               BL::Object& b_override,
 	               int width, int height,
-	               void **python_thread_state,
-	               const char *layer = 0);
-	void sync_render_layers(BL::SpaceView3D& b_v3d, const char *layer);
-	vector<Pass> sync_render_passes(BL::RenderLayer& b_rlay,
-	                                BL::SceneRenderLayer& b_srlay,
+	               void **python_thread_state);
+	void sync_view_layer(BL::SpaceView3D& b_v3d, BL::ViewLayer& b_view_layer);
+	vector<Pass> sync_render_passes(BL::RenderLayer& b_render_layer,
+	                                BL::ViewLayer& b_view_layer,
 	                                const SessionParams &session_params);
 	void sync_integrator();
 	void sync_camera(BL::RenderSettings& b_render,
@@ -77,8 +78,6 @@ public:
 	void sync_view(BL::SpaceView3D& b_v3d,
 	               BL::RegionView3D& b_rv3d,
 	               int width, int height);
-	inline int get_layer_samples() { return render_layer.samples; }
-	inline int get_layer_bound_samples() { return render_layer.bound_samples; }
 
 	/* get parameters */
 	static SceneParams get_scene_params(BL::Scene& b_scene,
@@ -99,31 +98,34 @@ public:
 
 private:
 	/* sync */
-	void sync_lamps(bool update_all);
-	void sync_materials(bool update_all);
-	void sync_objects(float motion_time = 0.0f);
+	void sync_lights(BL::Depsgraph& b_depsgraph, bool update_all);
+	void sync_materials(BL::Depsgraph& b_depsgraph, bool update_all);
+	void sync_objects(BL::Depsgraph& b_depsgraph, float motion_time = 0.0f);
 	void sync_motion(BL::RenderSettings& b_render,
+                     BL::Depsgraph& b_depsgraph,
 	                 BL::Object& b_override,
 	                 int width, int height,
 	                 void **python_thread_state);
 	void sync_film();
 	void sync_view();
-	void sync_world(bool update_all);
-	void sync_shaders();
+	void sync_world(BL::Depsgraph& b_depsgraph, bool update_all);
+	void sync_shaders(BL::Depsgraph& b_depsgraph);
 	void sync_curve_settings();
 
 	void sync_nodes(Shader *shader, BL::ShaderNodeTree& b_ntree);
-	Mesh *sync_mesh(BL::Object& b_ob, bool object_updated, bool hide_tris);
+	Mesh *sync_mesh(BL::Depsgraph& b_depsgrpah,
+	                BL::Object& b_ob,
+	                BL::Object& b_ob_instance,
+	                bool object_updated,
+	                bool hide_tris);
 	void sync_curves(Mesh *mesh,
 	                 BL::Mesh& b_mesh,
 	                 BL::Object& b_ob,
 	                 bool motion,
 	                 int motion_step = 0);
-	Object *sync_object(BL::Object& b_parent,
-	                    int persistent_id[OBJECT_PERSISTENT_ID_SIZE],
-	                    BL::DupliObject& b_dupli_ob,
-	                    Transform& tfm,
-	                    uint layer_flag,
+	Object *sync_object(BL::Depsgraph& b_depsgraph,
+	                    BL::ViewLayer& b_view_layer,
+	                    BL::DepsgraphObjectInstance& b_instance,
 	                    float motion_time,
 	                    bool hide_tris,
 	                    BlenderObjectCulling& culling,
@@ -131,11 +133,13 @@ private:
 	void sync_light(BL::Object& b_parent,
 	                int persistent_id[OBJECT_PERSISTENT_ID_SIZE],
 	                BL::Object& b_ob,
-	                BL::DupliObject& b_dupli_ob,
+	                BL::Object& b_ob_instance,
+	                int random_id,
 	                Transform& tfm,
 	                bool *use_portal);
 	void sync_background_light(bool use_portal);
-	void sync_mesh_motion(BL::Object& b_ob,
+	void sync_mesh_motion(BL::Depsgraph& b_depsgraph,
+	                      BL::Object& b_ob,
 	                      Object *object,
 	                      float motion_time);
 	void sync_camera_motion(BL::RenderSettings& b_render,
@@ -145,11 +149,14 @@ private:
 
 	/* particles */
 	bool sync_dupli_particle(BL::Object& b_ob,
-	                         BL::DupliObject& b_dup,
+	                         BL::DepsgraphObjectInstance& b_instance,
 	                         Object *object);
 
 	/* Images. */
 	void sync_images();
+
+	/* Early data free. */
+	void free_data_after_sync(BL::Depsgraph& b_depsgraph);
 
 	/* util */
 	void find_shader(BL::ID& id, vector<Shader*>& used_shaders, Shader *default_shader);
@@ -182,31 +189,19 @@ private:
 
 	struct RenderLayerInfo {
 		RenderLayerInfo()
-		: scene_layer(0), layer(0),
-		  holdout_layer(0), exclude_layer(0),
-		  material_override(PointerRNA_NULL),
-		  use_background_shader(true),
+		: use_background_shader(true),
 		  use_background_ao(true),
 		  use_surfaces(true),
-		  use_hair(true),
-		  use_viewport_visibility(false),
-		  samples(0), bound_samples(false)
+		  use_hair(true)
 		{}
 
 		string name;
-		uint scene_layer;
-		uint layer;
-		uint holdout_layer;
-		uint exclude_layer;
-		BL::Material material_override;
+		uint view_layer;
 		bool use_background_shader;
 		bool use_background_ao;
 		bool use_surfaces;
 		bool use_hair;
-		bool use_viewport_visibility;
-		int samples;
-		bool bound_samples;
-	} render_layer;
+	} view_layer;
 
 	Progress &progress;
 };

@@ -78,31 +78,12 @@ BlenderSync::~BlenderSync()
 
 /* Sync */
 
-bool BlenderSync::sync_recalc()
+void BlenderSync::sync_recalc(BL::Depsgraph& b_depsgraph)
 {
-	/* sync recalc flags from blender to cycles. actual update is done separate,
-	 * so we can do it later on if doing it immediate is not suitable */
+	/* Sync recalc flags from blender to cycles. Actual update is done separate,
+	 * so we can do it later on if doing it immediate is not suitable. */
 
-	BL::BlendData::materials_iterator b_mat;
-	bool has_updated_objects = b_data.objects.is_updated();
-	for(b_data.materials.begin(b_mat); b_mat != b_data.materials.end(); ++b_mat) {
-		if(b_mat->is_updated() || (b_mat->node_tree() && b_mat->node_tree().is_updated())) {
-			shader_map.set_recalc(*b_mat);
-		}
-		else {
-			Shader *shader = shader_map.find(*b_mat);
-			if(has_updated_objects && shader != NULL && shader->has_object_dependency) {
-				shader_map.set_recalc(*b_mat);
-			}
-		}
-	}
-
-	BL::BlendData::lamps_iterator b_lamp;
-
-	for(b_data.lamps.begin(b_lamp); b_lamp != b_data.lamps.end(); ++b_lamp)
-		if(b_lamp->is_updated() || (b_lamp->node_tree() && b_lamp->node_tree().is_updated()))
-			shader_map.set_recalc(*b_lamp);
-
+	bool has_updated_objects = b_depsgraph.id_type_updated(BL::DriverTarget::id_type_OBJECT);
 	bool dicing_prop_changed = false;
 
 	if(experimental) {
@@ -124,83 +105,92 @@ bool BlenderSync::sync_recalc()
 		}
 	}
 
-	BL::BlendData::objects_iterator b_ob;
+	/* Iterate over all IDs in this depsgraph. */
+	BL::Depsgraph::updates_iterator b_update;
+	for(b_depsgraph.updates.begin(b_update); b_update != b_depsgraph.updates.end(); ++b_update) {
+		BL::ID b_id(b_update->id());
 
-	for(b_data.objects.begin(b_ob); b_ob != b_data.objects.end(); ++b_ob) {
-		if(b_ob->is_updated()) {
-			object_map.set_recalc(*b_ob);
-			light_map.set_recalc(*b_ob);
+		/* Material */
+		if(b_id.is_a(&RNA_Material)) {
+			BL::Material b_mat(b_id);
+			shader_map.set_recalc(b_mat);
 		}
+		/* Light */
+		else if(b_id.is_a(&RNA_Light)) {
+			BL::Light b_light(b_id);
+			shader_map.set_recalc(b_light);
+		}
+		/* Object */
+		else if(b_id.is_a(&RNA_Object)) {
+			BL::Object b_ob(b_id);
+			const bool updated_geometry = b_update->is_updated_geometry();
 
-		if(object_is_mesh(*b_ob)) {
-			if(b_ob->is_updated_data() || b_ob->data().is_updated() ||
-			   (dicing_prop_changed && object_subdivision_type(*b_ob, preview, experimental) != Mesh::SUBDIVISION_NONE))
-			{
-				BL::ID key = BKE_object_is_modified(*b_ob)? *b_ob: b_ob->data();
-				mesh_map.set_recalc(key);
+			if(b_update->is_updated_transform()) {
+				object_map.set_recalc(b_ob);
+				light_map.set_recalc(b_ob);
 			}
-		}
-		else if(object_is_light(*b_ob)) {
-			if(b_ob->is_updated_data() || b_ob->data().is_updated())
-				light_map.set_recalc(*b_ob);
-		}
 
-		if(b_ob->is_updated_data()) {
-			BL::Object::particle_systems_iterator b_psys;
-			for(b_ob->particle_systems.begin(b_psys); b_psys != b_ob->particle_systems.end(); ++b_psys)
-				particle_system_map.set_recalc(*b_ob);
-		}
-	}
-
-	BL::BlendData::meshes_iterator b_mesh;
-
-	for(b_data.meshes.begin(b_mesh); b_mesh != b_data.meshes.end(); ++b_mesh) {
-		if(b_mesh->is_updated()) {
-			mesh_map.set_recalc(*b_mesh);
-		}
-	}
-
-	BL::BlendData::worlds_iterator b_world;
-
-	for(b_data.worlds.begin(b_world); b_world != b_data.worlds.end(); ++b_world) {
-		if(world_map == b_world->ptr.data) {
-			if(b_world->is_updated() ||
-			   (b_world->node_tree() && b_world->node_tree().is_updated()))
-			{
-				world_recalc = true;
-			}
-			else if(b_world->node_tree() && b_world->use_nodes()) {
-				Shader *shader = scene->default_background;
-				if(has_updated_objects && shader->has_object_dependency) {
-					world_recalc = true;
+			if(object_is_mesh(b_ob)) {
+				if(updated_geometry ||
+				   (dicing_prop_changed && object_subdivision_type(b_ob, preview, experimental) != Mesh::SUBDIVISION_NONE))
+				{
+					BL::ID key = BKE_object_is_modified(b_ob)? b_ob: b_ob.data();
+					mesh_map.set_recalc(key);
 				}
 			}
+			else if(object_is_light(b_ob)) {
+				if(updated_geometry) {
+					light_map.set_recalc(b_ob);
+				}
+			}
+
+			if(updated_geometry) {
+				BL::Object::particle_systems_iterator b_psys;
+				for(b_ob.particle_systems.begin(b_psys); b_psys != b_ob.particle_systems.end(); ++b_psys)
+					particle_system_map.set_recalc(b_ob);
+			}
+		}
+		/* Mesh */
+		else if(b_id.is_a(&RNA_Mesh)) {
+			BL::Mesh b_mesh(b_id);
+			mesh_map.set_recalc(b_mesh);
+		}
+		/* World */
+		else if(b_id.is_a(&RNA_World)) {
+			BL::World b_world(b_id);
+			if(world_map == b_world.ptr.data) {
+				world_recalc = true;
+			}
 		}
 	}
 
-	bool recalc =
-		shader_map.has_recalc() ||
-		object_map.has_recalc() ||
-		light_map.has_recalc() ||
-		mesh_map.has_recalc() ||
-		particle_system_map.has_recalc() ||
-		BlendDataObjects_is_updated_get(&b_data.ptr) ||
-		world_recalc;
+	/* Updates shader with object dependency if objects changed. */
+	if(has_updated_objects) {
+		if(scene->default_background->has_object_dependency) {
+			world_recalc = true;
+		}
 
-	return recalc;
+		foreach(Shader *shader, scene->shaders) {
+			if(shader->has_object_dependency) {
+				shader->need_sync_object = true;
+			}
+		}
+	}
 }
 
 void BlenderSync::sync_data(BL::RenderSettings& b_render,
+                            BL::Depsgraph& b_depsgraph,
                             BL::SpaceView3D& b_v3d,
                             BL::Object& b_override,
                             int width, int height,
-                            void **python_thread_state,
-                            const char *layer)
+                            void **python_thread_state)
 {
-	sync_render_layers(b_v3d, layer);
+	BL::ViewLayer b_view_layer = b_depsgraph.view_layer_eval();
+
+	sync_view_layer(b_v3d, b_view_layer);
 	sync_integrator();
 	sync_film();
-	sync_shaders();
+	sync_shaders(b_depsgraph);
 	sync_images();
 	sync_curve_settings();
 
@@ -210,14 +200,17 @@ void BlenderSync::sync_data(BL::RenderSettings& b_render,
 	   scene->need_motion() == Scene::MOTION_NONE ||
 	   scene->camera->motion_position == Camera::MOTION_POSITION_CENTER)
 	{
-		sync_objects();
+		sync_objects(b_depsgraph);
 	}
 	sync_motion(b_render,
+	            b_depsgraph,
 	            b_override,
 	            width, height,
 	            python_thread_state);
 
 	mesh_synced.clear();
+
+	free_data_after_sync(b_depsgraph);
 }
 
 /* Integrator */
@@ -371,75 +364,14 @@ void BlenderSync::sync_film()
 
 /* Render Layer */
 
-void BlenderSync::sync_render_layers(BL::SpaceView3D& b_v3d, const char *layer)
+void BlenderSync::sync_view_layer(BL::SpaceView3D& /*b_v3d*/, BL::ViewLayer& b_view_layer)
 {
-	PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
-	string layername;
-
-	/* 3d view */
-	if(b_v3d) {
-		if(RNA_boolean_get(&cscene, "preview_active_layer")) {
-			BL::RenderLayers layers(b_scene.render().ptr);
-			layername = layers.active().name();
-			layer = layername.c_str();
-		}
-		else {
-			render_layer.scene_layer = get_layer(b_v3d.layers(), b_v3d.layers_local_view());
-			render_layer.layer = render_layer.scene_layer;
-			render_layer.exclude_layer = 0;
-			render_layer.holdout_layer = 0;
-			render_layer.material_override = PointerRNA_NULL;
-			render_layer.use_background_shader = true;
-			render_layer.use_background_ao = true;
-			render_layer.use_hair = true;
-			render_layer.use_surfaces = true;
-			render_layer.use_viewport_visibility = true;
-			render_layer.samples = 0;
-			render_layer.bound_samples = false;
-			return;
-		}
-	}
-
 	/* render layer */
-	BL::RenderSettings r = b_scene.render();
-	BL::RenderSettings::layers_iterator b_rlay;
-	int use_layer_samples = get_enum(cscene, "use_layer_samples");
-	bool first_layer = true;
-	uint layer_override = get_layer(b_engine.layer_override());
-	uint scene_layers = layer_override ? layer_override : get_layer(b_scene.layers());
-
-	for(r.layers.begin(b_rlay); b_rlay != r.layers.end(); ++b_rlay) {
-		if((!layer && first_layer) || (layer && b_rlay->name() == layer)) {
-			render_layer.name = b_rlay->name();
-
-			render_layer.holdout_layer = get_layer(b_rlay->layers_zmask());
-			render_layer.exclude_layer = get_layer(b_rlay->layers_exclude());
-
-			render_layer.scene_layer = scene_layers & ~render_layer.exclude_layer;
-			render_layer.scene_layer |= render_layer.exclude_layer & render_layer.holdout_layer;
-
-			render_layer.layer = get_layer(b_rlay->layers());
-			render_layer.layer |= render_layer.holdout_layer;
-
-			render_layer.material_override = b_rlay->material_override();
-			render_layer.use_background_shader = b_rlay->use_sky();
-			render_layer.use_background_ao = b_rlay->use_ao();
-			render_layer.use_surfaces = b_rlay->use_solid();
-			render_layer.use_hair = b_rlay->use_strand();
-			render_layer.use_viewport_visibility = false;
-
-			render_layer.bound_samples = (use_layer_samples == 1);
-			if(use_layer_samples != 2) {
-				int samples = b_rlay->samples();
-				if(get_boolean(cscene, "use_square_samples"))
-					render_layer.samples = samples * samples;
-				else
-					render_layer.samples = samples;
-			}
-		}
-
-		first_layer = false;
-	}
+	view_layer.name = b_view_layer.name();
+	view_layer.use_background_shader = b_view_layer.use_sky();
+	view_layer.use_background_ao = b_view_layer.use_ao();
+	view_layer.use_surfaces = b_view_layer.use_solid();
+	view_layer.use_hair = b_view_layer.use_strand();
 }
 
 /* Images */
@@ -555,7 +487,7 @@ int BlenderSync::get_denoising_pass(BL::RenderPass& b_pass)
 }
 
 vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
-                                             BL::SceneRenderLayer& b_srlay,
+                                             BL::ViewLayer& b_view_layer,
                                              const SessionParams &session_params)
 {
 	vector<Pass> passes;
@@ -578,7 +510,7 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 			Pass::add(pass_type, passes);
 	}
 
-	PointerRNA crp = RNA_pointer_get(&b_srlay.ptr, "cycles");
+	PointerRNA crp = RNA_pointer_get(&b_view_layer.ptr, "cycles");
 	bool use_denoising = get_boolean(crp, "use_denoising");
 	bool store_denoising_passes = get_boolean(crp, "denoising_store_passes");
 	scene->film->denoising_flags = 0;
@@ -593,52 +525,52 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 		MAP_OPTION("denoising_subsurface_direct",     DENOISING_CLEAN_SUBSURFACE_DIR);
 		MAP_OPTION("denoising_subsurface_indirect",   DENOISING_CLEAN_SUBSURFACE_IND);
 #undef MAP_OPTION
-		b_engine.add_pass("Noisy Image", 4, "RGBA", b_srlay.name().c_str());
+		b_engine.add_pass("Noisy Image", 4, "RGBA", b_view_layer.name().c_str());
 	}
 
 	if(store_denoising_passes) {
-		b_engine.add_pass("Denoising Normal",          3, "XYZ", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Normal Variance", 3, "XYZ", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Albedo",          3, "RGB", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Albedo Variance", 3, "RGB", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Depth",           1, "Z",   b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Depth Variance",  1, "Z",   b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Shadow A",        3, "XYV", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Shadow B",        3, "XYV", b_srlay.name().c_str());
-		b_engine.add_pass("Denoising Image Variance",  3, "RGB", b_srlay.name().c_str());
+		b_engine.add_pass("Denoising Normal",          3, "XYZ", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Normal Variance", 3, "XYZ", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Albedo",          3, "RGB", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Albedo Variance", 3, "RGB", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Depth",           1, "Z",   b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Depth Variance",  1, "Z",   b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Shadow A",        3, "XYV", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Shadow B",        3, "XYV", b_view_layer.name().c_str());
+		b_engine.add_pass("Denoising Image Variance",  3, "RGB", b_view_layer.name().c_str());
 
 		if(scene->film->denoising_flags & DENOISING_CLEAN_ALL_PASSES) {
-			b_engine.add_pass("Denoising Clean",   3, "RGB", b_srlay.name().c_str());
+			b_engine.add_pass("Denoising Clean",   3, "RGB", b_view_layer.name().c_str());
 		}
 	}
 #ifdef __KERNEL_DEBUG__
 	if(get_boolean(crp, "pass_debug_bvh_traversed_nodes")) {
-		b_engine.add_pass("Debug BVH Traversed Nodes", 1, "X", b_srlay.name().c_str());
+		b_engine.add_pass("Debug BVH Traversed Nodes", 1, "X", b_view_layer.name().c_str());
 		Pass::add(PASS_BVH_TRAVERSED_NODES, passes);
 	}
 	if(get_boolean(crp, "pass_debug_bvh_traversed_instances")) {
-		b_engine.add_pass("Debug BVH Traversed Instances", 1, "X", b_srlay.name().c_str());
+		b_engine.add_pass("Debug BVH Traversed Instances", 1, "X", b_view_layer.name().c_str());
 		Pass::add(PASS_BVH_TRAVERSED_INSTANCES, passes);
 	}
 	if(get_boolean(crp, "pass_debug_bvh_intersections")) {
-		b_engine.add_pass("Debug BVH Intersections", 1, "X", b_srlay.name().c_str());
+		b_engine.add_pass("Debug BVH Intersections", 1, "X", b_view_layer.name().c_str());
 		Pass::add(PASS_BVH_INTERSECTIONS, passes);
 	}
 	if(get_boolean(crp, "pass_debug_ray_bounces")) {
-		b_engine.add_pass("Debug Ray Bounces", 1, "X", b_srlay.name().c_str());
+		b_engine.add_pass("Debug Ray Bounces", 1, "X", b_view_layer.name().c_str());
 		Pass::add(PASS_RAY_BOUNCES, passes);
 	}
 #endif
 	if(get_boolean(crp, "pass_debug_render_time")) {
-		b_engine.add_pass("Debug Render Time", 1, "X", b_srlay.name().c_str());
+		b_engine.add_pass("Debug Render Time", 1, "X", b_view_layer.name().c_str());
 		Pass::add(PASS_RENDER_TIME, passes);
 	}
 	if(get_boolean(crp, "use_pass_volume_direct")) {
-		b_engine.add_pass("VolumeDir", 3, "RGB", b_srlay.name().c_str());
+		b_engine.add_pass("VolumeDir", 3, "RGB", b_view_layer.name().c_str());
 		Pass::add(PASS_VOLUME_DIRECT, passes);
 	}
 	if(get_boolean(crp, "use_pass_volume_indirect")) {
-		b_engine.add_pass("VolumeInd", 3, "RGB", b_srlay.name().c_str());
+		b_engine.add_pass("VolumeInd", 3, "RGB", b_view_layer.name().c_str());
 		Pass::add(PASS_VOLUME_INDIRECT, passes);
 	}
 
@@ -650,7 +582,7 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 	if(get_boolean(crp, "use_pass_crypto_object")) {
 		for(int i = 0; i < crypto_depth; ++i) {
 			string passname = cryptomatte_prefix + string_printf("Object%02d", i);
-			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_srlay.name().c_str());
+			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
 			Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
 		}
 		scene->film->cryptomatte_passes = (CryptomatteType)(scene->film->cryptomatte_passes | CRYPT_OBJECT);
@@ -658,7 +590,7 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 	if(get_boolean(crp, "use_pass_crypto_material")) {
 		for(int i = 0; i < crypto_depth; ++i) {
 			string passname = cryptomatte_prefix + string_printf("Material%02d", i);
-			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_srlay.name().c_str());
+			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
 			Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
 		}
 		scene->film->cryptomatte_passes = (CryptomatteType)(scene->film->cryptomatte_passes | CRYPT_MATERIAL);
@@ -666,7 +598,7 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 	if(get_boolean(crp, "use_pass_crypto_asset")) {
 		for(int i = 0; i < crypto_depth; ++i) {
 			string passname = cryptomatte_prefix + string_printf("Asset%02d", i);
-			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_srlay.name().c_str());
+			b_engine.add_pass(passname.c_str(), 4, "RGBA", b_view_layer.name().c_str());
 			Pass::add(PASS_CRYPTOMATTE, passes, passname.c_str());
 		}
 		scene->film->cryptomatte_passes = (CryptomatteType)(scene->film->cryptomatte_passes | CRYPT_ASSET);
@@ -676,6 +608,30 @@ vector<Pass> BlenderSync::sync_render_passes(BL::RenderLayer& b_rlay,
 	}
 
 	return passes;
+}
+
+void BlenderSync::free_data_after_sync(BL::Depsgraph& b_depsgraph)
+{
+	/* When viewport display is not needed during render we can force some
+	 * caches to be releases from blender side in order to reduce peak memory
+	 * footprint during synchronization process.
+	 */
+	const bool is_interface_locked = b_engine.render() &&
+	                                 b_engine.render().use_lock_interface();
+	const bool can_free_caches = BlenderSession::headless || is_interface_locked;
+	if(!can_free_caches) {
+		return;
+	}
+	/* TODO(sergey): We can actually remove the whole dependency graph,
+	 * but that will need some API support first.
+	 */
+	BL::Depsgraph::objects_iterator b_ob;
+	for(b_depsgraph.objects.begin(b_ob);
+	    b_ob != b_depsgraph.objects.end();
+	    ++b_ob)
+	{
+		b_ob->cache_release();
+	}
 }
 
 /* Scene Parameters */
@@ -908,13 +864,14 @@ SessionParams BlenderSync::get_session_params(BL::RenderEngine& b_engine,
 	params.text_timeout = (double)get_float(cscene, "debug_text_timeout");
 
 	/* progressive refine */
-	params.progressive_refine = get_boolean(cscene, "use_progressive_refine") &&
+	params.progressive_refine = (b_engine.is_preview() ||
+	                             get_boolean(cscene, "use_progressive_refine")) &&
 	                            !b_r.use_save_buffers();
 
 	if(params.progressive_refine) {
-		BL::RenderSettings::layers_iterator b_rlay;
-		for(b_r.layers.begin(b_rlay); b_rlay != b_r.layers.end(); ++b_rlay) {
-			PointerRNA crl = RNA_pointer_get(&b_rlay->ptr, "cycles");
+		BL::Scene::view_layers_iterator b_view_layer;
+		for(b_scene.view_layers.begin(b_view_layer); b_view_layer != b_scene.view_layers.end(); ++b_view_layer) {
+			PointerRNA crl = RNA_pointer_get(&b_view_layer->ptr, "cycles");
 			if(get_boolean(crl, "use_denoising")) {
 				params.progressive_refine = false;
 			}
@@ -942,17 +899,7 @@ SessionParams BlenderSync::get_session_params(BL::RenderEngine& b_engine,
 		params.shadingsystem = SHADINGSYSTEM_OSL;
 
 	/* color managagement */
-#ifdef GLEW_MX
-	/* When using GLEW MX we need to check whether we've got an OpenGL
-	 * context for current window. This is because command line rendering
-	 * doesn't have OpenGL context actually.
-	 */
-	if(glewGetContext() != NULL)
-#endif
-	{
-		params.display_buffer_linear = GLEW_ARB_half_float_pixel &&
-		                               b_engine.support_display_space_shader(b_scene);
-	}
+	params.display_buffer_linear = b_engine.support_display_space_shader(b_scene);
 
 	if(b_engine.is_preview()) {
 		/* For preview rendering we're using same timeout as

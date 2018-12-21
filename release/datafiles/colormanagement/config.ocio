@@ -34,7 +34,7 @@ roles:
   default_sequencer: sRGB
 
   # Color spaces for color picking and texture painting (not internally supported yet)
-  color_picking: Raw
+  color_picking: sRGB
   texture_paint: Raw
 
   # Non-color data
@@ -70,7 +70,7 @@ displays:
     - !<View> {name: Default, colorspace: Raw}
 
 active_displays: [sRGB, DCIP3, Rec709, XYZ, None]
-active_views: [Default, RRT, Raw, Log]
+active_views: [Filmic, Default, RRT, Raw, Log]
 
 colorspaces:
   - !<ColorSpace>

@@ -22,10 +22,12 @@ set(INC
 	../include
 	../../blenkernel
 	../../blenlib
+	../../depsgraph
 	../../makesdna
 	../../makesrna
 	../../render/extern/include
 	../../windowmanager
+	../../../../intern/clog
 	../../../../intern/guardedalloc
 )
 

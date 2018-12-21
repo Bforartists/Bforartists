@@ -296,11 +296,11 @@ def menu_func_help(self, context):
 def register():
     bpy.utils.register_class(WM_OT_keyboardlayout)
 
-    bpy.types.INFO_MT_help.append(menu_func_help)
+    bpy.types.TOPBAR_MT_help.append(menu_func_help)
 
 
 def unregister():
-    bpy.types.INFO_MT_help.remove(menu_func_help)
+    bpy.types.TOPBAR_MT_help.remove(menu_func_help)
 
     bpy.utils.unregister_class(WM_OT_keyboardlayout)
 

@@ -123,7 +123,7 @@ class MRenderJob(netrender.model.RenderJob):
             self.chunks = info_map["chunks"]
 
     def testStart(self):
-        # Don't test files for versionned jobs
+        # Don't test files for versioned jobs
         if not self.version_info:
             for f in self.files:
                 if not f.test():
@@ -1193,4 +1193,3 @@ def runMaster(address, broadcast, clear, force, path, update_stats, test_break,u
         clearMaster(httpd.path)
     else:
         saveMaster(path, httpd)
-

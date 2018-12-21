@@ -176,6 +176,7 @@ def read(filepath):
                     else:
                         texture = tokens[2]
                 continue
+
             elif tokens[0] == b'obj_info':
                 continue
             elif tokens[0] == b'format':
@@ -222,9 +223,9 @@ import bpy
 
 def load_ply_mesh(filepath, ply_name):
     from bpy_extras.io_utils import unpack_face_list
-    # from bpy_extras.image_utils import load_image  # UNUSED
 
     obj_spec, obj, texture = read(filepath)
+    # XXX28: use texture
     if obj is None:
         print('Invalid file')
         return
@@ -262,9 +263,9 @@ def load_ply_mesh(filepath, ply_name):
     def add_face(vertices, indices, uvindices, colindices):
         mesh_faces.append(indices)
         if uvindices:
-            mesh_uvs.append([(vertices[index][uvindices[0]], vertices[index][uvindices[1]]) for index in indices])
+            mesh_uvs.extend([(vertices[index][uvindices[0]], vertices[index][uvindices[1]]) for index in indices])
         if colindices:
-            mesh_colors.append([(vertices[index][colindices[0]] * colmultiply[0],
+            mesh_colors.extend([(vertices[index][colindices[0]] * colmultiply[0],
                                  vertices[index][colindices[1]] * colmultiply[1],
                                  vertices[index][colindices[2]] * colmultiply[2],
                                  vertices[index][colindices[3]] * colmultiply[3],
@@ -316,41 +317,45 @@ def load_ply_mesh(filepath, ply_name):
         mesh.edges.foreach_set("vertices", [a for e in obj[b'edge'] for a in (e[eindex1], e[eindex2])])
 
     if mesh_faces:
-        mesh.tessfaces.add(len(mesh_faces))
-        mesh.tessfaces.foreach_set("vertices_raw", unpack_face_list(mesh_faces))
+        loops_vert_idx = []
+        faces_loop_start = []
+        faces_loop_total = []
+        lidx = 0
+        for f in mesh_faces:
+            nbr_vidx = len(f)
+            loops_vert_idx.extend(f)
+            faces_loop_start.append(lidx)
+            faces_loop_total.append(nbr_vidx)
+            lidx += nbr_vidx
 
-        if uvindices or colindices:
-            if uvindices:
-                uvlay = mesh.tessface_uv_textures.new()
-            if colindices:
-                vcol_lay = mesh.tessface_vertex_colors.new()
+        mesh.loops.add(len(loops_vert_idx))
+        mesh.polygons.add(len(mesh_faces))
 
-            if uvindices:
-                for i, f in enumerate(uvlay.data):
-                    ply_uv = mesh_uvs[i]
-                    for j, uv in enumerate(f.uv):
-                        uv[0], uv[1] = ply_uv[j]
+        mesh.loops.foreach_set("vertex_index", loops_vert_idx)
+        mesh.polygons.foreach_set("loop_start", faces_loop_start)
+        mesh.polygons.foreach_set("loop_total", faces_loop_total)
 
-            if colindices:
-                for i, f in enumerate(vcol_lay.data):
-                    # XXX, colors dont come in right, needs further investigation.
-                    ply_col = mesh_colors[i]
-                    if len(ply_col) == 4:
-                        f_col = f.color1, f.color2, f.color3, f.color4
-                    else:
-                        f_col = f.color1, f.color2, f.color3
+        if uvindices:
+            uv_layer = mesh.uv_layers.new()
+            for i, uv in enumerate(uv_layer.data):
+                uv.uv = mesh_uvs[i]
 
-                    for j, col in enumerate(f_col):
-                        col[0] = ply_col[j][0]
-                        col[1] = ply_col[j][1]
-                        col[2] = ply_col[j][2]
-                        col[3] = ply_col[j][3]
+        if colindices:
+            vcol_lay = mesh.vertex_colors.new()
 
-    mesh.validate()
+            for i, col in enumerate(vcol_lay.data):
+                col.color[0] = mesh_colors[i][0]
+                col.color[1] = mesh_colors[i][1]
+                col.color[2] = mesh_colors[i][2]
+                col.color[3] = mesh_colors[i][3]
+
     mesh.update()
+    mesh.validate()
 
     if texture and uvindices:
-
+        pass
+        # XXX28: add support for using texture.
+        '''
         import os
         import sys
         from bpy_extras.image_utils import load_image
@@ -375,6 +380,7 @@ def load_ply_mesh(filepath, ply_name):
             mesh.materials.append(material)
             for face in mesh.uv_textures[0].data:
                 face.image = image
+        '''
 
     return mesh
 
@@ -389,12 +395,10 @@ def load_ply(filepath):
     if not mesh:
         return {'CANCELLED'}
 
-    scn = bpy.context.scene
-
     obj = bpy.data.objects.new(ply_name, mesh)
-    scn.objects.link(obj)
-    scn.objects.active = obj
-    obj.select = True
+    bpy.context.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
 
     print('\nSuccessfully imported %r in %.3f sec' % (filepath, time.time() - t))
     return {'FINISHED'}

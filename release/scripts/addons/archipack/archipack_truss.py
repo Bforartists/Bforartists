@@ -43,7 +43,7 @@ def update(self, context):
 
 
 class archipack_truss(ArchipackObject, Manipulable, PropertyGroup):
-    truss_type = EnumProperty(
+    truss_type : EnumProperty(
             name="Type",
             items=(
                 ('1', 'Prolyte E20', 'Prolyte E20', 0),
@@ -57,40 +57,40 @@ class archipack_truss(ArchipackObject, Manipulable, PropertyGroup):
             default='2',
             update=update
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name="Height",
             default=2.0, min=0.01,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    segs = IntProperty(
+    segs : IntProperty(
             name="Segs",
             default=6, min=3,
             update=update
             )
-    master_segs = IntProperty(
+    master_segs : IntProperty(
             name="Master Segs",
             default=1, min=1,
             update=update
             )
-    master_count = IntProperty(
+    master_count : IntProperty(
             name="Masters",
             default=3, min=2,
             update=update
             )
-    entre_axe = FloatProperty(
+    entre_axe : FloatProperty(
             name="Distance",
             default=0.239, min=0.001,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    master_radius = FloatProperty(
+    master_radius : FloatProperty(
             name="Radius",
             default=0.02415, min=0.0001,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    slaves_radius = FloatProperty(
+    slaves_radius : FloatProperty(
             name="Subs radius",
             default=0.01, min=0.0001,
             unit='LENGTH', subtype='DISTANCE',
@@ -101,7 +101,7 @@ class archipack_truss(ArchipackObject, Manipulable, PropertyGroup):
     # .auto_update = False
     # bulk changes
     # .auto_update = True
-    auto_update = BoolProperty(
+    auto_update : BoolProperty(
             options={'SKIP_SAVE'},
             default=True,
             update=update
@@ -127,10 +127,10 @@ class archipack_truss(ArchipackObject, Manipulable, PropertyGroup):
 
         if not add:
             for seg in range(segs):
-                verts.append(tM * tMb * tmpverts[seg])
+                verts.append(tM @ tMb @ tmpverts[seg])
 
         for seg in range(segs):
-            verts.append(tM * tMt * tmpverts[seg])
+            verts.append(tM @ tMt @ tmpverts[seg])
 
         for seg in range(segs - 1):
             f = cv + seg
@@ -280,7 +280,7 @@ class ARCHIPACK_PT_truss(Panel):
     bl_label = "Truss"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -292,7 +292,7 @@ class ARCHIPACK_PT_truss(Panel):
             return
         layout = self.layout
         row = layout.row(align=True)
-        row.operator('archipack.truss_manipulate', icon='HAND')
+        row.operator('archipack.truss_manipulate', icon='VIEW_PAN')
         box = layout.box()
         box.prop(prop, 'truss_type')
         box.prop(prop, 'z')
@@ -318,9 +318,9 @@ class ARCHIPACK_OT_truss(ArchipackCreateTool, Operator):
         d = m.archipack_truss.add()
         # make manipulators selectable
         # d.manipulable_selectable = True
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         self.load_preset(d)
         self.add_material(o)
         m.auto_smooth_angle = 1.15
@@ -334,8 +334,8 @@ class ARCHIPACK_OT_truss(ArchipackCreateTool, Operator):
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
             o.location = bpy.context.scene.cursor_location
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             self.manipulate()
             return {'FINISHED'}
         else:

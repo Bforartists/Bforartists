@@ -295,7 +295,7 @@ class SpiroFitSpline(Operator):
         col.prop(self, "spire_resolution")
         row = col.row(align=True).split(0.9, align=True)
         row.prop(self, "spires")
-        row.prop(self, "direction", toggle=True, text="", icon="ARROW_LEFTRIGHT")
+        row.prop(self, "direction", toggle=True, text="", icon='ARROW_LEFTRIGHT')
         col.prop(self, "offset")
         col.prop(self, "waves")
         col.prop(self, "wave_iscale")
@@ -933,7 +933,7 @@ def add_curve_object(
     bpy.context.scene.objects.active = cur
     cur.select = True
     if x_ray is True:
-        cur.show_x_ray = x_ray
+        cur.show_in_front = x_ray
     return
 
 

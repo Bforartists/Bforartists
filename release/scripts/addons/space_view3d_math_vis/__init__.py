@@ -22,7 +22,7 @@ bl_info = {
     "name": "Math Vis (Console)",
     "author": "Campbell Barton",
     "version": (0, 2, 1),
-    "blender": (2, 57, 0),
+    "blender": (2, 80, 0),
     "location": "Properties: Scene > Math Vis Console and Python Console: Menu",
     "description": "Display console defined mathutils variables in the 3D view",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -74,7 +74,7 @@ class PanelConsoleVars(Panel):
         if len(state_props) == 0:
             box = layout.box()
             col = box.column(align=True)
-            col.label("No vars to display")
+            col.label(text="No vars to display")
         else:
             layout.template_list(
                 'MathVisVarList',
@@ -98,7 +98,7 @@ class DeleteVar(Operator):
     bl_description = "Remove the variable from the Console"
     bl_options = {'REGISTER'}
 
-    key = StringProperty(name="Key")
+    key: StringProperty(name="Key")
 
     def execute(self, context):
         locals = utils.console_namespace()
@@ -114,7 +114,7 @@ class ToggleDisplay(Operator):
     bl_description = "Change the display state of the var"
     bl_options = {'REGISTER'}
 
-    key = StringProperty(name="Key")
+    key: StringProperty(name="Key")
 
     def execute(self, context):
         utils.VarStates.toggle_display_state(self.key)
@@ -128,7 +128,7 @@ class ToggleLock(Operator):
     bl_description = "Lock the var from being deleted"
     bl_options = {'REGISTER'}
 
-    key = StringProperty(name="Key")
+    key: StringProperty(name="Key")
 
     def execute(self, context):
         utils.VarStates.toggle_lock_state(self.key)
@@ -177,8 +177,8 @@ def call_console_hook(self, context):
 
 
 class MathVisStateProp(PropertyGroup):
-    ktype = StringProperty()
-    state = BoolVectorProperty(default=(False, False), size=2)
+    ktype: StringProperty()
+    state: BoolVectorProperty(default=(False, False), size=2)
 
 
 class MathVisVarList(UIList):
@@ -219,22 +219,22 @@ class MathVisVarList(UIList):
 
 class MathVis(PropertyGroup):
 
-    index = IntProperty(
+    index: IntProperty(
         name="index"
     )
-    bbox_hide = BoolProperty(
+    bbox_hide: BoolProperty(
         name="Hide BBoxes",
         default=False,
         description="Hide the bounding boxes rendered for Matrix like items",
         update=call_console_hook
     )
-    name_hide = BoolProperty(
+    name_hide: BoolProperty(
         name="Hide Names",
         default=False,
         description="Hide the names of the rendered items",
         update=call_console_hook
     )
-    bbox_scale = FloatProperty(
+    bbox_scale: FloatProperty(
         name="Scale factor",
         min=0, default=1,
         description="Resize the Bounding Box and the coordinate "

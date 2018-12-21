@@ -123,4 +123,3 @@ class CMUMocapLib(bpy.types.AddonPreferences):
         layout.prop(self, "local_storage")
         layout.prop(self, "follow_structure")
         layout.prop(self, "automatically_import")
-

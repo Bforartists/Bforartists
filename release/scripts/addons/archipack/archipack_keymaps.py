@@ -24,6 +24,7 @@
 # Author: Stephen Leger (s-leger)
 #
 # ----------------------------------------------------------
+import bpy
 
 
 class Keymaps:
@@ -51,7 +52,9 @@ class Keymaps:
         """
         # provide abstration between user and addon
         # with different select mouse side
-        mouse_right = context.user_preferences.inputs.select_mouse
+        wm = context.window_manager
+        keyconfig = wm.keyconfigs.active
+        mouse_right = getattr(keyconfig.preferences, "select_mouse", "LEFT")
         if mouse_right == 'LEFT':
             mouse_left = 'RIGHT'
             mouse_right_side = 'Left'
@@ -79,6 +82,10 @@ class Keymaps:
             event: simple event signature to compare  like :
               if event == keymap.undo.event:
         """
+        # Headless mode fails without this check
+        if bpy.app.background:
+            return {'type': None, 'event':(False, False, False, False, None, None)}
+
         ev = context.window_manager.keyconfigs.user.keymaps[keyconfig].keymap_items[keymap_item]
         key = ev.type
         if ev.ctrl:
@@ -89,9 +96,10 @@ class Keymaps:
             key += '+SHIFT'
         return {'type': key, 'name': ev.name, 'event': (ev.alt, ev.ctrl, ev.shift, ev.type, ev.value)}
 
+
     def dump_keys(self, context, filename="c:\\tmp\\keymap.txt"):
         """
-            Utility for developpers :
+            Utility for developers :
             Dump all keymaps to a file
             filename : string a file path to dump keymaps
         """

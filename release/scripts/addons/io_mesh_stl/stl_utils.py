@@ -264,7 +264,7 @@ def read_stl(filepath):
 
         for nor, pt in gen(data):
             # Add the triangle and the point.
-            # If the point is allready in the list of points, the
+            # If the point is already in the list of points, the
             # index returned by pts.add() will be the one from the
             # first equal point inserted.
             tris.append([pts.add(p) for p in pt])

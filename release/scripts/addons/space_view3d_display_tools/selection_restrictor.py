@@ -45,7 +45,7 @@ curve = 'OUTLINER_OB_CURVE'
 arm = 'OUTLINER_OB_ARMATURE'
 empty = 'OUTLINER_OB_EMPTY'
 cam = 'OUTLINER_OB_CAMERA'
-lamp = 'OUTLINER_OB_LAMP'
+lamp = 'OUTLINER_OB_LIGHT'
 lat = 'OUTLINER_OB_LATTICE'
 font = 'OUTLINER_OB_FONT'
 meta = 'OUTLINER_OB_META'
@@ -135,10 +135,10 @@ def check_restrictors(dummy):
     # lamp
     if bpy.context.scene.get('lamprestrictor') is None:
         lamprestrictorenabled = True
-        lamp = 'OUTLINER_OB_LAMP'
+        lamp = 'OUTLINER_OB_LIGHT'
     else:
         lamprestrictorenabled = False
-        lamp = 'LAMP_DATA'
+        lamp = 'LIGHT_DATA'
 
     # lattice
     if bpy.context.scene.get('latrestrictor') is None:
@@ -408,7 +408,7 @@ class RestrictorCam(Operator):
 # Restrictor for Lamps
 
 class RestrictorLamp(Operator):
-    bl_idname = "restrictor.lamp"
+    bl_idname = "restrictor.light"
     bl_label = "Restrictor Lamps"
     bl_option = {'REGISTER', 'UNDO'}
     bl_description = "Lamps selection restrictor"
@@ -421,18 +421,18 @@ class RestrictorLamp(Operator):
             lamprestrictorenabled = True
             if bpy.context.scene.get('lamprestrictor') is not None:
                 del bpy.context.scene['lamprestrictor']
-            lamp = 'OUTLINER_OB_LAMP'
+            lamp = 'OUTLINER_OB_LIGHT'
             for ob in bpy.context.scene.objects:
-                if ob.type == 'LAMP':
+                if ob.type == 'LIGHT':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = False
 
         else:
             lamprestrictorenabled = False
             bpy.context.scene['lamprestrictor'] = 1
-            lamp = 'LAMP_DATA'
+            lamp = 'LIGHT_DATA'
             for ob in bpy.context.scene.objects:
-                if ob.type == 'LAMP':
+                if ob.type == 'LIGHT':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
                         ob.select = False
@@ -638,7 +638,7 @@ class RefreshRestrictors(Operator):
             'armrestrictor': ("OUTLINER_OB_ARMATURE", "ARMATURE_DATA", "ARMATURE"),
             'emptyrestrictor': ("OUTLINER_OB_EMPTY", "EMPTY_DATA", "EMPTY"),
             'camrestrictor': ("OUTLINER_OB_CAMERA", "CAMERA_DATA", "CAMERA"),
-            'lamprestrictor': ("OUTLINER_OB_LAMP", "LAMP_DATA", "LAMP"),
+            'lamprestrictor': ("OUTLINER_OB_LIGHT", "LIGHT_DATA", "LIGHT"),
             'latrestrictor': ("OUTLINER_OB_LATTICE", "LATTICE", "LATTICE"),
             'fontrestrictor': ("OUTLINER_OB_FONT", "FONT", "FONT"),
             'metarestrictor': ("OUTLINER_OB_META", "META_DATA", "META"),
@@ -664,7 +664,7 @@ class RefreshRestrictors(Operator):
             arm = gl_icon if types == "ARMATURE" else arm
             empty = gl_icon if types == "EMPTY" else empty
             cam = gl_icon if types == "CAMERA" else cam
-            lamp = gl_icon if types == "LAMP" else lamp
+            lamp = gl_icon if types == "LIGHT" else lamp
             lat = gl_icon if types == "LATTICE" else lat
             font = gl_icon if types == "FONT" else font
             meta = gl_icon if types == "META" else meta
@@ -701,7 +701,7 @@ class RestrictorSelection(Menu):
         layout.operator("restrictor.arm", icon=arm, text="Armature")
         layout.operator("restrictor.empty", icon=empty, text="Empty")
         layout.operator("restrictor.cam", icon=cam, text="Camera")
-        layout.operator("restrictor.lamp", icon=lamp, text="Lamp")
+        layout.operator("restrictor.light", icon=lamp, text="Lamp")
         layout.operator("restrictor.lat", icon=lat, text="Lattice")
         layout.operator("restrictor.font", icon=font, text="Font")
         layout.operator("restrictor.meta", icon=meta, text="MetaBall")

@@ -81,7 +81,7 @@ class Override(PropertyGroup):
             row = layout.row(align=True)
             row.label(prop.name, icon='DOT')
             row.prop(prop, '["{}"]'.format(escape_identifier("value")), text="")
-        
+
         row = layout.row()
         row.operator_context = 'INVOKE_SCREEN'
         row.context_pointer_set("id_data_override", self)

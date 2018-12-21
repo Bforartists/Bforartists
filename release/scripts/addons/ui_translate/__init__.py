@@ -21,11 +21,11 @@
 bl_info = {
     "name": "Manage UI translations",
     "author": "Bastien Montagne",
-    "version": (1, 1, 4),
-    "blender": (2, 79, 0),
+    "version": (1, 1, 5),
+    "blender": (2, 80, 0),
     "location": "Main \"File\" menu, text editor, any UI control",
-    "description": "Allow to manage UI translations directly from Blender "
-        "(update main po files, update scripts' translations, etc.)",
+    "description": "Allows managing UI translations directly from Blender "
+        "(update main .po files, update scripts' translations, etc.)",
     "warning": "Still in development, not all features are fully implemented yet!",
     "wiki_url": "http://wiki.blender.org/index.php/Dev:Doc/How_to/Translate_Blender",
     "support": 'OFFICIAL',
@@ -42,15 +42,12 @@ if "bpy" in locals():
 else:
     import bpy
     from . import (
-            settings,
-            edit_translation,
-            update_svn,
-            update_addon,
-            update_ui,
-            )
-
-
-import os
+        settings,
+        edit_translation,
+        update_svn,
+        update_addon,
+        update_ui,
+    )
 
 
 classes = settings.classes + edit_translation.classes + update_svn.classes + update_addon.classes + update_ui.classes
@@ -59,18 +56,21 @@ classes = settings.classes + edit_translation.classes + update_svn.classes + upd
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
+
     bpy.types.WindowManager.i18n_update_svn_settings = \
-                    bpy.props.PointerProperty(type=update_ui.I18nUpdateTranslationSettings)
+        bpy.props.PointerProperty(type=update_ui.I18nUpdateTranslationSettings)
 
     # Init addon's preferences (unfortunately, as we are using an external storage for the properties,
     # the load/save user preferences process has no effect on them :( ).
     if __name__ in bpy.context.user_preferences.addons:
         pref = bpy.context.user_preferences.addons[__name__].preferences
+        import os
         if os.path.isfile(pref.persistent_data_path):
             pref._settings.load(pref.persistent_data_path, reset=True)
 
 
 def unregister():
-    del bpy.types.WindowManager.i18n_update_svn_settings
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+    del bpy.types.WindowManager.i18n_update_svn_settings

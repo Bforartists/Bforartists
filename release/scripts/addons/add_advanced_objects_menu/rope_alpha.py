@@ -204,7 +204,7 @@ class ClothRope(Operator):
     bl_description = ("Create a new Scene with a Cloth modifier\n"
                       "Rope Simulation with hooked Helper Objects")
 
-    ropelenght = IntProperty(
+    ropelength = IntProperty(
             name="Rope Length",
             description="Length of the generated Rope",
             default=5
@@ -249,7 +249,7 @@ class ClothRope(Operator):
         scene = bpy.context.scene
         scene.name = "Test Rope"
         seleccionar_todo()
-        longitud = self.ropelenght
+        longitud = self.ropelength
 
         # For the middle to have x segments between the first and
         # last point, must add 1 to the quantity:
@@ -333,10 +333,10 @@ class ClothRope(Operator):
         entrar_en_editmode()  # enter edit mode
         bpy.ops.object.vertex_group_add()  # Creating Master guide group
         select_all_in_edit_mode(ob)
-        bpy.ops.object.vertex_group_assign()  # and assing it
+        bpy.ops.object.vertex_group_assign()  # and assign it
         ob.vertex_groups[1].name = "Guide_rope"
 
-        # extrude the Curve so it has a minumum thickness for collide
+        # extrude the Curve so it has a minimum thickness for collide
         bpy.ops.mesh.extrude_region_move(
                 MESH_OT_extrude_region={"mirror": False},
                 TRANSFORM_OT_translate={
@@ -485,7 +485,7 @@ class ClothRope(Operator):
 
         col.label("Rope settings:")
         rowsub0 = col.row()
-        rowsub0.prop(self, "ropelenght", text="Length")
+        rowsub0.prop(self, "ropelength", text="Length")
         rowsub0.prop(self, "ropesegments", text="Segments")
         rowsub0.prop(self, "radiusrope", text="Radius")
 
@@ -502,7 +502,7 @@ class BallRope(Operator):
                       "Wrecking Ball on a rope")
 
     # defaults rope ball
-    ropelenght2 = IntProperty(
+    ropelength2 = IntProperty(
             name="Rope Length",
             description="Length of the Wrecking Ball rope",
             default=10
@@ -564,7 +564,7 @@ class BallRope(Operator):
     def execute(self, context):
         world_steps = self.worldsteps
         solver_iterations = self.solveriterations
-        longitud = self.ropelenght2
+        longitud = self.ropelength2
 
         # make a + 2, so the segments will be between the two end points...
         segmentos = self.ropesegments2 + 2
@@ -622,7 +622,7 @@ class BallRope(Operator):
             bpy.ops.rigidbody.objects_add(type='ACTIVE')
             bpy.context.object.name = "CubeLink"
             if n != 0:
-                bpy.context.object.draw_type = 'WIRE'
+                bpy.context.object.display_type = 'WIRE'
                 bpy.context.object.hide_render = True
             n += 1
             bpy.context.object.scale.z = (longitud * 2) / (segmentos * 2) - separation
@@ -800,7 +800,7 @@ class BallRope(Operator):
         rowsub0.prop(self, "hidecubes", text="Hide Link Cubes")
 
         rowsub1 = col.row(align=True)
-        rowsub1.prop(self, "ropelenght2", text="Length")
+        rowsub1.prop(self, "ropelength2", text="Length")
         rowsub1.prop(self, "ropesegments2", text="Segments")
 
         rowsub2 = col.row(align=True)

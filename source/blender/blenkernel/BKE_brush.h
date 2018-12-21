@@ -28,12 +28,17 @@
  */
 
 enum eCurveMappingPreset;
+struct bContext;
 struct Brush;
+struct Paint;
 struct ImBuf;
 struct ImagePool;
 struct Main;
 struct Scene;
+struct ToolSettings;
 struct UnifiedPaintSettings;
+struct Material;
+
 // enum eCurveMappingPreset;
 
 #include "DNA_object_enums.h"
@@ -45,14 +50,17 @@ void BKE_brush_system_exit(void);
 /* datablock functions */
 void BKE_brush_init(struct Brush *brush);
 struct Brush *BKE_brush_add(struct Main *bmain, const char *name, const eObjectMode ob_mode);
+struct Brush *BKE_brush_add_gpencil(struct Main *bmain, struct ToolSettings *ts, const char *name);
+void BKE_brush_init_gpencil_settings(struct Brush *brush);
 struct Brush *BKE_brush_first_search(struct Main *bmain, const eObjectMode ob_mode);
 void BKE_brush_copy_data(struct Main *bmain, struct Brush *brush_dst, const struct Brush *brush_src, const int flag);
 struct Brush *BKE_brush_copy(struct Main *bmain, const struct Brush *brush);
 void BKE_brush_make_local(struct Main *bmain, struct Brush *brush, const bool lib_local);
-void BKE_brush_unlink(struct Main *bmain, struct Brush *brush);
 void BKE_brush_free(struct Brush *brush);
 
 void BKE_brush_sculpt_reset(struct Brush *brush);
+void BKE_brush_gpencil_presets(struct bContext *C);
+void BKE_brush_update_material(struct Main *bmain, struct Material *ma, struct Brush *exclude_brush);
 
 /* image icon function */
 struct ImBuf *get_brush_icon(struct Brush *brush);
@@ -116,6 +124,14 @@ void BKE_brush_scale_size(
         int *r_brush_size,
         float new_unprojected_radius,
         float old_unprojected_radius);
+
+/* Accessors */
+#define BKE_brush_tool_get(brush, p) \
+	(CHECK_TYPE_ANY(brush, struct Brush *, const struct Brush *), \
+	 *(const char *)POINTER_OFFSET(brush, (p)->runtime.tool_offset))
+#define BKE_brush_tool_set(brush, p, tool) { \
+	CHECK_TYPE_ANY(brush, struct Brush *); \
+	*(char *)POINTER_OFFSET(brush, (p)->runtime.tool_offset) = tool; } ((void)0)
 
 /* debugging only */
 void BKE_brush_debug_print_state(struct Brush *br);

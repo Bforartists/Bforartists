@@ -461,6 +461,13 @@ DO_INLINE void muladd_fmatrix_fvector(float to[3], float matrix[3][3], float fro
 	to[2] += dot_v3v3(matrix[2], from);
 }
 
+DO_INLINE void muladd_fmatrixT_fvector(float to[3], float matrix[3][3], float from[3])
+{
+	to[0] += matrix[0][0] * from[0] + matrix[1][0] * from[1] + matrix[2][0] * from[2];
+	to[1] += matrix[0][1] * from[0] + matrix[1][1] * from[1] + matrix[2][1] * from[2];
+	to[2] += matrix[0][2] * from[0] + matrix[1][2] * from[1] + matrix[2][2] * from[2];
+}
+
 BLI_INLINE void outerproduct(float r[3][3], const float a[3], const float b[3])
 {
 	mul_v3_v3fl(r[0], a, b[0]);
@@ -604,7 +611,9 @@ DO_INLINE void mul_bfmatrix_lfvector(float(*to)[3], fmatrix3x3 *from, lfVector *
 #pragma omp section
 		{
 			for (i = from[0].vcount; i < from[0].vcount + from[0].scount; i++) {
-				muladd_fmatrix_fvector(to[from[i].c], from[i].m, fLongVector[from[i].r]);
+				/* This is the lower triangle of the sparse matrix,
+				 * therefore multiplication occurs with transposed submatrices. */
+				muladd_fmatrixT_fvector(to[from[i].c], from[i].m, fLongVector[from[i].r]);
 			}
 		}
 #pragma omp section
@@ -617,8 +626,6 @@ DO_INLINE void mul_bfmatrix_lfvector(float(*to)[3], fmatrix3x3 *from, lfVector *
 	add_lfvector_lfvector(to, to, temp, from[0].vcount);
 
 	del_lfvector(temp);
-
-
 }
 
 /* SPARSE SYMMETRIC sub big matrix with big matrix*/
@@ -1585,9 +1592,13 @@ BLI_INLINE void apply_spring(Implicit_Data *data, int i, int j, const float f[3]
 }
 
 bool BPH_mass_spring_force_spring_linear(Implicit_Data *data, int i, int j, float restlen,
-                                         float stiffness, float damping, bool no_compress, float clamp_force)
+                                         float stiffness_tension, float damping_tension,
+                                         float stiffness_compression, float damping_compression,
+                                         bool resist_compress, bool new_compress, float clamp_force)
 {
 	float extent[3], length, dir[3], vel[3];
+	float f[3], dfdx[3][3], dfdv[3][3];
+	float damping = 0;
 
 	// calculate elonglation
 	spring_length(data, i, j, extent, dir, &length, vel);
@@ -1595,29 +1606,41 @@ bool BPH_mass_spring_force_spring_linear(Implicit_Data *data, int i, int j, floa
 	/* This code computes not only the force, but also its derivative.
 	   Zero derivative effectively disables the spring for the implicit solver.
 	   Thus length > restlen makes cloth unconstrained at the start of simulation. */
-	if ((length >= restlen && length > 0) || no_compress) {
-		float stretch_force, f[3], dfdx[3][3], dfdv[3][3];
+	if ((length >= restlen && length > 0) || resist_compress) {
+		float stretch_force;
 
-		stretch_force = stiffness * (length - restlen);
+		damping = damping_tension;
+
+		stretch_force = stiffness_tension * (length - restlen);
 		if (clamp_force > 0.0f && stretch_force > clamp_force) {
 			stretch_force = clamp_force;
 		}
 		mul_v3_v3fl(f, dir, stretch_force);
 
-		// Ascher & Boxman, p.21: Damping only during elonglation
-		// something wrong with it...
-		madd_v3_v3fl(f, dir, damping * dot_v3v3(vel, dir));
+		dfdx_spring(dfdx, dir, length, restlen, stiffness_tension);
+	}
+	else if (new_compress) {
+		/* This is based on the Choi and Ko bending model, which works surprisingly well for compression. */
+		float kb = stiffness_compression;
+		float cb = kb; /* cb equal to kb seems to work, but a factor can be added if necessary */
 
-		dfdx_spring(dfdx, dir, length, restlen, stiffness);
-		dfdv_damp(dfdv, dir, damping);
+		damping = damping_compression;
 
-		apply_spring(data, i, j, f, dfdx, dfdv);
+		mul_v3_v3fl(f, dir, fbstar(length, restlen, kb, cb));
 
-		return true;
+		outerproduct(dfdx, dir, dir);
+		mul_m3_fl(dfdx, fbstar_jacobi(length, restlen, kb, cb));
 	}
 	else {
 		return false;
 	}
+
+	madd_v3_v3fl(f, dir, damping * dot_v3v3(vel, dir));
+	dfdv_damp(dfdv, dir, damping);
+
+	apply_spring(data, i, j, f, dfdx, dfdv);
+
+	return true;
 }
 
 /* See "Stable but Responsive Cloth" (Choi, Ko 2005) */
@@ -1648,6 +1671,114 @@ bool BPH_mass_spring_force_spring_bending(Implicit_Data *data, int i, int j, flo
 	}
 }
 
+BLI_INLINE void poly_avg(lfVector *data, int *inds, int len, float r_avg[3])
+{
+	float fact = 1.0f / (float)len;
+
+	zero_v3(r_avg);
+
+	for (int i = 0; i < len; i++) {
+		madd_v3_v3fl(r_avg, data[inds[i]], fact);
+	}
+}
+
+BLI_INLINE void poly_norm(lfVector *data, int i, int j, int *inds, int len, float r_dir[3])
+{
+	float mid[3];
+
+	poly_avg(data, inds, len, mid);
+
+	normal_tri_v3(r_dir, data[i], data[j], mid);
+}
+
+BLI_INLINE void edge_avg(lfVector *data, int i, int j, float r_avg[3])
+{
+	r_avg[0] = (data[i][0] + data[j][0]) * 0.5f;
+	r_avg[1] = (data[i][1] + data[j][1]) * 0.5f;
+	r_avg[2] = (data[i][2] + data[j][2]) * 0.5f;
+}
+
+BLI_INLINE void edge_norm(lfVector *data, int i, int j, float r_dir[3])
+{
+	sub_v3_v3v3(r_dir, data[i], data[j]);
+	normalize_v3(r_dir);
+}
+
+BLI_INLINE float bend_angle(float dir_a[3], float dir_b[3], float dir_e[3])
+{
+	float cos, sin;
+	float tmp[3];
+
+	cos = dot_v3v3(dir_a, dir_b);
+
+	cross_v3_v3v3(tmp, dir_a, dir_b);
+	sin = dot_v3v3(tmp, dir_e);
+
+	return atan2f(sin, cos);
+}
+
+BLI_INLINE void spring_angle(Implicit_Data *data, int i, int j, int *i_a, int *i_b, int len_a, int len_b,
+                             float r_dir_a[3], float r_dir_b[3],
+                             float *r_angle, float r_vel_a[3], float r_vel_b[3])
+{
+	float dir_e[3], vel_e[3];
+
+	poly_norm(data->X, j, i, i_a, len_a, r_dir_a);
+	poly_norm(data->X, i, j, i_b, len_b, r_dir_b);
+
+	edge_norm(data->X, i, j, dir_e);
+
+	*r_angle = bend_angle(r_dir_a, r_dir_b, dir_e);
+
+	poly_avg(data->V, i_a, len_a, r_vel_a);
+	poly_avg(data->V, i_b, len_b, r_vel_b);
+
+	edge_avg(data->V, i, j, vel_e);
+
+	sub_v3_v3(r_vel_a, vel_e);
+	sub_v3_v3(r_vel_b, vel_e);
+}
+
+/* Angular springs roughly based on the bending model proposed by Baraff and Witkin in "Large Steps in Cloth Simulation". */
+bool BPH_mass_spring_force_spring_angular(Implicit_Data *data, int i, int j, int *i_a, int *i_b, int len_a, int len_b,
+                                          float restang, float stiffness, float damping)
+{
+	float angle, dir_a[3], dir_b[3], vel_a[3], vel_b[3];
+	float f_a[3], f_b[3], f_e[3];
+	float force;
+	int x;
+
+	spring_angle(data, i, j, i_a, i_b, len_a, len_b,
+	             dir_a, dir_b, &angle, vel_a, vel_b);
+
+	/* spring force */
+	force = stiffness * (angle - restang);
+
+	/* damping force */
+	force += -damping * (dot_v3v3(vel_a, dir_a) + dot_v3v3(vel_b, dir_b));
+
+	mul_v3_v3fl(f_a, dir_a, force / len_a);
+	mul_v3_v3fl(f_b, dir_b, force / len_b);
+
+	for (x = 0; x < len_a; x++) {
+		add_v3_v3(data->F[i_a[x]], f_a);
+	}
+
+	for (x = 0; x < len_b; x++) {
+		add_v3_v3(data->F[i_b[x]], f_b);
+	}
+
+	mul_v3_v3fl(f_a, dir_a, force * 0.5f);
+	mul_v3_v3fl(f_b, dir_b, force * 0.5f);
+
+	add_v3_v3v3(f_e, f_a, f_b);
+
+	sub_v3_v3(data->F[i], f_e);
+	sub_v3_v3(data->F[j], f_e);
+
+	return true;
+}
+
 /* Jacobian of a direction vector.
  * Basically the part of the differential orthogonal to the direction,
  * inversely proportional to the length of the edge.
@@ -1671,11 +1802,11 @@ BLI_INLINE void spring_grad_dir(Implicit_Data *data, int i, int j, float edge[3]
 	}
 }
 
-BLI_INLINE void spring_angbend_forces(Implicit_Data *data, int i, int j, int k,
-                                      const float goal[3],
-                                      float stiffness, float damping,
-                                      int q, const float dx[3], const float dv[3],
-                                      float r_f[3])
+BLI_INLINE void spring_hairbend_forces(Implicit_Data *data, int i, int j, int k,
+                                       const float goal[3],
+                                       float stiffness, float damping,
+                                       int q, const float dx[3], const float dv[3],
+                                       float r_f[3])
 {
 	float edge_ij[3], dir_ij[3];
 	float edge_jk[3], dir_jk[3];
@@ -1720,10 +1851,10 @@ BLI_INLINE void spring_angbend_forces(Implicit_Data *data, int i, int j, int k,
 }
 
 /* Finite Differences method for estimating the jacobian of the force */
-BLI_INLINE void spring_angbend_estimate_dfdx(Implicit_Data *data, int i, int j, int k,
-                                             const float goal[3],
-                                             float stiffness, float damping,
-                                             int q, float dfdx[3][3])
+BLI_INLINE void spring_hairbend_estimate_dfdx(Implicit_Data *data, int i, int j, int k,
+                                              const float goal[3],
+                                              float stiffness, float damping,
+                                              int q, float dfdx[3][3])
 {
 	const float delta = 0.00001f; // TODO find a good heuristic for this
 	float dvec_null[3][3], dvec_pos[3][3], dvec_neg[3][3];
@@ -1739,12 +1870,12 @@ BLI_INLINE void spring_angbend_estimate_dfdx(Implicit_Data *data, int i, int j, 
 	/* XXX TODO offset targets to account for position dependency */
 
 	for (a = 0; a < 3; ++a) {
-		spring_angbend_forces(data, i, j, k, goal, stiffness, damping,
-		                      q, dvec_pos[a], dvec_null[a], f);
+		spring_hairbend_forces(data, i, j, k, goal, stiffness, damping,
+		                       q, dvec_pos[a], dvec_null[a], f);
 		copy_v3_v3(dfdx[a], f);
 
-		spring_angbend_forces(data, i, j, k, goal, stiffness, damping,
-		                      q, dvec_neg[a], dvec_null[a], f);
+		spring_hairbend_forces(data, i, j, k, goal, stiffness, damping,
+		                       q, dvec_neg[a], dvec_null[a], f);
 		sub_v3_v3(dfdx[a], f);
 
 		for (b = 0; b < 3; ++b) {
@@ -1754,10 +1885,10 @@ BLI_INLINE void spring_angbend_estimate_dfdx(Implicit_Data *data, int i, int j, 
 }
 
 /* Finite Differences method for estimating the jacobian of the force */
-BLI_INLINE void spring_angbend_estimate_dfdv(Implicit_Data *data, int i, int j, int k,
-                                             const float goal[3],
-                                             float stiffness, float damping,
-                                             int q, float dfdv[3][3])
+BLI_INLINE void spring_hairbend_estimate_dfdv(Implicit_Data *data, int i, int j, int k,
+                                              const float goal[3],
+                                              float stiffness, float damping,
+                                              int q, float dfdv[3][3])
 {
 	const float delta = 0.00001f; // TODO find a good heuristic for this
 	float dvec_null[3][3], dvec_pos[3][3], dvec_neg[3][3];
@@ -1773,12 +1904,12 @@ BLI_INLINE void spring_angbend_estimate_dfdv(Implicit_Data *data, int i, int j, 
 	/* XXX TODO offset targets to account for position dependency */
 
 	for (a = 0; a < 3; ++a) {
-		spring_angbend_forces(data, i, j, k, goal, stiffness, damping,
-		                      q, dvec_null[a], dvec_pos[a], f);
+		spring_hairbend_forces(data, i, j, k, goal, stiffness, damping,
+		                       q, dvec_null[a], dvec_pos[a], f);
 		copy_v3_v3(dfdv[a], f);
 
-		spring_angbend_forces(data, i, j, k, goal, stiffness, damping,
-		                      q, dvec_null[a], dvec_neg[a], f);
+		spring_hairbend_forces(data, i, j, k, goal, stiffness, damping,
+		                       q, dvec_null[a], dvec_neg[a], f);
 		sub_v3_v3(dfdv[a], f);
 
 		for (b = 0; b < 3; ++b) {
@@ -1790,8 +1921,8 @@ BLI_INLINE void spring_angbend_estimate_dfdv(Implicit_Data *data, int i, int j, 
 /* Angular spring that pulls the vertex toward the local target
  * See "Artistic Simulation of Curly Hair" (Pixar technical memo #12-03a)
  */
-bool BPH_mass_spring_force_spring_bending_angular(Implicit_Data *data, int i, int j, int k,
-                                                  const float target[3], float stiffness, float damping)
+bool BPH_mass_spring_force_spring_bending_hair(Implicit_Data *data, int i, int j, int k,
+                                               const float target[3], float stiffness, float damping)
 {
 	float goal[3];
 	float fj[3], fk[3];
@@ -1806,18 +1937,18 @@ bool BPH_mass_spring_force_spring_bending_angular(Implicit_Data *data, int i, in
 
 	world_to_root_v3(data, j, goal, target);
 
-	spring_angbend_forces(data, i, j, k, goal, stiffness, damping, k, vecnull, vecnull, fk);
+	spring_hairbend_forces(data, i, j, k, goal, stiffness, damping, k, vecnull, vecnull, fk);
 	negate_v3_v3(fj, fk); /* counterforce */
 
-	spring_angbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, i, dfk_dxi);
-	spring_angbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, j, dfk_dxj);
-	spring_angbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, k, dfk_dxk);
+	spring_hairbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, i, dfk_dxi);
+	spring_hairbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, j, dfk_dxj);
+	spring_hairbend_estimate_dfdx(data, i, j, k, goal, stiffness, damping, k, dfk_dxk);
 	copy_m3_m3(dfj_dxi, dfk_dxi); negate_m3(dfj_dxi);
 	copy_m3_m3(dfj_dxj, dfk_dxj); negate_m3(dfj_dxj);
 
-	spring_angbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, i, dfk_dvi);
-	spring_angbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, j, dfk_dvj);
-	spring_angbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, k, dfk_dvk);
+	spring_hairbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, i, dfk_dvi);
+	spring_hairbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, j, dfk_dvj);
+	spring_hairbend_estimate_dfdv(data, i, j, k, goal, stiffness, damping, k, dfk_dvk);
 	copy_m3_m3(dfj_dvi, dfk_dvi); negate_m3(dfj_dvi);
 	copy_m3_m3(dfj_dvj, dfk_dvj); negate_m3(dfj_dvj);
 

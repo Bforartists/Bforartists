@@ -68,9 +68,9 @@ class MakeTriangle(Operator):
             ]
     triangleFaceList = [
             ('DEFAULT', "Normal", "1 Tri(angle) face", 0),
-            ('TRIANGLES', "3 Tri faces", "4 Verticies & 3 Tri(angle) faces", 1),
-            ('QUADS', "3 Quad faces", "7 Verticies & 3 Quad faces", 2),
-            ('SAFEQUADS', "6 Quad faces", "12 Verticies & 6 Quad faces", 3)
+            ('TRIANGLES', "3 Tri faces", "4 Vertices & 3 Tri(angle) faces", 1),
+            ('QUADS', "3 Quad faces", "7 Vertices & 3 Quad faces", 2),
+            ('SAFEQUADS', "6 Quad faces", "12 Vertices & 6 Quad faces", 3)
             ]
 
     # add definitions for some manipulation buttons
@@ -255,7 +255,7 @@ class MakeTriangle(Operator):
         # a triangle consists of 3 points: A, B, C
         # a 'safer' subdividable triangle consists of 4 points: A, B, C, D
         # a subdivide friendly triangle consists of 7 points: A, B, C, D, AB, AC, BC
-        # a truely subdivide friendly triangle consists of (3 x 4 = )12 points:
+        # a truly subdivide friendly triangle consists of (3 x 4 = )12 points:
         # A, B, C, D, E, BC, AAB, AAC, BBA, BBC, BCC, CCA
 
         BasicShapeCreated = False
@@ -263,7 +263,7 @@ class MakeTriangle(Operator):
         go = 0
 
         #
-        # call the functions for creating the triangles and test if successfull
+        # call the functions for creating the triangles and test if successful
         #
         BasicShapeCreated = self.drawBasicTriangleShape()
         if (BasicShapeCreated):

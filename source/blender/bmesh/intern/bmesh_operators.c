@@ -140,6 +140,10 @@ static void bmo_op_slots_init(const BMOSlotType *slot_types, BMOpSlot *slot_args
 			case BMO_OP_SLOT_MAPPING:
 				slot->data.ghash = BLI_ghash_ptr_new("bmesh slot map hash");
 				break;
+			case BMO_OP_SLOT_INT:
+				if (ELEM(slot->slot_subtype.intg, BMO_OP_SLOT_SUBTYPE_INT_ENUM, BMO_OP_SLOT_SUBTYPE_INT_FLAG)) {
+					slot->data.enum_flags = slot_types[i].enum_flags;
+				}
 			default:
 				break;
 		}
@@ -1375,7 +1379,7 @@ void *BMO_slot_buffer_get_first(BMOpSlot slot_args[BMO_OP_MAX_SLOTS], const char
 /**
  * \brief New Iterator
  *
- * \param restrictmask restricts the iteration to certain element types
+ * \param restrictmask: restricts the iteration to certain element types
  * (e.g. combination of BM_VERT, BM_EDGE, BM_FACE), if iterating
  * over an element buffer (not a mapping). */
 void *BMO_iter_new(

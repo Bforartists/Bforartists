@@ -196,23 +196,23 @@ class OscPanelMesh(Panel):
         colrow = col.row(align=1)
         colrow.operator("mesh.reconst_osc", icon="UV_SYNC_SELECT")
         colrow = col.row(align=1)
-        colrow.operator("mesh.vertex_color_mask", icon="GROUP_VCOL")        
+        colrow.operator("mesh.vertex_color_mask", icon="GROUP_VCOL")
         colrow = col.row(align=1)
         colrow.operator("mesh.overlap_uv_faces", icon="UV_FACESEL")
         colrow = col.row(align=1)
         colrow.operator("mesh.uv_island_copy", icon="COPYDOWN")
-        colrow.operator("mesh.uv_island_paste", icon="PASTEDOWN")        
+        colrow.operator("mesh.uv_island_paste", icon="PASTEDOWN")
         colrow = col.row(align=1)
-        colrow.operator("view3d.modal_operator", icon="STICKY_UVS_DISABLE")       
+        colrow.operator("view3d.modal_operator", icon="STICKY_UVS_DISABLE")
         colrow = col.row(align=1)
         colrow.operator("lattice.mirror_selected", icon="LATTICE_DATA")
         colrow = col.row(align=1)
         colrow.label(text="Edit Multimesh")
-        colrow.prop_search(scene, "multimeshedit", bpy.data, "groups", text="")   
+        colrow.prop_search(scene, "multimeshedit", bpy.data, "collections", text="")
         colrow = col.row(align=1)
         colrow.operator("mesh.create_edit_multimesh", icon="IMPORT", text= "StartEdit")
         colrow.operator("mesh.apply_edit_multimesh", icon="EXPORT", text="FinishEdit")
-        
+
 
 class OscPanelShapes(Panel):
     bl_idname = "Oscurart Shapes Tools"

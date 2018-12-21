@@ -3,7 +3,6 @@ import importlib
 import importlib
 from   ...utils import create_widget
 
-WGT_LAYERS  = [x == 19 for x in range(0, 20)]  # Widgets go on the last scene layer.
 MODULE_NAME = "super_widgets"  # Windows/Mac blender is weird, so __package__ doesn't work
 
 
@@ -160,5 +159,3 @@ def create_ballsocket_widget(rig, bone_name, size=1.0, bone_transform_name=None)
         return obj
     else:
         return None
-
-

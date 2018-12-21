@@ -128,6 +128,7 @@ void POSE_OT_group_deselect(struct wmOperatorType *ot);
 void POSE_OT_paths_calculate(struct wmOperatorType *ot);
 void POSE_OT_paths_update(struct wmOperatorType *ot);
 void POSE_OT_paths_clear(struct wmOperatorType *ot);
+void POSE_OT_paths_range_update(struct wmOperatorType *ot);
 
 void POSE_OT_autoside_names(struct wmOperatorType *ot);
 void POSE_OT_flip_names(struct wmOperatorType *ot);
@@ -139,24 +140,14 @@ void POSE_OT_quaternions_flip(struct wmOperatorType *ot);
 void POSE_OT_bone_layers(struct wmOperatorType *ot);
 
 /* ******************************************************* */
-/* Etch-A-Ton (Skeleton Sketching) Operators */
-
-void SKETCH_OT_gesture(struct wmOperatorType *ot);
-void SKETCH_OT_delete(struct wmOperatorType *ot);
-void SKETCH_OT_draw_stroke(struct wmOperatorType *ot);
-void SKETCH_OT_draw_preview(struct wmOperatorType *ot);
-void SKETCH_OT_finish_stroke(struct wmOperatorType *ot);
-void SKETCH_OT_cancel_stroke(struct wmOperatorType *ot);
-void SKETCH_OT_convert(struct wmOperatorType *ot);
-void SKETCH_OT_select(struct wmOperatorType *ot);
-
-/* ******************************************************* */
 /* Pose Tool Utilities (for PoseLib, Pose Sliding, etc.) */
 /* pose_utils.c */
 
 /* Temporary data linking PoseChannels with the F-Curves they affect */
 typedef struct tPChanFCurveLink {
 	struct tPChanFCurveLink *next, *prev;
+
+	struct Object *ob;              /* Object this Pose Channel belongs to. */
 
 	ListBase fcurves;               /* F-Curves for this PoseChannel (wrapped with LinkData) */
 	struct bPoseChannel *pchan;     /* Pose Channel which data is attached to */
@@ -181,12 +172,13 @@ typedef struct tPChanFCurveLink {
 
 /* ----------- */
 
-void poseAnim_mapping_get(struct bContext *C, ListBase *pfLinks, struct Object *ob, struct bAction *act);
+struct Object *poseAnim_object_get(struct Object *ob_);
+void poseAnim_mapping_get(struct bContext *C, ListBase *pfLinks);
 void poseAnim_mapping_free(ListBase *pfLinks);
 
 void poseAnim_mapping_refresh(struct bContext *C, struct Scene *scene, struct Object *ob);
 void poseAnim_mapping_reset(ListBase *pfLinks);
-void poseAnim_mapping_autoKeyframe(struct bContext *C, struct Scene *scene, struct Object *ob, ListBase *pfLinks, float cframe);
+void poseAnim_mapping_autoKeyframe(struct bContext *C, struct Scene *scene, ListBase *pfLinks, float cframe);
 
 LinkData *poseAnim_mapping_getNextFCurve(ListBase *fcuLinks, LinkData *prev, const char *path);
 
@@ -224,8 +216,7 @@ void POSE_OT_propagate(struct wmOperatorType *ot);
  * within each file, but some tools still have a bit of overlap which makes things messy -- Feb 2013
  */
 
-EditBone *make_boneList(struct ListBase *edbo, struct ListBase *bones, struct EditBone *parent, struct Bone *actBone);
-bool BIF_sk_selectStroke(struct bContext *C, const int mval[2], const bool extend);
+EditBone *make_boneList(struct ListBase *edbo, struct ListBase *bones, struct Bone *actBone);
 
 /* duplicate method */
 void preEditBoneDuplicate(struct ListBase *editbones);
@@ -248,10 +239,15 @@ void armature_select_mirrored_ex(struct bArmature *arm, const int flag);
 void armature_select_mirrored(struct bArmature *arm);
 void armature_tag_unselect(struct bArmature *arm);
 
-void *get_nearest_bone(struct bContext *C, const int xy[2], bool findunsel);
+void *get_nearest_bone(
+        struct bContext *C, const int xy[2], bool findunsel,
+        struct Base **r_base);
+
 void *get_bone_from_selectbuffer(
-        struct Scene *scene, struct Base *base, const unsigned int *buffer, short hits,
-        bool findunsel, bool do_nearest);
+        struct Base **bases, uint bases_len,
+        bool is_editmode, const unsigned int *buffer, short hits,
+        bool findunsel, bool do_nearest,
+        struct Base **r_base);
 
 int bone_looper(struct Object *ob, struct Bone *bone, void *data,
                 int (*bone_func)(struct Object *, struct Bone *, void *));

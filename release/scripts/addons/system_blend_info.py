@@ -102,10 +102,10 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
             icon='CAMERA_DATA')
 
         row = ob_cols[1].row()
-        lamps = [o for o in objects.values() if o.type == 'LAMP']
+        lamps = [o for o in objects.values() if o.type == 'LIGHT']
         num = len(lamps)
         row.label(text=quantity_string(num, "Lamp", "Lamps"),
-            icon='LAMP_DATA')
+            icon='LIGHT_DATA')
 
         row = ob_cols[0].row()
         armatures = [o for o in objects.values() if o.type == 'ARMATURE']
@@ -159,9 +159,9 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
             icon='CAMERA_DATA')
 
         row = db_cols[1].row()
-        num = len(bpy.data.lamps)
+        num = len(bpy.data.lights)
         row.label(text=quantity_string(num, "Lamp", "Lamps"),
-            icon='LAMP_DATA')
+            icon='LIGHT_DATA')
 
         row = db_cols[0].row()
         num = len(bpy.data.armatures)

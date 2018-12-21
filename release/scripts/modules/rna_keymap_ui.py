@@ -39,7 +39,7 @@ def _indented_layout(layout, level):
         level = 0.0001   # Tweak so that a percentage of 0 won't split by half
     indent = level * indentpx / bpy.context.region.width
 
-    split = layout.split(percentage=indent)
+    split = layout.split(factor=indent)
     col = split.column()
     col = split.column()
     return col
@@ -103,9 +103,9 @@ def draw_km(display_keymaps, kc, km, children, layout, level):
 
             # "Add New" at end of keymap item list
             subcol = _indented_layout(col, kmi_level)
-            subcol = subcol.split(percentage=0.2).column()
+            subcol = subcol.split(factor=0.2).column()
             subcol.operator("wm.keyitem_add", text="Add New", text_ctxt=i18n_contexts.id_windowmanager,
-                            icon='ZOOMIN')
+                            icon='ADD')
 
             col.separator()
 
@@ -167,7 +167,7 @@ def draw_kmi(display_keymaps, kc, km, kmi, layout, level):
     if kmi.show_expanded:
         box = col.box()
 
-        split = box.split(percentage=0.4)
+        split = box.split(factor=0.4)
         sub = split.row()
 
         if km.is_modal:
@@ -349,55 +349,54 @@ def draw_filtered(display_keymaps, filter_type, filter_text, layout):
 
             # "Add New" at end of keymap item list
             col = _indented_layout(layout, 1)
-            subcol = col.split(percentage=0.2).column()
-            subcol.operator("wm.keyitem_add", text="Add New", icon='ZOOMIN')
+            subcol = col.split(factor=0.2).column()
+            subcol.operator("wm.keyitem_add", text="Add New", icon='ADD')
     return True
 
 
 def draw_hierarchy(display_keymaps, layout):
-    from bpy_extras import keyconfig_utils
-    for entry in keyconfig_utils.KM_HIERARCHY:
+    from bl_keymap_utils import keymap_hierarchy
+    for entry in keymap_hierarchy.generate():
         draw_entry(display_keymaps, entry, layout)
 
 
 def draw_keymaps(context, layout):
-    from bpy_extras import keyconfig_utils
+    from bl_keymap_utils.io import keyconfig_merge
 
     wm = context.window_manager
-    kc = wm.keyconfigs.user
+    kc_user = wm.keyconfigs.user
+    kc_active = wm.keyconfigs.active
     spref = context.space_data
 
-    col = layout.column()
-    sub = col.column()
-
-    subsplit = sub.split()
+    subsplit = layout.split()
     subcol = subsplit.column()
 
-    row = subcol.row(align=True)
+    col = subcol.column()
+    row = col.row(align=True)
 
     # row.prop_search(wm.keyconfigs, "active", wm, "keyconfigs", text="Key Config")
-    text = bpy.path.display_name(wm.keyconfigs.active.name)
+    text = bpy.path.display_name(kc_active.name)
     if not text:
         text = "Blender (default)"
     row.menu("USERPREF_MT_keyconfigs", text=text)
-    row.operator("wm.keyconfig_preset_add", text="", icon='ZOOMIN')
-    row.operator("wm.keyconfig_preset_add", text="", icon='ZOOMOUT').remove_active = True
+    row.operator("wm.keyconfig_preset_add", text="", icon='ADD')
+    row.operator("wm.keyconfig_preset_add", text="", icon='REMOVE').remove_active = True
 
     # layout.context_pointer_set("keyconfig", wm.keyconfigs.active)
     # row.operator("wm.keyconfig_remove", text="", icon='X')
     row.separator()
-    rowsub = row.split(align=True, percentage=0.33)
+    rowsub = row.split(factor=0.33, align=True)
     # postpone drawing into rowsub, so we can set alert!
 
-    col.separator()
-    display_keymaps = keyconfig_utils.keyconfig_merge(kc, kc)
+    layout.separator()
+    display_keymaps = keyconfig_merge(kc_user, kc_user)
     filter_type = spref.filter_type
     filter_text = spref.filter_text.strip()
     if filter_text:
         filter_text = filter_text.lower()
-        ok = draw_filtered(display_keymaps, filter_type, filter_text, col)
+        ok = draw_filtered(display_keymaps, filter_type, filter_text, layout)
     else:
-        draw_hierarchy(display_keymaps, col)
+        draw_hierarchy(display_keymaps, layout)
         ok = True
 
     # go back and fill in rowsub
@@ -406,3 +405,32 @@ def draw_keymaps(context, layout):
     if not ok:
         rowsubsub.alert = True
     rowsubsub.prop(spref, "filter_text", text="", icon='VIEWZOOM')
+
+    if not filter_text:
+        # When the keyconfig defines it's own preferences.
+        kc_prefs = kc_active.preferences
+        if kc_prefs is not None:
+            box = col.box()
+            row = box.row(align=True)
+
+            userpref = context.user_preferences
+            inputs = userpref.inputs
+            show_ui_keyconfig = inputs.show_ui_keyconfig
+            row.prop(
+                inputs,
+                "show_ui_keyconfig",
+                text="",
+                icon='TRIA_DOWN' if show_ui_keyconfig else 'TRIA_RIGHT',
+                emboss=False,
+            )
+            row.label(text="Preferences")
+
+            if show_ui_keyconfig:
+                # Defined by user preset, may contain mistakes out of our control.
+                try:
+                    kc_prefs.draw(box)
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+            del box
+        del kc_prefs

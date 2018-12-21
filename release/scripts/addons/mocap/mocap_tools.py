@@ -232,12 +232,12 @@ def autoloop_anim():
     context.scene.frame_end = flm
 
 
-#simplifyCurves: performes the bulk of the samples to bezier conversion.
+#simplifyCurves: performs the bulk of the samples to bezier conversion.
 #IN:    curveGroup - which can be a collection of singleFcurves, or grouped (via nested lists) .
 #         error - threshold of permittable error (max distance) of the new beziers to the original data
 #         reparaError - threshold of error where we should try to fix the parameterization rather than split the existing curve. > error, usually by a small constant factor for best performance.
-#         maxIterations - maximum number of iterations of reparameterizations we should attempt. (Newton-Rahpson is not guarenteed to converge, so this is needed).
-#         group_mode - boolean, indicating wether we should place bezier keyframes on the same x (frame), or optimize each individual curve.
+#         maxIterations - maximum number of iterations of reparameterizations we should attempt. (Newton-Rahpson is not guaranteed to converge, so this is needed).
+#         group_mode - boolean, indicating whether we should place bezier keyframes on the same x (frame), or optimize each individual curve.
 #OUT: None. Deletes the existing curves and creates the new beziers.
 def simplifyCurves(curveGroup, error, reparaError, maxIterations, group_mode):
     #Calculates the unit tangent of point v
@@ -398,7 +398,7 @@ def simplifyCurves(curveGroup, error, reparaError, maxIterations, group_mode):
             sumVec += (bez[i + 1] - bez[i]) * bernsteinPoly(n - 1, i, t)
         return sumVec
 
-    #use Newton-Raphson to find a better paramterization of datapoints,
+    #use Newton-Raphson to find a better parameterization of datapoints,
     #one that minimizes the distance (or error)
     # between bezier and original data.
     def newtonRaphson(data_pts, s, e, bez):
@@ -531,7 +531,7 @@ def simplifyCurves(curveGroup, error, reparaError, maxIterations, group_mode):
 #       sel_opt- either "sel" (selected) or "all" for which curves to effect
 #       error- maximum error allowed, in fraction (20% = 0.0020, which is the default),
 #       i.e. divide by 10000 from percentage wanted.
-#       group_mode- boolean, to analyze each curve seperately or in groups,
+#       group_mode- boolean, to analyze each curve separately or in groups,
 #       where a group is all curves that effect the same property/RNA path
 def fcurves_simplify(context, obj, sel_opt="all", error=0.002, group_mode=True):
     # main vars
@@ -637,7 +637,7 @@ def denoise(obj, fcurves):
         fcurve.update()
 
 
-# Recieves armature, and rotations all bones by 90 degrees along the X axis
+# Receives armature, and rotations all bones by 90 degrees along the X axis
 # This fixes the common axis issue BVH files have when importing.
 # IN: Armature (bpy.types.Armature)
 def rotate_fix_armature(arm_data):
@@ -683,7 +683,7 @@ def scale_fix_armature(performer_obj, enduser_obj):
 
 
 #Guess Mapping
-#Given a performer and enduser armature, attempts to guess the hiearchy mapping
+#Given a performer and enduser armature, attempts to guess the hierarchy mapping
 def guessMapping(performer_obj, enduser_obj):
     perf_bones = performer_obj.data.bones
     end_bones = enduser_obj.data.bones
@@ -702,7 +702,7 @@ def guessMapping(performer_obj, enduser_obj):
         return "", bone
 
     def nameMatch(bone_a, bone_b):
-        # nameMatch - recieves two strings, returns 2 if they are relatively the same, 1 if they are the same but R and L and 0 if no match at all
+        # nameMatch - receives two strings, returns 2 if they are relatively the same, 1 if they are the same but R and L and 0 if no match at all
         side_a, noside_a = findBoneSide(bone_a)
         side_b, noside_b = findBoneSide(bone_b)
         if side_a == side_b:

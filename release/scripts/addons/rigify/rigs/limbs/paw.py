@@ -232,7 +232,7 @@ class Rig:
             eb[ mch  ].length /= 4
             eb[ ctrl ].length /= 2
 
-        # Contraints
+        # Constraints
 
         for i,b in enumerate( tweaks['mch'] ):
             first  = 0

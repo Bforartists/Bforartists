@@ -88,7 +88,7 @@ class CelticKnotOperator(Operator):
             )
     crossing_strength = FloatProperty(
             name="Crossing Strength",
-            description="Aligned only: strenth of bezier control points",
+            description="Aligned only: strength of bezier control points",
             soft_min=0,
             subtype="DISTANCE",
             unit="LENGTH"

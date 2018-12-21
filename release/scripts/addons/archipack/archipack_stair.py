@@ -234,16 +234,16 @@ class Stair():
 
     def project_uv(self, rM, uvs, verts, indexes, up_axis='Z'):
         if up_axis == 'Z':
-            uvs.append([(rM * Vector(verts[i])).to_2d() for i in indexes])
+            uvs.append([(rM @ Vector(verts[i])).to_2d() for i in indexes])
         elif up_axis == 'Y':
-            uvs.append([(x, z) for x, y, z in [(rM * Vector(verts[i])) for i in indexes]])
+            uvs.append([(x, z) for x, y, z in [(rM @ Vector(verts[i])) for i in indexes]])
         else:
-            uvs.append([(y, z) for x, y, z in [(rM * Vector(verts[i])) for i in indexes]])
+            uvs.append([(y, z) for x, y, z in [(rM @ Vector(verts[i])) for i in indexes]])
 
     def get_proj_matrix(self, part, t, nose_y):
         # a matrix to project verts
         # into uv space for horizontal parts of this step
-        # so uv = (rM * vertex).to_2d()
+        # so uv = (rM @ vertex).to_2d()
         tl = t - nose_y / self.get_length("LEFT")
         tr = t - nose_y / self.get_length("RIGHT")
         t2, part, dz, shape = self.get_part(tl, "LEFT")
@@ -264,7 +264,7 @@ class Stair():
 
         # a matrix to project verts
         # into uv space for horizontal parts of this step
-        # so uv = (rM * vertex).to_2d()
+        # so uv = (rM @ vertex).to_2d()
         rM = self.get_proj_matrix(self, t, nose_y)
 
         if self.z_mode == 'LINEAR':
@@ -468,7 +468,7 @@ class CurvedStair(Stair, Arc):
         self.l_shape = left_shape
         self.r_shape = right_shape
         self.edges_multiples = round(abs(da), 6) > double_limit
-        # left arc, tangeant at start and end
+        # left arc, tangent at start and end
         self.l_arc, self.l_t0, self.l_t1, self.l_tc = self.set_offset(-left_offset, left_shape)
         self.r_arc, self.r_t0, self.r_t1, self.r_tc = self.set_offset(right_offset, right_shape)
 
@@ -1024,7 +1024,7 @@ class StairGenerator():
                 co.z += z1
             if 'Slope' in g:
                 co.z += co.y * slope
-            verts.append(tM * co)
+            verts.append(tM @ co)
         matids += self.user_defined_mat
         faces += [tuple([i + f for i in p.vertices]) for p in m.polygons]
         uvs += self.user_defined_uvs
@@ -1106,7 +1106,7 @@ class StairGenerator():
             if s < n_sections:
                 v1 = subs[s + 1][0].v.normalized()
             dir = (v0 + v1).normalized()
-            scale = 1 / cos(0.5 * acos(min(1, max(-1, v0 * v1))))
+            scale = 1 / cos(0.5 * acos(min(1, max(-1, v0.dot(v1)))))
             for p in profile:
                 x, y = n.p + scale * p.x * dir
                 z = zl + p.y + altitude
@@ -1463,7 +1463,7 @@ class StairGenerator():
                     if s < n_sections:
                         v1 = cur_sect[s + 1][0].v.normalized()
                     dir = (v0 + v1).normalized()
-                    scale = 1 / cos(0.5 * acos(min(1, max(-1, v0 * v1))))
+                    scale = 1 / cos(0.5 * acos(min(1, max(-1, v0.dot(v1)))))
                     for p in profile:
                         x, y = n.p + scale * p.x * dir
                         z = zl + p.y + z_offset
@@ -1546,7 +1546,7 @@ materials_enum = (
 
 
 class archipack_stair_material(PropertyGroup):
-    index = EnumProperty(
+    index : EnumProperty(
         items=materials_enum,
         default='4',
         update=update
@@ -1557,7 +1557,7 @@ class archipack_stair_material(PropertyGroup):
             find witch selected object this instance belongs to
             provide support for "copy to selected"
         """
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             props = archipack_stair.datablock(o)
             if props:
@@ -1573,7 +1573,7 @@ class archipack_stair_material(PropertyGroup):
 
 
 class archipack_stair_part(PropertyGroup):
-    type = EnumProperty(
+    type : EnumProperty(
             items=(
                 ('S_STAIR', 'Straight stair', '', 0),
                 ('C_STAIR', 'Curved stair', '', 1),
@@ -1585,21 +1585,21 @@ class archipack_stair_part(PropertyGroup):
             default='S_STAIR',
             update=update_manipulators
             )
-    length = FloatProperty(
+    length : FloatProperty(
             name="Length",
             min=0.01,
             default=2.0,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             min=0.01,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    da = FloatProperty(
+    da : FloatProperty(
             name="Angle",
             min=-pi,
             max=pi,
@@ -1607,7 +1607,7 @@ class archipack_stair_part(PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    left_shape = EnumProperty(
+    left_shape : EnumProperty(
             items=(
                 ('RECTANGLE', 'Straight', '', 0),
                 ('CIRCLE', 'Curved ', '', 1)
@@ -1615,7 +1615,7 @@ class archipack_stair_part(PropertyGroup):
             default='RECTANGLE',
             update=update
             )
-    right_shape = EnumProperty(
+    right_shape : EnumProperty(
             items=(
                 ('RECTANGLE', 'Straight', '', 0),
                 ('CIRCLE', 'Curved ', '', 1)
@@ -1623,14 +1623,14 @@ class archipack_stair_part(PropertyGroup):
             default='RECTANGLE',
             update=update
             )
-    manipulators = CollectionProperty(type=archipack_manipulator)
+    manipulators : CollectionProperty(type=archipack_manipulator)
 
     def find_datablock_in_selection(self, context):
         """
             find witch selected object this instance belongs to
             provide support for "copy to selected"
         """
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             props = archipack_stair.datablock(o)
             if props:
@@ -1670,69 +1670,69 @@ class archipack_stair_part(PropertyGroup):
 
 class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
 
-    parts = CollectionProperty(type=archipack_stair_part)
-    n_parts = IntProperty(
+    parts : CollectionProperty(type=archipack_stair_part)
+    n_parts : IntProperty(
             name="Parts",
             min=1,
             max=32,
             default=1, update=update_manipulators
             )
-    step_depth = FloatProperty(
+    step_depth : FloatProperty(
             name="Going",
             min=0.2,
             default=0.25,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    width = FloatProperty(
+    width : FloatProperty(
             name="Width",
             min=0.01,
             default=1.2,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    height = FloatProperty(
+    height : FloatProperty(
             name="Height",
             min=0.1,
             default=2.4, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    nose_y = FloatProperty(
+    nose_y : FloatProperty(
             name="Depth",
             min=0.0,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    x_offset = FloatProperty(
+    x_offset : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    nose_z = FloatProperty(
+    nose_z : FloatProperty(
             name="Height",
             min=0.001,
             default=0.03, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    bottom_z = FloatProperty(
+    bottom_z : FloatProperty(
             name="Thickness",
             min=0.001,
             default=0.03, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             min=0.5,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    da = FloatProperty(
+    da : FloatProperty(
             name="Angle",
             min=-pi,
             max=pi,
@@ -1740,7 +1740,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    total_angle = FloatProperty(
+    total_angle : FloatProperty(
             name="Angle",
             min=-50 * pi,
             max=50 * pi,
@@ -1748,7 +1748,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    steps_type = EnumProperty(
+    steps_type : EnumProperty(
             name="Steps",
             items=(
                 ('CLOSED', 'Closed', '', 0),
@@ -1758,7 +1758,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='CLOSED',
             update=update
             )
-    nose_type = EnumProperty(
+    nose_type : EnumProperty(
             name="Nosing",
             items=(
                 ('STRAIGHT', 'Straight', '', 0),
@@ -1767,7 +1767,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='STRAIGHT',
             update=update
             )
-    left_shape = EnumProperty(
+    left_shape : EnumProperty(
             items=(
                 ('RECTANGLE', 'Straight', '', 0),
                 ('CIRCLE', 'Curved ', '', 1)
@@ -1775,7 +1775,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='RECTANGLE',
             update=update
             )
-    right_shape = EnumProperty(
+    right_shape : EnumProperty(
             items=(
                 ('RECTANGLE', 'Straight', '', 0),
                 ('CIRCLE', 'Curved ', '', 1)
@@ -1783,7 +1783,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='RECTANGLE',
             update=update
             )
-    z_mode = EnumProperty(
+    z_mode : EnumProperty(
             name="Interp z",
             items=(
                 ('STANDARD', 'Standard', '', 0),
@@ -1793,7 +1793,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='STANDARD',
             update=update
             )
-    presets = EnumProperty(
+    presets : EnumProperty(
             items=(
                 ('STAIR_I', 'I stair', '', 0),
                 ('STAIR_L', 'L stair', '', 1),
@@ -1803,131 +1803,131 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
                 ),
             default='STAIR_I', update=update_preset
             )
-    left_post = BoolProperty(
+    left_post : BoolProperty(
             name='left',
             default=True,
             update=update
             )
-    right_post = BoolProperty(
+    right_post : BoolProperty(
             name='right',
             default=True,
             update=update
             )
-    post_spacing = FloatProperty(
+    post_spacing : FloatProperty(
             name="Spacing",
             min=0.1,
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_x = FloatProperty(
+    post_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_y = FloatProperty(
+    post_y : FloatProperty(
             name="Length",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_z = FloatProperty(
+    post_z : FloatProperty(
             name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_alt = FloatProperty(
+    post_alt : FloatProperty(
             name="Altitude",
             min=-100,
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_offset_x = FloatProperty(
+    post_offset_x : FloatProperty(
             name="Offset",
             min=-100.0, max=100,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    post_corners = BoolProperty(
+    post_corners : BoolProperty(
             name="Only on edges",
             update=update,
             default=False
             )
-    user_defined_post_enable = BoolProperty(
+    user_defined_post_enable : BoolProperty(
             name="User",
             update=update,
             default=True
             )
-    user_defined_post = StringProperty(
+    user_defined_post : StringProperty(
             name="User defined",
             update=update
             )
-    idmat_post = EnumProperty(
+    idmat_post : EnumProperty(
             name="Post",
             items=materials_enum,
             default='4',
             update=update
             )
-    left_subs = BoolProperty(
+    left_subs : BoolProperty(
             name='left',
             default=False,
             update=update
             )
-    right_subs = BoolProperty(
+    right_subs : BoolProperty(
             name='right',
             default=False,
             update=update
             )
-    subs_spacing = FloatProperty(
+    subs_spacing : FloatProperty(
             name="Spacing",
             min=0.05,
             default=0.10, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_x = FloatProperty(
+    subs_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_y = FloatProperty(
+    subs_y : FloatProperty(
             name="Length",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_z = FloatProperty(
+    subs_z : FloatProperty(
             name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_alt = FloatProperty(
+    subs_alt : FloatProperty(
             name="Altitude",
             min=-100,
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_offset_x = FloatProperty(
+    subs_offset_x : FloatProperty(
             name="Offset",
             min=-100.0, max=100,
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    subs_bottom = EnumProperty(
+    subs_bottom : EnumProperty(
             name="Bottom",
             items=(
                 ('STEP', 'Follow step', '', 0),
@@ -1936,88 +1936,88 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='STEP',
             update=update
             )
-    user_defined_subs_enable = BoolProperty(
+    user_defined_subs_enable : BoolProperty(
             name="User",
             update=update,
             default=True
             )
-    user_defined_subs = StringProperty(
+    user_defined_subs : StringProperty(
             name="User defined",
             update=update
             )
-    idmat_subs = EnumProperty(
+    idmat_subs : EnumProperty(
             name="Subs",
             items=materials_enum,
             default='4',
             update=update
             )
-    left_panel = BoolProperty(
+    left_panel : BoolProperty(
             name='left',
             default=True,
             update=update
             )
-    right_panel = BoolProperty(
+    right_panel : BoolProperty(
             name='right',
             default=True,
             update=update
             )
-    panel_alt = FloatProperty(
+    panel_alt : FloatProperty(
             name="Altitude",
             default=0.25, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_x = FloatProperty(
+    panel_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.01, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_z = FloatProperty(
+    panel_z : FloatProperty(
             name="Height",
             min=0.001,
             default=0.6, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_dist = FloatProperty(
+    panel_dist : FloatProperty(
             name="Spacing",
             min=0.001,
             default=0.05, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    panel_offset_x = FloatProperty(
+    panel_offset_x : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    idmat_panel = EnumProperty(
+    idmat_panel : EnumProperty(
             name="Panels",
             items=materials_enum,
             default='5',
             update=update
             )
-    left_rail = BoolProperty(
+    left_rail : BoolProperty(
             name="left",
             update=update,
             default=False
             )
-    right_rail = BoolProperty(
+    right_rail : BoolProperty(
             name="right",
             update=update,
             default=False
             )
-    rail_n = IntProperty(
+    rail_n : IntProperty(
             name="#",
             default=1,
             min=0,
             max=31,
             update=update
             )
-    rail_x = FloatVectorProperty(
+    rail_x : FloatVectorProperty(
             name="Width",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -2031,7 +2031,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_z = FloatVectorProperty(
+    rail_z : FloatVectorProperty(
             name="Height",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -2045,7 +2045,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_offset = FloatVectorProperty(
+    rail_offset : FloatVectorProperty(
             name="Offset",
             default=[
                 0, 0, 0, 0, 0, 0, 0, 0,
@@ -2058,7 +2058,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_alt = FloatVectorProperty(
+    rail_alt : FloatVectorProperty(
             name="Altitude",
             default=[
                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -2071,47 +2071,47 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             unit='LENGTH',
             update=update
             )
-    rail_mat = CollectionProperty(type=archipack_stair_material)
+    rail_mat : CollectionProperty(type=archipack_stair_material)
 
-    left_handrail = BoolProperty(
+    left_handrail : BoolProperty(
             name="left",
             update=update,
             default=True
             )
-    right_handrail = BoolProperty(
+    right_handrail : BoolProperty(
             name="right",
             update=update,
             default=True
             )
-    handrail_offset = FloatProperty(
+    handrail_offset : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_alt = FloatProperty(
+    handrail_alt : FloatProperty(
             name="Altitude",
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_extend = FloatProperty(
+    handrail_extend : FloatProperty(
             name="Extend",
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_slice_left = BoolProperty(
+    handrail_slice_left : BoolProperty(
             name='Slice',
             default=True,
             update=update
             )
-    handrail_slice_right = BoolProperty(
+    handrail_slice_right : BoolProperty(
             name='Slice',
             default=True,
             update=update
             )
-    handrail_profil = EnumProperty(
+    handrail_profil : EnumProperty(
             name="Profil",
             items=(
                 ('SQUARE', 'Square', '', 0),
@@ -2121,21 +2121,21 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             default='SQUARE',
             update=update
             )
-    handrail_x = FloatProperty(
+    handrail_x : FloatProperty(
             name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_y = FloatProperty(
+    handrail_y : FloatProperty(
             name="Height",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    handrail_radius = FloatProperty(
+    handrail_radius : FloatProperty(
             name="Radius",
             min=0.001,
             default=0.02, precision=2, step=1,
@@ -2143,85 +2143,85 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
 
-    left_string = BoolProperty(
+    left_string : BoolProperty(
             name="left",
             update=update,
             default=False
             )
-    right_string = BoolProperty(
+    right_string : BoolProperty(
             name="right",
             update=update,
             default=False
             )
-    string_x = FloatProperty(
+    string_x : FloatProperty(
             name="Width",
             min=-100.0,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    string_z = FloatProperty(
+    string_z : FloatProperty(
             name="Height",
             default=0.3, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    string_offset = FloatProperty(
+    string_offset : FloatProperty(
             name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    string_alt = FloatProperty(
+    string_alt : FloatProperty(
             name="Altitude",
             default=-0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
 
-    idmat_bottom = EnumProperty(
+    idmat_bottom : EnumProperty(
             name="Bottom",
             items=materials_enum,
             default='1',
             update=update
             )
-    idmat_raise = EnumProperty(
+    idmat_raise : EnumProperty(
             name="Raise",
             items=materials_enum,
             default='1',
             update=update
             )
-    idmat_step_front = EnumProperty(
+    idmat_step_front : EnumProperty(
             name="Step front",
             items=materials_enum,
             default='3',
             update=update
             )
-    idmat_top = EnumProperty(
+    idmat_top : EnumProperty(
             name="Top",
             items=materials_enum,
             default='3',
             update=update
             )
-    idmat_side = EnumProperty(
+    idmat_side : EnumProperty(
             name="Side",
             items=materials_enum,
             default='1',
             update=update
             )
-    idmat_step_side = EnumProperty(
+    idmat_step_side : EnumProperty(
             name="Step Side",
             items=materials_enum,
             default='3',
             update=update
             )
-    idmat_handrail = EnumProperty(
+    idmat_handrail : EnumProperty(
             name="Handrail",
             items=materials_enum,
             default='3',
             update=update
             )
-    idmat_string = EnumProperty(
+    idmat_string : EnumProperty(
             name="String",
             items=materials_enum,
             default='3',
@@ -2229,35 +2229,35 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # UI layout related
-    parts_expand = BoolProperty(
+    parts_expand : BoolProperty(
             default=False
             )
-    steps_expand = BoolProperty(
+    steps_expand : BoolProperty(
             default=False
             )
-    rail_expand = BoolProperty(
+    rail_expand : BoolProperty(
             default=False
             )
-    idmats_expand = BoolProperty(
+    idmats_expand : BoolProperty(
             default=False
             )
-    handrail_expand = BoolProperty(
+    handrail_expand : BoolProperty(
             default=False
             )
-    string_expand = BoolProperty(
+    string_expand : BoolProperty(
             default=False
             )
-    post_expand = BoolProperty(
+    post_expand : BoolProperty(
             default=False
             )
-    panel_expand = BoolProperty(
+    panel_expand : BoolProperty(
             default=False
             )
-    subs_expand = BoolProperty(
+    subs_expand : BoolProperty(
             default=False
             )
 
-    auto_update = BoolProperty(
+    auto_update : BoolProperty(
             options={'SKIP_SAVE'},
             default=True,
             update=update_manipulators
@@ -2389,7 +2389,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
 
         if self.user_defined_post_enable:
             # user defined posts
-            user_def_post = context.scene.objects.get(self.user_defined_post)
+            user_def_post = context.scene.objects.get(self.user_defined_post.strip())
             if user_def_post is not None and user_def_post.type == 'MESH':
                 g.setup_user_defined_post(user_def_post, self.post_x, self.post_y, self.post_z)
 
@@ -2408,7 +2408,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
 
         # user defined subs
         if self.user_defined_subs_enable:
-            user_def_subs = context.scene.objects.get(self.user_defined_subs)
+            user_def_subs = context.scene.objects.get(self.user_defined_subs.strip())
             if user_def_subs is not None and user_def_subs.type == 'MESH':
                 g.setup_user_defined_post(user_def_subs, self.subs_x, self.subs_y, self.subs_z)
 
@@ -2539,7 +2539,7 @@ class ARCHIPACK_PT_stair(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     # bl_context = 'object'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -2552,7 +2552,7 @@ class ARCHIPACK_PT_stair(Panel):
         scene = context.scene
         layout = self.layout
         row = layout.row(align=True)
-        row.operator('archipack.stair_manipulate', icon='HAND')
+        row.operator('archipack.stair_manipulate', icon='VIEW_PAN')
         row = layout.row(align=True)
         row.prop(prop, 'presets', text="")
         box = layout.box()
@@ -2560,8 +2560,8 @@ class ARCHIPACK_PT_stair(Panel):
         row = box.row(align=True)
         # row.menu("ARCHIPACK_MT_stair_preset", text=bpy.types.ARCHIPACK_MT_stair_preset.bl_label)
         row.operator("archipack.stair_preset_menu", text=bpy.types.ARCHIPACK_OT_stair_preset_menu.bl_label)
-        row.operator("archipack.stair_preset", text="", icon='ZOOMIN')
-        row.operator("archipack.stair_preset", text="", icon='ZOOMOUT').remove_active = True
+        row.operator("archipack.stair_preset", text="", icon='ADD')
+        row.operator("archipack.stair_preset", text="", icon='REMOVE').remove_active = True
         box = layout.box()
         box.prop(prop, 'width')
         box.prop(prop, 'height')
@@ -2753,9 +2753,9 @@ class ARCHIPACK_OT_stair(ArchipackCreateTool, Operator):
         m = bpy.data.meshes.new("Stair")
         o = bpy.data.objects.new("Stair", m)
         d = m.archipack_stair.add()
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         self.load_preset(d)
         self.add_material(o)
         m.auto_smooth_angle = 0.20944
@@ -2769,8 +2769,8 @@ class ARCHIPACK_OT_stair(ArchipackCreateTool, Operator):
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
             o.location = context.scene.cursor_location
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             self.manipulate()
             return {'FINISHED'}
         else:

@@ -33,7 +33,7 @@
 #include <stdio.h>
 
 #include "DNA_anim_types.h"
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_scene_types.h"
 
 #include "MEM_guardedalloc.h"
@@ -53,10 +53,17 @@
 #include "ED_anim_api.h"
 #include "ED_markers.h"
 
-#include "BIF_gl.h"
+#include "GPU_immediate.h"
+#include "GPU_state.h"
+#include "GPU_framebuffer.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_message.h"
+
+#include "RNA_access.h"
+#include "RNA_define.h"
+#include "RNA_enum_types.h"
 
 #include "UI_resources.h"
 #include "UI_view2d.h"
@@ -92,9 +99,8 @@ ARegion *graph_has_buttons_region(ScrArea *sa)
 
 /* ******************** default callbacks for ipo space ***************** */
 
-static SpaceLink *graph_new(const bContext *C)
+static SpaceLink *graph_new(const ScrArea *UNUSED(sa), const Scene *scene)
 {
-	Scene *scene = CTX_data_scene(C);
 	ARegion *ar;
 	SpaceIpo *sipo;
 
@@ -117,7 +123,7 @@ static SpaceLink *graph_new(const bContext *C)
 
 	BLI_addtail(&sipo->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
 	/* channels */
 	ar = MEM_callocN(sizeof(ARegion), "channels region for graphedit");
@@ -173,20 +179,21 @@ static void graph_free(SpaceLink *sl)
 		MEM_freeN(si->ads);
 	}
 
-	if (si->ghostCurves.first)
-		free_fcurves(&si->ghostCurves);
+	if (si->runtime.ghost_curves.first) {
+		free_fcurves(&si->runtime.ghost_curves);
+	}
 }
 
 
 /* spacetype; init callback */
-static void graph_init(struct wmWindowManager *UNUSED(wm), ScrArea *sa)
+static void graph_init(struct wmWindowManager *wm, ScrArea *sa)
 {
 	SpaceIpo *sipo = (SpaceIpo *)sa->spacedata.first;
 
 	/* init dopesheet data if non-existent (i.e. for old files) */
 	if (sipo->ads == NULL) {
 		sipo->ads = MEM_callocN(sizeof(bDopeSheet), "GraphEdit DopeSheet");
-		sipo->ads->source = (ID *)(G.main->scene.first); // FIXME: this is a really nasty hack here for now...
+		sipo->ads->source = (ID *)WM_window_get_active_scene(wm->winactive);
 	}
 
 	/* force immediate init of any invalid F-Curve colors */
@@ -202,7 +209,7 @@ static SpaceLink *graph_duplicate(SpaceLink *sl)
 	SpaceIpo *sipon = MEM_dupallocN(sl);
 
 	/* clear or remove stuff from old */
-	BLI_duplicatelist(&sipon->ghostCurves, &((SpaceIpo *)sl)->ghostCurves);
+	BLI_duplicatelist(&sipon->runtime.ghost_curves, &((SpaceIpo *)sl)->runtime.ghost_curves);
 	sipon->ads = MEM_dupallocN(sipon->ads);
 
 	return (SpaceLink *)sipon;
@@ -226,17 +233,18 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 {
 	/* draw entirely, view changes should be handled here */
 	SpaceIpo *sipo = CTX_wm_space_graph(C);
+	Scene *scene = CTX_data_scene(C);
 	bAnimContext ac;
 	View2D *v2d = &ar->v2d;
 	View2DGrid *grid;
 	View2DScrollers *scrollers;
 	float col[3];
-	short unitx = 0, unity = V2D_UNIT_VALUES, flag = 0;
+	short unitx = 0, unity = V2D_UNIT_VALUES, cfra_flag = 0;
 
 	/* clear and setup matrix */
 	UI_GetThemeColor3fv(TH_BACK, col);
-	glClearColor(col[0], col[1], col[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GPU_clear_color(col[0], col[1], col[2], 0.0);
+	GPU_clear(GPU_COLOR_BIT);
 
 	UI_view2d_view_ortho(v2d);
 
@@ -246,6 +254,11 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 	UI_view2d_grid_draw(v2d, grid, V2D_GRIDLINES_ALL);
 
 	ED_region_draw_cb_draw(C, ar, REGION_DRAW_PRE_VIEW);
+
+	/* start and end frame (in F-Curve mode only) */
+	if (sipo->mode != SIPO_MODE_DRIVERS) {
+		ANIM_draw_framerange(scene, v2d);
+	}
 
 	/* draw data */
 	if (ANIM_animdata_get_context(C, &ac)) {
@@ -266,46 +279,53 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 	/* only free grid after drawing data, as we need to use it to determine sampling rate */
 	UI_view2d_grid_free(grid);
 
-	/* horizontal component of value-cursor (value line before the current frame line) */
-	if ((sipo->flag & SIPO_NODRAWCURSOR) == 0) {
+	if (((sipo->flag & SIPO_NODRAWCURSOR) == 0) || (sipo->mode == SIPO_MODE_DRIVERS)) {
+		uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-		float y = sipo->cursorVal;
+		immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
-		/* Draw a green line to indicate the cursor value */
-		UI_ThemeColorShadeAlpha(TH_CFRAME, -10, -50);
-		glEnable(GL_BLEND);
-		glLineWidth(2.0);
+		/* horizontal component of value-cursor (value line before the current frame line) */
+		if ((sipo->flag & SIPO_NODRAWCURSOR) == 0) {
+			float y = sipo->cursorVal;
 
-		glBegin(GL_LINES);
-		glVertex2f(v2d->cur.xmin, y);
-		glVertex2f(v2d->cur.xmax, y);
-		glEnd();
+			/* Draw a green line to indicate the cursor value */
+			immUniformThemeColorShadeAlpha(TH_CFRAME, -10, -50);
+			GPU_blend(true);
+			GPU_line_width(2.0);
 
-		glDisable(GL_BLEND);
+			immBegin(GPU_PRIM_LINES, 2);
+			immVertex2f(pos, v2d->cur.xmin, y);
+			immVertex2f(pos, v2d->cur.xmax, y);
+			immEnd();
+
+			GPU_blend(false);
+		}
+
+		/* current frame or vertical component of vertical component of the cursor */
+		if (sipo->mode == SIPO_MODE_DRIVERS) {
+			/* cursor x-value */
+			float x = sipo->cursorTime;
+
+			/* to help differentiate this from the current frame, draw slightly darker like the horizontal one */
+			immUniformThemeColorShadeAlpha(TH_CFRAME, -40, -50);
+			GPU_blend(true);
+			GPU_line_width(2.0);
+
+			immBegin(GPU_PRIM_LINES, 2);
+			immVertex2f(pos, x, v2d->cur.ymin);
+			immVertex2f(pos, x, v2d->cur.ymax);
+			immEnd();
+
+			GPU_blend(false);
+		}
+
+		immUnbindProgram();
 	}
 
-	/* current frame or vertical component of vertical component of the cursor */
-	if (sipo->mode == SIPO_MODE_DRIVERS) {
-		/* cursor x-value */
-		float x = sipo->cursorTime;
-
-		/* to help differentiate this from the current frame, draw slightly darker like the horizontal one */
-		UI_ThemeColorShadeAlpha(TH_CFRAME, -40, -50);
-		glEnable(GL_BLEND);
-		glLineWidth(2.0);
-
-		glBegin(GL_LINES);
-		glVertex2f(x, v2d->cur.ymin);
-		glVertex2f(x, v2d->cur.ymax);
-		glEnd();
-
-		glDisable(GL_BLEND);
-	}
-	else {
+	if (sipo->mode != SIPO_MODE_DRIVERS) {
 		/* current frame */
-		if (sipo->flag & SIPO_DRAWTIME) flag |= DRAWCFRA_UNIT_SECONDS;
-		if ((sipo->flag & SIPO_NODRAWCFRANUM) == 0) flag |= DRAWCFRA_SHOW_NUMBOX;
-		ANIM_draw_cfra(C, v2d, flag);
+		if (sipo->flag & SIPO_DRAWTIME) cfra_flag |= DRAWCFRA_UNIT_SECONDS;
+		ANIM_draw_cfra(C, v2d, cfra_flag);
 	}
 
 	/* markers */
@@ -325,9 +345,15 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 
 	/* scrollers */
 	// FIXME: args for scrollers depend on the type of data being shown...
-	scrollers = UI_view2d_scrollers_calc(C, v2d, unitx, V2D_GRID_NOCLAMP, unity, V2D_GRID_NOCLAMP);
+	scrollers = UI_view2d_scrollers_calc(C, v2d, NULL, unitx, V2D_GRID_NOCLAMP, unity, V2D_GRID_NOCLAMP);
 	UI_view2d_scrollers_draw(C, v2d, scrollers);
 	UI_view2d_scrollers_free(scrollers);
+
+	/* draw current frame number-indicator on top of scrollers */
+	if ((sipo->mode != SIPO_MODE_DRIVERS) && ((sipo->flag & SIPO_NODRAWCFRANUM) == 0)) {
+		UI_view2d_view_orthoSpecial(ar, v2d, 1);
+		ANIM_draw_cfra_number(C, v2d, cfra_flag);
+	}
 }
 
 static void graph_channel_region_init(wmWindowManager *wm, ARegion *ar)
@@ -358,8 +384,8 @@ static void graph_channel_region_draw(const bContext *C, ARegion *ar)
 
 	/* clear and setup matrix */
 	UI_GetThemeColor3fv(TH_BACK, col);
-	glClearColor(col[0], col[1], col[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GPU_clear_color(col[0], col[1], col[2], 0.0);
+	GPU_clear(GPU_COLOR_BIT);
 
 	UI_view2d_view_ortho(v2d);
 
@@ -372,7 +398,7 @@ static void graph_channel_region_draw(const bContext *C, ARegion *ar)
 	UI_view2d_view_restore(C);
 
 	/* scrollers */
-	scrollers = UI_view2d_scrollers_calc(C, v2d, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
+	scrollers = UI_view2d_scrollers_calc(C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
 	UI_view2d_scrollers_draw(C, v2d, scrollers);
 	UI_view2d_scrollers_free(scrollers);
 }
@@ -401,10 +427,12 @@ static void graph_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 
 static void graph_buttons_region_draw(const bContext *C, ARegion *ar)
 {
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
-static void graph_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void graph_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -416,6 +444,7 @@ static void graph_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), AReg
 				case ND_RENDER_OPTIONS:
 				case ND_OB_ACTIVE:
 				case ND_FRAME:
+				case ND_FRAME_RANGE:
 				case ND_MARKERS:
 					ED_region_tag_redraw(ar);
 					break;
@@ -450,6 +479,11 @@ static void graph_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), AReg
 			if (wmn->action == NA_RENAME)
 				ED_region_tag_redraw(ar);
 			break;
+		case NC_SCREEN:
+			if (ELEM(wmn->data, ND_LAYER)) {
+				ED_region_tag_redraw(ar);
+			}
+			break;
 		default:
 			if (wmn->data == ND_KEYS)
 				ED_region_tag_redraw(ar);
@@ -458,8 +492,84 @@ static void graph_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), AReg
 	}
 }
 
+static void graph_region_message_subscribe(
+        const struct bContext *UNUSED(C),
+        struct WorkSpace *UNUSED(workspace), struct Scene *scene,
+        struct bScreen *screen, struct ScrArea *sa, struct ARegion *ar,
+        struct wmMsgBus *mbus)
+{
+	PointerRNA ptr;
+	RNA_pointer_create(&screen->id, &RNA_SpaceGraphEditor, sa->spacedata.first, &ptr);
+
+	wmMsgSubscribeValue msg_sub_value_region_tag_redraw = {
+		.owner = ar,
+		.user_data = ar,
+		.notify = ED_region_do_msg_notify_tag_redraw,
+	};
+
+	/* Timeline depends on scene properties. */
+	{
+		bool use_preview = (scene->r.flag & SCER_PRV_RANGE);
+		extern PropertyRNA rna_Scene_frame_start;
+		extern PropertyRNA rna_Scene_frame_end;
+		extern PropertyRNA rna_Scene_frame_preview_start;
+		extern PropertyRNA rna_Scene_frame_preview_end;
+		extern PropertyRNA rna_Scene_use_preview_range;
+		extern PropertyRNA rna_Scene_frame_current;
+		const PropertyRNA *props[] = {
+			use_preview ? &rna_Scene_frame_preview_start : &rna_Scene_frame_start,
+			use_preview ? &rna_Scene_frame_preview_end   : &rna_Scene_frame_end,
+			&rna_Scene_use_preview_range,
+			&rna_Scene_frame_current,
+		};
+
+		PointerRNA idptr;
+		RNA_id_pointer_create(&scene->id, &idptr);
+
+		for (int i = 0; i < ARRAY_SIZE(props); i++) {
+			WM_msg_subscribe_rna(mbus, &idptr, props[i], &msg_sub_value_region_tag_redraw, __func__);
+		}
+	}
+
+	/* All dopesheet filter settings, etc. affect the drawing of this editor,
+	 * also same applies for all animation-related datatypes that may appear here,
+	 * so just whitelist the entire structs for updates
+	 */
+	{
+		wmMsgParams_RNA msg_key_params = {{{0}}};
+		StructRNA *type_array[] = {
+			&RNA_DopeSheet,   /* dopesheet filters */
+
+			&RNA_ActionGroup, /* channel groups */
+			&RNA_FCurve,      /* F-Curve */
+			&RNA_Keyframe,
+			&RNA_FCurveSample,
+
+			&RNA_FModifier,   /* F-Modifiers (XXX: Why can't we just do all subclasses too?) */
+			&RNA_FModifierCycles,
+			&RNA_FModifierEnvelope,
+			&RNA_FModifierEnvelopeControlPoint,
+			&RNA_FModifierFunctionGenerator,
+			&RNA_FModifierGenerator,
+			&RNA_FModifierLimits,
+			&RNA_FModifierNoise,
+			&RNA_FModifierPython,
+			&RNA_FModifierStepped,
+		};
+
+		for (int i = 0; i < ARRAY_SIZE(type_array); i++) {
+			msg_key_params.ptr.type = type_array[i];
+			WM_msg_subscribe_rna_params(
+			        mbus,
+			        &msg_key_params,
+			        &msg_sub_value_region_tag_redraw,
+			        __func__);
+		}
+	}
+}
+
 /* editor level listener */
-static void graph_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
+static void graph_listener(wmWindow *UNUSED(win), ScrArea *sa, wmNotifier *wmn, Scene *UNUSED(scene))
 {
 	SpaceIpo *sipo = (SpaceIpo *)sa->spacedata.first;
 
@@ -476,7 +586,7 @@ static void graph_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 			switch (wmn->data) {
 				case ND_OB_ACTIVE:  /* selection changed, so force refresh to flush (needs flag set to do syncing)  */
 				case ND_OB_SELECT:
-					sipo->flag |= SIPO_TEMP_NEEDCHANSYNC;
+					sipo->runtime.flag |= SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC;
 					ED_area_tag_refresh(sa);
 					break;
 
@@ -489,7 +599,7 @@ static void graph_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 			switch (wmn->data) {
 				case ND_BONE_SELECT:    /* selection changed, so force refresh to flush (needs flag set to do syncing) */
 				case ND_BONE_ACTIVE:
-					sipo->flag |= SIPO_TEMP_NEEDCHANSYNC;
+					sipo->runtime.flag |= SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC;
 					ED_area_tag_refresh(sa);
 					break;
 				case ND_TRANSFORM:
@@ -503,7 +613,7 @@ static void graph_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 		case NC_NODE:
 			if (wmn->action == NA_SELECTED) {
 				/* selection changed, so force refresh to flush (needs flag set to do syncing) */
-				sipo->flag |= SIPO_TEMP_NEEDCHANSYNC;
+				sipo->runtime.flag |= SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC;
 				ED_area_tag_refresh(sa);
 			}
 			break;
@@ -512,7 +622,7 @@ static void graph_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 				ED_area_tag_redraw(sa);
 			break;
 		case NC_WINDOW:
-			if (sipo->flag & SIPO_TEMP_NEEDCHANSYNC) {
+			if (sipo->runtime.flag & (SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC | SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR)) {
 				/* force redraw/refresh after undo/redo - prevents "black curve" problem */
 				ED_area_tag_refresh(sa);
 			}
@@ -669,9 +779,18 @@ static void graph_refresh(const bContext *C, ScrArea *sa)
 	/* update the state of the animchannels in response to changes from the data they represent
 	 * NOTE: the temp flag is used to indicate when this needs to be done, and will be cleared once handled
 	 */
-	if (sipo->flag & SIPO_TEMP_NEEDCHANSYNC) {
+	if (sipo->runtime.flag & SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC) {
 		ANIM_sync_animchannels_to_data(C);
-		sipo->flag &= ~SIPO_TEMP_NEEDCHANSYNC;
+		sipo->runtime.flag &= ~SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC;
+		ED_area_tag_redraw(sa);
+	}
+
+	/* We could check 'SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR', but color is recalculated anyway. */
+	if (sipo->runtime.flag & SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR) {
+		sipo->runtime.flag &= ~SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC_COLOR;
+#if 0	/* Done below. */
+		graph_refresh_fcurve_colors(C);
+#endif
 		ED_area_tag_redraw(sa);
 	}
 
@@ -685,12 +804,30 @@ static void graph_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID
 
 	if (sgraph->ads) {
 		if ((ID *)sgraph->ads->filter_grp == old_id) {
-			sgraph->ads->filter_grp = (Group *)new_id;
+			sgraph->ads->filter_grp = (Collection *)new_id;
 		}
 		if ((ID *)sgraph->ads->source == old_id) {
 			sgraph->ads->source = new_id;
 		}
 	}
+}
+
+static int graph_space_subtype_get(ScrArea *sa)
+{
+	SpaceIpo *sgraph = sa->spacedata.first;
+	return sgraph->mode;
+}
+
+static void graph_space_subtype_set(ScrArea *sa, int value)
+{
+	SpaceIpo *sgraph = sa->spacedata.first;
+	sgraph->mode = value;
+}
+
+static void graph_space_subtype_item_extend(
+        bContext *UNUSED(C), EnumPropertyItem **item, int *totitem)
+{
+	RNA_enum_items_add(item, totitem, rna_enum_space_graph_mode_items);
 }
 
 /* only called once, from space/spacetypes.c */
@@ -711,6 +848,9 @@ void ED_spacetype_ipo(void)
 	st->listener = graph_listener;
 	st->refresh = graph_refresh;
 	st->id_remap = graph_id_remap;
+	st->space_subtype_item_extend = graph_space_subtype_item_extend;
+	st->space_subtype_get = graph_space_subtype_get;
+	st->space_subtype_set = graph_space_subtype_set;
 
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype graphedit region");
@@ -718,6 +858,7 @@ void ED_spacetype_ipo(void)
 	art->init = graph_main_region_init;
 	art->draw = graph_main_region_draw;
 	art->listener = graph_region_listener;
+	art->message_subscribe = graph_region_message_subscribe;
 	art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_ANIMATION | ED_KEYMAP_FRAMES;
 
 	BLI_addhead(&st->regiontypes, art);
@@ -739,6 +880,7 @@ void ED_spacetype_ipo(void)
 	art->prefsizex = 200 + V2D_SCROLL_WIDTH; /* 200 is the 'standard', but due to scrollers, we want a bit more to fit the lock icons in */
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES;
 	art->listener = graph_region_listener;
+	art->message_subscribe = graph_region_message_subscribe;
 	art->init = graph_channel_region_init;
 	art->draw = graph_channel_region_draw;
 

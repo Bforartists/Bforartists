@@ -563,7 +563,7 @@ class GenerateCloud(Operator):
             # Select all of the left over boxes so people can immediately
             # press generate again if they want
             for eachMember in definitionObjects:
-                eachMember.draw_type = 'SOLID'
+                eachMember.display_type = 'SOLID'
                 eachMember.select = True
                 eachMember.hide_render = False
 
@@ -576,7 +576,7 @@ class GenerateCloud(Operator):
             # Create a new object cloudPnts
             cloudPnts = addNewObject(scene, "CloudPoints", bounds)
             cloudPnts["CloudMember"] = "CreatedObj"
-            cloudPnts.draw_type = 'WIRE'
+            cloudPnts.display_type = 'WIRE'
             cloudPnts.hide_render = True
 
             makeParent(bounds, cloudPnts, scene)
@@ -606,7 +606,7 @@ class GenerateCloud(Operator):
                             selectedObjects[0]
                             )
 
-            bounds.draw_type = 'BOUNDS'
+            bounds.display_type = 'BOUNDS'
             bounds.hide_render = False
 
             # Just add a Definition Property designating this
@@ -630,7 +630,7 @@ class GenerateCloud(Operator):
             for selObj in selectedObjects:
                 selObj["CloudMember"] = "DefinitionObj"
                 selObj.name = "DefinitionObj"
-                selObj.draw_type = 'WIRE'
+                selObj.display_type = 'WIRE'
                 selObj.hide_render = True
                 selObj.hide = True
                 makeParent(bounds, selObj, scene)
@@ -638,7 +638,7 @@ class GenerateCloud(Operator):
             # Do the same to the 1. object since it is no longer in list.
             firstObject["CloudMember"] = "DefinitionObj"
             firstObject.name = "DefinitionObj"
-            firstObject.draw_type = 'WIRE'
+            firstObject.display_type = 'WIRE'
             firstObject.hide_render = True
             makeParent(bounds, firstObject, scene)
 
@@ -646,7 +646,7 @@ class GenerateCloud(Operator):
             # Create a new object cloud.
             cloud = addNewObject(scene, "CloudMesh", bounds)
             cloud["CloudMember"] = "CreatedObj"
-            cloud.draw_type = 'WIRE'
+            cloud.display_type = 'WIRE'
             cloud.hide_render = True
 
             makeParent(bounds, cloud, scene)
@@ -677,7 +677,7 @@ class GenerateCloud(Operator):
             cloudParticles.settings.frame_end = 0
             cloudParticles.settings.emit_from = 'VOLUME'
             cloudParticles.settings.lifetime = scene.frame_end
-            cloudParticles.settings.draw_method = 'DOT'
+            cloudParticles.settings.display_method = 'DOT'
             cloudParticles.settings.render_type = 'NONE'
             cloudParticles.settings.distribution = 'RAND'
             cloudParticles.settings.physics_type = 'NEWTON'
@@ -836,7 +836,7 @@ class GenerateCloud(Operator):
                 # Create a new object cloudPnts
                 cloudPnts = addNewObject(scene, "CloudPoints", bounds)
                 cloudPnts["CloudMember"] = "CreatedObj"
-                cloudPnts.draw_type = 'WIRE'
+                cloudPnts.display_type = 'WIRE'
                 cloudPnts.hide_render = True
 
                 makeParent(bounds, cloudPnts, scene)

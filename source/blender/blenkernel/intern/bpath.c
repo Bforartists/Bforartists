@@ -478,13 +478,6 @@ void BKE_bpath_traverse_id(Main *bmain, ID *id, BPathVisitor visit_cb, const int
 		}                                                                      \
 	} (void)0
 
-			/* do via modifiers instead */
-#if 0
-			if (ob->fluidsimSettings) {
-				rewrite_path_fixed(ob->fluidsimSettings->surfdataPath, visit_cb, absbase, bpath_user_data);
-			}
-#endif
-
 			for (md = ob->modifiers.first; md; md = md->next) {
 				if (md->type == eModifierType_Fluidsim) {
 					FluidsimModifierData *fluidmd = (FluidsimModifierData *)md;
@@ -513,7 +506,7 @@ void BKE_bpath_traverse_id(Main *bmain, ID *id, BPathVisitor visit_cb, const int
 			}
 
 			if (ob->soft) {
-				BPATH_TRAVERSE_POINTCACHE(ob->soft->ptcaches);
+				BPATH_TRAVERSE_POINTCACHE(ob->soft->shared->ptcaches);
 			}
 
 			for (psys = ob->particlesystem.first; psys; psys = psys->next) {
@@ -585,14 +578,6 @@ void BKE_bpath_traverse_id(Main *bmain, ID *id, BPathVisitor visit_cb, const int
 						rewrite_path_fixed(ies->filepath, visit_cb, absbase, bpath_user_data);
 					}
 				}
-			}
-			break;
-		}
-		case ID_TE:
-		{
-			Tex *tex = (Tex *)id;
-			if (tex->type == TEX_VOXELDATA && TEX_VD_IS_SOURCE_PATH(tex->vd->file_format)) {
-				rewrite_path_fixed(tex->vd->source_path, visit_cb, absbase, bpath_user_data);
 			}
 			break;
 		}

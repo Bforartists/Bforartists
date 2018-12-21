@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Wavefront OBJ format",
     "author": "Campbell Barton, Bastien Montagne",
-    "version": (2, 3, 6),
-    "blender": (2, 78, 0),
+    "version": (3, 5, 2),
+    "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
@@ -48,70 +48,68 @@ from bpy.props import (
 from bpy_extras.io_utils import (
         ImportHelper,
         ExportHelper,
-        orientation_helper_factory,
+        orientation_helper,
         path_reference_mode,
         axis_conversion,
         )
 
 
-IOOBJOrientationHelper = orientation_helper_factory("IOOBJOrientationHelper", axis_forward='-Z', axis_up='Y')
-
-
-class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
-    """Import OBJ\nLoad a Wavefront OBJ File"""
+@orientation_helper(axis_forward='-Z', axis_up='Y')
+class ImportOBJ(bpy.types.Operator, ImportHelper):
+    """Load a Wavefront OBJ File"""
     bl_idname = "import_scene.obj"
     bl_label = "Import OBJ"
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".obj"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.obj;*.mtl",
             options={'HIDDEN'},
             )
 
-    use_edges = BoolProperty(
+    use_edges: BoolProperty(
             name="Lines",
             description="Import lines and faces with 2 verts as edge",
             default=True,
             )
-    use_smooth_groups = BoolProperty(
+    use_smooth_groups: BoolProperty(
             name="Smooth Groups",
             description="Surround smooth groups by sharp edges",
             default=True,
             )
 
-    use_split_objects = BoolProperty(
+    use_split_objects: BoolProperty(
             name="Object",
             description="Import OBJ Objects into Blender Objects",
             default=True,
             )
-    use_split_groups = BoolProperty(
+    use_split_groups: BoolProperty(
             name="Group",
             description="Import OBJ Groups into Blender Objects",
             default=True,
             )
 
-    use_groups_as_vgroups = BoolProperty(
+    use_groups_as_vgroups: BoolProperty(
             name="Poly Groups",
             description="Import OBJ groups as vertex groups",
             default=False,
             )
 
-    use_image_search = BoolProperty(
+    use_image_search: BoolProperty(
             name="Image Search",
             description="Search subdirs for any associated images "
                         "(Warning, may be slow)",
             default=True,
             )
 
-    split_mode = EnumProperty(
+    split_mode: EnumProperty(
             name="Split",
             items=(('ON', "Split", "Split geometry, omits unused verts"),
                    ('OFF', "Keep Vert Order", "Keep vertex order from file"),
                    ),
             )
 
-    global_clamp_size = FloatProperty(
+    global_clight_size: FloatProperty(
             name="Clamp Size",
             description="Clamp bounds under this value (zero to disable)",
             min=0.0, max=1000.0,
@@ -139,7 +137,6 @@ class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
                                         from_up=self.axis_up,
                                         ).to_4x4()
         keywords["global_matrix"] = global_matrix
-        keywords["use_cycles"] = (context.scene.render.engine == 'CYCLES')
 
         if bpy.data.is_saved and context.user_preferences.filepaths.use_relative_paths:
             import os
@@ -166,129 +163,130 @@ class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
         else:
             row.prop(self, "use_groups_as_vgroups")
 
-        row = layout.split(percentage=0.67)
-        row.prop(self, "global_clamp_size")
+        row = layout.split(factor=0.67)
+        row.prop(self, "global_clight_size")
         layout.prop(self, "axis_forward")
         layout.prop(self, "axis_up")
 
         layout.prop(self, "use_image_search")
 
 
-class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
-    """Export Obj\nSave a Wavefront OBJ File"""
+@orientation_helper(axis_forward='-Z', axis_up='Y')
+class ExportOBJ(bpy.types.Operator, ExportHelper):
+    """Save a Wavefront OBJ File"""
 
     bl_idname = "export_scene.obj"
     bl_label = 'Export OBJ'
     bl_options = {'PRESET'}
 
     filename_ext = ".obj"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.obj;*.mtl",
             options={'HIDDEN'},
             )
 
     # context group
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=True, # bfa - changed the default from false to true
+            default=False,
             )
-    use_animation = BoolProperty(
+    use_animation: BoolProperty(
             name="Animation",
             description="Write out an OBJ for each frame",
             default=False,
             )
 
     # object group
-    use_mesh_modifiers = BoolProperty(
+    use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",
             description="Apply modifiers",
             default=True,
             )
-    use_mesh_modifiers_render = BoolProperty(
+    use_mesh_modifiers_render: BoolProperty(
             name="Use Modifiers Render Settings",
             description="Use render settings when applying modifiers to mesh objects",
             default=False,
             )
 
     # extra data group
-    use_edges = BoolProperty(
+    use_edges: BoolProperty(
             name="Include Edges",
             description="",
             default=True,
             )
-    use_smooth_groups = BoolProperty(
+    use_smooth_groups: BoolProperty(
             name="Smooth Groups",
             description="Write sharp edges as smooth groups",
             default=False,
             )
-    use_smooth_groups_bitflags = BoolProperty(
+    use_smooth_groups_bitflags: BoolProperty(
             name="Bitflag Smooth Groups",
             description="Same as 'Smooth Groups', but generate smooth groups IDs as bitflags "
                         "(produces at most 32 different smooth groups, usually much less)",
             default=False,
             )
-    use_normals = BoolProperty(
+    use_normals: BoolProperty(
             name="Write Normals",
             description="Export one normal per vertex and per face, to represent flat faces and sharp edges",
             default=True,
             )
-    use_uvs = BoolProperty(
+    use_uvs: BoolProperty(
             name="Include UVs",
             description="Write out the active UV coordinates",
             default=True,
             )
-    use_materials = BoolProperty(
+    use_materials: BoolProperty(
             name="Write Materials",
             description="Write out the MTL file",
             default=True,
             )
-    use_triangles = BoolProperty(
+    use_triangles: BoolProperty(
             name="Triangulate Faces",
             description="Convert all faces to triangles",
             default=False,
             )
-    use_nurbs = BoolProperty(
+    use_nurbs: BoolProperty(
             name="Write Nurbs",
             description="Write nurbs curves as OBJ nurbs rather than "
                         "converting to geometry",
             default=False,
             )
-    use_vertex_groups = BoolProperty(
+    use_vertex_groups: BoolProperty(
             name="Polygroups",
             description="",
             default=False,
             )
 
     # grouping group
-    use_blen_objects = BoolProperty(
+    use_blen_objects: BoolProperty(
             name="Objects as OBJ Objects",
             description="",
             default=True,
             )
-    group_by_object = BoolProperty(
+    group_by_object: BoolProperty(
             name="Objects as OBJ Groups ",
             description="",
             default=False,
             )
-    group_by_material = BoolProperty(
+    group_by_material: BoolProperty(
             name="Material Groups",
             description="",
             default=False,
             )
-    keep_vertex_order = BoolProperty(
+    keep_vertex_order: BoolProperty(
             name="Keep Vertex Order",
             description="",
             default=False,
             )
 
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             min=0.01, max=1000.0,
             default=1.0,
             )
 
-    path_mode = path_reference_mode
+    path_mode: path_reference_mode
 
     check_extension = True
 
@@ -303,7 +301,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
                                             "filter_glob",
                                             ))
 
-        global_matrix = (Matrix.Scale(self.global_scale, 4) *
+        global_matrix = (Matrix.Scale(self.global_scale, 4) @
                          axis_conversion(to_forward=self.axis_forward,
                                          to_up=self.axis_up,
                                          ).to_4x4())
@@ -313,11 +311,11 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)", icon = "LOAD_OBJ")
+    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj)", icon = "SAVE_OBJ")
+    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj)")
 
 
 classes = (
@@ -330,13 +328,13 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
     for cls in classes:
         bpy.utils.unregister_class(cls)

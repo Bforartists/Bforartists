@@ -44,9 +44,9 @@ static bNodeSocketTemplate sh_node_sepxyz_out[] = {
 	{	-1, 0, ""	}
 };
 
-static int gpu_shader_sepxyz(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_sepxyz(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "separate_xyz", in, out);
+	return GPU_stack_link(mat, node, "separate_xyz", in, out);
 }
 
 void register_node_type_sh_sepxyz(void)
@@ -54,7 +54,6 @@ void register_node_type_sh_sepxyz(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_SEPXYZ, "Separate XYZ", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_sepxyz_in, sh_node_sepxyz_out);
 	node_type_gpu(&ntype, gpu_shader_sepxyz);
 
@@ -75,9 +74,9 @@ static bNodeSocketTemplate sh_node_combxyz_out[] = {
 	{	-1, 0, ""	}
 };
 
-static int gpu_shader_combxyz(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_combxyz(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "combine_xyz", in, out);
+	return GPU_stack_link(mat, node, "combine_xyz", in, out);
 }
 
 void register_node_type_sh_combxyz(void)
@@ -85,7 +84,6 @@ void register_node_type_sh_combxyz(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_COMBXYZ, "Combine XYZ", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_combxyz_in, sh_node_combxyz_out);
 	node_type_gpu(&ntype, gpu_shader_combxyz);
 

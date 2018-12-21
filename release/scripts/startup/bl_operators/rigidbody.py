@@ -47,7 +47,7 @@ class CopyRigidbodySettings(Operator):
         "deactivate_angular_velocity",
         "linear_damping",
         "angular_damping",
-        "collision_groups",
+        "collision_collections",
         "mesh_source",
         "use_deform",
         "enabled",
@@ -60,17 +60,17 @@ class CopyRigidbodySettings(Operator):
 
     def execute(self, context):
         obj_act = context.object
-        scene = context.scene
+        view_layer = context.view_layer
 
         # deselect all but mesh objects
         for o in context.selected_objects:
             if o.type != 'MESH':
-                o.select = False
+                o.select_set(False)
             elif o.rigid_body is None:
                 # Add rigidbody to object!
-                scene.objects.active = o
+                view_layer.objects.active = o
                 bpy.ops.rigidbody.object_add()
-        scene.objects.active = obj_act
+        view_layer.objects.active = obj_act
 
         objects = context.selected_objects
         if objects:
@@ -92,19 +92,19 @@ class BakeToKeyframes(Operator):
     bl_label = "Bake To Keyframes"
     bl_options = {'REGISTER', 'UNDO'}
 
-    frame_start = IntProperty(
+    frame_start: IntProperty(
         name="Start Frame",
         description="Start frame for baking",
         min=0, max=300000,
         default=1,
     )
-    frame_end = IntProperty(
+    frame_end: IntProperty(
         name="End Frame",
         description="End frame for baking",
         min=1, max=300000,
         default=250,
     )
-    step = IntProperty(
+    step: IntProperty(
         name="Frame Step",
         description="Frame Step",
         min=1, max=120,
@@ -127,7 +127,7 @@ class BakeToKeyframes(Operator):
         # filter objects selection
         for obj in context.selected_objects:
             if not obj.rigid_body or obj.rigid_body.type != 'ACTIVE':
-                obj.select = False
+                obj.select_set(False)
 
         objects = context.selected_objects
 
@@ -149,7 +149,7 @@ class BakeToKeyframes(Operator):
                     mat = bake[i][j]
                     # convert world space transform to parent space, so parented objects don't get offset after baking
                     if (obj.parent):
-                        mat = obj.matrix_parent_inverse.inverted() * obj.parent.matrix_world.inverted() * mat
+                        mat = obj.matrix_parent_inverse.inverted() @ obj.parent.matrix_world.inverted() @ mat
 
                     obj.location = mat.to_translation()
 
@@ -216,7 +216,7 @@ class ConnectRigidBodies(Operator):
     bl_label = "Connect Rigid Bodies"
     bl_options = {'REGISTER', 'UNDO'}
 
-    con_type = EnumProperty(
+    con_type: EnumProperty(
         name="Type",
         description="Type of generated constraint",
         # XXX Would be nice to get icons too, but currently not possible ;)
@@ -226,7 +226,7 @@ class ConnectRigidBodies(Operator):
         ),
         default='FIXED',
     )
-    pivot_type = EnumProperty(
+    pivot_type: EnumProperty(
         name="Location",
         description="Constraint pivot location",
         items=(
@@ -236,7 +236,7 @@ class ConnectRigidBodies(Operator):
         ),
         default='CENTER',
     )
-    connection_pattern = EnumProperty(
+    connection_pattern: EnumProperty(
         name="Connection Pattern",
         description="Pattern used to connect objects",
         items=(
@@ -265,12 +265,12 @@ class ConnectRigidBodies(Operator):
         ob = bpy.data.objects.new("Constraint", object_data=None)
         ob.location = loc
         context.scene.objects.link(ob)
-        context.scene.objects.active = ob
-        ob.select = True
+        context.view_layer.objects.active = ob
+        ob.select_set(True)
 
         bpy.ops.rigidbody.constraint_add()
         con_obj = context.active_object
-        con_obj.empty_draw_type = 'ARROWS'
+        con_obj.empty_display_type = 'ARROWS'
         con = con_obj.rigid_body_constraint
         con.type = self.con_type
 
@@ -278,7 +278,7 @@ class ConnectRigidBodies(Operator):
         con.object2 = object2
 
     def execute(self, context):
-        scene = context.scene
+        view_layer = context.view_layer
         objects = context.selected_objects
         obj_act = context.active_object
         change = False
@@ -311,8 +311,8 @@ class ConnectRigidBodies(Operator):
             # restore selection
             bpy.ops.object.select_all(action='DESELECT')
             for obj in objects:
-                obj.select = True
-            scene.objects.active = obj_act
+                obj.select_set(True)
+            view_layer.objects.active = obj_act
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "No other objects selected")

@@ -46,11 +46,12 @@
 
 #include "BKE_colorband.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_brush.h"
 #include "BKE_image.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_paint.h"
 #include "ED_screen.h"
@@ -865,8 +866,9 @@ static void paint_2d_lift_soften(ImagePaintState *s, ImBuf *ibuf, ImBuf *ibufb, 
 	out_off[0] = out_off[1] = 0;
 
 	if (!tile) {
-		IMB_rectclip(ibuf, ibufb, &in_off[0], &in_off[1], &out_off[0],
-		             &out_off[1], &dim[0], &dim[1]);
+		IMB_rectclip(
+		        ibuf, ibufb, &in_off[0], &in_off[1], &out_off[0],
+		        &out_off[1], &dim[0], &dim[1]);
 
 		if ((dim[0] == 0) || (dim[1] == 0))
 			return;
@@ -1383,7 +1385,7 @@ void paint_2d_redraw(const bContext *C, void *ps, bool final)
 
 		/* compositor listener deals with updating */
 		WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, s->image);
-		DAG_id_tag_update(&s->image->id, 0);
+		DEG_id_tag_update(&s->image->id, 0);
 	}
 	else {
 		if (!s->sima || !s->sima->lock)

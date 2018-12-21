@@ -27,8 +27,8 @@ from bpy.props import FloatProperty, PointerProperty
 bl_info = {
     "name": "Mesh Tools - Bforartists version",
     "author": "Jake Dube",
-    "version": (1, 0),
-    "blender": (2, 78, 0),
+    "version": (1, 1),
+    "blender": (2, 80, 0),
     "location": "View3D > Mesh > Transform > Set Dimensions",
     "description": "Sets dimensions for selected vertices.",
     "category": "Mesh"}
@@ -72,16 +72,16 @@ def safe_divide(a, b):
     return 1
 
 
-class SetDimensions(Operator):
+class ED_OT_SetDimensions(Operator):
     bl_label = "Set Dimensions"
     bl_idname = "mesh_tools_addon.set_dimensions"
     bl_description = "Sets dimensions of selected vertices"
     bl_options = {'REGISTER', 'UNDO'}
     bl_context = "editmode"
 
-    new_x = FloatProperty(name="X", min=0, default=1, unit='LENGTH')
-    new_y = FloatProperty(name="Y", min=0, default=1, unit='LENGTH')
-    new_z = FloatProperty(name="Z", min=0, default=1, unit='LENGTH')
+    new_x : FloatProperty(name="X", min=0, default=1, unit='LENGTH')
+    new_y : FloatProperty(name="Y", min=0, default=1, unit='LENGTH')
+    new_z : FloatProperty(name="Z", min=0, default=1, unit='LENGTH')
 
     def invoke(self, context, event):
         bounds = calc_bounds()
@@ -104,26 +104,33 @@ class SetDimensions(Operator):
         layout = self.layout
 
         box = layout.box()
-        box.label("New dimensions:")
+        box.label(text = "New dimensions:")
         box.prop(self, "new_x")
         box.prop(self, "new_y")
         box.prop(self, "new_z")
 
 
 def add_button(self, context):
-    self.layout.operator(SetDimensions.bl_idname, icon="PLUGIN")
+    self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
 
+classes = (
+    ED_OT_SetDimensions,	
+)
 
 def register():
-    register_class(SetDimensions)
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
     bpy.types.VIEW3D_MT_transform.append(add_button)
-    bpy.types.VIEW3D_PT_transform.append(add_button)
+    #bpy.types.VIEW3D_PT_transform.append(add_button)
 
 
 def unregister():
-    unregister_class(SetDimensions)
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
     bpy.types.VIEW3D_MT_transform.remove(add_button)
-    bpy.types.VIEW3D_PT_transform.remove(add_button)
+    #bpy.types.VIEW3D_PT_transform.remove(add_button)
 
 
 if __name__ == "__main__":

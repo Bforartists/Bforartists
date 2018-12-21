@@ -76,7 +76,7 @@ def debugPrintNew(debugs, *text):
             print(row)
 
 
-# Geometry and math calcualtion methods #
+# Geometry and math calculation methods #
 
 class CalculationHelper:
 
@@ -403,7 +403,7 @@ class EdgeRoundifier(Operator):
             items=workModeItems,
             name="",
             default='Normal',
-            description="Normal work with the current given paramaters set by the user\n"
+            description="Normal work with the current given parameters set by the user\n"
                         "Reset - changes back the parameters to their default values"
             )
     entryModeItems = [("Radius", "Radius", ""), ("Angle", "Angle", "")]

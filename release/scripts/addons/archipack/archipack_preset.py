@@ -170,7 +170,9 @@ class PresetMenuItem():
     def __init__(self, thumbsize, preset, image=None):
         name = bpy.path.display_name_from_filepath(preset)
         self.preset = preset
-        self.handle = ThumbHandle(thumbsize, name, image, draggable=True)
+        self.image = image
+        self.image.gl_load()
+        self.handle = ThumbHandle(thumbsize, name, self.image, draggable=True)
         self.enable = True
 
     def filter(self, keywords):
@@ -178,6 +180,11 @@ class PresetMenuItem():
             if key not in self.handle.label.label:
                 return False
         return True
+
+    def cleanup(self):
+        if self.image:
+            self.image.gl_free()
+            # bpy.data.images.remove(self.image)
 
     def set_pos(self, context, pos):
         self.handle.set_pos(context, pos)
@@ -223,7 +230,6 @@ class PresetMenu():
         self.border = GlPolyline((0.7, 0.7, 0.7, 1), d=2)
         self.keywords = SeekBox()
         self.keywords.colour_normal = (1, 1, 1, 1)
-
         self.border.closed = True
         self.set_pos(context)
 
@@ -268,11 +274,14 @@ class PresetMenu():
         return file_list
 
     def clearImages(self):
+        for item in self.menuItems:
+            item.cleanup()
         for image in bpy.data.images:
             if image.filepath_raw in self.imageList:
                 # image.user_clear()
                 bpy.data.images.remove(image, do_unlink=True)
         self.imageList.clear()
+
 
     def make_menuitem(self, filepath):
         """
@@ -377,7 +386,7 @@ class PresetMenu():
 
 class PresetMenuOperator():
 
-    preset_operator = StringProperty(
+    preset_operator : StringProperty(
         options={'SKIP_SAVE'},
         default="script.execute_preset"
     )
@@ -414,7 +423,11 @@ class PresetMenuOperator():
                 if self.preset_operator == 'script.execute_preset':
                     # call from preset menu
                     # ensure right active_object class
-                    d = getattr(bpy.types, self.preset_subdir).datablock(context.active_object)
+                    o = context.active_object
+                    if o.data and self.preset_subdir in o.data:
+                        d = getattr(o.data, self.preset_subdir)[0]
+                    elif self.preset_subdir in o:
+                        d = getattr(o, self.preset_subdir)[0]
                     if d is not None:
                         d.auto_update = False
                         # print("Archipack execute_preset loading auto_update:%s" % d.auto_update)
@@ -525,17 +538,22 @@ class ArchipackPreset(AddPresetBase):
 
     def background_render(self, context, cls, preset):
         generator = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "archipack_thumbs.py"
+        addon_name = __name__.split('.')[0]
+        matlib_path = context.user_preferences.addons[addon_name].preferences.matlib_path
         # Run external instance of blender like the original thumbnail generator.
         cmd = [
             bpy.app.binary_path,
             "--background",
+            "--factory-startup",
             "-noaudio",
+            # "--addons", addon_name,
             "--python", generator,
             "--",
+            "addon:" + addon_name,
+            "matlib:" + matlib_path,
             "cls:" + cls,
             "preset:" + preset
-            ]
-        # print(repr(cmd))
+        ]
 
         subprocess.Popen(cmd)
 
@@ -555,7 +573,7 @@ class ArchipackPreset(AddPresetBase):
 
             preset = os.path.join(target_path, filename) + ".py"
             cls = self.preset_subdir[10:]
-            print("post cb cls:%s preset:%s" % (cls, preset))
+            # print("post cb cls:%s preset:%s" % (cls, preset))
             self.background_render(context, cls, preset)
 
             return

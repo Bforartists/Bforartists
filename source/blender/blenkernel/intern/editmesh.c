@@ -39,6 +39,7 @@
 
 #include "BKE_editmesh.h"
 #include "BKE_cdderivedmesh.h"
+#include "BKE_library.h"
 
 
 BMEditMesh *BKE_editmesh_create(BMesh *bm, const bool do_tessellate)
@@ -58,7 +59,7 @@ BMEditMesh *BKE_editmesh_copy(BMEditMesh *em)
 	BMEditMesh *em_copy = MEM_callocN(sizeof(BMEditMesh), __func__);
 	*em_copy = *em;
 
-	em_copy->derivedCage = em_copy->derivedFinal = NULL;
+	em_copy->mesh_eval_cage = em_copy->mesh_eval_final = NULL;
 
 	em_copy->derivedVertColor = NULL;
 	em_copy->derivedVertColorLen = 0;
@@ -89,10 +90,12 @@ BMEditMesh *BKE_editmesh_from_object(Object *ob)
 {
 	BLI_assert(ob->type == OB_MESH);
 	/* sanity check */
+#if 0 /* disable in mutlti-object edit. */
 #ifndef NDEBUG
 	if (((Mesh *)ob->data)->edit_btmesh) {
 		BLI_assert(((Mesh *)ob->data)->edit_btmesh->ob == ob);
 	}
+#endif
 #endif
 	return ((Mesh *)ob->data)->edit_btmesh;
 }
@@ -112,18 +115,6 @@ static void editmesh_tessface_calc_intern(BMEditMesh *em)
 
 	BMLoop *(*looptris)[3];
 
-#if 0
-	/* note, we could be clever and re-use this array but would need to ensure
-	 * its realloced at some point, for now just free it */
-	if (em->looptris) MEM_freeN(em->looptris);
-
-	/* Use em->tottri when set, this means no reallocs while transforming,
-	 * (unless scanfill fails), otherwise... */
-	/* allocate the length of totfaces, avoid many small reallocs,
-	 * if all faces are tri's it will be correct, quads == 2x allocs */
-	BLI_array_reserve(looptris, (em->tottri && em->tottri < bm->totface * 3) ? em->tottri : bm->totface);
-#else
-
 	/* this means no reallocs for quad dominant models, for */
 	if ((em->looptris != NULL) &&
 	    /* (*em->tottri >= looptris_tot)) */
@@ -136,8 +127,6 @@ static void editmesh_tessface_calc_intern(BMEditMesh *em)
 		if (em->looptris) MEM_freeN(em->looptris);
 		looptris = MEM_mallocN(sizeof(*looptris) * looptris_tot, __func__);
 	}
-
-#endif
 
 	em->looptris = looptris;
 
@@ -152,51 +141,25 @@ void BKE_editmesh_tessface_calc(BMEditMesh *em)
 
 	/* commented because editbmesh_build_data() ensures we get tessfaces */
 #if 0
-	if (em->derivedFinal && em->derivedFinal == em->derivedCage) {
-		if (em->derivedFinal->recalcTessellation)
-			em->derivedFinal->recalcTessellation(em->derivedFinal);
+	if (em->mesh_eval_final && em->mesh_eval_final == em->mesh_eval_cage) {
+		BKE_mesh_runtime_looptri_ensure(em->mesh_eval_final);
 	}
-	else if (em->derivedFinal) {
-		if (em->derivedCage->recalcTessellation)
-			em->derivedCage->recalcTessellation(em->derivedCage);
-		if (em->derivedFinal->recalcTessellation)
-			em->derivedFinal->recalcTessellation(em->derivedFinal);
+	else if (em->mesh_eval_final) {
+		BKE_mesh_runtime_looptri_ensure(em->mesh_eval_final);
+		BKE_mesh_runtime_looptri_ensure(em->mesh_eval_cage);
 	}
 #endif
 }
 
-void BKE_editmesh_update_linked_customdata(BMEditMesh *em)
-{
-	BMesh *bm = em->bm;
-	int act;
-
-	if (CustomData_has_layer(&bm->pdata, CD_MTEXPOLY)) {
-		act = CustomData_get_active_layer(&bm->pdata, CD_MTEXPOLY);
-		CustomData_set_layer_active(&bm->ldata, CD_MLOOPUV, act);
-
-		act = CustomData_get_render_layer(&bm->pdata, CD_MTEXPOLY);
-		CustomData_set_layer_render(&bm->ldata, CD_MLOOPUV, act);
-
-		act = CustomData_get_clone_layer(&bm->pdata, CD_MTEXPOLY);
-		CustomData_set_layer_clone(&bm->ldata, CD_MLOOPUV, act);
-
-		act = CustomData_get_stencil_layer(&bm->pdata, CD_MTEXPOLY);
-		CustomData_set_layer_stencil(&bm->ldata, CD_MLOOPUV, act);
-	}
-}
-
 void BKE_editmesh_free_derivedmesh(BMEditMesh *em)
 {
-	if (em->derivedCage) {
-		em->derivedCage->needsFree = 1;
-		em->derivedCage->release(em->derivedCage);
+	if (em->mesh_eval_cage) {
+		BKE_id_free(NULL, em->mesh_eval_cage);
 	}
-	if (em->derivedFinal && em->derivedFinal != em->derivedCage) {
-		em->derivedFinal->needsFree = 1;
-		em->derivedFinal->release(em->derivedFinal);
+	if (em->mesh_eval_final && em->mesh_eval_final != em->mesh_eval_cage) {
+		BKE_id_free(NULL, em->mesh_eval_final);
 	}
-
-	em->derivedCage = em->derivedFinal = NULL;
+	em->mesh_eval_cage = em->mesh_eval_final = NULL;
 }
 
 /*does not free the BMEditMesh struct itself*/
@@ -263,4 +226,25 @@ float (*BKE_editmesh_vertexCos_get_orco(BMEditMesh *em, int *r_numVerts))[3]
 	*r_numVerts = em->bm->totvert;
 
 	return orco;
+}
+
+void BKE_editmesh_lnorspace_update(BMEditMesh *em)
+{
+	BMesh *bm = em->bm;
+
+	/* We need to create clnors data if none exist yet, otherwise there is no way to edit them.
+	 * Similar code to MESH_OT_customdata_custom_splitnormals_add operator, we want to keep same shading
+	 * in case we were using autosmooth so far...
+	 * Note: there is a problem here, which is that if someone starts a normal editing operation on previously
+	 * autosmooth-ed mesh, and cancel that operation, generated clnors data remain, with related sharp edges
+	 * (and hence autosmooth is 'lost').
+	 * Not sure how critical this is, and how to fix that issue? */
+	if (!CustomData_has_layer(&bm->ldata, CD_CUSTOMLOOPNORMAL)) {
+		Mesh *me = em->ob->data;
+		if (me->flag & ME_AUTOSMOOTH) {
+			BM_edges_sharp_from_angle_set(bm, me->smoothresh);
+		}
+	}
+
+	BM_lnorspace_update(bm);
 }

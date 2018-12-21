@@ -18,28 +18,22 @@
 
 # <pep8 compliant>
 
+import os
+import shutil
 if "bpy" in locals():
     import importlib
     importlib.reload(settings)
     importlib.reload(utils_i18n)
 else:
     import bpy
+    from bpy.types import Operator
     from bpy.props import (
-            BoolProperty,
-            CollectionProperty,
-            EnumProperty,
-            FloatProperty,
-            FloatVectorProperty,
-            IntProperty,
-            PointerProperty,
-            StringProperty,
-            )
+        BoolProperty,
+        EnumProperty,
+        StringProperty,
+    )
     from . import settings
     from bl_i18n_utils import utils as utils_i18n
-
-
-import os
-import shutil
 
 
 # A global cache for I18nMessages objects, as parsing po files takes a few seconds.
@@ -52,21 +46,30 @@ def _get_messages(lang, fname):
     return PO_CACHE[fname]
 
 
-class UI_OT_i18n_edittranslation_update_mo(bpy.types.Operator):
-    """Try to "compile" given po file into relevant blender.mo file """ \
-    """(WARNING: it will replace the official mo file in your user dir!)"""
+class UI_OT_i18n_edittranslation_update_mo(Operator):
+    """Try to "compile" given po file into relevant blender.mo file
+    (WARNING: it will replace the official mo file in your user dir!)"""
     bl_idname = "ui.i18n_edittranslation_update_mo"
     bl_label = "Edit Translation Update Mo"
 
-    # "Parameters"
-    lang = StringProperty(description="Current (translated) language",
-                          options={'SKIP_SAVE'})
-    po_file = StringProperty(description="Path to the matching po file",
-                             subtype='FILE_PATH', options={'SKIP_SAVE'})
-    clean_mo = BoolProperty(description="Clean up (remove) all local "
-                                        "translation files, to be able to use "
-                                        "all system's ones again",
-                            default=False, options={'SKIP_SAVE'})
+    # Operator Arguments
+    lang: StringProperty(
+        description="Current (translated) language",
+        options={'SKIP_SAVE'},
+    )
+
+    po_file: StringProperty(
+        description="Path to the matching po file",
+        subtype='FILE_PATH',
+        options={'SKIP_SAVE'},
+    )
+
+    clean_mo: BoolProperty(
+        description="Remove all local translation files, to be able to use the system ones again",
+        default=False,
+        options={'SKIP_SAVE'}
+    )
+    # /End Operator Arguments
 
     def execute(self, context):
         if self.clean_mo:
@@ -85,65 +88,169 @@ class UI_OT_i18n_edittranslation_update_mo(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class UI_OT_i18n_edittranslation(bpy.types.Operator):
-    """Translate the label and tooltip of the property defined by given 'parameters'"""
+class UI_OT_i18n_edittranslation(Operator):
+    """Translate the label and tooltip of the given property"""
     bl_idname = "ui.edittranslation"
     bl_label = "Edit Translation"
 
-    # "Parameters"
-    but_label = StringProperty(description="Label of the control", options={'SKIP_SAVE'})
-    rna_label = StringProperty(description="RNA-defined label of the control, if any", options={'SKIP_SAVE'})
-    enum_label = StringProperty(description="Label of the enum item of the control, if any", options={'SKIP_SAVE'})
-    but_tip = StringProperty(description="Tip of the control", options={'SKIP_SAVE'})
-    rna_tip = StringProperty(description="RNA-defined tip of the control, if any", options={'SKIP_SAVE'})
-    enum_tip = StringProperty(description="Tip of the enum item of the control, if any", options={'SKIP_SAVE'})
-    rna_struct = StringProperty(description="Identifier of the RNA struct, if any", options={'SKIP_SAVE'})
-    rna_prop = StringProperty(description="Identifier of the RNA property, if any", options={'SKIP_SAVE'})
-    rna_enum = StringProperty(description="Identifier of the RNA enum item, if any", options={'SKIP_SAVE'})
-    rna_ctxt = StringProperty(description="RNA context for label", options={'SKIP_SAVE'})
+    # Operator Arguments
+    but_label: StringProperty(
+        description="Label of the control",
+        options={'SKIP_SAVE'},
+    )
 
-    lang = StringProperty(description="Current (translated) language", options={'SKIP_SAVE'})
-    po_file = StringProperty(description="Path to the matching po file", subtype='FILE_PATH', options={'SKIP_SAVE'})
+    rna_label: StringProperty(
+        description="RNA-defined label of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    enum_label: StringProperty(
+        description="Label of the enum item of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    but_tip: StringProperty(
+        description="Tip of the control",
+        options={'SKIP_SAVE'},
+    )
+
+    rna_tip: StringProperty(
+        description="RNA-defined tip of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    enum_tip: StringProperty(
+        description="Tip of the enum item of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    rna_struct: StringProperty(
+        description="Identifier of the RNA struct, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    rna_prop: StringProperty(
+        description="Identifier of the RNA property, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    rna_enum: StringProperty(
+        description="Identifier of the RNA enum item, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    rna_ctxt: StringProperty(
+        description="RNA context for label",
+        options={'SKIP_SAVE'},
+    )
+
+    lang: StringProperty(
+        description="Current (translated) language",
+        options={'SKIP_SAVE'},
+    )
+
+    po_file: StringProperty(
+        description="Path to the matching po file",
+        subtype='FILE_PATH',
+        options={'SKIP_SAVE'},
+    )
 
     # Found in po file.
-    org_but_label = StringProperty(description="Original label of the control", options={'SKIP_SAVE'})
-    org_rna_label = StringProperty(description="Original RNA-defined label of the control, if any",
-                                   options={'SKIP_SAVE'})
-    org_enum_label = StringProperty(description="Original label of the enum item of the control, if any",
-                                    options={'SKIP_SAVE'})
-    org_but_tip = StringProperty(description="Original tip of the control", options={'SKIP_SAVE'})
-    org_rna_tip = StringProperty(description="Original RNA-defined tip of the control, if any", options={'SKIP_SAVE'})
-    org_enum_tip = StringProperty(description="Original tip of the enum item of the control, if any",
-                                  options={'SKIP_SAVE'})
+    org_but_label: StringProperty(
+        description="Original label of the control",
+        options={'SKIP_SAVE'},
+    )
 
-    flag_items = (('FUZZY', "Fuzzy", "Message is marked as fuzzy in po file"),
-                  ('ERROR', "Error", "Some error occurred with this message"),
-                 )
-    but_label_flags = EnumProperty(items=flag_items, description="Flags about the label of the button",
-                                   options={'SKIP_SAVE', 'ENUM_FLAG'})
-    rna_label_flags = EnumProperty(items=flag_items, description="Flags about the RNA-defined label of the button",
-                                   options={'SKIP_SAVE', 'ENUM_FLAG'})
-    enum_label_flags = EnumProperty(items=flag_items, description="Flags about the RNA enum item label of the button",
-                                    options={'SKIP_SAVE', 'ENUM_FLAG'})
-    but_tip_flags = EnumProperty(items=flag_items, description="Flags about the tip of the button",
-                                 options={'SKIP_SAVE', 'ENUM_FLAG'})
-    rna_tip_flags = EnumProperty(items=flag_items, description="Flags about the RNA-defined tip of the button",
-                                 options={'SKIP_SAVE', 'ENUM_FLAG'})
-    enum_tip_flags = EnumProperty(items=flag_items, description="Flags about the RNA enum item tip of the button",
-                                  options={'SKIP_SAVE', 'ENUM_FLAG'})
+    org_rna_label: StringProperty(
+        description="Original RNA-defined label of the control, if any",
+        options={'SKIP_SAVE'},
+    )
 
-    stats_str = StringProperty(description="Stats from opened po", options={'SKIP_SAVE'})
-    update_po = BoolProperty(description="Update po file, try to rebuild mo file, and refresh Blender UI",
-                             default=False, options={'SKIP_SAVE'})
-    update_mo = BoolProperty(description="Try to rebuild mo file, and refresh Blender UI",
-                             default=False, options={'SKIP_SAVE'})
-    clean_mo = BoolProperty(description="Clean up (remove) all local translation files, to be able to use "
-                                        "all system's ones again",
-                            default=False, options={'SKIP_SAVE'})
+    org_enum_label: StringProperty(
+        description="Original label of the enum item of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    org_but_tip: StringProperty(
+        description="Original tip of the control",
+        options={'SKIP_SAVE'},
+    )
+
+    org_rna_tip: StringProperty(
+        description="Original RNA-defined tip of the control, if any", options={'SKIP_SAVE'}
+    )
+
+    org_enum_tip: StringProperty(
+        description="Original tip of the enum item of the control, if any",
+        options={'SKIP_SAVE'},
+    )
+
+    flag_items = (
+        ('FUZZY', "Fuzzy", "Message is marked as fuzzy in po file"),
+        ('ERROR', "Error", "Some error occurred with this message"),
+    )
+
+    but_label_flags: EnumProperty(
+        description="Flags about the label of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    rna_label_flags: EnumProperty(
+        description="Flags about the RNA-defined label of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    enum_label_flags: EnumProperty(
+        description="Flags about the RNA enum item label of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    but_tip_flags: EnumProperty(
+        description="Flags about the tip of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    rna_tip_flags: EnumProperty(
+        description="Flags about the RNA-defined tip of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    enum_tip_flags: EnumProperty(
+        description="Flags about the RNA enum item tip of the button",
+        items=flag_items,
+        options={'SKIP_SAVE', 'ENUM_FLAG'},
+    )
+
+    stats_str: StringProperty(
+        description="Stats from opened po", options={'SKIP_SAVE'})
+
+    update_po: BoolProperty(
+        description="Update po file, try to rebuild mo file, and refresh Blender's UI",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    update_mo: BoolProperty(
+        description="Try to rebuild mo file, and refresh Blender's UI",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+
+    clean_mo: BoolProperty(
+        description="Remove all local translation files, to be able to use the system ones again",
+        default=False,
+        options={'SKIP_SAVE'},
+    )
+    # /End Operator Arguments
 
     def execute(self, context):
         if not hasattr(self, "msgmap"):
-            self.report('ERROR', "Looks like you did not invoke this operator first!")
+            self.report('ERROR', "invoke() needs to be called before execute()")
             return {'CANCELLED'}
 
         msgs = _get_messages(self.lang, self.po_file)
@@ -152,7 +259,6 @@ class UI_OT_i18n_edittranslation(bpy.types.Operator):
             if 'ERROR' in getattr(self, mmap["msg_flags"]):
                 continue
             k = mmap["key"]
-#            print(k)
             if k not in done_keys and len(k) == 1:
                 k = tuple(k)[0]
                 msgs.msgs[k].msgstr = getattr(self, mmap["msgstr"])
@@ -160,7 +266,7 @@ class UI_OT_i18n_edittranslation(bpy.types.Operator):
                 done_keys.add(k)
 
         if self.update_po:
-            # Try to overwrite po file, may fail if we have no good rights...
+            # Try to overwrite .po file, may fail if there are no permissions.
             try:
                 msgs.write(kind='PO', dest=self.po_file)
             except Exception as e:
@@ -175,19 +281,20 @@ class UI_OT_i18n_edittranslation(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        self.msgmap = {"but_label": {"msgstr": "but_label", "msgid": "org_but_label",
-                                     "msg_flags": "but_label_flags", "key": set()},
-                       "rna_label": {"msgstr": "rna_label", "msgid": "org_rna_label",
-                                     "msg_flags": "rna_label_flags", "key": set()},
-                       "enum_label": {"msgstr": "enum_label", "msgid": "org_enum_label",
-                                      "msg_flags": "enum_label_flags", "key": set()},
-                       "but_tip": {"msgstr": "but_tip", "msgid": "org_but_tip",
-                                   "msg_flags": "but_tip_flags", "key": set()},
-                       "rna_tip": {"msgstr": "rna_tip", "msgid": "org_rna_tip",
-                                   "msg_flags": "rna_tip_flags", "key": set()},
-                       "enum_tip": {"msgstr": "enum_tip", "msgid": "org_enum_tip",
-                                    "msg_flags": "enum_tip_flags", "key": set()},
-                      }
+        self.msgmap = {
+            "but_label": {
+                "msgstr": "but_label", "msgid": "org_but_label", "msg_flags": "but_label_flags", "key": set()},
+            "rna_label": {
+                "msgstr": "rna_label", "msgid": "org_rna_label", "msg_flags": "rna_label_flags", "key": set()},
+            "enum_label": {
+                "msgstr": "enum_label", "msgid": "org_enum_label", "msg_flags": "enum_label_flags", "key": set()},
+            "but_tip": {
+                "msgstr": "but_tip", "msgid": "org_but_tip", "msg_flags": "but_tip_flags", "key": set()},
+            "rna_tip": {
+                "msgstr": "rna_tip", "msgid": "org_rna_tip", "msg_flags": "rna_tip_flags", "key": set()},
+            "enum_tip": {
+                "msgstr": "enum_tip", "msgid": "org_enum_tip", "msg_flags": "enum_tip_flags", "key": set()},
+        }
 
         msgs = _get_messages(self.lang, self.po_file)
         msgs.find_best_messages_matches(self, self.msgmap, self.rna_ctxt, self.rna_struct, self.rna_prop, self.rna_enum)
@@ -229,9 +336,8 @@ class UI_OT_i18n_edittranslation(bpy.types.Operator):
         if self.org_but_label or self.org_rna_label or self.org_enum_label:
             # XXX Can't use box, labels are not enough readable in them :/
             box = layout.box()
-            #box = layout
             box.label(text="Labels:")
-            split = box.split(percentage=0.15)
+            split = box.split(factor=0.15)
             col1 = split.column()
             col2 = split.column()
             if self.org_but_label:
@@ -268,9 +374,8 @@ class UI_OT_i18n_edittranslation(bpy.types.Operator):
         if self.org_but_tip or self.org_rna_tip or self.org_enum_tip:
             # XXX Can't use box, labels are not enough readable in them :/
             box = layout.box()
-            #box = layout
             box.label(text="Tool Tips:")
-            split = box.split(percentage=0.15)
+            split = box.split(factor=0.15)
             col1 = split.column()
             col2 = split.column()
             if self.org_but_tip:

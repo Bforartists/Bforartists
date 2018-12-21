@@ -140,4 +140,3 @@ def is_subdir(path, directory):
         if path.startswith(directory.rstrip(sep) + sep):
             return True
     return False
-

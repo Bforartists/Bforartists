@@ -87,13 +87,13 @@ def get_lowest_world_co(context, ob, mat_parent=None):
     if ob.type == 'MESH':
         return get_lowest_world_co_from_mesh(ob)
 
-    elif ob.type == 'EMPTY' and ob.dupli_type == 'GROUP':
-        if not ob.dupli_group:
+    elif ob.type == 'EMPTY' and ob.instance_type == 'COLLECTION':
+        if not ob.instance_collection:
             return None
 
         else:
             lowest_co = None
-            for ob_l in ob.dupli_group.objects:
+            for ob_l in ob.instance_collection.objects:
                 if ob_l.type == 'MESH':
                     lowest_ob_l = get_lowest_world_co_from_mesh(ob_l, ob.matrix_world)
                     if not lowest_co:

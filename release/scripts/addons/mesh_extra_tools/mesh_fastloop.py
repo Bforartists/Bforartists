@@ -50,8 +50,8 @@ Bartius Crouch (Crouch) - http://sites.google.com/site/bartiuscrouch/
 Dealga McArdle (zeffii) - http://www.digitalaphasia.com
 
 Version history:-
-v0.16 - Ammended script for compatibility with recent API changes
-v0.15 - Ammended script meta information and button rendering code for
+v0.16 - Amended script for compatibility with recent API changes
+v0.15 - Amended script meta information and button rendering code for
         compatibility with recent API changes
 v0.14 - Modal operator
 v0.13 - Initial revision
@@ -79,7 +79,7 @@ class OBJECT_OT_FastLoop(Operator):
 
     def modal(self, context, event):
         if event.type == 'ESC':
-            context.area.header_text_set()
+            context.area.header_text_set(None)
             return {'CANCELLED'}
 
         elif event.type == 'LEFTMOUSE' and event.value == 'RELEASE':

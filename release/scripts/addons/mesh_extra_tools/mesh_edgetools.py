@@ -391,7 +391,7 @@ sum of the angles will be less.
 """
 # @todo
 # - Figure out how to deal with n-gons
-# How the heck is a face with 8 verts definied mathematically?
+# How the heck is a face with 8 verts defined mathematically?
 # How do I then find the intersection point of a line with said vert?
 # How do I know if that point is "inside" all the verts?
 # I have no clue, and haven't been able to find anything on it so far
@@ -1162,7 +1162,7 @@ class Shaft(Operator):
             )
     flip = BoolProperty(
             name="Flip Second Edge",
-            description="Flip the percieved direction of the second edge",
+            description="Flip the perceived direction of the second edge",
             default=False
             )
     radius = FloatProperty(
@@ -1255,7 +1255,7 @@ class Shaft(Operator):
                 # the user has changed selection.
                 # We then need to make sure that the active object really is an edge
                 # (robustness check)
-                # Finally, if the active edge is not the inital one, we flip them
+                # Finally, if the active edge is not the initial one, we flip them
                 # and have the GUI reflect that
                 if self.last_edge == self.edge:
                     if isinstance(bm.select_history.active, bmesh.types.BMEdge):
@@ -1336,20 +1336,20 @@ class Shaft(Operator):
                 for i in range(len(verts) - 2):
                     init_vec = distance_point_line(verts[i + 2].co, verts[0].co, verts[1].co)
                     co = init_vec + verts[i + 2].co
-                    # These will be rotated about the orgin so will need to be shifted:
+                    # These will be rotated about the origin so will need to be shifted:
                     for j in range(numV):
                         verts_out.append(co - (matrices[j] * init_vec))
             elif self.shaftType == 1:
                 for i in verts:
                     init_vec = distance_point_line(i.co, active.verts[0].co, active.verts[1].co)
                     co = init_vec + i.co
-                    # These will be rotated about the orgin so will need to be shifted:
+                    # These will be rotated about the origin so will need to be shifted:
                     for j in range(numV):
                         verts_out.append(co - (matrices[j] * init_vec))
             # Else if a line and a point was selected:
             elif self.shaftType == 2:
                 init_vec = distance_point_line(verts[2].co, verts[0].co, verts[1].co)
-                # These will be rotated about the orgin so will need to be shifted:
+                # These will be rotated about the origin so will need to be shifted:
                 verts_out = [
                     (verts[i].co - (matrices[j] * init_vec)) for i in range(2) for j in range(numV)
                     ]
@@ -1368,7 +1368,7 @@ class Shaft(Operator):
                 else:
                     vec = verts[0].co + Vector((0, self.radius, 0))
                 init_vec = distance_point_line(vec, verts[0].co, verts[1].co)
-                # These will be rotated about the orgin so will need to be shifted:
+                # These will be rotated about the origin so will need to be shifted:
                 verts_out = [
                     (verts[i].co - (matrices[j] * init_vec)) for i in range(2) for j in range(numV)
                     ]
@@ -1453,7 +1453,7 @@ class Slice(Operator):
 
     make_copy = BoolProperty(
             name="Make Copy",
-            description="Make new vertices at intersection points instead of spliting the edge",
+            description="Make new vertices at intersection points instead of splitting the edge",
             default=False
             )
     rip = BoolProperty(

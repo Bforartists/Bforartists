@@ -88,7 +88,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
 
                 """The "nice" method to check if layer has alpha channel
                 sadly GIMP sometimes decides not to export an alpha channel
-                if it's pure white so we are not completly sure here yet"""
+                if it's pure white so we are not completely sure here yet"""
                 if Line.startswith("b'L"): HasAlpha = True
                 else: HasAlpha = False
 
@@ -107,7 +107,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                         if HasAlpha:
                             if not os.path.isfile(PathSaveRaw+imageFileAlpha): HasAlpha = False
 
-                        # Get Widht and Height from images
+                        # Get Width and Height from images
                         data = open(PathSaveRaw+imageFile, "rb").read()
 
                         hexList = []
@@ -619,7 +619,7 @@ class GIMPImageToScene(bpy.types.Operator):
         if self.OpacityMode == 'COMPO' and self.SetupCompo == False:
             box.label('Tip: Enable Node Compositing', icon='INFO')
         box.prop(self, 'AlphaMode', icon='IMAGE_RGB_ALPHA')
-        box.prop(self, 'ShadelessMats', icon='SOLID')
+        box.prop(self, 'ShadelessMats', icon='SHADING_SOLID')
         box.prop(self, 'LayerOffset')
         box.prop(self, 'LayerScale')
 
@@ -680,13 +680,13 @@ def menu_func(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 
 if __name__ == "__main__":
