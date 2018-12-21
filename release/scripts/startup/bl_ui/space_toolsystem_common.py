@@ -87,7 +87,7 @@ ToolDef = namedtuple(
         "data_block",
         # Optional primary operator (for introspection only).
         "operator",
-        # Optional draw settings (operator options, toolsettings).
+        # Optional draw settings (operator options, tool_settings).
         "draw_settings",
         # Optional draw cursor.
         "draw_cursor",
@@ -431,7 +431,7 @@ class ToolSelectPanelHelper:
         """
         # Currently this just checks the width,
         # we could have different layouts as preferences too.
-        system = bpy.context.user_preferences.system
+        system = bpy.context.preferences.system
         view2d = region.view2d
         view2d_scale = (
             view2d.region_to_view(1.0, 0.0)[0] -
@@ -630,6 +630,7 @@ def _activate_by_item(context, space_type, item, index):
             item.draw_cursor(context, tool, xy)
         handle = WindowManager.draw_cursor_add(handle_fn, (context, item, tool), space_type)
         handle_map[space_type] = handle
+
 
 _activate_by_item._cursor_draw_handle = {}
 

@@ -73,7 +73,9 @@ static void gpencil_calc_vertex(
 {
 	Object *ob = cache_ob->ob;
 	const DRWContextState *draw_ctx = DRW_context_state_get();
-	bGPDframe *gpf = NULL;
+	const bool main_onion = draw_ctx->v3d != NULL ? (draw_ctx->v3d->gp_flag & V3D_GP_SHOW_ONION_SKIN) : true;
+	const bool do_onion = (bool)((gpd->flag & GP_DATA_STROKE_WEIGHTMODE) == 0) &&
+		main_onion && DRW_gpencil_onion_active(gpd);
 
 	const bool time_remap = BKE_gpencil_has_time_modifiers(ob);
 
@@ -81,28 +83,41 @@ static void gpencil_calc_vertex(
 	cache_ob->tot_triangles = 0;
 
 	for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+		bGPDframe *init_gpf = NULL;
+		const bool is_onion = ((do_onion) && (gpl->onion_flag & GP_LAYER_ONIONSKIN));
 		if (gpl->flag & GP_LAYER_HIDE) {
 			continue;
 		}
 
-		/* verify time modifiers */
-		if ((time_remap) && (!stl->storage->simplify_modif)) {
-			int remap_cfra = BKE_gpencil_time_modifier(
-			        draw_ctx->depsgraph, draw_ctx->scene, ob, gpl, cfra_eval,
-			        stl->storage->is_render);
-			gpf = BKE_gpencil_layer_getframe(gpl, remap_cfra, GP_GETFRAME_USE_PREV);
+		/* if onion skin need to count all frames of the layer */
+		if (is_onion) {
+			init_gpf = gpl->actframe;
 		}
 		else {
-			gpf = gpl->actframe;
+			/* verify time modifiers */
+			if ((time_remap) && (!stl->storage->simplify_modif)) {
+				int remap_cfra = BKE_gpencil_time_modifier(
+				        draw_ctx->depsgraph, draw_ctx->scene, ob, gpl, cfra_eval,
+				        stl->storage->is_render);
+				init_gpf = BKE_gpencil_layer_getframe(gpl, remap_cfra, GP_GETFRAME_USE_PREV);
+			}
+			else {
+				init_gpf = gpl->actframe;
+			}
 		}
 
-		if (gpf == NULL) {
+		if (init_gpf == NULL) {
 			continue;
 		}
 
-		for (bGPDstroke *gps = gpf->strokes.first; gps; gps = gps->next) {
-			cache_ob->tot_vertex += gps->totpoints + 3;
-			cache_ob->tot_triangles += gps->totpoints - 1;
+		for (bGPDframe *gpf = init_gpf; gpf; gpf = gpf->next) {
+			for (bGPDstroke *gps = gpf->strokes.first; gps; gps = gps->next) {
+				cache_ob->tot_vertex += gps->totpoints + 3;
+				cache_ob->tot_triangles += gps->totpoints - 1;
+			}
+			if (!is_onion) {
+				break;
+			}
 		}
 	}
 
@@ -1223,9 +1238,9 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 
 				if (gp_style->flag & GP_STYLE_STROKE_SHOW) {
 					DRW_shgroup_call_add(
-						stl->g_data->shgrps_drawing_stroke,
-						e_data->batch_buffer_stroke,
-						stl->storage->unit_matrix);
+					        stl->g_data->shgrps_drawing_stroke,
+					        e_data->batch_buffer_stroke,
+					        stl->storage->unit_matrix);
 				}
 
 				if ((gpd->runtime.sbuffer_size >= 3) &&
@@ -1250,9 +1265,9 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 
 					e_data->batch_buffer_fill = DRW_gpencil_get_buffer_fill_geom(gpd);
 					DRW_shgroup_call_add(
-						stl->g_data->shgrps_drawing_fill,
-						e_data->batch_buffer_fill,
-						stl->storage->unit_matrix);
+					        stl->g_data->shgrps_drawing_fill,
+					        e_data->batch_buffer_fill,
+					        stl->storage->unit_matrix);
 					stl->storage->buffer_fill = true;
 				}
 				stl->storage->buffer_stroke = true;
@@ -1282,9 +1297,9 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 		e_data->batch_buffer_ctrlpoint = DRW_gpencil_get_buffer_ctrlpoint_geom(gpd);
 
 		DRW_shgroup_call_add(
-			shgrp,
-			e_data->batch_buffer_ctrlpoint,
-			stl->storage->unit_matrix);
+		        shgrp,
+		        e_data->batch_buffer_ctrlpoint,
+		        stl->storage->unit_matrix);
 
 		stl->storage->buffer_ctrlpoint = true;
 	}
@@ -1359,6 +1374,11 @@ static void DRW_gpencil_shgroups_create(
 		bGPDframe *gpf = elm->gpf;
 		bGPDstroke *gps = elm->gps;
 		MaterialGPencilStyle *gp_style = BKE_material_gpencil_settings_get(ob, gps->mat_nr + 1);
+		/* if the user switch used material from data to object,
+		 * the material could not be available */
+		if (gp_style == NULL) {
+			break;
+		}
 
 		/* limit the number of shading groups */
 		if (i >= GPENCIL_MAX_SHGROUPS) {
@@ -1423,10 +1443,10 @@ static void DRW_gpencil_shgroups_create(
 					const int len = elm->vertex_idx - start_edit;
 					/* use always the same group */
 					DRW_shgroup_call_range_add(
-						stl->g_data->shgrps_edit_point,
-						cache->b_edit.batch,
-						(!cache_ob->is_dup_ob) ? gpf->runtime.viewmatrix : cache_ob->obmat,
-						start_edit, len);
+					        stl->g_data->shgrps_edit_point,
+					        cache->b_edit.batch,
+					        (!cache_ob->is_dup_ob) ? gpf->runtime.viewmatrix : cache_ob->obmat,
+					        start_edit, len);
 
 					start_edit = elm->vertex_idx;
 				}
@@ -1438,10 +1458,10 @@ static void DRW_gpencil_shgroups_create(
 					const int len = elm->vertex_idx - start_edlin;
 					/* use always the same group */
 					DRW_shgroup_call_range_add(
-						stl->g_data->shgrps_edit_line,
-						cache->b_edlin.batch,
-						(!cache_ob->is_dup_ob) ? gpf->runtime.viewmatrix : cache_ob->obmat,
-						start_edlin, len);
+					        stl->g_data->shgrps_edit_line,
+					        cache->b_edlin.batch,
+					        (!cache_ob->is_dup_ob) ? gpf->runtime.viewmatrix : cache_ob->obmat,
+					        start_edlin, len);
 
 					start_edlin = elm->vertex_idx;
 				}
