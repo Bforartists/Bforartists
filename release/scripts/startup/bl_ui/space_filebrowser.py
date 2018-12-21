@@ -154,7 +154,7 @@ class FILEBROWSER_PT_system_bookmarks(Panel):
 
     @classmethod
     def poll(cls, context):
-        return not context.user_preferences.filepaths.hide_system_bookmarks
+        return not context.preferences.filepaths.hide_system_bookmarks
 
     def draw(self, context):
         layout = self.layout
@@ -216,7 +216,7 @@ class FILEBROWSER_PT_recent_folders(Panel):
 
     @classmethod
     def poll(cls, context):
-        return not context.user_preferences.filepaths.hide_recent_locations
+        return not context.preferences.filepaths.hide_recent_locations
 
     def draw(self, context):
         layout = self.layout
