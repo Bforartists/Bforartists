@@ -8,7 +8,7 @@ Bforartists is a fork of the popular 3D software Blender, with the goal to impro
 
 The project page, the binary downloads and further information can be found at the project page: https://www.bforartists.de/
 
-Please use the tracker at the bforartists page to add issues, bug reports and requests. The tracker can be found here: https://github.com/Bforartists/Bforartists/issues
+Please use the tracker to add issues, bug reports and requests. The tracker can be found here: https://github.com/Bforartists/Bforartists/issues
 
 The main differences to Blender are:
 
