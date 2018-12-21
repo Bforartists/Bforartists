@@ -317,13 +317,13 @@ def km_window(params):
         # NDOF settings
         op_menu("USERPREF_MT_ndof_settings", {"type": 'NDOF_BUTTON_MENU', "value": 'PRESS'}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_PLUS', "value": 'PRESS'},
-         {"properties": [("data_path", 'user_preferences.inputs.ndof_sensitivity'), ("value", 1.1)]}),
+         {"properties": [("data_path", 'preferences.inputs.ndof_sensitivity'), ("value", 1.1)]}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_MINUS', "value": 'PRESS'},
-         {"properties": [("data_path", 'user_preferences.inputs.ndof_sensitivity'), ("value", 1.0 / 1.1)]}),
+         {"properties": [("data_path", 'preferences.inputs.ndof_sensitivity'), ("value", 1.0 / 1.1)]}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_PLUS', "value": 'PRESS', "shift": True},
-         {"properties": [("data_path", 'user_preferences.inputs.ndof_sensitivity'), ("value", 1.5)]}),
+         {"properties": [("data_path", 'preferences.inputs.ndof_sensitivity'), ("value", 1.5)]}),
         ("wm.context_scale_float", {"type": 'NDOF_BUTTON_MINUS', "value": 'PRESS', "shift": True},
-         {"properties": [("data_path", 'user_preferences.inputs.ndof_sensitivity'), ("value", 2.0 / 3.0)]}),
+         {"properties": [("data_path", 'preferences.inputs.ndof_sensitivity'), ("value", 2.0 / 3.0)]}),
         ("info.reports_display_update", {"type": 'TIMER_REPORT', "value": 'ANY', "any": True}, None),
     ])
 
@@ -1040,8 +1040,6 @@ def km_view3d(params):
         ("view3d.pastebuffer", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
         # Menus.
         op_menu_pie("VIEW3D_MT_snap_pie", {"type": 'S', "value": 'PRESS', "shift": True}),
-        op_menu_pie("VIEW3D_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
-        op_menu_pie("VIEW3D_MT_orientations_pie", {"type": 'COMMA', "value": 'PRESS'}),
         # Transform.
         ("transform.translate", {"type": 'G', "value": 'PRESS'}, None),
         ("transform.translate", {"type": params.select_tweak, "value": 'ANY'}, None),
@@ -1119,19 +1117,19 @@ def km_view3d(params):
              {"properties": [("texture_space", True)]}),
             # Old pivot.
             ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS'},
-             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'BOUNDING_BOX_CENTER')]}),
+             {"properties": [("data_path", 'tool_settings.transform_pivot_point'), ("value", 'BOUNDING_BOX_CENTER')]}),
             ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS', "ctrl": True},
-             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'MEDIAN_POINT')]}),
+             {"properties": [("data_path", 'tool_settings.transform_pivot_point'), ("value", 'MEDIAN_POINT')]}),
             ("wm.context_toggle", {"type": 'COMMA', "value": 'PRESS', "alt": True},
              {"properties": [("data_path", 'tool_settings.use_transform_pivot_point_align')]}),
             ("wm.context_toggle", {"type": 'SPACE', "value": 'PRESS', "ctrl": True},
              {"properties": [("data_path", 'space_data.show_gizmo_tool')]}),
             ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS'},
-             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'CURSOR')]}),
+             {"properties": [("data_path", 'tool_settings.transform_pivot_point'), ("value", 'CURSOR')]}),
             ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS', "ctrl": True},
-             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'INDIVIDUAL_ORIGINS')]}),
+             {"properties": [("data_path", 'tool_settings.transform_pivot_point'), ("value", 'INDIVIDUAL_ORIGINS')]}),
             ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS', "alt": True},
-             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'ACTIVE_ELEMENT')]}),
+             {"properties": [("data_path", 'tool_settings.transform_pivot_point'), ("value", 'ACTIVE_ELEMENT')]}),
             # Old shading.
             ("wm.context_toggle_enum", {"type": 'Z', "value": 'PRESS'},
              {"properties": [("data_path", 'space_data.shading.type'), ("value_1", 'WIREFRAME'), ("value_2", 'SOLID')]}),
@@ -1560,8 +1558,8 @@ def km_node_editor(params):
         ("node.link", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("detach", True)]}),
         ("node.resize", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
-        ("node.add_reroute", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True}, None),
-        ("node.links_cut", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
+        ("node.add_reroute", {"type": params.action_tweak, "value": 'ANY', "shift": True}, None),
+        ("node.links_cut", {"type": params.action_tweak, "value": 'ANY', "ctrl": True}, None),
         ("node.select_link_viewer", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
         ("node.backimage_move", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "alt": True}, None),
         ("node.backimage_zoom", {"type": 'V', "value": 'PRESS'},
@@ -2814,7 +2812,7 @@ def km_animation_channels(params):
         ("anim.channels_group", {"type": 'G', "value": 'PRESS', "ctrl": True}, None),
         ("anim.channels_ungroup", {"type": 'G', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         # Menus.
-        op_menu("DOPESHEET_MT_specials_channels", params.context_menu_event),
+        op_menu("DOPESHEET_MT_channel_specials", params.context_menu_event),
     ])
 
     return keymap
@@ -3013,7 +3011,7 @@ def km_grease_pencil_stroke_paint_mode(params):
          {"properties": [("data_path_primary", 'tool_settings.gpencil_paint.brush.size')]}),
         # Brush size
         ("wm.radial_control", {"type": 'F', "value": 'PRESS', "ctrl": True},
-         {"properties": [("data_path_primary", 'user_preferences.edit.grease_pencil_eraser_radius')]}),
+         {"properties": [("data_path_primary", 'preferences.edit.grease_pencil_eraser_radius')]}),
         # Draw context menu
         op_menu("GPENCIL_MT_gpencil_draw_specials", params.context_menu_event),
         # Draw delete menu
@@ -5068,9 +5066,9 @@ def km_node_editor_tool_select_box(params):
         "Node Tool: Select Box",
         {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
-            ("node.select_box", {"type": params.tool_mouse, "value": 'PRESS'},
-              {"properties": [("deselect", False), ("tweak", True)]}),
-            ("node.select_box", {"type": params.tool_mouse, "value": 'PRESS', "ctrl": True},
+            ("node.select_box", {"type": params.tool_tweak, "value": 'ANY'},
+              {"properties": [("tweak", True)]}),
+            ("node.select_box", {"type": params.tool_tweak, "value": 'ANY', "ctrl": True},
               {"properties": [("deselect", True), ("tweak", True)]}),
         ]},
     )
@@ -5082,9 +5080,9 @@ def km_node_editor_tool_select_lasso(params):
         {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
         {"items": [
             ("node.select_lasso", {"type": params.tool_mouse, "value": 'PRESS'},
-              {"properties": [("deselect", False)]}),
+              {"properties": [("deselect", False), ("tweak", True)]}),
             ("node.select_lasso", {"type": params.tool_mouse, "value": 'PRESS', "ctrl": True},
-              {"properties": [("deselect", True)]}),
+              {"properties": [("deselect", True), ("tweak", True)]}),
         ]},
     )
 
@@ -5717,7 +5715,7 @@ def km_3d_view_tool_paint_gpencil_curve(params):
             ("gpencil.primitive", {"type": params.tool_tweak, "value": 'ANY'},
              {"properties": [("type", 'CURVE'), ("wait_for_input", False)]}),
         ]},
-    )	
+    )
 
 def km_3d_view_tool_edit_gpencil_select(params):
     return (
