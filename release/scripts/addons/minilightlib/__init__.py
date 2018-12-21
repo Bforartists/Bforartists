@@ -14,11 +14,11 @@ bl_info = {
     "name": "Minilightlib",
     "description": "A mini library addon with predefined light setups",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (0,6,0),
-    "blender": (2, 76, 0),
+    "version": (0,7,0),
+    "blender": (2, 80, 0),
     "location": "Tool Shelf > Create > Mini Lightlib",
     "warning": "", 
-    "wiki_url": "http://www.reinerstilesets.de/anderes/blender-addons/mini-lightlib/",
+    "wiki_url": "",
     "category": "Create"}
 
  # -----------------------------------------------------------------------------------------------------
@@ -30,9 +30,9 @@ my_listing = [] # the list to create the dropdown box.
 
 ############################# Read Asset
 
-class VIEW3D_mini_lightlib_read_asset(bpy.types.Operator):
+class MLL_OT_read_asset(bpy.types.Operator):
     """Append the currently selected asset""" 
-    bl_idname = "view3d.read_asset" 
+    bl_idname = "view3d.mll_read_asset" 
     bl_label = "View Selected All Regions"
     bl_options = {'REGISTER', 'UNDO'}
     
@@ -54,8 +54,9 @@ class VIEW3D_mini_lightlib_read_asset(bpy.types.Operator):
         #link object to current scene
         for obj in data_to.objects:
             if obj is not None:
-               scn.objects.link(obj)
-               obj.select = False # We don't want to have the asset selected after loading
+               scn.collection.objects.link(obj)
+               #bpy.context.object.select_set(False) # We don't want to have the asset selected after loading
+               obj.select_set(False) # We don't want to have the asset selected after loading
         return {'FINISHED'}
 
 ############################# read directory
@@ -101,10 +102,10 @@ def item_cb(self, context):
     
 ########################### the panel #############################
 
-class VIEW3D_PT_Minilightlib(bpy.types.Panel):
+class MLL_PT_Minilightlib(bpy.types.Panel):
     bl_label = "Mini Lightlib"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Create"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -112,25 +113,32 @@ class VIEW3D_PT_Minilightlib(bpy.types.Panel):
         layout = self.layout
 
         scene = context.scene
-        layout.label("Select Asset:")
+        layout.label(text = "Select Asset:")
         layout.prop(scene, "MyEnum", text = "") # Dropdown box
-        layout.operator("view3d.read_asset", text="Append Asset") # Load asset
+        layout.operator("view3d.mll_read_asset", text="Append Asset") # Load asset
         layout.separator()
         layout.prop(context.scene, "path", text="") # Here you can change the path.
 
 # ------------------------------ register unregister --------------------------------------------------------
 
+classes = (
+    MLL_OT_read_asset,
+    MLL_PT_Minilightlib,
+)
+
 def register():
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
     bpy.types.Scene.path = bpy.props.StringProperty(name="dir_path", description="", default=os.path.dirname(os.path.abspath(__file__))+"/lightlib", maxlen=1024, subtype='DIR_PATH') # Directory loader       
     bpy.types.Scene.MyEnum = bpy.props.EnumProperty(name="Assets", items = item_cb)    # The dropdown box
     
-    bpy.utils.register_module(__name__)
     
-def unregister():    
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)    
     del bpy.types.Scene.MyEnum
     del bpy.types.Scene.path
-    
-    bpy.utils.unregister_module(__name__)   
+ 
         
-if __name__ == "__main__":
-    register()

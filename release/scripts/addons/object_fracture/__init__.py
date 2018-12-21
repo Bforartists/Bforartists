@@ -40,8 +40,8 @@ else:
 import bpy
 
 
-class INFO_MT_add_fracture_objects(bpy.types.Menu):
-    bl_idname = "INFO_MT_add_fracture_objects"
+class VIEW3D_MT_add_fracture_objects(bpy.types.Menu):
+    bl_idname = "VIEW3D_MT_add_fracture_objects"
     bl_label = "Fracture Helper Objects"
 
     def draw(self, context):
@@ -57,21 +57,21 @@ class INFO_MT_add_fracture_objects(bpy.types.Menu):
 
 
 def menu_func(self, context):
-    self.layout.menu("INFO_MT_add_fracture_objects")
+    self.layout.menu("VIEW3D_MT_add_fracture_objects")
 
 
 def register():
     bpy.utils.register_module(__name__)
 
     # Add the "add fracture objects" menu to the "Add" menu
-    bpy.types.INFO_MT_add.append(menu_func)
+    bpy.types.VIEW3D_MT_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
     # Remove "add fracture objects" menu from the "Add" menu.
-    bpy.types.INFO_MT_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_add.remove(menu_func)
 
 
 if __name__ == "__main__":

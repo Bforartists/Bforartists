@@ -1,0 +1,71 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_refraction_bsdf.oso
+shader node_refraction_bsdf
+param	color	Color	0.80000001 0.80000001 0.80000001		%read{10,18} %write{2147483647,-1}
+param	string	distribution	"sharp"		%read{7,15} %write{2147483647,-1}
+param	float	Roughness	0.2		%read{6,6} %write{2147483647,-1}
+param	float	IOR	1.45		%read{1,1} %write{2147483647,-1}
+param	normal	Normal	0 0 0		%read{9,17} %write{0,0} %initexpr
+oparam	closure color	BSDF			%read{2147483647,-1} %write{10,18}
+global	normal	N	%read{0,0} %write{2147483647,-1}
+local	float	f	%read{4,5} %write{1,1}
+local	float	eta	%read{9,17} %write{4,5}
+local	float	roughness	%read{13,17} %write{6,6}
+const	float	$const1	9.9999997e-06		%read{1,1} %write{2147483647,-1}
+temp	int	$tmp1	%read{3,3} %write{2,2}
+const	float	$const2	1		%read{4,4} %write{2147483647,-1}
+const	string	$const3	"sharp"		%read{7,7} %write{2147483647,-1}
+temp	int	$tmp2	%read{8,8} %write{7,7}
+temp	closure color	$tmp3	%read{10,10} %write{9,9}
+const	string	$const4	"refraction"		%read{9,9} %write{2147483647,-1}
+const	string	$const5	"beckmann"		%read{11,11} %write{2147483647,-1}
+temp	int	$tmp4	%read{12,12} %write{11,11}
+temp	closure color	$tmp5	%read{14,14} %write{13,13}
+const	string	$const6	"microfacet_beckmann_refraction"		%read{13,13} %write{2147483647,-1}
+const	string	$const7	"GGX"		%read{15,15} %write{2147483647,-1}
+temp	int	$tmp6	%read{16,16} %write{15,15}
+temp	closure color	$tmp7	%read{18,18} %write{17,17}
+const	string	$const8	"microfacet_ggx_refraction"		%read{17,17} %write{2147483647,-1}
+code Normal
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:24
+# 	normal Normal = N,
+	assign		Normal N 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl"} %line{24} %argrw{"wr"}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:27
+# 	float f = max(IOR, 1e-5);
+	max		f IOR $const1 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl"} %line{27} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:28
+# 	float eta = backfacing() ? 1.0 / f : f;
+	backfacing	$tmp1 	%line{28} %argrw{"w"}
+	if		$tmp1 5 6 	%argrw{"r"}
+	div		eta $const2 f 	%argrw{"wrr"}
+	assign		eta f 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:29
+# 	float roughness = Roughness * Roughness;
+	mul		roughness Roughness Roughness 	%line{29} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:31
+# 	if (distribution == "sharp")
+	eq		$tmp2 distribution $const3 	%line{31} %argrw{"wrr"}
+	if		$tmp2 11 19 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:32
+# 		BSDF = Color * refraction(Normal, eta);
+	closure		$tmp3 $const4 Normal eta 	%line{32} %argrw{"wrrr"}
+	mul		BSDF $tmp3 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:33
+# 	else if (distribution == "beckmann")
+	eq		$tmp4 distribution $const5 	%line{33} %argrw{"wrr"}
+	if		$tmp4 15 19 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:34
+# 		BSDF = Color * microfacet_beckmann_refraction(Normal, roughness, eta);
+	closure		$tmp5 $const6 Normal roughness eta 	%line{34} %argrw{"wrrrr"}
+	mul		BSDF $tmp5 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:35
+# 	else if (distribution == "GGX")
+	eq		$tmp6 distribution $const7 	%line{35} %argrw{"wrr"}
+	if		$tmp6 19 19 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_refraction_bsdf.osl:36
+# 		BSDF = Color * microfacet_ggx_refraction(Normal, roughness, eta);
+	closure		$tmp7 $const8 Normal roughness eta 	%line{36} %argrw{"wrrrr"}
+	mul		BSDF $tmp7 Color 	%argrw{"wrr"}
+	end

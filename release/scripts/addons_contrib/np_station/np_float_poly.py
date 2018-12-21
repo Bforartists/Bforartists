@@ -2416,4 +2416,3 @@ def unregister():
 
     # bpy.app.handlers.scene_update_post.remove(scene_update)
     pass
-

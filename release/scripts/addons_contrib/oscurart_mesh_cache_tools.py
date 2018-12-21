@@ -59,7 +59,7 @@ class CreaPropiedades(Operator):
     bl_label = "Create Auto Load PC Proxy List"
 
     def execute(self, context):
-        for gr in bpy.data.groups:
+        for gr in bpy.data.collections:
             if gr.library is not None:
                 i = bpy.context.scene.pc_auto_load_proxy.add()
                 i.name = gr.name
@@ -92,7 +92,7 @@ class OscurartMeshCacheSceneAutoLoad(PropertyGroup):
 def CargaAutoLoadPC(dummy):
     for gr in bpy.context.scene.pc_auto_load_proxy:
         if gr.use_auto_load:
-            for ob in bpy.data.groups[gr.name].objects:
+            for ob in bpy.data.collections[gr.name].objects:
                 for MOD in ob.modifiers:
                     if MOD.type == "MESH_CACHE":
                         MOD.cache_format = "PC2"
@@ -125,7 +125,7 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
 
         row = layout.column(align=1)
         row.prop(scene, "pc_pc2_folder", text="Folder")
-        row.operator("buttons.set_meshcache_folder", icon='FILESEL', text="Select Folder Path")
+        row.operator("buttons.set_meshcache_folder", icon='FILEBROWSER', text="Select Folder Path")
         row = layout.box().column(align=1)
         row.label("EXPORTER:")
         row.operator("group.linked_group_to_local", text="Linked To Local", icon="LINKED")
@@ -151,7 +151,7 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
         row.prop(scene, "pc_pc2_start", text="Frame Start")
         row.prop(scene, "pc_pc2_end", text="Frame End")
         row.prop(scene, "pc_pc2_exclude", text="Exclude Token:")
-        row.prop_search(scene, "pc_pc2_group", bpy.data, "groups", text="")
+        row.prop_search(scene, "pc_pc2_group", bpy.data, "collections", text="")
         row.operator("export_shape.pc2_selection", text="Export!", icon="POSE_DATA")
         row.prop(scene, "pc_pc2_world_space", text="World Space")
         row = layout.box().column(align=1)
@@ -164,9 +164,9 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
         row.operator("scene.pc_auto_load_proxy_remove", text="Remove List", icon="X")
 
         for i in scene.pc_auto_load_proxy:
-            if bpy.data.groups[i.name].library is not None:
+            if bpy.data.collections[i.name].library is not None:
                 row = layout.row()
-                row.prop(bpy.data.groups[i.name], "name", text="")
+                row.prop(bpy.data.collections[i.name], "name", text="")
                 row.prop(i, "use_auto_load", text="")
 
 
@@ -199,7 +199,7 @@ def OscFuncExportPc2(self):
     folderpath = bpy.context.scene.pc_pc2_folder
     framerange = end - start
 
-    for ob in bpy.data.groups[bpy.context.scene.pc_pc2_group].objects[:]:
+    for ob in bpy.data.collections[bpy.context.scene.pc_pc2_group].objects[:]:
         if any(token not in ob.name for token in bpy.context.scene.pc_pc2_exclude.split(",")):
             bpy.context.window_manager.progress_begin(0, 100)  # progressbar
             if ob.type == "MESH":
@@ -270,7 +270,7 @@ class OscRemoveSubsurf(Operator):
                 'DECIMATE', 'MASK', 'MIRROR', 'REMESH', 'SCREW',
                 'SKIN', 'SOLIDIFY', 'SUBSURF', 'TRIANGULATE'
                 ]
-        for OBJ in bpy.data.groups[bpy.context.scene.pc_pc2_group].objects[:]:
+        for OBJ in bpy.data.collections[bpy.context.scene.pc_pc2_group].objects[:]:
             for MOD in OBJ.modifiers[:]:
                 if MOD.type in GENERATE:
                     if eval("bpy.context.scene.mesh_cache_tools_settings.%s" % (MOD.type.lower())):
@@ -306,14 +306,14 @@ def OscLinkedGroupToLocal():
     try:
         ACTOBJ = bpy.context.active_object
 
-        if not ACTOBJ.id_data.dupli_group:
+        if not ACTOBJ.id_data.instance_collection:
             return False
 
-        GROBJS = [ob for ob in ACTOBJ.id_data.dupli_group.objects[:] if ob.type == "MESH"]
+        GROBJS = [ob for ob in ACTOBJ.id_data.instance_collection.objects[:] if ob.type == "MESH"]
 
-        for ob in ACTOBJ.id_data.dupli_group.objects[:]:
+        for ob in ACTOBJ.id_data.instance_collection.objects[:]:
             bpy.context.scene.objects.link(ob)
-        NEWGROUP = bpy.data.groups.new("%s_CLEAN" % (ACTOBJ.name))
+        NEWGROUP = bpy.data.collections.new("%s_CLEAN" % (ACTOBJ.name))
         bpy.context.scene.objects.unlink(ACTOBJ)
         NEWOBJ = []
         for ob in GROBJS:

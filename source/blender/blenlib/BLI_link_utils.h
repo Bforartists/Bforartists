@@ -35,6 +35,27 @@
 	list = link; \
 } (void)0
 
+/* Use for append (single linked list, storing the last element). */
+#define BLI_LINKS_APPEND(list, link)  { \
+	(link)->next = NULL; \
+	if ((list)->first) { \
+		(list)->last->next = link; \
+	} \
+	else { \
+		(list)->first = link; \
+	} \
+	(list)->last = link; \
+} (void)0
+
+/* Use for inserting after a certain element. */
+#define BLI_LINKS_INSERT_AFTER(list, node, link)  { \
+	if ((node)->next == NULL) { \
+		(list)->last = link; \
+	} \
+	(link)->next = (node)->next; \
+	(node)->next = link; \
+} (void)0
+
 #define BLI_LINKS_FREE(list)  { \
 	while (list) { \
 		void *next = list->next; \

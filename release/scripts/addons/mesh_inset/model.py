@@ -413,8 +413,8 @@ def _GetFaceGraph(faces, edges, vtoe, points):
     face_adj = [[] for i in range(len(faces))]
     is_interior_edge = [False] * len(edges)
     for e, ((vs, ve), f) in enumerate(edges):
-        for othere in vtoe[ve]:
-            ((_, we), g) = edges[othere]
+        for other in vtoe[ve]:
+            ((_, we), g) = edges[other]
             if we == vs:
                 # face g is adjacent to face f
                 # TODO: angle check

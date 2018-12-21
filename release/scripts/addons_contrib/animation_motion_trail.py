@@ -1363,7 +1363,10 @@ class MotionTrailOperator(bpy.types.Operator):
             context.area.tag_redraw()
             return {'PASS_THROUGH'}
 
-        select = context.user_preferences.inputs.select_mouse
+        wm = context.window_manager
+        keyconfig = wm.keyconfigs.active
+        select = getattr(keyconfig.preferences, "select_mouse", "LEFT")
+
         if (not context.active_object or
                 context.active_object.mode not in ('OBJECT', 'POSE')):
             if self.drag:
@@ -1528,7 +1531,9 @@ class MotionTrailOperator(bpy.types.Operator):
             return {'CANCELLED'}
 
         # get clashing keymap items
-        select = context.user_preferences.inputs.select_mouse
+        wm = context.window_manager
+        keyconfig = wm.keyconfigs.active
+        select = getattr(keyconfig.preferences, "select_mouse", "LEFT")
         kms = [
             bpy.context.window_manager.keyconfigs.active.keymaps['3D View'],
             bpy.context.window_manager.keyconfigs.active.keymaps['Object Mode']

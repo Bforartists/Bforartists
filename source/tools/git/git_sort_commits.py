@@ -58,5 +58,6 @@ def main():
     for c in commits:
         print(c.sha1)
 
+
 if __name__ == "__main__":
     main()

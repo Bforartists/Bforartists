@@ -52,11 +52,13 @@ set(SRC
 	bpy_app_build_options.c
 	bpy_app_ffmpeg.c
 	bpy_app_handlers.c
+	bpy_app_icons.c
 	bpy_app_ocio.c
 	bpy_app_oiio.c
 	bpy_app_opensubdiv.c
 	bpy_app_openvdb.c
 	bpy_app_sdl.c
+	bpy_app_timers.c
 	bpy_app_translations.c
 	bpy_capi_utils.c
 	bpy_driver.c
@@ -65,6 +67,8 @@ set(SRC
 	bpy_intern_string.c
 	bpy_library_load.c
 	bpy_library_write.c
+	bpy_gizmo_wrap.c
+	bpy_msgbus.c
 	bpy_operator.c
 	bpy_operator_wrap.c
 	bpy_path.c
@@ -75,11 +79,10 @@ set(SRC
 	bpy_rna_callback.c
 	bpy_rna_driver.c
 	bpy_rna_id_collection.c
+	bpy_rna_gizmo.c
 	bpy_traceback.c
 	bpy_utils_previews.c
 	bpy_utils_units.c
-	gpu.c
-	gpu_offscreen.c
 	stubs.c
 
 	bpy.h
@@ -88,16 +91,20 @@ set(SRC
 	bpy_app_build_options.h
 	bpy_app_ffmpeg.h
 	bpy_app_handlers.h
+	bpy_app_icons.h
 	bpy_app_ocio.h
 	bpy_app_oiio.h
 	bpy_app_opensubdiv.h
 	bpy_app_openvdb.h
 	bpy_app_sdl.h
+	bpy_app_timers.h
 	bpy_app_translations.h
 	bpy_capi_utils.h
 	bpy_driver.h
 	bpy_intern_string.h
 	bpy_library.h
+	bpy_gizmo_wrap.h
+	bpy_msgbus.h
 	bpy_operator.h
 	bpy_operator_wrap.h
 	bpy_path.h
@@ -107,10 +114,10 @@ set(SRC
 	bpy_rna_callback.h
 	bpy_rna_driver.h
 	bpy_rna_id_collection.h
+	bpy_rna_gizmo.h
 	bpy_traceback.h
 	bpy_utils_previews.h
 	bpy_utils_units.h
-	gpu.h
 	../BPY_extern.h
 	../BPY_extern_clog.h
 )
@@ -165,15 +172,15 @@ if(WITH_CYCLES_OSL)
 	add_definitions(-DWITH_CYCLES_OSL)
 endif()
 
+if(WITH_CYCLES_EMBREE)
+	add_definitions(-DWITH_CYCLES_EMBREE)
+endif()
+
 if(WITH_FREESTYLE)
 	list(APPEND INC
 		../../freestyle/intern/python
 	)
 	add_definitions(-DWITH_FREESTYLE)
-endif()
-
-if(WITH_GAMEENGINE)
-	add_definitions(-DWITH_GAMEENGINE)
 endif()
 
 if(WITH_IMAGE_CINEON)
@@ -182,10 +189,6 @@ endif()
 
 if(WITH_IMAGE_DDS)
 	add_definitions(-DWITH_DDS)
-endif()
-
-if(WITH_IMAGE_FRAMESERVER)
-	add_definitions(-DWITH_FRAMESERVER)
 endif()
 
 if(WITH_IMAGE_HDR)
@@ -296,10 +299,6 @@ if(WITH_OPENSUBDIV)
 	list(APPEND INC
 		../../../../intern/opensubdiv
 	)
-endif()
-
-if(WITH_PLAYER)
-	add_definitions(-DWITH_PLAYER)
 endif()
 
 add_definitions(${GL_DEFINITIONS})

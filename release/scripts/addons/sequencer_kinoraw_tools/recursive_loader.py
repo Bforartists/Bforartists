@@ -202,7 +202,7 @@ class Sequencer_Extra_ReadExifData(Operator):
         return {'FINISHED'}
 
 
-# TODO: fix poll to hide when unuseful
+# TODO: fix poll to hide when useless
 
 class ExifInfoPanel(Panel):
     """Creates a Panel in the Object properties window"""

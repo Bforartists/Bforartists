@@ -31,7 +31,7 @@ global_settings{ assumed_gamma 1.3 max_trace_level 5}
 
 camera{ location  <20,40,28>  
         angle 40 // direction 2*z 
-        right     x*image_width/image_height // keep propotions with any aspect ratio
+        right     x*image_width/image_height // keep proportions with any aspect ratio
         look_at   <0,2,0>
       }
 

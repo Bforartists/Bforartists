@@ -547,8 +547,8 @@ class torus_knot_plus(Operator, AddObjectHelper):
             items=SplineTypes,
             )
     bezierHandles = [
-            ('VECTOR', "Vector", "Bezier Hanles type - Vector"),
-            ('AUTOMATIC', "Auto", "Bezier Hanles type - Automatic"),
+            ('VECTOR', "Vector", "Bezier Handles type - Vector"),
+            ('AUTOMATIC', "Auto", "Bezier Handles type - Automatic"),
             ]
     handleType = EnumProperty(
             name="Handle type",
@@ -576,12 +576,12 @@ class torus_knot_plus(Operator, AddObjectHelper):
         split = box.split(percentage=0.85, align=True)
         split.prop(self, "torus_p", text="Revolutions")
         split.prop(self, "flip_p", toggle=True, text="",
-                   icon="ARROW_LEFTRIGHT")
+                   icon='ARROW_LEFTRIGHT')
 
         split = box.split(percentage=0.85, align=True)
         split.prop(self, "torus_q", text="Spins")
         split.prop(self, "flip_q", toggle=True, text="",
-                   icon="ARROW_LEFTRIGHT")
+                   icon='ARROW_LEFTRIGHT')
 
         links = gcd(self.torus_p, self.torus_q)
         info = "Multiple Links"

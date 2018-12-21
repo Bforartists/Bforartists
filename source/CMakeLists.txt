@@ -23,8 +23,8 @@
 #
 # ***** END GPL LICENSE BLOCK *****
 
-add_subdirectory(blender)
-
-if(WITH_GAMEENGINE)
-	add_subdirectory(gameengine)
+if(WITH_LEGACY_OPENGL)
+	add_definitions(-DWITH_LEGACY_OPENGL)
 endif()
+
+add_subdirectory(blender)

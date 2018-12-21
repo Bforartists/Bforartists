@@ -479,12 +479,12 @@ def add_curlycurve_button(self, context):
 
 def register():
     bpy.utils.register_class(add_curlycurve)
-    bpy.types.INFO_MT_curve_add.append(add_curlycurve_button)
+    bpy.types.VIEW3D_MT_curve_add.append(add_curlycurve_button)
 
 
 def unregister():
     bpy.utils.unregister_class(add_curlycurve)
-    bpy.types.INFO_MT_curve_add.remove(add_curlycurve_button)
+    bpy.types.VIEW3D_MT_curve_add.remove(add_curlycurve_button)
 
 
 if __name__ == "__main__":

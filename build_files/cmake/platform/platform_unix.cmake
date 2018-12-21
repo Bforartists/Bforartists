@@ -155,7 +155,7 @@ endif()
 # Codecs
 if(WITH_CODEC_SNDFILE)
 	find_package_wrapper(SndFile)
-	if(NOT SNDFILE_FOUND)
+	if(NOT LIBSNDFILE_FOUND)
 		set(WITH_CODEC_SNDFILE OFF)
 	endif()
 endif()
@@ -305,7 +305,7 @@ if(WITH_BOOST)
 		if(Boost_USE_STATIC_LIBS AND WITH_BOOST_ICU)
 			find_package(IcuLinux)
 		endif()
-		mark_as_advanced(Boost_DIR)  # why doesnt boost do this?
+		mark_as_advanced(Boost_DIR)  # why doesn't boost do this?
 	endif()
 
 	set(BOOST_INCLUDE_DIR ${Boost_INCLUDE_DIRS})
@@ -359,6 +359,10 @@ if(WITH_OPENCOLORIO)
 	endif()
 endif()
 
+if(WITH_CYCLES_EMBREE)
+	find_package(Embree 3.2.4 REQUIRED)
+endif()
+
 if(WITH_LLVM)
 	if(EXISTS ${LIBDIR})
 		set(LLVM_STATIC ON)
@@ -386,7 +390,7 @@ if(WITH_LLVM OR WITH_SDL_DYNLOAD)
 	)
 endif()
 
-if(WITH_OPENSUBDIV OR WITH_CYCLES_OPENSUBDIV)
+if(WITH_OPENSUBDIV)
 	find_package_wrapper(OpenSubdiv)
 
 	set(OPENSUBDIV_LIBRARIES ${OPENSUBDIV_LIBRARIES})
@@ -394,7 +398,6 @@ if(WITH_OPENSUBDIV OR WITH_CYCLES_OPENSUBDIV)
 
 	if(NOT OPENSUBDIV_FOUND)
 		set(WITH_OPENSUBDIV OFF)
-		set(WITH_CYCLES_OPENSUBDIV OFF)
 		message(STATUS "OpenSubdiv not found")
 	endif()
 endif()

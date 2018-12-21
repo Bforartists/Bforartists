@@ -155,7 +155,7 @@ class testScene2(bpy.types.Operator):
         bpy.ops.object.camera_add(location = (0,-1,0),rotation = (1.571,0,0))
         cam = bpy.context.active_object.data
         cam.lens = 50
-        cam.draw_size = 0.1
+        cam.display_size = 0.1
 
 # add spot lamp
         bpy.ops.object.lamp_add(type="SPOT", location = (-0.7,-0.5,0.3), rotation =(1.223,0,-0.960))
@@ -296,7 +296,7 @@ class Generategrass(bpy.types.Operator):
             grassParticles.settings.use_hair_bspline = True
             grassParticles.settings.render_step = 5
             grassParticles.settings.length_random = 0.5
-            grassParticles.settings.draw_step = 5
+            grassParticles.settings.display_step = 5
 # children
             grassParticles.settings.rendered_child_count = 50
             grassParticles.settings.child_type = "INTERPOLATED"
@@ -408,7 +408,7 @@ class Generategrass(bpy.types.Operator):
             grassParticles.settings.use_hair_bspline = True
             grassParticles.settings.render_step = 7
             grassParticles.settings.length_random = 1.0
-            grassParticles.settings.draw_step = 2
+            grassParticles.settings.display_step = 2
 # children
             grassParticles.settings.child_type = "INTERPOLATED"
             grassParticles.settings.child_length = 0.160
@@ -501,7 +501,7 @@ class Generategrass(bpy.types.Operator):
             grassParticles.settings.use_hair_bspline = True
             grassParticles.settings.render_step = 3
             grassParticles.settings.length_random = 0.3
-            grassParticles.settings.draw_step = 3
+            grassParticles.settings.display_step = 3
 # children
             grassParticles.settings.child_type = "INTERPOLATED"
             grassParticles.settings.child_length = 0.667
@@ -616,7 +616,7 @@ class testScene4(bpy.types.Operator):
         bpy.ops.object.camera_add(location = (0,-1,0),rotation = (1.571,0,0))
         cam = bpy.context.active_object.data
         cam.lens = 50
-        cam.draw_size = 0.1
+        cam.display_size = 0.1
 
 # add spot lamp
         bpy.ops.object.lamp_add(type="SPOT", location = (-0.7,-0.5,0.3), rotation =(1.223,0,-0.960))
@@ -755,7 +755,7 @@ class GenerateHair(bpy.types.Operator):
             hairParticles.settings.use_hair_bspline = True
             hairParticles.settings.render_step = 5
             hairParticles.settings.length_random = 0.5
-            hairParticles.settings.draw_step = 5
+            hairParticles.settings.display_step = 5
 # children
             hairParticles.settings.child_type = "INTERPOLATED"
             hairParticles.settings.create_long_hair_children = True
@@ -860,7 +860,7 @@ class GenerateHair(bpy.types.Operator):
             hairParticles.settings.use_hair_bspline = True
             hairParticles.settings.render_step = 7
             hairParticles.settings.length_random = 0.5
-            hairParticles.settings.draw_step = 5
+            hairParticles.settings.display_step = 5
 # children
             hairParticles.settings.child_type = "INTERPOLATED"
             hairParticles.settings.create_long_hair_children = True
@@ -956,7 +956,7 @@ class GenerateHair(bpy.types.Operator):
             hairParticles.settings.use_hair_bspline = True
             hairParticles.settings.render_step = 3
             hairParticles.settings.length_random = 0.3
-            hairParticles.settings.draw_step = 3
+            hairParticles.settings.display_step = 3
 # children
             hairParticles.settings.child_type = "INTERPOLATED"
             hairParticles.settings.rendered_child_count = 200
@@ -1069,7 +1069,7 @@ class testScene6(bpy.types.Operator):
         bpy.ops.object.camera_add(location = (0,-1,0),rotation = (1.571,0,0))
         cam = bpy.context.active_object.data
         cam.lens = 50
-        cam.draw_size = 0.1
+        cam.display_size = 0.1
 
 # add spot lamp
         bpy.ops.object.lamp_add(type="SPOT", location = (-0.7,-0.5,0.3), rotation =(1.223,0,-0.960))
@@ -1207,7 +1207,7 @@ class GenerateFur(bpy.types.Operator):
             furParticles.settings.use_hair_bspline = True
             furParticles.settings.render_step = 5
             furParticles.settings.length_random = 0.5
-            furParticles.settings.draw_step = 5
+            furParticles.settings.display_step = 5
 # children
             furParticles.settings.child_type = "INTERPOLATED"
             furParticles.settings.child_length = 0.134
@@ -1320,7 +1320,7 @@ class GenerateFur(bpy.types.Operator):
             furParticles.settings.use_hair_bspline = True
             furParticles.settings.render_step = 5
             furParticles.settings.length_random = 0.5
-            furParticles.settings.draw_step = 5
+            furParticles.settings.display_step = 5
 # children
             furParticles.settings.child_type = "INTERPOLATED"
             furParticles.settings.child_length = 0.07227
@@ -1452,7 +1452,7 @@ class GenerateFur(bpy.types.Operator):
             furParticles.settings.use_hair_bspline = True
             furParticles.settings.render_step = 5
             furParticles.settings.length_random = 0.5
-            furParticles.settings.draw_step = 5
+            furParticles.settings.display_step = 5
 # children
             furParticles.settings.child_type = "INTERPOLATED"
             furParticles.settings.child_length = 0.134
@@ -1500,6 +1500,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-

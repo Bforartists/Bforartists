@@ -225,7 +225,7 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
             # rotate seg
             seg.rotate(a)
             # rotate delta from rotation center to segment start
-            dp = rM * (seg.p0 - p0)
+            dp = rM @ (seg.p0 - p0)
             seg.translate(dp)
 
     def translate(self, idx_from, dp):
@@ -305,7 +305,7 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
                     use_dissolve_boundaries=False,
                     verts=bm.verts,
                     edges=bm.edges,
-                    delimit=1)
+                    delimit={'MATERIAL'})
 
         bm.verts.ensure_lookup_table()
 
@@ -333,7 +333,7 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
                 bmesh.ops.bevel(bm,
                     geom=geom,
                     offset=d.bevel_amount,
-                    offset_type=0,
+                    offset_type='OFFSET',
                     segments=1,     # d.bevel_res
                     profile=0.5,
                     vertex_only=False,
@@ -366,7 +366,7 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
                         use_dissolve_boundaries=False,
                         verts=bm.verts,
                         edges=bm.edges,
-                        delimit=1)
+                        delimit={'MATERIAL'})
 
             bm.verts.ensure_lookup_table()
 
@@ -925,7 +925,7 @@ class archipack_floor_part(PropertyGroup):
         A single manipulable polyline like segment
         polyline like segment line or arc based
     """
-    type = EnumProperty(
+    type : EnumProperty(
             items=(
                 ('S_SEG', 'Straight', '', 0),
                 ('C_SEG', 'Curved', '', 1),
@@ -933,19 +933,19 @@ class archipack_floor_part(PropertyGroup):
             default='S_SEG',
             update=update_type
             )
-    length = FloatProperty(
+    length : FloatProperty(
             name="Length",
             min=0.01,
             default=2.0,
             update=update
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             min=0.5,
             default=0.7,
             update=update
             )
-    da = FloatProperty(
+    da : FloatProperty(
             name="Angle",
             min=-pi,
             max=pi,
@@ -953,7 +953,7 @@ class archipack_floor_part(PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    a0 = FloatProperty(
+    a0 : FloatProperty(
             name="Start angle",
             min=-2 * pi,
             max=2 * pi,
@@ -961,21 +961,21 @@ class archipack_floor_part(PropertyGroup):
             subtype='ANGLE', unit='ROTATION',
             update=update
             )
-    offset = FloatProperty(
+    offset : FloatProperty(
             name="Offset",
             description="Side offset of segment",
             default=0,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
-    manipulators = CollectionProperty(type=archipack_manipulator)
+    manipulators : CollectionProperty(type=archipack_manipulator)
 
     def find_in_selection(self, context):
         """
             find witch selected object this instance belongs to
             provide support for "copy to selected"
         """
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             props = archipack_floor.datablock(o)
             if props:
@@ -1002,35 +1002,35 @@ class archipack_floor_part(PropertyGroup):
 
 
 class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
-    n_parts = IntProperty(
+    n_parts : IntProperty(
             name="Parts",
             min=1,
             default=1, update=update_manipulators
             )
-    parts = CollectionProperty(type=archipack_floor_part)
-    user_defined_path = StringProperty(
+    parts : CollectionProperty(type=archipack_floor_part)
+    user_defined_path : StringProperty(
             name="User defined",
             update=update_path
             )
-    user_defined_resolution = IntProperty(
+    user_defined_resolution : IntProperty(
             name="Resolution",
             min=1,
             max=128,
             default=12, update=update_path
             )
-    closed = BoolProperty(
+    closed : BoolProperty(
             default=True,
             name="Close",
             options={'SKIP_SAVE'},
             update=update_manipulators
             )
     # UI layout related
-    parts_expand = BoolProperty(
+    parts_expand : BoolProperty(
             options={'SKIP_SAVE'},
             default=False
             )
 
-    pattern = EnumProperty(
+    pattern : EnumProperty(
             name='Floor Pattern',
             items=(("boards", "Boards", ""),
                     ("square_parquet", "Square Parquet", ""),
@@ -1044,7 +1044,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             default="boards",
             update=update
             )
-    spacing = FloatProperty(
+    spacing : FloatProperty(
             name='Spacing',
             description='The amount of space between boards or tiles in both directions',
             unit='LENGTH', subtype='DISTANCE',
@@ -1053,7 +1053,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2,
             update=update
             )
-    thickness = FloatProperty(
+    thickness : FloatProperty(
             name='Thickness',
             description='Thickness',
             unit='LENGTH', subtype='DISTANCE',
@@ -1062,13 +1062,13 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2,
             update=update
             )
-    vary_thickness = BoolProperty(
+    vary_thickness : BoolProperty(
             name='Random Thickness',
             description='Vary thickness',
             default=False,
             update=update
             )
-    thickness_variance = FloatProperty(
+    thickness_variance : FloatProperty(
             name='Variance',
             description='How much vary by',
             min=0, max=100,
@@ -1078,7 +1078,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
 
-    board_width = FloatProperty(
+    board_width : FloatProperty(
             name='Width',
             description='The width',
             unit='LENGTH', subtype='DISTANCE',
@@ -1087,13 +1087,13 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2,
             update=update
             )
-    vary_width = BoolProperty(
+    vary_width : BoolProperty(
             name='Random Width',
             description='Vary width',
             default=False,
             update=update
             )
-    width_variance = FloatProperty(
+    width_variance : FloatProperty(
             name='Variance',
             description='How much vary by',
             subtype='PERCENTAGE',
@@ -1101,7 +1101,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2,
             update=update
             )
-    width_spacing = FloatProperty(
+    width_spacing : FloatProperty(
             name='Width Spacing',
             description='The amount of space between boards in the width direction',
             unit='LENGTH', subtype='DISTANCE',
@@ -1111,7 +1111,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
 
-    board_length = FloatProperty(
+    board_length : FloatProperty(
             name='Length',
             description='The length of the boards',
             unit='LENGTH', subtype='DISTANCE',
@@ -1120,7 +1120,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             default=2,
             update=update
             )
-    short_board_length = FloatProperty(
+    short_board_length : FloatProperty(
             name='Length',
             description='The length of the boards',
             unit='LENGTH', subtype='DISTANCE',
@@ -1129,27 +1129,27 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             default=2,
             update=update
             )
-    vary_length = BoolProperty(
+    vary_length : BoolProperty(
             name='Random Length',
             description='Vary board length',
             default=False,
             update=update
             )
-    length_variance = FloatProperty(
+    length_variance : FloatProperty(
             name='Variance',
             description='How much board length can vary by',
             subtype='PERCENTAGE',
             min=1, max=100, default=50,
             precision=2, update=update
             )
-    max_boards = IntProperty(
+    max_boards : IntProperty(
             name='Max Boards',
             description='Max number of boards in one row',
             min=1,
             default=20,
             update=update
             )
-    length_spacing = FloatProperty(
+    length_spacing : FloatProperty(
             name='Length Spacing',
             description='The amount of space between boards in the length direction',
             unit='LENGTH', subtype='DISTANCE',
@@ -1160,7 +1160,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # parquet specific
-    boards_in_group = IntProperty(
+    boards_in_group : IntProperty(
             name='Boards in Group',
             description='Number of boards in a group',
             min=1, default=4,
@@ -1168,7 +1168,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # tile specific
-    tile_width = FloatProperty(
+    tile_width : FloatProperty(
             name='Width',
             description='Width of the tiles',
             unit='LENGTH', subtype='DISTANCE',
@@ -1177,7 +1177,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2,
             update=update
             )
-    tile_length = FloatProperty(
+    tile_length : FloatProperty(
             name='Length',
             description='Length of the tiles',
             unit='LENGTH', subtype='DISTANCE',
@@ -1188,13 +1188,13 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # grout
-    add_grout = BoolProperty(
+    add_grout : BoolProperty(
             name='Add Grout',
             description='Add grout',
             default=False,
             update=update
             )
-    mortar_depth = FloatProperty(
+    mortar_depth : FloatProperty(
             name='Depth',
             description='The depth of the mortar from the surface of the tile',
             unit='LENGTH', subtype='DISTANCE',
@@ -1206,19 +1206,19 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # regular tile
-    random_offset = BoolProperty(
+    random_offset : BoolProperty(
             name='Random Offset',
             description='Random amount of offset for each row of tiles',
             update=update, default=False
             )
-    offset = FloatProperty(
+    offset : FloatProperty(
             name='Offset',
             description='How much to offset each row of tiles',
             min=0, max=100, default=0,
             precision=2,
             update=update
             )
-    offset_variance = FloatProperty(
+    offset_variance : FloatProperty(
             name='Variance',
             description='How much to vary the offset each row of tiles',
             min=0.001, max=100, default=50,
@@ -1227,13 +1227,13 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     # bevel
-    bevel = BoolProperty(
+    bevel : BoolProperty(
             name='Bevel',
             update=update,
             default=False,
             description='Bevel upper faces'
             )
-    bevel_amount = FloatProperty(
+    bevel_amount : FloatProperty(
             name='Bevel',
             description='Bevel amount',
             unit='LENGTH', subtype='DISTANCE',
@@ -1241,29 +1241,29 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
             precision=2, step=0.05,
             update=update
             )
-    solidify = BoolProperty(
+    solidify : BoolProperty(
             name="Solidify",
             default=True,
             update=update
             )
-    vary_materials = BoolProperty(
+    vary_materials : BoolProperty(
             name="Random Material",
             default=True,
             description="Vary Material indexes",
             update=update)
-    matid = IntProperty(
+    matid : IntProperty(
             name="#variations",
             min=1,
             max=10,
             default=7,
             description="Material index maxi",
             update=update)
-    auto_update = BoolProperty(
+    auto_update : BoolProperty(
             options={'SKIP_SAVE'},
             default=True,
             update=update_manipulators
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name="dumb z",
             description="Dumb z for manipulator placeholder",
             default=0.01,
@@ -1324,18 +1324,18 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
         # since this can lower points count by a resolution factor
         # use normalized to handle non linear t
         if resolution == 0:
-            pts.append(wM * p0.co.to_3d())
+            pts.append(wM @ p0.co.to_3d())
         else:
             v = (p1.co - p0.co).normalized()
             d1 = (p0.handle_right - p0.co).normalized()
             d2 = (p1.co - p1.handle_left).normalized()
             if d1 == v and d2 == v:
-                pts.append(wM * p0.co.to_3d())
+                pts.append(wM @ p0.co.to_3d())
             else:
-                seg = interpolate_bezier(wM * p0.co,
-                    wM * p0.handle_right,
-                    wM * p1.handle_left,
-                    wM * p1.co,
+                seg = interpolate_bezier(wM @ p0.co,
+                    wM @ p0.handle_right,
+                    wM @ p1.handle_left,
+                    wM @ p1.co,
                     resolution + 1)
                 for i in range(resolution):
                     pts.append(seg[i].to_3d())
@@ -1343,7 +1343,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
     def from_spline(self, context, wM, resolution, spline):
         pts = []
         if spline.type == 'POLY':
-            pts = [wM * p.co.to_3d() for p in spline.points]
+            pts = [wM @ p.co.to_3d() for p in spline.points]
             if spline.use_cyclic_u:
                 pts.append(pts[0])
         elif spline.type == 'BEZIER':
@@ -1358,18 +1358,13 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
                 self.interpolate_bezier(pts, wM, p0, p1, resolution)
                 pts.append(pts[0])
             else:
-                pts.append(wM * points[-1].co)
+                pts.append(wM @ points[-1].co)
 
-        pt = wM.inverted() * pts[0]
+        pt = wM.inverted() @ pts[0]
 
         # pretranslate
         o = self.find_in_selection(context, self.auto_update)
-        o.matrix_world = wM * Matrix([
-            [1, 0, 0, pt.x],
-            [0, 1, 0, pt.y],
-            [0, 0, 1, pt.z],
-            [0, 0, 0, 1]
-            ])
+        o.matrix_world = wM @ Matrix.Translation(pt)
         self.from_points(pts)
 
     def from_points(self, pts):
@@ -1405,7 +1400,7 @@ class archipack_floor(ArchipackObject, Manipulable, PropertyGroup):
         self.auto_update = True
 
     def update_path(self, context):
-        user_def_path = context.scene.objects.get(self.user_defined_path)
+        user_def_path = context.scene.objects.get(self.user_defined_path.strip())
         if user_def_path is not None and user_def_path.type == 'CURVE':
             self.from_spline(
                 context,
@@ -1565,13 +1560,13 @@ def update_operation(self, context):
 
 
 class archipack_floor_cutter_segment(ArchipackCutterPart, PropertyGroup):
-    manipulators = CollectionProperty(type=archipack_manipulator)
-    type = EnumProperty(
+    manipulators : CollectionProperty(type=archipack_manipulator)
+    type : EnumProperty(
         name="Type",
         items=(
             ('DEFAULT', 'Side', 'Side with rake', 0),
             ('BOTTOM', 'Bottom', 'Bottom with gutter', 1),
-            ('LINK', 'Side link', 'Side witout decoration', 2),
+            ('LINK', 'Side link', 'Side without decoration', 2),
             ('AXIS', 'Top', 'Top part with hip and beam', 3)
             # ('LINK_VALLEY', 'Side valley', 'Side with valley', 3),
             # ('LINK_HIP', 'Side hip', 'Side with hip', 4)
@@ -1581,7 +1576,7 @@ class archipack_floor_cutter_segment(ArchipackCutterPart, PropertyGroup):
         )
 
     def find_in_selection(self, context):
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
         for o in selected:
             d = archipack_floor_cutter.datablock(o)
             if d:
@@ -1599,7 +1594,7 @@ class archipack_floor_cutter_segment(ArchipackCutterPart, PropertyGroup):
 
 
 class archipack_floor_cutter(ArchipackCutter, ArchipackObject, Manipulable, PropertyGroup):
-    parts = CollectionProperty(type=archipack_floor_cutter_segment)
+    parts : CollectionProperty(type=archipack_floor_cutter_segment)
 
     def update_points(self, context, o, pts, update_parent=False):
         """
@@ -1615,11 +1610,11 @@ class archipack_floor_cutter(ArchipackCutter, ArchipackObject, Manipulable, Prop
 
         d = archipack_floor.datablock(o.parent)
         if d is not None:
-            o.parent.select = True
-            context.scene.objects.active = o.parent
+            o.parent.select_set(state=True)
+            context.view_layer.objects.active = o.parent
             d.update(context)
-        o.parent.select = False
-        context.scene.objects.active = o
+        o.parent.select_set(state=False)
+        context.view_layer.objects.active = o
 
 
 # ------------------------------------------------------------------
@@ -1632,7 +1627,7 @@ class ARCHIPACK_PT_floor(Panel):
     bl_label = "Flooring"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Archipack"
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -1648,7 +1643,7 @@ class ARCHIPACK_PT_floor(Panel):
         # retrieve datablock of your object
         props = archipack_floor.datablock(o)
         # manipulate
-        layout.operator("archipack.floor_manipulate", icon="HAND")
+        layout.operator("archipack.floor_manipulate", icon="VIEW_PAN")
         layout.separator()
         box = layout.box()
         row = box.row(align=True)
@@ -1658,10 +1653,10 @@ class ARCHIPACK_PT_floor(Panel):
                      text=bpy.types.ARCHIPACK_OT_floor_preset_menu.bl_label)
         row.operator("archipack.floor_preset",
                       text="",
-                      icon='ZOOMIN')
+                      icon='ADD')
         row.operator("archipack.floor_preset",
                       text="",
-                      icon='ZOOMOUT').remove_active = True
+                      icon='REMOVE').remove_active = True
 
         box = layout.box()
         box.operator('archipack.floor_cutter').parent = o.name
@@ -1759,7 +1754,7 @@ class ARCHIPACK_PT_floor_cutter(Panel):
     bl_label = "Floor Cutter"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -1772,7 +1767,7 @@ class ARCHIPACK_PT_floor_cutter(Panel):
         layout = self.layout
         scene = context.scene
         box = layout.box()
-        box.operator('archipack.floor_cutter_manipulate', icon='HAND')
+        box.operator('archipack.floor_cutter_manipulate', icon='VIEW_PAN')
         box.prop(prop, 'operation', text="")
         box = layout.box()
         box.label(text="From curve")
@@ -1824,9 +1819,9 @@ class ARCHIPACK_OT_floor(ArchipackCreateTool, Operator):
         p.a0 = angle_90
         p.length = x
         d.n_parts = 4
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         self.load_preset(d)
         self.add_material(o)
         return o
@@ -1837,8 +1832,8 @@ class ARCHIPACK_OT_floor(ArchipackCreateTool, Operator):
             o = self.create(context)
             o.location = context.scene.cursor_location
             # activate manipulators at creation time
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             self.manipulate()
             return {'FINISHED'}
         else:
@@ -1864,7 +1859,7 @@ class ARCHIPACK_OT_floor_from_curve(ArchipackCreateTool, Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def create(self, context):
         curve = context.active_object
@@ -1903,7 +1898,7 @@ class ARCHIPACK_OT_floor_from_wall(ArchipackCreateTool, Operator):
         wall = context.active_object
         wd = wall.data.archipack_wall2[0]
         bpy.ops.archipack.floor(auto_manipulate=False, filepath=self.filepath)
-        o = context.scene.objects.active
+        o = context.view_layer.objects.active
         d = archipack_floor.datablock(o)
         d.auto_update = False
         d.closed = True
@@ -1931,8 +1926,8 @@ class ARCHIPACK_OT_floor_from_wall(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             if self.auto_manipulate:
                 bpy.ops.archipack.floor_manipulate('INVOKE_DEFAULT')
             return {'FINISHED'}
@@ -1948,13 +1943,13 @@ class ARCHIPACK_OT_floor_cutter(ArchipackCreateTool, Operator):
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
 
-    parent = StringProperty("")
+    parent : StringProperty("")
 
     def create(self, context):
         m = bpy.data.meshes.new("Floor Cutter")
         o = bpy.data.objects.new("Floor Cutter", m)
         d = m.archipack_floor_cutter.add()
-        parent = context.scene.objects.get(self.parent)
+        parent = context.scene.objects.get(self.parent.strip())
         if parent is not None:
             o.parent = parent
             bbox = parent.bound_box
@@ -1963,7 +1958,7 @@ class ARCHIPACK_OT_floor_cutter(ArchipackCreateTool, Operator):
             x1, y1, z = bbox[6]
             x = 0.2 * (x1 - x0)
             y = 0.2 * (y1 - y0)
-            o.matrix_world = parent.matrix_world * Matrix([
+            o.matrix_world = parent.matrix_world @ Matrix([
                 [1, 0, 0, -3 * x],
                 [0, 1, 0, 0],
                 [0, 0, 1, 0],
@@ -1986,9 +1981,9 @@ class ARCHIPACK_OT_floor_cutter(ArchipackCreateTool, Operator):
             o.location = context.scene.cursor_location
         # make manipulators selectable
         d.manipulable_selectable = True
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         # self.add_material(o)
         self.load_preset(d)
         update_operation(d, context)
@@ -2001,8 +1996,8 @@ class ARCHIPACK_OT_floor_cutter(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             self.manipulate()
             return {'FINISHED'}
         else:

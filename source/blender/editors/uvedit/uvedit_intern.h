@@ -32,7 +32,6 @@
 #ifndef __UVEDIT_INTERN_H__
 #define __UVEDIT_INTERN_H__
 
-struct MTexPoly;
 struct Image;
 struct Object;
 struct Scene;
@@ -52,9 +51,10 @@ void  uv_poly_center(struct BMFace *f, float r_cent[2], const int cd_loop_uv_off
 /* find nearest */
 
 typedef struct UvNearestHit {
+	/** Only for `*_multi(..)` versions of functions. */
+	struct Object *ob;
 	/** Always set if we have a hit. */
 	struct BMFace *efa;
-	struct MTexPoly *tf;
 	struct BMLoop *l;
 	struct MLoopUV *luv, *luv_next;
 	/** Index of loop within face. */
@@ -66,15 +66,24 @@ typedef struct UvNearestHit {
 #define UV_NEAREST_HIT_INIT { .dist_sq = FLT_MAX, }
 
 bool uv_find_nearest_vert(
-        struct Scene *scene, struct Image *ima, struct BMEditMesh *em,
+        struct Scene *scene, struct Image *ima, struct Object *obedit,
+        const float co[2], const float penalty_dist, struct UvNearestHit *hit_final);
+bool uv_find_nearest_vert_multi(
+        struct Scene *scene, struct Image *ima, struct Object **objects, const uint objects_len,
         const float co[2], const float penalty_dist, struct UvNearestHit *hit_final);
 
 bool uv_find_nearest_edge(
-        struct Scene *scene, struct Image *ima, struct BMEditMesh *em,
+        struct Scene *scene, struct Image *ima, struct Object *obedit,
+        const float co[2], struct UvNearestHit *hit_final);
+bool uv_find_nearest_edge_multi(
+        struct Scene *scene, struct Image *ima, struct Object **objects, const uint objects_len,
         const float co[2], struct UvNearestHit *hit_final);
 
 bool uv_find_nearest_face(
-        struct Scene *scene, struct Image *ima, struct BMEditMesh *em,
+        struct Scene *scene, struct Image *ima, struct Object *obedit,
+        const float co[2], struct UvNearestHit *hit_final);
+bool uv_find_nearest_face_multi(
+        struct Scene *scene, struct Image *ima, struct Object **objects, const uint objects_len,
         const float co[2], struct UvNearestHit *hit_final);
 
 /* utility tool functions */

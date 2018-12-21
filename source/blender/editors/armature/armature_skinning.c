@@ -43,11 +43,17 @@
 
 #include "BKE_action.h"
 #include "BKE_armature.h"
+#include "BKE_context.h"
 #include "BKE_deform.h"
+#include "BKE_mesh_iterators.h"
+#include "BKE_mesh_runtime.h"
+#include "BKE_modifier.h"
 #include "BKE_object_deform.h"
 #include "BKE_report.h"
 #include "BKE_subsurf.h"
-#include "BKE_modifier.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "ED_armature.h"
 #include "ED_mesh.h"
@@ -57,13 +63,9 @@
 #include "armature_intern.h"
 #include "meshlaplacian.h"
 
-#if 0
-#include "reeb.h"
-#endif
-
 /* ********************************** Bone Skinning *********************************************** */
 
-static int bone_skinnable_cb(Object *ob, Bone *bone, void *datap)
+static int bone_skinnable_cb(Object *UNUSED(ob), Bone *bone, void *datap)
 {
 	/* Bones that are deforming
 	 * are regarded to be "skinnable" and are eligible for
@@ -89,9 +91,9 @@ static int bone_skinnable_cb(Object *ob, Bone *bone, void *datap)
 	 */
 	Bone ***hbone;
 	int a, segments;
-	struct { Object *armob; void *list; int heat; } *data = datap;
+	struct { Object *armob; void *list; int heat; bool is_weight_paint; } *data = datap;
 
-	if (!(ob->mode & OB_MODE_WEIGHT_PAINT) || !(bone->flag & BONE_HIDDEN_P)) {
+	if (!(data->is_weight_paint) || !(bone->flag & BONE_HIDDEN_P)) {
 		if (!(bone->flag & BONE_NO_DEFORM)) {
 			if (data->heat && data->armob->pose && BKE_pose_channel_find_name(data->armob->pose, bone->name))
 				segments = bone->segments;
@@ -103,7 +105,7 @@ static int bone_skinnable_cb(Object *ob, Bone *bone, void *datap)
 
 				for (a = 0; a < segments; a++) {
 					**hbone = bone;
-					++*hbone;
+					(*hbone)++;
 				}
 			}
 			return segments;
@@ -154,18 +156,17 @@ static int dgroup_skinnable_cb(Object *ob, Bone *bone, void *datap)
 	 */
 	bDeformGroup ***hgroup, *defgroup = NULL;
 	int a, segments;
-	struct { Object *armob; void *list; int heat; } *data = datap;
-	int wpmode = (ob->mode & OB_MODE_WEIGHT_PAINT);
+	struct { Object *armob; void *list; int heat; bool is_weight_paint; } *data = datap;
 	bArmature *arm = data->armob->data;
 
-	if (!wpmode || !(bone->flag & BONE_HIDDEN_P)) {
+	if (!data->is_weight_paint || !(bone->flag & BONE_HIDDEN_P)) {
 		if (!(bone->flag & BONE_NO_DEFORM)) {
 			if (data->heat && data->armob->pose && BKE_pose_channel_find_name(data->armob->pose, bone->name))
 				segments = bone->segments;
 			else
 				segments = 1;
 
-			if (!wpmode || ((arm->layer & bone->layer) && (bone->flag & BONE_SELECTED))) {
+			if (!data->is_weight_paint || ((arm->layer & bone->layer) && (bone->flag & BONE_SELECTED))) {
 				if (!(defgroup = defgroup_find_name(ob, bone->name))) {
 					defgroup = BKE_object_defgroup_add_name(ob, bone->name);
 				}
@@ -180,7 +181,7 @@ static int dgroup_skinnable_cb(Object *ob, Bone *bone, void *datap)
 
 				for (a = 0; a < segments; a++) {
 					**hgroup = defgroup;
-					++*hgroup;
+					(*hgroup)++;
 				}
 			}
 			return segments;
@@ -189,9 +190,10 @@ static int dgroup_skinnable_cb(Object *ob, Bone *bone, void *datap)
 	return 0;
 }
 
-static void envelope_bone_weighting(Object *ob, Mesh *mesh, float (*verts)[3], int numbones, Bone **bonelist,
-                                    bDeformGroup **dgrouplist, bDeformGroup **dgroupflip,
-                                    float (*root)[3], float (*tip)[3], const int *selected, float scale)
+static void envelope_bone_weighting(
+        Object *ob, Mesh *mesh, float (*verts)[3], int numbones, Bone **bonelist,
+        bDeformGroup **dgrouplist, bDeformGroup **dgroupflip,
+        float (*root)[3], float (*tip)[3], const int *selected, float scale)
 {
 	/* Create vertex group weights from envelopes */
 
@@ -247,8 +249,9 @@ static void envelope_bone_weighting(Object *ob, Mesh *mesh, float (*verts)[3], i
 	}
 }
 
-static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, Object *par,
-                                 int heat, const bool mirror)
+static void add_verts_to_dgroups(
+        ReportList *reports, Depsgraph *depsgraph, Scene *UNUSED(scene), Object *ob, Object *par,
+        int heat, const bool mirror)
 {
 	/* This functions implements the automatic computation of vertex group
 	 * weights, either through envelopes or using a heat equilibrium.
@@ -258,7 +261,7 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 	 * into account and vertex weights can be mirrored.
 	 *
 	 * The mesh vertex positions used are either the final deformed coords
-	 * from the derivedmesh in weightpaint mode, the final subsurf coords
+	 * from the evaluated mesh in weightpaint mode, the final subsurf coords
 	 * when parenting, or simply the original mesh coords.
 	 */
 
@@ -272,12 +275,13 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 	float (*root)[3], (*tip)[3], (*verts)[3];
 	int *selected;
 	int numbones, vertsfilled = 0, i, j, segments = 0;
-	int wpmode = (ob->mode & OB_MODE_WEIGHT_PAINT);
-	struct { Object *armob; void *list; int heat; } looper_data;
+	const bool wpmode = (ob->mode & OB_MODE_WEIGHT_PAINT);
+	struct { Object *armob; void *list; int heat; bool is_weight_paint; } looper_data;
 
 	looper_data.armob = par;
 	looper_data.heat = heat;
 	looper_data.list = NULL;
+	looper_data.is_weight_paint = wpmode;
 
 	/* count the number of skinnable bones */
 	numbones = bone_looper(ob, arm->bonebase.first, &looper_data, bone_skinnable_cb);
@@ -322,7 +326,7 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 				if ((par->pose) && (pchan = BKE_pose_channel_find_name(par->pose, bone->name))) {
 					if (bone->segments > 1) {
 						segments = bone->segments;
-						b_bone_spline_setup(pchan, 1, bbone_array);
+						BKE_pchan_bbone_spline_setup(pchan, true, bbone_array);
 						bbone = bbone_array;
 					}
 				}
@@ -371,15 +375,13 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 	verts = MEM_callocN(mesh->totvert * sizeof(*verts), "closestboneverts");
 
 	if (wpmode) {
-		/* if in weight paint mode, use final verts from derivedmesh */
-		DerivedMesh *dm = mesh_get_derived_final(scene, ob, CD_MASK_BAREMESH);
+		/* if in weight paint mode, use final verts from evaluated mesh */
+		Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
+		Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+		Mesh *me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, CD_MASK_BAREMESH);
 
-		if (dm->foreachMappedVert) {
-			mesh_get_mapped_verts_coords(dm, verts, mesh->totvert);
-			vertsfilled = 1;
-		}
-
-		dm->release(dm);
+		BKE_mesh_foreach_mapped_vert_coords_get(me_eval, verts, mesh->totvert);
+		vertsfilled = 1;
 	}
 	else if (modifiers_findByType(ob, eModifierType_Subsurf)) {
 		/* is subsurf on? Lets use the verts on the limit surface then.
@@ -400,15 +402,17 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 	if (heat) {
 		const char *error = NULL;
 
-		heat_bone_weighting(ob, mesh, verts, numbones, dgrouplist, dgroupflip,
-		                    root, tip, selected, &error);
+		heat_bone_weighting(
+		        ob, mesh, verts, numbones, dgrouplist, dgroupflip,
+		        root, tip, selected, &error);
 		if (error) {
 			BKE_report(reports, RPT_WARNING, error);
 		}
 	}
 	else {
-		envelope_bone_weighting(ob, mesh, verts, numbones, bonelist, dgrouplist,
-		                        dgroupflip, root, tip, selected, mat4_to_scale(par->obmat));
+		envelope_bone_weighting(
+		        ob, mesh, verts, numbones, bonelist, dgrouplist,
+		        dgroupflip, root, tip, selected, mat4_to_scale(par->obmat));
 	}
 
 	/* only generated in some cases but can call anyway */
@@ -424,8 +428,9 @@ static void add_verts_to_dgroups(ReportList *reports, Scene *scene, Object *ob, 
 	MEM_freeN(verts);
 }
 
-void ED_object_vgroup_calc_from_armature(ReportList *reports, Scene *scene, Object *ob, Object *par,
-                                  const int mode, const bool mirror)
+void ED_object_vgroup_calc_from_armature(
+        ReportList *reports, Depsgraph *depsgraph, Scene *scene, Object *ob, Object *par,
+        const int mode, const bool mirror)
 {
 	/* Lets try to create some vertex groups
 	 * based on the bones of the parent armature.
@@ -451,6 +456,6 @@ void ED_object_vgroup_calc_from_armature(ReportList *reports, Scene *scene, Obje
 		 * that are populated with the vertices for which the
 		 * bone is closest.
 		 */
-		add_verts_to_dgroups(reports, scene, ob, par, (mode == ARM_GROUPS_AUTO), mirror);
+		add_verts_to_dgroups(reports, depsgraph, scene, ob, par, (mode == ARM_GROUPS_AUTO), mirror);
 	}
 }

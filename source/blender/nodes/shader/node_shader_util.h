@@ -64,8 +64,6 @@
 #include "BKE_node.h"
 #include "BKE_texture.h"
 
-#include "BKE_library.h"
-
 #include "NOD_shader.h"
 #include "node_util.h"
 
@@ -78,6 +76,7 @@
 #include "RE_shader_ext.h"
 
 #include "GPU_material.h"
+#include "GPU_uniformbuffer.h"
 
 
 bool sh_node_poll_default(struct bNodeType *ntype, struct bNodeTree *ntree);
@@ -87,10 +86,9 @@ void sh_node_type_base(struct bNodeType *ntype, int type, const char *name, shor
 /* ********* exec data struct, remains internal *********** */
 
 typedef struct ShaderCallData {
-	ShadeInput *shi;		/* from render pipe */
-	ShadeResult *shr;		/* from render pipe */
+	/* Empty for now, may be reused if we convert shader to texture nodes. */
+	int dummy;
 } ShaderCallData;
-
 
 void nodestack_get_vec(float *in, short type_in, bNodeStack *ns);
 
@@ -98,6 +96,6 @@ void node_gpu_stack_from_data(struct GPUNodeStack *gs, int type, struct bNodeSta
 void node_data_from_gpu_stack(struct bNodeStack *ns, struct GPUNodeStack *gs);
 void node_shader_gpu_tex_mapping(struct GPUMaterial *mat, struct bNode *node, struct GPUNodeStack *in, struct GPUNodeStack *out);
 
-void ntreeExecGPUNodes(struct bNodeTreeExec *exec, struct GPUMaterial *mat, int do_outputs, short compatibility);
+void ntreeExecGPUNodes(struct bNodeTreeExec *exec, struct GPUMaterial *mat, int do_outputs);
 
 #endif

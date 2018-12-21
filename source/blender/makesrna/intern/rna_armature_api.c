@@ -42,6 +42,9 @@
 
 #include <stddef.h>
 
+#include "DNA_armature_types.h"
+
+#include "BLI_math_vector.h"
 #include "BKE_armature.h"
 
 static void rna_EditBone_align_roll(EditBone *ebo, float no[3])
@@ -56,6 +59,50 @@ static float rna_Bone_do_envelope(Bone *bone, float *vec)
 	                          bone->rad_tail * scale, bone->dist * scale);
 }
 
+static void rna_Bone_convert_local_to_pose(Bone *bone, float *r_matrix, float *matrix, float *matrix_local, float *parent_matrix, float *parent_matrix_local, bool invert)
+{
+	BoneParentTransform bpt;
+	float offs_bone[4][4];
+	float (*bone_arm_mat)[4] = (float (*)[4])matrix_local;
+	float (*parent_pose_mat)[4] = (float (*)[4])parent_matrix;
+	float (*parent_arm_mat)[4] = (float (*)[4])parent_matrix_local;
+
+	if (is_zero_m4(parent_pose_mat) || is_zero_m4(parent_arm_mat)) {
+		/* No parent case. */
+		BKE_calc_bone_parent_transform(bone->flag, bone_arm_mat, NULL, NULL, &bpt);
+	}
+	else {
+		invert_m4_m4(offs_bone, parent_arm_mat);
+		mul_m4_m4m4(offs_bone, offs_bone, bone_arm_mat);
+
+		BKE_calc_bone_parent_transform(bone->flag, offs_bone, parent_arm_mat, parent_pose_mat, &bpt);
+	}
+
+	if (invert) {
+		BKE_invert_bone_parent_transform(&bpt);
+	}
+
+	BKE_apply_bone_parent_transform(&bpt, (float (*)[4])matrix, (float (*)[4])r_matrix);
+}
+
+static void rna_Bone_MatrixFromAxisRoll(float *axis, float roll, float *r_matrix)
+{
+	vec_roll_to_mat3(axis, roll, (float (*)[3])r_matrix);
+}
+
+static void rna_Bone_AxisRollFromMatrix(float *matrix, float *axis_override, float *r_axis, float *r_roll)
+{
+	float mat[3][3];
+
+	normalize_m3_m3(mat, (float (*)[3])matrix);
+
+	if (normalize_v3_v3(r_axis, axis_override) != 0.0f) {
+		mat3_vec_to_roll(mat, r_axis, r_roll);
+	}
+	else {
+		mat3_to_vec_roll(mat, r_axis, r_roll);
+	}
+}
 #else
 
 void RNA_api_armature_edit_bone(StructRNA *srna)
@@ -83,6 +130,67 @@ void RNA_api_bone(StructRNA *srna)
 	/* return value */
 	parm = RNA_def_float(func, "factor", 0, -FLT_MAX, FLT_MAX, "Factor", "Envelope factor", -FLT_MAX, FLT_MAX);
 	RNA_def_function_return(func, parm);
+
+	func = RNA_def_function(srna, "convert_local_to_pose", "rna_Bone_convert_local_to_pose");
+	RNA_def_function_ui_description(func,
+	                                "Transform a matrix from Local to Pose space (or back), taking "
+	                                "into account options like Inherit Scale and Local Location. "
+	                                "Unlike Object.convert_space, this uses custom rest and pose "
+	                                "matrices provided by the caller. If the parent matrices are "
+	                                "omitted, the bone is assumed to have no parent.");
+	parm = RNA_def_property(func, "matrix_return", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_4x4);
+	RNA_def_property_ui_text(parm, "", "The transformed matrix");
+	RNA_def_function_output(func, parm);
+	parm = RNA_def_property(func, "matrix", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_4x4);
+	RNA_def_property_ui_text(parm, "", "The matrix to transform");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_property(func, "matrix_local", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_4x4);
+	RNA_def_property_ui_text(parm, "", "The custom rest matrix of this bone (Bone.matrix_local)");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_property(func, "parent_matrix", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_4x4);
+	RNA_def_property_ui_text(parm, "", "The custom pose matrix of the parent bone (PoseBone.matrix)");
+	parm = RNA_def_property(func, "parent_matrix_local", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_4x4);
+	RNA_def_property_ui_text(parm, "", "The custom rest matrix of the parent bone (Bone.matrix_local)");
+	parm = RNA_def_boolean(func, "invert", false, "", "Convert from Pose to Local space");
+
+	/* Conversions between Matrix and Axis + Roll representations. */
+	func = RNA_def_function(srna, "MatrixFromAxisRoll", "rna_Bone_MatrixFromAxisRoll");
+	RNA_def_function_ui_description(func, "Convert the axis + roll representation to a matrix");
+	RNA_def_function_flag(func, FUNC_NO_SELF);
+	parm = RNA_def_property(func, "axis", PROP_FLOAT, PROP_XYZ);
+	RNA_def_property_array(parm, 3);
+	RNA_def_property_ui_text(parm, "", "The main axis of the bone (tail - head)");
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
+	parm = RNA_def_property(func, "roll", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_ui_text(parm, "", "The roll of the bone");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_property(func, "result_matrix", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_3x3);
+	RNA_def_property_ui_text(parm, "", "The resulting orientation matrix");
+	RNA_def_function_output(func, parm);
+
+	func = RNA_def_function(srna, "AxisRollFromMatrix", "rna_Bone_AxisRollFromMatrix");
+	RNA_def_function_ui_description(func, "Convert a rotational matrix to the axis + roll representation");
+	RNA_def_function_flag(func, FUNC_NO_SELF);
+	parm = RNA_def_property(func, "matrix", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_multi_array(parm, 2, rna_matrix_dimsize_3x3);
+	RNA_def_property_ui_text(parm, "", "The orientation matrix of the bone");
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
+	parm = RNA_def_property(func, "axis", PROP_FLOAT, PROP_MATRIX);
+	RNA_def_property_array(parm, 3);
+	RNA_def_property_ui_text(parm, "", "The optional override for the axis (finds closest approximation for the matrix)");
+	parm = RNA_def_property(func, "result_axis", PROP_FLOAT, PROP_XYZ);
+	RNA_def_property_array(parm, 3);
+	RNA_def_property_ui_text(parm, "", "The main axis of the bone");
+	RNA_def_function_output(func, parm);
+	parm = RNA_def_property(func, "result_roll", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_ui_text(parm, "", "The roll of the bone");
+	RNA_def_function_output(func, parm);
 }
 
 #endif

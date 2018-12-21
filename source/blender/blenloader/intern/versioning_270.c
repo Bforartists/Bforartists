@@ -52,7 +52,6 @@
 #include "DNA_modifier_types.h"
 #include "DNA_particle_types.h"
 #include "DNA_linestyle_types.h"
-#include "DNA_actuator_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_smoke_types.h"
 #include "DNA_rigidbody_types.h"
@@ -77,6 +76,9 @@
 #include "BLI_math.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
+
+#include "BLT_translation.h"
 
 #include "BLO_readfile.h"
 
@@ -87,6 +89,64 @@
 #include "readfile.h"
 
 #include "MEM_guardedalloc.h"
+
+/* ************************************************** */
+/* GP Palettes API (Deprecated) */
+
+/* add a new gp-palette */
+static bGPDpalette *BKE_gpencil_palette_addnew(bGPdata *gpd, const char *name)
+{
+	bGPDpalette *palette;
+
+	/* check that list is ok */
+	if (gpd == NULL) {
+		return NULL;
+	}
+
+	/* allocate memory and add to end of list */
+	palette = MEM_callocN(sizeof(bGPDpalette), "bGPDpalette");
+
+	/* add to datablock */
+	BLI_addtail(&gpd->palettes, palette);
+
+	/* set basic settings */
+	/* auto-name */
+	BLI_strncpy(palette->info, name, sizeof(palette->info));
+	BLI_uniquename(&gpd->palettes, palette, DATA_("GP_Palette"), '.', offsetof(bGPDpalette, info),
+	               sizeof(palette->info));
+
+	/* return palette */
+	return palette;
+}
+
+/* add a new gp-palettecolor */
+static bGPDpalettecolor *BKE_gpencil_palettecolor_addnew(bGPDpalette *palette, const char *name)
+{
+	bGPDpalettecolor *palcolor;
+
+	/* check that list is ok */
+	if (palette == NULL) {
+		return NULL;
+	}
+
+	/* allocate memory and add to end of list */
+	palcolor = MEM_callocN(sizeof(bGPDpalettecolor), "bGPDpalettecolor");
+
+	/* add to datablock */
+	BLI_addtail(&palette->colors, palcolor);
+
+	/* set basic settings */
+	copy_v4_v4(palcolor->color, U.gpencil_new_layer_col);
+	ARRAY_SET_ITEMS(palcolor->fill, 1.0f, 1.0f, 1.0f);
+
+	/* auto-name */
+	BLI_strncpy(palcolor->info, name, sizeof(palcolor->info));
+	BLI_uniquename(&palette->colors, palcolor, DATA_("Color"), '.', offsetof(bGPDpalettecolor, info),
+	               sizeof(palcolor->info));
+
+	/* return palette color */
+	return palcolor;
+}
 
 /**
  * Setup rotation stabilization from ancient single track spec.
@@ -308,18 +368,6 @@ static char *replace_bbone_easing_rnapath(char *old_path)
 	}
 }
 
-/* NOTE: this version patch is intended for versions < 2.52.2, but was initially introduced in 2.27 already.
- *       But in 2.79 another case generating non-unique names was discovered (see T55668, involving Meta strips)... */
-static void do_versions_seq_unique_name_all_strips(Scene *sce, ListBase *seqbasep)
-{
-	for (Sequence *seq = seqbasep->first; seq != NULL; seq = seq->next) {
-		BKE_sequence_base_unique_name_recursive(&sce->ed->seqbase, seq);
-		if (seq->seqbase.first != NULL) {
-			do_versions_seq_unique_name_all_strips(sce, &seq->seqbase);
-		}
-	}
-}
-
 static void do_version_bbone_easing_fcurve_fix(ID *UNUSED(id), FCurve *fcu, void *UNUSED(user_data))
 {
 	/* F-Curve's path (for bbone_in/out) */
@@ -330,7 +378,7 @@ static void do_version_bbone_easing_fcurve_fix(ID *UNUSED(id), FCurve *fcu, void
 	/* Driver -> Driver Vars (for bbone_in/out) */
 	if (fcu->driver) {
 		for (DriverVar *dvar = fcu->driver->variables.first; dvar; dvar = dvar->next) {
-			DRIVER_TARGETS_LOOPER(dvar)
+			DRIVER_TARGETS_LOOPER_BEGIN(dvar)
 			{
 				if (dtar->rna_path) {
 					dtar->rna_path = replace_bbone_easing_rnapath(dtar->rna_path);
@@ -379,7 +427,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 
 		/* nodes don't use fixed node->id any more, clean up */
-		FOREACH_NODETREE(bmain, ntree, id) {
+		FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 			if (ntree->type == NTREE_COMPOSIT) {
 				bNode *node;
 				for (node = ntree->nodes.first; node; node = node->next) {
@@ -388,7 +436,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					}
 				}
 			}
-		} FOREACH_NODETREE_END
+		} FOREACH_NODETREE_END;
 
 		{
 			bScreen *screen;
@@ -399,7 +447,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					SpaceLink *space_link;
 					for (space_link = area->spacedata.first; space_link; space_link = space_link->next) {
 						if (space_link->spacetype == SPACE_CLIP) {
-							SpaceClip *space_clip = (SpaceClip *) space_link;
+							SpaceClip *space_clip = (SpaceClip *)space_link;
 							if (space_clip->mode != SC_MODE_MASKEDIT) {
 								space_clip->mode = SC_MODE_TRACKING;
 							}
@@ -418,7 +466,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 270, 1)) {
-		Scene *sce;
 		Object *ob;
 
 		/* Update Transform constraint (another deg -> rad stuff). */
@@ -431,12 +478,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
 					do_version_constraints_radians_degrees_270_1(&pchan->constraints);
 				}
-			}
-		}
-
-		for (sce = bmain->scene.first; sce; sce = sce->id.next) {
-			if (sce->r.raytrace_structure == R_RAYSTRUCTURE_BLIBVH) {
-				sce->r.raytrace_structure = R_RAYSTRUCTURE_AUTO;
 			}
 		}
 	}
@@ -501,13 +542,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 271, 0)) {
-		if (!DNA_struct_elem_find(fd->filesdna, "Material", "int", "mode2")) {
-			Material *ma;
-
-			for (ma = bmain->mat.first; ma; ma = ma->id.next)
-				ma->mode2 = MA_CASTSHADOW;
-		}
-
 		if (!DNA_struct_elem_find(fd->filesdna, "RenderData", "BakeData", "bake")) {
 			Scene *sce;
 
@@ -562,29 +596,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			Scene *scene;
 			for (scene = bmain->scene.first; scene; scene = scene->id.next) {
 				scene->r.preview_start_resolution = 64;
-			}
-		}
-	}
-
-	if (!MAIN_VERSION_ATLEAST(bmain, 271, 2)) {
-		/* init up & track axis property of trackto actuators */
-		Object *ob;
-
-		for (ob = bmain->object.first; ob; ob = ob->id.next) {
-			bActuator *act;
-			for (act = ob->actuators.first; act; act = act->next) {
-				if (act->type == ACT_EDIT_OBJECT) {
-					bEditObjectActuator *eoact = act->data;
-					eoact->trackflag = ob->trackflag;
-					/* if trackflag is pointing +-Z axis then upflag should point Y axis.
-					 * Rest of trackflag cases, upflag should be point z axis */
-					if ((ob->trackflag == OB_POSZ) || (ob->trackflag == OB_NEGZ)) {
-						eoact->upflag = 1;
-					}
-					else {
-						eoact->upflag = 2;
-					}
-				}
 			}
 		}
 	}
@@ -671,7 +682,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 273, 1)) {
-#define	BRUSH_RAKE (1 << 7)
+#define BRUSH_RAKE (1 << 7)
 #define BRUSH_RANDOM_ROTATION (1 << 25)
 
 		Brush *br;
@@ -779,7 +790,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 
 		if (!DNA_struct_elem_find(fd->filesdna, "NodePlaneTrackDeformData", "char", "flag")) {
-			FOREACH_NODETREE(bmain, ntree, id) {
+			FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 				if (ntree->type == NTREE_COMPOSIT) {
 					bNode *node;
 					for (node = ntree->nodes.first; node; node = node->next) {
@@ -792,7 +803,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					}
 				}
 			}
-			FOREACH_NODETREE_END
+			FOREACH_NODETREE_END;
 		}
 
 		if (!DNA_struct_elem_find(fd->filesdna, "Camera", "GPUDOFSettings", "gpu_dof")) {
@@ -853,7 +864,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			for (ob = bmain->object.first; ob; ob = ob->id.next) {
 				for (psys = ob->particlesystem.first; psys; psys = psys->next) {
 					if ((psys->pointcache->flag & PTCACHE_BAKED) == 0) {
-						psys->recalc |= PSYS_RECALC_RESET;
+						psys->recalc |= ID_RECALC_PSYS_RESET;
 					}
 				}
 			}
@@ -869,40 +880,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				}
 			}
 		}
-
-		if (!DNA_struct_elem_find(fd->filesdna, "GameData", "int", "scehysteresis")) {
-			Scene *scene;
-			for (scene = bmain->scene.first; scene; scene = scene->id.next) {
-				scene->gm.scehysteresis = 10;
-			}
-		}
-	}
-
-	if (!MAIN_VERSION_ATLEAST(bmain, 274, 2)) {
-		FOREACH_NODETREE(bmain, ntree, id) {
-			bNode *node;
-			bNodeSocket *sock;
-
-			for (node = ntree->nodes.first; node; node = node->next) {
-				if (node->type == SH_NODE_MATERIAL) {
-					for (sock = node->inputs.first; sock; sock = sock->next) {
-						if (STREQ(sock->name, "Refl")) {
-							BLI_strncpy(sock->name, "DiffuseIntensity", sizeof(sock->name));
-						}
-					}
-				}
-				else if (node->type == SH_NODE_MATERIAL_EXT) {
-					for (sock = node->outputs.first; sock; sock = sock->next) {
-						if (STREQ(sock->name, "Refl")) {
-							BLI_strncpy(sock->name, "DiffuseIntensity", sizeof(sock->name));
-						}
-						else if (STREQ(sock->name, "Ray Mirror")) {
-							BLI_strncpy(sock->name, "Reflectivity", sizeof(sock->name));
-						}
-					}
-				}
-			}
-		} FOREACH_NODETREE_END
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 274, 4)) {
@@ -940,8 +917,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 #undef SEQ_USE_PROXY_CUSTOM_DIR
 #undef SEQ_USE_PROXY_CUSTOM_FILE
 
-			}
-			SEQ_END
+			} SEQ_END;
 		}
 
 		for (screen = bmain->screen.first; screen; screen = screen->id.next) {
@@ -962,7 +938,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 						}
 						case SPACE_IMAGE:
 						{
-							SpaceImage *sima = (SpaceImage *) sl;
+							SpaceImage *sima = (SpaceImage *)sl;
 							sima->iuser.flag |= IMA_SHOW_STEREO;
 							break;
 						}
@@ -1067,7 +1043,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 		{
 			bScreen *screen;
-#define RV3D_VIEW_PERSPORTHO	 7
+#define RV3D_VIEW_PERSPORTHO     7
 			for (screen = bmain->screen.first; screen; screen = screen->id.next) {
 				ScrArea *sa;
 				for (sa = screen->areabase.first; sa; sa = sa->next) {
@@ -1096,7 +1072,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 		{
 			Lamp *lamp;
-#define LA_YF_PHOTON	5
+#define LA_YF_PHOTON    5
 			for (lamp = bmain->lamp.first; lamp; lamp = lamp->id.next) {
 				if (lamp->type == LA_YF_PHOTON) {
 					lamp->type = LA_LOCAL;
@@ -1104,16 +1080,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			}
 #undef LA_YF_PHOTON
 		}
-
-		{
-			Object *ob;
-			for (ob = bmain->object.first; ob; ob = ob->id.next) {
-				if (ob->body_type == OB_BODY_TYPE_CHARACTER && (ob->gameflag & OB_BOUNDS) && ob->collision_boundtype == OB_BOUND_TRIANGLE_MESH) {
-					ob->boundtype = ob->collision_boundtype = OB_BOUND_BOX;
-				}
-			}
-		}
-
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 276, 3)) {
@@ -1136,45 +1102,45 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			ToolSettings *ts = scene->toolsettings;
 
 			if (ts->gp_sculpt.brush[0].size == 0) {
-				GP_BrushEdit_Settings *gset = &ts->gp_sculpt;
-				GP_EditBrush_Data *brush;
+				GP_Sculpt_Settings *gset = &ts->gp_sculpt;
+				GP_Sculpt_Data *brush;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_SMOOTH];
+				brush = &gset->brush[GP_SCULPT_TYPE_SMOOTH];
 				brush->size = 25;
 				brush->strength = 0.3f;
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF | GP_EDITBRUSH_FLAG_SMOOTH_PRESSURE;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF | GP_SCULPT_FLAG_SMOOTH_PRESSURE;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_THICKNESS];
+				brush = &gset->brush[GP_SCULPT_TYPE_THICKNESS];
 				brush->size = 25;
 				brush->strength = 0.5f;
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_GRAB];
+				brush = &gset->brush[GP_SCULPT_TYPE_GRAB];
 				brush->size = 50;
 				brush->strength = 0.3f;
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_PUSH];
+				brush = &gset->brush[GP_SCULPT_TYPE_PUSH];
 				brush->size = 25;
 				brush->strength = 0.3f;
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_TWIST];
+				brush = &gset->brush[GP_SCULPT_TYPE_TWIST];
 				brush->size = 50;
 				brush->strength = 0.3f; // XXX?
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_PINCH];
+				brush = &gset->brush[GP_SCULPT_TYPE_PINCH];
 				brush->size = 50;
 				brush->strength = 0.5f; // XXX?
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_RANDOMIZE];
+				brush = &gset->brush[GP_SCULPT_TYPE_RANDOMIZE];
 				brush->size = 25;
 				brush->strength = 0.5f;
-				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 
-				brush = &gset->brush[GP_EDITBRUSH_TYPE_CLONE];
+				brush = &gset->brush[GP_SCULPT_TYPE_CLONE];
 				brush->size = 50;
 				brush->strength = 1.0f;
 			}
@@ -1223,12 +1189,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				gpd->flag |= GP_DATA_SHOW_ONIONSKINS;
 			else
 				gpd->flag &= ~GP_DATA_SHOW_ONIONSKINS;
-		}
-
-		if (!DNA_struct_elem_find(fd->filesdna, "Object", "unsigned char", "max_jumps")) {
-			for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
-				ob->max_jumps = 1;
-			}
 		}
 	}
 	if (!MAIN_VERSION_ATLEAST(bmain, 276, 5)) {
@@ -1325,8 +1285,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					copy_v4_fl(data->color, 1.0f);
 					data->shadow_color[3] = 1.0f;
 				}
-			}
-			SEQ_END
+			} SEQ_END;
 		}
 
 		/* Adding "Properties" region to DopeSheet */
@@ -1443,28 +1402,17 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			for (Scene *scene = bmain->scene.first; scene; scene = scene->id.next) {
 				ToolSettings *ts = scene->toolsettings;
 				/* initialize use position for sculpt brushes */
-				ts->gp_sculpt.flag |= GP_BRUSHEDIT_FLAG_APPLY_POSITION;
-				/* initialize  selected vertices alpha factor */
-				ts->gp_sculpt.alpha = 1.0f;
+				ts->gp_sculpt.flag |= GP_SCULPT_SETT_FLAG_APPLY_POSITION;
 
 				/* new strength sculpt brush */
 				if (ts->gp_sculpt.brush[0].size >= 11) {
-					GP_BrushEdit_Settings *gset = &ts->gp_sculpt;
-					GP_EditBrush_Data *brush;
+					GP_Sculpt_Settings *gset = &ts->gp_sculpt;
+					GP_Sculpt_Data *brush;
 
-					brush = &gset->brush[GP_EDITBRUSH_TYPE_STRENGTH];
+					brush = &gset->brush[GP_SCULPT_TYPE_STRENGTH];
 					brush->size = 25;
 					brush->strength = 0.5f;
-					brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-				}
-			}
-			/* create a default grease pencil drawing brushes set */
-			if (!BLI_listbase_is_empty(&bmain->gpencil)) {
-				for (Scene *scene = bmain->scene.first; scene; scene = scene->id.next) {
-					ToolSettings *ts = scene->toolsettings;
-					if (BLI_listbase_is_empty(&ts->gp_brushes)) {
-						BKE_gpencil_brush_init_presets(ts);
-					}
+					brush->flag = GP_SCULPT_FLAG_USE_FALLOFF;
 				}
 			}
 			/* Convert Grease Pencil to new palettes/brushes
@@ -1473,10 +1421,10 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			for (bGPdata *gpd = bmain->gpencil.first; gpd; gpd = gpd->id.next) {
 				if (BLI_listbase_is_empty(&gpd->palettes)) {
 					/* create palette */
-					bGPDpalette *palette = BKE_gpencil_palette_addnew(gpd, "GP_Palette", true);
+					bGPDpalette *palette = BKE_gpencil_palette_addnew(gpd, "GP_Palette");
 					for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
 						/* create color using layer name */
-						bGPDpalettecolor *palcolor = BKE_gpencil_palettecolor_addnew(palette, gpl->info, true);
+						bGPDpalettecolor *palcolor = BKE_gpencil_palettecolor_addnew(palette, gpl->info);
 						if (palcolor != NULL) {
 							/* set color attributes */
 							copy_v4_v4(palcolor->color, gpl->color);
@@ -1486,7 +1434,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 							if (gpl->flag & GP_LAYER_LOCKED)     palcolor->flag |= PC_COLOR_LOCKED;
 							if (gpl->flag & GP_LAYER_ONIONSKIN)  palcolor->flag |= PC_COLOR_ONIONSKIN;
 							if (gpl->flag & GP_LAYER_VOLUMETRIC) palcolor->flag |= PC_COLOR_VOLUMETRIC;
-							if (gpl->flag & GP_LAYER_HQ_FILL)    palcolor->flag |= PC_COLOR_HQ_FILL;
 
 							/* set layer opacity to 1 */
 							gpl->opacity = 1.0f;
@@ -1499,8 +1446,6 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 								for (bGPDstroke *gps = gpf->strokes.first; gps; gps = gps->next) {
 									/* set stroke to palette and force recalculation */
 									BLI_strncpy(gps->colorname, gpl->info, sizeof(gps->colorname));
-									gps->palcolor = NULL;
-									gps->flag |= GP_STROKE_RECALC_COLOR;
 									gps->thickness = gpl->thickness;
 
 									/* set alpha strength to 1 */
@@ -1510,13 +1455,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 								}
 							}
 						}
-
-						/* set thickness to 0 (now it is a factor to override stroke thickness) */
-						gpl->thickness = 0.0f;
 					}
-					/* set first color as active */
-					if (palette->colors.first)
-						BKE_gpencil_palettecolor_setactive(palette, palette->colors.first);
 				}
 			}
 		}
@@ -1694,7 +1633,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 		/* Fix for T50736, Glare comp node using same var for two different things. */
 		if (!DNA_struct_elem_find(fd->filesdna, "NodeGlare", "char", "star_45")) {
-			FOREACH_NODETREE(bmain, ntree, id) {
+			FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 				if (ntree->type == NTREE_COMPOSIT) {
 					ntreeSetTypes(NULL, ntree);
 					for (bNode *node = ntree->nodes.first; node; node = node->next) {
@@ -1713,7 +1652,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 						}
 					}
 				}
-			} FOREACH_NODETREE_END
+			} FOREACH_NODETREE_END;
 		}
 
 		if (!DNA_struct_elem_find(fd->filesdna, "SurfaceDeformModifierData", "float", "mat[4][4]")) {
@@ -1727,11 +1666,11 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			}
 		}
 
-		FOREACH_NODETREE(bmain, ntree, id) {
+		FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 			if (ntree->type == NTREE_COMPOSIT) {
 				do_versions_compositor_render_passes(ntree);
 			}
-		} FOREACH_NODETREE_END
+		} FOREACH_NODETREE_END;
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 279, 0)) {
@@ -1838,21 +1777,13 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			}
 		}
 	}
-
-	if (!MAIN_VERSION_ATLEAST(bmain, 279, 6)) {
-		for (Scene *sce = bmain->scene.first; sce != NULL; sce = sce->id.next) {
-			if (sce->ed != NULL && sce->ed->seqbase.first != NULL) {
-				do_versions_seq_unique_name_all_strips(sce, &sce->ed->seqbase);
-			}
-		}
-	}
 }
 
 void do_versions_after_linking_270(Main *bmain)
 {
 	/* To be added to next subversion bump! */
 	if (!MAIN_VERSION_ATLEAST(bmain, 279, 0)) {
-		FOREACH_NODETREE(bmain, ntree, id) {
+		FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 			if (ntree->type == NTREE_COMPOSIT) {
 				ntreeSetTypes(NULL, ntree);
 				for (bNode *node = ntree->nodes.first; node; node = node->next) {
@@ -1861,7 +1792,7 @@ void do_versions_after_linking_270(Main *bmain)
 					}
 				}
 			}
-		} FOREACH_NODETREE_END
+		} FOREACH_NODETREE_END;
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 279, 2)) {

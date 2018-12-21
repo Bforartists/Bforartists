@@ -42,8 +42,12 @@
 #endif
 
 #include "BKE_context.h"
+#include "BKE_main.h"
 #include "BKE_report.h"
 #include "BKE_rigidbody.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "RNA_access.h"
 
@@ -76,12 +80,17 @@ static bool ED_rigidbody_world_add_poll(bContext *C)
 
 static int rigidbody_world_add_exec(bContext *C, wmOperator *UNUSED(op))
 {
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	RigidBodyWorld *rbw;
 
 	rbw = BKE_rigidbody_create_world(scene);
 //	BKE_rigidbody_validate_sim_world(scene, rbw, false);
 	scene->rigidbody_world = rbw;
+
+	/* Full rebuild of DEG! */
+	DEG_relations_tag_update(bmain);
+	DEG_id_tag_update_ex(bmain, &scene->id, ID_RECALC_ANIMATION);
 
 	return OPERATOR_FINISHED;
 }
@@ -105,6 +114,7 @@ void RIGIDBODY_OT_world_add(wmOperatorType *ot)
 
 static int rigidbody_world_remove_exec(bContext *C, wmOperator *op)
 {
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	RigidBodyWorld *rbw = scene->rigidbody_world;
 
@@ -114,8 +124,11 @@ static int rigidbody_world_remove_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	BKE_rigidbody_free_world(rbw);
-	scene->rigidbody_world = NULL;
+	BKE_rigidbody_free_world(scene);
+
+	/* Full rebuild of DEG! */
+	DEG_relations_tag_update(bmain);
+	DEG_id_tag_update_ex(bmain, &scene->id, ID_RECALC_ANIMATION);
 
 	/* done */
 	return OPERATOR_FINISHED;
@@ -152,14 +165,14 @@ static int rigidbody_world_export_exec(bContext *C, wmOperator *op)
 		BKE_report(op->reports, RPT_ERROR, "No Rigid Body World to export");
 		return OPERATOR_CANCELLED;
 	}
-	if (rbw->physics_world == NULL) {
+	if (rbw->shared->physics_world == NULL) {
 		BKE_report(op->reports, RPT_ERROR, "Rigid Body World has no associated physics data to export");
 		return OPERATOR_CANCELLED;
 	}
 
 	RNA_string_get(op->ptr, "filepath", path);
 #ifdef WITH_BULLET
-	RB_dworld_export(rbw->physics_world, path);
+	RB_dworld_export(rbw->shared->physics_world, path);
 #endif
 	return OPERATOR_FINISHED;
 }

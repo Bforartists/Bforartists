@@ -328,7 +328,7 @@ class ExportObject: # Base class, do not use
         for Child in Util.SortByNameField(self.Children):
             Child.Write()
 
-# Simple decorator implemenation for ExportObject.  Used by empty objects
+# Simple decorator implementation for ExportObject.  Used by empty objects
 class EmptyExportObject(ExportObject):
     def __init__(self, Config, Exporter, BlenderObject):
         ExportObject.__init__(self, Config, Exporter, BlenderObject)

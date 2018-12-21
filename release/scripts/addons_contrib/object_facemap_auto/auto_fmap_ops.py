@@ -35,7 +35,7 @@ class MyFaceMapClear(Operator):
     bl_label = "My Face Map Clear Transform"
     bl_options = {'REGISTER', 'UNDO'}
 
-    clear_types = EnumProperty(
+    clear_types: EnumProperty(
         name="Clear Types",
         options={'ENUM_FLAG'},
         items=(

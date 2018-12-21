@@ -65,14 +65,10 @@ class DATA_PT_skeleton(ArmatureButtonsPanel, Panel):
         col.label(text="Protected Layers:")
         col.prop(arm, "layers_protected", text="")
 
-        if context.scene.render.engine == 'BLENDER_GAME':
-            col = layout.column()
-            col.label(text="Deform:")
-            col.prop(arm, "deform_method", expand=True)
-
 
 class DATA_PT_display(ArmatureButtonsPanel, Panel):
     bl_label = "Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -80,19 +76,17 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         ob = context.object
         arm = context.armature
 
-        layout.row().prop(arm, "draw_type", expand=True)
+        layout.row().prop(arm, "display_type", expand=True)
 
-        split = layout.split()
+        layout.use_property_split = True
 
-        col = split.column()
+        col = layout.column()
         col.prop(arm, "show_names", text="Names")
         col.prop(arm, "show_axes", text="Axes")
         col.prop(arm, "show_bone_custom_shapes", text="Shapes")
-
-        col = split.column()
-        col.prop(arm, "show_group_colors", text="Colors")
+        col.prop(arm, "show_group_colors", text="Group Colors")
         if ob:
-            col.prop(ob, "show_x_ray", text="X-Ray")
+            col.prop(ob, "show_in_front", text="In Front")
         col.prop(arm, "use_deform_delay", text="Delay Refresh")
 
 
@@ -107,6 +101,7 @@ class DATA_MT_bone_group_specials(Menu):
 
 class DATA_PT_bone_groups(ArmatureButtonsPanel, Panel):
     bl_label = "Bone Groups"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -128,8 +123,8 @@ class DATA_PT_bone_groups(ArmatureButtonsPanel, Panel):
 
         col = row.column(align=True)
         col.active = (ob.proxy is None)
-        col.operator("pose.group_add", icon='ZOOMIN', text="")
-        col.operator("pose.group_remove", icon='ZOOMOUT', text="")
+        col.operator("pose.group_add", icon='ADD', text="")
+        col.operator("pose.group_remove", icon='REMOVE', text="")
         col.menu("DATA_MT_bone_group_specials", icon='DOWNARROW_HLT', text="")
         if group:
             col.separator()
@@ -154,7 +149,8 @@ class DATA_PT_bone_groups(ArmatureButtonsPanel, Panel):
 
         sub = row.row(align=True)
         sub.operator("pose.group_assign", text="Assign")
-        sub.operator("pose.group_unassign", text="Remove")  # row.operator("pose.bone_group_remove_from", text="Remove")
+        # row.operator("pose.bone_group_remove_from", text="Remove")
+        sub.operator("pose.group_unassign", text="Remove")
 
         sub = row.row(align=True)
         sub.operator("pose.group_select", text="Select")
@@ -179,7 +175,7 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
 
         if poselib:
             # warning about poselib being in an invalid state
-            if len(poselib.fcurves) > 0 and len(poselib.pose_markers) == 0:
+            if poselib.fcurves and not poselib.pose_markers:
                 layout.label(icon='ERROR', text="Error: Potentially corrupt library, run 'Sanitize' operator to fix")
 
             # list of poses in pose library
@@ -193,15 +189,19 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
 
             # invoke should still be used for 'add', as it is needed to allow
             # add/replace options to be used properly
-            col.operator("poselib.pose_add", icon='ZOOMIN', text="")
+            col.operator("poselib.pose_add", icon='ADD', text="")
 
             col.operator_context = 'EXEC_DEFAULT'  # exec not invoke, so that menu doesn't need showing
 
             pose_marker_active = poselib.pose_markers.active
 
             if pose_marker_active is not None:
-                col.operator("poselib.pose_remove", icon='ZOOMOUT', text="")
-                col.operator("poselib.apply_pose", icon='ZOOM_SELECTED', text="").pose_index = poselib.pose_markers.active_index
+                col.operator("poselib.pose_remove", icon='REMOVE', text="")
+                col.operator(
+                    "poselib.apply_pose",
+                    icon='ZOOM_SELECTED',
+                    text="",
+                ).pose_index = poselib.pose_markers.active_index
 
             col.operator("poselib.action_sanitize", icon='HELP', text="")  # XXX: put in menu?
 
@@ -213,6 +213,7 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
 # TODO: this panel will soon be deprecated too
 class DATA_PT_ghost(ArmatureButtonsPanel, Panel):
     bl_label = "Ghost"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -221,21 +222,19 @@ class DATA_PT_ghost(ArmatureButtonsPanel, Panel):
 
         layout.row().prop(arm, "ghost_type", expand=True)
 
-        split = layout.split()
+        layout.use_property_split = True
 
-        col = split.column(align=True)
+        col = layout.column(align=True)
 
         if arm.ghost_type == 'RANGE':
-            col.prop(arm, "ghost_frame_start", text="Start")
+            col.prop(arm, "ghost_frame_start", text="Frame Start")
             col.prop(arm, "ghost_frame_end", text="End")
             col.prop(arm, "ghost_size", text="Step")
         elif arm.ghost_type == 'CURRENT_FRAME':
-            col.prop(arm, "ghost_step", text="Range")
+            col.prop(arm, "ghost_step", text="Frame Range")
             col.prop(arm, "ghost_size", text="Step")
 
-        col = split.column()
-        col.label(text="Display:")
-        col.prop(arm, "show_only_ghost_selected", text="Selected Only")
+        col.prop(arm, "show_only_ghost_selected", text="Display Selected Only")
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
@@ -249,6 +248,7 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         ob = context.object
         itasc = ob.pose.ik_param
@@ -256,45 +256,72 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
         layout.prop(ob.pose, "ik_solver")
 
         if itasc:
+            layout.use_property_split = False
             layout.row().prop(itasc, "mode", expand=True)
+            layout.use_property_split = True
             simulation = (itasc.mode == 'SIMULATION')
             if simulation:
-                layout.label(text="Reiteration:")
-                layout.row().prop(itasc, "reiteration_method", expand=True)
+                layout.prop(itasc, "reiteration_method", expand=False)
 
-            row = layout.row()
-            row.active = not simulation or itasc.reiteration_method != 'NEVER'
-            row.prop(itasc, "precision")
-            row.prop(itasc, "iterations")
+            col = layout.column()
+            col.active = not simulation or itasc.reiteration_method != 'NEVER'
+            col.prop(itasc, "precision")
+            col.prop(itasc, "iterations")
 
             if simulation:
                 layout.prop(itasc, "use_auto_step")
-                row = layout.row()
+                col = layout.column(align=True)
                 if itasc.use_auto_step:
-                    row.prop(itasc, "step_min", text="Min")
-                    row.prop(itasc, "step_max", text="Max")
+                    col.prop(itasc, "step_min", text="Steps Min")
+                    col.prop(itasc, "step_max", text="Max")
                 else:
-                    row.prop(itasc, "step_count")
+                    col.prop(itasc, "step_count", text="Steps")
 
             layout.prop(itasc, "solver")
             if simulation:
                 layout.prop(itasc, "feedback")
                 layout.prop(itasc, "velocity_max")
             if itasc.solver == 'DLS':
-                row = layout.row()
-                row.prop(itasc, "damping_max", text="Damp", slider=True)
-                row.prop(itasc, "damping_epsilon", text="Eps", slider=True)
+                col = layout.column()
+                col.separator()
+                col.prop(itasc, "damping_max", text="Damping Max", slider=True)
+                col.prop(itasc, "damping_epsilon", text="Damping Epsilon", slider=True)
 
 
 from .properties_animviz import (
     MotionPathButtonsPanel,
+    MotionPathButtonsPanel_display,
     OnionSkinButtonsPanel,
 )
 
 
 class DATA_PT_motion_paths(MotionPathButtonsPanel, Panel):
     #bl_label = "Bones Motion Paths"
+    bl_options = {'DEFAULT_CLOSED'}
     bl_context = "data"
+
+    @classmethod
+    def poll(cls, context):
+        # XXX: include pose-mode check?
+        return (context.object) and (context.armature)
+
+    def draw(self, context):
+        # layout = self.layout
+
+        ob = context.object
+        avs = ob.pose.animation_visualization
+
+        pchan = context.active_pose_bone
+        mpath = pchan.motion_path if pchan else None
+
+        self.draw_settings(context, avs, mpath, bones=True)
+
+
+class DATA_PT_motion_paths_display(MotionPathButtonsPanel_display, Panel):
+    #bl_label = "Bones Motion Paths"
+    bl_context = "data"
+    bl_parent_id = "DATA_PT_motion_paths"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -320,7 +347,7 @@ class DATA_PT_onion_skinning(OnionSkinButtonsPanel):  # , Panel): # inherit from
     @classmethod
     def poll(cls, context):
         # XXX: include pose-mode check?
-        return (context.object) and (context.armature)
+        return context.object and context.armature
 
     def draw(self, context):
         ob = context.object
@@ -329,7 +356,7 @@ class DATA_PT_onion_skinning(OnionSkinButtonsPanel):  # , Panel): # inherit from
 
 
 class DATA_PT_custom_props_arm(ArmatureButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     _context_path = "object.data"
     _property_type = bpy.types.Armature
 
@@ -341,9 +368,10 @@ classes = (
     DATA_MT_bone_group_specials,
     DATA_PT_bone_groups,
     DATA_PT_pose_library,
+    DATA_PT_motion_paths,
+    DATA_PT_motion_paths_display,
     DATA_PT_ghost,
     DATA_PT_iksolver_itasc,
-    DATA_PT_motion_paths,
     DATA_PT_custom_props_arm,
 )
 

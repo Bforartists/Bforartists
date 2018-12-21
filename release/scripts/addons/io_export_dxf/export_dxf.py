@@ -27,7 +27,7 @@ if DEBUG:
 
 from .model.migiusModel import MigiusDXFLibDrawing
 
-SUPPORTED_TYPES = ('MESH')#,'CURVE','EMPTY','TEXT','CAMERA','LAMP')
+SUPPORTED_TYPES = ('MESH')#,'CURVE','EMPTY','TEXT','CAMERA','LIGHT')
 
 def exportDXF(context, filePath, settings):
 	"""
@@ -277,10 +277,8 @@ def _exportItem(ctx, o, mw, drawing, settings):
 	elif (o.type == 'CAMERA') and settings['camera_as']:
 		from .primitive_exporters.camera_exporter import CameraDXFExporter
 		e = CameraDXFExporter(settings)
-	elif (o.type == 'LAMP') and settings['lamp_as']:
-		from .primitive_exporters.lamp_exporter import LampDXFExporter
+	elif (o.type == 'LIGHT') and settings['light_as']:
+		from .primitive_exporters.light_exporter import LampDXFExporter
 		e = LampDXFExporter(settings)
 
 	return e.export(ctx, drawing, o, mx, mx_n, color=ecolor, layer=elayer, lineType=eltype)
-
-

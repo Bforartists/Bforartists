@@ -67,12 +67,12 @@ from .timer import Timer
 
 
 def availableGroups(self, context):
-    return [(name, name, name, n) for n, name in enumerate(bpy.data.groups.keys())]
+    return [(name, name, name, n) for n, name in enumerate(bpy.data.collections.keys())]
 
 
 def availableGroupsOrNone(self, context):
     groups = [('None', 'None', 'None', 1)]
-    return groups + [(name, name, name, n + 1) for n, name in enumerate(bpy.data.groups.keys())]
+    return groups + [(name, name, name, n + 1) for n, name in enumerate(bpy.data.collections.keys())]
 
 
 def availableObjects(self, context):
@@ -157,9 +157,9 @@ def halton3D(index):
 
 
 def insidegroup(pointrelativetocursor, group):
-    if bpy.data.groups.find(group) < 0:
+    if bpy.data.collections.find(group) < 0:
         return False
-    for ob in bpy.data.groups[group].objects:
+    for ob in bpy.data.collections[group].objects:
         if pointInsideMesh(pointrelativetocursor, ob):
             return True
     return False
@@ -169,8 +169,8 @@ def groupdistribution(crowngroup, shadowgroup=None, seed=0, size=Vector((1, 1, 1
                       pointrelativetocursor=Vector((0, 0, 0))):
     if crowngroup == shadowgroup:
         shadowgroup = None  # safeguard otherwise every marker would be rejected
-    nocrowngroup = bpy.data.groups.find(crowngroup) < 0
-    noshadowgroup = (shadowgroup is None) or (bpy.data.groups.find(shadowgroup) < 0) or (shadowgroup == 'None')
+    nocrowngroup = bpy.data.collections.find(crowngroup) < 0
+    noshadowgroup = (shadowgroup is None) or (bpy.data.collections.find(shadowgroup) < 0) or (shadowgroup == 'None')
     index = 100 + seed
     nmarkers = 0
     nyield = 0
@@ -199,8 +199,8 @@ def groupExtends(group):
     of the bounding box in world space that encapsulates all objects in a group.
     """
     bb = []
-    if bpy.data.groups.find(group) >= 0:
-        for ob in bpy.data.groups[group].objects:
+    if bpy.data.collections.find(group) >= 0:
+        for ob in bpy.data.collections[group].objects:
             rot = ob.matrix_world.to_quaternion()
             scale = ob.matrix_world.to_scale()
             translate = ob.matrix_world.translation
@@ -954,8 +954,8 @@ class SCATree(bpy.types.Operator):
 
         startingpoints = []
         if self.useTrunkGroup:
-            if bpy.data.groups.find(self.trunkGroup) >= 0:
-                for ob in bpy.data.groups[self.trunkGroup].objects:
+            if bpy.data.collections.find(self.trunkGroup) >= 0:
+                for ob in bpy.data.collections[self.trunkGroup].objects:
                     p = ob.location - context.scene.cursor_location
                     startingpoints.append(Branchpoint(p, None))
 
@@ -1110,11 +1110,11 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
     bpy.utils.unregister_module(__name__)
 
 

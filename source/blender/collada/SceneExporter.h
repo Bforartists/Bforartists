@@ -34,7 +34,7 @@
 extern "C" {
 #include "DNA_scene_types.h"
 #include "DNA_object_types.h"
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_image_types.h"
@@ -48,7 +48,6 @@ extern "C" {
 #include "DNA_modifier_types.h"
 #include "DNA_userdef_types.h"
 
-#include "BKE_DerivedMesh.h"
 #include "BKE_fcurve.h"
 #include "BKE_animsys.h"
 #include "BLI_path_util.h"
@@ -95,16 +94,26 @@ extern "C" {
 class SceneExporter: COLLADASW::LibraryVisualScenes, protected TransformWriter, protected InstanceWriter
 {
 public:
-	SceneExporter(COLLADASW::StreamWriter *sw, ArmatureExporter *arm, const ExportSettings *export_settings);
-	void exportScene(bContext *C, Scene *sce);
+
+	SceneExporter(BlenderContext &blender_context, COLLADASW::StreamWriter *sw, ArmatureExporter *arm, const ExportSettings *export_settings) :
+		COLLADASW::LibraryVisualScenes(sw),
+		blender_context(blender_context),
+		arm_exporter(arm),
+		export_settings(export_settings)
+	{}
+
+	void exportScene();
 
 private:
+	BlenderContext &blender_context;
 	friend class ArmatureExporter;
-	void exportHierarchy(bContext *C, Scene *sce);
-	void writeNodes(bContext *C, Object *ob, Scene *sce);
-
 	ArmatureExporter *arm_exporter;
 	const ExportSettings *export_settings;
+
+	void exportHierarchy();
+	void writeNodeList(std::vector<Object *> &child_objects, Object *parent);
+	void writeNodes(Object *ob);
+
 };
 
 #endif

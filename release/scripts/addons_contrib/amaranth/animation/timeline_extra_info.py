@@ -60,8 +60,8 @@ def label_timeline_extra_info(self, context):
 
 
 def register():
-    bpy.types.TIME_HT_header.append(label_timeline_extra_info)
+    bpy.types.STATUSBAR_HT_header.append(label_timeline_extra_info)
 
 
 def unregister():
-    bpy.types.TIME_HT_header.remove(label_timeline_extra_info)
+    bpy.types.STATUSBAR_HT_header.remove(label_timeline_extra_info)

@@ -53,7 +53,7 @@ xmlPresets = source.getElementsByTagName('preset')
 default = []
 presets = []
 
-#----- Gets and Sets -----#
+# ----- Gets and Sets -----#
 
 
 def getDefault():
@@ -70,7 +70,7 @@ def getPreset(ID=0):
     global presets
     return presets[ID]
 
-#---------- Core ----------#
+# ---------- Core ----------#
 
 
 def parse():
@@ -127,23 +127,6 @@ def parseNode(setting, title=True):
     loc += 2
 
     # Preset material values (xmlPreset.childNodes[7]):
-    if setting.childNodes[loc].childNodes[1].childNodes[0].data == 'False':
-        mat_enable = False
-    else:
-        mat_enable = True
-    mat_color = utils.toList(setting.childNodes[loc].childNodes[3].childNodes[0].data)
-    mat_bright = float(setting.childNodes[loc].childNodes[5].childNodes[0].data)
-    mat_rough = float(setting.childNodes[loc].childNodes[7].childNodes[0].data)
-    mat_spec = float(setting.childNodes[loc].childNodes[9].childNodes[0].data)
-    mat_hard = int(setting.childNodes[loc].childNodes[11].childNodes[0].data)
-    mat_use_trans = bool(setting.childNodes[loc].childNodes[13].childNodes[0].data)
-    mat_alpha = float(setting.childNodes[loc].childNodes[15].childNodes[0].data)
-    mat_cloudy = float(setting.childNodes[loc].childNodes[17].childNodes[0].data)
-    mat_IOR = float(setting.childNodes[loc].childNodes[19].childNodes[0].data)
-    #mat_use_mirror = float(setting.childNodes[loc].childNodes[21].childNodes[0].data)
-    #mat_mossy = float(setting.childNodes[loc].childNodes[23].childNodes[0].data)
-    #mat_mossy = float(setting.childNodes[loc].childNodes[25].childNodes[0].data)
-    mat_mossy = float(setting.childNodes[loc].childNodes[21].childNodes[0].data)
     loc += 2
 
     # Preset random values (xmlPreset.childNodes[9]):
@@ -160,16 +143,12 @@ def parseNode(setting, title=True):
     if title:
         parsed = [title, scaleX, scaleY, scaleZ, skewX, skewY, skewZ,
                   use_scale_dis, scale_fac, deform, rough, detail,
-                  display_detail, smooth_fac, smooth_it, mat_enable, mat_color,
-                  mat_bright, mat_rough, mat_spec, mat_hard, mat_use_trans,
-                  mat_alpha, mat_cloudy, mat_IOR, mat_mossy, use_generate,
-                  use_random_seed, user_seed]
+                  display_detail, smooth_fac, smooth_it,
+                  use_generate, use_random_seed, user_seed]
     else:
         parsed = [scaleX, scaleY, scaleZ, skewX, skewY, skewZ, use_scale_dis,
                   scale_fac, deform, rough, detail, display_detail, smooth_fac,
-                  smooth_it, mat_enable, mat_color, mat_bright, mat_rough,
-                  mat_spec, mat_hard, mat_use_trans, mat_alpha, mat_cloudy,
-                  mat_IOR, mat_mossy, use_generate, use_random_seed, user_seed]
+                  smooth_it, use_generate, use_random_seed, user_seed]
 
     return parsed
 

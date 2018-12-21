@@ -61,7 +61,7 @@ def button_save_reload(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_WM_OT_save_reload)
-    bpy.types.INFO_MT_file.append(button_save_reload)
+    bpy.types.TOPBAR_MT_file.append(button_save_reload)
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     km = kc.keymaps.new(name="Window")
@@ -72,7 +72,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(AMTH_WM_OT_save_reload)
-    bpy.types.INFO_MT_file.remove(button_save_reload)
+    bpy.types.TOPBAR_MT_file.remove(button_save_reload)
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()

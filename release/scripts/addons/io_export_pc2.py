@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Export Pointcache Format(.pc2)",
     "author": "Florian Meyer (tstscr)",
-    "version": (1, 1, 1),
-    "blender": (2, 71, 0),
+    "version": (1, 1, 2),
+    "blender": (2, 80, 0),
     "location": "File > Export > Pointcache (.pc2)",
     "description": "Export mesh Pointcache data (.pc2)",
     "warning": "",
@@ -50,8 +50,10 @@ import time
 import math
 import struct
 
+
 def get_sampled_frames(start, end, sampling):
     return [math.modf(start + x * sampling) for x in range(int((end - start) / sampling) + 1)]
+
 
 def do_export(context, props, filepath):
     mat_x90 = mathutils.Matrix.Rotation(-math.pi/2, 4, 'X')
@@ -61,13 +63,13 @@ def do_export(context, props, filepath):
     end = props.range_end
     sampling = float(props.sampling)
     apply_modifiers = props.apply_modifiers
-    me = ob.to_mesh(sc, apply_modifiers, 'PREVIEW')
+    me = ob.to_mesh(context.depsgraph, apply_modifiers)
     vertCount = len(me.vertices)
     sampletimes = get_sampled_frames(start, end, sampling)
     sampleCount = len(sampletimes)
 
     # Create the header
-    headerFormat='<12siiffi'
+    headerFormat = '<12siiffi'
     headerStr = struct.pack(headerFormat, b'POINTCACHE2\0',
                             1, vertCount, start, sampling, sampleCount)
 
@@ -75,8 +77,9 @@ def do_export(context, props, filepath):
     file.write(headerStr)
 
     for frame in sampletimes:
-        sc.frame_set(int(frame[1]), frame[0])  # stupid modf() gives decimal part first!
-        me = ob.to_mesh(sc, apply_modifiers, 'PREVIEW')
+        # stupid modf() gives decimal part first!
+        sc.frame_set(int(frame[1]), subframe=frame[0])
+        me = ob.to_mesh(context.depsgraph, apply_modifiers)
 
         if len(me.vertices) != vertCount:
             bpy.data.meshes.remove(me, do_unlink=True)
@@ -97,19 +100,18 @@ def do_export(context, props, filepath):
 
         for v in me.vertices:
             thisVertex = struct.pack('<fff', float(v.co[0]),
-                                             float(v.co[1]),
-                                             float(v.co[2]))
+                                     float(v.co[1]),
+                                     float(v.co[2]))
             file.write(thisVertex)
 
         bpy.data.meshes.remove(me, do_unlink=True)
-
 
     file.flush()
     file.close()
     return True
 
 
-###### EXPORT OPERATOR #######
+# EXPORT OPERATOR
 class Export_pc2(bpy.types.Operator, ExportHelper):
     """Export the active Object as a .pc2 Pointcache file"""
     bl_idname = "export_shape.pc2"
@@ -117,50 +119,51 @@ class Export_pc2(bpy.types.Operator, ExportHelper):
 
     filename_ext = ".pc2"
 
-    rot_x90 = BoolProperty(name="Convert to Y-up",
-            description="Rotate 90 degrees around X to convert to y-up",
-            default=True,
-            )
-    world_space = BoolProperty(name="Export into Worldspace",
-            description="Transform the Vertexcoordinates into Worldspace",
-            default=False,
-            )
-    apply_modifiers = BoolProperty(name="Apply Modifiers",
-            description="Applies the Modifiers",
-            default=True,
-            )
-    range_start = IntProperty(name='Start Frame',
-            description='First frame to use for Export',
-            default=1,
-            )
-    range_end = IntProperty(name='End Frame',
-            description='Last frame to use for Export',
-            default=250,
-            )
-    sampling = EnumProperty(name='Sampling',
-            description='Sampling --> frames per sample (0.1 yields 10 samples per frame)',
-            items=(('0.01', '0.01', ''),
-                   ('0.05', '0.05', ''),
-                   ('0.1', '0.1', ''),
-                   ('0.2', '0.2', ''),
-                   ('0.25', '0.25', ''),
-                   ('0.5', '0.5', ''),
-                   ('1', '1', ''),
-                   ('2', '2', ''),
-                   ('3', '3', ''),
-                   ('4', '4', ''),
-                   ('5', '5', ''),
-                   ('10', '10', ''),
-                   ),
-            default='1',
-            )
+    rot_x90: BoolProperty(
+        name="Convert to Y-up",
+        description="Rotate 90 degrees around X to convert to y-up",
+        default=True,)
+    world_space: BoolProperty(
+        name="Export into Worldspace",
+        description="Transform the Vertexcoordinates into Worldspace",
+        default=False,)
+    apply_modifiers: BoolProperty(
+        name="Apply Modifiers",
+        description="Applies the Modifiers",
+        default=True,)
+    range_start: IntProperty(
+        name='Start Frame',
+        description='First frame to use for Export',
+        default=1,)
+    range_end: IntProperty(
+        name='End Frame',
+        description='Last frame to use for Export',
+        default=250,)
+    sampling: EnumProperty(
+        name='Sampling',
+        description='Sampling --> frames per sample (0.1 yields 10 samples per frame)',
+        items=(('0.01', '0.01', ''),
+               ('0.05', '0.05', ''),
+               ('0.1', '0.1', ''),
+               ('0.2', '0.2', ''),
+               ('0.25', '0.25', ''),
+               ('0.5', '0.5', ''),
+               ('1', '1', ''),
+               ('2', '2', ''),
+               ('3', '3', ''),
+               ('4', '4', ''),
+               ('5', '5', ''),
+               ('10', '10', ''),
+               ),
+        default='1',
+                            )
 
     @classmethod
     def poll(cls, context):
         obj = context.active_object
         return (
-            obj is not None and
-            obj.type in {'MESH', 'CURVE', 'SURFACE', 'FONT'}
+            obj is not None
+            and obj.type in {'MESH', 'CURVE', 'SURFACE', 'FONT'}
         )
 
     def execute(self, context):
@@ -173,7 +176,8 @@ class Export_pc2(bpy.types.Operator, ExportHelper):
         exported = do_export(context, props, filepath)
 
         if exported:
-            print('finished export in %s seconds' %((time.time() - start_time)))
+            print('finished export in %s seconds' %
+                  ((time.time() - start_time)))
             print(filepath)
 
         return {'FINISHED'}
@@ -183,7 +187,7 @@ class Export_pc2(bpy.types.Operator, ExportHelper):
 
         if True:
             # File selector
-            wm.fileselect_add(self) # will run self.execute()
+            wm.fileselect_add(self)  # will run self.execute()
             return {'RUNNING_MODAL'}
         elif True:
             # search the enum
@@ -196,23 +200,29 @@ class Export_pc2(bpy.types.Operator, ExportHelper):
             return self.execute(context)
 
 
-### REGISTER ###
-
-def menu_func(self, context):
+def menu_func_export_button(self, context):
     self.layout.operator(Export_pc2.bl_idname, text="Pointcache (.pc2)")
 
 
-def register():
-    bpy.utils.register_module(__name__)
+classes = [
+    Export_pc2,
+]
 
-    bpy.types.INFO_MT_file_export.append(menu_func)
-    #bpy.types.VIEW3D_PT_tools_objectmode.prepend(menu_func)
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export_button)
+    #bpy.types.VIEW3D_PT_tools_objectmode.prepend(menu_func_export_button)
+
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export_button)
+    #bpy.types.VIEW3D_PT_tools_objectmode.remove(menu_func_export_button)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
-    bpy.types.INFO_MT_file_export.remove(menu_func)
-    #bpy.types.VIEW3D_PT_tools_objectmode.remove(menu_func)
 
 if __name__ == "__main__":
     register()

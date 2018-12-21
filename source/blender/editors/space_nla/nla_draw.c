@@ -53,8 +53,12 @@
 #include "ED_anim_api.h"
 #include "ED_keyframes_draw.h"
 
-#include "BIF_gl.h"
 #include "BIF_glutil.h"
+
+#include "GPU_immediate.h"
+#include "GPU_immediate_util.h"
+#include "GPU_draw.h"
+#include "GPU_state.h"
 
 #include "WM_types.h"
 
@@ -97,49 +101,69 @@ void nla_action_get_color(AnimData *adt, bAction *act, float color[4])
 }
 
 /* draw the keyframes in the specified Action */
-static void nla_action_draw_keyframes(AnimData *adt, bAction *act, View2D *v2d, float y, float ymin, float ymax)
+static void nla_action_draw_keyframes(View2D *v2d, AnimData *adt, bAction *act, float y, float ymin, float ymax)
 {
-	DLRBT_Tree keys;
-	ActKeyColumn *ak;
-	float xscale, f1, f2;
-	float color[4];
-
 	/* get a list of the keyframes with NLA-scaling applied */
+	DLRBT_Tree keys;
 	BLI_dlrbTree_init(&keys);
-	action_to_keylist(adt, act, &keys, NULL);
-	BLI_dlrbTree_linkedlist_sync(&keys);
+	action_to_keylist(adt, act, &keys, 0);
 
 	if (ELEM(NULL, act, keys.first))
 		return;
 
 	/* draw a darkened region behind the strips
-	 *	- get and reset the background color, this time without the alpha to stand out better
-	 *	  (amplified alpha is used instead)
+	 * - get and reset the background color, this time without the alpha to stand out better
+	 *   (amplified alpha is used instead)
 	 */
+	float color[4];
 	nla_action_get_color(adt, act, color);
 	color[3] *= 2.5f;
 
-	glColor4fv(color);
-	/*  - draw a rect from the first to the last frame (no extra overlaps for now)
-	 *	  that is slightly stumpier than the track background (hardcoded 2-units here)
+	GPUVertFormat *format = immVertexFormat();
+	uint pos_id = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	immUniformColor4fv(color);
+
+	/* - draw a rect from the first to the last frame (no extra overlaps for now)
+	 *   that is slightly stumpier than the track background (hardcoded 2-units here)
 	 */
-	f1 = ((ActKeyColumn *)keys.first)->cfra;
-	f2 = ((ActKeyColumn *)keys.last)->cfra;
+	float f1 = ((ActKeyColumn *)keys.first)->cfra;
+	float f2 = ((ActKeyColumn *)keys.last)->cfra;
 
-	glRectf(f1, ymin + 2, f2, ymax - 2);
+	immRectf(pos_id, f1, ymin + 2, f2, ymax - 2);
+	immUnbindProgram();
 
+	/* count keys before drawing */
+	/* Note: It's safe to cast DLRBT_Tree, as it's designed to degrade down to a ListBase */
+	uint key_len = BLI_listbase_count((ListBase *)&keys);
 
-	/* get View2D scaling factor */
-	UI_view2d_scale_get(v2d, &xscale, NULL);
+	if (key_len > 0) {
+		format = immVertexFormat();
+		pos_id = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+		uint size_id = GPU_vertformat_attr_add(format, "size", GPU_COMP_F32, 1, GPU_FETCH_FLOAT);
+		uint color_id = GPU_vertformat_attr_add(format, "color", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
+		uint outline_color_id = GPU_vertformat_attr_add(format, "outlineColor", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
+		uint flags_id = GPU_vertformat_attr_add(format, "flags", GPU_COMP_U32, 1, GPU_FETCH_INT);
+		immBindBuiltinProgram(GPU_SHADER_KEYFRAME_DIAMOND);
+		GPU_enable_program_point_size();
+		immUniform2f("ViewportSize", BLI_rcti_size_x(&v2d->mask) + 1, BLI_rcti_size_y(&v2d->mask) + 1);
+		immBegin(GPU_PRIM_POINTS, key_len);
 
-	/* for now, color is hardcoded to be black */
-	glColor3f(0.0f, 0.0f, 0.0f);
+		/* - disregard the selection status of keyframes so they draw a certain way
+		 * - size is 6.0f which is smaller than the editable keyframes, so that there is a distinction
+		 */
+		for (ActKeyColumn *ak = keys.first; ak; ak = ak->next) {
+			draw_keyframe_shape(ak->cfra, y, 6.0f, false, ak->key_type, KEYFRAME_SHAPE_FRAME, 1.0f,
+			                    pos_id, size_id, color_id, outline_color_id,
+			                    flags_id, KEYFRAME_HANDLE_NONE, KEYFRAME_EXTREME_NONE);
+		}
 
-	/* just draw each keyframe as a simple dot (regardless of the selection status)
-	 *	- size is 3.0f which is smaller than the editable keyframes, so that there is a distinction
-	 */
-	for (ak = keys.first; ak; ak = ak->next)
-		draw_keyframe_shape(ak->cfra, y, xscale, 3.0f, 0, ak->key_type, KEYFRAME_SHAPE_FRAME, 1.0f);
+		immEnd();
+		GPU_disable_program_point_size();
+		immUnbindProgram();
+	}
 
 	/* free icons */
 	BLI_dlrbTree_free(&keys);
@@ -148,57 +172,70 @@ static void nla_action_draw_keyframes(AnimData *adt, bAction *act, View2D *v2d, 
 /* Strip Markers ------------------------ */
 
 /* Markers inside an action strip */
-static void nla_actionclip_draw_markers(NlaStrip *strip, float yminc, float ymaxc)
+static void nla_actionclip_draw_markers(NlaStrip *strip, float yminc, float ymaxc, int shade, const bool dashed)
 {
-	bAction *act = strip->act;
-	TimeMarker *marker;
+	const bAction *act = strip->act;
 
-	if (ELEM(NULL, strip->act, strip->act->markers.first))
+	if (ELEM(NULL, act, act->markers.first))
 		return;
 
-	for (marker = act->markers.first; marker; marker = marker->next) {
+	const uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+	if (dashed) {
+		immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+		float viewport_size[4];
+		GPU_viewport_size_get_f(viewport_size);
+		immUniform2f("viewport_size", viewport_size[2] / UI_DPI_FAC, viewport_size[3] / UI_DPI_FAC);
+
+		immUniform1i("colors_len", 0);  /* "simple" mode */
+		immUniform1f("dash_width", 6.0f);
+		immUniform1f("dash_factor", 0.5f);
+	}
+	else {
+		immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+	}
+	immUniformThemeColorShade(TH_STRIP_SELECT, shade);
+
+	immBeginAtMost(GPU_PRIM_LINES, BLI_listbase_count(&act->markers) * 2);
+	for (TimeMarker *marker = act->markers.first; marker; marker = marker->next) {
 		if ((marker->frame > strip->actstart) && (marker->frame < strip->actend)) {
 			float frame = nlastrip_get_frame(strip, marker->frame, NLATIME_CONVERT_MAP);
 
 			/* just a simple line for now */
-			// XXX: draw a triangle instead...
-			fdrawline(frame, yminc + 1, frame, ymaxc - 1);
+			/* XXX: draw a triangle instead... */
+			immVertex2f(shdr_pos, frame, yminc + 1);
+			immVertex2f(shdr_pos, frame, ymaxc - 1);
 		}
 	}
+	immEnd();
+
+	immUnbindProgram();
 }
 
 /* Markers inside a NLA-Strip */
 static void nla_strip_draw_markers(NlaStrip *strip, float yminc, float ymaxc)
 {
-	glLineWidth(2.0);
+	GPU_line_width(2.0f);
 
 	if (strip->type == NLASTRIP_TYPE_CLIP) {
 		/* try not to be too conspicuous, while being visible enough when transforming */
-		if (strip->flag & NLASTRIP_FLAG_SELECT)
-			UI_ThemeColorShade(TH_STRIP_SELECT, -60);
-		else
-			UI_ThemeColorShade(TH_STRIP_SELECT, -40);
-
-		setlinestyle(3);
+		int shade = (strip->flag & NLASTRIP_FLAG_SELECT) ? -60 : -40;
 
 		/* just draw the markers in this clip */
-		nla_actionclip_draw_markers(strip, yminc, ymaxc);
-
-		setlinestyle(0);
+		nla_actionclip_draw_markers(strip, yminc, ymaxc, shade, true);
 	}
 	else if (strip->flag & NLASTRIP_FLAG_TEMP_META) {
 		/* just a solid color, so that it is very easy to spot */
-		UI_ThemeColorShade(TH_STRIP_SELECT, 20);
-
+		int shade = 20;
 		/* draw the markers in the first level of strips only (if they are actions) */
 		for (NlaStrip *nls = strip->strips.first; nls; nls = nls->next) {
 			if (nls->type == NLASTRIP_TYPE_CLIP) {
-				nla_actionclip_draw_markers(nls, yminc, ymaxc);
+				nla_actionclip_draw_markers(nls, yminc, ymaxc, shade, false);
 			}
 		}
 	}
 
-	glLineWidth(1.0);
+	GPU_line_width(1.0f);
 }
 
 /* Strips (Proper) ---------------------- */
@@ -266,18 +303,15 @@ static void nla_strip_get_color_inside(AnimData *adt, NlaStrip *strip, float col
 }
 
 /* helper call for drawing influence/time control curves for a given NLA-strip */
-static void nla_draw_strip_curves(NlaStrip *strip, float yminc, float ymaxc)
+static void nla_draw_strip_curves(NlaStrip *strip, float yminc, float ymaxc, unsigned int pos)
 {
 	const float yheight = ymaxc - yminc;
 
-	/* drawing color is simply a light-gray */
-	// TODO: is this color suitable?
-	// XXX nasty hacked color for now... which looks quite bad too...
-	glColor3f(0.7f, 0.7f, 0.7f);
+	immUniformColor3f(0.7f, 0.7f, 0.7f);
 
 	/* draw with AA'd line */
-	glEnable(GL_LINE_SMOOTH);
-	glEnable(GL_BLEND);
+	GPU_line_smooth(true);
+	GPU_blend(true);
 
 	/* influence -------------------------- */
 	if (strip->flag & NLASTRIP_FLAG_USR_INFLUENCE) {
@@ -286,67 +320,101 @@ static void nla_draw_strip_curves(NlaStrip *strip, float yminc, float ymaxc)
 
 		/* plot the curve (over the strip's main region) */
 		if (fcu) {
-			glBegin(GL_LINE_STRIP);
+			immBegin(GPU_PRIM_LINE_STRIP, abs((int)(strip->end - strip->start) + 1));
 
 			/* sample at 1 frame intervals, and draw
-			 *	- min y-val is yminc, max is y-maxc, so clamp in those regions
+			 * - min y-val is yminc, max is y-maxc, so clamp in those regions
 			 */
 			for (cfra = strip->start; cfra <= strip->end; cfra += 1.0f) {
-				float y = evaluate_fcurve(fcu, cfra);
+				float y = evaluate_fcurve(fcu, cfra); /* assume this to be in 0-1 range */
 				CLAMP(y, 0.0f, 1.0f);
-				glVertex2f(cfra, ((y * yheight) + yminc));
+				immVertex2f(pos, cfra, ((y * yheight) + yminc));
 			}
 
-			glEnd(); // GL_LINE_STRIP
+			immEnd();
 		}
 	}
 	else {
 		/* use blend in/out values only if both aren't zero */
 		if ((IS_EQF(strip->blendin, 0.0f) && IS_EQF(strip->blendout, 0.0f)) == 0) {
-			glBegin(GL_LINE_STRIP);
+			immBeginAtMost(GPU_PRIM_LINE_STRIP, 4);
+
 			/* start of strip - if no blendin, start straight at 1, otherwise from 0 to 1 over blendin frames */
 			if (IS_EQF(strip->blendin, 0.0f) == 0) {
-				glVertex2f(strip->start,                    yminc);
-				glVertex2f(strip->start + strip->blendin,   ymaxc);
+				immVertex2f(pos, strip->start,                    yminc);
+				immVertex2f(pos, strip->start + strip->blendin,   ymaxc);
 			}
 			else
-				glVertex2f(strip->start, ymaxc);
+				immVertex2f(pos, strip->start, ymaxc);
 
 			/* end of strip */
 			if (IS_EQF(strip->blendout, 0.0f) == 0) {
-				glVertex2f(strip->end - strip->blendout,    ymaxc);
-				glVertex2f(strip->end,                      yminc);
+				immVertex2f(pos, strip->end - strip->blendout,    ymaxc);
+				immVertex2f(pos, strip->end,                      yminc);
 			}
 			else
-				glVertex2f(strip->end, ymaxc);
-			glEnd(); // GL_LINE_STRIP
+				immVertex2f(pos, strip->end, ymaxc);
+
+			immEnd();
 		}
 	}
 
-	/* time -------------------------- */
-	// XXX do we want to draw this curve? in a different color too?
-
 	/* turn off AA'd lines */
-	glDisable(GL_LINE_SMOOTH);
-	glDisable(GL_BLEND);
+	GPU_line_smooth(false);
+	GPU_blend(false);
+}
+
+/* helper call to setup dashed-lines for strip outlines */
+static uint nla_draw_use_dashed_outlines(float color[4], bool muted)
+{
+	/* Note that we use dashed shader here, and make it draw solid lines if not muted... */
+	uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+	float viewport_size[4];
+	GPU_viewport_size_get_f(viewport_size);
+	immUniform2f("viewport_size", viewport_size[2] / UI_DPI_FAC, viewport_size[3] / UI_DPI_FAC);
+
+	immUniform1i("colors_len", 0);  /* Simple dashes. */
+	immUniformColor3fv(color);
+
+	/* line style: dotted for muted */
+	if (muted) {
+		/* dotted - and slightly thicker for readability of the dashes */
+		immUniform1f("dash_width", 5.0f);
+		immUniform1f("dash_factor", 0.4f);
+		GPU_line_width(1.5f);
+	}
+	else {
+		/* solid line */
+		immUniform1f("dash_factor", 2.0f);
+		GPU_line_width(1.0f);
+	}
+
+	return shdr_pos;
 }
 
 /* main call for drawing a single NLA-strip */
 static void nla_draw_strip(SpaceNla *snla, AnimData *adt, NlaTrack *nlt, NlaStrip *strip, View2D *v2d, float yminc, float ymaxc)
 {
 	const bool non_solo = ((adt && (adt->flag & ADT_NLA_SOLO_TRACK)) && (nlt->flag & NLATRACK_SOLO) == 0);
-	float color[3];
+	const bool muted = ((nlt->flag & NLATRACK_MUTED) || (strip->flag & NLASTRIP_FLAG_MUTED));
+	float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	uint shdr_pos;
 
 	/* get color of strip */
 	nla_strip_get_color_inside(adt, strip, color);
 
+	shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
 	/* draw extrapolation info first (as backdrop)
-	 *	- but this should only be drawn if track has some contribution
+	 * - but this should only be drawn if track has some contribution
 	 */
 	if ((strip->extendmode != NLASTRIP_EXTEND_NOTHING) && (non_solo == 0)) {
 		/* enable transparency... */
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
+		GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+		GPU_blend(true);
 
 		switch (strip->extendmode) {
 			/* since this does both sides, only do the 'before' side, and leave the rest to the next case */
@@ -356,15 +424,10 @@ static void nla_draw_strip(SpaceNla *snla, AnimData *adt, NlaTrack *nlt, NlaStri
 				 */
 				if (strip->prev == NULL) {
 					/* set the drawing color to the color of the strip, but with very faint alpha */
-					glColor4f(color[0], color[1], color[2], 0.15f);
+					immUniformColor3fvAlpha(color, 0.15f);
 
 					/* draw the rect to the edge of the screen */
-					glBegin(GL_QUADS);
-					glVertex2f(v2d->cur.xmin, yminc);
-					glVertex2f(v2d->cur.xmin, ymaxc);
-					glVertex2f(strip->start, ymaxc);
-					glVertex2f(strip->start, yminc);
-					glEnd();
+					immRectf(shdr_pos, v2d->cur.xmin, yminc, strip->start, ymaxc);
 				}
 				ATTR_FALLTHROUGH;
 
@@ -373,117 +436,131 @@ static void nla_draw_strip(SpaceNla *snla, AnimData *adt, NlaTrack *nlt, NlaStri
 				/* only need to try and draw if the next strip doesn't occur immediately after */
 				if ((strip->next == NULL) || (IS_EQF(strip->next->start, strip->end) == 0)) {
 					/* set the drawing color to the color of the strip, but this time less faint */
-					glColor4f(color[0], color[1], color[2], 0.3f);
+					immUniformColor3fvAlpha(color, 0.3f);
 
 					/* draw the rect to the next strip or the edge of the screen */
-					glBegin(GL_QUADS);
-					glVertex2f(strip->end, yminc);
-					glVertex2f(strip->end, ymaxc);
-
-					if (strip->next) {
-						glVertex2f(strip->next->start, ymaxc);
-						glVertex2f(strip->next->start, yminc);
-					}
-					else {
-						glVertex2f(v2d->cur.xmax, ymaxc);
-						glVertex2f(v2d->cur.xmax, yminc);
-					}
-					glEnd();
+					float x2 = strip->next ? strip->next->start : v2d->cur.xmax;
+					immRectf(shdr_pos, strip->end, yminc, x2, ymaxc);
 				}
 				break;
 		}
 
-		glDisable(GL_BLEND);
+		GPU_blend(false);
 	}
 
 
 	/* draw 'inside' of strip itself */
 	if (non_solo == 0) {
-		/* strip is in normal track */
-		glColor3fv(color);
-		UI_draw_roundbox_corner_set(UI_CNR_ALL); /* all corners rounded */
+		immUnbindProgram();
 
-		UI_draw_roundbox_shade_x(GL_POLYGON, strip->start, yminc, strip->end, ymaxc, 0.0, 0.5, 0.1);
+		/* strip is in normal track */
+		UI_draw_roundbox_corner_set(UI_CNR_ALL); /* all corners rounded */
+		UI_draw_roundbox_shade_x(true, strip->start, yminc, strip->end, ymaxc, 0.0, 0.5, 0.1, color);
+
+		/* restore current vertex format & program (roundbox trashes it) */
+		shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+		immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 	}
 	else {
 		/* strip is in disabled track - make less visible */
-		glColor4f(color[0], color[1], color[2], 0.1f);
+		immUniformColor3fvAlpha(color, 0.1f);
 
-		glEnable(GL_BLEND);
-		glRectf(strip->start, yminc, strip->end, ymaxc);
-		glDisable(GL_BLEND);
+		GPU_blend(true);
+		immRectf(shdr_pos, strip->start, yminc, strip->end, ymaxc);
+		GPU_blend(false);
 	}
 
 
 	/* draw strip's control 'curves'
-	 *	- only if user hasn't hidden them...
+	 * - only if user hasn't hidden them...
 	 */
 	if ((snla->flag & SNLA_NOSTRIPCURVES) == 0)
-		nla_draw_strip_curves(strip, yminc, ymaxc);
+		nla_draw_strip_curves(strip, yminc, ymaxc, shdr_pos);
 
+	immUnbindProgram();
 
 	/* draw markings indicating locations of local markers (useful for lining up different actions) */
 	if ((snla->flag & SNLA_NOLOCALMARKERS) == 0)
 		nla_strip_draw_markers(strip, yminc, ymaxc);
 
 	/* draw strip outline
-	 *	- color used here is to indicate active vs non-active
+	 * - color used here is to indicate active vs non-active
 	 */
 	if (strip->flag & NLASTRIP_FLAG_ACTIVE) {
 		/* strip should appear 'sunken', so draw a light border around it */
-		glColor3f(0.9f, 1.0f, 0.9f); // FIXME: hardcoded temp-hack colors
+		color[0] = 0.9f; /* FIXME: hardcoded temp-hack colors */
+		color[1] = 1.0f;
+		color[2] = 0.9f;
 	}
 	else {
 		/* strip should appear to stand out, so draw a dark border around it */
-		glColor3f(0.0f, 0.0f, 0.0f);
+		color[0] = color[1] = color[2] = 0.0f; /* FIXME: or 1.0f ?? */
 	}
 
-	/* - line style: dotted for muted */
-	if ((nlt->flag & NLATRACK_MUTED) || (strip->flag & NLASTRIP_FLAG_MUTED))
-		setlinestyle(4);
+	/* draw outline
+	 * - dashed-line shader is loaded after this block
+	 */
+	if (muted) {
+		/* muted - draw dotted, squarish outline (for simplicity) */
+		shdr_pos = nla_draw_use_dashed_outlines(color, muted);
+		imm_draw_box_wire_2d(shdr_pos, strip->start, yminc, strip->end, ymaxc);
+	}
+	else {
+		/* non-muted - draw solid, rounded outline */
+		UI_draw_roundbox_shade_x(false, strip->start, yminc, strip->end, ymaxc, 0.0, 0.0, 0.1, color);
 
-	/* draw outline */
-	UI_draw_roundbox_shade_x(GL_LINE_LOOP, strip->start, yminc, strip->end, ymaxc, 0.0, 0.0, 0.1);
+		/* restore current vertex format & program (roundbox trashes it) */
+		shdr_pos = nla_draw_use_dashed_outlines(color, muted);
+	}
 
 	/* if action-clip strip, draw lines delimiting repeats too (in the same color as outline) */
-	if ((strip->type == NLASTRIP_TYPE_CLIP) && IS_EQF(strip->repeat, 1.0f) == 0) {
+	if ((strip->type == NLASTRIP_TYPE_CLIP) && strip->repeat > 1.0f) {
 		float repeatLen = (strip->actend - strip->actstart) * strip->scale;
-		int i;
 
 		/* only draw lines for whole-numbered repeats, starting from the first full-repeat
 		 * up to the last full repeat (but not if it lies on the end of the strip)
 		 */
-		for (i = 1; i < strip->repeat; i++) {
+		immBeginAtMost(GPU_PRIM_LINES, 2 * floorf(strip->repeat));
+		for (int i = 1; i < strip->repeat; i++) {
 			float repeatPos = strip->start + (repeatLen * i);
 
 			/* don't draw if line would end up on or after the end of the strip */
-			if (repeatPos < strip->end)
-				fdrawline(repeatPos, yminc + 4, repeatPos, ymaxc - 4);
+			if (repeatPos < strip->end) {
+				immVertex2f(shdr_pos, repeatPos, yminc + 4);
+				immVertex2f(shdr_pos, repeatPos, ymaxc - 4);
+			}
 		}
+		immEnd();
 	}
 	/* or if meta-strip, draw lines delimiting extents of sub-strips (in same color as outline, if more than 1 exists) */
 	else if ((strip->type == NLASTRIP_TYPE_META) && (strip->strips.first != strip->strips.last)) {
-		NlaStrip *cs;
-		float y = (ymaxc - yminc) / 2.0f + yminc;
+		const float y = (ymaxc - yminc) * 0.5f + yminc;
+
+		immBeginAtMost(GPU_PRIM_LINES, 4 * BLI_listbase_count(&strip->strips)); /* up to 2 lines per strip */
 
 		/* only draw first-level of child-strips, but don't draw any lines on the endpoints */
-		for (cs = strip->strips.first; cs; cs = cs->next) {
+		for (NlaStrip *cs = strip->strips.first; cs; cs = cs->next) {
 			/* draw start-line if not same as end of previous (and only if not the first strip)
-			 *	- on upper half of strip
+			 * - on upper half of strip
 			 */
-			if ((cs->prev) && IS_EQF(cs->prev->end, cs->start) == 0)
-				fdrawline(cs->start, y, cs->start, ymaxc);
+			if ((cs->prev) && IS_EQF(cs->prev->end, cs->start) == 0) {
+				immVertex2f(shdr_pos, cs->start, y);
+				immVertex2f(shdr_pos, cs->start, ymaxc);
+			}
 
 			/* draw end-line if not the last strip
-			 *	- on lower half of strip
+			 * - on lower half of strip
 			 */
-			if (cs->next)
-				fdrawline(cs->end, yminc, cs->end, y);
+			if (cs->next) {
+				immVertex2f(shdr_pos, cs->end, yminc);
+				immVertex2f(shdr_pos, cs->end, y);
+			}
 		}
+
+		immEnd();
 	}
 
-	/* reset linestyle */
-	setlinestyle(0);
+	immUnbindProgram();
 }
 
 /* add the relevant text to the cache of text-strings to draw in pixelspace */
@@ -495,7 +572,6 @@ static void nla_draw_strip_text(
 	char str[256];
 	size_t str_len;
 	char col[4];
-	rctf rect;
 
 	/* just print the name and the range */
 	if (strip->flag & NLASTRIP_FLAG_TEMP_META) {
@@ -520,13 +596,15 @@ static void nla_draw_strip_text(
 		col[3] = 128;
 
 	/* set bounding-box for text
-	 *	- padding of 2 'units' on either side
+	 * - padding of 2 'units' on either side
 	 */
-	// TODO: make this centered?
-	rect.xmin = xminc;
-	rect.ymin = yminc;
-	rect.xmax = xmaxc;
-	rect.ymax = ymaxc;
+	/* TODO: make this centered? */
+	rctf rect = {
+		.xmin = xminc,
+		.ymin = yminc,
+		.xmax = xmaxc,
+		.ymax = ymaxc
+	};
 
 	/* add this string to the cache of texts to draw */
 	UI_view2d_text_cache_add_rectf(v2d, &rect, str, str_len, col);
@@ -542,12 +620,11 @@ static void nla_draw_strip_frames_text(NlaTrack *UNUSED(nlt), NlaStrip *strip, V
 	char numstr[32];
 	size_t numstr_len;
 
-
 	/* Always draw times above the strip, whereas sequencer drew below + above.
 	 * However, we should be fine having everything on top, since these tend to be
 	 * quite spaced out.
-	 *	- 1 dp is compromise between lack of precision (ints only, as per sequencer)
-	 *	  while also preserving some accuracy, since we do use floats
+	 * - 1 dp is compromise between lack of precision (ints only, as per sequencer)
+	 *   while also preserving some accuracy, since we do use floats
 	 */
 	/* start frame */
 	numstr_len = BLI_snprintf_rlen(numstr, sizeof(numstr), "%.1f", strip->start);
@@ -562,37 +639,32 @@ static void nla_draw_strip_frames_text(NlaTrack *UNUSED(nlt), NlaStrip *strip, V
 
 void draw_nla_main_data(bAnimContext *ac, SpaceNla *snla, ARegion *ar)
 {
-	ListBase anim_data = {NULL, NULL};
-	bAnimListElem *ale;
-	int filter;
-
 	View2D *v2d = &ar->v2d;
-	float y = 0.0f;
-	size_t items;
-	int height;
 	const float pixelx = BLI_rctf_size_x(&v2d->cur) / BLI_rcti_size_x(&v2d->mask);
 	const float text_margin_x = (8 * UI_DPI_FAC) * pixelx;
 
 	/* build list of channels to draw */
-	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
-	items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+	ListBase anim_data = {NULL, NULL};
+	int filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
+	size_t items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
 	/* Update max-extent of channels here (taking into account scrollers):
-	 *  - this is done to allow the channel list to be scrollable, but must be done here
-	 *    to avoid regenerating the list again and/or also because channels list is drawn first
-	 *	- offset of NLACHANNEL_HEIGHT*2 is added to the height of the channels, as first is for
-	 *	  start of list offset, and the second is as a correction for the scrollers.
+	 * - this is done to allow the channel list to be scrollable, but must be done here
+	 *   to avoid regenerating the list again and/or also because channels list is drawn first
+	 * - offset of NLACHANNEL_HEIGHT*2 is added to the height of the channels, as first is for
+	 *   start of list offset, and the second is as a correction for the scrollers.
 	 */
-	height = ((items * NLACHANNEL_STEP(snla)) + (NLACHANNEL_HEIGHT(snla) * 2));
+	int height = ((items * NLACHANNEL_STEP(snla)) + (NLACHANNEL_HEIGHT(snla) * 2));
+
 	/* don't use totrect set, as the width stays the same
 	 * (NOTE: this is ok here, the configuration is pretty straightforward)
 	 */
 	v2d->tot.ymin = (float)(-height);
 
 	/* loop through channels, and set up drawing depending on their type  */
-	y = (float)(-NLACHANNEL_HEIGHT(snla));
+	float y = (float)(-NLACHANNEL_HEIGHT(snla));
 
-	for (ale = anim_data.first; ale; ale = ale->next) {
+	for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
 		const float yminc = (float)(y - NLACHANNEL_HEIGHT_HALF(snla));
 		const float ymaxc = (float)(y + NLACHANNEL_HEIGHT_HALF(snla));
 
@@ -635,40 +707,55 @@ void draw_nla_main_data(bAnimContext *ac, SpaceNla *snla, ARegion *ar)
 				case ANIMTYPE_NLAACTION:
 				{
 					AnimData *adt = ale->adt;
-					float color[4];
+
+					uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+					immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
 					/* just draw a semi-shaded rect spanning the width of the viewable area if there's data,
 					 * and a second darker rect within which we draw keyframe indicator dots if there's data
 					 */
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					glEnable(GL_BLEND);
+					GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+					GPU_blend(true);
 
 					/* get colors for drawing */
+					float color[4];
 					nla_action_get_color(adt, ale->data, color);
-					glColor4fv(color);
+					immUniformColor4fv(color);
 
 					/* draw slightly shifted up for greater separation from standard channels,
 					 * but also slightly shorter for some more contrast when viewing the strips
 					 */
-					glRectf(v2d->cur.xmin, yminc + NLACHANNEL_SKIP, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
-
-					/* draw keyframes in the action */
-					nla_action_draw_keyframes(adt, ale->data, v2d, y, yminc + NLACHANNEL_SKIP, ymaxc - NLACHANNEL_SKIP);
+					immRectf(pos, v2d->cur.xmin, yminc + NLACHANNEL_SKIP, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
 
 					/* draw 'embossed' lines above and below the strip for effect */
 					/* white base-lines */
-					glLineWidth(2.0f);
-					glColor4f(1.0f, 1.0f, 1.0f, 0.3);
-					fdrawline(v2d->cur.xmin, yminc + NLACHANNEL_SKIP, v2d->cur.xmax, yminc + NLACHANNEL_SKIP);
-					fdrawline(v2d->cur.xmin, ymaxc - NLACHANNEL_SKIP, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
+					GPU_line_width(2.0f);
+					immUniformColor4f(1.0f, 1.0f, 1.0f, 0.3f);
+					immBegin(GPU_PRIM_LINES, 4);
+					immVertex2f(pos, v2d->cur.xmin, yminc + NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmax, yminc + NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmin, ymaxc - NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
+					immEnd();
 
 					/* black top-lines */
-					glLineWidth(1.0f);
-					glColor3f(0.0f, 0.0f, 0.0f);
-					fdrawline(v2d->cur.xmin, yminc + NLACHANNEL_SKIP, v2d->cur.xmax, yminc + NLACHANNEL_SKIP);
-					fdrawline(v2d->cur.xmin, ymaxc - NLACHANNEL_SKIP, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
+					GPU_line_width(1.0f);
+					immUniformColor3f(0.0f, 0.0f, 0.0f);
+					immBegin(GPU_PRIM_LINES, 4);
+					immVertex2f(pos, v2d->cur.xmin, yminc + NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmax, yminc + NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmin, ymaxc - NLACHANNEL_SKIP);
+					immVertex2f(pos, v2d->cur.xmax, ymaxc - NLACHANNEL_SKIP);
+					immEnd();
 
-					glDisable(GL_BLEND);
+					/* TODO: these lines but better --^ */
+
+					immUnbindProgram();
+
+					/* draw keyframes in the action */
+					nla_action_draw_keyframes(v2d, adt, ale->data, y, yminc + NLACHANNEL_SKIP, ymaxc - NLACHANNEL_SKIP);
+
+					GPU_blend(false);
 					break;
 				}
 			}
@@ -695,19 +782,18 @@ void draw_nla_channel_list(const bContext *C, bAnimContext *ac, ARegion *ar)
 	View2D *v2d = &ar->v2d;
 	float y = 0.0f;
 	size_t items;
-	int height;
 
 	/* build list of channels to draw */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
 	items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
 	/* Update max-extent of channels here (taking into account scrollers):
-	 *  - this is done to allow the channel list to be scrollable, but must be done here
-	 *    to avoid regenerating the list again and/or also because channels list is drawn first
-	 *	- offset of NLACHANNEL_HEIGHT*2 is added to the height of the channels, as first is for
-	 *	  start of list offset, and the second is as a correction for the scrollers.
+	 * - this is done to allow the channel list to be scrollable, but must be done here
+	 *   to avoid regenerating the list again and/or also because channels list is drawn first
+	 * - offset of NLACHANNEL_HEIGHT*2 is added to the height of the channels, as first is for
+	 *  start of list offset, and the second is as a correction for the scrollers.
 	 */
-	height = ((items * NLACHANNEL_STEP(snla)) + (NLACHANNEL_HEIGHT(snla) * 2));
+	int height = ((items * NLACHANNEL_STEP(snla)) + (NLACHANNEL_HEIGHT(snla) * 2));
 	/* don't use totrect set, as the width stays the same
 	 * (NOTE: this is ok here, the configuration is pretty straightforward)
 	 */
@@ -745,8 +831,8 @@ void draw_nla_channel_list(const bContext *C, bAnimContext *ac, ARegion *ar)
 		y = (float)(-NLACHANNEL_HEIGHT(snla));
 
 		/* set blending again, as may not be set in previous step */
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
+		GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+		GPU_blend(true);
 
 		/* loop through channels, and set up drawing depending on their type  */
 		for (ale = anim_data.first; ale; ale = ale->next) {
@@ -769,7 +855,7 @@ void draw_nla_channel_list(const bContext *C, bAnimContext *ac, ARegion *ar)
 		UI_block_end(C, block);
 		UI_block_draw(C, block);
 
-		glDisable(GL_BLEND);
+		GPU_blend(false);
 	}
 
 	/* free temporary channels */

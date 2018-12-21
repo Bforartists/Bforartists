@@ -55,8 +55,6 @@ struct ColorManagedViewSettings;
 
 struct RenderResult *render_result_new(struct Render *re,
 	struct rcti *partrct, int crop, int savebuffers, const char *layername, const char *viewname);
-struct RenderResult *render_result_new_full_sample(struct Render *re,
-	struct ListBase *lb, struct rcti *partrct, int crop, int savebuffers, const char *viewname);
 
 struct RenderResult *render_result_new_from_exr(void *exrhandle, const char *colorspace, bool predivide, int rectx, int recty);
 
@@ -116,5 +114,28 @@ void render_result_rect_get_pixels(struct RenderResult *rr,
 void render_result_views_shallowcopy(struct RenderResult *dst, struct RenderResult *src);
 void render_result_views_shallowdelete(struct RenderResult *rr);
 bool render_result_has_views(struct RenderResult *rr);
+
+#define FOREACH_VIEW_LAYER_TO_RENDER_BEGIN(re_, iter_)    \
+{                                                         \
+	int nr_;                                              \
+	ViewLayer *iter_;                                     \
+	for (nr_ = 0, iter_ = (re_)->view_layers.first;       \
+	     iter_ != NULL;                                   \
+	    iter_ = iter_->next, nr_++)                       \
+	{                                                     \
+		if (!G.background &&  (re_)->r.scemode & R_SINGLE_LAYER) {  \
+			if (nr_ != re->active_view_layer) {           \
+				continue;                                 \
+			}                                             \
+		}                                                 \
+		else {                                            \
+			if ((iter_->flag & VIEW_LAYER_RENDER) == 0) { \
+				continue;                                 \
+			}                                             \
+		}
+
+#define FOREACH_VIEW_LAYER_TO_RENDER_END                  \
+	}                                                     \
+} ((void)0)
 
 #endif /* __RENDER_RESULT_H__ */

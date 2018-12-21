@@ -49,14 +49,14 @@ def add_mesh_bolt_button(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.append(add_mesh_bolt_button)
+    bpy.types.VIEW3D_MT_mesh_add.append(add_mesh_bolt_button)
     # bpy.types.VIEW3D_PT_tools_objectmode.prepend(add_mesh_bolt_button)  # just for testing
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.remove(add_mesh_bolt_button)
+    bpy.types.VIEW3D_MT_mesh_add.remove(add_mesh_bolt_button)
     # bpy.types.VIEW3D_PT_tools_objectmode.remove(add_mesh_bolt_button)  # just for testing
 
 

@@ -425,7 +425,7 @@ static int rna_validate_identifier(const char *identifier, char *error, bool pro
 	 */
 	static const char *kwlist[] = {
 		/* "False", "None", "True", */
-		"and", "as", "assert", "break",
+		"and", "as", "assert", "async", "await", "break",
 		"class", "continue", "def", "del", "elif", "else", "except",
 		"finally", "for", "from", "global", "if", "import", "in",
 		"is", "lambda", "nonlocal", "not", "or", "pass", "raise",
@@ -1165,7 +1165,8 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_, const char *identifier
 		case PROP_STRING:
 		{
 			StringPropertyRNA *sprop = (StringPropertyRNA *)prop;
-
+			/* By default don't allow NULL string args, callers may clear. */
+			RNA_def_property_flag(prop, PROP_NEVER_NULL);
 			sprop->defaultvalue = "";
 			break;
 		}
@@ -1270,6 +1271,14 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_, const char *identifier
 #endif
 	}
 
+	/* Override handling. */
+	if (DefRNA.preprocess) {
+		prop->override_diff = (RNAPropOverrideDiff)"rna_property_override_diff_default";
+		prop->override_store = (RNAPropOverrideStore)"rna_property_override_store_default";
+		prop->override_apply = (RNAPropOverrideApply)"rna_property_override_apply_default";
+	}
+	/* TODO: do we want that for runtime-defined stuff too? I’d say no, but... maybe yes :/ */
+
 	rna_addtail(&cont->properties, prop);
 
 	return prop;
@@ -1283,6 +1292,16 @@ void RNA_def_property_flag(PropertyRNA *prop, PropertyFlag flag)
 void RNA_def_property_clear_flag(PropertyRNA *prop, PropertyFlag flag)
 {
 	prop->flag &= ~flag;
+}
+
+void RNA_def_property_override_flag(PropertyRNA *prop, PropertyOverrideFlag flag)
+{
+	prop->flag_override |= flag;
+}
+
+void RNA_def_property_override_clear_flag(PropertyRNA *prop, PropertyOverrideFlag flag)
+{
+	prop->flag_override &= ~flag;
 }
 
 /**
@@ -1408,11 +1427,13 @@ void RNA_def_property_ui_text(PropertyRNA *prop, const char *name, const char *d
 	prop->description = description;
 }
 
-void RNA_def_property_ui_icon(PropertyRNA *prop, int icon, bool consecutive)
+void RNA_def_property_ui_icon(PropertyRNA *prop, int icon, int consecutive)
 {
 	prop->icon = icon;
-	if (consecutive)
+	if (consecutive != 0)
 		prop->flag |= PROP_ICONS_CONSECUTIVE;
+	if (consecutive < 0)
+		prop->flag |= PROP_ICONS_REVERSE;
 }
 
 /**
@@ -1423,7 +1444,7 @@ void RNA_def_property_ui_icon(PropertyRNA *prop, int icon, bool consecutive)
  * For floats this is (step * UI_PRECISION_FLOAT_SCALE), why? - nobody knows.
  * For ints, whole values are used.
  *
- * \param precision The number of zeros to show
+ * \param precision: The number of zeros to show
  * (as a whole number - common range is 1 - 6), see UI_PRECISION_FLOAT_MAX
  */
 void RNA_def_property_ui_range(PropertyRNA *prop, double min, double max, double step, int precision)
@@ -1860,7 +1881,7 @@ static PropertyDefRNA *rna_def_property_sdna(PropertyRNA *prop, const char *stru
 			return dp;
 		}
 		else {
-			fprintf(stderr, "%s: \"%s.%s\" (identifier \"%s\") not found.\n",
+			fprintf(stderr, "%s: \"%s.%s\" (identifier \"%s\") not found. Struct must be in DNA.\n",
 			        __func__, structname, propname, prop->identifier);
 			DefRNA.error = 1;
 			return NULL;
@@ -2222,6 +2243,29 @@ void RNA_def_property_editable_array_func(PropertyRNA *prop, const char *editabl
 	if (editable) prop->itemeditable = (ItemEditableFunc)editable;
 }
 
+/**
+ * Set custom callbacks for override operations handling.
+ *
+ * \note \a diff callback will also be used by RNA comparison/equality functions.
+ */
+void RNA_def_property_override_funcs(PropertyRNA *prop, const char *diff, const char *store, const char *apply)
+{
+	if (!DefRNA.preprocess) {
+		fprintf(stderr, "%s: only during preprocessing.\n", __func__);
+		return;
+	}
+
+	if (diff) {
+		prop->override_diff = (RNAPropOverrideDiff)diff;
+	}
+	if (store) {
+		prop->override_store = (RNAPropOverrideStore)store;
+	}
+	if (apply) {
+		prop->override_apply = (RNAPropOverrideApply)apply;
+	}
+}
+
 void RNA_def_property_update(PropertyRNA *prop, int noteflag, const char *func)
 {
 	if (!DefRNA.preprocess) {
@@ -2241,7 +2285,7 @@ void RNA_def_property_update_runtime(PropertyRNA *prop, const void *func)
 void RNA_def_property_poll_runtime(PropertyRNA *prop, const void *func)
 {
 	if (prop->type == PROP_POINTER) {
-		((PointerPropertyRNA *)prop)->poll = func;
+		((PointerPropertyRNA *)prop)->poll = (void *)func;
 	}
 	else {
 		fprintf(stderr, "%s: %s is not a Pointer Property.\n", __func__, prop->identifier);

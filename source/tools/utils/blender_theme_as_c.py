@@ -307,10 +307,11 @@ def file_remove_empty_braces(source_dst):
     # Remove:
     #     .foo = { }
     import re
+
     def key_replace(match):
         return ""
     data_prev = None
-    # Braces may become emtpy by removing nested
+    # Braces may become empty by removing nested
     while data != data_prev:
         data_prev = data
         data = re.sub(

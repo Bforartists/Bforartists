@@ -59,7 +59,7 @@ global_settings {
 #declare OverallScale           = 100;
 
 camera {
-  right     x*image_width/image_height // keep propotions with any aspect ratio
+  right     x*image_width/image_height // keep proportions with any aspect ratio
   location  < 1,1.6,-2.5>*OverallScale
   look_at   <-2.0,1.2,0>*OverallScale
 }

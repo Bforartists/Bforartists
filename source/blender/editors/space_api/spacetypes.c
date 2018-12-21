@@ -55,6 +55,7 @@
 #include "ED_paint.h"
 #include "ED_physics.h"
 #include "ED_render.h"
+#include "ED_scene.h"
 #include "ED_screen.h"
 #include "ED_sculpt.h"
 #include "ED_space_api.h"
@@ -66,6 +67,8 @@
 #include "ED_clip.h"
 #include "ED_mask.h"
 #include "ED_sequencer.h"
+#include "ED_gizmo_library.h"
+#include "ED_transform.h"
 
 #include "io_ops.h"
 
@@ -80,7 +83,6 @@ void ED_spacetypes_init(void)
 
 	/* create space types */
 	ED_spacetype_outliner();
-	ED_spacetype_time();
 	ED_spacetype_view3d();
 	ED_spacetype_ipo();
 	ED_spacetype_image();
@@ -93,14 +95,17 @@ void ED_spacetypes_init(void)
 	ED_spacetype_script();
 	ED_spacetype_text();
 	ED_spacetype_sequencer();
-	ED_spacetype_logic();
 	ED_spacetype_console();
 	ED_spacetype_userpref();
+	ED_spacetype_clip();
+	ED_spacetype_statusbar();
+	ED_spacetype_topbar();
 	ED_spacetype_toolbar();
-	ED_spacetype_clip();	
 //	...
 
 	/* register operator types for screen and all spaces */
+	ED_operatortypes_workspace();
+	ED_operatortypes_scene();
 	ED_operatortypes_screen();
 	ED_operatortypes_anim();
 	ED_operatortypes_animchannels();
@@ -118,22 +123,41 @@ void ED_spacetypes_init(void)
 	ED_operatortypes_metaball();
 	ED_operatortypes_sound();
 	ED_operatortypes_render();
-	ED_operatortypes_logic();
 	ED_operatortypes_mask();
 	ED_operatortypes_io();
 
 	ED_operatortypes_view2d();
 	ED_operatortypes_ui();
 
-	/* register operators */
+	ED_screen_user_menu_register();
+
+	/* gizmo types */
+	ED_gizmotypes_button_2d();
+	ED_gizmotypes_dial_3d();
+	ED_gizmotypes_move_3d();
+	ED_gizmotypes_arrow_2d();
+	ED_gizmotypes_arrow_3d();
+	ED_gizmotypes_preselect_3d();
+	ED_gizmotypes_primitive_3d();
+	ED_gizmotypes_blank_3d();
+	ED_gizmotypes_cage_2d();
+	ED_gizmotypes_cage_3d();
+	ED_gizmotypes_value_2d();
+
+	/* gizmo group types */
+	ED_gizmogrouptypes_value_2d();
+
+	/* register types for operators and gizmos */
 	spacetypes = BKE_spacetypes_list();
 	for (type = spacetypes->first; type; type = type->next) {
-		if (type->operatortypes)
+		/* init gizmo types first, operator-types need them */
+		if (type->gizmos) {
+			type->gizmos();
+		}
+		if (type->operatortypes) {
 			type->operatortypes();
+		}
 	}
-
-	/* register internal render callbacks */
-	ED_render_internal_init();
 }
 
 void ED_spacemacros_init(void)
@@ -194,6 +218,8 @@ void ED_spacetypes_keymap(wmKeyConfig *keyconf)
 	ED_keymap_view2d(keyconf);
 	ED_keymap_ui(keyconf);
 
+	ED_keymap_transform(keyconf);
+
 	spacetypes = BKE_spacetypes_list();
 	for (stype = spacetypes->first; stype; stype = stype->next) {
 		if (stype->keymap)
@@ -244,18 +270,12 @@ void ED_region_draw_cb_exit(ARegionType *art, void *handle)
 	}
 }
 
-void *ED_region_draw_cb_customdata(void *handle)
-{
-	return ((RegionDrawCB *)handle)->customdata;
-}
-
 void ED_region_draw_cb_draw(const bContext *C, ARegion *ar, int type)
 {
 	RegionDrawCB *rdc;
 
 	for (rdc = ar->type->drawcalls.first; rdc; rdc = rdc->next) {
 		if (rdc->type == type) {
-			UI_reinit_gl_state();
 			rdc->draw(C, ar, rdc->customdata);
 		}
 	}
@@ -268,7 +288,7 @@ void ED_region_draw_cb_draw(const bContext *C, ARegion *ar, int type)
 void ED_spacetype_xxx(void);
 
 /* allocate and init some vars */
-static SpaceLink *xxx_new(const bContext *UNUSED(C))
+static SpaceLink *xxx_new(const ScrArea *UNUSED(sa), const Scene *UNUSED(scene))
 {
 	return NULL;
 }

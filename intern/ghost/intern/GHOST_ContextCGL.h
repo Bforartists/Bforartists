@@ -34,10 +34,6 @@
 
 #include "GHOST_Context.h"
 
-//#define cglewGetContext() cglewContext
-//#include <GL/cglew.h>
-//extern "C" CGLEWContext *cglewContext;
-
 #ifndef GHOST_OPENGL_CGL_CONTEXT_FLAGS
 #define GHOST_OPENGL_CGL_CONTEXT_FLAGS 0
 #endif
@@ -87,6 +83,12 @@ public:
 	GHOST_TSuccess activateDrawingContext();
 
 	/**
+	 * Release the drawing context of the calling thread.
+	 * \return  A boolean success indicator.
+	 */
+	GHOST_TSuccess releaseDrawingContext();
+
+	/**
 	 * Call immediately after new to initialize.  If this fails then immediately delete the object.
 	 * \return Indication as to whether initialization has succeeded.
 	 */
@@ -120,21 +122,14 @@ public:
 	 */
 	GHOST_TSuccess updateDrawingContext();
 
-//protected:
-//	inline void activateCGLEW() const {
-//		cglewContext = m_cglewContext;
-//	}
-
 private:
-	//void initContextCGLEW()
-
 	/** The openGL view */
 	NSOpenGLView *m_openGLView;
 
 	/** The OpenGL drawing context */
 	NSOpenGLContext *m_openGLContext;
 
-	//static CGLEWContext *s_cglewContext;
+	bool m_coreProfile;
 
 	const bool m_debug;
 

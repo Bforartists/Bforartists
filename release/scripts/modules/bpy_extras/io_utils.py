@@ -21,7 +21,7 @@
 __all__ = (
     "ExportHelper",
     "ImportHelper",
-    "orientation_helper_factory",
+    "orientation_helper",
     "axis_conversion",
     "axis_conversion_ensure",
     "create_derived_objects",
@@ -52,24 +52,18 @@ def _check_axis_conversion(op):
 
 
 class ExportHelper:
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used for exporting the file",
         maxlen=1024,
         subtype='FILE_PATH',
     )
-    check_existing = BoolProperty(
+    check_existing: BoolProperty(
         name="Check Existing",
         description="Check and warn on overwriting existing files",
         default=True,
         options={'HIDDEN'},
     )
-
-    # needed for mix-ins
-    order = [
-        "filepath",
-        "check_existing",
-    ]
 
     # subclasses can override with decorator
     # True == use ext, False == no ext, None == do nothing.
@@ -112,17 +106,12 @@ class ExportHelper:
 
 
 class ImportHelper:
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used for importing the file",
         maxlen=1024,
         subtype='FILE_PATH',
     )
-
-    # needed for mix-ins
-    order = [
-        "filepath",
-    ]
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
@@ -132,53 +121,58 @@ class ImportHelper:
         return _check_axis_conversion(self)
 
 
-def orientation_helper_factory(name, axis_forward='Y', axis_up='Z'):
-    members = {}
+def orientation_helper(axis_forward='Y', axis_up='Z'):
+    """
+    A decorator for import/export classes, generating properties needed by the axis conversion system and IO helpers,
+    with specified default values (axes).
+    """
+    def wrapper(cls):
+        # Without that, we may end up adding those fields to some **parent** class' __annotations__ property
+        # (like the ImportHelper or ExportHelper ones)! See T58772.
+        if "__annotations__" not in cls.__dict__:
+            setattr(cls, "__annotations__", {})
 
-    def _update_axis_forward(self, context):
-        if self.axis_forward[-1] == self.axis_up[-1]:
-            self.axis_up = (self.axis_up[0:-1] +
-                            'XYZ'[('XYZ'.index(self.axis_up[-1]) + 1) % 3])
+        def _update_axis_forward(self, context):
+            if self.axis_forward[-1] == self.axis_up[-1]:
+                self.axis_up = (self.axis_up[0:-1] +
+                                'XYZ'[('XYZ'.index(self.axis_up[-1]) + 1) % 3])
 
-    members['axis_forward'] = EnumProperty(
-        name="Forward",
-        items=(
-            ('X', "X Forward", ""),
-            ('Y', "Y Forward", ""),
-            ('Z', "Z Forward", ""),
-            ('-X', "-X Forward", ""),
-            ('-Y', "-Y Forward", ""),
-            ('-Z', "-Z Forward", ""),
-        ),
-        default=axis_forward,
-        update=_update_axis_forward,
-    )
+        cls.__annotations__['axis_forward'] = EnumProperty(
+            name="Forward",
+            items=(
+                ('X', "X Forward", ""),
+                ('Y', "Y Forward", ""),
+                ('Z', "Z Forward", ""),
+                ('-X', "-X Forward", ""),
+                ('-Y', "-Y Forward", ""),
+                ('-Z', "-Z Forward", ""),
+            ),
+            default=axis_forward,
+            update=_update_axis_forward,
+        )
 
-    def _update_axis_up(self, context):
-        if self.axis_up[-1] == self.axis_forward[-1]:
-            self.axis_forward = (self.axis_forward[0:-1] +
-                                 'XYZ'[('XYZ'.index(self.axis_forward[-1]) + 1) % 3])
+        def _update_axis_up(self, context):
+            if self.axis_up[-1] == self.axis_forward[-1]:
+                self.axis_forward = (self.axis_forward[0:-1] +
+                                     'XYZ'[('XYZ'.index(self.axis_forward[-1]) + 1) % 3])
 
-    members['axis_up'] = EnumProperty(
-        name="Up",
-        items=(
-            ('X', "X Up", ""),
-            ('Y', "Y Up", ""),
-            ('Z', "Z Up", ""),
-            ('-X', "-X Up", ""),
-            ('-Y', "-Y Up", ""),
-            ('-Z', "-Z Up", ""),
-        ),
-        default=axis_up,
-        update=_update_axis_up,
-    )
+        cls.__annotations__['axis_up'] = EnumProperty(
+            name="Up",
+            items=(
+                ('X', "X Up", ""),
+                ('Y', "Y Up", ""),
+                ('Z', "Z Up", ""),
+                ('-X', "-X Up", ""),
+                ('-Y', "-Y Up", ""),
+                ('-Z', "-Z Up", ""),
+            ),
+            default=axis_up,
+            update=_update_axis_up,
+        )
 
-    members["order"] = [
-        "axis_forward",
-        "axis_up",
-    ]
+        return cls
 
-    return type(name, (object,), members)
+    return wrapper
 
 
 # Axis conversion function, not pretty LUT
@@ -352,10 +346,10 @@ def axis_conversion_ensure(operator, forward_attr, up_attr):
 # return a tuple (free, object list), free is True if memory should be freed
 # later with free_derived_objects()
 def create_derived_objects(scene, ob):
-    if ob.parent and ob.parent.dupli_type in {'VERTS', 'FACES'}:
+    if ob.parent and ob.parent.instance_type in {'VERTS', 'FACES'}:
         return False, None
 
-    if ob.dupli_type != 'NONE':
+    if ob.instance_type != 'NONE':
         ob.dupli_list_create(scene)
         return True, [(dob.object, dob.matrix) for dob in ob.dupli_list]
     else:

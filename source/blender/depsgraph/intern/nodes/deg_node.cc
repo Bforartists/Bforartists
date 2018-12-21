@@ -34,6 +34,7 @@
 
 #include "BLI_utildefines.h"
 
+#include "intern/eval/deg_eval_copy_on_write.h"
 #include "intern/nodes/deg_node_component.h"
 #include "intern/nodes/deg_node_id.h"
 #include "intern/nodes/deg_node_operation.h"
@@ -41,6 +42,7 @@
 #include "intern/depsgraph_intern.h"
 
 #include "util/deg_util_foreach.h"
+#include "util/deg_util_function.h"
 
 namespace DEG {
 
@@ -101,10 +103,7 @@ DepsNode::~DepsNode()
 /* Generic identifier for Depsgraph Nodes. */
 string DepsNode::identifier() const
 {
-	char typebuf[7];
-	sprintf(typebuf, "(%d)", type);
-
-	return string(typebuf) + " : " + name;
+	return string(nodeTypeAsString(type)) + " : " + name;
 }
 
 eDepsNode_Class DepsNode::get_class() const {
@@ -122,7 +121,7 @@ eDepsNode_Class DepsNode::get_class() const {
 /*******************************************************************************
  * Generic nodes definition.
  */
-\
+
 DEG_DEPSNODE_DEFINE(TimeSourceDepsNode, DEG_NODE_TYPE_TIMESOURCE, "Time Source");
 static DepsNodeFactoryImpl<TimeSourceDepsNode> DNTI_TIMESOURCE;
 

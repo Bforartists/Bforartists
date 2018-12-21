@@ -201,7 +201,7 @@ def create_mesh_from_audio(self, scene, verts, faces):
     bpy.context.scene.objects.active = ob
     ob.select = True
 
-    # inital vertex colors
+    # initial vertex colors
     if adv_obj.cubester_materials == "image" and adv_obj.cubester_color_image != "":
         picture = bpy.data.images[adv_obj.cubester_color_image]
         pixels = list(picture.pixels)
@@ -727,7 +727,7 @@ class CubeSterPanel(Panel):
             box.prop_search(adv_obj, "cubester_image", bpy.data, "images")
             box.prop(adv_obj, "cubester_load_image")
 
-            # find number of approriate images if sequence
+            # find number of appropriate images if sequence
             if adv_obj.cubester_load_type == "multiple":
                 box = layout.box()
                 # display number of images found there
@@ -787,7 +787,7 @@ class CubeSterPanel(Panel):
         if adv_obj.cubester_materials == "image":
             box.prop(adv_obj, "cubester_load_type")
 
-            # find number of approriate images if sequence
+            # find number of appropriate images if sequence
             if adv_obj.cubester_load_type == "multiple":
                 # display number of images found there
                 images = find_sequence_images(self, context)

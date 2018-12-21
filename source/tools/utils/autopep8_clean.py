@@ -40,8 +40,15 @@ def path_expand(paths, filename_check=None):
 
 
 def main():
+    import sys
     import subprocess
-    for f in path_expand(PATHS, is_source):
+
+    if os.path.samefile(sys.argv[-1], __file__):
+        paths = path_expand(PATHS, is_source)
+    else:
+        paths = path_expand(sys.argv[1:], is_source)
+
+    for f in paths:
         if f in BLACKLIST:
             continue
 

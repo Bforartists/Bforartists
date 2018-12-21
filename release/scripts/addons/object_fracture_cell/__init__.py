@@ -75,8 +75,8 @@ def main_object(scene, obj, level, **kw):
     obj.select = False
 
     if kw_copy["use_debug_redraw"]:
-        obj_draw_type_prev = obj.draw_type
-        obj.draw_type = 'WIRE'
+        obj_display_type_prev = obj.display_type
+        obj.display_type = 'WIRE'
 
     objects = fracture_cell_setup.cell_fracture_objects(scene, obj, **kw_copy)
     objects = fracture_cell_setup.cell_fracture_boolean(scene, obj, objects,
@@ -163,16 +163,16 @@ def main_object(scene, obj, level, **kw):
 
     # group
     if group_name:
-        group = bpy.data.groups.get(group_name)
+        group = bpy.data.collections.get(group_name)
         if group is None:
-            group = bpy.data.groups.new(group_name)
+            group = bpy.data.collections.new(group_name)
         group_objects = group.objects[:]
         for obj_cell in objects:
             if obj_cell not in group_objects:
                 group.objects.link(obj_cell)
 
     if kw_copy["use_debug_redraw"]:
-        obj.draw_type = obj_draw_type_prev
+        obj.display_type = obj_display_type_prev
 
     # testing only!
     # obj.hide = True

@@ -40,7 +40,7 @@ light_source {
 
 camera {
   location  <-0.5, 2.5, -7.0>
-  right     x*image_width/image_height // keep propotions with any aspect ratio
+  right     x*image_width/image_height // keep proportions with any aspect ratio
   look_at   <-0.5, 0.5,  0.0>
 }
 

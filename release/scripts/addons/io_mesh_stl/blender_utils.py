@@ -57,15 +57,13 @@ def create_and_link_mesh(name, faces, face_nors, points, global_matrix):
 
     mesh.update()
 
-    scene = bpy.context.scene
-
     obj = bpy.data.objects.new(name, mesh)
-    scene.objects.link(obj)
-    scene.objects.active = obj
-    obj.select = True
+    bpy.context.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
 
 
-def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False, triangulate=True):
+def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     """
     From an object, return a generator over a list of faces.
 
@@ -84,34 +82,19 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False, triangulate=Tru
 
     # get the modifiers
     try:
-        mesh = ob.to_mesh(bpy.context.scene, use_mesh_modifiers, "PREVIEW")
+        mesh = ob.to_mesh(bpy.context.depsgraph, use_mesh_modifiers)
     except RuntimeError:
-        raise StopIteration
+        return
 
-    mat = global_matrix * ob.matrix_world
+    mat = global_matrix @ ob.matrix_world
     mesh.transform(mat)
     if mat.is_negative:
         mesh.flip_normals()
-        mesh.calc_tessface()
-
-    if triangulate:
-        # From a list of faces, return the face triangulated if needed.
-        def iter_face_index():
-            for face in mesh.tessfaces:
-                vertices = face.vertices[:]
-                if len(vertices) == 4:
-                    yield vertices[0], vertices[1], vertices[2]
-                    yield vertices[2], vertices[3], vertices[0]
-                else:
-                    yield vertices
-    else:
-        def iter_face_index():
-            for face in mesh.tessfaces:
-                yield face.vertices[:]
+    mesh.calc_loop_triangles()
 
     vertices = mesh.vertices
 
-    for indexes in iter_face_index():
-        yield [vertices[index].co.copy() for index in indexes]
+    for tri in mesh.loop_triangles:
+        yield [vertices[index].co.copy() for index in tri.vertices]
 
     bpy.data.meshes.remove(mesh)

@@ -96,7 +96,7 @@ class RunAction(Operator):
         context.user_preferences.edit.keyframe_new_interpolation_type = 'LINEAR'
         # create first frame
         myempty.rotation_euler = (0, 0, 0)
-        myempty.empty_draw_size = 0.1
+        myempty.empty_display_size = 0.1
         context.scene.frame_set(scene.frame_start)
         myempty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_start)
 

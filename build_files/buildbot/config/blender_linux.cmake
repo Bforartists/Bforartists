@@ -31,9 +31,8 @@ else()
 	message(FATAL_ERROR "Unknown build environment")
 endif()
 
-# Default to only build Blender, not the player
+# Default to only build Blender
 set(WITH_BLENDER             ON  CACHE BOOL "" FORCE)
-set(WITH_PLAYER              OFF CACHE BOOL "" FORCE)
 
 # ######## Linux-specific build options ########
 # Options which are specific to Linux-only platforms
@@ -171,10 +170,6 @@ set(PYTHON_VERSION    3.7 CACHE BOOL "" FORCE)
 # Platform specific configuration, to ensure static linking against everything.
 
 set(Boost_USE_STATIC_LIBS    ON CACHE BOOL "" FORCE)
-
-# TODO(sergey): Move up to the rest of WITH_SYSTEM and DYNLOAD configuration,
-# once old chroot is officially retired.
-set(WITH_SYSTEM_OPENJPEG     ON CACHE BOOL "" FORCE)
 
 # We need to link OpenCOLLADA against PCRE library. Even though it is not installed
 # on /usr, we do not really care -- all we care is PCRE_FOUND be TRUE and its

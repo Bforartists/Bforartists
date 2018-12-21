@@ -102,7 +102,7 @@
  *
  * ALLOWED AND TESTED CHANGES IN STRUCTS:
  *  - type change (a char to float will be divided by 255)
- *  - location within a struct (everthing can be randomly mixed up)
+ *  - location within a struct (everything can be randomly mixed up)
  *  - struct within struct (within struct etc), this is recursive
  *  - adding new elements, will be default initialized zero
  *  - removing elements
@@ -139,23 +139,39 @@
 /* allowed duplicate code from makesdna.c */
 
 /**
- * parses the "[n]" on the end of an array name and returns the number of array elements n.
+ * parses the "[n1][n2]..." on the end of an array name and returns the number of array elements n1*n2*...
  */
 int DNA_elem_array_size(const char *str)
 {
-	int a, mul = 1;
-	const char *cp = NULL;
-
-	for (a = 0; str[a]; a++) {
-		if (str[a] == '[') {
-			cp = &(str[a + 1]);
-		}
-		else if (str[a] == ']' && cp) {
-			mul *= atoi(cp);
+	int result = 1;
+	int current = 0;
+	while (true) {
+		char c = *str++;
+		switch (c) {
+			case '\0':
+				return result;
+			case '[':
+				current = 0;
+				break;
+			case ']':
+				result *= current;
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				current = current * 10 + (c - '0');
+				break;
+			default:
+				break;
 		}
 	}
-
-	return mul;
 }
 
 /* ************************* END MAKE DNA ********************** */
@@ -193,8 +209,8 @@ static bool ispointer(const char *name)
 /**
  * Returns the size of struct fields of the specified type and name.
  *
- * \param type  Index into sdna->types/typelens
- * \param name  Index into sdna->names,
+ * \param type: Index into sdna->types/typelens
+ * \param name: Index into sdna->names,
  * needed to extract possible pointer/array information.
  */
 static int elementsize(const SDNA *sdna, short type, short name)
@@ -271,7 +287,7 @@ int DNA_struct_find_nr_ex(const SDNA *sdna, const char *str, unsigned int *index
 		index_p = BLI_ghash_lookup_p(sdna->structs_map, str);
 
 		if (index_p) {
-			a = GET_INT_FROM_POINTER(*index_p);
+			a = POINTER_AS_INT(*index_p);
 			*index_last = a;
 		}
 		else {
@@ -313,10 +329,52 @@ BLI_INLINE const char *pad_up_4(const char *ptr)
 }
 
 /**
+ * Temporary DNA doversion for files that were created with Blender 2.80
+ * between October 2016, and November 2017 (>=280.0 and < 280.2).
+ *
+ * /note This would be way more efficient if we can get the version from SDNA
+ * So we could return true if version == 280 && subversion < 2.
+ *
+ * Returns true if we need to do the DNA renaming.
+ */
+static bool need_doversion_280(SDNA *sdna, int *data, const bool data_alloc)
+{
+	if (data_alloc == false) {
+		return false;
+	}
+
+	bool active_layer = false, render_layers = false;
+
+	const char *cp = (char *)data;
+	for (int nr = 0; nr < sdna->nr_names; nr++) {
+		if (strcmp(cp, "active_layer") == 0) {
+			active_layer = true;
+			if (active_layer && render_layers) {
+				return true;
+			}
+		}
+		else if (strcmp(cp, "render_layers") == 0) {
+			render_layers = true;
+			if (active_layer && render_layers) {
+				return true;
+			}
+		}
+
+		while (*cp) cp++;
+		cp++;
+	}
+
+	/* If someone adds only one of them to the DNA, don't! */
+	BLI_assert(!(active_layer || render_layers));
+	return false;
+}
+
+/**
  * In sdna->data the data, now we convert that to something understandable
  */
 static bool init_structDNA(
         SDNA *sdna, bool do_endian_swap,
+        bool data_alloc,
         const char **r_error_message)
 {
 	int *data, *verg, gravity_fix = -1;
@@ -362,6 +420,10 @@ static bool init_structDNA(
 			return false;
 		}
 
+		/* Temporary DNA doversion for files that were created with Blender 2.80
+		 * between 280.0 and 280.2. */
+		const bool doversion_280 = need_doversion_280(sdna, data, data_alloc);
+
 		cp = (char *)data;
 		for (int nr = 0; nr < sdna->nr_names; nr++) {
 			sdna->names[nr] = cp;
@@ -373,6 +435,28 @@ static bool init_structDNA(
 				if (nr && strcmp(sdna->names[nr - 1], "Cvi") == 0) {
 					sdna->names[nr] = "gravity[3]";
 					gravity_fix = nr;
+				}
+			}
+			else if (doversion_280) {
+				if (strcmp(cp, "*render_layer") == 0) {
+					/* WorkSpace. */
+					sdna->names[nr] = "*view_layer";
+				}
+				else if (strcmp(cp, "*scene_layer") == 0) {
+					/* ParticleEditSettings. */
+					sdna->names[nr] = "*view_layer";
+				}
+				else if (strcmp(cp, "render_layers") == 0) {
+					/* Scene. */
+					sdna->names[nr] = "view_layers";
+				}
+				else if (strcmp(cp, "active_layer") == 0) {
+					/* Scene. */
+					sdna->names[nr] = "active_view_layer";
+				}
+				else if (strcmp(cp, "*cur_render_layer") == 0) {
+					/* FileGlobal. */
+					sdna->names[nr] = "*cur_view_layer";
 				}
 			}
 
@@ -408,9 +492,24 @@ static bool init_structDNA(
 			/* this is a patch, to change struct names without a conflict with SDNA */
 			/* be careful to use it, in this case for a system-struct (opengl/X) */
 
-			if (*cp == 'b') {
-				/* struct Screen was already used by X, 'bScreen' replaces the old IrisGL 'Screen' struct */
-				if (strcmp("bScreen", cp) == 0) sdna->types[nr] = cp + 1;
+			/* struct Screen was already used by X, 'bScreen' replaces the old IrisGL 'Screen' struct */
+			if (strcmp("bScreen", cp) == 0) {
+				sdna->types[nr] = cp + 1;
+			}
+			/* Groups renamed to collections in 2.8 */
+			else if (strcmp("Collection", cp) == 0) {
+				sdna->types[nr] = "Group";
+			}
+			else if (strcmp("CollectionObject", cp) == 0) {
+				sdna->types[nr] = "GroupObject";
+			}
+			else if (doversion_280) {
+				if (strcmp(cp, "SceneLayer") == 0) {
+					sdna->types[nr] = "ViewLayer";
+				}
+				else if (strcmp(cp, "SceneLayerEngineData") == 0) {
+					sdna->types[nr] = "ViewLayerEngineData";
+				}
 			}
 
 			while (*cp) cp++;
@@ -500,7 +599,7 @@ static bool init_structDNA(
 
 		for (intptr_t nr = 0; nr < sdna->nr_structs; nr++) {
 			sp = sdna->structs[nr];
-			BLI_ghash_insert(sdna->structs_map, (void *)sdna->types[sp[0]], SET_INT_IN_POINTER(nr));
+			BLI_ghash_insert(sdna->structs_map, (void *)sdna->types[sp[0]], POINTER_FROM_INT(nr));
 		}
 	}
 #endif
@@ -554,7 +653,7 @@ SDNA *DNA_sdna_from_data(
 	sdna->data_alloc = data_alloc;
 
 
-	if (init_structDNA(sdna, do_endian_swap, &error_message)) {
+	if (init_structDNA(sdna, do_endian_swap, data_alloc, &error_message)) {
 		return sdna;
 	}
 	else {
@@ -753,11 +852,11 @@ static eSDNA_Type sdna_type_nr(const char *dna_type)
  * Note there is no optimization for the case where otype and ctype are the same:
  * assumption is that caller will handle this case.
  *
- * \param ctype  Name of type to convert to
- * \param otype  Name of type to convert from
- * \param name  Field name to extract array-size information
- * \param curdata  Where to put converted data
- * \param olddata  Data of type otype to convert
+ * \param ctype: Name of type to convert to
+ * \param otype: Name of type to convert from
+ * \param name: Field name to extract array-size information
+ * \param curdata: Where to put converted data
+ * \param olddata: Data of type otype to convert
  */
 static void cast_elem(
         const char *ctype, const char *otype, const char *name,
@@ -836,11 +935,11 @@ static void cast_elem(
  * as lookup keys to identify data blocks in the saved .blend file, not
  * as actual in-memory pointers.
  *
- * \param curlen  Pointer length to conver to
- * \param oldlen  Length of pointers in olddata
- * \param name  Field name to extract array-size information
- * \param curdata  Where to put converted data
- * \param olddata  Data to convert
+ * \param curlen: Pointer length to conver to
+ * \param oldlen: Length of pointers in olddata
+ * \param name: Field name to extract array-size information
+ * \param curdata: Where to put converted data
+ * \param olddata: Data to convert
  */
 static void cast_pointer(int curlen, int oldlen, const char *name, char *curdata, const char *olddata)
 {
@@ -897,11 +996,11 @@ static int elem_strcmp(const char *name, const char *oname)
  * Returns whether the specified field exists according to the struct format
  * pointed to by old.
  *
- * \param sdna  Old SDNA
- * \param type  Current field type name
- * \param name  Current field name
- * \param old  Pointer to struct information in sdna
- * \return true when existsing, false otherwise.
+ * \param sdna: Old SDNA
+ * \param type: Current field type name
+ * \param name: Current field name
+ * \param old: Pointer to struct information in sdna
+ * \return true when existing, false otherwise.
  */
 static bool elem_exists(
         const SDNA *sdna,
@@ -935,12 +1034,12 @@ static bool elem_exists(
  * return NULL both when the field is found at offset 0 and when it is not
  * found at all. For field existence checks, use elem_exists() instead.
  *
- * \param sdna  Old SDNA
- * \param type  Current field type name
- * \param name  Current field name
- * \param old  Pointer to struct information in sdna
- * \param olddata  Struct data
- * \param sppo  Optional place to return pointer to field info in sdna
+ * \param sdna: Old SDNA
+ * \param type: Current field type name
+ * \param name: Current field name
+ * \param old: Pointer to struct information in sdna
+ * \param olddata: Struct data
+ * \param sppo: Optional place to return pointer to field info in sdna
  * \return Data address.
  */
 static const char *find_elem(
@@ -984,13 +1083,13 @@ static const char *find_elem(
  * Converts the contents of a single field of a struct, of a non-struct type,
  * from oldsdna to newsdna format.
  *
- * \param newsdna  SDNA of current Blender
- * \param oldsdna  SDNA of Blender that saved file
- * \param type  current field type name
- * \param name  current field name
- * \param curdata  put field data converted to newsdna here
- * \param old  pointer to struct info in oldsdna
- * \param olddata  struct contents laid out according to oldsdna
+ * \param newsdna: SDNA of current Blender
+ * \param oldsdna: SDNA of Blender that saved file
+ * \param type: current field type name
+ * \param name: current field name
+ * \param curdata: put field data converted to newsdna here
+ * \param old: pointer to struct info in oldsdna
+ * \param olddata: struct contents laid out according to oldsdna
  */
 static void reconstruct_elem(
         const SDNA *newsdna,
@@ -1080,15 +1179,15 @@ static void reconstruct_elem(
 /**
  * Converts the contents of an entire struct from oldsdna to newsdna format.
  *
- * \param newsdna  SDNA of current Blender
- * \param oldsdna  SDNA of Blender that saved file
- * \param compflags
+ * \param newsdna: SDNA of current Blender
+ * \param oldsdna: SDNA of Blender that saved file
+ * \param compflags:
  *
  * Result from DNA_struct_get_compareflags to avoid needless conversions.
- * \param oldSDNAnr  Index of old struct definition in oldsdna
- * \param data  Struct contents laid out according to oldsdna
- * \param curSDNAnr  Index of current struct definition in newsdna
- * \param cur  Where to put converted struct contents
+ * \param oldSDNAnr: Index of old struct definition in oldsdna
+ * \param data: Struct contents laid out according to oldsdna
+ * \param curSDNAnr: Index of current struct definition in newsdna
+ * \param cur: Where to put converted struct contents
  */
 static void reconstruct_struct(
         const SDNA *newsdna,
@@ -1187,9 +1286,9 @@ static void reconstruct_struct(
 /**
  * Does endian swapping on the fields of a struct value.
  *
- * \param oldsdna  SDNA of Blender that saved file
- * \param oldSDNAnr  Index of struct info within oldsdna
- * \param data  Struct data
+ * \param oldsdna: SDNA of Blender that saved file
+ * \param oldSDNAnr: Index of struct info within oldsdna
+ * \param data: Struct data
  */
 void DNA_struct_switch_endian(const SDNA *oldsdna, int oldSDNAnr, char *data)
 {
@@ -1259,7 +1358,7 @@ void DNA_struct_switch_endian(const SDNA *oldsdna, int oldSDNAnr, char *data)
 				else if (ELEM(spc[0], SDNA_TYPE_INT, SDNA_TYPE_FLOAT)) {
 					/* note, intentionally ignore long/ulong here these could be 4 or 8 bits,
 					 * but turns out we only used for runtime vars and
-					 * only once for a struct type thats no longer used. */
+					 * only once for a struct type that's no longer used. */
 
 					BLI_endian_switch_int32_array((int32_t *)cur, DNA_elem_array_size(name));
 				}
@@ -1273,14 +1372,14 @@ void DNA_struct_switch_endian(const SDNA *oldsdna, int oldSDNAnr, char *data)
 }
 
 /**
- * \param newsdna  SDNA of current Blender
- * \param oldsdna  SDNA of Blender that saved file
- * \param compflags
+ * \param newsdna: SDNA of current Blender
+ * \param oldsdna: SDNA of Blender that saved file
+ * \param compflags:
  *
  * Result from DNA_struct_get_compareflags to avoid needless conversions
- * \param oldSDNAnr  Index of struct info within oldsdna
- * \param blocks  The number of array elements
- * \param data  Array of struct data
+ * \param oldSDNAnr: Index of struct info within oldsdna
+ * \param blocks: The number of array elements
+ * \param data: Array of struct data
  * \return An allocated reconstructed struct
  */
 void *DNA_struct_reconstruct(

@@ -861,7 +861,7 @@ class FptImportOperator(Operator, ImportHelper):
 
         box.label(fpx_str['LABEL_NAME_EXTERNAL_DATA'], icon=FpxUI.ICON_EXTERNAL_DATA)
         flow = box.column_flow()
-        flow.prop(self, 'path_libraries', icon='FILESEL', text="")
+        flow.prop(self, 'path_libraries', icon='FILEBROWSER', text="")
         flow.prop(self, 'path_dmdfonts', icon='IMASEL', text="")
         flow.prop(self, 'path_tables', icon='FILE_FOLDER', text="")
 

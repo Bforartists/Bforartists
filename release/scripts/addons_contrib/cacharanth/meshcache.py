@@ -83,7 +83,7 @@ class MeshcacheOperator():
     def poll(cls, context):
         if context.scene.meshcache_apply_to == 'GROUP':
             # XXX doesn't seem correct
-            return bpy.data.groups
+            return bpy.data.collections
         else:
             return context.active_object is not None
 
@@ -92,7 +92,7 @@ class MeshcacheOperator():
         scene = context.scene
 
         if scene.meshcache_apply_to == 'GROUP':
-            objects = bpy.data.groups[scene.meshcache_group].objects
+            objects = bpy.data.collections[scene.meshcache_group].objects
         else:
             objects = context.selected_objects
 
