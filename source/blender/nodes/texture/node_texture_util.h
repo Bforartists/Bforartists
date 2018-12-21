@@ -61,7 +61,6 @@
 #include "BKE_material.h"
 #include "BKE_node.h"
 #include "BKE_texture.h"
-#include "BKE_library.h"
 
 #include "node_util.h"
 #include "NOD_texture.h"
@@ -87,7 +86,6 @@ typedef struct TexCallData {
 	short which_output;
 	int cfra;
 
-	ShadeInput *shi;
 	MTex *mtex;
 } TexCallData;
 
@@ -100,7 +98,6 @@ typedef struct TexParams {
 
 	/* optional. we don't really want these here, but image
 	 * textures need to do mapping & color correction */
-	ShadeInput *shi;
 	MTex *mtex;
 } TexParams;
 

@@ -14,32 +14,29 @@ bl_info = {
     "name": "Create IsoCam",
     "description": "Creates a true isometric camera or a isometric camera for game needs",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 1),
-    "blender": (2, 69, 0),
-    "location": "Toolshelf",
+    "version": (1, 0, 3),
+    "blender": (2, 80, 0),
+    "location": "3D View - Add menu",
     "warning": "", # used for warning icon and text in addons panel
-    "wiki_url": "http://www.reinerstilesets.de/de/anderes/blender-addons/create-isocam/",
+    "wiki_url": "",
     "category": "Create"}
 
-
 import bpy
+from bpy.types import Menu
 
 # ----------------------------------------- true isometric camera
-class createtrueisocam(bpy.types.Operator):
+class CIC_OT_createtrueisocam(bpy.types.Operator):
     """Creates a camera for mathematical correct isometric view"""
-    bl_idname = "scene.create_trueisocam"
+    bl_idname = "scene.cic_create_trueisocam"
     bl_label = "TrueIsocam"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         
         # ----------------------------Create Camera with correct position and rotation
-        bpy.ops.object.camera_add(location=(30.60861, -30.60861, 30.60861)) # Create Camera. I would love to set the rotation here too. Blender not. Not that there are no tutorials around which shows that it should work ... . 
-
-        #So that's what the next two lines are good for. Setting the rotation of the camera ...
-
-        object = bpy.context.scene.objects.active
-        object.rotation_euler = (0.955324, 0, 0.785398) #Attention, these are radians. Euler angles are (54.736,0,45) Here we set the rotation for a mathematical correct isometric view. Not to mix with the Isoview for a 2D game!
+        bpy.ops.object.camera_add(location=(30.60861, -30.60861, 30.60861), rotation = (0.955324, 0, 0.785398)) # Create Camera.
+        #object = bpy.context.scene.objects.active
+        object = bpy.context.object # Pick the active object, our new created camera
 
         # ------------------------------Here we adjust some settings ---------------------------------
         object.data.type = 'ORTHO' # We want Iso, so set the type of the camera to orthographic
@@ -49,21 +46,17 @@ class createtrueisocam(bpy.types.Operator):
 
         return {'FINISHED'}
 # ----------------------------------------- Game isometric camera
-class creategameisocam(bpy.types.Operator):
+class CIC_OT_creategameisocam(bpy.types.Operator):
     """Creates a camera with isometric view for game needs"""
-    bl_idname = "scene.create_gameisocam"
+    bl_idname = "scene.cic_create_gameisocam"
     bl_label = "GameIsocam"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         
         # ----------------------------Create Camera with correct position and rotation
-        bpy.ops.object.camera_add(location=(30.60861, -30.60861, 25.00000)) # Create Camera. I would love to set the rotation here too. Blender not. Not that there are no tutorials around which shows that it should work ... . 
-
-        #So that's what the next two lines are good for. Setting the rotation of the camera ...
-
-        object = bpy.context.scene.objects.active
-        object.rotation_euler = (1.047198, 0, 0.785398)#Attention, these are radians. Euler angles are (60,0,45) Here we set the rotation for a isometric view that is used in 2D games. Not to mix with the mathematical correct Isoview!
+        bpy.ops.object.camera_add(location=(30.60861, -30.60861, 25.00000), rotation = (1.047198, 0, 0.785398) ) # Create Camera.
+        object = bpy.context.object # Pick the active object, our new created camera
 
         # ------------------------------Here we adjust some settings ---------------------------------
         object.data.type = 'ORTHO' # We want Iso, so set the type of the camera to orthographic
@@ -77,21 +70,18 @@ class creategameisocam(bpy.types.Operator):
 # ----------------------------------------- Game isometric camera 4 to 3
 # This format is not so common. But is also used here and there. It is more topdown. With a basetile of 64 to 48 pixels
 
-class creategameisocam4to3(bpy.types.Operator):
+class CIC_OT_creategameisocam4to3(bpy.types.Operator):
     """Creates a camera with a special 4:3 iso view for game needs"""
-    bl_idname = "scene.create_gameisocam4to3"
+    bl_idname = "scene.cic_create_gameisocam4to3"
     bl_label = "GameIsocam4to3"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         
         # ----------------------------Create Camera with correct position and rotation
-        bpy.ops.object.camera_add(location=(23.42714, -23.42714, 37.4478)) # Create Camera. I would love to set the rotation here too. Blender not. Not that there are no tutorials around which shows that it should work ... . 
+        bpy.ops.object.camera_add(location=(23.42714, -23.42714, 37.4478), rotation = (0.724312, 0, 0.785398)) # Create Camera.
 
-        #So that's what the next two lines are good for. Setting the rotation of the camera ...
-
-        object = bpy.context.scene.objects.active
-        object.rotation_euler = (0.724312, 0, 0.785398)#Attention, these are radians. Euler angles are (41.5,0,45) Here we set the rotation for a isometric view that is used in 2D games. Not to mix with the mathematical correct Isoview!
+        object = bpy.context.object # Pick the active object, our new created camera
 
         # ------------------------------Here we adjust some settings ---------------------------------
         object.data.type = 'ORTHO' # We want Iso, so set the type of the camera to orthographic
@@ -99,75 +89,95 @@ class creategameisocam4to3(bpy.types.Operator):
         object.name = "GameIso4to3Cam" # let's rename the cam so that it cannot be confused with other cameras.
         bpy.ops.view3d.object_as_camera() # Set the current camera as the active one to look through
 
-
         return {'FINISHED'} 
     
 # ----------------------------------------- Create a ground plane
 
-class creategroundplane(bpy.types.Operator):
+class CIC_OT_creategroundplane(bpy.types.Operator):
     """Creates a groundplane in size of ten where you can put your things on"""
-    bl_idname = "scene.create_groundplane"
+    bl_idname = "scene.cic_create_groundplane"
     bl_label = "Groundplane"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.mesh.primitive_plane_add(location=(0, 0, 0)) # Create Camera. I would love to set the scale here too. Blender not. So let's do it in an extra step 
-
-        object = bpy.context.scene.objects.active
-        object.scale = (5, 5, 0)#The plane object is created with a size of 2. Scaling it to 10 means to scale it by factor 5
-        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)# apply scale
+        bpy.ops.mesh.primitive_plane_add(size = 10, location=(0, 0, 0)) # Create groundplane with size 10
 
         return {'FINISHED'}   
     
 #----------------------------------------- Create panel in the toolshelf -------------------------------------------------
 
-class Createisocampanel(bpy.types.Panel):
-    bl_label = "Create IsoCam"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Create"
+## DEACTIVATED FOR NOW!
+
+# class CIC_MT_createisocampanel(bpy.types.Panel):
+#     bl_label = "Create IsoCam"
+#     bl_space_type = "VIEW_3D"
+#     bl_region_type = "TOOLS"
+#     bl_category = "Create"
+
+#     def draw(self, context):
+        
+#         # column buttons solution. Less space than single buttons ...
+#         layout = self.layout
+#         view = context.space_data
+#         # Three buttons
+#         col = layout.column(align=True)
+#         col.operator("scene.cic_create_trueisocam", text="TrueIsocam")
+#         col.operator("scene.cic_create_gameisocam", text="GameIsocam")
+#         col.operator("scene.cic_create_gameisocam4to3", text="GameIso4to3cam") 
+#         col.operator("scene.cic_create_groundplane", text="Groundplane")
+
+# -------------------------------------------------------------------------------------------
+
+class CIC_MT_createisocammenu(bpy.types.Menu):
+    bl_idname = "CIC_MT_createisocammenu"
+    bl_label = "Create Isocam"
 
     def draw(self, context):
-        
-        # column buttons solution. Less space than single buttons ...
         layout = self.layout
-        view = context.space_data
-        # Three buttons
-        col = layout.column(align=True)
-        col.operator("scene.create_trueisocam", text="TrueIsocam")
-        col.operator("scene.create_gameisocam", text="GameIsocam")
-        col.operator("scene.create_gameisocam4to3", text="GameIso4to3cam") 
-        col.operator("scene.create_groundplane", text="Groundplane")
-# -------------------------------------------------------------------------------------------
+
+        layout.operator("scene.cic_create_trueisocam", text="TrueIsocam")
+        layout.operator("scene.cic_create_gameisocam", text="GameIsocam")
+        layout.operator("scene.cic_create_gameisocam4to3", text="GameIso4to3cam")
+        layout.operator("scene.cic_create_groundplane", text="Groundplane")
+
+classes = (
+    CIC_OT_createtrueisocam, 
+    CIC_OT_creategameisocam, 
+    CIC_OT_creategameisocam4to3, 
+    CIC_OT_creategroundplane,
+    CIC_MT_createisocammenu,
+)
+
+def menu_func(self, context):
+    self.layout.menu("CIC_MT_createisocammenu")
 
 # store keymaps here to access after registration
 addon_keymaps = []
-   
 
 def register():
-    bpy.utils.register_class(createtrueisocam)
-    bpy.utils.register_class(creategameisocam)
-    bpy.utils.register_class(creategameisocam4to3)
-    bpy.utils.register_class(creategroundplane)
-    bpy.utils.register_class(Createisocampanel)
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
+
+    bpy.types.VIEW3D_MT_add.append(menu_func)
 
 	    # handle the keymap
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
 
-    kmi = km.keymap_items.new(createtrueisocam.bl_idname, 'ONE', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(creategameisocam.bl_idname, 'TWO', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(creategameisocam4to3.bl_idname, 'THREE', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(creategroundplane.bl_idname, 'FOUR', 'PRESS', ctrl=True, shift=True, alt=True)
+    kmi = km.keymap_items.new(CIC_OT_createtrueisocam.bl_idname, 'ONE', 'PRESS', ctrl=True, shift=True, alt=True)
+    kmi = km.keymap_items.new(CIC_OT_creategameisocam.bl_idname, 'TWO', 'PRESS', ctrl=True, shift=True, alt=True)
+    kmi = km.keymap_items.new(CIC_OT_creategameisocam4to3.bl_idname, 'THREE', 'PRESS', ctrl=True, shift=True, alt=True)
+    kmi = km.keymap_items.new(CIC_OT_creategroundplane.bl_idname, 'FOUR', 'PRESS', ctrl=True, shift=True, alt=True)
 
     addon_keymaps.append(km)
 
 def unregister():
-    bpy.utils.unregister_class(createtrueisocam)
-    bpy.utils.unregister_class(creategameisocam)
-    bpy.utils.unregister_class(creategameisocam4to3)
-    bpy.utils.unregister_class(creategroundplane)
-    bpy.utils.unregister_class(Createisocampanel)
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
+
+    bpy.types.VIEW3D_MT_add.remove(menu_func)
 
 	    # handle the keymap
     wm = bpy.context.window_manager
@@ -176,9 +186,5 @@ def unregister():
     # clear the list
     del addon_keymaps[:]
 
-
-if __name__ == "__main__":
-    register()
-            
             
             

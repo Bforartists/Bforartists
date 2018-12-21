@@ -55,7 +55,12 @@ def blender_id_endpoint(endpoint_path=None):
     import os
     import urllib.parse
 
-    base_url = os.environ.get('BLENDER_ID_ENDPOINT', 'https://www.blender.org/id/')
+    base_url = os.environ.get('BLENDER_ID_ENDPOINT')
+    if base_url:
+        log.warning('Using overridden Blender ID url %s', base_url)
+    else:
+        base_url = 'https://www.blender.org/id/'
+        log.info('Using standard Blender ID url %s', base_url)
 
     # urljoin() is None-safe for the 2nd parameter.
     return urllib.parse.urljoin(base_url, endpoint_path)

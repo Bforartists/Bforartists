@@ -101,7 +101,7 @@ SCL_TRACK_TAG = 0xB022
 import struct
 
 # So 3ds max can open files, limit names to 12 in length
-# this is verry annoying for filenames!
+# this is very annoying for filenames!
 name_unique = []  # stores str, ascii only
 name_mapping = {}  # stores {orig: byte} mapping
 

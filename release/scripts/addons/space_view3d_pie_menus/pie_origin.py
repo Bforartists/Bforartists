@@ -23,7 +23,7 @@ bl_info = {
     "description": "Origin Snap/Place Menu",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",
@@ -105,10 +105,10 @@ class PieOriginPivot(Menu):
         if obj and obj.type == 'MESH':
             # 4 - LEFT
             pie.operator("object.origin_set", text="Origin to Center of Mass",
-                         icon='BBOX').type = 'ORIGIN_CENTER_OF_MASS'
+                         icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin To 3D Cursor",
-                        icon='CURSOR').type = 'ORIGIN_CURSOR'
+                        icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
             # 2 - BOTTOM
             pie.operator("object.pivotobottom", text="Origin to Bottom",
                         icon='TRIA_DOWN')
@@ -117,27 +117,27 @@ class PieOriginPivot(Menu):
                         icon='SNAP_INCREMENT')
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                        icon='BBOX').type = 'GEOMETRY_ORIGIN'
+                        icon='NONE').type = 'GEOMETRY_ORIGIN'
             # 9 - TOP - RIGHT
             pie.operator("object.origin_set", text="Origin To Geometry",
-                        icon='ROTATE').type = 'ORIGIN_GEOMETRY'
+                        icon='NONE').type = 'ORIGIN_GEOMETRY'
 
         else:
             # 4 - LEFT
             pie.operator("object.origin_set", text="Origin to Center of Mass",
-                         icon='BBOX').type = 'ORIGIN_CENTER_OF_MASS'
+                         icon='NONE').type = 'ORIGIN_CENTER_OF_MASS'
             # 6 - RIGHT
             pie.operator("object.origin_set", text="Origin To 3D Cursor",
-                        icon='CURSOR').type = 'ORIGIN_CURSOR'
+                        icon='PIVOT_CURSOR').type = 'ORIGIN_CURSOR'
             # 2 - BOTTOM
             pie.operator("object.pivot2selection", text="Origin To Selection",
                         icon='SNAP_INCREMENT')
             # 8 - TOP
             pie.operator("object.origin_set", text="Origin To Geometry",
-                        icon='ROTATE').type = 'ORIGIN_GEOMETRY'
+                        icon='NONE').type = 'ORIGIN_GEOMETRY'
             # 7 - TOP - LEFT
             pie.operator("object.origin_set", text="Geometry To Origin",
-                        icon='BBOX').type = 'GEOMETRY_ORIGIN'
+                        icon='NONE').type = 'GEOMETRY_ORIGIN'
 
 
 classes = (

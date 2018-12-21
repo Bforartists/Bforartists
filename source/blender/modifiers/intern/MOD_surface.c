@@ -35,13 +35,18 @@
 
 #include "DNA_scene_types.h"
 #include "DNA_object_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
+
+#include "BKE_bvhutils.h"
+#include "BKE_library.h"
+#include "BKE_mesh.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
-
-
-#include "BKE_cdderivedmesh.h"
 
 #include "MOD_modifiertypes.h"
 #include "MOD_util.h"
@@ -66,9 +71,9 @@ static void freeData(ModifierData *md)
 			MEM_SAFE_FREE(surmd->bvhtree);
 		}
 
-		if (surmd->dm) {
-			surmd->dm->release(surmd->dm);
-			surmd->dm = NULL;
+		if (surmd->mesh) {
+			BKE_id_free(NULL, surmd->mesh);
+			surmd->mesh = NULL;
 		}
 
 		MEM_SAFE_FREE(surmd->x);
@@ -83,41 +88,53 @@ static bool dependsOnTime(ModifierData *UNUSED(md))
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *mesh,
         float (*vertexCos)[3],
-        int UNUSED(numVerts),
-        ModifierApplyFlag UNUSED(flag))
+        int numVerts)
 {
 	SurfaceModifierData *surmd = (SurfaceModifierData *) md;
+	const int cfra = (int)DEG_get_ctime(ctx->depsgraph);
 
-	if (surmd->dm)
-		surmd->dm->release(surmd->dm);
+	if (surmd->mesh) {
+		BKE_id_free(NULL, surmd->mesh);
+	}
 
-	/* if possible use/create DerivedMesh */
-	if (derivedData) surmd->dm = CDDM_copy(derivedData);
-	else surmd->dm = get_dm(ob, NULL, NULL, NULL, false, false);
+	if (mesh) {
+		/* Not possible to use get_mesh() in this case as we'll modify its vertices
+		 * and get_mesh() would return 'mesh' directly. */
+		BKE_id_copy_ex(
+		        NULL, (ID *)mesh, (ID **)&surmd->mesh,
+		        LIB_ID_CREATE_NO_MAIN |
+		        LIB_ID_CREATE_NO_USER_REFCOUNT |
+		        LIB_ID_CREATE_NO_DEG_TAG |
+		        LIB_ID_COPY_NO_PREVIEW,
+		        false);
+	}
+	else {
+		surmd->mesh = MOD_deform_mesh_eval_get(ctx->object, NULL, NULL, NULL, numVerts, false, false);
+	}
 
-	if (!ob->pd) {
+	if (!ctx->object->pd) {
 		printf("SurfaceModifier deformVerts: Should not happen!\n");
 		return;
 	}
 
-	if (surmd->dm) {
+	if (surmd->mesh) {
 		unsigned int numverts = 0, i = 0;
 		int init = 0;
 		float *vec;
 		MVert *x, *v;
 
-		CDDM_apply_vert_coords(surmd->dm, vertexCos);
-		CDDM_calc_normals(surmd->dm);
+		BKE_mesh_apply_vert_coords(surmd->mesh, vertexCos);
+		BKE_mesh_calc_normals(surmd->mesh);
 
-		numverts = surmd->dm->getNumVerts(surmd->dm);
+		numverts = surmd->mesh->totvert;
 
 		if (numverts != surmd->numverts ||
 		    surmd->x == NULL ||
 		    surmd->v == NULL ||
-		    md->scene->r.cfra != surmd->cfra + 1)
+		    cfra != surmd->cfra + 1)
 		{
 			if (surmd->x) {
 				MEM_freeN(surmd->x);
@@ -138,8 +155,8 @@ static void deformVerts(
 
 		/* convert to global coordinates and calculate velocity */
 		for (i = 0, x = surmd->x, v = surmd->v; i < numverts; i++, x++, v++) {
-			vec = CDDM_get_vert(surmd->dm, i)->co;
-			mul_m4_v3(ob->obmat, vec);
+			vec = surmd->mesh->mvert[i].co;
+			mul_m4_v3(ctx->object->obmat, vec);
 
 			if (init)
 				v->co[0] = v->co[1] = v->co[2] = 0.0f;
@@ -149,17 +166,17 @@ static void deformVerts(
 			copy_v3_v3(x->co, vec);
 		}
 
-		surmd->cfra = md->scene->r.cfra;
+		surmd->cfra = cfra;
 
 		if (surmd->bvhtree)
 			free_bvhtree_from_mesh(surmd->bvhtree);
 		else
 			surmd->bvhtree = MEM_callocN(sizeof(BVHTreeFromMesh), "BVHTreeFromMesh");
 
-		if (surmd->dm->getNumPolys(surmd->dm))
-			bvhtree_from_mesh_get(surmd->bvhtree, surmd->dm, BVHTREE_FROM_LOOPTRI, 2);
+		if (surmd->mesh->totpoly)
+			BKE_bvhtree_from_mesh_get(surmd->bvhtree, surmd->mesh, BVHTREE_FROM_LOOPTRI, 2);
 		else
-			bvhtree_from_mesh_get(surmd->bvhtree, surmd->dm, BVHTREE_FROM_EDGES, 2);
+			BKE_bvhtree_from_mesh_get(surmd->bvhtree, surmd->mesh, BVHTREE_FROM_EDGES, 2);
 	}
 }
 
@@ -174,17 +191,23 @@ ModifierTypeInfo modifierType_Surface = {
 	                        eModifierTypeFlag_NoUserAdd,
 
 	/* copyData */          NULL,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  NULL,
 	/* freeData */          freeData,
 	/* isDisabled */        NULL,
-	/* updateDepgraph */    NULL,
 	/* updateDepsgraph */   NULL,
 	/* dependsOnTime */     dependsOnTime,
 	/* dependsOnNormals */	NULL,

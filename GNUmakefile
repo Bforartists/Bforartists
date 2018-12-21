@@ -45,12 +45,18 @@ endif
 
 # Dependencies DIR's
 DEPS_SOURCE_DIR:=$(BLENDER_DIR)/build_files/build_environment
-DEPS_BUILD_DIR:=$(BUILD_DIR)/deps
-DEPS_INSTALL_DIR:=$(shell dirname "$(BLENDER_DIR)")/lib/$(OS_NCASE)
 
-ifneq ($(OS_NCASE),darwin)
-	# Add processor type to directory name
-	DEPS_INSTALL_DIR:=$(DEPS_INSTALL_DIR)_$(shell uname -p)
+ifndef DEPS_BUILD_DIR
+	DEPS_BUILD_DIR:=$(BUILD_DIR)/deps
+endif
+
+ifndef DEPS_INSTALL_DIR
+	DEPS_INSTALL_DIR:=$(shell dirname "$(BLENDER_DIR)")/lib/$(OS_NCASE)
+
+	ifneq ($(OS_NCASE),darwin)
+		# Add processor type to directory name
+		DEPS_INSTALL_DIR:=$(DEPS_INSTALL_DIR)_$(shell uname -p)
+	endif
 endif
 
 # Allow to use alternative binary (pypy3, etc)
@@ -86,6 +92,16 @@ endif
 ifneq "$(findstring bpy, $(MAKECMDGOALS))" ""
 	BUILD_DIR:=$(BUILD_DIR)_bpy
 	BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS) -C"$(BLENDER_DIR)/build_files/cmake/config/bpy_module.cmake"
+endif
+
+
+# -----------------------------------------------------------------------------
+# Blender binary path
+
+ifeq ($(OS), Darwin)
+	BLENDER_BIN="$(BUILD_DIR)/bin/bforartists.app/Contents/MacOS/bforartists"
+else
+	BLENDER_BIN="$(BUILD_DIR)/bin/bforartists"
 endif
 
 
@@ -216,12 +232,12 @@ help: .FORCE
 	@echo "                         which are tagged to use the stricter formatting"
 	@echo "  * test_deprecated    - checks for deprecation tags in our code which may need to be removed"
 	@echo "  * test_style_c       - checks C/C++ conforms with blenders style guide:"
-	@echo "                         http://wiki.blender.org/index.php/Dev:Doc/CodeStyle"
+	@echo "                         https://wiki.blender.org/wiki/Source/Code_Style"
 	@echo "  * test_style_c_qtc   - same as test_style but outputs QtCreator tasks format"
 	@echo "  * test_style_osl     - checks OpenShadingLanguage conforms with blenders style guide:"
-	@echo "                         http://wiki.blender.org/index.php/Dev:Doc/CodeStyle"
+	@echo "                         https://wiki.blender.org/wiki/Source/Code_Style"
 	@echo "  * test_style_osl_qtc - checks OpenShadingLanguage conforms with blenders style guide:"
-	@echo "                         http://wiki.blender.org/index.php/Dev:Doc/CodeStyle"
+	@echo "                         https://wiki.blender.org/wiki/Source/Code_Style"
 	@echo ""
 	@echo "Static Source Code Checking (not associated with building blender)"
 	@echo "  * check_cppcheck       - run blender source through cppcheck (C & C++)"
@@ -239,8 +255,11 @@ help: .FORCE
 	@echo "  * icons    - Updates PNG icons from SVG files."
 	@echo "               Set environment variables 'BLENDER_BIN' and 'INKSCAPE_BIN'"
 	@echo "               to define your own commands."
-	@echo "  * tgz      - create a compressed archive of the source code."
-	@echo "  * update   - updates git and all submodules"
+	@echo "  * icons_geom - Updates Geometry icons from BLEND file."
+	@echo "                 Set environment variable 'BLENDER_BIN'"
+	@echo "                 to define your own command."
+	@echo "  * tgz        - create a compressed archive of the source code."
+	@echo "  * update     - updates git and all submodules"
 	@echo ""
 	@echo "Environment Variables"
 	@echo "  * BUILD_CMAKE_ARGS    - arguments passed to CMake."
@@ -411,7 +430,7 @@ check_spelling_osl: .FORCE
 	    "$(BLENDER_DIR)/intern/cycles/kernel/shaders"
 
 check_descriptions: .FORCE
-	"$(BUILD_DIR)/bin/blender" --background -noaudio --factory-startup --python \
+	$(BLENDER_BIN) --background -noaudio --factory-startup --python \
 	    "$(BLENDER_DIR)/source/tools/check_source/check_descriptions.py"
 
 # -----------------------------------------------------------------------------
@@ -424,6 +443,10 @@ tgz: .FORCE
 icons: .FORCE
 	"$(BLENDER_DIR)/release/datafiles/blender_icons_update.py"
 	"$(BLENDER_DIR)/release/datafiles/prvicons_update.py"
+
+icons_geom: .FORCE
+	BLENDER_BIN=$(BLENDER_BIN) \
+	    "$(BLENDER_DIR)/release/datafiles/blender_icons_geom_update.py"
 
 update: .FORCE
 	if [ "$(OS_NCASE)" = "darwin" ] && [ ! -d "../lib/$(OS_NCASE)" ]; then \
@@ -451,19 +474,19 @@ doc_py: .FORCE
 	$(BLENDER_BIN) --background -noaudio --factory-startup \
 		--python doc/python_api/sphinx_doc_gen.py
 	cd doc/python_api ; sphinx-build -b html sphinx-in sphinx-out
-	@echo "docs written into: '$(BLENDER_DIR)/doc/python_api/sphinx-out/contents.html'"
+	@echo "docs written into: '$(BLENDER_DIR)/doc/python_api/sphinx-out/index.html'"
 
 doc_doxy: .FORCE
 	cd doc/doxygen; doxygen Doxyfile
 	@echo "docs written into: '$(BLENDER_DIR)/doc/doxygen/html/index.html'"
 
 doc_dna: .FORCE
-	"$(BUILD_DIR)/bin/blender" --background -noaudio --factory-startup \
+	$(BLENDER_BIN) --background -noaudio --factory-startup \
 		--python doc/blender_file_format/BlendFileDnaExporter_25.py
 	@echo "docs written into: '$(BLENDER_DIR)/doc/blender_file_format/dna.html'"
 
 doc_man: .FORCE
-	$(PYTHON) doc/manpage/blender.1.py "$(BUILD_DIR)/bin/blender"
+	$(PYTHON) doc/manpage/blender.1.py $(BLENDER_BIN) blender.1
 
 help_features: .FORCE
 	@$(PYTHON) "$(BLENDER_DIR)/build_files/cmake/cmake_print_build_options.py" $(BLENDER_DIR)"/CMakeLists.txt"

@@ -1159,7 +1159,7 @@ def add_shell(selobject, objname, rp):
 # Project point using face normals
 #
 # m: Magnitud
-# pf: Comparision face +/-
+# pf: Comparison face +/-
 # ---------------------------------------------------------
 def project_point(idx, point, normals, m, pf):
     v1 = Vector(normals[idx])

@@ -42,12 +42,14 @@
 #include "DNA_scene_types.h"
 
 #include "ExportSettings.h"
+#include "collada_utils.h"
 
 class EffectsExporter: COLLADASW::LibraryEffects
 {
 public:
-	EffectsExporter(COLLADASW::StreamWriter *sw, const ExportSettings *export_settings);
-	void exportEffects(Scene *sce);
+	EffectsExporter(COLLADASW::StreamWriter *sw, const ExportSettings *export_settings, KeyImageMap &key_image_map);
+	void exportEffects(bContext *C, Scene *sce);
+
 	void operator()(Material *ma, Object *ob);
 
 	COLLADASW::ColorOrTexture createTexture(Image *ima,
@@ -57,12 +59,14 @@ public:
 
 	COLLADASW::ColorOrTexture getcol(float r, float g, float b, float a);
 private:
-	/** Fills the array of mtex indices which have image. Used for exporting images. */
-	void createTextureIndices(Material *ma, std::vector<int> &indices);
+	void set_shader_type(COLLADASW::EffectProfile &ep, Material *ma);
+	void set_transparency(COLLADASW::EffectProfile &ep, Material *ma);
+	void set_diffuse_color(COLLADASW::EffectProfile &ep, Material *ma);
+	void set_specular_color(COLLADASW::EffectProfile &ep, Material *ma);
+	void set_emission(COLLADASW::EffectProfile &ep, Material *ma);
+	void get_images(Material *ma, KeyImageMap &uid_image_map);
+	void create_image_samplers(COLLADASW::EffectProfile &ep, KeyImageMap &uid_image_map, std::string &active_uv);
 
-	void writeBlinn(COLLADASW::EffectProfile &ep, Material *ma);
-	void writeLambert(COLLADASW::EffectProfile &ep, Material *ma);
-	void writePhong(COLLADASW::EffectProfile &ep, Material *ma);
 	void writeTextures(COLLADASW::EffectProfile &ep,
 			std::string &key,
 			COLLADASW::Sampler *sampler,
@@ -72,8 +76,9 @@ private:
 	bool hasEffects(Scene *sce);
 
 	const ExportSettings *export_settings;
-
+	KeyImageMap &key_image_map;
 	Scene *scene;
+	bContext *mContext;
 };
 
 #endif

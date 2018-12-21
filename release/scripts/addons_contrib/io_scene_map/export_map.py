@@ -276,7 +276,7 @@ def write_quake_brush_face(fw, ob, face):
 
     # reuse face vertices
     f_vertices = [me.vertices[vi] for vi in face.vertices]
-  
+
     # original verts as tuples for writing
     orig_vco = tuple(round_vec(v.co) for v in f_vertices)
 
@@ -342,7 +342,7 @@ def write_doom_brush(fw, ob, me):
                 image_text = material.name
 
         # reuse face vertices
-        plane = poly_to_doom(me, p, radius)    
+        plane = poly_to_doom(me, p, radius)
         if plane is None:
             print("    ERROR: Could not create the plane from polygon!");
         elif doom_check_plane(done_planes, plane):
@@ -401,7 +401,7 @@ def split_objects(context, objects):
     for i, ob in enumerate(objects):
         print("Splitting object: %d/%d" % (i, tot_ob))
         ob.select = True
-        
+
         if ob.type == "MESH":
             scene.objects.active = ob
             bpy.ops.object.mode_set(mode='EDIT')
@@ -427,7 +427,7 @@ def split_objects(context, objects):
                 bpy.ops.mesh.region_to_loop()
                 bpy.ops.mesh.fill_holes(sides=8)
                 slot_idx = 0
-                for slot_idx, m in enumerate(split_ob.material_slots):                       
+                for slot_idx, m in enumerate(split_ob.material_slots):
                    if m.name == "textures/common/caulk":
                       break
                    #if m.name != "textures/common/caulk":
@@ -507,7 +507,7 @@ def export_map(context, filepath):
         if obs_mesh or obs_surf:
             if PREF_DOOM3_FORMAT:
                 fw('Version 2')
-            
+
             # brushes and surf's must be under worldspan
             fw('\n// entity 0\n')
             fw('{\n')
@@ -687,7 +687,7 @@ def save(operator,
     PREF_DEF_TEX_OPTS = texture_opts
     PREF_GRID_SNAP = grid_snap
     PREF_DOOM3_FORMAT = doom3_format
-    
+
     if (PREF_DOOM3_FORMAT):
         PREF_DEF_TEX_OPTS = '0 0 0'
     else:

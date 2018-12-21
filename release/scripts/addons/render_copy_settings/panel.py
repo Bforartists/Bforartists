@@ -28,14 +28,14 @@ class RENDER_UL_copy_settings(bpy.types.UIList):
         #assert(isinstance(item, (data_types.RenderCopySettingsScene, data_types.RenderCopySettingsDataSetting)))
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             if isinstance(item, data_types.RenderCopySettingsDataSetting):
-                layout.label(item.name, icon_value=icon)
+                layout.label(text=item.name, icon_value=icon)
                 layout.prop(item, "copy", text="")
             else: #elif isinstance(item, data_types.RenderCopySettingsDataScene):
                 layout.prop(item, "allowed", text=item.name, toggle=True)
         elif self.layout_type in {'GRID'}:
             layout.alignment = 'CENTER'
             if isinstance(item, data_types.RenderCopySettingsDataSetting):
-                layout.label(item.name, icon_value=icon)
+                layout.label(text=item.name, icon_value=icon)
                 layout.prop(item, "copy", text="")
             else: #elif isinstance(item, data_types.RenderCopySettingsDataScene):
                 layout.prop(item, "allowed", text=item.name, toggle=True)
@@ -60,9 +60,9 @@ class RENDER_PT_copy_settings(bpy.types.Panel):
         if bpy.ops.scene.render_copy_settings_prepare.poll():
             bpy.ops.scene.render_copy_settings_prepare()
 
-        split = layout.split(0.75)
+        split = layout.split(factor=0.75)
         split.template_list("RENDER_UL_copy_settings", "settings", cp_sett, "affected_settings",
-                            cp_sett, "affected_settings_idx", rows=6)
+                            cp_sett, "affected_settings_idx", rows=5)
 
         col = split.column()
         all_set = {sett.strid for sett in cp_sett.affected_settings if sett.copy}
@@ -76,7 +76,7 @@ class RENDER_PT_copy_settings(bpy.types.Panel):
 
         layout.prop(cp_sett, "filter_scene")
         if len(cp_sett.allowed_scenes):
-            layout.label("Affected Scenes:")
+            layout.label(text="Affected Scenes:")
             layout.template_list("RENDER_UL_copy_settings", "scenes", cp_sett, "allowed_scenes",
 #                                 cp_sett, "allowed_scenes_idx", rows=6, type='GRID')
                                  cp_sett, "allowed_scenes_idx", rows=6) # XXX Grid is not nice currently...

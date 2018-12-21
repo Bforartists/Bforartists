@@ -35,4 +35,3 @@ class LinetypeTable(Table):
             style = Linetype(entry_tags)
             styles._table_entries[style.name] = style
         return styles
-

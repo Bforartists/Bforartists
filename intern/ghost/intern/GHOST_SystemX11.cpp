@@ -57,6 +57,12 @@
 
 #include "GHOST_Debug.h"
 
+#if defined(WITH_GL_EGL)
+#  include "GHOST_ContextEGL.h"
+#else
+#  include "GHOST_ContextGLX.h"
+#endif
+
 #ifdef WITH_XF86KEYSYM
 #include <X11/XF86keysym.h>
 #endif
@@ -119,6 +125,7 @@ GHOST_SystemX11(
       m_xkb_descr(NULL),
       m_start_time(0)
 {
+	XInitThreads();
 	m_display = XOpenDisplay(NULL);
 
 	if (!m_display) {
@@ -397,6 +404,97 @@ createWindow(const STR_String& title,
 bool GHOST_SystemX11::supportsNativeDialogs(void)
 {
 	return false;
+}
+
+/**
+ * Create a new offscreen context.
+ * Never explicitly delete the context, use disposeContext() instead.
+ * \return  The new context (or 0 if creation failed).
+ */
+GHOST_IContext *
+GHOST_SystemX11::
+createOffscreenContext()
+{
+	// During development:
+	//   try 4.x compatibility profile
+	//   try 3.3 compatibility profile
+	//   fall back to 3.0 if needed
+	//
+	// Final Blender 2.8:
+	//   try 4.x core profile
+	//   try 3.3 core profile
+	//   no fallbacks
+
+#if defined(WITH_GL_PROFILE_CORE)
+	{
+		const char *version_major = (char*)glewGetString(GLEW_VERSION_MAJOR);
+		if (version_major != NULL && version_major[0] == '1') {
+			fprintf(stderr, "Error: GLEW version 2.0 and above is required.\n");
+			abort();
+		}
+	}
+#endif
+
+	const int profile_mask =
+#if defined(WITH_GL_PROFILE_CORE)
+		GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
+#elif defined(WITH_GL_PROFILE_COMPAT)
+		GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
+#else
+#  error // must specify either core or compat at build time
+#endif
+
+	GHOST_Context *context;
+
+	for (int minor = 5; minor >= 0; --minor) {
+		context = new GHOST_ContextGLX(
+		        false,
+		        0,
+		        (Window)NULL,
+		        m_display,
+		        (GLXFBConfig)NULL,
+		        profile_mask,
+		        4, minor,
+		        GHOST_OPENGL_GLX_CONTEXT_FLAGS | (false ? GLX_CONTEXT_DEBUG_BIT_ARB : 0),
+		        GHOST_OPENGL_GLX_RESET_NOTIFICATION_STRATEGY);
+
+		if (context->initializeDrawingContext())
+			return context;
+		else
+			delete context;
+	}
+
+	context = new GHOST_ContextGLX(
+	        false,
+	        0,
+	        (Window)NULL,
+	        m_display,
+	        (GLXFBConfig)NULL,
+	        profile_mask,
+	        3, 3,
+	        GHOST_OPENGL_GLX_CONTEXT_FLAGS | (false ? GLX_CONTEXT_DEBUG_BIT_ARB : 0),
+	        GHOST_OPENGL_GLX_RESET_NOTIFICATION_STRATEGY);
+
+	if (context->initializeDrawingContext())
+		return context;
+	else
+		delete context;
+
+	return NULL;
+}
+
+/**
+ * Dispose of a context.
+ * \param   context Pointer to the context to be disposed.
+ * \return  Indication of success.
+ */
+GHOST_TSuccess
+GHOST_SystemX11::
+disposeContext(GHOST_IContext *context)
+{
+	delete context;
+
+	return GHOST_kSuccess;
 }
 
 #if defined(WITH_X11_XINPUT) && defined(X_HAVE_UTF8_STRING)
@@ -2269,6 +2367,8 @@ void GHOST_SystemX11::refreshXInputDevices()
 					if (m_xtablet.StylusDevice != NULL) {
 						/* Find how many pressure levels tablet has */
 						XAnyClassPtr ici = device_info[i].inputclassinfo;
+						bool found_valuator_class = false;
+
 						for (int j = 0; j < m_xtablet.StylusDevice->num_classes; ++j) {
 							if (ici->c_class == ValuatorClass) {
 //								printf("\t\tfound ValuatorClass\n");
@@ -2286,10 +2386,22 @@ void GHOST_SystemX11::refreshXInputDevices()
 									m_xtablet.YtiltLevels = 0;
 								}
 
+								found_valuator_class = true;
+
 								break;
 							}
 
 							ici = (XAnyClassPtr)(((char *)ici) + ici->length);
+						}
+
+						if (!found_valuator_class) {
+							/* In case our name matching detects a device that
+							 * isn't actually a stylus. For example there can
+							 * be "XPPEN Tablet" and "XPPEN Tablet Pen", but
+							 * only the latter is a stylus. */
+							XCloseDevice(m_display, m_xtablet.StylusDevice);
+							m_xtablet.StylusDevice = NULL;
+							m_xtablet.StylusID = 0;
 						}
 					}
 					else {

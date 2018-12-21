@@ -50,6 +50,7 @@ static int gpu_shader_vector_displacement(GPUMaterial *mat, bNode *node, bNodeEx
 {
 	if (node->custom1 == SHD_SPACE_TANGENT) {
 		return GPU_stack_link(mat,
+		                      node,
 		                      "node_vector_displacement_tangent",
 		                      in,
 		                      out,
@@ -59,10 +60,10 @@ static int gpu_shader_vector_displacement(GPUMaterial *mat, bNode *node, bNodeEx
 		                      GPU_builtin(GPU_VIEW_MATRIX));
 	}
 	else if (node->custom1 == SHD_SPACE_OBJECT) {
-		return GPU_stack_link(mat, "node_vector_displacement_object", in, out, GPU_builtin(GPU_OBJECT_MATRIX));
+		return GPU_stack_link(mat, node, "node_vector_displacement_object", in, out, GPU_builtin(GPU_OBJECT_MATRIX));
 	}
 	else {
-		return GPU_stack_link(mat, "node_vector_displacement_world", in, out);
+		return GPU_stack_link(mat, node, "node_vector_displacement_world", in, out);
 	}
 }
 
@@ -72,7 +73,6 @@ void register_node_type_sh_vector_displacement(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_VECTOR_DISPLACEMENT, "Vector Displacement", NODE_CLASS_OP_VECTOR, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_vector_displacement_in, sh_node_vector_displacement_out);
 	node_type_storage(&ntype, "", NULL, NULL);
 	node_type_init(&ntype, node_shader_init_vector_displacement);

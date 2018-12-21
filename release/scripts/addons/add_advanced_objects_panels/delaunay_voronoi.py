@@ -157,7 +157,7 @@ class OBJECT_OT_TriangulateButton(Operator):
             print("Total :%s faces  %s verts" % (len(faces), len(points_3D)))
             return {'FINISHED'}
 
-        # Get points coodinates
+        # Get points coordinates
         r = obj.rotation_euler
         s = obj.scale
         mesh = obj.data
@@ -244,7 +244,7 @@ class OBJECT_OT_VoronoiButton(Operator):
         # move the check into the poll
         obj = context.active_object
 
-        # Get points coodinates
+        # Get points coordinates
         r = obj.rotation_euler
         s = obj.scale
         mesh = obj.data

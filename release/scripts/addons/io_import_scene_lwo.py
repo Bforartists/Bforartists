@@ -497,7 +497,7 @@ def read_colmap(col_bytes, object_layers):
 
 
 def read_color_vmad(col_bytes, object_layers, last_pols_count):
-    """Read the Discontinous (per-polygon) RGB values."""
+    """Read the Discontinuous (per-polygon) RGB values."""
     chunk_len= len(col_bytes)
     dia,= struct.unpack(">H", col_bytes[0:2])
     offset= 2
@@ -570,7 +570,7 @@ def read_uvmap(uv_bytes, object_layers):
 
 
 def read_uv_vmad(uv_bytes, object_layers, last_pols_count):
-    """Read the Discontinous (per-polygon) uv values."""
+    """Read the Discontinuous (per-polygon) uv values."""
     chunk_len= len(uv_bytes)
     offset= 2
     name, name_len= read_lwostring(uv_bytes[offset:])
@@ -1251,13 +1251,13 @@ def menu_func(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 if __name__ == "__main__":
     register()

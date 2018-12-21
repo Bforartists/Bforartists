@@ -1,0 +1,75 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_glossy_bsdf.oso
+shader node_glossy_bsdf
+param	color	Color	0.80000001 0.80000001 0.80000001		%read{5,19} %write{2147483647,-1}
+param	string	distribution	"GGX"		%read{2,14} %write{2147483647,-1}
+param	float	Roughness	0.2		%read{1,1} %write{2147483647,-1}
+param	normal	Normal	0 0 0		%read{4,18} %write{0,0} %initexpr
+oparam	closure color	BSDF			%read{2147483647,-1} %write{5,19}
+global	normal	N	%read{0,0} %write{2147483647,-1}
+local	float	roughness	%read{8,18} %write{1,1}
+const	string	$const1	"sharp"		%read{2,2} %write{2147483647,-1}
+temp	int	$tmp1	%read{3,3} %write{2,2}
+temp	closure color	$tmp2	%read{5,5} %write{4,4}
+const	string	$const2	"reflection"		%read{4,4} %write{2147483647,-1}
+const	string	$const3	"beckmann"		%read{6,6} %write{2147483647,-1}
+temp	int	$tmp3	%read{7,7} %write{6,6}
+temp	closure color	$tmp4	%read{9,9} %write{8,8}
+const	string	$const4	"microfacet_beckmann"		%read{8,8} %write{2147483647,-1}
+const	string	$const5	"GGX"		%read{10,10} %write{2147483647,-1}
+temp	int	$tmp5	%read{11,11} %write{10,10}
+temp	closure color	$tmp6	%read{13,13} %write{12,12}
+const	string	$const6	"microfacet_ggx"		%read{12,12} %write{2147483647,-1}
+const	string	$const7	"Multiscatter GGX"		%read{14,14} %write{2147483647,-1}
+temp	int	$tmp7	%read{15,15} %write{14,14}
+temp	closure color	$tmp8	%read{17,17} %write{16,16}
+const	string	$const8	"microfacet_multi_ggx"		%read{16,16} %write{2147483647,-1}
+temp	closure color	$tmp9	%read{19,19} %write{18,18}
+const	vector	$const9	0 0 0		%read{18,18} %write{2147483647,-1}
+const	string	$const10	"ashikhmin_shirley"		%read{18,18} %write{2147483647,-1}
+code Normal
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:24
+# 	normal Normal = N,
+	assign		Normal N 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl"} %line{24} %argrw{"wr"}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:27
+# 	float roughness = Roughness * Roughness;
+	mul		roughness Roughness Roughness 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl"} %line{27} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:29
+# 	if (distribution == "sharp")
+	eq		$tmp1 distribution $const1 	%line{29} %argrw{"wrr"}
+	if		$tmp1 6 20 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:30
+# 		BSDF = Color * reflection(Normal);
+	closure		$tmp2 $const2 Normal 	%line{30} %argrw{"wrr"}
+	mul		BSDF $tmp2 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:31
+# 	else if (distribution == "beckmann")
+	eq		$tmp3 distribution $const3 	%line{31} %argrw{"wrr"}
+	if		$tmp3 10 20 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:32
+# 		BSDF = Color * microfacet_beckmann(Normal, roughness);
+	closure		$tmp4 $const4 Normal roughness 	%line{32} %argrw{"wrrr"}
+	mul		BSDF $tmp4 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:33
+# 	else if (distribution == "GGX")
+	eq		$tmp5 distribution $const5 	%line{33} %argrw{"wrr"}
+	if		$tmp5 14 20 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:34
+# 		BSDF = Color * microfacet_ggx(Normal, roughness);
+	closure		$tmp6 $const6 Normal roughness 	%line{34} %argrw{"wrrr"}
+	mul		BSDF $tmp6 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:35
+# 	else if (distribution == "Multiscatter GGX")
+	eq		$tmp7 distribution $const7 	%line{35} %argrw{"wrr"}
+	if		$tmp7 18 20 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:36
+# 		BSDF = Color * microfacet_multi_ggx(Normal, roughness, Color);
+	closure		$tmp8 $const8 Normal roughness Color 	%line{36} %argrw{"wrrrr"}
+	mul		BSDF $tmp8 Color 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_glossy_bsdf.osl:38
+# 		BSDF = Color * ashikhmin_shirley(Normal, vector(0, 0, 0), roughness, roughness);
+	closure		$tmp9 $const10 Normal $const9 roughness roughness 	%line{38} %argrw{"wrrrrr"}
+	mul		BSDF $tmp9 Color 	%argrw{"wrr"}
+	end

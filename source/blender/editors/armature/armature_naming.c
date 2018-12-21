@@ -31,9 +31,13 @@
 
 #include <string.h>
 
+#include "MEM_guardedalloc.h"
+
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_object_types.h"
+#include "DNA_gpencil_types.h"
+#include "DNA_gpencil_modifier_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_ghash.h"
@@ -48,10 +52,13 @@
 #include "BKE_constraint.h"
 #include "BKE_context.h"
 #include "BKE_deform.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
+#include "BKE_gpencil_modifier.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -174,6 +181,9 @@ void ED_armature_bone_rename(Main *bmain, bArmature *arm, const char *oldnamep, 
 			}
 		}
 
+		/* force copy on write to update database */
+		DEG_id_tag_update(&arm->id, ID_RECALC_COPY_ON_WRITE);
+
 		/* do entire dbase - objects */
 		for (ob = bmain->object.first; ob; ob = ob->id.next) {
 			ModifierData *md;
@@ -264,6 +274,46 @@ void ED_armature_bone_rename(Main *bmain, bArmature *arm, const char *oldnamep, 
 						break;
 				}
 			}
+
+			/* fix grease pencil modifiers and vertex groups */
+			if (ob->type == OB_GPENCIL) {
+
+				bGPdata *gpd = (bGPdata *)ob->data;
+				for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+					if ((gpl->parent != NULL) && (gpl->parent->data == arm)) {
+						if (STREQ(gpl->parsubstr, oldname))
+							BLI_strncpy(gpl->parsubstr, newname, MAXBONENAME);
+					}
+				}
+
+				for (GpencilModifierData *gp_md = ob->greasepencil_modifiers.first; gp_md; gp_md = gp_md->next) {
+					switch (gp_md->type) {
+						case eGpencilModifierType_Armature:
+						{
+							ArmatureGpencilModifierData *mmd = (ArmatureGpencilModifierData *)gp_md;
+							if (mmd->object && mmd->object->data == arm) {
+								bDeformGroup *dg = defgroup_find_name(ob, oldname);
+								if (dg) {
+									BLI_strncpy(dg->name, newname, MAXBONENAME);
+								}
+							}
+							break;
+						}
+						case eGpencilModifierType_Hook:
+						{
+							HookGpencilModifierData *hgp_md = (HookGpencilModifierData *)gp_md;
+							if (hgp_md->object && (hgp_md->object->data == arm)) {
+								if (STREQ(hgp_md->subtarget, oldname))
+									BLI_strncpy(hgp_md->subtarget, newname, MAXBONENAME);
+							}
+							break;
+						}
+						default:
+							break;
+					}
+				}
+			}
+			DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 		}
 
 		/* Fix all animdata that may refer to this bone - we can't just do the ones attached to objects, since
@@ -355,38 +405,59 @@ void ED_armature_bones_flip_names(Main *bmain, bArmature *arm, ListBase *bones_n
 static int armature_flip_names_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
-	Object *ob = CTX_data_edit_object(C);
-	bArmature *arm;
-
-	/* paranoia checks */
-	if (ELEM(NULL, ob, ob->pose))
-		return OPERATOR_CANCELLED;
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Object *ob_active = CTX_data_edit_object(C);
 
 	const bool do_strip_numbers = RNA_boolean_get(op->ptr, "do_strip_numbers");
 
-	arm = ob->data;
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *ob = objects[ob_index];
+		bArmature *arm = ob->data;
 
-	ListBase bones_names = {NULL};
+		/* Paranoia check. */
+		if (ob_active->pose == NULL) {
+			continue;
+		}
 
-	CTX_DATA_BEGIN(C, EditBone *, ebone, selected_editable_bones)
-	{
-		BLI_addtail(&bones_names, BLI_genericNodeN(ebone->name));
+		ListBase bones_names = {NULL};
+
+		for (EditBone *ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+			if (EBONE_VISIBLE(arm, ebone)) {
+				if (ebone->flag & BONE_SELECTED) {
+					BLI_addtail(&bones_names, BLI_genericNodeN(ebone->name));
+
+					if (arm->flag & ARM_MIRROR_EDIT) {
+						EditBone *flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+						if ((flipbone) && !(flipbone->flag & BONE_SELECTED)) {
+							BLI_addtail(&bones_names, BLI_genericNodeN(flipbone->name));
+						}
+					}
+				}
+			}
+		}
+
+		if (BLI_listbase_is_empty(&bones_names)) {
+			continue;
+		}
+
+		ED_armature_bones_flip_names(bmain, arm, &bones_names, do_strip_numbers);
+
+		BLI_freelistN(&bones_names);
+
+		/* since we renamed stuff... */
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+
+		/* copied from #rna_Bone_update_renamed */
+		/* redraw view */
+		WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
+
+		/* update animation channels */
+		WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN, ob->data);
+
 	}
-	CTX_DATA_END;
-
-	ED_armature_bones_flip_names(bmain, arm, &bones_names, do_strip_numbers);
-
-	BLI_freelistN(&bones_names);
-
-	/* since we renamed stuff... */
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-
-	/* copied from #rna_Bone_update_renamed */
-	/* redraw view */
-	WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
-
-	/* update animation channels */
-	WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN, ob->data);
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }
@@ -410,36 +481,64 @@ void ARMATURE_OT_flip_names(wmOperatorType *ot)
 	                "(WARNING: may result in incoherent naming in some cases)");
 }
 
-
 static int armature_autoside_names_exec(bContext *C, wmOperator *op)
 {
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Main *bmain = CTX_data_main(C);
-	Object *ob = CTX_data_edit_object(C);
-	bArmature *arm;
 	char newname[MAXBONENAME];
-	short axis = RNA_enum_get(op->ptr, "type");
+	const short axis = RNA_enum_get(op->ptr, "type");
+	bool changed_multi = false;
 
-	/* paranoia checks */
-	if (ELEM(NULL, ob, ob->pose))
-		return OPERATOR_CANCELLED;
-	arm = ob->data;
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *ob = objects[ob_index];
+		bArmature *arm = ob->data;
+		bool changed = false;
 
-	/* loop through selected bones, auto-naming them */
-	CTX_DATA_BEGIN(C, EditBone *, ebone, selected_editable_bones)
-	{
-		BLI_strncpy(newname, ebone->name, sizeof(newname));
-		if (bone_autoside_name(newname, 1, axis, ebone->head[axis], ebone->tail[axis]))
-			ED_armature_bone_rename(bmain, arm, ebone->name, newname);
+		/* Paranoia checks. */
+		if (ELEM(NULL, ob, ob->pose)) {
+			continue;
+		}
+
+		for (EditBone *ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+			if (EBONE_EDITABLE(ebone)) {
+
+				/* We first need to do the flipped bone, then the original one.
+				 * Otherwise we can't find the flipped one because of the bone name change. */
+				if (arm->flag & ARM_MIRROR_EDIT) {
+					EditBone *flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+					if ((flipbone) && !(flipbone->flag & BONE_SELECTED)) {
+						BLI_strncpy(newname, flipbone->name, sizeof(newname));
+						if (bone_autoside_name(newname, 1, axis, flipbone->head[axis], flipbone->tail[axis])) {
+							ED_armature_bone_rename(bmain, arm, flipbone->name, newname);
+							changed = true;
+						}
+					}
+				}
+
+				BLI_strncpy(newname, ebone->name, sizeof(newname));
+				if (bone_autoside_name(newname, 1, axis, ebone->head[axis], ebone->tail[axis])) {
+					ED_armature_bone_rename(bmain, arm, ebone->name, newname);
+					changed = true;
+				}
+			}
+		}
+
+		if (!changed) {
+			continue;
+		}
+
+		changed_multi = true;
+
+		/* Since we renamed stuff... */
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+
+		/* Note, notifier might evolve. */
+		WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
 	}
-	CTX_DATA_END;
-
-	/* since we renamed stuff... */
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-
-	/* note, notifier might evolve */
-	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
-
-	return OPERATOR_FINISHED;
+	MEM_freeN(objects);
+	return changed_multi ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void ARMATURE_OT_autoside_names(wmOperatorType *ot)

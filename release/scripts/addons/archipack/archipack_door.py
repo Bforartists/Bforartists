@@ -40,7 +40,7 @@ from .panel import Panel as DoorPanel
 from .archipack_handle import create_handle, door_handle_horizontal_01
 from .archipack_manipulator import Manipulable
 from .archipack_preset import ArchipackPreset, PresetMenuOperator
-from .archipack_object import ArchipackObject, ArchipackCreateTool, ArchpackDrawTool
+from .archipack_object import ArchipackObject, ArchipackCreateTool, ArchipackDrawTool, ArchipackCollectionManager
 from .archipack_gl import FeedbackPanel
 from .archipack_keymaps import Keymaps
 
@@ -60,83 +60,83 @@ def update_childs(self, context):
 
 
 class archipack_door_panel(ArchipackObject, PropertyGroup):
-    x = FloatProperty(
+    x : FloatProperty(
             name='Width',
             min=0.25,
             default=100.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='Width'
             )
-    y = FloatProperty(
+    y : FloatProperty(
             name='Depth',
             min=0.001,
             default=0.02, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='depth'
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name='Height',
             min=0.1,
             default=2.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='height'
             )
-    direction = IntProperty(
+    direction : IntProperty(
             name="Direction",
             min=0,
             max=1,
             description="open direction"
             )
-    model = IntProperty(
+    model : IntProperty(
             name="Model",
             min=0,
             max=3,
             default=0,
             description="Model"
             )
-    chanfer = FloatProperty(
+    chanfer : FloatProperty(
             name='Bevel',
             min=0.001,
             default=0.005, precision=3,
             unit='LENGTH', subtype='DISTANCE',
             description='chanfer'
             )
-    panel_spacing = FloatProperty(
+    panel_spacing : FloatProperty(
             name='Spacing',
             min=0.001,
             default=0.1, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance between panels'
             )
-    panel_bottom = FloatProperty(
+    panel_bottom : FloatProperty(
             name='Bottom',
             min=0.0,
             default=0.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from bottom'
             )
-    panel_border = FloatProperty(
+    panel_border : FloatProperty(
             name='Border',
             min=0.001,
             default=0.2, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from border'
             )
-    panels_x = IntProperty(
+    panels_x : IntProperty(
             name="# h",
             min=1,
             max=50,
             default=1,
             description="panels h"
             )
-    panels_y = IntProperty(
+    panels_y : IntProperty(
             name="# v",
             min=1,
             max=50,
             default=1,
             description="panels v"
             )
-    panels_distrib = EnumProperty(
+    panels_distrib : EnumProperty(
             name='distribution',
             items=(
                 ('REGULAR', 'Regular', '', 0),
@@ -144,7 +144,7 @@ class archipack_door_panel(ArchipackObject, PropertyGroup):
                 ),
             default='REGULAR'
             )
-    handle = EnumProperty(
+    handle : EnumProperty(
             name='Shape',
             items=(
                 ('NONE', 'No handle', '', 0),
@@ -559,7 +559,7 @@ class archipack_door_panel(ArchipackObject, PropertyGroup):
     def remove_handle(self, context, o):
         handle = self.find_handle(o)
         if handle is not None:
-            context.scene.objects.unlink(handle)
+            self.unlink_object_from_scene(handle)
             bpy.data.objects.remove(handle, do_unlink=True)
 
     def update(self, context):
@@ -584,7 +584,7 @@ class ARCHIPACK_PT_door_panel(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     # bl_context = 'object'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -600,88 +600,88 @@ class ARCHIPACK_PT_door_panel(Panel):
 # ------------------------------------------------------------------
 
 
-class ARCHIPACK_OT_door_panel(Operator):
+class ARCHIPACK_OT_door_panel(ArchipackCollectionManager, Operator):
     bl_idname = "archipack.door_panel"
     bl_label = "Door model 1"
     bl_description = "Door model 1"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
-    x = FloatProperty(
+    x : FloatProperty(
             name='Width',
             min=0.1,
             default=0.80, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='Width'
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name='Height',
             min=0.1,
             default=2.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='height'
             )
-    y = FloatProperty(
+    y : FloatProperty(
             name='Depth',
             min=0.001,
             default=0.02, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='Depth'
             )
-    direction = IntProperty(
+    direction : IntProperty(
             name="Direction",
             min=0,
             max=1,
             description="open direction"
             )
-    model = IntProperty(
+    model : IntProperty(
             name="Model",
             min=0,
             max=3,
             description="panel type"
             )
-    chanfer = FloatProperty(
+    chanfer : FloatProperty(
             name='Bevel',
             min=0.001,
             default=0.005, precision=3,
             unit='LENGTH', subtype='DISTANCE',
             description='chanfer'
             )
-    panel_spacing = FloatProperty(
+    panel_spacing : FloatProperty(
             name='Spacing',
             min=0.001,
             default=0.1, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance between panels'
             )
-    panel_bottom = FloatProperty(
+    panel_bottom : FloatProperty(
             name='Bottom',
             min=0.0,
             default=0.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from bottom'
             )
-    panel_border = FloatProperty(
+    panel_border : FloatProperty(
             name='Border',
             min=0.001,
             default=0.2, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from border'
             )
-    panels_x = IntProperty(
+    panels_x : IntProperty(
             name="# h",
             min=1,
             max=50,
             default=1,
             description="panels h"
             )
-    panels_y = IntProperty(
+    panels_y : IntProperty(
             name="# v",
             min=1,
             max=50,
             default=1,
             description="panels v"
             )
-    panels_distrib = EnumProperty(
+    panels_distrib : EnumProperty(
             name='Distribution',
             items=(
                 ('REGULAR', 'Regular', '', 0),
@@ -689,7 +689,7 @@ class ARCHIPACK_OT_door_panel(Operator):
                 ),
             default='REGULAR'
             )
-    handle = EnumProperty(
+    handle : EnumProperty(
             name='Shape',
             items=(
                 ('NONE', 'No handle', '', 0),
@@ -697,14 +697,14 @@ class ARCHIPACK_OT_door_panel(Operator):
                 ),
             default='BOTH'
             )
-    material = StringProperty(
+    material : StringProperty(
             default=""
             )
 
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def create(self, context):
         """
@@ -727,7 +727,7 @@ class ARCHIPACK_OT_door_panel(Operator):
         d.panels_x = self.panels_x
         d.panels_y = self.panels_y
         d.handle = self.handle
-        context.scene.objects.link(o)
+        self.link_object_to_scene(context, o)
         o.lock_location[0] = True
         o.lock_location[1] = True
         o.lock_location[2] = True
@@ -736,8 +736,8 @@ class ARCHIPACK_OT_door_panel(Operator):
         o.lock_scale[0] = True
         o.lock_scale[1] = True
         o.lock_scale[2] = True
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         m = o.archipack_material.add()
         m.category = "door"
         m.material = self.material
@@ -751,8 +751,8 @@ class ARCHIPACK_OT_door_panel(Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -769,14 +769,14 @@ class ARCHIPACK_OT_select_parent(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def execute(self, context):
         if context.mode == "OBJECT":
             if context.active_object is not None and context.active_object.parent is not None:
                 bpy.ops.object.select_all(action="DESELECT")
-                context.active_object.parent.select = True
-                context.scene.objects.active = context.active_object.parent
+                context.active_object.parent.select_set(state=True)
+                context.view_layer.objects.active = context.active_object.parent
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -789,117 +789,117 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
         parent parametric object
         create/remove/update her own childs
     """
-    x = FloatProperty(
+    x : FloatProperty(
             name='Width',
             min=0.25,
             default=100.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='Width', update=update,
             )
-    y = FloatProperty(
+    y : FloatProperty(
             name='Depth',
             min=0.1,
             default=0.20, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='Depth', update=update,
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name='Height',
             min=0.1,
             default=2.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='height', update=update,
             )
-    frame_x = FloatProperty(
+    frame_x : FloatProperty(
             name='Width',
             min=0,
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='frame width', update=update,
             )
-    frame_y = FloatProperty(
+    frame_y : FloatProperty(
             name='Depth',
             default=0.03, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='frame depth', update=update,
             )
-    direction = IntProperty(
+    direction : IntProperty(
             name="Direction",
             min=0,
             max=1,
             description="open direction", update=update,
             )
-    door_y = FloatProperty(
+    door_y : FloatProperty(
             name='Depth',
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='depth', update=update,
             )
-    door_offset = FloatProperty(
+    door_offset : FloatProperty(
             name='Offset',
             min=0,
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='offset', update=update,
             )
-    model = IntProperty(
+    model : IntProperty(
             name="Model",
             min=0,
             max=3,
             default=0,
             description="Model", update=update,
             )
-    n_panels = IntProperty(
+    n_panels : IntProperty(
             name="Panels",
             min=1,
             max=2,
             default=1,
             description="number of panels", update=update
             )
-    chanfer = FloatProperty(
+    chanfer : FloatProperty(
             name='Bevel',
             min=0.001,
             default=0.005, precision=3, step=0.01,
             unit='LENGTH', subtype='DISTANCE',
             description='chanfer', update=update_childs,
             )
-    panel_spacing = FloatProperty(
+    panel_spacing : FloatProperty(
             name='Spacing',
             min=0.001,
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='distance between panels', update=update_childs,
             )
-    panel_bottom = FloatProperty(
+    panel_bottom : FloatProperty(
             name='Bottom',
             min=0.0,
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from bottom', update=update_childs,
             )
-    panel_border = FloatProperty(
+    panel_border : FloatProperty(
             name='Border',
             min=0.001,
             default=0.2, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from border', update=update_childs,
             )
-    panels_x = IntProperty(
+    panels_x : IntProperty(
             name="# h",
             min=1,
             max=50,
             default=1,
             description="panels h", update=update_childs,
             )
-    panels_y = IntProperty(
+    panels_y : IntProperty(
             name="# v",
             min=1,
             max=50,
             default=1,
             description="panels v", update=update_childs,
             )
-    panels_distrib = EnumProperty(
+    panels_distrib : EnumProperty(
             name='Distribution',
             items=(
                 ('REGULAR', 'Regular', '', 0),
@@ -907,7 +907,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
                 ),
             default='REGULAR', update=update_childs,
             )
-    handle = EnumProperty(
+    handle : EnumProperty(
             name='Handle',
             items=(
                 ('NONE', 'No handle', '', 0),
@@ -915,19 +915,19 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
                 ),
             default='BOTH', update=update_childs,
             )
-    hole_margin = FloatProperty(
+    hole_margin : FloatProperty(
             name='Hole margin',
             min=0.0,
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             description='how much hole surround wall'
             )
-    flip = BoolProperty(
+    flip : BoolProperty(
             default=False,
             update=update,
             description='flip outside and outside material of hole'
             )
-    auto_update = BoolProperty(
+    auto_update : BoolProperty(
             options={'SKIP_SAVE'},
             default=True,
             update=update
@@ -1032,13 +1032,13 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
             if archipack_door_panel.filter(child):
                 self.remove_handle(context, child)
                 to_remove -= 1
-                context.scene.objects.unlink(child)
+                self.unlink_object_from_scene(child)
                 bpy.data.objects.remove(child, do_unlink=True)
 
     def remove_handle(self, context, o):
         handle = self.find_handle(o)
         if handle is not None:
-            context.scene.objects.unlink(handle)
+            self.unlink_object_from_scene(handle)
             bpy.data.objects.remove(handle, do_unlink=True)
 
     def create_childs(self, context, o):
@@ -1112,7 +1112,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
                 id = c_names.index(c.data.name)
             except:
                 self.remove_handle(context, c)
-                context.scene.objects.unlink(c)
+                self.unlink_object_from_scene(c)
                 bpy.data.objects.remove(c, do_unlink=True)
 
         # children ordering may not be the same, so get the right l_childs order
@@ -1130,7 +1130,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
         for i, child in enumerate(childs):
             if order[i] < 0:
                 p = bpy.data.objects.new("DoorPanel", child.data)
-                context.scene.objects.link(p)
+                self.link_object_to_scene(context, p)
                 p.lock_location[0] = True
                 p.lock_location[1] = True
                 p.lock_location[2] = True
@@ -1158,7 +1158,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
                     # MaterialUtils.add_handle_materials(h)
                 h.location = handle.location.copy()
             elif h is not None:
-                context.scene.objects.unlink(h)
+                self.unlink_object_from_scene(h)
                 bpy.data.objects.remove(h, do_unlink=True)
 
     def _synch_hole(self, context, linked, hole):
@@ -1166,7 +1166,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
         if l_hole is None:
             l_hole = bpy.data.objects.new("hole", hole.data)
             l_hole['archipack_hole'] = True
-            context.scene.objects.link(l_hole)
+            self.link_object_to_scene(context, l_hole)
             l_hole.parent = linked
             l_hole.matrix_world = linked.matrix_world.copy()
             l_hole.location = hole.location.copy()
@@ -1178,8 +1178,8 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
             synch childs nodes of linked objects
         """
         bpy.ops.object.select_all(action='DESELECT')
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         childs = self.get_childs_panels(context, o)
         hole = self.find_hole(o)
         bpy.ops.object.select_linked(type='OBDATA')
@@ -1253,8 +1253,8 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
                 child.matrix_world = o.matrix_world.copy()
             else:
                 child = childs[child_n - 1]
-                child.select = True
-                context.scene.objects.active = child
+                child.select_set(state=True)
+                context.view_layer.objects.active = child
                 props = archipack_door_panel.datablock(child)
                 if props is not None:
                     props.x = x
@@ -1314,7 +1314,7 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
         if hole_obj is None:
             m = bpy.data.meshes.new("hole")
             hole_obj = bpy.data.objects.new("hole", m)
-            context.scene.objects.link(hole_obj)
+            self.link_object_to_scene(context, hole_obj)
             hole_obj['archipack_hole'] = True
             hole_obj.parent = o
             hole_obj.matrix_world = o.matrix_world.copy()
@@ -1339,19 +1339,19 @@ class archipack_door(ArchipackObject, Manipulable, PropertyGroup):
         m = bpy.data.meshes.new("hole")
         o = bpy.data.objects.new("hole", m)
         o['archipack_robusthole'] = True
-        context.scene.objects.link(o)
+        self.link_object_to_scene(context, o)
         v = Vector((0, 0, 0))
         offset = Vector((0, -0.001, 0))
         size = Vector((self.x + 2 * self.frame_x, self.z + self.frame_x + 0.001, self.y))
         verts = hole.vertices(16, offset, v, v, size, v, 0, 0, shape_z=None, path_type='RECTANGLE')
-        verts = [tM * Vector(v) for v in verts]
+        verts = [tM @ Vector(v) for v in verts]
         faces = hole.faces(16, path_type='RECTANGLE')
         matids = hole.mat(16, 0, 1, path_type='RECTANGLE')
         uvs = hole.uv(16, v, v, size, v, 0, 0, 0, 0, path_type='RECTANGLE')
         bmed.buildmesh(context, o, verts, faces, matids=matids, uvs=uvs)
 
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         return o
 
 
@@ -1360,7 +1360,7 @@ class ARCHIPACK_PT_door(Panel):
     bl_label = "Door"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -1371,7 +1371,7 @@ class ARCHIPACK_PT_door(Panel):
         if not archipack_door.filter(o):
             return
         layout = self.layout
-        layout.operator('archipack.door_manipulate', icon='HAND')
+        layout.operator('archipack.door_manipulate', icon='VIEW_PAN')
         props = archipack_door.datablock(o)
         row = layout.row(align=True)
         row.operator('archipack.door', text="Refresh", icon='FILE_REFRESH').mode = 'REFRESH'
@@ -1382,8 +1382,8 @@ class ARCHIPACK_PT_door(Panel):
         # box.label(text="Styles")
         row = box.row(align=True)
         row.operator("archipack.door_preset_menu", text=bpy.types.ARCHIPACK_OT_door_preset_menu.bl_label)
-        row.operator("archipack.door_preset", text="", icon='ZOOMIN')
-        row.operator("archipack.door_preset", text="", icon='ZOOMOUT').remove_active = True
+        row.operator("archipack.door_preset", text="", icon='ADD')
+        row.operator("archipack.door_preset", text="", icon='REMOVE').remove_active = True
         row = layout.row()
         box = row.box()
         box.label(text="Size")
@@ -1434,82 +1434,82 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
     bl_description = "Door"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
-    x = FloatProperty(
+    x : FloatProperty(
             name='width',
             min=0.1,
             default=0.80, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='Width'
             )
-    y = FloatProperty(
+    y : FloatProperty(
             name='depth',
             min=0.1,
             default=0.20, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='Depth'
             )
-    z = FloatProperty(
+    z : FloatProperty(
             name='height',
             min=0.1,
             default=2.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='height'
             )
-    direction = IntProperty(
+    direction : IntProperty(
             name="direction",
             min=0,
             max=1,
             description="open direction"
             )
-    n_panels = IntProperty(
+    n_panels : IntProperty(
             name="panels",
             min=1,
             max=2,
             default=1,
             description="number of panels"
             )
-    chanfer = FloatProperty(
+    chanfer : FloatProperty(
             name='chanfer',
             min=0.001,
             default=0.005, precision=3,
             unit='LENGTH', subtype='DISTANCE',
             description='chanfer'
             )
-    panel_spacing = FloatProperty(
+    panel_spacing : FloatProperty(
             name='spacing',
             min=0.001,
             default=0.1, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance between panels'
             )
-    panel_bottom = FloatProperty(
+    panel_bottom : FloatProperty(
             name='bottom',
             default=0.0, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from bottom'
             )
-    panel_border = FloatProperty(
+    panel_border : FloatProperty(
             name='border',
             min=0.001,
             default=0.2, precision=2,
             unit='LENGTH', subtype='DISTANCE',
             description='distance from border'
             )
-    panels_x = IntProperty(
+    panels_x : IntProperty(
             name="panels h",
             min=1,
             max=50,
             default=1,
             description="panels h"
             )
-    panels_y = IntProperty(
+    panels_y : IntProperty(
             name="panels v",
             min=1,
             max=50,
             default=1,
             description="panels v"
             )
-    panels_distrib = EnumProperty(
+    panels_distrib : EnumProperty(
             name='distribution',
             items=(
                 ('REGULAR', 'Regular', '', 0),
@@ -1517,7 +1517,7 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
                 ),
             default='REGULAR'
             )
-    handle = EnumProperty(
+    handle : EnumProperty(
             name='Shape',
             items=(
                 ('NONE', 'No handle', '', 0),
@@ -1525,7 +1525,7 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
                 ),
             default='BOTH'
             )
-    mode = EnumProperty(
+    mode : EnumProperty(
             items=(
             ('CREATE', 'Create', '', 0),
             ('DELETE', 'Delete', '', 1),
@@ -1556,13 +1556,13 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
         d.panels_x = self.panels_x
         d.panels_y = self.panels_y
         d.handle = self.handle
-        context.scene.objects.link(o)
-        o.select = True
-        context.scene.objects.active = o
+        self.link_object_to_scene(context, o)
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         self.add_material(o)
         self.load_preset(d)
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         return o
 
     def delete(self, context):
@@ -1571,16 +1571,16 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
             bpy.ops.archipack.disable_manipulate()
             for child in o.children:
                 if 'archipack_hole' in child:
-                    context.scene.objects.unlink(child)
+                    self.unlink_object_from_scene(child)
                     bpy.data.objects.remove(child, do_unlink=True)
                 elif child.data is not None and 'archipack_door_panel' in child.data:
                     for handle in child.children:
                         if 'archipack_handle' in handle:
-                            context.scene.objects.unlink(handle)
+                            self.unlink_object_from_scene(handle)
                             bpy.data.objects.remove(handle, do_unlink=True)
-                    context.scene.objects.unlink(child)
+                    self.unlink_object_from_scene(child)
                     bpy.data.objects.remove(child, do_unlink=True)
-            context.scene.objects.unlink(o)
+            self.unlink_object_from_scene(o)
             bpy.data.objects.remove(o, do_unlink=True)
 
     def update(self, context):
@@ -1593,8 +1593,8 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
                 if linked != o:
                     archipack_door.datablock(linked).update(context)
         bpy.ops.object.select_all(action="DESELECT")
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
 
     def unique(self, context):
         act = context.active_object
@@ -1602,12 +1602,12 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
         bpy.ops.object.select_all(action="DESELECT")
         for o in sel:
             if archipack_door.filter(o):
-                o.select = True
+                o.select_set(state=True)
                 for child in o.children:
                     if 'archipack_hole' in child or (child.data is not None and
                        'archipack_door_panel' in child.data):
                         child.hide_select = False
-                        child.select = True
+                        child.select_set(state=True)
         if len(context.selected_objects) > 0:
             bpy.ops.object.make_single_user(type='SELECTED_OBJECTS', object=True,
                 obdata=True, material=False, texture=False, animation=False)
@@ -1615,9 +1615,9 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
                 if 'archipack_hole' in child:
                     child.hide_select = True
         bpy.ops.object.select_all(action="DESELECT")
-        context.scene.objects.active = act
+        context.view_layer.objects.active = act
         for o in sel:
-            o.select = True
+            o.select_set(state=True)
 
     def execute(self, context):
         if context.mode == "OBJECT":
@@ -1625,8 +1625,8 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
                 bpy.ops.object.select_all(action="DESELECT")
                 o = self.create(context)
                 o.location = bpy.context.scene.cursor_location
-                o.select = True
-                context.scene.objects.active = o
+                o.select_set(state=True)
+                context.view_layer.objects.active = o
                 self.manipulate()
             elif self.mode == 'DELETE':
                 self.delete(context)
@@ -1640,14 +1640,14 @@ class ARCHIPACK_OT_door(ArchipackCreateTool, Operator):
             return {'CANCELLED'}
 
 
-class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
+class ARCHIPACK_OT_door_draw(ArchipackDrawTool, Operator):
     bl_idname = "archipack.door_draw"
     bl_label = "Draw Doors"
     bl_description = "Draw Doors over walls"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
 
-    filepath = StringProperty(default="")
+    filepath : StringProperty(default="")
     feedback = None
     stack = []
     object_name = ""
@@ -1659,7 +1659,7 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def draw_callback(self, _self, context):
         self.feedback.draw(context)
@@ -1670,32 +1670,32 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
 
         if archipack_door.filter(o):
 
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
 
             if event.shift:
                 bpy.ops.archipack.door(mode="UNIQUE")
 
             new_w = o.copy()
             new_w.data = o.data
-            context.scene.objects.link(new_w)
+            self.link_object_to_scene(context, new_w)
             # instance subs
             for child in o.children:
                 if "archipack_hole" not in child:
                     new_c = child.copy()
                     new_c.data = child.data
                     new_c.parent = new_w
-                    context.scene.objects.link(new_c)
+                    self.link_object_to_scene(context, new_c)
                     # dup handle if any
                     for c in child.children:
                         new_h = c.copy()
                         new_h.data = c.data
                         new_h.parent = new_c
-                        context.scene.objects.link(new_h)
+                        self.link_object_to_scene(context, new_h)
 
             o = new_w
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
 
         else:
             bpy.ops.archipack.door(auto_manipulate=False, filepath=self.filepath)
@@ -1704,13 +1704,13 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
         self.object_name = o.name
 
         bpy.ops.archipack.generate_hole('INVOKE_DEFAULT')
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
 
     def modal(self, context, event):
 
         context.area.tag_redraw()
-        o = context.scene.objects.get(self.object_name)
+        o = context.scene.objects.get(self.object_name.strip())
         if o is None:
             return {'FINISHED'}
 
@@ -1722,14 +1722,14 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
 
         # hide hole from raycast
         if hole is not None:
-            o.hide = True
-            hole.hide = True
+            o.hide_viewport = True
+            hole.hide_viewport = True
 
-        res, tM, wall, y = self.mouse_hover_wall(context, event)
+        res, tM, wall, width, y, z_offset = self.mouse_hover_wall(context, event)
 
         if hole is not None:
-            o.hide = False
-            hole.hide = False
+            o.hide_viewport = False
+            hole.hide_viewport = False
 
         if res and d is not None:
             o.matrix_world = tM
@@ -1749,14 +1749,14 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
 
             if event.type in {'LEFTMOUSE', 'RET', 'NUMPAD_ENTER', 'SPACE'}:
                 if wall is not None:
-                    context.scene.objects.active = wall
-                    wall.select = True
+                    context.view_layer.objects.active = wall
+                    wall.select_set(state=True)
                     if bpy.ops.archipack.single_boolean.poll():
                         bpy.ops.archipack.single_boolean()
-                    wall.select = False
+                    wall.select_set(state=False)
                     # o must be a door here
                     if d is not None:
-                        context.scene.objects.active = o
+                        context.view_layer.objects.active = o
                         self.stack.append(o)
                         self.add_object(context, event)
                         context.active_object.matrix_world = tM
@@ -1771,9 +1771,9 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
                 ):
             if len(self.stack) > 0:
                 last = self.stack.pop()
-                context.scene.objects.active = last
+                context.view_layer.objects.active = last
                 bpy.ops.archipack.door(mode="DELETE")
-                context.scene.objects.active = o
+                context.view_layer.objects.active = o
             return {'RUNNING_MODAL'}
 
         if event.value == 'RELEASE':
@@ -1797,18 +1797,18 @@ class ARCHIPACK_OT_door_draw(ArchpackDrawTool, Operator):
             # invoke with alt pressed will use current object as basis for linked copy
             if self.filepath == '' and archipack_door.filter(context.active_object):
                 o = context.active_object
-            context.scene.objects.active = None
+            context.view_layer.objects.active = None
             bpy.ops.object.select_all(action="DESELECT")
             if o is not None:
-                o.select = True
-                context.scene.objects.active = o
+                o.select_set(state=True)
+                context.view_layer.objects.active = o
             self.add_object(context, event)
             self.feedback = FeedbackPanel()
             self.feedback.instructions(context, "Draw a door", "Click & Drag over a wall", [
                 ('LEFTCLICK, RET, SPACE, ENTER', 'Create a door'),
                 ('BACKSPACE, CTRL+Z', 'undo last'),
                 ('C', 'Choose another door'),
-                ('SHIFT', 'Make independant copy'),
+                ('SHIFT', 'Make independent copy'),
                 ('RIGHTCLICK or ESC', 'exit')
                 ])
             self.feedback.enable()

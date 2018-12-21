@@ -20,6 +20,8 @@
 
 import bpy
 import blf
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 from . import utils
 from mathutils import Vector
@@ -27,6 +29,8 @@ from mathutils import Vector
 SpaceView3D = bpy.types.SpaceView3D
 callback_handle = []
 
+single_color_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+smooth_color_shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
 
 def tag_redraw_areas():
     context = bpy.context
@@ -64,28 +68,16 @@ def callback_disable():
 def draw_callback_px():
     context = bpy.context
 
-    from bgl import glColor3f
-    font_id = 0  # XXX, need to find out how best to get this.
+    if context.window_manager.MathVisProp.name_hide:
+        return
+
+    font_id = 0
     blf.size(font_id, 12, 72)
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
-
-    name_hide = context.window_manager.MathVisProp.name_hide
-
-    if name_hide:
-        return
-
     if not data_matrix and not data_quat and not data_euler and not data_vector and not data_vector_array:
-
-        '''
-        # draw some text
-        glColor3f(1.0, 0.0, 0.0)
-        blf.position(font_id, 180, 10, 0)
-        blf.draw(font_id, "Python Console has no mathutils definitions")
-        '''
         return
 
-    glColor3f(1.0, 1.0, 1.0)
 
     region = context.region
     region3d = context.space_data.region_3d
@@ -93,11 +85,10 @@ def draw_callback_px():
     region_mid_width = region.width / 2.0
     region_mid_height = region.height / 2.0
 
-    # vars for projection
     perspective_matrix = region3d.perspective_matrix.copy()
 
     def draw_text(text, vec, dx=3.0, dy=-4.0):
-        vec_4d = perspective_matrix * vec.to_4d()
+        vec_4d = perspective_matrix @ vec.to_4d()
         if vec_4d.w > 0.0:
             x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
             y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
@@ -105,191 +96,138 @@ def draw_callback_px():
             blf.position(font_id, x + dx, y + dy, 0.0)
             blf.draw(font_id, text)
 
-    # points
     if data_vector:
         for key, vec in data_vector.items():
             draw_text(key, vec)
 
-    # lines
     if data_vector_array:
         for key, vec in data_vector_array.items():
             if vec:
                 draw_text(key, vec[0])
 
-    # matrix
     if data_matrix:
         for key, mat in data_matrix.items():
             loc = Vector((mat[0][3], mat[1][3], mat[2][3]))
             draw_text(key, loc, dx=10, dy=-20)
 
-    line = 20
+    offset_y = 20
     if data_quat:
         loc = context.scene.cursor_location.copy()
         for key, mat in data_quat.items():
-            draw_text(key, loc, dy=-line)
-            line += 20
+            draw_text(key, loc, dy=-offset_y)
+            offset_y += 20
 
     if data_euler:
         loc = context.scene.cursor_location.copy()
         for key, mat in data_euler.items():
-            draw_text(key, loc, dy=-line)
-            line += 20
-
+            draw_text(key, loc, dy=-offset_y)
+            offset_y += 20
 
 def draw_callback_view():
-    context = bpy.context
-
-    from bgl import (
-        glEnable,
-        glDisable,
-        glColor3f,
-        glVertex3f,
-        glPointSize,
-        glLineWidth,
-        glBegin,
-        glEnd,
-        glLineStipple,
-        GL_POINTS,
-        GL_LINE_STRIP,
-        GL_LINES,
-        GL_LINE_STIPPLE
-    )
+    settings = bpy.context.window_manager.MathVisProp
+    scale = settings.bbox_scale
+    with_bounding_box = not settings.bbox_hide
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
 
-    # draw_matrix modifiers
-    bbox_hide = context.window_manager.MathVisProp.bbox_hide
-    bbox_scale = context.window_manager.MathVisProp.bbox_scale
-
-    # draw_matrix vars
-    zero = Vector((0.0, 0.0, 0.0))
-    x_p = Vector((bbox_scale, 0.0, 0.0))
-    x_n = Vector((-bbox_scale, 0.0, 0.0))
-    y_p = Vector((0.0, bbox_scale, 0.0))
-    y_n = Vector((0.0, -bbox_scale, 0.0))
-    z_p = Vector((0.0, 0.0, bbox_scale))
-    z_n = Vector((0.0, 0.0, -bbox_scale))
-    bb = [Vector() for i in range(8)]
-
-    def draw_matrix(mat):
-        zero_tx = mat * zero
-
-        glLineWidth(2.0)
-
-        # x
-        glColor3f(1.0, 0.2, 0.2)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * x_p))
-        glEnd()
-
-        glColor3f(0.6, 0.0, 0.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * x_n))
-        glEnd()
-
-        # y
-        glColor3f(0.2, 1.0, 0.2)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * y_p))
-        glEnd()
-
-        glColor3f(0.0, 0.6, 0.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * y_n))
-        glEnd()
-
-        # z
-        glColor3f(0.4, 0.4, 1.0)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * z_p))
-        glEnd()
-
-        glColor3f(0.0, 0.0, 0.6)
-        glBegin(GL_LINES)
-        glVertex3f(*(zero_tx))
-        glVertex3f(*(mat * z_n))
-        glEnd()
-
-        # bounding box
-        if bbox_hide:
-            return
-
-        i = 0
-        glColor3f(1.0, 1.0, 1.0)
-        for x in (-bbox_scale, bbox_scale):
-            for y in (-bbox_scale, bbox_scale):
-                for z in (-bbox_scale, bbox_scale):
-                    bb[i][:] = x, y, z
-                    bb[i] = mat * bb[i]
-                    i += 1
-
-        # strip
-        glLineWidth(1.0)
-        glLineStipple(1, 0xAAAA)
-        glEnable(GL_LINE_STIPPLE)
-
-        glBegin(GL_LINE_STRIP)
-        for i in 0, 1, 3, 2, 0, 4, 5, 7, 6, 4:
-            glVertex3f(*bb[i])
-        glEnd()
-
-        # not done by the strip
-        glBegin(GL_LINES)
-        glVertex3f(*bb[1])
-        glVertex3f(*bb[5])
-
-        glVertex3f(*bb[2])
-        glVertex3f(*bb[6])
-
-        glVertex3f(*bb[3])
-        glVertex3f(*bb[7])
-        glEnd()
-        glDisable(GL_LINE_STIPPLE)
-
-    # points
     if data_vector:
-        glPointSize(3.0)
-        glBegin(GL_POINTS)
-        glColor3f(0.5, 0.5, 1)
-        for key, vec in data_vector.items():
-            glVertex3f(*vec.to_3d())
-        glEnd()
-        glPointSize(1.0)
+        coords = [tuple(vec.to_3d()) for vec in data_vector.values()]
+        draw_points(coords)
 
-    # lines
     if data_vector_array:
-        glColor3f(0.5, 0.5, 1)
-        glLineWidth(2.0)
-
         for line in data_vector_array.values():
-            glBegin(GL_LINE_STRIP)
-            for vec in line:
-                glVertex3f(*vec)
-            glEnd()
-            glPointSize(1.0)
+            coords = [tuple(vec.to_3d()) for vec in line]
+            draw_line(coords)
 
-        glLineWidth(1.0)
-
-    # matrix
     if data_matrix:
-        for mat in data_matrix.values():
-            draw_matrix(mat)
+        draw_matrices(list(data_matrix.values()), scale, with_bounding_box)
 
-    if data_quat:
-        loc = context.scene.cursor_location.copy()
+    if data_euler or data_quat:
+        cursor = bpy.context.scene.cursor_location.copy()
+        derived_matrices = []
         for quat in data_quat.values():
-            mat = quat.to_matrix().to_4x4()
-            mat.translation = loc
-            draw_matrix(mat)
-
-    if data_euler:
-        loc = context.scene.cursor_location.copy()
+            matrix = quat.to_matrix().to_4x4()
+            matrix.translation = cursor
+            derived_matrices.append(matrix)
         for eul in data_euler.values():
-            mat = eul.to_matrix().to_4x4()
-            mat.translation = loc
-            draw_matrix(mat)
+            matrix = eul.to_matrix().to_4x4()
+            matrix.translation = cursor
+            derived_matrices.append(matrix)
+        draw_matrices(derived_matrices, scale, with_bounding_box)
+
+
+def draw_points(points):
+    batch = batch_from_points(points, "POINTS")
+    single_color_shader.bind()
+    single_color_shader.uniform_float("color", (0.5, 0.5, 1, 1))
+    batch.draw(single_color_shader)
+
+def draw_line(points):
+    batch = batch_from_points(points, "LINE_STRIP")
+    single_color_shader.bind()
+    single_color_shader.uniform_float("color", (0.5, 0.5, 1, 1))
+    batch.draw(single_color_shader)
+
+def batch_from_points(points, type):
+    return batch_for_shader(single_color_shader, type, {"pos" : points})
+
+def draw_matrices(matrices, scale, with_bounding_box):
+    x_p = Vector(( scale,   0.0,   0.0))
+    x_n = Vector((-scale,   0.0,   0.0))
+    y_p = Vector((0.0,    scale,   0.0))
+    y_n = Vector((0.0,   -scale,   0.0))
+    z_p = Vector((0.0,      0.0,  scale))
+    z_n = Vector((0.0,      0.0, -scale))
+
+    red_dark =    (0.2, 0.0, 0.0, 1.0)
+    red_light =   (1.0, 0.2, 0.2, 1.0)
+    green_dark =  (0.0, 0.2, 0.0, 1.0)
+    green_light = (0.2, 1.0, 0.2, 1.0)
+    blue_dark =   (0.0, 0.0, 0.2, 1.0)
+    blue_light =  (0.4, 0.4, 1.0, 1.0)
+
+    coords = []
+    colors = []
+    for matrix in matrices:
+        coords.append(matrix @ x_n)
+        coords.append(matrix @ x_p)
+        colors.extend((red_dark, red_light))
+        coords.append(matrix @ y_n)
+        coords.append(matrix @ y_p)
+        colors.extend((green_dark, green_light))
+        coords.append(matrix @ z_n)
+        coords.append(matrix @ z_p)
+        colors.extend((blue_dark, blue_light))
+
+    batch = batch_for_shader(smooth_color_shader, "LINES", {
+        "pos" : coords,
+        "color" : colors
+    })
+    batch.draw(smooth_color_shader)
+
+    if with_bounding_box:
+        draw_bounding_boxes(matrices, scale, (1.0, 1.0, 1.0, 1.0))
+
+def draw_bounding_boxes(matrices, scale, color):
+    boundbox_points = []
+    for x in (-scale, scale):
+        for y in (-scale, scale):
+            for z in (-scale, scale):
+                boundbox_points.append(Vector((x, y, z)))
+
+    boundbox_lines = [
+        (0, 1), (1, 3), (3, 2), (2, 0), (0, 4), (4, 5),
+        (5, 7), (7, 6), (6, 4), (1, 5), (2, 6), (3, 7)
+    ]
+
+    points = []
+    for matrix in matrices:
+        for v1, v2 in boundbox_lines:
+            points.append(matrix @ boundbox_points[v1])
+            points.append(matrix @ boundbox_points[v2])
+
+    batch = batch_from_points(points, "LINES")
+
+    single_color_shader.bind()
+    single_color_shader.uniform_float("color", color)
+    batch.draw(single_color_shader)

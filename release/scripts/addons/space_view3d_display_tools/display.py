@@ -82,10 +82,10 @@ class DisplayDrawChange(Operator, BasePollCheck):
 
             if not selection:
                 for obj in bpy.data.objects:
-                    obj.draw_type = self.drawing
+                    obj.display_type = self.drawing
             else:
                 for obj in selection:
-                    obj.draw_type = self.drawing
+                    obj.display_type = self.drawing
         except:
             self.report({'ERROR'}, "Setting Draw Type could not be applied")
             return {'CANCELLED'}
@@ -110,12 +110,12 @@ class DisplayBoundsSwitch(Operator, BasePollCheck):
                 for obj in bpy.data.objects:
                     obj.show_bounds = self.bounds
                     if self.bounds:
-                        obj.draw_bounds_type = scene.BoundingMode
+                        obj.display_bounds_type = scene.BoundingMode
             else:
                 for obj in selection:
                     obj.show_bounds = self.bounds
                     if self.bounds:
-                        obj.draw_bounds_type = scene.BoundingMode
+                        obj.display_bounds_type = scene.BoundingMode
         except:
             self.report({'ERROR'}, "Display/Hide Bounding box overlay failed")
             return {'CANCELLED'}
@@ -164,10 +164,10 @@ class DisplayXRayOn(Operator, BasePollCheck):
 
             if not selection:
                 for obj in bpy.data.objects:
-                    obj.show_x_ray = self.xrays
+                    obj.show_in_front = self.xrays
             else:
                 for obj in selection:
-                    obj.show_x_ray = self.xrays
+                    obj.show_in_front = self.xrays
         except:
             self.report({'ERROR'}, "Turn on/off X-ray mode failed")
             return {'CANCELLED'}

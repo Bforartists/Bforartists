@@ -520,7 +520,7 @@ def _ReveresedEdges(tris, td, bord, points):
 def _IsReversed(e, td, points):
     """If e=(a,b) is a non-border edge, with left-face triangle tl and
     right-face triangle tr, then it is 'reversed' if the circle through
-    a, b, and (say) the other vertex of tl containts the other vertex of tr.
+    a, b, and (say) the other vertex of tl contains the other vertex of tr.
     td is a _TriDict, for finding triangles containing edges, and points
     gives the coordinates for vertex indices used in edges."""
 

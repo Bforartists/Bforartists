@@ -36,6 +36,7 @@
 
 /* internal exports only */
 
+struct Depsgraph;
 struct Sequence;
 struct bContext;
 struct rctf;
@@ -56,15 +57,13 @@ struct ARegion *sequencer_has_buttons_region(struct ScrArea *sa);
 void draw_timeline_seq(const struct bContext *C, struct ARegion *ar);
 void draw_image_seq(const struct bContext *C, struct Scene *scene, struct  ARegion *ar, struct SpaceSeq *sseq, int cfra, int offset, bool draw_overlay, bool draw_backdrop);
 void color3ubv_from_seq(struct Scene *curscene, struct Sequence *seq, unsigned char col[3]);
-void draw_shadedstrip(struct Sequence *seq, unsigned char col[3], float x1, float y1, float x2, float y2);
-void draw_sequence_extensions(struct Scene *scene, struct ARegion *ar, struct Sequence *seq);
 
 void sequencer_special_update_set(Sequence *seq);
 
 /* UNUSED */
 // void seq_reset_imageofs(struct SpaceSeq *sseq);
 
-struct ImBuf *sequencer_ibuf_get(struct Main *bmain, struct Scene *scene, struct SpaceSeq *sseq, int cfra, int frame_ofs, const char *viewname);
+struct ImBuf *sequencer_ibuf_get(struct Main *bmain, struct Depsgraph *depsgraph, struct Scene *scene, struct SpaceSeq *sseq, int cfra, int frame_ofs, const char *viewname);
 
 /* sequencer_edit.c */
 struct View2D;
@@ -149,7 +148,7 @@ void SEQUENCER_OT_select_linked(struct wmOperatorType *ot);
 void SEQUENCER_OT_select_linked_pick(struct wmOperatorType *ot);
 void SEQUENCER_OT_select_handles(struct wmOperatorType *ot);
 void SEQUENCER_OT_select_active_side(struct wmOperatorType *ot);
-void SEQUENCER_OT_select_border(struct wmOperatorType *ot);
+void SEQUENCER_OT_select_box(struct wmOperatorType *ot);
 void SEQUENCER_OT_select_inverse(struct wmOperatorType *ot);
 void SEQUENCER_OT_select_grouped(struct wmOperatorType *ot);
 

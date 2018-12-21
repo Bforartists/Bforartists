@@ -62,7 +62,7 @@ def face_inset_fillet(bme, face_index_list, inset_amount, distance,
         bme.faces.ensure_lookup_table()
         # loops through the faces...
         f = bme.faces[faceindex]
-        f.select_set(0)
+        f.select_set(False)
         list_del.append(f)
         f.normal_update()
         vertex_index_list = [v.index for v in f.verts]

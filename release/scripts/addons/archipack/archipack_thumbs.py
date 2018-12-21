@@ -33,38 +33,30 @@ def log(s):
     print("[log]" + s)
 
 
-def generateThumb(context, cls, preset):
-    log("### RENDER THUMB ############################")
-    log("Start generating: " + cls)
+def create_lamp(context, loc):
+    bpy.ops.object.light_add(
+        type='POINT',
+        radius=1,
+        view_align=False,
+        location=loc)
+    lamp = context.active_object
+    lamp.data.use_nodes = True
+    tree = lamp.data.node_tree
+    return tree, tree.nodes, lamp.data
 
-    # engine settings
-    context.scene.render.engine = 'CYCLES'
-    render = context.scene.cycles
-    render.progressive = 'PATH'
-    render.samples = 24
-    try:
-        render.use_square_samples = True
-    except:
-        pass
-    render.preview_samples = 24
-    render.aa_samples = 24
-    render.transparent_max_bounces = 8
-    render.transparent_min_bounces = 8
-    render.transmission_bounces = 8
-    render.max_bounces = 8
-    render.min_bounces = 6
-    render.caustics_refractive = False
-    render.caustics_reflective = False
-    render.use_transparent_shadows = True
-    render.diffuse_bounces = 1
-    render.glossy_bounces = 4
-    bpy.ops.object.select_all(action="SELECT")
-    bpy.ops.object.delete()
-    # create object, loading preset
-    getattr(bpy.ops.archipack, cls)('INVOKE_DEFAULT', filepath=preset, auto_manipulate=False)
 
-    o = context.active_object
-    size = o.dimensions
+def create_camera(context, loc, rot):
+    bpy.ops.object.camera_add(
+        view_align=True,
+        enter_editmode=False,
+        location=loc,
+        rotation=rot)
+    cam = context.active_object
+    context.scene.camera = cam
+    return cam
+
+
+def get_center(o):
     x, y, z = o.bound_box[0]
     min_x = x
     min_y = y
@@ -73,93 +65,131 @@ def generateThumb(context, cls, preset):
     max_x = x
     max_y = y
     max_z = z
-    center = Vector((
+    return Vector((
         min_x + 0.5 * (max_x - min_x),
         min_y + 0.5 * (max_y - min_y),
         min_z + 0.5 * (max_z - min_z)))
 
-    # oposite / tan (0.5 * fov)  where fov is 49.134 deg
+
+def apply_simple_material(o, name, color):
+    m = bpy.data.materials.new(name)
+    m.use_nodes = True
+    m.node_tree.nodes[1].inputs[0].default_value = color
+    o.data.materials.append(m)
+
+
+# /home/stephen/blender-28-git/build_linux_full/bin/blender --background --factory-startup -noaudio --python /home/stephen/blender-28-git/build_linux_full/bin/2.80/scripts/addons/archipack/archipack_thumbs.py -- addon:archipack matlib:/medias/stephen/DATA/lib/ cls:roof preset:/home/stephen/.config/blender/2.80/scripts/presets/archipack_roof/square.py
+
+
+def generateThumb(context, cls, preset, engine):
+    log("### RENDER THUMB ############################")
+
+    # Cleanup scene
+    for o in context.scene.objects:
+        o.select_set(state=True)
+
+    bpy.ops.object.delete()
+
+    log("Start generating: %s" % cls)
+
+    # setup render
+
+    context.scene.render.engine = engine
+
+    if engine == 'CYCLES':
+        cycles = context.scene.cycles
+        cycles.progressive = 'PATH'
+        cycles.samples = 24
+        try:
+            cycles.use_square_samples = True
+        except:
+            pass
+        cycles.preview_samples = 24
+        cycles.aa_samples = 24
+        cycles.transparent_max_bounces = 8
+        cycles.transparent_min_bounces = 8
+        cycles.transmission_bounces = 8
+        cycles.max_bounces = 8
+        cycles.min_bounces = 6
+        cycles.caustics_refractive = False
+        cycles.caustics_reflective = False
+        cycles.use_transparent_shadows = True
+        cycles.diffuse_bounces = 1
+        cycles.glossy_bounces = 4
+
+    elif engine == 'BLENDER_EEVEE':
+        eevee = context.scene.eevee
+        eevee.use_gtao = True
+        eevee.use_ssr = True
+        eevee.use_soft_shadows = True
+        eevee.taa_render_samples = 64
+    else:
+        raise RuntimeError("Unsupported render engine %s" % engine)
+
+    render = context.scene.render
+
+    # engine settings
+    render.resolution_x = 150
+    render.resolution_y = 100
+    render.filepath = preset[:-3] + ".png"
+
+    # create object, loading preset
+    getattr(bpy.ops.archipack, cls)('INVOKE_DEFAULT', filepath=preset, auto_manipulate=False)
+    o = context.active_object
+    size = o.dimensions
+    center = get_center(o)
+
+    # opposite / tan (0.5 * fov)  where fov is 49.134 deg
     dist = max(size) / 0.32
-    loc = center + dist * Vector((0.5, -1, 0.5)).normalized()
+    loc = center + dist * Vector((-0.5, -1, 0.5)).normalized()
 
     log("Prepare camera")
-    bpy.ops.object.camera_add(view_align=True,
-        enter_editmode=False,
-        location=loc,
-        rotation=(1.150952, 0.0, 0.462509))
-    cam = context.active_object
+    cam = create_camera(context, loc, (1.150952, 0.0, -0.462509))
     cam.data.lens = 50
-    cam.select = True
-    context.scene.camera = cam
 
-    bpy.ops.object.select_all(action="DESELECT")
-    o.select = True
+    for ob in context.scene.objects:
+        ob.select_set(state=False)
+
+    o.select_set(state=True)
+
     bpy.ops.view3d.camera_to_view_selected()
+    cam.data.lens = 45
 
     log("Prepare scene")
     # add plane
     bpy.ops.mesh.primitive_plane_add(
-        radius=1000,
+        size=1000,
         view_align=False,
         enter_editmode=False,
         location=(0, 0, 0)
-        )
+    )
+
     p = context.active_object
-    m = bpy.data.materials.new("Plane")
-    m.use_nodes = True
-    m.node_tree.nodes[1].inputs[0].default_value = (1, 1, 1, 1)
-    p.data.materials.append(m)
+    apply_simple_material(p, "Plane", (1, 1, 1, 1))
 
     # add 3 lights
-    bpy.ops.object.lamp_add(
-        type='POINT',
-        radius=1,
-        view_align=False,
-        location=(3.69736, -7, 6.0))
-    l = context.active_object
-    l.data.use_nodes = True
-    tree = l.data.node_tree
-    nodes = l.data.node_tree.nodes
+    tree, nodes, lamp = create_lamp(context, (3.69736, -7, 6.0))
+    lamp.energy = 50
     emit = nodes["Emission"]
     emit.inputs[1].default_value = 2000.0
 
-    bpy.ops.object.lamp_add(
-        type='POINT',
-        radius=1,
-        view_align=False,
-        location=(9.414563179016113, 5.446230888366699, 5.903861999511719))
-    l = context.active_object
-    l.data.use_nodes = True
-    tree = l.data.node_tree
-    nodes = l.data.node_tree.nodes
+    tree, nodes, lamp = create_lamp(context, (9.414563179016113, 5.446230888366699, 5.903861999511719))
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5
     tree.links.new(falloff.outputs[2], emit.inputs[1])
 
-    bpy.ops.object.lamp_add(
-        type='POINT',
-        radius=1,
-        view_align=False,
-        location=(-7.847615718841553, 1.03135085105896, 5.903861999511719))
-    l = context.active_object
-    l.data.use_nodes = True
-    tree = l.data.node_tree
-    nodes = l.data.node_tree.nodes
+    tree, nodes, lamp = create_lamp(context, (-7.847615718841553, 1.03135085105896, 5.903861999511719))
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5
     tree.links.new(falloff.outputs[2], emit.inputs[1])
 
     # Set output filename.
-    render = context.scene.render
-    render.filepath = preset[:-3] + ".png"
     render.use_file_extension = True
     render.use_overwrite = True
     render.use_compositing = False
     render.use_sequencer = False
-    render.resolution_x = 150
-    render.resolution_y = 100
     render.resolution_percentage = 100
     # render.image_settings.file_format = 'PNG'
     # render.image_settings.color_mode = 'RGBA'
@@ -175,8 +205,9 @@ def generateThumb(context, cls, preset):
 
 
 if __name__ == "__main__":
-    preset = ""
 
+    preset = ""
+    engine = 'BLENDER_EEVEE' #'CYCLES'
     for arg in sys.argv:
         if arg.startswith("cls:"):
             cls = arg[4:]
@@ -186,9 +217,14 @@ if __name__ == "__main__":
             matlib = arg[7:]
         if arg.startswith("addon:"):
             module = arg[6:]
+        if arg.startswith("engine:"):
+            engine = arg[7:]
     try:
+        # log("### ENABLE %s ADDON ############################" % module)
         bpy.ops.wm.addon_enable(module=module)
+        # log("### MATLIB PATH ############################")
         bpy.context.user_preferences.addons[module].preferences.matlib_path = matlib
     except:
         raise RuntimeError("module name not found")
-    generateThumb(bpy.context, cls, preset)
+    # log("### GENERATE ############################")
+    generateThumb(bpy.context, cls, preset, engine)

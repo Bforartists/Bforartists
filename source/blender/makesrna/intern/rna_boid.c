@@ -87,20 +87,22 @@ static const EnumPropertyItem boidruleset_type_items[] = {
 #include "BLI_math_base.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_particle.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 static void rna_Boids_reset(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
 	if (ptr->type == &RNA_ParticleSystem) {
 		ParticleSystem *psys = (ParticleSystem *)ptr->data;
 
-		psys->recalc = PSYS_RECALC_RESET;
+		psys->recalc = ID_RECALC_PSYS_RESET;
 
-		DAG_id_tag_update(ptr->id.data, OB_RECALC_DATA);
+		DEG_id_tag_update(ptr->id.data, ID_RECALC_GEOMETRY);
 	}
 	else
-		DAG_id_tag_update(ptr->id.data, OB_RECALC_DATA | PSYS_RECALC_RESET);
+		DEG_id_tag_update(ptr->id.data, ID_RECALC_GEOMETRY | ID_RECALC_PSYS_RESET);
 
 	WM_main_add_notifier(NC_OBJECT | ND_PARTICLE | NA_EDITED, NULL);
 }
@@ -109,14 +111,14 @@ static void rna_Boids_reset_deps(Main *bmain, Scene *UNUSED(scene), PointerRNA *
 	if (ptr->type == &RNA_ParticleSystem) {
 		ParticleSystem *psys = (ParticleSystem *)ptr->data;
 
-		psys->recalc = PSYS_RECALC_RESET;
+		psys->recalc = ID_RECALC_PSYS_RESET;
 
-		DAG_id_tag_update(ptr->id.data, OB_RECALC_DATA);
+		DEG_id_tag_update(ptr->id.data, ID_RECALC_GEOMETRY);
 	}
 	else
-		DAG_id_tag_update(ptr->id.data, OB_RECALC_DATA | PSYS_RECALC_RESET);
+		DEG_id_tag_update(ptr->id.data, ID_RECALC_GEOMETRY | ID_RECALC_PSYS_RESET);
 
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	WM_main_add_notifier(NC_OBJECT | ND_PARTICLE | NA_EDITED, NULL);
 }

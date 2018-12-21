@@ -108,7 +108,7 @@ branchmodes = [("original", "Original", "rotate around each branch"),
 
 def getPresetpath():
     """Support user defined scripts directory
-       Find the first ocurrence of add_curve_sapling/presets in possible script paths
+       Find the first occurrence of add_curve_sapling/presets in possible script paths
        and return it as preset path"""
     # presetpath = ""
     # for p in bpy.utils.script_paths():
@@ -526,7 +526,7 @@ class AddTree(Operator):
         )
     autoTaper = BoolProperty(
         name='Auto Taper',
-        description='Calculate taper automaticly based on branch lengths',
+        description='Calculate taper automatically based on branch lengths',
         default=True, update=update_tree
         )
     taper = FloatVectorProperty(
@@ -804,7 +804,7 @@ class AddTree(Operator):
         )
     gustF = FloatProperty(
         name='Wind Gust Fequency',
-        description='The Fequency of directional movement',
+        description='The Frequency of directional movement',
         default=0.075, update=update_tree
         )
     af1 = FloatProperty(
@@ -1126,13 +1126,13 @@ def menu_func(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_curve_add.append(menu_func)
+    bpy.types.VIEW3D_MT_curve_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_curve_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
 
 
 if __name__ == "__main__":

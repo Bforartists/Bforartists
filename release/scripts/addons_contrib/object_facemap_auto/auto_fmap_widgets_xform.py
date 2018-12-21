@@ -52,7 +52,7 @@ def calc_view_vector(context):
 
 def pose_bone_calc_transform_orientation(pose_bone):
     ob_pose = pose_bone.id_data
-    return (ob_pose.matrix_world * pose_bone.matrix).inverted().to_3x3()
+    return (ob_pose.matrix_world @ pose_bone.matrix).inverted().to_3x3()
 
 
 def pose_bone_rotation_attr_from_mode(pose_bone):
@@ -128,6 +128,8 @@ def widget_iter_template(context, mpr, ob, fmap, fmap_target):
         event, tweak_next = yield
         if event in {True, False}:
             break
+        if event.type == 'INBETWEEN_MOUSEMOVE':
+            continue
         tweak = tweak_next
 
         if USE_VERBOSE:
@@ -137,7 +139,7 @@ def widget_iter_template(context, mpr, ob, fmap, fmap_target):
     if USE_VERBOSE:
         print("(iter-exit)", event)
 
-    context.area.header_text_set()
+    context.area.header_text_set(None)
 
 
 def widget_iter_pose_translate(context, mpr, ob, fmap, fmap_target):
@@ -182,6 +184,8 @@ def widget_iter_pose_translate(context, mpr, ob, fmap, fmap_target):
         event, tweak_next = yield
         if event in {True, False}:
             break
+        if event.type == 'INBETWEEN_MOUSEMOVE':
+            continue
         tweak = tweak_next
 
         if USE_VERBOSE:
@@ -190,7 +194,7 @@ def widget_iter_pose_translate(context, mpr, ob, fmap, fmap_target):
         mval = Vector((event.mouse_region_x, event.mouse_region_y))
 
         co_init, co = coords_to_loc_3d(context, (mval_init, mval), depth_location)
-        loc_delta = world_to_local_3x3 * (co - co_init)
+        loc_delta = world_to_local_3x3 @ (co - co_init)
 
         input_scale = 1.0
         is_precise = 'PRECISE' in tweak
@@ -213,7 +217,7 @@ def widget_iter_pose_translate(context, mpr, ob, fmap, fmap_target):
     else:
         pose_bone_autokey(pose_bone, tweak_attr, tweak_attr_lock)
 
-    context.area.header_text_set()
+    context.area.header_text_set(None)
 
 
 def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
@@ -253,7 +257,7 @@ def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
     world_to_local_3x3 = pose_bone_calc_transform_orientation(pose_bone)
 
     # for rotation
-    local_view_vector = (calc_view_vector(context) * world_to_local_3x3).normalized()
+    local_view_vector = (calc_view_vector(context) @ world_to_local_3x3).normalized()
 
     rot_init = getattr(pose_bone, tweak_attr).copy()
 
@@ -262,6 +266,8 @@ def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
         event, tweak_next = yield
         if event in {True, False}:
             break
+        if event.type == 'INBETWEEN_MOUSEMOVE':
+            continue
         tweak = tweak_next
 
         if USE_VERBOSE:
@@ -271,7 +277,7 @@ def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
 
         # calculate rotation matrix from input
         co_init, co = coords_to_loc_3d(context, (mval_init, mval), depth_location)
-        # co_delta = world_to_local_3x3 * (co - co_init)
+        # co_delta = world_to_local_3x3 @ (co - co_init)
 
         input_scale = 1.0
         is_precise = 'PRECISE' in tweak
@@ -302,7 +308,7 @@ def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
             # rot_delta = (co_init - rot_center).rotation_difference(co - rot_center).to_matrix()
 
         rot_matrix = rot_init.to_matrix()
-        rot_matrix = rot_matrix * rot_delta
+        rot_matrix = rot_matrix @ rot_delta
 
         if tweak_attr == "rotation_quaternion":
             final_value = rot_matrix.to_quaternion()
@@ -323,7 +329,7 @@ def widget_iter_pose_rotate(context, mpr, ob, fmap, fmap_target):
     else:
         pose_bone_autokey(pose_bone, tweak_attr, tweak_attr_lock)
 
-    context.area.header_text_set()
+    context.area.header_text_set(None)
 
 
 def widget_iter_pose_scale(context, mpr, ob, fmap, fmap_target):
@@ -360,6 +366,8 @@ def widget_iter_pose_scale(context, mpr, ob, fmap, fmap_target):
         event, tweak_next = yield
         if event in {True, False}:
             break
+        if event.type == 'INBETWEEN_MOUSEMOVE':
+            continue
         tweak = tweak_next
 
         if USE_VERBOSE:
@@ -387,7 +395,7 @@ def widget_iter_pose_scale(context, mpr, ob, fmap, fmap_target):
     else:
         pose_bone_autokey(pose_bone, tweak_attr, tweak_attr_lock)
 
-    context.area.header_text_set()
+    context.area.header_text_set(None)
 
 
 def widget_iter_shapekey(context, mpr, ob, fmap, fmap_target):
@@ -422,6 +430,8 @@ def widget_iter_shapekey(context, mpr, ob, fmap, fmap_target):
         event, tweak_next = yield
         if event in {True, False}:
             break
+        if event.type == 'INBETWEEN_MOUSEMOVE':
+            continue
         tweak = tweak_next
 
         if USE_VERBOSE:
@@ -448,7 +458,7 @@ def widget_iter_shapekey(context, mpr, ob, fmap, fmap_target):
     else:
         shape.id_data.keyframe_insert(shape.path_from_id() + ".value")
 
-    context.area.header_text_set()
+    context.area.header_text_set(None)
 
 
 # -------------------------

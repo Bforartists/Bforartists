@@ -31,6 +31,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_armature_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_text_types.h" /* for UI_OT_reports_to_text */
 #include "DNA_object_types.h" /* for OB_DATA_SUPPORT_ID */
@@ -42,14 +43,23 @@
 #include "BLT_lang.h"
 
 #include "BKE_context.h"
-#include "BKE_screen.h"
 #include "BKE_global.h"
+#include "BKE_idprop.h"
+#include "BKE_layer.h"
+#include "BKE_library.h"
+#include "BKE_library_override.h"
 #include "BKE_node.h"
-#include "BKE_text.h" /* for UI_OT_reports_to_text */
 #include "BKE_report.h"
+#include "BKE_screen.h"
+#include "BKE_text.h" /* for UI_OT_reports_to_text */
+
+#include "IMB_colormanagement.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
+#include "RNA_types.h"
 
 #include "UI_interface.h"
 
@@ -58,6 +68,7 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "ED_object.h"
 #include "ED_paint.h"
 
 /* only for UI_OT_editsource */
@@ -328,6 +339,217 @@ static void UI_OT_unset_property_button(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 }
 
+
+/* Note that we use different values for UI/UX than 'real' override operations, user does not care
+ * whether it's added or removed for the differential operation e.g. */
+enum {
+	UIOverride_Type_NOOP = 0,
+	UIOverride_Type_Replace = 1,
+	UIOverride_Type_Difference = 2,  /* Add/subtract */
+	UIOverride_Type_Factor = 3,  /* Multiply */
+	/* TODO: should/can we expose insert/remove ones for collections? Doubt it... */
+};
+
+static EnumPropertyItem override_type_items[] = {
+	{UIOverride_Type_NOOP, "NOOP", 0, "NoOp",
+	 "'No-Operation', place holder preventing automatic override to ever affect the property"},
+	{UIOverride_Type_Replace, "REPLACE", 0, "Replace", "Completely replace value from linked data by local one"},
+	{UIOverride_Type_Difference, "DIFFERENCE", 0, "Difference", "Store difference to linked data value"},
+	{UIOverride_Type_Factor, "FACTOR", 0, "Factor", "Store factor to linked data value (useful e.g. for scale)"},
+	{0, NULL, 0, NULL, NULL}
+};
+
+
+static bool override_type_set_button_poll(bContext *C)
+{
+	PointerRNA ptr;
+	PropertyRNA *prop;
+	int index;
+
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	const int override_status = RNA_property_static_override_status(&ptr, prop, index);
+
+	return (ptr.data && prop && (override_status & RNA_OVERRIDE_STATUS_OVERRIDABLE));
+}
+
+static int override_type_set_button_exec(bContext *C, wmOperator *op)
+{
+	PointerRNA ptr;
+	PropertyRNA *prop;
+	int index;
+	bool created;
+	const bool all = RNA_boolean_get(op->ptr, "all");
+	const int op_type = RNA_enum_get(op->ptr, "type");
+
+	short operation;
+
+	switch (op_type) {
+		case UIOverride_Type_NOOP:
+			operation = IDOVERRIDESTATIC_OP_NOOP;
+			break;
+		case UIOverride_Type_Replace:
+			operation = IDOVERRIDESTATIC_OP_REPLACE;
+			break;
+		case UIOverride_Type_Difference:
+			operation = IDOVERRIDESTATIC_OP_ADD;  /* override code will automatically switch to subtract if needed. */
+			break;
+		case UIOverride_Type_Factor:
+			operation = IDOVERRIDESTATIC_OP_MULTIPLY;
+			break;
+		default:
+			operation = IDOVERRIDESTATIC_OP_REPLACE;
+			BLI_assert(0);
+			break;
+	}
+
+	/* try to reset the nominated setting to its default value */
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	BLI_assert(ptr.id.data != NULL);
+
+	if (all) {
+		index = -1;
+	}
+
+	IDOverrideStaticPropertyOperation *opop = RNA_property_override_property_operation_get(
+	        &ptr, prop, operation, index, true, NULL, &created);
+	if (!created) {
+		opop->operation = operation;
+	}
+
+	return operator_button_property_finish(C, &ptr, prop);
+}
+
+static int override_type_set_button_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+#if 0  /* Disabled for now */
+	return WM_menu_invoke_ex(C, op, WM_OP_INVOKE_DEFAULT);
+#else
+	RNA_enum_set(op->ptr, "type", IDOVERRIDESTATIC_OP_REPLACE);
+	return override_type_set_button_exec(C, op);
+#endif
+}
+
+static void UI_OT_override_type_set_button(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Define Override Type";
+	ot->idname = "UI_OT_override_type_set_button";
+	ot->description = "Create an override operation, or set the type of an existing one";
+
+	/* callbacks */
+	ot->poll = override_type_set_button_poll;
+	ot->exec = override_type_set_button_exec;
+	ot->invoke = override_type_set_button_invoke;
+
+	/* flags */
+	ot->flag = OPTYPE_UNDO;
+
+	/* properties */
+	RNA_def_boolean(ot->srna, "all", 1, "All", "Reset to default values all elements of the array");
+	ot->prop = RNA_def_enum(
+	        ot->srna, "type", override_type_items, UIOverride_Type_Replace,
+	        "Type", "Type of override operation");
+	/* TODO: add itemf callback, not all options are available for all data types... */
+}
+
+
+static bool override_remove_button_poll(bContext *C)
+{
+	PointerRNA ptr;
+	PropertyRNA *prop;
+	int index;
+
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	const int override_status = RNA_property_static_override_status(&ptr, prop, index);
+
+	return (ptr.data && ptr.id.data && prop && (override_status & RNA_OVERRIDE_STATUS_OVERRIDDEN));
+}
+
+static int override_remove_button_exec(bContext *C, wmOperator *op)
+{
+	Main *bmain = CTX_data_main(C);
+	PointerRNA ptr, id_refptr, src;
+	PropertyRNA *prop;
+	int index;
+	const bool all = RNA_boolean_get(op->ptr, "all");
+
+	/* try to reset the nominated setting to its default value */
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	ID *id = ptr.id.data;
+	IDOverrideStaticProperty *oprop = RNA_property_override_property_find(&ptr, prop);
+	BLI_assert(oprop != NULL);
+	BLI_assert(id != NULL && id->override_static != NULL);
+
+	const bool is_template = (id->override_static->reference == NULL);
+
+	/* We need source (i.e. linked data) to restore values of deleted overrides...
+	 * If this is an override template, we obviously do not need to restore anything. */
+	if (!is_template) {
+		RNA_id_pointer_create(id->override_static->reference, &id_refptr);
+		if (!RNA_path_resolve(&id_refptr, oprop->rna_path, &src, NULL)) {
+			BLI_assert(0 && "Failed to create matching source (linked data) RNA pointer");
+		}
+	}
+
+	if (!all && index != -1) {
+		bool is_strict_find;
+		/* Remove override operation for given item, add singular operations for the other items as needed. */
+		IDOverrideStaticPropertyOperation *opop = BKE_override_static_property_operation_find(
+		        oprop, NULL, NULL, index, index, false, &is_strict_find);
+		BLI_assert(opop != NULL);
+		if (!is_strict_find) {
+			/* No specific override operation, we have to get generic one,
+			 * and create item-specific override operations for all but given index, before removing generic one. */
+			for (int idx = RNA_property_array_length(&ptr, prop); idx--; ) {
+				if (idx != index) {
+					BKE_override_static_property_operation_get(oprop, opop->operation, NULL, NULL, idx, idx, true, NULL, NULL);
+				}
+			}
+		}
+		BKE_override_static_property_operation_delete(oprop, opop);
+		if (!is_template) {
+			RNA_property_copy(bmain, &ptr, &src, prop, index);
+		}
+		if (BLI_listbase_is_empty(&oprop->operations)) {
+			BKE_override_static_property_delete(id->override_static, oprop);
+		}
+	}
+	else {
+		/* Just remove whole generic override operation of this property. */
+		BKE_override_static_property_delete(id->override_static, oprop);
+		if (!is_template) {
+			RNA_property_copy(bmain, &ptr, &src, prop, -1);
+		}
+	}
+
+	return operator_button_property_finish(C, &ptr, prop);
+}
+
+static void UI_OT_override_remove_button(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Remove Override";
+	ot->idname = "UI_OT_override_remove_button";
+	ot->description = "Remove an override operation";
+
+	/* callbacks */
+	ot->poll = override_remove_button_poll;
+	ot->exec = override_remove_button_exec;
+
+	/* flags */
+	ot->flag = OPTYPE_UNDO;
+
+	/* properties */
+	RNA_def_boolean(ot->srna, "all", 1, "All", "Reset to default values all elements of the array");
+}
+
+
+
+
 /* Copy To Selected Operator ------------------------ */
 
 bool UI_context_copy_to_selected_list(
@@ -484,6 +706,7 @@ bool UI_context_copy_to_selected_list(
  */
 static bool copy_to_selected_button(bContext *C, bool all, bool poll)
 {
+	Main *bmain = CTX_data_main(C);
 	PointerRNA ptr, lptr, idptr;
 	PropertyRNA *prop, *lprop;
 	bool success = false;
@@ -532,7 +755,7 @@ static bool copy_to_selected_button(bContext *C, bool all, bool poll)
 								break;
 							}
 							else {
-								if (RNA_property_copy(&lptr, &ptr, prop, (all) ? -1 : index)) {
+								if (RNA_property_copy(bmain, &lptr, &ptr, prop, (all) ? -1 : index)) {
 									RNA_property_update(C, &lptr, prop);
 									success = true;
 								}
@@ -582,6 +805,153 @@ static void UI_OT_copy_to_selected_button(wmOperatorType *ot)
 	/* properties */
 	RNA_def_boolean(ot->srna, "all", true, "All", "Copy to selected all elements of the array");
 }
+
+
+/* -------------------------------------------------------------------- */
+/** \name Jump to Target Operator
+ * \{ */
+
+/** Jump to the object or bone referenced by the pointer, or check if it is possible. */
+static bool jump_to_target_ptr(bContext *C, PointerRNA ptr, const bool poll)
+{
+	if (RNA_pointer_is_null(&ptr)) {
+		return false;
+	}
+
+	/* Verify pointer type. */
+	char bone_name[MAXBONENAME];
+	const StructRNA *target_type = NULL;
+
+	if (ELEM(ptr.type, &RNA_EditBone, &RNA_PoseBone, &RNA_Bone)) {
+		RNA_string_get(&ptr, "name", bone_name);
+		if (bone_name[0] != '\0') {
+			target_type = &RNA_Bone;
+		}
+	}
+	else if (RNA_struct_is_a(ptr.type, &RNA_Object)) {
+		target_type = &RNA_Object;
+	}
+
+	if (target_type == NULL) {
+		return false;
+	}
+
+	/* Find the containing Object. */
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Base *base = NULL;
+	const short id_type = GS(((ID *)ptr.id.data)->name);
+	if (id_type == ID_OB) {
+		base = BKE_view_layer_base_find(view_layer, ptr.id.data);
+	}
+	else if (OB_DATA_SUPPORT_ID(id_type)) {
+		base = ED_object_find_first_by_data_id(view_layer, ptr.id.data);
+	}
+
+	bool ok = false;
+	if ((base == NULL) ||
+	    ((target_type == &RNA_Bone) && (base->object->type != OB_ARMATURE)))
+	{
+		/* pass */
+	}
+	else if (poll) {
+		ok = true;
+	}
+	else {
+		/* Make optional. */
+		const bool reveal_hidden = true;
+		/* Select and activate the target. */
+		if (target_type == &RNA_Bone) {
+			ok = ED_object_jump_to_bone(C, base->object, bone_name, reveal_hidden);
+		}
+		else if (target_type == &RNA_Object) {
+			ok = ED_object_jump_to_object(C, base->object, reveal_hidden);
+		}
+		else {
+			BLI_assert(0);
+		}
+	}
+	return ok;
+}
+
+/**
+ * Jump to the object or bone referred to by the current UI field value.
+ *
+ * \note quite heavy for a poll callback, but the operator is only
+ * used as a right click menu item for certain UI field types, and
+ * this will fail quickly if the context is completely unsuitable.
+ */
+static bool jump_to_target_button(bContext *C, bool poll)
+{
+	PointerRNA ptr, target_ptr;
+	PropertyRNA *prop;
+	int index;
+
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	/* If there is a valid property... */
+	if (ptr.data && prop) {
+		const PropertyType type = RNA_property_type(prop);
+
+		/* For pointer properties, use their value directly. */
+		if (type == PROP_POINTER) {
+			target_ptr = RNA_property_pointer_get(&ptr, prop);
+
+			return jump_to_target_ptr(C, target_ptr, poll);
+		}
+		/* For string properties with prop_search, look up the search collection item. */
+		else if (type == PROP_STRING) {
+			const uiBut *but = UI_context_active_but_get(C);
+
+			if (but->type == UI_BTYPE_SEARCH_MENU && but->search_func == ui_rna_collection_search_cb) {
+				uiRNACollectionSearch *coll_search = but->search_arg;
+
+				char str_buf[MAXBONENAME];
+				char *str_ptr = RNA_property_string_get_alloc(&ptr, prop, str_buf, sizeof(str_buf), NULL);
+
+				int found = RNA_property_collection_lookup_string(&coll_search->search_ptr, coll_search->search_prop, str_ptr, &target_ptr);
+
+				if (str_ptr != str_buf) {
+					MEM_freeN(str_ptr);
+				}
+
+				if (found) {
+					return jump_to_target_ptr(C, target_ptr, poll);
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+static bool jump_to_target_button_poll(bContext *C)
+{
+	return jump_to_target_button(C, true);
+}
+
+static int jump_to_target_button_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	bool success = jump_to_target_button(C, false);
+
+	return (success) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
+static void UI_OT_jump_to_target_button(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Jump To Target";
+	ot->idname = "UI_OT_jump_to_target_button";
+	ot->description = "Switch to the target object or bone";
+
+	/* callbacks */
+	ot->poll = jump_to_target_button_poll;
+	ot->exec = jump_to_target_button_exec;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/** \} */
 
 /* Reports to Textblock Operator ------------------------ */
 
@@ -792,6 +1162,7 @@ static int editsource_exec(bContext *C, wmOperator *op)
 		ui_editsource_active_but_set(but);
 
 		/* redraw and get active button python info */
+		ED_region_do_layout(C, ar);
 		ED_region_do_draw(C, ar);
 		ar->do_draw = false;
 
@@ -1024,7 +1395,67 @@ static void UI_OT_reloadtranslation(wmOperatorType *ot)
 	ot->exec = reloadtranslation_exec;
 }
 
-bool UI_drop_color_poll(struct bContext *C, wmDrag *drag, const wmEvent *UNUSED(event))
+
+static ARegion *region_event_inside_for_screen(bContext *C, const int xy[2])
+{
+	bScreen *sc = CTX_wm_screen(C);
+	if (sc) {
+		for (ARegion *ar = sc->regionbase.first; ar; ar = ar->next) {
+			if (BLI_rcti_isect_pt_v(&ar->winrct, xy)) {
+				return ar;
+			}
+		}
+	}
+	return NULL;
+}
+
+static int ui_button_press_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	const bool skip_depressed = RNA_boolean_get(op->ptr, "skip_depressed");
+	ARegion *ar_prev = CTX_wm_region(C);
+	ARegion *ar = region_event_inside_for_screen(C, &event->x);
+
+	if (ar == NULL) {
+		ar = ar_prev;
+	}
+
+	CTX_wm_region_set(C, ar);
+	uiBut *but = UI_context_active_but_get(C);
+	CTX_wm_region_set(C, ar_prev);
+
+	if (but == NULL) {
+		return OPERATOR_PASS_THROUGH;
+	}
+	if (skip_depressed && (but->flag & (UI_SELECT | UI_SELECT_DRAW))) {
+		return OPERATOR_PASS_THROUGH;
+	}
+
+	/* Weak, this is a workaround for 'UI_but_is_tool', which checks the operator type,
+	 * having this avoids a minor drawing glitch. */
+	void *but_optype = but->optype;
+
+	UI_but_execute(C, but);
+
+	but->optype = but_optype;
+
+	WM_event_add_mousemove(C);
+
+	return OPERATOR_FINISHED;
+}
+
+static void UI_OT_button_execute(wmOperatorType *ot)
+{
+	ot->name = "Press Button";
+	ot->idname = "UI_OT_button_execute";
+	ot->description = "Presses active button";
+
+	ot->invoke = ui_button_press_invoke;
+	ot->flag = OPTYPE_INTERNAL;
+
+	RNA_def_boolean(ot->srna, "skip_depressed", 0, "Skip Depressed", "");
+}
+
+bool UI_drop_color_poll(struct bContext *C, wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
 	/* should only return true for regions that include buttons, for now
 	 * return true always */
@@ -1078,13 +1509,13 @@ static int drop_color_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 
 		if (RNA_property_subtype(but->rnaprop) == PROP_COLOR_GAMMA) {
 			if (!gamma)
-				ui_block_cm_to_display_space_v3(but->block, color);
+				IMB_colormanagement_scene_linear_to_srgb_v3(color);
 			RNA_property_float_set_array(&but->rnapoin, but->rnaprop, color);
 			RNA_property_update(C, &but->rnapoin, but->rnaprop);
 		}
 		else if (RNA_property_subtype(but->rnaprop) == PROP_COLOR) {
 			if (gamma)
-				ui_block_cm_to_scene_linear_v3(but->block, color);
+				IMB_colormanagement_srgb_to_scene_linear_v3(color);
 			RNA_property_float_set_array(&but->rnapoin, but->rnaprop, color);
 			RNA_property_update(C, &but->rnapoin, but->rnaprop);
 		}
@@ -1127,7 +1558,10 @@ void ED_operatortypes_ui(void)
 	WM_operatortype_append(UI_OT_copy_python_command_button);
 	WM_operatortype_append(UI_OT_reset_default_button);
 	WM_operatortype_append(UI_OT_unset_property_button);
+	WM_operatortype_append(UI_OT_override_type_set_button);
+	WM_operatortype_append(UI_OT_override_remove_button);
 	WM_operatortype_append(UI_OT_copy_to_selected_button);
+	WM_operatortype_append(UI_OT_jump_to_target_button);
 	WM_operatortype_append(UI_OT_reports_to_textblock);  /* XXX: temp? */
 	WM_operatortype_append(UI_OT_drop_color);
 #ifdef WITH_PYTHON
@@ -1135,6 +1569,7 @@ void ED_operatortypes_ui(void)
 	WM_operatortype_append(UI_OT_edittranslation_init);
 #endif
 	WM_operatortype_append(UI_OT_reloadtranslation);
+	WM_operatortype_append(UI_OT_button_execute);
 
 	/* external */
 	WM_operatortype_append(UI_OT_eyedropper_color);
@@ -1151,34 +1586,7 @@ void ED_operatortypes_ui(void)
  */
 void ED_keymap_ui(wmKeyConfig *keyconf)
 {
-	wmKeyMap *keymap = WM_keymap_ensure(keyconf, "User Interface", 0, 0);
-	wmKeyMapItem *kmi;
-
-	/* eyedroppers - notice they all have the same shortcut, but pass the event
-	 * through until a suitable eyedropper for the active button is found */
-	WM_keymap_add_item(keymap, "UI_OT_eyedropper_color", EKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "UI_OT_eyedropper_colorband", EKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "UI_OT_eyedropper_colorband_point", EKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "UI_OT_eyedropper_id", EKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "UI_OT_eyedropper_depth", EKEY, KM_PRESS, 0, 0);
-
-	/* Copy Data Path */
-	WM_keymap_add_item(keymap, "UI_OT_copy_data_path_button", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
-	kmi = WM_keymap_add_item(keymap, "UI_OT_copy_data_path_button", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT | KM_ALT, 0);
-	RNA_boolean_set(kmi->ptr, "full_path", true);
-
-	/* keyframes */
-	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_insert_button", IKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_delete_button", IKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_clear_button", IKEY, KM_PRESS, KM_SHIFT | KM_ALT, 0);
-
-	/* drivers */
-	WM_keymap_add_item(keymap, "ANIM_OT_driver_button_add", DKEY, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "ANIM_OT_driver_button_remove", DKEY, KM_PRESS, KM_CTRL | KM_ALT, 0);
-
-	/* keyingsets */
-	WM_keymap_add_item(keymap, "ANIM_OT_keyingset_button_add", KKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "ANIM_OT_keyingset_button_remove", KKEY, KM_PRESS, KM_ALT, 0);
+	WM_keymap_ensure(keyconf, "User Interface", 0, 0);
 
 	eyedropper_modal_keymap(keyconf);
 	eyedropper_colorband_modal_keymap(keyconf);

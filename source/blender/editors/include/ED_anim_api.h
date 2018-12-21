@@ -82,8 +82,10 @@ typedef struct bAnimContext {
 
 	struct bDopeSheet *ads; /* dopesheet data for editor (or which is being used) */
 
+	struct Depsgraph *depsgraph; /* active dependency graph */
 	struct Main *bmain;     /* Current Main */
 	struct Scene *scene;    /* active scene */
+	struct ViewLayer *view_layer; /* active scene layer */
 	struct Object *obact;   /* active object */
 	ListBase *markers;      /* active set of markers */
 
@@ -103,7 +105,8 @@ typedef enum eAnimCont_Types {
 	ANIMCONT_DRIVERS   = 6, /* drivers (bDopesheet) */
 	ANIMCONT_NLA       = 7, /* nla (bDopesheet) */
 	ANIMCONT_CHANNEL   = 8, /* animation channel (bAnimListElem) */
-	ANIMCONT_MASK      = 9  /* mask dopesheet */
+	ANIMCONT_MASK      = 9, /* mask dopesheet */
+	ANIMCONT_TIMELINE  = 10, /* "timeline" editor (bDopeSheet) */
 } eAnimCont_Types;
 
 /* --------------- Channels -------------------- */
@@ -193,6 +196,8 @@ typedef enum eAnim_ChannelType {
 
 	ANIMTYPE_NLATRACK,
 	ANIMTYPE_NLAACTION,
+
+	ANIMTYPE_PALETTE,
 
 	/* always as last item, the total number of channel types... */
 	ANIMTYPE_NUM_TYPES
@@ -343,6 +348,9 @@ typedef enum eAnimFilter_Flags {
 
 /* Movie clip only */
 #define EXPANDED_MCLIP(clip) (clip->flag & MCLIP_DATA_EXPAND)
+
+/* Palette only */
+#define EXPANDED_PALETTE(palette) (palette->flag & PALETTE_DATA_EXPAND)
 
 /* AnimData - NLA mostly... */
 #define SEL_ANIMDATA(adt) (adt->flag & ADT_UI_SELECTED)
@@ -535,21 +543,28 @@ void ANIM_fcurve_delete_from_animdata(bAnimContext *ac, struct AnimData *adt, st
 enum eAnimEditDraw_CurrentFrame {
 	/* plain time indicator with no special indicators */
 	DRAWCFRA_PLAIN          = 0,
-	/* draw box indicating current frame number */
-	DRAWCFRA_SHOW_NUMBOX    = (1 << 0),
 	/* time indication in seconds or frames */
-	DRAWCFRA_UNIT_SECONDS   = (1 << 1),
+	DRAWCFRA_UNIT_SECONDS   = (1 << 0),
 	/* draw indicator extra wide (for timeline) */
-	DRAWCFRA_WIDE           = (1 << 2)
+	DRAWCFRA_WIDE           = (1 << 1)
 };
 
 /* main call to draw current-frame indicator in an Animation Editor */
 void ANIM_draw_cfra(const struct bContext *C, struct View2D *v2d, short flag);
 
+/* main call to draw "number box" in scrollbar for current frame indicator */
+void ANIM_draw_cfra_number(const struct bContext *C, struct View2D *v2d, short flag);
+
 /* ------------- Preview Range Drawing -------------- */
 
 /* main call to draw preview range curtains */
 void ANIM_draw_previewrange(const struct bContext *C, struct View2D *v2d, int end_frame_width);
+
+
+/* -------------- Frame Range Drawing --------------- */
+
+/* main call to draw normal frame range indicators */
+void ANIM_draw_framerange(struct Scene *scene, struct View2D *v2d);
 
 /* ************************************************* */
 /* F-MODIFIER TOOLS */
@@ -673,13 +688,14 @@ float ANIM_unit_mapping_get_factor(struct Scene *scene, struct ID *id, struct FC
 
 /* --------- anim_deps.c, animation updates -------- */
 
-void ANIM_id_update(struct Scene *scene, struct ID *id);
+void ANIM_id_update(struct Main *bmain, struct ID *id);
 void ANIM_list_elem_update(struct Main *bmain, struct Scene *scene, bAnimListElem *ale);
 
 /* data -> channels syncing */
 void ANIM_sync_animchannels_to_data(const struct bContext *C);
 
 void ANIM_center_frame(struct bContext *C, int smooth_viewtx);
+
 /* ************************************************* */
 /* OPERATORS */
 
@@ -705,6 +721,10 @@ struct AnimData *ED_actedit_animdata_from_context(struct bContext *C);
 void ED_animedit_unlink_action(struct bContext *C, struct ID *id,
                                struct AnimData *adt, struct bAction *act,
                                struct ReportList *reports, bool force_delete);
+
+
+/* Drivers Editor - Utility to set up UI correctly */
+void ED_drivers_editor_init(struct bContext *C, struct ScrArea *sa);
 
 /* ************************************************ */
 

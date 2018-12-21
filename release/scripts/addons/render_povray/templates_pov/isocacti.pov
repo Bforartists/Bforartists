@@ -31,7 +31,7 @@ sky_sphere {
 #declare CamLoc = < 5, 10,-10>;
 camera {
 	location CamLoc
-        right x*image_width/image_height // keep propotions with any aspect ratio
+        right x*image_width/image_height // keep proportions with any aspect ratio
 	angle 45
 	look_at <0, 0, 0>
 }

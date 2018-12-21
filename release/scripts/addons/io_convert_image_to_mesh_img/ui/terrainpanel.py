@@ -45,7 +45,7 @@ class TerrainPanel(Panel):
     #
     # Displaying this value as a percentage (0, 100] is an intuitive way
     # for users to grasp what this value does. The DTM importer, however,
-    # wants to recieve a value between (0, 1]. This is obviously a
+    # wants to receive a value between (0, 1]. This is obviously a
     # straightforward conversion:
     #
     #     f(x) = x / 100

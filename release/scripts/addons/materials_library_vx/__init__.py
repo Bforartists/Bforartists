@@ -600,7 +600,7 @@ if mat:
     print ("Material", material, force)
 
     #if material:
-    #maybe some test cases doesnt return a material, gotta take care of that
+    #maybe some test cases doesn't return a material, gotta take care of that
     #i cannot think of any case like that right now
     #maybe import linked when the database isnt sync
     if context.mode == "EDIT_MESH":
@@ -695,7 +695,7 @@ bpy.ops.wm.save_mainfile(filepath="{3}", check_existing=False, compress=True)
 
       return 'INFO', "Material added."
     else:
-      print("Save Material Error: Run Blender with administrative priviledges.")
+      print("Save Material Error: Run Blender with administrative privileges.")
       return 'WARNING', "There was an error saving the material"
 
   def remove_material(self):
@@ -952,7 +952,7 @@ class MATLIB_OT_operator(Operator):
       return {'RUNNING_MODAL'}
     return self.execute(context)
 
-  ### TODO: execute doesnt trigger remove
+  ### TODO: execute doesn't trigger remove
   def execute(self, context):
 
     success = ""
@@ -1132,7 +1132,7 @@ class MATLIB_PT_vxPanel(Panel):
 #      matlibProperties.init = False
 #      matlib.__init__()
 
-    #libaries
+    #libraries
     row = layout.row(align=True)
     if matlib.current_library:
       text = matlib.current_library.shortname
@@ -1150,24 +1150,19 @@ class MATLIB_PT_vxPanel(Panel):
     if not matlib.hide_search:
       row = layout.row(align=True)
       row.prop_search(matlib, "search", matlib, "materials", text="", icon="VIEWZOOM")
-     
-     # Material preview window 
-    self.layout.template_preview(context.material)
-    
-    row = layout.row()
-    row.scale_y = 1.5
-    row.operator("matlib.apply", icon="MATERIAL", text=" Apply")
-    row.operator("matlib.preview", icon="COLOR", text="Preview")
 
 #    #list
     row = layout.row()
     row.template_list("UI_UL_list", "  ", matlib, "materials", matlib, "mat_index", rows=6)
     col = row.column(align=True)
+    row = layout.row()
 
       #operators
     col.operator("matlib.add", icon="ZOOMIN", text="")
     col.operator("matlib.remove", icon="ZOOMOUT", text="")
     col.operator("matlib.reload", icon="FILE_REFRESH", text="")
+    col.operator("matlib.apply", icon="MATERIAL", text="")
+    col.operator("matlib.preview", icon="COLOR", text="")
     col.operator("matlib.flush", icon="GHOST_DISABLED", text="")
     col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
 

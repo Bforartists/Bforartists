@@ -75,7 +75,7 @@ The file is read using Python's built-in JSON parser, so indentation or line bre
     nodes_dict = {}
     nodes = mat.node_tree.nodes
 
-    # We iterate a first time to create the nodes with their settings 
+    # We iterate a first time to create the nodes with their settings
 
     for node in nodes_JSON["NodeSetup"]:
         technical_name = node["type"]
@@ -116,7 +116,7 @@ The file is read using Python's built-in JSON parser, so indentation or line bre
                 if len(node["in"][i]) == 3:
 
                     # Contruct and execute the line adding a link
-           
+
                     exec ("links.new(nodes_dict[\"" + node["in"][i][0] +
                           "\"].outputs[" + str(node["in"][i][1]) +
                           "], nodes_dict[\"" + node["label"] + "\"].inputs["

@@ -233,7 +233,7 @@ def shape_children(mainobject, update=False):
     myctrl.location.x = 0
     myctrl.location.y = -((mp.frame_thick * 3) / 2)
     myctrl.location.z = -gap
-    myctrl.draw_type = 'BOUNDS'
+    myctrl.display_type = 'BOUNDS'
     myctrl.hide = False
     myctrl.hide_render = True
     if bpy.context.scene.render.engine == 'CYCLES':
@@ -256,7 +256,7 @@ def shape_children(mainobject, update=False):
     myctrlbase.location.x = 0
     myctrlbase.location.y = -0.15 - (mp.frame_thick / 3)
     myctrlbase.location.z = -0.10
-    myctrlbase.draw_type = 'BOUNDS'
+    myctrlbase.display_type = 'BOUNDS'
     myctrlbase.hide = False
     myctrlbase.hide_render = True
     if bpy.context.scene.render.engine == 'CYCLES':

@@ -31,8 +31,8 @@ bl_info = {
     'author': 's-leger',
     'license': 'GPL',
     'deps': '',
-    'version': (1, 2, 8),
-    'blender': (2, 7, 8),
+    'version': (1, 2, 81),
+    'blender': (2, 80, 0),
     'location': 'View3D > Tools > Create > Archipack',
     'warning': '',
     'wiki_url': 'https://github.com/s-leger/archipack/wiki',
@@ -46,7 +46,6 @@ import os
 
 if "bpy" in locals():
     import importlib as imp
-    imp.reload(archipack_progressbar)
     imp.reload(archipack_material)
     imp.reload(archipack_snap)
     imp.reload(archipack_manipulator)
@@ -65,7 +64,6 @@ if "bpy" in locals():
 
     # print("archipack: reload ready")
 else:
-    from . import archipack_progressbar
     from . import archipack_material
     from . import archipack_snap
     from . import archipack_manipulator
@@ -81,8 +79,7 @@ else:
     from . import archipack_truss
     from . import archipack_floor
     from . import archipack_rendering
-
-    # print("archipack: ready")
+    print("archipack: ready")
 
 # noinspection PyUnresolvedReferences
 import bpy
@@ -105,82 +102,110 @@ icons_collection = {}
 # Addon preferences
 # ----------------------------------------------------
 
-def update_panel(self, context):
-    try:
-        bpy.utils.unregister_class(TOOLS_PT_Archipack_Tools)
-        bpy.utils.unregister_class(TOOLS_PT_Archipack_Create)
-    except:
-        pass
-    prefs = context.user_preferences.addons[__name__].preferences
-    TOOLS_PT_Archipack_Tools.bl_category = prefs.tools_category
-    bpy.utils.register_class(TOOLS_PT_Archipack_Tools)
-    TOOLS_PT_Archipack_Create.bl_category = prefs.create_category
-    bpy.utils.register_class(TOOLS_PT_Archipack_Create)
-
 
 class Archipack_Pref(AddonPreferences):
     bl_idname = __name__
 
-    tools_category = StringProperty(
-        name="Tools",
-        description="Choose a name for the category of the Tools panel",
-        default="Tools",
-        update=update_panel
-    )
-    create_category = StringProperty(
-        name="Create",
-        description="Choose a name for the category of the Create panel",
-        default="Create",
-        update=update_panel
-    )
-    create_submenu = BoolProperty(
+    create_submenu : BoolProperty(
         name="Use Sub-menu",
         description="Put Achipack's object into a sub menu (shift+a)",
         default=True
     )
-    max_style_draw_tool = BoolProperty(
+    max_style_draw_tool : BoolProperty(
         name="Draw a wall use 3dsmax style",
         description="Reverse clic / release & drag cycle for Draw a wall",
         default=True
     )
     # Arrow sizes (world units)
-    arrow_size = FloatProperty(
+    arrow_size : FloatProperty(
             name="Arrow",
             description="Manipulators arrow size (blender units)",
             default=0.05
             )
     # Handle area size (pixels)
-    handle_size = IntProperty(
+    handle_size : IntProperty(
             name="Handle",
             description="Manipulators handle sensitive area size (pixels)",
             min=2,
             default=10
             )
-    matlib_path = StringProperty(
+    constant_handle_size: BoolProperty(
+        name="Constant handle size",
+        description="When checked, handle size on scree remains constant (handle size pixels)",
+        default=False
+    )
+    text_size: IntProperty(
+        name="Manipulators",
+        description="Manipulator font size (pixels)",
+        min=2,
+        default=14
+    )
+    handle_colour_selected: FloatVectorProperty(
+        name="Selected handle colour",
+        description="Handle color when selected",
+        subtype='COLOR_GAMMA',
+        default=(0.0, 0.0, 0.7, 1.0),
+        size=4,
+        min=0, max=1
+    )
+    handle_colour_inactive: FloatVectorProperty(
+        name="Inactive handle colour",
+        description="Handle color when disabled",
+        subtype='COLOR_GAMMA',
+        default=(0.3, 0.3, 0.3, 1.0),
+        size=4,
+        min=0, max=1
+    )
+    handle_colour_normal: FloatVectorProperty(
+        name="Handle colour normal",
+        description="Base handle color when not selected",
+        subtype='COLOR_GAMMA',
+        default=(1.0, 1.0, 1.0, 1.0),
+        size=4,
+        min=0, max=1
+    )
+    handle_colour_hover: FloatVectorProperty(
+        name="Handle colour hover",
+        description="Handle color when mouse hover",
+        subtype='COLOR_GAMMA',
+        default=(1.0, 1.0, 0.0, 1.0),
+        size=4,
+        min=0, max=1
+    )
+    handle_colour_active: FloatVectorProperty(
+        name="Handle colour active",
+        description="Handle colour when moving",
+        subtype='COLOR_GAMMA',
+        default=(1.0, 0.0, 0.0, 1.0),
+        size=4,
+        min=0, max=1
+    )
+    matlib_path : StringProperty(
             name="Folder path",
             description="absolute path to material library folder",
-            default=""
+            default="",
+            subtype="DIR_PATH"
             )
     # Font sizes and basic colour scheme
-    feedback_size_main = IntProperty(
+    feedback_size_main : IntProperty(
             name="Main",
             description="Main title font size (pixels)",
             min=2,
             default=16
             )
-    feedback_size_title = IntProperty(
+    feedback_size_title : IntProperty(
             name="Title",
             description="Tool name font size (pixels)",
             min=2,
             default=14
             )
-    feedback_size_shortcut = IntProperty(
+    feedback_size_shortcut : IntProperty(
             name="Shortcut",
             description="Shortcuts font size (pixels)",
             min=2,
             default=11
             )
-    feedback_shortcut_area = FloatVectorProperty(
+    feedback_shortcut_area : FloatVectorProperty(
             name="Background Shortcut",
             description="Shortcut area background color",
             subtype='COLOR_GAMMA',
@@ -188,7 +213,7 @@ class Archipack_Pref(AddonPreferences):
             size=4,
             min=0, max=1
             )
-    feedback_title_area = FloatVectorProperty(
+    feedback_title_area : FloatVectorProperty(
             name="Background Main",
             description="Title area background color",
             subtype='COLOR_GAMMA',
@@ -196,7 +221,7 @@ class Archipack_Pref(AddonPreferences):
             size=4,
             min=0, max=1
             )
-    feedback_colour_main = FloatVectorProperty(
+    feedback_colour_main : FloatVectorProperty(
             name="Font Main",
             description="Title color",
             subtype='COLOR_GAMMA',
@@ -204,7 +229,7 @@ class Archipack_Pref(AddonPreferences):
             size=4,
             min=0, max=1
             )
-    feedback_colour_key = FloatVectorProperty(
+    feedback_colour_key : FloatVectorProperty(
             name="Font Shortcut key",
             description="KEY label color",
             subtype='COLOR_GAMMA',
@@ -212,7 +237,7 @@ class Archipack_Pref(AddonPreferences):
             size=4,
             min=0, max=1
             )
-    feedback_colour_shortcut = FloatVectorProperty(
+    feedback_colour_shortcut : FloatVectorProperty(
             name="Font Shortcut hint",
             description="Shortcuts text color",
             subtype='COLOR_GAMMA',
@@ -226,21 +251,22 @@ class Archipack_Pref(AddonPreferences):
         box = layout.box()
         row = box.row()
         col = row.column()
-        col.label(text="Tab Category:")
-        col.prop(self, "tools_category")
-        col.prop(self, "create_category")
-        col.prop(self, "create_submenu")
-        box = layout.box()
-        box.label("Features")
-        box.prop(self, "max_style_draw_tool")
+        col.label(text="Setup actions")
+        col.prop(self, "matlib_path", text="Material library")
+        box.label(text="Render presets Thumbnails")
+        box.operator("archipack.render_thumbs", icon='ERROR')
         box = layout.box()
         row = box.row()
         col = row.column()
-        col.label(text="Material library:")
-        col.prop(self, "matlib_path")
+        col.label(text="Add menu:")
+        col.prop(self, "create_submenu")
+
+        box = layout.box()
+        box.label(text="Features")
+        box.prop(self, "max_style_draw_tool")
         box = layout.box()
         row = box.row()
-        split = row.split(percentage=0.5)
+        split = row.split(factor=0.5)
         col = split.column()
         col.label(text="Colors:")
         row = col.row(align=True)
@@ -253,6 +279,16 @@ class Archipack_Pref(AddonPreferences):
         row.prop(self, "feedback_colour_key")
         row = col.row(align=True)
         row.prop(self, "feedback_colour_shortcut")
+        row = col.row(align=True)
+        row.prop(self, "handle_colour_normal")
+        row = col.row(align=True)
+        row.prop(self, "handle_colour_hover")
+        row = col.row(align=True)
+        row.prop(self, "handle_colour_active")
+        row = col.row(align=True)
+        row.prop(self, "handle_colour_selected")
+        row = col.row(align=True)
+        row.prop(self, "handle_colour_inactive")
         col = split.column()
         col.label(text="Font size:")
         col.prop(self, "feedback_size_main")
@@ -261,46 +297,19 @@ class Archipack_Pref(AddonPreferences):
         col.label(text="Manipulators:")
         col.prop(self, "arrow_size")
         col.prop(self, "handle_size")
-        # layout.operator("archipack.render_thumbs")
+        col.prop(self, "text_size")
+        col.prop(self, "constant_handle_size")
 
 # ----------------------------------------------------
-# Archipack panels
+# Archipack panel
 # ----------------------------------------------------
-
-
-class TOOLS_PT_Archipack_Tools(Panel):
-    bl_label = "Archipack Tools"
-    bl_idname = "TOOLS_PT_Archipack_Tools"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Tools"
-    bl_context = "objectmode"
-
-    @classmethod
-    def poll(self, context):
-        return True
-
-    def draw(self, context):
-        wm = context.window_manager
-        layout = self.layout
-        box = layout.box()
-        box.label("Auto boolean")
-        box.operator("archipack.auto_boolean", text="AutoBoolean", icon='AUTO').mode = 'HYBRID'
-        box = layout.box()
-        box.label("Rendering")
-        box.prop(wm.archipack, 'render_type', text="")
-        box.operator("archipack.render", icon='RENDER_STILL')
-        box = layout.box()
-        box.label("Render presets Thumbnails")
-        box.operator("archipack.render_thumbs", icon='ERROR')
-
 
 class TOOLS_PT_Archipack_Create(Panel):
-    bl_label = "Add Archipack"
+    bl_label = "Archipack"
     bl_idname = "TOOLS_PT_Archipack_Create"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
-    bl_category = "Create"
+    # bl_category = "Create"
     bl_context = "objectmode"
 
     @classmethod
@@ -312,9 +321,11 @@ class TOOLS_PT_Archipack_Create(Panel):
 
         icons = icons_collection["main"]
         layout = self.layout
+        box = layout.box()
+        box.operator("archipack.auto_boolean", text="Boolean", icon='AUTO').mode = 'HYBRID'
         row = layout.row(align=True)
         box = row.box()
-        box.label("Objects")
+        box.label(text="Create")
         row = box.row(align=True)
         row.operator("archipack.window_preset_menu",
                     text="Window",
@@ -454,25 +465,6 @@ def menu_func(self, context):
         draw_menu(self, context)
 
 
-# ----------------------------------------------------
-# Datablock to store global addon variables
-# ----------------------------------------------------
-
-
-class archipack_data(PropertyGroup):
-    render_type = EnumProperty(
-        items=(
-            ('1', "Draw over", "Draw over last rendered image"),
-            ('2', "OpenGL", ""),
-            ('3', "Animation OpenGL", ""),
-            ('4', "Image", "Render image and draw over"),
-            ('5', "Animation", "Draw on each frame")
-            ),
-        name="Render type",
-        description="Render method"
-        )
-
-
 def register():
     global icons_collection
     icons = previews.new()
@@ -481,8 +473,6 @@ def register():
         name, ext = os.path.splitext(icon)
         icons.load(name, os.path.join(icons_dir, icon), 'IMAGE')
     icons_collection["main"] = icons
-
-    archipack_progressbar.register()
     archipack_material.register()
     archipack_snap.register()
     archipack_manipulator.register()
@@ -498,24 +488,18 @@ def register():
     archipack_truss.register()
     archipack_floor.register()
     archipack_rendering.register()
-
-    bpy.utils.register_class(archipack_data)
-    WindowManager.archipack = PointerProperty(type=archipack_data)
     bpy.utils.register_class(Archipack_Pref)
-    update_panel(None, bpy.context)
+    bpy.utils.register_class(TOOLS_PT_Archipack_Create)
     bpy.utils.register_class(ARCHIPACK_MT_create)
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     global icons_collection
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
     bpy.utils.unregister_class(ARCHIPACK_MT_create)
-
-    bpy.utils.unregister_class(TOOLS_PT_Archipack_Tools)
     bpy.utils.unregister_class(TOOLS_PT_Archipack_Create)
     bpy.utils.unregister_class(Archipack_Pref)
-    archipack_progressbar.unregister()
     archipack_material.unregister()
     archipack_snap.unregister()
     archipack_manipulator.unregister()
@@ -531,9 +515,6 @@ def unregister():
     archipack_truss.unregister()
     archipack_floor.unregister()
     archipack_rendering.unregister()
-
-    bpy.utils.unregister_class(archipack_data)
-    del WindowManager.archipack
 
     for icons in icons_collection.values():
         previews.remove(icons)

@@ -81,7 +81,7 @@ def voodoo_import(infile,ld_cam,ld_points):
         data.dof_distance = 0.0
         data.clip_start = 0.1
         data.clip_end = 1000.0
-        data.draw_size = 0.5
+        data.display_size = 0.5
         scene.objects.link(vcam)
         vcam.parent = dummy
 
@@ -318,12 +318,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 
 if __name__ == "__main__":

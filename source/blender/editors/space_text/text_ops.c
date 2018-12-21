@@ -698,7 +698,7 @@ static int text_refresh_pyconstraints_exec(bContext *UNUSED(C), wmOperator *UNUS
 		}
 
 		if (update) {
-			DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		}
 	}
 #endif
@@ -1949,7 +1949,7 @@ static int text_jump_exec(bContext *C, wmOperator *op)
 
 static int text_jump_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
-	return WM_operator_props_dialog_popup(C, op, 10 * UI_UNIT_X, 5 * UI_UNIT_Y);
+	return WM_operator_props_dialog_popup(C, op, 200, 100);
 
 }
 
@@ -2070,7 +2070,9 @@ void TEXT_OT_delete(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
+	PropertyRNA *prop;
+	prop = RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
+	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /******************* toggle overwrite operator **********************/

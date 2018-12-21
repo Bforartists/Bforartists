@@ -155,13 +155,6 @@ void imb_freetilesImBuf(ImBuf *ibuf)
 	ibuf->mall &= ~IB_tiles;
 }
 
-static void imb_free_bitmap_font(ImBuf *ibuf)
-{
-	if (ibuf->userdata && (ibuf->userflags & IB_BITMAPFONT)) {
-		MEM_freeN(ibuf->userdata);
-	}
-}
-
 static void freeencodedbufferImBuf(ImBuf *ibuf)
 {
 	if (ibuf == NULL) return;
@@ -215,7 +208,6 @@ void IMB_freeImBuf(ImBuf *ibuf)
 			imb_freerectImBuf(ibuf);
 			imb_freerectfloatImBuf(ibuf);
 			imb_freetilesImBuf(ibuf);
-			imb_free_bitmap_font(ibuf);
 			IMB_freezbufImBuf(ibuf);
 			IMB_freezbuffloatImBuf(ibuf);
 			freeencodedbufferImBuf(ibuf);
@@ -521,7 +513,6 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
 
 	x = ibuf1->x;
 	y = ibuf1->y;
-	if (ibuf1->flags & IB_fields) y *= 2;
 
 	ibuf2 = IMB_allocImBuf(x, y, ibuf1->planes, flags);
 	if (ibuf2 == NULL) return NULL;

@@ -81,7 +81,7 @@ class MakeSurfaceWedge(Operator, MakeSurfaceHelpers):
 
         # add a surface Plane
         bpy.ops.object.add_surface_plane()
-        # save some time, by getting instant acces to those values
+        # save some time, by getting instant access to those values
         ao = context.active_object
         point = ao.data.splines[0].points
 
@@ -95,7 +95,7 @@ class MakeSurfaceWedge(Operator, MakeSurfaceHelpers):
         bpy.ops.curve.select_all(action='DESELECT')
 
         # select points 0 and 1, and extrudde them
-        # declaring ao and point again seems necesary...
+        # declaring ao and point again seems necessary...
         ao = context.active_object
         point = ao.data.splines[0].points
         point[0].select = True
@@ -154,7 +154,7 @@ class MakeSurfaceCone(Operator, MakeSurfaceHelpers):
         bpy.ops.object.mode_set(mode='EDIT')
         # deselect all
         bpy.ops.curve.select_all(action='DESELECT')
-        # too shorten alot of lines
+        # too shorten a lot of lines
         point = ao.data.splines[0].points
         # get middle points
 
@@ -165,7 +165,7 @@ class MakeSurfaceCone(Operator, MakeSurfaceHelpers):
         # select non-middle points and delete them
         bpy.ops.curve.select_all(action='INVERT')
         bpy.ops.curve.delete(type='VERT')
-        # declaring this again seems necesary...
+        # declaring this again seems necessary...
         point = ao.data.splines[0].points
         # list of points to be in center, and 2 bu'' s higher
 
@@ -200,7 +200,7 @@ class MakeSurfaceCone(Operator, MakeSurfaceHelpers):
 class MakeSurfaceStar(Operator, MakeSurfaceHelpers):
     bl_idname = "object.add_surface_star"
     bl_label = "Add Surface Star"
-    bl_description = "Contruct a Surface Star"
+    bl_description = "Construct a Surface Star"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -282,7 +282,7 @@ class MakeSurfaceStar(Operator, MakeSurfaceHelpers):
 class MakeSurfacePlane(Operator, MakeSurfaceHelpers):
     bl_idname = "object.add_surface_plane"
     bl_label = "Add Surface Plane"
-    bl_description = "Contruct a Surface Plane"
+    bl_description = "Construct a Surface Plane"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):

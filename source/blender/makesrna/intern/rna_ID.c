@@ -36,6 +36,7 @@
 #include "BLI_math_base.h"
 
 #include "BKE_icons.h"
+#include "BKE_library.h"
 #include "BKE_object.h"
 
 #include "RNA_access.h"
@@ -58,10 +59,10 @@ const EnumPropertyItem rna_enum_id_type_items[] = {
 	{ID_CU, "CURVE", ICON_CURVE_DATA, "Curve", ""},
 	{ID_VF, "FONT", ICON_FONT_DATA, "Font", ""},
 	{ID_GD, "GREASEPENCIL", ICON_GREASEPENCIL, "Grease Pencil", ""},
-	{ID_GR, "GROUP", ICON_GROUP, "Group", ""},
+	{ID_GR, "COLLECTION", ICON_GROUP, "Collection", ""},
 	{ID_IM, "IMAGE", ICON_IMAGE_DATA, "Image", ""},
 	{ID_KE, "KEY", ICON_SHAPEKEY_DATA, "Key", ""},
-	{ID_LA, "LAMP", ICON_LAMP_DATA, "Lamp", ""},
+	{ID_LA, "LIGHT", ICON_LIGHT_DATA, "Light", ""},
 	{ID_LI, "LIBRARY", ICON_LIBRARY_DATA_DIRECT, "Library", ""},
 	{ID_LS, "LINESTYLE", ICON_LINE_DATA, "Line Style", ""},
 	{ID_LT, "LATTICE", ICON_LATTICE_DATA, "Lattice", ""},
@@ -75,14 +76,15 @@ const EnumPropertyItem rna_enum_id_type_items[] = {
 	{ID_PC, "PAINTCURVE", ICON_CURVE_BEZCURVE, "Paint Curve", ""},
 	{ID_PAL, "PALETTE", ICON_COLOR, "Palette", ""},
 	{ID_PA, "PARTICLE", ICON_PARTICLE_DATA, "Particle", ""},
+	{ID_LP, "LIGHT_PROBE", ICON_LIGHTPROBE_CUBEMAP, "Light Probe", ""},
 	{ID_SCE, "SCENE", ICON_SCENE_DATA, "Scene", ""},
-	{ID_SCR, "SCREEN", ICON_SPLITSCREEN, "Screen", ""},
-	{ID_SO, "SOUND", ICON_PLAY_AUDIO, "Sound", ""},
+	{ID_SO, "SOUND", ICON_SOUND, "Sound", ""},
 	{ID_SPK, "SPEAKER", ICON_SPEAKER, "Speaker", ""},
 	{ID_TXT, "TEXT", ICON_TEXT, "Text", ""},
 	{ID_TE, "TEXTURE", ICON_TEXTURE_DATA, "Texture", ""},
-	{ID_WM, "WINDOWMANAGER", ICON_FULLSCREEN, "Window Manager", ""},
+	{ID_WM, "WINDOWMANAGER", ICON_WINDOW, "Window Manager", ""},
 	{ID_WO, "WORLD", ICON_WORLD_DATA, "World", ""},
+	{ID_WS, "WORKSPACE", ICON_WORKSPACE, "Workspace", ""},
 	{0, NULL, 0, NULL, NULL}
 };
 
@@ -94,15 +96,43 @@ const EnumPropertyItem rna_enum_id_type_items[] = {
 
 #include "BKE_font.h"
 #include "BKE_idprop.h"
-#include "BKE_library.h"
 #include "BKE_library_query.h"
+#include "BKE_library_override.h"
 #include "BKE_library_remap.h"
 #include "BKE_animsys.h"
 #include "BKE_material.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"  /* XXX, remove me */
 
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph_query.h"
+
 #include "WM_api.h"
+
+void rna_ID_override_static_property_operation_refname_get(PointerRNA *ptr, char *value)
+{
+	IDOverrideStaticPropertyOperation *opop = ptr->data;
+	strcpy(value, (opop->subitem_reference_name == NULL) ? "" : opop->subitem_reference_name);
+}
+
+int rna_ID_override_static_property_operation_refname_length(PointerRNA *ptr)
+{
+	IDOverrideStaticPropertyOperation *opop = ptr->data;
+	return (opop->subitem_reference_name == NULL) ? 0 : strlen(opop->subitem_reference_name);
+}
+
+void rna_ID_override_static_property_operation_locname_get(PointerRNA *ptr, char *value)
+{
+	IDOverrideStaticPropertyOperation *opop = ptr->data;
+	strcpy(value, (opop->subitem_local_name == NULL) ? "" : opop->subitem_local_name);
+}
+
+int rna_ID_override_static_property_operation_locname_length(PointerRNA *ptr)
+{
+	IDOverrideStaticPropertyOperation *opop = ptr->data;
+	return (opop->subitem_local_name == NULL) ? 0 : strlen(opop->subitem_local_name);
+}
+
 
 /* name functions that ignore the first two ID characters */
 void rna_ID_name_get(PointerRNA *ptr, char *value)
@@ -121,8 +151,15 @@ void rna_ID_name_set(PointerRNA *ptr, const char *value)
 {
 	ID *id = (ID *)ptr->data;
 	BLI_strncpy_utf8(id->name + 2, value, sizeof(id->name) - 2);
-	BLI_assert(BKE_id_is_in_gobal_main(id));
+	BLI_assert(BKE_id_is_in_global_main(id));
 	BLI_libblock_ensure_unique_name(G_MAIN, id->name);
+
+	if (GS(id->name) == ID_OB) {
+		Object *ob = (Object *)id;
+		if (ob->type == OB_MBALL) {
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+		}
+	}
 }
 
 static int rna_ID_name_editable(PointerRNA *ptr, const char **UNUSED(r_info))
@@ -132,10 +169,41 @@ static int rna_ID_name_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 	if (GS(id->name) == ID_VF) {
 		VFont *vfont = (VFont *)id;
 		if (BKE_vfont_is_builtin(vfont))
-			return false;
+			return 0;
+	}
+	else if (!BKE_id_is_in_global_main(id)) {
+		return 0;
 	}
 
 	return PROP_EDITABLE;
+}
+
+void rna_ID_name_full_get(PointerRNA *ptr, char *value)
+{
+	ID *id = (ID *)ptr->data;
+	BKE_id_full_name_get(value, id);
+}
+
+int rna_ID_name_full_length(PointerRNA *ptr)
+{
+	ID *id = (ID *)ptr->data;
+	char name[MAX_ID_FULL_NAME];
+	BKE_id_full_name_get(name, id);
+	return strlen(name);
+}
+
+static int rna_ID_is_evaluated_get(PointerRNA *ptr)
+{
+	ID *id = (ID *)ptr->data;
+
+	return (DEG_get_original_id(id) != id);
+}
+
+static PointerRNA rna_ID_original_get(PointerRNA *ptr)
+{
+	ID *id = (ID *)ptr->data;
+
+	return rna_pointer_inherit_refine(ptr, &RNA_ID, DEG_get_original_id(id));
 }
 
 short RNA_type_to_ID_code(const StructRNA *type)
@@ -151,10 +219,10 @@ short RNA_type_to_ID_code(const StructRNA *type)
 	if (base_type == &RNA_Camera) return ID_CA;
 	if (base_type == &RNA_Curve) return ID_CU;
 	if (base_type == &RNA_GreasePencil) return ID_GD;
-	if (base_type == &RNA_Group) return ID_GR;
+	if (base_type == &RNA_Collection) return ID_GR;
 	if (base_type == &RNA_Image) return ID_IM;
 	if (base_type == &RNA_Key) return ID_KE;
-	if (base_type == &RNA_Lamp) return ID_LA;
+	if (base_type == &RNA_Light) return ID_LA;
 	if (base_type == &RNA_Library) return ID_LI;
 	if (base_type == &RNA_FreestyleLineStyle) return ID_LS;
 	if (base_type == &RNA_Lattice) return ID_LT;
@@ -168,6 +236,7 @@ short RNA_type_to_ID_code(const StructRNA *type)
 	if (base_type == &RNA_ParticleSettings) return ID_PA;
 	if (base_type == &RNA_Palette) return ID_PAL;
 	if (base_type == &RNA_PaintCurve) return ID_PC;
+	if (base_type == &RNA_LightProbe) return ID_LP;
 	if (base_type == &RNA_Scene) return ID_SCE;
 	if (base_type == &RNA_Screen) return ID_SCR;
 	if (base_type == &RNA_Sound) return ID_SO;
@@ -175,6 +244,7 @@ short RNA_type_to_ID_code(const StructRNA *type)
 	if (base_type == &RNA_Texture) return ID_TE;
 	if (base_type == &RNA_Text) return ID_TXT;
 	if (base_type == &RNA_VectorFont) return ID_VF;
+	if (base_type == &RNA_WorkSpace) return ID_WS;
 	if (base_type == &RNA_World) return ID_WO;
 	if (base_type == &RNA_WindowManager) return ID_WM;
 
@@ -193,10 +263,10 @@ StructRNA *ID_code_to_RNA_type(short idcode)
 		case ID_CF: return &RNA_CacheFile;
 		case ID_CU: return &RNA_Curve;
 		case ID_GD: return &RNA_GreasePencil;
-		case ID_GR: return &RNA_Group;
+		case ID_GR: return &RNA_Collection;
 		case ID_IM: return &RNA_Image;
 		case ID_KE: return &RNA_Key;
-		case ID_LA: return &RNA_Lamp;
+		case ID_LA: return &RNA_Light;
 		case ID_LI: return &RNA_Library;
 		case ID_LS: return &RNA_FreestyleLineStyle;
 		case ID_LT: return &RNA_Lattice;
@@ -210,6 +280,7 @@ StructRNA *ID_code_to_RNA_type(short idcode)
 		case ID_PA: return &RNA_ParticleSettings;
 		case ID_PAL: return &RNA_Palette;
 		case ID_PC: return &RNA_PaintCurve;
+		case ID_LP: return &RNA_LightProbe;
 		case ID_SCE: return &RNA_Scene;
 		case ID_SCR: return &RNA_Screen;
 		case ID_SO: return &RNA_Sound;
@@ -219,6 +290,7 @@ StructRNA *ID_code_to_RNA_type(short idcode)
 		case ID_VF: return &RNA_VectorFont;
 		case ID_WM: return &RNA_WindowManager;
 		case ID_WO: return &RNA_World;
+		case ID_WS: return &RNA_WorkSpace;
 
 		/* deprecated */
 		case ID_IP: break;
@@ -305,6 +377,15 @@ static ID *rna_ID_copy(ID *id, Main *bmain)
 	return NULL;
 }
 
+static ID *rna_ID_override_create(ID *id, Main *bmain)
+{
+	if (!BKE_override_static_is_enabled() || id->lib == NULL) {
+		return NULL;
+	}
+
+	return BKE_override_static_create_from_id(bmain, id);
+}
+
 static void rna_ID_update_tag(ID *id, ReportList *reports, int flag)
 {
 	/* XXX, new function for this! */
@@ -323,7 +404,11 @@ static void rna_ID_update_tag(ID *id, ReportList *reports, int flag)
 		/* ensure flag us correct for the type */
 		switch (GS(id->name)) {
 			case ID_OB:
-				if (flag & ~(OB_RECALC_ALL)) {
+				/* TODO(sergey): This is kind of difficult to predict since different
+				 * object types supports different flags. Maybe does not worth checking
+				 * for this at all. Or maybe let dependency graph to return whether
+				 * the tag was valid or not. */
+				if (flag & ~(ID_RECALC_ALL)) {
 					BKE_report(reports, RPT_ERROR, "'Refresh' incompatible with Object ID type");
 					return;
 				}
@@ -343,7 +428,7 @@ static void rna_ID_update_tag(ID *id, ReportList *reports, int flag)
 		}
 	}
 
-	DAG_id_tag_update(id, flag);
+	DEG_id_tag_update(id, flag);
 }
 
 static void rna_ID_user_clear(ID *id)
@@ -379,14 +464,14 @@ static struct ID *rna_ID_make_local(struct ID *self, Main *bmain, bool clear_pro
 static AnimData *rna_ID_animation_data_create(ID *id, Main *bmain)
 {
 	AnimData *adt = BKE_animdata_add_id(id);
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 	return adt;
 }
 
 static void rna_ID_animation_data_free(ID *id, Main *bmain)
 {
 	BKE_animdata_free(id, true);
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 }
 
 #ifdef WITH_PYTHON
@@ -415,8 +500,8 @@ int rna_IDMaterials_assign_int(PointerRNA *ptr, int key, const PointerRNA *assig
 	short *totcol = give_totcolp_id(id);
 	Material *mat_id = assign_ptr->id.data;
 	if (totcol && (key >= 0 && key < *totcol)) {
-		BLI_assert(BKE_id_is_in_gobal_main(id));
-		BLI_assert(BKE_id_is_in_gobal_main(&mat_id->id));
+		BLI_assert(BKE_id_is_in_global_main(id));
+		BLI_assert(BKE_id_is_in_global_main(&mat_id->id));
 		assign_material_id(G_MAIN, id, mat_id, key + 1);
 		return 1;
 	}
@@ -455,7 +540,7 @@ static Material *rna_IDMaterials_pop_id(
 		return NULL;
 	}
 
-	DAG_id_tag_update(id, OB_RECALC_DATA);
+	DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
 	WM_main_add_notifier(NC_OBJECT | ND_DRAW, id);
 	WM_main_add_notifier(NC_OBJECT | ND_OB_SHADING, id);
 
@@ -466,7 +551,7 @@ static void rna_IDMaterials_clear_id(ID *id, Main *bmain, bool remove_material_s
 {
 	BKE_material_clear_id(bmain, id, remove_material_slot);
 
-	DAG_id_tag_update(id, OB_RECALC_DATA);
+	DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
 	WM_main_add_notifier(NC_OBJECT | ND_DRAW, id);
 	WM_main_add_notifier(NC_OBJECT | ND_OB_SHADING, id);
 }
@@ -474,7 +559,7 @@ static void rna_IDMaterials_clear_id(ID *id, Main *bmain, bool remove_material_s
 static void rna_Library_filepath_set(PointerRNA *ptr, const char *value)
 {
 	Library *lib = (Library *)ptr->data;
-	BLI_assert(BKE_id_is_in_gobal_main(&lib->id));
+	BLI_assert(BKE_id_is_in_global_main(&lib->id));
 	BKE_library_filepath_set(G_MAIN, lib, value);
 }
 
@@ -783,52 +868,52 @@ static void rna_def_ID_properties(BlenderRNA *brna)
 
 	/* IDP_STRING */
 	prop = RNA_def_property(srna, "string", PROP_STRING, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 
 	/* IDP_INT */
 	prop = RNA_def_property(srna, "int", PROP_INT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 
 	prop = RNA_def_property(srna, "int_array", PROP_INT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_array(prop, 1);
 
 	/* IDP_FLOAT */
 	prop = RNA_def_property(srna, "float", PROP_FLOAT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 
 	prop = RNA_def_property(srna, "float_array", PROP_FLOAT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_array(prop, 1);
 
 	/* IDP_DOUBLE */
 	prop = RNA_def_property(srna, "double", PROP_FLOAT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 
 	prop = RNA_def_property(srna, "double_array", PROP_FLOAT, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_array(prop, 1);
 
 	/* IDP_GROUP */
 	prop = RNA_def_property(srna, "group", PROP_POINTER, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_struct_type(prop, "PropertyGroup");
 
 	prop = RNA_def_property(srna, "collection", PROP_COLLECTION, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_struct_type(prop, "PropertyGroup");
 
 	prop = RNA_def_property(srna, "idp_array", PROP_COLLECTION, PROP_NONE);
 	RNA_def_property_struct_type(prop, "PropertyGroup");
 	RNA_def_property_collection_funcs(prop, "rna_IDPArray_begin", "rna_iterator_array_next", "rna_iterator_array_end",
 	                                  "rna_iterator_array_get", "rna_IDPArray_length", NULL, NULL, NULL);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 
 	/* never tested, maybe its useful to have this? */
 #if 0
 	prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Name", "Unique name used in the code and scripting");
 	RNA_def_struct_name_property(srna, prop);
@@ -836,7 +921,7 @@ static void rna_def_ID_properties(BlenderRNA *brna)
 
 	/* IDP_ID */
 	prop = RNA_def_property(srna, "id", PROP_POINTER, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY | PROP_NEVER_UNLINK);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY | PROP_NEVER_UNLINK);
 	RNA_def_property_struct_type(prop, "ID");
 
 
@@ -854,7 +939,7 @@ static void rna_def_ID_properties(BlenderRNA *brna)
 	 * however this isn't prefect because it overrides how python would set the name
 	 * when we only really want this so RNA_def_struct_name_property() is set to something useful */
 	prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_EXPORT | PROP_IDPROPERTY);
+	RNA_def_property_flag(prop, PROP_IDPROPERTY);
 	/*RNA_def_property_clear_flag(prop, PROP_EDITABLE); */
 	RNA_def_property_ui_text(prop, "Name", "Unique name used in the code and scripting");
 	RNA_def_struct_name_property(srna, prop);
@@ -965,6 +1050,107 @@ static void rna_def_image_preview(BlenderRNA *brna)
 	RNA_def_function_ui_description(func, "Reload the preview from its source path");
 }
 
+static void rna_def_ID_override_static_property_operation(BlenderRNA *brna)
+{
+	StructRNA *srna;
+	PropertyRNA *prop;
+
+	static const EnumPropertyItem static_override_property_operation_items[] = {
+		{IDOVERRIDESTATIC_OP_NOOP, "NOOP", 0, "No-Op", "Does nothing, prevents adding actual overrides (NOT USED)"},
+		{IDOVERRIDESTATIC_OP_REPLACE, "REPLACE", 0, "Replace", "Replace value of reference by overriding one"},
+		{IDOVERRIDESTATIC_OP_ADD, "DIFF_ADD", 0, "Differential",
+		 "Stores and apply difference between reference and local value (NOT USED)"},
+		{IDOVERRIDESTATIC_OP_SUBTRACT, "DIFF_SUB", 0, "Differential",
+		 "Stores and apply difference between reference and local value (NOT USED)"},
+		{IDOVERRIDESTATIC_OP_MULTIPLY, "FACT_MULTIPLY", 0, "Factor",
+		 "Stores and apply multiplication factor between reference and local value (NOT USED)"},
+		{IDOVERRIDESTATIC_OP_INSERT_AFTER, "INSERT_AFTER", 0, "Insert After",
+		 "Insert a new item into collection after the one referenced in subitem_reference_name or _index"},
+		{IDOVERRIDESTATIC_OP_INSERT_BEFORE, "INSERT_BEFORE", 0, "Insert Before",
+		 "Insert a new item into collection after the one referenced in subitem_reference_name or _index (NOT USED)"},
+		{0, NULL, 0, NULL, NULL}
+	};
+
+	static const EnumPropertyItem static_override_property_flag_items[] = {
+		{IDOVERRIDESTATIC_FLAG_MANDATORY, "MANDATORY", 0, "Mandatory",
+		 "For templates, prevents the user from removing pre-defined operation (NOT USED)"},
+		{IDOVERRIDESTATIC_FLAG_LOCKED, "LOCKED", 0, "Locked",
+		 "Prevents the user from modifying that override operation (NOT USED)"},
+		{0, NULL, 0, NULL, NULL}
+	};
+
+	srna = RNA_def_struct(brna, "IDOverrideStaticPropertyOperation", NULL);
+	RNA_def_struct_ui_text(srna, "ID Static Override Property Operation",
+	                       "Description of an override operation over an overridden property");
+
+	prop = RNA_def_enum(srna, "operation", static_override_property_operation_items, IDOVERRIDESTATIC_OP_REPLACE,
+	                    "Operation", "What override operation is performed");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+
+	prop = RNA_def_enum(srna, "flag", static_override_property_flag_items, 0,
+	                    "Flags", "Optional flags (NOT USED)");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+
+	prop = RNA_def_string(srna, "subitem_reference_name", NULL, INT_MAX, "Subitem Reference Name",
+	                      "Used to handle insertions into collection");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+	RNA_def_property_string_funcs(prop, "rna_ID_override_static_property_operation_refname_get",
+	                              "rna_ID_override_static_property_operation_refname_length", NULL);
+
+	prop = RNA_def_string(srna, "subitem_local_name", NULL, INT_MAX, "Subitem Local Name",
+	                      "Used to handle insertions into collection");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+	RNA_def_property_string_funcs(prop, "rna_ID_override_static_property_operation_locname_get",
+	                              "rna_ID_override_static_property_operation_locname_length", NULL);
+
+	prop = RNA_def_int(srna, "subitem_reference_index", -1, -1, INT_MAX, "Subitem Reference Index",
+	                   "Used to handle insertions into collection", -1, INT_MAX);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+
+	prop = RNA_def_int(srna, "subitem_local_index", -1, -1, INT_MAX, "Subitem Local Index",
+	                   "Used to handle insertions into collection", -1, INT_MAX);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+}
+
+static void rna_def_ID_override_static_property(BlenderRNA *brna)
+{
+	StructRNA *srna;
+	PropertyRNA *prop;
+
+	srna = RNA_def_struct(brna, "IDOverrideStaticProperty", NULL);
+	RNA_def_struct_ui_text(srna, "ID Static Override Property", "Description of an overridden property");
+
+	/* String pointer, we *should* add get/set/etc. But NULL rna_path would be a nasty bug anyway... */
+	prop = RNA_def_string(srna, "rna_path", NULL, INT_MAX, "RNA Path",
+	                      "RNA path leading to that property, from owning ID");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);  /* For now. */
+
+	RNA_def_collection(srna, "operations", "IDOverrideStaticPropertyOperation", "Operations",
+	                   "List of overriding operations for a property");
+
+	rna_def_ID_override_static_property_operation(brna);
+}
+
+static void rna_def_ID_override_static(BlenderRNA *brna)
+{
+	StructRNA *srna;
+	PropertyRNA *prop;
+
+	srna = RNA_def_struct(brna, "IDOverrideStatic", NULL);
+	RNA_def_struct_ui_text(srna, "ID Static Override", "Struct gathering all data needed by statically overridden IDs");
+
+	RNA_def_pointer(srna, "reference", "ID", "Reference ID", "Linked ID used as reference by this override");
+
+	prop = RNA_def_boolean(srna, "auto_generate", true, "Auto Generate Override",
+	                       "Automatically generate overriding operations by detecting changes in properties");
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", STATICOVERRIDE_AUTO);
+
+	RNA_def_collection(srna, "properties", "IDOverrideStaticProperty", "Properties",
+	                   "List of overridden properties");
+
+	rna_def_ID_override_static_property(brna);
+}
+
 static void rna_def_ID(BlenderRNA *brna)
 {
 	StructRNA *srna;
@@ -972,9 +1158,9 @@ static void rna_def_ID(BlenderRNA *brna)
 	PropertyRNA *prop, *parm;
 
 	static const EnumPropertyItem update_flag_items[] = {
-		{OB_RECALC_OB, "OBJECT", 0, "Object", ""},
-		{OB_RECALC_DATA, "DATA", 0, "Data", ""},
-		{OB_RECALC_TIME, "TIME", 0, "Time", ""},
+		{ID_RECALC_TRANSFORM, "OBJECT", 0, "Object", ""},
+		{ID_RECALC_GEOMETRY, "DATA", 0, "Data", ""},
+		{ID_RECALC_ANIMATION, "TIME", 0, "Time", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
@@ -994,6 +1180,25 @@ static void rna_def_ID(BlenderRNA *brna)
 	RNA_def_property_update(prop, NC_ID | NA_RENAME, NULL);
 	RNA_def_struct_name_property(srna, prop);
 
+	prop = RNA_def_property(srna, "name_full", PROP_STRING, PROP_NONE);
+	RNA_def_property_ui_text(prop, "Full Name", "Unique data-block ID name, including library one is any");
+	RNA_def_property_string_funcs(prop, "rna_ID_name_full_get", "rna_ID_name_full_length", NULL);
+	RNA_def_property_string_maxlength(prop, MAX_ID_FULL_NAME);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+	prop = RNA_def_property(srna, "is_evaluated", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_ui_text(prop, "Is Evaluated",
+	                         "Whether this ID is runtime-only, evaluated data-block, or actual data from .blend file");
+	RNA_def_property_boolean_funcs(prop, "rna_ID_is_evaluated_get", NULL);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+	prop = RNA_def_property(srna, "original", PROP_POINTER, PROP_NONE);
+	RNA_def_property_struct_type(prop, "ID");
+	RNA_def_property_ui_text(prop, "Original ID",
+	                         "Actual data-block from .blend file (Main database) that generated that evaluated one");
+	RNA_def_property_pointer_funcs(prop, "rna_ID_original_get", NULL, NULL, NULL);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE | PROP_PTR_NO_OWNERSHIP);
+
 	prop = RNA_def_property(srna, "users", PROP_INT, PROP_UNSIGNED);
 	RNA_def_property_int_sdna(prop, NULL, "us");
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -1002,6 +1207,7 @@ static void rna_def_ID(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_fake_user", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", LIB_FAKEUSER);
 	RNA_def_property_ui_text(prop, "Fake User", "Save this data-block even if it has no users");
+	RNA_def_property_ui_icon(prop, ICON_FAKE_USER_OFF, true);
 	RNA_def_property_boolean_funcs(prop, NULL, "rna_ID_fake_user_set");
 
 	prop = RNA_def_property(srna, "tag", PROP_BOOLEAN, PROP_NONE);
@@ -1010,16 +1216,6 @@ static void rna_def_ID(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Tag",
 	                         "Tools can use this to tag data for their own purposes "
 	                         "(initial state is undefined)");
-
-	prop = RNA_def_property(srna, "is_updated", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "recalc", ID_RECALC);
-	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Is Updated", "Data-block is tagged for recalculation");
-
-	prop = RNA_def_property(srna, "is_updated_data", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "recalc", ID_RECALC_DATA);
-	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Is Updated Data", "Data-block data is tagged for recalculation");
 
 	prop = RNA_def_property(srna, "is_library_indirect", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "tag", LIB_TAG_INDIRECT);
@@ -1031,6 +1227,9 @@ static void rna_def_ID(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Library", "Library file the data-block is linked from");
 
+	prop = RNA_def_pointer(srna, "override_static", "IDOverrideStatic", "Static Override", "Static override data");
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
 	prop = RNA_def_pointer(srna, "preview", "ImagePreview", "Preview",
 	                       "Preview image and icon of this data-block (None if not supported for this type of data)");
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -1041,6 +1240,12 @@ static void rna_def_ID(BlenderRNA *brna)
 	RNA_def_function_ui_description(func, "Create a copy of this data-block (not supported for all data-blocks)");
 	RNA_def_function_flag(func, FUNC_USE_MAIN);
 	parm = RNA_def_pointer(func, "id", "ID", "", "New copy of the ID");
+	RNA_def_function_return(func, parm);
+
+	func = RNA_def_function(srna, "override_create", "rna_ID_override_create");
+	RNA_def_function_ui_description(func, "Create an overridden local copy of this linked data-block (not supported for all data-blocks)");
+	RNA_def_function_flag(func, FUNC_USE_MAIN);
+	parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
 	RNA_def_function_return(func, parm);
 
 	func = RNA_def_function(srna, "user_clear", "rna_ID_user_clear");
@@ -1147,6 +1352,7 @@ void RNA_def_ID(BlenderRNA *brna)
 	RNA_def_struct_ui_text(srna, "Any Type", "RNA type used for pointers to any possible data");
 
 	rna_def_ID(brna);
+	rna_def_ID_override_static(brna);
 	rna_def_image_preview(brna);
 	rna_def_ID_properties(brna);
 	rna_def_ID_materials(brna);

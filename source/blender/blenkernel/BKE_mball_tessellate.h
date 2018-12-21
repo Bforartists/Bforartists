@@ -23,13 +23,13 @@
 /** \file BKE_mball_tessellate.h
  *  \ingroup bke
  */
-struct EvaluationContext;
+struct Depsgraph;
 struct Main;
 struct Object;
 struct Scene;
 
 void BKE_mball_polygonize(
-        struct Main *bmain, struct EvaluationContext *eval_ctx, struct Scene *scene,
+        struct Depsgraph *depsgraph, struct Scene *scene,
         struct Object *ob, struct ListBase *dispbase);
 
 void BKE_mball_cubeTable_free(void);

@@ -1,4 +1,4 @@
-#Starting from 1918 (World War I Wood's glass) 
+#Starting from 1918 (World War I Wood's glass)
 
 import bpy
 bpy.context.object.data.type = 'POINT'

@@ -209,7 +209,7 @@ def load_edl(scene, filename, reel_files, reel_offsets, global_offset):
                                 other.frame_offset_end += (other.frame_final_end - new_end)
                                 other.update()
 
-                # Apply disolve
+                # Apply dissolve
                 if edit.transition_type == parse_edl.TRANSITION_DISSOLVE:
                     apply_dissolve_fcurve(final_strip, edit.transition_duration)
 

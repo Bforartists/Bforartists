@@ -212,7 +212,7 @@ class EditToolsPanel(Panel):
         EDGEDROP = scene.mesh_extra_tools.UiTabDrop[1]
         FACEDROP = scene.mesh_extra_tools.UiTabDrop[2]
         UTILSDROP = scene.mesh_extra_tools.UiTabDrop[3]
-        # Change icons depending on the bool state (complient with the rest of the UI)
+        # Change icons depending on the bool state (compliant with the rest of the UI)
         icon_active_0 = "TRIA_RIGHT" if not VERTDROP else "TRIA_DOWN"
         icon_active_1 = "TRIA_RIGHT" if not EDGEDROP else "TRIA_DOWN"
         icon_active_2 = "TRIA_RIGHT" if not FACEDROP else "TRIA_DOWN"

@@ -52,7 +52,7 @@ class ObjectNodeTree(bpy.types.NodeTree):
     @classmethod
     def get_from_context(cls, context):
         ob = context.active_object
-        if ob and ob.type not in {'LAMP'}:
+        if ob and ob.type not in {'LIGHT'}:
             ma = ob.active_material
             if ma is not None:
                 nt_name = ma.node_tree
@@ -517,7 +517,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -535,7 +535,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -597,7 +597,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -613,7 +613,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -668,7 +668,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -687,7 +687,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
                 im=image
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
-        split.operator("pov.imageopen",text="",icon="FILESEL")
+        split.operator("pov.imageopen",text="",icon="FILEBROWSER")
         if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
@@ -1305,4 +1305,3 @@ class UpdatePreviewKey(bpy.types.Operator):
         map = conf.keymaps[mapstr]
         map.keymap_items.new("node.updatepreview",type='RIGHTMOUSE',value="PRESS")
         return {'FINISHED'}
-
