@@ -36,6 +36,7 @@
 #include "WM_types.h"
 
 #include "ED_screen.h"
+#include "ED_select_utils.h"
 #include "ED_object.h"
 #include "ED_lattice.h"
 
@@ -55,26 +56,6 @@ void ED_operatortypes_lattice(void)
 
 void ED_keymap_lattice(wmKeyConfig *keyconf)
 {
-	wmKeyMap *keymap;
-	wmKeyMapItem *kmi;
-
-	keymap = WM_keymap_ensure(keyconf, "Lattice", 0, 0);
+	wmKeyMap *keymap = WM_keymap_ensure(keyconf, "Lattice", 0, 0);
 	keymap->poll = ED_operator_editlattice;
-
-	kmi = WM_keymap_add_item(keymap, "LATTICE_OT_select_all", AKEY, KM_PRESS, 0, 0);
-	RNA_enum_set(kmi->ptr, "action", SEL_TOGGLE);
-	kmi = WM_keymap_add_item(keymap, "LATTICE_OT_select_all", IKEY, KM_PRESS, KM_CTRL, 0);
-	RNA_enum_set(kmi->ptr, "action", SEL_INVERT);
-	WM_keymap_add_item(keymap, "LATTICE_OT_select_more", PADPLUSKEY, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "LATTICE_OT_select_less", PADMINUS, KM_PRESS, KM_CTRL, 0);
-
-	WM_keymap_add_item(keymap, "OBJECT_OT_vertex_parent_set", PKEY, KM_PRESS, KM_CTRL, 0);
-
-	WM_keymap_add_item(keymap, "LATTICE_OT_flip", FKEY, KM_PRESS, KM_CTRL, 0);
-
-	/* menus */
-	WM_keymap_add_menu(keymap, "VIEW3D_MT_hook", HKEY, KM_PRESS, KM_CTRL, 0);
-
-	ED_keymap_proportional_cycle(keyconf, keymap);
-	ED_keymap_proportional_editmode(keyconf, keymap, false);
 }

@@ -1117,7 +1117,7 @@ class GenerateGeodesicDome(Operator):
                 basegeodesic.makegeodesic()
                 basegeodesic.connectivity()
                 mesh = vefm_271.mesh()
-                vefm_271.finalfill(basegeodesic, mesh)  # always! for hexifiy etc. necessarry!!!
+                vefm_271.finalfill(basegeodesic, mesh)  # always! for hexifiy etc. necessary!!!
                 vefm_271.vefm_add_object(mesh)
                 last_generated_object = context.active_object
                 last_generated_object.location = (0, 0, 0)
@@ -1319,7 +1319,7 @@ class GenerateGeodesicDome(Operator):
                     message = "***OK***\nParameters saved in\n" + filename
                     print(message)
                 except:
-                    message = "***ERRROR***\n" + "Writing " + filename + "\nis not possible"
+                    message = "***ERROR***\n" + "Writing " + filename + "\nis not possible"
                 # bpy.context.scene.instant_filenames = filenames
 
             except:
@@ -1348,7 +1348,7 @@ class GenerateGeodesicDome(Operator):
                     message = "***OK***\nparameters read from\n" + filename
                     print(message)
                 except:
-                    message = "***ERRROR***\n" + "Writing " + filename + "\nnot possible"
+                    message = "***ERROR***\n" + "Writing " + filename + "\nnot possible"
                     # bpy.context.scene.instant_filenames = filenames
             except:
                 message = "***ERROR***\n Contakt PKHG,\nsomething went wrong reading params happened"

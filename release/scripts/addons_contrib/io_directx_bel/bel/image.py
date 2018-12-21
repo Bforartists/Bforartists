@@ -11,7 +11,7 @@ def dprint(str,l=2) :
         print(str)
 
 # create or retrieve a bdata image
-# given its path 
+# given its path
 def new(path, name=False, relative = True) :
     path = fs.clean(path)
     # check file
@@ -23,9 +23,9 @@ def new(path, name=False, relative = True) :
         try :
             path = bpy.path.relpath(path)
             path = fs.clean(path)
-        except : 
+        except :
             print('cant turn path into relative one (.blend and img path drive letters ?) ')
-        
+
     # retrieve paths to image file from existing image slot
     # returns img if paths match
     for img in bpy.data.images :
@@ -34,7 +34,7 @@ def new(path, name=False, relative = True) :
                 return img
 
     # create a unique name in image slot
-    if name == False : 
+    if name == False :
         name = bpy.path.basename(path)
     name = bel.bpyname(name,bpy.data.images.keys())
 
@@ -52,7 +52,7 @@ def applyShader(mat,config) :
     texslot = mat.texture_slots[0]
     tex = texslot.texture
     img = tex.image
-    
+
     #config = shaders[shadername]
     alpha = True if 'alpha' in config else False
 
@@ -184,12 +184,12 @@ def BSshader(nodes,pointer) :
         for key in RenderMaterial.keys() :
             if key not in ['DiffuseColor','SpecularColor','AmbientColor','EmissionColor','Shininess','Transparency'] :
                 print('NEW RENDERMATERIAL PROP ! : %s'%key)
-        
+
         #print(AmbientColor)
         if DiffuseColor : mat.diffuse_color = Color(DiffuseColor) #[0][0],DiffuseColor[0][1],DiffuseColor[0][2])
         if SpecularColor : mat.specular_color = Color(SpecularColor)#[0][0],SpecularColor[0][1],SpecularColor[0][2])
-        if AmbientColor : mat.ambient = AmbientColor[0] # source value is a vector3f with x=y=z 
-        if EmissionColor : mat.emit = EmissionColor[0] # source value is a vector3f with x=y=z 
+        if AmbientColor : mat.ambient = AmbientColor[0] # source value is a vector3f with x=y=z
+        if EmissionColor : mat.emit = EmissionColor[0] # source value is a vector3f with x=y=z
         #if Shininess : mat.
         #alpha is a boolean, whereas Transparency is a float or False
         if Transparency :
@@ -221,7 +221,7 @@ def BSshader(nodes,pointer) :
         imgname = imgpath.split('/')[-1]
         imgpath = tkm.path_archives+'/Images/Q=Tex032M/'+imgpath
 
-        if imgname not in bpy.data.images :        
+        if imgname not in bpy.data.images :
             if os.path.isfile(imgpath+'.png') : ext = '.png'
             elif os.path.isfile(imgpath+'.jp2') : ext = '.jp2'
             else :
@@ -231,13 +231,13 @@ def BSshader(nodes,pointer) :
             img = bpy.data.images.load(filepath=imgpath+ext)
             img.name = imgname
         else : img = bpy.data.images[imgname]
-        
+
         '''
         texslot = mat.texture_slots[0]
         mat.texture_slots[0]
         tex = texslot.texture
         tex.type = 'IMAGE'
-        img = tex.image        
+        img = tex.image
         img.name
         '''
         #img = bpy.data.images.new(name='imgname',width=640, height=512)

@@ -72,7 +72,7 @@ class vertex:
         self.normal = average(target).centroid()
         self.normal.findlength()
         if self.length == 0:
-            print("******ERROR*** lenght zero in findnormal, j = (0,1,0) replcaced")
+            print("******ERROR*** length zero in findnormal, j = (0,1,0) replaced")
             self.normal = vertex((0, 1, 0))
         self.normal.normalize()
 
@@ -706,7 +706,7 @@ class mesh:
 class facetype(mesh):
     def __init__(self, basegeodesic, parameters, width, height, relative):
         mesh.__init__(self)
-        self.detatch = parameters[0]
+        self.detach = parameters[0]
         self.endtype = parameters[1]
         self.coords = parameters[2]
         self.base = basegeodesic
@@ -750,7 +750,7 @@ class facetype(mesh):
         return length
 
     def createfaces(self):
-        if not self.detatch:
+        if not self.detach:
             for point in self.base.verts:
                 self.verts.append(point)
         if self.endtype == 4:
@@ -768,7 +768,7 @@ class facetype(mesh):
         grid = []
         candidate.dospokes()
 
-        if not self.detatch:
+        if not self.detach:
             line = []
             for vert in candidate.vertices:
                 line.append(vert)
@@ -1100,10 +1100,10 @@ class hub(mesh):
 
 # ???PKHG TODO Nmesh used yet wrong!
 def finalfill(source, target):
-    if source == target:  # PKHG: otherewise >infinite< loop
+    if source == target:  # PKHG: otherwise >infinite< loop
         print("\n***WARNING*** vefm_271.finalfill L1104 source == target empty mesh used")
         target = mesh()
-    # PKHG_??? maybe renumverting and checkkin faces wiht >=4 5 vertices?
+    # PKHG_??? maybe renumverting and checking faces with >=4 5 vertices?
     count = 0
 
     for point in source.verts:

@@ -1363,31 +1363,37 @@ static void rna_def_strip_color_balance(BlenderRNA *brna)
 static const EnumPropertyItem blend_mode_items[] = {
 	{SEQ_BLEND_REPLACE, "REPLACE", 0, "Replace", ""},
 	{SEQ_TYPE_CROSS, "CROSS", 0, "Cross", ""},
+	{0, "", ICON_NONE, NULL, NULL},
+	{SEQ_TYPE_DARKEN, "DARKEN", 0, "Darken", ""},
+	{SEQ_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
+	{SEQ_TYPE_BURN, "BURN", 0, "Burn", ""},
+	{SEQ_TYPE_LINEAR_BURN, "LINEAR_BURN", 0, "Linear Burn", ""},
+	{0, "", ICON_NONE, NULL, NULL},
+	{SEQ_TYPE_LIGHTEN, "LIGHTEN", 0, "Lighten", ""},
+	{SEQ_TYPE_SCREEN, "SCREEN", 0, "Screen", ""},
+	{SEQ_TYPE_DODGE, "DODGE", 0, "Dodge", ""},
 	{SEQ_TYPE_ADD, "ADD", 0, "Add", ""},
+	{0, "", ICON_NONE, NULL, NULL},
+	{SEQ_TYPE_OVERLAY, "OVERLAY", 0, "Overlay", ""},
+	{SEQ_TYPE_SOFT_LIGHT, "SOFT_LIGHT", 0, "Soft Light", ""},
+	{SEQ_TYPE_HARD_LIGHT, "HARD_LIGHT", 0, "Hard Light", ""},
+	{SEQ_TYPE_VIVID_LIGHT, "VIVID_LIGHT", 0, "Vivid Light", ""},
+	{SEQ_TYPE_LIN_LIGHT, "LINEAR_LIGHT", 0, "Linear Light", ""},
+	{SEQ_TYPE_PIN_LIGHT, "PIN_LIGHT", 0, "Pin Light", ""},
+	{0, "", ICON_NONE, NULL, NULL},
+	{SEQ_TYPE_DIFFERENCE, "DIFFERENCE", 0, "Difference", ""},
+	{SEQ_TYPE_EXCLUSION, "EXCLUSION", 0, "Exclusion", ""},
 	{SEQ_TYPE_SUB, "SUBTRACT", 0, "Subtract", ""},
+	{0, "", ICON_NONE, NULL, NULL},
+	{SEQ_TYPE_HUE, "HUE", 0, "Hue", ""},
+	{SEQ_TYPE_SATURATION, "SATURATION", 0, "Saturation", ""},
+	{SEQ_TYPE_BLEND_COLOR, "COLOR", 0, "Color", ""},
+	{SEQ_TYPE_VALUE, "VALUE", 0, "Value", ""},
+	{0, "", ICON_NONE, NULL, NULL},
 	{SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", ""},
 	{SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", ""},
 	{SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", ""},
-	{SEQ_TYPE_MUL, "MULTIPLY", 0, "Multiply", ""},
 	{SEQ_TYPE_OVERDROP, "OVER_DROP", 0, "Over Drop", ""},
-	{SEQ_TYPE_LIGHTEN, "LIGHTEN", 0, "Lighten", ""},
-	{SEQ_TYPE_DARKEN, "DARKEN", 0, "Darken", ""},
-	{SEQ_TYPE_SCREEN, "SCREEN", 0, "Screen", ""},
-	{SEQ_TYPE_OVERLAY, "OVERLAY", 0, "Overlay", ""},
-	{SEQ_TYPE_DODGE, "DODGE", 0, "Dodge", ""},
-	{SEQ_TYPE_BURN, "BURN", 0, "Burn", ""},
-	{SEQ_TYPE_LINEAR_BURN, "LINEAR_BURN", 0, "Linear Burn", ""},
-	{SEQ_TYPE_SOFT_LIGHT, "SOFT_LIGHT", 0, "Soft Light", ""},
-	{SEQ_TYPE_HARD_LIGHT, "HARD_LIGHT", 0, "Hard Light", ""},
-	{SEQ_TYPE_PIN_LIGHT, "PIN_LIGHT", 0, "Pin Light", ""},
-	{SEQ_TYPE_LIN_LIGHT, "LINEAR_LIGHT", 0, "Linear Light", ""},
-	{SEQ_TYPE_VIVID_LIGHT, "VIVID_LIGHT", 0, "Vivid Light", ""},
-	{SEQ_TYPE_BLEND_COLOR, "COLOR", 0, "Color", ""},
-	{SEQ_TYPE_HUE, "HUE", 0, "Hue", ""},
-	{SEQ_TYPE_SATURATION, "SATURATION", 0, "Saturation", ""},
-	{SEQ_TYPE_VALUE, "VALUE", 0, "Value", ""},
-	{SEQ_TYPE_DIFFERENCE, "DIFFERENCE", 0, "Difference", ""},
-	{SEQ_TYPE_EXCLUSION, "EXCLUSION", 0, "Exclusion", ""},
 	{0, NULL, 0, NULL, NULL}
 };
 
@@ -1504,12 +1510,13 @@ static void rna_def_sequence(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", SEQ_MUTE);
-	RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, true);
+	RNA_def_property_ui_icon(prop, ICON_HIDE_OFF, -1);
 	RNA_def_property_ui_text(prop, "Mute", "Disable strip so that it cannot be viewed in the output");
 	RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Sequence_mute_update");
 
 	prop = RNA_def_property(srna, "lock", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", SEQ_LOCK);
+	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_ui_icon(prop, ICON_UNLOCKED, true);
 	RNA_def_property_ui_text(prop, "Lock", "Lock strip so that it cannot be transformed");
 	RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, NULL);
@@ -1589,6 +1596,7 @@ static void rna_def_sequence(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "channel", PROP_INT, PROP_UNSIGNED);
 	RNA_def_property_int_sdna(prop, NULL, "machine");
+	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_range(prop, 1, MAXSEQ);
 	RNA_def_property_ui_text(prop, "Channel", "Y position of the sequence strip");
 	RNA_def_property_int_funcs(prop, NULL, "rna_Sequence_channel_set", NULL); /* overlap test */
@@ -2580,7 +2588,7 @@ static void rna_def_modifier(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", SEQUENCE_MODIFIER_MUTE);
 	RNA_def_property_ui_text(prop, "Mute", "Mute this modifier");
-	RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, 1);
+	RNA_def_property_ui_icon(prop, ICON_HIDE_OFF, -1);
 	RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_SequenceModifier_update");
 
 	prop = RNA_def_property(srna, "show_expanded", PROP_BOOLEAN, PROP_NONE);

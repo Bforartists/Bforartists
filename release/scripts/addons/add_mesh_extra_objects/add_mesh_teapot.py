@@ -199,8 +199,8 @@ def transpose(rowsbycols):
 def make_teapot(enumname, resolution):
     filenames = [None, teapot, teaspoon]
     try:
-        indexs = int(enumname)
-        filename = filenames[indexs]
+        indexes = int(enumname)
+        filename = filenames[indexes]
     except:
         print("Add Teapot Error: EnumProperty could not be set")
         filename = filenames[1]

@@ -343,6 +343,8 @@ class EnhancedSetCursor(bpy.types.Operator):
     def setup_keymaps(self, context, event=None):
         self.key_map = self.key_map.copy()
 
+        wm = context.window_manager
+
         # There is no such event as 'ACTIONMOUSE',
         # it's always 'LEFTMOUSE' or 'RIGHTMOUSE'
         if event:
@@ -355,7 +357,8 @@ class EnhancedSetCursor(bpy.types.Operator):
             else:
                 event = None
         if event is None:
-            select_mouse = context.user_preferences.inputs.select_mouse
+            keyconfig = wm.keyconfigs.active
+            select_mouse = getattr(keyconfig.preferences, "select_mouse", "LEFT")
             if select_mouse == 'RIGHT':
                 self.key_map["confirm"] = {'LEFTMOUSE'}
                 self.key_map["cancel"] = {'RIGHTMOUSE', 'ESC'}
@@ -364,7 +367,6 @@ class EnhancedSetCursor(bpy.types.Operator):
                 self.key_map["cancel"] = {'LEFTMOUSE', 'ESC'}
 
         # Use user-defined "free mouse" key, if it exists
-        wm = context.window_manager
         if '3D View' in wm.keyconfigs.user.keymaps:
             km = wm.keyconfigs.user.keymaps['3D View']
             for kmi in KeyMapItemSearch(EnhancedSetCursor.bl_idname, km):
@@ -1432,8 +1434,8 @@ class EnhancedSetCursor(bpy.types.Operator):
                 m = MatrixCompose(_x, y, z, p0)
             snapshot.matrix_world = m
 
-            snapshot.empty_draw_type = 'SINGLE_ARROW'
-            #snapshot.empty_draw_type = 'ARROWS'
+            snapshot.empty_display_type = 'SINGLE_ARROW'
+            #snapshot.empty_display_type = 'ARROWS'
             #snapshot.layers = [True] * 20 # ?
             scene.objects.link(snapshot)
 #============================================================================#
@@ -2502,7 +2504,7 @@ class Snap3DUtility(SnapUtilityBase):
 
         self.bbox_obj = self.cache._make_obj(mesh, None)
         self.bbox_obj.hide = True
-        self.bbox_obj.draw_type = 'WIRE'
+        self.bbox_obj.display_type = 'WIRE'
         self.bbox_obj.name = "BoundBoxSnap"
 
         self.shade_bbox = (shade == 'BOUNDBOX')
@@ -2517,8 +2519,8 @@ class Snap3DUtility(SnapUtilityBase):
         to_exclude = set(to_exclude)
 
         for target in to_include:
-            if only_solid and ((target.draw_type == 'BOUNDS') \
-                    or (target.draw_type == 'WIRE')):
+            if only_solid and ((target.display_type == 'BOUNDS') \
+                    or (target.display_type == 'WIRE')):
                 to_exclude.add(target)
 
         SnapUtilityBase.update_targets(self, to_include, to_exclude)
@@ -2569,7 +2571,7 @@ class Snap3DUtility(SnapUtilityBase):
                        else 'PREVIEW')
             mesh_obj = self.cache.get(obj, variant, reuse=False)
             if (mesh_obj is None) or self.shade_bbox or \
-                    (obj.draw_type == 'BOUNDS'):
+                    (obj.display_type == 'BOUNDS'):
                 if is_local:
                     bbox = [(-1, -1, -1), (1, 1, 1)]
                 else:
@@ -2623,13 +2625,13 @@ class Snap3DUtility(SnapUtilityBase):
                 # is there a better check?
                 # ("a is b" doesn't work here)
                 continue
-            if obj.show_x_ray != x_ray:
+            if obj.show_in_front != x_ray:
                 continue
 
             if is_bbox:
                 obj = self.get_bbox_obj(obj, \
                     sys_matrix, sys_matrix_inv, is_local)
-            elif obj.draw_type == 'BOUNDS':
+            elif obj.display_type == 'BOUNDS':
                 # Outside of BBox, there is no meaningful visual snapping
                 # for such display mode
                 continue
@@ -2780,7 +2782,7 @@ class Snap3DUtility(SnapUtilityBase):
 
         if is_bbox:
             self.bbox_obj.matrix_world = m.copy()
-            self.bbox_obj.show_x_ray = orig_obj.show_x_ray
+            self.bbox_obj.show_in_front = orig_obj.show_in_front
             self.hide_bbox(False)
 
         _ln = ln.copy()
@@ -3182,16 +3184,16 @@ class MeshCache:
 
             # This is necessary for correct bbox display # TODO
             # (though it'd be better to change the logic in the raycasting)
-            tmp_obj.show_x_ray = src_obj.show_x_ray
+            tmp_obj.show_in_front = src_obj.show_in_front
 
-            tmp_obj.dupli_faces_scale = src_obj.dupli_faces_scale
-            tmp_obj.dupli_frames_end = src_obj.dupli_frames_end
-            tmp_obj.dupli_frames_off = src_obj.dupli_frames_off
-            tmp_obj.dupli_frames_on = src_obj.dupli_frames_on
-            tmp_obj.dupli_frames_start = src_obj.dupli_frames_start
-            tmp_obj.dupli_group = src_obj.dupli_group
+            tmp_obj.instance_faces_scale = src_obj.instance_faces_scale
+            tmp_obj.instance_frames_end = src_obj.instance_frames_end
+            tmp_obj.instance_frames_off = src_obj.instance_frames_off
+            tmp_obj.instance_frames_on = src_obj.instance_frames_on
+            tmp_obj.instance_frames_start = src_obj.instance_frames_start
+            tmp_obj.instance_collection = src_obj.instance_collection
             #tmp_obj.dupli_list = src_obj.dupli_list
-            tmp_obj.dupli_type = src_obj.dupli_type
+            tmp_obj.instance_type = src_obj.instance_type
 
         # Make Blender recognize object as having geometry
         # (is there a simpler way to do this?)
@@ -3408,7 +3410,7 @@ class PseudoIDBlockBase(bpy.types.PropertyGroup):
         row.prop_menu_enum(self, "enum", text="", icon=self.icon)
         row.prop(self, "active", text="")
         if self.op_new:
-            row.operator(self.op_new, text="", icon='ZOOMIN')
+            row.operator(self.op_new, text="", icon='ADD')
         if self.op_delete:
             row.operator(self.op_delete, text="", icon='X')
 # end class
@@ -4405,7 +4407,7 @@ class SnapCursor_Circumscribed(bpy.types.Operator):
             self.report({'WARNING'}, 'Not implemented \
                         for %s mode' % context.mode)
             return {'CANCELLED'}
-        
+
         pos = center_of_circumscribed_circle(vecs)
         if pos is None:
             self.report({'WARNING'}, 'Select 3 objects/elements')
@@ -4426,7 +4428,7 @@ class SnapCursor_Inscribed(bpy.types.Operator):
             self.report({'WARNING'}, 'Not implemented \
                         for %s mode' % context.mode)
             return {'CANCELLED'}
-        
+
         pos = center_of_inscribed_circle(vecs)
         if pos is None:
             self.report({'WARNING'}, 'Select 3 objects/elements')
@@ -4686,7 +4688,7 @@ class CursorMonitor(bpy.types.Operator):
             if IsKeyMapItemEvent(kmi, event):
                 self.cancel(context)
                 return {'CANCELLED'}
-        
+
         try:
             return self._modal(context, event)
         except Exception as e:
@@ -4719,7 +4721,7 @@ class CursorMonitor(bpy.types.Operator):
             context.area.tag_redraw()
 
         settings = find_settings()
-        
+
         propagate_settings_to_all_screens(settings)
 
         # ================== #
@@ -5673,7 +5675,7 @@ def register():
     bpy.types.VIEW3D_MT_snap.append(extra_snap_menu_draw)
 
     bpy.app.handlers.scene_update_post.append(scene_update_post_kmreg)
-    
+
     bpy.app.handlers.load_post.append(scene_load_post)
 
 
@@ -5706,7 +5708,7 @@ def unregister():
     #bpy.types.VIEW3D_PT_view3d_properties.remove(draw_cursor_tools)
 
     bpy.types.VIEW3D_MT_snap.remove(extra_snap_menu_draw)
-    
+
     bpy.app.handlers.load_post.remove(scene_load_post)
 
 

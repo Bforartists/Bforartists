@@ -20,7 +20,7 @@ bl_info = {
     "name": "Simplify Curves",
     "author": "testscreenings",
     "version": (1, 0, 3),
-    "blender": (2, 75, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve > Simplify Curves",
     "description": "Simplifies 3D Curve objects and animation F-Curves",
     "warning": "",
@@ -35,16 +35,16 @@ This script simplifies Curve objects and animation F-Curves.
 
 import bpy
 from bpy.props import (
-        BoolProperty,
-        EnumProperty,
-        FloatProperty,
-        IntProperty,
-        )
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+)
 from mathutils import Vector
 from math import (
-        sin,
-        pow,
-        )
+    sin,
+    pow,
+)
 from bpy.types import Operator
 
 
@@ -307,10 +307,11 @@ def main(context, obj, options, curve_dimension):
 
     # create new object and put into scene
     newCurve = bpy.data.objects.new("Simple_" + obj.name, curve)
-    scene.objects.link(newCurve)
-    newCurve.select = True
+    coll = context.view_layer.active_layer_collection.collection
+    coll.objects.link(newCurve)
+    newCurve.select_set(True)
 
-    scene.objects.active = newCurve
+    context.view_layer.objects.active = newCurve
     newCurve.matrix_world = obj.matrix_world
 
     # set bezierhandles to auto
@@ -325,7 +326,7 @@ def getFcurveData(obj):
     for fc in obj.animation_data.action.fcurves:
         if fc.select:
             fcVerts = [vcVert.co.to_3d()
-                        for vcVert in fc.keyframe_points.values()]
+                       for vcVert in fc.keyframe_points.values()]
             fcurves.append(fcVerts)
     return fcurves
 
@@ -396,38 +397,38 @@ class GRAPH_OT_simplify(Operator):
     opModes = [
             ('DISTANCE', 'Distance', 'Distance-based simplification (Poly)'),
             ('CURVATURE', 'Curvature', 'Curvature-based simplification (RDP)')]
-    mode = EnumProperty(
+    mode: EnumProperty(
             name="Mode",
             description="Choose algorithm to use",
             items=opModes
             )
-    k_thresh = FloatProperty(
+    k_thresh: FloatProperty(
             name="k",
             min=0, soft_min=0,
             default=0, precision=3,
             description="Threshold"
             )
-    pointsNr = IntProperty(
+    pointsNr: IntProperty(
             name="n",
             min=5, soft_min=5,
             max=16, soft_max=9,
             default=5,
             description="Degree of curve to get averaged curvatures"
             )
-    error = FloatProperty(
+    error: FloatProperty(
             name="Error",
             description="Maximum allowed distance error",
             min=0.0, soft_min=0.0,
             default=0, precision=3
             )
-    degreeOut = IntProperty(
+    degreeOut: IntProperty(
             name="Degree",
             min=3, soft_min=3,
             max=7, soft_max=7,
             default=5,
             description="Degree of new curve"
             )
-    dis_error = FloatProperty(
+    dis_error: FloatProperty(
             name="Distance error",
             description="Maximum allowed distance error in Blender Units",
             min=0, soft_min=0,
@@ -490,7 +491,7 @@ class CURVE_OT_simplify(Operator):
             ('DISTANCE', 'Distance', 'Distance-based simplification (Poly)'),
             ('CURVATURE', 'Curvature', 'Curvature-based simplification (RDP)')
             ]
-    mode = EnumProperty(
+    mode: EnumProperty(
             name="Mode",
             description="Choose algorithm to use",
             items=opModes
@@ -501,42 +502,44 @@ class CURVE_OT_simplify(Operator):
             ('BEZIER', 'Bezier', 'BEZIER'),
             ('POLY', 'Poly', 'POLY')
             ]
-    output = EnumProperty(
+    output: EnumProperty(
             name="Output splines",
             description="Type of splines to output",
             items=SplineTypes
             )
-    k_thresh = FloatProperty(
+    k_thresh: FloatProperty(
             name="k",
             min=0, soft_min=0,
             default=0, precision=3,
             description="Threshold"
             )
-    pointsNr = IntProperty(name="n",
+    pointsNr: IntProperty(
+            name="n",
             min=5, soft_min=5,
             max=9, soft_max=9,
             default=5,
             description="Degree of curve to get averaged curvatures"
             )
-    error = FloatProperty(
+    error: FloatProperty(
             name="Error",
             description="Maximum allowed distance error in Blender Units",
             min=0, soft_min=0,
             default=0.0, precision=3
             )
-    degreeOut = IntProperty(name="Degree",
+    degreeOut: IntProperty(
+            name="Degree",
             min=3, soft_min=3,
             max=7, soft_max=7,
             default=5,
             description="Degree of new curve"
             )
-    dis_error = FloatProperty(
+    dis_error: FloatProperty(
             name="Distance error",
             description="Maximum allowed distance error in Blender Units",
             min=0, soft_min=0,
             default=0.0
             )
-    keepShort = BoolProperty(
+    keepShort: BoolProperty(
             name="Keep short splines",
             description="Keep short splines (less than 7 points)",
             default=True
@@ -546,7 +549,7 @@ class CURVE_OT_simplify(Operator):
         layout = self.layout
         col = layout.column()
 
-        col.label("Distance Error:")
+        col.label(text="Distance Error:")
         col.prop(self, "error", expand=True)
         col.prop(self, "output", text="Output", icon="OUTLINER_OB_CURVE")
         if self.output == "NURBS":
@@ -591,21 +594,30 @@ class CURVE_OT_simplify(Operator):
 
 
 # Register
+classes = [
+    GRAPH_OT_simplify,
+    CURVE_OT_simplify,
+]
+
 
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
     bpy.types.GRAPH_MT_channel.append(menu_func)
     bpy.types.DOPESHEET_MT_channel.append(menu_func)
-    bpy.types.INFO_MT_curve_add.append(menu)
+    bpy.types.VIEW3D_MT_curve_add.append(menu)
 
 
 def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
     bpy.types.GRAPH_MT_channel.remove(menu_func)
     bpy.types.DOPESHEET_MT_channel.remove(menu_func)
-    bpy.types.INFO_MT_curve_add.remove(menu)
-
-    bpy.utils.unregister_module(__name__)
+    bpy.types.VIEW3D_MT_curve_add.remove(menu)
 
 
 if __name__ == "__main__":

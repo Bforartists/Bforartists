@@ -33,7 +33,7 @@ bl_info = {
 
 import bpy
 from cacharanth import ui, meshcache
- 
+
 def register():
     ui.register()
     meshcache.register()

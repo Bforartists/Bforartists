@@ -125,10 +125,10 @@ def clear_properties():
 def register():
     init_properties()
     bpy.utils.register_class(AMTH_OBJECT_OT_wire_toggle)
-    bpy.types.VIEW3D_PT_view3d_display.append(ui_object_wire_toggle)
+    bpy.types.VIEW3D_PT_view3d_properties.append(ui_object_wire_toggle)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_OBJECT_OT_wire_toggle)
-    bpy.types.VIEW3D_PT_view3d_display.remove(ui_object_wire_toggle)
+    bpy.types.VIEW3D_PT_view3d_properties.remove(ui_object_wire_toggle)
     clear_properties()

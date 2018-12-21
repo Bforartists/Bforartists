@@ -1,7 +1,7 @@
 #since 1960, no longer manufactured since 2016
 #8mm projectors
 #used in many automobiles headlamps ; outdoor lighting systems ; watercraft ; desktop lamps (smaller power).
-#theatrical and studio (film and television) fixtures, including Ellipsoidal reflector spotlights, Source Four, and Fresnels; PAR Cans 
+#theatrical and studio (film and television) fixtures, including Ellipsoidal reflector spotlights, Source Four, and Fresnels; PAR Cans
 
 import bpy
 bpy.context.object.data.type = 'SPOT'

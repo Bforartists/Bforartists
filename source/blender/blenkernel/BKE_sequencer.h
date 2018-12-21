@@ -31,7 +31,7 @@
  */
 
 struct bContext;
-struct EvaluationContext;
+struct Depsgraph;
 struct StripColorBalance;
 struct Editing;
 struct GSet;
@@ -40,6 +40,7 @@ struct GPUFX;
 struct ImBuf;
 struct Main;
 struct Mask;
+struct RenderEngineType;
 struct Scene;
 struct Sequence;
 struct SequenceModifierData;
@@ -92,12 +93,13 @@ void BKE_sequence_iterator_end(SeqIterator *iter);
 	} ((void)0)
 
 typedef struct SeqRenderData {
-	struct EvaluationContext *eval_ctx;
 	struct Main *bmain;
+	struct Depsgraph *depsgraph;
 	struct Scene *scene;
 	int rectx;
 	int recty;
 	int preview_render_size;
+	int for_render;
 	int motion_blur_samples;
 	float motion_blur_shutter;
 	bool skip_cache;
@@ -112,8 +114,9 @@ typedef struct SeqRenderData {
 } SeqRenderData;
 
 void BKE_sequencer_new_render_data(
-        struct EvaluationContext *eval_ctx, struct Main *bmain, struct Scene *scene,
+        struct Main *bmain, struct Depsgraph *depsgraph, struct Scene *scene,
         int rectx, int recty, int preview_render_size,
+        int for_render,
         SeqRenderData *r_context);
 
 int BKE_sequencer_cmp_time_startdisp(const void *a, const void *b);
@@ -249,7 +252,7 @@ struct StripElem *BKE_sequencer_give_stripelem(struct Sequence *seq, int cfra);
 void BKE_sequencer_update_changed_seq_and_deps(struct Scene *scene, struct Sequence *changed_seq, int len_change, int ibuf_change);
 bool BKE_sequencer_input_have_to_preprocess(const SeqRenderData *context, struct Sequence *seq, float cfra);
 
-void BKE_sequencer_proxy_rebuild_context(struct Main *bmain, struct Scene *scene, struct Sequence *seq, struct GSet *file_list, ListBase *queue);
+void BKE_sequencer_proxy_rebuild_context(struct Main *bmain, struct Depsgraph *depsgraph, struct Scene *scene, struct Sequence *seq, struct GSet *file_list, ListBase *queue);
 void BKE_sequencer_proxy_rebuild(struct SeqIndexBuildContext *context, short *stop, short *do_update, float *progress);
 void BKE_sequencer_proxy_rebuild_finish(struct SeqIndexBuildContext *context, bool stop);
 
@@ -434,11 +437,12 @@ enum {
 };
 
 typedef struct ImBuf *(*SequencerDrawView)(
-        struct Main *bmain, struct Scene *scene,
+        struct Depsgraph *depsgraph, struct Scene *scene,
+        int drawtype,
         struct Object *camera, int width, int height,
-        unsigned int flag, unsigned int draw_flags, int drawtype, int alpha_mode,
+        unsigned int flag, unsigned int draw_flags, int alpha_mode,
         int samples, const char *viewname,
-        struct GPUFX *fx, struct GPUOffScreen *ofs, char err_out[256]);
+        struct GPUOffScreen *ofs, char err_out[256]);
 extern SequencerDrawView sequencer_view3d_cb;
 
 /* copy/paste */

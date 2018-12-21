@@ -31,10 +31,13 @@
 #pragma once
 
 #include "intern/nodes/deg_node.h"
+#include "BLI_sys_types.h"
 
 namespace DEG {
 
 struct ComponentDepsNode;
+
+typedef uint64_t IDComponentsMask;
 
 /* ID-Block Reference */
 struct IDDepsNode : public DepsNode {
@@ -46,32 +49,53 @@ struct IDDepsNode : public DepsNode {
 		const char *name;
 	};
 
-	void init(const ID *id, const char *subdata);
+	virtual void init(const ID *id, const char *subdata) override;
+	void init_copy_on_write(ID *id_cow_hint = NULL);
 	~IDDepsNode();
+	void destroy();
+
+	virtual string identifier() const override;
 
 	ComponentDepsNode *find_component(eDepsNode_Type type,
 	                                  const char *name = "") const;
 	ComponentDepsNode *add_component(eDepsNode_Type type,
 	                                 const char *name = "");
 
-	void tag_update(Depsgraph *graph);
+	virtual void tag_update(Depsgraph *graph, eDepsTag_Source source) override;
 
-	void finalize_build();
+	void finalize_build(Depsgraph *graph);
+
+	IDComponentsMask get_visible_components_mask() const;
 
 	/* ID Block referenced. */
-	ID *id;
+	ID *id_orig;
+	ID *id_cow;
 
 	/* Hash to make it faster to look up components. */
 	GHash *components;
-
-	/* Layers of this node with accumulated layers of it's output relations. */
-	unsigned int layers;
 
 	/* Additional flags needed for scene evaluation.
 	 * TODO(sergey): Only needed for until really granular updates
 	 * of all the entities.
 	 */
-	int eval_flags;
+	uint32_t eval_flags;
+	uint32_t previous_eval_flags;
+
+	/* Extra customdata mask which needs to be evaluated for the mesh object. */
+	uint64_t customdata_mask;
+	uint64_t previous_customdata_mask;
+
+	eDepsNode_LinkedState_Type linked_state;
+
+	/* Indicates the datablock is visible in the evaluated scene. */
+	bool is_directly_visible;
+
+	/* For the collection type of ID, denotes whether collection was fully
+	 * recursed into. 	 */
+	bool is_collection_fully_expanded;
+
+	IDComponentsMask visible_components_mask;
+	IDComponentsMask previously_visible_components_mask;
 
 	DEG_DEPSNODE_DECLARE;
 };

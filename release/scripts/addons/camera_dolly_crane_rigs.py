@@ -286,7 +286,7 @@ def create_aim_widget(self, name):
 
 
 # =========================================================================
-# Define the fuction to make the camera active
+# Define the function to make the camera active
 # =========================================================================
 def sceneCamera():
     ob = bpy.context.active_object
@@ -533,9 +533,9 @@ def build_dolly_rig(context):
         cam.data.name = "Dolly_Camera.000"
 
     cam_data_name = bpy.context.object.data.name
-    bpy.data.cameras[cam_data_name].draw_size = 1.0
+    bpy.data.cameras[cam_data_name].display_size = 1.0
     cam.rotation_euler[0] = 1.5708   # rotate the camera 90 degrees in x
-    cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct postion
+    cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct position
     cam.parent = rig
     cam.parent_type = "BONE"
     cam.parent_bone = "CTRL"
@@ -631,9 +631,9 @@ def build_crane_rig(context):
     ctrlAimChild.parent = ctrlAim
 
     # change display to BBone: it just looks nicer
-    bpy.context.object.data.draw_type = 'BBONE'
+    bpy.context.object.data.display_type = 'BBONE'
     # change display to wire for object
-    bpy.context.object.draw_type = 'WIRE'
+    bpy.context.object.display_type = 'WIRE'
 
     # jump into pose mode and change bones to euler
     bpy.ops.object.mode_set(mode='POSE')
@@ -718,9 +718,9 @@ def build_crane_rig(context):
         cam.data.name = "Crane_Camera.000"
 
     cam_data_name = bpy.context.object.data.name
-    bpy.data.cameras[cam_data_name].draw_size = 1.0
+    bpy.data.cameras[cam_data_name].display_size = 1.0
     cam.rotation_euler[0] = 1.5708   # rotate the camera 90 degrees in x
-    cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct postion
+    cam.location = (0.0, -2.0, 0.0)  # move the camera to the correct position
     cam.parent = rig
     cam.parent_type = "BONE"
     cam.parent_bone = "CTRL"
@@ -801,7 +801,7 @@ class DollyCameraUI(Panel):
                          text="Make Active Camera", icon='CAMERA_DATA')
 
         col.prop(context.active_object,
-                'show_x_ray', toggle=False, text='X Ray')
+                'show_in_front', toggle=False, text='X Ray')
         col.prop(cam, "show_limits")
         col.prop(cam, "show_safe_areas")
         col.prop(cam, "show_passepartout")
@@ -865,7 +865,7 @@ class CraneCameraUI(Panel):
             col.operator(
                 "scene.make_camera_active", text="Make Active Camera", icon='CAMERA_DATA')
         col.prop(
-            context.active_object, 'show_x_ray', toggle=False, text='X Ray')
+            context.active_object, 'show_in_front', toggle=False, text='X Ray')
         col.prop(cam, "show_limits")
         col.prop(cam, "show_safe_areas")
         col.prop(cam, "show_passepartout")
@@ -966,7 +966,7 @@ def register():
     bpy.utils.register_class(MakeCameraActive)
     bpy.utils.register_class(AddMarkerBind)
     bpy.utils.register_class(AddDofEmpty)
-    bpy.types.INFO_MT_camera_add.append(add_dolly_crane_buttons)
+    bpy.types.VIEW3D_MT_camera_add.append(add_dolly_crane_buttons)
 
 
 def unregister():
@@ -977,7 +977,7 @@ def unregister():
     bpy.utils.unregister_class(MakeCameraActive)
     bpy.utils.unregister_class(AddMarkerBind)
     bpy.utils.unregister_class(AddDofEmpty)
-    bpy.types.INFO_MT_camera_add.remove(add_dolly_crane_buttons)
+    bpy.types.VIEW3D_MT_camera_add.remove(add_dolly_crane_buttons)
 
 
 if __name__ == "__main__":

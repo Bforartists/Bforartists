@@ -37,6 +37,7 @@ IGNORE_SOURCE = (
 )
 
 IGNORE_CMAKE = (
+    "extern/audaspace/CMakeLists.txt",
 )
 
 UTF8_CHECK = True

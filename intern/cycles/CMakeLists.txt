@@ -308,13 +308,20 @@ if(WITH_CYCLES_CUDA_BINARIES AND (NOT WITH_CYCLES_CUBIN_COMPILER))
 		endif()
 		unset(MAX_MSVC)
 	elseif(APPLE)
-		if(${XCODE_VERSION} VERSION_GREATER_EQUAL 10.0)
+		if(NOT (${XCODE_VERSION} VERSION_LESS 10.0))
 			message(STATUS "nvcc not supported for this compiler version, using cycles_cubin_cc instead.")
 			set(WITH_CYCLES_CUBIN_COMPILER ON)
 		endif()
 	endif()
 endif()
 
+# NVRTC gives wrong rendering result in CUDA 10.0, so we must use NVCC.
+if(WITH_CYCLES_CUDA_BINARIES AND WITH_CYCLES_CUBIN_COMPILER)
+	if(NOT (${CUDA_VERSION} VERSION_LESS 10.0))
+		message(STATUS "cycles_cubin_cc not supported for CUDA 10.0+, using nvcc instead.")
+		set(WITH_CYCLES_CUBIN_COMPILER OFF)
+	endif()
+endif()
 
 # Subdirectories
 

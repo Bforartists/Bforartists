@@ -40,29 +40,13 @@ static bNodeSocketTemplate sh_node_camera_out[] = {
 	{	-1, 0, ""	}
 };
 
-
-static void node_shader_exec_camera(void *data, int UNUSED(thread), bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), bNodeStack **UNUSED(in), bNodeStack **out)
-{
-	if (data) {
-		ShadeInput *shi = ((ShaderCallData *)data)->shi;  /* Data we need for shading. */
-
-		copy_v3_v3(out[0]->vec, shi->co);       /* get view vector */
-		out[1]->vec[0] = fabsf(shi->co[2]);      /* get view z-depth */
-		out[2]->vec[0] = normalize_v3(out[0]->vec); /* get view distance */
-	}
-}
-
-static int gpu_shader_camera(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_camera(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
 	GPUNodeLink *viewvec;
 
 	viewvec = GPU_builtin(GPU_VIEW_POSITION);
-
-	/* Blender has negative Z, Cycles positive Z convention */
-	if (GPU_material_use_new_shading_nodes(mat))
-		GPU_link(mat, "invert_z", viewvec, &viewvec);
-
-	return GPU_stack_link(mat, "camera", in, out, viewvec);
+	GPU_link(mat, "invert_z", viewvec, &viewvec);
+	return GPU_stack_link(mat, node, "camera", in, out, viewvec);
 }
 
 void register_node_type_sh_camera(void)
@@ -70,10 +54,8 @@ void register_node_type_sh_camera(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_CAMERA, "Camera Data", NODE_CLASS_INPUT, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, NULL, sh_node_camera_out);
 	node_type_storage(&ntype, "", NULL, NULL);
-	node_type_exec(&ntype, NULL, NULL, node_shader_exec_camera);
 	node_type_gpu(&ntype, gpu_shader_camera);
 
 	nodeRegisterType(&ntype);

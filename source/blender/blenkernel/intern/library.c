@@ -47,7 +47,7 @@
 #include "DNA_brush_types.h"
 #include "DNA_cachefile_types.h"
 #include "DNA_camera_types.h"
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_ipo_types.h"
 #include "DNA_key_types.h"
@@ -62,6 +62,7 @@
 #include "DNA_mask_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_speaker_types.h"
@@ -70,6 +71,7 @@
 #include "DNA_vfont_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_world_types.h"
+#include "DNA_workspace_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
@@ -78,8 +80,8 @@
 #include "BLI_memarena.h"
 #include "BLI_mempool.h"
 #include "BLI_string_utils.h"
-
 #include "BLI_threads.h"
+
 #include "BLT_translation.h"
 
 #include "BKE_action.h"
@@ -89,12 +91,11 @@
 #include "BKE_brush.h"
 #include "BKE_camera.h"
 #include "BKE_cachefile.h"
+#include "BKE_collection.h"
 #include "BKE_context.h"
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
 #include "BKE_font.h"
 #include "BKE_global.h"
-#include "BKE_group.h"
 #include "BKE_gpencil.h"
 #include "BKE_idcode.h"
 #include "BKE_idprop.h"
@@ -103,10 +104,12 @@
 #include "BKE_lamp.h"
 #include "BKE_lattice.h"
 #include "BKE_library.h"
+#include "BKE_library_override.h"
 #include "BKE_library_query.h"
 #include "BKE_library_remap.h"
 #include "BKE_linestyle.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_runtime.h"
 #include "BKE_material.h"
 #include "BKE_main.h"
 #include "BKE_mball.h"
@@ -117,6 +120,7 @@
 #include "BKE_paint.h"
 #include "BKE_particle.h"
 #include "BKE_packedFile.h"
+#include "BKE_lightprobe.h"
 #include "BKE_sound.h"
 #include "BKE_speaker.h"
 #include "BKE_scene.h"
@@ -370,7 +374,7 @@ void BKE_id_make_local_generic(Main *bmain, ID *id, const bool id_in_mainlist, c
  *
  * \note Always set ID->newid pointer in case it gets duplicated...
  *
- * \param lib_local Special flag used when making a whole library's content local, it needs specific handling.
+ * \param lib_local: Special flag used when making a whole library's content local, it needs specific handling.
  *
  * \return true if the block can be made local.
  */
@@ -418,6 +422,9 @@ bool id_make_local(Main *bmain, ID *id, const bool test, const bool lib_local)
 		case ID_SPK:
 			if (!test) BKE_speaker_make_local(bmain, (Speaker *)id, lib_local);
 			return true;
+		case ID_LP:
+			if (!test) BKE_lightprobe_make_local(bmain, (LightProbe *)id, lib_local);
+			return true;
 		case ID_WO:
 			if (!test) BKE_world_make_local(bmain, (World *)id, lib_local);
 			return true;
@@ -431,7 +438,7 @@ bool id_make_local(Main *bmain, ID *id, const bool test, const bool lib_local)
 			if (!test) BKE_sound_make_local(bmain, (bSound *)id, lib_local);
 			return true;
 		case ID_GR:
-			if (!test) BKE_group_make_local(bmain, (Group *)id, lib_local);
+			if (!test) BKE_collection_make_local(bmain, (Collection *)id, lib_local);
 			return true;
 		case ID_AR:
 			if (!test) BKE_armature_make_local(bmain, (bArmature *)id, lib_local);
@@ -469,7 +476,11 @@ bool id_make_local(Main *bmain, ID *id, const bool test, const bool lib_local)
 		case ID_CF:
 			if (!test) BKE_cachefile_make_local(bmain, (CacheFile *)id, lib_local);
 			return true;
+		case ID_WS:
 		case ID_SCR:
+			/* A bit special: can be appended but not linked. Return false
+			 * since supporting make-local doesn't make much sense. */
+			return false;
 		case ID_LI:
 		case ID_KE:
 		case ID_WM:
@@ -507,6 +518,32 @@ static int id_copy_libmanagement_cb(void *user_data, ID *UNUSED(id_self), ID **i
 	return IDWALK_RET_NOP;
 }
 
+static void id_copy_clear_runtime_if_needed(ID *id, int flag)
+{
+	if (id == NULL) {
+		return;
+	}
+	if (flag & LIB_ID_COPY_RUNTIME) {
+		return;
+	}
+	switch ((ID_Type)GS(id->name)) {
+		case ID_OB:
+		{
+			Object *object = (Object *)id;
+			BKE_object_runtime_reset(object);
+			break;
+		}
+		case ID_ME:
+		{
+			Mesh *mesh = (Mesh *)id;
+			BKE_mesh_runtime_reset(mesh);
+			break;
+		}
+		default:
+			break;
+	}
+}
+
 /**
  * Generic entry point for copying a datablock (new API).
  *
@@ -515,11 +552,11 @@ static int id_copy_libmanagement_cb(void *user_data, ID *UNUSED(id_self), ID **i
  *
  * \note Usercount of new copy is always set to 1.
  *
- * \param bmain Main database, may be NULL only if LIB_ID_CREATE_NO_MAIN is specified.
- * \param id Source datablock.
- * \param r_newid Pointer to new (copied) ID pointer.
- * \param flag Set of copy options, see DNA_ID.h enum for details (leave to zero for default, full copy).
- * \param test If set, do not do any copy, just test whether copy is supported.
+ * \param bmain: Main database, may be NULL only if LIB_ID_CREATE_NO_MAIN is specified.
+ * \param id: Source datablock.
+ * \param r_newid: Pointer to new (copied) ID pointer.
+ * \param flag: Set of copy options, see DNA_ID.h enum for details (leave to zero for default, full copy).
+ * \param test: If set, do not do any copy, just test whether copy is supported.
  * \return False when copying that ID type is not supported, true otherwise.
  */
 /* XXX TODO remove test thing, *all* IDs should be copyable that way! */
@@ -589,6 +626,9 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 		case ID_SPK:
 			BKE_speaker_copy_data(bmain, (Speaker *)*r_newid, (Speaker *)id, flag);
 			break;
+		case ID_LP:
+			BKE_lightprobe_copy_data(bmain, (LightProbe *)*r_newid, (LightProbe *)id, flag);
+			break;
 		case ID_CA:
 			BKE_camera_copy_data(bmain, (Camera *)*r_newid, (Camera *)id, flag);
 			break;
@@ -602,7 +642,7 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 			BKE_text_copy_data(bmain, (Text *)*r_newid, (Text *)id, flag);
 			break;
 		case ID_GR:
-			BKE_group_copy_data(bmain, (Group *)*r_newid, (Group *)id, flag);
+			BKE_collection_copy_data(bmain, (Collection *)*r_newid, (Collection *)id, flag);
 			break;
 		case ID_AR:
 			BKE_armature_copy_data(bmain, (bArmature *)*r_newid, (bArmature *)id, flag);
@@ -620,7 +660,7 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 			BKE_particlesettings_copy_data(bmain, (ParticleSettings *)*r_newid, (ParticleSettings *)id, flag);
 			break;
 		case ID_GD:
-			BKE_gpencil_copy_data(bmain, (bGPdata *)*r_newid, (bGPdata *)id, flag);
+			BKE_gpencil_copy_data((bGPdata *)*r_newid, (bGPdata *)id, flag);
 			break;
 		case ID_MC:
 			BKE_movieclip_copy_data(bmain, (MovieClip *)*r_newid, (MovieClip *)id, flag);
@@ -649,6 +689,7 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 		case ID_LI:
 		case ID_SCR:
 		case ID_WM:
+		case ID_WS:
 		case ID_IP:
 			BLI_assert(0);  /* Should have been rejected at start of function! */
 			break;
@@ -668,6 +709,8 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
 		(*r_newid)->lib = id->lib;
 	}
 
+	id_copy_clear_runtime_if_needed(*r_newid, flag);
+
 	return true;
 }
 
@@ -677,7 +720,76 @@ bool BKE_id_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag, con
  */
 bool id_copy(Main *bmain, const ID *id, ID **newid, bool test)
 {
-	return BKE_id_copy_ex(bmain, id, newid, 0, test);
+	return BKE_id_copy_ex(bmain, id, newid, LIB_ID_COPY_SHAPEKEY, test);
+}
+
+/** Does a mere memory swap over the whole IDs data (including type-specific memory).
+ *  \note Most internal ID data itself is not swapped (only IDProperties are). */
+void BKE_id_swap(Main *bmain, ID *id_a, ID *id_b)
+{
+	BLI_assert(GS(id_a->name) == GS(id_b->name));
+
+	const ID id_a_back = *id_a;
+	const ID id_b_back = *id_b;
+
+#define CASE_SWAP(_gs, _type) \
+	case _gs: \
+		SWAP(_type, *(_type *)id_a, *(_type *)id_b); \
+		break
+
+	switch ((ID_Type)GS(id_a->name)) {
+		CASE_SWAP(ID_SCE, Scene);
+		CASE_SWAP(ID_LI, Library);
+		CASE_SWAP(ID_OB, Object);
+		CASE_SWAP(ID_ME, Mesh);
+		CASE_SWAP(ID_CU, Curve);
+		CASE_SWAP(ID_MB, MetaBall);
+		CASE_SWAP(ID_MA, Material);
+		CASE_SWAP(ID_TE, Tex);
+		CASE_SWAP(ID_IM, Image);
+		CASE_SWAP(ID_LT, Lattice);
+		CASE_SWAP(ID_LA, Lamp);
+		CASE_SWAP(ID_LP, LightProbe);
+		CASE_SWAP(ID_CA, Camera);
+		CASE_SWAP(ID_KE, Key);
+		CASE_SWAP(ID_WO, World);
+		CASE_SWAP(ID_SCR, bScreen);
+		CASE_SWAP(ID_VF, VFont);
+		CASE_SWAP(ID_TXT, Text);
+		CASE_SWAP(ID_SPK, Speaker);
+		CASE_SWAP(ID_SO, bSound);
+		CASE_SWAP(ID_GR, Collection);
+		CASE_SWAP(ID_AR, bArmature);
+		CASE_SWAP(ID_AC, bAction);
+		CASE_SWAP(ID_NT, bNodeTree);
+		CASE_SWAP(ID_BR, Brush);
+		CASE_SWAP(ID_PA, ParticleSettings);
+		CASE_SWAP(ID_WM, wmWindowManager);
+		CASE_SWAP(ID_WS, WorkSpace);
+		CASE_SWAP(ID_GD, bGPdata);
+		CASE_SWAP(ID_MC, MovieClip);
+		CASE_SWAP(ID_MSK, Mask);
+		CASE_SWAP(ID_LS, FreestyleLineStyle);
+		CASE_SWAP(ID_PAL, Palette);
+		CASE_SWAP(ID_PC, PaintCurve);
+		CASE_SWAP(ID_CF, CacheFile);
+		case ID_IP:
+			break;  /* Deprecated. */
+	}
+
+#undef CASE_SWAP
+
+	/* Restore original ID's internal data. */
+	*id_a = id_a_back;
+	*id_b = id_b_back;
+
+	/* Exception: IDProperties. */
+	id_a->properties = id_b_back.properties;
+	id_b->properties = id_a_back.properties;
+
+	/* Swap will have broken internal references to itself, restore them. */
+	BKE_libblock_relink_ex(bmain, id_a, id_b, id_a, false);
+	BKE_libblock_relink_ex(bmain, id_b, id_a, id_b, false);
 }
 
 /** Does *not* set ID->newid pointer. */
@@ -693,14 +805,22 @@ bool id_single_user(bContext *C, ID *id, PointerRNA *ptr, PropertyRNA *prop)
 			if (id_copy(bmain, id, &newid, false) && newid) {
 				/* copy animation actions too */
 				BKE_animdata_copy_id_action(bmain, id, false);
-				/* us is 1 by convention, but RNA_property_pointer_set
-				 * will also increment it, so set it to zero */
-				newid->us = 0;
+				/* us is 1 by convention with new IDs, but RNA_property_pointer_set
+				 * will also increment it, decrement it here. */
+				id_us_min(newid);
 
 				/* assign copy */
 				RNA_id_pointer_create(newid, &idptr);
 				RNA_property_pointer_set(ptr, prop, idptr);
 				RNA_property_update(C, ptr, prop);
+
+				/* tag grease pencil datablock and disable onion */
+				if (GS(id->name) == ID_GD) {
+					DEG_id_tag_update(id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+					DEG_id_tag_update(newid, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
+					bGPdata *gpd = (bGPdata *)newid;
+					gpd->flag &= ~GP_DATA_SHOW_ONIONSKINS;
+				}
 
 				return true;
 			}
@@ -807,81 +927,6 @@ void BKE_libblock_management_usercounts_clear(Main *bmain, void *idv)
 	id->tag |= LIB_TAG_NO_USER_REFCOUNT;
 }
 
-ListBase *which_libbase(Main *mainlib, short type)
-{
-	switch ((ID_Type)type) {
-		case ID_SCE:
-			return &(mainlib->scene);
-		case ID_LI:
-			return &(mainlib->library);
-		case ID_OB:
-			return &(mainlib->object);
-		case ID_ME:
-			return &(mainlib->mesh);
-		case ID_CU:
-			return &(mainlib->curve);
-		case ID_MB:
-			return &(mainlib->mball);
-		case ID_MA:
-			return &(mainlib->mat);
-		case ID_TE:
-			return &(mainlib->tex);
-		case ID_IM:
-			return &(mainlib->image);
-		case ID_LT:
-			return &(mainlib->latt);
-		case ID_LA:
-			return &(mainlib->lamp);
-		case ID_CA:
-			return &(mainlib->camera);
-		case ID_IP:
-			return &(mainlib->ipo);
-		case ID_KE:
-			return &(mainlib->key);
-		case ID_WO:
-			return &(mainlib->world);
-		case ID_SCR:
-			return &(mainlib->screen);
-		case ID_VF:
-			return &(mainlib->vfont);
-		case ID_TXT:
-			return &(mainlib->text);
-		case ID_SPK:
-			return &(mainlib->speaker);
-		case ID_SO:
-			return &(mainlib->sound);
-		case ID_GR:
-			return &(mainlib->group);
-		case ID_AR:
-			return &(mainlib->armature);
-		case ID_AC:
-			return &(mainlib->action);
-		case ID_NT:
-			return &(mainlib->nodetree);
-		case ID_BR:
-			return &(mainlib->brush);
-		case ID_PA:
-			return &(mainlib->particle);
-		case ID_WM:
-			return &(mainlib->wm);
-		case ID_GD:
-			return &(mainlib->gpencil);
-		case ID_MC:
-			return &(mainlib->movieclip);
-		case ID_MSK:
-			return &(mainlib->mask);
-		case ID_LS:
-			return &(mainlib->linestyle);
-		case ID_PAL:
-			return &(mainlib->palettes);
-		case ID_PC:
-			return &(mainlib->paintcurves);
-		case ID_CF:
-			return &(mainlib->cachefiles);
-	}
-	return NULL;
-}
-
 /**
  * Clear or set given tags for all ids in listbase (runtime tags).
  */
@@ -963,72 +1008,11 @@ void BKE_main_lib_objects_recalc_all(Main *bmain)
 	/* flag for full recalc */
 	for (ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ID_IS_LINKED(ob)) {
-			DAG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
+			DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
 		}
 	}
 
-	DAG_id_type_tag(bmain, ID_OB);
-}
-
-/**
- * puts into array *lb pointers to all the ListBase structs in main,
- * and returns the number of them as the function result. This is useful for
- * generic traversal of all the blocks in a Main (by traversing all the
- * lists in turn), without worrying about block types.
- *
- * \note MAX_LIBARRAY define should match this code */
-int set_listbasepointers(Main *main, ListBase **lb)
-{
-	/* BACKWARDS! also watch order of free-ing! (mesh<->mat), first items freed last.
-	 * This is important because freeing data decreases usercounts of other datablocks,
-	 * if this data is its self freed it can crash. */
-	lb[INDEX_ID_LI] = &(main->library);  /* Libraries may be accessed from pretty much any other ID... */
-	lb[INDEX_ID_IP] = &(main->ipo);
-	lb[INDEX_ID_AC] = &(main->action); /* moved here to avoid problems when freeing with animato (aligorith) */
-	lb[INDEX_ID_KE] = &(main->key);
-	lb[INDEX_ID_GD] = &(main->gpencil); /* referenced by nodes, objects, view, scene etc, before to free after. */
-	lb[INDEX_ID_NT] = &(main->nodetree);
-	lb[INDEX_ID_IM] = &(main->image);
-	lb[INDEX_ID_TE] = &(main->tex);
-	lb[INDEX_ID_MA] = &(main->mat);
-	lb[INDEX_ID_VF] = &(main->vfont);
-
-	/* Important!: When adding a new object type,
-	 * the specific data should be inserted here
-	 */
-
-	lb[INDEX_ID_AR] = &(main->armature);
-
-	lb[INDEX_ID_CF] = &(main->cachefiles);
-	lb[INDEX_ID_ME] = &(main->mesh);
-	lb[INDEX_ID_CU] = &(main->curve);
-	lb[INDEX_ID_MB] = &(main->mball);
-
-	lb[INDEX_ID_LT] = &(main->latt);
-	lb[INDEX_ID_LA] = &(main->lamp);
-	lb[INDEX_ID_CA] = &(main->camera);
-
-	lb[INDEX_ID_TXT] = &(main->text);
-	lb[INDEX_ID_SO]  = &(main->sound);
-	lb[INDEX_ID_GR]  = &(main->group);
-	lb[INDEX_ID_PAL] = &(main->palettes);
-	lb[INDEX_ID_PC]  = &(main->paintcurves);
-	lb[INDEX_ID_BR]  = &(main->brush);
-	lb[INDEX_ID_PA]  = &(main->particle);
-	lb[INDEX_ID_SPK] = &(main->speaker);
-
-	lb[INDEX_ID_WO]  = &(main->world);
-	lb[INDEX_ID_MC]  = &(main->movieclip);
-	lb[INDEX_ID_SCR] = &(main->screen);
-	lb[INDEX_ID_OB]  = &(main->object);
-	lb[INDEX_ID_LS]  = &(main->linestyle); /* referenced by scenes */
-	lb[INDEX_ID_SCE] = &(main->scene);
-	lb[INDEX_ID_WM]  = &(main->wm);
-	lb[INDEX_ID_MSK] = &(main->mask);
-
-	lb[INDEX_ID_NULL] = NULL;
-
-	return (MAX_LIBARRAY - 1);
+	DEG_id_type_tag(bmain, ID_OB);
 }
 
 /* *********** ALLOC AND FREE *****************
@@ -1075,8 +1059,9 @@ size_t BKE_libblock_get_alloc_info(short type, const char **name)
 		CASE_RETURN(ID_VF,  VFont);
 		CASE_RETURN(ID_TXT, Text);
 		CASE_RETURN(ID_SPK, Speaker);
+		CASE_RETURN(ID_LP,  LightProbe);
 		CASE_RETURN(ID_SO,  bSound);
-		CASE_RETURN(ID_GR,  Group);
+		CASE_RETURN(ID_GR,  Collection);
 		CASE_RETURN(ID_AR,  bArmature);
 		CASE_RETURN(ID_AC,  bAction);
 		CASE_RETURN(ID_NT,  bNodeTree);
@@ -1090,6 +1075,7 @@ size_t BKE_libblock_get_alloc_info(short type, const char **name)
 		CASE_RETURN(ID_PAL, Palette);
 		CASE_RETURN(ID_PC,  PaintCurve);
 		CASE_RETURN(ID_CF,  CacheFile);
+		CASE_RETURN(ID_WS,  WorkSpace);
 	}
 	return 0;
 #undef CASE_RETURN
@@ -1147,7 +1133,7 @@ void *BKE_libblock_alloc(Main *bmain, short type, const char *name, const int fl
 
 			/* TODO to be removed from here! */
 			if ((flag & LIB_ID_CREATE_NO_DEG_TAG) == 0) {
-				DAG_id_type_tag(bmain, type);
+				DEG_id_type_tag(bmain, type);
 			}
 		}
 		else {
@@ -1205,6 +1191,9 @@ void BKE_libblock_init_empty(ID *id)
 			break;
 		case ID_SPK:
 			BKE_speaker_init((Speaker *)id);
+			break;
+		case ID_LP:
+			BKE_lightprobe_init((LightProbe *)id);
 			break;
 		case ID_CA:
 			BKE_camera_init((Camera *)id);
@@ -1270,21 +1259,47 @@ void BKE_libblock_init_empty(ID *id)
 			/* Should not be needed - animation from lib pre-2.5 is broken anyway. */
 			BLI_assert(0);
 			break;
+		case ID_PAL:
+			BKE_palette_init((Palette *)id);
+			break;
 		default:
 			BLI_assert(0);  /* Should never reach this point... */
 	}
 }
 
-/* by spec, animdata is first item after ID */
-/* and, trust that BKE_animdata_from_id() will only find AnimData for valid ID-types */
-static void id_copy_animdata(Main *bmain, ID *id, const bool do_action)
+/** Generic helper to create a new empty datablock of given type in given \a bmain database.
+ *
+ * \param name: can be NULL, in which case we get default name for this ID type. */
+void *BKE_id_new(Main *bmain, const short type, const char *name)
 {
-	AnimData *adt = BKE_animdata_from_id(id);
+	BLI_assert(bmain != NULL);
 
-	if (adt) {
-		IdAdtTemplate *iat = (IdAdtTemplate *)id;
-		iat->adt = BKE_animdata_copy(bmain, iat->adt, do_action); /* could be set to false, need to investigate */
+	if (name == NULL) {
+		name = DATA_(BKE_idcode_to_name(type));
 	}
+
+	ID *id = BKE_libblock_alloc(bmain, type, name, 0);
+	BKE_libblock_init_empty(id);
+
+	return id;
+}
+
+/** Generic helper to create a new temporary empty datablock of given type, *outside* of any Main database.
+ *
+ * \param name: can be NULL, in which case we get default name for this ID type. */
+void *BKE_id_new_nomain(const short type, const char *name)
+{
+	if (name == NULL) {
+		name = DATA_(BKE_idcode_to_name(type));
+	}
+
+	ID *id = BKE_libblock_alloc(NULL, type, name,
+	                            LIB_ID_CREATE_NO_MAIN |
+	                            LIB_ID_CREATE_NO_USER_REFCOUNT |
+	                            LIB_ID_CREATE_NO_DEG_TAG);
+	BKE_libblock_init_empty(id);
+
+	return id;
 }
 
 void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int flag)
@@ -1299,6 +1314,8 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int fla
 	BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || bmain != NULL);
 	BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) != 0 || (flag & LIB_ID_CREATE_NO_ALLOCATE) == 0);
 	BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) == 0 || (flag & LIB_ID_CREATE_NO_USER_REFCOUNT) != 0);
+	/* Never implicitly copy shapekeys when generating temp data outside of Main database. */
+	BLI_assert((flag & LIB_ID_CREATE_NO_MAIN) == 0 || (flag & LIB_ID_COPY_SHAPEKEY) == 0);
 
 	if ((flag & LIB_ID_CREATE_NO_ALLOCATE) != 0) {
 		/* r_newid already contains pointer to allocated memory. */
@@ -1326,12 +1343,30 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int fla
 		new_id->properties = IDP_CopyProperty_ex(id->properties, flag);
 	}
 
-	/* the duplicate should get a copy of the animdata */
-	BLI_assert((flag & LIB_ID_COPY_ACTIONS) == 0 || (flag & LIB_ID_CREATE_NO_MAIN) == 0);
-	id_copy_animdata(bmain, new_id, (flag & LIB_ID_COPY_ACTIONS) != 0 && (flag & LIB_ID_CREATE_NO_MAIN) == 0);
+	/* XXX Again... We need a way to control what we copy in a much more refined way.
+	 * We cannot always copy this, some internal copying will die on it! */
+	/* For now, upper level code will have to do that itself when required. */
+#if 0
+	if (id->override != NULL) {
+		BKE_override_copy(new_id, id);
+	}
+#endif
+
+	if (id_can_have_animdata(new_id)) {
+		IdAdtTemplate *iat = (IdAdtTemplate *)new_id;
+
+		/* the duplicate should get a copy of the animdata */
+		if ((flag & LIB_ID_COPY_NO_ANIMDATA) == 0) {
+			BLI_assert((flag & LIB_ID_COPY_ACTIONS) == 0 || (flag & LIB_ID_CREATE_NO_MAIN) == 0);
+			iat->adt = BKE_animdata_copy(bmain, iat->adt, flag);
+		}
+		else {
+			iat->adt = NULL;
+		}
+	}
 
 	if ((flag & LIB_ID_CREATE_NO_DEG_TAG) == 0 && (flag & LIB_ID_CREATE_NO_MAIN) == 0) {
-		DAG_id_type_tag(bmain, GS(new_id->name));
+		DEG_id_type_tag(bmain, GS(new_id->name));
 	}
 
 	*r_newid = new_id;
@@ -1356,260 +1391,20 @@ void *BKE_libblock_copy_nolib(const ID *id, const bool do_action)
 	return idn;
 }
 
+void *BKE_libblock_copy_for_localize(const ID *id)
+{
+	ID *idn;
+	BKE_libblock_copy_ex(NULL, id, &idn, (LIB_ID_CREATE_NO_MAIN |
+	                                      LIB_ID_CREATE_NO_USER_REFCOUNT |
+	                                      LIB_ID_COPY_ACTIONS |
+	                                      LIB_ID_COPY_NO_ANIMDATA));
+	return idn;
+}
+
 void BKE_library_free(Library *lib)
 {
 	if (lib->packedfile)
 		freePackedFile(lib->packedfile);
-}
-
-Main *BKE_main_new(void)
-{
-	Main *bmain = MEM_callocN(sizeof(Main), "new main");
-	bmain->eval_ctx = DEG_evaluation_context_new(DAG_EVAL_VIEWPORT);
-	bmain->lock = MEM_mallocN(sizeof(SpinLock), "main lock");
-	BLI_spin_init((SpinLock *)bmain->lock);
-	return bmain;
-}
-
-void BKE_main_free(Main *mainvar)
-{
-	/* also call when reading a file, erase all, etc */
-	ListBase *lbarray[MAX_LIBARRAY];
-	int a;
-
-	MEM_SAFE_FREE(mainvar->blen_thumb);
-
-	a = set_listbasepointers(mainvar, lbarray);
-	while (a--) {
-		ListBase *lb = lbarray[a];
-		ID *id;
-
-		while ( (id = lb->first) ) {
-#if 1
-			BKE_libblock_free_ex(mainvar, id, false, false);
-#else
-			/* errors freeing ID's can be hard to track down,
-			 * enable this so valgrind will give the line number in its error log */
-			switch (a) {
-				case   0: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   1: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   2: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   3: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   4: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   5: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   6: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   7: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   8: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case   9: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  10: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  11: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  12: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  13: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  14: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  15: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  16: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  17: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  18: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  19: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  20: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  21: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  22: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  23: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  24: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  25: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  26: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  27: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  28: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  29: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  30: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  31: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  32: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  33: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				case  34: BKE_libblock_free_ex(mainvar, id, false, false); break;
-				default:
-					BLI_assert(0);
-					break;
-			}
-#endif
-		}
-	}
-
-	if (mainvar->relations) {
-		BKE_main_relations_free(mainvar);
-	}
-
-	BLI_spin_end((SpinLock *)mainvar->lock);
-	MEM_freeN(mainvar->lock);
-	DEG_evaluation_context_free(mainvar->eval_ctx);
-	MEM_freeN(mainvar);
-}
-
-void BKE_main_lock(struct Main *bmain)
-{
-	BLI_spin_lock((SpinLock *) bmain->lock);
-}
-
-void BKE_main_unlock(struct Main *bmain)
-{
-	BLI_spin_unlock((SpinLock *) bmain->lock);
-}
-
-
-static int main_relations_create_cb(void *user_data, ID *id_self, ID **id_pointer, int cb_flag)
-{
-	MainIDRelations *rel = user_data;
-
-	if (*id_pointer) {
-		MainIDRelationsEntry *entry, **entry_p;
-
-		entry = BLI_mempool_alloc(rel->entry_pool);
-		if (BLI_ghash_ensure_p(rel->id_user_to_used, id_self, (void ***)&entry_p)) {
-			entry->next = *entry_p;
-		}
-		else {
-			entry->next = NULL;
-		}
-		entry->id_pointer = id_pointer;
-		entry->usage_flag = cb_flag;
-		*entry_p = entry;
-
-		entry = BLI_mempool_alloc(rel->entry_pool);
-		if (BLI_ghash_ensure_p(rel->id_used_to_user, *id_pointer, (void ***)&entry_p)) {
-			entry->next = *entry_p;
-		}
-		else {
-			entry->next = NULL;
-		}
-		entry->id_pointer = (ID **)id_self;
-		entry->usage_flag = cb_flag;
-		*entry_p = entry;
-	}
-
-	return IDWALK_RET_NOP;
-}
-
-/** Generate the mappings between used IDs and their users, and vice-versa. */
-void BKE_main_relations_create(Main *bmain)
-{
-	ListBase *lbarray[MAX_LIBARRAY];
-	ID *id;
-	int a;
-
-	if (bmain->relations != NULL) {
-		BKE_main_relations_free(bmain);
-	}
-
-	bmain->relations = MEM_mallocN(sizeof(*bmain->relations), __func__);
-	bmain->relations->id_used_to_user = BLI_ghash_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
-	bmain->relations->id_user_to_used = BLI_ghash_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
-	bmain->relations->entry_pool = BLI_mempool_create(sizeof(MainIDRelationsEntry), 128, 128, BLI_MEMPOOL_NOP);
-
-	for (a = set_listbasepointers(bmain, lbarray); a--; ) {
-		for (id = lbarray[a]->first; id; id = id->next) {
-			BKE_library_foreach_ID_link(NULL, id, main_relations_create_cb, bmain->relations, IDWALK_READONLY);
-		}
-	}
-}
-
-void BKE_main_relations_free(Main *bmain)
-{
-	if (bmain->relations) {
-		if (bmain->relations->id_used_to_user) {
-			BLI_ghash_free(bmain->relations->id_used_to_user, NULL, NULL);
-		}
-		if (bmain->relations->id_user_to_used) {
-			BLI_ghash_free(bmain->relations->id_user_to_used, NULL, NULL);
-		}
-		BLI_mempool_destroy(bmain->relations->entry_pool);
-		MEM_freeN(bmain->relations);
-		bmain->relations = NULL;
-	}
-}
-
-/**
- * Generates a raw .blend file thumbnail data from given image.
- *
- * \param bmain If not NULL, also store generated data in this Main.
- * \param img ImBuf image to generate thumbnail data from.
- * \return The generated .blend file raw thumbnail data.
- */
-BlendThumbnail *BKE_main_thumbnail_from_imbuf(Main *bmain, ImBuf *img)
-{
-	BlendThumbnail *data = NULL;
-
-	if (bmain) {
-		MEM_SAFE_FREE(bmain->blen_thumb);
-	}
-
-	if (img) {
-		const size_t sz = BLEN_THUMB_MEMSIZE(img->x, img->y);
-		data = MEM_mallocN(sz, __func__);
-
-		IMB_rect_from_float(img);  /* Just in case... */
-		data->width = img->x;
-		data->height = img->y;
-		memcpy(data->rect, img->rect, sz - sizeof(*data));
-	}
-
-	if (bmain) {
-		bmain->blen_thumb = data;
-	}
-	return data;
-}
-
-/**
- * Generates an image from raw .blend file thumbnail \a data.
- *
- * \param bmain Use this bmain->blen_thumb data if given \a data is NULL.
- * \param data Raw .blend file thumbnail data.
- * \return An ImBuf from given data, or NULL if invalid.
- */
-ImBuf *BKE_main_thumbnail_to_imbuf(Main *bmain, BlendThumbnail *data)
-{
-	ImBuf *img = NULL;
-
-	if (!data && bmain) {
-		data = bmain->blen_thumb;
-	}
-
-	if (data) {
-		/* Note: we cannot use IMB_allocFromBuffer(), since it tries to dupalloc passed buffer, which will fail
-		 *       here (we do not want to pass the first two ints!). */
-		img = IMB_allocImBuf((unsigned int)data->width, (unsigned int)data->height, 32, IB_rect | IB_metadata);
-		memcpy(img->rect, data->rect, BLEN_THUMB_MEMSIZE(data->width, data->height) - sizeof(*data));
-	}
-
-	return img;
-}
-
-/**
- * Generates an empty (black) thumbnail for given Main.
- */
-void BKE_main_thumbnail_create(struct Main *bmain)
-{
-	MEM_SAFE_FREE(bmain->blen_thumb);
-
-	bmain->blen_thumb = MEM_callocN(BLEN_THUMB_MEMSIZE(BLEN_THUMB_SIZE, BLEN_THUMB_SIZE), __func__);
-	bmain->blen_thumb->width = BLEN_THUMB_SIZE;
-	bmain->blen_thumb->height = BLEN_THUMB_SIZE;
-}
-
-/**
- * Return filepath of given \a main.
- */
-const char *BKE_main_blendfile_path(const Main *bmain)
-{
-	return bmain->name;
-}
-
-/**
- * Return filepath of global main (G_MAIN).
- *
- * \warning Usage is not recommended, you should always try to get a valid Main pointer from context...
- */
-const char *BKE_main_blendfile_path_from_global(void)
-{
-	return BKE_main_blendfile_path(G_MAIN);
 }
 
 /* ***************** ID ************************ */
@@ -1948,10 +1743,10 @@ static void library_make_local_copying_check(ID *id, GSet *loop_tags, MainIDRela
 
 /** Make linked datablocks local.
  *
- * \param bmain Almost certainly global main.
- * \param lib If not NULL, only make local datablocks from this library.
- * \param untagged_only If true, only make local datablocks not tagged with LIB_TAG_PRE_EXISTING.
- * \param set_fake If true, set fake user on all localized datablocks (except group and objects ones).
+ * \param bmain: Almost certainly global main.
+ * \param lib: If not NULL, only make local datablocks from this library.
+ * \param untagged_only: If true, only make local datablocks not tagged with LIB_TAG_PRE_EXISTING.
+ * \param set_fake: If true, set fake user on all localized datablocks (except group and objects ones).
  */
 /* Note: Old (2.77) version was simply making (tagging) datablocks as local, without actually making any check whether
  * they were also indirectly used or not...
@@ -2320,7 +2115,7 @@ void BKE_library_make_local(
 	 * Try "make all local" in 04_01_H.lighting.blend from Agent327 without this, e.g. */
 	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ob->data != NULL && ob->type == OB_ARMATURE && ob->pose != NULL && ob->pose->flag & POSE_RECALC) {
-			BKE_pose_rebuild(ob, ob->data);
+			BKE_pose_rebuild(bmain, ob, ob->data, true);
 		}
 	}
 
@@ -2368,16 +2163,58 @@ void BKE_libblock_rename(Main *bmain, ID *id, const char *name)
 }
 
 /**
- * Returns in name the name of the block, with a 3-character prefix prepended
- * indicating whether it comes from a library, has a fake user, or no users.
+ * Generate full name of the data-block (without ID code, but with library if any).
+ *
+ * \note Result is unique to a given ID type in a given Main database.
+ *
+ * \param name: An allocated string of minimal length MAX_ID_FULL_NAME, will be filled with generated string.
  */
-void BKE_id_ui_prefix(char name[MAX_ID_NAME + 1], const ID *id)
+void BKE_id_full_name_get(char name[MAX_ID_FULL_NAME], const ID *id)
 {
-	name[0] = id->lib ? (ID_MISSING(id) ? 'M' : 'L') : ' ';
+	strcpy(name, id->name + 2);
+
+	if (id->lib != NULL) {
+		const size_t idname_len = strlen(id->name + 2);
+		const size_t libname_len = strlen(id->lib->id.name + 2);
+
+		name[idname_len] = ' ';
+		name[idname_len + 1] = '[';
+		strcpy(name + idname_len + 2, id->lib->id.name + 2);
+		name[idname_len + 2 + libname_len] = ']';
+		name[idname_len + 2 + libname_len + 1] = '\0';
+	}
+}
+
+/**
+ * Generate full name of the data-block (without ID code, but with library if any), with a 3-character prefix prepended
+ * indicating whether it comes from a library, is overriding, has a fake or no user, etc.
+ *
+ * \note Result is unique to a given ID type in a given Main database.
+ *
+ * \param name: An allocated string of minimal length MAX_ID_FULL_NAME_UI, will be filled with generated string.
+ */
+void BKE_id_full_name_ui_prefix_get(char name[MAX_ID_FULL_NAME_UI], const ID *id)
+{
+	name[0] = id->lib ? (ID_MISSING(id) ? 'M' : 'L') : ID_IS_STATIC_OVERRIDE(id) ? 'O' : ' ';
 	name[1] = (id->flag & LIB_FAKEUSER) ? 'F' : ((id->us == 0) ? '0' : ' ');
 	name[2] = ' ';
 
-	strcpy(name + 3, id->name + 2);
+	BKE_id_full_name_get(name + 3, id);
+}
+
+/**
+ * Generate a concatenation of ID name (including two-chars type code) and its lib name, if any.
+ *
+ * \return A unique allocated string key for any ID in the whole Main database.
+ */
+char *BKE_id_to_unique_string_key(const struct ID *id)
+{
+	char name[MAX_ID_FULL_NAME + 2];
+	name[0] = id->name[0];
+	name[1] = id->name[1];
+	BKE_id_full_name_get(name + 2, id);
+
+	return BLI_strdup(name);
 }
 
 void BKE_library_filepath_set(Main *bmain, Library *lib, const char *filepath)
@@ -2417,8 +2254,103 @@ void BKE_id_tag_clear_atomic(ID *id, int tag)
 
 /** Check that given ID pointer actually is in G_MAIN.
  * Main intended use is for debug asserts in places we cannot easily get rid of G_Main... */
-bool BKE_id_is_in_gobal_main(ID *id)
+bool BKE_id_is_in_global_main(ID *id)
 {
 	/* We do not want to fail when id is NULL here, even though this is a bit strange behavior... */
 	return (id == NULL || BLI_findindex(which_libbase(G_MAIN, GS(id->name)), id) != -1);
+}
+
+/************************* Datablock order in UI **************************/
+
+static int *id_order_get(ID *id)
+{
+	/* Only for workspace tabs currently. */
+	switch (GS(id->name)) {
+		case ID_WS:
+			return &((WorkSpace *)id)->order;
+		default:
+			return NULL;
+	}
+}
+
+static int id_order_compare(const void *a, const void *b)
+{
+	ID *id_a = ((LinkData *)a)->data;
+	ID *id_b = ((LinkData *)b)->data;
+
+	int *order_a = id_order_get(id_a);
+	int *order_b = id_order_get(id_b);
+
+	if (order_a && order_b) {
+		if (*order_a < *order_b) {
+			return -1;
+		}
+		else if (*order_a > *order_b) {
+			return 1;
+		}
+	}
+
+	return strcmp(id_a->name, id_b->name);
+}
+
+/**
+ * Returns ordered list of datablocks for display in the UI.
+ * Result is list of LinkData of IDs that must be freed.
+ */
+void BKE_id_ordered_list(ListBase *ordered_lb, const ListBase *lb)
+{
+	BLI_listbase_clear(ordered_lb);
+
+	for (ID *id = lb->first; id; id = id->next) {
+		BLI_addtail(ordered_lb, BLI_genericNodeN(id));
+	}
+
+	BLI_listbase_sort(ordered_lb, id_order_compare);
+
+	int num = 0;
+	for (LinkData *link = ordered_lb->first; link; link = link->next) {
+		int *order = id_order_get(link->data);
+		if (order) {
+			*order = num++;
+		}
+	}
+}
+
+/**
+ * Reorder ID in the list, before or after the "relative" ID.
+ */
+void BKE_id_reorder(const ListBase *lb, ID *id, ID *relative, bool after)
+{
+	int *id_order = id_order_get(id);
+	int relative_order;
+
+	if (relative) {
+		relative_order = *id_order_get(relative);
+	}
+	else {
+		relative_order = (after) ? BLI_listbase_count(lb) : 0;
+	}
+
+	if (after) {
+		/* Insert after. */
+		for (ID *other = lb->first; other; other = other->next) {
+			int *order = id_order_get(other);
+			if (*order > relative_order) {
+				(*order)++;
+			}
+		}
+
+		*id_order = relative_order + 1;
+	}
+	else {
+		/* Insert before. */
+		for (ID *other = lb->first; other; other = other->next) {
+			int *order = id_order_get(other);
+			if (*order < relative_order) {
+				(*order)--;
+			}
+		}
+
+		*id_order = relative_order - 1;
+	}
 }

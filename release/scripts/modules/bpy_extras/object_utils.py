@@ -61,10 +61,7 @@ def add_object_align_init(context, operator):
     if operator and properties.is_property_set("location"):
         location = Matrix.Translation(Vector(properties.location))
     else:
-        if space_data:  # local view cursor is detected below
-            location = Matrix.Translation(space_data.cursor_location)
-        else:
-            location = Matrix.Translation(context.scene.cursor_location)
+        location = Matrix.Translation(context.scene.cursor_location)
 
         if operator:
             properties.location = location.to_translation()
@@ -100,12 +97,12 @@ def add_object_align_init(context, operator):
         if operator:
             properties.rotation = rotation.to_euler()
 
-    return location * rotation
+    return location @ rotation
 
 
-def object_data_add(context, obdata, operator=None, use_active_layer=True, name=None):
+def object_data_add(context, obdata, operator=None, name=None):
     """
-    Add an object using the view context and preference to to initialize the
+    Add an object using the view context and preference to initialize the
     location, rotation and layer.
 
     :arg context: The context to use.
@@ -117,52 +114,24 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
     :arg name: Optional name
     :type name: string
     :return: the newly created object in the scene.
-    :rtype: :class:`bpy.types.ObjectBase`
+    :rtype: :class:`bpy.types.Object`
     """
     scene = context.scene
+    layer = context.view_layer
+    layer_collection = context.layer_collection or layer.active_layer_collection
+    scene_collection = layer_collection.collection
 
-    # ugh, could be made nicer
-    for ob in scene.objects:
-        ob.select = False
+    for ob in layer.objects:
+        ob.select_set(False)
 
     if name is None:
         name = "Object" if obdata is None else obdata.name
 
+    obj_act = layer.objects.active
     obj_new = bpy.data.objects.new(name, obdata)
-
-    base = scene.objects.link(obj_new)
-    base.select = True
-
-    v3d = None
-    if context.space_data and context.space_data.type == 'VIEW_3D':
-        v3d = context.space_data
-
-    if v3d and v3d.local_view:
-        base.layers_from_view(context.space_data)
-
-    if operator is not None and any(operator.layers):
-        base.layers = operator.layers
-    else:
-        if use_active_layer:
-            if v3d and v3d.local_view:
-                base.layers[scene.active_layer] = True
-            else:
-                if v3d and not v3d.lock_camera_and_layers:
-                    base.layers = [True if i == v3d.active_layer
-                                   else False for i in range(len(v3d.layers))]
-                else:
-                    base.layers = [True if i == scene.active_layer
-                                   else False for i in range(len(scene.layers))]
-        else:
-            if v3d:
-                base.layers_from_view(context.space_data)
-
-        if operator is not None:
-            operator.layers = base.layers
-
+    scene_collection.objects.link(obj_new)
+    obj_new.select_set(True)
     obj_new.matrix_world = add_object_align_init(context, operator)
-
-    obj_act = scene.objects.active
 
     # XXX
     # caused because entering edit-mode does not add a empty undo slot!
@@ -174,8 +143,8 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
             _obdata = bpy.data.meshes.new(name)
             obj_act = bpy.data.objects.new(_obdata.name, _obdata)
             obj_act.matrix_world = obj_new.matrix_world
-            scene.objects.link(obj_act)
-            scene.objects.active = obj_act
+            scene_collection.objects.link(obj_act)
+            layer.objects.active = obj_act
             bpy.ops.object.mode_set(mode='EDIT')
             # need empty undo step
             bpy.ops.ed.undo_push(message="Enter Editmode")
@@ -183,11 +152,12 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
 
     if obj_act and obj_act.mode == 'EDIT' and obj_act.type == obj_new.type:
         bpy.ops.mesh.select_all(action='DESELECT')
+        obj_act.select_set(True)
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        obj_act.select = True
+        obj_act.select_set(True)
         scene.update()  # apply location
-        # scene.objects.active = obj_new
+        # layer.objects.active = obj_new
 
         # Match up UV layers, this is needed so adding an object with UV's
         # doesn't create new layers when there happens to be a naming mis-match.
@@ -200,16 +170,14 @@ def object_data_add(context, obdata, operator=None, use_active_layer=True, name=
         bpy.ops.object.join()  # join into the active.
         if obdata:
             bpy.data.meshes.remove(obdata)
-        # base is freed, set to active object
-        base = scene.object_bases.active
 
         bpy.ops.object.mode_set(mode='EDIT')
     else:
-        scene.objects.active = obj_new
+        layer.objects.active = obj_new
         if context.user_preferences.edit.use_enter_edit_mode:
             bpy.ops.object.mode_set(mode='EDIT')
 
-    return base
+    return obj_new
 
 
 class AddObjectHelper:
@@ -217,24 +185,18 @@ class AddObjectHelper:
         if not self.view_align:
             self.rotation.zero()
 
-    view_align = BoolProperty(
+    view_align: BoolProperty(
         name="Align to View",
         default=False,
         update=view_align_update_callback,
     )
-    location = FloatVectorProperty(
+    location: FloatVectorProperty(
         name="Location",
         subtype='TRANSLATION',
     )
-    rotation = FloatVectorProperty(
+    rotation: FloatVectorProperty(
         name="Rotation",
         subtype='EULER',
-    )
-    layers = BoolVectorProperty(
-        name="Layers",
-        size=20,
-        subtype='LAYER',
-        options={'HIDDEN', 'SKIP_SAVE'},
     )
 
     @classmethod
@@ -251,7 +213,7 @@ def object_add_grid_scale(context):
     space_data = context.space_data
 
     if space_data and space_data.type == 'VIEW_3D':
-        return space_data.grid_scale_unit
+        return space_data.overlay.grid_scale_unit
 
     return 1.0
 
@@ -337,7 +299,7 @@ def world_to_camera_view(scene, obj, coord):
     """
     from mathutils import Vector
 
-    co_local = obj.matrix_world.normalized().inverted() * coord
+    co_local = obj.matrix_world.normalized().inverted() @ coord
     z = -co_local.z
 
     camera = obj.data

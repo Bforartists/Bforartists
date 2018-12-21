@@ -472,7 +472,11 @@ void DisplayBuffer::draw(Device *device, const DeviceDrawParams& draw_params)
 		device_memory& rgba = (half_float)? (device_memory&)rgba_half:
 		                                    (device_memory&)rgba_byte;
 
-		device->draw_pixels(rgba, 0, draw_width, draw_height, params.full_x, params.full_y, params.width, params.height, transparent, draw_params);
+		device->draw_pixels(
+		            rgba, 0,
+		            draw_width, draw_height, params.width, params.height,
+		            params.full_x, params.full_y, params.full_width, params.full_height,
+		            transparent, draw_params);
 	}
 }
 

@@ -22,7 +22,7 @@ bl_info = {
     "name": "Export Camera Animation",
     "author": "Campbell Barton",
     "version": (0, 1),
-    "blender": (2, 57, 0),
+    "blender": (2, 80, 0),
     "location": "File > Export > Cameras & Markers (.py)",
     "description": "Export Cameras & Markers (.py)",
     "warning": "",
@@ -45,7 +45,7 @@ def write_cameras(context, filepath, frame_start, frame_end, only_selected=False
         'dof_distance',
         'clip_start',
         'clip_end',
-        'draw_size',
+        'display_size',
         )
 
     obj_attrs = (
@@ -59,7 +59,7 @@ def write_cameras(context, filepath, frame_start, frame_end, only_selected=False
     cameras = []
 
     for obj in scene.objects:
-        if only_selected and not obj.select:
+        if only_selected and not obj.select_get():
             continue
         if obj.type != 'CAMERA':
             continue
@@ -84,7 +84,7 @@ def write_cameras(context, filepath, frame_start, frame_end, only_selected=False
         for attr in obj_attrs:
             fw("obj.%s = %s\n" % (attr, repr(getattr(obj, attr))))
 
-        fw("scene.objects.link(obj)\n")
+        fw("bpy.context.collection.objects.link(obj)\n")
         fw("cameras[%r] = obj\n" % obj.name)
         fw("\n")
 
@@ -134,15 +134,15 @@ class CameraExporter(bpy.types.Operator, ExportHelper):
     bl_label = "Export Camera & Markers"
 
     filename_ext = ".py"
-    filter_glob = StringProperty(default="*.py", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.py", options={'HIDDEN'})
 
-    frame_start = IntProperty(name="Start Frame",
+    frame_start: IntProperty(name="Start Frame",
             description="Start frame for export",
             default=1, min=1, max=300000)
-    frame_end = IntProperty(name="End Frame",
+    frame_end: IntProperty(name="End Frame",
             description="End frame for export",
             default=250, min=1, max=300000)
-    only_selected = BoolProperty(name="Only Selected",
+    only_selected: BoolProperty(name="Only Selected",
             default=True)
 
     def execute(self, context):
@@ -165,15 +165,13 @@ def menu_export(self, context):
 
 
 def register():
-    bpy.utils.register_module(__name__)
-
-    bpy.types.INFO_MT_file_export.append(menu_export)
+    bpy.utils.register_class(CameraExporter)
+    bpy.types.TOPBAR_MT_file_export.append(menu_export)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
-    bpy.types.INFO_MT_file_export.remove(menu_export)
+    bpy.utils.unregister_class(CameraExporter)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_export)
 
 
 if __name__ == "__main__":

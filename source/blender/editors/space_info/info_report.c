@@ -133,9 +133,6 @@ static int select_report_pick_invoke(bContext *C, wmOperator *op, const wmEvent 
 	ReportList *reports = CTX_wm_reports(C);
 	Report *report;
 
-	/* uses opengl */
-	wmSubWindowSet(CTX_wm_window(C), ar->swinid);
-
 	report = info_text_pick(sinfo, ar, reports, event->mval[1]);
 
 	RNA_int_set(op->ptr, "report_index", BLI_findindex(&reports->list, report));
@@ -215,8 +212,8 @@ void INFO_OT_select_all_toggle(wmOperatorType *ot)
 	/* properties */
 }
 
-/* borderselect operator */
-static int borderselect_exec(bContext *C, wmOperator *op)
+/* box_select operator */
+static int box_select_exec(bContext *C, wmOperator *op)
 {
 	SpaceInfo *sinfo = CTX_wm_space_info(C);
 	ARegion *ar = CTX_wm_region(C);
@@ -289,19 +286,19 @@ static int borderselect_exec(bContext *C, wmOperator *op)
 }
 
 
-/* ****** Border Select ****** */
-void INFO_OT_select_border(wmOperatorType *ot)
+/* ****** Box Select ****** */
+void INFO_OT_select_box(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Border Select";
-	ot->description = "Border Select\nToggle border selection";
-	ot->idname = "INFO_OT_select_border";
+	ot->name = "Box Select";
+	ot->description = "Box Select\nToggle box selection";
+	ot->idname = "INFO_OT_select_box";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
-	ot->exec = borderselect_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->invoke = WM_gesture_box_invoke;
+	ot->exec = box_select_exec;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = ED_operator_info_active;
 
@@ -309,7 +306,7 @@ void INFO_OT_select_border(wmOperatorType *ot)
 	/* ot->flag = OPTYPE_REGISTER; */
 
 	/* rna */
-	WM_operator_properties_gesture_border_select(ot);
+	WM_operator_properties_gesture_box_select(ot);
 }
 
 

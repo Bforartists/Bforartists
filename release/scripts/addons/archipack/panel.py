@@ -479,7 +479,7 @@ class Panel():
 
     def choose_a_shape_in_tri(self, center, origin, size, basis, pivot):
         """
-            Choose wich shape inside either a tri or a pentagon
+            Choose which shape inside either a tri or a pentagon
         """
         cx = (0.5 * basis + center.x) - origin.x
         cy = center.y - origin.y

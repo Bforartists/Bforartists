@@ -58,55 +58,77 @@
 
 #include "RNA_access.h"
 
-#include "BIF_gl.h"
-
 #include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
+
+#include "GPU_immediate.h"
+#include "GPU_matrix.h"
+#include "GPU_state.h"
 
 /* *************************************************** */
 /* CURRENT FRAME DRAWING */
 
 /* Draw current frame number in a little green box beside the current frame indicator */
-static void draw_cfra_number(Scene *scene, View2D *v2d, const float cfra, const bool time)
+void ANIM_draw_cfra_number(const bContext *C, View2D *v2d, short flag)
 {
+	Scene *scene = CTX_data_scene(C);
+	const float time = scene->r.cfra + scene->r.subframe;
+	const float cfra = (float)(time * scene->r.framelen);
+	const bool show_time = (flag & DRAWCFRA_UNIT_SECONDS) != 0;
+
 	const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
-	float xscale, yscale, x, y;
-	char numstr[32] = "    t";  /* t is the character to start replacing from */
+	unsigned char col[4];
+	float color[4];
+	float xscale, x, y;
+	char numstr[32] = "  t  ";  /* t is the character to start replacing from */
+	float hlen;
 	int slen;
 
 	/* because the frame number text is subject to the same scaling as the contents of the view */
-	UI_view2d_scale_get(v2d, &xscale, &yscale);
-	glScalef(1.0f / xscale, 1.0f, 1.0f);
+	UI_view2d_scale_get(v2d, &xscale, NULL);
+	GPU_matrix_push();
+	GPU_matrix_scale_2f(1.0f / xscale, 1.0f);
 
 	/* get timecode string
 	 * - padding on str-buf passed so that it doesn't sit on the frame indicator
-	 * - power = 0, gives 'standard' behavior for time
-	 *   but power = 1 is required for frames (to get integer frames)
 	 */
-	if (time) {
-		BLI_timecode_string_from_time(&numstr[4], sizeof(numstr) - 4, 0, FRA2TIME(cfra), FPS, U.timecode_style);
+	if (show_time) {
+		BLI_timecode_string_from_time(&numstr[2], sizeof(numstr) - 2, 0, FRA2TIME(cfra), FPS, U.timecode_style);
 	}
 	else {
-		BLI_timecode_string_from_time_seconds(&numstr[4], sizeof(numstr) - 4, 1, cfra);
+		BLI_timecode_string_from_time_seconds(&numstr[2], sizeof(numstr) - 2, 1, cfra);
 	}
 
 	slen = UI_fontstyle_string_width(fstyle, numstr) - 1;
+	hlen = slen * 0.5f;
 
 	/* get starting coordinates for drawing */
 	x = cfra * xscale;
-	y = 0.9f * U.widget_unit;
+	y = -0.1f * U.widget_unit;
 
 	/* draw green box around/behind text */
-	UI_ThemeColorShade(TH_CFRAME, 0);
-	glRectf(x, y,  x + slen,  y + 0.75f * U.widget_unit);
+	UI_GetThemeColor4fv(TH_CFRAME, color);
+	color[3] = 3.0f;
 
-	/* draw current frame number - black text */
-	UI_ThemeColor(TH_TEXT);
-	UI_fontstyle_draw_simple(fstyle, x - 0.25f * U.widget_unit, y + 0.15f * U.widget_unit, numstr);
+	UI_draw_roundbox_corner_set(UI_CNR_ALL);
+	UI_draw_roundbox_aa(true,
+	                    x - hlen - 0.1f * U.widget_unit,
+	                    y + 3.0f,
+	                    x + hlen + 0.1f * U.widget_unit,
+	                    y -3.0f + U.widget_unit,
+	                    0.1f * U.widget_unit,
+	                    color);
+
+	/* draw current frame number */
+	UI_GetThemeColor4ubv(TH_TEXT_HI, col);
+	UI_fontstyle_draw_simple(fstyle,
+	                         x - hlen - 0.15f * U.widget_unit,
+	                         y        + 0.28f * U.widget_unit,
+	                         numstr, col);
 
 	/* restore view transform */
-	glScalef(xscale, 1.0, 1.0);
+	GPU_matrix_pop();
 }
 
 /* General call for drawing current frame indicator in animation editor */
@@ -114,24 +136,24 @@ void ANIM_draw_cfra(const bContext *C, View2D *v2d, short flag)
 {
 	Scene *scene = CTX_data_scene(C);
 
-	/* Draw a light green line to indicate current frame */
-	UI_ThemeColor(TH_CFRAME);
-
 	const float time = scene->r.cfra + scene->r.subframe;
 	const float x = (float)(time * scene->r.framelen);
 
-	glLineWidth((flag & DRAWCFRA_WIDE) ? 3.0 : 2.0);
+	GPU_line_width((flag & DRAWCFRA_WIDE) ? 3.0 : 2.0);
 
-	glBegin(GL_LINES);
-	glVertex2f(x, v2d->cur.ymin - 500.0f); /* XXX arbitrary... want it go to bottom */
-	glVertex2f(x, v2d->cur.ymax);
-	glEnd();
+	GPUVertFormat *format = immVertexFormat();
+	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-	/* Draw current frame number in a little box */
-	if (flag & DRAWCFRA_SHOW_NUMBOX) {
-		UI_view2d_view_orthoSpecial(CTX_wm_region(C), v2d, 1);
-		draw_cfra_number(scene, v2d, x, (flag & DRAWCFRA_UNIT_SECONDS) != 0);
-	}
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	/* Draw a light green line to indicate current frame */
+	immUniformThemeColor(TH_CFRAME);
+
+	immBegin(GPU_PRIM_LINES, 2);
+	immVertex2f(pos, x, v2d->cur.ymin - 500.0f); /* XXX arbitrary... want it go to bottom */
+	immVertex2f(pos, x, v2d->cur.ymax);
+	immEnd();
+	immUnbindProgram();
 }
 
 /* *************************************************** */
@@ -145,21 +167,71 @@ void ANIM_draw_previewrange(const bContext *C, View2D *v2d, int end_frame_width)
 
 	/* only draw this if preview range is set */
 	if (PRVRANGEON) {
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
-		glColor4f(0.0f, 0.0f, 0.0f, 0.4f);
+		GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+		GPU_blend(true);
+
+		GPUVertFormat *format = immVertexFormat();
+		uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+		immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+		immUniformThemeColorShadeAlpha(TH_ANIM_PREVIEW_RANGE, -25, -30);
+		//immUniformColor4f(0.8f, 0.44f, 0.1f, 0.2f); /* XXX: Fix this hardcoded color (anim_active) */
 
 		/* only draw two separate 'curtains' if there's no overlap between them */
 		if (PSFRA < PEFRA + end_frame_width) {
-			glRectf(v2d->cur.xmin, v2d->cur.ymin, (float)PSFRA, v2d->cur.ymax);
-			glRectf((float)(PEFRA + end_frame_width), v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+			immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, (float)PSFRA, v2d->cur.ymax);
+			immRectf(pos, (float)(PEFRA + end_frame_width), v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
 		}
 		else {
-			glRectf(v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+			immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
 		}
 
-		glDisable(GL_BLEND);
+		immUnbindProgram();
+
+		GPU_blend(false);
 	}
+}
+
+/* *************************************************** */
+/* SCENE FRAME RANGE */
+
+/* Draw frame range guides (for scene frame range) in background */
+// TODO: Should we still show these when preview range is enabled?
+void ANIM_draw_framerange(Scene *scene, View2D *v2d)
+{
+	/* draw darkened area outside of active timeline frame range */
+	GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+	GPU_blend(true);
+
+	GPUVertFormat *format = immVertexFormat();
+	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+	immUniformThemeColorShadeAlpha(TH_BACK, -25, -100);
+
+	if (SFRA < EFRA) {
+		immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, (float)SFRA, v2d->cur.ymax);
+		immRectf(pos, (float)EFRA, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+	}
+	else {
+		immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+	}
+
+	GPU_blend(false);
+
+	/* thin lines where the actual frames are */
+	immUniformThemeColorShade(TH_BACK, -60);
+
+	immBegin(GPU_PRIM_LINES, 4);
+
+	immVertex2f(pos, (float)SFRA, v2d->cur.ymin);
+	immVertex2f(pos, (float)SFRA, v2d->cur.ymax);
+
+	immVertex2f(pos, (float)EFRA, v2d->cur.ymin);
+	immVertex2f(pos, (float)EFRA, v2d->cur.ymax);
+
+	immEnd();
+	immUnbindProgram();
 }
 
 /* *************************************************** */
@@ -479,21 +551,18 @@ static bool find_prev_next_keyframes(struct bContext *C, int *nextfra, int *prev
 	}
 
 	/* populate tree with keyframe nodes */
-	scene_to_keylist(&ads, scene, &keys, NULL);
-	gpencil_to_keylist(&ads, scene->gpd, &keys);
+	scene_to_keylist(&ads, scene, &keys, 0);
+	gpencil_to_keylist(&ads, scene->gpd, &keys, false);
 
 	if (ob) {
-		ob_to_keylist(&ads, ob, &keys, NULL);
-		gpencil_to_keylist(&ads, ob->gpd, &keys);
+		ob_to_keylist(&ads, ob, &keys, 0);
+		gpencil_to_keylist(&ads, ob->data, &keys, false);
 	}
 
 	if (mask) {
 		MaskLayer *masklay = BKE_mask_layer_active(mask);
 		mask_to_keylist(&ads, masklay, &keys);
 	}
-
-	/* build linked-list for searching */
-	BLI_dlrbTree_linkedlist_sync(&keys);
 
 	/* find matching keyframe in the right direction */
 	do {

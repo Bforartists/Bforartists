@@ -76,7 +76,7 @@ PyObject   *PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size);
 const char *PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce); /* coerce must be NULL */
 const char *PyC_UnicodeAsByteAndSize(PyObject *py_str, Py_ssize_t *size, PyObject **coerce);
 
-/* name namespace function for bpy & bge */
+/* name namespace function for bpy */
 PyObject *PyC_DefaultNameSpace(const char *filename);
 void PyC_RunQuicky(const char *filepath, int n, ...);
 bool PyC_NameSpace_ImportArray(PyObject *py_dict, const char *imports[]);
@@ -130,5 +130,12 @@ uint64_t PyC_Long_AsU64(PyObject *value);
 Py_LOCAL_INLINE(int32_t)  PyC_Long_AsI32(PyObject *value) { return (int32_t)_PyLong_AsInt(value); }
 Py_LOCAL_INLINE(int64_t)  PyC_Long_AsI64(PyObject *value) { return (int64_t)PyLong_AsLongLong(value); }
 Py_LOCAL_INLINE(uint64_t) PyC_Long_AsU64(PyObject *value) { return (uint64_t)PyLong_AsUnsignedLongLong(value); }
+
+/* utils for format string in `struct` module style syntax */
+char PyC_StructFmt_type_from_str(const char *typestr);
+bool PyC_StructFmt_type_is_float_any(char format);
+bool PyC_StructFmt_type_is_int_any(char format);
+bool PyC_StructFmt_type_is_byte(char format);
+bool PyC_StructFmt_type_is_bool(char format);
 
 #endif  /* __PY_CAPI_UTILS_H__ */

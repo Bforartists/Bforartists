@@ -87,15 +87,14 @@ def add_screw_list(self, context):
         icon="PLUGIN")
 
 def register():
-    bpy.types.INFO_MT_mesh_add.append(add_screw_list)
+    bpy.types.VIEW3D_MT_mesh_add.append(add_screw_list)
     bpy.utils.register_class(oscMakeScrew)
 
 
 def unregister():
-    bpy.types.INFO_MT_mesh_add.remove(add_screw_list)
+    bpy.types.VIEW3D_MT_mesh_add.remove(add_screw_list)
     bpy.utils.unregister_class(oscMakeScrew)
 
 
 if __name__ == '__main__':
     register()
-

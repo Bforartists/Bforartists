@@ -34,5 +34,3 @@ class DxfDrawing(object):
 	def convert(self, **kwargs):
 		""" Converts this drawing into DXF representation object """
 		raise NotImplementedError()
-
-

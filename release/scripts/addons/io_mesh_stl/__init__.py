@@ -21,8 +21,8 @@
 bl_info = {
     "name": "STL format",
     "author": "Guillaume Bouchard (Guillaum)",
-    "version": (1, 1, 2),
-    "blender": (2, 74, 0),
+    "version": (1, 1, 3),
+    "blender": (2, 80, 0),
     "location": "File > Import-Export > Stl",
     "description": "Import-Export STL files",
     "warning": "",
@@ -67,7 +67,7 @@ from bpy.props import (
 from bpy_extras.io_utils import (
         ImportHelper,
         ExportHelper,
-        orientation_helper_factory,
+        orientation_helper,
         axis_conversion,
         )
 from bpy.types import (
@@ -76,43 +76,41 @@ from bpy.types import (
         )
 
 
-IOSTLOrientationHelper = orientation_helper_factory("IOSTLOrientationHelper", axis_forward='Y', axis_up='Z')
-
-
-class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
-    """Import STL\nLoad STL triangle mesh data"""
+@orientation_helper(axis_forward='Y', axis_up='Z')
+class ImportSTL(Operator, ImportHelper):
+    """Load STL triangle mesh data"""
     bl_idname = "import_mesh.stl"
     bl_label = "Import STL"
     bl_options = {'UNDO'}
 
     filename_ext = ".stl"
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.stl",
             options={'HIDDEN'},
             )
-    files = CollectionProperty(
+    files: CollectionProperty(
             name="File Path",
             type=OperatorFileListElement,
             )
-    directory = StringProperty(
+    directory: StringProperty(
             subtype='DIR_PATH',
             )
 
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             soft_min=0.001, soft_max=1000.0,
             min=1e-6, max=1e6,
             default=1.0,
             )
 
-    use_scene_unit = BoolProperty(
+    use_scene_unit: BoolProperty(
             name="Scene Unit",
             description="Apply current scene's unit (as defined by unit scale) to imported data",
             default=False,
             )
 
-    use_facet_normal = BoolProperty(
+    use_facet_normal: BoolProperty(
             name="Facet Normals",
             description="Use (import) facet normals (note that this will still give flat shading)",
             default=False,
@@ -135,7 +133,7 @@ class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
 
         global_matrix = axis_conversion(from_forward=self.axis_forward,
                                         from_up=self.axis_up,
-                                        ).to_4x4() * Matrix.Scale(global_scale, 4)
+                                        ).to_4x4() @ Matrix.Scale(global_scale, 4)
 
         if not paths:
             paths.append(self.filepath)
@@ -155,41 +153,42 @@ class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
         return {'FINISHED'}
 
 
-class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
-    """Export STL\nSave STL triangle mesh data from the active object"""
+@orientation_helper(axis_forward='Y', axis_up='Z')
+class ExportSTL(Operator, ExportHelper):
+    """Save STL triangle mesh data from the active object"""
     bl_idname = "export_mesh.stl"
     bl_label = "Export STL"
 
     filename_ext = ".stl"
-    filter_glob = StringProperty(default="*.stl", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.stl", options={'HIDDEN'})
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
             default=False,
             )
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             min=0.01, max=1000.0,
             default=1.0,
             )
 
-    use_scene_unit = BoolProperty(
+    use_scene_unit: BoolProperty(
             name="Scene Unit",
             description="Apply current scene's unit (as defined by unit scale) to exported data",
             default=False,
             )
-    ascii = BoolProperty(
+    ascii: BoolProperty(
             name="Ascii",
             description="Save the file in ASCII file format",
             default=False,
             )
-    use_mesh_modifiers = BoolProperty(
+    use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",
             description="Apply the modifiers before saving",
             default=True,
             )
-    batch_mode = EnumProperty(
+    batch_mode: EnumProperty(
             name="Batch Mode",
             items=(('OFF', "Off", "All data in one file"),
                    ('OBJECT', "Object", "Each object as a file"),
@@ -228,7 +227,7 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
 
         global_matrix = axis_conversion(to_forward=self.axis_forward,
                                         to_up=self.axis_up,
-                                        ).to_4x4() * Matrix.Scale(global_scale, 4)
+                                        ).to_4x4() @ Matrix.Scale(global_scale, 4)
 
         if self.batch_mode == 'OFF':
             faces = itertools.chain.from_iterable(
@@ -248,26 +247,32 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)", icon = "LOAD_STL")
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)")
 
 
 def menu_export(self, context):
-    default_path = os.path.splitext(bpy.data.filepath)[0] + ".stl"
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)", icon = "SAVE_STL")
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)")
 
+
+classes = (
+    ImportSTL,
+    ExportSTL
+)
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    bpy.types.INFO_MT_file_import.append(menu_import)
-    bpy.types.INFO_MT_file_export.append(menu_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_export)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
-    bpy.types.INFO_MT_file_import.remove(menu_import)
-    bpy.types.INFO_MT_file_export.remove(menu_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_export)
 
 
 if __name__ == "__main__":

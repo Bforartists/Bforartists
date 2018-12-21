@@ -49,7 +49,7 @@ camera {
    location <59, 20, -55>
    direction <0, 0, 2>
    up <0, 1, 0>
-   right x*image_width/image_height // keep propotions with any aspect ratio
+   right x*image_width/image_height // keep proportions with any aspect ratio
    look_at <0, -1, 1>
 
 #if(FB_Quality != FB_Quality_Off)

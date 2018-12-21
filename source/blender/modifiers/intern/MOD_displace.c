@@ -33,6 +33,7 @@
  */
 
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
@@ -40,7 +41,8 @@
 #include "BLI_math.h"
 #include "BLI_task.h"
 
-#include "BKE_cdderivedmesh.h"
+#include "BKE_customdata.h"
+#include "BKE_editmesh.h"
 #include "BKE_library.h"
 #include "BKE_library_query.h"
 #include "BKE_image.h"
@@ -50,7 +52,9 @@
 #include "BKE_deform.h"
 #include "BKE_object.h"
 
-#include "depsgraph_private.h"
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
+
 #include "MEM_guardedalloc.h"
 
 #include "MOD_util.h"
@@ -134,37 +138,17 @@ static void foreachTexLink(
 	walk(userData, ob, md, "texture");
 }
 
-static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(useRenderParams))
 {
 	DisplaceModifierData *dmd = (DisplaceModifierData *) md;
 	return ((!dmd->texture && dmd->direction == MOD_DISP_DIR_RGB_XYZ) || dmd->strength == 0.0f);
-}
-
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	DisplaceModifierData *dmd = (DisplaceModifierData *) md;
-
-	if (dmd->map_object && dmd->texmapping == MOD_DISP_MAP_OBJECT) {
-		DagNode *curNode = dag_get_node(ctx->forest, dmd->map_object);
-
-		dag_add_relation(ctx->forest, curNode, ctx->obNode,
-		                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Displace Modifier");
-	}
-
-
-	if (dmd->texmapping == MOD_DISP_MAP_GLOBAL ||
-	    (ELEM(dmd->direction, MOD_DISP_DIR_X, MOD_DISP_DIR_Y, MOD_DISP_DIR_Z, MOD_DISP_DIR_RGB_XYZ) &&
-	    dmd->space == MOD_DISP_SPACE_GLOBAL))
-	{
-		dag_add_relation(ctx->forest, ctx->obNode, ctx->obNode,
-		                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Displace Modifier");
-	}
 }
 
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	DisplaceModifierData *dmd = (DisplaceModifierData *)md;
 	if (dmd->map_object != NULL && dmd->texmapping == MOD_DISP_MAP_OBJECT) {
+		DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "Displace Modifier");
 		DEG_add_object_relation(ctx->node, dmd->map_object, DEG_OB_COMP_TRANSFORM, "Displace Modifier");
 	}
 	if (dmd->texmapping == MOD_DISP_MAP_GLOBAL ||
@@ -173,16 +157,21 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	{
 		DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "Displace Modifier");
 	}
+	if (dmd->texture != NULL) {
+		DEG_add_generic_id_relation(ctx->node, &dmd->texture->id, "Displace Modifier");
+	}
 }
 
 typedef struct DisplaceUserdata {
 	/*const*/ DisplaceModifierData *dmd;
+	struct Scene *scene;
 	struct ImagePool *pool;
 	MDeformVert *dvert;
 	float weight;
 	int defgrp_index;
 	int direction;
 	bool use_global_direction;
+	Tex *tex_target;
 	float (*tex_co)[3];
 	float (*vertexCos)[3];
 	float local_mat[4][4];
@@ -221,9 +210,9 @@ static void displaceModifier_do_task(
 		}
 	}
 
-	if (dmd->texture) {
+	if (data->tex_target) {
 		texres.nor = NULL;
-		BKE_texture_get_value_ex(dmd->modifier.scene, dmd->texture, tex_co[iter], &texres, data->pool, false);
+		BKE_texture_get_value_ex(data->scene, data->tex_target, tex_co[iter], &texres, data->pool, false);
 		delta = texres.tin - dmd->midlevel;
 	}
 	else {
@@ -289,11 +278,11 @@ static void displaceModifier_do_task(
 	}
 }
 
-/* dm must be a CDDerivedMesh */
 static void displaceModifier_do(
-        DisplaceModifierData *dmd, Object *ob,
-        DerivedMesh *dm, float (*vertexCos)[3], int numVerts)
+        DisplaceModifierData *dmd, const ModifierEvalContext *ctx,
+        Mesh *mesh, float (*vertexCos)[3], const int numVerts)
 {
+	Object *ob = ctx->object;
 	MVert *mvert;
 	MDeformVert *dvert;
 	int direction = dmd->direction;
@@ -304,36 +293,37 @@ static void displaceModifier_do(
 	float local_mat[4][4] = {{0}};
 	const bool use_global_direction = dmd->space == MOD_DISP_SPACE_GLOBAL;
 
-	if (!dmd->texture && dmd->direction == MOD_DISP_DIR_RGB_XYZ) return;
+	if (dmd->texture == NULL && dmd->direction == MOD_DISP_DIR_RGB_XYZ) return;
 	if (dmd->strength == 0.0f) return;
 
-	mvert = CDDM_get_verts(dm);
-	modifier_get_vgroup(ob, dm, dmd->defgrp_name, &dvert, &defgrp_index);
+	mvert = mesh->mvert;
+	MOD_get_vgroup(ob, mesh, dmd->defgrp_name, &dvert, &defgrp_index);
 
-	if (dmd->texture) {
+	Tex *tex_target = (Tex *)DEG_get_evaluated_id(ctx->depsgraph, &dmd->texture->id);
+	if (tex_target != NULL) {
 		tex_co = MEM_calloc_arrayN((size_t)numVerts, sizeof(*tex_co),
 		                     "displaceModifier_do tex_co");
-		get_texture_coords((MappingInfoModifierData *)dmd, ob, dm, vertexCos, tex_co, numVerts);
+		MOD_get_texture_coords((MappingInfoModifierData *)dmd, ctx, ob, mesh, vertexCos, tex_co);
 
-		modifier_init_texture(dmd->modifier.scene, dmd->texture);
+		MOD_init_texture((MappingInfoModifierData *)dmd, ctx);
 	}
 	else {
 		tex_co = NULL;
 	}
 
 	if (direction == MOD_DISP_DIR_CLNOR) {
-		CustomData *ldata = dm->getLoopDataLayout(dm);
+		CustomData *ldata = &mesh->ldata;
 
 		if (CustomData_has_layer(ldata, CD_CUSTOMLOOPNORMAL)) {
 			float (*clnors)[3] = NULL;
 
-			if ((dm->dirty & DM_DIRTY_NORMALS) || !CustomData_has_layer(ldata, CD_NORMAL)) {
-				dm->calcLoopNormals(dm, true, (float)M_PI);
+			if ((mesh->runtime.cd_dirty_vert & CD_MASK_NORMAL) || !CustomData_has_layer(ldata, CD_NORMAL)) {
+				BKE_mesh_calc_normals_split(mesh);
 			}
 
 			clnors = CustomData_get_layer(ldata, CD_NORMAL);
 			vert_clnors = MEM_malloc_arrayN(numVerts, sizeof(*vert_clnors), __func__);
-			BKE_mesh_normals_loop_to_vertex(numVerts, dm->getLoopArray(dm), dm->getNumLoops(dm),
+			BKE_mesh_normals_loop_to_vertex(numVerts, mesh->mloop, mesh->totloop,
 			                                (const float (*)[3])clnors, vert_clnors);
 		}
 		else {
@@ -347,20 +337,22 @@ static void displaceModifier_do(
 	}
 
 	DisplaceUserdata data = {NULL};
+	data.scene = DEG_get_evaluated_scene(ctx->depsgraph);
 	data.dmd = dmd;
 	data.dvert = dvert;
 	data.weight = weight;
 	data.defgrp_index = defgrp_index;
 	data.direction = direction;
 	data.use_global_direction = use_global_direction;
+	data.tex_target = tex_target;
 	data.tex_co = tex_co;
 	data.vertexCos = vertexCos;
 	copy_m4_m4(data.local_mat, local_mat);
 	data.mvert = mvert;
 	data.vert_clnors = vert_clnors;
-	if (dmd->texture != NULL) {
+	if (tex_target != NULL) {
 		data.pool = BKE_image_pool_new();
-		BKE_texture_fetch_images_for_pool(dmd->texture, data.pool);
+		BKE_texture_fetch_images_for_pool(tex_target, data.pool);
 	}
 	ParallelRangeSettings settings;
 	BLI_parallel_range_settings_defaults(&settings);
@@ -384,32 +376,32 @@ static void displaceModifier_do(
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
+        ModifierData *md,
+        const ModifierEvalContext *ctx,
+        Mesh *mesh,
         float (*vertexCos)[3],
-        int numVerts,
-        ModifierApplyFlag UNUSED(flag))
+        int numVerts)
 {
-	DerivedMesh *dm = get_cddm(ob, NULL, derivedData, vertexCos, dependsOnNormals(md));
+	Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, NULL, mesh, NULL, numVerts, false, false);
 
-	displaceModifier_do((DisplaceModifierData *)md, ob, dm,
-	                    vertexCos, numVerts);
+	displaceModifier_do((DisplaceModifierData *)md, ctx, mesh_src, vertexCos, numVerts);
 
-	if (dm != derivedData)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 static void deformVertsEM(
-        ModifierData *md, Object *ob, struct BMEditMesh *editData,
-        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+        ModifierData *md, const ModifierEvalContext *ctx, struct BMEditMesh *editData,
+        Mesh *mesh, float (*vertexCos)[3], int numVerts)
 {
-	DerivedMesh *dm = get_cddm(ob, editData, derivedData, vertexCos, dependsOnNormals(md));
+	Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, editData, mesh, NULL, numVerts, false, false);
 
-	displaceModifier_do((DisplaceModifierData *)md, ob, dm,
-	                    vertexCos, numVerts);
+	displaceModifier_do((DisplaceModifierData *)md, ctx, mesh_src, vertexCos, numVerts);
 
-	if (dm != derivedData)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 
@@ -422,17 +414,23 @@ ModifierTypeInfo modifierType_Displace = {
 	                        eModifierTypeFlag_SupportsEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     dependsOnTime,
 	/* dependsOnNormals */	dependsOnNormals,

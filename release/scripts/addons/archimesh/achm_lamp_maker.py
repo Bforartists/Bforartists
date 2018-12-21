@@ -130,7 +130,7 @@ def set_preset(self):
 # Lamps
 # ------------------------------------------------------------------
 class AchmLamp(Operator):
-    bl_idname = "mesh.archimesh_lamp"
+    bl_idname = "mesh.archimesh_light"
     bl_label = "Lamp"
     bl_description = "Lamp Generator"
     bl_category = 'Archimesh'
@@ -375,7 +375,7 @@ class AchmLamp(Operator):
                 self.oldpreset = self.preset
 
             # Create lamp
-            create_lamp_mesh(self)
+            create_light_mesh(self)
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archimesh: Option only valid in Object mode")
@@ -386,13 +386,13 @@ class AchmLamp(Operator):
 # Generate mesh data
 # All custom values are passed using self container (self.myvariable)
 # ------------------------------------------------------------------------------
-def create_lamp_mesh(self):
+def create_light_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
         if o.select is True:
             o.select = False
     bpy.ops.object.select_all(False)
-    generate_lamp(self)
+    generate_light(self)
 
     return
 
@@ -401,13 +401,13 @@ def create_lamp_mesh(self):
 # Generate lamps
 # All custom values are passed using self container (self.myvariable)
 # ------------------------------------------------------------------------------
-def generate_lamp(self):
+def generate_light(self):
     location = bpy.context.scene.cursor_location
     myloc = copy(location)  # copy location to keep 3D cursor position
     # ---------------------
     # Lamp base
     # ---------------------
-    mydata = create_lamp_base("Lamp_base", self.base_height,
+    mydata = create_light_base("Lamp_base", self.base_height,
                               myloc.x, myloc.y, myloc.z,
                               self.base_segments, self.base_rings,
                               [self.br01, self.br02, self.br03, self.br04, self.br05, self.br06,
@@ -429,7 +429,7 @@ def generate_lamp(self):
     # ---------------------
     # Lampholder
     # ---------------------
-    myholder = create_lampholder("Lampholder", self.holder,
+    myholder = create_lightholder("Lampholder", self.holder,
                                  myloc.x, myloc.y, myloc.z,
                                  self.crt_mat)
     # refine
@@ -444,7 +444,7 @@ def generate_lamp(self):
     # ---------------------
     # Lamp strings
     # ---------------------
-    mystrings = create_lampholder_strings("Lampstrings", self.holder,
+    mystrings = create_lightholder_strings("Lampstrings", self.holder,
                                           myloc.x, myloc.y, myloc.z,
                                           self.tr02,
                                           self.top_height,
@@ -460,7 +460,7 @@ def generate_lamp(self):
     # ---------------------
     # Lampshade
     # ---------------------
-    mytop = create_lampshade("Lampshade", self.top_height,
+    mytop = create_lightshade("Lampshade", self.top_height,
                              myloc.x, myloc.y, myloc.z,
                              self.top_segments,
                              self.tr01, self.tr02,
@@ -517,7 +517,7 @@ def generate_lamp(self):
 # mat: Flag for creating materials
 # objcol: Color
 # ------------------------------------------------------------------------------
-def create_lamp_base(objname, height, px, py, pz, segments, rings, radios, ratios, subdivide, mat, objcol):
+def create_light_base(objname, height, px, py, pz, segments, rings, radios, ratios, subdivide, mat, objcol):
     # Calculate heights
     h = height / (rings - 1)
     listheight = []
@@ -562,7 +562,7 @@ def create_lamp_base(objname, height, px, py, pz, segments, rings, radios, ratio
 # pZ: position Z axis
 # mat: Flag for creating materials
 # ------------------------------------------------------------------------------
-def create_lampholder(objname, height, px, py, pz, mat):
+def create_lightholder(objname, height, px, py, pz, mat):
     mydata = create_cylinder_data(16, [0, height, height + 0.005, height + 0.008, height + 0.05],
                                   [0.005, 0.005, 0.010, 0.018, 0.018],
                                   False, False, False, 0, False)
@@ -600,7 +600,7 @@ def create_lampholder(objname, height, px, py, pz, mat):
 # shadeh: height of lampshader
 # mat: Flag for creating materials
 # ------------------------------------------------------------------------------
-def create_lampholder_strings(objname, height, px, py, pz, radio, shadeh, mat):
+def create_lightholder_strings(objname, height, px, py, pz, radio, shadeh, mat):
     mydata = create_cylinder_data(32, [height + 0.005, height + 0.005, height + 0.006, height + 0.006],
                                   [0.018, 0.025, 0.025, 0.018],
                                   False, False, False, 0, False)
@@ -652,7 +652,7 @@ def create_lampholder_strings(objname, height, px, py, pz, radio, shadeh, mat):
 # opacity: opacity factor
 # mat: Flag for creating materials
 # ------------------------------------------------------------------------------
-def create_lampshade(objname, height, px, py, pz, segments, radio1, radio2, pleats, pleatsize, opacity, mat):
+def create_lightshade(objname, height, px, py, pz, segments, radio1, radio2, pleats, pleatsize, opacity, mat):
     gap = 0.002
     radios = [radio1 - gap, radio1 - gap, radio1, radio2, radio2 - gap, radio2 - gap]
     heights = [gap * 2, 0, 0, height, height, height - (gap * 2)]

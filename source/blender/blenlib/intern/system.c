@@ -31,12 +31,13 @@
 
 #include "MEM_guardedalloc.h"
 
-/* for backtrace */
-#if defined(__linux__) || defined(__APPLE__)
-#  include <execinfo.h>
-#elif defined(WIN32)
+/* for backtrace and gethostname/GetComputerName */
+#if defined(WIN32)
 #  include <windows.h>
 #  include <dbghelp.h>
+#else
+#  include <execinfo.h>
+#  include <unistd.h>
 #endif
 
 int BLI_cpu_support_sse2(void)
@@ -175,4 +176,20 @@ char *BLI_cpu_brand_string(void)
 		return brand;
 	}
 	return NULL;
+}
+
+void BLI_hostname_get(char *buffer, size_t bufsize)
+{
+#ifndef WIN32
+	if (gethostname(buffer, bufsize - 1) < 0) {
+		BLI_strncpy(buffer, "-unknown-", bufsize);
+	}
+	/* When gethostname() truncates, it doesn't guarantee the trailing \0. */
+	buffer[bufsize - 1] = '\0';
+#else
+	DWORD bufsize_inout = bufsize;
+	if (!GetComputerName(buffer, &bufsize_inout)) {
+		strncpy(buffer, "-unknown-", bufsize);
+	}
+#endif
 }

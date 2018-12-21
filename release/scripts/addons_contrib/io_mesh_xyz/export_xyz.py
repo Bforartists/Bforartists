@@ -20,7 +20,7 @@ import bpy
 from . import import_xyz
 
 
-class AtomsExport(object):  
+class AtomsExport(object):
     __slots__ = ('element', 'location')
     def __init__(self, element, location):
         self.element  = element
@@ -32,13 +32,13 @@ def export_xyz(obj_type, filepath_xyz):
     list_atoms = []
     counter = 0
     for obj in bpy.context.selected_objects:
-    
+
         if "Stick" in obj.name:
             continue
-            
+
         if obj.type not in {'MESH', 'SURFACE', 'META'}:
-            continue 
-       
+            continue
+
         name = ""
         for element in import_xyz.ELEMENTS_DEFAULT:
             if element[1] in obj.name:
@@ -46,7 +46,7 @@ def export_xyz(obj_type, filepath_xyz):
                     name = "X"
                 else:
                     name = element[2]
-        
+
         if name == "":
             if obj_type == "0":
                 name = "?"
@@ -57,12 +57,12 @@ def export_xyz(obj_type, filepath_xyz):
             for vertex in obj.data.vertices:
                 location = obj.matrix_world*vertex.co
                 list_atoms.append(AtomsExport(name, location))
-                counter += 1                                       
+                counter += 1
         else:
             if not obj.parent:
                 location = obj.location
-                list_atoms.append(AtomsExport(name, location))                                   
-                counter += 1                                               
+                list_atoms.append(AtomsExport(name, location))
+                counter += 1
 
     xyz_file_p = open(filepath_xyz, "w")
     xyz_file_p.write("%d\n" % counter)
@@ -82,4 +82,3 @@ def export_xyz(obj_type, filepath_xyz):
     xyz_file_p.close()
 
     return True
-

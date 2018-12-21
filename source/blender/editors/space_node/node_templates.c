@@ -124,7 +124,7 @@ static void node_clear_recursive(bNode *node)
 			node_clear_recursive(input->link->fromnode);
 }
 
-static void node_remove_linked(bNodeTree *ntree, bNode *rem_node)
+static void node_remove_linked(Main *bmain, bNodeTree *ntree, bNode *rem_node)
 {
 	bNode *node, *next;
 	bNodeSocket *sock;
@@ -152,7 +152,7 @@ static void node_remove_linked(bNodeTree *ntree, bNode *rem_node)
 		if (node->flag & NODE_TEST) {
 			if (node->id)
 				id_us_min(node->id);
-			nodeFreeNode(ntree, node);
+			nodeDeleteNode(bmain, ntree, node);
 		}
 	}
 }
@@ -178,7 +178,7 @@ static void node_socket_remove(Main *bmain, bNodeTree *ntree, bNode *node_to, bN
 	if (!sock_to->link)
 		return;
 
-	node_remove_linked(ntree, sock_to->link->fromnode);
+	node_remove_linked(bmain, ntree, sock_to->link->fromnode);
 	sock_to->flag |= SOCK_COLLAPSED;
 
 	nodeUpdate(ntree, node_to);
@@ -218,20 +218,15 @@ static void node_socket_add_replace(const bContext *C, bNodeTree *ntree, bNode *
 	else if (!node_from) {
 		node_from = nodeAddStaticNode(C, ntree, type);
 		if (node_prev != NULL) {
-			/* If we're replacing existing node, use it's location. */
+			/* If we're replacing existing node, use its location. */
 			node_from->locx = node_prev->locx;
 			node_from->locy = node_prev->locy;
 			node_from->offsetx = node_prev->offsetx;
 			node_from->offsety = node_prev->offsety;
 		}
 		else {
-			/* Avoid exact intersection of nodes.
-			 * TODO(sergey): Still not ideal, but better than nothing.
-			 */
-			int index = BLI_findindex(&node_to->inputs, sock_to);
-			BLI_assert(index != -1);
-			node_from->locx = node_to->locx - (node_from->typeinfo->width + 50);
-			node_from->locy = node_to->locy - (node_from->typeinfo->height * index);
+			sock_from_tmp = BLI_findlink(&node_from->outputs, item->socket_index);
+			nodePositionRelative(node_from, node_to, sock_from_tmp, sock_to);
 		}
 
 		node_link_item_apply(bmain, node_from, item);
@@ -274,7 +269,7 @@ static void node_socket_add_replace(const bContext *C, bNodeTree *ntree, bNode *
 		}
 
 		/* remove node */
-		node_remove_linked(ntree, node_prev);
+		node_remove_linked(bmain, ntree, node_prev);
 	}
 
 	nodeUpdate(ntree, node_from);
@@ -446,21 +441,13 @@ static void ui_node_menu_column(NodeLinkArg *arg, int nclass, const char *cname)
 	uiBut *but;
 	NodeLinkArg *argN;
 	int first = 1;
-	int compatibility = 0;
-
-	if (ntree->type == NTREE_SHADER) {
-		if (BKE_scene_use_new_shading_nodes(arg->scene))
-			compatibility = NODE_NEW_SHADING;
-		else
-			compatibility = NODE_OLD_SHADING;
-	}
 
 	/* generate array of node types sorted by UI name */
 	bNodeType **sorted_ntypes = NULL;
 	BLI_array_declare(sorted_ntypes);
 
 	NODE_TYPES_BEGIN(ntype) {
-		if (compatibility && !(ntype->compatibility & compatibility)) {
+		if (!(ntype->poll && ntype->poll(ntype, ntree))) {
 			continue;
 		}
 
@@ -637,7 +624,7 @@ static void ui_node_draw_node(uiLayout *layout, bContext *C, bNodeTree *ntree, b
 
 	if (node->typeinfo->draw_buttons) {
 		if (node->type != NODE_GROUP) {
-			split = uiLayoutSplit(layout, 0.35f, false);
+			split = uiLayoutSplit(layout, 0.5f, false);
 			col = uiLayoutColumn(split, false);
 			col = uiLayoutColumn(split, false);
 
@@ -680,10 +667,10 @@ static void ui_node_draw_input(uiLayout *layout, bContext *C, bNodeTree *ntree, 
 		label[i] = ' ';
 	}
 	label[indent] = '\0';
-	BLI_snprintf(label + indent, UI_MAX_NAME_STR - indent, "%s:", IFACE_(input->name));
+	BLI_snprintf(label + indent, UI_MAX_NAME_STR - indent, "%s", IFACE_(input->name));
 
 	/* split in label and value */
-	split = uiLayoutSplit(layout, 0.35f, false);
+	split = uiLayoutSplit(layout, 0.5f, false);
 
 	row = uiLayoutRow(split, true);
 
@@ -705,7 +692,7 @@ static void ui_node_draw_input(uiLayout *layout, bContext *C, bNodeTree *ntree, 
 
 	uiItemL(row, label, ICON_NONE);
 	bt = block->buttons.last;
-	bt->drawflag = UI_BUT_TEXT_LEFT;
+	bt->drawflag = UI_BUT_TEXT_RIGHT;
 
 	if (dependency_loop) {
 		row = uiLayoutRow(split, false);

@@ -24,9 +24,9 @@ class VIEW3D_PIE_pivot_of(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.prop(context.space_data, "pivot_point", expand=True)
+        pie.prop(context.scene.tool_settings, "transform_pivot_point", expand=True)
         if context.active_object and context.active_object.mode == 'OBJECT':
-            pie.prop(context.space_data, "use_pivot_point_align", text="Center Points")
+            pie.prop(context.scene.tool_settings, "use_transform_pivot_point_align", text="Center Points")
 
 
 classes = (

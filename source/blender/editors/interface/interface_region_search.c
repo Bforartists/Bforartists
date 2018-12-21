@@ -64,6 +64,7 @@
 
 #include "interface_intern.h"
 #include "interface_regions_intern.h"
+#include "GPU_state.h"
 
 #define MENU_BORDER			(int)(0.3f * U.widget_unit)
 
@@ -397,15 +398,16 @@ int ui_searchbox_autocomplete(bContext *C, ARegion *ar, uiBut *but, char *str)
 	return match;
 }
 
-static void ui_searchbox_region_draw_cb(const bContext *UNUSED(C), ARegion *ar)
+static void ui_searchbox_region_draw_cb(const bContext *C, ARegion *ar)
 {
 	uiSearchboxData *data = ar->regiondata;
 
 	/* pixel space */
 	wmOrtho2_region_pixelspace(ar);
 
-	if (data->noback == false)
-		ui_draw_search_back(NULL, NULL, &data->bbox);  /* style not used yet */
+	if (data->noback == false) {
+		ui_draw_widget_back(UI_WTYPE_MENU_BACK, true, &data->bbox);
+	}
 
 	/* draw text */
 	if (data->items.totitem) {
@@ -415,6 +417,9 @@ static void ui_searchbox_region_draw_cb(const bContext *UNUSED(C), ARegion *ar)
 		if (data->preview) {
 			/* draw items */
 			for (a = 0; a < data->items.totitem; a++) {
+				/* ensure icon is up-to-date */
+				ui_icon_ensure_deferred(C, data->items.icons[a], data->preview);
+
 				ui_searchbox_butrect(&rect, data, a);
 
 				/* widget itself */
@@ -426,15 +431,15 @@ static void ui_searchbox_region_draw_cb(const bContext *UNUSED(C), ARegion *ar)
 			/* indicate more */
 			if (data->items.more) {
 				ui_searchbox_butrect(&rect, data, data->items.maxitem - 1);
-				glEnable(GL_BLEND);
+				GPU_blend(true);
 				UI_icon_draw(rect.xmax - 18, rect.ymin - 7, ICON_TRIA_DOWN);
-				glDisable(GL_BLEND);
+				GPU_blend(false);
 			}
 			if (data->items.offset) {
 				ui_searchbox_butrect(&rect, data, 0);
-				glEnable(GL_BLEND);
+				GPU_blend(true);
 				UI_icon_draw(rect.xmin, rect.ymax - 9, ICON_TRIA_UP);
-				glDisable(GL_BLEND);
+				GPU_blend(false);
 			}
 
 		}
@@ -452,15 +457,15 @@ static void ui_searchbox_region_draw_cb(const bContext *UNUSED(C), ARegion *ar)
 			/* indicate more */
 			if (data->items.more) {
 				ui_searchbox_butrect(&rect, data, data->items.maxitem - 1);
-				glEnable(GL_BLEND);
+				GPU_blend(true);
 				UI_icon_draw((BLI_rcti_size_x(&rect)) / 2, rect.ymin - 9, ICON_TRIA_DOWN);
-				glDisable(GL_BLEND);
+				GPU_blend(false);
 			}
 			if (data->items.offset) {
 				ui_searchbox_butrect(&rect, data, 0);
-				glEnable(GL_BLEND);
+				GPU_blend(true);
 				UI_icon_draw((BLI_rcti_size_x(&rect)) / 2, rect.ymax - 7, ICON_TRIA_UP);
-				glDisable(GL_BLEND);
+				GPU_blend(false);
 			}
 		}
 	}
@@ -528,8 +533,10 @@ ARegion *ui_searchbox_create_generic(bContext *C, ARegion *butregion, uiBut *but
 		data->prv_cols = but->a2;
 	}
 
-	/* only show key shortcuts when needed (not rna buttons) [#36699] */
-	if (but->rnaprop == NULL) {
+	/* Only show key shortcuts when needed (checking RNA prop pointer is useless here, a lot of buttons are about data
+	 * without having that pointer defined, let's rather try with optype!). One can also enforce that behavior by
+	 * setting UI_BUT_HAS_SHORTCUT drawflag of search button. */
+	if (but->optype != NULL || (but->drawflag & UI_BUT_HAS_SHORTCUT) != 0) {
 		data->use_sep = true;
 	}
 
@@ -624,7 +631,7 @@ ARegion *ui_searchbox_create_generic(bContext *C, ARegion *butregion, uiBut *but
 	}
 
 	/* adds subwindow */
-	ED_region_init(C, ar);
+	ED_region_init(ar);
 
 	/* notify change and redraw */
 	ED_region_tag_redraw(ar);
@@ -680,8 +687,9 @@ static void ui_searchbox_region_draw_cb__operator(const bContext *UNUSED(C), ARe
 	/* pixel space */
 	wmOrtho2_region_pixelspace(ar);
 
-	if (data->noback == false)
-		ui_draw_search_back(NULL, NULL, &data->bbox);  /* style not used yet */
+	if (data->noback == false) {
+		ui_draw_widget_back(UI_WTYPE_MENU_BACK, true, &data->bbox);
+	}
 
 	/* draw text */
 	if (data->items.totitem) {
@@ -730,15 +738,15 @@ static void ui_searchbox_region_draw_cb__operator(const bContext *UNUSED(C), ARe
 		/* indicate more */
 		if (data->items.more) {
 			ui_searchbox_butrect(&rect, data, data->items.maxitem - 1);
-			glEnable(GL_BLEND);
+			GPU_blend(true);
 			UI_icon_draw((BLI_rcti_size_x(&rect)) / 2, rect.ymin - 9, ICON_TRIA_DOWN);
-			glDisable(GL_BLEND);
+			GPU_blend(false);
 		}
 		if (data->items.offset) {
 			ui_searchbox_butrect(&rect, data, 0);
-			glEnable(GL_BLEND);
+			GPU_blend(true);
 			UI_icon_draw((BLI_rcti_size_x(&rect)) / 2, rect.ymax - 7, ICON_TRIA_UP);
-			glDisable(GL_BLEND);
+			GPU_blend(false);
 		}
 	}
 }
@@ -747,6 +755,7 @@ ARegion *ui_searchbox_create_operator(bContext *C, ARegion *butregion, uiBut *bu
 {
 	ARegion *ar;
 
+	UI_but_drawflag_enable(but, UI_BUT_HAS_SHORTCUT);
 	ar = ui_searchbox_create_generic(C, butregion, but);
 
 	ar->type->draw = ui_searchbox_region_draw_cb__operator;

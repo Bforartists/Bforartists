@@ -1,4 +1,4 @@
-#Starting from 1825 (stearin) 
+#Starting from 1825 (stearin)
 
 import bpy
 bpy.context.object.data.type = 'POINT'

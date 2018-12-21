@@ -154,7 +154,7 @@ def save(self, context, filepath="",
             b_tail = a_matrix * bone.tail
             file.write("OFFSET %.6f %.6f %.6f\n" % (b_tail[0], b_tail[1], b_tail[2]))
             file.write("SCALE 1.000000 1.000000 1.000000\n") # Is this even supported by CoD?
-            
+
             file.write("X %.6f %.6f %.6f\n" % (bone.matrix[0][0], bone.matrix[1][0], bone.matrix[2][0]))
             file.write("Y %.6f %.6f %.6f\n" % (bone.matrix[0][1], bone.matrix[1][1], bone.matrix[2][1]))
             file.write("Z %.6f %.6f %.6f\n\n" % (bone.matrix[0][2], bone.matrix[1][2], bone.matrix[2][2]))

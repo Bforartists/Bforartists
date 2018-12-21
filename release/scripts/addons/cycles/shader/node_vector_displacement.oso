@@ -1,0 +1,95 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_vector_displacement.oso
+shader node_vector_displacement
+param	color	Vector	0 0 0		%read{1,1} %write{2147483647,-1}
+param	float	Midlevel	0		%read{0,0} %write{2147483647,-1}
+param	float	Scale	1		%read{2,2} %write{2147483647,-1}
+param	string	space	"tangent"		%read{3,25} %write{2147483647,-1}
+param	string	attr_name	"geom:tangent"		%read{7,7} %write{2147483647,-1}
+param	string	attr_sign_name	"geom:tangent_sign"		%read{13,13} %write{2147483647,-1}
+oparam	vector	Displacement	0 0 0		%read{27,27} %write{23,27}
+global	normal	N	%read{5,5} %write{2147483647,-1}
+global	vector	dPdu	%read{10,10} %write{2147483647,-1}
+local	vector	offset	%read{16,24} %write{2,2}
+local	vector	___669_N_object	%read{11,19} %write{6,6}
+local	vector	___669_T_object	%read{9,17} %write{7,10}
+local	vector	___669_B_object	%read{15,22} %write{12,15}
+local	float	___669_tangent_sign	%read{15,15} %write{13,13}
+temp	vector	$tmp1	%read{1,1} %write{0,0}
+temp	color	$tmp2	%read{2,2} %write{1,1}
+const	string	$const1	"tangent"		%read{3,3} %write{2147483647,-1}
+temp	int	$tmp3	%read{4,4} %write{3,3}
+temp	normal	$tmp4	%read{6,6} %write{5,5}
+const	string	$const2	"world"		%read{5,27} %write{2147483647,-1}
+const	string	$const3	"object"		%read{5,27} %write{2147483647,-1}
+temp	int	$tmp5	%read{8,8} %write{7,7}
+temp	vector	$tmp6	%read{12,12} %write{11,11}
+temp	int	$tmp7	%read{14,14} %write{13,13}
+const	int	$const4	0		%read{16,16} %write{2147483647,-1}
+temp	float	$tmp8	%read{17,17} %write{16,16}
+temp	vector	$tmp9	%read{20,20} %write{17,17}
+const	int	$const5	1		%read{18,18} %write{2147483647,-1}
+temp	float	$tmp10	%read{19,19} %write{18,18}
+temp	vector	$tmp11	%read{20,20} %write{19,19}
+temp	vector	$tmp12	%read{23,23} %write{20,20}
+const	int	$const6	2		%read{21,21} %write{2147483647,-1}
+temp	float	$tmp13	%read{22,22} %write{21,21}
+temp	vector	$tmp14	%read{23,23} %write{22,22}
+temp	int	$tmp15	%read{26,26} %write{25,25}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:28
+# 	vector offset = (Vector - vector(Midlevel)) * Scale;
+	assign		$tmp1 Midlevel 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl"} %line{28} %argrw{"wr"}
+	sub		$tmp2 Vector $tmp1 	%argrw{"wrr"}
+	mul		offset $tmp2 Scale 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:30
+# 	if(space == "tangent") {
+	eq		$tmp3 space $const1 	%line{30} %argrw{"wrr"}
+	if		$tmp3 24 25 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:32
+# 		vector N_object = normalize(transform("world", "object", N));
+	transformn	$tmp4 $const2 $const3 N 	%line{32} %argrw{"wrrr"}
+	normalize	___669_N_object $tmp4 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:35
+# 		if(getattribute(attr_name, T_object)) {
+	getattribute	$tmp5 attr_name ___669_T_object 	%line{35} %argrw{"wrw"}
+	if		$tmp5 10 11 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:36
+# 			T_object = normalize(T_object);
+	normalize	___669_T_object ___669_T_object 	%line{36} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:39
+# 			T_object = normalize(dPdu);
+	normalize	___669_T_object dPdu 	%line{39} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:42
+# 		vector B_object = normalize(cross(N_object, T_object));
+	cross		$tmp6 ___669_N_object ___669_T_object 	%line{42} %argrw{"wrr"}
+	normalize	___669_B_object $tmp6 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:44
+# 		if(getattribute(attr_sign_name, tangent_sign)) {
+	getattribute	$tmp7 attr_sign_name ___669_tangent_sign 	%line{44} %argrw{"wrw"}
+	if		$tmp7 16 16 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:45
+# 			B_object *= tangent_sign;
+	mul		___669_B_object ___669_B_object ___669_tangent_sign 	%line{45} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:48
+# 		Displacement = T_object*offset[0] + N_object*offset[1] + B_object*offset[2];
+	compref		$tmp8 offset $const4 	%line{48} %argrw{"wrr"}
+	mul		$tmp9 ___669_T_object $tmp8 	%argrw{"wrr"}
+	compref		$tmp10 offset $const5 	%argrw{"wrr"}
+	mul		$tmp11 ___669_N_object $tmp10 	%argrw{"wrr"}
+	add		$tmp12 $tmp9 $tmp11 	%argrw{"wrr"}
+	compref		$tmp13 offset $const6 	%argrw{"wrr"}
+	mul		$tmp14 ___669_B_object $tmp13 	%argrw{"wrr"}
+	add		Displacement $tmp12 $tmp14 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:52
+# 		Displacement = offset;
+	assign		Displacement offset 	%line{52} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:55
+# 	if(space != "world") {
+	neq		$tmp15 space $const2 	%line{55} %argrw{"wrr"}
+	if		$tmp15 28 28 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_vector_displacement.osl:57
+# 		Displacement = transform("object", "world", Displacement);
+	transformv	Displacement $const3 $const2 Displacement 	%line{57} %argrw{"wrrr"}
+	end

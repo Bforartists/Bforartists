@@ -22,7 +22,7 @@ bl_info = {
     "name": "NewTek MDD format",
     "author": "Bill L.Nieuwendorp",
     "version": (1, 0, 1),
-    "blender": (2, 57, 0),
+    "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "Import-Export MDD as mesh shape keys",
     "warning": "",
@@ -57,17 +57,17 @@ class ImportMDD(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".mdd"
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.mdd",
             options={'HIDDEN'},
             )
-    frame_start = IntProperty(
+    frame_start: IntProperty(
             name="Start Frame",
             description="Start frame for inserting animation",
             min=-300000, max=300000,
             default=0,
             )
-    frame_step = IntProperty(
+    frame_step: IntProperty(
             name="Step",
             min=1, max=1000,
             default=1,
@@ -97,7 +97,7 @@ class ExportMDD(bpy.types.Operator, ExportHelper):
     bl_label = "Export MDD"
 
     filename_ext = ".mdd"
-    filter_glob = StringProperty(default="*.mdd", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.mdd", options={'HIDDEN'})
 
     # get first scene to get min and max properties for frames, fps
 
@@ -108,25 +108,25 @@ class ExportMDD(bpy.types.Operator, ExportHelper):
 
     # List of operator properties, the attributes will be assigned
     # to the class instance from the operator settings before calling.
-    fps = FloatProperty(
+    fps: FloatProperty(
             name="Frames Per Second",
             description="Number of frames/second",
             min=minfps, max=maxfps,
             default=25.0,
             )
-    frame_start = IntProperty(
+    frame_start: IntProperty(
             name="Start Frame",
             description="Start frame for baking",
             min=minframe, max=maxframe,
             default=1,
             )
-    frame_end = IntProperty(
+    frame_end: IntProperty(
             name="End Frame",
             description="End frame for baking",
             min=minframe, max=maxframe,
             default=250,
             )
-    use_rest_frame = BoolProperty(
+    use_rest_frame: BoolProperty(
             name="Rest Frame",
             description="Write the rest state at the first frame",
             default=False,
@@ -164,18 +164,25 @@ def menu_func_export(self, context):
                          )
 
 
-def register():
-    bpy.utils.register_module(__name__)
+classes = (
+    ImportMDD,
+    ExportMDD
+)
 
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 if __name__ == "__main__":
     register()

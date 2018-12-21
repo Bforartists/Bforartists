@@ -129,8 +129,8 @@ class Set_Up_Fold(Operator):
         scn.objects.link(rig)
         scn.objects.active = rig
         bpy.ops.object.mode_set(mode="EDIT")
-        arm.draw_type = "WIRE"
-        rig.show_x_ray = True
+        arm.display_type = "WIRE"
+        rig.show_in_front = True
         mod = obj.modifiers.new("UnFold", "ARMATURE")
         mod.show_in_editmode = True
         mod.object = rig
@@ -154,7 +154,7 @@ class Set_Up_Fold(Operator):
             b.select = False
             b.layers = vis
             b.parent = root
-            vg = obj.vertex_groups.new(b.name)
+            vg = obj.vertex_groups.new(name=b.name)
             vg.add(f.vertices, 1, "ADD")
 
         bpy.ops.object.mode_set()

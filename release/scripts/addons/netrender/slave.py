@@ -377,19 +377,11 @@ def render_slave(engine, netsettings, threads):
                             # thumbnail first
                             if netsettings.use_slave_thumb:
                                 thumbname = thumbnail.generate(filename)
-
                                 if thumbname:
-                                    f = open(thumbname, 'rb')
-                                    with ConnectionContext():
-                                        conn.request("PUT", "/thumb", f, headers=headers)
-                                    f.close()
-                                    responseStatus(conn)
+                                    sendFile(conn, "/thumb", thumbname, headers=headers)
 
-                            f = open(filename, 'rb')
-                            with ConnectionContext():
-                                conn.request("PUT", "/render", f, headers=headers)
-                            f.close()
-                            if responseStatus(conn) == http.client.NO_CONTENT:
+                            reponse_status = sendFile(conn, "/render", filename, headers=headers)
+                            if reponse_status == http.client.NO_CONTENT:
                                 continue
 
                         elif job.subtype == netrender.model.JOB_SUB_BAKING:
@@ -402,11 +394,8 @@ def render_slave(engine, netsettings, threads):
                                 headers["result-filename"] = result_filename
                                 headers["job-finished"] = str(result_filepath == frame_results[-1])
 
-                                f = open(result_filepath, 'rb')
-                                with ConnectionContext():
-                                    conn.request("PUT", "/result", f, headers=headers)
-                                f.close()
-                                if responseStatus(conn) == http.client.NO_CONTENT:
+                                response_status = sendFile(conn, "/result", result_filepath, headers=headers)
+                                if response_status == http.client.NO_CONTENT:
                                     continue
 
                         elif job.type == netrender.model.JOB_PROCESS:

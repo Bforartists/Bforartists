@@ -48,7 +48,7 @@ H3D_CAMERA_FOLLOW = 'CAMERA_FOLLOW_TRANSFORM'
 H3D_VIEW_MATRIX = 'view_matrix'
 
 
-def clamp_color(col):
+def clight_color(col):
     return tuple([max(min(c, 1.0), 0.0) for c in col])
 
 
@@ -164,14 +164,14 @@ def h3d_shader_glsl_frag_patch(filepath, scene, global_vars, frag_uniform_var_ma
                 lines.append("%s\n" % v)
             lines.append("// h3d custom vars end\n")
             lines.append("\n")
-        elif l.lstrip().startswith("lamp_visibility_other("):
+        elif l.lstrip().startswith("light_visibility_other("):
             w = l.split(', ')
             last_transform = w[1] + "_transform"  # XXX - HACK!!!
             w[1] = '(view_matrix * %s_transform * vec4(%s.x, %s.y, %s.z, 1.0)).xyz' % (w[1], w[1], w[1], w[1])
             l = ", ".join(w)
-        elif l.lstrip().startswith("lamp_visibility_sun_hemi("):
+        elif l.lstrip().startswith("light_visibility_sun_hemi("):
             w = l.split(', ')
-            w[0] = w[0][len("lamp_visibility_sun_hemi(") + 1:]
+            w[0] = w[0][len("light_visibility_sun_hemi(") + 1:]
 
             if not h3d_is_object_view(scene, frag_uniform_var_map[w[0]]):
                 w[0] = '(mat3(normalize(view_matrix[0].xyz), normalize(view_matrix[1].xyz), normalize(view_matrix[2].xyz)) * -%s)' % w[0]
@@ -179,10 +179,10 @@ def h3d_shader_glsl_frag_patch(filepath, scene, global_vars, frag_uniform_var_ma
                 w[0] = ('(mat3(normalize((view_matrix*%s)[0].xyz), normalize((view_matrix*%s)[1].xyz), normalize((view_matrix*%s)[2].xyz)) * -%s)' %
                         (last_transform, last_transform, last_transform, w[0]))
 
-            l = "\tlamp_visibility_sun_hemi(" + ", ".join(w)
-        elif l.lstrip().startswith("lamp_visibility_spot_circle("):
+            l = "\tlight_visibility_sun_hemi(" + ", ".join(w)
+        elif l.lstrip().startswith("light_visibility_spot_circle("):
             w = l.split(', ')
-            w[0] = w[0][len("lamp_visibility_spot_circle(") + 1:]
+            w[0] = w[0][len("light_visibility_spot_circle(") + 1:]
 
             if not h3d_is_object_view(scene, frag_uniform_var_map[w[0]]):
                 w[0] = '(mat3(normalize(view_matrix[0].xyz), normalize(view_matrix[1].xyz), normalize(view_matrix[2].xyz)) * -%s)' % w[0]
@@ -190,7 +190,7 @@ def h3d_shader_glsl_frag_patch(filepath, scene, global_vars, frag_uniform_var_ma
                 w[0] = ('(mat3(normalize((view_matrix*%s)[0].xyz), normalize((view_matrix*%s)[1].xyz), normalize((view_matrix*%s)[2].xyz)) * %s)' %
                     (last_transform, last_transform, last_transform, w[0]))
 
-            l = "\tlamp_visibility_spot_circle(" + ", ".join(w)
+            l = "\tlight_visibility_spot_circle(" + ", ".join(w)
 
         lines.append(l)
 
@@ -241,7 +241,7 @@ def export(file,
         # since objects of different types will always have
         # different decorated names.
         uuid_cache_object = {}    # object
-        uuid_cache_lamp = {}      # 'LA_' + object.name
+        uuid_cache_light = {}      # 'LA_' + object.name
         uuid_cache_view = {}      # object, different namespace
         uuid_cache_mesh = {}      # mesh
         uuid_cache_material = {}  # material
@@ -261,7 +261,7 @@ def export(file,
         # prevent uuid collisions.
         uuid_cache = {}
         uuid_cache_object = uuid_cache           # object
-        uuid_cache_lamp = uuid_cache             # 'LA_' + object.name
+        uuid_cache_light = uuid_cache             # 'LA_' + object.name
         uuid_cache_view = uuid_cache             # object, different namespace
         uuid_cache_mesh = uuid_cache             # mesh
         uuid_cache_material = uuid_cache         # material
@@ -370,16 +370,16 @@ def export(file,
             ident_step = ident + (' ' * (-len(ident) + \
             fw('%s<Fog ' % ident)))
             fw('fogType="%s"\n' % ('LINEAR' if (mtype == 'LINEAR') else 'EXPONENTIAL'))
-            fw(ident_step + 'color="%.3f %.3f %.3f"\n' % clamp_color(world.horizon_color))
+            fw(ident_step + 'color="%.3f %.3f %.3f"\n' % clight_color(world.horizon_color))
             fw(ident_step + 'visibilityRange="%.3f"\n' % mparam.depth)
             fw(ident_step + '/>\n')
         else:
             return
 
-    def writeNavigationInfo(ident, scene, has_lamp):
+    def writeNavigationInfo(ident, scene, has_light):
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<NavigationInfo ' % ident)))
-        fw('headlight="%s"\n' % bool_as_str(not has_lamp))
+        fw('headlight="%s"\n' % bool_as_str(not has_light))
         fw(ident_step + 'visibilityLimit="0.0"\n')
         fw(ident_step + 'type=\'"EXAMINE", "ANY"\'\n')
         fw(ident_step + 'avatarSize="0.25, 1.75, 0.75"\n')
@@ -411,8 +411,8 @@ def export(file,
         return ident
 
     def writeSpotLight(ident, obj, matrix, lamp, world):
-        # note, lamp_id is not re-used
-        lamp_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_lamp, clean_func=clean_def, sep="_"))
+        # note, light_id is not re-used
+        light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
         if world:
             ambi = world.ambient_color
@@ -435,11 +435,11 @@ def export(file,
         # radius = lamp.dist*math.cos(beamWidth)
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<SpotLight ' % ident)))
-        fw('DEF=%s\n' % lamp_id)
+        fw('DEF=%s\n' % light_id)
         fw(ident_step + 'radius="%.4f"\n' % radius)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
         fw(ident_step + 'beamWidth="%.4f"\n' % beamWidth)
         fw(ident_step + 'cutOffAngle="%.4f"\n' % cutOffAngle)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
@@ -447,8 +447,8 @@ def export(file,
         fw(ident_step + '/>\n')
 
     def writeDirectionalLight(ident, obj, matrix, lamp, world):
-        # note, lamp_id is not re-used
-        lamp_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_lamp, clean_func=clean_def, sep="_"))
+        # note, light_id is not re-used
+        light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
         if world:
             ambi = world.ambient_color
@@ -464,16 +464,16 @@ def export(file,
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<DirectionalLight ' % ident)))
-        fw('DEF=%s\n' % lamp_id)
+        fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
         fw(ident_step + '/>\n')
 
     def writePointLight(ident, obj, matrix, lamp, world):
-        # note, lamp_id is not re-used
-        lamp_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_lamp, clean_func=clean_def, sep="_"))
+        # note, light_id is not re-used
+        light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
         if world:
             ambi = world.ambient_color
@@ -488,9 +488,9 @@ def export(file,
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<PointLight ' % ident)))
-        fw('DEF=%s\n' % lamp_id)
+        fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
 
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
         fw(ident_step + 'radius="%.4f" \n' % lamp.distance)
@@ -1002,9 +1002,9 @@ def export(file,
             ident_step = ident + (' ' * (-len(ident) + \
             fw('%s<Material ' % ident)))
             fw('DEF=%s\n' % material_id)
-            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clamp_color(diffuseColor))
-            fw(ident_step + 'specularColor="%.3f %.3f %.3f"\n' % clamp_color(specColor))
-            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clamp_color(emitColor))
+            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clight_color(diffuseColor))
+            fw(ident_step + 'specularColor="%.3f %.3f %.3f"\n' % clight_color(specColor))
+            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clight_color(emitColor))
             fw(ident_step + 'ambientIntensity="%.3f"\n' % ambient)
             fw(ident_step + 'shininess="%.3f"\n' % shininess)
             fw(ident_step + 'transparency="%s"\n' % transp)
@@ -1035,12 +1035,12 @@ def export(file,
             #~ GPU_DATA_4F 5
             #~ GPU_DATA_4UB 8
             #~ GPU_DATA_9F 6
-            #~ GPU_DYNAMIC_LAMP_DYNCO 7
-            #~ GPU_DYNAMIC_LAMP_DYNCOL 11
-            #~ GPU_DYNAMIC_LAMP_DYNENERGY 10
-            #~ GPU_DYNAMIC_LAMP_DYNIMAT 8
-            #~ GPU_DYNAMIC_LAMP_DYNPERSMAT 9
-            #~ GPU_DYNAMIC_LAMP_DYNVEC 6
+            #~ GPU_DYNAMIC_LIGHT_DYNCO 7
+            #~ GPU_DYNAMIC_LIGHT_DYNCOL 11
+            #~ GPU_DYNAMIC_LIGHT_DYNENERGY 10
+            #~ GPU_DYNAMIC_LIGHT_DYNIMAT 8
+            #~ GPU_DYNAMIC_LIGHT_DYNPERSMAT 9
+            #~ GPU_DYNAMIC_LIGHT_DYNVEC 6
             #~ GPU_DYNAMIC_OBJECT_COLOR 5
             #~ GPU_DYNAMIC_OBJECT_IMAT 4
             #~ GPU_DYNAMIC_OBJECT_MAT 2
@@ -1134,45 +1134,45 @@ def export(file,
                     writeImageTexture(ident + '\t', uniform['image'])
                     fw('%s</field>\n' % ident)
 
-                elif uniform['type'] == gpu.GPU_DYNAMIC_LAMP_DYNCO:
-                    lamp_obj = uniform['lamp']
-                    frag_uniform_var_map[uniform['varname']] = lamp_obj
+                elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNCO:
+                    light_obj = uniform['lamp']
+                    frag_uniform_var_map[uniform['varname']] = light_obj
 
                     if uniform['datatype'] == gpu.GPU_DATA_3F:  # should always be true!
-                        lamp_obj_id = quoteattr(unique_name(lamp_obj, LA_ + lamp_obj.name, uuid_cache_lamp, clean_func=clean_def, sep="_"))
-                        lamp_obj_transform_id = quoteattr(unique_name(lamp_obj, lamp_obj.name, uuid_cache_object, clean_func=clean_def, sep="_"))
+                        light_obj_id = quoteattr(unique_name(light_obj, LA_ + light_obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
+                        light_obj_transform_id = quoteattr(unique_name(light_obj, light_obj.name, uuid_cache_object, clean_func=clean_def, sep="_"))
 
-                        value = '%.6f %.6f %.6f' % (global_matrix * lamp_obj.matrix_world).to_translation()[:]
-                        field_descr = " <!--- Lamp DynCo '%s' -->" % lamp_obj.name
+                        value = '%.6f %.6f %.6f' % (global_matrix * light_obj.matrix_world).to_translation()[:]
+                        field_descr = " <!--- Lamp DynCo '%s' -->" % light_obj.name
                         fw('%s<field name="%s" type="SFVec3f" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
 
                         # ------------------------------------------------------
                         # shader-patch
-                        field_descr = " <!--- Lamp DynCo '%s' (shader patch) -->" % lamp_obj.name
+                        field_descr = " <!--- Lamp DynCo '%s' (shader patch) -->" % light_obj.name
                         fw('%s<field name="%s_transform" type="SFMatrix4f" accessType="inputOutput" />%s\n' % (ident, uniform['varname'], field_descr))
 
                         # transform
                         frag_vars.append("uniform mat4 %s_transform;" % uniform['varname'])
                         h3d_material_route.append(
                                 '<ROUTE fromNode=%s fromField="accumulatedForward" toNode=%s toField="%s_transform" />%s' %
-                                (suffix_quoted_str(lamp_obj_transform_id, _TRANSFORM), material_id, uniform['varname'], field_descr))
+                                (suffix_quoted_str(light_obj_transform_id, _TRANSFORM), material_id, uniform['varname'], field_descr))
 
                         h3d_material_route.append(
                                 '<ROUTE fromNode=%s fromField="location" toNode=%s toField="%s" /> %s' %
-                                (lamp_obj_id, material_id, uniform['varname'], field_descr))
+                                (light_obj_id, material_id, uniform['varname'], field_descr))
                         # ------------------------------------------------------
 
                     else:
                         assert(0)
 
-                elif uniform['type'] == gpu.GPU_DYNAMIC_LAMP_DYNCOL:
+                elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNCOL:
                     # odd  we have both 3, 4 types.
-                    lamp_obj = uniform['lamp']
-                    frag_uniform_var_map[uniform['varname']] = lamp_obj
+                    light_obj = uniform['lamp']
+                    frag_uniform_var_map[uniform['varname']] = light_obj
 
-                    lamp = lamp_obj.data
+                    lamp = light_obj.data
                     value = '%.6f %.6f %.6f' % (lamp.color * lamp.energy)[:]
-                    field_descr = " <!--- Lamp DynColor '%s' -->" % lamp_obj.name
+                    field_descr = " <!--- Lamp DynColor '%s' -->" % light_obj.name
                     if uniform['datatype'] == gpu.GPU_DATA_3F:
                         fw('%s<field name="%s" type="SFVec3f" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
                     elif uniform['datatype'] == gpu.GPU_DATA_4F:
@@ -1180,26 +1180,26 @@ def export(file,
                     else:
                         assert(0)
 
-                elif uniform['type'] == gpu.GPU_DYNAMIC_LAMP_DYNENERGY:
+                elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNENERGY:
                     # not used ?
                     assert(0)
 
-                elif uniform['type'] == gpu.GPU_DYNAMIC_LAMP_DYNVEC:
-                    lamp_obj = uniform['lamp']
-                    frag_uniform_var_map[uniform['varname']] = lamp_obj
+                elif uniform['type'] == gpu.GPU_DYNAMIC_LIGHT_DYNVEC:
+                    light_obj = uniform['lamp']
+                    frag_uniform_var_map[uniform['varname']] = light_obj
 
                     if uniform['datatype'] == gpu.GPU_DATA_3F:
-                        lamp_obj = uniform['lamp']
-                        value = '%.6f %.6f %.6f' % ((global_matrix * lamp_obj.matrix_world).to_quaternion() * mathutils.Vector((0.0, 0.0, 1.0))).normalized()[:]
-                        field_descr = " <!--- Lamp DynDirection '%s' -->" % lamp_obj.name
+                        light_obj = uniform['lamp']
+                        value = '%.6f %.6f %.6f' % ((global_matrix * light_obj.matrix_world).to_quaternion() * mathutils.Vector((0.0, 0.0, 1.0))).normalized()[:]
+                        field_descr = " <!--- Lamp DynDirection '%s' -->" % light_obj.name
                         fw('%s<field name="%s" type="SFVec3f" accessType="inputOutput" value="%s" />%s\n' % (ident, uniform['varname'], value, field_descr))
 
                         # route so we can have the lamp update the view
-                        if h3d_is_object_view(scene, lamp_obj):
-                            lamp_id = quoteattr(unique_name(lamp_obj, LA_ + lamp_obj.name, uuid_cache_lamp, clean_func=clean_def, sep="_"))
+                        if h3d_is_object_view(scene, light_obj):
+                            light_id = quoteattr(unique_name(light_obj, LA_ + light_obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
                             h3d_material_route.append(
                                 '<ROUTE fromNode=%s fromField="direction" toNode=%s toField="%s" />%s' %
-                                        (lamp_id, material_id, uniform['varname'], field_descr))
+                                        (light_id, material_id, uniform['varname'], field_descr))
 
                     else:
                         assert(0)
@@ -1330,9 +1330,9 @@ def export(file,
 
         blending = world.use_sky_blend, world.use_sky_paper, world.use_sky_real
 
-        grd_triple = clamp_color(world.horizon_color)
-        sky_triple = clamp_color(world.zenith_color)
-        mix_triple = clamp_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
+        grd_triple = clight_color(world.horizon_color)
+        sky_triple = clight_color(world.zenith_color)
+        mix_triple = clight_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<Background ' % ident)))
@@ -1469,7 +1469,7 @@ def export(file,
                     if do_remove:
                         bpy.data.meshes.remove(me)
 
-            elif obj_type == 'LAMP':
+            elif obj_type == 'LIGHT':
                 data = obj.data
                 datatype = data.type
                 if datatype == 'POINT':
@@ -1521,7 +1521,7 @@ def export(file,
         ident = ''
         ident = writeHeader(ident)
 
-        writeNavigationInfo(ident, scene, any(obj.type == 'LAMP' for obj in objects))
+        writeNavigationInfo(ident, scene, any(obj.type == 'LIGHT' for obj in objects))
         writeBackground(ident, world)
         writeFog(ident, world)
 

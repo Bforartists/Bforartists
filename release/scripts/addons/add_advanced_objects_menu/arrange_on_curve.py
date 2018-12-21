@@ -59,7 +59,7 @@ class PanelDupliCurve(Panel):
             elif adv_obj.arrange_c_select_type == 'G':
                 layout.column(align=True).prop_search(
                               adv_obj, "arrange_c_obj_arranjar",
-                              bpy.data, "groups"
+                              bpy.data, "collections"
                               )
         if context.object.type == 'CURVE':
             layout.operator("object.arranjar_numa_curva", text="Arrange Objects")
@@ -238,7 +238,7 @@ class DupliCurve(Operator):
         elif adv_obj.arrange_c_select_type == 'O':
             G_Objeto = bpy.data.objects[adv_obj.arrange_c_obj_arranjar],
         elif adv_obj.arrange_c_select_type == 'G':
-            G_Objeto = bpy.data.groups[adv_obj.arrange_c_obj_arranjar].objects
+            G_Objeto = bpy.data.collections[adv_obj.arrange_c_obj_arranjar].objects
 
         yawMatrix = mathutils.Matrix.Rotation(self.Yaw, 4, 'X')
         pitchMatrix = mathutils.Matrix.Rotation(self.Pitch, 4, 'Y')

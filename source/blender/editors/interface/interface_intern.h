@@ -72,6 +72,8 @@ typedef enum {
 	UI_WTYPE_NUMBER,
 	UI_WTYPE_SLIDER,
 	UI_WTYPE_EXEC,
+	UI_WTYPE_TOOLBAR_ITEM,
+	UI_WTYPE_TAB,
 	UI_WTYPE_TOOLTIP,
 
 	/* strings */
@@ -103,6 +105,9 @@ typedef enum {
 	UI_WTYPE_PROGRESSBAR,
 } uiWidgetTypeEnum;
 
+#define UI_MENU_WIDTH_MIN       (UI_UNIT_Y * 9)
+#define UI_MENU_SUBMENU_PADDING (6 * UI_DPI_FAC) /* some extra padding added to menus containing submenu icons */
+
 /* menu scrolling */
 #define UI_MENU_SCROLL_ARROW	12
 #define UI_MENU_SCROLL_MOUSE	(UI_MENU_SCROLL_ARROW + 2)
@@ -111,6 +116,9 @@ typedef enum {
 /* panel limits */
 #define UI_PANEL_MINX   100
 #define UI_PANEL_MINY   70
+
+/* popover width (multiplied by 'U.widget_unit') */
+#define UI_POPOVER_WIDTH_UNITS 10
 
 /* uiBut->flag */
 enum {
@@ -187,23 +195,6 @@ enum {
 /* max amount of items a radial menu (pie menu) can contain */
 #define PIE_MAX_ITEMS 8
 
-typedef struct uiLinkLine {  /* only for draw/edit */
-	struct uiLinkLine *next, *prev;
-	struct uiBut *from, *to;
-	short flag, deactive;
-} uiLinkLine;
-
-typedef struct {
-	void **poin;        /* pointer to original pointer */
-	void ***ppoin;      /* pointer to original pointer-array */
-	short *totlink;     /* if pointer-array, here is the total */
-
-	short maxlink, pad;
-	short fromcode, tocode;
-
-	ListBase lines;
-} uiLink;
-
 struct uiBut {
 	struct uiBut *next, *prev;
 	int flag, drawflag;
@@ -258,6 +249,7 @@ struct uiBut {
 
 	uiButSearchCreateFunc search_create_func;
 	uiButSearchFunc search_func;
+	bool free_search_arg;
 	void *search_arg;
 
 	uiButHandleRenameFunc rename_func;
@@ -267,9 +259,6 @@ struct uiBut {
 	/* Run an action when holding the button down. */
 	uiButHandleHoldFunc hold_func;
 	void *hold_argN;
-
-	uiLink *link;
-	short linkto[2];  /* region relative coords */
 
 	const char *tip;
 	uiButToolTipFunc tip_func;
@@ -281,7 +270,7 @@ struct uiBut {
 	BIFIconID icon;
 	char dt; /* drawtype: UI_EMBOSS, UI_EMBOSS_NONE ... etc, copied from the block */
 	signed char pie_dir; /* direction in a pie menu, used for collision detection (RadialDirection) */
-	char changed; /* could be made into a single flag */
+	bool changed; /* could be made into a single flag */
 	unsigned char unit_type; /* so buttons can support unit systems which are not RNA */
 	short modifier_key;
 	short iconadd;
@@ -331,6 +320,11 @@ struct uiBut {
 	uiBlock *block;
 };
 
+typedef struct uiButTab {
+	uiBut but;
+	struct MenuType *menu;
+} uiButTab;
+
 typedef struct ColorPicker {
 	struct ColorPicker *next, *prev;
 	float color_data[3]; /* colr data may be HSV or HSL for now */
@@ -354,6 +348,13 @@ struct PieMenuData {
 	int flags;
 	int event; /* initial event used to fire the pie menu, store here so we can query for release */
 	float alphafac;
+};
+
+/* uiBlock.content_hints */
+enum eBlockContentHints {
+	/* In a menu block, if there is a single sub-menu button, we add some
+	 * padding to the right to put nicely aligned triangle icons there. */
+	UI_BLOCK_CONTAINS_SUBMENU_BUT = (1 << 0),
 };
 
 struct uiBlock {
@@ -402,12 +403,16 @@ struct uiBlock {
 
 	int flag;
 	short alignnr;
+	/* Hints about the buttons of this block. Used to avoid iterating over
+	 * buttons to find out if some criteria is met by any. Instead, check this
+	 * criteria when adding the button and set a flag here if it's met. */
+	short content_hints; /* eBlockContentHints */
 
 	char direction;
 	char theme_style; /* UI_BLOCK_THEME_STYLE_* */
 	char dt; /* drawtype: UI_EMBOSS, UI_EMBOSS_NONE ... etc, copied to buttons */
 	bool auto_open;
-	char _pad[6];
+	char _pad[5];
 	double auto_open_last;
 
 	const char *lockstr;
@@ -434,7 +439,7 @@ struct uiBlock {
 	struct UnitSettings *unit;  /* unit system, used a lot for numeric buttons so include here rather then fetching through the scene every time. */
 	ColorPickerData color_pickers; /* XXX, only accessed by color picker templates */
 
-	bool color_profile;         /* color profile for correcting linear colors for display */
+	bool is_color_gamma_picker; /* Block for color picker with gamma baked in. */
 
 	char display_device[64]; /* display device name used to display this block,
 	                          * used by color widgets to transform colors from/to scene linear
@@ -449,8 +454,6 @@ typedef struct uiSafetyRct {
 } uiSafetyRct;
 
 /* interface.c */
-
-extern void ui_linkline_remove(uiLinkLine *line, uiBut *but);
 
 void ui_fontscale(short *points, float aspect);
 
@@ -474,7 +477,6 @@ extern void ui_hsvcircle_vals_from_pos(
         const float mx, const float my);
 extern void ui_hsvcircle_pos_from_vals(struct uiBut *but, const rcti *rect, float *hsv, float *xpos, float *ypos);
 extern void ui_hsvcube_pos_from_vals(struct uiBut *but, const rcti *rect, float *hsv, float *xp, float *yp);
-bool ui_but_is_colorpicker_display_space(struct uiBut *but);
 
 extern void ui_but_string_get_ex(
         uiBut *but, char *str, const size_t maxlen,
@@ -506,14 +508,12 @@ extern bool ui_but_supports_cycling(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
 extern int  ui_but_is_pushed_ex(uiBut *but, double *value) ATTR_WARN_UNUSED_RESULT;
 extern int  ui_but_is_pushed(uiBut *but) ATTR_WARN_UNUSED_RESULT;
 
+void ui_but_override_flag(uiBut *but);
 
 extern void ui_block_bounds_calc(uiBlock *block);
-extern void ui_block_translate(uiBlock *block, int x, int y);
 
 extern struct ColorManagedDisplay *ui_block_cm_display_get(uiBlock *block);
 void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3]);
-void ui_block_cm_to_scene_linear_v3(uiBlock *block, float pixel[3]);
-void ui_block_cm_to_display_space_range(uiBlock *block, float *min, float *max);
 
 /* interface_regions.c */
 
@@ -525,16 +525,19 @@ struct uiKeyNavLock {
 };
 
 typedef uiBlock * (*uiBlockHandleCreateFunc)(struct bContext *C, struct uiPopupBlockHandle *handle, void *arg1);
+typedef void (*uiBlockHandleFreeFunc)(struct uiPopupBlockHandle *handle, void *arg1);
 
 struct uiPopupBlockCreate {
-	uiBlockCreateFunc              create_func;
+	uiBlockCreateFunc       create_func;
 	uiBlockHandleCreateFunc handle_create_func;
+	uiBlockHandleFreeFunc   free_func;
 	void *arg;
 
 	int event_xy[2];
 
 	/* when popup is initialized from a button */
 	ARegion *butregion;
+	uiBut *but;
 };
 
 struct uiPopupBlockHandle {
@@ -555,8 +558,10 @@ struct uiPopupBlockHandle {
 	struct uiPopupBlockCreate popup_create_vars;
 	/* true if we can re-create the popup using 'popup_create_vars' */
 	bool can_refresh;
+	bool refresh;
 
 	struct wmTimer *scrolltimer;
+	float scrolloffset;
 
 	struct uiKeyNavLock keynav_state;
 
@@ -576,6 +581,15 @@ struct uiPopupBlockHandle {
 	/* menu direction */
 	int direction;
 
+	/* Previous values so we don't resize or reposition on refresh. */
+	rctf prev_block_rect;
+	rctf prev_butrct;
+	short prev_dir1, prev_dir2;
+	int prev_mx, prev_my;
+
+	/* Maximum estimated size to avoid having to reposition on refresh. */
+	float max_size_x, max_size_y;
+
 /* #ifdef USE_DRAG_POPUP */
 	bool is_grab;
 	int     grab_xy_prev[2];
@@ -593,6 +607,11 @@ void ui_rgb_to_color_picker_compat_v(const float rgb[3], float r_cp[3]);
 void ui_rgb_to_color_picker_v(const float rgb[3], float r_cp[3]);
 void ui_color_picker_to_rgb_v(const float r_cp[3], float rgb[3]);
 void ui_color_picker_to_rgb(float r_cp0, float r_cp1, float r_cp2, float *r, float *g, float *b);
+
+bool ui_but_is_color_gamma(uiBut *but);
+
+void ui_scene_linear_to_color_picker_space(uiBut *but, float rgb[3]);
+void ui_color_picker_to_scene_linear_space(uiBut *but, float rgb[3]);
 
 uiBlock *ui_block_func_COLOR(struct bContext *C, uiPopupBlockHandle *handle, void *arg_but);
 ColorPicker *ui_block_colorpicker_create(struct uiBlock *block);
@@ -628,13 +647,25 @@ uiPopupBlockHandle *ui_popup_menu_create(
         struct bContext *C, struct ARegion *butregion, uiBut *but,
         uiMenuCreateFunc create_func, void *arg);
 
+/* interface_region_popover.c */
+uiBlock *ui_popover_block_refresh(
+        struct bContext *C, uiPopupBlockHandle *handle,
+        ARegion *butregion, uiBut *but);
+uiPopupBlockHandle *ui_popover_block_create(
+        struct bContext *C, struct ARegion *butregion, uiBut *but,
+        uiBlockCreateFunc create_func, uiBlockHandleCreateFunc handle_create_func,
+        void *arg);
+uiPopupBlockHandle *ui_popover_panel_create(
+        struct bContext *C, struct ARegion *butregion, uiBut *but,
+        uiMenuCreateFunc create_func, void *arg);
+
 /* interface_region_menu_pie.c */
 void ui_pie_menu_level_create(
         uiBlock *block, struct wmOperatorType *ot, const char *propname, IDProperty *properties,
         const EnumPropertyItem *items, int totitem, int context, int flag);
 
 /* interface_region_popup.c */
-void ui_popup_translate(struct bContext *C, struct ARegion *ar, const int mdiff[2]);
+void ui_popup_translate(struct ARegion *ar, const int mdiff[2]);
 void ui_popup_block_free(struct bContext *C, uiPopupBlockHandle *handle);
 void ui_popup_block_scrolltest(struct uiBlock *block);
 
@@ -645,13 +676,17 @@ void ui_popup_block_scrolltest(struct uiBlock *block);
 extern int ui_handler_panel_region(
         struct bContext *C, const struct wmEvent *event,
         struct ARegion *ar, const uiBut *active_but);
-extern void ui_draw_aligned_panel(struct uiStyle *style, uiBlock *block, const rcti *rect, const bool show_pin);
+extern void ui_draw_aligned_panel(
+        struct uiStyle *style, uiBlock *block, const rcti *rect,
+        const bool show_pin, const bool show_background);
 
 /* interface_draw.c */
 extern void ui_draw_dropshadow(const rctf *rct, float radius, float aspect, float alpha, int select);
 
 void ui_draw_gradient(const rcti *rect, const float hsv[3], const int type, const float alpha);
 
+
+void ui_draw_but_TAB_outline(const rcti *rect, float rad, unsigned char highlight[3], unsigned char highlight_fade[3]);
 void ui_draw_but_HISTOGRAM(ARegion *ar, uiBut *but, struct uiWidgetColors *wcol, const rcti *rect);
 void ui_draw_but_WAVEFORM(ARegion *ar, uiBut *but, struct uiWidgetColors *wcol, const rcti *rect);
 void ui_draw_but_VECTORSCOPE(ARegion *ar, uiBut *but, struct uiWidgetColors *wcol, const rcti *rect);
@@ -691,20 +726,55 @@ struct wmIMEData *ui_but_ime_data_get(uiBut *but);
 #endif
 
 /* interface_widgets.c */
-void ui_draw_anti_tria(float x1, float y1, float x2, float y2, float x3, float y3);
-void ui_draw_anti_roundbox(int mode, float minx, float miny, float maxx, float maxy, float rad, bool use_alpha);
+
+/* Widget shader parameters, must match the shader layout. */
+typedef struct uiWidgetBaseParameters {
+	rctf recti, rect;
+	float radi, rad;
+	float facxi, facyi;
+	float round_corners[4];
+	float color_inner1[4], color_inner2[4];
+	float color_outline[4], color_emboss[4];
+	float color_tria[4];
+	float tria1_center[2], tria2_center[2];
+	float tria1_size, tria2_size;
+	float shade_dir;
+	/* We pack alpha check and discard factor in alpha_discard.
+	 * If the value is negative then we do alpha check.
+	 * The absolute value itself is the discard factor.
+	 * Initialize value to 1.0.f if you don't want discard */
+	float alpha_discard;
+} uiWidgetBaseParameters;
+
+enum {
+	ROUNDBOX_TRIA_NONE = 0,
+	ROUNDBOX_TRIA_ARROWS,
+	ROUNDBOX_TRIA_SCROLL,
+	ROUNDBOX_TRIA_MENU,
+	ROUNDBOX_TRIA_CHECK,
+	ROUNDBOX_TRIA_HOLD_ACTION_ARROW,
+
+	ROUNDBOX_TRIA_MAX, /* don't use */
+};
+
+struct GPUBatch *ui_batch_roundbox_get(bool filled, bool antialiased);
+struct GPUBatch *ui_batch_roundbox_widget_get(int tria);
+struct GPUBatch *ui_batch_roundbox_shadow_get(void);
+
+void ui_draw_anti_tria_rect(const rctf *rect, char dir, const float color[4]);
 void ui_draw_menu_back(struct uiStyle *style, uiBlock *block, rcti *rect);
+void ui_draw_popover_back(ARegion *ar, struct uiStyle *style, uiBlock *block, rcti *rect);
 void ui_draw_pie_center(uiBlock *block);
 struct uiWidgetColors *ui_tooltip_get_theme(void);
+
+void ui_draw_widget_back_color(
+        uiWidgetTypeEnum type, bool use_shadow, const rcti *rect,
+        const float color[4]);
+void ui_draw_widget_back(
+        uiWidgetTypeEnum type, bool use_shadow, const rcti *rect);
 void ui_draw_tooltip_background(struct uiStyle *UNUSED(style), uiBlock *block, rcti *rect);
-void ui_draw_search_back(struct uiStyle *style, uiBlock *block, rcti *rect);
-bool ui_link_bezier_points(const rcti *rect, float coord_array[][2], int resol);
-void ui_draw_link_bezier(const rcti *rect);
 
 extern void ui_draw_but(const struct bContext *C, ARegion *ar, struct uiStyle *style, uiBut *but, rcti *rect);
-/* theme color init */
-struct ThemeUI;
-void ui_widget_color_init(struct ThemeUI *tui);
 
 void ui_draw_menu_item(struct uiFontStyle *fstyle, rcti *rect, const char *name, int iconid, int state, bool use_sep);
 void ui_draw_preview_item(struct uiFontStyle *fstyle, rcti *rect, const char *name, int iconid, int state);
@@ -714,12 +784,20 @@ void ui_draw_preview_item(struct uiFontStyle *fstyle, rcti *rect, const char *na
 /* margin at top of screen for popups */
 #define UI_POPUP_MENU_TOP (int)(8 * UI_DPI_FAC)
 
+#define UI_PIXEL_AA_JITTER 8
+extern const float ui_pixel_jitter[UI_PIXEL_AA_JITTER][2];
+
 /* interface_style.c */
 void uiStyleInit(void);
 
 /* interface_icons.c */
 void ui_icon_ensure_deferred(const struct bContext *C, const int icon_id, const bool big);
 int ui_id_icon_get(const struct bContext *C, struct ID *id, const bool big);
+
+/* interface_icons_event.c */
+void icon_draw_rect_input(
+        float x, float y, int w, int h, float alpha,
+        short event_type, short event_value);
 
 /* resources.c */
 void init_userdef_do_versions(struct Main *bmain);
@@ -732,10 +810,13 @@ void ui_resources_free(void);
 void ui_layout_add_but(uiLayout *layout, uiBut *but);
 void ui_but_add_search(uiBut *but, PointerRNA *ptr, PropertyRNA *prop, PointerRNA *searchptr, PropertyRNA *searchprop);
 void ui_layout_list_set_labels_active(uiLayout *layout);
+/* menu callback */
+void ui_item_paneltype_func(struct bContext *C, struct uiLayout *layout, void *arg_pt);
 
 /* interface_align.c */
 bool ui_but_can_align(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
-void ui_block_align_calc(uiBlock *block);
+int  ui_but_align_opposite_to_area_align_get(const ARegion *ar) ATTR_WARN_UNUSED_RESULT;
+void ui_block_align_calc(uiBlock *block, const ARegion *region);
 
 /* interface_anim.c */
 void ui_but_anim_flag(uiBut *but, float cfra);
@@ -746,12 +827,17 @@ bool ui_but_anim_expression_set(uiBut *but, const char *str);
 bool ui_but_anim_expression_create(uiBut *but, const char *str);
 void ui_but_anim_autokey(struct bContext *C, uiBut *but, struct Scene *scene, float cfra);
 
+void ui_but_anim_decorate_cb(struct bContext *C, void *arg_but, void *arg_dummy);
+void ui_but_anim_decorate_update_from_flag(uiBut *but);
+
 /* interface_query.c */
 bool ui_but_is_editable(const uiBut *but);
 bool ui_but_is_editable_as_text(const uiBut *but);
 bool ui_but_is_toggle(const uiBut *but);
+bool ui_but_is_popover_once_compat(const uiBut *but);
 
 extern bool ui_block_is_menu(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
+extern bool ui_block_is_popover(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
 extern bool ui_block_is_pie_menu(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
 extern bool ui_block_is_popup_any(const uiBlock *block) ATTR_WARN_UNUSED_RESULT;
 
@@ -779,5 +865,21 @@ void UI_OT_eyedropper_depth(struct wmOperatorType *ot);
 
 /* interface_eyedropper_driver.c */
 void UI_OT_eyedropper_driver(struct wmOperatorType *ot);
+
+/* interface_util.c */
+
+/**
+ * For use with #ui_rna_collection_search_cb.
+ */
+typedef struct uiRNACollectionSearch {
+	PointerRNA target_ptr;
+	PropertyRNA *target_prop;
+
+	PointerRNA search_ptr;
+	PropertyRNA *search_prop;
+
+	bool *but_changed; /* pointer to uiBut.changed */
+} uiRNACollectionSearch;
+void ui_rna_collection_search_cb(const struct bContext *C, void *arg, const char *str, uiSearchItems *items);
 
 #endif  /* __INTERFACE_INTERN_H__ */

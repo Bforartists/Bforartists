@@ -56,9 +56,6 @@
 #include "IMB_imbuf.h"
 #include "IMB_colormanagement.h"
 
-#include "GPU_draw.h"
-#include "GPU_debug.h"
-
 #include "DNA_image_types.h"
 #include "DNA_scene_types.h"
 
@@ -135,7 +132,7 @@ static void rna_Image_save(Image *image, Main *bmain, bContext *C, ReportList *r
 			if (image->source == IMA_SRC_GENERATED)
 				image->source = IMA_SRC_FILE;
 
-			IMB_colormanagment_colorspace_from_ibuf_ftype(&image->colorspace_settings, ibuf);
+			IMB_colormanagement_colorspace_from_ibuf_ftype(&image->colorspace_settings, ibuf);
 
 			ibuf->userflags &= ~IB_BITMAPDIRTY;
 		}
@@ -225,18 +222,18 @@ static void rna_Image_scale(Image *image, ReportList *reports, int width, int he
 
 static int rna_Image_gl_load(Image *image, ReportList *reports, int frame, int filter, int mag)
 {
-	ImBuf *ibuf;
-	unsigned int *bind = &image->bindcode[TEXTARGET_TEXTURE_2D];
+	GPUTexture *tex = image->gputexture[TEXTARGET_TEXTURE_2D];
 	int error = GL_NO_ERROR;
-	ImageUser iuser = {NULL};
-	void *lock;
 
-	if (*bind)
+	if (tex)
 		return error;
+
+	ImageUser iuser = {NULL};
 	iuser.framenr = frame;
 	iuser.ok = true;
 
-	ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
+	void *lock;
+	ImBuf *ibuf = BKE_image_acquire_ibuf(image, &iuser, &lock);
 
 	/* clean glError buffer */
 	while (glGetError() != GL_NO_ERROR) {}
@@ -247,17 +244,22 @@ static int rna_Image_gl_load(Image *image, ReportList *reports, int frame, int f
 		return (int)GL_INVALID_OPERATION;
 	}
 
-	GPU_create_gl_tex(bind, ibuf->rect, ibuf->rect_float, ibuf->x, ibuf->y, GL_TEXTURE_2D,
+	unsigned int bindcode = 0;
+	GPU_create_gl_tex(&bindcode, ibuf->rect, ibuf->rect_float, ibuf->x, ibuf->y, GL_TEXTURE_2D,
 	                  (filter != GL_NEAREST && filter != GL_LINEAR), false, image);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)mag);
 
+	/* TODO(merwin): validate input (dimensions, filter, mag) before calling OpenGL
+	 *               instead of trusting input & testing for error after */
 	error = glGetError();
 
 	if (error) {
-		glDeleteTextures(1, (GLuint *)bind);
-		image->bindcode[TEXTARGET_TEXTURE_2D] = 0;
+		glDeleteTextures(1, (GLuint *)&bindcode);
+	}
+	else {
+		image->gputexture[TEXTARGET_TEXTURE_2D] = GPU_texture_from_bindcode(GL_TEXTURE_2D, bindcode);
 	}
 
 	BKE_image_release_ibuf(image, ibuf, lock);
@@ -267,12 +269,11 @@ static int rna_Image_gl_load(Image *image, ReportList *reports, int frame, int f
 
 static int rna_Image_gl_touch(Image *image, ReportList *reports, int frame, int filter, int mag)
 {
-	unsigned int *bind = &image->bindcode[TEXTARGET_TEXTURE_2D];
 	int error = GL_NO_ERROR;
 
 	BKE_image_tag_time(image);
 
-	if (*bind == 0)
+	if (image->gputexture[TEXTARGET_TEXTURE_2D] == NULL)
 		error = rna_Image_gl_load(image, reports, frame, filter, mag);
 
 	return error;

@@ -28,9 +28,11 @@
 #include <stdio.h>
 
 #include "BLI_utildefines.h"
-#include "BLI_string.h"
 #include "BLI_fileops.h"
+#include "BLI_fileops_types.h"
+#include "BLI_listbase.h"
 #include "BLI_path_util.h"
+#include "BLI_string.h"
 
 #include "BKE_blender_version.h"
 #include "BKE_appdir.h"  /* own include */
@@ -182,10 +184,10 @@ static bool test_env_path(char *path, const char *envvar)
  * Constructs in \a targetpath the name of a directory relative to a version-specific
  * subdirectory in the parent directory of the Blender executable.
  *
- * \param targetpath  String to return path
- * \param folder_name  Optional folder name within version-specific directory
- * \param subfolder_name  Optional subfolder name within folder_name
- * \param ver  To construct name of version-specific directory within bprogdir
+ * \param targetpath: String to return path
+ * \param folder_name: Optional folder name within version-specific directory
+ * \param subfolder_name: Optional subfolder name within folder_name
+ * \param ver: To construct name of version-specific directory within bprogdir
  * \return true if such a directory exists.
  */
 static bool get_path_local(
@@ -227,7 +229,7 @@ static bool get_path_local(
  * Is this an install with user files kept together with the Blender executable and its
  * installation files.
  */
-static bool is_portable_install(void)
+bool BKE_appdir_app_is_portable_install(void)
 {
 	/* detect portable install by the existence of config folder */
 	const int ver = BLENDER_VERSION;
@@ -273,10 +275,10 @@ static bool get_path_environment(
  * Returns the path of a folder within the user-files area.
  *
  *
- * \param targetpath  String to return path
- * \param folder_name  default name of folder within user area
- * \param subfolder_name  optional name of subfolder within folder
-  * \param ver  Blender version, used to construct a subdirectory name
+ * \param targetpath: String to return path
+ * \param folder_name: default name of folder within user area
+ * \param subfolder_name: optional name of subfolder within folder
+  * \param ver: Blender version, used to construct a subdirectory name
  * \return true if it was able to construct such a path.
  */
 static bool get_path_user(
@@ -287,7 +289,7 @@ static bool get_path_user(
 	const char *user_base_path;
 
 	/* for portable install, user path is always local */
-	if (is_portable_install()) {
+	if (BKE_appdir_app_is_portable_install()) {
 		return get_path_local(targetpath, targetpath_len, folder_name, subfolder_name, ver);
 	}
 	user_path[0] = '\0';
@@ -314,10 +316,10 @@ static bool get_path_user(
 /**
  * Returns the path of a folder within the Blender installation directory.
  *
- * \param targetpath  String to return path
- * \param folder_name  default name of folder within installation area
- * \param subfolder_name  optional name of subfolder within folder
- * \param ver  Blender version, used to construct a subdirectory name
+ * \param targetpath: String to return path
+ * \param folder_name: default name of folder within installation area
+ * \param subfolder_name: optional name of subfolder within folder
+ * \param ver: Blender version, used to construct a subdirectory name
  * \return  true if it was able to construct such a path.
  */
 static bool get_path_system(
@@ -542,9 +544,9 @@ const char *BKE_appdir_folder_id_version(const int folder_id, const int ver, con
  * the name to its 8.3 version to prevent problems with
  * spaces and stuff. Final result is returned in fullname.
  *
- * \param fullname The full path and full name of the executable
+ * \param fullname: The full path and full name of the executable
  * (must be FILE_MAX minimum)
- * \param name The name of the executable (usually argv[0]) to be checked
+ * \param name: The name of the executable (usually argv[0]) to be checked
  */
 static void where_am_i(char *fullname, const size_t maxlen, const char *name)
 {
@@ -738,16 +740,42 @@ bool BKE_appdir_app_template_id_search(const char *app_template, char *path, siz
 	return false;
 }
 
+void BKE_appdir_app_templates(ListBase *templates)
+{
+	BLI_listbase_clear(templates);
+
+	for (int i = 0; i < 2; i++) {
+		char subdir[FILE_MAX];
+		if (!BKE_appdir_folder_id_ex(
+		        app_template_directory_id[i], app_template_directory_search[i],
+		        subdir, sizeof(subdir)))
+		{
+			continue;
+		}
+
+		struct direntry *dir;
+		uint totfile = BLI_filelist_dir_contents(subdir, &dir);
+		for (int f = 0; f < totfile; f++) {
+			if (!FILENAME_IS_CURRPAR(dir[f].relname) && S_ISDIR(dir[f].type)) {
+				char *template = BLI_strdup(dir[f].relname);
+				BLI_addtail(templates, BLI_genericNodeN(template));
+			}
+		}
+
+		BLI_filelist_free(dir, totfile);
+	}
+}
+
 /**
  * Gets the temp directory when blender first runs.
  * If the default path is not found, use try $TEMP
  *
  * Also make sure the temp dir has a trailing slash
  *
- * \param fullname The full path to the temporary temp directory
- * \param basename The full path to the persistent temp directory (may be NULL)
- * \param maxlen The size of the fullname buffer
- * \param userdir Directory specified in user preferences
+ * \param fullname: The full path to the temporary temp directory
+ * \param basename: The full path to the persistent temp directory (may be NULL)
+ * \param maxlen: The size of the fullname buffer
+ * \param userdir: Directory specified in user preferences
  */
 static void where_is_temp(char *fullname, char *basename, const size_t maxlen, char *userdir)
 {
@@ -813,7 +841,9 @@ static void where_is_temp(char *fullname, char *basename, const size_t maxlen, c
 				BLI_dir_create_recursive(tmp_name);
 			}
 #else
-			mkdtemp(tmp_name);
+			if (mkdtemp(tmp_name) == NULL) {
+				BLI_dir_create_recursive(tmp_name);
+			}
 #endif
 		}
 		if (BLI_is_dir(tmp_name)) {

@@ -787,7 +787,7 @@ class OBJECT_OT_UnbakeMocapConstraints(bpy.types.Operator):
 class OBJECT_OT_UpdateMocapConstraints(bpy.types.Operator):
     #Operator to update all post-retarget fixes, similar to update dependencies on drivers
     #Needed because python properties lack certain callbacks and some fixes take a while to recalculate.
-    """Update all post-retarget fixes (neccesary to take under """ \
+    """Update all post-retarget fixes (necessary to take under """ \
     """consideration changes to armature object or pose)"""
     bl_idname = "mocap.updateconstraints"
     bl_label = "Update Mocap Fixes"

@@ -73,8 +73,8 @@ def ui_dupli_group_library_path(self, context):
     row = self.layout.row()
     row.alignment = "LEFT"
 
-    if ob and ob.dupli_group and ob.dupli_group.library:
-        lib = ob.dupli_group.library.filepath
+    if ob and ob.instance_collection and ob.instance_collection.library:
+        lib = ob.instance_collection.library.filepath
 
         row.operator(AMTH_SCENE_OT_blender_instance_open.bl_idname,
                      text="Library: %s" % lib,
@@ -94,7 +94,7 @@ class AMTH_OBJECT_OT_id_dupligroup(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.dupli_group
+        return context.active_object.instance_collection
 
     def execute(self, context):
         self.__class__.clear = False
@@ -105,8 +105,8 @@ class AMTH_OBJECT_OT_id_dupligroup(bpy.types.Operator):
         obdata = 'bpy.data.objects[" % s"]' % ob.name
         # TODO: cleanup script var using format or template strings
         script = "%s" % (
-            "\nif %(obdata)s and %(obdata)s.dupli_group and %(obdata)s.pass_index != 0: %(obname)s \n"
-            "    for dob in %(obdata)s.dupli_group.objects: %(obname)s \n"
+            "\nif %(obdata)s and %(obdata)s.instance_collection and %(obdata)s.pass_index != 0: %(obname)s \n"
+            "    for dob in %(obdata)s.instance_collection.objects: %(obname)s \n"
             "        dob.pass_index = %(obdata)s.pass_index %(obname)s \n" %
             {"obdata": obdata, "obname": script_intro})
 
@@ -122,9 +122,9 @@ class AMTH_OBJECT_OT_id_dupligroup(bpy.types.Operator):
             amth_text.write(script_intro)
             amth_text.write(script)
 
-        if ob and ob.dupli_group:
+        if ob and ob.instance_collection:
             if ob.pass_index != 0:
-                for dob in ob.dupli_group.objects:
+                for dob in ob.instance_collection.objects:
                     dob.pass_index = ob.pass_index
 
         self.report({"INFO"},
@@ -143,7 +143,7 @@ class AMTH_OBJECT_OT_id_dupligroup_clear(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.dupli_group
+        return context.active_object.instance_collection
 
     def execute(self, context):
         context.active_object.pass_index = 0
@@ -165,7 +165,7 @@ class AMTH_OBJECT_OT_id_dupligroup_clear(bpy.types.Operator):
 
 def ui_object_id_duplis(self, context):
 
-    if context.active_object.dupli_group:
+    if context.active_object.instance_collection:
         split = self.layout.split()
         row = split.row(align=True)
         row.enabled = context.active_object.pass_index != 0

@@ -204,7 +204,7 @@ class UTSubsurfHideSelAll(Operator):
         objects = bpy.context.selected_objects if self.selected else bpy.data.objects
         for e in objects:
             try:
-                if e.type not in {"LAMP", "CAMERA", "EMPTY"}:
+                if e.type not in {"LIGHT", "CAMERA", "EMPTY"}:
                     e.modifiers['Subsurf'].show_viewport = self.show
             except Exception as k:
                 name = getattr(e, "name", "Nameless")
@@ -233,7 +233,7 @@ class UTOptimalDisplaySelAll(Operator):
         objects = bpy.context.selected_objects if self.selected else bpy.data.objects
         for e in objects:
             try:
-                if e.type not in {"LAMP", "CAMERA", "EMPTY"}:
+                if e.type not in {"LIGHT", "CAMERA", "EMPTY"}:
                     e.modifiers['Subsurf'].show_only_control_edges = self.on
             except Exception as k:
                 name = getattr(e, "name", "Nameless")

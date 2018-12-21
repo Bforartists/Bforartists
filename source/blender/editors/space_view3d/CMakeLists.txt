@@ -25,6 +25,7 @@ set(INC
 	../../blenlib
 	../../blentranslation
 	../../bmesh
+	../../draw
 	../../gpu
 	../../imbuf
 	../../makesdna
@@ -42,24 +43,29 @@ set(INC_SYS
 )
 
 set(SRC
-	drawanimviz.c
-	drawarmature.c
-	drawmesh.c
 	drawobject.c
-	drawsimdebug.c
-	drawvolume.c
 	space_view3d.c
 	view3d_buttons.c
 	view3d_camera_control.c
 	view3d_draw.c
+	view3d_draw_legacy.c
 	view3d_edit.c
 	view3d_fly.c
 	view3d_walk.c
 	view3d_header.c
 	view3d_iterators.c
+	view3d_gizmo_armature.c
+	view3d_gizmo_camera.c
+	view3d_gizmo_empty.c
+	view3d_gizmo_forcefield.c
+	view3d_gizmo_lamp.c
+	view3d_gizmo_navigate.c
+	view3d_gizmo_navigate_type.c
+	view3d_gizmo_ruler.c
+	view3d_gizmo_preselect.c
+	view3d_gizmo_preselect_type.c
 	view3d_ops.c
 	view3d_project.c
-	view3d_ruler.c
 	view3d_select.c
 	view3d_snap.c
 	view3d_toolbar.c
@@ -74,13 +80,6 @@ if(WITH_PYTHON)
 	add_definitions(-DWITH_PYTHON)
 endif()
 
-if(WITH_GAMEENGINE)
-	list(APPEND INC
-		../../../gameengine/BlenderRoutines
-	)
-	add_definitions(-DWITH_GAMEENGINE)
-endif()
-
 add_definitions(${GL_DEFINITIONS})
 
 if(WITH_INTERNATIONAL)
@@ -93,10 +92,6 @@ endif()
 
 if(WITH_MOD_SMOKE)
 	add_definitions(-DWITH_SMOKE)
-endif()
-
-if(WITH_LEGACY_DEPSGRAPH)
-	add_definitions(-DWITH_LEGACY_DEPSGRAPH)
 endif()
 
 blender_add_lib(bf_editor_space_view3d "${SRC}" "${INC}" "${INC_SYS}")

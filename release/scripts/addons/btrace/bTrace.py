@@ -115,9 +115,9 @@ class OBJECT_OT_objectconnect(Operator):
             if curve_handle == 'AUTOMATIC':  # hackish because of naming conflict in api
                 curve_handle = 'AUTO'
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.groups.keys()
+            bgroup = bpy.data.collections.keys()
             if 'Btrace' not in bgroup:
-                bpy.ops.group.create(name="Btrace")
+                bpy.ops.collections.create(name="Btrace")
             #  check if noise
             if Btrace.connect_noise:
                 bpy.ops.object.btfcnoise()
@@ -181,7 +181,7 @@ class OBJECT_OT_objectconnect(Operator):
             if Btrace.animate:   # Add Curve Grow it?
                 bpy.ops.curve.btgrow()
 
-            bpy.ops.object.group_link(group="Btrace")  # add to Btrace group
+            bpy.ops.object.collection_link(group="Btrace")  # add to Btrace group
             if Btrace.animate:
                 bpy.ops.curve.btgrow()  # Add grow curve
 
@@ -245,9 +245,9 @@ class OBJECT_OT_particletrace(Operator):
                 curve_handle = 'FREE'
 
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.groups.keys()
+            bgroup = bpy.data.collections.keys()
             if 'Btrace' not in bgroup:
-                bpy.ops.group.create(name="Btrace")
+                bpy.ops.collection.create(name="Btrace")
 
             if Btrace.curve_join:
                 tracer = curvetracer('Tracer', 'Splines')
@@ -271,7 +271,7 @@ class OBJECT_OT_particletrace(Operator):
             for curveobject in curvelist:
                 curveobject.select = True
                 bpy.context.scene.objects.active = curveobject
-                bpy.ops.object.group_link(group="Btrace")
+                bpy.ops.object.collection_link(group="Btrace")
                 # Materials
                 trace_mats = addtracemat(curveobject.data)
                 if not trace_mats and check_materials is True:
@@ -721,9 +721,9 @@ class OBJECT_OT_meshfollow(Operator):
 
             # Run methods
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.groups.keys()
+            bgroup = bpy.data.collections.keys()
             if 'Btrace' not in bgroup:
-                bpy.ops.group.create(name="Btrace")
+                bpy.ops.collection.create(name="Btrace")
 
             Btrace = bpy.context.window_manager.curve_tracer
             sel = getsel_option()  # Get selection
@@ -743,7 +743,7 @@ class OBJECT_OT_meshfollow(Operator):
                 if curveobject.type == 'CURVE':
                     curveobject.select = True
                     context.scene.objects.active = curveobject
-                    bpy.ops.object.group_link(group="Btrace")
+                    bpy.ops.object.collection_link(group="Btrace")
                     # Materials
                     trace_mats = addtracemat(curveobject.data)
                     if not trace_mats and check_materials is True:

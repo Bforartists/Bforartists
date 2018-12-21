@@ -153,8 +153,8 @@ ELEMENTS_DEFAULT = (
 # custom data file for instance.
 ELEMENTS = []
 
-# This is the list, which contains all atoms of all frames! Each item is a 
-# list which contains the atoms of a single frame. It is a list of  
+# This is the list, which contains all atoms of all frames! Each item is a
+# list which contains the atoms of a single frame. It is a list of
 # 'AtomProp'.
 ALL_FRAMES = []
 
@@ -174,7 +174,7 @@ class ElementProp(object):
         self.radii_ionic = radii_ionic
 
 # This is the class, which stores the properties of one atom.
-class AtomProp(object):  
+class AtomProp(object):
     __slots__ = ('element', 'name', 'location', 'radius', 'color', 'material')
     def __init__(self, element, name, location, radius, color, material):
         self.element = element
@@ -186,7 +186,7 @@ class AtomProp(object):
 
 
 # -----------------------------------------------------------------------------
-#                                                           Some basic routines        
+#                                                           Some basic routines
 
 def read_elements():
 
@@ -230,12 +230,12 @@ def read_xyz_file(filepath_xyz,radiustype):
         if len(split_list) == 1:
             number_atoms = int(split_list[0])
             FLAG = True
-            
+
         if FLAG == True:
-        
+
             line = filepath_xyz_p.readline()
             line = line.rstrip()
-            
+
             all_atoms= []
             for i in range(number_atoms):
 
@@ -246,18 +246,18 @@ def read_xyz_file(filepath_xyz,radiustype):
                 # may increase (or decrease). If it decreases, the addon crashes.
                 # If it increases, only the tot number of atoms of the first frame
                 # is used.
-                # By time, I will allow varying atom numbers ... but this takes 
-                # some time ...            
+                # By time, I will allow varying atom numbers ... but this takes
+                # some time ...
                 if number_frames != 0:
                     if i >= total_number_atoms:
                         break
-                        
-       
+
+
                 line = filepath_xyz_p.readline()
                 line = line.rstrip()
                 split_list = line.rsplit()
                 short_name = str(split_list[0])
-                     
+
                 # Go through all elements and find the element of the current atom.
                 FLAG_FOUND = False
                 for element in ELEMENTS:
@@ -270,7 +270,7 @@ def read_xyz_file(filepath_xyz,radiustype):
                         color = element.color
                         FLAG_FOUND = True
                         break
-                
+
                 # Is it a vacancy or an 'unknown atom' ?
                 if FLAG_FOUND == False:
                     # Give this atom also a name. If it is an 'X' then it is a
@@ -287,44 +287,44 @@ def read_xyz_file(filepath_xyz,radiustype):
                         name = str.upper(short_name)
                         radius = float(ELEMENTS[-2].radii[int(radiustype)])
                         color = ELEMENTS[-2].color
-              
+
                 x = float(split_list[1])
                 y = float(split_list[2])
                 z = float(split_list[3])
-                
+
                 location = Vector((x,y,z))
-            
+
                 all_atoms.append([short_name, name, location, radius, color])
-            
-            # We note here all elements. This needs to be done only once. 
+
+            # We note here all elements. This needs to be done only once.
             if number_frames == 0:
-            
+
                 # This is a guarantee that only the total number of atoms of the
                 # first frame is used. Condition is, so far, that the number of
                 # atoms in a xyz file is constant. However, sometimes the number
                 # may increase (or decrease). If it decreases, the addon crashes.
                 # If it increases, only the tot number of atoms of the first frame
                 # is used.
-                # By time, I will allow varying atom numbers ... but this takes 
+                # By time, I will allow varying atom numbers ... but this takes
                 # some time ...
                 total_number_atoms = number_atoms
-                
-                
+
+
                 elements = []
                 for atom in all_atoms:
                     FLAG_FOUND = False
                     for element in elements:
-                        # If the atom name is already in the list, 
+                        # If the atom name is already in the list,
                         # FLAG on 'True'.
                         if element == atom[1]:
                             FLAG_FOUND = True
                             break
                     # No name in the current list has been found? => New entry.
                     if FLAG_FOUND == False:
-                        # Stored are: Atom label (e.g. 'Na'), the corresponding 
+                        # Stored are: Atom label (e.g. 'Na'), the corresponding
                         # atom name (e.g. 'Sodium') and its color.
                         elements.append(atom[1])
-            
+
             # Sort the atoms: create lists of atoms of one type
             structure = []
             for element in elements:
@@ -343,7 +343,7 @@ def read_xyz_file(filepath_xyz,radiustype):
             FLAG = False
 
     filepath_xyz_p.close()
-    
+
     return total_number_atoms
 
 
@@ -356,7 +356,7 @@ def import_xyz(Ball_type,
                Ball_radius_factor,
                radiustype,
                Ball_distance_factor,
-               put_to_center, 
+               put_to_center,
                put_to_center_all,
                use_camera,
                use_lamp,
@@ -373,9 +373,9 @@ def import_xyz(Ball_type,
     # ------------------------------------------------------------------------
     # READING DATA OF ATOMS
 
-    Number_of_total_atoms = read_xyz_file(filepath_xyz, 
+    Number_of_total_atoms = read_xyz_file(filepath_xyz,
                                                        radiustype)
-                                               
+
     # We show the atoms of the first frame.
     first_frame = ALL_FRAMES[0]
 
@@ -441,7 +441,7 @@ def import_xyz(Ball_type,
     if put_to_center_all == True:
 
         # For all frames
-        for frame in ALL_FRAMES: 
+        for frame in ALL_FRAMES:
 
             sum_vec = Vector((0.0,0.0,0.0))
 
@@ -454,7 +454,7 @@ def import_xyz(Ball_type,
                 # may increase (or decrease). If it decreases, the addon crashes.
                 # If it increases, only the tot number of atoms of the first frame
                 # is used.
-                # By time, I will allow varying atom numbers ... but this takes 
+                # By time, I will allow varying atom numbers ... but this takes
                 # some time ...
                 if i >= Number_of_total_atoms:
                     break
@@ -469,7 +469,7 @@ def import_xyz(Ball_type,
                 for atom in atoms_of_one_type:
                     atom.location -= sum_vec
 
-   
+
     # ------------------------------------------------------------------------
     # SCALING
 
@@ -477,7 +477,7 @@ def import_xyz(Ball_type,
     for atoms_of_one_type in first_frame:
         for atom in atoms_of_one_type:
             atom.location *= Ball_distance_factor
-    
+
     # ------------------------------------------------------------------------
     # DETERMINATION OF SOME GEOMETRIC PROPERTIES
 
@@ -521,14 +521,14 @@ def import_xyz(Ball_type,
         camera_xyz_vec = object_center_vec + object_camera_vec
 
         # Create the camera
-        current_layers=bpy.context.scene.layers 
+        current_layers=bpy.context.scene.layers
         camera_data = bpy.data.cameras.new("A_camera")
         camera_data.lens = 45
         camera_data.clip_end = 500.0
         camera = bpy.data.objects.new("A_camera", camera_data)
         camera.location = camera_xyz_vec
         camera.layers = current_layers
-        bpy.context.scene.objects.link(camera) 
+        bpy.context.scene.objects.link(camera)
 
         # Here the camera is rotated such it looks towards the center of
         # the object. The [0.0, 0.0, 1.0] vector along the z axis
@@ -543,8 +543,8 @@ def import_xyz(Ball_type,
 
         # Rotate the camera around its axis by 90° such that we have a nice
         # camera position and view onto the object.
-        bpy.ops.object.select_all(action='DESELECT')        
-        camera.select = True         
+        bpy.ops.object.select_all(action='DESELECT')
+        camera.select = True
         bpy.ops.transform.rotate(value=(90.0*2*pi/360.0),
                                  axis=object_camera_vec,
                                  constraint_axis=(False, False, False),
@@ -575,15 +575,15 @@ def import_xyz(Ball_type,
         lamp_data = bpy.data.lamps.new(name="A_lamp", type="POINT")
         lamp_data.distance = 500.0
         lamp_data.energy = 3.0
-        lamp_data.shadow_method = 'RAY_SHADOW'        
+        lamp_data.shadow_method = 'RAY_SHADOW'
         lamp = bpy.data.objects.new("A_lamp", lamp_data)
         lamp.location = lamp_xyz_vec
         lamp.layers = current_layers
-        bpy.context.scene.objects.link(lamp)         
+        bpy.context.scene.objects.link(lamp)
 
         bpy.context.scene.world.light_settings.use_ambient_occlusion = True
         bpy.context.scene.world.light_settings.ao_factor = 0.2
-        
+
 
     # ------------------------------------------------------------------------
     # DRAWING THE ATOMS
@@ -634,8 +634,8 @@ def import_xyz(Ball_type,
                             layers=current_layers)
             # Meta balls
             elif Ball_type == "2":
-                bpy.ops.object.metaball_add(type='BALL', view_align=False, 
-                            enter_editmode=False, location=(0, 0, 0), 
+                bpy.ops.object.metaball_add(type='BALL', view_align=False,
+                            enter_editmode=False, location=(0, 0, 0),
                             rotation=(0, 0, 0), layers=current_layers)
 
         ball = bpy.context.scene.objects.active
@@ -647,14 +647,14 @@ def import_xyz(Ball_type,
             ball.name = "Ball (NURBS)_"+atom.name
         ball.active_material = atom.material
         ball.parent = new_atom_mesh
-        new_atom_mesh.dupli_type = 'VERTS'
+        new_atom_mesh.instance_type = 'VERTS'
         # The object is back translated to 'object_center_vec'.
         new_atom_mesh.location = object_center_vec
         STRUCTURE.append(new_atom_mesh)
 
     # ------------------------------------------------------------------------
     # SELECT ALL LOADED OBJECTS
-    
+
     bpy.ops.object.select_all(action='DESELECT')
     obj = None
     for obj in STRUCTURE:
@@ -669,71 +669,68 @@ def build_frames(frame_delta, frame_skip):
 
     scn = bpy.context.scene
 
-    # Introduce the basis for all elements that appear in the structure.     
+    # Introduce the basis for all elements that appear in the structure.
     for element in STRUCTURE:
-     
-        bpy.ops.object.select_all(action='DESELECT')   
+
+        bpy.ops.object.select_all(action='DESELECT')
         bpy.context.scene.objects.active = element
         element.select = True
         bpy.ops.object.shape_key_add(True)
-        
-    frame_skip += 1    
 
-    # Introduce the keys and reference the atom positions for each key.     
+    frame_skip += 1
+
+    # Introduce the keys and reference the atom positions for each key.
     i = 0
-    for j, frame in enumerate(ALL_FRAMES):        
-           
+    for j, frame in enumerate(ALL_FRAMES):
+
         if j % frame_skip == 0:
-           
+
             for elements_frame, elements_structure in zip(frame,STRUCTURE):
-             
+
                 key = elements_structure.shape_key_add()
-    
+
                 for atom_frame, atom_structure in zip(elements_frame, key.data):
-    
-                    atom_structure.co = (atom_frame.location 
+
+                    atom_structure.co = (atom_frame.location
                                        - elements_structure.location)
-    
-                key.name = atom_frame.name + "_frame_" + str(i) 
+
+                key.name = atom_frame.name + "_frame_" + str(i)
 
             i += 1
 
     num_frames = i
-        
+
     scn.frame_start = 0
     scn.frame_end = frame_delta * num_frames
 
     # Manage the values of the keys
     for element in STRUCTURE:
- 
-        scn.frame_current = 0 
+
+        scn.frame_current = 0
 
         element.data.shape_keys.key_blocks[1].value = 1.0
         element.data.shape_keys.key_blocks[2].value = 0.0
-        element.data.shape_keys.key_blocks[1].keyframe_insert("value")     
-        element.data.shape_keys.key_blocks[2].keyframe_insert("value")         
+        element.data.shape_keys.key_blocks[1].keyframe_insert("value")
+        element.data.shape_keys.key_blocks[2].keyframe_insert("value")
 
         scn.frame_current += frame_delta
 
         number = 0
-    
+
         for number in range(num_frames)[2:]:#-1]:
-    
+
             element.data.shape_keys.key_blocks[number-1].value = 0.0
             element.data.shape_keys.key_blocks[number].value = 1.0
             element.data.shape_keys.key_blocks[number+1].value = 0.0
-            element.data.shape_keys.key_blocks[number-1].keyframe_insert("value")     
-            element.data.shape_keys.key_blocks[number].keyframe_insert("value")     
-            element.data.shape_keys.key_blocks[number+1].keyframe_insert("value")         
-                
+            element.data.shape_keys.key_blocks[number-1].keyframe_insert("value")
+            element.data.shape_keys.key_blocks[number].keyframe_insert("value")
+            element.data.shape_keys.key_blocks[number+1].keyframe_insert("value")
+
             scn.frame_current += frame_delta
-            
-        number += 1    
-            
+
+        number += 1
+
         element.data.shape_keys.key_blocks[number].value = 1.0
         element.data.shape_keys.key_blocks[number-1].value = 0.0
-        element.data.shape_keys.key_blocks[number].keyframe_insert("value")     
-        element.data.shape_keys.key_blocks[number-1].keyframe_insert("value")    
-        
-
-
+        element.data.shape_keys.key_blocks[number].keyframe_insert("value")
+        element.data.shape_keys.key_blocks[number-1].keyframe_insert("value")

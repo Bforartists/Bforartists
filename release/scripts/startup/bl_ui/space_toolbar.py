@@ -980,7 +980,6 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "tools_group")
         layout.prop(addon_prefs, "tools_parent")
         layout.prop(addon_prefs, "tools_objectdata")
         layout.prop(addon_prefs, "tools_link_to_scn")
@@ -1019,18 +1018,6 @@ class TOOLBAR_MT_tools(Menu):
             mode = obj.mode
 
             if mode == 'OBJECT':
-
-                if addon_prefs.tools_group:
-
-                    row = layout.row(align=True)
-
-                    row.operator("group.create", icon='NEW_GROUP', text="")
-                    row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
-                    row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
-
-                    row = layout.row(align=True)
-                    row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
-                    row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
 
                 if addon_prefs.tools_parent:
 
@@ -1544,7 +1531,9 @@ class TOOLBAR_MT_misc(Menu):
 
     @staticmethod
     def draw_menus(layout, context):
-        scene = context.scene
+        window = context.window
+        screen = context.screen
+        scene = window.scene
         obj = context.object
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
@@ -1577,7 +1566,7 @@ class TOOLBAR_MT_misc(Menu):
 
             row = layout.row(align=True)
 
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+            layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
 
         if addon_prefs.misc_misc:
 

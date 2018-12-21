@@ -66,7 +66,6 @@ from amaranth.render import (
     unsimplify,
     final_resolution,
     samples_scene,
-    remember_layers,
     render_output_z,
     )
 
@@ -90,12 +89,12 @@ from amaranth.misc import (
 bl_info = {
     "name": "Amaranth Toolset",
     "author": "Pablo Vazquez, Bassam Kurdali, Sergey Sharybin, Lukas Tönne, Cesar Saez",
-    "version": (1, 0, 5),
-    "blender": (2, 74),
+    "version": (1, 0, 6),
+    "blender": (2, 80, 0),
     "location": "Everywhere!",
     "description": "A collection of tools and settings to improve productivity",
     "warning": "",
-    "wiki_url": "http://pablovazquez.org/amaranth",
+    "wiki_url": "https://pablovazquez.art/amaranth",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Scene",
 }

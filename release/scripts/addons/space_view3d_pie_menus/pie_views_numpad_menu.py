@@ -23,7 +23,7 @@ bl_info = {
     "description": "Viewport Numpad Menus",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "Q key",
     "warning": "",
     "wiki_url": "",
@@ -108,17 +108,17 @@ class PieViewNumpad(Menu):
         rd = scene.render
 
         # 4 - LEFT
-        pie.operator("view3d.viewnumpad", text="Left", icon='TRIA_LEFT').type = 'LEFT'
+        pie.operator("view3d.view_axis", text="Left", icon='TRIA_LEFT').type = 'LEFT'
         # 6 - RIGHT
-        pie.operator("view3d.viewnumpad", text="Right", icon='TRIA_RIGHT').type = 'RIGHT'
+        pie.operator("view3d.view_axis", text="Right", icon='TRIA_RIGHT').type = 'RIGHT'
         # 2 - BOTTOM
-        pie.operator("view3d.viewnumpad", text="Bottom", icon='TRIA_DOWN').type = 'BOTTOM'
+        pie.operator("view3d.view_axis", text="Bottom", icon='TRIA_DOWN').type = 'BOTTOM'
         # 8 - TOP
-        pie.operator("view3d.viewnumpad", text="Top", icon='TRIA_UP').type = 'TOP'
+        pie.operator("view3d.view_axis", text="Top", icon='TRIA_UP').type = 'TOP'
         # 7 - TOP - LEFT
-        pie.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
+        pie.operator("view3d.view_axis", text="Front").type = 'FRONT'
         # 9 - TOP - RIGHT
-        pie.operator("view3d.viewnumpad", text="Back").type = 'BACK'
+        pie.operator("view3d.view_axis", text="Back").type = 'BACK'
         # 1 - BOTTOM - LEFT
         box = pie.split().column()
         row = box.row(align=True)
@@ -131,8 +131,8 @@ class PieViewNumpad(Menu):
                          icon='LOCKED').data_path = "space_data.lock_camera"
 
         row = box.row(align=True)
-        row.operator("view3d.viewnumpad", text="View Cam", icon='VISIBLE_IPO_ON').type = 'CAMERA'
-        row.operator("view3d.camera_to_view", text="Cam to view", icon='MAN_TRANS')
+        row.operator("view3d.view_camera", text="View Cam", icon='VISIBLE_IPO_ON')
+        row.operator("view3d.camera_to_view", text="Cam to view", icon='NONE')
 
         icon_locked = 'LOCKED' if ob and ob.lock_rotation[0] is False else \
                       'UNLOCKED' if ob and ob.lock_rotation[0] is True else 'LOCKED'
@@ -143,7 +143,7 @@ class PieViewNumpad(Menu):
         row = box.row(align=True)
         row.prop(rd, "use_border", text="Border")
         # 3 - BOTTOM - RIGHT
-        pie.menu(PieViewallSelGlobEtc.bl_idname, text="View Menu", icon='BBOX')
+        pie.menu(PieViewallSelGlobEtc.bl_idname, text="View Menu", icon='NONE')
 
 
 classes = (

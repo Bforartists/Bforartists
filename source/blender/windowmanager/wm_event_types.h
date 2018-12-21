@@ -61,9 +61,6 @@ enum {
 	MIDDLEMOUSE         = 0x0002,
 	RIGHTMOUSE          = 0x0003,
 	MOUSEMOVE           = 0x0004,
-	/* only use if you want user option switch possible */
-	ACTIONMOUSE         = 0x0005,
-	SELECTMOUSE         = 0x0006,
 	/* Extra mouse buttons */
 	BUTTON4MOUSE        = 0x0007,
 	BUTTON5MOUSE        = 0x0008,
@@ -311,9 +308,11 @@ enum {
 	TIMERF                = 0x011F,  /* last timer */
 
 	/* Actionzones, tweak, gestures: 0x500x, 0x501x */
+#define EVT_ACTIONZONE_FIRST EVT_ACTIONZONE_AREA
 	EVT_ACTIONZONE_AREA   = 0x5000,
 	EVT_ACTIONZONE_REGION = 0x5001,
 	EVT_ACTIONZONE_FULLSCREEN = 0x5011,
+#define EVT_ACTIONZONE_LAST (EVT_ACTIONZONE_FULLSCREEN + 1)
 
 	/* NOTE: these values are saved in keymap files, do not change them but just add new ones */
 
@@ -324,9 +323,6 @@ enum {
 	EVT_TWEAK_L           = 0x5002,
 	EVT_TWEAK_M           = 0x5003,
 	EVT_TWEAK_R           = 0x5004,
-	/* tweak events for action or select mousebutton */
-	EVT_TWEAK_A           = 0x5005,
-	EVT_TWEAK_S           = 0x5006,
 	EVT_GESTURE           = 0x5010,
 
 	/* 0x5011 is taken, see EVT_ACTIONZONE_FULLSCREEN */
@@ -338,6 +334,8 @@ enum {
 	EVT_DROP              = 0x5023,
 	EVT_BUT_CANCEL        = 0x5024,
 
+	/* could become gizmo callback */
+	EVT_GIZMO_UPDATE     = 0x5025,
 	/* ********** End of Blender internal events. ********** */
 };
 
@@ -369,7 +367,7 @@ enum {
 #define ISMOUSE_GESTURE(event_type)  ((event_type) >= MOUSEPAN && (event_type) <= MOUSEROTATE)
 #define ISMOUSE_BUTTON(event_type) \
 	(ELEM(event_type, \
-	      LEFTMOUSE, MIDDLEMOUSE, RIGHTMOUSE, ACTIONMOUSE, SELECTMOUSE, \
+	      LEFTMOUSE, MIDDLEMOUSE, RIGHTMOUSE, \
 	      BUTTON4MOUSE, BUTTON5MOUSE, BUTTON6MOUSE, BUTTON7MOUSE))
 
 /* test whether the event is tweak event */
@@ -378,12 +376,12 @@ enum {
 /* test whether the event is a NDOF event */
 #define ISNDOF(event_type)  ((event_type) >= NDOF_MOTION && (event_type) < NDOF_LAST)
 
+#define IS_EVENT_ACTIONZONE(event_type)  ((event_type) >= EVT_ACTIONZONE_FIRST && (event_type) < EVT_ACTIONZONE_LAST)
+
 /* test whether event type is acceptable as hotkey, excluding modifiers */
 #define ISHOTKEY(event_type)                                                  \
 	((ISKEYBOARD(event_type) || ISMOUSE(event_type) || ISNDOF(event_type)) && \
-	 ((event_type) != ESCKEY) &&                                                \
-	 ((event_type) >= LEFTCTRLKEY && (event_type) <= LEFTSHIFTKEY) == false &&    \
-	 ((event_type) >= UNKNOWNKEY  && (event_type) <= GRLESSKEY) == false)
+	 (ISKEYMODIFIER(event_type) == false))
 
 /* internal helpers*/
 #define _VA_IS_EVENT_MOD2(v, a) (CHECK_TYPE_INLINE(v, wmEvent *), \
@@ -397,6 +395,41 @@ enum {
 
 /* reusable IS_EVENT_MOD(event, shift, ctrl, alt, oskey), macro */
 #define IS_EVENT_MOD(...) VA_NARGS_CALL_OVERLOAD(_VA_IS_EVENT_MOD, __VA_ARGS__)
+
+enum eEventType_Mask {
+	/* ISKEYMODIFIER */
+	EVT_TYPE_MASK_KEYBOARD_MODIFIER = (1 << 0),
+	/* ISKEYBOARD */
+	EVT_TYPE_MASK_KEYBOARD = (1 << 1),
+	/* ISMOUSE_WHEEL */
+	EVT_TYPE_MASK_MOUSE_WHEEL = (1 << 2),
+	/* ISMOUSE_BUTTON */
+	EVT_TYPE_MASK_MOUSE_GESTURE = (1 << 3),
+	/* ISMOUSE_GESTURE */
+	EVT_TYPE_MASK_MOUSE_BUTTON = (1 << 4),
+	/* ISMOUSE */
+	EVT_TYPE_MASK_MOUSE = (1 << 5),
+	/* ISNDOF */
+	EVT_TYPE_MASK_NDOF = (1 << 6),
+	/* ISTWEAK */
+	EVT_TYPE_MASK_TWEAK = (1 << 7),
+	/* IS_EVENT_ACTIONZONE */
+	EVT_TYPE_MASK_ACTIONZONE = (1 << 8),
+};
+#define EVT_TYPE_MASK_ALL \
+	(EVT_TYPE_MASK_KEYBOARD | \
+	 EVT_TYPE_MASK_MOUSE | \
+	 EVT_TYPE_MASK_NDOF | \
+	 EVT_TYPE_MASK_TWEAK | \
+	 EVT_TYPE_MASK_ACTIONZONE)
+
+#define EVT_TYPE_MASK_HOTKEY_INCLUDE \
+	(EVT_TYPE_MASK_KEYBOARD | EVT_TYPE_MASK_MOUSE | EVT_TYPE_MASK_NDOF)
+#define EVT_TYPE_MASK_HOTKEY_EXCLUDE \
+	EVT_TYPE_MASK_KEYBOARD_MODIFIER
+
+bool WM_event_type_mask_test(const int event_type, const enum eEventType_Mask mask);
+
 
 /* ********** wmEvent.val ********** */
 
@@ -446,7 +479,7 @@ enum {
 	GESTURE_MODAL_CIRCLE_ADD  = 6, /* circle sel: larger brush */
 	GESTURE_MODAL_CIRCLE_SUB  = 7, /* circle sel: smaller brush */
 
-	GESTURE_MODAL_BEGIN       = 8, /* border select/straight line, activate, use release to detect which button */
+	GESTURE_MODAL_BEGIN       = 8, /* box select/straight line, activate, use release to detect which button */
 
 	/* Uses 'zoom_out' operator property. */
 	GESTURE_MODAL_IN          = 9,

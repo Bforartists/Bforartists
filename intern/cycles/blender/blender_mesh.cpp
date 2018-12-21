@@ -35,46 +35,6 @@
 
 CCL_NAMESPACE_BEGIN
 
-/* Per-face bit flags. */
-enum {
-	/* Face has no special flags. */
-	FACE_FLAG_NONE      = (0 << 0),
-	/* Quad face was split using 1-3 diagonal. */
-	FACE_FLAG_DIVIDE_13 = (1 << 0),
-	/* Quad face was split using 2-4 diagonal. */
-	FACE_FLAG_DIVIDE_24 = (1 << 1),
-};
-
-/* Get vertex indices to create triangles from a given face.
- *
- * Two triangles has vertex indices in the original Blender-side face.
- * If face is already a quad tri_b will not be initialized.
- */
-inline void face_split_tri_indices(const int face_flag,
-                                   int tri_a[3],
-                                   int tri_b[3])
-{
-	if(face_flag & FACE_FLAG_DIVIDE_24) {
-		tri_a[0] = 0;
-		tri_a[1] = 1;
-		tri_a[2] = 3;
-
-		tri_b[0] = 2;
-		tri_b[1] = 3;
-		tri_b[2] = 1;
-	}
-	else {
-		/* Quad with FACE_FLAG_DIVIDE_13 or single triangle. */
-		tri_a[0] = 0;
-		tri_a[1] = 1;
-		tri_a[2] = 2;
-
-		tri_b[0] = 0;
-		tri_b[1] = 2;
-		tri_b[2] = 3;
-	}
-}
-
 /* Tangent Space */
 
 struct MikkUserData {
@@ -379,8 +339,6 @@ static void create_mesh_volume_attributes(Scene *scene,
 static void attr_create_vertex_color(Scene *scene,
                                      Mesh *mesh,
                                      BL::Mesh& b_mesh,
-                                     const vector<int>& nverts,
-                                     const vector<int>& face_flags,
                                      bool subdivision)
 {
 	if(subdivision) {
@@ -401,15 +359,15 @@ static void attr_create_vertex_color(Scene *scene,
 				int n = p->loop_total();
 				for(int i = 0; i < n; i++) {
 					float3 color = get_float3(l->data[p->loop_start() + i].color());
-					/* Encode vertex color using the sRGB curve. */
+					/* Compress/encode vertex color using the sRGB curve. */
 					*(cdata++) = color_float_to_byte(color_srgb_to_linear_v3(color));
 				}
 			}
 		}
 	}
 	else {
-		BL::Mesh::tessface_vertex_colors_iterator l;
-		for(b_mesh.tessface_vertex_colors.begin(l); l != b_mesh.tessface_vertex_colors.end(); ++l) {
+		BL::Mesh::vertex_colors_iterator l;
+		for(b_mesh.vertex_colors.begin(l); l != b_mesh.vertex_colors.end(); ++l) {
 			if(!mesh->need_attribute(scene, ustring(l->name().c_str())))
 				continue;
 
@@ -417,35 +375,20 @@ static void attr_create_vertex_color(Scene *scene,
 			                                       TypeDesc::TypeColor,
 			                                       ATTR_ELEMENT_CORNER_BYTE);
 
-			BL::MeshColorLayer::data_iterator c;
+			BL::Mesh::loop_triangles_iterator t;
 			uchar4 *cdata = attr->data_uchar4();
-			size_t i = 0;
 
-			for(l->data.begin(c); c != l->data.end(); ++c, ++i) {
-				int tri_a[3], tri_b[3];
-				face_split_tri_indices(face_flags[i], tri_a, tri_b);
+			for(b_mesh.loop_triangles.begin(t); t != b_mesh.loop_triangles.end(); ++t) {
+				int3 li = get_int3(t->loops());
+				float3 c1 = get_float3(l->data[li[0]].color());
+				float3 c2 = get_float3(l->data[li[1]].color());
+				float3 c3 = get_float3(l->data[li[2]].color());
 
-				/* Encode vertex color using the sRGB curve. */
-				uchar4 colors[4];
-				colors[0] = color_float_to_byte(color_srgb_to_linear_v3(get_float3(c->color1())));
-				colors[1] = color_float_to_byte(color_srgb_to_linear_v3(get_float3(c->color2())));
-				colors[2] = color_float_to_byte(color_srgb_to_linear_v3(get_float3(c->color3())));
-				if(nverts[i] == 4) {
-					colors[3] = color_float_to_byte(color_srgb_to_linear_v3(get_float3(c->color4())));
-				}
-
-				cdata[0] = colors[tri_a[0]];
-				cdata[1] = colors[tri_a[1]];
-				cdata[2] = colors[tri_a[2]];
-
-				if(nverts[i] == 4) {
-					cdata[3] = colors[tri_b[0]];
-					cdata[4] = colors[tri_b[1]];
-					cdata[5] = colors[tri_b[2]];
-					cdata += 6;
-				}
-				else
-					cdata += 3;
+				/* Compress/encode vertex color using the sRGB curve. */
+				cdata[0] = color_float_to_byte(color_srgb_to_linear_v3(c1));
+				cdata[1] = color_float_to_byte(color_srgb_to_linear_v3(c2));
+				cdata[2] = color_float_to_byte(color_srgb_to_linear_v3(c3));
+				cdata += 3;
 			}
 		}
 	}
@@ -454,14 +397,12 @@ static void attr_create_vertex_color(Scene *scene,
 /* Create uv map attributes. */
 static void attr_create_uv_map(Scene *scene,
                                Mesh *mesh,
-                               BL::Mesh& b_mesh,
-                               const vector<int>& nverts,
-                               const vector<int>& face_flags)
+                               BL::Mesh& b_mesh)
 {
-	if(b_mesh.tessface_uv_textures.length() != 0) {
-		BL::Mesh::tessface_uv_textures_iterator l;
+	if(b_mesh.uv_layers.length() != 0) {
+		BL::Mesh::uv_layers_iterator l;
 
-		for(b_mesh.tessface_uv_textures.begin(l); l != b_mesh.tessface_uv_textures.end(); ++l) {
+		for(b_mesh.uv_layers.begin(l); l != b_mesh.uv_layers.end(); ++l) {
 			const bool active_render = l->active_render();
 			AttributeStandard uv_std = (active_render)? ATTR_STD_UV: ATTR_STD_NONE;
 			ustring uv_name = ustring(l->name().c_str());
@@ -493,33 +434,15 @@ static void attr_create_uv_map(Scene *scene,
 					                               ATTR_ELEMENT_CORNER);
 				}
 
-				BL::MeshTextureFaceLayer::data_iterator t;
+				BL::Mesh::loop_triangles_iterator t;
 				float3 *fdata = uv_attr->data_float3();
-				size_t i = 0;
 
-				for(l->data.begin(t); t != l->data.end(); ++t, ++i) {
-					int tri_a[3], tri_b[3];
-					face_split_tri_indices(face_flags[i], tri_a, tri_b);
-
-					float3 uvs[4];
-					uvs[0] = get_float3(t->uv1());
-					uvs[1] = get_float3(t->uv2());
-					uvs[2] = get_float3(t->uv3());
-					if(nverts[i] == 4) {
-						uvs[3] = get_float3(t->uv4());
-					}
-
-					fdata[0] = uvs[tri_a[0]];
-					fdata[1] = uvs[tri_a[1]];
-					fdata[2] = uvs[tri_a[2]];
+				for(b_mesh.loop_triangles.begin(t); t != b_mesh.loop_triangles.end(); ++t) {
+					int3 li = get_int3(t->loops());
+					fdata[0] = get_float3(l->data[li[0]].uv());
+					fdata[1] = get_float3(l->data[li[1]].uv());
+					fdata[2] = get_float3(l->data[li[2]].uv());
 					fdata += 3;
-
-					if(nverts[i] == 4) {
-						fdata[0] = uvs[tri_b[0]];
-						fdata[1] = uvs[tri_b[1]];
-						fdata[2] = uvs[tri_b[2]];
-						fdata += 3;
-					}
 				}
 			}
 
@@ -563,7 +486,7 @@ static void attr_create_subd_uv_map(Scene *scene,
 		int i = 0;
 
 		for(b_mesh.uv_layers.begin(l); l != b_mesh.uv_layers.end(); ++l, ++i) {
-			bool active_render = b_mesh.uv_textures[i].active_render();
+			bool active_render = l->active_render();
 			AttributeStandard uv_std = (active_render)? ATTR_STD_UV: ATTR_STD_NONE;
 			ustring uv_name = ustring(l->name().c_str());
 			AttributeStandard tangent_std = (active_render)? ATTR_STD_UV_TANGENT
@@ -822,7 +745,7 @@ static void create_mesh(Scene *scene,
 {
 	/* count vertices and faces */
 	int numverts = b_mesh.vertices.length();
-	int numfaces = (!subdivision) ? b_mesh.tessfaces.length() : b_mesh.polygons.length();
+	int numfaces = (!subdivision) ? b_mesh.loop_triangles.length() : b_mesh.polygons.length();
 	int numtris = 0;
 	int numcorners = 0;
 	int numngons = 0;
@@ -834,14 +757,10 @@ static void create_mesh(Scene *scene,
 	}
 
 	BL::Mesh::vertices_iterator v;
-	BL::Mesh::tessfaces_iterator f;
 	BL::Mesh::polygons_iterator p;
 
 	if(!subdivision) {
-		for(b_mesh.tessfaces.begin(f); f != b_mesh.tessfaces.end(); ++f) {
-			int4 vi = get_int4(f->vertices_raw());
-			numtris += (vi[3] == 0)? 1: 2;
-		}
+		numtris = numfaces;
 	}
 	else {
 		for(b_mesh.polygons.begin(p); p != b_mesh.polygons.end(); ++p) {
@@ -869,7 +788,7 @@ static void create_mesh(Scene *scene,
 	/* create generated coordinates from undeformed coordinates */
 	const bool need_default_tangent =
 	        (subdivision == false) &&
-	        (b_mesh.tessface_uv_textures.length() == 0) &&
+	        (b_mesh.uv_layers.length() == 0) &&
 	        (mesh->need_attribute(scene, ATTR_STD_UV_TANGENT));
 	if(mesh->need_attribute(scene, ATTR_STD_GENERATED) ||
 	   need_default_tangent)
@@ -890,19 +809,21 @@ static void create_mesh(Scene *scene,
 
 	/* create faces */
 	vector<int> nverts(numfaces);
-	vector<int> face_flags(numfaces, FACE_FLAG_NONE);
-	int fi = 0;
 
 	if(!subdivision) {
-		for(b_mesh.tessfaces.begin(f); f != b_mesh.tessfaces.end(); ++f, ++fi) {
-			int4 vi = get_int4(f->vertices_raw());
-			int n = (vi[3] == 0)? 3: 4;
-			int shader = clamp(f->material_index(), 0, used_shaders.size()-1);
-			bool smooth = f->use_smooth() || use_loop_normals;
+		BL::Mesh::loop_triangles_iterator t;
+		int ti = 0;
+
+		for(b_mesh.loop_triangles.begin(t); t != b_mesh.loop_triangles.end(); ++t, ++ti) {
+			BL::MeshPolygon p = b_mesh.polygons[t->polygon_index()];
+			int3 vi = get_int3(t->vertices());
+
+			int shader = clamp(p.material_index(), 0, used_shaders.size()-1);
+			bool smooth = p.use_smooth() || use_loop_normals;
 
 			if(use_loop_normals) {
-				BL::Array<float, 12> loop_normals = f->split_normals();
-				for(int i = 0; i < n; i++) {
+				BL::Array<float, 9> loop_normals = t->split_normals();
+				for(int i = 0; i < 3; i++) {
 					N[vi[i]] = make_float3(loop_normals[i * 3],
 					                       loop_normals[i * 3 + 1],
 					                       loop_normals[i * 3 + 2]);
@@ -913,25 +834,8 @@ static void create_mesh(Scene *scene,
 			 *
 			 * NOTE: Autosmooth is already taken care about.
 			 */
-			if(n == 4) {
-				if(is_zero(cross(mesh->verts[vi[1]] - mesh->verts[vi[0]], mesh->verts[vi[2]] - mesh->verts[vi[0]])) ||
-				   is_zero(cross(mesh->verts[vi[2]] - mesh->verts[vi[0]], mesh->verts[vi[3]] - mesh->verts[vi[0]])))
-				{
-					mesh->add_triangle(vi[0], vi[1], vi[3], shader, smooth);
-					mesh->add_triangle(vi[2], vi[3], vi[1], shader, smooth);
-					face_flags[fi] |= FACE_FLAG_DIVIDE_24;
-				}
-				else {
-					mesh->add_triangle(vi[0], vi[1], vi[2], shader, smooth);
-					mesh->add_triangle(vi[0], vi[2], vi[3], shader, smooth);
-					face_flags[fi] |= FACE_FLAG_DIVIDE_13;
-				}
-			}
-			else {
-				mesh->add_triangle(vi[0], vi[1], vi[2], shader, smooth);
-			}
-
-			nverts[fi] = n;
+			mesh->add_triangle(vi[0], vi[1], vi[2], shader, smooth);
+			nverts[ti] = 3;
 		}
 	}
 	else {
@@ -957,13 +861,13 @@ static void create_mesh(Scene *scene,
 	 * The calculate functions will check whether they're needed or not.
 	 */
 	attr_create_pointiness(scene, mesh, b_mesh, subdivision);
-	attr_create_vertex_color(scene, mesh, b_mesh, nverts, face_flags, subdivision);
+	attr_create_vertex_color(scene, mesh, b_mesh, subdivision);
 
 	if(subdivision) {
 		attr_create_subd_uv_map(scene, mesh, b_mesh, subdivide_uvs);
 	}
 	else {
-		attr_create_uv_map(scene, mesh, b_mesh, nverts, face_flags);
+		attr_create_uv_map(scene, mesh, b_mesh);
 	}
 
 	/* for volume objects, create a matrix to transform from object space to
@@ -989,7 +893,7 @@ static void create_subd_mesh(Scene *scene,
                              int max_subdivisions)
 {
 	BL::SubsurfModifier subsurf_mod(b_ob.modifiers[b_ob.modifiers.length()-1]);
-	bool subdivide_uvs = subsurf_mod.use_subsurf_uv();
+	bool subdivide_uvs = subsurf_mod.uv_smooth() != BL::SubsurfModifier::uv_smooth_NONE;
 
 	create_mesh(scene, mesh, b_mesh, used_shaders, true, subdivide_uvs);
 
@@ -1071,50 +975,35 @@ static void sync_mesh_fluid_motion(BL::Object& b_ob, Scene *scene, Mesh *mesh)
 	}
 }
 
-Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
+Mesh *BlenderSync::sync_mesh(BL::Depsgraph& b_depsgraph,
+                             BL::Object& b_ob,
+                             BL::Object& b_ob_instance,
                              bool object_updated,
                              bool hide_tris)
 {
-	/* When viewport display is not needed during render we can force some
-	 * caches to be releases from blender side in order to reduce peak memory
-	 * footprint during synchronization process.
-	 */
-	const bool is_interface_locked = b_engine.render() &&
-	                                 b_engine.render().use_lock_interface();
-	const bool can_free_caches = BlenderSession::headless || is_interface_locked;
-
 	/* test if we can instance or if the object is modified */
 	BL::ID b_ob_data = b_ob.data();
-	BL::ID key = (BKE_object_is_modified(b_ob))? b_ob: b_ob_data;
-	BL::Material material_override = render_layer.material_override;
+	BL::ID key = (BKE_object_is_modified(b_ob))? b_ob_instance: b_ob_data;
 
 	/* find shader indices */
 	vector<Shader*> used_shaders;
 
 	BL::Object::material_slots_iterator slot;
 	for(b_ob.material_slots.begin(slot); slot != b_ob.material_slots.end(); ++slot) {
-		if(material_override) {
-			find_shader(material_override, used_shaders, scene->default_surface);
-		}
-		else {
-			BL::ID b_material(slot->material());
-			find_shader(b_material, used_shaders, scene->default_surface);
-		}
+		BL::ID b_material(slot->material());
+		find_shader(b_material, used_shaders, scene->default_surface);
 	}
 
 	if(used_shaders.size() == 0) {
-		if(material_override)
-			find_shader(material_override, used_shaders, scene->default_surface);
-		else
-			used_shaders.push_back(scene->default_surface);
+		used_shaders.push_back(scene->default_surface);
 	}
 
 	/* test if we need to sync */
 	int requested_geometry_flags = Mesh::GEOMETRY_NONE;
-	if(render_layer.use_surfaces) {
+	if(view_layer.use_surfaces) {
 		requested_geometry_flags |= Mesh::GEOMETRY_TRIANGLES;
 	}
-	if(render_layer.use_hair) {
+	if(view_layer.use_hair) {
 		requested_geometry_flags |= Mesh::GEOMETRY_CURVES;
 	}
 	Mesh *mesh;
@@ -1172,9 +1061,12 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 		 * updating meshes here will end up having derived mesh referencing
 		 * freed data from the blender side.
 		 */
-		if(preview && b_ob.type() != BL::Object::type_MESH)
+		if(preview && b_ob.type() != BL::Object::type_MESH) {
 			b_ob.update_from_editmode(b_data);
+		}
 
+		/* For some reason, meshes do not need this... */
+		bool apply_modifiers = (b_ob.type() != BL::Object::type_MESH);
 		bool need_undeformed = mesh->need_attribute(scene, ATTR_STD_GENERATED);
 
 		mesh->subdivision_type = object_subdivision_type(b_ob, preview, experimental);
@@ -1188,14 +1080,13 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 
 		BL::Mesh b_mesh = object_to_mesh(b_data,
 		                                 b_ob,
-		                                 b_scene,
-		                                 true,
-		                                 !preview,
+		                                 b_depsgraph,
+		                                 apply_modifiers,
 		                                 need_undeformed,
 		                                 mesh->subdivision_type);
 
 		if(b_mesh) {
-			if(render_layer.use_surfaces && !hide_tris) {
+			if(view_layer.use_surfaces && !hide_tris) {
 				if(mesh->subdivision_type != Mesh::SUBDIVISION_NONE)
 					create_subd_mesh(scene, mesh, b_ob, b_mesh, used_shaders,
 					                 dicing_rate, max_subdivisions);
@@ -1205,12 +1096,8 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 				create_mesh_volume_attributes(scene, b_ob, mesh, b_scene.frame_current());
 			}
 
-			if(render_layer.use_hair && mesh->subdivision_type == Mesh::SUBDIVISION_NONE)
+			if(view_layer.use_hair && mesh->subdivision_type == Mesh::SUBDIVISION_NONE)
 				sync_curves(mesh, b_mesh, b_ob, false);
-
-			if(can_free_caches) {
-				b_ob.cache_release();
-			}
 
 			/* free derived mesh */
 			b_data.meshes.remove(b_mesh, false, true, false);
@@ -1233,7 +1120,8 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 	return mesh;
 }
 
-void BlenderSync::sync_mesh_motion(BL::Object& b_ob,
+void BlenderSync::sync_mesh_motion(BL::Depsgraph& b_depsgraph,
+                                   BL::Object& b_ob,
                                    Object *object,
                                    float motion_time)
 {
@@ -1276,9 +1164,8 @@ void BlenderSync::sync_mesh_motion(BL::Object& b_ob,
 		/* get derived mesh */
 		b_mesh = object_to_mesh(b_data,
 		                        b_ob,
-		                        b_scene,
-		                        true,
-		                        !preview,
+		                        b_depsgraph,
+		                        false,
 		                        false,
 		                        Mesh::SUBDIVISION_NONE);
 	}
