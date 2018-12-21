@@ -100,7 +100,7 @@ class SEQUENCER_HT_header(Header):
 
         if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             layout.separator()
-            layout.operator("sequencer.refresh_all", icon="FILE_REFRESH", text="")
+            layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="")
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             layout.prop(st, "display_mode", text="", icon_only=True)
@@ -122,14 +122,14 @@ class SEQUENCER_HT_header(Header):
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             gpd = context.gpencil_data
-            toolsettings = context.tool_settings
+            tool_settings = context.tool_settings
 
             # Proportional editing
             if gpd and gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
-                row.prop(toolsettings, "proportional_edit", icon_only=True)
-                if toolsettings.proportional_edit != 'DISABLED':
-                    row.prop(toolsettings, "proportional_edit_falloff", icon_only=True)
+                row.prop(tool_settings, "proportional_edit", icon_only=True)
+                if tool_settings.proportional_edit != 'DISABLED':
+                    row.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -150,10 +150,7 @@ class SEQUENCER_MT_editor_menus(Menu):
     bl_label = ""
 
     def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
+        layout = self.layout
         st = context.space_data
 
         layout.menu("SEQUENCER_MT_view")
@@ -428,7 +425,7 @@ class SEQUENCER_MT_add_effect(Menu):
         col.operator("sequencer.effect_strip_add", text="Alpha Over").type = 'ALPHA_OVER'
         col.operator("sequencer.effect_strip_add", text="Alpha Under").type = 'ALPHA_UNDER'
         col.operator("sequencer.effect_strip_add", text="Color Mix").type = 'COLORMIX'
-        col.enabled = sel_sequences(context) >=2
+        col.enabled = sel_sequences(context) >= 2
 
         layout.separator()
 
