@@ -23,7 +23,7 @@ bl_info = {
     "description": "Set Pivot Point Menu",
     "author": "seb_k, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",

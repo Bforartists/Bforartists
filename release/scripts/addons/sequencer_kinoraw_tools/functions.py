@@ -74,7 +74,7 @@ def error_handlers(self, op_name, errors, reports="ERROR"):
 
 
 def initSceneProperties(context):
-    # initSceneProperties is ONLY for varaibles that should
+    # initSceneProperties is ONLY for variables that should
     # be keeped with the blend file. Any other addon preferences
     # should go to the addon preferences operator in __init__
     try:

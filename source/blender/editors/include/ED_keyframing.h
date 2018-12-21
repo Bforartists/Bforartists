@@ -50,9 +50,13 @@ struct bPoseChannel;
 struct bContext;
 struct ReportList;
 
+struct Depsgraph;
+
 struct PointerRNA;
 struct PropertyRNA;
 struct EnumPropertyItem;
+
+struct NlaKeyframingContext;
 
 #include "DNA_anim_types.h"
 #include "RNA_types.h"
@@ -74,7 +78,7 @@ struct bAction *verify_adt_action(struct Main *bmain, struct ID *id, short add);
 /* Get (or add relevant data to be able to do so) F-Curve from the given Action.
  * This assumes that all the destinations are valid.
  */
-struct FCurve *verify_fcurve(struct bAction *act, const char group[], struct PointerRNA *ptr,
+struct FCurve *verify_fcurve(struct Main *bmain, struct bAction *act, const char group[], struct PointerRNA *ptr,
                              const char rna_path[], const int array_index, short add);
 
 /* -------- */
@@ -107,7 +111,7 @@ int insert_vert_fcurve(struct FCurve *fcu, float x, float y, eBezTriple_Keyframe
  * Use this to insert a keyframe using the current value being keyframed, in the
  * nominated F-Curve (no creation of animation data performed). Returns success.
  */
-bool insert_keyframe_direct(struct ReportList *reports, struct PointerRNA ptr, struct PropertyRNA *prop, struct FCurve *fcu, float cfra, eBezTriple_KeyframeType keytype, eInsertKeyFlags flag);
+bool insert_keyframe_direct(struct Depsgraph *depsgraph, struct ReportList *reports, struct PointerRNA ptr, struct PropertyRNA *prop, struct FCurve *fcu, float cfra, eBezTriple_KeyframeType keytype, struct NlaKeyframingContext *nla, eInsertKeyFlags flag);
 
 /* -------- */
 
@@ -116,13 +120,15 @@ bool insert_keyframe_direct(struct ReportList *reports, struct PointerRNA ptr, s
  * using the current value being keyframed, in the relevant place. Returns success.
  */
 short insert_keyframe(
-        struct Main *bmain, struct ReportList *reports, struct ID *id, struct bAction *act,
-        const char group[], const char rna_path[], int array_index, float cfra, eBezTriple_KeyframeType keytype, eInsertKeyFlags flag);
+        struct Main *bmain, struct Depsgraph *depsgraph, struct ReportList *reports, struct ID *id, struct bAction *act,
+        const char group[], const char rna_path[], int array_index, float cfra, eBezTriple_KeyframeType keytype, struct ListBase *nla_cache, eInsertKeyFlags flag);
 
 /* Main Keyframing API call:
  *  Use this to delete keyframe on current frame for relevant channel. Will perform checks just in case.
  */
-short delete_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, eInsertKeyFlags flag);
+short delete_keyframe(
+        struct Main *bmain, struct ReportList *reports, struct ID *id, struct bAction *act,
+        const char group[], const char rna_path[], int array_index, float cfra, eInsertKeyFlags flag);
 
 /* ************ Keying Sets ********************** */
 
@@ -355,6 +361,12 @@ bool autokeyframe_cfra_can_key(struct Scene *scene, struct ID *id);
  * - Used for the buttons to check for keyframes...
  */
 bool fcurve_frame_has_keyframe(struct FCurve *fcu, float frame, short filter);
+
+/* Lesser Keyframe Checking API call:
+ * - Returns whether the current value of a given property differs from the interpolated value.
+ * - Used for button drawing.
+ */
+bool fcurve_is_changed(struct PointerRNA ptr, struct PropertyRNA *prop, struct FCurve *fcu, float frame);
 
 /* Main Keyframe Checking API call:
  * Checks whether a keyframe exists for the given ID-block one the given frame.

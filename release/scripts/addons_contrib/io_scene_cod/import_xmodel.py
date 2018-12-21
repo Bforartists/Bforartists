@@ -157,13 +157,13 @@ def load(self, context, filepath=""):
             """
             m_col = []
             m_col.append((float(line_split[1]), float(line_split[2]), float(line_split[3])))
-            
+
             state = 8
 
         elif state == 8 and line_split[0] == "Y":
             line_split = line.replace(",", "").split()
             bone_table[bone_i][3][1] = Vector((float(line_split[1]), float(line_split[2]), float(line_split[3])))
-            
+
             m_col.append((float(line_split[1]), float(line_split[2]), float(line_split[3])))
 
             state = 9
@@ -173,11 +173,11 @@ def load(self, context, filepath=""):
             vec_roll = Vector((float(line_split[1]), float(line_split[2]), float(line_split[3])))
             ##bone_table[bone_i][3][2] = vec_roll
             #print("bone_table: %s" % bone_table[bone_i][3][2])
-            
+
             m_col.append((float(line_split[1]), float(line_split[2]), float(line_split[3])))
 
             #test_3.append(Vector(vec_roll))
-            
+
             test_3.append(m_col)
             #print("test_3: %s\n\n" % test_3[:])
 
@@ -227,26 +227,26 @@ def load(self, context, filepath=""):
         elif state == 15 and line_split[0] == "NUMFACES":
             numfaces = int(line_split[1])
             state = 16
-            
+
         elif state == 16: #and line_split[0] == "TRI":
             #face_i += 1
             face_tmp = []
             state = 17
-            
+
         elif (state == 17 or state == 21 or state == 25) and line_split[0] == "VERT":
             #print("face_tmp length: %i" % len(face_tmp))
             face_tmp.append(int(line_split[1]))
             state += 1
-        
+
         elif (state == 18 or state == 22 or state == 26) and line_split[0] == "NORMAL":
             state += 1
-            
+
         elif (state == 19 or state == 23 or state == 27) and line_split[0] == "COLOR":
             state += 1
-            
+
         elif (state == 20 or state == 24 or state == 28) and line_split[0] == "UV":
             state += 1
-        
+
         elif state == 29:
 
             #print("Adding face: %s\n%i faces so far (of %i)\n" % (str(face_tmp), face_i, numfaces))
@@ -257,11 +257,11 @@ def load(self, context, filepath=""):
                 face_i += 1
                 face_tmp = []
                 state = 17
-                
+
         elif state > 15 and state < 30 and line_split[0] == "NUMOBJECTS":
             print("Bad numfaces, terminated loop\n")
             state = 30
-            
+
         elif state == 30:
             print("Adding mesh!")
             me = bpy.data.meshes.new("pymesh")
@@ -269,7 +269,7 @@ def load(self, context, filepath=""):
             me.update()
             ob = bpy.data.objects.new("Py-Mesh", me)
             bpy.context.scene.objects.link(ob)
-            
+
             state = 31
 
         else: #elif state == 16:
@@ -295,11 +295,11 @@ def load(self, context, filepath=""):
 
     # Create armature and object
     bpy.ops.object.add(
-        type='ARMATURE', 
+        type='ARMATURE',
         enter_editmode=True,
         location=origin)
     ob = bpy.context.object
-    ob.show_x_ray = True
+    ob.show_in_front = True
     ob.name = name
     amt = ob.data
     amt.name = name + "Amt"
@@ -347,11 +347,11 @@ def createRig(context, name, origin, boneTable):
 
     # Create armature and object
     bpy.ops.object.add(
-        type='ARMATURE', 
+        type='ARMATURE',
         enter_editmode=True,
         location=origin)
     ob = bpy.context.object
-    ob.show_x_ray = True
+    ob.show_in_front = True
     ob.name = name
     amt = ob.data
     amt.name = name + "Amt"

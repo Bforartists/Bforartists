@@ -40,7 +40,11 @@
 #include "BKE_curve.h"
 #include "BKE_cdderivedmesh.h"
 #include "BKE_editmesh.h"
+#include "BKE_mesh_runtime.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RNA_define.h"
 #include "RNA_access.h"
@@ -56,29 +60,36 @@
 #include "mesh_intern.h"  /* own include */
 
 
-static LinkNode *knifeproject_poly_from_object(ARegion *ar, Scene *scene, Object *ob, LinkNode *polys)
+static LinkNode *knifeproject_poly_from_object(const bContext *C, Scene *scene, Object *ob, LinkNode *polys)
 {
-	DerivedMesh *dm;
-	bool dm_needsFree;
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
+	ARegion *ar = CTX_wm_region(C);
+	struct Mesh *me_eval;
+	bool me_eval_needs_free;
 
-	if (ob->type == OB_MESH || ob->derivedFinal) {
-		dm = ob->derivedFinal ? ob->derivedFinal : mesh_get_derived_final(scene, ob, CD_MASK_BAREMESH);
-		dm_needsFree = false;
+	if (ob->type == OB_MESH || ob->runtime.mesh_eval) {
+		Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
+		me_eval = ob_eval->runtime.mesh_eval;
+		if (me_eval == NULL) {
+			Scene *scene_eval = (Scene *)DEG_get_evaluated_id(depsgraph, &scene->id);
+			me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, CD_MASK_BAREMESH);
+		}
+		me_eval_needs_free = false;
 	}
 	else if (ELEM(ob->type, OB_FONT, OB_CURVE, OB_SURF)) {
-		dm = CDDM_from_curve(ob);
-		dm_needsFree = true;
+		me_eval = BKE_mesh_new_nomain_from_curve(ob);
+		me_eval_needs_free = true;
 	}
 	else {
-		dm = NULL;
+		me_eval = NULL;
 	}
 
-	if (dm) {
+	if (me_eval) {
 		ListBase nurbslist = {NULL, NULL};
 		float projmat[4][4];
 
-		BKE_mesh_to_curve_nurblist(dm, &nurbslist, 0);  /* wire */
-		BKE_mesh_to_curve_nurblist(dm, &nurbslist, 1);  /* boundary */
+		BKE_mesh_to_curve_nurblist(me_eval, &nurbslist, 0);  /* wire */
+		BKE_mesh_to_curve_nurblist(me_eval, &nurbslist, 1);  /* boundary */
 
 		ED_view3d_ob_project_mat_get(ar->regiondata, ob, projmat);
 
@@ -105,18 +116,16 @@ static LinkNode *knifeproject_poly_from_object(ARegion *ar, Scene *scene, Object
 
 		BKE_nurbList_free(&nurbslist);
 
-		if (dm_needsFree) {
-			dm->release(dm);
+		if (me_eval_needs_free) {
+			BKE_mesh_free(me_eval);
 		}
 	}
-
 
 	return polys;
 }
 
 static int knifeproject_exec(bContext *C, wmOperator *op)
 {
-	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
 	Object *obedit = CTX_data_edit_object(C);
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
@@ -127,7 +136,7 @@ static int knifeproject_exec(bContext *C, wmOperator *op)
 	CTX_DATA_BEGIN (C, Object *, ob, selected_objects)
 	{
 		if (ob != obedit) {
-			polys = knifeproject_poly_from_object(ar, scene, ob, polys);
+			polys = knifeproject_poly_from_object(C, scene, ob, polys);
 		}
 	}
 	CTX_DATA_END;
@@ -169,7 +178,7 @@ void MESH_OT_knife_project(wmOperatorType *ot)
 	ot->poll = ED_operator_editmesh_region_view3d;
 
 	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_USE_EVAL_DATA;
 
 	/* parameters */
 	RNA_def_boolean(ot->srna, "cut_through", false, "Cut through", "Cut through all faces, not just visible ones");

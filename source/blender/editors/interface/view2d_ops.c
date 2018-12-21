@@ -33,6 +33,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_userdef_types.h"
+#include "DNA_windowmanager_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
@@ -169,18 +170,13 @@ static void view_pan_apply_ex(bContext *C, v2dViewPanData *vpd, float dx, float 
 	/* validate that view is in valid configuration after this operation */
 	UI_view2d_curRect_validate(v2d);
 
+	/* don't rebuild full tree in outliner, since we're just changing our view */
+	ED_region_tag_redraw_no_rebuild(vpd->ar);
+
 	/* request updates to be done... */
-	ED_region_tag_redraw(vpd->ar);
 	WM_event_add_mousemove(C);
 
 	UI_view2d_sync(vpd->sc, vpd->sa, v2d, V2D_LOCK_COPY);
-
-	/* exceptions */
-	if (vpd->sa->spacetype == SPACE_OUTLINER) {
-		/* don't rebuild full tree, since we're just changing our view */
-		SpaceOops *soops = vpd->sa->spacedata.first;
-		soops->storeflag |= SO_TREESTORE_REDRAW;
-	}
 }
 
 static void view_pan_apply(bContext *C, wmOperator *op)
@@ -358,7 +354,7 @@ static int view_scrollright_exec(bContext *C, wmOperator *op)
 	}
 
 	/* set RNA-Props - only movement in positive x-direction */
-	RNA_int_set(op->ptr, "deltax", 20);
+	RNA_int_set(op->ptr, "deltax", 40);
 	RNA_int_set(op->ptr, "deltay", 0);
 
 	/* apply movement, then we're done */
@@ -402,7 +398,7 @@ static int view_scrollleft_exec(bContext *C, wmOperator *op)
 	}
 
 	/* set RNA-Props - only movement in negative x-direction */
-	RNA_int_set(op->ptr, "deltax", -20);
+	RNA_int_set(op->ptr, "deltax", -40);
 	RNA_int_set(op->ptr, "deltay", 0);
 
 	/* apply movement, then we're done */
@@ -642,6 +638,7 @@ static void view_zoomstep_apply_ex(
 	View2D *v2d = &ar->v2d;
 	const rctf cur_old = v2d->cur;
 	float dx, dy;
+	const int snap_test = ED_region_snap_size_test(ar);
 
 	/* calculate amount to move view by, ensuring symmetry so the
 	 * old zoom level is restored after zooming back the same amount
@@ -726,8 +723,14 @@ static void view_zoomstep_apply_ex(
 	/* validate that view is in valid configuration after this operation */
 	UI_view2d_curRect_validate(v2d);
 
+	if (ED_region_snap_size_apply(ar, snap_test)) {
+		ScrArea *sa = CTX_wm_area(C);
+		ED_area_tag_redraw(sa);
+		WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+	}
+
 	/* request updates to be done... */
-	ED_region_tag_redraw(vzd->ar);
+	ED_region_tag_redraw_no_rebuild(vzd->ar);
 	UI_view2d_sync(CTX_wm_screen(C), CTX_wm_area(C), v2d, V2D_LOCK_COPY);
 }
 
@@ -902,6 +905,7 @@ static void view_zoomdrag_apply(bContext *C, wmOperator *op)
 	v2dViewZoomData *vzd = op->customdata;
 	View2D *v2d = vzd->v2d;
 	float dx, dy;
+	const int snap_test = ED_region_snap_size_test(vzd->ar);
 
 	/* get amount to move view by */
 	dx = RNA_float_get(op->ptr, "deltax");
@@ -966,8 +970,14 @@ static void view_zoomdrag_apply(bContext *C, wmOperator *op)
 	/* validate that view is in valid configuration after this operation */
 	UI_view2d_curRect_validate(v2d);
 
+	if (ED_region_snap_size_apply(vzd->ar, snap_test)) {
+		ScrArea *sa = CTX_wm_area(C);
+		ED_area_tag_redraw(sa);
+		WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+	}
+
 	/* request updates to be done... */
-	ED_region_tag_redraw(vzd->ar);
+	ED_region_tag_redraw_no_rebuild(vzd->ar);
 	UI_view2d_sync(CTX_wm_screen(C), CTX_wm_area(C), v2d, V2D_LOCK_COPY);
 }
 
@@ -1212,7 +1222,7 @@ static void VIEW2D_OT_zoom(wmOperatorType *ot)
 /* BORDER-ZOOM */
 
 /**
- * The user defines a rect using standard borderselect tools, and we use this rect to
+ * The user defines a rect using standard box select tools, and we use this rect to
  * define the new zoom-level of the view in the following ways:
  *
  * -# LEFTMOUSE - zoom in to view
@@ -1292,15 +1302,15 @@ static void VIEW2D_OT_zoom_border(wmOperatorType *ot)
 	ot->idname = "VIEW2D_OT_zoom_border";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
+	ot->invoke = WM_gesture_box_invoke;
 	ot->exec = view_borderzoom_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = view_zoom_poll;
 
 	/* rna */
-	WM_operator_properties_gesture_border_zoom(ot);
+	WM_operator_properties_gesture_box_zoom(ot);
 }
 
 #ifdef WITH_INPUT_NDOF
@@ -1488,7 +1498,7 @@ void UI_view2d_smooth_view(
 		v2d->cur = sms.new_cur;
 
 		UI_view2d_curRect_validate(v2d);
-		ED_region_tag_redraw(ar);
+		ED_region_tag_redraw_no_rebuild(ar);
 		UI_view2d_sync(CTX_wm_screen(C), CTX_wm_area(C), v2d, V2D_LOCK_COPY);
 	}
 }
@@ -1532,7 +1542,7 @@ static int view2d_smoothview_invoke(bContext *C, wmOperator *UNUSED(op), const w
 
 	UI_view2d_curRect_validate(v2d);
 	UI_view2d_sync(CTX_wm_screen(C), CTX_wm_area(C), v2d, V2D_LOCK_COPY);
-	ED_region_tag_redraw(ar);
+	ED_region_tag_redraw_no_rebuild(ar);
 
 	if (v2d->sms == NULL) {
 		UI_view2d_zoom_cache_reset();
@@ -1556,7 +1566,7 @@ static void VIEW2D_OT_smoothview(wmOperatorType *ot)
 	ot->flag = OPTYPE_INTERNAL;
 
 	/* rna */
-	WM_operator_properties_gesture_border(ot);
+	WM_operator_properties_gesture_box(ot);
 }
 
 /* ********************************************************* */
@@ -1577,7 +1587,7 @@ typedef struct v2dScrollerMove {
 	View2D *v2d;            /* View2D data that this operation affects */
 	ARegion *ar;            /* region that the scroller is in */
 
-	short scroller;         /* scroller that mouse is in ('h' or 'v') */
+	char scroller;          /* scroller that mouse is in ('h' or 'v') */
 	short zone; /* -1 is min zoomer, 0 is bar, 1 is max zoomer */             // XXX find some way to provide visual feedback of this (active color?)
 
 	float fac;              /* view adjustment factor, based on size of region */
@@ -1668,8 +1678,23 @@ static short mouse_in_scroller_handle(int mouse, int sc_min, int sc_max, int sh_
 	return SCROLLHANDLE_BAR;
 }
 
+static bool scroller_activate_poll(bContext *C)
+{
+	if (!view2d_poll(C)) {
+		return false;
+	}
+
+	wmWindow *win = CTX_wm_window(C);
+	ARegion *ar = CTX_wm_region(C);
+	View2D *v2d = &ar->v2d;
+	wmEvent *event = win->eventstate;
+
+	/* check if mouse in scrollbars, if they're enabled */
+	return (UI_view2d_mouse_in_scrollers(ar, v2d, event->x, event->y) != 0);
+}
+
 /* initialize customdata for scroller manipulation operator */
-static void scroller_activate_init(bContext *C, wmOperator *op, const wmEvent *event, short in_scroller)
+static void scroller_activate_init(bContext *C, wmOperator *op, const wmEvent *event, const char in_scroller)
 {
 	v2dScrollerMove *vsm;
 	View2DScrollers *scrollers;
@@ -1693,7 +1718,7 @@ static void scroller_activate_init(bContext *C, wmOperator *op, const wmEvent *e
 	/* 'zone' depends on where mouse is relative to bubble
 	 * - zooming must be allowed on this axis, otherwise, default to pan
 	 */
-	scrollers = UI_view2d_scrollers_calc(C, v2d, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
+	scrollers = UI_view2d_scrollers_calc(C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
 
 	/* use a union of 'cur' & 'tot' incase the current view is far outside 'tot'.
 	 * In this cases moving the scroll bars has far too little effect and the view can get stuck [#31476] */
@@ -1746,7 +1771,7 @@ static void scroller_activate_init(bContext *C, wmOperator *op, const wmEvent *e
 	}
 
 	UI_view2d_scrollers_free(scrollers);
-	ED_region_tag_redraw(ar);
+	ED_region_tag_redraw_no_rebuild(ar);
 }
 
 /* cleanup temp customdata  */
@@ -1760,7 +1785,7 @@ static void scroller_activate_exit(bContext *C, wmOperator *op)
 		MEM_freeN(op->customdata);
 		op->customdata = NULL;
 
-		ED_region_tag_redraw(CTX_wm_region(C));
+		ED_region_tag_redraw_no_rebuild(CTX_wm_region(C));
 	}
 }
 
@@ -1822,7 +1847,7 @@ static void scroller_activate_apply(bContext *C, wmOperator *op)
 	UI_view2d_curRect_validate(v2d);
 
 	/* request updates to be done... */
-	ED_region_tag_redraw(vsm->ar);
+	ED_region_tag_redraw_no_rebuild(vsm->ar);
 	UI_view2d_sync(CTX_wm_screen(C), CTX_wm_area(C), v2d, V2D_LOCK_COPY);
 }
 
@@ -1903,10 +1928,9 @@ static int scroller_activate_invoke(bContext *C, wmOperator *op, const wmEvent *
 {
 	ARegion *ar = CTX_wm_region(C);
 	View2D *v2d = &ar->v2d;
-	short in_scroller = 0;
 
 	/* check if mouse in scrollbars, if they're enabled */
-	in_scroller = UI_view2d_mouse_in_scrollers(C, v2d, event->x, event->y);
+	const char in_scroller = UI_view2d_mouse_in_scrollers(ar, v2d, event->x, event->y);
 
 	/* if in a scroller, init customdata then set modal handler which will catch mousedown to start doing useful stuff */
 	if (in_scroller) {
@@ -2000,7 +2024,7 @@ static void VIEW2D_OT_scroller_activate(wmOperatorType *ot)
 	ot->modal = scroller_activate_modal;
 	ot->cancel = scroller_activate_cancel;
 
-	ot->poll = view2d_poll;
+	ot->poll = scroller_activate_poll;
 }
 
 /* ********************************************************* */
@@ -2012,6 +2036,7 @@ static int reset_exec(bContext *C, wmOperator *UNUSED(op))
 	ARegion *ar = CTX_wm_region(C);
 	View2D *v2d = &ar->v2d;
 	int winx, winy;
+	const int snap_test = ED_region_snap_size_test(ar);
 
 	/* zoom 1.0 */
 	winx = (float)(BLI_rcti_size_x(&v2d->mask) + 1);
@@ -2045,6 +2070,12 @@ static int reset_exec(bContext *C, wmOperator *UNUSED(op))
 
 	/* validate that view is in valid configuration after this operation */
 	UI_view2d_curRect_validate(v2d);
+
+	if (ED_region_snap_size_apply(ar, snap_test)) {
+		ScrArea *sa = CTX_wm_area(C);
+		ED_area_tag_redraw(sa);
+		WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+	}
 
 	/* request updates to be done... */
 	ED_region_tag_redraw(ar);
@@ -2098,85 +2129,5 @@ void ED_operatortypes_view2d(void)
 
 void ED_keymap_view2d(wmKeyConfig *keyconf)
 {
-	wmKeyMap *keymap = WM_keymap_ensure(keyconf, "View2D", 0, 0);
-	wmKeyMapItem *kmi;
-
-	/* scrollers */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroller_activate", LEFTMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroller_activate", MIDDLEMOUSE, KM_PRESS, 0, 0);
-
-	/* pan/scroll */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_pan", MIDDLEMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_pan", MIDDLEMOUSE, KM_PRESS, KM_SHIFT, 0);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_pan", MOUSEPAN, 0, 0, 0);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_right", WHEELDOWNMOUSE, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_left", WHEELUPMOUSE, KM_PRESS, KM_CTRL, 0);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_down", WHEELDOWNMOUSE, KM_PRESS, KM_SHIFT, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_up", WHEELUPMOUSE, KM_PRESS, KM_SHIFT, 0);
-
-#ifdef WITH_INPUT_NDOF
-	WM_keymap_add_item(keymap, "VIEW2D_OT_ndof", NDOF_MOTION, 0, 0, 0);
-#endif
-
-	/* zoom - single step */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_out", WHEELOUTMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_in", WHEELINMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_out", PADMINUS, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_in", PADPLUSKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MOUSEPAN, 0, KM_CTRL, 0);
-
-	WM_keymap_verify_item(keymap, "VIEW2D_OT_smoothview", TIMER1, KM_ANY, KM_ANY, 0);
-
-	/* scroll up/down - no modifiers, only when zoom fails */
-	/* these may fail if zoom is disallowed, in which case they should pass on event */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_down", WHEELDOWNMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_up", WHEELUPMOUSE, KM_PRESS, 0, 0);
-	/* these may be necessary if vertical scroll is disallowed */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_right", WHEELDOWNMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_left", WHEELUPMOUSE, KM_PRESS, 0, 0);
-
-	/* alternatives for page up/down to scroll */
-#if 0 // XXX disabled, since this causes conflicts with hotkeys in animation editors
-	/* scroll up/down may fall through to left/right */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_down", PAGEDOWNKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_up", PAGEUPKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_right", PAGEDOWNKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_left", PAGEUPKEY, KM_PRESS, 0, 0);
-	/* shift for moving view left/right with page up/down */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_right", PAGEDOWNKEY, KM_PRESS, KM_SHIFT, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_left", PAGEUPKEY, KM_PRESS, KM_SHIFT, 0);
-#endif
-
-	/* zoom - drag */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MIDDLEMOUSE, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MOUSEZOOM, 0, 0, 0);
-
-	/* borderzoom - drag */
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_border", BKEY, KM_PRESS, KM_SHIFT, 0);
-
-	/* Alternative keymap for buttons listview */
-	keymap = WM_keymap_ensure(keyconf, "View2D Buttons List", 0, 0);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroller_activate", LEFTMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroller_activate", MIDDLEMOUSE, KM_PRESS, 0, 0);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_pan", MIDDLEMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_pan", MOUSEPAN, 0, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_down", WHEELDOWNMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_up", WHEELUPMOUSE, KM_PRESS, 0, 0);
-
-	kmi = WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_down", PAGEDOWNKEY, KM_PRESS, 0, 0);
-	RNA_boolean_set(kmi->ptr, "page", true);
-	kmi = WM_keymap_add_item(keymap, "VIEW2D_OT_scroll_up", PAGEUPKEY, KM_PRESS, 0, 0);
-	RNA_boolean_set(kmi->ptr, "page", true);
-
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MIDDLEMOUSE, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MOUSEZOOM, 0, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom", MOUSEPAN, 0, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_out", PADMINUS, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_zoom_in", PADPLUSKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "VIEW2D_OT_reset", HOMEKEY, KM_PRESS, 0, 0);
+	WM_keymap_ensure(keyconf, "View2D", 0, 0);
 }

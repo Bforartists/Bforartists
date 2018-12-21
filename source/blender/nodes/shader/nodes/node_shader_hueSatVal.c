@@ -82,9 +82,9 @@ static void node_shader_exec_hue_sat(void *UNUSED(data), int UNUSED(thread), bNo
 }
 
 
-static int gpu_shader_hue_sat(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_hue_sat(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "hue_sat", in, out);
+	return GPU_stack_link(mat, node, "hue_sat", in, out);
 }
 
 void register_node_type_sh_hue_sat(void)
@@ -92,7 +92,6 @@ void register_node_type_sh_hue_sat(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_HUE_SAT, "Hue Saturation Value", NODE_CLASS_OP_COLOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_hue_sat_in, sh_node_hue_sat_out);
 	node_type_size_preset(&ntype, NODE_SIZE_MIDDLE);
 	node_type_exec(&ntype, NULL, NULL, node_shader_exec_hue_sat);

@@ -49,13 +49,16 @@
 #include "ED_node.h"
 #include "ED_render.h"
 #include "ED_screen.h"
-#include "WM_api.h"
-#include "WM_types.h"
 
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
 #include "RNA_access.h"
+#include "RNA_define.h"
+#include "RNA_enum_types.h"
+
+#include "WM_api.h"
+#include "WM_types.h"
 
 #include "node_intern.h"  /* own include */
 
@@ -290,7 +293,7 @@ ARegion *node_has_tools_region(ScrArea *sa)
 
 /* ******************** default callbacks for node space ***************** */
 
-static SpaceLink *node_new(const bContext *UNUSED(C))
+static SpaceLink *node_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
 	ARegion *ar;
 	SpaceNode *snode;
@@ -316,7 +319,7 @@ static SpaceLink *node_new(const bContext *UNUSED(C))
 
 	BLI_addtail(&snode->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_BOTTOM : RGN_ALIGN_TOP;
 
 	/* buttons/list view */
 	ar = MEM_callocN(sizeof(ARegion), "buttons for node");
@@ -381,12 +384,12 @@ static void node_init(struct wmWindowManager *UNUSED(wm), ScrArea *UNUSED(sa))
 
 }
 
-static void node_area_listener(bScreen *sc, ScrArea *sa, wmNotifier *wmn)
+static void node_area_listener(wmWindow *UNUSED(win), ScrArea *sa, wmNotifier *wmn, Scene *UNUSED(scene))
 {
 	/* note, ED_area_tag_refresh will re-execute compositor */
 	SpaceNode *snode = sa->spacedata.first;
 	/* shaderfrom is only used for new shading nodes, otherwise all shaders are from objects */
-	short shader_type = BKE_scene_use_new_shading_nodes(sc->scene) ? snode->shaderfrom : SNODE_SHADER_OBJECT;
+	short shader_type = snode->shaderfrom;
 
 	/* preview renders */
 	switch (wmn->category) {
@@ -599,7 +602,7 @@ static void node_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 
 static void node_buttons_region_draw(const bContext *C, ARegion *ar)
 {
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
@@ -615,7 +618,7 @@ static void node_toolbar_region_init(wmWindowManager *wm, ARegion *ar)
 
 static void node_toolbar_region_draw(const bContext *C, ARegion *ar)
 {
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
 static void node_cursor(wmWindow *win, ScrArea *sa, ARegion *ar)
@@ -664,40 +667,31 @@ static void node_main_region_draw(const bContext *C, ARegion *ar)
 
 /* ************* dropboxes ************* */
 
-static bool node_ima_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
+static bool node_ima_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
-	if (drag->type == WM_DRAG_ID) {
-		ID *id = drag->poin;
-		if (GS(id->name) == ID_IM)
-			return 1;
+	if (drag->type == WM_DRAG_PATH) {
+		return (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE));   /* rule might not work? */
 	}
-	else if (drag->type == WM_DRAG_PATH) {
-		if (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE))   /* rule might not work? */
-			return 1;
+	else {
+		return WM_drag_ID(drag, ID_IM) != NULL;
 	}
-	return 0;
 }
 
-static bool node_mask_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
+static bool node_mask_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
-	if (drag->type == WM_DRAG_ID) {
-		ID *id = drag->poin;
-		if (GS(id->name) == ID_MSK)
-			return 1;
-	}
-	return 0;
+	return WM_drag_ID(drag, ID_MSK) != NULL;
 }
 
 static void node_id_drop_copy(wmDrag *drag, wmDropBox *drop)
 {
-	ID *id = drag->poin;
+	ID *id = WM_drag_ID(drag, 0);
 
 	RNA_string_set(drop->ptr, "name", id->name + 2);
 }
 
 static void node_id_path_drop_copy(wmDrag *drag, wmDropBox *drop)
 {
-	ID *id = drag->poin;
+	ID *id = WM_drag_ID(drag, 0);
 
 	if (id) {
 		RNA_string_set(drop->ptr, "name", id->name + 2);
@@ -737,17 +731,31 @@ static void node_header_region_draw(const bContext *C, ARegion *ar)
 }
 
 /* used for header + main region */
-static void node_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void node_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
+	wmGizmoMap *gzmap = ar->gizmo_map;
+
 	/* context changes */
 	switch (wmn->category) {
 		case NC_SPACE:
-			if (wmn->data == ND_SPACE_NODE)
-				ED_region_tag_redraw(ar);
+			switch (wmn->data) {
+				case ND_SPACE_NODE:
+					ED_region_tag_redraw(ar);
+					break;
+				case ND_SPACE_NODE_VIEW:
+					WM_gizmomap_tag_refresh(gzmap);
+					break;
+			}
 			break;
 		case NC_SCREEN:
+			if (wmn->data == ND_LAYOUTSET || wmn->action == NA_EDITED) {
+				WM_gizmomap_tag_refresh(gzmap);
+			}
 			switch (wmn->data) {
 				case ND_ANIMPLAY:
+				case ND_LAYER:
 					ED_region_tag_redraw(ar);
 					break;
 			}
@@ -757,10 +765,20 @@ static void node_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegi
 				ED_region_tag_redraw(ar);
 			break;
 		case NC_SCENE:
+			ED_region_tag_redraw(ar);
+			if (wmn->data == ND_RENDER_RESULT) {
+				WM_gizmomap_tag_refresh(gzmap);
+			}
+			break;
+		case NC_NODE:
+			ED_region_tag_redraw(ar);
+			if (ELEM(wmn->action, NA_EDITED, NA_SELECTED)) {
+				WM_gizmomap_tag_refresh(gzmap);
+			}
+			break;
 		case NC_MATERIAL:
 		case NC_TEXTURE:
 		case NC_WORLD:
-		case NC_NODE:
 		case NC_LINESTYLE:
 			ED_region_tag_redraw(ar);
 			break;
@@ -823,6 +841,17 @@ static int node_context(const bContext *C, const char *member, bContextDataResul
 	}
 
 	return 0;
+}
+
+static void node_widgets(void)
+{
+	/* create the widgetmap for the area here */
+	wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(
+	        &(const struct wmGizmoMapType_Params){SPACE_NODE, RGN_TYPE_WINDOW});
+	WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_transform);
+	WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_crop);
+	WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_sun_beams);
+	WM_gizmogrouptype_append_and_link(gzmap_type, NODE_GGT_backdrop_corner_pin);
 }
 
 static void node_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
@@ -896,6 +925,32 @@ static void node_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID 
 	}
 }
 
+
+static int node_space_subtype_get(ScrArea *sa)
+{
+	SpaceNode *snode = sa->spacedata.first;
+	return rna_node_tree_idname_to_enum(snode->tree_idname);
+}
+
+static void node_space_subtype_set(ScrArea *sa, int value)
+{
+	SpaceNode *snode = sa->spacedata.first;
+	ED_node_set_tree_type(snode, rna_node_tree_type_from_enum(value));
+}
+
+static void node_space_subtype_item_extend(
+        bContext *C, EnumPropertyItem **item, int *totitem)
+{
+	bool free;
+	const EnumPropertyItem *item_src = RNA_enum_node_tree_types_itemf_impl(C, &free);
+	for (const EnumPropertyItem *item_iter = item_src; item_iter->identifier; item_iter++) {
+		RNA_enum_item_add(item, totitem, item_iter);
+	}
+	if (free) {
+		MEM_freeN((void *)item_src);
+	}
+}
+
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_node(void)
 {
@@ -915,17 +970,21 @@ void ED_spacetype_node(void)
 	st->refresh = node_area_refresh;
 	st->context = node_context;
 	st->dropboxes = node_dropboxes;
+	st->gizmos = node_widgets;
 	st->id_remap = node_id_remap;
+	st->space_subtype_item_extend = node_space_subtype_item_extend;
+	st->space_subtype_get = node_space_subtype_get;
+	st->space_subtype_set = node_space_subtype_set;
 
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype node region");
 	art->regionid = RGN_TYPE_WINDOW;
 	art->init = node_main_region_init;
 	art->draw = node_main_region_draw;
+	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_GIZMO | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_GPENCIL;
 	art->listener = node_region_listener;
 	art->cursor = node_cursor;
 	art->event_cursor = true;
-	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_GPENCIL;
 
 	BLI_addhead(&st->regiontypes, art);
 
@@ -955,10 +1014,12 @@ void ED_spacetype_node(void)
 	/* regions: toolbar */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype view3d tools region");
 	art->regionid = RGN_TYPE_TOOLS;
-	art->prefsizex = 160; /* XXX */
+	art->prefsizex = 58; /* XXX */
 	art->prefsizey = 50; /* XXX */
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->listener = node_region_listener;
+	art->message_subscribe = ED_region_generic_tools_region_message_subscribe;
+	art->snap_size = ED_region_generic_tools_region_snap_size;
 	art->init = node_toolbar_region_init;
 	art->draw = node_toolbar_region_draw;
 	BLI_addhead(&st->regiontypes, art);

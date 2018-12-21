@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Bforartists UI Flags",
     "author": "Bforartists",
-    "version": (1, 0),
-    "blender": (2, 76, 0),
+    "version": (1, 1),
+    "blender": (2, 80, 0),
     "location": "User Preferences > Addons",
     "description": "UI Flags. DO NOT TURN OFF! This addon contains flags for various UI elements",
     "warning": "",
@@ -34,7 +34,7 @@ from bpy.types import Operator, AddonPreferences
 from bpy.props import BoolProperty
 
 
-class bforartists_UI_flags(AddonPreferences):
+class BFA_OT_ui_flags_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
@@ -42,53 +42,53 @@ class bforartists_UI_flags(AddonPreferences):
 #--------------------------------------------------------------------------------------------------------------------------
 
     # Subtab bools
-    subtab_3dview_properties_display_obj_related = BoolProperty(name="Object related", description="Contains some object related viewport settings", default = False)
-    subtab_3dview_properties_bgimg_settings = BoolProperty(name="Settings", description="Contains Settings", default = False)
-    subtab_3dview_properties_bgimg_align = BoolProperty(name="Align", description="Contains Align Tools", default = False)
-    subtab_3dview_properties_meshdisplay_overlay = BoolProperty(name="Overlay Options", description="Contains Overlay Settings", default = False)
-    subtab_3dview_properties_meshdisplay_info = BoolProperty(name="Info Options", description="Contains Info Settings", default = False)
+    subtab_3dview_properties_display_obj_related : BoolProperty(name = "Object related", description = "Contains some object related viewport settings", default = False)
+    subtab_3dview_properties_bgimg_settings : BoolProperty(name = "Settings", description = "Contains Settings", default = False)
+    subtab_3dview_properties_bgimg_align : BoolProperty(name = "Align", description = "Contains Align Tools", default = False)
+    subtab_3dview_properties_meshdisplay_overlay : BoolProperty(name = "Overlay Options", description = "Contains Overlay Settings", default = False)
+    subtab_3dview_properties_meshdisplay_info : BoolProperty(name = "Info Options", description = "Contains Info Settings", default = False)
 
     # Subtab Mesh Tools
-    SP_3Dview_mesh_tools_transform = BoolProperty(name="Transform", description="Transform tools", default = True)
-    SP_3Dview_mesh_tools_deform = BoolProperty(name="Deform", description="Deform tools", default = False)
-    SP_3Dview_mesh_tools_Modify = BoolProperty(name="Modify", description="Modify Tools", default = True)
-    SP_3Dview_mesh_tools_merge_separate = BoolProperty(name="Merge / Separate", description="Merge Separate tools", default = True)
-    SP_3Dview_mesh_tools_dissolve = BoolProperty(name="Dissolve", description="Contains Overlay Settings", default = False)
+    SP_3Dview_mesh_tools_transform : BoolProperty(name = "Transform", description = "Transform tools", default = True)
+    SP_3Dview_mesh_tools_deform : BoolProperty(name = "Deform", description = "Deform tools", default = False)
+    SP_3Dview_mesh_tools_Modify : BoolProperty(name = "Modify", description = "Modify Tools", default = True)
+    SP_3Dview_mesh_tools_merge_separate : BoolProperty(name = "Merge / Separate", description = "Merge Separate tools", default = True)
+    SP_3Dview_mesh_tools_dissolve : BoolProperty(name = "Dissolve", description = "Contains Overlay Settings", default = False)
 
     # Subtab bools Rendertab panels
-    SP_render_output_options = BoolProperty(name="Options", description="Contains Options", default = False)
-    SP_render_metadata_stampoptions = BoolProperty(name="Stamp Options", description="Contains Options for Stamp output", default = False)
-    SP_render_metadata_enabled = BoolProperty(name="Enabled Metadata", description="Contains the enabled / disabled Metadata Options", default = False)
-    SP_render_dimensions_options = BoolProperty(name="Advanced", description="Contains advanced Options", default = False)
-    SP_render_sampling_options = BoolProperty(name="Options", description="Contains Options", default = False)
-    SP_render_light_paths_options = BoolProperty(name="Options", description="Contains Options", default = False)
-    SP_render_postpro_BI_options = BoolProperty(name="Advanced", description="Contains more settings", default = False)
+    SP_render_output_options : BoolProperty(name = "Options", description = "Contains Options", default = False)
+    SP_render_metadata_stampoptions : BoolProperty(name = "Stamp Options", description = "Contains Options for Stamp output", default = False)
+    SP_render_metadata_enabled : BoolProperty(name = "Enabled Metadata", description = "Contains the enabled / disabled Metadata Options", default = False)
+    SP_render_dimensions_options : BoolProperty(name = "Advanced", description = "Contains advanced Options", default = False)
+    SP_render_sampling_options : BoolProperty(name = "Options", description = "Contains Options", default = False)
+    SP_render_light_paths_options : BoolProperty(name = "Options", description = "Contains Options", default = False)
+    SP_render_postpro_BI_options : BoolProperty(name = "Advanced", description = "Contains more settings", default = False)
 
     #Subtab Bools Scene Panel
-    SP_scene_colmanagement_render = BoolProperty(name="Render", description="Contains Color Management Render Settings", default = False)
-    SP_scene_audio_options = BoolProperty(name="Options", description="Contains Audio Options", default = False)
+    SP_scene_colmanagement_render : BoolProperty(name = "Render", description = "Contains Color Management Render Settings", default = False)
+    SP_scene_audio_options : BoolProperty(name = "Options", description = "Contains Audio Options", default = False)
 
     #Subtab Bools Object Panel
-    SP_object_display_wireframecols = BoolProperty(name="Wireframe Colors", description="Contains the Wireframe color options\nRequires a selected object", default = False)
+    SP_object_display_wireframecols : BoolProperty(name = "Wireframe Colors", description = "Contains the Wireframe color options\nRequires a selected object", default = False)
 
     #Subtab Bools Data Panel
-    SP_data_texspace_manual = BoolProperty(name="Manual Transform", description="Contains the transform edit boxes for manual Texture space", default = False)
+    SP_data_texspace_manual : BoolProperty(name = "Manual Transform", description = "Contains the transform edit boxes for manual Texture space", default = False)
 
     #Subtab Bools Material Panel
-    SP_material_options = BoolProperty(name="Options", description="Contains some more options", default = False)
-    SP_material_settings_options = BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
-    SP_material_shading_diffuseramp = BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
-    SP_material_shading_specularramp = BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
+    SP_material_options : BoolProperty(name = "Options", description = "Contains some more options", default = False)
+    SP_material_settings_options : BoolProperty(name = "Viewport Options", description = "Contains some Viewport options", default = False)
+    SP_material_shading_diffuseramp : BoolProperty(name = "Ramp Options", description = "Contains some Ramp options", default = False)
+    SP_material_shading_specularramp : BoolProperty(name = "Ramp Options", description = "Contains some Ramp options", default = False)
 
     # Node Editor, text or icon buttons
 
-    Node_text_or_icon = BoolProperty(name="Icon / Text Buttons", description="Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state", default = False)
+    Node_text_or_icon : BoolProperty(name = "Icon / Text Buttons", description = "Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state", default = False)
 
     # Compact paint panel
 
-    brushpanel_display_options = BoolProperty(name="Display Options", description="Contains Display options for the Brush panel", default = False)
-    brushpanel_hide_colorpicker = BoolProperty(name="Hide Colorpicker", description="Here you can hide the color picker", default = True)
-    brushpanel_hide_palette = BoolProperty(name="Hide Palette", description="Here you can display a much smaller brush menu", default = True)
+    brushpanel_display_options : BoolProperty(name = "Display Options", description = "Contains Display options for the Brush panel", default = False)
+    brushpanel_hide_colorpicker : BoolProperty(name = "Hide Colorpicker", description = "Here you can hide the color picker", default = True)
+    brushpanel_hide_palette : BoolProperty(name = "Hide Palette", description = "Here you can display a much smaller brush menu", default = True)
 
 #------------------------------------------------------------------------------------------------------------------------------
 
@@ -192,7 +192,7 @@ class bforartists_UI_flags(AddonPreferences):
         row.prop(self, "brushpanel_hide_palette")
         
 
-class OBJECT_OT_BFA_UI_flags(Operator):
+class BFA_OT_ui_flags(Operator):
     """Display UI Flags"""
     bl_idname = "object.addon_prefs_ui_flags"
     bl_label = "Bforartists UI Flags"
@@ -209,13 +209,21 @@ class OBJECT_OT_BFA_UI_flags(Operator):
 
         return {'FINISHED'}
 
+classes = (
+    BFA_OT_ui_flags_prefs, 
+	BFA_OT_ui_flags,
+	
+)
+
 
 # Registration
 def register():
-    bpy.utils.register_class(OBJECT_OT_BFA_UI_flags)
-    bpy.utils.register_class(bforartists_UI_flags)
-
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_class(OBJECT_OT_BFA_UI_flags)
-    bpy.utils.unregister_class(bforartists_UI_flags)
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
+

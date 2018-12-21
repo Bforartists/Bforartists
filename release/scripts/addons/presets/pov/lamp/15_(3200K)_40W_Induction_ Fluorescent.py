@@ -1,4 +1,4 @@
-#since the 1990's, 
+#since the 1990's,
 #Often circular or rectangular closed loop electrodeless fluorescent lamps
 
 import bpy

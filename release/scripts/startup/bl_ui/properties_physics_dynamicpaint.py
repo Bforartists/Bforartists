@@ -17,9 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-import bpy
-from bpy.types import Panel, UIList
 
+import bpy
+from bpy.types import (
+    Panel,
+    UIList,
+)
 from .properties_physics_common import (
     point_cache_ui,
     effector_weights_ui,
@@ -31,15 +34,23 @@ class PHYSICS_UL_dynapaint_surfaces(UIList):
         # assert(isinstance(item, bpy.types.DynamicPaintSurface)
         surf = item
         sticon = layout.enum_item_icon(surf, "surface_type", surf.surface_type)
+
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             row = layout.row(align=True)
             row.label(text="", icon_value=icon)
             row.prop(surf, "name", text="", emboss=False, icon_value=sticon)
             row = layout.row(align=True)
+
             if surf.use_color_preview:
-                row.prop(surf, "show_preview", text="", emboss=False,
-                         icon='RESTRICT_VIEW_OFF' if surf.show_preview else 'RESTRICT_VIEW_ON')
+                row.prop(
+                    surf,
+                    "show_preview",
+                    text="",
+                    emboss=False,
+                    icon='RESTRICT_VIEW_OFF' if surf.show_preview else 'RESTRICT_VIEW_ON'
+                )
             row.prop(surf, "is_active", text="")
+
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
             row = layout.row(align=True)
@@ -52,184 +63,301 @@ class PhysicButtonsPanel:
     bl_region_type = 'WINDOW'
     bl_context = "physics"
 
-    @classmethod
-    def poll(cls, context):
+    def poll_dyn_paint(context):
         ob = context.object
-        rd = context.scene.render
-        return (ob and ob.type == 'MESH') and rd.engine in cls.COMPAT_ENGINES and context.dynamic_paint
+        return (ob and ob.type == 'MESH') and context.dynamic_paint
+
+    def poll_dyn_canvas(context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        md = context.dynamic_paint
+        return (md and md.ui_type == 'CANVAS' and md.canvas_settings and md.canvas_settings.canvas_surfaces.active)
+
+    def poll_dyn_canvas_paint(context):
+        if not PhysicButtonsPanel.poll_dyn_canvas(context):
+            return False
+
+        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
+        return (surface.surface_type == 'PAINT')
+
+    def poll_dyn_canvas_brush(context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        md = context.dynamic_paint
+        return (md and md.ui_type == 'BRUSH' and md.brush_settings)
+
+    def poll_dyn_output(context):
+        if not PhysicButtonsPanel.poll_dyn_canvas(context):
+            return False
+
+        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
+        return (not (surface.surface_format == 'VERTEX' and (surface.surface_type in {'DISPLACE', 'WAVE'})))
+
+    def poll_dyn_output_maps(context):
+        if not PhysicButtonsPanel.poll_dyn_output(context):
+            return False
+
+        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
+        return (surface.surface_format == 'IMAGE' and surface.surface_type == 'PAINT')
 
 
 class PHYSICS_PT_dynamic_paint(PhysicButtonsPanel, Panel):
     bl_label = "Dynamic Paint"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        md = context.dynamic_paint
+
+        layout.prop(md, "ui_type")
+
+
+class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
+    bl_label = "Settings"
+    bl_parent_id = 'PHYSICS_PT_dynamic_paint'
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
 
         md = context.dynamic_paint
-
-        layout.row().prop(md, "ui_type", expand=True)
 
         if md.ui_type == 'CANVAS':
             canvas = md.canvas_settings
 
             if canvas is None:
                 layout.operator("dpaint.type_toggle", text="Add Canvas").type = 'CANVAS'
-            else:
-                layout.operator("dpaint.type_toggle", text="Remove Canvas", icon='X').type = 'CANVAS'
+                return  # do nothing.
 
-                surface = canvas.canvas_surfaces.active
+            layout.operator("dpaint.type_toggle", text="Remove Canvas", icon='X').type = 'CANVAS'
 
-                row = layout.row()
-                row.template_list("PHYSICS_UL_dynapaint_surfaces", "", canvas, "canvas_surfaces",
-                                  canvas.canvas_surfaces, "active_index", rows=1)
+            surface = canvas.canvas_surfaces.active
 
-                col = row.column(align=True)
-                col.operator("dpaint.surface_slot_add", icon='ZOOMIN', text="")
-                col.operator("dpaint.surface_slot_remove", icon='ZOOMOUT', text="")
+            row = layout.row()
+            row.template_list(
+                "PHYSICS_UL_dynapaint_surfaces", "", canvas, "canvas_surfaces",
+                canvas.canvas_surfaces, "active_index", rows=1
+            )
 
-                if surface:
-                    layout.prop(surface, "surface_format")
+            col = row.column(align=True)
+            col.operator("dpaint.surface_slot_add", icon='ADD', text="")
+            col.operator("dpaint.surface_slot_remove", icon='REMOVE', text="")
 
-                    col = layout.column()
-                    if surface.surface_format != 'VERTEX':
-                        col.label(text="Quality:")
-                        col.prop(surface, "image_resolution")
-                    col.prop(surface, "use_antialiasing")
+            layout.separator()
 
-                    col = layout.column()
-                    col.label(text="Frames:")
-                    split = col.split()
+            layout.use_property_split = True
 
-                    col = split.column(align=True)
-                    col.prop(surface, "frame_start", text="Start")
-                    col.prop(surface, "frame_end", text="End")
+            if surface:
+                flow = layout.grid_flow(
+                    row_major=True, columns=0, even_columns=True, even_rows=False, align=False
+                )
+                col = flow.column()
 
-                    split.prop(surface, "frame_substeps")
+                col.prop(surface, "surface_format")
+
+                if surface.surface_format != 'VERTEX':
+                    col.prop(surface, "image_resolution")
+                col.prop(surface, "use_antialiasing")
+
+                col = flow.column(align=True)
+                col.prop(surface, "frame_start", text="Frame Start")
+                col.prop(surface, "frame_end", text="End")
+
+                col.prop(surface, "frame_substeps")
 
         elif md.ui_type == 'BRUSH':
             brush = md.brush_settings
-            use_shading_nodes = context.scene.render.use_shading_nodes
 
             if brush is None:
                 layout.operator("dpaint.type_toggle", text="Add Brush").type = 'BRUSH'
-            else:
-                layout.operator("dpaint.type_toggle", text="Remove Brush", icon='X').type = 'BRUSH'
+                return  # do nothing.
 
-                split = layout.split()
+            layout.operator("dpaint.type_toggle", text="Remove Brush", icon='X').type = 'BRUSH'
 
-                col = split.column()
-                col.prop(brush, "use_absolute_alpha")
-                col.prop(brush, "use_paint_erase")
-                col.prop(brush, "paint_wetness", text="Wetness")
+            layout.use_property_split = True
 
-                col = split.column()
-                if not use_shading_nodes:
-                    sub = col.column()
-                    sub.active = (brush.paint_source != 'PARTICLE_SYSTEM')
-                    sub.prop(brush, "use_material")
-                if brush.use_material and brush.paint_source != 'PARTICLE_SYSTEM' and not use_shading_nodes:
-                    col.prop(brush, "material", text="")
-                    col.prop(brush, "paint_alpha", text="Alpha Factor")
-                else:
-                    col.prop(brush, "paint_color", text="")
-                    col.prop(brush, "paint_alpha", text="Alpha")
+            flow = layout.grid_flow(
+                row_major=True, columns=0, even_columns=True, even_rows=False, align=False
+            )
+            col = flow.column()
+            col.prop(brush, "paint_color")
+            col.prop(brush, "paint_alpha", text="Alpha", slider=True)
+
+            col = flow.column()
+            col.prop(brush, "paint_wetness", text="Wetness", slider=True)
+            col.prop(brush, "use_absolute_alpha")
+            col.prop(brush, "use_paint_erase")
 
 
 class PHYSICS_PT_dp_advanced_canvas(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Advanced"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_label = "Advanced"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        return md and md.ui_type == 'CANVAS' and md.canvas_settings and md.canvas_settings.canvas_surfaces.active and rd.engine in cls.COMPAT_ENGINES
+        if not PhysicButtonsPanel.poll_dyn_canvas(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         canvas = context.dynamic_paint.canvas_settings
         surface = canvas.canvas_surfaces.active
-
         surface_type = surface.surface_type
 
         layout.prop(surface, "surface_type")
+
         layout.separator()
 
-        # dissolve
-        if surface_type == 'PAINT':
-            split = layout.split(percentage=0.35)
-            split.prop(surface, "use_drying", text="Dry:")
-
-            col = split.column()
-            col.active = surface.use_drying
-            split = col.split(percentage=0.7)
-            col = split.column(align=True)
-            col.prop(surface, "dry_speed", text="Time")
-            col.prop(surface, "color_dry_threshold")
-            split.prop(surface, "use_dry_log", text="Slow")
-
-        if surface_type != 'WAVE':
-            split = layout.split(percentage=0.35)
-            col = split.column()
-            if surface_type == 'WEIGHT':
-                col.prop(surface, "use_dissolve", text="Fade:")
-            else:
-                col.prop(surface, "use_dissolve", text="Dissolve:")
-            col = split.column()
-            col.active = surface.use_dissolve
-            split = col.split(percentage=0.7)
-            split.prop(surface, "dissolve_speed", text="Time")
-            split.prop(surface, "use_dissolve_log", text="Slow")
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         # per type settings
         if surface_type == 'DISPLACE':
-            layout.prop(surface, "use_incremental_displace")
+            col = flow.column()
+
             if surface.surface_format == 'VERTEX':
-                row = layout.row()
-                row.prop(surface, "depth_clamp")
-                row.prop(surface, "displace_factor")
+                col.prop(surface, "depth_clamp")
+                col.prop(surface, "displace_factor")
+
+            col.prop(surface, "use_incremental_displace")
+            col.separator()
 
         elif surface_type == 'WAVE':
-            layout.prop(surface, "use_wave_open_border")
-
-            split = layout.split()
-
-            col = split.column(align=True)
+            col = flow.column()
+            col.prop(surface, "use_wave_open_border")
             col.prop(surface, "wave_timescale")
             col.prop(surface, "wave_speed")
 
-            col = split.column(align=True)
+            col.separator()
+
+            col = flow.column()
             col.prop(surface, "wave_damping")
             col.prop(surface, "wave_spring")
             col.prop(surface, "wave_smoothness")
 
-        layout.separator()
-        layout.prop(surface, "brush_group")
-        row = layout.row()
-        row.prop(surface, "brush_influence_scale")
-        row.prop(surface, "brush_radius_scale")
+            col.separator()
+
+        col = flow.column()
+        col.prop(surface, "brush_collection")
+
+        if surface_type not in {'DISPLACE', 'WAVE'}:
+            col = flow.column()  # flow the layout otherwise.
+
+        col.prop(surface, "brush_influence_scale", text="Scale Influence")
+        col.prop(surface, "brush_radius_scale", text="Radius")
 
 
-class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Output"
+class PHYSICS_PT_dp_advanced_canvas_paint_dry(PhysicButtonsPanel, Panel):
+    bl_label = "Dry"
+    bl_parent_id = "PHYSICS_PT_dp_advanced_canvas"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        if not (md and md.ui_type == 'CANVAS' and md.canvas_settings):
-            return 0
-        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
-        return (surface and
-                (not (surface.surface_format == 'VERTEX' and (surface.surface_type in {'DISPLACE', 'WAVE'}))) and
-                (rd.engine in cls.COMPAT_ENGINES))
+        if not PhysicButtonsPanel.poll_dyn_canvas_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        self.layout.prop(surface, "use_drying", text="")
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        flow.active = surface.use_drying
+
+        col = flow.column()
+        col.prop(surface, "dry_speed", text="Time")
+
+        col = flow.column()
+        col.prop(surface, "color_dry_threshold", text="Color")
+        col.prop(surface, "use_dry_log", text="Slow")
+
+
+class PHYSICS_PT_dp_advanced_canvas_paint_dissolve(PhysicButtonsPanel, Panel):
+    bl_label = "Dissolve"
+    bl_parent_id = "PHYSICS_PT_dp_advanced_canvas"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas(context):
+            return False
+
+        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
+
+        return (surface.surface_type != 'WAVE' and context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        self.layout.prop(surface, "use_dissolve", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        flow.active = surface.use_dissolve
+
+        col = flow.column()
+        col.prop(surface, "dissolve_speed", text="Time")
+
+        col = flow.column()
+        col.prop(surface, "use_dissolve_log", text="Slow")
+
+
+class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
+    bl_label = "Output"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_output(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
 
         canvas = context.dynamic_paint.canvas_settings
         surface = canvas.canvas_surfaces.active
@@ -237,88 +365,158 @@ class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
 
         surface_type = surface.surface_type
 
-        # vertex format outputs
+        # vertex format outputs.
         if surface.surface_format == 'VERTEX':
             if surface_type == 'PAINT':
-                # toggle active preview
+                # toggle active preview.
                 layout.prop(surface, "preview_id")
 
-                # paint-map output
+                # paint-map output.
                 row = layout.row()
                 row.prop_search(surface, "output_name_a", ob.data, "vertex_colors", text="Paintmap Layer")
-                if surface.output_exists(object=ob, index=0):
-                    ic = 'ZOOMOUT'
-                else:
-                    ic = 'ZOOMIN'
 
-                row.operator("dpaint.output_toggle", icon=ic, text="").output = 'A'
+                icons = 'REMOVE' if surface.output_exists(object=ob, index=0) else 'ADD'
+                row.operator("dpaint.output_toggle", icon=icons, text="").output = 'A'
 
-                # wet-map output
+                # wet-map output.
                 row = layout.row()
                 row.prop_search(surface, "output_name_b", ob.data, "vertex_colors", text="Wetmap Layer")
-                if surface.output_exists(object=ob, index=1):
-                    ic = 'ZOOMOUT'
-                else:
-                    ic = 'ZOOMIN'
 
-                row.operator("dpaint.output_toggle", icon=ic, text="").output = 'B'
+                icons = 'REMOVE' if surface.output_exists(object=ob, index=1) else 'ADD'
+                row.operator("dpaint.output_toggle", icon=icons, text="").output = 'B'
 
             elif surface_type == 'WEIGHT':
                 row = layout.row()
                 row.prop_search(surface, "output_name_a", ob, "vertex_groups", text="Vertex Group")
-                if surface.output_exists(object=ob, index=0):
-                    ic = 'ZOOMOUT'
-                else:
-                    ic = 'ZOOMIN'
 
-                row.operator("dpaint.output_toggle", icon=ic, text="").output = 'A'
+                icons = 'REMOVE' if surface.output_exists(object=ob, index=0) else 'ADD'
+                row.operator("dpaint.output_toggle", icon=icons, text="").output = 'A'
 
-        # image format outputs
+        # image format outputs.
         if surface.surface_format == 'IMAGE':
-            layout.operator("dpaint.bake", text="Bake Image Sequence", icon='MOD_DYNAMICPAINT')
-            layout.prop_search(surface, "uv_layer", ob.data, "uv_textures", text="UV Map")
-            layout.separator()
+            # layout.operator("dpaint.bake", text="Bake Image Sequence", icon='MOD_DYNAMICPAINT')
 
-            layout.prop(surface, "image_output_path", text="")
-            row = layout.row()
-            row.prop(surface, "image_fileformat", text="")
-            row.prop(surface, "use_premultiply", text="Premultiply Alpha")
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-            if surface_type == 'PAINT':
-                split = layout.split(percentage=0.4)
-                split.prop(surface, "use_output_a", text="Paintmaps:")
-                sub = split.row()
-                sub.active = surface.use_output_a
-                sub.prop(surface, "output_name_a", text="")
+            col = flow.column()
 
-                split = layout.split(percentage=0.4)
-                split.prop(surface, "use_output_b", text="Wetmaps:")
-                sub = split.row()
-                sub.active = surface.use_output_b
-                sub.prop(surface, "output_name_b", text="")
-            else:
-                col = layout.column()
-                col.prop(surface, "output_name_a", text="Filename:")
+            col.prop_search(surface, "uv_layer", ob.data, "uv_layers", text="UV Map")
+
+            col = flow.column()
+            col.prop(surface, "image_fileformat")
+            col.prop(surface, "use_premultiply", text="Premultiply Alpha")
+
+            if surface_type != 'PAINT':
+                col = col.column()
+                col.prop(surface, "output_name_a", text="Filename")
+
                 if surface_type == 'DISPLACE':
                     col.prop(surface, "displace_type", text="Displace Type")
                     col.prop(surface, "depth_clamp")
+
                 elif surface_type == 'WAVE':
                     col.prop(surface, "depth_clamp", text="Wave Clamp")
 
 
-class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Initial Color"
+class PHYSICS_PT_dp_canvas_output_paintmaps(PhysicButtonsPanel, Panel):
+    bl_label = "Paintmaps"
+    bl_parent_id = "PHYSICS_PT_dp_canvas_output"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        if not (md and md.ui_type == 'CANVAS' and md.canvas_settings):
-            return 0
-        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
-        return (surface and surface.surface_type == 'PAINT') and (rd.engine in cls.COMPAT_ENGINES)
+        if not PhysicButtonsPanel.poll_dyn_output_maps(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        self.layout.prop(surface, "use_output_a", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        sub = layout.column()
+        sub.active = surface.use_output_a
+        sub.prop(surface, "output_name_a", text="Name")
+
+
+class PHYSICS_PT_dp_canvas_output_bake(PhysicButtonsPanel, Panel):
+    bl_label = "Bake"
+    bl_parent_id = "PHYSICS_PT_dp_canvas_output"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_output_maps(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        row = layout.row(align=True)
+        row.alignment = 'RIGHT'
+        row.label(text="Cache Path")
+
+        layout.prop(surface, "image_output_path", text="")
+        layout.operator("dpaint.bake", text="Bake Image Sequence", icon='MOD_DYNAMICPAINT')
+
+
+class PHYSICS_PT_dp_canvas_output_wetmaps(PhysicButtonsPanel, Panel):
+    bl_label = "Wetmaps"
+    bl_parent_id = "PHYSICS_PT_dp_canvas_output"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_output_maps(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        self.layout.prop(surface, "use_output_b", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        sub = layout.column()
+        sub.active = surface.use_output_b
+        sub.prop(surface, "output_name_b", text="Name")
+
+
+class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
+    bl_label = "Initial Color"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -327,35 +525,126 @@ class PHYSICS_PT_dp_canvas_initial_color(PhysicButtonsPanel, Panel):
         surface = canvas.canvas_surfaces.active
         ob = context.object
 
-        layout.prop(surface, "init_color_type", expand=False)
+        layout.use_property_split = True
+
+        col = layout.column()
+        col.prop(surface, "init_color_type", text="Type", expand=False)
+
         if surface.init_color_type != 'NONE':
-            layout.separator()
+            col.separator()
 
         # dissolve
         if surface.init_color_type == 'COLOR':
             layout.prop(surface, "init_color")
 
         elif surface.init_color_type == 'TEXTURE':
-            layout.prop(surface, "init_texture")
-            layout.prop_search(surface, "init_layername", ob.data, "uv_textures", text="UV Map")
+            col.prop(surface, "init_texture")
+            col.prop_search(surface, "init_layername", ob.data, "uv_layers", text="UV Map")
 
         elif surface.init_color_type == 'VERTEX_COLOR':
-            layout.prop_search(surface, "init_layername", ob.data, "vertex_colors", text="Color Layer")
+            col.prop_search(surface, "init_layername", ob.data, "vertex_colors", text="Color Layer")
 
 
 class PHYSICS_PT_dp_effects(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Effects"
+    bl_label = "Effects"
+    bl_parent_id = 'PHYSICS_PT_dynamic_paint'
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        if not (md and md.ui_type == 'CANVAS' and md.canvas_settings):
+        if not PhysicButtonsPanel.poll_dyn_canvas_paint(context):
             return False
-        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
-        return (surface and surface.surface_type == 'PAINT') and (rd.engine in cls.COMPAT_ENGINES)
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        return  # do nothing.
+
+
+class PHYSICS_PT_dp_effects_spread(PhysicButtonsPanel, Panel):
+    bl_label = "Spread"
+    bl_parent_id = "PHYSICS_PT_dp_effects"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        self.layout.prop(surface, "use_spread", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        layout.active = surface.use_spread
+
+        col = flow.column()
+        col.prop(surface, "spread_speed", text="Speed")
+
+        col = flow.column()
+        col.prop(surface, "color_spread_speed", text="Color")
+
+
+class PHYSICS_PT_dp_effects_drip(PhysicButtonsPanel, Panel):
+    bl_label = "Drip"
+    bl_parent_id = "PHYSICS_PT_dp_effects"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        self.layout.prop(surface, "use_drip", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        flow.active = surface.use_drip
+
+        col = flow.column()
+        col.prop(surface, "drip_velocity", slider=True)
+
+        col = flow.column()
+        col.prop(surface, "drip_acceleration", slider=True)
+
+
+class PHYSICS_PT_dp_effects_drip_weights(PhysicButtonsPanel, Panel):
+    bl_label = "Weights"
+    bl_parent_id = "PHYSICS_PT_dp_effects_drip"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -363,51 +652,54 @@ class PHYSICS_PT_dp_effects(PhysicButtonsPanel, Panel):
         canvas = context.dynamic_paint.canvas_settings
         surface = canvas.canvas_surfaces.active
 
-        layout.row().prop(surface, "effect_ui", expand=True)
+        layout.active = surface.use_drip
 
-        if surface.effect_ui == 'SPREAD':
-            layout.prop(surface, "use_spread")
-
-            row = layout.row()
-            row.active = surface.use_spread
-            row.prop(surface, "spread_speed")
-            row.prop(surface, "color_spread_speed")
-
-        elif surface.effect_ui == 'DRIP':
-            layout.prop(surface, "use_drip")
-
-            col = layout.column()
-            col.active = surface.use_drip
-            effector_weights_ui(self, context, surface.effector_weights, 'DYNAMIC_PAINT')
-
-            layout.label(text="Surface Movement:")
-            row = layout.row()
-            row.prop(surface, "drip_velocity", slider=True)
-            row.prop(surface, "drip_acceleration", slider=True)
-
-        elif surface.effect_ui == 'SHRINK':
-            layout.prop(surface, "use_shrink")
-
-            row = layout.row()
-            row.active = surface.use_shrink
-            row.prop(surface, "shrink_speed")
+        effector_weights_ui(self, context, surface.effector_weights, 'DYNAMIC_PAINT')
 
 
-class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Cache"
+class PHYSICS_PT_dp_effects_shrink(PhysicButtonsPanel, Panel):
+    bl_label = "Shrink"
+    bl_parent_id = "PHYSICS_PT_dp_effects"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        return (md and
-                md.ui_type == 'CANVAS' and
-                md.canvas_settings and
-                md.canvas_settings.canvas_surfaces.active and
-                md.canvas_settings.canvas_surfaces.active.is_cache_user and
-                (rd.engine in cls.COMPAT_ENGINES))
+        if not PhysicButtonsPanel.poll_dyn_paint(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+
+        self.layout.prop(surface, "use_shrink", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        canvas = context.dynamic_paint.canvas_settings
+        surface = canvas.canvas_surfaces.active
+        layout.active = surface.use_shrink
+
+        layout.prop(surface, "shrink_speed", text="Speed")
+
+
+class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
+    bl_label = "Cache"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas(context):
+            return False
+
+        surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
+        return (surface.is_cache_user and (context.engine in cls.COMPAT_ENGINES))
 
     def draw(self, context):
         surface = context.dynamic_paint.canvas_settings.canvas_surfaces.active
@@ -417,130 +709,231 @@ class PHYSICS_PT_dp_cache(PhysicButtonsPanel, Panel):
 
 
 class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Source"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    bl_label = "Source"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        return md and md.ui_type == 'BRUSH' and md.brush_settings and (rd.engine in cls.COMPAT_ENGINES)
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         brush = context.dynamic_paint.brush_settings
         ob = context.object
 
-        split = layout.split()
-        col = split.column()
-        col.prop(brush, "paint_source")
+        layout.prop(brush, "paint_source", text="Paint")
+
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         if brush.paint_source == 'PARTICLE_SYSTEM':
-            col.prop_search(brush, "particle_system", ob, "particle_systems", text="")
+            col = flow.column()
+
+            col.separator()
+
+            col.prop_search(brush, "particle_system", ob, "particle_systems")
+
             if brush.particle_system:
-                col.label(text="Particle Effect:")
+                col = flow.column()
+
                 sub = col.column()
                 sub.active = not brush.use_particle_radius
-                sub.prop(brush, "solid_radius", text="Solid Radius")
+                sub.prop(brush, "solid_radius", text="Effect Solid Radius")
+
                 col.prop(brush, "use_particle_radius", text="Use Particle's Radius")
                 col.prop(brush, "smooth_radius", text="Smooth Radius")
 
         if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE', 'POINT'}:
-            col.prop(brush, "paint_distance", text="Paint Distance")
-            split = layout.row().split(percentage=0.4)
-            sub = split.column()
-            if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
-                sub.prop(brush, "use_proximity_project")
-            if brush.paint_source == 'VOLUME_DISTANCE':
-                sub.prop(brush, "invert_proximity")
-                sub.prop(brush, "use_negative_volume")
+            col = flow.column()
 
-            sub = split.column()
+            col.separator()
+
+            col.prop(brush, "paint_distance", text="Distance")
+            col.prop(brush, "proximity_falloff")
+
+            if brush.paint_source == 'VOLUME_DISTANCE':
+                col.prop(brush, "invert_proximity")
+
+                col = flow.column()
+                col.prop(brush, "use_negative_volume")
+
             if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
-                column = sub.column()
-                column.active = brush.use_proximity_project
-                column.prop(brush, "ray_direction")
-            sub.prop(brush, "proximity_falloff")
-            if brush.proximity_falloff == 'RAMP':
-                col = layout.row().column()
-                col.separator()
-                col.prop(brush, "use_proximity_ramp_alpha", text="Only Use Alpha")
-                col.template_color_ramp(brush, "paint_ramp", expand=True)
+                col = flow.column() if brush.paint_source != 'VOLUME_DISTANCE' else col.column()
+                col.prop(brush, "use_proximity_project")
+
+                sub = col.column()
+                sub.active = brush.use_proximity_project
+                sub.prop(brush, "ray_direction")
+
+
+class PHYSICS_PT_dp_brush_source_color_ramp(PhysicButtonsPanel, Panel):
+    bl_label = "Falloff Ramp"
+    bl_parent_id = "PHYSICS_PT_dp_brush_source"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        brush = context.dynamic_paint.brush_settings
+        return ((brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE', 'POINT'})
+                and (brush.proximity_falloff == 'RAMP')
+                and (context.engine in cls.COMPAT_ENGINES))
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        brush = context.dynamic_paint.brush_settings
+        layout.prop(brush, "use_proximity_ramp_alpha", text="Only Use Alpha")
+
+        layout.use_property_split = False
+        layout.template_color_ramp(brush, "paint_ramp", expand=True)
 
 
 class PHYSICS_PT_dp_brush_velocity(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Velocity"
+    bl_label = "Velocity"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        return md and md.ui_type == 'BRUSH' and md.brush_settings and (rd.engine in cls.COMPAT_ENGINES)
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         brush = context.dynamic_paint.brush_settings
 
-        split = layout.split()
-
-        col = split.column()
+        col = flow.column()
         col.prop(brush, "use_velocity_alpha")
         col.prop(brush, "use_velocity_color")
 
-        split.prop(brush, "use_velocity_depth")
-
-        col = layout.column()
-        col.active = (brush.use_velocity_alpha or brush.use_velocity_color or brush.use_velocity_depth)
-        col.prop(brush, "velocity_max")
-        col.template_color_ramp(brush, "velocity_ramp", expand=True)
-        layout.separator()
-
-        row = layout.row()
-        row.prop(brush, "use_smudge")
-        sub = row.row()
-        sub.active = brush.use_smudge
-        sub.prop(brush, "smudge_strength")
+        col = flow.column()
+        col.prop(brush, "use_velocity_depth")
+        sub = col.column()
+        sub.active = (brush.use_velocity_alpha or brush.use_velocity_color or brush.use_velocity_depth)
+        sub.prop(brush, "velocity_max")
 
 
-class PHYSICS_PT_dp_brush_wave(PhysicButtonsPanel, Panel):
-    bl_label = "Dynamic Paint Waves"
+class PHYSICS_PT_dp_brush_velocity_color_ramp(PhysicButtonsPanel, Panel):
+    bl_label = "Ramp"
+    bl_parent_id = "PHYSICS_PT_dp_brush_velocity"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        md = context.dynamic_paint
-        rd = context.scene.render
-        return md and md.ui_type == 'BRUSH' and md.brush_settings and (rd.engine in cls.COMPAT_ENGINES)
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
 
         brush = context.dynamic_paint.brush_settings
 
-        layout.prop(brush, "wave_type")
+        layout.template_color_ramp(brush, "velocity_ramp", expand=True)
+
+
+class PHYSICS_PT_dp_brush_velocity_smudge(PhysicButtonsPanel, Panel):
+    bl_label = "Smudge"
+    bl_parent_id = "PHYSICS_PT_dp_brush_velocity"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        brush = context.dynamic_paint.brush_settings
+
+        self.layout.prop(brush, "use_smudge", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        brush = context.dynamic_paint.brush_settings
+
+        layout.active = brush.use_smudge
+        layout.prop(brush, "smudge_strength", text="Strength", slider=True)
+
+
+class PHYSICS_PT_dp_brush_wave(PhysicButtonsPanel, Panel):
+    bl_label = "Waves"
+    bl_parent_id = "PHYSICS_PT_dynamic_paint"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        if not PhysicButtonsPanel.poll_dyn_canvas_brush(context):
+            return False
+
+        return (context.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        brush = context.dynamic_paint.brush_settings
+
+        layout.prop(brush, "wave_type", text="Type")
+
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
+
         if brush.wave_type != 'REFLECT':
-            row = layout.row()
-            row.prop(brush, "wave_factor")
-            row.prop(brush, "wave_clamp")
+            col = flow.column()
+            col.prop(brush, "wave_factor")
+
+            col = flow.column()
+            col.prop(brush, "wave_clamp")
 
 
 classes = (
     PHYSICS_UL_dynapaint_surfaces,
     PHYSICS_PT_dynamic_paint,
+    PHYSICS_PT_dynamic_paint_settings,
     PHYSICS_PT_dp_advanced_canvas,
-    PHYSICS_PT_dp_canvas_output,
-    PHYSICS_PT_dp_canvas_initial_color,
-    PHYSICS_PT_dp_effects,
+    PHYSICS_PT_dp_advanced_canvas_paint_dissolve,
+    PHYSICS_PT_dp_advanced_canvas_paint_dry,
     PHYSICS_PT_dp_cache,
+    PHYSICS_PT_dp_effects,
+    PHYSICS_PT_dp_effects_spread,
+    PHYSICS_PT_dp_effects_drip,
+    PHYSICS_PT_dp_effects_drip_weights,
+    PHYSICS_PT_dp_effects_shrink,
+    PHYSICS_PT_dp_canvas_initial_color,
     PHYSICS_PT_dp_brush_source,
+    PHYSICS_PT_dp_brush_source_color_ramp,
     PHYSICS_PT_dp_brush_velocity,
+    PHYSICS_PT_dp_brush_velocity_color_ramp,
+    PHYSICS_PT_dp_brush_velocity_smudge,
     PHYSICS_PT_dp_brush_wave,
+    PHYSICS_PT_dp_canvas_output,
+    PHYSICS_PT_dp_canvas_output_bake,
+    PHYSICS_PT_dp_canvas_output_paintmaps,
+    PHYSICS_PT_dp_canvas_output_wetmaps,
 )
+
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class

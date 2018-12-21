@@ -36,23 +36,7 @@
 
 #include "GHOST_Context.h"
 
-#ifdef WITH_GLEW_MX
-#define wglewGetContext() wglewContext
-#endif
-
 #include <GL/wglew.h>
-
-#ifdef WITH_GLEW_MX
-extern "C" WGLEWContext *wglewContext;
-#endif
-
-#ifndef GHOST_OPENGL_WGL_CONTEXT_FLAGS
-#  ifdef WITH_GPU_DEBUG
-#    define GHOST_OPENGL_WGL_CONTEXT_FLAGS WGL_CONTEXT_DEBUG_BIT_ARB
-#  else
-#    define GHOST_OPENGL_WGL_CONTEXT_FLAGS 0
-#  endif
-#endif
 
 #ifndef GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY
 #define GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY 0
@@ -95,6 +79,12 @@ public:
 	GHOST_TSuccess activateDrawingContext();
 
 	/**
+	 * Release the drawing context of the calling thread.
+	 * \return  A boolean success indicator.
+	 */
+	GHOST_TSuccess releaseDrawingContext();
+
+	/**
 	 * Call immediately after new to initialize.  If this fails then immediately delete the object.
 	 * \return Indication as to whether initialization has succeeded.
 	 */
@@ -121,13 +111,6 @@ public:
 	 */
 	GHOST_TSuccess getSwapInterval(int &intervalOut);
 
-protected:
-	inline void activateWGLEW() const {
-#ifdef WITH_GLEW_MX
-		wglewContext = m_wglewContext;
-#endif
-	}
-
 private:
 	int choose_pixel_format(
 	        bool stereoVisual,
@@ -148,15 +131,7 @@ private:
 	        int numOfAASamples,
 	        bool needAlpha,
 	        bool needStencil,
-	        bool sRGB,
-	        int *swapMethodOut);
-
-	int _choose_pixel_format_arb_2(bool stereoVisual,
-	        int *numOfAASamples,
-	        bool needAlpha,
-	        bool needStencil,
-	        bool sRGB,
-	        int  swapMethod);
+	        bool sRGB);
 
 	void initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD);
 
@@ -172,10 +147,6 @@ private:
 
 	HGLRC m_hGLRC;
 
-#ifdef WITH_GLEW_MX
-	WGLEWContext *m_wglewContext;
-#endif
-
 #ifndef NDEBUG
 	const char *m_dummyVendor;
 	const char *m_dummyRenderer;
@@ -184,8 +155,6 @@ private:
 
 	static HGLRC s_sharedHGLRC;
 	static int   s_sharedCount;
-
-	static bool s_singleContextMode;
 };
 
 #endif  // __GHOST_CONTEXTWGL_H__

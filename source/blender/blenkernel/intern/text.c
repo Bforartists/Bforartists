@@ -47,8 +47,6 @@
 #include "BLI_fileops.h"
 
 #include "DNA_constraint_types.h"
-#include "DNA_controller_types.h"
-#include "DNA_actuator_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -58,7 +56,6 @@
 #include "DNA_node_types.h"
 #include "DNA_material_types.h"
 
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
@@ -476,7 +473,7 @@ Text *BKE_text_load(Main *bmain, const char *file, const char *relpath)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_text_copy_data(Main *UNUSED(bmain), Text *ta_dst, const Text *ta_src, const int UNUSED(flag))
 {

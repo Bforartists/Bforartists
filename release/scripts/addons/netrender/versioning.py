@@ -131,4 +131,3 @@ ITEMS =  (
           (Subversion.name, Subversion.name, Subversion.description),
           (Git.name, Git.name, Git.description),
           )
-

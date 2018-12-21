@@ -25,7 +25,7 @@ light_source {
 camera {
    location  <0.2, 0.0,-25.0>
    look_at   <0.0, 0.0,  0.0>
-   right x*image_width/image_height // keep propotions with any aspect ratio
+   right x*image_width/image_height // keep proportions with any aspect ratio
    angle 65 
 }
 
@@ -132,7 +132,7 @@ camera {
 #declare Wall=pigment {
    BrickWall(<4,1,1>,0.2,<0.05,0.1,0>,6,0.5,0.5)
    function{FBrickWall(x,y,z).gray}
-   pigment_map {                    // give some stucture to the joint ...
+   pigment_map {                    // give some structure to the joint ...
       [0, granite
           scale 0.1
           colour_map {

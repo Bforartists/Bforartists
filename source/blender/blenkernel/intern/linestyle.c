@@ -139,7 +139,7 @@ void BKE_linestyle_free(FreestyleLineStyle *linestyle)
 
 	/* is no lib link block, but linestyle extension */
 	if (linestyle->nodetree) {
-		ntreeFreeTree(linestyle->nodetree);
+		ntreeFreeNestedTree(linestyle->nodetree);
 		MEM_freeN(linestyle->nodetree);
 		linestyle->nodetree = NULL;
 	}
@@ -160,7 +160,7 @@ void BKE_linestyle_free(FreestyleLineStyle *linestyle)
  *
  * WARNING! This function will not handle ID user count!
  *
- * \param flag  Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
+ * \param flag: Copying options (see BKE_library.h's LIB_ID_COPY_... flags for more).
  */
 void BKE_linestyle_copy_data(
         struct Main *bmain, FreestyleLineStyle *linestyle_dst, const FreestyleLineStyle *linestyle_src, const int flag)
@@ -212,20 +212,11 @@ void BKE_linestyle_make_local(struct Main *bmain, FreestyleLineStyle *linestyle,
 	BKE_id_make_local_generic(bmain, &linestyle->id, true, lib_local);
 }
 
-FreestyleLineStyle *BKE_linestyle_active_from_scene(Scene *scene)
+FreestyleLineStyle *BKE_linestyle_active_from_view_layer(ViewLayer *view_layer)
 {
-	SceneRenderLayer *actsrl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	if (!actsrl) {
-		return NULL;
-	}
-
-	FreestyleConfig *config = &actsrl->freestyleConfig;
+	FreestyleConfig *config = &view_layer->freestyle_config;
 	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(config);
-
-	if (lineset) {
-		return lineset->linestyle;
-	}
-	return NULL;
+	return (lineset) ? lineset->linestyle : NULL;
 }
 
 static LineStyleModifier *new_modifier(const char *name, int type, size_t size)

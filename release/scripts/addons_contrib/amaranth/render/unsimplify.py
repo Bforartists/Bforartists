@@ -81,4 +81,3 @@ def unregister():
             bpy.types.CYCLES_SCENE_PT_simplify.remove(unsimplify_ui)
         else:
             bpy.types.CyclesScene_PT_simplify.remove(unsimplify_ui)
-

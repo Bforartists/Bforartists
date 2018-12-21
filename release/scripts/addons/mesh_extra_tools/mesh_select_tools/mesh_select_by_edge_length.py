@@ -129,7 +129,7 @@ class Select_by_edge_length():
 
         bpy.ops.object.mode_set(mode='EDIT')
 
-    # Get the lenght of an edge, by giving this function all verts (2) in the edge
+    # Get the length of an edge, by giving this function all verts (2) in the edge
     def getEdgeLength(self, verts):
 
         vec1 = self.ob.data.vertices[verts[0]].co
@@ -199,7 +199,7 @@ class Select_init(bpy.types.Operator):
     edgeSize = EnumProperty(
             items=sizes,
             name="Edge comparison",
-            description="Choose the relation to set edge lenght",
+            description="Choose the relation to set edge length",
             default='EQUAL'
             )
     extend = BoolProperty(

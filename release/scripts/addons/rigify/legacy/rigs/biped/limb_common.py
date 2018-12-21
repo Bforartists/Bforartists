@@ -416,11 +416,11 @@ class IKLimb:
         v1 = flimb_e.tail - ulimb_e.head
         if 'X' in self.primary_rotation_axis or 'Y' in self.primary_rotation_axis:
             v2 = v1.cross(flimb_e.x_axis)
-            if (v2 * flimb_e.z_axis) > 0.0:
+            if (v2 @ flimb_e.z_axis) > 0.0:
                 v2 *= -1.0
         else:
             v2 = v1.cross(flimb_e.z_axis)
-            if (v2 * flimb_e.x_axis) < 0.0:
+            if (v2 @ flimb_e.x_axis) < 0.0:
                 v2 *= -1.0
         v2.normalize()
         v2 *= v1.length

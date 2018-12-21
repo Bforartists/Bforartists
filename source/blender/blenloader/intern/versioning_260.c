@@ -31,7 +31,6 @@
 #define DNA_DEPRECATED_ALLOW
 
 #include "DNA_anim_types.h"
-#include "DNA_actuator_types.h"
 #include "DNA_brush_types.h"
 #include "DNA_camera_types.h"
 #include "DNA_cloth_types.h"
@@ -43,11 +42,9 @@
 #include "DNA_meshdata_types.h"
 #include "DNA_object_fluidsim_types.h"
 #include "DNA_object_types.h"
-#include "DNA_property_types.h"
 #include "DNA_text_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_screen_types.h"
-#include "DNA_sensor_types.h"
 #include "DNA_sdna_types.h"
 #include "DNA_smoke_types.h"
 #include "DNA_space_types.h"
@@ -67,7 +64,6 @@
 #include "BKE_modifier.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
-#include "BKE_property.h" // for BKE_bproperty_object_get
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 #include "BKE_sequencer.h"
@@ -429,25 +425,6 @@ static void do_versions_nodetree_frame_2_64_6(bNodeTree *ntree)
 
 		/* initialize custom node color */
 		node->color[0] = node->color[1] = node->color[2] = 0.608f;  /* default theme color */
-	}
-}
-
-static void do_version_logic_264(ListBase *regionbase)
-{
-	ARegion *ar;
-
-	/* view settings for logic changed */
-	for (ar = regionbase->first; ar; ar = ar->next) {
-		if (ar->regiontype == RGN_TYPE_WINDOW) {
-			if (ar->v2d.keeptot == 0) {
-				ar->v2d.maxzoom = 1.5f;
-
-				ar->v2d.keepzoom = V2D_KEEPZOOM | V2D_LIMITZOOM | V2D_KEEPASPECT;
-				ar->v2d.keeptot = V2D_KEEPTOT_BOUNDS;
-				ar->v2d.align = V2D_ALIGN_NO_POS_Y | V2D_ALIGN_NO_NEG_X;
-				ar->v2d.keepofs = V2D_KEEPOFS_Y;
-			}
-		}
 	}
 }
 
@@ -900,14 +877,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			}
 		}
 		{
-			/* Initialize BGE exit key to esc key */
-			Scene *scene;
-			for (scene = bmain->scene.first; scene; scene = scene->id.next) {
-				if (!scene->gm.exitkey)
-					scene->gm.exitkey = 218; // Blender key code for ESC
-			}
-		}
-		{
 			MovieClip *clip;
 			Object *ob;
 
@@ -943,44 +912,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				}
 			}
 		}
-		{
-			/* Warn the user if he is using ["Text"] properties for Font objects */
-			Object *ob;
-			bProperty *prop;
-
-			for (ob = bmain->object.first; ob; ob = ob->id.next) {
-				if (ob->type == OB_FONT) {
-					prop = BKE_bproperty_object_get(ob, "Text");
-					if (prop) {
-						blo_reportf_wrap(fd->reports, RPT_WARNING,
-						                 TIP_("Game property name conflict in object '%s': text objects reserve the "
-						                      "['Text'] game property to change their content through logic bricks"),
-						                 ob->id.name + 2);
-					}
-				}
-			}
-		}
 	}
 
 	if (bmain->versionfile < 261 || (bmain->versionfile == 261 && bmain->subversionfile < 2)) {
-		{
-			/* convert Camera Actuator values to defines */
-			Object *ob;
-			bActuator *act;
-			for (ob = bmain->object.first; ob; ob = ob->id.next) {
-				for (act = ob->actuators.first; act; act = act->next) {
-					if (act->type == ACT_CAMERA) {
-						bCameraActuator *ba = act->data;
-
-						if (ba->axis == (float)'x') ba->axis = OB_POSX;
-						else if (ba->axis == (float)'y') ba->axis = OB_POSY;
-						/* don't do an if/else to avoid imediate subversion bump*/
-//						ba->axis=((ba->axis == (float)'x') ? OB_POSX_X : OB_POSY);
-					}
-				}
-			}
-		}
-
 		{
 			/* convert deprecated sculpt_paint_unified_* fields to
 			 * UnifiedPaintSettings */
@@ -1222,14 +1156,8 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 	}
 
 	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 4)) {
-		Lamp *la;
 		Camera *cam;
 		Curve *cu;
-
-		for (la = bmain->lamp.first; la; la = la->id.next) {
-			if (la->shadow_frustum_size == 0.0f)
-				la->shadow_frustum_size = 10.0f;
-		}
 
 		for (cam = bmain->camera.first; cam; cam = cam->id.next) {
 			if (cam->flag & CAM_PANORAMA) {
@@ -1316,19 +1244,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 	}
 
-
-	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 8)) {
-		/* set new deactivation values for game settings */
-		Scene *sce;
-
-		for (sce = bmain->scene.first; sce; sce = sce->id.next) {
-			/* Game Settings */
-			sce->gm.lineardeactthreshold = 0.8f;
-			sce->gm.angulardeactthreshold = 1.0f;
-			sce->gm.deactivationtime = 2.0f;
-		}
-	}
-
 	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 9)) {
 		FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
 			if (ntree->type == NTREE_SHADER) {
@@ -1339,7 +1254,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 						tex->iuser.frames = 1;
 						tex->iuser.sfra = 1;
-						tex->iuser.fie_ima = 2;
 						tex->iuser.ok = 1;
 					}
 				}
@@ -1388,7 +1302,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 							SpaceClip *sclip = (SpaceClip *)sl;
 
 							if (sclip->around == 0) {
-								sclip->around = V3D_AROUND_CENTER_MEAN;
+								sclip->around = V3D_AROUND_CENTER_MEDIAN;
 							}
 						}
 					}
@@ -1418,14 +1332,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				track = track->next;
 			}
 		}
-	}
-
-	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 12)) {
-		Material *ma;
-
-		for (ma = bmain->mat.first; ma; ma = ma->id.next)
-			if (ma->strand_widthfade == 2.0f)
-				ma->strand_widthfade = 0.0f;
 	}
 
 	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 13)) {
@@ -1573,20 +1479,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 	}
 
-	/* remove texco */
 	if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 21)) {
-		Material *ma;
-		for (ma = bmain->mat.first; ma; ma = ma->id.next) {
-			int a;
-			for (a = 0; a < MAX_MTEX; a++) {
-				if (ma->mtex[a]) {
-					if (ma->mtex[a]->texco == TEXCO_STICKY_) {
-						ma->mtex[a]->texco = TEXCO_UV;
-					}
-				}
-			}
-		}
-
 		{
 			Mesh *me;
 			for (me = bmain->mesh.first; me; me = me->id.next) {
@@ -1737,24 +1630,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		} FOREACH_NODETREE_END;
 	}
 
-	if (bmain->versionfile < 264 || (bmain->versionfile == 264 && bmain->subversionfile < 6)) {
-		bScreen *sc;
-
-		for (sc = bmain->screen.first; sc; sc = sc->id.next) {
-			ScrArea *sa;
-			for (sa = sc->areabase.first; sa; sa = sa->next) {
-				SpaceLink *sl;
-				if (sa->spacetype == SPACE_LOGIC)
-					do_version_logic_264(&sa->regionbase);
-
-				for (sl = sa->spacedata.first; sl; sl = sl->next) {
-					if (sl->spacetype == SPACE_LOGIC)
-						do_version_logic_264(&sl->regionbase);
-				}
-			}
-		}
-	}
-
 	if (bmain->versionfile < 264 || (bmain->versionfile == 264 && bmain->subversionfile < 7)) {
 		/* convert tiles size from resolution and number of tiles */
 		{
@@ -1762,17 +1637,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 			for (scene = bmain->scene.first; scene; scene = scene->id.next) {
 				if (scene->r.tilex == 0 || scene->r.tiley == 1) {
-					if (scene->r.xparts && scene->r.yparts) {
-						/* scene could be set for panoramic rendering, so clamp with the
-						 * lowest possible tile size value
-						 */
-						scene->r.tilex = max_ii(scene->r.xsch * scene->r.size / scene->r.xparts / 100, 8);
-						scene->r.tiley = max_ii(scene->r.ysch * scene->r.size / scene->r.yparts / 100, 8);
-					}
-					else {
-						/* happens when mixing using current trunk and previous release */
-						scene->r.tilex = scene->r.tiley = 64;
-					}
+					scene->r.tilex = scene->r.tiley = 64;
 				}
 			}
 		}
@@ -1808,17 +1673,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 	}
 
-	if (bmain->versionfile < 265) {
-		Object *ob;
-		for (ob = bmain->object.first; ob; ob = ob->id.next) {
-			if (ob->step_height == 0.0f) {
-				ob->step_height = 0.15f;
-				ob->jump_speed = 10.0f;
-				ob->fall_speed = 55.0f;
-			}
-		}
-	}
-
 	if (bmain->versionfile < 265 || (bmain->versionfile == 265 && bmain->subversionfile < 3)) {
 		bScreen *sc;
 		for (sc = bmain->screen.first; sc; sc = sc->id.next) {
@@ -1830,7 +1684,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 						case SPACE_VIEW3D:
 						{
 							View3D *v3d = (View3D *)sl;
-							v3d->flag2 |= V3D_SHOW_GPENCIL;
+							v3d->flag2 |= V3D_SHOW_ANNOTATION;
 							break;
 						}
 						case SPACE_SEQ:
@@ -1854,7 +1708,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 						case SPACE_CLIP:
 						{
 							SpaceClip *sclip = (SpaceClip *)sl;
-							sclip->flag |= SC_SHOW_GPENCIL;
+							sclip->flag |= SC_SHOW_ANNOTATION;
 							break;
 						}
 					}
@@ -1869,7 +1723,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 		for (scene = bmain->scene.first; scene; scene = scene->id.next) {
 			Sequence *seq;
-			bool set_premul = false;
 
 			SEQ_BEGIN (scene->ed, seq)
 			{
@@ -1883,24 +1736,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 			if (scene->r.bake_samples == 0)
 				scene->r.bake_samples = 256;
-
-			if (scene->world) {
-				World *world = blo_do_versions_newlibadr(fd, scene->id.lib, scene->world);
-
-				if (world && is_zero_v3(&world->horr)) {
-					if ((world->skytype & WO_SKYBLEND) == 0 || is_zero_v3(&world->zenr)) {
-						set_premul = true;
-					}
-				}
-			}
-			else
-				set_premul = true;
-
-			if (set_premul) {
-				printf("2.66 versioning fix: replacing black sky with premultiplied alpha for scene %s\n",
-				       scene->id.name + 2);
-				scene->r.alphamode = R_ALPHAPREMUL;
-			}
 		}
 
 		for (Image *image = bmain->image.first; image; image = image->id.next) {
@@ -2333,32 +2168,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				}
 			}
 		}
-
-		for (ob = bmain->object.first; ob; ob = ob->id.next) {
-			bSensor *sens;
-			bTouchSensor *ts;
-			bCollisionSensor *cs;
-			Material *ma;
-
-			for (sens = ob->sensors.first; sens; sens = sens->next) {
-				if (sens->type == SENS_TOUCH) {
-					ts = sens->data;
-					cs = MEM_callocN(sizeof(bCollisionSensor), "touch -> collision sensor do_version");
-
-					if (ts->ma) {
-						ma = blo_do_versions_newlibadr(fd, ob->id.lib, ts->ma);
-						BLI_strncpy(cs->materialName, ma->id.name + 2, sizeof(cs->materialName));
-					}
-
-					cs->mode = SENS_COLLISION_MATERIAL;
-
-					MEM_freeN(ts);
-
-					sens->data = cs;
-					sens->type = sens->otype = SENS_COLLISION;
-				}
-			}
-		}
 	}
 
 	if (!MAIN_VERSION_ATLEAST(bmain, 268, 5)) {
@@ -2451,11 +2260,13 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					if (sl->spacetype == SPACE_OUTLINER) {
 						SpaceOops *so = (SpaceOops *)sl;
 
-						if (!ELEM(so->outlinevis, SO_ALL_SCENES, SO_CUR_SCENE, SO_VISIBLE, SO_SELECTED, SO_ACTIVE,
-						          SO_SAME_TYPE, SO_GROUPS, SO_LIBRARIES, SO_SEQUENCE, SO_DATABLOCKS,
-						          SO_USERDEF))
+						if (!ELEM(so->outlinevis,
+						          SO_SCENES,
+						          SO_LIBRARIES,
+						          SO_SEQUENCE,
+						          SO_DATA_API))
 						{
-							so->outlinevis = SO_ALL_SCENES;
+							so->outlinevis = SO_SCENES;
 						}
 					}
 				}
@@ -2509,10 +2320,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			if (ts->sculpt)
 				ts->sculpt->flags |= SCULPT_DYNTOPO_SUBDIVIDE;
 
-			/* single texture mode removed from game engine */
-			if (scene->gm.matmode == GAME_MAT_TEXFACE)
-				scene->gm.matmode = GAME_MAT_MULTITEX;
-
 			/* 'Increment' mode disabled for nodes, use true grid snapping instead */
 			if (scene->toolsettings->snap_node_mode == SCE_SNAP_MODE_INCREMENT)
 				scene->toolsettings->snap_node_mode = SCE_SNAP_MODE_GRID;
@@ -2539,8 +2346,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
 			for (ob = bmain->object.first; ob; ob = ob->id.next) {
 				ModifierData *md;
-				bSensor *bs;
-				bActuator *ba;
 
 				for (md = ob->modifiers.first; md; md = md->next) {
 					if (md->type == eModifierType_EdgeSplit) {
@@ -2550,28 +2355,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					else if (md->type == eModifierType_Bevel) {
 						BevelModifierData *bmd = (BevelModifierData *)md;
 						bmd->bevel_angle = DEG2RADF(bmd->bevel_angle);
-					}
-				}
-
-				for (bs = ob->sensors.first; bs; bs = bs->next) {
-					if (bs->type == SENS_RADAR) {
-						bRadarSensor *brs = bs->data;
-						brs->angle = DEG2RADF(brs->angle);
-					}
-				}
-
-				for (ba = ob->actuators.first; ba; ba = ba->next) {
-					if (ba->type == ACT_CONSTRAINT) {
-						bConstraintActuator *bca = ba->data;
-						if (bca->type == ACT_CONST_TYPE_ORI) {
-							bca->minloc[0] = DEG2RADF(bca->minloc[0]);
-							bca->maxloc[0] = DEG2RADF(bca->maxloc[0]);
-						}
-					}
-					else if (ba->type == ACT_SOUND) {
-						bSoundActuator *bsa = ba->data;
-						bsa->sound3D.cone_outer_angle = DEG2RADF(bsa->sound3D.cone_outer_angle);
-						bsa->sound3D.cone_inner_angle = DEG2RADF(bsa->sound3D.cone_inner_angle);
 					}
 				}
 			}

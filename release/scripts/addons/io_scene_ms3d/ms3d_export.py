@@ -254,7 +254,7 @@ class Ms3dExporter():
                     ms3d_group._comment_object.comment = \
                             blender_ms3d_group.comment
                     ms3d_group._comment_object.index = len(ms3d_model._groups)
-                ms3d_group.material_index = None # to mark as not setted
+                ms3d_group.material_index = None # to mark as not set
                 ms3d_model._groups.append(ms3d_group)
                 blender_to_ms3d_groups[blender_ms3d_group.id] = ms3d_group
 

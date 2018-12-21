@@ -43,6 +43,7 @@
 
 #include "BLT_translation.h"
 
+#include "BKE_library.h"
 #include "BKE_report.h"
 
 #include "MEM_guardedalloc.h"
@@ -157,67 +158,165 @@ uiBut *uiDefAutoButR(uiBlock *block, PointerRNA *ptr, PropertyRNA *prop, int ind
  * \a check_prop callback filters functions to avoid drawing certain properties,
  * in cases where PROP_HIDDEN flag can't be used for a property.
  */
-int uiDefAutoButsRNA(
+eAutoPropButsReturn uiDefAutoButsRNA(
         uiLayout *layout, PointerRNA *ptr,
         bool (*check_prop)(PointerRNA *ptr, PropertyRNA *prop, void *user_data), void *user_data,
-        const char label_align)
+        const eButLabelAlign label_align, const bool compact)
 {
+	eAutoPropButsReturn return_info = UI_PROP_BUTS_NONE_ADDED;
 	uiLayout *split, *col;
 	int flag;
 	const char *name;
-	int tot = 0;
-
-	assert(ELEM(label_align, '\0', 'H', 'V'));
 
 	RNA_STRUCT_BEGIN (ptr, prop)
 	{
 		flag = RNA_property_flag(prop);
-		if (flag & PROP_HIDDEN || (check_prop && check_prop(ptr, prop, user_data) == 0)) {
+
+		if (flag & PROP_HIDDEN) {
+			continue;
+		}
+		if (check_prop && check_prop(ptr, prop, user_data) == 0) {
+			return_info |= UI_PROP_BUTS_ANY_FAILED_CHECK;
 			continue;
 		}
 
-		if (label_align != '\0') {
-			PropertyType type = RNA_property_type(prop);
-			const bool is_boolean = (type == PROP_BOOLEAN && !RNA_property_array_check(prop));
+		switch (label_align) {
+			case UI_BUT_LABEL_ALIGN_COLUMN:
+			case UI_BUT_LABEL_ALIGN_SPLIT_COLUMN:
+			{
+				PropertyType type = RNA_property_type(prop);
+				const bool is_boolean = (type == PROP_BOOLEAN && !RNA_property_array_check(prop));
 
-			name = RNA_property_ui_name(prop);
+				name = RNA_property_ui_name(prop);
 
-			if (label_align == 'V') {
-				col = uiLayoutColumn(layout, true);
+				if (label_align == UI_BUT_LABEL_ALIGN_COLUMN) {
+					col = uiLayoutColumn(layout, true);
 
-				if (!is_boolean)
-					uiItemL(col, name, ICON_NONE);
+					if (!is_boolean)
+						uiItemL(col, name, ICON_NONE);
+				}
+				else {
+					BLI_assert(label_align == UI_BUT_LABEL_ALIGN_SPLIT_COLUMN);
+					split = uiLayoutSplit(layout, 0.5f, false);
+
+					col = uiLayoutColumn(split, false);
+					uiItemL(col, (is_boolean) ? "" : name, ICON_NONE);
+					col = uiLayoutColumn(split, false);
+				}
+
+				/* may meed to add more cases here.
+				 * don't override enum flag names */
+
+				/* name is shown above, empty name for button below */
+				name = (flag & PROP_ENUM_FLAG || is_boolean) ? NULL : "";
+
+				break;
 			}
-			else {  /* (label_align == 'H') */
-				BLI_assert(label_align == 'H');
-				split = uiLayoutSplit(layout, 0.5f, false);
-
-				col = uiLayoutColumn(split, false);
-				uiItemL(col, (is_boolean) ? "" : name, ICON_NONE);
-				col = uiLayoutColumn(split, false);
-			}
-
-			/* may meed to add more cases here.
-			 * don't override enum flag names */
-
-			/* name is shown above, empty name for button below */
-			name = (flag & PROP_ENUM_FLAG || is_boolean) ? NULL : "";
-		}
-		else {
-			col = layout;
-			name = NULL; /* no smart label alignment, show default name with button */
+			case UI_BUT_LABEL_ALIGN_NONE:
+			default:
+				col = layout;
+				name = NULL; /* no smart label alignment, show default name with button */
+				break;
 		}
 
-		uiItemFullR(col, ptr, prop, -1, 0, 0, name, ICON_NONE);
-		tot++;
+		uiItemFullR(col, ptr, prop, -1, 0, compact ? UI_ITEM_R_COMPACT : 0, name, ICON_NONE);
+		return_info &= ~UI_PROP_BUTS_NONE_ADDED;
 	}
 	RNA_STRUCT_END;
 
-	return tot;
+	return return_info;
 }
 
-/***************************** ID Utilities *******************************/
+/* *** RNA collection search menu *** */
 
+typedef struct CollItemSearch {
+	struct CollItemSearch *next, *prev;
+	void *data;
+	char *name;
+	int index;
+	int iconid;
+} CollItemSearch;
+
+static int sort_search_items_list(const void *a, const void *b)
+{
+	const CollItemSearch *cis1 = a;
+	const CollItemSearch *cis2 = b;
+
+	if (BLI_strcasecmp(cis1->name, cis2->name) > 0)
+		return 1;
+	else
+		return 0;
+}
+
+void ui_rna_collection_search_cb(const struct bContext *C, void *arg, const char *str, uiSearchItems *items)
+{
+	uiRNACollectionSearch *data = arg;
+	char *name;
+	int i = 0, iconid = 0, flag = RNA_property_flag(data->target_prop);
+	ListBase *items_list = MEM_callocN(sizeof(ListBase), "items_list");
+	CollItemSearch *cis;
+	const bool skip_filter = (data->but_changed && !(*data->but_changed));
+
+	/* build a temporary list of relevant items first */
+	RNA_PROP_BEGIN (&data->search_ptr, itemptr, data->search_prop)
+	{
+
+		if (flag & PROP_ID_SELF_CHECK)
+			if (itemptr.data == data->target_ptr.id.data)
+				continue;
+
+		/* use filter */
+		if (RNA_property_type(data->target_prop) == PROP_POINTER) {
+			if (RNA_property_pointer_poll(&data->target_ptr, data->target_prop, &itemptr) == 0)
+				continue;
+		}
+
+		iconid = 0;
+		if (itemptr.type && RNA_struct_is_ID(itemptr.type)) {
+			name = MEM_malloc_arrayN(MAX_ID_FULL_NAME, sizeof(*name), __func__);
+			BKE_id_full_name_ui_prefix_get(name, itemptr.data);
+			iconid = ui_id_icon_get(C, itemptr.data, false);
+		}
+		else {
+			name = RNA_struct_name_get_alloc(&itemptr, NULL, 0, NULL); /* could use the string length here */
+		}
+
+		if (name) {
+			if (skip_filter || BLI_strcasestr(name, str)) {
+				cis = MEM_callocN(sizeof(CollItemSearch), "CollectionItemSearch");
+				cis->data = itemptr.data;
+				cis->name = name;  /* Still ownership of that memory. */
+				cis->index = i;
+				cis->iconid = iconid;
+				BLI_addtail(items_list, cis);
+			}
+			else {
+				MEM_freeN(name);
+			}
+		}
+
+		i++;
+	}
+	RNA_PROP_END;
+
+	BLI_listbase_sort(items_list, sort_search_items_list);
+
+	/* add search items from temporary list */
+	for (cis = items_list->first; cis; cis = cis->next) {
+		if (UI_search_item_add(items, cis->name, cis->data, cis->iconid) == false) {
+			break;
+		}
+	}
+
+	for (cis = items_list->first; cis; cis = cis->next) {
+		MEM_freeN(cis->name);
+	}
+	BLI_freelistN(items_list);
+	MEM_freeN(items_list);
+}
+
+
+/***************************** ID Utilities *******************************/
 int UI_icon_from_id(ID *id)
 {
 	Object *ob;

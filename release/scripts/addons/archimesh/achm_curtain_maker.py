@@ -1100,7 +1100,7 @@ def roller_side():
 # --------------------------------------------------------------------
 # Set curve cycle
 #
-# myObject: Curve obejct
+# myObject: Curve object
 # --------------------------------------------------------------------
 def set_curve_cycle(myobject):
     bpy.context.scene.objects.active = myobject

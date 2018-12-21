@@ -1906,7 +1906,7 @@ class ModalTimerOperator(bpy.types.Operator):
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.Scene.imp_sound_to_anim = PointerProperty(type=ImpSoundtoAnim, name="Import: Sound to Animation", description="Extract movement from sound file. See the Object Panel at the end.")
-    bpy.types.INFO_MT_file_import.append(WavFileImport)
+    bpy.types.TOPBAR_MT_file_import.append(WavFileImport)
 
 def unregister():
 
@@ -1916,7 +1916,7 @@ def unregister():
         pass
 
     try:
-        bpy.types.INFO_MT_file_import.remove(WavFileImport)
+        bpy.types.TOPBAR_MT_file_import.remove(WavFileImport)
     except:
         pass
 
@@ -1924,7 +1924,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-
-
-
-

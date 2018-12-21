@@ -186,4 +186,3 @@ class SubprocessHelper:
         self._wm_exit(context)
         self._process.kill()
         self.process_post(-1)
-

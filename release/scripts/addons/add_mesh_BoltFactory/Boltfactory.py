@@ -236,19 +236,19 @@ class add_mesh_bolt(Operator, AddObjectHelper):
             max=MAX_INPUT_NUMBER,
             description='Flat distance of the Hex Nut'
             )
-    
+
         # generic transform props
     view_align = BoolProperty(
             name="Align to View",
             default=False,
             update=AddObjectHelper.view_align_update_callback,
             )
-    
+
     location = FloatVectorProperty(
             name="Location",
             subtype='TRANSLATION',
             )
-    
+
     rotation = FloatVectorProperty(
             name="Rotation",
             subtype='EULER',
@@ -311,7 +311,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
         col.prop(self, 'bf_Crest_Percent')
         col.prop(self, 'bf_Root_Percent')
         col.prop(self, 'bf_Div_Count')
-        
+
         # generic transform props
         col.separator()
         col.prop(self, 'view_align')

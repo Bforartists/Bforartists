@@ -35,10 +35,11 @@
 struct bAnimVizSettings;
 struct bMotionPath;
 struct bPoseChannel;
-struct EvaluationContext;
+struct Depsgraph;
 struct ListBase;
 struct Main;
 struct Object;
+struct ParticleSystem;
 struct Path;
 struct ReportList;
 struct Scene;
@@ -48,13 +49,20 @@ struct Scene;
 
 void animviz_settings_init(struct bAnimVizSettings *avs);
 
+struct bMotionPath *animviz_copy_motionpath(const struct bMotionPath *mpath_src);
+
 void animviz_free_motionpath_cache(struct bMotionPath *mpath);
 void animviz_free_motionpath(struct bMotionPath *mpath);
 
 struct bMotionPath *animviz_verify_motionpaths(struct ReportList *reports, struct Scene *scene, struct Object *ob, struct bPoseChannel *pchan);
 
 void animviz_get_object_motionpaths(struct Object *ob, ListBase *targets);
-void animviz_calc_motionpaths(struct Main *bmain, struct Scene *scene, ListBase *targets);
+void animviz_calc_motionpaths(struct Depsgraph *depsgraph,
+                              struct Main *bmain,
+                              struct Scene *scene,
+                              ListBase *targets,
+                              bool restore,
+                              bool current_frame_only);
 
 /* ---------------------------------------------------- */
 /* Curve Paths */
@@ -66,25 +74,28 @@ int where_on_path(struct Object *ob, float ctime, float vec[4], float dir[3], fl
 /* ---------------------------------------------------- */
 /* Dupli-Geometry */
 
-struct ListBase *object_duplilist_ex(
-        struct Main *bmain, struct EvaluationContext *eval_ctx, struct Scene *sce, struct Object *ob, bool update);
-struct ListBase *object_duplilist(
-        struct Main *bmain, struct EvaluationContext *eval_ctx, struct Scene *sce, struct Object *ob);
+struct ListBase *object_duplilist(struct Depsgraph *depsgraph, struct Scene *sce, struct Object *ob);
 void free_object_duplilist(struct ListBase *lb);
 int count_duplilist(struct Object *ob);
 
-typedef struct DupliExtraData {
-	float obmat[4][4];
-	unsigned int lay;
-} DupliExtraData;
+typedef struct DupliObject {
+	struct DupliObject *next, *prev;
+	struct Object *ob;
+	float mat[4][4];
+	float orco[3], uv[2];
 
-typedef struct DupliApplyData {
-	int num_objects;
-	DupliExtraData *extra;
-} DupliApplyData;
+	short type; /* from Object.transflag */
+	char no_draw;
 
-DupliApplyData *duplilist_apply(struct Object *ob, struct Scene *scene, struct ListBase *duplilist);
-void duplilist_restore(struct ListBase *duplilist, DupliApplyData *apply_data);
-void duplilist_free_apply_data(DupliApplyData *apply_data);
+	/* Persistent identifier for a dupli object, for inter-frame matching of
+	 * objects with motion blur, or inter-update matching for syncing. */
+	int persistent_id[16]; /* 2*MAX_DUPLI_RECUR */
+
+	/* Particle this dupli was generated from. */
+	struct ParticleSystem *particle_system;
+
+	/* Random ID for shading */
+	unsigned int random_id;
+} DupliObject;
 
 #endif

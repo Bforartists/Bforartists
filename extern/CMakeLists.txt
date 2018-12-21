@@ -63,10 +63,6 @@ if(NOT WITH_SYSTEM_GLEW)
 	endif()
 endif()
 
-if(WITH_GAMEENGINE)
-	add_subdirectory(recastnavigation)
-endif()
-
 if(WITH_LZO AND NOT WITH_SYSTEM_LZO)
 	add_subdirectory(lzo)
 endif()
@@ -104,4 +100,9 @@ endif()
 
 if(WITH_SDL AND WITH_SDL_DYNLOAD)
 	add_subdirectory(sdlew)
+endif()
+
+if(WITH_AUDASPACE AND NOT WITH_SYSTEM_AUDASPACE)
+	set(AUDASPACE_CMAKE_CFG ${CMAKE_CURRENT_SOURCE_DIR}/audaspace/blender_config.cmake)
+	add_subdirectory(audaspace)
 endif()

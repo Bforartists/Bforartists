@@ -43,18 +43,19 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "BKE_animsys.h"
 #include "BKE_action.h"
+#include "BKE_animsys.h"
 #include "BKE_armature.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_idprop.h"
-#include "BKE_main.h"
 #include "BKE_library.h"
+#include "BKE_main.h"
 #include "BKE_object.h"
 
 #include "BKE_context.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -311,8 +312,7 @@ static int poselib_sanitize_exec(bContext *C, wmOperator *op)
 
 	/* determine which frames have keys */
 	BLI_dlrbTree_init(&keys);
-	action_to_keylist(NULL, act, &keys, NULL);
-	BLI_dlrbTree_linkedlist_sync(&keys);
+	action_to_keylist(NULL, act, &keys, 0);
 
 	/* for each key, make sure there is a corresponding pose */
 	for (ak = keys.first; ak; ak = ak->next) {
@@ -503,6 +503,7 @@ static int poselib_add_exec(bContext *C, wmOperator *op)
 
 	/* store new 'active' pose number */
 	act->active_marker = BLI_listbase_count(&act->markers);
+	DEG_id_tag_update(&act->id, ID_RECALC_COPY_ON_WRITE);
 
 	/* done */
 	return OPERATOR_FINISHED;
@@ -617,6 +618,7 @@ static int poselib_remove_exec(bContext *C, wmOperator *op)
 	 * may be being shown in anim editors as active action
 	 */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
+	DEG_id_tag_update(&act->id, ID_RECALC_COPY_ON_WRITE);
 
 	/* done */
 	return OPERATOR_FINISHED;
@@ -1024,7 +1026,7 @@ static void poselib_apply_pose(tPoseLib_PreviewData *pld)
 				}
 
 				if (ok)
-					animsys_evaluate_action_group(ptr, act, agrp, NULL, (float)frame);
+					animsys_evaluate_action_group(ptr, act, agrp, (float)frame);
 			}
 		}
 	}
@@ -1104,18 +1106,16 @@ static void poselib_preview_apply(bContext *C, wmOperator *op)
 		 */
 		// FIXME: shouldn't this use the builtin stuff?
 		if ((pld->arm->flag & ARM_DELAYDEFORM) == 0)
-			DAG_id_tag_update(&pld->ob->id, OB_RECALC_DATA);  /* sets recalc flags */
+			DEG_id_tag_update(&pld->ob->id, ID_RECALC_GEOMETRY);  /* sets recalc flags */
 		else
-			BKE_pose_where_is(pld->scene, pld->ob);
+			BKE_pose_where_is(CTX_data_depsgraph(C), pld->scene, pld->ob);
 	}
 
 	/* do header print - if interactively previewing */
 	if (pld->state == PL_PREVIEW_RUNNING) {
 		if (pld->flag & PL_PREVIEW_SHOWORIGINAL) {
-			BLI_strncpy(pld->headerstr,
-			            IFACE_("PoseLib Previewing Pose: [Showing Original Pose] | Use Tab to start previewing poses again"),
-			            sizeof(pld->headerstr));
-			ED_area_headerprint(pld->sa, pld->headerstr);
+			ED_area_status_text(pld->sa, IFACE_("PoseLib Previewing Pose: [Showing Original Pose]"));
+			ED_workspace_status_text(C, IFACE_("Use Tab to start previewing poses again"));
 		}
 		else if (pld->searchstr[0]) {
 			char tempstr[65];
@@ -1139,17 +1139,17 @@ static void poselib_preview_apply(bContext *C, wmOperator *op)
 
 			BLI_snprintf(pld->headerstr, sizeof(pld->headerstr),
 			             IFACE_("PoseLib Previewing Pose: Filter - [%s] | "
-			                    "Current Pose - \"%s\"  | "
-			                    "Use ScrollWheel or PageUp/Down to change"),
+			                    "Current Pose - \"%s\""),
 			             tempstr, markern);
-			ED_area_headerprint(pld->sa, pld->headerstr);
+			ED_area_status_text(pld->sa, pld->headerstr);
+			ED_workspace_status_text(C, IFACE_("Use ScrollWheel or PageUp/Down to change pose"));
 		}
 		else {
 			BLI_snprintf(pld->headerstr, sizeof(pld->headerstr),
-			             IFACE_("PoseLib Previewing Pose: \"%s\"  | "
-			                    "Use ScrollWheel or PageUp/Down to change"),
+			             IFACE_("PoseLib Previewing Pose: \"%s\""),
 			             pld->marker->name);
-			ED_area_headerprint(pld->sa, pld->headerstr);
+			ED_area_status_text(pld->sa, pld->headerstr);
+			ED_workspace_status_text(C, NULL);
 		}
 	}
 
@@ -1599,7 +1599,8 @@ static void poselib_preview_cleanup(bContext *C, wmOperator *op)
 	TimeMarker *marker = pld->marker;
 
 	/* redraw the header so that it doesn't show any of our stuff anymore */
-	ED_area_headerprint(pld->sa, NULL);
+	ED_area_status_text(pld->sa, NULL);
+	ED_workspace_status_text(C, NULL);
 
 	/* this signal does one recalc on pose, then unlocks, so ESC or edit will work */
 	pose->flag |= POSE_DO_UNLOCK;
@@ -1612,9 +1613,9 @@ static void poselib_preview_cleanup(bContext *C, wmOperator *op)
 		 * - note: code copied from transform_generics.c -> recalcData()
 		 */
 		if ((arm->flag & ARM_DELAYDEFORM) == 0)
-			DAG_id_tag_update(&ob->id, OB_RECALC_DATA);  /* sets recalc flags */
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);  /* sets recalc flags */
 		else
-			BKE_pose_where_is(scene, ob);
+			BKE_pose_where_is(CTX_data_depsgraph(C), scene, ob);
 	}
 	else if (pld->state == PL_PREVIEW_CONFIRM) {
 		/* tag poses as appropriate */
@@ -1625,14 +1626,14 @@ static void poselib_preview_cleanup(bContext *C, wmOperator *op)
 		action_set_activemarker(act, marker, NULL);
 
 		/* Update event for pose and deformation children */
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
 		/* updates */
 		if (IS_AUTOKEY_MODE(scene, NORMAL)) {
 			//remake_action_ipos(ob->action);
 		}
 		else
-			BKE_pose_where_is(scene, ob);
+			BKE_pose_where_is(CTX_data_depsgraph(C), scene, ob);
 	}
 
 	/* Request final redraw of the view. */

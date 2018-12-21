@@ -60,7 +60,6 @@ if 'cmake' in builder:
 
     # Config file to be used (relative to blender's sources root)
     cmake_config_file = "build_files/cmake/config/blender_release.cmake"
-    cmake_player_config_file = None
     cmake_cuda_config_file = None
 
     # Set build options.
@@ -73,9 +72,6 @@ if 'cmake' in builder:
         if builder.endswith('x86_64_10_9_cmake'):
             cmake_extra_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64')
         cmake_extra_options.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=10.9')
-        # Used to trick CUDFA to see CLang as an older version.
-        # cmake_extra_options.append('-DCUDA_HOST_COMPILER=/usr/local/cuda-hack/clang')
-        # cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE=/usr/local/cuda-hack/nvcc')
 
     elif builder.startswith('win'):
         if builder.endswith('_vs2017'):
@@ -109,24 +105,39 @@ if 'cmake' in builder:
         elif glibc == 'glibc211':
             deb_name = "squeeze"
         cmake_config_file = "build_files/buildbot/config/blender_linux.cmake"
-        cmake_player_config_file = "build_files/buildbot/config/blender_linux_player.cmake"
         if builder.endswith('x86_64_cmake'):
             chroot_name = 'buildbot_' + deb_name + '_x86_64'
-            targets = ['player', 'blender']
+            targets = ['blender']
         elif builder.endswith('i686_cmake'):
             bits = 32
             chroot_name = 'buildbot_' + deb_name + '_i686'
-            targets = ['player', 'blender']
+            targets = ['blender']
         if deb_name != "stretch":
             cmake_extra_options.extend(["-DCMAKE_C_COMPILER=/usr/bin/gcc-7",
                                         "-DCMAKE_CXX_COMPILER=/usr/bin/g++-7"])
+
+    # Workaround to build only sm_7x kernels with CUDA 10, until
+    # older kernels work well with this version.
+    if builder.startswith('win'):
+        cmake_extra_options.append('-DCUDA_VERSION=9.1')
+        cmake_extra_options.append('-DCUDA_TOOLKIT_INCLUDE:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.1/include')
+        cmake_extra_options.append('-DCUDA_TOOLKIT_ROOT_DIR:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.1')
+        cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.1/bin/nvcc.exe')
+        cmake_extra_options.append('-DCUDA10_NVCC_EXECUTABLE:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.0/bin/nvcc.exe')
+        cmake_extra_options.append('-DCUDA10_TOOLKIT_ROOT_DIR:PATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.0')
+    elif builder.startswith('linux'):
+        cmake_extra_options.append('-DCUDA_VERSION=9.1')
+        cmake_extra_options.append('-DCUDA_TOOLKIT_INCLDUE:PATH=/usr/local/cuda-9.1/include')
+        cmake_extra_options.append('-DCUDA_TOOLKIT_ROOT_DIR:PATH=/usr/local/cuda-9.1')
+        cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE:FILEPATH=/usr/local/cuda-9.1/bin/nvcc')
+        cmake_extra_options.append('-DCUDA10_NVCC_EXECUTABLE:FILEPATH=/usr/local/cuda-10.0/bin/nvcc')
+        cmake_extra_options.append('-DCUDA10_TOOLKIT_ROOT_DIR:PATH=/usr/local/cuda-10.0')
 
     cmake_options.append("-C" + os.path.join(blender_dir, cmake_config_file))
 
     # Prepare CMake options needed to configure cuda binaries compilation, 64bit only.
     if bits == 64:
         cuda_cmake_options.append("-DWITH_CYCLES_CUDA_BINARIES=%s" % ('ON' if build_cubins else 'OFF'))
-        cuda_cmake_options.append("-DCYCLES_CUDA_BINARIES_ARCH=sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61;sm_70")
         if build_cubins or 'cuda' in targets:
             cuda_cmake_options.append("-DCUDA_64_BIT_DEVICE_CODE=ON")
 
@@ -164,9 +175,7 @@ if 'cmake' in builder:
         target_name = 'install'
         # Tweaking CMake options to respect the target
         target_cmake_options = cmake_options[:]
-        if target == 'player':
-            target_cmake_options.append("-C" + os.path.join(blender_dir, cmake_player_config_file))
-        elif target == 'cuda':
+        if target == 'cuda':
             target_cmake_options += cuda_cmake_options
             target_chroot_prefix = cuda_chroot_prefix[:]
             target_name = 'cycles_kernel_cuda'

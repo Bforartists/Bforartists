@@ -47,10 +47,11 @@
 #include "BLT_translation.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_screen.h"
 #include "BKE_movieclip.h"
 #include "BKE_tracking.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_gpencil.h"
 
@@ -106,7 +107,7 @@ void uiTemplateMovieClip(uiLayout *layout, bContext *C, PointerRNA *ptr, const c
 	uiLayoutSetContextPointer(layout, "edit_movieclip", &clipptr);
 
 	if (!compact)
-		uiTemplateID(layout, C, ptr, propname, NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL);
+		uiTemplateID(layout, C, ptr, propname, NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false);
 
 	if (clip) {
 		uiLayout *col;
@@ -236,7 +237,7 @@ static void marker_block_handler(bContext *C, void *arg_cb, int event)
 		marker->pos[1] = cb->marker_pos[1] / height;
 
 		/* to update position of "parented" objects */
-		DAG_id_tag_update(&cb->clip->id, 0);
+		DEG_id_tag_update(&cb->clip->id, 0);
 		WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 		ok = true;
@@ -321,7 +322,7 @@ static void marker_block_handler(bContext *C, void *arg_cb, int event)
 			sub_v2_v2(cb->track->markers[i].pos, delta);
 
 		/* to update position of "parented" objects */
-		DAG_id_tag_update(&cb->clip->id, 0);
+		DEG_id_tag_update(&cb->clip->id, 0);
 		WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 		ok = true;
@@ -386,9 +387,10 @@ void uiTemplateMarker(uiLayout *layout, PointerRNA *ptr, const char *propname, P
 		else
 			tip = TIP_("Enabled\nMarker is enabled at current frame");
 
-		bt = uiDefIconButBitI(block, UI_BTYPE_TOGGLE_N, MARKER_DISABLED, 0, ICON_RESTRICT_VIEW_OFF, 0, 0, UI_UNIT_X, UI_UNIT_Y,
+		bt = uiDefIconButBitI(block, UI_BTYPE_TOGGLE_N, MARKER_DISABLED, 0, ICON_HIDE_OFF, 0, 0, UI_UNIT_X, UI_UNIT_Y,
 		                      &cb->marker_flag, 0, 0, 1, 0, tip);
 		UI_but_funcN_set(bt, marker_update_cb, cb, NULL);
+		UI_but_drawflag_enable(bt, UI_BUT_ICON_REVERSE);
 	}
 	else {
 		int width, height, step, digits;
@@ -531,6 +533,12 @@ void uiTemplateMovieclipInformation(uiLayout *layout, PointerRNA *ptr, const cha
 				ofs += BLI_strncpy_rlen(str + ofs, IFACE_(", RGBA byte"), sizeof(str) - ofs);
 			else
 				ofs += BLI_strncpy_rlen(str + ofs, IFACE_(", RGB byte"), sizeof(str) - ofs);
+		}
+
+		short frs_sec;
+		float frs_sec_base;
+		if (IMB_anim_get_fps(clip->anim, &frs_sec, &frs_sec_base, true)) {
+			ofs += BLI_snprintf(str + ofs, sizeof(str) - ofs, IFACE_(", %.2f fps"), (float)frs_sec / frs_sec_base);
 		}
 	}
 	else {

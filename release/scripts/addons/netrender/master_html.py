@@ -558,4 +558,3 @@ def get(handler):
         output(link("Back to Main Page", "/html"))
 
         output("</body></html>")
-

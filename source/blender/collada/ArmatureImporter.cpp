@@ -34,13 +34,14 @@
 
 extern "C" {
 #include "BKE_action.h"
-#include "BKE_depsgraph.h"
 #include "BKE_object.h"
 #include "BKE_armature.h"
 #include "BLI_string.h"
 #include "BLI_listbase.h"
 #include "ED_armature.h"
 }
+
+#include "DEG_depsgraph.h"
 
 #include "collada_utils.h"
 #include "ArmatureImporter.h"
@@ -54,10 +55,12 @@ static const char *bc_get_joint_name(T *node)
 }
 
 
-ArmatureImporter::ArmatureImporter(UnitConverter *conv, MeshImporterBase *mesh, Main *bmain, Scene *sce, const ImportSettings *import_settings) :
+ArmatureImporter::ArmatureImporter(
+        UnitConverter *conv, MeshImporterBase *mesh, Main *bmain, Scene *sce, ViewLayer *view_layer, const ImportSettings *import_settings) :
 	TransformReader(conv),
 	m_bmain(bmain),
 	scene(sce),
+	view_layer(view_layer),
 	unit_converter(conv),
 	import_settings(import_settings),
 	empty(NULL),
@@ -169,7 +172,7 @@ int ArmatureImporter::create_bone(SkinInfo *skin, COLLADAFW::Node *node, EditBon
 	}
 	copy_v3_v3(bone->head, mat[3]);
 
-	if (bone_is_skinned)
+	if (bone_is_skinned && this->import_settings->keep_bind_info)
 	{
 		float rest_mat[4][4];
 		get_node_mat(rest_mat, node, NULL, NULL, NULL);
@@ -410,7 +413,7 @@ Object *ArmatureImporter::get_empty_for_leaves()
 {
 	if (empty) return empty;
 
-	empty = bc_add_object(m_bmain, scene, OB_EMPTY, NULL);
+	empty = bc_add_object(m_bmain, scene, view_layer, OB_EMPTY, NULL);
 	empty->empty_drawtype = OB_EMPTY_SPHERE;
 
 	return empty;
@@ -496,7 +499,7 @@ void ArmatureImporter::create_armature_bones(Main *bmain, std::vector<Object *> 
 			ob_arms.push_back(ob_arm);
 		}
 
-		DAG_id_tag_update(&ob_arm->id, OB_RECALC_OB | OB_RECALC_DATA);
+		DEG_id_tag_update(&ob_arm->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 	}
 }
 
@@ -585,7 +588,7 @@ Object *ArmatureImporter::create_armature_bones(Main *bmain, SkinInfo& skin)
 		ob_arm = skin.set_armature(shared);
 	}
 	else {
-		ob_arm = skin.create_armature(m_bmain, scene);  //once for every armature
+		ob_arm = skin.create_armature(m_bmain, scene, view_layer);  //once for every armature
 	}
 
 	// enter armature edit mode
@@ -629,7 +632,7 @@ Object *ArmatureImporter::create_armature_bones(Main *bmain, SkinInfo& skin)
 	ED_armature_from_edit(bmain, armature);
 	ED_armature_edit_free(armature);
 
-	DAG_id_tag_update(&ob_arm->id, OB_RECALC_OB | OB_RECALC_DATA);
+	DEG_id_tag_update(&ob_arm->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 
 	return ob_arm;
 }
@@ -879,7 +882,7 @@ void ArmatureImporter::make_shape_keys(bContext *C)
 
 			//insert basis key
 			kb = BKE_keyblock_add_ctime(key, "Basis", false);
-			BKE_keyblock_convert_from_mesh(source_me, kb);
+			BKE_keyblock_convert_from_mesh(source_me, key, kb);
 
 			//insert other shape keys
 			for (int i = 0 ; i < morphTargetIds.getCount() ; i++ ) {
@@ -893,7 +896,7 @@ void ArmatureImporter::make_shape_keys(bContext *C)
 					std::string morph_name = *this->mesh_importer->get_geometry_name(me->id.name);
 
 					kb = BKE_keyblock_add_ctime(key, morph_name.c_str(), false);
-					BKE_keyblock_convert_from_mesh(me, kb);
+					BKE_keyblock_convert_from_mesh(me, key, kb);
 
 					//apply weights
 					weight =  morphWeights.getFloatValues()->getData()[i];

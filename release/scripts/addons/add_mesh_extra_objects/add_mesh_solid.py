@@ -246,7 +246,7 @@ def createSolid(plato, vtrunc, etrunc, dual, snub):
                                          fvOutput[vData[x][2][j]][index - 1]])
                         feOutput.append([fvOutput[x][j - 1], fvOutput[vData[x][2][j]][index],
                                          fvOutput[vData[x][2][j]][index - 1]])
-        # special rules fro birectified mesh (v1 todo: done)
+        # special rules for birectified mesh (v1 todo: done)
         elif vtrunc == 0.5:
             for j in range(len(i) - 1):
                 if x < vData[x][2][j]:  # use current vert,  since other one has not passed yet
@@ -348,7 +348,7 @@ class Solids(bpy.types.Operator):
                     )
     vTrunc = FloatProperty(
                     name="Vertex Truncation",
-                    description="Ammount of vertex truncation",
+                    description="Amount of vertex truncation",
                     min=0.0,
                     soft_min=0.0,
                     max=2.0,
@@ -359,7 +359,7 @@ class Solids(bpy.types.Operator):
                     )
     eTrunc = FloatProperty(
                     name="Edge Truncation",
-                    description="Ammount of edge truncation",
+                    description="Amount of edge truncation",
                     min=0.0,
                     soft_min=0.0,
                     max=1.0,

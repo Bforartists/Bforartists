@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Hotkey: 'Ctrl S'",
     "description": "Save/Open & File Menus",
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "All Editors",
     "warning": "",
     "wiki_url": "",
@@ -46,17 +46,17 @@ class PieSaveOpen(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("wm.read_homefile", text="New", icon='NEW')
+        pie.operator("wm.read_homefile", text="New", icon='FILE_NEW')
         # 6 - RIGHT
         pie.menu("pie.link", text="Link", icon='LINK_BLEND')
         # 2 - BOTTOM
         pie.menu("pie.fileio", text="Import/Export Menu", icon='IMPORT')
         # 8 - TOP
-        pie.operator("file.save_incremental", text="Incremental Save", icon='SAVE_COPY')
+        pie.operator("file.save_incremental", text="Incremental Save", icon='NONE')
         # 7 - TOP - LEFT
         pie.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
         # 9 - TOP - RIGHT
-        pie.operator("wm.save_as_mainfile", text="Save As...", icon='SAVE_AS')
+        pie.operator("wm.save_as_mainfile", text="Save As...", icon='NONE')
         # 1 - BOTTOM - LEFT
         pie.operator("wm.open_mainfile", text="Open file", icon='FILE_FOLDER')
         # 3 - BOTTOM - RIGHT
@@ -84,7 +84,7 @@ class pie_recover(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        box.operator("wm.recover_auto_save", text="Recover Auto Save...", icon='RECOVER_AUTO')
+        box.operator("wm.recover_auto_save", text="Recover Auto Save...", icon='NONE')
         box.operator("wm.recover_last_session", text="Recover Last Session", icon='RECOVER_LAST')
         box.operator("wm.revert_mainfile", text="Revert", icon='FILE_REFRESH')
 
@@ -97,9 +97,9 @@ class pie_fileio(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        box.menu("INFO_MT_file_import", icon='IMPORT')
+        box.menu("TOPBAR_MT_file_import", icon='IMPORT')
         box.separator()
-        box.menu("INFO_MT_file_export", icon='EXPORT')
+        box.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
 class ExternalData(Menu):

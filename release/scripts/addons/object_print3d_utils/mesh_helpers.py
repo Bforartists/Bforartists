@@ -32,7 +32,7 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
 
     if apply_modifiers and obj.modifiers:
         import bpy
-        me = obj.to_mesh(bpy.context.scene, True, 'PREVIEW', calc_tessface=False)
+        me = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=True)
         bm = bmesh.new()
         bm.from_mesh(me)
         bpy.data.meshes.remove(me)
@@ -157,19 +157,27 @@ def bmesh_check_thick_object(obj, thickness):
     # Create a real mesh (lame!)
     context = bpy.context
     scene = context.scene
+    layer = context.view_layer
+    layer_collection = context.layer_collection or layer.active_layer_collection
+    scene_collection = layer_collection.collection
+
     me_tmp = bpy.data.meshes.new(name="~temp~")
     bm.to_mesh(me_tmp)
     # bm.free()  # delay free
     obj_tmp = bpy.data.objects.new(name=me_tmp.name, object_data=me_tmp)
-    base = scene.objects.link(obj_tmp)
+    # base = scene.objects.link(obj_tmp)
+    scene_collection.objects.link(obj_tmp)
 
     # Add new object to local view layer
+    # XXX28
+    '''
     v3d = None
     if context.space_data and context.space_data.type == 'VIEW_3D':
         v3d = context.space_data
 
     if v3d and v3d.local_view:
         base.layers_from_view(context.space_data)
+    '''
 
     scene.update()
     ray_cast = obj_tmp.ray_cast
@@ -190,7 +198,7 @@ def bmesh_check_thick_object(obj, thickness):
             p_b = p - no_end
             p_dir = p_b - p_a
 
-            ok, co, no, index = ray_cast(p_a, p_dir, p_dir.length)
+            ok, co, no, index = ray_cast(p_a, p_dir, distance=p_dir.length)
 
             if ok:
                 # Add the face we hit
@@ -203,7 +211,7 @@ def bmesh_check_thick_object(obj, thickness):
     # finished with bm
     bm.free()
 
-    scene.objects.unlink(obj_tmp)
+    scene_collection.objects.unlink(obj_tmp)
     bpy.data.objects.remove(obj_tmp)
     bpy.data.meshes.remove(me_tmp)
 
@@ -228,17 +236,20 @@ def object_merge(context, objects):
                     seq.remove(seq[i])
 
     scene = context.scene
+    layer = context.view_layer
+    layer_collection = context.layer_collection or layer.active_layer_collection
+    scene_collection = layer_collection.collection
 
     # deselect all
     for obj in scene.objects:
-        obj.select = False
+        obj.select_set(False)
 
     # add empty object
     mesh_base = bpy.data.meshes.new(name="~tmp~")
     obj_base = bpy.data.objects.new(name="~tmp~", object_data=mesh_base)
-    base_base = scene.objects.link(obj_base)
-    scene.objects.active = obj_base
-    obj_base.select = True
+    scene_collection.objects.link(obj_base)
+    layer.objects.active = obj_base
+    obj_base.select_set(True)
 
     # loop over all meshes
     for obj in objects:
@@ -246,29 +257,29 @@ def object_merge(context, objects):
             continue
 
         # convert each to a mesh
-        mesh_new = obj.to_mesh(scene=scene,
-                               apply_modifiers=True,
-                               settings='PREVIEW',
-                               calc_tessface=False)
+        mesh_new = obj.to_mesh(
+            depsgraph=context.depsgraph,
+            apply_modifiers=True,
+        )
 
         # remove non-active uvs/vcols
         cd_remove_all_but_active(mesh_new.vertex_colors)
-        cd_remove_all_but_active(mesh_new.uv_textures)
+        cd_remove_all_but_active(mesh_new.uv_layers)
 
         # join into base mesh
         obj_new = bpy.data.objects.new(name="~tmp-new~", object_data=mesh_new)
-        base_new = scene.objects.link(obj_new)
+        base_new = scene_collection.objects.link(obj_new)
         obj_new.matrix_world = obj.matrix_world
 
         fake_context = context.copy()
         fake_context["active_object"] = obj_base
-        fake_context["selected_editable_bases"] = [base_base, base_new]
+        fake_context["selected_editable_objects"] = [obj_base, obj_new]
 
         bpy.ops.object.join(fake_context)
         del base_new, obj_new
 
         # remove object and its mesh, join does this
-        # scene.objects.unlink(obj_new)
+        # scene_collection.objects.unlink(obj_new)
         # bpy.data.objects.remove(obj_new)
 
         bpy.data.meshes.remove(mesh_new)
@@ -276,7 +287,8 @@ def object_merge(context, objects):
     scene.update()
 
     # return new object
-    return base_base
+    return obj_base
+
 
 
 def face_is_distorted(ele, angle_distort):

@@ -317,7 +317,7 @@ def fracture_group(context, group):
             and (len(ob.users_group) == 0 or ob.users_group[0].name != group)):
             tobesplit.append(ob)
 
-    cutters = bpy.data.groups[group].objects
+    cutters = bpy.data.collections[group].objects
 
     # @todo This can be optimized.
     # Avoid booleans on obs where bbox doesn't intersect.
@@ -407,7 +407,7 @@ class FractureGroup(bpy.types.Operator):
                            description="Specify the group used for fracturing")
 
 #    e = []
-#    for i, g in enumerate(bpy.data.groups):
+#    for i, g in enumerate(bpy.data.collections):
 #        e.append((g.name, g.name, ''))
 #    group = EnumProperty(name='Group (hit F8 to refresh list)',
 #                         items=e,
@@ -431,7 +431,7 @@ class FractureGroup(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "exe")
-        layout.prop_search(self, "group", bpy.data, "groups")
+        layout.prop_search(self, "group", bpy.data, "collections")
 
 #####################################################################
 # Import Functions

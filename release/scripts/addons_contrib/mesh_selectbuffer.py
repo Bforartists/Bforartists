@@ -25,8 +25,8 @@ bl_info = {
     "name": "KTX Selectbuffer",
     "description": "Enable boolean operations on selections",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 3, 2),
-    "blender": (2, 7, 0),
+    "version": (1, 4, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Properties",
     "warning": "",
     "wiki_url": "https://github.com/kostex/blenderscripts/",
@@ -46,7 +46,7 @@ class KTX_Selectbuffer_Mutate(bpy.types.Operator):
                       "A.symmetric_difference(B) elements in either A or B but not both\n"
                       "A.intersection(B) elements common to A and B")
 
-    operation = StringProperty()
+    operation : StringProperty()
 
     def execute(self, context):
         old_buffer = bpy.context.scene.ktx_selectbuffer
@@ -120,14 +120,28 @@ class KTX_Selectbuffer(bpy.types.Panel):
                 col.label(text='Select a Mesh Object')
 
 
+classes = (
+    KTX_Selectbuffer,
+    KTX_Selectbuffer_Mutate
+)
+
+
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+
     bpy.types.Scene.ktx_selectbuffer = Oldbuffer
+
+    for cls in classes:
+        register_class(cls)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
+
     del bpy.types.Scene.ktx_selectbuffer
+
+    for cls in classes:
+        unregister_class(cls)
 
 
 if __name__ == "__main__":

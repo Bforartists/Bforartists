@@ -37,10 +37,11 @@
 
 struct Object;
 struct Scene;
+struct Mesh;
 struct MFace;
-struct DerivedMesh;
 struct ClothModifierData;
 struct CollisionModifierData;
+struct Depsgraph;
 
 #define DO_INLINE MALWAYS_INLINE
 
@@ -116,6 +117,7 @@ typedef struct ClothVertex {
 	float 	goal;		/* goal, from SB			*/
 	float	impulse[3];	/* used in collision.c */
 	float	xrest[3];   /* rest position of the vertex */
+	float	dcvel[3];	/* delta velocities to be applied by collision response */
 	unsigned int impulse_count; /* same as above */
 	float 	avg_spring_len; /* average length of connected springs */
 	float 	struct_stiff;
@@ -132,11 +134,17 @@ ClothVertex;
 typedef struct ClothSpring {
 	int	ij;		/* Pij from the paper, one end of the spring.	*/
 	int	kl;		/* Pkl from the paper, one end of the spring.	*/
-	int mn;
-	float	restlen;	/* The original length of the spring.	*/
-	int	type;		/* types defined in BKE_cloth.h ("springType") */
-	int	flags; 		/* defined in BKE_cloth.h, e.g. deactivated due to tearing */
-	float 	stiffness;	/* stiffness factor from the vertex groups */
+	int mn;		/* For hair springs: third vertex index; For bending springs: edge index; */
+	int *pa;	/* Array of vert indices for poly a (for bending springs). */
+	int *pb;	/* Array of vert indices for poly b (for bending springs). */
+	int la;		/* Length of *pa. */
+	int lb;		/* Length of *pb. */
+	float restlen;	/* The original length of the spring. */
+	float restang;	/* The original angle of the bending springs. */
+	int	type;		/* Types defined in BKE_cloth.h ("springType"). */
+	int	flags; 		/* Defined in BKE_cloth.h, e.g. deactivated due to tearing. */
+	float lin_stiffness;	/* Linear stiffness factor from the vertex groups. */
+	float ang_stiffness;	/* Angular stiffness factor from the vertex groups. */
 	float editrestlen;
 
 	/* angular bending spring target and derivatives */
@@ -162,14 +170,20 @@ ClothSpring;
 /* These are the bits used in SimSettings.flags. */
 typedef enum {
 	CLOTH_SIMSETTINGS_FLAG_COLLOBJ = ( 1 << 2 ),// object is only collision object, no cloth simulation is done
-	CLOTH_SIMSETTINGS_FLAG_GOAL = ( 1 << 3 ), 	// we have goals enabled
+	CLOTH_SIMSETTINGS_FLAG_GOAL = ( 1 << 3 ), /* DEPRECATED, for versioning only. */
 	CLOTH_SIMSETTINGS_FLAG_TEARING = ( 1 << 4 ),// true if tearing is enabled
-	CLOTH_SIMSETTINGS_FLAG_SCALING = ( 1 << 8 ), /* is advanced scaling active? */
+	CLOTH_SIMSETTINGS_FLAG_SCALING = ( 1 << 8 ), /* DEPRECATED, for versioning only. */
 	CLOTH_SIMSETTINGS_FLAG_CCACHE_EDIT = (1 << 12),	/* edit cache in editmode */
-	CLOTH_SIMSETTINGS_FLAG_NO_SPRING_COMPRESS = (1 << 13), /* don't allow spring compression */
+	CLOTH_SIMSETTINGS_FLAG_RESIST_SPRING_COMPRESS = (1 << 13), /* don't allow spring compression */
 	CLOTH_SIMSETTINGS_FLAG_SEW = (1 << 14), /* pull ends of loose edges together */
 	CLOTH_SIMSETTINGS_FLAG_DYNAMIC_BASEMESH = (1 << 15), /* make simulation respect deformations in the base object */
 } CLOTH_SIMSETTINGS_FLAGS;
+
+/* ClothSimSettings.bending_model. */
+typedef enum {
+	CLOTH_BENDING_LINEAR	= 0,
+	CLOTH_BENDING_ANGULAR	= 1,
+} CLOTH_BENDING_MODEL;
 
 /* COLLISION FLAGS */
 typedef enum {
@@ -179,12 +193,12 @@ typedef enum {
 
 /* Spring types as defined in the paper.*/
 typedef enum {
-	CLOTH_SPRING_TYPE_STRUCTURAL  = (1 << 1),
-	CLOTH_SPRING_TYPE_SHEAR       = (1 << 2),
-	CLOTH_SPRING_TYPE_BENDING     = (1 << 3),
-	CLOTH_SPRING_TYPE_GOAL        = (1 << 4),
-	CLOTH_SPRING_TYPE_SEWING      = (1 << 5),
-	CLOTH_SPRING_TYPE_BENDING_ANG = (1 << 6),
+	CLOTH_SPRING_TYPE_STRUCTURAL   = (1 << 1),
+	CLOTH_SPRING_TYPE_SHEAR        = (1 << 2),
+	CLOTH_SPRING_TYPE_BENDING      = (1 << 3),
+	CLOTH_SPRING_TYPE_GOAL         = (1 << 4),
+	CLOTH_SPRING_TYPE_SEWING       = (1 << 5),
+	CLOTH_SPRING_TYPE_BENDING_HAIR = (1 << 6),
 } CLOTH_SPRING_TYPES;
 
 /* SPRING FLAGS */
@@ -209,10 +223,9 @@ typedef struct ColliderContacts {
 } ColliderContacts;
 
 // needed for implicit.c
-int cloth_bvh_objcollision (struct Object *ob, struct ClothModifierData *clmd, float step, float dt );
-int cloth_points_objcollision(struct Object *ob, struct ClothModifierData *clmd, float step, float dt);
+int cloth_bvh_collision(struct Depsgraph *depsgraph, struct Object *ob, struct ClothModifierData *clmd, float step, float dt);
 
-void cloth_find_point_contacts(struct Object *ob, struct ClothModifierData *clmd, float step, float dt,
+void cloth_find_point_contacts(struct Depsgraph *depsgraph, struct Object *ob, struct ClothModifierData *clmd, float step, float dt,
                                ColliderContacts **r_collider_contacts, int *r_totcolliders);
 void cloth_free_contacts(ColliderContacts *collider_contacts, int totcolliders);
 
@@ -226,16 +239,18 @@ void cloth_free_contacts(ColliderContacts *collider_contacts, int totcolliders);
 void cloth_free_modifier_extern (struct ClothModifierData *clmd );
 void cloth_free_modifier (struct ClothModifierData *clmd );
 void cloth_init (struct ClothModifierData *clmd );
-void clothModifier_do (struct ClothModifierData *clmd, struct Scene *scene, struct Object *ob, struct DerivedMesh *dm, float (*vertexCos)[3]);
+void clothModifier_do(
+        struct ClothModifierData *clmd, struct Depsgraph *depsgraph, struct Scene *scene,
+        struct Object *ob, struct Mesh *me, float (*vertexCos)[3]);
 
 int cloth_uses_vgroup(struct ClothModifierData *clmd);
 
 // needed for collision.c
-void bvhtree_update_from_cloth(struct ClothModifierData *clmd, bool moving);
-void bvhselftree_update_from_cloth(struct ClothModifierData *clmd, bool moving);
+void bvhtree_update_from_cloth(struct ClothModifierData *clmd, bool moving, bool self);
 
 // needed for button_object.c
-void cloth_clear_cache (struct Object *ob, struct ClothModifierData *clmd, float framenr );
+void cloth_clear_cache(
+        struct Object *ob, struct ClothModifierData *clmd, float framenr );
 
 void cloth_parallel_transport_hair_frame(float mat[3][3], const float dir_old[3], const float dir_new[3]);
 

@@ -26,7 +26,7 @@
 # behavior
 #
 # vertex animation to ShapeKeys with ipo  and gives the frame a value of 1.0
-# A modifier to read mdd files would be Ideal but thats for another day :)
+# A modifier to read mdd files would be Ideal but that's for another day :)
 #
 # Please send any fixes,updates,bugs to Slow67_at_Gmail.com
 # Bill Niewuendorp

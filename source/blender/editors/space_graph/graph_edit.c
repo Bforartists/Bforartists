@@ -36,7 +36,7 @@
 #include <float.h>
 
 #ifdef WITH_AUDASPACE
-#  include AUD_SPECIAL_H
+#  include <AUD_Special.h>
 #endif
 
 #include "MEM_guardedalloc.h"
@@ -54,13 +54,15 @@
 
 #include "BLT_translation.h"
 
+#include "BKE_animsys.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_nla.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph_build.h"
 
 #include "UI_view2d.h"
 
@@ -344,7 +346,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
 	int filter;
 
 	/* free existing ghost curves */
-	free_fcurves(&sipo->ghostCurves);
+	free_fcurves(&sipo->runtime.ghost_curves);
 
 	/* sanity check */
 	if (start >= end) {
@@ -395,7 +397,7 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
 		gcu->color[2] = fcu->color[2] - 0.07f;
 
 		/* store new ghost curve */
-		BLI_addtail(&sipo->ghostCurves, gcu);
+		BLI_addtail(&sipo->runtime.ghost_curves, gcu);
 
 		/* restore driver */
 		fcu->driver = driver;
@@ -462,11 +464,11 @@ static int graphkeys_clear_ghostcurves_exec(bContext *C, wmOperator *UNUSED(op))
 	sipo = (SpaceIpo *)ac.sl;
 
 	/* if no ghost curves, don't do anything */
-	if (BLI_listbase_is_empty(&sipo->ghostCurves))
+	if (BLI_listbase_is_empty(&sipo->runtime.ghost_curves)) {
 		return OPERATOR_CANCELLED;
-
+	}
 	/* free ghost curves */
-	free_fcurves(&sipo->ghostCurves);
+	free_fcurves(&sipo->runtime.ghost_curves);
 
 	/* update this editor only */
 	ED_area_tag_redraw(CTX_wm_area(C));
@@ -520,12 +522,14 @@ static const EnumPropertyItem prop_graphkeys_insertkey_types[] = {
 static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 {
 	ListBase anim_data = {NULL, NULL};
+	ListBase nla_cache = {NULL, NULL};
 	bAnimListElem *ale;
 	int filter;
 	size_t num_items;
 
 	ReportList *reports = ac->reports;
 	SpaceIpo *sipo = (SpaceIpo *)ac->sl;
+	struct Depsgraph *depsgraph = ac->depsgraph;
 	Scene *scene = ac->scene;
 	ToolSettings *ts = scene->toolsettings;
 	short flag = 0;
@@ -587,17 +591,8 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 	}
 	else {
 		for (ale = anim_data.first; ale; ale = ale->next) {
-			AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 			FCurve *fcu = (FCurve *)ale->key_data;
-			float cfra;
-
-			/* adjust current frame for NLA-mapping */
-			if ((sipo) && (sipo->mode == SIPO_MODE_DRIVERS))
-				cfra = sipo->cursorTime;
-			else if (adt)
-				cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
-			else
-				cfra = (float)CFRA;
+			float cfra = (float)CFRA;
 
 			/* read value from property the F-Curve represents, or from the curve only?
 			 * - ale->id != NULL:    Typically, this means that we have enough info to try resolving the path
@@ -608,10 +603,18 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 			 *                        up adding the keyframes on a new F-Curve in the action data instead.
 			 */
 			if (ale->id && !ale->owner && !fcu->driver) {
-				insert_keyframe(ac->bmain, reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
-				                fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, flag);
+				insert_keyframe(ac->bmain, depsgraph, reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
+				                fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, &nla_cache, flag);
 			}
 			else {
+				AnimData *adt = ANIM_nla_mapping_get(ac, ale);
+
+				/* adjust current frame for NLA-mapping */
+				if ((sipo) && (sipo->mode == SIPO_MODE_DRIVERS))
+					cfra = sipo->cursorTime;
+				else if (adt)
+					cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
+
 				const float curval = evaluate_fcurve(fcu, cfra);
 				insert_vert_fcurve(fcu, cfra, curval, ts->keyframe_type, 0);
 			}
@@ -619,6 +622,8 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 			ale->update |= ANIM_UPDATE_DEFAULT;
 		}
 	}
+
+	BKE_animsys_free_nla_keyframing_context_cache(&nla_cache);
 
 	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
@@ -2716,7 +2721,7 @@ static int graph_driver_vars_paste_exec(bContext *C, wmOperator *op)
 	/* successful or not? */
 	if (ok) {
 		/* rebuild depsgraph, now that there are extra deps here */
-		DAG_relations_tag_update(CTX_data_main(C));
+		DEG_relations_tag_update(CTX_data_main(C));
 
 		/* set notifier that keyframes have changed */
 		WM_event_add_notifier(C, NC_SCENE | ND_FRAME, CTX_data_scene(C));
@@ -2790,7 +2795,7 @@ static int graph_driver_delete_invalid_exec(bContext *C, wmOperator *op)
 
 	if (deleted > 0) {
 		/* notify the world of any changes */
-		DAG_relations_tag_update(CTX_data_main(C));
+		DEG_relations_tag_update(CTX_data_main(C));
 		WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_REMOVED, NULL);
 		WM_reportf(RPT_INFO, "Deleted %u drivers", deleted);
 	}

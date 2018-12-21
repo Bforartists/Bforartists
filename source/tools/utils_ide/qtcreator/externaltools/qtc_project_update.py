@@ -23,6 +23,7 @@ def cmake_find_source(path):
                 return l[l.index("=") + 1:].strip()
     return ""
 
+
 SOURCE_DIR = cmake_find_source(PROJECT_DIR)
 
 cmd = (

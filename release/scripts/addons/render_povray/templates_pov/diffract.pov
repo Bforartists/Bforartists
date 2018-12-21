@@ -83,7 +83,7 @@ camera {  //  Camera StdCam
   direction <0.0,     0.0,  1.6542>
   sky       <0.0,     0.0,  1.0>  // Use right handed-system!
   up        <0.0,     0.0,  1.0>  // Where Z is up
-  right x*image_width/image_height // keep propotions with any aspect ratio
+  right x*image_width/image_height // keep proportions with any aspect ratio
   look_at   <0.000, 0.000, -2.7500>
 }
 

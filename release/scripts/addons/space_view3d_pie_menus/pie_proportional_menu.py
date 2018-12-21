@@ -23,7 +23,7 @@ bl_info = {
     "description": "Proportional Object/Edit Tools",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View Object & Edit modes",
     "warning": "",
     "wiki_url": "",

@@ -1,0 +1,12 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_add_closure.oso
+shader node_add_closure
+param	closure color	Closure1			%read{0,0} %write{2147483647,-1}
+param	closure color	Closure2			%read{0,0} %write{2147483647,-1}
+oparam	closure color	Closure			%read{2147483647,-1} %write{0,0}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_add_closure.osl:24
+# 	Closure = Closure1 + Closure2;
+	add		Closure Closure1 Closure2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_add_closure.osl"} %line{24} %argrw{"wrr"}
+	end
