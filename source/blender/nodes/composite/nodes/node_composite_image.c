@@ -41,6 +41,7 @@
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
+#include "BKE_scene.h"
 
 /* **************** IMAGE (and RenderResult, multilayer image) ******************** */
 
@@ -190,16 +191,16 @@ typedef struct RLayerUpdateData {
 	int prev_index;
 } RLayerUpdateData;
 
-void node_cmp_rlayers_register_pass(bNodeTree *ntree, bNode *node, Scene *scene, SceneRenderLayer *srl, const char *name, int type)
+void node_cmp_rlayers_register_pass(bNodeTree *ntree, bNode *node, Scene *scene, ViewLayer *view_layer, const char *name, int type)
 {
 	RLayerUpdateData *data = node->storage;
 
-	if (scene == NULL || srl == NULL || data == NULL || node->id != (ID *)scene) {
+	if (scene == NULL || view_layer == NULL || data == NULL || node->id != (ID *)scene) {
 		return;
 	}
 
-	SceneRenderLayer *node_srl = BLI_findlink(&scene->r.layers, node->custom1);
-	if (node_srl != srl) {
+	ViewLayer *node_view_layer = BLI_findlink(&scene->view_layers, node->custom1);
+	if (node_view_layer != view_layer) {
 		return;
 	}
 
@@ -220,15 +221,15 @@ static void cmp_node_rlayer_create_outputs(bNodeTree *ntree, bNode *node, LinkNo
 	if (scene) {
 		RenderEngineType *engine_type = RE_engines_find(scene->r.engine);
 		if (engine_type && engine_type->update_render_passes) {
-			SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, node->custom1);
-			if (srl) {
+			ViewLayer *view_layer = BLI_findlink(&scene->view_layers, node->custom1);
+			if (view_layer) {
 				RLayerUpdateData *data = MEM_mallocN(sizeof(RLayerUpdateData), "render layer update data");
 				data->available_sockets = available_sockets;
 				data->prev_index = -1;
 				node->storage = data;
 
 				RenderEngine *engine = RE_engine_create(engine_type);
-				engine_type->update_render_passes(engine, scene, srl);
+				engine_type->update_render_passes(engine, scene, view_layer);
 				RE_engine_free(engine);
 
 				MEM_freeN(data);
@@ -305,8 +306,8 @@ static void node_composit_init_image(bNodeTree *ntree, bNode *node)
 	node->storage = iuser;
 	iuser->frames = 1;
 	iuser->sfra = 1;
-	iuser->fie_ima = 2;
 	iuser->ok = 1;
+	iuser->flag |= IMA_ANIM_ALWAYS;
 
 	/* setup initial outputs */
 	cmp_node_image_verify_outputs(ntree, node, false);
@@ -444,6 +445,7 @@ void register_node_type_cmp_rlayers(void)
 	node_type_storage(&ntype, NULL, node_composit_free_rlayers, node_composit_copy_rlayers);
 	node_type_update(&ntype, cmp_node_rlayers_update, NULL);
 	node_type_init(&ntype, node_cmp_rlayers_outputs);
+	node_type_size_preset(&ntype, NODE_SIZE_LARGE);
 
 	nodeRegisterType(&ntype);
 }

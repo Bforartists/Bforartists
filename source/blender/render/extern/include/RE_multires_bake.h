@@ -34,14 +34,22 @@
 #define __RE_MULTIRES_BAKE_H__
 
 struct MultiresBakeRender;
+struct Scene;
 
 typedef struct MultiresBakeRender {
+	Scene *scene;
 	DerivedMesh *lores_dm, *hires_dm;
 	bool simple;
 	int bake_filter;      /* Bake-filter, aka margin */
 	int lvl, tot_lvl;
 	short mode;
 	bool use_lores_mesh;  /* Use low-resolution mesh when baking displacement maps */
+
+	/* material aligned image array (for per-face bake image) */
+	struct {
+		Image **array;
+		int     len;
+	} ob_image;
 
 	int number_of_rays;   /* Number of rays to be cast when doing AO baking */
 	float bias;           /* Bias between object and start ray point when doing AO baking */

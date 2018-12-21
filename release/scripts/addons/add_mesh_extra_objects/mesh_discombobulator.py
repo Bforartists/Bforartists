@@ -461,7 +461,7 @@ def discombobulate(minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
     to_scale = bpy.context.active_object.scale
     to_rotate = bpy.context.active_object.rotation_euler
 
-    # First, we collect all the informations we will need from the previous mesh
+    # First, we collect all the information we will need from the previous mesh
     obverts = bpy.context.active_object.data.vertices
     obpolygons = bpy.context.active_object.data.polygons
     verts = []

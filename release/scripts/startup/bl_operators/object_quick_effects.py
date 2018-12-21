@@ -52,7 +52,7 @@ class QuickFur(Operator):
     bl_label = "Quick Fur"
     bl_options = {'REGISTER', 'UNDO'}
 
-    density = EnumProperty(
+    density: EnumProperty(
         name="Fur Density",
         items=(
             ('LIGHT', "Light", ""),
@@ -61,13 +61,13 @@ class QuickFur(Operator):
         ),
         default='MEDIUM',
     )
-    view_percentage = IntProperty(
+    view_percentage: IntProperty(
         name="View %",
         min=1, max=100,
         soft_min=1, soft_max=100,
         default=10,
     )
-    length = FloatProperty(
+    length: FloatProperty(
         name="Length",
         min=0.001, max=100,
         soft_min=0.01, soft_max=10,
@@ -84,8 +84,6 @@ class QuickFur(Operator):
             return {'CANCELLED'}
 
         mat = bpy.data.materials.new("Fur Material")
-        mat.strand.tip_size = 0.25
-        mat.strand.blend_distance = 0.5
 
         for obj in mesh_objects:
             fake_context["object"] = obj
@@ -106,6 +104,7 @@ class QuickFur(Operator):
             psys.settings.use_strand_primitive = True
             psys.settings.use_hair_bspline = True
             psys.settings.child_type = 'INTERPOLATED'
+            psys.settings.tip_radius = 0.25
 
             obj.data.materials.append(mat)
             psys.settings.material = len(obj.data.materials)
@@ -118,7 +117,7 @@ class QuickExplode(Operator):
     bl_label = "Quick Explode"
     bl_options = {'REGISTER', 'UNDO'}
 
-    style = EnumProperty(
+    style: EnumProperty(
         name="Explode Style",
         items=(
             ('EXPLODE', "Explode", ""),
@@ -126,40 +125,40 @@ class QuickExplode(Operator):
         ),
         default='EXPLODE',
     )
-    amount = IntProperty(
+    amount: IntProperty(
         name="Amount of pieces",
         min=2, max=10000,
         soft_min=2, soft_max=10000,
         default=100,
     )
-    frame_duration = IntProperty(
+    frame_duration: IntProperty(
         name="Duration",
         min=1, max=300000,
         soft_min=1, soft_max=10000,
         default=50,
     )
 
-    frame_start = IntProperty(
+    frame_start: IntProperty(
         name="Start Frame",
         min=1, max=300000,
         soft_min=1, soft_max=10000,
         default=1,
     )
-    frame_end = IntProperty(
+    frame_end: IntProperty(
         name="End Frame",
         min=1, max=300000,
         soft_min=1, soft_max=10000,
         default=10,
     )
 
-    velocity = FloatProperty(
+    velocity: FloatProperty(
         name="Outwards Velocity",
         min=0, max=300000,
         soft_min=0, soft_max=10,
         default=1,
     )
 
-    fade = BoolProperty(
+    fade: BoolProperty(
         name="Fade",
         description="Fade the pieces over time",
         default=True,
@@ -226,7 +225,7 @@ class QuickExplode(Operator):
 
             if self.fade:
                 explode.show_dead = False
-                uv = obj.data.uv_textures.new("Explode fade")
+                uv = obj.data.uv_layers.new("Explode fade")
                 explode.particle_uv = uv.name
 
                 mat = object_ensure_material(obj, "Explode Fade")
@@ -287,7 +286,7 @@ class QuickExplode(Operator):
 
 def obj_bb_minmax(obj, min_co, max_co):
     for i in range(0, 8):
-        bb_vec = obj.matrix_world * Vector(obj.bound_box[i])
+        bb_vec = obj.matrix_world @ Vector(obj.bound_box[i])
 
         min_co[0] = min(bb_vec[0], min_co[0])
         min_co[1] = min(bb_vec[1], min_co[1])
@@ -306,7 +305,7 @@ class QuickSmoke(Operator):
     bl_label = "Quick Smoke"
     bl_options = {'REGISTER', 'UNDO'}
 
-    style = EnumProperty(
+    style: EnumProperty(
         name="Smoke Style",
         items=(
             ('SMOKE', "Smoke", ""),
@@ -316,7 +315,7 @@ class QuickSmoke(Operator):
         default='SMOKE',
     )
 
-    show_flows = BoolProperty(
+    show_flows: BoolProperty(
         name="Render Smoke Objects",
         description="Keep the smoke objects visible during rendering",
         default=False,
@@ -347,7 +346,7 @@ class QuickSmoke(Operator):
             obj.modifiers[-1].flow_settings.smoke_flow_type = self.style
 
             if not self.show_flows:
-                obj.draw_type = 'WIRE'
+                obj.display_type = 'WIRE'
 
             # store bounding box min/max for the domain object
             obj_bb_minmax(obj, min_co, max_co)
@@ -369,88 +368,38 @@ class QuickSmoke(Operator):
 
         # Setup material
 
-        # Cycles
-        if context.scene.render.use_shading_nodes:
-            bpy.ops.object.material_slot_add()
+        # Cycles and Eevee
+        bpy.ops.object.material_slot_add()
 
-            mat = bpy.data.materials.new("Smoke Domain Material")
-            obj.material_slots[0].material = mat
+        mat = bpy.data.materials.new("Smoke Domain Material")
+        obj.material_slots[0].material = mat
 
-            # Make sure we use nodes
-            mat.use_nodes = True
+        # Make sure we use nodes
+        mat.use_nodes = True
 
-            # Set node variables and clear the default nodes
-            tree = mat.node_tree
-            nodes = tree.nodes
-            links = tree.links
+        # Set node variables and clear the default nodes
+        tree = mat.node_tree
+        nodes = tree.nodes
+        links = tree.links
 
-            nodes.clear()
+        nodes.clear()
 
-            # Create shader nodes
+        # Create shader nodes
 
-            # Material output
-            node_out = nodes.new(type='ShaderNodeOutputMaterial')
-            node_out.location = grid_location(6, 1)
+        # Material output
+        node_out = nodes.new(type='ShaderNodeOutputMaterial')
+        node_out.location = grid_location(6, 1)
 
-            # Add Principled Volume
-            node_principled = nodes.new(type='ShaderNodeVolumePrincipled')
-            node_principled.location = grid_location(4, 1)
-            links.new(node_principled.outputs["Volume"],
-                      node_out.inputs["Volume"])
+        # Add Principled Volume
+        node_principled = nodes.new(type='ShaderNodeVolumePrincipled')
+        node_principled.location = grid_location(4, 1)
+        links.new(node_principled.outputs["Volume"],
+                  node_out.inputs["Volume"])
 
-            node_principled.inputs["Density"].default_value = 5.0
+        node_principled.inputs["Density"].default_value = 5.0
 
-            if self.style in {'FIRE', 'BOTH'}:
-                node_principled.inputs["Blackbody Intensity"].default_value = 1.0
-
-        # Blender Internal
-        else:
-            # create a volume material with a voxel data texture for the domain
-            bpy.ops.object.material_slot_add()
-
-            mat = bpy.data.materials.new("Smoke Domain Material")
-            obj.material_slots[0].material = mat
-            mat.type = 'VOLUME'
-            mat.volume.density = 0
-            mat.volume.density_scale = 5
-            mat.volume.step_size = 0.1
-
-            tex = bpy.data.textures.new("Smoke Density", 'VOXEL_DATA')
-            tex.voxel_data.domain_object = obj
-            tex.voxel_data.interpolation = 'TRICUBIC_BSPLINE'
-
-            tex_slot = mat.texture_slots.add()
-            tex_slot.texture = tex
-            tex_slot.texture_coords = 'ORCO'
-            tex_slot.use_map_color_emission = False
-            tex_slot.use_map_density = True
-            tex_slot.use_map_color_reflection = True
-
-            # for fire add a second texture for flame emission
-            mat.volume.emission_color = Vector((0.0, 0.0, 0.0))
-            tex = bpy.data.textures.new("Flame", 'VOXEL_DATA')
-            tex.voxel_data.domain_object = obj
-            tex.voxel_data.smoke_data_type = 'SMOKEFLAME'
-            tex.voxel_data.interpolation = 'TRICUBIC_BSPLINE'
-            tex.use_color_ramp = True
-
-            tex_slot = mat.texture_slots.add()
-            tex_slot.texture = tex
-            tex_slot.texture_coords = 'ORCO'
-
-            # add color ramp for flame color
-            ramp = tex.color_ramp
-            # dark orange
-            elem = ramp.elements.new(0.333)
-            elem.color = (0.2, 0.03, 0.0, 1.0)
-
-            # yellow glow
-            elem = ramp.elements.new(0.666)
-            elem.color = (1, 0.65, 0.25, 1.0)
-
-            mat.texture_slots[1].use_map_density = True
-            mat.texture_slots[1].use_map_emission = True
-            mat.texture_slots[1].emission_factor = 5
+        if self.style in {'FIRE', 'BOTH'}:
+            node_principled.inputs["Blackbody Intensity"].default_value = 1.0
 
         return {'FINISHED'}
 
@@ -460,7 +409,7 @@ class QuickFluid(Operator):
     bl_label = "Quick Fluid"
     bl_options = {'REGISTER', 'UNDO'}
 
-    style = EnumProperty(
+    style: EnumProperty(
         name="Fluid Style",
         items=(
             ('INFLOW', "Inflow", ""),
@@ -468,19 +417,19 @@ class QuickFluid(Operator):
         ),
         default='BASIC',
     )
-    initial_velocity = FloatVectorProperty(
+    initial_velocity: FloatVectorProperty(
         name="Initial Velocity",
         description="Initial velocity of the fluid",
         min=-100.0, max=100.0,
         default=(0.0, 0.0, 0.0),
         subtype='VELOCITY',
     )
-    show_flows = BoolProperty(
+    show_flows: BoolProperty(
         name="Render Fluid Objects",
         description="Keep the fluid objects visible during rendering",
         default=False,
     )
-    start_baking = BoolProperty(
+    start_baking: BoolProperty(
         name="Start Fluid Bake",
         description=("Start baking the fluid immediately "
                      "after creating the domain object"),
@@ -522,7 +471,7 @@ class QuickFluid(Operator):
 
             obj.hide_render = not self.show_flows
             if not self.show_flows:
-                obj.draw_type = 'WIRE'
+                obj.display_type = 'WIRE'
 
             # store bounding box min/max for the domain object
             obj_bb_minmax(obj, min_co, max_co)
@@ -554,13 +503,33 @@ class QuickFluid(Operator):
         mat = bpy.data.materials.new("Fluid Domain Material")
         obj.material_slots[0].material = mat
 
-        mat.specular_intensity = 1
-        mat.specular_hardness = 100
-        mat.use_transparency = True
-        mat.alpha = 0.0
-        mat.transparency_method = 'RAYTRACE'
-        mat.raytrace_transparency.ior = 1.33
-        mat.raytrace_transparency.depth = 4
+        # Make sure we use nodes
+        mat.use_nodes = True
+
+        # Set node variables and clear the default nodes
+        tree = mat.node_tree
+        nodes = tree.nodes
+        links = tree.links
+
+        nodes.clear()
+
+        # Create shader nodes
+
+        # Material output
+        node_out = nodes.new(type='ShaderNodeOutputMaterial')
+        node_out.location = grid_location(6, 1)
+
+        # Add Glass
+        node_glass = nodes.new(type='ShaderNodeBsdfGlass')
+        node_glass.location = grid_location(4, 1)
+        links.new(node_glass.outputs["BSDF"], node_out.inputs["Surface"])
+        node_glass.inputs["IOR"].default_value = 1.33
+
+        # Add Absorption
+        node_absorption = nodes.new(type='ShaderNodeVolumeAbsorption')
+        node_absorption.location = grid_location(4, 2)
+        links.new(node_absorption.outputs["Volume"], node_out.inputs["Volume"])
+        node_absorption.inputs["Color"].default_value = (0.8, 0.9, 1.0, 1.0)
 
         if self.start_baking:
             bpy.ops.fluid.bake('INVOKE_DEFAULT')

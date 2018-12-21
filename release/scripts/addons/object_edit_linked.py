@@ -76,8 +76,8 @@ class EditLinked(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         return settings["original_file"] == "" and context.active_object is not None and (
-                (context.active_object.dupli_group and
-                 context.active_object.dupli_group.library is not None) or
+                (context.active_object.instance_collection and
+                 context.active_object.instance_collection.library is not None) or
                 (context.active_object.proxy and
                  context.active_object.proxy.library is not None) or
                  context.active_object.library is not None)
@@ -87,9 +87,9 @@ class EditLinked(bpy.types.Operator):
         #print(bpy.context.active_object.library)
         target = context.active_object
 
-        if target.dupli_group and target.dupli_group.library:
-            targetpath = target.dupli_group.library.filepath
-            settings["linked_objects"].extend({ob.name for ob in target.dupli_group.objects})
+        if target.instance_collection and target.instance_collection.library:
+            targetpath = target.instance_collection.library.filepath
+            settings["linked_objects"].extend({ob.name for ob in target.instance_collection.objects})
         elif target.library:
             targetpath = target.library.filepath
             settings["linked_objects"].append(target.name)
@@ -180,7 +180,7 @@ class PanelLinkedEdit(bpy.types.Panel):
         if context.active_object.proxy:
             target = context.active_object.proxy
         else:
-            target = context.active_object.dupli_group
+            target = context.active_object.instance_collection
 
         if settings["original_file"] == "" and (
                 (target and
@@ -219,7 +219,7 @@ class PanelLinkedEdit(bpy.types.Panel):
                 #  when launching a new Blender instance. Nested links don't
                 #  currently work when using a single instance of Blender.
                 props = layout.operator("object.edit_linked",
-                                        text="Edit Library: %s" % context.active_object.dupli_group.name,
+                                        text="Edit Library: %s" % context.active_object.instance_collection.name,
                                         icon="LINK_BLEND")
                 props.use_autosave = scene.use_autosave
                 props.use_instance = scene.use_instance
@@ -227,7 +227,7 @@ class PanelLinkedEdit(bpy.types.Panel):
                 layout.prop(scene, "use_instance")
 
                 layout.label(text="Path: %s" %
-                             context.active_object.dupli_group.library.filepath)
+                             context.active_object.instance_collection.library.filepath)
 
             else:
                 props = layout.operator("wm.return_to_original", icon="LOOP_BACK")

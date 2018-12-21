@@ -24,14 +24,15 @@
 import bpy
 
 
-def write_armature(context,
-                   filepath,
-                   frame_start,
-                   frame_end,
-                   global_scale=1.0,
-                   rotate_mode='NATIVE',
-                   root_transform_only=False,
-                   ):
+def write_armature(
+        context,
+        filepath,
+        frame_start,
+        frame_end,
+        global_scale=1.0,
+        rotate_mode='NATIVE',
+        root_transform_only=False,
+):
 
     def ensure_rot_order(rot_order_str):
         if set(rot_order_str) != {'X', 'Y', 'Z'}:
@@ -91,11 +92,11 @@ def write_armature(context,
             file.write("%sROOT %s\n" % (indent_str, bone_name))
 
         file.write("%s{\n" % indent_str)
-        file.write("%s\tOFFSET %.6f %.6f %.6f\n" % (indent_str, loc.x * global_scale, loc.y * global_scale, loc.z * global_scale))
+        file.write("%s\tOFFSET %.6f %.6f %.6f\n" % (indent_str, *(loc * global_scale)))
         if (bone.use_connect or root_transform_only) and bone.parent:
-            file.write("%s\tCHANNELS 3 %srotation %srotation %srotation\n" % (indent_str, rot_order_str[0], rot_order_str[1], rot_order_str[2]))
+            file.write("%s\tCHANNELS 3 %srotation %srotation %srotation\n" % (indent_str, *rot_order_str))
         else:
-            file.write("%s\tCHANNELS 6 Xposition Yposition Zposition %srotation %srotation %srotation\n" % (indent_str, rot_order_str[0], rot_order_str[1], rot_order_str[2]))
+            file.write("%s\tCHANNELS 6 Xposition Yposition Zposition %srotation %srotation %srotation\n" % (indent_str, *rot_order_str))
 
         if my_children:
             # store the location for the children
@@ -111,7 +112,7 @@ def write_armature(context,
             file.write("%s\tEnd Site\n" % indent_str)
             file.write("%s\t{\n" % indent_str)
             loc = bone.tail_local - node_locations[bone_name]
-            file.write("%s\t\tOFFSET %.6f %.6f %.6f\n" % (indent_str, loc.x * global_scale, loc.y * global_scale, loc.z * global_scale))
+            file.write("%s\t\tOFFSET %.6f %.6f %.6f\n" % (indent_str, *(loc * global_scale)))
             file.write("%s\t}\n" % indent_str)
 
         file.write("%s}\n" % indent_str)
@@ -149,22 +150,34 @@ def write_armature(context,
 
     class DecoratedBone:
         __slots__ = (
-            "name",  # bone name, used as key in many places
+            # Bone name, used as key in many places.
+            "name",
             "parent",  # decorated bone parent, set in a later loop
-            "rest_bone",  # blender armature bone
-            "pose_bone",  # blender pose bone
-            "pose_mat",  # blender pose matrix
-            "rest_arm_mat",  # blender rest matrix (armature space)
-            "rest_local_mat",  # blender rest batrix (local space)
-            "pose_imat",  # pose_mat inverted
-            "rest_arm_imat",  # rest_arm_mat inverted
-            "rest_local_imat",  # rest_local_mat inverted
-            "prev_euler",  # last used euler to preserve euler compability in between keyframes
-            "skip_position",  # is the bone disconnected to the parent bone?
+            # Blender armature bone.
+            "rest_bone",
+            # Blender pose bone.
+            "pose_bone",
+            # Blender pose matrix.
+            "pose_mat",
+            # Blender rest matrix (armature space).
+            "rest_arm_mat",
+            # Blender rest batrix (local space).
+            "rest_local_mat",
+            # Pose_mat inverted.
+            "pose_imat",
+            # Rest_arm_mat inverted.
+            "rest_arm_imat",
+            # Rest_local_mat inverted.
+            "rest_local_imat",
+            # Last used euler to preserve euler compatibility in between keyframes.
+            "prev_euler",
+            # Is the bone disconnected to the parent bone?
+            "skip_position",
             "rot_order",
             "rot_order_str",
-            "rot_order_str_reverse",  # needed for the euler order when converting from a matrix
-            )
+            # Needed for the euler order when converting from a matrix.
+            "rot_order_str_reverse",
+        )
 
         _eul_order_lookup = {
             'XYZ': (0, 1, 2),
@@ -173,7 +186,7 @@ def write_armature(context,
             'YZX': (1, 2, 0),
             'ZXY': (2, 0, 1),
             'ZYX': (2, 1, 0),
-            }
+        }
 
         def __init__(self, bone_name):
             self.name = bone_name
@@ -216,10 +229,7 @@ def write_armature(context,
     bones_decorated = [DecoratedBone(bone_name) for bone_name in serialized_names]
 
     # Assign parents
-    bones_decorated_dict = {}
-    for dbone in bones_decorated:
-        bones_decorated_dict[dbone.name] = dbone
-
+    bones_decorated_dict = {dbone.name: dbone for dbone in bones_decorated}
     for dbone in bones_decorated:
         parent = dbone.rest_bone.parent
         if parent:
@@ -227,7 +237,7 @@ def write_armature(context,
     del bones_decorated_dict
     # finish assigning parents
 
-    scene = bpy.context.scene
+    scene = context.scene
     frame_current = scene.frame_current
 
     file.write("MOTION\n")
@@ -244,13 +254,13 @@ def write_armature(context,
             trans = Matrix.Translation(dbone.rest_bone.head_local)
             itrans = Matrix.Translation(-dbone.rest_bone.head_local)
 
-            if  dbone.parent:
-                mat_final = dbone.parent.rest_arm_mat * dbone.parent.pose_imat * dbone.pose_mat * dbone.rest_arm_imat
-                mat_final = itrans * mat_final * trans
+            if dbone.parent:
+                mat_final = dbone.parent.rest_arm_mat @ dbone.parent.pose_imat @ dbone.pose_mat @ dbone.rest_arm_imat
+                mat_final = itrans @ mat_final @ trans
                 loc = mat_final.to_translation() + (dbone.rest_bone.head_local - dbone.parent.rest_bone.head_local)
             else:
-                mat_final = dbone.pose_mat * dbone.rest_arm_imat
-                mat_final = itrans * mat_final * trans
+                mat_final = dbone.pose_mat @ dbone.rest_arm_imat
+                mat_final = itrans @ mat_final @ trans
                 loc = mat_final.to_translation() + dbone.rest_bone.head
 
             # keep eulers compatible, no jumping on interpolation.
@@ -272,20 +282,21 @@ def write_armature(context,
     print("BVH Exported: %s frames:%d\n" % (filepath, frame_end - frame_start + 1))
 
 
-def save(operator, context, filepath="",
-          frame_start=-1,
-          frame_end=-1,
-          global_scale=1.0,
-          rotate_mode="NATIVE",
-          root_transform_only=False,
-          ):
-
-    write_armature(context, filepath,
-           frame_start=frame_start,
-           frame_end=frame_end,
-           global_scale=global_scale,
-           rotate_mode=rotate_mode,
-           root_transform_only=root_transform_only,
-           )
+def save(
+        context, filepath="",
+        frame_start=-1,
+        frame_end=-1,
+        global_scale=1.0,
+        rotate_mode="NATIVE",
+        root_transform_only=False,
+):
+    write_armature(
+        context, filepath,
+        frame_start=frame_start,
+        frame_end=frame_end,
+        global_scale=global_scale,
+        rotate_mode=rotate_mode,
+        root_transform_only=root_transform_only,
+    )
 
     return {'FINISHED'}

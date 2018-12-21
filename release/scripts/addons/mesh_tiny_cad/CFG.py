@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -22,8 +22,6 @@
 import os
 import bpy
 
-from bpy.types import Panel # bfa - tools belongs into the tool shelf, and that's panels.
-
 ICONS = 'BIX CCEN V2X VTX XALL E2F'.split(' ')
 icon_collection = {}
 
@@ -41,34 +39,6 @@ class TinyCADProperties(bpy.types.PropertyGroup):
 
 class VIEW3D_MT_edit_mesh_tinycad(bpy.types.Menu):
     bl_label = "TinyCAD"
-
-    @classmethod
-    def poll(cls, context):
-        return bool(context.object)
-
-    def draw(self, context):
-
-        pcoll = icon_collection["main"]
-
-        def cicon(name):
-            return pcoll[name].icon_id
-
-        op = self.layout.operator
-        op('tinycad.autovtx', text='VTX | AUTO', icon_value=cicon('VTX'))
-        op('tinycad.vertintersect', text='V2X | Vertex at intersection', icon_value=cicon('V2X'))
-        op('tinycad.intersectall', text='XALL | Intersect selected edges', icon_value=cicon('XALL'))
-        op('tinycad.linetobisect', text='BIX |  Bisector of 2 planar edges', icon_value=cicon('BIX'))
-        op('tinycad.circlecenter', text='CCEN | Resurrect circle center', icon_value=cicon('CCEN'))
-        op('tinycad.edge_to_face', text='E2F | Extend Edge to Face', icon_value=cicon('E2F'))
-
-#bfa - tools belongs into the tool shelf!
-class VIEW3D_MT_edit_mesh_tinycad_panel(Panel):
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_label = "TinyCAD"
-    bl_category = "Tools"
-    bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):

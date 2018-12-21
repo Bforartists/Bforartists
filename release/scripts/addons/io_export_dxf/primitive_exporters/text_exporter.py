@@ -85,5 +85,3 @@ def exportText(ob, mx, mw, **common):
                 flag=textFlag,height=textHeight,justifyhor=Alignment,**common)
             entities.append(dxfTEXT)
     return entities
-
-

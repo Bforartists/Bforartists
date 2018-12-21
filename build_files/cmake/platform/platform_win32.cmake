@@ -225,7 +225,7 @@ if(NOT JPEG_FOUND)
 endif()
 
 set(PTHREADS_INCLUDE_DIRS ${LIBDIR}/pthreads/include)
-set(PTHREADS_LIBRARIES ${LIBDIR}/pthreads/lib/pthreadVC2.lib)
+set(PTHREADS_LIBRARIES ${LIBDIR}/pthreads/lib/pthreadVC3.lib)
 
 set(FREETYPE ${LIBDIR}/freetype)
 set(FREETYPE_INCLUDE_DIRS
@@ -567,11 +567,10 @@ if(WITH_OPENAL)
 endif()
 
 if(WITH_CODEC_SNDFILE)
-	set(SNDFILE ${LIBDIR}/sndfile)
-	set(SNDFILE_INCLUDE_DIRS ${SNDFILE}/include)
-	set(SNDFILE_LIBPATH ${SNDFILE}/lib) # TODO, deprecate
-	set(SNDFILE_LIBRARIES ${SNDFILE_LIBPATH}/libsndfile-1.lib)
-
+	set(LIBSNDFILE ${LIBDIR}/sndfile)
+	set(LIBSNDFILE_INCLUDE_DIRS ${LIBSNDFILE}/include)
+	set(LIBSNDFILE_LIBPATH ${LIBSNDFILE}/lib) # TODO, deprecate
+	set(LIBSNDFILE_LIBRARIES ${LIBSNDFILE_LIBPATH}/libsndfile-1.lib)
 endif()
 
 if(WITH_RAYOPTIMIZATION AND SUPPORT_SSE_BUILD)

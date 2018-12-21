@@ -25,10 +25,10 @@ from bpy.app.handlers import persistent
 
 bl_info = {
     "name": "KTX RenderSlot",
-	"description": "Display/select renderslot in the render tab",
+    "description": "Display/select renderslot in the render tab",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 2, 6),
-    "blender": (2, 7, 0),
+    "version": (1, 3, 0),
+    "blender": (2, 80, 0),
     "location": "Properties Editor > Render > Render",
     "warning": "",
     "wiki_url": "https://github.com/kostex/blenderscripts/",
@@ -46,7 +46,7 @@ class OccupiedSlots:
 class KTX_Renderslot_Prefs(bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    advanced_mode = bpy.props.BoolProperty(
+    advanced_mode : bpy.props.BoolProperty(
         name="Advanced Mode",
         description="Gives the addon some advanced options",
         default=False)
@@ -63,7 +63,7 @@ class KTX_RenderSlot(Operator):
                       "Note: Dot next to number means slot has image data\n"
                       "[x] is active slot")
 
-    number = IntProperty()
+    number : IntProperty()
 
     def execute(self, context):
         bpy.data.images['Render Result'].render_slots.active_index = self.number
@@ -114,24 +114,36 @@ def ui(self, context):
         row.label(text="No Render Slots available yet", icon="INFO")
 
 
-def register():
-    bpy.utils.register_module(__name__)
+classes = (
+    KTX_RenderSlot,
+    KTX_Renderslot_Prefs
+)
 
-    bpy.types.RENDER_PT_render.prepend(ui)
+
+def register():
+    from bpy.utils import register_class
+
+    bpy.types.RENDER_PT_context.prepend(ui)
     bpy.types.Scene.ktx_auto_advance_slot = BoolProperty(default=False, description="Auto Advance to Next Slot after a Render")
     bpy.types.Scene.ktx_occupied_render_slots = OccupiedSlots
 
     bpy.app.handlers.render_post.append(checkslots)
 
+    for cls in classes:
+        register_class(cls)
+
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
 
-    bpy.types.RENDER_PT_render.remove(ui)
+    bpy.types.RENDER_PT_context.remove(ui)
     del bpy.types.Scene.ktx_occupied_render_slots
     del bpy.types.Scene.ktx_auto_advance_slot
 
     bpy.app.handlers.render_post.remove(checkslots)
+
+    for cls in classes:
+        unregister_class(cls)
 
 
 if __name__ == "__main__":

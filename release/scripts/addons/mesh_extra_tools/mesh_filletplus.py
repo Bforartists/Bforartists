@@ -201,7 +201,7 @@ def fillets(list_0, startv, vertlist, face, adj, n, out, flip, radius):
         bm.edges.index_update()
         bm.faces.index_update()
 
-        me.update(calc_edges=True, calc_tessface=True)
+        me.update(calc_edges=True, calc_loop_triangles=True)
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
 
     except Exception as e:

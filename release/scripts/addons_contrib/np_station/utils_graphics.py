@@ -151,19 +151,17 @@ def display_instructions(region, rv3d, instruct, keys_aff, keys_nav, keys_neg):
     rwtools = 0
     rwui = 0
 
-    np_print(system.window_draw_method, system.use_region_overlap)
+    np_print(system.use_region_overlap)
 
 
     if system.use_region_overlap:
-        if system.window_draw_method in ('TRIPLE_BUFFER', 'AUTOMATIC') :
-
-            area = bpy.context.area
-            np_print('GO', area.regions)
-            for r in area.regions:
-                if r.type == 'TOOLS':
-                    rwtools = r.width
-                elif r.type == 'UI':
-                    rwui = r.width
+        area = bpy.context.area
+        np_print('GO', area.regions)
+        for r in area.regions:
+            if r.type == 'TOOLS':
+                rwtools = r.width
+            elif r.type == 'UI':
+                rwui = r.width
 
     np_print('rwtools', rwtools, 'rwui', rwui)
     field_keys_y = 46
@@ -710,4 +708,3 @@ def display_cursor_badge(co2d, symbol, badge_mode, message_main, message_aux, au
             bgl.glEnd()
         '''
         bgl.glDisable(bgl.GL_BLEND)
-

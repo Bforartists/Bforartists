@@ -23,7 +23,7 @@ bl_info = {
     "description": "Viewport Shading Menus",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",
@@ -43,7 +43,7 @@ class PieShadingView(Menu):
         layout = self.layout
 
         pie = layout.menu_pie()
-        pie.prop(context.space_data, "viewport_shade", expand=True)
+        pie.prop(context.space_data.shading, "type", expand=True)
 
         if context.active_object:
             if context.mode == 'EDIT_MESH':

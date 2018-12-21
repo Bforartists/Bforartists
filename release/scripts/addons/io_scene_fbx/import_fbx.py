@@ -60,7 +60,7 @@ fbx_elem_nil = None
 convert_deg_to_rad_iter = units_convertor_iter("degree", "radian")
 
 MAT_CONVERT_BONE = fbx_utils.MAT_CONVERT_BONE.inverted()
-MAT_CONVERT_LAMP = fbx_utils.MAT_CONVERT_LAMP.inverted()
+MAT_CONVERT_LIGHT = fbx_utils.MAT_CONVERT_LIGHT.inverted()
 MAT_CONVERT_CAMERA = fbx_utils.MAT_CONVERT_CAMERA.inverted()
 
 
@@ -369,7 +369,7 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
 def blen_read_object_transform_do(transform_data):
     # This is a nightmare. FBX SDK uses Maya way to compute the transformation matrix of a node - utterly simple:
     #
-    #     WorldTransform = ParentWorldTransform * T * Roff * Rp * Rpre * R * Rpost * Rp-1 * Soff * Sp * S * Sp-1
+    #     WorldTransform = ParentWorldTransform @ T @ Roff @ Rp @ Rpre @ R @ Rpost @ Rp-1 @ Soff @ Sp @ S @ Sp-1
     #
     # Where all those terms are 4 x 4 matrices that contain:
     #     WorldTransform: Transformation matrix of the node in global space.
@@ -389,7 +389,7 @@ def blen_read_object_transform_do(transform_data):
     # But it was still too simple, and FBX notion of compatibility is... quite specific. So we also have to
     # support 3DSMax way:
     #
-    #     WorldTransform = ParentWorldTransform * T * R * S * OT * OR * OS
+    #     WorldTransform = ParentWorldTransform @ T @ R @ S @ OT @ OR @ OS
     #
     # Where all those terms are 4 x 4 matrices that contain:
     #     WorldTransform: Transformation matrix of the node in global space
@@ -414,7 +414,7 @@ def blen_read_object_transform_do(transform_data):
 
     # rotation
     to_rot = lambda rot, rot_ord: Euler(convert_deg_to_rad_iter(rot), rot_ord).to_matrix().to_4x4()
-    lcl_rot = to_rot(transform_data.rot, transform_data.rot_ord) * transform_data.rot_alt_mat
+    lcl_rot = to_rot(transform_data.rot, transform_data.rot_ord) @ transform_data.rot_alt_mat
     pre_rot = to_rot(transform_data.pre_rot, transform_data.rot_ord)
     pst_rot = to_rot(transform_data.pst_rot, transform_data.rot_ord)
     geom_rot = to_rot(transform_data.geom_rot, transform_data.rot_ord)
@@ -431,21 +431,21 @@ def blen_read_object_transform_do(transform_data):
     geom_scale[0][0], geom_scale[1][1], geom_scale[2][2] = transform_data.geom_sca
 
     base_mat = (
-        lcl_translation *
-        rot_ofs *
-        rot_piv *
-        pre_rot *
-        lcl_rot *
-        pst_rot *
-        rot_piv.inverted_safe() *
-        sca_ofs *
-        sca_piv *
-        lcl_scale *
+        lcl_translation @
+        rot_ofs @
+        rot_piv @
+        pre_rot @
+        lcl_rot @
+        pst_rot @
+        rot_piv.inverted_safe() @
+        sca_ofs @
+        sca_piv @
+        lcl_scale @
         sca_piv.inverted_safe()
     )
-    geom_mat = geom_loc * geom_rot * geom_scale
+    geom_mat = geom_loc @ geom_rot @ geom_scale
     # We return mat without 'geometric transforms' too, because it is to be used for children, sigh...
-    return (base_mat * geom_mat, base_mat, geom_mat)
+    return (base_mat @ geom_mat, base_mat, geom_mat)
 
 
 # XXX This might be weak, now that we can add vgroups from both bones and shapes, name collisions become
@@ -457,7 +457,7 @@ def add_vgroup_to_objects(vg_indices, vg_weights, vg_name, objects):
             # We replace/override here...
             vg = obj.vertex_groups.get(vg_name)
             if vg is None:
-                vg = obj.vertex_groups.new(vg_name)
+                vg = obj.vertex_groups.new(name=vg_name)
             for i, w in zip(vg_indices, vg_weights):
                 vg.add((i,), w, 'REPLACE')
 
@@ -601,7 +601,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
         else:  # Euler
             props[1] = (bl_obj.path_from_id("rotation_euler"), 3, grpname or "Euler Rotation")
 
-    blen_curves = [action.fcurves.new(prop, channel, grpname)
+    blen_curves = [action.fcurves.new(prop, index=channel, action_group=grpname)
                    for prop, nbr_channels, grpname in props for channel in range(nbr_channels)]
 
     if isinstance(item, Material):
@@ -613,7 +613,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value[channel] = v
 
             for fc, v in zip(blen_curves, value):
-                fc.keyframe_points.insert(frame, v, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 
     elif isinstance(item, ShapeKey):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
@@ -624,7 +624,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value = v / 100.0
 
             for fc, v in zip(blen_curves, (value,)):
-                fc.keyframe_points.insert(frame, v, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 
     elif isinstance(item, Camera):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
@@ -635,7 +635,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 value = v
 
             for fc, v in zip(blen_curves, (value,)):
-                fc.keyframe_points.insert(frame, v, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                fc.keyframe_points.insert(frame, v, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 
     else:  # Object or PoseBone:
         if item.is_bone:
@@ -661,19 +661,19 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
 
             # compensate for changes in the local matrix during processing
             if item.anim_compensation_matrix:
-                mat = mat * item.anim_compensation_matrix
+                mat = mat @ item.anim_compensation_matrix
 
             # apply pre- and post matrix
             # post-matrix will contain any correction for lights, camera and bone orientation
             # pre-matrix will contain any correction for a parent's correction matrix or the global matrix
             if item.pre_matrix:
-                mat = item.pre_matrix * mat
+                mat = item.pre_matrix @ mat
             if item.post_matrix:
-                mat = mat * item.post_matrix
+                mat = mat @ item.post_matrix
 
             # And now, remove that rest pose matrix from current mat (also in parent space).
             if restmat_inv:
-                mat = restmat_inv * mat
+                mat = restmat_inv @ mat
 
             # Now we have a virtual matrix of transform from AnimCurves, we can insert keyframes!
             loc, rot, sca = mat.decompose()
@@ -686,7 +686,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
                 rot = rot.to_euler(rot_mode, rot_prev)
                 rot_prev = rot
             for fc, value in zip(blen_curves, chain(loc, rot, sca)):
-                fc.keyframe_points.insert(frame, value, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+                fc.keyframe_points.insert(frame, value, options={'NEEDED', 'FAST'}).interpolation = 'LINEAR'
 
     # Since we inserted our keyframes in 'FAST' mode, we have to update the fcurves now.
     for fc in blen_curves:
@@ -1006,8 +1006,7 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
             fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, b'UV'))
             fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'UVIndex'))
 
-            uv_tex = mesh.uv_textures.new(name=fbx_layer_name)
-            uv_lay = mesh.uv_layers[-1]
+            uv_lay = mesh.uv_layers.new(name=fbx_layer_name)
             blen_data = uv_lay.data
 
             # some valid files omit this data
@@ -1087,7 +1086,6 @@ def blen_read_geom_layer_smooth(fbx_obj, mesh):
             )
         # We only set sharp edges here, not face smoothing itself...
         mesh.use_auto_smooth = True
-        mesh.show_edge_sharp = True
         return False
     elif fbx_layer_mapping == b'ByPolygon':
         blen_data = mesh.polygons
@@ -1165,7 +1163,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
     if geom_mat_co is not None:
         def _vcos_transformed_gen(raw_cos, m=None):
             # Note: we could most likely get much better performances with numpy, but will leave this as TODO for now.
-            return chain(*(m * Vector(v) for v in zip(*(iter(raw_cos),) * 3)))
+            return chain(*(m @ Vector(v) for v in zip(*(iter(raw_cos),) * 3)))
         fbx_verts = array.array(fbx_verts.typecode, _vcos_transformed_gen(fbx_verts, geom_mat_co))
 
     if fbx_verts is None:
@@ -1242,7 +1240,7 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
             ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh)
         else:
             def nortrans(v):
-                return geom_mat_no * Vector(v)
+                return geom_mat_no @ Vector(v)
             ok_normals = blen_read_geom_layer_normal(fbx_obj, mesh, nortrans)
 
     mesh.validate(clean_customdata=False)  # *Very* important to not remove lnors here!
@@ -1257,7 +1255,6 @@ def blen_read_geom(fbx_tmpl, fbx_obj, settings):
 
         mesh.normals_split_custom_set(tuple(zip(*(iter(clnors),) * 3)))
         mesh.use_auto_smooth = True
-        mesh.show_edge_sharp = True
     else:
         mesh.calc_normals()
 
@@ -1319,54 +1316,36 @@ def blen_read_shape(fbx_tmpl, fbx_sdata, fbx_bcdata, meshes, scene):
 # Material
 
 def blen_read_material(fbx_tmpl, fbx_obj, settings):
+    from bpy_extras import node_shader_utils
+    from math import sqrt
+
     elem_name_utf8 = elem_name_ensure_class(fbx_obj, b'Material')
 
-    cycles_material_wrap_map = settings.cycles_material_wrap_map
+    nodal_material_wrap_map = settings.nodal_material_wrap_map
     ma = bpy.data.materials.new(name=elem_name_utf8)
 
     const_color_white = 1.0, 1.0, 1.0
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-    #~ assert(fbx_props[0] is not None)  # Some Material may be missing that one, it seems... see T50566.
 
-    ma_diff = elem_props_get_color_rgb(fbx_props, b'DiffuseColor', const_color_white)
-    ma_spec = elem_props_get_color_rgb(fbx_props, b'SpecularColor', const_color_white)
-    ma_alpha = elem_props_get_number(fbx_props, b'Opacity', 1.0)
-    ma_spec_intensity = ma.specular_intensity = elem_props_get_number(fbx_props, b'SpecularFactor', 0.25) * 2.0
-    ma_spec_hardness = elem_props_get_number(fbx_props, b'Shininess', 9.6)
-    ma_refl_factor = elem_props_get_number(fbx_props, b'ReflectionFactor', 0.0)
-    ma_refl_color = elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
+    ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma, is_readonly=False, use_nodes=True)
+    ma_wrap.base_color = elem_props_get_color_rgb(fbx_props, b'DiffuseColor', const_color_white)
+    # No specular color in Principled BSDF shader, assumed to be either white or take some tint from diffuse one...
+    # TODO: add way to handle tint option (guesstimate from spec color + intensity...)?
+    ma_wrap.specular = elem_props_get_number(fbx_props, b'SpecularFactor', 0.25) * 2.0
+    # XXX Totally empirical conversion, trying to adapt it
+    #     (from 1.0 - 0.0 Principled BSDF range to 0.0 - 100.0 FBX shininess range)...
+    fbx_shininess = elem_props_get_number(fbx_props, b'Shininess', 20.0)
+    ma_wrap.roughness = 1.0 - (sqrt(fbx_shininess) / 10.0)
+    ma_wrap.transmission = 1.0 - elem_props_get_number(fbx_props, b'Opacity', 1.0)
+    ma_wrap.metallic = elem_props_get_number(fbx_props, b'ReflectionFactor', 0.0)
+    # We have no metallic (a.k.a. reflection) color...
+    # elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
+    # (x / 7.142) is only a guess, cycles usable range is (0.0 -> 0.5)
+    ma_wrap.normalmap_strength = elem_props_get_number(fbx_props, b'BumpFactor', 2.5) / 7.142
 
-    if settings.use_cycles:
-        from modules import cycles_shader_compat
-        # viewport color
-        ma.diffuse_color = ma_diff
-
-        ma_wrap = cycles_shader_compat.CyclesShaderWrapper(ma)
-        ma_wrap.diffuse_color_set(ma_diff)
-        ma_wrap.specular_color_set([c * ma_spec_intensity for c in ma_spec])
-        ma_wrap.hardness_value_set(((ma_spec_hardness + 3.0) / 5.0) - 0.65)
-        ma_wrap.alpha_value_set(ma_alpha)
-        ma_wrap.reflect_factor_set(ma_refl_factor)
-        ma_wrap.reflect_color_set(ma_refl_color)
-
-        cycles_material_wrap_map[ma] = ma_wrap
-    else:
-        # TODO, number BumpFactor isnt used yet
-        ma.diffuse_color = ma_diff
-        ma.specular_color = ma_spec
-        ma.alpha = ma_alpha
-        if ma_alpha < 1.0:
-            ma.use_transparency = True
-            ma.transparency_method = 'RAYTRACE'
-        ma.specular_intensity = ma_spec_intensity
-        ma.specular_hardness = ma_spec_hardness * 5.10 + 1.0
-
-        if ma_refl_factor != 0.0:
-            ma.raytrace_mirror.use = True
-            ma.raytrace_mirror.reflect_factor = ma_refl_factor
-            ma.mirror_color = ma_refl_color
+    nodal_material_wrap_map[ma] = ma_wrap
 
     if settings.use_custom_props:
         blen_read_custom_properties(fbx_obj, ma, settings)
@@ -1446,7 +1425,6 @@ def blen_read_camera(fbx_tmpl, fbx_obj, global_scale):
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-    assert(fbx_props[0] is not None)
 
     camera = bpy.data.cameras.new(name=elem_name_utf8)
 
@@ -1475,17 +1453,13 @@ def blen_read_light(fbx_tmpl, fbx_obj, global_scale):
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-    # rare
-    if fbx_props[0] is None:
-        lamp = bpy.data.lamps.new(name=elem_name_utf8, type='POINT')
-        return lamp
 
     light_type = {
         0: 'POINT',
         1: 'SUN',
         2: 'SPOT'}.get(elem_props_get_enum(fbx_props, b'LightType', 0), 'POINT')
 
-    lamp = bpy.data.lamps.new(name=elem_name_utf8, type=light_type)
+    lamp = bpy.data.lights.new(name=elem_name_utf8, type=light_type)
 
     if light_type == 'SPOT':
         spot_size = elem_props_get_number(fbx_props, b'OuterAngle', None)
@@ -1500,11 +1474,14 @@ def blen_read_light(fbx_tmpl, fbx_obj, global_scale):
             spot_blend = elem_props_get_number(fbx_props, b'HotSpot', 45.0)
         lamp.spot_blend = 1.0 - (spot_blend / spot_size)
 
-    # TODO, cycles
+    # TODO, cycles nodes???
     lamp.color = elem_props_get_color_rgb(fbx_props, b'Color', (1.0, 1.0, 1.0))
     lamp.energy = elem_props_get_number(fbx_props, b'Intensity', 100.0) / 100.0
     lamp.distance = elem_props_get_number(fbx_props, b'DecayStart', 25.0) * global_scale
-    lamp.shadow_method = ('RAY_SHADOW' if elem_props_get_bool(fbx_props, b'CastShadow', True) else 'NOSHADOW')
+    lamp.use_shadow = elem_props_get_bool(fbx_props, b'CastShadow', True)
+    if hasattr(lamp, "cycles"):
+        lamp.cycles.cast_shadow = lamp.use_shadow
+    # Keeping this for now, but this is not used nor exposed anymore afaik...
     lamp.shadow_color = elem_props_get_color_rgb(fbx_props, b'ShadowColor', (0.0, 0.0, 0.0))
 
     return lamp
@@ -1618,7 +1595,7 @@ class FbxImportHelperNode:
             self.pre_matrix = settings.global_matrix
 
         if parent_correction_inv:
-            self.pre_matrix = parent_correction_inv * (self.pre_matrix if self.pre_matrix else Matrix())
+            self.pre_matrix = parent_correction_inv @ (self.pre_matrix if self.pre_matrix else Matrix())
 
         correction_matrix = None
 
@@ -1706,12 +1683,12 @@ class FbxImportHelperNode:
             if self.fbx_type == b'Camera':
                 correction_matrix = MAT_CONVERT_CAMERA
             elif self.fbx_type == b'Light':
-                correction_matrix = MAT_CONVERT_LAMP
+                correction_matrix = MAT_CONVERT_LIGHT
 
         self.post_matrix = correction_matrix
 
         if self.do_bake_transform(settings):
-            self.post_matrix = settings.global_matrix_inv * (self.post_matrix if self.post_matrix else Matrix())
+            self.post_matrix = settings.global_matrix_inv @ (self.post_matrix if self.post_matrix else Matrix())
 
         # process children
         correction_matrix_inv = correction_matrix.inverted_safe() if correction_matrix else None
@@ -1788,29 +1765,29 @@ class FbxImportHelperNode:
     def get_world_matrix_as_parent(self):
         matrix = self.parent.get_world_matrix_as_parent() if self.parent else Matrix()
         if self.matrix_as_parent:
-            matrix = matrix * self.matrix_as_parent
+            matrix = matrix @ self.matrix_as_parent
         return matrix
 
     def get_world_matrix(self):
         matrix = self.parent.get_world_matrix_as_parent() if self.parent else Matrix()
         if self.matrix:
-            matrix = matrix * self.matrix
+            matrix = matrix @ self.matrix
         return matrix
 
     def get_matrix(self):
         matrix = self.matrix if self.matrix else Matrix()
         if self.pre_matrix:
-            matrix = self.pre_matrix * matrix
+            matrix = self.pre_matrix @ matrix
         if self.post_matrix:
-            matrix = matrix * self.post_matrix
+            matrix = matrix @ self.post_matrix
         return matrix
 
     def get_bind_matrix(self):
         matrix = self.bind_matrix if self.bind_matrix else Matrix()
         if self.pre_matrix:
-            matrix = self.pre_matrix * matrix
+            matrix = self.pre_matrix @ matrix
         if self.post_matrix:
-            matrix = matrix * self.post_matrix
+            matrix = matrix @ self.post_matrix
         return matrix
 
     def make_bind_pose_local(self, parent_matrix=None):
@@ -1818,13 +1795,13 @@ class FbxImportHelperNode:
             parent_matrix = Matrix()
 
         if self.bind_matrix:
-            bind_matrix = parent_matrix.inverted_safe() * self.bind_matrix
+            bind_matrix = parent_matrix.inverted_safe() @ self.bind_matrix
         else:
             bind_matrix = self.matrix.copy() if self.matrix else None
 
         self.bind_matrix = bind_matrix
         if bind_matrix:
-            parent_matrix = parent_matrix * bind_matrix
+            parent_matrix = parent_matrix @ bind_matrix
 
         for child in self.children:
             child.make_bind_pose_local(parent_matrix)
@@ -1844,8 +1821,8 @@ class FbxImportHelperNode:
                 child.collect_skeleton_meshes(meshes)
             for m in meshes:
                 old_matrix = m.matrix
-                m.matrix = armature_matrix_inv * m.get_world_matrix()
-                m.anim_compensation_matrix = old_matrix.inverted_safe() * m.matrix
+                m.matrix = armature_matrix_inv @ m.get_world_matrix()
+                m.anim_compensation_matrix = old_matrix.inverted_safe() @ m.matrix
                 m.is_global_animation = True
                 m.parent = self
             self.meshes = meshes
@@ -1920,7 +1897,7 @@ class FbxImportHelperNode:
         bone.tail = bone_tail
 
         # And rotate/move it to its final "rest pose".
-        bone_matrix = parent_matrix * self.get_bind_matrix().normalized()
+        bone_matrix = parent_matrix @ self.get_bind_matrix().normalized()
 
         bone.matrix = bone_matrix
 
@@ -1933,7 +1910,7 @@ class FbxImportHelperNode:
             if child.is_leaf and force_connect_children:
                 # Arggggggggggggggggg! We do not want to create this bone, but we need its 'virtual head' location
                 # to orient current one!!!
-                child_head = (bone_matrix * child.get_bind_matrix().normalized()).translation
+                child_head = (bone_matrix @ child.get_bind_matrix().normalized()).translation
                 child_connect(bone, None, child_head, connect_ctx)
             elif child.is_bone and not child.ignore:
                 child_bone = child.build_skeleton(arm, bone_matrix, bone_size,
@@ -1959,13 +1936,12 @@ class FbxImportHelperNode:
 
         fbx_props = (elem_find_first(self.fbx_elem, b'Properties70'),
                      elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-        assert(fbx_props[0] is not None)
 
         # ----
         # Misc Attributes
 
         obj.color[0:3] = elem_props_get_color_rgb(fbx_props, b'Color', (0.8, 0.8, 0.8))
-        obj.hide = not bool(elem_props_get_visibility(fbx_props, b'Visibility', 1.0))
+        obj.hide_viewport = not bool(elem_props_get_visibility(fbx_props, b'Visibility', 1.0))
 
         obj.matrix_basis = self.get_matrix()
 
@@ -1974,12 +1950,12 @@ class FbxImportHelperNode:
 
         return obj
 
-    def build_skeleton_children(self, fbx_tmpl, settings, scene):
+    def build_skeleton_children(self, fbx_tmpl, settings, scene, view_layer):
         if self.is_bone:
             for child in self.children:
                 if child.ignore:
                     continue
-                child.build_skeleton_children(fbx_tmpl, settings, scene)
+                child.build_skeleton_children(fbx_tmpl, settings, scene, view_layer)
             return None
         else:
             # child is not a bone
@@ -1991,11 +1967,11 @@ class FbxImportHelperNode:
             for child in self.children:
                 if child.ignore:
                     continue
-                child.build_skeleton_children(fbx_tmpl, settings, scene)
+                child.build_skeleton_children(fbx_tmpl, settings, scene, view_layer)
 
             # instance in scene
-            obj_base = scene.objects.link(obj)
-            obj_base.select = True
+            view_layer.active_layer_collection.collection.objects.link(obj)
+            obj.select_set(True)
 
             return obj
 
@@ -2014,7 +1990,7 @@ class FbxImportHelperNode:
                     # Blender attaches to the end of a bone, while FBX attaches to the start.
                     # bone_child_matrix corrects for that.
                     if child.pre_matrix:
-                        child.pre_matrix = self.bone_child_matrix * child.pre_matrix
+                        child.pre_matrix = self.bone_child_matrix @ child.pre_matrix
                     else:
                         child.pre_matrix = self.bone_child_matrix
 
@@ -2034,7 +2010,7 @@ class FbxImportHelperNode:
 
     def set_pose_matrix(self, arm):
         pose_bone = arm.bl_obj.pose.bones[self.bl_bone]
-        pose_bone.matrix_basis = self.get_bind_matrix().inverted_safe() * self.get_matrix()
+        pose_bone.matrix_basis = self.get_bind_matrix().inverted_safe() @ self.get_matrix()
 
         for child in self.children:
             if child.ignore:
@@ -2101,7 +2077,7 @@ class FbxImportHelperNode:
             if child.is_bone and not child.ignore:
                 child.set_bone_weights()
 
-    def build_hierarchy(self, fbx_tmpl, settings, scene):
+    def build_hierarchy(self, fbx_tmpl, settings, scene, view_layer):
         if self.is_armature:
             # create when linking since we need object data
             elem_name_utf8 = self.fbx_name
@@ -2116,21 +2092,20 @@ class FbxImportHelperNode:
             if self.fbx_elem:
                 fbx_props = (elem_find_first(self.fbx_elem, b'Properties70'),
                              elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-                assert(fbx_props[0] is not None)
 
                 if settings.use_custom_props:
                     blen_read_custom_properties(self.fbx_elem, arm, settings)
 
             # instance in scene
-            obj_base = scene.objects.link(arm)
-            obj_base.select = True
+            view_layer.active_layer_collection.collection.objects.link(arm)
+            arm.select_set(True)
 
             # Add bones:
 
             # Switch to Edit mode.
-            scene.objects.active = arm
-            is_hidden = arm.hide
-            arm.hide = False  # Can't switch to Edit mode hidden objects...
+            view_layer.objects.active = arm
+            is_hidden = arm.hide_viewport
+            arm.hide_viewport = False  # Can't switch to Edit mode hidden objects...
             bpy.ops.object.mode_set(mode='EDIT')
 
             for child in self.children:
@@ -2141,7 +2116,7 @@ class FbxImportHelperNode:
 
             bpy.ops.object.mode_set(mode='OBJECT')
 
-            arm.hide = is_hidden
+            arm.hide_viewport = is_hidden
 
             # Set pose matrix
             for child in self.children:
@@ -2154,7 +2129,7 @@ class FbxImportHelperNode:
             for child in self.children:
                 if child.ignore:
                     continue
-                child_obj = child.build_skeleton_children(fbx_tmpl, settings, scene)
+                child_obj = child.build_skeleton_children(fbx_tmpl, settings, scene, view_layer)
 
             return arm
         elif self.fbx_elem and not self.is_bone:
@@ -2162,16 +2137,16 @@ class FbxImportHelperNode:
 
             # walk through children
             for child in self.children:
-                child.build_hierarchy(fbx_tmpl, settings, scene)
+                child.build_hierarchy(fbx_tmpl, settings, scene, view_layer)
 
             # instance in scene
-            obj_base = scene.objects.link(obj)
-            obj_base.select = True
+            view_layer.active_layer_collection.collection.objects.link(obj)
+            obj.select_set(True)
 
             return obj
         else:
             for child in self.children:
-                child.build_hierarchy(fbx_tmpl, settings, scene)
+                child.build_hierarchy(fbx_tmpl, settings, scene, view_layer)
 
             return None
 
@@ -2200,16 +2175,16 @@ class FbxImportHelperNode:
                     #       which we obviously cannot do in Blender. :/
                     if amat is None:
                         amat = self.bind_matrix
-                    amat = settings.global_matrix * (Matrix() if amat is None else amat)
+                    amat = settings.global_matrix @ (Matrix() if amat is None else amat)
                     if self.matrix_geom:
-                        amat = amat * self.matrix_geom
-                    mmat = settings.global_matrix * mmat
+                        amat = amat @ self.matrix_geom
+                    mmat = settings.global_matrix @ mmat
                     if mesh.matrix_geom:
-                        mmat = mmat * mesh.matrix_geom
+                        mmat = mmat @ mesh.matrix_geom
 
                     # Now that we have armature and mesh in there (global) bind 'state' (matrix),
                     # we can compute inverse parenting matrix of the mesh.
-                    me_obj.matrix_parent_inverse = amat.inverted_safe() * mmat * me_obj.matrix_basis.inverted_safe()
+                    me_obj.matrix_parent_inverse = amat.inverted_safe() @ mmat @ me_obj.matrix_basis.inverted_safe()
 
                     mod = mesh.bl_obj.modifiers.new(arm.name, 'ARMATURE')
                     mod.object = arm
@@ -2257,7 +2232,6 @@ def load(operator, context, filepath="",
          global_scale=1.0,
          bake_space_transform=False,
          use_custom_normals=True,
-         use_cycles=True,
          use_image_search=False,
          use_alpha_decals=False,
          decal_offset=0.0,
@@ -2319,10 +2293,8 @@ def load(operator, context, filepath="",
 
     basedir = os.path.dirname(filepath)
 
-    cycles_material_wrap_map = {}
+    nodal_material_wrap_map = {}
     image_cache = {}
-    if not use_cycles:
-        texture_cache = {}
 
     # Tables: (FBX_byte_id -> [FBX_data, None or Blender_datablock])
     fbx_table_nodes = {}
@@ -2333,6 +2305,7 @@ def load(operator, context, filepath="",
         material_decals = None
 
     scene = context.scene
+    view_layer = context.view_layer
 
     # #### Get some info from GlobalSettings.
 
@@ -2358,7 +2331,7 @@ def load(operator, context, filepath="",
                       elem_props_get_integer(fbx_settings_props, b'CoordAxisSign', 1))
         axis_key = (axis_up, axis_forward, axis_coord)
         axis_up, axis_forward = {v: k for k, v in RIGHT_HAND_AXES.items()}.get(axis_key, ('Z', 'Y'))
-    global_matrix = (Matrix.Scale(global_scale, 4) *
+    global_matrix = (Matrix.Scale(global_scale, 4) @
                      axis_conversion(from_forward=axis_forward, from_up=axis_up).to_4x4())
 
     # To cancel out unwanted rotation/scale on nodes.
@@ -2389,11 +2362,11 @@ def load(operator, context, filepath="",
     settings = FBXImportSettings(
         operator.report, (axis_up, axis_forward), global_matrix, global_scale,
         bake_space_transform, global_matrix_inv, global_matrix_inv_transposed,
-        use_custom_normals, use_cycles, use_image_search,
+        use_custom_normals, use_image_search,
         use_alpha_decals, decal_offset,
         use_anim, anim_offset,
         use_custom_props, use_custom_props_enum_as_string,
-        cycles_material_wrap_map, image_cache,
+        nodal_material_wrap_map, image_cache,
         ignore_leaf_bones, force_connect_children, automatic_bone_orientation, bone_correction_matrix,
         use_prepost_rot,
     )
@@ -2436,7 +2409,7 @@ def load(operator, context, filepath="",
 
     def fbx_template_get(key):
         ret = fbx_templates.get(key, fbx_elem_nil)
-        if ret is None:
+        if ret is fbx_elem_nil:
             # Newest FBX (7.4 and above) use no more 'K' in their type names...
             key = (key[0], key[1][1:])
             return fbx_templates.get(key, fbx_elem_nil)
@@ -2596,7 +2569,6 @@ def load(operator, context, filepath="",
 
             fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                          elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-            assert(fbx_props[0] is not None)
 
             transform_data = blen_read_object_transform_preprocess(fbx_props, fbx_obj, Matrix(), use_prepost_rot)
             # Note: 'Root' "bones" are handled as (armature) objects.
@@ -2691,7 +2663,7 @@ def load(operator, context, filepath="",
                 armature_matrix = tx_arm
 
                 if tx_bone:
-                    mesh_matrix = tx_bone * mesh_matrix
+                    mesh_matrix = tx_bone @ mesh_matrix
                     helper_node.bind_matrix = tx_bone  # overwrite the bind matrix
 
                 # Get the meshes driven by this cluster: (Shouldn't that be only one?)
@@ -2734,7 +2706,7 @@ def load(operator, context, filepath="",
         root_helper.find_correction_matrix(settings)
 
         # build the Object/Armature/Bone hierarchy
-        root_helper.build_hierarchy(fbx_tmpl, settings, scene)
+        root_helper.build_hierarchy(fbx_tmpl, settings, scene, view_layer)
 
         # Link the Object/Armature/Bone hierarchy
         root_helper.link_hierarchy(fbx_tmpl, settings, scene)
@@ -2866,8 +2838,7 @@ def load(operator, context, filepath="",
                             continue
                         mat = fbx_item[1]
                         items.append((mat, lnk_prop))
-                        if settings.use_cycles:
-                            print("WARNING! Importing material's animation is not supported for Cycles materials...")
+                        print("WARNING! Importing material's animation is not supported for Nodal materials...")
                 for al_uuid, al_ctype in fbx_connection_map.get(acn_uuid, ()):
                     if al_ctype.props[0] != b'OO':
                         continue
@@ -2928,17 +2899,17 @@ def load(operator, context, filepath="",
             # So we have to be careful not to re-add endlessly the same material to a mesh!
             # This can easily happen with 'baked' dupliobjects, see T44386.
             # TODO: add an option to link materials to objects in Blender instead?
-            done_mats = set()
+            done_materials = set()
 
             for (fbx_lnk, fbx_lnk_item, fbx_lnk_type) in connection_filter_forward(fbx_uuid, b'Model'):
                 # link materials
                 fbx_lnk_uuid = elem_uuid(fbx_lnk)
                 for (fbx_lnk_material, material, fbx_lnk_material_type) in connection_filter_reverse(fbx_lnk_uuid, b'Material'):
-                    if material not in done_mats:
+                    if material not in done_materials:
                         mesh.materials.append(material)
-                        done_mats.add(material)
+                        done_materials.add(material)
 
-            # We have to validate mesh polygons' mat_idx, see T41015!
+            # We have to validate mesh polygons' ma_idx, see T41015!
             # Some FBX seem to have an extra 'default' material which is not defined in FBX file.
             if mesh.validate_material_indices():
                 print("WARNING: mesh '%s' had invalid material indices, those were reset to first material" % mesh.name)
@@ -2952,55 +2923,36 @@ def load(operator, context, filepath="",
         fbx_tmpl = fbx_template_get((b'Material', b'KFbxSurfacePhong'))
         # b'KFbxSurfaceLambert'
 
-        # textures that use this material
-        def texture_bumpfac_get(fbx_obj):
-            assert(fbx_obj.id == b'Material')
-            fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
-                         elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-            # Do not assert, it can be None actually, sigh...
-            #~ assert(fbx_props[0] is not None)
-            # (x / 7.142) is only a guess, cycles usable range is (0.0 -> 0.5)
-            return elem_props_get_number(fbx_props, b'BumpFactor', 2.5) / 7.142
-
-        def texture_mapping_get(fbx_obj):
+        def texture_mapping_set(fbx_obj, node_texture):
             assert(fbx_obj.id == b'Texture')
 
             fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                          elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-            # Do not assert, it can be None actually, sigh...
-            #~ assert(fbx_props[0] is not None)
-            return (elem_props_get_vector_3d(fbx_props, b'Translation', (0.0, 0.0, 0.0)),
-                    elem_props_get_vector_3d(fbx_props, b'Rotation', (0.0, 0.0, 0.0)),
-                    elem_props_get_vector_3d(fbx_props, b'Scaling', (1.0, 1.0, 1.0)),
-                    (bool(elem_props_get_enum(fbx_props, b'WrapModeU', 0)),
-                     bool(elem_props_get_enum(fbx_props, b'WrapModeV', 0))))
+            loc = elem_props_get_vector_3d(fbx_props, b'Translation', (0.0, 0.0, 0.0))
+            rot = tuple(-r for r in elem_props_get_vector_3d(fbx_props, b'Rotation', (0.0, 0.0, 0.0)))
+            scale = tuple(((1.0 / s) if s != 0.0 else 1.0)
+                          for s in elem_props_get_vector_3d(fbx_props, b'Scaling', (1.0, 1.0, 1.0)))
+            clamp_uv = (bool(elem_props_get_enum(fbx_props, b'WrapModeU', 0)),
+                        bool(elem_props_get_enum(fbx_props, b'WrapModeV', 0)))
 
-        if not use_cycles:
-            # Simple function to make a new mtex and set defaults
-            def material_mtex_new(material, image, tex_map):
-                tex = texture_cache.get(image)
-                if tex is None:
-                    tex = bpy.data.textures.new(name=image.name, type='IMAGE')
-                    tex.image = image
-                    texture_cache[image] = tex
+            if (loc == (0.0, 0.0, 0.0) and
+                rot == (0.0, 0.0, 0.0) and
+                scale == (1.0, 1.0, 1.0) and
+                clamp_uv == (False, False)):
+                return
 
-                    # copy custom properties from image object to texture
-                    for key, value in image.items():
-                        tex[key] = value
+            node_texture.translation = loc
+            node_texture.rotation = rot
+            node_texture.scale = scale
 
-                    # delete custom properties on the image object
-                    for key in image.keys():
-                        del image[key]
-
-                mtex = material.texture_slots.add()
-                mtex.texture = tex
-                mtex.texture_coords = 'UV'
-                mtex.use_map_color_diffuse = False
-
-                # No rotation here...
-                mtex.offset[:] = tex_map[0]
-                mtex.scale[:] = tex_map[2]
-                return mtex
+            # awkward conversion UV clamping to min/max
+            node_texture.min = (0.0, 0.0, 0.0)
+            node_texture.max = (1.0, 1.0, 1.0)
+            node_texture.use_min = node_texture.use_max = clamp_uv[0] or clamp_uv[1]
+            if clamp_uv[0] != clamp_uv[1]:
+                # use bool as index
+                node_texture.min[not clamp[0]] = -1e9
+                node_texture.max[not clamp[0]] = 1e9
 
         for fbx_uuid, fbx_item in fbx_table_nodes.items():
             fbx_obj, blen_data = fbx_item
@@ -3012,112 +2964,44 @@ def load(operator, context, filepath="",
                  image,
                  fbx_lnk_type) in connection_filter_reverse(fbx_uuid, b'Texture'):
 
-                if use_cycles:
-                    if fbx_lnk_type.props[0] == b'OP':
-                        lnk_type = fbx_lnk_type.props[3]
+                if fbx_lnk_type.props[0] == b'OP':
+                    lnk_type = fbx_lnk_type.props[3]
 
-                        ma_wrap = cycles_material_wrap_map[material]
+                    ma_wrap = nodal_material_wrap_map[material]
 
-                        # tx/rot/scale
-                        tex_map = texture_mapping_get(fbx_lnk)
-                        if (tex_map[0] == (0.0, 0.0, 0.0) and
-                                tex_map[1] == (0.0, 0.0, 0.0) and
-                                tex_map[2] == (1.0, 1.0, 1.0) and
-                                tex_map[3] == (False, False)):
-                            use_mapping = False
-                        else:
-                            use_mapping = True
-                            tex_map_kw = {
-                                "translation": tex_map[0],
-                                "rotation": [-i for i in tex_map[1]],
-                                "scale": [((1.0 / i) if i != 0.0 else 1.0) for i in tex_map[2]],
-                                "clamp": tex_map[3],
-                                }
+                    if lnk_type in {b'DiffuseColor', b'3dsMax|maps|texmap_diffuse'}:
+                        ma_wrap.base_color_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.base_color_texture)
+                    elif lnk_type in {b'SpecularColor', b'SpecularFactor'}:
+                        # Intensity actually, not color...
+                        ma_wrap.specular_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.specular_texture)
+                    elif lnk_type in {b'ReflectionColor', b'ReflectionFactor', b'3dsMax|maps|texmap_reflection'}:
+                        # Intensity actually, not color...
+                        ma_wrap.metallic_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.metallic_texture)
+                    elif lnk_type in {b'TransparentColor', b'TransparentFactor'}:
+                        # Transparency... sort of...
+                        ma_wrap.transmission_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.transmission_texture)
+                        if use_alpha_decals:
+                            material_decals.add(material)
+                    elif lnk_type == b'ShininessExponent':
+                        # That is probably reversed compared to expected results? TODO...
+                        ma_wrap.roughness_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.roughness_texture)
+                    # XXX, applications abuse bump!
+                    elif lnk_type in {b'NormalMap', b'Bump', b'3dsMax|maps|texmap_bump'}:
+                        ma_wrap.normalmap_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.normalmap_texture)
+                        """
+                    elif lnk_type == b'Bump':
+                        # TODO displacement...
+                        """
+                    else:
+                        print("WARNING: material link %r ignored" % lnk_type)
 
-                        if lnk_type in {b'DiffuseColor', b'3dsMax|maps|texmap_diffuse'}:
-                            ma_wrap.diffuse_image_set(image)
-                            if use_mapping:
-                                ma_wrap.diffuse_mapping_set(**tex_map_kw)
-                        elif lnk_type == b'SpecularColor':
-                            ma_wrap.specular_image_set(image)
-                            if use_mapping:
-                                ma_wrap.specular_mapping_set(**tex_map_kw)
-                        elif lnk_type in {b'ReflectionColor', b'3dsMax|maps|texmap_reflection'}:
-                            ma_wrap.reflect_image_set(image)
-                            if use_mapping:
-                                ma_wrap.reflect_mapping_set(**tex_map_kw)
-                        elif lnk_type == b'TransparentColor':  # alpha
-                            ma_wrap.alpha_image_set(image)
-                            if use_mapping:
-                                ma_wrap.alpha_mapping_set(**tex_map_kw)
-                            if use_alpha_decals:
-                                material_decals.add(material)
-                        elif lnk_type == b'DiffuseFactor':
-                            pass  # TODO
-                        elif lnk_type == b'ShininessExponent':
-                            ma_wrap.hardness_image_set(image)
-                            if use_mapping:
-                                ma_wrap.hardness_mapping_set(**tex_map_kw)
-                        # XXX, applications abuse bump!
-                        elif lnk_type in {b'NormalMap', b'Bump', b'3dsMax|maps|texmap_bump'}:
-                            ma_wrap.normal_image_set(image)
-                            ma_wrap.normal_factor_set(texture_bumpfac_get(fbx_obj))
-                            if use_mapping:
-                                ma_wrap.normal_mapping_set(**tex_map_kw)
-                            """
-                        elif lnk_type == b'Bump':
-                            ma_wrap.bump_image_set(image)
-                            ma_wrap.bump_factor_set(texture_bumpfac_get(fbx_obj))
-                            if use_mapping:
-                                ma_wrap.bump_mapping_set(**tex_map_kw)
-                            """
-                        else:
-                            print("WARNING: material link %r ignored" % lnk_type)
-
-                        material_images.setdefault(material, {})[lnk_type] = (image, tex_map)
-                else:
-                    if fbx_lnk_type.props[0] == b'OP':
-                        lnk_type = fbx_lnk_type.props[3]
-
-                        # tx/rot/scale (rot is ignored here!).
-                        tex_map = texture_mapping_get(fbx_lnk)
-
-                        mtex = material_mtex_new(material, image, tex_map)
-
-                        if lnk_type in {b'DiffuseColor', b'3dsMax|maps|texmap_diffuse'}:
-                            mtex.use_map_color_diffuse = True
-                            mtex.blend_type = 'MULTIPLY'
-                        elif lnk_type == b'SpecularColor':
-                            mtex.use_map_color_spec = True
-                            mtex.blend_type = 'MULTIPLY'
-                        elif lnk_type in {b'ReflectionColor', b'3dsMax|maps|texmap_reflection'}:
-                            mtex.use_map_raymir = True
-                        elif lnk_type == b'TransparentColor':  # alpha
-                            material.use_transparency = True
-                            material.transparency_method = 'RAYTRACE'
-                            material.alpha = 0.0
-                            mtex.use_map_alpha = True
-                            mtex.alpha_factor = 1.0
-                            if use_alpha_decals:
-                                material_decals.add(material)
-                        elif lnk_type == b'DiffuseFactor':
-                            mtex.use_map_diffuse = True
-                        elif lnk_type == b'ShininessExponent':
-                            mtex.use_map_hardness = True
-                        # XXX, applications abuse bump!
-                        elif lnk_type in {b'NormalMap', b'Bump', b'3dsMax|maps|texmap_bump'}:
-                            mtex.texture.use_normal_map = True  # not ideal!
-                            mtex.use_map_normal = True
-                            mtex.normal_factor = texture_bumpfac_get(fbx_obj)
-                            """
-                        elif lnk_type == b'Bump':
-                            mtex.use_map_normal = True
-                            mtex.normal_factor = texture_bumpfac_get(fbx_obj)
-                            """
-                        else:
-                            print("WARNING: material link %r ignored" % lnk_type)
-
-                        material_images.setdefault(material, {})[lnk_type] = (image, tex_map)
+                    material_images.setdefault(material, {})[lnk_type] = image
 
         # Check if the diffuse image has an alpha channel,
         # if so, use the alpha channel.
@@ -3128,30 +3012,21 @@ def load(operator, context, filepath="",
             if fbx_obj.id != b'Material':
                 continue
             material = fbx_table_nodes.get(fbx_uuid, (None, None))[1]
-            image, tex_map = material_images.get(material, {}).get(b'DiffuseColor', (None, None))
+            image = material_images.get(material, {}).get(b'DiffuseColor', None)
             # do we have alpha?
             if image and image.depth == 32:
                 if use_alpha_decals:
                     material_decals.add(material)
 
-                if use_cycles:
-                    ma_wrap = cycles_material_wrap_map[material]
-                    if ma_wrap.node_bsdf_alpha.mute:
-                        ma_wrap.alpha_image_set_from_diffuse()
-                else:
-                    if not any((True for mtex in material.texture_slots if mtex and mtex.use_map_alpha)):
-                        mtex = material_mtex_new(material, image, tex_map)
+                ma_wrap = nodal_material_wrap_map[material]
+                ma_wrap.transmission_texture.use_alpha = True
+                ma_wrap.transmission_texture.copy_from(ma_wrap.base_color_texture)
 
-                        material.use_transparency = True
-                        material.transparency_method = 'RAYTRACE'
-                        material.alpha = 0.0
-                        mtex.use_map_alpha = True
-                        mtex.alpha_factor = 1.0
-
-            # propagate mapping from diffuse to all other channels which have none defined.
-            if use_cycles:
-                ma_wrap = cycles_material_wrap_map[material]
-                ma_wrap.mapping_set_from_diffuse()
+            # Propagate mapping from diffuse to all other channels which have none defined.
+            # XXX Commenting for now, I do not really understand the logic here, why should diffuse mapping
+            #     be applied to all others if not defined for them???
+            # ~ ma_wrap = nodal_material_wrap_map[material]
+            # ~ ma_wrap.mapping_set_from_diffuse()
 
     _(); del _
 
@@ -3174,14 +3049,8 @@ def load(operator, context, filepath="",
                                     v.co += v.normal * decal_offset
                                 break
 
-                    if use_cycles:
-                        for obj in (obj for obj in bpy.data.objects if obj.data == mesh):
-                            obj.cycles_visibility.shadow = False
-                    else:
-                        for material in mesh.materials:
-                            if material in material_decals:
-                                # recieve but dont cast shadows
-                                material.use_raytrace = False
+                    for obj in (obj for obj in bpy.data.objects if obj.data == mesh):
+                        obj.cycles_visibility.shadow = False
     _(); del _
 
     perfmon.level_down()

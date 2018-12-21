@@ -39,11 +39,13 @@
 struct AnimData;
 struct Ipo;
 struct Key;
+struct LinkNode;
 struct MCol;
 struct MEdge;
 struct MFace;
 struct MLoop;
 struct MLoopCol;
+struct MLoopTri;
 struct MLoopUV;
 struct MPoly;
 struct MTexPoly;
@@ -51,6 +53,65 @@ struct MVert;
 struct Material;
 struct Mesh;
 struct Multires;
+struct SubdivCCG;
+
+#
+#
+typedef struct EditMeshData {
+	/** when set, \a vertexNos, polyNos are lazy initialized */
+	const float (*vertexCos)[3];
+
+	/** lazy initialize (when \a vertexCos is set) */
+	float const (*vertexNos)[3];
+	float const (*polyNos)[3];
+	/** also lazy init but dont depend on \a vertexCos */
+	const float (*polyCos)[3];
+} EditMeshData;
+
+
+/**
+ * \warning Typical access is done via #BKE_mesh_runtime_looptri_ensure, #BKE_mesh_runtime_looptri_len.
+ */
+struct MLoopTri_Store {
+	/* WARNING! swapping between array (ready-to-be-used data) and array_wip (where data is actually computed)
+	 *          shall always be protected by same lock as one used for looptris computing. */
+	struct MLoopTri *array, *array_wip;
+	int len;
+	int len_alloc;
+};
+
+/* not saved in file! */
+typedef struct Mesh_Runtime {
+	struct EditMeshData *edit_data;
+	void *batch_cache;
+
+	struct SubdivCCG *subdiv_ccg;
+	void  *pad1;
+	int subdiv_ccg_tot_level;
+	int pad2;
+
+	int64_t cd_dirty_vert;
+	int64_t cd_dirty_edge;
+	int64_t cd_dirty_loop;
+	int64_t cd_dirty_poly;
+
+	struct MLoopTri_Store looptris;
+
+	/** 'BVHCache', for 'BKE_bvhutil.c' */
+	struct LinkNode *bvh_cache;
+
+	/** Non-manifold boundary data for Shrinkwrap Target Project. */
+	struct ShrinkwrapBoundaryData *shrinkwrap_data;
+
+	/** Set by modifier stack if only deformed from original. */
+	char deformed_only;
+	/**
+	 * Copied from edit-mesh (hint, draw with editmesh data).
+	 * In the future we may leave the mesh-data empty
+	 * since its not needed if we can use edit-mesh data. */
+	char is_original;
+	char padding[6];
+} Mesh_Runtime;
 
 typedef struct Mesh {
 	ID id;
@@ -66,7 +127,6 @@ typedef struct Mesh {
 /* BMESH ONLY */
 	/*new face structures*/
 	struct MPoly *mpoly;
-	struct MTexPoly *mtpoly;
 	struct MLoop *mloop;
 	struct MLoopUV *mloopuv;
 	struct MLoopCol *mloopcol;
@@ -127,6 +187,8 @@ typedef struct Mesh {
 	short totcol;
 
 	struct Multires *mr DNA_DEPRECATED; /* deprecated multiresolution modeling data, only keep for loading old files */
+
+	Mesh_Runtime runtime;
 } Mesh;
 
 /* deprecated by MTFace, only here for file reading */
@@ -188,6 +250,7 @@ enum {
 	ME_CDFLAG_EDGE_CREASE  = 1 << 2,
 };
 
+#if 0 /* Was moved to overlay options for 2.8 */
 /* me->drawflag, short */
 enum {
 	ME_DRAWEDGES           = 1 << 0,
@@ -196,7 +259,7 @@ enum {
 	ME_DRAW_VNORMALS       = 1 << 3,
 
 	ME_DRAWEIGHT           = 1 << 4,
-	/* ME_HIDDENEDGES      = 1 << 5, */  /* DEPRECATED */
+	ME_DRAW_FACE_DOT       = 1 << 5,
 
 	ME_DRAWCREASES         = 1 << 6,
 	ME_DRAWSEAMS           = 1 << 7,
@@ -220,6 +283,7 @@ enum {
 /* draw loop normals */
 	ME_DRAW_LNORMALS       = 1 << 18,
 };
+#endif
 
 /* Subsurf Type */
 enum {

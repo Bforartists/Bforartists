@@ -69,7 +69,7 @@ class GlDrawOnScreen():
         ''' my_string : the text we want to print
             pos_x, pos_y : coordinates in integer values
             size : font height.
-            colour : used for definining the colour'''
+            colour : used for defining the colour'''
         dpi, font_id = 72, 0   # dirty fast assignment
         bgl.glColor4f(*colour)
         blf.position(font_id, x, y, 0)
@@ -590,7 +590,7 @@ class AutotrackerSettings(PropertyGroup):
     jump_cut = FloatProperty(
             name="Jump Cut",
             description="How much distance a marker can travel before it is considered "
-                        "to be a bad track and cut.\nA new track wil be added "
+                        "to be a bad track and cut.\nA new track will be added "
                         "(factor relative to mean motion)",
             default=5.0,
             min=0.0,

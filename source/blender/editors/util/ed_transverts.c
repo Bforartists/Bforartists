@@ -39,11 +39,13 @@
 #include "BLI_math.h"
 
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
 #include "BKE_lattice.h"
 #include "BKE_editmesh.h"
 #include "BKE_DerivedMesh.h"
 #include "BKE_context.h"
+#include "BKE_mesh_iterators.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_armature.h"
 
@@ -56,7 +58,7 @@ void ED_transverts_update_obedit(TransVertStore *tvs, Object *obedit)
 	const int mode = tvs->mode;
 	BLI_assert(ED_transverts_check_obedit(obedit) == true);
 
-	DAG_id_tag_update(obedit->data, 0);
+	DEG_id_tag_update(obedit->data, 0);
 
 	if (obedit->type == OB_MESH) {
 		BMEditMesh *em = BKE_editmesh_from_object(obedit);
@@ -303,9 +305,9 @@ void ED_transverts_create_from_obedit(TransVertStore *tvs, Object *obedit, const
 			userdata[1] = tvs->transverts;
 		}
 
-		if (tvs->transverts && em->derivedCage) {
+		if (tvs->transverts && em->mesh_eval_cage) {
 			BM_mesh_elem_table_ensure(bm, BM_VERT);
-			em->derivedCage->foreachMappedVert(em->derivedCage, set_mapped_co, userdata, DM_FOREACH_NOP);
+			BKE_mesh_foreach_mapped_vert(em->mesh_eval_cage, set_mapped_co, userdata, MESH_FOREACH_NOP);
 		}
 	}
 	else if (obedit->type == OB_ARMATURE) {

@@ -21,4 +21,3 @@ class ViewBorderDXFExporter(BasePrimitiveDXFExporter):
             dxfPOLYFACE = DXF.PolyLine([allpoints, faces], flag70=flag70, flag75=flag70, width=0.0, paperspace=espace, color=LAYERCOLOR_DEF)
             #dxfPLINE = DXF.PolyLine(points,points[0],[closed,0,0], paperspace=espace, color=LAYERCOLOR_DEF)
             d.append(dxfPLINE)
-

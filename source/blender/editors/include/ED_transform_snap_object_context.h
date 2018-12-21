@@ -29,12 +29,15 @@ struct BMVert;
 struct BMEdge;
 struct BMFace;
 
+struct Depsgraph;
 struct ListBase;
 struct Scene;
+struct ViewLayer;
 struct Main;
 struct Object;
 struct ARegion;
 struct View3D;
+struct bContext;
 
 /* transform_snap_object.c */
 
@@ -69,13 +72,16 @@ struct SnapObjectParams {
 	char snap_select;
 	/* use editmode cage */
 	unsigned int use_object_edit_cage : 1;
+	/* snap to the closest element, use when using more than one snap type */
+	unsigned int use_occlusion_test   : 1;
+
 };
 
 typedef struct SnapObjectContext SnapObjectContext;
 SnapObjectContext *ED_transform_snap_object_context_create(
-        struct Main *bmain, struct Scene *scene, int flag);
+        struct Main *bmain, struct Scene *scene, struct Depsgraph *depsgraph, int flag);
 SnapObjectContext *ED_transform_snap_object_context_create_view3d(
-        struct Main *bmain, struct Scene *scene, int flag,
+        struct Main *bmain, struct Scene *scene, struct Depsgraph *depsgraph, int flag,
         /* extra args for view3d */
         const struct ARegion *ar, const struct View3D *v3d);
 void ED_transform_snap_object_context_destroy(SnapObjectContext *sctx);
@@ -113,7 +119,6 @@ bool ED_transform_snap_object_project_view3d_ex(
         const unsigned short snap_to,
         const struct SnapObjectParams *params,
         const float mval[2], float *dist_px,
-        float *ray_depth,
         float r_loc[3], float r_no[3], int *r_index,
         struct Object **r_ob, float r_obmat[4][4]);
 bool ED_transform_snap_object_project_view3d(
@@ -121,16 +126,8 @@ bool ED_transform_snap_object_project_view3d(
         const unsigned short snap_to,
         const struct SnapObjectParams *params,
         const float mval[2], float *dist_px,
-        float *ray_depth,
         /* return args */
         float r_loc[3], float r_no[3]);
-bool ED_transform_snap_object_project_view3d_mixed(
-        SnapObjectContext *sctx,
-        const unsigned short snap_to_flag,
-        const struct SnapObjectParams *params,
-        const float mval_fl[2], float *dist_px,
-        bool use_depth,
-        float r_co[3], float r_no[3]);
 
 bool ED_transform_snap_object_project_all_view3d_ex(
         SnapObjectContext *sctx,

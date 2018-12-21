@@ -34,6 +34,7 @@ from bpy.props import (
     )
 from mathutils import Vector
 from .bmesh_utils import BmeshEdit as bmed
+from .archipack_object import ArchipackCollectionManager
 
 
 def update(self, context):
@@ -41,22 +42,22 @@ def update(self, context):
 
 
 class archipack_reference_point(PropertyGroup):
-    location_2d = FloatVectorProperty(
+    location_2d : FloatVectorProperty(
         subtype='XYZ',
         name="position 2d",
         default=Vector((0, 0, 0))
         )
-    location_3d = FloatVectorProperty(
+    location_3d : FloatVectorProperty(
         subtype='XYZ',
         name="position 3d",
         default=Vector((0, 0, 0))
         )
-    symbol_scale = FloatProperty(
+    symbol_scale : FloatProperty(
         name="Screen scale",
         default=1,
         min=0.01,
         update=update)
-    symbol_type = EnumProperty(
+    symbol_type : EnumProperty(
         name="Symbol type",
         default='WALL',
         items=(
@@ -70,7 +71,7 @@ class archipack_reference_point(PropertyGroup):
             Filter object with this class in data
             return
             True when object contains this datablock
-            False otherwhise
+            False otherwise
             usage:
             class_name.filter(object) from outside world
             self.__class__.filter(object) from instance
@@ -177,7 +178,7 @@ class ARCHIPACK_PT_reference_point(Panel):
     bl_label = "Reference point"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'ArchiPack'
+    bl_category = 'Archipack'
 
     @classmethod
     def poll(cls, context):
@@ -199,19 +200,19 @@ class ARCHIPACK_PT_reference_point(Panel):
         layout.operator('archipack.apply_holes')
 
 
-class ARCHIPACK_OT_reference_point(Operator):
+class ARCHIPACK_OT_reference_point(ArchipackCollectionManager, Operator):
     """Add reference point"""
     bl_idname = "archipack.reference_point"
     bl_label = "Reference point"
     bl_description = "Add reference point"
     bl_category = 'Archipack'
     bl_options = {'REGISTER', 'UNDO'}
-    location_3d = FloatVectorProperty(
+    location_3d : FloatVectorProperty(
         subtype='XYZ',
         name="position 3d",
         default=Vector((0, 0, 0))
         )
-    symbol_type = EnumProperty(
+    symbol_type : EnumProperty(
         name="Symbol type",
         default='WALL',
         items=(
@@ -226,7 +227,7 @@ class ARCHIPACK_OT_reference_point(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def create(self, context):
         x, y, z = context.scene.cursor_location
@@ -234,21 +235,21 @@ class ARCHIPACK_OT_reference_point(Operator):
         m = bpy.data.meshes.new(name="Reference")
         o = bpy.data.objects.new("Reference", m)
         o.location = Vector((x, y, 0))
-        context.scene.objects.link(o)
+        self.link_object_to_scene(context, o)
         d = o.archipack_reference_point.add()
         d.location_2d = Vector((x, y, 0))
         d.location_3d = self.location_3d
         d.symbol_type = self.symbol_type
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         d.update(context)
         return o
 
     def execute(self, context):
         if context.mode == "OBJECT":
             o = self.create(context)
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -298,7 +299,7 @@ class ARCHIPACK_OT_apply_holes(Operator):
             ctx['modifier'] = mod
             try:
                 bpy.ops.object.modifier_apply(ctx, apply_as='DATA',
-                                              modifier=ctx['modifier'].name)
+                                              modifier=mod.name)
             except:
                 pass
 
@@ -327,12 +328,12 @@ class ARCHIPACK_OT_apply_holes(Operator):
             bpy.ops.object.select_all(action="DESELECT")
             for r in to_remove:
                 r.hide_select = False
-                r.select = True
-                context.scene.objects.active = r
+                r.select_set(state=True)
+                context.view_layer.objects.active = r
             bpy.ops.object.delete(use_global=False)
 
-            o.select = True
-            context.scene.objects.active = o
+            o.select_set(state=True)
+            context.view_layer.objects.active = o
 
             return {'FINISHED'}
         else:
@@ -410,9 +411,9 @@ class ARCHIPACK_OT_move_2d_reference_to_cursor(Operator):
             bpy.ops.object.select_all(action="DESELECT")
             bpy.ops.archipack.reference_point(location_3d=props.location_3d)
             for child in o.children:
-                child.select = True
+                child.select_set(state=True)
             bpy.ops.archipack.parent_to_reference()
-            context.scene.objects.unlink(o)
+            self.unlink_object_from_scene(o)
             return {'FINISHED'}
         else:
             self.report({'WARNING'}, "Archipack: Option only valid in Object mode")
@@ -441,7 +442,7 @@ class ARCHIPACK_OT_parent_to_reference(Operator):
             # print("parent_to_reference parenting:%s objects" % (len(sel)))
             for child in sel:
                 rs = child.matrix_world.to_3x3().to_4x4()
-                loc = itM * child.matrix_world.translation
+                loc = itM @ child.matrix_world.translation
                 child.parent = None
                 child.matrix_parent_inverse.identity()
                 child.location = Vector((0, 0, 0))

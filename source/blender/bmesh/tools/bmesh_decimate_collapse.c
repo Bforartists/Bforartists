@@ -84,7 +84,7 @@ typedef enum CD_UseFlag {
  * ********************** */
 
 /**
- * \param vquadrics must be calloc'd
+ * \param vquadrics: must be calloc'd
  */
 static void bm_decim_build_quadrics(BMesh *bm, Quadric *vquadrics)
 {
@@ -100,7 +100,7 @@ static void bm_decim_build_quadrics(BMesh *bm, Quadric *vquadrics)
 		double plane_db[4];
 		Quadric q;
 
-		BM_face_calc_center_mean(f, center);
+		BM_face_calc_center_median(f, center);
 		copy_v3db_v3fl(plane_db, f->no);
 		plane_db[3] = -dot_v3db_v3fl(plane_db, center);
 
@@ -1281,9 +1281,9 @@ static bool bm_decim_edge_collapse(
 
 /**
  * \brief BM_mesh_decimate
- * \param bm The mesh
- * \param factor face count multiplier [0 - 1]
- * \param vweights Optional array of vertex  aligned weights [0 - 1],
+ * \param bm: The mesh
+ * \param factor: face count multiplier [0 - 1]
+ * \param vweights: Optional array of vertex  aligned weights [0 - 1],
  *        a vertex group is the usual source for this.
  * \param symmetry_axis: Axis of symmetry, -1 to disable mirror decimate.
  * \param symmetry_eps: Threshold when matching mirror verts.
@@ -1354,7 +1354,7 @@ void BM_mesh_decimate_collapse(
 		/* simple non-mirror case */
 		while ((bm->totface > face_tot_target) &&
 		       (BLI_heap_is_empty(eheap) == false) &&
-		       (BLI_heap_node_value(BLI_heap_top(eheap)) != COST_INVALID))
+		       (BLI_heap_top_value(eheap) != COST_INVALID))
 		{
 			// const float value = BLI_heap_node_value(BLI_heap_top(eheap));
 			BMEdge *e = BLI_heap_pop_min(eheap);
@@ -1379,7 +1379,7 @@ void BM_mesh_decimate_collapse(
 	else {
 		while ((bm->totface > face_tot_target) &&
 		       (BLI_heap_is_empty(eheap) == false) &&
-		       (BLI_heap_node_value(BLI_heap_top(eheap)) != COST_INVALID))
+		       (BLI_heap_top_value(eheap) != COST_INVALID))
 		{
 			/**
 			 * \note

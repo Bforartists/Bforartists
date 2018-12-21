@@ -48,10 +48,10 @@
 #include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
-#include "BKE_sequencer.h"
-#include "BKE_movieclip.h"
 #include "BKE_mask.h"
+#include "BKE_movieclip.h"
 #include "BKE_report.h"
+#include "BKE_sequencer.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -69,7 +69,7 @@
 #include "BKE_sound.h"
 
 #ifdef WITH_AUDASPACE
-#  include AUD_SEQUENCE_H
+#  include <AUD_Sequence.h>
 #endif
 
 /* own include */
@@ -693,7 +693,7 @@ static void sequencer_add_draw(bContext *UNUSED(C), wmOperator *op)
 
 	/* main draw call */
 	RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
-	uiDefAutoButsRNA(layout, &ptr, sequencer_add_draw_check_prop, NULL, '\0');
+	uiDefAutoButsRNA(layout, &ptr, sequencer_add_draw_check_prop, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
 
 	/* image template */
 	RNA_pointer_create(NULL, &RNA_ImageFormatSettings, imf, &imf_ptr);
@@ -878,6 +878,8 @@ static int sequencer_add_image_strip_exec(bContext *C, wmOperator *op)
 	seq = BKE_sequencer_add_image_strip(C, ed->seqbasep, &seq_load);
 	strip = seq->strip;
 	se = strip->stripdata;
+
+	seq->blend_mode = SEQ_TYPE_ALPHAOVER;
 
 	if (use_placeholders) {
 		sequencer_image_seq_reserve_frames(op, se, seq_load.len, minframe, numdigits);

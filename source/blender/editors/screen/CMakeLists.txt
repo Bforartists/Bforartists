@@ -23,8 +23,10 @@ set(INC
 	../../blenfont
 	../../blenkernel
 	../../blenlib
+	../../blenloader
 	../../blentranslation
 	../../bmesh
+	../../depsgraph
 	../../gpu
 	../../imbuf
 	../../makesdna
@@ -40,12 +42,17 @@ set(INC_SYS
 
 set(SRC
 	area.c
+	area_utils.c
 	glutil.c
 	screen_context.c
 	screen_draw.c
 	screen_edit.c
+	screen_geometry.c
 	screen_ops.c
+	screen_user_menu.c
 	screendump.c
+	workspace_edit.c
+	workspace_layout_edit.c
 
 	screen_intern.h
 )

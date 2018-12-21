@@ -57,7 +57,7 @@ class BasePrimitiveDXFExporter(object):
             # get its normal-vector in localCS
             vec_normal = f.no.copy()
             #print 'deb: vec_normal=', vec_normal #------------------
-            # must be transfered to camera/view-CS
+            # must be transferred to camera/view-CS
             vec_normal *= mx_n
             #vec_normal *= mb.rotationPart()
             #print 'deb:2vec_normal=', vec_normal #------------------
@@ -191,5 +191,5 @@ class BasePrimitiveDXFExporter(object):
 #        # ECS_origin is Global_Origin in EntityCoordSystem
 #        ECS_origin = OCS_origin * Zrotmatrix
 #        #print 'deb: ECS_origin=', ECS_origin #---------
-#        #TODO: it doesnt work yet for negative scaled curve-objects!
+#        #TODO: it doesn't work yet for negative scaled curve-objects!
 #        return ZRotation,Zrotmatrix,OCS_origin,ECS_origin

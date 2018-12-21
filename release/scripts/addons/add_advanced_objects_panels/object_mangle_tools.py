@@ -49,7 +49,7 @@ def move_coordinate(context, co, is_curve=False):
     multiplier = 1
 
     # For curves, we base the multiplier on the circumference formula.
-    # This helps make curve changes more noticable.
+    # This helps make curve changes more noticeable.
     if is_curve:
         multiplier = 2 * pi
     random_mag = advanced_objects.mangle_random_magnitude

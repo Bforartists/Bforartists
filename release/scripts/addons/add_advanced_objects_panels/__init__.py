@@ -468,7 +468,7 @@ class AdvancedObjProperties1(PropertyGroup):
             )
     # oscurart_constellation
     constellation_limit = FloatProperty(
-            name="Inital Threshold",
+            name="Initial Threshold",
             description="Edges will be created only if the distance\n"
                         "between vertices is smaller than this value\n"
                         "This is a starting value on Operator Invoke",

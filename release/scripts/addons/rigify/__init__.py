@@ -22,7 +22,7 @@ bl_info = {
     "name": "Rigify",
     "version": (0, 5),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello",
-    "blender": (2, 78, 0),
+    "blender": (2, 80, 0),
     "description": "Automatic rigging from building-block components",
     "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/"
@@ -44,7 +44,15 @@ import bpy
 import sys
 import os
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty
+from bpy.props import (
+    BoolProperty,
+    IntProperty,
+    EnumProperty,
+    StringProperty,
+    FloatVectorProperty,
+    PointerProperty,
+    CollectionProperty,
+)
 
 
 class RigifyPreferences(AddonPreferences):
@@ -118,14 +126,13 @@ class RigifyPreferences(AddonPreferences):
 
             register()
 
-    legacy_mode = BoolProperty(
+    legacy_mode: BoolProperty(
         name='Rigify Legacy Mode',
         description='Select if you want to use Rigify in legacy mode',
         default=False,
         update=update_legacy
     )
-
-    show_expanded = BoolProperty()
+    show_expanded: BoolProperty()
 
     def draw(self, context):
         layout = self.layout
@@ -143,71 +150,80 @@ class RigifyPreferences(AddonPreferences):
         op = sub.operator('wm.context_toggle', text='', icon=icon,
                           emboss=False)
         op.data_path = 'addon_prefs.show_expanded'
-        sub.label('{}: {}'.format('Rigify', 'Enable Legacy Mode'))
+        sub.label(text='{}: {}'.format('Rigify', 'Enable Legacy Mode'))
         sub = row.row()
         sub.alignment = 'RIGHT'
         sub.prop(self, 'legacy_mode')
 
         if expand:
-            split = col.row().split(percentage=0.15)
-            split.label('Description:')
+            split = col.row().split(factor=0.15)
+            split.label(text='Description:')
             split.label(text='When enabled the add-on will run in legacy mode using the old 2.76b feature set.')
 
         row = layout.row()
-        row.label("End of Rigify Preferences")
+        row.label(text="End of Rigify Preferences")
 
 
 class RigifyName(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
+    name: StringProperty()
 
 
 class RigifyColorSet(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(name="Color Set", default=" ")
-    active = bpy.props.FloatVectorProperty(
-                                   name="object_color",
-                                   subtype='COLOR',
-                                   default=(1.0, 1.0, 1.0),
-                                   min=0.0, max=1.0,
-                                   description="color picker"
-                                   )
-    normal = bpy.props.FloatVectorProperty(
-                                   name="object_color",
-                                   subtype='COLOR',
-                                   default=(1.0, 1.0, 1.0),
-                                   min=0.0, max=1.0,
-                                   description="color picker"
-                                   )
-    select = bpy.props.FloatVectorProperty(
-                                   name="object_color",
-                                   subtype='COLOR',
-                                   default=(1.0, 1.0, 1.0),
-                                   min=0.0, max=1.0,
-                                   description="color picker"
-                                   )
-    standard_colors_lock = bpy.props.BoolProperty(default=True)
+    name: StringProperty(name="Color Set", default=" ")
+    active: FloatVectorProperty(
+        name="object_color",
+        subtype='COLOR',
+        default=(1.0, 1.0, 1.0),
+        min=0.0, max=1.0,
+        description="color picker"
+    )
+    normal: FloatVectorProperty(
+        name="object_color",
+        subtype='COLOR',
+        default=(1.0, 1.0, 1.0),
+        min=0.0, max=1.0,
+        description="color picker"
+    )
+    select: FloatVectorProperty(
+        name="object_color",
+        subtype='COLOR',
+        default=(1.0, 1.0, 1.0),
+        min=0.0, max=1.0,
+        description="color picker"
+    )
+    standard_colors_lock: BoolProperty(default=True)
 
 
 class RigifySelectionColors(bpy.types.PropertyGroup):
 
-    select = bpy.props.FloatVectorProperty(
-                                           name="object_color",
-                                           subtype='COLOR',
-                                           default=(0.314, 0.784, 1.0),
-                                           min=0.0, max=1.0,
-                                           description="color picker"
-                                           )
+    select: FloatVectorProperty(
+        name="object_color",
+        subtype='COLOR',
+        default=(0.314, 0.784, 1.0),
+        min=0.0, max=1.0,
+        description="color picker"
+    )
 
-    active = bpy.props.FloatVectorProperty(
-                                           name="object_color",
-                                           subtype='COLOR',
-                                           default=(0.549, 1.0, 1.0),
-                                           min=0.0, max=1.0,
-                                           description="color picker"
-                                           )
+    active: FloatVectorProperty(
+        name="object_color",
+        subtype='COLOR',
+        default=(0.549, 1.0, 1.0),
+        min=0.0, max=1.0,
+        description="color picker"
+    )
 
 
 class RigifyParameters(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
+    name: StringProperty()
+
+
+# Remember the initial property set
+RIGIFY_PARAMETERS_BASE_DIR = set(dir(RigifyParameters))
+
+def clear_rigify_parameters():
+    for name in list(dir(RigifyParameters)):
+        if name not in RIGIFY_PARAMETERS_BASE_DIR:
+            delattr(RigifyParameters, name)
 
 
 class RigifyArmatureLayer(bpy.types.PropertyGroup):
@@ -225,104 +241,123 @@ class RigifyArmatureLayer(bpy.types.PropertyGroup):
         else:
             self['group_prop'] = value
 
-    name = bpy.props.StringProperty(name="Layer Name", default=" ")
-    row = bpy.props.IntProperty(name="Layer Row", default=1, min=1, max=32, description='UI row for this layer')
-    set = bpy.props.BoolProperty(name="Selection Set", default=False, description='Add Selection Set for this layer')
-    group = bpy.props.IntProperty(name="Bone Group", default=0, min=0, max=32,
-                                  get=get_group, set=set_group, description='Assign Bone Group to this layer')
+    name: StringProperty(name="Layer Name", default=" ")
+    row: IntProperty(name="Layer Row", default=1, min=1, max=32, description='UI row for this layer')
+    selset: BoolProperty(name="Selection Set", default=False, description='Add Selection Set for this layer')
+    group: IntProperty(name="Bone Group", default=0, min=0, max=32,
+        get=get_group, set=set_group, description='Assign Bone Group to this layer')
+
 
 ##### REGISTER #####
 
+classes = (
+    RigifyName,
+    RigifyParameters,
+    RigifyColorSet,
+    RigifySelectionColors,
+    RigifyArmatureLayer,
+    RigifyPreferences,
+)
+
+
 def register():
+    from bpy.utils import register_class
+
+    # Sub-modules.
     ui.register()
     metarig_menu.register()
 
-    bpy.utils.register_class(RigifyName)
-    bpy.utils.register_class(RigifyParameters)
+    # Classes.
+    for cls in classes:
+        register_class(cls)
 
-    bpy.utils.register_class(RigifyColorSet)
-    bpy.utils.register_class(RigifySelectionColors)
-    bpy.utils.register_class(RigifyArmatureLayer)
-    bpy.utils.register_class(RigifyPreferences)
-    bpy.types.Armature.rigify_layers = bpy.props.CollectionProperty(type=RigifyArmatureLayer)
+    # Properties.
+    bpy.types.Armature.rigify_layers = CollectionProperty(type=RigifyArmatureLayer)
 
-    bpy.types.PoseBone.rigify_type = bpy.props.StringProperty(name="Rigify Type", description="Rig type for this bone")
-    bpy.types.PoseBone.rigify_parameters = bpy.props.PointerProperty(type=RigifyParameters)
+    bpy.types.PoseBone.rigify_type = StringProperty(name="Rigify Type", description="Rig type for this bone")
+    bpy.types.PoseBone.rigify_parameters = PointerProperty(type=RigifyParameters)
 
-    bpy.types.Armature.rigify_colors = bpy.props.CollectionProperty(type=RigifyColorSet)
+    bpy.types.Armature.rigify_colors = CollectionProperty(type=RigifyColorSet)
 
-    bpy.types.Armature.rigify_selection_colors = bpy.props.PointerProperty(type=RigifySelectionColors)
+    bpy.types.Armature.rigify_selection_colors = PointerProperty(type=RigifySelectionColors)
 
-    bpy.types.Armature.rigify_colors_index = bpy.props.IntProperty(default=-1)
-    bpy.types.Armature.rigify_colors_lock = bpy.props.BoolProperty(default=True)
-    bpy.types.Armature.rigify_theme_to_add = bpy.props.EnumProperty(items=(('THEME01', 'THEME01', ''),
-                                                                          ('THEME02', 'THEME02', ''),
-                                                                          ('THEME03', 'THEME03', ''),
-                                                                          ('THEME04', 'THEME04', ''),
-                                                                          ('THEME05', 'THEME05', ''),
-                                                                          ('THEME06', 'THEME06', ''),
-                                                                          ('THEME07', 'THEME07', ''),
-                                                                          ('THEME08', 'THEME08', ''),
-                                                                          ('THEME09', 'THEME09', ''),
-                                                                          ('THEME10', 'THEME10', ''),
-                                                                          ('THEME11', 'THEME11', ''),
-                                                                          ('THEME12', 'THEME12', ''),
-                                                                          ('THEME13', 'THEME13', ''),
-                                                                          ('THEME14', 'THEME14', ''),
-                                                                          ('THEME15', 'THEME15', ''),
-                                                                          ('THEME16', 'THEME16', ''),
-                                                                          ('THEME17', 'THEME17', ''),
-                                                                          ('THEME18', 'THEME18', ''),
-                                                                          ('THEME19', 'THEME19', ''),
-                                                                          ('THEME20', 'THEME20', '')
-                                                                           ), name='Theme')
+    bpy.types.Armature.rigify_colors_index = IntProperty(default=-1)
+    bpy.types.Armature.rigify_colors_lock = BoolProperty(default=True)
+    bpy.types.Armature.rigify_theme_to_add = EnumProperty(items=(
+        ('THEME01', 'THEME01', ''),
+        ('THEME02', 'THEME02', ''),
+        ('THEME03', 'THEME03', ''),
+        ('THEME04', 'THEME04', ''),
+        ('THEME05', 'THEME05', ''),
+        ('THEME06', 'THEME06', ''),
+        ('THEME07', 'THEME07', ''),
+        ('THEME08', 'THEME08', ''),
+        ('THEME09', 'THEME09', ''),
+        ('THEME10', 'THEME10', ''),
+        ('THEME11', 'THEME11', ''),
+        ('THEME12', 'THEME12', ''),
+        ('THEME13', 'THEME13', ''),
+        ('THEME14', 'THEME14', ''),
+        ('THEME15', 'THEME15', ''),
+        ('THEME16', 'THEME16', ''),
+        ('THEME17', 'THEME17', ''),
+        ('THEME18', 'THEME18', ''),
+        ('THEME19', 'THEME19', ''),
+        ('THEME20', 'THEME20', '')
+        ), name='Theme')
 
     IDStore = bpy.types.WindowManager
-    IDStore.rigify_collection = bpy.props.EnumProperty(items=rig_lists.col_enum_list, default="All",
-                                                       name="Rigify Active Collection",
-                                                       description="The selected rig collection")
+    IDStore.rigify_collection = EnumProperty(items=rig_lists.col_enum_list, default="All",
+        name="Rigify Active Collection",
+        description="The selected rig collection")
 
-    IDStore.rigify_types = bpy.props.CollectionProperty(type=RigifyName)
-    IDStore.rigify_active_type = bpy.props.IntProperty(name="Rigify Active Type", description="The selected rig type")
+    IDStore.rigify_types = CollectionProperty(type=RigifyName)
+    IDStore.rigify_active_type = IntProperty(name="Rigify Active Type", description="The selected rig type")
 
-    IDStore.rigify_advanced_generation = bpy.props.BoolProperty(name="Advanced Options",
-                                                                description="Enables/disables advanced options for Rigify rig generation",
-                                                                default=False)
+    IDStore.rigify_advanced_generation = BoolProperty(name="Advanced Options",
+        description="Enables/disables advanced options for Rigify rig generation",
+        default=False)
 
     def update_mode(self, context):
         if self.rigify_generate_mode == 'new':
             self.rigify_force_widget_update = False
 
-    IDStore.rigify_generate_mode = bpy.props.EnumProperty(name="Rigify Generate Rig Mode",
-                                                          description="'Generate Rig' mode. In 'overwrite' mode the features of the target rig will be updated as defined by the metarig. In 'new' mode a new rig will be created as defined by the metarig. Current mode",
-                                                          update=update_mode,
-                                                          items=(('overwrite', 'overwrite', ''),
-                                                                 ('new', 'new', '')))
+    IDStore.rigify_generate_mode = EnumProperty(name="Rigify Generate Rig Mode",
+        description="'Generate Rig' mode. In 'overwrite' mode the features of the target rig will be updated as defined by the metarig. In 'new' mode a new rig will be created as defined by the metarig. Current mode",
+        update=update_mode,
+        items=( ('overwrite', 'overwrite', ''),
+                ('new', 'new', '')))
 
-    IDStore.rigify_force_widget_update = bpy.props.BoolProperty(name="Force Widget Update",
-                                                                description="Forces Rigify to delete and rebuild all the rig widgets. if unset, only missing widgets will be created",
-                                                                default=False)
+    IDStore.rigify_force_widget_update = BoolProperty(name="Force Widget Update",
+        description="Forces Rigify to delete and rebuild all the rig widgets. if unset, only missing widgets will be created",
+        default=False)
 
-    IDStore.rigify_target_rigs = bpy.props.CollectionProperty(type=RigifyName)
-    IDStore.rigify_target_rig = bpy.props.StringProperty(name="Rigify Target Rig",
-                                                         description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
-                                                         default="")
+    IDStore.rigify_target_rigs = CollectionProperty(type=RigifyName)
+    IDStore.rigify_target_rig = StringProperty(name="Rigify Target Rig",
+        description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
+        default="")
 
-    IDStore.rigify_rig_uis = bpy.props.CollectionProperty(type=RigifyName)
-    IDStore.rigify_rig_ui = bpy.props.StringProperty(name="Rigify Target Rig UI",
-                                                         description="Defines the UI to overwrite. It should always be the same as the target rig. If unset, 'rig_ui.py' will be used",
-                                                         default="")
+    IDStore.rigify_rig_uis = CollectionProperty(type=RigifyName)
+    IDStore.rigify_rig_ui = StringProperty(name="Rigify Target Rig UI",
+        description="Defines the UI to overwrite. It should always be the same as the target rig. If unset, 'rig_ui.py' will be used",
+        default="")
 
-    IDStore.rigify_rig_basename = bpy.props.StringProperty(name="Rigify Rig Name",
-                                                     description="Defines the name of the Rig. If unset, in 'new' mode 'rig' will be used, in 'overwrite' mode the target rig name will be used",
-                                                     default="")
+    IDStore.rigify_rig_basename = StringProperty(name="Rigify Rig Name",
+        description="Defines the name of the Rig. If unset, in 'new' mode 'rig' will be used, in 'overwrite' mode the target rig name will be used",
+        default="")
 
-    IDStore.rigify_transfer_only_selected = bpy.props.BoolProperty(name="Transfer Only Selected", description="Transfer selected bones only", default=True)
-    IDStore.rigify_transfer_start_frame = bpy.props.IntProperty(name="Start Frame", description="First Frame to Transfer", default=0, min= 0)
-    IDStore.rigify_transfer_end_frame = bpy.props.IntProperty(name="End Frame", description="Last Frame to Transfer", default=0, min= 0)
+    IDStore.rigify_transfer_only_selected = BoolProperty(
+        name="Transfer Only Selected",
+        description="Transfer selected bones only", default=True)
+    IDStore.rigify_transfer_start_frame = IntProperty(
+        name="Start Frame",
+        description="First Frame to Transfer", default=0, min= 0)
+    IDStore.rigify_transfer_end_frame = IntProperty(
+        name="End Frame",
+        description="Last Frame to Transfer", default=0, min= 0)
 
+    # Update legacy on restart or reload.
     if (ui and 'legacy' in str(ui)) or bpy.context.user_preferences.addons['rigify'].preferences.legacy_mode:
-        # update legacy on restart or reload
         bpy.context.user_preferences.addons['rigify'].preferences.legacy_mode = True
 
     # Add rig parameters
@@ -335,6 +370,9 @@ def register():
 
 
 def unregister():
+    from bpy.utils import unregister_class
+
+    # Properties.
     del bpy.types.PoseBone.rigify_type
     del bpy.types.PoseBone.rigify_parameters
 
@@ -354,14 +392,12 @@ def unregister():
     del IDStore.rigify_transfer_start_frame
     del IDStore.rigify_transfer_end_frame
 
-    bpy.utils.unregister_class(RigifyName)
-    bpy.utils.unregister_class(RigifyParameters)
+    # Classes.
+    for cls in classes:
+        unregister_class(cls)
 
-    bpy.utils.unregister_class(RigifyColorSet)
-    bpy.utils.unregister_class(RigifySelectionColors)
+    clear_rigify_parameters()
 
-    bpy.utils.unregister_class(RigifyArmatureLayer)
-    bpy.utils.unregister_class(RigifyPreferences)
-
+    # Sub-modules.
     metarig_menu.unregister()
     ui.unregister()

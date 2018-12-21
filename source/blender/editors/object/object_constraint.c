@@ -53,7 +53,6 @@
 #include "BKE_armature.h"
 #include "BKE_constraint.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
@@ -61,6 +60,9 @@
 #include "BKE_report.h"
 #include "BKE_tracking.h"
 #include "BIK_api.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #ifdef WITH_PYTHON
 #include "BPY_extern.h"
@@ -428,6 +430,11 @@ static void test_constraint(Main *bmain, Object *owner, bPoseChannel *pchan, bCo
 	if (check_targets && cti && cti->get_constraint_targets) {
 		cti->get_constraint_targets(con, &targets);
 
+		/* constraints with empty target list that actually require targets */
+		if (!targets.first && ELEM(con->type, CONSTRAINT_TYPE_ARMATURE)) {
+			con->flag |= CONSTRAINT_DISABLE;
+		}
+
 		/* disable and clear constraints targets that are incorrect */
 		for (ct = targets.first; ct; ct = ct->next) {
 			/* general validity checks (for those constraints that need this) */
@@ -468,6 +475,18 @@ static void test_constraint(Main *bmain, Object *owner, bPoseChannel *pchan, bCo
 
 						/* auto-set 'Path' setting on curve so this works  */
 						cu->flag |= CU_PATH;
+					}
+				}
+			}
+			else if (con->type == CONSTRAINT_TYPE_ARMATURE) {
+				if (ct->tar) {
+					if (ct->tar->type != OB_ARMATURE) {
+						ct->tar = NULL;
+						con->flag |= CONSTRAINT_DISABLE;
+					}
+					else if (!BKE_armature_find_bone_name(BKE_armature_from_object(ct->tar), ct->subtarget)) {
+						/* bone must exist in armature... */
+						con->flag |= CONSTRAINT_DISABLE;
 					}
 				}
 			}
@@ -596,6 +615,11 @@ static bool edit_constraint_poll_generic(bContext *C, StructRNA *rna_type)
 		return 0;
 	}
 
+	if (ID_IS_STATIC_OVERRIDE(ob)) {
+		CTX_wm_operator_poll_msg_set(C, "Cannot edit constraints coming from static override");
+		return (((bConstraint *)ptr.data)->flag & CONSTRAINT_STATICOVERRIDE_LOCAL) != 0;
+	}
+
 	return 1;
 }
 
@@ -606,8 +630,11 @@ static bool edit_constraint_poll(bContext *C)
 
 static void edit_constraint_properties(wmOperatorType *ot)
 {
-	RNA_def_string(ot->srna, "constraint", NULL, MAX_NAME, "Constraint", "Name of the constraint to edit");
-	RNA_def_enum(ot->srna, "owner", constraint_owner_items, 0, "Owner", "The owner of this constraint");
+	PropertyRNA *prop;
+	prop = RNA_def_string(ot->srna, "constraint", NULL, MAX_NAME, "Constraint", "Name of the constraint to edit");
+	RNA_def_property_flag(prop, PROP_HIDDEN);
+	prop = RNA_def_enum(ot->srna, "owner", constraint_owner_items, 0, "Owner", "The owner of this constraint");
+	RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
 static int edit_constraint_invoke_properties(bContext *C, wmOperator *op)
@@ -775,8 +802,10 @@ void CONSTRAINT_OT_limitdistance_reset(wmOperatorType *ot)
 
 /* ------------- Child-Of Constraint ------------------ */
 
-static void child_get_inverse_matrix(Scene *scene, Object *ob, bConstraint *con, float invmat[4][4], const int owner)
+static void child_get_inverse_matrix(const bContext *C, Scene *scene, Object *ob, bConstraint *con, float invmat[4][4], const int owner)
 {
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
+
 	/* nullify inverse matrix first */
 	unit_m4(invmat);
 
@@ -802,7 +831,7 @@ static void child_get_inverse_matrix(Scene *scene, Object *ob, bConstraint *con,
 			 * to use as baseline ("pmat") to derive delta from. This extra calc saves users
 			 * from having pressing "Clear Inverse" first
 			 */
-			BKE_pose_where_is(scene, ob);
+			BKE_pose_where_is(depsgraph, scene, ob);
 			copy_m4_m4(pmat, pchan->pose_mat);
 
 			/* 2. knock out constraints starting from this one */
@@ -819,7 +848,7 @@ static void child_get_inverse_matrix(Scene *scene, Object *ob, bConstraint *con,
 			}
 
 			/* 3. solve pose without disabled constraints */
-			BKE_pose_where_is(scene, ob);
+			BKE_pose_where_is(depsgraph, scene, ob);
 
 			/* 4. determine effect of constraint by removing the newly calculated
 			 * pchan->pose_mat from the original pchan->pose_mat, thus determining
@@ -842,7 +871,7 @@ static void child_get_inverse_matrix(Scene *scene, Object *ob, bConstraint *con,
 			}
 
 			/* 6. recalculate pose with new inv-mat applied */
-			BKE_pose_where_is(scene, ob);
+			BKE_pose_where_is(depsgraph, scene, ob);
 		}
 	}
 	if (owner == EDIT_CONSTRAINT_OWNER_OBJECT) {
@@ -853,7 +882,7 @@ static void child_get_inverse_matrix(Scene *scene, Object *ob, bConstraint *con,
 			BLI_assert(BLI_findindex(&ob->constraints, con) != -1);
 
 			/* use BKE_object_workob_calc_parent to find inverse - just like for normal parenting */
-			BKE_object_workob_calc_parent(scene, ob, &workob);
+			BKE_object_workob_calc_parent(depsgraph, scene, ob, &workob);
 			invert_m4_m4(invmat, workob.obmat);
 		}
 	}
@@ -875,7 +904,7 @@ static int childof_set_inverse_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	child_get_inverse_matrix(scene, ob, con, data->invmat, owner);
+	child_get_inverse_matrix(C, scene, ob, con, data->invmat, owner);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT, ob);
 
@@ -986,7 +1015,7 @@ static int followpath_path_animate_exec(bContext *C, wmOperator *op)
 		{
 			/* create F-Curve for path animation */
 			act = verify_adt_action(bmain, &cu->id, 1);
-			fcu = verify_fcurve(act, NULL, NULL, "eval_time", 0, 1);
+			fcu = verify_fcurve(bmain, act, NULL, NULL, "eval_time", 0, 1);
 
 			/* standard vertical range - 1:1 = 100 frames */
 			standardRange = 100.0f;
@@ -1011,7 +1040,7 @@ static int followpath_path_animate_exec(bContext *C, wmOperator *op)
 
 		/* create F-Curve for constraint */
 		act = verify_adt_action(bmain, &ob->id, 1);
-		fcu = verify_fcurve(act, NULL, NULL, path, 0, 1);
+		fcu = verify_fcurve(bmain, act, NULL, NULL, path, 0, 1);
 
 		/* standard vertical range - 0.0 to 1.0 */
 		standardRange = 1.0f;
@@ -1098,7 +1127,7 @@ static int objectsolver_set_inverse_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	child_get_inverse_matrix(scene, ob, con, data->invmat, owner);
+	child_get_inverse_matrix(C, scene, ob, con, data->invmat, owner);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT, ob);
 
@@ -1199,9 +1228,9 @@ void ED_object_constraint_update(Main *bmain, Object *ob)
 	object_test_constraints(bmain, ob);
 
 	if (ob->type == OB_ARMATURE)
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA | OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY | ID_RECALC_TRANSFORM);
 	else
-		DAG_id_tag_update(&ob->id, OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
 }
 
 static void object_pose_tag_update(Main *bmain, Object *ob)
@@ -1224,7 +1253,7 @@ void ED_object_constraint_dependency_update(Main *bmain, Object *ob)
 	if (ob->pose) {
 		object_pose_tag_update(bmain, ob);
 	}
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 }
 
 void ED_object_constraint_tag_update(Main *bmain, Object *ob, bConstraint *con)
@@ -1233,12 +1262,19 @@ void ED_object_constraint_tag_update(Main *bmain, Object *ob, bConstraint *con)
 		BKE_pose_tag_update_constraint_flags(ob->pose);
 	}
 
-	object_test_constraint(bmain, ob, con);
+	if (con) {
+		object_test_constraint(bmain, ob, con);
+	}
 
 	if (ob->type == OB_ARMATURE)
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA | OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY | ID_RECALC_TRANSFORM);
 	else
-		DAG_id_tag_update(&ob->id, OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
+
+	/* Do Copy-on-Write tag here too, otherwise constraint
+	 * influence/mute buttons in UI have no effect
+	 */
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 }
 
 void ED_object_constraint_dependency_tag_update(Main *bmain, Object *ob, bConstraint *con)
@@ -1248,7 +1284,7 @@ void ED_object_constraint_dependency_tag_update(Main *bmain, Object *ob, bConstr
 	if (ob->pose) {
 		object_pose_tag_update(bmain, ob);
 	}
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 }
 
 static bool constraint_poll(bContext *C)
@@ -1273,7 +1309,7 @@ static int constraint_delete_exec(bContext *C, wmOperator *UNUSED(op))
 		ED_object_constraint_update(bmain, ob); /* needed to set the flags on posebones correctly */
 
 		/* relatiols */
-		DAG_relations_tag_update(CTX_data_main(C));
+		DEG_relations_tag_update(CTX_data_main(C));
 
 		/* notifiers */
 		WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, ob);
@@ -1404,24 +1440,26 @@ void CONSTRAINT_OT_move_up(wmOperatorType *ot)
 static int pose_constraints_clear_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Main *bmain = CTX_data_main(C);
-	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
+	Object *prev_ob = NULL;
 
 	/* free constraints for all selected bones */
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+	CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob)
 	{
 		BKE_constraints_free(&pchan->constraints);
 		pchan->constflag &= ~(PCHAN_HAS_IK | PCHAN_HAS_SPLINEIK | PCHAN_HAS_CONST);
+
+		if (prev_ob != ob) {
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+			WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, ob);
+			prev_ob = ob;
+		}
 	}
 	CTX_DATA_END;
 
 	/* force depsgraph to get recalculated since relationships removed */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	/* note, calling BIK_clear_data() isn't needed here */
-
-	/* do updates */
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, ob);
 
 	return OPERATOR_FINISHED;
 }
@@ -1447,12 +1485,12 @@ static int object_constraints_clear_exec(bContext *C, wmOperator *UNUSED(op))
 	CTX_DATA_BEGIN (C, Object *, ob, selected_editable_objects)
 	{
 		BKE_constraints_free(&ob->constraints);
-		DAG_id_tag_update(&ob->id, OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
 	}
 	CTX_DATA_END;
 
 	/* force depsgraph to get recalculated since relationships removed */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	/* do updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, NULL);
@@ -1478,8 +1516,6 @@ static int pose_constraint_copy_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	bPoseChannel *pchan = CTX_data_active_pose_bone(C);
-	ListBase lb;
-	CollectionPointerLink *link;
 
 	/* don't do anything if bone doesn't exist or doesn't have any constraints */
 	if (ELEM(NULL, pchan, pchan->constraints.first)) {
@@ -1487,26 +1523,28 @@ static int pose_constraint_copy_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	/* copy all constraints from active posebone to all selected posebones */
-	CTX_data_selected_pose_bones(C, &lb);
-	for (link = lb.first; link; link = link->next) {
-		Object *ob = link->ptr.id.data;
-		bPoseChannel *chan = link->ptr.data;
+	Object *prev_ob = NULL;
 
+	/* copy all constraints from active posebone to all selected posebones */
+	CTX_DATA_BEGIN_WITH_ID(C, bPoseChannel *, chan, selected_pose_bones, Object *, ob)
+	{
 		/* if we're not handling the object we're copying from, copy all constraints over */
 		if (pchan != chan) {
 			BKE_constraints_copy(&chan->constraints, &pchan->constraints, true);
 			/* update flags (need to add here, not just copy) */
 			chan->constflag |= pchan->constflag;
 
-			BKE_pose_tag_recalc(bmain, ob->pose);
-			DAG_id_tag_update((ID *)ob, OB_RECALC_DATA);
+			if (prev_ob != ob) {
+				BKE_pose_tag_recalc(bmain, ob->pose);
+				DEG_id_tag_update((ID *)ob, ID_RECALC_GEOMETRY);
+				prev_ob = ob;
+			}
 		}
 	}
-	BLI_freelistN(&lb);
+	CTX_DATA_END;
 
 	/* force depsgraph to get recalculated since new relationships added */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT, NULL);
 
@@ -1539,13 +1577,13 @@ static int object_constraint_copy_exec(bContext *C, wmOperator *UNUSED(op))
 		/* if we're not handling the object we're copying from, copy all constraints over */
 		if (obact != ob) {
 			BKE_constraints_copy(&ob->constraints, &obact->constraints, true);
-			DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		}
 	}
 	CTX_DATA_END;
 
 	/* force depsgraph to get recalculated since new relationships added */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_ADDED, NULL);
@@ -1615,17 +1653,12 @@ static bool get_new_constraint_target(bContext *C, int con_type, Object **tar_ob
 			only_ob = true;
 			add = false;
 			break;
-
-		/* object only - add here is ok? */
-		case CONSTRAINT_TYPE_RIGIDBODYJOINT:
-			only_ob = true;
-			break;
 	}
 
 	/* if the active Object is Armature, and we can search for bones, do so... */
 	if ((obact->type == OB_ARMATURE) && (only_ob == false)) {
 		/* search in list of selected Pose-Channels for target */
-		CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+		CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones_from_active_object)
 		{
 			/* just use the first one that we encounter, as long as it is not the active one */
 			if (pchan != pchanact) {
@@ -1686,16 +1719,12 @@ static bool get_new_constraint_target(bContext *C, int con_type, Object **tar_ob
 	if ((found == false) && (add)) {
 		Main *bmain = CTX_data_main(C);
 		Scene *scene = CTX_data_scene(C);
-		Base *base = BASACT, *newbase = NULL;
+		ViewLayer *view_layer = CTX_data_view_layer(C);
+		Base *base = BASACT(view_layer);
 		Object *obt;
 
 		/* add new target object */
-		obt = BKE_object_add(bmain, scene, OB_EMPTY, NULL);
-
-		/* set layers OK */
-		newbase = BASACT;
-		newbase->lay = base->lay;
-		obt->lay = newbase->lay;
+		obt = BKE_object_add(bmain, scene, view_layer, OB_EMPTY, NULL);
 
 		/* transform cent to global coords for loc */
 		if (pchanact) {
@@ -1712,8 +1741,8 @@ static bool get_new_constraint_target(bContext *C, int con_type, Object **tar_ob
 		}
 
 		/* restore, BKE_object_add sets active */
-		BASACT = base;
-		base->flag |= SELECT;
+		BASACT(view_layer) = base;
+		base->flag |= BASE_SELECTED;
 
 		/* make our new target the new object */
 		*tar_ob = obt;
@@ -1745,10 +1774,6 @@ static int constraint_add_exec(bContext *C, wmOperator *op, Object *ob, ListBase
 	}
 	/* check if constraint to be added is valid for the given constraints stack */
 	if (type == CONSTRAINT_TYPE_NULL) {
-		return OPERATOR_CANCELLED;
-	}
-	if ((type == CONSTRAINT_TYPE_RIGIDBODYJOINT) && (list != &ob->constraints)) {
-		BKE_report(op->reports, RPT_ERROR, "Rigid Body Joint constraint can only be added to objects");
 		return OPERATOR_CANCELLED;
 	}
 	if ((type == CONSTRAINT_TYPE_KINEMATIC) && ((!pchan) || (list != &pchan->constraints))) {
@@ -1821,7 +1846,7 @@ static int constraint_add_exec(bContext *C, wmOperator *op, Object *ob, ListBase
 
 
 	/* force depsgraph to get recalculated since new relationships added */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 
 	if ((ob->type == OB_ARMATURE) && (pchan)) {
 		BKE_pose_tag_recalc(bmain, ob->pose);  /* sort pose channels */
@@ -1831,10 +1856,10 @@ static int constraint_add_exec(bContext *C, wmOperator *op, Object *ob, ListBase
 			 * XXX Temp hack until new depsgraph hopefully solves this. */
 			ob->adt->recalc |= ADT_RECALC_ANIM;
 		}
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA | OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY | ID_RECALC_TRANSFORM);
 	}
 	else
-		DAG_id_tag_update(&ob->id, OB_RECALC_OB);
+		DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM);
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_ADDED, ob);
@@ -2055,10 +2080,10 @@ void POSE_OT_ik_add(wmOperatorType *ot)
 /* remove IK constraints from selected bones */
 static int pose_ik_clear_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
+	Object *prev_ob = NULL;
 
 	/* only remove IK Constraints */
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+	CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob)
 	{
 		bConstraint *con, *next;
 
@@ -2070,14 +2095,18 @@ static int pose_ik_clear_exec(bContext *C, wmOperator *UNUSED(op))
 			}
 		}
 		pchan->constflag &= ~(PCHAN_HAS_IK | PCHAN_HAS_TARGET);
+
+		if (prev_ob != ob) {
+			prev_ob = ob;
+
+			/* Refresh depsgraph. */
+			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+
+			/* Note, notifier might evolve. */
+			WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, ob);
+		}
 	}
 	CTX_DATA_END;
-
-	/* refresh depsgraph */
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-
-	/* note, notifier might evolve */
-	WM_event_add_notifier(C, NC_OBJECT | ND_CONSTRAINT | NA_REMOVED, ob);
 
 	return OPERATOR_FINISHED;
 }

@@ -827,8 +827,8 @@ class FptImporter():
                             blender_empty_object.location = blender_position
                             blender_empty_object.rotation_mode = 'XZY'
                             blender_empty_object.rotation_euler = blender_rotation
-                            blender_empty_object.empty_draw_type = 'ARROWS'
-                            blender_empty_object.empty_draw_size = 10.0
+                            blender_empty_object.empty_display_type = 'ARROWS'
+                            blender_empty_object.empty_display_size = 10.0
                             self.__scene.objects.link(blender_empty_object)
                             blender_empty_object.layers = layers
 
@@ -985,7 +985,7 @@ class FptImporter():
         camera.clip_start = 1.0 # 1.0mm
         camera.clip_end = 10000.0 # 10.0m
         camera.dof_distance = 1211.0
-        camera.draw_size = 100.0
+        camera.display_size = 100.0
         self.__scene.camera = obj
         for area in self.__context.screen.areas:
             if area.type == 'VIEW_3D':
@@ -2018,8 +2018,8 @@ class FptImporter():
             blender_empty_object.rotation_mode = 'XZY'
             v = (cu.splines[-1].bezier_points[0].handle_left - cu.splines[-1].bezier_points[0].co)
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
-            blender_empty_object.empty_draw_type = 'ARROWS'
-            blender_empty_object.empty_draw_size = 10.0
+            blender_empty_object.empty_display_type = 'ARROWS'
+            blender_empty_object.empty_display_size = 10.0
             self.__scene.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_EMPTY_OBJECT.format(FORMAT_MODEL_START.format(name))
             if fpx_id:
@@ -2035,8 +2035,8 @@ class FptImporter():
             blender_empty_object.rotation_mode = 'XZY'
             v = (cu.splines[-1].bezier_points[-1].handle_right - cu.splines[-1].bezier_points[-1].co)
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
-            blender_empty_object.empty_draw_type = 'ARROWS'
-            blender_empty_object.empty_draw_size = 10.0
+            blender_empty_object.empty_display_type = 'ARROWS'
+            blender_empty_object.empty_display_size = 10.0
             self.__scene.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_EMPTY_OBJECT.format(FORMAT_MODEL_END.format(name))
             if fpx_id:
@@ -2133,8 +2133,8 @@ class FptImporter():
             blender_empty_object.rotation_mode = 'XZY'
             v = (bezier_point.handle_right - bezier_point.co)
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
-            blender_empty_object.empty_draw_type = 'ARROWS'
-            blender_empty_object.empty_draw_size = 10.0
+            blender_empty_object.empty_display_type = 'ARROWS'
+            blender_empty_object.empty_display_size = 10.0
             self.__scene.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_MODEL_RING.format(name, index)
             if fpx_id:
@@ -2629,8 +2629,8 @@ class FptImporter():
             blender_empty_object_new.location = old_object.parent.location + old_object.location + offset
             blender_empty_object_new.rotation_mode = blender_empty_object.rotation_mode
             blender_empty_object_new.rotation_euler = Euler((0, 0, radians(angle)), blender_empty_object.rotation_mode)
-            blender_empty_object_new.empty_draw_type = blender_empty_object.empty_draw_type
-            blender_empty_object_new.empty_draw_size = blender_empty_object.empty_draw_size
+            blender_empty_object_new.empty_display_type = blender_empty_object.empty_display_type
+            blender_empty_object_new.empty_display_size = blender_empty_object.empty_display_size
             self.__scene.objects.link(blender_empty_object_new)
 
             old_group_dict = {}
@@ -2657,8 +2657,8 @@ class FptImporter():
 
             blender_empty_object_new.parent = blender_empty_object
 
-            #blender_empty_object_new.dupli_type = 'GROUP'
-            #blender_empty_object_new.dupli_group = blender_group
+            #blender_empty_object_new.instance_type = 'COLLECTION'
+            #blender_empty_object_new.instance_collection = blender_group
             blender_empty_object_new.layers = layers
             blender_empty_object_new.select = True
             """

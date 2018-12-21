@@ -290,7 +290,7 @@ class Do:
         note: en.start_angle + en.end_angle: angles measured from the angle base (angbase) in the direction of
               angdir (1 = clockwise, 0 = counterclockwise)
         """
-        treshold = 0.005
+        threshold = 0.005
 
         if aunits is None:
             aunits = self.dwg.header.get('$AUNITS', 0)
@@ -337,22 +337,22 @@ class Do:
         # start
         spline = list()
         spline.append(vc + start)
-        if abs(angle) - pi / 2 > treshold:  # if angle is more than pi/2 incl. treshold
+        if abs(angle) - pi / 2 > threshold:  # if angle is more than pi/2 incl. threshold
             spline.append(vc + start + start * kappa * rot)
         else:
             spline.append(vc + start + start * kappa * angle / (pi / 2) * rot)
 
         # fill if angle is larger than 90 degrees
         a = pi / 2
-        if abs(angle) - treshold > a:
+        if abs(angle) - threshold > a:
             fill = start
 
-            while abs(angle) - a > treshold:
+            while abs(angle) - a > threshold:
                 fillnext = fill * rot
                 spline.append(vc + fillnext + fill * kappa)
                 spline.append(vc + fillnext)
                 # if this was the last fill control point
-                if abs(angle) - a - pi / 2 < treshold:
+                if abs(angle) - a - pi / 2 < threshold:
                     end_angle = (abs(angle) - a) * abs(angle) / angle
                     spline.append(vc + fillnext + fillnext * kappa * end_angle / (pi / 2) * rot)
                 else:
@@ -578,7 +578,7 @@ class Do:
 
     def polymesh(self, en, bm):
         """
-        en: POLYMESH entitiy
+        en: POLYMESH entity
         bm: Blender bmesh instance
         """
         mc = en.mcount if not en.is_mclosed else en.mcount + 1
@@ -738,7 +738,7 @@ class Do:
         if self.import_light:
             type_map = ["NONE", "SUN", "POINT", "SPOT"]
             layer = self.dwg.layers[en.layer]
-            lamp = bpy.data.lamps.new(en.name, type_map[en.light_type])
+            lamp = bpy.data.lights.new(en.name, type_map[en.light_type])
             if en.color != 256:
                 aci = en.color
             else:
@@ -905,7 +905,7 @@ class Do:
             for obj in inserts:
                 obj.parent = o
 
-            # put a copy of the retreived objects into the known_blocks dict, so that the attributes being added to
+            # put a copy of the retrieved objects into the known_blocks dict, so that the attributes being added to
             # the object from this point onwards (from INSERT attributes) are not being copied to new/other INSERTs
             self.known_blocks[name] = [[o.copy() for o in objects], inserts]
 
@@ -989,13 +989,13 @@ class Do:
             bbox = self._object_bbox(objects + inserts, block_scene, name, True)
 
             for i in inserts:
-                sub_group = i.dupli_group
+                sub_group = i.instance_collection
                 block_scene.objects.unlink(i)
                 block_group.objects.unlink(i)
                 i_empty = bpy.data.objects.new(i.name, None)
                 i_empty.matrix_basis = i.matrix_basis
-                i_empty.dupli_type = "GROUP"
-                i_empty.dupli_group = sub_group
+                i_empty.instance_type = "COLLECTION"
+                i_empty.instance_collection = sub_group
                 block_group.objects.link(i_empty)
                 block_scene.objects.link(i_empty)
 
@@ -1005,9 +1005,9 @@ class Do:
 
         bpy.context.screen.scene = scene
         o = bbox.copy()
-        # o.empty_draw_size = 0.3
-        o.dupli_type = "GROUP"
-        o.dupli_group = block_group
+        # o.empty_display_size = 0.3
+        o.instance_type = "COLLECTION"
+        o.instance_collection = block_group
         group.objects.link(o)
         if invisible is not None:
             o.hide = invisible
@@ -1021,7 +1021,7 @@ class Do:
         """
         entity: DXF entity
         name: String; not used but required to be consistent with the methods being called from _call_type()
-        group: Blender group of type (bpy_types.group) being set if called from block()
+        group: Blender group of type (bpy_types.Collection) being set if called from block()
         invisible: boolean to control visibility; being set if called from block()
         """
         aunits = self.dwg.header.get('$AUNITS', 0)
@@ -1066,7 +1066,7 @@ class Do:
                                               entity.col_count, entity.row_count)
                 o = bpy.data.objects.new(entity.name, dm)
                 instance.parent = o
-                o.dupli_type = "VERTS"
+                o.instance_type = "VERTS"
 
         # insert transformations
         rot = radians(entity.rotation) if aunits == 0 else entity.rotation
@@ -1342,11 +1342,11 @@ class Do:
         name: name of group (String)
         Finds group by name or creates it if it does not exist.
         """
-        groups = bpy.data.groups
+        groups = bpy.data.collections
         if name in groups.keys():
             group = groups[name]
         else:
-            group = bpy.data.groups.new(name)
+            group = bpy.data.collections.new(name)
         return group
 
     def _call_object_types(self, TYPE, entities, group, name, scene, separated=False):
@@ -1466,9 +1466,9 @@ class Do:
         scene.objects.link(o)
 
         self._nest_block(o, blockname, blgroup, scene)
-        o.dupli_type = "FACES"
-        o.use_dupli_faces_scale = True
-        o.dupli_faces_scale = f
+        o.instance_type = "FACES"
+        o.use_instance_faces_scale = True
+        o.instance_faces_scale = f
 
     def _nest_block(self, parent, name, blgroup, scene):
         b = self.dwg.blocks[name]

@@ -98,7 +98,7 @@ def humanReadableTimeToSeconds(time):
     return result
 
 #########################################
-# Benchmark specific helper funcitons.
+# Benchmark specific helper functions.
 
 def configureArgumentParser():
     parser = argparse.ArgumentParser(
@@ -117,13 +117,13 @@ def configureArgumentParser():
 
 def benchmarkFile(blender, blendfile, stats):
     logHeader("Begin benchmark of file {}" . format(blendfile))
-    # Pepare some regex for parsing
+    # Prepare some regex for parsing
     re_path_tracing = re.compile(".*Path Tracing Tile ([0-9]+)/([0-9]+)$")
     re_total_render_time = re.compile(".*Total render time: ([0-9]+(\.[0-9]+)?)")
     re_render_time_no_sync = re.compile(
         ".*Render time \(without synchronization\): ([0-9]+(\.[0-9]+)?)")
     re_pipeline_time = re.compile("Time: ([0-9:\.]+) \(Saving: ([0-9:\.]+)\)")
-    # Prepare outout folder.
+    # Prepare output folder.
     # TODO(sergey): Use some proper output folder.
     output_folder = "/tmp/"
     # Configure command for the current file.

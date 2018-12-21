@@ -21,6 +21,7 @@ def find_gitroot(filepath_reference):
         path = os.path.dirname(path)
     return path
 
+
 doxyfile, sourcefile = sys.argv[-2:]
 
 doxyfile = os.path.join(find_gitroot(sourcefile), doxyfile)

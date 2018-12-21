@@ -4,22 +4,22 @@ given name < 21
 if material name exists :
 naming_method = 0   blender default (increment name)
 naming_method = 1   do nothing, abort creation and use existing
-naming_method = 2   create new, rename existing, 
+naming_method = 2   create new, rename existing,
 naming_method = 3   create new, replace existing
 '''
 
 def new(name,naming_method):
-    if name in bpy.data.groups and naming_method :
-        grp = bpy.data.groups[name]
+    if name in bpy.data.collections and naming_method :
+        grp = bpy.data.collections[name]
         # if naming_method == 1 return existing
         if naming_method == 2 :
-            grp = bpy.data.groups.new(name)
+            grp = bpy.data.collections.new(name)
             grp.name = name
         elif naming_method == 3 :
-            bpy.data.groups.remove(grp)
-            grp = bpy.data.groups.new(name)
+            bpy.data.collections.remove(grp)
+            grp = bpy.data.collections.new(name)
     else :
-        grp = bpy.data.groups.new(name)
+        grp = bpy.data.collections.new(name)
     return grp
 
 ##  TODO
@@ -53,11 +53,11 @@ def remove(ob,with_data=True) :
                     and_data=False
             except :
                 and_data=False # empties
-                
+
             # odd (pre 2.60) :
             # ob=bpy.data.objects[ob.name]
-            # if the ob (board) argument comes from bpy.data.groups['aGroup'].objects,
-            #  bpy.data.groups['board'].objects['board'].users_scene
+            # if the ob (board) argument comes from bpy.data.collections['aGroup'].objects,
+            #  bpy.data.collections['board'].objects['board'].users_scene
             ob.name = '_dead'
             for sc in ob.users_scene :
                 sc.objects.unlink(ob)
@@ -72,4 +72,3 @@ def remove(ob,with_data=True) :
             # never wipe data before unlink the ex-user object of the scene else crash (2.58 3 770 2)
             if and_data :
                 wipeOutData(data)
-

@@ -23,7 +23,7 @@ bl_info = {
     "description": "Switch Editor Type Menu",
     "author": "saidenka",
     "version": (0, 1, 0),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "All Editors",
     "warning": "",
     "wiki_url": "",
@@ -41,7 +41,7 @@ from bpy.props import (
 
 
 class AreaPieMenu(Menu):
-    bl_idname = "INFO_MT_window_pie"
+    bl_idname = "TOPBAR_MT_window_pie"
     bl_label = "Pie Menu"
     bl_description = "Window Pie Menus"
 
@@ -73,21 +73,21 @@ class AreaPieEditor(Menu):
         # 6 - RIGHT
         pie.menu(AreaTypePieAnim.bl_idname, text="Animation Editors", icon="ACTION")
         # 2 - BOTTOM
-        pie.operator(SetAreaType.bl_idname, text="Property", icon="BUTS").types = "PROPERTIES"
+        pie.operator(SetAreaType.bl_idname, text="Property", icon="PROPERTIES").types = "PROPERTIES"
         # 8 - TOP
         pie.operator(SetAreaType.bl_idname, text="3D View", icon="MESH_CUBE").types = "VIEW_3D"
         # 7 - TOP - LEFT
-        pie.operator(SetAreaType.bl_idname, text="UV/Image Editor", icon="IMAGE_COL").types = "IMAGE_EDITOR"
+        pie.operator(SetAreaType.bl_idname, text="UV/Image Editor", icon="NONE").types = "IMAGE_EDITOR"
         # 9 - TOP - RIGHT
         pie.operator(SetAreaType.bl_idname, text="Node Editor", icon="NODETREE").types = "NODE_EDITOR"
         # 1 - BOTTOM - LEFT
-        pie.operator(SetAreaType.bl_idname, text="Outliner", icon="OOPS").types = "OUTLINER"
+        pie.operator(SetAreaType.bl_idname, text="Outliner", icon="NONE").types = "OUTLINER"
         # 3 - BOTTOM - RIGHT
         pie.menu(AreaTypePieOther.bl_idname, text="More Editors", icon="QUESTION")
 
 
 class AreaTypePieOther(Menu):
-    bl_idname = "INFO_MT_window_pie_area_type_other"
+    bl_idname = "TOPBAR_MT_window_pie_area_type_other"
     bl_label = "Editor Type (other)"
     bl_description = "Is pie menu change editor type (other)"
 
@@ -95,7 +95,7 @@ class AreaTypePieOther(Menu):
         # 4 - LEFT
         self.layout.operator(SetAreaType.bl_idname, text="Logic Editor", icon="LOGIC").types = "LOGIC_EDITOR"
         # 6 - RIGHT
-        self.layout.operator(SetAreaType.bl_idname, text="File Browser", icon="FILESEL").types = "FILE_BROWSER"
+        self.layout.operator(SetAreaType.bl_idname, text="File Browser", icon="FILEBROWSER").types = "FILE_BROWSER"
         # 2 - BOTTOM
         self.layout.operator(SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
         # 8 - TOP
@@ -114,7 +114,7 @@ class SetAreaType(Operator):
     bl_description = "Change Editor Type"
     bl_options = {'REGISTER'}
 
-    types = StringProperty(name="Area Type")
+    types: StringProperty(name="Area Type")
 
     def execute(self, context):
         context.area.type = self.types
@@ -122,7 +122,7 @@ class SetAreaType(Operator):
 
 
 class AreaTypePieAnim(Menu):
-    bl_idname = "INFO_MT_window_pie_area_type_anim"
+    bl_idname = "TOPBAR_MT_window_pie_area_type_anim"
     bl_label = "Editor Type (Animation)"
     bl_description = "Menu for changing editor type (animation related)"
 

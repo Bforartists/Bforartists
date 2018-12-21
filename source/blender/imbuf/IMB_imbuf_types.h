@@ -222,12 +222,10 @@ typedef struct ImBuf {
 	struct DDSData dds_data;
 } ImBuf;
 
-/* Moved from BKE_bmfont_types.h because it is a userflag bit mask. */
 /**
  * \brief userflags: Flags used internally by blender for imagebuffers
  */
 
-#define IB_BITMAPFONT			(1 << 0)	/* this image is a font */
 #define IB_BITMAPDIRTY			(1 << 1)	/* image needs to be saved is not the same as filename */
 #define IB_MIPMAP_INVALID		(1 << 2)	/* image mipmaps are invalid, need recreate */
 #define IB_RECT_INVALID			(1 << 3)	/* float buffer changed, needs recreation of byte rect */
@@ -242,7 +240,6 @@ typedef struct ImBuf {
 
 #define IB_rect				(1 << 0)
 #define IB_test				(1 << 1)
-#define IB_fields			(1 << 2)
 #define IB_zbuf				(1 << 3)
 #define IB_mem				(1 << 4)
 #define IB_rectfloat		(1 << 5)

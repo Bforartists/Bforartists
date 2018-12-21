@@ -29,7 +29,7 @@ class EditExternally(Operator):
     bl_label = "Image Edit Externally"
     bl_options = {'REGISTER'}
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         subtype='FILE_PATH',
     )
 
@@ -82,7 +82,7 @@ class EditExternally(Operator):
             import traceback
             traceback.print_exc()
             self.report({'ERROR'},
-                        "Image editor could not be launched, please ensure that "
+                        "Image editor could not be launched, ensure that "
                         "the path in User Preferences > File is valid, and Blender has rights to launch it")
 
             return {'CANCELLED'}
@@ -103,7 +103,7 @@ class EditExternally(Operator):
             return {'CANCELLED'}
 
         if sd.type == 'IMAGE_EDITOR':
-            filepath = image.filepath_from_user(sd.image_user)
+            filepath = image.filepath_from_user(image_user=sd.image_user)
         else:
             filepath = image.filepath
 

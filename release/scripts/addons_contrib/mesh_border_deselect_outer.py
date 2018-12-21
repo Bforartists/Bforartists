@@ -75,7 +75,7 @@ class MESH_OT_border_deselect_outer(bpy.types.Operator):
             return {'CANCELLED'}
 
         if self.init:
-            bpy.ops.view3d.select_border('INVOKE_DEFAULT', extend=False)
+            bpy.ops.view3d.select_box('INVOKE_DEFAULT', extend=False)
             self.init = False
 
         return {'RUNNING_MODAL'}

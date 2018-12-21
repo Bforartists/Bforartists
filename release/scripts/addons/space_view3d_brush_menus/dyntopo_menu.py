@@ -59,8 +59,8 @@ class DynDetailMenu(Menu):
             slider_setting = "detail_size"
 
         elif bpy.context.tool_settings.sculpt.detail_type_method == 'CONSTANT':
-            datapath = "tool_settings.sculpt.constant_detail"
-            slider_setting = "constant_detail"
+            datapath = "tool_settings.sculpt.constant_detail_resolution"
+            slider_setting = "constant_detail_resolution"
         else:
             datapath = "tool_settings.sculpt.detail_percent"
             slider_setting = "detail_percent"

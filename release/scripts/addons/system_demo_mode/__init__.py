@@ -21,14 +21,15 @@
 bl_info = {
     "name": "Demo Mode",
     "author": "Campbell Barton",
-    "blender": (2, 57, 0),
+    "blender": (2, 80, 0),
     "location": "Demo Menu",
     "description": "Demo mode lets you select multiple blend files and loop over them.",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/System/Demo_Mode#Running_Demo_Mode",
     "support": 'OFFICIAL',
-    "category": "System"}
+    "category": "System",
+}
 
 # To support reload properly, try to access a package var, if it's there, reload everything
 if "bpy" in locals():
@@ -39,12 +40,12 @@ if "bpy" in locals():
 
 import bpy
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        IntProperty,
-        FloatProperty,
-        EnumProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    IntProperty,
+    FloatProperty,
+    EnumProperty,
+)
 
 
 class DemoModeSetup(bpy.types.Operator):
@@ -57,85 +58,86 @@ class DemoModeSetup(bpy.types.Operator):
     # to the class instance from the operator settings before calling.
 
     # these are used to create the file list.
-    directory = StringProperty(
-            name="Search Path",
-            description="Directory used for importing the file",
-            maxlen=1024,
-            subtype='DIR_PATH',
-            )
-    random_order = BoolProperty(
-            name="Random Order",
-            description="Select files randomly",
-            default=False,
-            )
-    mode = EnumProperty(
-            name="Method",
-            items=(('AUTO', "Auto", ""),
-                   ('PLAY', "Play", ""),
-                   ('RENDER', "Render", ""),
-                   ),
-            )
+    directory: StringProperty(
+        name="Search Path",
+        description="Directory used for importing the file",
+        maxlen=1024,
+        subtype='DIR_PATH',
+    )
+    random_order: BoolProperty(
+        name="Random Order",
+        description="Select files randomly",
+        default=False,
+    )
+    mode: EnumProperty(
+        name="Method",
+        items=(
+            ('AUTO', "Auto", ""),
+            ('PLAY', "Play", ""),
+            ('RENDER', "Render", ""),
+        )
+    )
 
-    run = BoolProperty(
-            name="Run Immediately!",
-            description="Run demo immediately",
-            default=True,
-            )
-    exit = BoolProperty(
-            name="Exit",
-            description="Run once and exit",
-            default=False,
-            )
+    run: BoolProperty(
+        name="Run Immediately!",
+        description="Run demo immediately",
+        default=True,
+    )
+    exit: BoolProperty(
+        name="Exit",
+        description="Run once and exit",
+        default=False,
+    )
 
     # these are mapped directly to the config!
     #
     # anim
     # ====
-    anim_cycles = IntProperty(
-            name="Cycles",
-            description="Number of times to play the animation",
-            min=1, max=1000,
-            default=2,
-            )
-    anim_time_min = FloatProperty(
-            name="Time Min",
-            description="Minimum number of seconds to show the animation for "
-                        "(for small loops)",
-            min=0.0, max=1000.0,
-            soft_min=1.0, soft_max=1000.0,
-            default=4.0,
-            )
-    anim_time_max = FloatProperty(
-            name="Time Max",
-            description="Maximum number of seconds to show the animation for "
-                        "(in case the end frame is very high for no reason)",
-            min=0.0, max=100000000.0,
-            soft_min=1.0, soft_max=100000000.0,
-            default=8.0,
-            )
-    anim_screen_switch = FloatProperty(
-            name="Screen Switch",
-            description="Time between switching screens (in seconds) "
-                        "or 0 to disable",
-            min=0.0, max=100000000.0,
-            soft_min=1.0, soft_max=60.0,
-            default=0.0,
-            )
+    anim_cycles: IntProperty(
+        name="Cycles",
+        description="Number of times to play the animation",
+        min=1, max=1000,
+        default=2,
+    )
+    anim_time_min: FloatProperty(
+        name="Time Min",
+        description="Minimum number of seconds to show the animation for "
+                    "(for small loops)",
+        min=0.0, max=1000.0,
+        soft_min=1.0, soft_max=1000.0,
+        default=4.0,
+    )
+    anim_time_max: FloatProperty(
+        name="Time Max",
+        description="Maximum number of seconds to show the animation for "
+                    "(in case the end frame is very high for no reason)",
+        min=0.0, max=100000000.0,
+        soft_min=1.0, soft_max=100000000.0,
+        default=8.0,
+    )
+    anim_screen_switch: FloatProperty(
+        name="Screen Switch",
+        description="Time between switching screens (in seconds) "
+                    "or 0 to disable",
+        min=0.0, max=100000000.0,
+        soft_min=1.0, soft_max=60.0,
+        default=0.0,
+    )
     #
     # render
     # ======
-    display_render = FloatProperty(
-            name="Render Delay",
-            description="Time to display the rendered image before moving on "
-                        "(in seconds)",
-            min=0.0, max=60.0,
-            default=4.0,
-            )
-    anim_render = BoolProperty(
-            name="Render Anim",
-            description="Render entire animation (render mode only)",
-            default=False,
-            )
+    display_render: FloatProperty(
+        name="Render Delay",
+        description="Time to display the rendered image before moving on "
+                    "(in seconds)",
+        min=0.0, max=60.0,
+        default=4.0,
+    )
+    anim_render: BoolProperty(
+        name="Render Anim",
+        description="Render entire animation (render mode only)",
+        default=False,
+    )
 
     def execute(self, context):
         from . import config
@@ -168,13 +170,13 @@ class DemoModeSetup(bpy.types.Operator):
         layout = self.layout
 
         box = layout.box()
-        box.label("Search *.blend recursively")
-        box.label("Writes: demo.py config text")
+        box.label(text="Search *.blend recursively")
+        box.label(text="Writes: demo.py config text")
 
         layout.prop(self, "run")
         layout.prop(self, "exit")
 
-        layout.label("Generate Settings:")
+        layout.label(text="Generate Settings:")
         row = layout.row()
         row.prop(self, "mode", expand=True)
         layout.prop(self, "random_order")
@@ -184,7 +186,7 @@ class DemoModeSetup(bpy.types.Operator):
         layout.separator()
         sub = layout.column()
         sub.active = (mode in {'AUTO', 'PLAY'})
-        sub.label("Animate Settings:")
+        sub.label(text="Animate Settings:")
         sub.prop(self, "anim_cycles")
         sub.prop(self, "anim_time_min")
         sub.prop(self, "anim_time_max")
@@ -193,7 +195,7 @@ class DemoModeSetup(bpy.types.Operator):
         layout.separator()
         sub = layout.column()
         sub.active = (mode in {'AUTO', 'RENDER'})
-        sub.label("Render Settings:")
+        sub.label(text="Render Settings:")
         sub.prop(self, "display_render")
 
 
@@ -234,7 +236,7 @@ def extern_demo_mode_unregister():
     from . import demo_mode
     demo_mode.unregister()
 
-# --- intergration
+# --- integration
 
 
 def menu_func(self, context):
@@ -244,20 +246,27 @@ def menu_func(self, context):
     layout.separator()
 
 
-def register():
-    bpy.utils.register_class(DemoModeSetup)
-    bpy.utils.register_class(DemoModeRun)
+classes = (
+    DemoModeSetup,
+    DemoModeRun,
+)
 
-    bpy.types.INFO_MT_file.prepend(menu_func)
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+    bpy.types.TOPBAR_MT_file.prepend(menu_func)
 
     extern_demo_mode_register()
 
 
 def unregister():
-    bpy.utils.unregister_class(DemoModeSetup)
-    bpy.utils.unregister_class(DemoModeRun)
+    from bpy.utils import unregister_class
+    for cls in classes:
+        unregister_class(cls)
 
-    bpy.types.INFO_MT_file.remove(menu_func)
+    bpy.types.TOPBAR_MT_file.remove(menu_func)
 
     extern_demo_mode_unregister()
 

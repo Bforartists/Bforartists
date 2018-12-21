@@ -43,17 +43,17 @@ class CACHARANTH_GroupSelect(Operator):
     bl_description = "Switch to another material in this mesh"
 
     def avail_groups(self,context):
-        items = [(str(i),x.name,x.name, "GROUP", i) for i,x in enumerate(bpy.data.groups)]
+        items = [(str(i),x.name,x.name, "GROUP", i) for i,x in enumerate(bpy.data.collections)]
         return items
 
     group_select = bpy.props.EnumProperty(items = avail_groups, name = "Available Groups")
 
     @classmethod
     def poll(cls, context):
-        return bpy.data.groups
+        return bpy.data.collections
 
     def execute(self,context):
-        bpy.context.scene.meshcache_group = bpy.data.groups[int(self.group_select)].name
+        bpy.context.scene.meshcache_group = bpy.data.collections[int(self.group_select)].name
         return {'FINISHED'}
 
 
@@ -135,9 +135,9 @@ class VIEW3D_PT_MeshcacheToolsPanel(Panel):
         row.prop(scene, "meshcache_apply_to", expand=True)
 
         if scene.meshcache_apply_to == 'GROUP':
-            if bpy.data.groups:
+            if bpy.data.collections:
                 row = layout.row(align=True)
-                row.enabled = len(bpy.data.groups) != 0
+                row.enabled = len(bpy.data.collections) != 0
                 row.label(text="Select Group:")
                 row.operator_menu_enum("cacharanth.group_select",
                                                "group_select",
@@ -153,7 +153,7 @@ class VIEW3D_PT_MeshcacheToolsPanel(Panel):
 
         row = layout.row(align=True)
         row.prop(scene, "meshcache_folder", text="Export Path")
-        row.operator("buttons.meshcache_folder_set", icon='FILESEL', text="")
+        row.operator("buttons.meshcache_folder_set", icon='FILEBROWSER', text="")
 
 
         row = layout.row(align=True)

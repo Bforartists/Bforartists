@@ -37,14 +37,21 @@
 
 #include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
+#include "DNA_scene_types.h"
 
 #include "BLI_utildefines.h"
 
 #include "BKE_cdderivedmesh.h"
+#include "BKE_global.h"
 #include "BKE_mesh.h"
 #include "BKE_multires.h"
 #include "BKE_modifier.h"
+#include "BKE_subdiv.h"
+#include "BKE_subdiv_ccg.h"
+#include "BKE_subdiv_mesh.h"
 #include "BKE_subsurf.h"
+
+#include "DEG_depsgraph_query.h"
 
 #include "MOD_modifiertypes.h"
 
@@ -56,84 +63,105 @@ static void initData(ModifierData *md)
 	mmd->sculptlvl = 0;
 	mmd->renderlvl = 0;
 	mmd->totlvl = 0;
+	mmd->uv_smooth = SUBSURF_UV_SMOOTH_PRESERVE_CORNERS;
+	mmd->quality = 3;
 }
 
-static DerivedMesh *applyModifier(
-        ModifierData *md, Object *ob, DerivedMesh *dm,
-        ModifierApplyFlag flag)
+/* Subdivide into fully qualified mesh. */
+
+static Mesh *multires_as_mesh(MultiresModifierData *mmd,
+                              const ModifierEvalContext *ctx,
+                              Mesh *mesh,
+                              Subdiv *subdiv)
 {
-	MultiresModifierData *mmd = (MultiresModifierData *)md;
-	DerivedMesh *result;
-	Mesh *me = (Mesh *)ob->data;
-	const bool useRenderParams = (flag & MOD_APPLY_RENDER) != 0;
-	const bool ignore_simplify = (flag & MOD_APPLY_IGNORE_SIMPLIFY) != 0;
-	MultiresFlags flags = 0;
-	const bool has_mask = CustomData_has_layer(&me->ldata, CD_GRID_PAINT_MASK);
-
-	if (mmd->totlvl) {
-		if (!CustomData_get_layer(&me->ldata, CD_MDISPS)) {
-			/* multires always needs a displacement layer */
-			CustomData_add_layer(&me->ldata, CD_MDISPS, CD_CALLOC, NULL, me->totloop);
-		}
+	Mesh *result = mesh;
+	const bool use_render_params = (ctx->flag & MOD_APPLY_RENDER);
+	const bool ignore_simplify = (ctx->flag & MOD_APPLY_IGNORE_SIMPLIFY);
+	const Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
+	Object *object = ctx->object;
+	SubdivToMeshSettings mesh_settings;
+	BKE_multires_subdiv_mesh_settings_init(
+        &mesh_settings, scene, object, mmd, use_render_params, ignore_simplify);
+	if (mesh_settings.resolution < 3) {
+		return result;
 	}
-
-	if (has_mask)
-		flags |= MULTIRES_ALLOC_PAINT_MASK;
-
-	if (useRenderParams)
-		flags |= MULTIRES_USE_RENDER_PARAMS;
-
-	if (ignore_simplify)
-		flags |= MULTIRES_IGNORE_SIMPLIFY;
-
-	result = multires_make_derived_from_derived(dm, mmd, ob, flags);
-
-	if (result == dm)
-		return dm;
-
-	if (useRenderParams || !(flag & MOD_APPLY_USECACHE)) {
-		DerivedMesh *cddm;
-
-		cddm = CDDM_copy(result);
-
-		/* copy hidden/masks to vertices */
-		if (!useRenderParams) {
-			struct MDisps *mdisps;
-			struct GridPaintMask *grid_paint_mask;
-
-			mdisps = CustomData_get_layer(&me->ldata, CD_MDISPS);
-			grid_paint_mask = CustomData_get_layer(&me->ldata, CD_GRID_PAINT_MASK);
-
-			if (mdisps) {
-				subsurf_copy_grid_hidden(result, me->mpoly,
-				                         cddm->getVertArray(cddm),
-				                         mdisps);
-
-				BKE_mesh_flush_hidden_from_verts_ex(cddm->getVertArray(cddm),
-				                                    cddm->getLoopArray(cddm),
-				                                    cddm->getEdgeArray(cddm),
-				                                    cddm->getNumEdges(cddm),
-				                                    cddm->getPolyArray(cddm),
-				                                    cddm->getNumPolys(cddm));
-			}
-			if (grid_paint_mask) {
-				float *paint_mask = CustomData_add_layer(&cddm->vertData,
-				                                         CD_PAINT_MASK,
-				                                         CD_CALLOC, NULL,
-				                                         cddm->getNumVerts(cddm));
-
-				subsurf_copy_grid_paint_mask(result, me->mpoly,
-				                             paint_mask, grid_paint_mask);
-			}
-		}
-
-		result->release(result);
-		result = cddm;
-	}
-
+	BKE_subdiv_displacement_attach_from_multires(subdiv, mesh, mmd);
+	result = BKE_subdiv_to_mesh(subdiv, &mesh_settings, mesh);
 	return result;
 }
 
+/* Subdivide into CCG. */
+
+static void multires_ccg_settings_init(SubdivToCCGSettings *settings,
+                                       const MultiresModifierData *mmd,
+                                       const ModifierEvalContext *ctx,
+                                       Mesh *mesh)
+{
+	const bool has_mask =
+	        CustomData_has_layer(&mesh->ldata, CD_GRID_PAINT_MASK);
+	const bool use_render_params = (ctx->flag & MOD_APPLY_RENDER);
+	const bool ignore_simplify = (ctx->flag & MOD_APPLY_IGNORE_SIMPLIFY);
+	const Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
+	Object *object = ctx->object;
+	const int level = multires_get_level(
+	        scene, object, mmd, use_render_params, ignore_simplify);
+	settings->resolution = (1 << level) + 1;
+	settings->need_normal = true;
+	settings->need_mask = has_mask;
+}
+
+static Mesh *multires_as_ccg(MultiresModifierData *mmd,
+                             const ModifierEvalContext *ctx,
+                             Mesh *mesh,
+                             Subdiv *subdiv)
+{
+	Mesh *result = mesh;
+	SubdivToCCGSettings ccg_settings;
+	multires_ccg_settings_init(&ccg_settings, mmd, ctx, mesh);
+	if (ccg_settings.resolution < 3) {
+		return result;
+	}
+	BKE_subdiv_displacement_attach_from_multires(subdiv, mesh, mmd);
+	result = BKE_subdiv_to_ccg_mesh(subdiv, &ccg_settings, mesh);
+	return result;
+}
+
+static Mesh *applyModifier(ModifierData *md,
+                           const ModifierEvalContext *ctx,
+                           Mesh *mesh)
+{
+	Mesh *result = mesh;
+	MultiresModifierData *mmd = (MultiresModifierData *)md;
+	SubdivSettings subdiv_settings;
+	BKE_multires_subdiv_settings_init(&subdiv_settings, mmd);
+	if (subdiv_settings.level == 0) {
+		return result;
+	}
+	/* TODO(sergey): Try to re-use subdiv when possible. */
+	Subdiv *subdiv = BKE_subdiv_new_from_mesh(&subdiv_settings, mesh);
+	if (subdiv == NULL) {
+		/* Happens on bad topology, ut also on empty input mesh. */
+		return result;
+	}
+	/* NOTE: Orco needs final coordinates on CPU side, which are expected to be
+	 * accessible via MVert. For this reason we do not evaluate multires to
+	 * grids when orco is requested.
+	 */
+	const bool for_orco = (ctx->flag & MOD_APPLY_ORCO) != 0;
+	if ((ctx->object->mode & OB_MODE_SCULPT) && !for_orco) {
+		/* NOTE: CCG takes ownership over Subdiv. */
+		result = multires_as_ccg(mmd, ctx, mesh, subdiv);
+		result->runtime.subdiv_ccg_tot_level = mmd->totlvl;
+		// BKE_subdiv_stats_print(&subdiv->stats);
+	}
+	else {
+		result = multires_as_mesh(mmd, ctx, mesh, subdiv);
+		/* TODO(sergey): Cache subdiv somehow. */
+		// BKE_subdiv_stats_print(&subdiv->stats);
+		BKE_subdiv_free(subdiv);
+	}
+	return result;
+}
 
 ModifierTypeInfo modifierType_Multires = {
 	/* name */              "Multires",
@@ -145,17 +173,23 @@ ModifierTypeInfo modifierType_Multires = {
 	                        eModifierTypeFlag_RequiresOriginalData,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     applyModifier,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  NULL,
 	/* freeData */          NULL,
 	/* isDisabled */        NULL,
-	/* updateDepgraph */    NULL,
 	/* updateDepsgraph */   NULL,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

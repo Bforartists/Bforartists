@@ -1,22 +1,22 @@
-﻿# Big Thanks for the help with the code goes to pink vertex and CoDEmanX at the Blenderartists forum, and to Tobain at the german Blendpolis forum
+# Big Thanks for the help with the code goes to pink vertex and CoDEmanX at the Blenderartists forum, and to Tobain at the german Blendpolis forum
 # This script is under apache license
 
 bl_info = {
-    "name": "Reset 3D View - Bforartists version",
+    "name": "Reset 3D View",
     "description": "Resets the views of all 3D windows to standard view",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 2),
-    "blender": (2, 69, 0),
+    "version": (1, 0, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > View",
     "warning": "", # used for warning icon and text in addons panel
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Reset_3D_View",
+    "wiki_url": "",
     "category": "View"}
 
 
 import bpy
 import mathutils
 
-class Reset3dView(bpy.types.Operator):
+class R3DV_OT_reset3dview(bpy.types.Operator):
     """Reset 3D View"""
     bl_idname = "view.reset_3d_view"
     bl_label = "Reset 3D View"
@@ -30,7 +30,6 @@ class Reset3dView(bpy.types.Operator):
                (0.912, 0.1936, -0.3617, 0.0),
                (-0.0133, 0.8959, 0.4458, 0.0),
                (0.0, 0.0, -14.9892, 1.0))
-               
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
                 rv3d = area.spaces[0].region_3d
@@ -77,17 +76,41 @@ class Reset3dView(bpy.types.Operator):
         return {'FINISHED'}
     
 def menu_func(self, context):
-    self.layout.operator(Reset3dView.bl_idname, text="",icon ="VIEW_RESET")
-   
+    self.layout.operator(R3DV_OT_reset3dview.bl_idname)
+    
+# store keymaps here to access after registration
+addon_keymaps = []
+
+classes = (R3DV_OT_reset3dview, )
 
 def register():
-    bpy.utils.register_class(Reset3dView)
-    bpy.types.VIEW3D_HT_header.append(menu_func)
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
+    #bpy.utils.register_class(R3DV_OT_reset3dview)# the old way
+    bpy.types.VIEW3D_MT_view.append(menu_func)
+    
+    # handle the keymap
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    kmi = km.keymap_items.new(R3DV_OT_reset3dview.bl_idname, 'NUMPAD_ASTERIX', 'PRESS', ctrl=False, shift=False)
+    addon_keymaps.append((km))
 
 def unregister():
-    bpy.utils.unregister_class(Reset3dView)
-    bpy.types.VIEW3D_HT_header.remove(menu_func)
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
+
+    #bpy.utils.unregister_class(R3DV_OT_reset3dview)# the old way
+    bpy.types.VIEW3D_MT_view.remove(menu_func)
     
+    # handle the keymap
+    wm = bpy.context.window_manager
+    for km in addon_keymaps:
+        wm.keyconfigs.addon.keymaps.remove(km)
+    # clear the list
+    del addon_keymaps[:]
+
 
 if __name__ == "__main__":
     register()

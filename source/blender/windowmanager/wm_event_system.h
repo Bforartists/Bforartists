@@ -40,7 +40,12 @@
 struct ScrArea;
 struct ARegion;
 
-/* wmKeyMap is in DNA_windowmanager.h, it's savable */
+/* wmKeyMap is in DNA_windowmanager.h, it's saveable */
+
+struct wmEventHandler_KeymapFn {
+	void (*handle_post_fn)(wmKeyMap *keymap, wmKeyMapItem *kmi, void *user_data);
+	void  *user_data;
+};
 
 typedef struct wmEventHandler {
 	struct wmEventHandler *next, *prev;
@@ -51,6 +56,10 @@ typedef struct wmEventHandler {
 	/* keymap handler */
 	wmKeyMap *keymap;                   /* pointer to builtin/custom keymaps */
 	const rcti *bblocal, *bbwin;              /* optional local and windowspace bb */
+	/* Run after the keymap item runs. */
+	struct wmEventHandler_KeymapFn keymap_callback;
+
+	struct bToolRef *keymap_tool;
 
 	/* modal operator handler */
 	wmOperator *op;                     /* for derived/modal handlers */
@@ -68,7 +77,8 @@ typedef struct wmEventHandler {
 
 	/* drop box handler */
 	ListBase *dropboxes;
-
+	/* gizmo handler */
+	struct wmGizmoMap *gizmo_map;
 } wmEventHandler;
 
 /* custom types for handlers, for signaling, freeing */
@@ -87,8 +97,11 @@ void        wm_event_do_handlers    (bContext *C);
 
 void        wm_event_add_ghostevent (wmWindowManager *wm, wmWindow *win, int type, int time, void *customdata);
 
+void        wm_event_do_depsgraph(bContext *C);
 void        wm_event_do_refresh_wm_and_depsgraph(bContext *C);
 void        wm_event_do_notifiers(bContext *C);
+
+float       wm_pressure_curve(float raw_pressure);
 
 /* wm_keymap.c */
 

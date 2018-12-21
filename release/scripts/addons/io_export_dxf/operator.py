@@ -160,10 +160,10 @@ class DXFExporter(bpy.types.Operator):
 #        ('VIEW', 'VIEW', ''),
 #        ('POINT', 'POINT', '')
 #    )
-#    lamp_asItems = (
+#    light_asItems = (
 #        ('NO', 'Do not export', ''),
 #        ('..BLOCK', '..BLOCK', ''),
-#        ('..A_LAMP', '..A_LAMP', ''),
+#        ('..A_LIGHT', '..A_LIGHT', ''),
 #        ('POINT', 'POINT', '')
 #    )
     # --------- CONTROL PROPERTIES --------------------------------------------
@@ -207,9 +207,9 @@ class DXFExporter(bpy.types.Operator):
 #    camera_as = EnumProperty( name="Export camera As:", default='NO',
 #                            description="Select representation of a camera",
 #                            items=camera_asItems)
-#    lamp_as = EnumProperty( name="Export lamp As:", default='NO',
+#    light_as = EnumProperty( name="Export lamp As:", default='NO',
 #                            description="Select representation of a lamp",
-#                            items=lamp_asItems)
+#                            items=light_asItems)
     # ----------------------------------------------------------
     entitylayer_from = EnumProperty(name="Entity Layer", default="obj.data.name",
                                     description="Entity LAYER assigned to?",
@@ -265,7 +265,7 @@ class DXFExporter(bpy.types.Operator):
 #            'group_as' : self._checkNO(self.group_as),
 #            'proxy_as' : self._checkNO(self.proxy_as),
 #            'camera_as' : self._checkNO(self.camera_as),
-#            'lamp_as' : self._checkNO(self.lamp_as),
+#            'light_as' : self._checkNO(self.light_as),
 
             'entitylayer_from' : self.entitylayer_from,
             'entitycolor_from' : self.entitycolor_from,
@@ -299,5 +299,3 @@ class DXFExporter(bpy.types.Operator):
         WindowManager = context.window_manager
         WindowManager.fileselect_add(self)
         return {'RUNNING_MODAL'}
-
-

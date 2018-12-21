@@ -38,34 +38,34 @@ def CLIP_spaces_walk(context, all_screens, tarea, tspace, callback, *args):
                         callback(space, *args)
 
 
-def CLIP_set_viewport_background(context, all_screens, clip, clip_user):
-    def set_background(space_v3d, clip, user):
+def CLIP_set_viewport_background(context, clip, clip_user):
+    def set_background(cam, clip, user):
         bgpic = None
 
-        for x in space_v3d.background_images:
+        for x in cam.background_images:
             if x.source == 'MOVIE_CLIP':
                 bgpic = x
                 break
 
         if not bgpic:
-            bgpic = space_v3d.background_images.new()
+            bgpic = cam.background_images.new()
 
         bgpic.source = 'MOVIE_CLIP'
         bgpic.clip = clip
         bgpic.clip_user.proxy_render_size = user.proxy_render_size
         bgpic.clip_user.use_render_undistorted = True
         bgpic.use_camera_clip = False
-        bgpic.view_axis = 'CAMERA'
 
-        space_v3d.show_background_images = True
+        cam.show_background_images = True
 
-    CLIP_spaces_walk(context, all_screens, 'VIEW_3D', 'VIEW_3D',
-                     set_background, clip, clip_user)
+    scene_camera = context.scene.camera
+    if (not scene_camera) or (scene_camera.type != 'CAMERA'):
+        return
+    set_background(scene_camera.data, clip, clip_user)
 
 
 def CLIP_camera_for_clip(context, clip):
     scene = context.scene
-
     camera = scene.camera
 
     for ob in scene.objects:
@@ -99,7 +99,7 @@ def CLIP_default_settings_from_track(clip, track, framenr):
     width = clip.size[0]
     height = clip.size[1]
 
-    marker = track.markers.find_frame(framenr, False)
+    marker = track.markers.find_frame(framenr, exact=False)
     pattern_bb = marker.pattern_bound_box
 
     pattern = Vector(pattern_bb[1]) - Vector(pattern_bb[0])
@@ -133,7 +133,7 @@ class CLIP_OT_filter_tracks(bpy.types.Operator):
     bl_idname = "clip.filter_tracks"
     bl_options = {'UNDO', 'REGISTER'}
 
-    track_threshold = FloatProperty(
+    track_threshold: FloatProperty(
         name="Track Threshold",
         description="Filter Threshold to select problematic tracks",
         default=5.0,
@@ -236,9 +236,9 @@ class CLIP_OT_track_to_empty(Operator):
         ob = None
 
         ob = bpy.data.objects.new(name=track.name, object_data=None)
-        ob.select = True
-        context.scene.objects.link(ob)
-        context.scene.objects.active = ob
+        context.collection.objects.link(ob)
+        ob.select_set(True)
+        context.view_layer.objects.active = ob
 
         for con in ob.constraints:
             if con.type == 'FOLLOW_TRACK':
@@ -299,8 +299,8 @@ class CLIP_OT_bundles_to_mesh(Operator):
         if camera:
             reconstruction = tracking_object.reconstruction
             framenr = scene.frame_current - clip.frame_start + 1
-            reconstructed_matrix = reconstruction.cameras.matrix_from_frame(framenr)
-            matrix = camera.matrix_world * reconstructed_matrix.inverted()
+            reconstructed_matrix = reconstruction.cameras.matrix_from_frame(frame=framenr)
+            matrix = camera.matrix_world @ reconstructed_matrix.inverted()
 
         for track in tracking_object.tracks:
             if track.has_bundle and track.select:
@@ -312,9 +312,9 @@ class CLIP_OT_bundles_to_mesh(Operator):
             mesh.vertices.foreach_set("co", unpack_list(new_verts))
             ob = bpy.data.objects.new(name="Tracks", object_data=mesh)
             ob.matrix_world = matrix
-            context.scene.objects.link(ob)
-            ob.select = True
-            context.scene.objects.active = ob
+            context.collection.objects.link(ob)
+            ob.select_set(True)
+            context.view_layer.objects.active = ob
         else:
             self.report({'WARNING'}, "No usable tracks selected")
 
@@ -367,7 +367,7 @@ class CLIP_OT_delete_proxy(Operator):
         proxy = os.path.join(proxydir, clipfile)
         absproxy = bpy.path.abspath(proxy)
 
-        # proxy_<quality>[_undostorted]
+        # proxy_<quality>[_undistorted]
         for x in (25, 50, 75, 100):
             d = os.path.join(absproxy, "proxy_%d" % x)
 
@@ -382,13 +382,13 @@ class CLIP_OT_delete_proxy(Operator):
         for x in tc:
             self._rmproxy(os.path.join(absproxy, x))
 
-        # remove proxy per-clip directory
+        # Remove proxy per-clip directory.
         try:
             os.rmdir(absproxy)
         except OSError:
             pass
 
-        # remove [custom] proxy directory if empty
+        # Remove [custom] proxy directory if empty.
         try:
             absdir = bpy.path.abspath(proxydir)
             os.rmdir(absdir)
@@ -417,14 +417,14 @@ class CLIP_OT_set_viewport_background(Operator):
 
     def execute(self, context):
         sc = context.space_data
-        CLIP_set_viewport_background(context, False, sc.clip, sc.clip_user)
+        CLIP_set_viewport_background(context, sc.clip, sc.clip_user)
 
         return {'FINISHED'}
 
 
 class CLIP_OT_constraint_to_fcurve(Operator):
-    """Constraint to F-Curve\nCreate F-Curves for object which will copy \
-object's movement caused by this constraint"""
+    """Constraint to F-Curve\nCreate F-Curves for object which will copy """ \
+        """object's movement caused by this constraint"""
 
     bl_idname = "clip.constraint_to_fcurve"
     bl_label = "Constraint to F-Curve"
@@ -451,7 +451,7 @@ object's movement caused by this constraint"""
 
             return {'CANCELLED'}
 
-        # Get clip used for parenting
+        # Get clip used for parenting.
         if con.use_active_clip:
             clip = scene.active_clip
         else:
@@ -470,7 +470,7 @@ object's movement caused by this constraint"""
 
             return {'FINISHED'}
 
-        # Find start and end frames
+        # Find start and end frames.
         for track in clip.tracking.tracks:
             if sfra is None:
                 sfra = track.markers[0].frame
@@ -485,14 +485,14 @@ object's movement caused by this constraint"""
         if sfra is None or efra is None:
             return
 
-        # Store object matrices
+        # Store object matrices.
         for x in range(sfra, efra + 1):
             scene.frame_set(x)
             matrices.append(ob.matrix_world.copy())
 
         ob.animation_data_create()
 
-        # Apply matrices on object and insert key-frames
+        # Apply matrices on object and insert key-frames.
         i = 0
         for x in range(sfra, efra + 1):
             scene.frame_set(x)
@@ -516,7 +516,7 @@ object's movement caused by this constraint"""
         # XXX, should probably use context.selected_editable_objects
         # since selected objects can be from a lib or in hidden layer!
         for ob in scene.objects:
-            if ob.select:
+            if ob.select_set(True):
                 self._bake_object(scene, ob)
 
         return {'FINISHED'}
@@ -524,6 +524,7 @@ object's movement caused by this constraint"""
 
 class CLIP_OT_setup_tracking_scene(Operator):
     """Setup Tracking Scene\nPrepare scene for compositing 3D objects into this footage"""
+    # TODO: it will be great to integrate with other engines (other than Cycles)
 
     bl_idname = "clip.setup_tracking_scene"
     bl_label = "Setup Tracking Scene"
@@ -532,6 +533,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
     @classmethod
     def poll(cls, context):
         sc = context.space_data
+
 
         if sc.type != 'CLIP_EDITOR':
             return False
@@ -544,6 +546,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
     def _setupScene(context):
         scene = context.scene
         scene.active_clip = context.space_data.clip
+        scene.render.use_motion_blur = True
 
     @staticmethod
     def _setupWorld(context):
@@ -554,16 +557,9 @@ class CLIP_OT_setup_tracking_scene(Operator):
             world = bpy.data.worlds.new(name="World")
             scene.world = world
 
+        # Having AO enabled is nice for shadow catcher.
         world.light_settings.use_ambient_occlusion = True
-        world.light_settings.ao_blend_type = 'MULTIPLY'
-
-        world.light_settings.use_environment_light = True
-        world.light_settings.environment_energy = 0.1
-
         world.light_settings.distance = 1.0
-        world.light_settings.sample_method = 'ADAPTIVE_QMC'
-        world.light_settings.samples = 7
-        world.light_settings.threshold = 0.005
         if hasattr(scene, "cycles"):
             world.light_settings.ao_factor = 0.05
 
@@ -576,14 +572,16 @@ class CLIP_OT_setup_tracking_scene(Operator):
 
         cam = bpy.data.cameras.new(name="Camera")
         camob = bpy.data.objects.new(name="Camera", object_data=cam)
-        scene.objects.link(camob)
+        scene.collection.objects.link(camob)
 
         scene.camera = camob
 
-        camob.matrix_local = (Matrix.Translation((7.481, -6.508, 5.344)) *
-                              Matrix.Rotation(0.815, 4, 'Z') *
-                              Matrix.Rotation(0.011, 4, 'Y') *
-                              Matrix.Rotation(1.109, 4, 'X'))
+        camob.matrix_local = (
+            Matrix.Translation((7.481, -6.508, 5.344)) @
+            Matrix.Rotation(0.815, 4, 'Z') @
+            Matrix.Rotation(0.011, 4, 'Y') @
+            Matrix.Rotation(1.109, 4, 'X')
+        )
 
         return camob
 
@@ -596,10 +594,10 @@ class CLIP_OT_setup_tracking_scene(Operator):
         camob = CLIP_OT_setup_tracking_scene._findOrCreateCamera(context)
         cam = camob.data
 
-        # Remove all constraints to be sure motion is fine
+        # Remove all constraints to be sure motion is fine.
         camob.constraints.clear()
 
-        # Append camera solver constraint
+        # Append camera solver constraint.
         con = camob.constraints.new(type='CAMERA_SOLVER')
         con.use_active_clip = True
         con.influence = 1.0
@@ -610,30 +608,82 @@ class CLIP_OT_setup_tracking_scene(Operator):
     @staticmethod
     def _setupViewport(context):
         sc = context.space_data
-        CLIP_set_viewport_background(context, True, sc.clip, sc.clip_user)
+        CLIP_set_viewport_background(context, sc.clip, sc.clip_user)
 
     @staticmethod
-    def _setupRenderLayers(context):
+    def _setupViewLayers(context):
         scene = context.scene
-        rlayers = scene.render.layers
+        view_layers = scene.view_layers
 
-        if not scene.render.layers.get("Foreground"):
-            if len(rlayers) == 1:
-                fg = rlayers[0]
+        if not view_layers.get("Foreground"):
+            if len(view_layers) == 1:
+                fg = view_layers[0]
                 fg.name = 'Foreground'
             else:
-                fg = scene.render.layers.new("Foreground")
+                fg = view_layers.new("Foreground")
 
             fg.use_sky = True
-            fg.layers = [True] + [False] * 19
-            fg.layers_zmask = [False] * 10 + [True] + [False] * 9
-            fg.use_pass_vector = True
 
-        if not scene.render.layers.get("Background"):
-            bg = scene.render.layers.new("Background")
-            bg.use_pass_shadow = True
-            bg.use_pass_ambient_occlusion = True
-            bg.layers = [False] * 10 + [True] + [False] * 9
+        if not view_layers.get("Background"):
+            _bg = view_layers.new("Background")
+
+    @staticmethod
+    def createCollection(context, collection_name):
+        def collection_in_collection(collection, collection_to_query):
+            """Return true if collection is in any of the children or """
+            """grandchildren of collection_to_query"""
+            for child in collection_to_query.children:
+                if collection == child:
+                    return True
+
+                if collection_in_collection(collection, child):
+                    return True
+
+        master_collection = context.scene.collection
+        collection = bpy.data.collections.get(collection_name)
+
+        if collection and collection.library:
+            # We need a local collection instead.
+            collection = None
+
+        if not collection:
+            collection = bpy.data.collections.new(name=collection_name)
+            master_collection.children.link(collection)
+        else:
+            # see if collection is in the scene
+            if not collection_in_collection(collection, master_collection):
+                master_collection.children.link(collection)
+
+    def _setupCollections(self, context):
+        def setup_collection_recursively(collections, collection_name, attr_name):
+            for collection in collections:
+                if collection.collection.name == collection_name:
+                    setattr(collection, attr_name, True)
+                    break
+                else:
+                    setup_collection_recursively(collection.children, collection_name, attr_name)
+
+        collections = context.scene.collection.children
+        vlayers = context.scene.view_layers
+
+        if len(collections) == 1:
+            collections[0].name = "foreground"
+
+        self.createCollection(context, "foreground")
+        self.createCollection(context, "background")
+
+        # rendersettings
+        setup_collection_recursively(
+            vlayers["Foreground"].layer_collection.children,
+            "background",
+            "holdout",
+        )
+
+        setup_collection_recursively(
+            vlayers["Background"].layer_collection.children,
+            "foreground",
+            "indirect_only",
+        )
 
     @staticmethod
     def _wipeDefaultNodes(tree):
@@ -687,11 +737,11 @@ class CLIP_OT_setup_tracking_scene(Operator):
 
     def _setupNodes(self, context):
         if not self._needSetupNodes(context):
-            # compositor nodes were already setup or even changes already
-            # do nothing to prevent nodes damage
+            # Compositor nodes were already setup or even changes already
+            # do nothing to prevent nodes damage.
             return
 
-        # Enable backdrop for all compositor spaces
+        # Enable backdrop for all compositor spaces.
         def setup_space(space):
             space.show_backdrop = True
 
@@ -707,11 +757,10 @@ class CLIP_OT_setup_tracking_scene(Operator):
         need_stabilization = False
 
         # Remove all the nodes if they came from default node setup.
-        # This is simplest way to make it so final node setup is
-        # is correct.
+        # This is simplest way to make it so final node setup is correct.
         self._wipeDefaultNodes(tree)
 
-        # create nodes
+        # Create nodes.
         rlayer_fg = self._findOrCreateNode(tree, 'CompositorNodeRLayers')
         rlayer_bg = tree.nodes.new(type='CompositorNodeRLayers')
         composite = self._findOrCreateNode(tree, 'CompositorNodeComposite')
@@ -723,16 +772,11 @@ class CLIP_OT_setup_tracking_scene(Operator):
             stabilize = tree.nodes.new(type='CompositorNodeStabilize2D')
 
         scale = tree.nodes.new(type='CompositorNodeScale')
-        invert = tree.nodes.new(type='CompositorNodeInvert')
-        add_ao = tree.nodes.new(type='CompositorNodeMixRGB')
-        add_shadow = tree.nodes.new(type='CompositorNodeMixRGB')
-        mul_shadow = tree.nodes.new(type='CompositorNodeMixRGB')
-        mul_image = tree.nodes.new(type='CompositorNodeMixRGB')
-        vector_blur = tree.nodes.new(type='CompositorNodeVecBlur')
+        shadowcatcher = tree.nodes.new(type='CompositorNodeAlphaOver')
         alphaover = tree.nodes.new(type='CompositorNodeAlphaOver')
         viewer = tree.nodes.new(type='CompositorNodeViewer')
 
-        # setup nodes
+        # Setup nodes.
         movieclip.clip = clip
 
         distortion.clip = clip
@@ -749,22 +793,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
         rlayer_fg.scene = scene
         rlayer_fg.layer = "Foreground"
 
-        add_ao.blend_type = 'ADD'
-        add_ao.show_preview = False
-        add_shadow.blend_type = 'ADD'
-        add_shadow.show_preview = False
-
-        mul_shadow.blend_type = 'MULTIPLY'
-        mul_shadow.inputs["Fac"].default_value = 0.8
-        mul_shadow.show_preview = False
-
-        mul_image.blend_type = 'MULTIPLY'
-        mul_image.inputs["Fac"].default_value = 0.8
-        mul_image.show_preview = False
-
-        vector_blur.factor = 0.75
-
-        # create links
+        # Create links.
         tree.links.new(movieclip.outputs["Image"], distortion.inputs["Image"])
 
         if need_stabilization:
@@ -774,31 +803,18 @@ class CLIP_OT_setup_tracking_scene(Operator):
         else:
             tree.links.new(distortion.outputs["Image"], scale.inputs["Image"])
 
-        tree.links.new(rlayer_bg.outputs["Alpha"], invert.inputs["Color"])
+        tree.links.new(scale.outputs["Image"], shadowcatcher.inputs[1])
 
-        tree.links.new(invert.outputs["Color"], add_shadow.inputs[1])
-        tree.links.new(rlayer_bg.outputs["Shadow"], add_shadow.inputs[2])
+        tree.links.new(rlayer_bg.outputs["Image"], shadowcatcher.inputs[2])
 
-        tree.links.new(invert.outputs["Color"], add_ao.inputs[1])
-        tree.links.new(rlayer_bg.outputs["AO"], add_ao.inputs[2])
+        tree.links.new(rlayer_fg.outputs["Image"], alphaover.inputs[2])
 
-        tree.links.new(add_ao.outputs["Image"], mul_shadow.inputs[1])
-        tree.links.new(add_shadow.outputs["Image"], mul_shadow.inputs[2])
-
-        tree.links.new(scale.outputs["Image"], mul_image.inputs[1])
-        tree.links.new(mul_shadow.outputs["Image"], mul_image.inputs[2])
-
-        tree.links.new(rlayer_fg.outputs["Image"], vector_blur.inputs["Image"])
-        tree.links.new(rlayer_fg.outputs["Depth"], vector_blur.inputs["Z"])
-        tree.links.new(rlayer_fg.outputs["Vector"], vector_blur.inputs["Speed"])
-
-        tree.links.new(mul_image.outputs["Image"], alphaover.inputs[1])
-        tree.links.new(vector_blur.outputs["Image"], alphaover.inputs[2])
+        tree.links.new(shadowcatcher.outputs["Image"], alphaover.inputs[1])
 
         tree.links.new(alphaover.outputs["Image"], composite.inputs["Image"])
         tree.links.new(alphaover.outputs["Image"], viewer.inputs["Image"])
 
-        # place nodes
+        # Place nodes.
         movieclip.location = Vector((-300.0, 350.0))
 
         distortion.location = movieclip.location
@@ -817,47 +833,29 @@ class CLIP_OT_setup_tracking_scene(Operator):
         rlayer_bg.location = movieclip.location
         rlayer_bg.location -= Vector((0.0, 350.0))
 
-        invert.location = rlayer_bg.location
-        invert.location += Vector((250.0, 50.0))
-
-        add_ao.location = invert.location
-        add_ao.location[0] += 200
-        add_ao.location[1] = rlayer_bg.location[1]
-
-        add_shadow.location = add_ao.location
-        add_shadow.location -= Vector((0.0, 250.0))
-
-        mul_shadow.location = add_ao.location
-        mul_shadow.location += Vector((200.0, -50.0))
-
-        mul_image.location = mul_shadow.location
-        mul_image.location += Vector((300.0, 200.0))
-
         rlayer_fg.location = rlayer_bg.location
         rlayer_fg.location -= Vector((0.0, 500.0))
 
-        vector_blur.location[0] = mul_image.location[0]
-        vector_blur.location[1] = rlayer_fg.location[1]
+        shadowcatcher.location = scale.location
+        shadowcatcher.location += Vector((250.0, 0.0))
 
-        alphaover.location[0] = vector_blur.location[0] + 350
-        alphaover.location[1] = \
-            (vector_blur.location[1] + mul_image.location[1]) / 2
+        alphaover.location = shadowcatcher.location
+        alphaover.location += Vector((250.0, -250.0))
 
         composite.location = alphaover.location
-        composite.location += Vector((200.0, -100.0))
+        composite.location += Vector((300.0, -100.0))
 
         viewer.location = composite.location
         composite.location += Vector((0.0, 200.0))
 
-        # ensure no nodes were creates on position of existing node
+        # Ensure no nodes were created on the position of existing node.
         self._offsetNodes(tree)
 
-        scene.render.alpha_mode = 'TRANSPARENT'
         if hasattr(scene, "cycles"):
             scene.cycles.film_transparent = True
 
     @staticmethod
-    def _createMesh(scene, name, vertices, faces):
+    def _createMesh(collection, name, vertices, faces):
         from bpy_extras.io_utils import unpack_list
 
         mesh = bpy.data.meshes.new(name=name)
@@ -877,8 +875,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
         mesh.update()
 
         ob = bpy.data.objects.new(name=name, object_data=mesh)
-
-        scene.objects.link(ob)
+        collection.objects.link(ob)
 
         return ob
 
@@ -890,11 +887,11 @@ class CLIP_OT_setup_tracking_scene(Operator):
                 (half_size, half_size, z),
                 (-half_size, half_size, z)]
 
-    def _createGround(self, scene):
+    def _createGround(self, collection):
         vertices = self._getPlaneVertices(4.0, 0.0)
         faces = [0, 1, 2, 3]
 
-        ob = self._createMesh(scene, "Ground", vertices, faces)
+        ob = self._createMesh(collection, "Ground", vertices, faces)
         ob["is_ground"] = True
 
         return ob
@@ -910,24 +907,15 @@ class CLIP_OT_setup_tracking_scene(Operator):
         return None
 
     @staticmethod
-    def _mergeLayers(layers_a, layers_b):
+    def _createLight(scene):
+        light = bpy.data.lights.new(name="Light", type='POINT')
+        lightob = bpy.data.objects.new(name="Light", object_data=light)
 
-        return [(layers_a[i] | layers_b[i]) for i in range(len(layers_a))]
+        lightob.matrix_local = Matrix.Translation((4.076, 1.005, 5.904))
 
-    @staticmethod
-    def _createLamp(scene):
-        lamp = bpy.data.lamps.new(name="Lamp", type='POINT')
-        lampob = bpy.data.objects.new(name="Lamp", object_data=lamp)
-        scene.objects.link(lampob)
+        return lightob
 
-        lampob.matrix_local = Matrix.Translation((4.076, 1.005, 5.904))
-
-        lamp.distance = 30
-        lamp.shadow_method = 'RAY_SHADOW'
-
-        return lampob
-
-    def _createSampleObject(self, scene):
+    def _createSampleObject(self, collection):
         vertices = self._getPlaneVertices(1.0, -1.0) + \
             self._getPlaneVertices(1.0, 1.0)
         faces = (0, 1, 2, 3,
@@ -937,63 +925,59 @@ class CLIP_OT_setup_tracking_scene(Operator):
                  2, 6, 7, 3,
                  3, 7, 4, 0)
 
-        return self._createMesh(scene, "Cube", vertices, faces)
+        return self._createMesh(collection, "Cube", vertices, faces)
 
     def _setupObjects(self, context):
+
+        def setup_shadow_catcher_objects(collection):
+            """Make all the newly created and the old objects of a collection """ \
+                """to be properly setup for shadow catch"""
+            for ob in collection.objects:
+                ob.cycles.is_shadow_catcher = True
+                for child in collection.children:
+                    setup_shadow_catcher_collection(child)
+
         scene = context.scene
+        fg_coll = bpy.data.collections["foreground", None]
+        bg_coll = bpy.data.collections["background", None]
 
-        fg = scene.render.layers.get("Foreground")
-        bg = scene.render.layers.get("Background")
-
-        all_layers = self._mergeLayers(fg.layers, bg.layers)
-
-        # ensure all lamps are active on foreground and background
-        has_lamp = False
+        # Ensure all lights are active on foreground and background.
+        has_light = False
         has_mesh = False
         for ob in scene.objects:
-            if ob.type == 'LAMP':
-                ob.layers = all_layers
-                has_lamp = True
+            if ob.type == 'LIGHT':
+                has_light = True
             elif ob.type == 'MESH' and "is_ground" not in ob:
                 has_mesh = True
 
-        # create sample lamp if there's no lamps in the scene
-        if not has_lamp:
-            lamp = self._createLamp(scene)
-            lamp.layers = all_layers
+        # Create sample light if there is no lights in the scene.
+        if not has_light:
+            light = self._createLight(scene)
+            fg_coll.objects.link(light)
+            bg_coll.objects.link(light)
 
-        # create sample object if there's no meshes in the scene
+        # Create sample object if there's no meshes in the scene.
         if not has_mesh:
-            ob = self._createSampleObject(scene)
-            ob.layers = fg.layers
+            ob = self._createSampleObject(fg_coll)
 
-        # create ground object if needed
+        # Create ground object if needed.
         ground = self._findGround(context)
         if not ground:
-            ground = self._createGround(scene)
-            ground.layers = bg.layers
-        else:
-            # make sure ground is available on Background layer
-            ground.layers = self._mergeLayers(ground.layers, bg.layers)
+            ground = self._createGround(bg_coll)
 
-        # layers with background and foreground should be rendered
-        scene.layers = self._mergeLayers(scene.layers, all_layers)
+        # And set everything on background layer to shadow catcher.
+        if hasattr(scene, "cycles"):
+            setup_shadow_catcher_objects(bg_coll)
 
     def execute(self, context):
-        scene = context.scene
-        current_active_layer = scene.active_layer
-
         self._setupScene(context)
         self._setupWorld(context)
         self._setupCamera(context)
         self._setupViewport(context)
-        self._setupRenderLayers(context)
+        self._setupViewLayers(context)
+        self._setupCollections(context)
         self._setupNodes(context)
         self._setupObjects(context)
-
-        # Active layer has probably changed, set it back to the original value.
-        # NOTE: The active layer is always true.
-        scene.layers[current_active_layer] = True
 
         return {'FINISHED'}
 
@@ -1070,11 +1054,11 @@ class CLIP_OT_track_settings_to_track(bpy.types.Operator):
         track = clip.tracking.tracks.active
 
         framenr = context.scene.frame_current - clip.frame_start + 1
-        marker = track.markers.find_frame(framenr, False)
+        marker = track.markers.find_frame(framenr, exact=False)
 
         for t in clip.tracking.tracks:
             if t.select and t != track:
-                marker_selected = t.markers.find_frame(framenr, False)
+                marker_selected = t.markers.find_frame(framenr, exact=False)
                 for attr in self._attrs_track:
                     setattr(t, attr, getattr(track, attr))
                 for attr in self._attrs_marker:

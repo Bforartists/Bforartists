@@ -33,7 +33,7 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
     )
     use_scene_refresh = BoolProperty(
         name="Refresh Scene",
-        description="Specials Menu [W], or hit F5",
+        description="Specials Menu [W]",
         default=True,
     )
     use_timeline_extra_info = BoolProperty(
@@ -48,7 +48,7 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
     )
     use_scene_stats = BoolProperty(
         name="Extra Scene Statistics",
-        description="Display extra scene statistics in Info header (may be slow in heavy scenes)",
+        description="Display extra scene statistics in the status bar (may be slow in heavy scenes)",
         default=False,
     )
     frames_jump = IntProperty(

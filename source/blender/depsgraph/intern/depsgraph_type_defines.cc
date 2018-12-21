@@ -71,11 +71,55 @@ DepsNodeFactory *deg_type_get_factory(const eDepsNode_Type type)
 	return depsnode_typeinfo_registry[type];
 }
 
+/* Stringified node types ---------------------------------- */
+
+const char *nodeTypeAsString(eDepsNode_Type type)
+{
+	switch (type) {
+#define STRINGIFY_TYPE(name) case DEG_NODE_TYPE_##name: return #name
+
+		STRINGIFY_TYPE(UNDEFINED);
+		STRINGIFY_TYPE(OPERATION);
+		/* **** Generic Types **** */
+		STRINGIFY_TYPE(TIMESOURCE);
+		STRINGIFY_TYPE(ID_REF);
+		/* **** Outer Types **** */
+		STRINGIFY_TYPE(PARAMETERS);
+		STRINGIFY_TYPE(PROXY);
+		STRINGIFY_TYPE(ANIMATION);
+		STRINGIFY_TYPE(TRANSFORM);
+		STRINGIFY_TYPE(GEOMETRY);
+		STRINGIFY_TYPE(SEQUENCER);
+		STRINGIFY_TYPE(LAYER_COLLECTIONS);
+		STRINGIFY_TYPE(COPY_ON_WRITE);
+		STRINGIFY_TYPE(OBJECT_FROM_LAYER);
+		/* **** Evaluation-Related Outer Types (with Subdata) **** */
+		STRINGIFY_TYPE(EVAL_POSE);
+		STRINGIFY_TYPE(BONE);
+		STRINGIFY_TYPE(PARTICLE_SYSTEM);
+		STRINGIFY_TYPE(PARTICLE_SETTINGS);
+		STRINGIFY_TYPE(SHADING);
+		STRINGIFY_TYPE(SHADING_PARAMETERS);
+		STRINGIFY_TYPE(CACHE);
+		STRINGIFY_TYPE(POINT_CACHE);
+		STRINGIFY_TYPE(BATCH_CACHE);
+		/* Duplication. */
+		STRINGIFY_TYPE(DUPLI);
+		/* Synchronization. */
+		STRINGIFY_TYPE(SYNCHRONIZE);
+		/* Generic datablock. */
+		STRINGIFY_TYPE(GENERIC_DATABLOCK);
+
+		/* Total number of meaningful node types. */
+		case NUM_DEG_NODE_TYPES: return "SpecialCase";
+#undef STRINGIFY_TYPE
+	}
+	return "UNKNOWN";
+}
+
 /* Stringified opcodes ------------------------------------- */
 
-DepsOperationStringifier DEG_OPNAMES;
-
-static const char *stringify_opcode(eDepsOperation_Code opcode)
+const char *operationCodeAsString(eDepsOperation_Code opcode)
 {
 	switch (opcode) {
 #define STRINGIFY_OPCODE(name) case DEG_OPCODE_##name: return #name
@@ -87,6 +131,8 @@ static const char *stringify_opcode(eDepsOperation_Code opcode)
 		/* Animation, Drivers, etc. */
 		STRINGIFY_OPCODE(ANIMATION);
 		STRINGIFY_OPCODE(DRIVER);
+		/* Object related. */
+		STRINGIFY_OPCODE(OBJECT_BASE_FLAGS);
 		/* Transform. */
 		STRINGIFY_OPCODE(TRANSFORM_LOCAL);
 		STRINGIFY_OPCODE(TRANSFORM_PARENT);
@@ -99,11 +145,14 @@ static const char *stringify_opcode(eDepsOperation_Code opcode)
 		STRINGIFY_OPCODE(RIGIDBODY_TRANSFORM_COPY);
 		/* Geometry. */
 		STRINGIFY_OPCODE(GEOMETRY_UBEREVAL);
-		STRINGIFY_OPCODE(GEOMETRY_CLOTH_MODIFIER);
 		STRINGIFY_OPCODE(GEOMETRY_SHAPEKEY);
+		/* Object data. */
+		STRINGIFY_OPCODE(LIGHT_PROBE_EVAL);
+		STRINGIFY_OPCODE(SPEAKER_EVAL);
 		/* Pose. */
 		STRINGIFY_OPCODE(POSE_INIT);
 		STRINGIFY_OPCODE(POSE_INIT_IK);
+		STRINGIFY_OPCODE(POSE_CLEANUP);
 		STRINGIFY_OPCODE(POSE_DONE);
 		STRINGIFY_OPCODE(POSE_IK_SOLVER);
 		STRINGIFY_OPCODE(POSE_SPLINE_IK_SOLVER);
@@ -113,37 +162,42 @@ static const char *stringify_opcode(eDepsOperation_Code opcode)
 		STRINGIFY_OPCODE(BONE_CONSTRAINTS);
 		STRINGIFY_OPCODE(BONE_READY);
 		STRINGIFY_OPCODE(BONE_DONE);
-		/* Particles. */
-		STRINGIFY_OPCODE(PARTICLE_SYSTEM_EVAL_INIT);
+		STRINGIFY_OPCODE(BONE_SEGMENTS);
+		/* Particle System. */
+		STRINGIFY_OPCODE(PARTICLE_SYSTEM_INIT);
 		STRINGIFY_OPCODE(PARTICLE_SYSTEM_EVAL);
+		STRINGIFY_OPCODE(PARTICLE_SYSTEM_DONE);
+		/* Particles Settings. */
+		STRINGIFY_OPCODE(PARTICLE_SETTINGS_INIT);
+		STRINGIFY_OPCODE(PARTICLE_SETTINGS_EVAL);
+		STRINGIFY_OPCODE(PARTICLE_SETTINGS_RESET);
+		/* Point Cache. */
+		STRINGIFY_OPCODE(POINT_CACHE_RESET);
+		/* Batch cache. */
+		STRINGIFY_OPCODE(GEOMETRY_SELECT_UPDATE);
 		/* Masks. */
 		STRINGIFY_OPCODE(MASK_ANIMATION);
 		STRINGIFY_OPCODE(MASK_EVAL);
+		/* Collections. */
+		STRINGIFY_OPCODE(VIEW_LAYER_EVAL);
+		/* Copy on write. */
+		STRINGIFY_OPCODE(COPY_ON_WRITE);
 		/* Shading. */
 		STRINGIFY_OPCODE(SHADING);
+		STRINGIFY_OPCODE(MATERIAL_UPDATE);
+		STRINGIFY_OPCODE(WORLD_UPDATE);
 		/* Movie clip. */
 		STRINGIFY_OPCODE(MOVIECLIP_EVAL);
+		STRINGIFY_OPCODE(MOVIECLIP_SELECT_UPDATE);
+		/* Synchronization. */
+		STRINGIFY_OPCODE(SYNCHRONIZE_TO_ORIGINAL);
+		/* Generic datablock. */
+		STRINGIFY_OPCODE(GENERIC_DATABLOCK_UPDATE);
 
 		case DEG_NUM_OPCODES: return "SpecialCase";
 #undef STRINGIFY_OPCODE
 	}
 	return "UNKNOWN";
-}
-
-DepsOperationStringifier::DepsOperationStringifier()
-{
-	for (int i = 0; i < DEG_NUM_OPCODES; ++i) {
-		names_[i] = stringify_opcode((eDepsOperation_Code)i);
-	}
-}
-
-const char *DepsOperationStringifier::operator[](eDepsOperation_Code opcode)
-{
-	BLI_assert((opcode >= 0) && (opcode < DEG_NUM_OPCODES));
-	if (opcode >= 0 && opcode < DEG_NUM_OPCODES) {
-		return names_[opcode];
-	}
-	return "UnknownOpcode";
 }
 
 }  // namespace DEG

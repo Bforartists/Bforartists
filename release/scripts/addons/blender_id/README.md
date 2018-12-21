@@ -13,6 +13,9 @@ Blender ID add-on version 1.2.0 removed some workarounds necessary for
 Blender 2.77a. As such, versions 1.1.x are the last versions compatible with
 Blender 2.77a, and 1.2.0 and newer require at least Blender 2.78.
 
+Blender ID add-on version 2.0 is the first to support and require Blender 2.80+.
+
+
 Building & Bundling
 -------------------
 

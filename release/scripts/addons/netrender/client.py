@@ -243,14 +243,8 @@ def sendJobBaking(conn, scene, can_save = True):
     # if not ACCEPTED (but not processed), send files
     if response.status == http.client.ACCEPTED:
         for rfile in job.files:
-            f = open(rfile.filepath, "rb")
-            with ConnectionContext():
-                conn.request("PUT", fileURL(job_id, rfile.index), f)
-            f.close()
-            response = conn.getresponse()
-            response.read()
-
-    # server will reply with ACCEPTED until all files are found
+            sendFile(conn, fileURL(job_id, rfile.index), rfile.filepath)
+            # server will reply with ACCEPTED until all files are found
 
     return job_id
 
@@ -333,14 +327,8 @@ def sendJobBlender(conn, scene, anim = False, can_save = True):
     # if not ACCEPTED (but not processed), send files
     if response.status == http.client.ACCEPTED:
         for rfile in job.files:
-            f = open(rfile.filepath, "rb")
-            with ConnectionContext():
-                conn.request("PUT", fileURL(job_id, rfile.index), f)
-            f.close()
-            response = conn.getresponse()
-            response.read()
-
-    # server will reply with ACCEPTED until all files are found
+            sendFile(conn, fileURL(job_id, rfile.index), rfile.filepath)
+            # server will reply with ACCEPTED until all files are found
 
     return job_id
 

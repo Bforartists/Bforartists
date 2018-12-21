@@ -18,12 +18,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# <pep8 compliant>
+
 bl_info = {
     "name": "Refine tracking solution",
     "author": "Stephen Leger",
     "license": "GPL",
-    "version": (1, 1, 3),
-    "blender": (2, 7, 8),
+    "version": (1, 1, 4),
+    "blender": (2, 80, 0),
     "location": "Clip Editor > Tools > Solve > Refine Solution",
     "description": "Refine motion solution by setting track weight according"
                    " to reprojection error",
@@ -70,10 +72,9 @@ class OP_Tracking_refine_solution(Operator):
         marker_position = Vector()
 
         for frame in range(start, end):
-            camera = tracking.reconstruction.cameras.find_frame(frame)
+            camera = tracking.reconstruction.cameras.find_frame(frame=frame)
             if camera is not None:
-                imat = camera.matrix.inverted()
-                projection_matrix = imat.transposed()
+                camera_invert = camera.matrix.inverted()
             else:
                 continue
 
@@ -102,7 +103,7 @@ class OP_Tracking_refine_solution(Operator):
                 else:
                     tw = 1.0
 
-                reprojected_position = track.bundle * projection_matrix
+                reprojected_position = camera_invert @ track.bundle
                 if reprojected_position.z == 0:
                     track.weight = 0
                     track.keyframe_insert("weight", frame=frame)
@@ -152,11 +153,11 @@ class OP_Tracking_reset_solution(Operator):
         start = tracking.reconstruction.cameras[0].frame
         end = tracking.reconstruction.cameras[-1].frame
         for frame in range(start, end):
-            camera = tracking.reconstruction.cameras.find_frame(frame)
+            camera = tracking.reconstruction.cameras.find_frame(frame=frame)
             if camera is None:
                 continue
             for track in tracking.tracks:
-                marker = track.markers.find_frame(frame)
+                marker = track.markers.find_frame(frame=frame)
                 if marker is None:
                     continue
                 track.weight = 1.0
@@ -191,6 +192,13 @@ class RefineMotionTrackingPanel(Panel):
         row.operator("tracking.reset_solution")
 
 
+classes =(
+    OP_Tracking_refine_solution,
+    OP_Tracking_reset_solution,
+    RefineMotionTrackingPanel
+    )
+
+
 def register():
     bpy.types.WindowManager.TrackingTargetError = FloatProperty(
             name="Target Error",
@@ -204,11 +212,13 @@ def register():
             default=25,
             min=1
             )
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
     del bpy.types.WindowManager.TrackingTargetError
     del bpy.types.WindowManager.TrackingSmooth
 

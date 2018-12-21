@@ -159,9 +159,9 @@ void SkinInfo::set_controller(const COLLADAFW::SkinController *co)
 }
 
 // called from write_controller
-Object *SkinInfo::create_armature(Main *bmain, Scene *scene)
+Object *SkinInfo::create_armature(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
-	ob_arm = bc_add_object(bmain, scene, OB_ARMATURE, NULL);
+	ob_arm = bc_add_object(bmain, scene, view_layer, OB_ARMATURE, NULL);
 	return ob_arm;
 }
 
@@ -232,7 +232,10 @@ void SkinInfo::link_armature(bContext *C, Object *ob, std::map<COLLADAFW::Unique
 	amd->object = ob_arm;
 
 #if 1
-	bc_set_parent(ob, ob_arm, C);
+	/* XXX Why do we enforce objects to be children of Armatures if they weren't so before ?*/
+	if (!BKE_object_is_child_recursive(ob_arm, ob)) {
+		bc_set_parent(ob, ob_arm, C);
+	}
 #else
 	Object workob;
 	ob->parent = ob_arm;
@@ -241,10 +244,7 @@ void SkinInfo::link_armature(bContext *C, Object *ob, std::map<COLLADAFW::Unique
 	BKE_object_workob_calc_parent(scene, ob, &workob);
 	invert_m4_m4(ob->parentinv, workob.obmat);
 
-	DAG_id_tag_update(&obn->id, OB_RECALC_OB | OB_RECALC_DATA);
-
-	DAG_relations_tag_update(bmain);
-	WM_event_add_notifier(C, NC_OBJECT | ND_TRANSFORM, NULL);
+	DEG_id_tag_update(&obn->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 #endif
 	copy_m4_m4(ob->obmat, bind_shape_matrix);
 	BKE_object_apply_mat4(ob, ob->obmat, 0, 0);

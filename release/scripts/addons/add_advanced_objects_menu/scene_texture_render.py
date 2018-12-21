@@ -43,7 +43,7 @@ class add_texture_scene(Operator):
                     )
             cam = bpy.context.active_object.data
             cam.lens = 35
-            cam.draw_size = 0.1
+            cam.display_size = 0.1
 
             # add plane
             bpy.ops.mesh.primitive_plane_add(enter_editmode=True, location=(0, 0, 0))

@@ -362,7 +362,7 @@ def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect
                 # ignore shoulder
                 if 'shoulder' in b.name.lower() and connect_mesh is True:
                     continue
-                # connect the upper arm directly with chest ommiting shoulders
+                # connect the upper arm directly with chest omitting shoulders
                 if 'shoulder' in b.parent.name.lower() and connect_mesh is True:
                     vert1 = b.head
                     vert2 = b.parent.parent.tail
@@ -553,7 +553,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
 def main(context):
     """
-    This script will create a custome shape
+    This script will create a custom shape
     """
 
     # ### Check if selection is OK ###

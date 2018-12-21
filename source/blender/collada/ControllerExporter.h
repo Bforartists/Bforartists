@@ -54,25 +54,31 @@
 
 #include "BKE_key.h"
 
+struct Depsgraph;
 class SceneExporter;
 
 class ControllerExporter : public COLLADASW::LibraryControllers, protected TransformWriter, protected InstanceWriter
 {
 public:
-	ControllerExporter(COLLADASW::StreamWriter *sw, const ExportSettings *export_settings);
+	// XXX exporter writes wrong data for shared armatures.  A separate
+	// controller should be written for each armature-mesh binding how do
+	// we make controller ids then?
+	ControllerExporter(BlenderContext &blender_context, COLLADASW::StreamWriter *sw, const ExportSettings *export_settings) :
+		COLLADASW::LibraryControllers(sw),
+		blender_context(blender_context),
+		export_settings(export_settings) {
+	}
 
 	bool is_skinned_mesh(Object *ob);
 
 	bool add_instance_controller(Object *ob);
 
-	void export_controllers(Main *bmain, Scene *sce);
+	void export_controllers();
 
 	void operator()(Object *ob);
 
 private:
-	Main *m_bmain;
-	Scene *scene;
-	UnitConverter converter;
+	BlenderContext &blender_context;
 	const ExportSettings *export_settings;
 
 #if 0

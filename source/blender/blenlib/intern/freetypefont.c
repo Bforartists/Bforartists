@@ -291,14 +291,6 @@ static VFontData *objfnt_to_ftvfontdata(PackedFile *pf)
 	const char *fontname;
 	VFontData *vfd;
 
-#if 0
-	FT_CharMap found = 0;
-	FT_CharMap charmap;
-	FT_UShort my_platform_id = TT_PLATFORM_MICROSOFT;
-	FT_UShort my_encoding_id = TT_MS_ID_UNICODE_CS;
-	int n;
-#endif
-
 	/* load the freetype font */
 	err = FT_New_Memory_Face(library,
 	                         pf->data,
@@ -307,25 +299,6 @@ static VFontData *objfnt_to_ftvfontdata(PackedFile *pf)
 	                         &face);
 
 	if (err) return NULL;
-
-#if 0
-	for (n = 0; n < face->num_charmaps; n++)
-	{
-		charmap = face->charmaps[n];
-		if (charmap->platform_id == my_platform_id &&
-		    charmap->encoding_id == my_encoding_id)
-		{
-			found = charmap;
-			break;
-		}
-	}
-
-	if (!found) { return NULL; }
-
-	/* now, select the charmap for the face object */
-	err = FT_Set_Charmap(face, found);
-	if (err) { return NULL; }
-#endif
 
 	/* allocate blender font */
 	vfd = MEM_callocN(sizeof(*vfd), "FTVFontData");
@@ -359,10 +332,27 @@ static VFontData *objfnt_to_ftvfontdata(PackedFile *pf)
 		lcode = charcode = FT_Get_First_Char(face, &glyph_index);
 	}
 
+	/* Blender default BFont is not "complete". */
+	const bool complete_font = (face->ascender != 0) && (face->descender != 0) &&
+	                           (face->ascender != face->descender);
+
+	if (complete_font) {
+		/* We can get descender as well, but we simple store descender in relation to the ascender.
+		 * Also note that descender is stored as a negative number. */
+		vfd->ascender = (float)face->ascender / (face->ascender - face->descender);
+	}
+	else {
+		vfd->ascender = 0.8f;
+		vfd->em_height = 1.0f;
+	}
 
 	/* Adjust font size */
 	if (face->bbox.yMax != face->bbox.yMin) {
 		vfd->scale = (float)(1.0 / (double)(face->bbox.yMax - face->bbox.yMin));
+
+		if (complete_font) {
+			vfd->em_height = (float)(face->ascender - face->descender) / (face->bbox.yMax - face->bbox.yMin);
+		}
 	}
 	else {
 		vfd->scale = 1.0f / 1000.0f;
@@ -393,13 +383,6 @@ static int check_freetypefont(PackedFile *pf)
 	FT_Face face;
 	FT_GlyphSlot glyph;
 	FT_UInt glyph_index;
-#if 0
-	FT_CharMap charmap;
-	FT_CharMap found;
-	FT_UShort my_platform_id = TT_PLATFORM_MICROSOFT;
-	FT_UShort my_encoding_id = TT_MS_ID_UNICODE_CS;
-	int n;
-#endif
 	int success = 0;
 
 	err = FT_New_Memory_Face(library,
@@ -412,23 +395,6 @@ static int check_freetypefont(PackedFile *pf)
 		//XXX error("This is not a valid font");
 	}
 	else {
-
-#if 0
-		for (n = 0; n < face->num_charmaps; n++) {
-			charmap = face->charmaps[n];
-			if (charmap->platform_id == my_platform_id && charmap->encoding_id == my_encoding_id) {
-				found = charmap;
-				break;
-			}
-		}
-
-		if (!found) { return 0; }
-
-		/* now, select the charmap for the face object */
-		err = FT_Set_Charmap(face, found);
-		if (err) { return 0; }
-#endif
-
 		glyph_index = FT_Get_Char_Index(face, 'A');
 		err = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP);
 		if (err) {
@@ -453,7 +419,7 @@ static int check_freetypefont(PackedFile *pf)
  * Construct a new VFontData structure from
  * Freetype font data in a PackedFile.
  *
- * \param pf The font data.
+ * \param pf: The font data.
  * \retval A new VFontData structure, or NULL
  * if unable to load.
  */
@@ -533,22 +499,6 @@ VChar *BLI_vfontchar_copy(const VChar *vchar_src, const int UNUSED(flag))
 	return vchar_dst;
 }
 
-#if 0
-
-/* Freetype2 Outline struct */
-
-typedef struct  FT_Outline_ {
-	short       n_contours;      /* number of contours in glyph        */
-	short       n_points;        /* number of points in the glyph      */
-
-	FT_Vector  *points;          /* the outline's points               */
-	char       *tags;            /* the points flags                   */
-	short      *contours;        /* the contour end points             */
-
-	int         flags;           /* outline masks                      */
-} FT_Outline;
-
-#endif
 
 /*
  * from: http://www.freetype.org/freetype2/docs/glyphs/glyphs-6.html#section-1

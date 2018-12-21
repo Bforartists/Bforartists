@@ -746,7 +746,7 @@ def setBezierHandles(obj, mode='AUTOMATIC'):
     bpy.ops.object.mode_set(mode='OBJECT', toggle=True)
 
 
-# get array of vertcoordinates acording to splinetype
+# get array of vertcoordinates according to splinetype
 def vertsToPoints(Verts, splineType):
 
     # main vars

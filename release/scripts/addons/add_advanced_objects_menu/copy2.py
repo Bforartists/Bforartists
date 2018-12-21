@@ -168,7 +168,7 @@ def copy_to_from(scene, to_obj, from_obj, copymode, axes, edgescale, scale):
 
     if copymode == 'E':
         # don't pass edgescalling to object types that cannot be scaled
-        if from_obj.type in ["CAMERA", "LAMP", "EMPTY", "ARMATURE", "SPEAKER", "META"]:
+        if from_obj.type in ["CAMERA", "LIGHT", "EMPTY", "ARMATURE", "SPEAKER", "META"]:
             edgescale = False
         edge_copy(scene, to_obj, from_obj, axes, edgescale, scale)
 

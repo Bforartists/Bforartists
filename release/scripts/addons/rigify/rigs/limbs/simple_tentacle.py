@@ -274,7 +274,7 @@ def parameters_ui(layout, params):
         if bone_layers[i]:
             icon = "LAYER_ACTIVE"
         row.prop(params, "tweak_layers", index=i, toggle=True, text="", icon=icon)
-    
+
     col = r.column(align=True)
     row = col.row(align=True)
 

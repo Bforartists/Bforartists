@@ -179,8 +179,8 @@ def _property_chart_draw(self, context):
     col.label(text="Properties")
     row = col.row(align=True)
     row.menu("SCENE_MT_properties_presets", text=bpy.types.SCENE_MT_properties_presets.bl_label)
-    row.operator("scene.properties_preset_add", text="", icon="ZOOMIN")
-    row.operator("scene.properties_preset_add", text="", icon="ZOOMOUT").remove_active = True
+    row.operator("scene.properties_preset_add", text="", icon='ADD')
+    row.operator("scene.properties_preset_add", text="", icon='REMOVE').remove_active = True
     # edit the display props
     col.prop(id_storage, self._PROP_STORAGE_ID, text="")
 
