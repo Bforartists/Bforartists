@@ -96,6 +96,25 @@ def rna_idprop_has_properties(rna_item):
     return (nbr_props > 1) or (nbr_props and '_RNA_UI' not in keys)
 
 
+def rna_idprop_ui_prop_default_set(item, prop, value):
+    defvalue = None
+    try:
+        prop_type = type(item[prop])
+
+        if prop_type in {int, float}:
+            defvalue = prop_type(value)
+    except KeyError:
+        pass
+
+    if defvalue:
+        rna_ui = rna_idprop_ui_prop_get(item, prop, True)
+        rna_ui["default"] = defvalue
+    else:
+        rna_ui = rna_idprop_ui_prop_get(item, prop)
+        if rna_ui and "default" in rna_ui:
+            del rna_ui["default"]
+
+
 def draw(layout, context, context_member, property_type, use_edit=True):
 
     def assign_props(prop, val, key):
@@ -129,7 +148,7 @@ def draw(layout, context, context_member, property_type, use_edit=True):
         props.data_path = context_member
         del row
 
-    show_developer_ui = context.user_preferences.view.show_developer_ui
+    show_developer_ui = context.preferences.view.show_developer_ui
     rna_properties = {prop.identifier for prop in rna_item.bl_rna.properties if prop.is_runtime} if items else None
 
     layout.use_property_split = True

@@ -1917,6 +1917,8 @@ void DRW_render_object_iter(
 			DST.dupli_source = data_.dupli_object_current;
 			DST.ob_state = NULL;
 			callback(vedata, ob, engine, depsgraph);
+
+			drw_batch_cache_generate_requested(ob);
 		}
 	}
 	DEG_OBJECT_ITER_END
@@ -2277,7 +2279,9 @@ void DRW_draw_depth_loop(
 	/* Get list of enabled engines */
 	{
 		drw_engines_enable_basic();
-		drw_engines_enable_from_object_mode();
+		if (DRW_state_draw_support()) {
+			drw_engines_enable_from_object_mode();
+		}
 	}
 
 	/* Setup viewport */

@@ -222,7 +222,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
     def draw(self, context):
         layout = self.layout
 
-        toolsettings = context.tool_settings
+        tool_settings = context.tool_settings
         settings = self.paint_settings(context)
         brush = settings.brush
 
@@ -265,7 +265,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             row = col.row(align=True)
 
-            ups = toolsettings.unified_paint_settings
+            ups = tool_settings.unified_paint_settings
             if ((ups.use_unified_size and ups.use_locked_size) or
                     ((not ups.use_unified_size) and brush.use_locked_size)):
                 self.prop_unified_size(row, context, brush, "use_locked_size", icon='LOCKED')
@@ -415,8 +415,8 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             col.prop(brush, "use_projected")
 
             col = layout.column()
-            col.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
-            col.prop(toolsettings, "use_multipaint", text="Multi-Paint")
+            col.prop(tool_settings, "use_auto_normalize", text="Auto Normalize")
+            col.prop(tool_settings, "use_multipaint", text="Multi-Paint")
 
         # Vertex Paint Mode #
         elif context.vertex_paint_object and brush:
@@ -575,8 +575,8 @@ class VIEW3D_PT_stencil_projectpaint(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
         ob = context.active_object
         mesh = ob.data
 
@@ -631,13 +631,12 @@ class VIEW3D_PT_tools_brush_overlay(Panel, View3DPaintPanel):
 
         col = layout.column()
 
-
         row = col.row(align=True)
 
         sub = row.row(align=True)
         sub.prop(brush, "cursor_overlay_alpha", text="Curve Alpha")
         sub.prop(brush, "use_cursor_overlay_override", toggle=True, text="", icon='BRUSH_DATA')
-        row.prop(brush,"use_cursor_overlay", text="", toggle=True, icon='HIDE_OFF' if brush.use_cursor_overlay else 'HIDE_ON')
+        row.prop(brush, "use_cursor_overlay", text="", toggle=True, icon='HIDE_OFF' if brush.use_cursor_overlay else 'HIDE_ON')
 
         col.active = brush.brush_capabilities.has_overlay
 
@@ -870,8 +869,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        sculpt = toolsettings.sculpt
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.sculpt
         settings = self.paint_settings(context)
         brush = settings.brush
 
@@ -906,8 +905,8 @@ class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        sculpt = toolsettings.sculpt
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.sculpt
 
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
@@ -925,6 +924,8 @@ class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
             col.operator("sculpt.detail_flood_fill")
 
 # TODO, move to space_view3d.py
+
+
 class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
     bl_label = "Options"
@@ -939,8 +940,8 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        sculpt = toolsettings.sculpt
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.sculpt
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
@@ -972,6 +973,7 @@ class VIEW3D_PT_sculpt_options_unified(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(layout, context)
 
+
 class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
     bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
     bl_parent_id = "VIEW3D_PT_sculpt_options"
@@ -986,8 +988,8 @@ class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        sculpt = toolsettings.sculpt
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.sculpt
         capabilities = sculpt.brush.sculpt_capabilities
 
         col = layout.column()
@@ -1150,8 +1152,8 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
-        toolsettings = context.tool_settings
-        wpaint = toolsettings.weight_paint
+        tool_settings = context.tool_settings
+        wpaint = tool_settings.weight_paint
         draw_vpaint_symmetry(layout, wpaint)
 
 
@@ -1203,8 +1205,8 @@ class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
-        toolsettings = context.tool_settings
-        vpaint = toolsettings.vertex_paint
+        tool_settings = context.tool_settings
+        vpaint = tool_settings.vertex_paint
         draw_vpaint_symmetry(layout, vpaint)
 
 
@@ -1222,8 +1224,8 @@ class VIEW3D_PT_tools_imagepaint_external(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
 
         layout.prop(ipaint, "screen_grab_size", text="Screen Grab Size")
 
@@ -1247,8 +1249,8 @@ class VIEW3D_PT_tools_imagepaint_symmetry(Panel, View3DPaintPanel):
     def draw(self, context):
         layout = self.layout
 
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
 
         split = layout.split()
 
@@ -1281,8 +1283,8 @@ class VIEW3D_PT_tools_projectpaint(View3DPaintPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
 
         row = layout.row()
         row.prop(ipaint, "use_normal_falloff")
@@ -1302,6 +1304,7 @@ class VIEW3D_PT_tools_projectpaint(View3DPaintPanel, Panel):
         col = flow.column()
         col.prop(ipaint, "use_backface_culling")
 
+
 class VIEW3D_PT_tools_projectpaint_unified(Panel, View3DPaintPanel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_parent_id = "VIEW3D_PT_tools_projectpaint"
@@ -1314,6 +1317,7 @@ class VIEW3D_PT_tools_projectpaint_unified(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(layout, context)
 
+
 class VIEW3D_PT_tools_projectpaint_cavity(View3DPaintPanel, Panel):
     bl_context = ".imagepaint"  # dot on purpose (access from topbar)
     bl_label = "Cavity Mask"
@@ -1321,16 +1325,16 @@ class VIEW3D_PT_tools_projectpaint_cavity(View3DPaintPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
 
         self.layout.prop(ipaint, "use_cavity", text="")
 
     def draw(self, context):
         layout = self.layout
 
-        toolsettings = context.tool_settings
-        ipaint = toolsettings.image_paint
+        tool_settings = context.tool_settings
+        ipaint = tool_settings.image_paint
 
         layout.active = ipaint.use_cavity
 
@@ -1446,14 +1450,16 @@ class VIEW3D_PT_tools_normal(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False  # No animation.
 
-        toolsettings = context.tool_settings
+        tool_settings = context.tool_settings
 
-        layout.prop(toolsettings, "normal_vector", text="Normal Vector")
-        layout.prop(toolsettings, "face_strength", text="Face Strength")
+        layout.prop(tool_settings, "normal_vector", text="Normal Vector")
+        layout.prop(tool_settings, "face_strength", text="Face Strength")
 
 # ********** grease pencil object tool panels ****************
 
 # Grease Pencil drawing brushes
+
+
 class VIEW3D_PT_tools_grease_pencil_brush(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Brush"
@@ -1476,15 +1482,15 @@ class VIEW3D_PT_tools_grease_pencil_brush(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        ts = context.scene.tool_settings
-        settings = ts.gpencil_paint
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
 
         row = layout.row()
         col = row.column()
-        col.template_ID_preview(settings, "brush", new="brush.add_gpencil", rows=3, cols=8)
+        col.template_ID_preview(gpencil_paint, "brush", new="brush.add_gpencil", rows=3, cols=8)
 
         col = row.column()
-        brush = context.active_gpencil_brush
+        brush = gpencil_paint.brush
 
         sub = col.column(align=True)
         sub.operator("gpencil.brush_presets_create", icon='HELP', text="")
@@ -1501,6 +1507,7 @@ class VIEW3D_PT_tools_grease_pencil_brush(View3DPanel, Panel):
                 row = layout.row(align=True)
                 row.prop(brush, "size", text="Radius")
                 row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
+                row.prop(gp_settings, "use_occlude_eraser", text="", icon='XRAY')
 
                 if gp_settings.eraser_mode == 'SOFT':
                     row = layout.row(align=True)
@@ -1550,7 +1557,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_option(View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         return brush is not None and brush.gpencil_tool != 'ERASE'
 
     def draw_header_preset(self, context):
@@ -1562,7 +1569,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_option(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
 
         if brush is not None:
@@ -1586,11 +1593,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         return brush is not None and brush.gpencil_tool == 'DRAW'
 
     def draw_header(self, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         self.layout.prop(gp_settings, "use_settings_stabilizer", text="")
 
@@ -1600,7 +1607,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_stabilizer(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         layout.active = gp_settings.use_settings_stabilizer
 
@@ -1616,11 +1623,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_settings(View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         return brush is not None and brush.gpencil_tool != 'ERASE'
 
     def draw_header(self, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         self.layout.prop(gp_settings, "use_settings_postprocess", text="")
 
@@ -1630,7 +1637,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_settings(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         layout.active = gp_settings.use_settings_postprocess
 
@@ -1655,11 +1662,11 @@ class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         return brush is not None and brush.gpencil_tool != 'ERASE'
 
     def draw_header(self, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         self.layout.prop(gp_settings, "use_settings_random", text="")
 
@@ -1669,7 +1676,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_random(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
         layout.active = gp_settings.use_settings_random
 
@@ -1690,7 +1697,7 @@ class VIEW3D_PT_tools_grease_pencil_brushcurves(View3DPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         return brush is not None and brush.gpencil_tool != 'ERASE'
 
     @staticmethod
@@ -1701,14 +1708,14 @@ class VIEW3D_PT_tools_grease_pencil_brushcurves(View3DPanel, Panel):
 class VIEW3D_PT_tools_grease_pencil_brushcurves_sensitivity(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Sensitivity"
-    bl_parent_id ="VIEW3D_PT_tools_grease_pencil_brushcurves"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brushcurves"
 
     @staticmethod
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
 
         layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True)
@@ -1717,14 +1724,14 @@ class VIEW3D_PT_tools_grease_pencil_brushcurves_sensitivity(View3DPanel, Panel):
 class VIEW3D_PT_tools_grease_pencil_brushcurves_strength(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Strength"
-    bl_parent_id ="VIEW3D_PT_tools_grease_pencil_brushcurves"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brushcurves"
 
     @staticmethod
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
 
         layout.template_curve_mapping(gp_settings, "curve_strength", brush=True)
@@ -1733,14 +1740,14 @@ class VIEW3D_PT_tools_grease_pencil_brushcurves_strength(View3DPanel, Panel):
 class VIEW3D_PT_tools_grease_pencil_brushcurves_jitter(View3DPanel, Panel):
     bl_context = ".greasepencil_paint"
     bl_label = "Jitter"
-    bl_parent_id ="VIEW3D_PT_tools_grease_pencil_brushcurves"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_brushcurves"
 
     @staticmethod
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
-        brush = context.active_gpencil_brush
+        brush = context.tool_settings.gpencil_paint.brush
         gp_settings = brush.gpencil_settings
 
         layout.template_curve_mapping(gp_settings, "curve_jitter", brush=True)
