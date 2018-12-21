@@ -356,7 +356,7 @@ def DEF_atom_draw_atoms(prop_element,
 
     ball.active_material = material
     ball.parent = new_atom_mesh
-    new_atom_mesh.dupli_type = 'VERTS'
+    new_atom_mesh.instance_type = 'VERTS'
 
     # ------------------------------------------------------------------------
     # SELECT ALL LOADED OBJECTS
@@ -513,11 +513,11 @@ def register():
     bpy.utils.register_module(__name__)
     bpy.types.Scene.atom_cluster = bpy.props.PointerProperty(type=
                                                   CLASS_atom_cluster_Properties)
-    bpy.types.INFO_MT_mesh_add.append(DEF_menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(DEF_menu_func)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_mesh_add.remove(DEF_menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(DEF_menu_func)
 
 if __name__ == "__main__":
 

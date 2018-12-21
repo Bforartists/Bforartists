@@ -79,7 +79,7 @@ def defReconst(self, OFFSET):
 
 
 class reConst(Operator):
-    """Erase vertices bellow cero X position value and rebuilds the symmetry. """
+    """Erase vertices below cero X position value and rebuilds the symmetry. """
     """It also creates two uv channels, one symmetrical and one asymmetrical"""
     bl_idname = "mesh.reconst_osc"
     bl_label = "ReConst Mesh"
@@ -125,7 +125,7 @@ def side(self, nombre, offset):
 
 
 class SelectMenor(Operator):
-    """Selects the vetex with an N position value on the X axis"""
+    """Selects the vertex with an N position value on the X axis"""
     bl_idname = "mesh.select_side_osc"
     bl_label = "Select Side"
     bl_options = {"REGISTER", "UNDO"}
@@ -157,7 +157,7 @@ class SelectMenor(Operator):
 class rvg(Operator):
     bl_idname = "mesh.resym_vertex_weights_osc"
     bl_label = "Resym Vertex Weights"
-    bl_description = ("Copies the symetrical weight value of the vertices on the X axys\n"
+    bl_description = ("Copies the symmetrical weight value of the vertices on the X axys\n"
                       "(It needs the XML map and the Active Object is not in Edit mode)")
     bl_options = {"REGISTER", "UNDO"}
 
@@ -288,7 +288,7 @@ class OscResymSave(Operator):
 
 
 class OscResymMesh(Operator):
-    """Copies the symetrical position of the vertices on the X axys. It needs the XML map"""
+    """Copies the symmetrical position of the vertices on the X axys. It needs the XML map"""
     bl_idname = "mesh.resym_mesh"
     bl_label = "Resym save Apply XML"
     bl_options = {"REGISTER", "UNDO"}
@@ -321,8 +321,7 @@ def DefOscObjectToMesh():
     MESH = ACTOBJ.to_mesh(
         scene=bpy.context.scene,
         apply_modifiers=True,
-        settings="RENDER",
-        calc_tessface=True)
+        settings="RENDER")
     OBJECT = bpy.data.objects.new(("%s_Freeze") % (ACTOBJ.name), MESH)
     bpy.context.scene.objects.link(OBJECT)
 
@@ -354,32 +353,32 @@ def DefOscOverlapUv(self,offset,rotate):
     bm.faces.ensure_lookup_table()
     faces = [face for face in bm.faces if face.select]
     uv_layer = bm.loops.layers.uv[bpy.context.object.data.uv_layers.active.name]
-    
+
     faceDict = {}
     faceReverse = []
     bm.select_mode = {'FACE'}
     for face in faces:
-        bpy.ops.mesh.select_all(action="DESELECT") 
+        bpy.ops.mesh.select_all(action="DESELECT")
         face.select = True
         bpy.ops.mesh.select_mirror()
         faceDict[face.index] = [mirrorface for mirrorface in bm.faces if mirrorface.select][0].index
         faceReverse.append([mirrorface for mirrorface in bm.faces if mirrorface.select][0])
-        
-    
 
-    for selFace,mirrorFace in faceDict.items():   
-        for loop,mirrorLoop in zip(bm.faces[selFace].loops,bm.faces[mirrorFace].loops): 
-            mirrorLoop.copy_from(loop)   
-        if offset:      
-            for loop,mirrorLoop in zip(bm.faces[selFace].loops,bm.faces[mirrorFace].loops):    
-                mirrorLoop[uv_layer].uv += Vector((1,0))  
-   
-                       
-    #invierto direcciones        
+
+
+    for selFace,mirrorFace in faceDict.items():
+        for loop,mirrorLoop in zip(bm.faces[selFace].loops,bm.faces[mirrorFace].loops):
+            mirrorLoop.copy_from(loop)
+        if offset:
+            for loop,mirrorLoop in zip(bm.faces[selFace].loops,bm.faces[mirrorFace].loops):
+                mirrorLoop[uv_layer].uv += Vector((1,0))
+
+
+    #invierto direcciones
     bmesh.ops.reverse_uvs(bm, faces=[f for f in faceReverse])
-    bmesh.ops.rotate_uvs(bm, faces=[f for f in faceReverse]) 
+    bmesh.ops.rotate_uvs(bm, faces=[f for f in faceReverse])
     if rotate:
-        bmesh.ops.rotate_uvs(bm, faces=[f for f in faceReverse]) 
+        bmesh.ops.rotate_uvs(bm, faces=[f for f in faceReverse])
 
     bmesh.update_edit_mesh(me)
 
@@ -450,7 +449,7 @@ class ModalIndexOperator(Operator):
             self.tsize -= 1
         elif event.type in {'RIGHTMOUSE', 'ESC', 'TAB'}:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-            context.area.header_text_set()
+            context.area.header_text_set(None)
             return {'CANCELLED'}
 
         return {'PASS_THROUGH'}
@@ -566,42 +565,42 @@ def defCopyUvsIsland(self, context):
             for li in poly.loop_indices:
                 obLoop.append(li)
 
-    bpy.ops.object.mode_set(mode="EDIT")        
-    
+    bpy.ops.object.mode_set(mode="EDIT")
+
 def defPasteUvsIsland(self, uvOffset, rotateUv,context):
     bpy.ops.object.mode_set(mode="OBJECT")
     selPolys = [poly.index for poly in bpy.context.object.data.polygons if poly.select]
-        
+
     for island in selPolys:
-        bpy.ops.object.mode_set(mode="EDIT")      
-        bpy.ops.mesh.select_all(action="DESELECT")        
-        bpy.ops.object.mode_set(mode="OBJECT")  
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="DESELECT")
+        bpy.ops.object.mode_set(mode="OBJECT")
         bpy.context.object.data.polygons[island].select = True
-        bpy.ops.object.mode_set(mode="EDIT")  
+        bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.select_linked()
-        bpy.ops.object.mode_set(mode="OBJECT") 
+        bpy.ops.object.mode_set(mode="OBJECT")
         TobLoop = []
         TislandFaces = []
         for poly in bpy.context.object.data.polygons:
             if poly.select:
                 TislandFaces.append(poly.index)
                 for li in poly.loop_indices:
-                    TobLoop.append(li)    
+                    TobLoop.append(li)
 
         for source,target in zip(range(min(obLoop),max(obLoop)+1),range(min(TobLoop),max(TobLoop)+1)):
             bpy.context.object.data.uv_layers.active.data[target].uv = bpy.context.object.data.uv_layers.active.data[source].uv + Vector((uvOffset,0))
-              
-        bpy.ops.object.mode_set(mode="EDIT")   
-        
+
+        bpy.ops.object.mode_set(mode="EDIT")
+
     if rotateUv:
-        bpy.ops.object.mode_set(mode="OBJECT") 
+        bpy.ops.object.mode_set(mode="OBJECT")
         for poly in selPolys:
             bpy.context.object.data.polygons[poly].select = True
         bpy.ops.object.mode_set(mode="EDIT")
         bm = bmesh.from_edit_mesh(bpy.context.object.data)
         bmesh.ops.reverse_uvs(bm, faces=[f for f in bm.faces if f.select])
-        bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select]) 
-        #bmesh.update_edit_mesh(bpy.context.object.data, tessface=False, destructive=False)
+        bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select])
+        #bmesh.update_edit_mesh(bpy.context.object.data, loop_triangles=False, destructive=False)
 
 
 
@@ -620,22 +619,22 @@ class CopyUvIsland(Operator):
     def execute(self, context):
         defCopyUvsIsland(self, context)
         return {'FINISHED'}
-    
+
 class PasteUvIsland(Operator):
     """Paste Uv Island"""
     bl_idname = "mesh.uv_island_paste"
     bl_label = "Paste Uv Island"
     bl_options = {"REGISTER", "UNDO"}
-    
+
     uvOffset = BoolProperty(
             name="Uv Offset",
             default=False
-            )    
+            )
 
     rotateUv = BoolProperty(
             name="Rotate Uv Corner",
             default=False
-            )  
+            )
     @classmethod
     def poll(cls, context):
         return (context.active_object is not None and
@@ -644,23 +643,23 @@ class PasteUvIsland(Operator):
 
     def execute(self, context):
         defPasteUvsIsland(self, self.uvOffset, self.rotateUv, context)
-        return {'FINISHED'}    
-    
-    
+        return {'FINISHED'}
+
+
 
 class createEditMultimesh(Operator):
     """Create Edit Multi Mesh"""
     bl_idname = "mesh.create_edit_multimesh"
     bl_label = "Create edit multimesh"
     bl_options = {"REGISTER", "UNDO"}
-    
-    
+
+
     # creo el merge para editar
-    def execute(self,context):    
+    def execute(self,context):
         global relvert
-        global me    
-        global ob 
-        temp = [[ob , [vert.co for vert in ob.data.vertices]]for ob in bpy.data.groups[bpy.context.scene.multimeshedit].objects]
+        global me
+        global ob
+        temp = [[ob , [vert.co for vert in ob.data.vertices]]for ob in bpy.data.collections[bpy.context.scene.multimeshedit].objects]
         vi = 0
         pi = 0
         relvert = {}
@@ -670,10 +669,10 @@ class createEditMultimesh(Operator):
             objectMatrix = ob[0].matrix_world.copy()
             for vert in ob[0].data.vertices:
                 vertlist.append(objectMatrix*vert.co)
-            for poly in ob[0].data.polygons: 
+            for poly in ob[0].data.polygons:
                 polylist.append(tuple([vert+vi for vert in poly.vertices[:]]))
             relvert[ob[0]] = {vert.index:vert.index+vi for vert in  ob[0].data.vertices}
-            vi += len(ob[0].data.vertices)  
+            vi += len(ob[0].data.vertices)
             ob[0].hide = 1
         me = bpy.data.meshes.new("editMesh")
         ob = bpy.data.objects.new("editMesh", me)
@@ -682,7 +681,7 @@ class createEditMultimesh(Operator):
         bpy.ops.object.select_all(action="DESELECT")
         bpy.context.scene.objects.active = ob
         bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class ApplyEditMultimesh(Operator):
@@ -690,17 +689,17 @@ class ApplyEditMultimesh(Operator):
     bl_idname = "mesh.apply_edit_multimesh"
     bl_label = "Apply edit multimesh"
     bl_options = {"REGISTER", "UNDO"}
-   
-    def execute(self,context):    
+
+    def execute(self,context):
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
         for object,rv in relvert.items():
             objectMatrix = object.matrix_world.inverted().copy()
             for source, target in rv.items():
                 object.data.vertices[source].co = objectMatrix * me.vertices[target].co
-            object.hide = 0    
-        bpy.context.scene.objects.unlink(ob) 
-        return {'FINISHED'} 
-        
+            object.hide = 0
+        bpy.context.scene.objects.unlink(ob)
+        return {'FINISHED'}
+
 # -------------------------VERTEX COLOR MASK----------------------------------
 
 
@@ -719,10 +718,10 @@ class resymVertexGroups(Operator):
         obj = bpy.context.active_object
         mesh= obj.data
 
-        bpy.ops.object.mode_set(mode='EDIT', toggle=False) 
-        bpy.ops.mesh.select_all(action="DESELECT") 
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.mesh.select_all(action="DESELECT")
 
-        bm = bmesh.from_edit_mesh(mesh) 
+        bm = bmesh.from_edit_mesh(mesh)
         bm.faces.ensure_lookup_table()
 
         islands = []
@@ -730,24 +729,24 @@ class resymVertexGroups(Operator):
 
         try:
             color_layer = bm.loops.layers.color["RGBMask"]
-        except:    
+        except:
             color_layer = bm.loops.layers.color.new("RGBMask")
 
         while faces:
-            faces[0].select_set(True) 
-            bpy.ops.mesh.select_linked() 
+            faces[0].select_set(True)
+            bpy.ops.mesh.select_linked()
             islands.append([f for f in faces if f.select])
-            bpy.ops.mesh.hide(unselected=False) 
-            faces = [f for f in bm.faces if not f.hide] 
+            bpy.ops.mesh.hide(unselected=False)
+            faces = [f for f in bm.faces if not f.hide]
 
         bpy.ops.mesh.reveal()
 
         for island in islands:
-            color = (uniform(0,1),uniform(0,1),uniform(0,1),1) 
+            color = (uniform(0,1),uniform(0,1),uniform(0,1),1)
             for face in island:
                 for loop in face.loops:
-                    loop[color_layer] = color    
-            
+                    loop[color_layer] = color
+
         bpy.ops.object.mode_set(mode="VERTEX_PAINT")
 
-        return {'FINISHED'}           
+        return {'FINISHED'}

@@ -53,11 +53,12 @@ def image_copy_guess(filepath, objects):
 
 def write_mesh(context, info, report_cb):
     scene = context.scene
+    layer = context.view_layer
     unit = scene.unit_settings
     print_3d = scene.print_3d
 
-    obj_base = scene.object_bases.active
-    obj = obj_base.object
+    # obj_base = layer.object_bases.active
+    obj = layer.objects.active
 
     export_format = print_3d.export_format
     global_scale = unit.scale_length if (unit.system != 'NONE' and print_3d.use_apply_scale) else 1.0
@@ -73,13 +74,16 @@ def write_mesh(context, info, report_cb):
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
         from . import mesh_helpers
-        obj_base_tmp = mesh_helpers.object_merge(context, context_override["selected_objects"])
-        context_override["active_object"] = obj_base_tmp.object
-        context_override["selected_bases"] = [obj_base_tmp]
-        context_override["selected_objects"] = [obj_base_tmp.object]
+        obj_tmp = mesh_helpers.object_merge(context, context_override["selected_objects"])
+        context_override["active_object"] = obj_tmp
+        # context_override["selected_bases"] = [obj_base_tmp]
+        context_override["selected_objects"] = [obj_tmp]
     else:
+        # XXX28
+        '''
         if obj_base not in context_override["selected_bases"]:
             context_override["selected_bases"].append(obj_base)
+        '''
         if obj not in context_override["selected_objects"]:
             context_override["selected_objects"].append(obj)
 

@@ -1295,4 +1295,3 @@ def unregister():
     #bpy.utils.unregister_class(NPPCPreferences)
     #bpy.utils.unregister_module(__name__)
     bpy.app.handlers.scene_update_post.remove(NPPC_scene_update)
-

@@ -125,7 +125,7 @@ static int script_reload_exec(bContext *C, wmOperator *op)
 	/* TODO, this crashes on netrender and keying sets, need to look into why
 	 * disable for now unless running in debug mode */
 	WM_cursor_wait(1);
-	BPY_execute_string(C, "__import__('bpy').utils.load_scripts(reload_scripts=True)");
+	BPY_execute_string(C, (const char *[]){"bpy", NULL}, "bpy.utils.load_scripts(reload_scripts=True)");
 	WM_cursor_wait(0);
 	WM_event_add_notifier(C, NC_WINDOW, NULL);
 	return OPERATOR_FINISHED;
@@ -144,24 +144,4 @@ void SCRIPT_OT_reload(wmOperatorType *ot)
 
 	/* api callbacks */
 	ot->exec = script_reload_exec;
-}
-
-static int script_autoexec_warn_clear_exec(bContext *UNUSED(C), wmOperator *UNUSED(op))
-{
-	G.f |= G_SCRIPT_AUTOEXEC_FAIL_QUIET;
-	return OPERATOR_FINISHED;
-}
-
-void SCRIPT_OT_autoexec_warn_clear(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Continue Untrusted";
-	ot->description = "Continue Untrusted\nIgnore autoexec warning";
-	ot->idname = "SCRIPT_OT_autoexec_warn_clear";
-
-	/* flags */
-	ot->flag = OPTYPE_INTERNAL;
-
-	/* api callbacks */
-	ot->exec = script_autoexec_warn_clear_exec;
 }

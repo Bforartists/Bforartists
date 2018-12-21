@@ -462,10 +462,10 @@ class ArchimeshMainPanel(Panel):
         # Prop Buttons
         # ------------------------------
         box = layout.box()
-        box.label("Props", icon='LAMP_DATA')
+        box.label("Props", icon='LIGHT_DATA')
         row = box.row()
         row.operator("mesh.archimesh_books")
-        row.operator("mesh.archimesh_lamp")
+        row.operator("mesh.archimesh_light")
         row = box.row()
         row.operator("mesh.archimesh_venetian")
         row.operator("mesh.archimesh_roller")
@@ -517,7 +517,7 @@ class ArchimeshMainPanel(Panel):
 class AchmRunHintDisplayButton(Operator):
     bl_idname = "archimesh.runopenglbutton"
     bl_label = "Display hint data manager"
-    bl_description = "Display aditional information in the viewport"
+    bl_description = "Display additional information in the viewport"
     bl_category = 'Archimesh'
 
     _handle = None  # keep function handler

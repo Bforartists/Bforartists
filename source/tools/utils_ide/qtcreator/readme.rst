@@ -33,12 +33,12 @@ saving it to a file in the same path with an ".asm" extension.
 
 This can be handy for checking if the compiler is really optimizing out code as expected.
 
-Or if some change really does't change any functionality.
+Or if some change really doesn't change any functionality.
 
 The way it works is to get a list of the build commands that would run, and get those commands for the current file.
 
 Then this command runs, swapping out object creation args for arguments that create the assembly.
 
-.. note:: It would be nice to open this file, but currently this isnt supported. its just created along side the source.
+.. note:: It would be nice to open this file, but currently this isn't supported. It's just created along side the source.
 
 .. note:: Currently only GCC is supported.

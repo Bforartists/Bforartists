@@ -186,9 +186,9 @@ def ui_menu_lamps_add(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_OBJECT_OT_meshlight_add)
-    bpy.types.INFO_MT_mesh_add.append(ui_menu_lamps_add)
+    bpy.types.VIEW3D_MT_mesh_add.append(ui_menu_lamps_add)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_OBJECT_OT_meshlight_add)
-    bpy.types.INFO_MT_mesh_add.remove(ui_menu_lamps_add)
+    bpy.types.VIEW3D_MT_mesh_add.remove(ui_menu_lamps_add)

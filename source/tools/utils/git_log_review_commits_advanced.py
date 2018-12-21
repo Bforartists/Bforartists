@@ -126,23 +126,23 @@ USE_COLOR = True
 
 if USE_COLOR:
     color_codes = {
-        'black':         '\033[0;30m',
-        'bright_gray':   '\033[0;37m',
-        'blue':          '\033[0;34m',
-        'white':         '\033[1;37m',
-        'green':         '\033[0;32m',
-        'bright_blue':   '\033[1;34m',
-        'cyan':          '\033[0;36m',
-        'bright_green':  '\033[1;32m',
-        'red':           '\033[0;31m',
-        'bright_cyan':   '\033[1;36m',
-        'purple':        '\033[0;35m',
-        'bright_red':    '\033[1;31m',
-        'yellow':        '\033[0;33m',
+        'black': '\033[0;30m',
+        'bright_gray': '\033[0;37m',
+        'blue': '\033[0;34m',
+        'white': '\033[1;37m',
+        'green': '\033[0;32m',
+        'bright_blue': '\033[1;34m',
+        'cyan': '\033[0;36m',
+        'bright_green': '\033[1;32m',
+        'red': '\033[0;31m',
+        'bright_cyan': '\033[1;36m',
+        'purple': '\033[0;35m',
+        'bright_red': '\033[1;31m',
+        'yellow': '\033[0;33m',
         'bright_purple': '\033[1;35m',
-        'dark_gray':     '\033[1;30m',
+        'dark_gray': '\033[1;30m',
         'bright_yellow': '\033[1;33m',
-        'normal':        '\033[0m',
+        'normal': '\033[0m',
     }
 
     def colorize(msg, color=None):
@@ -245,7 +245,7 @@ def print_commit(c):
 
 def gen_commit_log(c):
     return "rB%s   %s   %-30s   %s" % (c.sha1.decode()[:10], c.date.strftime("%Y/%m/%d"),
-                                         c.author, gen_commit_summary(c))
+                                       c.author, gen_commit_summary(c))
 
 
 re_bugify_str = r"T([0-9]{1,})"
@@ -570,7 +570,7 @@ def argparse_create():
     parser.add_argument(
         "--blender-rstate-list", dest="blender_rstate_list",
         default="", required=False, type=lambda s: s.split(","),
-        help=("Blender release state(s) to additionaly list in their own sections "
+        help=("Blender release state(s) to additionally list in their own sections "
               "(e.g. pass 'RC2' to list fixes between RC1 and RC2, ie tagged as RC2, etc.)"))
 
     return parser
@@ -680,7 +680,7 @@ def main():
 
         sha1 = c.sha1
 
-        # diff may scroll off the screen, thats OK
+        # diff may scroll off the screen, that's OK
         os.system("git --git-dir %s show %s --format=%%n" % (c._git_dir, sha1.decode('ascii')))
         print("")
         print_commit(c)

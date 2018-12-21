@@ -46,8 +46,8 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
-#include "BKE_main.h"
 #include "BKE_image.h"
+#include "BKE_main.h"
 #include "BKE_report.h"
 
 #include "BIF_gl.h"
@@ -266,7 +266,7 @@ static void screenshot_draw(bContext *UNUSED(C), wmOperator *op)
 
 	/* main draw call */
 	RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
-	uiDefAutoButsRNA(layout, &ptr, screenshot_draw_check_prop, NULL, '\0');
+	uiDefAutoButsRNA(layout, &ptr, screenshot_draw_check_prop, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
 }
 
 static bool screenshot_poll(bContext *C)

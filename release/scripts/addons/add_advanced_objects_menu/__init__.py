@@ -92,8 +92,8 @@ from bpy.props import (
 
 
 # Define the "Scenes" menu
-class INFO_MT_scene_elements_add(Menu):
-    bl_idname = "INFO_MT_scene_elements"
+class VIEW3D_MT_scene_elements_add(Menu):
+    bl_idname = "VIEW3D_MT_scene_elements"
     bl_label = "Test Scenes"
 
     def draw(self, context):
@@ -108,8 +108,8 @@ class INFO_MT_scene_elements_add(Menu):
 
 
 # Define the "Lights" menu
-class INFO_MT_mesh_lamps_add(Menu):
-    bl_idname = "INFO_MT_scene_lamps"
+class VIEW3D_MT_mesh_lights_add(Menu):
+    bl_idname = "VIEW3D_MT_scene_lights"
     bl_label = "Lighting Sets"
 
     def draw(self, context):
@@ -122,8 +122,8 @@ class INFO_MT_mesh_lamps_add(Menu):
 
 
 # Define the "Chains" menu
-class INFO_MT_mesh_chain_add(Menu):
-    bl_idname = "INFO_MT_mesh_chain"
+class VIEW3D_MT_mesh_chain_add(Menu):
+    bl_idname = "VIEW3D_MT_mesh_chain"
     bl_label = "Chains"
 
     def draw(self, context):
@@ -134,15 +134,15 @@ class INFO_MT_mesh_chain_add(Menu):
 
 
 # Define the "Array" Menu
-class INFO_MT_array_mods_add(Menu):
-    bl_idname = "INFO_MT_array_mods"
+class VIEW3D_MT_array_mods_add(Menu):
+    bl_idname = "VIEW3D_MT_array_mods"
     bl_label = "Array Mods"
 
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.menu("INFO_MT_mesh_chain", icon="LINKED")
+        layout.menu("VIEW3D_MT_mesh_chain", icon="LINKED")
 
         layout.operator("objects.circle_array_operator",
                         text="Circle Array", icon="MOD_ARRAY")
@@ -153,8 +153,8 @@ class INFO_MT_array_mods_add(Menu):
 
 
 # Define the "Blocks" Menu
-class INFO_MT_quick_blocks_add(Menu):
-    bl_idname = "INFO_MT_quick_tools"
+class VIEW3D_MT_quick_blocks_add(Menu):
+    bl_idname = "VIEW3D_MT_quick_tools"
     bl_label = "Block Tools"
 
     def draw(self, context):
@@ -171,8 +171,8 @@ class INFO_MT_quick_blocks_add(Menu):
 
 
 # Define the "Phsysics Tools" Menu
-class INFO_MT_Physics_tools_add(Menu):
-    bl_idname = "INFO_MT_physics_tools"
+class VIEW3D_MT_Physics_tools_add(Menu):
+    bl_idname = "VIEW3D_MT_physics_tools"
     bl_label = "Physics Tools"
 
     def draw(self, context):
@@ -190,12 +190,12 @@ def menu(self, context):
     layout = self.layout
     layout.operator_context = 'INVOKE_REGION_WIN'
     self.layout.separator()
-    self.layout.menu("INFO_MT_scene_elements", icon="SCENE_DATA")
-    self.layout.menu("INFO_MT_scene_lamps", icon="LAMP_SPOT")
+    self.layout.menu("VIEW3D_MT_scene_elements", icon="SCENE_DATA")
+    self.layout.menu("VIEW3D_MT_scene_lights", icon="LIGHT_SPOT")
     self.layout.separator()
-    self.layout.menu("INFO_MT_array_mods", icon="MOD_ARRAY")
-    self.layout.menu("INFO_MT_quick_tools", icon="MOD_BUILD")
-    self.layout.menu("INFO_MT_physics_tools", icon="PHYSICS")
+    self.layout.menu("VIEW3D_MT_array_mods", icon="MOD_ARRAY")
+    self.layout.menu("VIEW3D_MT_quick_tools", icon="MOD_BUILD")
+    self.layout.menu("VIEW3D_MT_physics_tools", icon="PHYSICS")
 
 
 # Addons Preferences
@@ -524,7 +524,7 @@ def register():
     )
 
     # Add "Extras" menu to the "Add" menu
-    bpy.types.INFO_MT_add.append(menu)
+    bpy.types.VIEW3D_MT_add.append(menu)
     try:
         bpy.types.VIEW3D_MT_AddMenu.append(menu)
     except:
@@ -533,7 +533,7 @@ def register():
 
 def unregister():
     # Remove "Extras" menu from the "Add" menu.
-    bpy.types.INFO_MT_add.remove(menu)
+    bpy.types.VIEW3D_MT_add.remove(menu)
     try:
         bpy.types.VIEW3D_MT_AddMenu.remove(menu)
     except:

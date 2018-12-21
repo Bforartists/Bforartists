@@ -551,7 +551,15 @@ GHOST_WindowCocoa::GHOST_WindowCocoa(
 	
 	//Creates the OpenGL View inside the window
 	m_openGLView = [[CocoaOpenGLView alloc] initWithFrame:rect];
-	
+
+	if (m_systemCocoa->m_nativePixel) {
+		// Needs to happen early when building with the 10.14 SDK, otherwise
+		// has no effect until resizeing the window.
+		if ([m_openGLView respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]) {
+			[m_openGLView setWantsBestResolutionOpenGLSurface:YES];
+		}
+	}
+
 	[m_openGLView setSystemAndWindowCocoa:systemCocoa windowCocoa:this];
 	
 	[m_window setContentView:m_openGLView];
@@ -563,14 +571,9 @@ GHOST_WindowCocoa::GHOST_WindowCocoa(
 	updateDrawingContext();
 	activateDrawingContext();
 
-	// XXX jwilkins: This seems like it belongs in GHOST_ContextCGL, but probably not GHOST_ContextEGL
 	if (m_systemCocoa->m_nativePixel) {
-		if ([m_openGLView respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]) {
-			[m_openGLView setWantsBestResolutionOpenGLSurface:YES];
-		
-			NSRect backingBounds = [m_openGLView convertRectToBacking:[m_openGLView bounds]];
-			m_nativePixelSize = (float)backingBounds.size.width / (float)rect.size.width;
-		}
+		NSRect backingBounds = [m_openGLView convertRectToBacking:[m_openGLView bounds]];
+		m_nativePixelSize = (float)backingBounds.size.width / (float)rect.size.width;
 	}
 	
 	setTitle(title);
@@ -865,30 +868,30 @@ void GHOST_WindowCocoa::clientToScreen(GHOST_TInt32 inX, GHOST_TInt32 inY, GHOST
 
 void GHOST_WindowCocoa::screenToClientIntern(GHOST_TInt32 inX, GHOST_TInt32 inY, GHOST_TInt32& outX, GHOST_TInt32& outY) const
 {
-	NSPoint screenCoord;
-	NSPoint baseCoord;
+	NSRect screenCoord;
+	NSRect baseCoord;
 	
-	screenCoord.x = inX;
-	screenCoord.y = inY;
+	screenCoord.origin.x = inX;
+	screenCoord.origin.y = inY;
 	
-	baseCoord = [m_window convertScreenToBase:screenCoord];
+	baseCoord = [m_window convertRectFromScreen:screenCoord];
 	
-	outX = baseCoord.x;
-	outY = baseCoord.y;
+	outX = baseCoord.origin.x;
+	outY = baseCoord.origin.y;
 }
 
 void GHOST_WindowCocoa::clientToScreenIntern(GHOST_TInt32 inX, GHOST_TInt32 inY, GHOST_TInt32& outX, GHOST_TInt32& outY) const
 {
-	NSPoint screenCoord;
-	NSPoint baseCoord;
+	NSRect screenCoord;
+	NSRect baseCoord;
 	
-	baseCoord.x = inX;
-	baseCoord.y = inY;
+	baseCoord.origin.x = inX;
+	baseCoord.origin.y = inY;
 	
-	screenCoord = [m_window convertBaseToScreen:baseCoord];
+	screenCoord = [m_window convertRectToScreen:baseCoord];
 	
-	outX = screenCoord.x;
-	outY = screenCoord.y;
+	outX = screenCoord.origin.x;
+	outY = screenCoord.origin.y;
 }
 
 
@@ -996,82 +999,23 @@ GHOST_TSuccess GHOST_WindowCocoa::setOrder(GHOST_TWindowOrder order)
 GHOST_Context *GHOST_WindowCocoa::newDrawingContext(GHOST_TDrawingContextType type)
 {
 	if (type == GHOST_kDrawingContextTypeOpenGL) {
-#if !defined(WITH_GL_EGL)
 
-#if defined(WITH_GL_PROFILE_CORE)
 		GHOST_Context *context = new GHOST_ContextCGL(
 			m_wantStereoVisual,
 			m_wantNumOfAASamples,
 			m_window,
 			m_openGLView,
+
+#if defined(WITH_GL_PROFILE_CORE)
 			GL_CONTEXT_CORE_PROFILE_BIT,
-			3, 2,
+			3, 3,
+#else
+			0, // no profile bit
+			2, 1,
+#endif
 			GHOST_OPENGL_CGL_CONTEXT_FLAGS,
 			GHOST_OPENGL_CGL_RESET_NOTIFICATION_STRATEGY);
-#elif defined(WITH_GL_PROFILE_ES20)
-		GHOST_Context *context = new GHOST_ContextCGL(
-			m_wantStereoVisual,
-			m_wantNumOfAASamples,
-			m_window,
-			m_openGLView,
-			CGL_CONTEXT_ES2_PROFILE_BIT_EXT,
-			2, 0,
-			GHOST_OPENGL_CGL_CONTEXT_FLAGS,
-			GHOST_OPENGL_CGL_RESET_NOTIFICATION_STRATEGY);
-#elif defined(WITH_GL_PROFILE_COMPAT)
-		GHOST_Context *context = new GHOST_ContextCGL(
-			m_wantStereoVisual,
-			m_wantNumOfAASamples,
-			m_window,
-			m_openGLView,
-			0, // profile bit
-			0, 0,
-			m_debug_context,
-			GHOST_OPENGL_CGL_RESET_NOTIFICATION_STRATEGY);
-#else
-#  error
-#endif
 
-#else
-
-#if defined(WITH_GL_PROFILE_CORE)
-		GHOST_Context *context = new GHOST_ContextEGL(
-			m_wantStereoVisual,
-			m_wantNumOfAASamples,
-			m_window,
-			m_openGLView,
-			EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
-			3, 2,
-			GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-			GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-			EGL_OPENGL_API);
-#elif defined(WITH_GL_PROFILE_ES20)
-		GHOST_Context *context = new GHOST_ContextEGL(
-			m_wantStereoVisual,
-			m_wantNumOfAASamples,
-			m_window,
-			m_openGLView,
-			0, // profile bit
-			2, 0,
-			GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-			GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-			EGL_OPENGL_ES_API);
-#elif defined(WITH_GL_PROFILE_COMPAT)
-		GHOST_Context *context = new GHOST_ContextEGL(
-			m_wantStereoVisual,
-			m_wantNumOfAASamples,
-			m_window,
-			m_openGLView,
-			0, // profile bit
-			0, 0,
-			GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-			GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-			EGL_OPENGL_API);
-#else
-#  error
-#endif
-
-#endif
 		if (context->initializeDrawingContext())
 			return context;
 		else

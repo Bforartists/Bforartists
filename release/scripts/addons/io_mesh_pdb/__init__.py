@@ -82,7 +82,7 @@ class ImportPDB(Operator, ImportHelper):
     use_camera = BoolProperty(
         name="Camera", default=False,
         description="Do you need a camera?")
-    use_lamp = BoolProperty(
+    use_light = BoolProperty(
         name="Lamp", default=False,
         description = "Do you need a lamp?")
     ball = EnumProperty(
@@ -144,7 +144,7 @@ class ImportPDB(Operator, ImportHelper):
         description="The sticks are round (sectors are not visible)")
     use_sticks_bonds = BoolProperty(
         name="Bonds", default=False,
-        description="Show double and tripple bonds")
+        description="Show double and triple bonds")
     sticks_dist = FloatProperty(
         name="", default = 1.1, min=1.0, max=3.0,
         description="Distance between sticks measured in stick diameter")
@@ -162,7 +162,7 @@ class ImportPDB(Operator, ImportHelper):
         layout = self.layout
         row = layout.row()
         row.prop(self, "use_camera")
-        row.prop(self, "use_lamp")
+        row.prop(self, "use_light")
         row = layout.row()
         row.prop(self, "use_center")
         # Balls
@@ -256,7 +256,7 @@ class ImportPDB(Operator, ImportHelper):
                       self.sticks_radius,
                       self.use_center,
                       self.use_camera,
-                      self.use_lamp,
+                      self.use_light,
                       filepath_pdb)
 
         return {'FINISHED'}
@@ -301,13 +301,13 @@ def menu_func_export(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 if __name__ == "__main__":
 

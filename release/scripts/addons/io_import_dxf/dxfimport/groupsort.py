@@ -72,7 +72,7 @@ def by_dxftype(entities):
 def by_attributes(entities):
     """
     entities: list of DXF entities
-    attributes: thickness and width occuring in curve types; subdivision_levels occuring in MESH dxf types
+    attributes: thickness and width occurring in curve types; subdivision_levels occurring in MESH dxf types
     """
     def attributes(entity):
         width = [(0, 0)]

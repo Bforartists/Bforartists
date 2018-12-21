@@ -264,10 +264,10 @@ class Context(object):
 
     def setClipBuffer(self, xpourcent, ypourcent):
         xmin, xmax, ymin, ymax = self.extent
-        witdh = xmax - xmin
+        width = xmax - xmin
         height = ymax - ymin
-        xmin = xmin - witdh * xpourcent / 100
-        xmax = xmax + witdh * xpourcent / 100
+        xmin = xmin - width * xpourcent / 100
+        xmax = xmax + width * xpourcent / 100
         ymin = ymin - height * ypourcent / 100
         ymax = ymax + height * ypourcent / 100
         self.extent = xmin, xmax, ymin, ymax
@@ -761,7 +761,7 @@ class EdgeList(object):
                     break
                 i += 1
 
-        # Now search linear list of halfedges for the corect one
+        # Now search linear list of halfedges for the correct one
         if (he is self.leftend) or (he is not self.rightend and he.isPointRightOf(pt)):
             he = he.right
             while he is not self.rightend and he.isPointRightOf(pt):

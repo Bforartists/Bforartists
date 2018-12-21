@@ -45,6 +45,8 @@
 #include "BKE_screen.h"
 #include "BKE_unit.h"
 
+#include "DEG_depsgraph.h"
+
 #include "RNA_access.h"
 
 #include "UI_interface.h"
@@ -152,12 +154,9 @@ static void depthdropper_exit(bContext *C, wmOperator *op)
 static void depthdropper_depth_sample_pt(bContext *C, DepthDropper *ddr, int mx, int my, float *r_depth)
 {
 	/* we could use some clever */
-	Main *bmain = CTX_data_main(C);
-	wmWindow *win = CTX_wm_window(C);
-	ScrArea *sa = BKE_screen_find_area_xy(win->screen, SPACE_TYPE_ANY, mx, my);
-	Scene *scene = win->screen->scene;
-	UnitSettings *unit = &scene->unit;
-	const bool do_split = (unit->flag & USER_UNIT_OPT_SPLIT) != 0;
+	bScreen *screen = CTX_wm_screen(C);
+	ScrArea *sa = BKE_screen_find_area_xy(screen, SPACE_TYPE_ANY, mx, my);
+	Scene *scene = CTX_data_scene(C);
 
 	ScrArea *area_prev = CTX_wm_area(C);
 	ARegion *ar_prev = CTX_wm_region(C);
@@ -168,6 +167,7 @@ static void depthdropper_depth_sample_pt(bContext *C, DepthDropper *ddr, int mx,
 		if (sa->spacetype == SPACE_VIEW3D) {
 			ARegion *ar = BKE_area_find_region_xy(sa, RGN_TYPE_WINDOW, mx, my);
 			if (ar) {
+				struct Depsgraph *depsgraph = CTX_data_depsgraph(C);
 				View3D *v3d = sa->spacedata.first;
 				RegionView3D *rv3d = ar->regiondata;
 				/* weak, we could pass in some reference point */
@@ -185,7 +185,7 @@ static void depthdropper_depth_sample_pt(bContext *C, DepthDropper *ddr, int mx,
 
 				view3d_operator_needs_opengl(C);
 
-				if (ED_view3d_autodist(bmain, scene, ar, v3d, mval, co, true, NULL)) {
+				if (ED_view3d_autodist(depsgraph, ar, v3d, mval, co, true, NULL)) {
 					const float mval_center_fl[2] = {
 					    (float)ar->winx / 2,
 					    (float)ar->winy / 2};
@@ -196,9 +196,9 @@ static void depthdropper_depth_sample_pt(bContext *C, DepthDropper *ddr, int mx,
 
 					*r_depth = len_v3v3(view_co, co_align);
 
-					bUnit_AsString(ddr->name, sizeof(ddr->name),
-					               (double)*r_depth,
-					               4, unit->system, B_UNIT_LENGTH, do_split, false);
+					bUnit_AsString2(
+					        ddr->name, sizeof(ddr->name), (double)*r_depth,
+					        4, B_UNIT_LENGTH, &scene->unit, false);
 				}
 				else {
 					BLI_strncpy(ddr->name, "Nothing under cursor", sizeof(ddr->name));

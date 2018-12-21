@@ -48,14 +48,15 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_DerivedMesh.h"
+#include "BKE_bvhutils.h"
 #include "BKE_context.h"
 #include "BKE_editmesh.h"
 #include "BKE_editmesh_bvh.h"
 #include "BKE_report.h"
 
-#include "BIF_gl.h"
-#include "BIF_glutil.h" /* for paint cursor */
+#include "GPU_immediate.h"
+#include "GPU_matrix.h"
+#include "GPU_state.h"
 
 #include "ED_screen.h"
 #include "ED_space_api.h"
@@ -72,6 +73,9 @@
 
 #include "RNA_access.h"
 #include "RNA_define.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "mesh_intern.h"  /* own include */
 
@@ -299,7 +303,7 @@ static void knife_update_header(bContext *C, wmOperator *op, KnifeTool_OpData *k
 
 #undef WM_MODALKEY
 
-	ED_area_headerprint(CTX_wm_area(C), header);
+	ED_workspace_status_text(C, header);
 }
 
 static void knife_project_v2(const KnifeTool_OpData *kcd, const float co[3], float sco[2])
@@ -479,7 +483,7 @@ static KnifeEdge *get_bm_knife_edge(KnifeTool_OpData *kcd, BMEdge *e)
 /* Record the index in kcd->em->looptris of first looptri triple for a given face,
  * given an index for some triple in that array.
  * This assumes that all of the triangles for a given face are contiguous
- * in that array (as they are by the current tesselation routines).
+ * in that array (as they are by the current tessellation routines).
  * Actually store index + 1 in the hash, because 0 looks like "no entry"
  * to hash lookup routine; will reverse this in the get routine.
  * Doing this lazily rather than all at once for all faces.
@@ -502,7 +506,7 @@ static void set_lowest_face_tri(KnifeTool_OpData *kcd, BMFace *f, int index)
 	if (i == -1)
 		i++;
 
-	BLI_ghash_insert(kcd->facetrimap, f, SET_INT_IN_POINTER(i + 1));
+	BLI_ghash_insert(kcd->facetrimap, f, POINTER_FROM_INT(i + 1));
 }
 
 /* This should only be called for faces that have had a lowest face tri set by previous function */
@@ -510,7 +514,7 @@ static int get_lowest_face_tri(KnifeTool_OpData *kcd, BMFace *f)
 {
 	int ans;
 
-	ans = GET_INT_FROM_POINTER(BLI_ghash_lookup(kcd->facetrimap, f));
+	ans = POINTER_AS_INT(BLI_ghash_lookup(kcd->facetrimap, f));
 	BLI_assert(ans != 0);
 	return ans - 1;
 }
@@ -1004,12 +1008,18 @@ static void knifetool_draw_angle_snapping(const KnifeTool_OpData *kcd)
 		copy_v3_v3(v2, ray_hit_best[1]);
 	}
 
-	UI_ThemeColor(TH_TRANSFORM);
-	glLineWidth(2.0);
-	glBegin(GL_LINES);
-	glVertex3fv(v1);
-	glVertex3fv(v2);
-	glEnd();
+	uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
+	immUniformThemeColor(TH_TRANSFORM);
+	GPU_line_width(2.0);
+
+	immBegin(GPU_PRIM_LINES, 2);
+	immVertex3fv(pos, v1);
+	immVertex3fv(pos, v2);
+	immEnd();
+
+	immUnbindProgram();
 }
 
 static void knife_init_colors(KnifeColors *colors)
@@ -1028,152 +1038,176 @@ static void knife_init_colors(KnifeColors *colors)
 }
 
 /* modal loop selection drawing callback */
-static void knifetool_draw(const bContext *C, ARegion *UNUSED(ar), void *arg)
+static void knifetool_draw(const bContext *UNUSED(C), ARegion *UNUSED(ar), void *arg)
 {
-	View3D *v3d = CTX_wm_view3d(C);
 	const KnifeTool_OpData *kcd = arg;
-
-	if (v3d->zbuf) glDisable(GL_DEPTH_TEST);
+	GPU_depth_test(false);
 
 	glPolygonOffset(1.0f, 1.0f);
 
-	glPushMatrix();
-	glMultMatrixf(kcd->ob->obmat);
+	GPU_matrix_push();
+	GPU_matrix_mul(kcd->ob->obmat);
+
+	if (kcd->mode == MODE_DRAGGING && kcd->is_angle_snapping) {
+		knifetool_draw_angle_snapping(kcd);
+	}
+
+	GPUVertFormat *format = immVertexFormat();
+	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_3D_UNIFORM_COLOR);
 
 	if (kcd->mode == MODE_DRAGGING) {
-		if (kcd->is_angle_snapping)
-			knifetool_draw_angle_snapping(kcd);
+		immUniformColor3ubv(kcd->colors.line);
+		GPU_line_width(2.0);
 
-		glColor3ubv(kcd->colors.line);
-
-		glLineWidth(2.0);
-
-		glBegin(GL_LINES);
-		glVertex3fv(kcd->prev.cage);
-		glVertex3fv(kcd->curr.cage);
-		glEnd();
+		immBegin(GPU_PRIM_LINES, 2);
+		immVertex3fv(pos, kcd->prev.cage);
+		immVertex3fv(pos, kcd->curr.cage);
+		immEnd();
 	}
 
 	if (kcd->prev.vert) {
-		glColor3ubv(kcd->colors.point);
-		glPointSize(11);
+		immUniformColor3ubv(kcd->colors.point);
+		GPU_point_size(11);
 
-		glBegin(GL_POINTS);
-		glVertex3fv(kcd->prev.cage);
-		glEnd();
+		immBegin(GPU_PRIM_POINTS, 1);
+		immVertex3fv(pos, kcd->prev.cage);
+		immEnd();
 	}
 
 	if (kcd->prev.bmface) {
-		glColor3ubv(kcd->colors.curpoint);
-		glPointSize(9);
+		immUniformColor3ubv(kcd->colors.curpoint);
+		GPU_point_size(9);
 
-		glBegin(GL_POINTS);
-		glVertex3fv(kcd->prev.cage);
-		glEnd();
+		immBegin(GPU_PRIM_POINTS, 1);
+		immVertex3fv(pos, kcd->prev.cage);
+		immEnd();
 	}
 
 	if (kcd->curr.edge) {
-		glColor3ubv(kcd->colors.edge);
-		glLineWidth(2.0);
+		immUniformColor3ubv(kcd->colors.edge);
+		GPU_line_width(2.0);
 
-		glBegin(GL_LINES);
-		glVertex3fv(kcd->curr.edge->v1->cageco);
-		glVertex3fv(kcd->curr.edge->v2->cageco);
-		glEnd();
+		immBegin(GPU_PRIM_LINES, 2);
+		immVertex3fv(pos, kcd->curr.edge->v1->cageco);
+		immVertex3fv(pos, kcd->curr.edge->v2->cageco);
+		immEnd();
 	}
 	else if (kcd->curr.vert) {
-		glColor3ubv(kcd->colors.point);
-		glPointSize(11);
+		immUniformColor3ubv(kcd->colors.point);
+		GPU_point_size(11);
 
-		glBegin(GL_POINTS);
-		glVertex3fv(kcd->curr.cage);
-		glEnd();
+		immBegin(GPU_PRIM_POINTS, 1);
+		immVertex3fv(pos, kcd->curr.cage);
+		immEnd();
 	}
 
 	if (kcd->curr.bmface) {
-		glColor3ubv(kcd->colors.curpoint);
-		glPointSize(9);
+		immUniformColor3ubv(kcd->colors.curpoint);
+		GPU_point_size(9);
 
-		glBegin(GL_POINTS);
-		glVertex3fv(kcd->curr.cage);
-		glEnd();
+		immBegin(GPU_PRIM_POINTS, 1);
+		immVertex3fv(pos, kcd->curr.cage);
+		immEnd();
 	}
 
 	if (kcd->totlinehit > 0) {
 		KnifeLineHit *lh;
-		int i;
+		int i, v, vs;
+		float fcol[4];
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GPU_blend(true);
+		GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+
+		GPUVertBuf *vert = GPU_vertbuf_create_with_format(format);
+		GPU_vertbuf_data_alloc(vert, kcd->totlinehit);
+
+		lh = kcd->linehits;
+		for (i = 0, v = 0, vs = kcd->totlinehit - 1; i < kcd->totlinehit; i++, lh++) {
+			if (lh->v) {
+				GPU_vertbuf_attr_set(vert, pos, v++, lh->cagehit);
+			}
+			else {
+				GPU_vertbuf_attr_set(vert, pos, vs--, lh->cagehit);
+			}
+		}
+
+		GPUBatch *batch = GPU_batch_create_ex(GPU_PRIM_POINTS, vert, NULL, GPU_BATCH_OWNS_VBO);
+		GPU_batch_program_set_builtin(batch, GPU_SHADER_3D_UNIFORM_COLOR);
 
 		/* draw any snapped verts first */
-		glColor4ubv(kcd->colors.point_a);
-		glPointSize(11);
-		glBegin(GL_POINTS);
-		lh = kcd->linehits;
-		for (i = 0; i < kcd->totlinehit; i++, lh++) {
-			if (lh->v)
-				glVertex3fv(lh->cagehit);
-		}
-		glEnd();
+		rgba_uchar_to_float(fcol, kcd->colors.point_a);
+		GPU_batch_uniform_4fv(batch, "color", fcol);
+		GPU_matrix_bind(batch->interface);
+		GPU_point_size(11);
+		GPU_batch_draw_range_ex(batch, 0, v - 1, false);
 
 		/* now draw the rest */
-		glColor4ubv(kcd->colors.curpoint_a);
-		glPointSize(7);
-		glBegin(GL_POINTS);
-		lh = kcd->linehits;
-		for (i = 0; i < kcd->totlinehit; i++, lh++) {
-			if (!lh->v)
-				glVertex3fv(lh->cagehit);
-		}
-		glEnd();
-		glDisable(GL_BLEND);
+		rgba_uchar_to_float(fcol, kcd->colors.curpoint_a);
+		GPU_batch_uniform_4fv(batch, "color", fcol);
+		GPU_point_size(7);
+		GPU_batch_draw_range_ex(batch, vs + 1, kcd->totlinehit - (vs + 1), false);
+
+		GPU_batch_program_use_end(batch);
+		GPU_batch_discard(batch);
+
+		GPU_blend(false);
 	}
 
 	if (kcd->totkedge > 0) {
 		BLI_mempool_iter iter;
 		KnifeEdge *kfe;
 
-		glLineWidth(1.0);
-		glBegin(GL_LINES);
+		immUniformColor3ubv(kcd->colors.line);
+		GPU_line_width(1.0);
+
+		GPUBatch *batch = immBeginBatchAtMost(GPU_PRIM_LINES, BLI_mempool_len(kcd->kedges) * 2);
 
 		BLI_mempool_iternew(kcd->kedges, &iter);
 		for (kfe = BLI_mempool_iterstep(&iter); kfe; kfe = BLI_mempool_iterstep(&iter)) {
 			if (!kfe->is_cut)
 				continue;
 
-			glColor3ubv(kcd->colors.line);
-
-			glVertex3fv(kfe->v1->cageco);
-			glVertex3fv(kfe->v2->cageco);
+			immVertex3fv(pos, kfe->v1->cageco);
+			immVertex3fv(pos, kfe->v2->cageco);
 		}
 
-		glEnd();
+		immEnd();
+
+		GPU_batch_draw(batch);
+		GPU_batch_discard(batch);
 	}
 
 	if (kcd->totkvert > 0) {
 		BLI_mempool_iter iter;
 		KnifeVert *kfv;
 
-		glPointSize(5.0);
+		immUniformColor3ubv(kcd->colors.point);
+		GPU_point_size(5.0);
 
-		glBegin(GL_POINTS);
+		GPUBatch *batch = immBeginBatchAtMost(GPU_PRIM_POINTS, BLI_mempool_len(kcd->kverts));
+
 		BLI_mempool_iternew(kcd->kverts, &iter);
 		for (kfv = BLI_mempool_iterstep(&iter); kfv; kfv = BLI_mempool_iterstep(&iter)) {
 			if (!kfv->is_cut)
 				continue;
 
-			glColor3ubv(kcd->colors.point);
-
-			glVertex3fv(kfv->cageco);
+			immVertex3fv(pos, kfv->cageco);
 		}
 
-		glEnd();
+		immEnd();
+
+		GPU_batch_draw(batch);
+		GPU_batch_discard(batch);
 	}
 
-	glPopMatrix();
+	immUnbindProgram();
 
-	if (v3d->zbuf) glEnable(GL_DEPTH_TEST);
+	GPU_matrix_pop();
+
+	/* Reset default */
+	GPU_depth_test(true);
 }
 
 /**
@@ -1217,7 +1251,7 @@ static bool knife_ray_intersect_face(
 		lv2 = kcd->cagecos[BM_elem_index_get(tri[1]->v)];
 		lv3 = kcd->cagecos[BM_elem_index_get(tri[2]->v)];
 		/* using epsilon test in case ray is directly through an internal
-		 * tesselation edge and might not hit either tesselation tri with
+		 * tessellation edge and might not hit either tessellation tri with
 		 * an exact test;
 		 * we will exclude hits near real edges by a later test */
 		if (isect_ray_tri_epsilon_v3(v1, raydir, lv1, lv2, lv3, &lambda, ray_tri_uv, KNIFE_FLT_EPS)) {
@@ -1390,11 +1424,11 @@ static bool bm_ray_cast_cb_elem_not_in_face_check(BMFace *f, void *user_data)
  * Check if \a p is visible (not clipped, not occluded by another face).
  * s in screen projection of p.
  *
- * \param ele_test  Optional vert/edge/face to use when \a p is on the surface of the geometry,
+ * \param ele_test: Optional vert/edge/face to use when \a p is on the surface of the geometry,
  * intersecting faces matching this face (or connected when an vert/edge) will be ignored.
  */
 static bool point_is_visible(
-        KnifeTool_OpData *kcd, const float p[3], const float s[2], bglMats *mats,
+        KnifeTool_OpData *kcd, const float p[3], const float s[2],
         BMElem *ele_test)
 {
 	BMFace *f_hit;
@@ -1412,7 +1446,7 @@ static bool point_is_visible(
 		float view[3], p_ofs[3];
 
 		/* TODO: I think there's a simpler way to get the required raycast ray */
-		ED_view3d_unproject(mats, view, s[0], s[1], 0.0f);
+		ED_view3d_unproject(kcd->vc.ar, s[0], s[1], 0.0f, view);
 
 		mul_m4_v3(kcd->ob->imat, view);
 
@@ -1485,7 +1519,6 @@ static void set_linehit_depth(KnifeTool_OpData *kcd, KnifeLineHit *lh)
 /* Finds visible (or all, if cutting through) edges that intersects the current screen drag line */
 static void knife_find_line_hits(KnifeTool_OpData *kcd)
 {
-	bglMats mats;
 	SmallHash faces, kfes, kfvs;
 	float v1[3], v2[3], v3[3], v4[3], s1[2], s2[2];
 	BVHTree *planetree, *tree;
@@ -1515,8 +1548,6 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 	const bool use_hit_prev = true;
 	const bool use_hit_curr = (kcd->is_drag_hold == false);
 
-	bgl_get_mats(&mats);
-
 	if (kcd->linehits) {
 		MEM_freeN(kcd->linehits);
 		kcd->linehits = NULL;
@@ -1542,8 +1573,8 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 	}
 
 	/* unproject screen line */
-	ED_view3d_win_to_segment(kcd->ar, kcd->vc.v3d, s1, v1, v3, true);
-	ED_view3d_win_to_segment(kcd->ar, kcd->vc.v3d, s2, v2, v4, true);
+	ED_view3d_win_to_segment_clipped(kcd->vc.depsgraph, kcd->ar, kcd->vc.v3d, s1, v1, v3, true);
+	ED_view3d_win_to_segment_clipped(kcd->vc.depsgraph, kcd->ar, kcd->vc.v3d, s2, v2, v4, true);
 
 	mul_m4_v3(kcd->ob->imat, v1);
 	mul_m4_v3(kcd->ob->imat, v2);
@@ -1551,7 +1582,7 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 	mul_m4_v3(kcd->ob->imat, v4);
 
 	/* numeric error, 'v1' -> 'v2', 'v2' -> 'v4' can end up being ~2000 units apart in otho mode
-	 * (from ED_view3d_win_to_segment_clip() above)
+	 * (from ED_view3d_win_to_segment_clipped() above)
 	 * this gives precision error; rather then solving properly
 	 * (which may involve using doubles everywhere!),
 	 * limit the distance between these points */
@@ -1645,7 +1676,7 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 		knife_project_v2(kcd, v->cageco, s);
 		d = dist_squared_to_line_segment_v2(s, s1, s2);
 		if ((d <= vert_tol_sq) &&
-		    (point_is_visible(kcd, v->cageco, s, &mats, bm_elem_from_knife_vert(v, &kfe_hit))))
+		    (point_is_visible(kcd, v->cageco, s, bm_elem_from_knife_vert(v, &kfe_hit))))
 		{
 			memset(&hit, 0, sizeof(hit));
 			hit.v = v;
@@ -1708,7 +1739,7 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 				 * Need to find 3d intersection of ray through sint */
 				knife_input_ray_segment(kcd, sint, 1.0f, r1, r2);
 				isect_kind = isect_line_line_v3(kfe->v1->cageco, kfe->v2->cageco, r1, r2, p_cage, p_cage_tmp);
-				if (isect_kind >= 1 && point_is_visible(kcd, p_cage, sint, &mats, bm_elem_from_knife_edge(kfe))) {
+				if (isect_kind >= 1 && point_is_visible(kcd, p_cage, sint, bm_elem_from_knife_edge(kfe))) {
 					memset(&hit, 0, sizeof(hit));
 					if (kcd->snap_midpoints) {
 						/* choose intermediate point snap too */
@@ -1737,7 +1768,7 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 		float p[3], p_cage[3];
 
 		if (use_hit_prev && knife_ray_intersect_face(kcd, s1, v1, v3, f, face_tol_sq, p, p_cage)) {
-			if (point_is_visible(kcd, p_cage, s1, &mats, (BMElem *)f)) {
+			if (point_is_visible(kcd, p_cage, s1, (BMElem *)f)) {
 				memset(&hit, 0, sizeof(hit));
 				hit.f = f;
 				copy_v3_v3(hit.hit, p);
@@ -1749,7 +1780,7 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 		}
 
 		if (use_hit_curr && knife_ray_intersect_face(kcd, s2, v2, v4, f, face_tol_sq, p, p_cage)) {
-			if (point_is_visible(kcd, p_cage, s2, &mats, (BMElem *)f)) {
+			if (point_is_visible(kcd, p_cage, s2, (BMElem *)f)) {
 				memset(&hit, 0, sizeof(hit));
 				hit.f = f;
 				copy_v3_v3(hit.hit, p);
@@ -1782,13 +1813,9 @@ static void knife_find_line_hits(KnifeTool_OpData *kcd)
 static void knife_input_ray_segment(KnifeTool_OpData *kcd, const float mval[2], const float ofs,
                                     float r_origin[3], float r_origin_ofs[3])
 {
-	bglMats mats;
-
-	bgl_get_mats(&mats);
-
 	/* unproject to find view ray */
-	ED_view3d_unproject(&mats, r_origin,     mval[0], mval[1], 0.0f);
-	ED_view3d_unproject(&mats, r_origin_ofs, mval[0], mval[1], ofs);
+	ED_view3d_unproject(kcd->vc.ar, mval[0], mval[1], 0.0f, r_origin);
+	ED_view3d_unproject(kcd->vc.ar, mval[0], mval[1], ofs,  r_origin_ofs);
 
 	/* transform into object space */
 	invert_m4_m4(kcd->ob->imat, kcd->ob->obmat);
@@ -2194,7 +2221,7 @@ static int knife_update_active(KnifeTool_OpData *kcd)
 	/* if no hits are found this would normally default to (0, 0, 0) so instead
 	 * get a point at the mouse ray closest to the previous point.
 	 * Note that drawing lines in `free-space` isn't properly supported
-	 * but theres no guarantee (0, 0, 0) has any geometry either - campbell */
+	 * but there's no guarantee (0, 0, 0) has any geometry either - campbell */
 	if (kcd->curr.vert == NULL && kcd->curr.edge == NULL && kcd->curr.bmface == NULL) {
 		float origin[3];
 		float origin_ofs[3];
@@ -2503,7 +2530,8 @@ static void knife_recalc_projmat(KnifeTool_OpData *kcd)
 	mul_v3_mat3_m4v3(kcd->proj_zaxis, kcd->ob->imat, kcd->vc.rv3d->viewinv[2]);
 	normalize_v3(kcd->proj_zaxis);
 
-	kcd->is_ortho = ED_view3d_clip_range_get(kcd->vc.v3d, kcd->vc.rv3d,
+	kcd->is_ortho = ED_view3d_clip_range_get(kcd->vc.depsgraph,
+	                                         kcd->vc.v3d, kcd->vc.rv3d,
 	                                         &kcd->clipsta, &kcd->clipend, true);
 }
 
@@ -2574,7 +2602,12 @@ static void knifetool_init_bmbvh(KnifeTool_OpData *kcd)
 {
 	BM_mesh_elem_index_ensure(kcd->em->bm, BM_VERT);
 
-	kcd->cagecos = (const float (*)[3])BKE_editmesh_vertexCos_get(kcd->em, kcd->scene, NULL);
+	Scene *scene_eval = (Scene *)DEG_get_evaluated_id(kcd->vc.depsgraph, &kcd->scene->id);
+	Object *obedit_eval = (Object *)DEG_get_evaluated_id(kcd->vc.depsgraph, &kcd->em->ob->id);
+	BMEditMesh *em_eval = BKE_editmesh_from_object(obedit_eval);
+
+	kcd->cagecos = (const float (*)[3])BKE_editmesh_vertexCos_get(
+	        kcd->vc.depsgraph, em_eval, scene_eval, NULL);
 
 	kcd->bmbvh = BKE_bmbvh_new_from_editmesh(
 	        kcd->em,
@@ -2734,30 +2767,6 @@ wmKeyMap *knifetool_modal_keymap(wmKeyConfig *keyconf)
 
 	keymap = WM_modalkeymap_add(keyconf, "Knife Tool Modal Map", modal_items);
 
-	/* items for modal map */
-	WM_modalkeymap_add_item(keymap, ESCKEY, KM_PRESS, KM_ANY, 0, KNF_MODAL_CANCEL);
-	WM_modalkeymap_add_item(keymap, MIDDLEMOUSE, KM_ANY, KM_ANY, 0, KNF_MODAL_PANNING);
-	WM_modalkeymap_add_item(keymap, LEFTMOUSE, KM_DBL_CLICK, KM_ANY, 0, KNF_MODAL_ADD_CUT_CLOSED);
-	WM_modalkeymap_add_item(keymap, LEFTMOUSE, KM_ANY, KM_ANY, 0, KNF_MODAL_ADD_CUT);
-	WM_modalkeymap_add_item(keymap, RIGHTMOUSE, KM_PRESS, KM_ANY, 0, KNF_MODAL_CANCEL);
-	WM_modalkeymap_add_item(keymap, RETKEY, KM_PRESS, KM_ANY, 0, KNF_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, PADENTER, KM_PRESS, KM_ANY, 0, KNF_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, SPACEKEY, KM_PRESS, KM_ANY, 0, KNF_MODAL_CONFIRM);
-	WM_modalkeymap_add_item(keymap, EKEY, KM_PRESS, 0, 0, KNF_MODAL_NEW_CUT);
-
-	WM_modalkeymap_add_item(keymap, LEFTCTRLKEY, KM_PRESS, KM_ANY, 0, KNF_MODAL_MIDPOINT_ON);
-	WM_modalkeymap_add_item(keymap, LEFTCTRLKEY, KM_RELEASE, KM_ANY, 0, KNF_MODAL_MIDPOINT_OFF);
-	WM_modalkeymap_add_item(keymap, RIGHTCTRLKEY, KM_PRESS, KM_ANY, 0, KNF_MODAL_MIDPOINT_ON);
-	WM_modalkeymap_add_item(keymap, RIGHTCTRLKEY, KM_RELEASE, KM_ANY, 0, KNF_MODAL_MIDPOINT_OFF);
-
-	WM_modalkeymap_add_item(keymap, LEFTSHIFTKEY, KM_PRESS, KM_ANY, 0, KNF_MODEL_IGNORE_SNAP_ON);
-	WM_modalkeymap_add_item(keymap, LEFTSHIFTKEY, KM_RELEASE, KM_ANY, 0, KNF_MODEL_IGNORE_SNAP_OFF);
-	WM_modalkeymap_add_item(keymap, RIGHTSHIFTKEY, KM_PRESS, KM_ANY, 0, KNF_MODEL_IGNORE_SNAP_ON);
-	WM_modalkeymap_add_item(keymap, RIGHTSHIFTKEY, KM_RELEASE, KM_ANY, 0, KNF_MODEL_IGNORE_SNAP_OFF);
-
-	WM_modalkeymap_add_item(keymap, CKEY, KM_PRESS, 0, 0, KNF_MODAL_ANGLE_SNAP_TOGGLE);
-	WM_modalkeymap_add_item(keymap, ZKEY, KM_PRESS, 0, 0, KNF_MODAL_CUT_THROUGH_TOGGLE);
-
 	WM_modalkeymap_assign(keymap, "MESH_OT_knife_tool");
 
 	return keymap;
@@ -2771,7 +2780,7 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 	if (!obedit || obedit->type != OB_MESH || BKE_editmesh_from_object(obedit) != kcd->em) {
 		knifetool_exit(C, op);
-		ED_area_headerprint(CTX_wm_area(C), NULL);
+		ED_workspace_status_text(C, NULL);
 		return OPERATOR_FINISHED;
 	}
 
@@ -2792,7 +2801,7 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				ED_region_tag_redraw(kcd->ar);
 
 				knifetool_exit(C, op);
-				ED_area_headerprint(CTX_wm_area(C), NULL);
+				ED_workspace_status_text(C, NULL);
 
 				return OPERATOR_CANCELLED;
 			case KNF_MODAL_CONFIRM:
@@ -2801,7 +2810,7 @@ static int knifetool_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 				knifetool_finish(op);
 				knifetool_exit(C, op);
-				ED_area_headerprint(CTX_wm_area(C), NULL);
+				ED_workspace_status_text(C, NULL);
 
 				return OPERATOR_FINISHED;
 			case KNF_MODAL_MIDPOINT_ON:
@@ -3003,12 +3012,11 @@ static bool edbm_mesh_knife_point_isect(LinkNode *polys, const float cent_ss[2])
 }
 
 /**
- * \param use_tag  When set, tag all faces inside the polylines.
+ * \param use_tag: When set, tag all faces inside the polylines.
  */
 void EDBM_mesh_knife(bContext *C, LinkNode *polys, bool use_tag, bool cut_through)
 {
 	KnifeTool_OpData *kcd;
-	bglMats mats;
 
 	view3d_operator_needs_opengl(C);
 
@@ -3026,10 +3034,6 @@ void EDBM_mesh_knife(bContext *C, LinkNode *polys, bool use_tag, bool cut_throug
 
 		if (use_tag) {
 			BM_mesh_elem_hflag_enable_all(kcd->em->bm, BM_EDGE, BM_ELEM_TAG, false);
-		}
-
-		if (kcd->cut_through == false) {
-			bgl_get_mats(&mats);
 		}
 	}
 
@@ -3139,7 +3143,7 @@ void EDBM_mesh_knife(bContext *C, LinkNode *polys, bool use_tag, bool cut_throug
 							float cent[3], cent_ss[2];
 							BM_face_calc_point_in_face(f, cent);
 							knife_project_v2(kcd, cent, cent_ss);
-							if ((kcd->cut_through || point_is_visible(kcd, cent, cent_ss, &mats, (BMElem *)f)) &&
+							if ((kcd->cut_through || point_is_visible(kcd, cent, cent_ss, (BMElem *)f)) &&
 							    edbm_mesh_knife_point_isect(polys, cent_ss))
 							{
 								BM_elem_flag_enable(f, BM_ELEM_TAG);

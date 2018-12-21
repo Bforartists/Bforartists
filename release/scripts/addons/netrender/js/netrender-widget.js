@@ -105,7 +105,7 @@ function createPanelwidget(parent, name, header, content) {
 /*
  * create a jquery tabed widget
  * param;
- * 	 parent (string):  parent elemenet selector in form of '#name'
+ * 	 parent (string):  parent element selector in form of '#name'
  *   name (string ): name of the widget
  *   tabs_descriptions: array of object { name:"tabs-1", f_content: function for display tab content}
  *                          f_content= function(name){} where name is the tab name

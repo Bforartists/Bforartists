@@ -64,7 +64,7 @@ char *tcc_to_char(unsigned int tcc);
 
 
 
-/* implemetation */
+/* implementation */
 
 unsigned int GET_FCC(FILE *fp)
 {
@@ -200,35 +200,6 @@ AviError AVI_print_error(AviError in_error)
 
 	return in_error;
 }
-#if 0
-void AVI_set_debug(int mode)
-{
-	AVI_DEBUG = mode;
-}
-
-bool AVI_is_avi(char *name)
-{
-	FILE *fp;
-	int ret;
-
-	fp = BLI_fopen(name, "rb");
-	if (fp == NULL)
-		return 0;
-
-	if (GET_FCC(fp) != FCC("RIFF") ||
-	    !GET_FCC(fp) ||
-	    GET_FCC(fp) != FCC("AVI "))
-	{
-		ret = 0;
-	}
-	else {
-		ret = 1;
-	}
-
-	fclose(fp);
-	return ret;
-}
-#endif
 
 bool AVI_is_avi(const char *name)
 {
@@ -286,7 +257,7 @@ bool AVI_is_avi(const char *name)
 	fseek(movie.fp, movie.header->size - 14 * 4, SEEK_CUR);
 
 	/* Limit number of streams to some reasonable amount to prevent
-	 * buffer oveflow vulnerabilities. */
+	 * buffer overflow vulnerabilities. */
 	if (movie.header->Streams < 1 || movie.header->Streams > 65536) {
 		DEBUG_PRINT("Number of streams should be in range 1-65536\n");
 		fclose(movie.fp);
@@ -489,7 +460,7 @@ AviError AVI_open_movie(const char *name, AviMovie *movie)
 	fseek(movie->fp, movie->header->size - 14 * 4, SEEK_CUR);
 
 	/* Limit number of streams to some reasonable amount to prevent
-	 * buffer oveflow vulnerabilities. */
+	 * buffer overflow vulnerabilities. */
 	if (movie->header->Streams < 1 || movie->header->Streams > 65536) {
 		DEBUG_PRINT("Number of streams should be in range 1-65536\n");
 		return AVI_ERROR_FORMAT;
@@ -687,7 +658,7 @@ AviError AVI_open_movie(const char *name, AviMovie *movie)
 			movie->read_offset = 4;
 	}
 
-	DEBUG_PRINT("movie succesfully opened\n");
+	DEBUG_PRINT("movie successfully opened\n");
 	return AVI_ERROR_NONE;
 }
 
@@ -806,7 +777,7 @@ AviError AVI_open_compress(char *name, AviMovie *movie, int streams, ...)
 	movie->header->Reserved[3] = 0;
 
 	/* Limit number of streams to some reasonable amount to prevent
-	 * buffer oveflow vulnerabilities. */
+	 * buffer overflow vulnerabilities. */
 	if (movie->header->Streams < 0 || movie->header->Streams > 65536) {
 		DEBUG_PRINT("Number of streams should be in range 0-65536\n");
 		return AVI_ERROR_FORMAT;
@@ -850,14 +821,6 @@ AviError AVI_open_compress(char *name, AviMovie *movie, int streams, ...)
 		movie->streams[i].sh.bottom = 0;
 
 		if (movie->streams[i].sh.Type == FCC("vids")) {
-#if 0
-			if (movie->streams[i].format == AVI_FORMAT_MJPEG) {
-				movie->streams[i].sf = MEM_mallocN(sizeof(AviBitmapInfoHeader) +
-				                                   sizeof(AviMJPEGUnknown), "moviestreamformatL");
-				movie->streams[i].sf_size = sizeof(AviBitmapInfoHeader) + sizeof(AviMJPEGUnknown);
-			}
-			else {
-#endif
 			movie->streams[i].sf = MEM_mallocN(sizeof(AviBitmapInfoHeader),  "moviestreamformatS");
 			movie->streams[i].sf_size = sizeof(AviBitmapInfoHeader);
 
@@ -874,26 +837,6 @@ AviError AVI_open_compress(char *name, AviMovie *movie, int streams, ...)
 			((AviBitmapInfoHeader *) movie->streams[i].sf)->YPelsPerMeter = 0;
 			((AviBitmapInfoHeader *) movie->streams[i].sf)->ClrUsed = 0;
 			((AviBitmapInfoHeader *) movie->streams[i].sf)->ClrImportant = 0;
-
-#if 0
-			if (movie->streams[i].format == AVI_FORMAT_MJPEG) {
-				AviMJPEGUnknown *tmp;
-
-				tmp = (AviMJPEGUnknown *)((char *) movie->streams[i].sf + sizeof(AviBitmapInfoHeader));
-
-				tmp->a = 44;
-				tmp->b = 24;
-				tmp->c = 0;
-				tmp->d = 2;
-				tmp->e = 8;
-				tmp->f = 2;
-				tmp->g = 1;
-			}
-		}
-		else if (movie->streams[i].sh.Type == FCC("auds")) {
-			/* pass */
-		}
-#endif
 		}
 	}
 

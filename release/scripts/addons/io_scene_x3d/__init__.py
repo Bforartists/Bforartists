@@ -48,17 +48,15 @@ from bpy.props import (
 from bpy_extras.io_utils import (
         ImportHelper,
         ExportHelper,
-        orientation_helper_factory,
+        orientation_helper,
         axis_conversion,
         path_reference_mode,
         )
 
 
-IOX3DOrientationHelper = orientation_helper_factory("IOX3DOrientationHelper", axis_forward='Z', axis_up='Y')
-
-
-class ImportX3D(bpy.types.Operator, ImportHelper, IOX3DOrientationHelper):
-    """Import X3D / VRML2\nImport an X3D or VRML2 file"""
+@orientation_helper(axis_forward='Z', axis_up='Y')
+class ImportX3D(bpy.types.Operator, ImportHelper):
+    """Import an X3D or VRML2 file"""
     bl_idname = "import_scene.x3d"
     bl_label = "Import X3D/VRML2"
     bl_options = {'PRESET', 'UNDO'}
@@ -81,8 +79,9 @@ class ImportX3D(bpy.types.Operator, ImportHelper, IOX3DOrientationHelper):
         return import_x3d.load(context, **keywords)
 
 
-class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
-    """Export X3D\nExport selection to Extensible 3D file (.x3d)"""
+@orientation_helper(axis_forward='Z', axis_up='Y')
+class ExportX3D(bpy.types.Operator, ExportHelper):
+    """Export selection to Extensible 3D file (.x3d)"""
     bl_idname = "export_scene.x3d"
     bl_label = 'Export X3D'
     bl_options = {'PRESET'}
@@ -93,7 +92,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
     use_selection = BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=True, # bfa - changed the default from false to true
+            default=False,
             )
     use_mesh_modifiers = BoolProperty(
             name="Apply Modifiers",
@@ -161,26 +160,26 @@ class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
 
 def menu_func_import(self, context):
     self.layout.operator(ImportX3D.bl_idname,
-                         text="X3D Extensible 3D (.x3d/.wrl)", icon='LOAD_WRL')
+                         text="X3D Extensible 3D (.x3d/.wrl)")
 
 
 def menu_func_export(self, context):
     self.layout.operator(ExportX3D.bl_idname,
-                         text="X3D Extensible 3D (.x3d)", icon='SAVE_WRL') 
+                         text="X3D Extensible 3D (.x3d)")
 
 
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 # NOTES
 # - blender version is hardcoded

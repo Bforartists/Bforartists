@@ -43,7 +43,7 @@ def make_spiral(props, context):
     # archemedian and logarithmic can be plotted in cylindrical coordinates
 
     # INPUT: turns->degree->max_phi, steps, direction
-    # Initialise Polar Coordinate Enviroment
+    # Initialise Polar Coordinate Environment
     props.degree = 360 * props.turns     # If you want to make the slider for degree
     steps = props.steps * props.turns    # props.steps[per turn] -> steps[for the whole spiral]
     props.z_scale = props.dif_z * props.turns

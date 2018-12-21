@@ -19,8 +19,9 @@
 
 import bpy
 import os
-
+import re
 def find_index(objekti):
+
     luku = 0
     for tex in objekti.active_material.texture_slots:
         if(not(hasattr(tex,'texture'))):
@@ -28,308 +29,306 @@ def find_index(objekti):
         luku = luku +1
     return luku
 
-def gettex(mat_list, objekti, scene,export):
+def RemoveFbxNodes(objekti):
+    Node_Tree = objekti.active_material.node_tree
+    for node in Node_Tree.nodes:
+        if node.type != 'OUTPUT_MATERIAL':
+            Node_Tree.nodes.remove(node)
+        else:
+            output = node
+            output.location = 340,400
+    Prin_mat = Node_Tree.nodes.new(type="ShaderNodeBsdfPrincipled")
+    Prin_mat.location = 13, 375
 
+    Node_Tree.links.new(Prin_mat.outputs[0], output.inputs[0])
+
+def readtexturefolder(objekti, mat_list, texturelist, is_new): #read textures from texture file
+
+    create_nodes = False
+    for index_mat in objekti.material_slots:
+
+        texcoat = {}
+        texcoat['color'] = []
+        texcoat['metalness'] = []
+        texcoat['rough'] = []
+        texcoat['nmap'] = []
+        texcoat['disp'] = []
+        texcoat['emissive'] = []
+
+
+        for texture_info in texturelist:
+            if texture_info[0] == index_mat.name:
+                if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
+                    texcoat['color'].append(texture_info[3])
+                    create_nodes = True
+                if texture_info[2] == 'metalness' or texture_info[2] == 'specular' or texture_info[2] == 'reflection':
+                    texcoat['metalness'].append(texture_info[3])
+                    create_nodes = True
+                if texture_info[2] == 'rough' or texture_info[2] == 'roughness':
+                    texcoat['rough'].append(texture_info[3])
+                    create_nodes = True
+                if texture_info[2] == 'nmap' or texture_info[2] == 'normalmap' or texture_info[2] == 'normal_map':
+                    texcoat['nmap'].append(texture_info[3])
+                    create_nodes = True
+                if texture_info[2] == 'emissive':
+                    texcoat['emissive'].append(texture_info[3])
+                    create_nodes = True
+
+        if(create_nodes):
+            coat3D = bpy.context.scene.coat3D
+            path3b_n = coat3D.exchangedir
+            path3b_n += ('%slast_saved_3b_file.txt' % (os.sep))
+
+            if (os.path.isfile(path3b_n)):
+                export_file = open(path3b_n)
+                for line in export_file:
+                    objekti.coat3D.applink_3b_path = line
+                export_file.close()
+                coat3D.remove_path = True
+            createnodes(index_mat, texcoat)
+
+def checkmaterial(mat_list, objekti): #check how many materials object has
+    mat_list = []
+
+    for obj_mate in objekti.material_slots:
+        if(obj_mate.material.use_nodes == False):
+            obj_mate.material.use_nodes = True
+
+def createnodes(active_mat,texcoat): #luo nodes palikat ja linkittaa tekstuurit niihin
+    bring_color = True #naiden tarkoitus on tsekata onko tarvetta luoda uusi node vai riittaako paivitys
+    bring_metalness = True
+    bring_roughness = True
+    bring_normal = True
+    bring_disp = True
     coat3D = bpy.context.scene.coat3D
-    coa = objekti.coat3D
+    coatMat = active_mat.material
 
-    if(bpy.context.scene.render.engine == 'VRAY_RENDER' or bpy.context.scene.render.engine == 'VRAY_RENDER_PREVIEW'):
-        vray = True
+    if(coatMat.use_nodes == False):
+        coatMat.use_nodes = True
+    act_material = coatMat.node_tree
+    main_material = coatMat.node_tree
+    applink_group_node = False
+    #ensimmaiseksi kaydaan kaikki image nodet lapi ja tarkistetaan onko nimi 3DC alkunen jos on niin reload
+
+    for node in coatMat.node_tree.nodes:
+        if (node.type == 'OUTPUT_MATERIAL'):
+            out_mat = node
+            break
+
+    for node in act_material.nodes:
+        if(node.name == '3DC_Applink' and node.type == 'GROUP'):
+            applink_group_node = True
+            act_material = node.node_tree
+            group_tree = node.node_tree
+            applink_tree = node
+            break
+
+
+    for node in act_material.nodes:
+        if(node.type == 'TEX_IMAGE'):
+            if(node.name == '3DC_color'):
+                bring_color = False
+                node.image.reload()
+            elif(node.name == '3DC_metalness'):
+                bring_metalness = False
+                node.image.reload()
+            elif(node.name == '3DC_roughness'):
+                bring_roughness = False
+                node.image.reload()
+            elif(node.name == '3DC_normal'):
+                bring_normal = False
+                node.image.reload()
+
+    #seuraavaksi lahdemme rakentamaan node tree. Lahdetaan Material Outputista rakentaa
+
+    if(applink_group_node == False and coat3D.creategroup):
+        group_tree = bpy.data.node_groups.new( type="ShaderNodeTree", name="3DC_Applink")
+        group_tree.outputs.new("NodeSocketColor", "Color")
+        group_tree.outputs.new("NodeSocketColor", "Metallic")
+        group_tree.outputs.new("NodeSocketColor", "Roughness")
+        group_tree.outputs.new("NodeSocketVector", "Normal map")
+        applink_tree = act_material.nodes.new('ShaderNodeGroup')
+        applink_tree.name = '3DC_Applink'
+        applink_tree.node_tree = group_tree
+        applink_tree.location = -400, 300
+        act_material = group_tree
+        notegroup = act_material.nodes.new('NodeGroupOutput')
     else:
-        vray = False
+        index = 0
+        for node in coatMat.node_tree.nodes:
+            if (node.type == 'GROUP' and node.name =='3DC_Applink'):
+                for in_node in node.node_tree.nodes:
+                    if(in_node.type == 'GROUP_OUTPUT'):
+                        notegroup = in_node
+                        index = 1
+                        break
+            if(index == 1):
+                break
 
-    take_color = 0
-    take_spec = 0
-    take_normal = 0
-    take_disp = 0
-
-    bring_color = 1
-    bring_spec = 1
-    bring_normal = 1
-    bring_disp = 1
-
-    texcoat = {}
-    texcoat['color'] = []
-    texcoat['specular'] = []
-    texcoat['nmap'] = []
-    texcoat['disp'] = []
-    texu = []
-
-    if(export):
-        objekti.coat3D.objpath = export
-        nimi = os.path.split(export)[1]
-        osoite = os.path.dirname(export) + os.sep #pitaa ehka muuttaa
-        for mate in objekti.material_slots:
-            for tex_slot in mate.material.texture_slots:
-                if(hasattr(tex_slot,'texture')):
-                    if(tex_slot.texture.type == 'IMAGE'):
-                        if tex_slot.texture.image is not None:
-                            tex_slot.texture.image.reload()
-    else:
-        if(os.sys.platform == 'win32'):
-            osoite = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' + os.sep + 'Textures' + os.sep
+    if(out_mat.inputs['Surface'].is_linked == True):
+        main_mat = out_mat.inputs['Surface'].links[0].from_node
+        if(main_mat.inputs.find('Base Color') == -1):
+            input_color = main_mat.inputs.find('Color')
         else:
-            osoite = os.path.expanduser("~") + os.sep + '3DC2Blender' + os.sep + 'Textures' + os.sep
-    ki = os.path.split(coa.applink_name)[1]
-    ko = os.path.splitext(ki)[0]
-    just_nimi = ko + '_'
-    just_nimi_len = len(just_nimi)
-    print('terve:' + coa.applink_name)
+            input_color = main_mat.inputs.find('Base Color')
 
-    if(len(objekti.material_slots) != 0):
-        for obj_tex in objekti.active_material.texture_slots:
-            if(hasattr(obj_tex,'texture')):
-                if(obj_tex.texture.type == 'IMAGE'):
-                    if(obj_tex.use_map_color_diffuse):
-                        bring_color = 0;
-                    if(obj_tex.use_map_specular):
-                        bring_spec = 0;
-                    if(obj_tex.use_map_normal):
-                        bring_normal = 0;
-                    if(obj_tex.use_map_displacement):
-                        bring_disp = 0;
+        #Color
+        if(bring_color == True and texcoat['color'] != []):
+            node = act_material.nodes.new('ShaderNodeTexImage')
+            node.name = '3DC_color'
+            if (texcoat['color']):
+                sameimage = False
+                for image in bpy.data.images:
+                    if(image.filepath == texcoat['color'][0]):
+                        sameimage = True
+                        imagename = image
+                        break
 
-    files = os.listdir(osoite)
-    for i in files:
-        tui = i[:just_nimi_len]
-        if(tui == just_nimi):
-            texu.append(i)
+                if sameimage == True:
+                    node.image = imagename
+                else:
+                    node.image = bpy.data.images.load(texcoat['color'][0])
 
-    for yy in texu:
-        minimi = (yy.rfind('_'))+1
-        maksimi = (yy.rfind('.'))
-        tex_name = yy[minimi:maksimi]
-        koko = ''
-        koko += osoite
-        koko += yy
-        texcoat[tex_name].append(koko)
+            if(coat3D.createnodes):
+                curvenode = act_material.nodes.new('ShaderNodeRGBCurve')
+                curvenode.name = '3DC_RGBCurve'
+                huenode = act_material.nodes.new('ShaderNodeHueSaturation')
+                huenode.name = '3DC_HueSaturation'
 
-    if((texcoat['color'] or texcoat['nmap'] or texcoat['disp'] or texcoat['specular']) and (len(objekti.material_slots)) == 0):
-        materials_old = bpy.data.materials.keys()
-        bpy.ops.material.new()
-        materials_new = bpy.data.materials.keys()
-        new_ma = list(set(materials_new).difference(set(materials_old)))
-        new_mat = new_ma[0]
-        ki = bpy.data.materials[new_mat]
-        objekti.data.materials.append(ki)
+                act_material.links.new(curvenode.outputs[0], huenode.inputs[4])
+                act_material.links.new(node.outputs[0], curvenode.inputs[1])
+                if(coat3D.creategroup):
+                    act_material.links.new(huenode.outputs[0], notegroup.inputs[0])
+                    if(main_mat.type != 'MIX_SHADER'):
+                        main_material.links.new(applink_tree.outputs[0],main_mat.inputs[input_color])
+                    else:
+                        location = main_mat.location
+                        applink_tree.location = main_mat.location[0], main_mat.location[1] + 200
+                else:
+                    act_material.links.new(huenode.outputs[0], main_mat.inputs[input_color])
+                node.location = -990, 530
+                curvenode.location = -660, 480
+                huenode.location = -337, 335
+            else:
+                if (coat3D.creategroup):
+                    node.location = -400, 400
+                    act_material.links.new(node.outputs[0], notegroup.inputs[len(notegroup.inputs)-1])
+                    if (input_color != -1):
+                        main_material.links.new(applink_tree.outputs[len(applink_tree.outputs)-1], main_mat.inputs[input_color])
 
-    if(bring_color == 1 and texcoat['color']):
-        index = find_index(objekti)
-        tex = bpy.ops.Texture
-        objekti.active_material.texture_slots.create(index)
-        total_mat = len(objekti.active_material.texture_slots.items())
-        useold = ''
+                else:
+                    node.location = -400,400
+                    if (input_color != -1):
+                        act_material.links.new(node.outputs[0], main_mat.inputs[input_color])
+        #Metalness
+        if(bring_metalness == True and texcoat['metalness'] != []):
+            node = act_material.nodes.new('ShaderNodeTexImage')
+            node.name='3DC_metalness'
+            input_color = main_mat.inputs.find('Metallic')
+            if(texcoat['metalness']):
+                node.image = bpy.data.images.load(texcoat['metalness'][0])
+                node.color_space = 'NONE'
+            if (coat3D.createnodes):
+                curvenode = act_material.nodes.new('ShaderNodeRGBCurve')
+                curvenode.name = '3DC_RGBCurve'
+                huenode = act_material.nodes.new('ShaderNodeHueSaturation')
+                huenode.name = '3DC_HueSaturation'
 
-        for seekco in bpy.data.textures:
-            if((seekco.name[:5] == 'Color') and (seekco.users_material == ())):
-                useold = seekco
+                act_material.links.new(curvenode.outputs[0], huenode.inputs[4])
+                act_material.links.new(node.outputs[0], curvenode.inputs[1])
 
+                if (coat3D.creategroup):
+                    act_material.links.new(huenode.outputs[0], notegroup.inputs[1])
+                    if (main_mat.type == 'BSDF_PRINCIPLED'):
+                        main_material.links.new(applink_tree.outputs[1], main_mat.inputs[input_color])
+                else:
+                    act_material.links.new(huenode.outputs[0], main_mat.inputs[input_color])
 
-        if(useold == ''):
-
-            textures_old = bpy.data.textures.keys()
-            bpy.data.textures.new('Color',type='IMAGE')
-            textures_new = bpy.data.textures.keys()
-            name_te = list(set(textures_new).difference(set(textures_old)))
-            name_tex = name_te[0]
-
-            bpy.ops.image.new(name=name_tex)
-            bpy.data.images[name_tex].filepath = texcoat['color'][0]
-            bpy.data.images[name_tex].source = 'FILE'
-
-            objekti.active_material.texture_slots[index].texture = bpy.data.textures[name_tex]
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[name_tex]
-
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-
-            objekti.active_material.texture_slots[index].texture.image.reload()
-
-
-        elif(useold != ''):
-
-            objekti.active_material.texture_slots[index].texture = useold
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[useold.name]
-            objekti.active_material.texture_slots[index].texture.image.filepath = texcoat['color'][0]
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-
-
-    if(bring_normal == 1 and texcoat['nmap']):
-        index = find_index(objekti)
-        tex = bpy.ops.Texture
-        objekti.active_material.texture_slots.create(index)
-        total_mat = len(objekti.active_material.texture_slots.items())
-        useold = ''
-
-        for seekco in bpy.data.textures:
-            if((seekco.name[:6] == 'Normal') and (seekco.users_material == ())):
-                useold = seekco
-
-        if(useold == ''):
-
-            textures_old = bpy.data.textures.keys()
-            bpy.data.textures.new('Normal',type='IMAGE')
-            textures_new = bpy.data.textures.keys()
-            name_te = list(set(textures_new).difference(set(textures_old)))
-            name_tex = name_te[0]
-
-            bpy.ops.image.new(name=name_tex)
-            bpy.data.images[name_tex].filepath = texcoat['nmap'][0]
-            bpy.data.images[name_tex].source = 'FILE'
-
-            objekti.active_material.texture_slots[index].texture = bpy.data.textures[name_tex]
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[name_tex]
-
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_normal = True
-
-            objekti.active_material.texture_slots[index].texture.image.reload()
-            if(vray):
-                bpy.data.textures[name_tex].vray_slot.BRDFBump.map_type = 'TANGENT'
+                node.location = -994, 119
+                curvenode.location = -668, 113
+                huenode.location = -345, 118
 
             else:
-                bpy.data.textures[name_tex].use_normal_map = True
-                objekti.active_material.texture_slots[index].normal_map_space = 'TANGENT'
-                objekti.active_material.texture_slots[index].normal_factor = 1
+                if (coat3D.creategroup):
+                    node.location = -830, 160
+                    act_material.links.new(node.outputs[0], notegroup.inputs[len(notegroup.inputs)-1])
+                    if (input_color != -1):
+                        main_material.links.new(applink_tree.outputs[len(applink_tree.outputs)-1], main_mat.inputs[input_color])
+                else:
+                    node.location = -830, 160
+                    if (input_color != -1):
+                        act_material.links.new(node.outputs[0], main_mat.inputs[input_color])
 
+        #Roughness
+        if(bring_roughness == True and texcoat['rough'] != []):
+            node = act_material.nodes.new('ShaderNodeTexImage')
+            node.name='3DC_roughness'
+            input_color = main_mat.inputs.find('Roughness')
+            if(texcoat['rough']):
+                node.image = bpy.data.images.load(texcoat['rough'][0])
+                node.color_space = 'NONE'
 
+            if (coat3D.createnodes):
+                curvenode = act_material.nodes.new('ShaderNodeRGBCurve')
+                curvenode.name = '3DC_RGBCurve'
+                huenode = act_material.nodes.new('ShaderNodeHueSaturation')
+                huenode.name = '3DC_HueSaturation'
 
-        elif(useold != ''):
+                act_material.links.new(curvenode.outputs[0], huenode.inputs[4])
+                act_material.links.new(node.outputs[0], curvenode.inputs[1])
 
-            objekti.active_material.texture_slots[index].texture = useold
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[useold.name]
-            objekti.active_material.texture_slots[index].texture.image.filepath = texcoat['nmap'][0]
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_normal = True
-            objekti.active_material.texture_slots[index].normal_factor = 1
+                if (coat3D.creategroup):
+                    act_material.links.new(huenode.outputs[0], notegroup.inputs[2])
+                    if(main_mat.type == 'BSDF_PRINCIPLED'):
+                        main_material.links.new(applink_tree.outputs[2], main_mat.inputs[input_color])
+                else:
+                    act_material.links.new(huenode.outputs[0], main_mat.inputs[input_color])
 
+                node.location = -1000, -276
+                curvenode.location = -670, -245
+                huenode.location = -340, -100
 
-    if(bring_spec == 1 and texcoat['specular']):
-
-        index = find_index(objekti)
-
-        objekti.active_material.texture_slots.create(index)
-        useold = ''
-
-        for seekco in bpy.data.textures:
-            if((seekco.name[:8] == 'Specular') and (seekco.users_material == ())):
-                useold = seekco
-
-        if(useold == ''):
-
-            textures_old = bpy.data.textures.keys()
-            bpy.data.textures.new('Specular',type='IMAGE')
-            textures_new = bpy.data.textures.keys()
-            name_te = list(set(textures_new).difference(set(textures_old)))
-            name_tex = name_te[0]
-
-            bpy.ops.image.new(name=name_tex)
-            bpy.data.images[name_tex].filepath = texcoat['specular'][0]
-            bpy.data.images[name_tex].source = 'FILE'
-
-            objekti.active_material.texture_slots[index].texture = bpy.data.textures[name_tex]
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[name_tex]
-
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_specular = True
-
-            objekti.active_material.texture_slots[index].texture.image.reload()
-
-
-        elif(useold != ''):
-
-            objekti.active_material.texture_slots[index].texture = useold
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[useold.name]
-            objekti.active_material.texture_slots[index].texture.image.filepath = texcoat['specular'][0]
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_specular = True
-
-    if(bring_disp == 1 and texcoat['disp']):
-
-        index = find_index(objekti)
-
-
-        objekti.active_material.texture_slots.create(index)
-        useold = ''
-
-        for seekco in bpy.data.textures:
-            if((seekco.name[:12] == 'Displacement') and (seekco.users_material == ())):
-                useold = seekco
-
-        if useold == "":
-
-            textures_old = bpy.data.textures.keys()
-            bpy.data.textures.new('Displacement',type='IMAGE')
-            textures_new = bpy.data.textures.keys()
-            name_te = list(set(textures_new).difference(set(textures_old)))
-            name_tex = name_te[0]
-
-            bpy.ops.image.new(name=name_tex)
-            bpy.data.images[name_tex].filepath = texcoat['disp'][0]
-            bpy.data.images[name_tex].source = 'FILE'
-
-            objekti.active_material.texture_slots[index].texture = bpy.data.textures[name_tex]
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[name_tex]
-
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_displacement = True
-
-            objekti.active_material.texture_slots[index].texture.image.reload()
-
-
-        elif(useold != ''):
-
-            objekti.active_material.texture_slots[index].texture = useold
-            objekti.active_material.texture_slots[index].texture.image = bpy.data.images[useold.name]
-            objekti.active_material.texture_slots[index].texture.image.filepath = texcoat['disp'][0]
-            if(objekti.data.uv_textures.active):
-                objekti.active_material.texture_slots[index].texture_coords = 'UV'
-                objekti.active_material.texture_slots[index].uv_layer = objekti.data.uv_textures.active.name
-            objekti.active_material.texture_slots[index].use_map_color_diffuse = False
-            objekti.active_material.texture_slots[index].use_map_displacement = True
-
-        if(vray):
-            objekti.active_material.texture_slots[index].texture.use_interpolation = False
-            objekti.active_material.texture_slots[index].displacement_factor = 0.05
-
-
-        else:
-            disp_modi = ''
-            for seek_modi in objekti.modifiers:
-                if(seek_modi.type == 'DISPLACE'):
-                    disp_modi = seek_modi
-                    break
-            if(disp_modi):
-                disp_modi.texture = objekti.active_material.texture_slots[index].texture
-                if(objekti.data.uv_textures.active):
-                    disp_modi.texture_coords = 'UV'
-                    disp_modi.uv_layer = objekti.data.uv_textures.active.name
             else:
-                objekti.modifiers.new('Displace',type='DISPLACE')
-                objekti.modifiers['Displace'].texture = objekti.active_material.texture_slots[index].texture
-                if(objekti.data.uv_textures.active):
-                    objekti.modifiers['Displace'].texture_coords = 'UV'
-                    objekti.modifiers['Displace'].uv_layer = objekti.data.uv_textures.active.name
+                if (coat3D.creategroup):
+                    node.location = -550, 0
+                    act_material.links.new(node.outputs[0],notegroup.inputs[len(notegroup.inputs)-1])
+                    if (input_color != -1):
+                        main_material.links.new(applink_tree.outputs[len(applink_tree.outputs)-1], main_mat.inputs[input_color])
+
+                else:
+                    node.location = -550, 0
+                    if (input_color != -1):
+                        act_material.links.new(node.outputs[0], main_mat.inputs[input_color])
+        #Normal map
+        if(bring_normal == True and texcoat['nmap'] != []):
+            node = act_material.nodes.new('ShaderNodeTexImage')
+            normal_node = act_material.nodes.new('ShaderNodeNormalMap')
+
+            node.location = -600,-670
+            normal_node.location = -300,-300
+
+            node.name='3DC_normal'
+            normal_node.name='3DC_normalnode'
+            if(texcoat['nmap']):
+                node.image = bpy.data.images.load(texcoat['nmap'][0])
+                node.color_space = 'NONE'
+            input_color = main_mat.inputs.find('Normal')
+            act_material.links.new(node.outputs[0], normal_node.inputs[1])
+            act_material.links.new(normal_node.outputs[0], main_mat.inputs[input_color])
+            if (coat3D.creategroup):
+                act_material.links.new(normal_node.outputs[0], notegroup.inputs[3])
+                if(main_mat.inputs[input_color].name == 'Normal'):
+                    main_material.links.new(applink_tree.outputs[3], main_mat.inputs[input_color])
+
+
+def matlab(objekti,mat_list,texturelist,is_new):
+
+    ''' FBX Materials: remove all nodes and create princibles node'''
+    if(is_new):
+        RemoveFbxNodes(objekti)
+
+    '''Main Loop for Texture Update'''
+    #checkmaterial(mat_list, objekti)
+    readtexturefolder(objekti,mat_list,texturelist,is_new)
 
     return('FINISHED')

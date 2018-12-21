@@ -48,11 +48,13 @@
 
 #include "BKE_global.h"
 
-#include "BKE_depsgraph.h"
 #include "BKE_displist.h"
 #include "BKE_main.h"
 #include "BKE_mball_tessellate.h"  /* own include */
 #include "BKE_scene.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "BLI_strict_flags.h"
 
@@ -447,18 +449,18 @@ static void freepolygonize(PROCESS *process)
 
 /**** Cubical Polygonization (optional) ****/
 
-#define LB  0  /* left bottom edge	*/
-#define LT  1  /* left top edge	*/
-#define LN  2  /* left near edge	*/
-#define LF  3  /* left far edge	*/
+#define LB  0  /* left bottom edge */
+#define LT  1  /* left top edge */
+#define LN  2  /* left near edge */
+#define LF  3  /* left far edge */
 #define RB  4  /* right bottom edge */
-#define RT  5  /* right top edge	*/
-#define RN  6  /* right near edge	*/
-#define RF  7  /* right far edge	*/
-#define BN  8  /* bottom near edge	*/
-#define BF  9  /* bottom far edge	*/
-#define TN  10 /* top near edge	*/
-#define TF  11 /* top far edge	*/
+#define RT  5  /* right top edge */
+#define RN  6  /* right near edge */
+#define RF  7  /* right far edge */
+#define BN  8  /* bottom near edge */
+#define BF  9  /* bottom far edge */
+#define TN  10 /* top near edge */
+#define TF  11 /* top far edge */
 
 static INTLISTS *cubetable[256];
 static char faces[256];
@@ -837,27 +839,6 @@ static void vnormal(PROCESS *process, const float point[3], float r_no[3])
 	r_no[0] = metaball(process, point[0] + delta, point[1], point[2]) - f;
 	r_no[1] = metaball(process, point[0], point[1] + delta, point[2]) - f;
 	r_no[2] = metaball(process, point[0], point[1], point[2] + delta) - f;
-
-#if 0
-	f = normalize_v3(r_no);
-
-	if (0) {
-		float tvec[3];
-
-		delta *= 2.0f;
-
-		f = process->function(process, point[0], point[1], point[2]);
-
-		tvec[0] = process->function(process, point[0] + delta, point[1], point[2]) - f;
-		tvec[1] = process->function(process, point[0], point[1] + delta, point[2]) - f;
-		tvec[2] = process->function(process, point[0], point[1], point[2] + delta) - f;
-
-		if (normalize_v3(tvec) != 0.0f) {
-			add_v3_v3(r_no, tvec);
-			normalize_v3(r_no);
-		}
-	}
-#endif
 }
 #endif  /* USE_ACCUM_NORMAL */
 
@@ -1056,7 +1037,7 @@ static void polygonize(PROCESS *process)
  * Iterates over ALL objects in the scene and all of its sets, including
  * making all duplis(not only metas). Copies metas to mainb array.
  * Computes bounding boxes for building BVH. */
-static void init_meta(Main *bmain, EvaluationContext *eval_ctx, PROCESS *process, Scene *scene, Object *ob)
+static void init_meta(Depsgraph *depsgraph, PROCESS *process, Scene *scene, Object *ob)
 {
 	Scene *sce_iter = scene;
 	Base *base;
@@ -1075,13 +1056,13 @@ static void init_meta(Main *bmain, EvaluationContext *eval_ctx, PROCESS *process
 	BLI_split_name_num(obname, &obnr, ob->id.name + 2, '.');
 
 	/* make main array */
-	BKE_scene_base_iter_next(bmain, eval_ctx, &iter, &sce_iter, 0, NULL, NULL);
-	while (BKE_scene_base_iter_next(bmain, eval_ctx, &iter, &sce_iter, 1, &base, &bob)) {
+	BKE_scene_base_iter_next(depsgraph, &iter, &sce_iter, 0, NULL, NULL);
+	while (BKE_scene_base_iter_next(depsgraph, &iter, &sce_iter, 1, &base, &bob)) {
 		if (bob->type == OB_MBALL) {
 			zero_size = 0;
 			ml = NULL;
 
-			if (bob == ob && (base->flag & OB_FROMDUPLI) == 0) {
+			if (bob == ob && (base->flag_legacy & OB_FROMDUPLI) == 0) {
 				mb = ob->data;
 
 				if (mb->editelems) ml = mb->editelems->first;
@@ -1233,12 +1214,13 @@ static void init_meta(Main *bmain, EvaluationContext *eval_ctx, PROCESS *process
 	}
 }
 
-void BKE_mball_polygonize(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *ob, ListBase *dispbase)
+void BKE_mball_polygonize(Depsgraph *depsgraph, Scene *scene, Object *ob, ListBase *dispbase)
 {
 	MetaBall *mb;
 	DispList *dl;
 	unsigned int a;
 	PROCESS process = {0};
+	bool is_render = DEG_get_mode(depsgraph) == DAG_EVAL_RENDER;
 
 	mb = ob->data;
 
@@ -1249,10 +1231,10 @@ void BKE_mball_polygonize(Main *bmain, EvaluationContext *eval_ctx, Scene *scene
 	else if (process.thresh < 0.1f)   process.converge_res = 4;
 	else                              process.converge_res = 2;
 
-	if ((eval_ctx->mode != DAG_EVAL_RENDER) && (mb->flag == MB_UPDATE_NEVER)) return;
+	if (is_render && (mb->flag == MB_UPDATE_NEVER)) return;
 	if ((G.moving & (G_TRANSFORM_OBJ | G_TRANSFORM_EDIT)) && mb->flag == MB_UPDATE_FAST) return;
 
-	if (eval_ctx->mode == DAG_EVAL_RENDER) {
+	if (is_render) {
 		process.size = mb->rendersize;
 	}
 	else {
@@ -1267,7 +1249,7 @@ void BKE_mball_polygonize(Main *bmain, EvaluationContext *eval_ctx, Scene *scene
 	process.pgn_elements = BLI_memarena_new(BLI_MEMARENA_STD_BUFSIZE, "Metaball memarena");
 
 	/* initialize all mainb (MetaElems) */
-	init_meta(bmain, eval_ctx, &process, scene, ob);
+	init_meta(depsgraph, &process, scene, ob);
 
 	if (process.totelem > 0) {
 		build_bvh_spatial(&process, &process.metaball_bvh, 0, process.totelem, &process.allbb);

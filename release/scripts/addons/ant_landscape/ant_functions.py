@@ -953,43 +953,43 @@ class Eroder(bpy.types.Operator):
         try:
             vg=ob.vertex_groups["rainmap"]
         except:
-            vg=ob.vertex_groups.new("rainmap")
+            vg=ob.vertex_groups.new(name="rainmap")
         try:
             vgscree=ob.vertex_groups["scree"]
         except:
-            vgscree=ob.vertex_groups.new("scree")
+            vgscree=ob.vertex_groups.new(name="scree")
         try:
             vgavalanced=ob.vertex_groups["avalanced"]
         except:
-            vgavalanced=ob.vertex_groups.new("avalanced")
+            vgavalanced=ob.vertex_groups.new(name="avalanced")
         try:
             vgw=ob.vertex_groups["water"]
         except:
-            vgw=ob.vertex_groups.new("water")
+            vgw=ob.vertex_groups.new(name="water")
         try:
             vgscour=ob.vertex_groups["scour"]
         except:
-            vgscour=ob.vertex_groups.new("scour")
+            vgscour=ob.vertex_groups.new(name="scour")
         try:
             vgdeposit=ob.vertex_groups["deposit"]
         except:
-            vgdeposit=ob.vertex_groups.new("deposit")
+            vgdeposit=ob.vertex_groups.new(name="deposit")
         try:
             vgflowrate=ob.vertex_groups["flowrate"]
         except:
-            vgflowrate=ob.vertex_groups.new("flowrate")
+            vgflowrate=ob.vertex_groups.new(name="flowrate")
         try:
             vgsediment=ob.vertex_groups["sediment"]
         except:
-            vgsediment=ob.vertex_groups.new("sediment")
+            vgsediment=ob.vertex_groups.new(name="sediment")
         try:
             vgsedimentpct=ob.vertex_groups["sedimentpct"]
         except:
-            vgsedimentpct=ob.vertex_groups.new("sedimentpct")
+            vgsedimentpct=ob.vertex_groups.new(name="sedimentpct")
         try:
             vgcapacity=ob.vertex_groups["capacity"]
         except:
-            vgcapacity=ob.vertex_groups.new("capacity")
+            vgcapacity=ob.vertex_groups.new(name="capacity")
 
         g = Grid.fromBlenderMesh(me, vg, self.Ef)
 

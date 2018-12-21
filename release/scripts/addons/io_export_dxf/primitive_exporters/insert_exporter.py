@@ -72,4 +72,3 @@ def exportInsert(ob, mx, insert_name, **common):
         entities.append(dxfINSERT)
 
     return entities
-

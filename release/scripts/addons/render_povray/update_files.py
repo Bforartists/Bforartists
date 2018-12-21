@@ -485,7 +485,7 @@ def register():
     #Aperture (Intensity of the Blur)
     Cam.pov_dof_aperture = FloatProperty(
             name="Aperture",
-            description="Similar to a real camera's aperture effect over focal blur (though not in physical units and independant of focal length).Increase to get more blur",
+            description="Similar to a real camera's aperture effect over focal blur (though not in physical units and independent of focal length).Increase to get more blur",
             min=0.01, max=1.00, default=0.25)
 
     #Aperture adaptive sampling

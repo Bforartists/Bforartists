@@ -4,4 +4,3 @@ try:
     numexpr_available=True
 except ImportError:
     pass
-

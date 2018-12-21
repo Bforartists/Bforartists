@@ -46,11 +46,12 @@
 
 #include "BKE_colorband.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_brush.h"
 #include "BKE_image.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_paint.h"
 #include "ED_screen.h"
@@ -409,7 +410,7 @@ static ImBuf *brush_painter_imbuf_new(BrushPainter *painter, int size, float pre
 
 			if (is_texbrush) {
 				brush_imbuf_tex_co(&tex_mapping, x, y, texco);
-				BKE_brush_sample_tex_3D(scene, brush, texco, rgba, thread, pool);
+				BKE_brush_sample_tex_3d(scene, brush, texco, rgba, thread, pool);
 				/* TODO(sergey): Support texture paint color space. */
 				if (!use_float) {
 					IMB_colormanagement_scene_linear_to_display_v3(rgba, display);
@@ -484,7 +485,7 @@ static void brush_painter_imbuf_update(
 			if (!use_texture_old) {
 				if (is_texbrush) {
 					brush_imbuf_tex_co(&tex_mapping, x, y, texco);
-					BKE_brush_sample_tex_3D(scene, brush, texco, rgba, thread, pool);
+					BKE_brush_sample_tex_3d(scene, brush, texco, rgba, thread, pool);
 					/* TODO(sergey): Support texture paint color space. */
 					if (!use_float) {
 						IMB_colormanagement_scene_linear_to_display_v3(rgba, display);
@@ -700,7 +701,7 @@ static void brush_painter_2d_refresh_cache(ImagePaintState *s, BrushPainter *pai
 			do_partial_update_mask = true;
 			renew_maxmask = true;
 		}
-		/* explicilty disable partial update even if it has been enabled above */
+		/* explicitly disable partial update even if it has been enabled above */
 		if (brush->mask_pressure) {
 			do_partial_update_mask = false;
 			renew_maxmask = true;
@@ -865,8 +866,9 @@ static void paint_2d_lift_soften(ImagePaintState *s, ImBuf *ibuf, ImBuf *ibufb, 
 	out_off[0] = out_off[1] = 0;
 
 	if (!tile) {
-		IMB_rectclip(ibuf, ibufb, &in_off[0], &in_off[1], &out_off[0],
-		             &out_off[1], &dim[0], &dim[1]);
+		IMB_rectclip(
+		        ibuf, ibufb, &in_off[0], &in_off[1], &out_off[0],
+		        &out_off[1], &dim[0], &dim[1]);
 
 		if ((dim[0] == 0) || (dim[1] == 0))
 			return;
@@ -1383,7 +1385,7 @@ void paint_2d_redraw(const bContext *C, void *ps, bool final)
 
 		/* compositor listener deals with updating */
 		WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, s->image);
-		DAG_id_tag_update(&s->image->id, 0);
+		DEG_id_tag_update(&s->image->id, 0);
 	}
 	else {
 		if (!s->sima || !s->sima->lock)
@@ -1419,8 +1421,9 @@ static void paint_2d_fill_add_pixel_byte(
 		float color_f[4];
 		unsigned char *color_b = (unsigned char *)(ibuf->rect + coordinate);
 		rgba_uchar_to_float(color_f, color_b);
+		straight_to_premul_v4(color_f);
 
-		if (compare_len_squared_v3v3(color_f, color, threshold_sq)) {
+		if (compare_len_squared_v4v4(color_f, color, threshold_sq)) {
 			BLI_stack_push(stack, &coordinate);
 		}
 		BLI_BITMAP_SET(touched, coordinate, true);
@@ -1439,7 +1442,7 @@ static void paint_2d_fill_add_pixel_float(
 	coordinate = ((size_t)y_px) * ibuf->x + x_px;
 
 	if (!BLI_BITMAP_TEST(touched, coordinate)) {
-		if (compare_len_squared_v3v3(ibuf->rect_float + 4 * coordinate, color, threshold_sq)) {
+		if (compare_len_squared_v4v4(ibuf->rect_float + 4 * coordinate, color, threshold_sq)) {
 			BLI_stack_push(stack, &coordinate);
 		}
 		BLI_BITMAP_SET(touched, coordinate, true);
@@ -1546,6 +1549,7 @@ void paint_2d_bucket_fill(
 		else {
 			int pixel_color_b = *(ibuf->rect + coordinate);
 			rgba_uchar_to_float(pixel_color, (unsigned char *)&pixel_color_b);
+			straight_to_premul_v4(pixel_color);
 		}
 
 		BLI_stack_push(stack, &coordinate);

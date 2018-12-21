@@ -5,10 +5,10 @@ from bpy.types import Operator
 from bpy.props import BoolProperty
 
 
-def add_lamps(self, context):
+def add_lights(self, context):
 
     if self.bKeyLight:
-        keyLight = bpy.data.lamps.new(name="Key_Light", type="SPOT")
+        keyLight = bpy.data.lights.new(name="Key_Light", type="SPOT")
         ob = bpy.data.objects.new("Key_Light", keyLight)
         constraint = ob.constraints.new(type='COPY_LOCATION')
         constraint.use_offset = True
@@ -23,7 +23,7 @@ def add_lamps(self, context):
         ob.rotation_euler[2] = -0.785398
 
     if self.bFillLight:
-        fillLight = bpy.data.lamps.new(name="Fill_Light", type="SPOT")
+        fillLight = bpy.data.lights.new(name="Fill_Light", type="SPOT")
         ob = bpy.data.objects.new("Fill_Light", fillLight)
         constraint = ob.constraints.new(type='COPY_LOCATION')
         constraint.use_offset = True
@@ -39,7 +39,7 @@ def add_lamps(self, context):
         ob.data.energy = 0.3
 
     if self.bBackLight:
-        backLight = bpy.data.lamps.new(name="Back_Light", type="SPOT")
+        backLight = bpy.data.lights.new(name="Back_Light", type="SPOT")
         ob = bpy.data.objects.new("Back_Light", backLight)
         constraint = ob.constraints.new(type='COPY_LOCATION')
         constraint.use_offset = True
@@ -121,7 +121,7 @@ class OBJECT_OT_add_light_template(Operator):
                 self.target = context.active_object
                 self.camera = context.scene.camera
 
-            add_lamps(self, context)
+            add_lights(self, context)
 
         except Exception as e:
             self.report({'WARNING'},

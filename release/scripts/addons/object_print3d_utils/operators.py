@@ -23,15 +23,15 @@
 import bpy
 from bpy.types import Operator
 from bpy.props import (
-        IntProperty,
-        FloatProperty,
-        )
+    IntProperty,
+    FloatProperty,
+)
 import bmesh
 
 from . import (
-        mesh_helpers,
-        report,
-        )
+    mesh_helpers,
+    report,
+)
 
 
 def clean_float(text):
@@ -430,16 +430,16 @@ class MESH_OT_Print3D_Clean_Non_Manifold(Operator):
     bl_label = "Print3D Clean Non-Manifold and Inverted"
     bl_options = {'REGISTER', 'UNDO'}
 
-    threshold = bpy.props.FloatProperty(
-            name="threshold",
-            description="Minimum distance between elements to merge",
-            default=0.0001,
-            )
-    sides = bpy.props.IntProperty(
-            name="sides",
-            description="Number of sides in hole required to fill",
-            default=4,
-            )
+    threshold: bpy.props.FloatProperty(
+        name="threshold",
+        description="Minimum distance between elements to merge",
+        default=0.0001,
+    )
+    sides: bpy.props.IntProperty(
+        name="sides",
+        description="Number of sides in hole required to fill",
+        default=4,
+    )
 
     def execute(self, context):
         self.context = context
@@ -600,7 +600,7 @@ class MESH_OT_Print3D_Select_Report(Operator):
     bl_label = "Print3D Select Report"
     bl_options = {'INTERNAL'}
 
-    index = IntProperty()
+    index: IntProperty()
 
     _type_to_mode = {
         bmesh.types.BMVert: 'VERT',
@@ -659,14 +659,14 @@ class MESH_OT_Print3D_Scale_To_Volume(Operator):
     bl_label = "Scale to Volume"
     bl_options = {'REGISTER', 'UNDO'}
 
-    volume_init = FloatProperty(
-            options={'HIDDEN'},
-            )
-    volume = FloatProperty(
-            name="Volume",
-            unit='VOLUME',
-            min=0.0, max=100000.0,
-            )
+    volume_init: FloatProperty(
+        options={'HIDDEN'},
+    )
+    volume: FloatProperty(
+        name="Volume",
+        unit='VOLUME',
+        min=0.0, max=100000.0,
+    )
 
     def execute(self, context):
         import math
@@ -705,17 +705,17 @@ class MESH_OT_Print3D_Scale_To_Bounds(Operator):
     bl_label = "Scale to Bounds"
     bl_options = {'REGISTER', 'UNDO'}
 
-    length_init = FloatProperty(
-            options={'HIDDEN'},
-            )
-    axis_init = IntProperty(
-            options={'HIDDEN'},
-            )
-    length = FloatProperty(
-            name="Length Limit",
-            unit='LENGTH',
-            min=0.0, max=100000.0,
-            )
+    length_init: FloatProperty(
+        options={'HIDDEN'},
+    )
+    axis_init: IntProperty(
+        options={'HIDDEN'},
+    )
+    length: FloatProperty(
+        name="Length Limit",
+        unit='LENGTH',
+        min=0.0, max=100000.0,
+    )
 
     def execute(self, context):
         scale = self.length / self.length_init
@@ -731,11 +731,11 @@ class MESH_OT_Print3D_Scale_To_Bounds(Operator):
             return max(((max(v[i] for v in vecs) - min(v[i] for v in vecs)), i) for i in range(3))
 
         if context.mode == 'EDIT_MESH':
-            length, axis = calc_length([Vector(v) * obj.matrix_world
+            length, axis = calc_length([Vector(v) @ obj.matrix_world
                                         for obj in [context.edit_object]
                                         for v in obj.bound_box])
         else:
-            length, axis = calc_length([Vector(v) * obj.matrix_world
+            length, axis = calc_length([Vector(v) @ obj.matrix_world
                                         for obj in context.selected_editable_objects
                                         if obj.type == 'MESH' for v in obj.bound_box])
 

@@ -45,16 +45,16 @@ import bpy
 
 
 class RigifyName(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
+    name: bpy.props.StringProperty()
 
 
 class RigifyParameters(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
+    name: bpy.props.StringProperty()
 
 
 class RigifyArmatureLayer(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(name="Layer Name", default=" ")
-    row = bpy.props.IntProperty(name="Layer Row", default=1, min=1, max=32)
+    name: bpy.props.StringProperty(name="Layer Name", default=" ")
+    row: bpy.props.IntProperty(name="Layer Row", default=1, min=1, max=32)
 
 
 ##### REGISTER #####

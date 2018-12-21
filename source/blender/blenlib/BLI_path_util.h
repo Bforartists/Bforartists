@@ -41,6 +41,7 @@ struct ListBase;
 
 void BLI_setenv(const char *env, const char *val) ATTR_NONNULL(1);
 void BLI_setenv_if_new(const char *env, const char *val) ATTR_NONNULL(1);
+const char *BLI_getenv(const char *env) ATTR_NONNULL(1);
 
 void BLI_make_file_string(const char *relabase, char *string,  const char *dir, const char *file);
 void BLI_make_exist(char *dir);
@@ -106,6 +107,8 @@ void BLI_path_rel(char *file, const char *relfile) ATTR_NONNULL();
 
 bool BLI_path_is_rel(const char *path) ATTR_NONNULL() ATTR_WARN_UNUSED_RESULT;
 bool BLI_path_is_unc(const char *path);
+
+void BLI_path_to_display_name(char *display_name, int maxlen, const char *name) ATTR_NONNULL();
 
 #if defined(WIN32)
 void BLI_cleanup_unc_16(wchar_t *path_16);

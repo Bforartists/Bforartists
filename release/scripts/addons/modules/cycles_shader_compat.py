@@ -356,7 +356,7 @@ class CyclesShaderWrapper():
 
         return node_map
 
-    # note, all ***_mapping_set() functions currenly work the same way
+    # note, all ***_mapping_set() functions currently work the same way
     # (only with different image arg), could generalize.
 
     @staticmethod

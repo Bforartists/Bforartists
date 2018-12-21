@@ -42,26 +42,30 @@
 #include "BLI_rand.h"
 
 #include "DNA_anim_types.h"
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_meshdata_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_vfont_types.h"
 
 #include "BKE_animsys.h"
-#include "BKE_DerivedMesh.h"
-#include "BKE_depsgraph.h"
+#include "BKE_collection.h"
 #include "BKE_font.h"
-#include "BKE_group.h"
 #include "BKE_global.h"
+#include "BKE_idprop.h"
 #include "BKE_lattice.h"
 #include "BKE_main.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_iterators.h"
+#include "BKE_mesh_runtime.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
 #include "BKE_scene.h"
 #include "BKE_editmesh.h"
 #include "BKE_anim.h"
 
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "BLI_strict_flags.h"
 #include "BLI_hash.h"
@@ -69,16 +73,14 @@
 /* Dupli-Geometry */
 
 typedef struct DupliContext {
-	EvaluationContext *eval_ctx;
-	bool do_update;
-	bool animated;
-	Group *group; /* XXX child objects are selected from this group if set, could be nicer */
+	Depsgraph *depsgraph;
+	Collection *collection; /* XXX child objects are selected from this group if set, could be nicer */
+	Object *obedit; /* Only to check if the object is in edit-mode. */
 
-	Main *bmain;
 	Scene *scene;
+	ViewLayer *view_layer;
 	Object *object;
 	float space_mat[4][4];
-	unsigned int lay;
 
 	int persistent_id[MAX_DUPLI_RECUR];
 	int level;
@@ -98,23 +100,20 @@ static const DupliGenerator *get_dupli_generator(const DupliContext *ctx);
 
 /* create initial context for root object */
 static void init_context(
-        DupliContext *r_ctx, Main *bmain, EvaluationContext *eval_ctx,
-        Scene *scene, Object *ob, float space_mat[4][4], bool update)
+        DupliContext *r_ctx, Depsgraph *depsgraph,
+        Scene *scene, Object *ob, float space_mat[4][4])
 {
-	r_ctx->eval_ctx = eval_ctx;
-	r_ctx->bmain = bmain;
+	r_ctx->depsgraph = depsgraph;
 	r_ctx->scene = scene;
-	/* don't allow BKE_object_handle_update for viewport during render, can crash */
-	r_ctx->do_update = update && !(G.is_rendering && eval_ctx->mode != DAG_EVAL_RENDER);
-	r_ctx->animated = false;
-	r_ctx->group = NULL;
+	r_ctx->view_layer = DEG_get_evaluated_view_layer(depsgraph);
+	r_ctx->collection = NULL;
 
 	r_ctx->object = ob;
+	r_ctx->obedit = OBEDIT_FROM_OBACT(ob);
 	if (space_mat)
 		copy_m4_m4(r_ctx->space_mat, space_mat);
 	else
 		unit_m4(r_ctx->space_mat);
-	r_ctx->lay = ob->lay;
 	r_ctx->level = 0;
 
 	r_ctx->gen = get_dupli_generator(r_ctx);
@@ -123,15 +122,13 @@ static void init_context(
 }
 
 /* create sub-context for recursive duplis */
-static void copy_dupli_context(DupliContext *r_ctx, const DupliContext *ctx, Object *ob, float mat[4][4], int index, bool animated)
+static void copy_dupli_context(DupliContext *r_ctx, const DupliContext *ctx, Object *ob, float mat[4][4], int index)
 {
 	*r_ctx = *ctx;
 
-	r_ctx->animated |= animated; /* object animation makes all children animated */
-
 	/* XXX annoying, previously was done by passing an ID* argument, this at least is more explicit */
-	if (ctx->gen->type == OB_DUPLIGROUP)
-		r_ctx->group = ctx->object->dup_group;
+	if (ctx->gen->type == OB_DUPLICOLLECTION)
+		r_ctx->collection = ctx->object->dup_group;
 
 	r_ctx->object = ob;
 	if (mat)
@@ -146,8 +143,7 @@ static void copy_dupli_context(DupliContext *r_ctx, const DupliContext *ctx, Obj
  * mat is transform of the object relative to current context (including object obmat)
  */
 static DupliObject *make_dupli(const DupliContext *ctx,
-                               Object *ob, float mat[4][4], int index,
-                               bool animated, bool hide)
+                               Object *ob, float mat[4][4], int index)
 {
 	DupliObject *dob;
 	int i;
@@ -164,7 +160,6 @@ static DupliObject *make_dupli(const DupliContext *ctx,
 	dob->ob = ob;
 	mul_m4_m4m4(dob->mat, (float (*)[4])ctx->space_mat, mat);
 	dob->type = ctx->gen->type;
-	dob->animated = animated || ctx->animated; /* object itself or some parent is animated */
 
 	/* set persistent id, which is an array with a persistent index for each level
 	 * (particle number, vertex number, ..). by comparing this we can find the same
@@ -177,8 +172,6 @@ static DupliObject *make_dupli(const DupliContext *ctx,
 	for (; i < MAX_DUPLI_RECUR; i++)
 		dob->persistent_id[i] = INT_MAX;
 
-	if (hide)
-		dob->no_draw = true;
 	/* metaballs never draw in duplis, they are instead merged into one by the basis
 	 * mball outside of the group. this does mean that if that mball is not in the
 	 * scene, they will not show up at all, limitation that should be solved once. */
@@ -208,12 +201,12 @@ static DupliObject *make_dupli(const DupliContext *ctx,
 /* recursive dupli objects
  * space_mat is the local dupli space (excluding dupli object obmat!)
  */
-static void make_recursive_duplis(const DupliContext *ctx, Object *ob, float space_mat[4][4], int index, bool animated)
+static void make_recursive_duplis(const DupliContext *ctx, Object *ob, float space_mat[4][4], int index)
 {
-	/* simple preventing of too deep nested groups with MAX_DUPLI_RECUR */
+	/* simple preventing of too deep nested collections with MAX_DUPLI_RECUR */
 	if (ctx->level < MAX_DUPLI_RECUR) {
 		DupliContext rctx;
-		copy_dupli_context(&rctx, ctx, ob, space_mat, index, animated);
+		copy_dupli_context(&rctx, ctx, ob, space_mat, index);
 		if (rctx.gen) {
 			rctx.gen->make_duplis(&rctx);
 		}
@@ -235,45 +228,40 @@ static bool is_child(const Object *ob, const Object *parent)
 	return false;
 }
 
-/* create duplis from every child in scene or group */
+/* create duplis from every child in scene or collection */
 static void make_child_duplis(const DupliContext *ctx, void *userdata, MakeChildDuplisFunc make_child_duplis_cb)
 {
 	Object *parent = ctx->object;
-	Object *obedit = ctx->scene->obedit;
 
-	if (ctx->group) {
-		unsigned int lay = ctx->group->layer;
-		int groupid = 0;
-		GroupObject *go;
-		for (go = ctx->group->gobject.first; go; go = go->next, groupid++) {
-			Object *ob = go->ob;
-
-			if ((ob->lay & lay) && ob != obedit && is_child(ob, parent)) {
+	if (ctx->collection) {
+		eEvaluationMode mode = DEG_get_mode(ctx->depsgraph);
+		FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(ctx->collection, ob, mode)
+		{
+			if ((ob != ctx->obedit) && is_child(ob, parent)) {
 				DupliContext pctx;
-				copy_dupli_context(&pctx, ctx, ctx->object, NULL, groupid, false);
+				copy_dupli_context(&pctx, ctx, ctx->object, NULL, _base_id);
 
 				/* mballs have a different dupli handling */
-				if (ob->type != OB_MBALL)
-					ob->flag |= OB_DONE;  /* doesnt render */
-
+				if (ob->type != OB_MBALL) {
+					ob->flag |= OB_DONE;  /* doesn't render */
+				}
 				make_child_duplis_cb(&pctx, userdata, ob);
 			}
 		}
+		FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 	}
 	else {
-		unsigned int lay = ctx->scene->lay;
 		int baseid = 0;
-		Base *base;
-		for (base = ctx->scene->base.first; base; base = base->next, baseid++) {
+		ViewLayer *view_layer = ctx->view_layer;
+		for (Base *base = view_layer->object_bases.first; base; base = base->next, baseid++) {
 			Object *ob = base->object;
-
-			if ((base->lay & lay) && ob != obedit && is_child(ob, parent)) {
+			if ((ob != ctx->obedit) && is_child(ob, parent)) {
 				DupliContext pctx;
-				copy_dupli_context(&pctx, ctx, ctx->object, NULL, baseid, false);
+				copy_dupli_context(&pctx, ctx, ctx->object, NULL, baseid);
 
 				/* mballs have a different dupli handling */
 				if (ob->type != OB_MBALL)
-					ob->flag |= OB_DONE;  /* doesnt render */
+					ob->flag |= OB_DONE;  /* doesn't render */
 
 				make_child_duplis_cb(&pctx, userdata, ob);
 			}
@@ -284,77 +272,49 @@ static void make_child_duplis(const DupliContext *ctx, void *userdata, MakeChild
 
 /*---- Implementations ----*/
 
-/* OB_DUPLIGROUP */
-static void make_duplis_group(const DupliContext *ctx)
+/* OB_DUPLICOLLECTION */
+static void make_duplis_collection(const DupliContext *ctx)
 {
-	bool for_render = (ctx->eval_ctx->mode == DAG_EVAL_RENDER);
 	Object *ob = ctx->object;
-	Group *group;
-	GroupObject *go;
-	float group_mat[4][4];
-	int id;
-	bool animated, hide;
+	Collection *collection;
+	float collection_mat[4][4];
 
 	if (ob->dup_group == NULL) return;
-	group = ob->dup_group;
+	collection = ob->dup_group;
 
-	/* combine group offset and obmat */
-	unit_m4(group_mat);
-	sub_v3_v3(group_mat[3], group->dupli_ofs);
-	mul_m4_m4m4(group_mat, ob->obmat, group_mat);
+	/* combine collection offset and obmat */
+	unit_m4(collection_mat);
+	sub_v3_v3(collection_mat[3], collection->dupli_ofs);
+	mul_m4_m4m4(collection_mat, ob->obmat, collection_mat);
 	/* don't access 'ob->obmat' from now on. */
 
-	/* handles animated groups */
-
-	/* we need to check update for objects that are not in scene... */
-	if (ctx->do_update) {
-		/* note: update is optional because we don't always need object
-		 * transformations to be correct. Also fixes bug [#29616]. */
-		BKE_group_handle_recalc_and_update(ctx->bmain, ctx->eval_ctx, ctx->scene, ob, group);
-	}
-
-	animated = BKE_group_is_animated(group, ob);
-
-	for (go = group->gobject.first, id = 0; go; go = go->next, id++) {
-		/* note, if you check on layer here, render goes wrong... it still deforms verts and uses parent imat */
-		if (go->ob != ob) {
+	eEvaluationMode mode = DEG_get_mode(ctx->depsgraph);
+	FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(collection, cob, mode)
+	{
+		if (cob != ob) {
 			float mat[4][4];
 
-			/* Special case for instancing dupli-groups, see: T40051
-			 * this object may be instanced via dupli-verts/faces, in this case we don't want to render
-			 * (blender convention), but _do_ show in the viewport.
-			 *
-			 * Regular objects work fine but not if we're instancing dupli-groups,
-			 * because the rules for rendering aren't applied to objects they instance.
-			 * We could recursively pass down the 'hide' flag instead, but that seems unnecessary.
-			 */
-			if (for_render && go->ob->parent && go->ob->parent->transflag & (OB_DUPLIVERTS | OB_DUPLIFACES)) {
-				continue;
-			}
+			/* collection dupli offset, should apply after everything else */
+			mul_m4_m4m4(mat, collection_mat, cob->obmat);
 
-			/* group dupli offset, should apply after everything else */
-			mul_m4_m4m4(mat, group_mat, go->ob->obmat);
-
-			/* check the group instance and object layers match, also that the object visible flags are ok. */
-			hide = (go->ob->lay & group->layer) == 0 ||
-			       (for_render ? go->ob->restrictflag & OB_RESTRICT_RENDER : go->ob->restrictflag & OB_RESTRICT_VIEW);
-
-			make_dupli(ctx, go->ob, mat, id, animated, hide);
+			make_dupli(ctx, cob, mat, _base_id);
 
 			/* recursion */
-			make_recursive_duplis(ctx, go->ob, group_mat, id, animated);
+			make_recursive_duplis(ctx, cob, collection_mat, _base_id);
 		}
 	}
+	FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 }
 
-static const DupliGenerator gen_dupli_group = {
-    OB_DUPLIGROUP,                  /* type */
-    make_duplis_group               /* make_duplis */
+static const DupliGenerator gen_dupli_collection = {
+    OB_DUPLICOLLECTION,             /* type */
+    make_duplis_collection          /* make_duplis */
 };
 
 /* OB_DUPLIFRAMES */
 static void make_duplis_frames(const DupliContext *ctx)
 {
+	Depsgraph *depsgraph = ctx->depsgraph;
 	Scene *scene = ctx->scene;
 	Object *ob = ctx->object;
 	extern int enable_cu_speed; /* object.c */
@@ -362,8 +322,8 @@ static void make_duplis_frames(const DupliContext *ctx)
 	int cfrao = scene->r.cfra;
 	int dupend = ob->dupend;
 
-	/* dupliframes not supported inside groups */
-	if (ctx->group)
+	/* dupliframes not supported inside collections */
+	if (ctx->collection)
 		return;
 	/* if we don't have any data/settings which will lead to object movement,
 	 * don't waste time trying, as it will all look the same...
@@ -373,17 +333,13 @@ static void make_duplis_frames(const DupliContext *ctx)
 
 	/* make a copy of the object's original data (before any dupli-data overwrites it)
 	 * as we'll need this to keep track of unkeyed data
-	 *	- this doesn't take into account other data that can be reached from the object,
-	 *	  for example it's shapekeys or bones, hence the need for an update flush at the end
+	 * - this doesn't take into account other data that can be reached from the object,
+	 *   for example it's shapekeys or bones, hence the need for an update flush at the end
 	 */
 	copyob = *ob;
 
 	/* duplicate over the required range */
 	if (ob->transflag & OB_DUPLINOSPEED) enable_cu_speed = 0;
-
-	/* special flag to avoid setting recalc flags to notify the depsgraph of
-	 * updates, as this is not a permanent change to the object */
-	ob->id.recalc |= ID_RECALC_SKIP_ANIM_TAG;
 
 	for (scene->r.cfra = ob->dupsta; scene->r.cfra <= dupend; scene->r.cfra++) {
 		int ok = 1;
@@ -402,10 +358,11 @@ static void make_duplis_frames(const DupliContext *ctx)
 			 * and/or other objects which may affect this object's transforms are not updated either.
 			 * However, this has always been the way that this worked (i.e. pre 2.5), so I guess that it'll be fine!
 			 */
-			BKE_animsys_evaluate_animdata(scene, &ob->id, ob->adt, (float)scene->r.cfra, ADT_RECALC_ANIM); /* ob-eval will do drivers, so we don't need to do them */
-			BKE_object_where_is_calc_time(scene, ob, (float)scene->r.cfra);
+			/* ob-eval will do drivers, so we don't need to do them */
+			BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, (float)scene->r.cfra, ADT_RECALC_ANIM);
+			BKE_object_where_is_calc_time(depsgraph, scene, ob, (float)scene->r.cfra);
 
-			make_dupli(ctx, ob, ob->obmat, scene->r.cfra, false, false);
+			make_dupli(ctx, ob, ob->obmat, scene->r.cfra);
 		}
 	}
 
@@ -416,8 +373,9 @@ static void make_duplis_frames(const DupliContext *ctx)
 	 */
 	scene->r.cfra = cfrao;
 
-	BKE_animsys_evaluate_animdata(scene, &ob->id, ob->adt, (float)scene->r.cfra, ADT_RECALC_ANIM); /* ob-eval will do drivers, so we don't need to do them */
-	BKE_object_where_is_calc_time(scene, ob, (float)scene->r.cfra);
+	/* ob-eval will do drivers, so we don't need to do them */
+	BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, (float)scene->r.cfra, ADT_RECALC_ANIM);
+	BKE_object_where_is_calc_time(depsgraph, scene, ob, (float)scene->r.cfra);
 
 	/* but, to make sure unkeyed object transforms are still sane,
 	 * let's copy object's original data back over
@@ -432,7 +390,7 @@ static const DupliGenerator gen_dupli_frames = {
 
 /* OB_DUPLIVERTS */
 typedef struct VertexDupliData {
-	DerivedMesh *dm;
+	Mesh *me_eval;
 	BMEditMesh *edit_btmesh;
 	int totvert;
 	float (*orco)[3];
@@ -490,56 +448,34 @@ static void vertex_dupli__mapFunc(void *userData, int index, const float co[3],
 	 */
 	mul_m4_m4m4(space_mat, obmat, inst_ob->imat);
 
-	dob = make_dupli(vdd->ctx, vdd->inst_ob, obmat, index, false, false);
+	dob = make_dupli(vdd->ctx, vdd->inst_ob, obmat, index);
 
 	if (vdd->orco)
 		copy_v3_v3(dob->orco, vdd->orco[index]);
 
 	/* recursion */
-	make_recursive_duplis(vdd->ctx, vdd->inst_ob, space_mat, index, false);
+	make_recursive_duplis(vdd->ctx, vdd->inst_ob, space_mat, index);
 }
 
 static void make_child_duplis_verts(const DupliContext *ctx, void *userdata, Object *child)
 {
 	VertexDupliData *vdd = userdata;
-	DerivedMesh *dm = vdd->dm;
+	Mesh *me_eval = vdd->me_eval;
 
 	vdd->inst_ob = child;
 	invert_m4_m4(child->imat, child->obmat);
 	/* relative transform from parent to child space */
 	mul_m4_m4m4(vdd->child_imat, child->imat, ctx->object->obmat);
 
-	if (vdd->edit_btmesh) {
-		dm->foreachMappedVert(dm, vertex_dupli__mapFunc, vdd,
-		                      vdd->use_rotation ? DM_FOREACH_USE_NORMAL : 0);
-	}
-	else {
-		int a, totvert = vdd->totvert;
-		float vec[3], no[3];
-
-		if (vdd->use_rotation) {
-			for (a = 0; a < totvert; a++) {
-				dm->getVertCo(dm, a, vec);
-				dm->getVertNo(dm, a, no);
-
-				vertex_dupli__mapFunc(vdd, a, vec, no, NULL);
-			}
-		}
-		else {
-			for (a = 0; a < totvert; a++) {
-				dm->getVertCo(dm, a, vec);
-
-				vertex_dupli__mapFunc(vdd, a, vec, NULL, NULL);
-			}
-		}
-	}
+	BKE_mesh_foreach_mapped_vert(me_eval, vertex_dupli__mapFunc, vdd,
+	                             vdd->use_rotation ? MESH_FOREACH_USE_NORMAL : 0);
 }
 
 static void make_duplis_verts(const DupliContext *ctx)
 {
 	Scene *scene = ctx->scene;
 	Object *parent = ctx->object;
-	bool use_texcoords = ELEM(ctx->eval_ctx->mode, DAG_EVAL_RENDER, DAG_EVAL_PREVIEW);
+	bool use_texcoords = (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER);
 	VertexDupliData vdd;
 
 	vdd.ctx = ctx;
@@ -547,32 +483,31 @@ static void make_duplis_verts(const DupliContext *ctx)
 
 	/* gather mesh info */
 	{
-		Mesh *me = parent->data;
-		BMEditMesh *em = BKE_editmesh_from_object(parent);
 		CustomDataMask dm_mask = (use_texcoords ? CD_MASK_BAREMESH | CD_MASK_ORCO : CD_MASK_BAREMESH);
+		vdd.edit_btmesh = BKE_editmesh_from_object(parent);
 
-		if (ctx->eval_ctx->mode == DAG_EVAL_RENDER) {
-			vdd.dm = mesh_create_derived_render(scene, parent, dm_mask);
-		}
-		else if (em) {
-			vdd.dm = editbmesh_get_derived_cage(scene, parent, em, dm_mask);
+		/* We do not need any render-smecific handling anymore, depsgraph takes care of that. */
+		if (vdd.edit_btmesh != NULL) {
+			/* XXX TODO replace with equivalent of editbmesh_get_eval_cage when available. */
+			vdd.me_eval = mesh_get_eval_deform(ctx->depsgraph, scene, parent, dm_mask);
 		}
 		else {
-			vdd.dm = mesh_get_derived_final(scene, parent, dm_mask);
+			vdd.me_eval = mesh_get_eval_final(ctx->depsgraph, scene, parent, dm_mask);
 		}
-		vdd.edit_btmesh = me->edit_btmesh;
 
-		if (use_texcoords)
-			vdd.orco = vdd.dm->getVertDataArray(vdd.dm, CD_ORCO);
-		else
+		if (use_texcoords) {
+			vdd.orco = CustomData_get_layer(&vdd.me_eval->vdata, CD_ORCO);
+		}
+		else {
 			vdd.orco = NULL;
+		}
 
-		vdd.totvert = vdd.dm->getNumVerts(vdd.dm);
+		vdd.totvert = vdd.me_eval->totvert;
 	}
 
 	make_child_duplis(ctx, &vdd, make_child_duplis_verts);
 
-	vdd.dm->release(vdd.dm);
+	vdd.me_eval = NULL;
 }
 
 static const DupliGenerator gen_dupli_verts = {
@@ -585,7 +520,7 @@ static Object *find_family_object(Main *bmain, const char *family, size_t family
 {
 	Object **ob_pt;
 	Object *ob;
-	void *ch_key = SET_UINT_IN_POINTER(ch);
+	void *ch_key = POINTER_FROM_UINT(ch);
 
 	if ((ob_pt = (Object **)BLI_ghash_lookup_p(family_gh, ch_key))) {
 		ob = *ob_pt;
@@ -626,8 +561,8 @@ static void make_duplis_font(const DupliContext *ctx)
 	const wchar_t *text = NULL;
 	bool text_free = false;
 
-	/* font dupliverts not supported inside groups */
-	if (ctx->group)
+	/* font dupliverts not supported inside collections */
+	if (ctx->collection)
 		return;
 
 	copy_m4_m4(pmat, par->obmat);
@@ -655,7 +590,9 @@ static void make_duplis_font(const DupliContext *ctx)
 	/* advance matching BLI_strncpy_wchar_from_utf8 */
 	for (a = 0; a < text_len; a++, ct++) {
 
-		ob = find_family_object(ctx->bmain, cu->family, family_len, (unsigned int)text[a], family_gh);
+		/* XXX That G.main is *really* ugly, but not sure what to do here...
+		 * Definitively don't think it would be safe to put back Main *bmain pointer in DupliContext as done in 2.7x? */
+		ob = find_family_object(G.main, cu->family, family_len, (unsigned int)text[a], family_gh);
 		if (ob) {
 			vec[0] = fsize * (ct->xof - xof);
 			vec[1] = fsize * (ct->yof - yof);
@@ -675,7 +612,7 @@ static void make_duplis_font(const DupliContext *ctx)
 
 			copy_v3_v3(obmat[3], vec);
 
-			make_dupli(ctx, ob, obmat, a, false, false);
+			make_dupli(ctx, ob, obmat, a);
 		}
 	}
 
@@ -695,7 +632,7 @@ static const DupliGenerator gen_dupli_verts_font = {
 
 /* OB_DUPLIFACES */
 typedef struct FaceDupliData {
-	DerivedMesh *dm;
+	Mesh *me_eval;
 	int totface;
 	MPoly *mpoly;
 	MLoop *mloop;
@@ -743,7 +680,7 @@ static void make_child_duplis_faces(const DupliContext *ctx, void *userdata, Obj
 	float (*orco)[3] = fdd->orco;
 	MLoopUV *mloopuv = fdd->mloopuv;
 	int a, totface = fdd->totface;
-	bool use_texcoords = ELEM(ctx->eval_ctx->mode, DAG_EVAL_RENDER, DAG_EVAL_PREVIEW);
+	bool use_texcoords = (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER);
 	float child_imat[4][4];
 	DupliObject *dob;
 
@@ -781,7 +718,7 @@ static void make_child_duplis_faces(const DupliContext *ctx, void *userdata, Obj
 		 */
 		mul_m4_m4m4(space_mat, obmat, inst_ob->imat);
 
-		dob = make_dupli(ctx, inst_ob, obmat, a, false, false);
+		dob = make_dupli(ctx, inst_ob, obmat, a);
 		if (use_texcoords) {
 			float w = 1.0f / (float)mp->totloop;
 
@@ -801,7 +738,7 @@ static void make_child_duplis_faces(const DupliContext *ctx, void *userdata, Obj
 		}
 
 		/* recursion */
-		make_recursive_duplis(ctx, inst_ob, space_mat, a, false);
+		make_recursive_duplis(ctx, inst_ob, space_mat, a);
 	}
 }
 
@@ -809,7 +746,7 @@ static void make_duplis_faces(const DupliContext *ctx)
 {
 	Scene *scene = ctx->scene;
 	Object *parent = ctx->object;
-	bool use_texcoords = ELEM(ctx->eval_ctx->mode, DAG_EVAL_RENDER, DAG_EVAL_PREVIEW);
+	bool use_texcoords = (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER);
 	FaceDupliData fdd;
 
 	fdd.use_scale = ((parent->transflag & OB_DUPLIFACES_SCALE) != 0);
@@ -819,36 +756,34 @@ static void make_duplis_faces(const DupliContext *ctx)
 		BMEditMesh *em = BKE_editmesh_from_object(parent);
 		CustomDataMask dm_mask = (use_texcoords ? CD_MASK_BAREMESH | CD_MASK_ORCO | CD_MASK_MLOOPUV : CD_MASK_BAREMESH);
 
-		if (ctx->eval_ctx->mode == DAG_EVAL_RENDER) {
-			fdd.dm = mesh_create_derived_render(scene, parent, dm_mask);
-		}
-		else if (em) {
-			fdd.dm = editbmesh_get_derived_cage(scene, parent, em, dm_mask);
+		/* We do not need any render-smecific handling anymore, depsgraph takes care of that. */
+		if (em != NULL) {
+			/* XXX TODO replace with equivalent of editbmesh_get_eval_cage when available. */
+			fdd.me_eval = mesh_get_eval_deform(ctx->depsgraph, scene, parent, dm_mask);
 		}
 		else {
-			fdd.dm = mesh_get_derived_final(scene, parent, dm_mask);
+			fdd.me_eval = mesh_get_eval_final(ctx->depsgraph, scene, parent, dm_mask);
 		}
 
 		if (use_texcoords) {
-			CustomData *ml_data = fdd.dm->getLoopDataLayout(fdd.dm);
-			const int uv_idx = CustomData_get_render_layer(ml_data, CD_MLOOPUV);
-			fdd.orco = fdd.dm->getVertDataArray(fdd.dm, CD_ORCO);
-			fdd.mloopuv = CustomData_get_layer_n(ml_data, CD_MLOOPUV, uv_idx);
+			fdd.orco = CustomData_get_layer(&fdd.me_eval->vdata, CD_ORCO);
+			const int uv_idx = CustomData_get_render_layer(&fdd.me_eval->ldata, CD_MLOOPUV);
+			fdd.mloopuv = CustomData_get_layer_n(&fdd.me_eval->ldata, CD_MLOOPUV, uv_idx);
 		}
 		else {
 			fdd.orco = NULL;
 			fdd.mloopuv = NULL;
 		}
 
-		fdd.totface = fdd.dm->getNumPolys(fdd.dm);
-		fdd.mpoly = fdd.dm->getPolyArray(fdd.dm);
-		fdd.mloop = fdd.dm->getLoopArray(fdd.dm);
-		fdd.mvert = fdd.dm->getVertArray(fdd.dm);
+		fdd.totface = fdd.me_eval->totpoly;
+		fdd.mpoly = fdd.me_eval->mpoly;
+		fdd.mloop = fdd.me_eval->mloop;
+		fdd.mvert = fdd.me_eval->mvert;
 	}
 
 	make_child_duplis(ctx, &fdd, make_child_duplis_faces);
 
-	fdd.dm->release(fdd.dm);
+	fdd.me_eval = NULL;
 }
 
 static const DupliGenerator gen_dupli_faces = {
@@ -861,10 +796,10 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 {
 	Scene *scene = ctx->scene;
 	Object *par = ctx->object;
-	bool for_render = ctx->eval_ctx->mode == DAG_EVAL_RENDER;
-	bool use_texcoords = ELEM(ctx->eval_ctx->mode, DAG_EVAL_RENDER, DAG_EVAL_PREVIEW);
+	eEvaluationMode mode = DEG_get_mode(ctx->depsgraph);
+	bool for_render = mode == DAG_EVAL_RENDER;
+	bool use_texcoords = for_render;
 
-	GroupObject *go;
 	Object *ob = NULL, **oblist = NULL, obcopy, *obcopylist = NULL;
 	DupliObject *dob;
 	ParticleDupliWeight *dw;
@@ -877,8 +812,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 	float tmat[4][4], mat[4][4], pamat[4][4], vec[3], size = 0.0;
 	float (*obmat)[4];
 	int a, b, hair = 0;
-	int totpart, totchild, totgroup = 0 /*, pa_num */;
-	const bool dupli_type_hack = !BKE_scene_use_new_shading_nodes(scene);
+	int totpart, totchild;
 
 	int no_draw_flag = PARS_UNEXIST;
 
@@ -889,21 +823,20 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 	if (part == NULL)
 		return;
 
-	if (!psys_check_enabled(par, psys, (ctx->eval_ctx->mode == DAG_EVAL_RENDER)))
+	if (!psys_check_enabled(par, psys, for_render))
 		return;
 
 	if (!for_render)
 		no_draw_flag |= PARS_NO_DISP;
 
-	ctime = BKE_scene_frame_get(scene); /* NOTE: in old animsys, used parent object's timeoffset... */
+	ctime = DEG_get_ctime(ctx->depsgraph); /* NOTE: in old animsys, used parent object's timeoffset... */
 
 	totpart = psys->totpart;
 	totchild = psys->totchild;
 
-	BLI_srandom((unsigned int)(31415926 + psys->seed));
-
-	if ((psys->renderdata || part->draw_as == PART_DRAW_REND) && ELEM(part->ren_as, PART_DRAW_OB, PART_DRAW_GR)) {
+	if ((for_render || part->draw_as == PART_DRAW_REND) && ELEM(part->ren_as, PART_DRAW_OB, PART_DRAW_GR)) {
 		ParticleSimulationData sim = {NULL};
+		sim.depsgraph = ctx->depsgraph;
 		sim.scene = scene;
 		sim.ob = par;
 		sim.psys = psys;
@@ -917,10 +850,14 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 				return;
 		}
 		else { /*PART_DRAW_GR */
-			if (part->dup_group == NULL || BLI_listbase_is_empty(&part->dup_group->gobject))
+			if (part->dup_group == NULL)
 				return;
 
-			if (BLI_findptr(&part->dup_group->gobject, par, offsetof(GroupObject, ob))) {
+			const ListBase dup_collection_objects = BKE_collection_object_cache_get(part->dup_group);
+			if (BLI_listbase_is_empty(&dup_collection_objects))
+				return;
+
+			if (BLI_findptr(&dup_collection_objects, par, offsetof(Base, object))) {
 				return;
 			}
 		}
@@ -937,46 +874,67 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 			totpart = psys->totcached;
 		}
 
-		psys_check_group_weights(part);
+		RNG *rng = BLI_rng_new_srandom(31415926u + (unsigned int)psys->seed);
 
 		psys->lattice_deform_data = psys_create_lattice_deform_data(&sim);
 
 		/* gather list of objects or single object */
-		if (part->ren_as == PART_DRAW_GR) {
-			if (ctx->do_update) {
-				BKE_group_handle_recalc_and_update(ctx->bmain, ctx->eval_ctx, scene, par, part->dup_group);
-			}
+		int totcollection = 0;
 
+		if (part->ren_as == PART_DRAW_GR) {
 			if (part->draw & PART_DRAW_COUNT_GR) {
-				for (dw = part->dupliweights.first; dw; dw = dw->next)
-					totgroup += dw->count;
+				psys_find_group_weights(part);
+
+				for (dw = part->dupliweights.first; dw; dw = dw->next) {
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+					{
+						if (dw->ob == object) {
+							totcollection += dw->count;
+							break;
+						}
+					}
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
+				}
 			}
 			else {
-				for (go = part->dup_group->gobject.first; go; go = go->next)
-					totgroup++;
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				{
+					(void) object;
+					totcollection++;
+				}
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 			}
 
 			/* we also copy the actual objects to restore afterwards, since
 			 * BKE_object_where_is_calc_time will change the object which breaks transform */
-			oblist = MEM_callocN((size_t)totgroup * sizeof(Object *), "dupgroup object list");
-			obcopylist = MEM_callocN((size_t)totgroup * sizeof(Object), "dupgroup copy list");
+			oblist = MEM_callocN((size_t)totcollection * sizeof(Object *), "dupcollection object list");
+			obcopylist = MEM_callocN((size_t)totcollection * sizeof(Object), "dupcollection copy list");
 
-			if (part->draw & PART_DRAW_COUNT_GR && totgroup) {
-				dw = part->dupliweights.first;
-
-				for (a = 0; a < totgroup; dw = dw->next) {
-					for (b = 0; b < dw->count; b++, a++) {
-						oblist[a] = dw->ob;
-						obcopylist[a] = *dw->ob;
+			if (part->draw & PART_DRAW_COUNT_GR) {
+				a = 0;
+				for (dw = part->dupliweights.first; dw; dw = dw->next) {
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+					{
+						if (dw->ob == object) {
+							for (b = 0; b < dw->count; b++, a++) {
+								oblist[a] = dw->ob;
+								obcopylist[a] = *dw->ob;
+							}
+							break;
+						}
 					}
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 				}
 			}
 			else {
-				go = part->dup_group->gobject.first;
-				for (a = 0; a < totgroup; a++, go = go->next) {
-					oblist[a] = go->ob;
-					obcopylist[a] = *go->ob;
+				a = 0;
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				{
+					oblist[a] = object;
+					obcopylist[a] = *object;
+					a++;
 				}
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 			}
 		}
 		else {
@@ -1018,14 +976,14 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 
 			if (part->ren_as == PART_DRAW_GR) {
 				/* prevent divide by zero below [#28336] */
-				if (totgroup == 0)
+				if (totcollection == 0)
 					continue;
 
-				/* for groups, pick the object based on settings */
+				/* for collections, pick the object based on settings */
 				if (part->draw & PART_DRAW_RAND_GR)
-					b = BLI_rand() % totgroup;
+					b = BLI_rng_get_int(rng) % totcollection;
 				else
-					b = a % totgroup;
+					b = a % totcollection;
 
 				ob = oblist[b];
 				obmat = oblist[b]->obmat;
@@ -1065,27 +1023,37 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 			}
 
 			if (part->ren_as == PART_DRAW_GR && psys->part->draw & PART_DRAW_WHOLE_GR) {
-				for (go = part->dup_group->gobject.first, b = 0; go; go = go->next, b++) {
-
+				b = 0;
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				{
 					copy_m4_m4(tmat, oblist[b]->obmat);
+
 					/* apply particle scale */
 					mul_mat3_m4_fl(tmat, size * scale);
 					mul_v3_fl(tmat[3], size * scale);
-					/* group dupli offset, should apply after everything else */
-					if (!is_zero_v3(part->dup_group->dupli_ofs))
+
+					/* collection dupli offset, should apply after everything else */
+					if (!is_zero_v3(part->dup_group->dupli_ofs)) {
 						sub_v3_v3(tmat[3], part->dup_group->dupli_ofs);
+					}
+
 					/* individual particle transform */
 					mul_m4_m4m4(mat, pamat, tmat);
 
-					dob = make_dupli(ctx, go->ob, mat, a, false, false);
+					dob = make_dupli(ctx, object, mat, a);
 					dob->particle_system = psys;
-					if (use_texcoords)
+
+					if (use_texcoords) {
 						psys_get_dupli_texture(psys, part, sim.psmd, pa, cpa, dob->uv, dob->orco);
+					}
+
+					b++;
 				}
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_END;
 			}
 			else {
 				/* to give ipos in object correct offset */
-				BKE_object_where_is_calc_time(scene, ob, ctime - pa_time);
+				BKE_object_where_is_calc_time(ctx->depsgraph, scene, ob, ctime - pa_time);
 
 				copy_v3_v3(vec, obmat[3]);
 				obmat[3][0] = obmat[3][1] = obmat[3][2] = 0.0f;
@@ -1126,24 +1094,22 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 				if (part->draw & PART_DRAW_GLOBAL_OB)
 					add_v3_v3v3(mat[3], mat[3], vec);
 
-				dob = make_dupli(ctx, ob, mat, a, false, false);
+				dob = make_dupli(ctx, ob, mat, a);
 				dob->particle_system = psys;
 				if (use_texcoords)
 					psys_get_dupli_texture(psys, part, sim.psmd, pa, cpa, dob->uv, dob->orco);
-				/* XXX blender internal needs this to be set to dupligroup to render
-				 * groups correctly, but we don't want this hack for cycles */
-				if (dupli_type_hack && ctx->group)
-					dob->type = OB_DUPLIGROUP;
 			}
 		}
 
 		/* restore objects since they were changed in BKE_object_where_is_calc_time */
 		if (part->ren_as == PART_DRAW_GR) {
-			for (a = 0; a < totgroup; a++)
+			for (a = 0; a < totcollection; a++)
 				*(oblist[a]) = obcopylist[a];
 		}
 		else
 			*ob = obcopy;
+
+		BLI_rng_free(rng);
 	}
 
 	/* clean up */
@@ -1167,7 +1133,7 @@ static void make_duplis_particles(const DupliContext *ctx)
 	for (psys = ctx->object->particlesystem.first, psysid = 0; psys; psys = psys->next, psysid++) {
 		/* particles create one more level for persistent psys index */
 		DupliContext pctx;
-		copy_dupli_context(&pctx, ctx, ctx->object, NULL, psysid, false);
+		copy_dupli_context(&pctx, ctx, ctx->object, NULL, psysid);
 		make_duplis_particle_system(&pctx, psys);
 	}
 }
@@ -1189,7 +1155,7 @@ static const DupliGenerator *get_dupli_generator(const DupliContext *ctx)
 		return NULL;
 
 	/* Should the dupli's be generated for this object? - Respect restrict flags */
-	if (ctx->eval_ctx->mode == DAG_EVAL_RENDER ? (restrictflag & OB_RESTRICT_RENDER) : (restrictflag & OB_RESTRICT_VIEW))
+	if (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER ? (restrictflag & OB_RESTRICT_RENDER) : (restrictflag & OB_RESTRICT_VIEW))
 		return NULL;
 
 	if (transflag & OB_DUPLIPARTS) {
@@ -1210,8 +1176,8 @@ static const DupliGenerator *get_dupli_generator(const DupliContext *ctx)
 	else if (transflag & OB_DUPLIFRAMES) {
 		return &gen_dupli_frames;
 	}
-	else if (transflag & OB_DUPLIGROUP) {
-		return &gen_dupli_group;
+	else if (transflag & OB_DUPLICOLLECTION) {
+		return &gen_dupli_collection;
 	}
 
 	return NULL;
@@ -1221,24 +1187,17 @@ static const DupliGenerator *get_dupli_generator(const DupliContext *ctx)
 /* ---- ListBase dupli container implementation ---- */
 
 /* Returns a list of DupliObject */
-ListBase *object_duplilist_ex(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *ob, bool update)
+ListBase *object_duplilist(Depsgraph *depsgraph, Scene *sce, Object *ob)
 {
 	ListBase *duplilist = MEM_callocN(sizeof(ListBase), "duplilist");
 	DupliContext ctx;
-	init_context(&ctx, bmain, eval_ctx, scene, ob, NULL, update);
+	init_context(&ctx, depsgraph, sce, ob, NULL);
 	if (ctx.gen) {
 		ctx.duplilist = duplilist;
 		ctx.gen->make_duplis(&ctx);
 	}
 
 	return duplilist;
-}
-
-/* note: previously updating was always done, this is why it defaults to be on
- * but there are likely places it can be called without updating */
-ListBase *object_duplilist(Main *bmain, EvaluationContext *eval_ctx, Scene *sce, Object *ob)
-{
-	return object_duplilist_ex(bmain, eval_ctx, sce, ob, true);
 }
 
 void free_object_duplilist(ListBase *lb)
@@ -1275,60 +1234,4 @@ int count_duplilist(Object *ob)
 		}
 	}
 	return 1;
-}
-
-DupliApplyData *duplilist_apply(Object *ob, Scene *scene, ListBase *duplilist)
-{
-	DupliApplyData *apply_data = NULL;
-	int num_objects = BLI_listbase_count(duplilist);
-
-	if (num_objects > 0) {
-		DupliObject *dob;
-		int i;
-		apply_data = MEM_mallocN(sizeof(DupliApplyData), "DupliObject apply data");
-		apply_data->num_objects = num_objects;
-		apply_data->extra = MEM_mallocN(sizeof(DupliExtraData) * (size_t) num_objects,
-		                                "DupliObject apply extra data");
-
-		for (dob = duplilist->first, i = 0; dob; dob = dob->next, ++i) {
-			/* make sure derivedmesh is calculated once, before drawing */
-			if (scene && !(dob->ob->transflag & OB_DUPLICALCDERIVED) && dob->ob->type == OB_MESH) {
-				mesh_get_derived_final(scene, dob->ob, scene->customdata_mask);
-				dob->ob->transflag |= OB_DUPLICALCDERIVED;
-			}
-		}
-
-		for (dob = duplilist->first, i = 0; dob; dob = dob->next, ++i) {
-			/* copy obmat from duplis */
-			copy_m4_m4(apply_data->extra[i].obmat, dob->ob->obmat);
-			copy_m4_m4(dob->ob->obmat, dob->mat);
-
-			/* copy layers from the main duplicator object */
-			apply_data->extra[i].lay = dob->ob->lay;
-			dob->ob->lay = ob->lay;
-		}
-	}
-	return apply_data;
-}
-
-void duplilist_restore(ListBase *duplilist, DupliApplyData *apply_data)
-{
-	DupliObject *dob;
-	int i;
-	/* Restore object matrices.
-	 * NOTE: this has to happen in reverse order, since nested
-	 * dupli objects can repeatedly override the obmat.
-	 */
-	for (dob = duplilist->last, i = apply_data->num_objects - 1; dob; dob = dob->prev, --i) {
-		copy_m4_m4(dob->ob->obmat, apply_data->extra[i].obmat);
-		dob->ob->transflag &= ~OB_DUPLICALCDERIVED;
-
-		dob->ob->lay = apply_data->extra[i].lay;
-	}
-}
-
-void duplilist_free_apply_data(DupliApplyData *apply_data)
-{
-	MEM_freeN(apply_data->extra);
-	MEM_freeN(apply_data);
 }

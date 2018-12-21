@@ -37,10 +37,10 @@ def read_chan(context, filepath, z_up, rot_ord, sensor_width, sensor_height):
     # read the file
     filehandle = open(filepath, 'r')
 
-    # iterate throug the files lines
+    # iterate through the files lines
     for line in filehandle:
         # reset the target objects matrix
-        # (the one from whitch one we'll extract the final transforms)
+        # (the one from which one we'll extract the final transforms)
         m_trans_mat = Matrix()
 
         # strip the line

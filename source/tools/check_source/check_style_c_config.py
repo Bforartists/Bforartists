@@ -9,7 +9,6 @@ IGNORE = (
     "source/blender/blenkernel/intern/boids.c",
     "source/blender/blenkernel/intern/cloth.c",
     "source/blender/blenkernel/intern/collision.c",
-    "source/blender/blenkernel/intern/effect.c",
     "source/blender/blenkernel/intern/implicit.c",
     "source/blender/blenkernel/intern/particle.c",
     "source/blender/blenkernel/intern/particle_system.c",
@@ -21,10 +20,6 @@ IGNORE = (
     "source/blender/blenlib/intern/fnmatch.c",
     "source/blender/blenlib/intern/md5.c",
     "source/blender/blenlib/intern/voxel.c",
-
-    "source/blender/blenloader/intern/readfile.c",
-    "source/blender/blenloader/intern/versioning_250.c",
-    "source/blender/blenloader/intern/versioning_legacy.c",
 
     "source/blender/editors/space_logic/logic_buttons.c",
     "source/blender/editors/space_logic/logic_window.c",

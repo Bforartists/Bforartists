@@ -22,6 +22,10 @@
  *
  */
 
+/** \file blender/editors/io/io_alembic.c
+ *  \ingroup editor/io
+ */
+
 #ifdef WITH_ALEMBIC
 
 /* needed for directory lookup */
@@ -545,20 +549,10 @@ static int wm_alembic_import_exec(bContext *C, wmOperator *op)
 		}
 	}
 
-	/* Switch to object mode to avoid being stuck in other modes (T54326). */
-	if (CTX_data_mode_enum(C) != CTX_MODE_OBJECT) {
-		Object *obedit = CTX_data_edit_object(C);
-
-		if (obedit != NULL) {
-			ED_object_mode_toggle(C, obedit->mode);
-		}
-		else {
-			Object *ob = CTX_data_active_object(C);
-
-			if (ob) {
-				ED_object_mode_toggle(C, ob->mode);
-			}
-		}
+	/* Switch out of edit mode to avoid being stuck in it (T54326). */
+	Object *obedit = CTX_data_edit_object(C);
+	if (obedit) {
+		ED_object_mode_toggle(C, OB_MODE_EDIT);
 	}
 
 	bool ok = ABC_import(C, filename, scale, is_sequence, set_frame_range,

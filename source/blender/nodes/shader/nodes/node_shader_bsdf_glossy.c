@@ -46,14 +46,17 @@ static void node_shader_init_glossy(bNodeTree *UNUSED(ntree), bNode *node)
 	node->custom1 = SHD_GLOSSY_GGX;
 }
 
-static int node_shader_gpu_bsdf_glossy(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int node_shader_gpu_bsdf_glossy(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
 	if (!in[2].link)
-		in[2].link = GPU_builtin(GPU_VIEW_NORMAL);
-	else
-		GPU_link(mat, "direction_transform_m4v3", in[2].link, GPU_builtin(GPU_VIEW_MATRIX), &in[2].link);
+		GPU_link(mat, "world_normals_get", &in[2].link);
 
-	return GPU_stack_link(mat, "node_bsdf_glossy", in, out);
+	if (node->custom1 == SHD_GLOSSY_SHARP)
+		GPU_link(mat, "set_value_zero", &in[1].link);
+
+	GPU_material_flag_set(mat, GPU_MATFLAG_GLOSSY);
+
+	return GPU_stack_link(mat, node, "node_bsdf_glossy", in, out, GPU_constant(&node->ssr_id));
 }
 
 /* node type definition */
@@ -62,7 +65,6 @@ void register_node_type_sh_bsdf_glossy(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_BSDF_GLOSSY, "Glossy BSDF", NODE_CLASS_SHADER, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_bsdf_glossy_in, sh_node_bsdf_glossy_out);
 	node_type_size_preset(&ntype, NODE_SIZE_MIDDLE);
 	node_type_init(&ntype, node_shader_init_glossy);

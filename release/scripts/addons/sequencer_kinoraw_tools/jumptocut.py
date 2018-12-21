@@ -297,7 +297,7 @@ class OBJECT_OT_Metacopy(Operator):  # Operator copy source in/out
                 functions.triminout(strip2, sin, sout)
                 bpy.ops.sequencer.copy()
                 bpy.ops.sequencer.meta_separate()
-                self.report({'INFO'}, "META2 has been trimed and copied")
+                self.report({'INFO'}, "META2 has been trimmed and copied")
             else:
                 bpy.ops.sequencer.meta_make()
                 bpy.ops.sequencer.copy()

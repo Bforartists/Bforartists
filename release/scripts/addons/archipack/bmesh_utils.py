@@ -34,8 +34,8 @@ class BmeshEdit():
         """
             private, start bmesh editing of active object
         """
-        o.select = True
-        context.scene.objects.active = o
+        o.select_set(state=True)
+        context.view_layer.objects.active = o
         bpy.ops.object.mode_set(mode='EDIT')
         bm = bmesh.from_edit_mesh(o.data)
         bm.verts.ensure_lookup_table()
@@ -212,7 +212,7 @@ class BmeshEdit():
     @staticmethod
     def bevel(context, o,
             offset,
-            offset_type=0,
+            offset_type='OFFSET',
             segments=1,
             profile=0.5,
             vertex_only=False,

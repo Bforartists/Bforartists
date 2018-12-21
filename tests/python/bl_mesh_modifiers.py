@@ -38,12 +38,12 @@ USE_QUICK_RENDER = False
 
 def render_gl(context, filepath, shade):
 
-    def ctx_viewport_shade(context, shade):
+    def ctx_shading_type(context, shade):
         for area in context.window.screen.areas:
             if area.type == 'VIEW_3D':
                 space = area.spaces.active
                 # rv3d = space.region_3d
-                space.viewport_shade = shade
+                space.shading.type = shade
 
     import bpy
     scene = context.scene
@@ -59,7 +59,7 @@ def render_gl(context, filepath, shade):
     render.resolution_x = 512
     render.resolution_y = 512
 
-    ctx_viewport_shade(context, shade)
+    ctx_shading_type(context, shade)
 
     # stop to inspect!
     # if filepath == "test_cube_shell_solidify_subsurf_wp_wire":
@@ -127,7 +127,7 @@ def ctx_clear_scene():  # copied from batch_import.py
     # remove obdata, for now only worry about the startup scene
     for bpy_data_iter in (bpy.data.objects,
                           bpy.data.meshes,
-                          bpy.data.lamps,
+                          bpy.data.lights,
                           bpy.data.cameras,
                           ):
 
@@ -249,7 +249,7 @@ def mesh_uv_add(obj):
            (1.0, 1.0),
            (1.0, 0.0))
 
-    uv_lay = obj.data.uv_textures.new()
+    uv_lay = obj.data.uv_layers.new()
 
     # XXX, odd that we need to do this. until UV's and texface
     # are separated we will need to keep it
@@ -370,7 +370,7 @@ def modifier_armature_add(scene, obj):
     scene.objects.active = obj
 
     # display options
-    obj_arm.show_x_ray = True
+    obj_arm.show_in_front = True
     arm_data.draw_type = 'STICK'
 
     # apply to modifier
@@ -425,7 +425,7 @@ def modifier_hook_add(scene, obj, use_vgroup=True):
 
     obj_hook = mod.object
     obj_hook.rotation_euler = 0, math.radians(45), 0
-    obj_hook.show_x_ray = True
+    obj_hook.show_in_front = True
 
     if use_vgroup:
         mod.vertex_group = obj.vertex_groups[0].name

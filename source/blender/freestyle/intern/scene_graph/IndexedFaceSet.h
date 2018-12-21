@@ -113,7 +113,7 @@ public:
 	 *      0 : the arrays are not copied. The pointers passed as arguments are used. IndexedFaceSet takes these
 	 *          arrays desallocation in charge.
 	 *      1 : the arrays are copied. The caller is in charge of the arrays, passed as arguments desallocation.
-	*/
+	 */
 	IndexedFaceSet(float *iVertices, unsigned iVSize, float *iNormals, unsigned iNSize, FrsMaterial **iMaterials,
 	               unsigned iMSize, float *iTexCoords, unsigned iTSize, unsigned iNumFaces, unsigned *iNumVertexPerFace,
 	               TRIANGLES_STYLE *iFaceStyle, FaceEdgeMark *iFaceEdgeMarks, unsigned *iVIndices, unsigned iVISize,
@@ -150,8 +150,6 @@ public:
 		std::swap(_MISize, ioOther._MISize);
 		std::swap(_TISize, ioOther._TISize);
 
-		std::swap(_displayList, ioOther._displayList);
-
 		Rep::swap(ioOther);
 	}
 
@@ -172,12 +170,6 @@ public:
 
 	/*! Compute the Bounding Box */
 	virtual void ComputeBBox();
-
-	/*! modifiers */
-	inline void setDisplayList(unsigned int index)
-	{
-		_displayList = index;
-	}
 
 	/*! Accessors */
 	virtual const float *vertices() const
@@ -280,11 +272,6 @@ public:
 		return _TISize;
 	}
 
-	inline unsigned int displayList() const
-	{
-		return _displayList;
-	}
-
 protected:
 	float *_Vertices;
 	float *_Normals;
@@ -310,8 +297,6 @@ protected:
 	unsigned _NISize;
 	unsigned _MISize;
 	unsigned _TISize;
-
-	unsigned int _displayList;
 
 #ifdef WITH_CXX_GUARDEDALLOC
 	MEM_CXX_CLASS_ALLOC_FUNCS("Freestyle:IndexedFaceSet")

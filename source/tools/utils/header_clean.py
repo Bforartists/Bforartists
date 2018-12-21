@@ -28,7 +28,7 @@ we could change this if it's needed.
 
 Ensures headers are NOT removed:
 
-- They aren't used in the current build configuation.
+- They aren't used in the current build configuration.
 - They are needed but happen to be indirectly included by another header.
 - They use '#include <...>', instead of quotes (keep system headers).
 """
@@ -39,6 +39,8 @@ import subprocess
 import re
 
 # Copied form elsewhere...
+
+
 def cmake_cache_var(cmake_dir, var):
     cache_file = open(os.path.join(cmake_dir, "CMakeCache.txt"), encoding='utf-8')
     lines = [l_strip for l in cache_file for l_strip in (l.strip(),)
@@ -49,6 +51,7 @@ def cmake_cache_var(cmake_dir, var):
         if l.split(":")[0] == var:
             return l.split("=", 1)[-1]
     return None
+
 
 # RE_CFILE_SEARCH = re.search('<title>(.*)</title>', html, re.IGNORECASE)
 RE_CFILE_SEARCH = re.compile(r"\s\-c\s([\S]+)")
@@ -81,10 +84,10 @@ def find_build_args_ninja(build_dir):
     cmake_dir = build_dir
     make_exe = "ninja"
     process = subprocess.Popen(
-            [make_exe, "-t", "commands"],
-            stdout=subprocess.PIPE,
-            cwd=build_dir,
-            )
+        [make_exe, "-t", "commands"],
+        stdout=subprocess.PIPE,
+        cwd=build_dir,
+    )
     while process.poll():
         time.sleep(1)
 
@@ -98,10 +101,10 @@ def find_build_args_ninja(build_dir):
 def find_build_args_make(build_dir):
     make_exe = "make"
     process = subprocess.Popen(
-            [make_exe, "--always-make", "--dry-run", "--keep-going", "VERBOSE=1"],
-            stdout=subprocess.PIPE,
-            cwd=build_dir,
-            )
+        [make_exe, "--always-make", "--dry-run", "--keep-going", "VERBOSE=1"],
+        stdout=subprocess.PIPE,
+        cwd=build_dir,
+    )
     while process.poll():
         time.sleep(1)
 
@@ -145,7 +148,7 @@ def wash_source_const(pair):
         '''
 
         # for t in ("bool", "char", "short", "int", "long", "float", "double"):
-        #if t in l_strip:
+        # if t in l_strip:
         changed = True
         while changed:
             changed = False
@@ -262,7 +265,7 @@ def wash_source_include(pair):
     while i < len(lines):
         l = lines[i]
 
-        #if "\"BKE_" not in l:
+        # if "\"BKE_" not in l:
         #    i += 1
         #    continue
         m = re.match(re_c, l)
@@ -286,7 +289,6 @@ def wash_source_include(pair):
         # first check this is even getting compiled
         lines[i] = l_test
         write_lines(lines)
-
 
         # ensure this fails!, else we may be in an `#if 0` block
         ret = os.system(build_args)
@@ -362,7 +364,6 @@ def header_clean_all(build_dir, regex_list):
                 return True
         return False
 
-
     if 1:
         args = [(c, build_args) for (c, build_args) in args if test_path(c)]
 
@@ -416,4 +417,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

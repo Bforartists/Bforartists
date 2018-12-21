@@ -19,7 +19,7 @@
  * All rights reserved.
  *
  * Contributor(s): Full recode, Ton Roosendaal, Crete 2005
- *				 Full recode, Joshua Leung, 2009
+ *                 Full recode, Joshua Leung, 2009
  *
  * ***** END GPL LICENSE BLOCK *****
  */
@@ -70,7 +70,7 @@ void BKE_action_make_local(struct Main *bmain, struct bAction *act, const bool l
 /* Action API ----------------- */
 
 /* types of transforms applied to the given item
- *  - these are the return falgs for action_get_item_transforms()
+ * - these are the return flags for action_get_item_transforms()
  */
 typedef enum eAction_TransformFlags {
 	/* location */
@@ -94,8 +94,8 @@ typedef enum eAction_TransformFlags {
 } eAction_TransformFlags;
 
 /* Return flags indicating which transforms the given object/posechannel has
- *	- if 'curves' is provided, a list of links to these curves are also returned
- *	  whose nodes WILL NEED FREEING
+ * - if 'curves' is provided, a list of links to these curves are also returned
+ *   whose nodes WILL NEED FREEING
  */
 short action_get_item_transforms(struct bAction *act, struct Object *ob, struct bPoseChannel *pchan, ListBase *curves);
 
@@ -137,6 +137,8 @@ void action_groups_clear_tempflags(struct bAction *act);
 void                 BKE_pose_channel_free(struct bPoseChannel *pchan);
 void                 BKE_pose_channel_free_ex(struct bPoseChannel *pchan, bool do_id_user);
 
+void                 BKE_pose_channel_free_bbone_cache(struct bPoseChannel *pchan);
+
 void                 BKE_pose_channels_free(struct bPose *pose);
 void                 BKE_pose_channels_free_ex(struct bPose *pose, bool do_id_user);
 
@@ -162,9 +164,6 @@ struct bPoseChannel *BKE_pose_channel_get_mirrored(const struct bPose *pose, con
 #ifndef NDEBUG
 bool BKE_pose_channels_is_valid(const struct bPose *pose);
 #endif
-
-/* Copy the data from the action-pose (src) into the pose */
-void extract_pose_from_pose(struct bPose *pose, const struct bPose *src);
 
 /* sets constraint flags */
 void BKE_pose_update_constraint_flags(struct bPose *pose);
@@ -204,12 +203,14 @@ void BKE_pose_remove_group_index(struct bPose *pose, const int index);
 void what_does_obaction(struct Object *ob, struct Object *workob, struct bPose *pose, struct bAction *act, char groupname[], float cframe);
 
 /* for proxy */
+void BKE_pose_copyesult_pchan_result(struct bPoseChannel *pchanto, const struct bPoseChannel *pchanfrom);
 bool BKE_pose_copy_result(struct bPose *to, struct bPose *from);
 /* clear all transforms */
 void BKE_pose_rest(struct bPose *pose);
 
 /* Tag pose for recalc. Also tag all related data to be recalc. */
 void BKE_pose_tag_recalc(struct Main *bmain, struct bPose *pose);
+
 
 #ifdef __cplusplus
 };

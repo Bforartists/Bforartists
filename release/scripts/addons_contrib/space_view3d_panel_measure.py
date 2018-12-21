@@ -1088,7 +1088,7 @@ class VIEW3D_PT_measure(bpy.types.Panel):
                     row.prop(sce, "measure_panel_dist")
 
                     row = box.row()
-                    row.label(text="", icon='CURSOR')
+                    row.label(text="", icon='PIVOT_CURSOR')
                     row.label(text="", icon='ARROW_LEFTRIGHT')
                     if measureLocal(sce):
                         row.label(text="Obj. Center")
@@ -1108,7 +1108,7 @@ class VIEW3D_PT_measure(bpy.types.Panel):
                     row.prop(sce, "measure_panel_dist")
 
                     row = box.row()
-                    row.label(text="", icon='CURSOR')
+                    row.label(text="", icon='PIVOT_CURSOR')
                     row.label(text="", icon='ARROW_LEFTRIGHT')
                     row.label(text="", icon='VERTEXSEL')
 
@@ -1368,7 +1368,7 @@ class VIEW3D_PT_measure(bpy.types.Panel):
                 row.prop(sce, "measure_panel_dist")
 
                 row = box.row()
-                row.label(text="", icon='CURSOR')
+                row.label(text="", icon='PIVOT_CURSOR')
 
                 row.label(text="", icon='ARROW_LEFTRIGHT')
 
@@ -1449,7 +1449,7 @@ class VIEW3D_PT_measure(bpy.types.Panel):
                 row.prop(sce, "measure_panel_dist")
 
                 row = box.row()
-                row.label(text="", icon='CURSOR')
+                row.label(text="", icon='PIVOT_CURSOR')
                 row.label(text="", icon='ARROW_LEFTRIGHT')
                 row.label(text="Origin [0,0,0]")
 

@@ -1,0 +1,132 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_checker_texture.oso
+shader node_checker_texture
+param	int	use_mapping	0		%read{2,2} %write{2147483647,-1}
+param	matrix	mapping	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0		%read{3,3} %write{2147483647,-1}
+param	float	Scale	5		%read{4,4} %write{2147483647,-1}
+param	point	Vector	0 0 0		%read{1,1} %write{0,0} %initexpr
+param	color	Color1	0.80000001 0.80000001 0.80000001		%read{42,42} %write{2147483647,-1}
+param	color	Color2	0.2 0.2 0.2		%read{43,43} %write{2147483647,-1}
+oparam	float	Fac	0		%read{40,40} %write{36,38}
+oparam	color	Color	0 0 0		%read{2147483647,-1} %write{42,43}
+global	point	P	%read{0,0} %write{2147483647,-1}
+local	point	___688_p	%read{18,26} %write{9,17}
+local	int	___688_xi	%read{30,30} %write{21,21}
+local	int	___688_yi	%read{31,31} %write{25,25}
+local	int	___688_zi	%read{33,33} %write{29,29}
+local	point	p	%read{3,4} %write{1,3}
+temp	point	$tmp1	%read{6,14} %write{4,4}
+const	string	$const1	"checker"		%read{5,5} %write{2147483647,-1}
+const	int	$const2	0		%read{6,18} %write{2147483647,-1}
+temp	float	$tmp2	%read{7,7} %write{6,6}
+const	float	$const3	1e-06		%read{7,15} %write{2147483647,-1}
+temp	float	$tmp3	%read{8,8} %write{7,7}
+const	float	$const4	0.99999899		%read{8,16} %write{2147483647,-1}
+temp	float	$tmp4	%read{9,9} %write{8,8}
+const	int	$const5	1		%read{10,22} %write{2147483647,-1}
+temp	float	$tmp5	%read{11,11} %write{10,10}
+temp	float	$tmp6	%read{12,12} %write{11,11}
+temp	float	$tmp7	%read{13,13} %write{12,12}
+const	int	$const6	2		%read{14,33} %write{2147483647,-1}
+temp	float	$tmp8	%read{15,15} %write{14,14}
+temp	float	$tmp9	%read{16,16} %write{15,15}
+temp	float	$tmp10	%read{17,17} %write{16,16}
+temp	float	$tmp11	%read{21,21} %write{20,20}
+temp	float	$tmp12	%read{20,20} %write{19,19}
+temp	float	$tmp13	%read{19,19} %write{18,18}
+temp	float	$tmp14	%read{25,25} %write{24,24}
+temp	float	$tmp15	%read{24,24} %write{23,23}
+temp	float	$tmp16	%read{23,23} %write{22,22}
+temp	float	$tmp17	%read{29,29} %write{28,28}
+temp	float	$tmp18	%read{28,28} %write{27,27}
+temp	float	$tmp19	%read{27,27} %write{26,26}
+temp	int	$tmp20	%read{32,32} %write{30,30}
+temp	int	$tmp21	%read{32,32} %write{31,31}
+temp	int	$tmp22	%read{34,34} %write{32,32}
+temp	int	$tmp23	%read{34,34} %write{33,33}
+temp	int	$tmp24	%read{35,35} %write{34,34}
+const	float	$const7	1		%read{36,40} %write{2147483647,-1}
+const	float	$const8	0		%read{38,38} %write{2147483647,-1}
+temp	int	$tmp25	%read{41,41} %write{40,40}
+code Vector
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:45
+# 	point Vector = P,
+	assign		Vector P 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl"} %line{45} %argrw{"wr"}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:51
+# 	point p = Vector;
+	assign		p Vector 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl"} %line{51} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:53
+# 	if (use_mapping)
+	if		use_mapping 4 4 	%line{53} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:54
+# 		p = transform(mapping, p);
+	transform	p mapping p 	%line{54} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:56
+# 	Fac = checker(p * Scale);
+	mul		$tmp1 p Scale 	%line{56} %argrw{"wrr"}
+	functioncall	$const1 40 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:25
+# 	p[0] = (ip[0] + 0.000001) * 0.999999;
+	compref		$tmp2 $tmp1 $const2 	%line{25} %argrw{"wrr"}
+	add		$tmp3 $tmp2 $const3 	%argrw{"wrr"}
+	mul		$tmp4 $tmp3 $const4 	%argrw{"wrr"}
+	compassign	___688_p $const2 $tmp4 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:26
+# 	p[1] = (ip[1] + 0.000001) * 0.999999;
+	compref		$tmp5 $tmp1 $const5 	%line{26} %argrw{"wrr"}
+	add		$tmp6 $tmp5 $const3 	%argrw{"wrr"}
+	mul		$tmp7 $tmp6 $const4 	%argrw{"wrr"}
+	compassign	___688_p $const5 $tmp7 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:27
+# 	p[2] = (ip[2] + 0.000001) * 0.999999;
+	compref		$tmp8 $tmp1 $const6 	%line{27} %argrw{"wrr"}
+	add		$tmp9 $tmp8 $const3 	%argrw{"wrr"}
+	mul		$tmp10 $tmp9 $const4 	%argrw{"wrr"}
+	compassign	___688_p $const6 $tmp10 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:29
+# 	int xi = (int)fabs(floor(p[0]));
+	compref		$tmp13 ___688_p $const2 	%line{29} %argrw{"wrr"}
+	floor		$tmp12 $tmp13 	%argrw{"wr"}
+	fabs		$tmp11 $tmp12 	%argrw{"wr"}
+	assign		___688_xi $tmp11 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:30
+# 	int yi = (int)fabs(floor(p[1]));
+	compref		$tmp16 ___688_p $const5 	%line{30} %argrw{"wrr"}
+	floor		$tmp15 $tmp16 	%argrw{"wr"}
+	fabs		$tmp14 $tmp15 	%argrw{"wr"}
+	assign		___688_yi $tmp14 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:31
+# 	int zi = (int)fabs(floor(p[2]));
+	compref		$tmp19 ___688_p $const6 	%line{31} %argrw{"wrr"}
+	floor		$tmp18 $tmp19 	%argrw{"wr"}
+	fabs		$tmp17 $tmp18 	%argrw{"wr"}
+	assign		___688_zi $tmp17 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:33
+# 	if ((xi % 2 == yi % 2) == (zi % 2)) {
+	mod		$tmp20 ___688_xi $const6 	%line{33} %argrw{"wrr"}
+	mod		$tmp21 ___688_yi $const6 	%argrw{"wrr"}
+	eq		$tmp22 $tmp20 $tmp21 	%argrw{"wrr"}
+	mod		$tmp23 ___688_zi $const6 	%argrw{"wrr"}
+	eq		$tmp24 $tmp22 $tmp23 	%argrw{"wrr"}
+	if		$tmp24 38 40 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:34
+# 		return 1.0;
+	assign		Fac $const7 	%line{34} %argrw{"wr"}
+	return
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:37
+# 		return 0.0;
+	assign		Fac $const8 	%line{37} %argrw{"wr"}
+	return
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:57
+# 	if (Fac == 1.0) {
+	eq		$tmp25 Fac $const7 	%line{57} %argrw{"wrr"}
+	if		$tmp25 43 44 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:58
+# 		Color = Color1;
+	assign		Color Color1 	%line{58} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_checker_texture.osl:61
+# 		Color = Color2;
+	assign		Color Color2 	%line{61} %argrw{"wr"}
+	end

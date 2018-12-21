@@ -1520,6 +1520,19 @@ void PointDensityTextureNode::attributes(Shader *shader,
 	ShaderNode::attributes(shader, attributes);
 }
 
+void PointDensityTextureNode::add_image()
+{
+	if(slot == -1) {
+		ImageMetaData metadata;
+		slot = image_manager->add_image(filename.string(), builtin_data,
+		                                false, 0,
+		                                interpolation,
+		                                EXTENSION_CLIP,
+		                                true,
+		                                metadata);
+	}
+}
+
 void PointDensityTextureNode::compile(SVMCompiler& compiler)
 {
 	ShaderInput *vector_in = input("Vector");
@@ -1532,15 +1545,7 @@ void PointDensityTextureNode::compile(SVMCompiler& compiler)
 	image_manager = compiler.image_manager;
 
 	if(use_density || use_color) {
-		if(slot == -1) {
-			ImageMetaData metadata;
-			slot = image_manager->add_image(filename.string(), builtin_data,
-			                                false, 0,
-			                                interpolation,
-			                                EXTENSION_CLIP,
-			                                true,
-			                                metadata);
-		}
+		add_image();
 
 		if(slot != -1) {
 			compiler.stack_assign(vector_in);
@@ -1583,15 +1588,7 @@ void PointDensityTextureNode::compile(OSLCompiler& compiler)
 	image_manager = compiler.image_manager;
 
 	if(use_density || use_color) {
-		if(slot == -1) {
-			ImageMetaData metadata;
-			slot = image_manager->add_image(filename.string(), builtin_data,
-			                                false, 0,
-			                                interpolation,
-			                                EXTENSION_CLIP,
-			                                true,
-			                                metadata);
-		}
+		add_image();
 
 		if(slot != -1) {
 			compiler.parameter("filename", string_printf("@i%d", slot).c_str());
@@ -1713,9 +1710,9 @@ void RGBToBWNode::constant_fold(const ConstantFolder& folder)
 void RGBToBWNode::compile(SVMCompiler& compiler)
 {
 	compiler.add_node(NODE_CONVERT,
-	                 NODE_CONVERT_CF,
-	                 compiler.stack_assign(inputs[0]),
-	                 compiler.stack_assign(outputs[0]));
+	                  NODE_CONVERT_CF,
+	                  compiler.stack_assign(inputs[0]),
+	                  compiler.stack_assign(outputs[0]));
 }
 
 void RGBToBWNode::compile(OSLCompiler& compiler)

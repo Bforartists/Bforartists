@@ -173,7 +173,7 @@ class TriLighting(Operator):
             backx = obj_position.x + self.distance * singleback_vector.x
             backy = obj_position.y + self.distance * singleback_vector.y
 
-            backData = bpy.data.lamps.new(name="TriLamp-Back", type=self.secondarytype)
+            backData = bpy.data.lights.new(name="TriLamp-Back", type=self.secondarytype)
             backData.energy = backEnergy
 
             backLamp = bpy.data.objects.new(name="TriLamp-Back", object_data=backData)
@@ -196,7 +196,7 @@ class TriLighting(Operator):
             rightx = obj_position.x + self.distance * singleright_vector.x
             righty = obj_position.y + self.distance * singleright_vector.y
 
-            rightData = bpy.data.lamps.new(name="TriLamp-Fill", type=self.secondarytype)
+            rightData = bpy.data.lights.new(name="TriLamp-Fill", type=self.secondarytype)
             rightData.energy = fillEnergy
             rightLamp = bpy.data.objects.new(name="TriLamp-Fill", object_data=rightData)
             scene.objects.link(rightLamp)
@@ -215,7 +215,7 @@ class TriLighting(Operator):
             leftx = obj_position.x + self.distance * singleleft_vector.x
             lefty = obj_position.y + self.distance * singleleft_vector.y
 
-            leftData = bpy.data.lamps.new(name="TriLamp-Key", type=self.primarytype)
+            leftData = bpy.data.lights.new(name="TriLamp-Key", type=self.primarytype)
             leftData.energy = keyEnergy
 
             leftLamp = bpy.data.objects.new(name="TriLamp-Key", object_data=leftData)

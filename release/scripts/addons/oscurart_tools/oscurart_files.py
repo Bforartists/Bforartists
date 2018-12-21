@@ -91,16 +91,16 @@ class replaceFilePath(Operator):
 # ---------------------- SYNC MISSING GROUPS --------------------------
 
 class reFreshMissingGroups(Operator):
-    """Search on the libraries of the linked source and relink groups and link newones if there are. Usefull to use with the mesh cache tools"""
+    """Search on the libraries of the linked source and relink groups and link newones if there are. Useful to use with the mesh cache tools"""
     bl_idname = "file.sync_missing_groups"
     bl_label = "Sync Missing Groups"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        for group in bpy.data.groups:
+        for group in bpy.data.collections:
             if group.library is not None:
                 with bpy.data.libraries.load(group.library.filepath, link=True) as (linked, local):
-                    local.groups = linked.groups
+                    local.collections = linked.collections
         return {'FINISHED'}
 
 
@@ -125,7 +125,7 @@ class collectImagesOsc(Operator):
         for image in bpy.data.images:
             try:
                 image.update()
-            
+
                 if image.has_data:
                     if not os.path.exists(os.path.join(imagespath,os.path.basename(image.filepath))):
                         shutil.copy(image.filepath, os.path.join(imagespath,os.path.basename(image.filepath)))
@@ -133,9 +133,9 @@ class collectImagesOsc(Operator):
                     else:
                         print("%s exists." % (image.name))
                 else:
-                    print("%s missing path." % (image.name))   
+                    print("%s missing path." % (image.name))
             except:
-                print("%s missing path." % (image.name))             
+                print("%s missing path." % (image.name))
 
         bpy.ops.file.make_paths_relative()
 

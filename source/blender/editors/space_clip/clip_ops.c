@@ -56,11 +56,10 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
-#include "BKE_depsgraph.h"
-#include "BKE_report.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_movieclip.h"
+#include "BKE_report.h"
 #include "BKE_sound.h"
 #include "BKE_tracking.h"
 
@@ -82,6 +81,8 @@
 #include "UI_view2d.h"
 
 #include "PIL_time.h"
+
+#include "DEG_depsgraph_build.h"
 
 #include "clip_intern.h"	// own include
 
@@ -113,12 +114,16 @@ static void sclip_zoom_set(const bContext *C, float zoom, float location[2])
 	}
 
 	if ((U.uiflag & USER_ZOOM_TO_MOUSEPOS) && location) {
-		float dx, dy;
+		float aspx, aspy, w, h, dx, dy;
 
 		ED_space_clip_get_size(sc, &width, &height);
+		ED_space_clip_get_aspect(sc, &aspx, &aspy);
 
-		dx = ((location[0] - 0.5f) * width - sc->xof) * (sc->zoom - oldzoom) / sc->zoom;
-		dy = ((location[1] - 0.5f) * height - sc->yof) * (sc->zoom - oldzoom) / sc->zoom;
+		w = width * aspx;
+		h = height * aspy;
+
+		dx = ((location[0] - 0.5f) * w - sc->xof) * (sc->zoom - oldzoom) / sc->zoom;
+		dy = ((location[1] - 0.5f) * h - sc->yof) * (sc->zoom - oldzoom) / sc->zoom;
 
 		if (sc->flag & SC_LOCK_SELECTION) {
 			sc->xlockof += dx;
@@ -249,7 +254,7 @@ static int open_exec(bContext *C, wmOperator *op)
 
 	WM_event_add_notifier(C, NC_MOVIECLIP | NA_ADDED, clip);
 
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
 	MEM_freeN(op->customdata);
 
 	return OPERATOR_FINISHED;
@@ -317,6 +322,7 @@ static int reload_exec(bContext *C, wmOperator *UNUSED(op))
 	if (!clip)
 		return OPERATOR_CANCELLED;
 
+	WM_jobs_kill_type(CTX_wm_manager(C), NULL, WM_JOB_TYPE_CLIP_PREFETCH);
 	BKE_movieclip_reload(CTX_data_main(C), clip);
 
 	WM_event_add_notifier(C, NC_MOVIECLIP | NA_EDITED, clip);
@@ -467,7 +473,7 @@ static void view_pan_cancel(bContext *C, wmOperator *op)
 void CLIP_OT_view_pan(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "View Pan";
+	ot->name = "Pan View";
 	ot->idname = "CLIP_OT_view_pan";
 	ot->description = "View Pan\nPan the view";
 
@@ -1585,7 +1591,7 @@ void CLIP_OT_cursor_set(wmOperatorType *ot)
 	                     "Cursor location in normalized clip coordinates", -10.0f, 10.0f);
 }
 
-/********************** macroses *********************/
+/********************** macros *********************/
 
 void ED_operatormacros_clip(void)
 {

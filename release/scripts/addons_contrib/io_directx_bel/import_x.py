@@ -77,13 +77,13 @@ def load(operator, context, filepath,
          use_image_search=True,
          global_matrix=None,
          ):
-    
-    
+
+
     if quickmode :
         parented = False
-    
+
     bone_minlength = bone_maxlength / 100.0
-    
+
     #global templates, tokens
     rootTokens = []
     namelookup = {}
@@ -102,7 +102,7 @@ def load(operator, context, filepath,
     '''
     '''
     with * : defined in dXdata
-    
+
     WORD     16 bits
     * DWORD     32 bits
     * FLOAT     IEEE float
@@ -147,13 +147,13 @@ BINARY FORMAT
 #define TOKEN_UNICODE     50
 #define TOKEN_CSTRING     51
 #define TOKEN_ARRAY       52
-    
+
     '''
-    
+
     # COMMON REGEX
     space = '[\ \t]{1,}' # at least one space / tab
     space0 = '[\ \t]{0,}' # zero or more space / tab
-    
+
     # DIRECTX REGEX TOKENS
     r_template = r'template' + space + '[\w]*' + space0 + '\{'
     if quickmode :
@@ -162,10 +162,10 @@ BINARY FORMAT
         r_sectionname = r'[\w]*' + space + '[\w-]*' + space0 + '\{'
     r_refsectionname = r'\{' + space0 + '[\w-]*' + space0 + '\}'
     r_endsection = r'\{|\}'
-    
+
     # dX comments
     r_ignore = r'#|//'
-    
+
     #r_frame = r'Frame' + space + '[\w]*'
     #r_matrix = r'FrameTransformMatrix' + space + '\{[\s\d.,-]*'
     #r_mesh = r'Mesh' + space + '[\W]*'
@@ -173,7 +173,7 @@ BINARY FORMAT
     ###################
     ## STEP 1 FUNCTIONS
     ###################
-    
+
     ## HEADER
     # returns header values or False if directx reco tag is missing
     # assuming there's never comment header and that xof if the 1st
@@ -183,9 +183,9 @@ BINARY FORMAT
      4       Magic Number (required) "xof "
      2       Minor Version 03
      2       Major Version 02
-     4       Format Type (required) 
+     4       Format Type (required)
         "txt " Text File
-        "bin " Binary File  
+        "bin " Binary File
         "tzip" MSZip Compressed Text File
         "bzip" MSZip Compressed Binary File
      4       Float Accuracy "0032" 32 bit or "0064" 64 bit
@@ -202,8 +202,8 @@ BINARY FORMAT
         accuracy = int(data.read(4).decode())
         data.seek(0)
         return ( minor, major, format, accuracy )
-        
-    
+
+
     ##
     def dXtree(data,quickmode = False) :
         tokens = {}
@@ -221,7 +221,7 @@ BINARY FORMAT
             lines, trunkated = nextFileChunk(data,trunkated)
             if lines == None : break
             for l in lines :
-                
+
                 # compute pointer position
                 ptr += eol
                 c += 1
@@ -230,16 +230,16 @@ BINARY FORMAT
                 #if l != '' : print('***',l)
                 #if l == ''  : break
                 l = l.strip()
-                
+
                 # remove blank and comment lines
                 if l == '' or re.match(r_ignore,l) :
                     continue
-                
+
                 # one line token cases level switch
                 if previouslvl :
                     lvl -= 1
                     previouslvl = False
-                
+
                 #print('%s lines in %.2f\''%(c,time.clock()-t),end='\r')
                 #print(c,len(l)+1,ptr,data.tell())
                 if '{' in l :
@@ -248,14 +248,14 @@ BINARY FORMAT
                 elif '}' in l :
                     lvl -= 1
                 #print(c,lvl,tree)
-                
+
                 if quickmode == False :
                     ## look for templates
                     if re.match(r_template,l) :
                         tname = l.split(' ')[1]
                         templates[tname] = {'pointer' : ptr, 'line' : c}
                         continue
-    
+
                     ## look for {references}
                     if re.match(r_refsectionname,l) :
                         refname = namelookup[ l[1:-1].strip() ]
@@ -271,7 +271,7 @@ BINARY FORMAT
                         if 'user' not in tokens[refname] : tokens[refname]['users'] = [parent]
                         else : tokens[refname]['users'].append(parent)
                         continue
-    
+
                 ## look for any token or only Mesh token in quickmode
                 if re.match(r_sectionname,l) :
                     tokenname = getName(l,tokens)
@@ -289,7 +289,7 @@ BINARY FORMAT
                         tokens[tokenname]['parent'] = parent
                         tokens[tokenname]['childs'] = []
                         tokens[tokenname]['type'] = typ
-                        
+
                     else : tokens[tokenname] = {'pointer': ptr,
                                                 'line'   : c,
                                                 'parent' : parent,
@@ -300,9 +300,9 @@ BINARY FORMAT
                     tree.append(tokenname)
                     if lvl > 1 and quickmode == False :
                         tokens[parent]['childs'].append(tokenname)
-                    
+
         return tokens, templates, tokentypes
-        
+
     ## returns file binary chunks
     def nextFileChunk(data,trunkated=False,chunksize=1024) :
         if chunksize == 0 : chunk = data.read()
@@ -312,7 +312,7 @@ BINARY FORMAT
             #if stream : return lines.replace('\r','').replace('\n','')
             lines = lines.replace('\r','\n').split('\n')
             if trunkated : lines[0] = trunkated + lines[0]
-            if len(lines) == 1 : 
+            if len(lines) == 1 :
                 if lines[0] == '' : return None, None
                 return lines, False
             return lines, lines.pop()
@@ -323,28 +323,28 @@ BINARY FORMAT
                 w = chunk[word:word+4]
                 print(word,w,struct.unpack("<l", w),binascii.unhexlify(w))
 
-    
+
     # name unnamed tokens, watchout for x duplicate
     # for blender, referenced token in x should be named and unique..
     def getName(l,tokens) :
         xnam = l.split(' ')[1].strip()
-        
+
         #if xnam[0] == '{' : xnam = ''
         if xnam and xnam[-1] == '{' : xnam = xnam[:-1]
-        
+
         name = xnam
         if len(name) == 0 : name = l.split(' ')[0].strip()
-        
+
         namelookup[xnam] = bel.bpyname(name,tokens,4)
 
         return namelookup[xnam]
-    
-    
+
+
     ###################
     ## STEP 2 FUNCTIONS
     ###################
     # once the internal dict is populated the functions below can be used
-    
+
     ## from a list of tokens, displays every child, users and references
     '''
       walk_dxtree( [ 'Mesh01', 'Mesh02' ] ) # for particular pieces
@@ -357,21 +357,21 @@ BINARY FORMAT
                     tokenname = tokenname[1:]
                     ref = 'ref: '
                 else : ref = False
-                
+
                 frame_type = tokens[tokenname]['type']
                 line = ('{:7}'.format(tokens[tokenname]['line']))
                 log = ' %s%s (%s)'%( ref if ref else '', tokenname, frame_type )
                 print('%s.%s%s'%(line, tab, log))
                 if fi == len(field) - 1 : tab = tab[:-3] + '   '
-    
+
                 if ref == False :
                     for user in tokens[tokenname]['users'] :
                          print('%s.%s |__ user: %s'%(line, tab.replace('_',' '), user))
                     walk_dXtree(tokens[tokenname]['childs'],lvl+1,tab.replace('_',' ')+' |__')
-                
+
                 if fi == len(field) - 1 and len(tokens[tokenname]['childs']) == 0 :
                     print('%s.%s'%(line,tab))
-    
+
     ## remove eol, comments, spaces from a raw block of datas
     def cleanBlock(block) :
         while '//' in block :
@@ -384,7 +384,7 @@ BINARY FORMAT
             block = block[0:s] + block[e:]
         block = block.replace('\n','').replace(' ','').replace('\t ','')
         return block
-        
+
     def readToken(tokenname) :
         token = tokens[tokenname]
         datatype = token['type'].lower()
@@ -401,7 +401,7 @@ BINARY FORMAT
         if datatype in templatesConvert :
             fields = eval( templatesConvert[datatype] )
         return fields
-    
+
     def dXtemplateData(tpl,block,ptr=0) :
         #print('dxTPL',block[ptr])
         pack = []
@@ -422,14 +422,14 @@ BINARY FORMAT
             else :
                 length = 1
                 datavalue, ptr = dXdata(block, datatype, length, ptr)
-    
+
             #if len(str(datavalue)) > 50 : dispvalue = str(datavalue[0:25]) + ' [...] ' + str(datavalue[-25:])
             #else : dispvalue = str(datavalue)
             #print('%s :  %s %s'%(dataname,dispvalue,type(datavalue)))
             exec('%s = datavalue'%(dataname))
             pack.append( datavalue )
         return pack, ptr + 1
-    
+
     def dXdata(block,datatype,length,s=0,eof=';') :
         #print('dxDTA',block[s])
         # at last, the data we need
@@ -458,7 +458,7 @@ BINARY FORMAT
             if datatype in templatesConvert :
                 fields = eval( templatesConvert[datatype] )
             return fields, ptr
-    
+
     def dXarray(block, datatype, length, s=0) :
         #print('dxARR',block[s])
         lst = []
@@ -468,7 +468,7 @@ BINARY FORMAT
                 if i+1 == length : eoi = ';'
                 datavalue, s = dXdata(block,datatype,1,s,eoi)
                 lst.append( datavalue )
-            
+
         else :
             eoi = ';,'
             for i in range(length) :
@@ -480,7 +480,7 @@ BINARY FORMAT
                 lst.append( datavalue )
                 s = e + 2
         return lst, s
-    
+
     ###################################################
 
     ## populate a template with its datas
@@ -495,7 +495,7 @@ BINARY FORMAT
         go = True
         while go :
             lines, trunkated = nextFileChunk(data,trunkated,chunksize) # stream ?
-            if lines == None : 
+            if lines == None :
                 break
             for l in lines :
                 #l = data.readline().decode().strip()
@@ -503,21 +503,21 @@ BINARY FORMAT
                 if '}' in l :
                     go = False
                     break
-        
+
         uuid = re.search(r'<.+>',block).group()
         templates[tpl_name]['uuid'] = uuid.lower()
         templates[tpl_name]['members'] = []
         templates[tpl_name]['restriction'] = 'closed'
-        
+
         members = re.search(r'>.+',block).group()[1:-1].split(';')
         for member in members :
             if member == '' : continue
             if member[0] == '[' :
                 templates[tpl_name]['restriction'] = member
-                continue  
+                continue
             templates[tpl_name]['members'].append( member.split(' ') )
-    
-        if display : 
+
+        if display :
             print('\ntemplate %s :'%tpl_name)
             for k,v in templates[tpl_name].items() :
                 if k != 'members' :
@@ -525,7 +525,7 @@ BINARY FORMAT
                 else :
                     for member in v :
                         print('  %s'%str(member)[1:-1].replace(',',' ').replace("'",''))
-                
+
             if tpl_name in defaultTemplates :
                 defaultTemplates[tpl_name]['line'] = templates[tpl_name]['line']
                 defaultTemplates[tpl_name]['pointer'] = templates[tpl_name]['pointer']
@@ -543,8 +543,8 @@ BINARY FORMAT
                     #            print('  %s'%str(member)[1:-1].replace(',',' ').replace("'",''))
                 else :
                     print('MATCHES BUILTIN TEMPLATE')
-    
-            
+
+
     ##  read any kind of token data block
     # by default the block is cleaned from inline comment space etc to allow data parsing
     # useclean = False (retrieve all bytes) if you need to compute a file byte pointer
@@ -572,7 +572,7 @@ BINARY FORMAT
         block = block[s:e]
         if clean : block = cleanBlock(block)
         return block
-    
+
     def getChilds(tokenname) :
         childs = []
         # '*' in childname means it's a reference. always perform this test
@@ -581,12 +581,12 @@ BINARY FORMAT
             if childname[0] == '*' : childname = childname[1:]
             childs.append( childname )
         return childs
-    
+
     # the input nested list of [bonename, matrix, [child0,child1..]] is given by import_dXtree()
     def buildArm(armdata, child,lvl=0,parent_matrix=False) :
-        
+
         bonename, bonemat, bonechilds = child
-        
+
         if lvl == 0 :
             armname = armdata
             armdata = bpy.data.armatures.new(name=armname)
@@ -596,7 +596,7 @@ BINARY FORMAT
             bpy.context.scene.objects.active = arm
             bpy.ops.object.mode_set(mode='EDIT')
             parent_matrix = Matrix()
-        
+
         bone = armdata.edit_bones.new(name=bonename)
         bonematW = parent_matrix * bonemat
         bone.head = bonematW.to_translation()
@@ -611,10 +611,10 @@ BINARY FORMAT
             bpy.ops.object.mode_set(mode='OBJECT')
             return arm
         return bone
-    
+
     def import_dXtree(field,lvl=0) :
         tab = ' '*lvl*2
-        if field == [] : 
+        if field == [] :
             if show_geninfo : print('%s>> no childs, return False'%(tab))
             return False
         ob = False
@@ -622,14 +622,14 @@ BINARY FORMAT
         is_root = False
         frames = []
         obs = []
-        
+
         parentname = tokens[field[0]]['parent']
         if show_geninfo : print('%s>>childs in frame %s :'%(tab,parentname))
-        
+
         for tokenname in field :
 
             tokentype = tokens[tokenname]['type']
-            
+
             # frames can contain more than one mesh
             if tokentype  == 'mesh' :
                 # object and mesh naming :
@@ -638,35 +638,35 @@ BINARY FORMAT
                 if parentname :
                     meshcount = 0
                     for child in getChilds(parentname) :
-                        if tokens[child]['type'] == 'mesh' : 
+                        if tokens[child]['type'] == 'mesh' :
                             meshcount += 1
                             if meshcount == 2 :
                                 parentname = tokenname
                                 break
                 else : parentname = tokenname
-                
+
                 ob = getMesh(parentname,tokenname)
                 obs.append(ob)
 
                 if show_geninfo : print('%smesh : %s'%(tab,tokenname))
-            
+
             # frames contain one matrix (empty or bone)
             elif tokentype  == 'frametransformmatrix' :
                 [mat] = readToken(tokenname)
                 if show_geninfo : print('%smatrix : %s'%(tab,tokenname))
-            
+
             # frames can contain 0 or more frames
             elif tokentype  == 'frame' :
                 frames.append(tokenname)
                 if show_geninfo : print('%sframe : %s'%(tab,tokenname))
-        
-        # matrix is used for mesh transform if some mesh(es) exist(s)      
+
+        # matrix is used for mesh transform if some mesh(es) exist(s)
         if ob :
             is_root = True
             if mat == False :
                 mat = Matrix()
                 if show_geninfo : print('%smesh token without matrix, set it to default\n%splease report in bug tracker if you read this !'%(tab,tab))
-            if parentname == '' : 
+            if parentname == '' :
                 mat = mat * global_matrix
             if len(obs) == 1 :
                 ob.matrix_world = mat
@@ -675,7 +675,7 @@ BINARY FORMAT
                 ob.matrix_world = mat
                 for child in obs :
                     child.parent = ob
-        
+
         # matrix only, store it as a list as we don't know if
         # it's a bone or an empty yet
         elif mat :
@@ -687,25 +687,25 @@ BINARY FORMAT
             if show_geninfo : print('%snothing here'%(tab))
 
         childs = []
-        
+
         for tokenname in frames :
             if show_geninfo : print('%s<Begin %s :'%(tab,tokenname))
-            
+
             # child is either False, empty, object, or a list or undefined name matrices hierarchy
             child = import_dXtree(getChilds(tokenname),lvl+1)
             if child and type(child) != list :
                 is_root = True
             childs.append( [tokenname, child] )
             if show_geninfo : print('%sEnd %s>'%(tab,tokenname))
-        
+
         if is_root and parentname != '' :
-            
+
             if show_geninfo : print('%send of tree a this point'%(tab))
             if type(ob) == list :
                 mat = ob[1]
                 ob = bel.ob.new(parentname, None, naming_method)
             ob.matrix_world = mat
-            
+
         for tokenname, child in childs :
             if show_geninfo : print('%sbegin2 %s>'%(tab,tokenname))
             # returned a list of object(s) or matrice(s)
@@ -718,14 +718,14 @@ BINARY FORMAT
                     if type(child) == list :
                         if show_geninfo : print('%sconvert to armature %s'%(tab,tokenname))
                         child = buildArm(tokenname, child)
-                        
+
                     # parent the obj/empty/arm to current
                     # or apply the global user defined matrix to the object root
                     if parentname != '' :
                         child.parent = ob
                     else :
                         child.matrix_world = global_matrix
-                        
+
                 # returned a list of parented matrices. append it in childs list
                 elif type(child[0]) == str :
                     ob[2].append(child)
@@ -735,7 +735,7 @@ BINARY FORMAT
                     #print('  child data type: %s'%type(child.data))
                     child.parent = ob
                     #print('%s parented to %s'%(child.name,ob.name))
-                
+
             # returned False
             else :
                  if show_geninfo : print('%sreturned %s, nothing'%(tab,child))
@@ -745,9 +745,9 @@ BINARY FORMAT
 
     # build from mesh token type
     def getMesh(obname,tokenname,debug = False):
-    
+
         if debug : print('\nmesh name : %s'%tokenname)
-        
+
         verts = []
         edges = []
         faces = []
@@ -758,36 +758,36 @@ BINARY FORMAT
         groupindices = []
         groupweights = []
 
-        nVerts, verts, nFaces, faces = readToken(tokenname) 
+        nVerts, verts, nFaces, faces = readToken(tokenname)
 
         if debug :
             print('verts    : %s %s\nfaces    : %s %s'%(nVerts, len(verts),nFaces, len(faces)))
-        
+
         #for childname in token['childs'] :
         for childname in getChilds(tokenname) :
-            
+
             tokentype = tokens[childname]['type']
-            
+
             # UV
             if tokentype == 'meshtexturecoords' :
                 uv = readToken(childname)
                 #uv = bel.uv.asVertsLocation(uv, faces)
                 uv = bel.uv.asFlatList(uv, faces)
                 uvs.append(uv)
-                
+
                 if debug : print('uv       : %s'%(len(uv)))
-            
+
             # MATERIALS
             elif tokentype == 'meshmateriallist' :
                 nbslots, facemats = readToken(childname)
-                
+
                 if debug : print('facemats : %s'%(len(facemats)))
-                
+
                 # mat can exist but with no datas so we prepare the mat slot
                 # with dummy ones
                 for slot in range(nbslots) :
                     matslots.append('dXnoname%s'%slot )
-        
+
                 # length does not match (could be tuned more, need more cases)
                 if len(facemats) != len(faces) :
                     facemats = [ facemats[0] for i in faces ]
@@ -795,14 +795,14 @@ BINARY FORMAT
                 # seek for materials then textures if any mapped in this mesh.
                 # no type test, only one option type in token meshmateriallist : 'Material'
                 for slotid, matname in enumerate(getChilds(childname)) :
-                    
+
                     # rename dummy mats with the right name
                     matslots[slotid] = matname
 
                     # blender material creation (need tuning)
                     mat = bel.material.new(matname,naming_method)
                     matslots[slotid] = mat.name
-                    
+
                     if naming_method != 1 :
                         #print('matname : %s'%matname)
                         (diffuse_color,alpha), power, specCol, emitCol = readToken(matname)
@@ -811,9 +811,9 @@ BINARY FORMAT
                         mat.diffuse_intensity = power
                         mat.specular_color = specCol
                         # dX emit don't use diffuse color but is a color itself
-                        # convert it to a kind of intensity 
+                        # convert it to a kind of intensity
                         mat.emit = (emitCol[0] + emitCol[1] + emitCol[2] ) / 3
-                        
+
                         if alpha != 1.0 :
                             mat.use_transparency = True
                             mat.transparency_method = 'Z_TRANSPARENCY'
@@ -821,29 +821,29 @@ BINARY FORMAT
                             mat.specular_alpha = 0
                             transp = True
                         else : transp = False
-            
+
                         # texture
                         # only 'TextureFilename' can be here, no type test
-                        # textures have no name in .x so we build 
+                        # textures have no name in .x so we build
                         # image and texture names from the image file name
                         # bdata texture slot name = bdata image name
                         btexnames = []
                         for texname in getChilds(matname) :
-                            
+
                             # create/rename/reuse etc corresponding data image
                             # (returns False if not found)
                             [filename] = readToken(texname)
                             img = bel.image.new(path+'/'+filename)
-                            
+
                             if img == False :
                                 imgname = 'not_found'
                             else :
                                 imgname = img.name
-                                
+
                             #print('texname : %s'%texname)
                             #print('filename : %s'%filename)
                             #print('btex/img name : %s'%imgname)
-                            
+
                             # associated texture (no naming check.. maybe tune more)
                             # tex and texslot are created even if img not found
                             if imgname in bpy.data.textures and ( img == False or bpy.data.textures[imgname].image == img ) :
@@ -851,10 +851,10 @@ BINARY FORMAT
                             else :
                                 tex = bpy.data.textures.new(name=imgname,type='IMAGE')
                                 if img : tex.image = img
-                                
+
                             tex.use_alpha = transp
                             tex.use_preview_alpha = transp
-                                
+
                             # then create texture slot
                             texslot = mat.texture_slots.create(index=0)
                             texslot.texture = tex
@@ -868,35 +868,35 @@ BINARY FORMAT
                     if matname not in bpy.data.materials :
                         mat = bel.material.new(matname,naming_method)
                         matslots[slotid] = mat.name
-                        
+
                 if debug : print('matslots : %s'%matslots)
-                
+
             # VERTICES GROUPS/WEIGHTS
             elif tokentype == 'skinweights' :
                 groupname, nverts, vindices, vweights, mat = readToken(childname)
                 groupname = namelookup[groupname]
-                if debug : 
+                if debug :
                     print('vgroup    : %s (%s/%s verts) %s'%(groupname,len(vindices),len(vweights),'bone' if groupname in tokens else ''))
 
                 #if debug : print('matrix : %s\n%s'%(type(mat),mat))
-                
+
                 groupnames.append(groupname)
                 groupindices.append(vindices)
                 groupweights.append(vweights)
-                
-        ob = bel.mesh.write(obname,tokenname, 
-                            verts, edges, faces, 
-                            matslots, facemats, uvs, 
+
+        ob = bel.mesh.write(obname,tokenname,
+                            verts, edges, faces,
+                            matslots, facemats, uvs,
                             groupnames, groupindices, groupweights,
                             use_smooth_groups,
                             naming_method)
-        
+
         return ob
-                           
+
     ## here we go
-     
+
     file = os.path.basename(filepath)
-    
+
     print('\nimporting %s...'%file)
     start = time.clock()
     path = os.path.dirname(filepath)
@@ -909,7 +909,7 @@ BINARY FORMAT
 
     if header :
         minor, major, format, accuracy = header
-        
+
         if show_geninfo :
             print('\n%s directX header'%file)
             print('  minor  : %s'%(minor))
@@ -934,9 +934,9 @@ BINARY FORMAT
             if show_tree :
                 print('\nDirectX Data Tree :\n')
                 walk_dXtree(tokens.keys())
-            
+
             ## DATA IMPORTATION
-            if show_geninfo : 
+            if show_geninfo :
                 #print(tokens)
                 print('Root frames :\n %s'%rootTokens)
             if parented :
@@ -950,7 +950,7 @@ BINARY FORMAT
                     if obname :
                         meshcount = 0
                         for child in getChilds(obname) :
-                            if tokens[child]['type'] == 'mesh' : 
+                            if tokens[child]['type'] == 'mesh' :
                                 meshcount += 1
                                 if meshcount == 2 :
                                     obname = tokenname
@@ -959,13 +959,12 @@ BINARY FORMAT
 
                     ob = getMesh(obname,tokenname,show_geninfo)
                     ob.matrix_world = global_matrix
-                    
+
             print('done in %.2f\''%(time.clock()-start)) # ,end='\r')
-            
+
         else :
             print('only .x files in text format are currently supported')
             print('please share your file to make the importer evolve')
 
 
         return {'FINISHED'}
-        

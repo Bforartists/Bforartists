@@ -33,15 +33,17 @@
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
+#include "DNA_workspace_types.h"
 
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_image.h"
 #include "BKE_main.h"
 #include "BKE_undo_system.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_paint.h"
 #include "ED_undo.h"
@@ -334,7 +336,7 @@ static void image_undo_restore_list(ListBase *lb, struct UndoIDPtrMap *id_map)
 		}
 		ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
 
-		DAG_id_tag_update(&ima->id, 0);
+		DEG_id_tag_update(&ima->id, 0);
 
 		BKE_image_release_ibuf(ima, ibuf, NULL);
 	}

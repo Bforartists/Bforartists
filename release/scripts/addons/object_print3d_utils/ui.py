@@ -29,7 +29,7 @@ from . import report
 class Print3D_ToolBar:
     bl_label = "Print3D"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
 
     _type_to_icon = {
         bmesh.types.BMVert: 'VERTEXSEL',
@@ -49,7 +49,7 @@ class Print3D_ToolBar:
         if info:
             obj = context.edit_object
 
-            layout.label("Output:")
+            layout.label(text="Output:")
             box = layout.box()
             col = box.column(align=False)
             # box.alert = True
@@ -61,7 +61,7 @@ class Print3D_ToolBar:
                                  icon=Print3D_ToolBar._type_to_icon[bm_type]).index = i
                     layout.operator("mesh.select_non_manifold", text='Non Manifold Extended')
                 else:
-                    col.label(text)
+                    col.label(text=text)
 
 
     def draw(self, context):
@@ -73,13 +73,13 @@ class Print3D_ToolBar:
         # TODO, presets
 
         row = layout.row()
-        row.label("Statistics:")
+        row.label(text="Statistics:")
         rowsub = layout.row(align=True)
         rowsub.operator("mesh.print3d_info_volume", text="Volume")
         rowsub.operator("mesh.print3d_info_area", text="Area")
 
         row = layout.row()
-        row.label("Checks:")
+        row.label(text="Checks:")
         col = layout.column(align=True)
         col.operator("mesh.print3d_check_solid", text="Solid")
         col.operator("mesh.print3d_check_intersect", text="Intersections")
@@ -102,7 +102,7 @@ class Print3D_ToolBar:
         col.operator("mesh.print3d_check_all", text="Check All")
 
         row = layout.row()
-        row.label("Cleanup:")
+        row.label(text="Cleanup:")
         col = layout.column(align=True)
         col.operator("mesh.print3d_clean_isolated", text="Isolated")
         rowsub = col.row(align=True)
@@ -114,15 +114,15 @@ class Print3D_ToolBar:
         # col.operator("mesh.print3d_clean_thin", text="Wall Thickness")
 
         row = layout.row()
-        row.label("Scale To:")
+        row.label(text="Scale To:")
         rowsub = layout.row(align=True)
         rowsub.operator("mesh.print3d_scale_to_volume", text="Volume")
         rowsub.operator("mesh.print3d_scale_to_bounds", text="Bounds")
 
         col = layout.column()
         rowsub = col.row(align=True)
-        rowsub.label("Export Path:")
-        rowsub.prop(print_3d, "use_apply_scale", text="", icon='MAN_SCALE')
+        rowsub.label(text="Export Path:")
+        rowsub.prop(print_3d, "use_apply_scale", text="", icon='ORIENTATION_GLOBAL')
         rowsub.prop(print_3d, "use_export_texture", text="", icon='FILE_IMAGE')
         rowsub = col.row()
         rowsub.prop(print_3d, "export_path", text="")

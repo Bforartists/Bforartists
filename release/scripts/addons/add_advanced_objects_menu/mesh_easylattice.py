@@ -48,7 +48,7 @@ def createLattice(context, obj, props):
     lat = bpy.data.lattices.new('EasyLattice')
     ob = bpy.data.objects.new('EasyLattice', lat)
 
-    # Take into consideration any selected vertices (default: all verticies)
+    # Take into consideration any selected vertices (default: all vertices)
     selectedVertices = createVertexGroup(obj)
 
     size, pos = findBBox(obj, selectedVertices)
@@ -63,7 +63,7 @@ def createLattice(context, obj, props):
     # the rotation comes from the combined obj world
     # matrix which was converted to euler pairs
     ob.rotation_euler = buildRot_World(obj)
-    ob.show_x_ray = True
+    ob.show_in_front = True
 
     # Link object to scene
     scn = context.scene
@@ -102,7 +102,7 @@ def createVertexGroup(obj):
     if obj.mode == "EDIT":
         bpy.ops.object.editmode_toggle()
 
-    group = obj.vertex_groups.new("easy_lattice_group")
+    group = obj.vertex_groups.new(name="easy_lattice_group")
 
     for vert in vertices:
         if vert.select is True:
@@ -172,7 +172,7 @@ def findBBox(obj, selvertsarray):
 def buildTrnSclMat(obj):
     # This function builds a local matrix that encodes translation
     # and scale and it leaves out the rotation matrix
-    # The rotation is applied at obejct level if there is any
+    # The rotation is applied at object level if there is any
     mat_trans = Matrix.Translation(obj.location)
     mat_scale = Matrix.Scale(obj.scale[0], 4, (1, 0, 0))
     mat_scale *= Matrix.Scale(obj.scale[1], 4, (0, 1, 0))
@@ -186,7 +186,7 @@ def buildTrnSclMat(obj):
 def buildTrnScl_WorldMat(obj):
     # This function builds a real world matrix that encodes translation
     # and scale and it leaves out the rotation matrix
-    # The rotation is applied at obejct level if there is any
+    # The rotation is applied at object level if there is any
     loc, rot, scl = obj.matrix_world.decompose()
     mat_trans = Matrix.Translation(loc)
 
@@ -215,7 +215,7 @@ def buildRot_WorldMat(obj):
 def buildTrn_WorldMat(obj):
     # This function builds a real world matrix that encodes translation
     # and scale and it leaves out the rotation matrix
-    # The rotation is applied at obejct level if there is any
+    # The rotation is applied at object level if there is any
     loc, rot, scl = obj.matrix_world.decompose()
     mat_trans = Matrix.Translation(loc)
 
@@ -225,7 +225,7 @@ def buildTrn_WorldMat(obj):
 def buildScl_WorldMat(obj):
     # This function builds a real world matrix that encodes translation
     # and scale and it leaves out the rotation matrix
-    # The rotation is applied at obejct level if there is any
+    # The rotation is applied at object level if there is any
     loc, rot, scl = obj.matrix_world.decompose()
 
     mat_scale = Matrix.Scale(scl[0], 4, (1, 0, 0))

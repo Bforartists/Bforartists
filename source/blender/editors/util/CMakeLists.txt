@@ -24,6 +24,7 @@ set(INC
 	../../blenlib
 	../../blentranslation
 	../../bmesh
+	../../depsgraph
 	../../imbuf
 	../../gpu
 	../../makesdna
@@ -41,7 +42,9 @@ set(INC_SYS
 set(SRC
 	ed_transverts.c
 	ed_util.c
+	gizmo_utils.c
 	numinput.c
+	select_utils.c
 
 	# general includes
 	../include/BIF_gl.h
@@ -53,6 +56,8 @@ set(SRC
 	../include/ED_curve.h
 	../include/ED_datafiles.h
 	../include/ED_fileselect.h
+	../include/ED_gizmo_library.h
+	../include/ED_gizmo_utils.h
 	../include/ED_gpencil.h
 	../include/ED_image.h
 	../include/ED_info.h
@@ -73,9 +78,11 @@ set(SRC
 	../include/ED_particle.h
 	../include/ED_physics.h
 	../include/ED_render.h
+	../include/ED_scene.h
 	../include/ED_screen.h
 	../include/ED_screen_types.h
 	../include/ED_sculpt.h
+	../include/ED_select_utils.h
 	../include/ED_sequencer.h
 	../include/ED_sound.h
 	../include/ED_space_api.h
