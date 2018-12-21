@@ -60,8 +60,8 @@ class Library(bpy_types.ID):
         # See: readblenentry.c, IDTYPE_FLAGS_ISLINKABLE,
         # we could make this an attribute in rna.
         attr_links = ("actions", "armatures", "brushes", "cameras",
-                      "curves", "grease_pencil", "groups", "images",
-                      "lamps", "lattices", "materials", "metaballs",
+                      "curves", "grease_pencil", "collections", "images",
+                      "lights", "lattices", "materials", "metaballs",
                       "meshes", "node_groups", "objects", "scenes",
                       "sounds", "speakers", "textures", "texts",
                       "fonts", "worlds")
@@ -96,15 +96,15 @@ class Texture(bpy_types.ID):
                      )
 
 
-class Group(bpy_types.ID):
+class Collection(bpy_types.ID):
     __slots__ = ()
 
     @property
     def users_dupli_group(self):
-        """The dupli group this group is used in"""
+        """The collection instance objects this collection is used in"""
         import bpy
         return tuple(obj for obj in bpy.data.objects
-                     if self == obj.dupli_group)
+                     if self == obj.instance_collection)
 
 
 class Object(bpy_types.ID):
@@ -112,21 +112,21 @@ class Object(bpy_types.ID):
 
     @property
     def children(self):
-        """All the children of this object"""
+        """All the children of this object. Warning: takes O(len(bpy.data.objects)) time."""
         import bpy
         return tuple(child for child in bpy.data.objects
                      if child.parent == self)
 
     @property
-    def users_group(self):
-        """The groups this object is in"""
+    def users_collection(self):
+        """The collections this object is in. Warning: takes O(len(bpy.data.collections)) time."""
         import bpy
-        return tuple(group for group in bpy.data.groups
-                     if self in group.objects[:])
+        return tuple(collection for collection in bpy.data.collections
+                     if self in collection.objects[:])
 
     @property
     def users_scene(self):
-        """The scenes this object is in"""
+        """The scenes this object is in. Warning: takes O(len(bpy.data.scenes) * len(bpy.data.objects)) time."""
         import bpy
         return tuple(scene for scene in bpy.data.scenes
                      if self in scene.objects[:])
@@ -137,16 +137,31 @@ class WindowManager(bpy_types.ID):
 
     def popup_menu(self, draw_func, title="", icon='NONE'):
         import bpy
-        popup = self.popmenu_begin__internal(title, icon)
+        popup = self.popmenu_begin__internal(title, icon=icon)
 
         try:
             draw_func(popup, bpy.context)
         finally:
             self.popmenu_end__internal(popup)
 
+    def popover(
+            self, draw_func, *,
+            ui_units_x=0,
+            keymap=None,
+    ):
+        import bpy
+        popup = self.popover_begin__internal(
+            ui_units_x=ui_units_x,
+        )
+
+        try:
+            draw_func(popup, bpy.context)
+        finally:
+            self.popover_end__internal(popup, keymap=keymap)
+
     def popup_menu_pie(self, event, draw_func, title="", icon='NONE'):
         import bpy
-        pie = self.piemenu_begin__internal(title, icon, event)
+        pie = self.piemenu_begin__internal(title, icon=icon, event=event)
 
         if pie:
             try:
@@ -190,21 +205,21 @@ class _GenericBone:
         """ Vector pointing down the x-axis of the bone.
         """
         from mathutils import Vector
-        return self.matrix.to_3x3() * Vector((1.0, 0.0, 0.0))
+        return self.matrix.to_3x3() @ Vector((1.0, 0.0, 0.0))
 
     @property
     def y_axis(self):
         """ Vector pointing down the y-axis of the bone.
         """
         from mathutils import Vector
-        return self.matrix.to_3x3() * Vector((0.0, 1.0, 0.0))
+        return self.matrix.to_3x3() @ Vector((0.0, 1.0, 0.0))
 
     @property
     def z_axis(self):
         """ Vector pointing down the z-axis of the bone.
         """
         from mathutils import Vector
-        return self.matrix.to_3x3() * Vector((0.0, 0.0, 1.0))
+        return self.matrix.to_3x3() @ Vector((0.0, 0.0, 1.0))
 
     @property
     def basename(self):
@@ -253,12 +268,12 @@ class _GenericBone:
 
     @property
     def children(self):
-        """A list of all the bones children."""
+        """A list of all the bones children. Warning: takes O(len(bones)) time."""
         return [child for child in self._other_bones if child.parent == self]
 
     @property
     def children_recursive(self):
-        """A list of all children from this bone."""
+        """A list of all children from this bone. Warning: takes O(len(bones)**2) time."""
         bones_children = []
         for bone in self._other_bones:
             index = bone.parent_index(self)
@@ -275,7 +290,7 @@ class _GenericBone:
         Returns a chain of children with the same base name as this bone.
         Only direct chains are supported, forks caused by multiple children
         with matching base names will terminate the function
-        and not be returned.
+        and not be returned. Warning: takes O(len(bones)**2) time.
         """
         basename = self.basename
         chain = []
@@ -363,9 +378,9 @@ class EditBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
         :type roll: bool
         """
         from mathutils import Vector
-        z_vec = self.matrix.to_3x3() * Vector((0.0, 0.0, 1.0))
-        self.tail = matrix * self.tail
-        self.head = matrix * self.head
+        z_vec = self.matrix.to_3x3() @ Vector((0.0, 0.0, 1.0))
+        self.tail = matrix @ self.tail
+        self.head = matrix @ self.head
 
         if scale:
             scalar = matrix.median_scale
@@ -373,7 +388,7 @@ class EditBone(StructRNA, _GenericBone, metaclass=StructMetaPropGroup):
             self.tail_radius *= scalar
 
         if roll:
-            self.align_roll(matrix * z_vec)
+            self.align_roll(matrix @ z_vec)
 
 
 def ord_ind(i1, i2):
@@ -439,6 +454,8 @@ class Mesh(bpy_types.ID):
         # if no edges - calculate them
         if faces and (not edges):
             self.update(calc_edges=True)
+        elif edges:
+            self.update(calc_edges_loose=True)
 
     @property
     def edge_keys(self):
@@ -453,7 +470,7 @@ class MeshEdge(StructRNA):
         return ord_ind(*tuple(self.vertices))
 
 
-class MeshTessFace(StructRNA):
+class MeshLoopTriangle(StructRNA):
     __slots__ = ()
 
     @property
@@ -461,32 +478,18 @@ class MeshTessFace(StructRNA):
         """The midpoint of the face."""
         face_verts = self.vertices[:]
         mesh_verts = self.id_data.vertices
-        if len(face_verts) == 3:
-            return (mesh_verts[face_verts[0]].co +
-                    mesh_verts[face_verts[1]].co +
-                    mesh_verts[face_verts[2]].co
-                    ) / 3.0
-        else:
-            return (mesh_verts[face_verts[0]].co +
-                    mesh_verts[face_verts[1]].co +
-                    mesh_verts[face_verts[2]].co +
-                    mesh_verts[face_verts[3]].co
-                    ) / 4.0
+        return (mesh_verts[face_verts[0]].co +
+                mesh_verts[face_verts[1]].co +
+                mesh_verts[face_verts[2]].co
+                ) / 3.0
 
     @property
     def edge_keys(self):
         verts = self.vertices[:]
-        if len(verts) == 3:
-            return (ord_ind(verts[0], verts[1]),
-                    ord_ind(verts[1], verts[2]),
-                    ord_ind(verts[2], verts[0]),
-                    )
-        else:
-            return (ord_ind(verts[0], verts[1]),
-                    ord_ind(verts[1], verts[2]),
-                    ord_ind(verts[2], verts[3]),
-                    ord_ind(verts[3], verts[0]),
-                    )
+        return (ord_ind(verts[0], verts[1]),
+                ord_ind(verts[1], verts[2]),
+                ord_ind(verts[2], verts[0]),
+                )
 
 
 class MeshPolygon(StructRNA):
@@ -517,19 +520,6 @@ class Text(bpy_types.ID):
         self.clear()
         self.write(string)
 
-    @property
-    def users_logic(self):
-        """Logic bricks that use this text"""
-        import bpy
-        return tuple(obj for obj in bpy.data.objects
-                     if self in [cont.text for cont in obj.game.controllers
-                                 if cont.type == 'PYTHON']
-                     )
-
-
-# values are module: [(cls, path, line), ...]
-TypeMap = {}
-
 
 class Sound(bpy_types.ID):
     __slots__ = ()
@@ -542,59 +532,120 @@ class Sound(bpy_types.ID):
 
 
 class RNAMeta(type):
-
-    def __new__(cls, name, bases, classdict, **args):
-        result = type.__new__(cls, name, bases, classdict)
-        if bases and bases[0] is not StructRNA:
-            from _weakref import ref as ref
-            module = result.__module__
-
-            # first part of packages only
-            if "." in module:
-                module = module[:module.index(".")]
-
-            TypeMap.setdefault(module, []).append(ref(result))
-
-        return result
-
+    # TODO(campbell): move to C-API
     @property
     def is_registered(cls):
         return "bl_rna" in cls.__dict__
-
-
-class OrderedDictMini(dict):
-
-    def __init__(self, *args):
-        self.order = []
-        dict.__init__(self, args)
-
-    def __setitem__(self, key, val):
-        dict.__setitem__(self, key, val)
-        if key not in self.order:
-            self.order.append(key)
-
-    def __delitem__(self, key):
-        dict.__delitem__(self, key)
-        self.order.remove(key)
 
 
 class RNAMetaPropGroup(StructMetaPropGroup, RNAMeta):
     pass
 
 
-class OrderedMeta(RNAMeta):
+# Same as 'Operator'
+# only without 'as_keywords'
+class Gizmo(StructRNA):
+    __slots__ = ()
 
-    def __init__(cls, name, bases, attributes):
-        if attributes.__class__ is OrderedDictMini:
-            cls.order = attributes.order
+    def __getattribute__(self, attr):
+        properties = StructRNA.path_resolve(self, "properties")
+        bl_rna = getattr(properties, "bl_rna", None)
+        if (bl_rna is not None) and (attr in bl_rna.properties):
+            return getattr(properties, attr)
+        return super().__getattribute__(attr)
 
-    def __prepare__(name, bases, **kwargs):
-        return OrderedDictMini()  # collections.OrderedDict()
+    def __setattr__(self, attr, value):
+        properties = StructRNA.path_resolve(self, "properties")
+        bl_rna = getattr(properties, "bl_rna", None)
+        if (bl_rna is not None) and (attr in bl_rna.properties):
+            return setattr(properties, attr, value)
+        return super().__setattr__(attr, value)
+
+    def __delattr__(self, attr):
+        properties = StructRNA.path_resolve(self, "properties")
+        bl_rna = getattr(properties, "bl_rna", None)
+        if (bl_rna is not None) and (attr in bl_rna.properties):
+            return delattr(properties, attr)
+        return super().__delattr__(attr)
+
+    from _bpy import (
+        _rna_gizmo_target_set_handler as target_set_handler,
+        _rna_gizmo_target_get_value as target_get_value,
+        _rna_gizmo_target_set_value as target_set_value,
+        _rna_gizmo_target_get_range as target_get_range,
+    )
+
+    # Convenience wrappers around private `_gpu` module.
+    def draw_custom_shape(self, shape, *, matrix=None, select_id=None):
+        """
+        Draw a shape created form :class:`bpy.types.Gizmo.draw_custom_shape`.
+
+        :arg shape: The cached shape to draw.
+        :type shape: Undefined.
+        :arg matrix: 4x4 matrix, when not given
+           :class:`bpy.types.Gizmo.matrix_world` is used.
+        :type matrix: :class:`mathutils.Matrix`
+        :arg select_id: The selection id.
+           Only use when drawing within :class:`bpy.types.Gizmo.draw_select`.
+        :type select_it: int
+        """
+        import gpu
+
+        if matrix is None:
+            matrix = self.matrix_world
+
+        batch, shader = shape
+        shader.bind()
+
+        if select_id is not None:
+            gpu.select.load_id(select_id)
+        else:
+            if self.is_highlight:
+                color = (*self.color_highlight, self.alpha_highlight)
+            else:
+                color = (*self.color, self.alpha)
+            shader.uniform_float("color", color)
+
+        with gpu.matrix.push_pop():
+            gpu.matrix.multiply_matrix(matrix)
+            batch.draw()
+
+    @staticmethod
+    def new_custom_shape(type, verts):
+        """
+        Create a new shape that can be passed to :class:`bpy.types.Gizmo.draw_custom_shape`.
+
+        :arg type: The type of shape to create in (POINTS, LINES, TRIS, LINE_STRIP).
+        :type type: string
+        :arg verts: Coordinates.
+        :type verts: sequence of of 2D or 3D coordinates.
+        :arg display_name: Optional callback that takes the full path, returns the name to display.
+        :type display_name: Callable that takes a string and returns a string.
+        :return: The newly created shape.
+        :rtype: Undefined (it may change).
+        """
+        import gpu
+        from gpu.types import (
+            GPUBatch,
+            GPUVertBuf,
+            GPUVertFormat,
+        )
+        dims = len(verts[0])
+        if dims not in {2, 3}:
+            raise ValueError("Expected 2D or 3D vertex")
+        fmt = GPUVertFormat()
+        pos_id = fmt.attr_add(id="pos", comp_type='F32', len=dims, fetch_mode='FLOAT')
+        vbo = GPUVertBuf(len=len(verts), format=fmt)
+        vbo.attr_fill(id=pos_id, data=verts)
+        batch = GPUBatch(type=type, buf=vbo)
+        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR' if dims == 3 else '2D_UNIFORM_COLOR')
+        batch.program_set(shader)
+        return (batch, shader)
 
 
 # Only defined so operators members can be used by accessing self.order
 # with doc generation 'self.properties.bl_rna.properties' can fail
-class Operator(StructRNA, metaclass=OrderedMeta):
+class Operator(StructRNA, metaclass=RNAMeta):
     __slots__ = ()
 
     def __getattribute__(self, attr):
@@ -626,7 +677,7 @@ class Operator(StructRNA, metaclass=OrderedMeta):
                 if attr not in ignore}
 
 
-class Macro(StructRNA, metaclass=OrderedMeta):
+class Macro(StructRNA):
     # bpy_types is imported before ops is defined
     # so we have to do a local import on each run
     __slots__ = ()
@@ -666,7 +717,23 @@ class _GenericUI:
                 # ensure menus always get default context
                 operator_context_default = self.layout.operator_context
 
+                # Support filtering out by owner
+                workspace = context.workspace
+                if workspace.use_filter_by_owner:
+                    owner_names = {owner_id.name for owner_id in workspace.owner_ids}
+                else:
+                    owner_names = None
+
                 for func in draw_ls._draw_funcs:
+
+                    # Begin 'owner_id' filter.
+                    if owner_names is not None:
+                        owner_id = getattr(func, "_owner", None)
+                        if owner_id is not None:
+                            if func._owner not in owner_names:
+                                continue
+                    # End 'owner_id' filter.
+
                     # so bad menu functions don't stop
                     # the entire menu from drawing
                     try:
@@ -682,6 +749,13 @@ class _GenericUI:
 
         return draw_funcs
 
+    @staticmethod
+    def _dyn_owner_apply(draw_func):
+        from _bpy import _bl_owner_id_get
+        owner_id = _bl_owner_id_get()
+        if owner_id is not None:
+            draw_func._owner = owner_id
+
     @classmethod
     def is_extended(cls):
         return bool(getattr(cls.draw, "_draw_funcs", None))
@@ -693,6 +767,7 @@ class _GenericUI:
         takes the same arguments as the menus draw function
         """
         draw_funcs = cls._dyn_ui_initialize()
+        cls._dyn_owner_apply(draw_func)
         draw_funcs.append(draw_func)
 
     @classmethod
@@ -702,6 +777,7 @@ class _GenericUI:
         the menus draw function
         """
         draw_funcs = cls._dyn_ui_initialize()
+        cls._dyn_owner_apply(draw_func)
         draw_funcs.insert(0, draw_func)
 
     @classmethod
@@ -731,7 +807,8 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
 
     def path_menu(self, searchpaths, operator, *,
                   props_default=None, prop_filepath="filepath",
-                  filter_ext=None, filter_path=None, display_name=None):
+                  filter_ext=None, filter_path=None, display_name=None,
+                  add_operator=None):
         """
         Populate a menu from a list of paths.
 
@@ -760,7 +837,7 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         layout = self.layout
 
         if not searchpaths:
-            layout.label("* Missing Paths *")
+            layout.label(text="* Missing Paths *")
 
         # collect paths
         files = []
@@ -777,12 +854,16 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
 
         files.sort()
 
+        col = layout.column(align=True)
+
         for f, filepath in files:
             # Intentionally pass the full path to 'display_name' callback,
             # since the callback may want to use part a directory in the name.
-            props = layout.operator(
+            row = col.row(align=True)
+            name = display_name(filepath) if display_name else bpy.path.display_name(f)
+            props = row.operator(
                 operator,
-                text=display_name(filepath) if display_name else bpy.path.display_name(f),
+                text=name,
                 translate=False,
             )
 
@@ -794,6 +875,24 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
             if operator == "script.execute_preset":
                 props.menu_idname = self.bl_idname
 
+            if add_operator:
+                props = row.operator(add_operator, text="", icon='REMOVE')
+                props.name = name
+                props.remove_name = True
+
+        if add_operator:
+            wm = bpy.data.window_managers[0]
+
+            layout.separator()
+            row = layout.row()
+
+            sub = row.row()
+            sub.emboss = 'NORMAL'
+            sub.prop(wm, "preset_name", text="")
+
+            props = row.operator(add_operator, text="", icon='ADD')
+            props.name = wm.preset_name
+
     def draw_preset(self, context):
         """
         Define these on the subclass:
@@ -801,23 +900,27 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         - preset_subdir (string)
 
         Optionally:
+        - preset_add_operator (string)
         - preset_extensions (set of strings)
         - preset_operator_defaults (dict of keyword args)
         """
         import bpy
         ext_valid = getattr(self, "preset_extensions", {".py", ".xml"})
         props_default = getattr(self, "preset_operator_defaults", None)
+        add_operator = getattr(self, "preset_add_operator", None)
         self.path_menu(bpy.utils.preset_paths(self.preset_subdir),
                        self.preset_operator,
                        props_default=props_default,
-                       filter_ext=lambda ext: ext.lower() in ext_valid)
+                       filter_ext=lambda ext: ext.lower() in ext_valid,
+                       add_operator=add_operator)
 
     @classmethod
     def draw_collapsible(cls, context, layout):
         # helper function for (optionally) collapsed header menus
         # only usable within headers
         if context.area.show_menus:
-            cls.draw_menus(layout, context)
+            # Align menus to space them closely.
+            cls.draw_menus(layout.row(align=True), context)
         else:
             layout.menu(cls.__name__, icon='COLLAPSEMENU')
 
@@ -898,7 +1001,7 @@ class NodeSocket(StructRNA, metaclass=RNAMetaPropGroup):
 
     @property
     def links(self):
-        """List of node links from or to this socket"""
+        """List of node links from or to this socket. Warning: takes O(len(nodetree.links)) time."""
         return tuple(link for link in self.id_data.links
                      if (link.from_socket == self or
                          link.to_socket == self))

@@ -100,12 +100,8 @@ static const char *includefiles[] = {
 	"DNA_sequence_types.h",
 	"DNA_effect_types.h",
 	"DNA_outliner_types.h",
-	"DNA_property_types.h",
-	"DNA_sensor_types.h",
-	"DNA_controller_types.h",
-	"DNA_actuator_types.h",
 	"DNA_sound_types.h",
-	"DNA_group_types.h",
+	"DNA_collection_types.h",
 	"DNA_armature_types.h",
 	"DNA_action_types.h",
 	"DNA_constraint_types.h",
@@ -117,6 +113,8 @@ static const char *includefiles[] = {
 	"DNA_particle_types.h",
 	"DNA_cloth_types.h",
 	"DNA_gpencil_types.h",
+	"DNA_gpencil_modifier_types.h",
+	"DNA_shader_fx_types.h",
 	"DNA_windowmanager_types.h",
 	"DNA_anim_types.h",
 	"DNA_boid_types.h",
@@ -130,6 +128,10 @@ static const char *includefiles[] = {
 	"DNA_freestyle_types.h",
 	"DNA_linestyle_types.h",
 	"DNA_cachefile_types.h",
+	"DNA_layer_types.h",
+	"DNA_workspace_types.h",
+	"DNA_lightprobe_types.h",
+
 	/* see comment above before editing! */
 
 	/* empty string to indicate end of includefiles */
@@ -152,10 +154,10 @@ static short **structs, *structdata; /* at sp = structs[a] is the first address 
 /**
  * Variable to control debug output of makesdna.
  * debugSDNA:
- *  - 0 = no output, except errors
- *  - 1 = detail actions
- *  - 2 = full trace, tell which names and types were found
- *  - 4 = full trace, plus all gritty details
+ * - 0 = no output, except errors
+ * - 1 = detail actions
+ * - 2 = full trace, tell which names and types were found
+ * - 4 = full trace, plus all gritty details
  */
 static int debugSDNA = 0;
 static int additional_slen_offset;
@@ -166,14 +168,14 @@ static int additional_slen_offset;
 
 /**
  * Add type \c str to struct indexed by \c len, if it was not yet found.
- * \param str char
- * \param len int
+ * \param str: char
+ * \param len: int
  */
 static int add_type(const char *str, int len);
 
 /**
  * Add variable \c str to
- * \param str
+ * \param str:
  */
 static int add_name(const char *str);
 
@@ -503,6 +505,17 @@ static int preprocess_include(char *maindata, int len)
 			/* single values are skipped already, so decrement 1 less */
 			a -= 13;
 			cp += 13;
+		}
+		else if (strncmp("DNA_PRIVATE_WORKSPACE", cp, 21) == 0) {
+			/* Check for DNA_PRIVATE_WORKSPACE_READ_WRITE */
+			if (strncmp("_READ_WRITE", cp + 21, 11) == 0) {
+				a -= 31;
+				cp += 31;
+			}
+			else {
+				a -= 20;
+				cp += 20;
+			}
 		}
 		else {
 			md[0] = cp[0];
@@ -984,7 +997,7 @@ static int make_structDNA(const char *baseDirectory, FILE *file, FILE *file_offs
 		printf("Running makesdna at debug level %d\n", debugSDNA);
 	}
 
-	/* the longest known struct is 50k, so we assume 100k is sufficent! */
+	/* the longest known struct is 50k, so we assume 100k is sufficient! */
 	namedata = MEM_callocN(maxdata, "namedata");
 	typedata = MEM_callocN(maxdata, "typedata");
 	structdata = MEM_callocN(maxdata, "structdata");
@@ -1258,7 +1271,7 @@ int main(int argc, char **argv)
 	return(return_status);
 }
 
-/* handy but fails on struct bounds which makesdna doesnt care about
+/* handy but fails on struct bounds which makesdna doesn't care about
  * with quite the same strictness as GCC does */
 #if 0
 /* include files for automatic dependencies */
@@ -1313,12 +1326,8 @@ int main(int argc, char **argv)
 #include "DNA_sequence_types.h"
 #include "DNA_effect_types.h"
 #include "DNA_outliner_types.h"
-#include "DNA_property_types.h"
-#include "DNA_sensor_types.h"
-#include "DNA_controller_types.h"
-#include "DNA_actuator_types.h"
 #include "DNA_sound_types.h"
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_action_types.h"
 #include "DNA_constraint_types.h"
@@ -1330,6 +1339,8 @@ int main(int argc, char **argv)
 #include "DNA_particle_types.h"
 #include "DNA_cloth_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_gpencil_modifier_types.h"
+#include "DNA_shader_fx_types.h"
 #include "DNA_windowmanager_types.h"
 #include "DNA_anim_types.h"
 #include "DNA_boid_types.h"
@@ -1343,4 +1354,8 @@ int main(int argc, char **argv)
 #include "DNA_freestyle_types.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_cachefile_types.h"
+#include "DNA_layer_types.h"
+#include "DNA_workspace_types.h"
+#include "DNA_lightprobe_types.h"
+
 /* end of list */

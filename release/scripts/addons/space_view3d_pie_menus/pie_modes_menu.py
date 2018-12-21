@@ -23,7 +23,7 @@ bl_info = {
     "description": "Switch between 3d view object/edit modes",
     "author": "pitiwazou, meta-androcto, italic",
     "version": (0, 1, 2),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",
@@ -163,7 +163,7 @@ class SetObjectModePie(Operator):
     bl_description = "I set the interactive mode of object"
     bl_options = {'REGISTER'}
 
-    mode = bpy.props.StringProperty(name="Interactive mode", default="OBJECT")
+    mode: bpy.props.StringProperty(name="Interactive mode", default="OBJECT")
 
     def execute(self, context):
         if (context.active_object):
@@ -276,7 +276,7 @@ class PieObjectEditotherModes(Menu):
         box.operator("verts.edges", text="Vertex/Edges", icon='VERTEXSEL')
         box.operator("verts.edgesfaces", text="Vertex/Edges/Faces", icon='OBJECT_DATAMODE')
         box.operator("wm.context_toggle", text="Limit to Visible",
-                     icon="ORTHO").data_path = "space_data.use_occlude_geometry"
+                     icon="NONE").data_path = "space_data.use_occlude_geometry"
 
 
 class PieObjectEditMode(Menu):
@@ -429,7 +429,7 @@ class PieObjectEditMode(Menu):
                 pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
         else:
             message = "Active Object has only Object Mode available" if ob \
-                    and ob.type in {"LAMP", "CAMERA", "EMPTY", "SPEAKER"} else \
+                    and ob.type in {"LIGHT", "CAMERA", "EMPTY", "SPEAKER"} else \
                     "No active object found. Please select one first"
             pie = layout.menu_pie()
             pie.separator()

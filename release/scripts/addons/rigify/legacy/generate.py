@@ -28,7 +28,7 @@ from rna_prop_ui import rna_idprop_ui_prop_get
 from .utils import MetarigError, new_bone, get_rig_type
 from .utils import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, WGT_PREFIX, ROOT_NAME, make_original_name
 from .utils import RIG_DIR
-from .utils import create_root_widget
+from .utils import create_root_widget, ensure_widget_collection
 from .utils import random_id
 from .utils import copy_attributes
 from .rig_ui_template import UI_SLIDERS, layers_ui, UI_REGISTER
@@ -71,6 +71,9 @@ def generate_rig(context, metarig):
     bpy.ops.object.mode_set(mode='OBJECT')
 
     scene = context.scene
+    view_layer = context.view_layer
+    collection = context.collection
+    layer_collection = context.layer_collection
 
     #------------------------------------------
     # Create/find the rig object and set it up
@@ -88,8 +91,8 @@ def generate_rig(context, metarig):
         obj = scene.objects[name]
     except KeyError:
         obj = bpy.data.objects.new(name, bpy.data.armatures.new(name))
-        obj.draw_type = 'WIRE'
-        scene.objects.link(obj)
+        obj.display_type = 'WIRE'
+        collection.objects.link(obj)
 
     obj.data.pose_position = 'POSE'
 
@@ -98,9 +101,9 @@ def generate_rig(context, metarig):
     obj.animation_data_clear()
 
     # Select generated rig object
-    metarig.select = False
-    obj.select = True
-    scene.objects.active = obj
+    metarig.select_set(False)
+    obj.select_set(True)
+    view_layer.objects.active = obj
 
     # Remove all bones from the generated rig armature.
     bpy.ops.object.mode_set(mode='EDIT')
@@ -111,18 +114,18 @@ def generate_rig(context, metarig):
     # Create temporary duplicates for merging
     temp_rig_1 = metarig.copy()
     temp_rig_1.data = metarig.data.copy()
-    scene.objects.link(temp_rig_1)
+    collection.objects.link(temp_rig_1)
 
     temp_rig_2 = metarig.copy()
     temp_rig_2.data = obj.data
-    scene.objects.link(temp_rig_2)
+    collection.objects.link(temp_rig_2)
 
     # Select the temp rigs for merging
     for objt in scene.objects:
-        objt.select = False  # deselect all objects
-    temp_rig_1.select = True
-    temp_rig_2.select = True
-    scene.objects.active = temp_rig_2
+        objt.select_set(False)  # deselect all objects
+    temp_rig_1.select_set(True)
+    temp_rig_2.select_set(True)
+    view_layer.objects.active = temp_rig_2
 
     # Merge the temporary rigs
     bpy.ops.object.join()
@@ -132,9 +135,9 @@ def generate_rig(context, metarig):
 
     # Select the generated rig
     for objt in scene.objects:
-        objt.select = False  # deselect all objects
-    obj.select = True
-    scene.objects.active = obj
+        objt.select_set(False) # deselect all objects
+    obj.select_set(True)
+    view_layer.objects.active = obj
 
     # Copy over bone properties
     for bone in metarig.data.bones:
@@ -262,6 +265,9 @@ def generate_rig(context, metarig):
     rna_idprop_ui_prop_get(obj.data, "rig_id", create=True)
     obj.data["rig_id"] = rig_id
 
+    # Create/find widget collection
+    ensure_widget_collection(context)
+
     t.tick("Create root bone: ")
     #----------------------------------
     try:
@@ -277,8 +283,8 @@ def generate_rig(context, metarig):
         for rig in rigs:
             # Go into editmode in the rig armature
             bpy.ops.object.mode_set(mode='OBJECT')
-            context.scene.objects.active = obj
-            obj.select = True
+            context.view_layer.objects.active = obj
+            obj.select_set(True)
             bpy.ops.object.mode_set(mode='EDIT')
             scripts = rig.generate()
             if scripts is not None:
@@ -353,7 +359,7 @@ def generate_rig(context, metarig):
         if obj.data.bones[bone].name.startswith(DEF_PREFIX):
             obj.data.bones[bone].layers = DEF_LAYER
 
-    # Create root bone widget
+    #  Create root bone widget
     create_root_widget(obj, "root")
 
     # Assign shapes to bones
@@ -426,6 +432,10 @@ def generate_rig(context, metarig):
     bpy.ops.object.mode_set(mode='OBJECT')
     metarig.data.pose_position = rest_backup
     obj.data.pose_position = 'POSE'
+
+    #----------------------------------
+    # Restore active collection
+    view_layer.active_layer_collection = layer_collection
 
 
 def get_bone_rigs(obj, bone_name, halt_on_missing=False):

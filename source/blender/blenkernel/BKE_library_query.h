@@ -56,6 +56,9 @@ enum {
 	 * How to handle that kind of cases totally depends on what caller code is doing... */
 	IDWALK_CB_LOOPBACK = (1 << 4),
 
+	/** That ID is used as static override's reference by its owner. */
+	IDWALK_CB_STATIC_OVERRIDE_REFERENCE = (1 << 5),
+
 	/**
 	 * Adjusts #ID.us reference-count.
 	 * \note keep in sync with 'newlibadr_us' use in readfile.c
@@ -67,7 +70,7 @@ enum {
 
 enum {
 	IDWALK_RET_NOP            = 0,
-	IDWALK_RET_STOP_ITER      = 1 << 0,  /* Completly stop iteration. */
+	IDWALK_RET_STOP_ITER      = 1 << 0,  /* Completely stop iteration. */
 	IDWALK_RET_STOP_RECURSION = 1 << 1,  /* Stop recursion, that is, do not loop over ID used by current one. */
 };
 

@@ -1,6 +1,5 @@
 ﻿
 import bpy
-import bgl
 import blf
 
 # Author: Reiner "Tiles" Prokein
@@ -20,9 +19,9 @@ import blf
 bl_info = {
     "name": "Important Hotkeys BFA",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 2),
-    "blender": (2, 76, 0),
-    "location": "3D View > Properties Panel > Important Hotkeys",
+    "version": (1, 1, 0),
+    "blender": (2, 80, 0),
+    "location": "3D View > Properties Sidebar > Important Hotkeys",
     "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
     "warning": "",
     "wiki_url": "",
@@ -31,8 +30,8 @@ bl_info = {
 
 # ---------------------- Some variables, needed to position the text
 
-pos_x = 10 # Initial X position.
-pos_y = 30 # initial Y position. This value gets substracted from the screen height.
+pos_x = 100 # Initial X position.
+pos_y = 80 # initial Y position. This value gets substracted from the screen height.
 subpos_y = 0 # needed to calculate the position of the array strings below the title.
 
 # With this function we retreive the hotkey.
@@ -61,7 +60,7 @@ def draw_modetext(self, context, obj):
     wm = context.window_manager # Blender window manager
     
     # -------------------------------------- 3D View section
-    keymaps_3DV = wm.keyconfigs['Blender User'].keymaps['3D View'] # Hotkeys in the '3D View' section, 'Blender User' for actual hotkeys
+    keymaps_3DV = wm.keyconfigs.default.keymaps['3D View'] # Hotkeys in the '3D View' section, 'Blender' for actual hotkeys
     
     if not self._flag: # self._flag is false     
         # print(tuple(keymaps_3DV.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -80,7 +79,7 @@ def draw_modetext(self, context, obj):
                 self.scale_obj_string = handle_keys(km, self.scale_obj_string)
                 
      # -------------------------------------- Object Mode section         
-    keymaps_OBJECTMODE = wm.keyconfigs['Blender User'].keymaps['Object Mode']
+    keymaps_OBJECTMODE = wm.keyconfigs.default.keymaps['Object Mode']
     
     if not self._flag: # self._flag is false    
         # print(tuple(keymaps_OBJECTMODE.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -100,7 +99,7 @@ def draw_modetext(self, context, obj):
 
                 
     # ----------------------------------------- Mesh section -------------------------------------    
-    keymaps_MESH = wm.keyconfigs['Blender User'].keymaps['Mesh']
+    keymaps_MESH = wm.keyconfigs.default.keymaps['Mesh']
     
     if not self._flag:
         #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -160,7 +159,7 @@ def draw_modetext(self, context, obj):
                     self.mesh_edgering_select_add = handle_keys(km, self.mesh_edgering_select_add)
                     
     # ----------------------------------------- Pose section -------------------------------------    
-    keymaps_MESH = wm.keyconfigs['Blender User'].keymaps['Pose']
+    keymaps_MESH = wm.keyconfigs.default.keymaps['Pose']
     
     if not self._flag:
         #print(tuple(keymaps_MESH.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -171,7 +170,7 @@ def draw_modetext(self, context, obj):
                 self.pose_parent_set = handle_keys(km, self.pose_parent_set)
 
     # ----------------------------------------- Sculpt section -------------------------------------    
-    keymaps_SCULPT = wm.keyconfigs['Blender User'].keymaps['Sculpt']
+    keymaps_SCULPT = wm.keyconfigs.default.keymaps['Sculpt']
     
     if not self._flag:
         #print(tuple(keymaps_SCULPT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -204,7 +203,7 @@ def draw_modetext(self, context, obj):
                     self.stencil_control_scale = handle_keys(km, self.stencil_control_scale)
                 
     # ----------------------------------------- Vertexpaint section -------------------------------------    
-    keymaps_VERTEXPAINT = wm.keyconfigs['Blender User'].keymaps['Vertex Paint']
+    keymaps_VERTEXPAINT = wm.keyconfigs.default.keymaps['Vertex Paint']
     
     if not self._flag:
         #print(tuple(keymaps_VERTEXPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -251,7 +250,7 @@ def draw_modetext(self, context, obj):
                     self.vertexpaint_stencil_control_rotate_sec = handle_keys(km, self.vertexpaint_stencil_control_rotate_sec)
                     
      # ----------------------------------------- Weightpaint section -------------------------------------    
-    keymaps_WEIGHTPAINT = wm.keyconfigs['Blender User'].keymaps['Weight Paint']
+    keymaps_WEIGHTPAINT = wm.keyconfigs.default.keymaps['Weight Paint']
     
     if not self._flag:
         #print(tuple(keymaps_WEIGHTPAINT.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -304,7 +303,7 @@ def draw_modetext(self, context, obj):
                     self.weightpaint_stencil_control_rotate_sec = handle_keys(km, self.weightpaint_stencil_control_rotate_sec)
 
       # ----------------------------------------- Paint Curve section -------------------------------------    
-    keymaps_PAINTCURVE = wm.keyconfigs['Blender User'].keymaps['Paint Curve']
+    keymaps_PAINTCURVE = wm.keyconfigs.default.keymaps['Paint Curve']
     
     if not self._flag:
         #print(tuple(keymaps_PAINTCURVE.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
@@ -315,7 +314,7 @@ def draw_modetext(self, context, obj):
                 self.texturepaint_strokemethod_curve = handle_keys(km, self.texturepaint_strokemethod_curve)               
                 
  # ----------------------------------------- texturepaint section -------------------------------------    
-    keymaps_TEXTUREPAINT = wm.keyconfigs['Blender User'].keymaps['Image Paint']
+    keymaps_TEXTUREPAINT = wm.keyconfigs.default.keymaps['Image Paint']
     
     if not self._flag:
         #print(tuple(keymaps_TEXTUREPAINT.keymap_items.keys()))      # debug. prints the tuple content
@@ -366,7 +365,7 @@ def draw_modetext(self, context, obj):
                     self.texturepaint_stencil_control_rotate_sec = handle_keys(km, self.texturepaint_stencil_control_rotate_sec)
                 
  # ----------------------------------------- Particle section -------------------------------------    
-    keymaps_PARTICLE = wm.keyconfigs['Blender User'].keymaps['Particle']
+    keymaps_PARTICLE = wm.keyconfigs.default.keymaps['Particle']
     
     if not self._flag:
         #print(tuple(keymaps_PARTICLE.keymap_items.keys()))      # debug. prints the tuple content
@@ -383,7 +382,7 @@ def draw_modetext(self, context, obj):
                     self.particle_brush_strength = handle_keys(km, self.particle_brush_strength)
 
  # ----------------------------------------- Curve section -------------------------------------    
-    keymaps_CURVE = wm.keyconfigs['Blender User'].keymaps['Curve']
+    keymaps_CURVE = wm.keyconfigs.default.keymaps['Curve']
     
     if not self._flag:
         #print(tuple(keymaps_CURVE.keymap_items.keys()))      # debug. prints the tuple content
@@ -398,7 +397,7 @@ def draw_modetext(self, context, obj):
                 self.curve_vertex_add = handle_keys(km, self.curve_vertex_add)
 
  # ----------------------------------------- Armature section -------------------------------------    
-    keymaps_ARMATURE = wm.keyconfigs['Blender User'].keymaps['Armature']
+    keymaps_ARMATURE = wm.keyconfigs.default.keymaps['Armature']
     
     if not self._flag:
         #print(tuple(keymaps_ARMATURE.keymap_items.keys()))      # debug. prints the tuple content
@@ -679,12 +678,12 @@ def draw_maintext(self, context):
     # ------------ Get the hotkeys -------------------------------------------------
     
     wm            = bpy.context.window_manager # Blender window manager
-    keymaps_3DV   = wm.keyconfigs['Blender User'].keymaps['3D View'] # 3D View hotkeys
+    keymaps_3DV   = wm.keyconfigs.default.keymaps['3D View'] # 3D View hotkeys
     
     # ------------------------ 3d view section
     if self._flag2 == False:
         
-        self.select_with = bpy.context.user_preferences.inputs.select_mouse # Select with left or right
+        #self.select_with = bpy.context.user_preferences.inputs.select_mouse # Select with left or right
         
         for item, km in keymaps_3DV.keymap_items.items(): # all the items in the tuple
             
@@ -718,7 +717,7 @@ def draw_maintext(self, context):
                 self.set_3d_cursor = handle_keys(km, self.set_3d_cursor)
                 
     # -------------------- Screen section
-    keymaps_3DV   = wm.keyconfigs['Blender User'].keymaps['Screen']
+    keymaps_3DV   = wm.keyconfigs.default.keymaps['Screen']
     
     if self._flag2 == False:
         
@@ -733,7 +732,7 @@ def draw_maintext(self, context):
                 self.render_view_show = handle_keys(km, self.render_view_show)
                 
     # ---------------------- Window section
-    keymaps_WIN   = wm.keyconfigs['Blender User'].keymaps['Window']
+    keymaps_WIN   = wm.keyconfigs.default.keymaps['Window']
     
     if self._flag2 == False:
         
@@ -744,8 +743,8 @@ def draw_maintext(self, context):
                 self.search_menu = handle_keys(km, self.search_menu)
 
     # ---------------------- Grease Pencil section
-    keymaps_GPENCIL   = wm.keyconfigs['Blender User'].keymaps['Grease Pencil']
-    keymaps_STROKEEDIT   = wm.keyconfigs['Blender User'].keymaps['Grease Pencil Stroke Edit Mode']
+    keymaps_GPENCIL   = wm.keyconfigs.default.keymaps['Grease Pencil']
+    keymaps_STROKEEDIT   = wm.keyconfigs.default.keymaps['Grease Pencil Stroke Edit Mode']
     
     if self._flag2 == False:
         
@@ -780,7 +779,7 @@ def draw_maintext(self, context):
     # Calculate the text
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
     blf.size(font_id, context.scene.important_hotkeys_font_size, 72)
-    bgl.glColor4f(font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
+    blf.color(font_id,font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
 
     
     
@@ -788,7 +787,7 @@ def draw_maintext(self, context):
     texts.append(([
         "Important hotkeys",
         " ",
-        "Select with - "+ self.select_with + " Mouse Button",
+        #"Select with - "+ self.select_with + " Mouse Button",
         "Add to / subtract from selection - "+ self.add_to_selection,
         "Selection methods Circle, Border and Lasso select can be negated by holding Shift key",
         "Move view - "+ self.move_view_string,
@@ -856,7 +855,7 @@ def draw_maintext(self, context):
     
 # ----------------------- Mainclass. Here happens the work.
 
-class ModalDrawOperator(bpy.types.Operator):
+class IH_OT_ModalDrawOperator(bpy.types.Operator):
     """Shows a list with important hotkeys"""
     bl_idname = "view3d.modal_operator"
     bl_label = "Simple Modal View3D Operator"
@@ -871,7 +870,7 @@ class ModalDrawOperator(bpy.types.Operator):
         
         # ------------Fixed strings
         # 3d view
-        self.select_with = "Not found"
+        #self.select_with = "Not found"
         self.add_to_selection = "Not found"
         self.move_view_string = "Not found"
         self.rotate_view_string = "Not found"
@@ -1009,6 +1008,7 @@ class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
     bl_label = "Important Hotkeys"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_category = "View"
     
     def draw(self, context):
         sc = context.scene
@@ -1035,7 +1035,7 @@ class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
         
         # another method to split the elements
         row = layout.row(align=True)
-        split = row.split(percentage=0.2)
+        split = row.split(factor=0.2)
         left_side = split.column(align=True)
         left_side.prop(sc , "important_hotkeys_text_color", text="")
         split = split.split()
@@ -1080,17 +1080,20 @@ def clear_properties():
             
 # -------------------------- Register - Unregister
 
+classes = (
+    IH_OT_ModalDrawOperator, 
+	VIEW3D_PT_ShowtextPanel,	
+)
+
 def register():
     init_properties()  # everything initialize.
-    bpy.utils.register_class(ModalDrawOperator)
-    bpy.utils.register_class(VIEW3D_PT_ShowtextPanel)
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_class(ModalDrawOperator)
-    bpy.utils.unregister_class(VIEW3D_PT_ShowtextPanel) 
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
     clear_properties() # cleaning up after the job is done
-
-if __name__ == "__main__":
-    register()
-    
 

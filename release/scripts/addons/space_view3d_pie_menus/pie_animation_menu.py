@@ -23,7 +23,7 @@ bl_info = {
     "description": "Pie menu for Timeline controls",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",

@@ -43,7 +43,6 @@ class AbcMBallWriter : public AbcObjectWriter {
 public:
 	AbcMBallWriter(
 	        Main *bmain,
-	        Scene *scene,
 	        Object *ob,
 	        AbcTransformWriter *parent,
 	        uint32_t time_sampling,
@@ -51,7 +50,7 @@ public:
 
 	~AbcMBallWriter();
 
-	static bool isBasisBall(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *ob);
+	static bool isBasisBall(Scene *scene, Object *ob);
 
 private:
 	virtual void do_write();

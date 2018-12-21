@@ -51,7 +51,6 @@ extern "C" {
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_texture_types.h"
 
 }
 
@@ -93,6 +92,8 @@ private:
 
 	Main *m_bmain;
 	Scene *scene;
+	ViewLayer *view_layer;
+
 	ArmatureImporter *armature_importer;
 
 	std::map<std::string, std::string> mesh_geom_map; // needed for correct shape key naming
@@ -160,29 +161,24 @@ private:
 
 public:
 
-	MeshImporter(UnitConverter *unitconv, ArmatureImporter *arm, Main *bmain, Scene *sce);
+	MeshImporter(UnitConverter *unitconv, ArmatureImporter *arm, Main *bmain, Scene *sce, ViewLayer *view_layer);
 
 	virtual Object *get_object_by_geom_uid(const COLLADAFW::UniqueId& geom_uid);
 
 	virtual Mesh *get_mesh_by_geom_uid(const COLLADAFW::UniqueId& geom_uid);
 
-	MTex *assign_textures_to_uvlayer(COLLADAFW::TextureCoordinateBinding &ctexture,
-	                                 Mesh *me, TexIndexTextureArrayMap& texindex_texarray_map,
-	                                 MTex *color_texture);
-
 	void optimize_material_assignements();
 
-	MTFace *assign_material_to_geom(COLLADAFW::MaterialBinding cmaterial,
-	                                std::map<COLLADAFW::UniqueId, Material*>& uid_material_map,
-	                                Object *ob, const COLLADAFW::UniqueId *geom_uid,
-	                                char *layername, MTFace *texture_face,
-	                                std::map<Material*, TexIndexTextureArrayMap>& material_texture_mapping_map, short mat_index);
+	void assign_material_to_geom(
+	        COLLADAFW::MaterialBinding cmaterial,
+	        std::map<COLLADAFW::UniqueId, Material*>& uid_material_map,
+	        Object *ob, const COLLADAFW::UniqueId *geom_uid,
+	        short mat_index);
 
 
 	Object *create_mesh_object(COLLADAFW::Node *node, COLLADAFW::InstanceGeometry *geom,
 	                           bool isController,
-	                           std::map<COLLADAFW::UniqueId, Material*>& uid_material_map,
-	                           std::map<Material*, TexIndexTextureArrayMap>& material_texture_mapping_map);
+	                           std::map<COLLADAFW::UniqueId, Material*>& uid_material_map);
 
 	// create a mesh storing a pointer in a map so it can be retrieved later by geometry UID
 	bool write_geometry(const COLLADAFW::Geometry* geom);

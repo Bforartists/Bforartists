@@ -27,6 +27,7 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "BLI_utildefines.h"
 #include "BLI_ghash.h"
@@ -40,6 +41,7 @@
 
 typedef struct TseGroup {
 	TreeStoreElem **elems;
+	int lastused;
 	int size;
 	int allocated;
 } TseGroup;
@@ -53,10 +55,11 @@ static TseGroup *tse_group_create(void)
 	tse_group->elems = MEM_mallocN(sizeof(TreeStoreElem *), "TseGroupElems");
 	tse_group->size = 0;
 	tse_group->allocated = 1;
+	tse_group->lastused = 0;
 	return tse_group;
 }
 
-static void tse_group_add(TseGroup *tse_group, TreeStoreElem *elem)
+static void tse_group_add_element(TseGroup *tse_group, TreeStoreElem *elem)
 {
 	if (UNLIKELY(tse_group->size == tse_group->allocated)) {
 		tse_group->allocated *= 2;
@@ -64,6 +67,26 @@ static void tse_group_add(TseGroup *tse_group, TreeStoreElem *elem)
 	}
 	tse_group->elems[tse_group->size] = elem;
 	tse_group->size++;
+}
+
+static void tse_group_remove_element(TseGroup *tse_group, TreeStoreElem *elem)
+{
+	int min_allocated = MAX2(1, tse_group->allocated / 2);
+	BLI_assert(tse_group->allocated == 1 || (tse_group->allocated % 2) == 0);
+
+	tse_group->size--;
+	BLI_assert(tse_group->size >= 0);
+	for (int i = 0; i < tse_group->size; i++) {
+		if (tse_group->elems[i] == elem) {
+			memcpy(tse_group->elems[i], tse_group->elems[i + 1], (tse_group->size - (i + 1)) * sizeof(TreeStoreElem *));
+			break;
+		}
+	}
+
+	if (UNLIKELY(tse_group->size > 0 && tse_group->size <= min_allocated)) {
+		tse_group->allocated = min_allocated;
+		tse_group->elems = MEM_reallocN(tse_group->elems, sizeof(TreeStoreElem *) * tse_group->allocated);
+	}
 }
 
 static void tse_group_free(TseGroup *tse_group)
@@ -122,6 +145,16 @@ static void free_treehash_group(void *key)
 	tse_group_free(key);
 }
 
+void BKE_outliner_treehash_clear_used(void *treehash)
+{
+	GHashIterator gh_iter;
+
+	GHASH_ITER(gh_iter, treehash) {
+		TseGroup *group = BLI_ghashIterator_getValue(&gh_iter);
+		group->lastused = 0;
+	}
+}
+
 void *BKE_outliner_treehash_rebuild_from_treestore(void *treehash, BLI_mempool *treestore)
 {
 	BLI_assert(treehash);
@@ -140,7 +173,22 @@ void BKE_outliner_treehash_add_element(void *treehash, TreeStoreElem *elem)
 		*val_p = tse_group_create();
 	}
 	group = *val_p;
-	tse_group_add(group, elem);
+	group->lastused = 0;
+	tse_group_add_element(group, elem);
+}
+
+void BKE_outliner_treehash_remove_element(void *treehash, TreeStoreElem *elem)
+{
+	TseGroup *group = BLI_ghash_lookup(treehash, elem);
+
+	BLI_assert(group != NULL);
+	if (group->size <= 1) {
+		/* one element -> remove group completely */
+		BLI_ghash_remove(treehash, elem, NULL, free_treehash_group);
+	}
+	else {
+		tse_group_remove_element(group, elem);
+	}
 }
 
 static TseGroup *BKE_outliner_treehash_lookup_group(GHash *th, short type, short nr, struct ID *id)
@@ -163,10 +211,19 @@ TreeStoreElem *BKE_outliner_treehash_lookup_unused(void *treehash, short type, s
 
 	group = BKE_outliner_treehash_lookup_group(treehash, type, nr, id);
 	if (group) {
-		int i;
-		for (i = 0; i < group->size; i++) {
-			if (!group->elems[i]->used) {
-				return group->elems[i];
+		/* Find unused element, with optimization to start from previously
+		 * found element assuming we do repeated lookups. */
+		int size = group->size;
+		int offset = group->lastused;
+
+		for (int i = 0; i < size; i++, offset++) {
+			if (offset >= size) {
+				offset = 0;
+			}
+
+			if (!group->elems[offset]->used) {
+				group->lastused = offset;
+				return group->elems[offset];
 			}
 		}
 	}

@@ -48,7 +48,6 @@
 
 #include "BKE_context.h"
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_screen.h"
 #include "BKE_unit.h"
@@ -118,7 +117,7 @@ static int action_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 
 void ACTION_OT_properties(wmOperatorType *ot)
 {
-	ot->name = "Properties";
+	ot->name = "Toggle Sidebar";
 	ot->idname = "ACTION_OT_properties";
 	ot->description = "Toggle the properties region visibility";
 

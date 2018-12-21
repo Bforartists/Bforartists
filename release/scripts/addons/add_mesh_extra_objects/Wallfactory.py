@@ -61,7 +61,7 @@ class add_mesh_wallb(Operator):
     bl_description = "Create a block (masonry) wall mesh"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # UI items - API for properties - User accessable variables...
+    # UI items - API for properties - User accessible variables...
     # not all options are via UI, and some operations just don't work yet
 
     # only create object when True

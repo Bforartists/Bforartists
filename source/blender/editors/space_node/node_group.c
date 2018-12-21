@@ -50,6 +50,8 @@
 #include "BKE_main.h"
 #include "BKE_report.h"
 
+#include "DEG_depsgraph_build.h"
+
 #include "ED_node.h"  /* own include */
 #include "ED_screen.h"
 #include "ED_render.h"
@@ -340,11 +342,11 @@ static int node_group_ungroup(Main *bmain, bNodeTree *ntree, bNode *gnode)
 
 	while (nodes_delayed_free) {
 		node = BLI_linklist_pop(&nodes_delayed_free);
-		nodeFreeNode(ntree, node);
+		nodeDeleteNode(bmain, ntree, node);
 	}
 
 	/* delete the group instance */
-	nodeFreeNode(ntree, gnode);
+	nodeDeleteNode(bmain, ntree, gnode);
 
 	ntree->update |= NTREE_UPDATE_NODES | NTREE_UPDATE_LINKS;
 
@@ -961,6 +963,7 @@ static int node_group_make_exec(bContext *C, wmOperator *op)
 
 	snode_notify(C, snode);
 	snode_dag_update(C, snode);
+	DEG_relations_tag_update(bmain);  /* We broke relations in node tree, need to rebuild them in the grahes. */
 
 	return OPERATOR_FINISHED;
 }

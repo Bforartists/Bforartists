@@ -44,11 +44,14 @@
 #include "BKE_blender_copybuffer.h"  /* own include */
 #include "BKE_blendfile.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
+#include "BKE_layer.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_scene.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "BLO_readfile.h"
 #include "BLO_writefile.h"
@@ -95,7 +98,7 @@ bool BKE_copybuffer_read(Main *bmain_dst, const char *libname, ReportList *repor
 	/* Here appending/linking starts. */
 	Main *mainl = BLO_library_link_begin(bmain_dst, &bh, libname);
 	BLO_library_link_copypaste(mainl, bh);
-	BLO_library_link_end(mainl, &bh, 0, NULL, NULL);
+	BLO_library_link_end(mainl, &bh, 0, NULL, NULL, NULL);
 	/* Mark all library linked objects to be updated. */
 	BKE_main_lib_objects_recalc_all(bmain_dst);
 	IMB_colormanagement_check_file_config(bmain_dst);
@@ -117,7 +120,7 @@ bool BKE_copybuffer_paste(bContext *C, const char *libname, const short flag, Re
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
-	View3D *v3d = CTX_wm_view3d(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Main *mainl = NULL;
 	Library *lib;
 	BlendHandle *bh;
@@ -129,7 +132,7 @@ bool BKE_copybuffer_paste(bContext *C, const char *libname, const short flag, Re
 		return false;
 	}
 
-	BKE_scene_base_deselect_all(scene);
+	BKE_view_layer_base_deselect_all(view_layer);
 
 	/* tag everything, all untagged data can be made local
 	 * its also generally useful to know what is new
@@ -142,7 +145,7 @@ bool BKE_copybuffer_paste(bContext *C, const char *libname, const short flag, Re
 
 	BLO_library_link_copypaste(mainl, bh);
 
-	BLO_library_link_end(mainl, &bh, flag, scene, v3d);
+	BLO_library_link_end(mainl, &bh, flag, bmain, scene, view_layer);
 
 	/* mark all library linked objects to be updated */
 	BKE_main_lib_objects_recalc_all(bmain);
@@ -157,7 +160,11 @@ bool BKE_copybuffer_paste(bContext *C, const char *libname, const short flag, Re
 	BKE_main_id_tag_all(bmain, LIB_TAG_PRE_EXISTING, false);
 
 	/* recreate dependency graph to include new objects */
-	DAG_relations_tag_update(bmain);
+	DEG_relations_tag_update(bmain);
+
+	/* Tag update the scene to flush base collection settings, since the new object is added to a
+	 * new (active) collection, not its original collection, thus need recalculation. */
+	DEG_id_tag_update(&scene->id, 0);
 
 	BLO_blendhandle_close(bh);
 	/* remove library... */

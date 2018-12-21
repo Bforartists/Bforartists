@@ -33,7 +33,7 @@
 
 #include "rna_internal.h"
 
-#include "DNA_group_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_object_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
@@ -97,7 +97,6 @@ static const EnumPropertyItem rigidbody_mesh_source_items[] = {
 #  include "RBI_api.h"
 #endif
 
-#include "BKE_depsgraph.h"
 #include "BKE_rigidbody.h"
 
 #include "WM_api.h"
@@ -131,8 +130,8 @@ static void rna_RigidBodyWorld_num_solver_iterations_set(PointerRNA *ptr, int va
 	rbw->num_solver_iterations = value;
 
 #ifdef WITH_BULLET
-	if (rbw->physics_world) {
-		RB_dworld_set_solver_iterations(rbw->physics_world, value);
+	if (rbw->shared->physics_world) {
+		RB_dworld_set_solver_iterations(rbw->shared->physics_world, value);
 	}
 #endif
 }
@@ -144,10 +143,24 @@ static void rna_RigidBodyWorld_split_impulse_set(PointerRNA *ptr, bool value)
 	RB_FLAG_SET(rbw->flag, value, RBW_FLAG_USE_SPLIT_IMPULSE);
 
 #ifdef WITH_BULLET
-	if (rbw->physics_world) {
-		RB_dworld_set_split_impulse(rbw->physics_world, value);
+	if (rbw->shared->physics_world) {
+		RB_dworld_set_split_impulse(rbw->shared->physics_world, value);
 	}
 #endif
+}
+
+static void rna_RigidBodyWorld_objects_collection_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+	RigidBodyWorld *rbw = (RigidBodyWorld *)ptr->data;
+	BKE_rigidbody_objects_collection_validate(scene, rbw);
+	rna_RigidBodyWorld_reset(bmain, scene, ptr);
+}
+
+static void rna_RigidBodyWorld_constraints_collection_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+	RigidBodyWorld *rbw = (RigidBodyWorld *)ptr->data;
+	BKE_rigidbody_constraints_collection_validate(scene, rbw);
+	rna_RigidBodyWorld_reset(bmain, scene, ptr);
 }
 
 /* ******************************** */
@@ -174,7 +187,7 @@ static void rna_RigidBodyOb_shape_reset(Main *UNUSED(bmain), Scene *scene, Point
 	RigidBodyOb *rbo = (RigidBodyOb *)ptr->data;
 
 	BKE_rigidbody_cache_reset(rbw);
-	if (rbo->physics_shape)
+	if (rbo->shared->physics_shape)
 		rbo->flag |= RBO_FLAG_NEEDS_RESHAPE;
 }
 
@@ -208,9 +221,9 @@ static void rna_RigidBodyOb_disabled_set(PointerRNA *ptr, bool value)
 
 #ifdef WITH_BULLET
 	/* update kinematic state if necessary - only needed for active bodies */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_mass(rbo->physics_object, RBO_GET_MASS(rbo));
-		RB_body_set_kinematic_state(rbo->physics_object, !value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_mass(rbo->shared->physics_object, RBO_GET_MASS(rbo));
+		RB_body_set_kinematic_state(rbo->shared->physics_object, !value);
 		rbo->flag |= RBO_FLAG_NEEDS_VALIDATE;
 	}
 #endif
@@ -224,8 +237,8 @@ static void rna_RigidBodyOb_mass_set(PointerRNA *ptr, float value)
 
 #ifdef WITH_BULLET
 	/* only active bodies need mass update */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_mass(rbo->physics_object, RBO_GET_MASS(rbo));
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_mass(rbo->shared->physics_object, RBO_GET_MASS(rbo));
 	}
 #endif
 }
@@ -237,8 +250,8 @@ static void rna_RigidBodyOb_friction_set(PointerRNA *ptr, float value)
 	rbo->friction = value;
 
 #ifdef WITH_BULLET
-	if (rbo->physics_object) {
-		RB_body_set_friction(rbo->physics_object, value);
+	if (rbo->shared->physics_object) {
+		RB_body_set_friction(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -249,8 +262,8 @@ static void rna_RigidBodyOb_restitution_set(PointerRNA *ptr, float value)
 
 	rbo->restitution = value;
 #ifdef WITH_BULLET
-	if (rbo->physics_object) {
-		RB_body_set_restitution(rbo->physics_object, value);
+	if (rbo->shared->physics_object) {
+		RB_body_set_restitution(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -262,13 +275,13 @@ static void rna_RigidBodyOb_collision_margin_set(PointerRNA *ptr, float value)
 	rbo->margin = value;
 
 #ifdef WITH_BULLET
-	if (rbo->physics_shape) {
-		RB_shape_set_margin(rbo->physics_shape, RBO_GET_MARGIN(rbo));
+	if (rbo->shared->physics_shape) {
+		RB_shape_set_margin(rbo->shared->physics_shape, RBO_GET_MARGIN(rbo));
 	}
 #endif
 }
 
-static void rna_RigidBodyOb_collision_groups_set(PointerRNA *ptr, const bool *values)
+static void rna_RigidBodyOb_collision_collections_set(PointerRNA *ptr, const bool *values)
 {
 	RigidBodyOb *rbo = (RigidBodyOb *)ptr->data;
 	int i;
@@ -290,9 +303,9 @@ static void rna_RigidBodyOb_kinematic_state_set(PointerRNA *ptr, bool value)
 
 #ifdef WITH_BULLET
 	/* update kinematic state if necessary */
-	if (rbo->physics_object) {
-		RB_body_set_mass(rbo->physics_object, RBO_GET_MASS(rbo));
-		RB_body_set_kinematic_state(rbo->physics_object, value);
+	if (rbo->shared->physics_object) {
+		RB_body_set_mass(rbo->shared->physics_object, RBO_GET_MASS(rbo));
+		RB_body_set_kinematic_state(rbo->shared->physics_object, value);
 		rbo->flag |= RBO_FLAG_NEEDS_VALIDATE;
 	}
 #endif
@@ -306,8 +319,8 @@ static void rna_RigidBodyOb_activation_state_set(PointerRNA *ptr, bool value)
 
 #ifdef WITH_BULLET
 	/* update activation state if necessary - only active bodies can be deactivated */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_activation_state(rbo->physics_object, value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_activation_state(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -320,8 +333,8 @@ static void rna_RigidBodyOb_linear_sleepThresh_set(PointerRNA *ptr, float value)
 
 #ifdef WITH_BULLET
 	/* only active bodies need sleep threshold update */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_linear_sleep_thresh(rbo->physics_object, value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_linear_sleep_thresh(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -334,8 +347,8 @@ static void rna_RigidBodyOb_angular_sleepThresh_set(PointerRNA *ptr, float value
 
 #ifdef WITH_BULLET
 	/* only active bodies need sleep threshold update */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_angular_sleep_thresh(rbo->physics_object, value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_angular_sleep_thresh(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -348,8 +361,8 @@ static void rna_RigidBodyOb_linear_damping_set(PointerRNA *ptr, float value)
 
 #ifdef WITH_BULLET
 	/* only active bodies need damping update */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_linear_damping(rbo->physics_object, value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_linear_damping(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -362,8 +375,8 @@ static void rna_RigidBodyOb_angular_damping_set(PointerRNA *ptr, float value)
 
 #ifdef WITH_BULLET
 	/* only active bodies need damping update */
-	if ((rbo->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
-		RB_body_set_angular_damping(rbo->physics_object, value);
+	if ((rbo->shared->physics_object) && (rbo->type == RBO_TYPE_ACTIVE)) {
+		RB_body_set_angular_damping(rbo->shared->physics_object, value);
 	}
 #endif
 }
@@ -729,8 +742,8 @@ static void rna_RigidBodyWorld_convex_sweep_test(
 #ifdef WITH_BULLET
 	RigidBodyOb *rob = object->rigidbody_object;
 
-	if (rbw->physics_world != NULL && rob->physics_object != NULL) {
-		RB_world_convex_sweep_test(rbw->physics_world, rob->physics_object, ray_start, ray_end,
+	if (rbw->shared->physics_world != NULL && rob->shared->physics_object != NULL) {
+		RB_world_convex_sweep_test(rbw->shared->physics_world, rob->shared->physics_object, ray_start, ray_end,
 		                           r_location, r_hitpoint, r_normal, r_hit);
 		if (*r_hit == -2) {
 			BKE_report(reports, RPT_ERROR,
@@ -745,6 +758,13 @@ static void rna_RigidBodyWorld_convex_sweep_test(
 	UNUSED_VARS(rbw, reports, object, ray_start, ray_end, r_location, r_hitpoint, r_normal, r_hit);
 #endif
 }
+
+static PointerRNA rna_RigidBodyWorld_PointCache_get(PointerRNA *ptr)
+{
+	RigidBodyWorld *rbw = ptr->data;
+	return rna_pointer_inherit_refine(ptr, &RNA_PointCache, rbw->shared->pointcache);
+}
+
 
 #else
 
@@ -762,17 +782,18 @@ static void rna_def_rigidbody_world(BlenderRNA *brna)
 	RNA_def_struct_path_func(srna, "rna_RigidBodyWorld_path");
 
 	/* groups */
-	prop = RNA_def_property(srna, "group", PROP_POINTER, PROP_NONE);
-	RNA_def_property_struct_type(prop, "Group");
+	prop = RNA_def_property(srna, "collection", PROP_POINTER, PROP_NONE);
+	RNA_def_property_struct_type(prop, "Collection");
+	RNA_def_property_pointer_sdna(prop, NULL, "group");
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
-	RNA_def_property_ui_text(prop, "Group", "Group containing objects participating in this simulation");
-	RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_reset");
+	RNA_def_property_ui_text(prop, "Collection", "Collection containing objects participating in this simulation");
+	RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_objects_collection_update");
 
 	prop = RNA_def_property(srna, "constraints", PROP_POINTER, PROP_NONE);
-	RNA_def_property_struct_type(prop, "Group");
+	RNA_def_property_struct_type(prop, "Collection");
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_SELF_CHECK);
-	RNA_def_property_ui_text(prop, "Constraints", "Group containing rigid body constraint objects");
-	RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_reset");
+	RNA_def_property_ui_text(prop, "Constraints", "Collection containing rigid body constraint objects");
+	RNA_def_property_update(prop, NC_SCENE, "rna_RigidBodyWorld_constraints_collection_update");
 
 	/* booleans */
 	prop = RNA_def_property(srna, "enabled", PROP_BOOLEAN, PROP_NONE);
@@ -824,7 +845,7 @@ static void rna_def_rigidbody_world(BlenderRNA *brna)
 	/* cache */
 	prop = RNA_def_property(srna, "point_cache", PROP_POINTER, PROP_NONE);
 	RNA_def_property_flag(prop, PROP_NEVER_NULL);
-	RNA_def_property_pointer_sdna(prop, NULL, "pointcache");
+	RNA_def_property_pointer_funcs(prop, "rna_RigidBodyWorld_PointCache_get", NULL, NULL, NULL);
 	RNA_def_property_struct_type(prop, "PointCache");
 	RNA_def_property_ui_text(prop, "Point Cache", "");
 
@@ -1018,11 +1039,11 @@ static void rna_def_rigidbody_object(BlenderRNA *brna)
 	                         "(best results when non-zero)");
 	RNA_def_property_update(prop, NC_OBJECT | ND_POINTCACHE, "rna_RigidBodyOb_shape_reset");
 
-	prop = RNA_def_property(srna, "collision_groups", PROP_BOOLEAN, PROP_LAYER_MEMBER);
+	prop = RNA_def_property(srna, "collision_collections", PROP_BOOLEAN, PROP_LAYER_MEMBER);
 	RNA_def_property_boolean_sdna(prop, NULL, "col_groups", 1);
 	RNA_def_property_array(prop, 20);
-	RNA_def_property_boolean_funcs(prop, NULL, "rna_RigidBodyOb_collision_groups_set");
-	RNA_def_property_ui_text(prop, "Collision Groups", "Collision Groups Rigid Body belongs to");
+	RNA_def_property_boolean_funcs(prop, NULL, "rna_RigidBodyOb_collision_collections_set");
+	RNA_def_property_ui_text(prop, "Collision Collections", "Collision collections rigid body belongs to");
 	RNA_def_property_update(prop, NC_OBJECT | ND_POINTCACHE, "rna_RigidBodyOb_reset");
 	RNA_def_property_flag(prop, PROP_LIB_EXCEPTION);
 }

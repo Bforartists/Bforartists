@@ -56,6 +56,7 @@
 #include "ED_anim_api.h"
 #include "ED_keyframes_edit.h"
 #include "ED_markers.h"
+#include "ED_select_utils.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -68,20 +69,20 @@
 
 /* ******************** Deselect All Operator ***************************** */
 /* This operator works in one of three ways:
- *	1) (de)select all (AKEY) - test if select all or deselect all
- *	2) invert all (CTRL-IKEY) - invert selection of all keyframes
- *	3) (de)select all - no testing is done; only for use internal tools as normal function...
+ * 1) (de)select all (AKEY) - test if select all or deselect all
+ * 2) invert all (CTRL-IKEY) - invert selection of all keyframes
+ * 3) (de)select all - no testing is done; only for use internal tools as normal function...
  */
 
 /* Deselects keyframes in the Graph Editor
- *	- This is called by the deselect all operator, as well as other ones!
+ * - This is called by the deselect all operator, as well as other ones!
  *
- *  - test: check if select or deselect all
- *	- sel: how to select keyframes
- *		0 = deselect
- *		1 = select
- *		2 = invert
- *	- do_channels: whether to affect selection status of channels
+ * - test: check if select or deselect all
+ * - sel: how to select keyframes
+ *   0 = deselect
+ *   1 = select
+ *   2 = invert
+ * - do_channels: whether to affect selection status of channels
  */
 void deselect_graph_keys(bAnimContext *ac, bool test, short sel, bool do_channels)
 {
@@ -162,10 +163,24 @@ static int graphkeys_deselectall_exec(bContext *C, wmOperator *op)
 	ale_active = get_active_fcurve_channel(&ac);
 
 	/* 'standard' behavior - check if selected, then apply relevant selection */
-	if (RNA_boolean_get(op->ptr, "invert"))
-		deselect_graph_keys(&ac, 0, SELECT_INVERT, true);
-	else
-		deselect_graph_keys(&ac, 1, SELECT_ADD, true);
+	const int action = RNA_enum_get(op->ptr, "action");
+	switch (action) {
+		case SEL_TOGGLE:
+			deselect_graph_keys(&ac, 1, SELECT_ADD, true);
+			break;
+		case SEL_SELECT:
+			deselect_graph_keys(&ac, 0, SELECT_ADD, true);
+			break;
+		case SEL_DESELECT:
+			deselect_graph_keys(&ac, 0, SELECT_SUBTRACT, true);
+			break;
+		case SEL_INVERT:
+			deselect_graph_keys(&ac, 0, SELECT_INVERT, true);
+			break;
+		default:
+			BLI_assert(0);
+			break;
+	}
 
 	/* restore active F-Curve... */
 	if (ale_active) {
@@ -186,12 +201,12 @@ static int graphkeys_deselectall_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
-void GRAPH_OT_select_all_toggle(wmOperatorType *ot)
+void GRAPH_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select All";
-	ot->idname = "GRAPH_OT_select_all_toggle";
-	ot->description = "Select All\nToggle selection of all keyframes";
+	ot->idname = "GRAPH_OT_select_all";
+	ot->description = "Toggle selection of all keyframes";
 
 	/* api callbacks */
 	ot->exec = graphkeys_deselectall_exec;
@@ -200,26 +215,26 @@ void GRAPH_OT_select_all_toggle(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	/* props */
-	ot->prop = RNA_def_boolean(ot->srna, "invert", 0, "Invert", "");
+	/* properties */
+	WM_operator_properties_select_all(ot);
 }
 
-/* ******************** Border Select Operator **************************** */
+/* ******************** Box Select Operator **************************** */
 /* This operator currently works in one of three ways:
- *	-> BKEY     - 1) all keyframes within region are selected (validation with BEZT_OK_REGION)
- *	-> ALT-BKEY - depending on which axis of the region was larger...
- *		-> 2) x-axis, so select all frames within frame range (validation with BEZT_OK_FRAMERANGE)
- *		-> 3) y-axis, so select all frames within channels that region included (validation with BEZT_OK_VALUERANGE)
+ * -> BKEY     - 1) all keyframes within region are selected (validation with BEZT_OK_REGION)
+ * -> ALT-BKEY - depending on which axis of the region was larger...
+ *    -> 2) x-axis, so select all frames within frame range (validation with BEZT_OK_FRAMERANGE)
+ *    -> 3) y-axis, so select all frames within channels that region included (validation with BEZT_OK_VALUERANGE)
  *
  * The selection backend is also reused for the Lasso and Circle select operators.
  */
 
-/* Borderselect only selects keyframes now, as overshooting handles often get caught too,
+/* Box Select only selects keyframes now, as overshooting handles often get caught too,
  * which means that they may be inadvertently moved as well. However, incl_handles overrides
  * this, and allow handles to be considered independently too.
  * Also, for convenience, handles should get same status as keyframe (if it was within bounds).
  */
-static void borderselect_graphkeys(
+static void box_select_graphkeys(
         bAnimContext *ac, const rctf *rectf_view, short mode, short selectmode, bool incl_handles,
         void *data)
 {
@@ -270,7 +285,7 @@ static void borderselect_graphkeys(
 
 	mapping_flag |= ANIM_get_normalization_flags(ac);
 
-	/* loop over data, doing border select */
+	/* loop over data, doing box select */
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 		FCurve *fcu = (FCurve *)ale->key_data;
@@ -325,7 +340,7 @@ static void borderselect_graphkeys(
 
 /* ------------------- */
 
-static int graphkeys_borderselect_exec(bContext *C, wmOperator *op)
+static int graphkeys_box_select_exec(bContext *C, wmOperator *op)
 {
 	bAnimContext ac;
 	rcti rect;
@@ -345,7 +360,7 @@ static int graphkeys_borderselect_exec(bContext *C, wmOperator *op)
 		deselect_graph_keys(&ac, 1, SELECT_SUBTRACT, true);
 
 	/* get select mode
-	 *	- 'include_handles' from the operator specifies whether to include handles in the selection
+	 * - 'include_handles' from the operator specifies whether to include handles in the selection
 	 */
 	if (select) {
 		selectmode = SELECT_ADD;
@@ -359,12 +374,12 @@ static int graphkeys_borderselect_exec(bContext *C, wmOperator *op)
 	/* get settings from operator */
 	WM_operator_properties_border_to_rcti(op, &rect);
 
-	/* selection 'mode' depends on whether borderselect region only matters on one axis */
+	/* selection 'mode' depends on whether box_select region only matters on one axis */
 	if (RNA_boolean_get(op->ptr, "axis_range")) {
 		/* mode depends on which axis of the range is larger to determine which axis to use
-		 *	- checking this in region-space is fine, as it's fundamentally still going to be a different rect size
-		 *	- the frame-range select option is favored over the channel one (x over y), as frame-range one is often
-		 *	  used for tweaking timing when "blocking", while channels is not that useful...
+		 * - checking this in region-space is fine, as it's fundamentally still going to be a different rect size
+		 * - the frame-range select option is favored over the channel one (x over y), as frame-range one is often
+		 *   used for tweaking timing when "blocking", while channels is not that useful...
 		 */
 		if ((BLI_rcti_size_x(&rect)) >= (BLI_rcti_size_y(&rect)))
 			mode = BEZT_OK_FRAMERANGE;
@@ -376,8 +391,8 @@ static int graphkeys_borderselect_exec(bContext *C, wmOperator *op)
 
 	BLI_rctf_rcti_copy(&rect_fl, &rect);
 
-	/* apply borderselect action */
-	borderselect_graphkeys(&ac, &rect_fl, mode, selectmode, incl_handles, NULL);
+	/* apply box_select action */
+	box_select_graphkeys(&ac, &rect_fl, mode, selectmode, incl_handles, NULL);
 
 	/* send notifier that keyframe selection has changed */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
@@ -385,18 +400,18 @@ static int graphkeys_borderselect_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
-void GRAPH_OT_select_border(wmOperatorType *ot)
+void GRAPH_OT_select_box(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Border Select";
-	ot->idname = "GRAPH_OT_select_border";
-	ot->description = "Border Select\nBorder Select selects all keyframes that are inside the rectangle\nBorder Axis Range selects all keyframes within the width of the rectangle\nBorder Include handles selects Keyframes with handlers\nBorder Axis + Handles handles selects Keyframes with handlers +  no idea. Fix me!";
+	ot->name = "Box Select";
+	ot->idname = "GRAPH_OT_select_box";
+	ot->description = "Box Select\nSelect all keyframes within the specified region";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
-	ot->exec = graphkeys_borderselect_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->invoke = WM_gesture_box_invoke;
+	ot->exec = graphkeys_box_select_exec;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = graphop_visible_keyframes_poll;
 
@@ -404,7 +419,7 @@ void GRAPH_OT_select_border(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* rna */
-	WM_operator_properties_gesture_border_select(ot);
+	WM_operator_properties_gesture_box_select(ot);
 
 	ot->prop = RNA_def_boolean(ot->srna, "axis_range", 0, "Axis Range", "");
 	RNA_def_boolean(ot->srna, "include_handles", 0, "Include Handles", "Are handles tested individually against the selection criteria");
@@ -459,8 +474,8 @@ static int graphkeys_lassoselect_exec(bContext *C, wmOperator *op)
 	BLI_lasso_boundbox(&rect, data_lasso.mcords, data_lasso.mcords_tot);
 	BLI_rctf_rcti_copy(&rect_fl, &rect);
 
-	/* apply borderselect action */
-	borderselect_graphkeys(&ac, &rect_fl, BEZT_OK_REGION_LASSO, selectmode, incl_handles, &data_lasso);
+	/* apply box_select action */
+	box_select_graphkeys(&ac, &rect_fl, BEZT_OK_REGION_LASSO, selectmode, incl_handles, &data_lasso);
 
 	MEM_freeN((void *)data_lasso.mcords);
 
@@ -532,8 +547,8 @@ static int graph_circle_select_exec(bContext *C, wmOperator *op)
 		}
 	}
 
-	/* apply borderselect action */
-	borderselect_graphkeys(&ac, &rect_fl, BEZT_OK_REGION_CIRCLE, selectmode, incl_handles, &data);
+	/* apply box_select action */
+	box_select_graphkeys(&ac, &rect_fl, BEZT_OK_REGION_CIRCLE, selectmode, incl_handles, &data);
 
 	/* send notifier that keyframe selection has changed */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
@@ -562,10 +577,10 @@ void GRAPH_OT_select_circle(wmOperatorType *ot)
 
 /* ******************** Column Select Operator **************************** */
 /* This operator works in one of four ways:
- *	- 1) select all keyframes in the same frame as a selected one  (KKEY)
- *	- 2) select all keyframes in the same frame as the current frame marker (CTRL-KKEY)
- *	- 3) select all keyframes in the same frame as a selected markers (SHIFT-KKEY)
- *	- 4) select all keyframes that occur between selected markers (ALT-KKEY)
+ * - 1) select all keyframes in the same frame as a selected one  (KKEY)
+ * - 2) select all keyframes in the same frame as the current frame marker (CTRL-KKEY)
+ * - 3) select all keyframes in the same frame as a selected markers (SHIFT-KKEY)
+ * - 4) select all keyframes that occur between selected markers (ALT-KKEY)
  */
 
 /* defines for column-select mode */
@@ -684,7 +699,7 @@ static void columnselect_graph_keys(bAnimContext *ac, short mode)
 		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
 		/* loop over cfraelems (stored in the KeyframeEditData->list)
-		 *	- we need to do this here, as we can apply fewer NLA-mapping conversions
+		 * - we need to do this here, as we can apply fewer NLA-mapping conversions
 		 */
 		for (ce = ked.list.first; ce; ce = ce->next) {
 			/* set frame for validation callback to refer to */
@@ -1064,9 +1079,9 @@ void GRAPH_OT_select_leftright(wmOperatorType *ot)
 
 /* ******************** Mouse-Click Select Operator *********************** */
 /* This operator works in one of three ways:
- *	- 1) keyframe under mouse - no special modifiers
- *	- 2) all keyframes on the same side of current frame indicator as mouse - ALT modifier
- *	- 3) column select all keyframes in frame under mouse - CTRL modifier
+ * - 1) keyframe under mouse - no special modifiers
+ * - 2) all keyframes on the same side of current frame indicator as mouse - ALT modifier
+ * - 3) column select all keyframes in frame under mouse - CTRL modifier
  *
  * In addition to these basic options, the SHIFT modifier can be used to toggle the
  * selection mode between replacing the selection (without) and inverting the selection (with).
@@ -1180,8 +1195,8 @@ static void get_nearest_fcurve_verts_list(bAnimContext *ac, const int mval[2], L
 	short mapping_flag = 0;
 
 	/* get curves to search through
-	 *	- if the option to only show keyframes that belong to selected F-Curves is enabled,
-	 *	  include the 'only selected' flag...
+	 * - if the option to only show keyframes that belong to selected F-Curves is enabled,
+	 *   include the 'only selected' flag...
 	 */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
 	if (sipo->flag & SIPO_SELCUVERTSONLY)   // FIXME: this should really be check for by the filtering code...
@@ -1256,7 +1271,7 @@ static tNearestVertInfo *get_best_nearest_fcurve_vert(ListBase *matches)
 		/* which mode of search are we in: find first selected, or find vert? */
 		if (found) {
 			/* just take this vert now that we've found the selected one
-			 *	- we'll need to remove this from the list so that it can be returned to the original caller
+			 * - we'll need to remove this from the list so that it can be returned to the original caller
 			 */
 			BLI_remlink(matches, nvi);
 			return nvi;
@@ -1530,9 +1545,9 @@ void GRAPH_OT_clickselect(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Mouse Select Keys";
+	ot->name = "Select Keyframes";
 	ot->idname = "GRAPH_OT_clickselect";
-	ot->description = "Select keyframes by clicking on them";
+	ot->description = "Select Keyframes\nSelect keyframes by clicking on them";
 
 	/* callbacks */
 	ot->invoke = graphkeys_clickselect_invoke;

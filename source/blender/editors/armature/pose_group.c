@@ -38,8 +38,11 @@
 #include "DNA_armature_types.h"
 #include "DNA_object_types.h"
 
+#include "BKE_armature.h"
 #include "BKE_action.h"
 #include "BKE_context.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -104,6 +107,7 @@ static int pose_group_remove_exec(bContext *C, wmOperator *UNUSED(op))
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 
 	return OPERATOR_FINISHED;
 }
@@ -160,7 +164,7 @@ static int pose_groups_menu_invoke(bContext *C, wmOperator *op, const wmEvent *U
 		layout = UI_popup_menu_layout(pup);
 
 		/* special entry - allow to create new group, then use that
-		 *	(not to be used for removing though)
+		 * (not to be used for removing though)
 		 */
 		if (strstr(op->idname, "assign")) {
 			uiItemIntO(layout, "New Group", ICON_NONE, op->idname, "type", 0);
@@ -197,22 +201,23 @@ static int pose_group_assign_exec(bContext *C, wmOperator *op)
 	pose = ob->pose;
 
 	/* set the active group number to the one from operator props
-	 *  - if 0 after this, make a new group...
+	 * - if 0 after this, make a new group...
 	 */
 	pose->active_group = RNA_int_get(op->ptr, "type");
 	if (pose->active_group == 0)
 		BKE_pose_add_group(ob->pose, NULL);
 
 	/* add selected bones to group then */
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+	FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (ob, pchan)
 	{
 		pchan->agrp_index = pose->active_group;
 		done = true;
 	}
-	CTX_DATA_END;
+	FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 
 	/* report done status */
 	if (done)
@@ -251,17 +256,18 @@ static int pose_group_unassign_exec(bContext *C, wmOperator *UNUSED(op))
 		return OPERATOR_CANCELLED;
 
 	/* find selected bones to remove from all bone groups */
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+	FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (ob, pchan)
 	{
 		if (pchan->agrp_index) {
 			pchan->agrp_index = 0;
 			done = true;
 		}
 	}
-	CTX_DATA_END;
+	FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 
 	/* report done status */
 	if (done)
@@ -413,6 +419,7 @@ static int group_sort_exec(bContext *C, wmOperator *UNUSED(op))
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
+	DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
 
 	return OPERATOR_FINISHED;
 }
@@ -432,11 +439,11 @@ void POSE_OT_group_sort(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static void pose_group_select(bContext *C, Object *ob, bool select)
+static void pose_group_select(Object *ob, bool select)
 {
 	bPose *pose = ob->pose;
 
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, visible_pose_bones)
+	FOREACH_PCHAN_VISIBLE_IN_OBJECT_BEGIN (ob, pchan)
 	{
 		if ((pchan->bone->flag & BONE_UNSELECTABLE) == 0) {
 			if (select) {
@@ -449,7 +456,7 @@ static void pose_group_select(bContext *C, Object *ob, bool select)
 			}
 		}
 	}
-	CTX_DATA_END;
+	FOREACH_PCHAN_VISIBLE_IN_OBJECT_END;
 }
 
 static int pose_group_select_exec(bContext *C, wmOperator *UNUSED(op))
@@ -460,7 +467,7 @@ static int pose_group_select_exec(bContext *C, wmOperator *UNUSED(op))
 	if (ELEM(NULL, ob, ob->pose))
 		return OPERATOR_CANCELLED;
 
-	pose_group_select(C, ob, 1);
+	pose_group_select(ob, 1);
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
@@ -491,7 +498,7 @@ static int pose_group_deselect_exec(bContext *C, wmOperator *UNUSED(op))
 	if (ELEM(NULL, ob, ob->pose))
 		return OPERATOR_CANCELLED;
 
-	pose_group_select(C, ob, 0);
+	pose_group_select(ob, 0);
 
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);

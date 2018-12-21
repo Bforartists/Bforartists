@@ -23,7 +23,7 @@ bl_info = {
     "description": "Apply Transform Menu",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "3D View",
     "warning": "",
     "wiki_url": "",
@@ -40,7 +40,7 @@ from bpy.props import EnumProperty
 
 # Pie Apply Transforms - Ctrl + A
 class PieApplyTransforms(Menu):
-    bl_idname = "pie.applytranforms"
+    bl_idname = "pie.applytransforms"
     bl_label = "Pie Apply Transforms"
 
     def draw(self, context):
@@ -49,15 +49,15 @@ class PieApplyTransforms(Menu):
         # 4 - LEFT
         pie.operator("apply.transformall", text="Apply All", icon='FREEZE')
         # 6 - RIGHT
-        pie.operator("clear.all", text="Clear All", icon='MANIPUL')
+        pie.operator("clear.all", text="Clear All", icon='NONE')
         # 2 - BOTTOM
         pie.operator("object.duplicates_make_real", text="Make Duplicates Real")
         # 8 - TOP
-        pie.operator("apply.transformlocrotscale", text="Rotation", icon='MAN_ROT').option = 'ROT'
+        pie.operator("apply.transformlocrotscale", text="Rotation", icon='NONE').option = 'ROT'
         # 7 - TOP - LEFT
-        pie.operator("apply.transformlocrotscale", text="Location", icon='MAN_ROT').option = 'LOC'
+        pie.operator("apply.transformlocrotscale", text="Location", icon='NONE').option = 'LOC'
         # 9 - TOP - RIGHT
-        pie.operator("apply.transformlocrotscale", text="Scale", icon='MAN_ROT').option = 'SCALE'
+        pie.operator("apply.transformlocrotscale", text="Scale", icon='NONE').option = 'SCALE'
         # 1 - BOTTOM - LEFT
         pie.operator("object.visual_transform_apply", text="Visual Transforms")
         # 3 - BOTTOM - RIGHT
@@ -71,7 +71,7 @@ class ApplyTransLocRotPie(Operator):
     bl_description = "Apply Transform: Location, Rotation or Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
-    option = EnumProperty(
+    option: EnumProperty(
             name="Type",
             items=[
                 ("LOC", "Location", "Apply Location"),
@@ -109,10 +109,10 @@ class ClearMenu(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("object.location_clear", text="Clear Location", icon='MAN_TRANS')
-        layout.operator("object.rotation_clear", text="Clear Rotation", icon='MAN_ROT')
-        layout.operator("object.scale_clear", text="Clear Scale", icon='MAN_SCALE')
-        layout.operator("object.origin_clear", text="Clear Origin", icon='MANIPUL')
+        layout.operator("object.location_clear", text="Clear Location", icon='NONE')
+        layout.operator("object.rotation_clear", text="Clear Rotation", icon='NONE')
+        layout.operator("object.scale_clear", text="Clear Scale", icon='NONE')
+        layout.operator("object.origin_clear", text="Clear Origin", icon='NONE')
 
 
 # Clear all
@@ -149,7 +149,7 @@ def register():
         # Apply Transform
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS', ctrl=True)
-        kmi.properties.name = "pie.applytranforms"
+        kmi.properties.name = "pie.applytransforms"
         addon_keymaps.append((km, kmi))
 
 

@@ -49,7 +49,7 @@
 
 #ifdef RNA_RUNTIME
 
-#include "BKE_depsgraph.h"
+#include "DEG_depsgraph.h"
 
 #include "ED_clip.h"
 
@@ -61,7 +61,7 @@ static void rna_MovieClip_reload_update(Main *bmain, Scene *UNUSED(scene), Point
 	MovieClip *clip = (MovieClip *)ptr->id.data;
 
 	BKE_movieclip_reload(bmain, clip);
-	DAG_id_tag_update(&clip->id, 0);
+	DEG_id_tag_update(&clip->id, 0);
 }
 
 static void rna_MovieClip_size_get(PointerRNA *ptr, int *values)
@@ -70,6 +70,12 @@ static void rna_MovieClip_size_get(PointerRNA *ptr, int *values)
 
 	values[0] = clip->lastsize[0];
 	values[1] = clip->lastsize[1];
+}
+
+static float rna_MovieClip_fps_get(PointerRNA *ptr)
+{
+	MovieClip *clip = (MovieClip *)ptr->id.data;
+	return BKE_movieclip_get_fps(clip);
 }
 
 static void rna_MovieClipUser_proxy_render_settings_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
@@ -230,11 +236,11 @@ static void rna_def_moviecliUser(BlenderRNA *brna)
 	PropertyRNA *prop;
 
 	static const EnumPropertyItem clip_render_size_items[] = {
-		{MCLIP_PROXY_RENDER_SIZE_25, "PROXY_25", 0, "Proxy size 25%", ""},
-		{MCLIP_PROXY_RENDER_SIZE_50, "PROXY_50", 0, "Proxy size 50%", ""},
-		{MCLIP_PROXY_RENDER_SIZE_75, "PROXY_75", 0, "Proxy size 75%", ""},
-		{MCLIP_PROXY_RENDER_SIZE_100, "PROXY_100", 0, "Proxy size 100%", ""},
-		{MCLIP_PROXY_RENDER_SIZE_FULL, "FULL", 0, "No proxy, full render", ""},
+		{MCLIP_PROXY_RENDER_SIZE_25, "PROXY_25", 0, "25%", ""},
+		{MCLIP_PROXY_RENDER_SIZE_50, "PROXY_50", 0, "50%", ""},
+		{MCLIP_PROXY_RENDER_SIZE_75, "PROXY_75", 0, "75%", ""},
+		{MCLIP_PROXY_RENDER_SIZE_100, "PROXY_100", 0, "100%", ""},
+		{MCLIP_PROXY_RENDER_SIZE_FULL, "FULL", 0, "None, full render", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
@@ -245,13 +251,13 @@ static void rna_def_moviecliUser(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "frame_current", PROP_INT, PROP_TIME);
 	RNA_def_property_int_sdna(prop, NULL, "framenr");
 	RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
-	RNA_def_property_ui_text(prop, "Current Frame", "Current Frame\nCurrent frame number in movie or image sequence");
+	RNA_def_property_ui_text(prop, "Current Frame", "Current frame number in movie or image sequence");
 
 	/* render size */
 	prop = RNA_def_property(srna, "proxy_render_size", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "render_size");
 	RNA_def_property_enum_items(prop, clip_render_size_items);
-	RNA_def_property_ui_text(prop, "Proxy render size",
+	RNA_def_property_ui_text(prop, "Proxy Render Size",
 	                         "Proxy Render Size\nDraw preview using full resolution or different proxy resolutions");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, "rna_MovieClipUser_proxy_render_settings_update");
 
@@ -338,6 +344,7 @@ static void rna_def_movieclip(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "grease_pencil", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "gpd");
 	RNA_def_property_struct_type(prop, "GreasePencil");
+	RNA_def_property_pointer_funcs(prop, NULL, NULL, NULL, "rna_GPencil_datablocks_annotations_poll");
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
 	RNA_def_property_ui_text(prop, "Grease Pencil", "Grease pencil data for this movie clip");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
@@ -361,6 +368,12 @@ static void rna_def_movieclip(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_int_sdna(prop, NULL, "len");
 	RNA_def_property_ui_text(prop, "Duration", "Detected duration of movie clip in frames");
+
+	/* FPS */
+	prop = RNA_def_property(srna, "fps", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_float_funcs(prop, "rna_MovieClip_fps_get", NULL, NULL);
+	RNA_def_property_ui_text(prop, "Frame Rate", "Detected frame rate of the movie clip in frames per second");
 
 	/* color management */
 	prop = RNA_def_property(srna, "colorspace_settings", PROP_POINTER, PROP_NONE);

@@ -40,21 +40,10 @@
 #include <vector>
 
 
-#ifdef WITH_GLEW_MX
-WGLEWContext *wglewContext = NULL;
-#endif
-
 HGLRC GHOST_ContextWGL::s_sharedHGLRC = NULL;
 int   GHOST_ContextWGL::s_sharedCount = 0;
 
-bool GHOST_ContextWGL::s_singleContextMode = false;
-
-
-/* Intel video-cards don't work fine with multiple contexts and
- * have to share the same context for all windows.
- * But if we just share context for all windows it could work incorrect
- * with multiple videocards configuration. Suppose, that Intel videocards
- * can't be in multiple-devices configuration. */
+/* Some third-generation Intel video-cards are constantly bring problems */
 static bool is_crappy_intel_card()
 {
 	return strstr((const char *)glGetString(GL_VENDOR), "Intel") != NULL;
@@ -82,10 +71,6 @@ GHOST_ContextWGL::GHOST_ContextWGL(
       m_alphaBackground(alphaBackground),
       m_contextResetNotificationStrategy(contextResetNotificationStrategy),
       m_hGLRC(NULL)
-#ifdef WITH_GLEW_MX
-      ,
-      m_wglewContext(NULL)
-#endif
 #ifndef NDEBUG
       ,
       m_dummyVendor(NULL),
@@ -93,8 +78,7 @@ GHOST_ContextWGL::GHOST_ContextWGL(
       m_dummyVersion(NULL)
 #endif
 {
-	assert(m_hWnd);
-	assert(m_hDC);
+	assert(m_hDC != NULL);
 }
 
 
@@ -116,14 +100,12 @@ GHOST_ContextWGL::~GHOST_ContextWGL()
 		}
 	}
 
-#ifdef WITH_GLEW_MX
-	delete m_wglewContext;
-#endif
-
 #ifndef NDEBUG
-	free((void*)m_dummyRenderer);
-	free((void*)m_dummyVendor);
-	free((void*)m_dummyVersion);
+	if (m_dummyRenderer) {
+		free((void*)m_dummyRenderer);
+		free((void*)m_dummyVendor);
+		free((void*)m_dummyVersion);
+	}
 #endif
 }
 
@@ -158,7 +140,6 @@ GHOST_TSuccess GHOST_ContextWGL::getSwapInterval(int &intervalOut)
 GHOST_TSuccess GHOST_ContextWGL::activateDrawingContext()
 {
 	if (WIN32_CHK(::wglMakeCurrent(m_hDC, m_hGLRC))) {
-		activateGLEW();
 		return GHOST_kSuccess;
 	}
 	else {
@@ -166,6 +147,16 @@ GHOST_TSuccess GHOST_ContextWGL::activateDrawingContext()
 	}
 }
 
+
+GHOST_TSuccess GHOST_ContextWGL::releaseDrawingContext()
+{
+	if (WIN32_CHK(::wglMakeCurrent(NULL, NULL))) {
+		return GHOST_kSuccess;
+	}
+	else {
+		return GHOST_kFailure;
+	}
+}
 
 /* Ron Fosner's code for weighting pixel formats and forcing software.
  * See http://www.opengl.org/resources/faq/technical/weight.cpp
@@ -207,10 +198,6 @@ static int weight_pixel_format(PIXELFORMATDESCRIPTOR &pfd, PIXELFORMATDESCRIPTOR
 	if (pfd.cStencilBits >= 8)
 		weight++;
 #endif
-
-	/* want swap copy capability -- it matters a lot */
-	if (pfd.dwFlags & PFD_SWAP_COPY)
-		weight += 16;
 
 	return weight;
 }
@@ -330,6 +317,7 @@ static HWND clone_window(HWND hWnd, LPVOID lpParam)
 void GHOST_ContextWGL::initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD)
 {
 	HWND  dummyHWND  = NULL;
+
 	HDC   dummyHDC   = NULL;
 	HGLRC dummyHGLRC = NULL;
 
@@ -337,15 +325,6 @@ void GHOST_ContextWGL::initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD)
 	HGLRC prevHGLRC;
 
 	int iPixelFormat;
-
-
-#ifdef WITH_GLEW_MX
-	wglewContext = new WGLEWContext;
-	memset(wglewContext, 0, sizeof(WGLEWContext));
-
-	delete m_wglewContext;
-	m_wglewContext = wglewContext;
-#endif
 
 	SetLastError(NO_ERROR);
 
@@ -355,23 +334,25 @@ void GHOST_ContextWGL::initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD)
 	prevHGLRC = ::wglGetCurrentContext();
 	WIN32_CHK(GetLastError() == NO_ERROR);
 
-	dummyHWND = clone_window(m_hWnd, NULL);
-
-	if (dummyHWND == NULL)
-		goto finalize;
-
-	dummyHDC = GetDC(dummyHWND);
-
-	if (!WIN32_CHK(dummyHDC != NULL))
-		goto finalize;
-
-	iPixelFormat = choose_pixel_format_legacy(dummyHDC, preferredPFD);
+	iPixelFormat = choose_pixel_format_legacy(m_hDC, preferredPFD);
 
 	if (iPixelFormat == 0)
 		goto finalize;
 
 	PIXELFORMATDESCRIPTOR chosenPFD;
-	if (!WIN32_CHK(::DescribePixelFormat(dummyHDC, iPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &chosenPFD)))
+	if (!WIN32_CHK(::DescribePixelFormat(m_hDC, iPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &chosenPFD)))
+		goto finalize;
+
+	if (m_hWnd) {
+		dummyHWND = clone_window(m_hWnd, NULL);
+
+		if (dummyHWND == NULL)
+			goto finalize;
+
+		dummyHDC = GetDC(dummyHWND);
+	}
+
+	if (!WIN32_CHK(dummyHDC != NULL))
 		goto finalize;
 
 	if (!WIN32_CHK(::SetPixelFormat(dummyHDC, iPixelFormat, &chosenPFD)))
@@ -385,13 +366,8 @@ void GHOST_ContextWGL::initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD)
 	if (!WIN32_CHK(::wglMakeCurrent(dummyHDC, dummyHGLRC)))
 		goto finalize;
 
-#ifdef WITH_GLEW_MX
-	if (GLEW_CHK(wglewInit()) != GLEW_OK)
-		fprintf(stderr, "Warning! WGLEW failed to initialize properly.\n");
-#else
 	if (GLEW_CHK(glewInit()) != GLEW_OK)
 		fprintf(stderr, "Warning! Dummy GLEW/WGLEW failed to initialize properly.\n");
-#endif
 
 	// the following are not technially WGLEW, but they also require a context to work
 
@@ -404,8 +380,6 @@ void GHOST_ContextWGL::initContextWGLEW(PIXELFORMATDESCRIPTOR &preferredPFD)
 	m_dummyVendor   = _strdup(reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
 	m_dummyVersion  = _strdup(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
 #endif
-
-	s_singleContextMode = is_crappy_intel_card();
 
 finalize:
 	WIN32_CHK(::wglMakeCurrent(prevHDC, prevHGLRC));
@@ -426,7 +400,6 @@ static void makeAttribList(
         std::vector<int>& out,
         bool stereoVisual,
         int numOfAASamples,
-        int swapMethod,
         bool needAlpha,
         bool needStencil,
         bool sRGB)
@@ -445,9 +418,6 @@ static void makeAttribList(
 
 	out.push_back(WGL_ACCELERATION_ARB);
 	out.push_back(WGL_FULL_ACCELERATION_ARB);
-
-	out.push_back(WGL_SWAP_METHOD_ARB);
-	out.push_back(swapMethod);
 
 	if (stereoVisual) {
 		out.push_back(WGL_STEREO_ARB);
@@ -490,13 +460,12 @@ static void makeAttribList(
 }
 
 
-int GHOST_ContextWGL::_choose_pixel_format_arb_2(
+int GHOST_ContextWGL::_choose_pixel_format_arb_1(
         bool stereoVisual,
-        int *numOfAASamples,
+        int numOfAASamples,
         bool needAlpha,
         bool needStencil,
-        bool sRGB,
-        int swapMethod)
+        bool sRGB)
 {
 	std::vector<int> iAttributes;
 
@@ -508,12 +477,12 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 	int samples;
 
 	// guard against some insanely high number of samples
-	if (*numOfAASamples > 64) {
+	if (numOfAASamples > 64) {
 		fprintf(stderr, "Warning! Clamping number of samples to 64.\n");
 		samples = 64;
 	}
 	else {
-		samples = *numOfAASamples;
+		samples = numOfAASamples;
 	}
 
 	// request a format with as many samples as possible, but not more than requested
@@ -522,7 +491,6 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 		        iAttributes,
 		        stereoVisual,
 		        samples,
-		        swapMethod,
 		        needAlpha,
 		        needStencil,
 		        sRGB);
@@ -571,13 +539,11 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 		int actualSamples, alphaBits;
 		wglGetPixelFormatAttribivARB(m_hDC, iPixelFormat, 0, 1, iQuery, &actualSamples);
 
-		if (actualSamples != *numOfAASamples) {
+		if (actualSamples != numOfAASamples) {
 			fprintf(stderr,
 			        "Warning! Unable to find a multisample pixel format that supports exactly %d samples. "
 			        "Substituting one that uses %d samples.\n",
-			        *numOfAASamples, actualSamples);
-
-			*numOfAASamples = actualSamples; // set context property to actual value
+			        numOfAASamples, actualSamples);
 		}
 		if (needAlpha) {
 			iQuery[0] = WGL_ALPHA_BITS_ARB;
@@ -587,69 +553,6 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 						"Warning! Unable to find a frame buffer with alpha channel.\n");
 			}
 		}
-	}
-	else {
-		*numOfAASamples = 0;
-	}
-	return iPixelFormat;
-}
-
-
-int GHOST_ContextWGL::_choose_pixel_format_arb_1(bool stereoVisual,
-        int numOfAASamples,
-        bool needAlpha,
-        bool needStencil,
-        bool sRGB,
-        int *swapMethodOut)
-{
-	int iPixelFormat;
-	int copyPixelFormat = 0;
-	int undefPixelFormat = 0;
-	int exchPixelFormat = 0;
-	int copyNumOfAASamples = 0;
-	int undefNumOfAASamples = 0;
-	int exchNumOfAASamples = 0;
-
-	*swapMethodOut = WGL_SWAP_COPY_ARB;
-	copyNumOfAASamples = numOfAASamples;
-	copyPixelFormat  = _choose_pixel_format_arb_2(
-		stereoVisual, &copyNumOfAASamples, needAlpha, needStencil, sRGB, *swapMethodOut);
-
-	if (copyPixelFormat == 0 || copyNumOfAASamples < numOfAASamples) {
-		*swapMethodOut = WGL_SWAP_UNDEFINED_ARB;
-		undefNumOfAASamples = numOfAASamples;
-		undefPixelFormat = _choose_pixel_format_arb_2(
-			stereoVisual, &undefNumOfAASamples, needAlpha, needStencil, sRGB, *swapMethodOut);
-
-		if (undefPixelFormat == 0 || undefNumOfAASamples < numOfAASamples) {
-			*swapMethodOut = WGL_SWAP_EXCHANGE_ARB;
-			exchNumOfAASamples = numOfAASamples;
-			exchPixelFormat = _choose_pixel_format_arb_2(
-				stereoVisual, &exchNumOfAASamples, needAlpha, needStencil, sRGB, *swapMethodOut);
-			if (exchPixelFormat == 0 || exchNumOfAASamples < numOfAASamples) {
-				// the number of AA samples cannot be met, take the highest
-				if (undefPixelFormat != 0 && undefNumOfAASamples >= exchNumOfAASamples) {
-					exchNumOfAASamples = undefNumOfAASamples;
-					exchPixelFormat = undefPixelFormat;
-					*swapMethodOut = WGL_SWAP_UNDEFINED_ARB;
-				}
-				if (copyPixelFormat != 0 && copyNumOfAASamples >= exchNumOfAASamples) {
-					exchNumOfAASamples = copyNumOfAASamples;
-					exchPixelFormat = copyPixelFormat;
-					*swapMethodOut = WGL_SWAP_COPY_ARB;
-				}
-			}
-			iPixelFormat = exchPixelFormat;
-			m_numOfAASamples = exchNumOfAASamples;
-		}
-		else {
-			iPixelFormat = undefPixelFormat;
-			m_numOfAASamples = undefNumOfAASamples;
-		}
-	}
-	else {
-		iPixelFormat = copyPixelFormat;
-		m_numOfAASamples = copyNumOfAASamples;
 	}
 	return iPixelFormat;
 }
@@ -663,15 +566,13 @@ int GHOST_ContextWGL::choose_pixel_format_arb(
         bool sRGB)
 {
 	int iPixelFormat;
-	int swapMethodOut;
 
 	iPixelFormat = _choose_pixel_format_arb_1(
 	        stereoVisual,
 	        numOfAASamples,
 	        needAlpha,
 	        needStencil,
-	        sRGB,
-	        &swapMethodOut);
+	        sRGB);
 
 	if (iPixelFormat == 0 && stereoVisual) {
 		fprintf(stderr, "Warning! Unable to find a stereo pixel format.\n");
@@ -681,17 +582,9 @@ int GHOST_ContextWGL::choose_pixel_format_arb(
 		        numOfAASamples,
 		        needAlpha,
 		        needStencil,
-		        sRGB,
-		        &swapMethodOut);
+		        sRGB);
 
 		m_stereoVisual = false;  // set context property to actual value
-	}
-
-	if (swapMethodOut != WGL_SWAP_COPY_ARB) {
-		fprintf(stderr,
-		        "Warning! Unable to find a pixel format that supports WGL_SWAP_COPY_ARB. "
-		        "Substituting one that uses %s.\n",
-		        swapMethodOut == WGL_SWAP_UNDEFINED_ARB ? "WGL_SWAP_UNDEFINED_ARB" : "WGL_SWAP_EXCHANGE_ARB");
 	}
 
 	return iPixelFormat;
@@ -711,7 +604,6 @@ int GHOST_ContextWGL::choose_pixel_format(
 		(DWORD) (
 		PFD_SUPPORT_OPENGL |
 		PFD_DRAW_TO_WINDOW |
-		PFD_SWAP_COPY      |             /* support swap copy */
 		PFD_DOUBLEBUFFER   |             /* support double-buffering */
 		(stereoVisual ? PFD_STEREO : 0) |/* support stereo */
 		(
@@ -764,7 +656,7 @@ static void reportContextString(const char *name, const char *dummy, const char 
 {
 	fprintf(stderr, "%s: %s\n", name, context);
 
-	if (strcmp(dummy, context) != 0)
+	if (dummy && strcmp(dummy, context) != 0)
 		fprintf(stderr, "Warning! Dummy %s: %s\n", name, dummy);
 }
 #endif
@@ -772,63 +664,55 @@ static void reportContextString(const char *name, const char *dummy, const char 
 
 GHOST_TSuccess GHOST_ContextWGL::initializeDrawingContext()
 {
-	const bool needAlpha = m_alphaBackground;
+	SetLastError(NO_ERROR);
+
+	HGLRC prevHGLRC = ::wglGetCurrentContext();
+	WIN32_CHK(GetLastError() == NO_ERROR);
+
+	HDC prevHDC = ::wglGetCurrentDC();
+	WIN32_CHK(GetLastError() == NO_ERROR);
+
+	if (!WGLEW_ARB_create_context || ::GetPixelFormat(m_hDC) == 0) {
+		const bool needAlpha = m_alphaBackground;
 
 #ifdef GHOST_OPENGL_STENCIL
-	const bool needStencil = true;
+		const bool needStencil = true;
 #else
-	const bool needStencil = false;
+		const bool needStencil = false;
 #endif
 
 #ifdef GHOST_OPENGL_SRGB
-	const bool sRGB = true;
+		const bool sRGB = true;
 #else
-	const bool sRGB = false;
+		const bool sRGB = false;
 #endif
+		int iPixelFormat;
+		int lastPFD;
 
-	HGLRC prevHGLRC;
-	HDC   prevHDC;
+		PIXELFORMATDESCRIPTOR chosenPFD;
 
-	int iPixelFormat;
-	int lastPFD;
+		iPixelFormat = choose_pixel_format(m_stereoVisual, m_numOfAASamples, needAlpha, needStencil, sRGB);
 
-	PIXELFORMATDESCRIPTOR chosenPFD;
+		if (iPixelFormat == 0) {
+			goto error;
+		}
 
+		lastPFD = ::DescribePixelFormat(m_hDC, iPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &chosenPFD);
 
-	SetLastError(NO_ERROR);
+		if (!WIN32_CHK(lastPFD != 0)) {
+			goto error;
+		}
 
-	prevHGLRC = ::wglGetCurrentContext();
-	WIN32_CHK(GetLastError() == NO_ERROR);
+		if (needAlpha && chosenPFD.cAlphaBits == 0)
+			fprintf(stderr, "Warning! Unable to find a pixel format with an alpha channel.\n");
 
-	prevHDC   = ::wglGetCurrentDC();
-	WIN32_CHK(GetLastError() == NO_ERROR);
+		if (needStencil && chosenPFD.cStencilBits == 0)
+			fprintf(stderr, "Warning! Unable to find a pixel format with a stencil buffer.\n");
 
-	iPixelFormat = choose_pixel_format(m_stereoVisual, m_numOfAASamples, needAlpha, needStencil, sRGB);
-
-	if (iPixelFormat == 0) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
+		if (!WIN32_CHK(::SetPixelFormat(m_hDC, iPixelFormat, &chosenPFD))) {
+			goto error;
+		}
 	}
-
-	lastPFD = ::DescribePixelFormat(m_hDC, iPixelFormat, sizeof(PIXELFORMATDESCRIPTOR), &chosenPFD);
-
-	if (!WIN32_CHK(lastPFD != 0)) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
-	}
-
-	if (needAlpha && chosenPFD.cAlphaBits == 0)
-		fprintf(stderr, "Warning! Unable to find a pixel format with an alpha channel.\n");
-
-	if (needStencil && chosenPFD.cStencilBits == 0)
-		fprintf(stderr, "Warning! Unable to find a pixel format with a stencil buffer.\n");
-
-	if (!WIN32_CHK(::SetPixelFormat(m_hDC, iPixelFormat, &chosenPFD))) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
-	}
-
-	activateWGLEW();
 
 	if (WGLEW_ARB_create_context) {
 		int profileBitCore   = m_contextProfileMask & WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
@@ -902,86 +786,60 @@ GHOST_TSuccess GHOST_ContextWGL::initializeDrawingContext()
 
 		iAttributes.push_back(0);
 
-		if (!s_singleContextMode || s_sharedHGLRC == NULL)
-			m_hGLRC = ::wglCreateContextAttribsARB(m_hDC, NULL, &(iAttributes[0]));
-		else
-			m_hGLRC = s_sharedHGLRC;
-	}
-	else {
-		if (m_contextProfileMask  != 0)
-			fprintf(stderr, "Warning! Legacy WGL is unable to select between OpenGL profiles.");
-
-		if (m_contextMajorVersion != 0 || m_contextMinorVersion != 0)
-			fprintf(stderr, "Warning! Legacy WGL is unable to select between OpenGL versions.");
-
-		if (m_contextFlags != 0)
-			fprintf(stderr, "Warning! Legacy WGL is unable to set context flags.");
-
-		if (!s_singleContextMode || s_sharedHGLRC == NULL)
-			m_hGLRC = ::wglCreateContext(m_hDC);
-		else
-			m_hGLRC = s_sharedHGLRC;
+		m_hGLRC = ::wglCreateContextAttribsARB(m_hDC, NULL, &(iAttributes[0]));
 	}
 
-	if (!WIN32_CHK(m_hGLRC != NULL)) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
+	/* Silence warnings interpreted as errors by users when trying to get
+	 * a context with version higher than 3.3 Core. */
+	const bool silent = m_contextMajorVersion > 3;
+	if (!WIN32_CHK_SILENT(m_hGLRC != NULL, silent)) {
+		goto error;
 	}
-
-	if (s_sharedHGLRC == NULL)
-		s_sharedHGLRC = m_hGLRC;
 
 	s_sharedCount++;
 
-	if (!s_singleContextMode && s_sharedHGLRC != m_hGLRC && !WIN32_CHK(::wglShareLists(s_sharedHGLRC, m_hGLRC))) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
+	if (s_sharedHGLRC == NULL) {
+		s_sharedHGLRC = m_hGLRC;
+	}
+	else if (!WIN32_CHK(::wglShareLists(s_sharedHGLRC, m_hGLRC))) {
+		goto error;
 	}
 
 	if (!WIN32_CHK(::wglMakeCurrent(m_hDC, m_hGLRC))) {
-		::wglMakeCurrent(prevHDC, prevHGLRC);
-		return GHOST_kFailure;
+		goto error;
 	}
 
 	initContextGLEW();
 
+	if (is_crappy_intel_card()) {
+		/* Some Intel cards with context 4.1 or 4.2
+		 * don't have the point sprite enabled by default.
+		 *
+		 * However GL_POINT_SPRITE was removed in 3.2 and is now permanently ON.
+		 * Then use brute force. */
+		glEnable(GL_POINT_SPRITE);
+	}
+
 	initClearGL();
 	::SwapBuffers(m_hDC);
 
+#ifndef NDEBUG
 	const char *vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
 	const char *renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
 	const char *version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 
-#ifndef NDEBUG
-	reportContextString("Vendor",   m_dummyVendor,   vendor);
+	reportContextString("Vendor", m_dummyVendor, vendor);
 	reportContextString("Renderer", m_dummyRenderer, renderer);
-	reportContextString("Version",  m_dummyVersion,  version);
+	reportContextString("Version", m_dummyVersion, version);
+
+	fprintf(stderr, "Context Version: %d.%d\n", m_contextMajorVersion, m_contextMinorVersion);
 #endif
 
-	if ((strcmp(vendor, "Microsoft Corporation") == 0 ||
-	     strcmp(renderer, "GDI Generic") == 0) && version[0] == '1' && version[2] == '1')
-	{
-		MessageBox(m_hWnd, "Your system does not use 3D hardware acceleration.\n"
-		                   "Bforartists requires a graphics driver with OpenGL 2.1 support.\n\n"
-		                   "This may be caused by:\n"
-		                   "* A missing or faulty graphics driver installation.\n"
-		                   "  Bforartists needs a graphics card driver to work correctly.\n"
-		                   "* Accessing Bforartists through a remote connection.\n"
-		                   "* Using Bforartists through a virtual machine.\n\n"
-		                   "The program will now close.",
-		           "Bforartists - Can't detect 3D hardware accelerated Driver!",
-		           MB_OK | MB_ICONERROR);
-		exit(0);
-	}
-	else if (version[0] < '2' || (version[0] == '2' && version[2] < '1')) {
-		MessageBox(m_hWnd, "Bforartists requires a graphics driver with OpenGL 2.1 support.\n\n"
-		                   "The program will now close.",
-		           "Bforartists - Unsupported Graphics Driver!",
-		           MB_OK | MB_ICONERROR);
-		exit(0);
-	}
-
 	return GHOST_kSuccess;
+error:
+	::wglMakeCurrent(prevHDC, prevHGLRC);
+	return GHOST_kFailure;
+
 }
 
 

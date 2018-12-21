@@ -104,18 +104,18 @@ class BrushSetImporter(bpy.types.Operator):
     bl_idname = "import_image.brushset"
     bl_label = "Import BrushSet"
 
-    filename = StringProperty(name = "File Name", 
-                              description = "filepath", 
-                              default = "", 
-                              maxlen = 1024, 
-                              options = {'ANIMATABLE'}, 
+    filename = StringProperty(name = "File Name",
+                              description = "filepath",
+                              default = "",
+                              maxlen = 1024,
+                              options = {'ANIMATABLE'},
                               subtype = 'NONE')
-    
-    filepath = StringProperty(name = "File Name", 
-                              description = "filepath", 
-                              default = "", 
-                              maxlen = 1024, 
-                              options = {'ANIMATABLE'}, 
+
+    filepath = StringProperty(name = "File Name",
+                              description = "filepath",
+                              default = "",
+                              maxlen = 1024,
+                              options = {'ANIMATABLE'},
                               subtype = 'NONE')
 
     def execute(self, context):
@@ -161,11 +161,11 @@ class Brush_set_UI(bpy.types.Panel):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 if __name__ == "__main__":
     register()

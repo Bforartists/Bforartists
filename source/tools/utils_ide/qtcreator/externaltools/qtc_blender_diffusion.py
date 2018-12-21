@@ -43,5 +43,6 @@ def main():
         import webbrowser
         webbrowser.open(url)
 
+
 if __name__ == "__main__":
     main()

@@ -122,13 +122,14 @@ def SimpleCircle(sides=4, radius=1.0):
 
     angle = radians(360) / sides
     newpoints.append([radius, 0, 0])
-    j = 1
-    while j < sides:
-        t = angle * j
-        x = cos(t) * radius
-        y = sin(t) * radius
-        newpoints.append([x, y, 0])
-        j += 1
+    if radius != 0 :
+        j = 1
+        while j < sides:
+            t = angle * j
+            x = cos(t) * radius
+            y = sin(t) * radius
+            newpoints.append([x, y, 0])
+            j += 1
 
     return newpoints
 
@@ -232,7 +233,7 @@ def SimpleSegment(sides=0, a=2.0, b=1.0, startangle=0.0, endangle=45.0):
     x = cos(endangle) * b
     y = sin(endangle) * b
     newpoints.append([x, y, 0])
-    j = sides
+    j = sides - 1
     while j > 0:
         t = angle * j
         x = cos(t + startangle) * b
@@ -434,6 +435,8 @@ def main(context, self, align_matrix):
     if self.Simple_Type == 'Circle':
         if self.Simple_sides < 4:
             self.Simple_sides = 4
+        if self.Simple_radius == 0:
+            return {'FINISHED'}
         verts = SimpleCircle(self.Simple_sides, self.Simple_radius)
         newSpline.use_cyclic_u = True
 
@@ -455,10 +458,8 @@ def main(context, self, align_matrix):
     if self.Simple_Type == 'Sector':
         if self.Simple_sides < sides:
             self.Simple_sides = sides
-
         if self.Simple_radius == 0:
             return {'FINISHED'}
-
         verts = SimpleSector(
                     self.Simple_sides, self.Simple_radius,
                     self.Simple_startangle, self.Simple_endangle
@@ -468,10 +469,16 @@ def main(context, self, align_matrix):
     if self.Simple_Type == 'Segment':
         if self.Simple_sides < sides:
             self.Simple_sides = sides
-        if self.Simple_a == 0 or self.Simple_b == 0:
+        if self.Simple_a == 0 or self.Simple_b == 0 or self.Simple_a == self.Simple_b:
             return {'FINISHED'}
-        verts = SimpleSegment(
+        if self.Simple_a > self.Simple_b:
+            verts = SimpleSegment(
                     self.Simple_sides, self.Simple_a, self.Simple_b,
+                    self.Simple_startangle, self.Simple_endangle
+                    )
+        if self.Simple_a < self.Simple_b:
+            verts = SimpleSegment(
+                    self.Simple_sides, self.Simple_b, self.Simple_a,
                     self.Simple_startangle, self.Simple_endangle
                     )
         newSpline.use_cyclic_u = True
@@ -680,21 +687,27 @@ def main(context, self, align_matrix):
 
     if self.Simple_Type == 'Segment':
         i = 0
+        if self.Simple_a > self.Simple_b:
+            Segment_a = self.Simple_a
+            Segment_b = self.Simple_b
+        if self.Simple_a < self.Simple_b:
+            Segment_b = self.Simple_a
+            Segment_a = self.Simple_b
         for p1 in all_points:
             if i < n / 2 - 1:
                 p2 = all_points[i + 1]
-                u1 = asin(p1.co.y / self.Simple_a)
-                u2 = asin(p2.co.y / self.Simple_a)
+                u1 = asin(p1.co.y / Segment_a)
+                u2 = asin(p2.co.y / Segment_a)
                 if p1.co.x > 0 and p2.co.x < 0:
-                    u1 = acos(p1.co.x / self.Simple_a)
-                    u2 = acos(p2.co.x / self.Simple_a)
+                    u1 = acos(p1.co.x / Segment_a)
+                    u2 = acos(p2.co.x / Segment_a)
                 elif p1.co.x < 0 and p2.co.x > 0:
-                    u1 = acos(p1.co.x / self.Simple_a)
-                    u2 = acos(p2.co.x / self.Simple_a)
+                    u1 = acos(p1.co.x / Segment_a)
+                    u2 = acos(p2.co.x / Segment_a)
                 u = u2 - u1
                 if u < 0:
                     u = -u
-                l = 4 / 3 * tan(1 / 4 * u) * self.Simple_a
+                l = 4 / 3 * tan(1 / 4 * u) * Segment_a
                 v1 = Vector((-p1.co.y, p1.co.x, 0))
                 v1.normalize()
                 v2 = Vector((-p2.co.y, p2.co.x, 0))
@@ -713,18 +726,18 @@ def main(context, self, align_matrix):
                     p2.handle_left = v2
             elif i != n / 2 - 1 and i != n - 1:
                 p2 = all_points[i + 1]
-                u1 = asin(p1.co.y / self.Simple_b)
-                u2 = asin(p2.co.y / self.Simple_b)
+                u1 = asin(p1.co.y / Segment_b)
+                u2 = asin(p2.co.y / Segment_b)
                 if p1.co.x > 0 and p2.co.x < 0:
-                    u1 = acos(p1.co.x / self.Simple_b)
-                    u2 = acos(p2.co.x / self.Simple_b)
+                    u1 = acos(p1.co.x / Segment_b)
+                    u2 = acos(p2.co.x / Segment_b)
                 elif p1.co.x < 0 and p2.co.x > 0:
-                    u1 = acos(p1.co.x / self.Simple_b)
-                    u2 = acos(p2.co.x / self.Simple_b)
+                    u1 = acos(p1.co.x / Segment_b)
+                    u2 = acos(p2.co.x / Segment_b)
                 u = u2 - u1
                 if u < 0:
                     u = -u
-                l = 4 / 3 * tan(1 / 4 * u) * self.Simple_b
+                l = 4 / 3 * tan(1 / 4 * u) * Segment_b
                 v1 = Vector((-p1.co.y, p1.co.x, 0))
                 v1.normalize()
                 v2 = Vector((-p2.co.y, p2.co.x, 0))
@@ -817,7 +830,7 @@ class Simple(Operator):
     # general properties
     Types = [('Point', "Point", "Construct a Point"),
              ('Line', "Line", "Construct a Line"),
-             ('Distance', "Distance", "Contruct a two point Distance"),
+             ('Distance', "Distance", "Construct a two point Distance"),
              ('Angle', "Angle", "Construct an Angle"),
              ('Circle', "Circle", "Construct a Circle"),
              ('Ellipse', "Ellipse", "Construct an Ellipse"),
@@ -1366,23 +1379,40 @@ class BezierDivide(Operator):
         # main function
         spline = bpy.context.object.data.splines.active
         selected_all = [p for p in spline.bezier_points if p.select_control_point]
-        h = subdivide_cubic_bezier(
-                    selected_all[0].co, selected_all[0].handle_right,
-                    selected_all[1].handle_left, selected_all[1].co, self.Bezier_t / 100
-                    )
-
+        selected = []
+        n = 0
+        for j in spline.bezier_points:
+            n += 1
+            if j.select_control_point:
+                selected.append(n)
         selected_all[0].handle_right_type = 'FREE'
         selected_all[0].handle_left_type = 'FREE'
         selected_all[1].handle_right_type = 'FREE'
         selected_all[1].handle_left_type = 'FREE'
-        bpy.ops.curve.subdivide(1)
-        selected_all = [p for p in spline.bezier_points if p.select_control_point]
-
-        selected_all[0].handle_right = h[0]
-        selected_all[1].co = h[2]
-        selected_all[1].handle_left = h[1]
-        selected_all[1].handle_right = h[3]
-        selected_all[2].handle_left = h[4]
+        if abs(selected[0] - selected[1]) == 1:
+            h = subdivide_cubic_bezier(
+                    selected_all[0].co, selected_all[0].handle_right,
+                    selected_all[1].handle_left, selected_all[1].co, self.Bezier_t / 100
+                    )
+            bpy.ops.curve.subdivide(1)
+            selected_all = [p for p in spline.bezier_points if p.select_control_point]
+            selected_all[0].handle_right = h[0]
+            selected_all[1].co = h[2]
+            selected_all[1].handle_left = h[1]
+            selected_all[1].handle_right = h[3]
+            selected_all[2].handle_left = h[4]
+        else:
+            h = subdivide_cubic_bezier(
+                    selected_all[1].co, selected_all[1].handle_right,
+                    selected_all[0].handle_left, selected_all[0].co, self.Bezier_t / 100
+                    )
+            bpy.ops.curve.subdivide(1)
+            selected_all = [p for p in spline.bezier_points if p.select_control_point]
+            selected_all[1].handle_right = h[0]
+            selected_all[2].co = h[2]
+            selected_all[2].handle_left = h[1]
+            selected_all[2].handle_right = h[3]
+            selected_all[0].handle_left = h[4]
 
         # restore pre operator undo state
         bpy.context.user_preferences.edit.use_global_undo = undo
@@ -1526,7 +1556,7 @@ class SimpleVariables(PropertyGroup):
     # general properties
     Types = [('Point', "Point", "Construct a Point"),
              ('Line', "Line", "Construct a Line"),
-             ('Distance', "Distance", "Contruct a two point Distance"),
+             ('Distance', "Distance", "Construct a two point Distance"),
              ('Angle', "Angle", "Construct an Angle"),
              ('Circle', "Circle", "Construct a Circle"),
              ('Ellipse', "Ellipse", "Construct an Ellipse"),
@@ -1645,8 +1675,8 @@ class SimpleVariables(PropertyGroup):
             )
 
 
-class INFO_MT_simple_menu(Menu):
-    bl_idname = "INFO_MT_simple_menu"
+class VIEW3D_MT_simple_menu(Menu):
+    bl_idname = "VIEW3D_MT_simple_menu"
     bl_label = "2D Objects"
 
     def draw(self, context):
@@ -1714,8 +1744,18 @@ class INFO_MT_simple_menu(Menu):
 def Simple_button(self, context):
     layout = self.layout
     layout.separator()
-    self.layout.menu("INFO_MT_simple_menu", icon="MOD_CURVE")
+    self.layout.menu("VIEW3D_MT_simple_menu", icon="MOD_CURVE")
 
+class VIEW3D_MT_simple_edit_curve_menu(bpy.types.Menu):
+    bl_label = 'Simple edit'
+    
+    def draw(self, context):
+        self.layout.operator("curve.bezier_points_fillet", text="Fillet")
+        self.layout.operator("curve.bezier_spline_divide", text="Divide")
+
+def Simple_curve_edit_menu(self, context):
+    self.layout.menu('VIEW3D_MT_simple_edit_curve_menu')
+    self.layout.separator()
 
 def register():
     bpy.utils.register_class(Simple)
@@ -1723,10 +1763,11 @@ def register():
     bpy.utils.register_class(BezierDivide)
     bpy.utils.register_class(SimplePanel)
     bpy.utils.register_class(SimpleEdit)
-    bpy.utils.register_class(INFO_MT_simple_menu)
+    bpy.utils.register_class(VIEW3D_MT_simple_menu)
     bpy.utils.register_class(SimpleVariables)
 
-    bpy.types.INFO_MT_curve_add.append(Simple_button)
+    bpy.types.VIEW3D_MT_curve_add.append(Simple_button)
+    bpy.types.VIEW3D_MT_edit_curve_specials.prepend(Simple_curve_edit_menu)
 
     bpy.types.Object.s_curve = PointerProperty(type=SimpleVariables)
 
@@ -1737,10 +1778,10 @@ def unregister():
     bpy.utils.unregister_class(BezierDivide)
     bpy.utils.unregister_class(SimplePanel)
     bpy.utils.unregister_class(SimpleEdit)
-    bpy.utils.unregister_class(INFO_MT_simple_menu)
+    bpy.utils.unregister_class(VIEW3D_MT_simple_menu)
     bpy.utils.unregister_class(SimpleVariables)
 
-    bpy.types.INFO_MT_curve_add.remove(Simple_button)
+    bpy.types.VIEW3D_MT_curve_add.remove(Simple_button)
     del bpy.types.Object.s_curve
 
 

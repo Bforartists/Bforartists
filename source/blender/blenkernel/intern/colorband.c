@@ -78,7 +78,9 @@ void BKE_colorband_init(ColorBand *coba, bool rangetype)
 	}
 
 	coba->tot = 2;
+	coba->cur = 0;
 	coba->color_mode = COLBAND_BLEND_RGB;
+	coba->ipotype = COLBAND_INTERP_LINEAR;
 }
 
 static void colorband_init_from_table_rgba_simple(
@@ -208,7 +210,7 @@ static void colorband_init_from_table_rgba_resample(
 	}
 
 	while ((carr_len > 1 && !BLI_heap_is_empty(heap)) &&
-	       ((carr_len >= MAXCOLORBAND) || (BLI_heap_node_value(BLI_heap_top(heap)) <= eps_2x)))
+	       ((carr_len >= MAXCOLORBAND) || (BLI_heap_top_value(heap) <= eps_2x)))
 	{
 		c = BLI_heap_pop_min(heap);
 		struct ColorResampleElem *c_next = c->next, *c_prev = c->prev;

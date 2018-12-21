@@ -188,7 +188,7 @@ class ToggleApplyModifiersView(Operator):
 
                 mod.show_viewport = is_apply
 
-        message_a = "{} modifiers in the 3D View".format("Displaying" if is_apply else "Hidding")
+        message_a = "{} modifiers in the 3D View".format("Displaying" if is_apply else "Hiding")
 
         if skipped:
             message_a = "{}, {}".format(message_a, "skipping: " + ", ".join(skipped)) if \

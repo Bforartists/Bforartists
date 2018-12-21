@@ -454,7 +454,7 @@ class TransformMatrix(object):
       [ a b 0 ]
       [ c d 0 ]
       [ e f 1 ]
-    and coordinate tranformation is defined by:
+    and coordinate transformation is defined by:
       [x' y' 1] = [x y 1] x TransformMatrix
 
     Attributes:
@@ -501,7 +501,7 @@ class TransformMatrix(object):
         self.f = newf
 
     def Apply(self, pt):
-        """Return the result of applying this tranform to pt = (x,y).
+        """Return the result of applying this transform to pt = (x,y).
 
         Arguments:
           (x, y) : (float, float)

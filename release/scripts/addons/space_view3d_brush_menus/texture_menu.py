@@ -394,4 +394,3 @@ class MaskPressureModeMenu(Menu):
                     disable=True,
                     disable_icon='RADIOBUT_ON'
                     )
-

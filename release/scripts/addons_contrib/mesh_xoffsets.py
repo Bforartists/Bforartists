@@ -29,14 +29,14 @@ todo:
   [X] fix: when btn clicked, dialog will not appear until after mouse moved
   [X] fix: when new meas input, transform not applied until after mouse moved
   [ ] prevent selection of non-visible vertices
-  [ ] fix bug: obj is not subscriptable error if perspective is changed after 
+  [ ] fix bug: obj is not subscriptable error if perspective is changed after
         launching addon, disabling perspective change for now
   [ ] better measurement input panel
   [ ] add hotkey reference info into 3D View ?
   [?] snap_point not deleted after exit
   [X] only free move during translate when in selected objects
   [X] snap toggle button still drawn when dialog opened (jumps to dialog box)
-  [ ] 
+  [ ]
 
 #============================================================================
 """
@@ -71,11 +71,11 @@ from bpy_extras.view3d_utils import location_3d_to_region_2d
     CHECK_POPUP_INFO,
     GET_0_OR_180,
     DO_TRANSFORM,
-    
+
     MOVE,
     SCALE,
     ROTATE,
-    
+
     SLOW3DTO2D,
     GRABONLY
 ) = range(9)
@@ -900,7 +900,7 @@ def do_rotate(ref_pts, r_dat):
     curs_back = bpy.context.scene.cursor_location.copy()
     bpy.context.space_data.pivot_point = 'CURSOR'
     bpy.context.scene.cursor_location = ref_pts.rp_ls[1].co3d.copy()
-    
+
     axis_lock = ref_pts.ax_lock
     op_ax_lock = ()
     if   axis_lock == 'X': op_ax_lock = 1, 0, 0
@@ -1012,7 +1012,7 @@ def reset_settings(self):
             if flts_alm_eq(pt1[2], pt2[2]):
                 self.report({'ERROR'}, 'Free and Anchor share same location.')
                 self.ref_pts = ReferencePoints()  # reset ref pt data
-    
+
     if self.pt_find_md == GRABONLY:
         create_snap_pt(self.left_click_co, self.sel_backup)
 
@@ -1202,7 +1202,7 @@ def prepare_selected(sel_backup, ref_pts, transf_type):
 
 # runs transformation functions depending on which options are set.
 # transform functions cannot be called directly due to use of pop-up for
-# getting user input 
+# getting user input
 def do_transform(self):
     global curr_meas_stor, new_meas_stor
     rp_ls, ax_lock = self.ref_pts.rp_ls, self.ref_pts.ax_lock
@@ -1278,12 +1278,10 @@ def exit_addon(self):
 def check_for_reg_overlap(self):
     system = bpy.context.user_preferences.system
     if system.use_region_overlap:
-        # other draw_method options don't create transparent side bars
-        if system.window_draw_method in ('TRIPLE_BUFFER', 'AUTOMATIC'):
-            area = bpy.context.area
-            for r in area.regions:
-                if r.type == 'TOOLS':
-                    self.rtoolsw = r.width
+        area = bpy.context.area
+        for r in area.regions:
+            if r.type == 'TOOLS':
+                self.rtoolsw = r.width
 
 
 def draw_callback_px(self, context):

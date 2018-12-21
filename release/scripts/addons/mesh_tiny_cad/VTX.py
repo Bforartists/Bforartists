@@ -122,7 +122,7 @@ def do_vtx_if_appropriate(bm, edges):
     if not coplanar:
         return {'NON_PLANAR_EDGES'}
 
-    # point must lie on an edge or the virtual extention of an edge
+    # point must lie on an edge or the virtual extension of an edge
     bm = perform_vtx(bm, point, edges, (p1, p2, p3, p4), vertex_indices)
     return bm
 

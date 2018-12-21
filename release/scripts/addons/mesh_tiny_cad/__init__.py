@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,12 +20,12 @@
 
 
 bl_info = {
-    "name": "tinyCAD Mesh tools - Bforartists version",
+    "name": "tinyCAD Mesh tools",
     "author": "zeffii (aka Dealga McArdle)",
     "version": (1, 3, 1),
     "blender": (2, 7, 7),
     "category": "Mesh",
-    "location": "View3D > EditMode > (w) Specials / Edit Mode > Tools Tab > Tiny Cad Panel",
+    "location": "View3D > EditMode > (w) Specials",
     "wiki_url": "http://zeffii.github.io/mesh_tiny_cad/",
     "tracker_url": "https://github.com/zeffii/mesh_tiny_cad/issues"
 }
@@ -50,7 +50,7 @@ if "bpy" in locals():
 
 import bpy
 
-from .CFG import TinyCADProperties, VIEW3D_MT_edit_mesh_tinycad, VIEW3D_MT_edit_mesh_tinycad_panel
+from .CFG import TinyCADProperties, VIEW3D_MT_edit_mesh_tinycad
 from .CFG import register_icons, unregister_icons
 from . import VTX, V2X, XALL, BIX, CCEN, E2F
 
@@ -59,15 +59,15 @@ def menu_func(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_tinycad")
     self.layout.separator()
 
-classes = [
-    TinyCADProperties, VIEW3D_MT_edit_mesh_tinycad, VIEW3D_MT_edit_mesh_tinycad_panel,
+classes = (
+    TinyCADProperties, VIEW3D_MT_edit_mesh_tinycad,
     VTX.TCAutoVTX,
     XALL.TCIntersectAllEdges,
     V2X.TCVert2Intersection,
     E2F.TCEdgeToFace,
     CCEN.TCCallBackCCEN, CCEN.TCCircleCenter,
     BIX.TCLineOnBisection
-]
+)
 
 def register():
     register_icons()

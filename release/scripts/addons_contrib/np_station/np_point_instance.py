@@ -1305,4 +1305,3 @@ def unregister():
     #bpy.utils.unregister_class(NPPIPreferences)
     #bpy.utils.unregister_module(__name__)
     bpy.app.handlers.scene_update_post.remove(NPPI_scene_update)
-

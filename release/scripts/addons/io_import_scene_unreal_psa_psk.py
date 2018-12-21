@@ -89,10 +89,10 @@ class md5_bone:
         self.scale = [0.0] * 3
         self.head = [0.0] * 3
         self.tail = [0.0] * 3
-        self.bindmat = [None] * 3  # is this how you initilize a 2d-array
+        self.bindmat = [None] * 3  # is this how you initialize a 2d-array
         for i in range(3):
             self.bindmat[i] = [0.0] * 3
-        self.origmat = [None] * 3  #is this how you initilize a 2d-array
+        self.origmat = [None] * 3  #is this how you initialize a 2d-array
         for i in range(3):
             self.origmat[i] = [0.0] * 3
         self.parent = ""
@@ -628,7 +628,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     print("INIT UV TEXTURE...")
     _matcount = 0
     #for mattexcount in materials:
-        #print("MATERAIL ID:", _matcount)
+        #print("MATERIAL ID:", _matcount)
     _textcount = 0
     for uv in me_ob.tessface_uv_textures: # uv texture
         print("UV TEXTURE ID:",_textcount)
@@ -673,7 +673,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     for bone in ob_new.data.bones:
         #print("names:", bone.name, ":", dir(bone))
         #print("names:", bone.name)
-        group = obmesh.vertex_groups.new(bone.name)
+        group = obmesh.vertex_groups.new(name=bone.name)
 
     for vgroup in obmesh.vertex_groups:
         #print(vgroup.name, ":", vgroup.index)
@@ -1275,11 +1275,11 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_file_import.append(menu_func)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 if __name__ == "__main__":
     register()

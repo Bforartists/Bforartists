@@ -35,6 +35,7 @@
 #include "BLI_math.h"
 #include "BLI_listbase.h"
 
+#include "BKE_layer.h"
 #include "BKE_context.h"
 #include "BKE_report.h"
 #include "BKE_editmesh.h"
@@ -48,6 +49,8 @@
 #include "ED_screen.h"
 #include "ED_transform.h"
 #include "ED_view3d.h"
+
+#include "MEM_guardedalloc.h"
 
 #include "mesh_intern.h"  /* own include */
 
@@ -161,15 +164,15 @@ static bool edbm_extrude_discrete_faces(BMEditMesh *em, wmOperator *op, const ch
 }
 
 /* extrudes individual edges */
-static bool edbm_extrude_edges_indiv(BMEditMesh *em, wmOperator *op, const char hflag)
+static bool edbm_extrude_edges_indiv(BMEditMesh *em, wmOperator *op, const char hflag, const bool use_normal_flip)
 {
 	BMesh *bm = em->bm;
 	BMOperator bmop;
 
 	EDBM_op_init(
 	        em, &bmop, op,
-	        "extrude_edge_only edges=%he use_select_history=%b",
-	        hflag, true);
+	        "extrude_edge_only edges=%he use_normal_flip=%b use_select_history=%b",
+	        hflag, use_normal_flip, true);
 
 	/* deselect original verts */
 	BM_SELECT_HISTORY_BACKUP(bm);
@@ -236,6 +239,7 @@ static char edbm_extrude_htype_from_em_select(BMEditMesh *em)
 static bool edbm_extrude_ex(
         Object *obedit, BMEditMesh *em,
         char htype, const char hflag,
+        const bool use_normal_flip,
         const bool use_mirror,
         const bool use_select_history)
 {
@@ -250,6 +254,7 @@ static bool edbm_extrude_ex(
 	}
 
 	BMO_op_init(bm, &extop, BMO_FLAG_DEFAULTS, "extrude_face_region");
+	BMO_slot_bool_set(extop.slots_in, "use_normal_flip", use_normal_flip);
 	BMO_slot_bool_set(extop.slots_in, "use_select_history", use_select_history);
 	BMO_slot_buffer_from_enabled_hflag(bm, &extop, extop.slots_in, "geom", htype, hflag);
 
@@ -283,36 +288,44 @@ static bool edbm_extrude_ex(
 
 static int edbm_extrude_repeat_exec(bContext *C, wmOperator *op)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
 	RegionView3D *rv3d = CTX_wm_region_view3d(C);
-
 	const int steps = RNA_int_get(op->ptr, "steps");
-
 	const float offs = RNA_float_get(op->ptr, "offset");
 	float dvec[3], tmat[3][3], bmat[3][3];
 	short a;
 
-	/* dvec */
-	normalize_v3_v3_length(dvec, rv3d->persinv[2], offs);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
 
-	/* base correction */
-	copy_m3_m4(bmat, obedit->obmat);
-	invert_m3_m3(tmat, bmat);
-	mul_m3_v3(tmat, dvec);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
 
-	for (a = 0; a < steps; a++) {
-		edbm_extrude_ex(obedit, em, BM_ALL_NOLOOP, BM_ELEM_SELECT, false, false);
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
-		BMO_op_callf(
-		        em->bm, BMO_FLAG_DEFAULTS,
-		        "translate vec=%v verts=%hv",
-		        dvec, BM_ELEM_SELECT);
+		/* dvec */
+		normalize_v3_v3_length(dvec, rv3d->persinv[2], offs);
+
+		/* base correction */
+		copy_m3_m4(bmat, obedit->obmat);
+		invert_m3_m3(tmat, bmat);
+		mul_m3_v3(tmat, dvec);
+
+		for (a = 0; a < steps; a++) {
+			edbm_extrude_ex(obedit, em, BM_ALL_NOLOOP, BM_ELEM_SELECT, false, false, false);
+
+			BMO_op_callf(
+				em->bm, BMO_FLAG_DEFAULTS,
+				"translate vec=%v verts=%hv",
+				dvec, BM_ELEM_SELECT);
+		}
+
+		EDBM_mesh_normals_update(em);
+
+		EDBM_update_generic(em, true, true);
 	}
 
-	EDBM_mesh_normals_update(em);
-
-	EDBM_update_generic(em, true, true);
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }
@@ -345,9 +358,10 @@ void MESH_OT_extrude_repeat(wmOperatorType *ot)
 /* generic extern called extruder */
 static bool edbm_extrude_mesh(Object *obedit, BMEditMesh *em, wmOperator *op)
 {
-	bool changed = false;
+	const bool use_normal_flip = RNA_boolean_get(op->ptr, "use_normal_flip");
 	const char htype = edbm_extrude_htype_from_em_select(em);
 	enum {NONE = 0, ELEM_FLAG, VERT_ONLY, EDGE_ONLY} nr;
+	bool changed = false;
 
 	if (em->selectmode & SCE_SELECT_VERTEX) {
 		if      (em->bm->totvertsel == 0) nr = NONE;
@@ -369,13 +383,13 @@ static bool edbm_extrude_mesh(Object *obedit, BMEditMesh *em, wmOperator *op)
 		case NONE:
 			return false;
 		case ELEM_FLAG:
-			changed = edbm_extrude_ex(obedit, em, htype, BM_ELEM_SELECT, true, true);
+			changed = edbm_extrude_ex(obedit, em, htype, BM_ELEM_SELECT, use_normal_flip, true, true);
 			break;
 		case VERT_ONLY:
 			changed = edbm_extrude_verts_indiv(em, op, BM_ELEM_SELECT);
 			break;
 		case EDGE_ONLY:
-			changed = edbm_extrude_edges_indiv(em, op, BM_ELEM_SELECT);
+			changed = edbm_extrude_edges_indiv(em, op, BM_ELEM_SELECT, use_normal_flip);
 			break;
 	}
 
@@ -391,18 +405,28 @@ static bool edbm_extrude_mesh(Object *obedit, BMEditMesh *em, wmOperator *op)
 /* extrude without transform */
 static int edbm_extrude_region_exec(bContext *C, wmOperator *op)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
 
-	edbm_extrude_mesh(obedit, em, op);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
+		if (em->bm->totvertsel == 0) {
+			continue;
+		}
 
-	/* This normally happens when pushing undo but modal operators
-	 * like this one don't push undo data until after modal mode is
-	 * done.*/
-	EDBM_mesh_normals_update(em);
+		if (!edbm_extrude_mesh(obedit, em, op)) {
+			continue;
+		}
+		/* This normally happens when pushing undo but modal operators
+		 * like this one don't push undo data until after modal mode is
+		 * done.*/
+		EDBM_mesh_normals_update(em);
 
-	EDBM_update_generic(em, true, true);
-
+		EDBM_update_generic(em, true, true);
+	}
+	MEM_freeN(objects);
 	return OPERATOR_FINISHED;
 }
 
@@ -421,6 +445,60 @@ void MESH_OT_extrude_region(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
+	RNA_def_boolean(ot->srna, "use_normal_flip", false, "Flip Normals", "");
+	Transform_Properties(ot, P_NO_DEFAULTS | P_MIRROR_DUMMY);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Extrude Context Operator
+ *
+ * Guess what to do based on selection.
+ * \{ */
+
+/* extrude without transform */
+static int edbm_extrude_context_exec(bContext *C, wmOperator *op)
+{
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
+
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
+		if (em->bm->totvertsel == 0) {
+			continue;
+		}
+
+		edbm_extrude_mesh(obedit, em, op);
+		/* This normally happens when pushing undo but modal operators
+		 * like this one don't push undo data until after modal mode is
+		 * done.*/
+
+		EDBM_mesh_normals_update(em);
+
+		EDBM_update_generic(em, true, true);
+	}
+	MEM_freeN(objects);
+	return OPERATOR_FINISHED;
+}
+
+void MESH_OT_extrude_context(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Extrude Context";
+	ot->idname = "MESH_OT_extrude_context";
+	ot->description = "Extrude selection";
+
+	/* api callbacks */
+	ot->exec = edbm_extrude_context_exec;
+	ot->poll = ED_operator_editmesh;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	RNA_def_boolean(ot->srna, "use_normal_flip", false, "Flip Normals", "");
 	Transform_Properties(ot, P_NO_DEFAULTS | P_MIRROR_DUMMY);
 }
 
@@ -432,12 +510,22 @@ void MESH_OT_extrude_region(wmOperatorType *ot)
 
 static int edbm_extrude_verts_exec(bContext *C, wmOperator *op)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
 
-	edbm_extrude_verts_indiv(em, op, BM_ELEM_SELECT);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
+		if (em->bm->totvertsel == 0) {
+			continue;
+		}
 
-	EDBM_update_generic(em, true, true);
+		edbm_extrude_verts_indiv(em, op, BM_ELEM_SELECT);
+
+		EDBM_update_generic(em, true, true);
+	}
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }
@@ -468,12 +556,23 @@ void MESH_OT_extrude_verts_indiv(wmOperatorType *ot)
 
 static int edbm_extrude_edges_exec(bContext *C, wmOperator *op)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
+	const bool use_normal_flip = RNA_boolean_get(op->ptr, "use_normal_flip");
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
 
-	edbm_extrude_edges_indiv(em, op, BM_ELEM_SELECT);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
+		if (em->bm->totedgesel == 0) {
+			continue;
+		}
 
-	EDBM_update_generic(em, true, true);
+		edbm_extrude_edges_indiv(em, op, BM_ELEM_SELECT, use_normal_flip);
+
+		EDBM_update_generic(em, true, true);
+	}
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }
@@ -493,6 +592,7 @@ void MESH_OT_extrude_edges_indiv(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* to give to transform */
+	RNA_def_boolean(ot->srna, "use_normal_flip", false, "Flip Normals", "");
 	Transform_Properties(ot, P_NO_DEFAULTS | P_MIRROR_DUMMY);
 }
 
@@ -504,12 +604,22 @@ void MESH_OT_extrude_edges_indiv(wmOperatorType *ot)
 
 static int edbm_extrude_faces_exec(bContext *C, wmOperator *op)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
 
-	edbm_extrude_discrete_faces(em, op, BM_ELEM_SELECT);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
+		if (em->bm->totfacesel == 0) {
+			continue;
+		}
 
-	EDBM_update_generic(em, true, true);
+		edbm_extrude_discrete_faces(em, op, BM_ELEM_SELECT);
+
+		EDBM_update_generic(em, true, true);
+	}
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }
@@ -546,161 +656,206 @@ static int edbm_dupli_extrude_cursor_invoke(bContext *C, wmOperator *op, const w
 	BMIter iter;
 	float center[3];
 	uint verts_len;
-	bool use_proj;
 
 	em_setup_viewcontext(C, &vc);
+	const Object *object_active = vc.obact;
 
-	invert_m4_m4(vc.obedit->imat, vc.obedit->obmat);
+	const bool rot_src = RNA_boolean_get(op->ptr, "rotate_source");
+	const bool use_proj = ((vc.scene->toolsettings->snap_flag & SCE_SNAP) &&
+	                       (vc.scene->toolsettings->snap_mode == SCE_SNAP_MODE_FACE));
 
-	ED_view3d_init_mats_rv3d(vc.obedit, vc.rv3d);
-
-	use_proj = ((vc.scene->toolsettings->snap_flag & SCE_SNAP) &&
-	            (vc.scene->toolsettings->snap_mode == SCE_SNAP_MODE_FACE));
-
+	/* First calculate the center of transformation. */
 	zero_v3(center);
 	verts_len = 0;
 
-	BM_ITER_MESH (v1, &iter, vc.em->bm, BM_VERTS_OF_MESH) {
-		if (BM_elem_flag_test(v1, BM_ELEM_SELECT)) {
-			add_v3_v3(center, v1->co);
-			verts_len += 1;
+	uint objects_len = 0;
+	Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(vc.view_layer, vc.v3d, &objects_len);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		ED_view3d_viewcontext_init_object(&vc, obedit);
+		const int local_verts_len = vc.em->bm->totvertsel;
+
+		if (vc.em->bm->totvertsel == 0) {
+			continue;
 		}
+
+		float local_center[3];
+		zero_v3(local_center);
+
+		BM_ITER_MESH(v1, &iter, vc.em->bm, BM_VERTS_OF_MESH) {
+			if (BM_elem_flag_test(v1, BM_ELEM_SELECT)) {
+				add_v3_v3(local_center, v1->co);
+			}
+		}
+
+		mul_v3_fl(local_center, 1.0f / (float)local_verts_len);
+		mul_m4_v3(vc.obedit->obmat, local_center);
+		mul_v3_fl(local_center, (float)local_verts_len);
+
+		add_v3_v3(center, local_center);
+		verts_len += local_verts_len;
 	}
 
-	/* call extrude? */
 	if (verts_len != 0) {
-		const char extrude_htype = edbm_extrude_htype_from_em_select(vc.em);
-		const bool rot_src = RNA_boolean_get(op->ptr, "rotate_source");
-		BMEdge *eed;
-		float mat[3][3];
-		float vec[3], ofs[3];
-		float nor[3] = {0.0, 0.0, 0.0};
-
-		/* 2D normal calc */
-		const float mval_f[2] = {(float)event->mval[0],
-		                         (float)event->mval[1]};
-
 		mul_v3_fl(center, 1.0f / (float)verts_len);
+	}
 
-		/* check for edges that are half selected, use for rotation */
-		bool done = false;
-		BM_ITER_MESH (eed, &iter, vc.em->bm, BM_EDGES_OF_MESH) {
-			if (BM_elem_flag_test(eed, BM_ELEM_SELECT)) {
-				float co1[2], co2[2];
+	/* Then we process the meshes. */
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		ED_view3d_viewcontext_init_object(&vc, obedit);
 
-				if ((ED_view3d_project_float_object(vc.ar, eed->v1->co, co1, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK) &&
-				    (ED_view3d_project_float_object(vc.ar, eed->v2->co, co2, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK))
-				{
-					/* 2D rotate by 90d while adding.
-					 *  (x, y) = (y, -x)
-					 *
-					 * accumulate the screenspace normal in 2D,
-					 * with screenspace edge length weighting the result. */
-					if (line_point_side_v2(co1, co2, mval_f) >= 0.0f) {
-						nor[0] +=  (co1[1] - co2[1]);
-						nor[1] += -(co1[0] - co2[0]);
-					}
-					else {
-						nor[0] +=  (co2[1] - co1[1]);
-						nor[1] += -(co2[0] - co1[0]);
-					}
-					done = true;
-				}
+		if (verts_len != 0) {
+			if (vc.em->bm->totvertsel == 0) {
+				continue;
 			}
 		}
-
-		if (done) {
-			float view_vec[3], cross[3];
-
-			/* convert the 2D nomal into 3D */
-			mul_mat3_m4_v3(vc.rv3d->viewinv, nor); /* worldspace */
-			mul_mat3_m4_v3(vc.obedit->imat, nor); /* local space */
-
-			/* correct the normal to be aligned on the view plane */
-			mul_v3_mat3_m4v3(view_vec, vc.obedit->imat, vc.rv3d->viewinv[2]);
-			cross_v3_v3v3(cross, nor, view_vec);
-			cross_v3_v3v3(nor, view_vec, cross);
-			normalize_v3(nor);
+		else if (obedit != object_active) {
+			continue;
 		}
 
-		/* center */
-		copy_v3_v3(ofs, center);
+		invert_m4_m4(vc.obedit->imat, vc.obedit->obmat);
+		ED_view3d_init_mats_rv3d(vc.obedit, vc.rv3d);
 
-		mul_m4_v3(vc.obedit->obmat, ofs);  /* view space */
-		ED_view3d_win_to_3d_int(vc.v3d, vc.ar, ofs, event->mval, ofs);
-		mul_m4_v3(vc.obedit->imat, ofs); // back in object space
+		float local_center[3];
+		mul_v3_m4v3(local_center, vc.obedit->imat, center);
 
-		sub_v3_v3(ofs, center);
+		/* call extrude? */
+		if (verts_len != 0) {
+			const char extrude_htype = edbm_extrude_htype_from_em_select(vc.em);
+			BMEdge *eed;
+			float mat[3][3];
+			float vec[3], ofs[3];
+			float nor[3] = { 0.0, 0.0, 0.0 };
 
-		/* calculate rotation */
-		unit_m3(mat);
-		if (done) {
-			float angle;
+			/* 2D normal calc */
+			const float mval_f[2] = { (float)event->mval[0],
+			                          (float)event->mval[1] };
 
-			normalize_v3_v3(vec, ofs);
+			/* check for edges that are half selected, use for rotation */
+			bool done = false;
+			BM_ITER_MESH(eed, &iter, vc.em->bm, BM_EDGES_OF_MESH) {
+				if (BM_elem_flag_test(eed, BM_ELEM_SELECT)) {
+					float co1[2], co2[2];
 
-			angle = angle_normalized_v3v3(vec, nor);
-
-			if (angle != 0.0f) {
-				float axis[3];
-
-				cross_v3_v3v3(axis, nor, vec);
-
-				/* halve the rotation if its applied twice */
-				if (rot_src) {
-					angle *= 0.5f;
+					if ((ED_view3d_project_float_object(vc.ar, eed->v1->co, co1, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK) &&
+					    (ED_view3d_project_float_object(vc.ar, eed->v2->co, co2, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK))
+					{
+						/* 2D rotate by 90d while adding.
+						 *  (x, y) = (y, -x)
+						 *
+						 * accumulate the screenspace normal in 2D,
+						 * with screenspace edge length weighting the result. */
+						if (line_point_side_v2(co1, co2, mval_f) >= 0.0f) {
+							nor[0] += (co1[1] - co2[1]);
+							nor[1] += -(co1[0] - co2[0]);
+						}
+						else {
+							nor[0] += (co2[1] - co1[1]);
+							nor[1] += -(co2[0] - co1[0]);
+						}
+						done = true;
+					}
 				}
-
-				axis_angle_to_mat3(mat, axis, angle);
 			}
-		}
 
-		if (rot_src) {
+			if (done) {
+				float view_vec[3], cross[3];
+
+				/* convert the 2D normal into 3D */
+				mul_mat3_m4_v3(vc.rv3d->viewinv, nor); /* worldspace */
+				mul_mat3_m4_v3(vc.obedit->imat, nor); /* local space */
+
+				/* correct the normal to be aligned on the view plane */
+				mul_v3_mat3_m4v3(view_vec, vc.obedit->imat, vc.rv3d->viewinv[2]);
+				cross_v3_v3v3(cross, nor, view_vec);
+				cross_v3_v3v3(nor, view_vec, cross);
+				normalize_v3(nor);
+			}
+
+			/* center */
+			copy_v3_v3(ofs, local_center);
+
+			mul_m4_v3(vc.obedit->obmat, ofs);  /* view space */
+			ED_view3d_win_to_3d_int(vc.v3d, vc.ar, ofs, event->mval, ofs);
+			mul_m4_v3(vc.obedit->imat, ofs); // back in object space
+
+			sub_v3_v3(ofs, local_center);
+
+			/* calculate rotation */
+			unit_m3(mat);
+			if (done) {
+				float angle;
+
+				normalize_v3_v3(vec, ofs);
+
+				angle = angle_normalized_v3v3(vec, nor);
+
+				if (angle != 0.0f) {
+					float axis[3];
+
+					cross_v3_v3v3(axis, nor, vec);
+
+					/* halve the rotation if its applied twice */
+					if (rot_src) {
+						angle *= 0.5f;
+					}
+
+					axis_angle_to_mat3(mat, axis, angle);
+				}
+			}
+
+			if (rot_src) {
+				EDBM_op_callf(vc.em, op, "rotate verts=%hv cent=%v matrix=%m3",
+				              BM_ELEM_SELECT, local_center, mat);
+
+				/* also project the source, for retopo workflow */
+				if (use_proj) {
+					EDBM_project_snap_verts(C, vc.ar, vc.em);
+				}
+			}
+
+			edbm_extrude_ex(vc.obedit, vc.em, extrude_htype, BM_ELEM_SELECT, false, true, true);
 			EDBM_op_callf(vc.em, op, "rotate verts=%hv cent=%v matrix=%m3",
-			              BM_ELEM_SELECT, center, mat);
+			              BM_ELEM_SELECT, local_center, mat);
+			EDBM_op_callf(vc.em, op, "translate verts=%hv vec=%v",
+			              BM_ELEM_SELECT, ofs);
+		}
+		else {
+			/* This only runs for the active object. */
+			const float *cursor = vc.scene->cursor.location;
+			BMOperator bmop;
+			BMOIter oiter;
 
-			/* also project the source, for retopo workflow */
-			if (use_proj)
-				EDBM_project_snap_verts(C, vc.ar, vc.em);
+			copy_v3_v3(local_center, cursor);
+			ED_view3d_win_to_3d_int(vc.v3d, vc.ar, local_center, event->mval, local_center);
+
+			mul_m4_v3(vc.obedit->imat, local_center); // back in object space
+
+			EDBM_op_init(vc.em, &bmop, op, "create_vert co=%v", local_center);
+			BMO_op_exec(vc.em->bm, &bmop);
+
+			BMO_ITER(v1, &oiter, bmop.slots_out, "vert.out", BM_VERT) {
+				BM_vert_select_set(vc.em->bm, v1, true);
+			}
+
+			if (!EDBM_op_finish(vc.em, &bmop, op, true)) {
+				continue;
+			}
 		}
 
-		edbm_extrude_ex(vc.obedit, vc.em, extrude_htype, BM_ELEM_SELECT, true, true);
-		EDBM_op_callf(vc.em, op, "rotate verts=%hv cent=%v matrix=%m3",
-		              BM_ELEM_SELECT, center, mat);
-		EDBM_op_callf(vc.em, op, "translate verts=%hv vec=%v",
-		              BM_ELEM_SELECT, ofs);
+		if (use_proj) {
+			EDBM_project_snap_verts(C, vc.ar, vc.em);
+		}
+
+		/* This normally happens when pushing undo but modal operators
+		 * like this one don't push undo data until after modal mode is
+		 * done. */
+		EDBM_mesh_normals_update(vc.em);
+
+		EDBM_update_generic(vc.em, true, true);
 	}
-	else {
-		const float *cursor = ED_view3d_cursor3d_get(vc.scene, vc.v3d);
-		BMOperator bmop;
-		BMOIter oiter;
-
-		copy_v3_v3(center, cursor);
-		ED_view3d_win_to_3d_int(vc.v3d, vc.ar, center, event->mval, center);
-
-		mul_m4_v3(vc.obedit->imat, center); // back in object space
-
-		EDBM_op_init(vc.em, &bmop, op, "create_vert co=%v", center);
-		BMO_op_exec(vc.em->bm, &bmop);
-
-		BMO_ITER (v1, &oiter, bmop.slots_out, "vert.out", BM_VERT) {
-			BM_vert_select_set(vc.em->bm, v1, true);
-		}
-
-		if (!EDBM_op_finish(vc.em, &bmop, op, true)) {
-			return OPERATOR_CANCELLED;
-		}
-	}
-
-	if (use_proj)
-		EDBM_project_snap_verts(C, vc.ar, vc.em);
-
-	/* This normally happens when pushing undo but modal operators
-	 * like this one don't push undo data until after modal mode is
-	 * done. */
-	EDBM_mesh_normals_update(vc.em);
-
-	EDBM_update_generic(vc.em, true, true);
+	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
 }

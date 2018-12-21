@@ -280,7 +280,7 @@ class pen_tool_properties(PropertyGroup):
             )
     b1 = BoolProperty(
             name="Edge Length",
-            description="Display All Lenghts of Drawn Edges",
+            description="Display All Lengths of Drawn Edges",
             default=False
             )
     b2 = BoolProperty(

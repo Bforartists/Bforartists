@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,9 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# Modified BFA Version with Move to Layer button and the layer widget from the 3d view header.
-# And hidable options
-
 # <pep8 compliant>
 
 bl_info = {
@@ -28,7 +25,7 @@ bl_info = {
     "blender": (2, 76, 0),
     "location": "Toolshelf > Layers Tab",
     "warning": "",
-    "description": "Display and Edit Layer Name - Bforartists version",
+    "description": "Display and Edit Layer Name",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/3D_interaction/layer_manager",
     "category": "3D View",
@@ -280,11 +277,11 @@ class SCENE_OT_namedlayer_toggle_wire(Operator):
                     group_layers = scene.layergroups[group_idx].layers
                     layers = obj.layers
                     if True in {layer and group_layer for layer, group_layer in zip(layers, group_layers)}:
-                        obj.draw_type = display
+                        obj.display_type = display
                         scene.layergroups[group_idx].use_wire = use_wire
                 else:
                     if obj.layers[layer_idx]:
-                        obj.draw_type = display
+                        obj.display_type = display
                         scene.namedlayers.layers[layer_idx].use_wire = use_wire
 
         return {'FINISHED'}
@@ -367,7 +364,7 @@ class SCENE_OT_namedlayer_select_objects_by_layer(Operator):
                 for obj in objects:
                     obj.select = False
             else:
-                bpy.ops.object.select_by_layer(extend=self.extend, layers=layer_idx + 1)
+                bpy.ops.object.select_by_layer(match='SHARED', extend=self.extend, layers=layer_idx + 1)
 
         return {'FINISHED'}
 
@@ -409,70 +406,14 @@ class SCENE_OT_namedlayer_show_all(Operator):
             layer_cont.layers[:] = layers
 
         return {'FINISHED'}
-    
-class SCENE_PT_layer_manager(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_label = "Layer Manager"
-    bl_category = "Layers"
-
-    @classmethod
-    def poll(self, context):
-        return ((getattr(context, "mode", 'EDIT_MESH') not in EDIT_MODES) and
-                (context.area.spaces.active.type == 'VIEW_3D'))
-
-    def draw(self, context):
-        scene = context.scene
-        view_3d = context.area.spaces.active
-
-        layout = self.layout
-        view = context.space_data
-        is_local_view = (view.local_view is not None)
-
-        # Check for lock camera and layer is active
-        if view_3d.lock_camera_and_layers:
-            layer_cont = scene
-            use_spacecheck = False
-        else:
-            layer_cont = view_3d
-            use_spacecheck = True
-
-        layout = self.layout
-             
-        col = layout.column(align=True)
-
-        # bfa - move to layer button, with different local /global view text
-        if is_local_view:
-            col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("object.move_to_layer", text="Move out of Local View")
-            col.operator_context = 'INVOKE_REGION_WIN'
-        else:
-            col.operator("object.move_to_layer", text="Move to Layer...")
-       
-        row = layout.row()
-        row.alignment = 'LEFT'
-        row.template_layer_3D() # bfa - layer widget
-        
-        row = layout.row()
-        col = row.column()
-        col.prop(view_3d, "lock_camera_and_layers", text="")
-        
-        col = row.column()
-        # Check if there is a layer off
-        show = (False in {layer for layer in layer_cont.layers})
-        icon = 'RESTRICT_VIEW_ON' if show else 'RESTRICT_VIEW_OFF'
-        
-        #col = row.column()
-        col.operator("scene.namedlayer_show_all", emboss=False, icon=icon, text="").show = show
 
 
 class SCENE_PT_namedlayer_layers(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_label = "Named Layers"
+    bl_label = "Layer Management"
     bl_category = "Layers"
     bl_context = "objectmode"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):
@@ -498,21 +439,21 @@ class SCENE_PT_namedlayer_layers(Panel):
             use_spacecheck = True
 
         layout = self.layout
-        
-        
-        ################ Options ############################################
-        
-        if not context.scene.WT_Named_Layers_Options:
-            layout.prop(context.scene,"WT_Named_Layers_Options", emboss=False, icon="TRIA_RIGHT", text="Options")
-        else:
-            layout.prop(context.scene,"WT_Named_Layers_Options", emboss=False, icon="TRIA_DOWN", text="Options")
-            
-            layout.prop(namedlayers, "use_classic")
-            layout.prop(namedlayers, "use_extra_options", text="Options")
-            layout.prop(namedlayers, "use_layer_indices", text="Indices")
-            layout.prop(namedlayers, "use_hide_empty_layers", text="Hide Empty")
-            
-        # ---------------------------------------------------------------------------------------      
+        row = layout.row()
+        col = row.column()
+        col.prop(view_3d, "lock_camera_and_layers", text="")
+        # Check if there is a layer off
+        show = (False in {layer for layer in layer_cont.layers})
+        icon = 'RESTRICT_VIEW_ON' if show else 'RESTRICT_VIEW_OFF'
+        col.operator("scene.namedlayer_show_all", emboss=False, icon=icon, text="").show = show
+
+        col = row.column()
+        col.prop(namedlayers, "use_classic")
+        col.prop(namedlayers, "use_extra_options", text="Options")
+
+        col = row.column()
+        col.prop(namedlayers, "use_layer_indices", text="Indices")
+        col.prop(namedlayers, "use_hide_empty_layers", text="Hide Empty")
 
         col = layout.column()
         for layer_idx in range(NUM_LAYERS):
@@ -541,7 +482,7 @@ class SCENE_PT_namedlayer_layers(Panel):
                 row.prop(layer_cont, "layers", index=layer_idx, emboss=True, icon=icon, toggle=True, text="")
 
             # Name (use special icon for active layer)
-            icon = 'HAND' if (getattr(layer_cont, "active_layer", -1) == layer_idx) else 'NONE'
+            icon = 'FILE_TICK' if (getattr(layer_cont, "active_layer", -1) == layer_idx) else 'NONE'
             row.prop(namedlayer, "name", text="", icon=icon)
 
             if use_extra:
@@ -639,8 +580,8 @@ class SCENE_PT_namedlayer_groups(Panel):
         row.template_list("SCENE_UL_namedlayer_groups", "", scene, "layergroups", scene, "layergroups_index")
 
         col = row.column(align=True)
-        col.operator("scene.namedlayer_group_add", icon='ZOOMIN', text="").layers = scene.layers
-        col.operator("scene.namedlayer_group_remove", icon='ZOOMOUT', text="").group_idx = group_idx
+        col.operator("scene.namedlayer_group_add", icon='ADD', text="").layers = scene.layers
+        col.operator("scene.namedlayer_group_remove", icon='REMOVE', text="").group_idx = group_idx
 
         if bool(scene.layergroups):
             layout.prop(scene.layergroups[group_idx], "layers", text="", toggle=True)
@@ -701,8 +642,6 @@ def register():
     bpy.types.Scene.namedlayers = PointerProperty(type=NamedLayers)
     bpy.app.handlers.scene_update_post.append(check_init_data)
     update_panel(None, bpy.context)
-
-    bpy.types.Scene.WT_Named_Layers_Options = bpy.props.BoolProperty(name="Display WireTools paramaters", default=False)
 
 
 def unregister():

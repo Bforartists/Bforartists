@@ -94,12 +94,12 @@ def get_active_cam_for_each_frame(scene, start, end):
     return(active_cam_frames)
 
 
-# create managable list of selected objects
+# create manageable list of selected objects
 def get_selected(context):
     cameras = []  # list of selected cameras
     solids = []  # list of all selected meshes that can be exported as AE's solids
     lights = []  # list of all selected lamps that can be exported as AE's lights
-    nulls = []  # list of all selected objects exept cameras (will be used to create nulls in AE)
+    nulls = []  # list of all selected objects except cameras (will be used to create nulls in AE)
     obs = context.selected_objects
 
     for ob in obs:
@@ -110,7 +110,7 @@ def get_selected(context):
             # not ready yet. is_plane(object) returns False in all cases. This is temporary
             solids.append([ob, convert_name(ob.name)])
 
-        elif ob.type == 'LAMP':
+        elif ob.type == 'LIGHT':
             lights.append([ob, ob.data.type + convert_name(ob.name)])  # Type of lamp added to name
 
         else:
@@ -768,12 +768,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_class(ExportJsx)
-    bpy.types.INFO_MT_file_export.append(menu_func)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_class(ExportJsx)
-    bpy.types.INFO_MT_file_export.remove(menu_func)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
 if __name__ == "__main__":
     register()

@@ -18,74 +18,137 @@
 
 # <pep8 compliant>
 
+import os
+
 if "bpy" in locals():
     import importlib
     importlib.reload(settings)
     importlib.reload(utils_i18n)
 else:
     import bpy
+    from bpy.types import (
+        Operator,
+        Panel,
+        PropertyGroup,
+        UIList,
+    )
     from bpy.props import (
-            BoolProperty,
-            CollectionProperty,
-            EnumProperty,
-            FloatProperty,
-            FloatVectorProperty,
-            IntProperty,
-            PointerProperty,
-            StringProperty,
-            )
+        BoolProperty,
+        IntProperty,
+        StringProperty,
+        CollectionProperty,
+    )
     from . import settings
     from bl_i18n_utils import utils as utils_i18n
 
 from bpy.app.translations import pgettext_iface as iface_
 
-import os
+
+# Data ########################################################################
+
+class I18nUpdateTranslationLanguage(PropertyGroup):
+    """Settings/info about a language."""
+
+    uid: StringProperty(
+        name="Language ID",
+        description="ISO code (eg. \"fr_FR\")",
+        default="",
+    )
+
+    num_id: IntProperty(
+        name="Numeric ID",
+        description="Numeric ID (read only!)",
+        default=0, min=0,
+    )
+
+    name: StringProperty(
+        name="Language Name",
+        description="Language label (eg. \"French (Français)\")",
+        default="",
+    )
+
+    use: BoolProperty(
+        name="Use",
+        description="If this language should be used in the current operator",
+        default=True,
+    )
+
+    po_path: StringProperty(
+        name="PO File Path",
+        description="Path to the relevant po file in branches",
+        subtype='FILE_PATH',
+        default="",
+    )
+
+    po_path_trunk: StringProperty(
+        name="PO Trunk File Path",
+        description="Path to the relevant po file in trunk",
+        subtype='FILE_PATH',
+        default="",
+    )
+
+    mo_path_trunk: StringProperty(
+        name="MO File Path",
+        description="Path to the relevant mo file",
+        subtype='FILE_PATH',
+        default="",
+    )
+
+    po_path_git: StringProperty(
+        name="PO Git Master File Path",
+        description="Path to the relevant po file in Blender's translations git repository",
+        subtype='FILE_PATH',
+        default="",
+    )
 
 
-##### Data #####
-class I18nUpdateTranslationLanguage(bpy.types.PropertyGroup):
+class I18nUpdateTranslationSettings(PropertyGroup):
     """Settings/info about a language"""
-    uid = StringProperty(name="Language ID", default="", description="ISO code, like fr_FR")
-    num_id = IntProperty(name="Numeric ID", default=0, min=0, description="Numeric ID (readonly!)")
-    name = StringProperty(name="Language Name", default="",
-                          description="English language name/label (like \"French (Français)\")")
-    use = BoolProperty(name="Use", default=True, description="Use this language in current operator")
-    po_path = StringProperty(name="PO File Path", default="", subtype='FILE_PATH',
-                             description="Path to the relevant po file in branches")
-    po_path_trunk = StringProperty(name="PO Trunk File Path", default="", subtype='FILE_PATH',
-                                   description="Path to the relevant po file in trunk")
-    mo_path_trunk = StringProperty(name="MO File Path", default="", subtype='FILE_PATH',
-                                   description="Path to the relevant mo file")
-    po_path_git = StringProperty(name="PO Git Master File Path", default="", subtype='FILE_PATH',
-                                 description="Path to the relevant po file in Blender's translations git repository")
+
+    langs: CollectionProperty(
+        name="Languages",
+        type=I18nUpdateTranslationLanguage,
+        description="Languages to update in branches",
+    )
+
+    active_lang: IntProperty(
+        name="Active Language",
+        default=0,
+        description="Index of active language in langs collection",
+    )
+
+    pot_path: StringProperty(
+        name="POT File Path",
+        description="Path to the pot template file",
+        subtype='FILE_PATH',
+        default="",
+    )
+
+    is_init: BoolProperty(
+        description="Whether these settings have already been auto-set or not",
+        default=False,
+        options={'HIDDEN'},
+    )
 
 
-class I18nUpdateTranslationSettings(bpy.types.PropertyGroup):
-    """Settings/info about a language"""
-    langs = CollectionProperty(name="Languages", type=I18nUpdateTranslationLanguage,
-                               description="Languages to update in branches")
-    active_lang = IntProperty(name="Active Language", default=0,
-                              description="Index of active language in langs collection")
-    pot_path = StringProperty(name="POT File Path", default="", subtype='FILE_PATH',
-                              description="Path to the pot template file")
-    is_init = BoolProperty(default=False, options={'HIDDEN'},
-                           description="Whether these settings have already been auto-set or not")
+# UI ##########################################################################
 
+class UI_UL_i18n_languages(UIList):
+    """ """
 
-##### UI #####
-class UI_UL_i18n_languages(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        #assert(isinstance(item, bpy.types.I18nUpdateTranslationLanguage))
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout.label(item.name, icon_value=icon)
+            layout.label(text=item.name, icon_value=icon)
             layout.prop(item, "use", text="")
         elif self.layout_type in {'GRID'}:
             layout.alignment = 'CENTER'
-            layout.label(item.uid)
+            layout.label(text=item.uid)
             layout.prop(item, "use", text="")
 
 
-class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
+class UI_PT_i18n_update_translations_settings(Panel):
+    """ """
+
     bl_label = "I18n Update Translation"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
@@ -102,7 +165,7 @@ class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
             layout.label(text="Could not init languages data!")
             layout.label(text="Please edit the preferences of the UI Translate add-on")
         else:
-            split = layout.split(0.75)
+            split = layout.split(factor=0.75)
             split.template_list("UI_UL_i18n_languages", "", i18n_sett, "langs", i18n_sett, "active_lang", rows=8)
             col = split.column()
             col.operator("ui.i18n_updatetranslation_svn_init_settings", text="Reset Settings")
@@ -132,7 +195,7 @@ class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
             layout.prop(i18n_sett, "pot_path")
 
             layout.separator()
-            layout.label("Add-ons:")
+            layout.label(text="Add-ons:")
             row = layout.row()
             op = row.operator("ui.i18n_addon_translation_invoke", text="Refresh I18n Data...")
             op.op_id = "ui.i18n_addon_translation_update"
@@ -142,9 +205,11 @@ class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
             op.op_id = "ui.i18n_addon_translation_import"
 
 
-##### Operators #####
-class UI_OT_i18n_updatetranslation_svn_init_settings(bpy.types.Operator):
+# Operators ###################################################################
+
+class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
     """Init settings for i18n svn's update operators"""
+
     bl_idname = "ui.i18n_updatetranslation_svn_init_settings"
     bl_label = "Init I18n Update Settings"
     bl_option = {'REGISTER'}
@@ -200,14 +265,25 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class UI_OT_i18n_updatetranslation_svn_settings_select(bpy.types.Operator):
+class UI_OT_i18n_updatetranslation_svn_settings_select(Operator):
     """(De)select (or invert selection of) all languages for i18n svn's update operators"""
+
     bl_idname = "ui.i18n_updatetranslation_svn_settings_select"
     bl_label = "Init I18n Update Select Languages"
 
-    use_select = BoolProperty(name="Select All", default=True, description="Select all if True, else deselect all")
-    use_invert = BoolProperty(name="Invert Selection", default=False,
-                              description="Inverse selection (overrides 'Select All' when True)")
+    # Operator Arguments
+    use_select: BoolProperty(
+        name="Select All",
+        description="Select all if True, else deselect all",
+        default=True,
+    )
+
+    use_invert: BoolProperty(
+        name="Invert Selection",
+        description="Inverse selection (overrides 'Select All' when True)",
+        default=False,
+    )
+    # /End Operator Arguments
 
     @classmethod
     def poll(cls, context):

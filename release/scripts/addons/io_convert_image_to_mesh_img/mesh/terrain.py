@@ -32,7 +32,7 @@ class BTerrain:
     Functions for creating Blender meshes from DTM objects
 
     This class contains functions that convert DTM objects to Blender meshes.
-    Its main responsiblity is to triangulate a mesh from the elevation data in
+    Its main responsibility is to triangulate a mesh from the elevation data in
     the DTM. Additionally, it attaches some metadata to the object and creates
     a UV map for it so that companion ortho-images drape properly.
 
@@ -95,7 +95,7 @@ class BTerrain:
     @staticmethod
     def reload(obj, dtm):
         """
-        Replaces an exisiting object's terrain mesh
+        Replaces an existing object's terrain mesh
 
         This replaces an object's mesh with a new mesh, transferring old
         materials over to the new mesh. This is useful for reloading DTMs

@@ -34,15 +34,19 @@ class AbcObjectWriter;
 class AbcTransformWriter;
 class ArchiveWriter;
 
-struct EvaluationContext;
+struct Depsgraph;
 struct Main;
 struct Object;
 struct Scene;
+struct ViewLayer;
+struct Base;
 
 struct ExportSettings {
 	ExportSettings();
 
 	Scene *scene;
+	ViewLayer *view_layer;  // Scene layer to export; all its objects will be exported, unless selected_only=true
+	Depsgraph *depsgraph;
 	SimpleLogger logger;
 
 	bool selected_only;
@@ -88,8 +92,6 @@ class AbcExporter {
 
 	unsigned int m_trans_sampling_index, m_shape_sampling_index;
 
-	Scene *m_scene;
-
 	ArchiveWriter *m_writer;
 
 	/* mapping from name to transform writer */
@@ -99,10 +101,10 @@ class AbcExporter {
 	std::vector<AbcObjectWriter *> m_shapes;
 
 public:
-	AbcExporter(Main *bmain, Scene *scene, const char *filename, ExportSettings &settings);
+	AbcExporter(Main *bmain, const char *filename, ExportSettings &settings);
 	~AbcExporter();
 
-	void operator()(Main *bmain, float &progress, bool &was_canceled);
+	void operator()(float &progress, bool &was_canceled);
 
 protected:
 	void getShutterSamples(unsigned int nr_of_samples,
@@ -113,11 +115,11 @@ protected:
 private:
 	Alembic::Abc::TimeSamplingPtr createTimeSampling(double step);
 
-	void createTransformWritersHierarchy(EvaluationContext *eval_ctx);
-	AbcTransformWriter * createTransformWriter(Object *ob,  Object *parent, Object *dupliObParent);
-	void exploreTransform(EvaluationContext *eval_ctx, Object *ob, Object *parent, Object *dupliObParent = NULL);
-	void exploreObject(EvaluationContext *eval_ctx, Object *ob, Object *dupliObParent);
-	void createShapeWriters(EvaluationContext *eval_ctx);
+	void createTransformWritersHierarchy();
+	AbcTransformWriter *createTransformWriter(Object *ob,  Object *parent, Object *dupliObParent);
+	void exploreTransform(Base *ob_base, Object *parent, Object *dupliObParent);
+	void exploreObject(Base *ob_base, Object *dupliObParent);
+	void createShapeWriters();
 	void createShapeWriter(Object *ob, Object *dupliObParent);
 	void createParticleSystemsWriters(Object *ob, AbcTransformWriter *xform);
 

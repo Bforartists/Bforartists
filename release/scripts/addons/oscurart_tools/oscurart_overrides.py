@@ -39,7 +39,7 @@ def DefOscApplyOverrides(self):
     scene = bpy.context.scene
     proptolist = list(eval(scene.oscurart.overrides))
     for group, material in proptolist:
-        for object in bpy.data.groups[group].objects:
+        for object in bpy.data.collections[group].objects:
             lenslots = len(object.material_slots)
             if object.type in types:
                 if len(object.data.materials):
@@ -133,7 +133,7 @@ class OscCheckOverrides(Operator):
                 MATLIST.append(MATERIAL.name)
 
             GROUPLIST = []
-            for GROUP in bpy.data.groups[:]:
+            for GROUP in bpy.data.collections[:]:
                 if GROUP.users > 0:
                     GROUPLIST.append(GROUP.name)
 
@@ -194,7 +194,7 @@ class OscOverridesGUI(Panel):
 
         for i, m in enumerate(bpy.context.scene.ovlist):
             colrow = col.row(align=1)
-            colrow.prop_search(m, "grooverride", bpy.data, "groups", text="")
+            colrow.prop_search(m, "grooverride", bpy.data, "collections", text="")
             colrow.prop_search(
                 m,
                 "matoverride",

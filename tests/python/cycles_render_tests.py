@@ -77,6 +77,7 @@ def render_file(filepath, output_filepath):
             shutil.copy(frame_filepath, output_filepath)
             os.remove(frame_filepath)
         if VERBOSE:
+            print(" ".join(command))
             print(output.decode("utf-8"))
         return None
     except subprocess.CalledProcessError as e:
@@ -84,6 +85,7 @@ def render_file(filepath, output_filepath):
         if os.path.exists(frame_filepath):
             os.remove(frame_filepath)
         if VERBOSE:
+            print(" ".join(command))
             print(e.output.decode("utf-8"))
         if b"Error: engine not found" in e.output:
             return "NO_ENGINE"
@@ -95,6 +97,7 @@ def render_file(filepath, output_filepath):
         if os.path.exists(frame_filepath):
             os.remove(frame_filepath)
         if VERBOSE:
+            print(" ".join(command))
             print(e)
         return "CRASH"
 
@@ -124,6 +127,7 @@ def main():
     from modules import render_report
     report = render_report.Report("Cycles Test Report", output_dir, idiff)
     report.set_pixelated(True)
+    report.set_compare_engines('cycles', 'eevee')
     ok = report.run(test_dir, render_file)
 
     sys.exit(not ok)

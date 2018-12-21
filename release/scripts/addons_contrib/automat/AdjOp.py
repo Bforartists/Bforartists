@@ -5,34 +5,34 @@ if "bpy" in locals():
 	importlib.reload(JSONOps)
 else:
 	from . import JSONOps
-	
+
 import bpy
 import os
 
 class AdjustableOperatorFromTexture(bpy.types.Operator):
-    
+
     """This operator generates adjustable materials from textures in Cycles.
 
 This is a subclass from bpy.types.Operator.
 """
 
     # Metadata of the operator
-    
+
     bl_idname = "com.new_adj_automat"
     bl_label = "Adjustable Material from Image"
     bl_options = {"UNDO"}
-    
+
     # Variables used for storing the filepath given by blender's file manager
-    
+
     filepath = bpy.props.StringProperty(subtype="FILE_PATH")
     filename = bpy.props.StringProperty()
     directory = bpy.props.StringProperty(subtype="FILE_PATH")
-    
-    
+
+
 
 
     def execute(self, context):
-        
+
         """This is the main runnable method of the operator.
 
 This creates all the node setup."""
@@ -40,12 +40,12 @@ This creates all the node setup."""
         # Create the material
 
         mat = bpy.data.materials.new("Material")
-            
+
         mat.use_nodes = True
         nodes = mat.node_tree.nodes
 
         # Empty whatever nodes we allready had.
-    
+
         for node in nodes.keys():
             nodes.remove(nodes[node])
 
@@ -70,7 +70,7 @@ This creates all the node setup."""
         # We set one of our blurs to be stronger
 
         blurs[1]["Blur strength"].outputs[0].default_value = 1000
-        
+
         # We link the blurs up to the rest of the material
 
         links = mat.node_tree.links
@@ -89,26 +89,26 @@ This creates all the node setup."""
         nodes_dict["Bump Image"].image = image_data
 
         # Try to add the material to the selected object
-        
+
         try:
             bpy.context.object.data.materials.append(mat)
         except AttributeError:
-            
+
             # If there is no object with materials selected,
             # don't add the material to anythinng.
-            
+
             pass
-        
+
         # Tell that all went well
-        
+
         return {"FINISHED"}
-    
+
     def invoke(self, context, event):
-        
+
         """This method opens the file browser. After that, the
 execute(...) method gets ran, creating the node setup.
 It also checks that the render engine is Cycles.  """
-        
+
         if bpy.context.scene.render.engine == 'CYCLES':
             self.filename = ""
             context.window_manager.fileselect_add(self)

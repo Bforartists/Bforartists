@@ -1261,4 +1261,3 @@ def entity_factory(tags):
     entity = cls()  # call constructor
     list(entity.setup_attributes(tags))  # setup dxf attributes - chain of generators
     return entity
-

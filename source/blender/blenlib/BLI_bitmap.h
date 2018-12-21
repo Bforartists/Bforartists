@@ -49,8 +49,7 @@ typedef unsigned int BLI_bitmap;
 #define BLI_BITMAP_SIZE(_tot) \
 	((size_t)(_BITMAP_NUM_BLOCKS(_tot)) * sizeof(BLI_bitmap))
 
-/* allocate memory for a bitmap with '_tot' bits; free
- *  with MEM_freeN() */
+/* allocate memory for a bitmap with '_tot' bits; free with MEM_freeN() */
 #define BLI_BITMAP_NEW(_tot, _alloc_string) \
 	((BLI_bitmap *)MEM_callocN(BLI_BITMAP_SIZE(_tot), \
 	                         _alloc_string))
@@ -69,6 +68,12 @@ typedef unsigned int BLI_bitmap;
 	(CHECK_TYPE_ANY(_bitmap, BLI_bitmap *, const BLI_bitmap *), \
 	 ((_bitmap)[(_index) >> _BITMAP_POWER] & \
 	  (1u << ((_index) & _BITMAP_MASK))))
+
+#define BLI_BITMAP_TEST_AND_SET_ATOMIC(_bitmap, _index) \
+	(CHECK_TYPE_ANY(_bitmap, BLI_bitmap *, const BLI_bitmap *), \
+	(atomic_fetch_and_or_uint32((uint32_t*)&(_bitmap)[(_index) >> _BITMAP_POWER], \
+	                            (1u << ((_index) & _BITMAP_MASK))) & \
+	                            (1u << ((_index) & _BITMAP_MASK))))
 
 #define BLI_BITMAP_TEST_BOOL(_bitmap, _index) \
 	(CHECK_TYPE_ANY(_bitmap, BLI_bitmap *, const BLI_bitmap *), \

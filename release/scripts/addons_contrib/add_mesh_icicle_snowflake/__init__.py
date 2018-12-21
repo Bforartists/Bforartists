@@ -44,9 +44,9 @@ else:
 import bpy
 
 
-class INFO_MT_mesh_icy_add(bpy.types.Menu):
+class VIEW3D_MT_mesh_icy_add(bpy.types.Menu):
     # Define the "Ice" menu
-    bl_idname = "INFO_MT_mesh_ice_add"
+    bl_idname = "VIEW3D_MT_mesh_ice_add"
     bl_label = "Ice & Snow"
 
     def draw(self, context):
@@ -62,21 +62,21 @@ class INFO_MT_mesh_icy_add(bpy.types.Menu):
 
 # Define "Extras" menu
 def menu_func(self, context):
-    self.layout.menu("INFO_MT_mesh_ice_add", text="Ice & Snow", icon="FREEZE")
+    self.layout.menu("VIEW3D_MT_mesh_ice_add", text="Ice & Snow", icon="FREEZE")
 
 
 def register():
     bpy.utils.register_module(__name__)
 
     # Add "Extras" menu to the "Add Mesh" menu
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
     # Remove "Extras" menu from the "Add Mesh" menu.
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
 
 
 if __name__ == "__main__":

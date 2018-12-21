@@ -26,8 +26,7 @@ op_dir = ops_module.dir
 op_poll = ops_module.poll
 op_call = ops_module.call
 op_as_string = ops_module.as_string
-op_get_rna = ops_module.get_rna
-op_get_instance = ops_module.get_instance
+op_get_rna_type = ops_module.get_rna_type
 
 
 class BPyOps:
@@ -115,7 +114,16 @@ class BPyOpsSubModOp:
     __slots__ = ("_module", "_func")
 
     def _get_doc(self):
-        return op_as_string(self.idname())
+        idname = self.idname()
+        sig = op_as_string(self.idname())
+        # XXX You never quite know what you get from bpy.types,
+        # with operators... Operator and OperatorProperties
+        # are shadowing each other, and not in the same way for
+        # native ops and py ones! See T39158.
+        # op_class = getattr(bpy.types, idname)
+        op_class = op_get_rna_type(idname)
+        descr = op_class.description
+        return f"{sig}\n{descr}"
 
     @staticmethod
     def _parse_args(args):
@@ -145,10 +153,10 @@ class BPyOpsSubModOp:
         return C_dict, C_exec, C_undo
 
     @staticmethod
-    def _scene_update(context):
-        scene = context.scene
-        if scene:  # None in background mode
-            scene.update()
+    def _view_layer_update(context):
+        view_layer = context.view_layer
+        if view_layer:  # None in background mode
+            view_layer.update()
         else:
             import bpy
             for scene in bpy.data.scenes:
@@ -180,7 +188,10 @@ class BPyOpsSubModOp:
         wm = context.window_manager
 
         # run to account for any rna values the user changes.
-        BPyOpsSubModOp._scene_update(context)
+        # NOTE: We only update active vew layer, since that's what
+        # operators are supposed to operate on. There might be some
+        # corner cases when operator need a full scene update though.
+        BPyOpsSubModOp._view_layer_update(context)
 
         if args:
             C_dict, C_exec, C_undo = BPyOpsSubModOp._parse_args(args)
@@ -189,37 +200,17 @@ class BPyOpsSubModOp:
             ret = op_call(self.idname_py(), None, kw)
 
         if 'FINISHED' in ret and context.window_manager == wm:
-            BPyOpsSubModOp._scene_update(context)
+            BPyOpsSubModOp._view_layer_update(context)
 
         return ret
 
-    def get_rna(self):
+    def get_rna_type(self):
         """Internal function for introspection"""
-        return op_get_rna(self.idname())
-
-    def get_instance(self):
-        """Internal function for introspection"""
-        return op_get_instance(self.idname())
+        return op_get_rna_type(self.idname())
 
     def __repr__(self):  # useful display, repr(op)
         # import bpy
-        idname = self.idname()
-        as_string = op_as_string(idname)
-        # XXX You never quite know what you get from bpy.types,
-        # with operators... Operator and OperatorProperties
-        # are shadowing each other, and not in the same way for
-        # native ops and py ones! See T39158.
-        # op_class = getattr(bpy.types, idname)
-        op_class = op_get_rna(idname)
-        descr = op_class.bl_rna.description
-        # XXX, workaround for not registering
-        # every __doc__ to save time on load.
-        if not descr:
-            descr = op_class.__doc__
-            if not descr:
-                descr = ""
-
-        return "# %s\n%s" % (descr, as_string)
+        return op_as_string(self.idname())
 
     def __str__(self):  # used for print(...)
         return ("<function bpy.ops.%s.%s at 0x%x'>" %

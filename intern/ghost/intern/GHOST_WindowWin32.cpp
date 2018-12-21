@@ -201,6 +201,11 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
 		// Store a pointer to this class in the window structure
 		::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR) this);
 
+		if (!m_system->m_windowFocus) {
+			// Lower to bottom and don't activate if we don't want focus
+			::SetWindowPos(m_hWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+		}
+
 		// Store the device context
 		m_hDC = ::GetDC(m_hWnd);
 
@@ -214,11 +219,11 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
 					nCmdShow = SW_SHOWMAXIMIZED;
 					break;
 				case GHOST_kWindowStateMinimized:
-					nCmdShow = SW_SHOWMINIMIZED;
+					nCmdShow = (m_system->m_windowFocus) ? SW_SHOWMINIMIZED : SW_SHOWMINNOACTIVE;
 					break;
 				case GHOST_kWindowStateNormal:
 				default:
-					nCmdShow = SW_SHOWNORMAL;
+					nCmdShow = (m_system->m_windowFocus) ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE;
 					break;
 			}
 
@@ -624,101 +629,79 @@ GHOST_TSuccess GHOST_WindowWin32::invalidate()
 GHOST_Context *GHOST_WindowWin32::newDrawingContext(GHOST_TDrawingContextType type)
 {
 	if (type == GHOST_kDrawingContextTypeOpenGL) {
-#if !defined(WITH_GL_EGL)
+		GHOST_Context *context;
 
 #if defined(WITH_GL_PROFILE_CORE)
-		GHOST_Context *context = new GHOST_ContextWGL(
-		        m_wantStereoVisual,
-		        m_wantAlphaBackground,
-		        m_wantNumOfAASamples,
-		        m_hWnd,
-		        m_hDC,
-		        WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
-		        3, 2,
-		        GHOST_OPENGL_WGL_CONTEXT_FLAGS,
-		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
-#elif defined(WITH_GL_PROFILE_ES20)
-		GHOST_Context *context = new GHOST_ContextWGL(
-		        m_wantStereoVisual,
-		        m_wantAlphaBackground,
-		        m_wantNumOfAASamples,
-		        m_hWnd,
-		        m_hDC,
-		        WGL_CONTEXT_ES2_PROFILE_BIT_EXT,
-		        2, 0,
-		        GHOST_OPENGL_WGL_CONTEXT_FLAGS,
-		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+		/* - AMD and Intel give us exactly this version
+		 * - NVIDIA gives at least this version <-- desired behavior
+		 * So we ask for 4.5, 4.4 ... 3.3 in descending order to get the best version on the user's system. */
+		for (int minor = 5; minor >= 0; --minor) {
+			context = new GHOST_ContextWGL(
+			    m_wantStereoVisual,
+			    m_wantAlphaBackground,
+			    m_wantNumOfAASamples,
+			    m_hWnd,
+			    m_hDC,
+			    WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+			    4, minor,
+			    (m_debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
+			    GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+
+			if (context->initializeDrawingContext()) {
+				return context;
+			}
+			else {
+				delete context;
+			}
+		}
+		context = new GHOST_ContextWGL(
+		    m_wantStereoVisual,
+		    m_wantAlphaBackground,
+		    m_wantNumOfAASamples,
+		    m_hWnd,
+		    m_hDC,
+		    WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+		    3, 3,
+		    (m_debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
+		    GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+
+		if (context->initializeDrawingContext()) {
+			return context;
+		}
+		else {
+			MessageBox(
+			        m_hWnd,
+			        "Blender requires a graphics driver with at least OpenGL 3.3 support.\n\n"
+			        "The program will now close.",
+			        "Blender - Unsupported Graphics Driver!",
+			        MB_OK | MB_ICONERROR);
+			delete context;
+			exit(0);
+		}
+
 #elif defined(WITH_GL_PROFILE_COMPAT)
-		GHOST_Context *context = new GHOST_ContextWGL(
+		// ask for 2.1 context, driver gives any GL version >= 2.1 (hopefully the latest compatibility profile)
+		// 2.1 ignores the profile bit & is incompatible with core profile
+		context = new GHOST_ContextWGL(
 		        m_wantStereoVisual,
 		        m_wantAlphaBackground,
 		        m_wantNumOfAASamples,
 		        m_hWnd,
 		        m_hDC,
-#if 1
-		        0, // profile bit
-		        2, 1, // GL version requested
-#else
-		        // switch to this for Blender 2.8 development
-		        WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
-		        3, 2,
-#endif
+		        0, // no profile bit
+		        2, 1,
 		        (m_debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
 		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
-#else
-#  error
-#endif
 
-#else
-
-#if defined(WITH_GL_PROFILE_CORE)
-		GHOST_Context *context = new GHOST_ContextEGL(
-		        m_wantStereoVisual,
-		        m_wantNumOfAASamples,
-		        m_hWnd,
-		        m_hDC,
-		        EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
-		        3, 2,
-		        GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-		        GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-		        EGL_OPENGL_API);
-#elif defined(WITH_GL_PROFILE_ES20)
-		GHOST_Context *context = new GHOST_ContextEGL(
-		        m_wantStereoVisual,
-		        m_wantNumOfAASamples,
-		        m_hWnd,
-		        m_hDC,
-		        0, // profile bit
-		        2, 0,
-		        GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-		        GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-		        EGL_OPENGL_ES_API);
-#elif defined(WITH_GL_PROFILE_COMPAT)
-		GHOST_Context *context = new GHOST_ContextEGL(
-		        m_wantStereoVisual,
-		        m_wantNumOfAASamples,
-		        m_hWnd,
-		        m_hDC,
-#if 1
-		        0, // profile bit
-		        2, 1, // GL version requested
-#else
-		        // switch to this for Blender 2.8 development
-		        EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT,
-		        3, 2,
-#endif
-		        GHOST_OPENGL_EGL_CONTEXT_FLAGS,
-		        GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
-		        EGL_OPENGL_API);
-#else
-#  error
-#endif
-
-#endif
-		if (context->initializeDrawingContext())
+		if (context->initializeDrawingContext()) {
 			return context;
-		else
+		}
+		else {
 			delete context;
+		}
+#else
+#  error // must specify either core or compat at build time
+#endif
 	}
 
 	return NULL;
@@ -1105,12 +1088,12 @@ GHOST_TSuccess GHOST_WindowWin32::endProgressBar()
 #ifdef WITH_INPUT_IME
 void GHOST_WindowWin32::beginIME(GHOST_TInt32 x, GHOST_TInt32 y, GHOST_TInt32 w, GHOST_TInt32 h, int completed)
 {
-	m_imeImput.BeginIME(m_hWnd, GHOST_Rect(x, y - h, x, y), (bool)completed);
+	m_imeInput.BeginIME(m_hWnd, GHOST_Rect(x, y - h, x, y), (bool)completed);
 }
 
 
 void GHOST_WindowWin32::endIME()
 {
-	m_imeImput.EndIME(m_hWnd);
+	m_imeInput.EndIME(m_hWnd);
 }
 #endif /* WITH_INPUT_IME */

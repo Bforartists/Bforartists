@@ -32,13 +32,13 @@ lfoot LegIK_L
 
 
 T_pose_align = [d.split() for d in """\
-clavicle UpArmRot 
-humerus LoArm 
+clavicle UpArmRot
+humerus LoArm
 radius Hand .8
 wrist Hand
-hipjoint UpLeg 
-femur LoLeg 
-tibia Foot 
+hipjoint UpLeg
+femur LoLeg
+tibia Foot
 foot Toe""".splitlines()]
 
 
@@ -126,7 +126,7 @@ class CMUMocapAlignArmatures(bpy.types.Operator):
         c_d = DPB['Hip_L'].matrix.translation
         b_d = .5 * (c_d + DPB['Hip_R'].matrix.translation)
 
-        # get alignment matrix        
+        # get alignment matrix
         S = Matrix().to_3x3()
         S[0] = (c_s - b_s).normalized()
         S[1] = (a_s - b_s).normalized()
@@ -142,14 +142,14 @@ class CMUMocapAlignArmatures(bpy.types.Operator):
         # scale source to match destination
         s = (a_d - b_d).length / (a_s - b_s).length
         bpy.ops.transform.resize(value=(s, s, s))
-        
+
         # align armatures
         rot = T.to_quaternion()
         bpy.ops.transform.rotate(value=rot.angle, axis=rot.axis)
         a_s = SPB['upperneck'].matrix.translation
         a_s = SMW * a_s
         bpy.ops.transform.translate(value=a_d - a_s)
-        
+
         bpy.ops.pose.select_all(action='DESELECT')
         for bdef in T_pose_align:
             for side in "lr":
@@ -280,7 +280,7 @@ class CMUMocapTransferer(bpy.types.Operator):
                     c = DPB[db].constraints["Floor"]
                     c.name = name
                     c.target = floor
-        
+
         bpy.ops.mhx.toggle_fk_ik(toggle="MhaArmIk_L 1 2 3")
         bpy.ops.mhx.toggle_fk_ik(toggle="MhaArmIk_R 1 18 19")
         bpy.ops.mhx.toggle_fk_ik(toggle="MhaLegIk_L 1 4 5")
@@ -296,4 +296,3 @@ class CMUMocapTransferer(bpy.types.Operator):
         bpy.context.scene.frame_set(bpy.context.scene.frame_current)
         context.window_manager.event_timer_remove(self.timer)
         bpy.ops.object.mode_set(mode='OBJECT')
-

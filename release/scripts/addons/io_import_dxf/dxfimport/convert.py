@@ -278,14 +278,14 @@ def split_by_width(entity):
         en_template.bulge = []
         en_template.width = []
         en_template.tangents = []
-        
-        # is_closed is an attrib only on polyline 
+
+        # is_closed is an attrib only on polyline
         if en_template.dxftype == 'POLYLINE':
             en_template.is_closed = False
         else:
             # disable closed flag (0x01) when is_closed is a @property
             en_template.flags ^= 1
-            
+
         i = 0
         for pair, same_width in itertools.groupby(entity.width, key=lambda w: WidthTuple(w)):
             en = deepcopy(en_template)

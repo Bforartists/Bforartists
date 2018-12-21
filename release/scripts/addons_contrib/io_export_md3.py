@@ -683,10 +683,10 @@ def menu_func(self, context):
   self.layout.operator(ExportMD3.bl_idname, text="Quake Model 3 (.md3)").filepath = newpath
 
 def register():
-  bpy.types.INFO_MT_file_export.append(menu_func)
+  bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
 def unregister():
-  bpy.types.INFO_MT_file_export.remove(menu_func)
+  bpy.types.TOPBAR_MT_file_export.remove(menu_func)
 
 if __name__ == "__main__":
   register()

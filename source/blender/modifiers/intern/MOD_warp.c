@@ -29,20 +29,24 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "DNA_object_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
+#include "DNA_object_types.h"
 
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_cdderivedmesh.h"
+#include "BKE_editmesh.h"
+#include "BKE_library.h"
 #include "BKE_library_query.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 #include "BKE_texture.h"
 #include "BKE_colortools.h"
 
-#include "depsgraph_private.h"
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RE_shader_ext.h"
 
@@ -61,12 +65,12 @@ static void initData(ModifierData *md)
 	wmd->flag = 0;
 }
 
-static void copyData(const ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target, const int flag)
 {
 	const WarpModifierData *wmd = (const WarpModifierData *) md;
 	WarpModifierData *twmd = (WarpModifierData *) target;
 
-	modifier_copyData_generic(md, target);
+	modifier_copyData_generic(md, target, flag);
 
 	twmd->curfalloff = curvemapping_copy(wmd->curfalloff);
 }
@@ -105,7 +109,7 @@ static void freeData(ModifierData *md)
 }
 
 
-static bool isDisabled(ModifierData *md, int UNUSED(userRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(userRenderParams))
 {
 	WarpModifierData *wmd = (WarpModifierData *) md;
 
@@ -135,40 +139,27 @@ static void foreachTexLink(ModifierData *md, Object *ob, TexWalkFunc walk, void 
 	walk(userData, ob, md, "texture");
 }
 
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	WarpModifierData *wmd = (WarpModifierData *) md;
-
-	if (wmd->object_from && wmd->object_to) {
-		DagNode *fromNode = dag_get_node(ctx->forest, wmd->object_from);
-		DagNode *toNode = dag_get_node(ctx->forest, wmd->object_to);
-
-		dag_add_relation(ctx->forest, fromNode, ctx->obNode, DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Warp Modifier1");
-		dag_add_relation(ctx->forest, toNode, ctx->obNode, DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Warp Modifier2");
-	}
-
-	if ((wmd->texmapping == MOD_DISP_MAP_OBJECT) && wmd->map_object) {
-		DagNode *curNode = dag_get_node(ctx->forest, wmd->map_object);
-		dag_add_relation(ctx->forest, curNode, ctx->obNode, DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Warp Modifier3");
-	}
-}
-
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	WarpModifierData *wmd = (WarpModifierData *) md;
 	if (wmd->object_from != NULL && wmd->object_to != NULL) {
+		DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "Warplace Modifier");
 		DEG_add_object_relation(ctx->node, wmd->object_from, DEG_OB_COMP_TRANSFORM, "Warp Modifier from");
 		DEG_add_object_relation(ctx->node, wmd->object_to, DEG_OB_COMP_TRANSFORM, "Warp Modifier to");
 	}
 	if ((wmd->texmapping == MOD_DISP_MAP_OBJECT) && wmd->map_object != NULL) {
 		DEG_add_object_relation(ctx->node, wmd->map_object, DEG_OB_COMP_TRANSFORM, "Warp Modifier map");
 	}
+	if (wmd->texture != NULL) {
+		DEG_add_generic_id_relation(ctx->node, &wmd->texture->id, "Warp Modifier");
+	}
 }
 
 static void warpModifier_do(
-        WarpModifierData *wmd, Object *ob,
-        DerivedMesh *dm, float (*vertexCos)[3], int numVerts)
+        WarpModifierData *wmd, const ModifierEvalContext *ctx,
+        Mesh *mesh, float (*vertexCos)[3], int numVerts)
 {
+	Object *ob = ctx->object;
 	float obinv[4][4];
 	float mat_from[4][4];
 	float mat_from_inv[4][4];
@@ -190,7 +181,7 @@ static void warpModifier_do(
 	if (!(wmd->object_from && wmd->object_to))
 		return;
 
-	modifier_get_vgroup(ob, dm, wmd->defgrp_name, &dvert, &defgrp_index);
+	MOD_get_vgroup(ob, mesh, wmd->defgrp_name, &dvert, &defgrp_index);
 	if (dvert == NULL) {
 		defgrp_index = -1;
 	}
@@ -204,8 +195,8 @@ static void warpModifier_do(
 
 	invert_m4_m4(obinv, ob->obmat);
 
-	mul_m4_m4m4(mat_from, obinv, wmd->object_from->obmat);
-	mul_m4_m4m4(mat_to, obinv, wmd->object_to->obmat);
+	mul_m4_m4m4(mat_from, obinv, DEG_get_evaluated_object(ctx->depsgraph, wmd->object_from)->obmat);
+	mul_m4_m4m4(mat_to, obinv, DEG_get_evaluated_object(ctx->depsgraph, wmd->object_to)->obmat);
 
 	invert_m4_m4(tmat, mat_from); // swap?
 	mul_m4_m4m4(mat_final, tmat, mat_to);
@@ -226,11 +217,12 @@ static void warpModifier_do(
 	}
 	weight = strength;
 
-	if (wmd->texture) {
+	Tex *tex_target = (Tex *)DEG_get_evaluated_id(ctx->depsgraph, &wmd->texture->id);
+	if (mesh != NULL && tex_target != NULL) {
 		tex_co = MEM_malloc_arrayN(numVerts, sizeof(*tex_co), "warpModifier_do tex_co");
-		get_texture_coords((MappingInfoModifierData *)wmd, ob, dm, vertexCos, tex_co, numVerts);
+		MOD_get_texture_coords((MappingInfoModifierData *)wmd, ctx, ob, mesh, vertexCos, tex_co);
 
-		modifier_init_texture(wmd->modifier.scene, wmd->texture);
+		MOD_init_texture((MappingInfoModifierData *)wmd, ctx);
 	}
 
 	for (i = 0; i < numVerts; i++) {
@@ -284,9 +276,10 @@ static void warpModifier_do(
 			fac *= weight;
 
 			if (tex_co) {
+				struct Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
 				TexResult texres;
 				texres.nor = NULL;
-				BKE_texture_get_value(wmd->modifier.scene, wmd->texture, tex_co[i], &texres, false);
+				BKE_texture_get_value(scene, tex_target, tex_co[i], &texres, false);
 				fac *= texres.tin;
 			}
 
@@ -316,50 +309,46 @@ static void warpModifier_do(
 		}
 	}
 
-	if (tex_co)
+	if (tex_co) {
 		MEM_freeN(tex_co);
-
-}
-
-static int warp_needs_dm(WarpModifierData *wmd)
-{
-	return wmd->texture || wmd->defgrp_name[0];
+	}
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob, DerivedMesh *derivedData,
-        float (*vertexCos)[3], int numVerts, ModifierApplyFlag UNUSED(flag))
+        ModifierData *md, const ModifierEvalContext *ctx, Mesh *mesh,
+        float (*vertexCos)[3], int numVerts)
 {
-	DerivedMesh *dm = NULL;
-	int use_dm = warp_needs_dm((WarpModifierData *)md);
+	WarpModifierData *wmd = (WarpModifierData *)md;
+	Mesh *mesh_src = NULL;
 
-	if (use_dm) {
-		dm = get_cddm(ob, NULL, derivedData, vertexCos, false);
+	if (wmd->defgrp_name[0] != '\0' || wmd->texture != NULL) {
+		/* mesh_src is only needed for vgroups and textures. */
+		mesh_src = MOD_deform_mesh_eval_get(ctx->object, NULL, mesh, NULL, numVerts, false, false);
 	}
 
-	warpModifier_do((WarpModifierData *)md, ob, dm, vertexCos, numVerts);
+	warpModifier_do(wmd, ctx, mesh_src, vertexCos, numVerts);
 
-	if (use_dm) {
-		if (dm != derivedData) dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
 	}
 }
 
 static void deformVertsEM(
-        ModifierData *md, Object *ob, struct BMEditMesh *em,
-        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+        ModifierData *md, const ModifierEvalContext *ctx, struct BMEditMesh *em,
+        Mesh *mesh, float (*vertexCos)[3], int numVerts)
 {
-	DerivedMesh *dm = derivedData;
-	int use_dm = warp_needs_dm((WarpModifierData *)md);
+	WarpModifierData *wmd = (WarpModifierData *)md;
+	Mesh *mesh_src = NULL;
 
-	if (use_dm) {
-		if (!derivedData)
-			dm = CDDM_from_editbmesh(em, false, false);
+	if (wmd->defgrp_name[0] != '\0' || wmd->texture != NULL) {
+		/* mesh_src is only needed for vgroups and textures. */
+		mesh_src = MOD_deform_mesh_eval_get(ctx->object, em, mesh, NULL, numVerts, false, false);
 	}
 
-	deformVerts(md, ob, dm, vertexCos, numVerts, 0);
+	warpModifier_do(wmd, ctx, mesh_src, vertexCos, numVerts);
 
-	if (use_dm) {
-		if (!derivedData) dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
 	}
 }
 
@@ -373,17 +362,23 @@ ModifierTypeInfo modifierType_Warp = {
 	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 	/* copyData */          copyData,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          freeData,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     dependsOnTime,
 	/* dependsOnNormals */  NULL,

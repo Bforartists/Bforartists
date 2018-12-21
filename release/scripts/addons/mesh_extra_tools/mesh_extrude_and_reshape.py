@@ -304,7 +304,7 @@ class Extrude_and_Reshape(Operator):
                     nf = bmesh.utils.face_split(f, v1, v2)
                     # sp_faces2.update({f, nf[0]})
 
-            bmesh.update_edit_mesh(self.mesh, tessface=True, destructive=True)
+            bmesh.update_edit_mesh(self.mesh, loop_triangles=True, destructive=True)
             return {'FINISHED'}
         if self.cancel:
             return {'FINISHED'}
@@ -345,7 +345,7 @@ class Extrude_and_Reshape(Operator):
             dfaces = bmesh.ops.dissolve_edges(
                         self.bm, edges=geom, use_verts=True, use_face_split=False
                         )
-            bmesh.update_edit_mesh(self.mesh, tessface=True, destructive=True)
+            bmesh.update_edit_mesh(self.mesh, loop_triangles=True, destructive=True)
             bpy.ops.transform.translate(
                         'INVOKE_DEFAULT', constraint_axis=(False, False, True),
                         constraint_orientation='NORMAL', release_confirm=True

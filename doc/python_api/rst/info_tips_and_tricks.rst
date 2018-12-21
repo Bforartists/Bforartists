@@ -209,7 +209,7 @@ Bundled Python & Extensions
 ===========================
 
 The Blender releases distributed from blender.org include a complete Python installation on all platforms,
-this has the disadvantage that any extensions you have installed in your systems Python wont be found by Blender.
+this has the disadvantage that any extensions you have installed in your systems Python won't be found by Blender.
 
 There are 2 ways around this:
 
@@ -231,7 +231,7 @@ There are 2 ways around this:
   you could also copy the entire Python installation into Blenders sub-directory,
   replacing the one Blender comes with.
   This works as long as the Python versions match and the paths are created in the same relative locations.
-  Doing this has the advantage that you can redistribute this bundle to others with Blender and/or the game player,
+  Doing this has the advantage that you can redistribute this bundle to others with Blender
   including any extensions you rely on.
 
 
@@ -280,11 +280,6 @@ The IPython prompt has auto-complete and some useful features that the standard 
 
 Admittedly this highlights the lack of any Python debugging support built into Blender, but its still handy to know.
 
-.. note::
-
-   This works in the game engine as well, it can be handy to inspect the state of a running game.
-
-
 Advanced
 ========
 
@@ -320,4 +315,3 @@ enable the CMake build option ``WITH_PYTHON_SAFETY``.
 
 This enables data tracking which makes data access about 2x slower
 which is why the option isn't enabled in release builds.
-

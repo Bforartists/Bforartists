@@ -40,6 +40,8 @@ extern "C" {
 #endif
 
 struct BVHTree;
+struct DistProjectedAABBPrecalc;
+
 typedef struct BVHTree BVHTree;
 #define USE_KDOPBVH_WATERTIGHT
 
@@ -83,6 +85,10 @@ typedef struct BVHTreeRayHit {
 } BVHTreeRayHit;
 
 enum {
+	/* Use a priority queue to process nodes in the optimal order (for slow callbacks) */
+	BVH_NEAREST_OPTIMAL_ORDER   = (1 << 0),
+};
+enum {
 	/* calculate IsectRayPrecalc data */
 	BVH_RAYCAST_WATERTIGHT		= (1 << 0),
 };
@@ -100,6 +106,13 @@ typedef bool (*BVHTree_OverlapCallback)(void *userdata, int index_a, int index_b
 
 /* callback to range search query */
 typedef void (*BVHTree_RangeQuery)(void *userdata, int index, const float co[3], float dist_sq);
+
+/* callback to find nearest projected */
+typedef void (*BVHTree_NearestProjectedCallback)(
+        void *userdata, int index,
+        const struct DistProjectedAABBPrecalc *precalc,
+        const float (*clip_plane)[4], const int clip_plane_len,
+        BVHTreeNearest *nearest);
 
 
 /* callbacks to BLI_bvhtree_walk_dfs */
@@ -135,6 +148,10 @@ float BLI_bvhtree_get_epsilon(const BVHTree *tree);
 
 /* find nearest node to the given coordinates
  * (if nearest is given it will only search nodes where square distance is smaller than nearest->dist) */
+int BLI_bvhtree_find_nearest_ex(
+        BVHTree *tree, const float co[3], BVHTreeNearest *nearest,
+        BVHTree_NearestPointCallback callback, void *userdata,
+        int flag);
 int BLI_bvhtree_find_nearest(
         BVHTree *tree, const float co[3], BVHTreeNearest *nearest,
         BVHTree_NearestPointCallback callback, void *userdata);
@@ -161,6 +178,12 @@ float BLI_bvhtree_bb_raycast(const float bv[6], const float light_start[3], cons
 int BLI_bvhtree_range_query(
         BVHTree *tree, const float co[3], float radius,
         BVHTree_RangeQuery callback, void *userdata);
+
+int BLI_bvhtree_find_nearest_projected(
+        BVHTree *tree, float projmat[4][4], float winsize[2], float mval[2],
+        float clip_planes[6][4], int clip_num,
+        BVHTreeNearest *nearest,
+        BVHTree_NearestProjectedCallback callback, void *userdata);
 
 void BLI_bvhtree_walk_dfs(
         BVHTree *tree,

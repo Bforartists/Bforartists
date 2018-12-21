@@ -46,16 +46,19 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_appdir.h"
 #include "BKE_blender_undo.h"  /* own include */
 #include "BKE_blendfile.h"
-#include "BKE_appdir.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 
 #include "BLO_undofile.h"
+#include "BLO_readfile.h"
 #include "BLO_writefile.h"
+
+#include "DEG_depsgraph.h"
 
 /* -------------------------------------------------------------------- */
 
@@ -79,7 +82,10 @@ bool BKE_memfile_undo_decode(MemFileUndoData *mfu, bContext *C)
 		success = (BKE_blendfile_read(C, mfu->filename, NULL, 0) != BKE_BLENDFILE_READ_FAIL);
 	}
 	else {
-		success = BKE_blendfile_read_from_memfile(C, &mfu->memfile, NULL, 0);
+		success = BKE_blendfile_read_from_memfile(
+		        C, &mfu->memfile,
+		        &(const struct BlendFileReadParams){0},
+		        NULL);
 	}
 
 	/* Restore, bmain has been re-allocated. */
@@ -88,8 +94,8 @@ bool BKE_memfile_undo_decode(MemFileUndoData *mfu, bContext *C)
 	G.fileflags = fileflags;
 
 	if (success) {
-		/* important not to update time here, else non keyed tranforms are lost */
-		DAG_on_visible_update(bmain, false);
+		/* important not to update time here, else non keyed transforms are lost */
+		DEG_on_visible_update(bmain, false);
 	}
 
 	return success;

@@ -141,11 +141,9 @@ class NPDM_dim_definition(bpy.types.PropertyGroup):
 
 
 def register():
-
+    pass
 
 
 
 def unregister():
-
-
     pass

@@ -10,7 +10,6 @@ op.include_armatures = False
 op.include_shapekeys = False
 op.deform_bones_only = False
 op.active_uv_only = True
-op.export_texture_type_selection = 'uv'
 op.use_texture_copies = True
 op.triangulate = True
 op.use_object_instantiation = False

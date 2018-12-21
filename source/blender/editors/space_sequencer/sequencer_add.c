@@ -48,10 +48,10 @@
 #include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
-#include "BKE_sequencer.h"
-#include "BKE_movieclip.h"
 #include "BKE_mask.h"
+#include "BKE_movieclip.h"
 #include "BKE_report.h"
+#include "BKE_sequencer.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -69,7 +69,7 @@
 #include "BKE_sound.h"
 
 #ifdef WITH_AUDASPACE
-#  include AUD_SEQUENCE_H
+#  include <AUD_Sequence.h>
 #endif
 
 /* own include */
@@ -166,7 +166,7 @@ static void sequencer_generic_invoke_xy__internal(bContext *C, wmOperator *op, i
 	RNA_int_set(op->ptr, "frame_start", cfra);
 
 	if ((flag & SEQPROP_ENDFRAME) && RNA_struct_property_is_set(op->ptr, "frame_end") == 0)
-		RNA_int_set(op->ptr, "frame_end", cfra + 25);  // XXX arbitary but ok for now.
+		RNA_int_set(op->ptr, "frame_end", cfra + 25);  // XXX arbitrary but ok for now.
 
 	if (!(flag & SEQPROP_NOPATHS)) {
 		sequencer_generic_invoke_path__internal(C, op, "filepath");
@@ -650,13 +650,13 @@ static int sequencer_add_movie_strip_invoke(bContext *C, wmOperator *op, const w
 	Editing *ed = BKE_sequencer_editing_get(scene, false);
 
 	/* only enable "use_framerate" if there aren't any existing strips
-	 *  -  When there are no strips yet, there is no harm in enabling this,
-	 *     and it makes the single-strip case really nice for casual users
-	 *  -  When there are strips, it's best we don't touch the framerate,
-	 *     as all hell may break loose (e.g. audio strips start overlapping
-	 *     and can't be restored)
-	 *  -  These initial guesses can still be manually overridden by users
-	 *     from the modal options panel
+	 * - When there are no strips yet, there is no harm in enabling this,
+	 *   and it makes the single-strip case really nice for casual users
+	 * - When there are strips, it's best we don't touch the framerate,
+	 *   as all hell may break loose (e.g. audio strips start overlapping
+	 *   and can't be restored)
+	 * - These initial guesses can still be manually overridden by users
+	 *   from the modal options panel
 	 */
 	if (ed && ed->seqbasep && ed->seqbasep->first) {
 		RNA_boolean_set(op->ptr, "use_framerate", false);
@@ -693,7 +693,7 @@ static void sequencer_add_draw(bContext *UNUSED(C), wmOperator *op)
 
 	/* main draw call */
 	RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
-	uiDefAutoButsRNA(layout, &ptr, sequencer_add_draw_check_prop, NULL, '\0');
+	uiDefAutoButsRNA(layout, &ptr, sequencer_add_draw_check_prop, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
 
 	/* image template */
 	RNA_pointer_create(NULL, &RNA_ImageFormatSettings, imf, &imf_ptr);
@@ -878,6 +878,8 @@ static int sequencer_add_image_strip_exec(bContext *C, wmOperator *op)
 	seq = BKE_sequencer_add_image_strip(C, ed->seqbasep, &seq_load);
 	strip = seq->strip;
 	se = strip->stripdata;
+
+	seq->blend_mode = SEQ_TYPE_ALPHAOVER;
 
 	if (use_placeholders) {
 		sequencer_image_seq_reserve_frames(op, se, seq_load.len, minframe, numdigits);

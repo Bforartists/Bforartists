@@ -36,18 +36,18 @@ bl_info = {
     "name": "Rock Generator",
     "author": "Paul Marshall (brikbot)",
     "version": (1, 4),
-    "blender": (2, 68, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Rock Generator",
     "description": "Adds a mesh rock to the Add Mesh menu",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Add_Mesh/Rock_Generator",
+    "Scripts/Add_Mesh/Rock_Generator",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Add Mesh"}
 
 
 if "bpy" in locals():
-    import imp
-    imp.reload(rockgen)
+    from importlib import reload
+    reload(rockgen)
 else:
     from add_mesh_rocks import rockgen
 
@@ -55,22 +55,12 @@ import bpy
 
 
 # Register:
-def menu_func_rocks(self, context):
-    self.layout.operator(rockgen.rocks.bl_idname,
-                         text="Rock Generator",
-                         icon="PLUGIN")
-
-
 def register():
-    bpy.utils.register_module(__name__)
-
-    bpy.types.INFO_MT_mesh_add.append(menu_func_rocks)
+    rockgen.register()
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
-    bpy.types.INFO_MT_mesh_add.remove(menu_func_rocks)
+    rockgen.unregister()
 
 
 if __name__ == "__main__":

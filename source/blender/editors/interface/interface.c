@@ -41,6 +41,7 @@
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_workspace_types.h"
 
 #include "BLI_math.h"
 #include "BLI_listbase.h"
@@ -50,6 +51,7 @@
 
 #include "BLI_utildefines.h"
 
+#include "BKE_animsys.h"
 #include "BKE_context.h"
 #include "BKE_idprop.h"
 #include "BKE_main.h"
@@ -57,26 +59,38 @@
 #include "BKE_screen.h"
 #include "BKE_unit.h"
 
-#include "BIF_gl.h"
+#include "GPU_glew.h"
+#include "GPU_matrix.h"
+#include "GPU_state.h"
 
 #include "BLF_api.h"
 #include "BLT_translation.h"
 
 #include "UI_interface.h"
+#include "UI_interface_icons.h"
 
 #include "IMB_imbuf.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
-#include "wm_subwindow.h"
+#include "WM_message.h"
 
 #include "RNA_access.h"
 
 #include "BPY_extern.h"
 
+#include "ED_screen.h"
+#include "ED_numinput.h"
+
 #include "IMB_colormanagement.h"
 
+#include "DEG_depsgraph_query.h"
+
 #include "interface_intern.h"
+
+/* prototypes. */
+static void ui_but_to_pixelrect(struct rcti *rect, const struct ARegion *ar, struct uiBlock *block, struct uiBut *but);
+static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *but_p);
 
 /* avoid unneeded calls to ui_but_value_get */
 #define UI_BUT_VALUE_UNSET DBL_MAX
@@ -205,6 +219,84 @@ void ui_region_to_window(const ARegion *ar, int *x, int *y)
 	*y += ar->winrct.ymin;
 }
 
+static void ui_update_flexible_spacing(const ARegion *region, uiBlock *block)
+{
+	int sepr_flex_len = 0;
+	for (uiBut *but = block->buttons.first; but; but = but->next) {
+		if (but->type == UI_BTYPE_SEPR_SPACER) {
+			sepr_flex_len++;
+		}
+	}
+
+	if (sepr_flex_len == 0) {
+		return;
+	}
+
+	rcti rect;
+	ui_but_to_pixelrect(&rect, region, block, block->buttons.last);
+	const float buttons_width = (float)rect.xmax + UI_HEADER_OFFSET;
+	const float region_width = (float)region->sizex * U.dpi_fac;
+
+	if (region_width <= buttons_width) {
+		return;
+	}
+
+	/* We could get rid of this loop if we agree on a max number of spacer */
+	int *spacers_pos = alloca(sizeof(*spacers_pos) * (size_t)sepr_flex_len);
+	int i = 0;
+	for (uiBut *but = block->buttons.first; but; but = but->next) {
+		if (but->type == UI_BTYPE_SEPR_SPACER) {
+			ui_but_to_pixelrect(&rect, region, block, but);
+			spacers_pos[i] = rect.xmax + UI_HEADER_OFFSET;
+			i++;
+		}
+	}
+
+	const float segment_width = region_width / (float)sepr_flex_len;
+	float offset = 0, remaining_space = region_width - buttons_width;
+	i = 0;
+	for (uiBut *but = block->buttons.first; but; but = but->next) {
+		BLI_rctf_translate(&but->rect, offset, 0);
+		if (but->type == UI_BTYPE_SEPR_SPACER) {
+			/* How much the next block overlap with the current segment */
+			int overlap = (
+			        (i == sepr_flex_len - 1) ?
+			        buttons_width - spacers_pos[i] :
+			        (spacers_pos[i + 1] - spacers_pos[i]) / 2);
+			int segment_end = segment_width * (i + 1);
+			int spacer_end = segment_end - overlap;
+			int spacer_sta = spacers_pos[i] + offset;
+			if (spacer_end > spacer_sta) {
+				float step = min_ff(remaining_space, spacer_end - spacer_sta);
+				remaining_space -= step;
+				offset += step;
+			}
+			i++;
+		}
+	}
+	ui_block_bounds_calc(block);
+}
+
+static void ui_update_window_matrix(const wmWindow *window, const ARegion *region, uiBlock *block)
+{
+	/* window matrix and aspect */
+	if (region && region->visible) {
+		/* Get projection matrix which includes View2D translation and zoom. */
+		GPU_matrix_projection_get(block->winmat);
+		block->aspect = 2.0f / fabsf(region->winx * block->winmat[0][0]);
+	}
+	else {
+		/* No subwindow created yet, for menus for example, so we use the main
+		 * window instead, since buttons are created there anyway. */
+		int width = WM_window_pixels_x(window);
+		int height = WM_window_pixels_y(window);
+		rcti winrct = {0, width - 1, 0, height - 1};
+
+		wmGetProjectionMatrix(block->winmat, &winrct);
+		block->aspect = 2.0f / fabsf(width * block->winmat[0][0]);
+	}
+}
+
 /**
  * Popups will add a margin to #ARegion.winrct for shadow,
  * for interactivity (point-inside tests for eg), we want the winrct without the margin added.
@@ -223,7 +315,7 @@ void ui_region_winrct_get_no_margin(const struct ARegion *ar, struct rcti *r_rec
 
 /* ******************* block calc ************************* */
 
-void ui_block_translate(uiBlock *block, int x, int y)
+void UI_block_translate(uiBlock *block, int x, int y)
 {
 	uiBut *but;
 
@@ -243,7 +335,7 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 	UI_fontstyle_set(&style->widget);
 
 	for (init_col_bt = bt = block->buttons.first; bt; bt = bt->next) {
-		if (!ELEM(bt->type, UI_BTYPE_SEPR, UI_BTYPE_SEPR_LINE)) {
+		if (!ELEM(bt->type, UI_BTYPE_SEPR, UI_BTYPE_SEPR_LINE, UI_BTYPE_SEPR_SPACER)) {
 			j = BLF_width(style->widget.uifont_id, bt->drawstr, sizeof(bt->drawstr));
 
 			if (j > i)
@@ -333,7 +425,7 @@ static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
 	startx = (xmax * 0.5f) - (width * 0.5f);
 	starty = (ymax * 0.5f) - (height * 0.5f);
 
-	ui_block_translate(block, startx - block->rect.xmin, starty - block->rect.ymin);
+	UI_block_translate(block, startx - block->rect.xmin, starty - block->rect.ymin);
 
 	/* now recompute bounds and safety */
 	ui_block_bounds_calc(block);
@@ -347,7 +439,7 @@ static void ui_block_bounds_calc_centered_pie(uiBlock *block)
 	    block->pie_data.pie_center_spawned[1]
 	};
 
-	ui_block_translate(block, xy[0], xy[1]);
+	UI_block_translate(block, xy[0], xy[1]);
 
 	/* now recompute bounds and safety */
 	ui_block_bounds_calc(block);
@@ -407,7 +499,7 @@ static void ui_block_bounds_calc_popup(
 	rect_bounds.ymax = ymax - UI_POPUP_MENU_TOP;
 
 	BLI_rcti_clamp(&rect, &rect_bounds, ofs_dummy);
-	ui_block_translate(block, rect.xmin - block->rect.xmin, rect.ymin - block->rect.ymin);
+	UI_block_translate(block, rect.xmin - block->rect.xmin, rect.ymin - block->rect.ymin);
 
 	/* now recompute bounds and safety */
 	ui_block_bounds_calc(block);
@@ -491,86 +583,6 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
 	return UI_calc_float_precision(prec, value);
 }
 
-/* ************** LINK LINE DRAWING  ************* */
-
-/* link line drawing is not part of buttons or theme.. so we stick with it here */
-
-static void ui_draw_linkline(uiLinkLine *line, int highlightActiveLines, int dashInactiveLines)
-{
-	rcti rect;
-
-	if (line->from == NULL || line->to == NULL) return;
-
-	rect.xmin = BLI_rctf_cent_x(&line->from->rect);
-	rect.ymin = BLI_rctf_cent_y(&line->from->rect);
-	rect.xmax = BLI_rctf_cent_x(&line->to->rect);
-	rect.ymax = BLI_rctf_cent_y(&line->to->rect);
-
-	if (dashInactiveLines)
-		UI_ThemeColor(TH_GRID);
-	else if (line->flag & UI_SELECT)
-		glColor3ub(100, 100, 100);
-	else if (highlightActiveLines && ((line->from->flag & UI_ACTIVE) || (line->to->flag & UI_ACTIVE)))
-		UI_ThemeColor(TH_TEXT_HI);
-	else
-		glColor3ub(0, 0, 0);
-
-	ui_draw_link_bezier(&rect);
-}
-
-static void ui_draw_links(uiBlock *block)
-{
-	uiBut *but;
-	uiLinkLine *line;
-
-	/* Draw the gray out lines. Do this first so they appear at the
-	 * bottom of inactive or active lines.
-	 * As we go, remember if we see any active or selected lines. */
-	bool found_selectline = false;
-	bool found_activeline = false;
-
-	for (but = block->buttons.first; but; but = but->next) {
-		if (but->type == UI_BTYPE_LINK && but->link) {
-			for (line = but->link->lines.first; line; line = line->next) {
-				if (!(line->from->flag & UI_ACTIVE) && !(line->to->flag & UI_ACTIVE)) {
-					if (line->deactive)
-						ui_draw_linkline(line, 0, true);
-				}
-				else
-					found_activeline = true;
-
-				if ((line->from->flag & UI_SELECT) || (line->to->flag & UI_SELECT))
-					found_selectline = true;
-			}
-		}
-	}
-
-	/* Draw the inactive lines (lines with neither button being hovered over) */
-	for (but = block->buttons.first; but; but = but->next) {
-		if (but->type == UI_BTYPE_LINK && but->link) {
-			for (line = but->link->lines.first; line; line = line->next) {
-				if (!(line->from->flag & UI_ACTIVE) && !(line->to->flag & UI_ACTIVE)) {
-					if (!line->deactive)
-						ui_draw_linkline(line, 0, false);
-				}
-			}
-		}
-	}
-
-	/* Draw any active lines (lines with either button being hovered over).
-	 * Do this last so they appear on top of inactive and gray out lines. */
-	if (found_activeline) {
-		for (but = block->buttons.first; but; but = but->next) {
-			if (but->type == UI_BTYPE_LINK && but->link) {
-				for (line = but->link->lines.first; line; line = line->next) {
-					if ((line->from->flag & UI_ACTIVE) || (line->to->flag & UI_ACTIVE))
-						ui_draw_linkline(line, !found_selectline, false);
-				}
-			}
-		}
-	}
-}
-
 /* ************** BLOCK ENDING FUNCTION ************* */
 
 /* NOTE: if but->poin is allocated memory for every defbut, things fail... */
@@ -611,38 +623,6 @@ uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old)
 		}
 	}
 	return but_new;
-}
-
-/* oldbut is being inserted in new block, so we use the lines from new button, and replace button pointers */
-static void ui_but_update_linklines(uiBlock *block, uiBut *oldbut, uiBut *newbut)
-{
-	uiLinkLine *line;
-	uiBut *but;
-
-	/* if active button is UI_BTYPE_LINK */
-	if (newbut->type == UI_BTYPE_LINK && newbut->link) {
-
-		SWAP(uiLink *, oldbut->link, newbut->link);
-
-		for (line = oldbut->link->lines.first; line; line = line->next) {
-			if (line->to == newbut)
-				line->to = oldbut;
-			if (line->from == newbut)
-				line->from = oldbut;
-		}
-	}
-
-	/* check all other button links */
-	for (but = block->buttons.first; but; but = but->next) {
-		if (but != newbut && but->type == UI_BTYPE_LINK && but->link) {
-			for (line = but->link->lines.first; line; line = line->next) {
-				if (line->to == newbut)
-					line->to = oldbut;
-				if (line->from == newbut)
-					line->from = oldbut;
-			}
-		}
-	}
 }
 
 /**
@@ -701,8 +681,6 @@ static bool ui_but_update_from_old_block(const bContext *C, uiBlock *block, uiBu
 		but->selend = oldbut->selend;
 		but->softmin = oldbut->softmin;
 		but->softmax = oldbut->softmax;
-		but->linkto[0] = oldbut->linkto[0];
-		but->linkto[1] = oldbut->linkto[1];
 		oldbut->active = NULL;
 #endif
 
@@ -743,8 +721,6 @@ static bool ui_but_update_from_old_block(const bContext *C, uiBlock *block, uiBu
 		if (ELEM(oldbut->type, UI_BTYPE_PROGRESS_BAR)) {
 			oldbut->a1 = but->a1;
 		}
-
-		ui_but_update_linklines(block, oldbut, but);
 
 		if (!BLI_listbase_is_empty(&block->butstore)) {
 			UI_butstore_register_update(block, oldbut, but);
@@ -968,6 +944,7 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
 		MEM_freeN(butstr_orig);
 		but->str = but->strdata;
 		but->flag |= UI_BUT_HAS_SEP_CHAR;
+		but->drawflag |= UI_BUT_HAS_SHORTCUT;
 		ui_but_update(but);
 	}
 }
@@ -1012,14 +989,49 @@ static bool ui_but_event_operator_string_from_menu(
 	IDP_AddToGroup(prop_menu, IDP_NewString(mt->idname, "name", sizeof(mt->idname)));
 
 	if (WM_key_event_operator_string(
-	        C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true,
-	        buf, buf_len))
+	            C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true,
+	            buf, buf_len))
 	{
 		found = true;
 	}
 
 	IDP_FreeProperty(prop_menu);
 	MEM_freeN(prop_menu);
+	return found;
+}
+
+static bool ui_but_event_operator_string_from_panel(
+        const bContext *C, uiBut *but,
+        char *buf, const size_t buf_len)
+{
+	/** Nearly exact copy of #ui_but_event_operator_string_from_menu */
+	PanelType *pt = UI_but_paneltype_get(but);
+	BLI_assert(pt != NULL);
+
+	bool found = false;
+	IDProperty *prop_panel;
+
+	/* annoying, create a property */
+	IDPropertyTemplate val = {0};
+	prop_panel = IDP_New(IDP_GROUP, &val, __func__); /* dummy, name is unimportant  */
+	IDP_AddToGroup(prop_panel, IDP_NewString(pt->idname, "name", sizeof(pt->idname)));
+	IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &(IDPropertyTemplate){ .i = pt->space_type, }, "space_type"));
+	IDP_AddToGroup(prop_panel, IDP_New(IDP_INT, &(IDPropertyTemplate){ .i = pt->region_type, }, "region_type"));
+
+	for (int i = 0; i < 2; i++) {
+		/* FIXME(campbell): We can't reasonably search all configurations - long term. */
+		IDP_ReplaceInGroup(prop_panel, IDP_New(IDP_INT, &(IDPropertyTemplate){ .i = i, }, "keep_open"));
+		if (WM_key_event_operator_string(
+		            C, "WM_OT_call_panel", WM_OP_INVOKE_REGION_WIN, prop_panel, true,
+		            buf, buf_len))
+		{
+			found = true;
+			break;
+		}
+	}
+
+	IDP_FreeProperty(prop_panel);
+	MEM_freeN(prop_panel);
 	return found;
 }
 
@@ -1035,6 +1047,9 @@ static bool ui_but_event_operator_string(
 	else if (UI_but_menutype_get(but) != NULL) {
 		found = ui_but_event_operator_string_from_menu(C, but, buf, buf_len);
 	}
+	else if (UI_but_paneltype_get(but) != NULL) {
+		found = ui_but_event_operator_string_from_panel(C, but, buf, buf_len);
+	}
 
 	return found;
 }
@@ -1044,6 +1059,11 @@ static bool ui_but_event_property_operator_string(
         char *buf, const size_t buf_len)
 {
 	/* context toggle operator names to check... */
+
+	/* This function could use a refactor to generalize button type to operator relationship
+	 * as well as which operators use properties.
+	 * - Campbell
+	 * */
 	const char *ctx_toggle_opnames[] = {
 		"WM_OT_context_toggle",
 		"WM_OT_context_toggle_enum",
@@ -1053,54 +1073,110 @@ static bool ui_but_event_property_operator_string(
 		"WM_OT_context_menu_enum",
 		NULL
 	};
-	const size_t num_ops = sizeof(ctx_toggle_opnames) / sizeof(const char *);
+
+	const char *ctx_enum_opnames[] = {
+		"WM_OT_context_set_enum",
+		NULL
+	};
+
+	const char *ctx_enum_opnames_for_Area_ui_type[] = {
+		"SCREEN_OT_space_type_set_or_cycle",
+		NULL
+	};
+
+	const char **opnames = ctx_toggle_opnames;
+	int          opnames_len = ARRAY_SIZE(ctx_toggle_opnames);
+
+
+	int  prop_enum_value = -1;
+	bool prop_enum_value_ok = false;
+	bool prop_enum_value_is_int = false;
+	const char *prop_enum_value_id = "value";
+	PointerRNA *ptr = &but->rnapoin;
+	PropertyRNA *prop = but->rnaprop;
+	if ((but->type == UI_BTYPE_BUT_MENU) && (but->block->handle != NULL)) {
+		uiBut *but_parent = but->block->handle->popup_create_vars.but;
+		if ((but->type == UI_BTYPE_BUT_MENU) &&
+		    (but_parent && but_parent->rnaprop) &&
+		    (RNA_property_type(but_parent->rnaprop) == PROP_ENUM) &&
+		    (but_parent->menu_create_func == ui_def_but_rna__menu))
+		{
+			prop_enum_value = (int)but->hardmin;
+			ptr = &but_parent->rnapoin;
+			prop = but_parent->rnaprop;
+			prop_enum_value_ok = true;
+
+			opnames = ctx_enum_opnames;
+			opnames_len = ARRAY_SIZE(ctx_enum_opnames);
+		}
+	}
 
 	bool found = false;
 
+	/* Don't use the button again. */
+	but = NULL;
+
 	/* this version is only for finding hotkeys for properties (which get set via context using operators) */
-	if (but->rnaprop) {
+	if (prop) {
 		/* to avoid massive slowdowns on property panels, for now, we only check the
 		 * hotkeys for Editor / Scene settings...
 		 *
 		 * TODO: userpref settings?
 		 */
-		// TODO: value (for enum stuff)?
 		char *data_path = NULL;
 
-		if (but->rnapoin.id.data) {
-			ID *id = but->rnapoin.id.data;
+		if (ptr->id.data) {
+			ID *id = ptr->id.data;
 
 			if (GS(id->name) == ID_SCR) {
 				/* screen/editor property
 				 * NOTE: in most cases, there is actually no info for backwards tracing
 				 * how to get back to ID from the editor data we may be dealing with
 				 */
-				if (RNA_struct_is_a(but->rnapoin.type, &RNA_Space)) {
+				if (RNA_struct_is_a(ptr->type, &RNA_Space)) {
 					/* data should be directly on here... */
-					data_path = BLI_sprintfN("space_data.%s", RNA_property_identifier(but->rnaprop));
+					data_path = BLI_sprintfN("space_data.%s", RNA_property_identifier(prop));
+				}
+				else if (RNA_struct_is_a(ptr->type, &RNA_Area)) {
+					/* data should be directly on here... */
+					const char *prop_id = RNA_property_identifier(prop);
+					/* Hack since keys access 'type', UI shows 'ui_type'. */
+					if (STREQ(prop_id, "ui_type")) {
+						prop_id = "type";
+						prop_enum_value >>= 16;
+						prop = RNA_struct_find_property(ptr, prop_id);
+
+						opnames = ctx_enum_opnames_for_Area_ui_type;
+						opnames_len = ARRAY_SIZE(ctx_enum_opnames_for_Area_ui_type);
+						prop_enum_value_id = "space_type";
+						prop_enum_value_is_int = true;
+					}
+					else {
+						data_path = BLI_sprintfN("area.%s", prop_id);
+					}
 				}
 				else {
 					/* special exceptions for common nested data in editors... */
-					if (RNA_struct_is_a(but->rnapoin.type, &RNA_DopeSheet)) {
+					if (RNA_struct_is_a(ptr->type, &RNA_DopeSheet)) {
 						/* dopesheet filtering options... */
-						data_path = BLI_sprintfN("space_data.dopesheet.%s", RNA_property_identifier(but->rnaprop));
+						data_path = BLI_sprintfN("space_data.dopesheet.%s", RNA_property_identifier(prop));
 					}
-					else if (RNA_struct_is_a(but->rnapoin.type, &RNA_FileSelectParams)) {
+					else if (RNA_struct_is_a(ptr->type, &RNA_FileSelectParams)) {
 						/* Filebrowser options... */
-						data_path = BLI_sprintfN("space_data.params.%s", RNA_property_identifier(but->rnaprop));
+						data_path = BLI_sprintfN("space_data.params.%s", RNA_property_identifier(prop));
 					}
 				}
 			}
 			else if (GS(id->name) == ID_SCE) {
-				if (RNA_struct_is_a(but->rnapoin.type, &RNA_ToolSettings)) {
+				if (RNA_struct_is_a(ptr->type, &RNA_ToolSettings)) {
 					/* toolsettings property
 					 * NOTE: toolsettings is usually accessed directly (i.e. not through scene)
 					 */
-					data_path = RNA_path_from_ID_to_property(&but->rnapoin, but->rnaprop);
+					data_path = RNA_path_from_ID_to_property(ptr, prop);
 				}
 				else {
 					/* scene property */
-					char *path = RNA_path_from_ID_to_property(&but->rnapoin, but->rnaprop);
+					char *path = RNA_path_from_ID_to_property(ptr, prop);
 
 					if (path) {
 						data_path = BLI_sprintfN("scene.%s", path);
@@ -1109,7 +1185,7 @@ static bool ui_but_event_property_operator_string(
 #if 0
 					else {
 						printf("ERROR in %s(): Couldn't get path for scene property - %s\n",
-						       __func__, RNA_property_identifier(but->rnaprop));
+						       __func__, RNA_property_identifier(prop));
 					}
 #endif
 				}
@@ -1118,27 +1194,50 @@ static bool ui_but_event_property_operator_string(
 				//puts("other id");
 			}
 
-			//printf("prop shortcut: '%s' (%s)\n", RNA_property_identifier(but->rnaprop), data_path);
+			//printf("prop shortcut: '%s' (%s)\n", RNA_property_identifier(prop), data_path);
 		}
 
 		/* we have a datapath! */
-		if (data_path) {
-			size_t i;
-
+		if (data_path || (prop_enum_value_ok && prop_enum_value_id)) {
 			/* create a property to host the "datapath" property we're sending to the operators */
 			IDProperty *prop_path;
-			IDProperty *prop_path_value;
 
 			IDPropertyTemplate val = {0};
 			prop_path = IDP_New(IDP_GROUP, &val, __func__);
-			prop_path_value = IDP_NewString(data_path, "data_path", strlen(data_path) + 1);
-			IDP_AddToGroup(prop_path, prop_path_value);
+			if (data_path) {
+				IDP_AddToGroup(prop_path, IDP_NewString(data_path, "data_path", strlen(data_path) + 1));
+			}
+			if (prop_enum_value_ok) {
+				const EnumPropertyItem *item;
+				bool free;
+				RNA_property_enum_items((bContext *)C, ptr, prop, &item, NULL, &free);
+				int index = RNA_enum_from_value(item, prop_enum_value);
+				if (index != -1) {
+					IDProperty *prop_value;
+					if (prop_enum_value_is_int) {
+						int value = item[index].value;
+						prop_value = IDP_New(IDP_INT, &(IDPropertyTemplate){ .i = value, }, prop_enum_value_id);
+					}
+					else {
+						const char *id = item[index].identifier;
+						prop_value = IDP_NewString(id, prop_enum_value_id, strlen(id) + 1);
+					}
+					IDP_AddToGroup(prop_path, prop_value);
+				}
+				else {
+					opnames_len = 0;  /* Do nothing. */
+				}
+				if (free) {
+					MEM_freeN((void *)item);
+				}
+			}
 
 			/* check each until one works... */
-			for (i = 0; (i < num_ops) && (ctx_toggle_opnames[i]); i++) {
+
+			for (int i = 0; (i < opnames_len) && (opnames[i]); i++) {
 				if (WM_key_event_operator_string(
-				        C, ctx_toggle_opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false,
-				        buf, buf_len))
+				            C, opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false,
+				            buf, buf_len))
 				{
 					found = true;
 					break;
@@ -1148,7 +1247,9 @@ static bool ui_but_event_property_operator_string(
 			/* cleanup */
 			IDP_FreeProperty(prop_path);
 			MEM_freeN(prop_path);
-			MEM_freeN(data_path);
+			if (data_path) {
+				MEM_freeN(data_path);
+			}
 		}
 	}
 
@@ -1200,11 +1301,15 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
 	uiBut *but;
 	char buf[128];
 
-	BLI_assert(block->flag & UI_BLOCK_LOOP);
+	BLI_assert(block->flag & (UI_BLOCK_LOOP | UI_BLOCK_SHOW_SHORTCUT_ALWAYS));
 
 	/* only do it before bounding */
-	if (block->rect.xmin != block->rect.xmax)
+	if (block->rect.xmin != block->rect.xmax) {
 		return;
+	}
+	if (STREQ(block->name, "splash")) {
+		return;
+	}
 
 	if (block->flag & UI_BLOCK_RADIAL) {
 		for (but = block->buttons.first; but; but = but->next) {
@@ -1216,7 +1321,17 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
 	}
 	else {
 		for (but = block->buttons.first; but; but = but->next) {
-			if (but->dt != UI_EMBOSS_PULLDOWN) {
+			if (block->flag & UI_BLOCK_SHOW_SHORTCUT_ALWAYS) {
+				/* Skip icon-only buttons (as used in the toolbar). */
+				if (but->drawstr[0] == '\0') {
+					continue;
+				}
+				else if (((block->flag & UI_BLOCK_POPOVER) == 0) && UI_but_is_tool(but)) {
+					/* For non-popovers, shown in shortcut only (has special shortcut handling code). */
+					continue;
+				}
+			}
+			else if (but->dt != UI_EMBOSS_PULLDOWN) {
 				continue;
 			}
 
@@ -1227,6 +1342,18 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
 				ui_but_add_shortcut(but, buf, false);
 			}
 		}
+	}
+}
+
+void ui_but_override_flag(uiBut *but)
+{
+	const int override_status = RNA_property_static_override_status(&but->rnapoin, but->rnaprop, but->rnaindex);
+
+	if (override_status & RNA_OVERRIDE_STATUS_OVERRIDDEN) {
+		but->flag |= UI_BUT_OVERRIDEN;
+	}
+	else {
+		but->flag &= ~UI_BUT_OVERRIDEN;
 	}
 }
 
@@ -1267,6 +1394,7 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
 {
 	wmWindow *window = CTX_wm_window(C);
 	Scene *scene = CTX_data_scene(C);
+	ARegion *region = CTX_wm_region(C);
 	uiBut *but;
 
 	BLI_assert(block->active);
@@ -1294,6 +1422,10 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
 		}
 
 		ui_but_anim_flag(but, (scene) ? scene->r.cfra : 0.0f);
+		ui_but_override_flag(but);
+		if (UI_but_is_decorator(but)) {
+			ui_but_anim_decorate_update_from_flag(but);
+		}
 	}
 
 
@@ -1302,12 +1434,12 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
 	if (block->layouts.first) {
 		UI_block_layout_resolve(block, NULL, NULL);
 	}
-	ui_block_align_calc(block);
+	ui_block_align_calc(block, CTX_wm_region(C));
 	if ((block->flag & UI_BLOCK_LOOP) && (block->flag & UI_BLOCK_NUMSELECT)) {
 		ui_menu_block_set_keyaccels(block); /* could use a different flag to check */
 	}
 
-	if (block->flag & UI_BLOCK_LOOP) {
+	if (block->flag & (UI_BLOCK_LOOP | UI_BLOCK_SHOW_SHORTCUT_ALWAYS)) {
 		ui_menu_block_set_keymaps(C, block);
 	}
 
@@ -1341,6 +1473,8 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
 	if (block->flag & UI_BUT_ALIGN) {
 		UI_block_align_end(block);
 	}
+
+	ui_update_flexible_spacing(region, block);
 
 	block->endblock = 1;
 }
@@ -1388,7 +1522,6 @@ void UI_block_draw(const bContext *C, uiBlock *block)
 	ARegion *ar;
 	uiBut *but;
 	rcti rect;
-	int multisample_enabled;
 
 	/* get menu region or area region */
 	ar = CTX_wm_menu(C);
@@ -1398,13 +1531,8 @@ void UI_block_draw(const bContext *C, uiBlock *block)
 	if (!block->endblock)
 		UI_block_end(C, block);
 
-	/* disable AA, makes widgets too blurry */
-	multisample_enabled = glIsEnabled(GL_MULTISAMPLE);
-	if (multisample_enabled)
-		glDisable(GL_MULTISAMPLE);
-
 	/* we set this only once */
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
 
 	/* scale fonts */
 	ui_fontscale(&style.paneltitle.points, block->aspect);
@@ -1416,21 +1544,29 @@ void UI_block_draw(const bContext *C, uiBlock *block)
 	ui_but_to_pixelrect(&rect, ar, block, NULL);
 
 	/* pixel space for AA widgets */
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
+	GPU_matrix_push_projection();
+	GPU_matrix_push();
+	GPU_matrix_identity_set();
 
 	wmOrtho2_region_pixelspace(ar);
 
 	/* back */
 	if (block->flag & UI_BLOCK_RADIAL)
 		ui_draw_pie_center(block);
+	else if (block->flag & UI_BLOCK_POPOVER)
+		ui_draw_popover_back(ar, &style, block, &rect);
 	else if (block->flag & UI_BLOCK_LOOP)
 		ui_draw_menu_back(&style, block, &rect);
-	else if (block->panel)
-		ui_draw_aligned_panel(&style, block, &rect, UI_panel_category_is_visible(ar));
+	else if (block->panel) {
+		bool show_background = ar->alignment != RGN_ALIGN_FLOAT;
+		ui_draw_aligned_panel(
+		        &style, block, &rect,
+		        UI_panel_category_is_visible(ar), show_background);
+	}
+
+	BLF_batch_draw_begin();
+	UI_icon_draw_cache_begin();
+	UI_widgetbase_draw_cache_begin();
 
 	/* widgets */
 	for (but = block->buttons.first; but; but = but->next) {
@@ -1444,16 +1580,47 @@ void UI_block_draw(const bContext *C, uiBlock *block)
 		}
 	}
 
+	UI_widgetbase_draw_cache_end();
+	UI_icon_draw_cache_end();
+	BLF_batch_draw_end();
+
 	/* restore matrix */
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	GPU_matrix_pop_projection();
+	GPU_matrix_pop();
+}
 
-	if (multisample_enabled)
-		glEnable(GL_MULTISAMPLE);
+static void ui_block_message_subscribe(ARegion *ar, struct wmMsgBus *mbus, uiBlock *block)
+{
+	uiBut *but_prev = NULL;
+	/* possibly we should keep the region this block is contained in? */
+	for (uiBut *but = block->buttons.first; but; but = but->next) {
+		if (but->rnapoin.type && but->rnaprop) {
+			/* quick check to avoid adding buttons representing a vector, multiple times. */
+			if ((but_prev &&
+			     (but_prev->rnaprop == but->rnaprop) &&
+			     (but_prev->rnapoin.type == but->rnapoin.type) &&
+			     (but_prev->rnapoin.data == but->rnapoin.data) &&
+			     (but_prev->rnapoin.id.data == but->rnapoin.id.data)) == false)
+			{
+				/* TODO: could make this into utility function. */
+				WM_msg_subscribe_rna(
+				        mbus, &but->rnapoin, but->rnaprop,
+				        &(const wmMsgSubscribeValue){
+				            .owner = ar,
+				            .user_data = ar,
+				            .notify = ED_region_do_msg_notify_tag_redraw,
+				        }, __func__);
+				but_prev = but;
+			}
+		}
+	}
+}
 
-	ui_draw_links(block);
+void UI_region_message_subscribe(ARegion *ar, struct wmMsgBus *mbus)
+{
+	for (uiBlock *block = ar->uiblocks.first; block; block = block->next) {
+		ui_block_message_subscribe(ar, mbus, block);
+	}
 }
 
 /* ************* EVENTS ************* */
@@ -1502,6 +1669,22 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
 				break;
 			case UI_BTYPE_ROW:
 			case UI_BTYPE_LISTROW:
+			case UI_BTYPE_TAB:
+				if ((but->type == UI_BTYPE_TAB) && but->rnaprop && but->custom_data) {
+					/* uiBut.custom_data points to data this tab represents (e.g. workspace).
+					 * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+					if (RNA_property_type(but->rnaprop) == PROP_POINTER) {
+						PointerRNA active_ptr = RNA_property_pointer_get(&but->rnapoin, but->rnaprop);
+						if (active_ptr.data == but->custom_data) {
+							is_push = true;
+						}
+					}
+					break;
+				}
+				else if (but->optype) {
+					break;
+				}
+
 				UI_GET_BUT_VALUE_INIT(but, *value);
 				/* support for rna enum buts */
 				if (but->rnaprop && (RNA_property_flag(but->rnaprop) & PROP_ENUM_FLAG)) {
@@ -1537,83 +1720,6 @@ static void ui_but_update_select_flag(uiBut *but, double *value)
 	}
 }
 
-static uiBut *ui_linkline_find_inlink(uiBlock *block, void *poin)
-{
-	uiBut *but;
-
-	but = block->buttons.first;
-	while (but) {
-		if (but->type == UI_BTYPE_INLINK) {
-			if (but->poin == poin) return but;
-		}
-		but = but->next;
-	}
-	return NULL;
-}
-
-static void ui_linkline_add(ListBase *listb, uiBut *but, uiBut *bt, short deactive)
-{
-	uiLinkLine *line;
-
-	line = MEM_callocN(sizeof(uiLinkLine), "linkline");
-	BLI_addtail(listb, line);
-	line->from = but;
-	line->to = bt;
-	line->deactive = deactive;
-}
-
-uiBut *UI_block_links_find_inlink(uiBlock *block, void *poin)
-{
-	return ui_linkline_find_inlink(block, poin);
-}
-
-void UI_block_links_compose(uiBlock *block)
-{
-	uiBut *but, *bt;
-	uiLink *link;
-	void ***ppoin;
-	int a;
-
-	but = block->buttons.first;
-	while (but) {
-		if (but->type == UI_BTYPE_LINK) {
-			link = but->link;
-
-			/* for all pointers in the array */
-			if (link) {
-				if (link->ppoin) {
-					ppoin = link->ppoin;
-					for (a = 0; a < *(link->totlink); a++) {
-						bt = ui_linkline_find_inlink(block, (*ppoin)[a]);
-						if (bt) {
-							if ((but->flag & UI_BUT_SCA_LINK_GREY) || (bt->flag & UI_BUT_SCA_LINK_GREY)) {
-								ui_linkline_add(&link->lines, but, bt, true);
-							}
-							else {
-								ui_linkline_add(&link->lines, but, bt, false);
-							}
-
-						}
-					}
-				}
-				else if (link->poin) {
-					bt = ui_linkline_find_inlink(block, *link->poin);
-					if (bt) {
-						if ((but->flag & UI_BUT_SCA_LINK_GREY) || (bt->flag & UI_BUT_SCA_LINK_GREY)) {
-							ui_linkline_add(&link->lines, but, bt, true);
-						}
-						else {
-							ui_linkline_add(&link->lines, but, bt, false);
-						}
-					}
-				}
-			}
-		}
-		but = but->next;
-	}
-}
-
-
 /* ************************************************ */
 
 void UI_block_lock_set(uiBlock *block, bool val, const char *lockstr)
@@ -1630,47 +1736,77 @@ void UI_block_lock_clear(uiBlock *block)
 	block->lockstr = NULL;
 }
 
-/* *************************************************************** */
-
-void ui_linkline_remove(uiLinkLine *line, uiBut *but)
-{
-	uiLink *link;
-	int a, b;
-
-	BLI_remlink(&but->link->lines, line);
-
-	link = line->from->link;
-
-	/* are there more pointers allowed? */
-	if (link->ppoin) {
-
-		if (*(link->totlink) == 1) {
-			*(link->totlink) = 0;
-			MEM_freeN(*(link->ppoin));
-			*(link->ppoin) = NULL;
-		}
-		else {
-			b = 0;
-			for (a = 0; a < (*(link->totlink)); a++) {
-				if ((*(link->ppoin))[a] != line->to->poin) {
-					(*(link->ppoin))[b] = (*(link->ppoin))[a];
-					b++;
-				}
-			}
-			(*(link->totlink))--;
-		}
-	}
-	else {
-		*(link->poin) = NULL;
-	}
-
-	MEM_freeN(line);
-	//REDRAW
-}
-
 /* *********************** data get/set ***********************
  * this either works with the pointed to data, or can work with
  * an edit override pointer while dragging for example */
+
+/* Get PointerRNA which will point to a data inside of an evaluated
+ * ID datablock.
+ */
+static PointerRNA ui_but_evaluated_rnapoin_get(uiBut *but)
+{
+	BLI_assert(but->rnaprop != NULL);
+	/* TODO(sergey): evil_C sounds.. EVIL! Any clear way to avoid this? */
+	PointerRNA rnapoin_eval = but->rnapoin;
+	/* If there is no animation or drivers, it doesn't matter if we read value
+	 * from evaluated datablock or from original one.
+	 *
+	 * Reading from original one is much faster, since we don't need to do any
+	 * PointerRNA remapping or hash lookup.
+	 */
+	if (BKE_animdata_from_id(but->rnapoin.id.data) == NULL) {
+		return rnapoin_eval;
+	}
+	/* Same goes for the properties which can not be animated. */
+	if (!RNA_property_animateable(&but->rnapoin, but->rnaprop)) {
+		return rnapoin_eval;
+	}
+	Depsgraph *depsgraph = CTX_data_depsgraph(but->block->evil_C);
+	/* ID pointer we can always remap, they are inside of depsgraph. */
+	rnapoin_eval.id.data =
+	        DEG_get_evaluated_id(depsgraph, rnapoin_eval.id.data);
+	/* Some of ID datablocks do not have their evaluated copy inside
+	 * of dependency graph. If it's such datablock, no need to worry about
+	 * data pointer.
+	 */
+	if (rnapoin_eval.id.data == but->rnapoin.id.data) {
+		return rnapoin_eval;
+	}
+	/* For the data pointer it's getting a bit more involved, since it can
+	 * whether be and ID, or can be a property deep inside of ID.
+	 *
+	 * We start from checking if it's an ID, since that is the less involved
+	 * code path, and probably is executed in most of the cases.
+	 */
+	if (but->rnapoin.data == but->rnapoin.id.data) {
+		rnapoin_eval.data = DEG_get_evaluated_id(depsgraph, rnapoin_eval.data);
+		return rnapoin_eval;
+	}
+	/* We aren't as lucky as we thought we are :(
+	 *
+	 * Since we don't know what the property is, we get it's RNA path
+	 * relative to the original ID, and then we decent down from evaluated
+	 * ID to the same property.
+	 *
+	 * This seems to be most straightforward way to get sub-data pointers
+	 * which can be buried deep inside of ID block.
+	 */
+	const char *rna_path =
+	       RNA_path_from_ID_to_property(&but->rnapoin, but->rnaprop);
+	if (rna_path != NULL) {
+		PointerRNA id_ptr;
+		RNA_id_pointer_create(rnapoin_eval.id.data, &id_ptr);
+		if (!RNA_path_resolve_full(&id_ptr,
+		                           rna_path,
+		                           &rnapoin_eval,
+		                           NULL, NULL))
+		{
+			/* TODO(sergey): Anything to do here to recover? */
+		}
+		MEM_freeN((void *)rna_path);
+	}
+	return rnapoin_eval;
+}
 
 /* for buttons pointing to color for example */
 void ui_but_v3_get(uiBut *but, float vec[3])
@@ -1687,16 +1823,18 @@ void ui_but_v3_get(uiBut *but, float vec[3])
 
 		zero_v3(vec);
 
+		PointerRNA rnapoin_eval = ui_but_evaluated_rnapoin_get(but);
+
 		if (RNA_property_type(prop) == PROP_FLOAT) {
-			int tot = RNA_property_array_length(&but->rnapoin, prop);
+			int tot = RNA_property_array_length(&rnapoin_eval, prop);
 			BLI_assert(tot > 0);
 			if (tot == 3) {
-				RNA_property_float_get_array(&but->rnapoin, prop, vec);
+				RNA_property_float_get_array(&rnapoin_eval, prop, vec);
 			}
 			else {
 				tot = min_ii(tot, 3);
 				for (a = 0; a < tot; a++) {
-					vec[a] = RNA_property_float_get_index(&but->rnapoin, prop, a);
+					vec[a] = RNA_property_float_get_index(&rnapoin_eval, prop, a);
 				}
 			}
 		}
@@ -1778,7 +1916,7 @@ bool ui_but_is_float(const uiBut *but)
 
 bool ui_but_is_bool(const uiBut *but)
 {
-	if (ELEM(but->type, UI_BTYPE_TOGGLE, UI_BTYPE_TOGGLE_N, UI_BTYPE_ICON_TOGGLE, UI_BTYPE_ICON_TOGGLE_N))
+	if (ELEM(but->type, UI_BTYPE_TOGGLE, UI_BTYPE_TOGGLE_N, UI_BTYPE_ICON_TOGGLE, UI_BTYPE_ICON_TOGGLE_N, UI_BTYPE_TAB))
 		return true;
 
 	if (but->rnaprop && RNA_property_type(but->rnaprop) == PROP_BOOLEAN)
@@ -1876,27 +2014,29 @@ double ui_but_value_get(uiBut *but)
 
 		BLI_assert(but->rnaindex != -1);
 
+		PointerRNA rnapoin_eval = ui_but_evaluated_rnapoin_get(but);
+
 		switch (RNA_property_type(prop)) {
 			case PROP_BOOLEAN:
 				if (RNA_property_array_check(prop))
-					value = RNA_property_boolean_get_index(&but->rnapoin, prop, but->rnaindex);
+					value = RNA_property_boolean_get_index(&rnapoin_eval, prop, but->rnaindex);
 				else
-					value = RNA_property_boolean_get(&but->rnapoin, prop);
+					value = RNA_property_boolean_get(&rnapoin_eval, prop);
 				break;
 			case PROP_INT:
 				if (RNA_property_array_check(prop))
-					value = RNA_property_int_get_index(&but->rnapoin, prop, but->rnaindex);
+					value = RNA_property_int_get_index(&rnapoin_eval, prop, but->rnaindex);
 				else
-					value = RNA_property_int_get(&but->rnapoin, prop);
+					value = RNA_property_int_get(&rnapoin_eval, prop);
 				break;
 			case PROP_FLOAT:
 				if (RNA_property_array_check(prop))
-					value = RNA_property_float_get_index(&but->rnapoin, prop, but->rnaindex);
+					value = RNA_property_float_get_index(&rnapoin_eval, prop, but->rnaindex);
 				else
-					value = RNA_property_float_get(&but->rnapoin, prop);
+					value = RNA_property_float_get(&rnapoin_eval, prop);
 				break;
 			case PROP_ENUM:
-				value = RNA_property_enum_get(&but->rnapoin, prop);
+				value = RNA_property_enum_get(&rnapoin_eval, prop);
 				break;
 			default:
 				value = 0.0;
@@ -2039,7 +2179,7 @@ static bool ui_but_icon_extra_is_visible_text_clear(const uiBut *but)
 
 static bool ui_but_icon_extra_is_visible_search_unlink(const uiBut *but)
 {
-	BLI_assert(but->type == UI_BTYPE_SEARCH_MENU);
+	BLI_assert(ELEM(but->type, UI_BTYPE_SEARCH_MENU));
 	return ((but->editstr == NULL) &&
 	        (but->drawstr[0] != '\0') &&
 	        (but->flag & UI_BUT_VALUE_CLEAR));
@@ -2124,12 +2264,11 @@ void ui_but_convert_to_unit_alt_name(uiBut *but, char *str, size_t maxlen)
 }
 
 /**
- * \param float_precision  Override the button precision.
+ * \param float_precision: Override the button precision.
  */
 static void ui_get_but_string_unit(uiBut *but, char *str, int len_max, double value, bool pad, int float_precision)
 {
 	UnitSettings *unit = but->block->unit;
-	const bool do_split = (unit->flag & USER_UNIT_OPT_SPLIT) != 0;
 	int unit_type = UI_but_unit_type_get(but);
 	int precision;
 
@@ -2146,9 +2285,9 @@ static void ui_get_but_string_unit(uiBut *but, char *str, int len_max, double va
 		precision = float_precision;
 	}
 
-	bUnit_AsString(
+	bUnit_AsString2(
 	        str, len_max, ui_get_but_scale_unit(but, value), precision,
-	        unit->system, RNA_SUBTYPE_UNIT_VALUE(unit_type), do_split, pad);
+	        RNA_SUBTYPE_UNIT_VALUE(unit_type), unit, pad);
 }
 
 static float ui_get_but_step_unit(uiBut *but, float step_default)
@@ -2187,8 +2326,8 @@ static float ui_get_but_step_unit(uiBut *but, float step_default)
 }
 
 /**
- * \param float_precision  For number buttons the precision to use or -1 to fallback to the button default.
- * \param use_exp_float  Use exponent representation of floats when out of reasonable range (outside of 1e3/1e-3).
+ * \param float_precision: For number buttons the precision to use or -1 to fallback to the button default.
+ * \param use_exp_float: Use exponent representation of floats when out of reasonable range (outside of 1e3/1e-3).
  */
 void ui_but_string_get_ex(uiBut *but, char *str, const size_t maxlen, const int float_precision, const bool use_exp_float, bool *r_use_exp_float)
 {
@@ -2196,14 +2335,23 @@ void ui_but_string_get_ex(uiBut *but, char *str, const size_t maxlen, const int 
 		*r_use_exp_float = false;
 	}
 
-	if (but->rnaprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+	if (but->rnaprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU, UI_BTYPE_TAB)) {
 		PropertyType type;
 		const char *buf = NULL;
 		int buf_len;
 
 		type = RNA_property_type(but->rnaprop);
 
-		if (type == PROP_STRING) {
+		if ((but->type == UI_BTYPE_TAB) && (but->custom_data)) {
+			StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
+			PointerRNA ptr;
+
+			/* uiBut.custom_data points to data this tab represents (e.g. workspace).
+			 * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+			RNA_pointer_create(but->rnapoin.id.data, ptr_type, but->custom_data, &ptr);
+			buf = RNA_struct_name_get_alloc(&ptr, str, maxlen, &buf_len);
+		}
+		else if (type == PROP_STRING) {
 			/* RNA string */
 			buf = RNA_property_string_get_alloc(&but->rnapoin, but->rnaprop, str, maxlen, &buf_len);
 		}
@@ -2239,12 +2387,7 @@ void ui_but_string_get_ex(uiBut *but, char *str, const size_t maxlen, const int 
 			MEM_freeN((void *)buf);
 		}
 	}
-	else if (but->type == UI_BTYPE_TEXT) {
-		/* string */
-		BLI_strncpy(str, but->poin, maxlen);
-		return;
-	}
-	else if (but->type == UI_BTYPE_SEARCH_MENU) {
+	else if (ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
 		/* string */
 		BLI_strncpy(str, but->poin, maxlen);
 		return;
@@ -2354,26 +2497,12 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
 	return str;
 }
 
-#ifdef WITH_PYTHON
-
 static bool ui_set_but_string_eval_num_unit(bContext *C, uiBut *but, const char *str, double *r_value)
 {
-	char str_unit_convert[256];
-	const int unit_type = UI_but_unit_type_get(but);
-
-	BLI_strncpy(str_unit_convert, str, sizeof(str_unit_convert));
-
-	/* ugly, use the draw string to get the value,
-	 * this could cause problems if it includes some text which resolves to a unit */
-	bUnit_ReplaceString(
-	        str_unit_convert, sizeof(str_unit_convert), but->drawstr,
-	        ui_get_but_scale_unit(but, 1.0), but->block->unit->system, RNA_SUBTYPE_UNIT_VALUE(unit_type));
-
-	return BPY_execute_string_as_number(C, str_unit_convert, true, r_value);
+	const UnitSettings *unit = but->block->unit;
+	int type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
+	return user_string_to_number(C, str, unit, type, r_value);
 }
-
-#endif /* WITH_PYTHON */
-
 
 bool ui_but_string_set_eval_num(bContext *C, uiBut *but, const char *str, double *r_value)
 {
@@ -2384,7 +2513,7 @@ bool ui_but_string_set_eval_num(bContext *C, uiBut *but, const char *str, double
 	if (str[0] != '\0') {
 		bool is_unit_but = (ui_but_is_float(but) && ui_but_is_unit(but));
 		/* only enable verbose if we won't run again with units */
-		if (BPY_execute_string_as_number(C, str, is_unit_but == false, r_value)) {
+		if (BPY_execute_string_as_number(C, NULL, str, is_unit_but == false, r_value)) {
 			/* if the value parsed ok without unit conversion this button may still need a unit multiplier */
 			if (is_unit_but) {
 				char str_new[128];
@@ -2443,7 +2572,7 @@ static void ui_but_string_free_internal(uiBut *but)
 
 bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
 {
-	if (but->rnaprop && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
+	if (but->rnaprop && but->rnapoin.data && ELEM(but->type, UI_BTYPE_TEXT, UI_BTYPE_SEARCH_MENU)) {
 		if (RNA_property_editable(&but->rnapoin, but->rnaprop)) {
 			PropertyType type;
 
@@ -2455,17 +2584,15 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
 				return true;
 			}
 			else if (type == PROP_POINTER) {
-				/* RNA pointer */
-				PointerRNA ptr, rptr;
-				PropertyRNA *prop;
-
 				if (str[0] == '\0') {
 					RNA_property_pointer_set(&but->rnapoin, but->rnaprop, PointerRNA_NULL);
 					return true;
 				}
 				else {
-					ptr = but->rnasearchpoin;
-					prop = but->rnasearchprop;
+					/* RNA pointer */
+					PointerRNA rptr;
+					PointerRNA ptr = but->rnasearchpoin;
+					PropertyRNA *prop = but->rnasearchprop;
 
 					if (prop && RNA_property_collection_lookup_string(&ptr, prop, str, &rptr))
 						RNA_property_pointer_set(&but->rnapoin, but->rnaprop, rptr);
@@ -2488,10 +2615,32 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
 			}
 		}
 	}
+	else if (but->type == UI_BTYPE_TAB) {
+		if (but->rnaprop && but->custom_data) {
+			StructRNA *ptr_type = RNA_property_pointer_type(&but->rnapoin, but->rnaprop);
+			PointerRNA ptr;
+			PropertyRNA *prop;
+
+			/* uiBut.custom_data points to data this tab represents (e.g. workspace).
+			 * uiBut.rnapoin/prop store an active value (e.g. active workspace). */
+			RNA_pointer_create(but->rnapoin.id.data, ptr_type, but->custom_data, &ptr);
+			prop = RNA_struct_name_property(ptr_type);
+			if (RNA_property_editable(&ptr, prop)) {
+				RNA_property_string_set(&ptr, prop, str);
+			}
+		}
+	}
 	else if (but->type == UI_BTYPE_TEXT) {
 		/* string */
-		if (ui_but_is_utf8(but)) BLI_strncpy_utf8(but->poin, str, but->hardmax);
-		else BLI_strncpy(but->poin, str, but->hardmax);
+		if (!but->poin || (str[0] == '\0')) {
+			str = "";
+		}
+		else if (ui_but_is_utf8(but)) {
+			BLI_strncpy_utf8(but->poin, str, but->hardmax);
+		}
+		else {
+			BLI_strncpy(but->poin, str, but->hardmax);
+		}
 
 		return true;
 	}
@@ -2675,14 +2824,6 @@ static void ui_set_but_soft_range(uiBut *but)
 
 /* ******************* Free ********************/
 
-static void ui_free_link(uiLink *link)
-{
-	if (link) {
-		BLI_freelistN(&link->lines);
-		MEM_freeN(link);
-	}
-}
-
 /* can be called with C==NULL */
 static void ui_but_free(const bContext *C, uiBut *but)
 {
@@ -2703,6 +2844,10 @@ static void ui_but_free(const bContext *C, uiBut *but)
 		MEM_freeN(but->hold_argN);
 	}
 
+	if (!but->editstr && but->free_search_arg) {
+		MEM_SAFE_FREE(but->search_arg);
+	}
+
 	if (but->active) {
 		/* XXX solve later, buttons should be free-able without context ideally,
 		 * however they may have open tooltips or popup windows, which need to
@@ -2719,7 +2864,6 @@ static void ui_but_free(const bContext *C, uiBut *but)
 	if (but->str && but->str != but->strdata) {
 		MEM_freeN(but->str);
 	}
-	ui_free_link(but->link);
 
 	if ((but->type == UI_BTYPE_IMAGE) && but->poin) {
 		IMB_freeImBuf((struct ImBuf *)but->poin);
@@ -2759,6 +2903,27 @@ void UI_block_free(const bContext *C, uiBlock *block)
 	BLI_freelistN(&block->color_pickers.list);
 
 	MEM_freeN(block);
+}
+
+void UI_blocklist_update_window_matrix(const bContext *C, const ListBase *lb)
+{
+	ARegion *region = CTX_wm_region(C);
+	wmWindow *window = CTX_wm_window(C);
+
+	for (uiBlock *block = lb->first; block; block = block->next) {
+		if (block->active) {
+			ui_update_window_matrix(window, region, block);
+		}
+	}
+}
+
+void UI_blocklist_draw(const bContext *C, const ListBase *lb)
+{
+	for (uiBlock *block = lb->first; block; block = block->next) {
+		if (block->active) {
+			UI_block_draw(C, block);
+		}
+	}
 }
 
 /* can be called with C==NULL */
@@ -2817,7 +2982,6 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, sh
 	uiBlock *block;
 	wmWindow *window;
 	Scene *scn;
-	int getsizex, getsizey;
 
 	window = CTX_wm_window(C);
 	scn = CTX_data_scene(C);
@@ -2828,18 +2992,19 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, sh
 	block->evil_C = (void *)C;  /* XXX */
 
 	if (scn) {
-		block->color_profile = true;
-
 		/* store display device name, don't lookup for transformations yet
 		 * block could be used for non-color displays where looking up for transformation
 		 * would slow down redraw, so only lookup for actual transform when it's indeed
 		 * needed
 		 */
-		BLI_strncpy(block->display_device, scn->display_settings.display_device, sizeof(block->display_device));
+		STRNCPY(block->display_device, scn->display_settings.display_device);
 
 		/* copy to avoid crash when scene gets deleted with ui still open */
 		block->unit = MEM_mallocN(sizeof(scn->unit), "UI UnitSettings");
 		memcpy(block->unit, &scn->unit, sizeof(scn->unit));
+	}
+	else {
+		STRNCPY(block->display_device, IMB_colormanagement_display_get_default_name());
 	}
 
 	BLI_strncpy(block->name, name, sizeof(block->name));
@@ -2847,36 +3012,26 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, sh
 	if (region)
 		UI_block_region_set(block, region);
 
-	/* window matrix and aspect */
-	if (region && region->swinid) {
-		wm_subwindow_matrix_get(window, region->swinid, block->winmat);
-		wm_subwindow_size_get(window, region->swinid, &getsizex, &getsizey);
+	/* Set window matrix and aspect for region and OpenGL state. */
+	ui_update_window_matrix(window, region, block);
 
-		block->aspect = 2.0f / fabsf(getsizex * block->winmat[0][0]);
-	}
-	else {
-		/* no subwindow created yet, for menus for example, so we
-		 * use the main window instead, since buttons are created
-		 * there anyway */
-		wm_subwindow_matrix_get(window, window->screen->mainwin, block->winmat);
-		wm_subwindow_size_get(window, window->screen->mainwin, &getsizex, &getsizey);
-
-		block->aspect = 2.0f / fabsf(getsizex * block->winmat[0][0]);
+	/* Tag as popup menu if not created within a region. */
+	if (!(region && region->visible)) {
 		block->auto_open = true;
-		block->flag |= UI_BLOCK_LOOP; /* tag as menu */
+		block->flag |= UI_BLOCK_LOOP;
 	}
 
 	return block;
 }
 
-uiBlock *UI_block_find_in_region(const char *name, ARegion *ar)
-{
-	return BLI_findstring(&ar->uiblocks, name, offsetof(uiBlock, name));
-}
-
 void UI_block_emboss_set(uiBlock *block, char dt)
 {
 	block->dt = dt;
+}
+
+void UI_block_theme_style_set(uiBlock *block, char theme_style)
+{
+	block->theme_style = theme_style;
 }
 
 /**
@@ -2888,7 +3043,6 @@ void ui_but_update_ex(uiBut *but, const bool validate)
 {
 	/* if something changed in the button */
 	double value = UI_BUT_VALUE_UNSET;
-//	float okwidth; // UNUSED
 
 	ui_but_update_select_flag(but, &value);
 
@@ -2923,9 +3077,12 @@ void ui_but_update_ex(uiBut *but, const bool validate)
 
 		case UI_BTYPE_ICON_TOGGLE:
 		case UI_BTYPE_ICON_TOGGLE_N:
-			if (!but->rnaprop || (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE)) {
-				if (but->flag & UI_SELECT) but->iconadd = 1;
-				else but->iconadd = 0;
+			if ((but->rnaprop == NULL) || (RNA_property_flag(but->rnaprop) & PROP_ICONS_CONSECUTIVE)) {
+				if (but->rnaprop && RNA_property_flag(but->rnaprop) & PROP_ICONS_REVERSE) {
+					but->drawflag |= UI_BUT_ICON_REVERSE;
+				}
+
+				but->iconadd = (but->flag & UI_SELECT) ? 1 : 0;
 			}
 			break;
 
@@ -2950,8 +3107,8 @@ void ui_but_update_ex(uiBut *but, const bool validate)
 
 						EnumPropertyItem item;
 						if (RNA_property_enum_item_from_value_gettexted(
-						        but->block->evil_C,
-						        &but->rnapoin, but->rnaprop, value_enum, &item))
+						            but->block->evil_C,
+						            &but->rnapoin, but->rnaprop, value_enum, &item))
 						{
 							size_t slen = strlen(item.name);
 							ui_but_string_free_internal(but);
@@ -3132,25 +3289,14 @@ void ui_block_cm_to_display_space_v3(uiBlock *block, float pixel[3])
 	IMB_colormanagement_scene_linear_to_display_v3(pixel, display);
 }
 
-void ui_block_cm_to_scene_linear_v3(uiBlock *block, float pixel[3])
+static uiBut *ui_but_alloc(const eButType type)
 {
-	struct ColorManagedDisplay *display = ui_block_cm_display_get(block);
-
-	IMB_colormanagement_display_to_scene_linear_v3(pixel, display);
-}
-
-void ui_block_cm_to_display_space_range(uiBlock *block, float *min, float *max)
-{
-	struct ColorManagedDisplay *display = ui_block_cm_display_get(block);
-	float pixel[3];
-
-	copy_v3_fl(pixel, *min);
-	IMB_colormanagement_scene_linear_to_display_v3(pixel, display);
-	*min = min_fff(UNPACK3(pixel));
-
-	copy_v3_fl(pixel, *max);
-	IMB_colormanagement_scene_linear_to_display_v3(pixel, display);
-	*max = max_fff(UNPACK3(pixel));
+	switch (type) {
+		case UI_BTYPE_TAB:
+			return MEM_callocN(sizeof(uiButTab), "uiButTab");
+		default:
+			return MEM_callocN(sizeof(uiBut), "uiBut");
+	}
 }
 
 /**
@@ -3186,7 +3332,7 @@ static uiBut *ui_def_but(
 		}
 	}
 
-	but = MEM_callocN(sizeof(uiBut), "uiBut");
+	but = ui_but_alloc(type & BUTTYPE);
 
 	but->type = type & BUTTYPE;
 	but->pointype = type & UI_BUT_POIN_TYPES;
@@ -3243,14 +3389,15 @@ static uiBut *ui_def_but(
 
 	if (block->flag & UI_BLOCK_RADIAL) {
 		but->drawflag |= UI_BUT_TEXT_LEFT;
-		if (but->str && but->str[0])
+		if (but->str && but->str[0]) {
 			but->drawflag |= UI_BUT_ICON_LEFT;
+		}
 	}
-	else if ((block->flag & UI_BLOCK_LOOP) ||
+	else if (((block->flag & UI_BLOCK_LOOP) && !ui_block_is_popover(block)) ||
 	         ELEM(but->type,
 	              UI_BTYPE_MENU, UI_BTYPE_TEXT, UI_BTYPE_LABEL,
 	              UI_BTYPE_BLOCK, UI_BTYPE_BUT_MENU, UI_BTYPE_SEARCH_MENU,
-	              UI_BTYPE_PROGRESS_BAR))
+	              UI_BTYPE_PROGRESS_BAR, UI_BTYPE_POPOVER))
 	{
 		but->drawflag |= (UI_BUT_TEXT_LEFT | UI_BUT_ICON_LEFT);
 	}
@@ -3273,7 +3420,8 @@ static uiBut *ui_def_but(
 	         UI_BTYPE_BLOCK, UI_BTYPE_BUT, UI_BTYPE_LABEL,
 	         UI_BTYPE_PULLDOWN, UI_BTYPE_ROUNDBOX, UI_BTYPE_LISTBOX,
 	         UI_BTYPE_BUT_MENU, UI_BTYPE_SCROLL, UI_BTYPE_GRIP,
-	         UI_BTYPE_SEPR, UI_BTYPE_SEPR_LINE) ||
+	         UI_BTYPE_SEPR, UI_BTYPE_SEPR_LINE,
+	         UI_BTYPE_SEPR_SPACER) ||
 	    (but->type >= UI_BTYPE_SEARCH_MENU))
 	{
 		/* pass */
@@ -3441,6 +3589,12 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	block->flag |= UI_BLOCK_IS_FLIP;
 }
 
+static void ui_but_submenu_enable(uiBlock *block, uiBut *but)
+{
+	but->flag |= UI_BUT_ICON_SUBMENU;
+	block->content_hints |= UI_BLOCK_CONTAINS_SUBMENU_BUT;
+}
+
 /**
  * ui_def_but_rna_propname and ui_def_but_rna
  * both take the same args except for propname vs prop, this is done so we can
@@ -3575,12 +3729,20 @@ static uiBut *ui_def_but_rna(
 		ui_def_but_icon(but, icon, UI_HAS_ICON);
 	}
 
-	if ((type == UI_BTYPE_MENU) && (but->dt == UI_EMBOSS_PULLDOWN)) {
-		but->flag |= UI_BUT_ICON_SUBMENU;
+	if (type == UI_BTYPE_MENU) {
+		if (but->dt == UI_EMBOSS_PULLDOWN) {
+			ui_but_submenu_enable(block, but);
+		}
+	}
+	else if (type == UI_BTYPE_SEARCH_MENU) {
+		if (proptype == PROP_POINTER) {
+			/* Search buttons normally don't get undo, see: T54580. */
+			but->flag |= UI_BUT_UNDO;
+		}
 	}
 
 	const char *info;
-	if (!RNA_property_editable_info(&but->rnapoin, prop, &info)) {
+	if (but->rnapoin.data && !RNA_property_editable_info(&but->rnapoin, prop, &info)) {
 		ui_def_but_rna__disable(but, info);
 	}
 
@@ -3999,19 +4161,6 @@ uiBut *uiDefIconTextButO(uiBlock *block, int type, const char *opname, int opcon
 
 /* END Button containing both string label and icon */
 
-void UI_but_link_set(uiBut *but, void **poin, void ***ppoin, short *tot, int from, int to)
-{
-	uiLink *link;
-
-	link = but->link = MEM_callocN(sizeof(uiLink), "new uilink");
-
-	link->poin = poin;
-	link->ppoin = ppoin;
-	link->totlink = tot;
-	link->fromcode = from;
-	link->tocode = to;
-}
-
 /* cruft to make uiBlock and uiBut private */
 
 int UI_blocklist_min_y_get(ListBase *lb)
@@ -4159,7 +4308,7 @@ void UI_but_drag_set_value(uiBut *but)
 void UI_but_drag_set_image(uiBut *but, const char *path, int icon, struct ImBuf *imb, float scale, const bool use_free)
 {
 	but->dragtype = WM_DRAG_PATH;
-	ui_def_but_icon(but, icon, 0);  /* no flag UI_HAS_ICON, so icon doesnt draw in button */
+	ui_def_but_icon(but, icon, 0);  /* no flag UI_HAS_ICON, so icon doesn't draw in button */
 	if ((but->dragflag & UI_BUT_DRAGPOIN_FREE)) {
 		MEM_SAFE_FREE(but->dragpoin);
 		but->dragflag &= ~UI_BUT_DRAGPOIN_FREE;
@@ -4328,7 +4477,7 @@ uiBut *uiDefIconTextMenuBut(uiBlock *block, uiMenuCreateFunc func, void *arg, in
 	ui_def_but_icon(but, icon, UI_HAS_ICON);
 
 	but->drawflag |= UI_BUT_ICON_LEFT;
-	but->flag |= UI_BUT_ICON_SUBMENU;
+	ui_but_submenu_enable(block, but);
 
 	but->menu_create_func = func;
 	ui_but_update(but);
@@ -4360,7 +4509,7 @@ uiBut *uiDefIconTextBlockBut(uiBlock *block, uiBlockCreateFunc func, void *arg, 
 		but->drawflag |= UI_BUT_ICON_LEFT;
 	}
 	but->flag |= UI_HAS_ICON;
-	but->flag |= UI_BUT_ICON_SUBMENU;
+	ui_but_submenu_enable(block, but);
 
 	but->block_create_func = func;
 	ui_but_update(but);
@@ -4479,7 +4628,7 @@ static void operator_enum_search_cb(const struct bContext *C, void *but, const c
 		for (item = item_array; item->identifier; item++) {
 			/* note: need to give the index rather than the identifier because the enum can be freed */
 			if (BLI_strcasestr(item->name, str)) {
-				if (false == UI_search_item_add(items, item->name, SET_INT_IN_POINTER(item->value), 0))
+				if (false == UI_search_item_add(items, item->name, POINTER_FROM_INT(item->value), item->icon))
 					break;
 			}
 		}
@@ -4497,7 +4646,7 @@ static void operator_enum_call_cb(struct bContext *UNUSED(C), void *but, void *a
 
 	if (ot) {
 		if (ot->prop) {
-			RNA_property_enum_set(opptr, ot->prop, GET_INT_FROM_POINTER(arg2));
+			RNA_property_enum_set(opptr, ot->prop, POINTER_AS_INT(arg2));
 			/* We do not call op from here, will be called by button code.
 			 * ui_apply_but_funcs_after() (in interface_handlers.c) called this func before checking operators,
 			 * because one of its parameters is the button itself!
@@ -4610,7 +4759,7 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 				tmp = BLI_strdup(RNA_property_identifier(but->rnaprop));
 		}
 		else if (type == BUT_GET_RNASTRUCT_IDENTIFIER) {
-			if (but->rnaprop)
+			if (but->rnaprop && but->rnapoin.data)
 				tmp = BLI_strdup(RNA_struct_identifier(but->rnapoin.type));
 			else if (but->optype)
 				tmp = BLI_strdup(but->optype->idname);
@@ -4681,11 +4830,14 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 				/* enum property */
 				ptr = &but->rnapoin;
 				prop = but->rnaprop;
-				value = (but->type == UI_BTYPE_ROW) ? (int)but->hardmax : (int)ui_but_value_get(but);
+				value = (ELEM(but->type, UI_BTYPE_ROW, UI_BTYPE_TAB)) ? (int)but->hardmax : (int)ui_but_value_get(but);
 			}
 			else if (but->optype) {
 				PointerRNA *opptr = UI_but_operator_ptr_get(but);
 				wmOperatorType *ot = but->optype;
+
+				/* so the context is passed to itemf functions */
+				WM_operator_properties_sanitize(opptr, false);
 
 				/* if the default property of the operator is enum and it is set,
 				 * fetch the tooltip of the selected value so that "Snap" and "Mirror"

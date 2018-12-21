@@ -51,7 +51,9 @@
 #include "BKE_editmesh.h"
 #include "BKE_object_deform.h"  /* own include */
 #include "BKE_object.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
+#include "BKE_gpencil.h"
 
 /** \name Misc helpers
  * \{ */
@@ -68,7 +70,7 @@ static Lattice *object_defgroup_lattice_get(ID *id)
  *
  * Use it when you remove or reorder vgroups in the object.
  *
- * \param map an array mapping old indices to new indices.
+ * \param map: an array mapping old indices to new indices.
  */
 void BKE_object_defgroup_remap_update_users(Object *ob, int *map)
 {
@@ -401,10 +403,17 @@ static void object_defgroup_remove_edit_mode(Object *ob, bDeformGroup *dg)
  */
 void BKE_object_defgroup_remove(Object *ob, bDeformGroup *defgroup)
 {
-	if (BKE_object_is_in_editmode_vgroup(ob))
-		object_defgroup_remove_edit_mode(ob, defgroup);
-	else
-		object_defgroup_remove_object_mode(ob, defgroup);
+	if (ob->type == OB_GPENCIL) {
+		BKE_gpencil_vgroup_remove(ob, defgroup);
+	}
+	else {
+		if (BKE_object_is_in_editmode_vgroup(ob))
+			object_defgroup_remove_edit_mode(ob, defgroup);
+		else
+			object_defgroup_remove_object_mode(ob, defgroup);
+
+		BKE_object_batch_cache_dirty_tag(ob);
+	}
 }
 
 /**
@@ -624,7 +633,7 @@ bool *BKE_object_defgroup_validmap_get(Object *ob, const int defbase_tot)
 
 					val_p = BLI_ghash_lookup_p(gh, chan->name);
 					if (val_p) {
-						*val_p = SET_INT_IN_POINTER(1);
+						*val_p = POINTER_FROM_INT(1);
 					}
 				}
 			}
