@@ -137,6 +137,27 @@ bool activeSnap(const TransInfo *t)
 	       ((t->modifiers & (MOD_SNAP | MOD_SNAP_INVERT)) == MOD_SNAP_INVERT);
 }
 
+bool transformModeUseSnap(const TransInfo *t)
+{
+	ToolSettings *ts = t->settings;
+	if (t->mode == TFM_TRANSLATION) {
+		return (ts->snap_transform_mode_flag & SCE_SNAP_TRANSFORM_MODE_TRANSLATE) != 0;
+	}
+	if (t->mode == TFM_ROTATION) {
+		return (ts->snap_transform_mode_flag & SCE_SNAP_TRANSFORM_MODE_ROTATE) != 0;
+	}
+	if (t->mode == TFM_RESIZE) {
+		return (ts->snap_transform_mode_flag & SCE_SNAP_TRANSFORM_MODE_SCALE) != 0;
+	}
+
+	return false;
+}
+
+static bool doForceIncrementSnap(const TransInfo *t)
+{
+	return !transformModeUseSnap(t);
+}
+
 void drawSnapping(const struct bContext *C, TransInfo *t)
 {
 	unsigned char col[4], selectedCol[4], activeCol[4];
@@ -405,8 +426,10 @@ void applyGridAbsolute(TransInfo *t)
 
 void applySnapping(TransInfo *t, float *vec)
 {
-	if (t->tsnap.project && t->tsnap.mode == SCE_SNAP_MODE_FACE) {
-		/* Each Trans Data already makes the snap to face */
+	/* Each Trans Data already makes the snap to face */
+	if (doForceIncrementSnap(t) ||
+	    (t->tsnap.project && t->tsnap.mode == SCE_SNAP_MODE_FACE))
+	{
 		return;
 	}
 
@@ -639,7 +662,7 @@ void initSnapping(TransInfo *t, wmOperator *op)
 	/* use scene defaults only when transform is modal */
 	else if (t->flag & T_MODAL) {
 		if (ELEM(t->spacetype, SPACE_VIEW3D, SPACE_IMAGE, SPACE_NODE)) {
-			if (ts->snap_flag & SCE_SNAP) {
+			if (transformModeUseSnap(t) && (ts->snap_flag & SCE_SNAP)) {
 				t->modifiers |= MOD_SNAP;
 			}
 
@@ -1450,8 +1473,8 @@ void snapGridIncrement(TransInfo *t, float *val)
 
 	/* only do something if using absolute or incremental grid snapping
 	 * and there is no valid snap point */
-	if (!(t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) ||
-	    validSnap(t))
+	if ((!(t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) ||
+	    validSnap(t)) && !doForceIncrementSnap(t))
 	{
 		return;
 	}
@@ -1494,7 +1517,7 @@ static void applyGridIncrement(TransInfo *t, float *val, int max_index, const fl
 	const float *asp = use_aspect ? t->aspect : asp_local;
 	int i;
 
-	BLI_assert(t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID));
+	BLI_assert((t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) || doForceIncrementSnap(t));
 	BLI_assert(max_index <= 2);
 
 	/* Early bailing out if no need to snap */
@@ -1524,6 +1547,7 @@ static void applyGridIncrement(TransInfo *t, float *val, int max_index, const fl
 	/* absolute snapping on grid based on global center */
 	if ((t->tsnap.snap_spatial_grid) && (t->mode == TFM_TRANSLATION)) {
 		const float *center_global = t->center_global;
+		bool use_local_axis = false;
 
 		/* use a fallback for cursor selection,
 		 * this isn't useful as a global center for absolute grid snapping
@@ -1533,11 +1557,52 @@ static void applyGridIncrement(TransInfo *t, float *val, int max_index, const fl
 			center_global = cd->global;
 		}
 
+		if (t->con.mode & (CON_AXIS0 | CON_AXIS1 | CON_AXIS2)) {
+			use_local_axis = true;
+		}
+
 		for (i = 0; i <= max_index; i++) {
 			/* do not let unconstrained axis jump to absolute grid increments */
 			if (!(t->con.mode & CON_APPLY) || t->con.mode & (CON_AXIS0 << i)) {
 				const float iter_fac = fac[action] * asp[i];
-				val[i] = iter_fac * roundf((val[i] + center_global[i]) / iter_fac) - center_global[i];
+
+				if (use_local_axis) {
+					float local_axis[3];
+					float pos_on_axis[3];
+
+					copy_v3_v3(local_axis, t->con.mtx[i]);
+					copy_v3_v3(pos_on_axis, t->con.mtx[i]);
+
+					/* amount of movement on axis from initial pos */
+					mul_v3_fl(pos_on_axis, val[i]);
+
+					/* actual global position on axis */
+					add_v3_v3(pos_on_axis, center_global);
+
+					float min_dist = INFINITY;
+					for (int j = 0; j < 3; j++) {
+						if (fabs(local_axis[j]) < 0.01f) {
+							/* Ignore very small (normalized) axis changes */
+							continue;
+						}
+
+						/* closest point on grid */
+						float grid_p = iter_fac * roundf(pos_on_axis[j] / iter_fac);
+						float dist_p = fabs((grid_p - pos_on_axis[j]) / local_axis[j]);
+
+						/* The amount of distance needed to travel along the local axis to snap to the closest grid point */
+						/* in the global j axis direction */
+						float move_dist = (grid_p - center_global[j]) / local_axis[j];
+
+						if (dist_p < min_dist) {
+							min_dist = dist_p;
+							val[i] = move_dist;
+						}
+					}
+				}
+				else {
+					val[i] = iter_fac * roundf((val[i]  + center_global[i]) / iter_fac) - center_global[i];
+				}
 			}
 		}
 	}
