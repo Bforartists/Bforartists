@@ -10,7 +10,9 @@ The project page, the binary downloads and further information can be found at t
 
 Please use the tracker to add issues, bug reports and requests. The tracker can be found here: https://github.com/Bforartists/Bforartists/issues
 
-The main differences to Blender are:
+Note that the following information is valid for Bforartists 1, the current stable version of Bforartists. The code in the repository is already development code for Bforartists version 2.
+
+The main differences of Bforartists to Blender 2.79 are:
 
 - A brand new Keymap with Left Click select, which is reduced to just the necessary hotkeys.
 - Cleaned up User Interface. More than 600 not necessary double menu entries removed.
