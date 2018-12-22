@@ -400,7 +400,7 @@ void TEXT_OT_unlink(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unlink";
 	ot->idname = "TEXT_OT_unlink";
-	ot->description = "Unlink\nUnlink active text data block";
+	ot->description = "Unlink active text data-block";
 
 	/* api callbacks */
 	ot->exec = text_unlink_exec;

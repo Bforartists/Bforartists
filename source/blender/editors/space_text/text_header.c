@@ -92,7 +92,7 @@ void TEXT_OT_properties(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Sidebar";
-	ot->description = "oggle Sidebar\nToggle the properties region visibility";
+	ot->description = "Toggle Sidebar\nToggle the properties region visibility";
 	ot->idname = "TEXT_OT_properties";
 
 	/* api callbacks */

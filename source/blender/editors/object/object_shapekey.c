@@ -278,6 +278,7 @@ void OBJECT_OT_shape_key_add(wmOperatorType *ot)
 	ot->name = "Add Shape Key";
 	ot->idname = "OBJECT_OT_shape_key_add";
 	ot->description = "Add shape key to the object";
+
 	/* api callbacks */
 	ot->poll = shape_key_mode_poll;
 	ot->exec = shape_key_add_exec;
