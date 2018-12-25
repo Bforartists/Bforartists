@@ -163,7 +163,7 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
 
             row.operator("wm.open_mainfile", text="", icon='FILE_FOLDER')
-            row.menu("INFO_MT_file_open_recent", text="", icon='OPEN_RECENT')
+            row.menu("TOPBAR_MT_file_open_recent", text="", icon='OPEN_RECENT')
 
             row = layout.row(align=True)
 
@@ -184,11 +184,11 @@ class TOOLBAR_MT_file(Menu):
 
         if addon_prefs.file_import_menu:
 
-            layout.menu("INFO_MT_file_import", icon='IMPORT', text = "")
+            layout.menu("TOPBAR_MT_file_import", icon='IMPORT', text = "")
 
         if addon_prefs.file_export_menu:
 
-            layout.menu("INFO_MT_file_export", icon='EXPORT', text = "")
+            layout.menu("TOPBAR_MT_file_export", icon='EXPORT', text = "")
 
         ## ------------------ Import single types
 
@@ -267,7 +267,6 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("render.opengl", text="", icon = 'RENDER_STILL_VIEW')
             row.operator("render.opengl", text="", icon = 'RENDER_ANI_VIEW').animation = True
-            row.menu("INFO_MT_opengl_render", text = "", icon='TRIA_UP')
 
         ## ------------------ Render
 
