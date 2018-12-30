@@ -3867,7 +3867,6 @@ KDTree *BKE_object_as_kdtree(Object *ob, int *r_tot)
 	return tree;
 }
 
-
 bool BKE_object_modifier_use_time(Object *ob, ModifierData *md)
 {
 	if (modifier_dependsOnTime(md)) {
