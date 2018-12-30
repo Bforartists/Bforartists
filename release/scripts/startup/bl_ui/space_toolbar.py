@@ -113,8 +113,8 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "file_load_save")
         layout.prop(addon_prefs, "file_link_append")
@@ -151,8 +151,8 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         if addon_prefs.file_load_save:
 
@@ -163,7 +163,7 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
 
             row.operator("wm.open_mainfile", text="", icon='FILE_FOLDER')
-            row.menu("INFO_MT_file_open_recent", text="", icon='OPEN_RECENT')
+            row.menu("TOPBAR_MT_file_open_recent", text="", icon='OPEN_RECENT')
 
             row = layout.row(align=True)
 
@@ -184,11 +184,11 @@ class TOOLBAR_MT_file(Menu):
 
         if addon_prefs.file_import_menu:
 
-            layout.menu("INFO_MT_file_import", icon='IMPORT', text = "")
+            layout.menu("TOPBAR_MT_file_import", icon='IMPORT', text = "")
 
         if addon_prefs.file_export_menu:
 
-            layout.menu("INFO_MT_file_export", icon='EXPORT', text = "")
+            layout.menu("TOPBAR_MT_file_export", icon='EXPORT', text = "")
 
         ## ------------------ Import single types
 
@@ -267,7 +267,6 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("render.opengl", text="", icon = 'RENDER_STILL_VIEW')
             row.operator("render.opengl", text="", icon = 'RENDER_ANI_VIEW').animation = True
-            row.menu("INFO_MT_opengl_render", text = "", icon='TRIA_UP')
 
         ## ------------------ Render
 
@@ -320,8 +319,8 @@ class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "mesh_vertices_splitconnect")
         layout.prop(addon_prefs, "mesh_vertices_misc")
@@ -357,8 +356,8 @@ class TOOLBAR_MT_meshedit(Menu):
 
         ## ------------------ Vertices
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         obj = context.object 
         if obj is not None:
@@ -519,8 +518,8 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "primitives_mesh")
         layout.prop(addon_prefs, "primitives_curve")
@@ -548,8 +547,8 @@ class TOOLBAR_MT_primitives(Menu):
 
         TOOLBAR_MT_menu_primitives.draw_collapsible(context, layout)
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         obj = context.object 
 
@@ -857,8 +856,8 @@ class TOOLBAR_MT_toolbars_image_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "image_uv_align")
         layout.prop(addon_prefs, "image_uv_unwrap")
@@ -880,8 +879,8 @@ class TOOLBAR_MT_image(Menu):
 
         TOOLBAR_MT_menu_image.draw_collapsible(context, layout)
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ image sub toolbars
 
@@ -977,8 +976,8 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "tools_parent")
         layout.prop(addon_prefs, "tools_objectdata")
@@ -1010,8 +1009,8 @@ class TOOLBAR_MT_tools(Menu):
 
         ## ------------------ Tools sub toolbars
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         if obj is not None:
 
@@ -1144,8 +1143,8 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "animation_keyframes")
         layout.prop(addon_prefs, "animation_range")
@@ -1169,12 +1168,12 @@ class TOOLBAR_MT_animation(Menu):
         scene = context.scene
         screen = context.screen
         toolsettings = context.tool_settings
-        userprefs = context.user_preferences
+        userprefs = context.preferences
 
         TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ Animation sub toolbars
 
@@ -1255,7 +1254,7 @@ class TOOLBAR_MT_animation(Menu):
                 # if using JACK and A/V sync:
                 #   hide the play-reversed button
                 #   since JACK transport doesn't support reversed playback
-                if scene.sync_mode == 'AUDIO_SYNC' and context.user_preferences.system.audio_device == 'JACK':
+                if scene.sync_mode == 'AUDIO_SYNC' and context.preferences.system.audio_device == 'JACK':
                     sub = row.row(align=True)
                     sub.scale_x = 2.0
                     sub.operator("screen.animation_play", text="", icon='PLAY')
@@ -1365,8 +1364,8 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "edit_edit")
         layout.prop(addon_prefs, "edit_weightinedit")
@@ -1390,8 +1389,8 @@ class TOOLBAR_MT_edit(Menu):
 
         TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ Edit sub toolbars
 
@@ -1511,8 +1510,8 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "misc_undoredo")
         layout.prop(addon_prefs, "misc_undohistory")
@@ -1538,8 +1537,8 @@ class TOOLBAR_MT_misc(Menu):
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
 
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ## ------------------ Misc sub toolbars
 
