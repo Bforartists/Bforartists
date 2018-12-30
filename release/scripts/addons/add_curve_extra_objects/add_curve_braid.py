@@ -4,8 +4,8 @@
 bl_info = {
     "name": "New Braid",
     "author": "Jared Forsyth <github.com/jaredly>",
-    "version": (1, 0, 2),
-    "blender": (2, 6, 0),
+    "version": (1, 0, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh > New Braid",
     "description": "Adds a new Braid",
     "warning": "",
@@ -134,13 +134,13 @@ def star_pts(r=1, ir=None, points=5, center=(0, 0)):
 
 def defaultCircle(w=.6):
     circle = nurbs_circle('braid_circle', w, w)
-    circle.hide = True
+    circle.hide_select = True
     return circle
 
 
 def defaultStar():
     star = poly_lines('star', 'staz', [tuple(star_pts(points=5, r=.5, ir=.05))], type='NURBS')
-    star.hide = True
+    star.hide_select = True
     return star
 
 
@@ -151,46 +151,46 @@ def awesome_braid(strands=3, sides=5, bevel='braid_circle', pointy=False, **kwds
 
 
 class Braid(Operator):
-    bl_idname = "mesh.add_braid"
+    bl_idname = "curve.add_braid"
     bl_label = "New Braid"
     bl_description = ("Construct a new Braid\n"
                       "Creates two objects - the hidden one is used as the Bevel control")
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    strands = IntProperty(
+    strands : IntProperty(
             name="Strands",
             description="Number of Strands",
             min=2, max=100,
             default=3
             )
-    sides = IntProperty(
+    sides : IntProperty(
             name="Sides",
             description="Number of Knot sides",
             min=2, max=100,
             default=5
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             name="Radius",
             description="Increase / decrease the diameter in X,Y axis",
             default=1
             )
-    thickness = FloatProperty(
+    thickness : FloatProperty(
             name="Thickness",
             description="The ratio between inner and outside diameters",
             default=.3
             )
-    strandsize = FloatProperty(
+    strandsize : FloatProperty(
             name="Bevel Depth",
             description="Individual strand diameter (similar to Curve's Bevel depth)",
             default=.3,
             min=.01, max=10
             )
-    width = FloatProperty(
+    width : FloatProperty(
             name="Width",
             description="Stretch the Braids along the Z axis",
             default=.2
             )
-    resolution = IntProperty(
+    resolution : IntProperty(
             name="Bevel Resolution",
             description="Resolution of the Created curve\n"
                         "Increasing this value, will produce heavy geometry",
@@ -198,7 +198,7 @@ class Braid(Operator):
             max=100, soft_max=24,
             default=2
             )
-    pointy = BoolProperty(
+    pointy : BoolProperty(
             name="Pointy",
             description="Switch between round and sharp corners",
             default=False
@@ -209,7 +209,7 @@ class Braid(Operator):
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Settings:")
+        col.label(text="Settings:")
         col.prop(self, "strands")
         col.prop(self, "sides")
 
@@ -223,13 +223,13 @@ class Braid(Operator):
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Geometry Options:")
+        col.label(text="Geometry Options:")
         col.prop(self, "strandsize")
         col.prop(self, "resolution")
 
     def execute(self, context):
         circle = defaultCircle(self.strandsize)
-        context.scene.objects.link(circle)
+        context.scene.collection.objects.link(circle)
         braid = awesome_braid(
                         self.strands, self.sides,
                         bevel=circle.name,
@@ -239,12 +239,12 @@ class Braid(Operator):
                         mz=self.width,
                         resolution=self.resolution
                         )
-        base = context.scene.objects.link(braid)
+        base = context.scene.collection.objects.link(braid)
 
         for ob in context.scene.objects:
-            ob.select = False
-        base.select = True
-        context.scene.objects.active = braid
+            ob.select_set(False)
+        #base.select_set(True)
+        #context.scene.objects.active = braid
 
         return {'FINISHED'}
 

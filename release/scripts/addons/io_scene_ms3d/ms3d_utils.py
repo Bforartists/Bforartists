@@ -99,8 +99,8 @@ def select_all(select):
 def pre_setup_environment(porter, blender_context):
     # inject undo to porter
     # and turn off undo
-    porter.undo = blender_context.user_preferences.edit.use_global_undo
-    blender_context.user_preferences.edit.use_global_undo = False
+    porter.undo = blender_context.preferences.edit.use_global_undo
+    blender_context.preferences.edit.use_global_undo = False
 
     # inject active_object to self
     porter.active_object = blender_context.scene.objects.active
@@ -126,7 +126,7 @@ def post_setup_environment(porter, blender_context):
                 = blender_context.selected_objects[0]
 
     # restore pre operator undo state
-    blender_context.user_preferences.edit.use_global_undo = porter.undo
+    blender_context.preferences.edit.use_global_undo = porter.undo
 
 
 ###############################################################################

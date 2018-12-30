@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
+"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-23 10:49:02\n"
+"POT-Creation-Date: 2018-12-24 15:04:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,10 +31,6 @@ msgstr "aaaaaaaaa"
 
 
 msgid "No active bone"
-msgstr "aaaaaaaaa"
-
-
-msgid "Hide Objects"
 msgstr "aaaaaaaaa"
 
 

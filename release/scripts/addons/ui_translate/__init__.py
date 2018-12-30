@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Manage UI translations",
     "author": "Bastien Montagne",
-    "version": (1, 1, 5),
+    "version": (1, 2, 0),
     "blender": (2, 80, 0),
     "location": "Main \"File\" menu, text editor, any UI control",
     "description": "Allows managing UI translations directly from Blender "
@@ -62,8 +62,8 @@ def register():
 
     # Init addon's preferences (unfortunately, as we are using an external storage for the properties,
     # the load/save user preferences process has no effect on them :( ).
-    if __name__ in bpy.context.user_preferences.addons:
-        pref = bpy.context.user_preferences.addons[__name__].preferences
+    if __name__ in bpy.context.preferences.addons:
+        pref = bpy.context.preferences.addons[__name__].preferences
         import os
         if os.path.isfile(pref.persistent_data_path):
             pref._settings.load(pref.persistent_data_path, reset=True)

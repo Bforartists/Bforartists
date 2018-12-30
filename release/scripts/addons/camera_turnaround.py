@@ -91,9 +91,9 @@ class RunAction(Operator):
         myempty.select = True
         context.scene.objects.active = myempty
         # save current configuration
-        savedinterpolation = context.user_preferences.edit.keyframe_new_interpolation_type
+        savedinterpolation = context.preferences.edit.keyframe_new_interpolation_type
         # change interpolation mode
-        context.user_preferences.edit.keyframe_new_interpolation_type = 'LINEAR'
+        context.preferences.edit.keyframe_new_interpolation_type = 'LINEAR'
         # create first frame
         myempty.rotation_euler = (0, 0, 0)
         myempty.empty_display_size = 0.1
@@ -165,7 +165,7 @@ class RunAction(Operator):
             bpy.context.object.constraints[-1].target = bpy.data.objects[myempty.name]
 
         # back previous configuration
-        context.user_preferences.edit.keyframe_new_interpolation_type = savedinterpolation
+        context.preferences.edit.keyframe_new_interpolation_type = savedinterpolation
         bpy.context.scene.cursor_location = savedcursor
 
         # -------------------------

@@ -21,12 +21,11 @@
 bl_info = {
   "name": "Adobe Illustrator / PDF / SVG",
   "author": "Howard Trickey",
-  "version": (1, 2),
-  "blender": (2, 79, 0),
+  "version": (1, 3),
+  "blender": (2, 80, 0),
   "location": "File > Import-Export > Vector files (.ai, .pdf, .svg)",
   "description": "Import Adobe Illustrator, PDF, and SVG",
   "warning": "",
-  "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
   "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
       "Scripts/Import-Export/AI_PDF_SVG",
   "category": "Import-Export"}
@@ -57,23 +56,24 @@ from bpy_extras.io_utils import ImportHelper
 
 
 class VectorImporter(bpy.types.Operator, ImportHelper):
+    """Load an AI or PDF or SVG file"""
     bl_idname = "import_vec.aipdfsvg"
     bl_label = "Import AI/PDF/SVG"
-    bl_options = {"REGISTER", "UNDO"}
+    bl_options = {"UNDO"}
 
-    filter_glob = StringProperty(default="*.ai;*.pdf;*.svg", options={"HIDDEN"})
-    smoothness = IntProperty(name="Smoothness",
+    filter_glob : StringProperty(default="*.ai;*.pdf;*.svg", options={"HIDDEN"})
+    smoothness : IntProperty(name="Smoothness",
         description="How closely to approximate curves",
         default=1,
         min=0,
         max=100)
-    scale = FloatProperty(name="Scale",
+    scale : FloatProperty(name="Scale",
         description="Scale longer bounding box side to this size",
         default=4.0,
         min=0.1,
         max=100.0,
         unit="LENGTH")
-    subdiv_kind = EnumProperty(name="Subdivision Method",
+    subdiv_kind : EnumProperty(name="Subdivision Method",
         description="Method for approximating curves with lines",
         items=[ \
           ('UNIFORM', "Uniform",
@@ -86,52 +86,52 @@ class VectorImporter(bpy.types.Operator, ImportHelper):
               " determined by 'smoothness'"),
           ],
         default='ADAPTIVE')
-    filled_only = BoolProperty(name="Filled paths only",
+    filled_only : BoolProperty(name="Filled paths only",
         description="Only import filled paths",
         default=True)
-    ignore_white = BoolProperty(name="Ignore white-filled",
+    ignore_white : BoolProperty(name="Ignore white-filled",
         description="Do not import white-filled paths",
         default=True)
-    combine_paths = BoolProperty(name="Combine paths",
+    combine_paths : BoolProperty(name="Combine paths",
         description="Use all paths when looking for holes",
         default=False)
-    use_colors = BoolProperty(name="Use colors",
+    use_colors : BoolProperty(name="Use colors",
         description="Use colors from vector file as materials",
         default=False)
-    extrude_depth = FloatProperty(name="Extrude depth",
+    extrude_depth : FloatProperty(name="Extrude depth",
       description="Depth of extrusion, if > 0",
       default=0.0,
       min=0.0,
       max=100.0,
       unit='LENGTH')
-    bevel_amount = FloatProperty(name="Bevel amount",
+    bevel_amount : FloatProperty(name="Bevel amount",
       description="Amount of inward bevel, if > 0",
       default=0.0,
       min=0.0,
       max=1000.0,
       unit='LENGTH')
-    bevel_pitch = FloatProperty(name="Bevel pitch",
+    bevel_pitch : FloatProperty(name="Bevel pitch",
       description="Angle of bevel from horizontal",
       default=45 * math.pi / 180.0,
       min=0.0,
       max=89.0 * math.pi / 180.0,
       unit='ROTATION')
-    cap_back = BoolProperty(name="Cap back",
+    cap_back : BoolProperty(name="Cap back",
       description="Cap the back if extruding",
       default=False)
-    true_scale = BoolProperty(name="True Scale",
+    true_scale : BoolProperty(name="True Scale",
       description="Use true scale, with 1 meter = 1 blender unit",
       default=False)
     # some info display properties
-    num_verts = IntProperty(name="Number of vertices",
+    num_verts : IntProperty(name="Number of vertices",
       default=0)
-    num_faces = IntProperty(name="Number of faces",
+    num_faces : IntProperty(name="Number of faces",
       default=0)
 
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.label("Import Options")
+        box.label(text="Import Options")
         box.prop(self, "smoothness")
         box.prop(self, "scale")
         box.prop(self, "true_scale")
@@ -195,10 +195,10 @@ class VectorImporter(bpy.types.Operator, ImportHelper):
         self.num_verts = len(verts)
         self.num_faces = len(faces)
         obj = bpy.data.objects.new(objname, mesh)
-        context.scene.objects.link(obj)
+        context.scene.collection.objects.link(obj)
         bpy.ops.object.select_all(action='DESELECT')
-        obj.select = True
-        context.scene.objects.active = obj
+        obj.select_set(True)
+        context.view_layer.objects.active = obj
 
     def execute(self, context):
         self.action(context)
@@ -234,13 +234,13 @@ def menu_import(self, context):
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(VectorImporter)
 
     bpy.types.TOPBAR_MT_file_import.append(menu_import)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(VectorImporter)
 
     bpy.types.TOPBAR_MT_file_import.remove(menu_import)
 

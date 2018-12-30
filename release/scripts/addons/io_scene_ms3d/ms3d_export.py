@@ -165,7 +165,7 @@ class Ms3dExporter():
                         = blender_context.selected_objects[0]
 
             # restore pre operator undo state
-            blender_context.user_preferences.edit.use_global_undo = self.undo
+            blender_context.preferences.edit.use_global_undo = self.undo
 
             is_valid, statistics = ms3d_model.is_valid()
             if self.options_verbose in Ms3dUi.VERBOSE_NORMAL:

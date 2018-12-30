@@ -714,7 +714,7 @@ def draw_callback_px(self, context):
     region = context.region
 
     # Width screen
-    overlap = context.user_preferences.system.use_region_overlap
+    overlap = context.preferences.system.use_region_overlap
     t_panel_width = 0
     if overlap:
         for region in context.area.regions:
@@ -3115,7 +3115,7 @@ class Carver(bpy.types.Operator):
 
         # Undo Variables
         self.undo_index = 0
-        self.undo_limit = context.user_preferences.edit.undo_steps
+        self.undo_limit = context.preferences.edit.undo_steps
         self.undo_list = []
 
         # Boolean operations type

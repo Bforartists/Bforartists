@@ -2945,7 +2945,7 @@ class SnapCursSelToCenter(Operator):
 
 # Draw Separator #
 def UseSeparator(operator, context):
-    useSep = bpy.context.user_preferences.addons[__name__].preferences.use_separators
+    useSep = bpy.context.preferences.addons[__name__].preferences.use_separators
     if useSep:
         operator.layout.separator()
 
@@ -2953,7 +2953,7 @@ def UseSeparator(operator, context):
 # Use compact brushes menus #
 def UseBrushesLists():
     # separate function just for more convenience
-    useLists = bpy.context.user_preferences.addons[__name__].preferences.use_brushes_lists
+    useLists = bpy.context.preferences.addons[__name__].preferences.use_brushes_lists
 
     return bool(useLists)
 

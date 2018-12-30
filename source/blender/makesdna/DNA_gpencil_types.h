@@ -196,8 +196,8 @@ typedef enum eGPDstroke_Flag {
 	GP_STROKE_2DIMAGE		= (1 << 2),
 	/* stroke is selected */
 	GP_STROKE_SELECT		= (1 << 3),
-	/* Recalculate triangulation for high quality fill (when true, force a new recalc) */
-	GP_STROKE_RECALC_CACHES = (1 << 4),
+	/* Recalculate geometry data (triangulation, UVs, Bound Box,... (when true, force a new recalc) */
+	GP_STROKE_RECALC_GEOMETRY = (1 << 4),
 	/* Flag used to indicate that stroke is closed and draw edge between last and first point */
 	GP_STROKE_CYCLIC = (1 << 7),
 	/* Flag used to indicate that stroke is used for fill close and must use fill color for stroke and no fill area */
@@ -477,8 +477,8 @@ typedef enum eGPdata_Flag {
 	GP_DATA_STROKE_FORCE_RECALC = (1 << 17),
 	/* Special mode drawing polygons */
 	GP_DATA_STROKE_POLYGON = (1 << 18),
-	/* Use adaptative UV scales */
-	GP_DATA_UV_ADAPTATIVE = (1 << 19),
+	/* Use adaptive UV scales */
+	GP_DATA_UV_ADAPTIVE = (1 << 19),
 	/* Autolock not active layers */
 	GP_DATA_AUTOLOCK_LAYERS = (1 << 20),
 	/* Internal flag for python update */

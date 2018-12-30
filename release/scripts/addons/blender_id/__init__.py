@@ -263,7 +263,7 @@ class BlenderIdPreferences(AddonPreferences):
 class BlenderIdMixin:
     @staticmethod
     def addon_prefs(context):
-        preferences = context.user_preferences.addons[__name__].preferences
+        preferences = context.preferences.addons[__name__].preferences
         preferences.reset_messages()
         return preferences
 
@@ -352,7 +352,7 @@ def register():
     bpy.utils.register_class(BlenderIdPreferences)
     bpy.utils.register_class(BlenderIdValidate)
 
-    preferences = bpy.context.user_preferences.addons[__name__].preferences
+    preferences = bpy.context.preferences.addons[__name__].preferences
     preferences.reset_messages()
 
 

@@ -17,8 +17,6 @@
 
 import bpy
 import bgl
-import gpu
-import numpy as np
 
 from .common_utilities import snap_utilities
 
@@ -28,6 +26,8 @@ class SnapDrawn():
                  edge_color, vert_color, center_color,
                  perpendicular_color, constrain_shift_color,
                  axis_x_color, axis_y_color, axis_z_color):
+
+        import gpu
 
         self.out_color = out_color
         self.face_color = face_color
@@ -57,32 +57,53 @@ class SnapDrawn():
 
 
     def batch_line_strip_create(self, coords):
-        vbo = gpu.types.GPUVertBuf(self._format_pos, len = len(coords))
+        from gpu.types import (
+            GPUVertBuf,
+            GPUBatch,
+        )
+
+        vbo = GPUVertBuf(self._format_pos, len = len(coords))
         vbo.attr_fill(0, data = coords)
-        batch_lines = gpu.types.GPUBatch(type = "LINE_STRIP", buf = vbo)
+        batch_lines = GPUBatch(type = "LINE_STRIP", buf = vbo)
         return batch_lines
 
     def batch_lines_smooth_color_create(self, coords, colors):
-        vbo = gpu.types.GPUVertBuf(self._format_pos_and_color, len = len(coords))
+        from gpu.types import (
+            GPUVertBuf,
+            GPUBatch,
+        )
+
+        vbo = GPUVertBuf(self._format_pos_and_color, len = len(coords))
         vbo.attr_fill(0, data = coords)
         vbo.attr_fill(1, data = colors)
-        batch_lines = gpu.types.GPUBatch(type = "LINES", buf = vbo)
+        batch_lines = GPUBatch(type = "LINES", buf = vbo)
         return batch_lines
 
     def batch_triangles_create(self, coords):
-        vbo = gpu.types.GPUVertBuf(self._format_pos, len = len(coords))
+        from gpu.types import (
+            GPUVertBuf,
+            GPUBatch,
+        )
+
+        vbo = GPUVertBuf(self._format_pos, len = len(coords))
         vbo.attr_fill(0, data = coords)
-        batch_tris = gpu.types.GPUBatch(type = "TRIS", buf = vbo)
+        batch_tris = GPUBatch(type = "TRIS", buf = vbo)
         return batch_tris
 
     def batch_point_get(self):
         if self._batch_point is None:
-            vbo = gpu.types.GPUVertBuf(self._format_pos, len = 1)
+            from gpu.types import (
+                GPUVertBuf,
+                GPUBatch,
+            )
+            vbo = GPUVertBuf(self._format_pos, len = 1)
             vbo.attr_fill(0, ((0.0, 0.0, 0.0),))
-            self._batch_point = gpu.types.GPUBatch(type = "POINTS", buf = vbo)
+            self._batch_point = GPUBatch(type = "POINTS", buf = vbo)
         return self._batch_point
 
     def draw(self, type, location, list_verts_co, vector_constrain, prevloc):
+        import gpu
+
         # draw 3d point OpenGL in the 3D View
         bgl.glEnable(bgl.GL_BLEND)
         gpu.matrix.push()
@@ -150,6 +171,7 @@ class SnapDrawn():
         gpu.matrix.pop()
 
     def draw_elem(self, snap_obj, bm, elem):
+        import gpu
         from bmesh.types import(
             BMVert,
             BMEdge,
@@ -164,6 +186,8 @@ class SnapDrawn():
 
             if isinstance(elem, BMVert):
                 if elem.link_edges:
+                    import numpy as np
+
                     color = self.vert_color
                     edges = np.empty((len(elem.link_edges), 2), [("pos", "f4", 3), ("color", "f4", 4)])
                     edges["pos"][:, 0] = elem.co
@@ -216,7 +240,7 @@ class SnapNavigation():
     def __init__(self, context, use_ndof):
         # TO DO:
         # 'View Orbit', 'View Pan', 'NDOF Orbit View', 'NDOF Pan View'
-        self.use_ndof = use_ndof and context.user_preferences.inputs.use_ndof
+        self.use_ndof = use_ndof and context.preferences.inputs.use_ndof
 
         self._rotate = set()
         self._move = set()
@@ -371,7 +395,7 @@ class MousePointWidget(bpy.types.Gizmo):
 
             context = bpy.context
 
-            self.preferences = preferences = context.user_preferences.addons[__package__].preferences
+            self.preferences = preferences = context.preferences.addons[__package__].preferences
 
             #Configure the unit of measure
             self.snap_to_grid = preferences.increments_grid
@@ -386,9 +410,9 @@ class MousePointWidget(bpy.types.Gizmo):
                 preferences.center_color,
                 preferences.perpendicular_color,
                 preferences.constrain_shift_color,
-                (*context.user_preferences.themes[0].user_interface.axis_x, 1.0),
-                (*context.user_preferences.themes[0].user_interface.axis_y, 1.0),
-                (*context.user_preferences.themes[0].user_interface.axis_z, 1.0)
+                (*context.preferences.themes[0].user_interface.axis_x, 1.0),
+                (*context.preferences.themes[0].user_interface.axis_y, 1.0),
+                (*context.preferences.themes[0].user_interface.axis_z, 1.0)
             )
 
             #Init Snap Context

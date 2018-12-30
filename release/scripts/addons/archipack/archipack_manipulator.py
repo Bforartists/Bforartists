@@ -1956,7 +1956,7 @@ class archipack_manipulator(PropertyGroup):
         try:
             # retrieve addon name from imports
             addon_name = __name__.split('.')[0]
-            prefs = context.user_preferences.addons[addon_name].preferences
+            prefs = context.preferences.addons[addon_name].preferences
             arrow_size = prefs.arrow_size
             handle_size = prefs.handle_size
         except:

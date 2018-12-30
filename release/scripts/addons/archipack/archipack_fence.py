@@ -1482,7 +1482,7 @@ class ARCHIPACK_PT_fence(Panel):
         row = box.row(align=True)
         row.operator("archipack.fence_curve_update", text="", icon='FILE_REFRESH')
         row.prop_search(prop, "user_defined_path", scene, "objects", text="", icon='OUTLINER_OB_CURVE')
-        if prop.user_defined_path is not "":
+        if prop.user_defined_path != "":
             box.prop(prop, 'user_defined_spline')
             box.prop(prop, 'user_defined_resolution')
         box.prop(prop, 'angle_limit')

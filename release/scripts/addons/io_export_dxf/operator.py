@@ -29,7 +29,7 @@ class DXFExporter(bpy.types.Operator):
     """
     bl_idname = "export.dxf"
     bl_label = "Export DXF"
-    filepath = StringProperty(subtype='FILE_PATH')
+    filepath: StringProperty(subtype='FILE_PATH')
 
     entitylayer_from_items = (
         ('default_LAYER', 'Default Layer', ''),
@@ -167,86 +167,86 @@ class DXFExporter(bpy.types.Operator):
 #        ('POINT', 'POINT', '')
 #    )
     # --------- CONTROL PROPERTIES --------------------------------------------
-    projectionThrough = EnumProperty(name="Projection", default="NO",
+    projectionThrough: EnumProperty(name="Projection", default="NO",
                                     description="Select camera for use to 2D projection",
                                     items=projectionItems)
 
-    onlySelected = BoolProperty(name="Only selected", default=True,
+    onlySelected: BoolProperty(name="Only selected", default=True,
                               description="What object will be exported? Only selected / all objects")
 
-    apply_modifiers = BoolProperty(name="Apply modifiers", default=True,
+    apply_modifiers: BoolProperty(name="Apply modifiers", default=True,
                            description="Shall be modifiers applied during export?")
     # GUI_B -----------------------------------------
-    mesh_as = EnumProperty( name="Export Mesh As", default='3DFACEs',
+    mesh_as: EnumProperty( name="Export Mesh As", default='3DFACEs',
                             description="Select representation of a mesh",
                             items=mesh_asItems)
-#    curve_as = EnumProperty( name="Export Curve As:", default='NO',
+#    curve_as: EnumProperty( name="Export Curve As:", default='NO',
 #                            description="Select representation of a curve",
 #                            items=curve_asItems)
-#    surface_as = EnumProperty( name="Export Surface As:", default='NO',
+#    surface_as: EnumProperty( name="Export Surface As:", default='NO',
 #                            description="Select representation of a surface",
 #                            items=surface_asItems)
-#    meta_as = EnumProperty( name="Export meta As:", default='NO',
+#    meta_as: EnumProperty( name="Export meta As:", default='NO',
 #                            description="Select representation of a meta",
 #                            items=meta_asItems)
-#    text_as = EnumProperty( name="Export text As:", default='NO',
+#    text_as: EnumProperty( name="Export text As:", default='NO',
 #                            description="Select representation of a text",
 #                            items=text_asItems)
-#    empty_as = EnumProperty( name="Export empty As:", default='NO',
+#    empty_as: EnumProperty( name="Export empty As:", default='NO',
 #                            description="Select representation of a empty",
 #                            items=empty_asItems)
-#    group_as = EnumProperty( name="Export group As:", default='NO',
+#    group_as: EnumProperty( name="Export group As:", default='NO',
 #                            description="Select representation of a group",
 #                            items=group_asItems)
-##    parent_as = EnumProperty( name="Export parent As:", default='NO',
+##    parent_as: EnumProperty( name="Export parent As:", default='NO',
 ##                            description="Select representation of a parent",
 ##                            items=parent_asItems)
-#    proxy_as = EnumProperty( name="Export proxy As:", default='NO',
+#    proxy_as: EnumProperty( name="Export proxy As:", default='NO',
 #                            description="Select representation of a proxy",
 #                            items=proxy_asItems)
-#    camera_as = EnumProperty( name="Export camera As:", default='NO',
+#    camera_as: EnumProperty( name="Export camera As:", default='NO',
 #                            description="Select representation of a camera",
 #                            items=camera_asItems)
-#    light_as = EnumProperty( name="Export lamp As:", default='NO',
+#    light_as: EnumProperty( name="Export lamp As:", default='NO',
 #                            description="Select representation of a lamp",
 #                            items=light_asItems)
     # ----------------------------------------------------------
-    entitylayer_from = EnumProperty(name="Entity Layer", default="obj.data.name",
+    entitylayer_from: EnumProperty(name="Entity Layer", default="obj.data.name",
                                     description="Entity LAYER assigned to?",
                                     items=entitylayer_from_items)
-    entitycolor_from = EnumProperty(name="Entity Color", default="default_COLOR",
+    entitycolor_from: EnumProperty(name="Entity Color", default="default_COLOR",
                                     description="Entity COLOR assigned to?",
                                     items=layerColorFromItems)
-    entityltype_from = EnumProperty(name="Entity Linetype", default="CONTINUOUS",
+    entityltype_from: EnumProperty(name="Entity Linetype", default="CONTINUOUS",
                                     description="Entity LINETYPE assigned to?",
                                     items=entityltype_fromItems)
 
-    layerName_from = EnumProperty(name="Layer Name", default="LAYERNAME_DEF",
+    layerName_from: EnumProperty(name="Layer Name", default="LAYERNAME_DEF",
                                     description="From where will layer name be taken?",
                                     items=layerNameFromItems)
     # GUI_A -----------------------------------------
-#    layFrozen_on = BoolProperty(name="LAYER.frozen status", description="(*todo) Support LAYER.frozen status   on/off", default=False)
-#    materialFilter_on = BoolProperty(name="Material filtering", description="(*todo) Material filtering   on/off", default=False)
-#    colorFilter_on = BoolProperty(name="Color filtering", description="(*todo) Color filtering   on/off", default=False)
-#    groupFilter_on = BoolProperty(name="Group filtering", description="(*todo) Group filtering   on/off", default=False)
-#    objectFilter_on = BoolProperty(name="Object filtering", description="(*todo) Object filtering   on/off", default=False)
-#    paper_space_on = EnumProperty(name="Space of export:", default="2",
+#    layFrozen_on: BoolProperty(name="LAYER.frozen status", description="(*todo) Support LAYER.frozen status   on/off", default=False)
+#    materialFilter_on: BoolProperty(name="Material filtering", description="(*todo) Material filtering   on/off", default=False)
+#    colorFilter_on: BoolProperty(name="Color filtering", description="(*todo) Color filtering   on/off", default=False)
+#    groupFilter_on: BoolProperty(name="Group filtering", description="(*todo) Group filtering   on/off", default=False)
+#    objectFilter_on: BoolProperty(name="Object filtering", description="(*todo) Object filtering   on/off", default=False)
+#    paper_space_on: EnumProperty(name="Space of export:", default="2",
 #                                    description="Select space that will be taken for export.",
 #                                    items=spaceItems)
-#    material_to = EnumProperty(name="Material assigned to?:", default="NO",
+#    material_to: EnumProperty(name="Material assigned to?:", default="NO",
 #                                    description="Material assigned to?.",
 #                                    items=material_toItems)
 
-#    prefix_def = StringProperty(name="Prefix for LAYERs", default="DX_",
+#    prefix_def: StringProperty(name="Prefix for LAYERs", default="DX_",
 #                                    description='Type Prefix for LAYERs')
-#    layername_def = StringProperty(name="default LAYER name", default="DEF_LAY",
+#    layername_def: StringProperty(name="default LAYER name", default="DEF_LAY",
 #                                    description='Type default LAYER name')
-#    layercolor_def = StringProperty(name="Default layer color:", default="1",
+#    layercolor_def: StringProperty(name="Default layer color:", default="1",
 #                                    description='Set default COLOR. (0=BYBLOCK,256=BYLAYER)')
-#    layerltype_def = StringProperty(name="Default LINETYPE", default="DEF_LAY_TYPE",
+#    layerltype_def: StringProperty(name="Default LINETYPE", default="DEF_LAY_TYPE",
 #                                    description='Set default LINETYPE')
 
-    verbose = BoolProperty(name="Verbose", default=False,
+    verbose: BoolProperty(name="Verbose", default=False,
                            description="Run the exporter in debug mode.  Check the console for output")
 
     def execute(self, context):

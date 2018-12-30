@@ -330,3 +330,29 @@ class add_mesh_bolt(Operator, AddObjectHelper):
         self.execute(context)
 
         return {'FINISHED'}
+
+# Register:
+def menu_func_bolt(self, context):
+    self.layout.operator(
+        add_mesh_bolt.bl_idname,
+        text="Bolt",
+        icon="MOD_SCREW")
+
+classes = (
+    add_mesh_bolt,
+)
+
+		
+		
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func_bolt)
+
+
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_bolt)
