@@ -29,9 +29,9 @@ def failure_message(self):
 
 def failure_message_on_plane(self):
     msg2 = """\
-Edge2Face expects the edge to intersect at one point on the plane of the selected face. You're
-seeing this warning because mathutils.geometry.intersect_line_plane is being called on an edge/face
-combination that has no clear intersection point ( both points of the edge either touch the same
+Edge2Face expects the edge to intersect at one point on the plane of the selected face. You're  
+seeing this warning because mathutils.geometry.intersect_line_plane is being called on an edge/face  
+combination that has no clear intersection point ( both points of the edge either touch the same  
 plane as the face or they lie in a plane that is offset along the face's normal )"""
     lines = msg2.split('\n')
     for line in lines:

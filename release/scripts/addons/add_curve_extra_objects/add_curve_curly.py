@@ -5,8 +5,8 @@
 bl_info = {
     "name": "Curly Curves",
     "author": "Cmomoney",
-    "version": (1, 1, 8),
-    "blender": (2, 69, 0),
+    "version": (1, 1, 9),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve > Curly Curve",
     "description": "Adds a new Curly Curve",
     "warning": "",
@@ -405,20 +405,20 @@ class add_curlycurve(Operator, AddObjectHelper):
     bl_idname = "curve.curlycurve"
     bl_label = "Add Curly Curve"
     bl_description = "Create a Curly Curve"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    types = IntProperty(
+    types : IntProperty(
             name="Type",
             description="Type of curly curve",
             default=1,
             min=1, max=10
             )
-    scale_x = FloatProperty(
+    scale_x : FloatProperty(
             name="Scale X",
             description="Scale on X axis",
             default=1.0
             )
-    scale_y = FloatProperty(
+    scale_y : FloatProperty(
             name="Scale Y",
             description="Scale on Y axis",
             default=1.0
@@ -434,11 +434,11 @@ class add_curlycurve(Operator, AddObjectHelper):
         col.prop(self, "rotation")
 
         col = layout.column()
-        col.label("Curve:")
+        col.label(text = "Curve:")
         col.prop(self, "types")
 
         col = layout.column(align=True)
-        col.label("Resize:")
+        col.label(text = "Resize:")
         col.prop(self, "scale_x")
         col.prop(self, "scale_y")
 
@@ -479,12 +479,12 @@ def add_curlycurve_button(self, context):
 
 def register():
     bpy.utils.register_class(add_curlycurve)
-    bpy.types.VIEW3D_MT_curve_add.append(add_curlycurve_button)
+    #bpy.types.INFO_MT_curve_add.append(add_curlycurve_button)
 
 
 def unregister():
     bpy.utils.unregister_class(add_curlycurve)
-    bpy.types.VIEW3D_MT_curve_add.remove(add_curlycurve_button)
+    #bpy.types.INFO_MT_curve_add.remove(add_curlycurve_button)
 
 
 if __name__ == "__main__":

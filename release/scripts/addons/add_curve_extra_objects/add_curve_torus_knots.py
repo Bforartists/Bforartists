@@ -20,8 +20,8 @@
 bl_info = {
     "name": "Torus Knots",
     "author": "Marius Giurgi (DolphinDream), testscreenings",
-    "version": (0, 2),
-    "blender": (2, 76, 0),
+    "version": (0, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve",
     "description": "Adds many types of (torus) knots",
     "warning": "",
@@ -154,28 +154,28 @@ def align_matrix(self, context):
     userLoc = Matrix.Translation(self.location)
     userRot = self.rotation.to_matrix().to_4x4()
 
-    obj_align = context.user_preferences.edit.object_align
+    obj_align = context.preferences.edit.object_align
     if (context.space_data.type == 'VIEW_3D' and obj_align == 'VIEW'):
         rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
     else:
         rot = Matrix()
 
-    align_matrix = userLoc * loc * rot * userRot
+    align_matrix = userLoc @ loc @ rot @ userRot
     return align_matrix
 
 
 # ------------------------------------------------------------------------------
 # Set curve BEZIER handles to auto
 
-def setBezierHandles(obj, mode='AUTOMATIC'):
+def setBezierHandles(obj, mode='AUTO'):
     scene = bpy.context.scene
     if obj.type != 'CURVE':
         return
-    scene.objects.active = obj
-    bpy.ops.object.mode_set(mode='EDIT', toggle=True)
-    bpy.ops.curve.select_all(action='SELECT')
-    bpy.ops.curve.handle_type_set(type=mode)
-    bpy.ops.object.mode_set(mode='OBJECT', toggle=True)
+    #scene.objects.active = obj
+    #bpy.ops.object.mode_set(mode='EDIT', toggle=True)
+    #bpy.ops.curve.select_all(action='SELECT')
+    #bpy.ops.curve.handle_type_set(type=mode)
+    #bpy.ops.object.mode_set(mode='OBJECT', toggle=True)
 
 
 # ------------------------------------------------------------------------------
@@ -237,6 +237,9 @@ def create_torus_knot(self, context):
         if splineType == 'BEZIER':
             spline.bezier_points.add(int(len(vertArray) * 1.0 / 3 - 1))
             spline.bezier_points.foreach_set('co', vertArray)
+            for point in spline.bezier_points:
+                point.handle_right_type = self.handleType
+                point.handle_left_type = self.handleType
         else:
             spline.points.add(int(len(vertArray) * 1.0 / 4 - 1))
             spline.points.foreach_set('co', vertArray)
@@ -265,14 +268,14 @@ def create_torus_knot(self, context):
 
     # set object in the scene
     scene = bpy.context.scene
-    scene.objects.link(new_obj)  # place in active scene
-    new_obj.select = True  # set as selected
-    scene.objects.active = new_obj  # set as active
+    scene.collection.objects.link(new_obj)  # place in active scene
+    new_obj.select_set(True)  # set as selected
+    #scene.objects.active = new_obj  # set as active
     new_obj.matrix_world = self.align_matrix  # apply matrix
 
     # set BEZIER handles
-    if splineType == 'BEZIER':
-        setBezierHandles(new_obj, self.handleType)
+    #if splineType == 'BEZIER':
+    #    setBezierHandles(new_obj, self.handleType)
 
     return
 
@@ -355,123 +358,123 @@ class torus_knot_plus(Operator, AddObjectHelper):
     align_matrix = None
 
     # GENERAL options
-    options_plus = BoolProperty(
+    options_plus : BoolProperty(
             name="Extra Options",
             default=False,
             description="Show more options (the plus part)",
             )
-    absolute_location = BoolProperty(
+    absolute_location : BoolProperty(
             name="Absolute Location",
             default=False,
             description="Set absolute location instead of relative to 3D cursor",
             )
     # COLOR options
-    use_colors = BoolProperty(
+    use_colors : BoolProperty(
             name="Use Colors",
             default=False,
             description="Show torus links in colors",
             )
-    colorSet = EnumProperty(
+    colorSet : EnumProperty(
             name="Color Set",
             items=(('1', "RGBish", "RGBsish ordered colors"),
                     ('2', "Rainbow", "Rainbow ordered colors")),
             )
-    random_colors = BoolProperty(
+    random_colors : BoolProperty(
             name="Randomize Colors",
             default=False,
             description="Randomize link colors",
             )
-    saturation = FloatProperty(
+    saturation : FloatProperty(
             name="Saturation",
             default=0.75,
             min=0.0, max=1.0,
             description="Color saturation",
             )
     # SURFACE Options
-    geo_surface = BoolProperty(
+    geo_surface : BoolProperty(
             name="Surface",
             default=True,
             description="Create surface",
             )
-    geo_bDepth = FloatProperty(
+    geo_bDepth : FloatProperty(
             name="Bevel Depth",
             default=0.04,
             min=0, soft_min=0,
             description="Bevel Depth",
             )
-    geo_bRes = IntProperty(
+    geo_bRes : IntProperty(
             name="Bevel Resolution",
             default=2,
             min=0, soft_min=0,
             max=5, soft_max=5,
             description="Bevel Resolution"
             )
-    geo_extrude = FloatProperty(
+    geo_extrude : FloatProperty(
             name="Extrude",
             default=0.0,
             min=0, soft_min=0,
             description="Amount of curve extrusion"
             )
-    geo_offset = FloatProperty(
+    geo_offset : FloatProperty(
             name="Offset",
             default=0.0,
             min=0, soft_min=0,
             description="Offset the surface relative to the curve"
             )
     # TORUS KNOT Options
-    torus_p = IntProperty(
+    torus_p : IntProperty(
             name="p",
             default=2,
             min=1, soft_min=1,
             description="Number of Revolutions around the torus hole before closing the knot"
             )
-    torus_q = IntProperty(
+    torus_q : IntProperty(
             name="q",
             default=3,
             min=1, soft_min=1,
             description="Number of Spins through the torus hole before closing the knot"
             )
-    flip_p = BoolProperty(
+    flip_p : BoolProperty(
             name="Flip p",
             default=False,
             description="Flip Revolution direction"
             )
-    flip_q = BoolProperty(
+    flip_q : BoolProperty(
             name="Flip q",
             default=False,
             description="Flip Spin direction"
             )
-    multiple_links = BoolProperty(
+    multiple_links : BoolProperty(
             name="Multiple Links",
             default=True,
             description="Generate all links or just one link when q and q are not co-primes"
             )
-    torus_u = IntProperty(
+    torus_u : IntProperty(
             name="Rev. Multiplier",
             default=1,
             min=1, soft_min=1,
             description="Revolutions Multiplier"
             )
-    torus_v = IntProperty(
+    torus_v : IntProperty(
             name="Spin Multiplier",
             default=1,
             min=1, soft_min=1,
             description="Spin multiplier"
             )
-    torus_rP = FloatProperty(
+    torus_rP : FloatProperty(
             name="Revolution Phase",
             default=0.0,
             min=0.0, soft_min=0.0,
             description="Phase revolutions by this radian amount"
             )
-    torus_sP = FloatProperty(
+    torus_sP : FloatProperty(
             name="Spin Phase",
             default=0.0,
             min=0.0, soft_min=0.0,
             description="Phase spins by this radian amount"
             )
     # TORUS DIMENSIONS options
-    mode = EnumProperty(
+    mode : EnumProperty(
             name="Torus Dimensions",
             items=(("MAJOR_MINOR", "Major/Minor",
                     "Use the Major/Minor radii for torus dimensions."),
@@ -479,7 +482,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
                     "Use the Exterior/Interior radii for torus dimensions.")),
             update=mode_update_callback,
             )
-    torus_R = FloatProperty(
+    torus_R : FloatProperty(
             name="Major Radius",
             min=0.00, max=100.0,
             default=1.0,
@@ -487,7 +490,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
             unit='LENGTH',
             description="Radius from the torus origin to the center of the cross section"
             )
-    torus_r = FloatProperty(
+    torus_r : FloatProperty(
             name="Minor Radius",
             min=0.00, max=100.0,
             default=.25,
@@ -495,7 +498,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
             unit='LENGTH',
             description="Radius of the torus' cross section"
             )
-    torus_iR = FloatProperty(
+    torus_iR : FloatProperty(
             name="Interior Radius",
             min=0.00, max=100.0,
             default=.75,
@@ -503,7 +506,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
             unit='LENGTH',
             description="Interior radius of the torus (closest to the torus center)"
             )
-    torus_eR = FloatProperty(
+    torus_eR : FloatProperty(
             name="Exterior Radius",
             min=0.00, max=100.0,
             default=1.25,
@@ -511,26 +514,26 @@ class torus_knot_plus(Operator, AddObjectHelper):
             unit='LENGTH',
             description="Exterior radius of the torus (farthest from the torus center)"
             )
-    torus_s = FloatProperty(
+    torus_s : FloatProperty(
             name="Scale",
             min=0.01, max=100.0,
             default=1.00,
             description="Scale factor to multiply the radii"
             )
-    torus_h = FloatProperty(
+    torus_h : FloatProperty(
             name="Height",
             default=1.0,
             min=0.0, max=100.0,
             description="Scale along the local Z axis"
             )
     # CURVE options
-    torus_res = IntProperty(
+    torus_res : IntProperty(
             name="Curve Resolution",
             default=100,
             min=3, soft_min=3,
             description="Number of control vertices in the curve"
             )
-    segment_res = IntProperty(
+    segment_res : IntProperty(
             name="Segment Resolution",
             default=12,
             min=1, soft_min=1,
@@ -540,7 +543,7 @@ class torus_knot_plus(Operator, AddObjectHelper):
             ('POLY', "Poly", "Poly type"),
             ('NURBS', "Nurbs", "Nurbs type"),
             ('BEZIER', "Bezier", "Bezier type")]
-    outputType = EnumProperty(
+    outputType : EnumProperty(
             name="Output splines",
             default='BEZIER',
             description="Type of splines to output",
@@ -548,15 +551,15 @@ class torus_knot_plus(Operator, AddObjectHelper):
             )
     bezierHandles = [
             ('VECTOR', "Vector", "Bezier Handles type - Vector"),
-            ('AUTOMATIC', "Auto", "Bezier Handles type - Automatic"),
+            ('AUTO', "Auto", "Bezier Handles type - Automatic"),
             ]
-    handleType = EnumProperty(
+    handleType : EnumProperty(
             name="Handle type",
-            default='AUTOMATIC',
+            default='AUTO',
             items=bezierHandles,
             description="Bezier handle type",
             )
-    adaptive_resolution = BoolProperty(
+    adaptive_resolution : BoolProperty(
             name="Adaptive Resolution",
             default=False,
             description="Auto adjust curve resolution based on TK length",
@@ -573,12 +576,12 @@ class torus_knot_plus(Operator, AddObjectHelper):
         col.label(text="Torus Knot Parameters:")
 
         box = layout.box()
-        split = box.split(percentage=0.85, align=True)
+        split = box.split(factor=0.85, align=True)
         split.prop(self, "torus_p", text="Revolutions")
         split.prop(self, "flip_p", toggle=True, text="",
                    icon='ARROW_LEFTRIGHT')
 
-        split = box.split(percentage=0.85, align=True)
+        split = box.split(factor=0.85, align=True)
         split.prop(self, "torus_q", text="Spins")
         split.prop(self, "flip_q", toggle=True, text="",
                    icon='ARROW_LEFTRIGHT')
@@ -709,14 +712,14 @@ class torus_knot_plus(Operator, AddObjectHelper):
         self.align_matrix = align_matrix(self, context)
 
         # turn off undo
-        undo = bpy.context.user_preferences.edit.use_global_undo
-        bpy.context.user_preferences.edit.use_global_undo = False
+        #undo = bpy.context.preferences.edit.use_global_undo
+        #bpy.context.preferences.edit.use_global_undo = False
 
         # create the curve
         create_torus_knot(self, context)
 
         # restore pre operator undo state
-        bpy.context.user_preferences.edit.use_global_undo = undo
+        #bpy.context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 
@@ -724,3 +727,21 @@ class torus_knot_plus(Operator, AddObjectHelper):
         self.execute(context)
 
         return {'FINISHED'}
+
+# Register
+classes = [
+    torus_knot_plus
+]
+
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
+if __name__ == "__main__":
+    register()

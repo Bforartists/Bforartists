@@ -150,7 +150,7 @@ def quad_from_edge(bm, edge_sel, context, event):
 
     # adjust uv-map
     if __name__ != '__main__':
-        addon_prefs = context.user_preferences.addons[__name__].preferences
+        addon_prefs = context.preferences.addons[__name__].preferences
         if addon_prefs.adjustuv:
             for (key, uv_layer) in bm.loops.layers.uv.items():
                 uv_ori = {}
@@ -249,7 +249,7 @@ def quad_from_vertex(bm, vert_sel, context, event):
 
     # adjust uv-map
     if __name__ != '__main__':
-        addon_prefs = context.user_preferences.addons[__name__].preferences
+        addon_prefs = context.preferences.addons[__name__].preferences
         if addon_prefs.adjustuv:
             for (key, uv_layer) in bm.loops.layers.uv.items():
                 uv_others = {}
@@ -331,7 +331,7 @@ class MeshF2(bpy.types.Operator):
             # single vertex selected -> mirror vertex and create new face
             quad_from_vertex(bm, sel[0], context, event)
             if __name__ != '__main__':
-                addon_prefs = context.user_preferences.addons[__name__].\
+                addon_prefs = context.preferences.addons[__name__].\
                     preferences
                 if addon_prefs.autograb:
                     bpy.ops.transform.translate('INVOKE_DEFAULT')

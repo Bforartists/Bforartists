@@ -9,7 +9,7 @@ from . import crack_it
 
 
 def check_object_cell_fracture():
-    if "object_fracture_cell" in bpy.context.user_preferences.addons.keys():
+    if "object_fracture_cell" in bpy.context.preferences.addons.keys():
         return True
     return False
 

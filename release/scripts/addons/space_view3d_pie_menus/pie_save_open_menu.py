@@ -130,7 +130,7 @@ class FileIncrementalSave(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (bpy.data.filepath is not "")
+        return (bpy.data.filepath != "")
 
     def execute(self, context):
         f_path = bpy.data.filepath

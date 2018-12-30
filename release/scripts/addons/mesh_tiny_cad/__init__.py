@@ -22,8 +22,8 @@
 bl_info = {
     "name": "tinyCAD Mesh tools",
     "author": "zeffii (aka Dealga McArdle)",
-    "version": (1, 3, 1),
-    "blender": (2, 7, 7),
+    "version": (1, 3, 2),
+    "blender": (2, 80, 0),
     "category": "Mesh",
     "location": "View3D > EditMode > (w) Specials",
     "wiki_url": "http://zeffii.github.io/mesh_tiny_cad/",
@@ -59,7 +59,7 @@ def menu_func(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_tinycad")
     self.layout.separator()
 
-classes = (
+classes = [
     TinyCADProperties, VIEW3D_MT_edit_mesh_tinycad,
     VTX.TCAutoVTX,
     XALL.TCIntersectAllEdges,
@@ -67,7 +67,7 @@ classes = (
     E2F.TCEdgeToFace,
     CCEN.TCCallBackCCEN, CCEN.TCCircleCenter,
     BIX.TCLineOnBisection
-)
+]
 
 def register():
     register_icons()

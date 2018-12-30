@@ -745,8 +745,8 @@ def get_parallel_loops(bm_mod, loops):
 
 # gather initial data
 def initialise():
-    global_undo = bpy.context.user_preferences.edit.use_global_undo
-    bpy.context.user_preferences.edit.use_global_undo = False
+    global_undo = bpy.context.preferences.edit.use_global_undo
+    bpy.context.preferences.edit.use_global_undo = False
     object = bpy.context.active_object
     if 'MIRROR' in [mod.type for mod in object.modifiers if mod.show_viewport]:
         # ensure that selection is synced for the derived mesh
@@ -834,7 +834,7 @@ def terminate(global_undo):
     if obj.mode == 'EDIT':
         bmesh.update_edit_mesh(obj.data, loop_triangles=True, destructive=True)
 
-    bpy.context.user_preferences.edit.use_global_undo = global_undo
+    bpy.context.preferences.edit.use_global_undo = global_undo
 
 
 # ########################################
@@ -5067,7 +5067,7 @@ def update_panel(self, context):
                 bpy.utils.unregister_class(panel)
 
         for panel in panels:
-            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            panel.bl_category = context.preferences.addons[__name__].preferences.category
             bpy.utils.register_class(panel)
 
     except Exception as e:

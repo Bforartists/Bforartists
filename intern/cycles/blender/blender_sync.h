@@ -78,6 +78,8 @@ public:
 	void sync_view(BL::SpaceView3D& b_v3d,
 	               BL::RegionView3D& b_rv3d,
 	               int width, int height);
+	inline int get_layer_samples() { return view_layer.samples; }
+	inline int get_layer_bound_samples() { return view_layer.bound_samples; }
 
 	/* get parameters */
 	static SceneParams get_scene_params(BL::Scene& b_scene,
@@ -117,7 +119,8 @@ private:
 	                BL::Object& b_ob,
 	                BL::Object& b_ob_instance,
 	                bool object_updated,
-	                bool hide_tris);
+	                bool show_self,
+	                bool show_particles);
 	void sync_curves(Mesh *mesh,
 	                 BL::Mesh& b_mesh,
 	                 BL::Object& b_ob,
@@ -127,7 +130,8 @@ private:
 	                    BL::ViewLayer& b_view_layer,
 	                    BL::DepsgraphObjectInstance& b_instance,
 	                    float motion_time,
-	                    bool hide_tris,
+	                    bool show_self,
+	                    bool show_particles,
 	                    BlenderObjectCulling& culling,
 	                    bool *use_portal);
 	void sync_light(BL::Object& b_parent,
@@ -189,18 +193,23 @@ private:
 
 	struct RenderLayerInfo {
 		RenderLayerInfo()
-		: use_background_shader(true),
+		: material_override(PointerRNA_NULL),
+		  use_background_shader(true),
 		  use_background_ao(true),
 		  use_surfaces(true),
-		  use_hair(true)
+		  use_hair(true),
+		  samples(0),
+		  bound_samples(false)
 		{}
 
 		string name;
-		uint view_layer;
+		BL::Material material_override;
 		bool use_background_shader;
 		bool use_background_ao;
 		bool use_surfaces;
 		bool use_hair;
+		int samples;
+		bool bound_samples;
 	} view_layer;
 
 	Progress &progress;

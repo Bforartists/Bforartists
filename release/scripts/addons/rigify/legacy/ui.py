@@ -284,14 +284,14 @@ class Generate(bpy.types.Operator):
         import importlib
         importlib.reload(generate)
 
-        use_global_undo = context.user_preferences.edit.use_global_undo
-        context.user_preferences.edit.use_global_undo = False
+        use_global_undo = context.preferences.edit.use_global_undo
+        context.preferences.edit.use_global_undo = False
         try:
             generate.generate_rig(context, context.object)
         except MetarigError as rig_exception:
             rigify_report_exception(self, rig_exception)
         finally:
-            context.user_preferences.edit.use_global_undo = use_global_undo
+            context.preferences.edit.use_global_undo = use_global_undo
 
         return {'FINISHED'}
 
@@ -312,8 +312,8 @@ class Sample(bpy.types.Operator):
 
     def execute(self, context):
         if context.mode == 'EDIT_ARMATURE' and self.metarig_type != "":
-            use_global_undo = context.user_preferences.edit.use_global_undo
-            context.user_preferences.edit.use_global_undo = False
+            use_global_undo = context.preferences.edit.use_global_undo
+            context.preferences.edit.use_global_undo = False
             try:
                 rig = get_rig_type(self.metarig_type)
                 create_sample = rig.create_sample
@@ -322,7 +322,7 @@ class Sample(bpy.types.Operator):
             else:
                 create_sample(context.active_object)
             finally:
-                context.user_preferences.edit.use_global_undo = use_global_undo
+                context.preferences.edit.use_global_undo = use_global_undo
                 bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}

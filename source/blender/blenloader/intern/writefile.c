@@ -4131,7 +4131,7 @@ bool BLO_write_file(
 	const int path_list_flag = (BKE_BPATH_TRAVERSE_SKIP_LIBRARY | BKE_BPATH_TRAVERSE_SKIP_MULTIFILE);
 
 	if (G.debug & G_DEBUG_IO && mainvar->lock != NULL) {
-		BKE_report(reports, RPT_INFO, "Checking sanity of current .blend file *BEFORE* save to disk.");
+		BKE_report(reports, RPT_INFO, "Checking sanity of current .blend file *BEFORE* save to disk");
 		BLO_main_validate_libraries(mainvar, reports);
 	}
 
@@ -4220,7 +4220,7 @@ bool BLO_write_file(
 	}
 
 	if (G.debug & G_DEBUG_IO && mainvar->lock != NULL) {
-		BKE_report(reports, RPT_INFO, "Checking sanity of current .blend file *AFTER* save to disk.");
+		BKE_report(reports, RPT_INFO, "Checking sanity of current .blend file *AFTER* save to disk");
 		BLO_main_validate_libraries(mainvar, reports);
 	}
 

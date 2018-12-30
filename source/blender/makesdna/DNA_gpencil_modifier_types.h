@@ -280,7 +280,7 @@ typedef struct BuildGpencilModifierData {
 	float start_delay;    /* For each pair of gp keys, number of frames before strokes start appearing */
 	float length;         /* For each pair of gp keys, number of frames that build effect must be completed within */
 
-	short flag;           /* (eGpencilBuild_Flag) Options for controlling modifier behaviour */
+	short flag;           /* (eGpencilBuild_Flag) Options for controlling modifier behavior */
 
 	short mode;           /* (eGpencilBuild_Mode) How are strokes ordered */
 	short transition;     /* (eGpencilBuild_Transition) In what order do stroke points appear/disappear */
@@ -425,7 +425,7 @@ typedef enum eSimplifyGpencil_Mode {
 	/* Keep only one vertex every n vertices */
 	GP_SIMPLIFY_FIXED = 0,
 	/* Use RDP algorithm */
-	GP_SIMPLIFY_ADAPTATIVE = 1,
+	GP_SIMPLIFY_ADAPTIVE = 1,
 } eSimplifyGpencil_Mode;
 
 typedef struct OffsetGpencilModifierData {

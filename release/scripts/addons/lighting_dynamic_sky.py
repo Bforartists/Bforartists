@@ -72,7 +72,7 @@ def check_world_name(name_id="Dynamic"):
 
 
 def check_cycles():
-    return ('cycles' in bpy.context.user_preferences.addons.keys())
+    return ('cycles' in bpy.context.preferences.addons.keys())
 
 
 class dsky(Operator):

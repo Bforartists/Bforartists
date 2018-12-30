@@ -33,9 +33,9 @@ except:
 
 bl_info = {
     "name": "Import AutoCAD DXF Format (.dxf)",
-    "author": "Lukas Treyer, Manfred Moitzi (support + dxfgrabber library), Vladimir Elistratov, Bastien Montagne",
-    "version": (0, 8, 6),
-    "blender": (2, 7, 1),
+    "author": "Lukas Treyer, Manfred Moitzi (support + dxfgrabber library), Vladimir Elistratov, Bastien Montagne, Remigiusz Fiedler (AKA migius)",
+    "version": (0, 9, 6),
+    "blender": (2, 80, 0),
     "location": "File > Import > AutoCAD DXF",
     "description": "Import files in the Autocad DXF format (.dxf)",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/DXF_Importer",
@@ -130,7 +130,8 @@ def read(report, filename, obj_merge=BY_LAYER, import_text=True, import_light=Tr
 def display_groups_in_outliner():
     outliners = (a for a in bpy.context.screen.areas if a.type == "OUTLINER")
     for outliner in outliners:
-        outliner.spaces[0].display_mode = "GROUPS"
+        pass
+        #outliner.spaces[0].display_mode = "GROUPS"
 
 
 # Update helpers (must be globals to be re-usable).
@@ -200,21 +201,21 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     bl_region_type = 'WINDOW'
     bl_options = {'UNDO'}
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             name="input file",
             subtype='FILE_PATH'
             )
 
     filename_ext = ".dxf"
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.dxf",
             options={'HIDDEN'},
             )
 
     def _update_merge(self, context):
         _update_import_atts_do(self, context)
-    merge = BoolProperty(
+    merge: BoolProperty(
             name="Merged Objects",
             description="Merge DXF entities to Blender objects",
             default=T_Merge,
@@ -224,7 +225,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     def _update_merge_options(self, context):
         _update_import_atts_do(self, context)
 
-    merge_options = EnumProperty(
+    merge_options: EnumProperty(
             name="Merge",
             description="Merge multiple DXF entities into one Blender object",
             items=[('BY_LAYER', "By Layer", "Merge DXF entities of a layer to an object"),
@@ -235,37 +236,37 @@ class IMPORT_OT_dxf(bpy.types.Operator):
             update=_update_merge_options
             )
 
-    merge_lines = BoolProperty(
+    merge_lines: BoolProperty(
             name="Combine LINE entities to polygons",
             description="Checks if lines are connect on start or end and merges them to a polygon",
             default=T_MergeLines
             )
 
-    import_text = BoolProperty(
+    import_text: BoolProperty(
             name="Import Text",
             description="Import DXF Text Entities MTEXT and TEXT",
             default=T_ImportText,
             )
 
-    import_light = BoolProperty(
+    import_light: BoolProperty(
             name="Import Lights",
             description="Import DXF Text Entity LIGHT",
             default=T_ImportLight
             )
 
-    export_acis = BoolProperty(
+    export_acis: BoolProperty(
             name="Export ACIS Entities",
             description="Export Entities consisting of ACIS code to ACIS .sat/.sab files",
             default=T_ExportAcis
             )
 
-    outliner_groups = BoolProperty(
+    outliner_groups: BoolProperty(
             name="Display Groups in Outliner(s)",
             description="Make all outliners in current screen layout show groups",
             default=T_OutlinerGroups
             )
 
-    do_bbox = BoolProperty(
+    do_bbox: BoolProperty(
             name="Parent Blocks to Bounding Boxes",
             description="Create a bounding box for blocks with more than one object (faster without)",
             default=T_Bbox
@@ -273,7 +274,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
 
 
-    block_options = EnumProperty(
+    block_options: EnumProperty(
             name="Blocks As",
             description="Select the representation of DXF blocks: linked objects or group instances",
             items=[('LINKED_OBJECTS', "Linked Objects", "Block objects get imported as linked objects"),
@@ -285,14 +286,14 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     def _update_create_new_scene(self, context):
         _update_use_georeferencing_do(self, context)
         _set_recenter(self, self.recenter)
-    create_new_scene = BoolProperty(
+    create_new_scene: BoolProperty(
             name="Import DXF to new scene",
             description="Creates a new scene with the name of the imported file",
             default=T_CreateNewScene,
             update=_update_create_new_scene,
             )
 
-    recenter = BoolProperty(
+    recenter: BoolProperty(
             name="Center geometry to scene",
             description="Moves geometry to the center of the scene",
             default=T_Recenter,
@@ -300,14 +301,14 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
     def _update_thickness_width(self, context):
         _update_import_atts_do(self, context)
-    represent_thickness_and_width = BoolProperty(
+    represent_thickness_and_width: BoolProperty(
             name="Represent line thickness/width",
             description="Map thickness and width of lines to Bevel objects and extrusion attribute",
             default=T_ThicknessBevel,
             update=_update_thickness_width
             )
 
-    import_atts = BoolProperty(
+    import_atts: BoolProperty(
             name="Merge by attributes",
             description="If 'Merge objects' is on but thickness and width are not chosen to be represented, with this "
                         "option object still can be merged by thickness, with, subd and extrusion attributes "
@@ -320,7 +321,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
     def _update_use_georeferencing(self, context):
         _update_use_georeferencing_do(self, context)
         _set_recenter(self, self.recenter)
-    use_georeferencing = BoolProperty(
+    use_georeferencing: BoolProperty(
             name="Geo Referencing",
             description="Project coordinates to a given coordinate system or reference point",
             default=True,
@@ -329,7 +330,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
     def _update_dxf_indi(self, context):
         _set_recenter(self, self.recenter)
-    dxf_indi = EnumProperty(
+    dxf_indi: EnumProperty(
             name="DXF coordinate type",
             description="Indication for spherical or euclidian coordinates",
             items=[('EUCLIDEAN', "Euclidean", "Coordinates in x/y"),
@@ -340,7 +341,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
 
     # Note: FloatProperty is not precise enough, e.g. 1.0 becomes 0.999999999. Python is more precise here (it uses
     #       doubles internally), so we store it as string here and convert to number with py's float() func.
-    dxf_scale = StringProperty(
+    dxf_scale: StringProperty(
             name="Unit Scale",
             description="Coordinates are assumed to be in meters; deviation must be indicated here",
             default="1.0"
@@ -351,7 +352,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         _set_recenter(self, self.recenter)
     if PYPROJ:
         pitems = proj_none_items + proj_user_items + proj_epsg_items
-        proj_dxf = EnumProperty(
+        proj_dxf: EnumProperty(
             name="DXF SRID",
             description="The coordinate system for the DXF file (check http://epsg.io)",
             items=pitems,
@@ -359,12 +360,12 @@ class IMPORT_OT_dxf(bpy.types.Operator):
             update=_update_proj,
             )
 
-    epsg_dxf_user = StringProperty(name="EPSG-Code", default="EPSG")
-    merc_dxf_lat = FloatProperty(name="Geo-Reference Latitude", default=0.0)
-    merc_dxf_lon = FloatProperty(name="Geo-Reference Longitude", default=0.0)
+    epsg_dxf_user: StringProperty(name="EPSG-Code", default="EPSG")
+    merc_dxf_lat: FloatProperty(name="Geo-Reference Latitude", default=0.0)
+    merc_dxf_lon: FloatProperty(name="Geo-Reference Longitude", default=0.0)
 
     pitems = proj_none_items + ((proj_user_items + proj_tmerc_items + proj_epsg_items) if PYPROJ else proj_tmerc_items)
-    proj_scene = EnumProperty(
+    proj_scene: EnumProperty(
             name="Scn SRID",
             description="The coordinate system for the Scene (check http://epsg.io)",
             items=pitems,
@@ -372,19 +373,19 @@ class IMPORT_OT_dxf(bpy.types.Operator):
             update=_update_proj,
             )
 
-    epsg_scene_user = StringProperty(name="EPSG-Code", default="EPSG")
-    merc_scene_lat = FloatProperty(name="Geo-Reference Latitude", default=0.0)
-    merc_scene_lon = FloatProperty(name="Geo-Reference Longitude", default=0.0)
+    epsg_scene_user: StringProperty(name="EPSG-Code", default="EPSG")
+    merc_scene_lat: FloatProperty(name="Geo-Reference Latitude", default=0.0)
+    merc_scene_lon: FloatProperty(name="Geo-Reference Longitude", default=0.0)
 
     # internal use only!
-    internal_using_scene_srid = BoolProperty(default=False, options={'HIDDEN'})
+    internal_using_scene_srid: BoolProperty(default=False, options={'HIDDEN'})
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
 
         # merge options
-        layout.label("Merge Options:")
+        layout.label(text="Merge Options:")
         box = layout.box()
         sub = box.row()
         #sub.enabled = merge_map[self.merge_options] != BY_BLOCKS
@@ -397,7 +398,7 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         box.prop(self, "merge_lines")
 
         # general options
-        layout.label("Line thickness and width:")
+        layout.label(text="Line thickness and width:")
         box = layout.box()
         box.enabled = not merge_map[self.merge_options] == BY_CLOSED_NO_BULGE_POLY
         box.prop(self, "represent_thickness_and_width")
@@ -406,14 +407,14 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         sub.prop(self, "import_atts")
 
         # optional objects
-        layout.label("Optional Objects:")
+        layout.label(text="Optional Objects:")
         box = layout.box()
         box.prop(self, "import_text")
         box.prop(self, "import_light")
         box.prop(self, "export_acis")
 
         # view options
-        layout.label("View Options:")
+        layout.label(text="View Options:")
         box = layout.box()
         box.prop(self, "outliner_groups")
         box.prop(self, "create_new_scene")
@@ -428,13 +429,13 @@ class IMPORT_OT_dxf(bpy.types.Operator):
         self.draw_pyproj(box, context.scene) if PYPROJ else self.draw_merc(box)
 
     def draw_merc(self, box):
-        box.label("DXF File:")
+        box.label(text="DXF File:")
         box.prop(self, "dxf_indi")
         box.prop(self, "dxf_scale")
 
         sub = box.column()
         sub.enabled = not _recenter_allowed(self)
-        sub.label("Geo Reference:")
+        sub.label(text="Geo Reference:")
         sub = box.column()
         sub.enabled = not _recenter_allowed(self)
         if is_ref_scene(bpy.context.scene):
@@ -478,26 +479,26 @@ class IMPORT_OT_dxf(bpy.types.Operator):
                 col.alert = True
             col.prop(self, "epsg_scene_user")
             col.alert = False
-            col.label("")  # Placeholder.
+            col.label(text="")  # Placeholder.
         elif self.proj_scene == 'TMERC':
             col.prop(self, "merc_scene_lat", text="Lat")
             col.prop(self, "merc_scene_lon", text="Lon")
         else:
-            col.label("")  # Placeholder.
-            col.label("")  # Placeholder.
+            col.label(text="")  # Placeholder.
+            col.label(text="")  # Placeholder.
 
         # user info
         if self.proj_scene != 'NONE':
             if not valid_dxf_srid:
-                box.label("DXF SRID not valid", icon="ERROR")
+                box.label(text="DXF SRID not valid", icon="ERROR")
             if self.proj_dxf == 'NONE':
-                box.label("", icon='ERROR')
-                box.label("DXF SRID must be set, otherwise")
+                box.label(text="", icon='ERROR')
+                box.label(text="DXF SRID must be set, otherwise")
                 if self.proj_scene == 'USER':
                     code = self.epsg_scene_user
                 else:
                     code = self.proj_scene
-                box.label('Scene SRID %r is ignored!' % code)
+                box.label(text='Scene SRID %r is ignored!' % code)
 
     def execute(self, context):
         block_map = {"LINKED_OBJECTS": LINKED_OBJECTS, "GROUP_INSTANCES": GROUP_INSTANCES}
@@ -558,12 +559,12 @@ def menu_func(self, context):
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(IMPORT_OT_dxf)
     bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(IMPORT_OT_dxf)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func)
 
 

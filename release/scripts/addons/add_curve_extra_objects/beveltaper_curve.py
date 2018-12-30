@@ -20,8 +20,8 @@
 bl_info = {
     "name": "Bevel/Taper Curve",
     "author": "Cmomoney",
-    "version": (1, 1),
-    "blender": (2, 69, 0),
+    "version": (1, 2),
+    "blender": (2, 80, 0),
     "location": "View3D > Object > Bevel/Taper",
     "description": "Adds bevel and/or taper curve to active curve",
     "warning": "",
@@ -238,38 +238,38 @@ class add_tapercurve(Operator):
     bl_label = "Add Curve as Taper"
     bl_description = ("Add taper curve to Active Curve\n"
                       "Needs an existing Active Curve")
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    scale_ends1 = FloatProperty(
+    scale_ends1 : FloatProperty(
             name="End Width Left",
             description="Adjust left end taper",
             default=0.0,
             min=0.0
             )
-    scale_ends2 = FloatProperty(
+    scale_ends2 : FloatProperty(
             name="End Width Right",
             description="Adjust right end taper",
             default=0.0,
             min=0.0
             )
-    scale_mid = FloatProperty(
+    scale_mid : FloatProperty(
             name="Center Width",
             description="Adjust taper at center",
             default=1.0,
             min=0.0
             )
-    link1 = BoolProperty(
+    link1 : BoolProperty(
             name="Link Ends",
             description="Link the End Width Left / Right settings\n"
                         "End Width Left will be editable ",
             default=True
             )
-    link2 = BoolProperty(
+    link2 : BoolProperty(
             name="Link Ends / Center",
             description="Link the End Widths with the Center Width",
             default=False
             )
-    diff = FloatProperty(
+    diff : FloatProperty(
             name="Difference",
             default=1,
             description="Difference between ends and center while linked"
@@ -325,25 +325,25 @@ class add_bevelcurve(Operator, AddObjectHelper):
     bl_label = "Add Curve as Bevel"
     bl_description = ("Add bevel curve to Active Curve\n"
                       "Needs an existing Active Curve")
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    types = IntProperty(
+    types : IntProperty(
             name="Type",
             description="Type of bevel curve",
             default=1,
             min=1, max=5
             )
-    scale_x = FloatProperty(
+    scale_x : FloatProperty(
             name="Scale X",
             description="Scale on X axis",
             default=1.0
             )
-    scale_y = FloatProperty(
+    scale_y : FloatProperty(
             name="Scale Y",
             description="Scale on Y axis",
             default=1.0
             )
-    link = BoolProperty(
+    link : BoolProperty(
             name="Link XY",
             description="Link the Scale on X/Y axis",
             default=True
@@ -364,7 +364,7 @@ class add_bevelcurve(Operator, AddObjectHelper):
         col.prop(self, "rotation")
 
         col = layout.column(align=True)
-        col.label("Settings:")
+        col.label(text = "Settings:")
         col.prop(self, "types")
 
         split = layout.split(percentage=0.95, align=True)
@@ -394,7 +394,7 @@ class add_bevelcurve(Operator, AddObjectHelper):
 
 class Bevel_Taper_Curve_Menu(Menu):
     bl_label = "Bevel/Taper"
-    bl_idname = "OBJECT_MT_bevel_taper_curve_menu"
+    bl_idname = "VIEW3D_MT_bevel_taper_curve_menu"
 
     def draw(self, context):
         layout = self.layout
@@ -405,16 +405,16 @@ class Bevel_Taper_Curve_Menu(Menu):
 
 def menu_funcs(self, context):
     if bpy.context.scene.objects.active.type == "CURVE":
-        self.layout.menu("OBJECT_MT_bevel_taper_curve_menu")
+        self.layout.menu("VIEW3D_MT_bevel_taper_curve_menu")
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    #bpy.utils.register_module(__name__)
     bpy.types.VIEW3D_MT_object.append(menu_funcs)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    #bpy.utils.unregister_module(__name__)
     bpy.types.VIEW3D_MT_object.remove(menu_funcs)
 
 

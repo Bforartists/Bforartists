@@ -66,7 +66,7 @@ def get_prefs(context):
     global __name__
     try:
         addon_name = __name__.split('.')[0]
-        prefs = context.user_preferences.addons[addon_name].preferences
+        prefs = context.preferences.addons[addon_name].preferences
     except:
         prefs = DefaultColorScheme
         pass
@@ -325,7 +325,7 @@ class GlText(Gl):
         """
             overall on-screen size in pixels
         """
-        dpi, font_id = context.user_preferences.system.dpi, 0
+        dpi, font_id = context.preferences.system.dpi, 0
         if self.angle != 0:
             blf.enable(font_id, blf.ROTATION)
             blf.rotation(font_id, self.angle)
@@ -437,7 +437,7 @@ class GlText(Gl):
         p = self.position_2d_from_coord(context, self.pts[0], render)
 
         # dirty fast assignment
-        dpi, font_id = context.user_preferences.system.dpi, 0
+        dpi, font_id = context.preferences.system.dpi, 0
 
         # self.cbuff[0:4] = self.colour
 
@@ -1151,7 +1151,7 @@ class Screen():
 
     def size(self, context):
 
-        system = context.user_preferences.system
+        system = context.preferences.system
         w = context.region.width
         h = context.region.height
         y_min = self.margin

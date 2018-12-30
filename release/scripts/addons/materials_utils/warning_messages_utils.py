@@ -25,7 +25,7 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
     # override - important messages that should be enabled, no matter the setting
 
     # pass the show_warnings bool to enable/disable them
-    addon = bpy.context.user_preferences.addons[MAT_SPEC_NAME]
+    addon = bpy.context.preferences.addons[MAT_SPEC_NAME]
     get_warn = addon.preferences.show_warnings if addon else False
     show_warn = get_warn if override is False else override
 
@@ -160,7 +160,7 @@ def collect_report(collection="", is_start=False, is_final=False):
 
 def c_is_cycles_addon_enabled():
     # checks if Cycles is enabled thanks to ideasman42
-    return ('cycles' in bpy.context.user_preferences.addons.keys())
+    return ('cycles' in bpy.context.preferences.addons.keys())
 
 
 def c_data_has_materials():

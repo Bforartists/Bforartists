@@ -58,6 +58,7 @@
 #include "BKE_global.h"
 #include "BKE_scene.h"
 
+#include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
 #include "UI_view2d.h"
@@ -1672,8 +1673,10 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				}
 
 				/* free the group itself */
-				if (adt->action)
+				if (adt->action) {
 					BLI_freelinkN(&adt->action->groups, agrp);
+					DEG_id_tag_update_ex(CTX_data_main(C), &adt->action->id, ID_RECALC_COPY_ON_WRITE);
+				}
 				else
 					MEM_freeN(agrp);
 			}
@@ -1698,6 +1701,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 
 				/* try to free F-Curve */
 				ANIM_fcurve_delete_from_animdata(&ac, adt, fcu);
+				ale->update = ANIM_UPDATE_DEPS;
 				break;
 			}
 			case ANIMTYPE_NLACURVE:
@@ -1719,6 +1723,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				/* unlink and free the F-Curve */
 				BLI_remlink(&strip->fcurves, fcu);
 				free_fcurve(fcu);
+				ale->update = ANIM_UPDATE_DEPS;
 				break;
 			}
 			case ANIMTYPE_GPLAYER:
@@ -1729,6 +1734,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 
 				/* try to delete the layer's data and the layer itself */
 				BKE_gpencil_layer_delete(gpd, gpl);
+				ale->update = ANIM_UPDATE_DEPS;
 				break;
 			}
 			case ANIMTYPE_MASKLAYER:
@@ -1745,6 +1751,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 	}
 
 	/* cleanup */
+	ANIM_animdata_update(&ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 
 	/* send notifier that things have changed */
@@ -3051,7 +3058,7 @@ static void ANIM_OT_channels_click(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 
 	/* properties */
-	/* NOTE: don't save settings, otherwise, can end up with some weird behaviour (sticky extend) */
+	/* NOTE: don't save settings, otherwise, can end up with some weird behavior (sticky extend) */
 	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend Select", ""); // SHIFTKEY
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
