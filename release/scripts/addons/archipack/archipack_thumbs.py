@@ -223,7 +223,7 @@ if __name__ == "__main__":
         # log("### ENABLE %s ADDON ############################" % module)
         bpy.ops.wm.addon_enable(module=module)
         # log("### MATLIB PATH ############################")
-        bpy.context.user_preferences.addons[module].preferences.matlib_path = matlib
+        bpy.context.preferences.addons[module].preferences.matlib_path = matlib
     except:
         raise RuntimeError("module name not found")
     # log("### GENERATE ############################")

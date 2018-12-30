@@ -1124,7 +1124,7 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
         bdata = [None] * len(blen_data) if is_fake else blen_data
         if func(mesh, bdata, "normal",
                 fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, 3, layer_id, xform, True):
-            if blen_data_type is "Polygons":
+            if blen_data_type == "Polygons":
                 for pidx, p in enumerate(mesh.polygons):
                     for lidx in range(p.loop_start, p.loop_start + p.loop_total):
                         mesh.loops[lidx].normal[:] = bdata[pidx]

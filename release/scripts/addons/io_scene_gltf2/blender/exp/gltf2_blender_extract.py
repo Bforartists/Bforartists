@@ -648,7 +648,7 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
 
             bone_count = 0
 
-            if vertex.groups is not None and len(vertex.groups) > 0 and export_settings[gltf2_blender_export_keys.SKINS]:
+            if blender_vertex_groups is not None and vertex.groups is not None and len(vertex.groups) > 0 and export_settings[gltf2_blender_export_keys.SKINS]:
                 joint = []
                 weight = []
                 for group_element in vertex.groups:
@@ -668,13 +668,15 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
                     #
 
                     joint_index = 0
-                    modifiers_dict = {m.type: m for m in modifiers}
-                    if "ARMATURE" in modifiers_dict:
-                        armature = modifiers_dict["ARMATURE"].object
-                        skin = gltf2_blender_gather_skins.gather_skin(armature, export_settings)
-                        for index, j in enumerate(skin.joints):
-                            if j.name == vertex_group_name:
-                                joint_index = index
+
+                    if modifiers is not None:
+                        modifiers_dict = {m.type: m for m in modifiers}
+                        if "ARMATURE" in modifiers_dict:
+                            armature = modifiers_dict["ARMATURE"].object
+                            skin = gltf2_blender_gather_skins.gather_skin(armature, export_settings)
+                            for index, j in enumerate(skin.joints):
+                                if j.name == vertex_group_name:
+                                    joint_index = index
 
                     joint_weight = group_element.weight
 
@@ -975,10 +977,10 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
 
         if max_index >= range_indices:
             #
-            # Spliting result_primitives.
+            # Splitting result_primitives.
             #
 
-            # At start, all indicees are pending.
+            # At start, all indices are pending.
             pending_attributes = {
                 POSITION_ATTRIBUTE: [],
                 NORMAL_ATTRIBUTE: []
@@ -1038,6 +1040,7 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
             while len(pending_indices) > 0:
 
                 process_indices = pending_primitive[INDICES_ID]
+                max_index = max(process_indices)
 
                 pending_indices = []
 
@@ -1046,7 +1049,7 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
 
                 all_local_indices = []
 
-                for i in range(0, (max(process_indices) // range_indices) + 1):
+                for i in range(0, (max_index // range_indices) + 1):
                     all_local_indices.append([])
 
                 #
@@ -1063,7 +1066,7 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
                                          process_indices[face_index + 2])
 
                     # ... check if it can be but in a range of maximum indices.
-                    for i in range(0, (max(process_indices) // range_indices) + 1):
+                    for i in range(0, (max_index // range_indices) + 1):
                         offset = i * range_indices
 
                         # Yes, so store the primitive with its indices.
@@ -1075,7 +1078,7 @@ def extract_primitives(glTF, blender_mesh, blender_vertex_groups, modifiers, exp
                             written = True
                             break
 
-                    # If not written, the triangel face has indices from different ranges.
+                    # If not written, the triangle face has indices from different ranges.
                     if not written:
                         pending_indices.extend([process_indices[face_index + 0], process_indices[face_index + 1],
                                                 process_indices[face_index + 2]])

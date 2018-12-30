@@ -447,7 +447,7 @@ static short gp_stroke_addpoint(
 			pts->time = pt->time;
 
 			/* force fill recalc */
-			gps->flag |= GP_STROKE_RECALC_CACHES;
+			gps->flag |= GP_STROKE_RECALC_GEOMETRY;
 		}
 
 		/* increment counters */
@@ -586,7 +586,7 @@ static void gp_stroke_newfrombuffer(tGPsdata *p)
 	gps->inittime = p->inittime;
 
 	/* enable recalculation flag by default (only used if hq fill) */
-	gps->flag |= GP_STROKE_RECALC_CACHES;
+	gps->flag |= GP_STROKE_RECALC_GEOMETRY;
 
 	/* allocate enough memory for a continuous array for storage points */
 	gps->points = MEM_callocN(sizeof(bGPDspoint) * gps->totpoints, "gp_stroke_points");
@@ -1697,8 +1697,8 @@ static void gpencil_draw_apply_event(wmOperator *op, const wmEvent *event, Depsg
 	/* verify key status for straight lines */
 	if ((event->ctrl > 0) || (event->alt > 0)) {
 		if (p->straight[0] == 0) {
-			int dx = abs(p->mval[0] - p->mvalo[0]);
-			int dy = abs(p->mval[1] - p->mvalo[1]);
+			int dx = abs((int)(p->mval[0] - p->mvalo[0]));
+			int dy = abs((int)(p->mval[1] - p->mvalo[1]));
 			if ((dx > 0) || (dy > 0)) {
 				/* check mouse direction to replace the other coordinate with previous values */
 				if (dx >= dy) {

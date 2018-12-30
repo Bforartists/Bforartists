@@ -26,8 +26,8 @@ bl_info = {
     "name": "Celtic Knot",
     "description": "",
     "author": "Adam Newgas",
-    "version": (0, 1, 2),
-    "blender": (2, 74, 0),
+    "version": (0, 1, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve",
     "warning": "",
     "wiki_url": "https://github.com/BorisTheBrave/celtic-knot/wiki",
@@ -53,13 +53,13 @@ class CelticKnotOperator(Operator):
     bl_description = "Select a low poly Mesh Object to cover with Knitted Links"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    weave_up = FloatProperty(
+    weave_up : FloatProperty(
             name="Weave Up",
             description="Distance to shift curve upwards over knots",
             subtype="DISTANCE",
             unit="LENGTH"
             )
-    weave_down = FloatProperty(
+    weave_down : FloatProperty(
             name="Weave Down",
             description="Distance to shift curve downward under knots",
             subtype="DISTANCE",
@@ -69,7 +69,7 @@ class CelticKnotOperator(Operator):
             ('ALIGNED', "Aligned", "Points at a fixed crossing angle"),
             ('AUTO', "Auto", "Automatic control points")
             ]
-    handle_type = EnumProperty(
+    handle_type : EnumProperty(
             items=handle_types,
             name="Handle Type",
             description="Controls what type the bezier control points use",
@@ -78,7 +78,7 @@ class CelticKnotOperator(Operator):
 
     handle_type_map = {"AUTO": "AUTOMATIC", "ALIGNED": "ALIGNED"}
 
-    crossing_angle = FloatProperty(
+    crossing_angle : FloatProperty(
             name="Crossing Angle",
             description="Aligned only: the angle between curves in a knot",
             default=pi / 4,
@@ -86,14 +86,14 @@ class CelticKnotOperator(Operator):
             subtype="ANGLE",
             unit="ROTATION"
             )
-    crossing_strength = FloatProperty(
+    crossing_strength : FloatProperty(
             name="Crossing Strength",
             description="Aligned only: strength of bezier control points",
             soft_min=0,
             subtype="DISTANCE",
             unit="LENGTH"
             )
-    geo_bDepth = FloatProperty(
+    geo_bDepth : FloatProperty(
             name="Bevel Depth",
             default=0.04,
             min=0, soft_min=0,
@@ -211,7 +211,7 @@ class CelticKnotOperator(Operator):
                     forward = loop.vert.index == v
 
                 if not first:
-                    current_spline.bezier_points.add()
+                    current_spline.bezier_points.add(1)
                 first = False
                 midpoint = midpoints[loop.edge.index]
                 normal = loop.calc_normal() + prev_loop.calc_normal()
@@ -267,7 +267,7 @@ class CelticKnotOperator(Operator):
             curve_obj.data.bevel_depth = self.geo_bDepth
         except:
             pass
-        context.scene.objects.active = orig_obj
+        #context.scene.objects.active = orig_obj
 
         return {'FINISHED'}
 

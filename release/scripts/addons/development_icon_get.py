@@ -48,12 +48,12 @@ HISTORY = []
 
 
 def ui_scale():
-    prefs = bpy.context.user_preferences.system
+    prefs = bpy.context.preferences.system
     return prefs.dpi * prefs.pixel_size / DPI
 
 
 def prefs():
-    return bpy.context.user_preferences.addons[__name__].preferences
+    return bpy.context.preferences.addons[__name__].preferences
 
 
 class Icons:

@@ -23,8 +23,8 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 1, 2),
-    "blender": (2, 76, 0),
+    "version": (0, 1, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve > Extra Objects",
     "description": "Add extra curve object types",
     "warning": "",
@@ -140,10 +140,10 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
             "curve_type": ['POLY', 'NURBS'],
             "spiral_direction": ['COUNTER_CLOCKWISE', 'CLOCKWISE']
             }
-    update_spiral_presets_msg = StringProperty(
+    update_spiral_presets_msg : StringProperty(
             default="Nothing to do"
             )
-    update_spiral_presets = BoolProperty(
+    update_spiral_presets : BoolProperty(
             name="Update Old Presets",
             description="Update presets to reflect data changes",
             default=False,
@@ -155,12 +155,12 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
                     fixdic=spiral_fixdic
                     )
             )
-    show_menu_list = BoolProperty(
+    show_menu_list : BoolProperty(
             name="Menu List",
             description="Show/Hide the Add Menu items",
             default=False
             )
-    show_panel_list = BoolProperty(
+    show_panel_list : BoolProperty(
             name="Panels List",
             description="Show/Hide the Panel items",
             default=False
@@ -225,9 +225,9 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
                      icon="LAYER_USED")
 
 
-class VIEW3D_MT_curve_knots_add(Menu):
+class INFO_MT_curve_knots_add(Menu):
     # Define the "Extras" menu
-    bl_idname = "VIEW3D_MT_curve_knots_add"
+    bl_idname = "INFO_MT_curve_knots_add"
     bl_label = "Plants"
 
     def draw(self, context):
@@ -236,7 +236,10 @@ class VIEW3D_MT_curve_knots_add(Menu):
 
         layout.operator("curve.torus_knot_plus", text="Torus Knot Plus")
         layout.operator("curve.celtic_links", text="Celtic Links")
-        layout.operator("mesh.add_braid", text="Braid Knot")
+        layout.operator("curve.add_braid", text="Braid Knot")
+        layout.operator("object.add_spirofit_spline", icon="FORCE_MAGNETIC")
+        layout.operator("object.add_bounce_spline", icon="FORCE_HARMONIC")
+        layout.operator("object.add_catenary_curve", icon="FORCE_CURVE")
 
 
 # Define "Extras" menus
@@ -247,40 +250,47 @@ def menu_func(self, context):
 
     layout = self.layout
 
-    layout.operator_menu_enum("mesh.curveaceous_galore", "ProfileType",
-                              icon='CURVE_DATA')
-    layout.operator_menu_enum("curve.spirals", "spiral_type",
-                              icon='CURVE_DATA')
+    layout.operator_menu_enum("curve.curveaceous_galore", "ProfileType", icon='CURVE_DATA')
+    layout.operator_menu_enum("curve.spirals", "spiral_type", icon='CURVE_DATA')
     layout.separator()
 
-    layout.menu(VIEW3D_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
+    layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
     layout.separator()
-    layout.operator("curve.curlycurve", text="Curly Curve",
-                    icon='CURVE_DATA')
-    layout.menu("OBJECT_MT_bevel_taper_curve_menu", text="Bevel/Taper",
-                icon='CURVE_DATA')
+    layout.operator("curve.curlycurve", text="Curly Curve", icon='CURVE_DATA')
+    #layout.menu(VIEW3D_MT_bevel_taper_curve_menu, text="Bevel/Taper", icon='CURVE_DATA')
 
 
 def menu_surface(self, context):
     self.layout.separator()
     if context.mode == 'EDIT_SURFACE':
-        self.layout.operator("curve.smooth_x_times",
-                             text="Special Smooth", icon="MOD_CURVE")
+        self.layout.operator("curve.smooth_x_times", text="Special Smooth", icon="MOD_CURVE")
     elif context.mode == 'OBJECT':
-        self.layout.operator("object.add_surface_wedge", text="Wedge",
-                             icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_cone", text="Cone",
-                             icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_star", text="Star",
-                             icon="SURFACE_DATA")
-        self.layout.operator("object.add_surface_plane", text="Plane",
-                             icon="SURFACE_DATA")
+        self.layout.operator("object.add_surface_wedge", text="Wedge", icon="SURFACE_DATA")
+        self.layout.operator("object.add_surface_cone", text="Cone", icon="SURFACE_DATA")
+        self.layout.operator("object.add_surface_star", text="Star", icon="SURFACE_DATA")
+        self.layout.operator("object.add_surface_plane", text="Plane", icon="SURFACE_DATA")
 
+# Register
+classes = [
+    CurveExtraObjectsAddonPreferences,
+    INFO_MT_curve_knots_add
+]
 
 def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+    
     add_curve_simple.register()
-    bpy.utils.register_module(__name__)
-
+    add_curve_spirals.register()
+    add_curve_aceous_galore.register()
+    add_curve_torus_knots.register()
+    add_curve_braid.register()
+    add_curve_celtic_links.register()
+    add_curve_curly.register()
+    add_curve_spirofit_bouncespline.register()
+    add_surface_plane_cone.register()
+    
     # Add "Extras" menu to the "Add Curve" menu
     bpy.types.VIEW3D_MT_curve_add.append(menu_func)
     # Add "Extras" menu to the "Add Surface" menu
@@ -288,14 +298,24 @@ def register():
 
 
 def unregister():
-    add_curve_simple.unregister()
     # Remove "Extras" menu from the "Add Curve" menu.
     bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
     # Remove "Extras" menu from the "Add Surface" menu.
     bpy.types.VIEW3D_MT_surface_add.remove(menu_surface)
-
-    bpy.utils.unregister_module(__name__)
-
+    
+    add_surface_plane_cone.unregister()
+    add_curve_spirofit_bouncespline.unregister()
+    add_curve_curly.unregister()
+    add_curve_celtic_links.unregister()
+    add_curve_braid.unregister()
+    add_curve_torus_knots.unregister()
+    add_curve_aceous_galore.unregister()
+    add_curve_spirals.unregister()
+    add_curve_simple.unregister()
+    
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

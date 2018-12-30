@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "5.1"
-__date__ = "24 Feb 2018"
+__version__ = "5.2"
+__date__ = "17 Nov 2018"
 
 import bpy
 import bmesh
@@ -31,34 +31,73 @@ from bpy.props import (
 )
 
 from .. import common
+from ..utils.bl_class_registry import BlClassRegistry
+from ..utils.property_class_registry import PropertyClassRegistry
+from ..impl import flip_rotate_impl as impl
+
+__all__ = [
+    'Properties',
+    'MUV_OT_FlipRotate',
+]
 
 
-class MUV_FlipRot(bpy.types.Operator):
+@PropertyClassRegistry()
+class Properties:
+    idname = "flip_rotate_uv"
+
+    @classmethod
+    def init_props(cls, scene):
+        scene.muv_flip_rotate_uv_enabled = BoolProperty(
+            name="Flip/Rotate UV Enabled",
+            description="Flip/Rotate UV is enabled",
+            default=False
+        )
+        scene.muv_flip_rotate_uv_seams = BoolProperty(
+            name="Seams",
+            description="Seams",
+            default=True
+        )
+
+    @classmethod
+    def del_props(cls, scene):
+        del scene.muv_flip_rotate_uv_enabled
+        del scene.muv_flip_rotate_uv_seams
+
+
+@BlClassRegistry()
+class MUV_OT_FlipRotate(bpy.types.Operator):
     """
     Operation class: Flip and Rotate UV coordinate
     """
 
-    bl_idname = "uv.muv_fliprot"
+    bl_idname = "uv.muv_flip_rotate_uv_operator"
     bl_label = "Flip/Rotate UV"
     bl_description = "Flip/Rotate UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}
 
-    flip = BoolProperty(
+    flip: BoolProperty(
         name="Flip UV",
         description="Flip UV...",
         default=False
     )
-    rotate = IntProperty(
+    rotate: IntProperty(
         default=0,
         name="Rotate UV",
         min=0,
         max=30
     )
-    seams = BoolProperty(
+    seams: BoolProperty(
         name="Seams",
         description="Seams",
         default=True
     )
+
+    @classmethod
+    def poll(cls, context):
+        # we can not get area/space/region from console
+        if common.is_console_mode():
+            return True
+        return impl.is_valid_context(context)
 
     def execute(self, context):
         self.report({'INFO'}, "Flip/Rotate UV")
@@ -68,61 +107,24 @@ class MUV_FlipRot(bpy.types.Operator):
             bm.faces.ensure_lookup_table()
 
         # get UV layer
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'}, "Object must have more than one UV map")
+        uv_layer = impl.get_uv_layer(self, bm)
+        if not uv_layer:
             return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
 
         # get selected face
-        dest_uvs = []
-        dest_pin_uvs = []
-        dest_seams = []
-        dest_face_indices = []
-        for face in bm.faces:
-            if face.select:
-                dest_face_indices.append(face.index)
-                uvs = [l[uv_layer].uv.copy() for l in face.loops]
-                pin_uvs = [l[uv_layer].pin_uv for l in face.loops]
-                seams = [l.edge.seam for l in face.loops]
-                dest_uvs.append(uvs)
-                dest_pin_uvs.append(pin_uvs)
-                dest_seams.append(seams)
-        if not dest_uvs or not dest_pin_uvs:
-            self.report({'WARNING'}, "No faces are selected")
+        src_info = impl.get_src_face_info(self, bm, [uv_layer], True)
+        if not src_info:
             return {'CANCELLED'}
-        self.report({'INFO'}, "%d face(s) are selected" % len(dest_uvs))
+
+        face_count = len(src_info[list(src_info.keys())[0]])
+        self.report({'INFO'}, "{} face(s) are selected".format(face_count))
 
         # paste
-        for idx, duvs, dpuvs, dss in zip(dest_face_indices, dest_uvs,
-                                         dest_pin_uvs, dest_seams):
-            duvs_fr = [uv for uv in duvs]
-            dpuvs_fr = [pin_uv for pin_uv in dpuvs]
-            dss_fr = [s for s in dss]
-            # flip UVs
-            if self.flip is True:
-                duvs_fr.reverse()
-                dpuvs_fr.reverse()
-                dss_fr.reverse()
-            # rotate UVs
-            for _ in range(self.rotate):
-                uv = duvs_fr.pop()
-                pin_uv = dpuvs_fr.pop()
-                s = dss_fr.pop()
-                duvs_fr.insert(0, uv)
-                dpuvs_fr.insert(0, pin_uv)
-                dss_fr.insert(0, s)
-            # paste UVs
-            for l, duv, dpuv, ds in zip(
-                    bm.faces[idx].loops, duvs_fr, dpuvs_fr, dss_fr):
-                l[uv_layer].uv = duv
-                l[uv_layer].pin_uv = dpuv
-                if self.seams is True:
-                    l.edge.seam = ds
-
-        self.report({'INFO'}, "%d face(s) are flipped/rotated" % len(dest_uvs))
+        ret = impl.paste_uv(self, bm, src_info, src_info, [uv_layer], 'N_N',
+                            self.flip, self.rotate, self.seams)
+        if ret:
+            return {'CANCELLED'}
 
         bmesh.update_edit_mesh(obj.data)
-        if self.seams is True:
-            obj.data.show_edge_seams = True
 
         return {'FINISHED'}

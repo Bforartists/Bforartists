@@ -160,7 +160,7 @@ class ExportUVLayout(bpy.types.Operator):
 
     @staticmethod
     def iter_objects_to_export(context):
-        for obj in context.selected_objects:
+        for obj in {*context.selected_objects, context.active_object}:
             if obj.type != 'MESH':
                 continue
             mesh = obj.data

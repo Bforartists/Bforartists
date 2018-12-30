@@ -102,8 +102,8 @@ def FindCanvas(obj):
 
 
 def isFTransf():
-    user_preferences = bpy.context.user_preferences
-    addons = user_preferences.addons
+    preferences = bpy.context.preferences
+    addons = preferences.addons
     addon_prefs = addons[__name__].preferences
     if addon_prefs.fast_transform:
         return True
@@ -114,16 +114,16 @@ def isFTransf():
 """
 # EXPERIMENTAL FEATURES
 def isMakeVertexGroup():
-    user_preferences = bpy.context.user_preferences
-    addon_prefs = user_preferences.addons[__name__].preferences
+    preferences = bpy.context.preferences
+    addon_prefs = preferences.addons[__name__].preferences
     if addon_prefs.make_vertex_groups:
         return True
     else:
         return False
 
 def isMakeBoundary():
-    user_preferences = bpy.context.user_preferences
-    addon_prefs = user_preferences.addons[__name__].preferences
+    preferences = bpy.context.preferences
+    addon_prefs = preferences.addons[__name__].preferences
     if addon_prefs.make_boundary:
         return True
     else:
@@ -141,7 +141,7 @@ def ConvertToMesh(obj):
 # Do the Union, Difference and Intersection Operations with a Brush
 def Operation(context, _operation):
 
-    prefs = bpy.context.user_preferences.addons[__name__].preferences
+    prefs = bpy.context.preferences.addons[__name__].preferences
     useWire = prefs.use_wire
 
     for selObj in bpy.context.selected_objects:
@@ -503,7 +503,7 @@ class BTool_FastTransform(Operator):
     def modal(self, context, event):
         self.count += 1
         actObj = bpy.context.active_object
-        useWire = bpy.context.user_preferences.addons[__name__].preferences.use_wire
+        useWire = bpy.context.preferences.addons[__name__].preferences.use_wire
         if self.count == 1:
 
             if isBrush(actObj) and actObj["BoolTool_FTransform"] == "True":
@@ -1231,7 +1231,7 @@ def update_panels(self, context):
                 bpy.utils.unregister_class(panel)
 
         for panel in panels:
-            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            panel.bl_category = context.preferences.addons[__name__].preferences.category
             bpy.utils.register_class(panel)
 
     except Exception as e:

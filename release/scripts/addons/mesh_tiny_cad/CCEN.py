@@ -44,7 +44,7 @@ def generate_bmesh_repr(p1, v1, axis, num_verts):
     for i in range(num_verts + 1):
         theta = gamma * i
         mat_rot = mathutils.Matrix.Rotation(theta, 4, axis)
-        local_point = (mat_rot * ((v1 - p1) * rescale))
+        local_point = (mat_rot @ ((v1 - p1) * rescale))
         chain.append(local_point + p1)
 
     obj = bpy.context.edit_object
@@ -81,15 +81,15 @@ def generate_3PT(pts, obj, nv, mode=1):
     mat_rot = mathutils.Matrix.Rotation(math.radians(90.0), 4, axis)
 
     # triangle edges
-    v1_ = ((v1 - edge1_mid) * mat_rot) + edge1_mid
-    v2_ = ((v2 - edge1_mid) * mat_rot) + edge1_mid
-    v3_ = ((v3 - edge2_mid) * mat_rot) + edge2_mid
-    v4_ = ((v4 - edge2_mid) * mat_rot) + edge2_mid
+    v1_ = ((v1 - edge1_mid) @ mat_rot) + edge1_mid
+    v2_ = ((v2 - edge1_mid) @ mat_rot) + edge1_mid
+    v3_ = ((v3 - edge2_mid) @ mat_rot) + edge2_mid
+    v4_ = ((v4 - edge2_mid) @ mat_rot) + edge2_mid
 
     r = geometry.intersect_line_line(v1_, v2_, v3_, v4_)
     if r:
         p1, _ = r
-        cp = mw * p1
+        cp = mw @ p1
         bpy.context.scene.cursor_location = cp
 
         if mode == 0:
@@ -133,7 +133,7 @@ class TCCallBackCCEN(bpy.types.Operator):
 
 
 class TCCircleCenter(bpy.types.Operator):
-    '''Recreate a Circle from 3 selected verts, move 3dcursor its center'''
+    '''Recreate a Circle from 3 selected verts, move 3dcursor to its center'''
 
     bl_idname = 'tinycad.circlecenter'
     bl_label = 'CCEN circle center from selected'
@@ -147,7 +147,7 @@ class TCCircleCenter(bpy.types.Operator):
         col.prop(scn.tinycad_props, 'num_verts', text='num verts')
         row = col.row(align=True)
         row.prop(scn.tinycad_props, 'rescale', text='rescale')
-        row.operator('tinycad.reset_circlescale', text="", icon="LINK")
+        row.operator('tinycad.reset_circlescale', text="", icon="PIVOT_CURSOR")
 
     @classmethod
     def poll(cls, context):

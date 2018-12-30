@@ -2127,7 +2127,7 @@ class ARCHIPACK_OT_wall2_draw(ArchipackDrawTool, Operator):
             snap_point(takeloc=self.takeloc,
                        draw=self.sp_draw,
                        takemat=self.takemat,
-                       transform_orientation=context.scene.transform_orientation,
+                       transform_orientation=context.scene.transform_orientation_slots[0].type,
                        callback=self.sp_callback,
                        constraint_axis=(True, True, False),
                        release_confirm=self.max_style_draw_tool)
@@ -2263,7 +2263,7 @@ class ARCHIPACK_OT_wall2_draw(ArchipackDrawTool, Operator):
     def invoke(self, context, event):
 
         if context.mode == "OBJECT":
-            prefs = context.user_preferences.addons[__name__.split('.')[0]].preferences
+            prefs = context.preferences.addons[__name__.split('.')[0]].preferences
             self.max_style_draw_tool = prefs.max_style_draw_tool
             self.keymap = Keymaps(context)
             self.wall_part1 = GlPolygon((0.5, 0, 0, 0.2))

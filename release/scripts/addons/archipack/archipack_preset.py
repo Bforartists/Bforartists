@@ -539,7 +539,7 @@ class ArchipackPreset(AddPresetBase):
     def background_render(self, context, cls, preset):
         generator = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "archipack_thumbs.py"
         addon_name = __name__.split('.')[0]
-        matlib_path = context.user_preferences.addons[addon_name].preferences.matlib_path
+        matlib_path = context.preferences.addons[addon_name].preferences.matlib_path
         # Run external instance of blender like the original thumbnail generator.
         cmd = [
             bpy.app.binary_path,

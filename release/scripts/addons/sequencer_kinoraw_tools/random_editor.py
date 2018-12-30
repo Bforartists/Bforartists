@@ -43,7 +43,7 @@ class RandomScratchOperator(Operator):
             return False
 
     def invoke(self, context, event):
-        preferences = context.user_preferences
+        preferences = context.preferences
         random_frames = preferences.addons[__package__].preferences.random_frames
 
         sce = context.scene
@@ -114,7 +114,7 @@ class RandomEditorPanel(Panel):
                                             'SEQUENCER_PREVIEW'}:
             strip = functions.act_strip(context)
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor and scn.sequence_editor.active_strip:
                 if prefs.use_random_editor:
@@ -128,7 +128,7 @@ class RandomEditorPanel(Panel):
 
     def draw(self, context):
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         layout = self.layout

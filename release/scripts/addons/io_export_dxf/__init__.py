@@ -19,13 +19,12 @@
 bl_info = {
     "name": "Export Autocad DXF Format (.dxf)",
     "author": "Remigiusz Fiedler (AKA migius), Vaclav Klecanda",
-    "version": (2, 1, 3),
-    "blender": (2, 63, 0),
-    "location": "File > Export > Autodesk (.dxf)",
+    "version": (2, 2, 3),
+    "blender": (2, 80, 0),
+    "location": "File > Export > AutoCAD DXF",
     "description": "The script exports Blender geometry to DXF format r12 version.",
     "warning": "Under construction! Visit Wiki for details.",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Import-Export/DXF_Exporter",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/DXF_Exporter",
     "category": "Import-Export",
 }
 
@@ -38,26 +37,24 @@ import bpy
 from . import operator
 
 def menu_func(self, context):
-    self.layout.operator(operator.DXFExporter.bl_idname, text="Autocad (.dxf)")
+    self.layout.operator(operator.DXFExporter.bl_idname, text="AutoCAD DXF")
 
 classes = (
     operator.DXFExporter,
 )
 
 def register():
-    bpy.types.TOPBAR_MT_file_export.append(menu_func)
-
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func)
 
 
 def unregister():
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
-
     from bpy.utils import unregister_class
     for cls in reversed(classes):
         unregister_class(cls)
-
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func)
+    
 if __name__ == "__main__":
     register()

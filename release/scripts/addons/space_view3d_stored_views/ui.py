@@ -25,7 +25,7 @@ from bpy.types import (
 def get_preferences_timer():
     # replace the key if the add-on name changes
     # TODO: expose refresh rate to ui???
-    addon = bpy.context.user_preferences.addons[__package__]
+    addon = bpy.context.preferences.addons[__package__]
     timer_update = (addon.preferences.view_3d_update_rate if addon else False)
 
     return timer_update
@@ -49,12 +49,12 @@ def _draw_callback_px(self, context):
         r_height = context.region.height
         font_id = 0  # TODO: need to find out how best to get font_id
 
-        blf.size(font_id, 11, context.user_preferences.system.dpi)
+        blf.size(font_id, 11, context.preferences.system.dpi)
         text_size = blf.dimensions(0, self.view_name)
 
         # compute the text location
         text_location = 0
-        overlap = context.user_preferences.system.use_region_overlap
+        overlap = context.preferences.system.use_region_overlap
         if overlap:
             for region in context.area.regions:
                 if region.type == "UI":

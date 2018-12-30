@@ -181,7 +181,7 @@ class ArchipackSnapBase():
         SnapStore.snap_elements = ts.snap_elements
         SnapStore.snap_target = ts.snap_target
         SnapStore.pivot_point = ts.transform_pivot_point
-        SnapStore.trans_orientation = context.scene.transform_orientation
+        SnapStore.trans_orientation = context.scene.transform_orientation_slots[0].type
         self.create_helper(context)
         # Use a timer to broadcast a TIMER event while transform.translate is running
         self._timer = context.window_manager.event_timer_add(0.1, window=context.window)
@@ -208,7 +208,7 @@ class ArchipackSnapBase():
             ts.snap_elements = SnapStore.snap_elements
             ts.snap_target = SnapStore.snap_target
             ts.transform_pivot_point = SnapStore.pivot_point
-        context.scene.transform_orientation = SnapStore.trans_orientation
+        context.scene.transform_orientation_slots[0].type = SnapStore.trans_orientation
         for o in SnapStore.sel:
             o.select_set(state=True)
         if SnapStore.act is not None:

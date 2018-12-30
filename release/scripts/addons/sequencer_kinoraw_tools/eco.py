@@ -43,7 +43,7 @@ class EcoPanel(Panel):
         if context.space_data.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             strip = functions.act_strip(context)
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor and scn.sequence_editor.active_strip:
                 if prefs.use_eco_tools:
@@ -59,7 +59,7 @@ class EcoPanel(Panel):
         strip = functions.act_strip(context)
         seq_type = strip.type
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         if seq_type in ('MOVIE', 'IMAGE', 'META', 'MOVIECLIP', 'SCENE'):
@@ -95,7 +95,7 @@ class OBJECT_OT_EcoOperator(Operator):
     def execute(self, context):
         active_strip = functions.act_strip(context)
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         eco = prefs.eco_value

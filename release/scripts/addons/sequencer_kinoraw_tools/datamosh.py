@@ -19,7 +19,7 @@ proxy_qualities = [
 
 # functions
 def createdatamosh(context, strip):
-    preferences = context.user_preferences
+    preferences = context.preferences
     prefs = preferences.addons[__package__].preferences
 
     fileinput = bpy.path.abspath(strip.filepath)
@@ -122,7 +122,7 @@ class CreateDatamosh(Operator):
             return False
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
         strips = functions.get_selected_strips(context)
 
@@ -161,7 +161,7 @@ class CreateGlitchToolPanel(Panel):
                                             'SEQUENCER_PREVIEW'}:
             strip = functions.act_strip(context)
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor and scn.sequence_editor.active_strip:
                 if prefs.use_glitch_panel:
@@ -175,7 +175,7 @@ class CreateGlitchToolPanel(Panel):
 
     def draw(self, context):
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         layout = self.layout
