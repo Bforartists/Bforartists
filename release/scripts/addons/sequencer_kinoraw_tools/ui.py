@@ -203,7 +203,7 @@ class JumptoCut(Panel):
     def poll(self, context):
         if context.space_data.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor:
                 if prefs.use_jumptocut:
@@ -219,7 +219,7 @@ class JumptoCut(Panel):
         scn = context.scene
         strip = functions.act_strip(context)
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         layout = self.layout
@@ -265,7 +265,7 @@ class JumptoCut(Panel):
             # hide the play-reversed button
             # since JACK transport doesn't support reversed playback
             if scn.sync_mode == 'AUDIO_SYNC' and \
-                    context.user_preferences.system.audio_device == 'JACK':
+                    context.preferences.system.audio_device == 'JACK':
                 sub = sub_row.row(align=True)
                 sub.scale_x = 2.0
                 sub.operator("screen.animation_play", text="", icon='PLAY')

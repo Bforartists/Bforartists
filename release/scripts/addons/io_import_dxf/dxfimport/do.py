@@ -325,22 +325,22 @@ class Do:
         # turn clockwise
         if angdir == 0:
             rot = Matrix.Rotation(radians(-90), 3, "Z")
-            start = x_vec * radius * Matrix.Rotation(-s, 3, "Z")
-            end = x_vec * radius * Matrix.Rotation(-e, 3, "Z")
+            start = x_vec * radius @ Matrix.Rotation(-s, 3, "Z")
+            end = x_vec * radius @ Matrix.Rotation(-e, 3, "Z")
 
         # turn counter-clockwise
         else:
             rot = Matrix.Rotation(radians(90), 3, "Z")
-            start = x_vec * radius * Matrix.Rotation(s, 3, "Z")
-            end = x_vec * radius * Matrix.Rotation(e, 3, "Z")
+            start = x_vec * radius @ Matrix.Rotation(s, 3, "Z")
+            end = x_vec * radius @ Matrix.Rotation(e, 3, "Z")
 
         # start
         spline = list()
         spline.append(vc + start)
         if abs(angle) - pi / 2 > threshold:  # if angle is more than pi/2 incl. threshold
-            spline.append(vc + start + start * kappa * rot)
+            spline.append(vc + start + start * kappa @ rot)
         else:
-            spline.append(vc + start + start * kappa * angle / (pi / 2) * rot)
+            spline.append(vc + start + start * kappa * angle / (pi / 2) @ rot)
 
         # fill if angle is larger than 90 degrees
         a = pi / 2
@@ -348,15 +348,15 @@ class Do:
             fill = start
 
             while abs(angle) - a > threshold:
-                fillnext = fill * rot
+                fillnext = fill @ rot
                 spline.append(vc + fillnext + fill * kappa)
                 spline.append(vc + fillnext)
                 # if this was the last fill control point
                 if abs(angle) - a - pi / 2 < threshold:
                     end_angle = (abs(angle) - a) * abs(angle) / angle
-                    spline.append(vc + fillnext + fillnext * kappa * end_angle / (pi / 2) * rot)
+                    spline.append(vc + fillnext + fillnext * kappa * end_angle / (pi / 2) @ rot)
                 else:
-                    spline.append(vc + fillnext + fillnext * kappa * rot)
+                    spline.append(vc + fillnext + fillnext * kappa @ rot)
                 fill = fillnext
                 a += pi / 2
 
@@ -364,7 +364,7 @@ class Do:
             end_angle = angle
 
         # end
-        spline.append(vc + end + end * -kappa * end_angle / (pi / 2) * rot)
+        spline.append(vc + end + end * -kappa * end_angle / (pi / 2) @ rot)
         spline.append(vc + end)
 
         if len(spline) % 3 != 1:
@@ -405,9 +405,9 @@ class Do:
 
         try:
             b[0].co = vc + r
-            b[1].co = vc + r * clockwise
-            b[2].co = vc + r * clockwise * clockwise
-            b[3].co = vc + r * clockwise * clockwise * clockwise
+            b[1].co = vc + r @ clockwise
+            b[2].co = vc + r @ clockwise @ clockwise
+            b[3].co = vc + r @ clockwise @ clockwise @ clockwise
         except:
             print("Circle center: ", vc, "radius: ", r)
             raise
@@ -444,14 +444,14 @@ class Do:
             clockwise = Matrix(((0, -1, 0), (1, 0, 0), (0, 0, 1)))
             if len(major) == 2:
                 major = major.to_3d()
-            minor = major * en.ratio * clockwise
+            minor = major * en.ratio @ clockwise
 
             lh = b[1].handle_left - b[1].co
             rh = b[1].handle_right - b[1].co
             b[1].co = vc + minor
             b[1].handle_left = b[1].co + lh
             b[1].handle_right = b[1].co + rh
-            b[3].co = vc + minor * clockwise * clockwise
+            b[3].co = vc + minor @ clockwise @ clockwise
             b[3].handle_left = b[3].co + rh
             b[3].handle_right = b[3].co + lh
 
@@ -632,7 +632,7 @@ class Do:
         if entity.dxftype not in {"LINE", "POINT"}:
             if is_.extrusion(entity):
                 transformation = convert.extrusion_to_matrix(entity)
-                obj.location = transformation * obj.location
+                obj.location = transformation @ obj.location
                 obj.rotation_euler.rotate(transformation)
 
     def _bbox(self, objects, scene):
@@ -643,7 +643,7 @@ class Do:
         for obj in objects:
             om = obj.matrix_basis
             for v in obj.bound_box:
-                p = om * Vector(v)
+                p = om @ Vector(v)
                 if p.x < xmin:
                     xmin = p.x
                 if p.x > xmax:
@@ -723,7 +723,7 @@ class Do:
         o = bpy.data.objects.new("Point", None)
         o.location = self.proj(en.point)
         self._extrusion(o, en)
-        scene.objects.link(o)
+        scene.collection.objects.link(o)
 
         group = self._get_group(en.layer)
         group.objects.link(o)
@@ -751,7 +751,7 @@ class Do:
             o.location = self.proj(en.position)
             dir = self.proj(en.target) - self.proj(en.position)
             o.rotation_quaternion = dir.rotation_difference(Vector((0, 0, -1)))
-            scene.objects.link(o)
+            scene.collection.objects.link(o)
             return o
 
     def mtext(self, en, scene, name):
@@ -830,11 +830,11 @@ class Do:
                 if new_insert.name not in group.objects:
                     group.objects.link(new_insert)
                 if invisible is not None:
-                    new_insert.hide = bool(invisible)
+                    new_insert.hide_viewport = bool(invisible)
                 if inserts is not None:
                     inserts.append(new_insert)
                 new_insert.parent = parent
-                scene.objects.link(new_insert)
+                scene.collection.objects.link(new_insert)
 
         if name is None:
             name = entity.name
@@ -866,7 +866,7 @@ class Do:
                 if len(insert.children) > 0:
                     i_copy = bpy.data.objects.new(insert.name, None)
                     i_copy.matrix_basis = insert.matrix_basis
-                    scene.objects.link(i_copy)
+                    scene.collection.objects.link(i_copy)
                     group.objects.link(i_copy)
                     kids = insert.children[:]
                     for child in kids:
@@ -880,10 +880,10 @@ class Do:
             if len(objects) > 1 or len(insert_bounding_boxes) > 0:
                 if self.do_bounding_boxes:
                     o = self._object_bbox(objects + insert_bounding_boxes, scene, name, recursion_level == 0)
-                    scene.objects.link(o)
+                    scene.collection.objects.link(o)
                 else:
                     o = bpy.data.objects.new(name, None)
-                    scene.objects.link(o)
+                    scene.collection.objects.link(o)
                 if len(objects) > 0:
                     for obj in objects:
                         obj.parent = o
@@ -893,13 +893,13 @@ class Do:
             else:
                 # strange case but possible according to the testfiles
                 o = bpy.data.objects.new(name, None)
-                scene.objects.link(o)
+                scene.collection.objects.link(o)
 
             # unlink bounding boxes of inserts
             for ib in insert_bounding_boxes:
                 if ib.name in group.objects:
                     group.objects.unlink(ib)
-                scene.objects.unlink(ib)
+                scene.collection.objects.unlink(ib)
 
             # parent inserts to this block before any transformation on the block is being applied
             for obj in inserts:
@@ -918,11 +918,11 @@ class Do:
 
             for known_object in known_objects:
                 oc = known_object.copy()
-                scene.objects.link(oc)
+                scene.collection.objects.link(oc)
                 objects.append(oc)
 
             o = known_o.copy()
-            scene.objects.link(o)
+            scene.collection.objects.link(o)
 
             _recursive_copy_inserts(o, known_inserts, inserts, group, invisible)
 
@@ -940,7 +940,7 @@ class Do:
         # visibility
         if invisible is not None:
             for obj in objects:
-                obj.hide = bool(invisible)
+                obj.hide_viewport = bool(invisible)
 
         # block transformations
         o.location = self.proj(entity.basepoint)
@@ -990,14 +990,14 @@ class Do:
 
             for i in inserts:
                 sub_group = i.instance_collection
-                block_scene.objects.unlink(i)
+                block_scene.collection.objects.unlink(i)
                 block_group.objects.unlink(i)
                 i_empty = bpy.data.objects.new(i.name, None)
                 i_empty.matrix_basis = i.matrix_basis
                 i_empty.instance_type = "COLLECTION"
                 i_empty.instance_collection = sub_group
                 block_group.objects.link(i_empty)
-                block_scene.objects.link(i_empty)
+                block_scene.collection.objects.link(i_empty)
 
             self.known_blocks[name] = [objects, inserts, bbox]
         else:
@@ -1010,9 +1010,9 @@ class Do:
         o.instance_collection = block_group
         group.objects.link(o)
         if invisible is not None:
-            o.hide = invisible
+            o.hide_viewport = invisible
         o.location = self.proj(entity.basepoint)
-        scene.objects.link(o)
+        scene.collection.objects.link(o)
         # block_scene.update()
 
         return o
@@ -1079,9 +1079,9 @@ class Do:
 
         # visibility
         if invisible is None:
-            o.hide = bool(entity.invisible)
+            o.hide_viewport = bool(entity.invisible)
         else:
-            o.hide = bool(invisible)
+            o.hide_viewport = bool(invisible)
 
         # attributes
         if self.import_text:
@@ -1090,7 +1090,7 @@ class Do:
                     # Blender custom property
                     o[a.tag] = a.text
                     attname = entity.name + "_" + a.tag
-                    scene.objects.link(self.text(a, scene, attname))
+                    scene.collection.objects.link(self.text(a, scene, attname))
 
         return o
 
@@ -1173,7 +1173,7 @@ class Do:
 
             bevel = bpy.data.objects.new("BEVEL", bevd)
             obj.data.bevel_object = bevel
-            scene.objects.link(bevel)
+            scene.collection.objects.link(bevel)
 
             # CURVE TAPER
             if has_varying_width and len(ew) == 1:
@@ -1195,7 +1195,7 @@ class Do:
 
                 taper = bpy.data.objects.new("TAPER", tapd)
                 obj.data.taper_object = taper
-                scene.objects.link(taper)
+                scene.collection.objects.link(taper)
 
             # THICKNESS FOR CURVES HAVING A WIDTH
             if th != 0:
@@ -1233,7 +1233,7 @@ class Do:
 
         bm.to_mesh(d)
         o = bpy.data.objects.new(name, d)
-        scene.objects.link(o)
+        scene.collection.objects.link(o)
         return o
 
     def object_mesh(self, entities, scene, name):
@@ -1390,7 +1390,7 @@ class Do:
 
         if type(o) == bpy.types.Object:
             if o.name not in scene.objects:
-                scene.objects.link(o)
+                scene.collection.objects.link(o)
 
             if o.name not in group.objects:
                 group.objects.link(o)
@@ -1445,16 +1445,16 @@ class Do:
             extrusion = convert.extrusion_to_matrix(entity)
             scale = Matrix(((entity.scale[0],0,0,0),(0,entity.scale[1],0,0),(0,0,entity.scale[2],0),(0,0,0,1)))
             rotation = radians(entity.rotation) if aunits == 0 else entity.rotation
-            rotm = scale * extrusion * extrusion.Rotation(rotation, 4, "Z")
+            rotm = scale @ extrusion @ extrusion.Rotation(rotation, 4, "Z")
             if location is None:
-                location = rotm * Vector(entity.insert)
+                location = rotm @ Vector(entity.insert)
                 entity.insert = (0, 0, 0)
                 transformation = rotm
             else:
-                transformation = rotm.Translation((extrusion * Vector(entity.insert))-location) * rotm
+                transformation = rotm.Translation((extrusion @ Vector(entity.insert))-location) @ rotm
             verts = []
             for v in base:
-                verts.append(bm.verts.new(transformation * v))
+                verts.append(bm.verts.new(transformation @ v))
             bm.faces.new(verts)
 
 
@@ -1463,7 +1463,7 @@ class Do:
         bm.to_mesh(m)
         o = bpy.data.objects.new(blockname, m)
         o.location = location
-        scene.objects.link(o)
+        scene.collection.objects.link(o)
 
         self._nest_block(o, blockname, blgroup, scene)
         o.instance_type = "FACES"
@@ -1473,7 +1473,7 @@ class Do:
     def _nest_block(self, parent, name, blgroup, scene):
         b = self.dwg.blocks[name]
         e = bpy.data.objects.new(name, None)
-        scene.objects.link(e)
+        scene.collection.objects.link(e)
         #e.location = parent.location
         e.parent = parent
         for TYPE, grouped in groupsort.by_dxftype(b):
@@ -1639,7 +1639,7 @@ class Do:
         elif self.pScene is not None:  # assume Proj
             scene['SRID'] = re.findall("\+init=(.+)\s", self.pScene.srs)[0]
 
-        bpy.context.screen.scene = scene
+        #bpy.context.screen.scene = scene
 
         return self.errors
         # trying to import dimensions:

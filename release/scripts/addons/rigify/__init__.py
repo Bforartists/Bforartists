@@ -357,8 +357,8 @@ def register():
         description="Last Frame to Transfer", default=0, min= 0)
 
     # Update legacy on restart or reload.
-    if (ui and 'legacy' in str(ui)) or bpy.context.user_preferences.addons['rigify'].preferences.legacy_mode:
-        bpy.context.user_preferences.addons['rigify'].preferences.legacy_mode = True
+    if (ui and 'legacy' in str(ui)) or bpy.context.preferences.addons['rigify'].preferences.legacy_mode:
+        bpy.context.preferences.addons['rigify'].preferences.legacy_mode = True
 
     # Add rig parameters
     for rig in rig_lists.rig_list:

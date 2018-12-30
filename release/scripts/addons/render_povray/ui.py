@@ -245,12 +245,12 @@ for member in dir(properties_particle):  # add all "particle" panels from blende
 del properties_particle
 
 def check_add_mesh_extra_objects():
-    if "add_mesh_extra_objects" in bpy.context.user_preferences.addons.keys():
+    if "add_mesh_extra_objects" in bpy.context.preferences.addons.keys():
         return True
     return False
 
 def locate_docpath():
-    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
+    addon_prefs = bpy.context.preferences.addons[__package__].preferences
     # Use the system preference if its set.
     pov_documents = addon_prefs.docpath_povray
     if pov_documents:
@@ -784,7 +784,7 @@ class RENDER_PT_povray_antialias(RenderButtonsPanel, bpy.types.Panel):
 
 
     def draw_header(self, context):
-        prefs = bpy.context.user_preferences.addons[__package__].preferences
+        prefs = bpy.context.preferences.addons[__package__].preferences
         scene = context.scene
         if prefs.branch_feature_set_povray != 'uberpov' and scene.pov.antialias_method == '2':
             self.layout.prop(scene.pov, "antialias_enable", text="", icon='ERROR')
@@ -794,7 +794,7 @@ class RENDER_PT_povray_antialias(RenderButtonsPanel, bpy.types.Panel):
             self.layout.prop(scene.pov, "antialias_enable", text="", icon='ALIASED')
 
     def draw(self, context):
-        prefs = bpy.context.user_preferences.addons[__package__].preferences
+        prefs = bpy.context.preferences.addons[__package__].preferences
         layout = self.layout
         scene = context.scene
 

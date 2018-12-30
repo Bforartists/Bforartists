@@ -184,7 +184,7 @@ void EEVEE_lightcache_info_update(SceneEEVEE *eevee)
 
 	if (lcache != NULL) {
 		if (lcache->flag & LIGHTCACHE_BAKING) {
-			BLI_strncpy(eevee->light_cache_info, IFACE_("Baking light cache."), sizeof(eevee->light_cache_info));
+			BLI_strncpy(eevee->light_cache_info, IFACE_("Baking light cache"), sizeof(eevee->light_cache_info));
 			return;
 		}
 
@@ -196,7 +196,7 @@ void EEVEE_lightcache_info_update(SceneEEVEE *eevee)
 		BLI_snprintf(eevee->light_cache_info, sizeof(eevee->light_cache_info), IFACE_("%d Ref. Cubemaps, %d Irr. Samples (%s in memory)"), lcache->cube_len - 1, irr_samples, formatted_mem);
 	}
 	else {
-		BLI_strncpy(eevee->light_cache_info, IFACE_("No light cache in this scene."), sizeof(eevee->light_cache_info));
+		BLI_strncpy(eevee->light_cache_info, IFACE_("No light cache in this scene"), sizeof(eevee->light_cache_info));
 	}
 }
 
@@ -411,7 +411,8 @@ static void eevee_lightbake_count_probes(EEVEE_LightBake *lbake)
 
 	DEG_OBJECT_ITER_FOR_RENDER_ENGINE_BEGIN(depsgraph, ob)
 	{
-		if (!BKE_object_is_visible(ob, OB_VISIBILITY_CHECK_FOR_RENDER)) {
+		const int ob_visibility = BKE_object_visibility(ob, DAG_EVAL_RENDER);
+		if ((ob_visibility & OB_VISIBLE_SELF) == 0) {
 			continue;
 		}
 
@@ -1006,7 +1007,8 @@ static void eevee_lightbake_gather_probes(EEVEE_LightBake *lbake)
 	 * This allows a large number of probe to be precomputed (even dupli ones). */
 	DEG_OBJECT_ITER_FOR_RENDER_ENGINE_BEGIN(depsgraph, ob)
 	{
-		if (!BKE_object_is_visible(ob, OB_VISIBILITY_CHECK_FOR_RENDER)) {
+		const int ob_visibility = BKE_object_visibility(ob, DAG_EVAL_RENDER);
+		if ((ob_visibility & OB_VISIBLE_SELF) == 0) {
 			continue;
 		}
 

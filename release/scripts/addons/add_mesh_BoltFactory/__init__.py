@@ -19,8 +19,8 @@
 bl_info = {
     "name": "BoltFactory",
     "author": "Aaron Keith",
-    "version": (0, 3, 4),
-    "blender": (2, 78, 0),
+    "version": (0, 4, 0),
+    "blender":  (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add a bolt or nut",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -42,22 +42,15 @@ import bpy
 
 # ### REGISTER ###
 
-def add_mesh_bolt_button(self, context):
-    self.layout.operator(Boltfactory.add_mesh_bolt.bl_idname, text="Bolt", icon="MOD_SCREW")
 
 
 def register():
-    bpy.utils.register_module(__name__)
-
-    bpy.types.VIEW3D_MT_mesh_add.append(add_mesh_bolt_button)
-    # bpy.types.VIEW3D_PT_tools_objectmode.prepend(add_mesh_bolt_button)  # just for testing
+	Boltfactory.register()
+   
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
-    bpy.types.VIEW3D_MT_mesh_add.remove(add_mesh_bolt_button)
-    # bpy.types.VIEW3D_PT_tools_objectmode.remove(add_mesh_bolt_button)  # just for testing
+    Boltfactory.unregister()
 
 
 if __name__ == "__main__":

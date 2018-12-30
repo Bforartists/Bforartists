@@ -20,23 +20,29 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "5.1"
-__date__ = "24 Feb 2018"
+__version__ = "5.2"
+__date__ = "17 Nov 2018"
 
 import bpy
 
-from ..op import texture_projection
-from ..op import unwrap_constraint
-from ..op import uvw
+from ..op import (
+    uvw,
+)
+from ..utils.bl_class_registry import BlClassRegistry
+
+__all__ = [
+    'MUV_PT_View3D_UVMapping',
+]
 
 
-class OBJECT_PT_MUV_UVMapping(bpy.types.Panel):
+@BlClassRegistry()
+class MUV_PT_View3D_UVMapping(bpy.types.Panel):
     """
     Panel class: UV Mapping on Property Panel on View3D
     """
 
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_label = "UV Mapping"
     bl_category = "Magic UV"
     bl_context = 'mesh_edit'
@@ -44,56 +50,19 @@ class OBJECT_PT_MUV_UVMapping(bpy.types.Panel):
 
     def draw_header(self, _):
         layout = self.layout
-        layout.label(text="", icon='IMAGE_COL')
+        layout.label(text="", icon='IMAGE')
 
     def draw(self, context):
         sc = context.scene
-        props = sc.muv_props
         layout = self.layout
-
-        box = layout.box()
-        box.prop(sc, "muv_unwrapconst_enabled", text="Unwrap Constraint")
-        if sc.muv_unwrapconst_enabled:
-            ops = box.operator(
-                unwrap_constraint.MUV_UnwrapConstraint.bl_idname,
-                text="Unwrap")
-            ops.u_const = sc.muv_unwrapconst_u_const
-            ops.v_const = sc.muv_unwrapconst_v_const
-            row = box.row(align=True)
-            row.prop(sc, "muv_unwrapconst_u_const", text="U-Constraint")
-            row.prop(sc, "muv_unwrapconst_v_const", text="V-Constraint")
-
-        box = layout.box()
-        box.prop(sc, "muv_texproj_enabled", text="Texture Projection")
-        if sc.muv_texproj_enabled:
-            row = box.row()
-            if not props.texproj.running:
-                row.operator(texture_projection.MUV_TexProjStart.bl_idname,
-                             text="Start", icon='PLAY')
-            else:
-                row.operator(texture_projection.MUV_TexProjStop.bl_idname,
-                             text="Stop", icon='PAUSE')
-            row.prop(sc, "muv_texproj_tex_image", text="")
-            box.prop(sc, "muv_texproj_tex_transparency", text="Transparency")
-            col = box.column(align=True)
-            row = col.row()
-            row.prop(sc, "muv_texproj_adjust_window", text="Adjust Window")
-            if not sc.muv_texproj_adjust_window:
-                row.prop(sc, "muv_texproj_tex_magnitude", text="Magnitude")
-            col.prop(sc, "muv_texproj_apply_tex_aspect",
-                     text="Texture Aspect Ratio")
-            col.prop(sc, "muv_texproj_assign_uvmap", text="Assign UVMap")
-            if props.texproj.running:
-                box.operator(texture_projection.MUV_TexProjProject.bl_idname,
-                             text="Project")
 
         box = layout.box()
         box.prop(sc, "muv_uvw_enabled", text="UVW")
         if sc.muv_uvw_enabled:
             row = box.row(align=True)
-            ops = row.operator(uvw.MUV_UVWBoxMap.bl_idname, text="Box")
+            ops = row.operator(uvw.MUV_OT_UVW_BoxMap.bl_idname, text="Box")
             ops.assign_uvmap = sc.muv_uvw_assign_uvmap
-            ops = row.operator(uvw.MUV_UVWBestPlanerMap.bl_idname,
+            ops = row.operator(uvw.MUV_OT_UVW_BestPlanerMap.bl_idname,
                                text="Best Planner")
             ops.assign_uvmap = sc.muv_uvw_assign_uvmap
             box.prop(sc, "muv_uvw_assign_uvmap", text="Assign UVMap")

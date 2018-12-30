@@ -5,8 +5,8 @@ bl_info = {
     "name": "Spirals",
     "description": "Make spirals",
     "author": "Alejandro Omar Chocano Vasquez",
-    "version": (1, 2, 1),
-    "blender": (2, 62, 0),
+    "version": (1, 2, 2),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.4/Py/"
@@ -204,9 +204,9 @@ class CURVE_OT_spirals(Operator):
     bl_idname = "curve.spirals"
     bl_label = "Curve Spirals"
     bl_description = "Create different types of spirals"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    spiral_type = EnumProperty(
+    spiral_type : EnumProperty(
             items=[('ARCH', "Archemedian", "Archemedian"),
                    ("LOG", "Logarithmic", "Logarithmic"),
                    ("SPHERE", "Spheric", "Spheric"),
@@ -215,14 +215,14 @@ class CURVE_OT_spirals(Operator):
             name="Spiral Type",
             description="Type of spiral to add"
             )
-    curve_type = EnumProperty(
+    curve_type : EnumProperty(
             items=[('POLY', "Poly", "PolyLine"),
                    ("NURBS", "NURBS", "NURBS")],
             default='POLY',
             name="Curve Type",
             description="Type of spline to use"
             )
-    spiral_direction = EnumProperty(
+    spiral_direction : EnumProperty(
             items=[('COUNTER_CLOCKWISE', "Counter Clockwise",
                     "Wind in a counter clockwise direction"),
                    ("CLOCKWISE", "Clockwise",
@@ -231,62 +231,62 @@ class CURVE_OT_spirals(Operator):
             name="Spiral Direction",
             description="Direction of winding"
             )
-    turns = IntProperty(
+    turns : IntProperty(
             default=1,
             min=1, max=1000,
             description="Length of Spiral in 360 deg"
             )
-    steps = IntProperty(
+    steps : IntProperty(
             default=24,
             min=2, max=1000,
             description="Number of Vertices per turn"
             )
-    radius = FloatProperty(
+    radius : FloatProperty(
             default=1.00,
             min=0.00, max=100.00,
             description="Radius for first turn"
             )
-    dif_z = FloatProperty(
+    dif_z : FloatProperty(
             default=0,
             min=-10.00, max=100.00,
             description="Increase in Z axis per turn"
             )
     # needed for 1 and 2 spiral_type
     # Archemedian variables
-    dif_radius = FloatProperty(
+    dif_radius : FloatProperty(
             default=0.00,
             min=-50.00, max=50.00,
             description="Radius increment in each turn"
             )
     # step between turns(one turn equals 360 deg)
     # Log variables
-    B_force = FloatProperty(
+    B_force : FloatProperty(
             default=1.00,
             min=0.00, max=30.00,
             description="Factor of exponent"
             )
     # Torus variables
-    inner_radius = FloatProperty(
+    inner_radius : FloatProperty(
             default=0.20,
             min=0.00, max=100,
             description="Inner Radius of Torus"
             )
-    dif_inner_radius = FloatProperty(
+    dif_inner_radius : FloatProperty(
             default=0,
             min=-10, max=100,
             description="Increase of inner Radius per Cycle"
             )
-    dif_radius = FloatProperty(
+    dif_radius : FloatProperty(
             default=0,
             min=-10, max=100,
             description="Increase of Torus Radius per Cycle"
             )
-    cycles = FloatProperty(
+    cycles : FloatProperty(
             default=1,
             min=0.00, max=1000,
             description="Number of Cycles"
             )
-    curves_number = IntProperty(
+    curves_number : IntProperty(
             default=1,
             min=1, max=400,
             description="Number of curves of spiral"
@@ -300,13 +300,13 @@ class CURVE_OT_spirals(Operator):
         layout = self.layout
         col = layout.column_flow(align=True)
 
-        col.label("Presets:")
+        col.label(text="Presets:")
 
         row = col.row(align=True)
         row.menu("OBJECT_MT_spiral_curve_presets",
                  text=bpy.types.OBJECT_MT_spiral_curve_presets.bl_label)
-        row.operator("curve_extras.spiral_presets", text="", icon='ZOOMIN')
-        op = row.operator("curve_extras.spiral_presets", text="", icon='ZOOMOUT')
+        row.operator("curve_extras.spiral_presets", text="")
+        op = row.operator("curve_extras.spiral_presets", text="")
         op.remove_active = True
 
         layout.prop(self, "spiral_type")
@@ -320,25 +320,25 @@ class CURVE_OT_spirals(Operator):
 
         box = layout.box()
         if self.spiral_type == 'ARCH':
-            box.label("Archemedian Settings:")
+            box.label(text="Archemedian Settings:")
             col = box.column(align=True)
             col.prop(self, "dif_radius", text="Radius Growth")
             col.prop(self, "radius", text="Radius")
             col.prop(self, "dif_z", text="Height")
 
         if self.spiral_type == 'LOG':
-            box.label("Logarithmic Settings:")
+            box.label(text="Logarithmic Settings:")
             col = box.column(align=True)
             col.prop(self, "radius", text="Radius")
             col.prop(self, "B_force", text="Expansion Force")
             col.prop(self, "dif_z", text="Height")
 
         if self.spiral_type == 'SPHERE':
-            box.label("Spheric Settings:")
+            box.label(text="Spheric Settings:")
             box.prop(self, "radius", text="Radius")
 
         if self.spiral_type == 'TORUS':
-            box.label("Torus Settings:")
+            box.label(text="Torus Settings:")
             col = box.column(align=True)
             col.prop(self, "cycles", text="Number of Cycles")
 
@@ -412,13 +412,22 @@ class OBJECT_MT_spiral_curve_presets(Menu):
     draw = bpy.types.Menu.draw_preset
 
 
-def register():
-    bpy.utils.register_module(__name__)
+# Register
+classes = [
+    CURVE_OT_spirals,
+    CURVE_EXTRAS_OT_spirals_presets,
+    OBJECT_MT_spiral_curve_presets
+]
 
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

@@ -5059,7 +5059,7 @@ void flushTransGraphData(TransInfo *t)
 					break;
 
 				case SACTSNAP_TSTEP: /* second step */
-					/* XXX: the handle behaviour in this case is still not quite right... */
+					/* XXX: the handle behavior in this case is still not quite right... */
 					td2d->loc[0] = floor(((double)td2d->loc[0] / secf) + 0.5) * secf;
 					td->loc[0]   = floor(((double)td->loc[0] / secf) + 0.5) * secf;
 					break;
@@ -8449,7 +8449,7 @@ static void createTransGPencil(bContext *C, TransInfo *t)
 									/* only copy center in local origins.
 									 * This allows get interesting effects also when move using proportional editing */
 									if ((gps->flag & GP_STROKE_SELECT) &&
-										(ts->transform_pivot_point == V3D_AROUND_LOCAL_ORIGINS))
+									    (ts->transform_pivot_point == V3D_AROUND_LOCAL_ORIGINS))
 									{
 										copy_v3_v3(td->center, center);
 									}

@@ -36,7 +36,7 @@ from bpy.props import (CollectionProperty,
 
 bl_info = {
     'name': 'glTF 2.0 format',
-    'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann & Moritz Becher',
+    'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann Moritz Becher, Benjamin Schmithüsen',
     "version": (0, 0, 1),
     'blender': (2, 80, 0),
     'location': 'File > Import-Export',
@@ -53,24 +53,11 @@ bl_info = {
 #
 
 
-class GLTF2ExportSettings(bpy.types.Operator):
-    """Save the export settings on export (saved in .blend). """
-    """Toggle off to clear settings"""
-    bl_label = "Save Settings"
-    bl_idname = "scene.gltf2_export_settings_set"
-
-    def execute(self, context):
-        operator = context.active_operator
-        operator.will_save_settings = not operator.will_save_settings
-        if not operator.will_save_settings:
-            # clear settings
-            context.scene.pop(operator.scene_key)
-        return {"FINISHED"}
-
-
 class ExportGLTF2_Base:
 
     # TODO: refactor to avoid boilerplate
+
+    bl_options = {'UNDO', 'PRESET'}
 
     export_format: EnumProperty(
         name='Format',
@@ -88,6 +75,16 @@ class ExportGLTF2_Base:
             'but JSON (embedded or separate) may be easier to edit later'
         ),
         default='GLB'
+    )
+
+    ui_tab: EnumProperty(
+        items=(('GENERAL', "General", "General settings"),
+               ('MESHES', "Meshes", "Mesh settings"),
+               ('OBJECTS', "Objects", "Object settings"),
+               ('MATERIALS', "Materials", "Material settings"),
+               ('ANIMATION', "Animation", "Animation settings")),
+        name="ui_tab",
+        description="Export setting categories",
     )
 
     export_copyright: StringProperty(
@@ -214,8 +211,7 @@ class ExportGLTF2_Base:
 
     export_all_influences: BoolProperty(
         name='Include All Bone Influences',
-        description='Allow >4 joint vertex influences. Models may appear' \
-            ' incorrectly in many viewers',
+        description='Allow >4 joint vertex influences. Models may appear incorrectly in many viewers',
         default=False
     )
 
@@ -239,22 +235,22 @@ class ExportGLTF2_Base:
 
     export_lights: BoolProperty(
         name='Punctual Lights',
-        description='Export directional, point, and spot lights. Uses ' \
-            ' "KHR_lights_punctual" glTF extension',
+        description='Export directional, point, and spot lights. '
+                    'Uses "KHR_lights_punctual" glTF extension',
         default=False
     )
 
     export_texture_transform: BoolProperty(
         name='Texture Transforms',
-        description='Export texture or UV position, rotation, and scale.' \
-            ' Uses "KHR_texture_transform" glTF extension',
+        description='Export texture or UV position, rotation, and scale. '
+                    'Uses "KHR_texture_transform" glTF extension',
         default=False
     )
 
     export_displacement: BoolProperty(
         name='Displacement Textures (EXPERIMENTAL)',
-        description='EXPERIMENTAL: Export displacement textures. Uses' \
-            ' incomplete "KHR_materials_displacement" glTF extension',
+        description='EXPERIMENTAL: Export displacement textures. '
+                    'Uses incomplete "KHR_materials_displacement" glTF extension',
         default=False
     )
 
@@ -360,40 +356,47 @@ class ExportGLTF2_Base:
         return gltf2_blender_export.save(context, export_settings)
 
     def draw(self, context):
-        layout = self.layout
+        self.layout.prop(self, 'ui_tab', expand=True)
+        if self.ui_tab == 'GENERAL':
+            self.draw_general_settings()
+        elif self.ui_tab == 'MESHES':
+            self.draw_mesh_settings()
+        elif self.ui_tab == 'OBJECTS':
+            self.draw_object_settings()
+        elif self.ui_tab == 'MATERIALS':
+            self.draw_material_settings()
+        elif self.ui_tab == 'ANIMATION':
+            self.draw_animation_settings()
 
-        #
-
-        col = layout.box().column()
-        col.label(text='General:', icon='PREFERENCES')
+    def draw_general_settings(self):
+        col = self.layout.box().column()
         col.prop(self, 'export_format')
         col.prop(self, 'export_selected')
-        #col.prop(self, 'export_layers')
         col.prop(self, 'export_apply')
         col.prop(self, 'export_yup')
         col.prop(self, 'export_extras')
         col.prop(self, 'export_copyright')
 
-        col = layout.box().column()
-        col.label(text='Meshes:', icon='MESH_DATA')
+    def draw_mesh_settings(self):
+        col = self.layout.box().column()
         col.prop(self, 'export_texcoords')
         col.prop(self, 'export_normals')
         if self.export_normals:
             col.prop(self, 'export_tangents')
         col.prop(self, 'export_colors')
 
-        col = layout.box().column()
-        col.label(text='Objects:', icon='OBJECT_DATA')
+    def draw_object_settings(self):
+        col = self.layout.box().column()
         col.prop(self, 'export_cameras')
         col.prop(self, 'export_lights')
 
-        col = layout.box().column()
-        col.label(text='Materials:', icon='MATERIAL_DATA')
+    def draw_material_settings(self):
+        col = self.layout.box().column()
         col.prop(self, 'export_materials')
         col.prop(self, 'export_texture_transform')
 
-        col = layout.box().column()
-        col.label(text='Animation:', icon='ARMATURE_DATA')
+    def draw_animation_settings(self):
+        col = self.layout.box().column()
         col.prop(self, 'export_animations')
         if self.export_animations:
             col.prop(self, 'export_frame_range')
@@ -411,12 +414,6 @@ class ExportGLTF2_Base:
             col.prop(self, 'export_morph_normal')
             if self.export_morph_normal:
                 col.prop(self, 'export_morph_tangent')
-
-        row = layout.row()
-        row.operator(
-            GLTF2ExportSettings.bl_idname,
-            text=GLTF2ExportSettings.bl_label,
-            icon="%s" % "PINNED" if self.will_save_settings else "UNPINNED")
 
 
 class ExportGLTF2(bpy.types.Operator, ExportGLTF2_Base, ExportHelper):
@@ -497,7 +494,6 @@ def menu_func_import(self, context):
 
 
 classes = (
-    GLTF2ExportSettings,
     ExportGLTF2,
     ImportGLTF2
 )

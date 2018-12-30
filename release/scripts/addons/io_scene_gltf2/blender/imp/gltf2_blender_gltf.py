@@ -84,7 +84,7 @@ class BlenderGlTF():
         # Blender material
         if gltf.data.materials:
             for material in gltf.data.materials:
-                material.blender_material = None
+                material.blender_material = {}
 
                 if material.pbr_metallic_roughness:
                     # Init
@@ -168,6 +168,9 @@ class BlenderGlTF():
                     gltf.data.skins[node.skin].node_ids = []
 
                 gltf.data.skins[node.skin].node_ids.append(node_idx)
+
+            # Lights management
+            node.correction_needed = False
 
             # transform management
             if node.matrix:

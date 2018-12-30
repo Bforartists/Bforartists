@@ -20,7 +20,7 @@ proxy_qualities = [
 
 # Functions
 def setup_proxy(context, strip, size):
-    preferences = context.user_preferences
+    preferences = context.preferences
     prefs = preferences.addons[__package__].preferences
 
     # set up proxy settings
@@ -66,7 +66,7 @@ def create_proxy(context, strip, size, res):
     div = 4 / size
     newres = (int(int(res[0]) / div), int(int(res[1]) / div))
 
-    preferences = context.user_preferences
+    preferences = context.preferences
     proxy_dir = preferences.addons[__package__].preferences.proxy_dir
     scripts = preferences.addons[__package__].preferences.proxy_scripts
     ffmpeg_command = preferences.addons[__package__].preferences.ffmpeg_command
@@ -156,7 +156,7 @@ class CreateProxyOperator(Operator):
             return False
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         proxy_scripts_path = preferences.addons[__package__].preferences.proxy_scripts_path
 
         for strip in context.selected_editable_sequences:
@@ -255,7 +255,7 @@ class CreateProxyToolPanel(Panel):
                                             'SEQUENCER_PREVIEW'}:
             strip = functions.act_strip(context)
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor and scn.sequence_editor.active_strip:
                 if prefs.use_proxy_tools:
@@ -269,7 +269,7 @@ class CreateProxyToolPanel(Panel):
 
     def draw(self, context):
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         layout = self.layout

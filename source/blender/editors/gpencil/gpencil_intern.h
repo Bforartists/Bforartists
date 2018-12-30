@@ -157,6 +157,8 @@ typedef struct tGPDprimitive {
 	int type;                         /* type of primitive */
 	int orign_type;                   /* original type of primitive */
 	bool curve;                       /* type of primitive is a curve */
+	int brush_size;                   /* brush size */
+	float brush_strength;             /* brush strength */
 	short flip;                       /* flip option */
 	tGPspoint *points;                /* array of data-points for stroke */
 	int point_count;                  /* number of edges allocated */
@@ -506,7 +508,7 @@ struct GP_EditableStrokes_Iter {
  */
 #define GP_EDITABLE_STROKES_BEGIN(gpstroke_iter, C, gpl, gps)                           \
 {                                                                                       \
-	struct GP_EditableStrokes_Iter gpstroke_iter = {0};                                 \
+	struct GP_EditableStrokes_Iter gpstroke_iter = {{{0}}};                             \
 	Depsgraph *depsgraph_ = CTX_data_depsgraph(C);                                      \
 	Object *obact_ = CTX_data_active_object(C);                                         \
 	bGPdata *gpd_ = CTX_data_gpencil_data(C);                                           \

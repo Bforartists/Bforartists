@@ -69,7 +69,7 @@ def add_edges(bm, pt, idxs, fdp):
 
 def remove_earmarked_edges(bm, earmarked):
     edges_select = [e for e in bm.edges if e.index in earmarked]
-    bmesh.ops.delete(bm, geom=edges_select, context=2)
+    bmesh.ops.delete(bm, geom=edges_select, context='EDGES')
 
 
 def perform_vtx(bm, pt, edges, pts, vertex_indices):
@@ -122,7 +122,7 @@ def do_vtx_if_appropriate(bm, edges):
     if not coplanar:
         return {'NON_PLANAR_EDGES'}
 
-    # point must lie on an edge or the virtual extension of an edge
+    # point must lie on an edge or the virtual extention of an edge
     bm = perform_vtx(bm, point, edges, (p1, p2, p3, p4), vertex_indices)
     return bm
 

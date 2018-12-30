@@ -19,6 +19,7 @@
 
 
 import bpy
+
 import time
 import copy
 
@@ -489,7 +490,7 @@ def growSpline(n, stem, numSplit, splitAng, splitAngV, splineList,
             end_co = stem.p.co.copy()
 
             # Add the new point and adjust its coords, handles and radius
-            newSpline.bezier_points.add()
+            newSpline.bezier_points.add(1)
             newPoint = newSpline.bezier_points[-1]
             (newPoint.co, newPoint.handle_left_type, newPoint.handle_right_type) = (end_co + dirVec, hType, hType)
             newPoint.radius = (
@@ -561,7 +562,7 @@ def growSpline(n, stem, numSplit, splitAng, splitAngV, splineList,
     # Get the end point position
     end_co = stem.p.co.copy()
 
-    stem.spline.bezier_points.add()
+    stem.spline.bezier_points.add(1)
     newPoint = stem.spline.bezier_points[-1]
     (newPoint.co, newPoint.handle_left_type, newPoint.handle_right_type) = (end_co + dirVec, hType, hType)
     newPoint.radius = stem.radS * (1 - (stem.seg + 1) / stem.segMax) + \
@@ -730,7 +731,7 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
                     leafAnim, loopFrames, previewArm, armLevels, makeMesh, boneStep):
     arm = bpy.data.armatures.new('tree')
     armOb = bpy.data.objects.new('treeArm', arm)
-    bpy.context.scene.objects.link(armOb)
+    bpy.context.scene.collection.objects.link(armOb)
     # Create a new action to store all animation
     newAction = bpy.data.actions.new(name='windAction')
     armOb.animation_data_create()
@@ -742,7 +743,7 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
     if previewArm:
         armMod.show_viewport = False
         arm.display_type = 'WIRE'
-        treeOb.hide = True
+        treeOb.hide_viewport = True
     armMod.use_apply_on_spline = True
     armMod.object = armOb
     armMod.use_bone_envelopes = True
@@ -753,15 +754,16 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
         armMod.object = armOb
         armMod.use_bone_envelopes = False
         armMod.use_vertex_groups = True
+
     # Make sure all objects are deselected (may not be required?)
     for ob in bpy.data.objects:
-        ob.select = False
+        ob.select_set(state=False)
 
     fps = bpy.context.scene.render.fps
     animSpeed = (24 / fps) * frameRate
 
     # Set the armature as active and go to edit mode to add bones
-    bpy.context.scene.objects.active = armOb
+    bpy.context.view_layer.objects.active = armOb
     bpy.ops.object.mode_set(mode='EDIT')
     # For all the splines in the curve we need to add bones at each bezier point
     for i, parBone in enumerate(splineToBone):
@@ -873,10 +875,10 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
 
                     # Add new fcurves for each sway as well as the modifiers
                     swayX = armOb.animation_data.action.fcurves.new(
-                                            'pose.bones["' + boneName + '"].rotation_euler', 0
+                                            'pose.bones["' + boneName + '"].rotation_euler', index=0
                                             )
                     swayY = armOb.animation_data.action.fcurves.new(
-                                            'pose.bones["' + boneName + '"].rotation_euler', 2
+                                            'pose.bones["' + boneName + '"].rotation_euler', index=2
                                             )
                     swayXMod1 = swayX.modifiers.new(type='FNGENERATOR')
                     swayXMod2 = swayX.modifiers.new(type='FNGENERATOR')
@@ -955,14 +957,14 @@ def create_armature(armAnim, leafP, cu, frameRate, leafMesh, leafObj, leafVertSi
 
                     # Add new fcurves for each sway as well as the modifiers
                     swayX = armOb.animation_data.action.fcurves.new(
-                                                'pose.bones["' + bname + '"].rotation_euler', 0
+                                                'pose.bones["' + bname + '"].rotation_euler', index=0
                                                 )
                     swayY = armOb.animation_data.action.fcurves.new(
-                                                'pose.bones["' + bname + '"].rotation_euler', 2
+                                                'pose.bones["' + bname + '"].rotation_euler', index=2
                                                 )
                     # Add keyframe so noise works
-                    swayX.keyframe_points.add()
-                    swayY.keyframe_points.add()
+                    swayX.keyframe_points.add(1)
+                    swayY.keyframe_points.add(1)
                     swayX.keyframe_points[0].co = (0, 0)
                     swayY.keyframe_points[0].co = (0, 0)
 
@@ -1257,7 +1259,7 @@ def fabricate_stems(addsplinetobone, addstem, baseSize, branches, childP, cu, cu
 
 
 def perform_pruning(baseSize, baseSplits, childP, cu, currentMax, currentMin, currentScale, curve,
-                    curveBack, curveRes, deleteSpline, forceSprout, handles, n, oldMax, orginalSplineToBone,
+                    curveBack, curveRes, deleteSpline, forceSprout, handles, n, oldMax, originalSplineToBone,
                     originalCo, originalCurv, originalCurvV, originalHandleL, originalHandleR, originalLength,
                     originalSeg, prune, prunePowerHigh, prunePowerLow, pruneRatio, pruneWidth, pruneBase,
                     pruneWidthPeak, randState, ratio, scaleVal, segSplits, splineToBone, splitAngle, splitAngleV,
@@ -1291,7 +1293,7 @@ def perform_pruning(baseSize, baseSplits, childP, cu, currentMax, currentMin, cu
             st.seg = originalSeg
             st.p = newPoint
             newPoint.radius = st.radS
-            splineToBone = orginalSplineToBone
+            splineToBone = originalSplineToBone
 
         # Initialise the spline list for those contained in the current level of branching
         splineList = [st]
@@ -1594,12 +1596,12 @@ def addTree(props):
         handles = 'VECTOR'
 
     for ob in bpy.data.objects:
-        ob.select = False
+        ob.select_set(state=False)
 
     # Initialise the tree object and curve and adjust the settings
     cu = bpy.data.curves.new('tree', 'CURVE')
     treeOb = bpy.data.objects.new('tree', cu)
-    bpy.context.scene.objects.link(treeOb)
+    bpy.context.scene.collection.objects.link(treeOb)
 
     # treeOb.location=bpy.context.scene.cursor_location attractUp
 
@@ -1621,14 +1623,14 @@ def addTree(props):
         enCu = bpy.data.curves.new('envelope', 'CURVE')
         enOb = bpy.data.objects.new('envelope', enCu)
         enOb.parent = treeOb
-        bpy.context.scene.objects.link(enOb)
+        bpy.context.scene.collection.objects.link(enOb)
         newSpline = enCu.splines.new('BEZIER')
         newPoint = newSpline.bezier_points[-1]
         newPoint.co = Vector((0, 0, scaleVal))
         (newPoint.handle_right_type, newPoint.handle_left_type) = (enHandle, enHandle)
         # Set the coordinates by varying the z value, envelope will be aligned to the x-axis
         for c in range(enNum):
-            newSpline.bezier_points.add()
+            newSpline.bezier_points.add(1)
             newPoint = newSpline.bezier_points[-1]
             ratioVal = (c + 1) / (enNum)
             zVal = scaleVal - scaleVal * (1 - pruneBase) * ratioVal
@@ -1646,7 +1648,7 @@ def addTree(props):
         (newPoint.handle_right_type, newPoint.handle_left_type) = (enHandle, enHandle)
         # Create a second envelope but this time on the y-axis
         for c in range(enNum):
-            newSpline.bezier_points.add()
+            newSpline.bezier_points.add(1)
             newPoint = newSpline.bezier_points[-1]
             ratioVal = (c + 1) / (enNum)
             zVal = scaleVal - scaleVal * (1 - pruneBase) * ratioVal
@@ -1721,14 +1723,14 @@ def addTree(props):
             currentScale = 1.0
             oldMax = 1.0
             deleteSpline = False
-            orginalSplineToBone = copy.copy(splineToBone)
+            originalSplineToBone = copy.copy(splineToBone)
             forceSprout = False
             # Now do the iterative pruning, this uses a binary search and halts once the difference
             # between upper and lower bounds of the search are less than 0.005
             ratio, splineToBone = perform_pruning(
                                         baseSize, baseSplits, childP, cu, currentMax, currentMin,
                                         currentScale, curve, curveBack, curveRes, deleteSpline, forceSprout,
-                                        handles, n, oldMax, orginalSplineToBone, originalCo, originalCurv,
+                                        handles, n, oldMax, originalSplineToBone, originalCo, originalCurv,
                                         originalCurvV, originalHandleL, originalHandleR, originalLength,
                                         originalSeg, prune, prunePowerHigh, prunePowerLow, pruneRatio,
                                         pruneWidth, pruneBase, pruneWidthPeak, randState, ratio, scaleVal,
@@ -1787,7 +1789,7 @@ def addTree(props):
         # edges are currently added by validating the mesh which isn't great
         leafMesh = bpy.data.meshes.new('leaves')
         leafObj = bpy.data.objects.new('leaves', leafMesh)
-        bpy.context.scene.objects.link(leafObj)
+        bpy.context.scene.collection.objects.link(leafObj)
         leafObj.parent = treeOb
         leafMesh.from_pydata(leafVerts, (), leafFaces)
 
@@ -1816,7 +1818,7 @@ def addTree(props):
 
         # add leaf UVs
         if leafShape == 'rect':
-            leafMesh.uv_textures.new("leafUV")
+            leafMesh.uv_layers.new(name='leafUV')
             uvlayer = leafMesh.uv_layers.active.data
 
             u1 = .5 * (1 - leafScaleX)
@@ -1829,7 +1831,7 @@ def addTree(props):
                 uvlayer[i * 4 + 3].uv = Vector((u1, 0))
 
         elif leafShape == 'hex':
-            leafMesh.uv_textures.new("leafUV")
+            leafMesh.uv_layers.new(name='leafUV')
             uvlayer = leafMesh.uv_layers.active.data
 
             u1 = .5 * (1 - leafScaleX)
@@ -1877,7 +1879,7 @@ def addTree(props):
 
         treeMesh = bpy.data.meshes.new('treemesh')
         treeObj = bpy.data.objects.new('treemesh', treeMesh)
-        bpy.context.scene.objects.link(treeObj)
+        bpy.context.scene.collection.objects.link(treeObj)
 
         treeVerts = []
         treeEdges = []
@@ -1995,7 +1997,7 @@ def addTree(props):
         if useArm:
             armMod = treeObj.modifiers.new('windSway', 'ARMATURE')
             if previewArm:
-                bpy.data.objects['treeArm'].hide = True
+                bpy.data.objects['treeArm'].hide_viewport = True
                 bpy.data.armatures['tree'].display_type = 'STICK'
             armMod.object = bpy.data.objects['treeArm']
             armMod.use_bone_envelopes = False

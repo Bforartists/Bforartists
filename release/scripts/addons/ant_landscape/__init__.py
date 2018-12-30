@@ -391,7 +391,7 @@ class AntDisplaceSettingsPanel(bpy.types.Panel):
         if not ant.sphere_mesh:
             col = box.column()
             col.prop(ant, "edge_falloff")
-            if ant.edge_falloff is not "0":
+            if ant.edge_falloff != "0":
                 col = box.column(align=True)
                 col.prop(ant, "edge_level")
                 if ant.edge_falloff in ["2", "3"]:
@@ -401,7 +401,7 @@ class AntDisplaceSettingsPanel(bpy.types.Panel):
 
         col = box.column()
         col.prop(ant, "strata_type")
-        if ant.strata_type is not "0":
+        if ant.strata_type != "0":
             col = box.column()
             col.prop(ant, "strata")
         col = box.column()

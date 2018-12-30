@@ -1665,7 +1665,11 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.convert", "target")
+        ob = context.active_object
+        if ob and ob.type == 'GPENCIL' and context.gpencil_data:
+            layout.operator_menu_enum("gpencil.convert", "type", text="Convert to")
+        else:
+            layout.operator_menu_enum("object.convert", "target")
 
         layout.separator()
 
@@ -3861,7 +3865,7 @@ class VIEW3D_MT_gpencil_simplify(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator("gpencil.stroke_simplify_fixed", text="Fixed")
-        layout.operator("gpencil.stroke_simplify", text="Adaptative")
+        layout.operator("gpencil.stroke_simplify", text="Adaptive")
 
 
 class VIEW3D_MT_paint_gpencil(Menu):
@@ -3958,10 +3962,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes...")
-
-        layout.separator()
-
-        layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry...")
 
         layout.separator()
 
@@ -4143,7 +4143,7 @@ class VIEW3D_MT_orientations_pie(Menu):
         pie = layout.menu_pie()
         scene = context.scene
 
-        pie.prop(scene, "transform_orientation", expand=True)
+        pie.prop(scene.transform_orientation_slots[0], "type", expand=True)
 
 
 class VIEW3D_MT_snap_pie(Menu):
@@ -5555,7 +5555,7 @@ class VIEW3D_MT_gpencil_edit_specials(Menu):
         layout.operator("gpencil.stroke_smooth", text="Smooth")
         layout.operator("gpencil.stroke_subdivide", text="Subdivide")
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptive")
 
         layout.separator()
         layout.menu("GPENCIL_MT_separate", text="Separate")
@@ -5601,7 +5601,7 @@ class VIEW3D_MT_gpencil_sculpt_specials(Menu):
 
         layout.operator("gpencil.stroke_subdivide", text="Subdivide")
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptive")
 
         if context.mode == 'WEIGHT_GPENCIL':
             layout.separator()

@@ -723,7 +723,7 @@ def blender_check_kw_switch(fn, index_kw_start, index_kw, index_kw_end):
         warning(fn, "E120", "switch brace missing", index_kw_start, index_kw_end)
 
 
-def blender_check_kw_sizeof(index_kw):
+def blender_check_kw_sizeof(fn, index_kw):
     if tokens[index_kw + 1].text != "(":
         warning(fn, "E121", "expected '%s('" % tokens[index_kw].text, index_kw, index_kw + 1)
 
@@ -1274,7 +1274,7 @@ def scan_source(fp, code, args, fn):
             elif tok.text == "else":
                 blender_check_kw_else(fn, i)
             elif tok.text == "sizeof":
-                blender_check_kw_sizeof(i)
+                blender_check_kw_sizeof(fn, i)
         elif tok.type == Token.Punctuation:
             if tok.text == ",":
                 blender_check_comma(fn, i)

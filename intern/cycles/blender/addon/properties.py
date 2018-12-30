@@ -272,7 +272,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
     use_layer_samples: EnumProperty(
         name="Layer Samples",
-        description="How to use per render layer sample settings",
+        description="How to use per view layer sample settings",
         items=enum_use_layer_samples,
         default='USE',
     )
@@ -1144,7 +1144,7 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
         name="Holdout",
         description="Render objects as a holdout or matte, creating a "
         "hole in the image with zero alpha, to fill out in "
-        "compositing with real footange or another render",
+        "compositing with real footage or another render",
         default=False,
     )
 

@@ -19,9 +19,9 @@
 
 bl_info = {
     "name": "Sapling Tree Gen",
-    "author": "Andrew Hale (TrumanBlending), Aaron Buchler",
-    "version": (0, 3, 3),
-    "blender": (2, 77, 0),
+    "author": "Andrew Hale (TrumanBlending), Aaron Buchler, CansecoGPC",
+    "version": (0, 3, 4),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Curve",
     "description": ("Adds a parametric tree. The method is presented by "
     "Jason Weber & Joseph Penn in their paper 'Creation and Rendering of "
@@ -110,14 +110,7 @@ def getPresetpath():
     """Support user defined scripts directory
        Find the first occurrence of add_curve_sapling/presets in possible script paths
        and return it as preset path"""
-    # presetpath = ""
-    # for p in bpy.utils.script_paths():
-    #    presetpath = os.path.join(p, 'addons', 'add_curve_sapling_3', 'presets')
-    #    if os.path.exists(presetpath):
-    #        break
-    # return presetpath
 
-    # why not just do this
     script_file = os.path.realpath(__file__)
     directory = os.path.dirname(script_file)
     directory = os.path.join(directory, "presets")
@@ -145,7 +138,7 @@ class ExportData(Operator):
     bl_idname = 'sapling.exportdata'
     bl_label = 'Export Preset'
 
-    data = StringProperty()
+    data: StringProperty()
 
     def execute(self, context):
         # Unpack some data from the input
@@ -196,7 +189,7 @@ class ImportData(Operator):
     bl_idname = "sapling.importdata"
     bl_label = "Import Preset"
 
-    filename = StringProperty()
+    filename: StringProperty()
 
     def execute(self, context):
         # Make sure the operator knows about the global variables
@@ -276,49 +269,49 @@ class AddTree(Operator):
     def no_update_tree(self, context):
         self.do_update = False
 
-    do_update = BoolProperty(
+    do_update: BoolProperty(
         name='Do Update',
         default=True, options={'HIDDEN'}
         )
-    chooseSet = EnumProperty(
+    chooseSet: EnumProperty(
         name='Settings',
         description='Choose the settings to modify',
         items=settings,
         default='0', update=no_update_tree
         )
-    bevel = BoolProperty(
+    bevel: BoolProperty(
         name='Bevel',
         description='Whether the curve is beveled',
         default=False, update=update_tree
         )
-    prune = BoolProperty(
+    prune: BoolProperty(
         name='Prune',
         description='Whether the tree is pruned',
         default=False, update=update_tree
         )
-    showLeaves = BoolProperty(
+    showLeaves: BoolProperty(
         name='Show Leaves',
         description='Whether the leaves are shown',
         default=False, update=update_tree
         )
-    useArm = BoolProperty(
+    useArm: BoolProperty(
         name='Use Armature',
         description='Whether the armature is generated',
         default=False, update=update_tree
         )
-    seed = IntProperty(
+    seed: IntProperty(
         name='Random Seed',
         description='The seed of the random number generator',
         default=0, update=update_tree
         )
-    handleType = IntProperty(
+    handleType: IntProperty(
         name='Handle Type',
         description='The type of curve handles',
         min=0,
         max=1,
         default=0, update=update_tree
         )
-    levels = IntProperty(
+    levels: IntProperty(
         name='Levels',
         description='Number of recursive branches (Levels)',
         min=1,
@@ -326,14 +319,14 @@ class AddTree(Operator):
         soft_max=4,
         default=3, update=update_tree
         )
-    length = FloatVectorProperty(
+    length: FloatVectorProperty(
         name='Length',
         description='The relative lengths of each branch level (nLength)',
         min=0.000001,
         default=[1, 0.3, 0.6, 0.45],
         size=4, update=update_tree
         )
-    lengthV = FloatVectorProperty(
+    lengthV: FloatVectorProperty(
         name='Length Variation',
         description='The relative length variations of each level (nLengthV)',
         min=0.0,
@@ -341,52 +334,52 @@ class AddTree(Operator):
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    taperCrown = FloatProperty(
+    taperCrown: FloatProperty(
         name='Taper Crown',
         description='Shorten trunk splits toward outside of tree',
         min=0.0,
         soft_max=1.0,
         default=0, update=update_tree
         )
-    branches = IntVectorProperty(
+    branches: IntVectorProperty(
         name='Branches',
         description='The number of branches grown at each level (nBranches)',
         min=0,
         default=[50, 30, 10, 10],
         size=4, update=update_tree
         )
-    curveRes = IntVectorProperty(
+    curveRes: IntVectorProperty(
         name='Curve Resolution',
         description='The number of segments on each branch (nCurveRes)',
         min=1,
         default=[3, 5, 3, 1],
         size=4, update=update_tree
         )
-    curve = FloatVectorProperty(
+    curve: FloatVectorProperty(
         name='Curvature',
         description='The angle of the end of the branch (nCurve)',
         default=[0, -40, -40, 0],
         size=4, update=update_tree
         )
-    curveV = FloatVectorProperty(
+    curveV: FloatVectorProperty(
         name='Curvature Variation',
         description='Variation of the curvature (nCurveV)',
         default=[20, 50, 75, 0],
         size=4, update=update_tree
         )
-    curveBack = FloatVectorProperty(
+    curveBack: FloatVectorProperty(
         name='Back Curvature',
         description='Curvature for the second half of a branch (nCurveBack)',
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    baseSplits = IntProperty(
+    baseSplits: IntProperty(
         name='Base Splits',
         description='Number of trunk splits at its base (nBaseSplits)',
         min=0,
         default=0, update=update_tree
         )
-    segSplits = FloatVectorProperty(
+    segSplits: FloatVectorProperty(
         name='Segment Splits',
         description='Number of splits per segment (nSegSplits)',
         min=0,
@@ -394,45 +387,45 @@ class AddTree(Operator):
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    splitByLen = BoolProperty(
+    splitByLen: BoolProperty(
         name='Split relative to length',
         description='Split proportional to branch length',
         default=False, update=update_tree
         )
-    rMode = EnumProperty(
+    rMode: EnumProperty(
         name="",  # "Branching Mode"
         description='Branching and Rotation Mode',
         items=branchmodes,
         default="rotate", update=update_tree
         )
-    splitAngle = FloatVectorProperty(
+    splitAngle: FloatVectorProperty(
         name='Split Angle',
         description='Angle of branch splitting (nSplitAngle)',
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    splitAngleV = FloatVectorProperty(
+    splitAngleV: FloatVectorProperty(
         name='Split Angle Variation',
         description='Variation in the split angle (nSplitAngleV)',
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    scale = FloatProperty(
+    scale: FloatProperty(
         name='Scale',
         description='The tree scale (Scale)',
         min=0.0,
         default=13.0, update=update_tree)
-    scaleV = FloatProperty(name='Scale Variation',
+    scaleV: FloatProperty(name='Scale Variation',
         description='The variation in the tree scale (ScaleV)',
         default=3.0, update=update_tree
         )
-    attractUp = FloatVectorProperty(
+    attractUp: FloatVectorProperty(
         name='Vertical Attraction',
         description='Branch upward attraction',
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    attractOut = FloatVectorProperty(
+    attractOut: FloatVectorProperty(
         name='Outward Attraction',
         description='Branch outward attraction',
         default=[0, 0, 0, 0],
@@ -440,19 +433,19 @@ class AddTree(Operator):
         max=1.0,
         size=4, update=update_tree
         )
-    shape = EnumProperty(
+    shape: EnumProperty(
         name='Shape',
         description='The overall shape of the tree (Shape)',
         items=shapeList3,
         default='7', update=update_tree
         )
-    shapeS = EnumProperty(
+    shapeS: EnumProperty(
         name='Secondary Branches Shape',
         description='The shape of secondary splits',
         items=shapeList4,
         default='4', update=update_tree
         )
-    customShape = FloatVectorProperty(
+    customShape: FloatVectorProperty(
         name='Custom Shape',
         description='custom shape branch length at (Base, Middle, Middle Position, Top)',
         size=4,
@@ -460,76 +453,76 @@ class AddTree(Operator):
         max=1,
         default=[.5, 1.0, .3, .5], update=update_tree
         )
-    branchDist = FloatProperty(
+    branchDist: FloatProperty(
         name='Branch Distribution',
         description='Adjust branch spacing to put more branches at the top or bottom of the tree',
         min=0.1,
         soft_max=10,
         default=1.0, update=update_tree
         )
-    nrings = IntProperty(
+    nrings: IntProperty(
         name='Branch Rings',
         description='grow branches in rings',
         min=0,
         default=0, update=update_tree
         )
-    baseSize = FloatProperty(
+    baseSize: FloatProperty(
         name='Trunk Height',
         description='Fraction of tree height with no branches (Base Size)',
         min=0.0,
         max=1.0,
         default=0.4, update=update_tree
         )
-    baseSize_s = FloatProperty(
+    baseSize_s: FloatProperty(
         name='Secondary Base Size',
         description='Factor to decrease base size for each level',
         min=0.0,
         max=1.0,
         default=0.25, update=update_tree
         )
-    splitHeight = FloatProperty(
+    splitHeight: FloatProperty(
         name='Split Height',
         description='Fraction of tree height with no splits',
         min=0.0,
         max=1.0,
         default=0.2, update=update_tree
         )
-    splitBias = FloatProperty(
+    splitBias: FloatProperty(
         name='splitBias',
         description='Put more splits at the top or bottom of the tree',
         soft_min=-2.0,
         soft_max=2.0,
         default=0.0, update=update_tree
         )
-    ratio = FloatProperty(
+    ratio: FloatProperty(
         name='Ratio',
         description='Base radius size (Ratio)',
         min=0.0,
         default=0.015, update=update_tree
         )
-    minRadius = FloatProperty(
+    minRadius: FloatProperty(
         name='Minimum Radius',
         description='Minimum branch Radius',
         min=0.0,
         default=0.0, update=update_tree
         )
-    closeTip = BoolProperty(
+    closeTip: BoolProperty(
         name='Close Tip',
         description='Set radius at branch tips to zero',
         default=False, update=update_tree
         )
-    rootFlare = FloatProperty(
+    rootFlare: FloatProperty(
         name='Root Flare',
         description='Root radius factor',
         min=1.0,
         default=1.0, update=update_tree
         )
-    autoTaper = BoolProperty(
+    autoTaper: BoolProperty(
         name='Auto Taper',
         description='Calculate taper automatically based on branch lengths',
         default=True, update=update_tree
         )
-    taper = FloatVectorProperty(
+    taper: FloatVectorProperty(
         name='Taper',
         description='The fraction of tapering on each branch (nTaper)',
         min=0.0,
@@ -537,7 +530,7 @@ class AddTree(Operator):
         default=[1, 1, 1, 1],
         size=4, update=update_tree
         )
-    radiusTweak = FloatVectorProperty(
+    radiusTweak: FloatVectorProperty(
         name='Tweak Radius',
         description='multiply radius by this factor',
         min=0.0,
@@ -545,164 +538,164 @@ class AddTree(Operator):
         default=[1, 1, 1, 1],
         size=4, update=update_tree
         )
-    ratioPower = FloatProperty(
+    ratioPower: FloatProperty(
         name='Branch Radius Ratio',
         description=('Power which defines the radius of a branch compared to '
         'the radius of the branch it grew from (RatioPower)'),
         min=0.0,
         default=1.2, update=update_tree
         )
-    downAngle = FloatVectorProperty(
+    downAngle: FloatVectorProperty(
         name='Down Angle',
         description=('The angle between a new branch and the one it grew '
         'from (nDownAngle)'),
         default=[90, 60, 45, 45],
         size=4, update=update_tree
         )
-    downAngleV = FloatVectorProperty(
+    downAngleV: FloatVectorProperty(
         name='Down Angle Variation',
         description="Angle to decrease Down Angle by towards end of parent branch "
                     "(negative values add random variation)",
         default=[0, -50, 10, 10],
         size=4, update=update_tree
         )
-    useOldDownAngle = BoolProperty(
+    useOldDownAngle: BoolProperty(
         name='Use old down angle variation',
         default=False, update=update_tree
         )
-    useParentAngle = BoolProperty(
+    useParentAngle: BoolProperty(
         name='Use parent angle',
         description='(first level) Rotate branch to match parent branch',
         default=True, update=update_tree
         )
-    rotate = FloatVectorProperty(
+    rotate: FloatVectorProperty(
         name='Rotate Angle',
         description="The angle of a new branch around the one it grew from "
                     "(negative values rotate opposite from the previous)",
         default=[137.5, 137.5, 137.5, 137.5],
         size=4, update=update_tree
         )
-    rotateV = FloatVectorProperty(
+    rotateV: FloatVectorProperty(
         name='Rotate Angle Variation',
         description='Variation in the rotate angle (nRotateV)',
         default=[0, 0, 0, 0],
         size=4, update=update_tree
         )
-    scale0 = FloatProperty(
+    scale0: FloatProperty(
         name='Radius Scale',
         description='The scale of the trunk radius (0Scale)',
         min=0.0,
         default=1.0, update=update_tree
         )
-    scaleV0 = FloatProperty(
+    scaleV0: FloatProperty(
         name='Radius Scale Variation',
         description='Variation in the radius scale (0ScaleV)',
         min=0.0,
         max=1.0,
         default=0.2, update=update_tree
         )
-    pruneWidth = FloatProperty(
+    pruneWidth: FloatProperty(
         name='Prune Width',
         description='The width of the envelope (PruneWidth)',
         min=0.0,
         default=0.4, update=update_tree
         )
-    pruneBase = FloatProperty(
+    pruneBase: FloatProperty(
         name='Prune Base Height',
         description='The height of the base of the envelope, bound by trunk height',
         min=0.0,
         max=1.0,
         default=0.3, update=update_tree
         )
-    pruneWidthPeak = FloatProperty(
+    pruneWidthPeak: FloatProperty(
         name='Prune Width Peak',
         description=("Fraction of envelope height where the maximum width "
                      "occurs (PruneWidthPeak)"),
         min=0.0,
         default=0.6, update=update_tree
         )
-    prunePowerHigh = FloatProperty(
+    prunePowerHigh: FloatProperty(
         name='Prune Power High',
         description=('Power which determines the shape of the upper portion '
         'of the envelope (PrunePowerHigh)'),
         default=0.5, update=update_tree
         )
-    prunePowerLow = FloatProperty(
+    prunePowerLow: FloatProperty(
         name='Prune Power Low',
         description=('Power which determines the shape of the lower portion '
         'of the envelope (PrunePowerLow)'),
         default=0.001, update=update_tree
         )
-    pruneRatio = FloatProperty(
+    pruneRatio: FloatProperty(
         name='Prune Ratio',
         description='Proportion of pruned length (PruneRatio)',
         min=0.0,
         max=1.0,
         default=1.0, update=update_tree
         )
-    leaves = IntProperty(
+    leaves: IntProperty(
         name='Leaves',
         description="Maximum number of leaves per branch (negative values grow "
                     "leaves from branch tip (palmate compound leaves))",
         default=25, update=update_tree
         )
-    leafDownAngle = FloatProperty(
+    leafDownAngle: FloatProperty(
         name='Leaf Down Angle',
         description='The angle between a new leaf and the branch it grew from',
         default=45, update=update_leaves
         )
-    leafDownAngleV = FloatProperty(
+    leafDownAngleV: FloatProperty(
         name='Leaf Down Angle Variation',
         description="Angle to decrease Down Angle by towards end of parent branch "
                     "(negative values add random variation)",
         default=10, update=update_tree
         )
-    leafRotate = FloatProperty(
+    leafRotate: FloatProperty(
         name='Leaf Rotate Angle',
         description="The angle of a new leaf around the one it grew from "
                     "(negative values rotate opposite from previous)",
         default=137.5, update=update_tree
         )
-    leafRotateV = FloatProperty(
+    leafRotateV: FloatProperty(
         name='Leaf Rotate Angle Variation',
         description='Variation in the rotate angle',
         default=0.0, update=update_leaves
         )
-    leafScale = FloatProperty(
+    leafScale: FloatProperty(
         name='Leaf Scale',
         description='The scaling applied to the whole leaf (LeafScale)',
         min=0.0,
         default=0.17, update=update_leaves
         )
-    leafScaleX = FloatProperty(
+    leafScaleX: FloatProperty(
         name='Leaf Scale X',
         description=('The scaling applied to the x direction of the leaf '
         '(LeafScaleX)'),
         min=0.0,
         default=1.0, update=update_leaves
         )
-    leafScaleT = FloatProperty(
+    leafScaleT: FloatProperty(
         name='Leaf Scale Taper',
         description='scale leaves toward the tip or base of the patent branch',
         min=-1.0,
         max=1.0,
         default=0.0, update=update_leaves
         )
-    leafScaleV = FloatProperty(
+    leafScaleV: FloatProperty(
         name='Leaf Scale Variation',
         description='randomize leaf scale',
         min=0.0,
         max=1.0,
         default=0.0, update=update_leaves
         )
-    leafShape = EnumProperty(
+    leafShape: EnumProperty(
         name='Leaf Shape',
         description='The shape of the leaves',
         items=(('hex', 'Hexagonal', '0'), ('rect', 'Rectangular', '1'),
                ('dFace', 'DupliFaces', '2'), ('dVert', 'DupliVerts', '3')),
         default='hex', update=update_leaves
         )
-    leafDupliObj = EnumProperty(
+    leafDupliObj: EnumProperty(
         name='Leaf Object',
         description='Object to use for leaf instancing if Leaf Shape is DupliFaces or DupliVerts',
         items=objectList,
@@ -717,64 +710,64 @@ class AddTree(Operator):
         default=0.0, update=update_leaves
         )
     """
-    leafangle = FloatProperty(
+    leafangle: FloatProperty(
         name='Leaf Angle',
         description='Leaf vertical attraction',
         default=0.0, update=update_leaves
         )
-    horzLeaves = BoolProperty(
+    horzLeaves: BoolProperty(
         name='Horizontal leaves',
         description='Leaves face upwards',
         default=True, update=update_leaves
         )
-    leafDist = EnumProperty(
+    leafDist: EnumProperty(
         name='Leaf Distribution',
         description='The way leaves are distributed on branches',
         items=shapeList4,
         default='6', update=update_tree
         )
-    bevelRes = IntProperty(
+    bevelRes: IntProperty(
         name='Bevel Resolution',
         description='The bevel resolution of the curves',
         min=0,
         max=32,
         default=0, update=update_tree
         )
-    resU = IntProperty(
+    resU: IntProperty(
         name='Curve Resolution',
         description='The resolution along the curves',
         min=1,
         default=4, update=update_tree
         )
-    handleType = EnumProperty(
+    handleType: EnumProperty(
         name='Handle Type',
         description='The type of handles used in the spline',
         items=handleList,
         default='0', update=update_tree
         )
-    armAnim = BoolProperty(
+    armAnim: BoolProperty(
         name='Armature Animation',
         description='Whether animation is added to the armature',
         default=False, update=update_tree
         )
-    previewArm = BoolProperty(
+    previewArm: BoolProperty(
         name='Fast Preview',
         description='Disable armature modifier, hide tree, and set bone display to wire, for fast playback',
         # Disable skin modifier and hide tree and armature, for fast playback
         default=False, update=update_tree
         )
-    leafAnim = BoolProperty(
+    leafAnim: BoolProperty(
         name='Leaf Animation',
         description='Whether animation is added to the leaves',
         default=False, update=update_tree
         )
-    frameRate = FloatProperty(
+    frameRate: FloatProperty(
         name='Animation Speed',
         description=('Adjust speed of animation, relative to scene frame rate'),
         min=0.001,
         default=1, update=update_tree
         )
-    loopFrames = IntProperty(
+    loopFrames: IntProperty(
         name='Loop Frames',
         description='Number of frames to make the animation loop for, zero is disabled',
         min=0,
@@ -792,66 +785,66 @@ class AddTree(Operator):
         default=0.0, update=update_tree
         )
     """
-    wind = FloatProperty(
+    wind: FloatProperty(
         name='Overall Wind Strength',
         description='The intensity of the wind to apply to the armature',
         default=1.0, update=update_tree
         )
-    gust = FloatProperty(
+    gust: FloatProperty(
         name='Wind Gust Strength',
         description='The amount of directional movement, (from the positive Y direction)',
         default=1.0, update=update_tree
         )
-    gustF = FloatProperty(
+    gustF: FloatProperty(
         name='Wind Gust Fequency',
         description='The Frequency of directional movement',
         default=0.075, update=update_tree
         )
-    af1 = FloatProperty(
+    af1: FloatProperty(
         name='Amplitude',
         description='Multiplier for noise amplitude',
         default=1.0, update=update_tree
         )
-    af2 = FloatProperty(
+    af2: FloatProperty(
         name='Frequency',
         description='Multiplier for noise fequency',
         default=1.0, update=update_tree
         )
-    af3 = FloatProperty(
+    af3: FloatProperty(
         name='Randomness',
         description='Random offset in noise',
         default=4.0, update=update_tree
         )
-    makeMesh = BoolProperty(
+    makeMesh: BoolProperty(
         name='Make Mesh',
         description='Convert curves to mesh, uses skin modifier, enables armature simplification',
         default=False, update=update_tree
         )
-    armLevels = IntProperty(
+    armLevels: IntProperty(
         name='Armature Levels',
         description='Number of branching levels to make bones for, 0 is all levels',
         min=0,
         default=2, update=update_tree
         )
-    boneStep = IntVectorProperty(
+    boneStep: IntVectorProperty(
         name='Bone Length',
         description='Number of stem segments per bone',
         min=1,
         default=[1, 1, 1, 1],
         size=4, update=update_tree
         )
-    presetName = StringProperty(
+    presetName: StringProperty(
         name='Preset Name',
         description='The name of the preset to be saved',
         default='',
         subtype='FILE_NAME', update=no_update_tree
         )
-    limitImport = BoolProperty(
+    limitImport: BoolProperty(
         name='Limit Import',
         description='Limited imported tree to 2 levels & no leaves for speed',
         default=True, update=no_update_tree
         )
-    overwrite = BoolProperty(
+    overwrite: BoolProperty(
         name='Overwrite',
         description='When checked, overwrite existing preset files when saving',
         default=False, update=no_update_tree
@@ -881,7 +874,7 @@ class AddTree(Operator):
 
         if self.chooseSet == '0':
             box = layout.box()
-            box.label("Geometry:")
+            box.label(text="Geometry:")
             box.prop(self, 'bevel')
 
             row = box.row()
@@ -900,7 +893,7 @@ class AddTree(Operator):
             box.prop(self, 'nrings')
             box.prop(self, 'seed')
 
-            box.label("Tree Scale:")
+            box.label(text="Tree Scale:")
             row = box.row()
             row.prop(self, 'scale')
             row.prop(self, 'scaleV')
@@ -927,7 +920,7 @@ class AddTree(Operator):
             # Send the data dict and the file name to the exporter
             row.operator('sapling.exportdata').data = repr([repr(data), self.presetName, self.overwrite])
             row = box.row()
-            row.label(" ")
+            row.label(text=" ")
             row.prop(self, 'overwrite')
             row = box.row()
             row.menu('SAPLING_MT_preset', text='Load Preset')
@@ -935,7 +928,7 @@ class AddTree(Operator):
 
         elif self.chooseSet == '1':
             box = layout.box()
-            box.label("Branch Radius:")
+            box.label(text="Branch Radius:")
 
             row = box.row()
             row.prop(self, 'bevel')
@@ -961,7 +954,7 @@ class AddTree(Operator):
 
         elif self.chooseSet == '2':
             box = layout.box()
-            box.label("Branch Splitting:")
+            box.label(text="Branch Splitting:")
             box.prop(self, 'levels')
             box.prop(self, 'baseSplits')
             row = box.row()
@@ -984,14 +977,14 @@ class AddTree(Operator):
             col.prop(self, 'splitAngleV')
             col.prop(self, 'rotateV')
 
-            col.label("Branching Mode:")
+            col.label(text="Branching Mode:")
             col.prop(self, 'rMode')
 
             box.column().prop(self, 'curveRes')
 
         elif self.chooseSet == '3':
             box = layout.box()
-            box.label("Branch Growth:")
+            box.label(text="Branch Growth:")
 
             box.prop(self, 'taperCrown')
 
@@ -1014,7 +1007,7 @@ class AddTree(Operator):
 
         elif self.chooseSet == '4':
             box = layout.box()
-            box.label("Prune:")
+            box.label(text="Prune:")
             box.prop(self, 'prune')
             box.prop(self, 'pruneRatio')
             row = box.row()
@@ -1028,14 +1021,14 @@ class AddTree(Operator):
 
         elif self.chooseSet == '5':
             box = layout.box()
-            box.label("Leaves:")
+            box.label(text="Leaves:")
             box.prop(self, 'showLeaves')
             box.prop(self, 'leafShape')
             box.prop(self, 'leafDupliObj')
             box.prop(self, 'leaves')
             box.prop(self, 'leafDist')
 
-            box.label("")
+            box.label(text="")
             row = box.row()
             row.prop(self, 'leafDownAngle')
             row.prop(self, 'leafDownAngleV')
@@ -1043,7 +1036,7 @@ class AddTree(Operator):
             row = box.row()
             row.prop(self, 'leafRotate')
             row.prop(self, 'leafRotateV')
-            box.label("")
+            box.label(text="")
 
             row = box.row()
             row.prop(self, 'leafScale')
@@ -1056,22 +1049,22 @@ class AddTree(Operator):
             box.prop(self, 'horzLeaves')
             box.prop(self, 'leafangle')
 
-            # box.label(" ")
+            # box.label(text=" ")
             # box.prop(self, 'bend')
 
         elif self.chooseSet == '6':
             box = layout.box()
-            box.label("Armature:")
+            box.label(text="Armature:")
             row = box.row()
             row.prop(self, 'useArm')
             box.prop(self, 'makeMesh')
-            box.label("Armature Simplification:")
+            box.label(text="Armature Simplification:")
             box.prop(self, 'armLevels')
             box.prop(self, 'boneStep')
 
         elif self.chooseSet == '7':
             box = layout.box()
-            box.label("Finalize All Other Settings First!")
+            box.label(text="Finalize All Other Settings First!")
             box.prop(self, 'armAnim')
             box.prop(self, 'leafAnim')
             box.prop(self, 'previewArm')
@@ -1082,13 +1075,13 @@ class AddTree(Operator):
             # row.prop(self, 'windSpeed')
             # row.prop(self, 'windGust')
 
-            box.label('Wind Settings:')
+            box.label(text='Wind Settings:')
             box.prop(self, 'wind')
             row = box.row()
             row.prop(self, 'gust')
             row.prop(self, 'gustF')
 
-            box.label('Leaf Wind Settings:')
+            box.label(text='Leaf Wind Settings:')
             box.prop(self, 'af1')
             box.prop(self, 'af2')
             box.prop(self, 'af3')
@@ -1097,7 +1090,7 @@ class AddTree(Operator):
         # Ensure the use of the global variables
         global settings, useSet
         start_time = time.time()
-        # bpy.ops.ImportData.filename = "quaking_aspen"
+
         # If we need to set the properties from a preset then do it here
         if useSet:
             for a, b in settings.items():
@@ -1115,23 +1108,31 @@ class AddTree(Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        bpy.ops.sapling.importdata(filename="quaking_aspen.py")
+        bpy.ops.sapling.importdata(filename="callistemon.py")
         return self.execute(context)
 
 
 def menu_func(self, context):
     self.layout.operator(AddTree.bl_idname, text="Sapling Tree Gen", icon='CURVE_DATA')
 
+classes = (
+    AddTree,
+    PresetMenu,
+    ImportData,
+    ExportData,
+)
 
 def register():
-    bpy.utils.register_module(__name__)
-
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
     bpy.types.VIEW3D_MT_curve_add.append(menu_func)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
     bpy.types.VIEW3D_MT_curve_add.remove(menu_func)
 
 
