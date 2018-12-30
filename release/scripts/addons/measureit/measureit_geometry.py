@@ -806,7 +806,7 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
     if pos2d is None:
         return
 
-    # dpi = bpy.context.user_preferences.system.dpi
+    # dpi = bpy.context.preferences.system.dpi
     gap = 12
     x_pos, y_pos = pos2d
     font_id = 0
@@ -835,9 +835,9 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
     # -------------------
     for line in mylines:
         text_width, text_height = blf.dimensions(font_id, line)
-        if align is 'C':
+        if align == 'C':
             newx = x_pos - text_width / 2
-        elif align is 'R':
+        elif align == 'R':
             newx = x_pos - text_width - gap
         else:
             newx = x_pos
@@ -855,7 +855,7 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
         if maxwidth < text_width:
             maxwidth = text_width
 
-    if align is 'L':
+    if align == 'L':
         blf.disable(font_id, ROTATION)
 
     return maxwidth, maxheight

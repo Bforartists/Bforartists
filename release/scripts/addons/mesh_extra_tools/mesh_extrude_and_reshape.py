@@ -245,7 +245,7 @@ class Extrude_and_Reshape(Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.mode is not 'EDIT_MESH'
+        return context.mode != 'EDIT_MESH'
 
     def modal(self, context, event):
         if self.confirm:

@@ -47,8 +47,8 @@ def _get_messages(lang, fname):
 
 
 class UI_OT_i18n_edittranslation_update_mo(Operator):
-    """Try to "compile" given po file into relevant blender.mo file
-    (WARNING: it will replace the official mo file in your user dir!)"""
+    """Try to "compile" given po file into relevant blender.mo file"""
+    """(WARNING: it will replace the official mo file in your user dir!)"""
     bl_idname = "ui.i18n_edittranslation_update_mo"
     bl_label = "Edit Translation Update Mo"
 

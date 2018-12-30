@@ -11,7 +11,7 @@ import bpy
 # Utility function get preferences setting for exporters
 def get_preferences():
     # replace the key if the add-on name changes
-    addon = bpy.context.user_preferences.addons[__package__]
+    addon = bpy.context.preferences.addons[__package__]
     show_warn = (addon.preferences.show_exporters if addon else False)
 
     return show_warn

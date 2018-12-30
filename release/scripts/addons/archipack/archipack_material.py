@@ -132,7 +132,7 @@ class MatlibsManager():
         prefs = None
         # retrieve addon name from imports
         addon_name = __name__.split('.')[0]
-        prefs = context.user_preferences.addons[addon_name].preferences
+        prefs = context.preferences.addons[addon_name].preferences
         return prefs
 
     @property

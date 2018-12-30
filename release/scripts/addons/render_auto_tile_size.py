@@ -227,7 +227,7 @@ def on_scene_update(scene):
     if not ats_poll(context):
         return
 
-    userpref = context.user_preferences
+    userpref = context.preferences
 
     settings = scene.ats_settings
     render = scene.render
@@ -266,7 +266,7 @@ def get_actual_res(render):
 def get_threads(context, device):
     render = context.scene.render
     engine = render.engine
-    userpref = context.user_preferences
+    userpref = context.preferences
 
     if engine_is_gpu(engine, device, userpref):
         threads = userpref.addons['cycles'].preferences.get_num_gpu_devices()
@@ -324,7 +324,7 @@ def do_set_tile_size(context):
         return False
 
     scene = context.scene
-    userpref = context.user_preferences
+    userpref = context.preferences
 
     settings = scene.ats_settings
     render = scene.render
@@ -406,7 +406,7 @@ class SetTileSize(Operator):
 
 def ui_layout(engine, layout, context):
     scene = context.scene
-    userpref = context.user_preferences
+    userpref = context.preferences
 
     settings = scene.ats_settings
     render = scene.render

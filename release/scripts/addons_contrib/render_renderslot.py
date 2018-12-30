@@ -27,7 +27,7 @@ bl_info = {
     "name": "KTX RenderSlot",
     "description": "Display/select renderslot in the render tab",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 3, 0),
+    "version": (1, 3, 1),
     "blender": (2, 80, 0),
     "location": "Properties Editor > Render > Render",
     "warning": "",
@@ -100,7 +100,7 @@ def ui(self, context):
     try:
         active = bpy.data.images['Render Result'].render_slots.active_index
         if bpy.context.user_preferences.addons[__name__].preferences.advanced_mode:
-            row.prop(scn, 'ktx_auto_advance_slot', 'Auto Advance')
+            row.prop(scn, 'ktx_auto_advance_slot', text='Auto Advance')
         row = layout.row(align=True)
         row.alignment = 'EXPAND'
         for i in range(8):

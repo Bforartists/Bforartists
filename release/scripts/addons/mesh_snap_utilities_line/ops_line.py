@@ -206,8 +206,7 @@ def draw_line(self, bm_geom, location):
         self.sctx.tag_update_drawn_snap_object(self.main_snap_obj)
         #bm.verts.index_update()
 
-        if not self.wait_for_input:
-            bpy.ops.ed.undo_push(message="Undo draw line*")
+        bpy.ops.ed.undo_push(message="Undo draw line*")
 
     return [obj.matrix_world @ v.co for v in self.list_verts]
 
@@ -249,6 +248,50 @@ class SnapUtilitiesLine(bpy.types.Operator):
         context.tool_settings.mesh_select_mode = self.select_mode
         context.space_data.overlay.show_face_center = self.show_face_center
 
+    def _init_snap_context(self, context):
+        if self.sctx:
+            self.sctx.clear_snap_objects()
+        else:
+            #Create Snap Context
+            from .snap_context_l import SnapContext
+            self.sctx = SnapContext(context.region, context.space_data)
+            self.sctx.set_pixel_dist(12)
+            self.sctx.use_clip_planes(True)
+
+        if self.outer_verts:
+            for base in context.visible_bases:
+                self.sctx.add_obj(base.object, base.object.matrix_world)
+
+        self.sctx.set_snap_mode(True, True, self.snap_face)
+
+        if self.snap_widget:
+            self.geom = self.snap_widget.geom
+            self.type = self.snap_widget.type
+            self.location = self.snap_widget.loc
+            if self.snap_widget.snap_obj:
+                context.view_layer.objects.active = self.snap_widget.snap_obj.data[0]
+        else:
+            #init these variables to avoid errors
+            self.geom = None
+            self.type = 'OUT'
+            self.location = Vector()
+
+        self.prevloc = Vector()
+        self.list_verts = []
+        self.list_edges = []
+        self.list_verts_co = []
+        self.bool_update = False
+        self.vector_constrain = ()
+        self.len = 0
+        self.length_entered = ""
+        self.line_pos = 0
+
+        active_object = context.active_object
+        mesh = active_object.data
+
+        self.main_snap_obj = self.snap_obj = self.sctx._get_snap_obj_by_obj(active_object)
+        self.main_bm = self.bm = bmesh.from_edit_mesh(mesh)
+
     def modal(self, context, event):
         if self.navigation_ops.run(context, event, self.prevloc if self.vector_constrain else self.location):
             return {'RUNNING_MODAL'}
@@ -256,19 +299,17 @@ class SnapUtilitiesLine(bpy.types.Operator):
         context.area.tag_redraw()
 
         if event.ctrl and event.type == 'Z' and event.value == 'PRESS':
-            if self.bm:
-                self.bm.free()
-                self.bm = None
-            if self.main_bm:
-                self.main_bm.free()
+            del self.bm
+            del self.main_bm
+
             bpy.ops.ed.undo()
-            self.vector_constrain = None
-            self.list_verts_co = []
-            self.list_verts = []
-            self.list_edges = []
             bpy.ops.object.mode_set(mode='EDIT') # just to be sure
-            self.main_bm = bmesh.from_edit_mesh(self.main_snap_obj.data[0].data)
-            self.sctx.tag_update_drawn_snap_object(self.main_snap_obj)
+            bpy.ops.mesh.select_all(action='DESELECT')
+            context.tool_settings.mesh_select_mode = (True, False, True)
+            context.space_data.overlay.show_face_center = True
+
+            self._init_snap_context(context)
+            self.sctx.update_all()
             return {'RUNNING_MODAL'}
 
         is_making_lines = bool(self.list_verts_co)
@@ -369,8 +410,7 @@ class SnapUtilitiesLine(bpy.types.Operator):
                 self.vector_constrain = None
                 self.keyf8 = self.keyf8 is False
 
-        elif event.value == 'RELEASE':
-            if event.type in {'RET', 'NUMPAD_ENTER'}:
+            elif event.type in {'RET', 'NUMPAD_ENTER'}:
                 if self.length_entered != "" and self.list_verts_co:
                     try:
                         text_value = bpy.utils.units.to_value(self.unit_system, 'LENGTH', self.length_entered)
@@ -385,12 +425,13 @@ class SnapUtilitiesLine(bpy.types.Operator):
                     except:  # ValueError:
                         self.report({'INFO'}, "Operation not supported yet")
 
-                if not self.wait_for_input:
-                    self._exit(context)
-                    return {'FINISHED'}
+                self._exit(context)
+                return {'FINISHED'}
 
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 if not self.wait_for_input or not is_making_lines or event.type == 'ESC':
+                    if self.geom:
+                        self.geom.select = True
                     self._exit(context)
                     return {'FINISHED'}
                 else:
@@ -452,7 +493,7 @@ class SnapUtilitiesLine(bpy.types.Operator):
 
                 preferences = self.snap_widget.preferences
             else:
-                preferences = context.user_preferences.addons[__package__].preferences
+                preferences = context.preferences.addons[__package__].preferences
 
                 #Init DrawCache
                 self.draw_cache = SnapDrawn(
@@ -463,23 +504,12 @@ class SnapUtilitiesLine(bpy.types.Operator):
                     preferences.center_color,
                     preferences.perpendicular_color,
                     preferences.constrain_shift_color,
-                    tuple(context.user_preferences.themes[0].user_interface.axis_x) + (1.0,),
-                    tuple(context.user_preferences.themes[0].user_interface.axis_y) + (1.0,),
-                    tuple(context.user_preferences.themes[0].user_interface.axis_z) + (1.0,)
+                    tuple(context.preferences.themes[0].user_interface.axis_x) + (1.0,),
+                    tuple(context.preferences.themes[0].user_interface.axis_y) + (1.0,),
+                    tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,)
                 )
 
-                #Init Snap Context
-                from .snap_context_l import SnapContext
-
-                self.sctx = SnapContext(context.region, context.space_data)
-                self.sctx.set_pixel_dist(12)
-                self.sctx.use_clip_planes(True)
-
-                if preferences.outer_verts:
-                    for base in context.visible_bases:
-                        self.sctx.add_obj(base.object, base.object.matrix_world)
-
-                self.sctx.set_snap_mode(True, True, self.snap_face)
+                self.sctx = None
 
             #Configure the unit of measure
             self.unit_system = context.scene.unit_settings.system
@@ -495,50 +525,17 @@ class SnapUtilitiesLine(bpy.types.Operator):
             self.snap_to_grid = preferences.increments_grid
             self.incremental = bpy.utils.units.to_value(self.unit_system, 'LENGTH', str(preferences.incremental))
 
-            if self.snap_widget:
-                self.geom = self.snap_widget.geom
-                self.type = self.snap_widget.type
-                self.location = self.snap_widget.loc
-                if self.snap_widget.snap_obj:
-                    context.view_layer.objects.active = self.snap_widget.snap_obj.data[0]
-            else:
-                #init these variables to avoid errors
-                self.geom = None
-                self.type = 'OUT'
-                self.location = Vector()
-
-            self.prevloc = Vector()
-            self.list_verts = []
-            self.list_edges = []
-            self.list_verts_co = []
-            self.bool_update = False
-            self.vector_constrain = ()
-            self.len = 0
-            self.length_entered = ""
-            self.line_pos = 0
-
             self.navigation_ops = SnapNavigation(context, True)
 
-            active_object = context.active_object
-
-            #Create a new object
-            if active_object is None or active_object.type != 'MESH':
-                mesh = bpy.data.meshes.new("")
-                active_object = bpy.data.objects.new("", mesh)
-                context.scene.objects.link(obj)
-                context.scene.objects.active = active_object
-            else:
-                mesh = active_object.data
-
-            self.main_snap_obj = self.snap_obj = self.sctx._get_snap_obj_by_obj(active_object)
-            self.main_bm = self.bm = bmesh.from_edit_mesh(mesh) #remove at end
+            self._init_snap_context(context)
 
             #modals
+            context.window_manager.modal_handler_add(self)
+
             if not self.wait_for_input:
                 self.modal(context, event)
 
             self._handle = bpy.types.SpaceView3D.draw_handler_add(self.draw_callback_px, (), 'WINDOW', 'POST_VIEW')
-            context.window_manager.modal_handler_add(self)
 
             return {'RUNNING_MODAL'}
         else:

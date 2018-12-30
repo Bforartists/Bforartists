@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
+"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-23 10:49:02\n"
+"POT-Creation-Date: 2018-12-24 15:04:25\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -166,1772 +166,6 @@ msgid "Action group is expanded"
 msgstr "Grupa akcji jest rozwinięta"
 
 
-msgid "Actuator to apply actions in the game engine"
-msgstr "Mechanizm do zastosowania akcji w silniku gry"
-
-
-msgid "Active"
-msgstr "Aktywny"
-
-
-msgid "Set the active state of the actuator"
-msgstr "Ustaw aktywny stan mechanizmu"
-
-
-msgid "Pinned"
-msgstr "Przypięty"
-
-
-msgid "Display when not linked to a visible states controller"
-msgstr "Pokazuj, gdy nie połączony z widocznymi stanami kontrolera"
-
-
-msgid "Set actuator expanded in the user interface"
-msgstr "Rozwiń panel mechanizmu w interfejsie użytkownika"
-
-
-msgid "Type"
-msgstr "Rodzaj"
-
-
-msgid "Action"
-msgstr "Akcja"
-
-
-msgid "Armature"
-msgstr "Szkielet"
-
-
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgid "Constraint"
-msgstr "Ogranicznik"
-
-
-msgid "Edit Object"
-msgstr "Edytuj obiekt"
-
-
-msgid "Filter 2D"
-msgstr "Filtr 2D"
-
-
-msgid "Game"
-msgstr "Gra"
-
-
-msgid "Message"
-msgstr "Komunikat"
-
-
-msgid "Motion"
-msgstr "Ruch"
-
-
-msgid "Mouse"
-msgstr "Mysz"
-
-
-msgid "Parent"
-msgstr "Rodzic"
-
-
-msgid "Property"
-msgstr "Właściwość"
-
-
-msgid "Random"
-msgstr "Losowo"
-
-
-msgid "Scene"
-msgstr "Scena"
-
-
-msgid "Sound"
-msgstr "Dźwięk"
-
-
-msgid "State"
-msgstr "Stan"
-
-
-msgid "Steering"
-msgstr "Sterowanie"
-
-
-msgid "Visibility"
-msgstr "Widoczność"
-
-
-msgid "Action Actuator"
-msgstr "Akcja mechanizmu"
-
-
-msgid "Actuator to control the object movement"
-msgstr "Mechanizm do kontroli poruszania się obiektu"
-
-
-msgid "Child"
-msgstr "Potomek"
-
-
-msgid "Update Action on all children Objects as well"
-msgstr "Aktualizuj akcje także we wszystkich obiektach potomnych"
-
-
-msgid "Blend Mode"
-msgstr "Tryb Mieszania"
-
-
-msgid "How this layer is blended with previous layers"
-msgstr "Sposób w jaki ta warstwa jest mieszana z poprzednimi warstwami"
-
-
-msgid "Blend"
-msgstr "Mieszanie"
-
-
-msgid "Add"
-msgstr "Dodaj"
-
-
-msgid "Blendin"
-msgstr "Łagodne wejście"
-
-
-msgid "Number of frames of motion blending"
-msgstr "Liczba klatek w których ruch przenika się"
-
-
-msgid "End Frame"
-msgstr "Klatka końcowa"
-
-
-msgid "Frame Property"
-msgstr "Właściwości klatki"
-
-
-msgid "Assign the action's current frame number to this property"
-msgstr "Przypisz do tej właściwości bieżący numer klatki z bieżącej akcji"
-
-
-msgid "Start Frame"
-msgstr "Klatka początkowa"
-
-
-msgid "Layer"
-msgstr "Warstwa"
-
-
-msgid "The animation layer to play the action on"
-msgstr "Warstwa animacji do odtworzenia akcji na niej"
-
-
-msgid "Layer Weight"
-msgstr "Waga warstwy"
-
-
-msgid "How much of the previous layer to blend into this one"
-msgstr "Jak wiele poprzedniej warstwy przenika się z tą"
-
-
-msgid "Action Type"
-msgstr "Rodzaj akcji"
-
-
-msgid "Action playback type"
-msgstr "Sposób odtwarzania akcji"
-
-
-msgid "Play"
-msgstr "Start"
-
-
-msgid "Ping Pong"
-msgstr "Tam i z powrotem"
-
-
-msgid "Flipper"
-msgstr "Fliper"
-
-
-msgid "Loop Stop"
-msgstr "Pętla i stop"
-
-
-msgid "Loop End"
-msgstr "Pętla i koniec"
-
-
-msgid "Priority"
-msgstr "Priorytet"
-
-
-msgid "Execution priority - lower numbers will override actions with higher numbers (with 2 or more actions at once, the overriding channels must be lower in the stack)"
-msgstr "Priorytet wykonania - niskie numery nadpisują akcje z wyższymi numerami (z dwoma lub więcej akcjami naraz nadpisujące kanały muszą być niżej na stosie)"
-
-
-msgid "Use this property to define the Action position"
-msgstr "Użyj tej właściwości, aby zdefiniować pozycję akcji"
-
-
-msgid "Action is added to the current loc/rot/scale in global or local coordinate according to Local flag"
-msgstr "Akcja jest dodawana do bieżących transformacji lok/rot/skal w globalnych lub lokalnych współrzędnych zależnie od ustawienia flagi Lokalnie"
-
-
-msgid "Continue"
-msgstr "Kontynuacja"
-
-
-msgid "Restore last frame when switching on/off, otherwise play from the start each time"
-msgstr "Przywróć ostatnią klatkę gdy przełączasz wł/wył, w przeciwnym wypadku odtwarzaj od początku za każdym razem"
-
-
-msgid "Force"
-msgstr "Siła"
-
-
-msgid "Apply Action as a global or local force depending on the local option (dynamic objects only)"
-msgstr "Zastosuj akcję jako oddziaływanie globalne lub lokalne zależnie od opcji lokalnych (tylko dynamiczne obiekty)"
-
-
-msgid "L"
-msgstr "L"
-
-
-msgid "Let the Action act in local coordinates, used in Force and Add mode"
-msgstr "Niech akcja działa we współrzędnych lokalnych w trybach Siła i Dodaj"
-
-
-msgid "Armature Actuator"
-msgstr "Mechanizm Szkieletu"
-
-
-msgid "Bone"
-msgstr "Kość"
-
-
-msgid "Bone on which the constraint is defined"
-msgstr "Kość na której zdefiniowany jest ogranicznik"
-
-
-msgid "Name of the constraint to control"
-msgstr "Nazwa ogranicznika do sterowania"
-
-
-msgid "Influence"
-msgstr "Wpływ"
-
-
-msgid "Influence of this constraint"
-msgstr "Wpływ tego ogranicznika"
-
-
-msgid "Constraint Type"
-msgstr "Rodzaj ogranicznika"
-
-
-msgid "Run Armature"
-msgstr "Uruchom szkielet"
-
-
-msgid "Enable"
-msgstr "Włącz"
-
-
-msgid "Disable"
-msgstr "Wyłącz"
-
-
-msgid "Set Target"
-msgstr "Ustaw cel"
-
-
-msgid "Set Weight"
-msgstr "Ustaw wagę"
-
-
-msgid "Set Influence"
-msgstr "Ustaw wpływ"
-
-
-msgid "Secondary Target"
-msgstr "Cel drugoplanowy"
-
-
-msgid "Set this object as the secondary target of the constraint (only IK polar target at the moment)"
-msgstr "Ustaw ten obiekt jako cel drugoplanowy dla ogranicznika (na razie tylko cele biegunowe IK)"
-
-
-msgid "Target"
-msgstr "Cel"
-
-
-msgid "Set this object as the target of the constraint"
-msgstr "Ustaw ten obiekt jako cel dla ogranicznika"
-
-
-msgid "Weight"
-msgstr "Waga"
-
-
-msgid "Weight of this constraint"
-msgstr "Waga tego ogranicznika"
-
-
-msgid "Camera Actuator"
-msgstr "Mechanizm kamery"
-
-
-msgid "Axis"
-msgstr "Oś/Kierunek"
-
-
-msgid "Axis the Camera will try to get behind"
-msgstr "Kierunek w którym kamera będzie próbować podążać za obiekt"
-
-
-msgid "+X"
-msgstr "+X"
-
-
-msgid "Camera tries to get behind the X axis"
-msgstr "Kamera próbuje przedostać się w kierunku +X"
-
-
-msgid "+Y"
-msgstr "+Y"
-
-
-msgid "Camera tries to get behind the Y axis"
-msgstr "Kamera próbuje przedostać się w kierunku +Y"
-
-
-msgid "-X"
-msgstr "-X"
-
-
-msgid "Camera tries to get behind the -X axis"
-msgstr "Kamera próbuje przedostać się w kierunku -X"
-
-
-msgid "-Y"
-msgstr "-Y"
-
-
-msgid "Camera tries to get behind the -Y axis"
-msgstr "Kamera próbuje przedostać się w kierunku -Y"
-
-
-msgid "Damping"
-msgstr "Tłumienie"
-
-
-msgid "Strength of the constraint that drives the camera behind the target"
-msgstr "Siła ogranicznika który steruje kamerą poza celem"
-
-
-msgid "Height"
-msgstr "Wysokość"
-
-
-msgid "Max"
-msgstr "Maks"
-
-
-msgid "Min"
-msgstr "Min"
-
-
-msgid "Camera Object"
-msgstr "Obiekt kamery"
-
-
-msgid "Look at this Object"
-msgstr "Patrz na ten obiekt"
-
-
-msgid "Constraint Actuator"
-msgstr "Ogranicznik mechanizmu"
-
-
-msgid "Actuator to handle Constraints"
-msgstr "Mechanizm zarządzający ogranicznikami"
-
-
-msgid "Max Angle"
-msgstr "Największy kąt"
-
-
-msgid "Maximum angle allowed with target direction (no correction is done if angle with target direction is between min and max)"
-msgstr "Maksymalny kąt dozwolony pomiędzy kierunkiem docelowym (bez korekty jeżeli mieści się w granicach)"
-
-
-msgid "Min Angle"
-msgstr "Najmniejszy kąt"
-
-
-msgid "Minimum angle to maintain with target direction (no correction is done if angle with target direction is between min and max)"
-msgstr "Minimalny kąt do utrzymywania z kierunkiem docelowym (bez korekty jeżeli kąt z kierunkiem docelowym mieści się w granicach)"
-
-
-msgid "Damping factor: time constant (in frame) of low pass filter"
-msgstr "Współczynnik tłumienia: stała czasowa (w klatkach) filtru dolnoprzepustowego"
-
-
-msgid "RotDamp"
-msgstr "TłumienieObrotów"
-
-
-msgid "Use a different damping for orientation"
-msgstr "Użyj innego tłumienia dla orientacji"
-
-
-msgid "Direction"
-msgstr "Kierunek"
-
-
-msgid "Direction of the ray"
-msgstr "Kierunek promienia"
-
-
-msgid "None"
-msgstr "Nic"
-
-
-msgid "X axis"
-msgstr "Oś X"
-
-
-msgid "Y axis"
-msgstr "Oś Y"
-
-
-msgid "Z axis"
-msgstr "Oś Z"
-
-
-msgid "-X axis"
-msgstr "Oś -X"
-
-
-msgid "-Y axis"
-msgstr "Oś -Y"
-
-
-msgid "-Z axis"
-msgstr "Oś -Z"
-
-
-msgid "Select the axis to be aligned along the reference direction"
-msgstr "Wybierz oś do ustawienia zgodnie z kierunkiem odniesienia"
-
-
-msgid "Distance"
-msgstr "Odległość"
-
-
-msgid "Keep this distance to target"
-msgstr "Utrzymuj tę odległość od celu"
-
-
-msgid "Damping factor of the force field spring"
-msgstr "Współczynnik tłumienia siły sprężystej w polu siłowym"
-
-
-msgid "Spring force within the force field area"
-msgstr "Siła sprężysta w obszarze pola siłowego"
-
-
-msgid "Height of the force field area"
-msgstr "Wysokość obszaru pola siłowego"
-
-
-msgid "Limit"
-msgstr "Ograniczenie"
-
-
-msgid "Loc X"
-msgstr "Położenie X"
-
-
-msgid "Loc Y"
-msgstr "Położenie Y"
-
-
-msgid "Loc Z"
-msgstr "Położenie Z"
-
-
-msgid "Material"
-msgstr "Materiał"
-
-
-msgid "Ray detects only Objects with this material"
-msgstr "Promień wykryje tylko obiekty z tym materiałem"
-
-
-msgid "Constraints Mode"
-msgstr "Tryb ograniczników"
-
-
-msgid "The type of the constraint"
-msgstr "Rodzaj ogranicznika"
-
-
-msgid "Location Constraint"
-msgstr "Wymuszenie położenia"
-
-
-msgid "Distance Constraint"
-msgstr "Wymuszenie odległości"
-
-
-msgid "Orientation Constraint"
-msgstr "Wymuszenie orientacji"
-
-
-msgid "Force Field Constraint"
-msgstr "Wymuszenie pola siłowego"
-
-
-msgid "Ray detects only Objects with this property"
-msgstr "Promień wykryje tylko obiekty z tą właściwością"
-
-
-msgid "Range"
-msgstr "Zakres"
-
-
-msgid "Maximum length of ray"
-msgstr "Maksymalna długość promienia"
-
-
-msgid "Reference Direction"
-msgstr "Kierunek odniesienia"
-
-
-msgid "Time"
-msgstr "Czas"
-
-
-msgid "Maximum activation time in frame, 0 for unlimited"
-msgstr "Maksymalny czas aktywacji w klatkach, nieskończony gdy 0"
-
-
-msgid "N"
-msgstr "N"
-
-
-msgid "Add a horizontal spring force on slopes"
-msgstr "Dodaj poziomą siłę sprężystą na skosach"
-
-
-msgid "Rot Fh"
-msgstr "Rotacja Fh"
-
-
-msgid "Keep object axis parallel to normal"
-msgstr "Utrzymuj oś obiektu równolegle do normalnej"
-
-
-msgid "Force Distance"
-msgstr "Zasięg działania"
-
-
-msgid "Force distance of object to point of impact of ray"
-msgstr "Wymuś odległość między obiektem a punktem w który trafił promień"
-
-
-msgid "Set ray along object's axis or global axis"
-msgstr "Ustaw promień zgodnie z osiami obiektu lub osiami globalnymi"
-
-
-msgid "M/P"
-msgstr "M/W"
-
-
-msgid "Detect material instead of property"
-msgstr "Wykryj materiał albo właściwość"
-
-
-msgid "Set object axis along (local axis) or parallel (global axis) to the normal at hit position"
-msgstr "Ustaw osie obiektu zgodnie z kierunkiem normalnym w miejscu trafienia (lokalne osie lub równolegle do normalnej w przypadku osi globalnych)"
-
-
-msgid "PER"
-msgstr "Trw"
-
-
-msgid "Persistent actuator: stays active even if ray does not reach target"
-msgstr "Mechanizm trwały: jest aktywny nawet wtedy gdy promień nie trafia w cel"
-
-
-msgid "Edit Object Actuator"
-msgstr "Edytuj mechanizm obiektu"
-
-
-msgid "Actuator used to edit objects"
-msgstr "Mechanizm używany do zmian obiektów"
-
-
-msgid "Angular Velocity"
-msgstr "Prędkość kątowa"
-
-
-msgid "Angular velocity upon creation"
-msgstr "Prędkość kątowa w momencie utworzenia"
-
-
-msgid "Dynamic Operation"
-msgstr "Operacja dynamiczna"
-
-
-msgid "Restore Dynamics"
-msgstr "Przywrócenie dynamiki"
-
-
-msgid "Suspend Dynamics"
-msgstr "Wstrzymanie dynamiki"
-
-
-msgid "Enable Rigid Body"
-msgstr "Włączenie brył sztywnych"
-
-
-msgid "Disable Rigid Body"
-msgstr "Wyłączenie brył sztywnych"
-
-
-msgid "Set Mass"
-msgstr "Ustaw masę"
-
-
-msgid "Linear Velocity"
-msgstr "Prędkość liniowa"
-
-
-msgid "Velocity upon creation"
-msgstr "Prędkość w momencie utworzenia"
-
-
-msgid "Mass"
-msgstr "Masa"
-
-
-msgid "The mass of the object"
-msgstr "Masa obiektu"
-
-
-msgid "Mesh"
-msgstr "Siatka"
-
-
-msgid "Replace the existing, when left blank 'Phys' will remake the existing physics mesh"
-msgstr "Zastąp istniejącą, gdy puste 'Fizyka' odbuduje obecną siatkę fizyczną"
-
-
-msgid "The mode of the actuator"
-msgstr "Tryb mechanizmu"
-
-
-msgid "Add Object"
-msgstr "Dodaj obiekt"
-
-
-msgid "End Object"
-msgstr "Usuń obiekt"
-
-
-msgid "Replace Mesh"
-msgstr "Zastąp siatkę"
-
-
-msgid "Track to"
-msgstr "Śledzenie"
-
-
-msgid "Dynamics"
-msgstr "Dynamika"
-
-
-msgid "Object"
-msgstr "Obiekt"
-
-
-msgid "Add this Object and all its children (can't be on a visible layer)"
-msgstr "Dodaj ten obiekt i wszystkich jego obiekty potomne (nie mogą być na widocznej warstwie)"
-
-
-msgid "Duration the new Object lives or the track takes"
-msgstr "Czas życia obiektu lub długość śledzenia"
-
-
-msgid "Track Axis"
-msgstr "Oś śledząca"
-
-
-msgid "The axis that points to the target object"
-msgstr "Kierunek wskazujący na obiekt docelowy"
-
-
-msgid "Track to this Object"
-msgstr "Śledzenie tego obiektu"
-
-
-msgid "Up Axis"
-msgstr "Oś do góry"
-
-
-msgid "The axis that points upward"
-msgstr "Oś, która wskazuje w górę"
-
-
-msgid "3D"
-msgstr "3D"
-
-
-msgid "Enable 3D tracking"
-msgstr "Włącz śledzenie trójwymiarowe"
-
-
-msgid "Apply the rotation locally"
-msgstr "Zastosuj rotacje lokalnie"
-
-
-msgid "Apply the transformation locally"
-msgstr "Zastosuj transformacje lokalnie"
-
-
-msgid "Gfx"
-msgstr "Gfx"
-
-
-msgid "Replace the display mesh"
-msgstr "Zastąp wyświetlaną siatkę"
-
-
-msgid "Phys"
-msgstr "Fiz"
-
-
-msgid "Replace the physics mesh (triangle bounds only - compound shapes not supported)"
-msgstr "Zastąp siatkę fizyczną (tylko granice trójkątne - kształty złożone nie są wspierane)"
-
-
-msgid "Filter 2D Actuator"
-msgstr "Mechanizm filtrów 2D"
-
-
-msgid "Actuator to apply screen graphic effects"
-msgstr "Mechanizm do ekranowych efektów graficznych"
-
-
-msgid "Pass Number"
-msgstr "Numer przebiegu"
-
-
-msgid "Set filter order"
-msgstr "Ustaw kolejność filtrów"
-
-
-msgid "Script"
-msgstr "Skrypt"
-
-
-msgid "Filter 2D Type"
-msgstr "Rodzaj filtra 2D"
-
-
-msgid "Enable Filter"
-msgstr "Włącz filtr"
-
-
-msgid "Disable Filter"
-msgstr "Wyłącz filtr"
-
-
-msgid "Remove Filter"
-msgstr "Usuń filtr"
-
-
-msgid "Motion Blur"
-msgstr "Rozmycie ruchu"
-
-
-msgid "Blur"
-msgstr "Rozmycie"
-
-
-msgid "Sharpen"
-msgstr "Wyostrzenie"
-
-
-msgid "Dilation"
-msgstr "Rozpuszczenie"
-
-
-msgid "Erosion"
-msgstr "Erozja"
-
-
-msgid "Laplacian"
-msgstr "Laplacian"
-
-
-msgid "Sobel"
-msgstr "Sobel"
-
-
-msgid "Prewitt"
-msgstr "Prewitt"
-
-
-msgid "Gray Scale"
-msgstr "Odcienie szarości"
-
-
-msgid "Sepia"
-msgstr "Sepia"
-
-
-msgid "Invert"
-msgstr "Odwrócenie"
-
-
-msgid "Custom Filter"
-msgstr "Własny filtr"
-
-
-msgid "Value"
-msgstr "Wartość"
-
-
-msgid "Motion blur factor"
-msgstr "Siła rozmycia ruchu"
-
-
-msgid "Enable/Disable Motion Blur"
-msgstr "Włącz/wyłącz rozmycie ruchu"
-
-
-msgid "Game Actuator"
-msgstr "Mechanizm gry"
-
-
-msgid "File"
-msgstr "Plik"
-
-
-msgid "Start Game From File"
-msgstr "Rozpocznij grę z pliku"
-
-
-msgid "Restart Game"
-msgstr "Uruchom grę ponownie"
-
-
-msgid "Quit Game"
-msgstr "Wyjdź z gry"
-
-
-msgid "Save bge.logic.globalDict"
-msgstr "Zapisz konfigurację"
-
-
-msgid "Load bge.logic.globalDict"
-msgstr "Załaduj konfigurację"
-
-
-msgid "Message Actuator"
-msgstr "Mechanizm komunikatów"
-
-
-msgid "Body"
-msgstr "Treść"
-
-
-msgid "Optional, message body Text"
-msgstr "Opcjonalne; treść wiadomości"
-
-
-msgid "Prop Name"
-msgstr "Nazwa właściwości"
-
-
-msgid "The message body will be set by the Property Value"
-msgstr "Treść wiadomości będzie ustawiona jako wartość właściwości"
-
-
-msgid "Toggle message type: either Text or a PropertyName"
-msgstr "Przełącz rodzaj wiadomości: albo Treść albo NazwaWłaściwości"
-
-
-msgid "Text"
-msgstr "Tekst"
-
-
-msgid "Subject"
-msgstr "Temat"
-
-
-msgid "Optional, message subject (this is what can be filtered on)"
-msgstr "Opcjonalne; treść wiadomości (to jest to, co będzie można wyłapać)"
-
-
-msgid "To"
-msgstr "Do"
-
-
-msgid "Optional, send message to objects with this name only, or empty to broadcast"
-msgstr "Opcjonalnie; wyślij komunikat tylko do obiektów o tej nazwie lub zostaw puste, aby nadawać do wszystkich"
-
-
-msgid "Mouse Actuator"
-msgstr "Mechanizm myszy"
-
-
-msgid "Local"
-msgstr "Lokalnie"
-
-
-msgid "Apply rotation locally"
-msgstr "Zastosuj rotację lokalnie"
-
-
-msgid "Maximum positive rotation allowed by X mouse movement (0 for infinite)"
-msgstr "Maksymalna dodatnia rotacja dozwolona dla ruchu myszy po osi X (nieskończona gdy 0)"
-
-
-msgid "Maximum positive rotation allowed by Y mouse movement (0 for infinite)"
-msgstr "Maksymalna dodatnia rotacja dozwolona dla ruchu myszy po osi Y (nieskończona gdy 0)"
-
-
-msgid "Maximum negative rotation allowed by X mouse movement (0 for infinite)"
-msgstr "Maksymalna ujemna rotacja dozwolona dla ruchu myszy po osi X (nieskończona gdy 0)"
-
-
-msgid "Maximum negative rotation allowed by Y mouse movement (0 for infinite)"
-msgstr "Maksymalna ujemna rotacja dozwolona dla ruchu myszy po osi Y (nieskończona gdy 0)"
-
-
-msgid "Mode"
-msgstr "Tryb"
-
-
-msgid "Look"
-msgstr "Wygląd"
-
-
-msgid "Object Axis"
-msgstr "Osie obiektu"
-
-
-msgid "Local object axis mouse movement in the X direction will apply to"
-msgstr "Lokalna oś obiektu dla której stosuje się ruch myszy w osi X"
-
-
-msgid "X Axis"
-msgstr "Oś X"
-
-
-msgid "Y Axis"
-msgstr "Oś Y"
-
-
-msgid "Z Axis"
-msgstr "Oś Z"
-
-
-msgid "Local object axis mouse movement in the Y direction will apply to"
-msgstr "Lokalna oś obiektu dla której stosuje się ruch myszy w osi Y"
-
-
-msgid "Reset"
-msgstr "Zresetuj"
-
-
-msgid "Reset the cursor's X position to the center of the screen space after calculating"
-msgstr "Po obliczeniach ustaw poziome położenie kursora myszy w środku ekranu"
-
-
-msgid "Reset the cursor's Y position to the center of the screen space after calculating"
-msgstr "Po obliczeniach zresetuj pionowe położenie kursora myszy do środka ekranu "
-
-
-msgid "Sensitivity"
-msgstr "Czułość"
-
-
-msgid "Sensitivity of the X axis"
-msgstr "Czułość na osi X"
-
-
-msgid "Sensitivity of the Y axis"
-msgstr "Czułość na osi Y"
-
-
-msgid "Threshold"
-msgstr "Próg"
-
-
-msgid "Amount of X motion before mouse movement will register"
-msgstr "Zakres ruchu myszy w osi X zanim ruch zostanie zauważony"
-
-
-msgid "Amount of Y motion before mouse movement will register"
-msgstr "Zakres ruchu myszy w osi Y zanim ruch zostanie zauważony"
-
-
-msgid "Use X Axis"
-msgstr "Użyj osi X"
-
-
-msgid "Calculate mouse movement on the X axis"
-msgstr "Oblicz przesunięcia myszy w osi X"
-
-
-msgid "Use Y Axis"
-msgstr "Użyj osi Y"
-
-
-msgid "Calculate mouse movement on the Y axis"
-msgstr "Oblicz przesunięcia myszy w osi Y"
-
-
-msgid "Visible"
-msgstr "Widoczny"
-
-
-msgid "Make mouse cursor visible"
-msgstr "Pokaż kursor myszy"
-
-
-msgid "Motion Actuator"
-msgstr "Mechanizm ruchu"
-
-
-msgid "Angular velocity"
-msgstr "Prędkość kątowa"
-
-
-msgid "Damping Frames"
-msgstr "Tłumienie w klatkach"
-
-
-msgid "Number of frames to reach the target velocity"
-msgstr "Liczba klatek w których osiągnięta zostanie prędkość docelowa"
-
-
-msgid "Derivate Coefficient"
-msgstr "Współczynnik pochodnej"
-
-
-msgid "Not required, high values can cause instability"
-msgstr "Nie wymagane, wyższe wartości mogą powodować niestabilność"
-
-
-msgid "Upper limit for X force"
-msgstr "Górny zakres siły X"
-
-
-msgid "Upper limit for Y force"
-msgstr "Górny zakres siły Y"
-
-
-msgid "Upper limit for Z force"
-msgstr "Górny zakres siły Z"
-
-
-msgid "Lower limit for X force"
-msgstr "Dolny zakres siły X"
-
-
-msgid "Lower limit for Y force"
-msgstr "Dolny zakres siły Y"
-
-
-msgid "Lower limit for Z force"
-msgstr "Dolny zakres siły Z"
-
-
-msgid "Integral Coefficient"
-msgstr "Współczynnik całkowania"
-
-
-msgid "Low value (0.01) for slow response, high value (0.5) for fast response"
-msgstr "Niska wartość (0.01) dla wolnej reakcji, wysoka wartość (0.5) dla szybkiej reakcji."
-
-
-msgid "Linear velocity (in Servo mode it sets the target relative linear velocity, it will be achieved by automatic application of force - Null velocity is a valid target)"
-msgstr "Prędkość liniowa (w trybie serwo ustawia względną prędkość liniową dla celu, zostanie osiągnięta przez automatyczne przyłożenie siły - pusta prędkość jest prawidłowym celem)"
-
-
-msgid "Motion Type"
-msgstr "Rodzaj ruchu"
-
-
-msgid "Specify the motion system"
-msgstr "Wybierz system ruchu"
-
-
-msgid "Simple Motion"
-msgstr "Ruch prosty"
-
-
-msgid "Servo Control"
-msgstr "Kontrola serwo"
-
-
-msgid "Character Motion"
-msgstr "Ruch bohatera"
-
-
-msgid "Loc"
-msgstr "Lok"
-
-
-msgid "Location"
-msgstr "Lokalizacja"
-
-
-msgid "Rot"
-msgstr "Rot"
-
-
-msgid "Rotation"
-msgstr "Rotacja"
-
-
-msgid "Proportional Coefficient"
-msgstr "Współczynnik proporcjonalności"
-
-
-msgid "Typical value is 60x integral coefficient"
-msgstr "Wartość typowa to 60x współczynnik całkowania"
-
-
-msgid "Reference Object"
-msgstr "Obiekt odniesienia"
-
-
-msgid "Reference object for velocity calculation, leave empty for world reference"
-msgstr "Obiekt odniesienia dla obliczania prędkości, zostaw puste aby odniesieniem był świat"
-
-
-msgid "Torque"
-msgstr "Moment obrotowy"
-
-
-msgid "Toggle between ADD and SET character location"
-msgstr "Przełącza pomiędzy Dodaj a Ustaw położenie bohatera"
-
-
-msgid "Toggles between ADD and SET linV"
-msgstr "Przełącza pomiędzy Dodaj a Ustaw Prędkość Liniową"
-
-
-msgid "Jump"
-msgstr "Skocz"
-
-
-msgid "Make the character jump using the settings in the physics properties"
-msgstr "Włącz skakanie dla bohatera używając ustawień we właściwościach fizyki"
-
-
-msgid "Angular velocity is defined in local coordinates"
-msgstr "Prędkość kątowa jest zdefiniowana we współrzędnych lokalnych"
-
-
-msgid "Force is defined in local coordinates"
-msgstr "Siła jest zdefiniowana we współrzędnych lokalnych"
-
-
-msgid "Velocity is defined in local coordinates"
-msgstr "Prędkość jest zdefiniowana we współrzędnych lokalnych"
-
-
-msgid "Location is defined in local coordinates"
-msgstr "Położenie jest zdefiniowane we współrzędnych lokalnych"
-
-
-msgid "Rotation is defined in local coordinates"
-msgstr "Rotacja jest zdefiniowana we współrzędnych lokalnych"
-
-
-msgid "Torque is defined in local coordinates"
-msgstr "Moment obrotowy jest zdefiniowany we współrzędnych lokalnych"
-
-
-msgid "X"
-msgstr "X"
-
-
-msgid "Set limit to force along the X axis"
-msgstr "Ustaw ograniczenie dla siły wzdłuż osi X"
-
-
-msgid "Y"
-msgstr "Y"
-
-
-msgid "Set limit to force along the Y axis"
-msgstr "Ustaw ograniczenie dla siły wzdłuż osi Y"
-
-
-msgid "Z"
-msgstr "Z"
-
-
-msgid "Set limit to force along the Z axis"
-msgstr "Ustaw ograniczenie dla siły wzdłuż osi Z"
-
-
-msgid "Parent Actuator"
-msgstr "Mechanizm rodzica"
-
-
-msgid "Set Parent"
-msgstr "Ustaw rodzica"
-
-
-msgid "Remove Parent"
-msgstr "Usuń rodzica"
-
-
-msgid "Parent Object"
-msgstr "Obiekt rodzica"
-
-
-msgid "Set this object as parent"
-msgstr "Ustaw ten obiekt jako rodzic"
-
-
-msgid "Compound"
-msgstr "Złożony ze składowych"
-
-
-msgid "Add this object shape to the parent shape (only if the parent shape is already compound)"
-msgstr "Dodaj ten kształt obiektu do kształtu rodzica (tylko jeżeli kształt rodzica już jest złożony)"
-
-
-msgid "Ghost"
-msgstr "Duch"
-
-
-msgid "Make this object ghost while parented"
-msgstr "Uczyń ten obiekt duchem gdy zostanie zaparentowany"
-
-
-msgid "Property Actuator"
-msgstr "Mechanizm właściwości"
-
-
-msgid "Actuator to handle properties"
-msgstr "Mechanizm do zarządzania właściwościami"
-
-
-msgid "Assign"
-msgstr "Przypisz"
-
-
-msgid "Copy"
-msgstr "Skopiuj"
-
-
-msgid "Toggle"
-msgstr "Przełącz"
-
-
-msgid "For bool/int/float/timer properties only"
-msgstr "Tylko dla właściwości typu bool/int/float/timer"
-
-
-msgid "Level"
-msgstr "Poziom"
-
-
-msgid "Copy from this Object"
-msgstr "Kopiuj z tego obiektu"
-
-
-msgid "Property Name"
-msgstr "Nazwa właściwości"
-
-
-msgid "Copy this property"
-msgstr "Kopiuj tę właściwość"
-
-
-msgid "The name of the property"
-msgstr "Nazwa właściwości"
-
-
-msgid "The name of the property or the value to use (use \"\" around strings)"
-msgstr "Nazwa właściwości lub wartości której użyć (użyj \"\" dookoła napisów)"
-
-
-msgid "Random Actuator"
-msgstr "Mechanizm losowy"
-
-
-msgid "Chance"
-msgstr "Szansa"
-
-
-msgid "Pick a number between 0 and 1, success if it's below this value"
-msgstr "Sukces, gdy wylosowana liczba z przedziału (0,1) jest poniżej tej wartości"
-
-
-msgid "Distribution"
-msgstr "Rozkład"
-
-
-msgid "Choose the type of distribution"
-msgstr "Wybierz rodzaj rozkładu"
-
-
-msgid "Bool Constant"
-msgstr "Rozkład logiczny stały"
-
-
-msgid "Bool Uniform"
-msgstr "Rozkład logiczny jednolity"
-
-
-msgid "Bool Bernoulli"
-msgstr "Rozkład logiczny Bernoulliego"
-
-
-msgid "Int Constant"
-msgstr "Rozkład całkowity stały"
-
-
-msgid "Int Uniform"
-msgstr "Rozkład jednolity całkowity"
-
-
-msgid "Int Poisson"
-msgstr "Rozkład całkowity Poissona"
-
-
-msgid "Float Constant"
-msgstr "Rozkład zmiennoprzecinkowy"
-
-
-msgid "Float Uniform"
-msgstr "Rozkład zmiennoprzecinkowy jednolity"
-
-
-msgid "Float Normal"
-msgstr "Rozkład zmiennoprzecinkowy normalny"
-
-
-msgid "Float Neg. Exp."
-msgstr "Rozkład zmiennoprzecinkowy ujemnie wykładniczy"
-
-
-msgid "Choose a number from a range: upper boundary of the range"
-msgstr "Wybierz liczbę z zakresu: górne ograniczenie"
-
-
-msgid "Mean"
-msgstr "Średnia"
-
-
-msgid "A normal distribution: mean of the distribution"
-msgstr "Rozkład normalny: średnia rozkładu"
-
-
-msgid "Choose a number from a range: lower boundary of the range"
-msgstr "Wybierz liczbę z zakresu: dolne ograniczenie"
-
-
-msgid "Always return this number"
-msgstr "Zawsze podawaj tę liczbę"
-
-
-msgid "Half-Life Time"
-msgstr "Czas półżycia"
-
-
-msgid "Negative exponential dropoff"
-msgstr "Ujemnie wykładniczy spadek"
-
-
-msgid "Expected mean value of the distribution"
-msgstr "Oczekiwana średnia wartość rozkładu"
-
-
-msgid "Assign the random value to this property"
-msgstr "Przypisz losową wartość do tej właściwości"
-
-
-msgid "Seed"
-msgstr "Zarodek"
-
-
-msgid "Initial seed of the random generator, use Python for more freedom (choose 0 for not random)"
-msgstr "Początkowy zarodek generatora losowego, użyj Pythona jeżeli potrzebujesz więcej swobody (brak losowości gdy 0)"
-
-
-msgid "SD"
-msgstr "SD"
-
-
-msgid "A normal distribution: standard deviation of the distribution"
-msgstr "Rozkład normalny: odchylenie standardowe rozkładu"
-
-
-msgid "Always True"
-msgstr "Zawsze prawda"
-
-
-msgid "Always false or always true"
-msgstr "Zawsze prawda lub zawsze fałsz"
-
-
-msgid "Scene Actuator"
-msgstr "Mechanizm sceny"
-
-
-msgid "Set this Camera (leave empty to refer to self object)"
-msgstr "Ustaw kamerę (zostaw puste aby obiekt odnosił się do samego siebie)"
-
-
-msgid "Restart"
-msgstr "Restart"
-
-
-msgid "Set Scene"
-msgstr "Ustaw scenę"
-
-
-msgid "Set Camera"
-msgstr "Ustaw kamerę"
-
-
-msgid "Add Overlay Scene"
-msgstr "Dodaj scenę nakładkową"
-
-
-msgid "Add Background Scene"
-msgstr "Dodaj scenę w tle"
-
-
-msgid "Remove Scene"
-msgstr "Usuń scenę"
-
-
-msgid "Suspend Scene"
-msgstr "Wstrzymaj scenę"
-
-
-msgid "Resume Scene"
-msgstr "Wznów scenę"
-
-
-msgid "Scene to be added/removed/paused/resumed"
-msgstr "Scena do dodania/usunięcia/wstrzymania/wznowienia"
-
-
-msgid "Sound file"
-msgstr "Plik dźwiękowy"
-
-
-msgid "Cone Inner Angle"
-msgstr "Kąt wewnętrznego stożka"
-
-
-msgid "The angle of the inner cone"
-msgstr "Kąt wewnętrznego stożka"
-
-
-msgid "Cone Outer Angle"
-msgstr "Kąt zewnętrznego stożka"
-
-
-msgid "The angle of the outer cone"
-msgstr "Kąt zewnętrznego stożka"
-
-
-msgid "Cone Outer Gain"
-msgstr "Wzmocnienie zewnętrzne"
-
-
-msgid "The gain outside the outer cone (the gain in the outer cone will be interpolated between this value and the normal gain in the inner cone)"
-msgstr "Wzmocnienie poza zewnętrznym stożkiem (będzie ono interpolowane pomiędzy tą wartością a wartością normalną wzmocnienia w wewnętrznym stożku)"
-
-
-msgid "Maximum Distance"
-msgstr "Maksymalna odległość"
-
-
-msgid "The maximum distance at which you can hear the sound"
-msgstr "Maksymalna odległość z której jeszcze słychać dźwięk"
-
-
-msgid "Reference Distance"
-msgstr "Odległość odniesienia"
-
-
-msgid "The distance where the sound has a gain of 1.0"
-msgstr "Odległość w której dźwięk ma wzmocnienie 1.0"
-
-
-msgid "Maximum Gain"
-msgstr "Maksymalne wzmocnienie"
-
-
-msgid "The maximum gain of the sound, no matter how near it is"
-msgstr "Najwyższe wzmocnienie dźwięku, nieważne jak blisko jest"
-
-
-msgid "Minimum Gain"
-msgstr "Minimalne wzmocnienie"
-
-
-msgid "The minimum gain of the sound, no matter how far it is away"
-msgstr "Najmniejsza głośność dźwięku 3d, nieważne jak jest daleko"
-
-
-msgid "Play Mode"
-msgstr "Tryb odtwarzania"
-
-
-msgid "Play Stop"
-msgstr "Graj i zatrzymaj"
-
-
-msgid "Play End"
-msgstr "Graj do końca"
-
-
-msgid "Loop Bidirectional"
-msgstr "Pętla dwukierunkowa"
-
-
-msgid "Loop Bidirectional Stop"
-msgstr "Pętla dwukierunkowa i koniec"
-
-
-msgctxt "Sound"
-msgid "Pitch"
-msgstr "Wysokość"
-
-
-msgid "Pitch of the sound"
-msgstr "Wysokość dźwięku"
-
-
-msgid "Rolloff"
-msgstr "Propagacja"
-
-
-msgid "The influence factor on volume depending on distance"
-msgstr "Współczynnik określa jak bardzo dźwięk osłabia się ze wzrostem odległości"
-
-
-msgid "3D Sound"
-msgstr "Dźwięk 3D"
-
-
-msgid "Enable/Disable 3D Sound"
-msgstr "Włącz/wyłącz dźwięk 3D"
-
-
-msgctxt "Sound"
-msgid "Volume"
-msgstr "Głośność"
-
-
-msgid "Initial volume of the sound"
-msgstr "Początkowa głośność dźwięku"
-
-
-msgid "State Actuator"
-msgstr "Mechanizm stanu"
-
-
-msgid "Actuator to handle states"
-msgstr "Mechanizm do obsługi stanów gry"
-
-
-msgid "Operation"
-msgstr "Operacje"
-
-
-msgid "Select the bit operation on object state mask"
-msgstr "Wybierz bit operacje na masce stanów obiektu"
-
-
-msgid "Set State"
-msgstr "Ustaw stan"
-
-
-msgid "Add State"
-msgstr "Dodaj stan"
-
-
-msgid "Remove State"
-msgstr "Usuń stan"
-
-
-msgid "Change State"
-msgstr "Zmień stan"
-
-
-msgid "Steering Actuator"
-msgstr "Mechanizm sterujący"
-
-
-msgid "Acceleration"
-msgstr "Przyspieszenie"
-
-
-msgid "Max acceleration"
-msgstr "Maksymalne przyspieszenie"
-
-
-msgid "Dist"
-msgstr "Odległość"
-
-
-msgid "Relax distance"
-msgstr "Odległość w której nastąpi uspokojenie"
-
-
-msgid "Facing"
-msgstr "Ukierunkowanie (ang.Facing)"
-
-
-msgid "Enable automatic facing"
-msgstr "Włącz automatyczne ukierunkowanie (automatic-facing)"
-
-
-msgid "Axis for automatic facing"
-msgstr "Oś automatycznego ukierunkowania"
-
-
-msgid "-Z"
-msgstr "-Z"
-
-
-msgid "Lock Z velocity"
-msgstr "Zablokuj prędkość w osi Z"
-
-
-msgid "Disable simulation of linear motion along Z axis"
-msgstr "Wyłącz symulację prędkości liniowej wzdłuż osi Z"
-
-
-msgid "Behavior"
-msgstr "Zachowanie"
-
-
-msgid "Seek"
-msgstr "Wyszukiwanie"
-
-
-msgid "Flee"
-msgstr "Ucieczka"
-
-
-msgid "Path following"
-msgstr "Podążanie za ścieżką"
-
-
-msgid "Navigation Mesh Object"
-msgstr "Obiekt siatki nawigacyjnej"
-
-
-msgid "Navigation mesh"
-msgstr "Siatka nawigacyjna"
-
-
-msgid "Use normal of the navmesh to set \"UP\" vector"
-msgstr "Użyj wektora normalnego siatki nawigacyjnej aby ustawić wektor wskazujący w górę"
-
-
-msgid "Self Terminated"
-msgstr "Samoczynne zakończenie"
-
-
-msgid "Terminate when target is reached"
-msgstr "Zakończ gdy cel jest osiągnięty"
-
-
-msgid "Visualize"
-msgstr "Wizualizuj"
-
-
-msgid "Enable debug visualization for 'Path following'"
-msgstr "Wyświetlaj diagnostykę dla 'Podążania za ścieżką'"
-
-
-msgid "Target Object"
-msgstr "Obiekt docelowy"
-
-
-msgid "Target object"
-msgstr "Obiekt docelowy"
-
-
-msgid "Turn Speed"
-msgstr "Prędkość zwrotów"
-
-
-msgid "Max turn speed"
-msgstr "Maksymalna prędkość zwrotów"
-
-
-msgid "Update period"
-msgstr "Okres aktualizacji"
-
-
-msgid "Path update period"
-msgstr "Okres aktualizacji ścieżki"
-
-
-msgid "Velocity"
-msgstr "Prędkość"
-
-
-msgid "Velocity magnitude"
-msgstr "Zwiększanie prędkości"
-
-
-msgid "Visibility Actuator"
-msgstr "Mechanizm widoczności"
-
-
-msgid "Actuator to set visibility and occlusion of the object"
-msgstr "Mechanizm który ustawia widoczność i przesłanianie obiektów"
-
-
-msgid "Children"
-msgstr "Potomek"
-
-
-msgid "Set all the children of this object to the same visibility/occlusion recursively"
-msgstr "Ustaw taką samą widoczność/przesłanianie dla wszystkich potomków tego obiektu"
-
-
-msgid "Occlusion"
-msgstr "Przesłanianie"
-
-
-msgid "Set the object to occlude objects behind it (initialized from the object type in physics button)"
-msgstr "Ustaw obiekt jako przesłaniający obiekty poza nim (na podstawie rodzaju obiektu dostępnego w panelu fizyki)"
-
-
-msgid "Set the objects visible (initialized from the object render restriction toggle in physics button)"
-msgstr "Ustawia widoczność obiektu (na podstawie ustawienia ograniczeń renderowania dostępnych w panelu fizyki)"
-
-
 msgid "Add-on"
 msgstr "Dodatek"
 
@@ -1946,6 +180,10 @@ msgstr "Nazwa modułu"
 
 msgid "Password"
 msgstr "Hasło"
+
+
+msgid "Message"
+msgstr "Komunikat"
 
 
 msgid "Fribidi Library"
@@ -2020,6 +258,10 @@ msgid "Animation Data"
 msgstr "Dane animacji"
 
 
+msgid "Action"
+msgstr "Akcja"
+
+
 msgid "Action Blending"
 msgstr "Przenikanie akcji"
 
@@ -2034,6 +276,10 @@ msgstr "Zastąp"
 
 msgid "Result strip replaces the accumulated results by amount specified by influence"
 msgstr "Wynikowy pasek zastępuje połączone rezultaty w stopniu określonym przez wpływ"
+
+
+msgid "Add"
+msgstr "Dodaj"
 
 
 msgid "Weighted result of strip is added to the accumulated results"
@@ -2188,8 +434,16 @@ msgid "Number of frames to show before the current frame (only for 'Around Curre
 msgstr "Liczba klatek do pokazania przed bieżącą klatką (tylko dla 'wokół bieżącej klatki' dla metody pokrywania warstwowego)"
 
 
+msgid "End Frame"
+msgstr "Klatka końcowa"
+
+
 msgid "End frame of range of paths to display/calculate (not for 'Around Current Frame' Onion-skinning method)"
 msgstr "Końcowa klatka zakresu dla którego wyświetlane są trajektorie (nie dla 'Wokół bieżącej klatki' w przypadku pokrywania warstwowego)"
+
+
+msgid "Start Frame"
+msgstr "Klatka początkowa"
 
 
 msgid "Starting frame of range of paths to display/calculate (not for 'Around Current Frame' Onion-skinning method)"
@@ -2288,6 +542,10 @@ msgid "For Pose-Mode drawing, only draw ghosts for selected bones"
 msgstr "Dla trybu szkicowania pozy rysuj duchy tylko dla wybranych kości"
 
 
+msgid "Type"
+msgstr "Rodzaj"
+
+
 msgid "Method used for determining what ghosts get drawn"
 msgstr "Metoda używana do określania który duch będzie narysowany"
 
@@ -2332,6 +590,10 @@ msgid "Area in a subdivided screen, containing an editor"
 msgstr "Obszar w podzielonym obszarze ekranu, zawierający edytor"
 
 
+msgid "Height"
+msgstr "Wysokość"
+
+
 msgid "Area height"
 msgstr "Wysokość obszaru"
 
@@ -2372,68 +634,12 @@ msgid "Empty"
 msgstr "Pusty"
 
 
-msgid "3D View"
-msgstr "Widok 3D"
-
-
-msgid "3D viewport"
-msgstr "Widok 3D"
-
-
-msgid "Timeline"
-msgstr "Oś czasu"
-
-
-msgid "Timeline and playback controls"
-msgstr "Oś czasu oraz kontrolki odtwarzania"
-
-
-msgid "Graph Editor"
-msgstr "Edytor Graficzny"
-
-
-msgid "Edit drivers and keyframe interpolation"
-msgstr "Edycja krzywych oraz sterowników"
-
-
-msgid "Dope Sheet"
-msgstr "Dope Sheet"
-
-
-msgid "Adjust timing of keyframes"
-msgstr "Popraw synchronizację klatek kluczowych"
-
-
-msgid "NLA Editor"
-msgstr "Edytor NLA"
-
-
-msgid "Combine and layer Actions"
-msgstr "Łącz i zarządzaj warstwami akcji"
-
-
 msgid "UV/Image Editor"
 msgstr "Edytor obrazów/UV"
 
 
 msgid "View and edit images and UV Maps"
 msgstr "Wyświetlaj oraz edytuj obrazy oraz mapy UV"
-
-
-msgid "Movie Clip Editor"
-msgstr "Edytor klipów filmowych"
-
-
-msgid "Motion tracking tools"
-msgstr "Narzędzia do śledzenia ruchu"
-
-
-msgid "Video Sequence Editor"
-msgstr "Edytor Sekwencji Wideo"
-
-
-msgid "Video editing tools"
-msgstr "Narzędzia do edycji wideo"
 
 
 msgid "Node Editor"
@@ -2444,6 +650,38 @@ msgid "Editor for node-based shading and compositing tools"
 msgstr "Edytor z narzędziami do nieliniowego cieniowania i kompozycji"
 
 
+msgid "Video editing tools"
+msgstr "Narzędzia do edycji wideo"
+
+
+msgid "Movie Clip Editor"
+msgstr "Edytor klipów filmowych"
+
+
+msgid "Motion tracking tools"
+msgstr "Narzędzia do śledzenia ruchu"
+
+
+msgid "Dope Sheet"
+msgstr "Dope Sheet"
+
+
+msgid "Adjust timing of keyframes"
+msgstr "Popraw synchronizację klatek kluczowych"
+
+
+msgid "Graph Editor"
+msgstr "Edytor Graficzny"
+
+
+msgid "Edit drivers and keyframe interpolation"
+msgstr "Edycja krzywych oraz sterowników"
+
+
+msgid "Combine and layer Actions"
+msgstr "Łącz i zarządzaj warstwami akcji"
+
+
 msgid "Text Editor"
 msgstr "Edytor tekstu"
 
@@ -2452,28 +690,12 @@ msgid "Edit scripts and in-file documentation"
 msgstr "Edytuj skrypty oraz dokumentację 'w pliku'"
 
 
-msgid "Logic Editor"
-msgstr "Edytor logiki"
+msgid "Python Console"
+msgstr "Konsola pythona"
 
 
-msgid "Game logic editing"
-msgstr "Edytowanie logiki gry"
-
-
-msgid "Properties"
-msgstr "Właściwości"
-
-
-msgid "Outliner"
-msgstr "Zestawienie"
-
-
-msgid "User Preferences"
-msgstr "Konfiguracja"
-
-
-msgid "Edit persistent configuration settings"
-msgstr "Zmieniaj ustawienia konfiguracyjne programu"
+msgid "Interactive programmatic console for advanced editing and script development"
+msgstr "Interaktywna konsola programistyczna dla zaawansowanej edycji i tworzenia skryptów"
 
 
 msgid "Info"
@@ -2484,6 +706,14 @@ msgid "Main menu bar and list of error messages (drag down to expand and display
 msgstr "Główny pasek menu oraz lista komunikatów błędu (ściągnij za krawędź aby rozszerzyć panel i wyświetlić komunikaty)"
 
 
+msgid "Outliner"
+msgstr "Zestawienie"
+
+
+msgid "Properties"
+msgstr "Właściwości"
+
+
 msgid "File Browser"
 msgstr "Przeglądanie plików"
 
@@ -2492,12 +722,12 @@ msgid "Browse for files and assets"
 msgstr "Przeglądaj pliki i zasoby"
 
 
-msgid "Python Console"
-msgstr "Konsola pythona"
+msgid "Edit persistent configuration settings"
+msgstr "Zmieniaj ustawienia konfiguracyjne programu"
 
 
-msgid "Interactive programmatic console for advanced editing and script development"
-msgstr "Interaktywna konsola programistyczna dla zaawansowanej edycji i tworzenia skryptów"
+msgid "Default"
+msgstr "Domyślnie"
 
 
 msgid "Width"
@@ -2526,234 +756,6 @@ msgstr "Względna pozycja pozioma obszaru w oknie"
 
 msgid "Active Bone"
 msgstr "Aktywna Kość"
-
-
-msgid "Background Image"
-msgstr "Obrazek tła"
-
-
-msgid "Image and settings for display in the 3D View background"
-msgstr "Obraz i ustawienia wyświetlania dla tła widoku 3D"
-
-
-msgid "MovieClip"
-msgstr "Klip"
-
-
-msgid "Movie clip displayed and edited in this space"
-msgstr "Klip filmowy wyświetlany i edytowany w tym miejscu"
-
-
-msgid "Clip User"
-msgstr "Użytkownik klipu"
-
-
-msgid "Parameters defining which frame of the movie clip is displayed"
-msgstr "Parametry określające która klatka klipu filmowego jest wyświetlana"
-
-
-msgid "Depth"
-msgstr "Głębia"
-
-
-msgid "Draw under or over everything"
-msgstr "Pokazuj głębię rysując ponad i nad wszystkim"
-
-
-msgid "Back"
-msgstr "Tył"
-
-
-msgid "Front"
-msgstr "Przód"
-
-
-msgid "Frame Method"
-msgstr "Dopasowanie kadru"
-
-
-msgid "How the image fits in the camera frame"
-msgstr "Jak obraz pasuje w kadrze"
-
-
-msgid "Stretch"
-msgstr "Rozciągaj"
-
-
-msgid "Fit"
-msgstr "Dopasuj"
-
-
-msgid "Crop"
-msgstr "Obetnij"
-
-
-msgid "Image"
-msgstr "Obraz"
-
-
-msgid "Image displayed and edited in this space"
-msgstr "Obraz wyświetlany i edytowany w tym miejscu"
-
-
-msgid "Image User"
-msgstr "Użytkownik obrazu"
-
-
-msgid "Parameters defining which layer, pass and frame of the image is displayed"
-msgstr "Parametry określające która warstwa, przebieg oraz klatka obrazu są wyświetlane"
-
-
-msgid "X Offset"
-msgstr "Odstęp X"
-
-
-msgid "Offset image horizontally from the world origin"
-msgstr "Odstęp poziomy obrazu od punktu początkowego świata"
-
-
-msgid "Y Offset"
-msgstr "Odstęp Y"
-
-
-msgid "Offset image vertically from the world origin"
-msgstr "Odstęp pionowy obrazu od początku świata"
-
-
-msgid "Opacity"
-msgstr "Nieprzejrzystość"
-
-
-msgid "Image opacity to blend the image against the background color"
-msgstr "Jak silnie obraz miesza się z kolorem tła"
-
-
-msgid "Show Background Image"
-msgstr "Pokaż obrazek tła"
-
-
-msgid "Show this image as background"
-msgstr "Pokaż ten obraz w tle"
-
-
-msgid "Show Expanded"
-msgstr "Pokaż rozwinięty"
-
-
-msgid "Show the expanded in the user interface"
-msgstr "Pokaż rozwinięty w interfejsie użytkownika"
-
-
-msgid "Show On Foreground"
-msgstr "Pokaż w pierwszym planie"
-
-
-msgid "Show this image in front of objects in viewport"
-msgstr "Pokazuje ten obraz przed wszystkimi innymi obiektami w widoku"
-
-
-msgid "Size"
-msgstr "Rozmiar"
-
-
-msgid "Size of the background image (ortho view only)"
-msgstr "Rozmiar obrazu w tle (tylko dla widoku orto)"
-
-
-msgid "Background Source"
-msgstr "Źródło obrazu tła"
-
-
-msgid "Data source used for background"
-msgstr "Źródło danych dla obrazu używanego w tle"
-
-
-msgid "Movie Clip"
-msgstr "Klip"
-
-
-msgid "Camera Clip"
-msgstr "Klip kamery"
-
-
-msgid "Use movie clip from active scene camera"
-msgstr "Użyj klipu filmowego z kamery aktywnej sceny"
-
-
-msgid "Flip Horizontally"
-msgstr "Odwróć poziomo"
-
-
-msgid "Flip the background image horizontally"
-msgstr "Odwraca obraz w poziomie na drugą stronę"
-
-
-msgid "Flip Vertically"
-msgstr "Odwróć pionowo"
-
-
-msgid "Flip the background image vertically"
-msgstr "Odwraca pionowo obraz tła"
-
-
-msgid "Image Axis"
-msgstr "Skąd widać"
-
-
-msgid "The axis to display the image on"
-msgstr "Strona, z której będzie widać obraz"
-
-
-msgid "Left"
-msgstr "Lewo"
-
-
-msgid "Show background image while looking to the left"
-msgstr "Pokaż obraz gdy patrzysz z lewej strony"
-
-
-msgid "Right"
-msgstr "Prawo"
-
-
-msgid "Show background image while looking to the right"
-msgstr "Pokaż obraz gdy patrzysz z prawej strony"
-
-
-msgid "Show background image in back view"
-msgstr "Pokaż obraz gdy patrzysz z tyłu"
-
-
-msgid "Show background image in front view"
-msgstr "Pokaż obraz w widoku od przodu"
-
-
-msgid "Bottom"
-msgstr "Dół"
-
-
-msgid "Show background image in bottom view"
-msgstr "Pokaż obraz w widoku z dołu"
-
-
-msgid "Top"
-msgstr "Góra"
-
-
-msgid "Show background image in top view"
-msgstr "Pokaż obraz w widoku od góry"
-
-
-msgid "All Views"
-msgstr "Wszystkie widoki"
-
-
-msgid "Show background image in all views"
-msgstr "Pokazuj obraz w każdej osi"
-
-
-msgid "Show background image in camera view"
-msgstr "Pokaż obraz w widoku z kamery"
 
 
 msgid "Bake Pixel"
@@ -2812,8 +814,28 @@ msgid "Axis to bake in blue channel"
 msgstr "Kierunek wyliczany w kanale niebieskim"
 
 
+msgid "+X"
+msgstr "+X"
+
+
+msgid "+Y"
+msgstr "+Y"
+
+
 msgid "+Z"
 msgstr "+Z"
+
+
+msgid "-X"
+msgstr "-X"
+
+
+msgid "-Y"
+msgstr "-Y"
+
+
+msgid "-Z"
+msgstr "-Z"
 
 
 msgid "Axis to bake in green channel"
@@ -2828,6 +850,10 @@ msgid "Choose normal space for baking"
 msgstr "Wybierz przestrzeń normalnych dla wyliczania"
 
 
+msgid "Object"
+msgstr "Obiekt"
+
+
 msgid "Bake the normals in object space"
 msgstr "Wylicz normalne w przestrzeni obiektu"
 
@@ -2838,6 +864,10 @@ msgstr "Styczne"
 
 msgid "Bake the normals in tangent space"
 msgstr "Wylicz normalne w przestrzeni kątów stycznych"
+
+
+msgid "None"
+msgstr "Nic"
 
 
 msgid "Color"
@@ -3016,6 +1046,10 @@ msgid "Tilt in 3D View"
 msgstr "Przechył w widoku 3D"
 
 
+msgid "Weight"
+msgstr "Waga"
+
+
 msgid "Softbody goal weight"
 msgstr "Limit docelowy softbody"
 
@@ -3060,10 +1094,6 @@ msgid "Grease Pencil"
 msgstr "Szkicownik"
 
 
-msgid "Groups"
-msgstr "Grupy"
-
-
 msgid "Images"
 msgstr "Obrazy"
 
@@ -3082,10 +1112,6 @@ msgstr "Plik zapisano"
 
 msgid "Has the current session been saved to disk as a .blend file"
 msgstr "Czy bieżąca sesja została zapisana na dysk jako plik .blend"
-
-
-msgid "Lamps"
-msgstr "Lampy"
 
 
 msgid "Lattices"
@@ -3280,6 +1306,10 @@ msgid "Use rule when boid is on land"
 msgstr "Używaj reguły gdy boid jest na ziemi"
 
 
+msgid "Level"
+msgstr "Poziom"
+
+
 msgid "How much velocity's z-component is kept constant"
 msgstr "Jak bardzo składowa z prędkości jest utrzymywana bez zmian"
 
@@ -3358,6 +1388,10 @@ msgstr "Odległość ucieczki"
 
 msgid "Flee to this distance"
 msgstr "Jak daleko uciekać"
+
+
+msgid "Distance"
+msgstr "Odległość"
 
 
 msgid "Distance behind leader to follow"
@@ -3544,6 +1578,10 @@ msgid "Amount of rotation around side vector"
 msgstr "Wielkość rotacji wokół wektora bocznego"
 
 
+msgid "Range"
+msgstr "Zakres"
+
+
 msgid "Maximum distance from which a boid can attack"
 msgstr "Maksymalna odległość z której boidy mogą atakować"
 
@@ -3628,6 +1666,10 @@ msgid "Rules are gone through top to bottom (only the first rule which effect is
 msgstr "Reguły stosowane są od góry do dołu (tylko pierwsza reguła, której efekt przewyższa współczynnik rozmycia jest stosowana)"
 
 
+msgid "Random"
+msgstr "Losowo"
+
+
 msgid "A random rule is selected for each boid"
 msgstr "Do każdego boida stosowana jest losowa reguła"
 
@@ -3676,6 +1718,10 @@ msgid "B-Bone Z size"
 msgstr "Rozmiar Z B-kości"
 
 
+msgid "Children"
+msgstr "Potomek"
+
+
 msgid "Bones which are children of this bone"
 msgstr "Kości które są potomkami tej kości"
 
@@ -3694,14 +1740,6 @@ msgstr "Waga deformacji obwiedni"
 
 msgid "Bone deformation weight (for Envelope deform only)"
 msgstr "Wyłącznie dla deformacji obwiedni: waga deformacji"
-
-
-msgid "Foot"
-msgstr "Stopa"
-
-
-msgid "Mark this bone as a 'foot', which determines retargeted animation's translation"
-msgstr "Oznacz tę kość jako 'stopę', co określi przeinterpretowane przesunięcia animacji"
 
 
 msgid "Head"
@@ -3764,6 +1802,10 @@ msgid "4x4 bone matrix relative to armature"
 msgstr "Macierz 4x4 kości względna do szkieletu"
 
 
+msgid "Parent"
+msgstr "Rodzic"
+
+
 msgid "Parent bone (in same Armature)"
 msgstr "Kość nadrzędna (w tym samym szkielecie)"
 
@@ -3774,10 +1816,6 @@ msgstr "Zaznacz początek"
 
 msgid "Select Tail"
 msgstr "Zaznacz koniec"
-
-
-msgid "Draw Wire"
-msgstr "Rysuj siatkę"
 
 
 msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
@@ -3806,14 +1844,6 @@ msgstr "Promień końcowej części obwiedni"
 
 msgid "Radius of tail of bone (for Envelope deform only)"
 msgstr "Promień końcowej części kości, która definiuje obwiednię (tylko dla deformacji wyrażanej przez obwiednie)"
-
-
-msgid "Twist Fix"
-msgstr "Popraw skręcenie"
-
-
-msgid "Fix Twist on this bone"
-msgstr "Napraw skręcenie tej kości"
 
 
 msgid "Connected"
@@ -3912,6 +1942,182 @@ msgid "Has Spacing"
 msgstr "Odstępy"
 
 
+msgid "Mode"
+msgstr "Tryb"
+
+
+msgid "Threshold"
+msgstr "Próg"
+
+
+msgid "Material"
+msgstr "Materiał"
+
+
+msgid "Sensitivity"
+msgstr "Czułość"
+
+
+msgid "Smooth"
+msgstr "Wygładzanie"
+
+
+msgid "Iterations"
+msgstr "Iteracje"
+
+
+msgid "Background Image"
+msgstr "Obrazek tła"
+
+
+msgid "Image and settings for display in the 3D View background"
+msgstr "Obraz i ustawienia wyświetlania dla tła widoku 3D"
+
+
+msgid "Alpha"
+msgstr "Przezroczystość"
+
+
+msgid "Image opacity to blend the image against the background color"
+msgstr "Jak silnie obraz miesza się z kolorem tła"
+
+
+msgid "MovieClip"
+msgstr "Klip"
+
+
+msgid "Movie clip displayed and edited in this space"
+msgstr "Klip filmowy wyświetlany i edytowany w tym miejscu"
+
+
+msgid "Clip User"
+msgstr "Użytkownik klipu"
+
+
+msgid "Parameters defining which frame of the movie clip is displayed"
+msgstr "Parametry określające która klatka klipu filmowego jest wyświetlana"
+
+
+msgid "Depth"
+msgstr "Głębia"
+
+
+msgid "Back"
+msgstr "Tył"
+
+
+msgid "Front"
+msgstr "Przód"
+
+
+msgid "Frame Method"
+msgstr "Dopasowanie kadru"
+
+
+msgid "How the image fits in the camera frame"
+msgstr "Jak obraz pasuje w kadrze"
+
+
+msgid "Stretch"
+msgstr "Rozciągaj"
+
+
+msgid "Fit"
+msgstr "Dopasuj"
+
+
+msgid "Crop"
+msgstr "Obetnij"
+
+
+msgid "Image"
+msgstr "Obraz"
+
+
+msgid "Image displayed and edited in this space"
+msgstr "Obraz wyświetlany i edytowany w tym miejscu"
+
+
+msgid "Image User"
+msgstr "Użytkownik obrazu"
+
+
+msgid "Parameters defining which layer, pass and frame of the image is displayed"
+msgstr "Parametry określające która warstwa, przebieg oraz klatka obrazu są wyświetlane"
+
+
+msgid "Offset"
+msgstr "Odstęp"
+
+
+msgid "Rotation"
+msgstr "Rotacja"
+
+
+msgid "Scale"
+msgstr "Skala"
+
+
+msgid "Show Background Image"
+msgstr "Pokaż obrazek tła"
+
+
+msgid "Show this image as background"
+msgstr "Pokaż ten obraz w tle"
+
+
+msgid "Show Expanded"
+msgstr "Pokaż rozwinięty"
+
+
+msgid "Show the expanded in the user interface"
+msgstr "Pokaż rozwinięty w interfejsie użytkownika"
+
+
+msgid "Show On Foreground"
+msgstr "Pokaż w pierwszym planie"
+
+
+msgid "Show this image in front of objects in viewport"
+msgstr "Pokazuje ten obraz przed wszystkimi innymi obiektami w widoku"
+
+
+msgid "Background Source"
+msgstr "Źródło obrazu tła"
+
+
+msgid "Data source used for background"
+msgstr "Źródło danych dla obrazu używanego w tle"
+
+
+msgid "Movie Clip"
+msgstr "Klip"
+
+
+msgid "Camera Clip"
+msgstr "Klip kamery"
+
+
+msgid "Use movie clip from active scene camera"
+msgstr "Użyj klipu filmowego z kamery aktywnej sceny"
+
+
+msgid "Flip Horizontally"
+msgstr "Odwróć poziomo"
+
+
+msgid "Flip the background image horizontally"
+msgstr "Odwraca obraz w poziomie na drugą stronę"
+
+
+msgid "Flip Vertically"
+msgstr "Odwróć pionowo"
+
+
+msgid "Flip the background image vertically"
+msgstr "Odwraca pionowo obraz tła"
+
+
 msgid "Stereo"
 msgstr "Stereo"
 
@@ -3946,6 +2152,14 @@ msgstr "Ustaw odległość pomiędzy oczyma a planem stereo / 30 powinno być OK
 
 msgid "Pivot"
 msgstr "Punkt odniesienia"
+
+
+msgid "Left"
+msgstr "Lewo"
+
+
+msgid "Right"
+msgstr "Prawo"
 
 
 msgid "Center"
@@ -3988,18 +2202,6 @@ msgid "Minimum Distance"
 msgstr "Minimalna odległość"
 
 
-msgid "Minimum distance between collision objects before collision response takes in"
-msgstr "Minimalna odległość pomiędzy kolidującymi obiektami zanim nastąpi kolizja"
-
-
-msgid "Repulsion Distance"
-msgstr "Odległość odpychania"
-
-
-msgid "Maximum distance to apply repulsion force, must be greater than minimum distance"
-msgstr "Maksymalna odległość w której stosowana jest siła odpychająca, musi być większa niż minimalna odległość"
-
-
 msgid "Friction"
 msgstr "Tarcie"
 
@@ -4008,44 +2210,12 @@ msgid "Friction force if a collision happened (higher = less movement)"
 msgstr "Siła tarcia, w momencie gdy zaistniała kolizja (im większa tym mniej ruchu)"
 
 
-msgid "Collision Group"
-msgstr "Grupa kolizji"
-
-
-msgid "Limit colliders to this Group"
-msgstr "Ogranicz kolizje tylko do tej grupy obiektów"
-
-
-msgid "Repulsion Force"
-msgstr "Siła odpychania"
-
-
-msgid "Repulsion force to apply on cloth when close to colliding"
-msgstr "Siła odpychająca stosowana od tkanin gdy są bardzo bliskie kolizji"
-
-
-msgid "Self Collision Quality"
-msgstr "Jakość samo-kolizji"
-
-
-msgid "How many self collision iterations should be done (higher is better quality but slower)"
-msgstr "Jak wiele obliczeń przy kolizji z samym sobą ma być wykonane (więcej daje lepszą jakość ale wydłuża obliczenia)"
-
-
 msgid "Self Minimum Distance"
 msgstr "Minimalna odległość samo-kolizji"
 
 
-msgid "0.5 means no distance at all, 1.0 is maximum distance"
-msgstr "0.5 oznacza brak odległości, 1.0 oznacza odległość maksymalną"
-
-
 msgid "Self Friction"
 msgstr "Tarcie w samo-kolizji"
-
-
-msgid "Friction/damping with self contact"
-msgstr "Tarcie/tłumienie przy samo-kolizji"
 
 
 msgid "Enable Collision"
@@ -4092,16 +2262,12 @@ msgid "Bending Spring Damping"
 msgstr "Tłumienie zginających sił sprężystych"
 
 
-msgid "Damping of bending motion"
-msgstr "Tłumienie zginania"
+msgid "Linear"
+msgstr "Liniowy"
 
 
 msgid "Bending Stiffness"
 msgstr "Giętkość"
-
-
-msgid "Wrinkle coefficient (higher = less smaller but more big wrinkles)"
-msgstr "Współczynnik zmarszczek (wyższy powoduje że jest mniej małych ale więcej dużych zmarszczek)"
 
 
 msgid "Bending Stiffness Maximum"
@@ -4188,6 +2354,10 @@ msgid "Internal Friction"
 msgstr "Wewnętrzne tarcie"
 
 
+msgid "Mass"
+msgstr "Masa"
+
+
 msgid "Mass of cloth material"
 msgstr "Masa materiału tkaniny"
 
@@ -4232,68 +2402,12 @@ msgid "Max amount to shrink cloth by"
 msgstr "Maksymalna ilość o którą tkanina zostanie zmniejszona"
 
 
-msgid "Shrink Factor Min"
-msgstr "Minimalny czynnik zmniejszający"
-
-
-msgid "Min amount to shrink cloth by"
-msgstr "Minimalna ilość o którą pomniejszać tkaninę"
-
-
-msgid "Spring Damping"
-msgstr "Tłumienie sił sprężystych"
-
-
-msgid "Damping of cloth velocity (higher = more smooth, less jiggling)"
-msgstr "Tłumienie prędkości tkaniny (większe = bardziej łagodne, mniej szarpane)"
-
-
-msgid "Structural Stiffness"
-msgstr "Sztywność strukturalna"
-
-
-msgid "Overall stiffness of structure"
-msgstr "Ogólna sztywność całej struktury"
-
-
-msgid "Structural Stiffness Maximum"
-msgstr "Maksymalna sztywność strukturalna"
-
-
-msgid "Maximum structural stiffness value"
-msgstr "Maksymalna sztywność, jaką może mieć struktura"
-
-
-msgid "Pin Cloth"
-msgstr "Przypinanie Tkaniny"
-
-
-msgid "Enable pinning of cloth vertices to other objects/positions"
-msgstr "Włącz przypinanie wierzchołków tkaniny do innych obiektów/pozycji"
-
-
 msgid "Sew Cloth"
 msgstr "Zszywanie tkanin"
 
 
 msgid "Pulls loose edges together"
 msgstr "Przyciąga luźne krawędzie do siebie"
-
-
-msgid "Stiffness Scaling"
-msgstr "Skalowanie sztywności"
-
-
-msgid "If enabled, stiffness can be scaled along a weight painted vertex group"
-msgstr "Gdy włączone, sztywność może być skalowana z wagami namalowanymi w grupie wierzchołków"
-
-
-msgid "Velocity Damping"
-msgstr "Tłumienie prędkości"
-
-
-msgid "Damp velocity to help cloth reach the resting position faster (1.0 = no damping, 0.0 = fully dampened)"
-msgstr "Tłumienie prędkości pomaga tkaninie szybciej osiągnąć pozycję równowagi (1.0 = brak tłumienia, 0.0 = w pełni tłumione)"
 
 
 msgid "Bending Stiffness Vertex Group"
@@ -4448,6 +2562,10 @@ msgid "How much of effector force gets lost during collision with this object (i
 msgstr "Jak bardzo spada siła oddziaływania podczas kolizji z tym obiektem, w procentach"
 
 
+msgid "Damping"
+msgstr "Tłumienie"
+
+
 msgid "Amount of damping during collision"
 msgstr "Współczynnik tłumienia podczas kolizji"
 
@@ -4544,10 +2662,6 @@ msgid "Display device name"
 msgstr "Nazwa urządzenia wyświetlającego"
 
 
-msgid "Default"
-msgstr "Domyślnie"
-
-
 msgid "Input color space settings"
 msgstr "Ustawienia wejściowej przestrzeni kolorów"
 
@@ -4616,6 +2730,10 @@ msgid "Amount of gamma modification applied after display transform"
 msgstr "Modyfikacja parametru gamma stosowana po przekształceniach wyświetlania"
 
 
+msgid "Look"
+msgstr "Wygląd"
+
+
 msgid "Additional transform applied before view transform for an artistic needs"
 msgstr "Dodatkowa transformacja dodawana przed transformacją widoku (dla potrzeb artystycznych)"
 
@@ -4672,12 +2790,28 @@ msgid "Mix"
 msgstr "Mieszanie"
 
 
+msgid "Darken"
+msgstr "Przyciemnianie"
+
+
+msgid "Lighten"
+msgstr "Pojaśnianie"
+
+
 msgid "Screen"
 msgstr "Ekran"
 
 
 msgid "Overlay"
 msgstr "Nakładanie"
+
+
+msgid "Soft Light"
+msgstr "Miękkie światło"
+
+
+msgid "Linear Light"
+msgstr "Liniowe światło"
 
 
 msgid "Difference"
@@ -4688,14 +2822,6 @@ msgid "Divide"
 msgstr "Dzielenie"
 
 
-msgid "Darken"
-msgstr "Przyciemnianie"
-
-
-msgid "Lighten"
-msgstr "Pojaśnianie"
-
-
 msgid "Hue"
 msgstr "Odcień"
 
@@ -4704,12 +2830,8 @@ msgid "Saturation"
 msgstr "Nasycenie"
 
 
-msgid "Soft Light"
-msgstr "Miękkie światło"
-
-
-msgid "Linear Light"
-msgstr "Liniowe światło"
+msgid "Value"
+msgstr "Wartość"
 
 
 msgid "Brightness"
@@ -4800,10 +2922,6 @@ msgid "Cardinal"
 msgstr "Kardynalny"
 
 
-msgid "Linear"
-msgstr "Liniowy"
-
-
 msgid "B-Spline"
 msgstr "B-krzywa"
 
@@ -4818,10 +2936,6 @@ msgstr "Element gradientu kolorów"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "Element definiujący kolor w pozycji na gradiencie kolorów"
-
-
-msgid "Alpha"
-msgstr "Przezroczystość"
 
 
 msgid "Set alpha of selected color stop"
@@ -4877,6 +2991,10 @@ msgid "Constraint modifying the transformation of objects and bones"
 msgstr "Sprzężenie modyfikujące transformację obiektów i kości"
 
 
+msgid "Active"
+msgstr "Aktywny"
+
+
 msgid "Constraint is the one being edited "
 msgstr "Ogranicznik jest tym, który jest właśnie edytowany"
 
@@ -4897,6 +3015,10 @@ msgid "Amount of residual error in radians for constraints that work on orientat
 msgstr "Wielkość szczątkowego błędu w radianach dla ograniczników które zmieniają orientacje"
 
 
+msgid "Influence"
+msgstr "Wpływ"
+
+
 msgid "Amount of influence constraint will have on the final solution"
 msgstr "Wielkość wpływu jaki będzie miał ogranicznik na końcowe rozwiązanie"
 
@@ -4915,6 +3037,10 @@ msgstr "Poprawny"
 
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ogranicznik ma prawidłowe ustawienia i może zostać wyliczony"
+
+
+msgid "Disable"
+msgstr "Wyłącz"
 
 
 msgid "Enable/Disable Constraint"
@@ -5173,20 +3299,16 @@ msgid "Change pivot point for transforms (buggy)"
 msgstr "Zmień punkt odniesienia dla transformacji (uwaga, może działać błędnie)"
 
 
-msgid "Rigid Body Joint"
-msgstr "Łącznik"
-
-
-msgid "Use to define a Rigid Body Constraint (for Game Engine use only)"
-msgstr "Użyj, aby zdefiniować ogranicznik dla łącznika (tylko dla użytku w Silniku Gier)"
-
-
 msgid "Shrinkwrap"
 msgstr "Owijanie"
 
 
 msgid "Restrict movements to surface of target mesh"
 msgstr "Wymuś ruchy tylko po powierzchni docelowego obiektu"
+
+
+msgid "Armature"
+msgstr "Szkielet"
 
 
 msgid "Action Constraint"
@@ -5227,6 +3349,14 @@ msgstr "Minimalna wartość dla docelowego zakresu kanału"
 
 msgid "Sub-Target"
 msgstr "Cel podrzędny"
+
+
+msgid "Target"
+msgstr "Cel"
+
+
+msgid "Target object"
+msgstr "Obiekt docelowy"
 
 
 msgid "Transform Channel"
@@ -5279,6 +3409,10 @@ msgstr "Akcja obiektu"
 
 msgid "Bones only: apply the object's transformation channels of the action to the constrained bone, instead of bone's channels"
 msgstr "Zastosuj kanały transformacji obiektu akcji do ograniczanej kości, zamiast do kanałów kości (tylko dla kości)"
+
+
+msgid "Targets"
+msgstr "Obiekty docelowe"
 
 
 msgid "Camera Solver Constraint"
@@ -5405,6 +3539,18 @@ msgid "Main axis of movement"
 msgstr "Główna oś ruchu"
 
 
+msgid "X"
+msgstr "X"
+
+
+msgid "Y"
+msgstr "Y"
+
+
+msgid "Z"
+msgstr "Z"
+
+
 msgid "Target Object (Curves only)"
 msgstr "Obiekt docelowy (tylko dla ścieżek)"
 
@@ -5455,10 +3601,6 @@ msgstr "Odwróć Z"
 
 msgid "Invert the Z location"
 msgstr "Odwróć zmiany położenia Z"
-
-
-msgid "Offset"
-msgstr "Odstęp"
 
 
 msgid "Add original location into copied location"
@@ -5533,8 +3675,8 @@ msgid "Copy the scale of the target"
 msgstr "Kopiuj skalę obiektu docelowego"
 
 
-msgid "Add original scale into copied scale"
-msgstr "Dodaj oryginalną skalę do skali skopiowanej"
+msgid "Additive"
+msgstr "Addytywny"
 
 
 msgid "Copy the target's X scale"
@@ -5563,6 +3705,10 @@ msgstr "Ogranicznik śledzenia tłumionego"
 
 msgid "Point toward target by taking the shortest rotation path"
 msgstr "Wskazuj na obiekt docelowy wykorzystując najkrótszą ścieżkę rotacji"
+
+
+msgid "Track Axis"
+msgstr "Oś śledząca"
 
 
 msgid "Axis that points to the target object"
@@ -5633,6 +3779,10 @@ msgid "Percentage value defining target position along length of curve"
 msgstr "Wartość procentowa określająca położenie obiektu na ścieżce w zależności od jej długości"
 
 
+msgid "Up Axis"
+msgstr "Oś do góry"
+
+
 msgid "Axis that points upward"
 msgstr "Oś, która pokazuje w górę"
 
@@ -5667,6 +3817,10 @@ msgstr "Ogranicznik podążaj za ścieżką"
 
 msgid "Lock motion to the target motion track"
 msgstr "Ustaw ruch tak aby śledził ruch obiektu docelowego"
+
+
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgid "Camera to which motion is parented (if empty active scene camera is used)"
@@ -5735,10 +3889,6 @@ msgstr "Rodzaj IK"
 
 msgid "Copy Pose"
 msgstr "Kopiuj pozę"
-
-
-msgid "Iterations"
-msgstr "Iteracje"
 
 
 msgid "Maximum number of solving iterations"
@@ -5859,6 +4009,10 @@ msgstr "Kość odniesienia"
 
 msgid "Constraint axis Lock options relative to Bone or Target reference"
 msgstr "Opcje blokowania osi względem kości lub obiektu docelowego"
+
+
+msgid "Bone"
+msgstr "Kość"
 
 
 msgid "Chain follows position of target"
@@ -6165,12 +4319,12 @@ msgid "Usually only 1-3 are needed"
 msgstr "Zwykle potrzebne są 1-3"
 
 
-msgid "Targets"
-msgstr "Obiekty docelowe"
-
-
 msgid "Target Objects"
 msgstr "Obiekty docelowe"
+
+
+msgid "Script"
+msgstr "Skrypt"
 
 
 msgid "The text object that contains the Python script"
@@ -6183,206 +4337,6 @@ msgstr "Użyj obiektów docelowych"
 
 msgid "Use the targets indicated in the constraint panel"
 msgstr "Używa obiektów docelowych wskazanych w panelu ogranicznika"
-
-
-msgid "Rigid Body Joint Constraint"
-msgstr "Ogranicznik Złącze Bryły Sztywnej"
-
-
-msgid "For use with the Game Engine"
-msgstr "Dla użytku w Silniku Gier"
-
-
-msgid "Axis X"
-msgstr "Oś X"
-
-
-msgid "Rotate pivot on X axis"
-msgstr "Obrót łącznika na osi X"
-
-
-msgid "Axis Y"
-msgstr "Oś Y"
-
-
-msgid "Rotate pivot on Y axis"
-msgstr "Obrót łącznika na osi Y"
-
-
-msgid "Axis Z"
-msgstr "Oś Z"
-
-
-msgid "Rotate pivot on Z axis"
-msgstr "Obrót łącznika na osi Z"
-
-
-msgid "Child Object"
-msgstr "Obiekt potomny"
-
-
-msgid "Child object"
-msgstr "Obiekt potomny (dziecko)"
-
-
-msgid "Maximum Angular Limit X"
-msgstr "Największe ograniczenie kątowe X"
-
-
-msgid "Maximum Angular Limit Y"
-msgstr "Największe ograniczenie kątowe Y"
-
-
-msgid "Maximum Angular Limit Z"
-msgstr "Największe ograniczenie kątowe Z"
-
-
-msgid "Minimum Angular Limit X"
-msgstr "Najmniejsze ograniczenie kątowe X"
-
-
-msgid "Minimum Angular Limit Y"
-msgstr "Najmniejsze ograniczenie kątowe Y"
-
-
-msgid "Minimum Angular Limit Z"
-msgstr "Najmniejsze ograniczenie kątowe Z"
-
-
-msgid "Maximum Limit X"
-msgstr "Największe ograniczenie X"
-
-
-msgid "Maximum Limit Y"
-msgstr "Największe ograniczenie Y"
-
-
-msgid "Maximum Limit Z"
-msgstr "Największe ograniczenie Z"
-
-
-msgid "Minimum Limit X"
-msgstr "Najmniejsze ograniczenie X"
-
-
-msgid "Minimum Limit Y"
-msgstr "Najmniejsze ograniczenie Y"
-
-
-msgid "Minimum Limit Z"
-msgstr "Najmniejsze ograniczenie Z"
-
-
-msgid "Pivot Type"
-msgstr "Rodzaj łącznika"
-
-
-msgid "Ball"
-msgstr "Kula"
-
-
-msgid "Allow rotations around all axes"
-msgstr "Dozwolone są rotacje wokół wszystkich osi"
-
-
-msgid "Hinge"
-msgstr "Zawias"
-
-
-msgid "Work in one plane, allow rotations around one axis only"
-msgstr "Działaj w jednej płaszczyźnie, pozwól na rotacje tylko wokół jednej osi"
-
-
-msgid "Cone Twist"
-msgstr "Skręcenie stożkowe"
-
-
-msgid "Allow rotations around all axes with limits for the cone and twist axes"
-msgstr "Pozwala na rotację wokół wszystkich osi o graniczeniem do stożka i osi skręceń"
-
-
-msgid "Generic 6 DoF"
-msgstr "Ogólne 6 stopni swobody"
-
-
-msgid "No constraints by default, limits can be set individually"
-msgstr "Brak ograniczenia domyślnie, limity mogą być ustawione indywidualnie"
-
-
-msgid "Pivot X"
-msgstr "Łącznik X"
-
-
-msgid "Offset pivot on X"
-msgstr "Odstęp dla łącznika na osi X"
-
-
-msgid "Pivot Y"
-msgstr "Łącznik Y"
-
-
-msgid "Offset pivot on Y"
-msgstr "Odstęp dla łącznika na osi Y"
-
-
-msgid "Pivot Z"
-msgstr "Łącznik Z"
-
-
-msgid "Offset pivot on Z"
-msgstr "Odstęp dla łącznika na osi Z"
-
-
-msgid "Draw Pivot"
-msgstr "Pokaż łącznik"
-
-
-msgid "Display the pivot point and rotation in 3D view"
-msgstr "Pokaż łącznik oraz rotacje w Widoku 3D"
-
-
-msgid "Angular X Limit"
-msgstr "Ograniczenie kątowe X"
-
-
-msgid "Use minimum/maximum X angular limit"
-msgstr "Użyj ograniczenia kątowego min/maks X"
-
-
-msgid "Angular Y Limit"
-msgstr "Ograniczenie kątowe Y"
-
-
-msgid "Use minimum/maximum Y angular limit"
-msgstr "Użyj ograniczenia kątowego min/maks Y"
-
-
-msgid "Angular Z Limit"
-msgstr "Ograniczenie kątowe Z"
-
-
-msgid "Use minimum/maximum Z angular limit"
-msgstr "Użyj ograniczenia kątowego min/maks Z"
-
-
-msgid "Use minimum/maximum X limit"
-msgstr "Użyj ograniczeń min/maks X"
-
-
-msgid "Use minimum/maximum y limit"
-msgstr "Użyj ograniczeń min/maks Y"
-
-
-msgid "Use minimum/maximum z limit"
-msgstr "Użyj ograniczeń min/maks Z"
-
-
-msgid "Disable Linked Collision"
-msgstr "Wyłącz łączone kolizje"
-
-
-msgid "Disable collision between linked bodies"
-msgstr "Wyłącza kolizje pomiędzy łączonymi elementami"
 
 
 msgid "Shrinkwrap Constraint"
@@ -6713,8 +4667,12 @@ msgid "The transformation type to use from the target"
 msgstr "Rodzaj transformacji z obiektu docelowego"
 
 
-msgid "Scale"
-msgstr "Skala"
+msgid "Loc"
+msgstr "Lok"
+
+
+msgid "Rot"
+msgstr "Rot"
 
 
 msgid "Map To"
@@ -6813,174 +4771,6 @@ msgid "Target object for multi-target constraints"
 msgstr "Obiekt docelowy dla wielo-celowego ogranicznika"
 
 
-msgid "Game engine logic brick to process events, connecting sensors to actuators"
-msgstr "Kostka logiczna silnika gier do przetwarzania zdarzeń, łącząca czujniki z mechanizmami"
-
-
-msgid "Set the active state of the controller"
-msgstr "Ustaw aktywny stan kontrolera"
-
-
-msgid "Actuators"
-msgstr "Mechanizmy"
-
-
-msgid "The list containing the actuators connected to the controller"
-msgstr "Lista zawierająca mechanizmy podłączone do kontrolerów"
-
-
-msgid "Set controller expanded in the user interface"
-msgstr "Rozwiń kontroler w interfejsie użytkownika"
-
-
-msgid "Set Controller state index (1 to 30)"
-msgstr "Ustaw indeks stanu kontrolera (1 do 30)"
-
-
-msgid "And"
-msgstr "AND"
-
-
-msgid "Logic And"
-msgstr "Logiczna operacja I"
-
-
-msgid "Or"
-msgstr "OR"
-
-
-msgid "Logic Or"
-msgstr "Logiczna operacja Lub"
-
-
-msgid "Nand"
-msgstr "NAND"
-
-
-msgid "Logic Nand"
-msgstr "Logiczna operacja Nie-i"
-
-
-msgid "Nor"
-msgstr "NOR"
-
-
-msgid "Logic Nor"
-msgstr "Logiczna operacja Nie-lub"
-
-
-msgid "Xor"
-msgstr "XOR"
-
-
-msgid "Logic Xor"
-msgstr "Logiczna operacja Wyłącznie Lub"
-
-
-msgid "Xnor"
-msgstr "XNOR"
-
-
-msgid "Logic Xnor"
-msgstr "Logiczna operacja Wyłącznie-Nie-Lub"
-
-
-msgid "Expression"
-msgstr "Wyrażenie"
-
-
-msgid "Python"
-msgstr "Python"
-
-
-msgid "Mark controller for execution before all non-marked controllers (good for startup scripts)"
-msgstr "Włącz wykonanie kontrolera przed wszystkimi nie-zaznaczonymi kontrolerami (dobre dla skryptów startowych, bo startują na początku)"
-
-
-msgid "And Controller"
-msgstr "Kontroler AND"
-
-
-msgid "Controller passing on events based on a logical AND operation"
-msgstr "Kontroler przepuszczający zdarzenia bazujące na logicznej operacji AND (muszą wszystkie wystąpić aby zadziałało)"
-
-
-msgid "Expression Controller"
-msgstr "Kontroler wyrażenia"
-
-
-msgid "Controller passing on events based on the evaluation of an expression"
-msgstr "Kontroler przepuszczający sterowanie dalej zależnie od wyniku wyrażenia"
-
-
-msgid "Nand Controller"
-msgstr "Kontroler NAND"
-
-
-msgid "Controller passing on events based on a logical NAND operation"
-msgstr "Kontroler przepuszczający sterowanie dalej w zależności od operacji NAND (tylko dla niejednocześnie aktywnych wejść)"
-
-
-msgid "Nor Controller"
-msgstr "Kontroler NOR"
-
-
-msgid "Controller passing on events based on a logical NOR operation"
-msgstr "Kontroler przepuszczający sterowanie dla logicznej operacji NOR (tylko dla niejednoczesnej alternatywy)"
-
-
-msgid "Or Controller"
-msgstr "Kontroler OR"
-
-
-msgid "Controller passing on events based on a logical OR operation"
-msgstr "Kontroler który przekaże sterowanie dalej dowolnego podłączonego wejścia"
-
-
-msgid "Python Controller"
-msgstr "Kontroler Python"
-
-
-msgid "Controller executing a python script"
-msgstr "Kontroler który wykonuje skrypt"
-
-
-msgid "Execution Method"
-msgstr "Metoda wykonania"
-
-
-msgid "Python script type (textblock or module - faster)"
-msgstr "Rodzaj skryptu Pythona (blok tekstu lub moduł - szybsze)"
-
-
-msgid "Module name and function to run, e.g. \"someModule.main\" (internal texts and external python files can be used)"
-msgstr "Nazwa modułu lub funkcji do uruchomienia 'jakiśModuł.main' (można użyć wewnętrznych bloków tekstu lub zewnętrznych plików w Pythonie)"
-
-
-msgid "D"
-msgstr "D"
-
-
-msgid "Continuously reload the module from disk for editing external modules without restarting"
-msgstr "Nieustannie przeładowuj moduł z dysku aby edytować zewnętrzne moduły bez restartu"
-
-
-msgid "Xnor Controller"
-msgstr "Kontroler XNOR"
-
-
-msgid "Controller passing on events based on a logical XNOR operation"
-msgstr "Kontroler bazujący na operacji logicznej XNOR - puszcza tylko to co jest zanegowaną różnicą symetryczną stanów"
-
-
-msgid "Xor Controller"
-msgstr "Kontroler XOR"
-
-
-msgid "Controller passing on events based on a logical XOR operation"
-msgstr "Kontroler który przepuszcza akcje, które są niejednocześnie prawdziwe"
-
-
 msgid "Curve in a curve mapping"
 msgstr "Krzywa w mapowaniu krzywych"
 
@@ -7023,6 +4813,10 @@ msgstr "Uchwyt automatyczny"
 
 msgid "Vector Handle"
 msgstr "Uchwyt wektorowy"
+
+
+msgid "Location"
+msgstr "Lokalizacja"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -7081,6 +4875,46 @@ msgid "Plane"
 msgstr "Płaszczyzna"
 
 
+msgid "Scene"
+msgstr "Scena"
+
+
+msgid "Generated Coordinates"
+msgstr "Współrzędne generowane"
+
+
+msgid "Generated coordinates in parent object space"
+msgstr "Współrzędne generowane w przestrzeni obiektu rodzicielskiego"
+
+
+msgid "Particle System"
+msgstr "System cząstek"
+
+
+msgid "Persistent ID"
+msgstr "Trwałe ID"
+
+
+msgid "Persistent identifier for inter-frame matching of objects with motion blur"
+msgstr "Trwały identyfikator dla między-klatkowego dopasowywania obiektów z rozmyciem ruchu."
+
+
+msgid "UV Coordinates"
+msgstr "Współrzędne UV"
+
+
+msgid "UV coordinates in parent object space"
+msgstr "Współrzędne UV w przestrzeni obiektu rodzicielskiego"
+
+
+msgid "ID"
+msgstr "ID"
+
+
+msgid "Transform"
+msgstr "Transformuj"
+
+
 msgid "Safe Areas"
 msgstr "Obszary bezpieczne"
 
@@ -7127,14 +4961,6 @@ msgstr "Filtr nazw krzywych-F"
 
 msgid "F-Curve live filtering string"
 msgstr "Napis do filtrowania krzywych-F na żywo"
-
-
-msgid "Filtering Group"
-msgstr "Filtrowanie grup"
-
-
-msgid "Group that included object should be a member of"
-msgstr "Grupa której dołączony obiekt powinien być elementem"
 
 
 msgid "Name Filter"
@@ -7195,14 +5021,6 @@ msgstr "Pokaż ukryte"
 
 msgid "Include channels from objects/bone that are not visible"
 msgstr "Pokazuj kanały z obiektów/kości, które są niewidoczne"
-
-
-msgid "Display Lamp"
-msgstr "Pokaż lampę"
-
-
-msgid "Include visualization of lamp related animation data"
-msgstr "Pokaż wizualizacje lamp powiązanych z animacją"
 
 
 msgid "Display Lattices"
@@ -7267,22 +5085,6 @@ msgstr "Pokaż błęd"
 
 msgid "Only include F-Curves and drivers that are disabled or have errors"
 msgstr "Pokazuj tylko krzywe-F i sterowniki które są wyłączone lub mają błędy"
-
-
-msgid "Only Objects in Group"
-msgstr "Tylko obiekty w grupie"
-
-
-msgid "Only include channels from objects in the specified group"
-msgstr "Pokazuje tylko kanały dla obiektów z wybranej grupy"
-
-
-msgid "Only Matching F-Curves"
-msgstr "Tylko pasujące krzywe-F"
-
-
-msgid "Only include F-Curves with names containing search text"
-msgstr "Pokaż tylko krzywe-F z nazwami zawierającymi szukany tekst"
 
 
 msgid "Only Selected"
@@ -7369,6 +5171,10 @@ msgid "Driver for the value of a setting based on an external value"
 msgstr "Sterownik dla wartości parametru bazującego na wartości zewnętrznej"
 
 
+msgid "Expression"
+msgstr "Wyrażenie"
+
+
 msgid "Expression to use for Scripted Expression"
 msgstr "Treść wyrażenia skryptowego"
 
@@ -7379,14 +5185,6 @@ msgstr "Niewłaściwy"
 
 msgid "Driver could not be evaluated in past, so should be skipped"
 msgstr "Sterownik nie mógł być obliczony poprzednio, dlatego został zignorowany"
-
-
-msgid "Show Debug Info"
-msgstr "Pokaż informacje diagnostyczne"
-
-
-msgid "Show intermediate values for the driver calculations to allow debugging of drivers"
-msgstr "Pokaż wartości pośrednie z obliczeń sterownika aby umożliwić diagnostykę sterowników"
 
 
 msgid "Driver type"
@@ -7443,10 +5241,6 @@ msgstr "Ścieżka danych"
 
 msgid "RNA Path (from ID-block) to property used"
 msgstr "Ścieżka RNA (z danych ID bloku) do użytej własności"
-
-
-msgid "ID"
-msgstr "ID"
 
 
 msgid "ID-block that the specific property used can be found from (id_type property must be set first)"
@@ -7521,120 +5315,12 @@ msgid "Distance between two bones or objects"
 msgstr "Odległość między dwiema kośćmi lub obiektami"
 
 
-msgid "Object Duplicate"
-msgstr "Duplikat obiektu"
-
-
-msgid "An object duplicate"
-msgstr "Duplikat, kopia tego samego obiektu"
-
-
-msgid "Don't show dupli object in viewport or render"
-msgstr "Nie pokazuj obiektów zduplikowanych w widoku lub na renderze"
-
-
-msgid "Index"
-msgstr "Indeks"
-
-
-msgid "Index in the lowest-level dupli list"
-msgstr "Indeks w najniżej poziomowej liście duplikatów"
-
-
-msgid "Object Duplicate Matrix"
-msgstr "Macierz duplikacji obiektu"
-
-
-msgid "Object duplicate transformation matrix"
-msgstr "Macierz transformacji duplikowanego obiektu"
-
-
-msgid "Object being duplicated"
-msgstr "Obiekt który będzie duplikowany"
-
-
-msgid "Generated Coordinates"
-msgstr "Współrzędne generowane"
-
-
-msgid "Generated coordinates in parent object space"
-msgstr "Współrzędne generowane w przestrzeni obiektu rodzicielskiego"
-
-
-msgid "Particle System"
-msgstr "System cząstek"
-
-
-msgid "Particle system that this dupli object was instanced from"
-msgstr "System cząstek z którego ten duplikowany obiekt został powołany do istnienia"
-
-
-msgid "Persistent ID"
-msgstr "Trwałe ID"
-
-
-msgid "Persistent identifier for inter-frame matching of objects with motion blur"
-msgstr "Trwały identyfikator dla między-klatkowego dopasowywania obiektów z rozmyciem ruchu."
-
-
-msgid "Dupli Type"
-msgstr "Rodzaj duplikacji"
-
-
-msgid "Duplicator type that generated this dupli object"
-msgstr "Rodzaj duplikatora który generuje ten obiekt zduplikowany"
-
-
-msgid "Frames"
-msgstr "Klatki"
-
-
-msgid "Make copy of object for every frame"
-msgstr "Zrób kopię obiektu w każdej klatce animacji"
-
-
-msgid "Verts"
-msgstr "Wierzchołki"
-
-
-msgid "Duplicate child objects on all vertices"
-msgstr "Duplikuj obiekty potomne na wszystkich wierzchołkach"
-
-
-msgid "Faces"
-msgstr "Ściany"
-
-
-msgid "Duplicate child objects on all faces"
-msgstr "Duplikuj obiekty potomne na wszystkich ścianach"
-
-
-msgid "Group"
-msgstr "Grupa"
-
-
-msgid "Enable group instancing"
-msgstr "Włącz tworzenie grup (instancing)"
-
-
-msgid "UV Coordinates"
-msgstr "Współrzędne UV"
-
-
-msgid "UV coordinates in parent object space"
-msgstr "Współrzędne UV w przestrzeni obiektu rodzicielskiego"
-
-
 msgid "Brush Settings"
 msgstr "Ustawienia pędzla"
 
 
 msgid "Brush settings"
 msgstr "Ustawienia Pędzla"
-
-
-msgid "Material to use (if not defined, material linked to the mesh is used)"
-msgstr "Materiał do użycia (jeżeli nie jest zdefiniownay, użyty będzie materiał połączony z siatką obiektu)"
 
 
 msgid "Paint Alpha"
@@ -7693,10 +5379,6 @@ msgid "Proximity falloff type"
 msgstr "Rodzaj zaniku sąsiedztwa"
 
 
-msgid "Smooth"
-msgstr "Wygładzanie"
-
-
 msgid "Z-Axis"
 msgstr "Oś Z"
 
@@ -7715,14 +5397,6 @@ msgstr "Bezwzględna przezroczystość"
 
 msgid "Only increase alpha value if paint alpha is higher than existing"
 msgstr "Zwiększaj przezroczystość tylko wtedy gdy jej wartość jest większa niż obecnie istniejąca"
-
-
-msgid "Use object material"
-msgstr "Użyj materiału obiektu"
-
-
-msgid "Use object material to define color and influence"
-msgstr "Używa materiału jaki jest na obiekcie, aby określić kolor i wpływ pędzla"
 
 
 msgid "Erase Paint"
@@ -7813,8 +5487,20 @@ msgid "Obstacle"
 msgstr "Przeszkoda"
 
 
+msgid "Force"
+msgstr "Siła"
+
+
 msgid "Reflect Only"
 msgstr "Tylko odbicie"
+
+
+msgid "Acceleration"
+msgstr "Przyspieszenie"
+
+
+msgid "Velocity"
+msgstr "Prędkość"
 
 
 msgid "Texture"
@@ -7925,14 +5611,6 @@ msgid "Global gravity weight"
 msgstr "Globalny wpływ grawitacji"
 
 
-msgid "Effector Group"
-msgstr "Grupa efektora"
-
-
-msgid "Limit effectors to this Group"
-msgstr "Ogranicz efektory do tej grupy"
-
-
 msgid "Harmonic"
 msgstr "Harmoniczny"
 
@@ -8025,102 +5703,6 @@ msgid "Value of the item"
 msgstr "Wartość elementu"
 
 
-msgid "Environment map created by the renderer and cached for subsequent renders"
-msgstr "Mapa środowiska tworzona przez silnik renderujący i przechowana pomiędzy renderami"
-
-
-msgid "Clip End"
-msgstr "Koniec przycinania"
-
-
-msgid "Objects further than this are not visible to map"
-msgstr "Obiekty dalsze niż ta wartość będą niewidoczne"
-
-
-msgid "Clip Start"
-msgstr "Początek przycinania"
-
-
-msgid "Objects nearer than this are not visible to map"
-msgstr "Obiekty bliższe niż ta wartość nie są widoczne na mapie środowiskowej"
-
-
-msgid "Number of times a map will be rendered recursively (mirror effects)"
-msgstr "Liczba powtórzeń rekurencyjnego renderowania mapy (w przypadku efektów lustra)"
-
-
-msgid "Validity"
-msgstr "Poprawość"
-
-
-msgid "True if this map is ready for use, False if it needs rendering"
-msgstr "Prawda jeżeli ta mapa jest gotowa do użycia. Fałsz gdy potrzebuje dodatkowego wyrenderowania."
-
-
-msgid "Ignore Layers"
-msgstr "Ignoruj warstwy"
-
-
-msgid "Hide objects on these layers when generating the Environment Map"
-msgstr "Ukryj obiekty na tych warstwach podczas generowania mapy środowiskowej"
-
-
-msgid "Mapping"
-msgstr "Mapowanie"
-
-
-msgid "Cube"
-msgstr "Sześcian"
-
-
-msgid "Use environment map with six cube sides"
-msgstr "Użyj mapy środowiskowej z sześcioma ścianami kostki"
-
-
-msgid "Only one side is rendered, with Z axis pointing in direction of image"
-msgstr "Tylko jedna strona jest renderowana z osią Z zgodną z kierunkiem w jakim zwrócony jest obrazek"
-
-
-msgid "Pixel resolution of the rendered environment map"
-msgstr "Rozdzielczość w pikselach wyrenderowanej mapy środowiskowej"
-
-
-msgid "Static"
-msgstr "Statyczna"
-
-
-msgid "Calculate environment map only once"
-msgstr "Oblicz mapę środowiskową tylko raz"
-
-
-msgid "Animated"
-msgstr "Animowana"
-
-
-msgid "Calculate environment map at each rendering"
-msgstr "Oblicz mapę środowiskową podczas każdego renderowania"
-
-
-msgid "Image File"
-msgstr "Plik obrazka"
-
-
-msgid "Load a saved environment map image from disk"
-msgstr "Załaduj zapisaną mapę środowiskową z dysku"
-
-
-msgid "Viewpoint Object"
-msgstr "Obiekt punktu widzenia"
-
-
-msgid "Object to use as the environment map's viewpoint location"
-msgstr "Obiekt używany jako punkt widzenia dla mapy środowiskowej"
-
-
-msgid "Zoom"
-msgstr "Zbliżenie"
-
-
 msgid "F-Curve"
 msgstr "Krzywa-F"
 
@@ -8195,6 +5777,10 @@ msgstr "Utrzymuj wartości końcowych klatek kluczowych"
 
 msgid "Use slope of curve leading in/out of endpoint keyframes"
 msgstr "Użyj nachylenia krzywej takiego jak w ostatnich klatkach kluczowych"
+
+
+msgid "Group"
+msgstr "Grupa"
 
 
 msgid "Action Group that this F-Curve belongs to"
@@ -8329,6 +5915,11 @@ msgid "Audio samplerate(samples/s)"
 msgstr "Częstotliwość z jaką próbkowany jest dźwięk (w próbkach na sekundę)"
 
 
+msgctxt "Sound"
+msgid "Volume"
+msgstr "Głośność"
+
+
 msgid "Audio volume"
 msgstr "Głośność dźwięku"
 
@@ -8341,12 +5932,24 @@ msgid "Rate control: buffer size (kb)"
 msgstr "Kontrola przepustowości: rozmiar bufora (kb)"
 
 
-msgid "Codec"
-msgstr "Kodek"
+msgid "DNxHD"
+msgstr "DNxHD"
 
 
-msgid "FFmpeg codec to use"
-msgstr "Kodek FFmpeg który zostanie użyty"
+msgid "FFmpeg video codec #1"
+msgstr "Kodek wideo FFmpeg #1"
+
+
+msgid "Flash Video"
+msgstr "Wideo Flash"
+
+
+msgid "H.264"
+msgstr "H.264"
+
+
+msgid "HuffYUV"
+msgstr "HuffYUV"
 
 
 msgid "MPEG-1"
@@ -8357,36 +5960,12 @@ msgid "MPEG-2"
 msgstr "MPEG-2"
 
 
-msgid "MPEG-4(divx)"
-msgstr "MPEG-4 (divx)"
-
-
-msgid "HuffYUV"
-msgstr "HuffYUV"
-
-
-msgid "H.264"
-msgstr "H.264"
-
-
-msgid "Theora"
-msgstr "Theora"
-
-
-msgid "Flash Video"
-msgstr "Wideo Flash"
-
-
-msgid "FFmpeg video codec #1"
-msgstr "Kodek wideo FFmpeg #1"
-
-
 msgid "QT rle / QT Animation"
 msgstr "QT rle / Animacja QT"
 
 
-msgid "DNxHD"
-msgstr "DNxHD"
+msgid "Theora"
+msgstr "Theora"
 
 
 msgid "MPEG-4"
@@ -8765,10 +6344,6 @@ msgid "Constant factor to offset time by for function"
 msgstr "Stały czynnik przesuwający czas dla funkcji"
 
 
-msgid "Additive"
-msgstr "Addytywny"
-
-
 msgid "Values generated by this modifier are applied on top of the existing values instead of overwriting them"
 msgstr "Wartości generowane przez ten modyfikator są dodawane do istniejących wartości zamiast je nadpisywać"
 
@@ -8841,6 +6416,26 @@ msgid "Scaling (in time) of the noise"
 msgstr "Skalowanie (w czasie) szumu"
 
 
+msgid "Index"
+msgstr "Indeks"
+
+
+msgid "Maximum Distance"
+msgstr "Maksymalna odległość"
+
+
+msgid "Axis"
+msgstr "Oś/Kierunek"
+
+
+msgid "Seed"
+msgstr "Zarodek"
+
+
+msgid "Size"
+msgstr "Rozmiar"
+
+
 msgid "Save"
 msgstr "Zapisz"
 
@@ -8857,8 +6452,60 @@ msgid "Line Style"
 msgstr "Styl linii"
 
 
+msgid "Visibility"
+msgstr "Widoczność"
+
+
+msgid "Visible"
+msgstr "Widoczny"
+
+
+msgid "Blend Mode"
+msgstr "Tryb Mieszania"
+
+
+msgid "Frames"
+msgstr "Klatki"
+
+
+msgid "Opacity"
+msgstr "Nieprzejrzystość"
+
+
+msgid "Parent Object"
+msgstr "Obiekt rodzica"
+
+
+msgid "Direction"
+msgstr "Kierunek"
+
+
 msgid "Brush"
 msgstr "Pędzel"
+
+
+msgid "Groups"
+msgstr "Grupy"
+
+
+msgid "Window"
+msgstr "Okno"
+
+
+msgid "Lattice"
+msgstr "Kratownica"
+
+
+msgid "Invert"
+msgstr "Odwrócenie"
+
+
+msgid "Layer"
+msgstr "Warstwa"
+
+
+msgid "Fixed"
+msgstr "Stałe"
 
 
 msgid "Library"
@@ -8877,12 +6524,52 @@ msgid "Rotate"
 msgstr "Obróć"
 
 
+msgid "Blur"
+msgstr "Rozmycie"
+
+
+msgid "Clip End"
+msgstr "Koniec przycinania"
+
+
+msgid "Clip Start"
+msgstr "Początek przycinania"
+
+
 msgid "Dimensions"
 msgstr "Wymiary"
 
 
+msgid "Top"
+msgstr "Góra"
+
+
+msgid "Bottom"
+msgstr "Dół"
+
+
 msgid "Font"
 msgstr "Czcionka"
+
+
+msgid "X Offset"
+msgstr "Odstęp X"
+
+
+msgid "Y Offset"
+msgstr "Odstęp Y"
+
+
+msgid "Mean"
+msgstr "Średnia"
+
+
+msgid "Min"
+msgstr "Min"
+
+
+msgid "Max"
+msgstr "Maks"
 
 
 msgid "Use Nodes"
@@ -8893,20 +6580,57 @@ msgid "Flat"
 msgstr "Płaskie"
 
 
-msgid "Lattice"
-msgstr "Kratownica"
+msgid "Cube"
+msgstr "Sześcian"
 
 
-msgid "Lamp"
-msgstr "Lampa"
+msgid "Verts"
+msgstr "Wierzchołki"
+
+
+msgid "Faces"
+msgstr "Ściany"
+
+
+msgid "Mesh"
+msgstr "Siatka"
+
+
+msgid "GPencil"
+msgstr "Szkicownik"
 
 
 msgid "Speaker"
 msgstr "Głośnik"
 
 
+msgid "Angular Velocity"
+msgstr "Prędkość kątowa"
+
+
+msgid "Distribution"
+msgstr "Rozkład"
+
+
 msgid "World"
 msgstr "Świat"
+
+
+msgid "Reference Distance"
+msgstr "Odległość odniesienia"
+
+
+msgctxt "Sound"
+msgid "Pitch"
+msgstr "Wysokość"
+
+
+msgid "Sound"
+msgstr "Dźwięk"
+
+
+msgid "Blend"
+msgstr "Mieszanie"
 
 
 msgid "Filter"
@@ -8917,16 +6641,40 @@ msgid "Window Manager"
 msgstr "Zarządca okien"
 
 
-msgid "Window"
-msgstr "Okno"
+msgid "Operation"
+msgstr "Operacje"
+
+
+msgid "Codec"
+msgstr "Kodek"
+
+
+msgid "Mouse"
+msgstr "Mysz"
+
+
+msgid "Mapping"
+msgstr "Mapowanie"
+
+
+msgid "Max Angle"
+msgstr "Największy kąt"
+
+
+msgid "Min Angle"
+msgstr "Najmniejszy kąt"
+
+
+msgid "Pivot X"
+msgstr "Łącznik X"
+
+
+msgid "Pivot Y"
+msgstr "Łącznik Y"
 
 
 msgid "ID Type"
 msgstr "Typ ID"
-
-
-msgid "Transform"
-msgstr "Transformuj"
 
 
 msgid "Delete"
@@ -8937,10 +6685,6 @@ msgid "Key"
 msgstr "Klucz"
 
 
-msgid "External Data"
-msgstr "Zewnętrzne Dane"
-
-
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -8949,24 +6693,84 @@ msgid "Distort"
 msgstr "Zniekształć"
 
 
-msgid "GPencil"
-msgstr "Szkicownik"
+msgid "Python"
+msgstr "Python"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "File"
+msgstr "Plik"
+
+
+msgid "External Data"
+msgstr "Zewnętrzne Dane"
+
+
+msgid "Ball"
+msgstr "Kula"
+
+
+msgid "Local"
+msgstr "Lokalnie"
 
 
 msgid "Overwrite"
 msgstr "Nadpisz"
 
 
+msgid "Time"
+msgstr "Czas"
+
+
+msgid "Copy"
+msgstr "Skopiuj"
+
+
 msgid "Smooth Shading"
 msgstr "Gładkie Cieniowanie"
 
 
-msgid "Fixed"
-msgstr "Stałe"
+msgid "Target Object"
+msgstr "Obiekt docelowy"
+
+
+msgid "To"
+msgstr "Do"
 
 
 msgid "Active Track"
 msgstr "Aktywna Ścieżka"
+
+
+msgid "Remove"
+msgstr "Usuń"
+
+
+msgid "Zoom"
+msgstr "Zbliżenie"
+
+
+msgid "Sharpen"
+msgstr "Wyostrzenie"
+
+
+msgid "Sobel"
+msgstr "Sobel"
+
+
+msgid "Prewitt"
+msgstr "Prewitt"
+
+
+msgid "L"
+msgstr "L"
+
+
+msgid "Motion Blur"
+msgstr "Rozmycie ruchu"
 
 
 msgid "Pixelate"
@@ -8977,17 +6781,53 @@ msgid "Translate"
 msgstr "Przesuń"
 
 
+msgid "X Axis"
+msgstr "Oś X"
+
+
+msgid "Y Axis"
+msgstr "Oś Y"
+
+
+msgid "Layer Weight"
+msgstr "Waga warstwy"
+
+
+msgid "X axis"
+msgstr "Oś X"
+
+
+msgid "Y axis"
+msgstr "Oś Y"
+
+
+msgid "Z axis"
+msgstr "Oś Z"
+
+
 msgctxt "Operator"
 msgid "Duplicate"
 msgstr "Duplikuj"
 
 
-msgid "Translate (move) selected items"
-msgstr "Przesuń zaznaczone obiekty"
+msgid "Toggle"
+msgstr "Przełącz"
+
+
+msgid "Enable"
+msgstr "Włącz"
+
+
+msgid "(undocumented operator)"
+msgstr "(operator bez dokumentacji)"
 
 
 msgid "History"
 msgstr "Historia"
+
+
+msgid "Constraint"
+msgstr "Ogranicznik"
 
 
 msgctxt "Operator"
@@ -8999,8 +6839,28 @@ msgid "Null"
 msgstr "Żaden"
 
 
+msgid "Lamp"
+msgstr "Lampa"
+
+
+msgid "Z Axis"
+msgstr "Oś Z"
+
+
 msgid "Open"
 msgstr "Otwórz"
+
+
+msgid "Limit"
+msgstr "Ograniczenie"
+
+
+msgid "New"
+msgstr "Nowy"
+
+
+msgid "Warning"
+msgstr "Uwaga"
 
 
 msgid "Flat/Smooth"
@@ -9023,8 +6883,16 @@ msgid "Duplicate selected objects and move them"
 msgstr "Duplikuj zaznaczone obiekty i przesuń je"
 
 
-msgid "New"
-msgstr "Nowy"
+msgid "Child"
+msgstr "Potomek"
+
+
+msgid "Child Object"
+msgstr "Obiekt potomny"
+
+
+msgid "Hinge"
+msgstr "Zawias"
 
 
 msgctxt "Operator"
@@ -9041,9 +6909,20 @@ msgid "Rotate selected items"
 msgstr "Obróć zaznaczone obiekty"
 
 
-msgctxt "Operator"
-msgid "Translate"
-msgstr "Przesuń"
+msgid "Pinned"
+msgstr "Przypięty"
+
+
+msgid "Play"
+msgstr "Start"
+
+
+msgid "Property"
+msgstr "Właściwość"
+
+
+msgid "Property Name"
+msgstr "Nazwa właściwości"
 
 
 msgctxt "Operator"
@@ -9069,16 +6948,72 @@ msgid "Palette"
 msgstr "Paleta"
 
 
+msgid "Pin"
+msgstr "Przypnij"
+
+
 msgid "Performance"
 msgstr "Wydajność"
+
+
+msgid "Ghost"
+msgstr "Duch"
+
+
+msgid "Dynamics"
+msgstr "Dynamika"
+
+
+msgid "Behavior"
+msgstr "Zachowanie"
+
+
+msgid "Continue"
+msgstr "Kontynuacja"
 
 
 msgid "Auto-detect"
 msgstr "Automatyczne wykrywanie"
 
 
-msgid "Threads:"
-msgstr "Wątki:"
+msgid "Gray Scale"
+msgstr "Odcienie szarości"
+
+
+msgid "Sepia"
+msgstr "Sepia"
+
+
+msgid "Static"
+msgstr "Statyczna"
+
+
+msgid "Animated"
+msgstr "Animowana"
+
+
+msgid "Timeline"
+msgstr "Oś czasu"
+
+
+msgid "Timeline and playback controls"
+msgstr "Oś czasu oraz kontrolki odtwarzania"
+
+
+msgid "3D"
+msgstr "3D"
+
+
+msgid "3D View"
+msgstr "Widok 3D"
+
+
+msgid "Video Sequence Editor"
+msgstr "Edytor Sekwencji Wideo"
+
+
+msgid "Laplacian"
+msgstr "Laplacian"
 
 
 msgctxt "Operator"
@@ -9090,29 +7025,17 @@ msgid "Resolution:"
 msgstr "Rozdzielczość:"
 
 
+msgid "Layer:"
+msgstr "Warstwa:"
+
+
+msgid "Priority"
+msgstr "Priorytet"
+
+
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Skaluj"
-
-
-msgid "Shading:"
-msgstr "Cieniowanie:"
-
-
-msgid "Speed:"
-msgstr "Prędkość:"
-
-
-msgid "Aspect Ratio:"
-msgstr "Format Obrazu:"
-
-
-msgid "Frame Range:"
-msgstr "Zakres Klatek:"
-
-
-msgid "Memory:"
-msgstr "Pamięć:"
 
 
 msgctxt "Operator"
@@ -9387,28 +7310,12 @@ msgid "%i frames on disk"
 msgstr "%i klatek na dysku"
 
 
-msgid "%i frames in memory (%.1f %s)"
-msgstr "%i klatek w pamięci (%.1f %s)"
-
-
-msgid "Mb"
-msgstr "Mb"
-
-
-msgid "kb"
-msgstr "kb"
-
-
 msgid "%s, cache is outdated!"
 msgstr "%s, schowek jest przestarzały"
 
 
 msgid "%s, not exact since frame %i"
 msgstr "%s nie dokładne w klatce %i"
-
-
-msgid "Warning"
-msgstr "Uwaga"
 
 
 msgid "Invalid Input Error"
@@ -9425,10 +7332,6 @@ msgstr "Błąd braku pamięci"
 
 msgid "Undefined Type"
 msgstr "Niezdefiniowany typ"
-
-
-msgid "RenderLayer"
-msgstr "RenderLayer"
 
 
 msgctxt "Sequence"
@@ -9461,10 +7364,6 @@ msgstr "Paski były niekompatybilne"
 
 msgid "Strips must have the same number of inputs"
 msgstr "Paski muszą posiadać identyczną liczbę wejść"
-
-
-msgid "Unsupported audio format"
-msgstr "Format dźwiękowy nieobsługiwany"
 
 
 msgctxt "MovieClip"
@@ -9532,22 +7431,6 @@ msgid "Could not initialize streams, probably unsupported codec combination"
 msgstr "Nie można było zainicjować strumieni, prawdopodobnie nieobsługiwana kombinacja kodeków"
 
 
-msgid "Cannot startup socket system"
-msgstr "Nie można uruchomić systemu złączy"
-
-
-msgid "Cannot open socket"
-msgstr "Nie można otworzyć złącza"
-
-
-msgid "Cannot bind to socket"
-msgstr "Nie można związać ze złączem"
-
-
-msgid "Cannot establish listen backlog"
-msgstr "Nie można ustanowić listen backlog"
-
-
 msgid "unknown error reading file"
 msgstr "Nieznany błąd odczytu pliku"
 
@@ -9584,32 +7467,12 @@ msgid "Warning in console"
 msgstr "Ostrzeżenie w konsoli"
 
 
-msgid "Texface conversion problem (see error in console)"
-msgstr "Problem konwersji texface (szczegóły w konsoli)"
-
-
 msgid "Failed to read blend file '%s', not a blend file"
 msgstr "Odczyt pliku blend '%s' nie powiódł się, to nie jest plik blend"
 
 
 msgid "Unable to open '%s': %s"
 msgstr "Otwarcie '%s' niemożliwe: %s"
-
-
-msgid "Unable to read '%s' (problem seeking)"
-msgstr "Odczyt '%s' niemożliwy (problem z przeszukaniem)"
-
-
-msgid "Unable to read '%s' (truncated header)"
-msgstr "Odczyt '%s' niemożliwy (obcięty nagłówek)"
-
-
-msgid "Unable to read '%s' (not a blend file)"
-msgstr "Odczyt '%s' niemożliwy (to nie jest plik blend)"
-
-
-msgid "Game property name conflict in object '%s': text objects reserve the ['Text'] game property to change their content through logic bricks"
-msgstr "Konflikt nazwy właściwości gry '%s': objekt tekstu rezerwuje ['Text'] właściwość gry by zmieniać ich zawartość poprzez bloki logiczne"
 
 
 msgid "Unable to make version backup: filename too short"
@@ -9787,10 +7650,6 @@ msgstr "Nie odnaleziono sceny"
 
 msgid "Cannot re-link markers into the same scene"
 msgstr "Nie można ponownie powiązać markerów do tej samej sceny"
-
-
-msgid "Expected an timeline/animation area to be active"
-msgstr "Spodziewany aktywny obszar oś czau/animacja"
 
 
 msgid "Paste driver: no driver to paste"
@@ -10097,10 +7956,6 @@ msgid "Unselectable bone in chain"
 msgstr "Kość w łańcuchu niemożliwa do zaznaczenia"
 
 
-msgid "Template %t|None %x0|"
-msgstr "Szablon %t|Żaden %x0|"
-
-
 msgid "Bone Heat Weighting: failed to find solution for one or more bones"
 msgstr "Ważenie Ciepłoty Kości: Znalezienie rozwiązania dla jednej lub więcej kości nie powiodło się"
 
@@ -10177,10 +8032,6 @@ msgid "No keyframes to slide between"
 msgstr "Brak klatek kluczowych między którymi można ślizgać"
 
 
-msgid "No object to propagate poses for"
-msgstr "Brak obiektu, na który można rozszerzyć"
-
-
 msgid "No keyframed poses to propagate to"
 msgstr "Brak zakluczowanych póz na które można rozszerzyć"
 
@@ -10205,10 +8056,6 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Błąd programowania: Brak funkcji wyczyść transformację lub nazwy zestawu kluczowania"
 
 
-msgid "Cannot separate a curve with vertex keys"
-msgstr "Nie można oddzielić krzywej z kluczami wierzchołków"
-
-
 msgid "Cannot separate current selection"
 msgstr "Nie można oddzielić obecnego zaznaczenia"
 
@@ -10225,12 +8072,12 @@ msgid "No conversion possible"
 msgstr "Żadna konwersja nie jest możliwa"
 
 
-msgid "Resolution does not match"
-msgstr "Rozdzielczość nie pasuje"
-
-
 msgid "Too few selections to merge"
 msgstr "Za mało zaznaczeń by scalić"
+
+
+msgid "Resolution does not match"
+msgstr "Rozdzielczość nie pasuje"
 
 
 msgid "Cannot make segment"
@@ -10309,14 +8156,6 @@ msgid "Surface"
 msgstr "Powierzchnia"
 
 
-msgid "Surface has not got active point"
-msgstr "Powierzchnia nie otrzymała aktywnego punktu"
-
-
-msgid "Curve has not got active point"
-msgstr "Krzywa nie otrzymała aktywnego punktu"
-
-
 msgid "Text too long"
 msgstr "Za długi tekst"
 
@@ -10335,6 +8174,18 @@ msgstr "Otwarcie pliku '%s' nie powiodło się"
 
 msgid "File too long %s"
 msgstr "Plik za długi %s"
+
+
+msgid "Cannot paint stroke"
+msgstr "Nie mogę narysować kreski"
+
+
+msgid "Failed to find Grease Pencil data to draw into"
+msgstr "Nie udało się odnaleźć danych szkicownika w których można zapisać"
+
+
+msgid "Active region not set"
+msgstr "Nie ustawiony aktywny region"
 
 
 msgid "No keyframes copied to keyframes copy/paste buffer"
@@ -10385,36 +8236,12 @@ msgid "No active frame to delete"
 msgstr "Brak aktywnej klatki do usunięcia"
 
 
-msgid "Failed to find Grease Pencil data to draw into"
-msgstr "Nie udało się odnaleźć danych szkicownika w których można zapisać"
-
-
-msgid "Active region not set"
-msgstr "Nie ustawiony aktywny region"
-
-
-msgid "Grease Pencil: Drawing/erasing stroke... Release to end stroke"
-msgstr "Szkicownik: Rysowanie/wymazywanie kreski... Puść by zakończyć kreskę"
-
-
-msgid "Cannot paint stroke"
-msgstr "Nie mogę narysować kreski"
-
-
 msgid "Grease Pencil operator is already active"
 msgstr "Operator Szkicownik jest już aktywny"
 
 
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
-
-
-msgid "Failed to set value"
-msgstr "Ustawienie wartości nie powiodło się"
-
-
-msgid "Pin"
-msgstr "Przypnij"
 
 
 msgid "Shift+Left Mouse"
@@ -10472,11 +8299,6 @@ msgstr "Usuń Sterowniki"
 
 
 msgctxt "Operator"
-msgid "Add Drivers"
-msgstr "Dodaj Sterowniki"
-
-
-msgctxt "Operator"
 msgid "Add All to Keying Set"
 msgstr "Dodaj Wszystkie do zestawu klatek kluczowych"
 
@@ -10512,11 +8334,6 @@ msgstr "Usuń Skrót"
 
 
 msgctxt "Operator"
-msgid "Add Shortcut"
-msgstr "Dodaj Skrót"
-
-
-msgctxt "Operator"
 msgid "Online Manual"
 msgstr "Instrukcja Obsługi online"
 
@@ -10524,6 +8341,10 @@ msgstr "Instrukcja Obsługi online"
 msgctxt "Operator"
 msgid "Online Python Reference"
 msgstr "Referencja Python online"
+
+
+msgid "Failed to set value"
+msgstr "Ustawienie wartości nie powiodło się"
 
 
 msgid "Active button is not from a script, cannot edit source"
@@ -10614,14 +8435,6 @@ msgid "Hex triplet for color (#RRGGBB)"
 msgstr "Trójka HEX dla koloru (#RRGGBB)"
 
 
-msgid "Value in Display Color Space"
-msgstr "Wartość w ekranowej przestrzeni barwowej"
-
-
-msgid "Value in Linear RGB Color Space"
-msgstr "Wartość w liniowej przestrzeni barwowej RGB"
-
-
 msgid "Menu \"%s\" not found"
 msgstr "Nie odnaleziono menu \"%s\""
 
@@ -10632,6 +8445,10 @@ msgstr "(Shift klik/ciągnij by zaznaczyć wiele)"
 
 msgid "Shortcut: %s"
 msgstr "Skrót: %s"
+
+
+msgid "Python: %s"
+msgstr "Python: %s"
 
 
 msgid "Value: %s"
@@ -10648,10 +8465,6 @@ msgstr "Wyrażenie: %s"
 
 msgid "Library: %s"
 msgstr "Biblioteka: %s"
-
-
-msgid "Python: %s"
-msgstr "Python: %s"
 
 
 msgid "Disabled: %s"
@@ -10726,16 +8539,12 @@ msgid "Reset Curve"
 msgstr "Resetuj krzywą"
 
 
-msgid "* Redo Unsupported *"
-msgstr "* Ponów nieobsługiwane *"
+msgid "Reset"
+msgstr "Zresetuj"
 
 
 msgid "No Properties"
 msgstr "Brak Właściwości"
-
-
-msgid "Capture"
-msgstr "Przechwyć"
 
 
 msgid "Anim Player"
@@ -10762,16 +8571,8 @@ msgid "Proxy Protected"
 msgstr "Zastępca Chroniony"
 
 
-msgid "Add a new color stop to the colorband"
-msgstr "Dodaj nowy znacznik koloru do szlaku kolorów"
-
-
 msgid "Delete the active position"
 msgstr "Usuń aktywną pozycję"
-
-
-msgid "Flip the color ramp"
-msgstr "Odwróć gradient kolorów"
 
 
 msgid "Choose active color stop"
@@ -10812,10 +8613,6 @@ msgstr "Resetuj domyślne dla operatora"
 
 msgid "Stop this job"
 msgstr "Przerzij to zadanie"
-
-
-msgid "Stop screencast"
-msgstr "Zakończ nagrywanie ekranu"
 
 
 msgid "Stop animation playback"
@@ -10864,10 +8661,6 @@ msgstr "Przeglądaj dane stylu linii do powiązania"
 
 msgid "Browse Lattice Data to be linked"
 msgstr "Przeglądaj dane kraty do powiązania"
-
-
-msgid "Browse Lamp Data to be linked"
-msgstr "Przeglądaj dane lampy do powiązania"
 
 
 msgid "Browse Camera Data to be linked"
@@ -11066,24 +8859,24 @@ msgid "No filename given"
 msgstr "Nie podano nazwy pliku"
 
 
-msgid "Export Data Options:"
-msgstr "Opcje danych eksportu:"
-
-
 msgid "Texture Options:"
 msgstr "Opcje tekstury:"
+
+
+msgid "Export Data Options:"
+msgstr "Opcje danych eksportu:"
 
 
 msgid "Armature Options:"
 msgstr "Opcje szkieletu:"
 
 
-msgid "Collada Options:"
-msgstr "Opcje Collada:"
-
-
 msgid "Transformation Type"
 msgstr "Typ transformacji"
+
+
+msgid "Collada Options:"
+msgstr "Opcje Collada:"
 
 
 msgid "Import Data Options:"
@@ -11096,10 +8889,6 @@ msgstr "Nie mogę utworzyć pliku do eksportu"
 
 msgid "Can't overwrite export file"
 msgstr "Nie mogę nadpisać pliku do eksportu"
-
-
-msgid "Errors found during parsing COLLADA document (see console for details)"
-msgstr "Wykryto błędy podczas analizowania dokumentu COLLADA (szczegóły w konsoli)"
 
 
 msgctxt "Mesh"
@@ -11199,22 +8988,6 @@ msgid "Path selection requires two matching elements to be selected"
 msgstr "Zaznaczanie ścieżki wymaga zaznaczenia dwóch pasujących elementów"
 
 
-msgid "Error ripping vertex from faces"
-msgstr "Błąd przy odpruciu wierzchołka ze ściany"
-
-
-msgid "Selected vertex has no edge/face pairs attached"
-msgstr "Zaznaczony wierzchołek nie posiada dołączonych par krawędzi/ścian"
-
-
-msgid "No vertices could be ripped"
-msgstr "Żadne wierzchołki nie dały się rozpruć"
-
-
-msgid "No edges could be ripped"
-msgstr "Nie udało się rozpruć żadnych krawędzi"
-
-
 msgid "Cannot rip selected faces"
 msgstr "Nie mogę rozpruć zaznaczonych ścian"
 
@@ -11229,10 +9002,6 @@ msgstr "Brak zaznaczonych regionów ścian"
 
 msgid "No matching face regions found"
 msgstr "Nie odnaleziono pasujących regionów ścian"
-
-
-msgid "Mesh has no active vert/edge/face"
-msgstr "Siatka nie posiada aktywnych wierzchołków/krawędzi/ścian"
 
 
 msgid "Does not work in face selection mode"
@@ -11267,10 +9036,6 @@ msgid "Selected faces must be triangles or quads"
 msgstr "Zaznaczone ściany muszą być trójkątami lub czworokątami"
 
 
-msgid "Mesh does not have shape keys"
-msgstr "Siatka nie posiada kluczy kształtu"
-
-
 msgid "No edges are selected to operate on"
 msgstr "Brak zaznaczonych krawędzi, na których można działać"
 
@@ -11299,10 +9064,6 @@ msgid "View not found, cannot sort by view axis"
 msgstr "Nie odnaleziono widoku, porządkowanie według widoku niemożliwe"
 
 
-msgid "Mesh has no material or texture assigned"
-msgstr "Siatka nie posiada przypisanego materiału lub tekstury"
-
-
 msgid "Removed: %d vertices, %d edges, %d faces"
 msgstr "Usunięto: %d wierzchołków, %d krawędzi, %d ścian"
 
@@ -11321,14 +9082,6 @@ msgstr "%d już symetrycznych, %d par odbito"
 
 msgid "Parse error in %s"
 msgstr "Błąd parse w %s"
-
-
-msgid "No 3D View Available"
-msgstr "Brak dostępnego widoku 3D"
-
-
-msgid "Not an object or mesh"
-msgstr "To nie obiekt ani siatka"
 
 
 msgid "Cannot add geometry in edit mode"
@@ -11391,46 +9144,6 @@ msgid "%d %s mirrored"
 msgstr "%d %s odbitych"
 
 
-msgid "Object has a width or height of zero"
-msgstr "Obiekt ma zerową wysokość lub szerokość"
-
-
-msgid "Failed to create height field"
-msgstr "Budowanie pola wysokości nie powiodło się"
-
-
-msgid "Failed to create compact height field"
-msgstr "Budowanie kompaktowego pola wysokości nie powiodło się"
-
-
-msgid "Failed to erode walkable area"
-msgstr "Budowanie obszaru wyżłobienia nie powiodło się"
-
-
-msgid "Failed to build distance field"
-msgstr "Budowanie pola dystansu nie powiodło się"
-
-
-msgid "Failed to build contours"
-msgstr "Budowanie konturów nie powiodło się"
-
-
-msgid "Failed to build poly mesh"
-msgstr "Budowanie siatki poly nie powiodło się"
-
-
-msgid "Failed to build poly mesh detail"
-msgstr "Budowanie szczegółów siatki poly nie powiodło się"
-
-
-msgid "No mesh objects found"
-msgstr "Nie odnaleziono obiektów siatka"
-
-
-msgid "Active face has no index set"
-msgstr "Aktywny obiekt nie ma ustawionego indeksu"
-
-
 msgid "Cannot join while in edit mode"
 msgstr "Nie można złączyć w trybie edycji"
 
@@ -11473,17 +9186,12 @@ msgid "Field"
 msgstr "Pole"
 
 
-msgctxt "Lamp"
-msgid "Lamp"
-msgstr "Lampa"
-
-
-msgid "Property 'layer' has no values set"
-msgstr "Właściwość 'warstwa' nie ma ustawionych wartości"
-
-
 msgid "Cannot create editmode armature"
 msgstr "Nie można utworzyć szkieletu editmode"
+
+
+msgid "Not implemented"
+msgstr "Nie wprowadzone"
 
 
 msgid "Object not found"
@@ -11528,26 +9236,6 @@ msgstr "Wypalanie na nieobsługiwany typ obrazu"
 
 msgid "No objects found to bake from"
 msgstr "Nie odnaleziono obiektu, z którego można wypalić"
-
-
-msgid "No active object"
-msgstr "Brak aktywnego obiektu"
-
-
-msgid "No world set up"
-msgstr "Brak ustawionego świata"
-
-
-msgid "No objects or images found to bake to"
-msgstr "Nie odnaleziono obiektów lub obrazów, na które można wypalić"
-
-
-msgid "Circular reference in texture stack"
-msgstr "Zależność cykliczna w stosie tekstur"
-
-
-msgid "No valid images found to bake to"
-msgstr "Nie odnaleziono prawidłowych obrazów na które można wypalić"
 
 
 msgid "No valid selected objects"
@@ -11678,10 +9366,6 @@ msgid "No active pose bone to add a constraint to"
 msgstr "Brak aktywnej kości pozy do której można dodać ogranicznik"
 
 
-msgid "Rigid Body Joint constraint can only be added to objects"
-msgstr "Ogranicznik Przegub Bryły Sztywnej może być dodany wyłącznie do obiektów"
-
-
 msgid "IK constraint can only be added to bones"
 msgstr "Ogranicznik IK może być dodany tylko do kości"
 
@@ -11726,20 +9410,32 @@ msgid "Can't edit linked mesh or curve data"
 msgstr "Nie można edytować powiązanej siatki lub krzywej"
 
 
-msgid "Unable to execute '%s', error changing modes"
-msgstr "Nie udało się wykonać '%s', błąd zmiany trybu"
+msgid "Only one modifier of this type is allowed"
+msgstr "Tylko jeden modyfikator tego typu jest dozwolony"
 
 
-msgid "Skipped some groups because of cycle detected"
-msgstr "Pominięto niektóre grupy z powodu wykrytych zależności cyklicznych"
+msgid "Modifier is disabled, skipping apply"
+msgstr "Modyfikator jest wyłączony, przerywam aplikację"
 
 
-msgid "Active object contains no groups"
-msgstr "Aktywny obiekt nie zawiera grup"
+msgid "Cannot apply modifier for this object type"
+msgstr "Nie można zaaplikować modyfikatora na obiekcie tego rodzaju"
 
 
-msgid "Could not add the group because of dependency cycle detected"
-msgstr "Nie udało się dodać grupy z powodu wykrycia zależności cyklicznych"
+msgid "Modifiers cannot be applied to multi-user data"
+msgstr "Modyfikatory nie mogą być zaaplikowane na danych z wieloma użytkownikami"
+
+
+msgid "Applied modifier was not first, result may not be as expected"
+msgstr "Zaaplikowany modyfikator nie był pierwszy, efekt może być inny od spodziewanego"
+
+
+msgid "Modifiers cannot be added to object '%s'"
+msgstr "Nie można dodać modyfikatora do obiektu '%s'"
+
+
+msgid "Modifier '%s' not in object '%s'"
+msgstr "Brak modyfikatora '%s' w obiekcie '%s'"
 
 
 msgid "Requires selected vertices or active vertex group"
@@ -11762,8 +9458,8 @@ msgid "Could not find hook modifier"
 msgstr "Nie udało się odnaleśź modyfikatora hak"
 
 
-msgid "Only one modifier of this type is allowed"
-msgstr "Tylko jeden modyfikator tego typu jest dozwolony"
+msgid "Unable to execute '%s', error changing modes"
+msgstr "Nie udało się wykonać '%s', błąd zmiany trybu"
 
 
 msgid "Cannot move above a modifier requiring original data"
@@ -11774,20 +9470,12 @@ msgid "Cannot move beyond a non-deforming modifier"
 msgstr "Nie można przenieść poza niedeformujący modyfikator"
 
 
-msgid "Modifier is disabled, skipping apply"
-msgstr "Modyfikator jest wyłączony, przerywam aplikację"
-
-
 msgid "Only deforming modifiers can be applied to shapes"
 msgstr "Tylko modyfikatory zniekształcające mogą być zaaplikowane na kształtach"
 
 
 msgid "Modifier is disabled or returned error, skipping apply"
 msgstr "Modyfikator jest wyłączony lub zwrócił błąd, przerywam aplikację"
-
-
-msgid "Cannot apply modifier for this object type"
-msgstr "Nie można zaaplikować modyfikatora na obiekcie tego rodzaju"
 
 
 msgid "Modifier cannot be applied to a mesh with shape keys"
@@ -11802,10 +9490,6 @@ msgid "Modifier returned error, skipping apply"
 msgstr "Modyfikator zwrócił błąd, aplikacja przerwana"
 
 
-msgid "Cannot apply constructive modifiers on curve"
-msgstr "Nie można zaaplikować modyfikatora strukturalnego na krzywej"
-
-
 msgid "Applied modifier only changed CV points, not tessellated/bevel vertices"
 msgstr "Zaaplikowany modyfikator zmienił tylko punkty CV, nie teselowane/skosy wierzchołki"
 
@@ -11814,16 +9498,8 @@ msgid "Modifiers cannot be applied in edit mode"
 msgstr "Modyfikatory nie mogą być zaaplikowane w trybie edycji"
 
 
-msgid "Modifiers cannot be applied to multi-user data"
-msgstr "Modyfikatory nie mogą być zaaplikowane na danych z wieloma użytkownikami"
-
-
 msgid "Constructive modifier cannot be applied to multi-res data in sculpt mode"
 msgstr "Modyfikator strukturalny nie może być zaaplikowany na danych multi-res w trybie rzeźbienia"
-
-
-msgid "Applied modifier was not first, result may not be as expected"
-msgstr "Zaaplikowany modyfikator nie był pierwszy, efekt może być inny od spodziewanego"
 
 
 msgid "Reshape can work only with higher levels of subdivisions"
@@ -11836,14 +9512,6 @@ msgstr "Wymagany drugi zaznaczony obiekt siatka, z którego można kopiować ksz
 
 msgid "Objects do not have the same number of vertices"
 msgstr "Obiekty nie posiadają identycznej ilości wierzchołków"
-
-
-msgid "Modifiers cannot be added to object '%s'"
-msgstr "Nie można dodać modyfikatora do obiektu '%s'"
-
-
-msgid "Modifier '%s' not in object '%s'"
-msgstr "Brak modyfikatora '%s' w obiekcie '%s'"
 
 
 msgid "Mesh '%s' has no skin vertex data"
@@ -11868,10 +9536,6 @@ msgstr "Zaznacz 1 lub 3 wierzchołki, z których chcesz utworzyć rodzica"
 
 msgid "Loop in parents"
 msgstr "Pętla w rodzicach"
-
-
-msgid "Can only make proxy for a referenced object or group"
-msgstr "Zastępcę można utworzyć tylko dla obiektu lub grupy referencji"
 
 
 msgid "No object to make proxy for"
@@ -11918,16 +9582,12 @@ msgid "Can't unlink this object data"
 msgstr "Nie mogę odłączyć tych danych obiektu"
 
 
-msgid "Select Group"
-msgstr "Zaznacz Grupę"
+msgid "No active object"
+msgstr "Brak aktywnego obiektu"
 
 
 msgid "Use another Keying Set, as the active one depends on the currently selected objects or cannot find any targets due to unsuitable context"
 msgstr "Użyj innego zestawu klatek kluczowych, ponieważ aktywny zależy od obecnie zaznaczonych obiektów lub nie można odnaleźć żadnych celów z powodu niepasującego kontekstu"
-
-
-msgid "Active object must be a lamp"
-msgstr "Aktywnym obiektem musi być lampa"
 
 
 msgid "Objects have no data to transform"
@@ -12290,10 +9950,6 @@ msgid "St:%d "
 msgstr "St:%d "
 
 
-msgid "La:%d "
-msgstr "La:%d "
-
-
 msgid "| Mem:%.2fM (%.2fM, Peak %.2fM) "
 msgstr "| Pamięć:%.2fM (%.2fM, Szczyt: %.2fM) "
 
@@ -12442,18 +10098,6 @@ msgid "expected a view3d region & editcurve"
 msgstr "Spodziewany region view3d oraz editcurve"
 
 
-msgid "Screencast job stopped"
-msgstr "Wstrzymano zadanie nagrywania ekranu"
-
-
-msgid "Appended frame: %d"
-msgstr "Dołączona klatka: %d"
-
-
-msgid "Saved file: %s"
-msgstr "Zapisany plik: %s"
-
-
 msgid "Image requires 4 color channels to paint: %s"
 msgstr "Obraz wymaga 4 kanałów koloru do malowania: %s"
 
@@ -12542,6 +10186,10 @@ msgid "Object has negative scale, sculpting may be unpredictable"
 msgstr "Obiekt ma skalę ujemną, rzeźbienie może dać nieprzewidywalne skutki"
 
 
+msgid "Unsupported audio format"
+msgstr "Format dźwiękowy nieobsługiwany"
+
+
 msgid "Compiled without sound support"
 msgstr "Skompilowano bez obsługi dźwięku"
 
@@ -12572,10 +10220,6 @@ msgstr "Wklejanie klatek kluczowych nie dostępne dla trybu maski"
 
 msgid "Keyframe pasting is not available for grease pencil or mask mode"
 msgstr "Wklejanie klatek kluczowych nie dostępne dla szkicownika lub w trybie maski"
-
-
-msgid "Not implemented"
-msgstr "Nie wprowadzone"
 
 
 msgid "Not implemented for Masks"
@@ -12850,20 +10494,8 @@ msgid "Prop:"
 msgstr "Prop:"
 
 
-msgid "Update Dependencies"
-msgstr "Odśwież Zależności"
-
-
-msgid "Remove Driver"
-msgstr "Usuń Sterownik"
-
-
-msgid "Expr"
-msgstr "Expr"
-
-
-msgid "ERROR: Python auto-execution disabled"
-msgstr "BŁĄD: Python auto-execution nieaktywne"
+msgid "Driver Value:"
+msgstr "Wartość Sterownika:"
 
 
 msgid "ERROR: Invalid Python expression"
@@ -12898,32 +10530,16 @@ msgid "F-Modifiers can generate curves for those too"
 msgstr "Modyfikatory-F mogą również tworzyć krzywe dla tych"
 
 
-msgid "Driver Value:"
-msgstr "Wartość Sterownika:"
-
-
-msgid "Add Variable"
-msgstr "Dodaj Zmienną"
-
-
 msgid "Delete target variable"
 msgstr "Usuń docelową zmienną"
 
 
+msgid "Update Dependencies"
+msgstr "Odśwież Zależności"
+
+
 msgid "Add Modifier"
 msgstr "Dodaj Modyfikator"
-
-
-msgid "Force updates of dependencies"
-msgstr "Wymuś odświeżenie zależności"
-
-
-msgid "Remove this driver"
-msgstr "Usuń ten sterownik"
-
-
-msgid "Driver variables ensure that all dependencies will be accounted for and that drivers will update correctly"
-msgstr "Zmienne sterownika zapewniają, że wszystkie zależności będą wzięte pod uwagę i że sterowniki prawidłowo się uaktualnią"
 
 
 msgid "View Properties"
@@ -13028,10 +10644,6 @@ msgstr "Otwór %d"
 
 msgid "(%d) Frames"
 msgstr "(%d) Klatek"
-
-
-msgid "Color Depth:"
-msgstr "Głębia koloru"
 
 
 msgid "Hard coded Non-Linear, Gamma:1.7"
@@ -13146,14 +10758,6 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Nie można ustanowić ścieżki absolutnej przy niezapisanym pliku blend"
 
 
-msgid " | Mem:%.2fM"
-msgstr " | Pamięć:%.2fM"
-
-
-msgid " (%.2fM)"
-msgstr " (%.2fM)"
-
-
 msgid "(Key) "
 msgstr "(Klucz) "
 
@@ -13168,115 +10772,6 @@ msgstr "Wierzch:%s%s | Kości:%s%s"
 
 msgid "Verts:%s/%s"
 msgstr "Wierzch:%s/%s"
-
-
-msgid "No Recent Files"
-msgstr "Brak Ostatnich Plików"
-
-
-msgid "Open Recent..."
-msgstr "Otwórz Ostatnie..."
-
-
-msgid "Show Objects"
-msgstr "Pokaż Obiekty"
-
-
-msgid "Hide Objects"
-msgstr "Ukryj Obiekty"
-
-
-msgid "Hide Sensors"
-msgstr "Ukryj Czujniki"
-
-
-msgid "Hide Controllers"
-msgstr "Ukryj Kontrolery"
-
-
-msgid "Hide Actuators"
-msgstr "Ukryj Mechanizmy"
-
-
-msgid "Sensor only available for armatures"
-msgstr "Czujnik dostępny tylko dla szkieletów"
-
-
-msgid "First Modifier:"
-msgstr "Pierwszy Modyfikator:"
-
-
-msgid "Second Modifier:"
-msgstr "Drugi Modyfikator:"
-
-
-msgid "Set controller state index (from 1 to 30)"
-msgstr "Ustaw indeks stanu kontrolera (od 1 do 30)"
-
-
-msgid "Actuator only available for armatures"
-msgstr "Mechanizm dostępny tylko dla szkieletów"
-
-
-msgid "Mode only available for mesh objects"
-msgstr "Tryb dostępny tylko dla obiektów typu siatka"
-
-
-msgid "Dynamic Object Settings:"
-msgstr "Dynamiczne Ustawienia Obiektu"
-
-
-msgid "Choose between true and false, 50% chance each"
-msgstr "Wybierz między prawda i fałsz, 50% szans dla każdego"
-
-
-msgid "Actuator only available for mesh objects"
-msgstr "Mechanizm dostępny tylko dla obiektów typu siatka"
-
-
-msgid "Select a sound from the list or load a new one"
-msgstr "Wybierz dźwięk z listy lub załaduj nowy"
-
-
-msgid "Sel"
-msgstr "Sel"
-
-
-msgid "Act"
-msgstr "Act"
-
-
-msgid "Add Controller"
-msgstr "Dodaj Kontroler"
-
-
-msgid "Add Sensor"
-msgstr "Dodaj Czujnik"
-
-
-msgid "Add Actuator"
-msgstr "Dodaj Mechanizm"
-
-
-msgid "Object name, click to show/hide controllers"
-msgstr "Nazwa Obiektu, kliknij by pokazać/ukryć kontrolery"
-
-
-msgid "Object name, click to show/hide sensors"
-msgstr "Nazwa Obiektu, kliknij by pokazać/ukryć czujniki"
-
-
-msgid "Object name, click to show/hide actuators"
-msgstr "Nazwa Obiektu, kliknij by pokazać/ukryć mechanizmy"
-
-
-msgid "Shape Action"
-msgstr "Akcja Kształtu"
-
-
-msgctxt "WindowManager"
-msgid "Key:"
-msgstr "Key:"
 
 
 msgid "Strip Extents:"
@@ -13399,6 +10894,10 @@ msgid "Bokeh Type:"
 msgstr "Typ Bokeh"
 
 
+msgid "Speed:"
+msgstr "Prędkość:"
+
+
 msgid "Inner Edge:"
 msgstr "Wewnętrzna krawędź"
 
@@ -13425,10 +10924,6 @@ msgstr "Ścieżka bazowa"
 
 msgid "Add Input"
 msgstr "Dodaj Wejście"
-
-
-msgid "Layer:"
-msgstr "Warstwa:"
 
 
 msgid "File Subpath:"
@@ -13519,10 +11014,6 @@ msgid "LMB: drag node link, RMB: cancel"
 msgstr "LPM: ciągnij link, PPM: rezygnuj"
 
 
-msgid "Remove"
-msgstr "Usuń"
-
-
 msgid "Disconnect"
 msgstr "Odłącz"
 
@@ -13543,16 +11034,8 @@ msgid "Disconnect nodes connected to the input"
 msgstr "Odłącz nody przyłączone do tego wejścia"
 
 
-msgid "Restrict viewport visibility (Ctrl - Recursive)"
-msgstr "Ogranicz widoczność w widoku (Ctrl - dołączająco)"
-
-
-msgid "Restrict viewport selection (Ctrl - Recursive)"
-msgstr "Ogranicz zaznaczanie w widoku (Ctrl - dołączająco)"
-
-
-msgid "Restrict rendering (Ctrl - Recursive)"
-msgstr "Ogranicz renderowanie (Ctrl - dołączająco)"
+msgid "Can't edit library linked object"
+msgstr "Nie można edytować obiektu z linkowanej biblioteki"
 
 
 msgid "Restrict/Allow visibility in the 3D View"
@@ -13561,22 +11044,6 @@ msgstr "Ogranicz/Zezwól widoczność w widoku 3D"
 
 msgid "Restrict/Allow selection in the 3D View"
 msgstr "Ogranicz/Zezwól zaznaczanie w widoku 3D"
-
-
-msgid "Restrict/Allow renderability"
-msgstr "Ogranicz/Zezwól renderowalność"
-
-
-msgid "Render this RenderLayer"
-msgstr "Renderuj ten RenderLayer"
-
-
-msgid "Render this Pass"
-msgstr "Renderuj ten Pass"
-
-
-msgid "Exclude this Pass from Combined"
-msgstr "Wyłącz ten pass z Combined"
 
 
 msgid "Restrict/Allow editing of strokes and keyframes in this layer"
@@ -13603,28 +11070,12 @@ msgid "Operation requires an active keying set"
 msgstr "Operacja wymaga aktywnego zestawu klatek kluczowych"
 
 
-msgid "Can't edit library linked object"
-msgstr "Nie można edytować obiektu z linkowanej biblioteki"
-
-
 msgid "Not found: %s"
 msgstr "Nie odnaleziono: %s"
 
 
 msgid "Mixed selection"
 msgstr "Zaznaczenie mieszane"
-
-
-msgid "Index Object"
-msgstr "Indeks Obiekt"
-
-
-msgid "Index Material"
-msgstr "Indeks Materiał"
-
-
-msgid "RenderLayers"
-msgstr "RenderLayers"
 
 
 msgid "Strip None"
@@ -13793,6 +11244,14 @@ msgid "Text not found: %s"
 msgstr "Nie odnaleziono tekstu: %s"
 
 
+msgid "No Recent Files"
+msgstr "Brak Ostatnich Plików"
+
+
+msgid "Open Recent..."
+msgstr "Otwórz Ostatnie..."
+
+
 msgid "Control Point:"
 msgstr "Punkt Kontrolny:"
 
@@ -13921,76 +11380,8 @@ msgid "Vertex Weights"
 msgstr "Wagi Wierzchołków"
 
 
-msgid "Front Ortho"
-msgstr "Przód Orto"
-
-
-msgid "Front Persp"
-msgstr "Przód Persp"
-
-
-msgid "Back Ortho"
-msgstr "Tył Orto"
-
-
-msgid "Back Persp"
-msgstr "Tył Persp"
-
-
-msgid "Top Ortho"
-msgstr "Góra Orto"
-
-
-msgid "Top Persp"
-msgstr "Góra Persp"
-
-
-msgid "Bottom Ortho"
-msgstr "Dół Orto"
-
-
-msgid "Bottom Persp"
-msgstr "Dół Persp"
-
-
-msgid "Right Ortho"
-msgstr "Prawa Orto"
-
-
-msgid "Right Persp"
-msgstr "Prawa Persp"
-
-
-msgid "Left Ortho"
-msgstr "Lewa Orto"
-
-
-msgid "Left Persp"
-msgstr "Lewa Persp"
-
-
-msgid "Camera Persp"
-msgstr "Kamera Persp"
-
-
-msgid "Camera Ortho"
-msgstr "Kamera Orto"
-
-
-msgid "Camera Pano"
-msgstr "Kamera Pano"
-
-
 msgid "Object as Camera"
 msgstr "Obiekt jako kamera"
-
-
-msgid "User Ortho"
-msgstr "Użytkownika Orto"
-
-
-msgid "User Persp"
-msgstr "Użytkownika Persp"
 
 
 msgid "%s (Local)"
@@ -14045,20 +11436,8 @@ msgid "No buffer to paste from"
 msgstr "Brak bufora, z którego można wkleić"
 
 
-msgid "Tool Shelf"
-msgstr "Narzędzia podręczne"
-
-
 msgid "No active camera"
 msgstr "Brak aktywnej kamery"
-
-
-msgid "No more than 8 local views"
-msgstr "Nie więcej niż 8 widoków lokalnych"
-
-
-msgid "Game engine is disabled in this build"
-msgstr "Silnik gry wyłączony w tej wersji (build)"
 
 
 msgid "Cannot navigate a camera from an external library"
@@ -14630,6 +12009,10 @@ msgid "Armature '%s' does not contain bone '%s'"
 msgstr "Szkielet '%s' nie posiada kości '%s'"
 
 
+msgid "Background image cannot be removed"
+msgstr "Obraz w tle nie może zostać usunięty"
+
+
 msgid "Element not found in element collection or last element"
 msgstr "Element nie odnaleziony w kolekcji elementów lub jest ostatni"
 
@@ -14728,14 +12111,6 @@ msgstr "Warstwa nie odnaleziona w danych szkicownika"
 
 msgid "Frame already exists on this frame number %d"
 msgstr "Klatka już znajduje się na tym numerze klatki %d"
-
-
-msgid "Object '%s' already in group '%s'"
-msgstr "Obiekt '%s' już znajduje się w grupie '%s'"
-
-
-msgid "Object '%s' not in group '%s'"
-msgstr "Obiekt '%s' nie znajduje się w grupie '%s'"
 
 
 msgid "Could not acquire buffer from image"
@@ -14847,22 +12222,6 @@ msgid "Index %d is invalid"
 msgstr "Indeks %d jest nieprawidłowy"
 
 
-msgid "Cannot add tessface colors in edit mode"
-msgstr "Dodanie tessface colors niemożliwe w trybie edycji"
-
-
-msgid "Cannot add tessface colors when MPoly's exist"
-msgstr "Dodanie tessface colors niemożliwe gdy istnieją MPoly's"
-
-
-msgid "Cannot add tessface uv's in edit mode"
-msgstr "Dodanie tessface uv's niemożliwe w trybie edycji"
-
-
-msgid "Cannot add tessface uv's when MPoly's exist"
-msgstr "Dodanie tessface uv's niemożliwe gdy istnieją MPoly's"
-
-
 msgid "Vertex color '%s' not found"
 msgstr "Nie odnaleziono koloru werteksów '%s'"
 
@@ -14947,10 +12306,6 @@ msgid "Registering node socket class: '%s' is too long, maximum length is %d"
 msgstr "Rejestracja node socket class: '%s' jest za długie, maksymalna długość: %d"
 
 
-msgid "Cannot set dupli-group as object belongs in group being instanced, thus causing a cycle"
-msgstr "Nie można ustanowić dupli-group ponieważ obiekt należy do grupy instancjonowanej, powoduje zależność cykliczną"
-
-
 msgid "VertexGroup.add(): cannot be called while object is in edit mode"
 msgstr "VertexGroup.add(): nie można wywołać gdy obiekt jest w trybie edycji siatki"
 
@@ -14969,14 +12324,6 @@ msgstr "Nie odnaleziono ogranicznika '%s' w obiekcie '%s'"
 
 msgid "DeformGroup '%s' not in object '%s'"
 msgstr "DeformGroup '%s' nie istnieje w obiekcie '%s'"
-
-
-msgid "Object does not have duplis"
-msgstr "Obiekt nie posiada duplis"
-
-
-msgid "Object.dupli_list has not been freed"
-msgstr "Object.dupli_list nie zostało uwolnione"
 
 
 msgid "Object should be of mesh type"
@@ -15060,22 +12407,6 @@ msgid "Style module could not be removed"
 msgstr "Moduł Style nie mógł być usunięty"
 
 
-msgid "Object '%s' is already in scene '%s'"
-msgstr "Obiekt '%s' już znajduje się w scenie '%s'"
-
-
-msgid "Object '%s' is not in this scene '%s'"
-msgstr "Obiekt '%s' nie znajduje się w tej scenie '%s'"
-
-
-msgid "Object '%s' must be in object mode to unlink"
-msgstr "Obiekt '%s' musi być w trybie obiektowym aby mógł być odpięty"
-
-
-msgid "Render layer '%s' could not be removed from scene '%s'"
-msgstr "Render layer '%s' nie mógł być usunięty ze sceny '%s'"
-
-
 msgid "Timeline marker '%s' not found in scene '%s'"
 msgstr "Nie odnaleziono markera osi czasu '%s' w scenie '%s'"
 
@@ -15146,10 +12477,6 @@ msgstr "Brak sekwencji '%s' w scenie '%s'"
 
 msgid "Sound not packed"
 msgstr "Dźwięk nie spakowany"
-
-
-msgid "Background image cannot be removed"
-msgstr "Obraz w tle nie może zostać usunięty"
 
 
 msgid "MovieTracking '%s' cannot be removed"
@@ -15420,14 +12747,6 @@ msgid "View Distance"
 msgstr "Dystans widoku"
 
 
-msgid "Orco"
-msgstr "Orco"
-
-
-msgid "Vertex Alpha"
-msgstr "Alfa wierzchołka"
-
-
 msgid "True Normal"
 msgstr "Prawdziwa normalna"
 
@@ -15460,12 +12779,8 @@ msgid "Tangent Normal"
 msgstr "Styczna normalna"
 
 
-msgid "Light Vector"
-msgstr "Wektor światła"
-
-
-msgid "Visibility Factor"
-msgstr "Współczynnik widoczności"
+msgid "Facing"
+msgstr "Ukierunkowanie (ang.Facing)"
 
 
 msgid "Is Camera Ray"
@@ -15502,18 +12817,6 @@ msgstr "Głębia promienia"
 
 msgid "Transparent Depth"
 msgstr "Głębia przezroczystości"
-
-
-msgid "Spec"
-msgstr "Spec"
-
-
-msgid "DiffuseIntensity"
-msgstr "Intensywność diffuse"
-
-
-msgid "SpecTra"
-msgstr "SpecTra"
 
 
 msgid "Color1"
@@ -15616,30 +12919,6 @@ msgid "Unknown py-exception, could not convert"
 msgstr "Nieznana py-exception, przetworzenie nie powiodło się"
 
 
-msgid "Creating Shadowbuffers"
-msgstr "Tworzenie buforów cieni"
-
-
-msgid "Calculating previous frame vectors"
-msgstr "Przeliczanie wektorów poprzedniej klatki"
-
-
-msgid "Calculating next frame vectors"
-msgstr "Przeliczanie wektorów następnej klatki"
-
-
-msgid "Creating Environment maps"
-msgstr "Tworzenie map środowiska"
-
-
-msgid "Blender Game"
-msgstr "Blender Gra"
-
-
-msgid "Occlusion preprocessing"
-msgstr "Wstępne przetwarzanie okluzji"
-
-
 msgid "Fra:%d Mem:%.2fM (%.2fM, Peak %.2fM) "
 msgstr "Fra:%d Mem:%.2fM (%.2fM, Peak %.2fM) "
 
@@ -15650,10 +12929,6 @@ msgstr "Sce: %s Ve:%d Fa:%d Ha:%d La:%d"
 
 msgid "Sce: %s Ve:%d Fa:%d La:%d"
 msgstr "Sce: %s Ve:%d Fa:%d La:%d"
-
-
-msgid "%s, Part %d-%d"
-msgstr "%s, Część %d-%d"
 
 
 msgid "Image too small"
@@ -15672,10 +12947,6 @@ msgid "Cannot save render buffers, check the temp default path"
 msgstr "Zapis bufora renderowania nie powiodło się, sprawdź domyślną ścieżkę temp"
 
 
-msgid "Full sample does not support edge enhance"
-msgstr "Pełne próbkowanie nie obsługuje wzmacniania brzegów"
-
-
 msgid "No node tree in scene"
 msgstr "Brak node tree w scenie"
 
@@ -15688,72 +12959,12 @@ msgid "Full sample AA not supported without 3D rendering"
 msgstr "Pełne próbkowanie AA nie obsługiwane bez renderu 3D"
 
 
-msgid "No ortho render possible for panorama"
-msgstr "Render w trybie ortograficznym niemożliwy dla panoramy"
-
-
-msgid "Panoramic camera not supported in Freestyle"
-msgstr "Freestyle nie obsługuje kamery panoramicznej"
-
-
-msgid "Fields not supported in Freestyle"
-msgstr "Freestyle nie obsługuje półpól"
-
-
 msgid "All render layers are disabled"
 msgstr "Wszystkie Render Layers nieaktywne"
 
 
 msgid "No frames rendered, skipped to not overwrite"
 msgstr "Brak wyrenderowanych klatek, przełączono na nie nadpisuj"
-
-
-msgid "There is no generated environment map available to save"
-msgstr "Brak wygenerowanej mapy środowiska dostępnej do zapisu"
-
-
-msgid "Invalid environment map type"
-msgstr "Nieprawidłowy typ mapy środowiska"
-
-
-msgid "Error writing environment map"
-msgstr "Błąd przy zapisie mapy środowiska"
-
-
-msgid "Caching Point Densities"
-msgstr "Buforowanie Gęstości Punktów"
-
-
-msgid "Raytree.. building"
-msgstr "Raytree... budowanie"
-
-
-msgid "Raytree.. preparing"
-msgstr "Raytree... przygotowanie"
-
-
-msgid "Raytree building canceled"
-msgstr "Przerwano budowanie raytree"
-
-
-msgid "Raytree finished"
-msgstr "Finalizacja raytree"
-
-
-msgid "SSS preprocessing"
-msgstr "Wstępne przetwarzanie SSS"
-
-
-msgid "Precaching volume: %d%%"
-msgstr "Buforowanie objętości %d%%"
-
-
-msgid "Volume preprocessing"
-msgstr "Wstępne przetwarzanie objętości"
-
-
-msgid "Loading voxel datasets"
-msgstr "Ładowanie zbioru danych woksela"
 
 
 msgid "Paste name"
@@ -15828,10 +13039,6 @@ msgid "Linking or appending from a very old .blend file format (%d.%d), no anima
 msgstr "Powiązanie lub dołączenie z bardzo starego formatu .blend (%d.%d), dane o animacji nie zostaną przystosowane! Spróbuj zapisać źródłowy plik zawierający bibliotekę w aktualnym formacie pliku .blend"
 
 
-msgid "No valid 3D View found, game auto start is not possible"
-msgstr "Nie odnaleziono prawidłowego widoku 3D, automatyczne uruchomienie gry nie powiodło się"
-
-
 msgid "ON"
 msgstr "WŁ"
 
@@ -15840,40 +13047,8 @@ msgid "OFF"
 msgstr "WYŁ"
 
 
-msgid "Support an Open Animation Movie"
-msgstr "Wsparcie dla Open Animation Movie"
-
-
-msgid "Donations"
-msgstr "Donations"
-
-
-msgid "Credits"
-msgstr "Credits"
-
-
-msgid "Release Log"
-msgstr "Opis wersji"
-
-
-msgid "Blender Website"
-msgstr "Strona domowa Blendera"
-
-
-msgid "Python API Reference"
-msgstr "Odniesienie do Python API"
-
-
 msgid "unsupported format"
 msgstr "Nieobsługiwany format"
-
-
-msgid "(undocumented operator)"
-msgstr "(operator bez dokumentacji)"
-
-
-msgid "Dummy Name"
-msgstr "Pusta nazwa"
 
 
 msgid "Toggle System Console"
@@ -15953,10 +13128,6 @@ msgid "Property from path '%s' has length %d instead of %d"
 msgstr "Właściwość ze ścieżki '%s' ma długość %d zamiast %d"
 
 
-msgid "Blender User Preferences"
-msgstr "Preferencje użytkownika"
-
-
 msgid "Blender File View"
 msgstr "Widok plików"
 
@@ -15987,10 +13158,6 @@ msgstr "Dodaj Siatkę"
 
 msgid "Development"
 msgstr "Rozwój"
-
-
-msgid "Game Engine"
-msgstr "Silnik gry"
 
 
 msgid "Import-Export"

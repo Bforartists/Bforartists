@@ -364,7 +364,7 @@ def write_pov(filename, scene=None, info_callback=None):
     global_matrix = mathutils.Matrix.Rotation(-pi / 2.0, 4, 'X')
     comments = scene.pov.comments_enable and not scene.pov.tempfiles_enable
     linebreaksinlists = scene.pov.list_lf_enable and not scene.pov.tempfiles_enable
-    feature_set = bpy.context.user_preferences.addons[__package__].preferences.branch_feature_set_povray
+    feature_set = bpy.context.preferences.addons[__package__].preferences.branch_feature_set_povray
     using_uberpov = (feature_set=='uberpov')
     pov_binary = PovrayRender._locate_binary()
 
@@ -3666,7 +3666,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
 
 def write_pov_ini(scene, filename_ini, filename_log, filename_pov, filename_image):
-    feature_set = bpy.context.user_preferences.addons[__package__].preferences.branch_feature_set_povray
+    feature_set = bpy.context.preferences.addons[__package__].preferences.branch_feature_set_povray
     using_uberpov = (feature_set=='uberpov')
     #scene = bpy.data.scenes[0]
     render = scene.render
@@ -3745,7 +3745,7 @@ class PovrayRender(bpy.types.RenderEngine):
 
     @staticmethod
     def _locate_binary():
-        addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
+        addon_prefs = bpy.context.preferences.addons[__package__].preferences
 
         # Use the system preference if its set.
         pov_binary = addon_prefs.filepath_povray

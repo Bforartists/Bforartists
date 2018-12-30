@@ -16,7 +16,7 @@ class BasePrimitiveDXFExporter(object):
         returns a list of [x,y,z]
         """
         #print 'deb:projected_co()  verts=', verts #---------
-        temp_verts = [matrix*mathutils.Vector(v) for v in verts]
+        temp_verts = [matrix @ mathutils.Vector(v) for v in verts]
         #print 'deb:projected_co()  temp_verts=', temp_verts #---------
 
     #    if GUI_A['Z_force_on'].val: locZ = GUI_A['Z_elev'].val
@@ -58,7 +58,7 @@ class BasePrimitiveDXFExporter(object):
             vec_normal = f.no.copy()
             #print 'deb: vec_normal=', vec_normal #------------------
             # must be transferred to camera/view-CS
-            vec_normal *= mx_n
+            vec_normal @= mx_n
             #vec_normal *= mb.rotationPart()
             #print 'deb:2vec_normal=', vec_normal #------------------
             #vec_normal *= mw0.rotationPart()
@@ -72,7 +72,7 @@ class BasePrimitiveDXFExporter(object):
                     frontFace = True
             else:
                 v = f.verts[0]
-                vert = mathutils.Vector(v.co) * mx
+                vert = mathutils.Vector(v.co) @ mx
                 if mathutils.DotVecs(vert, vec_normal) < 0.00001:
                     frontFace = True
 

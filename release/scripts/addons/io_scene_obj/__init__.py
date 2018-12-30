@@ -138,7 +138,7 @@ class ImportOBJ(bpy.types.Operator, ImportHelper):
                                         ).to_4x4()
         keywords["global_matrix"] = global_matrix
 
-        if bpy.data.is_saved and context.user_preferences.filepaths.use_relative_paths:
+        if bpy.data.is_saved and context.preferences.filepaths.use_relative_paths:
             import os
             keywords["relpath"] = os.path.dirname(bpy.data.filepath)
 

@@ -21,7 +21,7 @@ bl_info = {
     "name": "Add Camera Rigs",
     "author": "Wayne Dixon, Kris Wittig",
     "version": (1, 1, 1),
-    "blender": (2, 77, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Camera > Dolly or Crane Rig",
     "description": "Adds a Camera Rig with UI",
     "warning": "Enable Auto Run Python Scripts in User Preferences > File",
@@ -47,20 +47,21 @@ def create_widget(self, name):
     obj_name = "WDGT_" + name
     scene = bpy.context.scene
 
-    # Check if it already exists
-    if obj_name in scene.objects:
-        return None
+    mesh = bpy.data.meshes.new(obj_name)
+    obj = bpy.data.objects.new(obj_name, mesh)
+
+    # create a new collection for the wigets
+    collection_name = "camera_widgets"
+    c = bpy.data.collections.get(collection_name)
+    if c is not None:
+        c.objects.link(obj)
     else:
-        mesh = bpy.data.meshes.new(obj_name)
-        obj = bpy.data.objects.new(obj_name, mesh)
-        scene.objects.link(obj)
+        c = bpy.data.collections.new(collection_name)
+        # link the collection
+        scene.collection.children.link(c)
+        c.objects.link(obj)
 
-        # this will put the Widget objects out of the way on layer 19
-        WDGT_layers = (False, False, False, False, False, False, False, False, False, True,
-                       False, False, False, False, False, False, False, False, False, False)
-        obj.layers = WDGT_layers
-
-        return obj
+    return obj
 
 
 def create_root_widget(self, name):
@@ -320,6 +321,7 @@ class MakeCameraActive(Operator):
 # Define function to add marker to timeline and bind camera
 # =========================================================================
 def markerBind():
+    view_layer = bpy.context.view_layer
     ob = bpy.context.active_object  # rig object
     active_cam = ob.children[0]     # camera object
 
@@ -329,11 +331,11 @@ def markerBind():
     bpy.ops.marker.add()
     bpy.ops.marker.rename(name="cam_" + str(bpy.context.scene.frame_current))
     # select rig camera
-    bpy.context.scene.objects.active = active_cam
+    view_layer.objects.active = active_cam
     # bind marker to selected camera
     bpy.ops.marker.camera_bind()
     # switch selected object back to the rig
-    bpy.context.scene.objects.active = ob
+    view_layer.objects.active = ob
     # switch back to 3d view
     bpy.context.area.type = 'VIEW_3D'
 
@@ -358,6 +360,7 @@ class AddMarkerBind(Operator):
 # Define the function to add an Empty as DOF object
 # =========================================================================
 def add_DOF_Empty():
+    view_layer = bpy.context.view_layer
     smode = bpy.context.mode
     rig = bpy.context.active_object
     bone = rig.data.bones['AIM_child']
@@ -383,9 +386,9 @@ def add_DOF_Empty():
     # make this new empty the dof_object
     cam.dof_object = obj
     # reselect the rig
-    bpy.context.scene.objects.active = rig
-    obj.select = False
-    rig.select = True
+    view_layer.objects.active = rig
+    obj.select_set(False)
+    rig.select_set(True)
 
     bpy.ops.object.mode_set(mode=smode, toggle=False)
 
@@ -409,6 +412,8 @@ class AddDofEmpty(Operator):
 # Define the function to build the Dolly Rig
 # =========================================================================
 def build_dolly_rig(context):
+    view_layer = bpy.context.view_layer
+
     # Define some useful variables:
     boneLayer = (False, True, False, False, False, False, False, False,
                  False, False, False, False, False, False, False, False,
@@ -498,7 +503,7 @@ def build_dolly_rig(context):
     prop["soft_max"] = prop["max"] = 1.0
 
     # Add Driver to Lock/Unlock Camera from Aim Target
-    rig = bpy.context.scene.objects.active
+    rig = view_layer.objects.active
     pose_bone = bpy.data.objects[rig.name].pose.bones['CTRL']
 
     constraint = pose_bone.constraints["Track To"]
@@ -558,9 +563,9 @@ def build_dolly_rig(context):
     bpy.context.object.hide_select = False
 
     # make the rig the active object before finishing
-    bpy.context.scene.objects.active = rig
-    cam.select = False
-    rig.select = True
+    view_layer.objects.active = rig
+    cam.select_set(False)
+    rig.select_set(True)
 
     return rig
 
@@ -576,6 +581,7 @@ def build_crane_rig(context):
                  False, False, False, False, False, False, False, False)
 
     # Add the new armature object:
+    view_layer = bpy.context.view_layer
     bpy.ops.object.armature_add()
     rig = context.active_object
 
@@ -683,7 +689,7 @@ def build_crane_rig(context):
     prop["soft_max"] = prop["max"] = 1.0
 
     # Add Driver to Lock/Unlock Camera from Aim Target
-    rig = bpy.context.scene.objects.active
+    rig = view_layer.objects.active
     pose_bone = bpy.data.objects[rig.name].pose.bones['CTRL']
 
     constraint = pose_bone.constraints["Track To"]
@@ -743,9 +749,9 @@ def build_crane_rig(context):
     bpy.context.object.hide_select = False
 
     # make the rig the active object before finishing
-    bpy.context.scene.objects.active = rig
-    cam.select = False
-    rig.select = True
+    view_layer.objects.active = rig
+    cam.select_set(False)
+    rig.select_set(True)
 
     return rig
 
