@@ -2518,7 +2518,7 @@ class archipack_stair(ArchipackObject, Manipulable, PropertyGroup):
 
         self.setup_manipulators()
 
-        if self.presets is not 'STAIR_O':
+        if self.presets != 'STAIR_O':
             for i, part in enumerate(self.parts):
                 if i >= self.n_parts:
                     break

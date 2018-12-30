@@ -57,7 +57,7 @@ def exportText(ob, mx, mw, **common):
             [point] = projected_co([point1], mx)
             if PERSPECTIVE:
                 clipStart = 10.0
-                coef = -clipStart / (point1*mx)[2]
+                coef = -clipStart / (point1 @ mx)[2]
                 textHeight *= coef
                 #print 'deb: coef=', coef #--------------
 

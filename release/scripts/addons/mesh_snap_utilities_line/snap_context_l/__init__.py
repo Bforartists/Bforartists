@@ -33,6 +33,7 @@ class _Internal:
         gpu_Indices_restore_state,
         gpu_Indices_use_clip_planes,
         gpu_Indices_set_ProjectionMatrix,
+        gpu_Indices_mesh_cache_clear,
         )
 
     from .utils_projection import (
@@ -293,6 +294,10 @@ class SnapContext():
             del self.snap_objects
 
     ## PUBLIC ##
+
+    def clear_snap_objects(self):
+        self.snap_objects.clear()
+        _Internal.gpu_Indices_mesh_cache_clear()
 
     def update_all(self):
         self.drawn_count = 0

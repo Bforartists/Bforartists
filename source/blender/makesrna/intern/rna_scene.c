@@ -118,7 +118,7 @@ const EnumPropertyItem rna_enum_uv_sculpt_tool_items[] = {
 
 const EnumPropertyItem rna_enum_snap_target_items[] = {
 	{SCE_SNAP_TARGET_CLOSEST, "CLOSEST", 0, "Closest", "Snap closest point onto target"},
-	{SCE_SNAP_TARGET_CENTER, "CENTER", 0, "Center", "Snap transormation center onto target"},
+	{SCE_SNAP_TARGET_CENTER, "CENTER", 0, "Center", "Snap transformation center onto target"},
 	{SCE_SNAP_TARGET_MEDIAN, "MEDIAN", 0, "Median", "Snap median onto target"},
 	{SCE_SNAP_TARGET_ACTIVE, "ACTIVE", 0, "Active", "Snap active onto target"},
 	{0, NULL, 0, NULL, NULL}
@@ -1422,6 +1422,13 @@ static void rna_SceneRenderView_name_set(PointerRNA *ptr, const char *value)
 	SceneRenderView *rv = (SceneRenderView *)ptr->data;
 	BLI_strncpy_utf8(rv->name, value, sizeof(rv->name));
 	BLI_uniquename(&scene->r.views, rv, DATA_("RenderView"), '.', offsetof(SceneRenderView, name), sizeof(rv->name));
+}
+
+void rna_ViewLayer_material_override_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
+{
+	Scene *scene = (Scene *)ptr->id.data;
+	rna_Scene_glsl_update(bmain, scene, ptr);
+	DEG_relations_tag_update(bmain);
 }
 
 void rna_ViewLayer_pass_update(Main *bmain, Scene *activescene, PointerRNA *ptr)
@@ -3214,7 +3221,7 @@ static void rna_def_unit_settings(BlenderRNA *brna)
 	RNA_def_property_update(prop, NC_WINDOW, NULL);
 }
 
-void rna_def_view_layer_common(StructRNA *srna, int scene)
+void rna_def_view_layer_common(StructRNA *srna, const bool scene)
 {
 	PropertyRNA *prop;
 
@@ -3227,6 +3234,19 @@ void rna_def_view_layer_common(StructRNA *srna, int scene)
 	else RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
 	if (scene) {
+		prop = RNA_def_property(srna, "material_override", PROP_POINTER, PROP_NONE);
+		RNA_def_property_pointer_sdna(prop, NULL, "mat_override");
+		RNA_def_property_struct_type(prop, "Material");
+		RNA_def_property_flag(prop, PROP_EDITABLE);
+		RNA_def_property_ui_text(prop, "Material Override",
+		                         "Material to override all other materials in this view layer");
+		RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_material_override_update");
+
+		prop = RNA_def_property(srna, "samples", PROP_INT, PROP_UNSIGNED);
+		RNA_def_property_ui_text(prop, "Samples", "Override number of render samples for this view layer, "
+		                                          "0 will use the scene setting");
+		RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
+
 		prop = RNA_def_property(srna, "pass_alpha_threshold", PROP_FLOAT, PROP_FACTOR);
 		RNA_def_property_ui_text(prop, "Alpha Threshold",
 		                         "Z, Index, normal, UV and vector passes are only affected by surfaces with "
@@ -3345,12 +3365,6 @@ void rna_def_view_layer_common(StructRNA *srna, int scene)
 	if (scene) RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
 	else RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
-	prop = RNA_def_property(srna, "use_pass_specular", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SPEC);
-	RNA_def_property_ui_text(prop, "Specular", "Deliver specular pass");
-	if (scene) RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-	else RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
 	prop = RNA_def_property(srna, "use_pass_shadow", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_SHADOW);
 	RNA_def_property_ui_text(prop, "Shadow", "Deliver shadow pass");
@@ -3372,12 +3386,6 @@ void rna_def_view_layer_common(StructRNA *srna, int scene)
 	prop = RNA_def_property(srna, "use_pass_environment", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_ENVIRONMENT);
 	RNA_def_property_ui_text(prop, "Environment", "Deliver environment lighting pass");
-	if (scene) RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
-	else RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-
-	prop = RNA_def_property(srna, "use_pass_indirect", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "passflag", SCE_PASS_INDIRECT);
-	RNA_def_property_ui_text(prop, "Indirect", "Deliver indirect lighting pass");
 	if (scene) RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_ViewLayer_pass_update");
 	else RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
@@ -6238,7 +6246,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", SCE_EEVEE_OVERSCAN);
 	RNA_def_property_boolean_default(prop, 0);
 	RNA_def_property_ui_text(prop, "Overscan", "Internally render past the image border to avoid "
-	                                           "screen-space effects disapearing");
+	                                           "screen-space effects disappearing");
 	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 
 	prop = RNA_def_property(srna, "overscan_size", PROP_FLOAT, PROP_PERCENTAGE);

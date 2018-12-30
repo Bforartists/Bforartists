@@ -169,7 +169,7 @@ def Get_Phillips_Bit_Height(Bit_Dia):
 # Returns a list of verts rotated by the given matrix. Used by SpinDup
 def Rot_Mesh(verts, matrix):
     from mathutils import Vector
-    return [(matrix * Vector(v))[:] for v in verts]
+    return [(matrix @ Vector(v))[:] for v in verts]
 
 
 # Returns a list of faces that has there index incremented by offset

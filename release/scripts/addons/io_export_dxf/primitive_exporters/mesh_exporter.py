@@ -64,8 +64,9 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
         allpoints = self.toGlobalOrigin(allpoints)
         faces=[]
         edges=[]
-        me.update(calc_tessface=True)
-        me_faces = me.tessfaces
+        
+        me.calc_loop_triangles() #me.update(calc_tessface=True)
+        me_faces = me.loop_triangles #tessfaces
         #print('deb: allpoints=\n', allpoints) #---------
         #print('deb: me_faces=\n', me_faces) #---------
         if me_faces and self.PROJECTION and self.HIDDEN_LINES:
@@ -121,7 +122,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
                     faces = [[v+1 for v in f.vertices] for f in faces]
                 else:
                     # for back-Faces-mode remove face-free vertices
-                    map=verts_state= [0]*len(allpoints)
+                    map=verts_state= [0] * len(allpoints)
                     for f in faces:
                         for v in f:
                             verts_state[v]=1
@@ -130,8 +131,8 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
                         for used_i,used in enumerate(verts_state):
                             if used:
                                 newverts.append(allpoints[used_i])
-                                map[used_i]=i
-                                i+=1
+                                map[used_i] = i
+                                i += 1
                         allpoints = newverts
                         faces = [[map[v]+1 for v in f] for f in faces]
                 args = copy.copy(kwargs)

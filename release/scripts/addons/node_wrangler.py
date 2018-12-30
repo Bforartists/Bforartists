@@ -56,38 +56,33 @@ from collections import namedtuple
 # with attributes determinig if pass is used,
 # and MultiLayer EXR outputs names and corresponding render engines
 #
-# rl_outputs entry = (render_pass, rl_output_name, exr_output_name, in_internal, in_cycles)
-RL_entry = namedtuple('RL_Entry', ['render_pass', 'output_name', 'exr_output_name', 'in_internal', 'in_cycles'])
+# rl_outputs entry = (render_pass, rl_output_name, exr_output_name, in_eevee, in_cycles)
+RL_entry = namedtuple('RL_Entry', ['render_pass', 'output_name', 'exr_output_name', 'in_eevee', 'in_cycles'])
 rl_outputs = (
     RL_entry('use_pass_ambient_occlusion', 'AO', 'AO', True, True),
-    RL_entry('use_pass_color', 'Color', 'Color', True, False),
     RL_entry('use_pass_combined', 'Image', 'Combined', True, True),
-    RL_entry('use_pass_diffuse', 'Diffuse', 'Diffuse', True, False),
     RL_entry('use_pass_diffuse_color', 'Diffuse Color', 'DiffCol', False, True),
     RL_entry('use_pass_diffuse_direct', 'Diffuse Direct', 'DiffDir', False, True),
     RL_entry('use_pass_diffuse_indirect', 'Diffuse Indirect', 'DiffInd', False, True),
-    RL_entry('use_pass_emit', 'Emit', 'Emit', True, False),
-    RL_entry('use_pass_environment', 'Environment', 'Env', True, False),
+    RL_entry('use_pass_emit', 'Emit', 'Emit', False, True),
+    RL_entry('use_pass_environment', 'Environment', 'Env', False, False),
     RL_entry('use_pass_glossy_color', 'Glossy Color', 'GlossCol', False, True),
     RL_entry('use_pass_glossy_direct', 'Glossy Direct', 'GlossDir', False, True),
     RL_entry('use_pass_glossy_indirect', 'Glossy Indirect', 'GlossInd', False, True),
-    RL_entry('use_pass_indirect', 'Indirect', 'Indirect', True, False),
-    RL_entry('use_pass_material_index', 'IndexMA', 'IndexMA', True, True),
-    RL_entry('use_pass_mist', 'Mist', 'Mist', True, False),
+    RL_entry('use_pass_indirect', 'Indirect', 'Indirect', False, False),
+    RL_entry('use_pass_material_index', 'IndexMA', 'IndexMA', False, True),
+    RL_entry('use_pass_mist', 'Mist', 'Mist', True, True),
     RL_entry('use_pass_normal', 'Normal', 'Normal', True, True),
-    RL_entry('use_pass_object_index', 'IndexOB', 'IndexOB', True, True),
-    RL_entry('use_pass_reflection', 'Reflect', 'Reflect', True, False),
-    RL_entry('use_pass_refraction', 'Refract', 'Refract', True, False),
-    RL_entry('use_pass_shadow', 'Shadow', 'Shadow', True, True),
-    RL_entry('use_pass_specular', 'Specular', 'Spec', True, False),
-    RL_entry('use_pass_subsurface_color', 'Subsurface Color', 'SubsurfaceCol', False, True),
-    RL_entry('use_pass_subsurface_direct', 'Subsurface Direct', 'SubsurfaceDir', False, True),
+    RL_entry('use_pass_object_index', 'IndexOB', 'IndexOB', False, True),
+    RL_entry('use_pass_shadow', 'Shadow', 'Shadow', False, True),
+    RL_entry('use_pass_subsurface_color', 'Subsurface Color', 'SubsurfaceCol', True, True),
+    RL_entry('use_pass_subsurface_direct', 'Subsurface Direct', 'SubsurfaceDir', True, True),
     RL_entry('use_pass_subsurface_indirect', 'Subsurface Indirect', 'SubsurfaceInd', False, True),
     RL_entry('use_pass_transmission_color', 'Transmission Color', 'TransCol', False, True),
     RL_entry('use_pass_transmission_direct', 'Transmission Direct', 'TransDir', False, True),
     RL_entry('use_pass_transmission_indirect', 'Transmission Indirect', 'TransInd', False, True),
     RL_entry('use_pass_uv', 'UV', 'UV', True, True),
-    RL_entry('use_pass_vector', 'Speed', 'Vector', True, True),
+    RL_entry('use_pass_vector', 'Speed', 'Vector', False, True),
     RL_entry('use_pass_z', 'Z', 'Depth', True, True),
     )
 
@@ -614,7 +609,7 @@ def force_update(context):
 
 
 def dpifac():
-    prefs = bpy.context.user_preferences.system
+    prefs = bpy.context.preferences.system
     return prefs.dpi * prefs.pixel_size / 72
 
 
@@ -2042,7 +2037,7 @@ class NWMergeNodes(Operator, NWBase):
     )
 
     def execute(self, context):
-        settings = context.user_preferences.addons[__name__].preferences
+        settings = context.preferences.addons[__name__].preferences
         merge_hide = settings.merge_hide
         merge_position = settings.merge_position  # 'center' or 'bottom'
 
@@ -2372,7 +2367,10 @@ class NWCopySettings(Operator, NWBase):
     def poll(cls, context):
         valid = False
         if nw_check(context):
-            if context.active_node is not None and context.active_node.type is not 'FRAME':
+            if (
+                    context.active_node is not None and
+                    context.active_node.type != 'FRAME'
+            ):
                 valid = True
         return valid
 
@@ -2714,7 +2712,7 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
 
         # Filter textures names for texturetypes in filenames
         # [Socket Name, [abbreviations and keyword list], Filename placeholder]
-        tags = context.user_preferences.addons[__name__].preferences.principled_tags
+        tags = context.preferences.addons[__name__].preferences.principled_tags
         normal_abbr = tags.normal.split(' ')
         bump_abbr = tags.bump.split(' ')
         gloss_abbr = tags.gloss.split(' ')
@@ -2955,7 +2953,7 @@ class NWAddReroutes(Operator, NWBase):
             reroutes_count = 0  # will be used when aligning reroutes added to hidden nodes
             for out_i, output in enumerate(node.outputs):
                 pass_used = False  # initial value to be analyzed if 'R_LAYERS'
-                # if node is not 'R_LAYERS' - "pass_used" not needed, so set it to True
+                # if node != 'R_LAYERS' - "pass_used" not needed, so set it to True
                 if node.type != 'R_LAYERS':
                     pass_used = True
                 else:  # if 'R_LAYERS' check if output represent used render pass
@@ -2966,10 +2964,9 @@ class NWAddReroutes(Operator, NWBase):
                         pass_used = True
                     else:
                         # check entries in global 'rl_outputs' variable
-                        #for render_pass, output_name, exr_name, in_internal, in_cycles in rl_outputs:
                         for rlo in rl_outputs:
-                            if output.name == rlo.output_name or output.name == rlo.exr_output_name:
-                                pass_used = getattr(node_scene.render.layers[node_layer], rlo.render_pass)
+                            if output.name in {rlo.output_name, rlo.exr_output_name}:
+                                pass_used = getattr(node_scene.view_layers[node_layer], rlo.render_pass)
                                 break
                 if pass_used:
                     valid = ((option == 'ALL') or
@@ -3036,14 +3033,14 @@ class NWLinkActiveToSelected(Operator, NWBase):
                 # Only outputs that represent used passes should be taken into account
                 # Check if pass represented by output is used.
                 # global 'rl_outputs' list will be used for that
-                for render_pass, out_name, exr_name, in_internal, in_cycles in rl_outputs:
+                for rlo in rl_outputs:
                     pass_used = False  # initial value. Will be set to True if pass is used
                     if out.name == 'Alpha':
                         # Alpha output is always present. Doesn't have representation in render pass. Assume it's used.
                         pass_used = True
-                    elif out.name == out_name:
+                    elif out.name in {rlo.output_name, rlo.exr_output_name}:
                         # example 'render_pass' entry: 'use_pass_uv' Check if True in scene render layers
-                        pass_used = getattr(active.scene.render.layers[active.layer], render_pass)
+                        pass_used = getattr(active.scene.view_layers[active.layer], rlo.render_pass)
                         break
                 if pass_used:
                     outputs.append(out)
@@ -3064,9 +3061,9 @@ class NWLinkActiveToSelected(Operator, NWBase):
                             src_name = active.label
                     elif use_outputs_names:
                         src_name = (out.name, )
-                        for render_pass, out_name, exr_name, in_internal, in_cycles in rl_outputs:
-                            if out.name in {out_name, exr_name}:
-                                src_name = (out_name, exr_name)
+                        for rlo in rl_outputs:
+                            if out.name in {rlo.output_name, rlo.exr_output_name}:
+                                src_name = (rlo.output_name, rlo.exr_output_name)
                     if dst_name not in src_name:
                         valid = False
                     if valid:
@@ -4669,7 +4666,7 @@ kmi_defs = (
     # Reset Nodes (Back Space)
     (NWResetNodes.bl_idname, 'BACK_SPACE', 'PRESS', False, False, False, None, "Revert node back to default state, but keep connections"),
     # MENUS
-    ('wm.call_menu', 'SPACE', 'PRESS', True, False, False, (('name', NodeWranglerMenu.bl_idname),), "Node Wranger menu"),
+    ('wm.call_menu', 'SPACE', 'PRESS', True, True, False, (('name', NodeWranglerMenu.bl_idname),), "Node Wranger menu"),
     ('wm.call_menu', 'SLASH', 'PRESS', False, False, False, (('name', NWAddReroutesMenu.bl_idname),), "Add Reroutes menu"),
     ('wm.call_menu', 'NUMPAD_SLASH', 'PRESS', False, False, False, (('name', NWAddReroutesMenu.bl_idname),), "Add Reroutes menu"),
     ('wm.call_menu', 'BACK_SLASH', 'PRESS', False, False, False, (('name', NWLinkActiveToSelectedMenu.bl_idname),), "Link active to selected (menu)"),

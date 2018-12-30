@@ -527,8 +527,8 @@ def generate_rig(context, metarig):
 def create_selection_sets(obj, metarig):
 
     # Check if selection sets addon is installed
-    if 'bone_selection_groups' not in bpy.context.user_preferences.addons \
-            and 'bone_selection_sets' not in bpy.context.user_preferences.addons:
+    if 'bone_selection_groups' not in bpy.context.preferences.addons \
+            and 'bone_selection_sets' not in bpy.context.preferences.addons:
         return
 
     bpy.ops.object.mode_set(mode='POSE')
@@ -550,7 +550,7 @@ def create_selection_sets(obj, metarig):
         #bpy.ops.pose.selection_set_add()
         obj.selection_sets.add()
         obj.selection_sets[-1].name = name
-        if 'bone_selection_sets' in bpy.context.user_preferences.addons:
+        if 'bone_selection_sets' in bpy.context.preferences.addons:
             act_sel_set = obj.selection_sets[-1]
 
             # iterate only the selected bones in current pose that are not hidden

@@ -20,8 +20,8 @@
 bl_info = {
     "name": "Curveaceous Galore!",
     "author": "Jimmy Hazevoet, testscreenings",
-    "version": (0, 2, 1),
-    "blender": (2, 59),
+    "version": (0, 2, 2),
+    "blender": (2, 80),
     "location": "View3D > Add > Curve",
     "description": "Adds many different types of Curves",
     "warning": "",
@@ -38,7 +38,7 @@ from bpy.props import (
         FloatProperty,
         IntProperty,
         )
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 from bpy.types import Operator
 from math import (
         sin, cos, pi
@@ -78,7 +78,7 @@ def randnum(low=0.0, high=1.0, seed=0):
 
 # ------------------------------------------------------------
 # Make some noise:
-def vTurbNoise(x, y, z, iScale=0.25, Size=1.0, Depth=6, Hard=0, Basis=0, Seed=0):
+def vTurbNoise(x, y, z, iScale=0.25, Size=1.0, Depth=6, Hard=False, Basis=0, Seed=0):
     """
     vTurbNoise((x,y,z), iScale=0.25, Size=1.0, Depth=6, Hard=0, Basis=0, Seed=0 )
 
@@ -93,7 +93,7 @@ def vTurbNoise(x, y, z, iScale=0.25, Size=1.0, Depth=6, Hard=0, Basis=0, Seed=0)
             (type=float)
         Depth - number of noise values added.
             (type=int)
-        Hard - noise hardness: 0 - soft noise; 1 - hard noise
+        Hard - noise hardness: True - soft noise; False - hard noise
             (type=int)
         basis - type of noise used for turbulence
             (type=int)
@@ -106,8 +106,9 @@ def vTurbNoise(x, y, z, iScale=0.25, Size=1.0, Depth=6, Hard=0, Basis=0, Seed=0)
     rand = randnum(-100, 100, Seed)
     if Basis is 9:
         Basis = 14
-    vTurb = Noise.turbulence_vector((x / Size + rand, y / Size + rand, z / Size + rand),
-                                    Depth, Hard, Basis)
+    vec = Vector((x / Size + rand, y / Size + rand, z / Size + rand))
+    vTurb = Noise.turbulence_vector(vec, Depth, Hard)
+    #mathutils.noise.turbulence_vector(position, octaves, hard, noise_basis='PERLIN_ORIGINAL', amplitude_scale=0.5, frequency_scale=2.0)
     tx = vTurb[0] * iScale
     ty = vTurb[1] * iScale
     tz = vTurb[2] * iScale
@@ -533,7 +534,7 @@ def SplatCurve(sides=24, scale=1.0, seed=0, basis=0, radius=1.0):
     i = 0
     while i < sides:
         t = i * step
-        turb = vTurbNoise(t, t, t, 1.0, scale, 6, 0, basis, seed)
+        turb = vTurbNoise(t, t, t, 1.0, scale, 6, False, basis, seed)
         turb = turb[2] * 0.5 + 0.5
         x = sin(t * pi) * radius * turb
         y = cos(t * pi) * radius * turb
@@ -684,7 +685,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
         # noise circle
         while i < number:
             t = i * step
-            v = vTurbNoise(t, t, t, 1.0, size, octaves, 0, basis, seed)
+            v = vTurbNoise(t, t, t, 1.0, size, octaves, False, basis, seed)
             x = sin(t * pi) + (v[0] * scale[0])
             y = cos(t * pi) + (v[1] * scale[1])
             z = v[2] * scale[2]
@@ -694,7 +695,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
         # noise knot / ball
         while i < number:
             t = i * step
-            v = vTurbNoise(t, t, t, 1.0, 1.0, octaves, 0, basis, seed)
+            v = vTurbNoise(t, t, t, 1.0, 1.0, octaves, False, basis, seed)
             x = v[0] * scale[0] * size
             y = v[1] * scale[1] * size
             z = v[2] * scale[2] * size
@@ -704,7 +705,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
         # noise linear
         while i < number:
             t = i * step
-            v = vTurbNoise(t, t, t, 1.0, size, octaves, 0, basis, seed)
+            v = vTurbNoise(t, t, t, 1.0, size, octaves, False, basis, seed)
             x = t + v[0] * scale[0]
             y = v[1] * scale[1]
             z = v[2] * scale[2]
@@ -719,7 +720,7 @@ def NoiseCurve(type=0, number=100, length=2.0, size=0.5,
 def align_matrix(context):
 
     loc = Matrix.Translation(context.scene.cursor_location)
-    obj_align = context.user_preferences.edit.object_align
+    obj_align = context.preferences.edit.object_align
 
     if (context.space_data.type == 'VIEW_3D' and
                 obj_align == 'VIEW'):
@@ -727,24 +728,24 @@ def align_matrix(context):
     else:
         rot = Matrix()
 
-    align_matrix = loc * rot
+    align_matrix = loc @ rot
     return align_matrix
 
 
 # ------------------------------------------------------------
 # Curve creation functions, sets bezierhandles to auto
-def setBezierHandles(obj, mode='AUTOMATIC'):
+def setBezierHandles(obj, mode='AUTO'):
     scene = bpy.context.scene
 
     if obj.type != 'CURVE':
         return
 
-    scene.objects.active = obj
-    bpy.ops.object.mode_set(mode='EDIT', toggle=True)
-    bpy.ops.curve.select_all(action='SELECT')
-    bpy.ops.curve.handle_type_set(type=mode)
-    bpy.ops.object.mode_set(mode='OBJECT', toggle=True)
-
+    #scene.objects.active = obj
+    #bpy.ops.object.mode_set(mode='EDIT', toggle=True)
+    #bpy.ops.curve.select_all(action='SELECT')
+    #obj.select_set(action='SELECT')
+    #bpy.ops.curve.handle_type_set(type=mode)
+    #bpy.ops.object.mode_set(mode='OBJECT', toggle=True)
 
 # get array of vertcoordinates according to splinetype
 def vertsToPoints(Verts, splineType):
@@ -772,7 +773,7 @@ def vertsToPoints(Verts, splineType):
 
 # create new CurveObject from vertarray and splineType
 def createCurve(context, vertArray, self, align_matrix):
-    scene = context.scene
+    scene = bpy.context.scene
 
     # output splineType 'POLY' 'NURBS' 'BEZIER'
     splineType = self.outputType
@@ -788,6 +789,9 @@ def createCurve(context, vertArray, self, align_matrix):
     if splineType == 'BEZIER':
         newSpline.bezier_points.add(int(len(vertArray) * 0.33))
         newSpline.bezier_points.foreach_set('co', vertArray)
+        for point in newSpline.bezier_points:
+            point.handle_right_type = self.handleType
+            point.handle_left_type = self.handleType
     else:
         newSpline.points.add(int(len(vertArray) * 0.25 - 1))
         newSpline.points.foreach_set('co', vertArray)
@@ -801,14 +805,15 @@ def createCurve(context, vertArray, self, align_matrix):
 
     # create object with newCurve
     new_obj = bpy.data.objects.new(name, newCurve)
-    scene.objects.link(new_obj)
-    new_obj.select = True
-    scene.objects.active = new_obj
+    scene.collection.objects.link(new_obj)
+    new_obj.select_set(True)
+    #scene.objects.active = new_obj
     new_obj.matrix_world = align_matrix
 
     # set bezierhandles
-    if splineType == 'BEZIER':
-        setBezierHandles(new_obj, self.handleType)
+    #if splineType == 'BEZIER':
+        #bpy.ops.curve.handle_type_set(type='AUTO')
+        #setBezierHandles(new_obj, self.handleType)
 
     return
 
@@ -817,7 +822,7 @@ def createCurve(context, vertArray, self, align_matrix):
 # Main Function
 def main(context, self, align_matrix):
     # deselect all objects
-    bpy.ops.object.select_all(action='DESELECT')
+    #bpy.ops.object.select_all(action='DESELECT')
 
     # options
     proType = self.ProfileType
@@ -930,7 +935,7 @@ def main(context, self, align_matrix):
 
 
 class Curveaceous_galore(Operator):
-    bl_idname = "mesh.curveaceous_galore"
+    bl_idname = "curve.curveaceous_galore"
     bl_label = "Curve Profiles"
     bl_description = "Construct many types of curves"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
@@ -939,7 +944,7 @@ class Curveaceous_galore(Operator):
     align_matrix = None
 
     # general properties
-    ProfileType = EnumProperty(
+    ProfileType : EnumProperty(
             name="Type",
             description="Form of Curve to create",
             items=[
@@ -956,7 +961,7 @@ class Curveaceous_galore(Operator):
             ('Splat', "Splat", "Splat"),
             ('Star', "Star", "Star")]
             )
-    outputType = EnumProperty(
+    outputType : EnumProperty(
             name="Output splines",
             description="Type of splines to output",
             items=[
@@ -965,7 +970,7 @@ class Curveaceous_galore(Operator):
             ('BEZIER', "Bezier", "Bezier Spline type")]
             )
     # Curve Options
-    shape = EnumProperty(
+    shape : EnumProperty(
             name="2D / 3D",
             description="2D or 3D Curve",
             items=[
@@ -973,135 +978,135 @@ class Curveaceous_galore(Operator):
             ('3D', "3D", "3D")
             ]
             )
-    use_cyclic_u = BoolProperty(
+    use_cyclic_u : BoolProperty(
             name="Cyclic",
             default=True,
             description="make curve closed"
             )
-    endp_u = BoolProperty(
+    endp_u : BoolProperty(
             name="Use endpoint u",
             default=True,
             description="stretch to endpoints"
             )
-    order_u = IntProperty(
+    order_u : IntProperty(
             name="Order u",
             default=4,
             min=2, soft_min=2,
             max=6, soft_max=6,
             description="Order of nurbs spline"
             )
-    handleType = EnumProperty(
+    handleType : EnumProperty(
             name="Handle type",
-            default='AUTOMATIC',
+            default='AUTO',
             description="Bezier handles type",
             items=[
             ('VECTOR', "Vector", "Vector type Bezier handles"),
-            ('AUTOMATIC', "Auto", "Automatic type Bezier handles")]
+            ('AUTO', "Auto", "Automatic type Bezier handles")]
             )
     # ProfileCurve properties
-    ProfileCurveType = IntProperty(
+    ProfileCurveType : IntProperty(
             name="Type",
             min=1,
             max=5,
             default=1,
             description="Type of Curve's Profile"
             )
-    ProfileCurvevar1 = FloatProperty(
+    ProfileCurvevar1 : FloatProperty(
             name="Variable 1",
             default=0.25,
             description="Variable 1 of Curve's Profile"
             )
-    ProfileCurvevar2 = FloatProperty(
+    ProfileCurvevar2 : FloatProperty(
             name="Variable 2",
             default=0.25,
             description="Variable 2 of Curve's Profile"
             )
     # Arrow, Rectangle, MiscCurve properties
-    MiscCurveType = IntProperty(
+    MiscCurveType : IntProperty(
             name="Type",
             min=0,
             max=3,
             default=0,
             description="Type of Curve"
             )
-    MiscCurvevar1 = FloatProperty(
+    MiscCurvevar1 : FloatProperty(
             name="Variable 1",
             default=1.0,
             description="Variable 1 of Curve"
             )
-    MiscCurvevar2 = FloatProperty(
+    MiscCurvevar2 : FloatProperty(
             name="Variable 2",
             default=0.5,
             description="Variable 2 of Curve"
             )
-    MiscCurvevar3 = FloatProperty(
+    MiscCurvevar3 : FloatProperty(
             name="Variable 3",
             default=0.1,
             min=0,
             description="Variable 3 of Curve"
             )
     # Common properties
-    innerRadius = FloatProperty(
+    innerRadius : FloatProperty(
             name="Inner radius",
             default=0.5,
             min=0,
             description="Inner radius"
             )
-    middleRadius = FloatProperty(
+    middleRadius : FloatProperty(
             name="Middle radius",
             default=0.95,
             min=0,
             description="Middle radius"
             )
-    outerRadius = FloatProperty(
+    outerRadius : FloatProperty(
             name="Outer radius",
             default=1.0,
             min=0,
             description="Outer radius"
             )
     # Flower properties
-    petals = IntProperty(
+    petals : IntProperty(
             name="Petals",
             default=8,
             min=2,
             description="Number of petals"
             )
-    petalWidth = FloatProperty(
+    petalWidth : FloatProperty(
             name="Petal width",
             default=2.0,
             min=0.01,
             description="Petal width"
             )
     # Star properties
-    starPoints = IntProperty(
+    starPoints : IntProperty(
             name="Star points",
             default=8,
             min=2,
             description="Number of star points"
             )
-    starTwist = FloatProperty(
+    starTwist : FloatProperty(
             name="Twist",
             default=0.0,
             description="Twist"
             )
     # Arc properties
-    arcSides = IntProperty(
+    arcSides : IntProperty(
             name="Arc sides",
             default=6,
             min=1,
             description="Sides of arc"
             )
-    startAngle = FloatProperty(
+    startAngle : FloatProperty(
             name="Start angle",
             default=0.0,
             description="Start angle"
             )
-    endAngle = FloatProperty(
+    endAngle : FloatProperty(
             name="End angle",
             default=90.0,
             description="End angle"
             )
-    arcType = IntProperty(
+    arcType : IntProperty(
             name="Arc type",
             default=3,
             min=1,
@@ -1109,13 +1114,13 @@ class Curveaceous_galore(Operator):
             description="Sides of arc"
             )
     # Cogwheel properties
-    teeth = IntProperty(
+    teeth : IntProperty(
             name="Teeth",
             default=8,
             min=2,
             description="number of teeth"
             )
-    bevel = FloatProperty(
+    bevel : FloatProperty(
             name="Bevel",
             default=0.5,
             min=0,
@@ -1123,32 +1128,32 @@ class Curveaceous_galore(Operator):
             description="Bevel"
             )
     # Nsided property
-    Nsides = IntProperty(
+    Nsides : IntProperty(
             name="Sides",
             default=8,
             min=3,
             description="Number of sides"
             )
     # Splat properties
-    splatSides = IntProperty(
+    splatSides : IntProperty(
             name="Splat sides",
             default=24,
             min=3,
             description="Splat sides"
             )
-    splatScale = FloatProperty(
+    splatScale : FloatProperty(
             name="Splat scale",
             default=1.0,
             min=0.0001,
             description="Splat scale"
             )
-    seed = IntProperty(
+    seed : IntProperty(
             name="Seed",
             default=0,
             min=0,
             description="Seed"
             )
-    basis = IntProperty(
+    basis : IntProperty(
             name="Basis",
             default=0,
             min=0,
@@ -1156,134 +1161,134 @@ class Curveaceous_galore(Operator):
             description="Basis"
             )
     # Helix properties
-    helixPoints = IntProperty(
+    helixPoints : IntProperty(
             name="Resolution",
             default=100,
             min=3,
             description="Resolution"
             )
-    helixHeight = FloatProperty(
+    helixHeight : FloatProperty(
             name="Height",
             default=2.0,
             min=0,
             description="Helix height"
             )
-    helixStart = FloatProperty(
+    helixStart : FloatProperty(
             name="Start angle",
             default=0.0,
             description="Helix start angle"
             )
-    helixEnd = FloatProperty(
+    helixEnd : FloatProperty(
             name="Endangle",
             default=360.0,
             description="Helix end angle"
             )
-    helixWidth = FloatProperty(
+    helixWidth : FloatProperty(
             name="Width",
             default=1.0,
             description="Helix width"
             )
-    helix_a = FloatProperty(
+    helix_a : FloatProperty(
             name="Variable 1",
             default=0.0,
             description="Helix Variable 1"
             )
-    helix_b = FloatProperty(
+    helix_b : FloatProperty(
             name="Variable 2",
             default=0.0,
             description="Helix Variable 2"
             )
     # Cycloid properties
-    cycloPoints = IntProperty(
+    cycloPoints : IntProperty(
             name="Resolution",
             default=100,
             min=3,
             soft_min=3,
             description="Resolution"
             )
-    cycloType = IntProperty(
+    cycloType : IntProperty(
             name="Type",
             default=1,
             min=0,
             max=2,
             description="Type: Cycloid , Hypocycloid / Hypotrochoid , Epicycloid / Epitrochoid"
             )
-    cyclo_a = FloatProperty(
+    cyclo_a : FloatProperty(
             name="R",
             default=1.0,
             min=0.01,
             description="Cycloid: R radius a"
             )
-    cyclo_b = FloatProperty(
+    cyclo_b : FloatProperty(
             name="r",
             default=0.25,
             min=0.01,
             description="Cycloid: r radius b"
             )
-    cyclo_d = FloatProperty(
+    cyclo_d : FloatProperty(
             name="d",
             default=0.25,
             description="Cycloid: d distance"
             )
     # Noise properties
-    noiseType = IntProperty(
+    noiseType : IntProperty(
             name="Type",
             default=0,
             min=0,
             max=2,
             description="Noise curve type: Linear, Circular or Knot"
             )
-    noisePoints = IntProperty(
+    noisePoints : IntProperty(
             name="Resolution",
             default=100,
             min=3,
             description="Resolution"
             )
-    noiseLength = FloatProperty(
+    noiseLength : FloatProperty(
             name="Length",
             default=2.0,
             min=0.01,
             description="Curve Length"
             )
-    noiseSize = FloatProperty(
+    noiseSize : FloatProperty(
             name="Noise size",
             default=1.0,
             min=0.0001,
             description="Noise size"
             )
-    noiseScaleX = FloatProperty(
+    noiseScaleX : FloatProperty(
             name="Noise x",
             default=1.0,
             min=0.0001,
             description="Noise x"
             )
-    noiseScaleY = FloatProperty(
+    noiseScaleY : FloatProperty(
             name="Noise y",
             default=1.0,
             min=0.0001,
             description="Noise y"
             )
-    noiseScaleZ = FloatProperty(
+    noiseScaleZ : FloatProperty(
             name="Noise z",
             default=1.0,
             min=0.0001,
             description="Noise z"
             )
-    noiseOctaves = IntProperty(
+    noiseOctaves : IntProperty(
             name="Octaves",
             default=2,
             min=1,
             max=16,
             description="Basis"
             )
-    noiseBasis = IntProperty(
+    noiseBasis : IntProperty(
             name="Basis",
             default=0,
             min=0,
             max=9,
             description="Basis"
             )
-    noiseSeed = IntProperty(
+    noiseSeed : IntProperty(
             name="Seed",
             default=1,
             min=0,
@@ -1424,8 +1429,8 @@ class Curveaceous_galore(Operator):
 
     def execute(self, context):
         # turn off undo
-        undo = context.user_preferences.edit.use_global_undo
-        context.user_preferences.edit.use_global_undo = False
+        undo = context.preferences.edit.use_global_undo
+        context.preferences.edit.use_global_undo = False
 
         # deal with 2D - 3D curve differences
         if self.ProfileType in ['Helix', 'Cycloid', 'Noise']:
@@ -1450,7 +1455,7 @@ class Curveaceous_galore(Operator):
         main(context, self, self.align_matrix or Matrix())
 
         # restore pre operator undo state
-        context.user_preferences.edit.use_global_undo = undo
+        context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 
@@ -1460,3 +1465,21 @@ class Curveaceous_galore(Operator):
         self.execute(context)
 
         return {'FINISHED'}
+
+# Register
+classes = [
+    Curveaceous_galore
+]
+
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+def unregister():
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
+if __name__ == "__main__":
+    register()

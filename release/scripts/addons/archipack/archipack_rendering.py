@@ -56,7 +56,7 @@ class ARCHIPACK_OT_render_thumbs(Operator):
     def background_render(self, context, cls, preset):
         generator = path.dirname(path.realpath(__file__)) + path.sep + "archipack_thumbs.py"
         addon_name = __name__.split('.')[0]
-        matlib_path = context.user_preferences.addons[addon_name].preferences.matlib_path
+        matlib_path = context.preferences.addons[addon_name].preferences.matlib_path
         # Run external instance of blender like the original thumbnail generator.
         cmd = [
             bpy.app.binary_path,
@@ -174,7 +174,7 @@ class ARCHIPACK_OT_render_thumbs(Operator):
 
     def invoke(self, context, event):
         addon_name = __name__.split('.')[0]
-        matlib_path = context.user_preferences.addons[addon_name].preferences.matlib_path
+        matlib_path = context.preferences.addons[addon_name].preferences.matlib_path
 
         if matlib_path == '':
             self.report({'WARNING'}, "You should setup a default material library path in addon preferences")

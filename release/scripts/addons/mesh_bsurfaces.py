@@ -2928,7 +2928,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
                 for i in range(0, len(surface_splines_parsed[0])):
                     surface_splines_parsed[0][i] = self.main_object.matrix_world * verts_ordered_V2[i].co
 
-        # When "Automatic join" option is active (and the selection type is not "TWO_CONNECTED"),
+        # When "Automatic join" option is active (and the selection type != "TWO_CONNECTED"),
         # merge the verts of the tips of the loops when they are "near enough"
         if self.automatic_join and selection_type != "TWO_CONNECTED":
             # Join the tips of "Follow" loops that are near enough and must be "closed"
@@ -3037,7 +3037,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 
     def execute(self, context):
 
-        bpy.context.user_preferences.edit.use_global_undo = False
+        bpy.context.preferences.edit.use_global_undo = False
 
         if not self.is_fill_faces:
             bpy.ops.wm.context_set_value(data_path='tool_settings.mesh_select_mode',
@@ -3108,17 +3108,17 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 
             bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
 
-        bpy.context.user_preferences.edit.use_global_undo = self.initial_global_undo_state
+        bpy.context.preferences.edit.use_global_undo = self.initial_global_undo_state
 
         return{'FINISHED'}
 
     def invoke(self, context, event):
-        self.initial_global_undo_state = bpy.context.user_preferences.edit.use_global_undo
+        self.initial_global_undo_state = bpy.context.preferences.edit.use_global_undo
 
         self.main_object = bpy.context.scene.objects.active
         self.main_object_selected_verts_count = int(self.main_object.data.total_vert_sel)
 
-        bpy.context.user_preferences.edit.use_global_undo = False
+        bpy.context.preferences.edit.use_global_undo = False
         bpy.ops.wm.context_set_value(data_path='tool_settings.mesh_select_mode',
                                      value='True, False, False')
 
@@ -3333,7 +3333,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
 
             self.execute(context)
             # Set again since "execute()" will turn it again to its initial value
-            bpy.context.user_preferences.edit.use_global_undo = False
+            bpy.context.preferences.edit.use_global_undo = False
 
             # If "Keep strokes" option is not active, delete original strokes curve object
             if (not self.stopping_errors and not self.keep_strokes) or self.is_crosshatch:
@@ -3354,7 +3354,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             if self.strokes_type == "GP_STROKES" and not self.stopping_errors:
                 bpy.ops.gpencil.active_frame_delete('INVOKE_REGION_WIN')
 
-            bpy.context.user_preferences.edit.use_global_undo = self.initial_global_undo_state
+            bpy.context.preferences.edit.use_global_undo = self.initial_global_undo_state
 
             if not self.stopping_errors:
                 return {"FINISHED"}
@@ -3366,7 +3366,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             created_faces_count = self.fill_with_faces(self.main_object)
 
             bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
-            bpy.context.user_preferences.edit.use_global_undo = self.initial_global_undo_state
+            bpy.context.preferences.edit.use_global_undo = self.initial_global_undo_state
 
             if created_faces_count == 0:
                 self.report({'WARNING'}, "There aren't any strokes attached to the object")
@@ -3374,7 +3374,7 @@ class GPENCIL_OT_SURFSK_add_surface(Operator):
             else:
                 return {"FINISHED"}
 
-        bpy.context.user_preferences.edit.use_global_undo = self.initial_global_undo_state
+        bpy.context.preferences.edit.use_global_undo = self.initial_global_undo_state
 
         if self.strokes_type == "EXTERNAL_NO_CURVE":
             self.report({'WARNING'}, "The secondary object is not a Curve.")
@@ -3858,7 +3858,7 @@ def update_panel(self, context):
                 bpy.utils.unregister_class(panel)
 
         for panel in panels:
-            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            panel.bl_category = context.preferences.addons[__name__].preferences.category
             bpy.utils.register_class(panel)
 
     except Exception as e:

@@ -616,8 +616,8 @@ class AntMeshDisplace(bpy.types.Operator):
             return {'PASS_THROUGH'}
 
         # turn off undo
-        undo = bpy.context.user_preferences.edit.use_global_undo
-        bpy.context.user_preferences.edit.use_global_undo = False
+        undo = bpy.context.preferences.edit.use_global_undo
+        bpy.context.preferences.edit.use_global_undo = False
 
         ob = context.object
 
@@ -745,6 +745,6 @@ class AntMeshDisplace(bpy.types.Operator):
             self.refresh = False
 
         # restore pre operator undo state
-        context.user_preferences.edit.use_global_undo = undo
+        context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}

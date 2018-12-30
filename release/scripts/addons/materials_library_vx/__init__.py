@@ -264,7 +264,7 @@ class Library():
 def get_libraries():
     libs = [Library(matlib_path, f) for f in os.listdir(matlib_path) if f[-5::] == "blend"]
     try:
-        user_path = bpy.context.user_preferences.addons[__name__].preferences.matlib_path
+        user_path = bpy.context.preferences.addons[__name__].preferences.matlib_path
         if user_path:
             if os.path.exists(user_path):
                 libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
@@ -1093,7 +1093,7 @@ def clean_materials():
 
 bin = bpy.app.binary_path
 mats = list_materials()
-bpy.context.user_preferences.filepaths.save_version = 0
+bpy.context.preferences.filepaths.save_version = 0
 for mat in mats:
   clean_materials()
   matpath = os.path.join("{1}", mat + ".blend")

@@ -105,18 +105,18 @@ class MyChecker():
         cls.mylist.clear()
         for e in sortkeys:
             cmd = ""
-            if e[2] is not "":
+            if e[2] != "":
                 cmd += e[2] + "+"
-            if e[3] is not "":
+            if e[3] != "":
                 cmd += e[3] + "+"
-            if e[4] is not "":
+            if e[4] != "":
                 cmd += e[4] + "+"
-            if e[5] is not "":
+            if e[5] != "":
                 cmd += e[5] + "+"
 
             cmd += e[1]
 
-            if e[6] is not "":
+            if e[6] != "":
                 cmd += "  " + e[6]
             cls.mylist.append([e[0], cmd])
 

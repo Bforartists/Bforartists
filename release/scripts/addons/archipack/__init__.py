@@ -458,7 +458,7 @@ def menu_func(self, context):
     icons = icons_collection["main"]
 
     # either draw sub menu or right at end of this one
-    if context.user_preferences.addons[__name__].preferences.create_submenu:
+    if context.preferences.addons[__name__].preferences.create_submenu:
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.menu("ARCHIPACK_MT_create", icon_value=icons["archipack"].icon_id)
     else:

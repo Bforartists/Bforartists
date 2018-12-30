@@ -579,7 +579,7 @@ class addTracerObjectPanel(Panel):
     def draw(self, context):
         layout = self.layout
         Btrace = context.window_manager.curve_tracer
-        addon_prefs = context.user_preferences.addons["btrace"].preferences
+        addon_prefs = context.preferences.addons["btrace"].preferences
         switch_expand = addon_prefs.expand_enum
         obj = context.object
 

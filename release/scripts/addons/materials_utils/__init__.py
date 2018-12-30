@@ -2594,7 +2594,7 @@ def use_separator(operator, context):
 # preferences utilities
 
 def return_preferences():
-    return bpy.context.user_preferences.addons[__name__].preferences
+    return bpy.context.preferences.addons[__name__].preferences
 
 
 def use_remove_mat_all():

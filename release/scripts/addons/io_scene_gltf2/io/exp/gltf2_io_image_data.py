@@ -14,6 +14,7 @@
 
 import typing
 import struct
+import re
 import zlib
 import numpy as np
 
@@ -23,23 +24,17 @@ class ImageData:
     # FUTURE_WORK: as a method to allow the node graph to be better supported, we could model some of
     # the node graph elements with numpy functions
 
-    def __init__(self, name: str, width: int, height: int, offset: int, channels: typing.Optional[typing.List[np.ndarray]] = []):
+    def __init__(self, name: str, filepath: str, width: int, height: int, offset: int, channels: typing.Optional[typing.List[np.ndarray]] = []):
         if width <= 0 or height <= 0:
             raise ValueError("Image data can not have zero width or height")
         if offset + len(channels) > 4:
             raise ValueError("Image data can not have more than 4 channels")
-
-        self.channels = []
-        for fill in range(offset): 
-            # Fill before.
-            self.channels.append(np.ones_like(channels[0]))
-        self.channels += channels
-        total_channels = len(self.channels)
-        for fill in range(total_channels, 4):
-            # Fill after.
-            self.channels.append(np.ones_like(channels[0]))
-        
+        self.channels = [None, None, None, None]
+        channels_length = len(channels)
+        for index in range(offset, offset + channels_length):
+            self.channels[index] = channels[index - offset]
         self.name = name
+        self.filepath = filepath
         self.width = width
         self.height = height
 
@@ -51,7 +46,9 @@ class ImageData:
         if len(image_data.channels) != 4:
             raise ValueError("Can't append image: incomplete image")
 
-        self.name += image_data.name
+        if self.name != image_data.name:
+            self.name += image_data.name
+            self.filepath = ""
 
         # Replace channel.
         self.channels[channel] = image_data.channels[channel]
@@ -80,6 +77,14 @@ class ImageData:
             return None
         return self.channels[3]
 
+    def get_extension(self):
+        allowed_extensions = ['.png', '.jpg', '.jpeg']
+        fallback_extension = allowed_extensions[0]
+
+        matches = re.findall(r'\.\w+$', self.filepath)
+        extension = matches[0] if len(matches) > 0 else fallback_extension
+        return extension if extension.lower() in allowed_extensions else fallback_extension
+
     def to_image_data(self, mime_type: str) -> bytes:
         if mime_type == 'image/png':
             return self.to_png_data()
@@ -91,10 +96,18 @@ class ImageData:
         # if there is no data, create a single pixel image
         if not channels:
             channels = np.ones((1, 1))
-
             # fill all channels of the png
             for _ in range(4 - len(channels)):
                 channels.append(np.ones_like(channels[0]))
+        else:
+            template_index = None
+            for index in range(0, 4):
+                if channels[index] is not None:
+                    template_index = index
+                    break
+            for index in range(0, 4):
+                if channels[index] is None:
+                    channels[index] = np.ones_like(channels[template_index])
 
         image = np.concatenate(channels, axis=1)
         image = image.flatten()

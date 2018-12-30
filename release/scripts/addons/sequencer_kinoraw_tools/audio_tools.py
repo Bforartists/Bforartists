@@ -79,7 +79,7 @@ class ExtractWavOperator(Operator):
 
     def execute(self, context):
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         audio_dir = preferences.addons[__package__].preferences.audio_dir
 
         functions.create_folder(bpy.path.abspath(audio_dir))
@@ -164,7 +164,7 @@ class ExternalAudioSetSyncOperator(Operator):
 
     def execute(self, context):
 
-        preferences = context.user_preferences
+        preferences = context.preferences
         filename = preferences.addons[__package__].preferences.audio_external_filename
 
         for strip in context.selected_editable_sequences:
@@ -219,7 +219,7 @@ class ExternalAudioReloadOperator(Operator):
                     return False
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         filename = preferences.addons[__package__].preferences.audio_external_filename
 
         data = readsyncfile(filename)
@@ -282,7 +282,7 @@ class AudioToolPanel(Panel):
     def poll(self, context):
         if context.space_data.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
             scn = context.scene
-            preferences = context.user_preferences
+            preferences = context.preferences
             prefs = preferences.addons[__package__].preferences
             if scn and scn.sequence_editor and scn.sequence_editor.active_strip:
                 if prefs.use_audio_tools:
@@ -295,7 +295,7 @@ class AudioToolPanel(Panel):
         layout.label(text="", icon="PLAY_AUDIO")
 
     def draw(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         strip = functions.act_strip(context)
@@ -348,7 +348,7 @@ class OpenMeterbridgeOperator(Operator):
                 return True
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         prefs = preferences.addons[__package__].preferences
 
         command = "meterbridge -t {} 'PulseAudio JACK Sink:front-left' " \

@@ -5,8 +5,8 @@ import bpy
 url_manual_prefix = "https://docs.blender.org/manual/en/dev/"
 
 language = ""
-if bpy.context.user_preferences.system.use_international_fonts:
-    language = bpy.context.user_preferences.system.language
+if bpy.context.preferences.system.use_international_fonts:
+    language = bpy.context.preferences.system.language
     if language == 'DEFAULT':
         import os
         language = os.getenv('LANG', '').split('.')[0]
