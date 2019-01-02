@@ -311,6 +311,8 @@ class VIEW3D_MT_editor_menus(Menu):
         gp_edit = obj and obj.mode in {'EDIT_GPENCIL', 'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'}
 
         layout.menu("VIEW3D_MT_view")
+        layout.menu("VIEW3D_MT_view_navigation")
+        
 
         # Select Menu
         if gp_edit:
@@ -620,7 +622,6 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
         layout.menu("VIEW3D_MT_view_viewpoint")
-        layout.menu("VIEW3D_MT_view_navigation")
         layout.menu("VIEW3D_MT_view_align")
 
         layout.separator()
@@ -640,6 +641,59 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+
+class VIEW3D_MT_view_navigation(Menu):
+    bl_label = "Navi"
+
+    def draw(self, context):
+        from math import pi
+        layout = self.layout
+
+        layout.operator("view3d.view_orbit", text= "Orbit Down", icon = "ORBIT_DOWN").type='ORBITDOWN'
+        layout.operator("view3d.view_orbit", text= "Orbit Up", icon = "ORBIT_UP").type='ORBITUP'
+        layout.operator("view3d.view_orbit", text= "Orbit Right", icon = "ORBIT_RIGHT").type='ORBITRIGHT'
+        layout.operator("view3d.view_orbit", text= "Orbit Left", icon = "ORBIT_LEFT").type='ORBITLEFT'
+        props = layout.operator("view3d.view_orbit", text = "Orbit Opposite", icon = "ORBIT_OPPOSITE")
+        props.type = 'ORBITRIGHT'
+        props.angle = pi
+
+        layout.separator()
+
+        layout.operator("view3d.view_roll", text="Roll Left", icon = "ROLL_LEFT").angle = pi / -12.0
+        layout.operator("view3d.view_roll", text="Roll Right", icon = "ROLL_RIGHT").angle = pi / 12.0
+
+        layout.separator()
+
+        layout.operator("view3d.view_pan", text= "Pan Down", icon = "PAN_DOWN").type = 'PANDOWN'
+        layout.operator("view3d.view_pan", text= "Pan Up", icon = "PAN_UP").type = 'PANUP'
+        layout.operator("view3d.view_pan", text= "Pan Right", icon = "PAN_RIGHT").type = 'PANRIGHT'
+        layout.operator("view3d.view_pan", text= "Pan Left", icon = "PAN_LEFT").type = 'PANLEFT'
+
+        layout.separator()
+
+        layout.operator("view3d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
+        layout.operator("view3d.zoom", text="Zoom In", icon = "ZOOM_IN").delta = 1
+        layout.operator("view3d.zoom", text="Zoom Out", icon = "ZOOM_OUT").delta = -1
+        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1", icon = "ZOOM_CAMERA")
+        layout.operator("view3d.dolly", text="Dolly View", icon = "DOLLY")
+        layout.operator("view3d.view_center_pick", icon = "CENTERTOMOUSE")
+
+        layout.separator()
+
+        layout.operator("view3d.fly", icon = "FLY_NAVIGATION")
+        layout.operator("view3d.walk", icon = "WALK_NAVIGATION")
+        layout.operator("view3d.navigate", icon = "VIEW_NAVIGATION")
+
+        layout.separator()
+
+        layout.operator("screen.animation_play", text="Playback Animation", icon = "TRIA_RIGHT")
+
+        layout.separator()
+
+        layout.operator("transform.translate", icon='TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+        layout.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+
 
 
 class VIEW3D_MT_view_local(Menu):
@@ -685,40 +739,6 @@ class VIEW3D_MT_view_viewpoint(Menu):
 
         layout.operator("view3d.view_axis", text="Right").type = 'RIGHT'
         layout.operator("view3d.view_axis", text="Left").type = 'LEFT'
-
-
-class VIEW3D_MT_view_navigation(Menu):
-    bl_label = "Navigation"
-
-    def draw(self, context):
-        from math import pi
-        layout = self.layout
-
-        layout.operator_enum("view3d.view_orbit", "type")
-        props = layout.operator("view3d.view_orbit", text="Orbit Opposite")
-        props.type = 'ORBITRIGHT'
-        props.angle = pi
-
-        layout.separator()
-
-        layout.operator("view3d.view_roll", text="Roll Left").type = 'LEFT'
-        layout.operator("view3d.view_roll", text="Roll Right").type = 'RIGHT'
-
-        layout.separator()
-
-        layout.operator_enum("view3d.view_pan", "type")
-
-        layout.separator()
-
-        layout.operator("view3d.zoom", text="Zoom In").delta = 1
-        layout.operator("view3d.zoom", text="Zoom Out").delta = -1
-        layout.operator("view3d.zoom_border", text="Zoom Border...")
-        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1")
-
-        layout.separator()
-
-        layout.operator("view3d.fly")
-        layout.operator("view3d.walk")
 
 
 class VIEW3D_MT_view_align(Menu):
@@ -5628,9 +5648,9 @@ classes = (
     VIEW3D_MT_uv_map,
     VIEW3D_MT_edit_proportional,
     VIEW3D_MT_view,
+    VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_local,
     VIEW3D_MT_view_cameras,
-    VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_view_viewpoint,
