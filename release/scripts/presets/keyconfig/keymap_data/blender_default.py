@@ -725,7 +725,7 @@ def km_uv_editor(params):
          {"properties": [("pinned", False)]}),
         ("uv.select_box", {"type": 'B', "value": 'PRESS', "ctrl": True},
          {"properties": [("pinned", True)]}),
-        ("uv.circle_select", {"type": 'C', "value": 'PRESS'}, None),
+        ("uv.select_circle", {"type": 'C', "value": 'PRESS'}, None),
         ("uv.select_lasso", {"type": params.action_tweak, "value": 'ANY', "ctrl": True},
          {"properties": [("mode", 'ADD')]}),
         ("uv.select_lasso", {"type": params.action_tweak, "value": 'ANY', "shift": True, "ctrl": True},
@@ -1513,39 +1513,34 @@ def km_node_editor(params):
         {"items": items},
     )
 
+    def node_select_ops(select_mouse):
+        return [
+            ("node.select", {"type": select_mouse, "value": 'PRESS'},
+             {"properties": [("extend", False)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "ctrl": True},
+             {"properties": [("extend", False)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "alt": True},
+             {"properties": [("extend", False)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "ctrl": True, "alt": True},
+             {"properties": [("extend", False)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "shift": True},
+             {"properties": [("extend", True)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "shift": True, "ctrl": True},
+             {"properties": [("extend", True)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "shift": True, "alt": True},
+             {"properties": [("extend", True)]}),
+            ("node.select", {"type": select_mouse, "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
+             {"properties": [("extend", True)]}),
+        ]
+
+    # Allow node selection with both for RMB select
+    if params.select_mouse == 'RIGHTMOUSE':
+        items.extend(node_select_ops('LEFTMOUSE'))
+        items.extend(node_select_ops('RIGHTMOUSE'))
+    else:
+        items.extend(node_select_ops('LEFTMOUSE'))
+
     items.extend([
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS'},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS'},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "ctrl": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "alt": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("extend", False)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "shift": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "shift": True, "ctrl": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "alt": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "shift": True, "alt": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
-         {"properties": [("extend", True)]}),
-        ("node.select", {"type": params.select_mouse, "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
-         {"properties": [("extend", True)]}),
         ("node.select_box", {"type": params.select_tweak, "value": 'ANY'},
          {"properties": [("tweak", True)]}),
         ("node.select_lasso", {"type": 'EVT_TWEAK_L', "value": 'ANY', "ctrl": True, "alt": True},
