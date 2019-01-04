@@ -193,6 +193,10 @@ def marker_menu_generic(layout):
 
     layout.separator()
 
+    layout.operator("marker.camera_bind", icon = "MARKER_BIND")
+
+    layout.separator()
+
     layout.operator("marker.rename", text="Rename Marker", icon = "STRING")
     layout.operator("marker.move", text="Grab/Move Marker", icon = "TRANSFORM_MOVE")
 
