@@ -120,9 +120,9 @@ class NLA_MT_view(Menu):
         layout.operator("nla.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("nla.view_all")
-        layout.operator("nla.view_selected")
-        layout.operator("nla.view_frame")
+        layout.operator("nla.view_all", icon = "VIEWALL")
+        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
         layout.menu("INFO_MT_area")
