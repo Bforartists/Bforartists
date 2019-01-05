@@ -1219,8 +1219,8 @@ class CLIP_PT_tools_scenesetup(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_viewport_background")
-        layout.operator("clip.setup_tracking_scene")
+        layout.operator("clip.set_viewport_background", text = "  Set as Background", icon = "BACKGROUND")
+        layout.operator("clip.setup_tracking_scene", text = "  Setup Tracking Scene", icon = "SETUP")
 
 
 # Grease Pencil properties
@@ -1270,14 +1270,13 @@ class CLIP_MT_view(Menu):
 
             text = iface_("Zoom %d:%d")
             for a, b in ratios:
-                layout.operator("clip.view_zoom_ratio",
-                                text=text % (a, b),
-                                translate=False).ratio = a / b
+                layout.operator("clip.view_zoom_ratio", text=text % (a, b), translate=False, icon = "ZOOM_SET").ratio = a / b
+
         else:
             if sc.view == 'GRAPH':
                 layout.operator_context = 'INVOKE_REGION_PREVIEW'
-                layout.operator("clip.graph_center_current_frame")
-                layout.operator("clip.graph_view_all")
+                layout.operator("clip.graph_center_current_frame", icon = "VIEW_SELECTED" )
+                layout.operator("clip.graph_view_all", icon = "VIEWALL")
                 layout.operator_context = 'INVOKE_DEFAULT'
 
             layout.prop(sc, "show_seconds")
@@ -1298,11 +1297,11 @@ class CLIP_MT_clip(Menu):
         sc = context.space_data
         clip = sc.clip
 
-        layout.operator("clip.open")
+        layout.operator("clip.open", icon = "FILE_FOLDER")
 
         if clip:
-            layout.operator("clip.prefetch")
-            layout.operator("clip.reload")
+            layout.operator("clip.prefetch", icon = "PREFETCH")
+            layout.operator("clip.reload", icon = "FILE_REFRESH")
             layout.menu("CLIP_MT_proxy")
 
 
@@ -1323,54 +1322,54 @@ class CLIP_MT_track(Menu):
         layout = self.layout
 
         layout.operator("clip.clear_solution", icon = "CLEAN_CHANNELS")
-        layout.operator("clip.solve_camera")
+        layout.operator("clip.solve_camera", icon = "MOTIONPATHS_CALCULATE")
 
         layout.separator()
-        props = layout.operator("clip.clear_track_path", text="Clear After")
+        props = layout.operator("clip.clear_track_path", text="Clear After", icon='FORWARD')
         props.clear_active = False
         props.action = 'REMAINED'
 
-        props = layout.operator("clip.clear_track_path", text="Clear Before")
+        props = layout.operator("clip.clear_track_path", text="Clear Before", icon='BACK')
         props.clear_active = False
         props.action = 'UPTO'
 
-        props = layout.operator("clip.clear_track_path", text="Clear Track Path")
+        props = layout.operator("clip.clear_track_path", text="Clear Track Path", icon = "CLEAR")
         props.clear_active = False
         props.action = 'ALL'
 
         layout.separator()
-        layout.operator("clip.join_tracks")
+        layout.operator("clip.join_tracks", icon = "JOIN")
 
         layout.separator()
-        layout.operator("clip.clean_tracks")
+        layout.operator("clip.clean_tracks", icon = "CLEAN_CHANNELS")
 
         layout.separator()
         layout.operator("clip.copy_tracks", text= "Copy", icon = "COPYDOWN")
         layout.operator("clip.paste_tracks", text= "Paste", icon = "PASTEDOWN")
 
         layout.separator()
-        props = layout.operator("clip.track_markers", text="Track Frame Backwards")
+        props = layout.operator("clip.track_markers", text="Track Frame Backwards", icon='FRAME_PREV')
         props.backwards = True
         props.sequence = False
 
-        props = layout.operator("clip.track_markers", text="Track Backwards")
+        props = layout.operator("clip.track_markers", text="Track Backwards", icon='PLAY_REVERSE')
         props.backwards = True
         props.sequence = True
 
-        props = layout.operator("clip.track_markers", text="Track Forwards")
+        props = layout.operator("clip.track_markers", text="Track Forwards", icon='PLAY')
         props.backwards = False
         props.sequence = True
 
-        props = layout.operator("clip.track_markers", text="Track Frame Forwards")
+        props = layout.operator("clip.track_markers", text="Track Frame Forwards", icon='FRAME_NEXT')
         props.backwards = False
         props.sequence = False
 
         layout.separator()
-        layout.operator("clip.delete_track")
-        layout.operator("clip.delete_marker")
+        layout.operator("clip.delete_track", icon = "DELETE")
+        layout.operator("clip.delete_marker", icon = "DELETE")
 
         layout.separator()
-        layout.operator("clip.add_marker_move")
+        layout.operator("clip.add_marker_move", icon = "MARKER")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
@@ -1383,19 +1382,19 @@ class CLIP_MT_reconstruction(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_origin")
-        layout.operator("clip.set_plane", text="Set Floor").plane = 'FLOOR'
-        layout.operator("clip.set_plane", text="Set Wall").plane = 'WALL'
+        layout.operator("clip.set_origin", icon = "ORIGIN")
+        layout.operator("clip.set_plane", text="Set Floor", icon = "FLOOR").plane = 'FLOOR'
+        layout.operator("clip.set_plane", text="Set Wall", icon = "WALL").plane = 'WALL'
 
-        layout.operator("clip.set_axis", text="Set X Axis").axis = 'X'
-        layout.operator("clip.set_axis", text="Set Y Axis").axis = 'Y'
+        layout.operator("clip.set_axis", text="Set X Axis", icon = "X_ICON").axis = 'X'
+        layout.operator("clip.set_axis", text="Set Y Axis", icon = "Y_ICON").axis = 'Y'
 
-        layout.operator("clip.set_scale")
+        layout.operator("clip.set_scale", icon = "TRANSFORM_SCALE")
 
         layout.separator()
 
-        layout.operator("clip.track_to_empty")
-        layout.operator("clip.bundles_to_mesh")
+        layout.operator("clip.track_to_empty", icon = "LINKED")
+        layout.operator("clip.bundles_to_mesh",  icon = "MARKER_TO_MESH")
 
 
 class CLIP_MT_track_visibility(Menu):
@@ -1444,7 +1443,13 @@ class CLIP_MT_select_grouped(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("clip.select_grouped", "group")
+        layout.operator("clip.select_grouped", text = "Keyframed", icon = "HAND").group = 'KEYFRAMED'
+        layout.operator("clip.select_grouped", text = "Estimated", icon = "HAND").group = 'ESTIMATED'
+        layout.operator("clip.select_grouped", text = "Tracked", icon = "HAND").group = 'TRACKED'
+        layout.operator("clip.select_grouped", text = "Locked", icon = "HAND").group = 'LOCKED'
+        layout.operator("clip.select_grouped", text = "Disabled", icon = "HAND").group = 'DISABLED'
+        layout.operator("clip.select_grouped", text = "Same Color", icon = "HAND").group = 'COLOR'
+        layout.operator("clip.select_grouped", text = "Failed", icon = "HAND").group = 'FAILED'
 
 
 class CLIP_MT_tracking_specials(Menu):
@@ -1457,24 +1462,22 @@ class CLIP_MT_tracking_specials(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.disable_markers",
-                        text="Enable Markers").action = 'ENABLE'
-
-        layout.operator("clip.disable_markers",
-                        text="Disable Markers").action = 'DISABLE'
+        layout.operator("clip.disable_markers", text="Enable Markers").action = 'ENABLE'
+        layout.operator("clip.disable_markers", text="Disable Markers").action = 'DISABLE'
 
         layout.separator()
+
         layout.operator("clip.set_origin")
 
         layout.separator()
+
         layout.operator("clip.hide_tracks")
         layout.operator("clip.hide_tracks_clear", text="Show Tracks")
 
         layout.separator()
-        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
 
-        layout.operator("clip.lock_tracks",
-                        text="Unlock Tracks").action = 'UNLOCK'
+        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
+        layout.operator("clip.lock_tracks", text="Unlock Tracks").action = 'UNLOCK'
 
 
 class CLIP_PT_camera_presets(PresetMenu):
