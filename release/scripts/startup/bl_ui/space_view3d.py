@@ -1296,30 +1296,40 @@ class VIEW3D_MT_select_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.select_all", text="All").action = 'SELECT'
+        layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("gpencil.select_all", text="None").action = 'DESELECT'
-        layout.operator("gpencil.select_all", text="Invert").action = 'INVERT'
+        layout.operator("gpencil.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("gpencil.select_box")
-        layout.operator("gpencil.select_circle")
+        layout.operator("gpencil.select_box", icon='BORDER_RECT')
+        layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("gpencil.select_linked", text="Linked")
+        layout.operator("gpencil.select_linked", text="Linked", icon = "CONNECTED")
         layout.operator("gpencil.select_alternate")
-        layout.operator_menu_enum("gpencil.select_grouped", "type", text="Grouped")
+        layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
         layout.separator()
 
-        layout.operator("gpencil.select_first")
-        layout.operator("gpencil.select_last")
+        layout.operator("gpencil.select_first", icon = "SELECT_FIRST")
+        layout.operator("gpencil.select_last", icon = "SELECT_LAST")
 
         layout.separator()
 
-        layout.operator("gpencil.select_more")
-        layout.operator("gpencil.select_less")
+        layout.operator("gpencil.select_more", icon = "SELECTMORE")
+        layout.operator("gpencil.select_less", icon = "SELECTLESS")
+
+
+class VIEW3D_MT_select_gpencil_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.select_grouped", text="Layer", icon = "LAYER").type = 'LAYER'
+        layout.operator("gpencil.select_grouped", text="Color", icon = "COLOR").type = 'MATERIAL'
 
 
 class VIEW3D_MT_select_paint_mask(Menu):
@@ -5669,6 +5679,7 @@ classes = (
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature,
     VIEW3D_MT_select_gpencil,
+    VIEW3D_MT_select_gpencil_grouped,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_angle_control,
