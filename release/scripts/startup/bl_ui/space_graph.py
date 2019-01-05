@@ -175,16 +175,16 @@ class GRAPH_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("graph.select_all", text="All").action = 'SELECT'
+        layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("graph.select_all", text="None").action = 'DESELECT'
-        layout.operator("graph.select_all", text="Invert").action = 'INVERT'
+        layout.operator("graph.select_all", text="Invert", icon = 'INVERSE').action = 'INVERT'
 
         layout.separator()
 
         props = layout.operator("graph.select_box", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = False
-        props = layout.operator("graph.select_box", text="Border Axis Range")
+        props = layout.operator("graph.select_box", text="Border Axis Range", icon='BORDER_RECT')
         props.axis_range = True
         props.include_handles = False
         props = layout.operator("graph.select_box", text="Border (Include Handles)", icon='BORDER_RECT')
@@ -194,11 +194,12 @@ class GRAPH_MT_select(Menu):
         layout.operator("graph.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
-        layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
-        layout.operator("graph.select_column", text="Column on Current Frame").mode = 'CFRA'
 
-        layout.operator("graph.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
-        layout.operator("graph.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        layout.operator("graph.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("graph.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
+
+        layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
         
@@ -210,11 +211,13 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
+
         layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
         layout.operator("graph.select_less",text = "Less", icon = "SELECTLESS")
 
         layout.separator()
-        layout.operator("graph.select_linked")
+
+        layout.operator("graph.select_linked", icon = "CONNECTED")  
 
 
 class GRAPH_MT_marker(Menu):
@@ -281,7 +284,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable")
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 
 class GRAPH_MT_key(Menu):
@@ -298,7 +301,7 @@ class GRAPH_MT_key(Menu):
         layout.separator()
         layout.operator_menu_enum("graph.keyframe_insert", "type")
         layout.operator_menu_enum("graph.fmodifier_add", "type")
-        layout.operator("graph.sound_bake")
+        layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
         layout.operator("graph.frame_jump")
@@ -347,7 +350,7 @@ class GRAPH_MT_delete(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("graph.delete")
+        layout.operator("graph.delete", icon = "DELETE")
 
         layout.separator()
 
