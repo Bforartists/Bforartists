@@ -96,8 +96,8 @@ class IMAGE_MT_view(Menu):
         if show_uvedit:
             layout.operator("image.view_selected")
 
-        layout.operator("image.view_all")
-        layout.operator("image.view_all", text="View Fit").fit_view = True
+        layout.operator("image.view_all", icon = "VIEWALL" )
+        layout.operator("image.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
 
         layout.separator()
 
@@ -140,15 +140,15 @@ class IMAGE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.select_all", text="All").action = 'SELECT'
+        layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("uv.select_all", text="None").action = 'DESELECT'
-        layout.operator("uv.select_all", text="Invert").action = 'INVERT'
+        layout.operator("uv.select_all", text="Invert", icon = 'INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("uv.select_box").pinned = False
-        layout.operator("uv.select_box", text="Box Select Pinned").pinned = True
-        layout.operator("uv.select_circle")
+        layout.operator("uv.select_box", icon='BORDER_RECT').pinned = False
+        layout.operator("uv.select_box", text="Box Select Pinned", icon='BORDER_RECT').pinned = True
+        layout.operator("uv.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
@@ -158,7 +158,7 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_pinned", icon = "PINNED")
-        layout.operator("uv.select_linked").extend = False
+        layout.operator("uv.select_linked", icon = "LINKED").extend = False
 
         layout.separator()
 
@@ -194,7 +194,7 @@ class IMAGE_MT_image(Menu):
         ima = sima.image
         show_render = sima.show_render
 
-        layout.operator("image.new", text="New")
+        layout.operator("image.new", text="New", icon='IMAGE_DATA')
         layout.operator("image.open", text="Open...", icon='FILE_FOLDER')
 
         layout.operator("image.read_viewlayers")
@@ -216,9 +216,9 @@ class IMAGE_MT_image(Menu):
             layout.operator("image.save_as", text="Save a Copy", icon='SAVE_COPY').copy = True
 
         if ima and ima.source == 'SEQUENCE':
-            layout.operator("image.save_sequence")
+            layout.operator("image.save_sequence", icon='SAVE_All')
 
-        layout.operator("image.save_dirty", text="Save All Images")
+        layout.operator("image.save_dirty", text="Save All Images", icon = "SAVE_ALL")
 
         if ima:
             layout.separator()
@@ -264,9 +264,9 @@ class IMAGE_MT_uvs_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.reveal")
-        layout.operator("uv.hide", text="Hide Selected").unselected = False
-        layout.operator("uv.hide", text="Hide Unselected").unselected = True
+        layout.operator("uv.reveal", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("uv.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class IMAGE_MT_uvs_proportional(Menu):
@@ -289,13 +289,13 @@ class IMAGE_MT_uvs_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
+        layout.operator("transform.translate", icon ='TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+        layout.operator("transform.resize", icon ='TRANSFORM_SCALE')
 
         layout.separator()
 
-        layout.operator("transform.shear")
+        layout.operator("transform.shear", icon = 'SHEAR')
 
 
 class IMAGE_MT_uvs_snap(Menu):
@@ -306,15 +306,15 @@ class IMAGE_MT_uvs_snap(Menu):
 
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        layout.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
-        layout.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
-        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
-        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
+        layout.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+        layout.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
         layout.separator()
 
-        layout.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
-        layout.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
+        layout.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+        layout.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
 
 
 class IMAGE_MT_uvs_mirror(Menu):
@@ -329,8 +329,8 @@ class IMAGE_MT_uvs_mirror(Menu):
 
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        layout.operator("transform.mirror", text="X Axis").constraint_axis[0] = True
-        layout.operator("transform.mirror", text="Y Axis").constraint_axis[1] = True
+        layout.operator("transform.mirror", text="X Axis", icon = "MIRROR_X").constraint_axis[0] = True
+        layout.operator("transform.mirror", text="Y Axis", icon = "MIRROR_Y").constraint_axis[1] = True
 
 
 class IMAGE_MT_uvs_weldalign(Menu):
@@ -339,8 +339,8 @@ class IMAGE_MT_uvs_weldalign(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.weld")  # W, 1.
-        layout.operator("uv.remove_doubles")
+        layout.operator("uv.weld", icon='WELD')  # W, 1.
+        layout.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
         layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
 
 
@@ -364,22 +364,22 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.prop(uv, "use_live_unwrap")
-        layout.operator("uv.unwrap")
-        layout.operator("uv.pin", text="Unpin").clear = True
-        layout.operator("uv.pin").clear = False
+        layout.operator("uv.unwrap", icon='UNWRAP_ABF')
+        layout.operator("uv.pin", text="Unpin", icon = "PINNED").clear = True
+        layout.operator("uv.pin", icon = "UNPINNED").clear = False
 
         layout.separator()
 
-        layout.operator("uv.pack_islands")
-        layout.operator("uv.average_islands_scale")
-        layout.operator("uv.minimize_stretch")
-        layout.operator("uv.stitch")
+        layout.operator("uv.pack_islands", icon ="PACKISLAND")
+        layout.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
+        layout.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
+        layout.operator("uv.stitch", icon = "STITCH")
 
         layout.separator()
 
-        layout.operator("uv.mark_seam").clear = False
-        layout.operator("uv.mark_seam", text="Clear Seam").clear = True
-        layout.operator("uv.seams_from_islands")
+        layout.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
+        layout.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
+        layout.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
 
         layout.separator()
 
