@@ -1507,12 +1507,14 @@ static uiLayout *draw_modifier(
 				ParticleSystem *psys = ((ParticleSystemModifierData *)md)->psys;
 
 				if (!(ob->mode & OB_MODE_PARTICLE_EDIT)) {
-					if (ELEM(psys->part->ren_as, PART_DRAW_GR, PART_DRAW_OB))
+					if (ELEM(psys->part->ren_as, PART_DRAW_GR, PART_DRAW_OB)) {
 						uiItemO(row, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Convert"), ICON_NONE,
 						        "OBJECT_OT_duplicates_make_real");
-					else if (psys->part->ren_as == PART_DRAW_PATH && psys->pathcache)
+					}
+					else if (psys->part->ren_as == PART_DRAW_PATH) {
 						uiItemO(row, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Convert"), ICON_NONE,
 						        "OBJECT_OT_modifier_convert");
+					}
 				}
 			}
 			else {
@@ -2650,7 +2652,9 @@ static uiBlock *ui_icon_view_menu_cb(bContext *C, ARegion *ar, void *arg_litem)
 /**
  * \param icon_scale: Scale of the icon, 1x == button height.
  */
-void uiTemplateIconView(uiLayout *layout, PointerRNA *ptr, const char *propname, bool show_labels, float icon_scale)
+void uiTemplateIconView(
+        uiLayout *layout, PointerRNA *ptr, const char *propname, bool show_labels,
+        float icon_scale, float icon_scale_popup)
 {
 	PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
 	IconViewMenuArgs *cb_args;
@@ -2677,12 +2681,16 @@ void uiTemplateIconView(uiLayout *layout, PointerRNA *ptr, const char *propname,
 		cb_args->ptr = *ptr;
 		cb_args->prop = prop;
 		cb_args->show_labels = show_labels;
-		cb_args->icon_scale = icon_scale;
+		cb_args->icon_scale = icon_scale_popup;
 
-		but = uiDefBlockButN(block, ui_icon_view_menu_cb, cb_args, "", 0, 0, UI_UNIT_X * 6, UI_UNIT_Y * 6, "");
+		but = uiDefBlockButN(
+		        block, ui_icon_view_menu_cb, cb_args, "",
+		        0, 0, UI_UNIT_X * icon_scale, UI_UNIT_Y * icon_scale, "");
 	}
 	else {
-		but = uiDefIconBut(block, UI_BTYPE_LABEL, 0, ICON_X, 0, 0, UI_UNIT_X * 6, UI_UNIT_Y * 6, NULL, 0.0, 0.0, 0.0, 0.0, "");
+		but = uiDefIconBut(
+		        block, UI_BTYPE_LABEL, 0, ICON_X,
+		        0, 0, UI_UNIT_X * icon_scale, UI_UNIT_Y * icon_scale, NULL, 0.0, 0.0, 0.0, 0.0, "");
 	}
 
 
@@ -4581,7 +4589,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 		if (WM_jobs_test(wm, sa, WM_JOB_TYPE_ANY))
 			owner = sa;
 		handle_event = B_STOPCLIP;
-		icon = ICON_CLIP;
+		icon = ICON_TRACKER;
 	}
 	else if (sa->spacetype == SPACE_FILE) {
 		if (WM_jobs_test(wm, sa, WM_JOB_TYPE_FILESEL_READDIR)) {

@@ -80,23 +80,12 @@ typedef struct uiFontStyle {
 	short uifont_id;		/* saved in file, 0 is default */
 	short points;			/* actual size depends on 'global' dpi */
 	short kerning;			/* unfitted or default kerning value. */
-	char word_wrap;			/* enable word-wrap when drawing */
-	char pad[5];
 	short italic, bold;		/* style hint */
 	short shadow;			/* value is amount of pixels blur */
 	short shadx, shady;		/* shadow offset in pixels */
-	short align;			/* text align hint */
 	float shadowalpha;		/* total alpha */
 	float shadowcolor;		/* 1 value, typically white or black anyway */
 } uiFontStyle;
-
-/* uiFontStyle.align */
-typedef enum eFontStyle_Align {
-	UI_STYLE_TEXT_LEFT		= 0,
-	UI_STYLE_TEXT_CENTER	= 1,
-	UI_STYLE_TEXT_RIGHT		= 2
-} eFontStyle_Align;
-
 
 /* this is fed to the layout engine and widget code */
 
@@ -247,7 +236,7 @@ typedef struct ThemeSpace {
 
 	/* navigation bar regions */
 	char navigation_bar[4];			/* region background */
-	int pad2;
+	char execution_buts[4];			/* region background */
 
 	/* float panel */
 /*	char panel[4];			unused */
@@ -699,14 +688,15 @@ typedef enum eUserPref_Section {
 	USER_SECTION_INPUT             = 5,
 	USER_SECTION_ADDONS            = 6,
 	USER_SECTION_LIGHT             = 7,
+	USER_SECTION_KEYMAP            = 8,
 #ifdef WITH_USERDEF_WORKSPACES
-	USER_SECTION_WORKSPACE_CONFIG  = 8,
-	USER_SECTION_WORKSPACE_ADDONS  = 9,
-	USER_SECTION_WORKSPACE_KEYMAPS = 10,
+	USER_SECTION_WORKSPACE_CONFIG  = 9,
+	USER_SECTION_WORKSPACE_ADDONS  = 10,
+	USER_SECTION_WORKSPACE_KEYMAPS = 11,
 #endif
 #ifdef WITH_USERDEF_SYSTEM_SPLIT
-	USER_SECTION_SYSTEM_DISPLAY    = 11,
-	USER_SECTION_SYSTEM_DEVICES    = 12,
+	USER_SECTION_SYSTEM_DISPLAY    = 12,
+	USER_SECTION_SYSTEM_DEVICES    = 13,
 #endif
 } eUserPref_Section;
 
