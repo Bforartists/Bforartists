@@ -991,8 +991,8 @@ typedef struct GP_Sculpt_Data {
 	float strength;         /* strength of effect */
 	float curcolor_add[3];  /* cursor color for add */
 	float curcolor_sub[3];  /* cursor color for sub */
-	float target_weight;    /* target weight */
-	char pad_[4];
+	float weight;           /* target weight */
+	char _pad[4];
 } GP_Sculpt_Data;
 
 /* GP_Sculpt_Data.flag */
@@ -1337,7 +1337,7 @@ typedef struct ToolSettings {
 	char edge_mode;
 	char edge_mode_live_unwrap;
 
-	/* SCE_MPR_LOC/SCAL */
+	/* SCE_GIZMO_SHOW_* */
 	char gizmo_flag;
 
 	/* Transform */
@@ -1819,41 +1819,32 @@ extern const char *RE_engine_id_CYCLES;
 #define MINAFRAMEF	-1048574.0f
 
 /* deprecate this! */
-#define TESTBASE(v3d, base)  (                                                \
-	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
-	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
+#define BASE_VISIBLE(v3d, base) (                                                                        \
+	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) &&                  \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) &&                        \
 	(((base)->flag & BASE_VISIBLE) != 0))
-#define TESTBASELIB(v3d, base)  (                                             \
-	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
-	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
-	((base)->object->id.lib == NULL) &&                                       \
-	(((base)->flag & BASE_VISIBLE) != 0))
-#define TESTBASELIB_BGMODE(v3d, base)  (                                      \
+#define BASE_VISIBLE_BGMODE(v3d, base) (                                                                 \
 	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
-	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
-	((base)->object->id.lib == NULL) &&                                       \
+	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) &&     \
 	(((base)->flag & BASE_VISIBLE) != 0))
-#define BASE_EDITABLE_BGMODE(v3d, base)  (                                    \
-	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
-	((base)->object->id.lib == NULL) &&                                       \
-	(((base)->flag & BASE_VISIBLE) != 0))
-#define BASE_SELECTABLE(v3d, base)  (                                         \
-	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
-	(((1 << (base)->object->type) & (v3d)->object_type_exclude_select) == 0) && \
+
+#define BASE_SELECTABLE(v3d, base) (                                                               \
+	BASE_VISIBLE(v3d, base) &&                                                                     \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_select) == 0) &&                    \
 	(((base)->flag & BASE_SELECTABLE) != 0))
-#define BASE_VISIBLE(v3d, base)  (                                            \
-	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
-	(((base)->flag & BASE_VISIBLE) != 0))
-#define BASE_VISIBLE_BGMODE(v3d, base) ( \
-	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
-	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
-	(((base)->flag & BASE_VISIBLE) != 0))
+#define BASE_SELECTABLE_BGMODE(v3d, base) (                                                        \
+	BASE_VISIBLE_BGMODE(v3d, base) &&                                                              \
+	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_select) == 0)) && \
+	(((base)->flag & BASE_SELECTABLE) != 0))
+
+#define TESTBASE(v3d, base) \
+	(BASE_VISIBLE(v3d, base) && (((base)->flag & BASE_SELECTED) != 0))
+#define TESTBASELIB(v3d, base) \
+	(TESTBASE(v3d, base) && ((base)->object->id.lib == NULL))
+#define BASE_EDITABLE_BGMODE(v3d, base) \
+	(BASE_VISIBLE_BGMODE(v3d, base) && ((base)->object->id.lib == NULL))
+#define TESTBASELIB_BGMODE(v3d, base) \
+	(BASE_EDITABLE_BGMODE(v3d, base) && (((base)->flag & BASE_SELECTED) != 0))
 
 #define FIRSTBASE(_view_layer)  ((_view_layer)->object_bases.first)
 #define LASTBASE(_view_layer)   ((_view_layer)->object_bases.last)
