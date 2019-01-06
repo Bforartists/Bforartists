@@ -73,7 +73,7 @@ typedef struct GpencilModifierData {
 	int type, mode;
 	int stackindex;
 	short flag;
-	short pad;
+	short _pad;
 	char name[64];  /* MAX_NAME */
 
 	char *error;
@@ -92,7 +92,7 @@ typedef struct NoiseGpencilModifierData {
 	float vrand1, vrand2;        /* random values */
 	struct RNG *rng;
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad[4];
 } NoiseGpencilModifierData;
 
 typedef enum eNoiseGpencil_Flag {
@@ -154,7 +154,7 @@ typedef struct TimeGpencilModifierData {
 	float frame_scale;           /* animation scale */
 	int mode;
 	int sfra, efra;             /* start and end frame for custom range */
-	char pad_[4];
+	char _pad[4];
 } TimeGpencilModifierData;
 
 typedef enum eTimeGpencil_Flag {
@@ -185,9 +185,9 @@ typedef struct TintGpencilModifierData {
 	float rgb[3];                /* Tint color */
 	float factor;                /* Mix factor */
 	char modify_color;           /* modify stroke, fill or both */
-	char pad[7];
+	char _pad[7];
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad1[4];
 } TintGpencilModifierData;
 
 typedef enum eTintGpencil_Flag {
@@ -204,9 +204,9 @@ typedef struct ColorGpencilModifierData {
 	int flag;                    /* flags */
 	float hsv[3];                /* hsv factors */
 	char modify_color;           /* modify stroke, fill or both */
-	char pad[3];
+	char _pad[3];
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad1[4];
 } ColorGpencilModifierData;
 
 typedef enum eColorGpencil_Flag {
@@ -224,9 +224,9 @@ typedef struct OpacityGpencilModifierData {
 	int flag;                    /* flags */
 	float factor;                /* Main Opacity factor */
 	char modify_color;                    /* modify stroke, fill or both */
-	char pad[3];
+	char _pad[3];
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad1[4];
 } OpacityGpencilModifierData;
 
 typedef enum eOpacityGpencil_Flag {
@@ -249,7 +249,7 @@ typedef struct ArrayGpencilModifierData {
 	float rot[3];                /* Rotation changes */
 	float scale[3];              /* Scale changes */
 	float rnd[20];               /* (first element is the index) random values */
-	char pad_[4];
+	char _pad[4];
 
 	int pass_index;              /* custom index for passes */
 	char layername[64];          /* layer name */
@@ -349,7 +349,7 @@ typedef struct MirrorGpencilModifierData {
 	int pass_index;              /* custom index for passes */
 	int flag;                    /* flags */
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad[4];
 } MirrorGpencilModifierData;
 
 typedef enum eMirrorGpencil_Flag {
@@ -371,11 +371,11 @@ typedef struct HookGpencilModifierData {
 	char vgname[64];        /* optional vertexgroup name, MAX_VGROUP_NAME */
 	int pass_index;         /* custom index for passes */
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad[4];
 
 	int flag;
 	char falloff_type;      /* use enums from WarpGpencilModifier (exact same functionality) */
-	char pad[3];
+	char _pad1[3];
 	float parentinv[4][4];  /* matrix making current transform unmodified */
 	float cent[3];          /* visualization of hook */
 	float falloff;          /* if not zero, falloff is distance where influence zero */
@@ -412,7 +412,7 @@ typedef struct SimplifyGpencilModifierData {
 	short mode;                  /* type of simplify */
 	short step;                  /* every n vertex to keep */
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad[4];
 } SimplifyGpencilModifierData;
 
 typedef enum eSimplifyGpencil_Flag {
@@ -456,7 +456,7 @@ typedef struct SmoothGpencilModifierData {
 	float factor;                /* factor of noise */
 	int step;                    /* how many times apply smooth */
 	int layer_pass;              /* custom index for passes */
-	char pad_[4];
+	char _pad[4];
 } SmoothGpencilModifierData;
 
 typedef enum eSmoothGpencil_Flag {
@@ -473,7 +473,7 @@ typedef enum eSmoothGpencil_Flag {
 typedef struct ArmatureGpencilModifierData {
 	GpencilModifierData modifier;
 	short deformflag, multi;  /* deformflag replaces armature->deformflag */
-	int pad2;
+	int _pad;
 	struct Object *object;
 	float *prevCos;           /* stored input of previous modifier, for vertexgroup blending */
 	char vgname[64];         /* MAX_VGROUP_NAME */
