@@ -120,9 +120,9 @@ class NLA_MT_view(Menu):
         layout.operator("nla.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("nla.view_all")
-        layout.operator("nla.view_selected")
-        layout.operator("nla.view_frame")
+        layout.operator("nla.view_all", icon = "VIEWALL")
+        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
         layout.menu("INFO_MT_area")
@@ -134,19 +134,19 @@ class NLA_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("nla.select_all", text="All").action = 'SELECT'
+        layout.operator("nla.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("nla.select_all", text="None").action = 'DESELECT'
-        layout.operator("nla.select_all", text="Invert").action = 'INVERT'
+        layout.operator("nla.select_all", text="Invert", icon = 'INVERSE').action = 'INVERT'
 
         layout.separator()
-        layout.operator("nla.select_box").axis_range = False
-        layout.operator("nla.select_box", text="Border Axis Range").axis_range = True
+        layout.operator("nla.select_box", icon='BORDER_RECT').axis_range = False
+        layout.operator("nla.select_box", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
 
         layout.separator()
-        props = layout.operator("nla.select_leftright", text="Before Current Frame")
+        props = layout.operator("nla.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
-        props = layout.operator("nla.select_leftright", text="After Current Frame")
+        props = layout.operator("nla.select_leftright", text="After Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'RIGHT'
 

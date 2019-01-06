@@ -351,9 +351,9 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.jump")
-        layout.operator("text.start_find", text="Find...")
-        layout.operator("text.autocomplete")
+        layout.operator("text.jump", icon = "GOTO")
+        layout.operator("text.start_find", text="Find", icon = "ZOOM_SET")
+        layout.operator("text.autocomplete", icon = "AUTOCOMPLETE")
 
         layout.separator()
 

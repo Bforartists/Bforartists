@@ -53,7 +53,7 @@ class INFO_MT_area(Menu):
         layout = self.layout
 
         if context.space_data.type == 'VIEW_3D':
-            layout.operator("screen.region_quadview")
+            layout.operator("screen.region_quadview", icon = "QUADVIEW")
             layout.separator()
 
         layout.operator("screen.area_split", text="Horizontal Split").direction = 'HORIZONTAL'
@@ -61,11 +61,11 @@ class INFO_MT_area(Menu):
 
         layout.separator()
 
-        layout.operator("screen.area_dupli", icon='DUPLICATE')
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
 
         layout.separator()
 
-        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA")
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon='FULLSCREEN_ENTER').use_hide_panels = True
 
 
