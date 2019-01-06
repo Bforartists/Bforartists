@@ -108,7 +108,7 @@ typedef struct bGPDpalettecolor {
 	float color[4];
 	float fill[4];           /* color that should be used for drawing "fills" for strokes */
 	short flag;              /* settings for palette color */
-	char  pad[6];            /* padding for compiler alignment error */
+	char  _pad[6];           /* padding for compiler alignment error */
 } bGPDpalettecolor;
 
 /* bGPDpalettecolor->flag */
@@ -134,7 +134,7 @@ typedef struct bGPDpalette {
 	char info[64];          /* Palette name. Must be unique. */
 
 	short flag;
-	char pad[6];            /* padding for compiler alignment error */
+	char _pad[6];           /* padding for compiler alignment error */
 } bGPDpalette;
 
 /* bGPDpalette->flag */
@@ -171,19 +171,19 @@ typedef struct bGPDstroke {
 	int tot_triangles;      /* number of triangles in array */
 
 	short thickness;        /* thickness of stroke */
-	short flag, pad[2];     /* various settings about this stroke */
+	short flag, _pad[2];    /* various settings about this stroke */
 
 	double inittime;		/* Init time of stroke */
 
 	char colorname[128] DNA_DEPRECATED;    /* color name */
 
 	int mat_nr;             /* material index */
-	char pad_[4];
+	char _pad1[4];
 
 	struct MDeformVert *dvert;    /* vertex weight data */
 
 	bGPDstroke_Runtime runtime;
-	char pad_1[4];
+	char _pad2[4];
 } bGPDstroke;
 
 /* bGPDstroke->flag */
@@ -244,7 +244,7 @@ typedef enum eGPDframe_Flag {
 /* Runtime temp data for bGPDlayer */
 typedef struct bGPDlayer_Runtime {
 	int icon_id;                    /* id for dynamic icon used to show annotation color preview for layer */
-	char pad_[4];
+	char _pad[4];
 } bGPDlayer_Runtime;
 
 /* Grease-Pencil Annotations - 'Layer' */
@@ -277,7 +277,7 @@ typedef struct bGPDlayer {
 	char viewlayername[64]; /* Name of the layer used to filter render output */
 
 	int blend_mode;         /* blend modes */
-	char pad_[4];
+	char _pad[4];
 
 	/* annotation onion skin */
 	short gstep;			/* Ghosts Before: max number of ghost frames to show between active frame and the one before it (0 = only the ghost itself) */
@@ -285,7 +285,7 @@ typedef struct bGPDlayer {
 
 	float gcolor_prev[3];	/* color for ghosts before the active frame */
 	float gcolor_next[3];	/* color for ghosts after the active frame */
-	char pad_1[4];
+	char _pad1[4];
 
 	bGPDlayer_Runtime runtime;
 } bGPDlayer;
@@ -351,10 +351,10 @@ typedef struct bGPdata_Runtime {
 	 */
 	short sbuffer_size;			/* number of elements currently in cache */
 	short sbuffer_sflag;		/* flags for stroke that cache represents */
-	char pad_[6];
+	char _pad[6];
 
 	int tot_cp_points;                 /* number of control-points for stroke */
-	char pad1_[4];
+	char _pad1_[4];
 	bGPDcontrolpoint *cp_points;       /* array of control-points for stroke */
 } bGPdata_Runtime;
 
@@ -366,7 +366,7 @@ typedef struct bGPgrid {
 	char _pad1[4];
 
 	int   lines;
-	char pad_[4];
+	char _pad[4];
 } bGPgrid;
 
 /* Grease-Pencil Annotations - 'DataBlock' */
@@ -379,7 +379,7 @@ typedef struct bGPdata {
 	int flag;				/* settings for this datablock */
 
 	short xray_mode;            /* xray mode for strokes (eGP_DepthOrdering) */
-	char pad_1[2];
+	char _pad1[2];
 
 	/* Palettes */
 	ListBase palettes DNA_DEPRECATED;    /* list of bGPDpalette's   - Deprecated (2.78 - 2.79 only) */
@@ -405,10 +405,10 @@ typedef struct bGPdata {
 	/* stats */
 	short totlayer;
 	short totframe;
-	char pad_2[6];
+	char _pad2[6];
 	int   totstroke;
 	int   totpoint;
-	char pad_3[4];
+	char _pad3[4];
 	bGPgrid grid;
 
 	bGPdata_Runtime runtime;
