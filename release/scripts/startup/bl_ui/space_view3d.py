@@ -596,6 +596,41 @@ class VIEW3D_MT_edit_proportional(Menu):
 # ********** View menus **********
 
 
+    # Workaround to separate the tooltips
+class VIEW3D_MT_view_view_selected_all_regions(bpy.types.Operator):
+    """View Selected All Regions\nMove the View to the selection center in all Quad View views"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "view3d.view_selected_all_regions"        # unique identifier for buttons and menu items to reference.
+    bl_label = "View Selected All Regions"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.view3d.view_selected(use_all_regions = True)
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
+    """View All all Regions\nView all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "view3d.view_all_all_regions"        # unique identifier for buttons and menu items to reference.
+    bl_label = "View All all Regions"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.view3d.view_all(use_all_regions = True)
+        return {'FINISHED'}
+
+    # Workaround to separate the tooltips
+class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
+    """Center Cursor and View All\nViews all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "view3d.view_all_center_cursor"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Center Cursor and View All"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.view3d.view_all(center = True)
+        return {'FINISHED'}
+
+
 class VIEW3D_MT_view(Menu):
     bl_label = "View"
 
@@ -608,35 +643,40 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.view_selected", text="Frame Selected", icon = "ALIGNCAMERA_ACTIVE").use_all_regions = False
-        if view.region_quadviews:
-            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE").use_all_regions = True
-
-        layout.operator("view3d.view_all", text="Frame All").center = False
-        layout.operator("view3d.view_persportho", text="Perspective/Orthographic", icon = "PERSP_ORTHO")
-        layout.menu("VIEW3D_MT_view_local")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
-
-        layout.separator()
-        layout.menu("VIEW3D_MT_view_viewpoint")
-        layout.menu("VIEW3D_MT_view_align")
-
-        layout.separator()
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_MT_view_borders", text="View Borders")
-
-        layout.separator()
-
-        layout.operator("screen.animation_play", text="Play Animation")
-
-        layout.separator()
-
         layout.operator("render.opengl", icon='RENDER_STILL')
         layout.operator("render.opengl", text="Viewport Render Animation", icon='RENDER_ANIMATION').animation = True
+
+        layout.separator()
+
+        #layout.operator_context = 'INVOKE_REGION_WIN' # ???
+        layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER")
+        layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
+
+        layout.separator()
+
+        layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
+        layout.operator("view3d.view_camera", text="Active Camera", icon = 'VIEW_SWITCHTOCAM')
+        layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_view_align")
+        layout.menu("VIEW3D_MT_view_align_selected")
+
+        layout.separator()
+        
+        layout.operator("view3d.localview", text="Toggle Local View", icon = "VIEW_GLOBAL_LOCAL")
+        layout.operator("view3d.localview_remove_from")
+
+        layout.separator()
+
+        layout.operator("view3d.view_selected", text="Frame Selected", icon = "ALIGNCAMERA_ACTIVE").use_all_regions = False
+        if view.region_quadviews:
+            layout.operator("view3d.view_selected_all_regions", text="Frame Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE")
+        layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
+        if view.region_quadviews:
+            layout.operator("view3d.view_all_all_regions", text = "Frame All (Quad View)", icon = "VIEWALL" ) # bfa - separated tooltip
+        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
 
         layout.separator()
 
@@ -696,73 +736,33 @@ class VIEW3D_MT_view_navigation(Menu):
 
 
 
-class VIEW3D_MT_view_local(Menu):
-    bl_label = "Local View"
-
-    def draw(self, context):
-        layout = self.layout
-        view = context.space_data
-
-        layout.operator("view3d.localview", text="Toggle Local View")
-        layout.operator("view3d.localview_remove_from")
-
-
-class VIEW3D_MT_view_cameras(Menu):
-    bl_label = "Cameras"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("view3d.object_as_camera")
-        layout.operator("view3d.view_camera", text="Active Camera")
-
-
-class VIEW3D_MT_view_viewpoint(Menu):
-    bl_label = "Viewpoint"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("view3d.view_camera", text="Camera")
-
-        layout.separator()
-
-        layout.operator("view3d.view_axis", text="Top").type = 'TOP'
-        layout.operator("view3d.view_axis", text="Bottom").type = 'BOTTOM'
-
-        layout.separator()
-
-        layout.operator("view3d.view_axis", text="Front").type = 'FRONT'
-        layout.operator("view3d.view_axis", text="Back").type = 'BACK'
-
-        layout.separator()
-
-        layout.operator("view3d.view_axis", text="Right").type = 'RIGHT'
-        layout.operator("view3d.view_axis", text="Left").type = 'LEFT'
-
-
 class VIEW3D_MT_view_align(Menu):
     bl_label = "Align View"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_view_align_selected")
+        layout.operator("view3d.camera_to_view", text="Align Active Camera to View", icon = "ALIGNCAMERA_VIEW")
+        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected", icon = "ALIGNCAMERA_ACTIVE")
+        layout.operator("view3d.view_center_cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
-        layout.operator("view3d.camera_to_view", text="Align Active Camera to View")
-        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected")
+        layout.operator("view3d.view_lock_to_active", icon = "LOCKTOACTIVE")
+        layout.operator("view3d.view_lock_clear", icon = "LOCK_CLEAR")
 
         layout.separator()
 
-        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
-        layout.operator("view3d.view_center_cursor")
+        layout.operator("view3d.view_persportho", text="Perspective/Orthographic", icon = "PERSP_ORTHO")
 
         layout.separator()
 
-        layout.operator("view3d.view_lock_to_active")
-        layout.operator("view3d.view_lock_clear")
+        layout.operator("view3d.view_axis", text="Top", icon ="VIEW_TOP").type = 'TOP'
+        layout.operator("view3d.view_axis", text="Bottom", icon ="VIEW_BOTTOM").type = 'BOTTOM'
+        layout.operator("view3d.view_axis", text="Front", icon ="VIEW_FRONT").type = 'FRONT'
+        layout.operator("view3d.view_axis", text="Back", icon ="VIEW_BACK").type = 'BACK'
+        layout.operator("view3d.view_axis", text="Right", icon ="VIEW_RIGHT").type = 'RIGHT'
+        layout.operator("view3d.view_axis", text="Left", icon ="VIEW_LEFT").type = 'LEFT'
 
 
 class VIEW3D_MT_view_align_selected(Menu):
@@ -771,46 +771,29 @@ class VIEW3D_MT_view_align_selected(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("view3d.view_axis", text="Top")
+        props = layout.operator("view3d.view_axis", text="Top", icon = "VIEW_ACTIVE_TOP")
         props.align_active = True
         props.type = 'TOP'
 
-        props = layout.operator("view3d.view_axis", text="Bottom")
+        props = layout.operator("view3d.view_axis", text="Bottom", icon ="VIEW_ACTIVE_BOTTOM")
         props.align_active = True
         props.type = 'BOTTOM'
 
-        layout.separator()
-
-        props = layout.operator("view3d.view_axis", text="Front")
+        props = layout.operator("view3d.view_axis", text="Front", icon ="VIEW_ACTIVE_FRONT")
         props.align_active = True
         props.type = 'FRONT'
 
-        props = layout.operator("view3d.view_axis", text="Back")
+        props = layout.operator("view3d.view_axis", text="Back", icon ="VIEW_ACTIVE_BACK")
         props.align_active = True
         props.type = 'BACK'
 
-        layout.separator()
-
-        props = layout.operator("view3d.view_axis", text="Right")
+        props = layout.operator("view3d.view_axis", text="Right" , icon ="VIEW_ACTIVE_RIGHT")
         props.align_active = True
         props.type = 'RIGHT'
 
-        props = layout.operator("view3d.view_axis", text="Left")
+        props = layout.operator("view3d.view_axis", text="Left", icon ="VIEW_ACTIVE_LEFT")
         props.align_active = True
         props.type = 'LEFT'
-
-
-class VIEW3D_MT_view_borders(Menu):
-    bl_label = "View Borders"
-
-    def draw(self, context):
-        layout = self.layout
-        # layout.operator("view3d.clip_border", text="Clipping Border...")
-        layout.operator("view3d.render_border", text="Render Border...")
-
-        layout.separator()
-
-        layout.operator("view3d.clear_render_border")
 
 
 # ********** Select menus, suffix from context.mode **********
@@ -5654,14 +5637,13 @@ classes = (
     VIEW3D_MT_snap,
     VIEW3D_MT_uv_map,
     VIEW3D_MT_edit_proportional,
+    VIEW3D_MT_view_view_selected_all_regions,
+    VIEW3D_MT_view_all_all_regions,
+    VIEW3D_MT_view_center_cursor_and_view_all,
     VIEW3D_MT_view,
     VIEW3D_MT_view_navigation,
-    VIEW3D_MT_view_local,
-    VIEW3D_MT_view_cameras,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
-    VIEW3D_MT_view_viewpoint,
-    VIEW3D_MT_view_borders,
     VIEW3D_MT_select_object,
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
