@@ -401,14 +401,15 @@ class VIEW3D_MT_transform_base(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.bend", text="Bend")
-        layout.operator("transform.push_pull", text="Push/Pull")
+        layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+        layout.operator("transform.shear", text="Shear", icon = "SHEAR")
+        layout.operator("transform.bend", text="Bend", icon = "BEND")
+        layout.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
 
         if context.mode != 'OBJECT':
-            layout.operator("transform.vertex_warp", text="Warp")
-            layout.operator("transform.vertex_random", text="Randomize")
+            layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
+            layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
+            layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
 
 
 # Generic transform menu - geometry types
@@ -419,12 +420,12 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         # generic...
         layout = self.layout
-        layout.operator("transform.shrink_fatten", text="Shrink Fatten")
+        layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
 
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
+        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
 
 # Object-specific extensions to Transform menu
@@ -438,19 +439,19 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
         # object-specific option follow...
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
+        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
         # XXX see alignmenu() in edit.c of b2.4x to get this working
-        layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
+        layout.operator("transform.transform", text="Align to Transform Orientation", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'
 
         layout.separator()
 
-        layout.operator("object.randomize_transform")
-        layout.operator("object.align")
+        layout.operator("object.randomize_transform", icon = "RANDOMIZE_TRANSFORM")
+        layout.operator("object.align", icon = "ALIGN")
 
         # TODO: there is a strange context bug here.
         """
@@ -473,17 +474,17 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
             if obj.data.display_type == 'BBONE':
                 layout.separator()
 
-                layout.operator("transform.transform", text="Scale BBone").mode = 'BONE_SIZE'
+                layout.operator("transform.transform", text="Scale BBone", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
             elif obj.data.display_type == 'ENVELOPE':
                 layout.separator()
 
-                layout.operator("transform.transform", text="Scale Envelope Distance").mode = 'BONE_SIZE'
-                layout.operator("transform.transform", text="Scale Radius").mode = 'BONE_ENVELOPE'
+                layout.operator("transform.transform", text="Scale Envelope Distance", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                layout.operator("transform.transform", text="Scale Radius", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
 
         if context.edit_object and context.edit_object.type == 'ARMATURE':
             layout.separator()
 
-            layout.operator("armature.align")
+            layout.operator("armature.align", icon = "ALIGN")
 
 
 class VIEW3D_MT_mirror(Menu):
