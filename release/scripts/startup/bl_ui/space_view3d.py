@@ -2884,7 +2884,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
             col.separator()
 
-            col.operator("mesh.extrude_vertices_move", text="Extrude Vertices"),
+            col.operator("mesh.extrude_vertices_move", text="Extrude Vertices")
             col.operator("mesh.bevel", text="Bevel Vertices").vertex_only = True
 
             if selected_verts_len > 1:
@@ -3084,7 +3084,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices"),
+        layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon = 'EXTRUDE_REGION')
         layout.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
 
         layout.separator()
@@ -3184,7 +3184,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.separator()
 
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW").use_ccw = True
+        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
 
         layout.separator()
 
@@ -3206,7 +3206,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
         layout.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
-        layout.operator("mesh.mark_sharp", text="Mark Sharp from Vertices").use_verts = True
+        layout.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon = "MARKSHARPEDGES").use_verts = True
         props = layout.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon = "CLEARSHARPEDGES")
         props.use_verts = True
         props.clear = True
@@ -3254,7 +3254,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION')
         layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'SHRINK_FATTEN')
-        layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces")
+        layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
         layout.separator()
 
