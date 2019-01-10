@@ -3693,12 +3693,10 @@ class VIEW3D_MT_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.separator()
-
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
-        layout.operator_menu_enum("lattice.flip", "axis")
+        layout.menu("VIEW3D_MT_edit_lattice_flip")
 
         layout.separator()
 
@@ -3707,6 +3705,16 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+class VIEW3D_MT_edit_lattice_flip(Menu):
+    bl_label = "Flip"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("lattice.flip", text = " U (X) axis", icon = "FLIP_X").axis = 'U'
+        layout.operator("lattice.flip", text = " V (Y) axis", icon = "FLIP_Y").axis = 'V'
+        layout.operator("lattice.flip", text = " W (Z) axis", icon = "FLIP_Z").axis = 'W'
 
 
 class VIEW3D_MT_edit_armature(Menu):
@@ -5756,6 +5764,7 @@ classes = (
     VIEW3D_MT_edit_meta,
     VIEW3D_MT_edit_meta_showhide,
     VIEW3D_MT_edit_lattice,
+    VIEW3D_MT_edit_lattice_flip,
     VIEW3D_MT_edit_armature,
     VIEW3D_MT_armature_specials,
     VIEW3D_MT_edit_armature_parent,
