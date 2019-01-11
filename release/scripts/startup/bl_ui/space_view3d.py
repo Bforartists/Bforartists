@@ -652,7 +652,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        #layout.operator_context = 'INVOKE_REGION_WIN' # ???
+        layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER")
         layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
 
@@ -810,26 +810,26 @@ class VIEW3D_MT_select_object_more_less(Menu):
 
         layout = self.layout
 
-        layout.operator("object.select_more", text="More")
-        layout.operator("object.select_less", text="Less")
+        layout.operator("object.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
-        props = layout.operator("object.select_hierarchy", text="Parent")
+        props = layout.operator("object.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("object.select_hierarchy", text="Child")
+        props = layout.operator("object.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
         layout.separator()
 
-        props = layout.operator("object.select_hierarchy", text="Extend Parent")
+        props = layout.operator("object.select_hierarchy", text="Extend Parent", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("object.select_hierarchy", text="Extend Child")
+        props = layout.operator("object.select_hierarchy", text="Extend Child", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
@@ -840,21 +840,21 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.select_all", text="All").action = 'SELECT'
+        layout.operator("object.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("object.select_all", text="None").action = 'DESELECT'
-        layout.operator("object.select_all", text="Invert").action = 'INVERT'
+        layout.operator("object.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
         layout.operator_menu_enum("object.select_by_type", "type", text="Select All by Type...")
-        layout.operator("object.select_camera", text="Select Active Camera")
-        layout.operator("object.select_mirror", text="Mirror Selection")
-        layout.operator("object.select_random", text="Select Random")
+        layout.operator("object.select_camera", text="Select Active Camera", icon = "CAMERA_DATA")
+        layout.operator("object.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
+        layout.operator("object.select_random", text="Select Random", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -864,7 +864,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.operator_menu_enum("object.select_grouped", "type", text="Select Grouped")
         layout.operator_menu_enum("object.select_linked", "type", text="Select Linked")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="Select Pattern...", icon = "PATTERN")
 
 
 class VIEW3D_MT_select_pose_more_less(Menu):
@@ -875,21 +875,21 @@ class VIEW3D_MT_select_pose_more_less(Menu):
 
         layout = self.layout
 
-        props = layout.operator("pose.select_hierarchy", text="Parent")
+        props = layout.operator("pose.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child")
+        props = layout.operator("pose.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
         layout.separator()
 
-        props = layout.operator("pose.select_hierarchy", text="Extend Parent")
+        props = layout.operator("pose.select_hierarchy", text="Extend Parent", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Extend Child")
+        props = layout.operator("pose.select_hierarchy", text="Extend Child", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
@@ -900,23 +900,23 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.select_all", text="All").action = 'SELECT'
+        layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("pose.select_all", text="None").action = 'DESELECT'
-        layout.operator("pose.select_all", text="Invert").action = 'INVERT'
+        layout.operator("pose.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("pose.select_mirror", text="Flip Active")
+        layout.operator("pose.select_mirror", text="Flip Active", icon = "FLIP")
 
         layout.separator()
 
-        layout.operator("pose.select_constraint_target", text="Constraint Target")
-        layout.operator("pose.select_linked", text="Linked")
+        layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
+        layout.operator("pose.select_linked", text="Linked", icon = "LINKED")
 
         layout.separator()
 
@@ -925,7 +925,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="Select Pattern", icon = "PATTERN")
 
 
 class VIEW3D_MT_select_particle(Menu):
@@ -934,32 +934,32 @@ class VIEW3D_MT_select_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("particle.select_all", text="All").action = 'SELECT'
+        layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all", text="None").action = 'DESELECT'
-        layout.operator("particle.select_all", text="Invert").action = 'INVERT'
+        layout.operator("particle.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("particle.select_linked")
+        layout.operator("particle.select_linked", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("particle.select_more")
-        layout.operator("particle.select_less")
+        layout.operator("particle.select_more", icon = "SELECTMORE")
+        layout.operator("particle.select_less", icon = "SELECTLESS")
 
         layout.separator()
 
-        layout.operator("particle.select_random")
+        layout.operator("particle.select_random", icon = "RANDOMIZE")
 
         layout.separator()
 
-        layout.operator("particle.select_roots", text="Roots")
-        layout.operator("particle.select_tips", text="Tips")
+        layout.operator("particle.select_roots", text="Roots", icon = "SELECT_ROOT")
+        layout.operator("particle.select_tips", text="Tips", icon = "SELECT_TIP")
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
@@ -982,14 +982,14 @@ class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
         layout = self.layout
         tool_settings = context.tool_settings
         if tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold")
-        layout.operator("mesh.select_loose", text="Loose Geometry")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides", text="Faces by Sides")
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon = "SELECT_FACES_BY_SIDE")
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
@@ -998,13 +998,13 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.select_more", text="More")
-        layout.operator("mesh.select_less", text="Less")
+        layout.operator("mesh.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("mesh.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
-        layout.operator("mesh.select_next_item", text="Next Active")
-        layout.operator("mesh.select_prev_item", text="Previous Active")
+        layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
+        layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
 
 
 class VIEW3D_MT_edit_mesh_select_linked(Menu):
@@ -1013,9 +1013,9 @@ class VIEW3D_MT_edit_mesh_select_linked(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.select_linked", text="Linked")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces")
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
 
 
 class VIEW3D_MT_edit_mesh_select_loops(Menu):
@@ -1024,13 +1024,13 @@ class VIEW3D_MT_edit_mesh_select_loops(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
-        layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
+        layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
+        layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
 
         layout.separator()
 
-        layout.operator("mesh.loop_to_region")
-        layout.operator("mesh.region_to_loop")
+        layout.operator("mesh.loop_to_region", icon = "SELECT_LOOPINNER")
+        layout.operator("mesh.region_to_loop", icon = "SELECT_BOUNDARY")
 
 
 class VIEW3D_MT_select_edit_mesh(Menu):
@@ -1040,25 +1040,25 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout = self.layout
 
         # primitive
-        layout.operator("mesh.select_all", text="All").action = 'SELECT'
+        layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mesh.select_all", text="None").action = 'DESELECT'
-        layout.operator("mesh.select_all", text="Invert").action = 'INVERT'
+        layout.operator("mesh.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
         # numeric
-        layout.operator("mesh.select_random", text="Select Random")
+        layout.operator("mesh.select_random", text="Select Random", icon = "RANDOMIZE")
         layout.operator("mesh.select_nth")
 
         layout.separator()
 
         # geometric
-        layout.operator("mesh.edges_select_sharp", text="Select Sharp Edges")
+        layout.operator("mesh.edges_select_sharp", text="Select Sharp Edges", icon = "SELECT_SHARPEDGES")
 
         layout.separator()
 
@@ -1093,33 +1093,33 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("curve.select_all", text="All").action = 'SELECT'
+        layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all", text="None").action = 'DESELECT'
-        layout.operator("curve.select_all", text="Invert").action = 'INVERT'
+        layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("curve.select_random")
-        layout.operator("curve.select_nth")
-        layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_random", icon = "RANDOMIZE")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
+        layout.operator("curve.select_linked", text="Select Linked", icon = "LINKED")
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
 
-        layout.operator("curve.de_select_first")
-        layout.operator("curve.de_select_last")
-        layout.operator("curve.select_next")
-        layout.operator("curve.select_previous")
+        layout.operator("curve.de_select_first", icon = "SELECT_FIRST")
+        layout.operator("curve.de_select_last", icon = "SELECT_LAST")
+        layout.operator("curve.select_next", text = "Next", icon = "NEXTACTIVE")
+        layout.operator("curve.select_previous", text = "Previous", icon = "PREVIOUSACTIVE")
 
         layout.separator()
 
-        layout.operator("curve.select_more")
-        layout.operator("curve.select_less")
+        layout.operator("curve.select_more", icon = "SELECTMORE")
+        layout.operator("curve.select_less", icon = "SELECTLESS")
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
@@ -1128,30 +1128,30 @@ class VIEW3D_MT_select_edit_surface(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("curve.select_all", text="All").action = 'SELECT'
+        layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all", text="None").action = 'DESELECT'
-        layout.operator("curve.select_all", text="Invert").action = 'INVERT'
+        layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("curve.select_random")
-        layout.operator("curve.select_nth")
-        layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_random", icon = "RANDOMIZE")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
+        layout.operator("curve.select_linked", text="Select Linked", icon = "LINKED")
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
 
-        layout.operator("curve.select_row")
+        layout.operator("curve.select_row", icon = "CONTROLPOINTROW")
 
         layout.separator()
 
-        layout.operator("curve.select_more")
-        layout.operator("curve.select_less")
+        layout.operator("curve.select_more", icon = "SELECTMORE")
+        layout.operator("curve.select_less", icon = "SELECTLESS")
 
 
 class VIEW3D_MT_select_edit_text(Menu):
@@ -1181,18 +1181,18 @@ class VIEW3D_MT_select_edit_metaball(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mball.select_all", text="All").action = 'SELECT'
+        layout.operator("mball.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mball.select_all", text="None").action = 'DESELECT'
-        layout.operator("mball.select_all", text="Invert").action = 'INVERT'
+        layout.operator("mball.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems")
+        layout.operator("mball.select_random_metaelems", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -1205,28 +1205,28 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("lattice.select_all", text="All").action = 'SELECT'
+        layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("lattice.select_all", text="None").action = 'DESELECT'
-        layout.operator("lattice.select_all", text="Invert").action = 'INVERT'
+        layout.operator("lattice.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("lattice.select_mirror")
-        layout.operator("lattice.select_random")
+        layout.operator("lattice.select_mirror", icon = "TRANSFORM_MIRROR")
+        layout.operator("lattice.select_random", icon = "RANDOMIZE")
 
         layout.separator()
 
-        layout.operator("lattice.select_more")
-        layout.operator("lattice.select_less")
+        layout.operator("lattice.select_more", icon = "SELECTMORE")
+        layout.operator("lattice.select_less", icon = "SELECTLESS")
 
         layout.separator()
 
-        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_select_edit_armature(Menu):
@@ -1235,46 +1235,46 @@ class VIEW3D_MT_select_edit_armature(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.select_all", text="All").action = 'SELECT'
+        layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all", text="None").action = 'DESELECT'
-        layout.operator("armature.select_all", text="Invert").action = 'INVERT'
+        layout.operator("armature.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("armature.select_mirror", text="Mirror").extend = False
+        layout.operator("armature.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR").extend = False
 
         layout.separator()
 
-        layout.operator("armature.select_more", text="More")
-        layout.operator("armature.select_less", text="Less")
+        layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
-        props = layout.operator("armature.select_hierarchy", text="Parent")
+        props = layout.operator("armature.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Child")
+        props = layout.operator("armature.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
         layout.separator()
 
-        props = layout.operator("armature.select_hierarchy", text="Extend Parent")
+        props = layout.operator("armature.select_hierarchy", text="Extend Parent", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Extend Child")
+        props = layout.operator("armature.select_hierarchy", text="Extend Child", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
 
 class VIEW3D_MT_select_gpencil(Menu):
@@ -1294,7 +1294,7 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_linked", text="Linked", icon = "CONNECTED")
+        layout.operator("gpencil.select_linked", text="Linked", icon = "LINKED")
         layout.operator("gpencil.select_alternate")
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
@@ -1325,18 +1325,18 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.face_select_all", text="All").action = 'SELECT'
+        layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("paint.face_select_all", text="None").action = 'DESELECT'
-        layout.operator("paint.face_select_all", text="Invert").action = 'INVERT'
+        layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon = 'BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("paint.face_select_linked", text="Linked")
+        layout.operator("paint.face_select_linked", text="Linked", icon = "LINKED")
 
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
@@ -1345,18 +1345,18 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.vert_select_all", text="All").action = 'SELECT'
+        layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all", text="None").action = 'DESELECT'
-        layout.operator("paint.vert_select_all", text="Invert").action = 'INVERT'
+        layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
-        layout.operator("view3d.select_box")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_box", icon='BORDER_RECT')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_angle_control(Menu):
@@ -2403,7 +2403,7 @@ class VIEW3D_MT_hide_mask(Menu):
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("view3d.select_border", text="Box Mask", icon = "BOX_MASK")
+        props = layout.operator("view3d.select_box", text="Box Mask", icon = "BOX_MASK")
         props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
 
@@ -2470,9 +2470,9 @@ class VIEW3D_MT_particle_specials(Menu):
         if particle_edit.select_mode == 'POINT':
             layout.separator()
 
-            layout.operator("particle.select_all", text="All").action = 'SELECT'
+            layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
             layout.operator("particle.select_all", text="None").action = 'DESELECT'
-            layout.operator("particle.select_all", text="Invert").action = 'INVERT'
+            layout.operator("particle.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
             layout.separator()
 
@@ -2481,16 +2481,16 @@ class VIEW3D_MT_particle_specials(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_random")
+            layout.operator("particle.select_random", icon = "RANDOMIZE")
 
             layout.separator()
 
-            layout.operator("particle.select_more")
-            layout.operator("particle.select_less")
+            layout.operator("particle.select_more", icon = "SELECTMORE")
+            layout.operator("particle.select_less", icon = "SELECTLESS")
 
             layout.separator()
 
-            layout.operator("particle.select_linked")
+            layout.operator("particle.select_linked", icon = "LINKED")
 
 
 class VIEW3D_MT_particle_showhide(ShowHideMenu, Menu):
