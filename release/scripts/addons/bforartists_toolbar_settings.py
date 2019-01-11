@@ -85,7 +85,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     primitives_curve : BoolProperty(name="Curve", default=False, description = "Display the Curve Toolbar\nDisplay is mode dependant", )
     primitives_surface : BoolProperty(name="Surface", default=False, description = "Display the Surface Toolbar\nDisplay is mode dependant", )
     primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball Toolbar\nDisplay is mode dependant", )
-    primitives_lamp : BoolProperty(name="Lamp", default=False, description = "Display the Lamp Toolbar\nDisplay is mode dependant", )
+    primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light Toolbar\nDisplay is mode dependant", )
     primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other Toolbar\nDisplay is mode dependant", )
     primitives_empties : BoolProperty(name="Empties", default=False, description = "Display the Empties Toolbar\nDisplay is mode dependant", )
     primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode dependant", )
@@ -207,7 +207,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "primitives_lamp")
+        row.prop(self, "primitives_light")
         row.prop(self, "primitives_other")
         row.prop(self, "primitives_empties")
         row.prop(self, "primitives_forcefield")

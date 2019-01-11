@@ -525,7 +525,7 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
         layout.prop(addon_prefs, "primitives_curve")
         layout.prop(addon_prefs, "primitives_surface")
         layout.prop(addon_prefs, "primitives_metaball")
-        layout.prop(addon_prefs, "primitives_lamp")
+        layout.prop(addon_prefs, "primitives_light")
         layout.prop(addon_prefs, "primitives_other")
         layout.prop(addon_prefs, "primitives_empties")
         layout.prop(addon_prefs, "primitives_forcefield")
@@ -601,15 +601,14 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                 row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-            if addon_prefs.primitives_lamp: 
+            if addon_prefs.primitives_light: 
 
                 row = layout.row(align=True)
 
-                row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
-                row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
-                row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-                row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
-                row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
+                row.operator("object.light_add", text="", icon='LAMP_POINT').type= 'POINT'
+                row.operator("object.light_add", text="", icon='LAMP_SUN').type= 'SUN' 
+                row.operator("object.light_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+                row.operator("object.light_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
             if addon_prefs.primitives_other: 
 
@@ -705,15 +704,14 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                     row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-                if addon_prefs.primitives_lamp: 
+                if addon_prefs.primitives_light: 
 
                     row = layout.row(align=True)
 
-                    row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
-                    row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
-                    row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-                    row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
-                    row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
+                    row.operator("object.light_add", text="", icon='LAMP_POINT').type= 'POINT'
+                    row.operator("object.light_add", text="", icon='LAMP_SUN').type= 'SUN' 
+                    row.operator("object.light_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+                    row.operator("object.light_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
                 if addon_prefs.primitives_other: 
 
