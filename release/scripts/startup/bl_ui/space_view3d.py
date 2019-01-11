@@ -1162,17 +1162,17 @@ class VIEW3D_MT_select_edit_text(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
         layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
-        layout.operator("font.text_paste_from_file")
+        layout.operator("font.text_paste_from_file", icon = "PASTEFILE")
 
         layout.separator()
 
-        layout.operator("font.select_all")
+        layout.operator("font.select_all", icon = "SELECT_ALL")
 
 
 class VIEW3D_MT_select_edit_metaball(Menu):
@@ -3615,7 +3615,7 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.operator("font.style_toggle", text="Toggle Underline", icon = 'UNDERLINED').style = 'UNDERLINE'
-        layout.operator("font.style_toggle", text="Toggle Small Caps").style = 'SMALL_CAPS'
+        layout.operator("font.style_toggle", text="Toggle Small Caps", icon = "SMALL_CAPS").style = 'SMALL_CAPS'
 
 
 class VIEW3D_MT_edit_text_chars(Menu):
