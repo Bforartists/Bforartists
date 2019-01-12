@@ -65,7 +65,7 @@ class VIEW3D_HT_header(Header):
 
         layout.template_header_3D_mode()
 
-        # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode...
+        # Contains buttons like Mode, Pivot, Layer, Mesh Select Mode
         if obj:
             # Particle edit
             if object_mode == 'PARTICLE_EDIT':
@@ -419,7 +419,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
         # base menu
         VIEW3D_MT_transform_base.draw(self, context)
 
-        # generic...
+        # generic
         layout = self.layout
         layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
 
@@ -437,7 +437,7 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
         # base menu
         VIEW3D_MT_transform_base.draw(self, context)
 
-        # object-specific option follow...
+        # object-specific option follow
         layout.separator()
 
         layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
@@ -469,7 +469,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
         # base menu
         VIEW3D_MT_transform_base.draw(self, context)
 
-        # armature specific extensions follow...
+        # armature specific extensions follow
         obj = context.object
         if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
             if obj.data.display_type == 'BBONE':
@@ -852,7 +852,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_by_type", "type", text="Select All by Type...")
+        layout.operator_menu_enum("object.select_by_type", "type", text="Select All by Type")
         layout.operator("object.select_camera", text="Select Active Camera", icon = "CAMERA_DATA")
         layout.operator("object.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
         layout.operator("object.select_random", text="Select Random", icon = "RANDOMIZE")
@@ -865,7 +865,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.operator_menu_enum("object.select_grouped", "type", text="Select Grouped")
         layout.operator_menu_enum("object.select_linked", "type", text="Select Linked")
-        layout.operator("object.select_pattern", text="Select Pattern...", icon = "PATTERN")
+        layout.operator("object.select_pattern", text="Select Pattern", icon = "PATTERN")
 
 
 class VIEW3D_MT_select_pose_more_less(Menu):
@@ -1020,7 +1020,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        # other ...
+        # other 
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
 
         layout.separator()
@@ -1569,7 +1569,7 @@ class VIEW3D_MT_add(Menu):
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator(
                 "object.collection_instance_add",
-                text="Collection Instance..." if has_collections else "No Collections to Instance",
+                text="Collection Instance" if has_collections else "No Collections to Instance",
                 icon='OUTLINER_OB_GROUP_INSTANCE',
             )
         else:
@@ -1596,19 +1596,19 @@ class VIEW3D_MT_object_relations(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.proxy_make", text="Make Proxy...")
+        layout.operator("object.proxy_make", text="Make Proxy", icon='MAKE_PROXY')
 
-        layout.operator("object.make_dupli_face")
+        layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
         layout.separator()
 
-        layout.operator_menu_enum("object.make_local", "type", text="Make Local...")
+        layout.operator_menu_enum("object.make_local", "type", text="Make Local")
         layout.menu("VIEW3D_MT_make_single_user")
 
         layout.separator()
 
-        layout.operator("object.data_transfer")
-        layout.operator("object.datalayout_transfer")
+        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
+        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
 
 
 class VIEW3D_MT_object(Menu):
@@ -1619,7 +1619,7 @@ class VIEW3D_MT_object(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_transform_object")
-        layout.operator_menu_enum("object.origin_set", text="Set Origin...", property="type")
+        layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
@@ -1629,7 +1629,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.operator("object.duplicate_move", icon = "DUPLICATE")
         layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
-        layout.operator("object.join")
+        layout.operator("object.join", icon ='JOIN')
 
         layout.separator()
 
@@ -1643,12 +1643,12 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_relations")
         layout.menu("VIEW3D_MT_object_constraints")
         layout.menu("VIEW3D_MT_object_track")
-        layout.menu("VIEW3D_MT_make_links", text="Make Links...")
+        layout.menu("VIEW3D_MT_make_links", text="Make Links")
 
         layout.separator()
 
-        layout.operator("object.shade_smooth")
-        layout.operator("object.shade_flat")
+        layout.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
+        layout.operator("object.shade_flat", icon ='SHADING_FLAT')
 
         layout.separator()
 
@@ -1670,8 +1670,8 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("object.delete", text="Delete").use_global = False
-        layout.operator("object.delete", text="Delete Global").use_global = True
+        layout.operator("object.delete", text="Delete", icon = "DELETE").use_global = False
+        layout.operator("object.delete", text="Delete Global", icon = "DELETE").use_global = True
 
 
 class VIEW3D_MT_object_animation(Menu):
@@ -1680,14 +1680,14 @@ class VIEW3D_MT_object_animation(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes...")
-        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes...")
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon= 'KEYFRAMES_INSERT')
+        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon= 'KEYFRAMES_REMOVE')
+        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon= 'KEYFRAMES_CLEAR')
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='TRIA_RIGHT')
 
         layout.separator()
 
-        layout.operator("nla.bake", text="Bake Action...")
+        layout.operator("nla.bake", text="Bake Action", icon= 'BAKE_ACTION')
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -1696,24 +1696,24 @@ class VIEW3D_MT_object_rigid_body(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("rigidbody.objects_add", text="Add Active").type = 'ACTIVE'
-        layout.operator("rigidbody.objects_add", text="Add Passive").type = 'PASSIVE'
+        layout.operator("rigidbody.objects_add", text="Add Active", icon='RIGID_ADD_ACTIVE').type = 'ACTIVE'
+        layout.operator("rigidbody.objects_add", text="Add Passive", icon='RIGID_ADD_PASSIVE').type = 'PASSIVE'
 
         layout.separator()
 
-        layout.operator("rigidbody.objects_remove", text="Remove")
+        layout.operator("rigidbody.objects_remove", text="Remove", icon='RIGID_REMOVE')
 
         layout.separator()
 
-        layout.operator("rigidbody.shape_change", text="Change Shape")
-        layout.operator("rigidbody.mass_calculate", text="Calculate Mass")
-        layout.operator("rigidbody.object_settings_copy", text="Copy from Active")
-        layout.operator("object.visual_transform_apply", text="Apply Transformation")
-        layout.operator("rigidbody.bake_to_keyframes", text="Bake To Keyframes")
+        layout.operator("rigidbody.shape_change", text="Change Shape", icon='RIGID_CHANGE_SHAPE')
+        layout.operator("rigidbody.mass_calculate", text="Calculate Mass", icon='RIGID_CALCULATE_MASS')
+        layout.operator("rigidbody.object_settings_copy", text="Copy from Active", icon='RIGID_COPY_FROM_ACTIVE')
+        layout.operator("object.visual_transform_apply", text="Apply Transformation", icon='RIGID_APPLY_TRANS')
+        layout.operator("rigidbody.bake_to_keyframes", text="Bake To Keyframes", icon='RIGID_BAKE_TO_KEYFRAME')
 
         layout.separator()
 
-        layout.operator("rigidbody.connect", text="Connect")
+        layout.operator("rigidbody.connect", text="Connect", icon='RIGID_CONSTRAINTS_CONNECT')
 
 
 class VIEW3D_MT_object_clear(Menu):
@@ -1722,13 +1722,13 @@ class VIEW3D_MT_object_clear(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.location_clear", text="Location").clear_delta = False
-        layout.operator("object.rotation_clear", text="Rotation").clear_delta = False
-        layout.operator("object.scale_clear", text="Scale").clear_delta = False
+        layout.operator("object.location_clear", text="Location", icon = "CLEARMOVE").clear_delta = False
+        layout.operator("object.rotation_clear", text="Rotation", icon = "CLEARROTATE").clear_delta = False
+        layout.operator("object.scale_clear", text="Scale", icon = "CLEARSCALE").clear_delta = False
 
         layout.separator()
 
-        layout.operator("object.origin_clear", text="Origin")
+        layout.operator("object.origin_clear", text="Origin", icon = "CLEARORIGIN")
 
 
 class VIEW3D_MT_object_specials(Menu):
@@ -1766,7 +1766,7 @@ class VIEW3D_MT_object_specials(Menu):
             layout.separator()
 
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator_menu_enum("object.origin_set", text="Set Origin...", property="type")
+            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
             layout.operator_context = 'INVOKE_DEFAULT'
             # If more than one object is selected
@@ -1820,14 +1820,14 @@ class VIEW3D_MT_object_specials(Menu):
 
             layout.operator("object.convert", text="Convert to Mesh").target = 'MESH'
 
-            layout.operator_menu_enum("object.origin_set", text="Set Origin...", property="type")
+            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
         elif obj.type == 'GPENCIL':
             layout.operator("gpencil.convert", text="Convert to Path").type = 'PATH'
             layout.operator("gpencil.convert", text="Convert to Bezier Curves").type = 'CURVE'
             layout.operator("gpencil.convert", text="Convert to Mesh").type = 'POLY'
 
-            layout.operator_menu_enum("object.origin_set", text="Set Origin...", property="type")
+            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -1923,7 +1923,7 @@ class VIEW3D_MT_object_specials(Menu):
 
         layout.separator()
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe")
 
         layout.separator()
 
@@ -1947,55 +1947,30 @@ class VIEW3D_MT_object_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE") 
         props.location, props.rotation, props.scale = True, False, False
 
-        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
         props.location, props.rotation, props.scale = False, True, False
 
-        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
-        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
         props.location, props.rotation, props.scale = False, True, True
 
         layout.separator()
 
-        layout.operator(
-            "object.transforms_to_deltas",
-            text="Location to Deltas",
-            text_ctxt=i18n_contexts.default,
-        ).mode = 'LOC'
-        layout.operator(
-            "object.transforms_to_deltas",
-            text="Rotation to Deltas",
-            text_ctxt=i18n_contexts.default,
-        ).mode = 'ROT'
-        layout.operator(
-            "object.transforms_to_deltas",
-            text="Scale to Deltas",
-            text_ctxt=i18n_contexts.default,
-        ).mode = 'SCALE'
-
-        layout.operator(
-            "object.transforms_to_deltas",
-            text="All Transforms to Deltas",
-            text_ctxt=i18n_contexts.default,
-        ).mode = 'ALL'
-        layout.operator("object.anim_transforms_to_deltas")
+        layout.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+        layout.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+        layout.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+        layout.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+        layout.operator("object.anim_transforms_to_deltas", icon = "APPLYANIDELTA")
 
         layout.separator()
 
-        layout.operator(
-            "object.visual_transform_apply",
-            text="Visual Transform",
-            text_ctxt=i18n_contexts.default,
-        )
-        layout.operator(
-            "object.convert",
-            text="Visual Geometry to Mesh",
-            text_ctxt=i18n_contexts.default,
-        ).target = 'MESH'
-        layout.operator("object.duplicates_make_real")
+        layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+        layout.operator("object.convert", text="Visual Geometry to Mesh", text_ctxt=i18n_contexts.default,).target = 'MESH'
+        layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
 
 
 class VIEW3D_MT_object_parent(Menu):
@@ -2030,15 +2005,15 @@ class VIEW3D_MT_object_collection(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("collection.create")
+        layout.operator("collection.create", icon='GROUP')
         # layout.operator_menu_enum("collection.objects_remove", "collection")  # BUGGY
-        layout.operator("collection.objects_remove")
-        layout.operator("collection.objects_remove_all")
+        layout.operator("collection.objects_remove", icon = "DELETE")
+        layout.operator("collection.objects_remove_all", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("collection.objects_add_active")
-        layout.operator("collection.objects_remove_active")
+        layout.operator("collection.objects_add_active", icon='GROUP')
+        layout.operator("collection.objects_remove_active", icon = "DELETE")
 
 
 class VIEW3D_MT_object_constraints(Menu):
@@ -2117,7 +2092,7 @@ class VIEW3D_MT_make_links(Menu):
 
         if len(bpy.data.scenes) > 10:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.make_links_scene", text="Objects to Scene...", icon='OUTLINER_OB_EMPTY')
+            layout.operator("object.make_links_scene", text="Objects to Scene", icon='OUTLINER_OB_EMPTY')
         else:
             layout.operator_context = 'EXEC_REGION_WIN'
             layout.operator_menu_enum("object.make_links_scene", "scene", text="Objects to Scene")
@@ -2596,7 +2571,7 @@ class VIEW3D_MT_pose_library(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("poselib.browse_interactive", text="Browse Poses...")
+        layout.operator("poselib.browse_interactive", text="Browse Poses")
 
         layout.separator()
 
@@ -2653,7 +2628,7 @@ class VIEW3D_MT_pose_constraints(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...", icon = "CONSTRAINT_DATA")
+        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)", icon = "CONSTRAINT_DATA")
         layout.operator("pose.constraints_copy", icon = "COPYDOWN")
         layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
@@ -2685,7 +2660,7 @@ class VIEW3D_MT_pose_specials(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe")
 
         layout.separator()
 
@@ -2899,14 +2874,14 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
             col.separator()
 
-            col.menu("VIEW3D_MT_snap", text="Snap Vertices...")
+            col.menu("VIEW3D_MT_snap", text="Snap Vertices")
             col.operator("transform.mirror", text="Mirror Vertices")
 
             col.separator()
 
             # Removal Operators
             if selected_verts_len > 1:
-                col.operator("mesh.merge", text="Merge Vertices...")
+                col.operator("mesh.merge", text="Merge Vertices")
                 col.operator("mesh.remove_doubles", text="Remove Double Vertices")
             col.operator("mesh.dissolve_verts")
             col.operator("mesh.delete", text="Delete Vertices", icon = "DELETE").type = 'VERT'
@@ -2996,7 +2971,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
             col.separator()
 
             # Modify Operators
-            col.menu("VIEW3D_MT_uv_map", text="UV Unwrap Faces...")
+            col.menu("VIEW3D_MT_uv_map", text="UV Unwrap Faces")
 
             col.separator()
 
@@ -3981,7 +3956,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate...")
+        layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
         layout.operator("gpencil.stroke_split", text="Split")
         layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join", icon ='JOIN')
         layout.operator("gpencil.stroke_flip", text="Flip Direction")
