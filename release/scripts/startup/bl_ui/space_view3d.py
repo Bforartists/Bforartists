@@ -973,24 +973,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_similar_region", text="Face Regions")
-
-
-class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
-    bl_label = "Select All by Trait"
-
-    def draw(self, context):
-        layout = self.layout
-        tool_settings = context.tool_settings
-        if tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
-        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
-        layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon = "SELECT_FACES_BY_SIDE")
-
-        layout.separator()
-
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
+        layout.operator("mesh.select_similar_region", text="Face Regions", icon = "FACEREGIONS")
 
 
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
@@ -1006,32 +989,6 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
 
         layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
         layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
-
-
-class VIEW3D_MT_edit_mesh_select_linked(Menu):
-    bl_label = "Select Linked"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
-
-
-class VIEW3D_MT_edit_mesh_select_loops(Menu):
-    bl_label = "Select Loops"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
-        layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
-
-        layout.separator()
-
-        layout.operator("mesh.loop_to_region", icon = "SELECT_LOOPINNER")
-        layout.operator("mesh.region_to_loop", icon = "SELECT_BOUNDARY")
 
 
 class VIEW3D_MT_select_edit_mesh(Menu):
@@ -1053,13 +1010,13 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # numeric
-        layout.operator("mesh.select_random", text="Select Random", icon = "RANDOMIZE")
-        layout.operator("mesh.select_nth")
+        layout.operator("mesh.select_random", text="Random", icon = "RANDOMIZE")
+        layout.operator("mesh.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
         # geometric
-        layout.operator("mesh.edges_select_sharp", text="Select Sharp Edges", icon = "SELECT_SHARPEDGES")
+        layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon = "SELECT_SHARPEDGES")
 
         layout.separator()
 
@@ -1068,7 +1025,17 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_select_by_trait")
+        # topology
+        tool_settings = context.tool_settings
+        if tool_settings.mesh_select_mode[2] is False:
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon = "SELECT_FACES_BY_SIDE")
+
+        layout.separator()
+
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
@@ -1076,16 +1043,27 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_select_loops")
+        # loops
+        layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
+        layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
+        layout.operator("mesh.loop_to_region", text = "Loop Inner Region", icon = "SELECT_LOOPINNER")
+        layout.operator("mesh.region_to_loop", text = "Boundary Loop", icon = "SELECT_BOUNDARY")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_select_linked")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
 
         layout.separator()
 
-        layout.operator("mesh.select_axis", text="Side of Active")
-        layout.operator("mesh.select_mirror", text="Mirror Selection")
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")        
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+
+        layout.separator()
+
+        layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
+        layout.operator("mesh.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
 
 
 class VIEW3D_MT_select_edit_curve(Menu):
@@ -5703,7 +5681,6 @@ classes = (
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
-    VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve,
@@ -5773,8 +5750,6 @@ classes = (
     VIEW3D_MT_bone_options_disable,
     VIEW3D_MT_edit_mesh_specials,
     VIEW3D_MT_edit_mesh_select_mode,
-    VIEW3D_MT_edit_mesh_select_linked,
-    VIEW3D_MT_edit_mesh_select_loops,
     VIEW3D_MT_edit_mesh_extrude,
     VIEW3D_MT_edit_mesh_vertices,
     VIEW3D_MT_edit_mesh_edges,
