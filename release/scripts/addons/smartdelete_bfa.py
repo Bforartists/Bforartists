@@ -130,7 +130,7 @@ class SDEL_OT_meshdissolvecontextual(bpy.types.Operator):
 classes = (SDEL_OT_meshdissolvecontextual, )
 
 def menu_func(self, context):
-    self.layout.operator(SDEL_OT_meshdissolvecontextual.bl_idname)
+    self.layout.operator(SDEL_OT_meshdissolvecontextual.bl_idname, icon = "DELETE")
 
 def register():
     from bpy.utils import register_class
