@@ -12,6 +12,7 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software Foundation,
+#  along with this program; if not, write to the Free Software Foundation
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
@@ -1648,8 +1649,8 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.duplicate_move")
-        layout.operator("object.duplicate_move_linked")
+        layout.operator("object.duplicate_move", icon = "DUPLICATE")
+        layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
         layout.operator("object.join")
 
         layout.separator()
@@ -1929,7 +1930,7 @@ class VIEW3D_MT_object_specials(Menu):
         layout.separator()
 
         layout.operator("object.duplicate_move", icon='DUPLICATE')
-        layout.operator("object.duplicate_move_linked")
+        layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
 
         layout.separator()
 
@@ -2802,7 +2803,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.duplicate_move", text="Duplicate")
+        layout.operator("mesh.duplicate_move", text="Duplicate", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_extrude")
         layout.operator("mesh.split", icon = "SPLIT")
         layout.operator("mesh.bisect", icon = 'BISECT')
@@ -2821,7 +2822,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_normals")
         layout.menu("VIEW3D_MT_edit_mesh_shading")
         layout.menu("VIEW3D_MT_edit_mesh_weights")
-        layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
+        layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 
         layout.separator()
 
@@ -2832,6 +2833,20 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
+
+class VIEW3D_MT_edit_mesh_sort_elements(Menu):
+    bl_label = "Sort Elements"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mesh.sort_elements", text="View Z Axis", icon = "Z_ICON").type = 'VIEW_ZAXIS'
+        layout.operator("mesh.sort_elements", text="View X Axis", icon = "X_ICON").type = 'VIEW_XAXIS'
+        layout.operator("mesh.sort_elements", text="Cursor Distance", icon = "CURSOR").type = 'CURSOR_DISTANCE'
+        layout.operator("mesh.sort_elements", text="Material", icon = "MATERIAL").type = 'MATERIAL'
+        layout.operator("mesh.sort_elements", text="Selected", icon = "RESTRICT_SELECT_OFF").type = 'SELECTED'
+        layout.operator("mesh.sort_elements", text="Randomize", icon = "RANDOMIZE").type = 'RANDOMIZE'
+        layout.operator("mesh.sort_elements", text="Reverse", icon = "SWITCH_DIRECTION").type = 'REVERSE'
 
 
 class VIEW3D_MT_edit_mesh_specials(Menu):
@@ -2884,7 +2899,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
             col.separator()
 
-            col.operator("mesh.extrude_vertices_move", text="Extrude Vertices")
+            col.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION')
             col.operator("mesh.bevel", text="Bevel Vertices").vertex_only = True
 
             if selected_verts_len > 1:
@@ -2916,7 +2931,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
                 col.operator("mesh.merge", text="Merge Vertices...")
                 col.operator("mesh.remove_doubles", text="Remove Double Vertices")
             col.operator("mesh.dissolve_verts")
-            col.operator("mesh.delete", text="Delete Vertices").type = 'VERT'
+            col.operator("mesh.delete", text="Delete Vertices", icon = "DELETE").type = 'VERT'
 
         if is_edge_mode:
             render = context.scene.render
@@ -2930,7 +2945,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
             col.separator()
 
-            col.operator("mesh.extrude_edges_move", text="Extrude Edges"),
+            col.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION'),
             col.operator("mesh.bevel", text="Bevel Edges").vertex_only = False
             if selected_edges_len >= 2:
                 col.operator("mesh.bridge_edge_loops")
@@ -2977,7 +2992,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
             # Removal Operators
             col.operator("mesh.unsubdivide")
             col.operator("mesh.dissolve_edges")
-            col.operator("mesh.delete", text="Delete Edges").type = 'EDGE'
+            col.operator("mesh.delete", text="Delete Edges", icon = "DELETE").type = 'EDGE'
 
         if is_face_mode:
             col = row.column()
@@ -2990,9 +3005,9 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
             col.separator()
 
-            col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces"),
-            col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals"),
-            col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces"),
+            col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION'),
+            col.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION'),
+            col.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION'),
 
             col.operator("mesh.inset"),
             col.operator("mesh.poke")
@@ -3021,7 +3036,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
             # Removal Operators
             col.operator("mesh.unsubdivide")
             col.operator("mesh.dissolve_faces")
-            col.operator("mesh.delete", text="Delete Faces").type = 'FACE'
+            col.operator("mesh.delete", text="Delete Faces", icon = "DELETE").type = 'FACE'
 
 
 class VIEW3D_MT_edit_mesh_select_mode(Menu):
@@ -3041,15 +3056,15 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
     _extrude_funcs = {
         'VERT': lambda layout:
-            layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices"),
+            layout.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION'),
         'EDGE': lambda layout:
-            layout.operator("mesh.extrude_edges_move", text="Extrude Edges"),
+            layout.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION'),
         'REGION': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces"),
+            layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon='EXTRUDE_REGION'),
         'REGION_VERT_NORMAL': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals"),
+            layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon='EXTRUDE_REGION'),
         'FACE': lambda layout:
-            layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces"),
+            layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon='EXTRUDE_REGION'),
     }
 
     @staticmethod
@@ -3366,7 +3381,7 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.delete_loose")
+        layout.operator("mesh.delete_loose", icon = "DELETE")
 
         layout.separator()
 
@@ -3539,7 +3554,7 @@ class VIEW3D_MT_edit_curve_specials(Menu):
 
         layout.separator()
 
-        layout.operator("curve.duplicate_move")
+        layout.operator("curve.duplicate_move", icon = "DUPLICATE")
         layout.operator("curve.split")
         layout.operator("curve.cyclic_toggle")
         layout.operator_menu_enum("curve.spline_type_set", "type")
@@ -3790,11 +3805,11 @@ class VIEW3D_MT_armature_specials(Menu):
 
         layout.operator("armature.subdivide", text="Subdivide")
 
-        layout.operator("armature.duplicate_move", text="Duplicate")
+        layout.operator("armature.duplicate_move", text="Duplicate", icon = "DUPLICATE")
 
-        layout.operator("armature.extrude_move")
+        layout.operator("armature.extrude_move", icon='EXTRUDE_REGION')
         if arm.use_mirror_x:
-            layout.operator("armature.extrude_forked")
+            layout.operator("armature.extrude_forked", icon='EXTRUDE_REGION')
 
         layout.separator()
 
@@ -5686,6 +5701,7 @@ classes = (
     VIEW3D_MT_select_pose_more_less,
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
+    VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
