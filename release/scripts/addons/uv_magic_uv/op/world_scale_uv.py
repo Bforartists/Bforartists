@@ -20,217 +20,341 @@
 
 __author__ = "McBuff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "5.1"
-__date__ = "24 Feb 2018"
+__version__ = "5.2"
+__date__ = "17 Nov 2018"
 
-from math import sqrt
 
 import bpy
-import bmesh
-from mathutils import Vector
-from bpy.props import EnumProperty
+from bpy.props import (
+    EnumProperty,
+    FloatProperty,
+    IntVectorProperty,
+    BoolProperty,
+)
 
-from .. import common
-
-
-def measure_wsuv_info(obj):
-    mesh_area = common.measure_mesh_area(obj)
-    uv_area = common.measure_uv_area(obj)
-
-    if not uv_area:
-        return None, None, None
-
-    if mesh_area == 0.0:
-        density = 0.0
-    else:
-        density = sqrt(uv_area) / sqrt(mesh_area)
-
-    return uv_area, mesh_area, density
+from ..utils.bl_class_registry import BlClassRegistry
+from ..utils.property_class_registry import PropertyClassRegistry
+from ..impl import world_scale_uv_impl as impl
 
 
-class MUV_WSUVMeasure(bpy.types.Operator):
+@PropertyClassRegistry()
+class Properties:
+    idname = "world_scale_uv"
+
+    @classmethod
+    def init_props(cls, scene):
+        scene.muv_world_scale_uv_enabled = BoolProperty(
+            name="World Scale UV Enabled",
+            description="World Scale UV is enabled",
+            default=False
+        )
+        scene.muv_world_scale_uv_src_mesh_area = FloatProperty(
+            name="Mesh Area",
+            description="Source Mesh Area",
+            default=0.0,
+            min=0.0
+        )
+        scene.muv_world_scale_uv_src_uv_area = FloatProperty(
+            name="UV Area",
+            description="Source UV Area",
+            default=0.0,
+            min=0.0
+        )
+        scene.muv_world_scale_uv_src_density = FloatProperty(
+            name="Density",
+            description="Source Texel Density",
+            default=0.0,
+            min=0.0
+        )
+        scene.muv_world_scale_uv_tgt_density = FloatProperty(
+            name="Density",
+            description="Target Texel Density",
+            default=0.0,
+            min=0.0
+        )
+        scene.muv_world_scale_uv_tgt_scaling_factor = FloatProperty(
+            name="Scaling Factor",
+            default=1.0,
+            max=1000.0,
+            min=0.00001
+        )
+        scene.muv_world_scale_uv_tgt_texture_size = IntVectorProperty(
+            name="Texture Size",
+            size=2,
+            min=1,
+            soft_max=10240,
+            default=(1024, 1024),
+        )
+        scene.muv_world_scale_uv_mode = EnumProperty(
+            name="Mode",
+            description="Density calculation mode",
+            items=[
+                ('PROPORTIONAL_TO_MESH', "Proportional to Mesh",
+                 "Apply density proportionaled by mesh size"),
+                ('SCALING_DENSITY', "Scaling Density",
+                 "Apply scaled density from source"),
+                ('SAME_DENSITY', "Same Density",
+                 "Apply same density of source"),
+                ('MANUAL', "Manual", "Specify density and size by manual"),
+            ],
+            default='MANUAL'
+        )
+        scene.muv_world_scale_uv_origin = EnumProperty(
+            name="Origin",
+            description="Aspect Origin",
+            items=[
+                ('CENTER', "Center", "Center"),
+                ('LEFT_TOP', "Left Top", "Left Bottom"),
+                ('LEFT_CENTER', "Left Center", "Left Center"),
+                ('LEFT_BOTTOM', "Left Bottom", "Left Bottom"),
+                ('CENTER_TOP', "Center Top", "Center Top"),
+                ('CENTER_BOTTOM', "Center Bottom", "Center Bottom"),
+                ('RIGHT_TOP', "Right Top", "Right Top"),
+                ('RIGHT_CENTER', "Right Center", "Right Center"),
+                ('RIGHT_BOTTOM', "Right Bottom", "Right Bottom")
+
+            ],
+            default='CENTER'
+        )
+
+    @classmethod
+    def del_props(cls, scene):
+        del scene.muv_world_scale_uv_enabled
+        del scene.muv_world_scale_uv_src_mesh_area
+        del scene.muv_world_scale_uv_src_uv_area
+        del scene.muv_world_scale_uv_src_density
+        del scene.muv_world_scale_uv_tgt_density
+        del scene.muv_world_scale_uv_tgt_scaling_factor
+        del scene.muv_world_scale_uv_mode
+        del scene.muv_world_scale_uv_origin
+
+
+@BlClassRegistry()
+class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
     """
     Operation class: Measure face size
     """
 
-    bl_idname = "uv.muv_wsuv_measure"
-    bl_label = "Measure"
+    bl_idname = "uv.muv_world_scale_uv_operator_measure"
+    bl_label = "Measure World Scale UV"
     bl_description = "Measure face size for scale calculation"
     bl_options = {'REGISTER', 'UNDO'}
 
+    def __init__(self):
+        self.__impl = impl.MeasureImpl()
+
+    @classmethod
+    def poll(cls, context):
+        return impl.MeasureImpl.poll(context)
+
     def execute(self, context):
-        sc = context.scene
-        obj = context.active_object
-
-        uv_area, mesh_area, density = measure_wsuv_info(obj)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
-            return {'CANCELLED'}
-
-        sc.muv_wsuv_src_uv_area = uv_area
-        sc.muv_wsuv_src_mesh_area = mesh_area
-        sc.muv_wsuv_src_density = density
-
-        self.report({'INFO'},
-                    "UV Area: {0}, Mesh Area: {1}, Texel Density: {2}"
-                    .format(uv_area, mesh_area, density))
-
-        return {'FINISHED'}
+        return self.__impl.execute(self, context)
 
 
-class MUV_WSUVApply(bpy.types.Operator):
+@BlClassRegistry()
+class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
     """
-    Operation class: Apply scaled UV
+    Operation class: Apply scaled UV (Manual)
     """
 
-    bl_idname = "uv.muv_wsuv_apply"
-    bl_label = "Apply"
-    bl_description = "Apply scaled UV based on scale calculation"
+    bl_idname = "uv.muv_world_scale_uv_operator_apply_manual"
+    bl_label = "Apply World Scale UV (Manual)"
+    bl_description = "Apply scaled UV based on user specification"
     bl_options = {'REGISTER', 'UNDO'}
 
-    origin = EnumProperty(
+    tgt_density: FloatProperty(
+        name="Density",
+        description="Target Texel Density",
+        default=1.0,
+        min=0.0
+    )
+    tgt_texture_size: IntVectorProperty(
+        name="Texture Size",
+        size=2,
+        min=1,
+        soft_max=10240,
+        default=(1024, 1024),
+    )
+    origin: EnumProperty(
         name="Origin",
         description="Aspect Origin",
         items=[
-            ('CENTER', 'Center', 'Center'),
-            ('LEFT_TOP', 'Left Top', 'Left Bottom'),
-            ('LEFT_CENTER', 'Left Center', 'Left Center'),
-            ('LEFT_BOTTOM', 'Left Bottom', 'Left Bottom'),
-            ('CENTER_TOP', 'Center Top', 'Center Top'),
-            ('CENTER_BOTTOM', 'Center Bottom', 'Center Bottom'),
-            ('RIGHT_TOP', 'Right Top', 'Right Top'),
-            ('RIGHT_CENTER', 'Right Center', 'Right Center'),
-            ('RIGHT_BOTTOM', 'Right Bottom', 'Right Bottom')
+            ('CENTER', "Center", "Center"),
+            ('LEFT_TOP', "Left Top", "Left Bottom"),
+            ('LEFT_CENTER', "Left Center", "Left Center"),
+            ('LEFT_BOTTOM', "Left Bottom", "Left Bottom"),
+            ('CENTER_TOP', "Center Top", "Center Top"),
+            ('CENTER_BOTTOM', "Center Bottom", "Center Bottom"),
+            ('RIGHT_TOP', "Right Top", "Right Top"),
+            ('RIGHT_CENTER', "Right Center", "Right Center"),
+            ('RIGHT_BOTTOM', "Right Bottom", "Right Bottom")
 
         ],
-        default="CENTER"
+        default='CENTER'
+    )
+    show_dialog: BoolProperty(
+        name="Show Diaglog Menu",
+        description="Show dialog menu if true",
+        default=True,
+        options={'HIDDEN', 'SKIP_SAVE'}
     )
 
-    def draw(self, _):
-        layout = self.layout
+    def __init__(self):
+        self.__impl = impl.ApplyManualImpl()
 
-        layout.prop(self, "origin")
+    @classmethod
+    def poll(cls, context):
+        return impl.ApplyManualImpl.poll(context)
+
+    def draw(self, context):
+        self.__impl.draw(self, context)
+
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
 
     def execute(self, context):
-        sc = context.scene
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        return self.__impl.execute(self, context)
 
-        sel_faces = [f for f in bm.faces if f.select]
 
-        uv_area, mesh_area, density = measure_wsuv_info(obj)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
-            return {'CANCELLED'}
+@BlClassRegistry()
+class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
+    """
+    Operation class: Apply scaled UV (Scaling Density)
+    """
 
-        uv_layer = bm.loops.layers.uv.verify()
+    bl_idname = "uv.muv_world_scale_uv_operator_apply_scaling_density"
+    bl_label = "Apply World Scale UV (Scaling Density)"
+    bl_description = "Apply scaled UV with scaling density"
+    bl_options = {'REGISTER', 'UNDO'}
 
-        if sc.muv_wsuv_mode == 'PROPORTIONAL':
-            tgt_density = sc.muv_wsuv_src_density * sqrt(mesh_area) / \
-                sqrt(sc.muv_wsuv_src_mesh_area)
-        elif sc.muv_wsuv_mode == 'SCALING':
-            tgt_density = sc.muv_wsuv_src_density * sc.muv_wsuv_scaling_factor
-        elif sc.muv_wsuv_mode == 'USER':
-            tgt_density = sc.muv_wsuv_tgt_density
-        elif sc.muv_wsuv_mode == 'CONSTANT':
-            tgt_density = sc.muv_wsuv_src_density
+    tgt_scaling_factor: FloatProperty(
+        name="Scaling Factor",
+        default=1.0,
+        max=1000.0,
+        min=0.00001
+    )
+    origin: EnumProperty(
+        name="Origin",
+        description="Aspect Origin",
+        items=[
+            ('CENTER', "Center", "Center"),
+            ('LEFT_TOP', "Left Top", "Left Bottom"),
+            ('LEFT_CENTER', "Left Center", "Left Center"),
+            ('LEFT_BOTTOM', "Left Bottom", "Left Bottom"),
+            ('CENTER_TOP', "Center Top", "Center Top"),
+            ('CENTER_BOTTOM', "Center Bottom", "Center Bottom"),
+            ('RIGHT_TOP', "Right Top", "Right Top"),
+            ('RIGHT_CENTER', "Right Center", "Right Center"),
+            ('RIGHT_BOTTOM', "Right Bottom", "Right Bottom")
 
-        factor = tgt_density / density
+        ],
+        default='CENTER'
+    )
+    src_density: FloatProperty(
+        name="Density",
+        description="Source Texel Density",
+        default=0.0,
+        min=0.0,
+        options={'HIDDEN'}
+    )
+    same_density: BoolProperty(
+        name="Same Density",
+        description="Apply same density",
+        default=False,
+        options={'HIDDEN'}
+    )
+    show_dialog: BoolProperty(
+        name="Show Diaglog Menu",
+        description="Show dialog menu if true",
+        default=True,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
 
-        # calculate origin
-        if self.origin == 'CENTER':
-            origin = Vector((0.0, 0.0))
-            num = 0
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin = origin + uv
-                    num = num + 1
-            origin = origin / num
-        elif self.origin == 'LEFT_TOP':
-            origin = Vector((100000.0, -100000.0))
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = min(origin.x, uv.x)
-                    origin.y = max(origin.y, uv.y)
-        elif self.origin == 'LEFT_CENTER':
-            origin = Vector((100000.0, 0.0))
-            num = 0
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = min(origin.x, uv.x)
-                    origin.y = origin.y + uv.y
-                    num = num + 1
-            origin.y = origin.y / num
-        elif self.origin == 'LEFT_BOTTOM':
-            origin = Vector((100000.0, 100000.0))
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = min(origin.x, uv.x)
-                    origin.y = min(origin.y, uv.y)
-        elif self.origin == 'CENTER_TOP':
-            origin = Vector((0.0, -100000.0))
-            num = 0
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = origin.x + uv.x
-                    origin.y = max(origin.y, uv.y)
-                    num = num + 1
-            origin.x = origin.x / num
-        elif self.origin == 'CENTER_BOTTOM':
-            origin = Vector((0.0, 100000.0))
-            num = 0
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = origin.x + uv.x
-                    origin.y = min(origin.y, uv.y)
-                    num = num + 1
-            origin.x = origin.x / num
-        elif self.origin == 'RIGHT_TOP':
-            origin = Vector((-100000.0, -100000.0))
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = max(origin.x, uv.x)
-                    origin.y = max(origin.y, uv.y)
-        elif self.origin == 'RIGHT_CENTER':
-            origin = Vector((-100000.0, 0.0))
-            num = 0
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = max(origin.x, uv.x)
-                    origin.y = origin.y + uv.y
-                    num = num + 1
-            origin.y = origin.y / num
-        elif self.origin == 'RIGHT_BOTTOM':
-            origin = Vector((-100000.0, 100000.0))
-            for f in sel_faces:
-                for l in f.loops:
-                    uv = l[uv_layer].uv
-                    origin.x = max(origin.x, uv.x)
-                    origin.y = min(origin.y, uv.y)
+    def __init__(self):
+        self.__impl = impl.ApplyScalingDensityImpl()
 
-        # update UV coordinate
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                diff = uv - origin
-                l[uv_layer].uv = origin + diff * factor
+    @classmethod
+    def poll(cls, context):
+        return impl.ApplyScalingDensityImpl.poll(context)
 
-        bmesh.update_edit_mesh(obj.data)
+    def draw(self, context):
+        self.__impl.draw(self, context)
 
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
 
-        return {'FINISHED'}
+    def execute(self, context):
+        return self.__impl.execute(self, context)
+
+
+@BlClassRegistry()
+class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
+    """
+    Operation class: Apply scaled UV (Proportional to mesh)
+    """
+
+    bl_idname = "uv.muv_world_scale_uv_operator_apply_proportional_to_mesh"
+    bl_label = "Apply World Scale UV (Proportional to mesh)"
+    bl_description = "Apply scaled UV proportionaled to mesh"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    origin: EnumProperty(
+        name="Origin",
+        description="Aspect Origin",
+        items=[
+            ('CENTER', "Center", "Center"),
+            ('LEFT_TOP', "Left Top", "Left Bottom"),
+            ('LEFT_CENTER', "Left Center", "Left Center"),
+            ('LEFT_BOTTOM', "Left Bottom", "Left Bottom"),
+            ('CENTER_TOP', "Center Top", "Center Top"),
+            ('CENTER_BOTTOM', "Center Bottom", "Center Bottom"),
+            ('RIGHT_TOP', "Right Top", "Right Top"),
+            ('RIGHT_CENTER', "Right Center", "Right Center"),
+            ('RIGHT_BOTTOM', "Right Bottom", "Right Bottom")
+
+        ],
+        default='CENTER'
+    )
+    src_density: FloatProperty(
+        name="Source Density",
+        description="Source Texel Density",
+        default=0.0,
+        min=0.0,
+        options={'HIDDEN'}
+    )
+    src_uv_area: FloatProperty(
+        name="Source UV Area",
+        description="Source UV Area",
+        default=0.0,
+        min=0.0,
+        options={'HIDDEN'}
+    )
+    src_mesh_area: FloatProperty(
+        name="Source Mesh Area",
+        description="Source Mesh Area",
+        default=0.0,
+        min=0.0,
+        options={'HIDDEN'}
+    )
+    show_dialog: BoolProperty(
+        name="Show Diaglog Menu",
+        description="Show dialog menu if true",
+        default=True,
+        options={'HIDDEN', 'SKIP_SAVE'}
+    )
+
+    def __init__(self):
+        self.__impl = impl.ApplyProportionalToMeshImpl()
+
+    @classmethod
+    def poll(cls, context):
+        return impl.ApplyProportionalToMeshImpl.poll(context)
+
+    def draw(self, context):
+        self.__impl.draw(self, context)
+
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
+
+    def execute(self, context):
+        return self.__impl.execute(self, context)

@@ -312,8 +312,8 @@ def calc_callback(self, context):
     self.displayed = objects  # store, so it can be checked next time
     context.window_manager.motion_trail.force_update = False
     try:
-        global_undo = context.user_preferences.edit.use_global_undo
-        context.user_preferences.edit.use_global_undo = False
+        global_undo = context.preferences.edit.use_global_undo
+        context.preferences.edit.use_global_undo = False
 
         for action_ob, child, offset_ob in objects:
             if selection_change:
@@ -606,11 +606,11 @@ def calc_callback(self, context):
             if context.scene.frame_current != frame_old:
                 context.scene.frame_set(frame_old)
 
-        context.user_preferences.edit.use_global_undo = global_undo
+        context.preferences.edit.use_global_undo = global_undo
 
     except:
         # restore global undo in case of failure (see T52524)
-        context.user_preferences.edit.use_global_undo = global_undo
+        context.preferences.edit.use_global_undo = global_undo
 
 
 # draw in 3d-view

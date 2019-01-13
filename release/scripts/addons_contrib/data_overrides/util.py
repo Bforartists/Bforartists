@@ -79,7 +79,7 @@ def id_data_enum_item(id_data):
 class OperatorCallContext():
     def __enter__(self):
         scene = bpy.context.scene
-        prefs = bpy.context.user_preferences
+        prefs = bpy.context.preferences
 
         # store active/selected state to restore it after operator execution
         self.curact = scene.objects.active
@@ -94,7 +94,7 @@ class OperatorCallContext():
 
     def __exit__(self, exc_type, exc_value, traceback):
         scene = bpy.context.scene
-        prefs = bpy.context.user_preferences
+        prefs = bpy.context.preferences
 
         # restore active/selected state
         scene.objects.active = self.curact

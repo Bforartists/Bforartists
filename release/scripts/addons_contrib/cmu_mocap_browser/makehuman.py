@@ -85,7 +85,7 @@ class CMUMocapAlignArmatures(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         self.src, self.dst = scan_armatures(context)
         context.scene.frame_set(0)
 
@@ -232,7 +232,7 @@ class CMUMocapTransferer(bpy.types.Operator):
         return {'PASS_THROUGH'}
 
     def execute(self, context):
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         self.src, self.dst = scan_armatures(context)
         DPB = self.dst.pose.bones
         self.set_inverses()

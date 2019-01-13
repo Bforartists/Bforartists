@@ -131,7 +131,7 @@ def update_panel(self, context):
                 bpy.utils.unregister_class(panel)
 
         for panel in panels:
-            panel.bl_category = context.user_preferences.addons[__package__].preferences.category
+            panel.bl_category = context.preferences.addons[__package__].preferences.category
             bpy.utils.register_class(panel)
 
     except Exception as e:

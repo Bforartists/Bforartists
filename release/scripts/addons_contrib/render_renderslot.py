@@ -99,7 +99,7 @@ def ui(self, context):
     row.alignment = 'LEFT'
     try:
         active = bpy.data.images['Render Result'].render_slots.active_index
-        if bpy.context.user_preferences.addons[__name__].preferences.advanced_mode:
+        if bpy.context.preferences.addons[__name__].preferences.advanced_mode:
             row.prop(scn, 'ktx_auto_advance_slot', text='Auto Advance')
         row = layout.row(align=True)
         row.alignment = 'EXPAND'
