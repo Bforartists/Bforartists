@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2008, Blender Foundation, Joshua Leung
  * This is a new part of Blender
  *
- * Contributor(s): Joshua Leung, Antonio Vazquez
+ * Contributor(s): Joshua Leung, Antonio Vazquez, Charlie Jolly
  *
  * ***** END GPL LICENSE BLOCK *****
  */
@@ -119,8 +119,8 @@ typedef enum eGPencil_PaintFlags {
 	GP_PAINTFLAG_SELECTMASK     = (1 << 3),
 	GP_PAINTFLAG_HARD_ERASER    = (1 << 4),
 	GP_PAINTFLAG_STROKE_ERASER  = (1 << 5),
+	GP_PAINTFLAG_REQ_VECTOR     = (1 << 6),
 } eGPencil_PaintFlags;
-
 
 /* Temporary 'Stroke' Operation data
  *   "p" = op->customdata
@@ -128,75 +128,124 @@ typedef enum eGPencil_PaintFlags {
 typedef struct tGPsdata {
 	bContext *C;
 
-	Main *bmain;        /* main database pointer */
-	Scene *scene;       /* current scene from context */
+	/** main database pointer. */
+	Main *bmain;
+	/** current scene from context. */
+	Scene *scene;
 	struct Depsgraph *depsgraph;
 
-	Object *ob;         /* current object */
-	wmWindow *win;      /* window where painting originated */
-	ScrArea *sa;        /* area where painting originated */
-	ARegion *ar;        /* region where painting originated */
-	View2D *v2d;        /* needed for GP_STROKE_2DSPACE */
-	rctf *subrect;      /* for using the camera rect within the 3d view */
+	/** current object. */
+	Object *ob;
+	/** window where painting originated. */
+	wmWindow *win;
+	/** area where painting originated. */
+	ScrArea *sa;
+	/** region where painting originated. */
+	ARegion *ar;
+	/** needed for GP_STROKE_2DSPACE. */
+	View2D *v2d;
+	/** for using the camera rect within the 3d view. */
+	rctf *subrect;
 	rctf subrect_data;
 
-	GP_SpaceConversion gsc; /* settings to pass to gp_points_to_xy() */
+	/** settings to pass to gp_points_to_xy(). */
+	GP_SpaceConversion gsc;
 
-	PointerRNA ownerPtr; /* pointer to owner of gp-datablock */
-	bGPdata *gpd;       /* gp-datablock layer comes from */
-	bGPDlayer *gpl;     /* layer we're working on */
-	bGPDframe *gpf;     /* frame we're working on */
+	/** pointer to owner of gp-datablock. */
+	PointerRNA ownerPtr;
+	/** gp-datablock layer comes from. */
+	bGPdata *gpd;
+	/** layer we're working on. */
+	bGPDlayer *gpl;
+	/** frame we're working on. */
+	bGPDframe *gpf;
 
-	char *align_flag;   /* projection-mode flags (toolsettings - eGPencil_Placement_Flags) */
+	/** projection-mode flags (toolsettings - eGPencil_Placement_Flags) */
+	char *align_flag;
 
-	eGPencil_PaintStatus status;     /* current status of painting */
-	eGPencil_PaintModes  paintmode;  /* mode for painting */
-	eGPencil_PaintFlags  flags;      /* flags that can get set during runtime (eGPencil_PaintFlags) */
+	/** current status of painting. */
+	eGPencil_PaintStatus status;
+	/** mode for painting. */
+	eGPencil_PaintModes  paintmode;
+	/** flags that can get set during runtime (eGPencil_PaintFlags) */
+	eGPencil_PaintFlags  flags;
 
-	short radius;       /* radius of influence for eraser */
+	/** radius of influence for eraser. */
+	short radius;
 
-	float mval[2];        /* current mouse-position */
-	float mvalo[2];       /* previous recorded mouse-position */
+	/** current mouse-position. */
+	float mval[2];
+	/** previous recorded mouse-position. */
+	float mvalo[2];
+	/** initial recorded mouse-position */
+	float mvali[2];
 
-	float pressure;     /* current stylus pressure */
-	float opressure;    /* previous stylus pressure */
+	/** current stylus pressure. */
+	float pressure;
+	/** previous stylus pressure. */
+	float opressure;
 
 	/* These need to be doubles, as (at least under unix) they are in seconds since epoch,
 	 * float (and its 7 digits precision) is definitively not enough here!
 	 * double, with its 15 digits precision, ensures us millisecond precision for a few centuries at least.
 	 */
-	double inittime;    /* Used when converting to path */
-	double curtime;     /* Used when converting to path */
-	double ocurtime;    /* Used when converting to path */
+	/** Used when converting to path. */
+	double inittime;
+	/** Used when converting to path. */
+	double curtime;
+	/** Used when converting to path. */
+	double ocurtime;
 
-	float imat[4][4];   /* inverted transformation matrix applying when converting coords from screen-space
-						 * to region space */
+	/** Inverted transformation matrix applying when converting coords from screen-space
+	 * to region space. */
+	float imat[4][4];
 	float mat[4][4];
 
-	float custom_color[4]; /* custom color - hack for enforcing a particular color for track/mask editing */
+	/** custom color - hack for enforcing a particular color for track/mask editing. */
+	float custom_color[4];
 
-	void *erasercursor; /* radial cursor data for drawing eraser */
+	/** radial cursor data for drawing eraser. */
+	void *erasercursor;
 
 	/* mat settings are only used for 3D view */
-	Material *material;   /* current material */
+	/** current material */
+	Material *material;
+	/** current drawing brush */
+	Brush *brush;
+	/** default eraser brush */
+	Brush *eraser;
 
-	Brush *brush;    /* current drawing brush */
-	Brush *eraser;   /* default eraser brush */
-	short straight[2];   /* 1: line horizontal, 2: line vertical, other: not defined, second element position */
-	int lock_axis;       /* lock drawing to one axis */
-	bool disable_fill;   /* the stroke is no fill mode */
+	/** 1: line horizontal, 2: line vertical, other: not defined */
+	short straight;
+	/** lock drawing to one axis */
+	int lock_axis;
+	/** the stroke is no fill mode */
+	bool disable_fill;
 
 	RNG *rng;
 
-	short keymodifier;   /* key used for invoking the operator */
-	short shift;         /* shift modifier flag */
+	/** key used for invoking the operator */
+	short keymodifier;
+	/** shift modifier flag */
+	short shift;
+	/** size in pixels for uv calculation */
+	float totpixlen;
 
-	float totpixlen;     /* size in pixels for uv calculation */
+	/* guide */
+	/** guide spacing */
+	float guide_spacing;
+	/** half guide spacing */
+	float half_spacing;
+	/** origin */
+	float origin[2];
 
 	ReportList *reports;
 } tGPsdata;
 
 /* ------ */
+
+#define STROKE_HORIZONTAL 1
+#define STROKE_VERTICAL 2
 
 /* Macros for accessing sensitivity thresholds... */
 /* minimum number of pixels mouse should move before new point created */
@@ -293,11 +342,11 @@ static void gp_get_3d_reference(tGPsdata *p, float vec[3])
 
 /* Stroke Editing ---------------------------- */
 /* check if the current mouse position is suitable for adding a new point */
-static bool gp_stroke_filtermval(tGPsdata *p, const float mval[2], float pmval[2])
+static bool gp_stroke_filtermval(tGPsdata *p, const float mval[2], float mvalo[2])
 {
 	Brush *brush = p->brush;
-	int dx = (int)fabsf(mval[0] - pmval[0]);
-	int dy = (int)fabsf(mval[1] - pmval[1]);
+	int dx = (int)fabsf(mval[0] - mvalo[0]);
+	int dy = (int)fabsf(mval[1] - mvalo[1]);
 	brush->gpencil_settings->flag &= ~GP_BRUSH_STABILIZE_MOUSE_TEMP;
 
 	/* if buffer is empty, just let this go through (i.e. so that dots will work) */
@@ -385,7 +434,7 @@ static void gp_stroke_convertcoords(tGPsdata *p, const float mval[2], float out[
 			 * - nothing more needs to be done here, since view_autodist_simple() has already done it
 			 */
 
-			 /* verify valid zdepth, if it's wrong, the default darwing mode is used
+			 /* verify valid zdepth, if it's wrong, the default drawing mode is used
 			  * and the function doesn't return now */
 			if ((depth == NULL) || (*depth <= 1.0f)) {
 				return;
@@ -430,7 +479,8 @@ static void gp_brush_jitter(
 		float curvef = curvemapping_evaluateF(brush->gpencil_settings->curve_jitter, 0, pressure);
 		tmp_pressure = curvef * brush->gpencil_settings->draw_sensitivity;
 	}
-	const float exfactor = (brush->gpencil_settings->draw_jitter + 2.0f) * (brush->gpencil_settings->draw_jitter + 2.0f); /* exponential value */
+	/* exponential value */
+	const float exfactor = (brush->gpencil_settings->draw_jitter + 2.0f) * (brush->gpencil_settings->draw_jitter + 2.0f);
 	const float fac = BLI_rng_get_float(rng) * exfactor * tmp_pressure;
 	/* Jitter is applied perpendicular to the mouse movement vector (2D space) */
 	float mvec[2], svec[2];
@@ -468,8 +518,10 @@ static void gp_brush_angle(bGPdata *gpd, Brush *brush, tGPspoint *pt, const floa
 	float fac;
 	float mpressure;
 
-	float angle = brush->gpencil_settings->draw_angle; /* default angle of brush in radians */;
-	float v0[2] = { cos(angle), sin(angle) }; /* angle vector of the brush with full thickness */
+	/* default angle of brush in radians */;
+	float angle = brush->gpencil_settings->draw_angle;
+	/* angle vector of the brush with full thickness */
+	float v0[2] = { cos(angle), sin(angle) };
 
 	/* Apply to first point (only if there are 2 points because before no data to do it ) */
 	if (gpd->runtime.sbuffer_size == 1) {
@@ -582,7 +634,8 @@ static short gp_stroke_addpoint(
 
 			/* store settings */
 			copy_v2_v2(&pt->x, mval);
-			pt->pressure = 1.0f; /* T44932 - Pressure vals are unreliable, so ignore for now */
+			/* T44932 - Pressure vals are unreliable, so ignore for now */
+			pt->pressure = 1.0f;
 			pt->strength = 1.0f;
 			pt->time = (float)(curtime - p->inittime);
 
@@ -597,7 +650,8 @@ static short gp_stroke_addpoint(
 
 			/* store settings */
 			copy_v2_v2(&pt->x, mval);
-			pt->pressure = 1.0f; /* T44932 - Pressure vals are unreliable, so ignore for now */
+			/* T44932 - Pressure vals are unreliable, so ignore for now */
+			pt->pressure = 1.0f;
 			pt->strength = 1.0f;
 			pt->time = (float)(curtime - p->inittime);
 
@@ -754,7 +808,8 @@ static short gp_stroke_addpoint(
 
 		/* store settings */
 		copy_v2_v2(&pt->x, mval);
-		pt->pressure = 1.0f; /* T44932 - Pressure vals are unreliable, so ignore for now */
+		/* T44932 - Pressure vals are unreliable, so ignore for now */
+		pt->pressure = 1.0f;
 		pt->strength = 1.0f;
 		pt->time = (float)(curtime - p->inittime);
 
@@ -1564,7 +1619,7 @@ static void gp_stroke_eraser_dostroke(tGPsdata *p,
 				gp_stroke_soft_refine(gps, cull_thresh);
 			}
 
-			gp_stroke_delete_tagged_points(gpf, gps, gps->next, GP_SPOINT_TAG, false);
+			gp_stroke_delete_tagged_points(gpf, gps, gps->next, GP_SPOINT_TAG, false, 0);
 		}
 		gp_update_cache(p->gpd);
 	}
@@ -1976,7 +2031,7 @@ static void gp_session_cleanup(tGPsdata *p)
 	/* free stroke buffer */
 	if (gpd->runtime.sbuffer) {
 		/* printf("\t\tGP - free sbuffer\n"); */
-		MEM_freeN(gpd->runtime.sbuffer);
+		MEM_SAFE_FREE(gpd->runtime.sbuffer);
 		gpd->runtime.sbuffer = NULL;
 	}
 
@@ -1991,9 +2046,9 @@ static void gp_session_free(tGPsdata *p)
 	if (p->rng != NULL) {
 		BLI_rng_free(p->rng);
 	}
+
 	MEM_freeN(p);
 }
-
 
 /* init new stroke */
 static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Depsgraph *depsgraph)
@@ -2121,7 +2176,8 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 
 			/* for camera view set the subrect */
 			if (rv3d->persp == RV3D_CAMOB) {
-				ED_view3d_calc_camera_border(p->scene, depsgraph, p->ar, v3d, rv3d, &p->subrect_data, true); /* no shift */
+				/* no shift */
+				ED_view3d_calc_camera_border(p->scene, depsgraph, p->ar, v3d, rv3d, &p->subrect_data, true);
 				p->subrect = &p->subrect_data;
 			}
 		}
@@ -2418,35 +2474,60 @@ static void gpencil_draw_status_indicators(bContext *C, tGPsdata *p)
 #endif
 
 		case GP_STATUS_IDLING:
+		{
 			/* print status info */
 			switch (p->paintmode) {
 				case GP_PAINTMODE_ERASER:
+				{
 					ED_workspace_status_text(C, IFACE_("Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | "
 						"ESC/Enter to end  (or click outside this area)"));
 					break;
+				}
 				case GP_PAINTMODE_DRAW_STRAIGHT:
+				{
 					ED_workspace_status_text(C, IFACE_("Grease Pencil Line Session: Hold and drag LMB to draw | "
 						"ESC/Enter to end  (or click outside this area)"));
 					break;
-				case GP_PAINTMODE_DRAW:
-					ED_workspace_status_text(C, IFACE_("Grease Pencil Freehand Session: Hold and drag LMB to draw"));
+				}
+				case GP_PAINTMODE_SET_CP:
+				{
+					ED_workspace_status_text(C, IFACE_("Grease Pencil Guides: LMB click and release to place reference point | "
+						"Esc/RMB to cancel"));
 					break;
+				}
+				case GP_PAINTMODE_DRAW:
+				{
+					GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+					if (guide->use_guide) {
+						ED_workspace_status_text(C, IFACE_("Grease Pencil Freehand Session: Hold and drag LMB to draw | "
+							"M key to flip guide | O key to move reference point"));
+					}
+					else {
+						ED_workspace_status_text(C, IFACE_("Grease Pencil Freehand Session: Hold and drag LMB to draw"));
+					}
+					break;
+				}
 				case GP_PAINTMODE_DRAW_POLY:
+				{
 					ED_workspace_status_text(C, IFACE_("Grease Pencil Poly Session: LMB click to place next stroke vertex | "
 						"Release Shift/ESC/Enter to end  (or click outside this area)"));
 					break;
-
+				}
 				default: /* unhandled future cases */
+				{
 					ED_workspace_status_text(C, IFACE_("Grease Pencil Session: ESC/Enter to end   (or click outside this area)"));
 					break;
+				}
 			}
 			break;
-
+		}
 		case GP_STATUS_ERROR:
 		case GP_STATUS_DONE:
+		{
 			/* clear status string */
 			ED_workspace_status_text(C, NULL);
 			break;
+		}
 		case GP_STATUS_PAINTING:
 			break;
 	}
@@ -2466,8 +2547,7 @@ static void gpencil_draw_apply(bContext *C, wmOperator *op, tGPsdata *p, Depsgra
 		gp_stroke_doeraser(p);
 
 		/* store used values */
-		p->mvalo[0] = p->mval[0];
-		p->mvalo[1] = p->mval[1];
+		copy_v2_v2(p->mvalo, p->mval);
 		p->opressure = p->pressure;
 	}
 	/* only add current point to buffer if mouse moved (even though we got an event, it might be just noise) */
@@ -2516,8 +2596,7 @@ static void gpencil_draw_apply(bContext *C, wmOperator *op, tGPsdata *p, Depsgra
 		}
 
 		/* store used values */
-		p->mvalo[0] = p->mval[0];
-		p->mvalo[1] = p->mval[1];
+		copy_v2_v2(p->mvalo, p->mval);
 		p->opressure = p->pressure;
 		p->ocurtime = p->curtime;
 
@@ -2536,44 +2615,98 @@ static void gpencil_draw_apply(bContext *C, wmOperator *op, tGPsdata *p, Depsgra
 	}
 }
 
+/* Helper to rotate point around origin */
+static void gp_rotate_v2_v2v2fl(float v[2], const float p[2], const float origin[2], const float angle)
+{
+	float pt[2];
+	float r[2];
+	sub_v2_v2v2(pt, p, origin);
+	rotate_v2_v2fl(r, pt, angle);
+	add_v2_v2v2(v, r, origin);
+}
+
+/* Helper to snap value to grid */
+static float gp_snap_to_grid_fl(float v, const float offset, const float spacing)
+{
+	if (spacing > 0.0f)
+		return roundf(v / spacing) * spacing + fmodf(offset, spacing);
+	else 
+		return v;
+}
+
+static void UNUSED_FUNCTION(gp_snap_to_grid_v2)(float v[2], const float offset[2], const float spacing)
+{
+	v[0] = gp_snap_to_grid_fl(v[0], offset[0], spacing);
+	v[1] = gp_snap_to_grid_fl(v[1], offset[1], spacing);
+}
+
+/* get reference point - screen coords to buffer coords */
+static void gp_origin_set(wmOperator *op, const int mval[2])
+{
+	tGPsdata *p = op->customdata;
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+	float origin[2];
+	float point[3];
+	copy_v2fl_v2i(origin, mval);
+	gp_stroke_convertcoords(p, origin, point, NULL);
+	if (guide->reference_point == GP_GUIDE_REF_CUSTOM) {
+		copy_v3_v3(guide->location, point);
+	}
+	else if (guide->reference_point == GP_GUIDE_REF_CURSOR) {
+		copy_v3_v3(p->scene->cursor.location, point);
+	}
+}
+
+/* get reference point - buffer coords to screen coords */
+static void gp_origin_get(tGPsdata *p, float origin[2])
+{
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+	float location[3];
+	if (guide->reference_point == GP_GUIDE_REF_CUSTOM) {
+		copy_v3_v3(location, guide->location);
+	}
+	else if (guide->reference_point == GP_GUIDE_REF_OBJECT &&
+		guide->reference_object != NULL) {
+		copy_v3_v3(location, guide->reference_object->loc);
+	}
+	else {
+		copy_v3_v3(location, p->scene->cursor.location);
+	}
+	GP_SpaceConversion *gsc = &p->gsc;
+	gp_point_3d_to_xy(gsc, p->gpd->runtime.sbuffer_sflag, location, origin);
+}
+
 /* handle draw event */
 static void gpencil_draw_apply_event(bContext *C, wmOperator *op, const wmEvent *event, Depsgraph *depsgraph, float x, float y)
 {
 	tGPsdata *p = op->customdata;
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
 	PointerRNA itemptr;
 	float mousef[2];
 	int tablet = 0;
 
 	/* convert from window-space to area-space mouse coordinates
 	 * add any x,y override position for fake events
-	 * NOTE: float to ints conversions, +1 factor is probably used to ensure a bit more accurate rounding...
 	 */
-	p->mval[0] = event->mval[0] + 1.0f - x;
-	p->mval[1] = event->mval[1] + 1.0f - y;
+	p->mval[0] = (float)event->mval[0] - x;
+	p->mval[1] = (float)event->mval[1] - y;
 	p->shift = event->shift;
 
-	/* verify key status for straight lines */
-	if ((event->alt > 0) && (RNA_boolean_get(op->ptr, "disable_straight") == false)) {
-		if (p->straight[0] == 0) {
-			int dx = (int)fabsf(p->mval[0] - p->mvalo[0]);
-			int dy = (int)fabsf(p->mval[1] - p->mvalo[1]);
+	/* verify direction for straight lines */
+	if ((guide->use_guide) || ((event->alt > 0) && (RNA_boolean_get(op->ptr, "disable_straight") == false))) {
+		if (p->straight == 0) {
+			int dx = (int)fabsf(p->mval[0] - p->mvali[0]);
+			int dy = (int)fabsf(p->mval[1] - p->mvali[1]);
 			if ((dx > 0) || (dy > 0)) {
-				/* check mouse direction to replace the other coordinate with previous values */
-				if (dx >= dy) {
-					/* horizontal */
-					p->straight[0] = 1;
-					p->straight[1] = (short)p->mval[1]; /* save y */
+				/* store mouse direction */
+				if (dx > dy) {
+					p->straight = STROKE_HORIZONTAL;
 				}
-				else {
-					/* vertical */
-					p->straight[0] = 2;
-					p->straight[1] = (short)p->mval[0]; /* save x */
+				else if (dx < dy) {
+					p->straight = STROKE_VERTICAL;
 				}
 			}
 		}
-	}
-	else {
-		p->straight[0] = 0;
 	}
 
 	p->curtime = PIL_check_seconds_timer();
@@ -2622,29 +2755,164 @@ static void gpencil_draw_apply_event(bContext *C, wmOperator *op, const wmEvent 
 	if (p->flags & GP_PAINTFLAG_FIRSTRUN) {
 		p->flags &= ~GP_PAINTFLAG_FIRSTRUN;
 
-		p->mvalo[0] = p->mval[0];
-		p->mvalo[1] = p->mval[1];
+		/* set values */
+		copy_v2_v2(p->mvalo, p->mval);
 		p->opressure = p->pressure;
 		p->inittime = p->ocurtime = p->curtime;
-		p->straight[0] = 0;
-		p->straight[1] = 0;
+		p->straight = 0;
+
+		/* save initial mouse */
+		copy_v2_v2(p->mvali, p->mval); 
+
+		/* calculate once and store snapping distance and origin */
+		RegionView3D * rv3d = p->ar->regiondata;
+		float scale = 1.0f;
+		if (rv3d->is_persp) {
+			float vec[3];
+			gp_get_3d_reference(p, vec);
+			mul_m4_v3(rv3d->persmat, vec);
+			scale = vec[2] * rv3d->pixsize;
+		}
+		else {
+			scale = rv3d->pixsize;
+		}
+		p->guide_spacing = guide->spacing / scale;
+		p->half_spacing = p->guide_spacing * 0.5f;
+		gp_origin_get(p, p->origin);
 
 		/* special exception here for too high pressure values on first touch in
 		 * windows for some tablets, then we just skip first touch...
 		 */
-		if (tablet && (p->pressure >= 0.99f))
+		if (tablet && (p->pressure >= 0.99f)) {
 			return;
+		}
+
+		/* special exception for grid snapping
+		 * it requires direction which needs at least two points
+		 */
+		if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP) &&
+			guide->use_guide &&
+			guide->use_snapping &&
+			(guide->type == GP_GUIDE_GRID)) {
+			p->flags |= GP_PAINTFLAG_REQ_VECTOR;
+		}
 	}
 
-	/* check if alt key is pressed and limit to straight lines */
-	if ((p->paintmode != GP_PAINTMODE_ERASER) && (p->straight[0] != 0)) {
-		if (p->straight[0] == 1) {
-			/* horizontal */
-			p->mval[1] = p->straight[1]; /* replace y */
+	/* wait for vector then add initial point */
+	if (p->flags & GP_PAINTFLAG_REQ_VECTOR) {
+		if (p->straight == 0) {
+			return;
+		}
+
+		p->flags &= ~GP_PAINTFLAG_REQ_VECTOR;
+
+		/* create fake events */
+		float tmp[2];
+		float pt[2];
+		copy_v2_v2(tmp, p->mval);						
+		sub_v2_v2v2(pt, p->mval, p->mvali);
+		gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), pt[0], pt[1]);
+		if (len_v2v2(p->mval, p->mvalo)) {
+			sub_v2_v2v2(pt, p->mval, p->mvalo);
+			gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), pt[0], pt[1]);
+		}
+		copy_v2_v2(p->mval, tmp);
+	}
+
+	/* check if stroke is straight or guided */
+	if ((p->paintmode != GP_PAINTMODE_ERASER)
+		&& ((p->straight) || (guide->use_guide))) {
+		/* guided stroke */
+		if (guide->use_guide) {
+			switch (guide->type) {
+				default:
+				case GP_GUIDE_CIRCULAR:
+				{
+					float distance;
+					distance = len_v2v2(p->mvali, p->origin);
+
+					if (guide->use_snapping && (guide->spacing > 0.0f)) {
+						distance = gp_snap_to_grid_fl(distance, 0.0f, p->guide_spacing);
+					}
+
+					dist_ensure_v2_v2fl(p->mval, p->origin, distance);
+				}
+				break;
+				case GP_GUIDE_RADIAL:
+				{
+					if (guide->use_snapping &&
+						(guide->angle_snap > 0.0f)) {
+						float point[2];
+						float xy[2];
+						float angle;
+						float half_angle = guide->angle_snap * 0.5f;
+						sub_v2_v2v2(xy, p->mvali, p->origin);
+						angle = atan2f(xy[1], xy[0]);
+						angle += (M_PI * 2.0f);
+						angle = fmodf(angle + half_angle, guide->angle_snap);
+						angle -= half_angle;
+						gp_rotate_v2_v2v2fl(point, p->mvali, p->origin, -angle);
+						closest_to_line_v2(p->mval, p->mval, point, p->origin);
+					}
+					else {
+						closest_to_line_v2(p->mval, p->mval, p->mvali, p->origin);
+					}
+				}
+				break;
+				case GP_GUIDE_PARALLEL:
+				{
+					float point[2];
+					float unit[2];
+					copy_v2_v2(unit, p->mvali);
+					unit[0] += 1.0f; /* start from horizontal */
+					gp_rotate_v2_v2v2fl(point, unit, p->mvali, guide->angle);
+					closest_to_line_v2(p->mval, p->mval, p->mvali, point);
+					
+					if (guide->use_snapping &&
+						(guide->spacing > 0.0f)) {						
+						gp_rotate_v2_v2v2fl(p->mval, p->mval, p->origin, -guide->angle);
+						p->mval[1] = gp_snap_to_grid_fl(p->mval[1] - p->half_spacing, p->origin[1], p->guide_spacing);
+						gp_rotate_v2_v2v2fl(p->mval, p->mval, p->origin, guide->angle);
+					}
+
+				}
+				break;
+				case GP_GUIDE_GRID:
+				{
+					if (guide->use_snapping &&
+						(guide->spacing > 0.0f)) {
+	
+						float point[2];
+						float unit[2];
+						float angle;
+						copy_v2_v2(unit, p->mvali);
+						unit[0] += 1.0f; /* start from horizontal */
+						angle = (p->straight == STROKE_VERTICAL) ? M_PI_2 : 0.0f;
+						gp_rotate_v2_v2v2fl(point, unit, p->mvali, angle);
+						closest_to_line_v2(p->mval, p->mval, p->mvali, point);
+
+						if (p->straight == STROKE_HORIZONTAL) {
+							p->mval[1] = gp_snap_to_grid_fl(p->mval[1] - p->half_spacing, p->origin[1], p->guide_spacing);
+						}
+						else {
+							p->mval[0] = gp_snap_to_grid_fl(p->mval[0] - p->half_spacing, p->origin[0], p->guide_spacing);
+						}
+					}
+					else if (p->straight == STROKE_HORIZONTAL) {
+						p->mval[1] = p->mvali[1]; /* replace y */
+					}
+					else {
+						p->mval[0] = p->mvali[0]; /* replace x */
+					}
+				}
+				break;
+			}
+		}
+		else if (p->straight == STROKE_HORIZONTAL) {	
+			p->mval[1] = p->mvali[1]; /* replace y */
 		}
 		else {
-			/* vertical */
-			p->mval[0] = p->straight[1]; /* replace x */
+			p->mval[0] = p->mvali[0]; /* replace x */
 		}
 	}
 
@@ -2698,8 +2966,8 @@ static int gpencil_draw_exec(bContext *C, wmOperator *op)
 
 		/* get relevant data for this point from stroke */
 		RNA_float_get_array(&itemptr, "mouse", mousef);
-		p->mval[0] = (int)mousef[0];
-		p->mval[1] = (int)mousef[1];
+		p->mval[0] = mousef[0];
+		p->mval[1] = mousef[1];
 		p->pressure = RNA_float_get(&itemptr, "pressure");
 		p->curtime = (double)RNA_float_get(&itemptr, "time") + p->inittime;
 
@@ -2742,6 +3010,93 @@ static int gpencil_draw_exec(bContext *C, wmOperator *op)
 }
 
 /* ------------------------------- */
+
+/* handle events for guides */
+static void gpencil_guide_event_handling(bContext *C, wmOperator *op, const wmEvent *event, tGPsdata *p)
+{
+	bool add_notifier = false;
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+
+	/* Enter or exit set center point mode */
+	if ((event->type == OKEY) && (event->val == KM_RELEASE)) {
+		if (p->paintmode == GP_PAINTMODE_DRAW && guide->reference_point != GP_GUIDE_REF_OBJECT) {
+			add_notifier = true; 
+			p->paintmode = GP_PAINTMODE_SET_CP;
+			ED_gpencil_toggle_brush_cursor(C, false, NULL);			
+		}
+	}
+	/* Freehand mode, turn off speed guide */
+	else if ((event->type == VKEY) && (event->val == KM_RELEASE)) {
+		guide->use_guide = false;
+		add_notifier = true;
+	}
+	/* Alternate or flip direction */
+	else if ((event->type == MKEY) && (event->val == KM_RELEASE)) {
+		if (guide->type == GP_GUIDE_CIRCULAR) {
+			add_notifier = true;
+			guide->type = GP_GUIDE_RADIAL;
+		}
+		else if (guide->type == GP_GUIDE_RADIAL) {
+			add_notifier = true;
+			guide->type = GP_GUIDE_CIRCULAR;
+		}
+		else if (guide->type == GP_GUIDE_PARALLEL) {
+			add_notifier = true;
+			guide->angle += M_PI_2;
+			guide->angle = angle_compat_rad(guide->angle, M_PI);
+		}
+		else {
+			add_notifier = false;
+		}
+	}
+	/* Line guides */
+	else if ((event->type == LKEY) && (event->val == KM_RELEASE)) {
+		add_notifier = true;
+		guide->use_guide = true;		
+		if (event->ctrl) {
+			guide->angle = 0.0f;
+			guide->type = GP_GUIDE_PARALLEL;
+		}
+		else if (event->alt) {
+			guide->type = GP_GUIDE_PARALLEL;
+			guide->angle = RNA_float_get(op->ptr, "guide_last_angle");
+		}
+		else {
+			guide->type = GP_GUIDE_PARALLEL;
+		}
+	}
+	/* Point guide */
+	else if ((event->type == CKEY) && (event->val == KM_RELEASE)) {
+		add_notifier = true;
+		guide->use_guide = true;
+		if (guide->type == GP_GUIDE_CIRCULAR) {
+			guide->type = GP_GUIDE_RADIAL;
+		}
+		else if (guide->type == GP_GUIDE_RADIAL) {
+			guide->type = GP_GUIDE_CIRCULAR;
+		}
+		else {
+			guide->type = GP_GUIDE_CIRCULAR;
+		}
+	}
+	/* Change line angle  */
+	else if (ELEM(event->type, JKEY, KKEY) && (event->val == KM_RELEASE)) {
+		add_notifier = true;
+		float angle = guide->angle;
+		float adjust = (float)M_PI / 180.0f;
+		if (event->alt)
+			adjust *= 45.0f;
+		else if (!event->shift)
+			adjust *= 15.0f;
+		angle += (event->type == JKEY) ? adjust : -adjust;
+		angle = angle_compat_rad(angle, M_PI);
+		guide->angle = angle;
+	}
+
+	if (add_notifier) {
+		WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS | NC_GPENCIL | NA_EDITED, NULL);
+	}
+}
 
 /* start of interactive drawing part of operator */
 static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -2792,7 +3147,7 @@ static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event
 		p->status = GP_STATUS_PAINTING;
 
 		/* handle the initial drawing - i.e. for just doing a simple dot */
-		gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), 0, 0);
+		gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), 0.0f, 0.0f);
 		op->flag |= OP_IS_MODAL_CURSOR_REGION;
 	}
 	else {
@@ -2803,6 +3158,12 @@ static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event
 
 	/* enable paint mode */
 	if (p->sa->spacetype == SPACE_VIEW3D) {
+
+		/* handle speed guide events before drawing inside view3d */
+		if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP)) {
+			gpencil_guide_event_handling(C, op, event, p);
+		}
+
 		Object *ob = CTX_data_active_object(C);
 		if (ob && (ob->type == OB_GPENCIL) && ((p->gpd->flag & GP_DATA_STROKE_PAINTMODE) == 0)) {
 			/* FIXME: use the mode switching operator, this misses notifiers, messages. */
@@ -2908,12 +3269,21 @@ static void gpencil_move_last_stroke_to_back(bContext *C)
 static void gpencil_add_missing_events(bContext *C, wmOperator *op, const wmEvent *event, tGPsdata *p)
 {
 	Brush *brush = p->brush;
-	if (brush->gpencil_settings->input_samples == 0) {
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+	int input_samples = brush->gpencil_settings->input_samples;
+
+	/* ensure sampling when using circular guide */
+	if (guide->use_guide && (guide->type == GP_GUIDE_CIRCULAR)) {
+		input_samples = GP_MAX_INPUT_SAMPLES;
+	}
+
+	if (input_samples == 0) {
 		return;
 	}
+		
 	RegionView3D *rv3d = p->ar->regiondata;
 	float defaultpixsize = rv3d->pixsize * 1000.0f;
-	int samples = (GP_MAX_INPUT_SAMPLES - brush->gpencil_settings->input_samples + 1);
+	int samples = (GP_MAX_INPUT_SAMPLES - input_samples + 1);
 	float thickness = (float)brush->size;
 
 	float pt[2], a[2], b[2];
@@ -2947,8 +3317,8 @@ static void gpencil_add_missing_events(bContext *C, wmOperator *op, const wmEven
 	float factor = ((thickness * dot_factor) / scale) * samples;
 
 	copy_v2_v2(a, p->mvalo);
-	b[0] = event->mval[0] + 1;
-	b[1] = event->mval[1] + 1;
+	b[0] = (float)event->mval[0] + 1.0f;
+	b[1] = (float)event->mval[1] + 1.0f;
 
 	/* get distance in pixels */
 	float dist = len_v2v2(a, b);
@@ -2959,7 +3329,7 @@ static void gpencil_add_missing_events(bContext *C, wmOperator *op, const wmEven
 		sub_v2_v2v2(pt, b, pt);
 		/* create fake event */
 		gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C),
-			(int)pt[0], (int)pt[1]);
+			pt[0], pt[1]);
 	}
 	else if (dist >= factor) {
 		int slices = 2 + (int)((dist - 1.0) / factor);
@@ -2969,7 +3339,7 @@ static void gpencil_add_missing_events(bContext *C, wmOperator *op, const wmEven
 			sub_v2_v2v2(pt, b, pt);
 			/* create fake event */
 			gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C),
-				(int)pt[0], (int)pt[1]);
+				pt[0], pt[1]);
 		}
 	}
 }
@@ -2979,7 +3349,9 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	tGPsdata *p = op->customdata;
 	ToolSettings *ts = CTX_data_tool_settings(C);
-	int estate = OPERATOR_PASS_THROUGH; /* default exit state - pass through to support MMB view nav, etc. */
+	GP_Sculpt_Guide *guide = &p->scene->toolsettings->gp_sculpt.guide;
+	/* default exit state - pass through to support MMB view nav, etc. */
+	int estate = OPERATOR_PASS_THROUGH;
 
 	/* if (event->type == NDOF_MOTION)
 	 *    return OPERATOR_PASS_THROUGH;
@@ -2997,6 +3369,43 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 	if (p->status == GP_STATUS_IDLING) {
 		ARegion *ar = CTX_wm_region(C);
 		p->ar = ar;
+	}
+
+	/* special mode for editing control points */
+	if (p->paintmode == GP_PAINTMODE_SET_CP) {
+		wmWindow *win = p->win;
+		WM_cursor_modal_set(win, BC_NSEW_SCROLLCURSOR);
+		bool drawmode = false;
+
+		switch (event->type) {
+			/* cancel */
+			case ESCKEY:
+			case RIGHTMOUSE:
+			{
+				if (ELEM(event->val, KM_RELEASE)) {
+					drawmode = true;				
+				}
+			}
+			break;
+			/* set */
+			case LEFTMOUSE:
+			{
+				if (ELEM(event->val, KM_RELEASE)) {
+					gp_origin_set(op, event->mval);
+					drawmode = true;
+				}
+			}
+			break;
+		}
+		if (drawmode) {
+			p->status = GP_STATUS_IDLING;
+			p->paintmode = GP_PAINTMODE_DRAW;
+			ED_gpencil_toggle_brush_cursor(C, true, NULL);
+			DEG_id_tag_update(&p->scene->id, ID_RECALC_COPY_ON_WRITE);
+		}
+		else {
+			return OPERATOR_RUNNING_MODAL;
+		}
 	}
 
 	/* we don't pass on key events, GP is used with key-modifiers - prevents Dkey to insert drivers */
@@ -3020,6 +3429,10 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 			 * - This operator is especially useful when animating
 			 */
 			WM_operator_name_call(C, "GPENCIL_OT_blank_frame_add", WM_OP_EXEC_DEFAULT, NULL);
+			estate = OPERATOR_RUNNING_MODAL;
+		}
+		else if ((!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP))) {
+			gpencil_guide_event_handling(C, op, event, p);
 			estate = OPERATOR_RUNNING_MODAL;
 		}
 		else {
@@ -3046,6 +3459,7 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				}
 			}
 		}
+
 		p->status = GP_STATUS_DONE;
 		estate = OPERATOR_FINISHED;
 	}
@@ -3206,6 +3620,7 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 		else if (event->val == KM_RELEASE) {
 			p->status = GP_STATUS_IDLING;
 			op->flag |= OP_IS_MODAL_CURSOR_REGION;
+			ED_region_tag_redraw(p->ar);
 		}
 	}
 
@@ -3215,9 +3630,10 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 		if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE) || (p->flags & GP_PAINTFLAG_FIRSTRUN)) {
 			/* handle drawing event */
 			/* printf("\t\tGP - add point\n"); */
+
 			gpencil_add_missing_events(C, op, event, p);
 
-			gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), 0, 0);
+			gpencil_draw_apply_event(C, op, event, CTX_data_depsgraph(C), 0.0f, 0.0f);
 
 			/* finish painting operation if anything went wrong just now */
 			if (p->status == GP_STATUS_ERROR) {
@@ -3254,7 +3670,8 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 			}
 
 			/* force refresh */
-			ED_region_tag_redraw(p->ar); /* just active area for now, since doing whole screen is too slow */
+			/* just active area for now, since doing whole screen is too slow */
+			ED_region_tag_redraw(p->ar);
 
 			/* event handled, so just tag as running modal */
 			estate = OPERATOR_RUNNING_MODAL;
@@ -3280,6 +3697,13 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 	/* process last operations before exiting */
 	switch (estate) {
 		case OPERATOR_FINISHED:
+			/* store stroke angle for parallel guide */
+			if ((p->straight == 0) || (guide->use_guide && (guide->type == GP_GUIDE_CIRCULAR))){
+				float xy[2];
+				sub_v2_v2v2(xy, p->mval, p->mvali);
+				float angle = atan2f(xy[1], xy[0]);
+				RNA_float_set(op->ptr, "guide_last_angle", angle);
+			}
 			/* one last flush before we're done */
 			gpencil_draw_exit(C, op);
 			WM_event_add_notifier(C, NC_GPENCIL | NA_EDITED, NULL);
@@ -3346,4 +3770,49 @@ void GPENCIL_OT_draw(wmOperatorType *ot)
 
 	prop = RNA_def_boolean(ot->srna, "disable_fill", false, "No Fill Areas", "Disable fill to use stroke as fill boundary");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+	
+	/* guides */
+	prop = RNA_def_float(ot->srna, "guide_last_angle", 0.0f, -10000.0f, 10000.0f, "Angle", "Speed guide angle", -10000.0f, 10000.0f);
+	prop = RNA_def_float_vector(ot->srna, "guide_origin", 3, NULL, -10000.0f, 10000.0f, "Origin", "Speed guide origin", -10000.0f, 10000.0f);
+}
+
+/* additional OPs */
+
+static int gpencil_guide_rotate(bContext *C, wmOperator *op)
+{
+	ToolSettings *ts = CTX_data_tool_settings(C);
+	GP_Sculpt_Guide *guide = &ts->gp_sculpt.guide;
+	float angle = RNA_float_get(op->ptr, "angle");
+	bool increment = RNA_boolean_get(op->ptr, "increment");
+	if (increment) {
+		float oldangle = guide->angle;
+		oldangle += angle;
+		guide->angle = angle_compat_rad(oldangle, M_PI);
+	}
+	else {
+		guide->angle = angle_compat_rad(angle, M_PI);
+	}
+	
+	return OPERATOR_FINISHED;
+}
+
+void GPENCIL_OT_guide_rotate(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Rotate Guide Angle";
+	ot->idname = "GPENCIL_OT_guide_rotate";
+	ot->description = "Rotate guide angle";
+
+	/* api callbacks */
+	ot->exec = gpencil_guide_rotate;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	PropertyRNA *prop;
+
+	prop = RNA_def_boolean(ot->srna, "increment", true, "Increment", "Increment angle");
+	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+	prop = RNA_def_float(ot->srna, "angle", 0.0f, -10000.0f, 10000.0f, "Angle", "Guide angle", -10000.0f, 10000.0f);
+	RNA_def_property_flag(prop, PROP_HIDDEN);
 }

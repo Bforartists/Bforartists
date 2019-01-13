@@ -484,7 +484,7 @@ static bool is_valid_unit_collection(const bUnitCollection *usys)
 	return usys != NULL && usys->units[0].name != NULL;
 }
 
-static const bUnitDef *get_preferred_unit_if_used(int type, PreferredUnits units)
+static const bUnitDef *get_preferred_display_unit_if_used(int type, PreferredUnits units)
 {
 	const bUnitCollection *usys = unit_get_system(units.system, type);
 	if (!is_valid_unit_collection(usys)) return NULL;
@@ -525,7 +525,7 @@ static size_t unit_as_string_main(
 		usys = &buDummyCollection;
 	}
 	else {
-		main_unit = get_preferred_unit_if_used(type, units);
+		main_unit = get_preferred_display_unit_if_used(type, units);
 	}
 
 	if (split && unit_should_be_split(type)) {
@@ -595,9 +595,9 @@ static const char *unit_find_str(const char *str, const char *substr)
 /* Note that numbers are added within brackets
  * ") " - is used to detect numbers we added so we can detect if commas need to be added
  *
- * "1m1cm+2mm"				- Original value
- * "1*1#1*0.01#+2*0.001#"	- Replace numbers
- * "1*1+1*0.01 +2*0.001 "	- Add add signs if ( + - * / | & ~ < > ^ ! = % ) not found in between
+ * "1m1cm+2mm"              - Original value
+ * "1*1#1*0.01#+2*0.001#"   - Replace numbers
+ * "1*1+1*0.01 +2*0.001 "   - Add add signs if ( + - * / | & ~ < > ^ ! = % ) not found in between
  *
  */
 
@@ -721,25 +721,27 @@ static const bUnitDef *unit_detect_from_str(const bUnitCollection *usys, const c
 	return unit;
 }
 
-bool bUnit_ContainsUnit(const char *str, int system, int type)
+bool bUnit_ContainsUnit(const char *str, int type)
 {
-	const bUnitCollection *usys = unit_get_system(system, type);
-	if (!is_valid_unit_collection(usys)) return false;
+	for (int system = 0; system < UNIT_SYSTEM_TOT; system++) {
+		const bUnitCollection *usys = unit_get_system(system, type);
+		if (!is_valid_unit_collection(usys)) continue;
 
-	for (int i = 0; i < usys->length; i++) {
-		if (unit_find(str, usys->units + i)) {
-			return true;
+		for (int i = 0; i < usys->length; i++) {
+			if (unit_find(str, usys->units + i)) {
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-double bUnit_PreferredUnitScalar(const struct UnitSettings *settings, int type)
+double bUnit_PreferredInputUnitScalar(const struct UnitSettings *settings, int type)
 {
 	PreferredUnits units = preferred_units_from_UnitSettings(settings);
-	const bUnitDef *unit = get_preferred_unit_if_used(type, units);
-	if (unit == NULL) return 1.0;
-	else return unit->scalar;
+	const bUnitDef *unit = get_preferred_display_unit_if_used(type, units);
+	if (unit) return unit->scalar;
+	else return bUnit_BaseScalar(units.system, type);
 }
 
 /* make a copy of the string that replaces the units with numbers
@@ -905,7 +907,8 @@ double bUnit_ClosestScalar(double value, int system, int type)
 double bUnit_BaseScalar(int system, int type)
 {
 	const bUnitCollection *usys = unit_get_system(system, type);
-	return unit_default(usys)->scalar;
+	if (usys) return unit_default(usys)->scalar;
+	else return 1.0;
 }
 
 /* external access */

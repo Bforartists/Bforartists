@@ -48,9 +48,11 @@ typedef struct GlobalsUboStorage {
 	float colorWireEdit[4];
 	float colorActive[4];
 	float colorSelect[4];
-	float colorTransform[4];
+	float colorDupliSelect[4];
+	float colorDupli[4];
 	float colorLibrarySelect[4];
 	float colorLibrary[4];
+	float colorTransform[4];
 	float colorLamp[4];
 	float colorSpeaker[4];
 	float colorCamera[4];
@@ -135,7 +137,7 @@ struct DRWShadingGroup *shgroup_instance_screen_aligned(struct DRWPass *pass, st
 struct DRWShadingGroup *shgroup_instance_empty_axes(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_scaled(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance_alpha(struct DRWPass *pass, struct GPUBatch *geom, float alpha);
+struct DRWShadingGroup *shgroup_instance_alpha(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_outline(struct DRWPass *pass, struct GPUBatch *geom, int *baseid);
 struct DRWShadingGroup *shgroup_camera_instance(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_distance_lines_instance(struct DRWPass *pass, struct GPUBatch *geom);
