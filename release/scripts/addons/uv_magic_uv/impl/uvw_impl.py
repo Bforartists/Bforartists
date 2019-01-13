@@ -28,6 +28,8 @@ from math import sin, cos, pi
 
 from mathutils import Vector
 
+from .. import common
+
 
 def is_valid_context(context):
     obj = context.object
@@ -144,7 +146,11 @@ def apply_planer_map(bm, uv_layer, size, offset, rotation, tex_aspect):
     # update UV coordinate
     for f in sel_faces:
         for l in f.loops:
-            co = q @ l.vert.co
+            if common.check_version(2, 80, 0) >= 0:
+                # pylint: disable=E0001
+                co = q @ l.vert.co
+            else:
+                co = q * l.vert.co
             x = co.x * sx
             y = co.y * sy
 

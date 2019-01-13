@@ -182,14 +182,9 @@ def draw_line(self, bm_geom, location):
         if self.create_face:
             ed_list = set(self.list_edges)
             for edge in v2.link_edges:
-                for vert in edge.verts:
-                    if vert != v2 and vert in self.list_verts:
-                        ed_list.add(edge)
-                        break
-                else:
-                    continue
-                # Inner loop had a break, break the outer
-                break
+                if edge not in ed_list and edge.other_vert(v2) in self.list_verts:
+                    ed_list.add(edge)
+                    break
 
             ed_list.update(get_loose_linked_edges(v2))
 
@@ -284,6 +279,7 @@ class SnapUtilitiesLine(bpy.types.Operator):
         self.vector_constrain = ()
         self.len = 0
         self.length_entered = ""
+        self.length_entered_value = 0.0
         self.line_pos = 0
 
         active_object = context.active_object
@@ -314,7 +310,7 @@ class SnapUtilitiesLine(bpy.types.Operator):
 
         is_making_lines = bool(self.list_verts_co)
 
-        if event.type == 'MOUSEMOVE' or self.bool_update:
+        if (event.type == 'MOUSEMOVE' or self.bool_update) and self.length_entered_value == 0.0:
             if self.rv3d.view_matrix != self.rotMat:
                 self.rotMat = self.rv3d.view_matrix.copy()
                 self.bool_update = True
@@ -339,30 +335,45 @@ class SnapUtilitiesLine(bpy.types.Operator):
                                         round(loc.y),
                                         round(loc.z))) * self.rd
 
-            if self.keyf8 and is_making_lines:
+            if is_making_lines and self.keyf8:
                 lloc = self.list_verts_co[-1]
                 view_vec, orig = self.sctx.last_ray
                 location = intersect_point_line(lloc, orig, (orig + view_vec))
                 vec = (location[0] - lloc)
                 ax, ay, az = abs(vec.x), abs(vec.y), abs(vec.z)
-                vec.x = ax > ay > az or ax > az > ay
-                vec.y = ay > ax > az or ay > az > ax
-                vec.z = az > ay > ax or az > ax > ay
-                if vec == Vector():
+                vec.x = ax > ay and ax > az
+                vec.y = ay > ax and ay > az
+                vec.z = az > ay and az > ax
+                if not (vec.x or vec.y or vec.z):
                     self.vector_constrain = None
                 else:
                     vc = lloc + vec
-                    try:
-                        if vc != self.vector_constrain[1]:
-                            type = 'X' if vec.x else 'Y' if vec.y else 'Z' if vec.z else 'shift'
-                            self.vector_constrain = [lloc, vc, type]
-                    except:
+                    if self.vector_constrain is None or vc != self.vector_constrain[1]:
                         type = 'X' if vec.x else 'Y' if vec.y else 'Z' if vec.z else 'shift'
                         self.vector_constrain = [lloc, vc, type]
+                        #del vc, type
+
+                #del view_vec, orig, location, ax, ay, az, vec
 
         if event.value == 'PRESS':
             if is_making_lines and (event.ascii in CharMap.ascii or event.type in CharMap.type):
                 CharMap.modal(self, context, event)
+
+                if self.length_entered != "":
+                    try:
+                        self.length_entered_value = bpy.utils.units.to_value(
+                                self.unit_system, 'LENGTH', self.length_entered)
+
+                        vector = (self.location - self.list_verts_co[-1]).normalized()
+                        self.location = (self.list_verts_co[-1] + (vector * self.length_entered_value))
+                        del vector
+
+                    except:  # ValueError:
+                        self.length_entered_value = 0.0 #invalid
+                        self.report({'INFO'}, "Operation not supported yet")
+                else:
+                    self.length_entered_value = 0.0
+                    self.bool_update = True
 
             elif event.type in self.constrain_keys:
                 self.bool_update = True
@@ -388,45 +399,35 @@ class SnapUtilitiesLine(bpy.types.Operator):
                             loc = self.location
                         self.vector_constrain = [loc, loc + self.constrain_keys[event.type], event.type]
 
-            elif event.type == 'LEFTMOUSE':
-                if not is_making_lines and self.bm:
-                    self.main_snap_obj = self.snap_obj
-                    self.main_bm = self.bm
+            elif event.type in {'LEFTMOUSE', 'RET', 'NUMPAD_ENTER'}:
+                if event.type == 'LEFTMOUSE' or self.length_entered_value != 0.0:
+                    if not is_making_lines and self.bm:
+                        self.main_snap_obj = self.snap_obj
+                        self.main_bm = self.bm
 
-                mat_inv = self.main_snap_obj.mat.inverted_safe()
-                point = mat_inv @ self.location
-                # with constraint the intersection can be in a different element of the selected one
-                geom2 = self.geom
-                if geom2:
-                    geom2.select = False
+                    mat_inv = self.main_snap_obj.mat.inverted_safe()
+                    point = mat_inv @ self.location
+                    # with constraint the intersection can be in a different element of the selected one
+                    geom2 = self.geom
+                    if geom2:
+                        geom2.select = False
 
-                if self.vector_constrain:
-                    geom2 = get_closest_edge(self.main_bm, point, .001)
+                    if self.vector_constrain:
+                        geom2 = get_closest_edge(self.main_bm, point, .001)
 
-                self.vector_constrain = None
-                self.list_verts_co = draw_line(self, geom2, point)
+                    self.list_verts_co = draw_line(self, geom2, point)
+
+                    self.vector_constrain = None
+                    self.length_entered = ""
+                    self.length_entered_value = 0.0
+                    self.line_pos = 0
+                else:
+                    self._exit(context)
+                    return {'FINISHED'}
 
             elif event.type == 'F8':
                 self.vector_constrain = None
                 self.keyf8 = self.keyf8 is False
-
-            elif event.type in {'RET', 'NUMPAD_ENTER'}:
-                if self.length_entered != "" and self.list_verts_co:
-                    try:
-                        text_value = bpy.utils.units.to_value(self.unit_system, 'LENGTH', self.length_entered)
-                        vector = (self.location - self.list_verts_co[-1]).normalized()
-                        location = (self.list_verts_co[-1] + (vector * text_value))
-
-                        mat_inv = self.main_snap_obj.mat.inverted_safe()
-                        self.list_verts_co = draw_line(self, self.geom, mat_inv @ location)
-                        self.length_entered = ""
-                        self.vector_constrain = None
-
-                    except:  # ValueError:
-                        self.report({'INFO'}, "Operation not supported yet")
-
-                self._exit(context)
-                return {'FINISHED'}
 
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 if not self.wait_for_input or not is_making_lines or event.type == 'ESC':
@@ -440,6 +441,9 @@ class SnapUtilitiesLine(bpy.types.Operator):
                     self.list_edges = []
                     self.list_verts = []
                     self.list_verts_co = []
+                    self.length_entered = ""
+                    self.length_entered_value = 0.0
+                    self.line_pos = 0
 
         a = ""
         if is_making_lines:

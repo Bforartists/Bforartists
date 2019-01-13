@@ -37,6 +37,7 @@ from .ant_functions import (
         draw_ant_displace,
         )
 from .ant_noise import noise_gen
+from ant_landscape import ant_noise
 
 # ------------------------------------------------------------
 # Do vert displacement
@@ -46,128 +47,128 @@ class AntMeshDisplace(bpy.types.Operator):
     bl_description = "Displace mesh vertices"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    ant_terrain_name = StringProperty(
+    ant_terrain_name: StringProperty(
             name="Name",
             default="Landscape"
             )
-    land_material = StringProperty(
+    land_material: StringProperty(
             name='Material',
             default="",
             description="Terrain material"
             )
-    water_material = StringProperty(
+    water_material: StringProperty(
             name='Material',
             default="",
             description="Water plane material"
             )
-    texture_block = StringProperty(
+    texture_block: StringProperty(
             name="Texture",
             default=""
             )
-    at_cursor = BoolProperty(
+    at_cursor: BoolProperty(
             name="Cursor",
             default=True,
             description="Place at cursor location",
             )
-    smooth_mesh = BoolProperty(
+    smooth_mesh: BoolProperty(
             name="Smooth",
             default=True,
             description="Shade smooth"
             )
-    tri_face = BoolProperty(
+    tri_face: BoolProperty(
             name="Triangulate",
             default=False,
             description="Triangulate faces"
             )
-    sphere_mesh = BoolProperty(
+    sphere_mesh: BoolProperty(
             name="Sphere",
             default=False,
             description="Generate uv sphere - remove doubles when ready"
             )
-    subdivision_x = IntProperty(
+    subdivision_x: IntProperty(
             name="Subdivisions X",
             default=128,
             min=4,
             max=6400,
             description="Mesh X subdivisions"
             )
-    subdivision_y = IntProperty(
+    subdivision_y: IntProperty(
             default=128,
             name="Subdivisions Y",
             min=4,
             max=6400,
             description="Mesh Y subdivisions"
             )
-    mesh_size = FloatProperty(
+    mesh_size: FloatProperty(
             default=2.0,
             name="Mesh Size",
             min=0.01,
             max=100000.0,
             description="Mesh size"
             )
-    mesh_size_x = FloatProperty(
+    mesh_size_x: FloatProperty(
             default=2.0,
             name="Mesh Size X",
             min=0.01,
             description="Mesh x size"
             )
-    mesh_size_y = FloatProperty(
+    mesh_size_y: FloatProperty(
             name="Mesh Size Y",
             default=2.0,
             min=0.01,
             description="Mesh y size"
             )
 
-    random_seed = IntProperty(
+    random_seed: IntProperty(
             name="Random Seed",
             default=0,
             min=0,
             description="Randomize noise origin"
             )
-    noise_offset_x = FloatProperty(
+    noise_offset_x: FloatProperty(
             name="Offset X",
             default=0.0,
             description="Noise X Offset"
             )
-    noise_offset_y = FloatProperty(
+    noise_offset_y: FloatProperty(
             name="Offset Y",
             default=0.0,
             description="Noise Y Offset"
             )
-    noise_offset_z = FloatProperty(
+    noise_offset_z: FloatProperty(
             name="Offset Z",
             default=0.0,
             description="Noise Z Offset"
             )
-    noise_size_x = FloatProperty(
+    noise_size_x: FloatProperty(
             default=1.0,
             name="Size X",
             min=0.01,
             max=1000.0,
             description="Noise x size"
             )
-    noise_size_y = FloatProperty(
+    noise_size_y: FloatProperty(
             name="Size Y",
             default=1.0,
             min=0.01,
             max=1000.0,
             description="Noise y size"
             )
-    noise_size_z = FloatProperty(
+    noise_size_z: FloatProperty(
             name="Size Z",
             default=1.0,
             min=0.01,
             max=1000.0,
             description="Noise Z size"
             )
-    noise_size = FloatProperty(
+    noise_size: FloatProperty(
             name="Noise Size",
             default=0.25,
             min=0.01,
             max=1000.0,
             description="Noise size"
             )
-    noise_type = EnumProperty(
+    noise_type: EnumProperty(
             name="Noise Type",
             default='hetero_terrain',
             description="Noise type",
@@ -192,46 +193,26 @@ class AntMeshDisplace(bpy.types.Operator):
                 ('planet_noise', "Planet Noise", "Planet Noise by: Farsthary", 17),
                 ('blender_texture', "Blender Texture - Texture Nodes", "Blender texture data block", 18)]
             )
-    basis_type = EnumProperty(
+    basis_type: EnumProperty(
             name="Noise Basis",
-            default="0",
+            default=ant_noise.noise_basis_default,
             description="Noise basis algorithms",
-            items = [
-                ("0", "Blender", "Blender default noise", 0),
-                ("1", "Perlin", "Perlin noise", 1),
-                ("2", "New Perlin", "New Perlin noise", 2),
-                ("3", "Voronoi F1", "Voronoi F1", 3),
-                ("4", "Voronoi F2", "Voronoi F2", 4),
-                ("5", "Voronoi F3", "Voronoi F3", 5),
-                ("6", "Voronoi F4", "Voronoi F4", 6),
-                ("7", "Voronoi F2-F1", "Voronoi F2-F1", 7),
-                ("8", "Voronoi Crackle", "Voronoi Crackle", 8),
-                ("9", "Cell Noise", "Cell noise", 9)]
+            items = ant_noise.noise_basis
             )
-    vl_basis_type = EnumProperty(
+    vl_basis_type: EnumProperty(
             name="vlNoise Basis",
-            default="0",
+            default=ant_noise.noise_basis_default,
             description="VLNoise basis algorithms",
-            items = [
-                ("0", "Blender", "Blender default noise", 0),
-                ("1", "Perlin", "Perlin noise", 1),
-                ("2", "New Perlin", "New Perlin noise", 2),
-                ("3", "Voronoi F1", "Voronoi F1", 3),
-                ("4", "Voronoi F2", "Voronoi F2", 4),
-                ("5", "Voronoi F3", "Voronoi F3", 5),
-                ("6", "Voronoi F4", "Voronoi F4", 6),
-                ("7", "Voronoi F2-F1", "Voronoi F2-F1", 7),
-                ("8", "Voronoi Crackle", "Voronoi Crackle", 8),
-                ("9", "Cell Noise", "Cell noise", 9)]
+            items = ant_noise.noise_basis
             )
-    distortion = FloatProperty(
+    distortion: FloatProperty(
             name="Distortion",
             default=1.0,
             min=0.01,
             max=100.0,
             description="Distortion amount"
             )
-    hard_noise = EnumProperty(
+    hard_noise: EnumProperty(
             name="Soft Hard",
             default="0",
             description="Soft Noise, Hard noise",
@@ -239,56 +220,56 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("0", "Soft", "Soft Noise", 0),
                 ("1", "Hard", "Hard noise", 1)]
             )
-    noise_depth = IntProperty(
+    noise_depth: IntProperty(
             name="Depth",
             default=8,
             min=0,
             max=16,
             description="Noise Depth - number of frequencies in the fBm"
             )
-    amplitude = FloatProperty(
+    amplitude: FloatProperty(
             name="Amp",
             default=0.5,
             min=0.01,
             max=1.0,
             description="Amplitude"
             )
-    frequency = FloatProperty(
+    frequency: FloatProperty(
             name="Freq",
             default=2.0,
             min=0.01,
             max=5.0,
             description="Frequency"
             )
-    dimension = FloatProperty(
+    dimension: FloatProperty(
             name="Dimension",
             default=1.0,
             min=0.01,
             max=2.0,
             description="H - fractal dimension of the roughest areas"
             )
-    lacunarity = FloatProperty(
+    lacunarity: FloatProperty(
             name="Lacunarity",
             min=0.01,
             max=6.0,
             default=2.0,
             description="Lacunarity - gap between successive frequencies"
             )
-    offset = FloatProperty(
+    offset: FloatProperty(
             name="Offset",
             default=1.0,
             min=0.01,
             max=6.0,
             description="Offset - raises the terrain from sea level"
             )
-    gain = FloatProperty(
+    gain: FloatProperty(
             name="Gain",
             default=1.0,
             min=0.01,
             max=6.0,
             description="Gain - scale factor"
             )
-    marble_bias = EnumProperty(
+    marble_bias: EnumProperty(
             name="Bias",
             default="0",
             description="Marble bias",
@@ -298,7 +279,7 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("2", "Tri", "Tri", 2),
                 ("3", "Saw", "Saw", 3)]
             )
-    marble_sharp = EnumProperty(
+    marble_sharp: EnumProperty(
             name="Sharp",
             default="0",
             description="Marble sharpness",
@@ -310,7 +291,7 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("4", "Sharp inv.", "Sharp", 4),
                 ("5", "Sharper inv.", "Sharper", 5)]
             )
-    marble_shape = EnumProperty(
+    marble_shape: EnumProperty(
             name="Shape",
             default="0",
             description="Marble shape",
@@ -324,19 +305,19 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("6", "Y", "Y", 6),
                 ("7", "X", "X", 7)]
         )
-    height = FloatProperty(
+    height: FloatProperty(
             name="Height",
             default=0.25,
             min=-10000.0,
             max=10000.0,
             description="Noise intensity scale"
             )
-    height_invert = BoolProperty(
+    height_invert: BoolProperty(
             name="Invert",
             default=False,
             description="Height invert",
             )
-    height_offset = FloatProperty(
+    height_offset: FloatProperty(
             name="Offset",
             default=0.0,
             min=-10000.0,
@@ -344,14 +325,14 @@ class AntMeshDisplace(bpy.types.Operator):
             description="Height offset"
             )
 
-    fx_mixfactor = FloatProperty(
+    fx_mixfactor: FloatProperty(
             name="Mix Factor",
             default=0.0,
             min=-1.0,
             max=1.0,
             description="Effect mix factor: -1.0 = Noise, +1.0 = Effect"
             )
-    fx_mix_mode = EnumProperty(
+    fx_mix_mode: EnumProperty(
             name="Effect Mix",
             default="0",
             description="Effect mix mode",
@@ -367,7 +348,7 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("8", "Max", "Maximum", 8)
                 ]
             )
-    fx_type = EnumProperty(
+    fx_type: EnumProperty(
             name="Effect Type",
             default="0",
             description="Effect type",
@@ -396,7 +377,7 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("21", "Flat Voronoi", "Flat voronoi", 21)
                 ]
             )
-    fx_bias = EnumProperty(
+    fx_bias: EnumProperty(
             name="Effect Bias",
             default="0",
             description="Effect bias type",
@@ -408,64 +389,64 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("4", "None", "None", 4)
                 ]
             )
-    fx_turb = FloatProperty(
+    fx_turb: FloatProperty(
             name="Distortion",
             default=0.0,
             min=0.0,
             max=1000.0,
             description="Effect turbulence distortion"
             )
-    fx_depth = IntProperty(
+    fx_depth: IntProperty(
             name="Depth",
             default=0,
             min=0,
             max=16,
             description="Effect depth - number of frequencies"
             )
-    fx_amplitude = FloatProperty(
+    fx_amplitude: FloatProperty(
             name="Amp",
             default=0.5,
             min=0.01,
             max=1.0,
             description="Amplitude"
             )
-    fx_frequency = FloatProperty(
+    fx_frequency: FloatProperty(
             name="Freq",
             default=2.0,
             min=0.01,
             max=5.0,
             description="Frequency"
             )
-    fx_size = FloatProperty(
+    fx_size: FloatProperty(
             name="Effect Size",
             default=1.0,
             min=0.01,
             max=1000.0,
             description="Effect size"
             )
-    fx_loc_x = FloatProperty(
+    fx_loc_x: FloatProperty(
             name="Offset X",
             default=0.0,
             description="Effect x offset"
             )
-    fx_loc_y = FloatProperty(
+    fx_loc_y: FloatProperty(
             name="Offset Y",
             default=0.0,
             description="Effect y offset"
             )
-    fx_height = FloatProperty(
+    fx_height: FloatProperty(
             name="Intensity",
             default=1.0,
             min=-1000.0,
             max=1000.0,
             description="Effect intensity scale"
             )
-    fx_invert = BoolProperty(
+    fx_invert: BoolProperty(
             name="Invert",
             default=False,
             description="Effect invert"
             )
-    fx_offset = FloatProperty(
+    fx_offset: FloatProperty(
             name="Offset",
             default=0.0,
             min=-1000.0,
@@ -473,7 +454,7 @@ class AntMeshDisplace(bpy.types.Operator):
             description="Effect height offset"
             )
 
-    edge_falloff = EnumProperty(
+    edge_falloff: EnumProperty(
             name="Falloff",
             default="0",
             description="Flatten edges",
@@ -483,53 +464,53 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("2", "X", "X Falloff", 2),
                 ("3", "X Y", "X Y Falloff", 3)]
             )
-    falloff_x = FloatProperty(
+    falloff_x: FloatProperty(
             name="Falloff X",
             default=4.0,
             min=0.1,
             max=100.0,
             description="Falloff x scale"
             )
-    falloff_y = FloatProperty(
+    falloff_y: FloatProperty(
             name="Falloff Y",
             default=4.0,
             min=0.1,
             max=100.0,
             description="Falloff y scale"
             )
-    edge_level = FloatProperty(
+    edge_level: FloatProperty(
             name="Edge Level",
             default=0.0,
             min=-10000.0,
             max=10000.0,
             description="Edge level, sealevel offset"
             )
-    maximum = FloatProperty(
+    maximum: FloatProperty(
             name="Maximum",
             default=1.0,
             min=-10000.0,
             max=10000.0,
             description="Maximum, flattens terrain at plateau level"
             )
-    minimum = FloatProperty(
+    minimum: FloatProperty(
             name="Minimum",
             default=-1.0,
             min=-10000.0,
             max=10000.0,
             description="Minimum, flattens terrain at seabed level"
             )
-    vert_group = StringProperty(
+    vert_group: StringProperty(
             name="Vertex Group",
             default=""
             )
-    strata = FloatProperty(
+    strata: FloatProperty(
             name="Amount",
             default=5.0,
             min=0.01,
             max=1000.0,
             description="Strata layers / terraces"
             )
-    strata_type = EnumProperty(
+    strata_type: EnumProperty(
             name="Strata",
             default="0",
             description="Strata types",
@@ -541,24 +522,24 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("4", "Quantize", "Quantize", 4),
                 ("5", "Quantize Mix", "Quantize mixed", 5)]
             )
-    water_plane = BoolProperty(
+    water_plane: BoolProperty(
             name="Water Plane",
             default=False,
             description="Add water plane"
             )
-    water_level = FloatProperty(
+    water_level: FloatProperty(
             name="Level",
             default=0.01,
             min=-10000.0,
             max=10000.0,
             description="Water level"
             )
-    remove_double = BoolProperty(
+    remove_double: BoolProperty(
             name="Remove Doubles",
             default=False,
             description="Remove doubles"
             )
-    direction = EnumProperty(
+    direction: EnumProperty(
             name="Direction",
             default="NORMAL",
             description="Displacement direction",
@@ -568,27 +549,27 @@ class AntMeshDisplace(bpy.types.Operator):
                 ("Y", "Y", "Displace in the Y direction", 2),
                 ("X", "X", "Displace in the X direction", 3)]
             )
-    show_main_settings = BoolProperty(
+    show_main_settings: BoolProperty(
             name="Main Settings",
             default=True,
             description="Show settings"
             )
-    show_noise_settings = BoolProperty(
+    show_noise_settings: BoolProperty(
             name="Noise Settings",
             default=True,
             description="Show noise settings"
             )
-    show_displace_settings = BoolProperty(
+    show_displace_settings: BoolProperty(
             name="Displace Settings",
             default=True,
             description="Show terrain settings"
             )
-    refresh = BoolProperty(
+    refresh: BoolProperty(
             name="Refresh",
             default=False,
             description="Refresh"
             )
-    auto_refresh = BoolProperty(
+    auto_refresh: BoolProperty(
             name="Auto",
             default=False,
             description="Automatic refresh"

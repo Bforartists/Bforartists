@@ -1924,17 +1924,17 @@ class RotateView3D(Operator):
             return {'FINISHED'}
 
         if event.type == 'MOUSEMOVE':
-            if context.user_preferences.inputs.view_rotate_method == 'TRACKBALL':
+            if context.preferences.inputs.view_rotate_method == 'TRACKBALL':
                 self.tracball(context, event.mouse_region_x, event.mouse_region_y, ob.location)
             else:
                 self.turnable(context, event.mouse_region_x, event.mouse_region_y, ob.location)
             align_to_view(context)
             # to unlock the camera
             if self.first_time:
-                rot_ang = context.user_preferences.view.rotation_angle
-                context.user_preferences.view.rotation_angle = 0
+                rot_ang = context.preferences.view.rotation_angle
+                context.preferences.view.rotation_angle = 0
                 bpy.ops.view3d.view_orbit(type='ORBITLEFT')
-                context.user_preferences.view.rotation_angle = rot_ang
+                context.preferences.view.rotation_angle = rot_ang
                 bpy.ops.view3d.view_persportho()
                 bpy.ops.view3d.view_persportho()
                 self.first_time = False
@@ -2097,11 +2097,11 @@ class PresetView3D(Operator):
         pos_init = sd.region_3d.view_location - origine
         sd.region_3d.view_location = origine
 
-        tmp = context.user_preferences.view.smooth_view
-        context.user_preferences.view.smooth_view = 0
+        tmp = context.preferences.view.smooth_view
+        context.preferences.view.smooth_view = 0
         bpy.ops.view3d.viewnumpad(type=self.view)
         align_to_view(context)
-        context.user_preferences.view.smooth_view = tmp
+        context.preferences.view.smooth_view = tmp
 
         vr_a = sd.region_3d.view_rotation.copy()
         pos_init.rotate(vr_a * vr_b)

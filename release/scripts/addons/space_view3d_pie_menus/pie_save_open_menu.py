@@ -73,7 +73,7 @@ class pie_link(Menu):
         box = pie.split().column()
         box.operator("wm.link", text="Link", icon='LINK_BLEND')
         box.operator("wm.append", text="Append", icon='APPEND_BLEND')
-        box.menu("external.data", text="External Data", icon='EXTERNAL_DATA')
+        box.menu("external.data", text="External Data")
 
 
 class pie_recover(Menu):

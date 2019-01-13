@@ -106,8 +106,8 @@ def node_template_add(context, filepath, node_group, ungroup, report):
 # Node Template Prefs
 
 def node_search_path(context):
-    user_preferences = context.user_preferences
-    addon_prefs = user_preferences.addons[__name__].preferences
+    preferences = context.preferences
+    addon_prefs = preferences.addons[__name__].preferences
     dirpath = addon_prefs.search_path
     return dirpath
 

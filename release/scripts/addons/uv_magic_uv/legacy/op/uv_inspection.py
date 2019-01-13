@@ -24,47 +24,17 @@ __version__ = "5.2"
 __date__ = "17 Nov 2018"
 
 import bpy
-import bmesh
 import bgl
 from bpy.props import BoolProperty, EnumProperty
 
 from ... import common
 from ...utils.bl_class_registry import BlClassRegistry
 from ...utils.property_class_registry import PropertyClassRegistry
-
-
-__all__ = [
-    'Properties',
-    'MUV_OT_UVInspection_Render',
-    'MUV_OT_UVInspection_Update',
-]
-
-
-def is_valid_context(context):
-    obj = context.object
-
-    # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
-    if context.object.mode != 'EDIT':
-        return False
-
-    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
-    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
-    # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
-        return False
-
-    return True
+from ...impl import uv_inspection_impl as impl
 
 
 @PropertyClassRegistry(legacy=True)
-class Properties:
+class _Properties:
     idname = "uv_inspection"
 
     @classmethod
@@ -145,7 +115,7 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
         # we can not get area/space/region from console
         if common.is_console_mode():
             return False
-        return is_valid_context(context)
+        return impl.is_valid_context(context)
 
     @classmethod
     def is_running(cls, _):
@@ -169,7 +139,7 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
     def draw(_, context):
         sc = context.scene
         props = sc.muv_props.uv_inspection
-        prefs = context.preferences.addons["uv_magic_uv"].preferences
+        prefs = context.user_preferences.addons["uv_magic_uv"].preferences
 
         if not MUV_OT_UVInspection_Render.is_running(context):
             return
@@ -221,7 +191,7 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
 
     def invoke(self, context, _):
         if not MUV_OT_UVInspection_Render.is_running(context):
-            update_uvinsp_info(context)
+            impl.update_uvinsp_info(context)
             MUV_OT_UVInspection_Render.handle_add(self, context)
         else:
             MUV_OT_UVInspection_Render.handle_remove()
@@ -230,25 +200,6 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
             context.area.tag_redraw()
 
         return {'FINISHED'}
-
-
-def update_uvinsp_info(context):
-    sc = context.scene
-    props = sc.muv_props.uv_inspection
-
-    obj = context.active_object
-    bm = bmesh.from_edit_mesh(obj.data)
-    if common.check_version(2, 73, 0) >= 0:
-        bm.faces.ensure_lookup_table()
-    uv_layer = bm.loops.layers.uv.verify()
-
-    if context.tool_settings.use_uv_select_sync:
-        sel_faces = [f for f in bm.faces]
-    else:
-        sel_faces = [f for f in bm.faces if f.select]
-    props.overlapped_info = common.get_overlapped_uv_info(
-        bm, sel_faces, uv_layer, sc.muv_uv_inspection_show_mode)
-    props.flipped_info = common.get_flipped_uv_info(sel_faces, uv_layer)
 
 
 @BlClassRegistry(legacy=True)
@@ -269,10 +220,10 @@ class MUV_OT_UVInspection_Update(bpy.types.Operator):
             return True
         if not MUV_OT_UVInspection_Render.is_running(context):
             return False
-        return is_valid_context(context)
+        return impl.is_valid_context(context)
 
     def execute(self, context):
-        update_uvinsp_info(context)
+        impl.update_uvinsp_info(context)
 
         if context.area:
             context.area.tag_redraw()
