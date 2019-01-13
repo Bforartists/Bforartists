@@ -33,6 +33,10 @@ from .space_toolsystem_common import (
 )
 
 
+def kmi_to_string_or_none(kmi):
+    return kmi.to_string() if kmi else "<none>"
+
+
 def generate_from_enum_ex(
         context, *,
         icon_prefix,
@@ -101,6 +105,10 @@ class _defs_view3d_generic:
     @ToolDef.from_fn
     def ruler():
         def description(context, item, km):
+            if km is not None:
+                kmi = km.keymap_items.find_from_operator("view3d.ruler_add")
+            else:
+                kmi = None
             return (
                 "Measure distance and angles.\n"
                 "\u2022 {} anywhere for new measurement.\n"
@@ -109,7 +117,7 @@ class _defs_view3d_generic:
                 "\u2022 Ctrl to snap.\n"
                 "\u2022 Shift to measure surface thickness"
             ).format(
-                km.keymap_items[0].to_string()
+                kmi_to_string_or_none(kmi)
             )
         return dict(
             text="Measure",
@@ -408,6 +416,9 @@ class _defs_edit_mesh:
         return dict(
             text="Add Cube",
             icon="ops.mesh.primitive_cube_add_gizmo",
+            description=(
+                "Add cube to mesh interactively"
+            ),
             widget=None,
             keymap=(),
         )
@@ -654,6 +665,7 @@ class _defs_edit_mesh:
             props = tool.operator_properties("transform.shear")
             layout.label(text="View Axis:")
             layout.prop(props, "shear_axis", expand=True)
+            _template_widget.TRANSFORM_GGT_gizmo.draw_settings_with_index(context, layout, 2)
         return dict(
             text="Shear",
             icon="ops.transform.shear",
@@ -863,7 +875,9 @@ class _defs_vertex_paint:
     @staticmethod
     def poll_select_mask(context):
         ob = context.active_object
-        return ob.type == 'MESH' and ob.data.use_paint_mask
+        return (ob.type == 'MESH' and
+                (ob.data.use_paint_mask or
+                 ob.data.use_paint_mask_vertex))
 
     @staticmethod
     def generate_from_brushes(context):
@@ -929,7 +943,10 @@ class _defs_weight_paint:
             brush = context.tool_settings.weight_paint.brush
             if brush is not None:
                 from .properties_paint_common import UnifiedPaintPanel
-                UnifiedPaintPanel.prop_unified_weight(layout, context, brush, "weight", slider=True, text="Weight")
+                UnifiedPaintPanel.prop_unified_weight(
+                    layout, context, brush, "weight", slider=True, text="Weight")
+                UnifiedPaintPanel.prop_unified_strength(
+                    layout, context, brush, "strength", slider=True, text="Strength")
             props = tool.operator_properties("paint.weight_gradient")
             layout.prop(props, "type")
 
@@ -1061,6 +1078,16 @@ class _defs_gpencil_paint:
         )
 
     @ToolDef.from_fn
+    def cutter():
+        return dict(
+            text="Cutter",
+            icon="ops.gpencil.stroke_cutter",
+            cursor='KNIFE',
+            widget=None,
+            keymap=(),
+        )
+
+    @ToolDef.from_fn
     def line():
         return dict(
             text="Line",
@@ -1124,7 +1151,7 @@ class _defs_gpencil_edit:
     @ToolDef.from_fn
     def select():
         def draw_settings(context, layout, tool):
-            pass
+            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             text="Select",
             icon="ops.generic.select",
@@ -1138,6 +1165,7 @@ class _defs_gpencil_edit:
         def draw_settings(context, layout, tool):
             props = tool.operator_properties("gpencil.select_box")
             layout.prop(props, "mode", expand=True)
+            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             text="Select Box",
             icon="ops.generic.select_box",
@@ -1151,6 +1179,7 @@ class _defs_gpencil_edit:
         def draw_settings(context, layout, tool):
             props = tool.operator_properties("gpencil.select_lasso")
             layout.prop(props, "mode", expand=True)
+            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             text="Select Lasso",
             icon="ops.generic.select_lasso",
@@ -1161,11 +1190,14 @@ class _defs_gpencil_edit:
 
     @ToolDef.from_fn
     def circle_select():
+        def draw_settings(context, layout, tool):
+            layout.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
         return dict(
             text="Select Circle",
             icon="ops.generic.select_circle",
             widget=None,
             keymap=(),
+            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
@@ -1612,6 +1644,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_view3d_generic.cursor,
             None,
             _defs_gpencil_paint.generate_from_brushes,
+            _defs_gpencil_paint.cutter,
             None,
             _defs_gpencil_paint.line,
             _defs_gpencil_paint.arc,

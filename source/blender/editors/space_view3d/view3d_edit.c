@@ -299,7 +299,7 @@ static bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
 
 		zero_v3(select_center);
 		for (base_eval = FIRSTBASE(view_layer_eval); base_eval; base_eval = base_eval->next) {
-			if (TESTBASE(v3d, base_eval)) {
+			if (BASE_SELECTED(v3d, base_eval)) {
 				/* use the boundbox if we can */
 				Object *ob_eval = base_eval->object;
 
@@ -2659,12 +2659,13 @@ static void view3d_from_minmax(
 		        C, v3d, ar, smooth_viewtx,
 		        &(const V3D_SmoothParams) {
 		            .camera_old = v3d->camera, .ofs = new_ofs,
-		            .dist = ok_dist ? &new_dist : NULL});
+		            .dist = ok_dist ? &new_dist : NULL,
+		        });
 	}
 	else {
 		ED_view3d_smooth_view(
 		        C, v3d, ar, smooth_viewtx,
-		        &(const V3D_SmoothParams) {.ofs = new_ofs, .dist = ok_dist ? &new_dist : NULL});
+		        &(const V3D_SmoothParams) { .ofs = new_ofs, .dist = ok_dist ? &new_dist : NULL, });
 	}
 
 	/* smooth view does viewlock RV3D_BOXVIEW copy */
@@ -2821,7 +2822,7 @@ static int viewselected_exec(bContext *C, wmOperator *op)
 		/* this is weak code this way, we should make a generic active/selection callback interface once... */
 		Base *base_eval;
 		for (base_eval = view_layer_eval->object_bases.first; base_eval; base_eval = base_eval->next) {
-			if (TESTBASELIB(v3d, base_eval)) {
+			if (BASE_SELECTED_EDITABLE(v3d, base_eval)) {
 				if (base_eval->object->type == OB_ARMATURE)
 					if (base_eval->object->mode & OB_MODE_POSE)
 						break;
@@ -2888,7 +2889,7 @@ static int viewselected_exec(bContext *C, wmOperator *op)
 	else {
 		Base *base_eval;
 		for (base_eval = FIRSTBASE(view_layer_eval); base_eval; base_eval = base_eval->next) {
-			if (TESTBASE(v3d, base_eval)) {
+			if (BASE_SELECTED(v3d, base_eval)) {
 
 				if (skip_camera && base_eval->object == v3d->camera) {
 					continue;
@@ -3497,7 +3498,7 @@ static int view3d_zoom_border_exec(bContext *C, wmOperator *op)
 
 	ED_view3d_smooth_view(
 	        C, v3d, ar, smooth_viewtx,
-	        &(const V3D_SmoothParams) {.ofs = new_ofs, .dist = &new_dist});
+	        &(const V3D_SmoothParams) { .ofs = new_ofs, .dist = &new_dist, });
 
 	if (rv3d->viewlock & RV3D_BOXVIEW) {
 		view3d_boxview_sync(CTX_wm_area(C), ar);
@@ -3642,7 +3643,7 @@ static void axis_set_view(
 		/* to camera */
 		ED_view3d_smooth_view(
 		        C, v3d, ar, smooth_viewtx,
-		        &(const V3D_SmoothParams) {.camera_old = v3d->camera, .ofs = rv3d->ofs, .quat = quat});
+		        &(const V3D_SmoothParams) { .camera_old = v3d->camera, .ofs = rv3d->ofs, .quat = quat, });
 	}
 	else if (orig_persp == RV3D_CAMOB && v3d->camera) {
 		/* from camera */
@@ -3657,7 +3658,7 @@ static void axis_set_view(
 
 		ED_view3d_smooth_view(
 		        C, v3d, ar, smooth_viewtx,
-		        &(const V3D_SmoothParams) {.ofs = ofs, .quat = quat, .dist = &dist});
+		        &(const V3D_SmoothParams) { .ofs = ofs, .quat = quat, .dist = &dist, });
 	}
 	else {
 		/* rotate around selection */
@@ -3674,7 +3675,7 @@ static void axis_set_view(
 		/* no camera involved */
 		ED_view3d_smooth_view(
 		        C, v3d, ar, smooth_viewtx,
-		        &(const V3D_SmoothParams) {.quat = quat, .dyn_ofs = dyn_ofs_pt});
+		        &(const V3D_SmoothParams) { .quat = quat, .dyn_ofs = dyn_ofs_pt, });
 	}
 }
 
@@ -3872,7 +3873,8 @@ static int view_camera_exec(bContext *C, wmOperator *op)
 			        C, v3d, ar, smooth_viewtx,
 			        &(const V3D_SmoothParams) {
 			            .camera = v3d->camera, .ofs = rv3d->ofs, .quat = rv3d->viewquat,
-			            .dist = &rv3d->dist, .lens = &v3d->lens});
+			            .dist = &rv3d->dist, .lens = &v3d->lens,
+			        });
 		}
 		else {
 			/* return to settings of last view */
@@ -3998,7 +4000,7 @@ static int vieworbit_exec(bContext *C, wmOperator *op)
 
 			ED_view3d_smooth_view(
 			        C, v3d, ar, smooth_viewtx,
-			        &(const V3D_SmoothParams) {.quat = quat_new, .dyn_ofs = dyn_ofs_pt});
+			        &(const V3D_SmoothParams) { .quat = quat_new, .dyn_ofs = dyn_ofs_pt, });
 
 			return OPERATOR_FINISHED;
 		}
@@ -4188,7 +4190,7 @@ static int viewroll_exec(bContext *C, wmOperator *op)
 
 		ED_view3d_smooth_view(
 		        C, v3d, ar, smooth_viewtx,
-		        &(const V3D_SmoothParams) {.quat = quat_new, .dyn_ofs = dyn_ofs_pt});
+		        &(const V3D_SmoothParams) { .quat = quat_new, .dyn_ofs = dyn_ofs_pt, });
 
 		viewops_data_free(C, op);
 		return OPERATOR_FINISHED;

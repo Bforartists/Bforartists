@@ -257,7 +257,9 @@ class _draw_left_context_mode:
                 UnifiedPaintPanel,
                 brush_basic_texpaint_settings,
             )
-            UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
+            capabilities = brush.image_paint_capabilities
+            if capabilities.has_color:
+                UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
             brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
         @staticmethod
@@ -276,7 +278,9 @@ class _draw_left_context_mode:
                 UnifiedPaintPanel,
                 brush_basic_vpaint_settings,
             )
-            UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
+            capabilities = brush.vertex_paint_capabilities
+            if capabilities.has_color:
+                UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
             brush_basic_vpaint_settings(layout, context, brush, compact=True)
 
         @staticmethod
@@ -299,9 +303,13 @@ class _draw_left_context_mode:
                 return
 
             is_paint = True
-            if (tool.name in {"Line", "Box", "Circle", "Arc", "Curve"}):
+            if tool.name in {"Line", "Box", "Circle", "Arc", "Curve"}:
                 is_paint = False
-            elif (not tool.has_datablock):
+            elif tool.name == "Cutter":
+                row = layout.row(align=True)
+                row.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
+                return
+            elif not tool.has_datablock:
                 return
 
             paint = context.tool_settings.gpencil_paint
@@ -453,7 +461,9 @@ class _draw_left_context_mode:
                 UnifiedPaintPanel,
                 brush_basic_texpaint_settings,
             )
-            UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
+            capabilities = brush.image_paint_capabilities
+            if capabilities.has_color:
+                UnifiedPaintPanel.prop_unified_color(layout, context, brush, "color", text="")
             brush_basic_texpaint_settings(layout, context, brush, compact=True)
 
 
@@ -491,7 +501,7 @@ class TOPBAR_PT_gpencil_layers(Panel):
         col = row.column()
         layer_rows = 10
         col.template_list("GPENCIL_UL_layer", "", gpd, "layers", gpd.layers, "active_index",
-                          rows=layer_rows, reverse=True)
+                          rows=layer_rows, sort_reverse=True, sort_lock=True)
 
         gpl = context.active_gpencil_layer
         if gpl:
@@ -502,6 +512,9 @@ class TOPBAR_PT_gpencil_layers(Panel):
             srow.prop(gpl, "opacity", text="Opacity", slider=True)
             srow.prop(gpl, "clamp_layer", text="",
                       icon='MOD_MASK' if gpl.clamp_layer else 'LAYER_ACTIVE')
+
+            srow = col.row(align=True)
+            srow.prop(gpl, "use_solo_mode", text="Show Only On Keyframed")
 
         col = row.column()
 

@@ -120,17 +120,28 @@ static void text_undosys_step_decode(struct bContext *C, UndoStep *us_p, int dir
 
 	if (dir < 0) {
 		TextUndoBuf data = us->data;
-		txt_do_undo(text, &data);
+		while (data.pos > -1) {
+			txt_do_undo(text, &data);
+		}
+		BLI_assert(data.pos == -1);
 	}
 	else {
 		TextUndoBuf data = us->data;
 		data.pos = -1;
-		txt_do_redo(text, &data);
+		while (data.pos < us->data.pos) {
+			txt_do_redo(text, &data);
+		}
+		BLI_assert(data.pos == us->data.pos);
 	}
 
+	SpaceText *st = CTX_wm_space_text(C);
+	if (st) {
+		/* Not essential, always show text being undo where possible. */
+		st->text = text;
+	}
 	text_update_edited(text);
 	text_update_cursor_moved(C);
-	text_drawcache_tag_update(CTX_wm_space_text(C), 1);
+	text_drawcache_tag_update(st, 1);
 	WM_event_add_notifier(C, NC_TEXT | NA_EDITED, text);
 }
 

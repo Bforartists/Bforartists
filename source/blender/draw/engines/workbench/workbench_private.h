@@ -188,11 +188,15 @@ typedef struct WORKBENCH_PrivateData {
 	float cached_shadow_direction[3];
 	float shadow_mat[4][4];
 	float shadow_inv[4][4];
-	float shadow_far_plane[4]; /* Far plane of the view frustum. */
-	float shadow_near_corners[4][3]; /* Near plane corners in shadow space. */
-	float shadow_near_min[3]; /* min and max of shadow_near_corners. allow fast test */
+	/* Far plane of the view frustum. */
+	float shadow_far_plane[4];
+	/* Near plane corners in shadow space. */
+	float shadow_near_corners[4][3];
+	/* min and max of shadow_near_corners. allow fast test */
+	float shadow_near_min[3];
 	float shadow_near_max[3];
-	float shadow_near_sides[2][4]; /* This is a parallelogram, so only 2 normal and distance to the edges. */
+	/* This is a parallelogram, so only 2 normal and distance to the edges. */
+	float shadow_near_sides[2][4];
 	bool shadow_changed;
 	bool is_playback;
 
@@ -230,6 +234,7 @@ typedef struct WORKBENCH_MaterialData {
 	float roughness;
 	int object_id;
 	int color_type;
+	int interp;
 	Image *ima;
 
 	/* Linked shgroup for drawing */
@@ -243,7 +248,8 @@ typedef struct WORKBENCH_ObjectData {
 
 	/* Shadow direction in local object space. */
 	float shadow_dir[3], shadow_depth;
-	float shadow_min[3], shadow_max[3]; /* Min, max in shadow space */
+	/* Min, max in shadow space */
+	float shadow_min[3], shadow_max[3];
 	BoundBox shadow_bbox;
 	bool shadow_bbox_dirty;
 
@@ -290,6 +296,7 @@ int workbench_taa_calculate_num_iterations(WORKBENCH_Data *vedata);
 
 /* workbench_materials.c */
 int workbench_material_determine_color_type(WORKBENCH_PrivateData *wpd, Image *ima, Object *ob);
+void workbench_material_get_image_and_mat(Object *ob, int mat_nr, Image **r_image, int *r_interp, Material **r_mat);
 char *workbench_material_build_defines(WORKBENCH_PrivateData *wpd, bool use_textures, bool is_hair);
 void workbench_material_update_data(WORKBENCH_PrivateData *wpd, Object *ob, Material *mat, WORKBENCH_MaterialData *data);
 uint workbench_material_get_hash(WORKBENCH_MaterialData *material_template, bool is_ghost);
@@ -298,7 +305,7 @@ int workbench_material_get_prepass_shader_index(WORKBENCH_PrivateData *wpd, bool
 int workbench_material_get_accum_shader_index(WORKBENCH_PrivateData *wpd, bool use_textures, bool is_hair);
 void workbench_material_shgroup_uniform(
         WORKBENCH_PrivateData *wpd, DRWShadingGroup *grp, WORKBENCH_MaterialData *material, Object *ob,
-        const bool use_metallic, const bool deferred);
+        const bool use_metallic, const bool deferred, const int interp);
 void workbench_material_copy(WORKBENCH_MaterialData *dest_material, const WORKBENCH_MaterialData *source_material);
 
 /* workbench_studiolight.c */
