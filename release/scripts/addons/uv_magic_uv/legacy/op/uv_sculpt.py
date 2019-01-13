@@ -23,56 +23,31 @@ __status__ = "production"
 __version__ = "5.2"
 __date__ = "17 Nov 2018"
 
+
 from math import pi, cos, tan, sin
 
 import bpy
-import bmesh
-import bgl
-from mathutils import Vector
-from bpy_extras import view3d_utils
-from mathutils.bvhtree import BVHTree
-from mathutils.geometry import barycentric_transform
 from bpy.props import (
     BoolProperty,
     IntProperty,
     EnumProperty,
     FloatProperty,
 )
+import bmesh
+import bgl
+from mathutils import Vector
+from bpy_extras import view3d_utils
+from mathutils.bvhtree import BVHTree
+from mathutils.geometry import barycentric_transform
 
 from ... import common
 from ...utils.bl_class_registry import BlClassRegistry
 from ...utils.property_class_registry import PropertyClassRegistry
-
-
-__all__ = [
-    'Properties',
-    'MUV_OT_UVSculpt',
-]
-
-
-def is_valid_context(context):
-    obj = context.object
-
-    # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
-    if context.object.mode != 'EDIT':
-        return False
-
-    # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
-        return False
-
-    return True
+from ...impl import uv_sculpt_impl as impl
 
 
 @PropertyClassRegistry(legacy=True)
-class Properties:
+class _Properties:
     idname = "uv_sculpt"
 
     @classmethod
@@ -175,7 +150,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
         # we can not get area/space/region from console
         if common.is_console_mode():
             return False
-        return is_valid_context(context)
+        return impl.is_valid_context(context)
 
     @classmethod
     def is_running(cls, _):
@@ -189,7 +164,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                                                "WINDOW", "POST_PIXEL")
         if not cls.__timer:
             cls.__timer = context.window_manager.event_timer_add(
-                0.1, context.window)
+                0.1, window=context.window)
             context.window_manager.modal_handler_add(obj)
 
     @classmethod
@@ -205,7 +180,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
     @classmethod
     def draw_brush(cls, obj, context):
         sc = context.scene
-        prefs = context.preferences.addons["uv_magic_uv"].preferences
+        prefs = context.user_preferences.addons["uv_magic_uv"].preferences
 
         num_segment = 180
         theta = 2 * pi / num_segment
@@ -233,17 +208,6 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
         self.current_mco = Vector((0.0, 0.0))
         self.__initial_mco = Vector((0.0, 0.0))
 
-    def __get_strength(self, p, len_, factor):
-        f = factor
-
-        if p > len_:
-            return 0.0
-
-        if p < 0.0:
-            return f
-
-        return (len_ - p) * f / len_
-
     def __stroke_init(self, context, _):
         sc = context.scene
 
@@ -254,7 +218,8 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
         world_mat = obj.matrix_world
         bm = bmesh.from_edit_mesh(obj.data)
         uv_layer = bm.loops.layers.uv.verify()
-        _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
+        _, region, space = common.get_space_legacy('VIEW_3D', 'WINDOW',
+                                                   'VIEW_3D')
 
         self.__loop_info = []
         for f in bm.faces:
@@ -271,7 +236,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                         "initial_vco": l.vert.co.copy(),
                         "initial_vco_2d": loc_2d,
                         "initial_uv": l[uv_layer].uv.copy(),
-                        "strength": self.__get_strength(
+                        "strength": impl.get_strength(
                             diff.length, sc.muv_uv_sculpt_radius,
                             sc.muv_uv_sculpt_strength)
                     }
@@ -292,7 +257,8 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                 l[uv_layer].uv = info["initial_uv"] + diff_uv / 100.0
 
         elif sc.muv_uv_sculpt_tools == 'PINCH':
-            _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
+            _, region, space = common.get_space_legacy('VIEW_3D', 'WINDOW',
+                                                       'VIEW_3D')
             loop_info = []
             for f in bm.faces:
                 if not f.select:
@@ -308,7 +274,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                             "initial_vco": l.vert.co.copy(),
                             "initial_vco_2d": loc_2d,
                             "initial_uv": l[uv_layer].uv.copy(),
-                            "strength": self.__get_strength(
+                            "strength": impl.get_strength(
                                 diff.length, sc.muv_uv_sculpt_radius,
                                 sc.muv_uv_sculpt_strength)
                         }
@@ -349,7 +315,8 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                 l[uv_layer].uv = l[uv_layer].uv + diff_uv / 10.0
 
         elif sc.muv_uv_sculpt_tools == 'RELAX':
-            _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
+            _, region, space = common.get_space_legacy('VIEW_3D', 'WINDOW',
+                                                       'VIEW_3D')
 
             # get vertex and loop relation
             vert_db = {}
@@ -395,9 +362,9 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                     if diff.length >= sc.muv_uv_sculpt_radius:
                         continue
                     db = vert_db[l.vert]
-                    strength = self.__get_strength(diff.length,
-                                                   sc.muv_uv_sculpt_radius,
-                                                   sc.muv_uv_sculpt_strength)
+                    strength = impl.get_strength(diff.length,
+                                                 sc.muv_uv_sculpt_radius,
+                                                 sc.muv_uv_sculpt_strength)
 
                     base = (1.0 - strength) * l[uv_layer].uv
                     if sc.muv_uv_sculpt_relax_method == 'HC':
@@ -446,8 +413,8 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
             'TOOLS',
             'TOOL_PROPS',
         ]
-        if not common.mouse_on_area(event, 'VIEW_3D') or \
-           common.mouse_on_regions(event, 'VIEW_3D', region_types):
+        if not common.mouse_on_area_legacy(event, 'VIEW_3D') or \
+           common.mouse_on_regions_legacy(event, 'VIEW_3D', region_types):
             return {'PASS_THROUGH'}
 
         if event.type == 'LEFTMOUSE':

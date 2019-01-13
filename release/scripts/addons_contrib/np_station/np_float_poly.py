@@ -268,7 +268,7 @@ def draw_callback_px_TRANS(self, context):
 
     np_print('04_callback_TRANS_START')
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
     point_markers = addon_prefs.npfp_point_markers
     point_size = addon_prefs.npfp_point_size
 
@@ -757,7 +757,7 @@ def draw_callback_px_NAV(self, context):
 
     np_print('05_callback_NAV_START')
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
     point_markers = addon_prefs.npfp_point_markers
     point_size = addon_prefs.npfp_point_size
 
@@ -1275,7 +1275,7 @@ class NPFPMakeSegment(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        addon_prefs = context.user_preferences.addons[__package__].preferences
+        addon_prefs = context.preferences.addons[__package__].preferences
         wire = addon_prefs.npfp_wire
         smooth = addon_prefs.npfp_smooth  # is this used ?
         material = addon_prefs.npfp_material
@@ -1378,7 +1378,7 @@ class NPFPDeletePoints(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        addon_prefs = context.user_preferences.addons[__package__].preferences  # is this used ?
+        addon_prefs = context.preferences.addons[__package__].preferences  # is this used ?
         dist = NP020FP.dist  # is this used ?
         polyob = NP020FP.polyob
         np_print('07_delete_points_START')
@@ -1426,7 +1426,7 @@ class NPFPMakeSurface(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     def execute(self, context):
-        addon_prefs = context.user_preferences.addons[__package__].preferences
+        addon_prefs = context.preferences.addons[__package__].preferences
         smooth = addon_prefs.npfp_smooth
         dist = NP020FP.dist  # is this used ?
         polyob = NP020FP.polyob
@@ -1452,7 +1452,7 @@ def draw_callback_px_NAVEX(self, context):
 
     np_print('08_callback_NAVEX_START')
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
 
     #scale = addon_prefs.npfp_scale  # is this used ?
     #badge = addon_prefs.npfp_badge
@@ -1847,7 +1847,7 @@ def draw_callback_px_EXTRUDE(self, context):
 
     np_print('10_callback_EXTRUDE_START')
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
     #scale = addon_prefs.npfp_scale
     #badge = addon_prefs.npfp_badge  # is this used ?
     #point_size = addon_prefs.npfp_point_size  # is this used ?
@@ -2332,7 +2332,7 @@ class NPFPRunBevel(bpy.types.Operator):
 
     def invoke(self, context, event):
         np_print('11_run_BEVEL_INVOKE_a')
-        addon_prefs = context.user_preferences.addons[__package__].preferences
+        addon_prefs = context.preferences.addons[__package__].preferences
         bevel = addon_prefs.npfp_bevel
         selob = NP020FP.selob
         flag = NP020FP.flag

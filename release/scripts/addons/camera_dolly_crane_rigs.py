@@ -57,6 +57,9 @@ def create_widget(self, name):
         c.objects.link(obj)
     else:
         c = bpy.data.collections.new(collection_name)
+        c.hide_viewport = True
+        c.hide_render = True
+
         # link the collection
         scene.collection.children.link(c)
         c.objects.link(obj)
