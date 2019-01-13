@@ -439,10 +439,35 @@ class SCENE_OT_export(bpy.types.Operator):
                 objekti.name = name_boxs[0]
                 objekti.data.name = name_boxs[0]
             objekti.coat3D.applink_name = objekti.data.name
-
+        mod_mat_list = {}
         for objekti in bpy.context.selected_objects:
+            mod_mat_list[objekti.name] = []
             objekti.coat3D.applink_scale = objekti.scale
 
+            ''' Checks what materials are linked into UV '''
+
+            if(coat3D.type == 'ppp'):
+                final_material_indexs = []
+                uvtiles_index = []
+                for poly in objekti.data.polygons:
+                    if(poly.material_index not in final_material_indexs):
+                        final_material_indexs.append(poly.material_index)
+                        loop_index = poly.loop_indices[0]
+                        uvtiles_index.append([poly.material_index,objekti.data.uv_layers.active.data[loop_index].uv[0]])
+                    if(len(final_material_indexs) == len(objekti.material_slots)):
+                        break
+                print(final_material_indexs)
+
+                material_index = 0
+                if (len(final_material_indexs) != len(objekti.material_slots)):
+                    for material in objekti.material_slots:
+                        if material_index not in final_material_indexs:
+                            temp_mat = material.material
+                            material.material = objekti.material_slots[0].material
+                            mod_mat_list[objekti.name].append([material_index, temp_mat])
+                        material_index = material_index + 1
+
+        print('uvtiles_index', uvtiles_index)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
         if(len(bpy.context.selected_objects) > 1 and coat3D.type != 'vox'):
             bpy.ops.object.transforms_to_deltas(mode='ROT')
@@ -467,10 +492,11 @@ class SCENE_OT_export(bpy.types.Operator):
                 objekti.coat3D.applink_onlyone = True
             objekti.coat3D.type = coat3D.type
             objekti.coat3D.applink_mesh = True
-            objekti.coat3D.applink_address = coa.applink_address
             objekti.coat3D.obj_mat = ''
             objekti.coat3D.applink_firsttime = True
-            objekti.coat3D.objecttime = str(os.path.getmtime(objekti.coat3D.applink_address))
+            if(coat3D.type != 'autopo'):
+                objekti.coat3D.applink_address = coa.applink_address
+                objekti.coat3D.objecttime = str(os.path.getmtime(objekti.coat3D.applink_address))
             objekti.data.coat3D.name = '3DC'
 
             if(coat3D.type != 'vox'):
@@ -480,6 +506,14 @@ class SCENE_OT_export(bpy.types.Operator):
                             for node in material.material.node_tree.nodes:
                                 if(node.name.startswith('3DC_') == True):
                                     material.material.node_tree.nodes.remove(node)
+
+            print('halloo', mod_mat_list)
+            for ind, mat_list in enumerate(mod_mat_list):
+                print('terve', mat_list)
+                if(mat_list == objekti.name):
+                    for ind, mat in enumerate(mod_mat_list[mat_list]):
+                        objekti.material_slots[mod_mat_list[mat_list][ind][0]].material = mod_mat_list[mat_list][ind][1]
+                        print('hipphhhuurrei', mod_mat_list[mat_list][ind][0], mod_mat_list[mat_list][ind][1])
 
         return {'FINISHED'}
 
@@ -944,7 +978,7 @@ class SCENE_PT_Settings(ObjectButtonsPanel,bpy.types.Panel):
 class SCENE_PT_Settings_Update(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "Update"
     bl_parent_id = "SCENE_PT_Settings"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_OPENGL'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
@@ -971,7 +1005,7 @@ class SCENE_PT_Settings_Update(ObjectButtonsPanel, bpy.types.Panel):
 class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "Folders"
     bl_parent_id = "SCENE_PT_Settings"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_OPENGL'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout

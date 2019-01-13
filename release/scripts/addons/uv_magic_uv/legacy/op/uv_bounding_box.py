@@ -35,42 +35,14 @@ from bpy.props import BoolProperty, EnumProperty
 from ... import common
 from ...utils.bl_class_registry import BlClassRegistry
 from ...utils.property_class_registry import PropertyClassRegistry
-
-
-__all__ = [
-    'Properties',
-    'MUV_OT_UVBoundingBox',
-]
+from ...impl import uv_bounding_box_impl as impl
 
 
 MAX_VALUE = 100000.0
 
 
-def is_valid_context(context):
-    obj = context.object
-
-    # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
-    if context.object.mode != 'EDIT':
-        return False
-
-    # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
-    # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
-    # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
-        return False
-
-    return True
-
-
 @PropertyClassRegistry(legacy=True)
-class Properties:
+class _Properties:
     idname = "uv_bounding_box"
 
     @classmethod
@@ -129,7 +101,7 @@ class Properties:
         del scene.muv_uv_bounding_box_boundary
 
 
-class CommandBase():
+class CommandBase:
     """
     Custom class: Base class of command
     """
@@ -314,7 +286,7 @@ class UniformScalingCommand(CommandBase):
         self.__y = y
 
 
-class CommandExecuter():
+class CommandExecuter:
     """
     Custom class: manage command history and execute command
     """
@@ -401,7 +373,7 @@ class State(IntEnum):
     UNIFORM_SCALING_4 = 14
 
 
-class StateBase():
+class StateBase:
     """
     Custom class: Base class of state
     """
@@ -428,7 +400,7 @@ class StateNone(StateBase):
         """
         Update state
         """
-        prefs = context.preferences.addons["uv_magic_uv"].preferences
+        prefs = context.user_preferences.addons["uv_magic_uv"].preferences
         cp_react_size = prefs.uv_bounding_box_cp_react_size
         is_uscaling = context.scene.muv_uv_bounding_box_uniform_scaling
         if (event.type == 'LEFTMOUSE') and (event.value == 'PRESS'):
@@ -555,7 +527,7 @@ class StateRotating(StateBase):
         return State.ROTATING
 
 
-class StateManager():
+class StateManager:
     """
     Custom class: Manage state about this feature
     """
@@ -618,7 +590,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
     def __init__(self):
         self.__timer = None
         self.__cmd_exec = CommandExecuter()         # Command executor
-        self.__state_mgr = StateManager(self.__cmd_exec)    # State Manager
+        self.__state_mgr = StateManager(self.__cmd_exec)   # State Manager
 
     __handle = None
     __timer = None
@@ -628,7 +600,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         # we can not get area/space/region from console
         if common.is_console_mode():
             return False
-        return is_valid_context(context)
+        return impl.is_valid_context(context)
 
     @classmethod
     def is_running(cls, _):
@@ -642,7 +614,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
                 cls.draw_bb, (obj, context), "WINDOW", "POST_PIXEL")
         if cls.__timer is None:
             cls.__timer = context.window_manager.event_timer_add(
-                0.1, context.window)
+                0.1, window=context.window)
             context.window_manager.modal_handler_add(obj)
 
     @classmethod
@@ -660,7 +632,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         """
         Draw control point
         """
-        prefs = context.preferences.addons["uv_magic_uv"].preferences
+        prefs = context.user_preferences.addons["uv_magic_uv"].preferences
         cp_size = prefs.uv_bounding_box_cp_size
         offset = cp_size / 2
         verts = [
@@ -686,7 +658,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         if not MUV_OT_UVBoundingBox.is_running(context):
             return
 
-        if not is_valid_context(context):
+        if not impl.is_valid_context(context):
             return
 
         for cp in props.ctrl_points:
@@ -790,7 +762,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         if not MUV_OT_UVBoundingBox.is_running(context):
             return {'FINISHED'}
 
-        if not is_valid_context(context):
+        if not impl.is_valid_context(context):
             MUV_OT_UVBoundingBox.handle_remove(context)
             return {'FINISHED'}
 
@@ -799,8 +771,8 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
             'UI',
             'TOOLS',
         ]
-        if not common.mouse_on_area(event, 'IMAGE_EDITOR') or \
-           common.mouse_on_regions(event, 'IMAGE_EDITOR', region_types):
+        if not common.mouse_on_area_legacy(event, 'IMAGE_EDITOR') or \
+           common.mouse_on_regions_legacy(event, 'IMAGE_EDITOR', region_types):
             return {'PASS_THROUGH'}
 
         if event.type == 'TIMER':

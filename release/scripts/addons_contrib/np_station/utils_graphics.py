@@ -40,7 +40,7 @@ class SettingsStore:
 # Use global SettingsStore class to store dict so it is not recreated each call
 # todo : come up with better way for storing and checking add-on settings
 def addon_settings_graph(key):
-    addon_prefs = bpy.context.user_preferences.addons[__package__].preferences
+    addon_prefs = bpy.context.preferences.addons[__package__].preferences
 
     if SettingsStore.add_set_graph_dict is not None:
         add_set_graph_dict = SettingsStore.add_set_graph_dict
@@ -146,7 +146,7 @@ def addon_settings_graph(key):
 def display_instructions(region, rv3d, instruct, keys_aff, keys_nav, keys_neg):
 
 
-    userpref = bpy.context.user_preferences
+    userpref = bpy.context.preferences
     system = userpref.system
     rwtools = 0
     rwui = 0
