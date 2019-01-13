@@ -1447,7 +1447,7 @@ def ablength(x1 = 0.0, y1 = 0.0, z1 = 0.0, x2 = 0.0, y2 = 0.0, z2 = 0.0):
 def align_matrix(context, location):
 
     loc = Matrix.Translation(location)
-    obj_align = context.user_preferences.edit.object_align
+    obj_align = context.preferences.edit.object_align
     if (context.space_data.type == 'VIEW_3D'
         and obj_align == 'VIEW'):
         rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
@@ -2652,15 +2652,15 @@ class Dimension(bpy.types.Operator):
             bpy.context.scene.update()
 
         # turn off undo
-        undo = bpy.context.user_preferences.edit.use_global_undo
-        bpy.context.user_preferences.edit.use_global_undo = False
+        undo = bpy.context.preferences.edit.use_global_undo
+        bpy.context.preferences.edit.use_global_undo = False
 
         # main function
         self.align_matrix = align_matrix(context, self.Dimension_startlocation)
         main(self, self.align_matrix)
 
         # restore pre operator undo state
-        bpy.context.user_preferences.edit.use_global_undo = undo
+        bpy.context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 

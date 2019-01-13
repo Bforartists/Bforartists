@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Snap_Utilities_Line",
     "author": "Germano Cavalcante",
-    "version": (5, 8, 27),
+    "version": (5, 8, 30),
     "blender": (2, 80, 0),
     "location": "View3D > TOOLS > Make Line",
     "description": "Extends Blender Snap controls",

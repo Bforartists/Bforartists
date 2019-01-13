@@ -163,7 +163,7 @@ def gllightpreset_importsingle(filename):
             spec2b=strArray[2]
 
             #set the variables
-            system=bpy.context.user_preferences.system
+            system=bpy.context.preferences.system
             system.solid_lights[0].use=illumination0
             system.solid_lights[1].use=illumination1
             system.solid_lights[2].use=illumination2
@@ -290,7 +290,7 @@ def gllightpreset_exportsingle(index, multiimport):
 
 def gllightpreset_addPresets():
 
-    system=bpy.context.user_preferences.system
+    system=bpy.context.preferences.system
 
     system.solid_lights[0].use=True
     system.solid_lights[1].use=True
@@ -540,42 +540,42 @@ def gllightpreset_save():
     index=bpy.context.scene.quickprefs.gllightpreset_index
     name=bpy.context.scene.quickprefs.gllightpreset[index].name
 
-    bpy.context.scene.quickprefs.gllightpreset[index].illuminated0 = bpy.context.user_preferences.system.solid_lights[0].use
-    bpy.context.scene.quickprefs.gllightpreset[index].illuminated1 = bpy.context.user_preferences.system.solid_lights[1].use
-    bpy.context.scene.quickprefs.gllightpreset[index].illuminated2 = bpy.context.user_preferences.system.solid_lights[2].use
+    bpy.context.scene.quickprefs.gllightpreset[index].illuminated0 = bpy.context.preferences.system.solid_lights[0].use
+    bpy.context.scene.quickprefs.gllightpreset[index].illuminated1 = bpy.context.preferences.system.solid_lights[1].use
+    bpy.context.scene.quickprefs.gllightpreset[index].illuminated2 = bpy.context.preferences.system.solid_lights[2].use
 
-    bpy.context.scene.quickprefs.gllightpreset[index].direction0 = bpy.context.user_preferences.system.solid_lights[0].direction
-    bpy.context.scene.quickprefs.gllightpreset[index].direction1 = bpy.context.user_preferences.system.solid_lights[1].direction
-    bpy.context.scene.quickprefs.gllightpreset[index].direction2 = bpy.context.user_preferences.system.solid_lights[2].direction
+    bpy.context.scene.quickprefs.gllightpreset[index].direction0 = bpy.context.preferences.system.solid_lights[0].direction
+    bpy.context.scene.quickprefs.gllightpreset[index].direction1 = bpy.context.preferences.system.solid_lights[1].direction
+    bpy.context.scene.quickprefs.gllightpreset[index].direction2 = bpy.context.preferences.system.solid_lights[2].direction
 
-    bpy.context.scene.quickprefs.gllightpreset[index].diffuse0 = bpy.context.user_preferences.system.solid_lights[0].diffuse_color
-    bpy.context.scene.quickprefs.gllightpreset[index].diffuse1 = bpy.context.user_preferences.system.solid_lights[1].diffuse_color
-    bpy.context.scene.quickprefs.gllightpreset[index].diffuse2 = bpy.context.user_preferences.system.solid_lights[2].diffuse_color
+    bpy.context.scene.quickprefs.gllightpreset[index].diffuse0 = bpy.context.preferences.system.solid_lights[0].diffuse_color
+    bpy.context.scene.quickprefs.gllightpreset[index].diffuse1 = bpy.context.preferences.system.solid_lights[1].diffuse_color
+    bpy.context.scene.quickprefs.gllightpreset[index].diffuse2 = bpy.context.preferences.system.solid_lights[2].diffuse_color
 
-    bpy.context.scene.quickprefs.gllightpreset[index].specular0 = bpy.context.user_preferences.system.solid_lights[0].specular_color
-    bpy.context.scene.quickprefs.gllightpreset[index].specular1 = bpy.context.user_preferences.system.solid_lights[1].specular_color
-    bpy.context.scene.quickprefs.gllightpreset[index].specular2 = bpy.context.user_preferences.system.solid_lights[2].specular_color
+    bpy.context.scene.quickprefs.gllightpreset[index].specular0 = bpy.context.preferences.system.solid_lights[0].specular_color
+    bpy.context.scene.quickprefs.gllightpreset[index].specular1 = bpy.context.preferences.system.solid_lights[1].specular_color
+    bpy.context.scene.quickprefs.gllightpreset[index].specular2 = bpy.context.preferences.system.solid_lights[2].specular_color
 
 #select the current light
 def gllightpreset_select():
     index=bpy.context.scene.quickprefs.gllightpreset_index
     name=bpy.context.scene.quickprefs.gllightpreset[index].name
 
-    bpy.context.user_preferences.system.solid_lights[0].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated0
-    bpy.context.user_preferences.system.solid_lights[1].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated1
-    bpy.context.user_preferences.system.solid_lights[2].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated2
+    bpy.context.preferences.system.solid_lights[0].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated0
+    bpy.context.preferences.system.solid_lights[1].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated1
+    bpy.context.preferences.system.solid_lights[2].use=bpy.context.scene.quickprefs.gllightpreset[index].illuminated2
 
-    bpy.context.user_preferences.system.solid_lights[0].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction0
-    bpy.context.user_preferences.system.solid_lights[1].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction1
-    bpy.context.user_preferences.system.solid_lights[2].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction2
+    bpy.context.preferences.system.solid_lights[0].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction0
+    bpy.context.preferences.system.solid_lights[1].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction1
+    bpy.context.preferences.system.solid_lights[2].direction=bpy.context.scene.quickprefs.gllightpreset[index].direction2
 
-    bpy.context.user_preferences.system.solid_lights[0].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse0
-    bpy.context.user_preferences.system.solid_lights[1].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse1
-    bpy.context.user_preferences.system.solid_lights[2].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse2
+    bpy.context.preferences.system.solid_lights[0].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse0
+    bpy.context.preferences.system.solid_lights[1].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse1
+    bpy.context.preferences.system.solid_lights[2].diffuse_color=bpy.context.scene.quickprefs.gllightpreset[index].diffuse2
 
-    bpy.context.user_preferences.system.solid_lights[0].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular0
-    bpy.context.user_preferences.system.solid_lights[1].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular1
-    bpy.context.user_preferences.system.solid_lights[2].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular2
+    bpy.context.preferences.system.solid_lights[0].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular0
+    bpy.context.preferences.system.solid_lights[1].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular1
+    bpy.context.preferences.system.solid_lights[2].specular_color=bpy.context.scene.quickprefs.gllightpreset[index].specular2
 
 #sort alphabetically
 def gllightpreset_sort():
@@ -745,9 +745,10 @@ class PANEL(bpy.types.Panel):
 
         #aliases
         scn = bpy.context.scene.quickprefs
-        system = context.user_preferences.system
-        inputs = context.user_preferences.inputs
-        edit = context.user_preferences.edit
+        system = context.preferences.system
+        inputs = context.preferences.inputs
+        edit = context.preferences.edit
+        view = context.preferences.view
         layout = self.layout
         split = layout.split()
 
@@ -846,7 +847,7 @@ class PANEL(bpy.types.Panel):
             boxrow=box.row()
             boxrow.label(text="Color Picker Type")
             boxrow=box.row()
-            boxrow.row().prop(system, "color_picker_type", text="")
+            boxrow.row().prop(view, "color_picker_type", text="")
 
             #Align To
             boxrow=box.row()

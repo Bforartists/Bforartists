@@ -212,8 +212,6 @@ def make_duplicator(target_collection, source_object, matrices):
 
     copy_obj = source_object.copy()
     copy_obj.name = source_object.name + " - copy"
-    copy_obj.hide_viewport = True
-    copy_obj.hide_render = True
     copy_obj.location = (0, 0, 0)
     copy_obj.parent = duplicator
 
