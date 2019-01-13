@@ -511,6 +511,8 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
                 layout.menu("VIEW3D_MT_tools_projectpaint_uvlayer", text=uv_text, translate=False)
             have_image = settings.canvas is not None
 
+            layout.prop(settings, "interpolation", text="")
+
         if settings.missing_uvs:
             layout.separator()
             split = layout.split()
@@ -1488,7 +1490,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_option(View3DPanel, Panel):
     @classmethod
     def poll(cls, context):
         brush = context.tool_settings.gpencil_paint.brush
-        return brush is not None and brush.gpencil_tool != 'ERASE'
+        return brush is not None and brush.gpencil_tool not in {'ERASE', 'FILL'}
 
     def draw_header_preset(self, context):
         VIEW3D_PT_gpencil_brush_presets.draw_panel_header(self.layout)
@@ -1628,7 +1630,7 @@ class VIEW3D_PT_tools_grease_pencil_brushcurves(View3DPanel, Panel):
     @classmethod
     def poll(cls, context):
         brush = context.tool_settings.gpencil_paint.brush
-        return brush is not None and brush.gpencil_tool != 'ERASE'
+        return brush is not None and brush.gpencil_tool not in {'ERASE', 'FILL'}
 
     @staticmethod
     def draw(self, context):

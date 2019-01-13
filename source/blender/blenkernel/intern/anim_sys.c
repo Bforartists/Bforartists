@@ -1888,10 +1888,17 @@ static void nlastrip_evaluate_controls(Depsgraph *depsgraph, NlaStrip *strip, fl
 	 * - we do this after the F-Curves have been evaluated to override the effects of those
 	 *   in case the override has been turned off.
 	 */
-	if ((strip->flag & NLASTRIP_FLAG_USR_TIME) == 0)
-		strip->strip_time = nlastrip_get_frame(strip, ctime, NLATIME_CONVERT_EVAL);
 	if ((strip->flag & NLASTRIP_FLAG_USR_INFLUENCE) == 0)
 		strip->influence = nlastrip_get_influence(strip, ctime);
+
+	/* Bypass evaluation time computation if time mapping is disabled. */
+	if ((strip->flag & NLASTRIP_FLAG_NO_TIME_MAP) != 0) {
+		strip->strip_time = ctime;
+		return;
+	}
+
+	if ((strip->flag & NLASTRIP_FLAG_USR_TIME) == 0)
+		strip->strip_time = nlastrip_get_frame(strip, ctime, NLATIME_CONVERT_EVAL);
 
 	/* if user can control the evaluation time (using F-Curves), consider the option which allows this time to be clamped
 	 * to lie within extents of the action-clip, so that a steady changing rate of progress through several cycles of the clip
@@ -1912,7 +1919,7 @@ NlaEvalStrip *nlastrips_ctime_get_strip(Depsgraph *depsgraph, ListBase *list, Li
 	/* loop over strips, checking if they fall within the range */
 	for (strip = strips->first; strip; strip = strip->next) {
 		/* check if current time occurs within this strip  */
-		if (IN_RANGE_INCL(ctime, strip->start, strip->end)) {
+		if (IN_RANGE_INCL(ctime, strip->start, strip->end) || (strip->flag & NLASTRIP_FLAG_NO_TIME_MAP)) {
 			/* this strip is active, so try to use it */
 			estrip = strip;
 			side = NES_TIME_WITHIN;
@@ -2297,7 +2304,7 @@ static NlaEvalChannel *nlaevalchan_verify_key(NlaEvalData *nlaeval, const char *
 	/* Look it up in the key hash. */
 	NlaEvalChannel **p_key_nec;
 	NlaEvalChannelKey **p_key;
-	bool found_key = BLI_ghash_ensure_p_ex(nlaeval->key_hash, key, (void***)&p_key, (void***)&p_key_nec);
+	bool found_key = BLI_ghash_ensure_p_ex(nlaeval->key_hash, key, (void ***)&p_key, (void ***)&p_key_nec);
 
 	if (found_key) {
 		return *p_key_nec;
@@ -2345,7 +2352,7 @@ static NlaEvalChannel *nlaevalchan_verify(PointerRNA *ptr, NlaEvalData *nlaeval,
 
 	/* Lookup the path in the path based hash. */
 	NlaEvalChannel **p_path_nec;
-	bool found_path = BLI_ghash_ensure_p(nlaeval->path_hash, (void*)path, (void***)&p_path_nec);
+	bool found_path = BLI_ghash_ensure_p(nlaeval->path_hash, (void *)path, (void ***)&p_path_nec);
 
 	if (found_path) {
 		return *p_path_nec;
@@ -2971,11 +2978,16 @@ static bool animsys_evaluate_nla(Depsgraph *depsgraph, NlaEvalData *echannels, P
 				/* Always use the blend mode of the strip in tweak mode, even if not in-place. */
 				if (nlt && adt->actstrip) {
 					dummy_strip->blendmode = adt->actstrip->blendmode;
-					dummy_strip->extendmode = adt->actstrip->extendmode;
+					dummy_strip->extendmode = NLASTRIP_EXTEND_HOLD;
 				}
 				else {
 					dummy_strip->blendmode = adt->act_blendmode;
 					dummy_strip->extendmode = adt->act_extendmode;
+				}
+
+				/* Unless extendmode is Nothing (might be useful for flattening NLA evaluation), disable range. */
+				if (dummy_strip->extendmode != NLASTRIP_EXTEND_NOTHING) {
+					dummy_strip->flag |= NLASTRIP_FLAG_NO_TIME_MAP;
 				}
 
 				dummy_strip->influence = adt->act_influence;
@@ -3128,7 +3140,7 @@ bool BKE_animsys_nla_remap_keyframe_value(struct NlaKeyframingContext *context, 
 	}
 
 	/* Find the evaluation channel for the NLA stack below current strip. */
-	NlaEvalChannelKey key = { .ptr = *prop_ptr, .prop = prop };
+	NlaEvalChannelKey key = { .ptr = *prop_ptr, .prop = prop, };
 	NlaEvalData *nlaeval = &context->nla_channels;
 	NlaEvalChannel *nec = nlaevalchan_verify_key(nlaeval, NULL, &key);
 	int real_index = nlaevalchan_validate_index(nec, index);
@@ -3484,11 +3496,34 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph,
 
 			PathResolvedRNA anim_rna;
 			if (animsys_store_rna_setting(&id_ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {
+				/* Evaluate driver, and write results to COW-domain destination */
 				const float ctime = DEG_get_ctime(depsgraph);
 				const float curval = evaluate_fcurve_driver(&anim_rna, fcu, driver_orig, ctime);
 				ok = animsys_write_rna_setting(&anim_rna, curval);
+
+				/* Flush results & status codes to original data for UI (T59984) */
 				if (ok && DEG_is_active(depsgraph)) {
 					animsys_write_orig_anim_rna(&id_ptr, fcu->rna_path, fcu->array_index, curval);
+
+					/* curval is displayed in the UI, and flag contains error-status codes */
+					driver_orig->curval = fcu->driver->curval;
+					driver_orig->flag = fcu->driver->flag;
+
+					DriverVar *dvar_orig = driver_orig->variables.first;
+					DriverVar *dvar = fcu->driver->variables.first;
+					for (;
+					     dvar_orig && dvar;
+					     dvar_orig = dvar_orig->next, dvar = dvar->next)
+					{
+						DriverTarget *dtar_orig = &dvar_orig->targets[0];
+						DriverTarget *dtar = &dvar->targets[0];
+						for (int i = 0; i < MAX_DRIVER_TARGETS; i++, dtar_orig++, dtar++) {
+							dtar_orig->flag = dtar->flag;
+						}
+
+						dvar_orig->curval = dvar->curval;
+						dvar_orig->flag = dvar->flag;
+					}
 				}
 			}
 
