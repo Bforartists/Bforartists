@@ -133,7 +133,7 @@ class DATA_PT_gpencil_datapanel(Panel):
         col = row.column()
         layer_rows = 7
         col.template_list("GPENCIL_UL_layer", "", gpd, "layers", gpd.layers, "active_index",
-                          rows=layer_rows, reverse=True)
+                          rows=layer_rows, sort_reverse=True, sort_lock=True)
 
         gpl = context.active_gpencil_layer
         if gpl:
@@ -144,6 +144,9 @@ class DATA_PT_gpencil_datapanel(Panel):
             srow.prop(gpl, "opacity", text="Opacity", slider=True)
             srow.prop(gpl, "clamp_layer", text="",
                       icon='MOD_MASK' if gpl.clamp_layer else 'LAYER_ACTIVE')
+
+            srow = col.row(align=True)
+            srow.prop(gpl, "use_solo_mode", text="Show Only On Keyframed")
 
         col = row.column()
 

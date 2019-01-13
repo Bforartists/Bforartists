@@ -410,7 +410,7 @@ static void shrinkwrap_calc_nearest_vertex(ShrinkwrapCalcData *calc)
 	nearest.index = -1;
 	nearest.dist_sq = FLT_MAX;
 
-	ShrinkwrapCalcCBData data = {.calc = calc, .tree = calc->tree};
+	ShrinkwrapCalcCBData data = { .calc = calc, .tree = calc->tree, };
 	ParallelRangeSettings settings;
 	BLI_parallel_range_settings_defaults(&settings);
 	settings.use_threading = (calc->numVerts > BKE_MESH_OMP_LIMIT);
@@ -676,7 +676,7 @@ static void shrinkwrap_calc_normal_projection(ShrinkwrapCalcData *calc)
 	/* After successfully build the trees, start projection vertices. */
 	ShrinkwrapCalcCBData data = {
 		.calc = calc, .tree = calc->tree, .aux_tree = aux_tree,
-		.proj_axis = proj_axis, .local2aux = &local2aux
+		.proj_axis = proj_axis, .local2aux = &local2aux,
 	};
 	ParallelRangeSettings settings;
 	BLI_parallel_range_settings_defaults(&settings);
@@ -852,7 +852,7 @@ static bool target_project_solve_point_tri(
 	x[2] = (dot_v3v3(tmp, r_hit_no) < 0) ? -dist : dist;
 
 	/* Solve the equations iteratively. */
-	TargetProjectTriData tri_data = { .vtri_co = vtri_co, .vtri_no = vtri_no, .point_co = point_co };
+	TargetProjectTriData tri_data = { .vtri_co = vtri_co, .vtri_no = vtri_no, .point_co = point_co, };
 
 	sub_v3_v3v3(tri_data.n0_minus_n2, vtri_no[0], vtri_no[2]);
 	sub_v3_v3v3(tri_data.n1_minus_n2, vtri_no[1], vtri_no[2]);
@@ -1182,17 +1182,22 @@ static void shrinkwrap_snap_with_side(float r_point_co[3], const float point_co[
 
 	/* If exactly on the surface, push out along normal */
 	if (dist < FLT_EPSILON) {
-		madd_v3_v3v3fl(r_point_co, hit_co, hit_no, goal_dist * forcesign);
+		if (forcesnap || goal_dist > 0) {
+			madd_v3_v3v3fl(r_point_co, hit_co, hit_no, goal_dist * forcesign);
+		}
+		else {
+			copy_v3_v3(r_point_co, hit_co);
+		}
 	}
 	/* Move to the correct side if needed */
 	else {
 		float delta[3];
 		sub_v3_v3v3(delta, point_co, hit_co);
-		float dsign = signf(dot_v3v3(delta, hit_no));
+		float dsign = signf(dot_v3v3(delta, hit_no) * forcesign);
 
 		/* If on the wrong side or too close, move to correct */
-		if (forcesnap || dsign * forcesign < 0 || dist < goal_dist) {
-			interp_v3_v3v3(r_point_co, point_co, hit_co, (dist - goal_dist * dsign * forcesign) / dist);
+		if (forcesnap || dsign * dist < goal_dist) {
+			interp_v3_v3v3(r_point_co, point_co, hit_co, (dist - goal_dist * dsign) / dist);
 		}
 		else {
 			copy_v3_v3(r_point_co, point_co);
@@ -1217,7 +1222,7 @@ void BKE_shrinkwrap_snap_point_to_surface(
 	switch (mode) {
 		/* Offsets along the line between point_co and hit_co. */
 		case MOD_SHRINKWRAP_ON_SURFACE:
-			if (goal_dist > 0 && (dist = len_v3v3(point_co, hit_co)) > FLT_EPSILON) {
+			if (goal_dist != 0 && (dist = len_v3v3(point_co, hit_co)) > FLT_EPSILON) {
 				interp_v3_v3v3(r_point_co, point_co, hit_co, (dist - goal_dist) / dist);
 			}
 			else {
@@ -1234,7 +1239,7 @@ void BKE_shrinkwrap_snap_point_to_surface(
 			break;
 
 		case MOD_SHRINKWRAP_OUTSIDE_SURFACE:
-			if (goal_dist > 0) {
+			if (goal_dist != 0) {
 				shrinkwrap_snap_with_side(r_point_co, point_co, hit_co, hit_no, goal_dist, +1, true);
 			}
 			else {
@@ -1244,7 +1249,7 @@ void BKE_shrinkwrap_snap_point_to_surface(
 
 		/* Offsets along the normal */
 		case MOD_SHRINKWRAP_ABOVE_SURFACE:
-			if (goal_dist > 0) {
+			if (goal_dist != 0) {
 				BKE_shrinkwrap_compute_smooth_normal(tree, transform, hit_idx, hit_co, hit_no, tmp);
 				madd_v3_v3v3fl(r_point_co, hit_co, tmp, goal_dist);
 			}
@@ -1268,7 +1273,7 @@ static void shrinkwrap_calc_nearest_surface_point(ShrinkwrapCalcData *calc)
 	nearest.dist_sq = FLT_MAX;
 
 	/* Find the nearest vertex */
-	ShrinkwrapCalcCBData data = {.calc = calc, .tree = calc->tree};
+	ShrinkwrapCalcCBData data = { .calc = calc, .tree = calc->tree, };
 	ParallelRangeSettings settings;
 	BLI_parallel_range_settings_defaults(&settings);
 	settings.use_threading = (calc->numVerts > BKE_MESH_OMP_LIMIT);

@@ -112,11 +112,12 @@ static Mesh *applyModifier(ModifierData *md, const ModifierEvalContext *ctx, Mes
 	const bool vertex_only = (bmd->flags & MOD_BEVEL_VERT) != 0;
 	const bool do_clamp = !(bmd->flags & MOD_BEVEL_OVERLAP_OK);
 	const int offset_type = bmd->val_flags;
+	const float value = bmd->value;
 	const int mat = CLAMPIS(bmd->mat, -1, ctx->object->totcol - 1);
 	const bool loop_slide = (bmd->flags & MOD_BEVEL_EVEN_WIDTHS) == 0;
 	const bool mark_seam = (bmd->edge_flags & MOD_BEVEL_MARK_SEAM);
 	const bool mark_sharp = (bmd->edge_flags & MOD_BEVEL_MARK_SHARP);
-	const bool harden_normals = (bmd->flags & MOD_BEVEL_HARDEN_NORMALS);
+	bool harden_normals = (bmd->flags & MOD_BEVEL_HARDEN_NORMALS);
 	const int face_strength_mode = bmd->face_str_mode;
 
 	bm = BKE_mesh_to_bmesh_ex(
@@ -187,10 +188,15 @@ static Mesh *applyModifier(ModifierData *md, const ModifierEvalContext *ctx, Mes
 		}
 	}
 
-	BM_mesh_bevel(bm, bmd->value, offset_type, bmd->res, bmd->profile,
+	if (harden_normals && !(((Mesh *)ctx->object->data)->flag & ME_AUTOSMOOTH)) {
+		modifier_setError(md, "Enable 'Auto Smooth' option in mesh settings for hardening");
+		harden_normals = false;
+	}
+
+	BM_mesh_bevel(bm, value, offset_type, bmd->res, bmd->profile,
 	              vertex_only, bmd->lim_flags & MOD_BEVEL_WEIGHT, do_clamp,
 	              dvert, vgroup, mat, loop_slide, mark_seam, mark_sharp,
-	              harden_normals, face_strength_mode);
+	              harden_normals, face_strength_mode, mesh->smoothresh);
 
 	result = BKE_mesh_from_bmesh_for_eval_nomain(bm, 0);
 

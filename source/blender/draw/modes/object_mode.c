@@ -231,6 +231,9 @@ typedef struct OBJECT_ShadingGroupList {
 	DRWShadingGroup *camera_clip_points;
 	DRWShadingGroup *camera_mist;
 	DRWShadingGroup *camera_mist_points;
+	DRWShadingGroup *camera_stereo_plane;
+	DRWShadingGroup *camera_stereo_volume;
+	DRWShadingGroup *camera_stereo_volume_wires;
 	ListBase camera_path;
 
 	/* Wire */
@@ -238,12 +241,18 @@ typedef struct OBJECT_ShadingGroupList {
 	DRWShadingGroup *wire_active;
 	DRWShadingGroup *wire_select;
 	DRWShadingGroup *wire_transform;
+	/* Wire (duplicator) */
+	DRWShadingGroup *wire_dupli;
+	DRWShadingGroup *wire_dupli_select;
 
 	/* Points */
 	DRWShadingGroup *points;
 	DRWShadingGroup *points_active;
 	DRWShadingGroup *points_select;
 	DRWShadingGroup *points_transform;
+	/* Points (duplicator) */
+	DRWShadingGroup *points_dupli;
+	DRWShadingGroup *points_dupli_select;
 
 	/* Texture Space */
 	DRWShadingGroup *texspace;
@@ -256,14 +265,17 @@ typedef struct OBJECT_PrivateData {
 	/* Outlines */
 	DRWShadingGroup *outlines_active;
 	DRWShadingGroup *outlines_select;
+	DRWShadingGroup *outlines_select_dupli;
 	DRWShadingGroup *outlines_transform;
 
 	/* Lightprobes */
 	DRWShadingGroup *lightprobes_cube_select;
+	DRWShadingGroup *lightprobes_cube_select_dupli;
 	DRWShadingGroup *lightprobes_cube_active;
 	DRWShadingGroup *lightprobes_cube_transform;
 
 	DRWShadingGroup *lightprobes_planar_select;
+	DRWShadingGroup *lightprobes_planar_select_dupli;
 	DRWShadingGroup *lightprobes_planar_active;
 	DRWShadingGroup *lightprobes_planar_transform;
 
@@ -274,12 +286,15 @@ typedef struct OBJECT_PrivateData {
 	DRWShadingGroup *center_selected_lib;
 	DRWShadingGroup *center_deselected_lib;
 
-	/* Outlines id offset */
+	/* Outlines id offset (accessed as an array) */
 	int id_ofs_active;
 	int id_ofs_select;
+	int id_ofs_select_dupli;
 	int id_ofs_transform;
+
 	int id_ofs_prb_active;
 	int id_ofs_prb_select;
+	int id_ofs_prb_select_dupli;
 	int id_ofs_prb_transform;
 
 	bool xray_enabled;
@@ -693,8 +708,19 @@ static DRWShadingGroup *shgroup_points(DRWPass *pass, const float col[4], GPUSha
 }
 
 static int *shgroup_theme_id_to_probe_outline_counter(
-        OBJECT_StorageList *stl, int theme_id)
+        OBJECT_StorageList *stl, int theme_id, const int base_flag)
 {
+	if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return &stl->g_data->id_ofs_prb_select_dupli;
+			case TH_TRANSFORM:
+			default:
+				return &stl->g_data->id_ofs_prb_transform;
+		}
+	}
+
 	switch (theme_id) {
 		case TH_ACTIVE:
 			return &stl->g_data->id_ofs_prb_active;
@@ -707,8 +733,19 @@ static int *shgroup_theme_id_to_probe_outline_counter(
 }
 
 static int *shgroup_theme_id_to_outline_counter(
-        OBJECT_StorageList *stl, int theme_id)
+        OBJECT_StorageList *stl, int theme_id, const int base_flag)
 {
+	if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return &stl->g_data->id_ofs_select_dupli;
+			case TH_TRANSFORM:
+			default:
+				return &stl->g_data->id_ofs_transform;
+		}
+	}
+
 	switch (theme_id) {
 		case TH_ACTIVE:
 			return &stl->g_data->id_ofs_active;
@@ -736,9 +773,20 @@ static DRWShadingGroup *shgroup_theme_id_to_probe_planar_outline_shgrp(
 }
 
 static DRWShadingGroup *shgroup_theme_id_to_probe_cube_outline_shgrp(
-        OBJECT_StorageList *stl, int theme_id)
+        OBJECT_StorageList *stl, int theme_id, const int base_flag)
 {
 	/* does not increment counter */
+	if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return stl->g_data->lightprobes_cube_select_dupli;
+			case TH_TRANSFORM:
+			default:
+				return stl->g_data->lightprobes_cube_transform;
+		}
+	}
+
 	switch (theme_id) {
 		case TH_ACTIVE:
 			return stl->g_data->lightprobes_cube_active;
@@ -750,11 +798,23 @@ static DRWShadingGroup *shgroup_theme_id_to_probe_cube_outline_shgrp(
 	}
 }
 
-static DRWShadingGroup *shgroup_theme_id_to_outline_or(
-        OBJECT_StorageList *stl, int theme_id, DRWShadingGroup *fallback)
+static DRWShadingGroup *shgroup_theme_id_to_outline_or_null(
+        OBJECT_StorageList *stl, int theme_id, const int base_flag)
 {
-	int *counter = shgroup_theme_id_to_outline_counter(stl, theme_id);
+	int *counter = shgroup_theme_id_to_outline_counter(stl, theme_id, base_flag);
 	*counter += 1;
+
+	if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return stl->g_data->outlines_select_dupli;
+			case TH_TRANSFORM:
+				return stl->g_data->outlines_transform;
+			default:
+				return NULL;
+		}
+	}
 
 	switch (theme_id) {
 		case TH_ACTIVE:
@@ -764,13 +824,28 @@ static DRWShadingGroup *shgroup_theme_id_to_outline_or(
 		case TH_TRANSFORM:
 			return stl->g_data->outlines_transform;
 		default:
-			return fallback;
+			return NULL;
 	}
 }
 
-static DRWShadingGroup *shgroup_theme_id_to_wire_or(
-        OBJECT_ShadingGroupList *sgl, int theme_id, DRWShadingGroup *fallback)
+static DRWShadingGroup *shgroup_theme_id_to_wire(
+        OBJECT_ShadingGroupList *sgl, int theme_id, const short base_flag)
 {
+	if (UNLIKELY(base_flag & BASE_FROM_SET)) {
+		return sgl->wire_dupli;
+	}
+	else if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return sgl->wire_dupli_select;
+			case TH_TRANSFORM:
+				return sgl->wire_transform;
+			default:
+				return sgl->wire_dupli;
+		}
+	}
+
 	switch (theme_id) {
 		case TH_ACTIVE:
 			return sgl->wire_active;
@@ -779,13 +854,28 @@ static DRWShadingGroup *shgroup_theme_id_to_wire_or(
 		case TH_TRANSFORM:
 			return sgl->wire_transform;
 		default:
-			return fallback;
+			return sgl->wire;
 	}
 }
 
-static DRWShadingGroup *shgroup_theme_id_to_point_or(
-        OBJECT_ShadingGroupList *sgl, int theme_id, DRWShadingGroup *fallback)
+static DRWShadingGroup *shgroup_theme_id_to_point(
+        OBJECT_ShadingGroupList *sgl, int theme_id, const short base_flag)
 {
+	if (UNLIKELY(base_flag & BASE_FROM_SET)) {
+		return sgl->points_dupli;
+	}
+	else if (UNLIKELY(base_flag & BASE_FROMDUPLI)) {
+		switch (theme_id) {
+			case TH_ACTIVE:
+			case TH_SELECT:
+				return sgl->points_dupli_select;
+			case TH_TRANSFORM:
+				return sgl->points_transform;
+			default:
+				return sgl->points_dupli;
+		}
+	}
+
 	switch (theme_id) {
 		case TH_ACTIVE:
 			return sgl->points_active;
@@ -794,7 +884,7 @@ static DRWShadingGroup *shgroup_theme_id_to_point_or(
 		case TH_TRANSFORM:
 			return sgl->points_transform;
 		default:
-			return fallback;
+			return sgl->points;
 	}
 }
 
@@ -917,10 +1007,12 @@ static void OBJECT_cache_init(void *vedata)
 		}
 
 		g_data->outlines_select = shgroup_outline(psl->outlines, &g_data->id_ofs_select, sh);
+		g_data->outlines_select_dupli = shgroup_outline(psl->outlines, &g_data->id_ofs_select_dupli, sh);
 		g_data->outlines_transform = shgroup_outline(psl->outlines, &g_data->id_ofs_transform, sh);
 		g_data->outlines_active = shgroup_outline(psl->outlines, &g_data->id_ofs_active, sh);
 
 		g_data->id_ofs_select = 0;
+		g_data->id_ofs_select_dupli = 0;
 		g_data->id_ofs_active = 0;
 		g_data->id_ofs_transform = 0;
 	}
@@ -933,15 +1025,18 @@ static void OBJECT_cache_init(void *vedata)
 
 		/* Cubemap */
 		g_data->lightprobes_cube_select       = shgroup_instance_outline(pass, sphere, &g_data->id_ofs_prb_select);
+		g_data->lightprobes_cube_select_dupli = shgroup_instance_outline(pass, sphere, &g_data->id_ofs_prb_select_dupli);
 		g_data->lightprobes_cube_active       = shgroup_instance_outline(pass, sphere, &g_data->id_ofs_prb_active);
 		g_data->lightprobes_cube_transform    = shgroup_instance_outline(pass, sphere, &g_data->id_ofs_prb_transform);
 
 		/* Planar */
 		g_data->lightprobes_planar_select       = shgroup_instance_outline(pass, quad, &g_data->id_ofs_prb_select);
+		g_data->lightprobes_planar_select_dupli = shgroup_instance_outline(pass, quad, &g_data->id_ofs_prb_select_dupli);
 		g_data->lightprobes_planar_active       = shgroup_instance_outline(pass, quad, &g_data->id_ofs_prb_active);
 		g_data->lightprobes_planar_transform    = shgroup_instance_outline(pass, quad, &g_data->id_ofs_prb_transform);
 
 		g_data->id_ofs_prb_select = 0;
+		g_data->id_ofs_prb_select_dupli = 0;
 		g_data->id_ofs_prb_active = 0;
 		g_data->id_ofs_prb_transform = 0;
 	}
@@ -964,7 +1059,7 @@ static void OBJECT_cache_init(void *vedata)
 		DRW_shgroup_uniform_texture_ref(grp, "sceneDepth", &dtxl->depth);
 		DRW_shgroup_uniform_block(grp, "globalsBlock", globals_ubo);
 		DRW_shgroup_uniform_float_copy(grp, "alphaOcclu", alphaOcclu);
-		DRW_shgroup_uniform_int(grp, "idOffsets", &stl->g_data->id_ofs_active, 3);
+		DRW_shgroup_uniform_int(grp, "idOffsets", &stl->g_data->id_ofs_active, 4);
 		DRW_shgroup_call_add(grp, quad, NULL);
 
 		psl->outlines_expand = DRW_pass_create("Outlines Expand Pass", state);
@@ -1166,6 +1261,15 @@ static void OBJECT_cache_init(void *vedata)
 		sgl->camera_clip_points = shgroup_distance_lines_instance(sgl->non_meshes, geom);
 		sgl->camera_mist_points = shgroup_distance_lines_instance(sgl->non_meshes, geom);
 
+		geom = DRW_cache_quad_get();
+		sgl->camera_stereo_plane = shgroup_instance_alpha(sgl->non_meshes, geom);
+
+		geom = DRW_cache_cube_get();
+		sgl->camera_stereo_volume = shgroup_instance_alpha(sgl->non_meshes, geom);
+
+		geom = DRW_cache_empty_cube_get();
+		sgl->camera_stereo_volume_wires = shgroup_instance(sgl->non_meshes, geom);
+
 		BLI_listbase_clear(&sgl->camera_path);
 
 		/* Texture Space */
@@ -1178,6 +1282,9 @@ static void OBJECT_cache_init(void *vedata)
 		sgl->wire_select = shgroup_wire(sgl->non_meshes, ts.colorSelect, sh);
 		sgl->wire_transform = shgroup_wire(sgl->non_meshes, ts.colorTransform, sh);
 		sgl->wire_active = shgroup_wire(sgl->non_meshes, ts.colorActive, sh);
+		/* Wire (duplicator) */
+		sgl->wire_dupli = shgroup_wire(sgl->non_meshes, ts.colorDupli, sh);
+		sgl->wire_dupli_select = shgroup_wire(sgl->non_meshes, ts.colorDupliSelect, sh);
 
 		/* Points (loose points) */
 		sh = e_data.loose_points_sh;
@@ -1185,10 +1292,15 @@ static void OBJECT_cache_init(void *vedata)
 		sgl->points_select = shgroup_points(sgl->non_meshes, ts.colorSelect, sh);
 		sgl->points_transform = shgroup_points(sgl->non_meshes, ts.colorTransform, sh);
 		sgl->points_active = shgroup_points(sgl->non_meshes, ts.colorActive, sh);
+		/* Points (duplicator) */
+		sgl->points_dupli = shgroup_points(sgl->non_meshes, ts.colorDupli, sh);
+		sgl->points_dupli_select = shgroup_points(sgl->non_meshes, ts.colorDupliSelect, sh);
 		DRW_shgroup_state_disable(sgl->points, DRW_STATE_BLEND);
 		DRW_shgroup_state_disable(sgl->points_select, DRW_STATE_BLEND);
 		DRW_shgroup_state_disable(sgl->points_transform, DRW_STATE_BLEND);
 		DRW_shgroup_state_disable(sgl->points_active, DRW_STATE_BLEND);
+		DRW_shgroup_state_disable(sgl->points_dupli, DRW_STATE_BLEND);
+		DRW_shgroup_state_disable(sgl->points_dupli_select, DRW_STATE_BLEND);
 
 		/* Metaballs Handles */
 		sgl->mball_handle = shgroup_instance_mball_handles(sgl->non_meshes);
@@ -1268,22 +1380,20 @@ static void OBJECT_cache_init(void *vedata)
 		/* Spot shapes */
 		state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND | DRW_STATE_CULL_FRONT;
 		sgl->spot_shapes = psl->spot_shapes[i] = DRW_pass_create("Spot Shape Pass", state);
-		float cone_spot_alpha = 0.5f;
 
 		geom = DRW_cache_lamp_spot_volume_get();
-		sgl->lamp_spot_volume = shgroup_instance_alpha(sgl->spot_shapes, geom, cone_spot_alpha);
+		sgl->lamp_spot_volume = shgroup_instance_alpha(sgl->spot_shapes, geom);
 
 		geom = DRW_cache_lamp_spot_square_volume_get();
-		sgl->lamp_spot_volume_rect = shgroup_instance_alpha(sgl->spot_shapes, geom, cone_spot_alpha);
+		sgl->lamp_spot_volume_rect = shgroup_instance_alpha(sgl->spot_shapes, geom);
 
-		cone_spot_alpha = 0.3f;
 		geom = DRW_cache_lamp_spot_volume_get();
-		sgl->lamp_spot_volume_outside = shgroup_instance_alpha(sgl->spot_shapes, geom, cone_spot_alpha);
+		sgl->lamp_spot_volume_outside = shgroup_instance_alpha(sgl->spot_shapes, geom);
 		DRW_shgroup_state_disable(sgl->lamp_spot_volume_outside, DRW_STATE_CULL_FRONT);
 		DRW_shgroup_state_enable(sgl->lamp_spot_volume_outside, DRW_STATE_CULL_BACK);
 
 		geom = DRW_cache_lamp_spot_square_volume_get();
-		sgl->lamp_spot_volume_rect_outside = shgroup_instance_alpha(sgl->spot_shapes, geom, cone_spot_alpha);
+		sgl->lamp_spot_volume_rect_outside = shgroup_instance_alpha(sgl->spot_shapes, geom);
 		DRW_shgroup_state_disable(sgl->lamp_spot_volume_rect_outside, DRW_STATE_CULL_FRONT);
 		DRW_shgroup_state_enable(sgl->lamp_spot_volume_rect_outside, DRW_STATE_CULL_BACK);
 	}
@@ -1398,9 +1508,12 @@ static void DRW_shgroup_lamp(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLayer
 	float (*shapemat)[4] = lamp_engine_data->shape_mat;
 	float (*spotblendmat)[4] = lamp_engine_data->spot_blend_mat;
 
-	/* Don't draw the center if it's selected or active */
-	if (theme_id == TH_LAMP)
-		DRW_shgroup_call_dynamic_add(sgl->lamp_center, ob->obmat[3]);
+	if ((ob->base_flag & (BASE_FROM_SET | BASE_FROMDUPLI)) == 0) {
+		/* Don't draw the center if it's selected or active */
+		if (theme_id == TH_LAMP) {
+			DRW_shgroup_call_dynamic_add(sgl->lamp_center, ob->obmat[3]);
+		}
+	}
 
 	/* First circle */
 	DRW_shgroup_call_dynamic_add(sgl->lamp_circle, ob->obmat[3], color);
@@ -1421,8 +1534,8 @@ static void DRW_shgroup_lamp(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLayer
 	else if (la->type == LA_SPOT) {
 		float size[3], sizemat[4][4];
 		static float one = 1.0f;
-		float cone_inside[3] = {0.0f, 0.0f, 0.0f};
-		float cone_outside[3] = {1.0f, 1.0f, 1.0f};
+		float cone_inside[4] = {0.0f, 0.0f, 0.0f, 0.5f};
+		float cone_outside[4] = {1.0f, 1.0f, 1.0f, 0.3f};
 		float blend = 1.0f - pow2f(la->spotblend);
 		size[0] = size[1] = sinf(la->spotsize * 0.5f) * la->dist;
 		size[2] = cosf(la->spotsize * 0.5f) * la->dist;
@@ -1536,6 +1649,151 @@ static void batch_camera_path_free(ListBase *camera_paths)
 	}
 }
 
+static bool camera_view3d_is_stereo3d(Scene *scene, View3D *v3d)
+{
+	return (scene->r.scemode & R_MULTIVIEW) != 0 &&
+	       (v3d->stereo3d_flag);
+}
+
+static void camera_stereo3d(
+        OBJECT_ShadingGroupList *sgl,
+        Scene *scene, ViewLayer *view_layer, View3D *v3d,
+        Object *ob, Camera *cam,
+        const float vec[4][3], float drawsize, const float scale[3])
+{
+	const bool is_select = DRW_state_is_select();
+	static float drwtria_dummy[2][2][2] = {{{0}}};
+	const float fac = (cam->stereo.pivot == CAM_S3D_PIVOT_CENTER) ? 2.0f : 1.0f;
+	float origin[2][3] = {{0}};
+	const char *viewnames[2] = {STEREO_LEFT_NAME, STEREO_RIGHT_NAME};
+
+	const bool is_stereo3d_cameras = (v3d->stereo3d_flag & V3D_S3D_DISPCAMERAS) && (scene->r.views_format == SCE_VIEWS_FORMAT_STEREO_3D);
+	const bool is_stereo3d_plane = (v3d->stereo3d_flag & V3D_S3D_DISPPLANE) && (scene->r.views_format == SCE_VIEWS_FORMAT_STEREO_3D);
+	const bool is_stereo3d_volume = (v3d->stereo3d_flag & V3D_S3D_DISPVOLUME);
+
+	float *color;
+	DRW_object_wire_theme_get(ob, view_layer, &color);
+
+	for (int eye = 0; eye < 2; eye++) {
+		float obmat[4][4];
+		ob = BKE_camera_multiview_render(scene, ob, viewnames[eye]);
+
+		BKE_camera_multiview_model_matrix_scaled(&scene->r, ob, viewnames[eye], obmat);
+
+		copy_v2_v2(cam->drwcorners[eye][0], vec[0]);
+		copy_v2_v2(cam->drwcorners[eye][1], vec[1]);
+		copy_v2_v2(cam->drwcorners[eye][2], vec[2]);
+		copy_v2_v2(cam->drwcorners[eye][3], vec[3]);
+
+		cam->drwdepth[eye] = vec[0][2];
+
+		if (cam->stereo.convergence_mode == CAM_S3D_OFFAXIS) {
+			const float shift_x =
+			        ((BKE_camera_multiview_shift_x(&scene->r, ob, viewnames[eye]) - cam->shiftx) *
+			        (drawsize * scale[0] * fac));
+
+			for (int i = 0; i < 4; i++) {
+				cam->drwcorners[eye][i][0] += shift_x;
+			}
+		}
+
+		/* Dummy triangle, draw on top of existent lines so it is invisible. */
+		copy_v2_v2(drwtria_dummy[eye][0], cam->drwcorners[eye][0]);
+		copy_v2_v2(drwtria_dummy[eye][1], cam->drwcorners[eye][0]);
+
+		if (is_stereo3d_cameras) {
+			DRW_shgroup_call_dynamic_add(
+			        sgl->camera_frame, color, cam->drwcorners[eye],
+			        &cam->drwdepth[eye], cam->drwtria, obmat);
+
+			DRW_shgroup_call_dynamic_add(
+			        sgl->camera, color, cam->drwcorners[eye],
+			        &cam->drwdepth[eye], drwtria_dummy[eye], obmat);
+		}
+
+		/* Connecting line. */
+		mul_m4_v3(obmat, origin[eye]);
+	}
+
+	/* Draw connecting lines. */
+	if (is_stereo3d_cameras) {
+		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, origin[0]);
+		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, origin[1]);
+	}
+
+	/* Draw convergence plane. */
+	if (is_stereo3d_plane && !is_select) {
+		static float convergence_distance_neg;
+		float axis_center[3];
+		float convergence_plane[4][2];
+		float offset;
+
+		mid_v3_v3v3(axis_center, origin[0], origin[1]);
+
+		for (int i = 0; i < 4; i++) {
+			mid_v2_v2v2(convergence_plane[i], cam->drwcorners[0][i], cam->drwcorners[1][i]);
+		}
+
+		offset = cam->stereo.convergence_distance / cam->drwdepth[0];
+
+		for (int i = 0; i < 4; i++) {
+			convergence_plane[i][0] -= 2.0f * cam->shiftx;
+			convergence_plane[i][1] -= 2.0f * cam->shifty;
+			mul_v2_fl(convergence_plane[i], offset);
+		}
+
+		convergence_distance_neg = -cam->stereo.convergence_distance;
+		DRW_shgroup_call_dynamic_add(
+		        sgl->camera_frame, color, convergence_plane,
+		        &convergence_distance_neg, cam->drwtria, cam->drwnormalmat);
+
+		if (v3d->stereo3d_convergence_alpha > 0.0f) {
+			/* We are using a -1,1 quad for this shading group, so we need to
+			 * scale and transform it to match the convergence plane border. */
+			static float one = 1.0f;
+			float plane_mat[4][4], scale_mat[4][4];
+			float scale_factor[3] = {1.0f, 1.0f, 1.0f};
+			float color_plane[4] = {0.0f, 0.0f, 0.0f, v3d->stereo3d_convergence_alpha};
+
+			const float height = convergence_plane[1][1] - convergence_plane[0][1];
+			const float width = convergence_plane[2][0] - convergence_plane[0][0];
+
+			scale_factor[0] = width * 0.5f;
+			scale_factor[1] = height * 0.5f;
+
+			copy_m4_m4(plane_mat, cam->drwnormalmat);
+			translate_m4(plane_mat, 0.0f, 0.0f, -cam->stereo.convergence_distance);
+			size_to_mat4(scale_mat, scale_factor);
+			mul_m4_m4_post(plane_mat, scale_mat);
+
+			DRW_shgroup_call_dynamic_add(sgl->camera_stereo_plane, color_plane, &one, plane_mat);
+		}
+	}
+
+	/* Draw convergence volume. */
+	if (is_stereo3d_volume && !is_select) {
+		static float one = 1.0f;
+		float color_volume[3][4] = {{0.0f, 1.0f, 1.0f, v3d->stereo3d_volume_alpha},
+		                            {1.0f, 0.0f, 0.0f, v3d->stereo3d_volume_alpha},
+		                            {0.0f, 0.0f, 0.0f, 0.0f}};
+
+		for (int eye = 0; eye < 2; eye++) {
+			float winmat[4][4], viewinv[4][4], viewmat[4][4], persmat[4][4], persinv[4][4];
+			ob = BKE_camera_multiview_render(scene, ob, viewnames[eye]);
+
+			BKE_camera_multiview_window_matrix(&scene->r, ob, viewnames[eye], winmat);
+			BKE_camera_multiview_model_matrix(&scene->r, ob, viewnames[eye], viewinv);
+
+			invert_m4_m4(viewmat, viewinv);
+			mul_m4_m4m4(persmat, winmat, viewmat);
+			invert_m4_m4(persinv, persmat);
+
+			DRW_shgroup_call_dynamic_add(sgl->camera_stereo_volume, color_volume[eye], &one, persinv);
+			DRW_shgroup_call_dynamic_add(sgl->camera_stereo_volume_wires, color_volume[2], &one, persinv);
+		}
+	}
+}
+
 static void DRW_shgroup_camera(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLayer *view_layer)
 {
 	const DRWContextState *draw_ctx = DRW_context_state_get();
@@ -1545,28 +1803,48 @@ static void DRW_shgroup_camera(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLay
 
 	Camera *cam = ob->data;
 	const  Object *camera_object = DEG_get_evaluated_object(draw_ctx->depsgraph, v3d->camera);
+	const bool is_select = DRW_state_is_select();
 	const bool is_active = (ob == camera_object);
 	const bool look_through = (is_active && (rv3d->persp == RV3D_CAMOB));
+	const bool is_multiview = (scene->r.scemode & R_MULTIVIEW) != 0;
+	const bool is_stereo3d = is_active && camera_view3d_is_stereo3d(scene, v3d);
+	const bool is_stereo3d_view = (scene->r.views_format == SCE_VIEWS_FORMAT_STEREO_3D);
+	const bool is_stereo3d_cameras = (ob == scene->camera) &&
+	                                 is_multiview &&
+	                                 is_stereo3d_view &&
+	                                 (v3d->stereo3d_flag & V3D_S3D_DISPCAMERAS);
+	const bool is_selection_camera_stereo = is_select &&
+	                                        look_through && is_multiview &&
+	                                        is_stereo3d_view;
+
 	float *color;
 	DRW_object_wire_theme_get(ob, view_layer, &color);
 
 	float vec[4][3], asp[2], shift[2], scale[3], drawsize;
 
-	scale[0] = 1.0f / len_v3(ob->obmat[0]);
-	scale[1] = 1.0f / len_v3(ob->obmat[1]);
-	scale[2] = 1.0f / len_v3(ob->obmat[2]);
+	/* BKE_camera_multiview_model_matrix already accounts for scale, don't do it here. */
+	if (is_selection_camera_stereo) {
+		scale[0] = 1.0f;
+		scale[1] = 1.0f;
+		scale[2] = 1.0f;
+	}
+	else {
+		scale[0] = 1.0f / len_v3(ob->obmat[0]);
+		scale[1] = 1.0f / len_v3(ob->obmat[1]);
+		scale[2] = 1.0f / len_v3(ob->obmat[2]);
+	}
 
 	BKE_camera_view_frame_ex(scene, cam, cam->drawsize, false, scale,
 	                         asp, shift, &drawsize, vec);
 
 	/* Frame coords */
-	copy_v2_v2(cam->drwcorners[0], vec[0]);
-	copy_v2_v2(cam->drwcorners[1], vec[1]);
-	copy_v2_v2(cam->drwcorners[2], vec[2]);
-	copy_v2_v2(cam->drwcorners[3], vec[3]);
+	copy_v2_v2(cam->drwcorners[0][0], vec[0]);
+	copy_v2_v2(cam->drwcorners[0][1], vec[1]);
+	copy_v2_v2(cam->drwcorners[0][2], vec[2]);
+	copy_v2_v2(cam->drwcorners[0][3], vec[3]);
 
 	/* depth */
-	cam->drwdepth = vec[0][2];
+	cam->drwdepth[0] = vec[0][2];
 
 	/* tria */
 	cam->drwtria[0][0] = shift[0] + ((0.7f * drawsize) * scale[0]);
@@ -1574,22 +1852,38 @@ static void DRW_shgroup_camera(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLay
 	cam->drwtria[1][0] = shift[0];
 	cam->drwtria[1][1] = shift[1] + ((1.1f * drawsize * (asp[1] + 0.7f)) * scale[1]);
 
-	if (look_through) {
+	if (look_through && !is_stereo3d_cameras) {
 		/* Only draw the frame. */
-		DRW_shgroup_call_dynamic_add(
-		        sgl->camera_frame, color, cam->drwcorners,
-		        &cam->drwdepth, cam->drwtria, ob->obmat);
+		float mat[4][4];
+		if (is_selection_camera_stereo) {
+			/* Make sure selection uses the same matrix for camera as the one used while viewing. */
+			const bool is_left = v3d->multiview_eye == STEREO_LEFT_ID;
+			BKE_camera_multiview_model_matrix(&scene->r, ob, is_left ? STEREO_LEFT_NAME : STEREO_RIGHT_NAME, mat);
+		}
+		else {
+			copy_m4_m4(mat, ob->obmat);
+		}
+
+		/* TODO (dfelinto): Disabling this for now since it is extremely wrong.
+		 * Besides selection and multiview still works bad even on its finest day. */
+		if (!is_multiview) {
+			DRW_shgroup_call_dynamic_add(
+			        sgl->camera_frame, color, cam->drwcorners[0],
+			        &cam->drwdepth[0], cam->drwtria, mat);
+		}
 	}
-	else {
-		DRW_shgroup_call_dynamic_add(
-		        sgl->camera, color, cam->drwcorners,
-		        &cam->drwdepth, cam->drwtria, ob->obmat);
+	else if (!look_through) {
+		if (!is_stereo3d_cameras) {
+			DRW_shgroup_call_dynamic_add(
+			        sgl->camera, color, cam->drwcorners[0],
+			        &cam->drwdepth[0], cam->drwtria, ob->obmat);
+		}
 
 		/* Active cam */
 		if (is_active) {
 			DRW_shgroup_call_dynamic_add(
 			        sgl->camera_tria, color,
-			        cam->drwcorners, &cam->drwdepth, cam->drwtria, ob->obmat);
+			        cam->drwcorners[0], &cam->drwdepth[0], cam->drwtria, ob->obmat);
 		}
 	}
 
@@ -1633,11 +1927,15 @@ static void DRW_shgroup_camera(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLay
 		}
 	}
 
+	/* Stereo cameras drawing. */
+	if (is_stereo3d) {
+		camera_stereo3d(sgl, scene, view_layer, v3d, ob, cam, vec, drawsize, scale);
+	}
+
 	/* Motion Tracking. */
 	MovieClip *clip = BKE_object_movieclip_get(scene, ob, false);
 	if ((v3d->flag2 & V3D_SHOW_RECONSTRUCTION) && (clip != NULL)) {
 		BLI_assert(BLI_listbase_is_empty(&sgl->camera_path));
-		const bool is_select = DRW_state_is_select();
 		const bool is_solid_bundle = (v3d->bundle_drawtype == OB_EMPTY_SPHERE) &&
 		                             ((v3d->shading.type != OB_SOLID) ||
 		                              ((v3d->shading.flag & XRAY_FLAG(v3d)) == 0));
@@ -2049,7 +2347,7 @@ static void DRW_shgroup_lightprobe(OBJECT_StorageList *stl, OBJECT_PassList *psl
 	        NULL);
 
 	if ((DRW_state_is_select() || do_outlines) && ((prb->flag & LIGHTPROBE_FLAG_SHOW_DATA) != 0)) {
-		int *call_id = shgroup_theme_id_to_probe_outline_counter(stl, theme_id);
+		int *call_id = shgroup_theme_id_to_probe_outline_counter(stl, theme_id, ob->base_flag);
 
 		if (prb->type == LIGHTPROBE_TYPE_GRID) {
 			/* Update transforms */
@@ -2102,7 +2400,7 @@ static void DRW_shgroup_lightprobe(OBJECT_StorageList *stl, OBJECT_PassList *psl
 			// unit_m4(prb_data->probe_cube_mat);
 			// copy_v3_v3(prb_data->probe_cube_mat[3], ob->obmat[3]);
 
-			DRWShadingGroup *grp = shgroup_theme_id_to_probe_cube_outline_shgrp(stl, theme_id);
+			DRWShadingGroup *grp = shgroup_theme_id_to_probe_cube_outline_shgrp(stl, theme_id, ob->base_flag);
 			/* TODO remove or change the drawing of the cube probes. Theses line draws nothing on purpose
 			 * to keep the call ids correct. */
 			zero_m4(probe_cube_mat);
@@ -2615,7 +2913,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 
 			if (geom) {
 				theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
-				DRWShadingGroup *shgroup = shgroup_theme_id_to_outline_or(stl, theme_id, NULL);
+				DRWShadingGroup *shgroup = shgroup_theme_id_to_outline_or_null(stl, theme_id, ob->base_flag);
 				if (shgroup != NULL) {
 					DRW_shgroup_call_object_add(shgroup, geom, ob);
 				}
@@ -2637,7 +2935,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 						if (theme_id == TH_UNDEFINED) {
 							theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 						}
-						DRWShadingGroup *shgroup = shgroup_theme_id_to_point_or(sgl, theme_id, sgl->points);
+						DRWShadingGroup *shgroup = shgroup_theme_id_to_point(sgl, theme_id, ob->base_flag);
 						DRW_shgroup_call_object_add(shgroup, geom, ob);
 					}
 				}
@@ -2658,7 +2956,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 						if (theme_id == TH_UNDEFINED) {
 							theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 						}
-						DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+						DRWShadingGroup *shgroup = shgroup_theme_id_to_wire(sgl, theme_id, ob->base_flag);
 						DRW_shgroup_call_object_add(shgroup, geom, ob);
 					}
 				}
@@ -2677,7 +2975,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 			if (theme_id == TH_UNDEFINED) {
 				theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 			}
-			DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+			DRWShadingGroup *shgroup = shgroup_theme_id_to_wire(sgl, theme_id, ob->base_flag);
 			DRW_shgroup_call_object_add(shgroup, geom, ob);
 			break;
 		}
@@ -2692,7 +2990,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 					theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 				}
 
-				DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+				DRWShadingGroup *shgroup = shgroup_theme_id_to_wire(sgl, theme_id, ob->base_flag);
 				DRW_shgroup_call_object_add(shgroup, geom, ob);
 			}
 			break;
@@ -2707,7 +3005,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 				if (theme_id == TH_UNDEFINED) {
 					theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 				}
-				DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+				DRWShadingGroup *shgroup = shgroup_theme_id_to_wire(sgl, theme_id, ob->base_flag);
 				DRW_shgroup_call_object_add(shgroup, geom, ob);
 			}
 			break;
@@ -2795,7 +3093,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 					if (theme_id == TH_UNDEFINED) {
 						theme_id = DRW_object_wire_theme_get(ob, view_layer, NULL);
 					}
-					DRWShadingGroup *shgroup = shgroup_theme_id_to_wire_or(sgl, theme_id, sgl->wire);
+					DRWShadingGroup *shgroup = shgroup_theme_id_to_wire(sgl, theme_id, ob->base_flag);
 					DRW_shgroup_call_object_add(shgroup, geom, ob);
 				}
 			}
@@ -2886,15 +3184,17 @@ static void OBJECT_draw_scene(void *vedata)
 	DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
 
 	int id_ct_select =       g_data->id_ofs_select;
+	int id_ct_select_dupli = g_data->id_ofs_select_dupli;
 	int id_ct_active =       g_data->id_ofs_active;
 	int id_ct_transform =    g_data->id_ofs_transform;
 
 	int id_ct_prb_select =       g_data->id_ofs_prb_select;
+	int id_ct_prb_select_dupli = g_data->id_ofs_prb_select_dupli;
 	int id_ct_prb_active =       g_data->id_ofs_prb_active;
 	int id_ct_prb_transform =    g_data->id_ofs_prb_transform;
 
-	int outline_calls = id_ct_select + id_ct_active + id_ct_transform;
-	outline_calls += id_ct_prb_select + id_ct_prb_active + id_ct_prb_transform;
+	int outline_calls = id_ct_select + id_ct_select_dupli + id_ct_active + id_ct_transform;
+	outline_calls += id_ct_prb_select + id_ct_prb_select_dupli + id_ct_prb_active + id_ct_prb_transform;
 
 	float clearcol[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 
@@ -2918,11 +3218,13 @@ static void OBJECT_draw_scene(void *vedata)
 		DRW_stats_group_start("Outlines");
 
 		g_data->id_ofs_active = 1;
-		g_data->id_ofs_select =    g_data->id_ofs_active + id_ct_active + id_ct_prb_active + 1;
-		g_data->id_ofs_transform = g_data->id_ofs_select + id_ct_select + id_ct_prb_select + 1;
+		g_data->id_ofs_select =       g_data->id_ofs_active + id_ct_active + id_ct_prb_active + 1;
+		g_data->id_ofs_select_dupli = g_data->id_ofs_select + id_ct_select + id_ct_prb_select + 1;
+		g_data->id_ofs_transform =    g_data->id_ofs_select_dupli + id_ct_select_dupli + id_ct_prb_select_dupli + 1;
 
 		g_data->id_ofs_prb_active =       g_data->id_ofs_active       + id_ct_active;
 		g_data->id_ofs_prb_select =       g_data->id_ofs_select       + id_ct_select;
+		g_data->id_ofs_prb_select_dupli = g_data->id_ofs_select_dupli + id_ct_select_dupli;
 		g_data->id_ofs_prb_transform =    g_data->id_ofs_transform    + id_ct_transform;
 
 		/* Render filled polygon on a separate framebuffer */
