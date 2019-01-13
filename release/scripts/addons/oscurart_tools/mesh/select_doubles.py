@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 import bpy
+
 from mathutils import Vector
 from bpy.types import Operator
 from bpy.props import (
@@ -35,26 +36,22 @@ D = bpy.data
 
 
 
-def SelDoubles(self, context):
-    bm = bmesh.from_edit_mesh(bpy.context.object.data)
+def SelDoubles(self, context, distance):
+    obj = bpy.context.object
+    me = obj.data
+    bm = bmesh.from_edit_mesh(me)
+    double = bmesh.ops.find_doubles(bm, verts=bm.verts, dist=distance)
 
-    for v in bm.verts:
-        v.select = 0
+    bpy.ops.mesh.select_all(action = 'DESELECT')
 
-    dictloc = {}
+    for vertice in double['targetmap']:
+        vertice.select = True
 
-    rd = lambda x: (round(x[0], 4), round(x[1], 4), round(x[2], 4))
+    # Switch to vertex select
+    bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
 
-    for vert in bm.verts:
-        dictloc.setdefault(rd(vert.co), []).append(vert.index)
-
-    for loc, ind in dictloc.items():
-        if len(ind) > 1:
-            for v in ind:
-                bm.verts[v].select = 1
-
-    bpy.context.view_layer.objects.active = bpy.context.view_layer.objects.active
-
+    # Show the updates in the viewport
+    bmesh.update_edit_mesh(me, False)
 
 class SelectDoubles(Operator):
     """Selects duplicated vertex without merge them"""
@@ -68,8 +65,12 @@ class SelectDoubles(Operator):
                 context.view_layer.objects.active.type == 'MESH' and
                 context.view_layer.objects.active.mode == "EDIT")
 
+    distance : bpy.props.FloatProperty(
+        default=.0001,
+        name="Distance")
+
     def execute(self, context):
-        SelDoubles(self, context)
+        SelDoubles(self, context,self.distance)
         return {'FINISHED'}
 
 

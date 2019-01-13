@@ -132,7 +132,7 @@ class MoveUVImpl():
         bmesh.update_edit_mesh(obj.data)
 
         # check mouse preference
-        if context.preferences.inputs.select_mouse == 'RIGHT':
+        if context.user_preferences.inputs.select_mouse == 'RIGHT':
             confirm_btn = 'LEFTMOUSE'
             cancel_btn = 'RIGHTMOUSE'
         else:

@@ -386,12 +386,18 @@ class GPU_Indices_Mesh():
     def get_loosevert_index(self, index):
         return self.looseverts[index]
 
-
-    def __del__(self):
+    def free(self):
         if len(self.users) == 1:
-            GPU_Indices_Mesh._Hash.pop(obj.data)
+            GPU_Indices_Mesh._Hash.pop(self.obj.data)
+            del self.batch_tris
+            del self.batch_edges
+            del self.batch_lverts
+            del self.verts_co
+            del self.tri_verts
+            del self.edge_verts
+            del self.looseverts
 
-        self.user.remove(self)
+        self.users.remove(self)
         #print('mesh_del', self.obj.name)
 
 

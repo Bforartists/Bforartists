@@ -151,7 +151,7 @@ class MenuStore:
 
 class MenuHandler:
     def __init__(self, title, tsize, act_colr, dis_colr, toolwid, reg):
-        self.dpi = bpy.context.user_preferences.system.dpi
+        self.dpi = bpy.context.preferences.system.dpi
         self.title = title
         # todo : better solution than None "magic numbers"
         self.menus = [None]  # no menu for 0
@@ -249,7 +249,7 @@ class MenuHandler:
 # === 3D View mouse location and button code ===
 class ViewButton():
     def __init__(self, colr_on, colr_off, txt_sz, txt_colr, offs=(0, 0)):
-        self.dpi = bpy.context.user_preferences.system.dpi
+        self.dpi = bpy.context.preferences.system.dpi
         self.is_drawn = False
         self.ms_over = False  # mouse over button
         self.wid = 0
@@ -979,7 +979,7 @@ def draw_callback_px(self, context):
                 if axis_pts is not None:
                     draw_line_2d(axis_pts[0], axis_pts[1], colr)
 
-                dpi = bpy.context.user_preferences.system.dpi
+                dpi = bpy.context.preferences.system.dpi
                 font_id, txt_sz = 0, 32
                 x_pos, y_pos = self.rtoolsw + 80, 36
                 bgl.glColor4f(*colr)
@@ -1042,7 +1042,7 @@ def exit_addon(self):
 def get_reg_overlap():
     rtoolsw = 0  # region tools (toolbar) width
     #ruiw = 0  # region ui (Number/n-panel) width
-    system = bpy.context.user_preferences.system
+    system = bpy.context.preferences.system
     if system.use_region_overlap:
         area = bpy.context.area
         for r in area.regions:

@@ -3311,7 +3311,7 @@ class NWCallInputsMenu(Operator, NWBase):
         return {'FINISHED'}
 
 
-class NWAddSequence(Operator, ImportHelper):
+class NWAddSequence(Operator, NWBase, ImportHelper):
     """Add an Image Sequence"""
     bl_idname = 'node.nw_add_sequence'
     bl_label = 'Import Image Sequence'
@@ -3413,7 +3413,7 @@ class NWAddSequence(Operator, ImportHelper):
         return {'FINISHED'}
 
 
-class NWAddMultipleImages(Operator, ImportHelper):
+class NWAddMultipleImages(Operator, NWBase, ImportHelper):
     """Add multiple images at once"""
     bl_idname = 'node.nw_add_multiple_images'
     bl_label = 'Open Selected Images'
