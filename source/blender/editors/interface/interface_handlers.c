@@ -1125,14 +1125,12 @@ static bool ui_multibut_states_tag(
 
 static void ui_multibut_states_create(uiBut *but_active, uiHandleButtonData *data)
 {
-	uiBut *but;
-
 	BLI_assert(data->multi_data.init == BUTTON_MULTI_INIT_SETUP);
 	BLI_assert(data->multi_data.has_mbuts);
 
 	data->multi_data.bs_mbuts = UI_butstore_create(but_active->block);
 
-	for (but = but_active->block->buttons.first; but; but = but->next) {
+	for (uiBut *but = but_active->block->buttons.first; but; but = but->next) {
 		if (but->flag & UI_BUT_DRAG_MULTI) {
 			ui_multibut_add(data, but);
 		}
@@ -1142,7 +1140,7 @@ static void ui_multibut_states_create(uiBut *but_active, uiHandleButtonData *dat
 	 * note: if we mix buttons which are proportional and others which are not,
 	 * this may work a bit strangely */
 	if ((but_active->rnaprop && (RNA_property_flag(but_active->rnaprop) & PROP_PROPORTIONAL)) ||
-	    ELEM(but->unit_type, PROP_UNIT_LENGTH))
+	    ELEM(but_active->unit_type, PROP_UNIT_LENGTH))
 	{
 		if (data->origvalue != 0.0) {
 			data->multi_data.is_proportional = true;
@@ -9322,6 +9320,7 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
 
 	ui_window_to_block_fl(ar, block, &event_xy[0], &event_xy[1]);
 
+	/* Distance from initial point. */
 	dist = ui_block_calc_pie_segment(block, event_xy);
 
 	if (but && button_modal_state(but->active->state)) {
@@ -9406,8 +9405,9 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
 				ED_region_tag_redraw(ar);
 			}
 			else {
-				/* distance from initial point */
-				if (!(block->pie_data.flags & UI_PIE_DRAG_STYLE)) {
+				if ((duration < 0.01 * U.pie_tap_timeout) &&
+				    !(block->pie_data.flags & UI_PIE_DRAG_STYLE))
+				{
 					block->pie_data.flags |= UI_PIE_CLICK_STYLE;
 				}
 				else {
