@@ -418,6 +418,11 @@ static PointerRNA rna_Theme_space_generic_get(PointerRNA *ptr)
 	return rna_pointer_inherit_refine(ptr, &RNA_ThemeSpaceGeneric, ptr->data);
 }
 
+static PointerRNA rna_Theme_gradient_colors_get(PointerRNA *ptr)
+{
+	return rna_pointer_inherit_refine(ptr, &RNA_ThemeGradientColors, ptr->data);
+}
+
 static PointerRNA rna_Theme_space_gradient_get(PointerRNA *ptr)
 {
 	return rna_pointer_inherit_refine(ptr, &RNA_ThemeSpaceGradient, ptr->data);
@@ -1045,27 +1050,31 @@ static void rna_def_userdef_theme_ui_panel(BlenderRNA *brna)
 
 static void rna_def_userdef_theme_ui_gradient(BlenderRNA *brna)
 {
+	/* Fake struct, keep this for compatible theme presets. */
 	StructRNA *srna;
 	PropertyRNA *prop;
 
 	srna = RNA_def_struct(brna, "ThemeGradientColors", NULL);
-	RNA_def_struct_sdna(srna, "uiGradientColors");
+	RNA_def_struct_sdna(srna, "ThemeSpace");
 	RNA_def_struct_clear_flag(srna, STRUCT_UNDO);
 	RNA_def_struct_ui_text(srna, "Theme Background Color", "Theme settings for background colors and gradient");
 
 	prop = RNA_def_property(srna, "show_grad", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "show_back_grad", 1);
 	RNA_def_property_ui_text(prop, "Use Gradient",
 	                         "Do a gradient for the background of the viewport working area");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-	prop = RNA_def_property(srna, "gradient", PROP_FLOAT, PROP_COLOR_GAMMA);
-	RNA_def_property_array(prop, 3);
-	RNA_def_property_ui_text(prop, "Gradient Low", "");
-	RNA_def_property_update(prop, 0, "rna_userdef_update");
-
 	prop = RNA_def_property(srna, "high_gradient", PROP_FLOAT, PROP_COLOR_GAMMA);
+	RNA_def_property_float_sdna(prop, NULL, "back");
 	RNA_def_property_array(prop, 3);
 	RNA_def_property_ui_text(prop, "Gradient High/Off", "");
+	RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+	prop = RNA_def_property(srna, "gradient", PROP_FLOAT, PROP_COLOR_GAMMA);
+	RNA_def_property_float_sdna(prop, NULL, "back_grad");
+	RNA_def_property_array(prop, 3);
+	RNA_def_property_ui_text(prop, "Gradient Low", "");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 }
 
@@ -1415,6 +1424,8 @@ static void rna_def_userdef_theme_space_gradient(BlenderRNA *brna)
 	/* gradient/background settings */
 	prop = RNA_def_property(srna, "gradients", PROP_POINTER, PROP_NONE);
 	RNA_def_property_flag(prop, PROP_NEVER_NULL);
+	RNA_def_property_struct_type(prop, "ThemeGradientColors");
+	RNA_def_property_pointer_funcs(prop, "rna_Theme_gradient_colors_get", NULL, NULL, NULL);
 	RNA_def_property_ui_text(prop, "Gradient Colors", "");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 
@@ -3809,6 +3820,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	                         "Pie menus will use the initial mouse position as center for this amount of time "
 	                         "(in 1/100ths of sec)");
 
+	prop = RNA_def_property(srna, "pie_tap_timeout", PROP_INT, PROP_NONE);
+	RNA_def_property_range(prop, 0, 1000);
+	RNA_def_property_ui_text(prop, "Tap Key Timeout",
+	                         "Pie menu button held longer than this will dismiss menu on release."
+	                         "(in 1/100ths of sec)");
+
 	prop = RNA_def_property(srna, "pie_animation_timeout", PROP_INT, PROP_NONE);
 	RNA_def_property_range(prop, 0, 1000);
 	RNA_def_property_ui_text(prop, "Animation Timeout",
@@ -4070,18 +4087,6 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_ADD_EDITMODE);
 	RNA_def_property_ui_text(prop, "Enter Edit Mode", "Enter Edit Mode automatically after adding a new object");
 
-	prop = RNA_def_property(srna, "use_drag_immediately", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_RELEASECONFIRM);
-	RNA_def_property_ui_text(prop, "Release confirms",
-	                         "Moving things with a mouse drag confirms when releasing the button");
-
-	prop = RNA_def_property(srna, "use_numeric_input_advanced", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_FLAG_NUMINPUT_ADVANCED);
-	RNA_def_property_ui_text(
-	        prop, "Default to Advanced Numeric Input",
-	        "When entering numbers while transforming, "
-	        "default to advanced mode for full math expression evaluation");
-
 	/* Undo */
 
 	prop = RNA_def_property(srna, "undo_steps", PROP_INT, PROP_NONE);
@@ -4256,6 +4261,17 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
 	RNA_def_property_int_sdna(prop, NULL, "node_margin");
 	RNA_def_property_ui_text(prop, "Auto-offset Margin", "Minimum distance between nodes for Auto-offsetting nodes");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
+
+	/* cursor */
+	prop = RNA_def_property(srna, "use_cursor_lock_adjust", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_LOCK_CURSOR_ADJUST);
+	RNA_def_property_ui_text(prop, "Cursor Lock Adjust",
+	                         "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)");
+
+	prop = RNA_def_property(srna, "use_mouse_depth_cursor", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_DEPTH_CURSOR);
+	RNA_def_property_ui_text(prop, "Cursor Surface Project",
+	                         "Use the surface depth for cursor placement");
 }
 
 static void rna_def_userdef_system(BlenderRNA *brna)
@@ -4626,20 +4642,10 @@ static void rna_def_userdef_input(BlenderRNA *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_ZOOM_INVERT);
 	RNA_def_property_ui_text(prop, "Invert Zoom Direction", "Invert the axis of mouse movement for zooming");
 
-	prop = RNA_def_property(srna, "use_cursor_lock_adjust", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_LOCK_CURSOR_ADJUST);
-	RNA_def_property_ui_text(prop, "Cursor Lock Adjust",
-	                         "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)");
-
 	prop = RNA_def_property(srna, "use_mouse_depth_navigate", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_DEPTH_NAVIGATE);
 	RNA_def_property_ui_text(prop, "Auto Depth",
 	                         "Use the depth under the mouse to improve view pan/rotate/zoom functionality");
-
-	prop = RNA_def_property(srna, "use_mouse_depth_cursor", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_DEPTH_CURSOR);
-	RNA_def_property_ui_text(prop, "Cursor Surface Project",
-	                         "Use the surface depth for cursor placement");
 
 	prop = RNA_def_property(srna, "use_camera_lock_parent", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "uiflag", USER_CAM_LOCK_NO_PARENT);
@@ -4675,6 +4681,18 @@ static void rna_def_userdef_input(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Continuous Grab",
 	                         "Allow moving the mouse outside the view on some manipulations "
 	                         "(transform, ui control drag)");
+
+	prop = RNA_def_property(srna, "use_drag_immediately", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_RELEASECONFIRM);
+	RNA_def_property_ui_text(prop, "Release Confirms",
+	                         "Moving things with a mouse drag confirms when releasing the button");
+
+	prop = RNA_def_property(srna, "use_numeric_input_advanced", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_FLAG_NUMINPUT_ADVANCED);
+	RNA_def_property_ui_text(
+	        prop, "Default to Advanced Numeric Input",
+	        "When entering numbers while transforming, "
+	        "default to advanced mode for full math expression evaluation");
 
 	/* View Navigation */
 	prop = RNA_def_property(srna, "navigation_mode", PROP_ENUM, PROP_NONE);
@@ -4916,12 +4934,6 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
 	                         "Allow any .blend file to run scripts automatically "
 	                         "(unsafe with blend files from an untrusted source)");
 	RNA_def_property_update(prop, 0, "rna_userdef_script_autoexec_update");
-
-	prop = RNA_def_property(srna, "author", PROP_STRING, PROP_NONE);
-	RNA_def_property_string_sdna(prop, NULL, "author");
-	RNA_def_property_string_maxlength(prop, 80);
-	RNA_def_property_ui_text(prop, "Author",
-	                         "Name that will be used in exported files when format supports such feature");
 
 	prop = RNA_def_property(srna, "use_tabs_as_spaces", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", USER_TXT_TABSTOSPACES_DISABLE);

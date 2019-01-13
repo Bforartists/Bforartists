@@ -191,6 +191,7 @@ class GreasePencilStrokeEditPanel:
         col.operator("gpencil.duplicate_move", text="Duplicate")
         if is_3d_view:
             col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
+            col.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
 
         layout.separator()
 
@@ -728,7 +729,7 @@ class AnnotationDataPanel:
         else:
             layer_rows = 3
         col.template_list("GPENCIL_UL_annotation_layer", "", gpd, "layers", gpd.layers, "active_index",
-                          rows=layer_rows, reverse=True)
+                          rows=layer_rows, sort_reverse=True, sort_lock=True)
 
         col = row.column()
 

@@ -2,6 +2,7 @@ uniform mat4 ModelViewProjectionMatrix;
 uniform vec2 Viewport;
 uniform int xraymode;
 uniform int color_type;
+uniform int caps_mode[2];
 
 layout(lines_adjacency) in;
 layout(triangle_strip, max_vertices = 13) out;
@@ -12,7 +13,7 @@ in vec2 finaluvdata[4];
 
 out vec4 mColor;
 out vec2 mTexCoord;
-out float uvfac;
+out vec2 uvfac;
 
 #define GP_XRAY_FRONT 0
 #define GP_XRAY_3DSPACE 1
@@ -22,6 +23,8 @@ out float uvfac;
 #define GPENCIL_COLOR_SOLID   0
 #define GPENCIL_COLOR_TEXTURE 1
 #define GPENCIL_COLOR_PATTERN 2
+
+#define GPENCIL_FLATCAP 1
 
 /* project 3d point to 2d on screen space */
 vec2 toScreenSpace(vec4 vertex)
@@ -64,7 +67,7 @@ bool is_equal(vec4 p1, vec4 p2)
 void main(void)
 {
 	float MiterLimit = 0.75;
-	uvfac = 0;
+	uvfac = vec2(0.0, 0.0);
 
 	/* receive 4 points */
 	vec4 P0 = gl_in[0].gl_Position;
@@ -158,26 +161,34 @@ void main(void)
 		length_b = finalThickness[2];
 	}
 
-	/* generate the start endcap (alpha < 0 used as endcap flag)*/
-	if (is_equal(P0,P2) && (color_type == GPENCIL_COLOR_SOLID)){
-		mTexCoord = vec2(2, 1);
-		mColor = vec4(finalColor[1].rgb, finalColor[1].a * -1.0) ;
+	/* generate the start endcap */
+	if ((caps_mode[0] != GPENCIL_FLATCAP) && is_equal(P0,P2) &&
+		(color_type == GPENCIL_COLOR_SOLID))
+	{
+		vec4 cap_color = finalColor[1];
+
+		mTexCoord = vec2(2.0, 1.0);
+		mColor = cap_color;
 		vec2 svn1 =  normalize(sp1 - sp2) * length_a * 4.0;
+		uvfac = vec2(0.0, 1.0);
 		gl_Position = vec4((sp1 + svn1) / Viewport, getZdepth(P1), 1.0);
 		EmitVertex();
 
-		mTexCoord = vec2(0, 0);
-		mColor = vec4(finalColor[1].rgb, finalColor[1].a * -1.0) ;
+		mTexCoord = vec2(0.0, 0.0);
+		mColor = cap_color;
+		uvfac = vec2(0.0, 1.0);
 		gl_Position = vec4((sp1 - (length_a * 2.0) * miter_a) / Viewport, getZdepth(P1), 1.0);
 		EmitVertex();
 
-		mTexCoord = vec2(0, 2);
-		mColor = vec4(finalColor[1].rgb, finalColor[1].a * -1.0) ;
+		mTexCoord = vec2(0.0, 2.0);
+		mColor = cap_color;
+		uvfac = vec2(0.0, 1.0);
 		gl_Position = vec4((sp1 + (length_a * 2.0) * miter_a) / Viewport, getZdepth(P1), 1.0);
 		EmitVertex();
 	}
 
 	/* generate the triangle strip */
+	uvfac = vec2(0.0, 0.0);
 	mTexCoord = (color_type == GPENCIL_COLOR_SOLID) ? vec2(0, 0) : vec2(finaluvdata[1].x, 0);
 	mColor = finalColor[1];
 	gl_Position = vec4((sp1 + length_a * miter_a) / Viewport, getZdepth(P1), 1.0);
@@ -198,23 +209,27 @@ void main(void)
 	gl_Position = vec4((sp2 - length_b * miter_b) / Viewport, getZdepth(P2), 1.0);
 	EmitVertex();
 
-	/* generate the end endcap (alpha < 0 used as endcap flag)*/
-	if (is_equal(P1,P3) && (color_type == GPENCIL_COLOR_SOLID) && (finaluvdata[2].x > 0)){
-		mTexCoord = vec2(finaluvdata[2].x, 2);
-		mColor = vec4(finalColor[2].rgb, finalColor[2].a * -1.0) ;
-		uvfac = finaluvdata[2].x;
+	/* generate the end endcap */
+	if ((caps_mode[1] != GPENCIL_FLATCAP) && is_equal(P1,P3) &&
+		(color_type == GPENCIL_COLOR_SOLID) && (finaluvdata[2].x > 0))
+	{
+		vec4 cap_color = finalColor[2];
+
+		mTexCoord = vec2(finaluvdata[2].x, 2.0);
+		mColor = cap_color;
+		uvfac = vec2(finaluvdata[2].x, 1.0);
 		gl_Position = vec4((sp2 + (length_b * 2.0) * miter_b) / Viewport, getZdepth(P2), 1.0);
 		EmitVertex();
 
-		mTexCoord = vec2(finaluvdata[2].x, 0);
-		mColor = vec4(finalColor[2].rgb, finalColor[2].a * -1.0) ;
-		uvfac = finaluvdata[2].x;
+		mTexCoord = vec2(finaluvdata[2].x, 0.0);
+		mColor = cap_color;
+		uvfac = vec2(finaluvdata[2].x, 1.0);
 		gl_Position = vec4((sp2 - (length_b * 2.0) * miter_b) / Viewport, getZdepth(P2), 1.0);
 		EmitVertex();
 
-		mTexCoord = vec2(finaluvdata[2].x + 2, 1);
-		mColor = vec4(finalColor[2].rgb, finalColor[2].a * -1.0) ;
-		uvfac = finaluvdata[2].x;
+		mTexCoord = vec2(finaluvdata[2].x + 2, 1.0);
+		mColor = cap_color;
+		uvfac = vec2(finaluvdata[2].x, 1.0);
 		vec2 svn2 =  normalize(sp2 - sp1) * length_b * 4.0;
 		gl_Position = vec4((sp2 + svn2) / Viewport, getZdepth(P2), 1.0);
 		EmitVertex();
