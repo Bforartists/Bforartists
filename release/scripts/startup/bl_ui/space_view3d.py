@@ -3865,7 +3865,7 @@ class VIEW3D_MT_gpencil_autoweights(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("gpencil.generate_weights", text="With Empty Groups").mode = 'NAME'
+        layout.operator("gpencil.generate_weights", text="With Empty Groups", icon = "ADD").mode = 'NAME'
         layout.operator("gpencil.generate_weights", text="With Automatic Weights").mode = 'AUTO'
 
 
@@ -3874,8 +3874,8 @@ class VIEW3D_MT_gpencil_simplify(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("gpencil.stroke_simplify_fixed", text="Fixed")
-        layout.operator("gpencil.stroke_simplify", text="Adaptative")
+        layout.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon = "MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Adaptative", icon = "MOD_SIMPLIFY")
 
 
 class VIEW3D_MT_paint_gpencil(Menu):
@@ -3956,10 +3956,11 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
-        layout.operator("gpencil.stroke_split", text="Split")
-        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join", icon ='JOIN')
-        layout.operator("gpencil.stroke_flip", text="Flip Direction")
+        #layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
+        layout.menu("GPENCIL_MT_separate")
+        layout.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
+        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join")       
+        layout.operator("gpencil.stroke_flip", text="Flip Direction", icon = "FLIP")
 
         layout.separator()
 
@@ -3993,8 +3994,8 @@ class VIEW3D_MT_weight_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.vertex_group_invert", text="Invert")
-        layout.operator("gpencil.vertex_group_smooth", text="Smooth")
+        layout.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
+        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
 
         layout.separator()
         layout.menu("VIEW3D_MT_gpencil_autoweights")
@@ -4012,7 +4013,7 @@ class VIEW3D_MT_gpencil_animation(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.blank_frame_add")
+        layout.operator("gpencil.blank_frame_add", icon = "ADD")
         layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)", icon = "DELETE")
 
         layout.separator()
@@ -4048,8 +4049,8 @@ class VIEW3D_MT_edit_gpencil_interpolate(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.interpolate", text="Interpolate")
-        layout.operator("gpencil.interpolate_sequence", text="Sequence")
+        layout.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
+        layout.operator("gpencil.interpolate_sequence", text="Sequence", icon = "SEQUENCE")
 
 
 class VIEW3D_MT_object_mode_pie(Menu):
