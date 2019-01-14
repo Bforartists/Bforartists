@@ -229,7 +229,8 @@ class GreasePencilStrokeEditPanel:
 
             col = layout.column(align=True)
             col.operator_menu_enum("gpencil.stroke_separate", text="Separate...", property="mode")
-            col.operator("gpencil.stroke_split", text="Split")
+            col.menu("GPENCIL_MT_separate")
+            col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
 
             col = layout.column(align=True)
             col.label(text="Cleanup:")
@@ -593,15 +594,15 @@ class GPENCIL_MT_snap(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.snap_to_grid", text="Selection to Grid")
-        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor").use_offset = False
-        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)").use_offset = True
+        layout.operator("gpencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
+        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
+        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
 
         layout.separator()
 
-        layout.operator("gpencil.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+        layout.operator("gpencil.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")   
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
 
 
 class GPENCIL_MT_separate(Menu):
@@ -609,9 +610,9 @@ class GPENCIL_MT_separate(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("gpencil.stroke_separate", text="Selected Points").mode = 'POINT'
-        layout.operator("gpencil.stroke_separate", text="Selected Strokes").mode = 'STROKE'
-        layout.operator("gpencil.stroke_separate", text="Active Layer").mode = 'LAYER'
+        layout.operator("gpencil.stroke_separate", text="Selected Points", icon = "SEPARATE").mode = 'POINT'
+        layout.operator("gpencil.stroke_separate", text="Selected Strokes", icon = "SEPARATE").mode = 'STROKE'
+        layout.operator("gpencil.stroke_separate", text="Active Layer", icon = "SEPARATE").mode = 'LAYER'
 
 
 class GPENCIL_MT_gpencil_draw_specials(Menu):
@@ -641,7 +642,7 @@ class GPENCIL_MT_gpencil_draw_delete(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame")
+        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame", icon = "DELETE")
 
 
 class GPENCIL_MT_cleanup(Menu):
