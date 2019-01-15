@@ -32,16 +32,20 @@ def update(filepath):
 
     print("Updating theme: %r" % filepath)
     preset_xml_map = (
-        ("user_preferences.themes[0]", "Theme"),
-        ("user_preferences.ui_styles[0]", "Theme"),
+        ("preferences.themes[0]", "Theme"),
+        ("preferences.ui_styles[0]", "Theme"),
     )
-    rna_xml.xml_file_run(context,
-                         filepath,
-                         preset_xml_map)
+    rna_xml.xml_file_run(
+        context,
+        filepath,
+        preset_xml_map,
+    )
 
-    rna_xml.xml_file_write(context,
-                           filepath,
-                           preset_xml_map)
+    rna_xml.xml_file_write(
+        context,
+        filepath,
+        preset_xml_map,
+    )
 
 
 def main():
