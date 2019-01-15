@@ -1610,6 +1610,18 @@ class VIEW3D_MT_object_relations(Menu):
         layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
         layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
 
+class VIEW3D_MT_origin_set(Menu):
+    bl_label = "Set Origin"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text = "Geometry to Origin").type='GEOMETRY_ORIGIN'
+        layout.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text = "Origin to Geometry").type='ORIGIN_GEOMETRY'
+        layout.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text = "Origin to 3D Cursor").type='ORIGIN_CURSOR'
+        layout.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text = "Origin to Center of Mass (Surface)").type='ORIGIN_CENTER_OF_MASS'
+        layout.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text = "Origin to Center of Mass (Volume)").type='ORIGIN_CENTER_OF_VOLUME'
+
 
 class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
@@ -1619,7 +1631,7 @@ class VIEW3D_MT_object(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_transform_object")
-        layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
+        layout.menu("VIEW3D_MT_origin_set")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
@@ -5686,6 +5698,7 @@ classes = (
     VIEW3D_MT_camera_add,
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
+    VIEW3D_MT_origin_set,
     VIEW3D_MT_object,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_rigid_body,
