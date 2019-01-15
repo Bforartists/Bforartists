@@ -3959,7 +3959,11 @@ class VIEW3D_MT_edit_gpencil(Menu):
         #layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
         layout.menu("GPENCIL_MT_separate")
         layout.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
-        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join")       
+        layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+        layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
+
+        layout.separator()
+
         layout.operator("gpencil.stroke_flip", text="Flip Direction", icon = "FLIP")
 
         layout.separator()
@@ -3970,7 +3974,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer", icon = "LAYER")
+        layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes")
 
