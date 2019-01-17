@@ -671,7 +671,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
         
         layout.operator("view3d.localview", text="Toggle Local View", icon = "VIEW_GLOBAL_LOCAL")
-        layout.operator("view3d.localview_remove_from")
+        layout.operator("view3d.localview_remove_from", icon = "VIEW_REMOVE_LOCAL")
 
         layout.separator()
 
