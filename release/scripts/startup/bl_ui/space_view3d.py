@@ -804,7 +804,7 @@ class VIEW3D_MT_view_align_selected(Menu):
 # ********** Select menus, suffix from context.mode **********
 
 class VIEW3D_MT_select_object_more_less(Menu):
-    bl_label = "Select More/Less"
+    bl_label = "More/Less"
 
     def draw(self, context):
         layout = self.layout
@@ -852,10 +852,10 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_by_type", "type", text="Select All by Type")
-        layout.operator("object.select_camera", text="Select Active Camera", icon = "CAMERA_DATA")
-        layout.operator("object.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
-        layout.operator("object.select_random", text="Select Random", icon = "RANDOMIZE")
+        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type")
+        layout.operator("object.select_camera", text="Active Camera", icon = "CAMERA_DATA")
+        layout.operator("object.select_mirror", text="Selection", icon = "TRANSFORM_MIRROR")
+        layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -863,13 +863,13 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_grouped", "type", text="Select Grouped")
-        layout.operator_menu_enum("object.select_linked", "type", text="Select Linked")
-        layout.operator("object.select_pattern", text="Select Pattern", icon = "PATTERN")
+        layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
+        layout.operator_menu_enum("object.select_linked", "type", text="Linked")
+        layout.operator("object.select_pattern", text="Pattern", icon = "PATTERN")
 
 
 class VIEW3D_MT_select_pose_more_less(Menu):
-    bl_label = "Select More/Less"
+    bl_label = "More/Less"
 
     def draw(self, context):
         layout = self.layout
@@ -946,16 +946,16 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_linked", icon = "LINKED")
+        layout.operator("particle.select_linked", text = "Linked", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("particle.select_more", icon = "SELECTMORE")
-        layout.operator("particle.select_less", icon = "SELECTLESS")
+        layout.operator("particle.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("particle.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
-        layout.operator("particle.select_random", icon = "RANDOMIZE")
+        layout.operator("particle.select_random", text = "Random", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -1011,7 +1011,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
 
 
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
-    bl_label = "Select More/Less"
+    bl_label = "More/Less"
 
     def draw(self, context):
         layout = self.layout
@@ -1117,9 +1117,9 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", icon = "RANDOMIZE")
+        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
-        layout.operator("curve.select_linked", text="Select Linked", icon = "LINKED")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
 
         layout.separator()
@@ -1131,8 +1131,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", icon = "SELECTMORE")
-        layout.operator("curve.select_less", icon = "SELECTLESS")
+        layout.operator("curve.select_more", text= "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text= "Less", icon = "SELECTLESS")
 
 class VIEW3D_MT_select_edit_curve_select_similar(Menu):
     bl_label = "Similar"
@@ -1163,10 +1163,10 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", icon = "RANDOMIZE")
+        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
-        layout.operator("curve.select_linked", text="Select Linked", icon = "LINKED")
-        layout.operator("curve.select_similar", text="Select Similar")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_similar", text="Similar")
 
         layout.separator()
 
@@ -1174,8 +1174,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", icon = "SELECTMORE")
-        layout.operator("curve.select_less", icon = "SELECTLESS")
+        layout.operator("curve.select_more", text= "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text= "Less", icon = "SELECTLESS")
 
 class VIEW3D_MT_select_edit_text(Menu):
     # intentional name mismatch
@@ -1215,7 +1215,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems", icon = "RANDOMIZE")
+        layout.operator("mball.select_random_metaelems", text = "Random", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -1239,13 +1239,13 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_mirror", icon = "TRANSFORM_MIRROR")
-        layout.operator("lattice.select_random", icon = "RANDOMIZE")
+        layout.operator("lattice.select_mirror", text = "Mirror", icon = "TRANSFORM_MIRROR")
+        layout.operator("lattice.select_random", text = "Random", icon = "RANDOMIZE")
 
         layout.separator()
 
-        layout.operator("lattice.select_more", icon = "SELECTMORE")
-        layout.operator("lattice.select_less", icon = "SELECTLESS")
+        layout.operator("lattice.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("lattice.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1323,13 +1323,13 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_first", icon = "SELECT_FIRST")
-        layout.operator("gpencil.select_last", icon = "SELECT_LAST")
+        layout.operator("gpencil.select_first", text = "First", icon = "SELECT_FIRST")
+        layout.operator("gpencil.select_last", text = "Last", icon = "SELECT_LAST")
 
         layout.separator()
 
-        layout.operator("gpencil.select_more", icon = "SELECTMORE")
-        layout.operator("gpencil.select_less", icon = "SELECTLESS")
+        layout.operator("gpencil.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("gpencil.select_less", text = "Less", icon = "SELECTLESS")
 
 
 class VIEW3D_MT_select_gpencil_grouped(Menu):
