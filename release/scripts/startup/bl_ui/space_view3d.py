@@ -847,6 +847,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -907,6 +908,7 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -941,6 +943,7 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1038,6 +1041,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1112,6 +1116,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1158,6 +1163,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1210,6 +1216,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1234,6 +1241,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1264,6 +1272,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1312,6 +1321,7 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("gpencil.select_box", icon='BORDER_RECT')
         layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1353,7 +1363,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
-
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon = 'BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -1374,6 +1384,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
         layout.operator("view3d.select_box", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
