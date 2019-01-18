@@ -3468,7 +3468,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
                 layout.separator()
 
-                layout.operator_menu_enum("curve.handle_type_set", "type")
+                layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
                 layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
 
                 layout.separator()
@@ -3486,6 +3486,22 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         layout.separator()
 
         layout.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+
+class VIEW3D_MT_edit_curve_handle_type_set(Menu):
+    bl_label = "Set Handle Type"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="Automatic").type = 'AUTOMATIC'
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR', text="Vector").type = 'VECTOR'
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="Aligned").type = 'ALIGNED'
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_FREE', text="Free").type = 'FREE_ALIGN'
+
+        layout.separator()
+
+        layout.operator("curve.handle_type_set", icon = 'HANDLE_FREE', text="Toggle Free / Aligned").type = 'TOGGLE_FREE_ALIGN'
 
 
 class VIEW3D_MT_edit_curve_segments(Menu):
@@ -5768,6 +5784,7 @@ classes = (
     VIEW3D_MT_gpencil_copy_layer,
     VIEW3D_MT_edit_curve,
     VIEW3D_MT_edit_curve_ctrlpoints,
+    VIEW3D_MT_edit_curve_handle_type_set,
     VIEW3D_MT_edit_curve_segments,
     VIEW3D_MT_edit_curve_clean,
     VIEW3D_MT_edit_curve_specials,
