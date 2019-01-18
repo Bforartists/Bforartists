@@ -865,8 +865,22 @@ class VIEW3D_MT_select_object(Menu):
         layout.separator()
 
         layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
-        layout.operator_menu_enum("object.select_linked", "type", text="Linked")
+        layout.menu ("VIEW3D_MT_select_linked")
         layout.operator("object.select_pattern", text="Pattern", icon = "PATTERN")
+
+
+class VIEW3D_MT_select_linked(Menu):
+    bl_label = "Linked"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_linked", text= "Object Data", icon = "OBJECT_DATA").type = 'OBDATA'
+        layout.operator("object.select_linked", text= "Material", icon = "MATERIAL_DATA").type = 'MATERIAL'
+        layout.operator("object.select_linked", text= "Instanced Collection", icon = "GROUP").type = 'DUPGROUP'
+        layout.operator("object.select_linked", text= "Particle System", icon = "PARTICLES").type = 'PARTICLE'
+        layout.operator("object.select_linked", text= "Library", icon = "LIBRARY").type = 'LIBRARY'
+        layout.operator("object.select_linked", text= "Library (Object Data)", icon = "LIBRARY_OBJECT").type = 'LIBRARY_OBDATA'
 
 
 class VIEW3D_MT_select_pose_more_less(Menu):
@@ -5731,6 +5745,7 @@ classes = (
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_select_object,
+    VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_pose_more_less,
