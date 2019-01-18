@@ -3430,12 +3430,12 @@ def draw_curve(self, context):
     layout.operator("curve.split", icon = "SPLIT")
     layout.operator("curve.separate", icon = "SEPARATE")
     layout.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+    layout.operator("curve.decimate", icon = "DECIMATE")
     layout.operator_menu_enum("curve.spline_type_set", "type")
 
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_showhide")
-    layout.menu("VIEW3D_MT_edit_curve_clean")
     layout.menu("VIEW3D_MT_edit_curve_delete")
 
 
@@ -3512,15 +3512,6 @@ class VIEW3D_MT_edit_curve_segments(Menu):
 
         layout.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
         layout.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
-
-
-class VIEW3D_MT_edit_curve_clean(Menu):
-    bl_label = "Clean Up"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.decimate", icon = "DECIMATE")
 
 
 class VIEW3D_MT_edit_curve_specials(Menu):
@@ -5786,7 +5777,6 @@ classes = (
     VIEW3D_MT_edit_curve_ctrlpoints,
     VIEW3D_MT_edit_curve_handle_type_set,
     VIEW3D_MT_edit_curve_segments,
-    VIEW3D_MT_edit_curve_clean,
     VIEW3D_MT_edit_curve_specials,
     VIEW3D_MT_edit_curve_delete,
     VIEW3D_MT_edit_curve_showhide,
