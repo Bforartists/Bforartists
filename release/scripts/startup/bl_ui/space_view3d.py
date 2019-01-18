@@ -964,12 +964,46 @@ class VIEW3D_MT_select_particle(Menu):
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
-    bl_label = "Select Similar"
+    bl_label = "Similar"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("mesh.select_similar", "type")
+        select_mode = context.tool_settings.mesh_select_mode 
+
+        # Vertices select mode
+        if tuple(select_mode) == (True, False, False):
+
+            layout.operator("mesh.select_similar", text= "Normal", icon = "RECALC_NORMALS").type='NORMAL'
+            layout.operator("mesh.select_similar", text= "Amount of Adjacent Faces", icon = "FACESEL").type='FACE'
+            layout.operator("mesh.select_similar", text= "Vertex Groups", icon = "GROUP_VERTEX").type='VGROUP'
+            layout.operator("mesh.select_similar", text= "Amount of connecting Edges", icon = "EDGESEL").type='EDGE'
+        
+        # Edges select mode
+        if tuple(select_mode) == (False, True, False):
+
+            layout.operator("mesh.select_similar", text= "Length", icon = "RULER").type='LENGTH'
+            layout.operator("mesh.select_similar", text= "Direction", icon = "SWITCH_DIRECTION").type='DIR'
+            layout.operator("mesh.select_similar", text= "Amount of Faces around an edge", icon = "FACESEL").type='FACE'
+            layout.operator("mesh.select_similar", text= "Face Angles", icon = "ANGLE").type='FACE_ANGLE'
+            layout.operator("mesh.select_similar", text= "Crease", icon = "CREASE").type='CREASE'
+            layout.operator("mesh.select_similar", text= "Bevel", icon = "BEVEL").type='BEVEL'
+            layout.operator("mesh.select_similar", text= "Seam", icon = "MARK_SEAM").type='SEAM'
+            layout.operator("mesh.select_similar", text= "Sharpness", icon = "SELECT_SHARPEDGES").type='SHARP'
+            layout.operator("mesh.select_similar", text= "Freestyle Edge Marks", icon = "MARK_FS_EDGE").type='FREESTYLE_EDGE'
+        
+        # Faces select mode
+        if tuple(select_mode) == (False, False, True ):
+
+            layout.operator("mesh.select_similar", text= "Material", icon = "MATERIAL").type='MATERIAL'           
+            layout.operator("mesh.select_similar", text= "Area", icon = "AREA").type='AREA'
+            layout.operator("mesh.select_similar", text= "Polygon Sides", icon = "POLYGONSIDES").type='SIDES'
+            layout.operator("mesh.select_similar", text= "Perimeter", icon = "PERIMETER").type='PERIMETER'
+            layout.operator("mesh.select_similar", text= "Normal", icon = "RECALC_NORMALS").type='NORMAL'
+            layout.operator("mesh.select_similar", text= "Co-Planar", icon = "MAKE_PLANAR").type='COPLANAR'
+            layout.operator("mesh.select_similar", text= "Flat / Smooth", icon = "SHADING_SMOOTH").type='SMOOTH'
+            layout.operator("mesh.select_similar", text= "Image", icon = "TEXTURE").type='FACE_MAP'
+            layout.operator("mesh.select_similar", text= "Freestyle Face Marks", icon = "MARKFSFACE").type='FREESTYLE_FACE'
 
         layout.separator()
 
@@ -1086,7 +1120,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
         layout.operator("curve.select_linked", text="Select Linked", icon = "LINKED")
-        layout.operator("curve.select_similar", text="Select Similar")
+        layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
 
         layout.separator()
 
@@ -1099,6 +1133,17 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.operator("curve.select_more", icon = "SELECTMORE")
         layout.operator("curve.select_less", icon = "SELECTLESS")
+
+class VIEW3D_MT_select_edit_curve_select_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.select_similar", text="Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("curve.select_similar", text="Radius", icon = "RADIUS").type = 'RADIUS'
+        layout.operator("curve.select_similar", text="Weight", icon = "MOD_VERTEX_WEIGHT").type = 'WEIGHT'
+        layout.operator("curve.select_similar", text="Direction", icon = "SWITCH_DIRECTION").type = 'DIRECTION'
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
@@ -1131,7 +1176,6 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.operator("curve.select_more", icon = "SELECTMORE")
         layout.operator("curve.select_less", icon = "SELECTLESS")
-
 
 class VIEW3D_MT_select_edit_text(Menu):
     # intentional name mismatch
@@ -5686,6 +5730,7 @@ classes = (
     VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve,
+    VIEW3D_MT_select_edit_curve_select_similar,
     VIEW3D_MT_select_edit_surface,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball,
