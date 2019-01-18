@@ -1002,7 +1002,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
             layout.operator("mesh.select_similar", text= "Normal", icon = "RECALC_NORMALS").type='NORMAL'
             layout.operator("mesh.select_similar", text= "Co-Planar", icon = "MAKE_PLANAR").type='COPLANAR'
             layout.operator("mesh.select_similar", text= "Flat / Smooth", icon = "SHADING_SMOOTH").type='SMOOTH'
-            layout.operator("mesh.select_similar", text= "Image", icon = "TEXTURE").type='FACE_MAP'
+            layout.operator("mesh.select_similar", text= "Face Map", icon = "TEXTURE").type='FACE_MAP'
             layout.operator("mesh.select_similar", text= "Freestyle Face Marks", icon = "MARKFSFACE").type='FREESTYLE_FACE'
 
         layout.separator()
