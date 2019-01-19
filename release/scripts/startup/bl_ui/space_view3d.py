@@ -864,9 +864,33 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
+        layout.menu ("VIEW3D_MT_select_grouped")
         layout.menu ("VIEW3D_MT_select_linked")
         layout.operator("object.select_pattern", text="Pattern", icon = "PATTERN")
+
+class VIEW3D_MT_select_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'      
+        layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
+        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+
+        layout.separator()
+
+        layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("object.select_grouped", text= "Collection", icon = "LAYER").type = 'COLLECTION'
+        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
+
+        layout.separator()
+
+        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
+        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
+        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
+        layout.operator("object.select_grouped", text= "Light Type", icon = "LAMP").type = 'LIGHT_TYPE'
 
 
 class VIEW3D_MT_select_linked(Menu):
@@ -5745,6 +5769,7 @@ classes = (
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_select_object,
+    VIEW3D_MT_select_grouped,
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
