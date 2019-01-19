@@ -1264,7 +1264,18 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
+        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
+
+class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mball.select_similar", text="Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("mball.select_similar", text="Radius", icon = "RADIUS").type = 'RADIUS'
+        layout.operator("mball.select_similar", text="Stiffness", icon = "BEND").type = 'STIFFNESS'
+        layout.operator("mball.select_similar", text="Rotation", icon = "ROTATE").type = 'ROTATION'
 
 
 class VIEW3D_MT_select_edit_lattice(Menu):
@@ -3764,6 +3775,18 @@ class VIEW3D_MT_edit_meta(Menu):
         layout.operator("mball.delete_metaelems", text="Delete", icon = "DELETE")
 
 
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class VIEW3D_MT_edit_meta_showhide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected metaelement(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mball.hide_metaelems_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mball.hide_metaelems(unselected = True)
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_edit_meta_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -5785,6 +5808,7 @@ classes = (
     VIEW3D_MT_select_edit_surface,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball,
+    VIEW3D_MT_select_edit_metaball_select_similar,
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature,
     VIEW3D_MT_select_gpencil,
@@ -5880,6 +5904,7 @@ classes = (
     VIEW3D_MT_edit_font,
     VIEW3D_MT_edit_text_chars,
     VIEW3D_MT_edit_meta,
+    VIEW3D_MT_edit_meta_showhide_unselected,
     VIEW3D_MT_edit_meta_showhide,
     VIEW3D_MT_edit_lattice,
     VIEW3D_MT_edit_lattice_flip,
