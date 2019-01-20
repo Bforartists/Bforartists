@@ -16,7 +16,8 @@ import bpy
 
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
 from io_scene_gltf2.io.com import gltf2_io
-from io_scene_gltf2.blender.exp import gltf2_blender_gather_texture_info
+from io_scene_gltf2.io.com.gltf2_io_extensions import Extension
+from io_scene_gltf2.blender.exp import gltf2_blender_gather_texture_info, gltf2_blender_export_keys
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_material_normal_texture_info_class
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_material_occlusion_texture_info_class
 
@@ -69,11 +70,7 @@ def gather_material(blender_material, export_settings):
 
 
 def __filter_material(blender_material, export_settings):
-    # if not blender_material.use_nodes:
-    #     return False
-    # if not blender_material.node_tree:
-    #     return False
-    return True
+    return export_settings[gltf2_blender_export_keys.MATERIALS]
 
 
 def __gather_alpha_cutoff(blender_material, export_settings):
@@ -113,6 +110,8 @@ def __gather_emissive_texture(blender_material, export_settings):
 def __gather_extensions(blender_material, export_settings):
     extensions = {}
 
+    if gltf2_blender_get.get_socket_or_texture_slot(blender_material, "Background") is not None:
+        extensions["KHR_materials_unlit"] = Extension("KHR_materials_unlit", {}, False)
 
     # TODO specular glossiness extension
 

@@ -552,7 +552,7 @@ def Hdr_load_callback(self, context):
             else:
                 envTex.texture_mapping.rotation.z = 0.0
                 projection = envTex.projection
-                prefs = bpy.context.user_preferences
+                prefs = bpy.context.preferences
                 fileName = prefs.filepaths.temporary_directory + "tmpSun.png"
 
                 st = envTex.image.copy()
