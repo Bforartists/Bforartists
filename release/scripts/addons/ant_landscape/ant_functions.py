@@ -232,7 +232,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                         )
                 new_ob = create_mesh_object(context, verts, [], faces, new_name).object
                 if ob['remove_double']:
-                    new_ob.select = True
+                    new_ob.select_set(True)
                     bpy.ops.object.mode_set(mode = 'EDIT')
                     bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)
                     bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -250,7 +250,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                         )
                 new_ob = create_mesh_object(context, verts, [], faces, new_name).object
 
-            new_ob.select = True
+            new_ob.select_set(True)
 
             if ob['smooth_mesh']:
                 bpy.ops.object.shade_smooth()
@@ -275,7 +275,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                             )
                     wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane").object
                     if ob['remove_double']:
-                        wobj.select = True
+                        wobj.select_set(True)
                         bpy.ops.object.mode_set(mode = 'EDIT')
                         bpy.ops.mesh.remove_doubles(threshold=0.0001, use_unselected=False)
                         bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -293,7 +293,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                             )
                     wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane").object
 
-                wobj.select = True
+                wobj.select_set(True)
 
                 if ob['smooth_mesh']:
                     bpy.ops.object.shade_smooth()
@@ -308,7 +308,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                 wobj.location = obj.location
                 wobj.rotation_euler = obj.rotation_euler
                 wobj.scale = obj.scale
-                wobj.select = False
+                wobj.select_set(False)
 
             new_ob.location = obj.location
             new_ob.rotation_euler = obj.rotation_euler
@@ -318,14 +318,14 @@ class AntLandscapeRegenerate(bpy.types.Operator):
             new_ob = store_properties(ob, new_ob)
 
             # Delete old object
-            new_ob.select = False
+            new_ob.select_set(False)
 
-            obj.select = True
+            obj.select_set(True)
             scene.objects.active = obj
             bpy.ops.object.delete(use_global=False)
 
             # Select landscape and make active
-            new_ob.select = True
+            new_ob.select_set(True)
             scene.objects.active = new_ob
 
             # restore pre operator undo state
@@ -342,24 +342,24 @@ class AntVgSlopeMap(bpy.types.Operator):
     bl_description = "A.N.T. Slope Map - z normal value to vertex group weight"
     bl_options = {'REGISTER', 'UNDO'}
 
-    z_method = EnumProperty(
+    z_method: EnumProperty(
             name="Method:",
             default='SLOPE_Z',
             items=[
                 ('SLOPE_Z', "Z Slope", "Slope for planar mesh"),
                 ('SLOPE_XYZ', "Sphere Slope", "Slope for spherical mesh")
                 ])
-    group_name = StringProperty(
+    group_name: StringProperty(
             name="Vertex Group Name:",
             default="Slope",
             description="Name"
             )
-    select_flat = BoolProperty(
+    select_flat: BoolProperty(
             name="Vert Select:",
             default=True,
             description="Select vertices on flat surface"
             )
-    select_range = FloatProperty(
+    select_range: FloatProperty(
             name="Vert Select Range:",
             default=0.0,
             min=0.0,
@@ -406,7 +406,7 @@ class AntVgSlopeMap(bpy.types.Operator):
 
             if self.select_flat:
                 if zval >= (1.0 - self.select_range):
-                    v.select = True
+                    v.select_set(True)
 
         vg_normal.name = self.group_name
 
@@ -438,8 +438,8 @@ def draw_ant_main(self, context, generate=True):
         if generate:
             row = box.row(align=True)
             split = row.split(align=True)
-            split.prop(self, "at_cursor", toggle=True, icon_only=True, icon='CURSOR')
-            split.prop(self, "smooth_mesh", toggle=True, icon_only=True, icon='SOLID')
+            split.prop(self, "at_cursor", toggle=True, icon_only=True, icon='PIVOT_CURSOR')
+            split.prop(self, "smooth_mesh", toggle=True, icon_only=True, icon='SHADING_SOLID')
             split.prop(self, "tri_face", toggle=True, icon_only=True, icon='MESH_DATA')
 
             if not self.sphere_mesh:
@@ -447,7 +447,7 @@ def draw_ant_main(self, context, generate=True):
                 row.prop(self, "sphere_mesh", toggle=True)
             else:
                 row = box.row(align=True)
-                split = row.split(0.5, align=True)
+                split = row.split(factor=0.5, align=True)
                 split.prop(self, "sphere_mesh", toggle=True)
                 split.prop(self, "remove_double", toggle=True)
 
@@ -636,7 +636,7 @@ def draw_ant_noise(self, context, generate=True):
             col.prop(self, "fx_turb")
 
             col = box.column(align=True)
-            row = col.row(align=True).split(0.92, align=True)
+            row = col.row(align=True).split(factor=0.92, align=True)
             row.prop(self, "fx_height")
             row.prop(self, "fx_invert", toggle=True, text="", icon='ARROW_LEFTRIGHT')
             col.prop(self, "fx_offset")
@@ -652,7 +652,7 @@ def draw_ant_displace(self, context, generate=True):
             col.prop(self, "direction", toggle=True)
 
         col = box.column(align=True)
-        row = col.row(align=True).split(0.92, align=True)
+        row = col.row(align=True).split(factor=0.92, align=True)
         row.prop(self, "height")
         row.prop(self, "height_invert", toggle=True, text="", icon='ARROW_LEFTRIGHT')
         col.prop(self, "height_offset")
@@ -785,49 +785,49 @@ class Eroder(bpy.types.Operator):
     bl_description = "Apply various kinds of erosion to a square ANT-Landscape grid. Also available in Weight Paint mode > Weights menu"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    Iterations = IntProperty(
+    Iterations: IntProperty(
             name="Iterations",
             description="Number of overall iterations",
             default=1,
             min=1,
             soft_max=100
             )
-    IterRiver = IntProperty(
+    IterRiver: IntProperty(
             name="River Iterations",
             description="Number of river iterations",
             default=30,
             min=1,
             soft_max=1000
             )
-    IterAva = IntProperty(
+    IterAva: IntProperty(
             name="Avalanche Iterations",
             description="Number of avalanche iterations",
             default=5,
             min=1,
             soft_max=10
             )
-    IterDiffuse = IntProperty(
+    IterDiffuse: IntProperty(
             name="Diffuse Iterations",
             description="Number of diffuse iterations",
             default=5,
             min=1,
             soft_max=10
             )
-    Ef = FloatProperty(
+    Ef: FloatProperty(
             name="Rain on Plains",
             description="1 gives equal rain across the terrain, 0 rains more at the mountain tops",
             default=0.0,
             min=0,
             max=1
             )
-    Kd = FloatProperty(
+    Kd: FloatProperty(
             name="Kd",
             description="Thermal diffusion rate (1.0 is a fairly high rate)",
             default=0.1,
             min=0,
             soft_max=100
             )
-    Kt = FloatProperty(
+    Kt: FloatProperty(
             name="Kt",
             description="Maximum stable talus angle",
             default=radians(60),
@@ -835,7 +835,7 @@ class Eroder(bpy.types.Operator):
             max=radians(90),
             subtype='ANGLE'
             )
-    Kr = FloatProperty(
+    Kr: FloatProperty(
             name="Rain amount",
             description="Total Rain amount",
             default=.01,
@@ -843,96 +843,96 @@ class Eroder(bpy.types.Operator):
             soft_max=1,
             precision=3
             )
-    Kv = FloatProperty(
+    Kv: FloatProperty(
             name="Rain variance",
             description="Rain variance (0 is constant, 1 is uniform)",
             default=0,
             min=0,
             max=1
             )
-    userainmap = BoolProperty(
+    userainmap: BoolProperty(
             name="Use rain map",
             description="Use active vertex group as a rain map",
             default=True
             )
-    Ks = FloatProperty(
+    Ks: FloatProperty(
             name="Soil solubility",
             description="Soil solubility - how quickly water quickly reaches saturation point",
             default=0.5,
             min=0,
             soft_max=1
             )
-    Kdep = FloatProperty(
+    Kdep: FloatProperty(
             name="Deposition rate",
             description="Sediment deposition rate - how quickly silt is laid down once water stops flowing quickly",
             default=0.1,
             min=0,
             soft_max=1
             )
-    Kz = FloatProperty(name="Fluvial Erosion Rate",
+    Kz: FloatProperty(name="Fluvial Erosion Rate",
             description="Amount of sediment moved each main iteration - if 0, then rivers are formed but the mesh is not changed",
             default=0.3,
             min=0,
             soft_max=20
             )
-    Kc = FloatProperty(
+    Kc: FloatProperty(
             name="Carrying capacity",
             description="Base sediment carrying capacity",
             default=0.9,
             min=0,
             soft_max=1
             )
-    Ka = FloatProperty(
+    Ka: FloatProperty(
             name="Slope dependence",
             description="Slope dependence of carrying capacity (not used)",
             default=1.0,
             min=0,
             soft_max=2
             )
-    Kev = FloatProperty(
+    Kev: FloatProperty(
             name="Evaporation",
             description="Evaporation Rate per grid square in % - causes sediment to be dropped closer to the hills",
             default=.5,
             min=0,
             soft_max=2
             )
-    numexpr = BoolProperty(
+    numexpr: BoolProperty(
             name="Numexpr",
             description="Use numexpr module (if available)",
             default=True
             )
-    Pd = FloatProperty(
+    Pd: FloatProperty(
             name="Diffusion Amount",
             description="Diffusion probability",
             default=0.2,
             min=0,
             max=1
             )
-    Pa = FloatProperty(
+    Pa: FloatProperty(
             name="Avalanche Amount",
             description="Avalanche amount",
             default=0.5,
             min=0,
             max=1
             )
-    Pw = FloatProperty(
+    Pw: FloatProperty(
             name="River Amount",
             description="Water erosion probability",
             default=1,
             min=0,
             max=1
             )
-    smooth = BoolProperty(
+    smooth: BoolProperty(
             name="Smooth",
             description="Set smooth shading",
             default=True
             )
-    showiterstats = BoolProperty(
+    showiterstats: BoolProperty(
             name="Iteration Stats",
             description="Show iteraration statistics",
             default=False
             )
-    showmeshstats = BoolProperty(name="Mesh Stats",
+    showmeshstats: BoolProperty(name="Mesh Stats",
             description="Show mesh statistics",
             default=False
             )

@@ -24,7 +24,7 @@ def initialize_subjects(context):
     """
         Initializes the main object and the subject (actor) list
     """
-    cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+    cml = context.preferences.addons['cmu_mocap_browser'].preferences
     if hasattr(cml, 'initialized'):
         return
     cml.initialized = True

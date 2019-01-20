@@ -23,11 +23,7 @@ __status__ = "production"
 __version__ = "5.2"
 __date__ = "17 Nov 2018"
 
-from math import sqrt
-
 import bpy
-import bmesh
-from mathutils import Vector
 from bpy.props import (
     EnumProperty,
     FloatProperty,
@@ -35,54 +31,9 @@ from bpy.props import (
     BoolProperty,
 )
 
-from ... import common
 from ...utils.bl_class_registry import BlClassRegistry
 from ...utils.property_class_registry import PropertyClassRegistry
-
-
-__all__ = [
-    'Properties',
-    'MUV_OT_WorldScaleUV_Measure',
-    'MUV_OT_WorldScaleUV_ApplyManual',
-    'MUV_OT_WorldScaleUV_ApplyScalingDensity',
-    'MUV_OT_WorldScaleUV_ApplyProportionalToMesh',
-]
-
-
-def is_valid_context(context):
-    obj = context.object
-
-    # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
-    if context.object.mode != 'EDIT':
-        return False
-
-    # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
-        return False
-
-    return True
-
-
-def measure_wsuv_info(obj, tex_size=None):
-    mesh_area = common.measure_mesh_area(obj)
-    uv_area = common.measure_uv_area(obj, tex_size)
-
-    if not uv_area:
-        return None, mesh_area, None
-
-    if mesh_area == 0.0:
-        density = 0.0
-    else:
-        density = sqrt(uv_area) / sqrt(mesh_area)
-
-    return uv_area, mesh_area, density
+from ...impl import world_scale_uv_impl as impl
 
 
 @PropertyClassRegistry(legacy=True)
@@ -188,132 +139,15 @@ class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
     bl_description = "Measure face size for scale calculation"
     bl_options = {'REGISTER', 'UNDO'}
 
+    def __init__(self):
+        self.__impl = impl.MeasureImpl()
+
     @classmethod
     def poll(cls, context):
-        # we can not get area/space/region from console
-        if common.is_console_mode():
-            return True
-        return is_valid_context(context)
+        return impl.MeasureImpl.poll(context)
 
     def execute(self, context):
-        sc = context.scene
-        obj = context.active_object
-
-        uv_area, mesh_area, density = measure_wsuv_info(obj)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
-            return {'CANCELLED'}
-
-        sc.muv_world_scale_uv_src_uv_area = uv_area
-        sc.muv_world_scale_uv_src_mesh_area = mesh_area
-        sc.muv_world_scale_uv_src_density = density
-
-        self.report({'INFO'},
-                    "UV Area: {0}, Mesh Area: {1}, Texel Density: {2}"
-                    .format(uv_area, mesh_area, density))
-
-        return {'FINISHED'}
-
-
-def apply(obj, origin, factor):
-    bm = bmesh.from_edit_mesh(obj.data)
-    if common.check_version(2, 73, 0) >= 0:
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
-
-    sel_faces = [f for f in bm.faces if f.select]
-
-    uv_layer = bm.loops.layers.uv.verify()
-
-    # calculate origin
-    if origin == 'CENTER':
-        origin = Vector((0.0, 0.0))
-        num = 0
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin = origin + uv
-                num = num + 1
-        origin = origin / num
-    elif origin == 'LEFT_TOP':
-        origin = Vector((100000.0, -100000.0))
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = min(origin.x, uv.x)
-                origin.y = max(origin.y, uv.y)
-    elif origin == 'LEFT_CENTER':
-        origin = Vector((100000.0, 0.0))
-        num = 0
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = min(origin.x, uv.x)
-                origin.y = origin.y + uv.y
-                num = num + 1
-        origin.y = origin.y / num
-    elif origin == 'LEFT_BOTTOM':
-        origin = Vector((100000.0, 100000.0))
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = min(origin.x, uv.x)
-                origin.y = min(origin.y, uv.y)
-    elif origin == 'CENTER_TOP':
-        origin = Vector((0.0, -100000.0))
-        num = 0
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = origin.x + uv.x
-                origin.y = max(origin.y, uv.y)
-                num = num + 1
-        origin.x = origin.x / num
-    elif origin == 'CENTER_BOTTOM':
-        origin = Vector((0.0, 100000.0))
-        num = 0
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = origin.x + uv.x
-                origin.y = min(origin.y, uv.y)
-                num = num + 1
-        origin.x = origin.x / num
-    elif origin == 'RIGHT_TOP':
-        origin = Vector((-100000.0, -100000.0))
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = max(origin.x, uv.x)
-                origin.y = max(origin.y, uv.y)
-    elif origin == 'RIGHT_CENTER':
-        origin = Vector((-100000.0, 0.0))
-        num = 0
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = max(origin.x, uv.x)
-                origin.y = origin.y + uv.y
-                num = num + 1
-        origin.y = origin.y / num
-    elif origin == 'RIGHT_BOTTOM':
-        origin = Vector((-100000.0, 100000.0))
-        for f in sel_faces:
-            for l in f.loops:
-                uv = l[uv_layer].uv
-                origin.x = max(origin.x, uv.x)
-                origin.y = min(origin.y, uv.y)
-
-    # update UV coordinate
-    for f in sel_faces:
-        for l in f.loops:
-            uv = l[uv_layer].uv
-            diff = uv - origin
-            l[uv_layer].uv = origin + diff * factor
-
-    bmesh.update_edit_mesh(obj.data)
+        return self.__impl.execute(self, context)
 
 
 @BlClassRegistry(legacy=True)
@@ -364,54 +198,21 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
+    def __init__(self):
+        self.__impl = impl.ApplyManualImpl()
+
     @classmethod
     def poll(cls, context):
-        # we can not get area/space/region from console
-        if common.is_console_mode():
-            return True
-        return is_valid_context(context)
+        return impl.ApplyManualImpl.poll(context)
 
-    def __apply_manual(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+    def draw(self, context):
+        self.__impl.draw(self, context)
 
-        tex_size = self.tgt_texture_size
-        uv_area, _, density = measure_wsuv_info(obj, tex_size)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map")
-            return {'CANCELLED'}
-
-        tgt_density = self.tgt_density
-        factor = tgt_density / density
-
-        apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
-
-        return {'FINISHED'}
-
-    def draw(self, _):
-        layout = self.layout
-
-        layout.prop(self, "tgt_density")
-        layout.prop(self, "tgt_texture_size")
-        layout.prop(self, "origin")
-
-        layout.separator()
-
-    def invoke(self, context, _):
-        if self.show_dialog:
-            wm = context.window_manager
-            return wm.invoke_props_dialog(self)
-
-        return self.execute(context)
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
 
     def execute(self, context):
-        return self.__apply_manual(context)
+        return self.__impl.execute(self, context)
 
 
 @BlClassRegistry(legacy=True)
@@ -468,73 +269,21 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
+    def __init__(self):
+        self.__impl = impl.ApplyScalingDensityImpl()
+
     @classmethod
     def poll(cls, context):
-        # we can not get area/space/region from console
-        if common.is_console_mode():
-            return True
-        return is_valid_context(context)
+        return impl.ApplyScalingDensityImpl.poll(context)
 
-    def __apply_scaling_density(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+    def draw(self, context):
+        self.__impl.draw(self, context)
 
-        uv_area, _, density = measure_wsuv_info(obj)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
-            return {'CANCELLED'}
-
-        tgt_density = self.src_density * self.tgt_scaling_factor
-        factor = tgt_density / density
-
-        apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
-
-        return {'FINISHED'}
-
-    def draw(self, _):
-        layout = self.layout
-
-        layout.label("Source:")
-        col = layout.column()
-        col.prop(self, "src_density")
-        col.enabled = False
-
-        layout.separator()
-
-        if not self.same_density:
-            layout.prop(self, "tgt_scaling_factor")
-        layout.prop(self, "origin")
-
-        layout.separator()
-
-    def invoke(self, context, _):
-        sc = context.scene
-
-        if self.show_dialog:
-            wm = context.window_manager
-
-            if self.same_density:
-                self.tgt_scaling_factor = 1.0
-            else:
-                self.tgt_scaling_factor = \
-                    sc.muv_world_scale_uv_tgt_scaling_factor
-            self.src_density = sc.muv_world_scale_uv_src_density
-
-            return wm.invoke_props_dialog(self)
-
-        return self.execute(context)
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
 
     def execute(self, context):
-        if self.same_density:
-            self.tgt_scaling_factor = 1.0
-
-        return self.__apply_scaling_density(context)
+        return self.__impl.execute(self, context)
 
 
 @BlClassRegistry(legacy=True)
@@ -593,63 +342,18 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
         options={'HIDDEN', 'SKIP_SAVE'}
     )
 
+    def __init__(self):
+        self.__impl = impl.ApplyProportionalToMeshImpl()
+
     @classmethod
     def poll(cls, context):
-        # we can not get area/space/region from console
-        if common.is_console_mode():
-            return True
-        return is_valid_context(context)
+        return impl.ApplyProportionalToMeshImpl.poll(context)
 
-    def __apply_proportional_to_mesh(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+    def draw(self, context):
+        self.__impl.draw(self, context)
 
-        uv_area, mesh_area, density = measure_wsuv_info(obj)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
-            return {'CANCELLED'}
-
-        tgt_density = self.src_density * sqrt(mesh_area) / sqrt(
-            self.src_mesh_area)
-
-        factor = tgt_density / density
-
-        apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
-
-        return {'FINISHED'}
-
-    def draw(self, _):
-        layout = self.layout
-
-        layout.label("Source:")
-        col = layout.column(align=True)
-        col.prop(self, "src_density")
-        col.prop(self, "src_uv_area")
-        col.prop(self, "src_mesh_area")
-        col.enabled = False
-
-        layout.separator()
-        layout.prop(self, "origin")
-
-        layout.separator()
-
-    def invoke(self, context, _):
-        if self.show_dialog:
-            wm = context.window_manager
-            sc = context.scene
-
-            self.src_density = sc.muv_world_scale_uv_src_density
-            self.src_mesh_area = sc.muv_world_scale_uv_src_mesh_area
-
-            return wm.invoke_props_dialog(self)
-
-        return self.execute(context)
+    def invoke(self, context, event):
+        return self.__impl.invoke(self, context, event)
 
     def execute(self, context):
-        return self.__apply_proportional_to_mesh(context)
+        return self.__impl.execute(self, context)

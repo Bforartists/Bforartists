@@ -1100,10 +1100,14 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     #       Textures are now only related to materials, in FBX!
     uvnumber = len(me.uv_layers)
     if uvnumber:
-        def _uvtuples_gen(raw_uvs):
-            return zip(*(iter(raw_uvs),) * 2)
+        # Looks like this mapping is also expected to convey UV islands (arg..... :((((( ).
+        # So we need to generate unique triplets (uv, vertex_idx) here, not only just based on UV values.
+        def _uvtuples_gen(raw_uvs, raw_lvidxs):
+            return zip(zip(*(iter(raw_uvs),) * 2), raw_lvidxs)
 
         t_luv = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 2
+        t_lvidx = array.array(data_types.ARRAY_INT32, (0,)) * len(me.loops)
+        me.loops.foreach_get("vertex_index", t_lvidx)
         for uvindex, uvlayer in enumerate(me.uv_layers):
             uvlayer.data.foreach_get("uv", t_luv)
             lay_uv = elem_data_single_int32(geom, b"LayerElementUV", uvindex)
@@ -1112,13 +1116,15 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
             elem_data_single_string(lay_uv, b"MappingInformationType", b"ByPolygonVertex")
             elem_data_single_string(lay_uv, b"ReferenceInformationType", b"IndexToDirect")
 
-            uv2idx = tuple(set(_uvtuples_gen(t_luv)))
-            elem_data_single_float64_array(lay_uv, b"UV", chain(*uv2idx))  # Flatten again...
+            uv_ids = tuple(set(_uvtuples_gen(t_luv, t_lvidx)))
+            elem_data_single_float64_array(lay_uv, b"UV", chain(*(uv for uv, vidx in uv_ids)))  # Flatten again...
 
-            uv2idx = {uv: idx for idx, uv in enumerate(uv2idx)}
-            elem_data_single_int32_array(lay_uv, b"UVIndex", (uv2idx[uv] for uv in _uvtuples_gen(t_luv)))
+            uv2idx = {uv_id: idx for idx, uv_id in enumerate(uv_ids)}
+            elem_data_single_int32_array(lay_uv, b"UVIndex", (uv2idx[uv_id] for uv_id in _uvtuples_gen(t_luv, t_lvidx)))
             del uv2idx
+            del uv_ids
         del t_luv
+        del t_lvidx
         del _uvtuples_gen
 
     # Face's materials.

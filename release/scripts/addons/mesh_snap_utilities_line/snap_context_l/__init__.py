@@ -288,6 +288,8 @@ class SnapContext():
             self._offscreen.free()
             # Some objects may still be being referenced
             for snap_obj in self.snap_objects:
+                if len(snap_obj.data) == 2:
+                    snap_obj.data[1].free()
                 del snap_obj.data
                 del snap_obj.mat
                 del snap_obj
@@ -306,6 +308,7 @@ class SnapContext():
 
     def tag_update_drawn_snap_object(self, snap_obj):
         if len(snap_obj.data) > 1:
+            snap_obj.data[1].free()
             del snap_obj.data[1:]
             #self.update_all()
             # Update on next snap_get call #
@@ -319,6 +322,7 @@ class SnapContext():
             snap_vert = self._snap_mode & VERT != 0
             snap_edge = self._snap_mode & EDGE != 0
             snap_face = self._snap_mode & FACE != 0
+            snap_obj.data[1].free()
             snap_obj.data[1] = GPU_Indices_Mesh(snap_obj.data[0], snap_face, snap_edge, snap_vert)
 
             _Internal.gpu_Indices_restore_state()

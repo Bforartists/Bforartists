@@ -30,13 +30,14 @@ from bpy.props import (
     BoolProperty,
     EnumProperty,
     IntProperty,
+    StringProperty,
 )
 from bpy.types import AddonPreferences
 
 from . import op
 from . import ui
-from .. import addon_updater_ops
 from ..utils.bl_class_registry import BlClassRegistry
+from ..utils.addon_updator import AddonUpdatorManager
 
 __all__ = [
     'add_builtin_menu',
@@ -159,6 +160,48 @@ def remove_builtin_menu():
     bpy.types.IMAGE_MT_uvs.remove(image_uvs_menu_fn)
     bpy.types.VIEW3D_MT_uv_map.remove(view3d_uvmap_menu_fn)
     bpy.types.VIEW3D_MT_object.remove(view3d_object_menu_fn)
+
+
+@BlClassRegistry(legacy=True)
+class MUV_OT_CheckAddonUpdate(bpy.types.Operator):
+    bl_idname = "uv.muv_check_addon_update"
+    bl_label = "Check Update"
+    bl_description = "Check Add-on Update"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        updater = AddonUpdatorManager.get_instance()
+        updater.check_update_candidate()
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry(legacy=True)
+class MUV_OT_UpdateAddon(bpy.types.Operator):
+    bl_idname = "uv.muv_update_addon"
+    bl_label = "Update"
+    bl_description = "Update Add-on"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    branch_name = StringProperty(
+        name="Branch Name",
+        description="Branch name to update",
+        default="",
+    )
+
+    def execute(self, context):
+        updater = AddonUpdatorManager.get_instance()
+        updater.update(self.branch_name)
+
+        return {'FINISHED'}
+
+
+def get_update_candidate_branches(_, __):
+    updater = AddonUpdatorManager.get_instance()
+    if not updater.candidate_checked():
+        return []
+
+    return [(name, name, "") for name in updater.get_candidate_branch_names()]
 
 
 @BlClassRegistry(legacy=True)
@@ -310,6 +353,13 @@ class Preferences(AddonPreferences):
         default=0,
         min=0,
         max=59
+    )
+
+    # for add-on updater
+    updater_branch_to_update = EnumProperty(
+        name="branch",
+        description="Target branch to update add-on",
+        items=get_update_candidate_branches
     )
 
     def draw(self, context):
