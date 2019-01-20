@@ -67,7 +67,9 @@
 typedef struct DepthDropper {
 	PointerRNA ptr;
 	PropertyRNA *prop;
+	bool is_undo;
 
+	bool is_set;
 	float init_depth; /* for resetting on cancel */
 
 	bool  accum_start; /* has mouse been presed */
@@ -89,7 +91,6 @@ static void depthdropper_draw_cb(const struct bContext *C, ARegion *ar, void *ar
 
 static int depthdropper_init(bContext *C, wmOperator *op)
 {
-	DepthDropper *ddr;
 	int index_dummy;
 
 	SpaceType *st;
@@ -98,9 +99,9 @@ static int depthdropper_init(bContext *C, wmOperator *op)
 	st = BKE_spacetype_from_id(SPACE_VIEW3D);
 	art = BKE_regiontype_from_id(st, RGN_TYPE_WINDOW);
 
-	op->customdata = ddr = MEM_callocN(sizeof(DepthDropper), "DepthDropper");
+	DepthDropper *ddr = MEM_callocN(sizeof(DepthDropper), __func__);
 
-	UI_context_active_but_prop_get(C, &ddr->ptr, &ddr->prop, &index_dummy);
+	uiBut *but = UI_context_active_but_prop_get(C, &ddr->ptr, &ddr->prop, &index_dummy);
 
 	/* fallback to the active camera's dof */
 	if (ddr->prop == NULL) {
@@ -119,8 +120,12 @@ static int depthdropper_init(bContext *C, wmOperator *op)
 	    (RNA_property_editable(&ddr->ptr, ddr->prop) == false) ||
 	    (RNA_property_type(ddr->prop) != PROP_FLOAT))
 	{
+		MEM_freeN(ddr);
 		return false;
 	}
+	op->customdata = ddr;
+
+	ddr->is_undo = UI_but_flag_is_set(but, UI_BUT_UNDO);
 
 	ddr->art = art;
 	ddr->draw_handle_pixel = ED_region_draw_cb_activate(art, depthdropper_draw_cb, ddr, REGION_DRAW_POST_PIXEL);
@@ -215,6 +220,7 @@ static void depthdropper_depth_sample_pt(bContext *C, DepthDropper *ddr, int mx,
 static void depthdropper_depth_set(bContext *C, DepthDropper *ddr, const float depth)
 {
 	RNA_property_float_set(&ddr->ptr, ddr->prop, depth);
+	ddr->is_set = true;
 	RNA_property_update(C, &ddr->ptr, ddr->prop);
 }
 
@@ -251,7 +257,9 @@ static void depthdropper_depth_sample_accum(bContext *C, DepthDropper *ddr, int 
 static void depthdropper_cancel(bContext *C, wmOperator *op)
 {
 	DepthDropper *ddr = op->customdata;
-	depthdropper_depth_set(C, ddr, ddr->init_depth);
+	if (ddr->is_set) {
+		depthdropper_depth_set(C, ddr, ddr->init_depth);
+	}
 	depthdropper_exit(C, op);
 }
 
@@ -267,6 +275,8 @@ static int depthdropper_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				depthdropper_cancel(C, op);
 				return OPERATOR_CANCELLED;
 			case EYE_MODAL_SAMPLE_CONFIRM:
+			{
+				const bool is_undo = ddr->is_undo;
 				if (ddr->accum_tot == 0) {
 					depthdropper_depth_sample(C, ddr, event->x, event->y);
 				}
@@ -274,7 +284,9 @@ static int depthdropper_modal(bContext *C, wmOperator *op, const wmEvent *event)
 					depthdropper_depth_set_accum(C, ddr);
 				}
 				depthdropper_exit(C, op);
-				return OPERATOR_FINISHED;
+				/* Could support finished & undo-skip. */
+				return is_undo ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+			}
 			case EYE_MODAL_SAMPLE_BEGIN:
 				/* enable accum and make first sample */
 				ddr->accum_start = true;
@@ -312,7 +324,6 @@ static int depthdropper_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSE
 		return OPERATOR_RUNNING_MODAL;
 	}
 	else {
-		depthdropper_exit(C, op);
 		return OPERATOR_CANCELLED;
 	}
 }
@@ -380,7 +391,7 @@ void UI_OT_eyedropper_depth(wmOperatorType *ot)
 	ot->poll = depthdropper_poll;
 
 	/* flags */
-	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
+	ot->flag = OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_INTERNAL;
 
 	/* properties */
 }
