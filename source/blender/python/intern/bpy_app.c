@@ -297,7 +297,7 @@ static PyObject *bpy_app_binary_path_python_get(PyObject *self, void *UNUSED(clo
 }
 
 PyDoc_STRVAR(bpy_app_debug_value_doc,
-"Int, number which can be set to non-zero values for testing purposes"
+"Short, number which can be set to non-zero values for testing purposes"
 );
 static PyObject *bpy_app_debug_value_get(PyObject *UNUSED(self), void *UNUSED(closure))
 {
@@ -306,10 +306,12 @@ static PyObject *bpy_app_debug_value_get(PyObject *UNUSED(self), void *UNUSED(cl
 
 static int bpy_app_debug_value_set(PyObject *UNUSED(self), PyObject *value, void *UNUSED(closure))
 {
-	int param = PyC_Long_AsI32(value);
+	short param = PyC_Long_AsI16(value);
 
 	if (param == -1 && PyErr_Occurred()) {
-		PyErr_SetString(PyExc_TypeError, "bpy.app.debug_value can only be set to a whole number");
+		PyC_Err_SetString_Prefix(
+		        PyExc_TypeError,
+		        "bpy.app.debug_value can only be set to a whole number");
 		return -1;
 	}
 

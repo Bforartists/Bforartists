@@ -90,19 +90,19 @@
 
 void ED_editors_init(bContext *C)
 {
+	struct Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	wmWindowManager *wm = CTX_wm_manager(C);
-
-	if (wm->undo_stack == NULL) {
-		wm->undo_stack = BKE_undosys_stack_create();
-	}
 
 	/* This is called during initialization, so we don't want to store any reports */
 	ReportList *reports = CTX_wm_reports(C);
 	int reports_flag_prev = reports->flag & ~RPT_STORE;
 
 	SWAP(int, reports->flag, reports_flag_prev);
+
+	/* Don't do undo pushes when calling an operator. */
+	wm->op_undo_depth++;
 
 	/* toggle on modes for objects that were saved with these enabled. for
 	 * e.g. linked objects we have to ensure that they are actually the
@@ -111,42 +111,64 @@ void ED_editors_init(bContext *C)
 	if (obact != NULL) {
 		for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
 			int mode = ob->mode;
-
 			if (mode == OB_MODE_OBJECT) {
-				/* pass */
+				continue;
 			}
-			else if (!BKE_object_has_mode_data(ob, mode)) {
+			else if (BKE_object_has_mode_data(ob, mode)) {
+				continue;
+			}
+			else if (ob->type == OB_GPENCIL) {
 				/* For multi-edit mode we may already have mode data.
-				 * (grease pencil does not need it)
-				 */
-				if (ob->type != OB_GPENCIL) {
-					ID *data = ob->data;
-					ob->mode = OB_MODE_OBJECT;
-					if ((ob->type == obact->type) && !ID_IS_LINKED(ob) && !(data && ID_IS_LINKED(data))) {
-						if (mode == OB_MODE_EDIT) {
-							ED_object_editmode_enter_ex(bmain, scene, ob, 0);
+				 * (grease pencil does not need it) */
+				continue;
+			}
+
+			ID *ob_data = ob->data;
+			ob->mode = OB_MODE_OBJECT;
+			if ((ob->type == obact->type) &&
+			    !ID_IS_LINKED(ob) &&
+			    !(ob_data && ID_IS_LINKED(ob_data)))
+			{
+				if (mode == OB_MODE_EDIT) {
+					ED_object_editmode_enter_ex(bmain, scene, ob, 0);
+				}
+				else if (mode == OB_MODE_POSE) {
+					ED_object_posemode_enter_ex(bmain, ob);
+				}
+				else if (mode & OB_MODE_ALL_SCULPT) {
+					if (obact == ob) {
+						if (mode == OB_MODE_SCULPT) {
+							ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, reports);
 						}
-						else if (mode == OB_MODE_POSE) {
-							ED_object_posemode_enter_ex(bmain, ob);
+						else if (mode == OB_MODE_VERTEX_PAINT) {
+							ED_object_vpaintmode_enter_ex(bmain, depsgraph, wm, scene, ob);
+						}
+						else if (mode == OB_MODE_WEIGHT_PAINT) {
+							ED_object_wpaintmode_enter_ex(bmain, depsgraph, wm, scene, ob);
 						}
 						else {
-							if (obact == ob) {
-								ED_object_mode_toggle(C, mode);
-							}
-							else {
-								/* Create data for non-active objects which need it for
-								 * mode-switching but don't yet support multi-editing. */
-								if (mode & OB_MODE_ALL_SCULPT) {
-									ob->mode = mode;
-									BKE_object_sculpt_data_create(ob);
-								}
-							}
+							BLI_assert(0);
 						}
+					}
+					else {
+						/* Create data for non-active objects which need it for
+						 * mode-switching but don't yet support multi-editing. */
+						if (mode & OB_MODE_ALL_SCULPT) {
+							ob->mode = mode;
+							BKE_object_sculpt_data_create(ob);
+						}
+					}
+				}
+				else {
+					/* TODO(campbell): avoid operator calls. */
+					if (obact == ob) {
+						ED_object_mode_toggle(C, mode);
 					}
 				}
 			}
 		}
 	}
+
 
 	/* image editor paint mode */
 	if (scene) {
@@ -154,20 +176,21 @@ void ED_editors_init(bContext *C)
 	}
 
 	SWAP(int, reports->flag, reports_flag_prev);
+	wm->op_undo_depth--;
 }
 
 /* frees all editmode stuff */
-void ED_editors_exit(bContext *C)
+void ED_editors_exit(Main *bmain, bool do_undo_system)
 {
-	Main *bmain = CTX_data_main(C);
-
-	if (!bmain)
+	if (!bmain) {
 		return;
+	}
 
 	/* frees all editmode undos */
-	if (G_MAIN->wm.first) {
+	if (do_undo_system && G_MAIN->wm.first) {
 		wmWindowManager *wm = G_MAIN->wm.first;
-		/* normally we don't check for NULL undo stack, do here since it may run in different context. */
+		/* normally we don't check for NULL undo stack,
+		 * do here since it may run in different context. */
 		if (wm->undo_stack) {
 			BKE_undosys_stack_destroy(wm->undo_stack);
 			wm->undo_stack = NULL;
@@ -198,11 +221,10 @@ void ED_editors_exit(bContext *C)
 
 /* flush any temp data from object editing to DNA before writing files,
  * rendering, copying, etc. */
-bool ED_editors_flush_edits(const bContext *C, bool for_render)
+bool ED_editors_flush_edits(Main *bmain, bool for_render)
 {
 	bool has_edited = false;
 	Object *ob;
-	Main *bmain = CTX_data_main(C);
 
 	/* loop through all data to find edit mode or object mode, because during
 	 * exiting we might not have a context for edit object and multiple sculpt
@@ -210,7 +232,8 @@ bool ED_editors_flush_edits(const bContext *C, bool for_render)
 	for (ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ob->mode & OB_MODE_SCULPT) {
 			/* Don't allow flushing while in the middle of a stroke (frees data in use).
-			 * Auto-save prevents this from happening but scripts may cause a flush on saving: T53986. */
+			 * Auto-save prevents this from happening but scripts
+			 * may cause a flush on saving: T53986. */
 			if ((ob->sculpt && ob->sculpt->cache) == 0) {
 				/* flush multires changes (for sculpt) */
 				multires_force_update(ob);
@@ -400,7 +423,8 @@ void ED_spacedata_id_remap(struct ScrArea *sa, struct SpaceLink *sl, ID *old_id,
 
 static int ed_flush_edits_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	ED_editors_flush_edits(C, false);
+	Main *bmain = CTX_data_main(C);
+	ED_editors_flush_edits(bmain, false);
 	return OPERATOR_FINISHED;
 }
 

@@ -146,7 +146,8 @@ BLI_INLINE void bicubic_interpolation(const unsigned char *byte_buffer, const fl
 			CLAMP(y1, 0, height - 1);
 			/* normally we could do this */
 			/* w = P(n-a) * P(b-m); */
-			/* except that would call P() 16 times per pixel therefor pow() 64 times, better precalc these */
+			/* except that would call P() 16 times per pixel therefor pow() 64 times,
+			 * better precalc these */
 			w = wx * wy[m + 1];
 
 			if (float_output) {
@@ -414,7 +415,8 @@ void BLI_bilinear_interpolation_wrap_char(const unsigned char *buffer, unsigned 
 
 /**************************************************************************
  * Filtering method based on
- * "Creating raster omnimax images from multiple perspective views using the elliptical weighted average filter"
+ * "Creating raster omnimax images from multiple perspective views
+ * using the elliptical weighted average filter"
  * by Ned Greene and Paul S. Heckbert (1986)
  ***************************************************************************/
 
@@ -453,7 +455,7 @@ const float EWA_WTS[EWA_MAXIDX + 1] = {
 	0.0415211f, 0.039974f, 0.0384389f, 0.0369158f, 0.0354046f, 0.0339052f, 0.0324175f, 0.0309415f,
 	0.029477f, 0.0280239f, 0.0265822f, 0.0251517f, 0.0237324f, 0.0223242f, 0.020927f, 0.0195408f,
 	0.0181653f, 0.0168006f, 0.0154466f, 0.0141031f, 0.0127701f, 0.0114476f, 0.0101354f, 0.00883339f,
-	0.00754159f, 0.00625989f, 0.00498819f, 0.00372644f, 0.00247454f, 0.00123242f, 0.f
+	0.00754159f, 0.00625989f, 0.00498819f, 0.00372644f, 0.00247454f, 0.00123242f, 0.f,
 };
 
 static void radangle2imp(float a2, float b2, float th, float *A, float *B, float *C, float *F)
