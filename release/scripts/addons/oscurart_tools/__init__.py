@@ -20,19 +20,19 @@
 
 bl_info = {
     "name": "Oscurart Tools",
-    "author": "Oscurart, CodemanX",
+    "author": "Oscurart",
     "version": (4, 0, 0),
     "blender": (2, 80, 0),
     "location": "View3D > Toolbar and View3D > Specials (W-key)",
     "description": "Tools for objects, render, shapes, and files.",
     "warning": "",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/3D_interaction/Oscurart_Tools",
+    "wiki_url": "https://www.oscurart.com.ar",
     "category": "Object",
     }
     
 
 import bpy
+from bpy.app.handlers import persistent
 from bpy.types import Menu
 from oscurart_tools.files import reload_images
 from oscurart_tools.files import save_incremental
@@ -45,6 +45,8 @@ from oscurart_tools.object import distribute
 from oscurart_tools.object import selection
 from oscurart_tools.object import search_and_select
 from oscurart_tools.mesh import apply_linked_meshes
+from oscurart_tools.render import render_tokens
+from oscurart_tools.render import batch_maker
 
 from bpy.types import (
         AddonPreferences,
@@ -73,6 +75,7 @@ class VIEW3D_MT_edit_mesh_oscurarttools(Menu):
         layout.operator("image.reload_images_osc")      
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
+        layout.operator("file.create_batch_maker_osc")
 
 def menu_funcMesh(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_oscurarttools")
@@ -92,6 +95,7 @@ class IMAGE_MT_uvs_oscurarttools(Menu):
         layout.operator("image.reload_images_osc")      
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
+        layout.operator("file.create_batch_maker_osc")
 
 def menu_funcImage(self, context):
     self.layout.menu("IMAGE_MT_uvs_oscurarttools")
@@ -113,6 +117,7 @@ class VIEW3D_MT_object_oscurarttools(Menu):
         layout.operator("image.reload_images_osc")      
         layout.operator("file.save_incremental_backup")
         layout.operator("file.collect_all_images")
+        layout.operator("file.create_batch_maker_osc")
 
 def menu_funcObject(self, context):
     self.layout.menu("VIEW3D_MT_object_oscurarttools")
@@ -137,14 +142,19 @@ classes = (
     shapes_to_objects.ShapeToObjects,
     search_and_select.SearchAndSelectOt,
     apply_linked_meshes.ApplyLRT,
+    batch_maker.oscBatchMaker
     )
 
-def register():
+def register():   
     from bpy.types import Scene
     Scene.multimeshedit = StringProperty()
     bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_funcMesh)
-    bpy.types.IMAGE_MT_specials.prepend(menu_funcImage)
+    bpy.types.IMAGE_MT_uvs_specials.prepend(menu_funcImage)
     bpy.types.VIEW3D_MT_object_specials.prepend(menu_funcObject)
+    bpy.app.handlers.render_pre.append(render_tokens.replaceTokens)
+    bpy.app.handlers.render_cancel.append(render_tokens.restoreTokens) 
+    bpy.app.handlers.render_post.append(render_tokens.restoreTokens) 
+    
 
     from bpy.utils import register_class
     for cls in classes:
@@ -154,7 +164,7 @@ def register():
 def unregister():
     del bpy.types.Scene.SearchAndSelectOt
     bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_funcMesh)
-    bpy.types.IMAGE_MT_specials.remove(menu_funcImage)
+    bpy.types.IMAGE_MT_uvs_specials.remove(menu_funcImage)
     bpy.types.VIEW3D_MT_object_specials.remove(menu_funcObject)
 
     from bpy.utils import unregister_class

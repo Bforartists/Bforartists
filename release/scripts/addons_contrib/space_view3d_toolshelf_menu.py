@@ -2902,7 +2902,7 @@ class SnapCursSelToCenter2(Operator):
 
 # Draw Separator #
 def UseSeparator(operator, context):
-    useSep = bpy.context.user_preferences.addons[__name__].preferences.use_separators
+    useSep = bpy.context.preferences.addons[__name__].preferences.use_separators
     if useSep:
         operator.layout.separator()
 
@@ -2910,7 +2910,7 @@ def UseSeparator(operator, context):
 # Use compact brushes menus #
 def UseBrushesLists():
     # separate function just for more convience
-    useLists = bpy.context.user_preferences.addons[__name__].preferences.use_brushes_lists
+    useLists = bpy.context.preferences.addons[__name__].preferences.use_brushes_lists
 
     return bool(useLists)
 
@@ -2946,12 +2946,12 @@ def update_panel(self, context):
         bpy.utils.unregister_class(VIEW3D_PT_Toolshelf_menu)
     except:
         pass
-    VIEW3D_PT_Toolshelf_menu.bl_category = context.user_preferences.addons[__name__].preferences.category
+    VIEW3D_PT_Toolshelf_menu.bl_category = context.preferences.addons[__name__].preferences.category
     bpy.utils.register_class(VIEW3D_PT_Toolshelf_menu)
 
 # Draw Separator #
 def UseSeparator(operator, context):
-    useSep = bpy.context.user_preferences.addons[__name__].preferences.use_separators
+    useSep = bpy.context.preferences.addons[__name__].preferences.use_separators
     if useSep:
         operator.layout.separator()
 
@@ -2959,7 +2959,7 @@ def UseSeparator(operator, context):
 # Use compact brushes menus #
 def UseBrushesLists():
     # separate function just for more convience
-    useLists = bpy.context.user_preferences.addons[__name__].preferences.use_brushes_lists
+    useLists = bpy.context.preferences.addons[__name__].preferences.use_brushes_lists
 
     return bool(useLists)
 

@@ -42,10 +42,10 @@ class SunPos_Panel(bpy.types.Panel):
     def disable(self, context, layout):
         p = context.scene.SunPos_pref_property
         if Map.init_zoom_preference:
-            Map.zoom_preferences(bpy.context.user_preferences.inputs.invert_zoom_wheel,
-                                 bpy.context.user_preferences.inputs.invert_mouse_zoom)
-            Hdr.zoom_preferences(bpy.context.user_preferences.inputs.invert_zoom_wheel,
-                                 bpy.context.user_preferences.inputs.invert_mouse_zoom)
+            Map.zoom_preferences(bpy.context.preferences.inputs.invert_zoom_wheel,
+                                 bpy.context.preferences.inputs.invert_mouse_zoom)
+            Hdr.zoom_preferences(bpy.context.preferences.inputs.invert_zoom_wheel,
+                                 bpy.context.preferences.inputs.invert_mouse_zoom)
         row = self.layout.row()
         if p.UseOneColumn:
             col1 = row.column()

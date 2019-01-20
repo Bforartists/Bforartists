@@ -62,7 +62,7 @@ class CMUMocapSubjectBrowser(bpy.types.Panel):
     def draw(self, context):
         data.initialize_subjects(context)
         layout = self.layout
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         layout.template_list("UI_UL_list", "SB", cml, "subject_list",
             cml, "subject_active")
         layout.prop(cml, "subject_import_name")
@@ -100,7 +100,7 @@ class CMUMocapMotionBrowser(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         layout.template_list("UI_UL_list", "MB", cml, "motion_list",
             cml, "motion_active")
         if cml.motion_active == -1:
@@ -153,7 +153,7 @@ class CMUMocapToMakeHuman(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         layout.prop_search(cml, "floor", context.scene, "objects")
         layout.prop(cml, "feet_angle")
         layout.operator("object.cmu_align", text='Align armatures')

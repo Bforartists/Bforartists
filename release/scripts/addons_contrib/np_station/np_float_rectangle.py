@@ -414,7 +414,7 @@ def DRAW_Overlay(self, context):
     np_print('DRAW_Overlay_START',';','NP020FR.flag = ', NP020FR.flag)
 
     '''
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
     badge = addon_prefs.npfr_badge
     badge_size = addon_prefs.npfr_badge_size
     dist_scale = addon_prefs.npfr_dist_scale

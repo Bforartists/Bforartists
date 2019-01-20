@@ -47,11 +47,11 @@ class AMTH_WM_OT_save_reload(bpy.types.Operator):
 
 
 def button_save_reload(self, context):
-    get_addon = "amaranth" in context.user_preferences.addons.keys()
+    get_addon = "amaranth" in context.preferences.addons.keys()
     if not get_addon:
         return
 
-    if context.user_preferences.addons["amaranth"].preferences.use_file_save_reload:
+    if context.preferences.addons["amaranth"].preferences.use_file_save_reload:
         self.layout.separator()
         self.layout.operator(
             AMTH_WM_OT_save_reload.bl_idname,

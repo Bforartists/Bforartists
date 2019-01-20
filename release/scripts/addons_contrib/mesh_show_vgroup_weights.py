@@ -46,7 +46,7 @@ def calc_callback(self, context):
         return
 
     # get color info from theme
-    acol = context.user_preferences.themes[0].view_3d.editmesh_active
+    acol = context.preferences.themes[0].view_3d.editmesh_active
     tcol = (acol[0] * 0.85, acol[1] * 0.85, acol[2] * 0.85)
 
     # get screen information
