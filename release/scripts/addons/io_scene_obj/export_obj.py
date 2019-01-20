@@ -138,8 +138,8 @@ def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
                                                        path_mode, "", copy_set, image.library)
                     options = []
                     if key == "map_Bump":
-                        if mat_wrap.normalmap_strengh != 1.0:
-                            options.append('-bm %.6f' % mat_wrap.normalmap_strengh)
+                        if mat_wrap.normalmap_strength != 1.0:
+                            options.append('-bm %.6f' % mat_wrap.normalmap_strength)
                     if tex_wrap.translation != Vector((0.0, 0.0, 0.0)):
                         options.append('-o %.6f %.6f %.6f' % tex_wrap.translation[:])
                     if tex_wrap.scale != Vector((1.0, 1.0, 1.0)):
@@ -399,7 +399,7 @@ def write_file(filepath, objects, depsgraph, scene,
                         loops = me.loops
 
                         if (EXPORT_SMOOTH_GROUPS or EXPORT_SMOOTH_GROUPS_BITFLAGS) and face_index_pairs:
-                            smooth_groups, smooth_groups_tot = me.calc_smooth_groups(EXPORT_SMOOTH_GROUPS_BITFLAGS)
+                            smooth_groups, smooth_groups_tot = me.calc_smooth_groups(use_bitflags=EXPORT_SMOOTH_GROUPS_BITFLAGS)
                             if smooth_groups_tot <= 1:
                                 smooth_groups, smooth_groups_tot = (), 0
                         else:

@@ -30,6 +30,25 @@ from ..op import (
     transfer_uv,
     uvw,
 )
+from ..op.preserve_uv_aspect import MUV_OT_PreserveUVAspect
+from ..op.texture_lock import (
+    MUV_OT_TextureLock_Lock,
+    MUV_OT_TextureLock_Unlock,
+)
+from ..op.texture_wrap import (
+    MUV_OT_TextureWrap_Refer,
+    MUV_OT_TextureWrap_Set,
+)
+from ..op.world_scale_uv import (
+    MUV_OT_WorldScaleUV_Measure,
+    MUV_OT_WorldScaleUV_ApplyManual,
+    MUV_OT_WorldScaleUV_ApplyScalingDensity,
+    MUV_OT_WorldScaleUV_ApplyProportionalToMesh,
+)
+from ..op.texture_projection import (
+    MUV_OT_TextureProjection,
+    MUV_OT_TextureProjection_Project,
+)
 from ..utils.bl_class_registry import BlClassRegistry
 
 __all__ = [
@@ -90,6 +109,95 @@ class MUV_MT_TransferUV(bpy.types.Menu):
 
 
 @BlClassRegistry()
+class MUV_MT_TextureLock(bpy.types.Menu):
+    """
+    Menu class: Master menu of Texture Lock
+    """
+
+    bl_idname = "uv.muv_texture_lock_menu"
+    bl_label = "Texture Lock"
+    bl_description = "Lock texture when vertices of mesh (Preserve UV)"
+
+    def draw(self, context):
+        layout = self.layout
+        sc = context.scene
+
+        layout.label(text="Normal Mode")
+        layout.operator(
+            MUV_OT_TextureLock_Lock.bl_idname,
+            text="Lock"
+            if not MUV_OT_TextureLock_Lock.is_ready(context)
+            else "ReLock")
+        ops = layout.operator(MUV_OT_TextureLock_Unlock.bl_idname,
+                              text="Unlock")
+        ops.connect = sc.muv_texture_lock_connect
+
+        layout.separator()
+
+        layout.label(text="Interactive Mode")
+        layout.prop(sc, "muv_texture_lock_lock", text="Lock")
+
+
+@BlClassRegistry()
+class MUV_MT_WorldScaleUV(bpy.types.Menu):
+    """
+    Menu class: Master menu of world scale UV
+    """
+
+    bl_idname = "uv.muv_world_scale_uv_menu"
+    bl_label = "World Scale UV"
+    bl_description = ""
+
+    def draw(self, context):
+        layout = self.layout
+        sc = context.scene
+
+        layout.operator(MUV_OT_WorldScaleUV_Measure.bl_idname,
+                        text="Measure")
+
+        layout.operator(MUV_OT_WorldScaleUV_ApplyManual.bl_idname,
+                        text="Apply (Manual)")
+
+        ops = layout.operator(
+            MUV_OT_WorldScaleUV_ApplyScalingDensity.bl_idname,
+            text="Apply (Same Desity)")
+        ops.src_density = sc.muv_world_scale_uv_src_density
+        ops.same_density = True
+
+        ops = layout.operator(
+            MUV_OT_WorldScaleUV_ApplyScalingDensity.bl_idname,
+            text="Apply (Scaling Desity)")
+        ops.src_density = sc.muv_world_scale_uv_src_density
+        ops.same_density = False
+        ops.tgt_scaling_factor = sc.muv_world_scale_uv_tgt_scaling_factor
+
+        ops = layout.operator(
+            MUV_OT_WorldScaleUV_ApplyProportionalToMesh.bl_idname,
+            text="Apply (Proportional to Mesh)")
+        ops.src_density = sc.muv_world_scale_uv_src_density
+        ops.src_uv_area = sc.muv_world_scale_uv_src_uv_area
+        ops.src_mesh_area = sc.muv_world_scale_uv_src_mesh_area
+        ops.origin = sc.muv_world_scale_uv_origin
+
+
+@BlClassRegistry()
+class MUV_MT_TextureWrap(bpy.types.Menu):
+    """
+    Menu class: Master menu of Texture Wrap
+    """
+
+    bl_idname = "uv.muv_texture_wrap_menu"
+    bl_label = "Texture Wrap"
+    bl_description = ""
+
+    def draw(self, _):
+        layout = self.layout
+
+        layout.operator(MUV_OT_TextureWrap_Refer.bl_idname, text="Refer")
+        layout.operator(MUV_OT_TextureWrap_Set.bl_idname, text="Set")
+
+
+@BlClassRegistry()
 class MUV_MT_UVW(bpy.types.Menu):
     """
     Menu class: Master menu of UVW
@@ -109,3 +217,43 @@ class MUV_MT_UVW(bpy.types.Menu):
         ops = layout.operator(uvw.MUV_OT_UVW_BestPlanerMap.bl_idname,
                               text="Best Planner")
         ops.assign_uvmap = sc.muv_uvw_assign_uvmap
+
+
+@BlClassRegistry()
+class MUV_MT_PreserveUVAspect(bpy.types.Menu):
+    """
+    Menu class: Master menu of Preserve UV Aspect
+    """
+
+    bl_idname = "uv.muv_preserve_uv_aspect_menu"
+    bl_label = "Preserve UV Aspect"
+    bl_description = ""
+
+    def draw(self, context):
+        layout = self.layout
+        sc = context.scene
+
+        for key in bpy.data.images.keys():
+            ops = layout.operator(MUV_OT_PreserveUVAspect.bl_idname, text=key)
+            ops.dest_img_name = key
+            ops.origin = sc.muv_preserve_uv_aspect_origin
+
+
+@BlClassRegistry()
+class MUV_MT_TextureProjection(bpy.types.Menu):
+    """
+    Menu class: Master menu of Texture Projection
+    """
+
+    bl_idname = "uv.muv_texture_projection_menu"
+    bl_label = "Texture Projection"
+    bl_description = ""
+
+    def draw(self, context):
+        layout = self.layout
+        sc = context.scene
+
+        layout.prop(sc, "muv_texture_projection_enable",
+                    text="Texture Projection")
+        layout.operator(MUV_OT_TextureProjection_Project.bl_idname,
+                        text="Project")

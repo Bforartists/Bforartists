@@ -1326,7 +1326,7 @@ class drawPoly(bpy.types.Operator):
             # restore selection mode and manipulator
             bpy.context.tool_settings.mesh_select_mode = self.sel_mode
             bpy.context.space_data.show_manipulator = self.manip
-            bpy.context.user_preferences.view.use_mouse_depth_cursor = self.cursor_depth
+            bpy.context.preferences.input.use_mouse_depth_cursor = self.cursor_depth
             bpy.context.scene.tool_settings.use_snap = self.snap
 
 
@@ -1350,7 +1350,7 @@ class drawPoly(bpy.types.Operator):
             # restore selection mode and manipulator
             bpy.context.tool_settings.mesh_select_mode = self.sel_mode
             bpy.context.space_data.show_manipulator = self.manip
-            bpy.context.user_preferences.view.use_mouse_depth_cursor = self.cursor_depth
+            bpy.context.preferences.input.use_mouse_depth_cursor = self.cursor_depth
             bpy.context.scene.tool_settings.use_snap = self.snap
 
 
@@ -1370,11 +1370,11 @@ class drawPoly(bpy.types.Operator):
             return {'PASS_THROUGH'}
 
         elif event.type == 'LEFT_CTRL' or event.type == 'RIGHT_CTRL' :
-            if bpy.context.user_preferences.view.use_mouse_depth_cursor == True:
-                bpy.context.user_preferences.view.use_mouse_depth_cursor = False
+            if bpy.context.preferences.input.use_mouse_depth_cursor == True:
+                bpy.context.preferences.input.use_mouse_depth_cursor = False
                 bpy.context.scene.tool_settings.use_snap = False
             else:
-                bpy.context.user_preferences.view.use_mouse_depth_cursor = True
+                bpy.context.preferences.input.use_mouse_depth_cursor = True
                 bpy.context.scene.tool_settings.use_snap = True
             return {'PASS_THROUGH'}
 
@@ -1413,8 +1413,8 @@ class drawPoly(bpy.types.Operator):
         bpy.context.tool_settings.mesh_select_mode = True, False, False
         self.manip = bpy.context.space_data.show_manipulator
         bpy.context.space_data.show_manipulator = False
-        self.cursor_depth = bpy.context.user_preferences.view.use_mouse_depth_cursor
-        bpy.context.user_preferences.view.use_mouse_depth_cursor = False
+        self.cursor_depth = bpy.context.preferences.input.use_mouse_depth_cursor
+        bpy.context.preferences.input.use_mouse_depth_cursor = False
         self.snap = bpy.context.scene.tool_settings.use_snap
         bpy.context.scene.tool_settings.use_snap = False
 
@@ -1445,28 +1445,28 @@ class toggleSilhouette(bpy.types.Operator):
     def execute(self, context):
 
 
-        light_check = bpy.context.user_preferences.system.solid_lights[0].use
+        light_check = bpy.context.preferences.system.solid_lights[0].use
 
         if light_check == True:
             # Set Lights to Off
-            bpy.context.user_preferences.system.solid_lights[0].use = False
-            bpy.context.user_preferences.system.solid_lights[1].use = False
+            bpy.context.preferences.system.solid_lights[0].use = False
+            bpy.context.preferences.system.solid_lights[1].use = False
 
             # Store variables
-            self.diff_col = bpy.context.user_preferences.system.solid_lights[2].diffuse_color
+            self.diff_col = bpy.context.preferences.system.solid_lights[2].diffuse_color
             self.disp_mode = bpy.context.space_data.viewport_shade
             self.matcap = bpy.context.space_data.use_matcap
             self.only_render = bpy.context.space_data.show_only_render
 
-            bpy.context.user_preferences.system.solid_lights[2].diffuse_color = 0,0,0
+            bpy.context.preferences.system.solid_lights[2].diffuse_color = 0,0,0
             bpy.context.space_data.viewport_shade = 'SOLID'
             bpy.context.space_data.use_matcap = False
             bpy.context.space_data.show_only_render = True
 
         else:
-            bpy.context.user_preferences.system.solid_lights[0].use = True
-            bpy.context.user_preferences.system.solid_lights[1].use = True
-            bpy.context.user_preferences.system.solid_lights[2].diffuse_color = self.diff_col
+            bpy.context.preferences.system.solid_lights[0].use = True
+            bpy.context.preferences.system.solid_lights[1].use = True
+            bpy.context.preferences.system.solid_lights[2].diffuse_color = self.diff_col
             bpy.context.space_data.viewport_shade = self.disp_mode
             bpy.context.space_data.use_matcap = self.matcap
             bpy.context.space_data.show_only_render = self.only_render
