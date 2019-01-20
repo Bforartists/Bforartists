@@ -553,8 +553,8 @@ class OBJECT_OT_load_img(bpy.types.Operator):
         global folder_path
         folder_path = '//'
         try:
-            user_preferences = bpy.context.user_preferences
-            addon_prefs = user_preferences.addons['lighting_hdri_shortcut'].preferences
+            preferences = bpy.context.preferences
+            addon_prefs = preferences.addons['lighting_hdri_shortcut'].preferences
             folder_path = addon_prefs.folder_path
         except:
             pass
@@ -621,8 +621,8 @@ class OBJECT_OT_addon_prefs(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons[__name__].preferences
+        preferences = context.preferences
+        addon_prefs = preferences.addons[__name__].preferences
 
         info = ("Path: %s" %
                 (addon_prefs.folder_path))

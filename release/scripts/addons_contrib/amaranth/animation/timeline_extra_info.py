@@ -23,14 +23,14 @@ import bpy
 
 
 def label_timeline_extra_info(self, context):
-    get_addon = "amaranth" in context.user_preferences.addons.keys()
+    get_addon = "amaranth" in context.preferences.addons.keys()
     if not get_addon:
         return
 
     layout = self.layout
     scene = context.scene
 
-    if context.user_preferences.addons["amaranth"].preferences.use_timeline_extra_info:
+    if context.preferences.addons["amaranth"].preferences.use_timeline_extra_info:
         row = layout.row(align=True)
 
         # Check for preview range

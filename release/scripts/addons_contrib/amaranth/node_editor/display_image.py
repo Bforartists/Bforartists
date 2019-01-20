@@ -50,11 +50,11 @@ class AMTH_NODE_OT_show_active_node_image(bpy.types.Operator):
         select_node = bpy.ops.node.select(mouse_x=mlocx, mouse_y=mlocy, extend=False)
 
         if 'FINISHED' in select_node:  # Only run if we're clicking on a node
-            get_addon = "amaranth" in context.user_preferences.addons.keys()
+            get_addon = "amaranth" in context.preferences.addons.keys()
             if not get_addon:
                 return {"CANCELLED"}
 
-            preferences = context.user_preferences.addons["amaranth"].preferences
+            preferences = context.preferences.addons["amaranth"].preferences
             if preferences.use_image_node_display:
                 if context.active_node:
                     active_node = context.active_node

@@ -96,13 +96,13 @@ class CMUMocapDownloadImport(bpy.types.Operator):
     def cancel(self, context):
         context.window_manager.event_timer_remove(self.timer)
         bpy.types.SpaceView3D.draw_handler_remove(self.handle, 'WINDOW')
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         if os.path.exists(self.local_file):
             return self.import_or_open(cml)
         return {'CANCELLED'}
 
     def execute(self, context):
-        cml = context.user_preferences.addons['cmu_mocap_browser'].preferences
+        cml = context.preferences.addons['cmu_mocap_browser'].preferences
         if not os.path.exists(self.local_file):
             try:
                 os.makedirs(os.path.split(self.local_file)[0])

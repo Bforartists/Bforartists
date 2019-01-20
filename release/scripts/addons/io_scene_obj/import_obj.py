@@ -125,6 +125,10 @@ def create_materials(filepath, relpath,
 
         map_offset = map_options.get(b'-o')
         map_scale = map_options.get(b'-s')
+        if map_offset is not None:
+            map_offset = tuple(map(float_func, map_offset))
+        if map_scale is not None:
+            map_scale = tuple(map(float_func, map_scale))
 
         def _generic_tex_set(nodetex, image, texcoords, translation, scale):
             nodetex.image = image
@@ -177,6 +181,64 @@ def create_materials(filepath, relpath,
         else:
             raise Exception("invalid type %r" % type)
 
+    def finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+                          do_highlight, do_reflection, do_transparency, do_glass):
+        # Finalize previous mat, if any.
+        if context_material:
+            if "specular" in context_material_vars:
+                # XXX This is highly approximated, not sure whether we can do better...
+                # TODO: Find a way to guesstimate best value from diffuse color...
+                # IDEA: Use standard deviation of both spec and diff colors (i.e. how far away they are
+                #       from some grey), and apply the the proportion between those two as tint factor?
+                spec = sum(spec_colors) / 3.0
+                # ~ spec_var = math.sqrt(sum((c - spec) ** 2 for c in spec_color) / 3.0)
+                # ~ diff = sum(context_mat_wrap.base_color) / 3.0
+                # ~ diff_var = math.sqrt(sum((c - diff) ** 2 for c in context_mat_wrap.base_color) / 3.0)
+                # ~ tint = min(1.0, spec_var / diff_var)
+                context_mat_wrap.specular = spec
+                context_mat_wrap.specular_tint = 0.0
+                if "roughness" not in context_material_vars:
+                    context_mat_wrap.roughness = 0.0
+
+
+            emit_value = sum(emit_colors) / 3.0
+            if emit_value > 1e-6:
+                print("WARNING, emit value unsupported by Principled BSDF shader, skipped.")
+                # We have to adapt it to diffuse color too...
+                emit_value /= sum(context_material.diffuse_color) / 3.0
+            # ~ context_material.emit = emit_value
+
+            # FIXME, how else to use this?
+            if do_highlight:
+                if "specular" not in context_material_vars:
+                    context_mat_wrap.specular = 1.0
+                if "roughness" not in context_material_vars:
+                    context_mat_wrap.roughness = 0.0
+            else:
+                if "specular" not in context_material_vars:
+                    context_mat_wrap.specular = 0.0
+                if "roughness" not in context_material_vars:
+                    context_mat_wrap.roughness = 1.0
+
+            if do_reflection:
+                if "metallic" not in context_material_vars:
+                    context_mat_wrap.metallic = 1.0
+            else:
+                # since we are (ab)using ambient term for metallic (which can be non-zero)
+                context_mat_wrap.metallic = 0.0
+
+            if do_transparency:
+                if "ior" not in context_material_vars:
+                    context_mat_wrap.ior = 1.0
+                if "transmission" not in context_material_vars:
+                    context_mat_wrap.transmission = 1.0
+                # EEVEE only
+                context_material.blend_method = 'BLEND'
+
+            if do_glass:
+                if "ior" not in context_material_vars:
+                    context_mat_wrap.ior = 1.5
+
     # Try to find a MTL with the same name as the OBJ if no MTLs are specified.
     temp_mtl = os.path.splitext((os.path.basename(filepath)))[0] + ".mtl"
     if os.path.exists(os.path.join(DIR, temp_mtl)):
@@ -220,57 +282,8 @@ def create_materials(filepath, relpath,
 
                 if line_id == b'newmtl':
                     # Finalize previous mat, if any.
-                    if context_material:
-                        if "specular" in context_material_vars:
-                            # XXX This is highly approximated, not sure whether we can do better...
-                            # TODO: Find a way to guesstimate best value from diffuse color...
-                            # IDEA: Use standard deviation of both spec and diff colors (i.e. how far away they are
-                            #       from some grey), and apply the the proportion between those two as tint factor?
-                            spec = sum(spec_colors) / 3.0
-                            # ~ spec_var = math.sqrt(sum((c - spec) ** 2 for c in spec_color) / 3.0)
-                            # ~ diff = sum(context_mat_wrap.base_color) / 3.0
-                            # ~ diff_var = math.sqrt(sum((c - diff) ** 2 for c in context_mat_wrap.base_color) / 3.0)
-                            # ~ tint = min(1.0, spec_var / diff_var)
-                            context_mat_wrap.specular = spec
-                            context_mat_wrap.specular_tint = 0.0
-                            if "roughness" not in context_material_vars:
-                                context_mat_wrap.roughness = 0.0
-
-
-                        emit_value = sum(emit_colors) / 3.0
-                        if emit_value > 1e-6:
-                            print("WARNING, emit value unsupported by Principled BSDF shader, skipped.")
-                            # We have to adapt it to diffuse color too...
-                            emit_value /= sum(context_material.diffuse_color) / 3.0
-                        # ~ context_material.emit = emit_value
-
-                        # FIXME, how else to use this?
-                        if do_highlight:
-                            if "specular" not in context_material_vars:
-                                context_mat_wrap.specular = 1.0
-                            if "roughness" not in context_material_vars:
-                                context_mat_wrap.roughness = 0.0
-                        else:
-                            if "specular" not in context_material_vars:
-                                context_mat_wrap.specular = 0.0
-                            if "roughness" not in context_material_vars:
-                                context_mat_wrap.roughness = 1.0
-
-                        if do_reflection:
-                            if "metallic" not in context_material_vars:
-                                context_mat_wrap.metallic = 1.0
-
-                        if do_transparency:
-                            if "ior" not in context_material_vars:
-                                context_mat_wrap.ior = 1.0
-                            if "transmission" not in context_material_vars:
-                                context_mat_wrap.transmission = 1.0
-                            # EEVEE only
-                            context_material.blend_method = 'BLEND'
-
-                        if do_glass:
-                            if "ior" not in context_material_vars:
-                                context_mat_wrap.ior = 1.5
+                    finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+                                      do_highlight, do_reflection, do_transparency, do_glass)
 
                     context_material_name = line_value(line_split)
                     context_material = unique_materials.get(context_material_name)
@@ -415,6 +428,10 @@ def create_materials(filepath, relpath,
                                                 context_material_name, img_data, line, 'refl')
                     else:
                         print("WARNING: %r:%r (ignored)" % (filepath, line))
+
+            # Finalize last mat, if any.
+            finalize_material(context_material, context_material_vars, spec_colors, emit_colors,
+                              do_highlight, do_reflection, do_transparency, do_glass)
             mtl.close()
 
 
@@ -843,6 +860,14 @@ def load(context,
     This function passes the file and sends the data off
         to be split into objects and then converted into mesh objects
     """
+    def unique_name(existing_names, name_orig):
+        i = 0
+        name = name_orig
+        while name in existing_names:
+            name = b"%s.%03d" % (name_orig, i)
+            i += 1
+        existing_names.add(name)
+        return name
 
     def handle_vec(line_start, context_multi_line, line_split, tag, data, vec, vec_len):
         ret_context_multi_line = tag if strip_slash(line_split) else b''
@@ -895,6 +920,8 @@ def load(context,
         context_object = None
         context_vgroup = None
 
+        objects_names = set()
+
         # Nurbs
         context_nurbs = {}
         nurbs = []
@@ -942,9 +969,9 @@ def load(context,
                 # and only fallback to full multi-line parsing when needed, this gives significant speed-up
                 # (~40% on affected code).
                 if line_start == b'v':
-                    vdata, vdata_len, do_quick_vert = (verts_loc, 3, not skip_quick_vert)
+                    vdata, vdata_len, do_quick_vert = verts_loc, 3, not skip_quick_vert
                 elif line_start == b'vn':
-                    vdata, vdata_len, do_quick_vert = (verts_nor, 3, not skip_quick_vert)
+                    vdata, vdata_len, do_quick_vert = verts_nor, 3, not skip_quick_vert
                 elif line_start == b'vt':
                     vdata, vdata_len, do_quick_vert = verts_tex, 2, not skip_quick_vert
                 elif context_multi_line == b'v':
@@ -968,7 +995,8 @@ def load(context,
                             if quick_vert_failures > 10000:
                                 skip_quick_vert = True
                     if not do_quick_vert:
-                        context_multi_line = handle_vec(line_start, context_multi_line, line_split, b'v', vdata, vec, vdata_len)
+                        context_multi_line = handle_vec(line_start, context_multi_line, line_split,
+                                                        context_multi_line or line_start, vdata, vec, vdata_len)
 
                 elif line_start == b'f' or context_multi_line == b'f':
                     if not context_multi_line:
@@ -1073,12 +1101,12 @@ def load(context,
 
                 elif line_start == b'o':
                     if use_split_objects:
-                        context_object = line_value(line_split)
+                        context_object = unique_name(objects_names, line_value(line_split))
                         # unique_obects[context_object]= None
 
                 elif line_start == b'g':
                     if use_split_groups:
-                        context_object = line_value(line.split())
+                        context_object = unique_name(objects_names, line_value(line_split))
                         # print 'context_object', context_object
                         # unique_obects[context_object]= None
                     elif use_groups_as_vgroups:

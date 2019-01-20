@@ -39,6 +39,20 @@ from math import (
         sin, cos, pi,
         )
 
+noise_basis_default = "PERLIN_ORIGINAL"
+noise_basis = [
+    ("BLENDER", "Blender", "Blender default noise", 0),
+    ("PERLIN_ORIGINAL", "Perlin", "Perlin noise", 1),
+    ("PERLIN_NEW", "New Perlin", "New Perlin noise", 2),
+    ("VORONOI_F1", "Voronoi F1", "Voronoi F1", 3),
+    ("VORONOI_F2", "Voronoi F2", "Voronoi F2", 4),
+    ("VORONOI_F3", "Voronoi F3", "Voronoi F3", 5),
+    ("VORONOI_F4", "Voronoi F4", "Voronoi F4", 6),
+    ("VORONOI_F2F1", "Voronoi F2-F1", "Voronoi F2-F1", 7),
+    ("VORONOI_CRACKLE", "Voronoi Crackle", "Voronoi Crackle", 8),
+    ("CELLNOISE", "Cell Noise", "Cell noise", 9)
+]
+
 # ------------------------------------------------------------
 # Height scale:
 def Height_Scale(input, iscale, offset, invert):
@@ -138,7 +152,7 @@ def marble_noise(x, y, z, origin, size, shape, bias, sharpnes, turb, depth, hard
     x += origin[0]
     y += origin[1]
     z += origin[2]
-    value = s + turb * turbulence_vector((x, y, z), depth, hard, basis)[1]
+    value = s + turb * turbulence_vector((x, y, z), depth, hard, noise_basis=basis)[1]
 
     if bias is 1:
         value = cos_bias(value)
@@ -169,10 +183,10 @@ def marble_noise(x, y, z, origin, size, shape, bias, sharpnes, turb, depth, hard
 def vlnTurbMode(coords, distort, basis, vlbasis, hardnoise):
     # hard noise
     if hardnoise:
-        return (abs(-variable_lacunarity(coords, distort, basis, vlbasis)))
+        return (abs(-variable_lacunarity(coords, distort, noise_type1=basis, noise_type2=vlbasis)))
     # soft noise
     else:
-        return variable_lacunarity(coords, distort, basis, vlbasis)
+        return variable_lacunarity(coords, distort, noise_type1=basis, noise_type2=vlbasis)
 
 
 def vl_noise_turbulence(coords, distort, depth, basis, vlbasis, hardnoise, amp, freq):
@@ -188,86 +202,86 @@ def vl_noise_turbulence(coords, distort, depth, basis, vlbasis, hardnoise, amp, 
 ## duo_multiFractal:
 def double_multiFractal(coords, H, lacunarity, octaves, offset, gain, basis, vlbasis):
     x, y, z = coords
-    n1 = multi_fractal((x * 1.5 + 1, y * 1.5 + 1, z * 1.5 + 1), 1.0, 1.0, 1.0, basis) * (offset * 0.5)
-    n2 = multi_fractal((x - 1, y - 1, z - 1), H, lacunarity, octaves, vlbasis) * (gain * 0.5)
+    n1 = multi_fractal((x * 1.5 + 1, y * 1.5 + 1, z * 1.5 + 1), 1.0, 1.0, 1.0, noise_basis=basis) * (offset * 0.5)
+    n2 = multi_fractal((x - 1, y - 1, z - 1), H, lacunarity, octaves, noise_basis=vlbasis) * (gain * 0.5)
     return (n1 * n1 + n2 * n2) * 0.5
 
 
 ## distorted_heteroTerrain:
 def distorted_heteroTerrain(coords, H, lacunarity, octaves, offset, distort, basis, vlbasis):
     x, y, z = coords
-    h1 = (hetero_terrain((x, y, z), 1.0, 2.0, 1.0, 1.0, basis) * 0.5)
+    h1 = (hetero_terrain((x, y, z), 1.0, 2.0, 1.0, 1.0, noise_basis=basis) * 0.5)
     d =  h1 * distort
-    h2 = (hetero_terrain((x + d, y + d, z + d), H, lacunarity, octaves, offset, vlbasis) * 0.25)
+    h2 = (hetero_terrain((x + d, y + d, z + d), H, lacunarity, octaves, offset, noise_basis=vlbasis) * 0.25)
     return (h1 * h1 + h2 * h2) * 0.5
 
 
 ## SlickRock:
 def slick_rock(coords, H, lacunarity, octaves, offset, gain, distort, basis, vlbasis):
     x, y, z = coords
-    n = multi_fractal((x,y,z), 1.0, 2.0, 2.0, basis) * distort * 0.25
-    r = ridged_multi_fractal((x + n, y + n, z + n), H, lacunarity, octaves, offset + 0.1, gain * 2, vlbasis)
+    n = multi_fractal((x,y,z), 1.0, 2.0, 2.0, noise_basis=basis) * distort * 0.25
+    r = ridged_multi_fractal((x + n, y + n, z + n), H, lacunarity, octaves, offset + 0.1, gain * 2, noise_basis=vlbasis)
     return (n + (n * r)) * 0.5
 
 
 ## vlhTerrain
 def vl_hTerrain(coords, H, lacunarity, octaves, offset, basis, vlbasis, distort):
     x, y, z = coords
-    ht = hetero_terrain((x, y, z), H, lacunarity, octaves, offset, basis ) * 0.25
-    vl = ht * variable_lacunarity((x, y, z), distort, basis, vlbasis) * 0.5 + 0.5
+    ht = hetero_terrain((x, y, z), H, lacunarity, octaves, offset, noise_basis=basis ) * 0.25
+    vl = ht * variable_lacunarity((x, y, z), distort, noise_type1=basis, noise_type2=vlbasis) * 0.5 + 0.5
     return vl * ht
 
 
 # another turbulence
 def ant_turbulence(coords, depth, hardnoise, nbasis, amp, freq, distortion):
     x, y, z = coords
-    t = turbulence_vector((x/2, y/2, z/2), depth, 0, nbasis, amp, freq) * 0.5 * distortion
-    return turbulence((t[0], t[1], t[2]), 2, hardnoise, 3) * 0.5 + 0.5
+    t = turbulence_vector((x/2, y/2, z/2), depth, 0, noise_basis=nbasis, amplitude_scale=amp, frequency_scale=freq) * 0.5 * distortion
+    return turbulence((t[0], t[1], t[2]), 2, hardnoise, noise_basis="VORONOI_F1") * 0.5 + 0.5
 
 
 # rocks noise
 def rocks_noise(coords, depth, hardnoise, nbasis, distortion):
     x,y,z = coords
-    p = turbulence((x, y, z), 4, 0, 0) * 0.125 * distortion
+    p = turbulence((x, y, z), 4, 0, noise_basis='BLENDER') * 0.125 * distortion
     xx, yy, zz = x, y, z
-    a = turbulence((xx + p, yy + p, zz), 2, 0, 7)
+    a = turbulence((xx + p, yy + p, zz), 2, 0, noise_basis='VORONOI_F2F1')
     pa = a * 0.1875 * distortion
-    b = turbulence((x, y, z + pa), depth, hardnoise, nbasis)
+    b = turbulence((x, y, z + pa), depth, hardnoise, noise_basis=nbasis)
     return ((a + 0.5 * (b - a)) * 0.5 + 0.5)
 
 
 # shattered_hterrain:
 def shattered_hterrain(coords, H, lacunarity, octaves, offset, distort, basis):
     x, y, z = coords
-    d = (turbulence_vector(coords, 6, 0, 0)[0] * 0.5 + 0.5) * distort * 0.5
-    t1 = (turbulence_vector((x + d, y + d, z + d), 0, 0, 7)[0] + 0.5)
-    t2 = (hetero_terrain((x * 2, y * 2, z * 2), H, lacunarity, octaves, offset, basis) * 0.5)
+    d = (turbulence_vector(coords, 6, 0)[0] * 0.5 + 0.5) * distort * 0.5
+    t1 = (turbulence_vector((x + d, y + d, z + d), 0, 0, noise_basis='VORONOI_F2F1')[0] + 0.5)
+    t2 = (hetero_terrain((x * 2, y * 2, z * 2), H, lacunarity, octaves, offset, noise_basis=basis) * 0.5)
     return ((t1 * t2) + t2 * 0.5) * 0.5
 
 
 # strata_hterrain
 def strata_hterrain(coords, H, lacunarity, octaves, offset, distort, basis):
     x, y, z = coords
-    value = hetero_terrain((x, y, z), H, lacunarity, octaves, offset, basis) * 0.5
+    value = hetero_terrain((x, y, z), H, lacunarity, octaves, offset, noise_basis=basis) * 0.5
     steps = (sin(value * (distort * 5) * pi) * (0.1 / (distort * 5) * pi))
     return (value * (1.0 - 0.5) + steps * 0.5)
 
 
 # Planet Noise by: Farsthary
 # https://farsthary.com/2010/11/24/new-planet-procedural-texture/
-def planet_noise(coords, oct=6, hard=0, noisebasis=1, nabla=0.001):
+def planet_noise(coords, oct=6, hard=0, noisebasis='PERLIN_ORIGINAL', nabla=0.001):
     x, y, z = coords
     d = 0.001
     offset = nabla * 1000
-    x = turbulence((x, y, z), oct, hard, noisebasis)
-    y = turbulence((x + offset, y, z), oct, hard, noisebasis)
-    z = turbulence((x, y + offset, z), oct, hard, noisebasis)
-    xdy = x - turbulence((x, y + d, z), oct, hard, noisebasis)
-    xdz = x - turbulence((x, y, z + d), oct, hard, noisebasis)
-    ydx = y - turbulence((x + d, y, z), oct, hard, noisebasis)
-    ydz = y - turbulence((x, y, z + d), oct, hard, noisebasis)
-    zdx = z - turbulence((x + d, y, z), oct, hard, noisebasis)
-    zdy = z - turbulence((x, y + d, z), oct, hard, noisebasis)
+    x = turbulence((x, y, z), oct, hard, noise_basis=noisebasis)
+    y = turbulence((x + offset, y, z), oct, hard, noise_basis=noisebasis)
+    z = turbulence((x, y + offset, z), oct, hard, noise_basis=noisebasis)
+    xdy = x - turbulence((x, y + d, z), oct, hard, noise_basis=noisebasis)
+    xdz = x - turbulence((x, y, z + d), oct, hard, noise_basis=noisebasis)
+    ydx = y - turbulence((x + d, y, z), oct, hard, noise_basis=noisebasis)
+    ydz = y - turbulence((x, y, z + d), oct, hard, noise_basis=noisebasis)
+    zdx = z - turbulence((x + d, y, z), oct, hard, noise_basis=noisebasis)
+    zdy = z - turbulence((x, y + d, z), oct, hard, noise_basis=noisebasis)
     return (zdy - ydz), (zdx - xdz), (ydx - xdy)
 
 
@@ -388,51 +402,51 @@ def Effect_Basis_Function(coords, type, bias):
         effect = offset + iscale * effect
     ## crackle:
     elif type == 13:
-        t = turbulence((x, y, 0), 6, 0, 0) * 0.25
-        effect = variable_lacunarity((x, y, t), 0.25, 0, 8)
+        t = turbulence((x, y, 0), 6, 0, noise_basis="BLENDER") * 0.25
+        effect = variable_lacunarity((x, y, t), 0.25, noise_type2='VORONOI_CRACKLE')
         if effect > 0.5:
             effect = 0.5
         effect = offset + iscale * effect
     ## sparse cracks noise:
     elif type == 14:
-        effect = 2.5 * abs(noise((x, y, 0), 1)) - 0.1
+        effect = 2.5 * abs(noise((x, y, 0), noise_basis="PERLIN_ORIGINAL")) - 0.1
         if effect > 0.25:
             effect = 0.25
         effect = offset + iscale * (effect * 2.5)
     ## shattered rock noise:
     elif type == 15:
-        effect = 0.5 + noise((x, y, 0), 7)
+        effect = 0.5 + noise((x, y, 0), noise_basis="VORONOI_F2F1")
         if effect > 0.75:
             effect = 0.75
         effect = offset + iscale * effect
     ## lunar noise:
     elif type == 16:
-        effect = 0.25 + 1.5 * voronoi((x, y, 0), 1)[0][0]
+        effect = 0.25 + 1.5 * voronoi((x, y, 0), distance_metric='DISTANCE_SQUARED')[0][0]
         if effect > 0.5:
             effect = 0.5
         effect = offset + iscale * effect * 2
     ## cosine noise:
     elif type == 17:
-        effect = cos(5 * noise((x, y, 0), 0))
+        effect = cos(5 * noise((x, y, 0), noise_basis="BLENDER"))
         effect = offset + iscale * (effect * 0.5)
     ## spikey noise:
     elif type == 18:
-        n = 0.5 + 0.5 * turbulence((x * 5, y * 5, 0), 8, 0, 0)
+        n = 0.5 + 0.5 * turbulence((x * 5, y * 5, 0), 8, 0, noise_basis="BLENDER")
         effect = ((n * n)**5)
         effect = offset + iscale * effect
     ## stone noise:
     elif type == 19:
-        effect = offset + iscale * (noise((x * 2, y * 2, 0), 0) * 1.5 - 0.75)
+        effect = offset + iscale * (noise((x * 2, y * 2, 0), noise_basis="BLENDER") * 1.5 - 0.75)
     ## Flat Turb:
     elif type == 20:
-        t = turbulence((x, y, 0), 6, 0, 0)
+        t = turbulence((x, y, 0), 6, 0, noise_basis="BLENDER")
         effect = t * 2.0
         if effect > 0.25:
             effect = 0.25
         effect = offset + iscale * effect
     ## Flat Voronoi:
     elif type == 21:
-        t = 1 - voronoi((x, y, 0), 1)[0][0]
+        t = 1 - voronoi((x, y, 0), distance_metric='DISTANCE_SQUARED')[0][0]
         effect = t * 2 - 1.5
         if effect > 0.25:
             effect = 0.25
@@ -452,7 +466,7 @@ def Effect_Function(coords, type, bias, turb, depth, frequency, amplitude):
     x, y, z = coords
     ## turbulence:
     if turb > 0.0:
-        t = turb * ( 0.5 + 0.5 * turbulence(coords, 6, 0, 0))
+        t = turb * ( 0.5 + 0.5 * turbulence(coords, 6, 0, noise_basis="BLENDER"))
         x = x + t
         y = y + t
         z = z + t
@@ -496,8 +510,8 @@ def noise_gen(coords, props):
     size_z = props[19]
     nsize = props[20]
     ntype = props[21]
-    nbasis = int(props[22])
-    vlbasis = int(props[23])
+    nbasis = props[22]
+    vlbasis = props[23]
     distortion = props[24]
     hardnoise = int(props[25])
     depth = props[26]
@@ -563,33 +577,27 @@ def noise_gen(coords, props):
 
     ncoords = (x / (nsize * size_x) + origin_x, y / (nsize * size_y) + origin_y, z / (nsize * size_z) + origin_z)
 
-    # Noise basis type's
-    if nbasis == 9:
-        nbasis = 14  # Cellnoise
-    if vlbasis == 9:
-        vlbasis = 14
-
     # Noise type's
     if ntype in [0, 'multi_fractal']:
-        value = multi_fractal(ncoords, dimension, lacunarity, depth, nbasis) * 0.5
+        value = multi_fractal(ncoords, dimension, lacunarity, depth, noise_basis=nbasis) * 0.5
 
     elif ntype in [1, 'ridged_multi_fractal']:
-        value = ridged_multi_fractal(ncoords, dimension, lacunarity, depth, offset, gain, nbasis) * 0.5
+        value = ridged_multi_fractal(ncoords, dimension, lacunarity, depth, offset, gain, noise_basis=nbasis) * 0.5
 
     elif ntype in [2, 'hybrid_multi_fractal']:
-        value = hybrid_multi_fractal(ncoords, dimension, lacunarity, depth, offset, gain, nbasis) * 0.5
+        value = hybrid_multi_fractal(ncoords, dimension, lacunarity, depth, offset, gain, noise_basis=nbasis) * 0.5
 
     elif ntype in [3, 'hetero_terrain']:
-        value = hetero_terrain(ncoords, dimension, lacunarity, depth, offset, nbasis) * 0.25
+        value = hetero_terrain(ncoords, dimension, lacunarity, depth, offset, noise_basis=nbasis) * 0.25
 
     elif ntype in [4, 'fractal']:
-        value = fractal(ncoords, dimension, lacunarity, depth, nbasis)
+        value = fractal(ncoords, dimension, lacunarity, depth, noise_basis=nbasis)
 
     elif ntype in [5, 'turbulence_vector']:
-        value = turbulence_vector(ncoords, depth, hardnoise, nbasis, amp, freq)[0]
+        value = turbulence_vector(ncoords, depth, hardnoise, noise_basis=nbasis, amplitude_scale=amp, frequency_scale=freq)[0]
 
     elif ntype in [6, 'variable_lacunarity']:
-        value = variable_lacunarity(ncoords, distortion, nbasis, vlbasis)
+        value = variable_lacunarity(ncoords, distortion, noise_type1=nbasis, noise_type2=vlbasis)
 
     elif ntype in [7, 'marble_noise']:
         value = marble_noise(

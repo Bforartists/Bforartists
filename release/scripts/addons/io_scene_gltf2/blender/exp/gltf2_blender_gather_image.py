@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import re
 
 import bpy
 import typing
@@ -30,13 +31,17 @@ def gather_image(
         export_settings):
     if not __filter_image(blender_shader_sockets_or_texture_slots, export_settings):
         return None
+
+    uri = __gather_uri(blender_shader_sockets_or_texture_slots, export_settings)
+    mime_type = __gather_mime_type(uri.filepath if uri is not None else "")
+
     image = gltf2_io.Image(
         buffer_view=__gather_buffer_view(blender_shader_sockets_or_texture_slots, export_settings),
         extensions=__gather_extensions(blender_shader_sockets_or_texture_slots, export_settings),
         extras=__gather_extras(blender_shader_sockets_or_texture_slots, export_settings),
-        mime_type=__gather_mime_type(blender_shader_sockets_or_texture_slots, export_settings),
+        mime_type=mime_type,
         name=__gather_name(blender_shader_sockets_or_texture_slots, export_settings),
-        uri=__gather_uri(blender_shader_sockets_or_texture_slots, export_settings)
+        uri=uri
     )
     return image
 
@@ -51,7 +56,7 @@ def __gather_buffer_view(sockets_or_slots, export_settings):
     if export_settings[gltf2_blender_export_keys.FORMAT] != 'GLTF_SEPARATE':
         image = __get_image_data(sockets_or_slots, export_settings)
         return gltf2_io_binary_data.BinaryData(
-            data=image.to_image_data(__gather_mime_type(sockets_or_slots, export_settings)))
+            data=image.to_image_data(__gather_mime_type()))
     return None
 
 
@@ -63,9 +68,13 @@ def __gather_extras(sockets_or_slots, export_settings):
     return None
 
 
-def __gather_mime_type(sockets_or_slots, export_settings):
-    return 'image/png'
-    # return 'image/jpeg'
+def __gather_mime_type(filepath=""):
+    extension_types = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg'}
+    default_extension = extension_types['.png']
+
+    matches = re.findall(r'\.\w+$', filepath)
+    extension = matches[0] if len(matches) > 0 else default_extension
+    return extension_types[extension] if extension.lower() in extension_types.keys() else default_extension
 
 
 def __gather_name(sockets_or_slots, export_settings):
@@ -98,6 +107,8 @@ def __get_image_data(sockets_or_slots, export_settings):
     # in a helper class. During generation of the glTF in the exporter these will then be combined to actual binary
     # ressources.
     def split_pixels_by_channels(image: bpy.types.Image, export_settings) -> typing.List[typing.List[float]]:
+        assert image.channels > 0, "Image '{}' has no color channels and cannot be exported.".format(image.name)
+
         channelcache = export_settings['gltf_channelcache']
         if image.name in channelcache:
             return channelcache[image.name]
@@ -115,20 +126,35 @@ def __get_image_data(sockets_or_slots, export_settings):
         image = None
         for result, socket in zip(results, sockets_or_slots):
             # rudimentarily try follow the node tree to find the correct image data.
-            channel = None
+            source_channel = None
+            target_channel = None
+            source_channels_length = None
             for elem in result.path:
                 if isinstance(elem.from_node, bpy.types.ShaderNodeSeparateRGB):
-                    channel = {
+                    source_channel = {
                         'R': 0,
                         'G': 1,
                         'B': 2
                     }[elem.from_socket.name]
 
-            if channel is not None:
-                pixels = [split_pixels_by_channels(result.shader_node.image, export_settings)[channel]]
+            if source_channel is not None:
+                pixels = [split_pixels_by_channels(result.shader_node.image, export_settings)[source_channel]]
+                target_channel = source_channel
+                source_channel = 0
+                source_channels_length = 1
             else:
                 pixels = split_pixels_by_channels(result.shader_node.image, export_settings)
-                channel = 0
+                target_channel = 0
+                source_channel = 0
+                source_channels_length = len(pixels)
+
+            # Change target channel for metallic and roughness.
+            if elem.to_socket.name == 'Metallic':
+                target_channel = 2
+                source_channels_length = 1
+            elif elem.to_socket.name == 'Roughness':
+                target_channel = 1
+                source_channels_length = 1
 
             file_name = os.path.splitext(result.shader_node.image.name)[0]
 
@@ -137,13 +163,15 @@ def __get_image_data(sockets_or_slots, export_settings):
                 result.shader_node.image.filepath,
                 result.shader_node.image.size[0],
                 result.shader_node.image.size[1],
-                channel,
+                source_channel,
+                target_channel,
+                source_channels_length,
                 pixels)
 
             if image is None:
                 image = image_data
             else:
-                image.add_to_image(channel, image_data)
+                image.add_to_image(target_channel, image_data)
 
         return image
     elif __is_slot(sockets_or_slots):
@@ -156,6 +184,8 @@ def __get_image_data(sockets_or_slots, export_settings):
             texture.image.size[0],
             texture.image.size[1],
             0,
+            0,
+            len(pixels),
             pixels)
         return image_data
     else:
