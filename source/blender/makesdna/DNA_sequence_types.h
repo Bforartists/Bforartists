@@ -45,6 +45,7 @@
 #include "DNA_color_types.h"
 #include "DNA_listBase.h"
 #include "DNA_vec_types.h"
+#include "DNA_vfont_types.h"
 
 struct Ipo;
 struct Scene;
@@ -182,7 +183,8 @@ typedef struct Sequence {
 	/** Old animation system, deprecated for 2.5. */
 	struct Ipo *ipo DNA_DEPRECATED;
 
-	/* these ID vars should never be NULL but can be when linked libs fail to load, so check on access */
+	/** these ID vars should never be NULL but can be when linked libs fail to load,
+	 * so check on access */
 	struct Scene     *scene;
 	/** Override scene camera. */
 	struct Object    *scene_camera;
@@ -320,13 +322,15 @@ typedef struct GaussianBlurVars {
 
 typedef struct TextVars {
 	char text[512];
+	VFont *text_font;
+	int text_blf_id;
 	int text_size;
 	float color[4], shadow_color[4];
 	float loc[2];
 	float wrap_width;
 	char flag;
 	char align, align_y;
-	char pad[5];
+	char pad[1];
 } TextVars;
 
 /* TextVars.flag */
@@ -347,6 +351,8 @@ enum {
 	SEQ_TEXT_ALIGN_Y_CENTER = 1,
 	SEQ_TEXT_ALIGN_Y_BOTTOM = 2,
 };
+
+#define SEQ_FONT_NOT_LOADED -2
 
 typedef struct ColorMixVars {
 	/** Value from SEQ_TYPE_XXX enumeration. */
@@ -537,7 +543,7 @@ enum {
 /* seq->alpha_mode */
 enum {
 	SEQ_ALPHA_STRAIGHT = 0,
-	SEQ_ALPHA_PREMUL   = 1
+	SEQ_ALPHA_PREMUL   = 1,
 };
 
 /* seq->type WATCH IT: SEQ_TYPE_EFFECT BIT is used to determine if this is an effect strip!!! */
@@ -592,7 +598,7 @@ enum {
 	SEQ_TYPE_DIFFERENCE  = 59,
 	SEQ_TYPE_EXCLUSION   = 60,
 
-	SEQ_TYPE_MAX         = 60
+	SEQ_TYPE_MAX         = 60,
 };
 
 #define SEQ_MOVIECLIP_RENDER_UNDISTORTED (1 << 0)
@@ -630,7 +636,7 @@ enum {
 
 enum {
 	SEQUENCE_MASK_INPUT_STRIP   = 0,
-	SEQUENCE_MASK_INPUT_ID      = 1
+	SEQUENCE_MASK_INPUT_ID      = 1,
 };
 
 enum {

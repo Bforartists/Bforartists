@@ -1420,12 +1420,12 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				copy_v3_fl(scene->eevee.bloom_color, 1.0f);
 				scene->eevee.bloom_threshold = 0.8f;
 				scene->eevee.bloom_knee = 0.5f;
-				scene->eevee.bloom_intensity = 0.8f;
+				scene->eevee.bloom_intensity = 0.05f;
 				scene->eevee.bloom_radius = 6.5f;
-				scene->eevee.bloom_clamp = 1.0f;
+				scene->eevee.bloom_clamp = 0.0f;
 
 				scene->eevee.motion_blur_samples = 8;
-				scene->eevee.motion_blur_shutter = 1.0f;
+				scene->eevee.motion_blur_shutter = 0.5f;
 
 				scene->eevee.shadow_method = SHADOW_ESM;
 				scene->eevee.shadow_cube_size = 512;
@@ -1779,7 +1779,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 			}
 		}
 
-		if (!DNA_struct_elem_find(fd->filesdna, "View3DShadeing", "char", "background_type")) {
+		if (!DNA_struct_elem_find(fd->filesdna, "View3DShading", "char", "background_type")) {
 			for (bScreen *screen = bmain->screen.first; screen; screen = screen->id.next) {
 				for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
 					for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {

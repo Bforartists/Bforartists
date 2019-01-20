@@ -53,6 +53,8 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "RNA_define.h"
+
 #include "interface_intern.h"
 
 #include "ED_image.h"
@@ -67,25 +69,24 @@ typedef struct Eyedropper {
 	PointerRNA ptr;
 	PropertyRNA *prop;
 	int index;
+	bool is_undo;
 
+	bool is_set;
 	float init_col[3]; /* for resetting on cancel */
 
 	bool  accum_start; /* has mouse been pressed */
 	float accum_col[3];
 	int   accum_tot;
 
-	bool accumulate; /* Color picking for cryptomatte, without accumulation. */
+	bool use_accum;
 } Eyedropper;
 
 static bool eyedropper_init(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	Eyedropper *eye;
+	Eyedropper *eye = MEM_callocN(sizeof(Eyedropper), __func__);
+	eye->use_accum = RNA_boolean_get(op->ptr, "use_accumulate");
 
-	op->customdata = eye = MEM_callocN(sizeof(Eyedropper), "Eyedropper");
-	eye->accumulate = !STREQ(op->type->idname, "UI_OT_eyedropper_color_crypto");
-
-	UI_context_active_but_prop_get(C, &eye->ptr, &eye->prop, &eye->index);
+	uiBut *but = UI_context_active_but_prop_get(C, &eye->ptr, &eye->prop, &eye->index);
 
 	if ((eye->ptr.data == NULL) ||
 	    (eye->prop == NULL) ||
@@ -93,23 +94,28 @@ static bool eyedropper_init(bContext *C, wmOperator *op)
 	    (RNA_property_array_length(&eye->ptr, eye->prop) < 3) ||
 	    (RNA_property_type(eye->prop) != PROP_FLOAT))
 	{
+		MEM_freeN(eye);
 		return false;
 	}
+	op->customdata = eye;
 
+	eye->is_undo = UI_but_flag_is_set(but, UI_BUT_UNDO);
+
+	float col[4];
+	RNA_property_float_get_array(&eye->ptr, eye->prop, col);
 	if (RNA_property_subtype(eye->prop) != PROP_COLOR) {
+		Scene *scene = CTX_data_scene(C);
 		const char *display_device;
-		float col[4];
 
 		display_device = scene->display_settings.display_device;
 		eye->display = IMB_colormanagement_display_get_named(display_device);
 
 		/* store initial color */
-		RNA_property_float_get_array(&eye->ptr, eye->prop, col);
 		if (eye->display) {
 			IMB_colormanagement_display_to_scene_linear_v3(col, eye->display);
 		}
-		copy_v3_v3(eye->init_col, col);
 	}
+	copy_v3_v3(eye->init_col, col);
 
 	return true;
 }
@@ -207,6 +213,7 @@ static void eyedropper_color_set(bContext *C, Eyedropper *eye, const float col[3
 	}
 
 	RNA_property_float_set_array(&eye->ptr, eye->prop, col_conv);
+	eye->is_set = true;
 
 	RNA_property_update(C, &eye->ptr, eye->prop);
 }
@@ -217,7 +224,7 @@ static void eyedropper_color_sample(bContext *C, Eyedropper *eye, int mx, int my
 	float col[3];
 	eyedropper_color_sample_fl(C, mx, my, col);
 
-	if (eye->accumulate) {
+	if (eye->use_accum) {
 		add_v3_v3(eye->accum_col, col);
 		eye->accum_tot++;
 	}
@@ -240,7 +247,9 @@ static void eyedropper_color_sample(bContext *C, Eyedropper *eye, int mx, int my
 static void eyedropper_cancel(bContext *C, wmOperator *op)
 {
 	Eyedropper *eye = op->customdata;
-	eyedropper_color_set(C, eye, eye->init_col);
+	if (eye->is_set) {
+		eyedropper_color_set(C, eye, eye->init_col);
+	}
 	eyedropper_exit(C, op);
 }
 
@@ -256,11 +265,15 @@ static int eyedropper_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				eyedropper_cancel(C, op);
 				return OPERATOR_CANCELLED;
 			case EYE_MODAL_SAMPLE_CONFIRM:
+			{
+				const bool is_undo = eye->is_undo;
 				if (eye->accum_tot == 0) {
 					eyedropper_color_sample(C, eye, event->x, event->y);
 				}
 				eyedropper_exit(C, op);
-				return OPERATOR_FINISHED;
+				/* Could support finished & undo-skip. */
+				return is_undo ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+			}
 			case EYE_MODAL_SAMPLE_BEGIN:
 				/* enable accum and make first sample */
 				eye->accum_start = true;
@@ -296,7 +309,6 @@ static int eyedropper_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 		return OPERATOR_RUNNING_MODAL;
 	}
 	else {
-		eyedropper_exit(C, op);
 		return OPERATOR_PASS_THROUGH;
 	}
 }
@@ -341,23 +353,12 @@ void UI_OT_eyedropper_color(wmOperatorType *ot)
 	ot->poll = eyedropper_poll;
 
 	/* flags */
-	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
-}
+	ot->flag = OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_INTERNAL;
 
-void UI_OT_eyedropper_color_crypto(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Cryptomatte Eyedropper";
-	ot->idname = "UI_OT_eyedropper_color_crypto";
-	ot->description = "Pick a color from Cryptomatte node Pick output image";
+	/* properties */
+	PropertyRNA *prop;
 
-	/* api callbacks */
-	ot->invoke = eyedropper_invoke;
-	ot->modal = eyedropper_modal;
-	ot->cancel = eyedropper_cancel;
-	ot->exec = eyedropper_exec;
-	ot->poll = eyedropper_poll;
-
-	/* flags */
-	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
+	/* Needed for color picking with crypto-matte. */
+	prop = RNA_def_boolean(ot->srna, "use_accumulate", true, "Accumulate", "");
+	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
