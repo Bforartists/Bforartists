@@ -87,7 +87,7 @@ void ED_armature_transform_apply(Main *bmain, Object *ob, float mat[4][4], const
 void ED_armature_transform_bones(struct bArmature *arm, float mat[4][4], const bool do_props)
 {
 	EditBone *ebone;
-	float scale = mat4_to_scale(mat);   /* store the scale of the matrix here to use on envelopes */
+	float scale = mat4_to_scale(mat);  /* store the scale of the matrix here to use on envelopes */
 	float mat3[3][3];
 
 	copy_m3_m4(mat3, mat);
@@ -141,7 +141,7 @@ void ED_armature_transform(Main *bmain, bArmature *arm, float mat[4][4], const b
 
 /* exported for use in editors/object/ */
 /* 0 == do center, 1 == center new, 2 == center cursor */
-void ED_armature_origin_set(Main *bmain, Object *ob, float cursor[3], int centermode, int around)
+void ED_armature_origin_set(Main *bmain, Object *ob, const float cursor[3], int centermode, int around)
 {
 	const bool is_editmode = BKE_object_is_in_editmode(ob);
 	EditBone *ebone;

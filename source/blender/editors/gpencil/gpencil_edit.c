@@ -629,7 +629,9 @@ static void gp_duplicate_points(const bGPDstroke *gps, ListBase *new_strokes, co
 
 				/* make a stupid copy first of the entire stroke (to get the flags too) */
 				gpsd = MEM_dupallocN(gps);
-				BLI_strncpy(gpsd->runtime.tmp_layerinfo, layername, sizeof(gpsd->runtime.tmp_layerinfo)); /* saves original layer name */
+
+				/* saves original layer name */
+				BLI_strncpy(gpsd->runtime.tmp_layerinfo, layername, sizeof(gpsd->runtime.tmp_layerinfo));
 
 				/* initialize triangle memory - will be calculated on next redraw */
 				gpsd->triangles = NULL;
@@ -930,7 +932,8 @@ static int gp_strokes_copy_exec(bContext *C, wmOperator *op)
 
 					/* make direct copies of the stroke and its points */
 					gpsd = MEM_dupallocN(gps);
-					BLI_strncpy(gpsd->runtime.tmp_layerinfo, gpl->info, sizeof(gpsd->runtime.tmp_layerinfo)); /* saves original layer name */
+					/* saves original layer name */
+					BLI_strncpy(gpsd->runtime.tmp_layerinfo, gpl->info, sizeof(gpsd->runtime.tmp_layerinfo));
 					gpsd->points = MEM_dupallocN(gps->points);
 					if (gps->dvert != NULL) {
 						gpsd->dvert = MEM_dupallocN(gps->dvert);
@@ -1009,7 +1012,7 @@ static bool gp_strokes_paste_poll(bContext *C)
 
 typedef enum eGP_PasteMode {
 	GP_COPY_ONLY = -1,
-	GP_COPY_MERGE = 1
+	GP_COPY_MERGE = 1,
 } eGP_PasteMode;
 
 static int gp_strokes_paste_exec(bContext *C, wmOperator *op)
@@ -2428,7 +2431,7 @@ void GPENCIL_OT_stroke_apply_thickness(wmOperatorType *ot)
 enum {
 	GP_STROKE_CYCLIC_CLOSE = 1,
 	GP_STROKE_CYCLIC_OPEN = 2,
-	GP_STROKE_CYCLIC_TOGGLE = 3
+	GP_STROKE_CYCLIC_TOGGLE = 3,
 };
 
 static int gp_stroke_cyclical_set_exec(bContext *C, wmOperator *op)
@@ -2521,7 +2524,7 @@ enum {
 	GP_STROKE_CAPS_TOGGLE_BOTH    = 0,
 	GP_STROKE_CAPS_TOGGLE_START   = 1,
 	GP_STROKE_CAPS_TOGGLE_END     = 2,
-	GP_STROKE_CAPS_TOGGLE_DEFAULT = 3
+	GP_STROKE_CAPS_TOGGLE_DEFAULT = 3,
 };
 
 static int gp_stroke_caps_set_exec(bContext *C, wmOperator *op)
@@ -2545,14 +2548,21 @@ static int gp_stroke_caps_set_exec(bContext *C, wmOperator *op)
 			MaterialGPencilStyle *gp_style = BKE_material_gpencil_settings_get(ob, gps->mat_nr + 1);
 
 			/* skip strokes that are not selected or invalid for current view */
-			if (((gps->flag & GP_STROKE_SELECT) == 0) || ED_gpencil_stroke_can_use(C, gps) == false)
+			if (((gps->flag & GP_STROKE_SELECT) == 0) ||
+			    (ED_gpencil_stroke_can_use(C, gps) == false))
+			{
 				continue;
+			}
 			/* skip hidden or locked colors */
-			if (!gp_style || (gp_style->flag & GP_STYLE_COLOR_HIDE) || (gp_style->flag & GP_STYLE_COLOR_LOCKED))
+			if (!gp_style ||
+			    (gp_style->flag & GP_STYLE_COLOR_HIDE) ||
+			    (gp_style->flag & GP_STYLE_COLOR_LOCKED))
+			{
 				continue;
+			}
 
 			if ((type == GP_STROKE_CAPS_TOGGLE_BOTH) ||
-				(type == GP_STROKE_CAPS_TOGGLE_START))
+			    (type == GP_STROKE_CAPS_TOGGLE_START))
 			{
 				++gps->caps[0];
 				if (gps->caps[0] >= GP_STROKE_CAP_MAX) {
@@ -2560,7 +2570,7 @@ static int gp_stroke_caps_set_exec(bContext *C, wmOperator *op)
 				}
 			}
 			if ((type == GP_STROKE_CAPS_TOGGLE_BOTH) ||
-				(type == GP_STROKE_CAPS_TOGGLE_END))
+			    (type == GP_STROKE_CAPS_TOGGLE_END))
 			{
 				++gps->caps[1];
 				if (gps->caps[1] >= GP_STROKE_CAP_MAX) {
@@ -3054,13 +3064,15 @@ static int gp_strokes_reproject_exec(bContext *C, wmOperator *op)
 				}
 				else {
 					/* Geometry - Snap to surfaces of visible geometry */
-					/* XXX: There will be precision loss (possible stairstep artifacts) from this conversion to satisfy the API's */
+					/* XXX: There will be precision loss (possible stairstep artifacts)
+					 * from this conversion to satisfy the API's */
 					const int screen_co[2] = {(int)xy[0], (int)xy[1]};
 
 					int depth_margin = 0; // XXX: 4 for strokes, 0 for normal
 					float depth;
 
-					/* XXX: The proper procedure computes the depths into an array, to have smooth transitions when all else fails... */
+					/* XXX: The proper procedure computes the depths into an array,
+					 * to have smooth transitions when all else fails... */
 					if (ED_view3d_autodist_depth(gsc.ar, screen_co, depth_margin, &depth)) {
 						ED_view3d_autodist_simple(gsc.ar, screen_co, &pt->x, 0, &depth);
 					}
@@ -3485,6 +3497,12 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
 	if (ELEM(NULL, gpd_src)) {
 		return OPERATOR_CANCELLED;
 	}
+
+	if ((mode == GP_SEPARATE_LAYER) && (BLI_listbase_count(&gpd_src->layers) == 1)) {
+		BKE_report(op->reports, RPT_ERROR, "Cannot separate an object with one layer only");
+		return OPERATOR_CANCELLED;
+	}
+
 	const bool is_multiedit = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd_src);
 
 	/* create a new object */
@@ -3492,7 +3510,6 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
 	ob_dst = base_new->object;
 	ob_dst->mode = OB_MODE_OBJECT;
 	/* create new grease pencil datablock */
-	// XXX: check usercounts
 	gpd_dst = BKE_gpencil_data_addnew(bmain, gpd_src->id.name + 2);
 	ob_dst->data = (bGPdata *)gpd_dst;
 
@@ -3620,8 +3637,35 @@ static int gp_stroke_separate_exec(bContext *C, wmOperator *op)
 			gpl->prev = gpl->next = NULL;
 			/* relink to destination datablock */
 			BLI_addtail(&gpd_dst->layers, gpl);
+
+			/* add duplicate materials */
+			for (bGPDframe *gpf = gpl->frames.first; gpf; gpf = gpf->next) {
+				for (bGPDstroke *gps = gpf->strokes.first; gps; gps = gps->next) {
+					/* skip strokes that are invalid for current view */
+					if (ED_gpencil_stroke_can_use(C, gps) == false) {
+						continue;
+					}
+					ma = give_current_material(ob, gps->mat_nr + 1);
+					idx = BKE_gpencil_get_material_index(ob_dst, ma);
+					if (idx == 0) {
+						totadd++;
+						ob_dst->actcol = totadd;
+						ob_dst->totcol = totadd;
+
+						if (totadd > totslots) {
+							BKE_object_material_slot_add(bmain, ob_dst);
+						}
+
+						assign_material(bmain, ob_dst, ma, ob_dst->totcol, BKE_MAT_ASSIGN_USERPREF);
+						idx = totadd;
+					}
+					/* reasign material */
+					gps->mat_nr = idx - 1;
+				}
+			}
 		}
 	}
+
 	DEG_id_tag_update(&gpd_src->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 	DEG_id_tag_update(&gpd_dst->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 
@@ -3850,8 +3894,8 @@ static void gpencil_cutter_dissolve(bGPDlayer *hit_layer, bGPDstroke *hit_stroke
 	}
 
 	/* if all points selected delete or only 2 points and 1 selected */
-	if ((totselect == 1) && (hit_stroke->totpoints == 2) ||
-		(hit_stroke->totpoints == totselect))
+	if (((totselect == 1) && (hit_stroke->totpoints == 2)) ||
+	    (hit_stroke->totpoints == totselect))
 	{
 		BLI_remlink(&hit_layer->actframe->strokes, hit_stroke);
 		BKE_gpencil_free_stroke(hit_stroke);
@@ -3950,7 +3994,7 @@ static int gpencil_cutter_lasso_select(
 		}
 		/* if mark all points inside lasso set to remove all stroke */
 		if ((tot_inside == oldtot) ||
-			((tot_inside == 1) && (oldtot == 2)))
+		    ((tot_inside == 1) && (oldtot == 2)))
 		{
 			for (i = 0; i < gps->totpoints; i++) {
 				pt = &gps->points[i];

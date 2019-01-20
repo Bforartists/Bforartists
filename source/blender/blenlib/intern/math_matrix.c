@@ -656,28 +656,31 @@ void mul_v4_m4v3(float r[4], const float M[4][4], const float v[3])
 
 void mul_v3_m3v3(float r[3], const float M[3][3], const float a[3])
 {
-	BLI_assert(r != a);
+	float t[3];
+	copy_v3_v3(t, a);
 
-	r[0] = M[0][0] * a[0] + M[1][0] * a[1] + M[2][0] * a[2];
-	r[1] = M[0][1] * a[0] + M[1][1] * a[1] + M[2][1] * a[2];
-	r[2] = M[0][2] * a[0] + M[1][2] * a[1] + M[2][2] * a[2];
+	r[0] = M[0][0] * t[0] + M[1][0] * t[1] + M[2][0] * t[2];
+	r[1] = M[0][1] * t[0] + M[1][1] * t[1] + M[2][1] * t[2];
+	r[2] = M[0][2] * t[0] + M[1][2] * t[1] + M[2][2] * t[2];
 }
 
 void mul_v3_m3v3_db(double r[3], const double M[3][3], const double a[3])
 {
-	BLI_assert(r != a);
+	double t[3];
+	copy_v3_v3_db(t, a);
 
-	r[0] = M[0][0] * a[0] + M[1][0] * a[1] + M[2][0] * a[2];
-	r[1] = M[0][1] * a[0] + M[1][1] * a[1] + M[2][1] * a[2];
-	r[2] = M[0][2] * a[0] + M[1][2] * a[1] + M[2][2] * a[2];
+	r[0] = M[0][0] * t[0] + M[1][0] * t[1] + M[2][0] * t[2];
+	r[1] = M[0][1] * t[0] + M[1][1] * t[1] + M[2][1] * t[2];
+	r[2] = M[0][2] * t[0] + M[1][2] * t[1] + M[2][2] * t[2];
 }
 
 void mul_v2_m3v3(float r[2], const float M[3][3], const float a[3])
 {
-	BLI_assert(r != a);
+	float t[3];
+	copy_v3_v3(t, a);
 
-	r[0] = M[0][0] * a[0] + M[1][0] * a[1] + M[2][0] * a[2];
-	r[1] = M[0][1] * a[0] + M[1][1] * a[1] + M[2][1] * a[2];
+	r[0] = M[0][0] * t[0] + M[1][0] * t[1] + M[2][0] * t[2];
+	r[1] = M[0][1] * t[0] + M[1][1] * t[1] + M[2][1] * t[2];
 }
 
 void mul_m3_v3(const float M[3][3], float r[3])
@@ -1788,11 +1791,13 @@ void blend_m4_m4m4(float out[4][4], const float dst[4][4], const float src[4][4]
  */
 void interp_m3_m3m3(float R[3][3], const float A[3][3], const float B[3][3], const float t)
 {
-	/* 'Rotation' component ('U' part of polar decomposition, the closest orthogonal matrix to M3 rot/scale
+	/* 'Rotation' component ('U' part of polar decomposition,
+	 * the closest orthogonal matrix to M3 rot/scale
 	 * transformation matrix), spherically interpolated. */
 	float U_A[3][3], U_B[3][3], U[3][3];
 	float quat_A[4], quat_B[4], quat[4];
-	/* 'Scaling' component ('P' part of polar decomposition, i.e. scaling in U-defined space), linearly interpolated. */
+	/* 'Scaling' component ('P' part of polar decomposition, i.e. scaling in U-defined space),
+	 * linearly interpolated. */
 	float P_A[3][3], P_B[3][3], P[3][3];
 
 	int i;
