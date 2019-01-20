@@ -450,7 +450,7 @@ def DRAW_RunTranslate(self, context):
 
     np_print('04_DRAW_RunTrans_START',';','flag = ', NP020PC.flag)
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
 
     flag = NP020PC.flag
     takeloc3d = NP020PC.takeloc3d
@@ -976,7 +976,7 @@ def DRAW_ArrayTrans(self, context):
 
     np_print('06a_DRAW_ArrayTrans_START',';','flag = ', NP020PC.flag)
 
-    addon_prefs = context.user_preferences.addons[__package__].preferences
+    addon_prefs = context.preferences.addons[__package__].preferences
     badge = addon_prefs.nppc_badge
     badge_size = addon_prefs.nppc_badge_size
 

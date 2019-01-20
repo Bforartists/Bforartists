@@ -545,8 +545,8 @@ class EnhancedSetCursor(bpy.types.Operator):
         if use_snap:
             snap_type = tool_settings.snap_element
         else:
-            userprefs_view = context.user_preferences.view
-            if userprefs_view.use_mouse_depth_cursor:
+            userprefs_input = context.preferences.input
+            if userprefs_input.use_mouse_depth_cursor:
                 # Suggested by Lissanro in the forum
                 use_snap = True
                 snap_type = 'FACE'
@@ -1181,7 +1181,7 @@ class EnhancedSetCursor(bpy.types.Operator):
 
         v3d = context.space_data
 
-        userprefs_view = context.user_preferences.view
+        userprefs_view = context.preferences.view
 
         tool_settings = context.tool_settings
 
@@ -1195,7 +1195,7 @@ class EnhancedSetCursor(bpy.types.Operator):
         font_size = 11
         blf.size(font_id, font_size, 72) # font, point size, dpi
 
-        tet = context.user_preferences.themes[0].text_editor
+        tet = context.preferences.themes[0].text_editor
 
         # Prepare the table...
         if self.transform_mode == 'MOVE':
@@ -2943,7 +2943,7 @@ class ToggleObjectMode:
 
     def __enter__(self):
         if self.mode:
-            edit_preferences = bpy.context.user_preferences.edit
+            edit_preferences = bpy.context.preferences.edit
 
             self.global_undo = edit_preferences.use_global_undo
             self.prev_mode = bpy.context.object.mode
@@ -2956,7 +2956,7 @@ class ToggleObjectMode:
 
     def __exit__(self, type, value, traceback):
         if self.mode:
-            edit_preferences = bpy.context.user_preferences.edit
+            edit_preferences = bpy.context.preferences.edit
 
             if self.prev_mode != self.mode:
                 bpy.ops.object.mode_set(mode=self.prev_mode)
@@ -3965,7 +3965,7 @@ class BookmarkLibraryProp(bpy.types.PropertyGroup):
             smooth_prev = gl_get(bgl.GL_SMOOTH)
 
             pixelsize = 1
-            dpi = context.user_preferences.system.dpi
+            dpi = context.preferences.system.dpi
             widget_unit = (pixelsize * dpi * 20.0 + 36.0) / 72.0
 
             bgl.glShadeModel(bgl.GL_SMOOTH)
@@ -5355,7 +5355,7 @@ def draw_callback_view(self, context):
         rv3d = context.region_data
 
         pixelsize = 1
-        dpi = context.user_preferences.system.dpi
+        dpi = context.preferences.system.dpi
         widget_unit = (pixelsize * dpi * 20.0 + 36.0) / 72.0
 
         cursor_w = widget_unit*2
@@ -5563,7 +5563,7 @@ def update_keymap(activate):
     cur_idname = 'view3d.cursor3d'
 
     wm = bpy.context.window_manager
-    userprefs = bpy.context.user_preferences
+    userprefs = bpy.context.preferences
     settings = find_settings()
 
     auto_register_keymaps = settings.auto_register_keymaps
@@ -5615,7 +5615,7 @@ def scene_update_post_kmreg(scene):
 @bpy.app.handlers.persistent
 def scene_load_post(*args):
     wm = bpy.context.window_manager
-    userprefs = bpy.context.user_preferences
+    userprefs = bpy.context.preferences
     addon_prefs = userprefs.addons[__name__].preferences
     wm.cursor_3d_runtime_settings.use_cursor_monitor = \
         addon_prefs.use_cursor_monitor
