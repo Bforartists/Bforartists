@@ -310,6 +310,62 @@ class CLIP_MT_tracking_editor_menus(Menu):
             else:
                 layout.menu("CLIP_MT_clip")
 
+        if sc.view == 'GRAPH':
+            if clip:
+                layout.menu("CLIP_GRAPH_MT_select")
+                layout.menu("CLIP_GRAPH_MT_graph")
+
+
+class CLIP_GRAPH_MT_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_PREVIEW'
+
+        layout.operator("clip.graph_select_box", icon = 'BORDER_RECT')
+
+        layout.separator()
+
+        layout.operator("clip.graph_select_all_markers", icon = 'SELECT_ALL').action = 'TOGGLE'
+        layout.operator("clip.graph_select_all_markers", text ="Inverse", icon = 'INVERSE').action = 'INVERT'
+
+class CLIP_GRAPH_MT_graph(Menu):
+    bl_label = "Graph"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_PREVIEW'
+
+        layout.operator("clip.graph_delete_curve", icon = 'DELETE')
+        layout.operator("clip.graph_delete_knot", icon = 'DELETE')
+
+        layout.separator()
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path Remained", icon = 'CLEAN_CHANNELS')
+        props.action = 'REMAINED'
+        props.clear_active = True
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path Up To",icon = 'CLEAN_CHANNELS')
+        props.action = 'UPTO'
+        props.clear_active = True
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path All",icon = 'CLEAN_CHANNELS')
+        props.action = 'ALL'
+        props.clear_active = True
+
+        layout.separator()
+
+        layout.operator("clip.graph_disable_markers", icon = 'MARKER_HLT').action = 'TOGGLE'
+
+        layout.separator()
+
+        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
+        layout.operator("transform.resize", icon = 'TRANSFORM_SCALE')
+
 
 class CLIP_MT_masking_editor_menus(Menu):
 
@@ -1544,6 +1600,8 @@ classes = (
     CLIP_PT_marker_display,
     CLIP_MT_track,
     CLIP_MT_tracking_editor_menus,
+    CLIP_GRAPH_MT_select,
+    CLIP_GRAPH_MT_graph,
     CLIP_MT_masking_editor_menus,
     CLIP_PT_track,
     CLIP_PT_tools_clip,
