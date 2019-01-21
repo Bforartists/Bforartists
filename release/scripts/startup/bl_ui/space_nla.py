@@ -101,7 +101,7 @@ class NLA_MT_view(Menu):
 
         st = context.space_data
 
-        layout.operator("nla.properties", icon='MENU_PANEL')
+        layout.operator("nla.properties", text = "Sidebar", icon='MENU_PANEL')
 
         layout.separator()
 
