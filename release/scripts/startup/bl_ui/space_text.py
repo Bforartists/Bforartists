@@ -190,7 +190,7 @@ class TEXT_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.properties", icon='MENU_PANEL')
+        layout.operator("text.properties", text = "Sidebar", icon='MENU_PANEL')
 
         layout.separator()
 
