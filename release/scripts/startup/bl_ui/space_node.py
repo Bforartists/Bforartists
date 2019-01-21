@@ -306,13 +306,14 @@ class NODE_MT_node(Menu):
         layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
         layout.operator("node.links_cut", icon = "CUT_LINKS")
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
+        layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
 
         layout.separator()
 
-        layout.operator("node.group_edit").exit = False
-        layout.operator("node.group_ungroup")
-        layout.operator("node.group_make")
-        layout.operator("node.group_insert")
+        layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
+        layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
+        layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+        layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
 
         layout.separator()
 
@@ -325,7 +326,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.read_viewlayers")
+        layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
 
 
 class NODE_PT_node_color_presets(PresetMenu):
