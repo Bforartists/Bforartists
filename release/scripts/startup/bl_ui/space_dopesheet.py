@@ -468,7 +468,12 @@ class DOPESHEET_MT_channel(Menu):
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
+
+        layout.operator("anim.channels_find", icon = "VIEWZOOM")
+
+        layout.separator()
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
+
 
 
 class DOPESHEET_MT_key(Menu):

@@ -209,6 +209,12 @@ def marker_menu_generic(layout):
     tool_settings = context.tool_settings
     layout.prop(tool_settings, "lock_markers")
 
+    layout.separator()
+
+    layout.operator("anim.channels_find", icon = "VIEWZOOM")
+
+
+
 ###################################
 
 
