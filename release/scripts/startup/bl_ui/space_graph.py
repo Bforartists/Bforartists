@@ -285,6 +285,10 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
+        
+        layout.separator()
+
+        layout.operator("anim.channels_find", icon = "VIEWZOOM")
 
 
 class GRAPH_MT_key(Menu):
