@@ -563,11 +563,11 @@ class TOPBAR_MT_file(Menu):
 
         layout.operator_context = 'INVOKE_AREA'
         layout.menu("TOPBAR_MT_file_new", text="New")
-        layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
+        layout.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
-        layout.operator("wm.revert_mainfile")
-        layout.operator("wm.recover_last_session")
-        layout.operator("wm.recover_auto_save", text="Recover Auto Save...")
+        layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
+        layout.operator("wm.recover_last_session", icon='RECOVER_LAST')
+        layout.operator("wm.recover_auto_save", text="Recover Auto Save", icon='RECOVER_AUTO')
 
         layout.separator()
 
@@ -575,9 +575,9 @@ class TOPBAR_MT_file(Menu):
         layout.operator("wm.save_mainfile", text="Save", icon='FILE_TICK')
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("wm.save_as_mainfile", text="Save As...")
+        layout.operator("wm.save_as_mainfile", text="Save As", icon='SAVE_AS')
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("wm.save_as_mainfile", text="Save Copy...").copy = True
+        layout.operator("wm.save_as_mainfile", text="Save Copy", icon='SAVE_COPY').copy = True
 
         layout.separator()
         layout.operator_context = 'INVOKE_AREA'
@@ -590,23 +590,20 @@ class TOPBAR_MT_file(Menu):
         if app_template:
             layout.label(text=bpy.path.display_name(app_template))
             layout.operator("wm.save_homefile")
-            layout.operator(
-                "wm.read_factory_settings",
-                text="Load Factory Settings",
-            ).app_template = app_template
+            layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon='LOAD_FACTORY').app_template = app_template
         else:
-            layout.operator("wm.save_homefile")
-            layout.operator("wm.read_factory_settings")
+            layout.operator("wm.save_homefile", icon='SAVE_PREFS')
+            layout.operator("wm.read_factory_settings", icon='LOAD_FACTORY')
 
         layout.separator()
 
-        layout.operator("wm.app_template_install", text="Install Application Template...")
+        layout.operator("wm.app_template_install", text="Install Application Template")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("wm.link", text="Link...", icon='LINK_BLEND')
-        layout.operator("wm.append", text="Append...", icon='APPEND_BLEND')
+        layout.operator("wm.link", text="Link", icon='LINK_BLEND')
+        layout.operator("wm.append", text="Append", icon='APPEND_BLEND')
         layout.menu("TOPBAR_MT_file_previews")
 
         layout.separator()
