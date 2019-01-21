@@ -92,7 +92,8 @@ typedef struct TreeElementIcon {
 #define TREESTORE_ID_TYPE(_id) \
 	(ELEM(GS((_id)->name), ID_SCE, ID_LI, ID_OB, ID_ME, ID_CU, ID_MB, ID_NT, ID_MA, ID_TE, ID_IM, ID_LT, ID_LA, ID_CA) || \
 	 ELEM(GS((_id)->name), ID_KE, ID_WO, ID_SPK, ID_GR, ID_AR, ID_AC, ID_BR, ID_PA, ID_GD, ID_LS, ID_LP) || \
-	 ELEM(GS((_id)->name), ID_SCR, ID_WM, ID_TXT, ID_VF, ID_SO, ID_CF, ID_PAL, ID_MC, ID_WS, ID_MSK))  /* Only in 'blendfile' mode ... :/ */
+	/* Only in 'blendfile' mode ... :/ */ \
+	 ELEM(GS((_id)->name), ID_SCR, ID_WM, ID_TXT, ID_VF, ID_SO, ID_CF, ID_PAL, ID_MC, ID_WS, ID_MSK))
 
 /* TreeElement->flag */
 enum {
@@ -218,7 +219,7 @@ typedef void (*outliner_operation_cb)(
 
 void outliner_do_object_operation_ex(
         struct bContext *C, struct ReportList *reports, struct Scene *scene, struct SpaceOops *soops,
-        struct ListBase *lb, outliner_operation_cb operation_cb, bool recurse_selected);
+        struct ListBase *lb, outliner_operation_cb operation_cb, void *user_data, bool recurse_selected);
 void outliner_do_object_operation(
         struct bContext *C, struct ReportList *reports, struct Scene *scene, struct SpaceOops *soops,
         struct ListBase *lb, outliner_operation_cb operation_cb);

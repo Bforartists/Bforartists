@@ -1769,7 +1769,8 @@ void MATERIAL_OT_copy(wmOperatorType *ot)
 	ot->exec = copy_material_exec;
 
 	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL; /* no undo needed since no changes are made to the material */
+	/* no undo needed since no changes are made to the material */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL;
 }
 
 static int paste_material_exec(bContext *C, wmOperator *UNUSED(op))
@@ -1781,6 +1782,7 @@ static int paste_material_exec(bContext *C, wmOperator *UNUSED(op))
 
 	paste_matcopybuf(CTX_data_main(C), ma);
 
+	DEG_id_tag_update(&ma->id, ID_RECALC_COPY_ON_WRITE);
 	WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_LINKS, ma);
 
 	return OPERATOR_FINISHED;
@@ -1901,7 +1903,8 @@ void TEXTURE_OT_slot_copy(wmOperatorType *ot)
 	ot->poll = copy_mtex_poll;
 
 	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL; /* no undo needed since no changes are made to the mtex */
+	/* no undo needed since no changes are made to the mtex */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL;
 }
 
 static int paste_mtex_exec(bContext *C, wmOperator *UNUSED(op))

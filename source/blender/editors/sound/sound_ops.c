@@ -108,7 +108,7 @@ static int sound_open_exec(bContext *C, wmOperator *op)
 
 	if (sound->playback_handle == NULL) {
 		if (op->customdata) MEM_freeN(op->customdata);
-		BKE_libblock_free(bmain, sound);
+		BKE_id_free(bmain, sound);
 		BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");
 		return OPERATOR_CANCELLED;
 	}
@@ -116,7 +116,7 @@ static int sound_open_exec(bContext *C, wmOperator *op)
 	info = AUD_getInfo(sound->playback_handle);
 
 	if (info.specs.channels == AUD_CHANNELS_INVALID) {
-		BKE_libblock_free(bmain, sound);
+		BKE_id_free(bmain, sound);
 		if (op->customdata) MEM_freeN(op->customdata);
 		BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");
 		return OPERATOR_CANCELLED;
@@ -420,7 +420,7 @@ static const char *snd_ext_sound[] = {
 	".mp3",
 	".ogg",
 	".wav",
-	NULL
+	NULL,
 };
 
 static bool sound_mixdown_check(bContext *UNUSED(C), wmOperator *op)
@@ -815,7 +815,8 @@ static void SOUND_OT_unpack(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_enum(ot->srna, "method", rna_enum_unpack_method_items, PF_USE_LOCAL, "Method", "How to unpack");
-	RNA_def_string(ot->srna, "id", NULL, MAX_ID_NAME - 2, "Sound Name", "Sound data-block name to unpack"); /* XXX, weark!, will fail with library, name collisions */
+	/* XXX, weark!, will fail with library, name collisions */
+	RNA_def_string(ot->srna, "id", NULL, MAX_ID_NAME - 2, "Sound Name", "Sound data-block name to unpack");
 }
 
 /* ******************************************************* */

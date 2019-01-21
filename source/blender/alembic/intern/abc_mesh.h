@@ -31,7 +31,9 @@ struct ModifierData;
 
 /* ************************************************************************** */
 
-class AbcMeshWriter : public AbcObjectWriter {
+/* Writer for Alembic meshes. Does not assume the object is a mesh object. */
+class AbcGenericMeshWriter : public AbcObjectWriter {
+protected:
 	Alembic::AbcGeom::OPolyMeshSchema m_mesh_schema;
 	Alembic::AbcGeom::OPolyMeshSchema::Sample m_mesh_sample;
 
@@ -49,35 +51,26 @@ class AbcMeshWriter : public AbcObjectWriter {
 	bool m_is_subd;
 
 public:
-	AbcMeshWriter(Object *ob,
-	              AbcTransformWriter *parent,
-	              uint32_t time_sampling,
-	              ExportSettings &settings);
+	AbcGenericMeshWriter(Object *ob,
+	                     AbcTransformWriter *parent,
+	                     uint32_t time_sampling,
+	                     ExportSettings &settings);
 
-	~AbcMeshWriter();
+	~AbcGenericMeshWriter();
 	void setIsAnimated(bool is_animated);
 
-private:
+protected:
 	virtual void do_write();
+	virtual bool isAnimated() const;
+	virtual Mesh *getEvaluatedMesh(Scene *scene_eval, Object *ob_eval, bool &r_needsfree) = 0;
 
-	bool isAnimated() const;
+	Mesh *getFinalMesh(bool &r_needsfree);
 
 	void writeMesh(struct Mesh *mesh);
 	void writeSubD(struct Mesh *mesh);
 
-	void getMeshInfo(struct Mesh *mesh, std::vector<float> &points,
-	                 std::vector<int32_t> &facePoints,
-	                 std::vector<int32_t> &faceCounts,
-	                 std::vector<int32_t> &creaseIndices,
-	                 std::vector<int32_t> &creaseLengths,
-	                 std::vector<float> &creaseSharpness);
-
-	struct Mesh *getFinalMesh(bool &r_needsfree);
-
-	void getMaterialIndices(struct Mesh *mesh, std::vector<int32_t> &indices);
-
 	void writeArbGeoParams(struct Mesh *mesh);
-	void getGeoGroups(struct Mesh *mesh, std::map<std::string, std::vector<int32_t> > &geoGroups);
+	void getGeoGroups(struct Mesh *mesh, std::map<std::string, std::vector<int32_t>> &geoGroups);
 
 	/* fluid surfaces support */
 	void getVelocities(struct Mesh *mesh, std::vector<Imath::V3f> &vels);
@@ -85,6 +78,20 @@ private:
 	template <typename Schema>
 	void writeFaceSets(struct Mesh *mesh, Schema &schema);
 };
+
+
+class AbcMeshWriter : public AbcGenericMeshWriter {
+public:
+	AbcMeshWriter(Object *ob,
+	              AbcTransformWriter *parent,
+	              uint32_t time_sampling,
+	              ExportSettings &settings);
+
+	~AbcMeshWriter();
+protected:
+	virtual Mesh *getEvaluatedMesh(Scene *scene_eval, Object *ob_eval, bool &r_needsfree) override;
+};
+
 
 /* ************************************************************************** */
 
