@@ -185,19 +185,7 @@ static void rna_userdef_anisotropic_update(Main *bmain, Scene *scene, PointerRNA
 	rna_userdef_update(bmain, scene, ptr);
 }
 
-static void rna_userdef_gl_gpu_mipmaps(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-	GPU_set_gpu_mipmapping(bmain, U.use_gpu_mipmap);
-	rna_userdef_update(bmain, scene, ptr);
-}
-
 static void rna_userdef_gl_texture_limit_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-	GPU_free_images(bmain);
-	rna_userdef_update(bmain, scene, ptr);
-}
-
-static void rna_userdef_gl_use_16bit_textures(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
 	GPU_free_images(bmain);
 	rna_userdef_update(bmain, scene, ptr);
@@ -234,6 +222,11 @@ static void rna_userdef_autokeymode_set(PointerRNA *ptr, int value)
 		userdef->autokey_mode |= (AUTOKEY_MODE_EDITKEYS - AUTOKEY_ON);
 		userdef->autokey_mode &= ~(AUTOKEY_MODE_NORMAL - AUTOKEY_ON);
 	}
+}
+
+static void rna_userdef_tablet_api_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *UNUSED(ptr))
+{
+	WM_init_tablet_api();
 }
 
 #ifdef WITH_INPUT_NDOF
@@ -3782,11 +3775,9 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	                         "Color range used for weight visualization in weight painting mode");
 	RNA_def_property_update(prop, 0, "rna_UserDef_weight_color_update");
 
-
-	/* app flags (use for app-templates) */
 	prop = RNA_def_property(srna, "show_layout_ui", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "app_flag", USER_APP_LOCK_UI_LAYOUT);
-	RNA_def_property_ui_text(prop, "Show Layout Widgets", "Show screen layout editing UI");
+	RNA_def_property_ui_text(prop, "Editor Corner Splitting", "Split and join editors by dragging from corners");
 	RNA_def_property_update(prop, 0, "rna_userdef_update_ui");
 
 	/* menus */
@@ -3847,7 +3838,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_quit_dialog", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_QUIT_PROMPT);
 	RNA_def_property_ui_text(prop, "Prompt Quit",
-	                         "Ask for confirmation when quitting through the window close button");
+	                         "Ask for confirmation when quitting with unsaved changes");
 
 	/* Toolbox click-hold delay */
 	prop = RNA_def_property(srna, "open_left_mouse_delay", PROP_INT, PROP_NONE);
@@ -4361,13 +4352,6 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static const EnumPropertyItem gpu_select_method_items[] = {
-	    {USER_SELECT_AUTO, "AUTO", 0, "Automatic", ""},
-	    {USER_SELECT_USE_SELECT_RENDERMODE, "GL_SELECT", 0, "OpenGL Select", ""},
-	    {USER_SELECT_USE_OCCLUSION_QUERY, "GL_QUERY", 0, "OpenGL Occlusion Queries", ""},
-	    {0, NULL, 0, NULL, NULL}
-	};
-
 	srna = RNA_def_struct(brna, "PreferencesSystem", NULL);
 	RNA_def_struct_sdna(srna, "UserDef");
 	RNA_def_struct_nested(brna, srna, "Preferences");
@@ -4439,7 +4423,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_region_overlap", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag2", USER_REGION_OVERLAP);
 	RNA_def_property_ui_text(prop, "Region Overlap",
-	                         "Draw tool/property regions over the main region, when using Triple Buffer");
+	                         "Draw tool/property regions over the main region");
 	RNA_def_property_update(prop, 0, "rna_userdef_dpi_update");
 
 	prop = RNA_def_property(srna, "gpu_viewport_quality", PROP_FLOAT, PROP_FACTOR);
@@ -4473,16 +4457,6 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 
 	/* Textures */
-
-	prop = RNA_def_property(srna, "use_16bit_textures", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "use_16bit_textures", 1);
-	RNA_def_property_ui_text(prop, "16 Bit Float Textures", "Use 16 bit per component texture for float images");
-	RNA_def_property_update(prop, 0, "rna_userdef_gl_use_16bit_textures");
-
-	prop = RNA_def_property(srna, "use_gpu_mipmap", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "use_gpu_mipmap", 1);
-	RNA_def_property_ui_text(prop, "GPU Mipmap Generation", "Generate Image Mipmaps on the GPU");
-	RNA_def_property_update(prop, 0, "rna_userdef_gl_gpu_mipmaps");
 
 	prop = RNA_def_property(srna, "image_draw_method", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_items(prop, image_draw_methods);
@@ -4519,12 +4493,6 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 	                         "Number of seconds between each run of the GL texture garbage collector");
 
 	/* Select */
-
-	prop = RNA_def_property(srna, "select_method", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_sdna(prop, NULL, "gpu_select_method");
-	RNA_def_property_enum_items(prop, gpu_select_method_items);
-	RNA_def_property_ui_text(prop, "Selection Method",
-	                         "Use OpenGL occlusion queries or selection render mode to accelerate selection");
 
 	prop = RNA_def_property(srna, "use_select_pick_depth", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "gpu_select_pick_deph", 1);
@@ -4607,6 +4575,13 @@ static void rna_def_userdef_input(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 #endif /* WITH_INPUT_NDOF */
+
+	static const EnumPropertyItem tablet_api[] = {
+		{USER_TABLET_AUTOMATIC, "AUTOMATIC", 0, "Automatic", "Automatically choose Wintab or Windows Ink depending on the device"},
+		{USER_TABLET_NATIVE, "WINDOWS_INK", 0, "Windows Ink", "Use native Windows Ink API, for modern tablet and pen devices. Requires Windows 8 or newer"},
+		{USER_TABLET_WINTAB, "WINTAB", 0, "Wintab", "Use Wintab driver for older tablets and Windows versions"},
+		{0, NULL, 0, NULL, NULL}
+	};
 
 	static const EnumPropertyItem view_zoom_styles[] = {
 		{USER_ZOOM_CONT, "CONTINUE", 0, "Continue", "Old style zoom, continues while moving mouse up or down"},
@@ -4732,6 +4707,11 @@ static void rna_def_userdef_input(BlenderRNA *brna)
 	RNA_def_property_ui_range(prop, -1.0f, 1.0f, 0.1f, 2);
 	RNA_def_property_ui_text(prop, "Softness",
 	                         "Adjusts softness of the low pressure response onset using a gamma curve");
+
+	prop = RNA_def_property(srna, "tablet_api", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_items(prop, tablet_api);
+	RNA_def_property_ui_text(prop, "Tablet API", "Select the tablet API to use for pressure sensitivity");
+	RNA_def_property_update(prop, 0, "rna_userdef_tablet_api_update");
 
 #ifdef WITH_INPUT_NDOF
 	/* 3D mouse settings */
@@ -4895,7 +4875,7 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "show_hidden_files_datablocks", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_HIDE_DOT);
-	RNA_def_property_ui_text(prop, "Hide Dot Files/Data-Blocks", "Hide files/data-blocks that start with a dot (.*)");
+	RNA_def_property_ui_text(prop, "Hide Dot Files/Libraries", "Hide files and data-blocks if their name start with a dot (.*)");
 
 	prop = RNA_def_property(srna, "use_filter_files", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_FILTERFILEEXTS);
@@ -5088,27 +5068,28 @@ void RNA_def_userdef(BlenderRNA *brna)
 	PropertyRNA *prop;
 
 	static const EnumPropertyItem preference_section_items[] = {
-		{0, "", ICON_USER, "User", ""},
 		{USER_SECTION_INTERFACE, "INTERFACE", 0, "Interface", ""},
 		{USER_SECTION_THEME, "THEMES", 0, "Themes", ""},
+		{USER_SECTION_VIEWPORT, "VIEWPORT", 0, "Viewport", ""},
 		{USER_SECTION_LIGHT, "LIGHTS", 0, "Lights", ""},
-		{USER_SECTION_EDIT, "EDITING", 0, "Editing", ""},
-		{USER_SECTION_INPUT, "INPUT", 0, "Input", ""},
-		{USER_SECTION_KEYMAP, "KEYMAP", 0, "Keymap", ""},
+		{USER_SECTION_EDITING, "EDITING", 0, "Editing", ""},
+		{USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
+		{0, "", 0, NULL, NULL},
 		{USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
-#ifdef WITH_USERDEF_WORKSPACES
-		{0, "", ICON_WORKSPACE, "Workspaces", ""},
+#if 0 //def WITH_USERDEF_WORKSPACES
+		{0, "", 0, NULL, NULL},
 		{USER_SECTION_WORKSPACE_CONFIG, "WORKSPACE_CONFIG", 0, "Configuration File", ""},
 		{USER_SECTION_WORKSPACE_ADDONS, "WORKSPACE_ADDONS", 0, "Add-on Overrides", ""},
 		{USER_SECTION_WORKSPACE_KEYMAPS, "WORKSPACE_KEYMAPS", 0, "Keymap Overrides", ""},
 #endif
-		{0, "", ICON_SYSTEM, "System", ""},
-		{USER_SECTION_SYSTEM_GENERAL, "SYSTEM_GENERAL", 0, "General", ""},
-		{USER_SECTION_SYSTEM_FILES,   "SYSTEM_FILES",   0, "Files",   ""},
-#ifdef WITH_USERDEF_SYSTEM_SPLIT
-		{USER_SECTION_SYSTEM_DISPLAY, "SYSTEM_DISPLAY", 0, "Display", ""},
-		{USER_SECTION_SYSTEM_DEVICES, "SYSTEM_DEVICES", 0, "Devices", ""},
-#endif
+		{0, "", 0, NULL, NULL},
+		{USER_SECTION_INPUT, "INPUT", 0, "Input", ""},
+		{USER_SECTION_NAVIGATION, "NAVIGATION", 0, "Navigation", ""},
+		{USER_SECTION_KEYMAP, "KEYMAP", 0, "Keymap", ""},
+		{0, "", 0, NULL, NULL},
+		{USER_SECTION_SYSTEM, "SYSTEM", 0, "System", ""},
+		{USER_SECTION_SAVE_LOAD, "SAVE_LOAD",   0, "Save & Load",   ""},
+		{USER_SECTION_FILE_PATHS, "FILE_PATHS",   0, "File Paths",   ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
