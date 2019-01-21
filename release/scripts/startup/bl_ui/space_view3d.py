@@ -864,7 +864,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type")
+        layout.menu ("VIEW3D_MT_select_by_type")
         layout.operator("object.select_camera", text="Active Camera", icon = "CAMERA_DATA")
         layout.operator("object.select_mirror", text="Selection", icon = "TRANSFORM_MIRROR")
         layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")
@@ -878,6 +878,32 @@ class VIEW3D_MT_select_object(Menu):
         layout.menu ("VIEW3D_MT_select_grouped")
         layout.menu ("VIEW3D_MT_select_linked")
         layout.operator("object.select_pattern", text="Pattern", icon = "PATTERN")
+
+class VIEW3D_MT_select_by_type(Menu):
+    bl_label = "All by Type"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_by_type", text= "Mesh", icon = "OUTLINER_OB_MESH").type = 'MESH'
+        layout.operator("object.select_by_type", text= "Curve", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+        layout.operator("object.select_by_type", text= "Surface", icon = "OUTLINER_OB_SURFACE").type = 'SURFACE'
+        layout.operator("object.select_by_type", text= "Meta", icon = "OUTLINER_OB_META").type = 'META'
+        layout.operator("object.select_by_type", text= "Font", icon = "OUTLINER_OB_FONT").type = 'FONT'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Armature", icon = "OUTLINER_OB_ARMATURE").type = 'ARMATURE'
+        layout.operator("object.select_by_type", text= "Lattice", icon = "OUTLINER_OB_LATTICE").type = 'LATTICE'
+        layout.operator("object.select_by_type", text= "Empty", icon = "OUTLINER_OB_EMPTY").type = 'EMPTY'
+        layout.operator("object.select_by_type", text= "GPencil", icon = "GREASEPENCIL").type = 'GPENCIL'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Camera", icon = "OUTLINER_OB_CAMERA").type = 'CAMERA'
+        layout.operator("object.select_by_type", text= "Light", icon = "OUTLINER_OB_LAMP").type = 'LIGHT'
+        layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
+        layout.operator("object.select_by_type", text= "Probe", icon = "OUTLINER_OB_LIGHTPROBE").type = 'LIGHT_PROBE'
 
 class VIEW3D_MT_select_grouped(Menu):
     bl_label = "Grouped"
@@ -5847,6 +5873,7 @@ classes = (
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
     VIEW3D_MT_select_object,
+    VIEW3D_MT_select_by_type,
     VIEW3D_MT_select_grouped,
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
