@@ -401,7 +401,13 @@ static void sequence_clipboard_pointers(Main *bmain, Sequence *seq, void (*callb
 	callback(bmain, (ID **)&seq->clip);
 	callback(bmain, (ID **)&seq->mask);
 	callback(bmain, (ID **)&seq->sound);
+
+	if (seq->type == SEQ_TYPE_TEXT && seq->effectdata) {
+		TextVars *text_data = seq->effectdata;
+		callback(bmain, (ID **)&text_data->text_font);
+	}
 }
+
 /* recursive versions of functions above */
 void BKE_sequencer_base_clipboard_pointers_free(ListBase *seqbase)
 {
@@ -5231,14 +5237,14 @@ Sequence *BKE_sequencer_add_sound_strip(bContext *C, ListBase *seqbasep, SeqLoad
 	sound = BKE_sound_new_file(bmain, seq_load->path); /* handles relative paths */
 
 	if (sound->playback_handle == NULL) {
-		BKE_libblock_free(bmain, sound);
+		BKE_id_free(bmain, sound);
 		return NULL;
 	}
 
 	info = AUD_getInfo(sound->playback_handle);
 
 	if (info.specs.channels == AUD_CHANNELS_INVALID) {
-		BKE_libblock_free(bmain, sound);
+		BKE_id_free(bmain, sound);
 		return NULL;
 	}
 
