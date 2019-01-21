@@ -210,8 +210,8 @@ class NODE_MT_view(Menu):
 
         snode = context.space_data
 
-        layout.operator("node.properties", icon='MENU_PANEL')
-        layout.operator("node.toolbar", icon='MENU_PANEL')
+        layout.operator("node.properties", text = "Sidebar", icon='MENU_PANEL')
+        layout.operator("node.toolbar", text = "Tool Shelf", icon='MENU_PANEL')
 
         layout.separator()
 
