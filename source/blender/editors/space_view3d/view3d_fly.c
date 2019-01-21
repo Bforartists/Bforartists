@@ -28,7 +28,8 @@
 
 #ifdef WITH_INPUT_NDOF
 //#  define NDOF_FLY_DEBUG
-//#  define NDOF_FLY_DRAW_TOOMUCH  /* is this needed for ndof? - commented so redraw doesn't thrash - campbell */
+/* is this needed for ndof? - commented so redraw doesn't thrash - campbell */
+//#  define NDOF_FLY_DRAW_TOOMUCH
 #endif /* WITH_INPUT_NDOF */
 
 #include "DNA_object_types.h"
@@ -62,7 +63,8 @@
 
 #include "view3d_intern.h"  /* own include */
 
-/* NOTE: these defines are saved in keymap files, do not change values but just add new ones */
+/* NOTE: these defines are saved in keymap files,
+ * do not change values but just add new ones */
 enum {
 	FLY_MODAL_CANCEL = 1,
 	FLY_MODAL_CONFIRM,
@@ -90,12 +92,13 @@ typedef enum eFlyPanState {
 	/* disabled */
 	FLY_AXISLOCK_STATE_OFF    = 0,
 
-	/* enabled but not checking because mouse hasn't moved outside the margin since locking was checked an not needed
-	 * when the mouse moves, locking is set to 2 so checks are done. */
+	/* enabled but not checking because mouse hasn't moved outside the margin since locking was
+	 * checked an not needed when the mouse moves, locking is set to 2 so checks are done. */
 	FLY_AXISLOCK_STATE_IDLE   = 1,
 
-	/* mouse moved and checking needed, if no view altering is done its changed back to #FLY_AXISLOCK_STATE_IDLE */
-	FLY_AXISLOCK_STATE_ACTIVE = 2
+	/* mouse moved and checking needed,
+	 * if no view altering is done its changed back to #FLY_AXISLOCK_STATE_IDLE */
+	FLY_AXISLOCK_STATE_ACTIVE = 2,
 } eFlyPanState;
 
 /* called in transform_ops.c, on each regeneration of keymaps  */
@@ -531,7 +534,8 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 				time_wheel = (float)(time_currwheel - fly->time_lastwheel);
 				fly->time_lastwheel = time_currwheel;
 				/* Mouse wheel delays range from (0.5 == slow) to (0.01 == fast) */
-				time_wheel = 1.0f + (10.0f - (20.0f * min_ff(time_wheel, 0.5f))); /* 0-0.5 -> 0-5.0 */
+				/* 0-0.5 -> 0-5.0 */
+				time_wheel = 1.0f + (10.0f - (20.0f * min_ff(time_wheel, 0.5f)));
 
 				if (fly->speed < 0.0f) {
 					fly->speed = 0.0f;
@@ -555,7 +559,8 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 				time_currwheel = PIL_check_seconds_timer();
 				time_wheel = (float)(time_currwheel - fly->time_lastwheel);
 				fly->time_lastwheel = time_currwheel;
-				time_wheel = 1.0f + (10.0f - (20.0f * min_ff(time_wheel, 0.5f))); /* 0-0.5 -> 0-5.0 */
+				/* 0-0.5 -> 0-5.0 */
+				time_wheel = 1.0f + (10.0f - (20.0f * min_ff(time_wheel, 0.5f)));
 
 				if (fly->speed > 0.0f) {
 					fly->speed = 0;
@@ -575,7 +580,8 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 			/* implement WASD keys,
 			 * comments only for 'forward '*/
 			case FLY_MODAL_DIR_FORWARD:
-				if (fly->axis == 2 && fly->speed < 0.0f) { /* reverse direction stops, tap again to continue */
+				if (fly->axis == 2 && fly->speed < 0.0f) {
+					/* reverse direction stops, tap again to continue */
 					fly->axis = -1;
 				}
 				else {
@@ -694,14 +700,17 @@ static int flyApply(bContext *C, FlyInfo *fly)
 	 */
 	RegionView3D *rv3d = fly->rv3d;
 
-	float mat[3][3]; /* 3x3 copy of the view matrix so we can move along the view axis */
-	float dvec[3] = {0, 0, 0}; /* this is the direction that's added to the view offset per redraw */
+	/* 3x3 copy of the view matrix so we can move along the view axis */
+	float mat[3][3];
+	/* this is the direction that's added to the view offset per redraw */
+	float dvec[3] = {0, 0, 0};
 
 	/* Camera Uprighting variables */
 	float moffset[2]; /* mouse offset from the views center */
 	float tmp_quat[4]; /* used for rotating the view */
 
-	int xmargin, ymargin; /* x and y margin are define the safe area where the mouses movement wont rotate the view */
+	/* x and y margin are define the safe area where the mouses movement wont rotate the view */
+	int xmargin, ymargin;
 
 #ifdef NDOF_FLY_DEBUG
 	{
@@ -763,7 +772,10 @@ static int flyApply(bContext *C, FlyInfo *fly)
 #endif
 			time_current = PIL_check_seconds_timer();
 			time_redraw = (float)(time_current - fly->time_lastdraw);
-			time_redraw_clamped = min_ff(0.05f, time_redraw); /* clamp redraw time to avoid jitter in roll correction */
+
+			/* clamp redraw time to avoid jitter in roll correction */
+			time_redraw_clamped = min_ff(0.05f, time_redraw);
+
 			fly->time_lastdraw = time_current;
 
 			/* Scale the time to use shift to scale the speed down- just like
@@ -853,7 +865,8 @@ static int flyApply(bContext *C, FlyInfo *fly)
 						fly->zlock_momentum += FLY_ZUP_CORRECT_ACCEL;
 					}
 					else {
-						fly->zlock = FLY_AXISLOCK_STATE_IDLE; /* don't check until the view rotates again */
+						/* don't check until the view rotates again */
+						fly->zlock = FLY_AXISLOCK_STATE_IDLE;
 						fly->zlock_momentum = 0.0f;
 					}
 				}

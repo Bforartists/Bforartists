@@ -634,14 +634,17 @@ static float *mask_rasterize(Mask *mask, const int width, const int height)
 
 /* sets up the opengl context.
  * width, height are to match the values from ED_mask_get_size() */
-void ED_mask_draw_region(Mask *mask, ARegion *ar,
-                         const char draw_flag, const char draw_type, const char overlay_mode,
-                         const int width_i, const int height_i,  /* convert directly into aspect corrected vars */
-                         const float aspx, const float aspy,
-                         const bool do_scale_applied, const bool do_draw_cb,
-                         float stabmat[4][4], /* optional - only used by clip */
-                         const bContext *C    /* optional - only used when do_post_draw is set or called from clip editor */
-                         )
+void ED_mask_draw_region(
+        Mask *mask, ARegion *ar,
+        const char draw_flag, const char draw_type, const char overlay_mode,
+        /* convert directly into aspect corrected vars */
+        const int width_i, const int height_i,
+        const float aspx, const float aspy,
+        const bool do_scale_applied, const bool do_draw_cb,
+        /* optional - only used by clip */
+        float stabmat[4][4],
+        /* optional - only used when do_post_draw is set or called from clip editor */
+        const bContext *C)
 {
 	struct View2D *v2d = &ar->v2d;
 
@@ -706,7 +709,7 @@ void ED_mask_draw_region(Mask *mask, ARegion *ar,
 			GPU_matrix_mul(stabmat);
 		}
 		IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_SHUFFLE_COLOR);
-		GPU_shader_uniform_vector(state.shader, GPU_shader_get_uniform(state.shader, "shuffle"), 4, 1, red);
+		GPU_shader_uniform_vector(state.shader, GPU_shader_get_uniform_ensure(state.shader, "shuffle"), 4, 1, red);
 		immDrawPixelsTex(&state, 0.0f, 0.0f, width, height, GL_RED, GL_FLOAT, GL_NEAREST, buffer, 1.0f, 1.0f, NULL);
 
 		GPU_matrix_pop();
@@ -718,7 +721,8 @@ void ED_mask_draw_region(Mask *mask, ARegion *ar,
 		MEM_freeN(buffer);
 	}
 
-	/* apply transformation so mask editing tools will assume drawing from the origin in normalized space */
+	/* apply transformation so mask editing tools will assume drawing from the
+	 * origin in normalized space */
 	GPU_matrix_push();
 	GPU_matrix_translate_2f(x + xofs, y + yofs);
 	GPU_matrix_scale_2f(zoomx, zoomy);
