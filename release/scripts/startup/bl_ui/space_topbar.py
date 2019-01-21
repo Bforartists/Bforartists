@@ -562,7 +562,7 @@ class TOPBAR_MT_file(Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.menu("TOPBAR_MT_file_new", text="New", icon='FILE_NEW')
+        layout.menu("TOPBAR_MT_file_new", text="New")
         layout.operator("wm.open_mainfile", text="Open...", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
         layout.operator("wm.revert_mainfile")
@@ -611,8 +611,8 @@ class TOPBAR_MT_file(Menu):
 
         layout.separator()
 
-        layout.menu("TOPBAR_MT_file_import", icon='IMPORT')
-        layout.menu("TOPBAR_MT_file_export", icon='EXPORT')
+        layout.menu("TOPBAR_MT_file_import")
+        layout.menu("TOPBAR_MT_file_export")
 
         layout.separator()
 
