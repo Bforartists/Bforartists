@@ -125,7 +125,7 @@ class GRAPH_MT_view(Menu):
 
         st = context.space_data
 
-        layout.operator("graph.properties", icon='MENU_PANEL')
+        layout.operator("graph.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.separator()
 
         layout.prop(st, "use_realtime_update")
