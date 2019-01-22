@@ -237,8 +237,14 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             if tool != 'NONE':
                 layout.column().prop(settings, "tool")
                 col = layout.column()
-                col.prop(brush, "size", slider=True)
+                row = col.row(align=True)
+                row.prop(brush, "size", slider=True)
+
+                myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+                myvar.data_path_primary = 'tool_settings.particle_edit.brush.size'
+
                 if tool == 'ADD':
+                    
                     col.prop(brush, "count")
 
                     col = layout.column()
@@ -246,7 +252,11 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                     col.prop(brush, "steps", slider=True)
                     col.prop(settings, "default_key_count", slider=True)
                 else:
-                    col.prop(brush, "strength", slider=True)
+                    row = col.row(align=True)
+                    row.prop(brush, "strength", slider=True)
+
+                    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+                    myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
 
                     if tool == 'LENGTH':
                         layout.row().prop(brush, "length_mode", expand=True)
