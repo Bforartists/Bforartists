@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -2735,18 +2735,9 @@ class WM_MT_splash(Menu):
             # Links if no recent files
             col2_title.label(text="Getting Started")
 
-            col2.operator(
-                "wm.url_open", text="Manual", icon='URL'
-            ).url = "https://docs.blender.org/manual/en/dev/"
-            col2.operator(
-                "wm.url_open", text="Release Notes", icon='URL',
-            ).url = "https://www.blender.org/download/releases/%d-%d/" % bpy.app.version[:2]
-            col2.operator(
-                "wm.url_open", text="Blender Website", icon='URL',
-            ).url = "https://www.blender.org"
-            col2.operator(
-                "wm.url_open", text="Credits", icon='URL',
-            ).url = "https://www.blender.org/about/credits/"
+            col2.operator("wm.url_open", text="Manual", icon='URL').url = "https://www.bforartists.de/wiki/bforartists-2-manual"
+            col2.operator("wm.url_open", text="Release Notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
+            col2.operator("wm.url_open", text="Credits", icon='URL').url = "https://www.bforartists.de/wiki/credits-page-bforartists"
 
         layout.separator()
 
@@ -2759,22 +2750,13 @@ class WM_MT_splash(Menu):
         col1.operator("wm.recover_last_session", icon='RECOVER_LAST')
 
         col2 = split.column()
-        if found_recent:
-            col2.operator(
-                "wm.url_open", text="Release Notes", icon='URL',
-            ).url = "https://www.blender.org/download/releases/%d-%d/" % bpy.app.version[:2]
-            col2.operator(
-                "wm.url_open", text="Development Fund", icon='URL'
-            ).url = "https://fund.blender.org"
-        else:
-            col2.operator(
-                "wm.url_open", text="Development Fund", icon='URL'
-            ).url = "https://fund.blender.org"
-            col2.operator(
-                "wm.url_open", text="Donate", icon='URL'
-            ).url = "https://www.blender.org/foundation/donation-payment/"
+
+        col2.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de/"
 
         layout.separator()
+        
+        layout.label(text = "Bforartists 2 Alpha 0.1 is based on Blender 2.80 Beta")
+
         layout.separator()
 
 
