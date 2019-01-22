@@ -1483,38 +1483,43 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	 * avoids recreating splash for version updates */
 	const char *version_suffix = NULL;
 
-	if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha")) {
-		version_suffix = " Alpha";
-	}
-	else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "beta")) {
-		version_suffix = " Beta";
-	}
-	else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "rc")) {
-		version_suffix = " Release Candidate";
-	}
-	else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
-		version_suffix = STRINGIFY(BLENDER_VERSION_CHAR);
-	}
+	/*bfa - the string up right. We don't need Blender hashes or Blender version numbers in Bforartists*/
 
-	char *version = BLI_sprintfN("Version %d.%d%s", BLENDER_VERSION / 100, BLENDER_VERSION % 100, version_suffix);
+	//if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha")) {
+	//	version_suffix = " Alpha";
+	//}
+	//else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "beta")) {
+	//	version_suffix = " Beta";
+	//}
+	//else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "rc")) {
+	//	version_suffix = " Release Candidate";
+	//}
+	//else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
+	//	version_suffix = STRINGIFY(BLENDER_VERSION_CHAR);
+	//}
 
-	if (version != NULL && version[0]) {
-		/* placed after the version number in the image,
-		 * placing y is tricky to match baseline */
-		/* hack to have text draw 'text_sel' */
-		UI_block_emboss_set(block, UI_EMBOSS_NONE);
-		int x = 202 * U.dpi_fac;
-		int y = 130 * U.dpi_fac;
-		int w = 240 * U.dpi_fac;
+	/* bfa - A odd Blender version number in the middle of the splash screen, introduced with Blender 2.80 Beta.
+	/* We don't want the Blender version number. We place the version number directly in the image*/
+
+	//char *version = BLI_sprintfN("Version %d.%d%s", BLENDER_VERSION / 100, BLENDER_VERSION % 100, version_suffix);
+
+	//if (version != NULL && version[0]) {
+	//	/* placed after the version number in the image,
+	//	 * placing y is tricky to match baseline */
+	//	/* hack to have text draw 'text_sel' */
+	//	UI_block_emboss_set(block, UI_EMBOSS_NONE);
+	//	int x = 202 * U.dpi_fac;
+	//	int y = 130 * U.dpi_fac;
+	//	int w = 240 * U.dpi_fac;
 
 
-		but = uiDefBut(block, UI_BTYPE_LABEL, 0, version, x, y, w, UI_UNIT_Y, NULL, 0, 0, 0, 0, NULL);
-		/* XXX, set internal flag - UI_SELECT */
-		UI_but_flag_enable(but, 1);
-		UI_block_emboss_set(block, UI_EMBOSS);
-	}
+	//	but = uiDefBut(block, UI_BTYPE_LABEL, 0, version, x, y, w, UI_UNIT_Y, NULL, 0, 0, 0, 0, NULL);
+	//	/* XXX, set internal flag - UI_SELECT */
+	//	UI_but_flag_enable(but, 1);
+	//	UI_block_emboss_set(block, UI_EMBOSS);
+	//}
 
-	MEM_freeN(version);
+	//MEM_freeN(version);
 
 #ifdef WITH_BUILDINFO
 	if (build_commit_timestamp != 0) {
