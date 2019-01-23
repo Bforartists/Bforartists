@@ -1377,54 +1377,27 @@ class CLIP_MT_track(Menu):
         layout = self.layout
 
         layout.operator("clip.clear_solution", icon = "CLEAN_CHANNELS")
-        layout.operator("clip.solve_camera", icon = "MOTIONPATHS_CALCULATE")
-
-        layout.separator()
-        props = layout.operator("clip.clear_track_path", text="Clear After", icon='FORWARD')
-        props.clear_active = False
-        props.action = 'REMAINED'
-
-        props = layout.operator("clip.clear_track_path", text="Clear Before", icon='BACK')
-        props.clear_active = False
-        props.action = 'UPTO'
 
         props = layout.operator("clip.clear_track_path", text="Clear Track Path", icon = "CLEAR")
         props.clear_active = False
         props.action = 'ALL'
 
         layout.separator()
-        layout.operator("clip.join_tracks", icon = "JOIN")
-
-        layout.separator()
-        layout.operator("clip.clean_tracks", icon = "CLEAN_CHANNELS")
+        layout.operator("clip.lock_tracks", text="Lock", icon = "LOCKED").action = 'LOCK'
+        layout.operator("clip.lock_tracks", text="Unlock", icon = "UNLOCKED").action = 'UNLOCK'
 
         layout.separator()
         layout.operator("clip.copy_tracks", text= "Copy", icon = "COPYDOWN")
         layout.operator("clip.paste_tracks", text= "Paste", icon = "PASTEDOWN")
 
         layout.separator()
-        props = layout.operator("clip.track_markers", text="Track Frame Backwards", icon='FRAME_PREV')
-        props.backwards = True
-        props.sequence = False
-
-        props = layout.operator("clip.track_markers", text="Track Backwards", icon='PLAY_REVERSE')
-        props.backwards = True
-        props.sequence = True
-
-        props = layout.operator("clip.track_markers", text="Track Forwards", icon='PLAY')
-        props.backwards = False
-        props.sequence = True
-
-        props = layout.operator("clip.track_markers", text="Track Frame Forwards", icon='FRAME_NEXT')
-        props.backwards = False
-        props.sequence = False
+        layout.operator("clip.keyframe_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("clip.keyframe_delete", icon = "KEYFRAMES_REMOVE")
 
         layout.separator()
-        layout.operator("clip.delete_track", icon = "DELETE")
-        layout.operator("clip.delete_marker", icon = "DELETE")
+        layout.menu("CLIP_MT_track_visibility")
+        layout.menu("CLIP_MT_track_transform")
 
-        layout.separator()
-        layout.operator("clip.add_marker_move", icon = "MARKER")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
