@@ -686,12 +686,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.view_selected", text="Frame Selected", icon = "ALIGNCAMERA_ACTIVE").use_all_regions = False
+        layout.operator("view3d.view_selected", text="View Selected", icon = "VIEW_SELECTED").use_all_regions = False
         if view.region_quadviews:
-            layout.operator("view3d.view_selected_all_regions", text="Frame Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE")
-        layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
+            layout.operator("view3d.view_selected_all_regions", text="View Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE")
+        layout.operator("view3d.view_all", text="View All", icon = "VIEWALL").center = False
         if view.region_quadviews:
-            layout.operator("view3d.view_all_all_regions", text = "Frame All (Quad View)", icon = "VIEWALL" ) # bfa - separated tooltip
+            layout.operator("view3d.view_all_all_regions", text = "View All (Quad View)", icon = "VIEWALL" ) # bfa - separated tooltip
         layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
 
         layout.separator()
@@ -4257,7 +4257,7 @@ class VIEW3D_MT_view_pie(Menu):
         pie = layout.menu_pie()
         pie.operator_enum("view3d.view_axis", "type")
         pie.operator("view3d.view_camera", text="View Camera", icon='CAMERA_DATA')
-        pie.operator("view3d.view_selected", text="View Selected", icon='ZOOM_SELECTED')
+        pie.operator("view3d.view_selected", text="View Selected", icon='VIEW_SELECTED')
 
 
 class VIEW3D_MT_shading_pie(Menu):
