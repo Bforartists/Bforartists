@@ -143,7 +143,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
                     panel.prop_unified_color(row, context, brush, "secondary_color", text="")
                     row.separator()
                     row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
-                    row.operator("paint.sample_color", icon='EYEDROPPER', text="")
+                    #row.operator("paint.sample_color", icon='EYEDROPPER', text="")# bfa - picker doesn't activate here.
         else:
             if brush.image_tool == 'FILL' and not projpaint:
                 col.prop(brush, "fill_threshold")
