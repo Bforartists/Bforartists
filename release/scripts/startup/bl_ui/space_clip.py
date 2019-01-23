@@ -436,9 +436,6 @@ class CLIP_PT_tools_clip(Panel):
 
         col = layout.column(align=True)
         col.operator("clip.set_scene_frames", icon = "SET_FRAMES")
-        row = col.row(align=True)
-        row.operator("clip.prefetch", text="Prefetch")
-        row.operator("clip.reload", text="Reload")
 
 
 class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
@@ -451,15 +448,19 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        sc = context.space_data
+        col = layout.column(align=True)
+        
+        col.operator("clip.detect_features", icon = "DETECT")
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("clip.add_marker_at_click", text="Add", icon = "MARKER")
+        col.operator("clip.add_marker_at_click", text="Add Marker            ", icon = "MARKER")   
         col.operator("clip.disable_markers", text="Enable Markers    " , icon = "ENABLE").action = 'ENABLE'
         col.operator("clip.disable_markers", text="Disable markers    ", icon = "DISABLE").action = 'DISABLE'
-        row.operator("clip.delete_track", text="Delete", icon = "DELETE")
-        col.operator("clip.detect_features")
+        col.operator("clip.delete_marker", text="Delete Marker        ", icon = "DELETE")
+        
+        col = layout.column(align=True)       
+        
+        col.operator("clip.delete_track", text="Delete Track        ", icon = "DELETE")
 
 
 class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
@@ -496,16 +497,12 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
 
         row = col.row(align=True)
         row.use_property_split = False
-        row.prop(settings, "use_default_red_channel",
-                 text="R", toggle=True)
-        row.prop(settings, "use_default_green_channel",
-                 text="G", toggle=True)
-        row.prop(settings, "use_default_blue_channel",
-                 text="B", toggle=True)
+        row.prop(settings, "use_default_red_channel", text="R", toggle=True)
+        row.prop(settings, "use_default_green_channel", text="G", toggle=True)
+        row.prop(settings, "use_default_blue_channel", text="B", toggle=True)
 
         col.separator()
-        col.operator("clip.track_settings_as_default",
-                     text="Copy From Active Track")
+        col.operator("clip.track_settings_as_default", text="Copy From Active Track", icon = "COPYDOWN")
 
 
 class CLIP_PT_tracking_settings_extras(CLIP_PT_tracking_panel, Panel):
@@ -693,23 +690,22 @@ class CLIP_PT_tools_orientation(CLIP_PT_tracking_panel, Panel):
 
         col = layout.column(align=True)
 
-        row = col.row(align=True)
-        row.operator("clip.set_plane", text="Floor", icon = "FLOOR").plane = 'FLOOR'
-        row.operator("clip.set_plane", text="Wall", icon = "WALL").plane = 'WALL'
+        col.operator("clip.set_plane", text="Floor", icon = "FLOOR").plane = 'FLOOR'
+        col.operator("clip.set_plane", text="Wall", icon = "WALL").plane = 'WALL'
+
+        col = layout.column(align=True)
 
         col.operator("clip.set_origin", icon = "ORIGIN")
 
-        row = col.row(align=True)
-        row.operator("clip.set_axis", text="Set X Axis", icon = "X_ICON").axis = 'X'
-        row.operator("clip.set_axis", text="Set Y Axis", icon = "Y_ICON").axis = 'Y'
+        col = layout.column(align=True)
 
-        layout.separator()
+        col.operator("clip.set_axis", text="Set X Axis", icon = "X_ICON").axis = 'X'
+        col.operator("clip.set_axis", text="Set Y Axis", icon = "Y_ICON").axis = 'Y'
 
         col = layout.column()
 
-        row = col.row(align=True)
-        row.operator("clip.set_scale", icon = "TRANSFORM_SCALE")
-        row.operator("clip.apply_solution_scale", text="Apply Scale", icon = "APPLYSCALE")
+        col.operator("clip.set_scale", icon = "TRANSFORM_SCALE")
+        col.operator("clip.apply_solution_scale", text="Apply Scale", icon = "APPLYSCALE")
 
         col.prop(settings, "distance")
 
