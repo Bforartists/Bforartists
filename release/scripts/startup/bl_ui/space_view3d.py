@@ -2319,6 +2319,8 @@ class VIEW3D_MT_brush(Menu):
                     layout.prop(brush, "use_persistent")
                     layout.operator("sculpt.set_persistent_base")
 
+        layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
+
 
 class VIEW3D_MT_brush_paint_modes(Menu):
     bl_label = "Enabled Modes"
