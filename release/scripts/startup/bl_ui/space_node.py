@@ -220,13 +220,13 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view2d.zoom_in")
-        layout.operator("view2d.zoom_out")
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
 
         layout.separator()
 
-        layout.operator("node.view_selected")
-        layout.operator("node.view_all")
+        layout.operator("node.view_selected", icon='VIEW_SELECTED')
+        layout.operator("node.view_all", icon = "VIEWALL" )
 
         if context.space_data.show_backdrop:
             layout.separator()
