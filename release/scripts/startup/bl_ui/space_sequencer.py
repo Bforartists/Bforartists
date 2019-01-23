@@ -193,9 +193,9 @@ class SEQUENCER_MT_view(Menu):
 
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("sequencer.view_all", text="View all Sequences")
-            layout.operator("sequencer.view_selected")
-            layout.operator("sequencer.view_frame")
+            layout.operator("sequencer.view_all", text="View all Sequences", icon = "VIEWALL" )
+            layout.operator("sequencer.view_selected", text = "View Selected", icon='VIEW_SELECTED')
+            layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
             layout.operator_context = 'INVOKE_DEFAULT'
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
