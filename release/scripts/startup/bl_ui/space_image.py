@@ -94,7 +94,7 @@ class IMAGE_MT_view(Menu):
         layout.separator()
 
         if show_uvedit:
-            layout.operator("image.view_selected")
+            layout.operator("image.view_selected", text = "View Selected", icon='VIEW_SELECTED')
 
         layout.operator("image.view_all", icon = "VIEWALL" )
         layout.operator("image.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
