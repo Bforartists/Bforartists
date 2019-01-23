@@ -306,7 +306,6 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_MT_select")
                 layout.menu("CLIP_MT_clip")
                 layout.menu("CLIP_MT_track")
-                layout.menu("CLIP_MT_reconstruction")
             else:
                 layout.menu("CLIP_MT_clip")
 
@@ -695,8 +694,8 @@ class CLIP_PT_tools_orientation(CLIP_PT_tracking_panel, Panel):
         col = layout.column(align=True)
 
         row = col.row(align=True)
-        row.operator("clip.set_plane", text="Floor").plane = 'FLOOR'
-        row.operator("clip.set_plane", text="Wall").plane = 'WALL'
+        row.operator("clip.set_plane", text="Floor", icon = "FLOOR").plane = 'FLOOR'
+        row.operator("clip.set_plane", text="Wall", icon = "WALL").plane = 'WALL'
 
         col.operator("clip.set_origin", icon = "ORIGIN")
 
@@ -1431,6 +1430,10 @@ class CLIP_MT_track(Menu):
         layout.menu("CLIP_MT_track_visibility")
         layout.menu("CLIP_MT_track_transform")
 
+        layout.separator()
+
+        layout.menu("CLIP_MT_reconstruction")
+
 
 class CLIP_MT_reconstruction(Menu):
     bl_label = "Reconstruction"
@@ -1438,19 +1441,7 @@ class CLIP_MT_reconstruction(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_origin", icon = "ORIGIN")
-        layout.operator("clip.set_plane", text="Set Floor", icon = "FLOOR").plane = 'FLOOR'
-        layout.operator("clip.set_plane", text="Set Wall", icon = "WALL").plane = 'WALL'
-
-        layout.operator("clip.set_axis", text="Set X Axis", icon = "X_ICON").axis = 'X'
-        layout.operator("clip.set_axis", text="Set Y Axis", icon = "Y_ICON").axis = 'Y'
-
-        layout.operator("clip.set_scale", icon = "TRANSFORM_SCALE")
-
-        layout.separator()
-
-        layout.operator("clip.track_to_empty", icon = "LINKED")
-        layout.operator("clip.bundles_to_mesh",  icon = "MARKER_TO_MESH")
+        layout.label(text = "Menu remains for addon compability")
 
 
 class CLIP_MT_track_visibility(Menu):
