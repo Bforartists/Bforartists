@@ -792,8 +792,8 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 
 		if (UI_but_online_manual_id(but, buf, sizeof(buf))) {
 			PointerRNA ptr_props;
-			uiItemO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Manual"),
-			        ICON_URL, "WM_OT_doc_view_manual_ui_context");
+			//uiItemO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Manual"), /*bfa - turned off the menu item online manual*/
+			//        ICON_URL, "WM_OT_doc_view_manual_ui_context");
 
 			if (U.flag & USER_DEVELOPER_UI) {
 				uiItemFullO(
