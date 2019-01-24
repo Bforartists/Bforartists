@@ -53,6 +53,18 @@ class BrushButtonsPanel(UnifiedPaintPanel):
         return tool_settings.brush
 
 
+# Workaround to separate the tooltips for Toggle Maximize Area
+class IMAGE_MT_view_view_fit(bpy.types.Operator):
+    """View Fit\nFits the content area into the window"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "image.view_all_fit"        # unique identifier for buttons and menu items to reference.
+    bl_label = "View Fit"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.image.view_all(fit_view = True)
+        return {'FINISHED'}  
+
+
 class IMAGE_MT_view(Menu):
     bl_label = "View"
 
@@ -97,7 +109,7 @@ class IMAGE_MT_view(Menu):
             layout.operator("image.view_selected", text = "View Selected", icon='VIEW_SELECTED')
 
         layout.operator("image.view_all", icon = "VIEWALL" )
-        layout.operator("image.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
+        layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
 
         layout.separator()
 
@@ -134,6 +146,40 @@ class IMAGE_MT_view_zoom(Menu):
             ).ratio = a / b
 
 
+# Workaround to separate the tooltips
+class IMAGE_MT_select_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+# Workaround to separate the tooltips
+class IMAGE_MT_select_linked_pick_extend(bpy.types.Operator):
+    """Linked Pick Extend\nSelect all UV vertices under the mouse with extend method\nHotkey Only tool! """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_linked_pick_extend"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Linked Pick Extend"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_linked_pick(extend = True)
+        return {'FINISHED'} 
+
+# Workaround to separate the tooltips
+class IMAGE_MT_select_linked_extend(bpy.types.Operator):
+    """Linked Extend\nSelect all UV vertices linked to the active keymap extended"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_linked_extend"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Linked Extend"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_linked(extend = True)
+        return {'FINISHED'}
+
+
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
 
@@ -142,7 +188,7 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("uv.select_all", text="None").action = 'DESELECT'
-        layout.operator("uv.select_all", text="Invert", icon = 'INVERSE').action = 'INVERT'
+        layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -151,18 +197,21 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
-
-        layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
-        layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
+      
+        layout.operator("uv.select_linked", icon = "LINKED").extend = False
+        layout.operator("uv.select_linked_extend", text="Linked Extend", icon = "LINKED") # bfa - separated tooltip
+        layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED").extend = False
+        layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend", icon = "LINKED") # bfa - separated tooltip
 
         layout.separator()
 
         layout.operator("uv.select_pinned", icon = "PINNED")
-        layout.operator("uv.select_linked", icon = "LINKED").extend = False
+        layout.operator("uv.select_split", icon = "SPLIT")
 
         layout.separator()
 
-        layout.operator("uv.select_split", icon = "SPLIT")
+        layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
 
 
 class IMAGE_MT_brush(Menu):
@@ -1326,8 +1375,12 @@ class IMAGE_PT_grease_pencil(AnnotationDataPanel, Panel):
 
 classes = (
     ALL_MT_editormenu,
+    IMAGE_MT_view_view_fit,
     IMAGE_MT_view,
     IMAGE_MT_view_zoom,
+    IMAGE_MT_select_linked_pick_extend,
+    IMAGE_MT_select_linked_extend,
+    IMAGE_MT_select_inverse,
     IMAGE_MT_select,
     IMAGE_MT_brush,
     IMAGE_MT_image,
