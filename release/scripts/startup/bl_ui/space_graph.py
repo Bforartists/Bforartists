@@ -261,13 +261,13 @@ class GRAPH_MT_channel(Menu):
         layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+
+        layout.menu("GRAPH_MT_channel_settings_toggle")
 
         layout.separator()
+
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
-        layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
+        layout.menu("GRAPH_MT_channel_extrapolation")
 
         layout.separator()
 
@@ -281,14 +281,58 @@ class GRAPH_MT_channel(Menu):
         layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+
+        layout.menu("GRAPH_MT_channel_move")
 
         layout.separator()
+
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
         
         layout.separator()
 
         layout.operator("anim.channels_find", icon = "VIEWZOOM")
+
+
+class GRAPH_MT_channel_settings_toggle(Menu):
+    bl_label = "Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_toggle", text = "Toggle Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_toggle", text = "Toggle Mute", icon ="MUTE_IPO_ON").type = 'MUTE'
+
+        layout.separator()
+
+        layout.operator("anim.channels_setting_enable", text = "Enable Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text = "Enable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+
+        layout.separator()
+
+        layout.operator("anim.channels_setting_disable", text = "Disable Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text = "Disable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+
+class GRAPH_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("graph.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("graph.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("graph.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
+
+
+class GRAPH_MT_channel_move(Menu):
+    bl_label = "Move"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("anim.channels_move", text= "To Top", icon = "MOVE_TO_TOP").direction = 'TOP'
+        layout.operator("anim.channels_move", text= "Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("anim.channels_move", text= "Down", icon = "MOVE_DOWN").direction = 'DOWN'
+        layout.operator("anim.channels_move", text= "To Bottom", icon = "MOVE_TO_BOTTOM").direction = 'BOTTOM'
 
 
 class GRAPH_MT_key(Menu):
@@ -467,6 +511,9 @@ classes = (
     GRAPH_MT_marker,
     GRAPH_MT_channel_hide_unselected_curves,
     GRAPH_MT_channel,
+    GRAPH_MT_channel_settings_toggle,
+    GRAPH_MT_channel_extrapolation,
+    GRAPH_MT_channel_move,
     GRAPH_MT_key,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
