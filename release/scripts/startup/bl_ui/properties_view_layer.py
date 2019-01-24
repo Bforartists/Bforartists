@@ -38,6 +38,14 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        
+        window = context.window
+        screen = context.screen
+        scene = window.scene
+        
+        layout.template_search(window, "view_layer", scene, "view_layers", new="scene.view_layer_add", unlink="scene.view_layer_remove")
+        
+        layout.separator()
 
         layout.use_property_split = True
 
