@@ -466,31 +466,50 @@ class DOPESHEET_MT_channel(Menu):
         layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
+
         layout.operator("anim.channels_group", icon = "NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+
+        layout.menu("GRAPH_MT_channel_settings_toggle")#bfa - menu comes from space_graph
 
         layout.separator()
+
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
-        layout.operator_menu_enum("action.extrapolation_type", "type", text="Extrapolation Mode")
+        layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
+
         layout.operator("anim.channels_expand", icon = "EXPANDMENU")
         layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+
+        layout.menu("GRAPH_MT_channel_move") #bfa - menu comes from space_graph
+
+        # bfa - the channels find menu item is already in the marker menu. But should be here.
+        # The marker menu is a shared menu from the time line. And the time line editor and nla does not have a channel menu.
+        #layout.separator()
+
+        #layout.operator("anim.channels_find", icon = "VIEWZOOM") 
 
         layout.separator()
 
-        layout.operator("anim.channels_find", icon = "VIEWZOOM")
-
-        layout.separator()
         layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
+
+
+class DOPESHEET_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("action.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("action.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("action.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
+
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
@@ -737,6 +756,7 @@ classes = (
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
+    DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key_clean_channels,
     DOPESHEET_MT_key,
     DOPESHEET_MT_key_transform,
