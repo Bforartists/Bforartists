@@ -846,6 +846,18 @@ class VIEW3D_MT_select_object_more_less(Menu):
         props.direction = 'CHILD'
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_object(Menu):
     bl_label = "Select"
 
@@ -854,7 +866,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.operator("object.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("object.select_all", text="None").action = 'DESELECT'
-        layout.operator("object.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("object.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -971,6 +983,18 @@ class VIEW3D_MT_select_pose_more_less(Menu):
         props.direction = 'CHILD'
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "pose.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.pose.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
 
@@ -979,7 +1003,7 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("pose.select_all", text="None").action = 'DESELECT'
-        layout.operator("pose.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("pose.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1006,6 +1030,18 @@ class VIEW3D_MT_select_pose(Menu):
         layout.operator("object.select_pattern", text="Select Pattern", icon = "PATTERN")
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "particle.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.particle.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
 
@@ -1014,7 +1050,7 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all", text="None").action = 'DESELECT'
-        layout.operator("particle.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("particle.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1103,6 +1139,18 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
         layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_edit_mesh(Menu):
     bl_label = "Select"
 
@@ -1112,7 +1160,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         # primitive
         layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mesh.select_all", text="None").action = 'DESELECT'
-        layout.operator("mesh.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("mesh.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1178,6 +1226,17 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
         layout.operator("mesh.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "curve.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.curve.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_select_edit_curve(Menu):
     bl_label = "Select"
@@ -1187,7 +1246,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all", text="None").action = 'DESELECT'
-        layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE')
 
         layout.separator()
 
@@ -1278,6 +1337,17 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.operator("font.select_all", icon = "SELECT_ALL")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mball.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mball.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_select_edit_metaball(Menu):
     bl_label = "Select"
@@ -1287,7 +1357,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.operator("mball.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mball.select_all", text="None").action = 'DESELECT'
-        layout.operator("mball.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("mball.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1315,6 +1385,18 @@ class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
         layout.operator("mball.select_similar", text="Rotation", icon = "ROTATE").type = 'ROTATION'
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "lattice.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.lattice.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+
 class VIEW3D_MT_select_edit_lattice(Menu):
     bl_label = "Select"
 
@@ -1323,7 +1405,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("lattice.select_all", text="None").action = 'DESELECT'
-        layout.operator("lattice.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1346,6 +1428,18 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "armature.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.armature.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_edit_armature(Menu):
     bl_label = "Select"
 
@@ -1354,7 +1448,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all", text="None").action = 'DESELECT'
-        layout.operator("armature.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("armature.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1438,6 +1532,18 @@ class VIEW3D_MT_select_gpencil_grouped(Menu):
         layout.operator("gpencil.select_grouped", text="Color", icon = "COLOR").type = 'MATERIAL'
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "paint.face_select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.face_select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_select_paint_mask(Menu):
     bl_label = "Select"
 
@@ -1446,7 +1552,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
 
         layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("paint.face_select_all", text="None").action = 'DESELECT'
-        layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
         layout.operator("view3d.select_lasso", icon='BORDER_LASSO').mode = 'ADD'
@@ -1458,6 +1564,18 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_linked", text="Linked", icon = "LINKED")
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "paint.vert_select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.vert_select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
 
@@ -1466,7 +1584,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all", text="None").action = 'DESELECT'
-        layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -1764,6 +1882,20 @@ class VIEW3D_MT_origin_set(Menu):
         layout.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text = "Origin to Center of Mass (Volume)").type='ORIGIN_CENTER_OF_VOLUME'
 
 
+# ********** Object menu **********
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_delete_global(bpy.types.Operator):
+    """Delete global\nDeletes the selected object(s) globally in all opened scenes"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.delete_global"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Delete Global"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.delete(use_global = True)
+        return {'FINISHED'}
+
+
 class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
     bl_label = "Object"
@@ -1783,6 +1915,12 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.duplicate_move", icon = "DUPLICATE")
         layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
         layout.operator("object.join", icon ='JOIN')
+
+        layout.separator()
+
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
+        layout.operator("object.delete", text="Delete Global", icon = "DELETE").use_global = True
 
         layout.separator()
 
@@ -1819,12 +1957,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_showhide")
-
-        layout.separator()
-
-        layout.operator_context = 'EXEC_DEFAULT'
-        layout.operator("object.delete", text="Delete", icon = "DELETE").use_global = False
-        layout.operator("object.delete", text="Delete Global", icon = "DELETE").use_global = True
 
 
 class VIEW3D_MT_object_animation(Menu):
@@ -2198,6 +2330,18 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_fluid", icon = "MOD_FLUIDSIM")
 
 
+# Workaround to separate the tooltips for Show Hide
+class VIEW3D_hide_view_set_unselected(bpy.types.Operator):
+    """Hide Unselected\nHides the unselected Object(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.hide_view_set(unselected = True)
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_object_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -2209,7 +2353,7 @@ class VIEW3D_MT_object_showhide(Menu):
         layout.separator()
 
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
-        layout.operator("object.hide_view_set", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
+        layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
 class VIEW3D_MT_make_single_user(Menu):
@@ -2528,7 +2672,7 @@ class VIEW3D_MT_particle(Menu):
 
         particle_edit = tool_settings.particle_edit
 
-        layout.operator("particle.mirror", icon = "MIRROR")
+        layout.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
 
         layout.operator("particle.remove_doubles", icon='REMOVE_DOUBLES')
 
@@ -2543,7 +2687,7 @@ class VIEW3D_MT_particle(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_particle_showhide")
+        layout.menu("VIEW3D_MT_particle_show_hide")
 
         layout.separator()
 
@@ -2605,9 +2749,27 @@ class VIEW3D_MT_particle_specials(Menu):
             layout.operator("particle.select_linked", icon = "LINKED")
 
 
-class VIEW3D_MT_particle_showhide(ShowHideMenu, Menu):
-    _operator_name = "particle"
+# Workaround to separate the tooltips for Show Hide for Particles in Particle mode
+class VIEW3D_particle_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide the unselected Particles"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "particle.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.particle.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_particle_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("particle.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("particle.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 class VIEW3D_MT_pose(Menu):
     bl_label = "Pose"
@@ -2667,7 +2829,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_pose_showhide")
+        layout.menu("VIEW3D_MT_pose_show_hide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
@@ -2791,8 +2953,27 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
 
-class VIEW3D_MT_pose_showhide(ShowHideMenu, Menu):
-    _operator_name = "pose"
+# Workaround to separate the tooltips for Show Hide for Armature in Pose mode
+class VIEW3D_MT_pose_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Bones"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "pose.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.pose.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_pose_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("pose.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("pose.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("pose.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -2937,7 +3118,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_showhide")
+        layout.menu("VIEW3D_MT_edit_mesh_show_hide")
         layout.operator_menu_enum("mesh.separate", "type")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
 
@@ -3533,8 +3714,27 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
 
 
-class VIEW3D_MT_edit_mesh_showhide(ShowHideMenu, Menu):
-    _operator_name = "mesh"
+# Workaround to separate the tooltips for Show Hide for Mesh in Edit Mode
+class VIEW3D_mesh_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected geometry in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_edit_mesh_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mesh.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mesh.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
 class VIEW3D_MT_edit_gpencil_delete(Menu):
@@ -3578,7 +3778,7 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_showhide")
+    layout.menu("VIEW3D_MT_edit_curve_show_hide")
     layout.menu("VIEW3D_MT_edit_curve_delete")
 
 
@@ -3723,8 +3923,27 @@ class VIEW3D_MT_edit_curve_delete(Menu):
         layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
 
-class VIEW3D_MT_edit_curve_showhide(ShowHideMenu, Menu):
-    _operator_name = "curve"
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class VIEW3D_curve_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "curve.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.curve.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_edit_curve_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("curve.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("curve.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
 class VIEW3D_MT_edit_surface(Menu):
@@ -5898,30 +6117,40 @@ classes = (
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
+    VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
     VIEW3D_MT_select_by_type,
     VIEW3D_MT_select_grouped,
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
+    VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_pose_more_less,
+    VIEW3D_MT_select_particle_inverse,
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_more_less,
+    VIEW3D_MT_select_edit_mesh_inverse,
     VIEW3D_MT_select_edit_mesh,
+    VIEW3D_MT_select_edit_curve_inverse,
     VIEW3D_MT_select_edit_curve,
     VIEW3D_MT_select_edit_curve_select_similar,
     VIEW3D_MT_select_edit_surface,
     VIEW3D_MT_select_edit_text,
+    VIEW3D_MT_select_edit_metaball_inverse,
     VIEW3D_MT_select_edit_metaball,
     VIEW3D_MT_select_edit_metaball_select_similar,
+    VIEW3D_MT_select_edit_lattice_inverse,
     VIEW3D_MT_select_edit_lattice,
+    VIEW3D_MT_select_edit_armature_inverse,
     VIEW3D_MT_select_edit_armature,
     VIEW3D_MT_select_gpencil,
     VIEW3D_MT_select_gpencil_grouped,
+    VIEW3D_MT_select_paint_mask_inverse,
     VIEW3D_MT_select_paint_mask,
+    VIEW3D_MT_select_paint_mask_vertex_inverse,
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_angle_control,
     VIEW3D_MT_mesh_add,
@@ -5937,6 +6166,7 @@ classes = (
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
     VIEW3D_MT_origin_set,
+    VIEW3D_MT_object_delete_global,
     VIEW3D_MT_object,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_rigid_body,
@@ -5950,6 +6180,7 @@ classes = (
     VIEW3D_MT_object_collection,
     VIEW3D_MT_object_constraints,
     VIEW3D_MT_object_quick_effects,
+    VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
@@ -5963,7 +6194,8 @@ classes = (
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_specials,
-    VIEW3D_MT_particle_showhide,
+    VIEW3D_particle_hide_unselected,
+    VIEW3D_MT_particle_show_hide,
     VIEW3D_MT_pose,
     VIEW3D_MT_pose_transform,
     VIEW3D_MT_pose_slide,
@@ -5973,7 +6205,8 @@ classes = (
     VIEW3D_MT_pose_group,
     VIEW3D_MT_pose_ik,
     VIEW3D_MT_pose_constraints,
-    VIEW3D_MT_pose_showhide,
+    VIEW3D_MT_pose_hide_unselected,
+    VIEW3D_MT_pose_show_hide,
     VIEW3D_MT_pose_apply,
     VIEW3D_MT_pose_specials,
     VIEW3D_MT_bone_options_toggle,
@@ -5992,7 +6225,9 @@ classes = (
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
-    VIEW3D_MT_edit_mesh_showhide,
+    VIEW3D_mesh_hide_unselected,
+    VIEW3D_curve_hide_unselected,
+    VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
@@ -6007,7 +6242,7 @@ classes = (
     VIEW3D_MT_edit_curve_segments,
     VIEW3D_MT_edit_curve_specials,
     VIEW3D_MT_edit_curve_delete,
-    VIEW3D_MT_edit_curve_showhide,
+    VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
     VIEW3D_MT_edit_text_chars,
