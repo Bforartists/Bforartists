@@ -2463,7 +2463,22 @@ class VIEW3D_MT_brush(Menu):
                     layout.prop(brush, "use_persistent")
                     layout.operator("sculpt.set_persistent_base")
 
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
+
         layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
+
+# Show hide menu for face selection masking
+class VIEW3D_MT_facemask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_select_reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("paint.face_select_hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("paint.face_select_hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_brush_paint_modes(Menu):
@@ -6197,6 +6212,7 @@ classes = (
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,
+    VIEW3D_MT_facemask_showhide,
     VIEW3D_MT_brush_paint_modes,
     VIEW3D_MT_paint_vertex,
     VIEW3D_MT_hook,
