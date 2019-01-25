@@ -683,7 +683,7 @@ static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Resize";
-	ot->description = "Scale (resize) selected items";
+	ot->description = "Resize\nScale (resize) selected items";
 	ot->idname = OP_RESIZE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -764,7 +764,7 @@ static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Rotate";
-	ot->description = "Rotate selected items";
+	ot->description = "Rotate\nRotate selected items";
 	ot->idname = OP_ROTATION;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -987,7 +987,7 @@ static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Vertex Slide";
-	ot->description = "Slide a vertex along a mesh";
+	ot->description = "Vertex Slide\nSlide a vertex along a mesh";
 	ot->idname = OP_VERT_SLIDE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1040,7 +1040,7 @@ static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Edge Bevel Weight";
-	ot->description = "Change the bevel weight of edges";
+	ot->description = "Edge Bevel Weight\nChange the bevel weight of edges";
 	ot->idname = OP_EDGE_BWEIGHT;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1062,7 +1062,7 @@ static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Sequence Slide";
-	ot->description = "Slide a sequence strip in time";
+	ot->description = "Sequence Slide\nSlide a sequence strip in time";
 	ot->idname = OP_SEQ_SLIDE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1084,7 +1084,7 @@ static void TRANSFORM_OT_rotate_normal(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Normal Rotate";
-	ot->description = "Rotate split normal of selected items";
+	ot->description = "Normal Rotate\nRotate split normal of selected items";
 	ot->idname = OP_NORMAL_ROTATION;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -1174,7 +1174,7 @@ static void TRANSFORM_OT_from_gizmo(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Transform From Gizmo";
-	ot->description = "Transform selected items by mode type";
+	ot->description = "Transform From Gizmo\nTransform selected items by mode type";
 	ot->idname = "TRANSFORM_OT_from_gizmo";
 	ot->flag = 0;
 
