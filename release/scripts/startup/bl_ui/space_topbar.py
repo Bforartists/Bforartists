@@ -63,6 +63,7 @@ class TOPBAR_HT_upper_bar(Header):
     def draw_right(self, context):
         layout = self.layout
 
+        # bfa not sure if longer needed. 
         window = context.window
         screen = context.screen
         scene = window.scene
@@ -72,8 +73,6 @@ class TOPBAR_HT_upper_bar(Header):
             layout.template_reports_banner()
             layout.template_running_jobs()
 
-        # Active workspace view-layer is retrieved through window, not through workspace.
-        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
 
 class TOPBAR_HT_lower_bar(Header):
     bl_space_type = 'TOPBAR'
