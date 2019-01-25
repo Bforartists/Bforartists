@@ -420,7 +420,7 @@ void OBJECT_OT_select_by_type(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select By Type";
-	ot->description = "Select By Type, all visible objects of type";
+	ot->description = "Select By Type\nSelect By Type, all visible objects of type";
 	ot->idname = "OBJECT_OT_select_by_type";
 
 	/* api callbacks */
@@ -689,7 +689,7 @@ void OBJECT_OT_select_linked(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Linked";
-	ot->description = "Select Linked, Select all visible objects that are linked to";
+	ot->description = "Select Linked\n Select all visible objects that are linked to";
 	ot->idname = "OBJECT_OT_select_linked";
 
 	/* api callbacks */
@@ -1311,7 +1311,7 @@ void OBJECT_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "OBJECT_OT_select_more";
-	ot->description = "Select connected parent/child objects";
+	ot->description = "Select More\nSelect connected parent/child objects";
 
 	/* api callbacks */
 	ot->exec = object_select_more_exec;
@@ -1341,7 +1341,7 @@ void OBJECT_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "OBJECT_OT_select_less";
-	ot->description = "Deselect objects at the boundaries of parent/child relationships";
+	ot->description = "Select Less\nDeselect objects at the boundaries of parent/child relationships";
 
 	/* api callbacks */
 	ot->exec = object_select_less_exec;
