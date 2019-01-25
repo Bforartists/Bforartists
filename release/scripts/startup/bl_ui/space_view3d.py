@@ -3989,6 +3989,10 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_font_move_select")
+
+        layout.separator()
+
         layout.operator("font.style_toggle", text="Toggle Bold", icon = 'BOLD').style = 'BOLD'
         layout.operator("font.style_toggle", text="Toggle Italic", icon = 'ITALIC').style = 'ITALIC'
 
@@ -3996,6 +4000,34 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.operator("font.style_toggle", text="Toggle Underline", icon = 'UNDERLINED').style = 'UNDERLINE'
         layout.operator("font.style_toggle", text="Toggle Small Caps", icon = "SMALL_CAPS").style = 'SMALL_CAPS'
+
+        layout.separator()
+
+        layout.operator("font.case_set", icon = 'SET_UPPERCASE', text = "Set Uppercase").case = 'UPPER'
+        layout.operator("font.case_set", icon = 'SET_LOWERCASE', text = "Set Lowercase").case = 'LOWER'
+
+        layout.separator()
+
+        layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
+
+
+# move_select submenu
+class VIEW3D_MT_edit_font_move_select(Menu):
+    bl_label = "Select Text"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("font.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
+        layout.operator("font.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
+        layout.operator("font.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
+        layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
+        layout.operator("font.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
+        layout.operator("font.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
+        layout.operator("font.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
+        layout.operator("font.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
+        layout.operator("font.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
+        layout.operator("font.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
 class VIEW3D_MT_edit_text_chars(Menu):
@@ -6274,6 +6306,7 @@ classes = (
     VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_surface,
     VIEW3D_MT_edit_font,
+    VIEW3D_MT_edit_font_move_select,
     VIEW3D_MT_edit_text_chars,
     VIEW3D_MT_edit_meta,
     VIEW3D_MT_edit_meta_showhide_unselected,
