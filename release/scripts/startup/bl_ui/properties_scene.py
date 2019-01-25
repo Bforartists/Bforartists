@@ -64,12 +64,19 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
+        
+        # Active workspace view-layer is retrieved through window, not through workspace.
+        window = context.window
+        screen = context.screen
+        scene = window.scene
+        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+        
+        # the following props have another scene definition
 
-        scene = context.scene
-
-        layout.prop(scene, "camera")
-        layout.prop(scene, "background_set")
-        layout.prop(scene, "active_clip")
+        scn = context.scene
+        layout.prop(scn, "camera")
+        layout.prop(scn, "background_set")
+        layout.prop(scn, "active_clip")
 
 
 class SCENE_PT_unit(SceneButtonsPanel, Panel):
