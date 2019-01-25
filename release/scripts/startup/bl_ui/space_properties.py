@@ -21,15 +21,28 @@ import bpy
 from bpy.types import Header, Panel, Menu
 
 
+################################ Switch between the editors ##########################################
+
+
+class PROP_OT_switch_editors_in_properties(bpy.types.Operator):
+    """You are in Properties Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_properties"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Properties Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
 class PROPERTIES_HT_header(Header):
     bl_space_type = 'PROPERTIES'
 
     def draw(self, context):
         layout = self.layout
 
-        row = layout.row()
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors. The classes are in the space_outliner.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_outliner", text="", icon='OOPS')
+        row.operator("wm.switch_editor_in_properties", text="", icon='BUTS_ACTIVE')
 
 
 class PROPERTIES_PT_navigation_bar(Panel):
@@ -62,9 +75,10 @@ class ALL_MT_editormenu(Menu):
 
 
 classes = (
-    ALL_MT_editormenu,
+    PROP_OT_switch_editors_in_properties,  
     PROPERTIES_HT_header,
     PROPERTIES_PT_navigation_bar,
+    ALL_MT_editormenu,
 )
 
 if __name__ == "__main__":  # only for live edit.
