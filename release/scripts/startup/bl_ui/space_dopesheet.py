@@ -208,8 +208,6 @@ class DOPESHEET_HT_header(Header):
 
         st = context.space_data
 
-        row = layout.row(align=True)
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if st.mode == 'TIMELINE':

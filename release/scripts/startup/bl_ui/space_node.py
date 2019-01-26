@@ -45,8 +45,6 @@ class NODE_HT_header(Header):
         id_from = snode.id_from
         tool_settings = context.tool_settings
 
-        row = layout.row(align=True)
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         # Now expanded via the 'ui_type'
