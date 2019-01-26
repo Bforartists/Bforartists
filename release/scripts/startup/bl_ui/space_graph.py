@@ -215,7 +215,7 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("graph.select_linked", icon = "CONNECTED")  
+        layout.operator("graph.select_linked", text = "Linked", icon = "CONNECTED")  
 
 
 class GRAPH_MT_marker(Menu):
