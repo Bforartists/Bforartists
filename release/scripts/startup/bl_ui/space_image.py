@@ -570,8 +570,6 @@ class IMAGE_HT_header(Header):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        row = layout.row(align=True)
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if sima.mode != 'UV':

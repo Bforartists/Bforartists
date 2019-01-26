@@ -34,8 +34,6 @@ class NLA_HT_header(Header):
 
         st = context.space_data
 
-        row = layout.row(align=True)
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         NLA_MT_editor_menus.draw_collapsible(context, layout)

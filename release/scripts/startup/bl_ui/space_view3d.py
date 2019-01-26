@@ -47,7 +47,6 @@ class VIEW3D_HT_header(Header):
         overlay = view.overlay
         tool_settings = context.tool_settings
 
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         object_mode = 'OBJECT' if obj is None else obj.mode
