@@ -762,17 +762,37 @@ class TOPBAR_MT_render(Menu):
 
         layout.separator()
 
-        layout.operator("sound.mixdown", text="Render Audio...")
+        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
 
         layout.separator()
 
-        layout.operator("render.view_show", text="View Render")
-        layout.operator("render.play_rendered_anim", text="View Animation")
+        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
+        layout.menu("TOPBAR_MT_opengl_render")
+
+
+        layout.separator()
+
+        layout.operator("render.view_show", text="Show/Hide Render", icon = 'HIDE_RENDERVIEW')
+        layout.operator("render.play_rendered_anim", text="Play rendered Animation", icon='PLAY')
         layout.prop_menu_enum(rd, "display_mode", text="Display Mode")
 
         layout.separator()
 
         layout.prop(rd, "use_lock_interface", text="Lock Interface")
+
+class TOPBAR_MT_opengl_render(Menu):
+    bl_label = "OpenGL Render Options"
+
+    def draw(self, context):
+        layout = self.layout
+
+        rd = context.scene.render
+        layout.prop(rd, "use_antialiasing")
+        layout.prop(rd, "use_full_sample")
+
+        layout.prop_menu_enum(rd, "antialiasing_samples")
+        layout.prop_menu_enum(rd, "alpha_mode")
 
 
 class TOPBAR_MT_edit(Menu):
@@ -1041,6 +1061,7 @@ classes = (
     TOPBAR_MT_file_previews,
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
+    TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
     TOPBAR_MT_help,
     TOPBAR_PT_active_tool,
