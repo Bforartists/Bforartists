@@ -888,7 +888,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.menu ("VIEW3D_MT_select_grouped")
         layout.menu ("VIEW3D_MT_select_linked")
-        layout.operator("object.select_pattern", text="Pattern", icon = "PATTERN")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
 class VIEW3D_MT_select_by_type(Menu):
     bl_label = "All by Type"
@@ -1026,7 +1026,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("object.select_pattern", text="Select Pattern", icon = "PATTERN")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
 
 # Workaround to separate the tooltips
@@ -1309,7 +1309,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_row", icon = "CONTROLPOINTROW")
+        layout.operator("curve.select_row", text = "Control Point row", icon = "CONTROLPOINTROW")
 
         layout.separator()
 
