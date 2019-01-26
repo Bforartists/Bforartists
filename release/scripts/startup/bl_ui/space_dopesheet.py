@@ -426,7 +426,7 @@ class DOPESHEET_MT_select(Menu):
             layout.operator("action.select_less",text = "Less", icon = "SELECTLESS")
 
             layout.separator()
-            layout.operator("action.select_linked", icon = "CONNECTED")
+            layout.operator("action.select_linked", text = "Linked", icon = "CONNECTED")
 
 
 class DOPESHEET_MT_marker(Menu):
