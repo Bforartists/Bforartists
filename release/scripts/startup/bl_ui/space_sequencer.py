@@ -80,8 +80,6 @@ class SEQUENCER_HT_header(Header):
         st = context.space_data
         scene = context.scene
 
-        row = layout.row(align=True)
-        #row.template_header()
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.prop(st, "view_type", text="")
