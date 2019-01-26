@@ -31,7 +31,6 @@ class FILEBROWSER_HT_header(Header):
         params = st.params
 
         if st.active_operator is None:
-            #layout.template_header()
             ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         layout.menu("FILEBROWSER_MT_view")
