@@ -1918,9 +1918,11 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_DEFAULT'
+        myvar = layout.operator("object.delete", text="Delete", icon = "DELETE")
+        myvar.use_global = False
+        myvar.confirm = False
         layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
-        layout.operator("object.delete", text="Delete Global", icon = "DELETE").use_global = True
-
+        
         layout.separator()
 
         layout.operator("view3d.copybuffer", text="Copy Objects", icon='COPYDOWN')
