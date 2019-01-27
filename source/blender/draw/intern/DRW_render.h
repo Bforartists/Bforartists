@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -197,23 +200,23 @@ typedef enum {
 /* Textures from DRW_texture_pool_query_* have the options
  * DRW_TEX_FILTER for color float textures, and no options
  * for depth textures and integer textures. */
-struct GPUTexture *DRW_texture_pool_query_2D(int w, int h, GPUTextureFormat format, DrawEngineType *engine_type);
+struct GPUTexture *DRW_texture_pool_query_2D(int w, int h, eGPUTextureFormat format, DrawEngineType *engine_type);
 
 struct GPUTexture *DRW_texture_create_1D(
-        int w, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
+        int w, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
 struct GPUTexture *DRW_texture_create_2D(
-        int w, int h, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
+        int w, int h, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
 struct GPUTexture *DRW_texture_create_2D_array(
-        int w, int h, int d, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
+        int w, int h, int d, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
 struct GPUTexture *DRW_texture_create_3D(
-        int w, int h, int d, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
+        int w, int h, int d, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
 struct GPUTexture *DRW_texture_create_cube(
-        int w, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
+        int w, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels);
 
 void DRW_texture_ensure_fullscreen_2D(
-        struct GPUTexture **tex, GPUTextureFormat format, DRWTextureFlag flags);
+        struct GPUTexture **tex, eGPUTextureFormat format, DRWTextureFlag flags);
 void DRW_texture_ensure_2D(
-        struct GPUTexture **tex, int w, int h, GPUTextureFormat format, DRWTextureFlag flags);
+        struct GPUTexture **tex, int w, int h, eGPUTextureFormat format, DRWTextureFlag flags);
 
 void DRW_texture_generate_mipmaps(struct GPUTexture *tex);
 void DRW_texture_free(struct GPUTexture *tex);
@@ -243,15 +246,20 @@ void DRW_multisamples_resolve(
 /* Shaders */
 struct GPUShader *DRW_shader_create(
         const char *vert, const char *geom, const char *frag, const char *defines);
+struct DRW_ShaderCreateFromArray_Params { const char **vert, **geom, **frag, **defs; };
+struct GPUShader *DRW_shader_create_from_arrays_impl(
+        const struct DRW_ShaderCreateFromArray_Params *params);
+#define DRW_shader_create_from_arrays(...) \
+	DRW_shader_create_from_arrays_impl(&(const struct DRW_ShaderCreateFromArray_Params)__VA_ARGS__)
 struct GPUShader *DRW_shader_create_with_lib(
         const char *vert, const char *geom, const char *frag, const char *lib, const char *defines);
 struct GPUShader *DRW_shader_create_with_transform_feedback(
         const char *vert, const char *geom, const char *defines,
-        const GPUShaderTFBType prim_type, const char **varying_names, const int varying_count);
+        const eGPUShaderTFBType prim_type, const char **varying_names, const int varying_count);
 struct GPUShader *DRW_shader_create_2D(const char *frag, const char *defines);
 struct GPUShader *DRW_shader_create_3D(const char *frag, const char *defines);
 struct GPUShader *DRW_shader_create_fullscreen(const char *frag, const char *defines);
-struct GPUShader *DRW_shader_create_3D_depth_only(void);
+struct GPUShader *DRW_shader_create_3D_depth_only(eDRW_ShaderSlot slot);
 struct GPUMaterial *DRW_shader_find_from_world(struct World *wo, const void *engine_type, int options, bool deferred);
 struct GPUMaterial *DRW_shader_find_from_material(struct Material *ma, const void *engine_type, int options, bool deferred);
 struct GPUMaterial *DRW_shader_create_from_world(
@@ -283,16 +291,20 @@ typedef enum {
 	DRW_STATE_CULL_FRONT    = (1 << 9),
 	DRW_STATE_WIRE          = (1 << 10),
 	DRW_STATE_POINT         = (1 << 11),
-	DRW_STATE_OFFSET_POSITIVE = (1 << 12), /* Polygon offset. Does not work with lines and points. */
-	DRW_STATE_OFFSET_NEGATIVE = (1 << 13), /* Polygon offset. Does not work with lines and points. */
+	/** Polygon offset. Does not work with lines and points. */
+	DRW_STATE_OFFSET_POSITIVE = (1 << 12),
+	/** Polygon offset. Does not work with lines and points. */
+	DRW_STATE_OFFSET_NEGATIVE = (1 << 13),
 	/* DRW_STATE_STIPPLE_4     = (1 << 14), */ /* Not used */
 	DRW_STATE_BLEND         = (1 << 15),
 	DRW_STATE_ADDITIVE      = (1 << 16),
 	DRW_STATE_MULTIPLY      = (1 << 17),
 	/* DRW_STATE_TRANSMISSION  = (1 << 18), */ /* Not used */
 	DRW_STATE_CLIP_PLANES   = (1 << 19),
-	DRW_STATE_ADDITIVE_FULL = (1 << 20), /* Same as DRW_STATE_ADDITIVE but let alpha accumulate without premult. */
-	DRW_STATE_BLEND_PREMUL  = (1 << 21), /* Use that if color is already premult by alpha. */
+	/** Same as DRW_STATE_ADDITIVE but let alpha accumulate without premult. */
+	DRW_STATE_ADDITIVE_FULL = (1 << 20),
+	/** Use that if color is already premult by alpha. */
+	DRW_STATE_BLEND_PREMUL  = (1 << 21),
 	DRW_STATE_WIRE_SMOOTH   = (1 << 22),
 	DRW_STATE_TRANS_FEEDBACK = (1 << 23),
 	DRW_STATE_BLEND_OIT     = (1 << 24),
@@ -531,8 +543,9 @@ void DRW_state_lock(DRWState state);
 
 void DRW_state_invert_facing(void);
 
-void DRW_state_clip_planes_count_set(uint plane_len);
+void DRW_state_clip_planes_len_set(uint plane_len);
 void DRW_state_clip_planes_reset(void);
+void DRW_state_clip_planes_set_from_rv3d(struct RegionView3D *rv3d);
 
 /* Culling, return true if object is inside view frustum. */
 bool DRW_culling_sphere_test(BoundSphere *bsphere);
@@ -577,7 +590,9 @@ typedef struct DRWContextState {
 
 	eObjectMode object_mode;
 
-	/* Last resort (some functions take this as an arg so we can't easily avoid).
+	eDRW_ShaderSlot shader_slot;
+
+	/** Last resort (some functions take this as an arg so we can't easily avoid).
 	 * May be NULL when used for selection or depth buffer. */
 	const struct bContext *evil_C;
 

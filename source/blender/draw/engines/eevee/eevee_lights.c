@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -33,7 +36,6 @@
 
 #include "DEG_depsgraph_query.h"
 
-#include "eevee_engine.h"
 #include "eevee_private.h"
 
 #define SHADOW_CASTER_ALLOC_CHUNK 16
@@ -454,8 +456,9 @@ void EEVEE_lights_cache_shcaster_material_add(
 	DRW_shgroup_uniform_block(grp, "shadow_block", sldata->shadow_ubo);
 	DRW_shgroup_uniform_block(grp, "common_block", sldata->common_ubo);
 
-	if (alpha_threshold != NULL)
+	if (alpha_threshold != NULL) {
 		DRW_shgroup_uniform_float(grp, "alphaThreshold", alpha_threshold, 1);
+	}
 
 	DRW_shgroup_call_object_add(grp, geom, ob);
 }
@@ -525,7 +528,7 @@ void EEVEE_lights_cache_shcaster_object_add(EEVEE_ViewLayerData *sldata, Object 
 void EEVEE_lights_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 {
 	EEVEE_LampsInfo *linfo = sldata->lamps;
-	GPUTextureFormat shadow_pool_format = GPU_R32F;
+	eGPUTextureFormat shadow_pool_format = GPU_R32F;
 
 	sldata->common_data.la_num_light = linfo->num_light;
 
@@ -596,8 +599,9 @@ void EEVEE_lights_cache_finish(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 
 float light_attenuation_radius_get(Lamp *la, float light_threshold)
 {
-	if (la->mode & LA_CUSTOM_ATTENUATION)
+	if (la->mode & LA_CUSTOM_ATTENUATION) {
 		return la->att_dist;
+	}
 
 	/* Compute max light power. */
 	float power = max_fff(la->r, la->g, la->b);

@@ -53,19 +53,15 @@
 #include "BLI_math.h"
 #include "BLI_listbase.h"
 #include "BLI_utildefines.h"
-#include "BLI_string.h"
 #include "BLI_array_utils.h"
 
 #include "BKE_animsys.h"
 #include "BKE_brush.h"
 #include "BKE_displist.h"
-#include "BKE_global.h"
 #include "BKE_gpencil.h"
 #include "BKE_icons.h"
 #include "BKE_image.h"
 #include "BKE_library.h"
-#include "BKE_library_query.h"
-#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.h"
@@ -1096,6 +1092,8 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 
 	if (!ma)
 		return;
+
+	DEG_id_tag_update(&ma->id, ID_RECALC_SHADING);
 
 	if (ma->texpaintslot) {
 		MEM_freeN(ma->texpaintslot);

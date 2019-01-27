@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2017, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -31,19 +34,13 @@
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 
-#include "BKE_icons.h"
-#include "BKE_idprop.h"
-#include "BKE_main.h"
 
-#include "ED_view3d.h"
 #include "ED_screen.h"
 
-#include "GPU_glew.h"
 #include "GPU_matrix.h"
 #include "GPU_shader.h"
 #include "GPU_viewport.h"
 
-#include "external_engine.h"
 /* Shaders */
 
 #define EXTERNAL_ENGINE "BLENDER_EXTERNAL"
@@ -100,7 +97,7 @@ static void external_engine_init(void *UNUSED(vedata))
 {
 	/* Depth prepass */
 	if (!e_data.depth_sh) {
-		e_data.depth_sh = DRW_shader_create_3D_depth_only();
+		e_data.depth_sh = DRW_shader_create_3D_depth_only(DRW_SHADER_SLOT_DEFAULT);
 	}
 }
 
@@ -125,8 +122,9 @@ static void external_cache_populate(void *vedata, Object *ob)
 {
 	EXTERNAL_StorageList *stl = ((EXTERNAL_Data *)vedata)->stl;
 
-	if (!DRW_object_is_renderable(ob))
+	if (!DRW_object_is_renderable(ob)) {
 		return;
+	}
 
 	struct GPUBatch *geom = DRW_cache_object_surface_get(ob);
 	if (geom) {

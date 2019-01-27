@@ -64,8 +64,6 @@
 #include "BKE_displist.h"
 #include "BKE_idprop.h"
 #include "BKE_library.h"
-#include "BKE_library_query.h"
-#include "BKE_library_remap.h"
 #include "BKE_lattice.h"
 #include "BKE_main.h"
 #include "BKE_object.h"
@@ -1377,9 +1375,7 @@ void armature_deform_verts(
 				smat = summat;
 			}
 			else {
-				if (target->type != OB_GPENCIL) {
-					mul_v3_fl(vec, armature_weight / contrib);
-				}
+				mul_v3_fl(vec, armature_weight / contrib);
 				add_v3_v3v3(co, vec, co);
 			}
 

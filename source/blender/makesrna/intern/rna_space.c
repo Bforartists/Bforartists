@@ -532,31 +532,15 @@ static void rna_SpaceView3D_camera_update(Main *bmain, Scene *scene, PointerRNA 
 	}
 }
 
-static void rna_SpaceView3D_lock_camera_and_layers_set(PointerRNA *ptr, bool value)
+static void rna_SpaceView3D_use_local_camera_set(PointerRNA *ptr, bool value)
 {
 	View3D *v3d = (View3D *)(ptr->data);
 	bScreen *sc = (bScreen *)ptr->id.data;
 
-	v3d->scenelock = value;
+	v3d->scenelock = !value;
 
-	if (value) {
+	if (!value) {
 		Scene *scene = ED_screen_scene_find(sc, G_MAIN->wm.first);
-
-		/* TODO: restore local view. */
-#if 0
-		int bit;
-		v3d->lay = scene->lay;
-
-		/* seek for layact */
-		bit = 0;
-		while (bit < 32) {
-			if (v3d->lay & (1u << bit)) {
-				v3d->layact = (1u << bit);
-				break;
-			}
-			bit++;
-		}
-#endif
 		v3d->camera = scene->camera;
 	}
 }
@@ -2195,6 +2179,13 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
+		static const EnumPropertyItem pixel_snap_mode_items[] = {
+		{SI_PIXEL_SNAP_DISABLED, "DISABLED", 0, "Disabled", "Don't snap to pixels"},
+		{SI_PIXEL_SNAP_CORNER, "CORNER", 0, "Corner", "Snap to pixel corners"},
+		{SI_PIXEL_SNAP_CENTER, "CENTER", 0, "Center", "Snap to pixel centers"},
+		{0, NULL, 0, NULL, NULL}
+	};
+
 	srna = RNA_def_struct(brna, "SpaceUVEditor", NULL);
 	RNA_def_struct_sdna(srna, "SpaceImage");
 	RNA_def_struct_nested(brna, srna, "SpaceImageEditor");
@@ -2266,9 +2257,9 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
 
 	/* todo: move edge and face drawing options here from G.f */
 
-	prop = RNA_def_property(srna, "use_snap_to_pixels", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "flag", SI_PIXELSNAP);
-	RNA_def_property_ui_text(prop, "Snap to Pixels", "Snap UVs to pixel locations while editing");
+	prop = RNA_def_property(srna, "pixel_snap_mode", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_items(prop, pixel_snap_mode_items);
+	RNA_def_property_ui_text(prop, "Snap to Pixels", "Snap UVs to pixels while editing");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
 
 	prop = RNA_def_property(srna, "lock_bounds", PROP_BOOLEAN, PROP_NONE);
@@ -2602,6 +2593,12 @@ static void rna_def_space_view3d_shading(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "X-Ray Alpha", "Amount of alpha to use");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+	prop = RNA_def_property(srna, "use_dof", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", V3D_SHADING_DEPTH_OF_FIELD);
+	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+	RNA_def_property_ui_text(prop, "Depth Of Field", "Use depth of field on viewport using the values from the active camera");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "use_scene_lights", PROP_BOOLEAN, PROP_NONE);
@@ -3183,12 +3180,11 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Tool Gizmo", "Active tool gizmo");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
-	prop = RNA_def_property(srna, "lock_camera_and_layers", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "scenelock", 1);
-	RNA_def_property_boolean_funcs(prop, NULL, "rna_SpaceView3D_lock_camera_and_layers_set");
-	RNA_def_property_ui_text(prop, "Lock Camera and Layers",
-	                         "Use the scene's active camera and layers in this view, rather than local layers");
-	RNA_def_property_ui_icon(prop, ICON_LOCKVIEW_OFF, 1);
+	prop = RNA_def_property(srna, "use_local_camera", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "scenelock", 1);
+	RNA_def_property_boolean_funcs(prop, NULL, "rna_SpaceView3D_use_local_camera_set");
+	RNA_def_property_ui_text(prop, "Use Local Camera",
+	                         "Use a local camera in this view, rather than scene's active camera camera");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "region_3d", PROP_POINTER, PROP_NONE);

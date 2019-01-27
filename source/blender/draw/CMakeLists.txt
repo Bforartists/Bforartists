@@ -55,6 +55,7 @@ set(INC_SYS
 set(SRC
 	intern/draw_anim_viz.c
 	intern/draw_armature.c
+	intern/draw_builtin_shader.c
 	intern/draw_cache.c
 	intern/draw_cache_impl_curve.c
 	intern/draw_cache_impl_displist.c
@@ -69,10 +70,10 @@ set(SRC
 	intern/draw_manager.c
 	intern/draw_manager_data.c
 	intern/draw_manager_exec.c
+	intern/draw_manager_profiling.c
 	intern/draw_manager_shader.c
 	intern/draw_manager_text.c
 	intern/draw_manager_texture.c
-	intern/draw_manager_profiling.c
 	intern/draw_view.c
 	modes/edit_armature_mode.c
 	modes/edit_curve_mode.c
@@ -109,30 +110,32 @@ set(SRC
 	engines/eevee/eevee_subsurface.c
 	engines/eevee/eevee_temporal_sampling.c
 	engines/eevee/eevee_volumes.c
+	engines/workbench/solid_mode.c
+	engines/workbench/transparent_mode.c
 	engines/workbench/workbench_data.c
-	engines/workbench/workbench_engine.c
 	engines/workbench/workbench_deferred.c
 	engines/workbench/workbench_effect_aa.c
+	engines/workbench/workbench_effect_dof.c
 	engines/workbench/workbench_effect_fxaa.c
 	engines/workbench/workbench_effect_taa.c
+	engines/workbench/workbench_engine.c
 	engines/workbench/workbench_forward.c
 	engines/workbench/workbench_materials.c
 	engines/workbench/workbench_render.c
 	engines/workbench/workbench_studiolight.c
 	engines/workbench/workbench_volume.c
-	engines/workbench/solid_mode.c
-	engines/workbench/transparent_mode.c
 	engines/external/external_engine.c
-	engines/gpencil/gpencil_engine.h
-	engines/gpencil/gpencil_engine.c
-	engines/gpencil/gpencil_render.c
 	engines/gpencil/gpencil_cache_utils.c
-	engines/gpencil/gpencil_draw_utils.c
 	engines/gpencil/gpencil_draw_cache_impl.c
+	engines/gpencil/gpencil_draw_utils.c
+	engines/gpencil/gpencil_engine.c
+	engines/gpencil/gpencil_engine.h
+	engines/gpencil/gpencil_render.c
 	engines/gpencil/gpencil_shader_fx.c
 
 	DRW_engine.h
 	intern/DRW_render.h
+	intern/draw_builtin_shader.h
 	intern/draw_cache.h
 	intern/draw_cache_impl.h
 	intern/draw_common.h
@@ -140,8 +143,8 @@ set(SRC
 	intern/draw_hair_private.h
 	intern/draw_instance_data.h
 	intern/draw_manager.h
-	intern/draw_manager_text.h
 	intern/draw_manager_profiling.h
+	intern/draw_manager_text.h
 	intern/draw_view.h
 	modes/draw_mode_engines.h
 	modes/edit_mesh_mode_intern.h
@@ -225,6 +228,7 @@ data_to_c_simple(engines/workbench/shaders/workbench_common_lib.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_data_lib.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_deferred_composite_frag.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_deferred_background_frag.glsl SRC)
+data_to_c_simple(engines/workbench/shaders/workbench_effect_dof_frag.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_effect_fxaa_frag.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_effect_taa_frag.glsl SRC)
 data_to_c_simple(engines/workbench/shaders/workbench_forward_composite_frag.glsl SRC)
@@ -249,6 +253,7 @@ data_to_c_simple(modes/shaders/common_hair_refine_vert.glsl SRC)
 data_to_c_simple(modes/shaders/common_view_lib.glsl SRC)
 data_to_c_simple(modes/shaders/common_fxaa_lib.glsl SRC)
 data_to_c_simple(modes/shaders/common_fullscreen_vert.glsl SRC)
+data_to_c_simple(modes/shaders/common_world_clip_lib.glsl SRC)
 data_to_c_simple(modes/shaders/animviz_mpath_lines_vert.glsl SRC)
 data_to_c_simple(modes/shaders/animviz_mpath_lines_geom.glsl SRC)
 data_to_c_simple(modes/shaders/animviz_mpath_points_vert.glsl SRC)

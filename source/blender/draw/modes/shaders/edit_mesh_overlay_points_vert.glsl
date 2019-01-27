@@ -3,6 +3,7 @@ uniform mat3 NormalMatrix;
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
 uniform mat4 ModelViewProjectionMatrix;
+uniform mat4 ModelMatrix;
 uniform float ofs = 3e-5;
 
 in vec3 pos;
@@ -48,4 +49,8 @@ void main()
 		gl_Position = vec4(0.0);
 		gl_PointSize = 0.0;
 	}
+
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((ModelMatrix * vec4(pos, 1.0)).xyz);
+#endif
 }

@@ -39,7 +39,6 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_listbase.h"
 #include "BLI_utildefines.h"
 
 #include "BIF_gl.h"
@@ -65,7 +64,7 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
-static GPUInterlaceShader interlace_gpu_id_from_type(eStereo3dInterlaceType interlace_type)
+static eGPUInterlaceShader interlace_gpu_id_from_type(eStereo3dInterlaceType interlace_type)
 {
 	switch (interlace_type) {
 		case S3D_INTERLACE_ROW:
