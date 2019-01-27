@@ -4124,8 +4124,6 @@ class VIEW3D_MT_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.separator()
-
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
@@ -4134,6 +4132,8 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.make_regular", icon = 'MAKE_REGULAR')
+
+        layout.menu("VIEW3D_MT_hook")
 
         layout.separator()
 
