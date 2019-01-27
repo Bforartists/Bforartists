@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -35,6 +38,16 @@ struct ViewLayer;
 struct ModifierData;
 struct ParticleSystem;
 struct PTCacheEdit;
+
+/**
+ * Support selecting shaders with different options compiled in.
+ * Needed for clipping support because it means using a separate set of shaders.
+ */
+typedef enum eDRW_ShaderSlot {
+	DRW_SHADER_SLOT_DEFAULT = 0,
+	DRW_SHADER_SLOT_CLIPPED = 1,
+} eDRW_ShaderSlot;
+#define DRW_SHADER_SLOT_LEN 2
 
 #define UBO_FIRST_COLOR colorWire
 #define UBO_LAST_COLOR colorGridAxisZ
@@ -125,21 +138,23 @@ BLI_STATIC_ASSERT_ALIGN(GlobalsUboStorage, 16)
 void DRW_globals_update(void);
 void DRW_globals_free(void);
 
+void DRW_shgroup_world_clip_planes_from_rv3d(struct DRWShadingGroup *shgrp, const RegionView3D *rv3d);
+
 struct DRWShadingGroup *shgroup_dynlines_flat_color(struct DRWPass *pass);
-struct DRWShadingGroup *shgroup_dynlines_dashed_uniform_color(struct DRWPass *pass, float color[4]);
-struct DRWShadingGroup *shgroup_dynpoints_uniform_color(struct DRWPass *pass, float color[4], float *size);
-struct DRWShadingGroup *shgroup_groundlines_uniform_color(struct DRWPass *pass, float color[4]);
-struct DRWShadingGroup *shgroup_groundpoints_uniform_color(struct DRWPass *pass, float color[4]);
-struct DRWShadingGroup *shgroup_instance_screenspace(struct DRWPass *pass, struct GPUBatch *geom, float *size);
+struct DRWShadingGroup *shgroup_dynlines_dashed_uniform_color(struct DRWPass *pass, const float color[4]);
+struct DRWShadingGroup *shgroup_dynpoints_uniform_color(struct DRWPass *pass, const float color[4], const float *size);
+struct DRWShadingGroup *shgroup_groundlines_uniform_color(struct DRWPass *pass, const float color[4]);
+struct DRWShadingGroup *shgroup_groundpoints_uniform_color(struct DRWPass *pass, const float color[4]);
+struct DRWShadingGroup *shgroup_instance_screenspace(struct DRWPass *pass, struct GPUBatch *geom, const float *size);
 struct DRWShadingGroup *shgroup_instance_solid(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_wire(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_screen_aligned(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance_empty_axes(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance_scaled(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance_alpha(struct DRWPass *pass, struct GPUBatch *geom);
+struct DRWShadingGroup *shgroup_instance_empty_axes(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_instance_scaled(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_instance_alpha(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_outline(struct DRWPass *pass, struct GPUBatch *geom, int *baseid);
-struct DRWShadingGroup *shgroup_camera_instance(struct DRWPass *pass, struct GPUBatch *geom);
+struct DRWShadingGroup *shgroup_camera_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_distance_lines_instance(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_spot_instance(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_mball_handles(struct DRWPass *pass);
@@ -201,5 +216,19 @@ void DRW_hair_free(void);
 /* pose_mode.c */
 bool DRW_pose_mode_armature(
     struct Object *ob, struct Object *active_ob);
+
+/* draw_common.c */
+struct DRW_Global {
+	/** If needed, contains all global/Theme colors
+	 * Add needed theme colors / values to DRW_globals_update() and update UBO
+	 * Not needed for constant color. */
+	GlobalsUboStorage block;
+	/** Define "globalsBlock" uniform for 'block'.  */
+	struct GPUUniformBuffer *block_ubo;
+
+	struct GPUTexture *ramp;
+	struct GPUTexture *weight_ramp;
+};
+extern struct DRW_Global G_draw;
 
 #endif /* __DRAW_COMMON_H__ */

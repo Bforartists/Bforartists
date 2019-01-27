@@ -7,9 +7,12 @@ flat in vec4 v2[1];
 
 void main()
 {
-	gl_Position = v1[0];
-	EmitVertex();
-	gl_Position = v2[0];
-	EmitVertex();
+	for (int v = 0; v < 2; v++) {
+		gl_Position = (v == 0) ? v1[0] : v2[0];
+#ifdef USE_WORLD_CLIP_PLANES
+		world_clip_planes_set_clip_distance(gl_in[0].gl_ClipDistance);
+#endif
+		EmitVertex();
+	}
 	EndPrimitive();
 }

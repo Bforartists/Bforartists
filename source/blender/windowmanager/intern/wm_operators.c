@@ -65,7 +65,6 @@
 #include "BLI_dynstr.h" /*for WM_operator_pystring */
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
-#include "BLI_ghash.h"
 
 #include "BLO_readfile.h"
 
@@ -2197,14 +2196,14 @@ static void radial_control_paint_cursor(bContext *UNUSED(C), int x, int y, void 
 		GPU_matrix_push();
 
 		/* draw original angle line */
-		GPU_matrix_rotate_2d(RAD2DEGF(rc->initial_value));
+		GPU_matrix_rotate_3f(RAD2DEGF(rc->initial_value), 0.0f, 0.0f, 1.0f);
 		immBegin(GPU_PRIM_LINES, 2);
 		immVertex2f(pos, (float)WM_RADIAL_CONTROL_DISPLAY_MIN_SIZE, 0.0f);
 		immVertex2f(pos, (float)WM_RADIAL_CONTROL_DISPLAY_SIZE, 0.0f);
 		immEnd();
 
 		/* draw new angle line */
-		GPU_matrix_rotate_2d(RAD2DEGF(rc->current_value - rc->initial_value));
+		GPU_matrix_rotate_3f(RAD2DEGF(rc->current_value - rc->initial_value), 0.0f, 0.0f, 1.0f);
 		immBegin(GPU_PRIM_LINES, 2);
 		immVertex2f(pos, (float)WM_RADIAL_CONTROL_DISPLAY_MIN_SIZE, 0.0f);
 		immVertex2f(pos, (float)WM_RADIAL_CONTROL_DISPLAY_SIZE, 0.0f);
@@ -3315,7 +3314,7 @@ static void gesture_box_modal_keymap(wmKeyConfig *keyconf)
 	WM_modalkeymap_assign(keymap, "CLIP_OT_graph_select_box");
 	WM_modalkeymap_assign(keymap, "MASK_OT_select_box");
 	WM_modalkeymap_assign(keymap, "VIEW2D_OT_zoom_border");
-//	WM_modalkeymap_assign(keymap, "VIEW3D_OT_clip_border"); /* TODO */
+	WM_modalkeymap_assign(keymap, "VIEW3D_OT_clip_border");
 	WM_modalkeymap_assign(keymap, "VIEW3D_OT_render_border");
 	WM_modalkeymap_assign(keymap, "VIEW3D_OT_select_box");
 	WM_modalkeymap_assign(keymap, "VIEW3D_OT_zoom_border"); /* XXX TODO: zoom border should perhaps map rightmouse to zoom out instead of in+cancel */

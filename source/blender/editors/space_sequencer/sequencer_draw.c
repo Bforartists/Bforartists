@@ -48,7 +48,6 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
-#include "BKE_main.h"
 #include "BKE_sequencer.h"
 #include "BKE_sound.h"
 #include "BKE_scene.h"
@@ -56,7 +55,6 @@
 #include "IMB_colormanagement.h"
 #include "IMB_imbuf.h"
 
-#include "BIF_glutil.h"
 
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
@@ -1310,9 +1308,10 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 	}
 
 	if (draw_backdrop) {
-		/* XXX: need to load identity projection too? */
 		GPU_matrix_push();
 		GPU_matrix_identity_set();
+		GPU_matrix_push_projection();
+		GPU_matrix_identity_projection_set();
 	}
 
 	glGenTextures(1, (GLuint *)&texid);
@@ -1443,6 +1442,7 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 
 	if (draw_backdrop) {
 		GPU_matrix_pop();
+		GPU_matrix_pop_projection();
 		return;
 	}
 

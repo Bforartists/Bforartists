@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2017, Blender Foundation.
  * Contributor(s): Antonio Vazquez
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -72,12 +75,13 @@ tGPencilObjectCache *gpencil_object_cache_add(
 	Object *ob_orig = (Object *)DEG_get_original_id(&ob->id);
 	cache_elem->ob = ob_orig;
 	cache_elem->gpd = (bGPdata *)ob_orig->data;
-	copy_v3_v3(cache_elem->loc, ob->loc);
+	copy_v3_v3(cache_elem->loc, ob->obmat[3]);
 	copy_m4_m4(cache_elem->obmat, ob->obmat);
 	cache_elem->idx = *gp_cache_used;
 
 	/* object is duplicated (particle) */
 	cache_elem->is_dup_ob = ob->base_flag & BASE_FROM_DUPLI;
+	cache_elem->scale = mat4_to_scale(ob->obmat);
 
 	/* save FXs */
 	cache_elem->pixfactor = cache_elem->gpd->pixfactor;
@@ -94,10 +98,10 @@ tGPencilObjectCache *gpencil_object_cache_add(
 	float zdepth = 0.0;
 	if (rv3d) {
 		if (rv3d->is_persp) {
-			zdepth = ED_view3d_calc_zfac(rv3d, ob->loc, NULL);
+			zdepth = ED_view3d_calc_zfac(rv3d, ob->obmat[3], NULL);
 		}
 		else {
-			zdepth = -dot_v3v3(rv3d->viewinv[2], ob->loc);
+			zdepth = -dot_v3v3(rv3d->viewinv[2], ob->obmat[3]);
 		}
 	}
 	else {
@@ -112,7 +116,7 @@ tGPencilObjectCache *gpencil_object_cache_add(
 			mul_m4_v3(camera->obmat, vn);
 			normalize_v3(vn);
 			plane_from_point_normal_v3(plane_cam, camera->loc, vn);
-			zdepth = dist_squared_to_plane_v3(ob->loc, plane_cam);
+			zdepth = dist_squared_to_plane_v3(ob->obmat[3], plane_cam);
 		}
 	}
 	cache_elem->zdepth = zdepth;

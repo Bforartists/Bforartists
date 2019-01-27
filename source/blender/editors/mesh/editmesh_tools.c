@@ -46,7 +46,6 @@
 #include "BLI_listbase.h"
 #include "BLI_linklist.h"
 #include "BLI_linklist_stack.h"
-#include "BLI_noise.h"
 #include "BLI_math.h"
 #include "BLI_rand.h"
 #include "BLI_sort_utils.h"
@@ -1007,10 +1006,16 @@ static int edbm_mark_seam_exec(bContext *C, wmOperator *op)
 				BM_elem_flag_enable(eed, BM_ELEM_SEAM);
 			}
 		}
+	}
 
-		ED_uvedit_live_unwrap(scene, obedit);
+	ED_uvedit_live_unwrap(scene, objects, objects_len);
+
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *obedit = objects[ob_index];
+		BMEditMesh *em = BKE_editmesh_from_object(obedit);
 		EDBM_update_generic(em, true, false);
 	}
+
 	MEM_freeN(objects);
 
 	return OPERATOR_FINISHED;
@@ -4387,7 +4392,11 @@ static int edbm_fill_grid_exec(bContext *C, wmOperator *op)
 			int span;
 			int offset;
 
-			if (RNA_property_is_set(op->ptr, prop_span)) {
+			/* Only reuse on redo because these settings need to match the current selection.
+			 * We never want to use them on other geometry, repeat last for eg, see: T60777. */
+			if ((op->flag & OP_IS_REPEAT) &&
+			    RNA_property_is_set(op->ptr, prop_span))
+			{
 				span = RNA_property_int_get(op->ptr, prop_span);
 				span = min_ii(span, (clamp / 2) - 1);
 				calc_span = false;
@@ -7576,8 +7585,8 @@ void MESH_OT_point_normals(struct wmOperatorType *ot)
 
 	RNA_def_boolean(ot->srna, "align", false, "Align", "Make all affected normals parallel");
 
-	RNA_def_float_vector(ot->srna, "target_location", 3, NULL, -FLT_MAX, FLT_MAX,
-	                     "Target", "Target location to which normals will point", -1000.0f, 1000.0f);
+	RNA_def_float_vector_xyz(ot->srna, "target_location", 3, NULL, -FLT_MAX, FLT_MAX,
+	                         "Target", "Target location to which normals will point", -1000.0f, 1000.0f);
 
 	RNA_def_boolean(ot->srna, "spherize", false,
 	                "Spherize", "Interpolate between original and new normals");

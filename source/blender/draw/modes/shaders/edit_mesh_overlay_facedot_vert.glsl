@@ -1,5 +1,6 @@
 
 uniform mat4 ModelViewProjectionMatrix;
+uniform mat4 ModelMatrix;
 
 in vec3 pos;
 in vec4 norAndFlag;
@@ -27,5 +28,9 @@ void main()
 		? normalize((ModelViewMatrix * vec4(pos, 1.0)).xyz)
 		: vec3(0.0, 0.0, 1.0);
 	facing = dot(view_vec, view_normal);
+#endif
+
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((ModelMatrix * vec4(pos, 1.0)).xyz);
 #endif
 }

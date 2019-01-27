@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -24,13 +27,11 @@
  */
 #include "BKE_studiolight.h"
 
-#include "DRW_engine.h"
 #include "workbench_private.h"
 
 #include "BKE_object.h"
 
 #include "BLI_math.h"
-#include "BKE_global.h"
 
 void studiolight_update_world(WORKBENCH_PrivateData *wpd, StudioLight *studiolight, WORKBENCH_UBO_World *wd)
 {

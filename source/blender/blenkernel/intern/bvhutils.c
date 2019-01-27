@@ -387,7 +387,6 @@ static void mesh_edges_spherecast(void *userdata, int index, const BVHTreeRay *r
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Vertex Builder
  * \{ */
 
@@ -554,7 +553,6 @@ BVHTree *bvhtree_from_mesh_verts_ex(
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Edge Builder
  * \{ */
 
@@ -739,7 +737,6 @@ BVHTree *bvhtree_from_mesh_edges_ex(
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Tessellated Face Builder
  * \{ */
 
@@ -835,7 +832,6 @@ BVHTree *bvhtree_from_mesh_faces_ex(
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name LoopTri Face Builder
  * \{ */
 
@@ -1112,6 +1108,8 @@ BVHTree *BKE_bvhtree_from_mesh_get(
 			data_cp.vert = mesh->mvert;
 
 			if (data_cp.cached == false) {
+				/* TODO: a global mutex lock held during the expensive operation of
+				 * building the BVH tree is really bad for performance. */
 				BLI_rw_mutex_lock(&cache_rwlock, THREAD_LOCK_WRITE);
 				data_cp.cached = bvhcache_find(
 				        mesh->runtime.bvh_cache, type, &data_cp.tree);
@@ -1308,7 +1306,6 @@ void free_bvhtree_from_mesh(struct BVHTreeFromMesh *data)
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name BVHCache
  * \{ */
 

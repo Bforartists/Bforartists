@@ -486,7 +486,6 @@ enum {
 	HEADER_TOOLBAR_MISC = (1 << 17),
 };
 
-#define EDGEWIDTH	1
 #define AREAGRID	4
 #define AREAMINX	32
 #define HEADERY		26

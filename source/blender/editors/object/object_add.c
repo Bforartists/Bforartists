@@ -90,7 +90,6 @@
 #include "BKE_particle.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
 #include "BKE_speaker.h"
 
 #include "DEG_depsgraph.h"
@@ -967,6 +966,23 @@ void OBJECT_OT_drop_named_image(wmOperatorType *ot)
 }
 
 /********************* Add Gpencil Operator ********************/
+static bool object_gpencil_add_poll(bContext *C)
+{
+	Scene *scene = CTX_data_scene(C);
+	Object *obact = CTX_data_active_object(C);
+
+	if ((scene == NULL) || (ID_IS_LINKED(scene))) {
+		return false;
+	}
+
+	if (obact && obact->type == OB_GPENCIL) {
+		if (obact->mode != OB_MODE_OBJECT) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 static int object_gpencil_add_exec(bContext *C, wmOperator *op)
 {
@@ -1073,7 +1089,7 @@ void OBJECT_OT_gpencil_add(wmOperatorType *ot)
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
 	ot->exec = object_gpencil_add_exec;
-	ot->poll = ED_operator_scene_editable;
+	ot->poll = object_gpencil_add_poll;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -27,17 +30,14 @@
 
 #include "DRW_render.h"
 
-#include "BKE_global.h" /* for G.debug_value */
 #include "BKE_camera.h"
 #include "BKE_object.h"
 #include "BKE_animsys.h"
-#include "BKE_screen.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_camera_types.h"
 #include "DNA_screen_types.h"
 
-#include "ED_screen.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"

@@ -129,7 +129,6 @@
 #include "BKE_collection.h"
 #include "BKE_colortools.h"
 #include "BKE_constraint.h"
-#include "BKE_context.h"
 #include "BKE_curve.h"
 #include "BKE_effect.h"
 #include "BKE_fcurve.h"
@@ -171,9 +170,10 @@
 #include "NOD_common.h"
 #include "NOD_socket.h"
 
+#include "BLO_blend_defs.h"
+#include "BLO_blend_validate.h"
 #include "BLO_readfile.h"
 #include "BLO_undofile.h"
-#include "BLO_blend_defs.h"
 
 #include "RE_engine.h"
 
@@ -6016,7 +6016,7 @@ static void lib_link_scene(FileData *fd, Main *main)
 			sce->toolsettings->particle.shape_object = newlibadr(fd, sce->id.lib, sce->toolsettings->particle.shape_object);
 
 			sce->toolsettings->gp_sculpt.guide.reference_object = newlibadr(fd, sce->id.lib, sce->toolsettings->gp_sculpt.guide.reference_object);
-			
+
 			for (Base *base_legacy_next, *base_legacy = sce->base.first; base_legacy; base_legacy = base_legacy_next) {
 				base_legacy_next = base_legacy->next;
 
@@ -6501,9 +6501,9 @@ static void direct_link_scene(FileData *fd, Scene *sce)
 
 	if (sce->master_collection) {
 		sce->master_collection = newdataadr(fd, sce->master_collection);
-		direct_link_collection(fd, sce->master_collection);
 		/* Needed because this is an ID outside of Main. */
-		sce->master_collection->id.py_instance = NULL;
+		direct_link_id(fd, &sce->master_collection->id);
+		direct_link_collection(fd, sce->master_collection);
 	}
 
 	/* insert into global old-new map for reading without UI (link_global accesses it again) */
@@ -6675,10 +6675,6 @@ static void direct_link_region(FileData *fd, ARegion *ar, int spacetype)
 				rv3d->render_engine = NULL;
 				rv3d->sms = NULL;
 				rv3d->smooth_timer = NULL;
-
-				/* TODO: support clipping in 2.8x,
-				 * Tools use clipping which is confusing when it isn't displayed, T59580. */
-				rv3d->rflag &= ~RV3D_CLIPPING;
 			}
 		}
 	}
@@ -8877,6 +8873,10 @@ static void lib_link_all(FileData *fd, Main *main)
 	lib_link_workspaces(fd, main);
 
 	lib_link_library(fd, main);    /* only init users */
+
+	/* We could integrate that to mesh/curve/lattice lib_link, but this is really cheap process,
+	 * so simpler to just use it directly in this single call. */
+	BLO_main_validate_shapekeys(main, NULL);
 }
 
 static void direct_link_keymapitem(FileData *fd, wmKeyMapItem *kmi)
