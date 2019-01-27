@@ -38,7 +38,6 @@
 
 #include "BLI_utildefines.h"
 
-#include "BKE_context.h"
 #include "BKE_deform.h"
 #include "BKE_gpencil.h"
 #include "BKE_gpencil_modifier.h"
@@ -83,7 +82,7 @@ static void deformStroke(
 
 	if (!is_stroke_affected_by_modifier(
 	            ob,
-	            mmd->layername, mmd->pass_index, mmd->layer_pass, 3, gpl, gps,
+	            mmd->layername, mmd->pass_index, mmd->layer_pass, 1, gpl, gps,
 	            mmd->flag & GP_LATTICE_INVERT_LAYER, mmd->flag & GP_LATTICE_INVERT_PASS,
 	            mmd->flag & GP_LATTICE_INVERT_LAYERPASS))
 	{

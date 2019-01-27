@@ -43,7 +43,6 @@
 #include "IMB_imbuf_types.h"
 
 #include "BLI_math.h"
-#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -483,6 +482,8 @@ const EnumPropertyItem rna_enum_transform_orientation_items[] = {
 };
 
 #ifdef RNA_RUNTIME
+
+#include "BLI_string_utils.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_color_types.h"
@@ -5707,7 +5708,7 @@ static void rna_def_display_safe_areas(BlenderRNA *brna)
 	static float default_action_center[2] = {0.15f, 0.05f};
 
 	srna = RNA_def_struct(brna, "DisplaySafeAreas", NULL);
-	RNA_def_struct_ui_text(srna, "Safe Areas", "Safe Areas used in 3D view and the VSE");
+	RNA_def_struct_ui_text(srna, "Safe Areas", "Safe areas used in 3D view and the sequencer");
 	RNA_def_struct_sdna(srna, "DisplaySafeAreas");
 
 	/* SAFE AREAS */

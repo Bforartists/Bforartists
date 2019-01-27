@@ -940,7 +940,9 @@ static void wm_operator_finished(bContext *C, wmOperator *op, const bool repeat,
 }
 
 /* if repeat is true, it doesn't register again, nor does it free */
-static int wm_operator_exec(bContext *C, wmOperator *op, const bool repeat, const bool store)
+static int wm_operator_exec(
+        bContext *C, wmOperator *op,
+        const bool repeat, const bool use_repeat_op_flag, const bool store)
 {
 	wmWindowManager *wm = CTX_wm_manager(C);
 	int retval = OPERATOR_CANCELLED;
@@ -958,12 +960,12 @@ static int wm_operator_exec(bContext *C, wmOperator *op, const bool repeat, cons
 			wm->op_undo_depth++;
 		}
 
-		if (repeat) {
+		if (repeat && use_repeat_op_flag) {
 			op->flag |= OP_IS_REPEAT;
 		}
 		retval = op->type->exec(C, op);
 		OPERATOR_RETVAL_CHECK(retval);
-		if (repeat) {
+		if (repeat && use_repeat_op_flag) {
 			op->flag &= ~OP_IS_REPEAT;
 		}
 
@@ -1015,7 +1017,7 @@ static int wm_operator_exec_notest(bContext *C, wmOperator *op)
 int WM_operator_call_ex(bContext *C, wmOperator *op,
                         const bool store)
 {
-	return wm_operator_exec(C, op, false, store);
+	return wm_operator_exec(C, op, false, false, store);
 }
 
 int WM_operator_call(bContext *C, wmOperator *op)
@@ -1038,7 +1040,11 @@ int WM_operator_call_notest(bContext *C, wmOperator *op)
  */
 int WM_operator_repeat(bContext *C, wmOperator *op)
 {
-	return wm_operator_exec(C, op, true, true);
+	return wm_operator_exec(C, op, true, true, true);
+}
+int WM_operator_repeat_interactive(bContext *C, wmOperator *op)
+{
+	return wm_operator_exec(C, op, true, false, true);
 }
 /**
  * \return true if #WM_operator_repeat can run
@@ -2057,7 +2063,12 @@ static int wm_handler_operator_call(bContext *C, ListBase *handlers, wmEventHand
 						wmGizmoGroupType *gzgt = WM_gizmogrouptype_find(idname, false);
 						if (gzgt != NULL) {
 							if ((gzgt->flag & WM_GIZMOGROUPTYPE_TOOL_INIT) != 0) {
-								WM_gizmo_group_type_ensure_ptr(gzgt);
+								ARegion *ar = CTX_wm_region(C);
+								if (ar != NULL) {
+									wmGizmoMapType *gzmap_type = WM_gizmomaptype_ensure(&gzgt->gzmap_params);
+									WM_gizmo_group_type_ensure_ptr_ex(gzgt, gzmap_type);
+									WM_gizmomaptype_group_init_runtime_with_region(gzmap_type, gzgt, ar);
+								}
 							}
 						}
 					}
@@ -3670,7 +3681,7 @@ static int convert_key(GHOST_TKey key)
 	}
 }
 
-static void wm_eventemulation(wmEvent *event)
+static void wm_eventemulation(wmEvent *event, bool test_only)
 {
 	/* Store last mmb/rmb event value to make emulation work when modifier keys
 	 * are released first. This really should be in a data structure somewhere. */
@@ -3683,13 +3694,19 @@ static void wm_eventemulation(wmEvent *event)
 			if (event->val == KM_PRESS && event->alt) {
 				event->type = MIDDLEMOUSE;
 				event->alt = 0;
-				emulating_event = MIDDLEMOUSE;
+
+				if (!test_only) {
+					emulating_event = MIDDLEMOUSE;
+				}
 			}
 #ifdef __APPLE__
 			else if (event->val == KM_PRESS && event->oskey) {
 				event->type = RIGHTMOUSE;
 				event->oskey = 0;
-				emulating_event = RIGHTMOUSE;
+
+				if (!test_only) {
+					emulating_event = RIGHTMOUSE;
+				}
 			}
 #endif
 			else if (event->val == KM_RELEASE) {
@@ -3702,7 +3719,10 @@ static void wm_eventemulation(wmEvent *event)
 					event->type = RIGHTMOUSE;
 					event->oskey = 0;
 				}
-				emulating_event = EVENT_NONE;
+
+				if (!test_only) {
+					emulating_event = EVENT_NONE;
+				}
 			}
 		}
 
@@ -3985,7 +4005,7 @@ void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, int type, int U
 			else
 				event.type = MIDDLEMOUSE;
 
-			wm_eventemulation(&event);
+			wm_eventemulation(&event, false);
 
 			/* copy previous state to prev event state (two old!) */
 			evt->prevval = evt->val;
@@ -4045,7 +4065,7 @@ void wm_event_add_ghostevent(wmWindowManager *wm, wmWindow *win, int type, int U
 			memcpy(event.utf8_buf, kd->utf8_buf, sizeof(event.utf8_buf)); /* might be not null terminated*/
 			event.val = (type == GHOST_kEventKeyDown) ? KM_PRESS : KM_RELEASE;
 
-			wm_eventemulation(&event);
+			wm_eventemulation(&event, false);
 
 			/* copy previous state to prev event state (two old!) */
 			evt->prevval = evt->val;
@@ -4623,7 +4643,7 @@ void WM_window_cursor_keymap_status_refresh(bContext *C, wmWindow *win)
 		wmEvent test_event = *win->eventstate;
 		test_event.type = event_data[data_index].event_type;
 		test_event.val = event_data[data_index].event_value;
-		wm_eventemulation(&test_event);
+		wm_eventemulation(&test_event, true);
 		wmKeyMapItem *kmi = NULL;
 		for (int handler_index = 0; handler_index < ARRAY_SIZE(handlers); handler_index++) {
 			kmi = wm_kmi_from_event(C, wm, handlers[handler_index], &test_event);

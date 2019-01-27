@@ -252,7 +252,7 @@ typedef struct SceneRenderLayer {
 	/* flags between (1 << 8) and (1 << 15) are set to 1 already, for future options */
 
 #define SCE_LAY_ALL_Z       (1 << 15)
-#define SCE_LAY_XOR         (1 << 16)
+/* #define SCE_LAY_XOR         (1 << 16) */  /* UNUSED */
 #define SCE_LAY_DISABLE     (1 << 17)
 #define SCE_LAY_ZMASK       (1 << 18)
 #define SCE_LAY_NEG_ZMASK   (1 << 19)
@@ -1568,7 +1568,7 @@ typedef struct PhysicsSettings {
 } PhysicsSettings;
 
 /* ------------------------------------------- */
-/* Safe Area options used in Camera View & VSE
+/* Safe Area options used in Camera View & Sequencer
  */
 typedef struct DisplaySafeAreas {
 	/* each value represents the (x,y) margins as a multiplier.

@@ -664,6 +664,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
         layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER")
         layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
 
@@ -2042,6 +2043,7 @@ class VIEW3D_MT_object_specials(Menu):
         '''
 
         # If something is selected
+
         if obj is None:
             pass
         elif obj.type == 'MESH':

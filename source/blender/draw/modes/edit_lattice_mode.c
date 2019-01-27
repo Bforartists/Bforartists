@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -33,21 +36,13 @@
 
 #include "draw_common.h"
 
-#include "draw_mode_engines.h"
+#include "draw_builtin_shader.h"
 
-/* If needed, contains all global/Theme colors
- * Add needed theme colors / values to DRW_globals_update() and update UBO
- * Not needed for constant color. */
-extern struct GPUUniformBuffer *globals_ubo; /* draw_common.c */
-extern struct GlobalsUboStorage ts; /* draw_common.c */
-
+extern char datatoc_common_world_clip_lib_glsl[];
 extern char datatoc_common_globals_lib_glsl[];
+
 extern char datatoc_edit_lattice_overlay_loosevert_vert_glsl[];
 extern char datatoc_edit_lattice_overlay_frag_glsl[];
-
-extern char datatoc_gpu_shader_3D_vert_glsl[];
-extern char datatoc_gpu_shader_uniform_color_frag_glsl[];
-extern char datatoc_gpu_shader_point_uniform_color_frag_glsl[];
 
 /* *********** LISTS *********** */
 /* All lists are per viewport specific datas.
@@ -97,6 +92,11 @@ typedef struct EDIT_LATTICE_Data {
 	EDIT_LATTICE_StorageList *stl;
 } EDIT_LATTICE_Data;
 
+typedef struct EDIT_LATTICE_Shaders {
+	GPUShader *wire;
+	GPUShader *overlay_vert;
+} EDIT_LATTICE_Shaders;
+
 /* *********** STATIC *********** */
 
 static struct {
@@ -104,9 +104,8 @@ static struct {
 	 * Add sources to source/blender/draw/modes/shaders
 	 * init in EDIT_LATTICE_engine_init();
 	 * free in EDIT_LATTICE_engine_free(); */
-	GPUShader *wire_sh;
 
-	GPUShader *overlay_vert_sh;
+	EDIT_LATTICE_Shaders sh_data[DRW_SHADER_SLOT_LEN];
 
 } e_data = {NULL}; /* Engine data */
 
@@ -145,15 +144,32 @@ static void EDIT_LATTICE_engine_init(void *vedata)
 	 *                     tex, 2);
 	 */
 
-	if (!e_data.wire_sh) {
-		e_data.wire_sh = GPU_shader_get_builtin_shader(GPU_SHADER_3D_SMOOTH_COLOR);
+	const DRWContextState *draw_ctx = DRW_context_state_get();
+	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+	const bool is_clip = (draw_ctx->rv3d->rflag & RV3D_CLIPPING) != 0;
+	if (is_clip) {
+		DRW_state_clip_planes_set_from_rv3d(draw_ctx->rv3d);
+	}
+	const char *world_clip_lib_or_empty = is_clip ? datatoc_common_world_clip_lib_glsl : "";
+	const char *world_clip_def_or_empty = is_clip ? "#define USE_WORLD_CLIP_PLANES\n" : "";
+
+	if (!sh_data->wire) {
+		sh_data->wire = DRW_shader_get_builtin_shader(GPU_SHADER_3D_SMOOTH_COLOR, draw_ctx->shader_slot);
 	}
 
-	if (!e_data.overlay_vert_sh) {
-		e_data.overlay_vert_sh = DRW_shader_create_with_lib(
-		        datatoc_edit_lattice_overlay_loosevert_vert_glsl, NULL,
-		        datatoc_edit_lattice_overlay_frag_glsl,
-		        datatoc_common_globals_lib_glsl, NULL);
+	if (!sh_data->overlay_vert) {
+		sh_data->overlay_vert = DRW_shader_create_from_arrays({
+		        .vert = (const char *[]){
+		            world_clip_lib_or_empty,
+		            datatoc_common_globals_lib_glsl,
+		            datatoc_edit_lattice_overlay_loosevert_vert_glsl,
+		            NULL},
+		        .frag = (const char *[]){
+		            datatoc_common_globals_lib_glsl,
+		            datatoc_edit_lattice_overlay_frag_glsl,
+		            NULL},
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
+
 	}
 }
 
@@ -164,6 +180,10 @@ static void EDIT_LATTICE_cache_init(void *vedata)
 	EDIT_LATTICE_PassList *psl = ((EDIT_LATTICE_Data *)vedata)->psl;
 	EDIT_LATTICE_StorageList *stl = ((EDIT_LATTICE_Data *)vedata)->stl;
 
+	const DRWContextState *draw_ctx = DRW_context_state_get();
+	RegionView3D *rv3d = draw_ctx->rv3d;
+	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+
 	if (!stl->g_data) {
 		/* Alloc transient pointers */
 		stl->g_data = MEM_mallocN(sizeof(*stl->g_data), __func__);
@@ -173,14 +193,21 @@ static void EDIT_LATTICE_cache_init(void *vedata)
 		psl->wire_pass = DRW_pass_create(
 		        "Lattice Wire",
 		        DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WIRE);
-		stl->g_data->wire_shgrp = DRW_shgroup_create(e_data.wire_sh, psl->wire_pass);
+		stl->g_data->wire_shgrp = DRW_shgroup_create(sh_data->wire, psl->wire_pass);
+		if (rv3d->rflag & RV3D_CLIPPING) {
+			DRW_shgroup_world_clip_planes_from_rv3d(stl->g_data->wire_shgrp, rv3d);
+		}
 
 		psl->vert_pass = DRW_pass_create(
 		        "Lattice Verts",
 		        DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_POINT);
-		stl->g_data->vert_shgrp = DRW_shgroup_create(e_data.overlay_vert_sh, psl->vert_pass);
+		stl->g_data->vert_shgrp = DRW_shgroup_create(sh_data->overlay_vert, psl->vert_pass);
+		DRW_shgroup_uniform_block(stl->g_data->vert_shgrp, "globalsBlock", G_draw.block_ubo);
+		if (rv3d->rflag & RV3D_CLIPPING) {
+			DRW_shgroup_world_clip_planes_from_rv3d(stl->g_data->vert_shgrp, rv3d);
+		}
 
-		DRW_shgroup_uniform_block(stl->g_data->vert_shgrp, "globalsBlock", globals_ubo);
+
 	}
 }
 
@@ -255,8 +282,16 @@ static void EDIT_LATTICE_draw_scene(void *vedata)
  * Mostly used for freeing shaders */
 static void EDIT_LATTICE_engine_free(void)
 {
-	// Currently built-in, dont free
-	DRW_SHADER_FREE_SAFE(e_data.overlay_vert_sh);
+	for (int sh_data_index = 0; sh_data_index < ARRAY_SIZE(e_data.sh_data); sh_data_index++) {
+		EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[sh_data_index];
+		/* Don't free builtins. */
+		sh_data->wire = NULL;
+		GPUShader **sh_data_as_array = (GPUShader **)sh_data;
+		for (int i = 0; i < (sizeof(EDIT_LATTICE_Shaders) / sizeof(GPUShader *)); i++) {
+			DRW_SHADER_FREE_SAFE(sh_data_as_array[i]);
+		}
+	}
+
 }
 
 static const DrawEngineDataSize EDIT_LATTICE_data_size = DRW_VIEWPORT_DATA_SIZE(EDIT_LATTICE_Data);

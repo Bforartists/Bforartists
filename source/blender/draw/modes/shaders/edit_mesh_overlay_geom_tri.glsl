@@ -16,6 +16,10 @@ uniform vec2 viewportSize;
 uniform bool isXray = false;
 
 in vec4 pPos[];
+#ifdef USE_WORLD_CLIP_PLANES
+/* Worldspace position. */
+in vec3 wsPos[];
+#endif
 in ivec4 vData[];
 #ifdef VERTEX_FACING
 in float vFacing[];
@@ -68,6 +72,10 @@ void doVertex(int v)
 #endif
 	gl_Position = pPos[v];
 
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_set_clip_distance(gl_in[v].gl_ClipDistance);
+#endif
+
 	EmitVertex();
 }
 
@@ -82,6 +90,10 @@ void doVertexOfs(int v, vec2 fixvec)
 #endif
 	float z_ofs = Z_OFFSET * ((ProjectionMatrix[3][3] == 0.0) ? 1.0 : 0.0);
 	gl_Position = pPos[v] + vec4(fixvec * pPos[v].w, z_ofs, 0.0);
+
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_set_clip_distance(gl_in[v].gl_ClipDistance);
+#endif
 
 	EmitVertex();
 }
@@ -138,14 +150,18 @@ void main()
 
 	/* Face */
 	vec4 fcol;
-	if ((vData[0].x & FACE_ACTIVE) != 0)
+	if ((vData[0].x & FACE_ACTIVE) != 0) {
 		fcol = colorFaceSelect;
-	else if ((vData[0].x & FACE_SELECTED) != 0)
+	}
+	else if ((vData[0].x & FACE_SELECTED) != 0) {
 		fcol = colorFaceSelect;
-	else if ((vData[0].x & FACE_FREESTYLE) != 0)
+	}
+	else if ((vData[0].x & FACE_FREESTYLE) != 0) {
 		fcol = colorFaceFreestyle;
-	else
+	}
+	else {
 		fcol = colorFace;
+	}
 
 	/* Vertex */
 	ssPos[0] = proj(pPos[0]);

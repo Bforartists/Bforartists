@@ -48,7 +48,6 @@
 #include "DNA_smoke_types.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_threads.h"
 #include "BLI_math.h"
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
@@ -811,7 +810,7 @@ static int ptcache_smoke_read(PTCacheFile *pf, void *smoke_v)
 		sds->active_fields = active_fields | cache_fields;
 		smoke_reallocate_fluid(sds, ch_dx, ch_res, 1);
 		sds->dx = ch_dx;
-		VECCOPY(sds->res, ch_res);
+		copy_v3_v3_int(sds->res, ch_res);
 		sds->total_cells = ch_res[0]*ch_res[1]*ch_res[2];
 		if (sds->flags & MOD_SMOKE_HIGHRES) {
 			smoke_reallocate_highres_fluid(sds, ch_dx, ch_res, 1);

@@ -53,9 +53,7 @@
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
 #include "BLI_threads.h"
-#include "BLI_alloca.h"
 
-#include "BIF_gl.h"
 #include "BLF_api.h"
 
 #include "UI_interface.h"
@@ -191,10 +189,10 @@ void blf_batch_draw(void)
 	UI_widgetbase_draw_cache_flush();
 
 	GPU_texture_bind(g_batch.tex_bind_state, 0);
-	GPU_vertbuf_vertex_count_set(g_batch.verts, g_batch.glyph_len);
+	GPU_vertbuf_data_len_set(g_batch.verts, g_batch.glyph_len);
 	GPU_vertbuf_use(g_batch.verts); /* send data */
 
-	GPUBuiltinShader shader = (g_batch.simple_shader) ? GPU_SHADER_TEXT_SIMPLE : GPU_SHADER_TEXT;
+	eGPUBuiltinShader shader = (g_batch.simple_shader) ? GPU_SHADER_TEXT_SIMPLE : GPU_SHADER_TEXT;
 	GPU_batch_program_set_builtin(g_batch.batch, shader);
 	GPU_batch_uniform_1i(g_batch.batch, "glyph", 0);
 	GPU_batch_draw(g_batch.batch);

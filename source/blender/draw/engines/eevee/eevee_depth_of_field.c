@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -27,32 +30,19 @@
 
 #include "DRW_render.h"
 
-#include "BLI_dynstr.h"
-#include "BLI_rand.h"
-
-#include "DNA_anim_types.h"
 #include "DNA_camera_types.h"
-#include "DNA_object_force_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_world_types.h"
 
-#include "BKE_global.h" /* for G.debug_value */
 #include "BKE_camera.h"
-#include "BKE_mesh.h"
-#include "BKE_object.h"
-#include "BKE_animsys.h"
-#include "BKE_screen.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
 #include "eevee_private.h"
-#include "GPU_extensions.h"
 #include "GPU_framebuffer.h"
 #include "GPU_texture.h"
-
-#include "ED_screen.h"
 
 static struct {
 	/* Depth Of Field */
@@ -111,7 +101,7 @@ int EEVEE_depth_of_field_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *v
 
 			int buffer_size[2] = {(int)viewport_size[0] / 2, (int)viewport_size[1] / 2};
 
-			GPUTextureFormat down_format = DRW_state_draw_background() ? GPU_R11F_G11F_B10F : GPU_RGBA16F;
+			eGPUTextureFormat down_format = DRW_state_draw_background() ? GPU_R11F_G11F_B10F : GPU_RGBA16F;
 
 			effects->dof_down_near = DRW_texture_pool_query_2D(buffer_size[0], buffer_size[1], down_format,
 			                                                   &draw_engine_eevee_type);
@@ -128,7 +118,7 @@ int EEVEE_depth_of_field_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *v
 			});
 
 			/* Go full 32bits for rendering and reduce the color artifacts. */
-			GPUTextureFormat fb_format = DRW_state_is_image_render() ? GPU_RGBA32F : GPU_RGBA16F;
+			eGPUTextureFormat fb_format = DRW_state_is_image_render() ? GPU_RGBA32F : GPU_RGBA16F;
 
 			effects->dof_blur = DRW_texture_pool_query_2D(buffer_size[0] * 2, buffer_size[1], fb_format,
 			                                              &draw_engine_eevee_type);

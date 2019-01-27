@@ -69,7 +69,6 @@
 #endif
 
 /* -------------------------------------------------------------------- */
-
 /** \name High Level `.blend` file read/write.
  * \{ */
 
@@ -265,9 +264,6 @@ static void setup_app_data(
 		CTX_data_scene_set(C, curscene);
 	}
 	else {
-		/* Keep state from preferences. */
-		const int fileflags_skip = G_FILE_FLAGS_RUNTIME;
-		G.fileflags = (G.fileflags & fileflags_skip) | (bfd->fileflags & ~fileflags_skip);
 		CTX_wm_manager_set(C, bmain->wm.first);
 		CTX_wm_screen_set(C, bfd->curscreen);
 		CTX_data_scene_set(C, bfd->curscene);
@@ -276,6 +272,10 @@ static void setup_app_data(
 		CTX_wm_menu_set(C, NULL);
 		curscene = bfd->curscene;
 	}
+
+	/* Keep state from preferences. */
+	const int fileflags_skip = G_FILE_FLAGS_RUNTIME;
+	G.fileflags = (G.fileflags & fileflags_skip) | (bfd->fileflags & ~fileflags_skip);
 
 	/* this can happen when active scene was lib-linked, and doesn't exist anymore */
 	if (CTX_data_scene(C) == NULL) {
@@ -621,7 +621,6 @@ void BKE_blendfile_workspace_config_data_free(WorkspaceConfigFileData *workspace
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Partial `.blend` file save.
  * \{ */
 

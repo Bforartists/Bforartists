@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -29,9 +32,9 @@
 
 #include "BLI_alloca.h"
 #include "BLI_dynstr.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_node.h"
 #include "BKE_particle.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
@@ -41,12 +44,10 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 
-#include "ED_uvedit.h"
 
 #include "GPU_shader.h"
 #include "GPU_texture.h"
 
-#include "UI_resources.h"
 
 /* *********** STATIC *********** */
 static struct {
@@ -66,6 +67,7 @@ static struct {
 } e_data = {{NULL}};
 
 /* Shaders */
+extern char datatoc_common_world_clip_lib_glsl[];
 extern char datatoc_common_hair_lib_glsl[];
 
 extern char datatoc_workbench_forward_composite_frag_glsl[];
@@ -85,12 +87,15 @@ static char *workbench_build_forward_vert(bool is_hair)
 {
 	char *str = NULL;
 	if (!is_hair) {
-		return BLI_strdup(datatoc_workbench_prepass_vert_glsl);
+		return BLI_string_joinN(
+		        datatoc_common_world_clip_lib_glsl,
+		        datatoc_workbench_prepass_vert_glsl);
 	}
 
 	DynStr *ds = BLI_dynstr_new();
 
 	BLI_dynstr_append(ds, datatoc_common_hair_lib_glsl);
+	BLI_dynstr_append(ds, datatoc_common_world_clip_lib_glsl);
 	BLI_dynstr_append(ds, datatoc_workbench_prepass_vert_glsl);
 
 	str = BLI_dynstr_get_cstring(ds);
@@ -194,6 +199,11 @@ static WORKBENCH_MaterialData *get_or_create_material_data(
 		}
 		material->object_id = engine_object_data->object_id;
 		DRW_shgroup_uniform_int(material->shgrp_object_outline, "object_id", &material->object_id, 1);
+		if (wpd->world_clip_planes) {
+			const DRWContextState *draw_ctx = DRW_context_state_get();
+			RegionView3D *rv3d = draw_ctx->rv3d;
+			DRW_shgroup_world_clip_planes_from_rv3d(material->shgrp_object_outline, rv3d);
+		}
 		BLI_ghash_insert(wpd->material_hash, POINTER_FROM_UINT(hash), material);
 	}
 	return material;
@@ -356,6 +366,19 @@ void workbench_forward_engine_init(WORKBENCH_Data *vedata)
 		DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
 	}
 
+	/* TODO(campbell): displays but masks geometry, only use with wire for now. */
+	if ((wpd->shading.type == OB_WIRE) &&
+	    (draw_ctx->rv3d && (draw_ctx->rv3d->rflag & RV3D_CLIPPING) && draw_ctx->rv3d->clipbb))
+	{
+		psl->background_pass = DRW_pass_create(
+		        "Background", DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL);
+		GPUShader *shader = GPU_shader_get_builtin_shader(GPU_SHADER_3D_UNIFORM_COLOR_BACKGROUND);
+		grp = DRW_shgroup_create(shader, psl->background_pass);
+		wpd->world_clip_planes_batch = DRW_draw_background_clipping_batch_from_rv3d(draw_ctx->rv3d);
+		DRW_shgroup_call_add(grp, wpd->world_clip_planes_batch, NULL);
+		DRW_shgroup_uniform_vec4(grp, "color", &wpd->world_clip_planes_color[0], 1);
+	}
+
 	{
 		workbench_aa_create_pass(vedata, &e_data.transparent_accum_tx);
 	}
@@ -404,6 +427,7 @@ void workbench_forward_engine_free()
 	workbench_volume_engine_free();
 	workbench_fxaa_engine_free();
 	workbench_taa_engine_free();
+	workbench_dof_engine_free();
 }
 
 void workbench_forward_cache_init(WORKBENCH_Data *UNUSED(vedata))
@@ -475,8 +499,9 @@ void workbench_forward_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 	Scene *scene = draw_ctx->scene;
 	const bool is_wire = (ob->dt == OB_WIRE);
 
-	if (!DRW_object_is_renderable(ob))
+	if (!DRW_object_is_renderable(ob)) {
 		return;
+	}
 
 	if (ob->type == OB_MESH) {
 		workbench_forward_cache_populate_particles(vedata, ob);
@@ -633,6 +658,11 @@ void workbench_forward_draw_scene(WORKBENCH_Data *vedata)
 	GPU_framebuffer_bind(fbl->composite_fb);
 	DRW_draw_pass(psl->composite_pass);
 	DRW_draw_pass(psl->volume_pass);
+
+	/* Only when clipping is enabled. */
+	if (psl->background_pass) {
+		DRW_draw_pass(psl->background_pass);
+	}
 
 	/* Color correct and Anti aliasing */
 	workbench_aa_draw_pass(vedata, e_data.composite_buffer_tx);
