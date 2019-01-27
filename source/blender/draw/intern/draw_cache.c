@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor(s): Blender Institute
+ * Contributor(s): Blender Foundation (2008).
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -37,13 +39,11 @@
 
 #include "BLI_utildefines.h"
 #include "BLI_math.h"
-#include "BLI_listbase.h"
 
 #include "BKE_object.h"
-#include "BKE_object_deform.h"
+#include "BKE_paint.h"
 
 #include "GPU_batch.h"
-#include "GPU_batch_presets.h"
 #include "GPU_batch_utils.h"
 
 #include "MEM_guardedalloc.h"
@@ -145,7 +145,6 @@ void DRW_shape_cache_reset(void)
 }
 
 /* -------------------------------------------------------------------- */
-
 /** \name Helper functions
  * \{ */
 
@@ -386,7 +385,6 @@ GPUBatch *DRW_cache_sphere_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Common
  * \{ */
 
@@ -667,7 +665,6 @@ GPUBatch *DRW_cache_gpencil_axes_get(void)
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Common Object API
 * \{ */
 
@@ -781,7 +778,6 @@ GPUBatch **DRW_cache_object_surface_material_get(
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Empties
  * \{ */
 
@@ -1306,7 +1302,6 @@ GPUBatch *DRW_cache_field_cone_limit_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Lamps
  * \{ */
 
@@ -1724,7 +1719,6 @@ GPUBatch *DRW_cache_lamp_spot_square_volume_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Speaker
  * \{ */
 
@@ -1788,7 +1782,6 @@ GPUBatch *DRW_cache_speaker_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Probe
  * \{ */
 
@@ -1929,7 +1922,6 @@ GPUBatch *DRW_cache_lightprobe_planar_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Armature Bones
  * \{ */
 
@@ -2822,7 +2814,6 @@ GPUBatch *DRW_cache_bone_dof_lines_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Camera
  * \{ */
 
@@ -2968,7 +2959,6 @@ GPUBatch *DRW_cache_camera_tria_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Object Mode Helpers
  * \{ */
 
@@ -2998,7 +2988,6 @@ GPUBatch *DRW_cache_single_vert_get(void)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Meshes
  * \{ */
 
@@ -3091,7 +3080,6 @@ void DRW_cache_mesh_sculpt_coords_ensure(Object *ob)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Curve
  * \{ */
 
@@ -3190,7 +3178,6 @@ GPUBatch **DRW_cache_curve_surface_shaded_get(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name MetaBall
  * \{ */
 
@@ -3217,7 +3204,6 @@ GPUBatch **DRW_cache_mball_surface_shaded_get(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Font
  * \{ */
 
@@ -3298,7 +3284,6 @@ GPUBatch **DRW_cache_text_surface_shaded_get(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Surface
  * \{ */
 
@@ -3373,7 +3358,6 @@ GPUBatch **DRW_cache_surf_surface_shaded_get(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Lattice
  * \{ */
 
@@ -3410,7 +3394,6 @@ GPUBatch *DRW_cache_lattice_vert_overlay_get(Object *ob)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Particles
  * \{ */
 
@@ -3620,10 +3603,7 @@ GPUBatch *DRW_cache_cursor_get(bool crosshair_lines)
 			float x = f10 * cosf(angle);
 			float y = f10 * sinf(angle);
 
-			if (i % 2 == 0)
-				GPU_vertbuf_attr_set(vbo, attr_id.color, v, red);
-			else
-				GPU_vertbuf_attr_set(vbo, attr_id.color, v, white);
+			GPU_vertbuf_attr_set(vbo, attr_id.color, v, (i % 2 == 0) ? red : white);
 
 			GPU_vertbuf_attr_set(vbo, attr_id.pos, v, (const float[2]){x, y});
 			GPU_indexbuf_add_generic_vert(&elb, v++);
@@ -3681,7 +3661,6 @@ GPUBatch *DRW_cache_cursor_get(bool crosshair_lines)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Batch Cache Impl. common
  * \{ */
 
@@ -3753,8 +3732,11 @@ void drw_batch_cache_generate_requested(Object *ob)
 	const ToolSettings *ts = draw_ctx->scene->toolsettings;
 	const int mode = CTX_data_mode_enum_ex(draw_ctx->object_edit, draw_ctx->obact, draw_ctx->object_mode);
 	const bool is_paint_mode = ELEM(mode, CTX_MODE_PAINT_TEXTURE, CTX_MODE_PAINT_VERTEX, CTX_MODE_PAINT_WEIGHT);
-	const bool use_hide = (ob->type == OB_MESH) && ((is_paint_mode && (ob == draw_ctx->obact)) ||
-	                                               ((mode == CTX_MODE_EDIT_MESH) && BKE_object_is_in_editmode(ob)));
+	const bool use_hide = (
+	        (ob->type == OB_MESH) &&
+	        ((is_paint_mode && (ob == draw_ctx->obact) &&
+	          (BKE_paint_select_face_test(ob) || BKE_paint_select_vert_test(ob))) ||
+	         ((mode == CTX_MODE_EDIT_MESH) && BKE_object_is_in_editmode(ob))));
 
 	struct Mesh *mesh_eval = ob->runtime.mesh_eval;
 	switch (ob->type) {

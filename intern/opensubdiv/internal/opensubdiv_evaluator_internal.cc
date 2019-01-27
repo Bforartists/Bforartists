@@ -130,7 +130,7 @@ template <int element_size, int num_vertices>
 class StackAllocatedBuffer {
  public:
   static PatchCoordBuffer* Create(int /*size*/) {
-    // TODO(sergey): Validate that requested dize is smaller than static
+    // TODO(sergey): Validate that requested size is smaller than static
     // stack memory size.
     return new StackAllocatedBuffer<element_size, num_vertices>();
   }
@@ -527,12 +527,12 @@ class CpuEvalOutput : public VolatileEvalOutput<CpuVertexBuffer,
                            CpuVertexBuffer,
                            StencilTable,
                            CpuPatchTable,
-                           CpuEvaluator> (vertex_stencils,
-                                          varying_stencils,
-                                          all_face_varying_stencils,
-                                          face_varying_width,
-                                          patch_table,
-                                          evaluator_cache) {
+                           CpuEvaluator>(vertex_stencils,
+                                         varying_stencils,
+                                         all_face_varying_stencils,
+                                         face_varying_width,
+                                         patch_table,
+                                         evaluator_cache) {
   }
 };
 

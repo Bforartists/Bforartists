@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -27,18 +30,14 @@
 
 #include "BLI_mempool.h"
 
-#include "BIF_glutil.h"
 
 #include "BKE_global.h"
-#include "BKE_object.h"
 
 #include "GPU_draw.h"
 #include "GPU_extensions.h"
 #include "intern/gpu_shader_private.h"
 
 #ifdef USE_GPU_SELECT
-#  include "ED_view3d.h"
-#  include "ED_armature.h"
 #  include "GPU_select.h"
 #endif
 
@@ -55,7 +54,6 @@ void DRW_select_load_id(uint id)
 struct GPUUniformBuffer *view_ubo;
 
 /* -------------------------------------------------------------------- */
-
 /** \name Draw State (DRW_state)
  * \{ */
 
@@ -270,7 +268,7 @@ void drw_state_set(DRWState state)
 		int test;
 		if ((test = CHANGED_TO(DRW_STATE_CLIP_PLANES))) {
 			if (test == 1) {
-				for (int i = 0; i < DST.num_clip_planes; ++i) {
+				for (int i = 0; i < DST.clip_planes_len; ++i) {
 					glEnable(GL_CLIP_DISTANCE0 + i);
 				}
 			}
@@ -436,21 +434,33 @@ void DRW_state_invert_facing(void)
  * and if the shaders have support for it (see usage of gl_ClipDistance).
  * Be sure to call DRW_state_clip_planes_reset() after you finish drawing.
  **/
-void DRW_state_clip_planes_count_set(uint plane_len)
+void DRW_state_clip_planes_len_set(uint plane_len)
 {
 	BLI_assert(plane_len <= MAX_CLIP_PLANES);
-	DST.num_clip_planes = plane_len;
+	DST.clip_planes_len = plane_len;
 }
 
 void DRW_state_clip_planes_reset(void)
 {
-	DST.num_clip_planes = 0;
+	DST.clip_planes_len = 0;
+}
+
+void DRW_state_clip_planes_set_from_rv3d(RegionView3D *rv3d)
+{
+	int max_len = 6;
+	int real_len = (rv3d->viewlock & RV3D_BOXCLIP) ? 4 : max_len;
+	while (real_len < max_len) {
+		/* Fill in dummy values that wont change results (6 is hard coded in shaders). */
+		copy_v4_v4(rv3d->clip[real_len], rv3d->clip[3]);
+		real_len++;
+	}
+
+	DRW_state_clip_planes_len_set(max_len);
 }
 
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Clipping (DRW_clipping)
  * \{ */
 
@@ -505,8 +515,9 @@ static void draw_frustum_boundbox_calc(const float(*projmat)[4], BoundBox *r_bbo
 
 static void draw_clipping_setup_from_view(void)
 {
-	if (DST.clipping.updated)
+	if (DST.clipping.updated) {
 		return;
+	}
 
 	float (*viewinv)[4] = DST.view_data.matstate.mat[DRW_MAT_VIEWINV];
 	float (*projmat)[4] = DST.view_data.matstate.mat[DRW_MAT_WIN];
@@ -542,7 +553,7 @@ static void draw_clipping_setup_from_view(void)
 			default: q = 4; r = 7; s = 6; break; /* +X */
 		}
 		if (DST.frontface == GL_CW) {
-			SWAP(int, q, r);
+			SWAP(int, q, s);
 		}
 
 		normal_quad_v3(DST.clipping.frustum_planes[p], bbox.vec[p], bbox.vec[q], bbox.vec[r], bbox.vec[s]);
@@ -668,14 +679,16 @@ bool DRW_culling_sphere_test(BoundSphere *bsphere)
 	draw_clipping_setup_from_view();
 
 	/* Bypass test if radius is negative. */
-	if (bsphere->radius < 0.0f)
+	if (bsphere->radius < 0.0f) {
 		return true;
+	}
 
 	/* Do a rough test first: Sphere VS Sphere intersect. */
 	BoundSphere *frustum_bsphere = &DST.clipping.frustum_bsphere;
 	float center_dist = len_squared_v3v3(bsphere->center, frustum_bsphere->center);
-	if (center_dist > SQUARE(bsphere->radius + frustum_bsphere->radius))
+	if (center_dist > SQUARE(bsphere->radius + frustum_bsphere->radius)) {
 		return false;
+	}
 
 	/* Test against the 6 frustum planes. */
 	for (int p = 0; p < 6; p++) {
@@ -746,7 +759,6 @@ void DRW_culling_frustum_planes_get(float planes[6][4])
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Draw (DRW_draw)
  * \{ */
 
@@ -996,8 +1008,9 @@ static void release_texture_slots(bool with_persist)
 	}
 	else {
 		for (int i = 0; i < GPU_max_textures(); ++i) {
-			if (DST.RST.bound_tex_slots[i] != BIND_PERSIST)
+			if (DST.RST.bound_tex_slots[i] != BIND_PERSIST) {
 				DST.RST.bound_tex_slots[i] = BIND_NONE;
+			}
 		}
 	}
 
@@ -1013,8 +1026,9 @@ static void release_ubo_slots(bool with_persist)
 	}
 	else {
 		for (int i = 0; i < GPU_max_ubo_binds(); ++i) {
-			if (DST.RST.bound_ubo_slots[i] != BIND_PERSIST)
+			if (DST.RST.bound_ubo_slots[i] != BIND_PERSIST) {
 				DST.RST.bound_ubo_slots[i] = BIND_NONE;
+			}
 		}
 	}
 
@@ -1301,8 +1315,9 @@ static void drw_update_view(void)
 
 static void drw_draw_pass_ex(DRWPass *pass, DRWShadingGroup *start_group, DRWShadingGroup *end_group)
 {
-	if (start_group == NULL)
+	if (start_group == NULL) {
 		return;
+	}
 
 	DST.shader = NULL;
 

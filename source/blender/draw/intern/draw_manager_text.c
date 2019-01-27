@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,6 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
+ *
+ * ***** END GPL LICENSE BLOCK *****
+ *
  */
 
 /** \file blender/draw/intern/draw_manager_text.c
@@ -24,17 +28,14 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_listbase.h"
-#include "BLI_string.h"
 #include "BLI_math.h"
 
-#include "BIF_gl.h"
 
 #include "GPU_matrix.h"
 
 #include "ED_screen.h"
 #include "ED_view3d.h"
 
-#include "UI_resources.h"
 #include "UI_interface.h"
 
 #include "WM_api.h"

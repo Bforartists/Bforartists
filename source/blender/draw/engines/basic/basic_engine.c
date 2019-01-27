@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -28,9 +31,6 @@
 
 #include "DRW_render.h"
 
-#include "BKE_icons.h"
-#include "BKE_idprop.h"
-#include "BKE_main.h"
 #include "BKE_particle.h"
 
 #include "DNA_particle_types.h"
@@ -63,11 +63,15 @@ typedef struct BASIC_Data {
 	BASIC_StorageList *stl;
 } BASIC_Data;
 
+typedef struct BASIC_Shaders {
+	/* Depth Pre Pass */
+	struct GPUShader *depth;
+} BASIC_Shaders;
+
 /* *********** STATIC *********** */
 
 static struct {
-	/* Depth Pre Pass */
-	struct GPUShader *depth_sh;
+	BASIC_Shaders sh_data[DRW_SHADER_SLOT_LEN];
 } e_data = {NULL}; /* Engine data */
 
 typedef struct BASIC_PrivateData {
@@ -80,9 +84,12 @@ typedef struct BASIC_PrivateData {
 
 static void basic_engine_init(void *UNUSED(vedata))
 {
+	const DRWContextState *draw_ctx = DRW_context_state_get();
+	BASIC_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+
 	/* Depth prepass */
-	if (!e_data.depth_sh) {
-		e_data.depth_sh = DRW_shader_create_3D_depth_only();
+	if (!sh_data->depth) {
+		sh_data->depth = DRW_shader_create_3D_depth_only(draw_ctx->shader_slot);
 	}
 }
 
@@ -90,6 +97,15 @@ static void basic_cache_init(void *vedata)
 {
 	BASIC_PassList *psl = ((BASIC_Data *)vedata)->psl;
 	BASIC_StorageList *stl = ((BASIC_Data *)vedata)->stl;
+
+	const DRWContextState *draw_ctx = DRW_context_state_get();
+	BASIC_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+	const RegionView3D *rv3d = draw_ctx->rv3d;
+	const bool is_clip = (rv3d->rflag & RV3D_CLIPPING) != 0;
+
+	if (is_clip) {
+		DRW_state_clip_planes_set_from_rv3d(draw_ctx->rv3d);
+	}
 
 	if (!stl->g_data) {
 		/* Alloc transient pointers */
@@ -99,12 +115,18 @@ static void basic_cache_init(void *vedata)
 	{
 		psl->depth_pass = DRW_pass_create(
 		        "Depth Pass", DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WIRE);
-		stl->g_data->depth_shgrp = DRW_shgroup_create(e_data.depth_sh, psl->depth_pass);
+		stl->g_data->depth_shgrp = DRW_shgroup_create(sh_data->depth, psl->depth_pass);
+		if (rv3d->rflag & RV3D_CLIPPING) {
+			DRW_shgroup_world_clip_planes_from_rv3d(stl->g_data->depth_shgrp, rv3d);
+		}
 
 		psl->depth_pass_cull = DRW_pass_create(
 		        "Depth Pass Cull",
 		        DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_CULL_BACK);
-		stl->g_data->depth_shgrp_cull = DRW_shgroup_create(e_data.depth_sh, psl->depth_pass_cull);
+		stl->g_data->depth_shgrp_cull = DRW_shgroup_create(sh_data->depth, psl->depth_pass_cull);
+		if (rv3d->rflag & RV3D_CLIPPING) {
+			DRW_shgroup_world_clip_planes_from_rv3d(stl->g_data->depth_shgrp_cull, rv3d);
+		}
 	}
 }
 

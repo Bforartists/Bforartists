@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -34,10 +37,8 @@
 #include "DNA_smoke_types.h"
 #include "DNA_world_types.h"
 
-#include "BKE_global.h" /* for G.debug_value */
 #include "BKE_modifier.h"
 #include "BKE_mesh.h"
-#include "BKE_object.h"
 
 #include "ED_screen.h"
 

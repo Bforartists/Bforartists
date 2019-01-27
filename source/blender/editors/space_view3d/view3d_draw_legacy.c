@@ -48,7 +48,6 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
-#include "BLI_jitter_2d.h"
 #include "BLI_utildefines.h"
 #include "BLI_endian_switch.h"
 #include "BLI_threads.h"
@@ -60,12 +59,10 @@
 #include "BKE_image.h"
 #include "BKE_key.h"
 #include "BKE_layer.h"
-#include "BKE_main.h"
 #include "BKE_object.h"
 #include "BKE_global.h"
 #include "BKE_paint.h"
 #include "BKE_scene.h"
-#include "BKE_screen.h"
 #include "BKE_unit.h"
 #include "BKE_movieclip.h"
 
@@ -138,24 +135,6 @@ void ED_view3d_clipping_enable(void)
 	for (unsigned a = 0; a < 6; a++) {
 		glEnable(GL_CLIP_PLANE0 + a);
 	}
-}
-
-static bool view3d_clipping_test(const float co[3], const float clip[6][4])
-{
-	if (plane_point_side_v3(clip[0], co) > 0.0f)
-		if (plane_point_side_v3(clip[1], co) > 0.0f)
-			if (plane_point_side_v3(clip[2], co) > 0.0f)
-				if (plane_point_side_v3(clip[3], co) > 0.0f)
-					return false;
-
-	return true;
-}
-
-/* for 'local' ED_view3d_clipping_local must run first
- * then all comparisons can be done in localspace */
-bool ED_view3d_clipping_test(const RegionView3D *rv3d, const float co[3], const bool is_local)
-{
-	return view3d_clipping_test(co, is_local ? rv3d->clip_local : rv3d->clip);
 }
 
 /* *********************** backdraw for selection *************** */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -25,26 +28,16 @@
 
 #include "DRW_render.h"
 
-#include "BLI_dynstr.h"
 #include "BLI_rand.h"
 
 #include "BKE_object.h"
 #include "BKE_global.h" /* for G.debug_value */
-#include "BKE_screen.h"
 
 #include "DNA_world_types.h"
 
-#include "ED_screen.h"
-
-#include "GPU_material.h"
-#include "GPU_glew.h"
-
-#include "eevee_engine.h"
 #include "eevee_private.h"
 
 #define EEVEE_ENGINE "BLENDER_EEVEE"
-
-extern GlobalsUboStorage ts;
 
 /* *********** FUNCTIONS *********** */
 
@@ -254,7 +247,7 @@ static void eevee_draw_background(void *vedata)
 		DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
 
 		GPU_framebuffer_bind(fbl->main_fb);
-		GPUFrameBufferBits clear_bits = GPU_DEPTH_BIT;
+		eGPUFrameBufferBits clear_bits = GPU_DEPTH_BIT;
 		clear_bits |= (DRW_state_draw_background()) ? 0 : GPU_COLOR_BIT;
 		clear_bits |= ((stl->effects->enabled_effects & EFFECT_SSS) != 0) ? GPU_STENCIL_BIT : 0;
 		GPU_framebuffer_clear(fbl->main_fb, clear_bits, clear_col, clear_depth, clear_stencil);
