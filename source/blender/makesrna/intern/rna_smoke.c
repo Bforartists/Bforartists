@@ -30,7 +30,6 @@
 #include <limits.h>
 
 #include "BLI_sys_types.h"
-#include "BLI_threads.h"
 
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
@@ -51,6 +50,8 @@
 
 
 #ifdef RNA_RUNTIME
+
+#include "BLI_threads.h"
 
 #include "BKE_colorband.h"
 #include "BKE_context.h"
@@ -926,7 +927,7 @@ static void rna_def_smoke_domain_settings(BlenderRNA *brna)
 	RNA_def_property_range(prop, 0.0, 1.0);
 	RNA_def_property_ui_range(prop, 0.0, 1.0, 0.1, 3);
 	RNA_def_property_ui_text(prop, "Clipping",
-	                         "Value under which voxels are considered empty space to optimize caching or rendering");
+	                         "Value under which voxels are considered empty space to optimize caching and rendering");
 	RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER, NULL);
 }
 

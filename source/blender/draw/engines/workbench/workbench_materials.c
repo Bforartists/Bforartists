@@ -1,4 +1,26 @@
-
+/*
+ * ***** BEGIN GPL LICENSE BLOCK *****
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Copyright 2018, Blender Foundation.
+ * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
+ *
+ */
 
 #include "workbench_private.h"
 
@@ -110,6 +132,9 @@ char *workbench_material_build_defines(WORKBENCH_PrivateData *wpd, bool use_text
 	if (is_hair) {
 		BLI_dynstr_appendf(ds, "#define HAIR_SHADER\n");
 	}
+	if (wpd->world_clip_planes != NULL) {
+		BLI_dynstr_appendf(ds, "#define USE_WORLD_CLIP_PLANES\n");
+	}
 
 	str = BLI_dynstr_get_cstring(ds);
 	BLI_dynstr_free(ds);
@@ -168,6 +193,7 @@ int workbench_material_get_prepass_shader_index(
 	SET_FLAG_FROM_TEST(index, NORMAL_VIEWPORT_PASS_ENABLED(wpd), 1 << 3);
 	SET_FLAG_FROM_TEST(index, MATCAP_ENABLED(wpd), 1 << 4);
 	SET_FLAG_FROM_TEST(index, use_textures, 1 << 5);
+	SET_FLAG_FROM_TEST(index, wpd->world_clip_planes != NULL, 1 << 6);
 	return index;
 }
 
@@ -235,6 +261,11 @@ void workbench_material_shgroup_uniform(
 			DRW_shgroup_uniform_vec3(grp, "materialSpecularColor", material->specular_color, 1);
 		}
 		DRW_shgroup_uniform_float(grp, "materialRoughness", &material->roughness, 1);
+	}
+
+	if (wpd->world_clip_planes != NULL) {
+		DRW_shgroup_uniform_vec4(grp, "WorldClipPlanes", wpd->world_clip_planes[0], 6);
+		DRW_shgroup_state_enable(grp, DRW_STATE_CLIP_PLANES);
 	}
 }
 

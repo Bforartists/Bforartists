@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -28,7 +31,6 @@
 #include "DRW_render.h"
 
 #include "BKE_global.h"
-#include "BKE_blender.h"
 
 #include "BLI_threads.h"
 
@@ -148,7 +150,6 @@ typedef struct EEVEE_LightBake {
 } EEVEE_LightBake;
 
 /* -------------------------------------------------------------------- */
-
 /** \name Light Cache
  * \{ */
 
@@ -368,7 +369,6 @@ void EEVEE_lightcache_free(LightCache *lcache)
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Light Bake Context
  * \{ */
 
@@ -401,7 +401,6 @@ static void eevee_lightbake_context_disable(EEVEE_LightBake *lbake)
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Light Bake Job
  * \{ */
 
@@ -511,8 +510,9 @@ wmJob *EEVEE_lightbake_job_create(
 	EEVEE_LightBake *lbake = NULL;
 
 	/* only one render job at a time */
-	if (WM_jobs_test(wm, scene, WM_JOB_TYPE_RENDER))
+	if (WM_jobs_test(wm, scene, WM_JOB_TYPE_RENDER)) {
 		return NULL;
+	}
 
 	wmJob *wm_job = WM_jobs_get(wm, win, scene, "Bake Lighting",
 	                            WM_JOB_EXCL_RENDER | WM_JOB_PRIORITY | WM_JOB_PROGRESS, WM_JOB_TYPE_LIGHT_BAKE);

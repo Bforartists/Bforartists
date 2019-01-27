@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2017, Blender Foundation.
  * Contributor(s): Antonio Vazquez
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -25,10 +28,8 @@
 
 #include "BLI_polyfill_2d.h"
 
-#include "DRW_engine.h"
 #include "DRW_render.h"
 
-#include "BKE_brush.h"
 #include "BKE_gpencil.h"
 #include "BKE_gpencil_modifier.h"
 #include "BKE_image.h"
@@ -36,7 +37,6 @@
 #include "BKE_paint.h"
 
 #include "ED_gpencil.h"
-#include "ED_view3d.h"
 
 #include "DNA_gpencil_types.h"
 #include "DNA_material_types.h"
@@ -153,8 +153,9 @@ static bool gpencil_can_draw_stroke(
         const bool onion, const bool is_mat_preview)
 {
 	/* skip stroke if it doesn't have any valid data */
-	if ((gps->points == NULL) || (gps->totpoints < 1) || (gp_style == NULL))
+	if ((gps->points == NULL) || (gps->totpoints < 1) || (gp_style == NULL)) {
 		return false;
+	}
 
 	/* if mat preview render always visible */
 	if (is_mat_preview) {
@@ -357,7 +358,8 @@ bool DRW_gpencil_onion_active(bGPdata *gpd)
 /* create shading group for strokes */
 DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
         GPENCIL_e_data *e_data, GPENCIL_Data *vedata, DRWPass *pass, GPUShader *shader, Object *ob,
-        bGPdata *gpd, bGPDstroke *gps, MaterialGPencilStyle *gp_style, int id, bool onion)
+        bGPdata *gpd, bGPDstroke *gps, MaterialGPencilStyle *gp_style, int id,
+		bool onion, const float scale)
 {
 	GPENCIL_StorageList *stl = ((GPENCIL_Data *)vedata)->stl;
 	const float *viewport_size = DRW_viewport_size_get();
@@ -376,7 +378,7 @@ DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
 
 	/* object scale and depth */
 	if ((ob) && (id > -1)) {
-		stl->shgroups[id].obj_scale = mat4_to_scale(ob->obmat);
+		stl->shgroups[id].obj_scale = scale;
 		DRW_shgroup_uniform_float(grp, "objscale", &stl->shgroups[id].obj_scale, 1);
 		stl->shgroups[id].keep_size = (int)((gpd) && (gpd->flag & GP_DATA_STROKE_KEEPTHICKNESS));
 		DRW_shgroup_uniform_int(grp, "keep_size", &stl->shgroups[id].keep_size, 1);
@@ -453,7 +455,7 @@ DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
 /* create shading group for points */
 static DRWShadingGroup *DRW_gpencil_shgroup_point_create(
         GPENCIL_e_data *e_data, GPENCIL_Data *vedata, DRWPass *pass, GPUShader *shader, Object *ob,
-        bGPdata *gpd, MaterialGPencilStyle *gp_style, int id, bool onion)
+        bGPdata *gpd, MaterialGPencilStyle *gp_style, int id, bool onion, const float scale)
 {
 	GPENCIL_StorageList *stl = ((GPENCIL_Data *)vedata)->stl;
 	const float *viewport_size = DRW_viewport_size_get();
@@ -471,7 +473,7 @@ static DRWShadingGroup *DRW_gpencil_shgroup_point_create(
 
 	/* object scale and depth */
 	if ((ob) && (id > -1)) {
-		stl->shgroups[id].obj_scale = mat4_to_scale(ob->obmat);
+		stl->shgroups[id].obj_scale = scale;
 		DRW_shgroup_uniform_float(grp, "objscale", &stl->shgroups[id].obj_scale, 1);
 		stl->shgroups[id].keep_size = (int)((gpd) && (gpd->flag & GP_DATA_STROKE_KEEPTHICKNESS));
 		DRW_shgroup_uniform_int(grp, "keep_size", &stl->shgroups[id].keep_size, 1);
@@ -1127,8 +1129,9 @@ void DRW_gpencil_triangulate_stroke_fill(Object *ob, bGPDstroke *gps)
 	}
 	else {
 		/* No triangles needed - Free anything allocated previously */
-		if (gps->triangles)
+		if (gps->triangles) {
 			MEM_freeN(gps->triangles);
+		}
 
 		gps->triangles = NULL;
 	}
@@ -1186,11 +1189,12 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 				if ((gp_style) && (gp_style->mode == GP_STYLE_MODE_LINE)) {
 					stl->g_data->shgrps_drawing_stroke = DRW_gpencil_shgroup_stroke_create(
 						e_data, vedata, psl->drawing_pass, e_data->gpencil_stroke_sh, NULL,
-						gpd, NULL, gp_style, -1, false);
+						gpd, NULL, gp_style, -1, false, 1.0f);
 				}
 				else {
 					stl->g_data->shgrps_drawing_stroke = DRW_gpencil_shgroup_point_create(
-						e_data, vedata, psl->drawing_pass, e_data->gpencil_point_sh, NULL, gpd, gp_style, -1, false);
+						e_data, vedata, psl->drawing_pass, e_data->gpencil_point_sh, NULL,
+						gpd, gp_style, -1, false, 1.0f);
 				}
 
 				/* clean previous version of the batch */
@@ -1210,15 +1214,11 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 						gpd, lthick);
 				}
 
-				/* No fill strokes, must show stroke always */
-				if ((gp_style->flag & GP_STYLE_STROKE_SHOW) ||
-				    (gpd->runtime.sbuffer_sflag & GP_STROKE_NOFILL))
-				{
-					DRW_shgroup_call_add(
-					        stl->g_data->shgrps_drawing_stroke,
-					        e_data->batch_buffer_stroke,
-					        stl->storage->unit_matrix);
-				}
+				/* buffer strokes, must show stroke always */
+				DRW_shgroup_call_add(
+					    stl->g_data->shgrps_drawing_stroke,
+					    e_data->batch_buffer_stroke,
+					    stl->storage->unit_matrix);
 
 				if ((gpd->runtime.sbuffer_size >= 3) &&
 				    (gpd->runtime.sfill[3] > GPENCIL_ALPHA_OPACITY_THRESH) &&
@@ -1331,6 +1331,7 @@ static void DRW_gpencil_shgroups_create(
 	for (int i = 0; i < cache->grp_used; i++) {
 		elm = &cache->grp_cache[i];
 		array_elm = &cache_ob->shgrp_array[idx];
+		const float scale = cache_ob->scale;
 
 		/* save last group when change */
 		if (gpl_prev == NULL) {
@@ -1370,7 +1371,7 @@ static void DRW_gpencil_shgroups_create(
 
 				shgrp = DRW_gpencil_shgroup_stroke_create(
 				        e_data, vedata, psl->stroke_pass, e_data->gpencil_stroke_sh,
-				        ob, gpd, gps, gp_style, stl->storage->shgroup_id, elm->onion);
+				        ob, gpd, gps, gp_style, stl->storage->shgroup_id, elm->onion, scale);
 
 				DRW_shgroup_call_range_add(
 				        shgrp, cache->b_stroke.batch,
@@ -1387,7 +1388,7 @@ static void DRW_gpencil_shgroups_create(
 
 				shgrp = DRW_gpencil_shgroup_point_create(
 				        e_data, vedata, psl->stroke_pass, e_data->gpencil_point_sh,
-				        ob, gpd, gp_style, stl->storage->shgroup_id, elm->onion);
+				        ob, gpd, gp_style, stl->storage->shgroup_id, elm->onion, scale);
 
 				DRW_shgroup_call_range_add(
 				        shgrp, cache->b_point.batch,
@@ -1493,8 +1494,9 @@ void DRW_gpencil_populate_multiedit(
 	/* draw strokes */
 	for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
 		/* don't draw layer if hidden */
-		if (gpl->flag & GP_LAYER_HIDE)
+		if (gpl->flag & GP_LAYER_HIDE) {
 			continue;
+		}
 
 		/* list of frames to draw */
 		if (!playing) {
@@ -1600,8 +1602,9 @@ void DRW_gpencil_populate_datablock(
 		}
 
 		gpf = BKE_gpencil_layer_getframe(gpl, remap_cfra, GP_GETFRAME_USE_PREV);
-		if (gpf == NULL)
+		if (gpf == NULL) {
 			continue;
+		}
 
 		/* if solo mode, display only frames with keyframe in the current frame */
 		if ((is_solomode) && (gpf->framenum != remap_cfra)) {

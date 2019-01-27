@@ -64,7 +64,6 @@
 #include "DNA_world_types.h"
 
 #include "BLI_utildefines.h"
-#include "BLI_listbase.h"
 #include "BLI_ghash.h"
 #include "BLI_linklist_stack.h"
 
@@ -471,7 +470,7 @@ void BKE_library_foreach_ID_link(Main *bmain, ID *id, LibraryIDLinkCallback call
 				for (TimeMarker *marker = scene->markers.first; marker; marker = marker->next) {
 					CALLBACK_INVOKE(marker->camera, IDWALK_CB_NOP);
 				}
-				
+
 				if (toolsett) {
 					CALLBACK_INVOKE(toolsett->particle.scene, IDWALK_CB_NOP);
 					CALLBACK_INVOKE(toolsett->particle.object, IDWALK_CB_NOP);

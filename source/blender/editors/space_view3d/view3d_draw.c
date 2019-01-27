@@ -37,8 +37,6 @@
 #include "BLI_threads.h"
 #include "BLI_jitter_2d.h"
 
-#include "BIF_gl.h"
-#include "BIF_glutil.h"
 
 #include "BKE_camera.h"
 #include "BKE_collection.h"
@@ -1376,7 +1374,6 @@ void view3d_main_region_draw(const bContext *C, ARegion *ar)
 }
 
 /* -------------------------------------------------------------------- */
-
 /** \name Offscreen Drawing
  * \{ */
 
@@ -1729,5 +1726,30 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(
 	        &v3d, &ar, width, height, flag,
 	        draw_flags, alpha_mode, samples, viewname, ofs, err_out);
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Viewport Clipping
+ * \{ */
+
+static bool view3d_clipping_test(const float co[3], const float clip[6][4])
+{
+	if (plane_point_side_v3(clip[0], co) > 0.0f)
+		if (plane_point_side_v3(clip[1], co) > 0.0f)
+			if (plane_point_side_v3(clip[2], co) > 0.0f)
+				if (plane_point_side_v3(clip[3], co) > 0.0f)
+					return false;
+
+	return true;
+}
+
+/* for 'local' ED_view3d_clipping_local must run first
+ * then all comparisons can be done in localspace */
+bool ED_view3d_clipping_test(const RegionView3D *rv3d, const float co[3], const bool is_local)
+{
+	return view3d_clipping_test(co, is_local ? rv3d->clip_local : rv3d->clip);
+}
+
 
 /** \} */

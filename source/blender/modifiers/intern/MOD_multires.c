@@ -42,7 +42,6 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_cdderivedmesh.h"
-#include "BKE_global.h"
 #include "BKE_mesh.h"
 #include "BKE_multires.h"
 #include "BKE_modifier.h"
@@ -159,6 +158,7 @@ static Mesh *applyModifier(ModifierData *md,
 	if (subdiv_settings.level == 0) {
 		return result;
 	}
+	BKE_subdiv_settings_validate_for_mesh(&subdiv_settings, mesh);
 	Subdiv *subdiv = subdiv_descriptor_ensure(mmd, &subdiv_settings, mesh);
 	if (subdiv == NULL) {
 		/* Happens on bad topology, ut also on empty input mesh. */

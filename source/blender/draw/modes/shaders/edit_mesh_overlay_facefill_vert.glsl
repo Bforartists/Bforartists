@@ -1,5 +1,6 @@
 
 uniform mat4 ModelViewProjectionMatrix;
+uniform mat4 ModelMatrix;
 uniform ivec4 dataMask = ivec4(0xFF);
 
 in vec3 pos;
@@ -17,12 +18,20 @@ void main()
 
 	ivec4 data_m = data & dataMask;
 
-	if ((data_m.x & FACE_ACTIVE) != 0)
+	if ((data_m.x & FACE_ACTIVE) != 0) {
 		faceColor = colorFaceSelect;
-	else if ((data_m.x & FACE_SELECTED) != 0)
+	}
+	else if ((data_m.x & FACE_SELECTED) != 0) {
 		faceColor = colorFaceSelect;
-	else if ((data_m.x & FACE_FREESTYLE) != 0)
+	}
+	else if ((data_m.x & FACE_FREESTYLE) != 0) {
 		faceColor = colorFaceFreestyle;
-	else
+	}
+	else {
 		faceColor = colorFace;
+	}
+
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((ModelMatrix * vec4(pos, 1.0)).xyz);
+#endif
 }

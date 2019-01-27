@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -87,7 +90,6 @@ struct DRWInstanceDataList {
 static ListBase g_idatalists = {NULL, NULL};
 
 /* -------------------------------------------------------------------- */
-
 /** \name Instance Buffer Management
  * \{ */
 
@@ -147,8 +149,9 @@ void DRW_batching_buffer_request(
 	}
 	int new_id = 0; /* Find insertion point. */
 	for (; new_id < chunk->alloc_size; ++new_id) {
-		if (chunk->bbufs[new_id].format == NULL)
+		if (chunk->bbufs[new_id].format == NULL) {
 			break;
+		}
 	}
 	/* If there is no batch left. Allocate more. */
 	if (new_id == chunk->alloc_size) {
@@ -188,8 +191,9 @@ void DRW_instancing_buffer_request(
 	}
 	int new_id = 0; /* Find insertion point. */
 	for (; new_id < chunk->alloc_size; ++new_id) {
-		if (chunk->ibufs[new_id].format == NULL)
+		if (chunk->ibufs[new_id].format == NULL) {
 			break;
+		}
 	}
 	/* If there is no batch left. Allocate more. */
 	if (new_id == chunk->alloc_size) {
@@ -283,7 +287,6 @@ void DRW_instance_buffer_finish(DRWInstanceDataList *idatalist)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Instance Data (DRWInstanceData)
  * \{ */
 
@@ -342,7 +345,6 @@ DRWInstanceData *DRW_instance_data_request(DRWInstanceDataList *idatalist, uint 
 /** \} */
 
 /* -------------------------------------------------------------------- */
-
 /** \name Instance Data List (DRWInstanceDataList)
  * \{ */
 

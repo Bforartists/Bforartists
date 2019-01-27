@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -28,27 +31,21 @@
 #include "DNA_brush_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_userdef_types.h"
-#include "DNA_world_types.h"
 #include "DNA_view3d_types.h"
 
 #include "ED_screen.h"
-#include "ED_transform.h"
 #include "ED_view3d.h"
 
-#include "GPU_draw.h"
 #include "GPU_shader.h"
 #include "GPU_immediate.h"
 #include "GPU_matrix.h"
 
 #include "UI_resources.h"
 
-#include "WM_api.h"
 #include "WM_types.h"
 
-#include "BKE_global.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
-#include "BKE_unit.h"
 
 #include "DRW_render.h"
 
@@ -122,6 +119,41 @@ void DRW_draw_background(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 }
+
+GPUBatch *DRW_draw_background_clipping_batch_from_rv3d(const RegionView3D *rv3d)
+{
+	const BoundBox *bb = rv3d->clipbb;
+	const uint clipping_index[6][4] = {
+		{0, 1, 2, 3},
+		{0, 4, 5, 1},
+		{4, 7, 6, 5},
+		{7, 3, 2, 6},
+		{1, 5, 6, 2},
+		{7, 4, 0, 3}
+	};
+	GPUVertBuf *vbo;
+	GPUIndexBuf *el;
+	GPUIndexBufBuilder elb = {0};
+
+	/* Elements */
+	GPU_indexbuf_init(&elb, GPU_PRIM_TRIS, ARRAY_SIZE(clipping_index) * 2, ARRAY_SIZE(bb->vec));
+	for (int i = 0; i < ARRAY_SIZE(clipping_index); i++) {
+		const uint *idx = clipping_index[i];
+		GPU_indexbuf_add_tri_verts(&elb, idx[0], idx[1], idx[2]);
+		GPU_indexbuf_add_tri_verts(&elb, idx[0], idx[2], idx[3]);
+	}
+	el = GPU_indexbuf_build(&elb);
+
+	GPUVertFormat format = {0};
+	uint pos_id = GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+
+	vbo = GPU_vertbuf_create_with_format(&format);
+	GPU_vertbuf_data_alloc(vbo, ARRAY_SIZE(bb->vec));
+	GPU_vertbuf_attr_fill(vbo, pos_id, bb->vec);
+
+	return GPU_batch_create_ex(GPU_PRIM_TRIS, vbo, el, GPU_BATCH_OWNS_VBO | GPU_BATCH_OWNS_INDEX);
+}
+
 
 /* **************************** 3D Cursor ******************************** */
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -27,7 +30,7 @@
 
 #ifndef NDEBUG
 /* Maybe gpu_texture.c is a better place for this. */
-static bool drw_texture_format_supports_framebuffer(GPUTextureFormat format)
+static bool drw_texture_format_supports_framebuffer(eGPUTextureFormat format)
 {
 	/* Some formats do not work with framebuffers. */
 	switch (format) {
@@ -76,7 +79,7 @@ void drw_texture_set_parameters(GPUTexture *tex, DRWTextureFlag flags)
 	GPU_texture_unbind(tex);
 }
 
-GPUTexture *DRW_texture_create_1D(int w, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
+GPUTexture *DRW_texture_create_1D(int w, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
 {
 	GPUTexture *tex = GPU_texture_create_1D(w, format, fpixels, NULL);
 	drw_texture_set_parameters(tex, flags);
@@ -84,7 +87,7 @@ GPUTexture *DRW_texture_create_1D(int w, GPUTextureFormat format, DRWTextureFlag
 	return tex;
 }
 
-GPUTexture *DRW_texture_create_2D(int w, int h, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
+GPUTexture *DRW_texture_create_2D(int w, int h, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
 {
 	GPUTexture *tex = GPU_texture_create_2D(w, h, format, fpixels, NULL);
 	drw_texture_set_parameters(tex, flags);
@@ -93,7 +96,7 @@ GPUTexture *DRW_texture_create_2D(int w, int h, GPUTextureFormat format, DRWText
 }
 
 GPUTexture *DRW_texture_create_2D_array(
-        int w, int h, int d, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
+        int w, int h, int d, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
 {
 	GPUTexture *tex = GPU_texture_create_2D_array(w, h, d, format, fpixels, NULL);
 	drw_texture_set_parameters(tex, flags);
@@ -102,7 +105,7 @@ GPUTexture *DRW_texture_create_2D_array(
 }
 
 GPUTexture *DRW_texture_create_3D(
-        int w, int h, int d, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
+        int w, int h, int d, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
 {
 	GPUTexture *tex = GPU_texture_create_3D(w, h, d, format, fpixels, NULL);
 	drw_texture_set_parameters(tex, flags);
@@ -110,7 +113,7 @@ GPUTexture *DRW_texture_create_3D(
 	return tex;
 }
 
-GPUTexture *DRW_texture_create_cube(int w, GPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
+GPUTexture *DRW_texture_create_cube(int w, eGPUTextureFormat format, DRWTextureFlag flags, const float *fpixels)
 {
 	GPUTexture *tex = GPU_texture_create_cube(w, format, fpixels, NULL);
 	drw_texture_set_parameters(tex, flags);
@@ -118,7 +121,7 @@ GPUTexture *DRW_texture_create_cube(int w, GPUTextureFormat format, DRWTextureFl
 	return tex;
 }
 
-GPUTexture *DRW_texture_pool_query_2D(int w, int h, GPUTextureFormat format, DrawEngineType *engine_type)
+GPUTexture *DRW_texture_pool_query_2D(int w, int h, eGPUTextureFormat format, DrawEngineType *engine_type)
 {
 	BLI_assert(drw_texture_format_supports_framebuffer(format));
 	GPUTexture *tex = GPU_viewport_texture_pool_query(DST.viewport, engine_type, w, h, format);
@@ -126,7 +129,7 @@ GPUTexture *DRW_texture_pool_query_2D(int w, int h, GPUTextureFormat format, Dra
 	return tex;
 }
 
-void DRW_texture_ensure_fullscreen_2D(GPUTexture **tex, GPUTextureFormat format, DRWTextureFlag flags)
+void DRW_texture_ensure_fullscreen_2D(GPUTexture **tex, eGPUTextureFormat format, DRWTextureFlag flags)
 {
 	if (*(tex) == NULL) {
 		const float *size = DRW_viewport_size_get();
@@ -134,7 +137,7 @@ void DRW_texture_ensure_fullscreen_2D(GPUTexture **tex, GPUTextureFormat format,
 	}
 }
 
-void DRW_texture_ensure_2D(GPUTexture **tex, int w, int h, GPUTextureFormat format, DRWTextureFlag flags)
+void DRW_texture_ensure_2D(GPUTexture **tex, int w, int h, eGPUTextureFormat format, DRWTextureFlag flags)
 {
 	if (*(tex) == NULL) {
 		*(tex) = DRW_texture_create_2D(w, h, format, flags, NULL);

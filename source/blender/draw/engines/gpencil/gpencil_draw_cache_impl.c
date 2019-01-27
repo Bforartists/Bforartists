@@ -35,14 +35,11 @@
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 
-#include "BKE_action.h"
 #include "BKE_deform.h"
 #include "BKE_gpencil.h"
 
 #include "DRW_render.h"
 
-#include "GPU_immediate.h"
-#include "GPU_draw.h"
 
 #include "ED_gpencil.h"
 #include "ED_view3d.h"
@@ -397,7 +394,7 @@ GPUBatch *DRW_gpencil_get_buffer_ctrlpoint_geom(bGPdata *gpd)
 	if (ts->gp_sculpt.guide.use_guide) {
 		totpoints++;
 	}
-	
+
 	static GPUVertFormat format = { 0 };
 	static uint pos_id, color_id, size_id;
 	if (format.attr_len == 0) {
@@ -586,7 +583,7 @@ void DRW_gpencil_get_edit_geom(struct GpencilBatchCacheElem *be, bGPDstroke *gps
 	for (int i = 0; i < gps->totpoints; i++, pt++) {
 		/* weight paint */
 		if (is_weight_paint) {
-			float weight = (dvert && dvert->dw) ? defvert_find_weight(dvert, vgindex) : 0.0f;
+			float weight = (dvert && dvert->dw && (vgindex > -1)) ? defvert_find_weight(dvert, vgindex) : 0.0f;
 			float hue = 2.0f * (1.0f - weight) / 3.0f;
 			hsv_to_rgb(hue, 1.0f, 1.0f, &selectColor[0], &selectColor[1], &selectColor[2]);
 			selectColor[3] = 1.0f;
@@ -661,7 +658,7 @@ void DRW_gpencil_get_edlin_geom(struct GpencilBatchCacheElem *be, bGPDstroke *gp
 	for (int i = 0; i < gps->totpoints; i++, pt++) {
 		/* weight paint */
 		if (is_weight_paint) {
-			float weight = (dvert && dvert->dw) ? defvert_find_weight(dvert, vgindex) : 0.0f;
+			float weight = (dvert && dvert->dw && (vgindex > -1)) ? defvert_find_weight(dvert, vgindex) : 0.0f;
 			float hue = 2.0f * (1.0f - weight) / 3.0f;
 			hsv_to_rgb(hue, 1.0f, 1.0f, &selectColor[0], &selectColor[1], &selectColor[2]);
 			selectColor[3] = 1.0f;
