@@ -6,6 +6,7 @@ uniform mat3 NormalMatrix;
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
 uniform mat4 ModelViewProjectionMatrix;
+uniform mat4 ModelMatrix;
 uniform ivec4 dataMask = ivec4(0xFF);
 
 in vec3 pos;
@@ -33,6 +34,10 @@ void main()
 		? normalize(vpos.xyz)
 		: vec3(0.0, 0.0, 1.0);
 	vFacing = dot(view_vec, view_normal);
+#  endif
+
+#  ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((ModelMatrix * vec4(pos, 1.0)).xyz);
 #  endif
 }
 
@@ -77,14 +82,18 @@ void main()
 	}
 
 	/* Face */
-	if ((vData[0].x & FACE_ACTIVE) != 0)
+	if ((vData[0].x & FACE_ACTIVE) != 0) {
 		faceColor = colorFaceSelect;
-	else if ((vData[0].x & FACE_SELECTED) != 0)
+	}
+	else if ((vData[0].x & FACE_SELECTED) != 0) {
 		faceColor = colorFaceSelect;
-	else if ((vData[0].x & FACE_FREESTYLE) != 0)
+	}
+	else if ((vData[0].x & FACE_FREESTYLE) != 0) {
 		faceColor = colorFaceFreestyle;
-	else
+	}
+	else {
 		faceColor = colorFace;
+	}
 
 #  ifdef VERTEX_SELECTION
 	vertexColor = EDIT_MESH_vertex_color(data0.x).rgb;
@@ -96,6 +105,10 @@ void main()
 		? normalize(vPos.xyz)
 		: vec3(0.0, 0.0, 1.0);
 	facing = dot(view_vec, view_normal);
+#  endif
+
+#  ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((ModelMatrix * vec4(pos, 1.0)).xyz);
 #  endif
 }
 

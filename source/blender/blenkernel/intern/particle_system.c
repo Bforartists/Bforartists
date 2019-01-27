@@ -58,12 +58,10 @@
 #include "BLI_utildefines.h"
 #include "BLI_edgehash.h"
 #include "BLI_rand.h"
-#include "BLI_jitter_2d.h"
 #include "BLI_math.h"
 #include "BLI_blenlib.h"
 #include "BLI_kdtree.h"
 #include "BLI_kdopbvh.h"
-#include "BLI_sort.h"
 #include "BLI_task.h"
 #include "BLI_threads.h"
 #include "BLI_linklist.h"
@@ -73,10 +71,8 @@
 #include "BKE_collision.h"
 #include "BKE_colortools.h"
 #include "BKE_effect.h"
-#include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_library_query.h"
-#include "BKE_main.h"
 #include "BKE_particle.h"
 
 #include "BKE_collection.h"
@@ -2967,23 +2963,6 @@ static void psys_update_path_cache(ParticleSimulationData *sim, float cfra, cons
 			else if (part->childtype==0 && (psys->flag & PSYS_HAIR_DYNAMICS && psys->pointcache->flag & PTCACHE_BAKED)==0)
 				skip = 1; /* in edit mode paths are needed for child particles and dynamic hair */
 		}
-	}
-
-
-	/* particle instance modifier with "path" option need cached paths even if particle system doesn't */
-	if (skip) {
-		FOREACH_SCENE_OBJECT_BEGIN(sim->scene, ob)
-		{
-			ModifierData *md = modifiers_findByType(ob, eModifierType_ParticleInstance);
-			if (md) {
-				ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *)md;
-				if (pimd->flag & eParticleInstanceFlag_Path && pimd->ob == sim->ob && pimd->psys == (psys - (ParticleSystem*)sim->ob->particlesystem.first)) {
-					skip = 0;
-					break;
-				}
-			}
-		}
-		FOREACH_SCENE_OBJECT_END;
 	}
 
 	if (!skip) {

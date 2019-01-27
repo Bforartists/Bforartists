@@ -157,7 +157,6 @@
 #include "MEM_guardedalloc.h" // MEM_freeN
 #include "BLI_bitmap.h"
 #include "BLI_blenlib.h"
-#include "BLI_linklist.h"
 #include "BLI_mempool.h"
 
 #include "BKE_action.h"
@@ -188,10 +187,11 @@
 #endif
 
 
-#include "BLO_writefile.h"
+#include "BLO_blend_defs.h"
+#include "BLO_blend_validate.h"
 #include "BLO_readfile.h"
 #include "BLO_undofile.h"
-#include "BLO_blend_defs.h"
+#include "BLO_writefile.h"
 
 #include "readfile.h"
 
@@ -4133,6 +4133,7 @@ bool BLO_write_file(
 	if (G.debug & G_DEBUG_IO && mainvar->lock != NULL) {
 		BKE_report(reports, RPT_INFO, "Checking sanity of current .blend file *BEFORE* save to disk");
 		BLO_main_validate_libraries(mainvar, reports);
+		BLO_main_validate_shapekeys(mainvar, reports);
 	}
 
 	/* open temporary file, so we preserve the original in case we crash */

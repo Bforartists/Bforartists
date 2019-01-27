@@ -579,7 +579,7 @@ class TOPBAR_MT_file(Menu):
             app_template = None
 
         if app_template:
-            layout.label(text=bpy.path.display_name(app_template))
+            layout.label(text=bpy.path.display_name(app_template, has_ext=False))
             layout.operator("wm.save_homefile")
             layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon='LOAD_FACTORY').app_template = app_template
         else:

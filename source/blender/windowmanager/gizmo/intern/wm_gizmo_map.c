@@ -32,7 +32,6 @@
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_rect.h"
-#include "BLI_string.h"
 #include "BLI_ghash.h"
 
 #include "BKE_context.h"
@@ -971,7 +970,7 @@ void wm_gizmomap_modal_set(
 
 		struct wmGizmoOpElem *gzop = WM_gizmo_operator_get(gz, gz->highlight_part);
 		if (gzop && gzop->type) {
-			const int retval = WM_operator_name_call_ptr(C, gzop->type, WM_OP_INVOKE_DEFAULT, &gzop->ptr);
+			const int retval = WM_gizmo_operator_invoke(C, gz, gzop);
 			if ((retval & OPERATOR_RUNNING_MODAL) == 0) {
 				wm_gizmomap_modal_set(gzmap, C, gz, event, false);
 			}

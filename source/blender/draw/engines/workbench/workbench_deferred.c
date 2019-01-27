@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -25,7 +28,6 @@
 
 #include "workbench_private.h"
 
-#include "BIF_gl.h"
 
 #include "BLI_alloca.h"
 #include "BLI_dynstr.h"
@@ -33,7 +35,6 @@
 #include "BLI_rand.h"
 #include "BLI_string_utils.h"
 
-#include "BKE_node.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
@@ -43,7 +44,6 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 
-#include "ED_uvedit.h"
 
 #include "GPU_shader.h"
 #include "GPU_texture.h"
@@ -90,6 +90,7 @@ static struct {
 
 /* Shaders */
 extern char datatoc_common_hair_lib_glsl[];
+extern char datatoc_common_world_clip_lib_glsl[];
 
 extern char datatoc_workbench_prepass_vert_glsl[];
 extern char datatoc_workbench_prepass_frag_glsl[];
@@ -159,12 +160,15 @@ static char *workbench_build_prepass_vert(bool is_hair)
 {
 	char *str = NULL;
 	if (!is_hair) {
-		return BLI_strdup(datatoc_workbench_prepass_vert_glsl);
+		return BLI_string_joinN(
+		        datatoc_common_world_clip_lib_glsl,
+		        datatoc_workbench_prepass_vert_glsl);
 	}
 
 	DynStr *ds = BLI_dynstr_new();
 
 	BLI_dynstr_append(ds, datatoc_common_hair_lib_glsl);
+	BLI_dynstr_append(ds, datatoc_common_world_clip_lib_glsl);
 	BLI_dynstr_append(ds, datatoc_workbench_prepass_vert_glsl);
 
 	str = BLI_dynstr_get_cstring(ds);
@@ -336,6 +340,9 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 	WORKBENCH_PassList *psl = vedata->psl;
 	DefaultTextureList *dtxl = DRW_viewport_texture_list_get();
 	const DRWContextState *draw_ctx = DRW_context_state_get();
+	RegionView3D *rv3d = draw_ctx->rv3d;
+	View3D *v3d = draw_ctx->v3d;
+	Object *camera = (rv3d->persp == RV3D_CAMOB) ? v3d->camera : NULL;
 
 	if (!stl->g_data) {
 		/* Alloc transient pointers */
@@ -399,12 +406,14 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 	WORKBENCH_PrivateData *wpd = stl->g_data;
 	workbench_private_data_init(wpd);
 
+	workbench_dof_engine_init(vedata, camera);
+
 	{
 		const float *viewport_size = DRW_viewport_size_get();
 		const int size[2] = {(int)viewport_size[0], (int)viewport_size[1]};
-		const GPUTextureFormat nor_tex_format = NORMAL_ENCODING_ENABLED() ? GPU_RG16 : GPU_RGBA32F;
-		const GPUTextureFormat comp_tex_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_R11F_G11F_B10F;
-		const GPUTextureFormat id_tex_format = OBJECT_ID_PASS_ENABLED(wpd) ? GPU_R32UI : GPU_R8;
+		const eGPUTextureFormat nor_tex_format = NORMAL_ENCODING_ENABLED() ? GPU_RG16 : GPU_RGBA32F;
+		const eGPUTextureFormat comp_tex_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_R11F_G11F_B10F;
+		const eGPUTextureFormat id_tex_format = OBJECT_ID_PASS_ENABLED(wpd) ? GPU_R32UI : GPU_R8;
 
 		e_data.object_id_tx = NULL;
 		e_data.color_buffer_tx = NULL;
@@ -441,7 +450,7 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 			GPU_ATTACHMENT_TEXTURE(dtxl->depth),
 			GPU_ATTACHMENT_TEXTURE(e_data.composite_buffer_tx),
 		});
-		GPU_framebuffer_ensure_config(&fbl->volume_fb, {
+		GPU_framebuffer_ensure_config(&fbl->color_only_fb, {
 			GPU_ATTACHMENT_NONE,
 			GPU_ATTACHMENT_TEXTURE(e_data.composite_buffer_tx),
 		});
@@ -505,6 +514,10 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 
 	{
 		workbench_aa_create_pass(vedata, &e_data.color_buffer_tx);
+	}
+
+	{
+		workbench_dof_create_pass(vedata, &e_data.composite_buffer_tx);
 	}
 
 	if (CAVITY_ENABLED(wpd)) {
@@ -576,6 +589,7 @@ void workbench_deferred_engine_free(void)
 	workbench_volume_engine_free();
 	workbench_fxaa_engine_free();
 	workbench_taa_engine_free();
+	workbench_dof_engine_free();
 }
 
 static void workbench_composite_uniforms(WORKBENCH_PrivateData *wpd, DRWShadingGroup *grp)
@@ -633,6 +647,14 @@ void workbench_deferred_cache_init(WORKBENCH_Data *vedata)
 			DRW_shgroup_uniform_texture_ref(grp, "objectId", &e_data.object_id_tx);
 		}
 		DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
+
+		if (draw_ctx->rv3d && (draw_ctx->rv3d->rflag & RV3D_CLIPPING) && draw_ctx->rv3d->clipbb) {
+			GPUShader *shader = GPU_shader_get_builtin_shader(GPU_SHADER_3D_UNIFORM_COLOR_BACKGROUND);
+			grp = DRW_shgroup_create(shader, psl->background_pass);
+			wpd->world_clip_planes_batch = DRW_draw_background_clipping_batch_from_rv3d(draw_ctx->rv3d);
+			DRW_shgroup_call_add(grp, wpd->world_clip_planes_batch, NULL);
+			DRW_shgroup_uniform_vec4(grp, "color", &wpd->world_clip_planes_color[0], 1);
+		}
 	}
 
 	/* Deferred Mix Pass */
@@ -738,7 +760,11 @@ static WORKBENCH_MaterialData *get_or_create_material_data(
 		DRW_shgroup_stencil_mask(material->shgrp, (ob->dtx & OB_DRAWXRAY) ? 0x00 : 0xFF);
 		DRW_shgroup_uniform_int(material->shgrp, "object_id", &material->object_id, 1);
 		workbench_material_shgroup_uniform(wpd, material->shgrp, material, ob, true, true, interp);
-
+		if (wpd->world_clip_planes) {
+			const DRWContextState *draw_ctx = DRW_context_state_get();
+			RegionView3D *rv3d = draw_ctx->rv3d;
+			DRW_shgroup_world_clip_planes_from_rv3d(material->shgrp, rv3d);
+		}
 		BLI_ghash_insert(wpd->material_hash, POINTER_FROM_UINT(hash), material);
 	}
 	return material;
@@ -794,8 +820,9 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	Scene *scene = draw_ctx->scene;
 
-	if (!DRW_object_is_renderable(ob))
+	if (!DRW_object_is_renderable(ob)) {
 		return;
+	}
 
 	if (ob->type == OB_MESH) {
 		workbench_cache_populate_particles(vedata, ob);
@@ -1069,10 +1096,11 @@ void workbench_deferred_draw_scene(WORKBENCH_Data *vedata)
 	DRW_draw_pass(psl->background_pass);
 
 	if (wpd->volumes_do) {
-		GPU_framebuffer_bind(fbl->volume_fb);
+		GPU_framebuffer_bind(fbl->color_only_fb);
 		DRW_draw_pass(psl->volume_pass);
 	}
 
+	workbench_dof_draw_pass(vedata);
 	workbench_aa_draw_pass(vedata, e_data.composite_buffer_tx);
 }
 
@@ -1081,6 +1109,7 @@ void workbench_deferred_draw_finish(WORKBENCH_Data *vedata)
 	WORKBENCH_StorageList *stl = vedata->stl;
 	WORKBENCH_PrivateData *wpd = stl->g_data;
 
+	/* XXX TODO(fclem) do not discard UBOS after drawing! Store them per viewport. */
 	workbench_private_data_free(wpd);
 	workbench_volume_smoke_textures_free(wpd);
 }

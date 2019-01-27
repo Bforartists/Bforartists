@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -171,7 +174,7 @@ DRWPass *workbench_taa_create_pass(WORKBENCH_Data *vedata, GPUTexture **color_bu
 	int previous_jitter_index = effect_info->jitter_index;
 
 	{
-		const GPUTextureFormat hist_buffer_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_RGBA8;
+		const eGPUTextureFormat hist_buffer_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_RGBA8;
 		DRW_texture_ensure_fullscreen_2D(&txl->history_buffer_tx, hist_buffer_format, 0);
 		DRW_texture_ensure_fullscreen_2D(&txl->depth_buffer_tx, GPU_DEPTH24_STENCIL8, 0);
 	}

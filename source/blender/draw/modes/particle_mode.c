@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -23,34 +26,24 @@
  *  \ingroup draw
  */
 
-#include "DRW_engine.h"
 #include "DRW_render.h"
 
-#include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
 #include "DNA_particle_types.h"
 
-#include "BKE_particle.h"
 #include "BKE_pointcache.h"
 
 #include "GPU_shader.h"
-#include "GPU_batch.h"
 
 #include "draw_common.h"
-
-#include "draw_mode_engines.h"
 
 #include "ED_particle.h"
 
 #include "DEG_depsgraph_query.h"
 
-#include "draw_cache_impl.h"
-
 extern char datatoc_particle_strand_vert_glsl[];
 extern char datatoc_particle_strand_frag_glsl[];
 extern char datatoc_common_globals_lib_glsl[];
-
-extern struct GPUUniformBuffer *globals_ubo; /* draw_common.c */
 
 /* *********** LISTS *********** */
 
@@ -147,9 +140,9 @@ static void particle_cache_init(void *vedata)
 	stl->g_data->inner_points_group = DRW_shgroup_create(e_data.points_shader, psl->psys_edit_pass);
 	stl->g_data->tip_points_group = DRW_shgroup_create(e_data.points_shader, psl->psys_edit_pass);
 
-	DRW_shgroup_uniform_block(stl->g_data->strands_group, "globalsBlock", globals_ubo);
-	DRW_shgroup_uniform_block(stl->g_data->inner_points_group, "globalsBlock", globals_ubo);
-	DRW_shgroup_uniform_block(stl->g_data->tip_points_group, "globalsBlock", globals_ubo);
+	DRW_shgroup_uniform_block(stl->g_data->strands_group, "globalsBlock", G_draw.block_ubo);
+	DRW_shgroup_uniform_block(stl->g_data->inner_points_group, "globalsBlock", G_draw.block_ubo);
+	DRW_shgroup_uniform_block(stl->g_data->tip_points_group, "globalsBlock", G_draw.block_ubo);
 }
 
 static void particle_edit_cache_populate(void *vedata,

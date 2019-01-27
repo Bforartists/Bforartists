@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -41,7 +44,7 @@
 #define WORKBENCH_ENGINE "BLENDER_WORKBENCH"
 #define M_GOLDEN_RATION_CONJUGATE 0.618033988749895
 #define MAX_COMPOSITE_SHADERS (1 << 6)
-#define MAX_PREPASS_SHADERS (1 << 6)
+#define MAX_PREPASS_SHADERS (1 << 7)
 #define MAX_ACCUM_SHADERS (1 << 4)
 #define MAX_CAVITY_SHADERS (1 << 3)
 
@@ -89,7 +92,14 @@ typedef struct WORKBENCH_FramebufferList {
 	struct GPUFrameBuffer *effect_fb;
 	struct GPUFrameBuffer *effect_taa_fb;
 	struct GPUFrameBuffer *depth_buffer_fb;
-	struct GPUFrameBuffer *volume_fb;
+	struct GPUFrameBuffer *color_only_fb;
+
+	struct GPUFrameBuffer *dof_downsample_fb;
+	struct GPUFrameBuffer *dof_coc_tile_h_fb;
+	struct GPUFrameBuffer *dof_coc_tile_v_fb;
+	struct GPUFrameBuffer *dof_coc_dilate_fb;
+	struct GPUFrameBuffer *dof_blur1_fb;
+	struct GPUFrameBuffer *dof_blur2_fb;
 
 	/* Forward render buffers */
 	struct GPUFrameBuffer *object_outline_fb;
@@ -105,6 +115,7 @@ typedef struct WORKBENCH_TextureList {
 typedef struct WORKBENCH_StorageList {
 	struct WORKBENCH_PrivateData *g_data;
 	struct WORKBENCH_EffectInfo *effects;
+	float *dof_ubo_data;
 } WORKBENCH_StorageList;
 
 typedef struct WORKBENCH_PassList {
@@ -123,8 +134,17 @@ typedef struct WORKBENCH_PassList {
 	struct DRWPass *composite_pass;
 	struct DRWPass *composite_shadow_pass;
 	struct DRWPass *background_pass;
+	struct DRWPass *background_pass_clip;
 	struct DRWPass *ghost_resolve_pass;
 	struct DRWPass *effect_aa_pass;
+	struct DRWPass *dof_down_ps;
+	struct DRWPass *dof_flatten_v_ps;
+	struct DRWPass *dof_flatten_h_ps;
+	struct DRWPass *dof_dilate_h_ps;
+	struct DRWPass *dof_dilate_v_ps;
+	struct DRWPass *dof_blur1_ps;
+	struct DRWPass *dof_blur2_ps;
+	struct DRWPass *dof_resolve_ps;
 	struct DRWPass *volume_pass;
 
 	/* forward rendering */
@@ -200,6 +220,10 @@ typedef struct WORKBENCH_PrivateData {
 	bool shadow_changed;
 	bool is_playback;
 
+	float (*world_clip_planes)[4];
+	struct GPUBatch *world_clip_planes_batch;
+	float world_clip_planes_color[4];
+
 	/* Volumes */
 	bool volumes_do;
 	ListBase smoke_domains;
@@ -209,6 +233,22 @@ typedef struct WORKBENCH_PrivateData {
 	float viewvecs[3][4];
 	float ssao_params[4];
 	float ssao_settings[4];
+
+	/* Dof */
+	struct GPUTexture *half_res_col_tx;
+	struct GPUTexture *dof_blur_tx;
+	struct GPUTexture *coc_halfres_tx;
+	struct GPUTexture *coc_temp_tx;
+	struct GPUTexture *coc_tiles_tx[2];
+	struct GPUUniformBuffer *dof_ubo;
+	float dof_aperturesize;
+	float dof_distance;
+	float dof_invsensorsize;
+	float dof_near_far[2];
+	float dof_blades;
+	float dof_rotation;
+	float dof_ratio;
+	bool dof_enabled;
 
 	/* Color Management */
 	bool use_color_view_settings;
@@ -293,6 +333,12 @@ void workbench_taa_draw_scene_start(WORKBENCH_Data *vedata);
 void workbench_taa_draw_scene_end(WORKBENCH_Data *vedata);
 void workbench_taa_view_updated(WORKBENCH_Data *vedata);
 int workbench_taa_calculate_num_iterations(WORKBENCH_Data *vedata);
+
+/* workbench_effect_dof.c */
+void workbench_dof_engine_init(WORKBENCH_Data *vedata, Object *camera);
+void workbench_dof_engine_free(void);
+void workbench_dof_create_pass(WORKBENCH_Data *vedata, GPUTexture **dof_input);
+void workbench_dof_draw_pass(WORKBENCH_Data *vedata);
 
 /* workbench_materials.c */
 int workbench_material_determine_color_type(WORKBENCH_PrivateData *wpd, Image *ima, Object *ob);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, Blender Foundation.
+ * ***** BEGIN GPL LICENSE BLOCK *****
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * Copyright 2016, Blender Foundation.
  * Contributor(s): Blender Institute
+ *
+ * ***** END GPL LICENSE BLOCK *****
  *
  */
 
@@ -33,7 +36,6 @@
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
 
-#include "BKE_camera.h"
 #include "BKE_object.h"
 
 #include "BLI_rand.h"
@@ -42,7 +44,6 @@
 #include "DEG_depsgraph_query.h"
 
 #include "GPU_framebuffer.h"
-#include "GPU_glew.h"
 #include "GPU_state.h"
 
 #include "RE_pipeline.h"
@@ -285,8 +286,9 @@ static void eevee_render_result_normal(
 	EEVEE_PrivateData *g_data = stl->g_data;
 
 	/* Only read the center texel. */
-	if (stl->effects->taa_current_sample > 1)
+	if (stl->effects->taa_current_sample > 1) {
 		return;
+	}
 
 	if ((view_layer->passflag & SCE_PASS_NORMAL) != 0) {
 		RenderPass *rp = RE_pass_find_by_name(rl, RE_PASSNAME_NORMAL, viewname);
@@ -333,8 +335,9 @@ static void eevee_render_result_z(
 	EEVEE_PrivateData *g_data = stl->g_data;
 
 	/* Only read the center texel. */
-	if (stl->effects->taa_current_sample > 1)
+	if (stl->effects->taa_current_sample > 1) {
 		return;
+	}
 
 	if ((view_layer->passflag & SCE_PASS_Z) != 0) {
 		RenderPass *rp = RE_pass_find_by_name(rl, RE_PASSNAME_Z, viewname);

@@ -28,11 +28,9 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
-#include "BLI_threads.h"
 #include "BLI_utildefines.h"
 #include "BLI_math_base.h"
 
-#include "BKE_global.h"
 
 #include "GPU_batch.h"
 #include "GPU_draw.h"
@@ -108,7 +106,7 @@ static GPUAttachmentType attachment_type_from_tex(GPUTexture *tex, int slot)
 	}
 }
 
-static GLenum convert_buffer_bits_to_gl(GPUFrameBufferBits bits)
+static GLenum convert_buffer_bits_to_gl(eGPUFrameBufferBits bits)
 {
 	GLbitfield mask = 0;
 	mask |= (bits & GPU_DEPTH_BIT) ? GL_DEPTH_BUFFER_BIT : 0;
@@ -576,7 +574,7 @@ void GPU_framebuffer_viewport_set(GPUFrameBuffer *fb, int x, int y, int w, int h
 }
 
 void GPU_framebuffer_clear(
-        GPUFrameBuffer *fb, GPUFrameBufferBits buffers,
+        GPUFrameBuffer *fb, eGPUFrameBufferBits buffers,
         const float clear_col[4], float clear_depth, uint clear_stencil)
 {
 	CHECK_FRAMEBUFFER_IS_BOUND(fb);
@@ -630,7 +628,7 @@ void GPU_framebuffer_read_color(
 void GPU_framebuffer_blit(
         GPUFrameBuffer *fb_read, int read_slot,
         GPUFrameBuffer *fb_write, int write_slot,
-        GPUFrameBufferBits blit_buffers)
+        eGPUFrameBufferBits blit_buffers)
 {
 	BLI_assert(blit_buffers != 0);
 
@@ -791,6 +789,11 @@ GPUOffScreen *GPU_offscreen_create(int width, int height, int samples, bool dept
 	GPUOffScreen *ofs;
 
 	ofs = MEM_callocN(sizeof(GPUOffScreen), "GPUOffScreen");
+
+	/* Sometimes areas can have 0 height or width and this will
+	 * create a 1D texture which we don't want. */
+	height = max_ii(1, height);
+	width  = max_ii(1, width);
 
 	ofs->color = GPU_texture_create_2D_multisample(
 	        width, height,
@@ -967,7 +970,7 @@ void GPU_clear_color(float red, float green, float blue, float alpha)
 	glClearColor(red, green, blue, alpha);
 }
 
-void GPU_clear(GPUFrameBufferBits flags)
+void GPU_clear(eGPUFrameBufferBits flags)
 {
 	glClear(convert_buffer_bits_to_gl(flags));
 }

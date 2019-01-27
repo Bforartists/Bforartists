@@ -46,7 +46,6 @@
 #include "BLI_math.h"
 #include "BLI_lasso_2d.h"
 #include "BLI_listbase.h"
-#include "BLI_string.h"
 #include "BLI_kdtree.h"
 #include "BLI_rand.h"
 #include "BLI_task.h"
@@ -67,7 +66,6 @@
 
 #include "DEG_depsgraph.h"
 
-#include "BIF_gl.h"
 
 #include "ED_object.h"
 #include "ED_physics.h"
@@ -1325,25 +1323,26 @@ void recalc_emitter_field(Depsgraph *UNUSED(depsgraph), Object *UNUSED(ob), Part
 
 		mvert = &mesh->mvert[mface->v1];
 		copy_v3_v3(vec, mvert->co);
-		VECCOPY(nor, mvert->no);
+		copy_v3fl_v3s(nor, mvert->no);
 
 		mvert = &mesh->mvert[mface->v2];
 		add_v3_v3v3(vec, vec, mvert->co);
-		VECADD(nor, nor, mvert->no);
+		add_v3fl_v3fl_v3s(nor, nor, mvert->no);
 
 		mvert = &mesh->mvert[mface->v3];
 		add_v3_v3v3(vec, vec, mvert->co);
-		VECADD(nor, nor, mvert->no);
+		add_v3fl_v3fl_v3s(nor, nor, mvert->no);
 
 		if (mface->v4) {
 			mvert = &mesh->mvert[mface->v4];
 			add_v3_v3v3(vec, vec, mvert->co);
-			VECADD(nor, nor, mvert->no);
+			add_v3fl_v3fl_v3s(nor, nor, mvert->no);
 
 			mul_v3_fl(vec, 0.25);
 		}
-		else
+		else {
 			mul_v3_fl(vec, 1.0f / 3.0f);
+		}
 
 		normalize_v3(nor);
 
@@ -4360,7 +4359,7 @@ static void brush_edit_apply_event(bContext *C, wmOperator *op, const wmEvent *e
 	PointerRNA itemptr;
 	float mouse[2];
 
-	VECCOPY2D(mouse, event->mval);
+	copy_v2fl_v2i(mouse, event->mval);
 
 	/* fill in stroke */
 	RNA_collection_add(op->ptr, "stroke", &itemptr);

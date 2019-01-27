@@ -64,7 +64,7 @@ static int bpygpu_ParseBultinShaderEnum(PyObject *o, void *p)
 		} \
 	} ((void)0)
 
-	GPUBuiltinShader mode;
+	eGPUBuiltinShader mode;
 	MATCH_ID(2D_UNIFORM_COLOR);
 	MATCH_ID(2D_FLAT_COLOR);
 	MATCH_ID(2D_SMOOTH_COLOR);
@@ -80,7 +80,7 @@ static int bpygpu_ParseBultinShaderEnum(PyObject *o, void *p)
 	return 0;
 
 success:
-	(*(GPUBuiltinShader *)p) = mode;
+	(*(eGPUBuiltinShader *)p) = mode;
 	return 1;
 }
 
@@ -99,7 +99,6 @@ static int bpygpu_uniform_location_get(GPUShader *shader, const char *name, cons
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Shader Type
  * \{ */
 
@@ -682,7 +681,6 @@ PyTypeObject BPyGPUShader_Type = {
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name gpu.shader Module API
  * \{ */
 
@@ -720,7 +718,7 @@ static PyObject *bpygpu_shader_from_builtin(PyObject *UNUSED(self), PyObject *ar
 {
 	BPYGPU_IS_INIT_OR_ERROR_OBJ;
 
-	GPUBuiltinShader shader_id;
+	eGPUBuiltinShader shader_id;
 
 	if (!bpygpu_ParseBultinShaderEnum(arg, &shader_id)) {
 		return NULL;
@@ -750,7 +748,7 @@ PyDoc_STRVAR(bpygpu_shader_code_from_builtin_doc,
 );
 static PyObject *bpygpu_shader_code_from_builtin(BPyGPUShader *UNUSED(self), PyObject *arg)
 {
-	GPUBuiltinShader shader_id;
+	eGPUBuiltinShader shader_id;
 
 	const char *vert;
 	const char *frag;
@@ -812,7 +810,6 @@ static PyModuleDef BPyGPU_shader_module_def = {
 
 
 /* -------------------------------------------------------------------- */
-
 /** \name Public API
  * \{ */
 
