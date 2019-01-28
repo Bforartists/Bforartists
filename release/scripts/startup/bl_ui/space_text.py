@@ -116,8 +116,6 @@ class TEXT_MT_editor_menus(Menu):
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
 
-        layout.menu("TEXT_MT_templates")
-
 
 class TEXT_PT_properties(Panel):
     bl_space_type = 'TEXT_EDITOR'
@@ -238,6 +236,10 @@ class TEXT_MT_text(Menu):
 
             layout.column()
             layout.operator("text.run_script")
+
+        layout.separator()
+
+        layout.menu("TEXT_MT_templates")
             
         layout.separator()
         
