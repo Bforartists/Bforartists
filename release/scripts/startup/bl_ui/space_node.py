@@ -268,7 +268,16 @@ class NODE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("node.find_node", icon='VIEWZOOM') 
+        layout.operator("node.find_node", icon='VIEWZOOM')
+
+class NODE_MT_node_group_separate(Menu):
+    bl_label = "Separate"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("node.group_separate", text = "Copy", icon = "SEPARATE").type = 'COPY'
+        layout.operator("node.group_separate", text = "Move", icon = "SEPARATE").type = 'MOVE'
 
 
 class NODE_MT_node(Menu):
@@ -305,6 +314,7 @@ class NODE_MT_node(Menu):
         layout.operator("node.links_cut", icon = "CUT_LINKS")
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
         layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
+        layout.operator("node.parent_set", icon = "PARENT_SET")
 
         layout.separator()
 
@@ -313,6 +323,7 @@ class NODE_MT_node(Menu):
         layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
         layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
         layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
+        layout.menu("NODE_MT_node_group_separate")
 
         layout.separator()
 
@@ -326,6 +337,7 @@ class NODE_MT_node(Menu):
         layout.separator()
 
         layout.operator("node.read_viewlayers", icon = "RENDERLAYERS")
+        layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
 class NODE_PT_node_color_presets(PresetMenu):
@@ -645,6 +657,7 @@ classes = (
     NODE_MT_add,
     NODE_MT_view,
     NODE_MT_select,
+    NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_PT_node_color_presets,
     NODE_MT_node_color_specials,
