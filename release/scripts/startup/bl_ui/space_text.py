@@ -109,9 +109,9 @@ class TEXT_MT_editor_menus(Menu):
         st = context.space_data
         text = st.text
 
-        layout.menu("TEXT_MT_view")
         layout.menu("TEXT_MT_text")
-
+        layout.menu("TEXT_MT_view")
+        
         if text:
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
@@ -213,7 +213,7 @@ class TEXT_MT_redraw_timer(Menu):
 
 
 class TEXT_MT_text(Menu):
-    bl_label = "Text"
+    bl_label = "File"
 
     def draw(self, context):
         layout = self.layout
@@ -235,7 +235,7 @@ class TEXT_MT_text(Menu):
                 layout.operator("text.make_internal")
 
             layout.column()
-            layout.operator("text.run_script")
+            layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
 
