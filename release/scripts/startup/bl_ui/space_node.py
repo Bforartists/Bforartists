@@ -309,6 +309,7 @@ class NODE_MT_node(Menu):
         layout.separator()
 
         layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
+        layout.operator("node.group_edit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP").exit = True
         layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
         layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
         layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
