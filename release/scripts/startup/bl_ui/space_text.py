@@ -131,9 +131,6 @@ class TEXT_PT_properties(Panel):
         st = context.space_data
 
         flow = layout.column_flow()
-        flow.prop(st, "show_line_numbers")
-        flow.prop(st, "show_word_wrap")
-        flow.prop(st, "show_syntax_highlight")
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
 
