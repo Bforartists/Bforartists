@@ -1260,6 +1260,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
         layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
 
         layout.separator()
