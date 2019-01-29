@@ -870,9 +870,6 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub = col.column()
         sub.active = (brush and brush.sculpt_tool != 'MASK')
         
-        if (sculpt.detail_type_method == 'CONSTANT'):
-            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
-        
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
@@ -885,8 +882,6 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
         col.prop(sculpt, "use_smooth_shading")
-        
-        
 
 
 class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
@@ -912,12 +907,12 @@ class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column()
-        col.operator("sculpt.symmetrize")
+        col.operator("sculpt.symmetrize", icon = "SYMMETRIZE")
         col = flow.column()
-        col.operator("sculpt.optimize")
+        col.operator("sculpt.optimize", icon = "OPTIMIZE")
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             col = flow.column()
-            col.operator("sculpt.detail_flood_fill")
+            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
 
 # TODO, move to space_view3d.py
 
