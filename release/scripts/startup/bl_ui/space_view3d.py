@@ -2614,6 +2614,20 @@ class VIEW3D_MT_paint_weight(Menu):
         self.draw_generic(self.layout, is_editmode=False)
 
 
+class VIEW3D_MT_subdivision_set(Menu):
+    bl_label = "Subdivide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 0
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 1
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 2
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 3
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 4
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 5
+
+
 class VIEW3D_MT_sculpt(Menu):
     bl_label = "Sculpt"
 
@@ -2622,6 +2636,8 @@ class VIEW3D_MT_sculpt(Menu):
 
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
+
+        layout.menu("VIEW3D_MT_subdivision_set")
 
         layout.prop(sculpt, "use_symmetry_x")
         layout.prop(sculpt, "use_symmetry_y")
@@ -6249,6 +6265,7 @@ classes = (
     VIEW3D_MT_hook,
     VIEW3D_MT_vertex_group,
     VIEW3D_MT_paint_weight,
+    VIEW3D_MT_subdivision_set,
     VIEW3D_MT_sculpt,
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
