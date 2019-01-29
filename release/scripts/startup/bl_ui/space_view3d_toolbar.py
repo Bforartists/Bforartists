@@ -861,12 +861,18 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sculpt = tool_settings.sculpt
         settings = self.paint_settings(context)
         brush = settings.brush
+        
+        layout.operator("sculpt.set_detail_size", text="Set detail size    ", icon = "BRUSHSIZE")
 
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
 
         sub = col.column()
         sub.active = (brush and brush.sculpt_tool != 'MASK')
+        
+        if (sculpt.detail_type_method == 'CONSTANT'):
+            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
+        
         if sculpt.detail_type_method in {'CONSTANT', 'MANUAL'}:
             row = sub.row(align=True)
             row.prop(sculpt, "constant_detail_resolution")
@@ -879,6 +885,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
         col.prop(sculpt, "use_smooth_shading")
+        
+        
 
 
 class VIEW3D_PT_sculpt_dyntopo_remesh(Panel, View3DPaintPanel):
