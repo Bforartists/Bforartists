@@ -1060,7 +1060,8 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_linked", text = "Linked", icon = "LINKED")
+        layout.operator("particle.select_linked", text="Linked", icon = "LINKED").deselect = False
+        layout.operator("particle.select_linked", text="Deselect Linked", icon = "LINKED").deselect = True
 
         layout.separator()
 
