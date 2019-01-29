@@ -188,6 +188,9 @@ class GRAPH_MT_select(Menu):
         props = layout.operator("graph.select_box", text="Border (Include Handles)", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = True
+        props = layout.operator("graph.select_box", text="Border (Axis + Handles)", icon='BORDER_RECT')
+        props.axis_range = True
+        props.include_handles = True
 
         layout.operator("graph.select_circle", icon = 'CIRCLE_SELECT')
 
@@ -198,6 +201,10 @@ class GRAPH_MT_select(Menu):
 
         layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
         layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
+
+        layout.separator()
+
+        layout.operator("graph.select_linked", text = "Linked", icon = "CONNECTED")  
 
         layout.separator()
         
@@ -212,10 +219,6 @@ class GRAPH_MT_select(Menu):
 
         layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
         layout.operator("graph.select_less",text = "Less", icon = "SELECTLESS")
-
-        layout.separator()
-
-        layout.operator("graph.select_linked", text = "Linked", icon = "CONNECTED")  
 
 
 class GRAPH_MT_marker(Menu):
