@@ -257,6 +257,10 @@ class MASK_PT_transforms:
         col.operator("transform.resize", text="Scale")
         col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
 
+        layout.separator()
+
+        col.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
+
 
 class MASK_MT_add(Menu):
     bl_label = "Add"
@@ -278,21 +282,24 @@ class MASK_MT_mask(Menu):
         layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
 
         layout.separator()
+
         layout.operator("mask.cyclic_toggle")
         layout.operator("mask.switch_direction")
         layout.operator("mask.normals_make_consistent")
         layout.operator("mask.handle_type_set")
-        layout.operator("mask.feather_weight_clear")  # TODO, better place?
 
         layout.separator()
+
         layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
         layout.operator("mask.parent_set", icon = "PARENT_SET")
 
         layout.separator()
+
         layout.operator("mask.copy_splines", icon = "COPYDOWN")
         layout.operator("mask.paste_splines", icon = "PASTEDOWN")
 
         layout.separator()
+
         layout.menu("MASK_MT_visibility")
         layout.menu("MASK_MT_transform")
         layout.menu("MASK_MT_animation")
@@ -318,6 +325,10 @@ class MASK_MT_transform(Menu):
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
         layout.operator("transform.transform", text="Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
+
+        layout.separator()
+
+        layout.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
 
 
 class MASK_MT_animation(Menu):
