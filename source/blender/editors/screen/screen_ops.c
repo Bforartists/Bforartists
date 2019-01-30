@@ -4021,8 +4021,6 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 		(sa->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toggle_editortypemenu");
 
-	uiItemS(layout);
-
 	/* file browser should be fullscreen all the time, topbar should
 	 * never be. But other regions can be maximized/restored... */
 	if (!ELEM(sa->spacetype, SPACE_FILE, SPACE_TOPBAR)) {
