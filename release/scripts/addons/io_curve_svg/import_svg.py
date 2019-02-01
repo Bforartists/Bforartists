@@ -52,7 +52,7 @@ def srgb_to_linearrgb(c):
         return pow((c + 0.055) * (1.0 / 1.055), 2.4)
 
 def check_points_equal(point_a, point_b):
-    return (abs(point_a[0] - point_b[0]) < 1e-6 and 
+    return (abs(point_a[0] - point_b[0]) < 1e-6 and
             abs(point_a[1] - point_b[1]) < 1e-6)
 
 
@@ -308,7 +308,7 @@ def SVGGetMaterial(color, context):
         diffuse_color[2] = srgb_to_linearrgb(diffuse_color[2])
 
     mat = bpy.data.materials.new(name='SVGMat')
-    mat.diffuse_color = diffuse_color
+    mat.diffuse_color = (*diffuse_color, 1.0)
 
     materials[color] = mat
 

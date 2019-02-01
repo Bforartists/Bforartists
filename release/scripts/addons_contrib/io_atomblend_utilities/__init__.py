@@ -159,19 +159,19 @@ class PanelProperties(bpy.types.PropertyGroup):
                                               None,
                                               None)
 
-    datafile = StringProperty(
+    datafile: StringProperty(
         name = "", description="Path to your custom data file",
         maxlen = 256, default = "", subtype='FILE_PATH')
-    XYZ_file = StringProperty(
+    XYZ_file: StringProperty(
         name = "Path to file", default="",
         description = "Path of the XYZ file")
-    number_atoms = StringProperty(name="",
+    number_atoms: StringProperty(name="",
         default="Number", description = "This output shows "
         "the number of atoms which have been loaded")
-    distance = StringProperty(
+    distance: StringProperty(
         name="", default="Distance (A)",
         description="Distance of 2 objects in Angstrom")
-    replace_objs = EnumProperty(
+    replace_objs: EnumProperty(
         name="Shape",
         description="Choose a different atom shape.",
         items=(('0',"Unchanged", "Do not change the shape"),
@@ -192,7 +192,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('8a',"Torus (Mesh)", "Replace with a torus (Mesh)"),
                ('8b',"Torus (NURBS)", "Replace with a torus (NURBS)")),
                default='0',)
-    replace_objs_material = EnumProperty(
+    replace_objs_material: EnumProperty(
         name="Material",
         description="Choose a different material.",
         items=(('0',"Unchanged", "Leave the material unchanged"),
@@ -201,7 +201,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('3',"Reflecting", "Use reflecting material"),
                ('4',"Transparent + reflecting", "Use transparent and reflecting material")),
                default='0',)
-    replace_objs_special = EnumProperty(
+    replace_objs_special: EnumProperty(
         name="Special",
         description="Choose a special atom shape.",
         items=(('0',"None", "Use no special shape."),
@@ -210,14 +210,14 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('3',"F+ center", "Replace with a F+ center"),
                ('4',"F0 center", "Replace with a F0 center")),
                default='0',)
-    action_type = EnumProperty(
+    action_type: EnumProperty(
         name="",
         description="Which objects shall be modified?",
         items=(('ALL_ACTIVE',"all active objects", "in the current layer"),
                ('ALL_IN_LAYER',"all in all selected layers",
                 "in selected layer(s)")),
                default='ALL_ACTIVE',)
-    radius_type = EnumProperty(
+    radius_type: EnumProperty(
         name="Type",
         description="Which type of atom radii?",
         items=(('0',"predefined", "Use pre-defined radii"),
@@ -225,7 +225,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('2',"van der Waals","Use van der Waals radii"),
                ('3',"ionic radii", "Use ionic radii")),
                default='0',update=Callback_radius_type)
-    radius_type_ionic = EnumProperty(
+    radius_type_ionic: EnumProperty(
         name="Charge",
         description="Charge state of the ions if existing.",
         items=(('0',"-4", "Charge state -4"),
@@ -241,17 +241,17 @@ class PanelProperties(bpy.types.PropertyGroup):
                ('10',"+6", "Charge state +6"),
                ('11',"+7", "Charge state +7")),
                default='4',update=Callback_radius_type)
-    radius_pm_name = StringProperty(
+    radius_pm_name: StringProperty(
         name="", default="Atom name",
         description="Put in the name of the atom (e.g. Hydrogen)")
-    radius_pm = FloatProperty(
+    radius_pm: FloatProperty(
         name="", default=100.0, min=0.0,
         description="Put in the radius of the atom (in pm)",
         update=Callback_radius_pm)
-    radius_all = FloatProperty(
+    radius_all: FloatProperty(
         name="Scale", default = 1.05, min=1.0, max=5.0,
         description="Put in the scale factor")
-    sticks_all = FloatProperty(
+    sticks_all: FloatProperty(
         name="Scale", default = 1.05, min=1.0, max=5.0,
         description="Put in the scale factor")
 

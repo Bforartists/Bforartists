@@ -28,12 +28,13 @@ import bpy
 import os
 
 
-def save_mesh(filepath,
-              mesh,
-              use_normals=True,
-              use_uv_coords=True,
-              use_colors=True,
-              ):
+def save_mesh(
+        filepath,
+        mesh,
+        use_normals=True,
+        use_uv_coords=True,
+        use_colors=True,
+):
 
     def rvec3d(v):
         return round(v[0], 6), round(v[1], 6), round(v[2], 6)
@@ -112,11 +113,12 @@ def save_mesh(filepath,
 
             if has_vcol:
                 color = col[j]
-                color = (int(color[0] * 255.0),
-                         int(color[1] * 255.0),
-                         int(color[2] * 255.0),
-                         255
-                         )
+                color = (
+                    int(color[0] * 255.0),
+                    int(color[1] * 255.0),
+                    int(color[2] * 255.0),
+                    int(color[3] * 255.0),
+                )
             key = normal_key, uvcoord_key, color
 
             vdict_local = vdict[vidx]
@@ -180,16 +182,16 @@ def save_mesh(filepath,
     return {'FINISHED'}
 
 
-def save(operator,
-         context,
-         filepath="",
-         use_mesh_modifiers=True,
-         use_normals=True,
-         use_uv_coords=True,
-         use_colors=True,
-         global_matrix=None
-         ):
-
+def save(
+        operator,
+        context,
+        filepath="",
+        use_mesh_modifiers=True,
+        use_normals=True,
+        use_uv_coords=True,
+        use_colors=True,
+        global_matrix=None
+):
     obj = context.active_object
 
     if global_matrix is None:

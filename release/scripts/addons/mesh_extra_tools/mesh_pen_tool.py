@@ -258,7 +258,7 @@ def draw_callback_px(self, context):
 
 
 class pen_tool_properties(PropertyGroup):
-    a = FloatProperty(
+    a: FloatProperty(
             name="Alpha",
             description="Set Font Alpha",
             default=1.0,
@@ -266,29 +266,29 @@ class pen_tool_properties(PropertyGroup):
             step=10,
             precision=1
             )
-    fs = IntProperty(
+    fs: IntProperty(
             name="Size",
             description="Set Font Size",
             default=14,
             min=12, max=40,
             step=1
             )
-    b0 = BoolProperty(
+    b0: BoolProperty(
             name="Angles",
             description="Display All Angles on Drawn Edges",
             default=False
             )
-    b1 = BoolProperty(
+    b1: BoolProperty(
             name="Edge Length",
             description="Display All Lengths of Drawn Edges",
             default=False
             )
-    b2 = BoolProperty(
+    b2: BoolProperty(
             name="Mouse Location 3D",
             description="Display the location coordinates of the mouse cursor",
             default=False
             )
-    restore_view = BoolProperty(
+    restore_view: BoolProperty(
             name="Restore View",
             description="After the tool has finished, is the Viewport restored\n"
                         "to it's previous state",
@@ -328,12 +328,12 @@ class pen_tool_panel(Panel):
             layout.label(text="Pen Tool Active", icon="INFO")
         else:
             col = layout.column(align=True)
-            col.label("Font:")
+            col.label(text="Font:")
             col.prop(pen_tool_props, "fs", text="Size", slider=True)
             col.prop(pen_tool_props, "a", text="Alpha", slider=True)
 
             col = layout.column(align=True)
-            col.label("Settings:")
+            col.label(text="Settings:")
             col.prop(pen_tool_props, "b0", text="Angles", toggle=True)
             col.prop(pen_tool_props, "b1", text="Edge Length", toggle=True)
             col.prop(pen_tool_props, "b2", text="Mouse Location 3D", toggle=True)
@@ -351,7 +351,7 @@ class pen_tool_operator(Operator):
     bl_label = "Pen Tool"
     bl_options = {"REGISTER", "UNDO", "INTERNAL"}
 
-    text_location = IntProperty(
+    text_location: IntProperty(
             name="",
             default=0,
             options={'HIDDEN'}

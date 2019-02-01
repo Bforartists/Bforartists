@@ -26,7 +26,7 @@ bl_info = {
     "name": "Display Tools",
     "author": "Jordi Vall-llovera Medina, Jhon Wallace",
     "version": (1, 6, 4),
-    "blender": (2, 7, 0),
+    "blender": (2, 70, 0),
     "location": "Toolshelf",
     "description": "Display tools for fast navigation/interaction with the viewport",
     "warning": "",
@@ -152,7 +152,7 @@ class DisplayToolsPanel(Panel):
 
             if render.use_simplify is True:
                 col = layout.column(align=True)
-                col.label("Settings :")
+                col.label(text="Settings :")
                 col.prop(render, "simplify_subdivision", "Subdivision")
                 col.prop(render, "simplify_shadow_samples", "Shadow Samples")
                 col.prop(render, "simplify_child_particles", "Child Particles")
@@ -227,7 +227,7 @@ class DisplayToolsPanel(Panel):
 
             col = layout.column(align=True)
             col.alignment = 'EXPAND'
-            col.label("Bounding Box:")
+            col.label(text="Bounding Box:")
             row = col.row()
             row.prop(display_tools, "BoundingMode", text="Type")
             row = col.row()
@@ -340,7 +340,7 @@ class DisplayToolsPanel(Panel):
             col.separator()
 
             row = col.row()
-            row.label("Subsurf Visibility:", icon="ALIASED")
+            row.label(text="Subsurf Visibility:", icon="ALIASED")
 
             col = layout.column(align=True)
             row1 = col.row(align=True)
@@ -376,7 +376,7 @@ class DisplayToolsPanel(Panel):
             col.separator()
 
             row = col.row(align=True)
-            row.label("Subdivision Level:", icon="MOD_SUBSURF")
+            row.label(text="Subdivision Level:", icon="MOD_SUBSURF")
 
             row = col.row(align=True)
             row.operator("view3d.modifiers_subsurf_level_set", text="0").level = 0
@@ -442,7 +442,7 @@ class DisplayToolsPanel(Panel):
             col.operator("view3d.fast_navigate_operator", icon="NEXT_KEYFRAME")
             col.operator("view3d.fast_navigate_stop", icon="PANEL_CLOSE")
 
-            layout.label("Settings:")
+            layout.label(text="Settings:")
             layout.prop(display_tools, "OriginalMode")
             layout.prop(display_tools, "FastMode")
             layout.prop(display_tools, "EditActive", "Edit mode")
@@ -459,7 +459,7 @@ class DisplayToolsPanel(Panel):
             col.prop(display_tools, "ParticlesPercentageDisplay")
 
             col = layout.column(align=True)
-            col.label("Screen Active Area:")
+            col.label(text="Screen Active Area:")
             col.prop(display_tools, "ScreenStart")
             col.prop(display_tools, "ScreenEnd")
 
@@ -467,11 +467,11 @@ class DisplayToolsPanel(Panel):
 # define scene props
 class display_tools_scene_props(PropertyGroup):
     # Init delay variables
-    Delay = BoolProperty(
+    Delay: BoolProperty(
             default=False,
             description="Activate delay return to normal viewport mode"
             )
-    DelayTime = IntProperty(
+    DelayTime: IntProperty(
             default=30,
             min=0,
             max=500,
@@ -480,7 +480,7 @@ class display_tools_scene_props(PropertyGroup):
             description="Delay time to return to normal viewport"
                         "mode after move your mouse cursor"
             )
-    DelayTimeGlobal = IntProperty(
+    DelayTimeGlobal: IntProperty(
             default=30,
             min=1,
             max=500,
@@ -490,40 +490,40 @@ class display_tools_scene_props(PropertyGroup):
                         "mode after move your mouse cursor"
             )
     # Init variable for fast navigate
-    EditActive = BoolProperty(
+    EditActive: BoolProperty(
             default=True,
             description="Activate for fast navigate in edit mode too"
             )
     # Init properties for scene
-    FastNavigateStop = BoolProperty(
+    FastNavigateStop: BoolProperty(
             name="Fast Navigate Stop",
             description="Stop fast navigate mode",
             default=False
             )
-    OriginalMode = EnumProperty(
+    OriginalMode: EnumProperty(
             items=[('TEXTURED', 'Texture', 'Texture display mode'),
                    ('SOLID', 'Solid', 'Solid display mode')],
             name="Normal",
             default='SOLID'
             )
-    BoundingMode = EnumProperty(
+    BoundingMode: EnumProperty(
             items=[('BOX', 'Box', 'Box shape'),
                    ('SPHERE', 'Sphere', 'Sphere shape'),
                    ('CYLINDER', 'Cylinder', 'Cylinder shape'),
                    ('CONE', 'Cone', 'Cone shape')],
             name="BB Mode"
             )
-    FastMode = EnumProperty(
+    FastMode: EnumProperty(
             items=[('WIREFRAME', 'Wireframe', 'Wireframe display'),
                    ('BOUNDBOX', 'Bounding Box', 'Bounding Box display')],
             name="Fast"
             )
-    ShowParticles = BoolProperty(
+    ShowParticles: BoolProperty(
             name="Show Particles",
             description="Show or hide particles on fast navigate mode",
             default=True
             )
-    ParticlesPercentageDisplay = IntProperty(
+    ParticlesPercentageDisplay: IntProperty(
             name="Fast Display",
             description="Display only a percentage of particles when active",
             default=25,
@@ -533,7 +533,7 @@ class display_tools_scene_props(PropertyGroup):
             soft_max=100,
             subtype='FACTOR'
             )
-    InitialParticles = IntProperty(
+    InitialParticles: IntProperty(
             name="Normal Display",
             description="When idle, how much particles are displayed\n"
                         "Overrides the Particles settings",
@@ -543,11 +543,11 @@ class display_tools_scene_props(PropertyGroup):
             soft_min=0,
             soft_max=100
             )
-    Symplify = IntProperty(
+    Symplify: IntProperty(
             name="Integer",
             description="Enter an integer"
             )
-    ScreenStart = IntProperty(
+    ScreenStart: IntProperty(
             name="Left Limit",
             default=0,
             min=0,
@@ -556,7 +556,7 @@ class display_tools_scene_props(PropertyGroup):
             description="Limit the screen active area width from the left side\n"
                         "Changed values will take effect on the next run",
             )
-    ScreenEnd = IntProperty(
+    ScreenEnd: IntProperty(
             name="Right Limit",
             default=0,
             min=0,
@@ -572,10 +572,10 @@ class display_tools_scene_props(PropertyGroup):
             default=(False,) * 6,
             size=6,
             )
-    WT_handler_enable = BoolProperty(
+    WT_handler_enable: BoolProperty(
             default=False
             )
-    WT_handler_previous_object = StringProperty(
+    WT_handler_previous_object: StringProperty(
             default=""
             )
 
@@ -608,7 +608,7 @@ class DisplayToolsPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Display",

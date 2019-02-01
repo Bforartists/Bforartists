@@ -246,9 +246,9 @@ class NPPAPrepareContext(bpy.types.Operator):
     def execute(self, context):
         take = NP020PA.take
         place = NP020PA.place
-        take.select = True
-        place.select = True
-        bpy.context.scene.objects.active = place
+        take.select_set(True)
+        place.select_set(True)
+        bpy.context.view_layer.objects.active = place
         bpy.context.tool_settings.use_snap = False
         bpy.context.tool_settings.snap_element = 'VERTEX'
         bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -283,24 +283,24 @@ class NPPARunTranslate(bpy.types.Operator):
         elif event.type in ('LEFTMOUSE','RET','NUMPAD_ENTER') and event.value == 'RELEASE':
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             if flag == 'RUNTRANSZERO':
-                take.select = False
-                place.select = False
+                take.select_set(False)
+                place.select_set(False)
                 NP020PA.ar13d = copy.deepcopy(take.location)
                 NP020PA.ar23d = copy.deepcopy(place.location)
                 NP020PA.firsttake3d = copy.deepcopy(take.location)
                 for ob in selob:
-                   ob.select = True
+                   ob.select_set(True)
                 bpy.ops.object.duplicate()
                 NP020PA.nextob = bpy.context.selected_objects
                 NP020PA.prevob = selob
-                place.select = True
+                place.select_set(True)
                 NP020PA.flag = 'RUNTRANSFIRST_break'
             elif flag == 'RUNTRANSFIRST':
                 NP020PA.deltavec_safe = copy.deepcopy(NP020PA.deltavec)
                 np_print('deltavec_safe = ', NP020PA.deltavec_safe)
                 NP020PA.ar13d = copy.deepcopy(take.location)
                 NP020PA.ar23d = copy.deepcopy(place.location)
-                place.select = False
+                place.select_set(False)
                 bpy.ops.object.duplicate()
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
@@ -308,7 +308,7 @@ class NPPARunTranslate(bpy.types.Operator):
                 NP020PA.prevob = nextob
                 NP020PA.nextob = bpy.context.selected_objects
                 take.location = copy.deepcopy(place.location)
-                place.select = True
+                place.select_set(True)
                 NP020PA.flag = 'ARRAYTRANS'
 
             else:
@@ -353,7 +353,7 @@ class NPPARunTranslate(bpy.types.Operator):
                 np_print('deltavec_safe = ', NP020PA.deltavec_safe)
                 NP020PA.ar13d = copy.deepcopy(take.location)
                 NP020PA.ar23d = copy.deepcopy(place.location)
-                place.select = False
+                place.select_set(False)
                 bpy.ops.object.duplicate()
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
@@ -361,7 +361,7 @@ class NPPARunTranslate(bpy.types.Operator):
                 NP020PA.prevob = nextob
                 NP020PA.nextob = bpy.context.selected_objects
                 take.location = copy.deepcopy(place.location)
-                place.select = True
+                place.select_set(True)
                 NP020PA.flag = 'ARRAYTRANS'
             else:
                 np_print('UNKNOWN FLAG')
@@ -374,21 +374,21 @@ class NPPARunTranslate(bpy.types.Operator):
             if flag == 'RUNTRANSZERO':
                 NP020PA.flag = 'EXIT'
             elif flag == 'RUNTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PA.flag = 'EXIT'
             elif flag == 'RUNTRANSNEXT':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
                 NP020PA.selob = prevob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PA.flag = 'EXIT'
             else:
                 np_print('UNKNOWN FLAG')
@@ -596,9 +596,9 @@ class NPPANavTranslate(bpy.types.Operator):
                 nextob = NP020PA.nextob
                 for ob in nextob:
                     ob.hide = False
-                place.select = False
+                place.select_set(False)
                 bpy.ops.transform.translate(value = navdelta)
-                place.select = True
+                place.select_set(True)
                 NP020PA.flag = 'RUNTRANSFIRST'
             else:
                 np_print('UNKNOWN FLAG')
@@ -615,17 +615,17 @@ class NPPANavTranslate(bpy.types.Operator):
             take.hide = False
             place.hide = False
             if flag == 'NAVTRANSZERO':
-                place.select = False
+                place.select_set(False)
                 NP020PA.flag = 'EXIT'
             elif flag == 'NAVTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
                 for ob in nextob:
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PA.flag = 'ARRAYTRANS'
             else:
                 np_print('UNKNOWN FLAG')
@@ -638,17 +638,17 @@ class NPPANavTranslate(bpy.types.Operator):
             take.hide = False
             place.hide = False
             if flag == 'NAVTRANSZERO':
-                place.select = False
+                place.select_set(False)
                 NP020PA.flag = 'EXIT'
             elif flag == 'NAVTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PA.prevob
                 nextob = NP020PA.nextob
                 for ob in nextob:
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PA.flag = 'EXIT'
             else:
                 np_print('UNKNOWN FLAG')
@@ -768,11 +768,11 @@ class NPPAArrayTranslate(bpy.types.Operator):
             selob = bpy.context.selected_objects
             bpy.ops.object.select_all(action='DESELECT')
             for ob in arob:
-                ob.select = True
+                ob.select_set(True)
                 bpy.ops.object.modifier_apply(modifier = ardict[ob][0].name)
-                ob.select = False
+                ob.select_set(False)
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PA.flag = 'EXIT'
             np_print('06_ArrayTrans_enter_FINISHED',';','flag = ', NP020PA.flag)
             return{'FINISHED'}
@@ -786,7 +786,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
             selob = bpy.context.selected_objects
             bpy.ops.object.select_all(action='DESELECT')
             for ob in arob:
-                ob.select = True
+                ob.select_set(True)
                 ob.modifiers.remove(ardict[ob][0])
                 np_print('NP020PA.count', NP020PA.count)
                 for i in range(1, NP020PA.count):
@@ -794,7 +794,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
                     bpy.ops.transform.translate(value = value)
                 bpy.ops.object.select_all(action='DESELECT')
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PA.flag = 'EXIT'
             np_print('06_ArrayTrans_ctrl_tab_FINISHED',';','flag = ', NP020PA.flag)
             return{'FINISHED'}
@@ -808,7 +808,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
             selob = bpy.context.selected_objects
             bpy.ops.object.select_all(action='DESELECT')
             for ob in arob:
-                ob.select = True
+                ob.select_set(True)
                 ob.modifiers.remove(ardict[ob][0])
                 np_print('NP020PA.count', NP020PA.count)
                 for i in range(1, NP020PA.count):
@@ -816,7 +816,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
                     bpy.ops.transform.translate(value = value)
                 bpy.ops.object.select_all(action='DESELECT')
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PA.flag = 'EXIT'
             np_print('06_ArrayTrans_tab_FINISHED',';','flag = ', NP020PA.flag)
             return{'FINISHED'}
@@ -877,9 +877,9 @@ class NPPAArrayTranslate(bpy.types.Operator):
             selob = NP020PA.selob
             lenselob = len(selob)
             for i, ob in enumerate(selob):
-                ob.select = True
+                ob.select_set(True)
                 if i == lenselob-1:
-                    bpy.context.scene.objects.active = ob
+                    bpy.context.view_layer.objects.active = ob
             args = (self, context)
             self._handle = bpy.types.SpaceView3D.draw_handler_add(DRAW_ArrayTranslate, args, 'WINDOW', 'POST_PIXEL')
             context.window_manager.modal_handler_add(self)
@@ -1043,22 +1043,22 @@ class NPPARestoreContext(bpy.types.Operator):
         take = NP020PA.take
         place = NP020PA.place
         bpy.ops.object.select_all(action='DESELECT')
-        take.select = True
-        place.select = True
+        take.select_set(True)
+        place.select_set(True)
         if NP020PA.prevob != None:
             prevob = NP020PA.prevob
             nextob = NP020PA.nextob
             if prevob is not selob:
                 for i, ob in enumerate(prevob):
-                    ob.select = True
+                    ob.select_set(True)
             for i, ob in enumerate(nextob):
-                ob.select = True
+                ob.select_set(True)
         bpy.ops.object.delete('EXEC_DEFAULT')
         lenselob = len(selob)
         for i, ob in enumerate(selob):
-            ob.select = True
+            ob.select_set(True)
             if i == lenselob-1:
-                bpy.context.scene.objects.active = ob
+                bpy.context.view_layer.objects.active = ob
         NP020PA.take = None
         NP020PA.place = None
         NP020PA.takeloc3d = (0.0,0.0,0.0)
@@ -1077,7 +1077,7 @@ class NPPARestoreContext(bpy.types.Operator):
         bpy.context.space_data.pivot_point = NP020PA.pivot_point
         bpy.context.space_data.transform_orientation = NP020PA.trans_orient
         if NP020PA.acob is not None:
-            bpy.context.scene.objects.active = NP020PA.acob
+            bpy.context.view_layer.objects.active = NP020PA.acob
             bpy.ops.object.mode_set(mode = NP020PA.edit_mode)
 
         np_print('07_CleanExit_FINISHED',';','flag = ', NP020PA.flag)

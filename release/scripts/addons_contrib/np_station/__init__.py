@@ -74,18 +74,18 @@ class NP020BasePanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        row = self.layout.row(True)
-        col = row.column(True)
-        col.label(" Create:",icon = "MESH_CUBE")
+        row = self.layout.row(align=True)
+        col = row.column(align=True)
+        col.label(text=" Create:",icon = "MESH_CUBE")
         col.separator()
         col.operator('object.np_020_float_poly', icon='MESH_DATA', text='float_poly')
         col.operator('object.np_020_float_rectangle', icon='MESH_PLANE', text='float_rectangle')
         col.operator('object.np_020_float_box', icon='MESH_CUBE', text='float_box')
 
         self.layout.separator()
-        row = self.layout.row(True)
-        col = row.column(True)
-        col.label(" Modify:",icon = "MODIFIER")
+        row = self.layout.row(align=True)
+        col = row.column(align=True)
+        col.label(text=" Modify:",icon = "MODIFIER")
         col.separator()
         col.operator('object.np_020_point_move', icon='MAN_TRANS', text='point_move')
         col.operator('object.np_020_point_copy', icon='ROTACTIVE', text='point_copy')
@@ -97,17 +97,17 @@ class NP020BasePanel(bpy.types.Panel):
 
 
         self.layout.separator()
-        row = self.layout.row(True)
-        col = row.column(True)
-        col.label(" Transfer:",icon = 'BRUSH_DATA')
+        row = self.layout.row(align=True)
+        col = row.column(align=True)
+        col.label(text=" Transfer:",icon = 'BRUSH_DATA')
         col.separator()
         col.operator('object.np_020_shader_brush', icon='MOD_DYNAMICPAINT', text='shader_brush')
 
 
         self.layout.separator()
-        row = self.layout.row(True)
-        col = row.column(True)
-        col.label(" Measure:",icon = "ALIGN")
+        row = self.layout.row(align=True)
+        col = row.column(align=True)
+        col.label(text=" Measure:",icon = "ALIGN")
         col.separator()
         col.operator('object.np_020_point_distance', icon='ARROW_LEFTRIGHT', text='point_distance')
 
@@ -148,7 +148,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
     bl_idname = __name__
 
 
-    category = bpy.props.StringProperty(
+    category: bpy.props.StringProperty(
             name="",
             description="Choose a name for the category of the panel",
             default="Tools",
@@ -158,7 +158,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
 #----------------------------------------------------------------------------------------
 
 
-    np_col_scheme = bpy.props.EnumProperty(
+    np_col_scheme: bpy.props.EnumProperty(
         name ='',
         items = (
             ('csc_default_grey', 'Blender_Default_NP_GREY',''),
@@ -166,14 +166,14 @@ class NP020Preferences(bpy.types.AddonPreferences):
         default = 'csc_default_grey',
         description = 'Choose the overall addon color scheme, according to your current Blender theme')
 
-    np_size_num = bpy.props.IntProperty(
+    np_size_num: bpy.props.IntProperty(
             name='',
             description='Size of the numerics that display on-screen dimensions, the default is 18',
             default=18,
             min=10,
             max=30)
 
-    np_scale_dist = bpy.props.FloatProperty(
+    np_scale_dist: bpy.props.FloatProperty(
             name='',
             description='Distance multiplier (for example, for cm use 100)',
             default=100,
@@ -181,7 +181,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
             step=100,
             precision=2)
 
-    np_suffix_dist = bpy.props.EnumProperty(
+    np_suffix_dist: bpy.props.EnumProperty(
         name='',
         items=(("'", "'", ''), ('"', '"', ''), (' thou', 'thou', ''),
                (' km', 'km', ''), (' m', 'm', ''), (' cm', 'cm', ''),
@@ -189,19 +189,19 @@ class NP020Preferences(bpy.types.AddonPreferences):
         default=' cm',
         description='Add a unit extension after the numerical distance ')
 
-    np_display_badge = bpy.props.BoolProperty(
+    np_display_badge: bpy.props.BoolProperty(
             name='Display badge',
             description='Use the graphical badge near the mouse cursor',
             default=True)
 
-    np_size_badge = bpy.props.IntProperty(
+    np_size_badge: bpy.props.IntProperty(
             name='badge_size',
             description='Size of the mouse badge, the default is 2',
             default=2,
             min=0,
             step=10)
 
-    op_prefs = bpy.props.EnumProperty(
+    op_prefs: bpy.props.EnumProperty(
         name ='Individual operator settings',
         items = (
             ('nppd', 'NP Point Distance',''),
@@ -339,7 +339,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
     '''
 #----------------------------------------------------------------------------------------
 
-    nppd_scale = bpy.props.FloatProperty(
+    nppd_scale: bpy.props.FloatProperty(
             name = 'Scale',
             description = 'Distance multiplier (for example, for cm use 100)',
             default = 100,
@@ -347,7 +347,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
             step = 1,
             precision = 3)
 
-    nppd_suffix = bpy.props.EnumProperty(
+    nppd_suffix: bpy.props.EnumProperty(
         name = 'Suffix',
         items = (
             ("'", "'", ''), ('"', '"', ''), (
@@ -356,12 +356,12 @@ class NP020Preferences(bpy.types.AddonPreferences):
         default = 'cm',
         description = 'Add a unit extension after the number ')
 
-    nppd_badge = bpy.props.BoolProperty(
+    nppd_badge: bpy.props.BoolProperty(
             name = 'Mouse badge',
             description = 'Use the graphical badge near the mouse cursor',
             default = True)
 
-    nppd_step = bpy.props.EnumProperty(
+    nppd_step: bpy.props.EnumProperty(
         name ='Step',
         items = (
             ('simple', 'simple',
@@ -370,67 +370,67 @@ class NP020Preferences(bpy.types.AddonPreferences):
         default = 'simple',
         description = 'The way the command behaves after the second click')
 
-    nppd_hold = bpy.props.BoolProperty(
+    nppd_hold: bpy.props.BoolProperty(
             name = 'Hold result',
             description = 'Include an extra step to display the last measured distance in the viewport',
             default = False)
 
-    nppd_gold = bpy.props.BoolProperty(
+    nppd_gold: bpy.props.BoolProperty(
             name = 'Golden ratio',
             description = 'Display a marker showing the position of the golden division point (1.61803 : 1)',
             default = False)
 
-    nppd_info = bpy.props.BoolProperty(
+    nppd_info: bpy.props.BoolProperty(
             name = 'Value to header info',
             description = 'Display last measured distance on the header',
             default = True)
 
-    nppd_clip = bpy.props.BoolProperty(
+    nppd_clip: bpy.props.BoolProperty(
             name = 'Value to clipboard',
             description = 'Copy last measured distance to clipboard for later reuse',
             default = True)
 
-    nppd_col_line_main_DEF = bpy.props.BoolProperty(
+    nppd_col_line_main_DEF: bpy.props.BoolProperty(
             name = 'Default',
             description = 'Use the default color',
             default = True)
 
-    nppd_col_line_shadow_DEF = bpy.props.BoolProperty(
+    nppd_col_line_shadow_DEF: bpy.props.BoolProperty(
             name = 'Default',
             description = 'Use the default color',
             default = True)
 
-    nppd_col_num_main_DEF = bpy.props.BoolProperty(
+    nppd_col_num_main_DEF: bpy.props.BoolProperty(
             name = 'Default',
             description = 'Use the default color',
             default = True)
 
-    nppd_col_num_shadow_DEF = bpy.props.BoolProperty(
+    nppd_col_num_shadow_DEF: bpy.props.BoolProperty(
             name = 'Default',
             description = 'Use the default color',
             default = True)
 
-    nppd_xyz_lines = bpy.props.BoolProperty(
+    nppd_xyz_lines: bpy.props.BoolProperty(
             name = 'XYZ lines',
             description = 'Display axial distance lines',
             default = True)
 
-    nppd_xyz_distances = bpy.props.BoolProperty(
+    nppd_xyz_distances: bpy.props.BoolProperty(
             name = 'XYZ distances',
             description = 'Display axial distances',
             default = True)
 
-    nppd_xyz_backdrop = bpy.props.BoolProperty(
+    nppd_xyz_backdrop: bpy.props.BoolProperty(
             name = 'XYZ backdrop',
             description = 'Display backdrop field for xyz distances',
             default = False)
 
-    nppd_stereo_cage = bpy.props.BoolProperty(
+    nppd_stereo_cage: bpy.props.BoolProperty(
             name = 'Stereo cage',
             description = 'Display bounding box that contains the dimension',
             default = True)
 
-    nppd_col_line_main = bpy.props.FloatVectorProperty(
+    nppd_col_line_main: bpy.props.FloatVectorProperty(
         name = '',
         default = (1.0,
      1.0,
@@ -442,7 +442,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
         max = 1,
         description = 'Color of the measurement line, to disable it set alpha to 0.0')
 
-    nppd_col_line_shadow = bpy.props.FloatVectorProperty(
+    nppd_col_line_shadow: bpy.props.FloatVectorProperty(
         name = '',
         default = (0.1,
      0.1,
@@ -454,7 +454,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
         max = 1,
         description = 'Color of the line shadow, to disable it set alpha to 0.0')
 
-    nppd_col_num_main = bpy.props.FloatVectorProperty(
+    nppd_col_num_main: bpy.props.FloatVectorProperty(
         name = '',
         default = (0.1,
      0.1,
@@ -466,7 +466,7 @@ class NP020Preferences(bpy.types.AddonPreferences):
         max = 1,
         description = 'Color of the number, to disable it set alpha to 0.0')
 
-    nppd_col_num_shadow = bpy.props.FloatVectorProperty(
+    nppd_col_num_shadow: bpy.props.FloatVectorProperty(
         name = '',
         default = (1.0,
      1.0,
@@ -553,12 +553,12 @@ class NP020Preferences(bpy.types.AddonPreferences):
             step=10,
             precision=1)
     '''
-    npfp_point_markers = bpy.props.BoolProperty(
+    npfp_point_markers: bpy.props.BoolProperty(
             name='Point markers',
             description='Use the markers for the start and other points of the poly',
             default=True)
 
-    npfp_point_size = bpy.props.FloatProperty(
+    npfp_point_size: bpy.props.FloatProperty(
             name='size',
             description='Size of the start and point markers, the default is 5.0',
             default=5,
@@ -566,32 +566,32 @@ class NP020Preferences(bpy.types.AddonPreferences):
             step=50,
             precision=1)
 
-    npfp_point_color_DEF = bpy.props.BoolProperty(
+    npfp_point_color_DEF: bpy.props.BoolProperty(
             name='Default point COLOR',
             description='Use the default color for the point markers',
             default=True)
 
-    npfp_wire = bpy.props.BoolProperty(
+    npfp_wire: bpy.props.BoolProperty(
             name='Wire contour',
             description="Use the 'show wireframe' option over the object's solid drawing",
             default=True)
 
-    npfp_smooth = bpy.props.BoolProperty(
+    npfp_smooth: bpy.props.BoolProperty(
             name='Smooth shading',
             description='Automaticaly turn on smooth shading for the poly object',
             default=False)
 
-    npfp_material = bpy.props.BoolProperty(
+    npfp_material: bpy.props.BoolProperty(
             name='Base material',
             description='Automaticaly assign a base material to the poly object',
             default=True)
 
-    npfp_bevel = bpy.props.BoolProperty(
+    npfp_bevel: bpy.props.BoolProperty(
             name='Bevel',
             description='Start the bevel operation after the extrusion',
             default=False)
 
-    npfp_point_color = bpy.props.FloatVectorProperty(
+    npfp_point_color: bpy.props.FloatVectorProperty(
             name='', default=(0.3, 0.3, 0.3, 1.0),
             size=4, subtype="COLOR", min=0, max=1,
             description='Color of the point markers')

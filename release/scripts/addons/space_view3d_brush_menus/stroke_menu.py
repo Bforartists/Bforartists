@@ -41,7 +41,7 @@ class PaintCurvesMenu(Menu):
                         )
 
         else:
-            layout.row().label("No Paint Curves Available", icon="INFO")
+            layout.row().label(text="No Paint Curves Available", icon="INFO")
 
 class StrokeOptionsMenu(Menu):
     bl_label = "Stroke Options"
@@ -135,7 +135,7 @@ class StrokeOptionsMenu(Menu):
                     layout.row().prop(brush, "smooth_stroke_factor",
                                       text=utils_core.PIW + "Factor", slider=True)
         else:
-            layout.row().label("No Stroke Options available", icon="INFO")
+            layout.row().label(text="No Stroke Options available", icon="INFO")
 
 
 class StrokeMethodMenu(Menu):
@@ -182,4 +182,4 @@ class StrokeMethodMenu(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No Stroke Method available", icon="INFO")
+            layout.row().label(text="No Stroke Method available", icon="INFO")

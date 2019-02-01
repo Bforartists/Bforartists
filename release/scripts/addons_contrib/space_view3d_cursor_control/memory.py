@@ -64,11 +64,11 @@ PRECISION = 4
 
 
 class CursorMemoryData(PropertyGroup):
-    savedLocationDraw = BoolProperty(
+    savedLocationDraw: BoolProperty(
             description="Draw SL cursor in 3D view",
             default=1
             )
-    savedLocation = FloatVectorProperty(
+    savedLocation: FloatVectorProperty(
             name="",
             description="Saved Location",
             precision=PRECISION

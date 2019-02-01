@@ -51,10 +51,10 @@ class RawImporter(bpy.types.Operator):
     bl_label = "Import RAW"
     bl_options = {'UNDO'}
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             )
-    filter_glob = StringProperty(default="*.raw", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.raw", options={'HIDDEN'})
 
     def execute(self, context):
         from . import import_raw
@@ -73,14 +73,14 @@ class RawExporter(bpy.types.Operator, ExportHelper):
     bl_label = "Export RAW"
 
     filename_ext = ".raw"
-    filter_glob = StringProperty(default="*.raw", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.raw", options={'HIDDEN'})
 
-    apply_modifiers = BoolProperty(
+    apply_modifiers: BoolProperty(
             name="Apply Modifiers",
             description="Use transformed mesh data from each object",
             default=True,
             )
-    triangulate = BoolProperty(
+    triangulate: BoolProperty(
             name="Triangulate",
             description="Triangulate quads",
             default=True,

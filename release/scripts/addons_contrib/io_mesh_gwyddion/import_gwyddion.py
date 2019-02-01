@@ -205,7 +205,7 @@ def create_mesh(data_list,
         surface_mesh.from_pydata(data_mesh, [], data_faces)
         surface_mesh.update()
         surface = bpy.data.objects.new(image_name, surface_mesh)
-        bpy.context.scene.objects.link(surface)
+        bpy.context.collection.objects.link(surface)
         bpy.ops.object.select_all(action='DESELECT')
         surface.select = True
 
@@ -252,7 +252,7 @@ def create_mesh(data_list,
         camera = bpy.data.objects.new("A_camera", camera_data)
         camera.location = camera_xyz_vec
         camera.layers = current_layers
-        bpy.context.scene.objects.link(camera)
+        bpy.context.collection.objects.link(camera)
 
         # Here the camera is rotated such it looks towards the center of
         # the object. The [0.0, 0.0, 1.0] vector along the z axis
@@ -268,7 +268,7 @@ def create_mesh(data_list,
         # Rotate the camera around its axis by 90° such that we have a nice
         # camera position and view onto the object.
         bpy.ops.object.select_all(action='DESELECT')
-        camera.select = True
+        camera.select_set(True)
         bpy.ops.transform.rotate(value=(90.0*2*pi/360.0),
                                  axis=object_camera_vec,
                                  constraint_axis=(False, False, False),
@@ -303,7 +303,7 @@ def create_mesh(data_list,
         lamp = bpy.data.objects.new("A_lamp", lamp_data)
         lamp.location = lamp_xyz_vec
         lamp.layers = current_layers
-        bpy.context.scene.objects.link(lamp)
+        bpy.context.collection.objects.link(lamp)
 
         bpy.context.scene.world.light_settings.use_ambient_occlusion = True
         bpy.context.scene.world.light_settings.ao_factor = 0.1

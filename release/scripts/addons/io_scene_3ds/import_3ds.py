@@ -917,7 +917,7 @@ def load_3ds(filepath,
                 ob.matrix_world = ob.matrix_world * global_matrix
 
     for ob in importedObjects:
-        ob.select = True
+        ob.select_set(True)
 
     # Done DUMMYVERT
     """

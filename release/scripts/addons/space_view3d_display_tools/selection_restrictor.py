@@ -190,7 +190,7 @@ class RestrictorShow(Operator):
     bl_option = {'REGISTER', 'UNDO'}
     bl_description = "Show/Hide Selection Restrictors"
 
-    hide = StringProperty()
+    hide: StringProperty()
 
     def execute(self, context):
         global show
@@ -213,7 +213,7 @@ class IgnoreRestrictors(Operator):
     bl_label = "Ignore Restrictor by Selected Objects"
     bl_option = {'REGISTER', 'UNDO'}
     bl_description = "Ignore or do not ignore Restrictor by selected objects"
-    ignore = BoolProperty()
+    ignore: BoolProperty()
 
     def execute(self, context):
         if self.ignore is True:
@@ -237,7 +237,7 @@ class RestrictorMesh(Operator):
     bl_label = "restrictor meshes"
     bl_option = {'REGISTER', 'UNDO'}
     bl_description = "Meshes selection restrictor"
-    mesh = StringProperty()
+    mesh: StringProperty()
 
     def execute(self, context):
         global mesh
@@ -260,7 +260,7 @@ class RestrictorMesh(Operator):
                 if ob.type == 'MESH':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -295,7 +295,7 @@ class RestrictorCurve(Operator):
                 if ob.type == 'CURVE':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -330,7 +330,7 @@ class RestrictorArm(Operator):
                 if ob.type == 'ARMATURE':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -365,7 +365,7 @@ class RestrictorEmpty(Operator):
                 if ob.type == 'EMPTY':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -400,7 +400,7 @@ class RestrictorCam(Operator):
                 if ob.type == 'CAMERA':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -435,7 +435,7 @@ class RestrictorLamp(Operator):
                 if ob.type == 'LIGHT':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -469,7 +469,7 @@ class RestrictorLat(Operator):
                 if ob.type == 'LATTICE':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -503,7 +503,7 @@ class RestrictorFont(Operator):
                 if ob.type == 'FONT':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -537,7 +537,7 @@ class RestrictorMeta(Operator):
                 if ob.type == 'META':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -571,7 +571,7 @@ class RestrictorSurf(Operator):
                 if ob.type == 'SURFACE':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -606,7 +606,7 @@ class RestrictorSound(Operator):
                 if ob.type == 'SPEAKER':
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = True
-                        ob.select = False
+                        ob.select_set(False)
 
         return{'FINISHED'}
 
@@ -657,7 +657,7 @@ class RefreshRestrictors(Operator):
                     if ob.get('ignore_restrictors') is None:
                         ob.hide_select = False if get_props is None else True
                         if get_props is None:
-                            ob.select = False
+                            ob.select_set(False)
 
             mesh = gl_icon if types == "MESH" else mesh
             curve = gl_icon if types == "CURVE" else curve

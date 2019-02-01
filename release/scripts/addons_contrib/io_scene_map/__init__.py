@@ -22,7 +22,7 @@ bl_info = {
     "name": "Quake/Doom3 MAP format",
     "author": "Campbell Barton, scorpion81, Bastien Montagne, motorstep",
     "version": (2, 1, 0),
-    "blender": (2, 6, 9),
+    "blender": (2, 69, 0),
     "location": "File > Export",
     "description": "Export MAP brushes, nurbs surfaces, "
                    "lamps and empties as map nodes",
@@ -51,38 +51,38 @@ class ExportMAP(bpy.types.Operator, ExportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".map"
-    filter_glob = StringProperty(default="*.map", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.map", options={'HIDDEN'})
 
-    doom3_format = BoolProperty(
+    doom3_format: BoolProperty(
             name="Doom 3 Format",
             description="Export to Doom3 MAP Format",
             default=True)
 
-    face_thickness = FloatProperty(
+    face_thickness: FloatProperty(
             name="Face Thickness",
             description=("Thickness given to geometry which can't be "
                          "converted into a brush"),
             min=0.0001, max=10.0,
             default=0.1,
             )
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             description="Scale everything by this value",
             min=0.01, max=1000.0,
             default=1.0,
             )
-    grid_snap = BoolProperty(
+    grid_snap: BoolProperty(
             name="Grid Snap",
             description="Round to whole numbers",
             default=False,
             )
 
-    texture_null = StringProperty(
+    texture_null: StringProperty(
             name="Tex Null",
             description="Texture used when none is assigned",
             default="NULL",
             )
-    texture_opts = StringProperty(
+    texture_opts: StringProperty(
             name="Tex Opts",
             description="Brush texture options",
             default='0 0 0 1 1 0 0 0',

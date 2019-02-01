@@ -26,8 +26,6 @@
 # noinspection PyUnresolvedReferences
 import bpy
 # noinspection PyUnresolvedReferences
-import bgl
-# noinspection PyUnresolvedReferences
 import blf
 from math import fabs, sqrt, sin, cos
 # noinspection PyUnresolvedReferences
@@ -35,7 +33,12 @@ from mathutils import Vector
 # noinspection PyUnresolvedReferences
 from bpy_extras import view3d_utils
 from .achm_room_maker import get_wall_points
+# GPU
+import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
+shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
 
 # -------------------------------------------------------------
 # Handle all draw routines (OpenGL main entry point)
@@ -46,68 +49,58 @@ def draw_main(context):
     rv3d = context.space_data.region_3d
     scene = context.scene
 
-    rgb = scene.archimesh_text_color
-    rgbw = scene.archimesh_walltext_color
+    rgba = scene.archimesh_text_color
+    rgbaw = scene.archimesh_walltext_color
     fsize = scene.archimesh_font_size
     wfsize = scene.archimesh_wfont_size
     space = scene.archimesh_hint_space
     measure = scene.archimesh_gl_measure
     dspname = scene.archimesh_gl_name
-    # Get visible layers
-    layers = []
-    for x in range(0, 20):
-        if context.scene.layers[x] is True:
-            layers.extend([x])
 
     bgl.glEnable(bgl.GL_BLEND)
     # Display selected or all
     if scene.archimesh_gl_ghost is False:
         objlist = context.selected_objects
     else:
-        objlist = context.scene.objects
+        objlist = context.view_layer.objects
     # ---------------------------------------
     # Generate all OpenGL calls
     # ---------------------------------------
     for myobj in objlist:
-        if myobj.hide is False:
-            # verify visible layer
-            for x in range(0, 20):
-                if myobj.layers[x] is True:
-                    if x in layers:
-                        # -----------------------------------------------------
-                        # Rooms
-                        # -----------------------------------------------------
-                        if 'RoomGenerator' in myobj:
-                            op = myobj.RoomGenerator[0]
-                            draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, measure, dspname)
+        if myobj.visible_get() is True:
+            # -----------------------------------------------------
+            # Rooms
+            # -----------------------------------------------------
+            if 'RoomGenerator' in myobj:
+                op = myobj.RoomGenerator[0]
+                draw_room_data(myobj, op, region, rv3d, rgba, rgbaw, fsize, wfsize, space, measure, dspname)
 
-                        # -----------------------------------------------------
-                        # Doors
-                        # -----------------------------------------------------
-                        if 'DoorObjectGenerator' in myobj:
-                            op = myobj.DoorObjectGenerator[0]
-                            draw_door_data(myobj, op, region, rv3d, rgb, fsize, space, measure)
+            # -----------------------------------------------------
+            # Doors
+            # -----------------------------------------------------
+            if 'DoorObjectGenerator' in myobj:
+                op = myobj.DoorObjectGenerator[0]
+                draw_door_data(myobj, op, region, rv3d, rgba, fsize, space, measure)
 
-                        # -----------------------------------------------------
-                        # Window (Rail)
-                        # -----------------------------------------------------
-                        if 'WindowObjectGenerator' in myobj:
-                            op = myobj.WindowObjectGenerator[0]
-                            draw_window_rail_data(myobj, op, region, rv3d, rgb, fsize, space, measure)
+            # -----------------------------------------------------
+            # Window (Rail)
+            # -----------------------------------------------------
+            if 'WindowObjectGenerator' in myobj:
+                op = myobj.WindowObjectGenerator[0]
+                draw_window_rail_data(myobj, op, region, rv3d, rgba, fsize, space, measure)
 
-                        # -----------------------------------------------------
-                        # Window (Panel)
-                        # -----------------------------------------------------
-                        if 'WindowPanelGenerator' in myobj:
-                            op = myobj.WindowPanelGenerator[0]
-                            draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure)
-                        break   # avoid unnecessary loops
+            # -----------------------------------------------------
+            # Window (Panel)
+            # -----------------------------------------------------
+            if 'WindowPanelGenerator' in myobj:
+                op = myobj.WindowPanelGenerator[0]
+                draw_window_panel_data(myobj, op, region, rv3d, rgba, fsize, space, measure)
+
     # -----------------------
     # restore opengl defaults
     # -----------------------
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
-    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
 
 # -------------------------------------------------------------
@@ -115,7 +108,7 @@ def draw_main(context):
 #
 # right: Align to right
 # -------------------------------------------------------------
-def draw_text(x_pos, y_pos, display_text, rgb, fsize, right=False):
+def draw_text(x_pos, y_pos, display_text, rgba, fsize, right=False):
     gap = 12
     font_id = 0
     blf.size(font_id, fsize, 72)
@@ -126,7 +119,7 @@ def draw_text(x_pos, y_pos, display_text, rgb, fsize, right=False):
     else:
         newx = x_pos
     blf.position(font_id, newx, y_pos, 0)
-    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
+    blf.color(font_id, rgba[0], rgba[1], rgba[2], rgba[3])
     blf.draw(font_id, display_text)
     return
 
@@ -135,25 +128,26 @@ def draw_text(x_pos, y_pos, display_text, rgb, fsize, right=False):
 # Draw an OpenGL line
 #
 # -------------------------------------------------------------
-def draw_line(v1, v2):
+def draw_line(v1, v2, rgba):
+    coords = [(v1[0], v1[1]), (v2[0], v2[1])]
+    batch = batch_for_shader(shader, 'LINES', {"pos": coords})
+
     # noinspection PyBroadException
     try:
         if v1 is not None and v2 is not None:
-            bgl.glBegin(bgl.GL_LINES)
-            bgl.glVertex2f(*v1)
-            bgl.glVertex2f(*v2)
-            bgl.glEnd()
+            shader.bind()
+            shader.uniform_float("color", rgba)
+            batch.draw(shader)
     except:
         pass
-
 
 # -------------------------------------------------------------
 # Draw room information
 #
-# rgb: Color
+# rgba: Color
 # fsize: Font size
 # -------------------------------------------------------------
-def draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, measure, dspname):
+def draw_room_data(myobj, op, region, rv3d, rgba, rgbaw, fsize, wfsize, space, measure, dspname):
 
     verts, activefaces, activenormals = get_wall_points(myobj)
 
@@ -201,8 +195,6 @@ def draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, mea
         # colour + line setup
         bgl.glEnable(bgl.GL_BLEND)
         bgl.glLineWidth(1)
-        bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
-
         # --------------------------------
         # Measures
         # --------------------------------
@@ -215,18 +207,18 @@ def draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, mea
 
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
 
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
             # Draw horizontal line
-            draw_line(screen_point_a, screen_point_b)
+            draw_line(screen_point_a, screen_point_b, rgba)
             # Draw vertical line 1 (upper vertical)
-            draw_line(screen_point_a1, screen_point_a2)
+            draw_line(screen_point_a1, screen_point_a2, rgba)
             # Draw vertical line 2 (upper vertical)
-            draw_line(screen_point_b1, screen_point_b2)
+            draw_line(screen_point_b1, screen_point_b2, rgba)
             # Draw vertical line 1
-            draw_line(screen_point_a, screen_point_a1)
+            draw_line(screen_point_a, screen_point_a1, rgba)
             # Draw vertical line 2
-            draw_line(screen_point_b, screen_point_b1)
+            draw_line(screen_point_b, screen_point_b1, rgba)
 
         # --------------------------------
         # Wall Number
@@ -247,7 +239,7 @@ def draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, mea
                 if op.walls[i].curved is True:
                     txt = "Curved: "
 
-                draw_text(txtpoint2d[0], txtpoint2d[1], txt + str(i + 1), rgbw, wfsize)
+                draw_text(txtpoint2d[0], txtpoint2d[1], txt + str(i + 1), rgbaw, wfsize)
 
     return
 
@@ -255,10 +247,10 @@ def draw_room_data(myobj, op, region, rv3d, rgb, rgbw, fsize, wfsize, space, mea
 # -------------------------------------------------------------
 # Draw door information
 #
-# rgb: Color
+# rgba: Color
 # fsize: Font size
 # -------------------------------------------------------------
-def draw_door_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
+def draw_door_data(myobj, op, region, rv3d, rgba, fsize, space, measure):
 
     # Points
     a_p1 = get_point(op.glpoint_a, myobj)
@@ -312,7 +304,6 @@ def draw_door_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
     # colour + line setup
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(1)
-    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
 
     # --------------------------------
     # Measures
@@ -323,43 +314,43 @@ def draw_door_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
         txtpoint3d = interpolate3d(a_p1, t_p1, fabs(dist / 2))
         gap3d = (a_p2[0], txtpoint3d[1], txtpoint3d[2])
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize, True)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize, True)
 
-        draw_line(screen_point_ap2, screen_point_tp2)
-        draw_line(screen_point_ap3, screen_point_ap1)
-        draw_line(screen_point_tp3, screen_point_tp1)
+        draw_line(screen_point_ap2, screen_point_tp2, rgba)
+        draw_line(screen_point_ap3, screen_point_ap1, rgba)
+        draw_line(screen_point_tp3, screen_point_tp1, rgba)
 
         # Horizontal
         dist = distance(b_p1, c_p1)
         txtpoint3d = interpolate3d(b_p1, c_p1, fabs(dist / 2))
         gap3d = (txtpoint3d[0], txtpoint3d[1], b_p2[2] + 0.02)
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-        draw_line(screen_point_bp2, screen_point_cp2)
-        draw_line(screen_point_bp3, screen_point_bp1)
-        draw_line(screen_point_cp3, screen_point_cp1)
+        draw_line(screen_point_bp2, screen_point_cp2, rgba)
+        draw_line(screen_point_bp3, screen_point_bp1, rgba)
+        draw_line(screen_point_cp3, screen_point_cp1, rgba)
 
         # Door size
         dist = distance(d_p1, e_p1)
         txtpoint3d = interpolate3d(d_p1, e_p1, fabs(dist / 2))
         gap3d = (txtpoint3d[0], txtpoint3d[1], txtpoint3d[2] + 0.02)
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-        draw_line(screen_point_dp1, screen_point_ep1)
-        draw_line(screen_point_dp2, screen_point_dp3)
-        draw_line(screen_point_ep2, screen_point_ep3)
+        draw_line(screen_point_dp1, screen_point_ep1, rgba)
+        draw_line(screen_point_dp2, screen_point_dp3, rgba)
+        draw_line(screen_point_ep2, screen_point_ep3, rgba)
     return
 
 
 # -------------------------------------------------------------
 # Draw window rail information
 #
-# rgb: Color
+# rgba: Color
 # fsize: Font size
 # -------------------------------------------------------------
-def draw_window_rail_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
+def draw_window_rail_data(myobj, op, region, rv3d, rgba, fsize, space, measure):
 
     # Points
     a_p1 = get_point(op.glpoint_a, myobj)
@@ -397,7 +388,6 @@ def draw_window_rail_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
     # colour + line setup
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(1)
-    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
 
     # --------------------------------
     # Measures
@@ -408,22 +398,22 @@ def draw_window_rail_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
         txtpoint3d = interpolate3d(a_p1, t_p1, fabs(dist / 2))
         gap3d = (a_p2[0], txtpoint3d[1], txtpoint3d[2])
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize, True)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize, True)
 
-        draw_line(screen_point_ap2, screen_point_tp2)
-        draw_line(screen_point_ap3, screen_point_ap1)
-        draw_line(screen_point_tp3, screen_point_tp1)
+        draw_line(screen_point_ap2, screen_point_tp2, rgba)
+        draw_line(screen_point_ap3, screen_point_ap1, rgba)
+        draw_line(screen_point_tp3, screen_point_tp1, rgba)
 
         # Horizontal
         dist = distance(b_p1, c_p1)
         txtpoint3d = interpolate3d(b_p1, c_p1, fabs(dist / 2))
         gap3d = (txtpoint3d[0], txtpoint3d[1], b_p2[2] + 0.02)
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-        draw_line(screen_point_bp2, screen_point_cp2)
-        draw_line(screen_point_bp3, screen_point_bp1)
-        draw_line(screen_point_cp3, screen_point_cp1)
+        draw_line(screen_point_bp2, screen_point_cp2, rgba)
+        draw_line(screen_point_bp3, screen_point_bp1, rgba)
+        draw_line(screen_point_cp3, screen_point_cp1, rgba)
 
     return
 
@@ -431,10 +421,10 @@ def draw_window_rail_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
 # -------------------------------------------------------------
 # Draw window panel information
 #
-# rgb: Color
+# rgba: Color
 # fsize: Font size
 # -------------------------------------------------------------
-def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
+def draw_window_panel_data(myobj, op, region, rv3d, rgba, fsize, space, measure):
 
     # Points
     a_p1 = get_point(op.glpoint_a, myobj)
@@ -504,7 +494,6 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
     # colour + line setup
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glLineWidth(1)
-    bgl.glColor4f(rgb[0], rgb[1], rgb[2], rgb[3])
 
     # --------------------------------
     # Measures
@@ -515,22 +504,22 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
         txtpoint3d = interpolate3d(a_p1, t_p1, fabs(dist / 2))
         gap3d = (a_p2[0], txtpoint3d[1], txtpoint3d[2])
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize, True)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize, True)
 
-        draw_line(screen_point_ap2, screen_point_tp2)
-        draw_line(screen_point_ap3, screen_point_ap1)
-        draw_line(screen_point_tp3, screen_point_tp1)
+        draw_line(screen_point_ap2, screen_point_tp2, rgba)
+        draw_line(screen_point_ap3, screen_point_ap1, rgba)
+        draw_line(screen_point_tp3, screen_point_tp1, rgba)
 
         # Vertical (Left)
         dist = distance(f_p1, d_p1)
         txtpoint3d = interpolate3d(f_p1, d_p1, fabs(dist / 2))
         gap3d = (f_p2[0], txtpoint3d[1], txtpoint3d[2])
         txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+        draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-        draw_line(screen_point_fp2, screen_point_dp2)
-        draw_line(screen_point_fp1, screen_point_fp3)
-        draw_line(screen_point_dp1, screen_point_dp3)
+        draw_line(screen_point_fp2, screen_point_dp2, rgba)
+        draw_line(screen_point_fp1, screen_point_fp3, rgba)
+        draw_line(screen_point_dp1, screen_point_dp3, rgba)
 
         # Horizontal (not triangle nor arch)
         if op.UST != "4" and op.UST != "2":
@@ -538,29 +527,29 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
             txtpoint3d = interpolate3d(b_p2, c_p2, fabs(dist / 2))
             gap3d = (txtpoint3d[0], txtpoint3d[1], txtpoint3d[2] + 0.05)
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-            draw_line(screen_point_bp2, screen_point_cp2)
-            draw_line(screen_point_bp3, screen_point_bp1)
-            draw_line(screen_point_cp3, screen_point_cp1)
+            draw_line(screen_point_bp2, screen_point_cp2, rgba)
+            draw_line(screen_point_bp3, screen_point_bp1, rgba)
+            draw_line(screen_point_cp3, screen_point_cp1, rgba)
         else:
             dist = distance(b_p1, g_p3)
             txtpoint3d = interpolate3d(b_p2, g_p4, fabs(dist / 2))
             gap3d = (txtpoint3d[0], txtpoint3d[1], txtpoint3d[2] + 0.05)
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize, True)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize, True)
 
             dist = distance(g_p3, c_p1)
             txtpoint3d = interpolate3d(g_p4, c_p2, fabs(dist / 2))
             gap3d = (txtpoint3d[0], txtpoint3d[1], txtpoint3d[2] + 0.05)
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-            draw_line(screen_point_bp2, screen_point_gp4)
-            draw_line(screen_point_gp4, screen_point_cp2)
-            draw_line(screen_point_bp3, screen_point_bp1)
-            draw_line(screen_point_cp3, screen_point_cp1)
-            draw_line(screen_point_gp3, screen_point_gp5)
+            draw_line(screen_point_bp2, screen_point_gp4, rgba)
+            draw_line(screen_point_gp4, screen_point_cp2, rgba)
+            draw_line(screen_point_bp3, screen_point_bp1, rgba)
+            draw_line(screen_point_cp3, screen_point_cp1, rgba)
+            draw_line(screen_point_gp3, screen_point_gp5, rgba)
 
         # Only for Triangle or arch
         if op.UST == "2" or op.UST == "4":
@@ -568,9 +557,9 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
             txtpoint3d = interpolate3d(g_p2, g_p3, fabs(dist / 2))
             gap3d = (txtpoint3d[0] + 0.05, txtpoint3d[1], txtpoint3d[2])
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-            draw_line(screen_point_gp2, screen_point_gp3)
+            draw_line(screen_point_gp2, screen_point_gp3, rgba)
 
         # Only for Triangle and Inclines or arch
         if op.UST == "3" or op.UST == "4" or op.UST == "2":
@@ -584,11 +573,11 @@ def draw_window_panel_data(myobj, op, region, rv3d, rgb, fsize, space, measure):
             txtpoint3d = interpolate3d(h_p1, h_p3, fabs(dist / 2))
             gap3d = (txtpoint3d[0], txtpoint3d[1], txtpoint3d[2] - space - 0.05)
             txtpoint2d = view3d_utils.location_3d_to_region_2d(region, rv3d, gap3d)
-            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgb, fsize)
+            draw_text(txtpoint2d[0], txtpoint2d[1], "%6.2f" % dist, rgba, fsize)
 
-            draw_line(screen_point_ap1, screen_point_hp2)
-            draw_line(screen_point_hp3, screen_point_hp5)
-            draw_line(screen_point_hp1, screen_point_hp4)
+            draw_line(screen_point_ap1, screen_point_hp2, rgba)
+            draw_line(screen_point_hp3, screen_point_hp5, rgba)
+            draw_line(screen_point_hp1, screen_point_hp4, rgba)
 
     return
 
@@ -636,7 +625,7 @@ def get_point(v1, mainobject):
     # Using World Matrix
     vt = Vector((v1[0], v1[1], v1[2], 1))
     m4 = mainobject.matrix_world
-    vt2 = m4 * vt
+    vt2 = m4 @ vt
     v2 = [vt2[0], vt2[1], vt2[2]]
 
     return v2

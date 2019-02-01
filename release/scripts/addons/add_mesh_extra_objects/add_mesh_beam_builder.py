@@ -663,9 +663,9 @@ def addBeamObj(sRef, context):
 
     beamMesh = bpy.data.meshes.new("Beam")
     beamObj = bpy.data.objects.new("Beam", beamMesh)
-    context.scene.objects.link(beamObj)
-    context.scene.objects.active = beamObj
-    beamObj.select = True
+    context.collection.objects.link(beamObj)
+    context.view_layer.objects.active = beamObj
+    beamObj.select_set(True)
 
     beamMesh.from_pydata(verts, [], faces)
     beamMesh.update(calc_edges=True)
@@ -675,7 +675,7 @@ def addBeamObj(sRef, context):
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
     if sRef.Cursor:
-        if beamObj.select is True:
+        if beamObj.select_get() is True:
             # we also have to check if we're considered to be in 3D View (view3d)
             if bpy.ops.view3d.snap_selected_to_cursor.poll():
                 bpy.ops.view3d.snap_selected_to_cursor()
@@ -694,7 +694,7 @@ class addBeam(Operator):
     bl_description = "Create beam meshes of various profiles"
     bl_options = {'REGISTER', 'UNDO'}
 
-    Type = EnumProperty(
+    Type: EnumProperty(
             items=(
             ('0', "Box Profile", "Square Beam"),
             ("1", "U Profile", "U Profile Beam"),
@@ -705,34 +705,34 @@ class addBeam(Operator):
             ),
             description="Beam form"
             )
-    beamZ = FloatProperty(
+    beamZ: FloatProperty(
             name="Height",
             min=0.01, max=100,
             default=1
             )
-    beamX = FloatProperty(
+    beamX: FloatProperty(
             name="Width",
             min=0.01, max=100,
             default=.5
             )
-    beamY = FloatProperty(
+    beamY: FloatProperty(
             name="Depth",
             min=0.01,
             max=100,
             default=2
             )
-    beamW = FloatProperty(
+    beamW: FloatProperty(
             name="Thickness",
             min=0.01, max=1,
             default=0.1
             )
-    edgeA = IntProperty(
+    edgeA: IntProperty(
             name="Taper",
             min=0, max=100,
             default=0,
             description="Angle beam edges"
             )
-    Cursor = BoolProperty(
+    Cursor: BoolProperty(
             name="Use 3D Cursor",
             default=False,
             description="Draw the beam where the 3D Cursor is"
@@ -742,9 +742,9 @@ class addBeam(Operator):
         layout = self.layout
 
         box = layout.box()
-        split = box.split(percentage=0.85, align=True)
+        split = box.split(factor=0.85, align=True)
         split.prop(self, "Type", text="")
-        split.prop(self, "Cursor", text="", icon="CURSOR")
+        split.prop(self, "Cursor", text="")
 
         box.prop(self, "beamZ")
         box.prop(self, "beamX")

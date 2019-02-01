@@ -937,12 +937,12 @@ class mlrestore(Operator):
                       "(Doesn't create new nor converts existing materials)")
     bl_options = {'REGISTER', 'UNDO'}
 
-    switcher = BoolProperty(
+    switcher: BoolProperty(
         name="Use Nodes",
         description="When restoring, switch Use Nodes On/Off",
         default=True
     )
-    renderer = EnumProperty(
+    renderer: EnumProperty(
         name="Renderer",
         description="Choose Cycles or Blender Internal",
         items=(

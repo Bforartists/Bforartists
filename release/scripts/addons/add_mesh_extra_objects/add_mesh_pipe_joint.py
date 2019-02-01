@@ -94,7 +94,7 @@ class AddElbowJoint(Operator):
     bl_description = "Construct an elbow pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
         default=1.0,
@@ -102,12 +102,12 @@ class AddElbowJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    div = IntProperty(
+    div: IntProperty(
         name="Divisions",
         description="Number of vertices (divisions)",
         default=32, min=3, max=256
         )
-    angle = FloatProperty(
+    angle: FloatProperty(
         name="Angle",
         description="The angle of the branching pipe (i.e. the 'arm' - "
                     "Measured from the center line of the main pipe",
@@ -116,7 +116,7 @@ class AddElbowJoint(Operator):
         max=radians(179.9),
         unit="ROTATION"
         )
-    startLength = FloatProperty(
+    startLength: FloatProperty(
         name="Length Start",
         description="Length of the beginning of the pipe",
         default=3.0,
@@ -124,7 +124,7 @@ class AddElbowJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    endLength = FloatProperty(
+    endLength: FloatProperty(
         name="End Length",
         description="Length of the end of the pipe",
         default=3.0,
@@ -203,7 +203,7 @@ class AddTeeJoint(Operator):
     bl_description = "Construct a tee-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
         default=1.0,
@@ -211,14 +211,14 @@ class AddTeeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    div = IntProperty(
+    div: IntProperty(
         name="Divisions",
         description="Number of vertices (divisions)",
         default=32,
         min=4,
         max=256
         )
-    angle = FloatProperty(
+    angle: FloatProperty(
         name="Angle",
         description="The angle of the branching pipe (i.e. the 'arm' - "
                     "Measured from the center line of the main pipe",
@@ -227,7 +227,7 @@ class AddTeeJoint(Operator):
         max=radians(179.9),
         unit="ROTATION"
         )
-    startLength = FloatProperty(
+    startLength: FloatProperty(
         name="Length Start",
         description="Length of the beginning of the"
                     " main pipe (the straight one)",
@@ -236,7 +236,7 @@ class AddTeeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    endLength = FloatProperty(
+    endLength: FloatProperty(
         name="End Length",
         description="Length of the end of the"
                     " main pipe (the straight one)",
@@ -245,7 +245,7 @@ class AddTeeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    branchLength = FloatProperty(
+    branchLength: FloatProperty(
         name="Arm Length",
         description="Length of the arm pipe (the bent one)",
         default=3.0,
@@ -385,7 +385,7 @@ class AddWyeJoint(Operator):
     bl_description = "Construct a wye-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
         default=1.0,
@@ -393,14 +393,14 @@ class AddWyeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    div = IntProperty(
+    div: IntProperty(
         name="Divisions",
         description="Number of vertices (divisions)",
         default=32,
         min=4,
         max=256
         )
-    angle1 = FloatProperty(
+    angle1: FloatProperty(
         name="Angle 1",
         description="The angle of the 1. branching pipe "
                     "(measured from the center line of the main pipe)",
@@ -409,7 +409,7 @@ class AddWyeJoint(Operator):
         max=radians(179.9),
         unit="ROTATION"
         )
-    angle2 = FloatProperty(
+    angle2: FloatProperty(
         name="Angle 2",
         description="The angle of the 2. branching pipe "
                     "(measured from the center line of the main pipe) ",
@@ -418,7 +418,7 @@ class AddWyeJoint(Operator):
         max=radians(179.9),
         unit="ROTATION"
         )
-    startLength = FloatProperty(
+    startLength: FloatProperty(
         name="Length Start",
         description="Length of the beginning of the"
                     " main pipe (the straight one)",
@@ -427,7 +427,7 @@ class AddWyeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    branch1Length = FloatProperty(
+    branch1Length: FloatProperty(
         name="Length Arm 1",
         description="Length of the 1. arm",
         default=3.0,
@@ -435,7 +435,7 @@ class AddWyeJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    branch2Length = FloatProperty(
+    branch2Length: FloatProperty(
         name="Length Arm 2",
         description="Length of the 2. arm",
         default=3.0,
@@ -587,7 +587,7 @@ class AddCrossJoint(Operator):
     bl_description = "Construct a cross-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
         default=1.0,
@@ -595,14 +595,14 @@ class AddCrossJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    div = IntProperty(
+    div: IntProperty(
         name="Divisions",
         description="Number of vertices (divisions)",
         default=32,
         min=4,
         max=256
         )
-    angle1 = FloatProperty(
+    angle1: FloatProperty(
         name="Angle 1",
         description="The angle of the 1. arm (from the main axis)",
         default=radians(90.0),
@@ -610,21 +610,21 @@ class AddCrossJoint(Operator):
         max=radians(179.9),
         unit="ROTATION"
         )
-    angle2 = FloatProperty(name="Angle 2",
+    angle2: FloatProperty(name="Angle 2",
         description="The angle of the 2. arm (from the main axis)",
         default=radians(90.0),
         min=radians(-179.9),
         max=radians(179.9),
         unit="ROTATION"
         )
-    angle3 = FloatProperty(name="Angle 3 (center)",
+    angle3: FloatProperty(name="Angle 3 (center)",
         description="The angle of the center arm (from the main axis)",
         default=radians(0.0),
         min=radians(-179.9),
         max=radians(179.9),
         unit="ROTATION"
         )
-    startLength = FloatProperty(
+    startLength: FloatProperty(
         name="Length Start",
         description="Length of the beginning of the "
                     "main pipe (the straight one)",
@@ -633,14 +633,14 @@ class AddCrossJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    branch1Length = FloatProperty(name="Length Arm 1",
+    branch1Length: FloatProperty(name="Length Arm 1",
         description="Length of the 1. arm",
         default=3.0,
         min=0.01,
         max=100.0,
         unit="LENGTH"
         )
-    branch2Length = FloatProperty(
+    branch2Length: FloatProperty(
         name="Length Arm 2",
         description="Length of the 2. arm",
         default=3.0,
@@ -648,7 +648,7 @@ class AddCrossJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    branch3Length = FloatProperty(
+    branch3Length: FloatProperty(
         name="Length Arm 3 (center)",
         description="Length of the center arm",
         default=3.0,
@@ -847,7 +847,7 @@ class AddNJoint(Operator):
     bl_description = "Construct a n-joint pipe mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Radius",
         description="The radius of the pipe",
         default=1.0,
@@ -855,21 +855,21 @@ class AddNJoint(Operator):
         max=100.0,
         unit="LENGTH"
         )
-    div = IntProperty(
+    div: IntProperty(
         name="Divisions",
         description="Number of vertices (divisions)",
         default=32,
         min=4,
         max=256
         )
-    number = IntProperty(
+    number: IntProperty(
         name="Arms / Joints",
         description="Number of joints / arms",
         default=5,
         min=2,
         max=99999
         )
-    length = FloatProperty(
+    length: FloatProperty(
         name="Length",
         description="Length of each joint / arm",
         default=3.0,

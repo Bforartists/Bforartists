@@ -24,7 +24,7 @@ class SEQExportStrip(bpy.types.Operator):
     bl_idname = "sequencer.export_strips"
     bl_label = "Export Strips"
 
-    filepath = StringProperty(subtype='FILE_PATH')
+    filepath: StringProperty(subtype='FILE_PATH')
 
     def execute(self, context):
         sce = bpy.context.scene

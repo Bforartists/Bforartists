@@ -62,7 +62,7 @@ class ImportX3D(bpy.types.Operator, ImportHelper):
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".x3d"
-    filter_glob = StringProperty(default="*.x3d;*.wrl", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.x3d;*.wrl", options={'HIDDEN'})
 
     def execute(self, context):
         from . import import_x3d
@@ -87,51 +87,51 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".x3d"
-    filter_glob = StringProperty(default="*.x3d", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.x3d", options={'HIDDEN'})
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
             default=False,
             )
-    use_mesh_modifiers = BoolProperty(
+    use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",
             description="Use transformed mesh data from each object",
             default=True,
             )
-    use_triangulate = BoolProperty(
+    use_triangulate: BoolProperty(
             name="Triangulate",
             description="Write quads into 'IndexedTriangleSet'",
             default=False,
             )
-    use_normals = BoolProperty(
+    use_normals: BoolProperty(
             name="Normals",
             description="Write normals with geometry",
             default=False,
             )
-    use_compress = BoolProperty(
+    use_compress: BoolProperty(
             name="Compress",
             description="Compress the exported file",
             default=False,
             )
-    use_hierarchy = BoolProperty(
+    use_hierarchy: BoolProperty(
             name="Hierarchy",
             description="Export parent child relationships",
             default=True,
             )
-    name_decorations = BoolProperty(
+    name_decorations: BoolProperty(
             name="Name decorations",
             description=("Add prefixes to the names of exported nodes to "
                          "indicate their type"),
             default=True,
             )
-    use_h3d = BoolProperty(
+    use_h3d: BoolProperty(
             name="H3D Extensions",
             description="Export shaders for H3D",
             default=False,
             )
 
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             min=0.01, max=1000.0,
             default=1.0,

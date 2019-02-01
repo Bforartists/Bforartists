@@ -765,14 +765,14 @@ def initialise():
 def move_verts(object, bm, mapping, move, lock, influence):
     if lock:
         lock_x, lock_y, lock_z = lock
-        orientation = bpy.context.space_data.transform_orientation
-        custom = bpy.context.space_data.current_orientation
+        orient_slot = bpy.context.scene.transform_orientation_slots[0]
+        custom = orient_slot.custom_orientation
         if custom:
-            mat = custom.matrix.to_4x4().inverted() * object.matrix_world.copy()
-        elif orientation == 'LOCAL':
+            mat = custom.matrix.to_4x4().inverted() @ object.matrix_world.copy()
+        elif orient_slot.type == 'LOCAL':
             mat = mathutils.Matrix.Identity(4)
-        elif orientation == 'VIEW':
-            mat = bpy.context.region_data.view_matrix.copy() * \
+        elif orient_slot.type == 'VIEW':
+            mat = bpy.context.region_data.view_matrix.copy() @ \
                 object.matrix_world.copy()
         else:  # orientation == 'GLOBAL'
             mat = object.matrix_world.copy()
@@ -786,14 +786,14 @@ def move_verts(object, bm, mapping, move, lock, influence):
                 else:
                     index = mapping[index]
             if lock:
-                delta = (loc - bm.verts[index].co) * mat_inv
+                delta = (loc - bm.verts[index].co) @ mat_inv
                 if lock_x:
                     delta[0] = 0
                 if lock_y:
                     delta[1] = 0
                 if lock_z:
                     delta[2] = 0
-                delta = delta * mat
+                delta = delta @ mat
                 loc = bm.verts[index].co + delta
             if influence < 0:
                 new_loc = loc

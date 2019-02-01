@@ -218,46 +218,46 @@ class add_mesh_honeycomb(bpy.types.Operator):
         if self.edge > m:
             self.edge = m
 
-    rows = IntProperty(
+    rows: IntProperty(
             name="Num of rows",
             default=2,
             min=1, max=100,
             description='Number of the rows'
             )
-    cols = IntProperty(
+    cols: IntProperty(
             name='Num of cols',
             default=2,
             min=1, max=100,
             description='Number of the columns'
             )
-    layers = BoolVectorProperty(
+    layers: BoolVectorProperty(
             name="Layers",
             size=20,
             subtype='LAYER',
             options={'HIDDEN', 'SKIP_SAVE'},
             )
-    diam = FloatProperty(
+    diam: FloatProperty(
             name='Cell Diameter',
             default=1.0,
             min=0.0, update=fix_edge,
             description='Diameter of the cell'
             )
-    edge = FloatProperty(
+    edge: FloatProperty(
             name='Edge Width',
             default=0.1,
             min=0.0, update=fix_edge,
             description='Width of the edge'
             )
     # generic transform props
-    view_align = BoolProperty(
+    view_align: BoolProperty(
             name="Align to View",
             default=False
             )
-    location = FloatVectorProperty(
+    location: FloatVectorProperty(
             name="Location",
             subtype='TRANSLATION'
             )
-    rotation = FloatVectorProperty(
+    rotation: FloatVectorProperty(
             name="Rotation",
             subtype='EULER'
             )

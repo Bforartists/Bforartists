@@ -35,7 +35,7 @@ bl_info = {
     "name": "Sun Position",
     "author": "Michael Martin",
     "version": (3, 0, 1),
-    "blender": (2, 6, 5),
+    "blender": (2, 65, 0),
     "api": 53207,
     "location": "World > Sun Position",
     "description": "Show sun position with objects and/or sky texture",

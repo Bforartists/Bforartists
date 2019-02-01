@@ -255,7 +255,7 @@ def main(context, lat_props):
 
         bpy.ops.object.select_all(action='DESELECT')
         bpy.ops.object.select_pattern(pattern=lat.name, extend=False)
-        context.scene.objects.active = lat
+        context.view_layer.objects.active = lat
 
         context.scene.update()
 
@@ -268,22 +268,22 @@ class EasyLattice(Operator):
     bl_description = ("Create a Lattice modifier ready to edit\n"
                       "Needs an existing Active Mesh Object\n")
 
-    lat_u = IntProperty(
+    lat_u: IntProperty(
             name="Lattice u",
             description="Points in u direction",
             default=3
             )
-    lat_v = IntProperty(
+    lat_v: IntProperty(
             name="Lattice v",
             description="Points in v direction",
             default=3
             )
-    lat_w = IntProperty(
+    lat_w: IntProperty(
             name="Lattice w",
             description="Points in w direction",
             default=3
             )
-    lat_scale_factor = FloatProperty(
+    lat_scale_factor: FloatProperty(
             name="Lattice scale factor",
             description="Adjustment to the lattice scale",
             default=1,
@@ -296,7 +296,7 @@ class EasyLattice(Operator):
                  ('KEY_CATMULL_ROM', "Catmull-Rom", "Catmull-Rom Interpolation type"),
                  ('KEY_BSPLINE', "BSpline", "Key BSpline Interpolation Type")
                 )
-    lat_type = EnumProperty(
+    lat_type: EnumProperty(
             name="Lattice Type",
             description="Choose Lattice Type",
             items=lat_types,

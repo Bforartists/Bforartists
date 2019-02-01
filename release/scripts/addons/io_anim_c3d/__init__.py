@@ -127,78 +127,78 @@ class C3DImporter(bpy.types.Operator):
     bl_idname = "import_anim.c3d"
     bl_label = "Import C3D"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         subtype='FILE_PATH',
     )
-    Y_up = BoolProperty(
+    Y_up: BoolProperty(
         name="Up vector is Y axis",
         default=False,
         description="Check when the data uses Y-up, uncheck when it uses Z-up",
     )
-    from_inches = BoolProperty(
+    from_inches: BoolProperty(
         name="Convert from inches to meters",
         default=False,
         description="Scale by 2.54/100",
     )
-    scale = FloatProperty(
+    scale: FloatProperty(
         name="Scale",
         default=1.0,
         description="Scale the positions by this value",
         min=0.0000001, max=1000000.0,
         soft_min=0.001, soft_max=100.0,
     )
-    auto_scale = BoolProperty(
+    auto_scale: BoolProperty(
         name="Adjust scale automatically",
         default=False,
         description="Guess correct scale factor",
     )
-    auto_magnitude = BoolProperty(
+    auto_magnitude: BoolProperty(
         name="Adjust scale magnitude",
         default=True,
         description="Automatically adjust scale magnitude",
     )
-    create_armature = BoolProperty(
+    create_armature: BoolProperty(
         name="Create an armature",
         default=True,
         description="Import the markers as bones instead of empties",
     )
-    size = FloatProperty(
+    size: FloatProperty(
         name="Empty or bone size",
         default=.03,
         description="The size of each empty or bone",
         min=0.0001, max=1000000.0,
         soft_min=0.001, soft_max=100.0,
     )
-    x_ray = BoolProperty(
+    x_ray: BoolProperty(
         name="Use X-Ray",
         default=True,
         description="Show the empties or armature over other objects",
     )
-    frame_skip = IntProperty(
+    frame_skip: IntProperty(
         name="Fps divisor",
         default=1,
         description="Frame supersampling factor",
         min=1,
     )
-    use_frame_no = BoolProperty(
+    use_frame_no: BoolProperty(
         name="Use frame numbers",
         default=False,
         description="Offset start of animation according to the source",
     )
-    show_names = BoolProperty(
+    show_names: BoolProperty(
         name="Show Names", default=False,
         description="Show the markers' name",
     )
-    prefix = StringProperty(
+    prefix: StringProperty(
         name="Name Prefix", maxlen=32,
         description="Prefix object names with this",
     )
-    use_existing = BoolProperty(
+    use_existing: BoolProperty(
         name="Use existing empties or armature",
         default=False,
         description="Use previously created homonymous empties or bones",
     )
-    confidence = FloatProperty(
+    confidence: FloatProperty(
         name="Minimum Confidence Level", default=0,
         description="Only consider markers with at least "
                     "this confidence level",
@@ -206,7 +206,7 @@ class C3DImporter(bpy.types.Operator):
         soft_min=-1., soft_max=100.0,
     )
 
-    filter_glob = StringProperty(default="*.c3d;*.csv", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.c3d;*.csv", options={'HIDDEN'})
 
     def find_height(self, ms):
         """
@@ -274,7 +274,7 @@ class C3DImporter(bpy.types.Operator):
             o.show_name = self.properties.show_names
             o.show_in_front = self.properties.x_ray
         for name in unames.values():
-            bpy.context.scene.objects[name].select = True
+            bpy.context.scene.objects[name].select_set(True)
         return unames
 
     def create_armature_obj(self, ms, scale):

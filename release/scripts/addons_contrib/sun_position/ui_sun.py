@@ -575,7 +575,7 @@ class SunPos_OT_ClearObjectGroup(bpy.types.Operator):
         Sun.verify_ObjectGroup()
         try:
             for x in Sun.Selected_objects:
-                x.select = True
+                x.select_set(True)
         except:
             pass
         del Sun.Selected_objects[:]
@@ -603,7 +603,7 @@ class SunPos_OT_TimePlace(bpy.types.Operator):
 
     from bpy.props import EnumProperty
 
-    timePlacePresets = EnumProperty(
+    timePlacePresets: EnumProperty(
         name="Time & place presets",
         description="Preset Place & Day",
         items=(
@@ -657,7 +657,7 @@ class SunPos_OT_MapChoice(bpy.types.Operator):
            ["Textureless", "None"]]
     from bpy.props import EnumProperty
 
-    mapPresets = EnumProperty(
+    mapPresets: EnumProperty(
         name="World map presets",
         description="world map files",
         items=(

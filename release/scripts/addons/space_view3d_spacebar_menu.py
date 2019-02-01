@@ -2870,7 +2870,7 @@ class SetObjectMode(Operator):
     bl_description = "I set the interactive mode of object"
     bl_options = {'REGISTER'}
 
-    mode = StringProperty(
+    mode: StringProperty(
                     name="Interactive mode",
                     default="OBJECT"
                     )
@@ -2962,13 +2962,13 @@ def UseBrushesLists():
 class VIEW3D_MT_Space_Dynamic_Menu_Pref(AddonPreferences):
     bl_idname = __name__
 
-    use_separators = BoolProperty(
+    use_separators: BoolProperty(
                     name="Use Separators in the menus",
                     default=True,
                     description=("Use separators in the menus, a trade-off between \n"
                                  "readability vs. using more space for displaying items")
                     )
-    use_brushes_lists = BoolProperty(
+    use_brushes_lists: BoolProperty(
                     name="Use compact menus for brushes",
                     default=False,
                     description=("Use more compact menus instead  \n"

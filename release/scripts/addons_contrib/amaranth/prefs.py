@@ -21,48 +21,48 @@ from bpy.props import (
 
 class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
     bl_idname = "amaranth"
-    use_frame_current = BoolProperty(
+    use_frame_current: BoolProperty(
         name="Current Frame Slider",
         description="Set the current frame from the Specials menu in the 3D View",
         default=True,
     )
-    use_file_save_reload = BoolProperty(
+    use_file_save_reload: BoolProperty(
         name="Save & Reload File",
         description="File menu > Save & Reload, or Ctrl + Shift + W",
         default=True,
     )
-    use_scene_refresh = BoolProperty(
+    use_scene_refresh: BoolProperty(
         name="Refresh Scene",
         description="Specials Menu [W]",
         default=True,
     )
-    use_timeline_extra_info = BoolProperty(
+    use_timeline_extra_info: BoolProperty(
         name="Timeline Extra Info",
         description="Timeline Header",
         default=True,
     )
-    use_image_node_display = BoolProperty(
+    use_image_node_display: BoolProperty(
         name="Active Image Node in Editor",
         description="Display active node image in image editor",
         default=True,
     )
-    use_scene_stats = BoolProperty(
+    use_scene_stats: BoolProperty(
         name="Extra Scene Statistics",
         description="Display extra scene statistics in the status bar (may be slow in heavy scenes)",
         default=False,
     )
-    frames_jump = IntProperty(
+    frames_jump: IntProperty(
         name="Frames",
         description="Number of frames to jump forward/backward",
         default=10,
         min=1
     )
-    use_framerate = BoolProperty(
+    use_framerate: BoolProperty(
         name="Framerate Jump",
         description="Jump the amount of frames forward/backward that you have set as your framerate",
         default=False,
     )
-    use_layers_for_render = BoolProperty(
+    use_layers_for_render: BoolProperty(
         name="Current Layers for Render",
         description="Save the layers that should be enabled for render",
         default=True,

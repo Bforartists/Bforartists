@@ -258,7 +258,7 @@ def frames_from_verts(ob, end, shape, mode):
 
 def keyframes_handler(scn, ob, shape, mode):
     bpy.ops.object.select_all(action='DESELECT')
-    ob.select = True
+    ob.select_set(True)
 
     start = ob.rs_shotshape_nav if ob.rs_shotshape_nav_start else 0
 
@@ -374,7 +374,7 @@ class RENDER_OT_RenderShots_constraints_add(bpy.types.Operator):
     bl_idname = "render.rendershots_constraints_add"
     bl_label = "Create Constraints"
 
-    cam = StringProperty()
+    cam: StringProperty()
 
     def execute(self, context):
         ob = bpy.data.objects[self.cam]
@@ -416,7 +416,7 @@ class RENDER_OT_RenderShots_render(bpy.types.Operator):
     bl_idname = "render.rendershots_render"
     bl_label = "Render"
 
-    animation = BoolProperty(default=False)
+    animation: BoolProperty(default=False)
     _timer = None
     _usingShape = False
 

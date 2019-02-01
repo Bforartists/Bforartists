@@ -119,7 +119,7 @@ class rule_draw:
 
     @staticmethod
     def _generic_match_name(layout, rule):
-        layout.label("Match Name:")
+        layout.label(text="Match Name:")
         row = layout.row(align=True)
         row.prop(rule, "match_name", text="")
         row.prop(rule, "use_match_regex", text="", icon='SORTALPHA')
@@ -153,7 +153,7 @@ class rule_draw:
     @staticmethod
     def EXPR(layout, rule):
         col = layout.column()
-        col.label("Scripted Expression:")
+        col.label(text="Scripted Expression:")
         col.prop(rule, "match_expr", text="")
 
 
@@ -308,7 +308,7 @@ class OBJECT_OT_color_rules_assign(Operator):
     bl_label = "Assign Colors"
     bl_options = {'UNDO'}
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selected",
             description="Apply to selected (otherwise all objects in the scene)",
             default=True,
@@ -380,7 +380,7 @@ class OBJECT_OT_color_rules_move(Operator):
     bl_idname = "object.color_rules_move"
     bl_label = "Remove Color Layer"
     bl_options = {'UNDO'}
-    direction = IntProperty()
+    direction: IntProperty()
 
     def execute(self, context):
         scene = context.scene
@@ -396,22 +396,22 @@ class OBJECT_OT_color_rules_move(Operator):
 
 
 class ColorRule(bpy.types.PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name="Rule Name",
             )
-    color = FloatVectorProperty(
+    color: FloatVectorProperty(
             name="Color",
             description="Color to assign",
             subtype='COLOR', size=3, min=0, max=1, precision=3, step=0.1,
             default=(0.5, 0.5, 0.5),
             )
-    factor = FloatProperty(
+    factor: FloatProperty(
             name="Opacity",
             description="Color to assign",
             min=0, max=1, precision=1, step=0.1,
             default=1.0,
             )
-    type = EnumProperty(
+    type: EnumProperty(
             name="Rule Type",
             items=(('NAME', "Name", ""),
                    ('DATA', "Data Name", "Name of the object data"),
@@ -423,7 +423,7 @@ class ColorRule(bpy.types.PropertyGroup):
                    ),
             )
 
-    use_invert = BoolProperty(
+    use_invert: BoolProperty(
             name="Invert",
             description="Match when the rule isn't met",
             )
@@ -432,10 +432,10 @@ class ColorRule(bpy.types.PropertyGroup):
     # Matching Variables
 
     # shared by all name matching
-    match_name = StringProperty(
+    match_name: StringProperty(
             name="Match Name",
             )
-    use_match_regex = BoolProperty(
+    use_match_regex: BoolProperty(
             name="Regex",
             description="Use regular expressions for pattern matching",
             )
@@ -446,14 +446,14 @@ class ColorRule(bpy.types.PropertyGroup):
             subtype='LAYER',
             )
     # type == 'TYPE'
-    match_object_type = EnumProperty(
+    match_object_type: EnumProperty(
             name="Object Type",
             items=([(i.identifier, i.name, "")
                     for i in bpy.types.Object.bl_rna.properties['type'].enum_items]
                     )
             )
     # type == 'EXPR'
-    match_expr = StringProperty(
+    match_expr: StringProperty(
             name="Expression",
             description="Python expression, where 'self' is the object variable"
             )

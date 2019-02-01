@@ -224,7 +224,7 @@ class MESH_OT_face_inset_fillet(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     # inset amount
-    inset_amount = FloatProperty(
+    inset_amount: FloatProperty(
             name="Inset amount",
             description="Define the size of the Inset relative to the selection",
             default=0.04,
@@ -233,7 +233,7 @@ class MESH_OT_face_inset_fillet(Operator):
             precision=3
             )
     # number of sides
-    number_of_sides = IntProperty(
+    number_of_sides: IntProperty(
             name="Number of sides",
             description="Define the roundness of the corners by specifying\n"
                         "the subdivision count",
@@ -241,7 +241,7 @@ class MESH_OT_face_inset_fillet(Operator):
             min=1, max=100,
             step=1
             )
-    distance = FloatProperty(
+    distance: FloatProperty(
             name="",
             description="Use distance or radius for corners' size calculation",
             default=0.04,
@@ -249,24 +249,24 @@ class MESH_OT_face_inset_fillet(Operator):
             step=1,
             precision=3
             )
-    out = BoolProperty(
+    out: BoolProperty(
             name="Outside",
             description="Inset the Faces outwards in relation to the selection\n"
                         "Note: depending on the geometry, can give unsatisfactory results",
             default=False
             )
-    radius = BoolProperty(
+    radius: BoolProperty(
             name="Radius",
             description="Use radius for corners' size calculation",
             default=False
             )
-    type_enum = EnumProperty(
+    type_enum: EnumProperty(
             items=(('opt0', "N-gon", "N-gon corners - Keep the corner Faces uncut"),
                    ('opt1', "Triangle", "Triangulate corners")),
             name="Corner Type",
             default="opt0"
             )
-    kp = BoolProperty(
+    kp: BoolProperty(
             name="Keep faces",
             description="Do not delete the inside Faces\n"
                         "Only available if the Out option is checked",
@@ -276,7 +276,7 @@ class MESH_OT_face_inset_fillet(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Corner Type:")
+        layout.label(text="Corner Type:")
 
         row = layout.row()
         row.prop(self, "type_enum", text="")

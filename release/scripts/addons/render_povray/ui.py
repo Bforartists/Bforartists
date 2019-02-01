@@ -767,7 +767,7 @@ class RENDER_PT_povray_photons(RenderButtonsPanel, bpy.types.Panel):
 
 
         box = layout.box()
-        box.label('Photon Map File:')
+        box.label(text='Photon Map File:')
         row = box.row()
         row.prop(scene.pov, "photon_map_file_save_load",expand = True)
         if scene.pov.photon_map_file_save_load in {'save'}:

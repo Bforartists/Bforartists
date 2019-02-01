@@ -58,7 +58,7 @@ class Inset(bpy.types.Operator):
     bl_description = "Make an inset polygon inside selection"
     bl_options = {'REGISTER', 'UNDO'}
 
-    inset_amount = FloatProperty(name="Amount",
+    inset_amount: FloatProperty(name="Amount",
         description="Amount to move inset edges",
         default=5.0,
         min=0.0,
@@ -66,7 +66,7 @@ class Inset(bpy.types.Operator):
         soft_min=0.0,
         soft_max=100.0,
         unit='LENGTH')
-    inset_height = FloatProperty(name="Height",
+    inset_height: FloatProperty(name="Height",
         description="Amount to raise inset faces",
         default=0.0,
         min=-10000.0,
@@ -74,10 +74,10 @@ class Inset(bpy.types.Operator):
         soft_min=-500.0,
         soft_max=500.0,
         unit='LENGTH')
-    region = BoolProperty(name="Region",
+    region: BoolProperty(name="Region",
         description="Inset selection as one region?",
         default=True)
-    scale = EnumProperty(name="Scale",
+    scale: EnumProperty(name="Scale",
         description="Scale for amount",
         items=[
             ('PERCENT', "Percent",
@@ -95,7 +95,7 @@ class Inset(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.label("Inset Options:")
+        box.label(text="Inset Options:")
         box.prop(self, "scale")
         box.prop(self, "inset_amount")
         box.prop(self, "inset_height")

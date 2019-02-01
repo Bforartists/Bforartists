@@ -73,99 +73,99 @@ def hasIKConstraint(pose_bone):
 
 
 class MocapConstraint(bpy.types.PropertyGroup):
-    name = StringProperty(name="Name",
+    name: StringProperty(name="Name",
         default="Mocap Fix",
         description="Name of Mocap Fix",
         update=mocap_constraints.setConstraint)
-    constrained_bone = StringProperty(name="Bone",
+    constrained_bone: StringProperty(name="Bone",
         default="",
         description="Constrained Bone",
         update=mocap_constraints.updateConstraintBoneType)
-    constrained_boneB = StringProperty(name="Bone (2)",
+    constrained_boneB: StringProperty(name="Bone (2)",
         default="",
         description="Other Constrained Bone (optional, depends on type)",
         update=mocap_constraints.setConstraint)
-    s_frame = IntProperty(name="S",
+    s_frame: IntProperty(name="S",
         default=0,
         description="Start frame of Fix",
         update=mocap_constraints.setConstraint)
-    e_frame = IntProperty(name="E",
+    e_frame: IntProperty(name="E",
         default=100,
         description="End frame of Fix",
         update=mocap_constraints.setConstraint)
-    smooth_in = IntProperty(name="In",
+    smooth_in: IntProperty(name="In",
         default=10,
         description="Number of frames to smooth in",
         update=mocap_constraints.setConstraint,
         min=0)
-    smooth_out = IntProperty(name="Out",
+    smooth_out: IntProperty(name="Out",
         default=10,
         description="Number of frames to smooth out",
         update=mocap_constraints.setConstraint,
         min=0)
-    targetMesh = StringProperty(name="Mesh",
+    targetMesh: StringProperty(name="Mesh",
         default="",
         description="Target of Fix - Mesh (optional, depends on type)",
         update=mocap_constraints.setConstraint)
-    active = BoolProperty(name="Active",
+    active: BoolProperty(name="Active",
         default=True,
         description="Fix is active",
         update=mocap_constraints.setConstraint)
-    show_expanded = BoolProperty(name="Show Expanded",
+    show_expanded: BoolProperty(name="Show Expanded",
         default=True,
         description="Fix is fully shown")
-    targetPoint = FloatVectorProperty(name="Point", size=3,
+    targetPoint: FloatVectorProperty(name="Point", size=3,
         subtype="XYZ", default=(0.0, 0.0, 0.0),
         description="Target of Fix - Point",
         update=mocap_constraints.setConstraint)
-    targetDist = FloatProperty(name="Offset",
+    targetDist: FloatProperty(name="Offset",
         default=0.0,
         description="Distance and Floor Fixes - Desired offset",
         update=mocap_constraints.setConstraint)
-    targetSpace = EnumProperty(
+    targetSpace: EnumProperty(
         items=[("WORLD", "World Space", "Evaluate target in global space"),
             ("LOCAL", "Object space", "Evaluate target in object space"),
             ("constrained_boneB", "Other Bone Space", "Evaluate target in specified other bone space")],
         name="Space",
         description="In which space should Point type target be evaluated",
         update=mocap_constraints.setConstraint)
-    type = EnumProperty(name="Type of constraint",
+    type: EnumProperty(name="Type of constraint",
         items=[("point", "Maintain Position", "Bone is at a specific point"),
             ("freeze", "Maintain Position at frame", "Bone does not move from location specified in target frame"),
             ("floor", "Stay above", "Bone does not cross specified mesh object eg floor"),
             ("distance", "Maintain distance", "Target bones maintained specified distance")],
         description="Type of Fix",
         update=mocap_constraints.updateConstraintBoneType)
-    real_constraint = StringProperty()
-    real_constraint_bone = StringProperty()
+    real_constraint: StringProperty()
+    real_constraint_bone: StringProperty()
 
 
 # Animation Stitch Settings, used for animation stitching of 2 retargeted animations.
 class AnimationStitchSettings(bpy.types.PropertyGroup):
-    first_action = StringProperty(name="Action 1",
+    first_action: StringProperty(name="Action 1",
             description="First action in stitch")
-    second_action = StringProperty(name="Action 2",
+    second_action: StringProperty(name="Action 2",
             description="Second action in stitch")
-    blend_frame = IntProperty(name="Stitch frame",
+    blend_frame: IntProperty(name="Stitch frame",
             description="Frame to locate stitch on")
-    blend_amount = IntProperty(name="Blend amount",
+    blend_amount: IntProperty(name="Blend amount",
             description="Size of blending transition, on both sides of the stitch",
             default=10)
-    second_offset = IntProperty(name="Second offset",
+    second_offset: IntProperty(name="Second offset",
             description="Frame offset for 2nd animation, where it should start",
             default=10)
-    stick_bone = StringProperty(name="Stick Bone",
+    stick_bone: StringProperty(name="Stick Bone",
             description="Bone to freeze during transition",
             default="")
 
 
 # MocapNLA Tracks. Stores which tracks/actions are associated with each retargeted animation.
 class MocapNLATracks(bpy.types.PropertyGroup):
-    name = StringProperty()
-    base_track = StringProperty()
-    auto_fix_track = StringProperty()
-    manual_fix_track = StringProperty()
-    stride_action = StringProperty()
+    name: StringProperty()
+    base_track: StringProperty()
+    auto_fix_track: StringProperty()
+    manual_fix_track: StringProperty()
+    stride_action: StringProperty()
 
 
 #Update function for Advanced Retarget boolean variable.
@@ -231,7 +231,7 @@ def toggleIKBone(self, context):
 #MocapMap class for storing mapping on enduser performer,
 # where a bone may be linked to more than one on the performer
 class MocapMapping(bpy.types.PropertyGroup):
-    name = StringProperty()
+    name: StringProperty()
 
 # Disabling for now [#28933] - campbell
 '''
@@ -279,7 +279,7 @@ class MocapPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Preprocessing:")
+        layout.label(text="Preprocessing:")
 
         row = layout.row(align=True)
         row.operator("mocap.denoise", text='Clean noise')
@@ -291,7 +291,7 @@ class MocapPanel(bpy.types.Panel):
         row.operator("mocap.limitdof", text='Constrain Rig')
         row.operator("mocap.removelimitdof", text='Unconstrain Rig')
 
-        layout.label("Retargeting:")
+        layout.label(text="Retargeting:")
         enduser_obj = bpy.context.active_object
         performer_obj = [obj for obj in bpy.context.selected_objects if obj != enduser_obj]
         if enduser_obj is None or len(performer_obj) != 1:
@@ -299,8 +299,8 @@ class MocapPanel(bpy.types.Panel):
         else:
             layout.operator("mocap.guessmapping", text="Guess Hierarchy Mapping")
             labelRow = layout.row(align=True)
-            labelRow.label("Performer Rig")
-            labelRow.label("End user Rig")
+            labelRow.label(text="Performer Rig")
+            labelRow.label(text="End user Rig")
             performer_obj = performer_obj[0]
             if performer_obj.data and enduser_obj.data:
                 if performer_obj.data.name in bpy.data.armatures and enduser_obj.data.name in bpy.data.armatures:
@@ -336,9 +336,9 @@ class MocapPanel(bpy.types.Panel):
                             IKCol.prop(pose_bone, 'IKRetarget')
                             IKLabel.label(label_mod)
                         else:
-                            twistCol.label(" ")
-                            IKCol.label(" ")
-                            IKLabel.label(" ")
+                            twistCol.label(text=" ")
+                            IKCol.label(text=" ")
+                            IKLabel.label(text=" ")
                     mapRow = layout.row()
                     mapRow.operator("mocap.savemapping", text='Save mapping')
                     mapRow.operator("mocap.loadmapping", text='Load mapping')
@@ -392,16 +392,16 @@ class MocapConstraintsPanel(bpy.types.Panel):
                             if m_constraint.type == "distance" or m_constraint.type == "point":
                                 box.prop_search(m_constraint, 'constrained_boneB', enduser_obj.pose, "bones", icon='CONSTRAINT_BONE')
                             frameRow = box.row()
-                            frameRow.label("Frame Range:")
+                            frameRow.label(text="Frame Range:")
                             frameRow.prop(m_constraint, 's_frame')
                             frameRow.prop(m_constraint, 'e_frame')
                             smoothRow = box.row()
-                            smoothRow.label("Smoothing:")
+                            smoothRow.label(text="Smoothing:")
                             smoothRow.prop(m_constraint, 'smooth_in')
                             smoothRow.prop(m_constraint, 'smooth_out')
                             targetRow = box.row()
                             targetLabelCol = targetRow.column()
-                            targetLabelCol.label("Target settings:")
+                            targetLabelCol.label(text="Target settings:")
                             targetPropCol = targetRow.column()
                             if m_constraint.type == "floor":
                                 targetPropCol.prop_search(m_constraint, 'targetMesh', bpy.data, "objects")
@@ -437,10 +437,10 @@ class ExtraToolsPanel(bpy.types.Panel):
             enduser_arm = context.active_object.data
             selectBox = layout.box()
             selectRetargets = selectBox.row()
-            selectRetargets.label("Retargeted Animations:")
+            selectRetargets.label(text="Retargeted Animations:")
             selectRetargets.prop_search(enduser_arm, "active_mocap", enduser_arm, "mocapNLATracks")
             stitchBox = layout.box()
-            stitchBox.label("Animation Stitching")
+            stitchBox.label(text="Animation Stitching")
             settings = enduser_arm.stitch_settings
             stitchBox.prop_search(settings, "first_action", enduser_arm, "mocapNLATracks")
             stitchBox.prop_search(settings, "second_action", enduser_arm, "mocapNLATracks")
@@ -543,7 +543,7 @@ class OBJECT_OT_SelectMapBoneButton(bpy.types.Operator):
     """Select a bone for faster mapping"""
     bl_idname = "mocap.selectmap"
     bl_label = "Select Mapping Bone"
-    perf_bone = StringProperty()
+    perf_bone: StringProperty()
 
     def execute(self, context):
         enduser_obj = bpy.context.active_object
@@ -706,7 +706,7 @@ class MOCAP_OT_AddMocapFix(bpy.types.Operator):
     """artifacts following the retarget"""
     bl_idname = "mocap.addmocapfix"
     bl_label = "Add Mocap Fix"
-    type = EnumProperty(name="Type of Fix",
+    type: EnumProperty(name="Type of Fix",
     items=[("point", "Maintain Position", "Bone is at a specific point"),
         ("freeze", "Maintain Position at frame", "Bone does not move from location specified in target frame"),
         ("floor", "Stay above", "Bone does not cross specified mesh object eg floor"),
@@ -731,7 +731,7 @@ class OBJECT_OT_RemoveMocapConstraint(bpy.types.Operator):
     """Remove this post-retarget fix"""
     bl_idname = "mocap.removeconstraint"
     bl_label = "Remove Mocap Fix"
-    constraint = IntProperty()
+    constraint: IntProperty()
 
     def execute(self, context):
         enduser_obj = bpy.context.active_object

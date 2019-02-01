@@ -104,11 +104,11 @@ class AddSymmetricalEmpty(Operator):
 
         layout.prop(mirror, "use_clip", text="Use Clipping")
 
-        layout.label("Mirror Axis")
+        layout.label(text="Mirror Axis")
         row = layout.row(align=True)
-        row.prop(mirror, "use_x")
-        row.prop(mirror, "use_y")
-        row.prop(mirror, "use_z")
+        row.prop(mirror, "use_axis")
+        row.prop(mirror, "use_axis")
+        row.prop(mirror, "use_axis")
 
     def execute(self, context):
         Add_Symmetrical_Empty()
@@ -128,11 +128,11 @@ class AddSymmetricalVert(Operator):
 
         layout.prop(mirror, "use_clip", text="Use Clipping")
 
-        layout.label("Mirror Axis")
+        layout.label(text="Mirror Axis")
         row = layout.row(align=True)
-        row.prop(mirror, "use_x")
-        row.prop(mirror, "use_y")
-        row.prop(mirror, "use_z")
+        row.prop(mirror, "use_axis")
+        row.prop(mirror, "use_axis")
+        row.prop(mirror, "use_axis")
 
     def execute(self, context):
         Add_Symmetrical_Vert()

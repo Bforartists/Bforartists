@@ -193,14 +193,14 @@ def add_type1(self, context):
 
 
 def make_path(self, context, verts):
-    target = bpy.context.scene.objects.active
+    target = bpy.context.view_layer.objects.active
     bpy.ops.curve.primitive_nurbs_path_add(
             view_align=False, enter_editmode=False, location=(0, 0, 0)
             )
-    target.data.taper_object = bpy.context.scene.objects.active
-    taper = bpy.context.scene.objects.active
+    target.data.taper_object = bpy.context.view_layer.objects.active
+    taper = bpy.context.view_layer.objects.active
     taper.name = target.name + '_Taper'
-    bpy.context.scene.objects.active = target
+    bpy.context.view_layer.objects.active = target
     points = taper.data.splines[0].points
 
     for i in range(len(verts)):
@@ -208,7 +208,7 @@ def make_path(self, context, verts):
 
 
 def make_curve(self, context, verts, lh, rh):
-    target = bpy.context.scene.objects.active
+    target = bpy.context.view_layer.objects.active
     curve_data = bpy.data.curves.new(
                         name=target.name + '_Bevel', type='CURVE'
                         )
@@ -229,8 +229,8 @@ def make_curve(self, context, verts, lh, rh):
             c += 1
 
     object_data_add(context, curve_data, operator=self)
-    target.data.bevel_object = bpy.context.scene.objects.active
-    bpy.context.scene.objects.active = target
+    target.data.bevel_object = bpy.context.view_layer.objects.active
+    bpy.context.view_layer.objects.active = target
 
 
 class add_tapercurve(Operator):
@@ -284,7 +284,7 @@ class add_tapercurve(Operator):
         layout = self.layout
 
         col = layout.column(align=True)
-        col.label("Settings:")
+        col.label(text="Settings:")
         split = layout.split(percentage=0.95, align=True)
         split.active = not self.link2
         col = split.column(align=True)
@@ -404,7 +404,7 @@ class Bevel_Taper_Curve_Menu(Menu):
 
 
 def menu_funcs(self, context):
-    if bpy.context.scene.objects.active.type == "CURVE":
+    if bpy.context.view_layer.objects.active.type == "CURVE":
         self.layout.menu("VIEW3D_MT_bevel_taper_curve_menu")
 
 

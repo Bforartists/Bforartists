@@ -21,7 +21,7 @@ bl_info = {
     "name": "Select Tools",
     "author": "Jakub Belcik",
     "version": (1, 0, 2),
-    "blender": (2, 7, 3),
+    "blender": (2, 73, 0),
     "location": "3D View > Tools",
     "description": "Selection Tools",
     "warning": "",
@@ -63,7 +63,7 @@ class ShowHideObject(Operator):
                     i.hide_render = False
                 else:
                     i.hide = True
-                    i.select = False
+                    i.select_set(False)
 
                     if i.type not in ['CAMERA', 'LIGHT']:
                         i.hide_render = True
@@ -101,7 +101,7 @@ class HideAllObjects(Operator):
         if context.object is None:
             for i in bpy.data.objects:
                 i.hide = True
-                i.select = False
+                i.select_set(False)
 
                 if i.type not in ['CAMERA', 'LIGHT']:
                     i.hide_render = True
@@ -111,7 +111,7 @@ class HideAllObjects(Operator):
             for i in bpy.data.objects:
                 if i.name != obj_name:
                     i.hide = True
-                    i.select = False
+                    i.select_set(False)
 
                     if i.type not in ['CAMERA', 'LIGHT']:
                         i.hide_render = True
@@ -193,7 +193,7 @@ class ShowRenderAllSelected(Operator):
     def execute(self, context):
         for ob in bpy.data.objects:
             try:
-                if ob.select is True:
+                if ob.select_get() is True:
                     ob.hide_render = False
             except:
                 continue
@@ -209,7 +209,7 @@ class HideRenderAllSelected(Operator):
     def execute(self, context):
         for ob in bpy.data.objects:
             try:
-                if ob.select is True:
+                if ob.select_get() is True:
                     ob.hide_render = True
             except:
                 continue
@@ -221,7 +221,7 @@ class OBJECT_OT_HideShowByTypeTemplate():
 
     bl_options = {'UNDO', 'REGISTER'}
 
-    type = EnumProperty(
+    type: EnumProperty(
             items=(
                 ('MESH', 'Mesh', ''),
                 ('CURVE', 'Curve', ''),
@@ -285,18 +285,18 @@ class OBJECT_OT_HideByType(OBJECT_OT_HideShowByTypeTemplate, Operator):
     bl_idname = "object.hide_by_type"
     bl_label = "Hide By Type"
 
-    hide_or_show = BoolProperty(
+    hide_or_show: BoolProperty(
             name="Hide",
             description="Inverse effect",
             options={'HIDDEN'},
             default=1
             )
-    hide_selected = BoolProperty(
+    hide_selected: BoolProperty(
             name="Selected",
             description="Hide only selected objects",
             default=0
             )
-    hide_render_restricted = BoolProperty(
+    hide_render_restricted: BoolProperty(
             name="Only Render-Restricted",
             description="Hide only render restricted objects",
             default=0
@@ -307,18 +307,18 @@ class OBJECT_OT_ShowByType(OBJECT_OT_HideShowByTypeTemplate, Operator):
     bl_idname = "object.show_by_type"
     bl_label = "Show By Type"
 
-    hide_or_show = BoolProperty(
+    hide_or_show: BoolProperty(
             name="Hide",
             description="Inverse effect",
             options={'HIDDEN'},
             default=0
             )
-    hide_selected = BoolProperty(
+    hide_selected: BoolProperty(
             name="Selected",
             options={'HIDDEN'},
             default=0
             )
-    hide_render_restricted = BoolProperty(
+    hide_render_restricted: BoolProperty(
             name="Only Renderable",
             description="Show only non render restricted objects",
             default=0

@@ -3527,12 +3527,12 @@ class ArchipackLines():
         box = layout.box()
         row = box.row()
         if self.parts_expand:
-            row.prop(self, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(self, 'n_parts')
             for i, part in enumerate(self.parts):
                 part.draw(layout, context, i)
         else:
-            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
 
     def update_parts(self):
         # print("update_parts")
@@ -4707,13 +4707,13 @@ class archipack_roof(ArchipackLines, ArchipackObject, Manipulable, PropertyGroup
         box = layout.box()
         row = box.row()
         if self.parts_expand:
-            row.prop(self, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(self, 'n_parts')
             # box.prop(self, 'closed')
             for i, part in enumerate(self.parts):
                 part.draw(layout, context, i)
         else:
-            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
 
 
 def update_hole(self, context):
@@ -4876,9 +4876,9 @@ class ARCHIPACK_PT_roof(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.tile_expand:
-            row.prop(prop, 'tile_expand', icon="TRIA_DOWN", text="Covering", icon_only=True, emboss=False)
+            row.prop(prop, 'tile_expand', icon="TRIA_DOWN", text="Covering", emboss=False)
         else:
-            row.prop(prop, 'tile_expand', icon="TRIA_RIGHT", text="Covering", icon_only=True, emboss=False)
+            row.prop(prop, 'tile_expand', icon="TRIA_RIGHT", text="Covering", emboss=False)
         row.prop(prop, 'tile_enable')
         if prop.tile_expand:
             box.prop(prop, 'tile_model', text="")
@@ -4919,9 +4919,9 @@ class ARCHIPACK_PT_roof(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.hip_expand:
-            row.prop(prop, 'hip_expand', icon="TRIA_DOWN", text="Hip", icon_only=True, emboss=False)
+            row.prop(prop, 'hip_expand', icon="TRIA_DOWN", text="Hip", emboss=False)
         else:
-            row.prop(prop, 'hip_expand', icon="TRIA_RIGHT", text="Hip", icon_only=True, emboss=False)
+            row.prop(prop, 'hip_expand', icon="TRIA_RIGHT", text="Hip", emboss=False)
         row.prop(prop, 'hip_enable')
         if prop.hip_expand:
             box.prop(prop, 'hip_model', text="")
@@ -4938,9 +4938,9 @@ class ARCHIPACK_PT_roof(Panel):
         row = box.row(align=True)
 
         if prop.beam_expand:
-            row.prop(prop, 'beam_expand', icon="TRIA_DOWN", text="Beam", icon_only=True, emboss=False)
+            row.prop(prop, 'beam_expand', icon="TRIA_DOWN", text="Beam", emboss=False)
         else:
-            row.prop(prop, 'beam_expand', icon="TRIA_RIGHT", text="Beam", icon_only=True, emboss=False)
+            row.prop(prop, 'beam_expand', icon="TRIA_RIGHT", text="Beam", emboss=False)
         if prop.beam_expand:
             box.prop(prop, 'beam_enable')
             if prop.beam_enable:
@@ -4966,9 +4966,9 @@ class ARCHIPACK_PT_roof(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.gutter_expand:
-            row.prop(prop, 'gutter_expand', icon="TRIA_DOWN", text="Gutter", icon_only=True, emboss=False)
+            row.prop(prop, 'gutter_expand', icon="TRIA_DOWN", text="Gutter", emboss=False)
         else:
-            row.prop(prop, 'gutter_expand', icon="TRIA_RIGHT", text="Gutter", icon_only=True, emboss=False)
+            row.prop(prop, 'gutter_expand', icon="TRIA_RIGHT", text="Gutter", emboss=False)
         row.prop(prop, 'gutter_enable')
         if prop.gutter_expand:
             box.prop(prop, 'gutter_alt')
@@ -4980,9 +4980,9 @@ class ARCHIPACK_PT_roof(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.fascia_expand:
-            row.prop(prop, 'fascia_expand', icon="TRIA_DOWN", text="Fascia", icon_only=True, emboss=False)
+            row.prop(prop, 'fascia_expand', icon="TRIA_DOWN", text="Fascia", emboss=False)
         else:
-            row.prop(prop, 'fascia_expand', icon="TRIA_RIGHT", text="Fascia", icon_only=True, emboss=False)
+            row.prop(prop, 'fascia_expand', icon="TRIA_RIGHT", text="Fascia", emboss=False)
         row.prop(prop, 'fascia_enable')
         if prop.fascia_expand:
             box.prop(prop, 'fascia_altitude')
@@ -4993,9 +4993,9 @@ class ARCHIPACK_PT_roof(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.bargeboard_expand:
-            row.prop(prop, 'bargeboard_expand', icon="TRIA_DOWN", text="Bargeboard", icon_only=True, emboss=False)
+            row.prop(prop, 'bargeboard_expand', icon="TRIA_DOWN", text="Bargeboard", emboss=False)
         else:
-            row.prop(prop, 'bargeboard_expand', icon="TRIA_RIGHT", text="Bargeboard", icon_only=True, emboss=False)
+            row.prop(prop, 'bargeboard_expand', icon="TRIA_RIGHT", text="Bargeboard", emboss=False)
         row.prop(prop, 'bargeboard_enable')
         if prop.bargeboard_expand:
             box.prop(prop, 'bargeboard_altitude')

@@ -24,12 +24,12 @@ class MESH_OT_extra_tools_help(Operator):
     bl_description = "Tool Help - click to read some basic information"
     bl_options = {'REGISTER'}
 
-    help_ids = StringProperty(
+    help_ids: StringProperty(
             name="ID of the Operator to display",
             options={'HIDDEN'},
             default="default"
             )
-    popup_size = IntProperty(
+    popup_size: IntProperty(
             name="Size of the Help Pop-up Menu",
             default=350,
             min=100,

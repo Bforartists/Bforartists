@@ -144,7 +144,7 @@ def write(obname,name,
 
     # scene link check
     if obj.name not in bpy.context.scene.objects.keys() :
-        bpy.context.scene.objects.link(obj)
+        bpy.context.collection.objects.link(obj)
 
     return obj
 

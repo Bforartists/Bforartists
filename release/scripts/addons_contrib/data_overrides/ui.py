@@ -88,7 +88,7 @@ class SCENE_OT_Override_Add(Operator):
     def id_block_items(self, context):
         return [id_data_enum_item(id_data) for id_data in bpy.data.objects]
 
-    id_block = EnumProperty(name="ID", description="ID datablock for which to add overrides", items=id_block_items)
+    id_block: EnumProperty(name="ID", description="ID datablock for which to add overrides", items=id_block_items)
 
     def invoke(self, context, evemt):
         context.window_manager.invoke_search_popup(self)
@@ -109,7 +109,7 @@ class SCENE_OT_Override_AddCustomProperty(Operator):
     bl_label = "Add Custom Property Override"
     bl_options = {'REGISTER', 'UNDO'}
 
-    propname = StringProperty(name="Property", description="Path to the custom property to override")
+    propname: StringProperty(name="Property", description="Path to the custom property to override")
 
     @classmethod
     def poll(cls, context):

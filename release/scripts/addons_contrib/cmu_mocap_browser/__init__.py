@@ -111,8 +111,8 @@ class CMUMocapMotionBrowser(bpy.types.Panel):
         fps = motion['fps']
         ifps = fps // cml.frame_skip
         row = layout.row()
-        row.column().label("Original: {0:d} fps.".format(fps))
-        row.column().label("Importing: {0:d} fps.".format(ifps))
+        row.column().label(text="Original: {0:d} fps.".format(fps))
+        row.column().label(text="Importing: {0:d} fps.".format(ifps))
         layout.prop(cml, "frame_skip")
         layout.prop(cml, "cloud_scale")
         remote_fname = library.motion_url.format(sidx, midx)
