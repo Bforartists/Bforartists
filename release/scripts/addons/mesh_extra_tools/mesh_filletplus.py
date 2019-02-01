@@ -297,7 +297,7 @@ class MESH_OT_fillet_plus(Operator):
                       "Note: Works on a mesh whose all faces share the same normal")
     bl_options = {"REGISTER", "UNDO"}
 
-    adj = FloatProperty(
+    adj: FloatProperty(
             name="",
             description="Size of the filleted corners",
             default=0.1,
@@ -305,25 +305,25 @@ class MESH_OT_fillet_plus(Operator):
             step=1,
             precision=3
             )
-    n = IntProperty(
+    n: IntProperty(
             name="",
             description="Subdivision of the filleted corners",
             default=3,
             min=1, max=50,
             step=1
             )
-    out = BoolProperty(
+    out: BoolProperty(
             name="Outside",
             description="Fillet towards outside",
             default=False
             )
-    flip = BoolProperty(
+    flip: BoolProperty(
             name="Flip",
             description="Flip the direction of the Fillet\n"
                         "Only available if Outside option is not active",
             default=False
             )
-    radius = BoolProperty(
+    radius: BoolProperty(
             name="Radius",
             description="Use radius for the size of the filleted corners",
             default=False
@@ -343,11 +343,11 @@ class MESH_OT_fillet_plus(Operator):
         else:
             layout.prop(self, "radius")
             if self.radius is True:
-                layout.label("Radius:")
+                layout.label(text="Radius:")
             elif self.radius is False:
-                layout.label("Distance:")
+                layout.label(text="Distance:")
             layout.prop(self, "adj")
-            layout.label("Number of sides:")
+            layout.label(text="Number of sides:")
             layout.prop(self, "n")
 
             if self.n > 1:

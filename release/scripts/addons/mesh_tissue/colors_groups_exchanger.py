@@ -37,7 +37,7 @@ bl_info = {
     "name": "Colors/Groups Exchanger",
     "author": "Alessandro Zomparelli (Co-de-iT)",
     "version": (0, 3, 2),
-    "blender": (2, 7, 8),
+    "blender": (2, 78, 0),
     "location": "",
     "description": ("Convert vertex colors channels to vertex groups and vertex"
                     " groups to colors"),
@@ -65,27 +65,27 @@ class vertex_colors_to_vertex_groups(Operator):
     bl_description = ("Convert the active Vertex Color into a Vertex Group")
     bl_options = {'REGISTER', 'UNDO'}
 
-    red = BoolProperty(
+    red: BoolProperty(
             name="Red Channel",
             default=False,
             description="Convert Red Channel"
             )
-    green = BoolProperty(
+    green: BoolProperty(
             name="Green Channel",
             default=False,
             description="Convert Green Channel"
             )
-    blue = BoolProperty(
+    blue: BoolProperty(
             name="Blue Channel",
             default=False,
             description="Convert Blue Channel"
             )
-    value = BoolProperty(
+    value: BoolProperty(
             name="Value Channel",
             default=True,
             description="Convert Value Channel"
             )
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             default=False,
             description="Invert all Color Channels"
@@ -184,7 +184,7 @@ class vertex_group_to_vertex_colors(Operator):
     bl_description = ("Convert the active Vertex Group into a Vertex Color")
     bl_options = {'REGISTER', 'UNDO'}
 
-    channel = EnumProperty(
+    channel: EnumProperty(
             items=[('Blue', 'Blue Channel', 'Convert to Blue Channel'),
                    ('Green', 'Green Channel', 'Convert to Green Channel'),
                    ('Red', 'Red Channel', 'Convert to Red Channel'),
@@ -196,7 +196,7 @@ class vertex_group_to_vertex_colors(Operator):
             options={'LIBRARY_EDITABLE'}
             )
 
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             default=False,
             description="Invert Color Channel"
@@ -282,26 +282,26 @@ class curvature_to_vertex_groups(Operator):
                       "mesh. Is based on Dirty Vertex Color")
     bl_options = {'REGISTER', 'UNDO'}
 
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             default=False,
             description="Invert Values"
             )
-    blur_strength = FloatProperty(
+    blur_strength: FloatProperty(
             name="Blur Strength",
             default=1,
             min=0.001,
             max=1,
             description="Blur strength per iteration"
             )
-    blur_iterations = IntProperty(
+    blur_iterations: IntProperty(
             name="Blur Iterations",
             default=1,
             min=0,
             max=40,
             description="Number of times to blur the values"
             )
-    min_angle = FloatProperty(
+    min_angle: FloatProperty(
             name="Min Angle",
             default=0,
             min=0,
@@ -309,7 +309,7 @@ class curvature_to_vertex_groups(Operator):
             subtype='ANGLE',
             description="Minimum angle"
             )
-    max_angle = FloatProperty(
+    max_angle: FloatProperty(
             name="Max Angle",
             default=pi,
             min=pi / 2,
@@ -317,7 +317,7 @@ class curvature_to_vertex_groups(Operator):
             subtype='ANGLE',
             description="Maximum angle"
             )
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             default=False,
             description="Invert the curvature map"
@@ -362,7 +362,7 @@ class face_area_to_vertex_groups(Operator):
                       "faces")
     bl_options = {'REGISTER', 'UNDO'}
 
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             default=False,
             description="Invert Values"
@@ -425,35 +425,35 @@ class harmonic_weight(Operator):
     bl_description = "Create an harmonic variation of the active Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
 
-    freq = FloatProperty(
+    freq: FloatProperty(
             name="Frequency",
             default=20,
             soft_min=0,
             soft_max=100,
             description="Wave frequency"
             )
-    amp = FloatProperty(
+    amp: FloatProperty(
             name="Amplitude",
             default=1,
             soft_min=0,
             soft_max=10,
             description="Wave amplitude"
             )
-    midlevel = FloatProperty(
+    midlevel: FloatProperty(
             name="Midlevel",
             default=0,
             min=-1,
             max=1,
             description="Midlevel"
             )
-    add = FloatProperty(
+    add: FloatProperty(
             name="Add",
             default=0,
             min=-1,
             max=1,
             description="Add to the Weight"
             )
-    mult = FloatProperty(
+    mult: FloatProperty(
             name="Multiply",
             default=0,
             min=0,

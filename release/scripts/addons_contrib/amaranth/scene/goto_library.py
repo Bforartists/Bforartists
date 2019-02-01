@@ -73,7 +73,7 @@ class AMTH_FILE_OT_directory_go_to(bpy.types.Operator):
     bl_idname = "file.directory_go_to"
     bl_label = "Go To"
 
-    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
 
     def execute(self, context):
         bpy.ops.file.select_bookmark(dir=self.filepath)

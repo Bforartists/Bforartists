@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Geodesic Domes2",
     "author": "Noctumsolis, PKHG, Meta Androcto, Andy Houston",
-    "version": (0, 3, 2),
-    "blender": (2, 7, 1),
+    "version": (0, 3, 3),
+    "blender": (2, 80, 0),
     "location": "Toolshelf > Create Tab",
     "description": "Create geodesic dome type objects.",
     "warning": "",

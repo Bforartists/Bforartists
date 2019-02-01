@@ -25,7 +25,7 @@ class SelVertEdgeFace(Operator):
     bl_description = "Select Vertices, Edges, Faces by their indices"
     bl_options = {"REGISTER", "UNDO"}
 
-    select_type = EnumProperty(
+    select_type: EnumProperty(
             items=[
                    ('VERT', "Vertices", "Select Vertices by index"),
                    ('EDGE', "Edges", "Select Edges by index"),
@@ -35,7 +35,7 @@ class SelVertEdgeFace(Operator):
             description="",
             default='VERT',
             )
-    indice = FloatProperty(
+    indice: FloatProperty(
             name="Selected",
             default=0,
             min=0, max=100,
@@ -43,17 +43,17 @@ class SelVertEdgeFace(Operator):
             precision=2,
             subtype="PERCENTAGE"
             )
-    delta = BoolProperty(
+    delta: BoolProperty(
             name="Use Parameter",
             default=False,
             description="Select by Index / Parameter"
             )
-    flip = BoolProperty(
+    flip: BoolProperty(
             name="Reverse Order",
             default=False,
             description="Reverse selecting order"
             )
-    start_new = BoolProperty(
+    start_new: BoolProperty(
             name="Fresh Start",
             default=False,
             description="Start from no previous selection\n"
@@ -70,11 +70,11 @@ class SelVertEdgeFace(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Selection Type:")
+        layout.label(text="Selection Type:")
         layout.prop(self, "select_type", text="")
         layout.separator()
 
-        layout.label("Selected:")
+        layout.label(text="Selected:")
         layout.prop(self, "indice", text="", slider=True)
 
         d_text = self.delta_text[self.select_type]

@@ -46,7 +46,7 @@ class CACHARANTH_GroupSelect(Operator):
         items = [(str(i),x.name,x.name, "GROUP", i) for i,x in enumerate(bpy.data.collections)]
         return items
 
-    group_select = bpy.props.EnumProperty(items = avail_groups, name = "Available Groups")
+    group_select: bpy.props.EnumProperty(items = avail_groups, name = "Available Groups")
 
     @classmethod
     def poll(cls, context):
@@ -110,7 +110,7 @@ class MESH_OT_MeshcacheExcludeNameRemove(Operator):
         return {'FINISHED'}
 
 class MeshcacheExcludeNames(bpy.types.PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name="Rule Name",
             )
 

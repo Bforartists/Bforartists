@@ -45,7 +45,7 @@ from bpy.props import (
 
 from bpy.types import Operator
 
-def main_object(scene, obj, level, **kw):
+def main_object(context, obj, level, **kw):
     import random
 
     # pull out some args
@@ -66,20 +66,22 @@ def main_object(scene, obj, level, **kw):
     use_sharp_edges = kw_copy.pop("use_sharp_edges")
     use_sharp_edges_apply = kw_copy.pop("use_sharp_edges_apply")
 
+    collection = context.collection
+
     if level != 0:
         kw_copy["source_limit"] = recursion_source_limit
 
     from . import fracture_cell_setup
 
     # not essential but selection is visual distraction.
-    obj.select = False
+    obj.select_set(False)
 
     if kw_copy["use_debug_redraw"]:
         obj_display_type_prev = obj.display_type
         obj.display_type = 'WIRE'
 
-    objects = fracture_cell_setup.cell_fracture_objects(scene, obj, **kw_copy)
-    objects = fracture_cell_setup.cell_fracture_boolean(scene, obj, objects,
+    objects = fracture_cell_setup.cell_fracture_objects(context, obj, **kw_copy)
+    objects = fracture_cell_setup.cell_fracture_boolean(context, obj, objects,
                                                         use_island_split=use_island_split,
                                                         use_interior_hide=(use_interior_vgroup or use_sharp_edges),
                                                         use_debug_bool=use_debug_bool,
@@ -123,9 +125,9 @@ def main_object(scene, obj, level, **kw):
             objects_recursive = []
             for i, obj_cell in objects_recurse_input:
                 assert(objects[i] is obj_cell)
-                objects_recursive += main_object(scene, obj_cell, level_sub, **kw)
+                objects_recursive += main_object(context, obj_cell, level_sub, **kw)
                 if use_remove_original:
-                    scene.objects.unlink(obj_cell)
+                    collection.objects.unlink(obj_cell)
                     del objects[i]
                 if recursion_clamp and len(objects) + len(objects_recursive) >= recursion_clamp:
                     break
@@ -182,7 +184,6 @@ def main_object(scene, obj, level, **kw):
 def main(context, **kw):
     import time
     t = time.time()
-    scene = context.scene
     objects_context = context.selected_editable_objects
 
     kw_copy = kw.copy()
@@ -194,11 +195,11 @@ def main(context, **kw):
     objects = []
     for obj in objects_context:
         if obj.type == 'MESH':
-            objects += main_object(scene, obj, 0, **kw_copy)
+            objects += main_object(context, obj, 0, **kw_copy)
 
     bpy.ops.object.select_all(action='DESELECT')
     for obj_cell in objects:
-        obj_cell.select = True
+        obj_cell.select_set(True)
 
     if mass_mode == 'UNIFORM':
         for obj_cell in objects:
@@ -250,7 +251,7 @@ class FractureCell(Operator):
 
     # -------------------------------------------------------------------------
     # Source Options
-    source = EnumProperty(
+    source: EnumProperty(
             name="Source",
             items=(('VERT_OWN', "Own Verts", "Use own vertices"),
                    ('VERT_CHILD', "Child Verts", "Use child object vertices"),
@@ -264,21 +265,21 @@ class FractureCell(Operator):
             default={'PARTICLE_OWN'},
             )
 
-    source_limit = IntProperty(
+    source_limit: IntProperty(
             name="Source Limit",
             description="Limit the number of input points, 0 for unlimited",
             min=0, max=5000,
             default=100,
             )
 
-    source_noise = FloatProperty(
+    source_noise: FloatProperty(
             name="Noise",
             description="Randomize point distribution",
             min=0.0, max=1.0,
             default=0.0,
             )
 
-    cell_scale = FloatVectorProperty(
+    cell_scale: FloatVectorProperty(
             name="Scale",
             description="Scale Cell Shape",
             size=3,
@@ -289,35 +290,35 @@ class FractureCell(Operator):
     # -------------------------------------------------------------------------
     # Recursion
 
-    recursion = IntProperty(
+    recursion: IntProperty(
             name="Recursion",
             description="Break shards recursively",
             min=0, max=5000,
             default=0,
             )
 
-    recursion_source_limit = IntProperty(
+    recursion_source_limit: IntProperty(
             name="Source Limit",
             description="Limit the number of input points, 0 for unlimited (applies to recursion only)",
             min=0, max=5000,
             default=8,
             )
 
-    recursion_clamp = IntProperty(
+    recursion_clamp: IntProperty(
             name="Clamp Recursion",
             description="Finish recursion when this number of objects is reached (prevents recursing for extended periods of time), zero disables",
             min=0, max=10000,
             default=250,
             )
 
-    recursion_chance = FloatProperty(
+    recursion_chance: FloatProperty(
             name="Random Factor",
             description="Likelihood of recursion",
             min=0.0, max=1.0,
             default=0.25,
             )
 
-    recursion_chance_select = EnumProperty(
+    recursion_chance_select: EnumProperty(
             name="Recurse Over",
             items=(('RANDOM', "Random", ""),
                    ('SIZE_MIN', "Small", "Recursively subdivide smaller objects"),
@@ -331,49 +332,49 @@ class FractureCell(Operator):
     # -------------------------------------------------------------------------
     # Mesh Data Options
 
-    use_smooth_faces = BoolProperty(
+    use_smooth_faces: BoolProperty(
             name="Smooth Faces",
             default=False,
             )
 
-    use_sharp_edges = BoolProperty(
+    use_sharp_edges: BoolProperty(
             name="Sharp Edges",
             description="Set sharp edges when disabled",
             default=True,
             )
 
-    use_sharp_edges_apply = BoolProperty(
+    use_sharp_edges_apply: BoolProperty(
             name="Apply Split Edge",
             description="Split sharp hard edges",
             default=True,
             )
 
-    use_data_match = BoolProperty(
+    use_data_match: BoolProperty(
             name="Match Data",
             description="Match original mesh materials and data layers",
             default=True,
             )
 
-    use_island_split = BoolProperty(
+    use_island_split: BoolProperty(
             name="Split Islands",
             description="Split disconnected meshes",
             default=True,
             )
 
-    margin = FloatProperty(
+    margin: FloatProperty(
             name="Margin",
             description="Gaps for the fracture (gives more stable physics)",
             min=0.0, max=1.0,
             default=0.001,
             )
 
-    material_index = IntProperty(
+    material_index: IntProperty(
             name="Material",
             description="Material index for interior faces",
             default=0,
             )
 
-    use_interior_vgroup = BoolProperty(
+    use_interior_vgroup: BoolProperty(
             name="Interior VGroup",
             description="Create a vertex group for interior verts",
             default=False,
@@ -382,7 +383,7 @@ class FractureCell(Operator):
     # -------------------------------------------------------------------------
     # Physics Options
 
-    mass_mode = EnumProperty(
+    mass_mode: EnumProperty(
             name="Mass Mode",
             items=(('VOLUME', "Volume", "Objects get part of specified mass based on their volume"),
                    ('UNIFORM', "Uniform", "All objects get the specified mass"),
@@ -390,7 +391,7 @@ class FractureCell(Operator):
             default='VOLUME',
             )
 
-    mass = FloatProperty(
+    mass: FloatProperty(
             name="Mass",
             description="Mass to give created objects",
             min=0.001, max=1000.0,
@@ -401,13 +402,13 @@ class FractureCell(Operator):
     # -------------------------------------------------------------------------
     # Object Options
 
-    use_recenter = BoolProperty(
+    use_recenter: BoolProperty(
             name="Recenter",
             description="Recalculate the center points after splitting",
             default=True,
             )
 
-    use_remove_original = BoolProperty(
+    use_remove_original: BoolProperty(
             name="Remove Original",
             description="Removes the parents used to create the shatter",
             default=True,
@@ -419,20 +420,20 @@ class FractureCell(Operator):
     # .. different from object options in that this controls how the objects
     #    are setup in the scene.
 
-    use_layer_index = IntProperty(
+    use_layer_index: IntProperty(
             name="Layer Index",
             description="Layer to add the objects into or 0 for existing",
             default=0,
             min=0, max=20,
             )
 
-    use_layer_next = BoolProperty(
+    use_layer_next: BoolProperty(
             name="Next Layer",
             description="At the object into the next layer (layer index overrides)",
             default=True,
             )
 
-    group_name = StringProperty(
+    group_name: StringProperty(
             name="Group",
             description="Create objects int a group "
                         "(use existing or create new)",
@@ -440,19 +441,19 @@ class FractureCell(Operator):
 
     # -------------------------------------------------------------------------
     # Debug
-    use_debug_points = BoolProperty(
+    use_debug_points: BoolProperty(
             name="Debug Points",
             description="Create mesh data showing the points used for fracture",
             default=False,
             )
 
-    use_debug_redraw = BoolProperty(
+    use_debug_redraw: BoolProperty(
             name="Show Progress Realtime",
             description="Redraw as fracture is done",
             default=True,
             )
 
-    use_debug_bool = BoolProperty(
+    use_debug_bool: BoolProperty(
             name="Debug Boolean",
             description="Skip applying the boolean modifier",
             default=False,
@@ -475,7 +476,7 @@ class FractureCell(Operator):
         layout = self.layout
         box = layout.box()
         col = box.column()
-        col.label("Point Source")
+        col.label(text="Point Source")
         rowsub = col.row()
         rowsub.prop(self, "source")
         rowsub = col.row()
@@ -486,7 +487,7 @@ class FractureCell(Operator):
 
         box = layout.box()
         col = box.column()
-        col.label("Recursive Shatter")
+        col.label(text="Recursive Shatter")
         rowsub = col.row(align=True)
         rowsub.prop(self, "recursion")
         rowsub.prop(self, "recursion_source_limit")
@@ -497,7 +498,7 @@ class FractureCell(Operator):
 
         box = layout.box()
         col = box.column()
-        col.label("Mesh Data")
+        col.label(text="Mesh Data")
         rowsub = col.row()
         rowsub.prop(self, "use_smooth_faces")
         rowsub.prop(self, "use_sharp_edges")
@@ -516,7 +517,7 @@ class FractureCell(Operator):
 
         box = layout.box()
         col = box.column()
-        col.label("Physics")
+        col.label(text="Physics")
         rowsub = col.row(align=True)
         rowsub.prop(self, "mass_mode")
         rowsub.prop(self, "mass")
@@ -524,14 +525,14 @@ class FractureCell(Operator):
 
         box = layout.box()
         col = box.column()
-        col.label("Object")
+        col.label(text="Object")
         rowsub = col.row(align=True)
         rowsub.prop(self, "use_recenter")
 
 
         box = layout.box()
         col = box.column()
-        col.label("Scene")
+        col.label(text="Scene")
         rowsub = col.row(align=True)
         rowsub.prop(self, "use_layer_index")
         rowsub.prop(self, "use_layer_next")
@@ -539,7 +540,7 @@ class FractureCell(Operator):
 
         box = layout.box()
         col = box.column()
-        col.label("Debug")
+        col.label(text="Debug")
         rowsub = col.row(align=True)
         rowsub.prop(self, "use_debug_redraw")
         rowsub.prop(self, "use_debug_points")
@@ -548,7 +549,7 @@ class FractureCell(Operator):
 
 def menu_func(self, context):
     layout = self.layout
-    layout.label("Cell Fracture:")
+    layout.label(text="Cell Fracture:")
     layout.operator("object.add_fracture_cell_objects",
                     text="Cell Fracture")
 

@@ -59,13 +59,13 @@ class CMUMocapDownloadImport(bpy.types.Operator):
     bl_idname = "mocap.download_import"
     bl_label = "Download and Import a file"
 
-    remote_file = bpy.props.StringProperty(
+    remote_file: bpy.props.StringProperty(
         name="Remote File",
         description="Location from where to download the file data")
-    local_file = bpy.props.StringProperty(
+    local_file: bpy.props.StringProperty(
         name="Local File",
         description="Destination where to save the file data")
-    do_import = bpy.props.BoolProperty(
+    do_import: bpy.props.BoolProperty(
         name="Manual Import",
         description="Import the resource non-automatically",
         default=False)

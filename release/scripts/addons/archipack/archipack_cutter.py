@@ -662,12 +662,12 @@ class ArchipackCutter():
         box = layout.box()
         row = box.row()
         if self.parts_expand:
-            row.prop(self, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(self, 'n_parts')
             for i, part in enumerate(self.parts):
                 part.draw(layout, context, i)
         else:
-            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(self, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
 
     def update_parts(self):
         # print("update_parts")

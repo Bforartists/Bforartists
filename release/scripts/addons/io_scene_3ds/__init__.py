@@ -63,9 +63,9 @@ class Import3DS(bpy.types.Operator, ImportHelper):
     bl_options = {'UNDO'}
 
     filename_ext = ".3ds"
-    filter_glob = StringProperty(default="*.3ds", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.3ds", options={'HIDDEN'})
 
-    constrain_size = FloatProperty(
+    constrain_size: FloatProperty(
             name="Size Constraint",
             description="Scale the model by 10 until it reaches the "
                         "size constraint (0 to disable)",
@@ -73,13 +73,13 @@ class Import3DS(bpy.types.Operator, ImportHelper):
             soft_min=0.0, soft_max=1000.0,
             default=10.0,
             )
-    use_image_search = BoolProperty(
+    use_image_search: BoolProperty(
             name="Image Search",
             description="Search subdirectories for any associated images "
                         "(Warning, may be slow)",
             default=True,
             )
-    use_apply_transform = BoolProperty(
+    use_apply_transform: BoolProperty(
             name="Apply Transform",
             description="Workaround for object transformations "
                         "importing incorrectly",
@@ -109,12 +109,12 @@ class Export3DS(bpy.types.Operator, ExportHelper):
     bl_label = 'Export 3DS'
 
     filename_ext = ".3ds"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.3ds",
             options={'HIDDEN'},
             )
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
             default=False,

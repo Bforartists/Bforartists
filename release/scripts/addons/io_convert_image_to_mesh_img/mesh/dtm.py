@@ -130,7 +130,7 @@ class DTM:
     def _get_data_start(self):
         """Gets the start position of the DTM data block"""
         label_length = self.label['RECORD_BYTES']
-        num_labels = self.label.get('LABEL_RECORDS', 1)
+        num_labels = self.label.get(text='LABEL_RECORDS', 1)
         return int(label_length * num_labels)
 
     def _process_invalid_data(self, data):

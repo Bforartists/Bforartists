@@ -4,7 +4,7 @@ bl_info = {
     "name": "PKHG faces",
     "author": "PKHG",
     "version": (0, 0, 6),
-    "blender": (2, 7, 1),
+    "blender": (2, 71, 0),
     "location": "View3D > Tools > PKHG (tab)",
     "description": "Faces selected will become added faces of different style",
     "warning": "",
@@ -31,111 +31,111 @@ class MESH_OT_add_faces_to_object(Operator):
     bl_description = "Set parameters and build object with added faces"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    reverse_faces = BoolProperty(
+    reverse_faces: BoolProperty(
             name="Reverse Faces",
             default=False,
             description="Revert the normals of selected faces"
             )
-    name_source_object = StringProperty(
+    name_source_object: StringProperty(
             name="Mesh",
             description="Choose a Source Mesh",
             default="Cube"
             )
-    remove_start_faces = BoolProperty(
+    remove_start_faces: BoolProperty(
             name="Remove Start Faces",
             default=True,
             description="Make a choice about removal of Original Faces"
             )
-    base_height = FloatProperty(
+    base_height: FloatProperty(
             name="Base Height",
             min=-20,
             soft_max=10, max=20,
             default=0.2,
             description="Set general Base Height"
             )
-    use_relative_base_height = BoolProperty(
+    use_relative_base_height: BoolProperty(
             name="Relative Base Height",
             default=False,
             description="Relative or absolute Base Height"
             )
-    second_height = FloatProperty(
+    second_height: FloatProperty(
             name="2nd height", min=-5,
             soft_max=5, max=20,
             default=0.2,
             description="Second height for various shapes"
             )
-    width = FloatProperty(
+    width: FloatProperty(
             name="Width Faces",
             min=-20, max=20,
             default=0.5,
             description="Set general width"
             )
-    repeat_extrude = IntProperty(
+    repeat_extrude: IntProperty(
             name="Repeat",
             min=1,
             soft_max=5, max=20,
             description="For longer base"
             )
-    move_inside = FloatProperty(
+    move_inside: FloatProperty(
             name="Move Inside",
             min=0.0,
             max=1.0,
             default=0.5,
             description="How much move to inside"
             )
-    thickness = FloatProperty(
+    thickness: FloatProperty(
             name="Thickness",
             soft_min=0.01, min=0,
             soft_max=5.0, max=20.0,
             default=0
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name="Depth",
             min=-5,
             soft_max=5.0, max=20.0,
             default=0
             )
-    collapse_edges = BoolProperty(
+    collapse_edges: BoolProperty(
             name="Make Point",
             default=False,
             description="Collapse the vertices of edges"
             )
-    spike_base_width = FloatProperty(
+    spike_base_width: FloatProperty(
             name="Spike Base Width",
             default=0.4,
             min=-4.0,
             soft_max=1, max=20,
             description="Base width of a spike"
             )
-    base_height_inset = FloatProperty(
+    base_height_inset: FloatProperty(
             name="Base Height Inset",
             default=0.0,
             min=-5, max=5,
             description="To elevate or drop the Base height Inset"
             )
-    top_spike = FloatProperty(
+    top_spike: FloatProperty(
             name="Top Spike",
             default=1.0,
             min=-10.0, max=10.0,
             description="The Base Height of a spike"
             )
-    top_extra_height = FloatProperty(
+    top_extra_height: FloatProperty(
             name="Top Extra Height",
             default=0.0,
             min=-10.0, max=10.0,
             description="Add extra height"
             )
-    step_with_real_spike = BoolProperty(
+    step_with_real_spike: BoolProperty(
             name="Step with Real Spike",
             default=False,
             description="In stepped, use a real spike"
             )
-    use_relative = BoolProperty(
+    use_relative: BoolProperty(
             name="Use Relative",
             default=False,
             description="Change size using area, min or max"
             )
-    face_types = EnumProperty(
+    face_types: EnumProperty(
             name="Face Types",
             description="Different types of Faces",
             default="no",
@@ -151,36 +151,36 @@ class MESH_OT_add_faces_to_object(Operator):
                 ('bar', "Bar", "Bar"),
                 ]
             )
-    strange_boxed_effect = BoolProperty(
+    strange_boxed_effect: BoolProperty(
             name="Strange Effect",
             default=False,
             description="Do not show one extrusion"
             )
-    use_boundary = BoolProperty(
+    use_boundary: BoolProperty(
             name="Use Boundary",
             default=True
             )
-    use_even_offset = BoolProperty(
+    use_even_offset: BoolProperty(
             name="Even Offset",
             default=True
             )
-    use_relative_offset = BoolProperty(
+    use_relative_offset: BoolProperty(
             name="Relative Offset",
             default=True
             )
-    use_edge_rail = BoolProperty(
+    use_edge_rail: BoolProperty(
             name="Edge Rail",
             default=False
             )
-    use_outset = BoolProperty(
+    use_outset: BoolProperty(
             name="Outset",
             default=False
             )
-    use_select_inset = BoolProperty(
+    use_select_inset: BoolProperty(
             name="Inset",
             default=False
             )
-    use_interpolate = BoolProperty(
+    use_interpolate: BoolProperty(
             name="Interpolate",
             default=True
             )
@@ -203,7 +203,7 @@ class MESH_OT_add_faces_to_object(Operator):
         col.separator()
         col.label(text="Using Active Object", icon="INFO")
         col.separator()
-        col.label("Face Types:")
+        col.label(text="Face Types:")
         col.prop(self, "face_types", text="")
         col.separator()
         col.prop(self, "use_relative")
@@ -309,7 +309,7 @@ class MESH_OT_add_faces_to_object(Operator):
 
             # PKHG>INFO now the extruded facec have to move in normal direction
             bpy.ops.object.mode_set(mode='EDIT')
-            obj = bpy.context.scene.objects.active
+            obj = bpy.context.view_layer.objects.active
             bm = bmesh.from_edit_mesh(obj.data)
             todo_faces = [face for face in bm.faces if face.select]
             for face in todo_faces:
@@ -680,7 +680,7 @@ def prepare(self, context, remove_start_faces=True):
        Start for a face selected change of faces
        select an object of type mesh, with activated several (all) faces
     """
-    obj = bpy.context.scene.objects.active
+    obj = bpy.context.view_layer.objects.active
     bpy.ops.object.mode_set(mode='OBJECT')
     selectedpolygons = [el for el in obj.data.polygons if el.select]
 

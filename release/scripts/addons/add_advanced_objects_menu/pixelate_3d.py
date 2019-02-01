@@ -60,7 +60,7 @@ def pix(self, obj):
     sca = self.size * (100 - self.gap) * .005
     bpy.ops.mesh.primitive_cube_add(layers=[True] + [False] * 19)
     bpy.ops.transform.resize(value=[sca] * 3)
-    bpy.context.scene.objects.active = dup
+    bpy.context.view_layer.objects.active = dup
     bpy.ops.object.parent_set(type='OBJECT')
 
 
@@ -73,21 +73,21 @@ class Pixelate(Operator):
                       "Needs an existing Active Mesh Object")
     bl_options = {'REGISTER', 'UNDO'}
 
-    size = FloatProperty(
+    size: FloatProperty(
             name="Size",
             min=.05, max=5,
             default=.25,
             description="Size of the cube / grid \n"
                         "Small values (below 0.1) can create a high polygon count"
             )
-    gap = IntProperty(
+    gap: IntProperty(
             name="Gap",
             min=0, max=90,
             default=10,
             subtype='PERCENTAGE',
             description="Separation - percent of size"
             )
-    smooth = FloatProperty(
+    smooth: FloatProperty(
             name="Smooth",
             min=0, max=1,
             default=.0,

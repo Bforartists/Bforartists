@@ -19,7 +19,6 @@ class OperatorAutoLoftCurves(Operator):
 
     def execute(self, context):
         #print("### TODO: OperatorLoftCurves.execute()")
-        scene = context.scene
         mesh = bpy.data.meshes.new("LoftMesh")
 
         curve0 = context.selected_objects[0]
@@ -31,7 +30,7 @@ class OperatorAutoLoftCurves(Operator):
 
         loftobj = bpy.data.objects.new(self.name, mesh)
 
-        scene.objects.link(loftobj)
+        context.collection.objects.link(loftobj)
         loftobj["autoloft"] = True
         if loftobj.get('_RNA_UI') is None:
             loftobj['_RNA_UI'] = {}

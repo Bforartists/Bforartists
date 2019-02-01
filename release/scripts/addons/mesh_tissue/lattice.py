@@ -31,7 +31,7 @@ bl_info = {
     "name": "Lattice",
     "author": "Alessandro Zomparelli (Co-de-iT)",
     "version": (0, 3),
-    "blender": (2, 7, 8),
+    "blender": (2, 78, 0),
     "location": "",
     "description": "Generate a Lattice based on a grid mesh",
     "warning": "",
@@ -173,80 +173,80 @@ class lattice_along_surface(Operator):
                       "Lattice's topology")
     bl_options = {'REGISTER', 'UNDO'}
 
-    set_parent = BoolProperty(
+    set_parent: BoolProperty(
             name="Set Parent",
             default=True,
             description="Automatically set the Lattice as parent"
             )
-    flipNormals = BoolProperty(
+    flipNormals: BoolProperty(
             name="Flip Normals",
             default=False,
             description="Flip normals direction"
             )
-    swapUV = BoolProperty(
+    swapUV: BoolProperty(
             name="Swap UV",
             default=False,
             description="Flip grid's U and V"
             )
-    flipU = BoolProperty(
+    flipU: BoolProperty(
             name="Flip U",
             default=False,
             description="Flip grid's U")
 
-    flipV = BoolProperty(
+    flipV: BoolProperty(
             name="Flip V",
             default=False,
             description="Flip grid's V"
             )
-    flipW = BoolProperty(
+    flipW: BoolProperty(
             name="Flip W",
             default=False,
             description="Flip grid's W"
             )
-    use_groups = BoolProperty(
+    use_groups: BoolProperty(
             name="Vertex Group",
             default=False,
             description="Use active Vertex Group for lattice's thickness"
             )
-    high_quality_lattice = BoolProperty(
+    high_quality_lattice: BoolProperty(
             name="High quality",
             default=True,
             description="Increase the the subdivisions in normal direction for a "
                         "more correct result"
             )
-    hide_lattice = BoolProperty(
+    hide_lattice: BoolProperty(
             name="Hide Lattice",
             default=True,
             description="Automatically hide the Lattice object"
             )
-    scale_x = FloatProperty(
+    scale_x: FloatProperty(
             name="Scale X",
             default=1,
             min=0.001,
             max=1,
             description="Object scale"
             )
-    scale_y = FloatProperty(
+    scale_y: FloatProperty(
             name="Scale Y", default=1,
             min=0.001,
             max=1,
             description="Object scale"
             )
-    scale_z = FloatProperty(
+    scale_z: FloatProperty(
             name="Scale Z",
             default=1,
             min=0.001,
             max=1,
             description="Object scale"
             )
-    thickness = FloatProperty(
+    thickness: FloatProperty(
             name="Thickness",
             default=1,
             soft_min=0,
             soft_max=5,
             description="Lattice thickness"
             )
-    displace = FloatProperty(
+    displace: FloatProperty(
             name="Displace",
             default=0,
             soft_min=-1,
@@ -316,7 +316,7 @@ class lattice_along_surface(Operator):
             if o.name != grid_obj.name and o.type in \
                     ('MESH', 'CURVE', 'SURFACE', 'FONT'):
                 obj = o
-                o.select = False
+                o.select_set(False)
                 break
         try:
             obj_dim = obj.dimensions
@@ -338,8 +338,8 @@ class lattice_along_surface(Operator):
 
         if len(grid_mesh.polygons) > 64 * 64:
             bpy.ops.object.delete(use_global=False)
-            bpy.context.scene.objects.active = obj
-            obj.select = True
+            bpy.context.view_layer.objects.active = obj
+            obj.select_set(True)
             self.report({'ERROR'}, "Maximum resolution allowed for Lattice is 64")
             return {'CANCELLED'}
 
@@ -379,15 +379,15 @@ class lattice_along_surface(Operator):
         if bb.z == 0:
             lattice.scale.z = 1
 
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_add(type='LATTICE')
         obj.modifiers[-1].object = lattice
 
         # set as parent
         if self.set_parent:
-            obj.select = True
-            lattice.select = True
-            bpy.context.scene.objects.active = lattice
+            obj.select_set(True)
+            lattice.select_set(True)
+            bpy.context.view_layer.objects.active = lattice
             bpy.ops.object.parent_set(type='LATTICE')
 
         # reading grid structure
@@ -432,12 +432,12 @@ class lattice_along_surface(Operator):
                                 target_point.z / bpy.data.objects[lattice.name].scale.z
         except:
             bpy.ops.object.mode_set(mode='OBJECT')
-            grid_obj.select = True
-            lattice.select = True
-            obj.select = False
+            grid_obj.select_set(True)
+            lattice.select_set(True)
+            obj.select_set(False)
             bpy.ops.object.delete(use_global=False)
-            bpy.context.scene.objects.active = obj
-            obj.select = True
+            bpy.context.view_layer.objects.active = obj
+            obj.select_set(True)
             bpy.ops.object.modifier_remove(modifier=obj.modifiers[-1].name)
             if nu > 64 or nv > 64:
                 self.report({'ERROR'}, "Maximum resolution allowed for Lattice is 64")
@@ -451,12 +451,12 @@ class lattice_along_surface(Operator):
         # grid_obj.matrix_world = old_grid_matrix
 
         bpy.ops.object.mode_set(mode='OBJECT')
-        grid_obj.select = True
-        lattice.select = False
-        obj.select = False
+        grid_obj.select_set(True)
+        lattice.select_set(False)
+        obj.select_set(False)
         bpy.ops.object.delete(use_global=False)
-        bpy.context.scene.objects.active = lattice
-        lattice.select = True
+        bpy.context.view_layer.objects.active = lattice
+        lattice.select_set(True)
 
         if self.high_quality_lattice:
             bpy.context.object.data.points_w = 8
@@ -466,9 +466,9 @@ class lattice_along_surface(Operator):
         if self.hide_lattice:
             bpy.ops.object.hide_view_set(unselected=False)
 
-        bpy.context.scene.objects.active = obj
-        obj.select = True
-        lattice.select = False
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
+        lattice.select_set(False)
 
         if self.flipNormals:
             try:

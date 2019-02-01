@@ -142,48 +142,48 @@ class add_supertoroid(bpy.types.Operator):
     bl_description = "Construct a supertoroid mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    R = FloatProperty(
+    R: FloatProperty(
             name="Big radius",
             description="The radius inside the tube",
             default=1.0,
             min=0.01, max=100.0
             )
-    r = FloatProperty(
+    r: FloatProperty(
             name="Small radius",
             description="The radius of the tube",
             default=0.3,
             min=0.01, max=100.0
             )
-    u = IntProperty(
+    u: IntProperty(
             name="U-segments",
             description="Radial segmentation",
             default=16,
             min=3, max=265
             )
-    v = IntProperty(
+    v: IntProperty(
             name="V-segments",
             description="Lateral segmentation",
             default=8,
             min=3, max=265
             )
-    n1 = FloatProperty(
+    n1: FloatProperty(
             name="Ring manipulator",
             description="Manipulates the shape of the Ring",
             default=1.0,
             min=0.01, max=100.0
             )
-    n2 = FloatProperty(
+    n2: FloatProperty(
             name="Cross manipulator",
             description="Manipulates the shape of the cross-section",
             default=1.0,
             min=0.01, max=100.0
             )
-    ie = BoolProperty(
+    ie: BoolProperty(
             name="Use Int. and Ext. radii",
             description="Use internal and external radii",
             default=False
             )
-    edit = BoolProperty(
+    edit: BoolProperty(
             name="",
             description="",
             default=False,

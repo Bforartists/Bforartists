@@ -422,13 +422,13 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
             ob_new = bpy.data.objects.new(meshname, armdata)
             #ob_new = bpy.data.objects.new(meshname, 'ARMATURE')
             #ob_new.data = armdata
-            bpy.context.scene.objects.link(ob_new)
+            bpy.context.collection.objects.link(ob_new)
             #bpy.ops.object.mode_set(mode='OBJECT')
             for i in bpy.context.scene.objects:
-                i.select = False #deselect all objects
-            ob_new.select = True
+                i.select_set(False) #deselect all objects
+            ob_new.select_set(True)
             #set current armature to edit the bone
-            bpy.context.scene.objects.active = ob_new
+            bpy.context.view_layer.objects.active = ob_new
             #set mode to able to edit the bone
             if bpy.ops.object.mode_set.poll():
                 bpy.ops.object.mode_set(mode='EDIT')
@@ -697,12 +697,12 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     #bpy.ops.object.select_name(name=str(ob_new.name))
     #bpy.context.scene.objects.active = ob_new
     me_ob.update()
-    bpy.context.scene.objects.link(obmesh)
+    bpy.context.collection.objects.link(obmesh)
     bpy.context.scene.update()
-    obmesh.select = False
-    ob_new.select = False
-    obmesh.select = True
-    ob_new.select = True
+    obmesh.select_set(False)
+    ob_new.select_set(False)
+    obmesh.select_set(True)
+    ob_new.select_set(True)
     bpy.ops.object.parent_set(type="ARMATURE")
 
     print ("PSK2Blender completed")
@@ -1044,10 +1044,10 @@ class IMPORT_OT_psa(bpy.types.Operator):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             )
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.psa",
             options={'HIDDEN'},
             )

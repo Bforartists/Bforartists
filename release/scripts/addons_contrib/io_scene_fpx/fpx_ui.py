@@ -142,43 +142,43 @@ class FpxUI:
 
 def NotImplemented(layout):
     box = layout.box()
-    box.label(fpx_str['LABEL_NAME_NOT_IMPLEMENTED'], icon='ERROR')
+    box.label(text=fpx_str['LABEL_NAME_NOT_IMPLEMENTED'], icon='ERROR')
     flow = box.column_flow()
-    flow.label(fpx_str['LABEL_NAME_NOT_IMPLEMENTED_1'])
-    flow.label(fpx_str['LABEL_NAME_NOT_IMPLEMENTED_2'])
+    flow.label(text=fpx_str['LABEL_NAME_NOT_IMPLEMENTED_1'])
+    flow.label(text=fpx_str['LABEL_NAME_NOT_IMPLEMENTED_2'])
 
 ###############################################################################
 class FptEmptyItemProperties(PropertyGroup):
-    prop = StringProperty(
+    prop: StringProperty(
             default="",
             #options={'HIDDEN', },
             )
-    model = StringProperty(
+    model: StringProperty(
             default="",
             #options={'HIDDEN', },
             )
 
 class FptEmptyProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=fpx_str['PROP_NAME_EMPTY_PROP_NAME'],
             description=fpx_str['PROP_DESC_EMPTY_PROP_NAME'],
             default="",
             #options={'HIDDEN', },
             )
 
-    id = StringProperty(
+    id: StringProperty(
             name=fpx_str['PROP_NAME_EMPTY_PROP_ID'],
             description=fpx_str['PROP_DESC_EMPTY_PROP_ID'],
             default="",
             #options={'HIDDEN', },
             )
 
-    models = CollectionProperty(
+    models: CollectionProperty(
             type=FptEmptyItemProperties,
             #options={'HIDDEN', },
             )
 
-    selected_model_index = IntProperty(
+    selected_model_index: IntProperty(
             default=-1,
             min=-1,
             options={'HIDDEN', 'SKIP_SAVE', },
@@ -248,13 +248,13 @@ class FpmImportOperator(Operator, ImportHelper):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             options={'HIDDEN', }
             )
 
 
-    verbose = EnumProperty(
+    verbose: EnumProperty(
             name=fpx_str['PROP_NAME_VERBOSE'],
             description=fpx_str['PROP_DESC_VERBOSE'],
             items=( (FpxUI.VERBOSE_MODE_NONE,
@@ -273,31 +273,31 @@ class FpmImportOperator(Operator, ImportHelper):
             default=FpxUI.PROP_DEFAULT_VERBOSE,
             )
 
-    keep_temp = BoolProperty(
+    keep_temp: BoolProperty(
             name=fpx_str['PROP_NAME_KEEP_TEMP'],
             description=fpx_str['PROP_DESC_KEEP_TEMP'],
             default=FpxUI.PROP_DEFAULT_KEEP_TEMP,
             )
 
 
-    use_all_models_of_folder = BoolProperty(
+    use_all_models_of_folder: BoolProperty(
             name=fpx_str['PROP_NAME_ALL_MODELS'],
             description=fpx_str['PROP_DESC_ALL_MODELS'],
             default=FpxUI.PROP_DEFAULT_ALL_MODELS,
             )
 
-    use_scene_per_model = BoolProperty(
+    use_scene_per_model: BoolProperty(
             name=fpx_str['PROP_NAME_SCENE'],
             description=fpx_str['PROP_DESC_SCENE'],
             default=FpxUI.PROP_DEFAULT_SCENE,
             )
 
-    name_extra = StringProperty(
+    name_extra: StringProperty(
             #options={'HIDDEN', },
             )
 
 
-    use_model_filter = EnumProperty(
+    use_model_filter: EnumProperty(
             name=fpx_str['PROP_NAME_USE_MODEL_FILTER'],
             description=fpx_str['PROP_DESC_USE_MODEL_FILTER'],
             items=(
@@ -330,7 +330,7 @@ class FpmImportOperator(Operator, ImportHelper):
             options={'ENUM_FLAG', },
             )
 
-    use_model_adjustment = BoolProperty(
+    use_model_adjustment: BoolProperty(
             name=fpx_str['PROP_NAME_MODEL_ADJUST'],
             description=fpx_str['PROP_DESC_MODEL_ADJUST'],
             default=FpxUI.PROP_DEFAULT_MODEL_ADJUST_FPM,
@@ -339,7 +339,7 @@ class FpmImportOperator(Operator, ImportHelper):
 
     filename_ext = fpx_str['FILE_EXT_FPM']
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default=fpx_str['FILE_FILTER_FPM'],
             options={'HIDDEN', }
             )
@@ -355,7 +355,7 @@ class FpmImportOperator(Operator, ImportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
+        box.label(text=fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
         flow = box.column_flow()
         flow.prop(self, 'verbose', icon='SPEAKER')
         flow = box.column_flow()
@@ -409,7 +409,7 @@ class FpmImportOperator(Operator, ImportHelper):
     @staticmethod
     def draw_model_options(cls, layout):
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_MODEL_OPTIONS'], icon=FpxUI.ICON_MODEL)
+        box.label(text=fpx_str['LABEL_NAME_MODEL_OPTIONS'], icon=FpxUI.ICON_MODEL)
         if FpxUI.USE_MODEL_FILTER_COLLISION in cls.use_model_filter:
             NotImplemented(box)
         flow = box.column_flow()
@@ -427,13 +427,13 @@ class FplImportOperator(Operator, ImportHelper):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             options={'HIDDEN', }
             )
 
 
-    verbose = EnumProperty(
+    verbose: EnumProperty(
             name=fpx_str['PROP_NAME_VERBOSE'],
             description=fpx_str['PROP_DESC_VERBOSE'],
             items=( (FpxUI.VERBOSE_MODE_NONE,
@@ -452,20 +452,20 @@ class FplImportOperator(Operator, ImportHelper):
             default=FpxUI.PROP_DEFAULT_VERBOSE,
             )
 
-    keep_temp = BoolProperty(
+    keep_temp: BoolProperty(
             name=fpx_str['PROP_NAME_KEEP_TEMP'],
             description=fpx_str['PROP_DESC_KEEP_TEMP'],
             default=FpxUI.PROP_DEFAULT_KEEP_TEMP,
             )
 
 
-    use_all_libraries_of_folder = BoolProperty(
+    use_all_libraries_of_folder: BoolProperty(
             name=fpx_str['PROP_NAME_ALL_LIBRARIES'],
             description=fpx_str['PROP_DESC_ALL_LIBRARIES'],
             default=FpxUI.PROP_DEFAULT_ALL_LIBRARIES,
             )
 
-    use_library_filter = EnumProperty(
+    use_library_filter: EnumProperty(
             name=fpx_str['PROP_NAME_USE_LIBRARY_FILTER'],
             description=fpx_str['PROP_DESC_USE_LIBRARY_FILTER'],
             items=(
@@ -510,7 +510,7 @@ class FplImportOperator(Operator, ImportHelper):
             options={'ENUM_FLAG', },
             )
 
-    use_model_filter = EnumProperty(
+    use_model_filter: EnumProperty(
             name=fpx_str['PROP_NAME_USE_MODEL_FILTER'],
             description=fpx_str['PROP_DESC_USE_MODEL_FILTER'],
             items=(
@@ -543,7 +543,7 @@ class FplImportOperator(Operator, ImportHelper):
             options={'ENUM_FLAG', },
             )
 
-    use_model_adjustment = BoolProperty(
+    use_model_adjustment: BoolProperty(
             name=fpx_str['PROP_NAME_MODEL_ADJUST'],
             description=fpx_str['PROP_DESC_MODEL_ADJUST'],
             default=FpxUI.PROP_DEFAULT_MODEL_ADJUST_FPL,
@@ -552,7 +552,7 @@ class FplImportOperator(Operator, ImportHelper):
 
     filename_ext = fpx_str['FILE_EXT_FPL']
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default=fpx_str['FILE_FILTER_FPL'],
             options={'HIDDEN', }
             )
@@ -568,7 +568,7 @@ class FplImportOperator(Operator, ImportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
+        box.label(text=fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
         flow = box.column_flow()
         flow.prop(self, 'verbose', icon='SPEAKER')
         flow = box.column_flow()
@@ -620,7 +620,7 @@ class FplImportOperator(Operator, ImportHelper):
     @staticmethod
     def draw_library_options(cls, layout):
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_LIBRARYL_OPTIONS'], icon='IMPORT')
+        box.label(text=fpx_str['LABEL_NAME_LIBRARYL_OPTIONS'], icon='IMPORT')
         if FpxUI.USE_LIBRARY_FILTER_DMDFONT in cls.use_library_filter \
                 or FpxUI.USE_LIBRARY_FILTER_SOUND in cls.use_library_filter \
                 or FpxUI.USE_LIBRARY_FILTER_MUSIC in cls.use_library_filter \
@@ -640,13 +640,13 @@ class FptImportOperator(Operator, ImportHelper):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             options={'HIDDEN', }
             )
 
 
-    verbose = EnumProperty(
+    verbose: EnumProperty(
             name=fpx_str['PROP_NAME_VERBOSE'],
             description=fpx_str['PROP_DESC_VERBOSE'],
             items=( (FpxUI.VERBOSE_MODE_NONE,
@@ -665,14 +665,14 @@ class FptImportOperator(Operator, ImportHelper):
             default=FpxUI.PROP_DEFAULT_VERBOSE,
             )
 
-    keep_temp = BoolProperty(
+    keep_temp: BoolProperty(
             name=fpx_str['PROP_NAME_KEEP_TEMP'],
             description=fpx_str['PROP_DESC_KEEP_TEMP'],
             default=FpxUI.PROP_DEFAULT_KEEP_TEMP,
             )
 
 
-    path_libraries = StringProperty(
+    path_libraries: StringProperty(
             name=fpx_str['PROP_NAME_LIBRARIES_PATH'],
             description=fpx_str['PROP_DESC_LIBRARIES_PATH'],
             default=FpxUI.PROP_DEFAULT_LIBRARIES_PATH,
@@ -680,7 +680,7 @@ class FptImportOperator(Operator, ImportHelper):
             #options={'HIDDEN', },
             )
 
-    path_dmdfonts = StringProperty(
+    path_dmdfonts: StringProperty(
             name=fpx_str['PROP_NAME_DMDFONTS_PATH'],
             description=fpx_str['PROP_DESC_DMDFONTS_PATH'],
             default=FpxUI.PROP_DEFAULT_DMDFONTS_PATH,
@@ -688,7 +688,7 @@ class FptImportOperator(Operator, ImportHelper):
             #options={'HIDDEN', },
             )
 
-    path_tables = StringProperty(
+    path_tables: StringProperty(
             name=fpx_str['PROP_NAME_TABLES_PATH'],
             description=fpx_str['PROP_DESC_TABLES_PATH'],
             default=FpxUI.PROP_DEFAULT_TABLES_PATH,
@@ -697,13 +697,13 @@ class FptImportOperator(Operator, ImportHelper):
             )
 
 
-    convert_to_mesh = BoolProperty(
+    convert_to_mesh: BoolProperty(
             name=fpx_str['PROP_NAME_CONVERT_TO_MESH'],
             description=fpx_str['PROP_DESC_CONVERT_TO_MESH'],
             default=FpxUI.PROP_DEFAULT_CONVERT_TO_MESH,
             )
 
-    resolution_wire_bevel = IntProperty(
+    resolution_wire_bevel: IntProperty(
             name=fpx_str['PROP_NAME_RESOLUTION_WIRE_BEVEL'],
             description=fpx_str['PROP_DESC_RESOLUTION_WIRE_BEVEL'],
             default=FpxUI.PROP_DEFAULT_RESOLUTION_WIRE_BEVEL,
@@ -711,7 +711,7 @@ class FptImportOperator(Operator, ImportHelper):
             max=16,
             )
 
-    resolution_wire = IntProperty(
+    resolution_wire: IntProperty(
             name=fpx_str['PROP_NAME_RESOLUTION_WIRE'],
             description=fpx_str['PROP_DESC_RESOLUTION_WIRE'],
             default=FpxUI.PROP_DEFAULT_RESOLUTION_WIRE,
@@ -719,7 +719,7 @@ class FptImportOperator(Operator, ImportHelper):
             max=16,
             )
 
-    resolution_rubber_bevel = IntProperty(
+    resolution_rubber_bevel: IntProperty(
             name=fpx_str['PROP_NAME_RESOLUTION_RUBBER_BEVEL'],
             description=fpx_str['PROP_DESC_RESOLUTION_RUBBER_BEVEL'],
             default=FpxUI.PROP_DEFAULT_RESOLUTION_RUBBER_BEVEL,
@@ -727,7 +727,7 @@ class FptImportOperator(Operator, ImportHelper):
             max=16,
             )
 
-    resolution_rubber = IntProperty(
+    resolution_rubber: IntProperty(
             name=fpx_str['PROP_NAME_RESOLUTION_RUBBER'],
             description=fpx_str['PROP_DESC_RESOLUTION_RUBBER'],
             default=FpxUI.PROP_DEFAULT_RESOLUTION_RUBBER,
@@ -735,7 +735,7 @@ class FptImportOperator(Operator, ImportHelper):
             max=16,
             )
 
-    resolution_shape = IntProperty(
+    resolution_shape: IntProperty(
             name=fpx_str['PROP_NAME_RESOLUTION_SHAPE'],
             description=fpx_str['PROP_DESC_RESOLUTION_SHAPE'],
             default=FpxUI.PROP_DEFAULT_RESOLUTION_SHAPE,
@@ -743,14 +743,14 @@ class FptImportOperator(Operator, ImportHelper):
             max=16,
             )
 
-    use_hermite_handle = BoolProperty(
+    use_hermite_handle: BoolProperty(
             name=fpx_str['PROP_NAME_USE_HERMITE_HANDLE'],
             description=fpx_str['PROP_DESC_USE_HERMITE_HANDLE'],
             default=FpxUI.PROP_DEFAULT_USE_HERMITE_HANDLE,
             )
 
 
-    use_library_filter = EnumProperty(
+    use_library_filter: EnumProperty(
             name=fpx_str['PROP_NAME_USE_LIBRARY_FILTER'],
             description=fpx_str['PROP_DESC_USE_LIBRARY_FILTER'],
             items=(
@@ -795,7 +795,7 @@ class FptImportOperator(Operator, ImportHelper):
             options={'ENUM_FLAG', },
             )
 
-    use_model_filter = EnumProperty(
+    use_model_filter: EnumProperty(
             name=fpx_str['PROP_NAME_USE_MODEL_FILTER'],
             description=fpx_str['PROP_DESC_USE_MODEL_FILTER'],
             items=(
@@ -828,7 +828,7 @@ class FptImportOperator(Operator, ImportHelper):
             options={'ENUM_FLAG', },
             )
 
-    use_model_adjustment = BoolProperty(
+    use_model_adjustment: BoolProperty(
             name=fpx_str['PROP_NAME_MODEL_ADJUST'],
             description=fpx_str['PROP_DESC_MODEL_ADJUST'],
             default=FpxUI.PROP_DEFAULT_MODEL_ADJUST_FPT,
@@ -837,7 +837,7 @@ class FptImportOperator(Operator, ImportHelper):
 
     filename_ext = fpx_str['FILE_EXT_FPT']
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default=fpx_str['FILE_FILTER_FPT'],
             options={'HIDDEN', }
             )
@@ -853,20 +853,20 @@ class FptImportOperator(Operator, ImportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
+        box.label(text=fpx_str['LABEL_NAME_OPTIONS'], icon=FpxUI.ICON_OPTIONS)
         flow = box.column_flow()
         flow.prop(self, 'verbose', icon='SPEAKER')
         flow = box.column_flow()
         flow.prop(self, 'keep_temp', icon='GHOST')
 
-        box.label(fpx_str['LABEL_NAME_EXTERNAL_DATA'], icon=FpxUI.ICON_EXTERNAL_DATA)
+        box.label(text=fpx_str['LABEL_NAME_EXTERNAL_DATA'], icon=FpxUI.ICON_EXTERNAL_DATA)
         flow = box.column_flow()
         flow.prop(self, 'path_libraries', icon='FILEBROWSER', text="")
         flow.prop(self, 'path_dmdfonts', icon='IMASEL', text="")
         flow.prop(self, 'path_tables', icon='FILE_FOLDER', text="")
 
         box = layout.box()
-        box.label(fpx_str['LABEL_NAME_TABLE_OPTIONS'], icon=FpxUI.ICON_MODEL)
+        box.label(text=fpx_str['LABEL_NAME_TABLE_OPTIONS'], icon=FpxUI.ICON_MODEL)
         #if self.convert_to_mesh:
         #    NotImplemented(box)
         flow = box.column_flow()

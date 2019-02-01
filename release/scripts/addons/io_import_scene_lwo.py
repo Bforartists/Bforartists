@@ -1047,7 +1047,7 @@ def build_objects(object_layers, object_surfs, object_tags, object_name, add_sub
                 ngons[fi]= fpol  # Deal with them later
 
         ob= bpy.data.objects.new(layer_data.name, me)
-        bpy.context.scene.objects.link(ob)
+        bpy.context.collection.objects.link(ob)
         ob_dict[layer_data.index]= [ob, layer_data.parent_index]
 
         # Move the object so the pivot is in the right place.
@@ -1222,12 +1222,12 @@ class IMPORT_OT_lwo(bpy.types.Operator):
     bl_description= "Import a LightWave Object file"
     bl_options= {'REGISTER', 'UNDO'}
 
-    filepath= StringProperty(name="File Path", description="Filepath used for importing the LWO file", maxlen=1024, default="")
+    filepath: StringProperty(name="File Path", description="Filepath used for importing the LWO file", maxlen=1024, default="")
 
-    ADD_SUBD_MOD= BoolProperty(name="Apply SubD Modifier", description="Apply the Subdivision Surface modifier to layers with Subpatches", default=True)
-    LOAD_HIDDEN= BoolProperty(name="Load Hidden Layers", description="Load object layers that have been marked as hidden", default=False)
-    SKEL_TO_ARM= BoolProperty(name="Create Armature", description="Create an armature from an embedded Skelegon rig", default=True)
-    USE_EXISTING_MATERIALS= BoolProperty(name="Use Existing Materials", description="Use existing materials if a material by that name already exists", default=False)
+    ADD_SUBD_MOD: BoolProperty(name="Apply SubD Modifier", description="Apply the Subdivision Surface modifier to layers with Subpatches", default=True)
+    LOAD_HIDDEN: BoolProperty(name="Load Hidden Layers", description="Load object layers that have been marked as hidden", default=False)
+    SKEL_TO_ARM: BoolProperty(name="Create Armature", description="Create an armature from an embedded Skelegon rig", default=True)
+    USE_EXISTING_MATERIALS: BoolProperty(name="Use Existing Materials", description="Use existing materials if a material by that name already exists", default=False)
 
     def execute(self, context):
         load_lwo(self.filepath,

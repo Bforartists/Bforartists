@@ -1490,19 +1490,19 @@ class ARCHIPACK_PT_fence(Panel):
         box = layout.box()
         row = box.row()
         if prop.parts_expand:
-            row.prop(prop, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(prop, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(prop, 'n_parts')
             for i, part in enumerate(prop.parts):
                 part.draw(layout, context, i)
         else:
-            row.prop(prop, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(prop, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
 
         box = layout.box()
         row = box.row(align=True)
         if prop.handrail_expand:
-            row.prop(prop, 'handrail_expand', icon="TRIA_DOWN", icon_only=True, text="Handrail", emboss=False)
+            row.prop(prop, 'handrail_expand', icon="TRIA_DOWN", text="Handrail", emboss=False)
         else:
-            row.prop(prop, 'handrail_expand', icon="TRIA_RIGHT", icon_only=True, text="Handrail", emboss=False)
+            row.prop(prop, 'handrail_expand', icon="TRIA_RIGHT", text="Handrail", emboss=False)
 
         row.prop(prop, 'handrail')
 
@@ -1522,9 +1522,9 @@ class ARCHIPACK_PT_fence(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.post_expand:
-            row.prop(prop, 'post_expand', icon="TRIA_DOWN", icon_only=True, text="Post", emboss=False)
+            row.prop(prop, 'post_expand', icon="TRIA_DOWN", text="Post", emboss=False)
         else:
-            row.prop(prop, 'post_expand', icon="TRIA_RIGHT", icon_only=True, text="Post", emboss=False)
+            row.prop(prop, 'post_expand', icon="TRIA_RIGHT", text="Post", emboss=False)
         row.prop(prop, 'post')
         if prop.post_expand:
             box.prop(prop, 'post_spacing')
@@ -1539,9 +1539,9 @@ class ARCHIPACK_PT_fence(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.subs_expand:
-            row.prop(prop, 'subs_expand', icon="TRIA_DOWN", icon_only=True, text="Subs", emboss=False)
+            row.prop(prop, 'subs_expand', icon="TRIA_DOWN", text="Subs", emboss=False)
         else:
-            row.prop(prop, 'subs_expand', icon="TRIA_RIGHT", icon_only=True, text="Subs", emboss=False)
+            row.prop(prop, 'subs_expand', icon="TRIA_RIGHT", text="Subs", emboss=False)
 
         row.prop(prop, 'subs')
         if prop.subs_expand:
@@ -1558,9 +1558,9 @@ class ARCHIPACK_PT_fence(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.panel_expand:
-            row.prop(prop, 'panel_expand', icon="TRIA_DOWN", icon_only=True, text="Panels", emboss=False)
+            row.prop(prop, 'panel_expand', icon="TRIA_DOWN", text="Panels", emboss=False)
         else:
-            row.prop(prop, 'panel_expand', icon="TRIA_RIGHT", icon_only=True, text="Panels", emboss=False)
+            row.prop(prop, 'panel_expand', icon="TRIA_RIGHT", text="Panels", emboss=False)
         row.prop(prop, 'panel')
         if prop.panel_expand:
             box.prop(prop, 'panel_dist')
@@ -1572,9 +1572,9 @@ class ARCHIPACK_PT_fence(Panel):
         box = layout.box()
         row = box.row(align=True)
         if prop.rail_expand:
-            row.prop(prop, 'rail_expand', icon="TRIA_DOWN", icon_only=True, text="Rails", emboss=False)
+            row.prop(prop, 'rail_expand', icon="TRIA_DOWN", text="Rails", emboss=False)
         else:
-            row.prop(prop, 'rail_expand', icon="TRIA_RIGHT", icon_only=True, text="Rails", emboss=False)
+            row.prop(prop, 'rail_expand', icon="TRIA_RIGHT", text="Rails", emboss=False)
         row.prop(prop, 'rail')
         if prop.rail_expand:
             box.prop(prop, 'rail_n')
@@ -1591,13 +1591,13 @@ class ARCHIPACK_PT_fence(Panel):
         row = box.row()
 
         if prop.idmats_expand:
-            row.prop(prop, 'idmats_expand', icon="TRIA_DOWN", icon_only=True, text="Materials", emboss=False)
+            row.prop(prop, 'idmats_expand', icon="TRIA_DOWN", text="Materials", emboss=False)
             box.prop(prop, 'idmat_handrail')
             box.prop(prop, 'idmat_panel')
             box.prop(prop, 'idmat_post')
             box.prop(prop, 'idmat_subs')
         else:
-            row.prop(prop, 'idmats_expand', icon="TRIA_RIGHT", icon_only=True, text="Materials", emboss=False)
+            row.prop(prop, 'idmats_expand', icon="TRIA_RIGHT", text="Materials", emboss=False)
 
 # ------------------------------------------------------------------
 # Define operator class to create object

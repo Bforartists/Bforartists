@@ -96,7 +96,7 @@ class FindReelsEDL(Operator):
     """ Matching by reel name and existing filename when set"""
     bl_idname = "sequencer.import_edl_findreel"
     bl_label = "Find Missing Reel Files"
-    directory = StringProperty(
+    directory: StringProperty(
             subtype='DIR_PATH',
             )
 
@@ -246,26 +246,26 @@ class ImportEDL(Operator):
 # Persistent Scene Data Types (store EDL import info)
 
 class EDLReelInfo(bpy.types.PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name="Name",
             )
-    filepath = StringProperty(
+    filepath: StringProperty(
             name="Video File",
             subtype='FILE_PATH',
             )
-    frame_offset = IntProperty(
+    frame_offset: IntProperty(
             name="Frame Offset",
             )
 
 
 class EDLImportInfo(bpy.types.PropertyGroup):
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             )
-    reels = bpy.props.CollectionProperty(
+    reels: bpy.props.CollectionProperty(
             type=EDLReelInfo,
             )
-    frame_offset = IntProperty(
+    frame_offset: IntProperty(
             name="Global Frame Offset",
             )
 

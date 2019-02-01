@@ -328,7 +328,7 @@ class Solids(bpy.types.Operator):
     bl_description = "Add one of the Platonic, Archimedean or Catalan solids"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    source = EnumProperty(
+    source: EnumProperty(
                     items=(("4", "Tetrahedron", ""),
                             ("6", "Hexahedron", ""),
                             ("8", "Octahedron", ""),
@@ -337,7 +337,7 @@ class Solids(bpy.types.Operator):
                     name="Source",
                     description="Starting point of your solid"
                     )
-    size = FloatProperty(
+    size: FloatProperty(
                     name="Size",
                     description="Radius of the sphere through the vertices",
                     min=0.01,
@@ -346,7 +346,7 @@ class Solids(bpy.types.Operator):
                     soft_max=100,
                     default=1.0
                     )
-    vTrunc = FloatProperty(
+    vTrunc: FloatProperty(
                     name="Vertex Truncation",
                     description="Amount of vertex truncation",
                     min=0.0,
@@ -357,7 +357,7 @@ class Solids(bpy.types.Operator):
                     precision=3,
                     step=0.5
                     )
-    eTrunc = FloatProperty(
+    eTrunc: FloatProperty(
                     name="Edge Truncation",
                     description="Amount of edge truncation",
                     min=0.0,
@@ -368,24 +368,24 @@ class Solids(bpy.types.Operator):
                     precision=3,
                     step=0.2
                     )
-    snub = EnumProperty(
+    snub: EnumProperty(
                     items=(("None", "No Snub", ""),
                            ("Left", "Left Snub", ""),
                            ("Right", "Right Snub", "")),
                     name="Snub",
                     description="Create the snub version"
                     )
-    dual = BoolProperty(
+    dual: BoolProperty(
                     name="Dual",
                     description="Create the dual of the current solid",
                     default=False
                     )
-    keepSize = BoolProperty(
+    keepSize: BoolProperty(
                     name="Keep Size",
                     description="Keep the whole solid at a constant size",
                     default=False
                     )
-    preset = EnumProperty(
+    preset: EnumProperty(
                     items=(("0", "Custom", ""),
                            ("t4", "Truncated Tetrahedron", ""),
                            ("r4", "Cuboctahedron", ""),

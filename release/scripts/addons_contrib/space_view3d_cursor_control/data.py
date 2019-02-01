@@ -37,28 +37,28 @@ PRECISION = 4
 
 class CursorControlData(PropertyGroup):
     # Step length properties
-    stepLengthEnable = BoolProperty(
+    stepLengthEnable: BoolProperty(
             name="Use step length",
             description="Use step length",
             default=0
             )
-    stepLengthMode = EnumProperty(
+    stepLengthMode: EnumProperty(
             items=[("Mode", "Mode", "Mode"),
                    ("Absolute", "Absolute", "Absolute"),
                    ("Proportional", "Proportional", "Proportional")],
             default="Proportional"
             )
-    stepLengthValue = FloatProperty(
+    stepLengthValue: FloatProperty(
             name="",
             precision=PRECISION,
             default=PHI
             )
     # Property for linex result select...
-    linexChoice = IntProperty(
+    linexChoice: IntProperty(
             name="",
             default=-1
             )
-    deltaVector = FloatVectorProperty(
+    deltaVector: FloatVectorProperty(
             name="",
             precision=PRECISION,
             default=(1, 0, 0)

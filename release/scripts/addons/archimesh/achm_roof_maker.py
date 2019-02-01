@@ -35,46 +35,46 @@ from .achm_tools import *
 # Define UI class
 # Rooms
 # ------------------------------------------------------------------
-class AchmRoof(Operator):
+class ARCHIMESH_OT_Roof(Operator):
     bl_idname = "mesh.archimesh_roof"
     bl_label = "Roof"
     bl_description = "Roof Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # Define properties
-    roof_width = IntProperty(
+    roof_width: IntProperty(
             name='Num tiles X',
             min=1, max=100, default=6,
             description='Tiles in X axis',
             )
-    roof_height = IntProperty(
+    roof_height: IntProperty(
             name='Num tiles Y',
             min=1, max=100, default=3,
             description='Tiles in Y axis',
             )
 
-    roof_thick = FloatProperty(
+    roof_thick: FloatProperty(
             name='Tile thickness',
             min=0.000, max=0.50, default=0.012, precision=3,
             description='Thickness of the roof tile',
             )
-    roof_angle = FloatProperty(
+    roof_angle: FloatProperty(
             name='Roof slope', min=0.0, max=70.0, default=0.0, precision=1,
             description='Roof angle of slope',
             )
-    roof_scale = FloatProperty(
+    roof_scale: FloatProperty(
             name='Tile scale', min=0.001, max=10, default=1, precision=3,
             description='Scale of roof tile',
             )
 
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             )
 
-    model = EnumProperty(
+    model: EnumProperty(
             items=(
                 ('1', "Model 01", ""),
                 ('2', "Model 02", ""),
@@ -95,7 +95,7 @@ class AchmRoof(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
             box = layout.box()
             box.prop(self, 'model')
             box.prop(self, 'roof_width')
@@ -124,19 +124,19 @@ class AchmRoof(Operator):
             y = tilesize_y * self.roof_scale * self.roof_height
 
             buf = 'Size: {0:.2f} * {1:.2f} aprox.'.format(x, y)
-            box.label(buf)
+            box.label(text=buf)
 
             box = layout.box()
             box.prop(self, 'roof_thick')
             box.prop(self, 'roof_angle')
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -158,19 +158,19 @@ class AchmRoof(Operator):
 def create_roof_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
     bpy.ops.object.select_all(False)
 
     mydata = create_roof(self)
     myroof = mydata[0]
 
     # active object and deactivate others
-    if bpy.context.scene.objects.active is not None:
-        bpy.context.scene.objects.active.select = False
+    if bpy.context.view_layer.objects.active is not None:
+        bpy.context.view_layer.objects.active.select_set(False)
 
-    bpy.context.scene.objects.active = myroof
-    myroof.select = True
+    bpy.context.view_layer.objects.active = myroof
+    myroof.select_set(True)
 
     # Thicknes
     if self.roof_thick > 0.0:
@@ -205,14 +205,14 @@ def create_roof_mesh(self):
     myroof.rotation_euler = (radians(self.roof_angle), 0.0, 0.0)
 
     # Create materials
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # material
         mat = create_diffuse_material("Roof_material", False, 0.482, 0.061, 0.003, 0.581, 0.105, 0.068, 0.01)
         set_material(myroof, mat)
 
     bpy.ops.object.select_all(False)
-    myroof.select = True
-    bpy.context.scene.objects.active = myroof
+    myroof.select_set(True)
+    bpy.context.view_layer.objects.active = myroof
     return
 
 
@@ -243,7 +243,7 @@ def create_roof(self):
     myobject = bpy.data.objects.new("Roof", mymesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(verts, [], faces)
     mymesh.update(calc_edges=True)

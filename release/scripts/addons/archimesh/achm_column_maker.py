@@ -26,6 +26,7 @@
 # noinspection PyUnresolvedReferences
 import bpy
 from math import cos, sin, radians, atan, sqrt
+from bpy.props import BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
 from .achm_tools import *
 
 
@@ -33,15 +34,15 @@ from .achm_tools import *
 # Define UI class
 # Columns
 # ------------------------------------------------------------------
-class AchmColumn(bpy.types.Operator):
+class ARCHIMESH_OT_Column(bpy.types.Operator):
     bl_idname = "mesh.archimesh_column"
     bl_label = "Column"
     bl_description = "Columns Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # Define properties
-    model = bpy.props.EnumProperty(
+    model: bpy.props.EnumProperty(
             name="Model",
             items=(
                 ('1', "Circular", ""),
@@ -49,185 +50,185 @@ class AchmColumn(bpy.types.Operator):
                 ),
             description="Type of column",
             )
-    keep_size = bpy.props.BoolProperty(
+    keep_size: BoolProperty(
             name="Keep radius equal",
             description="Keep all radius (top, mid and bottom) to the same size",
             default=True,
             )
 
-    rad_top = bpy.props.FloatProperty(
+    rad_top: FloatProperty(
             name='Top radius',
             min=0.001, max=10, default=0.15, precision=3,
             description='Radius of the column in the top',
             )
-    rad_mid = bpy.props.FloatProperty(
+    rad_mid: FloatProperty(
             name='Middle radius',
             min=0.001, max=10, default=0.15, precision=3,
             description='Radius of the column in the middle',
             )
-    shift = bpy.props.FloatProperty(
+    shift: FloatProperty(
             name='',
             min=-1, max=1, default=0, precision=3,
             description='Middle displacement',
             )
 
-    rad_bottom = bpy.props.FloatProperty(
+    rad_bottom: FloatProperty(
             name='Bottom radius',
             min=0.001, max=10, default=0.15, precision=3,
             description='Radius of the column in the bottom',
             )
 
-    col_height = bpy.props.FloatProperty(
+    col_height: FloatProperty(
             name='Total height',
             min=0.001, max=10, default=2.4, precision=3,
             description='Total height of column, including bases and tops',
             )
-    col_sx = bpy.props.FloatProperty(
+    col_sx: FloatProperty(
             name='X size',
             min=0.001, max=10, default=0.30, precision=3,
             description='Column size for x axis',
             )
-    col_sy = bpy.props.FloatProperty(
+    col_sy: FloatProperty(
             name='Y size',
             min=0.001, max=10, default=0.30, precision=3,
             description='Column size for y axis',
             )
 
-    cir_base = bpy.props.BoolProperty(
+    cir_base: BoolProperty(
             name="Include circular base",
             description="Include a base with circular form",
             default=False,
             )
-    cir_base_r = bpy.props.FloatProperty(
+    cir_base_r: FloatProperty(
             name='Radio',
             min=0.001, max=10, default=0.08, precision=3,
             description='Rise up radio of base',
             )
-    cir_base_z = bpy.props.FloatProperty(
+    cir_base_z: FloatProperty(
             name='Height',
             min=0.001, max=10, default=0.05, precision=3,
             description='Size for z axis',
             )
 
-    cir_top = bpy.props.BoolProperty(
+    cir_top: BoolProperty(
             name="Include circular top",
             description="Include a top with circular form",
             default=False,
             )
-    cir_top_r = bpy.props.FloatProperty(
+    cir_top_r: FloatProperty(
             name='Radio',
             min=0.001, max=10, default=0.08, precision=3,
             description='Rise up radio of top',
             )
-    cir_top_z = bpy.props.FloatProperty(
+    cir_top_z: FloatProperty(
             name='Height',
             min=0.001, max=10, default=0.05, precision=3,
             description='Size for z axis',
             )
 
-    box_base = bpy.props.BoolProperty(
+    box_base: BoolProperty(
             name="Include rectangular base",
             description="Include a base with rectangular form",
             default=True,
             )
-    box_base_x = bpy.props.FloatProperty(
+    box_base_x: FloatProperty(
             name='X size',
             min=0.001, max=10, default=0.40, precision=3,
             description='Size for x axis',
             )
-    box_base_y = bpy.props.FloatProperty(
+    box_base_y: FloatProperty(
             name='Y size',
             min=0.001, max=10, default=0.40, precision=3,
             description='Size for y axis',
             )
-    box_base_z = bpy.props.FloatProperty(
+    box_base_z: FloatProperty(
             name='Height',
             min=0.001, max=10, default=0.05, precision=3,
             description='Size for z axis',
             )
 
-    box_top = bpy.props.BoolProperty(
+    box_top: BoolProperty(
             name="Include rectangular top",
             description="Include a top with rectangular form",
             default=True,
             )
-    box_top_x = bpy.props.FloatProperty(
+    box_top_x: FloatProperty(
             name='X size',
             min=0.001, max=10, default=0.40, precision=3,
             description='Size for x axis',
             )
-    box_top_y = bpy.props.FloatProperty(
+    box_top_y: FloatProperty(
             name='Y size',
             min=0.001, max=10, default=0.40, precision=3,
             description='Size for y axis',
             )
-    box_top_z = bpy.props.FloatProperty(
+    box_top_z: FloatProperty(
             name='Height',
             min=0.001, max=10, default=0.05, precision=3,
             description='Size for z axis',
             )
 
-    arc_top = bpy.props.BoolProperty(
+    arc_top: BoolProperty(
             name="Create top arch",
             description="Include an arch in the top of the column",
             default=False,
             )
-    arc_radio = bpy.props.FloatProperty(
+    arc_radio: FloatProperty(
             name='Arc Radio',
             min=0.001, max=10, default=1, precision=1,
             description='Radio of the arch',
             )
-    arc_width = bpy.props.FloatProperty(
+    arc_width: FloatProperty(
             name='Thickness',
             min=0.01, max=10, default=0.15, precision=2,
             description='Thickness of the arch wall',
             )
-    arc_gap = bpy.props.FloatProperty(
+    arc_gap: FloatProperty(
             name='Arc gap',
             min=0.01, max=10, default=0.25, precision=2,
             description='Size of the gap in the arch sides',
             )
 
-    crt_mat = bpy.props.BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             )
-    crt_array = bpy.props.BoolProperty(
+    crt_array: BoolProperty(
             name="Create array of elements",
             description="Create a modifier array for all elemnst",
             default=False,
             )
-    array_num_x = bpy.props.IntProperty(
+    array_num_x: IntProperty(
             name='Count X',
             min=0, max=100, default=3,
             description='Number of elements in array',
             )
-    array_space_x = bpy.props.FloatProperty(
+    array_space_x: FloatProperty(
             name='Distance X',
             min=0.000, max=10, default=1, precision=3,
             description='Distance between elements (only arc disabled)',
             )
-    array_num_y = bpy.props.IntProperty(
+    array_num_y: IntProperty(
             name='Count Y',
             min=0, max=100, default=0,
             description='Number of elements in array',
             )
-    array_space_y = bpy.props.FloatProperty(
+    array_space_y: FloatProperty(
             name='Distance Y',
             min=0.000, max=10, default=1, precision=3,
             description='Distance between elements (only arc disabled)',
             )
-    array_space_z = bpy.props.FloatProperty(
+    array_space_z: FloatProperty(
             name='Distance Z',
             min=-10, max=10, default=0, precision=3,
             description='Combined X/Z distance between elements (only arc disabled)',
             )
-    ramp = bpy.props.BoolProperty(
+    ramp: BoolProperty(
             name="Deform",
             description="Deform top base with Z displacement", default=True,
             )
-    array_space_factor = bpy.props.FloatProperty(
+    array_space_factor: FloatProperty(
             name='Move Y center',
             min=0.00, max=1, default=0.0, precision=3,
             description='Move the center of the arch in Y axis. (0 centered)',
@@ -244,7 +245,7 @@ class AchmColumn(bpy.types.Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
             box = layout.box()
             box.prop(self, 'model')
             # Circular
@@ -311,7 +312,7 @@ class AchmColumn(bpy.types.Operator):
                 row.prop(self, 'array_num_x')
                 row.prop(self, 'array_num_y')
                 if self.arc_top is True:
-                    box.label("Use arch radio and thickness to set distances")
+                    box.label(text="Use arch radio and thickness to set distances")
 
                 if self.arc_top is False:
                     row = box.row()
@@ -322,12 +323,12 @@ class AchmColumn(bpy.types.Operator):
                     row.prop(self, 'ramp')
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -355,8 +356,8 @@ def create_column_mesh(self):
     mycolumn = None
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
     bpy.ops.object.select_all(False)
 
@@ -374,14 +375,15 @@ def create_column_mesh(self):
         height = height - self.box_base_z
     if self.box_top:
         height = height - self.box_top_z
+
     # ------------------------
     # Create circular column
     # ------------------------
     if self.model == "1":
         bpy.ops.object.select_all(False)
         mycolumn = create_circular_column(self, "Column", radio_top, radio_mid, radio_bottom, height)
-        mycolumn.select = True
-        bpy.context.scene.objects.active = mycolumn
+        mycolumn.select_set(True)
+        bpy.context.view_layer.objects.active = mycolumn
         # Subsurf
         set_smooth(mycolumn)
         set_modifier_subsurf(mycolumn)
@@ -391,8 +393,8 @@ def create_column_mesh(self):
     if self.model == "2":
         mycolumn = create_rectangular_base(self, "Column", self.col_sx, self.col_sy, height)
         bpy.ops.object.select_all(False)
-        mycolumn.select = True
-        bpy.context.scene.objects.active = mycolumn
+        mycolumn.select_set(True)
+        bpy.context.view_layer.objects.active = mycolumn
         set_normals(mycolumn)
     # ------------------------
     # Circular base
@@ -400,8 +402,8 @@ def create_column_mesh(self):
     if self.cir_base is True:
         cir_bottom = create_torus("Column_cir_bottom", radio_bottom, self.cir_base_r, self.cir_base_z)
         bpy.ops.object.select_all(False)
-        cir_bottom.select = True
-        bpy.context.scene.objects.active = cir_bottom
+        cir_bottom.select_set(True)
+        bpy.context.view_layer.objects.active = cir_bottom
         set_modifier_subsurf(cir_bottom)
         set_smooth(cir_bottom)
         cir_bottom.location.x = 0.0
@@ -416,8 +418,8 @@ def create_column_mesh(self):
         box_bottom = create_rectangular_base(self, "Column_box_bottom", self.box_base_x, self.box_base_y,
                                              self.box_base_z)
         bpy.ops.object.select_all(False)
-        box_bottom.select = True
-        bpy.context.scene.objects.active = box_bottom
+        box_bottom.select_set(True)
+        bpy.context.view_layer.objects.active = box_bottom
         box_bottom.parent = mycolumn
         set_normals(box_bottom)
         box_bottom.location.x = 0.0
@@ -432,8 +434,8 @@ def create_column_mesh(self):
     if self.cir_top is True:
         cir_top = create_torus("Column_cir_top", radio_top, self.cir_top_r, self.cir_top_z)
         bpy.ops.object.select_all(False)
-        cir_top.select = True
-        bpy.context.scene.objects.active = cir_top
+        cir_top.select_set(True)
+        bpy.context.view_layer.objects.active = cir_top
         set_modifier_subsurf(cir_top)
         set_smooth(cir_top)
         cir_top.parent = mycolumn
@@ -448,8 +450,8 @@ def create_column_mesh(self):
         box_top = create_rectangular_base(self, "Column_box_top", self.box_top_x, self.box_top_y,
                                           self.box_top_z, self.ramp)
         bpy.ops.object.select_all(False)
-        box_top.select = True
-        bpy.context.scene.objects.active = box_top
+        box_top.select_set(True)
+        bpy.context.view_layer.objects.active = box_top
         set_normals(box_top)
         box_top.parent = mycolumn
         box_top.location.x = 0.0
@@ -464,8 +466,8 @@ def create_column_mesh(self):
                            self.array_space_factor)
         myarc.parent = mycolumn
         bpy.ops.object.select_all(False)
-        myarc.select = True
-        bpy.context.scene.objects.active = myarc
+        myarc.select_set(True)
+        bpy.context.view_layer.objects.active = myarc
         set_normals(myarc)
         set_modifier_mirror(myarc, "X")
         myarc.location.x = self.arc_radio + self.arc_gap
@@ -530,7 +532,7 @@ def create_column_mesh(self):
     # ------------------------
     # Create materials
     # ------------------------
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # Column material
         mat = create_diffuse_material("Column_material", False, 0.748, 0.734, 0.392, 0.573, 0.581, 0.318)
         set_material(mycolumn, mat)
@@ -554,8 +556,8 @@ def create_column_mesh(self):
             set_material(myarc, mat)
 
     bpy.ops.object.select_all(False)
-    mycolumn.select = True
-    bpy.context.scene.objects.active = mycolumn
+    mycolumn.select_set(True)
+    bpy.context.view_layer.objects.active = mycolumn
 
     return
 
@@ -604,7 +606,7 @@ def create_circular_column(self, objname, radio_top, radio_mid, radio_bottom, he
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -676,7 +678,7 @@ def create_torus(objname, radio_inside, radio_outside, height):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -725,7 +727,7 @@ def create_rectangular_base(self, objname, x, y, z, ramp=False):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -791,7 +793,7 @@ def create_arc(objname, radio, gap, thickness, center):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)

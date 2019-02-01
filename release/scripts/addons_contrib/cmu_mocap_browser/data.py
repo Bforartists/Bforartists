@@ -54,62 +54,62 @@ def update_motions(obj, context):
 
 
 class ListItem(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
-    idx = bpy.props.IntProperty()
+    name: bpy.props.StringProperty()
+    idx: bpy.props.IntProperty()
 
 
 class CMUMocapLib(bpy.types.AddonPreferences):
     bl_idname = 'cmu_mocap_browser'
 
-    local_storage = bpy.props.StringProperty(
+    local_storage: bpy.props.StringProperty(
         name="Local Storage",
         subtype='DIR_PATH',
         description="Location to store downloaded resources",
         default="~/cmu_mocap_lib"
         )
-    follow_structure = bpy.props.BoolProperty(
+    follow_structure: bpy.props.BoolProperty(
         name="Follow Library Folder Structure",
         description="Store resources in subfolders of the local storage",
         default=True
         )
-    automatically_import = bpy.props.BoolProperty(
+    automatically_import: bpy.props.BoolProperty(
         name="Automatically Import after Download",
         description="Import the resource after the download is finished",
         default=True
         )
-    subject_list = bpy.props.CollectionProperty(
+    subject_list: bpy.props.CollectionProperty(
         name="subjects", type=ListItem
         )
-    subject_active = bpy.props.IntProperty(
+    subject_active: bpy.props.IntProperty(
         name="subject_idx", default=-1, update=update_motions
         )
-    subject_import_name = bpy.props.StringProperty(
+    subject_import_name: bpy.props.StringProperty(
         name="Armature Name",
         description="Identifier of the imported subject's armature",
         default="Skeleton"
         )
-    motion_list = bpy.props.CollectionProperty(
+    motion_list: bpy.props.CollectionProperty(
         name="motions", type=ListItem
         )
-    motion_active = bpy.props.IntProperty(
+    motion_active: bpy.props.IntProperty(
         name="motion_idx", default=-1
         )
-    frame_skip = bpy.props.IntProperty(
+    frame_skip: bpy.props.IntProperty(
         # usually the sample rate is 120, so the default 4 gives you 30fps
         name="Fps Divisor", default=4,
         description="Frame supersampling factor", min=1
         )
-    cloud_scale = bpy.props.FloatProperty(
+    cloud_scale: bpy.props.FloatProperty(
         name="Marker Cloud Scale",
         description="Scale the marker cloud by this value",
         default=1., min=0.0001, max=1000000.0,
         soft_min=0.001, soft_max=100.0
         )
-    floor = bpy.props.StringProperty(
+    floor: bpy.props.StringProperty(
         name="Floor",
         description="Object to use as floor constraint"
         )
-    feet_angle = bpy.props.FloatProperty(
+    feet_angle: bpy.props.FloatProperty(
         name="Feet Angle",
         description="Fix for wrong initial feet position",
         default=0

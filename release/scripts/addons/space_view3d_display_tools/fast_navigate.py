@@ -62,8 +62,8 @@ class FastNavigate(Operator):
     bl_description = ("Limit the objects drawing in the 3D view for faster navigation\n"
                       "Runs in modal mode until Stop is pressed or Esc, Return, Space")
 
-    trigger = BoolProperty(default=False)
-    mode = BoolProperty(default=False)
+    trigger: BoolProperty(default=False)
+    mode: BoolProperty(default=False)
     screen_width = [0, 0]
     store_fail = False
     store_init_particles = {}

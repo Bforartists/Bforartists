@@ -267,12 +267,12 @@ class Ms3dImportOperator(Operator, ImportHelper):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             options={'HIDDEN', }
             )
 
-    verbose = EnumProperty(
+    verbose: EnumProperty(
             name=ms3d_str['PROP_NAME_VERBOSE'],
             description=ms3d_str['PROP_DESC_VERBOSE'],
             items=( (Ms3dUi.VERBOSE_MODE_NONE,
@@ -291,13 +291,13 @@ class Ms3dImportOperator(Operator, ImportHelper):
             default=Ms3dUi.PROP_DEFAULT_VERBOSE,
             )
 
-    use_animation = BoolProperty(
+    use_animation: BoolProperty(
             name=ms3d_str['PROP_NAME_USE_ANIMATION'],
             description=ms3d_str['PROP_DESC_USE_ANIMATION'],
             default=Ms3dUi.PROP_DEFAULT_USE_ANIMATION,
             )
 
-    rotation_mode = EnumProperty(
+    rotation_mode: EnumProperty(
             name=ms3d_str['PROP_NAME_ROTATION_MODE'],
             description=ms3d_str['PROP_DESC_ROTATION_MODE'],
             items=( (Ms3dUi.PROP_ITEM_ROTATION_MODE_EULER,
@@ -310,13 +310,13 @@ class Ms3dImportOperator(Operator, ImportHelper):
             default=Ms3dUi.PROP_DEFAULT_ANIMATION_ROTATION,
             )
 
-    use_joint_size = BoolProperty(
+    use_joint_size: BoolProperty(
             name=ms3d_str['PROP_NAME_USE_JOINT_SIZE'],
             description=ms3d_str['PROP_DESC_USE_JOINT_SIZE'],
             default=Ms3dUi.PROP_DEFAULT_USE_JOINT_SIZE,
             )
 
-    joint_size = FloatProperty(
+    joint_size: FloatProperty(
             name=ms3d_str['PROP_NAME_IMPORT_JOINT_SIZE'],
             description=ms3d_str['PROP_DESC_IMPORT_JOINT_SIZE'],
             min=Ms3dUi.PROP_JOINT_SIZE_MIN, max=Ms3dUi.PROP_JOINT_SIZE_MAX,
@@ -327,24 +327,24 @@ class Ms3dImportOperator(Operator, ImportHelper):
             #options={'HIDDEN', },
             )
 
-    use_joint_to_bones = BoolProperty(
+    use_joint_to_bones: BoolProperty(
             name=ms3d_str['PROP_NAME_JOINT_TO_BONES'],
             description=ms3d_str['PROP_DESC_JOINT_TO_BONES'],
             default=Ms3dUi.PROP_DEFAULT_JOINT_TO_BONES,
             )
 
-    use_extended_normal_handling = BoolProperty(
+    use_extended_normal_handling: BoolProperty(
             name=ms3d_str['PROP_NAME_EXTENDED_NORMAL_HANDLING'],
             description=ms3d_str['PROP_DESC_EXTENDED_NORMAL_HANDLING'],
             default=Ms3dUi.PROP_DEFAULT_EXTENDED_NORMAL_HANDLING,
             )
 
-    filename_ext = StringProperty(
+    filename_ext: StringProperty(
             default=ms3d_str['FILE_EXT'],
             options={'HIDDEN', }
             )
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default=ms3d_str['FILE_FILTER'],
             options={'HIDDEN', }
             )
@@ -366,7 +366,7 @@ class Ms3dImportOperator(Operator, ImportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label(ms3d_str['LABEL_NAME_OPTIONS'], icon=Ms3dUi.ICON_OPTIONS)
+        box.label(text=ms3d_str['LABEL_NAME_OPTIONS'], icon=Ms3dUi.ICON_OPTIONS)
         box.prop(self, 'verbose', icon='SPEAKER')
 
         box = layout.box()
@@ -375,7 +375,7 @@ class Ms3dImportOperator(Operator, ImportHelper):
         box.prop(self, 'use_extended_normal_handling')
 
         box = layout.box()
-        box.label(ms3d_str['LABEL_NAME_ANIMATION'], icon=Ms3dUi.ICON_ANIMATION)
+        box.label(text=ms3d_str['LABEL_NAME_ANIMATION'], icon=Ms3dUi.ICON_ANIMATION)
         box.prop(self, 'use_animation')
         if (self.use_animation):
             box.prop(self, 'rotation_mode', icon=Ms3dUi.ICON_ROTATION_MODE,
@@ -434,12 +434,12 @@ class Ms3dExportOperator(Operator, ExportHelper):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             options={'HIDDEN', }
             )
 
-    verbose = EnumProperty(
+    verbose: EnumProperty(
             name=ms3d_str['PROP_NAME_VERBOSE'],
             description=ms3d_str['PROP_DESC_VERBOSE'],
             items=( (Ms3dUi.VERBOSE_MODE_NONE,
@@ -458,31 +458,31 @@ class Ms3dExportOperator(Operator, ExportHelper):
             default=Ms3dUi.PROP_DEFAULT_VERBOSE,
             )
 
-    use_blender_names = BoolProperty(
+    use_blender_names: BoolProperty(
             name=ms3d_str['PROP_NAME_USE_BLENDER_NAMES'],
             description=ms3d_str['PROP_DESC_USE_BLENDER_NAMES'],
             default=Ms3dUi.PROP_DEFAULT_USE_BLENDER_NAMES,
             )
 
-    use_blender_materials = BoolProperty(
+    use_blender_materials: BoolProperty(
             name=ms3d_str['PROP_NAME_USE_BLENDER_MATERIALS'],
             description=ms3d_str['PROP_DESC_USE_BLENDER_MATERIALS'],
             default=Ms3dUi.PROP_DEFAULT_USE_BLENDER_MATERIALS,
             )
 
-    apply_transform = BoolProperty(
+    apply_transform: BoolProperty(
             name=ms3d_str['PROP_NAME_APPLY_TRANSFORM'],
             description=ms3d_str['PROP_DESC_APPLY_TRANSFORM'],
             default=Ms3dUi.PROP_DEFAULT_APPLY_TRANSFORM,
             )
 
-    apply_modifiers = BoolProperty(
+    apply_modifiers: BoolProperty(
             name=ms3d_str['PROP_NAME_APPLY_MODIFIERS'],
             description=ms3d_str['PROP_DESC_APPLY_MODIFIERS'],
             default=Ms3dUi.PROP_DEFAULT_APPLY_MODIFIERS,
             )
 
-    apply_modifiers_mode =  EnumProperty(
+    apply_modifiers_mode:  EnumProperty(
             name=ms3d_str['PROP_NAME_APPLY_MODIFIERS_MODE'],
             description=ms3d_str['PROP_DESC_APPLY_MODIFIERS_MODE'],
             items=( (Ms3dUi.PROP_ITEM_APPLY_MODIFIERS_MODE_VIEW,
@@ -495,41 +495,41 @@ class Ms3dExportOperator(Operator, ExportHelper):
             default=Ms3dUi.PROP_DEFAULT_APPLY_MODIFIERS_MODE,
             )
 
-    use_animation = BoolProperty(
+    use_animation: BoolProperty(
             name=ms3d_str['PROP_NAME_USE_ANIMATION'],
             description=ms3d_str['PROP_DESC_USE_ANIMATION'],
             default=Ms3dUi.PROP_DEFAULT_USE_ANIMATION,
             )
 
-    normalize_weights = BoolProperty(
+    normalize_weights: BoolProperty(
             name=ms3d_str['PROP_NAME_NORMALIZE_WEIGHTS'],
             description=ms3d_str['PROP_DESC_NORMALIZE_WEIGHTS'],
             default=Ms3dUi.PROP_DEFAULT_NORMALIZE_WEIGHTS,
             )
 
-    shrink_to_keys = BoolProperty(
+    shrink_to_keys: BoolProperty(
             name=ms3d_str['PROP_NAME_SHRINK_TO_KEYS'],
             description=ms3d_str['PROP_DESC_SHRINK_TO_KEYS'],
             default=Ms3dUi.PROP_DEFAULT_SHRINK_TO_KEYS,
             )
 
-    bake_each_frame = BoolProperty(
+    bake_each_frame: BoolProperty(
             name=ms3d_str['PROP_NAME_BAKE_EACH_FRAME'],
             description=ms3d_str['PROP_DESC_BAKE_EACH_FRAME'],
             default=Ms3dUi.PROP_DEFAULT_BAKE_EACH_FRAME,
             )
 
-    check_existing = BoolProperty(
+    check_existing: BoolProperty(
             default=False,
             options={'HIDDEN', }
             )
 
-    filename_ext = StringProperty(
+    filename_ext: StringProperty(
             default=ms3d_str['FILE_EXT'],
             options={'HIDDEN', }
             )
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default=ms3d_str['FILE_FILTER'],
             options={'HIDDEN', }
             )
@@ -560,7 +560,7 @@ class Ms3dExportOperator(Operator, ExportHelper):
 
         box = layout.box()
         flow = box.column_flow()
-        flow.label(ms3d_str['LABEL_NAME_OPTIONS'], icon=Ms3dUi.ICON_OPTIONS)
+        flow.label(text=ms3d_str['LABEL_NAME_OPTIONS'], icon=Ms3dUi.ICON_OPTIONS)
         flow.prop(self, 'verbose', icon='SPEAKER')
 
         box = layout.box()
@@ -568,7 +568,7 @@ class Ms3dExportOperator(Operator, ExportHelper):
         flow.label(ms3d_str['LABEL_NAME_PROCESSING'],
                 icon=Ms3dUi.ICON_PROCESSING)
         row = flow.row()
-        row.label(ms3d_str['PROP_NAME_ACTIVE'], icon='ROTACTIVE')
+        row.label(text=ms3d_str['PROP_NAME_ACTIVE'], icon='ROTACTIVE')
         row.label(blender_context.active_object.name)
         ##flow.prop(self, 'object_name')
         flow.prop(self, 'use_blender_names')
@@ -646,7 +646,7 @@ class Ms3dSetSmoothingGroupOperator(Operator):
     bl_label = ms3d_str['BL_LABEL_SMOOTHING_GROUP_OPERATOR']
     bl_options = {'UNDO', 'INTERNAL', }
 
-    smoothing_group_index = IntProperty(
+    smoothing_group_index: IntProperty(
             name=ms3d_str['PROP_SMOOTHING_GROUP_INDEX'],
             options={'HIDDEN', 'SKIP_SAVE', },
             )
@@ -722,7 +722,7 @@ class Ms3dGroupOperator(Operator):
     bl_label = ms3d_str['BL_LABEL_GROUP_OPERATOR']
     bl_options = {'UNDO', 'INTERNAL', }
 
-    mode = EnumProperty(
+    mode: EnumProperty(
             items=( ('', "", ""),
                     ('ADD_GROUP',
                             ms3d_str['ENUM_ADD_GROUP_1'],
@@ -813,7 +813,7 @@ class Ms3dMaterialOperator(Operator):
     bl_label = ms3d_str['BL_LABEL_MATERIAL_OPERATOR']
     bl_options = {'UNDO', 'INTERNAL', }
 
-    mode = EnumProperty(
+    mode: EnumProperty(
             items=( ('', "", ""),
                     ('FROM_BLENDER',
                             ms3d_str['ENUM_FROM_BLENDER_1'],
@@ -858,14 +858,14 @@ class Ms3dMaterialOperator(Operator):
 
 ###############################################################################
 class Ms3dGroupProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=ms3d_str['PROP_NAME_NAME'],
             description=ms3d_str['PROP_DESC_GROUP_NAME'],
             default="",
             #options={'HIDDEN', },
             )
 
-    flags = EnumProperty(
+    flags: EnumProperty(
             name=ms3d_str['PROP_NAME_FLAGS'],
             description=ms3d_str['PROP_DESC_FLAGS_GROUP'],
             items=(#(Ms3dUi.FLAG_NONE, ms3d_str['ENUM_FLAG_NONE_1'],
@@ -904,25 +904,25 @@ class Ms3dGroupProperties(PropertyGroup):
             options={'ENUM_FLAG', 'ANIMATABLE', },
             )
 
-    comment = StringProperty(
+    comment: StringProperty(
             name=ms3d_str['PROP_NAME_COMMENT'],
             description=ms3d_str['PROP_DESC_COMMENT_GROUP'],
             default="",
             #options={'HIDDEN', },
             )
 
-    id = IntProperty(options={'HIDDEN', },)
+    id: IntProperty(options={'HIDDEN', },)
 
 
 class Ms3dModelProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=ms3d_str['PROP_NAME_NAME'],
             description=ms3d_str['PROP_DESC_NAME_MODEL'],
             default="",
             #options={'HIDDEN', },
             )
 
-    joint_size = FloatProperty(
+    joint_size: FloatProperty(
             name=ms3d_str['PROP_NAME_JOINT_SIZE'],
             description=ms3d_str['PROP_DESC_JOINT_SIZE'],
             min=Ms3dUi.PROP_JOINT_SIZE_MIN, max=Ms3dUi.PROP_JOINT_SIZE_MAX,
@@ -933,7 +933,7 @@ class Ms3dModelProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    transparency_mode = EnumProperty(
+    transparency_mode: EnumProperty(
             name=ms3d_str['PROP_NAME_TRANSPARENCY_MODE'],
             description=ms3d_str['PROP_DESC_TRANSPARENCY_MODE'],
             items=( (Ms3dUi.MODE_TRANSPARENCY_SIMPLE,
@@ -954,7 +954,7 @@ class Ms3dModelProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    alpha_ref = FloatProperty(
+    alpha_ref: FloatProperty(
             name=ms3d_str['PROP_NAME_ALPHA_REF'],
             description=ms3d_str['PROP_DESC_ALPHA_REF'],
             min=0, max=1, precision=3, step=0.1,
@@ -963,7 +963,7 @@ class Ms3dModelProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    comment = StringProperty(
+    comment: StringProperty(
             name=ms3d_str['PROP_NAME_COMMENT'],
             description=ms3d_str['PROP_DESC_COMMENT_MODEL'],
             default="",
@@ -973,7 +973,7 @@ class Ms3dModelProperties(PropertyGroup):
     ##########################
     # ms3d group handling
     #
-    apply_mode = EnumProperty(
+    apply_mode: EnumProperty(
             items=( ('ASSIGN',
                             ms3d_str['ENUM_ASSIGN_1'],
                             ms3d_str['ENUM_ASSIGN_2_SMOOTHING_GROUP']),
@@ -988,7 +988,7 @@ class Ms3dModelProperties(PropertyGroup):
             options={'HIDDEN', 'SKIP_SAVE', },
             )
 
-    selected_group_index = IntProperty(
+    selected_group_index: IntProperty(
             default=-1,
             min=-1,
             options={'HIDDEN', 'SKIP_SAVE', },
@@ -997,7 +997,7 @@ class Ms3dModelProperties(PropertyGroup):
     # ms3d group handling
     ##########################
 
-    groups = CollectionProperty(
+    groups: CollectionProperty(
             type=Ms3dGroupProperties,
             #options={'HIDDEN', },
             )
@@ -1025,7 +1025,7 @@ class Ms3dModelProperties(PropertyGroup):
 
 
 class Ms3dArmatureProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=ms3d_str['PROP_NAME_NAME'],
             description=ms3d_str['PROP_DESC_NAME_ARMATURE'],
             default="",
@@ -1034,14 +1034,14 @@ class Ms3dArmatureProperties(PropertyGroup):
 
 
 class Ms3dJointProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=ms3d_str['PROP_NAME_NAME'],
             description=ms3d_str['PROP_DESC_NAME_JOINT'],
             default="",
             #options={'HIDDEN', },
             )
 
-    flags = EnumProperty(
+    flags: EnumProperty(
             name=ms3d_str['PROP_NAME_FLAGS'],
             description=ms3d_str['PROP_DESC_FLAGS_JOINT'],
             items=(#(Ms3dUi.FLAG_NONE,
@@ -1081,7 +1081,7 @@ class Ms3dJointProperties(PropertyGroup):
             options={'ENUM_FLAG', 'ANIMATABLE', },
             )
 
-    color = FloatVectorProperty(
+    color: FloatVectorProperty(
             name=ms3d_str['PROP_NAME_COLOR'],
             description=ms3d_str['PROP_DESC_COLOR_JOINT'],
             subtype='COLOR', size=3, min=0, max=1, precision=3, step=0.1,
@@ -1089,7 +1089,7 @@ class Ms3dJointProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    comment = StringProperty(
+    comment: StringProperty(
             name=ms3d_str['PROP_NAME_COMMENT'],
             description=ms3d_str['PROP_DESC_COMMENT_JOINT'],
             default="",
@@ -1185,14 +1185,14 @@ class Ms3dMaterialHelper:
 
 
 class Ms3dMaterialProperties(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name=ms3d_str['PROP_NAME_NAME'],
             description=ms3d_str['PROP_DESC_NAME_MATERIAL'],
             default="",
             #options={'HIDDEN', },
             )
 
-    ambient = FloatVectorProperty(
+    ambient: FloatVectorProperty(
             name=ms3d_str['PROP_NAME_AMBIENT'],
             description=ms3d_str['PROP_DESC_AMBIENT'],
             subtype='COLOR', size=4, min=0, max=1, precision=3, step=0.1,
@@ -1201,7 +1201,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    diffuse = FloatVectorProperty(
+    diffuse: FloatVectorProperty(
             name=ms3d_str['PROP_NAME_DIFFUSE'],
             description=ms3d_str['PROP_DESC_DIFFUSE'],
             subtype='COLOR', size=4, min=0, max=1, precision=3, step=0.1,
@@ -1210,7 +1210,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    specular = FloatVectorProperty(
+    specular: FloatVectorProperty(
             name=ms3d_str['PROP_NAME_SPECULAR'],
             description=ms3d_str['PROP_DESC_SPECULAR'],
             subtype='COLOR', size=4, min=0, max=1, precision=3, step=0.1,
@@ -1219,7 +1219,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    emissive = FloatVectorProperty(
+    emissive: FloatVectorProperty(
             name=ms3d_str['PROP_NAME_EMISSIVE'],
             description=ms3d_str['PROP_DESC_EMISSIVE'],
             subtype='COLOR', size=4, min=0, max=1, precision=3, step=0.1,
@@ -1228,7 +1228,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    shininess = FloatProperty(
+    shininess: FloatProperty(
             name=ms3d_str['PROP_NAME_SHININESS'],
             description=ms3d_str['PROP_DESC_SHININESS'],
             min=0, max=Ms3dSpec.MAX_MATERIAL_SHININESS, precision=3, step=0.1,
@@ -1238,7 +1238,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    transparency = FloatProperty(
+    transparency: FloatProperty(
             name=ms3d_str['PROP_NAME_TRANSPARENCY'],
             description=ms3d_str['PROP_DESC_TRANSPARENCY'],
             min=0, max=1, precision=3, step=0.1,
@@ -1248,7 +1248,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    mode = EnumProperty(
+    mode: EnumProperty(
             name=ms3d_str['PROP_NAME_MODE'],
             description=ms3d_str['PROP_DESC_MODE_TEXTURE'],
             items=( (Ms3dUi.FLAG_TEXTURE_COMBINE_ALPHA,
@@ -1269,7 +1269,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             options={'ANIMATABLE', 'ENUM_FLAG', },
             )
 
-    texture = StringProperty(
+    texture: StringProperty(
             name=ms3d_str['PROP_NAME_TEXTURE'],
             description=ms3d_str['PROP_DESC_TEXTURE'],
             default="",
@@ -1277,7 +1277,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    alphamap = StringProperty(
+    alphamap: StringProperty(
             name=ms3d_str['PROP_NAME_ALPHAMAP'],
             description=ms3d_str['PROP_DESC_ALPHAMAP'],
             default="",
@@ -1285,7 +1285,7 @@ class Ms3dMaterialProperties(PropertyGroup):
             #options={'HIDDEN', },
             )
 
-    comment = StringProperty(
+    comment: StringProperty(
             name=ms3d_str['PROP_NAME_COMMENT'],
             description=ms3d_str['PROP_DESC_COMMENT_MATERIAL'],
             default="",

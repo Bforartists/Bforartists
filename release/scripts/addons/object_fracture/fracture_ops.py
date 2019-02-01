@@ -70,12 +70,12 @@ def create_cutter(context, crack_type, scale, roughness):
             v.co *= scale
 
         if crack_type == 'SPHERE_ROUGH':
-            for v in context.scene.objects.active.data.vertices:
+            for v in context.view_layer.objects.active.data.vertices:
                 v.co[0] += roughness * scale * 0.2 * (random.random() - 0.5)
                 v.co[1] += roughness * scale * 0.1 * (random.random() - 0.5)
                 v.co[2] += roughness * scale * 0.1 * (random.random() - 0.5)
 
-    bpy.context.active_object.select = True
+    bpy.context.active_object.select_set(True)
 #    bpy.context.scene.objects.active.select = True
 
     '''
@@ -142,10 +142,10 @@ def getIslands(shard):
         shards = []
         for gi in range(0, gindex):
             bpy.ops.object.select_all(action='DESELECT')
-            bpy.context.scene.objects.active = shard
-            shard.select = True
+            bpy.context.view_layer.objects.active = shard
+            shard.select_set(True)
             bpy.ops.object.duplicate(linked=False, mode='DUMMY')
-            a = bpy.context.scene.objects.active
+            a = bpy.context.view_layer.objects.active
             sm = a.data
             print (a.name)
 
@@ -159,7 +159,7 @@ def getIslands(shard):
                     #print('getIslands: ' + str(x))
                     a.data.vertices[x].select = True
 
-            print(bpy.context.scene.objects.active.name)
+            print(bpy.context.view_layer.objects.active.name)
 
             bpy.ops.object.editmode_toggle()
             bpy.ops.mesh.delete()
@@ -169,7 +169,7 @@ def getIslands(shard):
 
             shards.append(a)
 
-        bpy.context.scene.objects.unlink(shard)
+        bpy.context.collection.objects.unlink(shard)
 
     return shards
 
@@ -184,9 +184,9 @@ def boolop(ob, cutter, op):
     gsize = sizex + sizey + sizez
 
     bpy.ops.object.select_all()
-    ob.select = True
+    ob.select_set(True)
     sce.objects.active = ob
-    cutter.select = False
+    cutter.select_set(False)
 
     bpy.ops.object.modifier_add(type='BOOLEAN')
     a = sce.objects.active
@@ -233,7 +233,9 @@ def boolop(ob, cutter, op):
 
 
 def splitobject(context, ob, crack_type, roughness):
+    collection = context.collection
     scene = context.scene
+    view_layer = context.view_layer
 
     size = getsizefrommesh(ob)
     shards = []
@@ -251,7 +253,7 @@ def splitobject(context, ob, crack_type, roughness):
         random.random() * 5000.0,
         random.random() * 5000.0]
 
-    scene.objects.active = ob
+    view_layer.objects.active = ob
     operations = ['INTERSECT', 'DIFFERENCE']
 
     for op in operations:
@@ -261,17 +263,17 @@ def splitobject(context, ob, crack_type, roughness):
         if fault > 0:
             # Delete all shards in case of fault from previous operation.
             for s in shards:
-                scene.objects.unlink(s)
+                collection.objects.unlink(s)
 
-            scene.objects.unlink(cutter)
+            collection.objects.unlink(cutter)
             #print('splitobject: fault')
 
             return [ob]
 
     if shards[0] != ob:
-        bpy.context.scene.objects.unlink(ob)
+        bpy.context.collection.objects.unlink(ob)
 
-    bpy.context.scene.objects.unlink(cutter)
+    bpy.context.collection.objects.unlink(cutter)
 
     return shards
 
@@ -281,7 +283,7 @@ def fracture_basic(context, nshards, crack_type, roughness):
     shards = []
 
     for ob in context.scene.objects:
-        if ob.select:
+        if ob.select_get():
             tobesplit.append(ob)
 
     i = 1     # I counts shards, starts with 1 - the original object
@@ -330,7 +332,7 @@ def fracture_group(context, group):
             if fault == 1:
                # Delete all shards in case of fault from previous operation.
                 for s in shards:
-                    bpy.context.scene.objects.unlink(s)
+                    bpy.context.collection.objects.unlink(s)
 
                 #print('fracture_group: fault')
                 #print('fracture_group: ' + str(i))
@@ -346,21 +348,21 @@ class FractureSimple(bpy.types.Operator):
     bl_label = "Fracture Object"
     bl_options = {'REGISTER', 'UNDO'}
 
-    exe = BoolProperty(name="Execute",
+    exe: BoolProperty(name="Execute",
         description="If it shall actually run, for optimal performance",
         default=False)
 
-    hierarchy = BoolProperty(name="Generate hierarchy",
+    hierarchy: BoolProperty(name="Generate hierarchy",
         description="Hierarchy is useful for simulation of objects" \
                     " breaking in motion",
         default=False)
 
-    nshards = IntProperty(name="Number of shards",
+    nshards: IntProperty(name="Number of shards",
         description="Number of shards the object should be split into",
         min=2,
         default=5)
 
-    crack_type = EnumProperty(name='Crack type',
+    crack_type: EnumProperty(name='Crack type',
         items=(
             ('FLAT', 'Flat', 'a'),
             ('FLAT_ROUGH', 'Flat rough', 'a'),
@@ -369,7 +371,7 @@ class FractureSimple(bpy.types.Operator):
         description='Look of the fracture surface',
         default='FLAT')
 
-    roughness = FloatProperty(name="Roughness",
+    roughness: FloatProperty(name="Roughness",
         description="Roughness of the fracture surface",
         min=0.0,
         max=3.0,
@@ -399,11 +401,11 @@ class FractureGroup(bpy.types.Operator):
     bl_label = "Fracture Object (Group)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    exe = BoolProperty(name="Execute",
+    exe: BoolProperty(name="Execute",
                        description="If it shall actually run, for optimal performance",
                        default=False)
 
-    group = StringProperty(name="Group",
+    group: StringProperty(name="Group",
                            description="Specify the group used for fracturing")
 
 #    e = []

@@ -22,7 +22,7 @@ bl_info = {
     "name": "Data Overrides",
     "author": "Lukas Toenne",
     "version": (0, 1),
-    "blender": (2, 7, 3),
+    "blender": (2, 73, 0),
     "location": "Scene Properties",
     "description": "Override settings and caching for linked objects",
     "warning": "",

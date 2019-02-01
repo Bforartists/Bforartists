@@ -202,12 +202,12 @@ def menu(self, context):
 class AdvancedObjPreferences(AddonPreferences):
     bl_idname = __name__
 
-    show_menu_list = BoolProperty(
+    show_menu_list: BoolProperty(
         name="Menu List",
         description="Show/Hide the Add Menu items",
         default=False
     )
-    show_panel_list = BoolProperty(
+    show_panel_list: BoolProperty(
         name="Panels List",
         description="Show/Hide the Panel items",
         default=False
@@ -313,149 +313,149 @@ def adjust_selected_color_image(self, context):
 class AdvancedObjProperties(PropertyGroup):
     # cubester
     # main properties
-    cubester_check_audio = BoolProperty(
+    cubester_check_audio: BoolProperty(
         name="",
         default=False
     )
-    cubester_audio_image = EnumProperty(
+    cubester_audio_image: EnumProperty(
         name="Input Type",
         items=(("image", "Image",
                 "Use an Image as input for generating Geometry", "IMAGE_COL", 0),
                ("audio", "Audio",
                 "Use a Sound Strip as input for generating Geometry", "FILE_SOUND", 1))
     )
-    cubester_audio_file_length = IntProperty(
+    cubester_audio_file_length: IntProperty(
         default=0
     )
     # audio
-    cubester_audio_path = StringProperty(
+    cubester_audio_path: StringProperty(
         default="",
         name="Audio File",
         subtype="FILE_PATH",
         update=find_audio_length
     )
-    cubester_audio_min_freq = IntProperty(
+    cubester_audio_min_freq: IntProperty(
         name="Minimum Frequency",
         min=20, max=100000,
         default=20
     )
-    cubester_audio_max_freq = IntProperty(
+    cubester_audio_max_freq: IntProperty(
         name="Maximum Frequency",
         min=21, max=999999,
         default=5000
     )
-    cubester_audio_offset_type = EnumProperty(
+    cubester_audio_offset_type: EnumProperty(
         name="Offset Type",
         items=(("freq", "Frequency Offset", ""),
                ("frame", "Frame Offset", "")),
         description="Type of offset per row of mesh"
     )
-    cubester_audio_frame_offset = IntProperty(
+    cubester_audio_frame_offset: IntProperty(
         name="Frame Offset",
         min=0, max=10,
         default=2
     )
-    cubester_audio_block_layout = EnumProperty(
+    cubester_audio_block_layout: EnumProperty(
         name="Block Layout",
         items=(("rectangle", "Rectangular", ""),
               ("radial", "Radial", ""))
     )
-    cubester_audio_width_blocks = IntProperty(
+    cubester_audio_width_blocks: IntProperty(
         name="Width Block Count",
         min=1, max=10000,
         default=5
     )
-    cubester_audio_length_blocks = IntProperty(
+    cubester_audio_length_blocks: IntProperty(
         name="Length Block Count",
         min=1, max=10000,
         default=50
     )
     # image
-    cubester_load_type = EnumProperty(
+    cubester_load_type: EnumProperty(
         name="Image Input Type",
         items=(("single", "Single Image", ""),
               ("multiple", "Image Sequence", ""))
     )
-    cubester_image = StringProperty(
+    cubester_image: StringProperty(
         default="",
         name=""
     )
-    cubester_load_image = StringProperty(
+    cubester_load_image: StringProperty(
         default="",
         name="Load Image",
         subtype="FILE_PATH",
         update=adjust_selected_image
     )
-    cubester_skip_images = IntProperty(
+    cubester_skip_images: IntProperty(
         name="Image Step",
         min=1, max=30,
         default=1,
         description="Step from image to image by this number"
     )
-    cubester_max_images = IntProperty(
+    cubester_max_images: IntProperty(
         name="Max Number Of Images",
         min=2, max=1000,
         default=10,
         description="Maximum number of images to be used"
     )
-    cubester_frame_step = IntProperty(
+    cubester_frame_step: IntProperty(
         name="Frame Step Size",
         min=1, max=10,
         default=4,
         description="The number of frames each picture is used"
     )
-    cubester_skip_pixels = IntProperty(
+    cubester_skip_pixels: IntProperty(
         name="Skip # Pixels",
         min=0, max=256,
         default=64,
         description="Skip this number of pixels before placing the next"
     )
-    cubester_mesh_style = EnumProperty(
+    cubester_mesh_style: EnumProperty(
         name="Mesh Type",
         items=(("blocks", "Blocks", ""),
                ("plane", "Plane", "")),
         description="Compose mesh of multiple blocks or of a single plane"
     )
-    cubester_block_style = EnumProperty(
+    cubester_block_style: EnumProperty(
         name="Block Style",
         items=(("size", "Vary Size", ""),
                ("position", "Vary Position", "")),
         description="Vary Z-size of block, or vary Z-position"
     )
-    cubester_height_scale = FloatProperty(
+    cubester_height_scale: FloatProperty(
         name="Height Scale",
         subtype="DISTANCE",
         min=0.1, max=2,
         default=0.2
     )
-    cubester_invert = BoolProperty(
+    cubester_invert: BoolProperty(
         name="Invert Height",
         default=False
     )
     # general adjustments
-    cubester_size_per_hundred_pixels = FloatProperty(
+    cubester_size_per_hundred_pixels: FloatProperty(
         name="Size Per 100 Blocks/Points",
         subtype="DISTANCE",
         min=0.001, max=5,
         default=1
     )
     # material based stuff
-    cubester_materials = EnumProperty(
+    cubester_materials: EnumProperty(
         name="Material",
         items=(("vertex", "Vertex Colors", ""),
                ("image", "Image", "")),
         description="Color with vertex colors, or uv unwrap and use an image"
     )
-    cubester_use_image_color = BoolProperty(
+    cubester_use_image_color: BoolProperty(
         name="Use Original Image Colors'?",
         default=True,
         description="Use original image colors, or replace with an another one"
     )
-    cubester_color_image = StringProperty(
+    cubester_color_image: StringProperty(
         default="",
         name=""
     )
-    cubester_load_color_image = StringProperty(
+    cubester_load_color_image: StringProperty(
         default="",
         name="Load Color Image",
         subtype="FILE_PATH",
@@ -463,33 +463,33 @@ class AdvancedObjProperties(PropertyGroup):
     )
     cubester_vertex_colors = {}
     # advanced
-    cubester_advanced = BoolProperty(
+    cubester_advanced: BoolProperty(
         name="Advanced Options",
         default=False
     )
-    cubester_random_weights = BoolProperty(
+    cubester_random_weights: BoolProperty(
         name="Random Weights",
         default=False
     )
-    cubester_weight_r = FloatProperty(
+    cubester_weight_r: FloatProperty(
         name="Red",
         subtype="FACTOR",
         min=0.01, max=1.0,
         default=0.25
     )
-    cubester_weight_g = FloatProperty(
+    cubester_weight_g: FloatProperty(
         name="Green",
         subtype="FACTOR",
         min=0.01, max=1.0,
         default=0.25
     )
-    cubester_weight_b = FloatProperty(
+    cubester_weight_b: FloatProperty(
         name="Blue",
         subtype="FACTOR",
         min=0.01, max=1.0,
         default=0.25
     )
-    cubester_weight_a = FloatProperty(
+    cubester_weight_a: FloatProperty(
         name="Alpha",
         subtype="FACTOR",
         min=0.01, max=1.0,
@@ -497,15 +497,15 @@ class AdvancedObjProperties(PropertyGroup):
     )
 
     # arrange_on_curve
-    arrange_c_use_selected = BoolProperty(
+    arrange_c_use_selected: BoolProperty(
         name="Use Selected",
         description="Use the selected objects to duplicate",
         default=True,
     )
-    arrange_c_obj_arranjar = StringProperty(
+    arrange_c_obj_arranjar: StringProperty(
         name=""
     )
-    arrange_c_select_type = EnumProperty(
+    arrange_c_select_type: EnumProperty(
         name="Type",
         description="Select object or group",
         items=[

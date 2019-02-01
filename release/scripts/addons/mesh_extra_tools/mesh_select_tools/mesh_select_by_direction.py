@@ -162,7 +162,7 @@ class Select_init(Operator):
                       "defined by a vector with coordinates X, Y, Z")
     bl_options = {'REGISTER', 'UNDO'}
 
-    direction = FloatVectorProperty(
+    direction: FloatVectorProperty(
             name="Direction",
             description="Define a vector from the inputs axis X, Y, Z\n"
                         "Used to define the normals direction",
@@ -172,7 +172,7 @@ class Select_init(Operator):
             step=100,
             precision=2
             )
-    divergence = FloatProperty(
+    divergence: FloatProperty(
             name="Divergence",
             description="The number of degrees the selection may differ from the Vector\n"
                         "(Input is converted to radians)",
@@ -183,14 +183,14 @@ class Select_init(Operator):
             precision=2,
             subtype='ANGLE'
             )
-    extend = BoolProperty(
+    extend: BoolProperty(
             name="Extend",
             description="Extend the current selection",
             default=False
             )
     # The spaces we use
     spaces = (('LOC', 'Local', ''), ('GLO', 'Global', ''))
-    space = EnumProperty(
+    space: EnumProperty(
             items=spaces,
             name="Space",
             description="The space to interpret the directions in",

@@ -55,24 +55,24 @@ class MESH_OT_edges_floor_plan(Operator):
     bl_description = "Top View, Extrude Flat Along Edges"
     bl_options = {'REGISTER', 'UNDO'}
 
-    wid = FloatProperty(
+    wid: FloatProperty(
             name="Wall width:",
             description="Set the width of the generated walls\n",
             default=0.1,
             min=0.001, max=30000
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name="Inner height:",
             description="Set the height of the inner wall edges",
             default=0.0,
             min=0, max=10
             )
-    connect_ends = BoolProperty(
+    connect_ends: BoolProperty(
             name="Connect Ends",
             description="Connect the ends of the boundary Edge loops",
             default=False
             )
-    repeat_cleanup = IntProperty(
+    repeat_cleanup: IntProperty(
             name="Recursive Prepare",
             description="Number of times that the preparation phase runs\n"
                         "at the start of the script\n"
@@ -94,25 +94,25 @@ class MESH_OT_edges_floor_plan(Operator):
              "Useful for complex meshes, however works best on flat surfaces\n"
              "as the extrude direction has to be defined")
             ]
-    fill_type = EnumProperty(
+    fill_type: EnumProperty(
             name="Fill Type",
             items=fill_items,
             description="Choose the method for creating geometry",
             default='SOLIDIFY'
             )
-    keep_faces = BoolProperty(
+    keep_faces: BoolProperty(
             name="Keep Faces",
             description="Keep or not the fill faces\n"
                         "Can depend on Remove Ngons state",
             default=False
             )
-    tri_faces = BoolProperty(
+    tri_faces: BoolProperty(
             name="Triangulate Faces",
             description="Triangulate the created fill faces\n"
                         "Sometimes can lead to unsatisfactory results",
             default=False
             )
-    initial_extrude = FloatVectorProperty(
+    initial_extrude: FloatVectorProperty(
             name="Initial Extrude",
             description="",
             default=(0.0, 0.0, 0.1),
@@ -121,7 +121,7 @@ class MESH_OT_edges_floor_plan(Operator):
             precision=3,
             size=3
             )
-    remove_ngons = BoolProperty(
+    remove_ngons: BoolProperty(
             name="Remove Ngons",
             description="Keep or not the Ngon Faces\n"
                         "Note about limitations:\n"
@@ -129,13 +129,13 @@ class MESH_OT_edges_floor_plan(Operator):
                         "Removing the Ngons can lead to no geometry created",
             default=True
             )
-    offset = FloatProperty(
+    offset: FloatProperty(
             name="Wall Offset:",
             description="Set the offset for the Solidify modifier",
             default=0.0,
             min=-1.0, max=1.0
             )
-    only_rim = BoolProperty(
+    only_rim: BoolProperty(
             name="Rim Only",
             description="Solidify Fill Rim only option",
             default=False

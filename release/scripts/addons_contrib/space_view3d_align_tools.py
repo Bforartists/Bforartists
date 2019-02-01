@@ -577,7 +577,7 @@ class OBJECT_OT_align_tools(Operator):
     # property definitions
 
     # Object-Pivot-Cursor:
-    subject = EnumProperty(
+    subject: EnumProperty(
             items=(("0", "Object", "Align Objects"),
                    ("1", "Pivot", "Align Objects Pivot"),
                    ("2", "Cursor", "Align Cursor To Active")),
@@ -585,40 +585,40 @@ class OBJECT_OT_align_tools(Operator):
             description="What will be moved"
             )
     # Move active Too:
-    active_too = BoolProperty(
+    active_too: BoolProperty(
             name="Active too",
             default=False,
             description="Move the active object too"
             )
     # advanced options
-    advanced = BoolProperty(
+    advanced: BoolProperty(
             name="Advanced Options",
             default=False,
             description="Show advanced options"
             )
-    consistent = BoolProperty(
+    consistent: BoolProperty(
             name="Consistent Selection",
             default=False,
             description="Use consistent selection"
             )
     # Align Location:
-    loc_x = BoolProperty(
+    loc_x: BoolProperty(
             name="Align to X axis",
             default=False,
             description="Enable X axis alignment"
             )
-    loc_y = BoolProperty(
+    loc_y: BoolProperty(
             name="Align to Y axis",
             default=False,
             description="Enable Y axis alignment"
             )
-    loc_z = BoolProperty(
+    loc_z: BoolProperty(
             name="Align to Z axis",
             default=False,
             description="Enable Z axis alignment"
             )
     # Selection Option:
-    ref1 = EnumProperty(
+    ref1: EnumProperty(
             items=(("3", "Max", "Align the maximum point"),
                    ("1", "Center", "Align the center point"),
                    ("2", "Pivot", "Align the pivot"),
@@ -627,7 +627,7 @@ class OBJECT_OT_align_tools(Operator):
             description="Moved objects reference point"
             )
     # Active Oject Option:
-    ref2 = EnumProperty(
+    ref2: EnumProperty(
             items=(("3", "Max", "Align to the maximum point"),
                    ("1", "Center", "Align to the center point"),
                    ("2", "Pivot", "Align to the pivot"),
@@ -636,7 +636,7 @@ class OBJECT_OT_align_tools(Operator):
             name="Active reference",
             description="Destination point"
             )
-    self_or_active = EnumProperty(
+    self_or_active: EnumProperty(
             items=(("0", "Self", "In relation of itself"),
                    ("1", "Active", "In relation of the active object"),
                    ("2", "Selection", "In relation of the entire selection")),
@@ -645,88 +645,88 @@ class OBJECT_OT_align_tools(Operator):
             description="To what the pivot will be aligned"
             )
     # Location Offset
-    loc_offset = FloatVectorProperty(
+    loc_offset: FloatVectorProperty(
             name="Location Offset",
             description="Offset for location align position",
             default=(0.0, 0.0, 0.0),
             subtype='XYZ', size=3
             )
     # Rotation Offset
-    rot_offset = FloatVectorProperty(
+    rot_offset: FloatVectorProperty(
             name="Rotation Offset",
             description="Offset for rotation alignment",
             default=(0.0, 0.0, 0.0),
             subtype='EULER', size=3
             )
     # Scale Offset
-    scale_offset = FloatVectorProperty(
+    scale_offset: FloatVectorProperty(
             name="Scale Offset",
             description="Offset for scale match",
             default=(0.0, 0.0, 0.0),
             subtype='XYZ', size=3
             )
     # Fit Dimension Prop:
-    fit_x = BoolProperty(
+    fit_x: BoolProperty(
             name="Fit Dimension to X axis",
             default=False,
             description=""
             )
-    fit_y = BoolProperty(
+    fit_y: BoolProperty(
             name="Fit Dimension to Y axis",
             default=False,
             description=""
             )
-    fit_z = BoolProperty(
+    fit_z: BoolProperty(
             name="Fit Dimension to Z axis",
             default=False,
             description=""
             )
     # Apply Fit Dimension:
-    apply_dim = BoolProperty(
+    apply_dim: BoolProperty(
             name="Apply  Dimension",
             default=False,
             description=""
             )
     # Align Rot Prop:
-    rot_x = BoolProperty(
+    rot_x: BoolProperty(
             name="Align Rotation to X axis",
             default=False,
             description=""
             )
-    rot_y = BoolProperty(
+    rot_y: BoolProperty(
             name="Align Rotation to Y axis",
             default=False,
             description=""
             )
-    rot_z = BoolProperty(
+    rot_z: BoolProperty(
             name="Align Rotation to Z axis",
             default=False,
             description=""
             )
     # Apply Rot:
-    apply_rot = BoolProperty(
+    apply_rot: BoolProperty(
             name="Apply Rotation",
             default=False,
             description=""
             )
     # Align Scale:
-    scale_x = BoolProperty(
+    scale_x: BoolProperty(
             name="Match Scale to X axis",
             default=False,
             description=""
             )
-    scale_y = BoolProperty(
+    scale_y: BoolProperty(
             name="Match Scale to Y axis",
             default=False,
             description=""
             )
-    scale_z = BoolProperty(
+    scale_z: BoolProperty(
             name="match Scale to Z axis",
             default=False,
             description=""
             )
     # Apply Scale:
-    apply_scale = BoolProperty(
+    apply_scale: BoolProperty(
             name="Apply Scale",
             default=False,
             description=""
@@ -1046,7 +1046,7 @@ class AlignUi(Panel):
             row = layout.row()
             row.label(text="Active object is: ", icon='OBJECT_DATA')
             box = layout.box()
-            box.label(obj.name, icon='EDITMODE_HLT')
+            box.label(text=obj.name, icon='EDITMODE_HLT')
 
         col = layout.column()
         col.label(text="Align Loc + Rot:", icon='MANIPUL')
@@ -1117,7 +1117,7 @@ class AlignAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",

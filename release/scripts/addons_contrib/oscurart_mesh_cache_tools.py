@@ -32,23 +32,23 @@ from bpy.app.handlers import persistent
 
 
 class OscurartMeshCacheModifiersSettings(PropertyGroup):
-    array = BoolProperty(default=True)
-    bevel = BoolProperty(default=True)
-    boolean = BoolProperty(default=True)
-    build = BoolProperty(default=True)
-    decimate = BoolProperty(default=True)
-    edge_split = BoolProperty(default=True)
-    mask = BoolProperty(default=True)
-    mirror = BoolProperty(default=True)
-    multires = BoolProperty(default=True)
-    remesh = BoolProperty(default=True)
-    screw = BoolProperty(default=True)
-    skin = BoolProperty(default=True)
-    solidify = BoolProperty(default=True)
-    subsurf = BoolProperty(default=True)
-    triangulate = BoolProperty(default=True)
-    wireframe = BoolProperty(default=True)
-    cloth = BoolProperty(default=True)
+    array: BoolProperty(default=True)
+    bevel: BoolProperty(default=True)
+    boolean: BoolProperty(default=True)
+    build: BoolProperty(default=True)
+    decimate: BoolProperty(default=True)
+    edge_split: BoolProperty(default=True)
+    mask: BoolProperty(default=True)
+    mirror: BoolProperty(default=True)
+    multires: BoolProperty(default=True)
+    remesh: BoolProperty(default=True)
+    screw: BoolProperty(default=True)
+    skin: BoolProperty(default=True)
+    solidify: BoolProperty(default=True)
+    subsurf: BoolProperty(default=True)
+    triangulate: BoolProperty(default=True)
+    wireframe: BoolProperty(default=True)
+    cloth: BoolProperty(default=True)
 
 
 # ----------------- AUTO LOAD PROXY
@@ -78,11 +78,11 @@ class RemuevePropiedades(Operator):
 
 
 class OscurartMeshCacheSceneAutoLoad(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name="GroupName",
             default=""
             )
-    use_auto_load = BoolProperty(
+    use_auto_load: BoolProperty(
             name="Bool",
             default=False
             )
@@ -127,7 +127,7 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
         row.prop(scene, "pc_pc2_folder", text="Folder")
         row.operator("buttons.set_meshcache_folder", icon='FILEBROWSER', text="Select Folder Path")
         row = layout.box().column(align=1)
-        row.label("EXPORTER:")
+        row.label(text="EXPORTER:")
         row.operator("group.linked_group_to_local", text="Linked To Local", icon="LINKED")
         row.operator("object.remove_subsurf_modifier", text="Remove Gen Modifiers", icon="MOD_SUBSURF")
         row.prop(scene.mesh_cache_tools_settings, "array", text="Array")
@@ -155,11 +155,11 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
         row.operator("export_shape.pc2_selection", text="Export!", icon="POSE_DATA")
         row.prop(scene, "pc_pc2_world_space", text="World Space")
         row = layout.box().column(align=1)
-        row.label("IMPORTER:")
+        row.label(text="IMPORTER:")
         row.operator("import_shape.pc2_selection", text="Import", icon="POSE_DATA")
         row.operator("object.modifier_mesh_cache_up", text="MC Top", icon="TRIA_UP")
         row = layout.box().column(align=1)
-        row.label("PROXY AUTO LOAD:")
+        row.label(text="PROXY AUTO LOAD:")
         row.operator("scene.pc_auto_load_proxy_create", text="Create List", icon="GROUP")
         row.operator("scene.pc_auto_load_proxy_remove", text="Remove List", icon="X")
 
@@ -312,9 +312,9 @@ def OscLinkedGroupToLocal():
         GROBJS = [ob for ob in ACTOBJ.id_data.instance_collection.objects[:] if ob.type == "MESH"]
 
         for ob in ACTOBJ.id_data.instance_collection.objects[:]:
-            bpy.context.scene.objects.link(ob)
+            bpy.context.collection.objects.link(ob)
         NEWGROUP = bpy.data.collections.new("%s_CLEAN" % (ACTOBJ.name))
-        bpy.context.scene.objects.unlink(ACTOBJ)
+        bpy.context.collection.objects.unlink(ACTOBJ)
         NEWOBJ = []
         for ob in GROBJS:
             NEWGROUP.objects.link(ob)
@@ -354,16 +354,16 @@ class OscMeshCacheUp(Operator):
 
     def execute(self, context):
 
-        actob = bpy.context.scene.objects.active
+        actob = bpy.context.view_layer.objects.active
 
         for ob in bpy.context.selected_objects[:]:
-            bpy.context.scene.objects.active = ob
+            bpy.context.view_layer.objects.active = ob
             for mod in ob.modifiers[:]:
                 if mod.type == "MESH_CACHE":
                     for up in range(ob.modifiers.keys().index(mod.name)):
                         bpy.ops.object.modifier_move_up(modifier=mod.name)
 
-        bpy.context.scene.objects.active = actob
+        bpy.context.view_layer.objects.active = actob
 
         return {'FINISHED'}
 
@@ -397,7 +397,7 @@ class OscurartMeshCacheToolsAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Category",
             description="Choose a name for the category of the panel",
             default="Tools",

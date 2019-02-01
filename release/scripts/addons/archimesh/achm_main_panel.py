@@ -49,11 +49,11 @@ def isboolean(myobject, childobject):
 # ------------------------------------------------------
 # Button: Action to link windows and doors
 # ------------------------------------------------------
-class AchmHoleAction(Operator):
+class ARCHIMESH_OT_Hole(Operator):
     bl_idname = "object.archimesh_cut_holes"
     bl_label = "Auto Holes"
     bl_description = "Enable windows and doors holes for any selected object (needs wall thickness)"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     # ------------------------------
     # Execute
@@ -70,7 +70,7 @@ class AchmHoleAction(Operator):
             # noinspection PyBroadException
             try:
                 if obj["archimesh.hole_enable"]:
-                    if obj.select is True or scene.archimesh_select_only is False:
+                    if obj.select_get() is True or scene.archimesh_select_only is False:
                         listobj.extend([obj])
             except:
                 continue
@@ -117,8 +117,8 @@ class AchmHoleAction(Operator):
             # Parent the empty to the room (the parent of frame)
             if obj.parent is not None:
                 bpy.ops.object.select_all(action='DESELECT')
-                parentobj.select = True
-                obj.parent.select = True  # parent of object
+                parentobj.select_set(True)
+                obj.parent.select_set(True)  # parent of object
                 bpy.ops.object.parent_set(type='OBJECT', keep_transform=False)
             # ---------------------------------------
             # Add the modifier to controller
@@ -149,7 +149,7 @@ class AchmHoleAction(Operator):
                 # noinspection PyBroadException
                 try:
                     if obj["archimesh.ctrl_base"]:
-                        if obj.select is True or scene.archimesh_select_only is False:
+                        if obj.select_get() is True or scene.archimesh_select_only is False:
                             # add boolean modifier
                             if isboolean(mybaseboard, obj) is False:
                                 set_modifier_boolean(mybaseboard, obj)
@@ -170,7 +170,7 @@ class AchmHoleAction(Operator):
                 # noinspection PyBroadException
                 try:
                     if obj["archimesh.ctrl_hole"]:
-                        if obj.select is True or scene.archimesh_select_only is False:
+                        if obj.select_get() is True or scene.archimesh_select_only is False:
                             # add boolean modifier
                             if isboolean(myshell, obj) is False:
                                 set_modifier_boolean(myshell, obj)
@@ -183,11 +183,11 @@ class AchmHoleAction(Operator):
 # ------------------------------------------------------
 # Button: Action to create room from grease pencil
 # ------------------------------------------------------
-class AchmPencilAction(Operator):
+class ARCHIMESH_OT_Pencil(Operator):
     bl_idname = "object.archimesh_pencil_room"
     bl_label = "Room from Draw"
     bl_description = "Create a room base on grease pencil strokes (draw from top view (7 key))"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     # ------------------------------
     # Execute
@@ -387,12 +387,12 @@ class AchmPencilAction(Operator):
 # ------------------------------------------------------------------
 # Define panel class for main functions.
 # ------------------------------------------------------------------
-class ArchimeshMainPanel(Panel):
+class ARCHIMESH_PT_Main(Panel):
     bl_idname = "ARCHIMESH_PT_main"
     bl_label = "Archimesh"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Create"
+    bl_region_type = "UI"
+    bl_category = "View"
     bl_context = "objectmode"
 
     # ------------------------------
@@ -411,7 +411,7 @@ class ArchimeshMainPanel(Panel):
         try:
             if 'RoomGenerator' in myobj:
                 box = layout.box()
-                box.label("Room Tools", icon='MODIFIER')
+                box.label(text="Room Tools", icon='MODIFIER')
                 row = box.row(align=False)
                 row.operator("object.archimesh_cut_holes", icon='GRID')
                 row.prop(scene, "archimesh_select_only")
@@ -431,7 +431,7 @@ class ArchimeshMainPanel(Panel):
         try:
             if myobj["archimesh.sku"] is not None:
                 box = layout.box()
-                box.label("Kitchen Tools", icon='MODIFIER')
+                box.label(text="Kitchen Tools", icon='MODIFIER')
                 # Export
                 row = box.row(align=False)
                 row.operator("io_export.kitchen_inventory", text="Export inventory", icon='PASTEDOWN')
@@ -442,7 +442,7 @@ class ArchimeshMainPanel(Panel):
         # Elements Buttons
         # ------------------------------
         box = layout.box()
-        box.label("Elements", icon='GROUP')
+        box.label(text="Elements", icon='GROUP')
         row = box.row()
         row.operator("mesh.archimesh_room")
         row.operator("mesh.archimesh_column")
@@ -462,7 +462,7 @@ class ArchimeshMainPanel(Panel):
         # Prop Buttons
         # ------------------------------
         box = layout.box()
-        box.label("Props", icon='LIGHT_DATA')
+        box.label(text="Props", icon='LIGHT_DATA')
         row = box.row()
         row.operator("mesh.archimesh_books")
         row.operator("mesh.archimesh_light")
@@ -476,7 +476,7 @@ class ArchimeshMainPanel(Panel):
         # OpenGL Buttons
         # ------------------------------
         box = layout.box()
-        box.label("Display hints", icon='QUESTION')
+        box.label(text="Display hints", icon='QUESTION')
         row = box.row()
         if context.window_manager.archimesh_run_opengl is False:
             icon = 'PLAY'
@@ -486,7 +486,7 @@ class ArchimeshMainPanel(Panel):
             txt = 'Hide'
         row.operator("archimesh.runopenglbutton", text=txt, icon=icon)
         row = box.row()
-        row.prop(scene, "archimesh_gl_measure", toggle=True, icon="ALIGN")
+        row.prop(scene, "archimesh_gl_measure", toggle=True, icon="ALIGN_CENTER")
         row.prop(scene, "archimesh_gl_name", toggle=True, icon="OUTLINER_OB_FONT")
         row.prop(scene, "archimesh_gl_ghost", icon='GHOST_ENABLED')
         row = box.row()
@@ -501,7 +501,7 @@ class ArchimeshMainPanel(Panel):
         # Grease pencil tools
         # ------------------------------
         box = layout.box()
-        box.label("Pencil Tools", icon='MODIFIER')
+        box.label(text="Pencil Tools", icon='MODIFIER')
         row = box.row(align=False)
         row.operator("object.archimesh_pencil_room", icon='GREASEPENCIL')
         row = box.row(align=False)
@@ -514,11 +514,11 @@ class ArchimeshMainPanel(Panel):
 # Defines button for enable/disable the tip display
 #
 # -------------------------------------------------------------
-class AchmRunHintDisplayButton(Operator):
+class ARCHIMESH_OT_HintDisplay(Operator):
     bl_idname = "archimesh.runopenglbutton"
     bl_label = "Display hint data manager"
     bl_description = "Display additional information in the viewport"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     _handle = None  # keep function handler
 
@@ -527,8 +527,8 @@ class AchmRunHintDisplayButton(Operator):
     # ----------------------------------
     @staticmethod
     def handle_add(self, context):
-        if AchmRunHintDisplayButton._handle is None:
-            AchmRunHintDisplayButton._handle = SpaceView3D.draw_handler_add(draw_callback_px, (self, context),
+        if ARCHIMESH_OT_HintDisplay._handle is None:
+            ARCHIMESH_OT_HintDisplay._handle = SpaceView3D.draw_handler_add(draw_callback_px, (self, context),
                                                                                       'WINDOW',
                                                                                       'POST_PIXEL')
             context.window_manager.archimesh_run_opengl = True
@@ -539,9 +539,9 @@ class AchmRunHintDisplayButton(Operator):
     # noinspection PyUnusedLocal
     @staticmethod
     def handle_remove(self, context):
-        if AchmRunHintDisplayButton._handle is not None:
-            SpaceView3D.draw_handler_remove(AchmRunHintDisplayButton._handle, 'WINDOW')
-        AchmRunHintDisplayButton._handle = None
+        if ARCHIMESH_OT_HintDisplay._handle is not None:
+            SpaceView3D.draw_handler_remove(ARCHIMESH_OT_HintDisplay._handle, 'WINDOW')
+        ARCHIMESH_OT_HintDisplay._handle = None
         context.window_manager.archimesh_run_opengl = False
 
     # ------------------------------

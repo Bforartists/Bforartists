@@ -29,7 +29,7 @@ class SEQUENCER_EXTRA_MT_input(Menu):
     bl_label = "Input"
 
     def draw(self, context):
-        self.layout.label("Kinoraw Input")
+        self.layout.label(text="Kinoraw Input")
         self.layout.separator()
 
         self.layout.operator_context = "INVOKE_REGION_WIN"
@@ -378,14 +378,14 @@ class JumptoCut(Panel):
 
             else:
                 row = layout.row(align=True)
-                row.label("Snap:")
+                row.label(text="Snap:")
 
                 row.operator("sequencerextra.extrasnap", text="Left", icon="SNAP_ON").align = 0
                 row.operator("sequencerextra.extrasnap", text="Center", icon="SNAP_SURFACE").align = 1
                 row.operator("sequencerextra.extrasnap", text="Right", icon="SNAP_ON").align = 2
 
                 row = layout.row(align=True)
-                row.label("Handlers:")
+                row.label(text="Handlers:")
                 row.operator("sequencerextra.extrahandles",
                              text="Left", icon="TRIA_LEFT").side = 0
                 row.operator("sequencerextra.extrahandles",
@@ -591,7 +591,7 @@ class JumptoCut(Panel):
                     sub.operator("screen.animation_play", text="", icon='PAUSE' if
                                  context.screen.is_animation_playing else 'PLAY')
 
-                    row.label("Cut To")
+                    row.label(text="Cut To")
                     for i in range(1, strip.channel):
                         row.operator("sequencer.cut_multicam", text="%d" % i).camera = i
 

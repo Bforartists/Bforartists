@@ -35,7 +35,7 @@ class Sequencer_Extra_FrameSkip(Operator):
     bl_description = "Skip through the Timeline by one-second increments"
     bl_options = {'REGISTER', 'UNDO'}
 
-    back = BoolProperty(
+    back: BoolProperty(
             name="Back",
             default=False
             )
@@ -545,7 +545,7 @@ class Sequencer_Extra_Insert(Operator):
                       "forward following ones")
     bl_options = {'REGISTER', 'UNDO'}
 
-    singlechannel = BoolProperty(
+    singlechannel: BoolProperty(
             name="Single Channel",
             default=False
             )
@@ -616,7 +616,7 @@ class Sequencer_Extra_CopyProperties(Operator):
     bl_description = "Copy properties of active strip to selected strips"
     bl_options = {'REGISTER', 'UNDO'}
 
-    prop = EnumProperty(
+    prop: EnumProperty(
             name="Property",
             items=[
                 # common
@@ -788,7 +788,7 @@ class Sequencer_Extra_FadeInOut(Operator):
     bl_description = "Fade volume or opacity of active strip"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = EnumProperty(
+    mode: EnumProperty(
             name='Direction',
             items=(
                 ('IN', "Fade In...", ""),
@@ -797,12 +797,12 @@ class Sequencer_Extra_FadeInOut(Operator):
             default='IN',
             )
 
-    fade_duration = IntProperty(
+    fade_duration: IntProperty(
         name='Duration',
         description='Number of frames to fade',
         min=1, max=250,
         default=25)
-    fade_amount = FloatProperty(
+    fade_amount: FloatProperty(
         name='Amount',
         description='Maximum value of fade',
         min=0.0,
@@ -946,7 +946,7 @@ class Sequencer_Extra_PlaceFromFileBrowser(Operator):
     bl_description = "Place or insert active file from File Browser"
     bl_options = {'REGISTER', 'UNDO'}
 
-    insert = BoolProperty(
+    insert: BoolProperty(
             name="Insert",
             default=False
             )
@@ -1049,7 +1049,7 @@ class Sequencer_Extra_SelectCurrentFrame(Operator):
     bl_description = "Select strips according to current frame"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = EnumProperty(
+    mode: EnumProperty(
             name='Mode',
             items=(
             ('BEFORE', 'Before Current Frame', ''),
@@ -1109,7 +1109,7 @@ class Sequencer_Extra_SelectAllByType(Operator):
     bl_description = "Select all the strips of the same type"
     bl_options = {'REGISTER', 'UNDO'}
 
-    type = EnumProperty(
+    type: EnumProperty(
             name="Strip Type",
             items=(
                 ('ACTIVE', 'Same as Active Strip', ''),

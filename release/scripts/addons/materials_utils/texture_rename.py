@@ -28,12 +28,12 @@ class TEXTURE_OT_patern_rename(Operator):
     def_name = "Texture"    # default name
     is_not_undo = False     # prevent drawing props on undo
 
-    named = StringProperty(
+    named: StringProperty(
         name="Search for name",
         description="Enter the name pattern or choose the one from the dropdown list below",
         default=def_name
     )
-    replace_all = BoolProperty(
+    replace_all: BoolProperty(
         name="Replace all",
         description="Replace all the Textures in the data with the names of the images attached",
         default=False

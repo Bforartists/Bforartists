@@ -74,77 +74,77 @@ def string_strip_hyphen(name):
 ###############################################################################
 class RenderPovSettingsScene(PropertyGroup):
     #Linux SDL-window enable
-    sdl_window_enable = BoolProperty(
+    sdl_window_enable: BoolProperty(
             name="Enable SDL window",
             description="Enable the SDL window in Linux OS",
             default=True)
     # File Options
-    text_block = StringProperty(
+    text_block: StringProperty(
             name="Text Scene Name",
             description="Name of POV-Ray scene to use. "
                         "Set when clicking Run to render current text only",
             maxlen=1024)
-    tempfiles_enable = BoolProperty(
+    tempfiles_enable: BoolProperty(
             name="Enable Tempfiles",
             description="Enable the OS-Tempfiles. Otherwise set the path where"
                         " to save the files",
             default=True)
-    pov_editor = BoolProperty(
+    pov_editor: BoolProperty(
             name="POV-Ray editor",
             description="Don't Close POV-Ray editor after rendering (Overridden"
                         " by /EXIT command)",
             default=False)
-    deletefiles_enable = BoolProperty(
+    deletefiles_enable: BoolProperty(
             name="Delete files",
             description="Delete files after rendering. "
                         "Doesn't work with the image",
             default=True)
-    scene_name = StringProperty(
+    scene_name: StringProperty(
             name="Scene Name",
             description="Name of POV-Ray scene to create. Empty name will use "
                         "the name of the blend file",
             maxlen=1024)
-    scene_path = StringProperty(
+    scene_path: StringProperty(
             name="Export scene path",
             # Bug in POV-Ray RC3
             # description="Path to directory where the exported scene "
                         # "(POV and INI) is created",
             description="Path to directory where the files are created",
             maxlen=1024, subtype="DIR_PATH")
-    renderimage_path = StringProperty(
+    renderimage_path: StringProperty(
             name="Rendered image path",
             description="Full path to directory where the rendered image is "
                         "saved",
             maxlen=1024, subtype="DIR_PATH")
-    list_lf_enable = BoolProperty(
+    list_lf_enable: BoolProperty(
             name="LF in lists",
             description="Enable line breaks in lists (vectors and indices). "
                         "Disabled: lists are exported in one line",
             default=True)
 
     # Not a real pov option, just to know if we should write
-    radio_enable = BoolProperty(
+    radio_enable: BoolProperty(
             name="Enable Radiosity",
             description="Enable POV-Rays radiosity calculation",
             default=True)
 
-    radio_display_advanced = BoolProperty(
+    radio_display_advanced: BoolProperty(
             name="Advanced Options",
             description="Show advanced options",
             default=False)
 
-    media_enable = BoolProperty(
+    media_enable: BoolProperty(
             name="Enable Media",
             description="Enable POV-Rays atmospheric media",
             default=False)
 
-    media_samples = IntProperty(
+    media_samples: IntProperty(
             name="Samples",
             description="Number of samples taken from camera to first object "
                         "encountered along ray path for media calculation",
             min=1, max=100, default=35)
 
-    media_scattering_type = EnumProperty(
+    media_scattering_type: EnumProperty(
             name="Scattering Type",
             description="Scattering model",
             items=(('1', "1 Isotropic", "The simplest form of scattering because"
@@ -184,32 +184,32 @@ class RenderPovSettingsScene(PropertyGroup):
                                               " scattering.")),
             default='1')
 
-    media_diffusion_scale = FloatProperty(
+    media_diffusion_scale: FloatProperty(
             name="Scale", description="Scale factor of Media Diffusion Color",
             precision=12, step=0.00000001, min=0.000000001, max=1.0,
             default=(1.0))
 
-    media_diffusion_color = FloatVectorProperty(
+    media_diffusion_color: FloatVectorProperty(
             name="Media Diffusion Color", description="The atmospheric media color",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.001, 0.001, 0.001),
             options={'ANIMATABLE'},
             subtype='COLOR')
 
-    media_absorption_scale = FloatProperty(
+    media_absorption_scale: FloatProperty(
             name="Scale", description="Scale factor of Media Absorption Color. "
                                       "use 1/depth of media volume in meters",
             precision=12, step=0.000001, min=0.000000001, max=1.0,
             default=(0.00002))
 
-    media_absorption_color = FloatVectorProperty(
+    media_absorption_color: FloatVectorProperty(
             name="Media Absorption Color", description="The atmospheric media absorption color",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0),
             options={'ANIMATABLE'},
             subtype='COLOR')
 
-    media_eccentricity = FloatProperty(
+    media_eccentricity: FloatProperty(
             name="Media Eccenticity Factor", description="Positive values lead"
                  " to scattering in the direction of the light and negative "
                  "values lead to scattering in the opposite direction of the "
@@ -219,40 +219,40 @@ class RenderPovSettingsScene(PropertyGroup):
             default=(0.0),
             options={'ANIMATABLE'})
 
-    baking_enable = BoolProperty(
+    baking_enable: BoolProperty(
             name="Enable Baking",
             description="Enable POV-Rays texture baking",
             default=False)
-    indentation_character = EnumProperty(
+    indentation_character: EnumProperty(
             name="Indentation",
             description="Select the indentation type",
             items=(('NONE', "None", "No indentation"),
                    ('TAB', "Tabs", "Indentation with tabs"),
                    ('SPACE', "Spaces", "Indentation with spaces")),
             default='SPACE')
-    indentation_spaces = IntProperty(
+    indentation_spaces: IntProperty(
             name="Quantity of spaces",
             description="The number of spaces for indentation",
             min=1, max=10, default=4)
 
-    comments_enable = BoolProperty(
+    comments_enable: BoolProperty(
             name="Enable Comments",
             description="Add comments to pov file",
             default=True)
 
     # Real pov options
-    command_line_switches = StringProperty(
+    command_line_switches: StringProperty(
             name="Command Line Switches",
             description="Command line switches consist of a + (plus) or - "
                         "(minus) sign, followed by one or more alphabetic "
                         "characters and possibly a numeric value",
             maxlen=500)
 
-    antialias_enable = BoolProperty(
+    antialias_enable: BoolProperty(
             name="Anti-Alias", description="Enable Anti-Aliasing",
             default=True)
 
-    antialias_method = EnumProperty(
+    antialias_method: EnumProperty(
             name="Method",
             description="AA-sampling method. Type 1 is an adaptive, "
                         "non-recursive, super-sampling method. Type 2 is an "
@@ -263,77 +263,77 @@ class RenderPovSettingsScene(PropertyGroup):
                    ("2", "stochastic AA", "Type 3 Sampling in UberPOV")),
             default="1")
 
-    antialias_confidence = FloatProperty(
+    antialias_confidence: FloatProperty(
             name="Antialias Confidence",
             description="how surely the computed color "
                         "of a given pixel is indeed"
                         "within the threshold error margin",
             min=0.0001, max=1.0000, default=0.9900, precision=4)
-    antialias_depth = IntProperty(
+    antialias_depth: IntProperty(
             name="Antialias Depth", description="Depth of pixel for sampling",
             min=1, max=9, default=3)
 
-    antialias_threshold = FloatProperty(
+    antialias_threshold: FloatProperty(
             name="Antialias Threshold", description="Tolerance for sub-pixels",
             min=0.0, max=1.0, soft_min=0.05, soft_max=0.5, default=0.03)
 
-    jitter_enable = BoolProperty(
+    jitter_enable: BoolProperty(
             name="Jitter",
             description="Enable Jittering. Adds noise into the sampling "
                         "process (it should be avoided to use jitter in "
                         "animation)",
             default=False)
 
-    jitter_amount = FloatProperty(
+    jitter_amount: FloatProperty(
             name="Jitter Amount", description="Amount of jittering",
             min=0.0, max=1.0, soft_min=0.01, soft_max=1.0, default=1.0)
 
-    antialias_gamma = FloatProperty(
+    antialias_gamma: FloatProperty(
             name="Antialias Gamma",
             description="POV-Ray compares gamma-adjusted values for super "
                         "sampling. Antialias Gamma sets the Gamma before "
                         "comparison",
             min=0.0, max=5.0, soft_min=0.01, soft_max=2.5, default=2.5)
 
-    max_trace_level = IntProperty(
+    max_trace_level: IntProperty(
             name="Max Trace Level",
             description="Number of reflections/refractions allowed on ray "
                         "path",
             min=1, max=256, default=5)
 
 #######NEW from Lanuhum
-    adc_bailout_enable = BoolProperty(
+    adc_bailout_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    adc_bailout = FloatProperty(
+    adc_bailout: FloatProperty(
             name="ADC Bailout",
             description="",
             min=0.0, max=1000.0,default=0.00392156862745, precision=3)
 
-    ambient_light_enable = BoolProperty(
+    ambient_light_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    ambient_light = FloatVectorProperty(
+    ambient_light: FloatVectorProperty(
             name="Ambient Light",
             description="Ambient light is used to simulate the effect of inter-diffuse reflection",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(1, 1, 1), options={'ANIMATABLE'}, subtype='COLOR',
     )
-    global_settings_advanced = BoolProperty(
+    global_settings_advanced: BoolProperty(
             name="Advanced",
             description="",
             default=False)
 
-    irid_wavelength_enable = BoolProperty(
+    irid_wavelength_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    irid_wavelength = FloatVectorProperty(
+    irid_wavelength: FloatVectorProperty(
             name="Irid Wavelength",
             description=(
                 "Iridescence calculations depend upon the dominant "
@@ -342,7 +342,7 @@ class RenderPovSettingsScene(PropertyGroup):
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.25,0.18,0.14), options={'ANIMATABLE'}, subtype='COLOR')
 
-    charset = EnumProperty(
+    charset: EnumProperty(
             name="Charset",
             description="This allows you to specify the assumed character set of all text strings",
             items=(("ascii", "ASCII", ""),
@@ -350,22 +350,22 @@ class RenderPovSettingsScene(PropertyGroup):
                    ("sys", "SYS", "")),
             default="utf8")
 
-    max_intersections_enable = BoolProperty(
+    max_intersections_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    max_intersections = IntProperty(
+    max_intersections: IntProperty(
             name="Max Intersections",
             description="POV-Ray uses a set of internal stacks to collect ray/object intersection points",
             min=2, max=1024, default=64)
 
-    number_of_waves_enable = BoolProperty(
+    number_of_waves_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    number_of_waves = IntProperty(
+    number_of_waves: IntProperty(
             name="Number Waves",
             description=(
                 "The waves and ripples patterns are generated by summing a series of waves, "
@@ -373,62 +373,62 @@ class RenderPovSettingsScene(PropertyGroup):
             ),
             min=1, max=10, default=1000)
 
-    noise_generator_enable = BoolProperty(
+    noise_generator_enable: BoolProperty(
             name="Enable",
             description="",
             default=False)
 
-    noise_generator = IntProperty(
+    noise_generator: IntProperty(
             name="Noise Generator",
             description="There are three noise generators implemented",
             min=1, max=3, default=2)
 
     ########################### PHOTONS #######################################
-    photon_enable = BoolProperty(
+    photon_enable: BoolProperty(
             name="Photons",
             description="Enable global photons",
             default=False)
 
-    photon_enable_count = BoolProperty(
+    photon_enable_count: BoolProperty(
             name="Spacing / Count",
             description="Enable count photons",
             default=False)
 
-    photon_count = IntProperty(
+    photon_count: IntProperty(
             name="Count",
             description="Photons count",
             min=1, max=100000000, default=20000)
 
-    photon_spacing = FloatProperty(
+    photon_spacing: FloatProperty(
             name="Spacing",
             description="Average distance between photons on surfaces. half "
                         "this get four times as many surface photons",
             min=0.001, max=1.000, default=0.005,
             soft_min=0.001, soft_max=1.000, precision=3)
 
-    photon_max_trace_level = IntProperty(
+    photon_max_trace_level: IntProperty(
             name="Max Trace Level",
             description="Number of reflections/refractions allowed on ray "
                         "path",
             min=1, max=256, default=5)
 
-    photon_adc_bailout = FloatProperty(
+    photon_adc_bailout: FloatProperty(
             name="ADC Bailout",
             description="The adc_bailout for photons. Use adc_bailout = "
                         "0.01 / brightest_ambient_object for good results",
             min=0.0, max=1000.0, default=0.1,
             soft_min=0.0, soft_max=1.0, precision=3)
 
-    photon_gather_min = IntProperty(
+    photon_gather_min: IntProperty(
             name="Gather Min", description="Minimum number of photons gathered"
                                            "for each point",
             min=1, max=256, default=20)
 
-    photon_gather_max = IntProperty(
+    photon_gather_max: IntProperty(
             name="Gather Max", description="Maximum number of photons gathered for each point",
             min=1, max=256, default=100)
 
-    photon_map_file_save_load = EnumProperty(
+    photon_map_file_save_load: EnumProperty(
             name="Operation",
             description="Load or Save photon map file",
             items=(("NONE", "None", ""),
@@ -436,107 +436,107 @@ class RenderPovSettingsScene(PropertyGroup):
                    ("load", "Load", "")),
             default="NONE")
 
-    photon_map_filename = StringProperty(
+    photon_map_filename: StringProperty(
             name="Filename",
             description="",
             maxlen=1024)
 
-    photon_map_dir = StringProperty(
+    photon_map_dir: StringProperty(
             name="Directory",
             description="",
             maxlen=1024, subtype="DIR_PATH")
 
-    photon_map_file = StringProperty(
+    photon_map_file: StringProperty(
             name="File",
             description="",
             maxlen=1024, subtype="FILE_PATH")
 
     #########RADIOSITY########
-    radio_adc_bailout = FloatProperty(
+    radio_adc_bailout: FloatProperty(
             name="ADC Bailout",
             description="The adc_bailout for radiosity rays. Use "
                         "adc_bailout = 0.01 / brightest_ambient_object for good results",
             min=0.0, max=1000.0, soft_min=0.0, soft_max=1.0, default=0.0039, precision=4)
 
-    radio_always_sample = BoolProperty(
+    radio_always_sample: BoolProperty(
             name="Always Sample",
             description="Only use the data from the pretrace step and not gather "
                         "any new samples during the final radiosity pass",
             default=False)
 
-    radio_brightness = FloatProperty(
+    radio_brightness: FloatProperty(
             name="Brightness",
             description="Amount objects are brightened before being returned "
                         "upwards to the rest of the system",
             min=0.0, max=1000.0, soft_min=0.0, soft_max=10.0, default=1.0)
 
-    radio_count = IntProperty(
+    radio_count: IntProperty(
             name="Ray Count",
             description="Number of rays for each new radiosity value to be calculated "
                         "(halton sequence over 1600)",
             min=1, max=10000, soft_max=1600, default=35)
 
-    radio_error_bound = FloatProperty(
+    radio_error_bound: FloatProperty(
             name="Error Bound",
             description="One of the two main speed/quality tuning values, "
                         "lower values are more accurate",
             min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=1.8)
 
-    radio_gray_threshold = FloatProperty(
+    radio_gray_threshold: FloatProperty(
             name="Gray Threshold",
             description="One of the two main speed/quality tuning values, "
                         "lower values are more accurate",
             min=0.0, max=1.0, soft_min=0, soft_max=1, default=0.0)
 
-    radio_low_error_factor = FloatProperty(
+    radio_low_error_factor: FloatProperty(
             name="Low Error Factor",
             description="Just enough samples is slightly blotchy. Low error changes error "
                         "tolerance for less critical last refining pass",
             min=0.000001, max=1.0, soft_min=0.000001, soft_max=1.0, default=0.5)
 
-    radio_media = BoolProperty(
+    radio_media: BoolProperty(
             name="Media", description="Radiosity estimation can be affected by media",
             default=True)
 
-    radio_subsurface = BoolProperty(
+    radio_subsurface: BoolProperty(
             name="Subsurface", description="Radiosity estimation can be affected by Subsurface Light Transport",
             default=False)
 
-    radio_minimum_reuse = FloatProperty(
+    radio_minimum_reuse: FloatProperty(
             name="Minimum Reuse",
             description="Fraction of the screen width which sets the minimum radius of reuse "
                         "for each sample point (At values higher than 2% expect errors)",
             min=0.0, max=1.0, soft_min=0.1, soft_max=0.1, default=0.015, precision=3)
 
-    radio_maximum_reuse = FloatProperty(
+    radio_maximum_reuse: FloatProperty(
             name="Maximum Reuse",
             description="The maximum reuse parameter works in conjunction with, and is similar to that of minimum reuse, "
                         "the only difference being that it is an upper bound rather than a lower one",
             min=0.0, max=1.0,default=0.2, precision=3)
 
-    radio_nearest_count = IntProperty(
+    radio_nearest_count: IntProperty(
             name="Nearest Count",
             description="Number of old ambient values blended together to "
                         "create a new interpolated value",
             min=1, max=20, default=5)
 
-    radio_normal = BoolProperty(
+    radio_normal: BoolProperty(
             name="Normals", description="Radiosity estimation can be affected by normals",
             default=False)
 
-    radio_recursion_limit = IntProperty(
+    radio_recursion_limit: IntProperty(
             name="Recursion Limit",
             description="how many recursion levels are used to calculate "
                         "the diffuse inter-reflection",
             min=1, max=20, default=1)
 
-    radio_pretrace_start = FloatProperty(
+    radio_pretrace_start: FloatProperty(
             name="Pretrace Start",
             description="Fraction of the screen width which sets the size of the "
                         "blocks in the mosaic preview first pass",
             min=0.01, max=1.00, soft_min=0.02, soft_max=1.0, default=0.08)
 
-    radio_pretrace_end = FloatProperty(
+    radio_pretrace_end: FloatProperty(
             name="Pretrace End",
             description="Fraction of the screen width which sets the size of the blocks "
                         "in the mosaic preview last pass",
@@ -546,30 +546,30 @@ class RenderPovSettingsScene(PropertyGroup):
 # Material POV properties.
 ###############################################################################
 class RenderPovSettingsMaterial(PropertyGroup):
-    irid_enable = BoolProperty(
+    irid_enable: BoolProperty(
             name="Iridescence coating",
             description="Newton's thin film interference (like an oil slick on a puddle of "
                         "water or the rainbow hues of a soap bubble.)",
             default=False)
 
-    mirror_use_IOR = BoolProperty(
+    mirror_use_IOR: BoolProperty(
             name="Correct Reflection",
             description="Use same IOR as raytrace transparency to calculate mirror reflections. "
                         "More physically correct",
             default=False)
 
-    mirror_metallic = BoolProperty(
+    mirror_metallic: BoolProperty(
             name="Metallic Reflection",
             description="mirror reflections get colored as diffuse (for metallic materials)",
             default=False)
 
-    conserve_energy = BoolProperty(
+    conserve_energy: BoolProperty(
             name="Conserve Energy",
             description="Light transmitted is more correctly reduced by mirror reflections, "
                         "also the sum of diffuse and translucency gets reduced below one ",
             default=True)
 
-    irid_amount = FloatProperty(
+    irid_amount: FloatProperty(
             name="amount",
             description="Contribution of the iridescence effect to the overall surface color. "
                         "As a rule of thumb keep to around 0.25 (25% contribution) or less, "
@@ -577,60 +577,60 @@ class RenderPovSettingsMaterial(PropertyGroup):
                         "the diffuse and possibly the ambient values of the surface",
             min=0.0, max=1.0, soft_min=0.01, soft_max=1.0, default=0.25)
 
-    irid_thickness = FloatProperty(
+    irid_thickness: FloatProperty(
             name="thickness",
             description="A very thin film will have a high frequency of color changes while a "
                         "thick film will have large areas of color",
             min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=1)
 
-    irid_turbulence = FloatProperty(
+    irid_turbulence: FloatProperty(
             name="turbulence", description="This parameter varies the thickness",
             min=0.0, max=10.0, soft_min=0.000, soft_max=1.0, default=0)
 
-    interior_fade_color = FloatVectorProperty(
+    interior_fade_color: FloatVectorProperty(
             name="Interior Fade Color", description="Color of filtered attenuation for transparent "
                                            "materials",
             precision=4, step=0.01, min=0.0, soft_max=1.0,
             default=(0, 0, 0), options={'ANIMATABLE'}, subtype='COLOR')
 
-    caustics_enable = BoolProperty(
+    caustics_enable: BoolProperty(
             name="Caustics",
             description="use only fake refractive caustics (default) or photon based "
                         "reflective/refractive caustics",
             default=True)
 
-    fake_caustics = BoolProperty(
+    fake_caustics: BoolProperty(
             name="Fake Caustics", description="use only (Fast) fake refractive caustics",
             default=True)
 
-    fake_caustics_power = FloatProperty(
+    fake_caustics_power: FloatProperty(
             name="Fake caustics power",
             description="Values typically range from 0.0 to 1.0 or higher. Zero is no caustics. "
                         "Low, non-zero values give broad hot-spots while higher values give "
                         "tighter, smaller simulated focal points",
             min=0.00, max=10.0, soft_min=0.00, soft_max=5.0, default=0.07)
 
-    refraction_caustics = BoolProperty(
+    refraction_caustics: BoolProperty(
             name="Refractive Caustics", description="hotspots of light focused when going through the material",
             default=True)
 
-    photons_dispersion = FloatProperty(
+    photons_dispersion: FloatProperty(
             name="Chromatic Dispersion",
             description="Light passing through will be separated according to wavelength. "
                         "This ratio of refractive indices for violet to red controls how much "
                         "the colors are spread out 1 = no dispersion, good values are 1.01 to 1.1",
             min=1.0000, max=10.000, soft_min=1.0000, soft_max=1.1000, precision=4, default=1.0000)
 
-    photons_dispersion_samples = IntProperty(
+    photons_dispersion_samples: IntProperty(
             name="Dispersion Samples", description="Number of color-steps for dispersion",
             min=2, max=128, default=7)
 
-    photons_reflection = BoolProperty(
+    photons_reflection: BoolProperty(
             name="Reflective Photon Caustics",
             description="Use this to make your Sauron's ring ;-P",
             default=False)
 
-    refraction_type = EnumProperty(
+    refraction_type: EnumProperty(
             items=[
                    ("1", "Fake Caustics", "use fake caustics"),
                    ("2", "Photons Caustics", "use photons for refractive caustics")],
@@ -639,7 +639,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
             default="1")
 
     ##################################CustomPOV Code############################
-    replacement_text = StringProperty(
+    replacement_text: StringProperty(
             name="Declared name:",
             description="Type the declared name in custom POV code or an external "
                         ".inc it points at. texture {} expected",
@@ -737,13 +737,13 @@ class RenderPovSettingsMaterial(PropertyGroup):
         else:
             ob.pov.mesh_write_as = ob.pov.mesh_write_as_old
 
-    material_use_nodes = BoolProperty(name="Use nodes", description="", update=use_material_nodes_callback, default=False)
-    material_active_node = EnumProperty(name="Active node", description="", items=node_enum_callback, update=node_active_callback)
-    preview_settings = BoolProperty(name="Preview Settings", description="",default=False)
-    object_preview_transform = BoolProperty(name="Transform object", description="",default=False)
-    object_preview_scale = FloatProperty(name="XYZ", min=0.5, max=2.0, default=1.0)
-    object_preview_rotate = FloatVectorProperty(name="Rotate", description="", min=-180.0, max=180.0,default=(0.0,0.0,0.0), subtype='XYZ')
-    object_preview_bgcontrast = FloatProperty(name="Contrast", min=0.0, max=1.0, default=0.5)
+    material_use_nodes: BoolProperty(name="Use nodes", description="", update=use_material_nodes_callback, default=False)
+    material_active_node: EnumProperty(name="Active node", description="", items=node_enum_callback, update=node_active_callback)
+    preview_settings: BoolProperty(name="Preview Settings", description="",default=False)
+    object_preview_transform: BoolProperty(name="Transform object", description="",default=False)
+    object_preview_scale: FloatProperty(name="XYZ", min=0.5, max=2.0, default=1.0)
+    object_preview_rotate: FloatVectorProperty(name="Rotate", description="", min=-180.0, max=180.0,default=(0.0,0.0,0.0), subtype='XYZ')
+    object_preview_bgcontrast: FloatProperty(name="Contrast", min=0.0, max=1.0, default=0.5)
 
 
 ###############################################################################
@@ -752,13 +752,13 @@ class RenderPovSettingsMaterial(PropertyGroup):
 class PovraySocketUniversal(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketUniversal'
     bl_label = 'Povray Socket'
-    value_unlimited = bpy.props.FloatProperty(default=0.0)
-    value_0_1 = bpy.props.FloatProperty(min=0.0,max=1.0,default=0.0)
-    value_0_10 = bpy.props.FloatProperty(min=0.0,max=10.0,default=0.0)
-    value_000001_10 = bpy.props.FloatProperty(min=0.000001,max=10.0,default=0.0)
-    value_1_9 = bpy.props.IntProperty(min=1,max=9,default=1)
-    value_0_255 = bpy.props.IntProperty(min=0,max=255,default=0)
-    percent = bpy.props.FloatProperty(min=0.0,max=100.0,default=0.0)
+    value_unlimited: bpy.props.FloatProperty(default=0.0)
+    value_0_1: bpy.props.FloatProperty(min=0.0,max=1.0,default=0.0)
+    value_0_10: bpy.props.FloatProperty(min=0.0,max=10.0,default=0.0)
+    value_000001_10: bpy.props.FloatProperty(min=0.000001,max=10.0,default=0.0)
+    value_1_9: bpy.props.IntProperty(min=1,max=9,default=1)
+    value_0_255: bpy.props.IntProperty(min=0,max=255,default=0)
+    percent: bpy.props.FloatProperty(min=0.0,max=100.0,default=0.0)
     def draw(self, context, layout, node, text):
         space = context.space_data
         tree = space.edit_tree
@@ -805,7 +805,7 @@ class PovraySocketUniversal(bpy.types.NodeSocket):
 class PovraySocketFloat_0_1(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloat_0_1'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(description="Input node Value_0_1",min=0,max=1,default=0)
+    default_value: bpy.props.FloatProperty(description="Input node Value_0_1",min=0,max=1,default=0)
     def draw(self, context, layout, node, text):
         if self.is_linked:
             layout.label(text)
@@ -818,10 +818,10 @@ class PovraySocketFloat_0_1(bpy.types.NodeSocket):
 class PovraySocketFloat_0_10(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloat_0_10'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(description="Input node Value_0_10",min=0,max=10,default=0)
+    default_value: bpy.props.FloatProperty(description="Input node Value_0_10",min=0,max=10,default=0)
     def draw(self, context, layout, node, text):
         if node.bl_idname == 'ShaderNormalMapNode' and node.inputs[2].is_linked:
-            layout.label('')
+            layout.label(text='')
             self.hide_value=True
         if self.is_linked:
             layout.label(text)
@@ -833,10 +833,10 @@ class PovraySocketFloat_0_10(bpy.types.NodeSocket):
 class PovraySocketFloat_10(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloat_10'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(description="Input node Value_10",min=-10,max=10,default=0)
+    default_value: bpy.props.FloatProperty(description="Input node Value_10",min=-10,max=10,default=0)
     def draw(self, context, layout, node, text):
         if node.bl_idname == 'ShaderNormalMapNode' and node.inputs[2].is_linked:
-            layout.label('')
+            layout.label(text='')
             self.hide_value=True
         if self.is_linked:
             layout.label(text)
@@ -848,7 +848,7 @@ class PovraySocketFloat_10(bpy.types.NodeSocket):
 class PovraySocketFloatPositive(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloatPositive'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(description="Input Node Value Positive", min=0.0, default=0)
+    default_value: bpy.props.FloatProperty(description="Input Node Value Positive", min=0.0, default=0)
     def draw(self, context, layout, node, text):
         if self.is_linked:
             layout.label(text)
@@ -860,7 +860,7 @@ class PovraySocketFloatPositive(bpy.types.NodeSocket):
 class PovraySocketFloat_000001_10(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloat_000001_10'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(min=0.000001,max=10,default=0.000001)
+    default_value: bpy.props.FloatProperty(min=0.000001,max=10,default=0.000001)
     def draw(self, context, layout, node, text):
         if self.is_output or self.is_linked:
             layout.label(text)
@@ -872,7 +872,7 @@ class PovraySocketFloat_000001_10(bpy.types.NodeSocket):
 class PovraySocketFloatUnlimited(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketFloatUnlimited'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(default = 0.0)
+    default_value: bpy.props.FloatProperty(default = 0.0)
     def draw(self, context, layout, node, text):
         if self.is_linked:
             layout.label(text)
@@ -884,7 +884,7 @@ class PovraySocketFloatUnlimited(bpy.types.NodeSocket):
 class PovraySocketInt_1_9(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketInt_1_9'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.IntProperty(description="Input node Value_1_9",min=1,max=9,default=6)
+    default_value: bpy.props.IntProperty(description="Input node Value_1_9",min=1,max=9,default=6)
     def draw(self, context, layout, node, text):
         if self.is_linked:
             layout.label(text)
@@ -896,7 +896,7 @@ class PovraySocketInt_1_9(bpy.types.NodeSocket):
 class PovraySocketInt_0_256(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketInt_0_256'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.IntProperty(min=0,max=255,default=0)
+    default_value: bpy.props.IntProperty(min=0,max=255,default=0)
     def draw(self, context, layout, node, text):
         if self.is_linked:
             layout.label(text)
@@ -910,7 +910,7 @@ class PovraySocketPattern(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketPattern'
     bl_label = 'Povray Socket'
 
-    default_value = bpy.props.EnumProperty(
+    default_value: bpy.props.EnumProperty(
             name="Pattern",
             description="Select the pattern",
             items=(('boxed', "Boxed", ""),('brick', "Brick", ""),('cells', "Cells", ""), ('checker', "Checker", ""),
@@ -923,7 +923,7 @@ class PovraySocketPattern(bpy.types.NodeSocket):
 
     def draw(self, context, layout, node, text):
         if self.is_output or self.is_linked:
-            layout.label("Pattern")
+            layout.label(text="Pattern")
         else:
             layout.prop(self, "default_value", text=text)
 
@@ -934,7 +934,7 @@ class PovraySocketColor(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketColor'
     bl_label = 'Povray Socket'
 
-    default_value = bpy.props.FloatVectorProperty(
+    default_value: bpy.props.FloatVectorProperty(
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR')
 
@@ -951,11 +951,11 @@ class PovraySocketColorRGBFT(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketColorRGBFT'
     bl_label = 'Povray Socket'
 
-    default_value = bpy.props.FloatVectorProperty(
+    default_value: bpy.props.FloatVectorProperty(
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR')
-    f = bpy.props.FloatProperty(default = 0.0,min=0.0,max=1.0)
-    t = bpy.props.FloatProperty(default = 0.0,min=0.0,max=1.0)
+    f: bpy.props.FloatProperty(default = 0.0,min=0.0,max=1.0)
+    t: bpy.props.FloatProperty(default = 0.0,min=0.0,max=1.0)
     def draw(self, context, layout, node, text):
         if self.is_output or self.is_linked:
             layout.label(text)
@@ -968,7 +968,7 @@ class PovraySocketColorRGBFT(bpy.types.NodeSocket):
 class PovraySocketTexture(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketTexture'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.IntProperty()
+    default_value: bpy.props.IntProperty()
     def draw(self, context, layout, node, text):
         layout.label(text)
 
@@ -980,7 +980,7 @@ class PovraySocketTexture(bpy.types.NodeSocket):
 class PovraySocketTransform(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketTransform'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.IntProperty(min=0,max=255,default=0)
+    default_value: bpy.props.IntProperty(min=0,max=255,default=0)
     def draw(self, context, layout, node, text):
         layout.label(text)
 
@@ -990,7 +990,7 @@ class PovraySocketTransform(bpy.types.NodeSocket):
 class PovraySocketNormal(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketNormal'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.IntProperty(min=0,max=255,default=0)
+    default_value: bpy.props.IntProperty(min=0,max=255,default=0)
     def draw(self, context, layout, node, text):
         layout.label(text)
 
@@ -1000,9 +1000,9 @@ class PovraySocketNormal(bpy.types.NodeSocket):
 class PovraySocketSlope(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketSlope'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.FloatProperty(min = 0.0, max = 1.0)
-    height = bpy.props.FloatProperty(min = 0.0, max = 10.0)
-    slope = bpy.props.FloatProperty(min = -10.0, max = 10.0)
+    default_value: bpy.props.FloatProperty(min = 0.0, max = 1.0)
+    height: bpy.props.FloatProperty(min = 0.0, max = 10.0)
+    slope: bpy.props.FloatProperty(min = -10.0, max = 10.0)
     def draw(self, context, layout, node, text):
         if self.is_output or self.is_linked:
             layout.label(text)
@@ -1016,7 +1016,7 @@ class PovraySocketSlope(bpy.types.NodeSocket):
 class PovraySocketMap(bpy.types.NodeSocket):
     bl_idname = 'PovraySocketMap'
     bl_label = 'Povray Socket'
-    default_value = bpy.props.StringProperty()
+    default_value: bpy.props.StringProperty()
     def draw(self, context, layout, node, text):
         layout.label(text)
     def draw_color(self, context, node):
@@ -1193,14 +1193,14 @@ node_categories = [
 ###############################################################################
 class RenderPovSettingsTexture(PropertyGroup):
     #Custom texture gamma
-    tex_gamma_enable = BoolProperty(
+    tex_gamma_enable: BoolProperty(
             name="Enable custom texture gamma",
             description="Notify some custom gamma for which texture has been precorrected "
                         "without the file format carrying it and only if it differs from your "
                         "OS expected standard (see pov doc)",
             default=False)
 
-    tex_gamma_value = FloatProperty(
+    tex_gamma_value: FloatProperty(
             name="Custom texture gamma",
             description="value for which the file was issued e.g. a Raw photo is gamma 1.0",
             min=0.45, max=5.00, soft_min=1.00, soft_max=2.50, default=1.00)
@@ -1215,7 +1215,7 @@ class RenderPovSettingsTexture(PropertyGroup):
 
 
 
-    tex_pattern_type = EnumProperty(
+    tex_pattern_type: EnumProperty(
             name="Texture_Type",
             description="Choose between Blender or POV-Ray parameters to specify texture",
             items= (('agate', 'Agate', '','PLUGIN', 0),
@@ -1259,18 +1259,18 @@ class RenderPovSettingsTexture(PropertyGroup):
             default='emulator',
             )
 
-    magnet_style = EnumProperty(
+    magnet_style: EnumProperty(
             name="Magnet style",
             description="magnet or julia",
             items=(('mandel', "Mandelbrot", ""),('julia', "Julia", "")),
             default='julia')
 
-    magnet_type = IntProperty(
+    magnet_type: IntProperty(
             name="Magnet_type",
             description="1 or 2",
             min=1, max=2, default=2)
 
-    warp_types = EnumProperty(
+    warp_types: EnumProperty(
             name="Warp Types",
             description="Select the type of warp",
             items=(('PLANAR', "Planar", ""), ('CUBIC', "Cubic", ""),
@@ -1278,224 +1278,224 @@ class RenderPovSettingsTexture(PropertyGroup):
                    ('CYLINDRICAL', "Cylindrical", ""), ('NONE', "None", "No indentation")),
             default='NONE')
 
-    warp_orientation = EnumProperty(
+    warp_orientation: EnumProperty(
             name="Warp Orientation",
             description="Select the orientation of warp",
             items=(('x', "X", ""), ('y', "Y", ""), ('z', "Z", "")),
             default='y')
 
-    wave_type = EnumProperty(
+    wave_type: EnumProperty(
             name="Waves type",
             description="Select the type of waves",
             items=(('ramp', "Ramp", ""), ('sine', "Sine", ""), ('scallop', "Scallop", ""),
                    ('cubic', "Cubic", ""), ('poly', "Poly", ""), ('triangle', 'Triangle', "")),
             default='ramp')
 
-    gen_noise = IntProperty(
+    gen_noise: IntProperty(
             name="Noise Generators",
             description="Noise Generators",
             min=1, max=3, default=1)
 
-    warp_dist_exp = FloatProperty(
+    warp_dist_exp: FloatProperty(
             name="Distance exponent",
             description="Distance exponent",
             min=0.0, max=100.0, default=1.0)
 
-    warp_tor_major_radius = FloatProperty(
+    warp_tor_major_radius: FloatProperty(
             name="Major radius",
             description="Torus is distance from major radius",
             min=0.0, max=5.0, default=1.0)
 
 
-    warp_turbulence_x = FloatProperty(
+    warp_turbulence_x: FloatProperty(
             name="Turbulence X",
             description="Turbulence X",
             min=0.0, max=5.0, default=0.0)
 
-    warp_turbulence_y = FloatProperty(
+    warp_turbulence_y: FloatProperty(
             name="Turbulence Y",
             description="Turbulence Y",
             min=0.0, max=5.0, default=0.0)
 
-    warp_turbulence_z = FloatProperty(
+    warp_turbulence_z: FloatProperty(
             name="Turbulence Z",
             description="Turbulence Z",
             min=0.0, max=5.0, default=0.0)
 
-    modifier_octaves = IntProperty(
+    modifier_octaves: IntProperty(
             name="Turbulence octaves",
             description="Turbulence octaves",
             min=1, max=10, default=1)
 
-    modifier_lambda = FloatProperty(
+    modifier_lambda: FloatProperty(
             name="Turbulence lambda",
             description="Turbulence lambda",
             min=0.0, max=5.0, default=1.00)
 
-    modifier_omega = FloatProperty(
+    modifier_omega: FloatProperty(
             name="Turbulence omega",
             description="Turbulence omega",
             min=0.0, max=10.0, default=1.00)
 
-    modifier_phase = FloatProperty(
+    modifier_phase: FloatProperty(
             name="Phase",
             description="The phase value causes the map entries to be shifted so that the map "
                         "starts and ends at a different place",
             min=0.0, max=2.0, default=0.0)
 
-    modifier_frequency = FloatProperty(
+    modifier_frequency: FloatProperty(
             name="Frequency",
             description="The frequency keyword adjusts the number of times that a color map "
                         "repeats over one cycle of a pattern",
             min=0.0, max=25.0, default=2.0)
 
-    modifier_turbulence = FloatProperty(
+    modifier_turbulence: FloatProperty(
             name="Turbulence",
             description="Turbulence",
             min=0.0, max=5.0, default=2.0)
 
-    modifier_numbers = IntProperty(
+    modifier_numbers: IntProperty(
             name="Numbers",
             description="Numbers",
             min=1, max=27, default=2)
 
-    modifier_control0 = IntProperty(
+    modifier_control0: IntProperty(
             name="Control0",
             description="Control0",
             min=0, max=100, default=1)
 
-    modifier_control1 = IntProperty(
+    modifier_control1: IntProperty(
             name="Control1",
             description="Control1",
             min=0, max=100, default=1)
 
-    brick_size_x = FloatProperty(
+    brick_size_x: FloatProperty(
             name="Brick size x",
             description="",
             min=0.0000, max=1.0000, default=0.2500)
 
-    brick_size_y = FloatProperty(
+    brick_size_y: FloatProperty(
             name="Brick size y",
             description="",
             min=0.0000, max=1.0000, default=0.0525)
 
-    brick_size_z = FloatProperty(
+    brick_size_z: FloatProperty(
             name="Brick size z",
             description="",
             min=0.0000, max=1.0000, default=0.1250)
 
-    brick_mortar = FloatProperty(
+    brick_mortar: FloatProperty(
             name="Mortar",
             description="Mortar",
             min=0.000, max=1.500, default=0.01)
 
-    julia_complex_1 = FloatProperty(
+    julia_complex_1: FloatProperty(
             name="Julia Complex 1",
             description="",
             min=0.000, max=1.500, default=0.360)
 
-    julia_complex_2 = FloatProperty(
+    julia_complex_2: FloatProperty(
             name="Julia Complex 2",
             description="",
             min=0.000, max=1.500, default=0.250)
 
-    f_iter = IntProperty(
+    f_iter: IntProperty(
             name="Fractal Iteration",
             description="",
             min=0, max=100, default=20)
 
-    f_exponent = IntProperty(
+    f_exponent: IntProperty(
             name="Fractal Exponent",
             description="",
             min=2, max=33, default=2)
 
-    f_ior = IntProperty(
+    f_ior: IntProperty(
             name="Fractal Interior",
             description="",
             min=1, max=6, default=1)
 
-    f_ior_fac = FloatProperty(
+    f_ior_fac: FloatProperty(
             name="Fractal Interior Factor",
             description="",
             min=0.0, max=10.0, default=1.0)
 
-    f_eor = IntProperty(
+    f_eor: IntProperty(
             name="Fractal Exterior",
             description="",
             min=1, max=8, default=1)
 
-    f_eor_fac = FloatProperty(
+    f_eor_fac: FloatProperty(
             name="Fractal Exterior Factor",
             description="",
             min=0.0, max=10.0, default=1.0)
 
-    grad_orient_x= IntProperty(
+    grad_orient_x: IntProperty(
             name="Gradient orientation X",
             description="",
             min=0, max=1, default=0)
 
-    grad_orient_y= IntProperty(
+    grad_orient_y: IntProperty(
             name="Gradient orientation Y",
             description="",
             min=0, max=1, default=1)
 
-    grad_orient_z= IntProperty(
+    grad_orient_z: IntProperty(
             name="Gradient orientation Z",
             description="",
             min=0, max=1, default=0)
 
-    pave_sides = EnumProperty(
+    pave_sides: EnumProperty(
             name="Pavement sides",
             description="",
             items=(('3', "3", ""), ('4', "4", ""), ('6', "6", "")),
             default='3')
 
-    pave_pat_2= IntProperty(
+    pave_pat_2: IntProperty(
             name="Pavement pattern 2",
             description="maximum: 2",
             min=1, max=2, default=2)
 
-    pave_pat_3= IntProperty(
+    pave_pat_3: IntProperty(
             name="Pavement pattern 3",
             description="maximum: 3",
             min=1, max=3, default=3)
 
-    pave_pat_4= IntProperty(
+    pave_pat_4: IntProperty(
             name="Pavement pattern 4",
             description="maximum: 4",
             min=1, max=4, default=4)
 
-    pave_pat_5= IntProperty(
+    pave_pat_5: IntProperty(
             name="Pavement pattern 5",
             description="maximum: 5",
             min=1, max=5, default=5)
 
-    pave_pat_7= IntProperty(
+    pave_pat_7: IntProperty(
             name="Pavement pattern 7",
             description="maximum: 7",
             min=1, max=7, default=7)
 
-    pave_pat_12= IntProperty(
+    pave_pat_12: IntProperty(
             name="Pavement pattern 12",
             description="maximum: 12",
             min=1, max=12, default=12)
 
-    pave_pat_22= IntProperty(
+    pave_pat_22: IntProperty(
             name="Pavement pattern 22",
             description="maximum: 22",
             min=1, max=22, default=22)
 
-    pave_pat_35= IntProperty(
+    pave_pat_35: IntProperty(
             name="Pavement pattern 35",
             description="maximum: 35",
             min=1, max=35, default=35)
 
-    pave_tiles= IntProperty(
+    pave_tiles: IntProperty(
             name="Pavement tiles",
             description="If sides = 6, maximum tiles 5!!!",
             min=1, max=6, default=1)
 
-    pave_form= IntProperty(
+    pave_form: IntProperty(
             name="Pavement form",
             description="",
             min=0, max=4, default=0)
@@ -1503,7 +1503,7 @@ class RenderPovSettingsTexture(PropertyGroup):
     #########FUNCTIONS#############################################################################
     #########FUNCTIONS#############################################################################
 
-    func_list = EnumProperty(
+    func_list: EnumProperty(
             name="Functions",
             description="Select the function for create pattern",
             items=(('NONE', "None", "No indentation"),
@@ -1557,131 +1557,131 @@ class RenderPovSettingsTexture(PropertyGroup):
 
             default='NONE')
 
-    func_x = FloatProperty(
+    func_x: FloatProperty(
             name="FX",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_plus_x = EnumProperty(
+    func_plus_x: EnumProperty(
             name="Func plus x",
             description="",
             items=(('NONE', "None", ""), ('increase', "*", ""), ('plus', "+", "")),
             default='NONE')
 
-    func_y = FloatProperty(
+    func_y: FloatProperty(
             name="FY",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_plus_y = EnumProperty(
+    func_plus_y: EnumProperty(
             name="Func plus y",
             description="",
             items=(('NONE', "None", ""), ('increase', "*", ""), ('plus', "+", "")),
             default='NONE')
 
-    func_z = FloatProperty(
+    func_z: FloatProperty(
             name="FZ",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_plus_z = EnumProperty(
+    func_plus_z: EnumProperty(
             name="Func plus z",
             description="",
             items=(('NONE', "None", ""), ('increase', "*", ""), ('plus', "+", "")),
             default='NONE')
 
-    func_P0 = FloatProperty(
+    func_P0: FloatProperty(
             name="P0",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P1 = FloatProperty(
+    func_P1: FloatProperty(
             name="P1",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P2 = FloatProperty(
+    func_P2: FloatProperty(
             name="P2",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P3 = FloatProperty(
+    func_P3: FloatProperty(
             name="P3",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P4 = FloatProperty(
+    func_P4: FloatProperty(
             name="P4",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P5 = FloatProperty(
+    func_P5: FloatProperty(
             name="P5",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P6 = FloatProperty(
+    func_P6: FloatProperty(
             name="P6",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P7 = FloatProperty(
+    func_P7: FloatProperty(
             name="P7",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P8 = FloatProperty(
+    func_P8: FloatProperty(
             name="P8",
             description="",
             min=0.0, max=25.0, default=1.0)
 
-    func_P9 = FloatProperty(
+    func_P9: FloatProperty(
             name="P9",
             description="",
             min=0.0, max=25.0, default=1.0)
 
     #########################################
-    tex_rot_x = FloatProperty(
+    tex_rot_x: FloatProperty(
             name="Rotate X",
             description="",
             min=-180.0, max=180.0, default=0.0)
 
-    tex_rot_y = FloatProperty(
+    tex_rot_y: FloatProperty(
             name="Rotate Y",
             description="",
             min=-180.0, max=180.0, default=0.0)
 
-    tex_rot_z = FloatProperty(
+    tex_rot_z: FloatProperty(
             name="Rotate Z",
             description="",
             min=-180.0, max=180.0, default=0.0)
 
-    tex_mov_x = FloatProperty(
+    tex_mov_x: FloatProperty(
             name="Move X",
             description="",
             min=-100000.0, max=100000.0, default=0.0)
 
-    tex_mov_y = FloatProperty(
+    tex_mov_y: FloatProperty(
             name="Move Y",
             description="",
             min=-100000.0, max=100000.0, default=0.0)
 
-    tex_mov_z = FloatProperty(
+    tex_mov_z: FloatProperty(
             name="Move Z",
             description="",
             min=-100000.0, max=100000.0, default=0.0)
 
-    tex_scale_x = FloatProperty(
+    tex_scale_x: FloatProperty(
             name="Scale X",
             description="",
             min=0.0, max=10000.0, default=1.0)
 
-    tex_scale_y = FloatProperty(
+    tex_scale_y: FloatProperty(
             name="Scale Y",
             description="",
             min=0.0, max=10000.0, default=1.0)
 
-    tex_scale_z = FloatProperty(
+    tex_scale_z: FloatProperty(
             name="Scale Z",
             description="",
             min=0.0, max=10000.0, default=1.0)
@@ -1693,7 +1693,7 @@ class RenderPovSettingsTexture(PropertyGroup):
 
 class RenderPovSettingsObject(PropertyGroup):
     # Pov inside_vector used for CSG
-    inside_vector = FloatVectorProperty(
+    inside_vector: FloatVectorProperty(
             name="CSG Inside Vector", description="Direction to shoot CSG inside test rays at",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.001, 0.001, 0.5),
@@ -1701,7 +1701,7 @@ class RenderPovSettingsObject(PropertyGroup):
             subtype='XYZ')
 
     # Importance sampling
-    importance_value = FloatProperty(
+    importance_value: FloatProperty(
             name="Radiosity Importance",
             description="Priority value relative to other objects for sampling radiosity rays. "
                         "Increase to get more radiosity rays at comparatively small yet "
@@ -1709,7 +1709,7 @@ class RenderPovSettingsObject(PropertyGroup):
             min=0.01, max=1.00, default=0.50)
 
     # Collect photons
-    collect_photons = BoolProperty(
+    collect_photons: BoolProperty(
             name="Receive Photon Caustics",
             description="Enable object to collect photons from other objects caustics. Turn "
                         "off for objects that don't really need to receive caustics (e.g. objects"
@@ -1717,7 +1717,7 @@ class RenderPovSettingsObject(PropertyGroup):
             default=True)
 
     # Photons spacing_multiplier
-    spacing_multiplier = FloatProperty(
+    spacing_multiplier: FloatProperty(
             name="Photons Spacing Multiplier",
             description="Multiplier value relative to global spacing of photons. "
                         "Decrease by half to get 4x more photons at surface of "
@@ -1726,29 +1726,29 @@ class RenderPovSettingsObject(PropertyGroup):
 
     ##################################CustomPOV Code############################
     # Only DUMMIES below for now:
-    replacement_text = StringProperty(
+    replacement_text: StringProperty(
             name="Declared name:",
             description="Type the declared name in custom POV code or an external .inc "
                         "it points at. Any POV shape expected e.g: isosurface {}",
             default="")
 
     #############POV-Ray specific object properties.############################
-    object_as = StringProperty(maxlen=1024)
+    object_as: StringProperty(maxlen=1024)
 
-    imported_loc = FloatVectorProperty(
+    imported_loc: FloatVectorProperty(
         name="Imported Pov location",
         precision=6,
         default=(0.0, 0.0, 0.0))
 
-    imported_loc_cap = FloatVectorProperty(
+    imported_loc_cap: FloatVectorProperty(
         name="Imported Pov location",
         precision=6,
         default=(0.0, 0.0, 2.0))
 
-    unlock_parameters = BoolProperty(name="Lock",default = False)
+    unlock_parameters: BoolProperty(name="Lock",default = False)
 
     # not in UI yet but used for sor (lathe) / prism... pov primitives
-    curveshape = EnumProperty(
+    curveshape: EnumProperty(
             name="Povray Shape Type",
             items=(("birail", "Birail", ""),
                    ("cairo", "Cairo", ""),
@@ -1758,14 +1758,14 @@ class RenderPovSettingsObject(PropertyGroup):
                    ("sphere_sweep", "Sphere Sweep", "")),
             default="sphere_sweep")
 
-    mesh_write_as = EnumProperty(
+    mesh_write_as: EnumProperty(
             name="Mesh Write As",
             items=(("blobgrid", "Blob Grid", ""),
                    ("grid", "Grid", ""),
                    ("mesh", "Mesh", "")),
             default="mesh")
 
-    object_ior = FloatProperty(
+    object_ior: FloatProperty(
             name="IOR", description="IOR",
             min=1.0, max=10.0,default=1.0)
 
@@ -1785,128 +1785,128 @@ class RenderPovSettingsObject(PropertyGroup):
     # dispersion_samples = IntProperty(name="Samples",min=2, max=100,default=7)
     # reflection = BoolProperty(name="Reflection",description="",default=False)
     # pass_through = BoolProperty(name="Pass through",description="",default=False)
-    no_shadow = BoolProperty(name="No Shadow",default=False)
+    no_shadow: BoolProperty(name="No Shadow",default=False)
 
-    no_image = BoolProperty(name="No Image",default=False)
+    no_image: BoolProperty(name="No Image",default=False)
 
-    no_reflection = BoolProperty(name="No Reflection",default=False)
+    no_reflection: BoolProperty(name="No Reflection",default=False)
 
-    no_radiosity = BoolProperty(name="No Radiosity",default=False)
+    no_radiosity: BoolProperty(name="No Radiosity",default=False)
 
-    inverse = BoolProperty(name="Inverse",default=False)
+    inverse: BoolProperty(name="Inverse",default=False)
 
-    sturm = BoolProperty(name="Sturm",default=False)
+    sturm: BoolProperty(name="Sturm",default=False)
 
-    double_illuminate = BoolProperty(name="Double Illuminate",default=False)
+    double_illuminate: BoolProperty(name="Double Illuminate",default=False)
 
-    hierarchy = BoolProperty(name="Hierarchy",default=False)
+    hierarchy: BoolProperty(name="Hierarchy",default=False)
 
-    hollow = BoolProperty(name="Hollow",default=False)
+    hollow: BoolProperty(name="Hollow",default=False)
 
-    boundorclip = EnumProperty(
+    boundorclip: EnumProperty(
             name="Boundorclip",
             items=(("none", "None", ""),
                    ("bounded_by", "Bounded_by", ""),
                    ("clipped_by", "Clipped_by", "")),
             default="none")
-    boundorclipob = StringProperty(maxlen=1024)
+    boundorclipob: StringProperty(maxlen=1024)
 
-    addboundorclip = BoolProperty(description="",default=False)
+    addboundorclip: BoolProperty(description="",default=False)
 
-    blob_threshold = FloatProperty(name="Threshold",min=0.00, max=10.0, default=0.6)
+    blob_threshold: FloatProperty(name="Threshold",min=0.00, max=10.0, default=0.6)
 
-    blob_strength = FloatProperty(name="Strength",min=-10.00, max=10.0, default=1.00)
+    blob_strength: FloatProperty(name="Strength",min=-10.00, max=10.0, default=1.00)
 
-    res_u = IntProperty(name="U",min=100, max=1000, default=500)
+    res_u: IntProperty(name="U",min=100, max=1000, default=500)
 
-    res_v = IntProperty(name="V",min=100, max=1000, default=500)
+    res_v: IntProperty(name="V",min=100, max=1000, default=500)
 
-    contained_by = EnumProperty(
+    contained_by: EnumProperty(
             name="Contained by",
             items=(("box", "Box", ""),
                    ("sphere", "Sphere", "")),
             default="box")
 
-    container_scale = FloatProperty(name="Container Scale",min=0.0, max=10.0, default=1.00)
+    container_scale: FloatProperty(name="Container Scale",min=0.0, max=10.0, default=1.00)
 
-    threshold = FloatProperty(name="Threshold",min=0.0, max=10.0, default=0.00)
+    threshold: FloatProperty(name="Threshold",min=0.0, max=10.0, default=0.00)
 
-    accuracy = FloatProperty(name="Accuracy",min=0.0001, max=0.1, default=0.001)
+    accuracy: FloatProperty(name="Accuracy",min=0.0001, max=0.1, default=0.001)
 
-    max_gradient = FloatProperty(name="Max Gradient",min=0.0, max=100.0, default=5.0)
+    max_gradient: FloatProperty(name="Max Gradient",min=0.0, max=100.0, default=5.0)
 
-    all_intersections = BoolProperty(name="All Intersections",default=False)
+    all_intersections: BoolProperty(name="All Intersections",default=False)
 
-    max_trace = IntProperty(name="Max Trace",min=1, max=100,default=1)
+    max_trace: IntProperty(name="Max Trace",min=1, max=100,default=1)
 
 
     def prop_update_cylinder(self, context):
         if bpy.ops.pov.cylinder_update.poll():
             bpy.ops.pov.cylinder_update()
-    cylinder_radius = FloatProperty(name="Cylinder R",min=0.00, max=10.0, default=0.04, update=prop_update_cylinder)
-    cylinder_location_cap = FloatVectorProperty(
+    cylinder_radius: FloatProperty(name="Cylinder R",min=0.00, max=10.0, default=0.04, update=prop_update_cylinder)
+    cylinder_location_cap: FloatVectorProperty(
             name="Cylinder Cap Location", subtype='TRANSLATION',
             description="The position of the 'other' end of the cylinder (relative to object location)",
             default=(0.0, 0.0, 2.0), update=prop_update_cylinder,
     )
 
-    imported_cyl_loc = FloatVectorProperty(
+    imported_cyl_loc: FloatVectorProperty(
         name="Imported Pov location",
         precision=6,
         default=(0.0, 0.0, 0.0))
 
-    imported_cyl_loc_cap = FloatVectorProperty(
+    imported_cyl_loc_cap: FloatVectorProperty(
         name="Imported Pov location",
         precision=6,
         default=(0.0, 0.0, 2.0))
 
     def prop_update_sphere(self, context):
         bpy.ops.pov.sphere_update()
-    sphere_radius = FloatProperty(name="Sphere radius",min=0.00, max=10.0, default=0.5, update=prop_update_sphere)
+    sphere_radius: FloatProperty(name="Sphere radius",min=0.00, max=10.0, default=0.5, update=prop_update_sphere)
 
 
     def prop_update_cone(self, context):
         bpy.ops.pov.cone_update()
 
-    cone_base_radius = FloatProperty(
+    cone_base_radius: FloatProperty(
         name = "Base radius", description = "The first radius of the cone",
         default = 1.0, min = 0.01, max = 100.0, update=prop_update_cone)
-    cone_cap_radius = FloatProperty(
+    cone_cap_radius: FloatProperty(
         name = "Cap radius", description = "The second radius of the cone",
         default = 0.3, min = 0.0, max = 100.0, update=prop_update_cone)
 
-    cone_segments = IntProperty(
+    cone_segments: IntProperty(
         name = "Segments", description = "Radial segmentation of proxy mesh",
         default = 16, min = 3, max = 265, update=prop_update_cone)
 
-    cone_height = FloatProperty(
+    cone_height: FloatProperty(
         name = "Height", description = "Height of the cone",
         default = 2.0, min = 0.01, max = 100.0, update=prop_update_cone)
 
-    cone_base_z = FloatProperty()
-    cone_cap_z = FloatProperty()
+    cone_base_z: FloatProperty()
+    cone_cap_z: FloatProperty()
 
 ###########Parametric
     def prop_update_parametric(self, context):
         bpy.ops.pov.parametric_update()
 
-    u_min = FloatProperty(name = "U Min",
+    u_min: FloatProperty(name = "U Min",
                     description = "",
                     default = 0.0, update=prop_update_parametric)
-    v_min = FloatProperty(name = "V Min",
+    v_min: FloatProperty(name = "V Min",
                     description = "",
                     default = 0.0, update=prop_update_parametric)
-    u_max = FloatProperty(name = "U Max",
+    u_max: FloatProperty(name = "U Max",
                     description = "",
                     default = 6.28, update=prop_update_parametric)
-    v_max = FloatProperty(name = "V Max",
+    v_max: FloatProperty(name = "V Max",
                     description = "",
                     default = 12.57, update=prop_update_parametric)
-    x_eq = StringProperty(
+    x_eq: StringProperty(
                     maxlen=1024, default = "cos(v)*(1+cos(u))*sin(v/8)", update=prop_update_parametric)
-    y_eq = StringProperty(
+    y_eq: StringProperty(
                     maxlen=1024, default = "sin(u)*sin(v/8)+cos(v/8)*1.5", update=prop_update_parametric)
-    z_eq = StringProperty(
+    z_eq: StringProperty(
                     maxlen=1024, default = "sin(v)*(1+cos(u))*sin(v/8)", update=prop_update_parametric)
 
 ###########Torus
@@ -1914,59 +1914,59 @@ class RenderPovSettingsObject(PropertyGroup):
     def prop_update_torus(self, context):
         bpy.ops.pov.torus_update()
 
-    torus_major_segments = IntProperty(
+    torus_major_segments: IntProperty(
                     name = "Segments", description = "Radial segmentation of proxy mesh",
                     default = 48, min = 3, max = 720, update=prop_update_torus)
-    torus_minor_segments = IntProperty(
+    torus_minor_segments: IntProperty(
                     name = "Segments", description = "Cross-section segmentation of proxy mesh",
                     default = 12, min = 3, max = 720, update=prop_update_torus)
-    torus_major_radius = FloatProperty(
+    torus_major_radius: FloatProperty(
                     name="Major radius",
                     description="Major radius",
                     min=0.00, max=100.00, default=1.0, update=prop_update_torus)
-    torus_minor_radius = FloatProperty(
+    torus_minor_radius: FloatProperty(
                     name="Minor radius",
                     description="Minor radius",
                     min=0.00, max=100.00, default=0.25, update=prop_update_torus)
 
 
 ###########Rainbow
-    arc_angle = FloatProperty(name = "Arc angle",
+    arc_angle: FloatProperty(name = "Arc angle",
                       description = "The angle of the raynbow arc in degrees",
                       default = 360, min = 0.01, max = 360.0)
-    falloff_angle = FloatProperty(name = "Falloff angle",
+    falloff_angle: FloatProperty(name = "Falloff angle",
                       description = "The angle after which rainbow dissolves into background",
                       default = 360, min = 0.0, max = 360)
 
 ###########HeightFields
 
-    quality = IntProperty(name = "Quality",
+    quality: IntProperty(name = "Quality",
                       description = "",
                       default = 100, min = 1, max = 100)
 
-    hf_filename = StringProperty(maxlen = 1024)
+    hf_filename: StringProperty(maxlen = 1024)
 
-    hf_gamma = FloatProperty(
+    hf_gamma: FloatProperty(
             name="Gamma",
             description="Gamma",
             min=0.0001, max=20.0, default=1.0)
 
-    hf_premultiplied = BoolProperty(
+    hf_premultiplied: BoolProperty(
             name="Premultiplied",
             description="Premultiplied",
             default=True)
 
-    hf_smooth = BoolProperty(
+    hf_smooth: BoolProperty(
             name="Smooth",
             description="Smooth",
             default=False)
 
-    hf_water = FloatProperty(
+    hf_water: FloatProperty(
             name="Water Level",
             description="Wather Level",
             min=0.00, max=1.00, default=0.0)
 
-    hf_hierarchy = BoolProperty(
+    hf_hierarchy: BoolProperty(
             name="Hierarchy",
             description="Height field hierarchy",
             default=True)
@@ -1975,33 +1975,33 @@ class RenderPovSettingsObject(PropertyGroup):
     def prop_update_superellipsoid(self, context):
         bpy.ops.pov.superellipsoid_update()
 
-    se_param1 = FloatProperty(
+    se_param1: FloatProperty(
             name="Parameter 1",
             description="",
             min=0.00, max=10.0, default=0.04)
 
-    se_param2 = FloatProperty(
+    se_param2: FloatProperty(
             name="Parameter 2",
             description="",
             min=0.00, max=10.0, default=0.04)
 
-    se_u = IntProperty(name = "U-segments",
+    se_u: IntProperty(name = "U-segments",
                     description = "radial segmentation",
                     default = 20, min = 4, max = 265,
                     update=prop_update_superellipsoid)
-    se_v = IntProperty(name = "V-segments",
+    se_v: IntProperty(name = "V-segments",
                     description = "lateral segmentation",
                     default = 20, min = 4, max = 265,
                     update=prop_update_superellipsoid)
-    se_n1 = FloatProperty(name = "Ring manipulator",
+    se_n1: FloatProperty(name = "Ring manipulator",
                     description = "Manipulates the shape of the Ring",
                     default = 1.0, min = 0.01, max = 100.0,
                     update=prop_update_superellipsoid)
-    se_n2 = FloatProperty(name = "Cross manipulator",
+    se_n2: FloatProperty(name = "Cross manipulator",
                     description = "Manipulates the shape of the cross-section",
                     default = 1.0, min = 0.01, max = 100.0,
                     update=prop_update_superellipsoid)
-    se_edit = EnumProperty(items=[("NOTHING", "Nothing", ""),
+    se_edit: EnumProperty(items=[("NOTHING", "Nothing", ""),
                                 ("NGONS", "N-Gons", ""),
                                 ("TRIANGLES", "Triangles", "")],
                     name="Fill up and down",
@@ -2009,7 +2009,7 @@ class RenderPovSettingsObject(PropertyGroup):
                     default='TRIANGLES',
                     update=prop_update_superellipsoid)
 #############Used for loft and Superellipsoid, etc.
-    curveshape = EnumProperty(
+    curveshape: EnumProperty(
             name="Povray Shape Type",
             items=(("birail", "Birail", ""),
                    ("cairo", "Cairo", ""),
@@ -2024,117 +2024,117 @@ class RenderPovSettingsObject(PropertyGroup):
     def prop_update_supertorus(self, context):
         bpy.ops.pov.supertorus_update()
 
-    st_major_radius = FloatProperty(
+    st_major_radius: FloatProperty(
             name="Major radius",
             description="Major radius",
             min=0.00, max=100.00, default=1.0,
             update=prop_update_supertorus)
 
-    st_minor_radius = FloatProperty(
+    st_minor_radius: FloatProperty(
             name="Minor radius",
             description="Minor radius",
             min=0.00, max=100.00, default=0.25,
             update=prop_update_supertorus)
 
-    st_ring = FloatProperty(
+    st_ring: FloatProperty(
             name="Ring",
             description="Ring manipulator",
             min=0.0001, max=100.00, default=1.00,
             update=prop_update_supertorus)
 
-    st_cross = FloatProperty(
+    st_cross: FloatProperty(
             name="Cross",
             description="Cross manipulator",
             min=0.0001, max=100.00, default=1.00,
             update=prop_update_supertorus)
 
-    st_accuracy = FloatProperty(
+    st_accuracy: FloatProperty(
             name="Accuracy",
             description="Supertorus accuracy",
             min=0.00001, max=1.00, default=0.001)
 
-    st_max_gradient = FloatProperty(
+    st_max_gradient: FloatProperty(
             name="Gradient",
             description="Max gradient",
             min=0.0001, max=100.00, default=10.00,
             update=prop_update_supertorus)
 
-    st_R = FloatProperty(name = "big radius",
+    st_R: FloatProperty(name = "big radius",
                       description = "The radius inside the tube",
                       default = 1.0, min = 0.01, max = 100.0,
                       update=prop_update_supertorus)
-    st_r = FloatProperty(name = "small radius",
+    st_r: FloatProperty(name = "small radius",
                       description = "The radius of the tube",
                       default = 0.3, min = 0.01, max = 100.0,
                       update=prop_update_supertorus)
-    st_u = IntProperty(name = "U-segments",
+    st_u: IntProperty(name = "U-segments",
                     description = "radial segmentation",
                     default = 16, min = 3, max = 265,
                     update=prop_update_supertorus)
-    st_v = IntProperty(name = "V-segments",
+    st_v: IntProperty(name = "V-segments",
                     description = "lateral segmentation",
                     default = 8, min = 3, max = 265,
                     update=prop_update_supertorus)
-    st_n1 = FloatProperty(name = "Ring manipulator",
+    st_n1: FloatProperty(name = "Ring manipulator",
                       description = "Manipulates the shape of the Ring",
                       default = 1.0, min = 0.01, max = 100.0,
                       update=prop_update_supertorus)
-    st_n2 = FloatProperty(name = "Cross manipulator",
+    st_n2: FloatProperty(name = "Cross manipulator",
                       description = "Manipulates the shape of the cross-section",
                       default = 1.0, min = 0.01, max = 100.0,
                       update=prop_update_supertorus)
-    st_ie = BoolProperty(name = "Use Int.+Ext. radii",
+    st_ie: BoolProperty(name = "Use Int.+Ext. radii",
                       description = "Use internal and external radii",
                       default = False,
                       update=prop_update_supertorus)
-    st_edit = BoolProperty(name="",
+    st_edit: BoolProperty(name="",
                         description="",
                         default=False,
                         options={'HIDDEN'},
                         update=prop_update_supertorus)
 
 ########################Loft
-    loft_n = IntProperty(name = "Segments",
+    loft_n: IntProperty(name = "Segments",
                     description = "Vertical segments",
                     default = 16, min = 3, max = 720)
-    loft_rings_bottom = IntProperty(name = "Bottom",
+    loft_rings_bottom: IntProperty(name = "Bottom",
                     description = "Bottom rings",
                     default = 5, min = 2, max = 100)
-    loft_rings_side = IntProperty(name = "Side",
+    loft_rings_side: IntProperty(name = "Side",
                     description = "Side rings",
                     default = 10, min = 2, max = 100)
-    loft_thick = FloatProperty(name = "Thickness",
+    loft_thick: FloatProperty(name = "Thickness",
                       description = "Manipulates the shape of the Ring",
                       default = 0.3, min = 0.01, max = 1.0)
-    loft_r = FloatProperty(name = "Radius",
+    loft_r: FloatProperty(name = "Radius",
                       description = "Radius",
                       default = 1, min = 0.01, max = 10)
-    loft_height = FloatProperty(name = "Height",
+    loft_height: FloatProperty(name = "Height",
                       description = "Manipulates the shape of the Ring",
                       default = 2, min = 0.01, max = 10.0)
 
 ###################Prism
-    prism_n = IntProperty(name = "Sides",
+    prism_n: IntProperty(name = "Sides",
                     description = "Number of sides",
                     default = 5, min = 3, max = 720)
-    prism_r = FloatProperty(name = "Radius",
+    prism_r: FloatProperty(name = "Radius",
                     description = "Radius",
                     default = 1.0)
 
 ##################Isosurface
-    iso_function_text = StringProperty(name="Function Text",maxlen=1024)#,update=iso_props_update_callback)
+    iso_function_text: StringProperty(name="Function Text",maxlen=1024)#,update=iso_props_update_callback)
 
 ##################PolygonToCircle
-    polytocircle_resolution = IntProperty(name = "Resolution",
+    polytocircle_resolution: IntProperty(name = "Resolution",
                     description = "",
                     default = 3, min = 0, max = 256)
-    polytocircle_ngon = IntProperty(name = "NGon",
+    polytocircle_ngon: IntProperty(name = "NGon",
                     description = "",
                     min = 3, max = 64,default = 5)
-    polytocircle_ngonR = FloatProperty(name = "NGon Radius",
+    polytocircle_ngonR: FloatProperty(name = "NGon Radius",
                     description = "",
                     default = 0.3)
-    polytocircle_circleR = FloatProperty(name = "Circle Radius",
+    polytocircle_circleR: FloatProperty(name = "Circle Radius",
                     description = "",
                     default = 1.0)
 
@@ -2143,7 +2143,7 @@ class RenderPovSettingsObject(PropertyGroup):
 # Modifiers POV properties.
 ###############################################################################
 #class RenderPovSettingsModifier(PropertyGroup):
-    boolean_mod = EnumProperty(
+    boolean_mod: EnumProperty(
             name="Operation",
             description="Choose the type of calculation for Boolean modifier",
             items=(("BMESH", "Use the BMesh Boolean Solver", ""),
@@ -2164,12 +2164,12 @@ class RenderPovSettingsObject(PropertyGroup):
 ###############################################################################
 class RenderPovSettingsCamera(PropertyGroup):
     #DOF Toggle
-    dof_enable = BoolProperty(
+    dof_enable: BoolProperty(
             name="Depth Of Field", description="EnablePOV-Ray Depth Of Field ",
             default=False)
 
     # Aperture (Intensity of the Blur)
-    dof_aperture = FloatProperty(
+    dof_aperture: FloatProperty(
             name="Aperture",
             description="Similar to a real camera's aperture effect over focal blur (though not "
                         "in physical units and independent of focal length). "
@@ -2177,30 +2177,30 @@ class RenderPovSettingsCamera(PropertyGroup):
             min=0.01, max=1.00, default=0.50)
 
     # Aperture adaptive sampling
-    dof_samples_min = IntProperty(
+    dof_samples_min: IntProperty(
             name="Samples Min", description="Minimum number of rays to use for each pixel",
             min=1, max=128, default=3)
 
-    dof_samples_max = IntProperty(
+    dof_samples_max: IntProperty(
             name="Samples Max", description="Maximum number of rays to use for each pixel",
             min=1, max=128, default=9)
 
-    dof_variance = IntProperty(
+    dof_variance: IntProperty(
             name="Variance",
             description="Minimum threshold (fractional value) for adaptive DOF sampling (up "
                         "increases quality and render time). The value for the variance should "
                         "be in the range of the smallest displayable color difference",
             min=1, max=100000, soft_max=10000, default=8192)
 
-    dof_confidence = FloatProperty(
+    dof_confidence: FloatProperty(
             name="Confidence",
             description="Probability to reach the real color value. Larger confidence values "
                         "will lead to more samples, slower traces and better images",
             min=0.01, max=0.99, default=0.20)
 
-    normal_enable = BoolProperty(name="Perturbated Camera", default=False)
-    cam_normal = FloatProperty(name="Normal Strength", min=0.0, max=1.0, default=0.0)
-    normal_patterns = EnumProperty(
+    normal_enable: BoolProperty(name="Perturbated Camera", default=False)
+    cam_normal: FloatProperty(name="Normal Strength", min=0.0, max=1.0, default=0.0)
+    normal_patterns: EnumProperty(
             name="Pattern",
             description="",
             items=(('agate', "Agate", ""), ('boxed', "Boxed", ""), ('bumps', "Bumps", ""), ('cells', "Cells", ""),
@@ -2213,12 +2213,12 @@ class RenderPovSettingsCamera(PropertyGroup):
                    ('square', "Square", ""),('tiling', "Tiling", ""),
                    ('waves', "Waves", ""), ('wood', "Wood", ""),('wrinkles', "Wrinkles", "")),
             default='agate')
-    turbulence = FloatProperty(name="Turbulence", min=0.0, max=100.0, default=0.1)
-    scale = FloatProperty(name="Scale", min=0.0,default=1.0)
+    turbulence: FloatProperty(name="Turbulence", min=0.0, max=100.0, default=0.1)
+    scale: FloatProperty(name="Scale", min=0.0,default=1.0)
 
     ##################################CustomPOV Code############################
     # Only DUMMIES below for now:
-    replacement_text = StringProperty(
+    replacement_text: StringProperty(
             name="Texts in blend file",
             description="Type the declared name in custom POV code or an external .inc "
                         "it points at. camera {} expected",
@@ -2230,7 +2230,7 @@ class RenderPovSettingsCamera(PropertyGroup):
 # Text POV properties.
 ###############################################################################
 class RenderPovSettingsText(PropertyGroup):
-    custom_code = EnumProperty(
+    custom_code: EnumProperty(
             name="Custom Code",
             description="rendered source: Both adds text at the "
                         "top of the exported POV-Ray file",
@@ -2245,7 +2245,7 @@ class RenderPovSettingsText(PropertyGroup):
 class PovrayPreferences(AddonPreferences):
     bl_idname = __name__
 
-    branch_feature_set_povray = EnumProperty(
+    branch_feature_set_povray: EnumProperty(
                 name="Feature Set",
                 description="Choose between official (POV-Ray) or (UberPOV) "
                             "development branch features to write in the pov file",
@@ -2254,12 +2254,12 @@ class PovrayPreferences(AddonPreferences):
                 default='povray'
                 )
 
-    filepath_povray = StringProperty(
+    filepath_povray: StringProperty(
                 name="Binary Location",
                 description="Path to renderer executable",
                 subtype='FILE_PATH',
                 )
-    docpath_povray = StringProperty(
+    docpath_povray: StringProperty(
                 name="Includes Location",
                 description="Path to Insert Menu files",
                 subtype='FILE_PATH',
