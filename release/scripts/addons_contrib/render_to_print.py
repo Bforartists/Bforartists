@@ -121,7 +121,7 @@ update_settings_cb.level = False
 
 
 class RenderPrintSertings(PropertyGroup):
-    unit_from = EnumProperty(
+    unit_from: EnumProperty(
             name="Set from",
             description="Set from",
             items=(
@@ -130,7 +130,7 @@ class RenderPrintSertings(PropertyGroup):
                 ),
             default="CM_TO_PIXELS",
             )
-    orientation = EnumProperty(
+    orientation: EnumProperty(
             name="Page Orientation",
             description="Set orientation",
             items=(
@@ -140,42 +140,42 @@ class RenderPrintSertings(PropertyGroup):
             default="Portrait",
             update=update_settings_cb,
             )
-    preset = EnumProperty(
+    preset: EnumProperty(
             name="Select Preset",
             description="Select from preset",
             items=paper_presets,
             default="custom_1_1",
             update=update_settings_cb,
             )
-    dpi = IntProperty(
+    dpi: IntProperty(
             name="DPI",
             description="Dots per Inch",
             default=300,
             min=72, max=1800,
             update=update_settings_cb,
             )
-    width_cm = FloatProperty(
+    width_cm: FloatProperty(
             name="Width",
             description="Width in CM",
             default=5.0,
             min=1.0, max=100000.0,
             update=update_settings_cb,
             )
-    height_cm = FloatProperty(
+    height_cm: FloatProperty(
             name="Height",
             description="Height in CM",
             default=3.0,
             min=1.0, max=100000.0,
             update=update_settings_cb,
             )
-    width_px = IntProperty(
+    width_px: IntProperty(
             name="Pixel Width",
             description="Pixel Width",
             default=900,
             min=4, max=10000,
             update=update_settings_cb,
             )
-    height_px = IntProperty(
+    height_px: IntProperty(
             name="Pixel Height",
             description="Pixel Height",
             default=600,
@@ -256,8 +256,8 @@ class RENDER_PT_print(Panel):
         row5.prop(ps, "height_px")
 
         col.separator()
-        row6.label("Inch Width: %.2f" % (ps.width_cm / 2.54))
-        row6.label("Inch Height: %.2f" % (ps.height_cm / 2.54))
+        row6.label(text="Inch Width: %.2f" % (ps.width_cm / 2.54))
+        row6.label(text="Inch Height: %.2f" % (ps.height_cm / 2.54))
         col.separator()
 
         row7.operator("render.apply_size", icon="RENDER_STILL")

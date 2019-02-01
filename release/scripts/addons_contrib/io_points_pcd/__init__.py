@@ -52,15 +52,15 @@ class ImportPCD(bpy.types.Operator, ImportHelper):
 
     filename_ext = ".pcd"
 
-    filter_glob = StringProperty(default="*.pcd", options={'HIDDEN'})
-    object_name = StringProperty(default="", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.pcd", options={'HIDDEN'})
+    object_name: StringProperty(default="", options={'HIDDEN'})
 
-    files = CollectionProperty(name="File Path",
+    files: CollectionProperty(name="File Path",
                           description="File path used for importing "
                                       "the PCD file",
                           type=bpy.types.OperatorFileListElement)
 
-    directory = StringProperty(subtype='DIR_PATH')
+    directory: StringProperty(subtype='DIR_PATH')
 
     def execute(self, context):
         paths = [os.path.join(self.directory, name.name) for name in self.files]
@@ -92,7 +92,7 @@ class ExportPCD(bpy.types.Operator, ExportHelper):
 
     filename_ext = ".pcd"
 
-    filter_glob = StringProperty(default="*.pcd", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.pcd", options={'HIDDEN'})
 
 
     def execute(self, context):

@@ -217,8 +217,8 @@ class NPFRPrepareContext(bpy.types.Operator):
         if flag == 'RUNTRANS0':
             helper = NP020FR.helper
             bpy.ops.object.select_all(action = 'DESELECT')
-            helper.select = True
-            bpy.context.scene.objects.active = helper
+            helper.select_set(True)
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -264,12 +264,12 @@ class NPFRPrepareContext(bpy.types.Operator):
 
             bpy.ops.object.select_all(action = 'DESELECT')
             if corner_brush == False: helper.location = pointloc
-            helper.select = True
+            helper.select_set(True)
             bpy.ops.transform.rotate(value = ang_hor ,axis = Vector((0.0, 0.0, 1.0)))
             bpy.ops.transform.rotate(value = rot_ang ,axis = rot_axis)
             NP020FR.trans_custom = True
             bpy.ops.transform.create_orientation(use = True)
-            bpy.context.scene.objects.active = helper
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -278,7 +278,7 @@ class NPFRPrepareContext(bpy.types.Operator):
         elif flag == 'RUNTRANS2':
             helper = NP020FR.helper
             ndef = NP020FR.ndef
-            bpy.context.scene.objects.active = helper
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -643,7 +643,7 @@ class NPFRGenerateGeometry(bpy.types.Operator):
             scn.objects.active = recob
             scn.update()
             bpy.ops.object.select_all(action = 'DESELECT')
-            recob.select = True
+            recob.select_set(True)
             bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
             bpy.ops.object.mode_set(mode = 'EDIT')
             bpy.ops.mesh.select_all(action = 'SELECT')
@@ -679,17 +679,17 @@ class NPFRRestoreContext(bpy.types.Operator):
         recob = NP020FR.recob
         helper.hide = False
         bpy.ops.object.select_all(action = 'DESELECT')
-        helper.select = True
+        helper.select_set(True)
         bpy.ops.object.delete('EXEC_DEFAULT')
         if recob == None:
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             if NP020FR.acob is not None:
-                bpy.context.scene.objects.active = NP020FR.acob
+                bpy.context.view_layer.objects.active = NP020FR.acob
                 bpy.ops.object.mode_set(mode = NP020FR.edit_mode)
         else:
-            recob.select = True
-            bpy.context.scene.objects.active = recob
+            recob.select_set(True)
+            bpy.context.view_layer.objects.active = recob
             bpy.ops.object.mode_set(mode = NP020FR.edit_mode)
         if NP020FR.trans_custom: bpy.ops.transform.delete_orientation()
         bpy.context.tool_settings.use_snap = NP020FR.use_snap

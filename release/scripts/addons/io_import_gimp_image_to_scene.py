@@ -554,31 +554,31 @@ class GIMPImageToScene(bpy.types.Operator):
     bl_description = "Imports GIMP multilayer image files into 3D Scenes"
     bl_options = {'REGISTER', 'UNDO'}
 
-    filename = StringProperty(name="File Name",
+    filename: StringProperty(name="File Name",
         description="Name of the file")
-    directory = StringProperty(name="Directory",
+    directory: StringProperty(name="Directory",
         description="Directory of the file")
 
-    LayerViewers = BoolProperty(name="Layer Viewers",
+    LayerViewers: BoolProperty(name="Layer Viewers",
         description="Add Viewer nodes to each Render Layer node",
         default=True)
 
-    MixerViewers = BoolProperty(name="Mixer Viewers",
+    MixerViewers: BoolProperty(name="Mixer Viewers",
         description="Add Viewer nodes to each Mix node",
         default=True)
 
-    AlphaMode = EnumProperty(name="Alpha Mode",
+    AlphaMode: EnumProperty(name="Alpha Mode",
         description="Representation of alpha information in the RGBA pixels",
         items=(
             ('STRAIGHT', 'Texture Alpha Factor', 'Transparent RGB and alpha pixels are unmodified'),
             ('PREMUL', 'Material Alpha Value', 'Transparent RGB pixels are multiplied by the alpha channel')),
         default='STRAIGHT')
 
-    ShadelessMats = BoolProperty(name="Shadeless Material",
+    ShadelessMats: BoolProperty(name="Shadeless Material",
         description="Set Materials as Shadeless",
         default=True)
 
-    OpacityMode = EnumProperty(name="Opacity Mode",
+    OpacityMode: EnumProperty(name="Opacity Mode",
         description="Layer Opacity management",
         items=(
             ('TEX', 'Texture Alpha Factor', ''),
@@ -587,24 +587,24 @@ class GIMPImageToScene(bpy.types.Operator):
             ('BAKE', 'Baked in Image Alpha', '')),
         default='TEX')
 
-    SetCamera = BoolProperty(name="Set Camera",
+    SetCamera: BoolProperty(name="Set Camera",
         description="Create an Ortho Camera matching image resolution",
         default=True)
 
-    SetupCompo = BoolProperty(name="Setup Node Compositing",
+    SetupCompo: BoolProperty(name="Setup Node Compositing",
         description="Create a compositing node setup (will delete existing nodes)",
         default=False)
 
-    GroupUntagged = BoolProperty(name="Group Untagged",
+    GroupUntagged: BoolProperty(name="Group Untagged",
         description="Layers with no tag go to a single Render Layer",
         default=False)
 
-    LayerOffset = FloatProperty(name="Layer Separation",
+    LayerOffset: FloatProperty(name="Layer Separation",
         description="Distance between each 3D Layer in the Z axis",
         min=0,
         default=0.50)
 
-    LayerScale = FloatProperty(name="Layer Scale",
+    LayerScale: FloatProperty(name="Layer Scale",
         description="Scale pixel resolution by Blender units",
         min=0,
         default=0.01)
@@ -613,18 +613,18 @@ class GIMPImageToScene(bpy.types.Operator):
         layout = self.layout
 
         box = layout.box()
-        box.label('3D Layers:', icon='SORTSIZE')
+        box.label(text='3D Layers:', icon='SORTSIZE')
         box.prop(self, 'SetCamera', icon='OUTLINER_DATA_CAMERA')
         box.prop(self, 'OpacityMode', icon='GHOST')
         if self.OpacityMode == 'COMPO' and self.SetupCompo == False:
-            box.label('Tip: Enable Node Compositing', icon='INFO')
+            box.label(text='Tip: Enable Node Compositing', icon='INFO')
         box.prop(self, 'AlphaMode', icon='IMAGE_RGB_ALPHA')
         box.prop(self, 'ShadelessMats', icon='SHADING_SOLID')
         box.prop(self, 'LayerOffset')
         box.prop(self, 'LayerScale')
 
         box = layout.box()
-        box.label('Compositing:', icon='RENDERLAYERS')
+        box.label(text='Compositing:', icon='RENDERLAYERS')
         box.prop(self, 'SetupCompo', icon='NODETREE')
         if self.SetupCompo:
             box.prop(self, 'GroupUntagged', icon='IMAGE_ZDEPTH')

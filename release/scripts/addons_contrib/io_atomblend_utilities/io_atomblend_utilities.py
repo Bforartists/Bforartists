@@ -319,7 +319,7 @@ def modify_objects(action_type,
                                                'Sticks_Cylinder' in atom.name or
                                                'Stick_Cylinder' in atom.name):
 
-        bpy.context.scene.objects.active = atom
+        bpy.context.view_layer.objects.active = atom
         bpy.ops.object.mode_set(mode='EDIT', toggle=False)
         bm = bmesh.from_edit_mesh(atom.data)
 
@@ -339,7 +339,7 @@ def modify_objects(action_type,
             v.co[1] = ((v.co[1] - center[1]) / radius) * radius_new + center[1]
 
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-        bpy.context.scene.objects.active = None
+        bpy.context.view_layer.objects.active = None
 
     # Replace atom objects
     if action_type == "ATOM_REPLACE_OBJ" and "Stick" not in atom.name:
@@ -372,7 +372,7 @@ def modify_objects(action_type,
 
         # Delete the old object.
         bpy.ops.object.select_all(action='DESELECT')
-        atom.select = True
+        atom.select_set(True)
         bpy.ops.object.delete()
         del(atom)
 
@@ -409,7 +409,7 @@ def modify_objects(action_type,
 
         # Finally, delete the old object
         bpy.ops.object.select_all(action='DESELECT')
-        atom.select = True
+        atom.select_set(True)
         bpy.ops.object.delete()
 
 
@@ -442,7 +442,7 @@ def separate_atoms(scn):
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
     # ... delete the new mesh including the separated vertex
     bpy.ops.object.select_all(action='DESELECT')
-    new_object.select = True
+    new_object.select_set(True)
     bpy.ops.object.delete()
 
     # Create new atoms/vacancies at the position of the old atoms
@@ -452,15 +452,15 @@ def separate_atoms(scn):
         # structure. <= this is done 'len(locations)' times. After each
         # duplication, move the new object onto the positions
         bpy.ops.object.select_all(action='DESELECT')
-        atom.children[0].select = True
-        bpy.context.scene.objects.active = atom.children[0]
+        atom.children[0].select_set(True)
+        bpy.context.view_layer.objects.active = atom.children[0]
         bpy.ops.object.duplicate_move()
-        new_atom = bpy.context.scene.objects.active
+        new_atom = bpy.context.view_layer.objects.active
         new_atom.parent = None
         new_atom.location = location
         new_atom.name = atom.name + "_sep"
 
-    bpy.context.scene.objects.active = atom
+    bpy.context.view_layer.objects.active = atom
 
 
 # Prepare a new material
@@ -636,10 +636,10 @@ def draw_obj(atom_shape, atom):
             rotation=(0, 0, 0),
             layers=current_layers)
 
-    new_atom = bpy.context.scene.objects.active
+    new_atom = bpy.context.view_layer.objects.active
     new_atom.scale = atom.scale + Vector((0.0,0.0,0.0))
     new_atom.name = atom.name + "_tmp"
-    new_atom.select = True
+    new_atom.select_set(True)
 
     return new_atom
 
@@ -656,7 +656,7 @@ def draw_obj_special(atom_shape, atom):
         new_mesh.from_pydata([Vector((0.0,0.0,0.0))], [], [])
         new_mesh.update()
         new_atom = bpy.data.objects.new(atom.name + "_sep", new_mesh)
-        bpy.context.scene.objects.link(new_atom)
+        bpy.context.collection.objects.link(new_atom)
         new_atom.location = atom.location
         material_new = bpy.data.materials.new(atom.active_material.name + "_sep")
         material_new.name = atom.name + "_halo"
@@ -667,7 +667,7 @@ def draw_obj_special(atom_shape, atom):
         material_new.halo.add = 0.0
         new_atom.active_material = material_new
         new_atom.name = atom.name
-        new_atom.select = True
+        new_atom.select_set(True)
     # F2+ center
     if atom_shape == '2':
         # Create first a cube
@@ -676,10 +676,10 @@ def draw_obj_special(atom_shape, atom):
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        cube = bpy.context.scene.objects.active
+        cube = bpy.context.view_layer.objects.active
         cube.scale = atom.scale + Vector((0.0,0.0,0.0))
         cube.name = atom.name + "_F2+-center"
-        cube.select = True
+        cube.select_set(True)
         # New material for this cube
         material_cube = bpy.data.materials.new(atom.name + "_F2+-center")
         material_cube.diffuse_color = [0.8,0.0,0.0]
@@ -698,7 +698,7 @@ def draw_obj_special(atom_shape, atom):
         lamp = bpy.data.objects.new("F2+_lamp", lamp_data)
         lamp.location = Vector((0.0, 0.0, 0.0))
         lamp.layers = current_layers
-        bpy.context.scene.objects.link(lamp)
+        bpy.context.collection.objects.link(lamp)
         lamp.parent = cube
         # The new 'atom' is the F2+ defect
         new_atom = cube
@@ -710,10 +710,10 @@ def draw_obj_special(atom_shape, atom):
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        cube = bpy.context.scene.objects.active
+        cube = bpy.context.view_layer.objects.active
         cube.scale = atom.scale + Vector((0.0,0.0,0.0))
         cube.name = atom.name + "_F+-center"
-        cube.select = True
+        cube.select_set(True)
         # New material for this cube
         material_cube = bpy.data.materials.new(atom.name + "_F+-center")
         material_cube.diffuse_color = [0.8,0.8,0.0]
@@ -731,7 +731,7 @@ def draw_obj_special(atom_shape, atom):
                                         location=(0.0, 0.0, 0.0),
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        electron = bpy.context.scene.objects.active
+        electron = bpy.context.view_layer.objects.active
         electron.scale = scale
         electron.name = atom.name + "_F+_electron"
         electron.parent = cube
@@ -755,7 +755,7 @@ def draw_obj_special(atom_shape, atom):
         lamp = bpy.data.objects.new("F+_lamp", lamp_data)
         lamp.location = Vector((0.0, 0.0, 0.0))
         lamp.layers = current_layers
-        bpy.context.scene.objects.link(lamp)
+        bpy.context.collection.objects.link(lamp)
         lamp.parent = cube
         # The new 'atom' is the F+ defect complex + lamp
         new_atom = cube
@@ -767,10 +767,10 @@ def draw_obj_special(atom_shape, atom):
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        cube = bpy.context.scene.objects.active
+        cube = bpy.context.view_layer.objects.active
         cube.scale = atom.scale + Vector((0.0,0.0,0.0))
         cube.name = atom.name + "_F0-center"
-        cube.select = True
+        cube.select_set(True)
         # New material for this cube
         material_cube = bpy.data.materials.new(atom.name + "_F0-center")
         material_cube.diffuse_color = [0.8,0.8,0.8]
@@ -788,7 +788,7 @@ def draw_obj_special(atom_shape, atom):
                                         location=(scale[0]*1.5,0.0,0.0),
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        electron1 = bpy.context.scene.objects.active
+        electron1 = bpy.context.view_layer.objects.active
         electron1.scale = scale
         electron1.name = atom.name + "_F0_electron1"
         electron1.parent = cube
@@ -798,7 +798,7 @@ def draw_obj_special(atom_shape, atom):
                                         location=(-scale[0]*1.5,0.0,0.0),
                                         rotation=(0.0, 0.0, 0.0),
                                         layers=current_layers)
-        electron2 = bpy.context.scene.objects.active
+        electron2 = bpy.context.view_layer.objects.active
         electron2.scale = scale
         electron2.name = atom.name + "_F0_electron2"
         electron2.parent = cube
@@ -823,7 +823,7 @@ def draw_obj_special(atom_shape, atom):
         lamp1 = bpy.data.objects.new("F0_lamp", lamp1_data)
         lamp1.location = Vector((scale[0]*1.5, 0.0, 0.0))
         lamp1.layers = current_layers
-        bpy.context.scene.objects.link(lamp1)
+        bpy.context.collection.objects.link(lamp1)
         lamp1.parent = cube
         lamp2_data = bpy.data.lamps.new(name="F0_lamp2", type="POINT")
         lamp2_data.distance = atom.scale[0] * 2.0
@@ -833,7 +833,7 @@ def draw_obj_special(atom_shape, atom):
         lamp2 = bpy.data.objects.new("F0_lamp", lamp2_data)
         lamp2.location = Vector((-scale[0]*1.5, 0.0, 0.0))
         lamp2.layers = current_layers
-        bpy.context.scene.objects.link(lamp2)
+        bpy.context.collection.objects.link(lamp2)
         lamp2.parent = cube
         # The new 'atom' is the F0 defect complex + lamps
         new_atom = cube

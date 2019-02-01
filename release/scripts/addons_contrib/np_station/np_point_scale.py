@@ -283,8 +283,8 @@ class NPPSPrepareContext(bpy.types.Operator):
             bpy.context.space_data.pivot_point = 'CURSOR'
             bpy.context.space_data.transform_orientation = 'GLOBAL'
             for ob in selob:
-                ob.select = True
-                bpy.context.scene.objects.active = ob
+                ob.select_set(True)
+                bpy.context.view_layer.objects.active = ob
             axis = (False, False, False)
             if mode == 0:
                 curloc = cage3d[6]
@@ -322,7 +322,7 @@ class NPPSPrepareContext(bpy.types.Operator):
                 axis = (False, False, True)
             if flag_con: axis = (False, False, False)
             if flag_cenpivot: curloc = c3d
-            if flag_force: bpy.ops.object.transform_apply(rotation=True,scale=True)
+            if flag_force: bpy.ops.object.transform_apply(location=False,rotation=True,scale=True)
             bpy.context.scene.cursor_location = curloc
             NP020PS.axis = axis
 
@@ -862,8 +862,8 @@ class NPPSRestoreContext(bpy.types.Operator):
         selob = NP020PS.selob
         bpy.ops.object.select_all(action = 'DESELECT')
         for ob in selob:
-            ob.select = True
-            bpy.context.scene.objects.active = ob
+            ob.select_set(True)
+            bpy.context.view_layer.objects.active = ob
         bpy.context.tool_settings.use_snap = NP020PS.use_snap
         bpy.context.tool_settings.snap_element = NP020PS.snap_element
         bpy.context.tool_settings.snap_target = NP020PS.snap_target
@@ -872,7 +872,7 @@ class NPPSRestoreContext(bpy.types.Operator):
         if NP020PS.trans_custom: bpy.ops.transform.delete_orientation()
         bpy.context.scene.cursor_location = NP020PS.curloc
         if NP020PS.acob is not None:
-            bpy.context.scene.objects.active = NP020PS.acob
+            bpy.context.view_layer.objects.active = NP020PS.acob
             bpy.ops.object.mode_set(mode = NP020PS.edit_mode)
         NP020PS.flag = 'DISPLAY'
         return {'FINISHED'}

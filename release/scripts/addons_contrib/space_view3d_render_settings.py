@@ -20,7 +20,7 @@ bl_info = {
     "name": "Render Settings",
     "author": "meta-androcto, Saidenka",
     "version": (0, 1, 1),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "Render Menu, UV Editor Render Tab",
     "description": "Render Settings BI & Cycles",
     "warning": "",
@@ -40,13 +40,13 @@ class RenderBackground(bpy.types.Operator):
     bl_description = "Render From The Commandline"
     bl_options = {'REGISTER'}
 
-    is_quit = bpy.props.BoolProperty(name="Quit Blender", default=True)
+    is_quit: bpy.props.BoolProperty(name="Quit Blender", default=True)
     items = [
         ('IMAGE', "Image", "", 1),
         ('ANIME', "Animation", "", 2),
     ]
-    mode = bpy.props.EnumProperty(items=items, name="Mode", default='IMAGE')
-    thread = bpy.props.IntProperty(name="Threads", default=2, min=1, max=16, soft_min=1, soft_max=16)
+    mode: bpy.props.EnumProperty(items=items, name="Mode", default='IMAGE')
+    thread: bpy.props.IntProperty(name="Threads", default=2, min=1, max=16, soft_min=1, soft_max=16)
 
     def execute(self, context):
         blend_path = bpy.data.filepath
@@ -71,7 +71,7 @@ class SetRenderResolutionPercentage(bpy.types.Operator):
     bl_description = "Percent of the size of the resolution"
     bl_options = {'REGISTER', 'UNDO'}
 
-    size = bpy.props.IntProperty(name="Rendering size (%)", default=100, min=1, max=1000, soft_min=1, soft_max=1000, step=1)
+    size: bpy.props.IntProperty(name="Rendering size (%)", default=100, min=1, max=1000, soft_min=1, soft_max=1000, step=1)
 
     def execute(self, context):
         context.scene.render.resolution_percentage = self.size
@@ -84,7 +84,7 @@ class ToggleThreadsMode(bpy.types.Operator):
     bl_description = "I will switch the number of threads in the CPU to be used for rendering"
     bl_options = {'REGISTER', 'UNDO'}
 
-    threads = bpy.props.IntProperty(name="Number of threads", default=1, min=1, max=16, soft_min=1, soft_max=16, step=1)
+    threads: bpy.props.IntProperty(name="Number of threads", default=1, min=1, max=16, soft_min=1, soft_max=16, step=1)
 
     def execute(self, context):
         if (context.scene.render.threads_mode == 'AUTO'):
@@ -112,8 +112,8 @@ class SetAllSubsurfRenderLevels(bpy.types.Operator):
         ('ABSOLUTE', "Absolute value", "", 1),
         ('RELATIVE', "Relative value", "", 2),
     ]
-    mode = bpy.props.EnumProperty(items=items, name="Mode")
-    levels = bpy.props.IntProperty(name="Level", default=2, min=-20, max=20, soft_min=-20, soft_max=20, step=1)
+    mode: bpy.props.EnumProperty(items=items, name="Mode")
+    levels: bpy.props.IntProperty(name="Level", default=2, min=-20, max=20, soft_min=-20, soft_max=20, step=1)
 
     def execute(self, context):
         for obj in bpy.data.objects:
@@ -139,7 +139,7 @@ class SyncAllSubsurfRenderLevels(bpy.types.Operator):
     bl_description = "sync_all_subsurf_render_levels"
     bl_options = {'REGISTER', 'UNDO'}
 
-    level_offset = bpy.props.IntProperty(name="Sync Levels", default=0, min=-20, max=20, soft_min=-20, soft_max=20, step=1)
+    level_offset: bpy.props.IntProperty(name="Sync Levels", default=0, min=-20, max=20, soft_min=-20, soft_max=20, step=1)
 
     def execute(self, context):
         for obj in bpy.data.objects:

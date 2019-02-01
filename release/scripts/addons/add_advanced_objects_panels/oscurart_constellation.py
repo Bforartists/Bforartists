@@ -61,7 +61,7 @@ def OscConstellation(limit):
 
     mesh = bpy.data.meshes.new("rsdata")
     obj = bpy.data.objects.new("rsObject", mesh)
-    bpy.context.scene.objects.link(obj)
+    bpy.context.collection.objects.link(obj)
     mesh.from_pydata(vertlist, edgelist, [])
 
 
@@ -73,7 +73,7 @@ class Oscurart_Constellation(Operator):
                       "Needs an existing Active Mesh Object")
     bl_options = {'REGISTER', 'UNDO'}
 
-    limit = FloatProperty(
+    limit: FloatProperty(
             name="Threshold",
             description="Edges will be created only if the distance\n"
                         "between vertices is smaller than this value",
@@ -125,7 +125,7 @@ class Constellation_Operator_Panel(Panel):
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Constellation:")
+        col.label(text="Constellation:")
         col.operator("mesh.constellation", text="Cross Section")
         col.prop(adv_obj, "constellation_limit")
 

@@ -107,31 +107,31 @@ class TextCounter_Props(PropertyGroup):
     def val_up(self, context):
         textcounter_update_val(context.object, context.scene)
 
-    ifAnimated = BoolProperty(
+    ifAnimated: BoolProperty(
         name='Counter Active',
         default=False,
         update=val_up
         )
-    counter = FloatProperty(
+    counter: FloatProperty(
         name='Counter',
         update=val_up
         )
-    padding = IntProperty(
+    padding: IntProperty(
         name='Padding',
         update=val_up,
         min=1
         )
-    ifDecimal = BoolProperty(
+    ifDecimal: BoolProperty(
         name='Decimal',
         default=False,
         update=val_up
         )
-    decimals = IntProperty(
+    decimals: IntProperty(
         name='Decimal',
         update=val_up,
         min=0
         )
-    typeEnum = EnumProperty(
+    typeEnum: EnumProperty(
         items=[
             ('ANIMATED', 'Animated', 'Counter values from f-curves'),
             ('DYNAMIC', 'Dynamic', 'Counter values from expression')
@@ -140,7 +140,7 @@ class TextCounter_Props(PropertyGroup):
         update=val_up,
         default='ANIMATED'
         )
-    formattingEnum = EnumProperty(
+    formattingEnum: EnumProperty(
         items=[
             ('NUMBER', 'Number', 'Counter values as numbers'),
             ('TIME', 'Time', 'Counter values as time')
@@ -150,55 +150,55 @@ class TextCounter_Props(PropertyGroup):
         default='NUMBER'
         )
     # set to 0 as eval will crash in it's default state
-    expr = StringProperty(
+    expr: StringProperty(
         name='Expression',
         description="Enter a number or a numeric expression",
         update=val_up,
         default=default_string
         )
-    prefix = StringProperty(
+    prefix: StringProperty(
         name='Prefix',
         update=val_up,
         default=''
         )
-    sufix = StringProperty(
+    sufix: StringProperty(
         name='Sufix',
         update=val_up,
         default=''
         )
-    ifTextFile = BoolProperty(
+    ifTextFile: BoolProperty(
         name='Override with Text File',
         default=False,
         update=val_up
         )
-    textFile = StringProperty(
+    textFile: StringProperty(
         name='Text File',
         update=val_up,
         default=''
         )
-    ifTextFormatting = BoolProperty(
+    ifTextFormatting: BoolProperty(
         name='Numerical Formatting',
         default=False,
         update=val_up
         )
-    timeSeparators = IntProperty(
+    timeSeparators: IntProperty(
         name='Separators',
         update=val_up,
         min=0, max=3
         )
-    timeModulo = IntProperty(
+    timeModulo: IntProperty(
         name='Last Separator Modulo',
         update=val_up,
         min=1,
         default=24
         )
-    timeLeadZeroes = IntProperty(
+    timeLeadZeroes: IntProperty(
         name='Leading Zeroes',
         update=val_up,
         min=1,
         default=2
         )
-    timeTrailZeroes = IntProperty(
+    timeTrailZeroes: IntProperty(
         name='Trailing Zeroes',
         update=val_up,
         min=1,
@@ -218,7 +218,7 @@ class TextCounter_Props(PropertyGroup):
             debug_print_vars('Expr Error: ' + str(e.args))
             return '0'
 
-    dynamicCounter = StringProperty(
+    dynamicCounter: StringProperty(
         name='Dynamic Counter',
         get=dyn_get,
         default=''
@@ -245,7 +245,7 @@ class TextCounter_Props(PropertyGroup):
         counter += int(separators[-1])
         self.counter = float(counter)
 
-    formattedCounter = StringProperty(
+    formattedCounter: StringProperty(
         name='Formatted Counter',
         get=form_get,
         set=form_set,

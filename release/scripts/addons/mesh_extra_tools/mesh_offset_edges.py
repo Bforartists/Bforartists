@@ -509,7 +509,7 @@ class OffsetEdges(Operator):
                       "Operates only on separate Edge loops selections")
     bl_options = {'REGISTER', 'UNDO'}
 
-    geometry_mode = EnumProperty(
+    geometry_mode: EnumProperty(
             items=[('offset', "Offset", "Offset edges"),
                    ('extrude', "Extrude", "Extrude edges"),
                    ('move', "Move", "Move selected edges")],
@@ -517,38 +517,38 @@ class OffsetEdges(Operator):
             default='offset',
             update=use_cashes
             )
-    width = FloatProperty(
+    width: FloatProperty(
             name="Width",
             default=.2,
             precision=4, step=1,
             update=use_cashes
             )
-    flip_width = BoolProperty(
+    flip_width: BoolProperty(
             name="Flip Width",
             default=False,
             description="Flip width direction",
             update=use_cashes
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name="Depth",
             default=.0,
             precision=4, step=1,
             update=use_cashes
             )
-    flip_depth = BoolProperty(
+    flip_depth: BoolProperty(
             name="Flip Depth",
             default=False,
             description="Flip depth direction",
             update=use_cashes
             )
-    depth_mode = EnumProperty(
+    depth_mode: EnumProperty(
             items=[('angle', "Angle", "Angle"),
                    ('depth', "Depth", "Depth")],
             name="Depth mode",
             default='angle',
             update=use_cashes
             )
-    angle = FloatProperty(
+    angle: FloatProperty(
             name="Angle", default=0,
             precision=3, step=.1,
             min=-2 * pi, max=2 * pi,
@@ -556,33 +556,33 @@ class OffsetEdges(Operator):
             description="Angle",
             update=use_cashes
             )
-    flip_angle = BoolProperty(
+    flip_angle: BoolProperty(
             name="Flip Angle",
             default=False,
             description="Flip Angle",
             update=use_cashes
             )
-    follow_face = BoolProperty(
+    follow_face: BoolProperty(
             name="Follow Face",
             default=False,
             description="Offset along faces around"
             )
-    mirror_modifier = BoolProperty(
+    mirror_modifier: BoolProperty(
             name="Mirror Modifier",
             default=False,
             description="Take into account of Mirror modifier"
             )
-    edge_rail = BoolProperty(
+    edge_rail: BoolProperty(
             name="Edge Rail",
             default=False,
             description="Align vertices along inner edges"
             )
-    edge_rail_only_end = BoolProperty(
+    edge_rail_only_end: BoolProperty(
             name="Edge Rail Only End",
             default=False,
             description="Apply edge rail to end verts only"
             )
-    threshold = FloatProperty(
+    threshold: FloatProperty(
             name="Flat Face Threshold",
             default=radians(0.05), precision=5,
             step=1.0e-4, subtype='ANGLE',
@@ -590,12 +590,12 @@ class OffsetEdges(Operator):
                         "below this value, those faces are regarded as flat",
             options={'HIDDEN'}
             )
-    caches_valid = BoolProperty(
+    caches_valid: BoolProperty(
             name="Caches Valid",
             default=False,
             options={'HIDDEN'}
             )
-    angle_presets = EnumProperty(
+    angle_presets: EnumProperty(
             items=[('0°', "0°", "0°"),
                    ('15°', "15°", "15°"),
                    ('30°', "30°", "30°"),

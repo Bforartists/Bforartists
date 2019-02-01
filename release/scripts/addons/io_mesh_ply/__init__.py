@@ -29,7 +29,8 @@ bl_info = {
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Import-Export/Stanford_PLY",
     "support": 'OFFICIAL',
-    "category": "Import-Export"}
+    "category": "Import-Export",
+}
 
 # Copyright (C) 2004, 2005: Bruce Merry, bmerry@cs.uct.ac.za
 # Contributors: Bruce Merry, Campbell Barton
@@ -47,18 +48,18 @@ if "bpy" in locals():
 import os
 import bpy
 from bpy.props import (
-        CollectionProperty,
-        StringProperty,
-        BoolProperty,
-        EnumProperty,
-        FloatProperty,
-        )
+    CollectionProperty,
+    StringProperty,
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+)
 from bpy_extras.io_utils import (
-        ImportHelper,
-        ExportHelper,
-        axis_conversion,
-        orientation_helper
-        )
+    ImportHelper,
+    ExportHelper,
+    axis_conversion,
+    orientation_helper
+)
 
 
 class ImportPLY(bpy.types.Operator, ImportHelper):
@@ -67,10 +68,13 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
     bl_label = "Import PLY"
     bl_options = {'UNDO'}
 
-    files: CollectionProperty(name="File Path",
-                          description="File path used for importing "
-                                      "the PLY file",
-                          type=bpy.types.OperatorFileListElement)
+    files: CollectionProperty(
+        name="File Path",
+        description=(
+            "File path used for importing "
+            "the PLY file"
+        ),
+        type=bpy.types.OperatorFileListElement)
 
     directory: StringProperty()
 
@@ -102,34 +106,36 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
     filter_glob: StringProperty(default="*.ply", options={'HIDDEN'})
 
     use_mesh_modifiers: BoolProperty(
-            name="Apply Modifiers",
-            description="Apply Modifiers to the exported mesh",
-            default=True,
-            )
+        name="Apply Modifiers",
+        description="Apply Modifiers to the exported mesh",
+        default=True,
+    )
     use_normals: BoolProperty(
-            name="Normals",
-            description="Export Normals for smooth and "
-                        "hard shaded faces "
-                        "(hard shaded faces will be exported "
-                        "as individual faces)",
-            default=True,
-            )
+        name="Normals",
+        description=(
+            "Export Normals for smooth and "
+            "hard shaded faces "
+            "(hard shaded faces will be exported "
+            "as individual faces)"
+        ),
+        default=True,
+    )
     use_uv_coords: BoolProperty(
-            name="UVs",
-            description="Export the active UV layer",
-            default=True,
-            )
+        name="UVs",
+        description="Export the active UV layer",
+        default=True,
+    )
     use_colors: BoolProperty(
-            name="Vertex Colors",
-            description="Export the active vertex color layer",
-            default=True,
-            )
+        name="Vertex Colors",
+        description="Export the active vertex color layer",
+        default=True,
+    )
 
     global_scale: FloatProperty(
-            name="Scale",
-            min=0.01, max=1000.0,
-            default=1.0,
-            )
+        name="Scale",
+        min=0.01, max=1000.0,
+        default=1.0,
+    )
 
     @classmethod
     def poll(cls, context):
@@ -140,15 +146,19 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
 
         from mathutils import Matrix
 
-        keywords = self.as_keywords(ignore=("axis_forward",
-                                            "axis_up",
-                                            "global_scale",
-                                            "check_existing",
-                                            "filter_glob",
-                                            ))
-        global_matrix = axis_conversion(to_forward=self.axis_forward,
-                                        to_up=self.axis_up,
-                                        ).to_4x4() @ Matrix.Scale(self.global_scale, 4)
+        keywords = self.as_keywords(
+            ignore=(
+                "axis_forward",
+                "axis_up",
+                "global_scale",
+                "check_existing",
+                "filter_glob",
+            )
+        )
+        global_matrix = axis_conversion(
+            to_forward=self.axis_forward,
+            to_up=self.axis_up,
+        ).to_4x4() @ Matrix.Scale(self.global_scale, 4)
         keywords["global_matrix"] = global_matrix
 
         filepath = self.filepath
@@ -182,7 +192,7 @@ def menu_func_export(self, context):
 classes = (
     ImportPLY,
     ExportPLY,
-    )
+)
 
 
 def register():

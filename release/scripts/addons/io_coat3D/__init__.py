@@ -88,12 +88,7 @@ def set_exchange_folder():
     Blender_export = ""
 
     if(platform == 'win32'):
-        exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV48' + os.sep +'Exchange'
-        if not(os.path.isdir(exchange)):
-            exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV4' + os.sep +'Exchange'
-        if not (os.path.isdir(exchange)):
-            exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV3' + os.sep + 'Exchange'
-
+        exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + 'Applinks' + os.sep + '3D-Coat' + os.sep +'Exchange'
     else:
         exchange = os.path.expanduser("~") + os.sep + '3D-CoatV4' + os.sep + 'Exchange'
         if not(os.path.isdir(exchange)):
@@ -456,7 +451,6 @@ class SCENE_OT_export(bpy.types.Operator):
                         uvtiles_index.append([poly.material_index,objekti.data.uv_layers.active.data[loop_index].uv[0]])
                     if(len(final_material_indexs) == len(objekti.material_slots)):
                         break
-                print(final_material_indexs)
 
                 material_index = 0
                 if (len(final_material_indexs) != len(objekti.material_slots)):
@@ -467,7 +461,6 @@ class SCENE_OT_export(bpy.types.Operator):
                             mod_mat_list[objekti.name].append([material_index, temp_mat])
                         material_index = material_index + 1
 
-        print('uvtiles_index', uvtiles_index)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
         if(len(bpy.context.selected_objects) > 1 and coat3D.type != 'vox'):
             bpy.ops.object.transforms_to_deltas(mode='ROT')
@@ -507,13 +500,11 @@ class SCENE_OT_export(bpy.types.Operator):
                                 if(node.name.startswith('3DC_') == True):
                                     material.material.node_tree.nodes.remove(node)
 
-            print('halloo', mod_mat_list)
+
             for ind, mat_list in enumerate(mod_mat_list):
-                print('terve', mat_list)
                 if(mat_list == objekti.name):
                     for ind, mat in enumerate(mod_mat_list[mat_list]):
                         objekti.material_slots[mod_mat_list[mat_list][ind][0]].material = mod_mat_list[mat_list][ind][1]
-                        print('hipphhhuurrei', mod_mat_list[mat_list][ind][0], mod_mat_list[mat_list][ind][1])
 
         return {'FINISHED'}
 
@@ -561,7 +552,6 @@ class SCENE_OT_import(bpy.types.Operator):
 
 
         kokeilu = coat3D.exchangedir
-        print('kokeilu', kokeilu)
         Blender_folder = ("%s%sBlender"%(kokeilu,os.sep))
         Blender_export = Blender_folder
         path3b_now = coat3D.exchangedir
@@ -569,9 +559,8 @@ class SCENE_OT_import(bpy.types.Operator):
         Blender_export += ('%sexport.txt'%(os.sep))
         new_applink_address = 'False'
         new_object = False
-        print('Blender_export', Blender_export)
+        print('mitas: ', Blender_export)
         if(os.path.isfile(Blender_export)):
-            print('Blender_export', Blender_export)
             obj_pathh = open(Blender_export)
             new_object = True
             for line in obj_pathh:
@@ -591,7 +580,6 @@ class SCENE_OT_import(bpy.types.Operator):
             os.remove(exportfile)
 
         if(new_object == False):
-            print('tanne pitas tulla')
 
             '''
             #Blender -> 3DC -> Blender workflow
@@ -844,7 +832,7 @@ class SCENE_OT_import(bpy.types.Operator):
             old_materials = bpy.data.materials.keys()
             old_objects = bpy.data.objects.keys()
 
-            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 0.001, use_manual_orientation=True, axis_forward='-Z', axis_up='Y')
+            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 1, use_manual_orientation=True, axis_forward='-Z', axis_up='Y', use_custom_normals=False)
 
             new_materials = bpy.data.materials.keys()
             new_objects = bpy.data.objects.keys()
@@ -862,6 +850,7 @@ class SCENE_OT_import(bpy.types.Operator):
                 bpy.data.objects[c_index].material_slots[0].material = bpy.data.materials[diff_mat[laskuri]]
                 laskuri += 1
 
+
             bpy.ops.object.select_all(action='DESELECT')
             for new_obj in bpy.context.collection.objects:
 
@@ -869,7 +858,7 @@ class SCENE_OT_import(bpy.types.Operator):
                     new_obj.select_set(True)
                     #bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
                     #new_obj.rotation_euler = (0, 0, 0)
-                    new_obj.scale = (0.03, 0.03, 0.03)
+                    #new_obj.scale = (0.01, 0.01, 0.01)
                     new_obj.coat3D.applink_firsttime = False
                     new_obj.select_set(False)
                     new_obj.coat3D.applink_address = new_applink_address
@@ -997,8 +986,6 @@ class SCENE_PT_Settings_Update(ObjectButtonsPanel, bpy.types.Panel):
         col.prop(coat3D, "createnodes", text="Create Extra Nodes")
         col = flow.column()
         col.prop(coat3D, "importtextures", text="Update Textures")
-        col = flow.column()
-        col.prop(coat3D, "creategroup", text="Group Nodes")
         col = flow.column()
         col.prop(coat3D, "exportmod", text="Export with modifiers")
 
@@ -1142,10 +1129,6 @@ class SceneCoat3D(PropertyGroup):
         name="FilePath",
         subtype="FILE_PATH",
     )
-    cursor_loc: FloatVectorProperty(
-        name="Cursor_loc",
-        description="location"
-    )
     exchangedir: StringProperty(
         name="FilePath",
         subtype="DIR_PATH"
@@ -1153,14 +1136,6 @@ class SceneCoat3D(PropertyGroup):
     exchangefolder: StringProperty(
         name="FilePath",
         subtype="DIR_PATH"
-    )
-    wasactive: StringProperty(
-        name="Pass active object",
-    )
-    import_box: BoolProperty(
-        name="Import window",
-        description="Allows to skip import dialog",
-        default=True
     )
     bring_retopo: BoolProperty(
         name="Import window",
@@ -1181,46 +1156,6 @@ class SceneCoat3D(PropertyGroup):
         description="Alert if Exchange folder is not found",
         default=True
     )
-    export_box: BoolProperty(
-        name="Export window",
-        description="Allows to skip export dialog",
-        default=True
-    )
-    export_color: BoolProperty(
-        name="Export color",
-        description="Export color texture",
-        default=True
-    )
-    export_spec: BoolProperty(
-        name="Export specular",
-        description="Export specular texture",
-        default=True
-    )
-    export_normal: BoolProperty(
-        name="Export Normal",
-        description="Export normal texture",
-        default=True
-    )
-    export_disp: BoolProperty(
-        name="Export Displacement",
-        description="Export displacement texture",
-        default=True
-    )
-    export_position: BoolProperty(
-        name="Export Source Position",
-        description="Export source position",
-        default=True
-    )
-    export_zero_layer: BoolProperty(
-        name="Export from Layer 0",
-        description="Export mesh from Layer 0",
-        default=True
-    )
-    export_coarse: BoolProperty(
-        name="Export Coarse",
-        description="Export Coarse",
-        default=True
-    )
     exportfile: BoolProperty(
         name="No Import File",
         description="Add Modifiers and export",
@@ -1236,11 +1171,6 @@ class SceneCoat3D(PropertyGroup):
         description="Export modifiers",
         default=False
     )
-    export_pos: BoolProperty(
-        name="Remember Position",
-        description="Remember position",
-        default=True
-    )
     importtextures: BoolProperty(
         name="Bring Textures",
         description="Import Textures",
@@ -1251,19 +1181,9 @@ class SceneCoat3D(PropertyGroup):
         description="Import Textures",
         default=True
     )
-    creategroup: BoolProperty(
-        name="Bring Textures",
-        description="Import Textures",
-        default=True
-    )
     importlevel: BoolProperty(
         name="Multires. Level",
         description="Bring Specific Multires Level",
-        default=False
-    )
-    exportover: BoolProperty(
-        name="Export Obj",
-        description="Import Textures",
         default=False
     )
     importmesh: BoolProperty(

@@ -254,9 +254,9 @@ class CopyPropertyChart(Operator):
     bl_idname = "wm.chart_copy"
     bl_label = "Copy properties from active to selected"
 
-    data_path_active = StringProperty()
-    data_path_selected = StringProperty()
-    data_path = StringProperty()
+    data_path_active: StringProperty()
+    data_path_selected: StringProperty()
+    data_path: StringProperty()
 
     def execute(self, context):
         # so attributes are found for '_property_chart_data_get()'

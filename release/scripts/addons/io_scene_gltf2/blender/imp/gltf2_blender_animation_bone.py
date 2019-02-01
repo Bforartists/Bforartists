@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import bpy
 from mathutils import Matrix
 
@@ -34,43 +35,51 @@ class BlenderBoneAnim():
         elif interpolation == "CUBICSPLINE":
             kf.interpolation = 'BEZIER'
         else:
-            kf.interpolation = 'BEZIER'
+            kf.interpolation = 'LINEAR'
 
     @staticmethod
     def parse_translation_channel(gltf, node, obj, bone, channel, animation):
         """Manage Location animation."""
-        fps = bpy.context.scene.render.fps
-        blender_path = "location"
+        blender_path = "pose.bones[" + json.dumps(bone.name) + "].location"
+        group_name = "location"
 
         keys = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].input)
         values = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].output)
         inv_bind_matrix = node.blender_bone_matrix.to_quaternion().to_matrix().to_4x4().inverted() \
             @ Matrix.Translation(node.blender_bone_matrix.to_translation()).inverted()
 
-        for idx, key in enumerate(keys):
-            if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
-                # TODO manage tangent?
-                translation_keyframe = loc_gltf_to_blender(values[idx * 3 + 1])
-            else:
-                translation_keyframe = loc_gltf_to_blender(values[idx])
-            if not node.parent:
+        if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
+            # TODO manage tangent?
+            translation_keyframes = (
+                loc_gltf_to_blender(values[idx * 3 + 1])
+                for idx in range(0, len(keys))
+            )
+        else:
+            translation_keyframes = (loc_gltf_to_blender(vals) for vals in values)
+        if node.parent is None:
+            parent_mat = Matrix()
+        else:
+            if not gltf.data.nodes[node.parent].is_joint:
                 parent_mat = Matrix()
             else:
-                if not gltf.data.nodes[node.parent].is_joint:
-                    parent_mat = Matrix()
-                else:
-                    parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
+                parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
 
-            # Pose is in object (armature) space and it's value if the offset from the bind pose
-            # (which is also in object space)
-            # Scale is not taken into account
-            final_trans = (parent_mat @ Matrix.Translation(translation_keyframe)).to_translation()
-            bone.location = inv_bind_matrix @ final_trans
-            bone.keyframe_insert(blender_path, frame=key[0] * fps, group="location")
+        # Pose is in object (armature) space and it's value if the offset from the bind pose
+        # (which is also in object space)
+        # Scale is not taken into account
+        final_translations = [
+            inv_bind_matrix @ (parent_mat @ Matrix.Translation(translation_keyframe)).to_translation()
+            for translation_keyframe in translation_keyframes
+        ]
 
-        for fcurve in [curve for curve in obj.animation_data.action.fcurves if curve.group.name == "location"]:
-            for kf in fcurve.keyframe_points:
-                BlenderBoneAnim.set_interpolation(animation.samplers[channel.sampler].interpolation, kf)
+        BlenderBoneAnim.fill_fcurves(
+            obj.animation_data.action,
+            keys,
+            final_translations,
+            group_name,
+            blender_path,
+            animation.samplers[channel.sampler].interpolation
+        )
 
     @staticmethod
     def parse_rotation_channel(gltf, node, obj, bone, channel, animation):
@@ -82,73 +91,120 @@ class BlenderBoneAnim():
         # Converting to euler and then back to quaternion is a dirty fix preventing this issue in animation, until a
         # better solution is found
         # This fix is skipped when parent matrix is identity
-        fps = bpy.context.scene.render.fps
-        blender_path = "rotation_quaternion"
+        blender_path = "pose.bones[" + json.dumps(bone.name) + "].rotation_quaternion"
+        group_name = "rotation"
 
         keys = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].input)
         values = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].output)
         bind_rotation = node.blender_bone_matrix.to_quaternion()
 
-        for idx, key in enumerate(keys):
-            if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
-                # TODO manage tangent?
-                quat_keyframe = quaternion_gltf_to_blender(values[idx * 3 + 1])
+        if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
+            # TODO manage tangent?
+            quat_keyframes = (
+                quaternion_gltf_to_blender(values[idx * 3 + 1])
+                for idx in range(0, len(keys))
+            )
+        else:
+            quat_keyframes = (quaternion_gltf_to_blender(vals) for vals in values)
+        if not node.parent:
+            final_rots = [
+                bind_rotation.inverted() @ quat_keyframe
+                for quat_keyframe in quat_keyframes
+            ]
+        else:
+            if not gltf.data.nodes[node.parent].is_joint:
+                parent_mat = Matrix()
             else:
-                quat_keyframe = quaternion_gltf_to_blender(values[idx])
-            if not node.parent:
-                bone.rotation_quaternion = bind_rotation.inverted() @ quat_keyframe
+                parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
+
+            if parent_mat != parent_mat.inverted():
+                final_rots = [
+                    bind_rotation.rotation_difference(
+                        (parent_mat @ quat_keyframe.to_matrix().to_4x4()).to_quaternion()
+                    ).to_euler().to_quaternion()
+                    for quat_keyframe in quat_keyframes
+                ]
             else:
-                if not gltf.data.nodes[node.parent].is_joint:
-                    parent_mat = Matrix()
-                else:
-                    parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
+                final_rots = [
+                    bind_rotation.rotation_difference(quat_keyframe).to_euler().to_quaternion()
+                    for quat_keyframe in quat_keyframes
+                ]
 
-                if parent_mat != parent_mat.inverted():
-                    final_rot = (parent_mat @ quat_keyframe.to_matrix().to_4x4()).to_quaternion()
-                    bone.rotation_quaternion = bind_rotation.rotation_difference(final_rot).to_euler().to_quaternion()
-                else:
-                    bone.rotation_quaternion = \
-                        bind_rotation.rotation_difference(quat_keyframe).to_euler().to_quaternion()
-
-            bone.keyframe_insert(blender_path, frame=key[0] * fps, group='rotation')
-
-        for fcurve in [curve for curve in obj.animation_data.action.fcurves if curve.group.name == "rotation"]:
-            for kf in fcurve.keyframe_points:
-                BlenderBoneAnim.set_interpolation(animation.samplers[channel.sampler].interpolation, kf)
+        BlenderBoneAnim.fill_fcurves(
+            obj.animation_data.action,
+            keys,
+            final_rots,
+            group_name,
+            blender_path,
+            animation.samplers[channel.sampler].interpolation
+        )
 
     @staticmethod
     def parse_scale_channel(gltf, node, obj, bone, channel, animation):
         """Manage scaling animation."""
-        fps = bpy.context.scene.render.fps
-        blender_path = "scale"
+        blender_path = "pose.bones[" + json.dumps(bone.name) + "].scale"
+        group_name = "scale"
 
         keys = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].input)
         values = BinaryData.get_data_from_accessor(gltf, animation.samplers[channel.sampler].output)
         bind_scale = scale_to_matrix(node.blender_bone_matrix.to_scale())
 
-        for idx, key in enumerate(keys):
-            if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
-                # TODO manage tangent?
-                scale_mat = scale_to_matrix(loc_gltf_to_blender(values[idx * 3 + 1]))
+        if animation.samplers[channel.sampler].interpolation == "CUBICSPLINE":
+            # TODO manage tangent?
+            scale_mats = (
+                scale_to_matrix(loc_gltf_to_blender(values[idx * 3 + 1]))
+                for idx in range(0, len(keys))
+            )
+        else:
+            scale_mats = (scale_to_matrix(loc_gltf_to_blender(vals)) for vals in values)
+        if not node.parent:
+            final_scales = [
+                (bind_scale.inverted() @ scale_mat).to_scale()
+                for scale_mat in scale_mats
+            ]
+        else:
+            if not gltf.data.nodes[node.parent].is_joint:
+                parent_mat = Matrix()
             else:
-                scale_mat = scale_to_matrix(loc_gltf_to_blender(values[idx]))
-            if not node.parent:
-                bone.scale = (bind_scale.inverted() @ scale_mat).to_scale()
-            else:
-                if not gltf.data.nodes[node.parent].is_joint:
-                    parent_mat = Matrix()
-                else:
-                    parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
+                parent_mat = gltf.data.nodes[node.parent].blender_bone_matrix
 
-                bone.scale = (
-                    bind_scale.inverted() @ scale_to_matrix(parent_mat.to_scale()) @ scale_mat
-                ).to_scale()
+            final_scales = [
+                (bind_scale.inverted() @ scale_to_matrix(parent_mat.to_scale()) @ scale_mat).to_scale()
+                for scale_mat in scale_mats
+            ]
 
-            bone.keyframe_insert(blender_path, frame=key[0] * fps, group='scale')
+        BlenderBoneAnim.fill_fcurves(
+            obj.animation_data.action,
+            keys,
+            final_scales,
+            group_name,
+            blender_path,
+            animation.samplers[channel.sampler].interpolation
+        )
 
-        for fcurve in [curve for curve in obj.animation_data.action.fcurves if curve.group.name == "scale"]:
+    @staticmethod
+    def fill_fcurves(action, keys, values, group_name, blender_path, interpolation):
+        """Create FCurves from the keyframe-value pairs (one per component)."""
+        fps = bpy.context.scene.render.fps
+
+        coords = [0] * (2 * len(keys))
+        coords[::2] = (key[0] * fps for key in keys)
+
+        if group_name not in action.groups:
+            action.groups.new(group_name)
+        group = action.groups[group_name]
+
+        for i in range(0, len(values[0])):
+            fcurve = action.fcurves.new(data_path=blender_path, index=i)
+            fcurve.group = group
+
+            fcurve.keyframe_points.add(len(keys))
+            coords[1::2] = (vals[i] for vals in values)
+            fcurve.keyframe_points.foreach_set('co', coords)
+
+            # Setting interpolation
             for kf in fcurve.keyframe_points:
-                BlenderBoneAnim.set_interpolation(animation.samplers[channel.sampler].interpolation, kf)
+                BlenderBoneAnim.set_interpolation(interpolation, kf)
 
     @staticmethod
     def anim(gltf, anim_idx, node_idx):
@@ -169,13 +225,22 @@ class BlenderBoneAnim():
         if name not in bpy.data.actions:
             action = bpy.data.actions.new(name)
         else:
-            action = bpy.data.actions[name]
-            # Check if this action has some users.
-            # If no user (only 1 indeed), that means that this action must be deleted
-            # (is an action from a deleted object)
-            if action.users == 1:
-                bpy.data.actions.remove(action)
-                action = bpy.data.actions.new(name)
+            if name in gltf.animation_managed:
+                # multiple animation with same name in glTF file
+                # Create a new action with new name if needed
+                if name in gltf.current_animation_names.keys():
+                    action = bpy.data.actions[gltf.current_animation_names[name]]
+                    name = gltf.current_animation_names[name]
+                else:
+                    action = bpy.data.actions.new(name)
+            else:
+                action = bpy.data.actions[name]
+                # Check if this action has some users.
+                # If no user (only 1 indeed), that means that this action must be deleted
+                # (is an action from a deleted object)
+                if action.users == 1:
+                    bpy.data.actions.remove(action)
+                    action = bpy.data.actions.new(name)
         if not obj.animation_data:
             obj.animation_data_create()
         obj.animation_data.action = bpy.data.actions[action.name]
@@ -191,4 +256,7 @@ class BlenderBoneAnim():
 
             elif channel.target.path == "scale":
                 BlenderBoneAnim.parse_scale_channel(gltf, node, obj, bone, channel, animation)
+
+        if action.name not in gltf.current_animation_names.keys():
+            gltf.current_animation_names[name] = action.name
 

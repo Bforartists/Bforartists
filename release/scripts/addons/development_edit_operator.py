@@ -105,7 +105,7 @@ class EditOperator(Operator):
 
     items = get_ops()
 
-    op = EnumProperty(
+    op: EnumProperty(
             name="Op",
             description="",
             items=items

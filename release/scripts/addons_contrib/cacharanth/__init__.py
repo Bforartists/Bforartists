@@ -22,7 +22,7 @@ bl_info = {
     "name": "Cacharanth",
     "author": "Pablo Vazquez, Lukas Toenne",
     "version": (0, 2),
-    "blender": (2, 7, 3),
+    "blender": (2, 73, 0),
     "location": "View3D > Cacharanth (Tab)",
     "description": "Import and Export Caches",
     "warning": "",

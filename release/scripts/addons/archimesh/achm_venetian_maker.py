@@ -34,11 +34,11 @@ from .achm_tools import *
 # ------------------------------------------------------------------
 # Define operator class to create object
 # ------------------------------------------------------------------
-class AchmVenetian(Operator):
+class ARCHIMESH_OT_Venetian(Operator):
     bl_idname = "mesh.archimesh_venetian"
     bl_label = "Venetian blind"
     bl_description = "Venetian"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # -----------------------------------------------------
@@ -48,7 +48,7 @@ class AchmVenetian(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     # -----------------------------------------------------
     # Execute
@@ -71,21 +71,21 @@ class AchmVenetian(Operator):
 def create_object(self, context):
     # deselect all objects
     for o in bpy.data.objects:
-        o.select = False
+        o.select_set(False)
 
     # we create main object and mesh
     mainmesh = bpy.data.meshes.new("VenetianFrane")
     mainobject = bpy.data.objects.new("VenetianFrame", mainmesh)
     mainobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(mainobject)
+    bpy.context.collection.objects.link(mainobject)
     mainobject.VenetianObjectGenerator.add()
 
     # we shape the main object and create other objects as children
     shape_mesh_and_create_children(mainobject, mainmesh)
 
     # we select, and activate, main object
-    mainobject.select = True
-    bpy.context.scene.objects.active = mainobject
+    mainobject.select_set(True)
+    bpy.context.view_layer.objects.active = mainobject
 
 
 # ------------------------------------------------------------------------------
@@ -100,12 +100,12 @@ def update_object(self, context):
     oldmesh = o.data
     oldname = o.data.name
     # Now we deselect that object to not delete it.
-    o.select = False
+    o.select_set(False)
     # and we create a new mesh
     tmp_mesh = bpy.data.meshes.new("temp")
     # deselect all objects
     for obj in bpy.data.objects:
-        obj.select = False
+        obj.select_set(False)
 
     # -----------------------
     # remove all children
@@ -123,8 +123,8 @@ def update_object(self, context):
     bpy.data.meshes.remove(oldmesh)
     tmp_mesh.name = oldname
     # and select, and activate, the main object
-    o.select = True
-    bpy.context.scene.objects.active = o
+    o.select_set(True)
+    bpy.context.view_layer.objects.active = o
 
 
 # ------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mat = None
     plastic = None
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         rgb = mp.objcol
         plastic = create_diffuse_material("Plastic_venetian_material", True, rgb[0], rgb[1], rgb[2], rgb[0], rgb[1],
                                           rgb[2], 0.2)
@@ -149,7 +149,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     create_venetian_top(tmp_mesh, mp.width + 0.002, mp.depth + 0.002, -0.06)
 
     # materials
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mainobject, plastic)
     # --------------------------------------------------------------------------------
     # segments
@@ -169,7 +169,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     set_normals(myslats)
     set_smooth(myslats)
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(myslats, plastic)
     # ------------------------
     # Strings (Middle)
@@ -201,7 +201,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mycurver.location.y = 0
     mycurver.location.z = 0
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material("String_material", False, 0.674, 0.617, 0.496, 0.1, 0.1, 0.1, 0.01)
         set_material(mycurvel, mat)
         set_material(mycurvec, mat)
@@ -237,7 +237,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mycurverf.location.y = ((-mp.depth / 2) * cos(radians(mp.angle))) - 0.001
     mycurverf.location.z = 0
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mycurvelf, mat)
         set_material(mycurvecf, mat)
         set_material(mycurverf, mat)
@@ -274,7 +274,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mycurverb.location.y = ((mp.depth / 2) * cos(radians(mp.angle))) + 0.001
     mycurverb.location.z = 0
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mycurvelb, mat)
         set_material(mycurvecb, mat)
         set_material(mycurverb, mat)
@@ -290,7 +290,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mybase.rotation_euler = (radians(angleused), 0, 0)
 
     # materials
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mybase, plastic)
     # ------------------
     # Stick
@@ -301,7 +301,7 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mystick.location.y = -mp.depth / 2 - 0.003
     mystick.location.z = -0.03
     # materials
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         matstick = create_diffuse_material("Stick_material", False, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.04)
         set_material(mybase, matstick)
 
@@ -314,12 +314,12 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     mystring.location.y = -mp.depth / 2 - 0.003
     mystring.location.z = -0.03
 
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mystring, mat)
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True and o.name != mainobject.name:
-            o.select = False
+        if o.select_get() is True and o.name != mainobject.name:
+            o.select_set(False)
 
     return
 
@@ -328,38 +328,38 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
 # Define property group class to create or modify
 # ------------------------------------------------------------------
 class ObjectProperties(PropertyGroup):
-    width = FloatProperty(
+    width: FloatProperty(
             name='Width',
             min=0.30, max=4, default=1, precision=3,
             description='Total width', update=update_object,
             )
-    height = FloatProperty(
+    height: FloatProperty(
             name='Height',
             min=0.20, max=10, default=1.7, precision=3,
             description='Total height',
             update=update_object,
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name='Slat depth', min=0.02, max=0.30, default=0.04,
             precision=3,
             description='Slat depth', update=update_object,
             )
-    angle = FloatProperty(
+    angle: FloatProperty(
             name='Angle', min=0, max=85, default=0, precision=1,
             description='Angle of the slats', update=update_object,
             )
-    ratio = IntProperty(
+    ratio: IntProperty(
             name='Extend', min=0, max=100, default=100,
             description='% of extension (100 full extend)', update=update_object,
             )
 
     # Materials
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True, update=update_object,
             )
-    objcol = FloatVectorProperty(
+    objcol: FloatVectorProperty(
             name="Color",
             description="Color for material",
             default=(0.616, 0.435, 1.0, 1.0),
@@ -376,12 +376,12 @@ Object.VenetianObjectGenerator = CollectionProperty(type=ObjectProperties)
 # ------------------------------------------------------------------
 # Define panel class to modify object
 # ------------------------------------------------------------------
-class AchmVenetianObjectgeneratorpanel(Panel):
+class ARCHIMESH_PT_VenetianObjectgenerator(Panel):
     bl_idname = "OBJECT_PT_venetian_generator"
     bl_label = "Venetian"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     # -----------------------------------------------------
     # Verify if visible
@@ -410,7 +410,7 @@ class AchmVenetianObjectgeneratorpanel(Panel):
 
         layout = self.layout
         if bpy.context.mode == 'EDIT_MESH':
-            layout.label('Warning: Operator does not work in edit mode.', icon='ERROR')
+            layout.label(text='Warning: Operator does not work in edit mode.', icon='ERROR')
         else:
             myobjdat = o.VenetianObjectGenerator[0]
             space = bpy.context.space_data
@@ -418,7 +418,7 @@ class AchmVenetianObjectgeneratorpanel(Panel):
                 # Imperial units warning
                 if bpy.context.scene.unit_settings.system == "IMPERIAL":
                     row = layout.row()
-                    row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                    row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
             row = box.row()
@@ -430,7 +430,7 @@ class AchmVenetianObjectgeneratorpanel(Panel):
             row.prop(myobjdat, 'ratio', slider=True)
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(myobjdat, 'crt_mat')
             if myobjdat.crt_mat:
@@ -438,7 +438,7 @@ class AchmVenetianObjectgeneratorpanel(Panel):
                 row.prop(myobjdat, 'objcol')
             else:
                 row = layout.row()
-                row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+                row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
 
 # ------------------------------------------------------------------------------
@@ -518,7 +518,7 @@ def create_slat_mesh(objname, width, depth, height, angle, ratio):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -644,7 +644,7 @@ def create_venetian_base(objname, x, y, z):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -809,7 +809,7 @@ def get_venetian_stick(objname, height):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -1375,7 +1375,7 @@ def get_venetian_strings(objname, height):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -1396,7 +1396,7 @@ def create_bezier(objname, points, origin, depth=0.001, fill='FULL'):
     myobject = bpy.data.objects.new(objname, curvedata)
     myobject.location = origin
 
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     polyline = curvedata.splines.new('BEZIER')
     polyline.bezier_points.add(len(points) - 1)

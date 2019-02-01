@@ -146,7 +146,7 @@ class TEXT_OT_ui_cheat_sheet(Operator):
 
 # Properties
 class text_ui_cheat_props(PropertyGroup):
-    dev_ui_cheat_type = EnumProperty(
+    dev_ui_cheat_type: EnumProperty(
         name="Choose a Type",
         description="Choose what Classes to include in a Text-Block",
         items=(('all', "All", "Print all the types"),
@@ -156,7 +156,7 @@ class text_ui_cheat_props(PropertyGroup):
                ),
         default='all',
     )
-    searchable = BoolProperty(
+    searchable: BoolProperty(
         name="Format searchable",
         description="Generate the list as Python dictionary,\n"
                     "using the format Class: Path",

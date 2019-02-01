@@ -196,11 +196,11 @@ def set_defaults(s):
 # ------------------------------------------------------------------
 # Define operator class to create window panels
 # ------------------------------------------------------------------
-class AchmWinPanel(Operator):
+class ARCHIMESH_PT_Win(Operator):
     bl_idname = "mesh.archimesh_winpanel"
     bl_label = "Panel Window"
     bl_description = "Generate editable flat windows"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # -----------------------------------------------------
@@ -210,7 +210,7 @@ class AchmWinPanel(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     # -----------------------------------------------------
     # Execute
@@ -231,13 +231,13 @@ class AchmWinPanel(Operator):
 def create_window():
     # deselect all objects
     for o in bpy.data.objects:
-        o.select = False
+        o.select_set(False)
     # Create main object
     window_mesh = bpy.data.meshes.new("Window")
     window_object = bpy.data.objects.new("Window", window_mesh)
 
     # Link object to scene
-    bpy.context.scene.objects.link(window_object)
+    bpy.context.collection.objects.link(window_object)
     window_object.WindowPanelGenerator.add()
     window_object.location = bpy.context.scene.cursor_location
 
@@ -246,17 +246,17 @@ def create_window():
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True and o.name != window_object.name:
-            o.select = False
+        if o.select_get() is True and o.name != window_object.name:
+            o.select_set(False)
 
     # Select, and activate object
-    window_object.select = True
-    bpy.context.scene.objects.active = window_object
+    window_object.select_set(True)
+    bpy.context.view_layer.objects.active = window_object
 
     do_ctrl_box(window_object)
     # Reselect
-    window_object.select = True
-    bpy.context.scene.objects.active = window_object
+    window_object.select_set(True)
+    bpy.context.view_layer.objects.active = window_object
 
 
 # ------------------------------------------------------------------------------
@@ -269,12 +269,12 @@ def update_window(self, context):
     oldmesh = o.data
     oldname = o.data.name
     # Now deselect that object to not delete it.
-    o.select = False
+    o.select_set(False)
     # # and create a new mesh for the object:
     # tmp_mesh = bpy.data.meshes.new("temp")
     # deselect all objects
     for obj in bpy.data.objects:
-        obj.select = False
+        obj.select_set(False)
     # ---------------------------------
     #  Clear Parent objects (autohole)
     # ---------------------------------
@@ -291,16 +291,16 @@ def update_window(self, context):
             # noinspection PyBroadException
             try:
                 # clear child data
-                child.hide = False  # must be visible to avoid bug
+                child.hide_viewport = False  # must be visible to avoid bug
                 child.hide_render = False  # must be visible to avoid bug
                 old = child.data
-                child.select = True
+                child.select_set(True)
                 bpy.ops.object.delete()
                 bpy.data.meshes.remove(old)
             except:
                 pass
 
-        myparent.select = True
+        myparent.select_set(True)
         bpy.ops.object.delete()
 
     # Finally create all that again
@@ -316,17 +316,17 @@ def update_window(self, context):
     tmp_mesh.name = oldname
     # deactivate others
     for ob in bpy.data.objects:
-        if ob.select is True and ob.name != o.name:
-            ob.select = False
+        if ob.select_get() is True and ob.name != o.name:
+            ob.select_set(False)
     # and select, and activate, the object.
-    o.select = True
-    bpy.context.scene.objects.active = o
+    o.select_set(True)
+    bpy.context.view_layer.objects.active = o
 
     do_ctrl_box(o)
 
     # Reselect
-    o.select = True
-    bpy.context.scene.objects.active = o
+    o.select_set(True)
+    bpy.context.view_layer.objects.active = o
 
 
 # ------------------------------------------------------------------------------
@@ -395,9 +395,9 @@ def do_ctrl_box(myobject):
     myctrl.location.y = 0
     myctrl.location.z = 0
     myctrl.display_type = 'WIRE'
-    myctrl.hide = False
+    myctrl.hide_viewport = False
     myctrl.hide_render = True
-    if bpy.context.scene.render.engine == 'CYCLES':
+    if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         myctrl.cycles_visibility.camera = False
         myctrl.cycles_visibility.diffuse = False
         myctrl.cycles_visibility.glossy = False
@@ -1541,7 +1541,7 @@ def create_ctrl_box(parentobj, objname):
     myobj = bpy.data.objects.new(objname, mymesh)
 
     myobj.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobj)
+    bpy.context.collection.objects.link(myobj)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -1553,7 +1553,7 @@ def create_ctrl_box(parentobj, objname):
 # Define property group class to create or modify
 # ------------------------------------------------------------------
 class GeneralPanelProperties(PropertyGroup):
-    prs = EnumProperty(
+    prs: EnumProperty(
             items=(
                 ('1', "WINDOW 250X200", ""),
                 ('2', "WINDOW 200X200", ""),
@@ -1568,41 +1568,55 @@ class GeneralPanelProperties(PropertyGroup):
             description='Predefined types',
             update=update_using_default,
             )
-    son = prs
-    gen = IntProperty(
+    son: EnumProperty(
+            items=(
+                ('1', "WINDOW 250X200", ""),
+                ('2', "WINDOW 200X200", ""),
+                ('3', "WINDOW 180X200", ""),
+                ('4', "WINDOW 180X160", ""),
+                ('5', "WINDOW 160X160", ""),
+                ('6', "WINDOW 50X50", ""),
+                ('7', "DOOR 80X250", ""),
+                ('8', "DOOR 80X230", ""),
+                ),
+            name="",
+            description='Predefined types',
+            update=update_using_default,
+            )
+    gen: IntProperty(
             name='H Count', min=1, max=8, default=3,
             description='Horizontal Panes',
             update=update_window,
             )
-    yuk = IntProperty(
+    yuk: IntProperty(
             name='V Count', min=1, max=5, default=1,
             description='Vertical Panes',
             update=update_window,
             )
-    kl1 = IntProperty(
+    kl1: IntProperty(
             name='Outer Frame', min=2, max=50, default=5,
             description='Outside Frame Thickness',
             update=update_window,
             )
-    kl2 = IntProperty(
+    kl2: IntProperty(
             name='Risers', min=2, max=50, default=5,
             description='Risers Width',
             update=update_window,
             )
-    fk = IntProperty(
+    fk: IntProperty(
             name='Inner Frame', min=1, max=20, default=2,
             description='Inside Frame Thickness',
             update=update_window,
             )
 
-    mr = BoolProperty(name='Sill', default=True, description='Window Sill', update=update_window)
-    mr1 = IntProperty(name='', min=1, max=20, default=4, description='Height', update=update_window)
-    mr2 = IntProperty(name='', min=0, max=20, default=4, description='First Depth', update=update_window)
-    mr3 = IntProperty(name='', min=1, max=50, default=20, description='Second Depth', update=update_window)
-    mr4 = IntProperty(name='', min=0, max=50, default=0, description='Extrusion for Jamb',
+    mr: BoolProperty(name='Sill', default=True, description='Window Sill', update=update_window)
+    mr1: IntProperty(name='', min=1, max=20, default=4, description='Height', update=update_window)
+    mr2: IntProperty(name='', min=0, max=20, default=4, description='First Depth', update=update_window)
+    mr3: IntProperty(name='', min=1, max=50, default=20, description='Second Depth', update=update_window)
+    mr4: IntProperty(name='', min=0, max=50, default=0, description='Extrusion for Jamb',
                                 update=update_window)
 
-    mt1 = EnumProperty(
+    mt1: EnumProperty(
             items=(
                 ('1', "PVC", ""),
                 ('2', "WOOD", ""),
@@ -1613,7 +1627,7 @@ class GeneralPanelProperties(PropertyGroup):
             description='Material to use',
             update=update_window,
             )
-    mt2 = EnumProperty(
+    mt2: EnumProperty(
             items=(
                 ('1', "PVC", ""),
                 ('2', "WOOD", ""),
@@ -1625,14 +1639,14 @@ class GeneralPanelProperties(PropertyGroup):
             update=update_window,
             )
 
-    r = FloatProperty(
+    r: FloatProperty(
             name='Rotation',
             min=0, max=360, default=0, precision=1,
             description='Panel rotation',
             update=update_window,
             )
 
-    UST = EnumProperty(
+    UST: EnumProperty(
             items=(
                 ('1', "Flat", ""),
                 ('2', "Arch", ""),
@@ -1643,7 +1657,7 @@ class GeneralPanelProperties(PropertyGroup):
             description='Type of window upper section',
             update=update_window,
             )
-    DT2 = EnumProperty(
+    DT2: EnumProperty(
             items=(
                 ('1', "Difference", ""),
                 ('2', "Radius", ""),
@@ -1652,7 +1666,7 @@ class GeneralPanelProperties(PropertyGroup):
             default='1',
             update=update_window,
             )
-    DT3 = EnumProperty(
+    DT3: EnumProperty(
             items=(
                 ('1', "Difference", ""),
                 ('2', "Incline %", ""),
@@ -1662,102 +1676,102 @@ class GeneralPanelProperties(PropertyGroup):
             default='1', update=update_window,
             )
 
-    VL1 = IntProperty(name='', min=-10000, max=10000, default=30, update=update_window)  # Fark
-    VL2 = IntProperty(name='', min=1, max=10000, default=30, update=update_window)  # Cap
-    VL3 = IntProperty(name='', min=-100, max=100, default=30, update=update_window)  # Egim %
-    VL4 = IntProperty(name='', min=-45, max=45, default=30, update=update_window)  # Egim Aci
+    VL1: IntProperty(name='', min=-10000, max=10000, default=30, update=update_window)  # Fark
+    VL2: IntProperty(name='', min=1, max=10000, default=30, update=update_window)  # Cap
+    VL3: IntProperty(name='', min=-100, max=100, default=30, update=update_window)  # Egim %
+    VL4: IntProperty(name='', min=-45, max=45, default=30, update=update_window)  # Egim Aci
 
-    res = IntProperty(name='Resolution', min=2, max=360, default=36, update=update_window)  # Res
+    res: IntProperty(name='Resolution', min=2, max=360, default=36, update=update_window)  # Res
 
-    gnx0 = IntProperty(name='', min=1, max=300, default=60, description='1st Window Width',
+    gnx0: IntProperty(name='', min=1, max=300, default=60, description='1st Window Width',
                                  update=update_window)
-    gnx1 = IntProperty(name='', min=1, max=300, default=110, description='2nd Window Width',
+    gnx1: IntProperty(name='', min=1, max=300, default=110, description='2nd Window Width',
                                  update=update_window)
-    gnx2 = IntProperty(name='', min=1, max=300, default=60, description='3rd Window Width',
+    gnx2: IntProperty(name='', min=1, max=300, default=60, description='3rd Window Width',
                                  update=update_window)
-    gnx3 = IntProperty(name='', min=1, max=300, default=60, description='4th Window Width',
+    gnx3: IntProperty(name='', min=1, max=300, default=60, description='4th Window Width',
                                  update=update_window)
-    gnx4 = IntProperty(name='', min=1, max=300, default=60, description='5th Window Width',
+    gnx4: IntProperty(name='', min=1, max=300, default=60, description='5th Window Width',
                                  update=update_window)
-    gnx5 = IntProperty(name='', min=1, max=300, default=60, description='6th Window Width',
+    gnx5: IntProperty(name='', min=1, max=300, default=60, description='6th Window Width',
                                  update=update_window)
-    gnx6 = IntProperty(name='', min=1, max=300, default=60, description='7th Window Width',
+    gnx6: IntProperty(name='', min=1, max=300, default=60, description='7th Window Width',
                                  update=update_window)
-    gnx7 = IntProperty(name='', min=1, max=300, default=60, description='8th Window Width',
-                                 update=update_window)
-
-    gny0 = IntProperty(name='', min=1, max=300, default=190, description='1st Row Height',
-                                 update=update_window)
-    gny1 = IntProperty(name='', min=1, max=300, default=45, description='2nd Row Height',
-                                 update=update_window)
-    gny2 = IntProperty(name='', min=1, max=300, default=45, description='3rd Row Height',
-                                 update=update_window)
-    gny3 = IntProperty(name='', min=1, max=300, default=45, description='4th Row Height',
-                                 update=update_window)
-    gny4 = IntProperty(name='', min=1, max=300, default=45, description='5th Row Height',
+    gnx7: IntProperty(name='', min=1, max=300, default=60, description='8th Window Width',
                                  update=update_window)
 
-    k00 = BoolProperty(name='', default=True, update=update_window)
-    k01 = BoolProperty(name='', default=False, update=update_window)
-    k02 = BoolProperty(name='', default=True, update=update_window)
-    k03 = BoolProperty(name='', default=False, update=update_window)
-    k04 = BoolProperty(name='', default=False, update=update_window)
-    k05 = BoolProperty(name='', default=False, update=update_window)
-    k06 = BoolProperty(name='', default=False, update=update_window)
-    k07 = BoolProperty(name='', default=False, update=update_window)
+    gny0: IntProperty(name='', min=1, max=300, default=190, description='1st Row Height',
+                                 update=update_window)
+    gny1: IntProperty(name='', min=1, max=300, default=45, description='2nd Row Height',
+                                 update=update_window)
+    gny2: IntProperty(name='', min=1, max=300, default=45, description='3rd Row Height',
+                                 update=update_window)
+    gny3: IntProperty(name='', min=1, max=300, default=45, description='4th Row Height',
+                                 update=update_window)
+    gny4: IntProperty(name='', min=1, max=300, default=45, description='5th Row Height',
+                                 update=update_window)
 
-    k10 = BoolProperty(name='', default=False, update=update_window)
-    k11 = BoolProperty(name='', default=False, update=update_window)
-    k12 = BoolProperty(name='', default=False, update=update_window)
-    k13 = BoolProperty(name='', default=False, update=update_window)
-    k14 = BoolProperty(name='', default=False, update=update_window)
-    k15 = BoolProperty(name='', default=False, update=update_window)
-    k16 = BoolProperty(name='', default=False, update=update_window)
-    k17 = BoolProperty(name='', default=False, update=update_window)
+    k00: BoolProperty(name='', default=True, update=update_window)
+    k01: BoolProperty(name='', default=False, update=update_window)
+    k02: BoolProperty(name='', default=True, update=update_window)
+    k03: BoolProperty(name='', default=False, update=update_window)
+    k04: BoolProperty(name='', default=False, update=update_window)
+    k05: BoolProperty(name='', default=False, update=update_window)
+    k06: BoolProperty(name='', default=False, update=update_window)
+    k07: BoolProperty(name='', default=False, update=update_window)
 
-    k20 = BoolProperty(name='', default=False, update=update_window)
-    k21 = BoolProperty(name='', default=False, update=update_window)
-    k22 = BoolProperty(name='', default=False, update=update_window)
-    k23 = BoolProperty(name='', default=False, update=update_window)
-    k24 = BoolProperty(name='', default=False, update=update_window)
-    k25 = BoolProperty(name='', default=False, update=update_window)
-    k26 = BoolProperty(name='', default=False, update=update_window)
-    k27 = BoolProperty(name='', default=False, update=update_window)
+    k10: BoolProperty(name='', default=False, update=update_window)
+    k11: BoolProperty(name='', default=False, update=update_window)
+    k12: BoolProperty(name='', default=False, update=update_window)
+    k13: BoolProperty(name='', default=False, update=update_window)
+    k14: BoolProperty(name='', default=False, update=update_window)
+    k15: BoolProperty(name='', default=False, update=update_window)
+    k16: BoolProperty(name='', default=False, update=update_window)
+    k17: BoolProperty(name='', default=False, update=update_window)
 
-    k30 = BoolProperty(name='', default=False, update=update_window)
-    k31 = BoolProperty(name='', default=False, update=update_window)
-    k32 = BoolProperty(name='', default=False, update=update_window)
-    k33 = BoolProperty(name='', default=False, update=update_window)
-    k34 = BoolProperty(name='', default=False, update=update_window)
-    k35 = BoolProperty(name='', default=False, update=update_window)
-    k36 = BoolProperty(name='', default=False, update=update_window)
-    k37 = BoolProperty(name='', default=False, update=update_window)
+    k20: BoolProperty(name='', default=False, update=update_window)
+    k21: BoolProperty(name='', default=False, update=update_window)
+    k22: BoolProperty(name='', default=False, update=update_window)
+    k23: BoolProperty(name='', default=False, update=update_window)
+    k24: BoolProperty(name='', default=False, update=update_window)
+    k25: BoolProperty(name='', default=False, update=update_window)
+    k26: BoolProperty(name='', default=False, update=update_window)
+    k27: BoolProperty(name='', default=False, update=update_window)
 
-    k40 = BoolProperty(name='', default=False, update=update_window)
-    k41 = BoolProperty(name='', default=False, update=update_window)
-    k42 = BoolProperty(name='', default=False, update=update_window)
-    k43 = BoolProperty(name='', default=False, update=update_window)
-    k44 = BoolProperty(name='', default=False, update=update_window)
-    k45 = BoolProperty(name='', default=False, update=update_window)
-    k46 = BoolProperty(name='', default=False, update=update_window)
-    k47 = BoolProperty(name='', default=False, update=update_window)
+    k30: BoolProperty(name='', default=False, update=update_window)
+    k31: BoolProperty(name='', default=False, update=update_window)
+    k32: BoolProperty(name='', default=False, update=update_window)
+    k33: BoolProperty(name='', default=False, update=update_window)
+    k34: BoolProperty(name='', default=False, update=update_window)
+    k35: BoolProperty(name='', default=False, update=update_window)
+    k36: BoolProperty(name='', default=False, update=update_window)
+    k37: BoolProperty(name='', default=False, update=update_window)
+
+    k40: BoolProperty(name='', default=False, update=update_window)
+    k41: BoolProperty(name='', default=False, update=update_window)
+    k42: BoolProperty(name='', default=False, update=update_window)
+    k43: BoolProperty(name='', default=False, update=update_window)
+    k44: BoolProperty(name='', default=False, update=update_window)
+    k45: BoolProperty(name='', default=False, update=update_window)
+    k46: BoolProperty(name='', default=False, update=update_window)
+    k47: BoolProperty(name='', default=False, update=update_window)
     # opengl internal data
-    glpoint_a = FloatVectorProperty(
+    glpoint_a: FloatVectorProperty(
             name="glpointa",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_b = FloatVectorProperty(
+    glpoint_b: FloatVectorProperty(
             name="glpointb",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_c = FloatVectorProperty(
+    glpoint_c: FloatVectorProperty(
             name="glpointc",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_d = FloatVectorProperty(
+    glpoint_d: FloatVectorProperty(
             name="glpointc",
             description="Hidden property for opengl",
             default=(0, 0, 0),
@@ -1771,12 +1785,12 @@ Object.WindowPanelGenerator = CollectionProperty(type=GeneralPanelProperties)
 # ------------------------------------------------------------------
 # Define panel class to modify myobjects.
 # ------------------------------------------------------------------
-class AchmWindowEditPanel(Panel):
+class ARCHIMESH_PT_WindowEdit(Panel):
     bl_idname = "ARCHIMESH_PT_window_edit"
     bl_label = "Window Panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Window'
+    bl_category = 'View'
 
     # -----------------------------------------------------
     # Verify if visible
@@ -1806,7 +1820,7 @@ class AchmWindowEditPanel(Panel):
 
         layout = self.layout
         if bpy.context.mode == 'EDIT_MESH':
-            layout.label('Warning: Operator does not work in edit mode.', icon='ERROR')
+            layout.label(text='Warning: Operator does not work in edit mode.', icon='ERROR')
         else:
             myobject = o.WindowPanelGenerator[0]
             layout.prop(myobject, 'prs')
@@ -1827,8 +1841,8 @@ class AchmWindowEditPanel(Panel):
                 row.prop(myobject, 'mr3')
                 row.prop(myobject, 'mr4')
             row = layout.row()
-            row.label('Frame')
-            row.label('Inner Frame')
+            row.label(text='Frame')
+            row.label(text='Inner Frame')
             row = layout.row()
             row.prop(myobject, 'mt1')
             row.prop(myobject, 'mt2')

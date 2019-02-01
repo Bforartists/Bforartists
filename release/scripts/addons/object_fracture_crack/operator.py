@@ -141,19 +141,19 @@ class crackitPanel(Panel):
         col.prop(crackit, "fracture_scalez")
 
         col = box.column(align=True)
-        col.label("Settings:")
+        col.label(text="Settings:")
         col.prop(crackit, "fracture_div")
         col.prop(crackit, "fracture_margin")
 
         col = box.column(align=True)
-        col.label("Extrude:")
+        col.label(text="Extrude:")
         col.prop(crackit, "extrude_offset")
         col.prop(crackit, "extrude_random")
 
         # material Preset:
         box = layout.box()
         row = box.row()
-        row.label("Material Preset:")
+        row.label(text="Material Preset:")
         row_sub = row.row()
         row_sub.prop(crackit, "material_lib_name", text="",
                      toggle=True, icon="LONGDISPLAY")

@@ -696,29 +696,29 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
     bl_idname = "export.jsx"
     bl_label = "Export to Adobe After Effects"
     filename_ext = ".jsx"
-    filter_glob = StringProperty(default="*.jsx", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.jsx", options={'HIDDEN'})
 
-    include_animation = BoolProperty(
+    include_animation: BoolProperty(
             name="Animation",
             description="Animate Exported Cameras and Objects",
             default=True,
             )
-    include_active_cam = BoolProperty(
+    include_active_cam: BoolProperty(
             name="Active Camera",
             description="Include Active Camera",
             default=True,
             )
-    include_selected_cams = BoolProperty(
+    include_selected_cams: BoolProperty(
             name="Selected Cameras",
             description="Add Selected Cameras",
             default=True,
             )
-    include_selected_objects = BoolProperty(
+    include_selected_objects: BoolProperty(
             name="Selected Objects",
             description="Export Selected Objects",
             default=True,
             )
-    include_cam_bundles = BoolProperty(
+    include_cam_bundles: BoolProperty(
             name="Camera 3D Markers",
             description="Include 3D Markers of Camera Motion Solution for selected cameras",
             default=True,
@@ -728,7 +728,7 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
 #            description="Include 3D Markers of Object Motion Solution for selected cameras",
 #            default=True,
 #            )
-    ae_size = FloatProperty(
+    ae_size: FloatProperty(
             name="AE Size",
             description="Size of AE Composition (pixels per 1BU)",
             default=100.0,
@@ -740,13 +740,13 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
         box = layout.box()
         box.label('Size fo AE Comp (pixels per 1 BU)')
         box.prop(self, 'ae_size')
-        box.label('Animation:')
+        box.label(text='Animation:')
         box.prop(self, 'include_animation')
-        box.label('Include Cameras and Objects:')
+        box.label(text='Include Cameras and Objects:')
         box.prop(self, 'include_active_cam')
         box.prop(self, 'include_selected_cams')
         box.prop(self, 'include_selected_objects')
-        box.label("Include Tracking Data:")
+        box.label(text="Include Tracking Data:")
         box.prop(self, 'include_cam_bundles')
 #        box.prop(self, 'include_ob_bundles')
 

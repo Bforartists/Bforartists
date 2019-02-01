@@ -44,7 +44,7 @@ def get_blendunits(units):
 # False= faces to outside
 # --------------------------------------------------------------------
 def set_normals(myobject, direction=False):
-    bpy.context.scene.objects.active = myobject
+    bpy.context.view_layer.objects.active = myobject
     # go edit mode
     bpy.ops.object.mode_set(mode='EDIT')
     # select all faces
@@ -59,7 +59,7 @@ def set_normals(myobject, direction=False):
 # Remove doubles
 # --------------------------------------------------------------------
 def remove_doubles(myobject):
-    bpy.context.scene.objects.active = myobject
+    bpy.context.view_layer.objects.active = myobject
     # go edit mode
     bpy.ops.object.mode_set(mode='EDIT')
     # select all faces
@@ -76,12 +76,12 @@ def remove_doubles(myobject):
 def set_smooth(myobject):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    myobject.select = True
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    myobject.select_set(True)
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.shade_smooth()
 
 
@@ -89,8 +89,8 @@ def set_smooth(myobject):
 # Add modifier (subdivision)
 # --------------------------------------------------------------------
 def set_modifier_subsurf(myobject):
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='SUBSURF')
         for mod in myobject.modifiers:
             if mod.type == 'SUBSURF':
@@ -102,26 +102,26 @@ def set_modifier_subsurf(myobject):
 # --------------------------------------------------------------------
 def set_modifier_mirror(myobject, axis="Y"):
     bpy.ops.object.select_all(False)
-    myobject.select = True
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    myobject.select_set(True)
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='MIRROR')
         for mod in myobject.modifiers:
             if mod.type == 'MIRROR':
                 if axis == "X":
-                    mod.use_x = True
+                    mod.use_axis[0] = True
                 else:
-                    mod.use_x = False
+                    mod.use__axis[0] = False
 
                 if axis == "Y":
-                    mod.use_y = True
+                    mod.use_axis[1] = True
                 else:
-                    mod.use_y = False
+                    mod.use_axis[1] = False
 
                 if axis == "Z":
-                    mod.use_z = True
+                    mod.use_axis[2] = True
                 else:
-                    mod.use_z = False
+                    mod.use_axis[2] = False
 
                 mod.use_clip = True
 
@@ -131,9 +131,9 @@ def set_modifier_mirror(myobject, axis="Y"):
 # --------------------------------------------------------------------
 def set_modifier_array(myobject, axis, move, repeat, fix=False, fixmove=0, zmove=0):
     bpy.ops.object.select_all(False)
-    myobject.select = True
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    myobject.select_set(True)
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='ARRAY')
         for mod in myobject.modifiers:
             if mod.type == 'ARRAY':
@@ -162,8 +162,8 @@ def set_modifier_array(myobject, axis, move, repeat, fix=False, fixmove=0, zmove
 # Add modifier (curve)
 # --------------------------------------------------------------------
 def set_modifier_curve(myobject, mycurve):
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='CURVE')
         for mod in myobject.modifiers:
             if mod.type == 'CURVE':
@@ -175,8 +175,8 @@ def set_modifier_curve(myobject, mycurve):
 # Add modifier (solidify)
 # --------------------------------------------------------------------
 def set_modifier_solidify(myobject, width):
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='SOLIDIFY')
         for mod in myobject.modifiers:
             if mod.type == 'SOLIDIFY':
@@ -190,8 +190,8 @@ def set_modifier_solidify(myobject, width):
 # Add modifier (boolean)
 # --------------------------------------------------------------------
 def set_modifier_boolean(myobject, bolobject):
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.modifier_add(type='BOOLEAN')
         mod = myobject.modifiers[len(myobject.modifiers) - 1]
         mod.operation = 'DIFFERENCE'
@@ -202,8 +202,8 @@ def set_modifier_boolean(myobject, bolobject):
 # Set material to object
 # --------------------------------------------------------------------
 def set_material(myobject, mymaterial):
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         myobject.data.materials.append(mymaterial)
 
 
@@ -211,10 +211,10 @@ def set_material(myobject, mymaterial):
 # Set material to selected faces
 # --------------------------------------------------------------------
 def set_material_faces(myobject, idx):
-    bpy.context.scene.objects.active = myobject
-    myobject.select = True
+    bpy.context.view_layer.objects.active = myobject
+    myobject.select_set(True)
     bpy.context.object.active_material_index = idx
-    if bpy.context.scene.objects.active.name == myobject.name:
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         bpy.ops.object.mode_set(mode='EDIT')
         bpy.ops.object.material_slot_assign()
         # Deselect
@@ -226,9 +226,9 @@ def set_material_faces(myobject, idx):
 # Select faces
 # --------------------------------------------------------------------
 def select_faces(myobject, selface, clear):
-    myobject.select = True
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    myobject.select_set(True)
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         # deselect everything
         if clear:
             bpy.ops.object.mode_set(mode='EDIT')
@@ -243,9 +243,9 @@ def select_faces(myobject, selface, clear):
 # Select vertices
 # --------------------------------------------------------------------
 def select_vertices(myobject, selvertices, clear=True):
-    myobject.select = True
-    bpy.context.scene.objects.active = myobject
-    if bpy.context.scene.objects.active.name == myobject.name:
+    myobject.select_set(True)
+    bpy.context.view_layer.objects.active = myobject
+    if bpy.context.view_layer.objects.active.name == myobject.name:
         # deselect everything
         if clear:
             bpy.ops.object.mode_set(mode='EDIT')
@@ -272,9 +272,9 @@ def select_vertices(myobject, selvertices, clear=True):
 def mark_seam(myobject):
     # noinspection PyBroadException
     try:
-        myobject.select = True
-        bpy.context.scene.objects.active = myobject
-        if bpy.context.scene.objects.active.name == myobject.name:
+        myobject.select_set(True)
+        bpy.context.view_layer.objects.active = myobject
+        if bpy.context.view_layer.objects.active.name == myobject.name:
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
             bpy.ops.mesh.mark_seam()
             bpy.ops.object.mode_set(mode='OBJECT')
@@ -288,9 +288,9 @@ def mark_seam(myobject):
 def unwrap_mesh(myobject, allfaces=True):
     # noinspection PyBroadException
     try:
-        myobject.select = True
-        bpy.context.scene.objects.active = myobject
-        if bpy.context.scene.objects.active.name == myobject.name:
+        myobject.select_set(True)
+        bpy.context.view_layer.objects.active = myobject
+        if bpy.context.view_layer.objects.active.name == myobject.name:
             # Unwrap
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
             if allfaces is True:
@@ -328,7 +328,7 @@ def create_diffuse_material(matname, replace, r, g, b, rv=0.8, gv=0.8, bv=0.8, m
                 return m
     # Create material
     mat = bpy.data.materials.new(matname)
-    mat.diffuse_color = (rv, gv, bv)  # viewport color
+    mat.diffuse_color = (rv, gv, bv, 1.0)  # viewport color
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
 
@@ -412,7 +412,7 @@ def create_translucent_material(matname, replace, r, g, b, rv=0.8, gv=0.8, bv=0.
                 return m
     # Create material
     mat = bpy.data.materials.new(matname)
-    mat.diffuse_color = (rv, gv, bv)  # viewport color
+    mat.diffuse_color = (rv, gv, bv, 1.0)  # viewport color
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
 
@@ -465,7 +465,7 @@ def create_glass_material(matname, replace, rv=0.333, gv=0.342, bv=0.9):
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (rv, gv, bv)
+    mat.diffuse_color = (rv, gv, bv, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -544,7 +544,7 @@ def create_transparent_material(matname, replace, r=1, g=1, b=1, alpha=0):
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (r, g, b)
+    mat.diffuse_color = (r, g, b, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -580,7 +580,7 @@ def create_glossy_material(matname, replace, r, g, b, rv=0.578, gv=0.555, bv=0.7
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (rv, gv, bv)
+    mat.diffuse_color = (rv, gv, bv, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -653,7 +653,7 @@ def create_old_glass_material(matname, replace, rv=0.352716, gv=0.760852, bv=0.9
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (rv, gv, bv)
+    mat.diffuse_color = (rv, gv, bv, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -726,7 +726,7 @@ def create_brick_material(matname, replace, r, g, b, rv=0.8, gv=0.636, bv=0.315)
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (rv, gv, bv)
+    mat.diffuse_color = (rv, gv, bv, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -782,7 +782,7 @@ def create_fabric_material(matname, replace, r, g, b, rv=0.8, gv=0.636, bv=0.315
     # Create material
     mat = bpy.data.materials.new(matname)
     mat.use_nodes = True
-    mat.diffuse_color = (rv, gv, bv)
+    mat.diffuse_color = (rv, gv, bv, 1.0)
     nodes = mat.node_tree.nodes
 
     # support for multilanguage
@@ -886,9 +886,9 @@ def parentobject(parentobj, childobj):
     # noinspection PyBroadException
     try:
         bpy.ops.object.select_all(action='DESELECT')
-        bpy.context.scene.objects.active = parentobj
-        parentobj.select = True
-        childobj.select = True
+        bpy.context.view_layer.objects.active = parentobj
+        parentobj.select_set(True)
+        childobj.select_set(True)
         bpy.ops.object.parent_set(type='OBJECT', keep_transform=False)
         return True
     except:
@@ -923,7 +923,7 @@ def create_control_box(objname, x, y, z, tube=True):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -952,11 +952,11 @@ def remove_children(myobject):
             # clear child data
             if child.type == 'MESH':
                 old = child.data
-                child.select = True
+                child.select_set(True)
                 bpy.ops.object.delete()
                 bpy.data.meshes.remove(old)
             if child.type == 'CURVE':
-                child.select = True
+                child.select_set(True)
                 bpy.ops.object.delete()
         except:
             pass

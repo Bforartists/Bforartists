@@ -65,7 +65,7 @@ class CreateAvi(Operator):
     bl_description = "Create an avi output file"
     bl_options = {'REGISTER', 'UNDO'}
 
-    size = IntProperty(
+    size: IntProperty(
             name="proxysize",
             default=1
             )

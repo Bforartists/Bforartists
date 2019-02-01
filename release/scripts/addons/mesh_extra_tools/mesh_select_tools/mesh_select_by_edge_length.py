@@ -183,7 +183,7 @@ class Select_init(bpy.types.Operator):
                       "Does not work in Vertex Select mode")
     bl_options = {'REGISTER', 'UNDO'}
 
-    edgeLength = FloatProperty(
+    edgeLength: FloatProperty(
             name="Edge length",
             description="The comparison scale in Blender units",
             default=1.0,
@@ -196,18 +196,18 @@ class Select_init(bpy.types.Operator):
     sizes = (('SMALL', 'Smaller', "Select items smaller or equal the size setting"),
              ('BIG', 'Bigger', "Select items bigger or equal to the size setting"),
              ('EQUAL', 'Equal', "Select edges equal to the size setting"))
-    edgeSize = EnumProperty(
+    edgeSize: EnumProperty(
             items=sizes,
             name="Edge comparison",
             description="Choose the relation to set edge length",
             default='EQUAL'
             )
-    extend = BoolProperty(
+    extend: BoolProperty(
             name="Extend",
             description="Extend the current selection",
             default=False
             )
-    start_new = BoolProperty(
+    start_new: BoolProperty(
             name="Fresh Start",
             default=False,
             description="Start from no previous selection"
@@ -215,7 +215,7 @@ class Select_init(bpy.types.Operator):
     # The spaces we use
     spaces = (('LOC', 'Local', "Use Local space"),
               ('GLO', 'Global', "Use Global Space"))
-    space = EnumProperty(
+    space: EnumProperty(
             items=spaces,
             name="Space",
             description="The space to interpret the directions in",

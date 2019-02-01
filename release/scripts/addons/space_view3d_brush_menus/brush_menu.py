@@ -108,8 +108,8 @@ class BrushOptionsMenu(Menu):
         toolsettings = context.tool_settings.image_paint
 
         if context.image_paint_object and not toolsettings.detect_data():
-            layout.row().label("Missing Data", icon="INFO")
-            layout.row().label("See Tool Shelf", icon="BACK")
+            layout.row().label(text="Missing Data", icon="INFO")
+            layout.row().label(text="See Tool Shelf", icon="BACK")
         else:
             has_brush = utils_core.get_brush_link(context, types="brush")
             if has_brush and has_brush.image_tool in {'DRAW', 'FILL'} and \
@@ -145,7 +145,7 @@ class BrushOptionsMenu(Menu):
         particle_edit = context.tool_settings.particle_edit
 
         if particle_edit.tool == 'NONE':
-            layout.row().label("No Brush Selected", icon="INFO")
+            layout.row().label(text="No Brush Selected", icon="INFO")
             layout.row().separator()
             layout.row().menu("VIEW3D_MT_sv3_brushes_menu",
                                 text="Select Brush", icon="BRUSH_DATA")
@@ -271,7 +271,7 @@ class BrushStrengthMenu(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 
 class BrushModeMenu(Menu):
@@ -336,7 +336,7 @@ class BrushModeMenu(Menu):
                             disable=True, disable_icon='RADIOBUT_ON'
                             )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 
 class BrushAutosmoothMenu(Menu):
@@ -372,7 +372,7 @@ class BrushAutosmoothMenu(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No Smooth options available", icon="INFO")
+            layout.row().label(text="No Smooth options available", icon="INFO")
 
 
 class BrushWeightMenu(Menu):
@@ -417,7 +417,7 @@ class BrushWeightMenu(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No brush available", icon="INFO")
+            layout.row().label(text="No brush available", icon="INFO")
 
 
 class ParticleCountMenu(Menu):
@@ -496,7 +496,7 @@ class FlipColorsAll(Operator):
     bl_idname = "view3d.sv3_flip_colors_all"
     bl_description = "Switch between Foreground and Background colors"
 
-    is_tex = BoolProperty(
+    is_tex: BoolProperty(
                 default=False,
                 options={'HIDDEN'}
                 )
@@ -584,7 +584,7 @@ class ColorPickerPopup(Operator):
 
             layout.row().template_ID(settings, "palette", new="palette.new")
         else:
-            layout.row().label("No brushes currently available", icon="INFO")
+            layout.row().label(text="No brushes currently available", icon="INFO")
 
             return
 

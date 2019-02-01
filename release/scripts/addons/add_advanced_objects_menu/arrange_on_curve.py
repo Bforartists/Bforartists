@@ -4,7 +4,7 @@ bl_info = {
     "name": "Arrange on Curve",
     "author": "Mano-Wii",
     "version": (6, 3, 0),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "3D View > Toolshelf > Create > Arrange on Curve",
     "description": "Arrange objects along a curve",
     "warning": "Select curve",
@@ -71,7 +71,7 @@ class DupliCurve(Operator):
     bl_description = "Arange chosen / selected objects along the Active Curve"
     bl_options = {'REGISTER', 'UNDO'}
 
-    use_distance = EnumProperty(
+    use_distance: EnumProperty(
             name="Arrangement",
             items=[
                 ("D", "Distance", "Objects are arranged depending on the distance", 0),
@@ -79,7 +79,7 @@ class DupliCurve(Operator):
                 ("R", "Range", "Objects are arranged uniformly between the corners", 2)
                 ]
             )
-    distance = FloatProperty(
+    distance: FloatProperty(
             name="Distance",
             description="Distance between Objects",
             default=1.0,
@@ -87,44 +87,44 @@ class DupliCurve(Operator):
             soft_min=0.1,
             unit='LENGTH',
             )
-    object_qt = IntProperty(
+    object_qt: IntProperty(
             name="Quantity",
             description="Object amount",
             default=2,
             min=0,
             )
-    scale = FloatProperty(
+    scale: FloatProperty(
             name="Scale",
             description="Object Scale",
             default=1.0,
             min=FLT_MIN,
             unit='LENGTH',
                 )
-    Yaw = FloatProperty(
+    Yaw: FloatProperty(
             name="X",
             description="Rotate around the X axis (Yaw)",
             default=0.0,
             unit='ROTATION'
             )
-    Pitch = FloatProperty(
+    Pitch: FloatProperty(
             default=0.0,
             description="Rotate around the Y axis (Pitch)",
             name="Y",
             unit='ROTATION'
             )
-    Roll = FloatProperty(
+    Roll: FloatProperty(
             default=0.0,
             description="Rotate around the Z axis (Roll)",
             name="Z",
             unit='ROTATION'
             )
-    max_angle = FloatProperty(
+    max_angle: FloatProperty(
             default=1.57079,
             max=3.141592,
             name="Angle",
             unit='ROTATION'
             )
-    offset = FloatProperty(
+    offset: FloatProperty(
             default=0.0,
             name="Offset",
             unit='LENGTH'
@@ -266,7 +266,7 @@ class DupliCurve(Operator):
                             j += 1
                             dx -= dist  # Calculating the remaining length of the section
                             obj = object.copy()
-                            context.scene.objects.link(obj)
+                            context.collection.objects.link(obj)
                             obj.matrix_world = quat * yawMatrix * pitchMatrix * rollMatrix
                             # Placing in the correct position
                             obj.matrix_world.translation = point - v_norm * dx
@@ -296,7 +296,7 @@ class DupliCurve(Operator):
                             j += 1
                             dx -= dist  # Calculating the remaining length of the section
                             obj = object.copy()
-                            context.scene.objects.link(obj)
+                            context.collection.objects.link(obj)
                             obj.matrix_world = quat * yawMatrix * pitchMatrix * rollMatrix
                             # Placing in the correct position
                             obj.matrix_world.translation = point - v_norm * dx
@@ -332,7 +332,7 @@ class DupliCurve(Operator):
                             object = G_Objeto[j % len(G_Objeto)]
                             j += 1
                             obj = object.copy()
-                            context.scene.objects.link(obj)
+                            context.collection.objects.link(obj)
                             obj.matrix_world = quat * yawMatrix * pitchMatrix * rollMatrix
                             # Placing in the correct position
                             obj.matrix_world.translation = point - v_norm * dx

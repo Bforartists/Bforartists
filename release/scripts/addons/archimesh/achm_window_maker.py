@@ -34,11 +34,11 @@ from .achm_tools import *
 # ------------------------------------------------------------------
 # Define operator class to create object
 # ------------------------------------------------------------------
-class AchmWindows(Operator):
+class ARCHIMESH_OT_Windows(Operator):
     bl_idname = "mesh.archimesh_window"
     bl_label = "Rail Windows"
     bl_description = "Rail Windows Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # -----------------------------------------------------
@@ -48,7 +48,7 @@ class AchmWindows(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     # -----------------------------------------------------
     # Execute
@@ -71,21 +71,21 @@ class AchmWindows(Operator):
 def create_object(self, context):
     # deselect all objects
     for o in bpy.data.objects:
-        o.select = False
+        o.select_set(False)
 
     # we create main object and mesh
     mainmesh = bpy.data.meshes.new("WindowFrane")
     mainobject = bpy.data.objects.new("WindowFrame", mainmesh)
     mainobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(mainobject)
+    bpy.context.collection.objects.link(mainobject)
     mainobject.WindowObjectGenerator.add()
 
     # we shape the main object and create other objects as children
     shape_mesh_and_create_children(mainobject, mainmesh)
 
     # we select, and activate, main object
-    mainobject.select = True
-    bpy.context.scene.objects.active = mainobject
+    mainobject.select_set(True)
+    bpy.context.view_layer.objects.active = mainobject
 
 
 # ------------------------------------------------------------------------------
@@ -100,12 +100,12 @@ def update_object(self, context):
     oldmesh = o.data
     oldname = o.data.name
     # Now we deselect that object to not delete it.
-    o.select = False
+    o.select_set(False)
     # and we create a new mesh
     tmp_mesh = bpy.data.meshes.new("temp")
     # deselect all objects
     for obj in bpy.data.objects:
-        obj.select = False
+        obj.select_set(False)
 
     # ---------------------------------
     #  Clear Parent objects (autohole)
@@ -120,16 +120,16 @@ def update_object(self, context):
             # noinspection PyBroadException
             try:
                 # clear child data
-                child.hide = False  # must be visible to avoid bug
+                child.hide_viewport = False  # must be visible to avoid bug
                 child.hide_render = False  # must be visible to avoid bug
                 old = child.data
-                child.select = True
+                child.select_set(True)
                 bpy.ops.object.delete()
                 bpy.data.meshes.remove(old)
             except:
                 dummy = -1
 
-        myparent.select = True
+        myparent.select_set(True)
         bpy.ops.object.delete()
 
     # -----------------------
@@ -148,8 +148,8 @@ def update_object(self, context):
     bpy.data.meshes.remove(oldmesh)
     tmp_mesh.name = oldname
     # and select, and activate, the main object
-    o.select = True
-    bpy.context.scene.objects.active = o
+    o.select_set(True)
+    bpy.context.view_layer.objects.active = o
 
 
 # ------------------------------------------------------------------------------
@@ -217,9 +217,9 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
     myctrl.location.y = -mp.depth * 3 / 2
     myctrl.location.z = 0
     myctrl.display_type = 'BOUNDS'
-    myctrl.hide = False
+    myctrl.hide_viewport = False
     myctrl.hide_render = True
-    if bpy.context.scene.render.engine == 'CYCLES':
+    if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         myctrl.cycles_visibility.camera = False
         myctrl.cycles_visibility.diffuse = False
         myctrl.cycles_visibility.glossy = False
@@ -232,8 +232,8 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True and o.name != mainobject.name:
-            o.select = False
+        if o.select_get() is True and o.name != mainobject.name:
+            o.select_set(False)
 
     return
 
@@ -242,40 +242,40 @@ def shape_mesh_and_create_children(mainobject, tmp_mesh, update=False):
 # Define property group class to create or modify
 # ------------------------------------------------------------------
 class ObjectProperties(PropertyGroup):
-    width = FloatProperty(
+    width: FloatProperty(
             name='Width',
             min=0.20, max=50,
             default=1.20, precision=3,
             description='window width',
             update=update_object,
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name='Depth',
             min=0.07, max=1,
             default=0.10, precision=3,
             description='window depth',
             update=update_object,
             )
-    height = FloatProperty(
+    height: FloatProperty(
             name='Height',
             min=0.20, max=50,
             default=1, precision=3,
             description='window height',
             update=update_object,
             )
-    r = FloatProperty(
+    r: FloatProperty(
             name='Rotation', min=0, max=360, default=0, precision=1,
             description='Window rotation',
             update=update_object,
             )
 
-    external = BoolProperty(
+    external: BoolProperty(
             name="External frame",
             description="Create an external front frame",
             default=True,
             update=update_object,
             )
-    frame = FloatProperty(
+    frame: FloatProperty(
             name='External Frame',
             min=0.001, max=1,
             default=0.01, precision=3,
@@ -283,21 +283,21 @@ class ObjectProperties(PropertyGroup):
             update=update_object,
             )
 
-    frame_L = FloatProperty(
+    frame_L: FloatProperty(
             name='Frame',
             min=0.02, max=1,
             default=0.06, precision=3,
             description='Frame size',
             update=update_object,
             )
-    wf = FloatProperty(
+    wf: FloatProperty(
             name='WinFrame',
             min=0.001, max=1,
             default=0.05, precision=3,
             description='Window Frame size',
             update=update_object,
             )
-    leafratio = FloatProperty(
+    leafratio: FloatProperty(
             name='Leaf ratio',
             min=0.001, max=0.999,
             default=0.50,
@@ -305,7 +305,7 @@ class ObjectProperties(PropertyGroup):
             description='Leaf thickness ratio',
             update=update_object,
             )
-    opentype = EnumProperty(
+    opentype: EnumProperty(
             items=(
                 ('1', "Rail window", ""),
                 ('2', "Two leaf", ""),
@@ -315,34 +315,34 @@ class ObjectProperties(PropertyGroup):
             description="Defines type of window",
             update=update_object,
             )
-    handle = BoolProperty(
+    handle: BoolProperty(
             name="Create handles",
             description="Create default handle to the leaf",
             default=True,
             update=update_object,
             )
 
-    sill = BoolProperty(
+    sill: BoolProperty(
             name="Sill",
             description="Add sill to window",
             default=True,
             update=update_object,
             )
-    sill_thickness = FloatProperty(
+    sill_thickness: FloatProperty(
             name='Thickness',
             min=0, max=50,
             default=0.01, precision=3,
             description='Sill thickness',
             update=update_object,
             )
-    sill_back = FloatProperty(
+    sill_back: FloatProperty(
             name='Back',
             min=0, max=10,
             default=0.0, precision=3,
             description='Extrusion in back side',
             update=update_object,
             )
-    sill_front = FloatProperty(
+    sill_front: FloatProperty(
             name='Front',
             min=0, max=10,
             default=0.12, precision=3,
@@ -350,39 +350,39 @@ class ObjectProperties(PropertyGroup):
             update=update_object,
             )
 
-    blind = BoolProperty(
+    blind: BoolProperty(
             name="Blind",
             description="Create an external blind",
             default=False,
             update=update_object,
             )
-    blind_box = BoolProperty(
+    blind_box: BoolProperty(
             name="Blind box", description="Create a box over frame for blind",
             default=True,
             update=update_object,
             )
-    blind_height = FloatProperty(
+    blind_height: FloatProperty(
             name='Height',
             min=0.001, max=10,
             default=0.12, precision=3,
             description='Blind box height',
             update=update_object,
             )
-    blind_back = FloatProperty(
+    blind_back: FloatProperty(
             name='Back',
             min=0.001, max=10,
             default=0.002, precision=3,
             description='Extrusion in back side',
             update=update_object,
             )
-    blind_rail = FloatProperty(
+    blind_rail: FloatProperty(
             name='Separation',
             min=0.001, max=10,
             default=0.10, precision=3,
             description='Separation from frame',
             update=update_object,
             )
-    blind_ratio = IntProperty(
+    blind_ratio: IntProperty(
             name='Extend',
             min=0, max=100,
             default=20,
@@ -391,24 +391,24 @@ class ObjectProperties(PropertyGroup):
             )
 
     # Materials
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             update=update_object,
             )
     # opengl internal data
-    glpoint_a = FloatVectorProperty(
+    glpoint_a: FloatVectorProperty(
             name="glpointa",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_b = FloatVectorProperty(
+    glpoint_b: FloatVectorProperty(
             name="glpointb",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_c = FloatVectorProperty(
+    glpoint_c: FloatVectorProperty(
             name="glpointc",
             description="Hidden property for opengl",
             default=(0, 0, 0),
@@ -422,12 +422,12 @@ Object.WindowObjectGenerator = CollectionProperty(type=ObjectProperties)
 # ------------------------------------------------------------------
 # Define panel class to modify object
 # ------------------------------------------------------------------
-class AchmWindowObjectgeneratorpanel(Panel):
+class ARCHIMESH_PT_WindowObjectgenerator(Panel):
     bl_idname = "OBJECT_PT_window_generator"
     bl_label = "Window Rail"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     # -----------------------------------------------------
     # Verify if visible
@@ -456,7 +456,7 @@ class AchmWindowObjectgeneratorpanel(Panel):
 
         layout = self.layout
         if bpy.context.mode == 'EDIT_MESH':
-            layout.label('Warning: Operator does not work in edit mode.', icon='ERROR')
+            layout.label(text='Warning: Operator does not work in edit mode.', icon='ERROR')
         else:
             myobjdat = o.WindowObjectGenerator[0]
             space = bpy.context.space_data
@@ -464,13 +464,13 @@ class AchmWindowObjectgeneratorpanel(Panel):
                 # Imperial units warning
                 if bpy.context.scene.unit_settings.system == "IMPERIAL":
                     row = layout.row()
-                    row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                    row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
                 box = layout.box()
                 row = box.row()
                 row.prop(myobjdat, 'opentype')
                 row = box.row()
-                row.label("Window size")
+                row.label(text="Window size")
                 row = box.row()
                 row.prop(myobjdat, 'width')
                 row.prop(myobjdat, 'depth')
@@ -514,12 +514,12 @@ class AchmWindowObjectgeneratorpanel(Panel):
                         row.prop(myobjdat, 'blind_back')
 
                 box = layout.box()
-                if not context.scene.render.engine == 'CYCLES':
+                if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                     box.enabled = False
                 box.prop(myobjdat, 'crt_mat')
             else:
                 row = layout.row()
-                row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+                row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
 
 # ------------------------------------------------------------------------------
@@ -529,7 +529,7 @@ def generate_rail_window(myframe, mp, mymesh):
     myloc = bpy.context.scene.cursor_location
 
     alummat = None
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         alummat = create_diffuse_material("Window_material", False, 0.8, 0.8, 0.8, 0.6, 0.6, 0.6, 0.15)
 
     # Frame
@@ -620,7 +620,7 @@ def generate_leaf_window(myframe, mp, mymesh):
     myloc = bpy.context.scene.cursor_location
 
     alummat = None
-    if mp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         alummat = create_diffuse_material("Window_material", False, 0.8, 0.8, 0.8, 0.6, 0.6, 0.6, 0.15)
 
     # Frame
@@ -719,11 +719,11 @@ def generate_leaf_window(myframe, mp, mymesh):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    myframe.select = True
-    bpy.context.scene.objects.active = myframe
+    myframe.select_set(True)
+    bpy.context.view_layer.objects.active = myframe
 
     return myframe
 
@@ -906,7 +906,7 @@ def create_rail_window_frame(mywindow, mymesh, sx, sy, sz, frame, mat, matdata, 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mywindow, matdata)
     # --------------
     # Blind Box
@@ -919,7 +919,7 @@ def create_rail_window_frame(mywindow, mymesh, sx, sy, sz, frame, mat, matdata, 
         mybox.location.x = 0
         mybox.location.y = -blind_back - sy
         mybox.location.z = sz
-        if mat and bpy.context.scene.render.engine == 'CYCLES':
+        if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
             set_material(mybox, matdata)
         # Lock
         mybox.lock_location = (True, True, True)
@@ -1030,7 +1030,7 @@ def create_leaf_window_frame(mywindow, mymesh, sx, sy, sz, frame, frame_l, leafr
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mywindow, matdata)
 
     # --------------
@@ -1044,7 +1044,7 @@ def create_leaf_window_frame(mywindow, mymesh, sx, sy, sz, frame, frame_l, leafr
         mybox.location.x = 0
         mybox.location.y = -blind_back - sy
         mybox.location.z = sz
-        if mat and bpy.context.scene.render.engine == 'CYCLES':
+        if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
             set_material(mybox, matdata)
         # Lock
         mybox.lock_location = (True, True, True)
@@ -1200,7 +1200,7 @@ def create_rail_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
     mywindow.location[0] = px
     mywindow.location[1] = py
     mywindow.location[2] = pz
-    bpy.context.scene.objects.link(mywindow)
+    bpy.context.collection.objects.link(mywindow)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -1226,7 +1226,7 @@ def create_rail_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
         else:
             myhandle.location.z = 1
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mywindow, matdata)
         # Glass
         glass = create_glass_material("Glass_material", False)
@@ -1299,7 +1299,7 @@ def create_leaf_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
     mywindow.location[0] = px
     mywindow.location[1] = py
     mywindow.location[2] = pz
-    bpy.context.scene.objects.link(mywindow)
+    bpy.context.collection.objects.link(mywindow)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -1330,7 +1330,7 @@ def create_leaf_window_leaf(objname, hand, sx, sy, sz, f, px, py, pz, mat, matda
         set_smooth(myhandle)
         set_modifier_subsurf(myhandle)
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(mywindow, matdata)
         # Glass
         glass = create_glass_material("Glass_material", False)
@@ -1751,13 +1751,13 @@ def create_leaf_handle(objname, mat):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
 
     # Create materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         alumat = create_glossy_material("Handle_material", False, 0.733, 0.779, 0.8)
         set_material(myobject, alumat)
 
@@ -2092,13 +2092,13 @@ def create_rail_handle(objname, mat):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
 
     # Create materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         plastic = create_diffuse_material("Plastic_Handle_material", False, 0.01, 0.01, 0.01, 0.082, 0.079, 0.02, 0.01)
         set_material(myobject, plastic)
 
@@ -2130,12 +2130,12 @@ def create_sill(objname, x, y, z, mat):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mymat = create_diffuse_material("Sill_material", False, 0.8, 0.8, 0.8)
         set_material(myobject, mymat)
 
@@ -2168,7 +2168,7 @@ def create_blind_box(objname, x, y, z):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -2228,12 +2228,12 @@ def create_blind_rail(objname, sx, sz, px, py, pz, mat, matdata, blind_rail):
     myblind.location[0] = px
     myblind.location[1] = py
     myblind.location[2] = pz
-    bpy.context.scene.objects.link(myblind)
+    bpy.context.collection.objects.link(myblind)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(myblind, matdata)
 
     return myblind
@@ -2290,14 +2290,14 @@ def create_blind(objname, sx, sz, px, py, pz, mat, blind_ratio):
     myblind.location[0] = px
     myblind.location[1] = py
     myblind.location[2] = pz
-    bpy.context.scene.objects.link(myblind)
+    bpy.context.collection.objects.link(myblind)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
 
     myblind.lock_location = (True, True, False)  # only Z axis
 
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material("Blind_plastic_material", False, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.15)
         set_material(myblind, mat)
 

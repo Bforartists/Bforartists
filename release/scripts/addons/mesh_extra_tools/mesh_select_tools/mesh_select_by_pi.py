@@ -164,22 +164,22 @@ class Select_init(Operator):
                       "Number Pi (3.14 etc.) or e (2.71828 - Euler's number)")
     bl_options = {'REGISTER', 'UNDO'}
 
-    e = BoolProperty(
+    e: BoolProperty(
             name="Use e",
             description="Use e as the base of selection instead of pi",
             default=False
             )
-    invert = BoolProperty(
+    invert: BoolProperty(
             name="Invert",
             description="Invert the selection result",
             default=False
             )
-    extend = BoolProperty(
+    extend: BoolProperty(
             name="Extend",
             description="Extend the current selection",
             default=False
             )
-    start_new = BoolProperty(
+    start_new: BoolProperty(
             name="Fresh Start",
             default=False,
             description="Start from no previous selection"

@@ -253,7 +253,7 @@ class FaceTypeSelect(Operator):
     bl_description = "Select Triangles and / or Ngons on the Active Object"
     bl_options = {'REGISTER', 'UNDO'}
 
-    face_type = EnumProperty(
+    face_type: EnumProperty(
             name="Face Type",
             items=(('tris', "Tris", "Colorize Triangles in the Mesh"),
                    ('ngons', "Ngons", "Colorize Ngons in the Mesh")),
@@ -278,19 +278,19 @@ class FaceTypeSelect(Operator):
 
 
 class MeshCheckCollectionGroup(PropertyGroup):
-    mesh_check_use = BoolProperty(
+    mesh_check_use: BoolProperty(
             name="Mesh Check",
             description="Display Mesh Check options",
             default=False,
             update=updateBGLData
             )
-    display_faces = BoolProperty(
+    display_faces: BoolProperty(
             name="Display Faces",
             description="Use BGL to display Ngons and Tris of the mesh",
             default=False,
             update=updateBGLData
             )
-    edge_width = FloatProperty(
+    edge_width: FloatProperty(
             name="Width",
             description="Drawn Edges width in pixels",
             min=1.0,
@@ -299,13 +299,13 @@ class MeshCheckCollectionGroup(PropertyGroup):
             subtype='PIXEL',
             update=updateBGLData
             )
-    finer_lines_behind_use = BoolProperty(
+    finer_lines_behind_use: BoolProperty(
             name="Finer Lines behind",
             description="Display partially hidden edges finer in non-occlude mode",
             default=True,
             update=updateBGLData
             )
-    custom_tri_color = FloatVectorProperty(
+    custom_tri_color: FloatVectorProperty(
             name="Tri Color",
             description="Custom color for the Triangles",
             min=0.0,
@@ -315,7 +315,7 @@ class MeshCheckCollectionGroup(PropertyGroup):
             subtype='COLOR',
             update=updateBGLData
             )
-    custom_ngons_color = FloatVectorProperty(
+    custom_ngons_color: FloatVectorProperty(
             name="Ngons Color",
             description="Custom color for the Ngons",
             min=0.0,
@@ -325,7 +325,7 @@ class MeshCheckCollectionGroup(PropertyGroup):
             subtype='COLOR',
             update=updateBGLData
             )
-    face_opacity = FloatProperty(
+    face_opacity: FloatProperty(
             name="Face Opacity",
             description="Opacity of the color for the face",
             min=0.0,

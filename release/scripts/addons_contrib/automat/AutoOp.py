@@ -22,11 +22,11 @@ class AutomatOperatorFromTexture(bpy.types.Operator):
 
 	# Variables used for storing the filepath given by blender's file manager
 
-	filepath = bpy.props.StringProperty(subtype="FILE_PATH")
-	filename = bpy.props.StringProperty()
-	directory = bpy.props.StringProperty(subtype="FILE_PATH")
+	filepath: bpy.props.StringProperty(subtype="FILE_PATH")
+	filename: bpy.props.StringProperty()
+	directory: bpy.props.StringProperty(subtype="FILE_PATH")
 
-	make_seamless = bpy.props.BoolProperty(name="Make Seamless", description="Make tileable (removes visible borders of the image).")
+	make_seamless: bpy.props.BoolProperty(name="Make Seamless", description="Make tileable (removes visible borders of the image).")
 
 	def execute(self, context):
 

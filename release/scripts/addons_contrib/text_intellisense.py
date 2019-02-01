@@ -108,7 +108,7 @@ class Intellioptions(bpy.types.Operator):
     bl_idname = "text.intellioptions"
     bl_label = "Intellisense options"
 
-    text = bpy.props.StringProperty()
+    text: bpy.props.StringProperty()
 
     @classmethod
     def poll(cls, context):
@@ -185,7 +185,7 @@ class TestLine(bpy.types.Operator):
     bl_idname = "text.test_line"
     bl_label = "Test line"
 
-    all = bpy.props.BoolProperty(default=False)
+    all: bpy.props.BoolProperty(default=False)
 
     """
     @classmethod
@@ -339,7 +339,7 @@ class DebugPanel(bpy.types.Panel):
     bl_region_type = "UI"
     # bl_context = "object"
 
-    text = bpy.props.StringProperty()
+    text: bpy.props.StringProperty()
 
     def draw(self, context):
         layout = self.layout

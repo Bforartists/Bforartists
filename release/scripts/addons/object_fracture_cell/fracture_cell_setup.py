@@ -121,7 +121,7 @@ def _points_from_object(obj, source):
     return points
 
 
-def cell_fracture_objects(scene, obj,
+def cell_fracture_objects(context, obj,
                           source={'PARTICLE_OWN'},
                           source_limit=0,
                           source_noise=0.0,
@@ -137,6 +137,8 @@ def cell_fracture_objects(scene, obj,
                           ):
 
     from . import fracture_cell_calc
+    collection = context.collection
+    scene = context.scene
 
     # -------------------------------------------------------------------------
     # GET POINTS
@@ -187,7 +189,7 @@ def cell_fracture_objects(scene, obj,
         bm.to_mesh(mesh_tmp)
         bm.free()
         obj_tmp = bpy.data.objects.new(name=mesh_tmp.name, object_data=mesh_tmp)
-        scene.objects.link(obj_tmp)
+        collection.objects.link(obj_tmp)
         del obj_tmp, mesh_tmp
 
     mesh = obj.data
@@ -278,7 +280,7 @@ def cell_fracture_objects(scene, obj,
         # OBJECT
 
         obj_cell = bpy.data.objects.new(name=cell_name, object_data=mesh_dst)
-        scene.objects.link(obj_cell)
+        collection.objects.link(obj_cell)
         # scene.objects.active = obj_cell
         obj_cell.location = center_point
 
@@ -309,7 +311,7 @@ def cell_fracture_objects(scene, obj,
     return objects
 
 
-def cell_fracture_boolean(scene, obj, objects,
+def cell_fracture_boolean(context, obj, objects,
                           use_debug_bool=False,
                           clean=True,
                           use_island_split=False,
@@ -320,6 +322,8 @@ def cell_fracture_boolean(scene, obj, objects,
                           ):
 
     objects_boolean = []
+    collection = context.collection
+    scene = context.scene
 
     if use_interior_hide and level == 0:
         # only set for level 0
@@ -346,7 +350,7 @@ def cell_fracture_boolean(scene, obj, objects,
             if not mesh_old.users:
                 bpy.data.meshes.remove(mesh_old)
             if not mesh_new.vertices:
-                scene.objects.unlink(obj_cell)
+                collection.objects.unlink(obj_cell)
                 if not obj_cell.users:
                     bpy.data.objects.remove(obj_cell)
                     obj_cell = None
@@ -392,9 +396,9 @@ def cell_fracture_boolean(scene, obj, objects,
         # this is ugly and Im not proud of this - campbell
         base = None
         for base in scene.object_bases:
-            base.select = False
+            base.select_set(False)
         for obj_cell in objects_boolean:
-            obj_cell.select = True
+            obj_cell.select_set(True)
 
         bpy.ops.mesh.separate(type='LOOSE')
 

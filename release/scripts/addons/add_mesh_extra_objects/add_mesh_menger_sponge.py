@@ -144,32 +144,32 @@ class AddMengerSponge(bpy.types.Operator):
     bl_description = "Construct a menger sponge mesh"
     bl_options = {'REGISTER', 'UNDO'}
 
-    level = IntProperty(
+    level: IntProperty(
             name="Level",
             description="Sponge Level",
             min=0, max=4,
             default=1,
             )
-    radius = FloatProperty(
+    radius: FloatProperty(
             name="Width",
             description="Sponge Radius",
             min=0.01, max=100.0,
             default=1.0,
             )
     # generic transform props
-    view_align = BoolProperty(
+    view_align: BoolProperty(
             name="Align to View",
             default=False,
             )
-    location = FloatVectorProperty(
+    location: FloatVectorProperty(
             name="Location",
             subtype='TRANSLATION',
             )
-    rotation = FloatVectorProperty(
+    rotation: FloatVectorProperty(
             name="Rotation",
             subtype='EULER',
             )
-    layers = BoolVectorProperty(
+    layers: BoolVectorProperty(
             name="Layers",
             size=20,
             subtype='LAYER',
@@ -184,7 +184,7 @@ class AddMengerSponge(bpy.types.Operator):
         mesh = bpy.data.meshes.new(name='Sponge')
         mesh.from_pydata(vertices, [], faces)
         uvs = [(0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)]
-        mesh.uv_textures.new()
+        mesh.uv_layers.new()
         for i, uvloop in enumerate(mesh.uv_layers.active.data):
             uvloop.uv = uvs[i % 4]
 

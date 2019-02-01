@@ -1645,7 +1645,7 @@ class MotionTrailPanel(bpy.types.Panel):
             row.prop(context.window_manager.motion_trail, "path_display",
                 icon="RIGHTARROW", text="", emboss=False)
 
-        row.label("Path options")
+        row.label(text="Path options")
 
         if context.window_manager.motion_trail.path_display:
             col.prop(context.window_manager.motion_trail, "path_style",
@@ -1683,19 +1683,19 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             context.area.tag_redraw()
 
     # internal use
-    enabled = BoolProperty(default=False)
+    enabled: BoolProperty(default=False)
 
-    force_update = BoolProperty(name="internal use",
+    force_update: BoolProperty(name="internal use",
         description="Force calc_callback to fully execute",
         default=False)
 
-    handle_type_enabled = BoolProperty(default=False)
-    handle_type_frame = FloatProperty()
-    handle_type_side = StringProperty()
-    handle_type_action_ob = StringProperty()
-    handle_type_child = StringProperty()
+    handle_type_enabled: BoolProperty(default=False)
+    handle_type_frame: FloatProperty()
+    handle_type_side: StringProperty()
+    handle_type_action_ob: StringProperty()
+    handle_type_child: StringProperty()
 
-    handle_type_old = EnumProperty(
+    handle_type_old: EnumProperty(
             items=(
                 ("AUTO", "", ""),
                 ("AUTO_CLAMPED", "", ""),
@@ -1705,7 +1705,7 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             default='AUTO'
             )
     # visible in user interface
-    calculate = EnumProperty(name="Calculate", items=(
+    calculate: EnumProperty(name="Calculate", items=(
             ("fast", "Fast", "Recommended setting, change if the "
                              "motion path is positioned incorrectly"),
             ("full", "Full", "Takes parenting and modifiers into account, "
@@ -1714,17 +1714,17 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             default='full',
             update=internal_update
             )
-    frame_display = BoolProperty(name="Frames",
+    frame_display: BoolProperty(name="Frames",
             description="Display frames, \n test",
             default=True,
             update=internal_update
             )
-    handle_display = BoolProperty(name="Display",
+    handle_display: BoolProperty(name="Display",
             description="Display handles",
             default=True,
             update=internal_update
             )
-    handle_type = EnumProperty(name="Type", items=(
+    handle_type: EnumProperty(name="Type", items=(
             ("AUTO", "Automatic", ""),
             ("AUTO_CLAMPED", "Auto Clamped", ""),
             ("VECTOR", "Vector", ""),
@@ -1734,12 +1734,12 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             default='AUTO',
             update=set_handle_type
             )
-    keyframe_numbers = BoolProperty(name="Keyframe numbers",
+    keyframe_numbers: BoolProperty(name="Keyframe numbers",
             description="Display keyframe numbers",
             default=False,
             update=internal_update
             )
-    mode = EnumProperty(name="Mode", items=(
+    mode: EnumProperty(name="Mode", items=(
             ("location", "Location", "Change path that is followed"),
             ("speed", "Speed", "Change speed between keyframes"),
             ("timing", "Timing", "Change position of keyframes on timeline")),
@@ -1747,25 +1747,25 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             default='location',
             update=internal_update
             )
-    path_after = IntProperty(name="After",
+    path_after: IntProperty(name="After",
             description="Number of frames to show after the current frame, "
                         "0 = display all",
             default=50,
             min=0,
             update=internal_update
             )
-    path_before = IntProperty(name="Before",
+    path_before: IntProperty(name="Before",
             description="Number of frames to show before the current frame, "
                         "0 = display all",
             default=50,
             min=0,
             update=internal_update
             )
-    path_display = BoolProperty(name="Path options",
+    path_display: BoolProperty(name="Path options",
             description="Display path options",
             default=True
             )
-    path_resolution = IntProperty(name="Resolution",
+    path_resolution: IntProperty(name="Resolution",
             description="10 is smoothest, but could be "
                         "slow when adjusting keyframes, handles or timebeads",
             default=10,
@@ -1773,7 +1773,7 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             max=10,
             update=internal_update
             )
-    path_style = EnumProperty(name="Path style", items=(
+    path_style: EnumProperty(name="Path style", items=(
             ("acceleration", "Acceleration", "Gradient based on relative acceleration"),
             ("simple", "Simple", "Black line"),
             ("speed", "Speed", "Gradient based on relative speed")),
@@ -1781,7 +1781,7 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             default='simple',
             update=internal_update
             )
-    path_transparency = IntProperty(name="Path transparency",
+    path_transparency: IntProperty(name="Path transparency",
             description="Determines visibility of path",
             default=0,
             min=0,
@@ -1789,14 +1789,14 @@ class MotionTrailProps(bpy.types.PropertyGroup):
             subtype='PERCENTAGE',
             update=internal_update
             )
-    path_width = IntProperty(name="Path width",
+    path_width: IntProperty(name="Path width",
             description="Width in pixels",
             default=1,
             min=1,
             soft_max=5,
             update=internal_update
             )
-    timebeads = IntProperty(name="Time beads",
+    timebeads: IntProperty(name="Time beads",
             description="Number of time beads to display per segment",
             default=5,
             min=1,

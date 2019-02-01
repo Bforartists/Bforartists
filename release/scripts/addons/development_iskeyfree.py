@@ -22,7 +22,7 @@ bl_info = {
     "name": "Is key Free",
     "author": "Antonio Vazquez (antonioya)",
     "version": (1, 1, 1),
-    "blender": (2, 6, 9),
+    "blender": (2, 69, 0),
     "location": "Text Editor > Props Shelf (Ctrl/t > IsKeyFree Tools",
     "description": "Find free shortcuts, inform about used and print a key list",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6"
@@ -245,11 +245,11 @@ class UIControlPanel(Panel):
             cmd = mychecker.getlast()
             if cmd is not None:
                 row = layout.row()
-                row.label("Current uses of " + str(cmd), icon="PARTICLE_DATA")
+                row.label(text="Current uses of " + str(cmd), icon="PARTICLE_DATA")
             for e in mylist:
                 if oldcontext != e[0]:
                     box = layout.box()
-                    box.label(e[0], icon="UNPINNED")
+                    box.label(text=e[0], icon="UNPINNED")
                     oldcontext = e[0]
 
                 row = box.row(align=True)
@@ -275,31 +275,31 @@ def update_data(self, context):
 
 
 class IskeyFreeProperties(PropertyGroup):
-    data = StringProperty(
+    data: StringProperty(
         name="Key", maxlen=32,
         description="Shortcut to verify"
     )
-    use_crtl = BoolProperty(
+    use_crtl: BoolProperty(
         name="Ctrl",
         description="Ctrl key used in shortcut",
         default=False
     )
-    use_alt = BoolProperty(
+    use_alt: BoolProperty(
         name="Alt",
         description="Alt key used in shortcut",
         default=False
     )
-    use_shift = BoolProperty(
+    use_shift: BoolProperty(
         name="Shift",
         description="Shift key used in shortcut",
         default=False
     )
-    use_oskey = BoolProperty(
+    use_oskey: BoolProperty(
         name="OsKey",
         description="Operating system key used in shortcut",
         default=False
     )
-    numpad = EnumProperty(
+    numpad: EnumProperty(
         items=(
             ('NONE', "Select key", ""),
             ("LEFTMOUSE", "LEFTMOUSE", ""),

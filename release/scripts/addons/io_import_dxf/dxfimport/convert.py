@@ -150,7 +150,7 @@ def bulge_to_arc(point, next, bulge):
         cosagitta_len = sagitta_len - radius
         direction *= -1
         correction *= -1
-    center = point + section / 2 + section.normalized() * cosagitta_len * rot * direction
+    center = point + section / 2 + section.normalized() * cosagitta_len * direction @ rot
     cp = point - center
     cn = next - center
     cr = cp.to_3d().cross(cn.to_3d()) * correction

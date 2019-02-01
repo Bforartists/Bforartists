@@ -89,12 +89,12 @@ class ExtrudeAlongCurve(bpy.types.Operator):
     bl_label = "Extrude Along Curve"
     bl_options = {'REGISTER', 'UNDO'}
 
-    resolution = bpy.props.IntProperty(name="Resolution", default=1, min=1, soft_max=100)
-    scale = bpy.props.FloatProperty(name="Scale", default=1.0, soft_min=0.0, soft_max=5.0)
-    rotation = bpy.props.FloatProperty(name="Rotation", default=0.0, soft_min=-2 * pi, soft_max=2 * pi, subtype='ANGLE')
-    splineidx = bpy.props.IntProperty(name="Spline Index", default=0, min=0)
-    snapto = bpy.props.BoolProperty(name="Snap To Face", default=True)
-    curveob = bpy.props.EnumProperty(name="Curve", items=curve_ob_enum)
+    resolution: bpy.props.IntProperty(name="Resolution", default=1, min=1, soft_max=100)
+    scale: bpy.props.FloatProperty(name="Scale", default=1.0, soft_min=0.0, soft_max=5.0)
+    rotation: bpy.props.FloatProperty(name="Rotation", default=0.0, soft_min=-2 * pi, soft_max=2 * pi, subtype='ANGLE')
+    splineidx: bpy.props.IntProperty(name="Spline Index", default=0, min=0)
+    snapto: bpy.props.BoolProperty(name="Snap To Face", default=True)
+    curveob: bpy.props.EnumProperty(name="Curve", items=curve_ob_enum)
 
     @classmethod
     def poll(self, context):
