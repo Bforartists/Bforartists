@@ -139,78 +139,78 @@ Sun = SunClass()
 
 class SunPosSettings(PropertyGroup):
 
-    IsActive = BoolProperty(
+    IsActive: BoolProperty(
         description="True if panel enabled.",
         default=False)
 
-    ShowMap = BoolProperty(
+    ShowMap: BoolProperty(
         description="Show world map.",
         default=False)
 
-    DaylightSavings = BoolProperty(
+    DaylightSavings: BoolProperty(
         description="Daylight savings time adds 1 hour to standard time.",
         default=0)
 
-    ShowRefraction = BoolProperty(
+    ShowRefraction: BoolProperty(
         description="Show apparent sun position due to refraction.",
         default=1)
 
-    ShowNorth = BoolProperty(
+    ShowNorth: BoolProperty(
         description="Draws line pointing north.",
         default=0)
 
-    Latitude = FloatProperty(
+    Latitude: FloatProperty(
         attr="",
         name="Latitude",
         description="Latitude: (+) Northern (-) Southern",
         soft_min=-90.000, soft_max=90.000, step=3.001,
         default=40.000, precision=3)
 
-    Longitude = FloatProperty(
+    Longitude: FloatProperty(
         attr="",
         name="Longitude",
         description="Longitude: (-) West of Greenwich  (+) East of Greenwich",
         soft_min=-180.000, soft_max=180.000,
         step=3.001, default=1.000, precision=3)
 
-    Month = IntProperty(
+    Month: IntProperty(
         attr="",
         name="Month",
         description="",
         min=1, max=12, default=6)
 
-    Day = IntProperty(
+    Day: IntProperty(
         attr="",
         name="Day",
         description="",
         min=1, max=31, default=21)
 
-    Year = IntProperty(
+    Year: IntProperty(
         attr="",
         name="Year",
         description="",
         min=1800, max=4000, default=2012)
 
-    Day_of_year = IntProperty(
+    Day_of_year: IntProperty(
         attr="",
         name="Day of year",
         description="",
         min=1, max=366, default=1)
 
-    UTCzone = IntProperty(
+    UTCzone: IntProperty(
         attr="",
         name="UTC zone",
         description="Time zone: Difference from Greenwich England in hours.",
         min=0, max=12, default=0)
 
-    Time = FloatProperty(
+    Time: FloatProperty(
         attr="",
         name="Time",
         description="",
         precision=4,
         soft_min=0.00, soft_max=23.9999, step=1.00, default=12.00)
 
-    NorthOffset = FloatProperty(
+    NorthOffset: FloatProperty(
         attr="",
         name="",
         description="North offset in degrees or radians "
@@ -218,44 +218,44 @@ class SunPosSettings(PropertyGroup):
         unit="ROTATION",
         soft_min=-3.14159265, soft_max=3.14159265, step=10.00, default=0.00)
 
-    SunDistance = FloatProperty(
+    SunDistance: FloatProperty(
         attr="",
         name="Distance",
         description="Distance to sun from XYZ axes intersection.",
         unit="LENGTH",
         soft_min=1, soft_max=3000.00, step=10.00, default=50.00)
 
-    UseSunObject = BoolProperty(
+    UseSunObject: BoolProperty(
         description="Enable sun positioning of named lamp or mesh",
         default=False)
 
-    SunObject = StringProperty(
+    SunObject: StringProperty(
         default="Sun",
         name="theSun",
         description="Name of sun object")
 
-    UseSkyTexture = BoolProperty(
+    UseSkyTexture: BoolProperty(
         description="Enable use of Cycles' "
                     "sky texture. World nodes must be enabled, "
                     "then set color to Sky Texture.",
         default=False)
 
-    SkyTexture = StringProperty(
+    SkyTexture: StringProperty(
         default="Sky Texture",
         name="sunSky",
         description="Name of sky texture to be used")
 
-    ShowHdr = BoolProperty(
+    ShowHdr: BoolProperty(
         description="Click to set sun location on environment texture",
         default=False)
 
-    HDR_texture = StringProperty(
+    HDR_texture: StringProperty(
         default="Environment Texture",
         name="envSky",
         description="Name of texture to use. World nodes must be enabled "
                     "and color set to Environment Texture")
 
-    HDR_azimuth = FloatProperty(
+    HDR_azimuth: FloatProperty(
         attr="",
         name="Rotation",
         description="Rotation angle of sun and environment texture "
@@ -263,29 +263,29 @@ class SunPosSettings(PropertyGroup):
         unit="ROTATION",
         step=1.00, default=0.00, precision=3)
 
-    HDR_elevation = FloatProperty(
+    HDR_elevation: FloatProperty(
         attr="",
         name="Elevation",
         description="Elevation angle of sun",
         step=3.001,
         default=0.000, precision=3)
 
-    BindToSun = BoolProperty(
+    BindToSun: BoolProperty(
         description="If true, Environment texture moves with sun.",
         default=False)
 
-    UseObjectGroup = BoolProperty(
+    UseObjectGroup: BoolProperty(
         description="Allow a group of objects to be positioned.",
         default=False)
 
-    TimeSpread = FloatProperty(
+    TimeSpread: FloatProperty(
         attr="",
         name="Time Spread",
         description="Time period in which to spread object group",
         precision=4,
         soft_min=1.00, soft_max=24.00, step=1.00, default=23.00)
 
-    ObjectGroup = EnumProperty(
+    ObjectGroup: EnumProperty(
         name="Display type",
         description="Show object group on ecliptic or as analemma",
         items=(
@@ -294,7 +294,7 @@ class SunPosSettings(PropertyGroup):
         ),
         default='ECLIPTIC')
 
-    Location = StringProperty(
+    Location: StringProperty(
         default="view3d",
         name="location",
         description="panel location")
@@ -307,7 +307,7 @@ class SunPosSettings(PropertyGroup):
 
 class SunPosPreferences(PropertyGroup):
 
-    UsageMode = EnumProperty(
+    UsageMode: EnumProperty(
         name="Usage mode",
         description="operate in normal mode or environment texture mode",
         items=(
@@ -316,7 +316,7 @@ class SunPosPreferences(PropertyGroup):
         ),
         default='NORMAL')
 
-    MapLocation = EnumProperty(
+    MapLocation: EnumProperty(
         name="Map location",
         description="Display map in viewport or world panel",
         items=(
@@ -325,43 +325,43 @@ class SunPosPreferences(PropertyGroup):
         ),
         default='VIEWPORT')
 
-    UseOneColumn = BoolProperty(
+    UseOneColumn: BoolProperty(
         description="Set panel to use one column.",
         default=False)
 
-    UseTimePlace = BoolProperty(
+    UseTimePlace: BoolProperty(
         description="Show time/place presets.",
         default=False)
 
-    UseObjectGroup = BoolProperty(
+    UseObjectGroup: BoolProperty(
         description="Use object group option.",
         default=True)
 
-    ShowDMS = BoolProperty(
+    ShowDMS: BoolProperty(
         description="Show lat/long degrees,minutes,seconds labels.",
         default=True)
 
-    ShowNorth = BoolProperty(
+    ShowNorth: BoolProperty(
         description="Show north offset choice and slider.",
         default=True)
 
-    ShowRefraction = BoolProperty(
+    ShowRefraction: BoolProperty(
         description="Show sun refraction choice.",
         default=True)
 
-    ShowAzEl = BoolProperty(
+    ShowAzEl: BoolProperty(
         description="Show azimuth and solar elevation info.",
         default=True)
 
-    ShowDST = BoolProperty(
+    ShowDST: BoolProperty(
         description="Show daylight savings time choice.",
         default=True)
 
-    ShowRiseSet = BoolProperty(
+    ShowRiseSet: BoolProperty(
         description="Show sunrise and sunset.",
         default=True)
 
-    MapName = StringProperty(
+    MapName: StringProperty(
         default="WorldMap.jpg",
         name="WorldMap",
         description="Name of world map")

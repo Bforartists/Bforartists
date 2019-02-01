@@ -440,10 +440,9 @@ class Import(bpy.types.Operator):
         mesh.update()
         ob_new = bpy.data.objects.new(TARGET_NAME, mesh)
         ob_new.data = mesh
-        scene = bpy.context.scene
-        scene.objects.link(ob_new)
-        scene.objects.active = ob_new
-        ob_new.select = True
+        bpy.context.collection.objects.link(ob_new)
+        bpy.context.view_layer.objects.active = ob_new
+        ob_new.select_set(True)
         print ('*** End draw   ***')
         print('*** Start Smooth ***')
         bpy.ops.object.shade_smooth()
@@ -473,35 +472,35 @@ class Img_Importer(bpy.types.Panel):
             col = layout.column()
             split = col.split(align=True)
             if Message != "":
-                split.label("Message: " + Message)
+                split.label(text="Message: " + Message)
         else:
             col = layout.column()
             split = col.split(align=True)
-            split.label("Minimum Latitude: " + str(MINIMUM_LATITUDE) + " deg")
-            split.label("Maximum Latitude: " + str(MAXIMUM_LATITUDE) + " deg")
+            split.label(text="Minimum Latitude: " + str(MINIMUM_LATITUDE) + " deg")
+            split.label(text="Maximum Latitude: " + str(MAXIMUM_LATITUDE) + " deg")
 
             split = col.split(align=True)
-            split.label("Westernmost Longitude: " + str(WESTERNMOST_LONGITUDE) + " deg")
-            split.label("Easternmost Longitude: " + str(EASTERNMOST_LONGITUDE) + " deg")
+            split.label(text="Westernmost Longitude: " + str(WESTERNMOST_LONGITUDE) + " deg")
+            split.label(text="Easternmost Longitude: " + str(EASTERNMOST_LONGITUDE) + " deg")
 
             split = col.split(align=True)
-            split.label("Lines: " + str(LINES))
-            split.label("Line samples: " + str(LINE_SAMPLES))
+            split.label(text="Lines: " + str(LINES))
+            split.label(text="Line samples: " + str(LINE_SAMPLES))
 
             split = col.split(align=True)
-            split.label("Sample type: " + str(SAMPLE_TYPE))
-            split.label("Sample bits: " + str(SAMPLE_BITS))
+            split.label(text="Sample type: " + str(SAMPLE_TYPE))
+            split.label(text="Sample bits: " + str(SAMPLE_BITS))
 
             split = col.split(align=True)
-            split.label("Unit: " + UNIT)
-            split.label("Map resolution: " + str(MAP_RESOLUTION) + " pix/deg")
+            split.label(text="Unit: " + UNIT)
+            split.label(text="Map resolution: " + str(MAP_RESOLUTION) + " pix/deg")
 
             split = col.split(align=True)
-            split.label("Radius: " + str(OFFSET) + " " + RadiusUM)
-            split.label("Scale: " + str(SCALING_FACTOR))
+            split.label(text="Radius: " + str(OFFSET) + " " + RadiusUM)
+            split.label(text="Scale: " + str(SCALING_FACTOR))
 
             split = col.split(align=True)
-            split.label("Target: ")
+            split.label(text="Target: ")
             split.label(TARGET_NAME)
 
             col = layout.column()
@@ -511,7 +510,7 @@ class Img_Importer(bpy.types.Panel):
             if bpy.context.scene.FromLat < bpy.context.scene.ToLat:
                 col = layout.column()
                 split = col.split(align=True)
-                split.label("Warning: Northernmost must be greater than Southernmost")
+                split.label(text="Warning: Northernmost must be greater than Southernmost")
 
             col = layout.column()
             split = col.split(align=True)
@@ -520,7 +519,7 @@ class Img_Importer(bpy.types.Panel):
             if bpy.context.scene.FromLong > bpy.context.scene.ToLong:
                 col = layout.column()
                 split = col.split(align=True)
-                split.label("Warning: Easternmost must be greater than Westernmost")
+                split.label(text="Warning: Easternmost must be greater than Westernmost")
 
             col = layout.column()
             split = col.split(align=True)
@@ -534,7 +533,7 @@ class Img_Importer(bpy.types.Panel):
             if Message != "":
                 col = layout.column()
                 split = col.split(align=True)
-                split.label("Message: " + Message)
+                split.label(text="Message: " + Message)
 
             if bpy.context.scene.fpath.upper().endswith(("IMG", "LBL")):  # Check if is selected the correct file
                 VertNumbers = (((RealLat(bpy.context.scene.FromLat) - RealLat(bpy.context.scene.ToLat)) * MAP_RESOLUTION) + 1) * ((RealLong(bpy.context.scene.ToLong) - RealLong(bpy.context.scene.FromLong)) * MAP_RESOLUTION + 1)
@@ -543,7 +542,7 @@ class Img_Importer(bpy.types.Panel):
             #If I have 4 or plus vertex and at least 2 row and at least 2 point, I can import
             if VertNumbers > 3 and (RealLat(bpy.context.scene.FromLat) > RealLat(bpy.context.scene.ToLat)) and (RealLong(bpy.context.scene.FromLong) < RealLong(bpy.context.scene.ToLong)):  # If I have 4 or plus vertex I can import
                 split = col.split(align=True)
-                split.label("Map resolution on the equator: ")
+                split.label(text="Map resolution on the equator: ")
                 split.label(str(2 * math.pi * OFFSET / 360 / MAP_RESOLUTION) + " " + RadiusUM + "/pix")
                 col = layout.column()
                 split = col.split(align=True)
@@ -553,7 +552,7 @@ class Img_Importer(bpy.types.Panel):
                 split.label("Real Westernmost Long.: " + str(RealLong(bpy.context.scene.FromLong)) + " deg")
                 split.label("Real Easternmost Long.: " + str(RealLong(bpy.context.scene.ToLong)) + "deg")
                 split = col.split(align=True)
-                split.label("Numbers of vertex to be imported: " + str(int(VertNumbers)))
+                split.label(text="Numbers of vertex to be imported: " + str(int(VertNumbers)))
                 col.separator()
                 col.operator('import.lro_and_mgs', text='Import')
                 col.separator()

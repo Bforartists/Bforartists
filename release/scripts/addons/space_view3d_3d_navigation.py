@@ -25,8 +25,8 @@
 bl_info = {
     "name": "3D Navigation",
     "author": "Demohero, uriel",
-    "version": (1, 2, 2),
-    "blender": (2, 77, 0),
+    "version": (1, 2, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Display Tab",
     "description": "Navigate the Camera & 3D View from the Toolshelf",
     "warning": "",
@@ -94,7 +94,7 @@ class PanUpViewsAll(Operator):
     bl_label = "Pan View"
     bl_description = "Pan the 3D View"
 
-    panning = StringProperty(
+    panning: StringProperty(
             default="PANUP",
             options={"HIDDEN"}
             )
@@ -161,7 +161,7 @@ class LeftViewpoint1(Operator):
     bl_description = "View from the Left"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='LEFT')
+        bpy.ops.view3d.view_axis(type='LEFT')
         return {'FINISHED'}
 
 
@@ -171,7 +171,7 @@ class RightViewpoint1(Operator):
     bl_description = "View from the Right"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='RIGHT')
+        bpy.ops.view3d.view_axis(type='RIGHT')
         return {'FINISHED'}
 
 
@@ -181,7 +181,7 @@ class FrontViewpoint1(Operator):
     bl_description = "View from the Front"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='FRONT')
+        bpy.ops.view3d.view_axis(type='FRONT')
         return {'FINISHED'}
 
 
@@ -191,7 +191,7 @@ class BackViewpoint1(Operator):
     bl_description = "View from the Back"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='BACK')
+        bpy.ops.view3d.view_axis(type='BACK')
         return {'FINISHED'}
 
 
@@ -201,7 +201,7 @@ class TopViewpoint1(Operator):
     bl_description = "View from the Top"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='TOP')
+        bpy.ops.view3d.view_axis(type='TOP')
         return {'FINISHED'}
 
 
@@ -211,7 +211,7 @@ class BottomViewpoint1(Operator):
     bl_description = "View from the Bottom"
 
     def execute(self, context):
-        bpy.ops.view3d.viewnumpad(type='BOTTOM')
+        bpy.ops.view3d.view_axis(type='BOTTOM')
         return {'FINISHED'}
 
 
@@ -219,7 +219,7 @@ class BottomViewpoint1(Operator):
 class VIEW3D_PT_3dnavigationPanel(Panel):
     bl_category = "Display"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_label = "3D Nav"
 
     def draw(self, context):
@@ -230,20 +230,20 @@ class VIEW3D_PT_3dnavigationPanel(Panel):
         col = layout.column(align=True)
         col.operator("view3d.localview", text="View Global / Local")
         col.operator("view3d.view_persportho", text="View Persp / Ortho")
-        col.operator("view3d.viewnumpad", text="View Camera", icon='CAMERA_DATA').type = 'CAMERA'
+        col.operator("view3d.view_camera", text="View Camera", icon='CAMERA_DATA')
 
         # group of 6 buttons
         col = layout.column(align=True)
         col.label(text="Align view from:", icon="VIEW3D")
         row = col.row()
-        row.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
-        row.operator("view3d.viewnumpad", text="Back").type = 'BACK'
+        row.operator("view3d.view_axis", text="Front").type = 'FRONT'
+        row.operator("view3d.view_axis", text="Back").type = 'BACK'
         row = col.row()
-        row.operator("view3d.viewnumpad", text="Left").type = 'LEFT'
-        row.operator("view3d.viewnumpad", text="Right").type = 'RIGHT'
+        row.operator("view3d.view_axis", text="Left").type = 'LEFT'
+        row.operator("view3d.view_axis", text="Right").type = 'RIGHT'
         row = col.row()
-        row.operator("view3d.viewnumpad", text="Top").type = 'TOP'
-        row.operator("view3d.viewnumpad", text="Bottom").type = 'BOTTOM'
+        row.operator("view3d.view_axis", text="Top").type = 'TOP'
+        row.operator("view3d.view_axis", text="Bottom").type = 'BOTTOM'
 
         # group of 2 buttons
         col = layout.column(align=True)
@@ -263,7 +263,7 @@ class VIEW3D_PT_pan_navigation1(Panel):
     bl_idname = "pan.navigation1"
     bl_label = "Pan Orbit Zoom Roll"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Display"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -339,7 +339,7 @@ class NavAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Display",

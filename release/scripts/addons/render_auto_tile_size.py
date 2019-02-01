@@ -68,28 +68,28 @@ def _update_tile_size(self, context):
 
 
 class AutoTileSizeSettings(PropertyGroup):
-    gpu_choice = EnumProperty(
+    gpu_choice: EnumProperty(
             name="Target GPU Tile Size",
             items=TILE_SIZES,
             default='256',
             description="Square dimensions of tiles for GPU rendering",
             update=_update_tile_size
             )
-    cpu_choice = EnumProperty(
+    cpu_choice: EnumProperty(
             name="Target CPU Tile Size",
             items=TILE_SIZES,
             default='32',
             description="Square dimensions of tiles for CPU rendering",
             update=_update_tile_size
             )
-    bi_choice = EnumProperty(
+    bi_choice: EnumProperty(
             name="Target CPU Tile Size",
             items=TILE_SIZES,
             default='64',
             description="Square dimensions of tiles",
             update=_update_tile_size
             )
-    gpu_custom = IntProperty(
+    gpu_custom: IntProperty(
             name="Target Size",
             default=256,
             min=8,  # same as blender's own limits
@@ -97,7 +97,7 @@ class AutoTileSizeSettings(PropertyGroup):
             description="Custom target tile size for GPU rendering",
             update=_update_tile_size
             )
-    cpu_custom = IntProperty(
+    cpu_custom: IntProperty(
             name="Target Size",
             default=32,
             min=8,  # same as blender's own limits
@@ -105,7 +105,7 @@ class AutoTileSizeSettings(PropertyGroup):
             description="Custom target tile size for CPU rendering",
             update=_update_tile_size
             )
-    bi_custom = IntProperty(
+    bi_custom: IntProperty(
             name="Target Size",
             default=64,
             min=8,  # same as blender's own limits
@@ -113,7 +113,7 @@ class AutoTileSizeSettings(PropertyGroup):
             description="Custom target tile size",
             update=_update_tile_size
             )
-    target_type = EnumProperty(
+    target_type: EnumProperty(
             name="Target tile size",
             items=(
                 ('po2', "Po2", "A choice between powers of 2 (16, 32, 64...)"),
@@ -122,26 +122,26 @@ class AutoTileSizeSettings(PropertyGroup):
             description="Method of choosing the target tile size",
             update=_update_tile_size
             )
-    use_optimal = BoolProperty(
+    use_optimal: BoolProperty(
             name="Optimal Tiles",
             default=True,
             description="Try to find a similar tile size for best performance, "
                         "instead of using exact selected one",
             update=_update_tile_size
             )
-    is_enabled = BoolProperty(
+    is_enabled: BoolProperty(
             name="Auto Tile Size",
             default=True,
             description="Calculate the best tile size based on factors of the "
                         "render size and the chosen target",
             update=_update_tile_size
             )
-    use_advanced_ui = BoolProperty(
+    use_advanced_ui: BoolProperty(
             name="Advanced Settings",
             default=False,
             description="Show extra options for more control over the calculated tile size"
             )
-    thread_error_correct = BoolProperty(
+    thread_error_correct: BoolProperty(
             name="Fix",
             default=True,
             description="Reduce the tile size so that all your available threads are used",
@@ -149,11 +149,11 @@ class AutoTileSizeSettings(PropertyGroup):
             )
 
     # Internally used props (not for GUI)
-    first_run = BoolProperty(
+    first_run: BoolProperty(
             default=True,
             options={'HIDDEN'}
             )
-    threads_error = BoolProperty(
+    threads_error: BoolProperty(
             options={'HIDDEN'}
             )
     num_tiles = IntVectorProperty(
@@ -161,15 +161,15 @@ class AutoTileSizeSettings(PropertyGroup):
             size=2,
             options={'HIDDEN'}
             )
-    prev_choice = StringProperty(
+    prev_choice: StringProperty(
             default='',
             options={'HIDDEN'}
             )
-    prev_engine = StringProperty(
+    prev_engine: StringProperty(
             default='',
             options={'HIDDEN'}
             )
-    prev_device = StringProperty(
+    prev_device: StringProperty(
             default='',
             options={'HIDDEN'}
             )
@@ -178,11 +178,11 @@ class AutoTileSizeSettings(PropertyGroup):
             size=2,
             options={'HIDDEN'}
             )
-    prev_border = BoolProperty(
+    prev_border: BoolProperty(
             default=False,
             options={'HIDDEN'}
             )
-    prev_border_res = FloatVectorProperty(
+    prev_border_res: FloatVectorProperty(
             default=(0, 0, 0, 0),
             size=4,
             options={'HIDDEN'}
@@ -192,7 +192,7 @@ class AutoTileSizeSettings(PropertyGroup):
             size=2,
             options={'HIDDEN'}
             )
-    prev_threads = IntProperty(
+    prev_threads: IntProperty(
             default=0,
             options={'HIDDEN'}
             )

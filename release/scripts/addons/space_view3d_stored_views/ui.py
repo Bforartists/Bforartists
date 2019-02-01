@@ -245,7 +245,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
 
         layout = self.layout
         scene = context.scene
-        layout.label("Camera Selector")
+        layout.label(text="Camera Selector")
         cameras = sorted([o for o in scene.objects if o.type == 'CAMERA'],
                          key=lambda o: o.name)
 
@@ -260,4 +260,4 @@ class VIEW3D_PT_properties_stored_views(Panel):
                 row.operator("cameraselector.add_camera_marker",
                                    text='', icon='MARKER')
         else:
-            layout.label("No cameras in this scene")
+            layout.label(text="No cameras in this scene")

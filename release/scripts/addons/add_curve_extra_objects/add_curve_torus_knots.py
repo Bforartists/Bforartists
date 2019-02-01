@@ -325,10 +325,10 @@ def addLinkColors(self, curveData):
 
         # set material color
         if self.options_plus and self.random_colors:
-            mat.diffuse_color = random(), random(), random()
+            mat.diffuse_color = (random(), random(), random(), 1.0)
         else:
             cID = i % (len(colors))  # cycle through predefined colors
-            mat.diffuse_color = colors[cID]
+            mat.diffuse_color = (*colors[cID], 1.0)
 
         if self.options_plus:
             mat.diffuse_color.s = self.saturation

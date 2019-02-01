@@ -118,7 +118,7 @@ class MESH_xOT_deselect_boundary(Operator):
                       "so the tool will not have results")
     bl_options = {'REGISTER', 'UNDO'}
 
-    keep_cap_edges = BoolProperty(
+    keep_cap_edges: BoolProperty(
                         name="Keep Cap Edges",
                         description="Keep quad strip cap edges selected",
                         default=False
@@ -164,19 +164,19 @@ class MESH_xOT_cut_faces(Operator):
     SUBD_FAN = 2
     SUBD_STRAIGHT_CUT = 3
 
-    num_cuts = IntProperty(
+    num_cuts: IntProperty(
             name="Number of Cuts",
             default=1,
             min=1,
             max=100,
             subtype='UNSIGNED'
             )
-    use_single_edge = BoolProperty(
+    use_single_edge: BoolProperty(
             name="Quad/Tri Mode",
             description="Cut boundary faces",
             default=False
             )
-    corner_type = EnumProperty(
+    corner_type: EnumProperty(
             items=[('SUBD_INNERVERT', "Inner Vert", ""),
                    ('SUBD_PATH', "Path", ""),
                    ('SUBD_FAN', "Fan", ""),
@@ -186,7 +186,7 @@ class MESH_xOT_cut_faces(Operator):
             description="How to subdivide quad corners",
             default='SUBD_STRAIGHT_CUT'
             )
-    use_grid_fill = BoolProperty(
+    use_grid_fill: BoolProperty(
             name="Use Grid Fill",
             description="Fill fully enclosed faces with a grid",
             default=True
@@ -200,13 +200,13 @@ class MESH_xOT_cut_faces(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Number of Cuts:")
+        layout.label(text="Number of Cuts:")
         layout.prop(self, "num_cuts", text="")
 
         layout.prop(self, "use_single_edge")
         layout.prop(self, "use_grid_fill")
 
-        layout.label("Quad Corner Type:")
+        layout.label(text="Quad Corner Type:")
         layout.prop(self, "corner_type", text="")
 
     def cut_edges(self, context):

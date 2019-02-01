@@ -833,8 +833,8 @@ class importmesh(mesh):
         mesh.__init__(self)
 
         obj = bpy.data.objects[meshname]
-        bpy.context.scene.objects.active = obj
-        obj.select = True
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(True)
         impmesh = None
         if not breakquadflag:
             bpy.ops.object.mode_set(mode='EDIT')

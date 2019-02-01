@@ -21,7 +21,7 @@ bl_info = {
     "category": "Mesh",
     "author": "Piotr Komisarczyk (komi3D), PKHG",
     "version": (1, 0, 1),
-    "blender": (2, 7, 3),
+    "blender": (2, 73, 0),
     "location": "SPACE > Edge Roundifier or CTRL-E > "
                 "Edge Roundifier or Tools > Addons > Edge Roundifier",
     "description": "Mesh editing script allowing edge rounding",
@@ -264,7 +264,7 @@ class EdgeRoundifier(Operator):
     threshold = 0.0005
     obj = None
 
-    edgeScaleFactor = FloatProperty(
+    edgeScaleFactor: FloatProperty(
             name="",
             description="Set the Factor of scaling",
             default=1.0,
@@ -272,7 +272,7 @@ class EdgeRoundifier(Operator):
             step=0.5,
             precision=5
             )
-    r = FloatProperty(
+    r: FloatProperty(
             name="",
             description="User Defined arc steepness by a Radius\n"
                         "Enabled only if Entry mode is set to Radius\n",
@@ -281,7 +281,7 @@ class EdgeRoundifier(Operator):
             step=0.1,
             precision=3
             )
-    a = FloatProperty(
+    a: FloatProperty(
             name="",
             description="User defined arc steepness calculated from an Angle\n"
                         "Enabled only if Entry mode is set to Angle and\n"
@@ -291,74 +291,74 @@ class EdgeRoundifier(Operator):
             step=0.5,
             precision=1
             )
-    n = IntProperty(
+    n: IntProperty(
             name="",
             description="Arc subdivision level",
             default=4,
             min=1, max=100,
             step=1
             )
-    flip = BoolProperty(
+    flip: BoolProperty(
             name="Flip",
             description="If True, flip the side of the selected edges where the arcs are drawn",
             default=False
             )
-    invertAngle = BoolProperty(
+    invertAngle: BoolProperty(
             name="Invert",
             description="If True, uses an inverted angle to draw the arc (360 degrees - angle)",
             default=False
             )
-    fullCircles = BoolProperty(
+    fullCircles: BoolProperty(
             name="Circles",
             description="If True, uses an angle of 360 degrees to draw the arcs",
             default=False
             )
-    bothSides = BoolProperty(
+    bothSides: BoolProperty(
             name="Both sides",
             description="If True, draw arcs on both sides of the selected edges",
             default=False
             )
-    drawArcCenters = BoolProperty(
+    drawArcCenters: BoolProperty(
             name="Centers",
             description="If True, draws a vertex for each spin center",
             default=False
             )
-    removeEdges = BoolProperty(
+    removeEdges: BoolProperty(
             name="Edges",
             description="If True removes the Original selected edges",
             default=False
             )
-    removeScaledEdges = BoolProperty(
+    removeScaledEdges: BoolProperty(
             name="Scaled edges",
             description="If True removes the Scaled edges (not part of the arcs)",
             default=False
             )
-    connectArcWithEdge = BoolProperty(
+    connectArcWithEdge: BoolProperty(
             name="Arc - Edge",
             description="Connect Arcs to Edges",
             default=False
             )
-    connectArcs = BoolProperty(
+    connectArcs: BoolProperty(
             name="Arcs",
             description="Connect subsequent Arcs",
             default=False
             )
-    connectScaledAndBase = BoolProperty(
+    connectScaledAndBase: BoolProperty(
             name="Scaled - Base Edge",
             description="Connect Scaled to Base Edge",
             default=False
             )
-    connectArcsFlip = BoolProperty(
+    connectArcsFlip: BoolProperty(
             name="Flip Arcs",
             description="Flip the connection of subsequent Arcs",
             default=False
             )
-    connectArcWithEdgeFlip = BoolProperty(
+    connectArcWithEdgeFlip: BoolProperty(
             name="Flip Arc - Edge",
             description="Flip the connection of the Arcs to Edges",
             default=False
             )
-    axisAngle = FloatProperty(
+    axisAngle: FloatProperty(
             name="",
             description="Rotate Arc around the perpendicular axis",
             default=0.0,
@@ -366,7 +366,7 @@ class EdgeRoundifier(Operator):
             step=0.5,
             precision=1
             )
-    edgeAngle = FloatProperty(
+    edgeAngle: FloatProperty(
             name="",
             description="Rotate Arc around the Edge (Edge acts like as the axis)",
             default=0.0,
@@ -374,7 +374,7 @@ class EdgeRoundifier(Operator):
             step=0.5,
             precision=1
             )
-    offset = FloatProperty(
+    offset: FloatProperty(
             name="",
             description="Offset Arc perpendicular the Edge",
             default=0.0,
@@ -382,7 +382,7 @@ class EdgeRoundifier(Operator):
             step=0.1,
             precision=5
             )
-    offset2 = FloatProperty(
+    offset2: FloatProperty(
             name="",
             description="Offset Arc in parallel to the Edge",
             default=0.0,
@@ -390,7 +390,7 @@ class EdgeRoundifier(Operator):
             step=0.1,
             precision=5
             )
-    ellipticFactor = FloatProperty(
+    ellipticFactor: FloatProperty(
             name="",
             description="Make Arc elliptic",
             default=0.0,
@@ -399,7 +399,7 @@ class EdgeRoundifier(Operator):
             precision=5
             )
     workModeItems = [("Normal", "Normal", ""), ("Reset", "Reset", "")]
-    workMode = EnumProperty(
+    workMode: EnumProperty(
             items=workModeItems,
             name="",
             default='Normal',
@@ -407,7 +407,7 @@ class EdgeRoundifier(Operator):
                         "Reset - changes back the parameters to their default values"
             )
     entryModeItems = [("Radius", "Radius", ""), ("Angle", "Angle", "")]
-    entryMode = EnumProperty(
+    entryMode: EnumProperty(
             items=entryModeItems,
             name="",
             default='Angle',
@@ -418,14 +418,14 @@ class EdgeRoundifier(Operator):
             ("Spin", "Spin", ""), ("V1", "V1", ""),
             ("Edge", "Edge", ""), ("V2", "V2", "")
             ]
-    rotateCenter = EnumProperty(
+    rotateCenter: EnumProperty(
             items=rotateCenterItems,
             name="",
             default='Edge',
             description="Rotate center for spin axis rotate"
             )
     arcModeItems = [("FullEdgeArc", "Full", "Full"), ('HalfEdgeArc', "Half", "Half")]
-    arcMode = EnumProperty(
+    arcMode: EnumProperty(
             items=arcModeItems,
             name="",
             default='FullEdgeArc',
@@ -437,7 +437,7 @@ class EdgeRoundifier(Operator):
             ('72', "72", "PentagonCircle (5 sides)"), ('60', "60", "HexagonCircle (6 sides)"),
             ('45', "45", "OctagonCircle (8 sides)"), ('30', "30", "DodecagonCircle (12 sides)")
             ]
-    angleEnum = EnumProperty(
+    angleEnum: EnumProperty(
             items=angleItems,
             name="",
             default='180',
@@ -445,7 +445,7 @@ class EdgeRoundifier(Operator):
             )
     refItems = [('ORG', "Origin", "Use Origin Location"), ('CUR', "3D Cursor", "Use 3DCursor Location"),
                 ('EDG', "Edge", "Use Individual Edge Reference")]
-    referenceLocation = EnumProperty(
+    referenceLocation: EnumProperty(
             items=refItems,
             name="",
             default='ORG',
@@ -456,7 +456,7 @@ class EdgeRoundifier(Operator):
             (YZ, "YZ", "YZ Plane (X=0)"),
             (XZ, "XZ", "XZ Plane (Y=0)")
             ]
-    planeEnum = EnumProperty(
+    planeEnum: EnumProperty(
             items=planeItems,
             name="",
             default='XY',
@@ -467,7 +467,7 @@ class EdgeRoundifier(Operator):
             ('CENTER', "Center", "Center of the Edge"),
             ('V2', "V2", "v2 - Second Edge's Vertex")
             ]
-    edgeScaleCenterEnum = EnumProperty(
+    edgeScaleCenterEnum: EnumProperty(
             items=edgeScaleCenterItems,
             name="Edge scale center",
             default='CENTER',
@@ -487,7 +487,7 @@ class EdgeRoundifier(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
 
-        mesh = context.scene.objects.active.data
+        mesh = context.view_layer.objects.active.data
         bm = bmesh.new()
         bm.from_mesh(mesh)
 
@@ -619,7 +619,7 @@ class EdgeRoundifier(Operator):
 
         self.resetValues(parameters["workMode"])
 
-        self.obj = context.scene.objects.active
+        self.obj = context.view_layer.objects.active
         scaledEdges = self.scaleDuplicatedEdges(bm, edges, parameters)
 
         if len(scaledEdges) > 0:
@@ -1335,7 +1335,7 @@ class EdgeRoundifier(Operator):
     def selectEdgesAfterRoundifier(self, context, edges):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
-        mesh = context.scene.objects.active.data
+        mesh = context.view_layer.objects.active.data
         bmnew = bmesh.new()
         bmnew.from_mesh(mesh)
 

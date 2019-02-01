@@ -4,7 +4,7 @@ bl_info = {
     "name": "Random Vertices",
     "author": "Oscurart, Greg",
     "version": (1, 3),
-    "blender": (2, 6, 3),
+    "blender": (2, 63, 0),
     "location": "Object > Transform > Random Vertices",
     "description": "Randomize selected components of active object",
     "warning": "",
@@ -94,12 +94,12 @@ class MESH_OT_random_vertices(Operator):
                       "or a multiplication of them and the Vertex Weights")
     bl_options = {'REGISTER', 'UNDO'}
 
-    vgfilter = BoolProperty(
+    vgfilter: BoolProperty(
             name="Vertex Group",
             description="Use Vertex Weight defined in the Active Group",
             default=False
             )
-    factor = FloatProperty(
+    factor: FloatProperty(
             name="Factor",
             description="Base Multiplier of the randomization effect",
             default=1

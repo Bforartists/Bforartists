@@ -2,7 +2,7 @@ bl_info = {
     "name": "Icicle Generator",
     "author": "Eoin Brennan (Mayeoin Bread)",
     "version": (2, 2, 1),
-    "blender": (2, 7, 4),
+    "blender": (2, 74, 0),
     "location": "View3D > Add > Mesh",
     "description": "Construct a linear string of icicles of different sizes",
     "warning": "",
@@ -34,7 +34,7 @@ class IcicleGenerator(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     # Maximum radius
-    maxR = FloatProperty(
+    maxR: FloatProperty(
             name="Max",
             description="Maximum radius of a cone",
             default=0.15,
@@ -43,7 +43,7 @@ class IcicleGenerator(bpy.types.Operator):
             unit="LENGTH"
             )
     # Minimum radius
-    minR = FloatProperty(
+    minR: FloatProperty(
             name="Min",
             description="Minimum radius of a cone",
             default=0.025,
@@ -52,7 +52,7 @@ class IcicleGenerator(bpy.types.Operator):
             unit="LENGTH"
             )
     # Maximum depth
-    maxD = FloatProperty(
+    maxD: FloatProperty(
             name="Max",
             description="Maximum depth (height) of cone",
             default=2.0,
@@ -61,7 +61,7 @@ class IcicleGenerator(bpy.types.Operator):
             unit="LENGTH"
             )
     # Minimum depth
-    minD = FloatProperty(
+    minD: FloatProperty(
             name="Min",
             description="Minimum depth (height) of cone",
             default=1.5,
@@ -70,14 +70,14 @@ class IcicleGenerator(bpy.types.Operator):
             unit="LENGTH"
             )
     # Number of verts at base of cone
-    verts = IntProperty(
+    verts: IntProperty(
             name="Vertices",
             description="Number of vertices at the icicle base",
             default=8,
             min=3,
             max=24
             )
-    addCap = EnumProperty(
+    addCap: EnumProperty(
             name="Fill cap",
             description="Fill the icicle cone base",
             items=[
@@ -92,7 +92,7 @@ class IcicleGenerator(bpy.types.Operator):
     # Obviously, the more iterations, the more time spent calculating.
     # Max value (10,000) is safe but can be slow,
     # 2000 to 5000 should be adequate for 95% of cases
-    its = IntProperty(
+    its: IntProperty(
             name="Iterations",
             description="Number of iterations before giving up, prevents freezing/crashing",
             default=2000,
@@ -110,15 +110,15 @@ class IcicleGenerator(bpy.types.Operator):
         layout = self.layout
         col = layout.column(align=True)
 
-        col.label("Radius:")
+        col.label(text="Radius:")
         col.prop(self, "minR")
         col.prop(self, "maxR")
 
-        col.label("Depth:")
+        col.label(text="Depth:")
         col.prop(self, "minD")
         col.prop(self, "maxD")
 
-        col.label("Base:")
+        col.label(text="Base:")
         col.prop(self, "verts")
         col.prop(self, "addCap", text="")
 

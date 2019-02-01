@@ -23,7 +23,7 @@ class AMTH_OBJECT_OT_wire_toggle(bpy.types.Operator):
     bl_label = "Display Wireframe"
     bl_options = {"REGISTER", "UNDO"}
 
-    clear = bpy.props.BoolProperty(
+    clear: bpy.props.BoolProperty(
         default=False, name="Clear Wireframe",
         description="Clear Wireframe Display")
 

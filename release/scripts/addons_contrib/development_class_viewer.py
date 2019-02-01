@@ -126,7 +126,7 @@ class TEXT_OT_Jumptoline(Operator, BaseCheckPoll):
     bl_description = "Jump to line containing the text"
     __doc__ = "Jump to line containing the passed line integer. Used by the Class Viewer add-on"
 
-    line = IntProperty(default=-1)
+    line: IntProperty(default=-1)
 
     def execute(self, context):
         if self.line == -1:

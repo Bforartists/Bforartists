@@ -91,7 +91,7 @@ class DisplayModifiersRenderSwitch(Operator, BasePollCheck):
     bl_label = "On/Off"
     bl_description = "Display/Hide modifiers on render"
 
-    mod_render = BoolProperty(default=True)
+    mod_render: BoolProperty(default=True)
 
     def execute(self, context):
         try:
@@ -122,7 +122,7 @@ class DisplayModifiersViewportSwitch(Operator, BasePollCheck):
     bl_label = "On/Off"
     bl_description = "Display/Hide modifiers in the viewport"
 
-    mod_switch = BoolProperty(default=True)
+    mod_switch: BoolProperty(default=True)
 
     def execute(self, context):
         try:
@@ -149,7 +149,7 @@ class DisplayModifiersEditSwitch(Operator, BasePollCheck):
     bl_label = "On/Off"
     bl_description = "Display/Hide modifiers during edit mode"
 
-    mod_edit = BoolProperty(default=True)
+    mod_edit: BoolProperty(default=True)
 
     def execute(self, context):
         try:
@@ -175,7 +175,7 @@ class DisplayModifiersCageSet(Operator, BasePollCheck):
     bl_label = "On/Off"
     bl_description = "Display modifiers editing cage during edit mode"
 
-    set_cage = BoolProperty(default=True)
+    set_cage: BoolProperty(default=True)
 
     def execute(self, context):
         selection = context.selected_objects
@@ -200,7 +200,7 @@ class ModifiersSubsurfLevel_Set(Operator, BasePollCheck):
     bl_label = "Set Subsurf level"
     bl_description = "Change subsurf modifier level"
 
-    level = IntProperty(
+    level: IntProperty(
         name="Subsurf Level",
         description="Change subsurf modifier level",
         default=1,
@@ -215,7 +215,7 @@ class ModifiersSubsurfLevel_Set(Operator, BasePollCheck):
         try:
             if not selection:
                 for obj in bpy.data.objects:
-                    context.scene.objects.active = obj
+                    context.view_layer.objects.active = obj
                     bpy.ops.object.modifier_add(type='SUBSURF')
                     value = 0
                     for mod in obj.modifiers:

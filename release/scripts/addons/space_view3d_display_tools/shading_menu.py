@@ -23,7 +23,7 @@ bl_info = {
     "name": "shade Tools",
     "author": "Jordi Vall-llovera Medina, Jhon Wallace",
     "version": (1, 6, 0),
-    "blender": (2, 7, 0),
+    "blender": (2, 70, 0),
     "location": "Toolshelf",
     "description": "Display tools for fast navigate/interact with the viewport",
     "warning": "",

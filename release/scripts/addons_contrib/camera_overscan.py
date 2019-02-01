@@ -20,7 +20,7 @@ bl_info = {
     "name": "Camera Overscan",
     "author": "John Roper, Barnstorm VFX, Luca Scheller",
     "version": (1, 2, 1),
-    "blender": (2, 7, 6),
+    "blender": (2, 76, 0),
     "location": "Render Settings > Camera Overscan",
     "description": "Render Overscan",
     "warning": "",
@@ -60,7 +60,7 @@ class CODuplicateCamera(Operator):
                 cam_obj = active_cam.copy()
                 cam_obj.data = active_cam.data.copy()
                 cam_obj.name = "Camera_Overscan"
-                context.scene.objects.link(cam_obj)
+                context.collection.objects.link(cam_obj)
         except:
             self.report({'WARNING'}, "Setting up a new Overscan Camera has failed")
             return {'CANCELLED'}
@@ -137,39 +137,39 @@ def RO_Menu(self, context):
             row.enabled = False
         row.operator("scene.co_duplicate_camera", icon="RENDER_STILL")
     else:
-        row.label("No active Camera type in the Scene", icon='INFO')
+        row.label(text="No active Camera type in the Scene", icon='INFO')
 
 
 class camera_overscan_props(PropertyGroup):
-    RO_Activate = BoolProperty(
+    RO_Activate: BoolProperty(
                         default=False,
                         description="Enable/Disable Camera Overscan\n"
                                     "Affects the active Scene Camera only\n"
                                     "(Objects as cameras are not supported)",
                         update=RO_Update
                         )
-    RO_Custom_Res_X = IntProperty(
+    RO_Custom_Res_X: IntProperty(
                         default=0,
                         min=0,
                         max=65536,
                         update=RO_Update
                         )
-    RO_Custom_Res_Y = IntProperty(
+    RO_Custom_Res_Y: IntProperty(
                         default=0,
                         min=0,
                         max=65536,
                         update=RO_Update
                         )
-    RO_Safe_Res_X = FloatProperty()
-    RO_Safe_Res_Y = FloatProperty()
+    RO_Safe_Res_X: FloatProperty()
+    RO_Safe_Res_Y: FloatProperty()
 
     # the hard limit is sys.max which is too much, used 65536 instead
-    RO_Safe_SensorSize = FloatProperty(
+    RO_Safe_SensorSize: FloatProperty(
                         default=-1,
                         min=-1,
                         max=65536
                         )
-    RO_Safe_SensorFit = StringProperty()
+    RO_Safe_SensorFit: StringProperty()
 
 
 def register():

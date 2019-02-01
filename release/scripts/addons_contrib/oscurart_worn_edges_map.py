@@ -68,7 +68,7 @@ class OscurartWorn(bpy.types.Operator):
     def poll(cls, context):
         return context.active_object is not None
 
-    factor = bpy.props.FloatProperty(name="Factor", min=.001, default=1)
+    factor: bpy.props.FloatProperty(name="Factor", min=.001, default=1)
 
     def execute(self, context):
         CreateWornEdges(context, self.factor)

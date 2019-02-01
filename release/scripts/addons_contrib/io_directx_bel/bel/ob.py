@@ -12,14 +12,14 @@ def new(name,datatype,naming_method):
             ob = bpy.data.objects.new(name,datatype)
             ob.name = name
         elif naming_method == 3 :
-            bpy.context.scene.objects.unlink(ob)
+            bpy.context.collection.objects.unlink(ob)
             ob.user_clear()
             bpy.data.objects.remove(ob)
             ob = bpy.data.objects.new(name,datatype)
     else :
         ob = bpy.data.objects.new(name,datatype)
     if ob.name not in bpy.context.scene.objects.keys() :
-        bpy.context.scene.objects.link(ob)
+        bpy.context.collection.objects.link(ob)
     return ob
 
 ## returns an object or a list of objects

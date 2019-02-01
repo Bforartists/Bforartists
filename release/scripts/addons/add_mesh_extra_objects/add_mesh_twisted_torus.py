@@ -110,7 +110,7 @@ def add_twisted_torus(major_rad, minor_rad, major_seg, minor_seg, twists):
                 major_rad + (cos(angle) * minor_rad),
                 0.0,
                 sin(angle) * minor_rad))
-            vec = quat * vec
+            vec = quat @ vec
 
             edgeloop.append(len(verts))
             verts.append(vec)
@@ -139,7 +139,7 @@ class AddTwistedTorus(bpy.types.Operator):
     bl_description = "Construct a twisted torus mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    major_radius = FloatProperty(
+    major_radius: FloatProperty(
         name="Major Radius",
         description="Radius from the origin to the"
                     " center of the cross section",
@@ -147,47 +147,47 @@ class AddTwistedTorus(bpy.types.Operator):
         max=100.0,
         default=1.0
         )
-    minor_radius = FloatProperty(
+    minor_radius: FloatProperty(
         name="Minor Radius",
         description="Radius of the torus' cross section",
         min=0.01,
         max=100.0,
         default=0.25
         )
-    major_segments = IntProperty(
+    major_segments: IntProperty(
         name="Major Segments",
         description="Number of segments for the main ring of the torus",
         min=3,
         max=256,
         default=48
         )
-    minor_segments = IntProperty(
+    minor_segments: IntProperty(
         name="Minor Segments",
         description="Number of segments for the minor ring of the torus",
         min=3,
         max=256,
         default=12
         )
-    twists = IntProperty(
+    twists: IntProperty(
         name="Twists",
         description="Number of twists of the torus",
         min=0,
         max=256,
         default=1
         )
-    use_abso = BoolProperty(
+    use_abso: BoolProperty(
         name="Use Int/Ext Controls",
         description="Use the Int/Ext controls for torus dimensions",
         default=False
         )
-    abso_major_rad = FloatProperty(
+    abso_major_rad: FloatProperty(
         name="Exterior Radius",
         description="Total Exterior Radius of the torus",
         min=0.01,
         max=100.0,
         default=1.0
         )
-    abso_minor_rad = FloatProperty(
+    abso_minor_rad: FloatProperty(
         name="Inside Radius",
         description="Total Interior Radius of the torus",
         min=0.01,

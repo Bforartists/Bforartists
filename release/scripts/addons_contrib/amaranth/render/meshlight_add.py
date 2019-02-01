@@ -11,40 +11,40 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
     bl_label = "Add Meshlight"
     bl_options = {'REGISTER', 'UNDO'}
 
-    single_sided = bpy.props.BoolProperty(
+    single_sided: bpy.props.BoolProperty(
         name="Single Sided",
         default=True,
         description="Only emit light on one side",
         )
 
-    is_constant = bpy.props.BoolProperty(
+    is_constant: bpy.props.BoolProperty(
         name="Constant Falloff",
         default=False,
         description="Energy is constant (i.e. the Sun), "
                     "independent of how close to the source you are",
         )
 
-    visible = bpy.props.BoolProperty(
+    visible: bpy.props.BoolProperty(
         name="Visible on Camera",
         default=False,
         description="Whether to show the meshlight source on Camera",
         )
 
-    size = bpy.props.FloatProperty(
+    size: bpy.props.FloatProperty(
         name="Size",
         description="Meshlight size. Lower is sharper shadows, higher is softer",
         min=0.01, max=100.0,
         default=1.0,
         )
 
-    strength = bpy.props.FloatProperty(
+    strength: bpy.props.FloatProperty(
         name="Strength",
         min=0.01, max=100000.0,
         default=1.5,
         step=0.25,
         )
 
-    temperature = bpy.props.FloatProperty(
+    temperature: bpy.props.FloatProperty(
         name="Temperature",
         min=800, max=12000.0,
         default=5500.0,
@@ -52,7 +52,7 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
         description="Temperature in Kelvin. Lower is warmer, higher is colder",
         )
 
-    rotation = bpy.props.FloatVectorProperty(
+    rotation: bpy.props.FloatVectorProperty(
         name="Rotation",
         subtype='EULER',
         )

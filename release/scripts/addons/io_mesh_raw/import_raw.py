@@ -96,14 +96,14 @@ def addMeshObj(mesh, objName):
     scn = bpy.context.scene
 
     for o in scn.objects:
-        o.select = False
+        o.select_set(False)
 
     mesh.update()
     mesh.validate()
 
     nobj = bpy.data.objects.new(objName, mesh)
     scn.objects.link(nobj)
-    nobj.select = True
+    nobj.select_set(True)
 
     if scn.objects.active is None or scn.objects.active.mode == 'OBJECT':
         scn.objects.active = nobj

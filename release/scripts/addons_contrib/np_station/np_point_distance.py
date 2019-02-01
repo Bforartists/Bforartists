@@ -179,7 +179,7 @@ class NP020PDGetSelection(bpy.types.Operator):
         NP020PD.selob = selob
         # De-selecting objects in prepare for other processes in the script:
         for ob in selob:
-            ob.select = False
+            ob.select_set(False)
         np_print('01_get_selection_END')
         return {'FINISHED'}
 
@@ -237,8 +237,8 @@ class NP020PDAddPoints(bpy.types.Operator):
         end = bpy.context.object
         end.name = 'NP_PD_end'
         NP020PD.end = end
-        start.select = True
-        end.select = True
+        start.select_set(True)
+        end.select_set(True)
         bpy.context.tool_settings.use_snap = False
         bpy.context.tool_settings.snap_element = NP020PD.snap
         bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -938,11 +938,11 @@ class NP020PDRunTranslate(bpy.types.Operator):
         # taken by transform.translate operator
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             bpy.ops.object.select_all(action='DESELECT')
-            start.select = True
-            end.select = True
+            start.select_set(True)
+            end.select_set(True)
             bpy.ops.object.delete('EXEC_DEFAULT')
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PD.startloc3d = (0.0, 0.0, 0.0)
             NP020PD.endloc3d = (0.0, 0.0, 0.0)
             NP020PD.phase = 0
@@ -958,7 +958,7 @@ class NP020PDRunTranslate(bpy.types.Operator):
             bpy.context.space_data.transform_orientation = NP020PD.trans_orient
             bpy.context.space_data.show_manipulator = NP020PD.show_manipulator
             if NP020PD.acob is not None:
-                bpy.context.scene.objects.active = NP020PD.acob
+                bpy.context.view_layer.objects.active = NP020PD.acob
                 bpy.ops.object.mode_set(mode=NP020PD.edit_mode)
             np_print('04_run_TRANS_esc_right_CANCELLED')
             return{'CANCELLED'}
@@ -1309,11 +1309,11 @@ class NP020PDRunNavigate(bpy.types.Operator):
             bpy.ops.object.select_all(action='DESELECT')
             start.hide = False
             end.hide = False
-            start.select = True
-            end.select = True
+            start.select_set(True)
+            end.select_set(True)
             bpy.ops.object.delete('EXEC_DEFAULT')
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PD.startloc3d = (0.0, 0.0, 0.0)
             NP020PD.endloc3d = (0.0, 0.0, 0.0)
             NP020PD.phase = 0
@@ -1329,7 +1329,7 @@ class NP020PDRunNavigate(bpy.types.Operator):
             bpy.context.space_data.transform_orientation = NP020PD.trans_orient
             bpy.context.space_data.show_manipulator = NP020PD.show_manipulator
             if NP020PD.acob is not None:
-                bpy.context.scene.objects.active = NP020PD.acob
+                bpy.context.view_layer.objects.active = NP020PD.acob
                 bpy.ops.object.mode_set(mode=NP020PD.edit_mode)
             np_print('05_run_NAV_esc_right_any_CANCELLED')
             return{'CANCELLED'}
@@ -1376,7 +1376,7 @@ class NP020PDChangePhase(bpy.types.Operator):
         NP020PD.startloc3d = startloc3d
         NP020PD.endloc3d = endloc3d
         bpy.ops.object.select_all(action='DESELECT')
-        end.select = True
+        end.select_set(True)
         bpy.context.tool_settings.use_snap = False
         bpy.context.tool_settings.snap_element = NP020PD.snap
         bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -1416,11 +1416,11 @@ class NP020PDHoldResult(bpy.types.Operator):
         # taken by transform.translate operator
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             bpy.ops.object.select_all(action='DESELECT')
-            start.select = True
-            end.select = True
+            start.select_set(True)
+            end.select_set(True)
             bpy.ops.object.delete('EXEC_DEFAULT')
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             NP020PD.startloc3d = (0.0, 0.0, 0.0)
             NP020PD.endloc3d = (0.0, 0.0, 0.0)
             NP020PD.phase = 0
@@ -1436,7 +1436,7 @@ class NP020PDHoldResult(bpy.types.Operator):
             bpy.context.space_data.transform_orientation = NP020PD.trans_orient
             bpy.context.space_data.show_manipulator = NP020PD.show_manipulator
             if NP020PD.acob is not None:
-                bpy.context.scene.objects.active = NP020PD.acob
+                bpy.context.view_layer.objects.active = NP020PD.acob
                 bpy.ops.object.mode_set(mode=NP020PD.edit_mode)
             np_print('07_HOLD_esc_right_CANCELLED')
             return{'CANCELLED'}
@@ -1501,11 +1501,11 @@ class NP020PDDeletePoints(bpy.types.Operator):
         start = NP020PD.start
         end = NP020PD.end
         bpy.ops.object.select_all(action='DESELECT')
-        start.select = True
-        end.select = True
+        start.select_set(True)
+        end.select_set(True)
         bpy.ops.object.delete('EXEC_DEFAULT')
         for ob in selob:
-            ob.select = True
+            ob.select_set(True)
         NP020PD.startloc3d = (0.0, 0.0, 0.0)
         NP020PD.endloc3d = (0.0, 0.0, 0.0)
         NP020PD.phase = 0
@@ -1522,7 +1522,7 @@ class NP020PDDeletePoints(bpy.types.Operator):
         bpy.context.space_data.transform_orientation = NP020PD.trans_orient
         bpy.context.space_data.show_manipulator = NP020PD.show_manipulator
         if NP020PD.acob is not None:
-            bpy.context.scene.objects.active = NP020PD.acob
+            bpy.context.view_layer.objects.active = NP020PD.acob
             bpy.ops.object.mode_set(mode=NP020PD.edit_mode)
 
         if step == 'simple':

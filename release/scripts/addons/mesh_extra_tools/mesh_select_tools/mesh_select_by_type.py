@@ -32,14 +32,14 @@ class DATA_OP_facetype_select(Operator):
     bl_description = "Select all faces of a certain type"
     bl_options = {'REGISTER', 'UNDO'}
 
-    face_type = EnumProperty(
+    face_type: EnumProperty(
             name="Select faces:",
             items=(("3", "Triangles", "Faces made up of 3 vertices"),
                    ("4", "Quads", "Faces made up of 4 vertices"),
                    ("5", "Ngons", "Faces made up of 5 and more vertices")),
             default="5"
             )
-    extend = BoolProperty(
+    extend: BoolProperty(
             name="Extend",
             description="Extend Selection",
             default=False

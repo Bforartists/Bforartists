@@ -20,7 +20,7 @@ bl_info = {
     'name': 'Dimension',
     'author': 'Spivak Vladimir (http://cwolf3d.korostyshev.net)',
     'version': (3, 9, 5),
-    'blender': (2, 7, 8),
+    'blender': (2, 78, 0),
     'location': 'View3D > Add > Curve',
     'description': 'Adds Dimension',
     'warning': '', # used for warning icon and text in addons panel
@@ -52,7 +52,7 @@ def addText(string = '', loc = ((0, 0, 0)), textsize = 1, align = 'CENTER', offs
         fnt = bpy.data.fonts.load(font)
     tcu.font = fnt
     text.location = loc
-    bpy.context.scene.objects.link(text)
+    bpy.context.collection.objects.link(text)
 
     return text
 
@@ -1462,10 +1462,10 @@ def align_matrix(context, location):
 # sets bezierhandles to auto
 def setBezierHandles(obj, mode = 'VECTOR'):
 
-    scene = bpy.context.scene
+    view_layer = bpy.context.view_layer
     if obj.type !=  'CURVE':
         return
-    scene.objects.active = obj
+    view_layer.objects.active = obj
     bpy.ops.object.mode_set(mode = 'EDIT', toggle = True)
     bpy.ops.curve.select_all(action = 'SELECT')
     bpy.ops.curve.handle_type_set(type = mode)
@@ -1514,7 +1514,6 @@ def createCurve(vertArray, self, align_matrix):
     name = self.Dimension_Type         # Type as name
 
     # create curve
-    scene = bpy.context.scene
     newCurve = bpy.data.curves.new(name, type = 'CURVE') # curvedatablock
     newSpline = newCurve.splines.new('BEZIER') # spline
 
@@ -1528,7 +1527,7 @@ def createCurve(vertArray, self, align_matrix):
 
     # create object with newCurve
     DimensionCurve = bpy.data.objects.new(name, newCurve) # object
-    scene.objects.link(DimensionCurve) # place in active scene
+    bpy.context.collection.objects.link(DimensionCurve) # place in active scene
     DimensionCurve.Dimension = True
     DimensionCurve.matrix_world = align_matrix # apply matrix
     self.Dimension_Name = DimensionCurve.name
@@ -1768,9 +1767,9 @@ def createCurve(vertArray, self, align_matrix):
         bpy.context.scene.update()
 
     bpy.ops.object.select_all(action='DESELECT')
-    DimensionCurve.select = True
-    DimensionText.select = True
-    bpy.context.scene.objects.active = DimensionCurve
+    DimensionCurve.select_set(True)
+    DimensionText.select_set(True)
+    bpy.context.view_layer.objects.active = DimensionCurve
     bpy.context.scene.update()
 
     DimensionCurve.Dimension_Name = self.Dimension_Name
@@ -2738,7 +2737,7 @@ class DimensionAdd(bpy.types.Panel):
             endvertex = bpy.context.scene.cursor_location
             layout = self.layout
             col = layout.column()
-            col.label("Note:")
+            col.label(text="Note:")
             row = layout.row()
             props1 = row.operator("curve.dimension", text = 'Add linear note')
             props1.Dimension_Change = False
@@ -2759,7 +2758,7 @@ class DimensionAdd(bpy.types.Panel):
             props2.Dimension_parent = obj.name
 
             col = layout.column()
-            col.label("Distance to 3D cursor:")
+            col.label(text="Distance to 3D cursor:")
             row = layout.row()
             props3 = row.operator("curve.dimension", text = 'Add linear dimension')
             props3.Dimension_Change = False
@@ -2782,7 +2781,7 @@ class DimensionAdd(bpy.types.Panel):
             props4.Dimension_parent = obj.name
 
             col = layout.column()
-            col.label("Radius to 3D cursor:")
+            col.label(text="Radius to 3D cursor:")
             row = layout.row()
             props7 = row.operator("curve.dimension", text = 'Add linear radius')
             props7.Dimension_Change = False
@@ -2805,7 +2804,7 @@ class DimensionAdd(bpy.types.Panel):
             props8.Dimension_parent = obj.name
 
             col = layout.column()
-            col.label("Diameter to 3D cursor:")
+            col.label(text="Diameter to 3D cursor:")
             row = layout.row()
             props9 = row.operator("curve.dimension", text = 'Add linear diameter')
             props9.Dimension_Change = False
@@ -2836,7 +2835,7 @@ class DimensionAdd(bpy.types.Panel):
 
             layout = self.layout
             col = layout.column()
-            col.label("Distance:")
+            col.label(text="Distance:")
             row = layout.row()
             props1 = row.operator("curve.dimension", text = 'Add linear dimension')
             props1.Dimension_Change = False
@@ -2859,7 +2858,7 @@ class DimensionAdd(bpy.types.Panel):
             props2.Dimension_parent = obj.name
 
             col = layout.column()
-            col.label("Radius:")
+            col.label(text="Radius:")
             row = layout.row()
             props3 = row.operator("curve.dimension", text = 'Add linear radius')
             props3.Dimension_Change = False
@@ -2882,7 +2881,7 @@ class DimensionAdd(bpy.types.Panel):
             props4.Dimension_parent = obj.name
 
             col = layout.column()
-            col.label("Diameter:")
+            col.label(text="Diameter:")
             row = layout.row()
             props5 = row.operator("curve.dimension", text = 'Add linear diameter')
             props5.Dimension_Change = False
@@ -2914,7 +2913,7 @@ class DimensionAdd(bpy.types.Panel):
 
             layout = self.layout
             col = layout.column()
-            col.label("Angle:")
+            col.label(text="Angle:")
             row = layout.row()
             props1 = row.operator("curve.dimension", text = 'Add Linear angle dimension')
             props1.Dimension_Change = False

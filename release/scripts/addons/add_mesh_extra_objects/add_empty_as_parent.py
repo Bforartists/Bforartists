@@ -22,24 +22,24 @@ class P2E(Operator):
     bl_description = "Parent selected objects to a new Empty"
     bl_options = {"REGISTER", "UNDO"}
 
-    nombre = StringProperty(
+    nombre: StringProperty(
                     name="",
                     default='OBJECTS',
                     description='Give the empty / group a name'
                     )
-    grupo = BoolProperty(
+    grupo: BoolProperty(
                     name="Create Group",
                     default=False,
                     description="Also add objects to a group"
                     )
-    locat = EnumProperty(
+    locat: EnumProperty(
                     name='',
                     items=[('CURSOR', 'Cursor', 'Cursor'), ('ACTIVE', 'Active', 'Active'),
                            ('CENTER', 'Center', 'Selection Center')],
                     description='Empty location',
                     default='CENTER'
                    )
-    renom = BoolProperty(
+    renom: BoolProperty(
                     name="Add Prefix",
                     default=False,
                     description="Add prefix to objects name"
@@ -85,12 +85,12 @@ class P2E(Operator):
             bpy.ops.collection.objects_add_active()
 
         for o in objs:
-            o.select = True
+            o.select_set(True)
             if not o.parent:
                 bpy.ops.object.parent_set(type='OBJECT')
             if self.grupo:
                 bpy.ops.collection.objects_add_active()
-            o.select = False
+            o.select_set(False)
         for o in objs:
             if self.renom:
                 o.name = self.nombre + '_' + o.name

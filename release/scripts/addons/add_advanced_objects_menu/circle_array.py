@@ -6,7 +6,7 @@ bl_info = {
     "name": "Circle Array",
     "author": "Antonis Karvelas",
     "version": (1, 0, 1),
-    "blender": (2, 6, 7),
+    "blender": (2, 67, 0),
     "location": "View3D > Object > Circle_Array",
     "description": "Uses an existing array and creates an empty, "
                    "rotates it properly and makes a Circle Array",
@@ -90,15 +90,15 @@ class Circle_Array(Operator):
                     check_mod.use_relative_offset = False
                 else:
                     # fallback
-                    bpy.context.scene.objects.active = active
+                    bpy.context.view_layer.objects.active = active
                     bpy.ops.object.modifier_add(type='ARRAY')
                     active.modifiers[0].use_object_offset = True
                     active.modifiers[0].use_relative_offset = False
 
                 active.modifiers[0].use_object_offset = True
                 active.modifiers[0].use_relative_offset = False
-                active.select = False
-                bpy.context.scene.objects.active = context.active_object
+                active.select_set(False)
+                bpy.context.view_layer.objects.active = context.active_object
                 bpy.ops.view3d.snap_cursor_to_selected()
 
                 if active.modifiers[0].offset_object is None:
@@ -109,14 +109,14 @@ class Circle_Array(Operator):
                 else:
                     empty_name = active.modifiers[0].offset_object
 
-                bpy.context.scene.objects.active = active
+                bpy.context.view_layer.objects.active = active
                 num = active.modifiers["Array"].count
                 rotate_num = 360 / num
-                active.select = True
+                active.select_set(True)
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
                 empty_name.rotation_euler = (0, 0, radians(rotate_num))
-                empty_name.select = False
-                active.select = True
+                empty_name.select_set(False)
+                active.select_set(True)
                 bpy.ops.object.origin_set(type="ORIGIN_CURSOR")
 
                 return {'FINISHED'}
@@ -134,14 +134,14 @@ class Circle_Array(Operator):
                 else:
                     empty_name = active.modifiers[0].offset_object
 
-                bpy.context.scene.objects.active = active
+                bpy.context.view_layer.objects.active = active
                 num = active.modifiers["Array"].count
                 rotate_num = 360 / num
-                active.select = True
+                active.select_set(True)
                 bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
                 empty_name.rotation_euler = (0, 0, radians(rotate_num))
-                empty_name.select = False
-                active.select = True
+                empty_name.select_set(False)
+                active.select_set(True)
 
                 return {'FINISHED'}
 

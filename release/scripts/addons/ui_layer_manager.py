@@ -57,44 +57,44 @@ FAKE_LAYER_GROUP = [True] * NUM_LAYERS
 
 
 class NamedLayer(PropertyGroup):
-    name = StringProperty(
+    name: StringProperty(
             name="Layer Name"
             )
-    use_lock = BoolProperty(
+    use_lock: BoolProperty(
             name="Lock Layer",
             default=False
             )
-    use_object_select = BoolProperty(
+    use_object_select: BoolProperty(
             name="Object Select",
             default=True
             )
-    use_wire = BoolProperty(
+    use_wire: BoolProperty(
             name="Wire Layer",
             default=False
             )
 
 
 class NamedLayers(PropertyGroup):
-    layers = CollectionProperty(type=NamedLayer)
+    layers: CollectionProperty(type=NamedLayer)
 
-    use_hide_empty_layers = BoolProperty(
+    use_hide_empty_layers: BoolProperty(
             name="Hide Empty Layer",
             default=False
             )
-    use_extra_options = BoolProperty(
+    use_extra_options: BoolProperty(
             name="Show Extra Options",
             default=True
             )
-    use_layer_indices = BoolProperty(
+    use_layer_indices: BoolProperty(
             name="Show Layer Indices",
             default=False
             )
-    use_classic = BoolProperty(
+    use_classic: BoolProperty(
             name="Classic",
             default=False,
             description="Use a classic layer selection visibility"
             )
-    use_init = BoolProperty(
+    use_init: BoolProperty(
             default=True,
             options={'HIDDEN'}
             )
@@ -114,9 +114,9 @@ def check_init_data(scene):
 
 
 class LayerGroup(PropertyGroup):
-    use_toggle = BoolProperty(name="", default=False)
-    use_wire = BoolProperty(name="", default=False)
-    use_lock = BoolProperty(name="", default=False)
+    use_toggle: BoolProperty(name="", default=False)
+    use_wire: BoolProperty(name="", default=False)
+    use_lock: BoolProperty(name="", default=False)
 
     layers = BoolVectorProperty(name="Layers", default=([False] * NUM_LAYERS), size=NUM_LAYERS, subtype='LAYER')
 
@@ -151,7 +151,7 @@ class SCENE_OT_namedlayer_group_remove(Operator):
     bl_idname = "scene.namedlayer_group_remove"
     bl_label = "Remove Layer Group"
 
-    group_idx = bpy.props.IntProperty()
+    group_idx: bpy.props.IntProperty()
 
     @classmethod
     def poll(cls, context):
@@ -173,10 +173,10 @@ class SCENE_OT_namedlayer_toggle_visibility(Operator):
     bl_idname = "scene.namedlayer_toggle_visibility"
     bl_label = "Show/Hide Layer"
 
-    layer_idx = IntProperty()
-    group_idx = IntProperty()
-    use_spacecheck = BoolProperty()
-    extend = BoolProperty(options={'SKIP_SAVE'})
+    layer_idx: IntProperty()
+    group_idx: IntProperty()
+    use_spacecheck: BoolProperty()
+    extend: BoolProperty(options={'SKIP_SAVE'})
 
     @classmethod
     def poll(cls, context):
@@ -218,8 +218,8 @@ class SCENE_OT_namedlayer_move_to_layer(Operator):
     bl_idname = "scene.namedlayer_move_to_layer"
     bl_label = "Move Objects To Layer"
 
-    layer_idx = IntProperty()
-    extend = BoolProperty(options={'SKIP_SAVE'})
+    layer_idx: IntProperty()
+    extend: BoolProperty(options={'SKIP_SAVE'})
 
     @classmethod
     def poll(cls, context):
@@ -231,7 +231,7 @@ class SCENE_OT_namedlayer_move_to_layer(Operator):
 
         # Cycle all objects in the layer
         for obj in scene.objects:
-            if obj.select:
+            if obj.select_get():
                 # If object is in at least one of the scene's visible layers...
                 if True in {ob_layer and sce_layer for ob_layer, sce_layer in zip(obj.layers, scene.layers)}:
                     if self.extend:
@@ -252,9 +252,9 @@ class SCENE_OT_namedlayer_toggle_wire(Operator):
     bl_idname = "scene.namedlayer_toggle_wire"
     bl_label = "Toggle Objects Draw Wire"
 
-    layer_idx = IntProperty()
-    use_wire = BoolProperty()
-    group_idx = IntProperty()
+    layer_idx: IntProperty()
+    use_wire: BoolProperty()
+    group_idx: IntProperty()
 
     @classmethod
     def poll(cls, context):
@@ -292,9 +292,9 @@ class SCENE_OT_namedlayer_lock_all(Operator):
     bl_idname = "scene.namedlayer_lock_all"
     bl_label = "Lock Objects"
 
-    layer_idx = IntProperty()
-    use_lock = BoolProperty()
-    group_idx = IntProperty()
+    layer_idx: IntProperty()
+    use_lock: BoolProperty()
+    group_idx: IntProperty()
 
     @classmethod
     def poll(cls, context):
@@ -316,12 +316,12 @@ class SCENE_OT_namedlayer_lock_all(Operator):
                     layers = obj.layers
                     if True in {layer and group_layer for layer, group_layer in zip(layers, group_layers)}:
                         obj.hide_select = not use_lock
-                        obj.select = False
+                        obj.select_set(False)
                         scene.layergroups[group_idx].use_lock = not use_lock
                 else:
                     if obj.layers[layer_idx]:
                         obj.hide_select = not use_lock
-                        obj.select = False
+                        obj.select_set(False)
                         scene.namedlayers.layers[layer_idx].use_lock = not use_lock
 
         return {'FINISHED'}
@@ -332,11 +332,11 @@ class SCENE_OT_namedlayer_select_objects_by_layer(Operator):
     bl_idname = "scene.namedlayer_select_objects_by_layer"
     bl_label = "Select Objects In Layer"
 
-    select_obj = BoolProperty()
-    layer_idx = IntProperty()
+    select_obj: BoolProperty()
+    layer_idx: IntProperty()
 
-    extend = BoolProperty(options={'SKIP_SAVE'})
-    active = BoolProperty(options={'SKIP_SAVE'})
+    extend: BoolProperty(options={'SKIP_SAVE'})
+    active: BoolProperty(options={'SKIP_SAVE'})
 
     @classmethod
     def poll(cls, context):
@@ -357,12 +357,12 @@ class SCENE_OT_namedlayer_select_objects_by_layer(Operator):
                     objects.append(obj)
                     not_all_selected -= 1
                     if self.active:
-                        context.scene.objects.active = obj
-                    if obj.select:
+                        context.view_layer.objects.active = obj
+                    if obj.select_get():
                         not_all_selected += 1
             if not not_all_selected:
                 for obj in objects:
-                    obj.select = False
+                    obj.select_set(False)
             else:
                 bpy.ops.object.select_by_layer(match='SHARED', extend=self.extend, layers=layer_idx + 1)
 
@@ -379,7 +379,7 @@ class SCENE_OT_namedlayer_show_all(Operator):
     bl_idname = "scene.namedlayer_show_all"
     bl_label = "Select All Layers"
 
-    show = BoolProperty()
+    show: BoolProperty()
 
     @classmethod
     def poll(cls, context):
@@ -618,7 +618,7 @@ class LayerMAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Layers",

@@ -172,7 +172,7 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
         box.label(text="Spirals:")
 
         if self.update_spiral_presets:
-            box.label(self.update_spiral_presets_msg, icon="FILE_TICK")
+            box.label(text=self.update_spiral_presets_msg, icon="FILE_TICK")
         else:
             box.prop(self, "update_spiral_presets")
 

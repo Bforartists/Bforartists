@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Turnaround Camera",
     "author": "Antonio Vazquez (antonioya)",
-    "version": (0, 2, 5),
-    "blender": (2, 68, 0),
+    "version": (0, 3, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Toolshelf > Animation Tab > Turnaround Camera",
     "description": "Add a camera rotation around selected object",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -46,7 +46,7 @@ from bpy.types import (
 # ------------------------------------------------------
 # Action class
 # ------------------------------------------------------
-class RunAction(Operator):
+class CAMERATURN_OT_RunAction(Operator):
     bl_idname = "object.rotate_around"
     bl_label = "Turnaround"
     bl_description = "Create camera rotation around selected object"
@@ -88,8 +88,8 @@ class RunAction(Operator):
         # (make empty active object)
         # -------------------------
         bpy.ops.object.select_all(False)
-        myempty.select = True
-        context.scene.objects.active = myempty
+        myempty.select_set(True)
+        context.view_layer.objects.active = myempty
         # save current configuration
         savedinterpolation = context.preferences.edit.keyframe_new_interpolation_type
         # change interpolation mode
@@ -158,7 +158,7 @@ class RunAction(Operator):
 
         # Track constraint
         if turn_camera.track is True:
-            bpy.context.scene.objects.active = camera
+            bpy.context.view_layer.objects.active = camera
             bpy.ops.object.constraint_add(type='TRACK_TO')
             bpy.context.object.constraints[-1].track_axis = 'TRACK_NEGATIVE_Z'
             bpy.context.object.constraints[-1].up_axis = 'UP_Y'
@@ -172,8 +172,8 @@ class RunAction(Operator):
         # Back to old selection
         # -------------------------
         bpy.ops.object.select_all(False)
-        selectobject.select = True
-        bpy.context.scene.objects.active = selectobject
+        selectobject.select_set(True)
+        bpy.context.view_layer.objects.active = selectobject
         bpy.context.scene.frame_set(savedframe)
 
         return {'FINISHED'}
@@ -182,49 +182,49 @@ class RunAction(Operator):
 # ------------------------------------------------------
 # Define Properties
 # ------------------------------------------------------
-class CameraTurnProps(PropertyGroup):
+class CAMERATURN_Props(PropertyGroup):
 
-    camera_revol_x = FloatProperty(
+    camera_revol_x: FloatProperty(
             name='X', min=0, max=25,
             default=0, precision=2,
             description='Number total of revolutions in X axis'
             )
-    camera_revol_y = FloatProperty(
+    camera_revol_y: FloatProperty(
             name='Y', min=0, max=25,
             default=0, precision=2,
             description='Number total of revolutions in Y axis'
             )
-    camera_revol_z = FloatProperty(
+    camera_revol_z: FloatProperty(
             name='Z', min=0, max=25,
             default=1, precision=2,
             description='Number total of revolutions in Z axis'
             )
-    inverse_x = BoolProperty(
+    inverse_x: BoolProperty(
             name="-X",
             description="Inverse rotation",
             default=False
             )
-    inverse_y = BoolProperty(
+    inverse_y: BoolProperty(
             name="-Y",
             description="Inverse rotation",
             default=False
             )
-    inverse_z = BoolProperty(
+    inverse_z: BoolProperty(
             name="-Z",
             description="Inverse rotation",
             default=False
             )
-    use_cursor = BoolProperty(
+    use_cursor: BoolProperty(
             name="Use cursor position",
             description="Use cursor position instead of object origin",
             default=False
             )
-    back_forw = BoolProperty(
+    back_forw: BoolProperty(
             name="Back and forward",
             description="Create back and forward animation",
             default=False
             )
-    dolly_zoom = EnumProperty(
+    dolly_zoom: EnumProperty(
             items=(
                 ('0', "None", ""),
                 ('1', "Dolly zoom", ""),
@@ -233,24 +233,24 @@ class CameraTurnProps(PropertyGroup):
             name="Lens Effects",
             description="Create a camera lens movement"
             )
-    camera_from_lens = FloatProperty(
+    camera_from_lens: FloatProperty(
             name="From",
             min=1, max=500, default=35,
             precision=3,
             description="Start lens value"
             )
-    camera_to_lens = FloatProperty(
+    camera_to_lens: FloatProperty(
             name="To",
             min=1, max=500,
             default=35, precision=3,
             description="End lens value"
             )
-    track = BoolProperty(
+    track: BoolProperty(
             name="Create track constraint",
             description="Add a track constraint to the camera",
             default=False
             )
-    reset_cam_anim = BoolProperty(
+    reset_cam_anim: BoolProperty(
             name="Clear Camera",
             description="Clear previous camera animations if there are any\n"
                         "(For instance, previous Dolly Zoom)",
@@ -261,12 +261,12 @@ class CameraTurnProps(PropertyGroup):
 # ------------------------------------------------------
 # UI Class
 # ------------------------------------------------------
-class PanelUI(Panel):
+class CAMERATURN_PT_ui(Panel):
     bl_idname = "CAMERA_TURN_PT_main"
     bl_label = "Turnaround Camera"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "Animation"
+    bl_region_type = "UI"
+    bl_category = "View"
 
     def draw(self, context):
         layout = self.layout
@@ -277,7 +277,7 @@ class PanelUI(Panel):
             bpy.context.scene.camera.name
         except AttributeError:
             row = layout.row(align=False)
-            row.label("No defined camera for scene", icon="INFO")
+            row.label(text="No defined camera for scene", icon="INFO")
             return
 
         if context.active_object is not None:
@@ -287,28 +287,28 @@ class PanelUI(Panel):
                 row.operator("object.rotate_around", icon='OUTLINER_DATA_CAMERA')
                 box = row.box()
                 box.scale_y = 0.5
-                box.label(buf, icon='MESH_DATA')
+                box.label(text=buf, icon='MESH_DATA')
                 row = layout.row(align=False)
                 row.prop(scene, "camera")
 
-                layout.label("Rotation:")
+                layout.label(text="Rotation:")
                 row = layout.row(align=True)
                 row.prop(scene, "frame_start")
                 row.prop(scene, "frame_end")
 
                 col = layout.column(align=True)
-                split = col.split(percentage=0.85, align=True)
+                split = col.split(factor=0.85, align=True)
                 split.prop(turn_camera, "camera_revol_x")
                 split.prop(turn_camera, "inverse_x", toggle=True)
-                split = col.split(percentage=0.85, align=True)
+                split = col.split(factor=0.85, align=True)
                 split.prop(turn_camera, "camera_revol_y")
                 split.prop(turn_camera, "inverse_y", toggle=True)
-                split = col.split(percentage=0.85, align=True)
+                split = col.split(factor=0.85, align=True)
                 split.prop(turn_camera, "camera_revol_z")
                 split.prop(turn_camera, "inverse_z", toggle=True)
 
                 col = layout.column(align=True)
-                col.label("Options:")
+                col.label(text="Options:")
                 row = col.row(align=True)
                 row.prop(turn_camera, "back_forw", toggle=True)
                 row.prop(turn_camera, "reset_cam_anim", toggle=True)
@@ -324,23 +324,30 @@ class PanelUI(Panel):
 
             else:
                 buf = "No valid object selected"
-                layout.label(buf, icon='MESH_DATA')
+                layout.label(text=buf, icon='MESH_DATA')
 
 
 # ------------------------------------------------------
 # Registration
 # ------------------------------------------------------
-def register():
-    bpy.utils.register_class(RunAction)
-    bpy.utils.register_class(PanelUI)
-    bpy.utils.register_class(CameraTurnProps)
-    bpy.types.Scene.turn_camera = PointerProperty(type=CameraTurnProps)
+classes = (
+    CAMERATURN_OT_RunAction,
+    CAMERATURN_PT_ui,
+    CAMERATURN_Props
+)
 
+def register():
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+    bpy.types.Scene.turn_camera = PointerProperty(type=CAMERATURN_Props)
 
 def unregister():
-    bpy.utils.unregister_class(RunAction)
-    bpy.utils.unregister_class(PanelUI)
-    bpy.utils.unregister_class(CameraTurnProps)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
     del bpy.types.Scene.turn_camera
 
 

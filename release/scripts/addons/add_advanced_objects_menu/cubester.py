@@ -172,7 +172,9 @@ def create_material(scene, ob, name):
 
 
 # generate mesh from audio
-def create_mesh_from_audio(self, scene, verts, faces):
+def create_mesh_from_audio(self, context, verts, faces):
+    scene = context.scene
+    view_layer = context.view_layer
     adv_obj = scene.advanced_objects
     audio_filepath = adv_obj.cubester_audio_path
     width = adv_obj.cubester_audio_width_blocks
@@ -197,9 +199,9 @@ def create_mesh_from_audio(self, scene, verts, faces):
     mesh = bpy.data.meshes.new("cubed")
     mesh.from_pydata(verts, [], faces)
     ob = bpy.data.objects.new("cubed", mesh)
-    bpy.context.scene.objects.link(ob)
-    bpy.context.scene.objects.active = ob
-    ob.select = True
+    bpy.context.collection.objects.link(ob)
+    bpy.context.view_layer.objects.active = ob
+    ob.select_set(True)
 
     # initial vertex colors
     if adv_obj.cubester_materials == "image" and adv_obj.cubester_color_image != "":
@@ -335,9 +337,9 @@ def create_mesh_from_audio(self, scene, verts, faces):
         # correct for z height
         curve.scale = (curve.scale[0], curve.scale[0], curve.scale[0])
 
-        ob.select = True
-        curve.select = False
-        scene.objects.active = ob
+        ob.select_set(True)
+        curve.select_set(False)
+        view_layer.objects.active = ob
 
         # data was collected and then multi-variable regression was done in Excel
         # influence of width and length
@@ -412,9 +414,9 @@ def create_mesh_from_image(self, scene, verts, faces):
     mesh = bpy.data.meshes.new("cubed")
     mesh.from_pydata(verts, [], faces)
     ob = bpy.data.objects.new("cubed", mesh)
-    context.scene.objects.link(ob)
-    context.scene.objects.active = ob
-    ob.select = True
+    context.collection.objects.link(ob)
+    context.view_layer.objects.active = ob
+    ob.select_set(True)
 
     # uv unwrap
     if adv_obj.cubester_mesh_style == "blocks":
@@ -723,7 +725,7 @@ class CubeSterPanel(Panel):
         if adv_obj.cubester_audio_image == "image":
             box = layout.box()
             box.prop(adv_obj, "cubester_load_type")
-            box.label("Image To Convert:")
+            box.label(text="Image To Convert:")
             box.prop_search(adv_obj, "cubester_image", bpy.data, "images")
             box.prop(adv_obj, "cubester_load_image")
 
@@ -806,7 +808,7 @@ class CubeSterPanel(Panel):
                 box.prop(adv_obj, "cubester_use_image_color", icon="COLOR")
 
             if not adv_obj.cubester_use_image_color or adv_obj.cubester_audio_image == "audio":
-                box.label("Image To Use For Colors:")
+                box.label(text="Image To Use For Colors:")
                 box.prop_search(adv_obj, "cubester_color_image", bpy.data, "images")
                 box.prop(adv_obj, "cubester_load_color_image")
 
@@ -819,11 +821,11 @@ class CubeSterPanel(Panel):
         box = layout.box()
 
         if adv_obj.cubester_mesh_style == "blocks":
-            box.label("Approximate Cube Count: " + str(rows * columns))
-            box.label("Expected Verts/Faces: " + str(rows * columns * 8) + " / " + str(rows * columns * 6))
+            box.label(text="Approximate Cube Count: " + str(rows * columns))
+            box.label(text="Expected Verts/Faces: " + str(rows * columns * 8) + " / " + str(rows * columns * 6))
         else:
-            box.label("Approximate Point Count: " + str(rows * columns))
-            box.label("Expected Verts/Faces: " + str(rows * columns) + " / " + str(rows * (columns - 1)))
+            box.label(text="Approximate Point Count: " + str(rows * columns))
+            box.label(text="Expected Verts/Faces: " + str(rows * columns) + " / " + str(rows * (columns - 1)))
 
         # blocks and plane generation time values
         if adv_obj.cubester_mesh_style == "blocks":
@@ -844,10 +846,10 @@ class CubeSterPanel(Panel):
                 time = (points * slope) + intercept + (points * block_infl) + \
                        (images_found / adv_obj.cubester_skip_images * frame_infl) + intercept2
 
-                box.label("Images To Be Used: " + str(int(images_found / adv_obj.cubester_skip_images)))
+                box.label(text="Images To Be Used: " + str(int(images_found / adv_obj.cubester_skip_images)))
         else:
             # audio based mesh
-            box.label("Audio Track Length: " + str(adv_obj.cubester_audio_file_length) + " frames")
+            box.label(text="Audio Track Length: " + str(adv_obj.cubester_audio_file_length) + " frames")
 
             block_infl, frame_infl, intercept = 0.0948, 0.0687566, -25.85985
             time = (points * block_infl) + (adv_obj.cubester_audio_file_length * frame_infl) + intercept
@@ -860,7 +862,7 @@ class CubeSterPanel(Panel):
             time_mod = "min"
         time = round(time, 3)
 
-        box.label("Expected Time: " + str(time) + " " + time_mod)
+        box.label(text="Expected Time: " + str(time) + " " + time_mod)
 
         # advanced
         if adv_obj.cubester_audio_image == "image":
@@ -873,7 +875,7 @@ class CubeSterPanel(Panel):
                 box.prop(adv_obj, "cubester_random_weights", icon="RNDCURVE")
 
                 if not adv_obj.cubester_random_weights:
-                    box.label("RGBA Channel Weights", icon="COLOR")
+                    box.label(text="RGBA Channel Weights", icon="COLOR")
                     col = box.column(align=True)
                     col.prop(adv_obj, "cubester_weight_r")
                     col.prop(adv_obj, "cubester_weight_g")
@@ -912,7 +914,7 @@ class CubeSter(Operator):
                     path.isfile(adv_obj.cubester_audio_path) and
                     adv_obj.cubester_check_audio is True):
 
-                create_mesh_from_audio(self, scene, verts, faces)
+                create_mesh_from_audio(self, context, verts, faces)
                 created = adv_obj.cubester_audio_file_length
             else:
                 self.report({'WARNING'},

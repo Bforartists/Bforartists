@@ -10,7 +10,7 @@ bl_info = {
     "description": "Super fast cutting and mirroring for Mesh objects",
     "author": "Lapineige",
     "version": (2, 4, 2),
-    "blender": (2, 7, 1),
+    "blender": (2, 71, 0),
     "location": "View 3D > Toolbar > Tools tab > AutoMirror (panel)",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
@@ -190,7 +190,7 @@ class BisectMirror(Panel):
 
         if obj and obj.type == 'MESH':
             layout.operator("object.automirror", icon="MOD_MIRROR")
-            layout.label("Options:")
+            layout.label(text="Options:")
             layout.prop(auto_m, "axis", text="Mirror Axis", expand=True)
             layout.prop(auto_m, "orientation", text="Orientation")
             layout.prop(auto_m, "threshold", text="Threshold")
@@ -208,7 +208,7 @@ class BisectMirror(Panel):
 
 
 class AutoMirrorProperties(PropertyGroup):
-    axis = EnumProperty(
+    axis: EnumProperty(
             name="Axis",
             items=[
                 ("x", "X", "", 1),
@@ -217,7 +217,7 @@ class AutoMirrorProperties(PropertyGroup):
                 ],
             description="Axis used by the mirror modifier"
             )
-    orientation = EnumProperty(
+    orientation: EnumProperty(
             name="Orientation",
             items=[
                 ("positive", "Positive", "", 1),
@@ -225,34 +225,34 @@ class AutoMirrorProperties(PropertyGroup):
                 ],
             description="Choose the side along the axis of the editable part (+/- coordinates)"
             )
-    threshold = FloatProperty(
+    threshold: FloatProperty(
             default=0.001,
             min=0.001,
             description="Vertices closer than this distance are merged on the loopcut"
             )
-    toggle_edit = BoolProperty(
+    toggle_edit: BoolProperty(
             name="Toggle Edit Mode",
             default=True,
             description="If not in Edit mode, change mode to it"
             )
-    cut = BoolProperty(
+    cut: BoolProperty(
             name="Cut",
             default=True,
             description="If enabled, cut the mesh in two parts and mirror it\n"
                         "If not, just make a loopcut"
             )
-    clipping = BoolProperty(
+    clipping: BoolProperty(
             default=True
             )
-    use_clip = BoolProperty(
+    use_clip: BoolProperty(
             default=True,
             description="Use clipping for the mirror modifier"
             )
-    show_on_cage = BoolProperty(
+    show_on_cage: BoolProperty(
             default=True,
             description="Enable editing the cage (it's the classical modifier's option)"
             )
-    apply_mirror = BoolProperty(
+    apply_mirror: BoolProperty(
             description="Apply the mirror modifier (useful to symmetrise the mesh)"
             )
 

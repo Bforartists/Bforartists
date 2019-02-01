@@ -85,10 +85,10 @@ class SeparateOutline(Operator):
 
 class CurveTools2Settings(PropertyGroup):
     # selection
-    SelectedObjects = CollectionProperty(
+    SelectedObjects: CollectionProperty(
             type=Properties.CurveTools2SelectedObject
             )
-    NrSelectedObjects = IntProperty(
+    NrSelectedObjects: IntProperty(
             name="NrSelectedObjects",
             default=0,
             description="Number of selected objects",
@@ -102,33 +102,33 @@ class CurveTools2Settings(PropertyGroup):
             )
     """
     # curve
-    CurveLength = FloatProperty(
+    CurveLength: FloatProperty(
             name="CurveLength",
             default=0.0,
             precision=6
             )
     # splines
-    SplineResolution = IntProperty(
+    SplineResolution: IntProperty(
             name="SplineResolution",
             default=64,
             min=2, max=1024,
             soft_min=2,
             description="Spline resolution will be set to this value"
             )
-    SplineRemoveLength = FloatProperty(
+    SplineRemoveLength: FloatProperty(
             name="SplineRemoveLength",
             default=0.001,
             precision=6,
             description="Splines shorter than this threshold length will be removed"
             )
-    SplineJoinDistance = FloatProperty(
+    SplineJoinDistance: FloatProperty(
             name="SplineJoinDistance",
             default=0.001,
             precision=6,
             description="Splines with starting/ending points closer to each other "
                         "than this threshold distance will be joined"
             )
-    SplineJoinStartEnd = BoolProperty(
+    SplineJoinStartEnd: BoolProperty(
             name="SplineJoinStartEnd",
             default=False,
             description="Only join splines at the starting point of one and the ending point of the other"
@@ -137,14 +137,14 @@ class CurveTools2Settings(PropertyGroup):
             ('At midpoint', 'At midpoint', 'Join splines at midpoint of neighbouring points'),
             ('Insert segment', 'Insert segment', 'Insert segment between neighbouring points')
             )
-    SplineJoinMode = EnumProperty(
+    SplineJoinMode: EnumProperty(
             items=splineJoinModeItems,
             name="SplineJoinMode",
             default='At midpoint',
             description="Determines how the splines will be joined"
             )
     # curve intersection
-    LimitDistance = FloatProperty(
+    LimitDistance: FloatProperty(
             name="LimitDistance",
             default=0.0001,
             precision=6,
@@ -155,7 +155,7 @@ class CurveTools2Settings(PropertyGroup):
             ('3D', '3D', 'Detect where curves intersect in 3D'),
             ('From View', 'From View', 'Detect where curves intersect in the RegionView3D')
             )
-    IntersectCurvesAlgorithm = EnumProperty(
+    IntersectCurvesAlgorithm: EnumProperty(
             items=intAlgorithmItems,
             name="IntersectCurvesAlgorithm",
             description="Determines how the intersection points will be detected",
@@ -166,7 +166,7 @@ class CurveTools2Settings(PropertyGroup):
             ('Split', 'Split', 'Split the existing spline(s) into 2'),
             ('Empty', 'Empty', 'Add empty at intersections')
             )
-    IntersectCurvesMode = EnumProperty(
+    IntersectCurvesMode: EnumProperty(
             items=intModeItems,
             name="IntersectCurvesMode",
             description="Determines what happens at the intersection points",
@@ -177,7 +177,7 @@ class CurveTools2Settings(PropertyGroup):
             ('Active', 'Active', 'Insert points into active curve only'),
             ('Other', 'Other', 'Insert points into other curve only')
             )
-    IntersectCurvesAffect = EnumProperty(
+    IntersectCurvesAffect: EnumProperty(
             items=intAffectItems,
             name="IntersectCurvesAffect",
             description="Determines which of the selected curves will be affected by the operation",
@@ -388,7 +388,7 @@ class CurveAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",

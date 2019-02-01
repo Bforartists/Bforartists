@@ -38,59 +38,59 @@ from .achm_tools import *
 # Define UI class
 # Books
 # ------------------------------------------------------------------
-class AchmBooks(Operator):
+class ARCHIMESH_OT_Books(Operator):
     bl_idname = "mesh.archimesh_books"
     bl_label = "Books"
     bl_description = "Books Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
-    width = FloatProperty(
+    width: FloatProperty(
             name='Width', min=0.001, max=1, default=0.045, precision=3,
             description='Bounding book width',
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name='Depth', min=0.001, max=1, default=0.22, precision=3,
             description='Bounding book depth',
             )
-    height = FloatProperty(
+    height: FloatProperty(
             name='Height', min=0.001, max=1, default=0.30, precision=3,
             description='Bounding book height',
             )
-    num = IntProperty(
-            name='Number of books', min=1, max=100, default=20,
+    num: IntProperty(
+            name='Number of books', min=1, max=100, default=5,
             description='Number total of books',
             )
 
-    rX = FloatProperty(
+    rX: FloatProperty(
             name='X', min=0.000, max=0.999, default=0, precision=3,
             description='Randomness for X axis',
             )
-    rY = FloatProperty(
+    rY: FloatProperty(
             name='Y', min=0.000, max=0.999, default=0, precision=3,
             description='Randomness for Y axis',
             )
-    rZ = FloatProperty(
+    rZ: FloatProperty(
             name='Z', min=0.000, max=0.999, default=0, precision=3,
             description='Randomness for Z axis',
             )
 
-    rot = FloatProperty(
+    rot: FloatProperty(
             name='Rotation', min=0.000, max=1, default=0, precision=3,
             description='Randomness for vertical position (0-> All straight)',
             )
-    afn = IntProperty(
+    afn: IntProperty(
             name='Affinity', min=0, max=10, default=5,
             description='Number of books with same rotation angle',
             )
 
     # Materials
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             )
-    objcol = FloatVectorProperty(
+    objcol: FloatVectorProperty(
             name="Color",
             description="Color for material",
             default=(1.0, 1.0, 1.0, 1.0),
@@ -98,7 +98,7 @@ class AchmBooks(Operator):
             subtype='COLOR',
             size=4,
             )
-    rC = FloatProperty(
+    rC: FloatProperty(
             name='Randomness',
             min=0.000, max=1, default=0, precision=3,
             description='Randomness for color ',
@@ -115,10 +115,10 @@ class AchmBooks(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
-            box.label("Book size")
+            box.label(text="Book size")
             row = box.row()
             row.prop(self, 'width')
             row.prop(self, 'depth')
@@ -127,7 +127,7 @@ class AchmBooks(Operator):
             row.prop(self, 'num', slider=True)
 
             box = layout.box()
-            box.label("Randomness")
+            box.label(text="Randomness")
             row = box.row()
             row.prop(self, 'rX', slider=True)
             row.prop(self, 'rY', slider=True)
@@ -137,7 +137,7 @@ class AchmBooks(Operator):
             row.prop(self, 'afn', slider=True)
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
             if self.crt_mat:
@@ -147,7 +147,7 @@ class AchmBooks(Operator):
                 row.prop(self, 'rC', slider=True)
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -170,8 +170,8 @@ class AchmBooks(Operator):
 def create_book_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
     bpy.ops.object.select_all(False)
     generate_books(self)
 
@@ -203,7 +203,7 @@ def generate_books(self):
         mydata = create_book("Book" + str(x),
                              self.width, self.depth, self.height,
                              lastx, myloc.y, myloc.z,
-                             self.crt_mat if bpy.context.scene.render.engine == 'CYCLES' else False,
+                             self.crt_mat if bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'} else False,
                              self.rX, self.rY, self.rZ, self.rot, ox, oy, oz, ot,
                              self.objcol, self.rC)
         boxes.extend([mydata[0]])
@@ -230,11 +230,11 @@ def generate_books(self):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    boxes[0].select = True
-    bpy.context.scene.objects.active = boxes[0]
+    boxes[0].select_set(True)
+    bpy.context.view_layer.objects.active = boxes[0]
 
     return
 
@@ -361,7 +361,7 @@ def create_book(objname, sx, sy, sz, px, py, pz, mat, frx,
     mybook.location[0] = px
     mybook.location[1] = py
     mybook.location[2] = pz + sin(radians(rot)) * sx
-    bpy.context.scene.objects.link(mybook)
+    bpy.context.collection.objects.link(mybook)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -369,7 +369,7 @@ def create_book(objname, sx, sy, sz, px, py, pz, mat, frx,
     # ---------------------------------
     # Materials and UV Maps
     # ---------------------------------
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         rgb = objcol
         # External
         mat = create_diffuse_material(objname + "_material", True,

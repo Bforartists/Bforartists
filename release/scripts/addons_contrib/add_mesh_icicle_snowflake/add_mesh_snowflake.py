@@ -2,7 +2,7 @@ bl_info = {
     "name": "Snowflake Generator",
     "author": "Eoin Brennan (Mayeoin Bread)",
     "version": (1, 3, 1),
-    "blender": (2, 7, 4),
+    "blender": (2, 74, 0),
     "location": "View3D > Add > Mesh",
     "descrition": "Construct a randomly generated snowflake",
     "warning": "",

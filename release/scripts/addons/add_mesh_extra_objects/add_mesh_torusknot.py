@@ -98,13 +98,13 @@ class AddTorusKnot(bpy.types.Operator):
     bl_description = "Construct a torus knot mesh"
     bl_options = {"REGISTER", "UNDO"}
 
-    resolution = IntProperty(
+    resolution: IntProperty(
         name="Resolution",
         description="Resolution of the Torus Knot",
         default=80,
         min=30, max=256
         )
-    objecttype = IntProperty(
+    objecttype: IntProperty(
         name="Knot Type",
         description="Type of Knot",
         default=1,

@@ -233,13 +233,14 @@ class Ms3dImporter():
         ###blender_mesh_object.parent = blender_armature_object
 
         blender_scene = blender_context.scene
+        blender_collection = blender_context.collection
 
         blender_group = blender_context.blend_data.collections.new(
                 FORMAT_GROUP.format(ms3d_model.name))
         blender_empty_object = blender_context.blend_data.objects.new(
                 FORMAT_EMPTY_OBJECT.format(ms3d_model.name), None)
         blender_empty_object.location = blender_scene.cursor_location
-        blender_scene.objects.link(blender_empty_object)
+        blender_collection.objects.link(blender_empty_object)
         blender_group.objects.link(blender_empty_object)
 
         for blender_object in blender_objects:
@@ -284,13 +285,14 @@ class Ms3dImporter():
         ##########################
         # blender stuff:
         # link to blender scene
-        blender_scene = blender_context.scene
-        blender_scene.objects.link(blender_mesh_object)
+        blender_collection = blender_context.collection
+        blender_view_layer = blender_context.view_layer
+        blender_collection.objects.link(blender_mesh_object)
         #blender_mesh_object.location = blender_scene.cursor_location
         enable_edit_mode(False, blender_context)
         select_all(False)
-        blender_mesh_object.select = True
-        blender_scene.objects.active = blender_mesh_object
+        blender_mesh_object.select_set(True)
+        blender_view_layer.objects.active = blender_mesh_object
 
         ##########################
         # take this as active object after import
@@ -664,6 +666,7 @@ class Ms3dImporter():
     def create_animation(self, blender_context, ms3d_model, blender_mesh_object):
         ##########################
         # setup scene
+        blender_collection = blender_context.collection
         blender_scene = blender_context.scene
         blender_scene.render.fps = ms3d_model.animation_fps
         if ms3d_model.animation_fps:
@@ -695,7 +698,7 @@ class Ms3dImporter():
         blender_armature.use_auto_ik = True
         blender_armature_object = blender_context.blend_data.objects.new(
                 ms3d_armature_object_name, blender_armature)
-        blender_scene.objects.link(blender_armature_object)
+        blender_collection.objects.link(blender_armature_object)
         #blender_armature_object.location = blender_scene.cursor_location
         blender_armature_object.show_in_front = True
 
@@ -827,7 +830,7 @@ class Ms3dImporter():
         if joint_length < 0.01:
             joint_length = 0.01
 
-        blender_scene.objects.active = blender_armature_object
+        blender_view_layer.objects.active = blender_armature_object
         enable_edit_mode(True, blender_context)
         for ms3d_joint in ms3d_joints_ordered:
             blender_edit_bone = blender_armature.edit_bones.new(ms3d_joint.name)

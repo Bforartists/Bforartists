@@ -866,7 +866,7 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
             name="Vertex Group",
             default=""
             )
-    strata = FloatProperty(
+    strata: FloatProperty(
             name="Amount",
             default=5.0,
             min=0.01,

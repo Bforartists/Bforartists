@@ -61,7 +61,7 @@ class TextureMenu(Menu):
                     layout.row().operator("brush.stencil_reset_transform")
 
         else:
-            layout.row().label("No Texture Slot available", icon="INFO")
+            layout.row().label(text="No Texture Slot available", icon="INFO")
 
     def vertpaint(self, layout, context):
         has_brush = utils_core.get_brush_link(context, types="brush")
@@ -94,7 +94,7 @@ class TextureMenu(Menu):
                     layout.row().operator("brush.stencil_reset_transform")
 
         else:
-            layout.row().label("No Texture Slot available", icon="INFO")
+            layout.row().label(text="No Texture Slot available", icon="INFO")
 
     def texpaint(self, layout, context):
         has_brush = utils_core.get_brush_link(context, types="brush")
@@ -131,7 +131,7 @@ class TextureMenu(Menu):
                     layout.row().operator("brush.stencil_reset_transform")
 
         else:
-            layout.row().label("No Texture Slot available", icon="INFO")
+            layout.row().label(text="No Texture Slot available", icon="INFO")
 
         layout.row().separator()
 
@@ -166,7 +166,7 @@ class TextureMenu(Menu):
                 prop.mask = True
 
         else:
-            layout.row().label("Mask Texture not available", icon="INFO")
+            layout.row().label(text="Mask Texture not available", icon="INFO")
 
 
 class Textures(Menu):
@@ -269,7 +269,7 @@ class TextureMapMode(Menu):
                             disable_icon='RADIOBUT_ON'
                             )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 
 class MaskTextures(Menu):
@@ -310,7 +310,7 @@ class MaskTextures(Menu):
                         path=True
                         )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 
 class MaskMapMode(Menu):
@@ -336,7 +336,7 @@ class MaskMapMode(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 
 class TextureAngleSource(Menu):
@@ -372,7 +372,7 @@ class TextureAngleSource(Menu):
                         disable_icon='RADIOBUT_ON'
                         )
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
 class MaskPressureModeMenu(Menu):
     bl_label = "Mask Pressure Mode"

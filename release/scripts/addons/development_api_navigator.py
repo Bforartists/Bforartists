@@ -347,7 +347,7 @@ class Down(ApiNavigator, Operator):
     bl_idname = "api_navigator.down"
     bl_label = "API Navigator Down"
 
-    pointed_module = StringProperty(
+    pointed_module: StringProperty(
                         name="Current Module",
                         default=""
                         )
@@ -405,7 +405,7 @@ class Subscript(ApiNavigator, Operator):
     bl_idname = "api_navigator.subscript"
     bl_label = "API Navigator Subscript"
 
-    subscription = StringProperty(
+    subscription: StringProperty(
                         name="",
                         default=""
                         )
@@ -652,27 +652,27 @@ class ApiNavProps(PropertyGroup):
 
     bpy.context.window_manager.api_nav_props
     """
-    path = StringProperty(
+    path: StringProperty(
             name="Path",
             description="Enter bpy.ops.api_navigator to see the documentation",
             default="bpy"
             )
-    old_path = StringProperty(
+    old_path: StringProperty(
             name="Old Path",
             default=""
             )
-    filters = StringProperty(
+    filters: StringProperty(
             name="Filters",
             description="Filter the resulting modules",
             default=""
             )
-    reduce_to = IntProperty(
+    reduce_to: IntProperty(
             name="Reduce to",
             description="Display a maximum number of x entries by pages",
             default=10,
             min=1
             )
-    pages = IntProperty(
+    pages: IntProperty(
             name="Pages",
             description="Display a Page",
             default=0,

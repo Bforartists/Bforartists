@@ -250,7 +250,7 @@ class WM_OT_keyboardlayout(bpy.types.Operator):
     bl_description = ("Export the keyboard layouts in SVG format\n"
                       "for each Editor in a separate file")
 
-    directory = StringProperty(
+    directory: StringProperty(
         subtype='FILE_PATH',
         options={'SKIP_SAVE'},
         )

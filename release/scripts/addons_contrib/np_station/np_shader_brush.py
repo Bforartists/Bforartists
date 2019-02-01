@@ -77,8 +77,8 @@ def draw_callback1_px(self, context):
     elif mode == 4:
         instruct = 'paint material on object / objects'
         if hitob is not None:
-            acob = bpy.context.scene.objects.active
-            bpy.context.scene.objects.active = hitob
+            acob = bpy.context.view_layer.objects.active
+            bpy.context.view_layer.objects.active = hitob
             slots = hitob.material_slots
             for i, s in enumerate(slots):
                 hitob.active_material_index = i
@@ -86,17 +86,17 @@ def draw_callback1_px(self, context):
             if self.shader is not None:
                 hitob.data.materials.append(self.shader)
             np_print(hitob.select)
-            if hitob.select == True:
+            if hitob.select_get() is True:
                 np_print('true')
                 for ob in self.selob:
-                    bpy.context.scene.objects.active = ob
+                    bpy.context.view_layer.objects.active = ob
                     slots = ob.material_slots
                     for i, s in enumerate(slots):
                         ob.active_material_index = i
                         bpy.ops.object.material_slot_remove()
                     if self.shader is not None:
                         ob.data.materials.append(self.shader)
-            bpy.context.scene.objects.active = acob
+            bpy.context.view_layer.objects.active = acob
             #bpy.context.scene.update()
             np_print('040')
 
@@ -129,7 +129,7 @@ def draw_callback1_px(self, context):
             else:
                 self.shader = None
                 self.shadername = 'None'
-            bpy.context.scene.objects.active = hitob
+            bpy.context.view_layer.objects.active = hitob
             hitob.active_material_index = matindex
             np_print('self.shader', self.shader)
             np_print('050')
@@ -143,8 +143,8 @@ def draw_callback1_px(self, context):
     elif mode == 7:
         instruct = 'paint material on single face'
         if hitob is not None:
-            acob = bpy.context.scene.objects.active
-            bpy.context.scene.objects.active = hitob
+            acob = bpy.context.view_layer.objects.active
+            bpy.context.view_layer.objects.active = hitob
             findex = scenecast[3]
             np_print('findex', findex)
             me = hitob.data
@@ -180,7 +180,7 @@ def draw_callback1_px(self, context):
             bpy.ops.object.material_slot_assign()
             bpy.ops.mesh.select_all(action = 'DESELECT')
             bpy.ops.object.mode_set(mode = 'OBJECT')
-            bpy.context.scene.objects.active = acob
+            bpy.context.view_layer.objects.active = acob
 
 
     # ON-SCREEN INSTRUCTIONS:
