@@ -426,7 +426,7 @@
             execution_buts="#00000000"
             tab_active="#4d6b99"
             tab_inactive="#333333"
-            tab_back="#33333300"
+            tab_back="#333333cc"
             tab_outline="#000000"
             >
             <gradients>
