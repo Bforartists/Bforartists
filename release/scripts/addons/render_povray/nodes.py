@@ -286,7 +286,7 @@ class PovrayMappingNode(Node, ObjectNodeTree):
     bl_label = 'Mapping'
     bl_icon = 'SOUND'
 
-    warp_type = EnumProperty(
+    warp_type: EnumProperty(
             name="Warp Types",
             description="Select the type of warp",
             items=( ('cubic', "Cubic", ""),  ('cylindrical', "Cylindrical", ""),('planar', "Planar", ""),
@@ -295,18 +295,18 @@ class PovrayMappingNode(Node, ObjectNodeTree):
                     ('NONE', "None", "No indentation")),
             default='NONE')
 
-    warp_orientation = EnumProperty(
+    warp_orientation: EnumProperty(
             name="Warp Orientation",
             description="Select the orientation of warp",
             items=(('x', "X", ""), ('y', "Y", ""), ('z', "Z", "")),
             default='y')
 
-    warp_dist_exp = FloatProperty(
+    warp_dist_exp: FloatProperty(
             name="Distance exponent",
             description="Distance exponent",
             min=0.0, max=100.0, default=1.0)
 
-    warp_tor_major_radius = FloatProperty(
+    warp_tor_major_radius: FloatProperty(
             name="Major radius",
             description="Torus is distance from major radius",
             min=0.0, max=5.0, default=1.0)
@@ -472,7 +472,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
     bl_idname = 'PovrayColorImageNode'
     bl_label = 'Image map'
 
-    map_type = bpy.props.EnumProperty(
+    map_type: bpy.props.EnumProperty(
             name="Map type",
             description="",
             items=( ('uv_mapping', "UV", ""),
@@ -481,8 +481,8 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
                     ('2', "Cylindrical", "Cylindrical mapping"),
                     ('5', "Torroidal", "Torus or donut shaped mapping")),
             default='0')
-    image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
-    interpolate = EnumProperty(
+    image: StringProperty(maxlen=1024) # , subtype="FILE_PATH"
+    interpolate: EnumProperty(
             name="Interpolate",
             description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
             items=(
@@ -490,8 +490,8 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
                 ('4', "Normalized", "Gives normalized distance"),
             ),
             default='2')
-    premultiplied = BoolProperty(default=False)
-    once = BoolProperty(description="Not to repeat", default=False)
+    premultiplied: BoolProperty(default=False)
+    once: BoolProperty(description="Not to repeat", default=False)
 
     def init(self, context):
 
@@ -629,7 +629,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
     bl_label = 'Image pattern'
     bl_icon = 'SOUND'
 
-    map_type = bpy.props.EnumProperty(
+    map_type: bpy.props.EnumProperty(
             name="Map type",
             description="",
             items=(
@@ -640,8 +640,8 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
                 ('5', "Torroidal", "Torus or donut shaped mapping"),
             ),
             default='0')
-    image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
-    interpolate = EnumProperty(
+    image: StringProperty(maxlen=1024) # , subtype="FILE_PATH"
+    interpolate: EnumProperty(
             name="Interpolate",
             description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
             items=(
@@ -649,9 +649,9 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
                 ('4', "Normalized", "Gives normalized distance"),
             ),
             default='2')
-    premultiplied = BoolProperty(default=False)
-    once = BoolProperty(description="Not to repeat", default=False)
-    use_alpha = BoolProperty(default=True)
+    premultiplied: BoolProperty(default=False)
+    once: BoolProperty(description="Not to repeat", default=False)
+    use_alpha: BoolProperty(default=True)
     def init(self, context):
 
         gamma=self.inputs.new('PovraySocketFloat_000001_10', "Gamma")
@@ -795,22 +795,22 @@ class ShaderTextureMapNode(Node, ObjectNodeTree):
     bl_idname = 'ShaderTextureMapNode'
     bl_label = 'Texture map'
 
-    brick_size_x = FloatProperty(
+    brick_size_x: FloatProperty(
             name="X",
             description="",
             min=0.0000, max=1.0000, default=0.2500)
 
-    brick_size_y = FloatProperty(
+    brick_size_y: FloatProperty(
             name="Y",
             description="",
             min=0.0000, max=1.0000, default=0.0525)
 
-    brick_size_z = FloatProperty(
+    brick_size_z: FloatProperty(
             name="Z",
             description="",
             min=0.0000, max=1.0000, default=0.1250)
 
-    brick_mortar = FloatProperty(
+    brick_mortar: FloatProperty(
             name="Mortar",
             description="Mortar",
             min=0.000, max=1.500, default=0.01)
@@ -834,7 +834,7 @@ class ShaderTextureMapNode(Node, ObjectNodeTree):
 
         if self.inputs[0].default_value =='brick':
             layout.prop(self, "brick_mortar")
-            layout.label("Brick size:")
+            layout.label(text="Brick size:")
             layout.prop(self, "brick_size_x")
             layout.prop(self, "brick_size_y")
             layout.prop(self, "brick_size_z")
@@ -843,7 +843,7 @@ class ShaderTextureMapNode(Node, ObjectNodeTree):
 
         if self.inputs[0].default_value =='brick':
             layout.prop(self, "brick_mortar")
-            layout.label("Brick size:")
+            layout.label(text="Brick size:")
             layout.prop(self, "brick_size_x")
             layout.prop(self, "brick_size_y")
             layout.prop(self, "brick_size_z")
@@ -1015,7 +1015,7 @@ class TextureOutputNode(Node, TextureNodeTree):
 
     def draw_buttons(self, context, layout):
 
-        layout.label("Color Ramps:")
+        layout.label(text="Color Ramps:")
 
     def draw_label(self):
         return "Color Map"
@@ -1164,7 +1164,7 @@ class NODE_OT_povray_image_open(bpy.types.Operator):
     bl_idname = "pov.imageopen"
     bl_label = "Open"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             name="File Path",
             description="Open image",
             maxlen=1024,

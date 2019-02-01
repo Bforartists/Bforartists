@@ -119,7 +119,7 @@ class LoftedSurface:
 
         meshObject = bpy.data.objects.new(self.name, mesh)
 
-        bpy.context.scene.objects.link(meshObject)
+        bpy.context.collection.objects.link(meshObject)
 
 
 
@@ -267,7 +267,7 @@ class SweptSurface:
 
         meshObject = bpy.data.objects.new(self.name, mesh)
 
-        bpy.context.scene.objects.link(meshObject)
+        bpy.context.collection.objects.link(meshObject)
 
 
 
@@ -456,4 +456,4 @@ class BirailedSurface:
 
         meshObject = bpy.data.objects.new(self.name, mesh)
 
-        bpy.context.scene.objects.link(meshObject)
+        bpy.context.collection.objects.link(meshObject)

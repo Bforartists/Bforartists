@@ -38,11 +38,9 @@ def create_and_link_mesh(name, points):
     mesh.validate()
     mesh.update()
 
-    scene = bpy.context.scene
-
     obj = bpy.data.objects.new(name, mesh)
-    scene.objects.link(obj)
-    obj.select = True
+    bpy.context.collection.objects.link(obj)
+    obj.select_set(True)
 
 
 def import_pcd(filepath, name="new_pointcloud"):

@@ -5,7 +5,7 @@ bl_info = {
     "description": "Edges length",
     "author": "Giuseppe De Marco [BlenderLab] inspired by NirenYang",
     "version": (0, 1, 0),
-    "blender": (2, 7, 1),
+    "blender": (2, 71, 0),
     "location": "Toolbar > Tools > Mesh Tools: set Length(Shit+Alt+E)",
     "warning": "",
     "wiki_url": "",
@@ -64,11 +64,11 @@ class LengthSet(Operator):
                       "Note: works only with Edges that not share a vertex")
     bl_options = {'REGISTER', 'UNDO'}
 
-    old_length = FloatProperty(
+    old_length: FloatProperty(
             name="Original length",
             options={'HIDDEN'},
             )
-    set_length_type = EnumProperty(
+    set_length_type: EnumProperty(
             items=[
                 ('manual', "Manual",
                  "Input manually the desired Target Length"),
@@ -77,14 +77,14 @@ class LengthSet(Operator):
             ],
             name="Set Type of Input",
             )
-    target_length = FloatProperty(
+    target_length: FloatProperty(
             name="Target Length",
             description="Input a value for an Edges Length target",
             default=1.00,
             unit='LENGTH',
             precision=5
             )
-    existing_length = EnumProperty(
+    existing_length: EnumProperty(
             items=[
                 ('min', "Shortest",
                  "Set all to shortest Edge of selection"),
@@ -98,7 +98,7 @@ class LengthSet(Operator):
             ],
             name="Existing length"
             )
-    mode = EnumProperty(
+    mode: EnumProperty(
             items=[
                 ('fixed', "Fixed", "Fixed"),
                 ('increment', "Increment", "Increment"),
@@ -106,7 +106,7 @@ class LengthSet(Operator):
             ],
             name="Mode"
             )
-    behaviour = EnumProperty(
+    behaviour: EnumProperty(
             items=[
                 ('proportional', "Proportional",
                  "Move vertex locations proportionally to the center of the Edge"),
@@ -132,19 +132,19 @@ class LengthSet(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Original Active length is: {:.3f}".format(self.old_length))
+        layout.label(text="Original Active length is: {:.3f}".format(self.old_length))
 
-        layout.label("Input Mode:")
+        layout.label(text="Input Mode:")
         layout.prop(self, "set_length_type", expand=True)
         if self.set_length_type == 'manual':
             layout.prop(self, "target_length")
         else:
             layout.prop(self, "existing_length", text="")
 
-        layout.label("Mode:")
+        layout.label(text="Mode:")
         layout.prop(self, "mode", text="")
 
-        layout.label("Resize Behavior:")
+        layout.label(text="Resize Behavior:")
         layout.prop(self, "behaviour", text="")
 
     def get_existing_edge_length(self, bm):

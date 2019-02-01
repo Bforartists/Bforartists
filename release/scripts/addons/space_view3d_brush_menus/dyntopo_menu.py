@@ -108,7 +108,7 @@ class DetailMethodMenu(Menu):
                       ("Constant Detail", 'CONSTANT'),
                       ("Brush Detail", 'BRUSH'))
 
-        layout.row().label("Refine")
+        layout.row().label(text="Refine")
         layout.row().separator()
 
         # add the refine menu items
@@ -120,9 +120,9 @@ class DetailMethodMenu(Menu):
                     disable_icon='RADIOBUT_ON'
                     )
 
-        layout.row().label("")
+        layout.row().label(text="")
 
-        layout.row().label("Type")
+        layout.row().label(text="Type")
         layout.row().separator()
 
         # add the type menu items

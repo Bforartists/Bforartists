@@ -53,54 +53,54 @@ class CrackItProperties(PropertyGroup):
     # In Panel subclass, In bpy.types.Operator subclass,
     # reference them by context.scene.crackit
 
-    fracture_childverts = BoolProperty(
+    fracture_childverts: BoolProperty(
             name="From Child Verts",
             description="Use child object's vertices and position for origin of crack",
             default=False
             )
-    fracture_scalex = FloatProperty(
+    fracture_scalex: FloatProperty(
             name="Scale X",
             description="Scale X",
             default=1.00,
             min=0.00,
             max=1.00
             )
-    fracture_scaley = FloatProperty(
+    fracture_scaley: FloatProperty(
             name="Scale Y",
             description="Scale Y",
             default=1.00,
             min=0.00,
             max=1.00
             )
-    fracture_scalez = FloatProperty(
+    fracture_scalez: FloatProperty(
             name="Scale Z",
             description="Scale Z",
             default=1.00,
             min=0.00,
             max=1.00
             )
-    fracture_div = IntProperty(
+    fracture_div: IntProperty(
             name="Max Crack",
             description="Max Crack",
             default=100,
             min=0,
             max=10000
             )
-    fracture_margin = FloatProperty(
+    fracture_margin: FloatProperty(
             name="Margin Size",
             description="Margin Size",
             default=0.001,
             min=0.000,
             max=1.000
             )
-    extrude_offset = FloatProperty(
+    extrude_offset: FloatProperty(
             name="Offset",
             description="Extrude Offset",
             default=0.10,
             min=0.00,
             max=2.00
             )
-    extrude_random = FloatProperty(
+    extrude_random: FloatProperty(
             name="Random",
             description="Extrude Random",
             default=0.30,
@@ -112,7 +112,7 @@ class CrackItProperties(PropertyGroup):
     # Selection of material preset
     # Note: you can choose the original name in the library blend
     # or the prop name
-    material_preset = EnumProperty(
+    material_preset: EnumProperty(
             name="Preset",
             description="Material Preset",
             items=[
@@ -124,7 +124,7 @@ class CrackItProperties(PropertyGroup):
                 ('crackit_rock1', "Rock", "Rock Material")
                 ]
             )
-    material_lib_name = BoolProperty(
+    material_lib_name: BoolProperty(
             name="Library Name",
             description="Use the original Material name from the .blend library\n"
                         "instead of the one defined in the Preset",

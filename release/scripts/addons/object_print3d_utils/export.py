@@ -53,6 +53,7 @@ def image_copy_guess(filepath, objects):
 
 def write_mesh(context, info, report_cb):
     scene = context.scene
+    collection = context.collection
     layer = context.view_layer
     unit = scene.unit_settings
     print_3d = scene.print_3d
@@ -184,7 +185,7 @@ def write_mesh(context, info, report_cb):
     if obj_base_tmp is not None:
         obj = obj_base_tmp.object
         mesh = obj.data
-        scene.objects.unlink(obj)
+        collection.objects.unlink(obj)
         bpy.data.objects.remove(obj)
         bpy.data.meshes.remove(mesh)
         del obj_base_tmp, obj, mesh
@@ -192,9 +193,9 @@ def write_mesh(context, info, report_cb):
         # restore context
         base = None
         for base in context_backup["selected_bases"]:
-            base.select = True
+            base.select_set(True)
         del base
-        scene.objects.active = context_backup["active_object"]
+        layer.objects.active = context_backup["active_object"]
 
     if 'FINISHED' in ret:
         info.append(("%r ok" % os.path.basename(filepath), None))

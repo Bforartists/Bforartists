@@ -1670,13 +1670,13 @@ class ARCHIPACK_PT_floor(Panel):
         box = layout.box()
         row = box.row()
         if props.parts_expand:
-            row.prop(props, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(props, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(props, 'n_parts')
             # box.prop(prop, 'closed')
             for i, part in enumerate(props.parts):
                 part.draw(context, layout, i)
         else:
-            row.prop(props, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(props, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
         layout.separator()
         box = layout.box()
         box.prop(props, 'pattern', text="")

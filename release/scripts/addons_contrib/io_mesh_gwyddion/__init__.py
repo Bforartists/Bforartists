@@ -66,48 +66,48 @@ class ImportGwyddion(Operator, ImportHelper):
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".gwy"
-    filter_glob  = StringProperty(default="*.gwy", options={'HIDDEN'},)
+    filter_glob: StringProperty(default="*.gwy", options={'HIDDEN'},)
 
-    use_camera = BoolProperty(
+    use_camera: BoolProperty(
         name="Camera", default=False,
         description="Do you need a camera?")
-    use_lamp = BoolProperty(
+    use_lamp: BoolProperty(
         name="Lamp", default=False,
         description = "Do you need a lamp?")
-    use_smooth = BoolProperty(
+    use_smooth: BoolProperty(
         name="Smooth image data", default=False,
         description = "Smooth the images")
-    scale_size = FloatProperty (
+    scale_size: FloatProperty (
         name = "Scale xy", default=0.5,
         description = "Scale the lateral size")
-    scale_height = FloatProperty (
+    scale_height: FloatProperty (
         name = "Scale h", default=3.0,
         description = "Scale the height")
-    use_all_channels = BoolProperty(
+    use_all_channels: BoolProperty(
         name="All channels", default=False,
         description = "Load all images")
-    use_c1 = BoolProperty(
+    use_c1: BoolProperty(
         name="1", default=True,
         description = "Channel 1")
-    use_c2 = BoolProperty(
+    use_c2: BoolProperty(
         name="2", default=False,
         description = "Channel 2")
-    use_c3 = BoolProperty(
+    use_c3: BoolProperty(
         name="3", default=False,
         description = "Channel 3")
-    use_c4 = BoolProperty(
+    use_c4: BoolProperty(
         name="4", default=False,
         description = "Channel 4")
-    use_c5 = BoolProperty(
+    use_c5: BoolProperty(
         name="5", default=False,
         description = "Channel 5")
-    use_c6 = BoolProperty(
+    use_c6: BoolProperty(
         name="6", default=False,
         description = "Channel 6")
-    use_c7 = BoolProperty(
+    use_c7: BoolProperty(
         name="7", default=False,
         description = "Channel 7")
-    use_c8 = BoolProperty(
+    use_c8: BoolProperty(
         name="8", default=False,
         description = "Channel 8")
 

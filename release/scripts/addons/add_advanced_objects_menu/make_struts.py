@@ -420,7 +420,7 @@ def build_edge_frames(edges):
 
 
 def make_manifold_struts(truss_obj, od, segments):
-    bpy.context.scene.objects.active = truss_obj
+    bpy.context.view_layer.objects.active = truss_obj
     bpy.ops.object.editmode_toggle()
     truss_mesh = bmesh.from_edit_mesh(truss_obj.data).copy()
     bpy.ops.object.editmode_toggle()
@@ -477,9 +477,9 @@ def create_struts(self, context, ind, od, segments, solid, loops, manifold):
     build_cossin(segments)
 
     for truss_obj in bpy.context.scene.objects:
-        if not truss_obj.select:
+        if not truss_obj.select_get():
             continue
-        truss_obj.select = False
+        truss_obj.select_set(False)
         truss_mesh = truss_obj.to_mesh(context.scene, True, 'PREVIEW')
         if not truss_mesh.edges:
             continue
@@ -491,10 +491,10 @@ def create_struts(self, context, ind, od, segments, solid, loops, manifold):
         mesh = bpy.data.meshes.new("Struts")
         mesh.from_pydata(verts, [], faces)
         obj = bpy.data.objects.new("Struts", mesh)
-        bpy.context.scene.objects.link(obj)
-        obj.select = True
+        bpy.context.collection.objects.link(obj)
+        obj.select_set(True)
         obj.location = truss_obj.location
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
         mesh.update()
 
 
@@ -506,36 +506,36 @@ class Struts(Operator):
                       "Needs an existing Active Mesh Object")
     bl_options = {'REGISTER', 'UNDO'}
 
-    ind = FloatProperty(
+    ind: FloatProperty(
             name="Inside Diameter",
             description="Diameter of inner surface",
             min=0.0, soft_min=0.0,
             max=100, soft_max=100,
             default=0.04
             )
-    od = FloatProperty(
+    od: FloatProperty(
             name="Outside Diameter",
             description="Diameter of outer surface",
             min=0.001, soft_min=0.001,
             max=100, soft_max=100,
             default=0.05
             )
-    manifold = BoolProperty(
+    manifold: BoolProperty(
             name="Manifold",
             description="Connect struts to form a single solid",
             default=False
             )
-    solid = BoolProperty(
+    solid: BoolProperty(
             name="Solid",
             description="Create inner surface",
             default=False
             )
-    loops = BoolProperty(
+    loops: BoolProperty(
             name="Loops",
             description="Create sub-surf friendly loops",
             default=False
             )
-    segments = IntProperty(
+    segments: IntProperty(
             name="Segments",
             description="Number of segments around strut",
             min=3, soft_min=3,

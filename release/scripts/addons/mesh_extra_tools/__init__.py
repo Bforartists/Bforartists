@@ -745,7 +745,7 @@ class MeshExtraToolsSceneProps(PropertyGroup):
             size=4,
             )
     # Vertex align
-    vert_align_store_axis = FloatVectorProperty(
+    vert_align_store_axis: FloatVectorProperty(
             name="Define Custom Coordinates",
             description="Store the values of coordinates, for repeated use\n"
                         "as a starting point",
@@ -755,12 +755,12 @@ class MeshExtraToolsSceneProps(PropertyGroup):
             subtype='XYZ',
             precision=3
             )
-    vert_align_use_stored = BoolProperty(
+    vert_align_use_stored: BoolProperty(
             name="Use Stored Coordinates",
             description="Use starting point coordinates for alignment",
             default=False
             )
-    vert_align_to = EnumProperty(
+    vert_align_to: EnumProperty(
             items=(('vertex', "Original vertex",
                     "Use the stored vertex coordinates for aligning"),
                    ('coordinates', "Custom coordinates",
@@ -775,14 +775,14 @@ class MeshExtraToolsSceneProps(PropertyGroup):
             size=3,
             )
     # Mesh Info select
-    mesh_info_show = BoolProperty(
+    mesh_info_show: BoolProperty(
             name="Show Face Info",
             description="Display the Object's Face Count information\n"
                         "Note: it can have some performance impact on dense meshes\n"
                         "Leave it closed if not needed or set the Delay to a higher value",
             default=False
             )
-    mesh_info_delay = FloatProperty(
+    mesh_info_delay: FloatProperty(
             name="Delay",
             description="Set the Update time Delay in seconds\n"
                         "Set to zero to update with the UI refresh\n"
@@ -799,12 +799,12 @@ class MeshExtraToolsSceneProps(PropertyGroup):
 class mesh_extra_tools_pref(AddonPreferences):
     bl_idname = __name__
 
-    show_info = BoolProperty(
+    show_info: BoolProperty(
             name="Info",
             default=False,
             description="Some general information about the add-on",
             )
-    show_shortcuts = BoolProperty(
+    show_shortcuts: BoolProperty(
             name="Hot Keys",
             default=False,
             description="List of the shortcuts used for the included various tools",

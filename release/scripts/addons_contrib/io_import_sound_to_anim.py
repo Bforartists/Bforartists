@@ -21,11 +21,10 @@
 bl_info = {
     "name": "Import: Sound to Animation",
     "author": "Vlassius",
-    "version": (0, 70),
-    "blender": (2, 64, 0),
-    "location": "Select a object > Object tab > Import Movement From Wav File",
-    "description": "Extract movement from sound file. "
-        "See the Object Panel at the end.",
+    "version": (0, 80),
+    "blender": (2, 80, 0),
+    "location": "Select a object > View3D > Tool Shelf > Import Movement From .Wav File",
+    "description": "Extract movement from .wav sound file.",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
         "Scripts/Import-Export/Import_Movement_From_Audio_File",
@@ -38,107 +37,8 @@ bl_info = {
 - NOTES:
 - This script takes a wav file and get sound "movement" to help you in sync the movement to words in the wave file. <br>
 - Supported Audio: .wav (wave) 8 bits and 16 bits - mono and multichanel file<br>
-- At least Blender 2.64.9 is necessary to run this program.
-- Curitiba - Brasil
-
-
--v 0.70Beta-
-    Included: SmartRender - Render just the frames that has changes
-    Included: Options to check SmartRender for Blender Internal Render Engine:LocRotScale, Material, Transp, Mirror
-    Included: User can Cancel all functions with CANCEL button- Extensive Code and flux change (bugs expected)
-    Included: User can Cancel all functions with ESC
-    Inclused: User friendly messages into UI while running (its no more necessary to look at terminal window to most users)
-    Cleanup:  Non Stardard Chars in coments
-    To Do:    Decrease overhead of timer loops
-    To Do:    Try to implement Smart Render for Cycles
-
--v 0.60Beta-
-    Included: Option to use just the beat from the audio sound
-    Included: Option to exclude the beat from the audio sound
-    Included: More or less sensibility options when using the beat
-    Included: Audio Channel Select option
-
--v 0.50Beta-
-    Included: Auto Adjust Audio Sensity option
-    Included: 8 bits .wav file support
-    Recalibrated: Manual audio sense 1
-    Cosmetic: Many changes in panel and terminal window info
-    Corrected: Tracker_url
-    Corrected: a few bytes in Memory Leaks
-    work around: memory leak in function: bpy.ops.transform.rotate
-    work around: memory leak in function: bpy.ops.anim.keyframe_insert
-
--v 0.22Beta-
-    Included:
-    Camera Rotation
-    Empty Location-Rotation-Scale
-
--v 0.21Beta-
-    Changed just the meta informations like version and wiki page.
-
--v 0.20 Beta-
-    New Panel
-
--v 0.1.5 Beta-
-    Change in API-> Properties
-    Included the button "Get FPS from Scene" due to a problem to get it in the start
-    Return to Frame 1 after import
-    Filter .wav type file (by batFINGER)
-
--v 0.1.4 Beta-
-    If choose negative in rotation, auto check the rotation negative to Bones
-    change in register()  unregister():
-
--v 0.1.3 Beta-
-    File Cleanup
-    Change to bl_info.
-    Cosmetic Changes.
-    Minor change in API in how to define buttons.
-    Adjust in otimization.
-
--v 0.1.2 Beta
-change in API- Update function bpy.ops.anim.keyframe_insert_menu
-
--v 0.1.1 Beta
-change in API- Update property of  window_manager.fileselect_add
-
--v 0.1.0 Beta
-new - Added support to LAMP object
-new - improved flow to import
-new - check the type of object before show options
-bug - option max. and min. values
-change- Updated scene properties for changes in property API.
-        See http://lists.blender.org/pipermail/bf-committers/2010-September/028654.html
-new flow: 1) Process the sound file    2) Show Button to import key frames
-
-- v0.0.4 ALPHA
-new - Added destructive optimizer option - LostLestSignificativeDigit lost/total -> 10/255 default
-new - Visual Graph to samples
-new - Option to just process audio file and do not import - this is to help adjust the audio values
-new - Get and show automatically the FPS (in proper field) information taking the information from scene
-bug- Display sensitivity +1
-bug - Corrected location of the script in description
-
-- v0.0.3
-Main change: Corrected to work INSIDE dir /install/linux2/2.53/scripts/addons
-Corrected position of label "Rotation Negative"
-Added correct way to deal with paths in Python os.path.join - os.path.normpath
-
-- v0.0.2
-Corrected initial error (Register() function)
-Corrected some labels R. S. L.
-Turned off "object field" for now
-Changed target default to Z location
-
-- v0.0.1
-Initial version
-
-Credit to:
-Vlassius
-
-- http://vlassius.com.br
-- vlassius@vlassius.com.br
-- Curitiba - Brasil
+- At least Blender 2.80 is necessary to run this program.
+- Brazil
 
 """
 
@@ -154,20 +54,29 @@ def _Interna_Globals(BytesDadosTotProcess, context):
 
     array= bytearray(BytesDadosTotProcess)  # cria array
     arrayAutoSense= bytearray((BytesDadosTotProcess)*2)  # cria array para AutoAudioSense
-    context.scene.imp_sound_to_anim.bArrayCriado=True
+    context.object.imp_sound_to_anim.bArrayCriado=True
 
 #
 #==================================================================================================
 # BLENDER UI Panel
 #==================================================================================================
 #
-class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
+"""class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "object"
     bl_label = "Import Movement From Wav File"
-    bl_options = {'DEFAULT_CLOSED'}
-
+    bl_options = {'DEFAULT_CLOSED'}"""
+    
+class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
+    bl_idname = "IMPORTWAVTOOL_PT_tools"
+    bl_space_type = "VIEW_3D"
+    bl_context = "objectmode"
+    bl_region_type = "UI"
+    bl_label = "Import Tool"
+    bl_category = "Import Movement From Wav File"
+    #bl_options = {'DEFAULT_CLOSED'}
+    
     def draw(self, context):
         layout = self.layout
 
@@ -183,134 +92,134 @@ class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
             row.label(text="Supported Object are Type: Armature, Mesh, Camera and Lamp")
             row=layout.row()
         else:
-            #print(context.scene.imp_sound_to_anim.bTypeImport)
-            if context.scene.imp_sound_to_anim.bTypeImport == 0:
+            #print(context.object.imp_sound_to_anim.bTypeImport)
+            if context.object.imp_sound_to_anim.bTypeImport == 0:
                 #mount panel to Direct animation
                 row=layout.row()
                 layout.operator("import.sound_animation_botao_udirect")
 
             # monta as telas quando está rodando
-            elif context.scene.imp_sound_to_anim.Working!="":   #its running
+            elif context.object.imp_sound_to_anim.Working!="":   #its running
                 row=layout.row()
                 row=layout.row()
 
-                if context.scene.imp_sound_to_anim.Working== "CheckSmartRender":
-                    #context.scene.imp_sound_to_anim.Info_check_smartrender=
+                if context.object.imp_sound_to_anim.Working== "CheckSmartRender":
+                    #context.object.imp_sound_to_anim.Info_check_smartrender=
                     row=layout.row()
                     row.label(text="Checking for Smart Render...")
                     row=layout.row()
-                    row.label(text=context.scene.imp_sound_to_anim.Info_check_smartrender)
+                    row.label(text=context.object.imp_sound_to_anim.Info_check_smartrender)
                     row=layout.row()
 
-                elif context.scene.imp_sound_to_anim.Working== "SmartRender":
-                    #context.scene.imp_sound_to_anim.Info_check_smartrender=
+                elif context.object.imp_sound_to_anim.Working== "SmartRender":
+                    #context.object.imp_sound_to_anim.Info_check_smartrender=
                     row=layout.row()
                     row.label(text="Processing Smart Render...")
                     row=layout.row()
-                    row.label(text=context.scene.imp_sound_to_anim.Info_check_smartrender)
+                    row.label(text=context.object.imp_sound_to_anim.Info_check_smartrender)
                     row=layout.row()
 
-                elif context.scene.imp_sound_to_anim.Working== "ProcessaSom":
-                    #context.scene.imp_sound_to_anim.Info_Import=
+                elif context.object.imp_sound_to_anim.Working== "ProcessaSom":
+                    #context.object.imp_sound_to_anim.Info_Import=
                     row=layout.row()
                     row.label(text="Processing Sound File...")
                     row=layout.row()
-                    row.label(text=context.scene.imp_sound_to_anim.Info_Import)
+                    row.label(text=context.object.imp_sound_to_anim.Info_Import)
 
-                elif context.scene.imp_sound_to_anim.Working== "wavimport":
-                    #context.scene.imp_sound_to_anim.Info_Import=
+                elif context.object.imp_sound_to_anim.Working== "wavimport":
+                    #context.object.imp_sound_to_anim.Info_Import=
                     row=layout.row()
                     row.label(text="Importing Keys...")
                     row=layout.row()
-                    row.label(text=context.scene.imp_sound_to_anim.Info_Import)
+                    row.label(text=context.object.imp_sound_to_anim.Info_Import)
                     row=layout.row()
 
                 # botao cancel
                 layout.operator(OBJECT_OT_Botao_Cancel.bl_idname)
                 row=layout.row()
 
-            elif context.scene.imp_sound_to_anim.bTypeImport == 1:
+            elif context.object.imp_sound_to_anim.bTypeImport == 1:
                 row=layout.row()
                 row.label(text="1)Click button \"Process Wav\",")
                 row=layout.row()
                 row.label(text="2)Click Button \"Import Key Frames\",")
                 row=layout.row()
-                row.label(text="Run the animation (alt A) and Enjoy!")
+                row.label(text="Run the animation and Enjoy!")
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_auto_audio_sense")
+                row.prop(context.object.imp_sound_to_anim,"action_auto_audio_sense")
                 row=layout.row()
-                if context.scene.imp_sound_to_anim.action_auto_audio_sense == 0:   # se auto audio sense desligado
-                    row.prop(context.scene.imp_sound_to_anim,"audio_sense")
+                if context.object.imp_sound_to_anim.action_auto_audio_sense == 0:   # se auto audio sense desligado
+                    row.prop(context.object.imp_sound_to_anim,"audio_sense")
                     row=layout.row()
 
                 else: #somente se autosense ligado
-                    if context.scene.imp_sound_to_anim.remove_beat == 0 :
-                        row.prop(context.scene.imp_sound_to_anim,"use_just_beat")
+                    if context.object.imp_sound_to_anim.remove_beat == 0 :
+                        row.prop(context.object.imp_sound_to_anim,"use_just_beat")
 
-                    if context.scene.imp_sound_to_anim.use_just_beat == 0:
-                        row.prop(context.scene.imp_sound_to_anim,"remove_beat")
+                    if context.object.imp_sound_to_anim.use_just_beat == 0:
+                        row.prop(context.object.imp_sound_to_anim,"remove_beat")
 
-                    if context.scene.imp_sound_to_anim.use_just_beat or context.scene.imp_sound_to_anim.remove_beat:
-                        if not context.scene.imp_sound_to_anim.beat_less_sensible and not context.scene.imp_sound_to_anim.beat_more_sensible:
+                    if context.object.imp_sound_to_anim.use_just_beat or context.object.imp_sound_to_anim.remove_beat:
+                        if not context.object.imp_sound_to_anim.beat_less_sensible and not context.object.imp_sound_to_anim.beat_more_sensible:
                             row=layout.row()
-                        if context.scene.imp_sound_to_anim.beat_less_sensible ==0:
-                            row.prop(context.scene.imp_sound_to_anim,"beat_more_sensible")
+                        if context.object.imp_sound_to_anim.beat_less_sensible ==0:
+                            row.prop(context.object.imp_sound_to_anim,"beat_more_sensible")
 
-                        if context.scene.imp_sound_to_anim.beat_more_sensible ==0:
-                            row.prop(context.scene.imp_sound_to_anim,"beat_less_sensible")
+                        if context.object.imp_sound_to_anim.beat_more_sensible ==0:
+                            row.prop(context.object.imp_sound_to_anim,"beat_less_sensible")
 
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_per_second")
+                row.prop(context.object.imp_sound_to_anim,"action_per_second")
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_escale")
+                row.prop(context.object.imp_sound_to_anim,"action_escale")
 
                 #row=layout.row()
-                row.label(text="Result from 0 to " + str(round(255/context.scene.imp_sound_to_anim.action_escale,4)) + "")
+                row.label(text="Result from 0 to " + str(round(255/context.object.imp_sound_to_anim.action_escale,4)) + "")
 
                 row=layout.row()
                 row.label(text="Property to Change:")
-                row.prop(context.scene.imp_sound_to_anim,"import_type")
+                row.prop(context.object.imp_sound_to_anim,"import_type")
 
                 #coluna
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"import_where1")
-                row.prop(context.scene.imp_sound_to_anim,"import_where2")
-                row.prop(context.scene.imp_sound_to_anim,"import_where3")
+                row.prop(context.object.imp_sound_to_anim,"import_where1")
+                row.prop(context.object.imp_sound_to_anim,"import_where2")
+                row.prop(context.object.imp_sound_to_anim,"import_where3")
 
                 row=layout.row()
                 row.label(text='Optional Configurations:')
                 row=layout.row()
-
-                row.prop(context.scene.imp_sound_to_anim,"frames_per_second")
+                
+                row.prop(context.object.imp_sound_to_anim,"frames_per_second")
                 row=layout.row()
                 #coluna
                 column= layout.column()
-                split=column.split(percentage=0.5)
+                split=column.split(factor=0.5) #percentage=0.5
                 col=split.column()
 
                 row=col.row()
-                row.prop(context.scene.imp_sound_to_anim,"frames_initial")
+                row.prop(context.object.imp_sound_to_anim,"frames_initial")
 
                 row=col.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_min_value")
+                row.prop(context.object.imp_sound_to_anim,"action_min_value")
 
                 col=split.column()
 
                 row=col.row()
-                row.prop(context.scene.imp_sound_to_anim,"optimization_destructive")
+                row.prop(context.object.imp_sound_to_anim,"optimization_destructive")
 
                 row=col.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_max_value")
+                row.prop(context.object.imp_sound_to_anim,"action_max_value")
 
                 row=layout.row()
 
-                row.prop(context.scene.imp_sound_to_anim,"action_offset_x")
-                row.prop(context.scene.imp_sound_to_anim,"action_offset_y")
-                row.prop(context.scene.imp_sound_to_anim,"action_offset_z")
+                row.prop(context.object.imp_sound_to_anim,"action_offset_x")
+                row.prop(context.object.imp_sound_to_anim,"action_offset_y")
+                row.prop(context.object.imp_sound_to_anim,"action_offset_z")
 
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"audio_channel_select")
-                row.prop(context.scene.imp_sound_to_anim,"action_valor_igual")
+                row.prop(context.object.imp_sound_to_anim,"audio_channel_select")
+                row.prop(context.object.imp_sound_to_anim,"action_valor_igual")
 
                 #operator button
                 #OBJECT_OT_Botao_Go => Botao_GO
@@ -318,7 +227,7 @@ class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
                 layout.operator(OBJECT_OT_Botao_Go.bl_idname)
 
                 row=layout.row()
-                row.label(text=context.scene.imp_sound_to_anim.Info_Import)
+                row.label(text=context.object.imp_sound_to_anim.Info_Import)
 
                 # preciso garantir a existencia do array porque o Blender salva no arquivo como existente sem o array existir
                 try:
@@ -326,7 +235,7 @@ class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
                 except NameError:
                     nada=0 #dummy
                 else:
-                    if context.scene.imp_sound_to_anim.bArrayCriado:
+                    if context.object.imp_sound_to_anim.bArrayCriado:
                         layout.operator(OBJECT_OT_Botao_Import.bl_idname)
                         row=layout.row()
 
@@ -335,35 +244,35 @@ class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
                     row=layout.row()
                     row.label(text="----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
                     row=layout.row()
-                    if context.scene.imp_sound_to_anim.Info_check_smartrender!= "":
+                    if context.object.imp_sound_to_anim.Info_check_smartrender!= "":
                         row=layout.row()
-                        row.label(text=context.scene.imp_sound_to_anim.Info_check_smartrender)
+                        row.label(text=context.object.imp_sound_to_anim.Info_check_smartrender)
 
                     row=layout.row()
                     row.operator(OBJECT_OT_Botao_Check_SmartRender.bl_idname)
-                    if context.scene.imp_sound_to_anim.Info_check_smartrender!= "":
+                    if context.object.imp_sound_to_anim.Info_check_smartrender!= "":
                         row.operator(OBJECT_OT_Botao_SmartRender.bl_idname)
 
                     row=layout.row()
-                    row.prop(context.scene.imp_sound_to_anim,"check_smartrender_loc_rot_sc")
-                    row.prop(context.scene.imp_sound_to_anim,"check_smartrender_material_basic")
+                    row.prop(context.object.imp_sound_to_anim,"check_smartrender_loc_rot_sc")
+                    row.prop(context.object.imp_sound_to_anim,"check_smartrender_material_basic")
                     row=layout.row()
-                    row.prop(context.scene.imp_sound_to_anim,"check_smartrender_material_transparence")
-                    row.prop(context.scene.imp_sound_to_anim,"check_smartrender_material_mirror")
+                    row.prop(context.object.imp_sound_to_anim,"check_smartrender_material_transparence")
+                    row.prop(context.object.imp_sound_to_anim,"check_smartrender_material_mirror")
 
             #-----------------------------
             #Use Driver
             #-----------------------------
-            if context.scene.imp_sound_to_anim.bTypeImport == 2:
+            if context.object.imp_sound_to_anim.bTypeImport == 2:
 
                 row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"audio_sense")
-                row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"frames_per_second")
-                row=layout.row()
-                row.prop(context.scene.imp_sound_to_anim,"action_per_second")
-                row=layout.row()
-                layout.operator(ImportWavFile.bl_idname)
+                #row.prop(context.object.imp_sound_to_anim,"audio_sense")
+                #row=layout.row()
+                #row.prop(context.object.imp_sound_to_anim,"frames_per_second")
+                #row=layout.row()
+                #row.prop(context.object.imp_sound_to_anim,"action_per_second")
+                #row=layout.row()
+                #layout.operator(ImportWavFile.bl_idname)
 
 
 #
@@ -374,30 +283,30 @@ class VIEW3D_PT_CustomMenuPanel(bpy.types.Panel):
 class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #Array created
-        bArrayCriado = IntProperty(name="",
+        bArrayCriado: IntProperty(name="",
             description="Avisa que rodou process de som",
             default=0)
 
         #Script Running
-        Working = StringProperty(name="",
+        Working: StringProperty(name="Working",
             description="Script esta trabalhando",
             maxlen= 1024,
             default="")
 
         #Nome do objeto
-        Info_Import = StringProperty(name="",
+        Info_Import: StringProperty(name="Info_Import",
             description="Info about Import",
             maxlen= 1024,
             default= "")#this set the initial text
 
         #Mensagem Smart Render
-        Info_check_smartrender = StringProperty(name="",
+        Info_check_smartrender: StringProperty(name="Info_check_smartrender",
             description="Smart Render Message",
             maxlen= 1024,
             default= "")#this set the initial text
 
         #iAudioSensib=0    #sensibilidade volume do audio 0 a 5. Quanto maior, mais sensibilidade
-        audio_sense = IntProperty(name="Audio Sens",
+        audio_sense: IntProperty(name="Audio Sens",
             description="Audio Sensibility.",
             min=1,
             max=6,
@@ -405,15 +314,16 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
             default= 1)
 
         #iFramesPorSeg=15  #Frames por segundo para key frame
-        #fps= (bpy.types.Scene) bpy.context.scene.render.fps
-        frames_per_second = IntProperty(name="#Frames/s",
+        #fps= (bpy.types.Scene) bpy.context.object.render.fps
+        frames_per_second: IntProperty(name="#Frames/s",
             description="Frames you want per second. Better match your set up in Blender scene.",
             min=1,
             max=120,
-            step=1)
+            step=1,
+            default= 10)
 
         #iMovPorSeg=1      #Sensibilidade de movimento. 3= 3 movimentos por segundo
-        action_per_second = IntProperty(name="Act/s",
+        action_per_second: IntProperty(name="Act/s",
             description="Actions per second. From 1 to #Frames/s",
             min=1,
             max=120,
@@ -422,7 +332,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #iDivScala=200
         #scala do valor do movimento. [se =1 - 0 a 255 ] [se=255 - 0,00000 a 1,00000] [se=1000 - 0 a 0.255]
-        action_escale = IntProperty(name="Scale",
+        action_escale: IntProperty(name="Scale",
             description="Scale the result values. See the text at right side of the field",
             min=1,
             max=99999,
@@ -430,7 +340,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
             default= 100)#this set the initial text
 
         #iMaxValue=255
-        action_max_value = IntProperty(name="Clip Max",
+        action_max_value: IntProperty(name="Clip Max",
             description="Set the max value (clip higher values).",
             min=1,
             max=255,
@@ -438,7 +348,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
             default= 255)#this set the initial text
 
         #iMinValue=0
-        action_min_value = IntProperty(name="Clip Min",
+        action_min_value: IntProperty(name="Clip Min",
             description="Set the min value. (clip lower values)",
             min=0,
             max=255,
@@ -446,42 +356,42 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
             default= 0)#this set the initial text
 
         #iStartFrame=0#
-        frames_initial = IntProperty(name="Frame Ini",
+        frames_initial: IntProperty(name="Frame Ini",
             description="Where to start to put the computed values.",
             min=0,
             max=999999999,
             step=1,
             default= 0)
 
-        audio_channel_select = IntProperty(name="Audio Channel",
+        audio_channel_select: IntProperty(name="Audio Channel",
             description="Choose the audio channel to use",
             min=1,
             max=10,
             step=1,
             default= 1)
 
-        action_offset_x = FloatProperty(name="XOffset",
+        action_offset_x: FloatProperty(name="XOffset",
             description="Offset X Values",
             min=-999999,
             max=999999,
             step=1,
             default= 0)
 
-        action_offset_y = FloatProperty(name="YOffset",
+        action_offset_y: FloatProperty(name="YOffset",
             description="Offset Y Values",
             min=-999999,
             max=999999,
             step=1,
             default= 0)
 
-        action_offset_z = FloatProperty(name="ZOffset",
+        action_offset_z: FloatProperty(name="ZOffset",
             description="Offset Z Values",
             min=-999999,
             max=999999,
             step=1,
             default= 0)
 
-        import_type= EnumProperty(items=(('imp_t_Scale', "Scale", "Apply to Scale"),
+        import_type: EnumProperty(items=(('imp_t_Scale', "Scale", "Apply to Scale"),
                                          ('imp_t_Rotation', "Rotation", "Apply to Rotation"),
                                          ('imp_t_Location', "Location", "Apply to Location")
                                         ),
@@ -489,7 +399,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
                                  description= "Property to Import Values",
                                  default='imp_t_Location')
 
-        import_where1= EnumProperty(items=(('imp_w_-z', "-z", "Apply to -z"),
+        import_where1: EnumProperty(items=(('imp_w_-z', "-z", "Apply to -z"),
                                           ('imp_w_-y', "-y", "Apply to -y"),
                                           ('imp_w_-x', "-x", "Apply to -x"),
                                           ('imp_w_z', "z", "Apply to z"),
@@ -500,7 +410,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
                                  description= "Where to Import",
                                  default='imp_w_z')
 
-        import_where2= EnumProperty(items=(('imp_w_none', "None", ""),
+        import_where2: EnumProperty(items=(('imp_w_none', "None", ""),
                                           ('imp_w_-z', "-z", "Apply to -z"),
                                           ('imp_w_-y', "-y", "Apply to -y"),
                                           ('imp_w_-x', "-x", "Apply to -x"),
@@ -512,7 +422,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
                                  description= "Where to Import",
                                  default='imp_w_none')
 
-        import_where3= EnumProperty(items=(('imp_w_none', "None", ""),
+        import_where3: EnumProperty(items=(('imp_w_none', "None", ""),
                                           ('imp_w_-z', "-z", "Apply to -z"),
                                           ('imp_w_-y', "-y", "Apply to -y"),
                                           ('imp_w_-x', "-x", "Apply to -x"),
@@ -528,56 +438,56 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
         #========== Propriedades boolean  =============#
 
         #  INVERTIDO!!!  bNaoValorIgual=True    # nao deixa repetir valores     INVERTIDO!!!
-        action_valor_igual = BoolProperty(name="Hard Transition",
-            description="Use to movements like a mouth, to a arm movement, maybe you will not use this.",
+        action_valor_igual: BoolProperty(name="Hard Transition",
+            description="Default. Movements like a beat.",
             default=1)
 
-        action_auto_audio_sense = BoolProperty(name="Auto Audio Sensitivity",
+        action_auto_audio_sense: BoolProperty(name="Auto Audio Sensitivity",
             description="Try to discover best audio scale. ",
             default=1)
 
-        use_just_beat=BoolProperty(name="Just Use The Beat",
-            description="Try to use just the beat to extract movement.",
+        use_just_beat:BoolProperty(name="Only Use The Beat",
+            description="Try to use only the beat to extract movement.",
             default=0)
 
-        remove_beat=BoolProperty(name="Remove The Beat",
+        remove_beat:BoolProperty(name="Remove The Beat",
             description="Try to remove the beat to extract movement.",
             default=0)
 
-        beat_more_sensible=BoolProperty(name="More Sensible",
+        beat_more_sensible:BoolProperty(name="More Sensible",
             description="Try To be more sensible about the beat.",
             default=0)
 
-        beat_less_sensible=BoolProperty(name="Less Sensible",
+        beat_less_sensible:BoolProperty(name="Less Sensible",
             description="Try to be less sensible about the beat.",
             default=0)
 
-        check_smartrender_loc_rot_sc=BoolProperty(name="Loc Rot Scale",
+        check_smartrender_loc_rot_sc:BoolProperty(name="Loc Rot Scale",
             description="Find changes in Location, Rotation and Scale Frame by Frame.",
             default=1)
 
-        check_smartrender_material_basic=BoolProperty(name="Basic Material",
+        check_smartrender_material_basic:BoolProperty(name="Basic Material",
             description="Find changes in basic material settings Frame by Frame.",
             default=1)
 
-        check_smartrender_material_transparence=BoolProperty(name="Material Transparence",
+        check_smartrender_material_transparence:BoolProperty(name="Material Transparence",
             description="Find changes in material transparence settings Frame by Frame.",
             default=0)
 
-        check_smartrender_material_mirror=BoolProperty(name="Material Mirror",
+        check_smartrender_material_mirror:BoolProperty(name="Material Mirror",
             description="Find changes in material mirror settings Frame by Frame.",
             default=0)
 
-        timer_reset_func=BoolProperty(name="Reset Counters",
+        timer_reset_func:BoolProperty(name="Reset Counters",
             description="Reset Counters after stop",
             default=0)
 
-        cancel_button_hit=BoolProperty(name="Cancel Hit",
+        cancel_button_hit:BoolProperty(name="Cancel Hit",
             description="Cancel Hit",
             default=0)
 
         #  Optimization
-        optimization_destructive = IntProperty(name="Optimization",
+        optimization_destructive: IntProperty(name="Optimization",
             description="Hi value = Hi optimization -> Hi loss of information.",
             min=0,
             max=254,
@@ -588,16 +498,16 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
         # not defined
         # Direct=1
         # Driver=2
-        bTypeImport = IntProperty(name="",
+        bTypeImport: IntProperty(name="bTypeImport",
             description="Import Direct or Driver",
-            default=0)
+            default=1)
 
         # globais do dialog open wave
-        filter_glob = StringProperty(default="*.wav", options={'HIDDEN'})
-        path =        StringProperty(name="File Path", description="Filepath used for importing the WAV file", \
+        filter_glob: StringProperty(default="*.wav", options={'HIDDEN'})
+        path:        StringProperty(name="File Path", description="Filepath used for importing the WAV file", \
                                                                                         maxlen= 1024, default= "")
-        filename =    StringProperty(name="File Name", description="Name of the file")
-        directory =   StringProperty(name="Directory", description="Directory of the file")
+        filename:    StringProperty(name="File Name", description="Name of the file")
+        directory:   StringProperty(name="Directory", description="Directory of the file")
 
 from bpy.props import *
 
@@ -616,9 +526,9 @@ class OBJECT_OT_Botao_uDirect(bpy.types.Operator):
     bl_label = "Direct to a Property"
 
     def execute(self, context):
-        context.scene.imp_sound_to_anim.bTypeImport= 1
-        if context.scene.imp_sound_to_anim.frames_per_second == 0:
-             context.scene.imp_sound_to_anim.frames_per_second= bpy.context.scene.render.fps
+        context.object.imp_sound_to_anim.bTypeImport= 1
+        if context.object.imp_sound_to_anim.frames_per_second == 0:
+            context.object.imp_sound_to_anim.frames_per_second= bpy.context.scene.render.fps
         return{'FINISHED'}
 
     def invoke(self, context, event):
@@ -645,42 +555,42 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
         obi=OBJECT_OT_Botao_Import
 
         # para de entrar no timer
-        context.scene.imp_sound_to_anim.Working=""
+        context.object.imp_sound_to_anim.Working=""
         #reseta contadores caso seja pedido
-        if context.scene.imp_sound_to_anim.timer_reset_func:
+        if context.object.imp_sound_to_anim.timer_reset_func:
             obi.RunFrom=0
             obi.iSumOptimizerP1=0
             obi.iSumOptimizerP2=0
             obi.iSumOptimizerP3=0
             obi.iSumImportFrames=0
-            context.scene.imp_sound_to_anim.timer_reset_func=False
-
+            context.object.imp_sound_to_anim.timer_reset_func=False
+            
         #limita o loop se estiver no fim
         tot=len(array)-1
         if obi.RunFrom+loop > tot:
             loop= tot - obi.RunFrom
 
         #scala do valor do movimento. [se =1 - 0 a 255 ] [se=255 - 0,00000 a 1,00000] [se=1000 - 0 a 0.255]
-        iDivScala= int(context.scene.imp_sound_to_anim.action_escale)
+        iDivScala= int(context.object.imp_sound_to_anim.action_escale)
 
         # nao deixa repetir valores
         bNaoValorIgual=True
-        if context.scene.imp_sound_to_anim.action_valor_igual: bNaoValorIgual= False
+        if context.object.imp_sound_to_anim.action_valor_igual: bNaoValorIgual= False
 
         # inicia no inicio pedido pelo usuario mais ponteiro RunFrom
-        iStartFrame= int(context.scene.imp_sound_to_anim.frames_initial) + obi.RunFrom
+        iStartFrame= int(context.object.imp_sound_to_anim.frames_initial) + obi.RunFrom
 
-        iMaxValue= context.scene.imp_sound_to_anim.action_max_value
-        iMinValue= context.scene.imp_sound_to_anim.action_min_value
+        iMaxValue= context.object.imp_sound_to_anim.action_max_value
+        iMinValue= context.object.imp_sound_to_anim.action_min_value
 
         bEscala=bRotacao=bEixo=False
-        if context.scene.imp_sound_to_anim.import_type=='imp_t_Scale':
+        if context.object.imp_sound_to_anim.import_type=='imp_t_Scale':
             bEscala=True;
 
-        if context.scene.imp_sound_to_anim.import_type=='imp_t_Rotation':
+        if context.object.imp_sound_to_anim.import_type=='imp_t_Rotation':
             bRotacao=True;
 
-        if context.scene.imp_sound_to_anim.import_type=='imp_t_Location':
+        if context.object.imp_sound_to_anim.import_type=='imp_t_Location':
             bEixo=True;
 
         # atencao, nao eh boolean
@@ -692,22 +602,22 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
         bEixoX=bEixoY=bEixoZ=bEscalaX=bEscalaY=bEscalaZ=bRotationX=bRotationY=bRotationZ=False
 
         # LOCAL 1
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_x':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
 
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_y':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
 
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_z':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
 
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_-x':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_-x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
@@ -715,7 +625,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iEscalaXneg=-1
             iRotationNeg=-1
 
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_-y':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_-y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
@@ -723,7 +633,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iRotationNeg=-1
             iEscalaYneg=-1
 
-        if context.scene.imp_sound_to_anim.import_where1== 'imp_w_-z':
+        if context.object.imp_sound_to_anim.import_where1== 'imp_w_-z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
@@ -733,22 +643,22 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
 
         # LOCAL 2
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_x':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
 
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_y':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
 
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_z':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
 
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_-x':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_-x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
@@ -756,7 +666,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iEscalaXneg=-1
             iRotationNeg=-1
 
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_-y':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_-y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
@@ -764,7 +674,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iRotationNeg=-1
             iEscalaYneg=-1
 
-        if context.scene.imp_sound_to_anim.import_where2== 'imp_w_-z':
+        if context.object.imp_sound_to_anim.import_where2== 'imp_w_-z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
@@ -774,22 +684,22 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
 
         # LOCAL 3
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_x':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
 
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_y':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
 
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_z':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
 
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_-x':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_-x':
             bEixoX=True
             bEscalaX=True
             bRotationX=True
@@ -797,7 +707,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iEscalaXneg=-1
             iRotationNeg=-1
 
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_-y':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_-y':
             bEixoY=True
             bEscalaY=True
             bRotationY=True
@@ -805,7 +715,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iRotationNeg=-1
             iEscalaYneg=-1
 
-        if context.scene.imp_sound_to_anim.import_where3== 'imp_w_-z':
+        if context.object.imp_sound_to_anim.import_where3== 'imp_w_-z':
             bEixoZ=True
             bEscalaZ=True
             bRotationZ=True
@@ -813,17 +723,17 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
             iRotationNeg=-1
             iEscalaZneg=-1
 
-        iMinBaseX=iMinScaleBaseX=context.scene.imp_sound_to_anim.action_offset_x
-        iMinBaseY=iMinScaleBaseY=context.scene.imp_sound_to_anim.action_offset_y
-        iMinBaseZ=iMinScaleBaseZ=context.scene.imp_sound_to_anim.action_offset_z
+        iMinBaseX=iMinScaleBaseX=context.object.imp_sound_to_anim.action_offset_x
+        iMinBaseY=iMinScaleBaseY=context.object.imp_sound_to_anim.action_offset_y
+        iMinBaseZ=iMinScaleBaseZ=context.object.imp_sound_to_anim.action_offset_z
 
         #escala inicia com 1 e nao com zero
-        iRotationAxisBaseX=context.scene.imp_sound_to_anim.action_offset_x  +1
-        iRotationAxisBaseY=context.scene.imp_sound_to_anim.action_offset_y  +1
-        iRotationAxisBaseZ=context.scene.imp_sound_to_anim.action_offset_z  +1
+        iRotationAxisBaseX=context.object.imp_sound_to_anim.action_offset_x  +1
+        iRotationAxisBaseY=context.object.imp_sound_to_anim.action_offset_y  +1
+        iRotationAxisBaseZ=context.object.imp_sound_to_anim.action_offset_z  +1
 
         #Added destructive optimizer option - LostLestSignificativeDigit lost/total
-        iDestructiveOptimizer=context.scene.imp_sound_to_anim.optimization_destructive
+        iDestructiveOptimizer=context.object.imp_sound_to_anim.optimization_destructive
 
         #limita ou nao o valor - velocidade
         bLimitValue=False
@@ -852,13 +762,13 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
         iRotateValAnt=0
 
         # variavel global _Interna_Globals
-        if context.scene.imp_sound_to_anim.bArrayCriado:
+        if context.object.imp_sound_to_anim.bArrayCriado:
             for i in range(loop):
                 ival=array[i+obi.RunFrom]/iDivScala
                 #valor pequeno demais, vai dar zero na hora de aplicar
                 if ival < 0.001:
-                     array[i+obi.RunFrom]=0
-                     ival=0
+                    array[i+obi.RunFrom]=0
+                    ival=0
 
                 # to increase performance and legibility
                 arrayI= array[i+obi.RunFrom]
@@ -1013,7 +923,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
             if obi.RunFrom>= tot:
                 bpy.context.scene.frame_current = 1
-                context.scene.imp_sound_to_anim.Info_Import="Done. Imported " + str(obi.iSumImportFrames) + " Frames"
+                context.object.imp_sound_to_anim.Info_Import="Done. Imported " + str(obi.iSumImportFrames) + " Frames"
                 from time import strftime
                 print('')
                 print("================================================================")
@@ -1033,7 +943,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
                 return obi.RunFrom
             else:
                 obi.RunFrom+= loop
-                context.scene.imp_sound_to_anim.Info_Import="Processing Frame " + str(obi.RunFrom+loop) + \
+                context.object.imp_sound_to_anim.Info_Import="Processing Frame " + str(obi.RunFrom+loop) + \
                                                                             " of " + str(tot-1) + " Frames"
                 return obi.RunFrom
 
@@ -1041,7 +951,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
     def execute(self, context):
         #wavimport(context)
         #return{'FINISHED'}
-        context.scene.imp_sound_to_anim.Working= "wavimport"
+        context.object.imp_sound_to_anim.Working= "wavimport"
         bpy.ops.wm.modal_timer_operator()
 
     def invoke(self, context, event):
@@ -1062,26 +972,25 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
     bl_description = "Process a .wav file, take movement from the sound and import to the scene as Key"
     bl_label = "Process Wav"
 
-    filter_glob = StringProperty(default="*.wav", options={'HIDDEN'})
-    path = StringProperty(name="File Path", description="Filepath used for importing the WAV file", \
+    filter_glob: StringProperty(default="*.wav", options={'HIDDEN'})
+    path:        StringProperty(name="File Path", description="Filepath used for importing the WAV file", \
                                                                             maxlen= 1024, default= "")
-    filename = StringProperty(name="File Name", description="Name of the file")
-    directory = StringProperty(name="Directory", description="Directory of the file")
+    filename:    StringProperty(name="File Name", description="Name of the file")
+    directory:   StringProperty(name="Directory", description="Directory of the file")
 
     RunFrom=0
     Wave_read=0
     MaxAudio=0
-
-
+        
     def SoundConv(File, DivSens, Sensibil, Resol, context, bAutoSense, bRemoveBeat, bUseBeat, bMoreSensible, \
                                                                             bLessSensible, AudioChannel, loop):
         obg= OBJECT_OT_Botao_Go
         #reseta contadores caso seja pedido
-        if context.scene.imp_sound_to_anim.timer_reset_func:
+        if context.object.imp_sound_to_anim.timer_reset_func:
             obc.RunFrom=0
             Wave_read=0
             MaxAudio=0
-            context.scene.imp_sound_to_anim.timer_reset_func=False
+            context.object.imp_sound_to_anim.timer_reset_func=False
 
         #abre arquivo se primeira rodada
         if obg.RunFrom==0:
@@ -1099,15 +1008,15 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
 
         if ChkCompr != "NONE":
             print('Sorry, this compressed Format is NOT Supported ', ChkCompr)
-            context.scene.imp_sound_to_anim.Info_Import= "Sorry, this compressed Format is NOT Supported "
+            context.object.imp_sound_to_anim.Info_Import= "Sorry, this compressed Format is NOT Supported "
             return False
 
         if SampW > 2:
-            context.scene.imp_sound_to_anim.Info_Import= "Sorry, supported .wav files 8 and 16 bits only"
+            context.object.imp_sound_to_anim.Info_Import= "Sorry, supported .wav files 8 and 16 bits only"
             print('Sorry, supported .wav files 8 and 16 bits only')
             return False
 
-        context.scene.imp_sound_to_anim.Info_Import=""
+        context.object.imp_sound_to_anim.Info_Import=""
 
         # controla numero do canal
         if AudioChannel > NumCh:
@@ -1296,7 +1205,7 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
                 UseMax=0
 
                 if bUseBeat==1:
-                    print("Trying to use just the beat.")
+                    print("Trying to use only the beat.")
                     UseMinim= obg.MaxAudio*0.8
                     if bMoreSensible:
                         UseMinim= obg.MaxAudio*0.7
@@ -1355,7 +1264,7 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
                 del arrayAutoSense[:]
 
             # mensagens finais
-            context.scene.imp_sound_to_anim.Info_Import= "Click \"Import Key frames\" to begin import" #this set the initial text
+            context.object.imp_sound_to_anim.Info_Import= "Click \"Import Key frames\" to begin import" #this set the initial text
 
             print("================================================================")
             from time import strftime
@@ -1371,7 +1280,7 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
             return obg.RunFrom   # acabou tudo
 
         else:#ainda nao acabou o arquivo todo if RunFrom+loop = looptot:
-            context.scene.imp_sound_to_anim.Info_Import="Processing " + str(obg.RunFrom) + " of " + str(looptot) +" Audio Frames"
+            context.object.imp_sound_to_anim.Info_Import="Processing " + str(obg.RunFrom) + " of " + str(looptot) +" Audio Frames"
             # force update info text in UI
             bpy.context.scene.frame_current= bpy.context.scene.frame_current
             obg.RunFrom+=loop
@@ -1383,14 +1292,14 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
     def ProcessaSom(context, loop):
         obg= OBJECT_OT_Botao_Go
         # para de entrar o timer
-        context.scene.imp_sound_to_anim.Working=""
+        context.object.imp_sound_to_anim.Working=""
         #reseta contadores caso seja pedido
-        if context.scene.imp_sound_to_anim.timer_reset_func:
+        if context.object.imp_sound_to_anim.timer_reset_func:
             obg.RunFrom=0
-            context.scene.imp_sound_to_anim.timer_reset_func=False
+            context.object.imp_sound_to_anim.timer_reset_func=False
 
         import os
-        f= os.path.join(context.scene.imp_sound_to_anim.directory, context.scene.imp_sound_to_anim.filename)
+        f= os.path.join(context.object.imp_sound_to_anim.directory, context.object.imp_sound_to_anim.filename)
         f= os.path.normpath(f)
 
         if obg.RunFrom==0:
@@ -1404,35 +1313,36 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
             return
 
         #sensibilidade volume do audio 0 a 5. Quanto maior, mais sensibilidade
-        iAudioSensib= int(context.scene.imp_sound_to_anim.audio_sense)-1
+        iAudioSensib= int(context.object.imp_sound_to_anim.audio_sense)-1
         if iAudioSensib <0: iAudioSensib=0
         elif iAudioSensib>5: iAudioSensib=5
 
         #act/s nao pode se maior que frames/s
-        if context.scene.imp_sound_to_anim.action_per_second > context.scene.imp_sound_to_anim.frames_per_second:
-            context.scene.imp_sound_to_anim.action_per_second = context.scene.imp_sound_to_anim.frames_per_second
+        if context.object.imp_sound_to_anim.action_per_second > context.object.imp_sound_to_anim.frames_per_second:
+            context.object.imp_sound_to_anim.action_per_second = context.object.imp_sound_to_anim.frames_per_second
 
         #Frames por segundo para key frame
-        iFramesPorSeg= int(context.scene.imp_sound_to_anim.frames_per_second)
+        iFramesPorSeg= int(context.object.imp_sound_to_anim.frames_per_second)
 
         #Sensibilidade de movimento. 3= 3 movimentos por segundo
-        iMovPorSeg= int(context.scene.imp_sound_to_anim.action_per_second)
+        iMovPorSeg= int(context.object.imp_sound_to_anim.action_per_second)
 
         #iDivMovPorSeg Padrao - taxa 4/s ou a cada 0,25s  => iFramesPorSeg/iDivMovPorSeg= ~0.25
+        iDivMovPorSeg=1
         for i in range(iFramesPorSeg):
             iDivMovPorSeg=iFramesPorSeg/(i+1)
             if iFramesPorSeg/iDivMovPorSeg >=iMovPorSeg:
                 break
 
-        bRemoveBeat=    context.scene.imp_sound_to_anim.remove_beat
-        bUseBeat=       context.scene.imp_sound_to_anim.use_just_beat
-        bLessSensible=  context.scene.imp_sound_to_anim.beat_less_sensible
-        bMoreSensible=  context.scene.imp_sound_to_anim.beat_more_sensible
-        AudioChannel=   context.scene.imp_sound_to_anim.audio_channel_select
+        bRemoveBeat=    context.object.imp_sound_to_anim.remove_beat
+        bUseBeat=       context.object.imp_sound_to_anim.use_just_beat
+        bLessSensible=  context.object.imp_sound_to_anim.beat_less_sensible
+        bMoreSensible=  context.object.imp_sound_to_anim.beat_more_sensible
+        AudioChannel=   context.object.imp_sound_to_anim.audio_channel_select
 
         # chama funcao de converter som, retorna preenchendo _Interna_Globals.array
         index= OBJECT_OT_Botao_Go.SoundConv(f, int(iDivMovPorSeg), iAudioSensib, iFramesPorSeg, context, \
-                                    context.scene.imp_sound_to_anim.action_auto_audio_sense, bRemoveBeat, \
+                                    context.object.imp_sound_to_anim.action_auto_audio_sense, bRemoveBeat, \
                                     bUseBeat, bMoreSensible, bLessSensible, AudioChannel, loop)
         return index
 
@@ -1440,12 +1350,12 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
     def execute(self, context):
 
         # copia dados dialof open wave
-        context.scene.imp_sound_to_anim.filter_glob= self.filter_glob
-        context.scene.imp_sound_to_anim.path = self.path
-        context.scene.imp_sound_to_anim.filename = self.filename
-        context.scene.imp_sound_to_anim.directory = self.directory
+        context.object.imp_sound_to_anim.filter_glob= self.filter_glob
+        context.object.imp_sound_to_anim.path = self.path
+        context.object.imp_sound_to_anim.filename = self.filename
+        context.object.imp_sound_to_anim.directory = self.directory
 
-        context.scene.imp_sound_to_anim.Working= "ProcessaSom"
+        context.object.imp_sound_to_anim.Working= "ProcessaSom"
         bpy.ops.wm.modal_timer_operator()
         #ProcessaSom(context)
         return{'FINISHED'}
@@ -1460,309 +1370,6 @@ class OBJECT_OT_Botao_Go(bpy.types.Operator):
 
 #
 #==================================================================================================
-# Button - Check Smart Render
-#==================================================================================================
-#
-class OBJECT_OT_Botao_Check_SmartRender(bpy.types.Operator):
-    '''Check for Reduction'''
-    bl_idname = "import.sound_animation_botao_check_smartrender"
-    bl_label = "Check Smart Render"
-
-    RunFrom=0
-    Frames_Renderizar=0
-    Frames_Pular=0
-
-    def CheckSmartRender(context, loop):
-        obc= OBJECT_OT_Botao_Check_SmartRender
-
-        #reseta contadores caso seja pedido
-        if context.scene.imp_sound_to_anim.timer_reset_func:
-            obc.RunFrom=0
-            obc.Frames_Pular=0
-            obc.Frames_Renderizar=0
-            context.scene.imp_sound_to_anim.timer_reset_func=False
-
-        if obc.RunFrom==0:
-            if loop !=1: # loop==1 quando estou chamando de dentro da funcao render
-                print("")
-                print("================================================================")
-                print('Running Check Smart Render...')
-
-        #garante ao menos locrotscale ligado
-        if context.scene.imp_sound_to_anim.check_smartrender_loc_rot_sc==False and \
-                        context.scene.imp_sound_to_anim.check_smartrender_material_basic==False and \
-                        context.scene.imp_sound_to_anim.check_smartrender_material_transparence==False and \
-                        context.scene.imp_sound_to_anim.check_smartrender_material_mirror==False:
-            context.scene.imp_sound_to_anim.check_smartrender_loc_rot_sc=True
-
-        chkLocRotSc=  context.scene.imp_sound_to_anim.check_smartrender_loc_rot_sc
-        chkMatBas=    context.scene.imp_sound_to_anim.check_smartrender_material_basic
-        chkMatTransp= context.scene.imp_sound_to_anim.check_smartrender_material_transparence
-        chkMatMirror= context.scene.imp_sound_to_anim.check_smartrender_material_mirror
-
-        ToRender=[]
-        origloop=loop
-        from copy import copy
-        RunMax= bpy.context.scene.frame_end - bpy.context.scene.frame_start+1
-        if obc.RunFrom+loop > RunMax:
-            loop= RunMax-obc.RunFrom
-            if loop<=0:   #acabou
-                if origloop !=1: # loop==1 quando estou chamando de dentro da funcao render
-                    print("")
-                    print("Frames to copy: " + str(obc.Frames_Pular) + " Frames to really render= " + str(obc.Frames_Renderizar))
-                    print("================================================================")
-                    print("")
-                obc.RunFrom=0
-                obc.Frames_Pular=0
-                obc.Frames_Renderizar=0
-                return (ToRender, obc.RunFrom)
-
-        #move para o primeiro frame a renderizar
-        #RunFrom inicia em zero - frames inicia em 1
-        bpy.context.scene.frame_current = obc.RunFrom+bpy.context.scene.frame_start
-
-        for k in range(loop):
-            if obc.RunFrom==0 and k==0: #primeiro sempre renderiza
-                ToRender.append(bpy.context.scene.frame_current)
-                obc.Frames_Renderizar+=1
-                bpy.context.scene.frame_set(bpy.context.scene.frame_current + 1)
-            else:
-                if origloop !=1: # loop==1 quando estou chamando de dentro da funcao render
-                    import sys
-                    sys.stdout.write("\rChecking Frame "+str(bpy.context.scene.frame_current) + "  ")
-                    sys.stdout.flush()
-                #buffer de todos os objetos
-                a=[]
-                for obj in bpy.data.objects:
-                    if chkLocRotSc:
-                        # loc rot scale
-                        a.append(copy(obj.location))
-                        a.append(copy(obj.rotation_euler))
-                        a.append(copy(obj.scale))
-                    if hasattr(obj.data, 'materials') and obj.data.materials.keys()!=[] :
-                        if bpy.context.scene.render.engine == "BLENDER_RENDER":
-                            #pega somente primeiro material sempre
-                            if chkMatBas:
-                                # cores
-                                a.append(copy(obj.data.materials[0].type))
-                                a.append(copy(obj.data.materials[0].emit))
-                                a.append(copy(obj.data.materials[0].diffuse_color))
-                                a.append(copy(obj.data.materials[0].diffuse_intensity))
-                                a.append(copy(obj.data.materials[0].specular_intensity))
-                                a.append(copy(obj.data.materials[0].specular_color))
-                                a.append(copy(obj.data.materials[0].alpha))
-                                a.append(copy(obj.data.materials[0].diffuse_shader))
-                                a.append(copy(obj.data.materials[0].specular_shader))
-                                a.append(copy(obj.data.materials[0].specular_hardness))
-
-                            if chkMatTransp:
-                                # transp
-                                a.append(copy(obj.data.materials[0].transparency_method))
-                                a.append(copy(obj.data.materials[0].specular_alpha))
-                                a.append(copy(obj.data.materials[0].raytrace_transparency.fresnel))
-                                a.append(copy(obj.data.materials[0].raytrace_transparency.ior))
-                                a.append(copy(obj.data.materials[0].raytrace_transparency.filter))
-                                a.append(copy(obj.data.materials[0].raytrace_transparency.depth))
-                                a.append(copy(obj.data.materials[0].translucency))
-                                a.append(copy(obj.data.materials[0].specular_alpha))
-
-                            if chkMatMirror:
-                                #mirror
-                                a.append(copy(obj.data.materials[0].raytrace_mirror.reflect_factor))
-                                a.append(copy(obj.data.materials[0].raytrace_mirror.fresnel))
-                                a.append(copy(obj.data.materials[0].raytrace_mirror.fresnel_factor))
-                                a.append(copy(obj.data.materials[0].mirror_color))
-                                a.append(copy(obj.data.materials[0].raytrace_mirror.depth))
-                                a.append(copy(obj.data.materials[0].raytrace_mirror.gloss_factor))
-
-                # tenho todos os objetos em a[]
-                # incrementar um frame e checar se eh igual
-                bpy.context.scene.frame_set(bpy.context.scene.frame_current + 1)
-
-                j=0
-                dif=0
-                for obj in bpy.data.objects:
-                    if chkLocRotSc:
-                        if a[j]!= obj.location or a[j+1]!= obj.rotation_euler or a[j+2]!= obj.scale:
-                            dif=1
-                            #break
-                        j+=3
-
-                    if hasattr(obj.data, 'materials') and obj.data.materials.keys()!=[] :
-                        if bpy.context.scene.render.engine == "BLENDER_RENDER":
-                            if chkMatBas:
-                                # cores
-                                if a[j]!= obj.data.materials[0].type or   a[j+1]!= obj.data.materials[0].emit or \
-                                                                            a[j+2]!= obj.data.materials[0].diffuse_color or \
-                                                                            a[j+3]!= obj.data.materials[0].diffuse_intensity or \
-                                                                            a[j+4]!= obj.data.materials[0].specular_intensity or \
-                                                                            a[j+5]!= obj.data.materials[0].specular_color or \
-                                                                            a[j+6]!= obj.data.materials[0].alpha or \
-                                                                            a[j+7]!= obj.data.materials[0].diffuse_shader or \
-                                                                            a[j+8]!= obj.data.materials[0].specular_shader or \
-                                                                            a[j+9]!= obj.data.materials[0].specular_hardness:
-                                    dif=1
-                                    print("mat")
-                                    j+= 10  # ajusta ponteiro j
-                                    if chkMatTransp: j+=8
-                                    if chkMatMirror: j+=6
-                                    break
-                                j+=10
-
-                            if chkMatTransp:
-                                #transp
-                                if a[j]!= obj.data.materials[0].transparency_method or    a[j+1]!= obj.data.materials[0].specular_alpha or \
-                                                                                            a[j+2]!= obj.data.materials[0].raytrace_transparency.fresnel or \
-                                                                                            a[j+3]!= obj.data.materials[0].raytrace_transparency.ior or \
-                                                                                            a[j+4]!= obj.data.materials[0].raytrace_transparency.filter or \
-                                                                                            a[j+5]!= obj.data.materials[0].raytrace_transparency.depth or \
-                                                                                            a[j+6]!= obj.data.materials[0].translucency or \
-                                                                                            a[j+7]!= obj.data.materials[0].specular_alpha:
-                                    dif=1
-                                    j+= 8     # ajusta ponteiro j
-                                    if chkMatMirror: j+=6
-
-                                    break
-                                j+=8
-
-                            if chkMatMirror:
-                                #mirror
-                                if a[j]!= obj.data.materials[0].raytrace_mirror.reflect_factor or a[j+1]!= obj.data.materials[0].raytrace_mirror.fresnel or \
-                                                                                                    a[j+2]!= obj.data.materials[0].raytrace_mirror.fresnel_factor or \
-                                                                                                    a[j+3]!= obj.data.materials[0].mirror_color or \
-                                                                                                    a[j+4]!= obj.data.materials[0].raytrace_mirror.depth or \
-                                                                                                    a[j+5]!= obj.data.materials[0].raytrace_mirror.gloss_factor:
-                                    dif=1
-                                    j+= 6     # ajusta ponteiro j
-                                    break
-                                j+=6
-                # finaliza
-                if dif==0:
-                    obc.Frames_Pular+=1
-                else:
-                    obc.Frames_Renderizar+=1
-                    ToRender.append(bpy.context.scene.frame_current)
-
-                del a
-        # para nao sair do index - nunca chega nesse frame
-        ToRender.append(bpy.context.scene.frame_end+1)
-
-        if obc.RunFrom+loop < RunMax:
-            context.scene.imp_sound_to_anim.Info_check_smartrender= "["+str(obc.RunFrom+loop) + "/" + \
-                                        str(RunMax) + "] Frames to Render= " + str(obc.Frames_Renderizar) + \
-                                        " -> Reduction " + str(round((obc.Frames_Pular/RunMax)*100,1)) + "%"
-        else:
-            context.scene.imp_sound_to_anim.Info_check_smartrender= "Frames to Render= " + str(obc.Frames_Renderizar) + \
-                                                    " -> Reduction " + str(round((obc.Frames_Pular/RunMax)*100,1)) + "%"
-
-        #incrementa indice
-        obc.RunFrom+= loop
-        return (ToRender, obc.RunFrom)
-
-    def execute(self, context):
-        context.scene.imp_sound_to_anim.Working= "CheckSmartRender"
-        #context.scene.imp_sound_to_anim.timer_reset_func=True
-        bpy.ops.wm.modal_timer_operator()
-        #CheckSmartRender(context)
-        return{'FINISHED'}
-
-    def invoke(self, context, event):
-        self.execute(context)
-        return {'FINISHED'}
-
-
-#
-#==================================================================================================
-# Button - Smart Render
-#==================================================================================================
-#
-class OBJECT_OT_Botao_SmartRender(bpy.types.Operator):
-    '''Render Only Modified Frames and Copy the Others'''
-    bl_idname = "import.sound_animation_smart_render"
-    bl_label = "Smart Render"
-
-    BaseRenderToCopy=0
-
-    def SmartRender(context):
-        obs=OBJECT_OT_Botao_SmartRender
-
-        index=0
-        pad=4
-        #calcula zero pad
-        if bpy.context.scene.frame_end //1000000 > 0:  #default 999999 1000000//1000000=1
-            pad=7
-        elif bpy.context.scene.frame_end //100000 > 0:  #default 99999 100000//100000=1
-            pad=6
-        elif bpy.context.scene.frame_end //10000 > 0:  #default 9999 10000//10000=1
-            pad=5
-
-        #bpy.data.images['Render Result'].file_format ='PNG'
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
-
-        #info dos arquivos
-        path= bpy.context.scene.render.filepath
-
-        import shutil
-
-        tot=bpy.context.scene.frame_end - bpy.context.scene.frame_start+1
-        i=0
-        # checa apenas 1 frame    o indice é interno em ChackSmartRender
-        r= OBJECT_OT_Botao_Check_SmartRender.CheckSmartRender(context, 1)
-        ToRender= r[0] # tem numero do frame se for para renderizar
-        index= r[1]
-
-        #copia frame atual  #se o frame ja não foi renderizado
-        if (obs.BaseRenderToCopy!=(index+bpy.context.scene.frame_start-1)) and index > 1:   #index!=1 and index !=0:
-            print("Copying: " + str(obs.BaseRenderToCopy) + "-> " + str(index+bpy.context.scene.frame_start-1) + \
-                                "  To " + path + str(index+bpy.context.scene.frame_start-1).zfill(pad)  + ".png")
-            shutil.copy2(path + str(obs.BaseRenderToCopy).zfill(pad)  + ".png", path + \
-                        str(index+bpy.context.scene.frame_start-1).zfill(pad)  + ".png")
-
-        if ToRender.__len__()>1:   #renderizar 1 item em ToRender nao renderiza, (sempre vem com no minimo 1)
-            if index==1:
-                print("================================================================")
-                from time import strftime
-                print(strftime("Running Smart Render:  %H:%M:%S"))
-                print("================================================================")
-                BaseRenderToCopy=0
-
-            if ToRender[0] <= bpy.context.scene.frame_end:
-                #renderiza proximo frame
-                print("Rendering-> " + str(ToRender[0]))
-                obs.BaseRenderToCopy= ToRender[0]
-                bpy.ops.render.render(animation=False, write_still=False)
-                bpy.data.images['Render Result'].save_render(filepath=path + str(ToRender[0]).zfill(pad)  + ".png")
-                i+=1
-
-        if index==tot:
-            print("================================================================")
-            from time import strftime
-            print(strftime("Finish Render:  %H:%M:%S"))
-            print("================================================================")
-            print(".")
-
-        if index==tot+1:
-            obs.BaseRenderToCopy=0
-            return 0
-
-        return index
-
-
-    def execute(self, context):
-        # se for CYCLES, nao funciona com timer, preciso rodar direto
-        context.scene.imp_sound_to_anim.Working= "SmartRender"
-        bpy.ops.wm.modal_timer_operator()
-        #SmartRender(context)
-        return{'FINISHED'}
-
-    def invoke(self, context, event):
-        self.execute(context)
-        return {'FINISHED'}
-
-
-
-#
-#==================================================================================================
 # Button - Cancel
 #==================================================================================================
 #
@@ -1772,7 +1379,7 @@ class OBJECT_OT_Botao_Cancel(bpy.types.Operator):
     bl_label = "CANCEL"
 
     def execute(self, context):
-        context.scene.imp_sound_to_anim.cancel_button_hit=True
+        context.object.imp_sound_to_anim.cancel_button_hit=True
         return{'FINISHED'}
 
     def invoke(self, context, event):
@@ -1800,7 +1407,7 @@ class ModalTimerOperator(bpy.types.Operator):
         bpy.context.scene.frame_set(bpy.context.scene.frame_current)
         if index!=0:
             #configura timer para a funcao
-            context.scene.imp_sound_to_anim.Working= func
+            context.object.imp_sound_to_anim.Working= func
             self.Running=True
             return {'PASS_THROUGH'}
         else: # posso desligar o timer e modal
@@ -1814,10 +1421,10 @@ class ModalTimerOperator(bpy.types.Operator):
         if event.type == 'ESC'and self.Running:
             print("-- ESC Pressed --")
             self.cancel(context)
-            context.scene.imp_sound_to_anim.Working=""
+            context.object.imp_sound_to_anim.Working=""
             self.Running=False
             #reseta contadores
-            context.scene.imp_sound_to_anim.timer_reset_func=True
+            context.object.imp_sound_to_anim.timer_reset_func=True
             # forca update do UI
             bpy.context.scene.frame_set(bpy.context.scene.frame_current)
             return {'CANCELLED'}
@@ -1825,47 +1432,47 @@ class ModalTimerOperator(bpy.types.Operator):
         if event.type == 'TIMER':
             #print("timer")
             #CheckSmartRender
-            if context.scene.imp_sound_to_anim.Working== "CheckSmartRender":
+            if context.object.imp_sound_to_anim.Working== "CheckSmartRender":
                 self.parar(context)
                 #5= frames para rodar antes de voltar    [1]= indice de posicao atual
                 index= OBJECT_OT_Botao_Check_SmartRender.CheckSmartRender(context, 5)[1]
                 return self.CheckRunStop(context, "CheckSmartRender", index)
 
             #SmartRender
-            elif context.scene.imp_sound_to_anim.Working== "SmartRender":
+            elif context.object.imp_sound_to_anim.Working== "SmartRender":
                 self.parar(context)
                 #render/copia 1 e volta     index>=0 indice posicao atual
                 index= OBJECT_OT_Botao_SmartRender.SmartRender(context)
                 return self.CheckRunStop(context, "SmartRender", index)
 
             #ProcessaSom
-            elif context.scene.imp_sound_to_anim.Working== "ProcessaSom":
+            elif context.object.imp_sound_to_anim.Working== "ProcessaSom":
                 self.parar(context)
                 # loop = numero de frames de audio    index=0 se terminou ou >0 se não acabou
                 index= OBJECT_OT_Botao_Go.ProcessaSom(context, 50)
                 return self.CheckRunStop(context, "ProcessaSom", index)
 
             #wavimport(context)
-            elif context.scene.imp_sound_to_anim.Working== "wavimport":
+            elif context.object.imp_sound_to_anim.Working== "wavimport":
                 self.parar(context)
                 # 5= numero de frames to import por timer
                 index=OBJECT_OT_Botao_Import.wavimport(context, 50)
                 return self.CheckRunStop(context, "wavimport", index)
 
             #passa por aqui quando as funcoes estao sendo executadas mas
-            #configuradas para nao entrar porque  context.scene.imp_sound_to_anim.Working== ""
+            #configuradas para nao entrar porque  context.object.imp_sound_to_anim.Working== ""
             return {'PASS_THROUGH'}
 
         # reseta e para tudo botao CANCEL pressionado
-        if context.scene.imp_sound_to_anim.cancel_button_hit==True:
-            context.scene.imp_sound_to_anim.Working=""
+        if context.object.imp_sound_to_anim.cancel_button_hit==True:
+            context.object.imp_sound_to_anim.Working=""
             #pede reset contadores
-            context.scene.imp_sound_to_anim.timer_reset_func=True
+            context.object.imp_sound_to_anim.timer_reset_func=True
             if self._timer!= None:
                 context.window_manager.event_timer_remove(self._timer)
                 self._timer= None
             print("-- Cancel Pressed --")
-            context.scene.imp_sound_to_anim.cancel_button_hit=False
+            context.object.imp_sound_to_anim.cancel_button_hit=False
             return {'FINISHED'}
 
         #print("modal")
@@ -1879,10 +1486,10 @@ class ModalTimerOperator(bpy.types.Operator):
 
     def execute(self, context):
         if self._timer==None:
-            self._timer = context.window_manager.event_timer_add(0.2, context.window)
+            self._timer = context.window_manager.event_timer_add(0.2, window=context.window)
             context.window_manager.modal_handler_add(self)
         #para deixar rodar sem deligar o timer
-        context.scene.imp_sound_to_anim.timer_desligar=False
+        context.object.imp_sound_to_anim.timer_desligar=False
         self.Running=True
         return {'RUNNING_MODAL'}
 
@@ -1893,7 +1500,7 @@ class ModalTimerOperator(bpy.types.Operator):
 
     def parar(self, context):
         if self.Running:
-            context.scene.imp_sound_to_anim.Working=""
+            context.object.imp_sound_to_anim.Working=""
             self.Running=False
 
 
@@ -1903,6 +1510,41 @@ class ModalTimerOperator(bpy.types.Operator):
 #     Register - Unregister - MAIN
 #==================================================================================================
 #
+# ------------------------------------------------------------
+# Register:
+classes = (
+    VIEW3D_PT_CustomMenuPanel,
+    ModalTimerOperator,
+    OBJECT_OT_Botao_Cancel,
+    OBJECT_OT_Botao_Go,
+    OBJECT_OT_Botao_Import,
+    OBJECT_OT_Botao_uDirect,
+    ImpSoundtoAnim,
+)
+
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    #bpy.types.VIEW3D_MT_mesh_add.append(menu_func_landscape)
+    bpy.types.TOPBAR_MT_file_import.append(WavFileImport)
+    #bpy.types.VIEW3D_MT_mesh_add.append(WavFileImport)
+    #bpy.types.Object.ant_landscape = PointerProperty(type=AntLandscapePropertiesGroup, name="ANT_Landscape", description="Landscape properties")
+    bpy.types.Object.imp_sound_to_anim = PointerProperty(type=ImpSoundtoAnim, name="imp_sound_to_anim", description="Extract movement from sound file. See the tool shelf.")
+
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)  
+    #bpy.types.VIEW3D_MT_mesh_add.remove(WavFileImport)  
+    bpy.types.TOPBAR_MT_file_import.remove(WavFileImport)
+
+
+if __name__ == "__main__":
+    register()
+
+
+
+"""
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.Scene.imp_sound_to_anim = PointerProperty(type=ImpSoundtoAnim, name="Import: Sound to Animation", description="Extract movement from sound file. See the Object Panel at the end.")
@@ -1923,4 +1565,4 @@ def unregister():
 
 
 if __name__ == "__main__":
-    register()
+    register()"""

@@ -72,7 +72,7 @@ class ImportXmodel(bpy.types.Operator, ImportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".XMODEL_EXPORT"
-    filter_glob = StringProperty(default="*.XMODEL_EXPORT", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.XMODEL_EXPORT", options={'HIDDEN'})
 
     #use_meshes = BoolProperty(name="Meshes", description="Import meshes", default=True)
     #use_armature = BoolProperty(name="Armature", description="Import Armature", default=True)
@@ -119,7 +119,7 @@ class ImportXanim(bpy.types.Operator, ImportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".XANIM_EXPORT"
-    filter_glob = StringProperty(default="*.XANIM_EXPORT;*.NT_EXPORT", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.XANIM_EXPORT;*.NT_EXPORT", options={'HIDDEN'})
 
     def execute(self, context):
         # print("Selected: " + context.active_object.name)
@@ -135,12 +135,12 @@ class ExportXmodel(bpy.types.Operator, ExportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".XMODEL_EXPORT"
-    filter_glob = StringProperty(default="*.XMODEL_EXPORT", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.XMODEL_EXPORT", options={'HIDDEN'})
 
     # List of operator properties, the attributes will be assigned
     # to the class instance from the operator settings before calling.
 
-    use_version = EnumProperty(
+    use_version: EnumProperty(
         name="Format Version",
         description="XMODEL_EXPORT format version for export",
         items=(('5', "Version 5", "vCoD, CoD:UO"),
@@ -148,69 +148,69 @@ class ExportXmodel(bpy.types.Operator, ExportHelper):
         default='6',
         )
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
         name="Selection only",
         description="Export selected meshes only (object or weight paint mode)",
         default=False
         )
 
-    use_vertex_colors = BoolProperty(
+    use_vertex_colors: BoolProperty(
         name="Vertex colors",
         description="Export vertex colors (if disabled, white color will be used)",
         default=True
         )
 
-    use_vertex_colors_alpha = BoolProperty(
+    use_vertex_colors_alpha: BoolProperty(
         name="As alpha",
         description="Turn RGB vertex colors into grayscale (average value) and use it as alpha transparency. White is 1 (opaque), black 0 (invisible)",
         default=False
         )
 
-    use_apply_modifiers = BoolProperty(
+    use_apply_modifiers: BoolProperty(
         name="Apply Modifiers",
         description="Apply all mesh modifiers except Armature (preview resolution)",
         default=True
         )
 
-    use_armature = BoolProperty(
+    use_armature: BoolProperty(
         name="Armature",
         description="Export bones (if disabled, only a 'tag_origin' bone will be written)",
         default=True
         )
 
-    use_vertex_cleanup = BoolProperty(
+    use_vertex_cleanup: BoolProperty(
         name="Clean up vertices",
         description="Try this if you have problems converting to xmodel. Skips vertices which aren't used by any face and updates references.",
         default=False
         )
 
-    use_armature_pose = BoolProperty(
+    use_armature_pose: BoolProperty(
         name="Pose animation to models",
         description="Export meshes with Armature modifier applied as a series of XMODEL_EXPORT files",
         default=False
         )
 
-    use_frame_start = IntProperty(
+    use_frame_start: IntProperty(
         name="Start",
         description="First frame to export",
         default=1,
         min=0
         )
 
-    use_frame_end = IntProperty(
+    use_frame_end: IntProperty(
         name="End",
         description="Last frame to export",
         default=250,
         min=0
         )
 
-    use_weight_min = BoolProperty(
+    use_weight_min: BoolProperty(
         name="Minimum bone weight",
         description="Try this if you get 'too small weight' errors when converting",
         default=False,
         )
 
-    use_weight_min_threshold = FloatProperty(
+    use_weight_min_threshold: FloatProperty(
         name="Threshold",
         description="Smallest allowed weight (minimum value)",
         default=0.010097,
@@ -278,7 +278,7 @@ class ExportXmodel(bpy.types.Operator, ExportHelper):
             sub.prop(self, "use_vertex_colors_alpha")
 
         col = layout.column(align=True)
-        col.label("Advanced:")
+        col.label(text="Advanced:")
 
         col = layout.column(align=True)
         col.prop(self, "use_vertex_cleanup")
@@ -317,18 +317,18 @@ class ExportXanim(bpy.types.Operator, ExportHelper):
     bl_options = {'PRESET'}
 
     filename_ext = ".XANIM_EXPORT"
-    filter_glob = StringProperty(default="*.XANIM_EXPORT", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.XANIM_EXPORT", options={'HIDDEN'})
 
     # List of operator properties, the attributes will be assigned
     # to the class instance from the operator settings before calling.
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
         name="Selection only",
         description="Export selected bones only (pose mode)",
         default=False
         )
 
-    use_framerate = IntProperty(
+    use_framerate: IntProperty(
         name="Framerate",
         description="Set frames per second for export, 30 fps is commonly used.",
         default=24,
@@ -336,27 +336,27 @@ class ExportXanim(bpy.types.Operator, ExportHelper):
         max=100
         )
 
-    use_frame_start = IntProperty(
+    use_frame_start: IntProperty(
         name="Start",
         description="First frame to export",
         default=1,
         min=0
         )
 
-    use_frame_end = IntProperty(
+    use_frame_end: IntProperty(
         name="End",
         description="Last frame to export",
         default=250,
         min=0
         )
 
-    use_notetrack = BoolProperty(
+    use_notetrack: BoolProperty(
         name="Notetrack",
         description="Export timeline markers as notetrack nodes",
         default=True
         )
 
-    use_notetrack_format = EnumProperty(
+    use_notetrack_format: EnumProperty(
         name="Notetrack format",
         description="Notetrack format to use. Always set 'CoD 7' for Black Ops, even if not using notetrack!",
         items=(('5', "CoD 5", "Separate NT_EXPORT notetrack file for 'World at War'"),
@@ -414,7 +414,7 @@ class ExportXanim(bpy.types.Operator, ExportHelper):
             icon = 'ERROR'
 
         col = layout.column(align=True)
-        col.label("Armature: %s" % armature_info, icon)
+        col.label(text="Armature: %s" % armature_info, icon)
 
         col = layout.column(align=True)
         col.prop(self, "use_selection", "Selection only (%i bones)" % bones_selected)

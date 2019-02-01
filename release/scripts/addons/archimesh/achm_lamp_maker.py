@@ -129,14 +129,14 @@ def set_preset(self):
 # Define UI class
 # Lamps
 # ------------------------------------------------------------------
-class AchmLamp(Operator):
+class ARCHIMESH_PT_Lamp(Operator):
     bl_idname = "mesh.archimesh_light"
     bl_label = "Lamp"
     bl_description = "Lamp Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
     # preset
-    preset = EnumProperty(
+    preset: EnumProperty(
             items=(
                 ('0', "None", ""),
                 ('1', "Sphere", ""),
@@ -147,109 +147,119 @@ class AchmLamp(Operator):
             name="Predefined",
             description="Apply predefined design",
             )
-    oldpreset = preset
+    oldpreset: EnumProperty(
+            items=(
+                ('0', "None", ""),
+                ('1', "Sphere", ""),
+                ('2', "Pear", ""),
+                ('3', "Vase", ""),
+                ('4', "Rectangular", ""),
+                ),
+            name="Predefined",
+            description="Apply predefined design",
+            )
 
-    base_height = FloatProperty(
+    base_height: FloatProperty(
             name='Height',
             min=0.01, max=10, default=0.20, precision=3,
             description='lamp base height',
             )
-    base_segments = IntProperty(
+    base_segments: IntProperty(
             name='Segments',
             min=3, max=128, default=16,
             description='Number of segments (vertical)',
             )
-    base_rings = IntProperty(
+    base_rings: IntProperty(
             name='Rings',
             min=2, max=12, default=6,
             description='Number of rings (horizontal)',
             )
-    holder = FloatProperty(
+    holder: FloatProperty(
             name='Lampholder',
             min=0.001, max=10, default=0.02, precision=3,
             description='Lampholder height',
             )
-    smooth = BoolProperty(
+    smooth: BoolProperty(
             name="Smooth",
             description="Use smooth shader",
             default=True,
             )
-    subdivide = BoolProperty(
+    subdivide: BoolProperty(
             name="Subdivide",
             description="Add subdivision modifier",
             default=True,
             )
 
-    bz01 = FloatProperty(name='S1', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz02 = FloatProperty(name='S2', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz03 = FloatProperty(name='S3', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz04 = FloatProperty(name='S4', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz05 = FloatProperty(name='S5', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz06 = FloatProperty(name='S6', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz07 = FloatProperty(name='S7', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz08 = FloatProperty(name='S8', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz09 = FloatProperty(name='S9', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz10 = FloatProperty(name='S10', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz11 = FloatProperty(name='S11', min=-1, max=1, default=0, precision=3, description='Z shift factor')
-    bz12 = FloatProperty(name='S12', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz01: FloatProperty(name='S1', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz02: FloatProperty(name='S2', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz03: FloatProperty(name='S3', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz04: FloatProperty(name='S4', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz05: FloatProperty(name='S5', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz06: FloatProperty(name='S6', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz07: FloatProperty(name='S7', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz08: FloatProperty(name='S8', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz09: FloatProperty(name='S9', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz10: FloatProperty(name='S10', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz11: FloatProperty(name='S11', min=-1, max=1, default=0, precision=3, description='Z shift factor')
+    bz12: FloatProperty(name='S12', min=-1, max=1, default=0, precision=3, description='Z shift factor')
 
-    br01 = FloatProperty(name='R1', min=0.001, max=10, default=0.06, precision=3, description='Ring radio')
-    br02 = FloatProperty(name='R2', min=0.001, max=10, default=0.08, precision=3, description='Ring radio')
-    br03 = FloatProperty(name='R3', min=0.001, max=10, default=0.09, precision=3, description='Ring radio')
-    br04 = FloatProperty(name='R4', min=0.001, max=10, default=0.08, precision=3, description='Ring radio')
-    br05 = FloatProperty(name='R5', min=0.001, max=10, default=0.06, precision=3, description='Ring radio')
-    br06 = FloatProperty(name='R6', min=0.001, max=10, default=0.03, precision=3, description='Ring radio')
-    br07 = FloatProperty(name='R7', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
-    br08 = FloatProperty(name='R8', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
-    br09 = FloatProperty(name='R9', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
-    br10 = FloatProperty(name='R10', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
-    br11 = FloatProperty(name='R11', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
-    br12 = FloatProperty(name='R12', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br01: FloatProperty(name='R1', min=0.001, max=10, default=0.06, precision=3, description='Ring radio')
+    br02: FloatProperty(name='R2', min=0.001, max=10, default=0.08, precision=3, description='Ring radio')
+    br03: FloatProperty(name='R3', min=0.001, max=10, default=0.09, precision=3, description='Ring radio')
+    br04: FloatProperty(name='R4', min=0.001, max=10, default=0.08, precision=3, description='Ring radio')
+    br05: FloatProperty(name='R5', min=0.001, max=10, default=0.06, precision=3, description='Ring radio')
+    br06: FloatProperty(name='R6', min=0.001, max=10, default=0.03, precision=3, description='Ring radio')
+    br07: FloatProperty(name='R7', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br08: FloatProperty(name='R8', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br09: FloatProperty(name='R9', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br10: FloatProperty(name='R10', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br11: FloatProperty(name='R11', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
+    br12: FloatProperty(name='R12', min=0.001, max=10, default=0.10, precision=3, description='Ring radio')
 
-    top_height = FloatProperty(
+    top_height: FloatProperty(
             name='Height', min=0.01, max=10,
             default=0.20, precision=3,
             description='lampshade height',
             )
-    top_segments = IntProperty(
+    top_segments: IntProperty(
             name='Segments', min=3, max=128,
             default=32,
             description='Number of segments (vertical)',
             )
-    tr01 = FloatProperty(
+    tr01: FloatProperty(
             name='R1', min=0.001, max=10,
             default=0.16, precision=3,
             description='lampshade bottom radio',
             )
-    tr02 = FloatProperty(name='R2', min=0.001, max=10,
+    tr02: FloatProperty(name='R2', min=0.001, max=10,
                          default=0.08, precision=3,
                          description='lampshade top radio')
-    pleats = BoolProperty(
+    pleats: BoolProperty(
             name="Pleats", description="Create pleats in the lampshade",
             default=False,
             )
-    tr03 = FloatProperty(
+    tr03: FloatProperty(
             name='R3', min=0.001, max=1,
             default=0.01, precision=3, description='Pleats size',
             )
-    energy = FloatProperty(
+    energy: FloatProperty(
             name='Light', min=0.00, max=1000,
             default=15, precision=3,
             description='Light intensity',
             )
-    opacity = FloatProperty(
+    opacity: FloatProperty(
             name='Translucency', min=0.00, max=1,
             default=0.3, precision=3,
             description='Lampshade translucency factor (1 completely translucent)',
             )
 
     # Materials
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             )
-    objcol = FloatVectorProperty(
+    objcol: FloatVectorProperty(
             name="Color",
             description="Color for material",
             default=(1.0, 1.0, 1.0, 1.0),
@@ -269,10 +279,10 @@ class AchmLamp(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
-            box.label("Lamp base")
+            box.label(text="Lamp base")
             row = box.row()
             row.prop(self, 'preset')
             row = box.row()
@@ -338,7 +348,7 @@ class AchmLamp(Operator):
                 row.prop(self, 'bz12', slider=True)
 
             box = layout.box()
-            box.label("Lampshade")
+            box.label(text="Lampshade")
             row = box.row()
             row.prop(self, 'top_height')
             row.prop(self, 'top_segments')
@@ -354,7 +364,7 @@ class AchmLamp(Operator):
                 row.prop(self, 'tr03')
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
             if self.crt_mat:
@@ -362,7 +372,7 @@ class AchmLamp(Operator):
                 row.prop(self, 'objcol')
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -389,8 +399,8 @@ class AchmLamp(Operator):
 def create_light_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
     bpy.ops.object.select_all(False)
     generate_light(self)
 
@@ -481,22 +491,22 @@ def generate_light(self):
     # Light bulb
     # ---------------------
     radbulb = 0.02
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, size=radbulb)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=16, radius=radbulb)
     mybulb = bpy.data.objects[bpy.context.active_object.name]
     mybulb.name = "Lamp_Bulb"
     mybulb.parent = myholder
     mybulb.location = (0, 0, radbulb + self.holder + 0.04)
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_emission_material(mybulb.name, True, 0.8, 0.8, 0.8, self.energy)
         set_material(mybulb, mat)
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    mybase.select = True
-    bpy.context.scene.objects.active = mybase
+    mybase.select_set(True)
+    bpy.context.view_layer.objects.active = mybase
 
     return
 
@@ -534,7 +544,7 @@ def create_light_base(objname, height, px, py, pz, segments, rings, radios, rati
 
     mymesh = bpy.data.meshes.new(objname)
     mycylinder = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(mycylinder)
+    bpy.context.collection.objects.link(mycylinder)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -543,7 +553,7 @@ def create_light_base(objname, height, px, py, pz, segments, rings, radios, rati
     mycylinder.location.y = py
     mycylinder.location.z = pz
     # Materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         rgb = objcol
         mymat = create_diffuse_material(mycylinder.name + "_material", True, rgb[0], rgb[1], rgb[2], rgb[0], rgb[1],
                                         rgb[2], 0.1)
@@ -571,7 +581,7 @@ def create_lightholder(objname, height, px, py, pz, mat):
 
     mymesh = bpy.data.meshes.new(objname)
     mycylinder = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(mycylinder)
+    bpy.context.collection.objects.link(mycylinder)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -581,7 +591,7 @@ def create_lightholder(objname, height, px, py, pz, mat):
     mycylinder.location.z = pz
 
     # Materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material(mycylinder.name + "_material", True, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.1)
         set_material(mycylinder, mat)
 
@@ -609,7 +619,7 @@ def create_lightholder_strings(objname, height, px, py, pz, radio, shadeh, mat):
 
     mymesh = bpy.data.meshes.new(objname)
     mycylinder = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(mycylinder)
+    bpy.context.collection.objects.link(mycylinder)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -627,7 +637,7 @@ def create_lightholder_strings(objname, height, px, py, pz, radio, shadeh, mat):
     box2.location = (-0.021, 0, height + 0.004)
 
     # Materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material(mycylinder.name + "_material", True, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.1)
         set_material(mycylinder, mat)
         set_material(box1, mat)
@@ -664,7 +674,7 @@ def create_lightshade(objname, height, px, py, pz, segments, radio1, radio2, ple
 
     mymesh = bpy.data.meshes.new(objname)
     mycylinder = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(mycylinder)
+    bpy.context.collection.objects.link(mycylinder)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -673,7 +683,7 @@ def create_lightshade(objname, height, px, py, pz, segments, radio1, radio2, ple
     mycylinder.location.y = py
     mycylinder.location.z = pz
     # materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mymat = create_translucent_material(mycylinder.name + "_material", True, 0.8, 0.65, 0.45, 0.8, 0.65, 0.45,
                                             opacity)
         set_material(mycylinder, mymat)
@@ -699,7 +709,7 @@ def create_box_segments(objname, height, shift):
 
     mymesh = bpy.data.meshes.new(objname)
     mysegment = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(mysegment)
+    bpy.context.collection.objects.link(mysegment)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)

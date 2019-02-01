@@ -24,7 +24,7 @@ bl_info = {
     "name": "Vertex Align",
     "author": "",
     "version": (0, 1, 7),
-    "blender": (2, 6, 1),
+    "blender": (2, 61, 0),
     "location": "View3D > Tool Shelf",
     "description": "",
     "warning": "",
@@ -117,7 +117,7 @@ class Vertex_align_original(Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.label("Axis:")
+        layout.label(text="Axis:")
 
         row = layout.row(align=True)
         row.prop(context.scene.mesh_extra_tools, "vert_align_axis",
@@ -203,7 +203,7 @@ class Vertex_align_coord_menu(Operator):
     bl_description = "Change the custom coordinates for aligning"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def_axis_coord = FloatVectorProperty(
+    def_axis_coord: FloatVectorProperty(
             name="",
             description="Enter the values of coordinates",
             default=(0.0, 0.0, 0.0),
@@ -233,7 +233,7 @@ class Vertex_align_coord_menu(Operator):
         layout = self.layout
 
         if self.using_store(context) and self.is_not_undo:
-            layout.label("Using Stored Coordinates", icon="INFO")
+            layout.label(text="Using Stored Coordinates", icon="INFO")
 
         row = layout.split(0.25)
         row.prop(self, "use_axis_coord", index=0, text="X")

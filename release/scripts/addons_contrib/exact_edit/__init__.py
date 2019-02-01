@@ -22,7 +22,7 @@ bl_info = {
     "name": "Exact Edit",
     "author": "nBurn",
     "version": (0, 2, 0),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "View3D",
     "description": "Tool for precisely setting distance, scale, and rotation",
     "wiki_url": "https://github.com/n-Burn/Exact_Edit/wiki",
@@ -51,7 +51,7 @@ class XEditPanel(bpy.types.Panel):
 
     def draw(self, context):
         #layout = self.layout
-        row = self.layout.row(True)
+        row = self.layout.row(align=True)
         col = row.column()
         col.operator("view3d.xedit_set_meas_op", text="Set Measure", icon="EDIT")
         col.operator("view3d.xedit_free_rotate_op", text="Free Rotate", icon="FORCE_MAGNETIC")

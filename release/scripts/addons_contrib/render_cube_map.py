@@ -50,7 +50,7 @@ bl_info = {
     "name": "Cube Map",
     "author": "Dalai Felinto",
     "version": (1, 0),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "Render Panel",
     "description": "",
     "warning": "",
@@ -148,6 +148,7 @@ class NodeTree:
 class View:
     def __init__(self, name, euler_rotation):
         self._name = name
+        self._collection = None
         self._scene = None
         self._scene_camera = None
         self._node = None
@@ -190,7 +191,7 @@ class View:
         self._scene_camera = self._scene.camera
 
         self._camera = bpy.data.objects.new(self._name, data)
-        self._scene.objects.link(self._camera)
+        self._collection.objects.link(self._camera)
 
         rotation = self._euler_rotation.copy()
         rotation.z += zed
@@ -202,7 +203,7 @@ class View:
         self._scene.camera = self._camera
 
     def resetCamera(self):
-        self._scene.objects.unlink(self._camera)
+        self._collection.objects.unlink(self._camera)
         bpy.data.objects.remove(self._camera)
         self._camera = None
 
@@ -281,6 +282,8 @@ def cube_map_render_init(scene, use_force=False):
 
         hashes.append(hash(scene))
         view.setScene(scene)
+        # have Dalai to look at this?
+        view._collection = bpy.context.collection  # XXX TODO better fix
 
     # create a scene from scratch
     node_tree_data = NodeTree(main_scene)
@@ -402,7 +405,7 @@ class CubeMapSetup(Operator):
     bl_label = "Cube Map Render Setup"
     bl_description = ""
 
-    action = bpy.props.EnumProperty(
+    action: bpy.props.EnumProperty(
         description="",
         items=(("SETUP", "Setup", "Created linked scenes and setup cube map"),
                ("RESET", "Reset", "Delete added scenes"),
@@ -520,54 +523,54 @@ class RENDER_PT_cube_map(Panel):
 # ############################################################
 
 class CubeMapInfo(bpy.types.PropertyGroup):
-    use_cube_map = BoolProperty(
+    use_cube_map: BoolProperty(
             name="Cube Map",
             default=False,
             )
 
-    is_temporary = BoolProperty(
+    is_temporary: BoolProperty(
             name="Temporary",
             default=False,
             )
 
-    is_enabled = BoolProperty(
+    is_enabled: BoolProperty(
             name="Enabled",
             default=False,
             )
 
     # per view settings
-    is_advanced = BoolProperty(
+    is_advanced: BoolProperty(
             name="Advanced",
             default=False,
             description="Decide which views to render",
             )
 
-    use_view_north = BoolProperty(
+    use_view_north: BoolProperty(
             name="North",
             default=True,
             )
 
-    use_view_south = BoolProperty(
+    use_view_south: BoolProperty(
             name="South",
             default=True,
             )
 
-    use_view_west = BoolProperty(
+    use_view_west: BoolProperty(
             name="West",
             default=True,
             )
 
-    use_view_east = BoolProperty(
+    use_view_east: BoolProperty(
             name="East",
             default=True,
             )
 
-    use_view_zenith = BoolProperty(
+    use_view_zenith: BoolProperty(
             name="Zenith",
             default=True,
             )
 
-    use_view_nadir = BoolProperty(
+    use_view_nadir: BoolProperty(
             name="Nadir",
             default=True,
             )

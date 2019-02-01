@@ -22,7 +22,7 @@ bl_info = {
     "name": "Dynamic Toolshelf Menu",
     "author": "meta-androcto",
     "version": (3, 0, 2),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "View3D > Spacebar Key, Dynamic Tab",
     "description": "Context Sensitive Toolshelf Menu",
     "warning": "",
@@ -2830,7 +2830,7 @@ class SetObjectMode2(Operator):
     bl_description = "I set the interactive mode of object"
     bl_options = {'REGISTER'}
 
-    mode = bpy.props.StringProperty(name="Interactive mode", default="OBJECT")
+    mode: bpy.props.StringProperty(name="Interactive mode", default="OBJECT")
 
     def execute(self, context):
         if (context.active_object):
@@ -2919,14 +2919,14 @@ def UseBrushesLists():
 class VIEW3D_MT_Space_Dynamic_Menu_Pref2(bpy.types.AddonPreferences):
     bl_idname = __name__
 
-    use_separators = bpy.props.BoolProperty(
+    use_separators: bpy.props.BoolProperty(
         name="Use Separators in the menus",
         default=True,
         description=("Use separators in the menus, a trade-off between \n"
                      "readability vs. using more space for displaying items")
     )
 
-    use_brushes_lists = bpy.props.BoolProperty(
+    use_brushes_lists: bpy.props.BoolProperty(
         name="Use compact menus for brushes",
         default=False,
         description=("Use more compact menus instead  \n"
@@ -2969,20 +2969,20 @@ class ToolshelfMenuAddonPreferences(AddonPreferences):
     bl_idname = __name__
 
 
-    category = bpy.props.StringProperty(
+    category: bpy.props.StringProperty(
             name="Category",
             description="Choose a name for the category of the panel",
             default="Dynamic",
             update=update_panel)
 
-    use_separators = bpy.props.BoolProperty(
+    use_separators: bpy.props.BoolProperty(
         name="Use Separators in the menus",
         default=False,
         description=("Use separators in the menus, a trade-off between \n"
                      "readability vs. using more space for displaying items")
     )
 
-    use_brushes_lists = bpy.props.BoolProperty(
+    use_brushes_lists: bpy.props.BoolProperty(
         name="Use compact menus for brushes",
         default=True,
         description=("Use more compact menus instead  \n"

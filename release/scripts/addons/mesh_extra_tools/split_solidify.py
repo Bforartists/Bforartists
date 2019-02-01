@@ -22,7 +22,7 @@ bl_info = {
     "name": "Split Solidify",
     "author": "zmj100, updated by zeffii to BMesh",
     "version": (0, 1, 2),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "View3D > Tool Shelf",
     "description": "",
     "warning": "",
@@ -109,7 +109,7 @@ class MESH_OT_split_solidify(Operator):
     bl_description = "Split and Solidify selected Faces"
     bl_options = {"REGISTER", "UNDO"}
 
-    distance = FloatProperty(
+    distance: FloatProperty(
             name="",
             description="Distance of the splitted Faces to the original geometry",
             default=0.4,
@@ -117,7 +117,7 @@ class MESH_OT_split_solidify(Operator):
             step=1,
             precision=3
             )
-    thickness = FloatProperty(
+    thickness: FloatProperty(
             name="",
             description="Thickness of the splitted Faces",
             default=0.04,
@@ -125,7 +125,7 @@ class MESH_OT_split_solidify(Operator):
             step=1,
             precision=3
             )
-    random_dist = FloatProperty(
+    random_dist: FloatProperty(
             name="",
             description="Randomization factor of the splitted Faces' location",
             default=0.06,
@@ -133,16 +133,16 @@ class MESH_OT_split_solidify(Operator):
             step=1,
             precision=3
             )
-    loc_random = BoolProperty(
+    loc_random: BoolProperty(
             name="Random",
             description="Randomize the locations of splitted faces",
             default=False
             )
-    del_original = BoolProperty(
+    del_original: BoolProperty(
             name="Delete original faces",
             default=True
             )
-    normal_extr = EnumProperty(
+    normal_extr: EnumProperty(
             items=(('opt0', "Face", "Solidify along Face Normals"),
                    ('opt1', "Vertex", "Solidify along Vertex Normals")),
             name="Normal",
@@ -151,18 +151,18 @@ class MESH_OT_split_solidify(Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.label("Normal:")
+        layout.label(text="Normal:")
         layout.prop(self, "normal_extr", expand=True)
         layout.prop(self, "loc_random")
 
         if not self.loc_random:
-            layout.label("Distance:")
+            layout.label(text="Distance:")
             layout.prop(self, "distance")
         elif self.loc_random:
-            layout.label("Random distance:")
+            layout.label(text="Random distance:")
             layout.prop(self, "random_dist")
 
-        layout.label("Thickness:")
+        layout.label(text="Thickness:")
         layout.prop(self, "thickness")
         layout.prop(self, "del_original")
 

@@ -18,7 +18,7 @@ bl_info = {
         "name": "HairNet",
         "author": "Rhett Jackson",
         "version": (0, 5, 1),
-        "blender": (2, 7, 4),
+        "blender": (2, 74, 0),
         "location": "Properties",
         "category": "Object",
         "description": "Creates a particle hair system with hair guides from mesh edges which start at marked seams",
@@ -292,17 +292,17 @@ def changeSelection(thisObject):
     storedActive, storedSelected = preserveSelection()
 
     bpy.ops.object.select_all(action='DESELECT')
-    bpy.context.scene.objects.active=thisObject
-    thisObject.select=True
+    bpy.context.view_layer.objects.active=thisObject
+    thisObject.select_set(True)
 
     return storedActive, storedSelected
 
 def restoreSelection(storedActive, storedSelected):
     #Restore active object and selection
-    bpy.context.scene.objects.active=storedActive
+    bpy.context.view_layer.objects.active=storedActive
     bpy.ops.object.select_all(action='DESELECT')
     for sel in storedSelected:
-        sel.select = True
+        sel.select_set(True)
 
 def removeParticleSystem(object, particleSystem):
     override = {"object": object, "particle_system": particleSystem}
@@ -422,7 +422,7 @@ class HairNet (bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Makes hair guides from mesh edges."
 
-    meshKind = StringProperty()
+    meshKind: StringProperty()
 
     targetHead = False
     headObj = 0
@@ -917,13 +917,13 @@ class HairNetPanel(bpy.types.Panel):
         if not self.headObj.hnIsEmitter:
             box = layout.box()
             row = box.row()
-            row.label("Hair Object:")
-            row.label("Master Hair System:")
+            row.label(text="Hair Object:")
+            row.label(text="Master Hair System:")
             for thisHairObject in self.hairObjList:
                 row = box.row()
                 row.prop_search(thisHairObject, 'hnMasterHairSystem',  bpy.data, "particles", text = thisHairObject.name)
                 row = box.row()
-                row.label("Guide Subdivisions:")
+                row.label(text="Guide Subdivisions:")
                 row.prop(thisHairObject, 'hnSproutHairs', text = "Subdivide U")
 #                 row.prop(thisHairObject, 'hnSubdivideHairSections', text = "Subdivide V")
 
@@ -937,14 +937,14 @@ class HairNetPanel(bpy.types.Panel):
 
 
                 row = box.row()
-                row.label("Master Hair System")
+                row.label(text="Master Hair System")
                 row = box.row()
                 row.prop_search(self.headObj, 'hnMasterHairSystem',  bpy.data, "particles", text = self.headObj.name)
 
             except:
                 pass
             row = box.row()
-            row.label("Guide Subdivisions:")
+            row.label(text="Guide Subdivisions:")
             row.prop(self.headObj, 'hnSproutHairs', text = "Subdivide U")
 
         row = layout.row()

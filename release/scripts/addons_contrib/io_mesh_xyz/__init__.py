@@ -71,56 +71,56 @@ class ImportXYZ(Operator, ImportHelper):
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".xyz"
-    filter_glob  = StringProperty(default="*.xyz", options={'HIDDEN'},)
+    filter_glob: StringProperty(default="*.xyz", options={'HIDDEN'},)
 
-    use_camera = BoolProperty(
+    use_camera: BoolProperty(
         name="Camera", default=False,
         description="Do you need a camera?")
-    use_lamp = BoolProperty(
+    use_lamp: BoolProperty(
         name="Lamp", default=False,
         description = "Do you need a lamp?")
-    ball = EnumProperty(
+    ball: EnumProperty(
         name="Type of ball",
         description="Choose ball",
         items=(('0', "NURBS", "NURBS balls"),
                ('1', "Mesh" , "Mesh balls"),
                ('2', "Meta" , "Metaballs")),
                default='0',)
-    mesh_azimuth = IntProperty(
+    mesh_azimuth: IntProperty(
         name = "Azimuth", default=32, min=1,
         description = "Number of sectors (azimuth)")
-    mesh_zenith = IntProperty(
+    mesh_zenith: IntProperty(
         name = "Zenith", default=32, min=1,
         description = "Number of sectors (zenith)")
-    scale_ballradius = FloatProperty(
+    scale_ballradius: FloatProperty(
         name = "Balls", default=1.0, min=0.0001,
         description = "Scale factor for all atom radii")
-    scale_distances = FloatProperty (
+    scale_distances: FloatProperty (
         name = "Distances", default=1.0, min=0.0001,
         description = "Scale factor for all distances")
-    atomradius = EnumProperty(
+    atomradius: EnumProperty(
         name="Type of radius",
         description="Choose type of atom radius",
         items=(('0', "Pre-defined", "Use pre-defined radius"),
                ('1', "Atomic", "Use atomic radius"),
                ('2', "van der Waals", "Use van der Waals radius")),
                default='0',)
-    use_center = BoolProperty(
+    use_center: BoolProperty(
         name = "Object to origin (first frames)", default=False,
         description = "Put the object into the global origin, the first frame only")
-    use_center_all = BoolProperty(
+    use_center_all: BoolProperty(
         name = "Object to origin (all frames)", default=True,
         description = "Put the object into the global origin, all frames")
-    datafile = StringProperty(
+    datafile: StringProperty(
         name = "", description="Path to your custom data file",
         maxlen = 256, default = "", subtype='FILE_PATH')
-    use_frames = BoolProperty(
+    use_frames: BoolProperty(
         name = "Load all frames?", default=False,
         description = "Do you want to load all frames?")
-    skip_frames = IntProperty(
+    skip_frames: IntProperty(
         name="", default=0, min=0,
         description="Number of frames you want to skip.")
-    images_per_key = IntProperty(
+    images_per_key: IntProperty(
         name="", default=1, min=1,
         description="Choose the number of images between 2 keys.")
 
@@ -203,10 +203,10 @@ class ExportXYZ(Operator, ExportHelper):
     bl_label  = "Export XYZ (*.xyz)"
     filename_ext = ".xyz"
 
-    filter_glob  = StringProperty(
+    filter_glob: StringProperty(
         default="*.xyz", options={'HIDDEN'},)
 
-    atom_xyz_export_type = EnumProperty(
+    atom_xyz_export_type: EnumProperty(
         name="Type of Objects",
         description="Choose type of objects",
         items=(('0', "All", "Export all active objects"),

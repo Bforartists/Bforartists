@@ -654,17 +654,17 @@ class Extend(Operator):
     bl_description = "Extend the selected edges of vertex pairs"
     bl_options = {'REGISTER', 'UNDO'}
 
-    di1 = BoolProperty(
+    di1: BoolProperty(
             name="Forwards",
             description="Extend the edge forwards",
             default=True
             )
-    di2 = BoolProperty(
+    di2: BoolProperty(
             name="Backwards",
             description="Extend the edge backwards",
             default=False
             )
-    length = FloatProperty(
+    length: FloatProperty(
             name="Length",
             description="Length to extend the edge",
             min=0.0, max=1024.0,
@@ -776,7 +776,7 @@ class Spline(Operator):
     bl_description = "Create a spline interplopation between two edges"
     bl_options = {'REGISTER', 'UNDO'}
 
-    alg = EnumProperty(
+    alg: EnumProperty(
             name="Spline Algorithm",
             items=[('Blender', "Blender", "Interpolation provided through mathutils.geometry"),
                     ('Hermite', "C-Spline", "C-spline interpolation"),
@@ -784,31 +784,31 @@ class Spline(Operator):
                     ('B-Spline', "B-Spline", "B-Spline interpolation")],
             default='Bezier'
             )
-    segments = IntProperty(
+    segments: IntProperty(
             name="Segments",
             description="Number of segments to use in the interpolation",
             min=2, max=4096,
             soft_max=1024,
             default=32
             )
-    flip1 = BoolProperty(
+    flip1: BoolProperty(
             name="Flip Edge",
             description="Flip the direction of the spline on Edge 1",
             default=False
             )
-    flip2 = BoolProperty(
+    flip2: BoolProperty(
             name="Flip Edge",
             description="Flip the direction of the spline on Edge 2",
             default=False
             )
-    ten1 = FloatProperty(
+    ten1: FloatProperty(
             name="Tension",
             description="Tension on Edge 1",
             min=-4096.0, max=4096.0,
             soft_min=-8.0, soft_max=8.0,
             default=1.0
             )
-    ten2 = FloatProperty(
+    ten2: FloatProperty(
             name="Tension",
             description="Tension on Edge 2",
             min=-4096.0, max=4096.0,
@@ -822,12 +822,12 @@ class Spline(Operator):
         layout.prop(self, "alg")
         layout.prop(self, "segments")
 
-        layout.label("Edge 1:")
+        layout.label(text="Edge 1:")
         split = layout.split(percentage=0.8, align=True)
         split.prop(self, "ten1")
         split.prop(self, "flip1", text="", icon="ALIGN", toggle=True)
 
-        layout.label("Edge 2:")
+        layout.label(text="Edge 2:")
         split = layout.split(percentage=0.8, align=True)
         split.prop(self, "ten2")
         split.prop(self, "flip2", text="", icon="ALIGN", toggle=True)
@@ -947,50 +947,50 @@ class Ortho(Operator):
     bl_description = "Creates new edges within an angle from vertices of selected edges"
     bl_options = {'REGISTER', 'UNDO'}
 
-    vert1 = BoolProperty(
+    vert1: BoolProperty(
             name="Vertice 1",
             description="Enable edge creation for Vertice 1",
             default=True
             )
-    vert2 = BoolProperty(
+    vert2: BoolProperty(
             name="Vertice 2",
             description="Enable edge creation for Vertice 2",
             default=True
             )
-    vert3 = BoolProperty(
+    vert3: BoolProperty(
             name="Vertice 3",
             description="Enable edge creation for Vertice 3",
             default=True
             )
-    vert4 = BoolProperty(
+    vert4: BoolProperty(
             name="Vertice 4",
             description="Enable edge creation for Vertice 4",
             default=True
             )
-    pos = BoolProperty(
+    pos: BoolProperty(
             name="Positive",
             description="Enable creation of positive direction edges",
             default=True
             )
-    neg = BoolProperty(
+    neg: BoolProperty(
             name="Negative",
             description="Enable creation of negative direction edges",
             default=True
             )
-    angle = FloatProperty(
+    angle: FloatProperty(
             name="Angle",
             description="Define the angle off of the originating edge",
             min=0.0, max=180.0,
             default=90.0
             )
-    length = FloatProperty(
+    length: FloatProperty(
             name="Length",
             description="Length of created edges",
             min=0.0, max=1024.0,
             default=1.0
             )
     # For when only one edge is selected (Possible feature to be testd):
-    plane = EnumProperty(
+    plane: EnumProperty(
             name="Plane",
             items=[("XY", "X-Y Plane", "Use the X-Y plane as the plane of creation"),
                    ("XZ", "X-Z Plane", "Use the X-Z plane as the plane of creation"),
@@ -1001,7 +1001,7 @@ class Ortho(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Creation:")
+        layout.label(text="Creation:")
         split = layout.split()
         col = split.column()
 
@@ -1012,7 +1012,7 @@ class Ortho(Operator):
         col.prop(self, "vert3", toggle=True)
         col.prop(self, "vert4", toggle=True)
 
-        layout.label("Direction:")
+        layout.label(text="Direction:")
         row = layout.row(align=False)
         row.alignment = 'EXPAND'
         row.prop(self, "pos")
@@ -1146,7 +1146,7 @@ class Shaft(Operator):
     shaftType = 0
 
     # For tracking if the user has changed selection:
-    last_edge = IntProperty(
+    last_edge: IntProperty(
             name="Last Edge",
             description="Tracks if user has changed selected edges",
             min=0, max=1,
@@ -1154,36 +1154,36 @@ class Shaft(Operator):
             )
     last_flip = False
 
-    edge = IntProperty(
+    edge: IntProperty(
             name="Edge",
             description="Edge to shaft around",
             min=0, max=1,
             default=0
             )
-    flip = BoolProperty(
+    flip: BoolProperty(
             name="Flip Second Edge",
             description="Flip the perceived direction of the second edge",
             default=False
             )
-    radius = FloatProperty(
+    radius: FloatProperty(
             name="Radius",
             description="Shaft Radius",
             min=0.0, max=1024.0,
             default=1.0
             )
-    start = FloatProperty(
+    start: FloatProperty(
             name="Starting Angle",
             description="Angle to start the shaft at",
             min=-360.0, max=360.0,
             default=0.0
             )
-    finish = FloatProperty(
+    finish: FloatProperty(
             name="Ending Angle",
             description="Angle to end the shaft at",
             min=-360.0, max=360.0,
             default=360.0
             )
-    segments = IntProperty(
+    segments: IntProperty(
             name="Shaft Segments",
             description="Number of segments to use in the shaft",
             min=1, max=4096,
@@ -1451,22 +1451,22 @@ class Slice(Operator):
     bl_description = "Cut edges at the plane defined by a selected face"
     bl_options = {'REGISTER', 'UNDO'}
 
-    make_copy = BoolProperty(
+    make_copy: BoolProperty(
             name="Make Copy",
             description="Make new vertices at intersection points instead of splitting the edge",
             default=False
             )
-    rip = BoolProperty(
+    rip: BoolProperty(
             name="Rip",
             description="Split into two edges that DO NOT share an intersection vertex",
             default=True
             )
-    pos = BoolProperty(
+    pos: BoolProperty(
             name="Positive",
             description="Remove the portion on the side of the face normal",
             default=False
             )
-    neg = BoolProperty(
+    neg: BoolProperty(
             name="Negative",
             description="Remove the portion on the side opposite of the face normal",
             default=False
@@ -1478,7 +1478,7 @@ class Slice(Operator):
         layout.prop(self, "make_copy")
         if not self.make_copy:
             layout.prop(self, "rip")
-            layout.label("Remove Side:")
+            layout.label(text="Remove Side:")
             layout.prop(self, "pos")
             layout.prop(self, "neg")
 
@@ -1641,7 +1641,7 @@ class Project(Operator):
                       "(Active is projected onto the rest)")
     bl_options = {'REGISTER', 'UNDO'}
 
-    make_copy = BoolProperty(
+    make_copy: BoolProperty(
             name="Make Copy",
             description="Make duplicates of the vertices instead of altering them",
             default=False
@@ -1719,22 +1719,22 @@ class Project_End(Operator):
                       "edges closest to a plane onto that plane")
     bl_options = {'REGISTER', 'UNDO'}
 
-    make_copy = BoolProperty(
+    make_copy: BoolProperty(
             name="Make Copy",
             description="Make a duplicate of the vertice instead of moving it",
             default=False
             )
-    keep_length = BoolProperty(
+    keep_length: BoolProperty(
             name="Keep Edge Length",
             description="Maintain edge lengths",
             default=False
             )
-    use_force = BoolProperty(
+    use_force: BoolProperty(
             name="Use opposite vertices",
             description="Force the usage of the vertices at the other end of the edge",
             default=False
             )
-    use_normal = BoolProperty(
+    use_normal: BoolProperty(
             name="Project along normal",
             description="Use the plane's normal as the projection direction",
             default=False

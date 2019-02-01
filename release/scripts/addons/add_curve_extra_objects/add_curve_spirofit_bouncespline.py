@@ -825,7 +825,7 @@ class CatenaryCurve(Operator):
 
         try:
             ob1 = bpy.context.active_object
-            ob1.select = False
+            ob1.select_set(False)
             ob2 = bpy.context.selected_objects[0]
             start = ob1.location
             end = ob2.location

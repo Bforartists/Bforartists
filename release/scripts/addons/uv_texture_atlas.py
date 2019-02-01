@@ -275,30 +275,30 @@ class TexAtl_RunFinish(Operator):
 
 
 class TexAtl_UVLayers(PropertyGroup):
-    name = StringProperty(default="")
+    name: StringProperty(default="")
 
 
 class TexAtl_VertexGroups(PropertyGroup):
-    name = StringProperty(default="")
+    name: StringProperty(default="")
 
 
 class TexAtl_Groups(PropertyGroup):
-    name = StringProperty(default="")
+    name: StringProperty(default="")
 
 
 class TexAtl_MSLightmapGroups(PropertyGroup):
 
-    name = StringProperty(default="")
-    bake = BoolProperty(default=True)
+    name: StringProperty(default="")
+    bake: BoolProperty(default=True)
 
-    unwrap_type = EnumProperty(
+    unwrap_type: EnumProperty(
         name="unwrap_type",
         items=(('0', 'Smart_Unwrap', 'Smart_Unwrap'),
                ('1', 'Lightmap', 'Lightmap'),
                ('2', 'No_Unwrap', 'No_Unwrap'),
                ),
     )
-    resolutionX = EnumProperty(
+    resolutionX: EnumProperty(
         name="resolutionX",
         items=(('256', '256', ''),
                ('512', '512', ''),
@@ -310,7 +310,7 @@ class TexAtl_MSLightmapGroups(PropertyGroup):
                ),
         default='1024'
     )
-    resolutionY = EnumProperty(
+    resolutionY: EnumProperty(
         name="resolutionY",
         items=(('256', '256', ''),
                ('512', '512', ''),
@@ -322,25 +322,25 @@ class TexAtl_MSLightmapGroups(PropertyGroup):
                ),
         default='1024'
     )
-    autoUnwrapPrecision = FloatProperty(
+    autoUnwrapPrecision: FloatProperty(
         name="autoUnwrapPrecision",
         default=0.01,
         min=0.001,
         max=10
     )
-    template_list_controls = StringProperty(
+    template_list_controls: StringProperty(
         default="bake",
         options={"HIDDEN"},
     )
 
 
 class TexAtl_MergedObjects(PropertyGroup):
-    name = StringProperty()
-    vertex_groups = CollectionProperty(
+    name: StringProperty()
+    vertex_groups: CollectionProperty(
         type=TexAtl_VertexGroups,
     )
-    groups = CollectionProperty(type=TexAtl_Groups)
-    uv_layers = CollectionProperty(type=TexAtl_UVLayers)
+    groups: CollectionProperty(type=TexAtl_Groups)
+    uv_layers: CollectionProperty(type=TexAtl_UVLayers)
 
 
 class TexAtl_AddSelectedToGroup(Operator):
@@ -389,7 +389,7 @@ class TexAtl_SelectGroup(Operator):
         bpy.ops.object.select_all(action='DESELECT')
         obj_group = bpy.data.collections[group_name]
         for object in obj_group.objects:
-            object.select = True
+            object.select_set(True)
         return {'FINISHED'}
 
 
@@ -404,6 +404,7 @@ class TexAtl_RemoveFromGroup(Operator):
 
     def execute(self, context):
         scene = context.scene
+        view_layer = context.view_layer
 
         # Check if group exists
         if check_group_exist(self, context) is False:
@@ -417,7 +418,7 @@ class TexAtl_RemoveFromGroup(Operator):
 
             obj_group = bpy.data.collections[group_name]
             for object in context.selected_objects:
-                scene.objects.active = object
+                view_layer.objects.active = object
 
                 if object.type == 'MESH' and object.name in obj_group.objects:
 
@@ -440,6 +441,7 @@ class TexAtl_RemoveOtherUVs(Operator):
 
     def execute(self, context):
         scene = context.scene
+        view_layer = context.view_layer
         group_name = scene.ms_lightmap_groups[
             scene.ms_lightmap_groups_index].name
 
@@ -455,7 +457,7 @@ class TexAtl_RemoveOtherUVs(Operator):
 
         # Remove other UVs of selected objects
         for object in context.selected_objects:
-            scene.objects.active = object
+            view_layer.objects.active = object
             if object.type == 'MESH' and object.name in obj_group.objects:
 
                 # remove UVs
@@ -478,7 +480,7 @@ class TexAtl_AddLightmapGroup(Operator):
     bl_label = "add Lightmap"
     bl_description = "Adds a new Lightmap Group"
 
-    name = StringProperty(name="Group Name", default='TextureAtlas')
+    name: StringProperty(name="Group Name", default='TextureAtlas')
 
     def execute(self, context):
         scene = context.scene
@@ -537,9 +539,9 @@ class TexAtl_CreateLightmap(Operator):
     bl_label = "TextureAtlas - Generate Lightmap"
     bl_description = "Generates a Lightmap"
 
-    group_name = StringProperty(default='')
-    resolutionX = IntProperty(default=1024)
-    resolutionY = IntProperty(default=1024)
+    group_name: StringProperty(default='')
+    resolutionX: IntProperty(default=1024)
+    resolutionY: IntProperty(default=1024)
 
     def execute(self, context):
         scene = context.scene
@@ -598,26 +600,28 @@ class TexAtl_MergeObjects(Operator):
     bl_label = "TextureAtlas - TexAtl_MergeObjects"
     bl_description = "Merges Objects and stores Origins"
 
-    group_name = StringProperty(default='')
-    unwrap = BoolProperty(default=False)
+    group_name: StringProperty(default='')
+    unwrap: BoolProperty(default=False)
 
     def execute(self, context):
+        collection = context.collection
         scene = context.scene
+        view_layer = context.view_layer
 
         # objToDelete = None
         bpy.ops.object.select_all(action='DESELECT')
         ob_merged_old = bpy.data.objects.get(self.group_name + "_mergedObject")
         if ob_merged_old is not None:
-            ob_merged_old.select = True
-            scene.objects.active = ob_merged_old
+            ob_merged_old.select_set(True)
+            view_layer.objects.active = ob_merged_old
             bpy.ops.object.delete(use_global=True)
 
         me = bpy.data.meshes.new(self.group_name + '_mergedObject')
         ob_merge = bpy.data.objects.new(self.group_name + '_mergedObject', me)
         ob_merge.location = scene.cursor_location   # position object at 3d-cursor
-        scene.objects.link(ob_merge)                # Link object to scene
+        collection.objects.link(ob_merge)           # Link object to collection
         me.update()
-        ob_merge.select = False
+        ob_merge.select_set(False)
 
         bpy.ops.object.select_all(action='DESELECT')
 
@@ -633,26 +637,26 @@ class TexAtl_MergeObjects(Operator):
             object.hide_select = False
 
             bpy.ops.object.select_all(action='DESELECT')
-            object.select = True
+            object.select_set(True)
 
             # activate lightmap uv if existent
             for uv in object.data.uv_textures:
                 if uv.name == self.group_name:
                     uv.active = True
-                    scene.objects.active = object
+                    view_layer.objects.active = object
 
             # Duplicate Temp Object
             bpy.ops.object.select_all(action='DESELECT')
-            object.select = True
-            scene.objects.active = object
+            object.select_set(True)
+            view_layer.objects.active = object
             bpy.ops.object.duplicate(linked=False, mode='TRANSLATION')
-            activeNowObject = scene.objects.active
-            activeNowObject.select = True
+            activeNowObject = view_layer.objects.active
+            activeNowObject.select_set(True)
 
             # hide render of original mesh
             object.hide_render = True
             object.hide = True
-            object.select = False
+            object.select_set(False)
             object.hide_select = isObjHideSelect
 
             # remove unused UV
@@ -669,7 +673,7 @@ class TexAtl_MergeObjects(Operator):
             UVLIST.clear()  # clear array
 
             # create vertex groups for each selected object
-            scene.objects.active = activeNowObject
+            view_layer.objects.active = activeNowObject
             vgroup = activeNowObject.vertex_groups.new(name=object.name)
             vgroup.add(
                 list(range(len(activeNowObject.data.vertices))), weight=1.0, type='ADD')
@@ -690,17 +694,17 @@ class TexAtl_MergeObjects(Operator):
 
             # merge objects together
             bpy.ops.object.select_all(action='DESELECT')
-            activeNowObject.select = True
-            ob_merge.select = True
-            scene.objects.active = ob_merge
+            activeNowObject.select_set(True)
+            ob_merge.select_set(True)
+            view_layer.objects.active = ob_merge
             bpy.ops.object.join()
 
         mergeList.clear() # Clear Merge List
 
         # make Unwrap
         bpy.ops.object.select_all(action='DESELECT')
-        ob_merge.select = True
-        scene.objects.active = ob_merge
+        ob_merge.select_set(True)
+        view_layer.objects.active = ob_merge
 
         # Unfide all faces
         bpy.ops.object.mode_set(mode='EDIT')
@@ -733,30 +737,31 @@ class TexAtl_SeparateObjects(Operator):
     bl_label = "TextureAtlas - Separate Objects"
     bl_description = "Separates Objects and restores Origin"
 
-    group_name = StringProperty(default='')
+    group_name: StringProperty(default='')
 
     def execute(self, context):
         scene = context.scene
+        view_layer = context.view_layer
 
         ob_merged = bpy.data.objects.get(self.group_name + "_mergedObject")
         if ob_merged is not None:
 
-            # if scene.objects.active is not None:
+            # if view_layer.objects.active is not None:
                 # bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
             bpy.ops.object.select_all(action='DESELECT')
             ob_merged.hide = False
-            ob_merged.select = True
+            ob_merged.select_set(True)
             groupSeparate = bpy.data.collections.new(ob_merged.name)
             groupSeparate.objects.link(ob_merged)
-            ob_merged.select = False
+            ob_merged.select_set(False)
 
             doUnhidePolygons = False
             for ms_obj in ob_merged.ms_merged_objects:
                 # select vertex groups and separate group from merged
                 # object
                 bpy.ops.object.select_all(action='DESELECT')
-                ob_merged.select = True
-                scene.objects.active = ob_merged
+                ob_merged.select_set(True)
+                view_layer.objects.active = ob_merged
 
                 bpy.ops.object.mode_set(mode='EDIT')
                 if doUnhidePolygons is False:
@@ -770,7 +775,7 @@ class TexAtl_SeparateObjects(Operator):
                 bpy.ops.object.vertex_group_select()
                 bpy.ops.mesh.separate(type='SELECTED')
                 bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-                # scene.objects.active.select = False
+                # view_layer.objects.active.select_set(False)
 
                 # find separated object
                 ob_separeted = None
@@ -781,27 +786,27 @@ class TexAtl_SeparateObjects(Operator):
 
                 # Copy UV Coordinates to the original mesh
                 if ms_obj.name in scene.objects:
-                    ob_merged.select = False
+                    ob_merged.select_set(False)
                     ob_original = scene.objects[ms_obj.name]
                     isOriginalToSelect = ob_original.hide_select
                     ob_original.hide_select = False
                     ob_original.hide = False
-                    ob_original.select = True
-                    scene.objects.active = ob_separeted
+                    ob_original.select_set(True)
+                    view_layer.objects.active = ob_separeted
                     bpy.ops.object.join_uvs()
                     ob_original.hide_render = False
-                    ob_original.select = False
+                    ob_original.select_set(False)
                     ob_original.hide_select = isOriginalToSelect
                     ob_original.data.update()
 
                 # delete separated object
                 bpy.ops.object.select_all(action='DESELECT')
-                ob_separeted.select = True
+                ob_separeted.select_set(True)
                 bpy.ops.object.delete(use_global=False)
 
             # delete duplicated object
             bpy.ops.object.select_all(action='DESELECT')
-            ob_merged.select = True
+            ob_merged.select_set(True)
             bpy.ops.object.delete(use_global=False)
 
         return{'FINISHED'}

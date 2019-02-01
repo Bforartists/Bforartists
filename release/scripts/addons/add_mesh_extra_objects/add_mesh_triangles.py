@@ -74,33 +74,33 @@ class MakeTriangle(Operator):
             ]
 
     # add definitions for some manipulation buttons
-    flipX = BoolProperty(
+    flipX: BoolProperty(
             name="Flip X sign",
             description="Draw on the other side of the X axis (Mirror on Y axis)",
             default=False
             )
-    flipY = BoolProperty(
+    flipY: BoolProperty(
             name="Flip Y sign",
             description="Draw on the other side of the Y axis (Mirror on X axis)",
             default=False
             )
-    scale = FloatProperty(
+    scale: FloatProperty(
             name="Scale",
             description="Triangle scale",
             default=1.0,
             min=1.0
             )
-    triangleType = EnumProperty(
+    triangleType: EnumProperty(
             items=triangleTypeList,
             name="Type",
             description="Triangle Type"
             )
-    triangleFace = EnumProperty(
+    triangleFace: EnumProperty(
             items=triangleFaceList,
             name="Face types",
             description="Triangle Face Types"
             )
-    at_3Dcursor = BoolProperty(
+    at_3Dcursor: BoolProperty(
             name="Use 3D Cursor",
             description="Draw the triangle where the 3D cursor is",
             default=False
@@ -277,17 +277,17 @@ class MakeTriangle(Operator):
 
             NewMesh.update()
             NewObj = bpy.data.objects.new("Triangle", NewMesh)
-            context.scene.objects.link(NewObj)
+            context.collection.objects.link(NewObj)
 
             # before doing the deselect make sure edit mode isn't active
             exitEditMode()
             bpy.ops.object.select_all(action="DESELECT")
-            NewObj.select = True
-            context.scene.objects.active = NewObj
+            NewObj.select_set(True)
+            context.view_layer.objects.active = NewObj
 
             if self.at_3Dcursor is True:
                 # we'll need to be sure there is actually an object selected
-                if NewObj.select is True:
+                if NewObj.select_get() is True:
                     # we also have to check if we're considered to be in 3D View (view3d)
                     if bpy.ops.view3d.snap_selected_to_cursor.poll() is True:
                         bpy.ops.view3d.snap_selected_to_cursor()

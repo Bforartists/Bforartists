@@ -54,7 +54,7 @@ from bpy.props import (
 
 # global properties for the script, mainly for UI
 class LightFieldPropertyGroup(PropertyGroup):
-    angle = FloatProperty(
+    angle: FloatProperty(
             name="Angle",
             # 40 degrees
             default=0.69813170079,
@@ -65,38 +65,38 @@ class LightFieldPropertyGroup(PropertyGroup):
             subtype='ANGLE',
             description="Field of view of camera and angle of beam for spotlights"
             )
-    row_length = IntProperty(
+    row_length: IntProperty(
             name="Row Length",
             default=1,
             min=1,
             description="The number of cameras/lights in one row"
             )
-    create_handler = BoolProperty(
+    create_handler: BoolProperty(
             name="Handler",
             default=True,
             description="Creates an empty object, to which the cameras and spotlights are parented to"
             )
-    do_camera = BoolProperty(
+    do_camera: BoolProperty(
             name="Create Camera",
             default=True,
             description="A light field camera is created"
             )
-    animate_camera = BoolProperty(
+    animate_camera: BoolProperty(
             name="Animate Camera",
             default=True,
             description="Animates a single camera, so not multiple cameras get created"
             )
-    do_projection = BoolProperty(
+    do_projection: BoolProperty(
             name="Create Projector",
             default=False,
             description="A light field projector is created"
             )
-    texture_path = StringProperty(
+    texture_path: StringProperty(
             name="Texture Path",
             description="From this path textures for the spotlights will be loaded",
             subtype='DIR_PATH'
             )
-    light_intensity = FloatProperty(
+    light_intensity: FloatProperty(
             name="Light Intensity",
             default=2,
             min=0,
@@ -104,7 +104,7 @@ class LightFieldPropertyGroup(PropertyGroup):
             description="Total intensity of all lamps"
             )
     # blending of the spotlights
-    spot_blend = FloatProperty(
+    spot_blend: FloatProperty(
             name="Blend",
             default=0,
             min=0,
@@ -113,7 +113,7 @@ class LightFieldPropertyGroup(PropertyGroup):
             description="Blending of the spotlights"
             )
     # spacing in pixels on the focal plane
-    spacing = IntProperty(
+    spacing: IntProperty(
             name="Spacing",
             default=10,
             min=0,
@@ -150,7 +150,7 @@ class LFTPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = StringProperty(
+    category: StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",

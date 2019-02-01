@@ -84,42 +84,42 @@ class MExtrude(Operator):
                       "Scaling, Variation, Randomization")
     bl_options = {"REGISTER", "UNDO", "PRESET"}
 
-    off = FloatProperty(
+    off: FloatProperty(
             name="Offset",
             soft_min=0.001, soft_max=10,
             min=-100, max=100,
             default=1.0,
             description="Translation"
             )
-    offx = FloatProperty(
+    offx: FloatProperty(
             name="Loc X",
             soft_min=-10.0, soft_max=10.0,
             min=-100.0, max=100.0,
             default=0.0,
             description="Global Translation X"
             )
-    offy = FloatProperty(
+    offy: FloatProperty(
             name="Loc Y",
             soft_min=-10.0, soft_max=10.0,
             min=-100.0, max=100.0,
             default=0.0,
             description="Global Translation Y"
             )
-    offz = FloatProperty(
+    offz: FloatProperty(
             name="Loc Z",
             soft_min=-10.0, soft_max=10.0,
             min=-100.0, max=100.0,
             default=0.0,
             description="Global Translation Z"
             )
-    rotx = FloatProperty(
+    rotx: FloatProperty(
             name="Rot X",
             min=-85, max=85,
             soft_min=-30, soft_max=30,
             default=0,
             description="X Rotation"
             )
-    roty = FloatProperty(
+    roty: FloatProperty(
             name="Rot Y",
             min=-85, max=85,
             soft_min=-30,
@@ -127,96 +127,96 @@ class MExtrude(Operator):
             default=0,
             description="Y Rotation"
             )
-    rotz = FloatProperty(
+    rotz: FloatProperty(
             name="Rot Z",
             min=-85, max=85,
             soft_min=-30, soft_max=30,
             default=-0,
             description="Z Rotation"
             )
-    nrotx = FloatProperty(
+    nrotx: FloatProperty(
             name="N Rot X",
             min=-85, max=85,
             soft_min=-30, soft_max=30,
             default=0,
             description="Normal X Rotation"
             )
-    nroty = FloatProperty(
+    nroty: FloatProperty(
             name="N Rot Y",
             min=-85, max=85,
             soft_min=-30, soft_max=30,
             default=0,
             description="Normal Y Rotation"
             )
-    nrotz = FloatProperty(
+    nrotz: FloatProperty(
             name="N Rot Z",
             min=-85, max=85,
             soft_min=-30, soft_max=30,
             default=-0,
             description="Normal Z Rotation"
             )
-    sca = FloatProperty(
+    sca: FloatProperty(
             name="Scale",
             min=0.01, max=10,
             soft_min=0.5, soft_max=1.5,
             default=1.0,
             description="Scaling of the selected faces after extrusion"
             )
-    var1 = FloatProperty(
+    var1: FloatProperty(
             name="Offset Var", min=-10, max=10,
             soft_min=-1, soft_max=1,
             default=0,
             description="Offset variation"
             )
-    var2 = FloatProperty(
+    var2: FloatProperty(
             name="Rotation Var",
             min=-10, max=10,
             soft_min=-1, soft_max=1,
             default=0,
             description="Rotation variation"
             )
-    var3 = FloatProperty(
+    var3: FloatProperty(
             name="Scale Noise",
             min=-10, max=10,
             soft_min=-1, soft_max=1,
             default=0,
             description="Scaling noise"
             )
-    var4 = IntProperty(
+    var4: IntProperty(
             name="Probability",
             min=0, max=100,
             default=100,
             description="Probability, chance of extruding a face"
             )
-    num = IntProperty(
+    num: IntProperty(
             name="Repeat",
             min=1, max=500,
             soft_max=100,
             default=5,
             description="Repetitions"
             )
-    ran = IntProperty(
+    ran: IntProperty(
             name="Seed",
             min=-9999, max=9999,
             default=0,
             description="Seed to feed random values"
             )
-    opt1 = BoolProperty(
+    opt1: BoolProperty(
             name="Polygon coordinates",
             default=True,
             description="Polygon coordinates, Object coordinates"
             )
-    opt2 = BoolProperty(
+    opt2: BoolProperty(
             name="Proportional offset",
             default=False,
             description="Scale * Offset"
             )
-    opt3 = BoolProperty(
+    opt3: BoolProperty(
             name="Per step rotation noise",
             default=False,
             description="Per step rotation noise, Initial rotation noise"
             )
-    opt4 = BoolProperty(
+    opt4: BoolProperty(
             name="Per step scale noise",
             default=False,
             description="Per step scale noise, Initial scale noise"

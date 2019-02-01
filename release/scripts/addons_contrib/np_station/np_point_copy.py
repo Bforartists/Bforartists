@@ -246,9 +246,9 @@ class NPPCPrepareContext(bpy.types.Operator):
     def execute(self, context):
         take = NP020PC.take
         place = NP020PC.place
-        take.select = True
-        place.select = True
-        bpy.context.scene.objects.active = place
+        take.select_set(True)
+        place.select_set(True)
+        bpy.context.view_layer.objects.active = place
         bpy.context.tool_settings.use_snap = False
         bpy.context.tool_settings.snap_element = 'VERTEX'
         bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -283,22 +283,22 @@ class NPPCRunTranslate(bpy.types.Operator):
         elif event.type in ('LEFTMOUSE','RET','NUMPAD_ENTER') and event.value == 'RELEASE':
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             if flag == 'RUNTRANSZERO':
-                take.select = False
-                place.select = False
+                take.select_set(False)
+                place.select_set(False)
                 NP020PC.firsttake3d = copy.deepcopy(take.location)
                 for ob in selob:
-                   ob.select = True
+                   ob.select_set(True)
                 bpy.ops.object.duplicate()
                 NP020PC.nextob = bpy.context.selected_objects
                 NP020PC.prevob = selob
-                place.select = True
+                place.select_set(True)
                 NP020PC.flag = 'RUNTRANSFIRST_break'
             elif flag == 'RUNTRANSFIRST':
                 NP020PC.deltavec_safe = copy.deepcopy(NP020PC.deltavec)
                 np_print('deltavec_safe = ', NP020PC.deltavec_safe)
                 NP020PC.ar13d = copy.deepcopy(take.location)
                 NP020PC.ar23d = copy.deepcopy(place.location)
-                place.select = False
+                place.select_set(False)
                 bpy.ops.object.duplicate()
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
@@ -307,14 +307,14 @@ class NPPCRunTranslate(bpy.types.Operator):
                 NP020PC.nextob = bpy.context.selected_objects
                 NP020PC.selob = nextob
                 take.location = copy.deepcopy(place.location)
-                place.select = True
+                place.select_set(True)
                 NP020PC.flag = 'RUNTRANSNEXT_break'
             elif flag == 'RUNTRANSNEXT':
                 NP020PC.deltavec_safe = copy.deepcopy(NP020PC.deltavec)
                 np_print('deltavec_safe = ', NP020PC.deltavec_safe)
                 NP020PC.ar13d = copy.deepcopy(take.location)
                 NP020PC.ar23d = copy.deepcopy(place.location)
-                place.select = False
+                place.select_set(False)
                 bpy.ops.object.duplicate()
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
@@ -323,7 +323,7 @@ class NPPCRunTranslate(bpy.types.Operator):
                 NP020PC.nextob = bpy.context.selected_objects
                 NP020PC.selob = nextob
                 take.location = copy.deepcopy(place.location)
-                place.select = True
+                place.select_set(True)
                 NP020PC.flag = 'RUNTRANSNEXT_break'
             else:
                 np_print('UNKNOWN FLAG')
@@ -368,21 +368,21 @@ class NPPCRunTranslate(bpy.types.Operator):
             if flag == 'RUNTRANSZERO':
                 NP020PC.flag = 'EXIT'
             elif flag == 'RUNTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in nextob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.selob = prevob
                 NP020PC.flag = 'EXIT'
             elif flag == 'RUNTRANSNEXT':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in nextob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.selob = prevob
                 NP020PC.flag = 'EXIT'
             else:
@@ -396,21 +396,21 @@ class NPPCRunTranslate(bpy.types.Operator):
             if flag == 'RUNTRANSZERO':
                 NP020PC.flag = 'EXIT'
             elif flag == 'RUNTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.flag = 'EXIT'
             elif flag == 'RUNTRANSNEXT':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 NP020PC.selob = prevob
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.flag = 'EXIT'
             else:
                 np_print('UNKNOWN FLAG')
@@ -640,9 +640,9 @@ class NPPCNavTranslate(bpy.types.Operator):
                 nextob = NP020PC.nextob
                 for ob in nextob:
                     ob.hide = False
-                place.select = False
+                place.select_set(False)
                 bpy.ops.transform.translate(value = navdelta)
-                place.select = True
+                place.select_set(True)
                 NP020PC.flag = 'RUNTRANSFIRST'
             elif flag == 'NAVTRANSNEXT':
                 takeloc3d = NP020PC.takeloc3d
@@ -651,9 +651,9 @@ class NPPCNavTranslate(bpy.types.Operator):
                 nextob = NP020PC.nextob
                 for ob in nextob:
                     ob.hide = False
-                place.select = False
+                place.select_set(False)
                 bpy.ops.transform.translate(value = navdelta)
-                place.select = True
+                place.select_set(True)
                 NP020PC.flag = 'RUNTRANSNEXT'
             else:
                 np_print('UNKNOWN FLAG')
@@ -670,27 +670,27 @@ class NPPCNavTranslate(bpy.types.Operator):
             take.hide = False
             place.hide = False
             if flag == 'NAVTRANSZERO':
-                place.select = False
+                place.select_set(False)
                 NP020PC.flag = 'EXIT'
             elif flag == 'NAVTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 for ob in nextob:
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.flag = 'EXIT'
             elif flag == 'NAVTRANSNEXT':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 for ob in nextob:
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 NP020PC.flag = 'ARRAYTRANS'
             else:
@@ -704,20 +704,20 @@ class NPPCNavTranslate(bpy.types.Operator):
             take.hide = False
             place.hide = False
             if flag == 'NAVTRANSZERO':
-                place.select = False
+                place.select_set(False)
                 NP020PC.flag = 'EXIT'
             elif flag == 'NAVTRANSFIRST':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 for ob in nextob:
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.flag = 'EXIT'
             elif flag == 'NAVTRANSNEXT':
-                place.select = False
+                place.select_set(False)
                 prevob = NP020PC.prevob
                 nextob = NP020PC.nextob
                 NP020PC.selob = prevob
@@ -725,7 +725,7 @@ class NPPCNavTranslate(bpy.types.Operator):
                     ob.hide = False
                 bpy.ops.object.delete('EXEC_DEFAULT')
                 for ob in prevob:
-                    ob.select = True
+                    ob.select_set(True)
                 NP020PC.flag = 'EXIT'
             else:
                 np_print('UNKNOWN FLAG')
@@ -1137,14 +1137,14 @@ class NPPCRestoreContext(bpy.types.Operator):
         take = NP020PC.take
         place = NP020PC.place
         bpy.ops.object.select_all(action='DESELECT')
-        take.select = True
-        place.select = True
+        take.select_set(True)
+        place.select_set(True)
         bpy.ops.object.delete('EXEC_DEFAULT')
         lenselob = len(selob)
         for i, ob in enumerate(selob):
-            ob.select = True
+            ob.select_set(True)
             if i == lenselob-1:
-                bpy.context.scene.objects.active = ob
+                bpy.context.view_layer.objects.active = ob
         NP020PC.take = None
         NP020PC.place = None
         NP020PC.takeloc3d = (0.0,0.0,0.0)

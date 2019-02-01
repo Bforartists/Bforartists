@@ -74,87 +74,87 @@ class ImportPDB(Operator, ImportHelper):
     bl_options = {'PRESET', 'UNDO'}
 
     filename_ext = ".pdb"
-    filter_glob  = StringProperty(default="*.pdb", options={'HIDDEN'},)
+    filter_glob: StringProperty(default="*.pdb", options={'HIDDEN'},)
 
-    use_center = BoolProperty(
+    use_center: BoolProperty(
         name = "Object to origin", default=True,
         description = "Put the object into the global origin")
-    use_camera = BoolProperty(
+    use_camera: BoolProperty(
         name="Camera", default=False,
         description="Do you need a camera?")
-    use_light = BoolProperty(
+    use_light: BoolProperty(
         name="Lamp", default=False,
         description = "Do you need a lamp?")
-    ball = EnumProperty(
+    ball: EnumProperty(
         name="Type of ball",
         description="Choose ball",
         items=(('0', "NURBS", "NURBS balls"),
                ('1', "Mesh" , "Mesh balls"),
                ('2', "Meta" , "Metaballs")),
                default='0',)
-    mesh_azimuth = IntProperty(
+    mesh_azimuth: IntProperty(
         name = "Azimuth", default=32, min=1,
         description = "Number of sectors (azimuth)")
-    mesh_zenith = IntProperty(
+    mesh_zenith: IntProperty(
         name = "Zenith", default=32, min=1,
         description = "Number of sectors (zenith)")
-    scale_ballradius = FloatProperty(
+    scale_ballradius: FloatProperty(
         name = "Balls", default=1.0, min=0.0001,
         description = "Scale factor for all atom radii")
-    scale_distances = FloatProperty (
+    scale_distances: FloatProperty (
         name = "Distances", default=1.0, min=0.0001,
         description = "Scale factor for all distances")
-    atomradius = EnumProperty(
+    atomradius: EnumProperty(
         name="Type",
         description="Choose type of atom radius",
         items=(('0', "Pre-defined", "Use pre-defined radius"),
                ('1', "Atomic", "Use atomic radius"),
                ('2', "van der Waals", "Use van der Waals radius")),
                default='0',)
-    use_sticks = BoolProperty(
+    use_sticks: BoolProperty(
         name="Use sticks", default=True,
         description="Do you want to display the sticks?")
-    use_sticks_type = EnumProperty(
+    use_sticks_type: EnumProperty(
         name="Type",
         description="Choose type of stick",
         items=(('0', "Dupliverts", "Use dupliverts structures"),
                ('1', "Skin", "Use skin and subdivision modifier"),
                ('2', "Normal", "Use simple cylinders")),
                default='0',)
-    sticks_subdiv_view  = IntProperty(
+    sticks_subdiv_view: IntProperty(
         name = "SubDivV", default=2, min=1,
         description="Number of subdivisions (view)")
-    sticks_subdiv_render  = IntProperty(
+    sticks_subdiv_render: IntProperty(
         name = "SubDivR", default=2, min=1,
         description="Number of subdivisions (render)")
-    sticks_sectors = IntProperty(
+    sticks_sectors: IntProperty(
         name = "Sector", default=20, min=1,
         description="Number of sectors of a stick")
-    sticks_radius = FloatProperty(
+    sticks_radius: FloatProperty(
         name = "Radius", default=0.2, min=0.0001,
         description ="Radius of a stick")
-    sticks_unit_length = FloatProperty(
+    sticks_unit_length: FloatProperty(
         name = "Unit", default=0.05, min=0.0001,
         description = "Length of the unit of a stick in Angstrom")
-    use_sticks_color = BoolProperty(
+    use_sticks_color: BoolProperty(
         name="Color", default=True,
         description="The sticks appear in the color of the atoms")
-    use_sticks_smooth = BoolProperty(
+    use_sticks_smooth: BoolProperty(
         name="Smooth", default=True,
         description="The sticks are round (sectors are not visible)")
-    use_sticks_bonds = BoolProperty(
+    use_sticks_bonds: BoolProperty(
         name="Bonds", default=False,
         description="Show double and triple bonds")
-    sticks_dist = FloatProperty(
+    sticks_dist: FloatProperty(
         name="", default = 1.1, min=1.0, max=3.0,
         description="Distance between sticks measured in stick diameter")
-    use_sticks_one_object = BoolProperty(
+    use_sticks_one_object: BoolProperty(
         name="One object", default=True,
         description="All sticks are one object")
-    use_sticks_one_object_nr = IntProperty(
+    use_sticks_one_object_nr: IntProperty(
         name = "No.", default=200, min=10,
         description="Number of sticks to be grouped at once")
-    datafile = StringProperty(
+    datafile: StringProperty(
         name = "", description="Path to your custom data file",
         maxlen = 256, default = "", subtype='FILE_PATH')
 
@@ -268,10 +268,10 @@ class ExportPDB(Operator, ExportHelper):
     bl_label  = "Export Protein Data Bank(*.pdb)"
     filename_ext = ".pdb"
 
-    filter_glob  = StringProperty(
+    filter_glob: StringProperty(
         default="*.pdb", options={'HIDDEN'},)
 
-    atom_pdb_export_type = EnumProperty(
+    atom_pdb_export_type: EnumProperty(
         name="Type of Objects",
         description="Choose type of objects",
         items=(('0', "All", "Export all active objects"),

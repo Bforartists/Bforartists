@@ -182,12 +182,12 @@ def add_diamond(segments, girdle_radius, table_radius,
 
         # Row for flat side
         verts_flat.append(len(verts))
-        vec = quat * Vector((table_radius, 0.0, height_flat))
+        vec = quat @ Vector((table_radius, 0.0, height_flat))
         verts.append(vec)
 
         # Row for the middle/girdle
         verts_girdle.append(len(verts))
-        vec = quat * Vector((girdle_radius, 0.0, height_middle))
+        vec = quat @ Vector((girdle_radius, 0.0, height_middle))
         verts.append(vec)
 
     # Flat face
@@ -211,35 +211,35 @@ class AddDiamond(Operator):
     bl_description = "Construct a diamond mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    segments = IntProperty(
+    segments: IntProperty(
             name="Segments",
             description="Number of segments for the diamond",
             min=3,
             max=256,
             default=32
             )
-    girdle_radius = FloatProperty(
+    girdle_radius: FloatProperty(
             name="Girdle Radius",
             description="Girdle radius of the diamond",
             min=0.01,
             max=9999.0,
             default=1.0
             )
-    table_radius = FloatProperty(
+    table_radius: FloatProperty(
             name="Table Radius",
             description="Girdle radius of the diamond",
             min=0.01,
             max=9999.0,
             default=0.6
             )
-    crown_height = FloatProperty(
+    crown_height: FloatProperty(
             name="Crown Height",
             description="Crown height of the diamond",
             min=0.01,
             max=9999.0,
             default=0.35
             )
-    pavilion_height = FloatProperty(
+    pavilion_height: FloatProperty(
             name="Pavilion Height",
             description="Pavilion height of the diamond",
             min=0.01,
@@ -265,35 +265,35 @@ class AddGem(Operator):
     bl_description = "Construct an offset faceted gem mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    segments = IntProperty(
+    segments: IntProperty(
             name="Segments",
             description="Longitudial segmentation",
             min=3,
             max=265,
             default=8
             )
-    pavilion_radius = FloatProperty(
+    pavilion_radius: FloatProperty(
             name="Radius",
             description="Radius of the gem",
             min=0.01,
             max=9999.0,
             default=1.0
             )
-    crown_radius = FloatProperty(
+    crown_radius: FloatProperty(
             name="Table Radius",
             description="Radius of the table(top)",
             min=0.01,
             max=9999.0,
             default=0.6
             )
-    crown_height = FloatProperty(
+    crown_height: FloatProperty(
             name="Table height",
             description="Height of the top half",
             min=0.01,
             max=9999.0,
             default=0.35
             )
-    pavilion_height = FloatProperty(
+    pavilion_height: FloatProperty(
             name="Pavilion height",
             description="Height of bottom half",
             min=0.01,

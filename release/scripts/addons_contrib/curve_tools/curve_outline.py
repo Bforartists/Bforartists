@@ -85,7 +85,7 @@ class CurveOutline(bpy.types.Operator):
     bl_idname = "object._curve_outline"
     bl_label = "Create Outline"
     bl_options = {'REGISTER', 'UNDO'}
-    outline = bpy.props.FloatProperty(name="Amount", default=0.1, min=-10, max=10)
+    outline: bpy.props.FloatProperty(name="Amount", default=0.1, min=-10, max=10)
 
     @classmethod
     def poll(cls, context):

@@ -96,7 +96,7 @@ class CMUMocapAlignArmatures(bpy.types.Operator):
 
         # clear frame poses, leave source selected
         for o in self.dst, self.src:
-            context.scene.objects.active = o
+            context.view_layer.objects.active = o
             bpy.ops.object.mode_set(mode='POSE')
             bpy.ops.pose.select_all(action='SELECT')
             bpy.ops.pose.rot_clear()
@@ -237,7 +237,7 @@ class CMUMocapTransferer(bpy.types.Operator):
         DPB = self.dst.pose.bones
         self.set_inverses()
         context.scene.frame_set(0)
-        context.scene.objects.active = self.dst
+        context.view_layer.objects.active = self.dst
         bpy.ops.object.mode_set(mode='POSE')
         bpy.ops.pose.select_all(action='DESELECT')
         for sb, db, cc in [

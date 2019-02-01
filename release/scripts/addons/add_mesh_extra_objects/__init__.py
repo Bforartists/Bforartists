@@ -25,8 +25,8 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 3, 2),
-    "blender": (2, 74, 5),
+    "version": (0, 3, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add extra mesh object types",
     "warning": "",
@@ -181,9 +181,9 @@ class VIEW3D_MT_mesh_mech(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.menu("VIEW3D_MT_mesh_pipe_joints_add",
-                text="Pipe Joints", icon="SNAP_PEEL_OBJECT")
+                text="Pipe Joints")
         layout.menu("VIEW3D_MT_mesh_gears_add",
-                text="Gears", icon="SCRIPTWIN")
+                text="Gears")
 
 
 class VIEW3D_MT_mesh_extras_add(Menu):
@@ -249,104 +249,6 @@ class VIEW3D_MT_mesh_pipe_joints_add(Menu):
         layout.operator("mesh.primitive_n_joint_add",
                         text="Pipe N-Joint")
 
-
-class discombobulator_scene_props(bpy.types.PropertyGroup):
-    DISC_doodads = []
-    # Protusions Buttons:
-    repeatprot = IntProperty(
-            name="Repeat protusions",
-            description=("Make several layers of protusion \n"
-                         "Use carefully, runs recursively the discombulator"),
-            default=1, min=1, max=4  # set to 4 because it's 2**n reqursive
-            )
-    doprots = BoolProperty(
-            name="Make protusions",
-            description="Check if we want to add protusions to the mesh",
-            default=True
-            )
-    subpolygon1 = BoolProperty(
-            name="1",
-            default=True
-            )
-    subpolygon2 = BoolProperty(
-            name="2",
-            default=True
-            )
-    subpolygon3 = BoolProperty(
-            name="3",
-            default=True
-            )
-    subpolygon4 = BoolProperty(
-            name="4",
-            default=True
-            )
-    polygonschangedpercent = FloatProperty(
-            name="Polygon %",
-            description="Percentage of changed polygons",
-            default=1.0
-            )
-    minHeight = FloatProperty(
-            name="Min height",
-            description="Minimal height of the protusions",
-            default=0.2
-            )
-    maxHeight = FloatProperty(
-            name="Max height",
-            description="Maximal height of the protusions",
-            default=0.4
-            )
-    minTaper = FloatProperty(
-            name="Min taper",
-            description="Minimal height of the protusions",
-            default=0.15, min=0.0, max=1.0,
-            subtype='PERCENTAGE'
-            )
-    maxTaper = FloatProperty(
-            name="Max taper",
-            description="Maximal height of the protusions",
-            default=0.35, min=0.0, max=1.0,
-            subtype='PERCENTAGE'
-            )
-    # Doodads buttons:
-    dodoodads = BoolProperty(
-            name="Make doodads",
-            description="Check if we want to generate doodads",
-            default=False
-            )
-    mindoodads = IntProperty(
-            name="Minimum doodads number",
-            description="Ask for the minimum number of doodads to generate per polygon",
-            default=1, min=0, max=50
-            )
-    maxdoodads = IntProperty(
-            name="Maximum doodads number",
-            description="Ask for the maximum number of doodads to generate per polygon",
-            default=6, min=1, max=50
-            )
-    doodMinScale = FloatProperty(
-            name="Scale min", description="Minimum scaling of doodad",
-            default=0.5, min=0.0, max=1.0,
-            subtype='PERCENTAGE'
-            )
-    doodMaxScale = FloatProperty(
-            name="Scale max",
-            description="Maximum scaling of doodad",
-            default=1.0, min=0.0, max=1.0,
-            subtype='PERCENTAGE'
-            )
-    # Materials buttons:
-    sideProtMat = IntProperty(
-            name="Side's prot mat",
-            description="Material of protusion's sides",
-            default=0, min=0
-            )
-    topProtMat = IntProperty(
-            name="Prot's top mat",
-            description="Material of protusion's top",
-            default=0, min=0
-            )
-
-
 # Register all operators and panels
 
 # Define "Extras" menu
@@ -356,50 +258,83 @@ def menu_func(self, context):
 
     lay_out.separator()
     lay_out.menu("VIEW3D_MT_mesh_vert_add",
-                text="Single Vert", icon="LAYER_ACTIVE")
+                text="Single Vert")
     lay_out.operator("mesh.primitive_round_cube_add",
-                    text="Round Cube", icon="MOD_SUBSURF")
+                    text="Round Cube")
     lay_out.menu("VIEW3D_MT_mesh_math_add",
                 text="Math Function", icon="PACKAGE")
     lay_out.menu("VIEW3D_MT_mesh_mech_add",
-                text="Mechanical", icon="SCRIPTWIN")
+                text="Mechanical")
     lay_out.menu("VIEW3D_MT_mesh_torus_add",
-                text="Torus Objects", icon="MESH_TORUS")
+                text="Torus Objects")
     lay_out.separator()
     lay_out.operator("mesh.generate_geodesic_dome",
-                    text="Geodesic Dome", icon="MESH_ICOSPHERE")
+                    text="Geodesic Dome")
     lay_out.operator("discombobulate.ops",
-                    text="Discombobulator", icon="RETOPO")
+                    text="Discombobulator")
     lay_out.separator()
     lay_out.menu("VIEW3D_MT_mesh_extras_add",
-                text="Extras", icon="MESH_DATA")
+                text="Extras")
     lay_out.separator()
     lay_out.operator("object.parent_to_empty",
-                    text="Parent To Empty", icon="LINK_AREA")
+                    text="Parent To Empty")
 
+# Register
+classes = [
+    VIEW3D_MT_mesh_vert_add,
+    VIEW3D_MT_mesh_gears_add,
+    VIEW3D_MT_mesh_diamonds_add,
+    VIEW3D_MT_mesh_math_add,
+    VIEW3D_MT_mesh_mech,
+    VIEW3D_MT_mesh_extras_add,
+    VIEW3D_MT_mesh_torus_add,
+    VIEW3D_MT_mesh_pipe_joints_add,
+    add_mesh_star.AddStar,
+    add_mesh_twisted_torus.AddTwistedTorus,
+    add_mesh_gemstones.AddDiamond,
+    add_mesh_gemstones.AddGem,
+    add_mesh_gears.AddGear,
+    add_mesh_gears.AddWormGear,
+    add_mesh_3d_function_surface.AddZFunctionSurface,
+    add_mesh_3d_function_surface.AddXYZFunctionSurface,
+    add_mesh_round_cube.AddRoundCube,
+    add_mesh_supertoroid.add_supertoroid,
+    add_mesh_pyramid.AddPyramid,
+    add_mesh_torusknot.AddTorusKnot,
+    add_mesh_honeycomb.add_mesh_honeycomb,
+    add_mesh_teapot.AddTeapot,
+    add_mesh_pipe_joint.AddElbowJoint,
+    add_mesh_pipe_joint.AddTeeJoint,
+    add_mesh_pipe_joint.AddWyeJoint,
+    add_mesh_pipe_joint.AddCrossJoint,
+    add_mesh_pipe_joint.AddNJoint,
+    add_mesh_solid.Solids,
+    add_mesh_round_brilliant.MESH_OT_primitive_brilliant_add,
+    add_mesh_menger_sponge.AddMengerSponge,
+    add_mesh_vertex.AddVert,
+    add_mesh_vertex.AddEmptyVert,
+    add_mesh_vertex.AddSymmetricalEmpty,
+    add_mesh_vertex.AddSymmetricalVert,
+    add_empty_as_parent.P2E,
+    add_empty_as_parent.PreFix,
+    mesh_discombobulator.discombobulator,
+    mesh_discombobulator.discombobulator_dodads_list,
+    mesh_discombobulator.discombob_help,
+    mesh_discombobulator.VIEW3D_OT_tools_discombobulate,
+    mesh_discombobulator.chooseDoodad,
+    mesh_discombobulator.unchooseDoodad,
+    add_mesh_beam_builder.addBeam,
+    Wallfactory.add_mesh_wallb,
+    add_shape_geodesic.add_corrective_pose_shape_fast,
+    third_domes_panel_271.GenerateGeodesicDome,
+    third_domes_panel_271.DialogOperator,
+    add_mesh_triangles.MakeTriangle
+]
 
 def register():
-    bpy.utils.register_module(__name__)
-
-    # Register Discombobulator properties
-    bpy.types.Scene.discomb = bpy.props.PointerProperty(
-                                        type=discombobulator_scene_props
-                                        )
-    # Error messages for Geodesic Domes
-    bpy.types.Scene.error_message = StringProperty(
-                                        name="actual error",
-                                        default=""
-                                        )
-    bpy.types.Scene.geodesic_not_yet_called = BoolProperty(
-                                        name="geodesic_not_called",
-                                        default=True
-                                        )
-    bpy.types.Scene.gd_help_text_width = IntProperty(
-                                        name="Text Width",
-                                        description="The width above which the text wraps",
-                                        default=60,
-                                        max=180, min=20
-                                        )
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
     # Add "Extras" menu to the "Add Mesh" menu
     bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
@@ -408,14 +343,10 @@ def register():
 def unregister():
     # Remove "Extras" menu from the "Add Mesh" menu.
     bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
-
-    del bpy.types.Scene.discomb
-    del bpy.types.Scene.error_message
-    del bpy.types.Scene.geodesic_not_yet_called
-    del bpy.types.Scene.gd_help_text_width
-
-    bpy.utils.unregister_module(__name__)
-
+    
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

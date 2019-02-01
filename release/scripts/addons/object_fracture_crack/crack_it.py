@@ -48,7 +48,7 @@ def makeFracture(child_verts=False, division=100, noise=0.00,
                 scaleX=1.00, scaleY=1.00, scaleZ=1.00, recursion=0, margin=0.001):
 
     # Get active object name and active layer
-    active_name = bpy.context.scene.objects.active.name
+    active_name = bpy.context.view_layer.objects.active.name
     active_layer = bpy.context.scene.active_layer
 
     # source method of whether use child verts
@@ -81,8 +81,8 @@ def _makeJoin(active_name, active_layer):
 
     if fractures:
         # Execute join
-        bpy.context.scene.objects.active = fractures[0]
-        fractures[0].select = True
+        bpy.context.view_layer.objects.active = fractures[0]
+        fractures[0].select_set(True)
         bpy.ops.object.join()
     else:
         error_handlers(
@@ -91,7 +91,7 @@ def _makeJoin(active_name, active_layer):
             )
 
     # Change name
-    bpy.context.scene.objects.active.name = active_name + '_crack'
+    bpy.context.view_layer.objects.active.name = active_name + '_crack'
 
     # Change origin
     bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')

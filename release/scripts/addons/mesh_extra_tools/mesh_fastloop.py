@@ -21,7 +21,7 @@ bl_info = {
     "description": "Add loops fast",
     "author": "Andy Davies (metalliandy)",
     "version": (0, 1, 7),
-    "blender": (2, 5, 6),
+    "blender": (2, 56, 0),
     "location": "Tool Shelf",
     "warning": "",
     "wiki_url": "",
@@ -68,7 +68,7 @@ class OBJECT_OT_FastLoop(Operator):
     bl_description = ("Create multiple edge loops in succession\n"
                       "Runs modal until ESC is pressed twice")
 
-    active = BoolProperty(
+    active: BoolProperty(
                 name="active",
                 default=False
                 )

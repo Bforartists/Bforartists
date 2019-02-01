@@ -90,7 +90,7 @@ def makeChain(self, context, mult, curverig):
             (23, 22, 19, 18), (21, 17, 14, 20), (15, 23, 18, 12)]
             )
         mesh.validate()
-        bpy.context.scene.objects.link(object)
+        bpy.context.collection.objects.link(object)
         # scale to the bone
         bpy.data.objects["HardLink" + str(hueso.name)].scale = (hueso.length * mult,
                                                                 hueso.length * mult,
@@ -142,7 +142,7 @@ def makeChain(self, context, mult, curverig):
             (22, 21, 20, 19), (23, 22, 19, 18), (21, 17, 14, 20), (15, 23, 18, 12)]
             )
         mesh.validate()
-        bpy.context.scene.objects.link(object)
+        bpy.context.collection.objects.link(object)
         # scale to the bone
         bpy.data.objects["NewLink" + str(hueso.name)].scale = (hueso.length * mult,
                                                                   hueso.length * mult,
@@ -171,7 +171,7 @@ def makeChain(self, context, mult, curverig):
         # create data and link the object to the scene
         crv = bpy.data.curves.new("CurvaCable", "CURVE")
         obCable = bpy.data.objects.new("Cable", crv)
-        bpy.context.scene.objects.link(obCable)
+        bpy.context.collection.objects.link(obCable)
 
         # set the attributes
         crv.dimensions = "3D"
@@ -207,7 +207,7 @@ def makeChain(self, context, mult, curverig):
         # select the curve
         bpy.ops.object.select_all(action='DESELECT')
         bpy.data.objects['Cable'].select = 1
-        bpy.context.scene.objects.active = bpy.data.objects['Cable']
+        bpy.context.view_layer.objects.active = bpy.data.objects['Cable']
         # switch to Edit mode
         bpy.ops.object.mode_set(mode='EDIT')
 
@@ -223,7 +223,7 @@ def makeChain(self, context, mult, curverig):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.select_all(action='DESELECT')
         ACTARM.select = 1
-        bpy.context.scene.objects.active = bpy.data.objects['Armature']
+        bpy.context.view_layer.objects.active = bpy.data.objects['Armature']
         bpy.ops.object.mode_set(mode='POSE')
         bpy.ops.pose.select_all(action='DESELECT')
         ACTARM.data.bones[-1].select = 1
@@ -245,11 +245,11 @@ class MESH_OT_primitive_oscurart_chain_add(Operator):
                       "The Active/Last Selected Object must be an Armature")
     bl_options = {'REGISTER', 'UNDO'}
 
-    curverig = BoolProperty(
+    curverig: BoolProperty(
             name="Curve Rig",
             default=False
             )
-    multiplier = FloatProperty(
+    multiplier: FloatProperty(
             name="Scale",
             default=1,
             min=0.01, max=100.0

@@ -30,7 +30,7 @@ bl_info = {
     "name": "Geographical Sun",
     "author": "Doug Hammond (dougal2)",
     "version": (0, 0, 2),
-    "blender": (2, 7, 0),
+    "blender": (2, 70, 0),
     "category": "Lighting",
     "location": "Lamp data > Geographical Sun",
     "warning": "",
@@ -419,7 +419,7 @@ class OBJECT_OT_set_geographical_location_preset(Operator):
     bl_label = "Apply location preset"
     bl_description = "Update the settings with the data from the chosen city location"
 
-    index = IntProperty()
+    index: IntProperty()
 
     @classmethod
     def poll(cls, context):
@@ -481,53 +481,53 @@ class OBJECT_MT_geo_sun_location_world_cities(Menu):
 
 
 class SUNGEO_GeoSunProperties(PropertyGroup):
-    minute = IntProperty(
+    minute: IntProperty(
             name="Minute",
             min=0,
             max=59,
             default=today.minute
             )
-    hour = IntProperty(
+    hour: IntProperty(
             name="Hour",
             min=0,
             max=24,
             default=today.hour
             )
-    day = IntProperty(
+    day: IntProperty(
             name="Day",
             min=1,
             max=31,
             default=today.day
             )
-    month = IntProperty(
+    month: IntProperty(
             name="Month",
             min=1,
             max=12,
             default=today.month
             )
-    year = IntProperty(
+    year: IntProperty(
             name="Year",
             min=datetime.MINYEAR,
             max=datetime.MAXYEAR,
             default=today.year
             )
-    tz = IntProperty(
+    tz: IntProperty(
             name="Time Zone",
             min=-13,
             max=13,
             default=time.timezone
             )
-    dst = BoolProperty(
+    dst: BoolProperty(
             name="Daylight saving time",
             default=False
             )
-    lat = FloatProperty(
+    lat: FloatProperty(
             name="Latitude",
             min=-180.0,
             max=180.0,
             default=0.0
             )
-    longt = FloatProperty(
+    longt: FloatProperty(
             name="Longitude",
             min=-90.0,
             max=90.0,
@@ -551,7 +551,7 @@ class SUNGEO_PT_lamp_settings(Panel):
 
         cl = context.lamp
         if not (cl and cl.type == 'SUN'):
-            layout.label("Sun lamp is not active", icon="INFO")
+            layout.label(text="Sun lamp is not active", icon="INFO")
             return
 
         geosunproperties = cl.GeoSunProperties

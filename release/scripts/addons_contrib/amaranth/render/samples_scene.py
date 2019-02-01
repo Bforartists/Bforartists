@@ -64,7 +64,7 @@ class AMTH_RENDER_OT_cycles_samples_percentage(bpy.types.Operator):
     bl_idname = "scene.amaranth_cycles_samples_percentage"
     bl_label = "Set Render Samples Percentage"
 
-    percent = IntProperty(
+    percent: IntProperty(
             name="Percentage",
             description="Percentage to divide render samples by",
             subtype="PERCENTAGE", default=0
@@ -155,7 +155,7 @@ def render_cycles_scene_samples(self, context):
 
             for rl in scene.render.layers:
                 row = col.row(align=True)
-                row.label(rl.name, icon="BLANK1")
+                row.label(text=rl.name, icon="BLANK1")
                 row.prop(
                     rl, "samples", text="%s" %
                     "Samples" if rl.samples > 0 else "Automatic (%s)" %
@@ -186,7 +186,7 @@ def render_cycles_scene_samples(self, context):
                         if s.render.engine == "CYCLES":
                             cscene = s.cycles
 
-                            row.label(s.name, icon="BLANK1")
+                            row.label(text=s.name, icon="BLANK1")
                             row.prop(cscene, "aa_samples",
                                      text="AA Samples")
                         else:

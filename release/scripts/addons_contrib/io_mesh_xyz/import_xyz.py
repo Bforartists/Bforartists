@@ -528,7 +528,7 @@ def import_xyz(Ball_type,
         camera = bpy.data.objects.new("A_camera", camera_data)
         camera.location = camera_xyz_vec
         camera.layers = current_layers
-        bpy.context.scene.objects.link(camera)
+        bpy.context.collection.objects.link(camera)
 
         # Here the camera is rotated such it looks towards the center of
         # the object. The [0.0, 0.0, 1.0] vector along the z axis
@@ -544,7 +544,7 @@ def import_xyz(Ball_type,
         # Rotate the camera around its axis by 90° such that we have a nice
         # camera position and view onto the object.
         bpy.ops.object.select_all(action='DESELECT')
-        camera.select = True
+        camera.select_set(True)
         bpy.ops.transform.rotate(value=(90.0*2*pi/360.0),
                                  axis=object_camera_vec,
                                  constraint_axis=(False, False, False),
@@ -579,7 +579,7 @@ def import_xyz(Ball_type,
         lamp = bpy.data.objects.new("A_lamp", lamp_data)
         lamp.location = lamp_xyz_vec
         lamp.layers = current_layers
-        bpy.context.scene.objects.link(lamp)
+        bpy.context.collection.objects.link(lamp)
 
         bpy.context.scene.world.light_settings.use_ambient_occlusion = True
         bpy.context.scene.world.light_settings.ao_factor = 0.2
@@ -607,7 +607,7 @@ def import_xyz(Ball_type,
         atom_mesh.from_pydata(atom_vertices, [], [])
         atom_mesh.update()
         new_atom_mesh = bpy.data.objects.new(atom.name, atom_mesh)
-        bpy.context.scene.objects.link(new_atom_mesh)
+        bpy.context.collection.objects.link(new_atom_mesh)
 
         # Now, build a representative sphere (atom)
         current_layers=bpy.context.scene.layers
@@ -638,7 +638,7 @@ def import_xyz(Ball_type,
                             enter_editmode=False, location=(0, 0, 0),
                             rotation=(0, 0, 0), layers=current_layers)
 
-        ball = bpy.context.scene.objects.active
+        ball = bpy.context.view_layer.objects.active
         ball.scale  = (atom.radius*Ball_radius_factor,) * 3
 
         if atom.name == "Vacancy":
@@ -658,10 +658,10 @@ def import_xyz(Ball_type,
     bpy.ops.object.select_all(action='DESELECT')
     obj = None
     for obj in STRUCTURE:
-        obj.select = True
+        obj.select_set(True)
     # activate the last selected object (perhaps another should be active?)
     if obj:
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
 
 
 
@@ -673,8 +673,8 @@ def build_frames(frame_delta, frame_skip):
     for element in STRUCTURE:
 
         bpy.ops.object.select_all(action='DESELECT')
-        bpy.context.scene.objects.active = element
-        element.select = True
+        bpy.context.view_layer.objects.active = element
+        element.select_set(True)
         bpy.ops.object.shape_key_add(True)
 
     frame_skip += 1

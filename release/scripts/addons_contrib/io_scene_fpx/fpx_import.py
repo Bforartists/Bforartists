@@ -661,6 +661,8 @@ class FptImporter():
         self.__context = blender_context
         self.__data = blender_context.blend_data
         self.__scene = blender_context.scene
+        self.__collection = blender_context.collection
+        self.__view_layer = blender_context.view_layer
 
         try:
             try:
@@ -829,7 +831,7 @@ class FptImporter():
                             blender_empty_object.rotation_euler = blender_rotation
                             blender_empty_object.empty_display_type = 'ARROWS'
                             blender_empty_object.empty_display_size = 10.0
-                            self.__scene.objects.link(blender_empty_object)
+                            self.__collection.objects.link(blender_empty_object)
                             blender_empty_object.layers = layers
 
                             blender_empty_object.fpt.name = fpx_item_name
@@ -963,6 +965,7 @@ class FptImporter():
             self.__context = None
             self.__data = None
             self.__scene = None
+            self.__view_layer = None
 
         t3 = time()
         if self.verbose in FpxUI.VERBOSE_NORMAL:
@@ -975,11 +978,11 @@ class FptImporter():
         name = "Camera.table"
         camera = self.__data.cameras.new(name)
         obj = self.__data.objects.new(name, camera)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
         width = fpx_table_data.get_value("width", default=0.0)
         obj.location = (width / 2.0, -1600.0, 550.0)
         obj.rotation_euler = (radians(63.0), 0.0, 0.0)
-        obj.select = True
+        obj.select_set(True)
         obj.layers = FptImporter.LAYERS_AO
         camera.lens_unit = 'FOV'
         camera.clip_start = 1.0 # 1.0mm
@@ -1034,14 +1037,14 @@ class FptImporter():
             self.__scene.render.engine = tmp_engine
 
         obj = self.__data.objects.new(FORMAT_LAMP_OBJECT.format(name), lamp)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
         obj.location = (width2, -length * (2.0/3.0), 600.0)
         obj.layers = FptImporter.LAYERS_AO
 
         # cycles
         mesh = self.__data.meshes.new(FORMAT_MESH.format("{}.arealamp".format(name)))
         obj = self.__data.objects.new(FORMAT_MESH_OBJECT.format(name), mesh)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
         obj.location = (width2, -length * (2.0/3.0), 610.0)
         obj.layers = FptImporter.LAYERS_AO
         bm = bmesh.new()
@@ -1078,7 +1081,7 @@ class FptImporter():
             self.__scene.render.engine = tmp_engine
 
         obj = self.__data.objects.new(FORMAT_LAMP_OBJECT.format(name), lamp)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
 
         obj.location = location
         obj.layers = layers
@@ -1414,8 +1417,8 @@ class FptImporter():
         offset_x = tex_size_width - 2.0 * (tex_loc_x - box_x)
         offset_y = tex_size_length - 2.0 * (tex_loc_y - box_y)
 
-        blender_object.select = True
-        self.__scene.objects.active = blender_object
+        blender_object.select_set(True)
+        self.__view_layer.objects.active = blender_object
         self.__scene.update()
         if ops.object.convert.poll():
             ops.object.convert()
@@ -1487,7 +1490,7 @@ class FptImporter():
 
         mesh = self.__data.meshes.new(FORMAT_MESH.format(name))
         obj = self.__data.objects.new(FORMAT_MESH_OBJECT.format(name), mesh)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
         obj.layers = FptImporter.LAYERS_AO
 
         #inner playfield
@@ -1523,7 +1526,7 @@ class FptImporter():
         mesh_box = self.__data.meshes.new(FORMAT_MESH.format("{}.playfield".format(name)))
         obj_box = self.__data.objects.new(FORMAT_MESH_OBJECT.format("{}.playfield".format(name)), mesh_box)
         obj_box.parent = obj
-        self.__scene.objects.link(obj_box)
+        self.__collection.objects.link(obj_box)
         obj_box.layers = FptImporter.LAYERS_AO
 
         bm = bmesh.new()
@@ -1582,7 +1585,7 @@ class FptImporter():
         mesh_translite = self.__data.meshes.new(FORMAT_MESH.format("{}.translite".format(name)))
         obj_translite = self.__data.objects.new(FORMAT_MESH_OBJECT.format("{}.translite".format(name)), mesh_translite)
         obj_translite.parent = obj
-        self.__scene.objects.link(obj_translite)
+        self.__collection.objects.link(obj_translite)
         obj_translite.layers = FptImporter.LAYERS_AO
 
         #inner translite
@@ -1691,7 +1694,7 @@ class FptImporter():
         if rubber_bevel is None:
             cu0 = self.__data.curves.new(bevel_name, 'CURVE')
             rubber_bevel = self.__data.objects.new(bevel_name, cu0)
-            self.__scene.objects.link(rubber_bevel)
+            self.__collection.objects.link(rubber_bevel)
             cu0.dimensions = '2D'
             cu0.resolution_u = self.resolution_rubber_bevel
 
@@ -1776,7 +1779,7 @@ class FptImporter():
         self.create_wire_pole(cu.splines, co2, h_right2, h_left2, surface, width)
 
         # merge wire curve with pole caps
-        self.__scene.objects.active = obj
+        self.__view_layer.objects.active = obj
         self.merge_caps(cu.splines, width)
 
         cu.splines[0].type = 'NURBS' # looks better for wires
@@ -1947,7 +1950,7 @@ class FptImporter():
 
         mesh = self.__data.meshes.new(FORMAT_MESH.format(name))
         obj = self.__data.objects.new(FORMAT_MESH_OBJECT.format(name), mesh)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
 
         z = surface + self.debug_light_extrude
         bm = bmesh.new()
@@ -2020,7 +2023,7 @@ class FptImporter():
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
             blender_empty_object.empty_display_type = 'ARROWS'
             blender_empty_object.empty_display_size = 10.0
-            self.__scene.objects.link(blender_empty_object)
+            self.__collection.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_EMPTY_OBJECT.format(FORMAT_MODEL_START.format(name))
             if fpx_id:
                 blender_empty_object.fpt.id = FptElementType.VALUE_INT_TO_NAME.get(fpx_id)
@@ -2037,7 +2040,7 @@ class FptImporter():
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
             blender_empty_object.empty_display_type = 'ARROWS'
             blender_empty_object.empty_display_size = 10.0
-            self.__scene.objects.link(blender_empty_object)
+            self.__collection.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_EMPTY_OBJECT.format(FORMAT_MODEL_END.format(name))
             if fpx_id:
                 blender_empty_object.fpt.id = FptElementType.VALUE_INT_TO_NAME.get(fpx_id)
@@ -2135,7 +2138,7 @@ class FptImporter():
             blender_empty_object.rotation_euler = Euler((0, 0, Vector((v.x, v.y)).angle_signed(Vector((1.0, 0.0)))), 'XZY')
             blender_empty_object.empty_display_type = 'ARROWS'
             blender_empty_object.empty_display_size = 10.0
-            self.__scene.objects.link(blender_empty_object)
+            self.__collection.objects.link(blender_empty_object)
             blender_empty_object.fpt.name = FORMAT_MODEL_RING.format(name, index)
             if fpx_id:
                 blender_empty_object.fpt.id = FptElementType.VALUE_INT_TO_NAME.get(fpx_id)
@@ -2217,7 +2220,7 @@ class FptImporter():
         if wire_bevel is None:
             cu = self.__data.curves.new(bevel_name, 'CURVE')
             wire_bevel = self.__data.objects.new(bevel_name, cu)
-            self.__scene.objects.link(wire_bevel)
+            self.__collection.objects.link(wire_bevel)
             cu.dimensions = '2D'
             cu.resolution_u = self.resolution_shape
 
@@ -2330,7 +2333,7 @@ class FptImporter():
     def create_curve(self, name, layers, curve_resolution):
         cu = self.__data.curves.new(FORMAT_CURVE.format(name), 'CURVE')
         obj = self.__data.objects.new(FORMAT_CURVE_OBJECT.format(name), cu)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
 
         cu.dimensions = '3D'
         cu.twist_mode = 'Z_UP'
@@ -2503,7 +2506,7 @@ class FptImporter():
 
         cu = self.__data.curves.new("{}.bevel_curve".format(name), 'CURVE')
         obj = self.__data.objects.new("{}".format(name), cu)
-        self.__scene.objects.link(obj)
+        self.__collection.objects.link(obj)
 
         cu.dimensions = '2D'
         cu.twist_mode = 'Z_UP'
@@ -2556,7 +2559,7 @@ class FptImporter():
         if wire_bevel is None:
             cu = self.__data.curves.new(bevel_name, 'CURVE')
             wire_bevel = self.__data.objects.new(bevel_name, cu)
-            self.__scene.objects.link(wire_bevel)
+            self.__collection.objects.link(wire_bevel)
             cu.dimensions = '2D'
             cu.resolution_u = self.resolution_wire_bevel
 
@@ -2580,7 +2583,7 @@ class FptImporter():
         if wire_bevel is None:
             cu = self.__data.curves.new(bevel_name, 'CURVE')
             wire_bevel = self.__data.objects.new(bevel_name, cu)
-            self.__scene.objects.link(wire_bevel)
+            self.__collection.objects.link(wire_bevel)
             cu.dimensions = '2D'
             cu.resolution_u = self.resolution_wire_bevel
 
@@ -2631,7 +2634,7 @@ class FptImporter():
             blender_empty_object_new.rotation_euler = Euler((0, 0, radians(angle)), blender_empty_object.rotation_mode)
             blender_empty_object_new.empty_display_type = blender_empty_object.empty_display_type
             blender_empty_object_new.empty_display_size = blender_empty_object.empty_display_size
-            self.__scene.objects.link(blender_empty_object_new)
+            self.__collection.objects.link(blender_empty_object_new)
 
             old_group_dict = {}
             for old_vert in old_mesh.vertices:
@@ -2660,7 +2663,7 @@ class FptImporter():
             #blender_empty_object_new.instance_type = 'COLLECTION'
             #blender_empty_object_new.instance_collection = blender_group
             blender_empty_object_new.layers = layers
-            blender_empty_object_new.select = True
+            blender_empty_object_new.select_set(True)
             """
             active_object = self.__scene.objects.active
             self.__scene.objects.active = blender_empty_object_new
@@ -3009,6 +3012,7 @@ def adjust_position(blender_context, blender_scene, fpx_model, fpx_model_type=No
 
     blender_object = blender_context.active_object
     blender_parent = blender_object.parent
+    blender_view_layer = blender_context.view_layer
 
     # Fpm_Model_Type.OBJECT_OBJECT = 0
     ## Fpm_Model_Type.OBJECT_PEG = 1
@@ -3153,8 +3157,8 @@ def adjust_position(blender_context, blender_scene, fpx_model, fpx_model_type=No
         pass
 
     if blender_location:
-        blender_scene.objects.active = blender_parent
-        blender_scene.objects.active.location = blender_location
+        blender_view_layer.objects.active = blender_parent
+        blender_view_layer.objects.active.location = blender_location
         blender_scene.update()
 
 def remove_material(blender_context):

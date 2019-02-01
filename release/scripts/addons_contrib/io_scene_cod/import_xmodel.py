@@ -268,7 +268,7 @@ def load(self, context, filepath=""):
             me.from_pydata(vert_table, [], face_table)
             me.update()
             ob = bpy.data.objects.new("Py-Mesh", me)
-            bpy.context.scene.objects.link(ob)
+            bpy.context.collection.objects.link(ob)
 
             state = 31
 

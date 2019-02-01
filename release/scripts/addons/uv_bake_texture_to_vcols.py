@@ -55,7 +55,7 @@ class UV_OT_bake_texture_to_vcols(bpy.types.Operator):
         "(requires image texture)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    replace_active_layer = BoolProperty(
+    replace_active_layer: BoolProperty(
         name="Replace layer",
         description="Overwrite active Vertex Color layer",
         default=True)
@@ -65,7 +65,7 @@ class UV_OT_bake_texture_to_vcols(bpy.types.Operator):
         ("REPEAT", "Repeat", "Tile the image so that each vertex is accounted for."),
         ("EXTEND", "Extend", "Extends the edges of the image to the UV-coordinates.")]
 
-    mappingMode = EnumProperty(
+    mappingMode: EnumProperty(
        items=mappingModes,
        default="CLIP",
        name="Mapping",
@@ -89,14 +89,14 @@ class UV_OT_bake_texture_to_vcols(bpy.types.Operator):
                      ("LINEAR_LIGHT", "Linear Light", "")
                     ]
 
-    blendingMode = EnumProperty(
+    blendingMode: EnumProperty(
         items=blendingModes,
         default="MULTIPLY",
         name="Blend Type",
         description="The blending mode to use when baking")
 
-    mirror_x = BoolProperty(name="Mirror X", description="Mirror the image on the X-axis")
-    mirror_y = BoolProperty(name="Mirror Y", description="Mirror the image on the Y-axis")
+    mirror_x: BoolProperty(name="Mirror X", description="Mirror the image on the X-axis")
+    mirror_y: BoolProperty(name="Mirror Y", description="Mirror the image on the Y-axis")
 
     @classmethod
     def poll(self, context):

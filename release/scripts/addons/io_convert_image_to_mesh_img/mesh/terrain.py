@@ -221,7 +221,7 @@ class BTerrain:
     @staticmethod
     def _center(obj):
         """Move object geometry to object origin"""
-        bpy.context.scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
         bpy.ops.object.origin_set(center='BOUNDS')
 
     @staticmethod

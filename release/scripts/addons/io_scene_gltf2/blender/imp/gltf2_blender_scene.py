@@ -28,22 +28,31 @@ class BlenderScene():
     @staticmethod
     def create(gltf, scene_idx):
         """Scene creation."""
-        pyscene = gltf.data.scenes[scene_idx]
+        if scene_idx is not None:
+            pyscene = gltf.data.scenes[scene_idx]
+            list_nodes = pyscene.nodes
 
-    # Create a new scene only if not already exists in .blend file
-    # TODO : put in current scene instead ?
-        if pyscene.name not in [scene.name for scene in bpy.data.scenes]:
-            # TODO: There is a bug in 2.8 alpha that break CLEAR_KEEP_TRANSFORM
-            # if we are creating a new scene
+            # Create a new scene only if not already exists in .blend file
+            # TODO : put in current scene instead ?
+            if pyscene.name not in [scene.name for scene in bpy.data.scenes]:
+                # TODO: There is a bug in 2.8 alpha that break CLEAR_KEEP_TRANSFORM
+                # if we are creating a new scene
+                scene = bpy.context.scene
+                scene.render.engine = "BLENDER_EEVEE"
+
+                gltf.blender_scene = scene.name
+            else:
+                gltf.blender_scene = pyscene.name
+
+            # Switch to newly created main scene
+            bpy.context.window.scene = bpy.data.scenes[gltf.blender_scene]
+
+        else:
+            # No scene in glTF file, create all objects in current scene
             scene = bpy.context.scene
             scene.render.engine = "BLENDER_EEVEE"
-
             gltf.blender_scene = scene.name
-        else:
-            gltf.blender_scene = pyscene.name
-
-        # Switch to newly created main scene
-        bpy.context.window.scene = bpy.data.scenes[gltf.blender_scene]
+            list_nodes = BlenderScene.get_root_nodes(gltf)
 
         # Create Yup2Zup empty
         obj_rotation = bpy.data.objects.new("Yup2Zup", None)
@@ -52,8 +61,8 @@ class BlenderScene():
 
         bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj_rotation)
 
-        if pyscene.nodes is not None:
-            for node_idx in pyscene.nodes:
+        if list_nodes is not None:
+            for node_idx in list_nodes:
                 BlenderNode.create(gltf, node_idx, None)  # None => No parent
 
         # Now that all mesh / bones are created, create vertex groups on mesh
@@ -71,28 +80,75 @@ class BlenderScene():
                     BlenderSkin.create_armature_modifiers(gltf, skin_id)
 
         if gltf.data.animations:
+            gltf.animation_managed = []
             for anim_idx, anim in enumerate(gltf.data.animations):
-                if pyscene.nodes is not None:
-                    for node_idx in pyscene.nodes:
+                gltf.current_animation_names = {}
+                if list_nodes is not None:
+                    for node_idx in list_nodes:
                         BlenderAnimation.anim(gltf, anim_idx, node_idx)
+                for an in gltf.current_animation_names.values():
+                    gltf.animation_managed.append(an)
 
         # Parent root node to rotation object
-        if pyscene.nodes is not None:
-            for node_idx in pyscene.nodes:
-                bpy.data.objects[gltf.data.nodes[node_idx].blender_object].parent = obj_rotation
+        if list_nodes is not None:
+            exclude_nodes = []
+            for node_idx in list_nodes:
+                if gltf.data.nodes[node_idx].is_joint:
+                    # Do not change parent if root node is already parented (can be the case for skinned mesh)
+                    if not bpy.data.objects[gltf.data.nodes[node_idx].blender_armature_name].parent:
+                        bpy.data.objects[gltf.data.nodes[node_idx].blender_armature_name].parent = obj_rotation
+                    else:
+                        exclude_nodes.append(node_idx)
+                else:
+                    # Do not change parent if root node is already parented (can be the case for skinned mesh)
+                    if not bpy.data.objects[gltf.data.nodes[node_idx].blender_object].parent:
+                        bpy.data.objects[gltf.data.nodes[node_idx].blender_object].parent = obj_rotation
+                    else:
+                        exclude_nodes.append(node_idx)
 
             if gltf.animation_object is False:
 
 
-                for node_idx in pyscene.nodes:
+
+
+                for node_idx in list_nodes:
+
+                    if node_idx in exclude_nodes:
+                        continue # for root node that are parented by the process
+                        # for example skinned meshes
+
                     for obj_ in bpy.context.scene.objects:
                         obj_.select_set(False)
-                    bpy.data.objects[gltf.data.nodes[node_idx].blender_object].select_set(True)
-                    bpy.context.view_layer.objects.active = bpy.data.objects[gltf.data.nodes[node_idx].blender_object]
+                    if gltf.data.nodes[node_idx].is_joint:
+                        bpy.data.objects[gltf.data.nodes[node_idx].blender_armature_name].select_set(True)
+                        bpy.context.view_layer.objects.active = bpy.data.objects[gltf.data.nodes[node_idx].blender_armature_name]
+
+                    else:
+                        bpy.data.objects[gltf.data.nodes[node_idx].blender_object].select_set(True)
+                        bpy.context.view_layer.objects.active = bpy.data.objects[gltf.data.nodes[node_idx].blender_object]
 
                     bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
 
                 # remove object
                 bpy.context.scene.collection.objects.unlink(obj_rotation)
                 bpy.data.objects.remove(obj_rotation)
+
+    @staticmethod
+    def get_root_nodes(gltf):
+        if gltf.data.nodes is None:
+            return None
+
+        parents = {}
+        for idx, node  in enumerate(gltf.data.nodes):
+            pynode = gltf.data.nodes[idx]
+            if pynode.children:
+                for child_idx in pynode.children:
+                    parents[child_idx] = idx
+
+        roots = []
+        for idx, node in enumerate(gltf.data.nodes):
+            if idx not in parents.keys():
+                roots.append(idx)
+
+        return roots
 

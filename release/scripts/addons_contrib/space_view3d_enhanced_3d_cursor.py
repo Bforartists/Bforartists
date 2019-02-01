@@ -22,7 +22,7 @@ bl_info = {
     "description": "Cursor history and bookmarks; drag/snap cursor.",
     "author": "dairin0d",
     "version": (3, 0, 7),
-    "blender": (2, 7, 7),
+    "blender": (2, 77, 0),
     "location": "View3D > Action mouse; F10; Properties panel",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -591,7 +591,7 @@ class EnhancedSetCursor(bpy.types.Operator):
             transform_func(particle)
 
         if make_snapshot:
-            self.make_normal_snapshot(context.scene, tangential_snapshot)
+            self.make_normal_snapshot(context.collection, tangential_snapshot)
 
         return {'RUNNING_MODAL'}
 
@@ -1416,7 +1416,7 @@ class EnhancedSetCursor(bpy.types.Operator):
 
         return p0, x * scl, y * scl, z * scl, _x * scl, _z * scl
 
-    def make_normal_snapshot(self, scene, tangential=False):
+    def make_normal_snapshot(self, collection, tangential=False):
         settings = find_settings()
         tfm_opts = settings.transform_options
 
@@ -1437,7 +1437,7 @@ class EnhancedSetCursor(bpy.types.Operator):
             snapshot.empty_display_type = 'SINGLE_ARROW'
             #snapshot.empty_display_type = 'ARROWS'
             #snapshot.layers = [True] * 20 # ?
-            scene.objects.link(snapshot)
+            collection.objects.link(snapshot)
 #============================================================================#
 
 
@@ -1546,6 +1546,8 @@ def gather_particles(**kwargs):
     area_type = kwargs.get("area_type", context.area.type)
 
     scene = kwargs.get("scene", context.scene)
+	
+    view_layer = kwargs.get("view_layer", context.view_layer)
 
     space_data = kwargs.get("space_data", context.space_data)
     region_data = kwargs.get("region_data", context.region_data)
@@ -1798,7 +1800,7 @@ def gather_particles(**kwargs):
         pivots['CENTER'] = bbox_center.copy()
 
     csu = CoordinateSystemUtility(scene, space_data, region_data, \
-        pivots, normal_system)
+        pivots, normal_system, view_layer)
 
     return particles, csu
 
@@ -1852,7 +1854,7 @@ class CoordinateSystemUtility:
     }
 
     def __init__(self, scene, space_data, region_data, \
-                 pivots, normal_system):
+                 pivots, normal_system, view_layer):
         self.space_data = space_data
         self.region_data = region_data
 
@@ -1860,7 +1862,7 @@ class CoordinateSystemUtility:
             self.pivot_map_inv = self.pivot_v3d_map
 
         self.tou = TransformOrientationUtility(
-            scene, space_data, region_data)
+            scene, space_data, region_data, view_layer)
         self.tou.normal_system = normal_system
 
         self.pivots = pivots
@@ -1943,10 +1945,11 @@ class TransformOrientationUtility:
         "Scaled", "Surface",
     }
 
-    def __init__(self, scene, v3d, rv3d):
+    def __init__(self, scene, v3d, rv3d, vwly):
         self.scene = scene
         self.v3d = v3d
         self.rv3d = rv3d
+        self.view_layer = vwly
 
         self.custom_systems = [item for item in scene.orientations \
             if item.name not in self.special_systems]
@@ -2002,7 +2005,7 @@ class TransformOrientationUtility:
             self.v3d.transform_orientation = name
 
     def get_matrix(self, name=None):
-        active_obj = self.scene.objects.active
+        active_obj = self.view_layer.objects.active
 
         if not name:
             name = self.transform_orientation
@@ -2038,7 +2041,7 @@ class TransformOrientationUtility:
 
 # Is there a less cumbersome way to create transform orientation?
 def create_transform_orientation(scene, name=None, matrix=None):
-    active_obj = scene.objects.active
+    active_obj = view_layer.objects.active
     prev_mode = None
 
     if active_obj:
@@ -2270,7 +2273,7 @@ class SnapUtility:
         if context.area.type == 'VIEW_3D':
             v3d = context.space_data
             shade = v3d.viewport_shade
-            self.implementation = Snap3DUtility(context.scene, shade)
+            self.implementation = Snap3DUtility(context, shade)
             self.implementation.update_targets(
                 context.visible_objects, [])
 
@@ -2486,11 +2489,11 @@ class Snap3DUtility(SnapUtilityBase):
         for j in (-1, 1)
         for k in (-1, 1)]
 
-    def __init__(self, scene, shade):
+    def __init__(self, context, shade):
         SnapUtilityBase.__init__(self)
 
         convert_types = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}
-        self.cache = MeshCache(scene, convert_types)
+        self.cache = MeshCache(context, convert_types)
 
         # ? seems that dict is enough
         self.bbox_cache = {}#collections.OrderedDict()
@@ -2544,9 +2547,9 @@ class Snap3DUtility(SnapUtilityBase):
         # because otherwise outliner will blink each
         # time cursor is clicked
         if hide:
-            self.cache.scene.objects.unlink(self.bbox_obj)
+            self.cache.collection.objects.unlink(self.bbox_obj)
         else:
-            self.cache.scene.objects.link(self.bbox_obj)
+            self.cache.collection.objects.link(self.bbox_obj)
 
     def get_bbox_obj(self, obj, sys_matrix, sys_matrix_inv, is_local):
         if is_local:
@@ -3013,8 +3016,9 @@ class MeshCache:
                          'META', 'ARMATURE', 'LATTICE'}
     convert_types = conversible_types
 
-    def __init__(self, scene, convert_types=None):
-        self.scene = scene
+    def __init__(self, context, convert_types=None):
+        self.collection = context.collection
+        self.scene = context.scene
         if convert_types:
             self.convert_types = convert_types
         self.cached = {}
@@ -3197,10 +3201,10 @@ class MeshCache:
 
         # Make Blender recognize object as having geometry
         # (is there a simpler way to do this?)
-        self.scene.objects.link(tmp_obj)
+        self.collection.objects.link(tmp_obj)
         self.scene.update()
         # We don't need this object in scene
-        self.scene.objects.unlink(tmp_obj)
+        self.collection.objects.unlink(tmp_obj)
 
         return tmp_obj
 
@@ -3419,11 +3423,11 @@ class PseudoIDBlockBase(bpy.types.PropertyGroup):
 
 # ===== TRANSFORM EXTRA OPTIONS ===== #
 class TransformExtraOptionsProp(bpy.types.PropertyGroup):
-    use_relative_coords = bpy.props.BoolProperty(
+    use_relative_coords: bpy.props.BoolProperty(
         name="Relative coordinates",
         description="Consider existing transformation as the starting point",
         default=True)
-    snap_interpolate_normals_mode = bpy.props.EnumProperty(
+    snap_interpolate_normals_mode: bpy.props.EnumProperty(
         items=[('NEVER', "Never", "Don't interpolate normals"),
                ('ALWAYS', "Always", "Always interpolate normals"),
                ('SMOOTH', "Smoothness-based", "Interpolate normals only "\
@@ -3431,17 +3435,17 @@ class TransformExtraOptionsProp(bpy.types.PropertyGroup):
         name="Normal interpolation",
         description="Normal interpolation mode for snapping",
         default='SMOOTH')
-    snap_only_to_solid = bpy.props.BoolProperty(
+    snap_only_to_solid: bpy.props.BoolProperty(
         name="Snap only to solid",
         description="Ignore wireframe/non-solid objects during snapping",
         default=False)
-    snap_element_screen_size = bpy.props.IntProperty(
+    snap_element_screen_size: bpy.props.IntProperty(
         name="Snap distance",
         description="Radius in pixels for snapping to edges/vertices",
         default=8,
         min=2,
         max=64)
-    use_comma_separator = bpy.props.BoolProperty(
+    use_comma_separator: bpy.props.BoolProperty(
         name="Use comma separator",
         description="Use comma separator when copying/pasting"\
                     "coordinate values (instead of Tab character)",
@@ -3450,7 +3454,7 @@ class TransformExtraOptionsProp(bpy.types.PropertyGroup):
 
 # ===== 3D VECTOR LOCATION ===== #
 class LocationProp(bpy.types.PropertyGroup):
-    pos = bpy.props.FloatVectorProperty(
+    pos: bpy.props.FloatVectorProperty(
         name="xyz", description="xyz coords",
         options={'HIDDEN'}, subtype='XYZ')
 
@@ -3537,27 +3541,27 @@ class CursorHistoryProp(bpy.types.PropertyGroup):
 
     update_cursor_on_id_change = True
 
-    show_trace = bpy.props.BoolProperty(
+    show_trace: bpy.props.BoolProperty(
         name="Trace",
         description="Show history trace",
         default=False)
-    max_size = bpy.props.StringProperty(
+    max_size: bpy.props.StringProperty(
         name="Size",
         description="History max size",
         default=str(50),
         update=update_history_max_size)
-    current_id = bpy.props.IntProperty(
+    current_id: bpy.props.IntProperty(
         name="Index",
         description="Current position in cursor location history",
         default=50,
         min=0,
         max=50,
         update=update_history_id)
-    entries = bpy.props.CollectionProperty(
+    entries: bpy.props.CollectionProperty(
         type=LocationProp)
 
-    curr_id = bpy.props.IntProperty(options={'HIDDEN'})
-    last_id = bpy.props.IntProperty(options={'HIDDEN'})
+    curr_id: bpy.props.IntProperty(options={'HIDDEN'})
+    last_id: bpy.props.IntProperty(options={'HIDDEN'})
 
     def get_pos(self, id = None):
         if id is None:
@@ -3609,10 +3613,10 @@ class CursorHistoryProp(bpy.types.PropertyGroup):
 
 # ===== BOOKMARK ===== #
 class BookmarkProp(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(
+    name: bpy.props.StringProperty(
         name="name", description="bookmark name",
         options={'HIDDEN'})
-    pos = bpy.props.FloatVectorProperty(
+    pos: bpy.props.FloatVectorProperty(
         name="xyz", description="xyz coords",
         options={'HIDDEN'}, subtype='XYZ')
 
@@ -3635,7 +3639,7 @@ class NewCursor3DBookmark(bpy.types.Operator):
     bl_label = "New Bookmark"
     bl_description = "Add a new bookmark"
 
-    name = bpy.props.StringProperty(
+    name: bpy.props.StringProperty(
         name="Name",
         description="Name of the new bookmark",
         default="Mark")
@@ -3819,7 +3823,7 @@ class AddEmptyAtCursor3DBookmark(bpy.types.Operator):
         name = "{}.{}".format(library.name, bookmark.name)
         obj = bpy.data.objects.new(name, None)
         obj.matrix_world = to_matrix4x4(matrix, bookmark_pos)
-        context.scene.objects.link(obj)
+        context.collection.objects.link(obj)
 
         """
         for sel_obj in list(context.selected_objects):
@@ -3841,13 +3845,13 @@ class AddEmptyAtCursor3DBookmark(bpy.types.Operator):
 
 # ===== BOOKMARK LIBRARY ===== #
 class BookmarkLibraryProp(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty(
+    name: bpy.props.StringProperty(
         name="Name", description="Name of the bookmark library",
         options={'HIDDEN'})
     bookmarks = bpy.props.PointerProperty(
         type=BookmarkIDBlock,
         options={'HIDDEN'})
-    system = bpy.props.EnumProperty(
+    system: bpy.props.EnumProperty(
         items=[
             ('GLOBAL', "Global", "Global (absolute) coordinates"),
             ('LOCAL', "Local", "Local coordinate system, "\
@@ -3864,7 +3868,7 @@ class BookmarkLibraryProp(bpy.types.PropertyGroup):
         description="Coordinate system in which to store/recall "\
                     "cursor locations",
         options={'HIDDEN'})
-    offset = bpy.props.BoolProperty(
+    offset: bpy.props.BoolProperty(
         name="Offset",
         description="Store/recall relative to the last cursor position",
         default=False,
@@ -3891,7 +3895,7 @@ class BookmarkLibraryProp(bpy.types.PropertyGroup):
         else:
             csu.source_pos = Vector()
 
-        active_obj = csu.tou.scene.objects.active
+        active_obj = csu.tou.view_layer.objects.active
 
         if self.system == 'GLOBAL':
             sys_name = 'GLOBAL'
@@ -4014,7 +4018,7 @@ class NewCursor3DBookmarkLibrary(bpy.types.Operator):
     bl_label = "New Library"
     bl_description = "Add a new bookmark library"
 
-    name = bpy.props.StringProperty(
+    name: bpy.props.StringProperty(
         name="Name",
         description="Name of the new library",
         default="Lib")
@@ -4048,7 +4052,7 @@ class Cursor3DToolsSettings(bpy.types.PropertyGroup):
         type=TransformExtraOptionsProp,
         options={'HIDDEN'})
 
-    cursor_visible = bpy.props.BoolProperty(
+    cursor_visible: bpy.props.BoolProperty(
         name="Cursor visibility",
         description="Show/hide cursor. When hidden, "\
 "Blender continuously redraws itself (eats CPU like crazy, "\
@@ -4120,27 +4124,27 @@ class Cursor3DToolsSettings(bpy.types.PropertyGroup):
         default=True)
 
 class Cursor3DToolsSceneSettings(bpy.types.PropertyGroup):
-    stick_obj_name = bpy.props.StringProperty(
+    stick_obj_name: bpy.props.StringProperty(
         name="Stick-to-object name",
         description="Name of the object to stick cursor to",
         options={'HIDDEN'})
-    stick_obj_pos = bpy.props.FloatVectorProperty(
+    stick_obj_pos: bpy.props.FloatVectorProperty(
         default=(0.0, 0.0, 0.0),
         options={'HIDDEN'},
         subtype='XYZ')
 
 # ===== CURSOR RUNTIME PROPERTIES ===== #
 class CursorRuntimeSettings(bpy.types.PropertyGroup):
-    current_monitor_id = bpy.props.IntProperty(
+    current_monitor_id: bpy.props.IntProperty(
         default=0,
         options={'HIDDEN'})
 
-    surface_pos = bpy.props.FloatVectorProperty(
+    surface_pos: bpy.props.FloatVectorProperty(
         default=(0.0, 0.0, 0.0),
         options={'HIDDEN'},
         subtype='XYZ')
 
-    use_cursor_monitor = bpy.props.BoolProperty(
+    use_cursor_monitor: bpy.props.BoolProperty(
         name="Enable Cursor Monitor",
         description="Record 3D cursor history "\
             "(uses a background modal operator)",
@@ -4293,7 +4297,7 @@ class SetCursorDialog(bpy.types.Operator):
     bl_label = "Set 3D Cursor"
     bl_description = "Set 3D Cursor XYZ values"
 
-    pos = bpy.props.FloatVectorProperty(
+    pos: bpy.props.FloatVectorProperty(
         name="Location",
         description="3D Cursor location in current coordinate system",
         subtype='XYZ',
@@ -4470,13 +4474,13 @@ class AlignOrientationProperties(bpy.types.PropertyGroup):
 
         return orients
 
-    src_axis = bpy.props.EnumProperty(default='Z', items=axes_items,
+    src_axis: bpy.props.EnumProperty(default='Z', items=axes_items,
                                       name="Initial axis")
     #src_orient = bpy.props.EnumProperty(default='GLOBAL', items=get_orients)
 
-    dest_axis = bpy.props.EnumProperty(default=' ', items=axes_items_,
+    dest_axis: bpy.props.EnumProperty(default=' ', items=axes_items_,
                                        name="Final axis")
-    dest_orient = bpy.props.EnumProperty(items=get_orients,
+    dest_orient: bpy.props.EnumProperty(items=get_orients,
                                          name="Final orientation")
 
 class AlignOrientation(bpy.types.Operator):
@@ -4519,13 +4523,13 @@ class AlignOrientation(bpy.types.Operator):
 
         return orients
 
-    src_axis = bpy.props.EnumProperty(default='Z', items=axes_items,
+    src_axis: bpy.props.EnumProperty(default='Z', items=axes_items,
                                       name="Initial axis")
     #src_orient = bpy.props.EnumProperty(default='GLOBAL', items=get_orients)
 
-    dest_axis = bpy.props.EnumProperty(default=' ', items=axes_items_,
+    dest_axis: bpy.props.EnumProperty(default=' ', items=axes_items_,
                                        name="Final axis")
-    dest_orient = bpy.props.EnumProperty(items=get_orients,
+    dest_orient: bpy.props.EnumProperty(items=get_orients,
                                          name="Final orientation")
 
     @classmethod
@@ -5625,11 +5629,11 @@ class ThisAddonPreferences(bpy.types.AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    auto_register_keymaps = bpy.props.BoolProperty(
+    auto_register_keymaps: bpy.props.BoolProperty(
         name="Auto Register Keymaps",
         default=True)
 
-    use_cursor_monitor = bpy.props.BoolProperty(
+    use_cursor_monitor: bpy.props.BoolProperty(
         name="Enable Cursor Monitor",
         description="Cursor monitor is a background modal operator "\
             "that records 3D cursor history",

@@ -133,6 +133,6 @@ class RandomEditorPanel(Panel):
 
         layout = self.layout
         col = layout.column(align=True)
-        col.label("Cut duration:")
+        col.label(text="Cut duration:")
         col.prop(prefs, "random_frames")
         col.operator("sequencer.randomscratchoperator")

@@ -71,80 +71,80 @@ class KinorawToolsAddon(AddonPreferences):
     bl_option = {'REGISTER'}
 
     # extra_actions
-    kr_show_tools = BoolProperty(
+    kr_show_tools: BoolProperty(
             name="Show tools",
             description="Show extra tools in the panel",
             default=False
             )
-    kr_mini_ui = BoolProperty(
+    kr_mini_ui: BoolProperty(
             name="Mini UI",
             description="Enable mini UI",
             default=True
             )
-    kr_show_info = BoolProperty(
+    kr_show_info: BoolProperty(
             name="Show info",
             description="Show basic info from selected strip",
             default=False
             )
-    kr_show_trim = BoolProperty(
+    kr_show_trim: BoolProperty(
             name="Show trim",
             default=False
             )
-    kr_show_modifiers = BoolProperty(
+    kr_show_modifiers: BoolProperty(
             name="Show modifiers",
             description="Show modifiers from selected strip",
             default=False
             )
-    kr_extra_info = BoolProperty(
+    kr_extra_info: BoolProperty(
             name="Show extra info",
             description="Show extra info and settings from selected strip",
             default=False
             )
     # exif
-    use_exif_panel = BoolProperty(
+    use_exif_panel: BoolProperty(
             name="Exif info Panel | depends on external programs, see Documentation",
             default=False
             )
     # glitch
-    use_glitch_panel = BoolProperty(
+    use_glitch_panel: BoolProperty(
             name="Glitch panel | depends on external programs, see Documentation",
             default=False
             )
-    all_keyframes = BoolProperty(
+    all_keyframes: BoolProperty(
             name="Remove all keyframes",
             default=True
             )
-    load_glitch = BoolProperty(
+    load_glitch: BoolProperty(
             name="Load glitch after conversion > UNSTABLE!!!",
             default=True
             )
     # jump to cut
-    use_jumptocut = BoolProperty(
+    use_jumptocut: BoolProperty(
             name="Jump to Cut Panel",
             default=True
             )
-    use_io_tools = BoolProperty(
+    use_io_tools: BoolProperty(
             name="Enable in and out tools in Jump to Cut Panel",
             default=False
             )
     # Proxy Tools
-    use_proxy_tools = BoolProperty(
+    use_proxy_tools: BoolProperty(
             name="Proxy tools Panel | depends on external programs, see Documentation",
             default=False
             )
-    proxy_dir = StringProperty(
+    proxy_dir: StringProperty(
             name="Proxy Custom Directory",
             default="//proxies/"
             )
-    proxy_scripts_path = StringProperty(
+    proxy_scripts_path: StringProperty(
             name="Directory to store proxy scripts",
             default="//proxy_scripts/"
             )
-    proxy_scripts = BoolProperty(
+    proxy_scripts: BoolProperty(
             name="Generate ffmpeg scripts",
             default=False
             )
-    ffmpeg_command = StringProperty(
+    ffmpeg_command: StringProperty(
             name="Command to generate proxy",
             default='''ffmpeg -i {} -vcodec mjpeg -q:v 10 -s {}x{} -an -y {}'''
             )

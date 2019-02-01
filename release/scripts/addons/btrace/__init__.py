@@ -66,7 +66,7 @@ from bpy.props import (
 class btrace_preferences(AddonPreferences):
     bl_idname = __name__
 
-    expand_enum = EnumProperty(
+    expand_enum: EnumProperty(
             name="UI Options",
             items=[
                  ('list', "Drop down list",
@@ -82,7 +82,7 @@ class btrace_preferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.label("UI Options:")
+        layout.label(text="UI Options:")
 
         row = layout.row(align=True)
         row.prop(self, "expand_enum", text="UI Options", expand=True)

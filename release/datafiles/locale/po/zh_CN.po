@@ -14,11 +14,15 @@ msgstr ""
 "Language: zh_CN\n"
 "=====X-Generator: Poedit 1.6.9\n"
 "Language: zh_CN>>>>>> .r306\n"
-"X-Generator: Poedit 2.2"
+"X-Generator: Poedit 2.2.1"
 
 
 msgid "Action F-Curves"
 msgstr "动作函数曲线"
+
+
+msgid "Collection of action F-Curves"
+msgstr "函数曲线动作集合"
 
 
 msgid "Action Group"
@@ -171,6 +175,10 @@ msgstr "扩展"
 
 msgid "Action group is expanded"
 msgstr "扩展的动作块组"
+
+
+msgid "Action Groups"
+msgstr "动作块组"
 
 
 msgid "Active Pose Marker Index"
@@ -645,6 +653,10 @@ msgid "Empty"
 msgstr "空物体"
 
 
+msgid "3D Viewport"
+msgstr "3D 视图"
+
+
 msgid "UV/Image Editor"
 msgstr "UV/ 图像编辑器"
 
@@ -731,6 +743,10 @@ msgstr "文件浏览器"
 
 msgid "Browse for files and assets"
 msgstr "浏览文件及资源"
+
+
+msgid "Preferences"
+msgstr "偏好设置"
 
 
 msgid "Edit persistent configuration settings"
@@ -1145,6 +1161,10 @@ msgid "Grease Pencil"
 msgstr "蜡笔"
 
 
+msgid "Grease Pencil data-blocks"
+msgstr "蜡笔数据块"
+
+
 msgid "Images"
 msgstr "图像"
 
@@ -1221,6 +1241,10 @@ msgid "Scenes"
 msgstr "场景"
 
 
+msgid "Scene data-blocks"
+msgstr "场景数据块"
+
+
 msgid "Screens"
 msgstr "屏幕"
 
@@ -1271,6 +1295,42 @@ msgstr "世界环境"
 
 msgid "Main Cameras"
 msgstr "主摄像机"
+
+
+msgid "Main Grease Pencils"
+msgstr "主蜡笔"
+
+
+msgid "Collection of grease pencils"
+msgstr "蜡笔集合"
+
+
+msgid "Main Light Probes"
+msgstr "主光照探头"
+
+
+msgid "Collection of light probes"
+msgstr "光照探头集合"
+
+
+msgid "Main Scenes"
+msgstr "主场景"
+
+
+msgid "Collection of scenes"
+msgstr "屏幕集合"
+
+
+msgid "Main Screens"
+msgstr "主屏幕"
+
+
+msgid "Collection of screens"
+msgstr "屏幕集合"
+
+
+msgid "Main Speakers"
+msgstr "主扬声器"
 
 
 msgid "Blender RNA"
@@ -2061,6 +2121,10 @@ msgid "Has Spacing"
 msgstr "具有间隔特性"
 
 
+msgid "Grease Pencil Brush Settings"
+msgstr "蜡笔笔刷设置"
+
+
 msgid "Angle"
 msgstr "角度"
 
@@ -2099,6 +2163,10 @@ msgstr "简化"
 
 msgid "Threshold"
 msgstr "阈值"
+
+
+msgid "Grease Pencil Icon"
+msgstr "蜡笔图标"
 
 
 msgid "Marker"
@@ -2230,7 +2298,7 @@ msgstr "旋转"
 
 
 msgid "Scale"
-msgstr "比例"
+msgstr "缩放"
 
 
 msgid "Show Background Image"
@@ -4894,6 +4962,10 @@ msgid "Target object for multi-target constraints"
 msgstr "多目标约束的物体"
 
 
+msgid "Blend Weight"
+msgstr "混合权重"
+
+
 msgid "Curve in a curve mapping"
 msgstr "曲线映射中的曲线"
 
@@ -5166,6 +5238,10 @@ msgid "Persistent identifier for inter-frame matching of objects with motion blu
 msgstr "用于带运动模糊的物体内部帧匹配的持久标识"
 
 
+msgid "Show Particles"
+msgstr "显示粒子"
+
+
 msgid "UV Coordinates"
 msgstr "UV 坐标"
 
@@ -5283,7 +5359,11 @@ msgstr "折叠概要"
 
 
 msgid "Display Grease Pencil"
-msgstr "显示铅笔"
+msgstr "显示蜡笔"
+
+
+msgid "Active Scene Only"
+msgstr "仅活动场景"
 
 
 msgid "Display Hidden"
@@ -5576,6 +5656,11 @@ msgstr "图像"
 
 
 msgctxt "ID"
+msgid "Light"
+msgstr "灯光"
+
+
+msgctxt "ID"
 msgid "Library"
 msgstr "库"
 
@@ -5638,6 +5723,11 @@ msgstr "调色板"
 msgctxt "ID"
 msgid "Particle"
 msgstr "粒子"
+
+
+msgctxt "ID"
+msgid "Light Probe"
+msgstr "光照探头"
 
 
 msgctxt "ID"
@@ -7109,7 +7199,7 @@ msgstr "改变函数曲线数值 (例如, 改变运动幅度) "
 
 
 msgid "Cycles"
-msgstr "循环"
+msgstr "Cycles"
 
 
 msgid "Cyclic extend/repeat keyframe sequence"
@@ -7992,12 +8082,60 @@ msgid "Filter ID types"
 msgstr "过滤ID类型"
 
 
+msgid "Show/hide Grease pencil data-blocks"
+msgstr "显示/隐藏蜡笔数据块"
+
+
+msgid "Light Probes"
+msgstr "光照探头"
+
+
+msgid "Show/hide Light Probe data-blocks"
+msgstr "显示/隐藏光照探头数据块"
+
+
+msgid "Show/hide Scene data-blocks"
+msgstr "显示/隐藏场景数据块"
+
+
+msgid "Show/hide Speaker data-blocks"
+msgstr "显示/隐藏扬声器数据块"
+
+
+msgid "Show/hide Sound data-blocks"
+msgstr "显示/隐藏声音数据块"
+
+
 msgid "Show/hide Texture data-blocks"
 msgstr "显示/隐藏纹理数据块"
 
 
+msgid "Show/hide Text data-blocks"
+msgstr "显示/隐藏文本数据块"
+
+
 msgid "Fonts"
 msgstr "字体"
+
+
+msgid "Show/hide Font data-blocks"
+msgstr "显示/隐藏字体数据块"
+
+
+msgid "Show/hide World data-blocks"
+msgstr "显示/隐藏世界环境数据块"
+
+
+msgid "Show/hide workspace data-blocks"
+msgstr "显示/隐藏工作空间数据块"
+
+
+msgid "Filter ID categories"
+msgstr "过滤ID分类"
+
+
+msgid "Show/hide scenes"
+msgstr "显示 / 隐藏场景"
 
 
 msgid "Animations"
@@ -9124,6 +9262,14 @@ msgid "Grease Pencil Frames"
 msgstr "蜡笔帧"
 
 
+msgid "Collection of grease pencil frames"
+msgstr "蜡笔关键帧集合"
+
+
+msgid "Grease Pencil Interpolate Settings"
+msgstr "蜡笔插值设置"
+
+
 msgid "Easing"
 msgstr "过渡"
 
@@ -9444,6 +9590,10 @@ msgid "Only sculpt selected stroke points"
 msgstr "仅雕刻选中的笔画端点"
 
 
+msgid "Use Curve"
+msgstr "使用曲线"
+
+
 msgid "Grease Pencil Stroke"
 msgstr "蜡笔笔触"
 
@@ -9546,6 +9696,10 @@ msgstr "拖拽游标"
 
 msgid "Options"
 msgstr "选项"
+
+
+msgid "Use in 3D viewport"
+msgstr "使用3D视图"
 
 
 msgid "Persistent"
@@ -11168,6 +11322,10 @@ msgstr "均衡三角切B"
 
 msgid "Show Limits"
 msgstr "显示极限"
+
+
+msgid "Display the clipping range and focus point on the camera"
+msgstr "在摄像机中显示剪切范围及焦点"
 
 
 msgid "Show Mist"
@@ -12851,12 +13009,68 @@ msgid "Resolution Y"
 msgstr "Y 分辨率"
 
 
+msgid "Resolution Z"
+msgstr "Z 分辨率"
+
+
 msgid "Intensity"
 msgstr "强度"
 
 
+msgid "Invert visibility collection"
+msgstr "反转可见性集合"
+
+
+msgid "Parallax Radius"
+msgstr "视差半径"
+
+
 msgid "Clipping"
 msgstr "范围限制"
+
+
+msgid "Show Data"
+msgstr "显示数据"
+
+
+msgid "Parallax"
+msgstr "视差"
+
+
+msgid "Type of light probe"
+msgstr "光照探头类型"
+
+
+msgid "Reflection Cubemap"
+msgstr "立方盒反射"
+
+
+msgid "Capture reflections"
+msgstr "捕捉反射"
+
+
+msgid "Reflection Plane"
+msgstr "反射平面"
+
+
+msgid "Irradiance Volume"
+msgstr "辐射体积"
+
+
+msgid "Use Custom Parallax"
+msgstr "使用自定义视差"
+
+
+msgid "Visibility Blur"
+msgstr "可见性模糊"
+
+
+msgid "Filter size of the visibility blur"
+msgstr "可见性模糊的过滤尺寸"
+
+
+msgid "Visibility Collection"
+msgstr "可见性集合"
 
 
 msgid "Active Shape Index"
@@ -13021,6 +13235,14 @@ msgstr "纹理槽"
 
 msgid "Use shader nodes to render the material"
 msgstr "使用着色器节点渲染材质"
+
+
+msgid "Screen Space Refraction"
+msgstr "屏幕空间折射"
+
+
+msgid "Use raytraced screen space refractions"
+msgstr "使用光线追踪屏幕空间折射"
 
 
 msgid "Auto Smooth Angle"
@@ -13293,6 +13515,10 @@ msgstr "现实此剪辑的纵横比, 不会影响到渲染结果"
 
 msgid "Filename of the movie or sequence file"
 msgstr "影片或序列文件的文件名"
+
+
+msgid "Frame Rate"
+msgstr "帧率"
 
 
 msgid "Detected duration of movie clip in frames"
@@ -13751,6 +13977,10 @@ msgid "Faces"
 msgstr "面"
 
 
+msgid "Enable collection instancing"
+msgstr "启用集合实例"
+
+
 msgid "Location of the object"
 msgstr "物体的位置"
 
@@ -14108,7 +14338,7 @@ msgstr "蜡笔"
 
 
 msgid "Light"
-msgstr "低压缩率"
+msgstr "灯光(低压缩率)"
 
 
 msgid "Speaker"
@@ -15299,6 +15529,10 @@ msgid "Cycles hair rendering settings"
 msgstr "Cycles 毛发渲染设置"
 
 
+msgid "Scene Display"
+msgstr "场景显示"
+
+
 msgid "Display Settings"
 msgstr "显示设置"
 
@@ -15357,6 +15591,10 @@ msgstr "渲染与回放各帧时, 向前跳过的帧的数量"
 
 msgid "Constant acceleration in a given direction"
 msgstr "指定方向上的匀加速度"
+
+
+msgid "Annotations"
+msgstr "标注"
 
 
 msgid "NLA TweakMode"
@@ -18926,6 +19164,10 @@ msgstr "隐藏 / 遮罩"
 
 msgid "Hooks"
 msgstr "挂钩"
+
+
+msgid "Light Probe"
+msgstr "光照探头"
 
 
 msgid "Make Links"
@@ -25665,6 +25907,18 @@ msgid "True if this node is used as the active output"
 msgstr "若将此节点用作当前活动的输出节点, 则可用"
 
 
+msgid "Eevee"
+msgstr "Eevee"
+
+
+msgid "Use shaders for Eevee renderer"
+msgstr "为Eevee渲染器使用着色器"
+
+
+msgid "Use shaders for Cycles renderer"
+msgstr "为 Cycles渲染器使用着色器"
+
+
 msgid "Line Style Output"
 msgstr "线条样式输出"
 
@@ -25705,6 +25959,10 @@ msgid "Script Source"
 msgstr "脚本源"
 
 
+msgid "Use internal text data-block"
+msgstr "使用内部文本数据块"
+
+
 msgid "Use external .osl or .oso file"
 msgstr "使用外部 .osl 或 .oso 文件"
 
@@ -25731,6 +25989,10 @@ msgstr "分离 RGB"
 
 msgid "Separate XYZ"
 msgstr "分离 XYZ"
+
+
+msgid "Shader to RGB"
+msgstr "Shader --> RGB"
 
 
 msgid "Squeeze Value"
@@ -25809,6 +26071,10 @@ msgid "Texture Coordinate"
 msgstr "纹理坐标"
 
 
+msgid "From Instancer"
+msgstr "来自实例"
+
+
 msgid "Use the parent of the dupli object if possible"
 msgstr "使用副本物体的父级, 若可能"
 
@@ -25845,6 +26111,10 @@ msgid "No interpolation (sample closest texel)"
 msgstr "无插值 (采样邻近纹素)"
 
 
+msgid "Cubic interpolation"
+msgstr "三次插值"
+
+
 msgid "Bicubic when magnifying, else bilinear (OSL only)"
 msgstr "放大时使用双三次插值, 否则使用双线性插值 (仅用于 OSL)"
 
@@ -25875,6 +26145,18 @@ msgstr "源自一个球面反射镜的正交型照片投影"
 
 msgid "Gradient Texture"
 msgstr "渐变纹理"
+
+
+msgid "IES Texture"
+msgstr "IES纹理"
+
+
+msgid "Use internal text datablock"
+msgstr "使用内部文本数据块"
+
+
+msgid "Use external .ies file"
+msgstr "使用外部 .ies 文件"
 
 
 msgid "Method to project 2D image on object with a 3D texture vector"
@@ -30690,6 +30972,10 @@ msgid "Use Metadata"
 msgstr "使用元数据"
 
 
+msgid "General"
+msgstr "常规"
+
+
 msgctxt "Operator"
 msgid "Export OBJ"
 msgstr "导出OBJ"
@@ -31459,6 +31745,11 @@ msgid "Delete the active frame(s) of all editable Grease Pencil layers"
 msgstr "删除所有活动帧的可编辑蜡笔图层"
 
 
+msgctxt "Operator"
+msgid "Annotation Draw"
+msgstr "绘制标注"
+
+
 msgid "Make annotations on the active data"
 msgstr "为活动的数据创建注释"
 
@@ -31495,6 +31786,10 @@ msgid "Eraser"
 msgstr "橡皮擦"
 
 
+msgid "Erase Annotation strokes"
+msgstr "擦除标注笔迹"
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "插入空白帧"
@@ -31513,7 +31808,7 @@ msgstr "隐藏选中/未选中的蜡笔颜色"
 
 
 msgid "Lock all Grease Pencil colors to prevent them from being accidentally modified"
-msgstr "锁定所有蜡笔颜色，避免意外修改。"
+msgstr "锁定所有蜡笔颜色，避免意外修改"
 
 
 msgctxt "Operator"
@@ -31677,6 +31972,10 @@ msgstr "笔画雕刻模式切换"
 
 msgid "Limit"
 msgstr "限制"
+
+
+msgid "Decay"
+msgstr "衰减"
 
 
 msgid "Hide selected/unselected Grease Pencil layers"
@@ -31866,6 +32165,11 @@ msgstr "选择顶点组"
 
 msgid "Select all the vertices assigned to the active vertex group"
 msgstr "选择所有指定到活动顶点组中的顶点"
+
+
+msgctxt "Operator"
+msgid "Smooth Vertex Group"
+msgstr "平滑顶点组"
 
 
 msgctxt "Operator"
@@ -36376,6 +36680,23 @@ msgid "Add a camera object to the scene"
 msgstr "向场景中添加一个摄像机物体"
 
 
+msgid "Add an object to a new collection"
+msgstr "将物体添加到新集合"
+
+
+msgctxt "Operator"
+msgid "Add Collection Instance"
+msgstr "添加集合实例"
+
+
+msgid "Add a collection instance"
+msgstr "添加集合实例"
+
+
+msgid "Collection name to add"
+msgstr "要添加的集合名称"
+
+
 msgctxt "Operator"
 msgid "Add Constraint"
 msgstr "添加约束"
@@ -36777,6 +37098,10 @@ msgid "Set Offset From Cursor"
 msgstr "设定相对于光标位置的偏移量"
 
 
+msgid "Set offset used for collection instances based on cursor position"
+msgstr "根据光标位置设置用于集合实例的偏移量"
+
+
 msgctxt "Operator"
 msgid "Restrict Render Unselected"
 msgstr "不渲染未选中的物体"
@@ -36812,6 +37137,15 @@ msgstr "传递 UV 映射"
 msgctxt "Operator"
 msgid "Laplacian Deform Bind"
 msgstr "拉普拉斯形变绑定"
+
+
+msgctxt "Operator"
+msgid "Add Light Probe"
+msgstr "添加光照探头"
+
+
+msgid "Add a light probe object"
+msgstr "添加光照探头物体"
 
 
 msgctxt "Operator"
@@ -38180,6 +38514,14 @@ msgstr "清除驱动器"
 
 msgid "Hierarchy"
 msgstr "层级"
+
+
+msgid "Add a new collection inside selected collection"
+msgstr "在选中的集中内部添加新的集合"
+
+
+msgid "Nested"
+msgstr "嵌套"
 
 
 msgctxt "Operator"
@@ -45060,6 +45402,11 @@ msgid "Save the current Blender file"
 msgstr "保存当前工程文件"
 
 
+msgctxt "Operator"
+msgid "Save Preferences"
+msgstr "保存用户设置"
+
+
 msgid "Save user preferences separately, overrides startup file preferences"
 msgstr "保存用户设置, 覆盖启动文件的用户设置"
 
@@ -45106,6 +45453,10 @@ msgid "Splash Screen"
 msgstr "启动画面"
 
 
+msgid "Show light preferences"
+msgstr "显示光照偏好"
+
+
 msgctxt "Operator"
 msgid "Save System Info"
 msgstr "保存系统信息"
@@ -45128,6 +45479,10 @@ msgid "Remove existing theme file if exists"
 msgstr "如果主题文件存在则移除"
 
 
+msgid "Cycle"
+msgstr "循环"
+
+
 msgid "Open a website in the web-browser"
 msgstr "在网页浏览器中打开网站"
 
@@ -45141,12 +45496,48 @@ msgstr "要打开的URL"
 
 
 msgctxt "Operator"
+msgid "Close Window"
+msgstr "关闭窗口"
+
+
+msgid "Close the current window"
+msgstr "关闭当前窗口"
+
+
+msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "切换窗口全屏"
 
 
 msgid "Toggle the current window fullscreen"
 msgstr "切换当前窗口至全屏"
+
+
+msgctxt "Operator"
+msgid "New Window"
+msgstr "新建窗口"
+
+
+msgid "Create a new window"
+msgstr "创建一个新的窗口"
+
+
+msgctxt "Operator"
+msgid "New Main Window"
+msgstr "新建主窗口"
+
+
+msgid "Create a new main window with its own workspace and scene selection"
+msgstr "创建一个包含自身工作空间与场景选择的新主窗口"
+
+
+msgctxt "Operator"
+msgid "Add Workspace"
+msgstr "添加工作空间"
+
+
+msgid "Add a new workspace by duplicating the current one or appending one from the user configuration"
+msgstr "通过复制当前场景或者从用户预设添加新的工作空间"
 
 
 msgctxt "Operator"
@@ -45248,6 +45639,10 @@ msgstr "对称 Z"
 
 msgid "Mirror brush across the Z axis"
 msgstr "沿 Z 轴镜像笔刷"
+
+
+msgid "Grease Pencil Paint"
+msgstr "蜡笔绘制"
 
 
 msgid "Image Paint"
@@ -45574,6 +45969,10 @@ msgid "Footage Settings"
 msgstr "镜头设定"
 
 
+msgid "Annotation"
+msgstr "标注"
+
+
 msgid "Marker Display"
 msgstr "标记显示"
 
@@ -45635,6 +46034,10 @@ msgstr "镜头"
 
 msgid "Depth of Field"
 msgstr "景深"
+
+
+msgid "Aperture"
+msgstr "光圈"
 
 
 msgid "Spot Shape"
@@ -45719,6 +46122,10 @@ msgstr "几何数据"
 
 msgid "Ghost"
 msgstr "重影"
+
+
+msgid "Custom Parallax"
+msgstr "自定义视差"
 
 
 msgid "Paragraph"
@@ -45813,6 +46220,10 @@ msgid "Freestyle Line"
 msgstr "Freestyle 线条集"
 
 
+msgid "Grease Pencil Material Slots"
+msgstr "蜡笔材质槽"
+
+
 msgid "Backdrop"
 msgstr "背景图"
 
@@ -45861,6 +46272,10 @@ msgid "Viscoelastic Springs"
 msgstr "粘带弹性"
 
 
+msgid "Property Weights"
+msgstr "属性权重"
+
+
 msgid "Self Collision"
 msgstr "自碰撞"
 
@@ -45895,6 +46310,10 @@ msgstr "色彩管理"
 
 msgid "Indirect Lighting"
 msgstr "间接光照明"
+
+
+msgid "Screen Space Reflections"
+msgstr "屏幕空间反射"
 
 
 msgid "Shadows"
@@ -47137,8 +47556,16 @@ msgid "Amount that unselected F-Curves stand out from the background (Graph Edit
 msgstr "未选中的函数曲线相对于背景的突显量 (曲线图形)"
 
 
+msgid "Annotation Default Color"
+msgstr "标注默认颜色"
+
+
+msgid "Color of new annotation layers"
+msgstr "新建标注图层的颜色"
+
+
 msgid "Grease Pencil Eraser Radius"
-msgstr "蜡笔橡皮擦的半径"
+msgstr "蜡笔擦除半径"
 
 
 msgid "Radius of eraser 'brush'"
@@ -48137,6 +48564,10 @@ msgid "Limit the texture size to save graphics memory"
 msgstr "通过限制纹理尺寸来节约显存"
 
 
+msgid "Enable Grease Pencil OpenGL multi-sampling, only for systems that support it"
+msgstr "开启蜡笔OpenGL多采样计算, 仅适用于硬件支持的系统,"
+
+
 msgid "No MultiSample"
 msgstr "无多重采样"
 
@@ -48177,6 +48608,14 @@ msgid "Use 16x OpenGL MultiSample (requires restart)"
 msgstr "使用16x OpenGL多重采样(需要重启)"
 
 
+msgid "Viewport Quality"
+msgstr "视图品质"
+
+
+msgid "Quality setting for Solid mode rendering in the 3d viewport"
+msgstr "3D视图中实体模式的渲染品质设置"
+
+
 msgid "Image Draw Method"
 msgstr "图像绘制方式"
 
@@ -48211,6 +48650,14 @@ msgstr "多重采样"
 
 msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
 msgstr "开启OpenGL多采样计算, 仅适用于硬件支持的系统, 需重启"
+
+
+msgid "OpenSubdiv Compute Type"
+msgstr "OpenSudiv运算类型"
+
+
+msgid "OpenMP"
+msgstr "OpenMP"
 
 
 msgid "GLSL Transform Feedback"
@@ -48295,6 +48742,14 @@ msgstr "GPU 多级纹理生成"
 
 msgid "Generate Image Mipmaps on the GPU"
 msgstr "在 GPU 中生成图像的多级纹理"
+
+
+msgid "Translate UI"
+msgstr "翻译用户界面"
+
+
+msgid "Enable UI translation and use international fonts"
+msgstr "启用界面翻译并使用国际化字体"
 
 
 msgid "Region Overlap"
@@ -50169,6 +50624,18 @@ msgid "Global child particles percentage"
 msgstr "全局子粒子比例"
 
 
+msgid "Global child particles percentage during rendering"
+msgstr "渲染时的全局子粒子比例"
+
+
+msgid "Simplify Grease Pencil drawing"
+msgstr "简化蜡笔笔画"
+
+
+msgid "Layers Blending"
+msgstr "图层混合"
+
+
 msgid "Simplify Subdivision"
 msgstr "简化细分"
 
@@ -51095,6 +51562,58 @@ msgstr "改变弹簧的静止长度所需的拉伸/压缩量"
 
 msgid "Factor for ambient occlusion blending"
 msgstr "AO 混合系数"
+
+
+msgid "Trace Precision"
+msgstr "追踪精度"
+
+
+msgid "Precision of the horizon search"
+msgstr "水平搜索的精度"
+
+
+msgid "Light Threshold"
+msgstr "光照阈值"
+
+
+msgid "Edge Fading"
+msgstr "边衰减"
+
+
+msgid "Render Samples"
+msgstr "渲染采样"
+
+
+msgid "Number of samples per pixels for rendering"
+msgstr "渲染时单个像素的采样数"
+
+
+msgid "Viewport Samples"
+msgstr "视图采样"
+
+
+msgid "Number of samples, unlimited if 0"
+msgstr "采样数值，0为不限制"
+
+
+msgid "Enable screen space reflection"
+msgstr "开启屏幕空间反射"
+
+
+msgid "Screen Space Refractions"
+msgstr "屏幕空间折射"
+
+
+msgid "Enable screen space Refractions"
+msgstr "启用屏幕空间折射"
+
+
+msgid "Enable screen space subsurface scattering"
+msgstr "启用屏幕空间次表面散射"
+
+
+msgid "Viewport Denoising"
+msgstr "视图降噪"
 
 
 msgid "Scene Render View"
@@ -53041,6 +53560,10 @@ msgid "Scopes to visualize movie clip statistics"
 msgstr "影片剪辑统计值的可视化范围"
 
 
+msgid "Show Annotation"
+msgstr "显示标注"
+
+
 msgid "Show Blue Channel"
 msgstr "显示蓝色通道"
 
@@ -54020,16 +54543,40 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "序列的视图类型(序列,预览或两者同时)"
 
 
+msgid "Sequencer/Preview"
+msgstr "序列编辑器/预览"
+
+
+msgid "Waveform Displaying"
+msgstr "波形图显示"
+
+
+msgid "How Waveforms are drawn"
+msgstr "波形的绘制方法"
+
+
 msgid "Waveforms Off"
 msgstr "隐藏波形"
+
+
+msgid "No waveforms drawn for any sound strips"
+msgstr "不为任何片断绘制波形"
 
 
 msgid "Waveforms On"
 msgstr "显示波形"
 
 
+msgid "Waveforms drawn for all sound strips"
+msgstr "为所有声音片断绘制波形"
+
+
 msgid "Use Strip Option"
 msgstr "使用片段选项"
+
+
+msgid "Waveforms drawn according to strip setting"
+msgstr "根据片断设置绘制波形"
 
 
 msgid "Space Text Editor"
@@ -56104,6 +56651,10 @@ msgid "Grease Pencil Keyframe"
 msgstr "蜡笔关键帧"
 
 
+msgid "Color for indicating Grease Pencil keyframes"
+msgstr "指示蜡笔关键帧的颜色"
+
+
 msgid "Object Keyframe"
 msgstr "物体关键帧"
 
@@ -56196,6 +56747,10 @@ msgid "Time Step"
 msgstr "时间步长"
 
 
+msgid "Draw stroke at 3D cursor location"
+msgstr "在 3D 游标位置绘制笔触"
+
+
 msgid "Stick stroke to the view "
 msgstr "将线条贴附到视图平面"
 
@@ -56254,6 +56809,10 @@ msgstr "标记倒角"
 
 msgid "Tag Freestyle Edge Mark"
 msgstr "标记 Freestyle 标记边"
+
+
+msgid "Grease Pencil Interpolate"
+msgstr "蜡笔插值"
 
 
 msgid "Stick stroke to other strokes"
@@ -57189,6 +57748,76 @@ msgstr "物体模式"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Select"
+msgstr "3D视图工具: 选择"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Box"
+msgstr "3D视图工具: 框选"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Circle"
+msgstr "3D视图工具: 刷选"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Select Lasso"
+msgstr "3D视图工具: 套索选择"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Cursor"
+msgstr "3D视图工具: 游标"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Transform"
+msgstr "3D视图工具: 变换"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Move"
+msgstr "3D视图工具: 移动"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Rotate"
+msgstr "3D视图工具: 旋转"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Scale"
+msgstr "3D视图工具: 缩放"
+
+
+msgctxt "WindowManager"
+msgid "Generic Tool: Annotate"
+msgstr "通用工具: 标注"
+
+
+msgctxt "WindowManager"
+msgid "Generic Tool: Annotate Line"
+msgstr "通用工具: 标注线"
+
+
+msgctxt "WindowManager"
+msgid "Generic Tool: Annotate Polygon"
+msgstr "通用工具: 标注多边形"
+
+
+msgctxt "WindowManager"
+msgid "Generic Tool: Annotate Eraser"
+msgstr "通用工具: 标注擦除"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Measure"
+msgstr "3D视图工具: 测量"
+
+
+msgctxt "WindowManager"
 msgid "Mesh"
 msgstr "网格"
 
@@ -57464,6 +58093,36 @@ msgstr "蜡笔笔画雕刻模式"
 
 
 msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Paint (Draw brush)"
+msgstr "蜡笔的笔触绘制(绘制笔刷)"
+
+
+msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Paint (Fill)"
+msgstr "蜡笔的笔触绘制(填充)"
+
+
+msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Paint (Erase)"
+msgstr "蜡笔的笔触绘制(擦除)"
+
+
+msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Paint Mode"
+msgstr "蜡笔笔画绘制模式"
+
+
+msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Sculpt Mode"
+msgstr "蜡笔笔画雕刻模式"
+
+
+msgctxt "WindowManager"
+msgid "Grease Pencil Stroke Weight Mode"
+msgstr "蜡笔笔画权重模式"
+
+
+msgctxt "WindowManager"
 msgid "Mask Editing"
 msgstr "遮罩编辑"
 
@@ -57543,6 +58202,10 @@ msgstr "在外部 .osl 文件路径中写入 .oso 文件失败"
 
 msgid "Cycles Compute Device:"
 msgstr "Cycles 计算设备:"
+
+
+msgid "No compatible GPUs found"
+msgstr "未找到兼容的GPU"
 
 
 msgid "Total Samples:"
@@ -59096,6 +59759,10 @@ msgid "Buffer"
 msgstr "缓冲区"
 
 
+msgid "Sample Bias"
+msgstr "采样偏移量"
+
+
 msgid "Mask Value"
 msgstr "遮罩值"
 
@@ -59188,8 +59855,56 @@ msgid "Dynamic Mesh"
 msgstr "动态网格"
 
 
+msgid "Structural Group"
+msgstr "结构组"
+
+
+msgid "Max Tension"
+msgstr "最大张力"
+
+
+msgid "Max Compression"
+msgstr "最大压缩"
+
+
+msgid "Shear Group"
+msgstr "切变组"
+
+
+msgid "Max Shearing"
+msgstr "最大切变"
+
+
+msgid "Bending Group"
+msgstr "弯曲组"
+
+
+msgid "Max Bending"
+msgstr "最大弯曲"
+
+
+msgid "Shrinking Group"
+msgstr "缩放组"
+
+
+msgid "Max Shrinking"
+msgstr "最大缩放"
+
+
+msgid "Tension"
+msgstr "张力"
+
+
 msgid "Structural"
 msgstr "结构"
+
+
+msgid "Affect Location"
+msgstr "影响位置"
+
+
+msgid "Min Distance"
+msgstr "最小距离"
 
 
 msgid "Enable physics for:"
@@ -59209,6 +59924,10 @@ msgstr "清除所有烘培"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "力场"
+
+
+msgid "Use Library Path"
+msgstr "使用库路径"
 
 
 msgid "Use Lib Path"
@@ -59231,12 +59950,20 @@ msgstr "全部更新到帧"
 
 
 msgid "Cache is disabled until the file is saved"
-msgstr "保存工程后才开启缓存"
+msgstr "保存工程后才禁用缓存"
+
+
+msgid "Options are disabled until the file is saved"
+msgstr "保存工程后才禁用选项"
 
 
 msgctxt "Operator"
 msgid "Bake Image Sequence"
 msgstr "烘焙图像序列"
+
+
+msgid "Premultiply Alpha"
+msgstr "预乘 Alpha"
 
 
 msgctxt "Operator"
@@ -59313,6 +60040,10 @@ msgstr "阴影采样"
 
 msgid "Refraction"
 msgstr "折射"
+
+
+msgid "Render Engine"
+msgstr "渲染引擎"
 
 
 msgid "Paths:"
@@ -59565,6 +60296,10 @@ msgstr "插值模式"
 msgctxt "Operator"
 msgid "Easing Type"
 msgstr "缓动类型"
+
+
+msgid "Grease Pencil Objects"
+msgstr "蜡笔物体"
 
 
 msgctxt "Operator"
@@ -60320,9 +61055,32 @@ msgid "Auto Keyframing:"
 msgstr "自动插入关键帧"
 
 
+msgid "Annotation:"
+msgstr "标注:"
+
+
+msgid "View Axis:"
+msgstr "查看轴向:"
+
+
 msgctxt "Operator"
 msgid "Recover Auto Save..."
 msgstr "恢复到自动存档文件..."
+
+
+msgctxt "Operator"
+msgid "Install Application Template..."
+msgstr "安装应用模板..."
+
+
+msgctxt "Operator"
+msgid "Link..."
+msgstr "关联..."
+
+
+msgctxt "Operator"
+msgid "Append..."
+msgstr "追加..."
 
 
 msgctxt "Operator"
@@ -60432,12 +61190,20 @@ msgid "Memory Limit"
 msgstr "内存限额"
 
 
+msgid "Grease Pencil/Annotations:"
+msgstr "蜡笔/标注:"
+
+
 msgid "Manhattan Distance"
 msgstr "曼哈顿点距"
 
 
 msgid "Euclidean Distance"
 msgstr "欧几里德点距"
+
+
+msgid "Annotations:"
+msgstr "标注:"
 
 
 msgid "Default Color"
@@ -60497,7 +61263,7 @@ msgstr "复制数据:"
 
 
 msgid "General:"
-msgstr "常项:"
+msgstr "常规:"
 
 
 msgid "Console Scrollback"
@@ -60518,6 +61284,14 @@ msgstr "采样格式"
 
 msgid "OpenGL:"
 msgstr "OpenGL:"
+
+
+msgid "Anisotropic Filtering:"
+msgstr "各向异性过滤:"
+
+
+msgid "Grease Pencil Options:"
+msgstr "蜡笔选项:"
 
 
 msgid "Text Draw Options:"
@@ -61170,6 +61944,11 @@ msgstr "单段骨骼"
 
 
 msgctxt "Operator"
+msgid "Grease Pencil"
+msgstr "蜡笔"
+
+
+msgctxt "Operator"
 msgid "Empty"
 msgstr "空物体"
 
@@ -61187,6 +61966,21 @@ msgstr "生成代理..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "转为本地项..."
+
+
+msgctxt "Operator"
+msgid "Set Origin..."
+msgstr "设置原点..."
+
+
+msgctxt "Operator"
+msgid "Copy Objects"
+msgstr "复制物体"
+
+
+msgctxt "Operator"
+msgid "Paste Objects"
+msgstr "粘贴物体"
 
 
 msgid "Make Links..."
@@ -61420,8 +62214,63 @@ msgstr "网格元素排序..."
 
 
 msgctxt "Operator"
+msgid "New Edge/Face from Vertices"
+msgstr "从顶点创建边/面"
+
+
+msgctxt "Operator"
 msgid "Connect Vertex Path"
 msgstr "连接顶点路径"
+
+
+msgctxt "Operator"
+msgid "Connect Vertex Pairs"
+msgstr "连接顶点对"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices"
+msgstr "断离顶点"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices and Fill"
+msgstr "断离顶点并填充"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices and Extend"
+msgstr "断离顶点并延长"
+
+
+msgctxt "Operator"
+msgid "Slide Vertices"
+msgstr "滑动顶点"
+
+
+msgctxt "Operator"
+msgid "Smooth Vertices"
+msgstr "平滑顶点"
+
+
+msgctxt "Operator"
+msgid "Propagate to Shapes"
+msgstr "传递到形状"
+
+
+msgctxt "Operator"
+msgid "Merge Vertices"
+msgstr "合并顶点"
+
+
+msgctxt "Operator"
+msgid "Remove Double Vertices"
+msgstr "移除重叠顶点"
+
+
+msgctxt "Operator"
+msgid "Solidify Faces"
+msgstr "面实体化"
 
 
 msgctxt "Operator"
@@ -61541,6 +62390,26 @@ msgstr "晶格"
 
 
 msgctxt "Operator"
+msgid "Collection Instance..."
+msgstr "集合实例..."
+
+
+msgctxt "Operator"
+msgid "No Collections to Instance"
+msgstr "无可用的集合用于实体化"
+
+
+msgctxt "Operator"
+msgid "Collection Instance"
+msgstr "集合实例"
+
+
+msgctxt "Operator"
+msgid "Delete Global"
+msgstr "全局删除"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "添加活动项"
 
@@ -61553,6 +62422,11 @@ msgstr "添加被动项"
 msgctxt "Operator"
 msgid "Objects to Scene..."
 msgstr "物体到场景..."
+
+
+msgctxt "Operator"
+msgid "Objects to Scene"
+msgstr "物体到场景"
 
 
 msgctxt "Operator"
@@ -61606,8 +62480,38 @@ msgstr "粘贴 X 轴向的翻转动作"
 
 
 msgctxt "Operator"
+msgid "Extrude Vertices"
+msgstr "挤出顶点"
+
+
+msgctxt "Operator"
+msgid "Extrude Edges"
+msgstr "挤出边线"
+
+
+msgctxt "Operator"
+msgid "Extrude Faces"
+msgstr "挤出面"
+
+
+msgctxt "Operator"
+msgid "Extrude Faces Along Normals"
+msgstr "沿法向挤出面"
+
+
+msgctxt "Operator"
+msgid "Bevel Vertices"
+msgstr "顶点倒角"
+
+
+msgctxt "Operator"
 msgid "Clear Sharp"
 msgstr "清除锐边"
+
+
+msgctxt "Operator"
+msgid "Mark Sharp from Vertices"
+msgstr "从顶点标记锐边"
 
 
 msgctxt "Operator"
@@ -61735,6 +62639,27 @@ msgid "Set Roll"
 msgstr "设置扭转"
 
 
+msgid "No layer to copy"
+msgstr "没有层供复制"
+
+
+msgctxt "Operator"
+msgid "Duplicate All Layers"
+msgstr "复制所有层"
+
+
+msgid "Only Origins"
+msgstr "仅原心"
+
+
+msgid "Lock to 3D Cursor"
+msgstr "锁定到3D游标"
+
+
+msgid "Marker Names"
+msgstr "标记名称"
+
+
 msgctxt "Operator"
 msgid "Assign Automatic From Bones"
 msgstr "自动按骨骼指定"
@@ -61751,6 +62676,26 @@ msgstr "指定到组"
 
 
 msgctxt "Operator"
+msgid "Delete Vertices"
+msgstr "删除顶点"
+
+
+msgctxt "Operator"
+msgid "Delete Edges"
+msgstr "删除边"
+
+
+msgctxt "Operator"
+msgid "Bridge Faces"
+msgstr "桥接面"
+
+
+msgctxt "Operator"
+msgid "Delete Faces"
+msgstr "删除面"
+
+
+msgctxt "Operator"
 msgid "Clear Freestyle Edge"
 msgstr "清除 Freestyle 边"
 
@@ -61758,6 +62703,14 @@ msgstr "清除 Freestyle 边"
 msgctxt "Operator"
 msgid "Clear Freestyle Face"
 msgstr "清除 Freestyle 面"
+
+
+msgid "No destination object"
+msgstr "无目标物体"
+
+
+msgid "Specular Lighting"
+msgstr "高光光照"
 
 
 msgctxt "Operator"
@@ -62538,6 +63491,10 @@ msgid "F-Curve is visible in Graph Editor for editing"
 msgstr "在曲线编辑器中可见可编辑的F曲线"
 
 
+msgid "Grease Pencil layer is visible in the viewport"
+msgstr "蜡笔图层在视图中可见"
+
+
 msgid "Channels are visible in Graph Editor for editing"
 msgstr "通道在曲线编辑器中可见, 以进行编辑"
 
@@ -62931,7 +63888,7 @@ msgstr "分辨率不匹配"
 
 
 msgid "Cannot make segment"
-msgstr "无法创建段"
+msgstr "无法创建线段"
 
 
 msgid "Cannot spin"
@@ -63046,6 +64003,14 @@ msgid "Nowhere for grease pencil data to go"
 msgstr "蜡笔数据无地可去"
 
 
+msgid "Active object is not a selected grease pencil"
+msgstr "活动的物体不是一个被选中的蜡笔"
+
+
+msgid "No Grease Pencil data"
+msgstr "没有蜡笔数据"
+
+
 msgid "No grease pencil data"
 msgstr "没有蜡笔数据"
 
@@ -63060,6 +64025,14 @@ msgstr "无可供删除的活动关键帧"
 
 msgid "Cannot interpolate as current frame already has existing grease pencil frames"
 msgstr "不能对已经是蜡笔关键帧的当前帧使进行插值"
+
+
+msgid "Grease Pencil Erase Session: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
+msgstr "蜡笔擦除会话: 按下并拖拽鼠标左键, 或按右键进行清除 | 按ESC / 回车键(或在区域外单击)结束"
+
+
+msgid "Grease Pencil Line Session: Hold and drag LMB to draw | ESC/Enter to end  (or click outside this area)"
+msgstr "蜡笔直线会话; 按下并拖拽鼠标左键进行绘制 | 按ESC / 回车键(或在区域外单击)结束"
 
 
 msgid "Grease Pencil operator is already active"
@@ -63987,6 +64960,11 @@ msgstr "曲线引导"
 msgctxt "Object"
 msgid "Field"
 msgstr "力场"
+
+
+msgctxt "Lamp"
+msgid "Light"
+msgstr "灯光"
 
 
 msgid "Cannot create editmode armature"
@@ -65971,6 +66949,14 @@ msgid "Object as Camera"
 msgstr "物体作为摄像机"
 
 
+msgid "User Orthographic"
+msgstr "用户正交"
+
+
+msgid "User Perspective"
+msgstr "用户透视"
+
+
 msgid "%s (Local)"
 msgstr "%s (局部)"
 
@@ -67050,6 +68036,10 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "无法移除键配置 %s"
 
 
+msgid "Operator '%s' not found!"
+msgstr "未能找到操作 %s"
+
+
 msgid "Cannot execute boolean operation"
 msgstr "未能执行布尔操作"
 
@@ -67534,6 +68524,10 @@ msgid "No frames rendered, skipped to not overwrite"
 msgstr "未渲染任何帧, 跳过以避免覆写"
 
 
+msgid "No active view found in scene \"%s\""
+msgstr "场景 \"%s\" 中没有找到活动视图"
+
+
 msgid "Paste name"
 msgstr "粘贴名称"
 
@@ -67544,6 +68538,10 @@ msgstr "正文中缺少'window'"
 
 msgid "Save Over?"
 msgstr "覆盖保存?"
+
+
+msgid "Allow Execution"
+msgstr "允许执行"
 
 
 msgid "unable to open the file"
@@ -67659,12 +68657,48 @@ msgid "Property from path '%s' has length %d instead of %d"
 msgstr "路径 '%s' 的属性长度为 %d 而非 %d"
 
 
+msgid "This file has not been saved yet. Save before closing?"
+msgstr "该文件尚未保存，退出前保存文件？"
+
+
+msgid "Save changes to \"%s\" before closing?"
+msgstr "退出前保存修改至 \"%s\"？"
+
+
+msgid "Discard Changes"
+msgstr "放弃修改"
+
+
+msgid "Save & Quit"
+msgstr "保存并退出"
+
+
 msgid "Blender Render"
 msgstr "Blender 渲染"
 
 
+msgid "Blender Preferences"
+msgstr "Blender 用户设置"
+
+
 msgid "Blender File View"
 msgstr "Blender 文件视图"
+
+
+msgid "Blender Drivers Editor"
+msgstr "Blender驱动器编辑器"
+
+
+msgid "Do not quit"
+msgstr "不退出"
+
+
+msgid "Discard changes and quit"
+msgstr "放弃修改并退出"
+
+
+msgid "Save and quit"
+msgstr "保存并退出"
 
 
 msgid "All Add-ons"

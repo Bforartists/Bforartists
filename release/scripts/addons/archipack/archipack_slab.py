@@ -1327,13 +1327,13 @@ class ARCHIPACK_PT_slab(Panel):
         box = layout.box()
         row = box.row()
         if prop.parts_expand:
-            row.prop(prop, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
+            row.prop(prop, 'parts_expand', icon="TRIA_DOWN", text="Parts", emboss=False)
             box.prop(prop, 'n_parts')
             # box.prop(prop, 'closed')
             for i, part in enumerate(prop.parts):
                 part.draw(context, layout, i)
         else:
-            row.prop(prop, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
+            row.prop(prop, 'parts_expand', icon="TRIA_RIGHT", text="Parts", emboss=False)
 
 
 class ARCHIPACK_PT_slab_cutter(Panel):

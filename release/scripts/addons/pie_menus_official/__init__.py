@@ -78,12 +78,17 @@ def get_addon_preferences(name=''):
                     cls = _get_pref_class(mod)
                     if cls:
                         prop = PointerProperty(type=cls)
-                        setattr(UIToolsPreferences, name, prop)
+                        create_property(UIToolsPreferences, name, prop)
                         bpy.utils.unregister_class(UIToolsPreferences)
                         bpy.utils.register_class(UIToolsPreferences)
         return getattr(addon_prefs, name, None)
     else:
         return addon_prefs
+
+def create_property(cls, name, prop):
+    if not hasattr(cls, '__annotations__'):
+        cls.__annotations__ = dict()
+    cls.__annotations__[name] = prop
 
 
 def register_submodule(mod):
@@ -206,20 +211,25 @@ for mod in sub_modules:
             mod.__addon_enabled__ = enabled
         return update
 
-    prop = BoolProperty(
+    create_property(
+        UIToolsPreferences,
+        'use_' + mod_name,
+        BoolProperty(
             name=info['name'],
             description=info.get('description', ''),
             update=gen_update(mod),
             default=True,
-            )
+        ))
 
-    setattr(UIToolsPreferences, 'use_' + mod_name, prop)
-    prop = BoolProperty()
-    setattr(UIToolsPreferences, 'show_expanded_' + mod_name, prop)
+    create_property(
+        UIToolsPreferences,
+        'show_expanded_' + mod_name,
+        BoolProperty())
+
 
 classes = (
     UIToolsPreferences,
-    )
+)
 
 
 def register():

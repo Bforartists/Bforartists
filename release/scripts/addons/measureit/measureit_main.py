@@ -469,7 +469,7 @@ class MEASUREIT_PT_Edit(Panel):
                         units = scene.measureit_units
 
                         box = layout.box()
-                        box.label("Totals", icon='SOLO_ON')
+                        box.label(text="Totals", icon='SOLO_ON')
                         final = 0
                         for idx in range(len(tot)):
                             if ac[idx] is True:

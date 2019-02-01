@@ -64,7 +64,7 @@ from bpy.props import (
 class VIEW3D_MT_Brushes_Pref(AddonPreferences):
     bl_idname = __name__
 
-    use_brushes_menu_type = EnumProperty(
+    use_brushes_menu_type: EnumProperty(
         name="Choose Brushes Selection",
         description="",
         items=[('lists', "Use compact Menus",
@@ -78,7 +78,7 @@ class VIEW3D_MT_Brushes_Pref(AddonPreferences):
             ],
         default='lists'
         )
-    column_set = IntProperty(
+    column_set: IntProperty(
         name="Number of Columns",
         description="Number of columns used for the brushes menu",
         default=2,
