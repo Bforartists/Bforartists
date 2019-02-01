@@ -21,40 +21,40 @@ class TriLighting(Operator):
                       "Needs an existing Active Object")
     bl_options = {'REGISTER', 'UNDO'}
 
-    height = FloatProperty(
+    height: FloatProperty(
             name="Height",
             default=5
             )
-    distance = FloatProperty(
+    distance: FloatProperty(
             name="Distance",
             default=5,
             min=0.1,
             subtype="DISTANCE"
             )
-    energy = IntProperty(
+    energy: IntProperty(
             name="Base Energy",
             default=3,
             min=1
             )
-    contrast = IntProperty(
+    contrast: IntProperty(
             name="Contrast",
             default=50,
             min=-100, max=100,
             subtype="PERCENTAGE"
             )
-    leftangle = IntProperty(
+    leftangle: IntProperty(
             name="Left Angle",
             default=26,
             min=1, max=90,
             subtype="ANGLE"
             )
-    rightangle = IntProperty(
+    rightangle: IntProperty(
             name="Right Angle",
             default=45,
             min=1, max=90,
             subtype="ANGLE"
             )
-    backangle = IntProperty(
+    backangle: IntProperty(
             name="Back Angle",
             default=235,
             min=90, max=270,
@@ -67,14 +67,14 @@ class TriLighting(Operator):
             ('HEMI', "Hemi", "Hemi Light"),
             ('AREA', "Area", "Area Light")
             ]
-    primarytype = EnumProperty(
+    primarytype: EnumProperty(
             attr='tl_type',
             name="Key Type",
             description="Choose the types of Key Lights you would like",
             items=Light_Type_List,
             default='HEMI'
             )
-    secondarytype = EnumProperty(
+    secondarytype: EnumProperty(
             attr='tl_type',
             name="Fill + Back Type",
             description="Choose the types of secondary Lights you would like",
@@ -89,30 +89,31 @@ class TriLighting(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Position:")
+        layout.label(text="Position:")
         col = layout.column(align=True)
         col.prop(self, "height")
         col.prop(self, "distance")
 
-        layout.label("Light:")
+        layout.label(text="Light:")
         col = layout.column(align=True)
         col.prop(self, "energy")
         col.prop(self, "contrast")
 
-        layout.label("Orientation:")
+        layout.label(text="Orientation:")
         col = layout.column(align=True)
         col.prop(self, "leftangle")
         col.prop(self, "rightangle")
         col.prop(self, "backangle")
 
         col = layout.column()
-        col.label("Key Light Type:")
+        col.label(text="Key Light Type:")
         col.prop(self, "primarytype", text="")
-        col.label("Fill + Back Type:")
+        col.label(text="Fill + Back Type:")
         col.prop(self, "secondarytype", text="")
 
     def execute(self, context):
         try:
+            collection = context.collection
             scene = context.scene
             view = context.space_data
             if view.type == 'VIEW_3D' and not view.lock_camera_and_layers:
@@ -123,13 +124,13 @@ class TriLighting(Operator):
             if (camera is None):
                 cam_data = bpy.data.cameras.new(name='Camera')
                 cam_obj = bpy.data.objects.new(name='Camera', object_data=cam_data)
-                scene.objects.link(cam_obj)
+                collection.objects.link(cam_obj)
                 scene.camera = cam_obj
                 bpy.ops.view3d.camera_to_view()
                 camera = cam_obj
                 bpy.ops.view3d.viewnumpad(type='TOP')
 
-            obj = bpy.context.scene.objects.active
+            obj = bpy.context.view_layer.objects.active
 
             # Calculate Energy for each Lamp
             if(self.contrast > 0):
@@ -177,7 +178,7 @@ class TriLighting(Operator):
             backData.energy = backEnergy
 
             backLamp = bpy.data.objects.new(name="TriLamp-Back", object_data=backData)
-            scene.objects.link(backLamp)
+            collection.objects.link(backLamp)
             backLamp.location = (backx, backy, self.height)
 
             trackToBack = backLamp.constraints.new(type="TRACK_TO")
@@ -199,7 +200,7 @@ class TriLighting(Operator):
             rightData = bpy.data.lights.new(name="TriLamp-Fill", type=self.secondarytype)
             rightData.energy = fillEnergy
             rightLamp = bpy.data.objects.new(name="TriLamp-Fill", object_data=rightData)
-            scene.objects.link(rightLamp)
+            collection.objects.link(rightLamp)
             rightLamp.location = (rightx, righty, self.height)
             trackToRight = rightLamp.constraints.new(type="TRACK_TO")
             trackToRight.target = obj
@@ -219,7 +220,7 @@ class TriLighting(Operator):
             leftData.energy = keyEnergy
 
             leftLamp = bpy.data.objects.new(name="TriLamp-Key", object_data=leftData)
-            scene.objects.link(leftLamp)
+            collection.objects.link(leftLamp)
             leftLamp.location = (leftx, lefty, self.height)
             trackToLeft = leftLamp.constraints.new(type="TRACK_TO")
             trackToLeft.target = obj

@@ -50,19 +50,19 @@ class UV_IC_Panel():
 
 
 class UV_IC_TexIndex(PropertyGroup):
-    bpy.types.Scene.UVTexIndex = IntProperty(
+    bpy.types.Scene.UVTexIndex: IntProperty(
         name="UVIndexToGet",
         description="get UVIndex of selected objects",
         min=1,
         max=8,
         default=1)
 
-    bpy.types.Scene.UVTexGetName = StringProperty(
+    bpy.types.Scene.UVTexGetName: StringProperty(
         name="UVNameToGet",
              description="get new UVName of selected objects",
              default="UVMap")
 
-    bpy.types.Scene.UVTexRenderActive = BoolProperty(
+    bpy.types.Scene.UVTexRenderActive: BoolProperty(
         name="Set Render Active",
         description="Set Render Active...",
         default=False

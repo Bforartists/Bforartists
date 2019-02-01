@@ -97,7 +97,7 @@ class ExportUVLayout(bpy.types.Operator):
     opacity: FloatProperty(
         name="Fill Opacity",
         min=0.0, max=1.0,
-        default=1.0, # bfa set default from 0.25 to 1
+        default=0.25,
         description="Set amount of opacity for exported UV layout",
     )
 
@@ -212,7 +212,7 @@ class ExportUVLayout(bpy.types.Operator):
         if polygon.material_index < len(mesh.materials):
             material = mesh.materials[polygon.material_index]
             if material is not None:
-                return tuple(material.diffuse_color)
+                return tuple(material.diffuse_color)[:3]
         return default
 
     def get_exporter(self):

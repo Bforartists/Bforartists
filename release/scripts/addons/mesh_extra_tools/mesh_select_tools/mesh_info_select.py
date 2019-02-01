@@ -100,10 +100,10 @@ class DATA_PT_info_panel(Panel):
 
         if check_used:
             info_str = check_the_obj_polycount(context, check_delay)
-            col.label(info_str, icon='MESH_DATA')
+            col.label(text=info_str, icon='MESH_DATA')
 
         col = layout.column()
-        col.label("Select faces by type:")
+        col.label(text="Select faces by type:")
 
         row = layout.row()
         row.operator("data.facetype_select", text="Ngons").face_type = "5"

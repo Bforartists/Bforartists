@@ -60,37 +60,37 @@ class ExportVRML(bpy.types.Operator, ExportHelper):
     bl_label = "Export VRML2"
 
     filename_ext = ".wrl"
-    filter_glob = StringProperty(default="*.wrl", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.wrl", options={'HIDDEN'})
 
-    use_selection = BoolProperty(
+    use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
             default=False,
             )
 
-    use_mesh_modifiers = BoolProperty(
+    use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",
             description="Apply Modifiers to the exported mesh",
             default=True,
             )
-    use_color = BoolProperty(
+    use_color: BoolProperty(
             name="Vertex Colors",
             description="Export the active vertex color layer",
             default=True,
             )
-    color_type = EnumProperty(
+    color_type: EnumProperty(
             name='Color',
             items=(
             ('VERTEX', "Vertex Color", ""),
             ('MATERIAL', "Material Color", "")),
             )
-    use_uv = BoolProperty(
+    use_uv: BoolProperty(
             name="Texture/UVs",
             description="Export the active texture and UV coords",
             default=True,
             )
 
-    global_scale = FloatProperty(
+    global_scale: FloatProperty(
             name="Scale",
             min=0.01, max=1000.0,
             default=1.0,

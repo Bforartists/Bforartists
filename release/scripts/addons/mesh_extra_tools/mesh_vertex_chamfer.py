@@ -44,26 +44,26 @@ class VertexChamfer(Operator):
     bl_description = "Tri chamfer selected vertices"
     bl_options = {'REGISTER', 'UNDO'}
 
-    factor = FloatProperty(
+    factor: FloatProperty(
             name="Factor",
             description="Size of the Champfer",
             default=0.1,
             min=0.0,
             soft_max=1.0
             )
-    relative = BoolProperty(
+    relative: BoolProperty(
             name="Relative",
             description="If Relative, Champfer size is relative to the edge length",
             default=True
             )
-    dissolve = BoolProperty(
+    dissolve: BoolProperty(
             name="Remove",
             description="Remove/keep the original selected vertices\n"
                         "Remove creates a new triangle face between the Champfer edges,\n"
                         "similar to the Dissolve Vertices operator",
             default=True
             )
-    displace = FloatProperty(
+    displace: FloatProperty(
             name="Displace",
             description="Active only if Remove option is disabled\n"
                         "Displaces the original selected vertices along the normals\n"

@@ -24,7 +24,7 @@ bl_info = {
                    "(suitable for terrain modelling) or Voronoi diagram in 2D",
     "author": "Domlysz, Oscurart",
     "version": (1, 3),
-    "blender": (2, 7, 0),
+    "blender": (2, 70, 0),
     "location": "3D View > Toolshelf > Create > Delaunay Voronoi",
     "warning": "",
     "wiki_url": "https://github.com/domlysz/BlenderGIS/wiki",
@@ -110,7 +110,7 @@ class ToolsPanelDelaunay(Panel):
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Point Cloud:")
+        col.label(text="Point Cloud:")
         col.operator("delaunay.triangulation")
         col.operator("voronoi.tesselation")
 
@@ -148,11 +148,11 @@ class OBJECT_OT_TriangulateButton(Operator):
             mesh.from_pydata(points_3D, [], faces)
             mesh.update(calc_edges=True)
             my = bpy.data.objects.new("TIN", mesh)
-            context.scene.objects.link(my)
+            context.collection.objects.link(my)
             my.matrix_world = obj.matrix_world.copy()
-            obj.select = False
-            my.select = True
-            context.scene.objects.active = my
+            obj.select_set(False)
+            my.select_set(True)
+            context.view_layer.objects.active = my
             self.report({'INFO'}, "Mesh created (" + str(len(faces)) + " triangles)")
             print("Total :%s faces  %s verts" % (len(faces), len(points_3D)))
             return {'FINISHED'}
@@ -210,10 +210,10 @@ class OBJECT_OT_TriangulateButton(Operator):
         tinObj.scale = s
 
         # Update scene
-        bpy.context.scene.objects.link(tinObj)  # Link object to scene
-        bpy.context.scene.objects.active = tinObj
-        tinObj.select = True
-        obj.select = False
+        bpy.context.collection.objects.link(tinObj)  # Link object to collection 
+        bpy.context.view_layer.objects.active = tinObj
+        tinObj.select_set(True)
+        obj.select_set(False)
 
         self.report({"INFO"},
                      "Mesh created (" + str(len(triangles)) + " triangles)")
@@ -228,7 +228,7 @@ class OBJECT_OT_VoronoiButton(Operator):
                       "Needs an existing Active Mesh Object")
     bl_options = {"REGISTER", "UNDO"}
 
-    meshType = EnumProperty(
+    meshType: EnumProperty(
             items=[('Edges', "Edges", "Edges Only - do not fill Faces"),
                    ('Faces', "Faces", "Fill Faces in the new Object")],
             name="Mesh type",
@@ -313,10 +313,10 @@ class OBJECT_OT_VoronoiButton(Operator):
         voronoiObj.scale = s
 
         # update scene
-        bpy.context.scene.objects.link(voronoiObj)  # Link object to scene
-        bpy.context.scene.objects.active = voronoiObj
-        voronoiObj.select = True
-        obj.select = False
+        bpy.context.collection.objects.link(voronoiObj)  # Link object to collection
+        bpy.context.view_layer.objects.active = voronoiObj
+        voronoiObj.select_set(True)
+        obj.select_set(False)
 
         # Report
         if self.meshType == "Edges":

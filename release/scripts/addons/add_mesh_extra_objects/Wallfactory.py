@@ -66,7 +66,7 @@ class add_mesh_wallb(Operator):
 
     # only create object when True
     # False allows modifying several parameters without creating object
-    ConstructTog = BoolProperty(
+    ConstructTog: BoolProperty(
             name="Construct",
             description="Generate the object",
             default=True
@@ -74,13 +74,13 @@ class add_mesh_wallb(Operator):
     # need to modify so radial makes a tower (normal);
     # want "flat" setting to make disk (alternate)
     # make the wall circular - if not sloped it's a flat disc
-    RadialTog = BoolProperty(
+    RadialTog: BoolProperty(
             name="Radial",
             description="Make masonry radial",
             default=False
             )
     # curve the wall - if radial creates dome.
-    SlopeTog = BoolProperty(
+    SlopeTog: BoolProperty(
             name="Curved",
             description="Make masonry sloped, or curved",
             default=False
@@ -88,214 +88,214 @@ class add_mesh_wallb(Operator):
     # need to review defaults and limits for all of these UI objects
 
     # wall area/size
-    WallStart = FloatProperty(
+    WallStart: FloatProperty(
             name="Start",
             description="Left side, or start angle",
             default=-10.0,
             min=-100, max=100.0
             )
-    WallEnd = FloatProperty(
+    WallEnd: FloatProperty(
             name="End",
             description="Right side, or end angle",
             default=10.0,
             min=0.0, max=100.0
             )
-    WallBottom = FloatProperty(
+    WallBottom: FloatProperty(
             name="Bottom",
             description="Lower height or radius",
             default=0.0,
             min=-100, max=100
             )
-    WallTop = FloatProperty(
+    WallTop: FloatProperty(
             name="Top",
             description="Upper height or radius",
             default=15.0,
             min=0.0, max=100.0
             )
-    EdgeOffset = FloatProperty(
+    EdgeOffset: FloatProperty(
             name="Edging",
             description="Block staggering on wall sides",
             default=0.6, min=0.0, max=100.0
             )
     # block sizing
-    Width = FloatProperty(
+    Width: FloatProperty(
             name="Width",
             description="Average width of each block",
             default=1.5,
             min=0.01, max=100.0
             )
-    WidthVariance = FloatProperty(
+    WidthVariance: FloatProperty(
             name="Variance",
             description="Random variance of block width",
             default=0.5,
             min=0.0, max=100.0
             )
-    WidthMinimum = FloatProperty(
+    WidthMinimum: FloatProperty(
             name="Minimum",
             description="Absolute minimum block width",
             default=0.5,
             min=0.01, max=100.0
             )
-    Height = FloatProperty(
+    Height: FloatProperty(
             name="Height",
             description="Average Height of each block",
             default=0.7,
             min=0.01, max=100.0
             )
-    HeightVariance = FloatProperty(
+    HeightVariance: FloatProperty(
             name="Variance",
             description="Random variance of block Height",
             default=0.3,
             min=0.0, max=100.0
             )
-    HeightMinimum = FloatProperty(
+    HeightMinimum: FloatProperty(
             name="Minimum",
             description="Absolute minimum block Height",
             default=0.25,
             min=0.01, max=100.0
             )
-    Depth = FloatProperty(
+    Depth: FloatProperty(
             name="Depth",
             description="Average Depth of each block",
             default=2.0,
             min=0.01, max=100.0
             )
-    DepthVariance = FloatProperty(
+    DepthVariance: FloatProperty(
             name="Variance",
             description="Random variance of block Depth",
             default=0.1,
             min=0.0, max=100.0
             )
-    DepthMinimum = FloatProperty(
+    DepthMinimum: FloatProperty(
             name="Minimum",
             description="Absolute minimum block Depth",
             default=1.0,
             min=0.01, max=100.0
             )
-    MergeBlock = BoolProperty(
+    MergeBlock: BoolProperty(
             name="Merge Blocks",
             description="Make big blocks (merge closely adjoining blocks)",
             default=False
             )
     # edging for blocks
-    Grout = FloatProperty(
+    Grout: FloatProperty(
             name="Thickness",
             description="Distance between blocks",
             default=0.1,
             min=-10.0, max=10.0
             )
-    GroutVariance = FloatProperty(
+    GroutVariance: FloatProperty(
             name="Variance",
             description="Random variance of block Grout",
             default=0.03,
             min=0.0, max=100.0
             )
-    GroutDepth = FloatProperty(
+    GroutDepth: FloatProperty(
             name="Depth",
             description="Grout Depth from the face of the blocks",
             default=0.1,
             min=0.0001, max=10.0
             )
-    GroutDepthVariance = FloatProperty(
+    GroutDepthVariance: FloatProperty(
             name="Variance",
             description="Random variance of block Grout Depth",
             default=0.03,
             min=0.0, max=100.0
             )
-    GroutEdge = BoolProperty(
+    GroutEdge: BoolProperty(
             name="Edging",
             description="Grout perimiter",
             default=False
             )
     # properties for openings
-    Opening1Tog = BoolProperty(
+    Opening1Tog: BoolProperty(
             name="Opening(s)",
             description="Make windows or doors",
             default=True
             )
-    Opening1Width = FloatProperty(
+    Opening1Width: FloatProperty(
             name="Width",
             description="The Width of the first opening",
             default=2.5,
             min=0.01, max=100.0
             )
-    Opening1Height = FloatProperty(
+    Opening1Height: FloatProperty(
             name="Height",
             description="The Height of the first opening",
             default=3.5,
             min=0.01, max=100.0
             )
-    Opening1X = FloatProperty(
+    Opening1X: FloatProperty(
             name="Indent",
             description="The x position or spacing of the first opening",
             default=5.0,
             min=-100, max=100.0
             )
-    Opening1Z = FloatProperty(
+    Opening1Z: FloatProperty(
             name="Bottom",
             description="The z position of the First opening",
             default=5.0,
             min=-100, max=100.0
             )
-    Opening1Repeat = BoolProperty(
+    Opening1Repeat: BoolProperty(
             name="Repeat",
             description="make multiple openings, with spacing X1",
             default=False
             )
-    Opening1TopArchTog = BoolProperty(
+    Opening1TopArchTog: BoolProperty(
             name="Top Arch",
             description="Add an arch to the top of the first opening",
             default=True
             )
-    Opening1TopArch = FloatProperty(
+    Opening1TopArch: FloatProperty(
             name="Curve",
             description="Height of the arch on the top of the opening",
             default=2.5,
             min=0.001, max=100.0
             )
-    Opening1TopArchThickness = FloatProperty(
+    Opening1TopArchThickness: FloatProperty(
             name="Thickness",
             description="Thickness of the arch on the top of the opening",
             default=0.75,
             min=0.001, max=100.0
             )
-    Opening1BtmArchTog = BoolProperty(
+    Opening1BtmArchTog: BoolProperty(
             name="Bottom Arch",
             description="Add an arch to the bottom of opening 1",
             default=False
             )
-    Opening1BtmArch = FloatProperty(
+    Opening1BtmArch: FloatProperty(
             name="Curve",
             description="Height of the arch on the bottom of the opening",
             default=1.0,
             min=0.01, max=100.0
             )
-    Opening1BtmArchThickness = FloatProperty(
+    Opening1BtmArchThickness: FloatProperty(
             name="Thickness",
             description="Thickness of the arch on the bottom of the opening",
             default=0.5,
             min=0.01, max=100.0
             )
-    Opening1Bevel = FloatProperty(
+    Opening1Bevel: FloatProperty(
             name="Bevel",
             description="Angle block face",
             default=0.25,
             min=-10.0, max=10.0
             )
     # openings on top of wall
-    CrenelTog = BoolProperty(
+    CrenelTog: BoolProperty(
             name="Crenels",
             description="Make openings along top of wall",
             default=False
             )
-    CrenelXP = FloatProperty(
+    CrenelXP: FloatProperty(
             name="Width",
             description="Gap width in wall based the percentage of wall width",
             default=0.25,
             min=0.10, max=1.0,
             subtype="PERCENTAGE"
             )
-    CrenelZP = FloatProperty(
+    CrenelZP: FloatProperty(
             name="Height",
             description="Crenel Height as the percentage of wall height",
             default=0.10,
@@ -304,166 +304,166 @@ class add_mesh_wallb(Operator):
             )
     # narrow openings in wall.
     # need to prevent overlap with arch openings - though inversion is an interesting effect.
-    SlotTog = BoolProperty(
+    SlotTog: BoolProperty(
             name="Slots",
             description="Make narrow openings in wall",
             default=False
             )
-    SlotRpt = BoolProperty(
+    SlotRpt: BoolProperty(
             name="Repeat",
             description="Repeat slots along wall",
             default=False
             )
-    SlotWdg = BoolProperty(
+    SlotWdg: BoolProperty(
             name="Wedged (n/a)",
             description="Bevel edges of slots",
             default=False
             )
-    SlotX = FloatProperty(
+    SlotX: FloatProperty(
             name="Indent",
             description="The x position or spacing of slots",
             default=0.0, min=-100, max=100.0
             )
-    SlotGap = FloatProperty(
+    SlotGap: FloatProperty(
             name="Opening",
             description="The opening size of slots",
             default=0.5, min=0.10, max=100.0
             )
-    SlotV = BoolProperty(
+    SlotV: BoolProperty(
             name="Vertical",
             description="Vertical slots",
             default=True
             )
-    SlotVH = FloatProperty(
+    SlotVH: FloatProperty(
             name="Height",
             description="Height of vertical slot",
             default=3.5,
             min=0.10, max=100.0
             )
-    SlotVBtm = FloatProperty(
+    SlotVBtm: FloatProperty(
             name="Bottom",
             description="Z position for slot",
             default=5.00,
             min=-100.0, max=100.0
             )
-    SlotH = BoolProperty(
+    SlotH: BoolProperty(
             name="Horizontal",
             description="Horizontal slots",
             default=False
             )
-    SlotHW = FloatProperty(
+    SlotHW: FloatProperty(
             name="Width",
             description="Width of horizontal slot",
             default=2.5,
             min=0.10, max=100.0
             )
     # this should offset from VBtm... maybe make a % like crenels?
-    SlotHBtm = FloatProperty(
+    SlotHBtm: FloatProperty(
             name="Bottom",
             description="Z position for horizontal slot",
             default=5.50,
             min=-100.0, max=100.0
             )
     # properties for shelf (extend blocks in area)
-    ShelfTog = BoolProperty(
+    ShelfTog: BoolProperty(
             name="Shelf",
             description="Add blocks in area by depth to make shelf/platform",
             default=False
             )
-    ShelfX = FloatProperty(
+    ShelfX: FloatProperty(
             name="Left",
             description="The x position of Shelf",
             default=-5.00,
             min=-100, max=100.0
             )
-    ShelfZ = FloatProperty(
+    ShelfZ: FloatProperty(
             name="Bottom",
             description="The z position of Shelf",
             default=10.0,
             min=-100, max=100.0
             )
-    ShelfH = FloatProperty(
+    ShelfH: FloatProperty(
             name="Height",
             description="The Height of Shelf area",
             default=1.0,
             min=0.01, max=100.0
             )
-    ShelfW = FloatProperty(
+    ShelfW: FloatProperty(
             name="Width",
             description="The Width of shelf area",
             default=5.0,
             min=0.01, max=100.0
             )
-    ShelfD = FloatProperty(
+    ShelfD: FloatProperty(
             name="Depth",
             description="Depth of each block for shelf (from cursor + 1/2 wall depth)",
             default=2.0,
             min=0.01, max=100.0
             )
-    ShelfBack = BoolProperty(
+    ShelfBack: BoolProperty(
             name="Backside",
             description="Shelf on backside of wall",
             default=False
             )
     # properties for steps (extend blocks in area,  progressive width)
-    StepTog = BoolProperty(
+    StepTog: BoolProperty(
             name="Steps",
             description="Add blocks in area by depth with progressive width to make steps",
             default=False
             )
-    StepX = FloatProperty(
+    StepX: FloatProperty(
             name="Left",
             description="The x position of steps",
             default=-9.00,
             min=-100, max=100.0
             )
-    StepZ = FloatProperty(
+    StepZ: FloatProperty(
             name="Bottom",
             description="The z position of steps",
             default=0.0,
             min=-100, max=100.0
             )
-    StepH = FloatProperty(
+    StepH: FloatProperty(
             name="Height",
             description="The Height of step area",
             default=10.0,
             min=0.01, max=100.0
             )
-    StepW = FloatProperty(
+    StepW: FloatProperty(
             name="Width",
             description="The Width of step area",
             default=8.0,
             min=0.01, max=100.0
             )
-    StepD = FloatProperty(
+    StepD: FloatProperty(
             name="Depth",
             description="Depth of each block for steps (from cursor + 1/2 wall depth)",
             default=1.0,
             min=0.01, max=100.0
             )
-    StepV = FloatProperty(
+    StepV: FloatProperty(
             name="Riser",
             description="Height of each step",
             default=0.70,
             min=0.01, max=100.0
             )
-    StepT = FloatProperty(
+    StepT: FloatProperty(
             name="Tread",
             description="Width of each step",
             default=1.0,
             min=0.01, max=100.0
             )
-    StepLeft = BoolProperty(
+    StepLeft: BoolProperty(
             name="Direction",
             description="If checked, flip steps direction towards the -X axis",
             default=False
             )
-    StepOnly = BoolProperty(
+    StepOnly: BoolProperty(
             name="Steps Only",
             description="Steps only, no supporting blocks",
             default=False
             )
-    StepBack = BoolProperty(
+    StepBack: BoolProperty(
             name="Backside",
             description="Steps on backside of wall",
             default=False
@@ -865,19 +865,17 @@ class add_mesh_wallb(Operator):
         # Make a mesh from a list of verts/edges/faces.
         mesh.from_pydata(verts_array, [], faces_array)
 
-        scene = context.scene
-
         # Deselect all objects.
         bpy.ops.object.select_all(action='DESELECT')
 
         mesh.update()
 
         ob_new = bpy.data.objects.new("Wall", mesh)
-        scene.objects.link(ob_new)
+        context.collection.objects.link(ob_new)
         # leave this out to prevent 'Tab key" going into edit mode :)
         # Use rmb click to select and still modify.
-        scene.objects.active = ob_new
-        ob_new.select = True
+        context.view_layer.objects.active = ob_new
+        ob_new.select_set(True)
 
         ob_new.location = tuple(context.scene.cursor_location)
         ob_new.rotation_quaternion = [1.0, 0.0, 0.0, 0.0]

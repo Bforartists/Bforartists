@@ -310,7 +310,7 @@ class AMTH_SCENE_OT_amaranth_object_select(Operator):
     bl_idname = "scene.amaranth_object_select"
     bl_label = "Select Object"
 
-    object_name = StringProperty()
+    object_name: StringProperty()
 
     def execute(self, context):
         if not (self.object_name and self.object_name in bpy.data.objects):
@@ -321,8 +321,8 @@ class AMTH_SCENE_OT_amaranth_object_select(Operator):
         obj = bpy.data.objects[self.object_name]
 
         bpy.ops.object.select_all(action="DESELECT")
-        obj.select = True
-        context.scene.objects.active = obj
+        obj.select_set(True)
+        context.view_layer.objects.active = obj
 
         return {"FINISHED"}
 
@@ -567,7 +567,7 @@ class AMTH_SCENE_OT_list_users_for_x_type(Operator):
             items = [('0', USER_X_NAME_EMPTY, USER_X_NAME_EMPTY, "INFO", 0)]
         return items
 
-    list_type_select = EnumProperty(
+    list_type_select: EnumProperty(
             items=avail,
             name="Available",
             options={"SKIP_SAVE"}
@@ -590,7 +590,7 @@ class AMTH_SCENE_OT_list_users_for_x(Operator):
     bl_idname = "scene.amth_list_users_for_x"
     bl_label = "List Users for Datablock"
 
-    name = StringProperty()
+    name: StringProperty()
 
     def execute(self, context):
         d = bpy.data
@@ -805,7 +805,7 @@ class AMTH_SCENE_OT_list_users_debug_clear(Operator):
     bl_idname = "scene.amth_list_users_debug_clear"
     bl_label = "Clear Debug Panel lists"
 
-    what = StringProperty(
+    what: StringProperty(
             name="",
             default="NONE",
             options={'HIDDEN'}
@@ -822,7 +822,7 @@ class AMTH_SCENE_OT_blender_instance_open(Operator):
     bl_idname = "scene.blender_instance_open"
     bl_label = "Open Blender Instance"
 
-    filepath = StringProperty()
+    filepath: StringProperty()
 
     def execute(self, context):
         if self.filepath:
@@ -846,7 +846,7 @@ class AMTH_SCENE_OT_Collection_List_Refresh(Operator):
                       "Use to generate/refresh the list or after changes to Data")
     bl_options = {"REGISTER", "INTERNAL"}
 
-    what = StringProperty(default="NONE")
+    what: StringProperty(default="NONE")
 
     def execute(self, context):
         message = "No changes applied"
@@ -1333,22 +1333,22 @@ def fill_ligters_corner_props(context, refresh=False):
 
 
 class AMTH_LightersCornerStateProp(PropertyGroup):
-    icon_type = StringProperty()
-    text_lib = StringProperty()
-    is_library = StringProperty()
+    icon_type: StringProperty()
+    text_lib: StringProperty()
+    is_library: StringProperty()
 
 
 class AMTH_MissingImagesStateProp(PropertyGroup):
-    text_lib = StringProperty()
-    has_filepath = StringProperty()
-    is_library = StringProperty()
+    text_lib: StringProperty()
+    has_filepath: StringProperty()
+    is_library: StringProperty()
 
 
 class AMTH_LightersCollectionIndexProp(PropertyGroup):
-    index = IntProperty(
+    index: IntProperty(
             name="index"
             )
-    index_image = IntProperty(
+    index_image: IntProperty(
             name="index"
             )
 

@@ -119,11 +119,11 @@ class PALETTE_MT_menu(Menu):
         layout = self.layout
 
         if bpy.data.filepath == "":
-            layout.label("*Please save the .blend file first*")
+            layout.label(text="*Please save the .blend file first*")
             return
 
         if not searchpaths[0]:
-            layout.label("* Missing Paths *")
+            layout.label(text="* Missing Paths *")
             return
 
         # collect paths
@@ -163,12 +163,12 @@ class PALETTE_OT_load_gimp_palette(Operator):
     bl_idname = "palette.load_gimp_palette"
     bl_label = "Load a Gimp palette"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="Path",
         description="Path of the .gpl file to load",
         default=""
     )
-    menu_idname = StringProperty(
+    menu_idname: StringProperty(
         name="Menu ID Name",
         description="ID name of the menu this was called from",
         default=""
@@ -263,14 +263,14 @@ class WriteGimpPalette():
      - preset_subdir """
     bl_options = {'REGISTER'}  # only because invoke_props_popup requires
 
-    name = StringProperty(
+    name: StringProperty(
         name="Name",
         description="Name of the preset, used to make the path name",
         maxlen=64,
         options={'SKIP_SAVE'},
         default=""
     )
-    remove_active = BoolProperty(
+    remove_active: BoolProperty(
         default=False,
         options={'HIDDEN'}
     )
@@ -444,7 +444,7 @@ class IMAGE_OT_select_color(Operator):
     bl_description = "Select this color"
     bl_options = {'UNDO'}
 
-    color_index = IntProperty()
+    color_index: IntProperty()
 
     def invoke(self, context, event):
         palette_props = context.scene.palette_props
@@ -559,7 +559,7 @@ class VIEW3D_OT_select_weight(Operator):
     bl_description = "Select this weight value slot"
     bl_options = {'UNDO'}
 
-    weight_index = IntProperty()
+    weight_index: IntProperty()
 
     def current_weight(self):
         pp = bpy.context.scene.palette_props
@@ -690,7 +690,7 @@ class VIEW3D_PT_weight_palette(PaintPanel, Panel):
 
 class PALETTE_Colors(PropertyGroup):
     """Class for colors CollectionProperty"""
-    color = FloatVectorProperty(
+    color: FloatVectorProperty(
         name="",
         description="",
         default=(0.8, 0.8, 0.8),
@@ -746,54 +746,54 @@ class PALETTE_Props(PropertyGroup):
         bpy.context.tool_settings.unified_paint_settings.weight = weight
         return None
 
-    palette_name = StringProperty(
+    palette_name: StringProperty(
         name="Palette Name",
         default="Preset",
         subtype='FILE_NAME'
     )
-    color_name = StringProperty(
+    color_name: StringProperty(
         name="",
         description="Color Name",
         default="Untitled",
         update=update_color_name
     )
-    columns = IntProperty(
+    columns: IntProperty(
         name="Columns",
         description="Number of Columns",
         min=0, max=16,
         default=0
     )
-    index = IntProperty(
+    index: IntProperty(
         name="Index",
         description="Move Selected Color",
         min=0,
         update=move_color
     )
-    notes = StringProperty(
+    notes: StringProperty(
         name="Palette Notes",
         default="#\n"
     )
-    current_color_index = IntProperty(
+    current_color_index: IntProperty(
         name="Current Color Index",
         description="",
         default=0,
         min=0
     )
-    current_weight_index = IntProperty(
+    current_weight_index: IntProperty(
         name="Current Color Index",
         description="",
         default=10,
         min=-1
     )
-    presets_folder = StringProperty(name="",
+    presets_folder: StringProperty(name="",
         description="Palettes Folder",
         subtype="DIR_PATH",
         default="//"
     )
-    colors = CollectionProperty(
+    colors: CollectionProperty(
         type=PALETTE_Colors
     )
-    weight = FloatProperty(
+    weight: FloatProperty(
         name="Weight",
         description="Modify the active Weight preset slot value",
         default=0.0,
@@ -801,57 +801,57 @@ class PALETTE_Props(PropertyGroup):
         precision=3,
         update=update_weight
     )
-    weight_0 = FloatProperty(
+    weight_0: FloatProperty(
         default=0.0,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_1 = FloatProperty(
+    weight_1: FloatProperty(
         default=0.1,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_2 = FloatProperty(
+    weight_2: FloatProperty(
         default=0.25,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_3 = FloatProperty(
+    weight_3: FloatProperty(
         default=0.333,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_4 = FloatProperty(
+    weight_4: FloatProperty(
         default=0.4,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_5 = FloatProperty(
+    weight_5: FloatProperty(
         default=0.5,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_6 = FloatProperty(
+    weight_6: FloatProperty(
         default=0.6,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_7 = FloatProperty(
+    weight_7: FloatProperty(
         default=0.6666,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_8 = FloatProperty(
+    weight_8: FloatProperty(
         default=0.75,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_9 = FloatProperty(
+    weight_9: FloatProperty(
         default=0.9,
         min=0.0, max=1.0,
         precision=3
     )
-    weight_10 = FloatProperty(
+    weight_10: FloatProperty(
         default=1.0,
         min=0.0, max=1.0,
         precision=3

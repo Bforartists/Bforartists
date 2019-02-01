@@ -183,9 +183,9 @@ class StructureBuilder(DataStructure):
         """
             Create the armature and leave it in edit mode
         """
-        bpy.context.scene.objects.active = None
+        bpy.context.view_layer.objects.active = None
         bpy.ops.object.add(type='ARMATURE', enter_editmode=True)
-        self.object = bpy.context.scene.objects.active
+        self.object = bpy.context.view_layer.objects.active
         self.armature = self.object.data
         self.object.name = self.name
         self.armature.name = self.name
@@ -315,41 +315,41 @@ class AsfImporter(bpy.types.Operator):
     bl_idname = "import_anim.asf"
     bl_label = "Import ASF"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             )
-    armature_name = StringProperty(
+    armature_name: StringProperty(
             name="Armature Name", maxlen=63,
             default="Skeleton",
             description="Name of the new object",
             )
-    use_limits = BoolProperty(
+    use_limits: BoolProperty(
             name="Use Limits", default=False,
             description="Create bone constraints for limits",
             )
-    scale = FloatProperty(
+    scale: FloatProperty(
             name="Scale",
             default=1.0,
             description="Scale the armature by this value",
             min=0.0001, max=1000000.0,
             soft_min=0.001, soft_max=100.0,
             )
-    from_inches = BoolProperty(
+    from_inches: BoolProperty(
             name="Convert from inches to metric",
             default=False, description="Scale by 2.54/100",
             )
-    use_rot_x = BoolProperty(
+    use_rot_x: BoolProperty(
             name="Rotate X 90 degrees",
             default=False,
             description="Correct orientation",
             )
-    use_rot_z = BoolProperty(
+    use_rot_z: BoolProperty(
             name="Rotate Z 90 degrees",
             default=False,
             description="Correct orientation",
             )
 
-    filter_glob = StringProperty(default="*.asf", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.asf", options={'HIDDEN'})
 
     def execute(self, context):
         uscale = (0.0254 if self.from_inches else 1.0)
@@ -410,23 +410,23 @@ class AmcImporter(bpy.types.Operator):
     bl_idname = "import_anim.amc"
     bl_label = "Import AMC"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH',
             )
-    frame_skip = IntProperty(
+    frame_skip: IntProperty(
             name="Fps divisor",
             default=4,
             # usually the sample rate is 120, so the default 4 gives you 30fps
             description="Frame supersampling factor",
             min=1,
             )
-    use_frame_no = BoolProperty(
+    use_frame_no: BoolProperty(
             name="Use frame numbers",
             default=False,
             description="Offset start of animation according to the source",
             )
 
-    filter_glob = StringProperty(default="*.amc", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.amc", options={'HIDDEN'})
 
     @classmethod
     def poll(cls, context):
@@ -466,16 +466,16 @@ class AmcExporter(bpy.types.Operator):
     bl_idname = "export_anim.amc"
     bl_label = "Export AMC"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             subtype='FILE_PATH'
             )
-    use_scale = BoolProperty(
+    use_scale: BoolProperty(
             name="Use original armature scale",
             default=True,
             description="Scale movement to original scale if available",
             )
 
-    filter_glob = StringProperty(default="*.amc", options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.amc", options={'HIDDEN'})
 
     @classmethod
     def poll(cls, context):

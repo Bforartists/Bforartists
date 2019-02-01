@@ -209,11 +209,11 @@ class VIEW3D_stored_views_import(Operator, ImportHelper):
     bl_description = "Import a .blsv preset file to the current Stored Views"
 
     filename_ext = ".blsv"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
         default="*.blsv",
         options={'HIDDEN'}
     )
-    replace = BoolProperty(
+    replace: BoolProperty(
         name="Replace",
         default=True,
         description="Replace current stored views, otherwise append"
@@ -258,12 +258,12 @@ class VIEW3D_stored_views_import_from_scene(Operator):
     bl_label = "Import stored views from scene"
     bl_description = "Import currently stored views from an another scene"
 
-    scene_name = StringProperty(
+    scene_name: StringProperty(
         name="Scene Name",
         description="A current blend scene",
         default=""
     )
-    replace = BoolProperty(
+    replace: BoolProperty(
         name="Replace",
         default=True,
         description="Replace current stored views, otherwise append"
@@ -306,14 +306,14 @@ class VIEW3D_stored_views_export(Operator, ExportHelper):
     bl_description = "Export the current Stored Views to a .blsv preset file"
 
     filename_ext = ".blsv"
-    filepath = StringProperty(
+    filepath: StringProperty(
         default=os.path.join(IO_Utils.get_preset_path()[0], "untitled")
     )
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
         default="*.blsv",
         options={'HIDDEN'}
     )
-    preset_name = StringProperty(
+    preset_name: StringProperty(
         name="Preset name",
         default="",
         description="Name of the stored views preset"

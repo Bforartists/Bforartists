@@ -109,9 +109,9 @@ def drop_objectsall(self, context):
     name = ground.name
 
     for obs in bpy.context.scene.objects:
-        obs.select = True
+        obs.select_set(True)
         if obs.name == name:
-            obs.select = False
+            obs.select_set(False)
 
     obs2 = context.selected_objects
 
@@ -158,11 +158,11 @@ def drop_objectsall(self, context):
 
     # cleanup
     bpy.ops.object.select_all(action='DESELECT')
-    tmp_ground.select = True
+    tmp_ground.select_set(True)
     bpy.ops.object.delete('EXEC_DEFAULT')
     for ob in obs2:
-        ob.select = True
-    ground.select = True
+        ob.select_set(True)
+    ground.select_set(True)
 
 
 def drop_objects(self, context):
@@ -215,20 +215,20 @@ def drop_objects(self, context):
 
     # cleanup
     bpy.ops.object.select_all(action='DESELECT')
-    tmp_ground.select = True
+    tmp_ground.select_set(True)
     bpy.ops.object.delete('EXEC_DEFAULT')
     for ob in obs:
-        ob.select = True
-    ground.select = True
+        ob.select_set(True)
+    ground.select_set(True)
 
 
 # define base dummy class for inheritance
 class DropBaseAtributes:
-    align = BoolProperty(
+    align: BoolProperty(
             name="Align to ground",
             description="Aligns the objects' rotation to the ground",
             default=True)
-    use_origin = BoolProperty(
+    use_origin: BoolProperty(
             name="Use Origins",
             description="Drop to objects' origins\n"
                         "Use this option for dropping all types of Objects",
@@ -300,7 +300,7 @@ class Drop_help(Operator):
     bl_description = "Clik for some information about Drop to Ground"
     bl_options = {"REGISTER", "INTERNAL"}
 
-    is_all = BoolProperty(
+    is_all: BoolProperty(
             default=True,
             options={"HIDDEN"}
             )
@@ -308,27 +308,27 @@ class Drop_help(Operator):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("General Info:")
-        layout.label("The Active Object has to be of a Mesh, Font,")
-        layout.label("Metaball, Curve or Surface type and")
-        layout.label("be at the lowest Z location")
-        layout.label("The option Use Origins must be enabled to drop")
-        layout.label("objects that are not of a Mesh or DupliGroup type")
-        layout.label("The Active Object has to be big enough to catch them")
-        layout.label("To check that, use the Orthographic Top View")
+        layout.label(text="General Info:")
+        layout.label(text="The Active Object has to be of a Mesh, Font,")
+        layout.label(text="Metaball, Curve or Surface type and")
+        layout.label(text="be at the lowest Z location")
+        layout.label(text="The option Use Origins must be enabled to drop")
+        layout.label(text="objects that are not of a Mesh or DupliGroup type")
+        layout.label(text="The Active Object has to be big enough to catch them")
+        layout.label(text="To check that, use the Orthographic Top View")
         layout.separator()
 
-        layout.label("To use:")
+        layout.label(text="To use:")
 
         if self.is_all is False:
-            layout.label("Select objects to drop")
-            layout.label("Then Shift Select the object to be the ground")
-            layout.label("Drops Selected Object to the Active one")
+            layout.label(text="Select objects to drop")
+            layout.label(text="Then Shift Select the object to be the ground")
+            layout.label(text="Drops Selected Object to the Active one")
         else:
-            layout.label("Select the ground Mesh and press Drop all")
-            layout.label("The unselected Objects will be moved straight")
-            layout.label("down the Z axis, so they have to be above")
-            layout.label("the Selected / Active one to fall")
+            layout.label(text="Select the ground Mesh and press Drop all")
+            layout.label(text="The unselected Objects will be moved straight")
+            layout.label(text="down the Z axis, so they have to be above")
+            layout.label(text="the Selected / Active one to fall")
 
     def execute(self, context):
         return {'FINISHED'}

@@ -40,20 +40,20 @@ from .achm_tools import *
 # ----------------------------------------------------------
 # Export menu UI
 # ----------------------------------------------------------
-class AchmExportRoom(Operator, ExportHelper):
+class ARCHIMESH_OT_ExportRoom(Operator, ExportHelper):
     bl_idname = "io_export.roomdata"
     bl_description = 'Export Room data (.dat)'
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_label = "Export"
 
     # From ExportHelper. Filter filenames.
     filename_ext = ".dat"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.dat",
             options={'HIDDEN'},
             )
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             name="File Path",
             description="File path used for exporting room data file",
             maxlen=1024, default="",
@@ -152,20 +152,20 @@ class AchmExportRoom(Operator, ExportHelper):
 # ----------------------------------------------------------
 # Import menu UI
 # ----------------------------------------------------------
-class AchmImportRoom(Operator, ImportHelper):
+class ARCHIMESH_OT_ImportRoom(Operator, ImportHelper):
     bl_idname = "io_import.roomdata"
     bl_description = 'Import Room data (.dat)'
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_label = "Import"
 
     # From Helper. Filter filenames.
     filename_ext = ".dat"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.dat",
             options={'HIDDEN'},
             )
 
-    filepath = StringProperty(
+    filepath: StringProperty(
             name="File Path",
             description="File path used for exporting room data file",
             maxlen=1024, default="",
@@ -312,11 +312,11 @@ class AchmImportRoom(Operator, ImportHelper):
 # ------------------------------------------------------------------
 # Define operator class to create rooms
 # ------------------------------------------------------------------
-class AchmRoom(Operator):
+class ARCHIMESH_OT_Room(Operator):
     bl_idname = "mesh.archimesh_room"
     bl_label = "Room"
     bl_description = "Generate room with walls, baseboard, floor and ceiling"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # -----------------------------------------------------
@@ -326,7 +326,7 @@ class AchmRoom(Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label("Use Properties panel (N) to define parms", icon='INFO')
+        row.label(text="Use Properties panel (N) to define parms", icon='INFO')
         row = layout.row(align=False)
         row.operator("io_import.roomdata", text="Import", icon='COPYDOWN')
 
@@ -349,13 +349,13 @@ class AchmRoom(Operator):
 def create_room(self, context):
     # deselect all objects
     for o in bpy.data.objects:
-        o.select = False
+        o.select_set(False)
 
     # we create main object and mesh for walls
     roommesh = bpy.data.meshes.new("Room")
     roomobject = bpy.data.objects.new("Room", roommesh)
     roomobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(roomobject)
+    bpy.context.collection.objects.link(roomobject)
     roomobject.RoomGenerator.add()
     roomobject.RoomGenerator[0].walls.add()
 
@@ -363,8 +363,8 @@ def create_room(self, context):
     shape_walls_and_create_children(roomobject, roommesh)
 
     # we select, and activate, main object for the room.
-    roomobject.select = True
-    bpy.context.scene.objects.active = roomobject
+    bpy.context.view_layer.objects.active = roomobject
+    roomobject.select_set(True)
 
 
 # -----------------------------------------------------
@@ -395,12 +395,12 @@ def update_room(self, context):
     oldmesh = o.data
     oldname = o.data.name
     # Now we deselect that room object to not delete it.
-    o.select = False
+    o.select_set(False)
     # and we create a new mesh for the walls:
     tmp_mesh = bpy.data.meshes.new("temp")
     # deselect all objects
     for obj in bpy.data.objects:
-        obj.select = False
+        obj.select_set(False)
     # Remove children created by this addon:
     for child in o.children:
         # noinspection PyBroadException
@@ -418,7 +418,7 @@ def update_room(self, context):
                     pass
                 # clear data
                 old = child.data
-                child.select = True
+                child.select_set(True)
                 bpy.ops.object.delete()
                 bpy.data.meshes.remove(old)
         except:
@@ -430,8 +430,8 @@ def update_room(self, context):
     bpy.data.meshes.remove(oldmesh)
     tmp_mesh.name = oldname
     # and select, and activate, the main object of the room.
-    o.select = True
-    bpy.context.scene.objects.active = o
+    o.select_set(True)
+    bpy.context.view_layer.objects.active = o
 
 
 # -----------------------------------------------------
@@ -495,9 +495,9 @@ def shape_walls_and_create_children(myroom, tmp_mesh, update=False):
         baseboardmesh = bpy.data.meshes.new("Baseboard")
         mybase = bpy.data.objects.new("Baseboard", baseboardmesh)
         mybase.location = (0, 0, 0)
-        bpy.context.scene.objects.link(mybase)
+        bpy.context.collection.objects.link(mybase)
         mybase.parent = myroom
-        mybase.select = True
+        mybase.select_set(True)
         mybase["archimesh.room_object"] = True
         mybase["archimesh.room_baseboard"] = True
 
@@ -544,7 +544,7 @@ def shape_walls_and_create_children(myroom, tmp_mesh, update=False):
             movetotopsolidify(mybase)
 
     # Create materials
-    if rp.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if rp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # Wall material (two faces)
         mat = create_diffuse_material("Wall_material", False, 0.765, 0.650, 0.588, 0.8, 0.621, 0.570, 0.1, True)
         set_material(myroom, mat)
@@ -571,8 +571,8 @@ def shape_walls_and_create_children(myroom, tmp_mesh, update=False):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True and o.name != myroom.name:
-            o.select = False
+        if o.select_get() is True and o.name != myroom.name:
+            o.select_set(False)
 
 
 # ------------------------------------------------------------------------------
@@ -791,7 +791,7 @@ def make_curved_wall(myvertex, myfaces, size, wall_angle, lastx, lasty, height,
 # ------------------------------------------------------------------------------
 
 def create_floor(rp, typ, myroom):
-    bpy.context.scene.objects.active = myroom
+    bpy.context.view_layer.objects.active = myroom
 
     myvertex = []
     myfaces = []
@@ -823,7 +823,7 @@ def create_floor(rp, typ, myroom):
     myobject = bpy.data.objects.new(typ, mymesh)
 
     myobject.location = (0, 0, 0)
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -835,7 +835,7 @@ def create_floor(rp, typ, myroom):
 # Define property group class to create, or modify, room walls.
 # ------------------------------------------------------------------
 class WallProperties(PropertyGroup):
-    w = FloatProperty(
+    w: FloatProperty(
             name='Length',
             min=-150, max=150,
             default=1, precision=3,
@@ -843,33 +843,33 @@ class WallProperties(PropertyGroup):
             update=update_room,
             )
 
-    a = BoolProperty(
+    a: BoolProperty(
             name="Advanced",
             description="Define advanced parameters of the wall",
             default=False,
             update=update_room,
             )
 
-    curved = BoolProperty(
+    curved: BoolProperty(
             name="Curved",
             description="Enable curved wall parameters",
             default=False,
             update=update_room,
             )
-    curve_factor = FloatProperty(
+    curve_factor: FloatProperty(
             name='Factor',
             min=-5, max=5,
             default=1, precision=1,
             description='Curvature variation',
             update=update_room,
             )
-    curve_arc_deg = FloatProperty(
+    curve_arc_deg: FloatProperty(
             name='Degrees', min=1, max=359,
             default=180, precision=1,
             description='Degrees of the curve arc (must be >= steps)',
             update=update_room,
             )
-    curve_steps = IntProperty(
+    curve_steps: IntProperty(
             name='Steps',
             min=2, max=50,
             default=12,
@@ -877,19 +877,19 @@ class WallProperties(PropertyGroup):
             update=update_room,
             )
 
-    m = FloatProperty(
+    m: FloatProperty(
             name='Peak', min=0, max=50,
             default=0, precision=3,
             description='Middle height variation',
             update=update_room,
             )
-    f = FloatProperty(
+    f: FloatProperty(
             name='Factor', min=-1, max=1,
             default=0, precision=3,
             description='Middle displacement',
             update=update_room,
             )
-    r = FloatProperty(
+    r: FloatProperty(
             name='Angle',
             min=-180, max=180,
             default=0, precision=1,
@@ -897,7 +897,7 @@ class WallProperties(PropertyGroup):
             update=update_room,
             )
 
-    h = EnumProperty(
+    h: EnumProperty(
             items=(
                 ('0', "Visible", ""),
                 ('1', "Baseboard", ""),
@@ -910,12 +910,12 @@ class WallProperties(PropertyGroup):
             )
 
     # opengl internal data
-    glpoint_a = FloatVectorProperty(
+    glpoint_a: FloatVectorProperty(
             name="glpointa",
             description="Hidden property for opengl",
             default=(0, 0, 0),
             )
-    glpoint_b = FloatVectorProperty(
+    glpoint_b: FloatVectorProperty(
             name="glpointb",
             description="Hidden property for opengl",
             default=(0, 0, 0),
@@ -1144,7 +1144,7 @@ def add_shell(selobject, objname, rp):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = selobject.location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -1492,90 +1492,90 @@ def is_in_nextface(idx, activefaces, verts, x, y):
 # Define property group class to create or modify a rooms.
 # ------------------------------------------------------------------
 class RoomProperties(PropertyGroup):
-    room_height = FloatProperty(
+    room_height: FloatProperty(
             name='Height', min=0.001, max=50,
             default=2.4, precision=3,
             description='Room height', update=update_room,
             )
-    wall_width = FloatProperty(
+    wall_width: FloatProperty(
             name='Thickness', min=0.000, max=10,
             default=0.0, precision=3,
             description='Thickness of the walls', update=update_room,
             )
-    inverse = BoolProperty(
+    inverse: BoolProperty(
             name="Inverse", description="Inverse normals to outside",
             default=False,
             update=update_room,
             )
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
             update=update_room,
             )
 
-    wall_num = IntProperty(
+    wall_num: IntProperty(
             name='Number of Walls', min=1, max=50,
             default=1,
             description='Number total of walls in the room', update=add_room_wall,
             )
 
-    baseboard = BoolProperty(
+    baseboard: BoolProperty(
             name="Baseboard", description="Create a baseboard automatically",
             default=True,
             update=update_room,
             )
 
-    base_width = FloatProperty(
+    base_width: FloatProperty(
             name='Width', min=0.001, max=10,
             default=0.015, precision=3,
             description='Baseboard width', update=update_room,
             )
-    base_height = FloatProperty(
+    base_height: FloatProperty(
             name='Height', min=0.05, max=20,
             default=0.12, precision=3,
             description='Baseboard height', update=update_room,
             )
 
-    ceiling = BoolProperty(
+    ceiling: BoolProperty(
             name="Ceiling", description="Create a ceiling",
             default=False, update=update_room,
             )
-    floor = BoolProperty(
+    floor: BoolProperty(
             name="Floor", description="Create a floor automatically",
             default=False,
             update=update_room,
             )
 
-    merge = BoolProperty(
+    merge: BoolProperty(
             name="Close walls", description="Close walls to create a full closed room",
             default=False, update=update_room,
             )
 
-    walls = CollectionProperty(
+    walls: CollectionProperty(
             type=WallProperties,
             )
 
-    shell = BoolProperty(
+    shell: BoolProperty(
             name="Wall cover", description="Create a cover of boards",
             default=False, update=update_room,
             )
-    shell_thick = FloatProperty(
+    shell_thick: FloatProperty(
             name='Thickness', min=0.001, max=1,
             default=0.025, precision=3,
             description='Cover board thickness', update=update_room,
             )
-    shell_height = FloatProperty(
+    shell_height: FloatProperty(
             name='Height', min=0.05, max=1,
             default=0.20, precision=3,
             description='Cover board height', update=update_room,
             )
-    shell_factor = FloatProperty(
+    shell_factor: FloatProperty(
             name='Top', min=0.1, max=1,
             default=1, precision=1,
             description='Percentage for top covering (1 Full)', update=update_room,
             )
-    shell_bfactor = FloatProperty(
+    shell_bfactor: FloatProperty(
             name='Bottom', min=0.1, max=1,
             default=1, precision=1,
             description='Percentage for bottom covering (1 Full)', update=update_room,
@@ -1589,7 +1589,7 @@ Object.RoomGenerator = CollectionProperty(type=RoomProperties)
 # Add wall parameters to the panel.
 # -----------------------------------------------------
 def add_wall(idx, box, wall):
-    box.label("Wall " + str(idx))
+    box.label(text="Wall " + str(idx))
     row = box.row()
     row.prop(wall, 'w')
     row.prop(wall, 'a')
@@ -1615,12 +1615,12 @@ def add_wall(idx, box, wall):
 # ------------------------------------------------------------------
 # Define panel class to modify rooms.
 # ------------------------------------------------------------------
-class AchmRoomGeneratorPanel(Panel):
+class ARCHIMESH_PT_RoomGenerator(Panel):
     bl_idname = "OBJECT_PT_room_generator"
     bl_label = "Room"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Archimesh'
+    bl_category = 'View'
 
     # -----------------------------------------------------
     # Verify if visible
@@ -1650,7 +1650,7 @@ class AchmRoomGeneratorPanel(Panel):
 
         layout = self.layout
         if bpy.context.mode == 'EDIT_MESH':
-            layout.label('Warning: Operator does not work in edit mode.', icon='ERROR')
+            layout.label(text='Warning: Operator does not work in edit mode.', icon='ERROR')
         else:
             room = o.RoomGenerator[0]
             row = layout.row()
@@ -1692,6 +1692,6 @@ class AchmRoomGeneratorPanel(Panel):
                 row.prop(room, 'shell_bfactor', slider=True)
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(room, 'crt_mat')

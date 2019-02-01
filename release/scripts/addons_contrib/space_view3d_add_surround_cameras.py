@@ -103,6 +103,7 @@ class AddSurroundCamerasOperator(bpy.types.Operator):
     def execute(self, context):
 
         scene = context.scene
+        view_layer = context.view_layer
         numScreens = context.window_manager.num_surround_screens
 
         # add an empty for the camera origin if not already present
@@ -138,8 +139,8 @@ class AddSurroundCamerasOperator(bpy.types.Operator):
 
         # sel/activate origin
         bpy.ops.object.select_all(action='DESELECT')
-        obj_origin.select = True
-        scene.objects.active = obj_origin
+        obj_origin.select_set(True)
+        view_layer.objects.active = obj_origin
 
         context.window_manager.previous_num_surround_screens = numScreens
         return {'FINISHED'}
@@ -224,12 +225,13 @@ class RemoveSurroundCamerasOperator(bpy.types.Operator):
     def execute(self, context):
 
         scene = context.scene
+        collection = context.collection
 
         # XXX. shouldnt there be some less general way to do this?
         # like check if they are the child of origin? - campbell
         for obj in scene.objects[:]:
             if obj.type == 'CAMERA':
-                scene.objects.unlink(obj)
+                collection.objects.unlink(obj)
 
         context.window_manager.previous_num_surround_screens = -1
         return {'FINISHED'}

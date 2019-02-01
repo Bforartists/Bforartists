@@ -291,7 +291,7 @@ class CURVE_OT_spirals(Operator):
             min=1, max=400,
             description="Number of curves of spiral"
             )
-    touch = BoolProperty(
+    touch: BoolProperty(
             default=False,
             description="No empty spaces between cycles"
             )

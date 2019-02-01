@@ -162,7 +162,6 @@ def register():
                                                                               
 
 def unregister():
-    del bpy.types.Scene.SearchAndSelectOt
     bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_funcMesh)
     bpy.types.IMAGE_MT_uvs_specials.remove(menu_funcImage)
     bpy.types.VIEW3D_MT_object_specials.remove(menu_funcObject)

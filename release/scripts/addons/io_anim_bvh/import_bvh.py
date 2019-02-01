@@ -650,7 +650,7 @@ def bvh_node_dict2armature(
 
     # finally apply matrix
     arm_ob.matrix_world = global_matrix
-    bpy.ops.object.transform_apply(rotation=True)
+    bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
     return arm_ob
 

@@ -261,7 +261,7 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
     if rack:
         teethNum = 1
 
-    print(radius, width, conangle)
+    #print(radius, width, conangle)
     scale = (radius - 2 * width * tan(conangle)) / radius
 
     verts = []
@@ -554,69 +554,69 @@ class AddGear(Operator):
     bl_description = "Construct a gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    number_of_teeth = IntProperty(name="Number of Teeth",
+    number_of_teeth: IntProperty(name="Number of Teeth",
             description="Number of teeth on the gear",
             min=2,
             max=265,
             default=12
             )
-    radius = FloatProperty(name="Radius",
+    radius: FloatProperty(name="Radius",
             description="Radius of the gear, negative for crown gear",
             min=-100.0,
             max=100.0,
             unit='LENGTH',
             default=1.0
             )
-    addendum = FloatProperty(name="Addendum",
+    addendum: FloatProperty(name="Addendum",
             description="Addendum, extent of tooth above radius",
             min=0.01,
             max=100.0,
             unit='LENGTH',
             default=0.1
             )
-    dedendum = FloatProperty(name="Dedendum",
+    dedendum: FloatProperty(name="Dedendum",
             description="Dedendum, extent of tooth below radius",
             min=0.0,
             max=100.0,
             unit='LENGTH',
             default=0.1
             )
-    angle = FloatProperty(name="Pressure Angle",
+    angle: FloatProperty(name="Pressure Angle",
             description="Pressure angle, skewness of tooth tip",
             min=0.0,
             max=radians(45.0),
             unit='ROTATION',
             default=radians(20.0)
             )
-    base = FloatProperty(name="Base",
+    base: FloatProperty(name="Base",
             description="Base, extent of gear below radius",
             min=0.0,
             max=100.0,
             unit='LENGTH',
             default=0.2
             )
-    width = FloatProperty(name="Width",
+    width: FloatProperty(name="Width",
             description="Width, thickness of gear",
             min=0.05,
             max=100.0,
             unit='LENGTH',
             default=0.2
             )
-    skew = FloatProperty(name="Skewness",
+    skew: FloatProperty(name="Skewness",
             description="Skew of teeth",
             min=radians(-90.0),
             max=radians(90.0),
             unit='ROTATION',
             default=radians(0.0)
             )
-    conangle = FloatProperty(name="Conical angle",
+    conangle: FloatProperty(name="Conical angle",
             description="Conical angle of gear",
             min=0.0,
             max=radians(90.0),
             unit='ROTATION',
             default=radians(0.0)
             )
-    crown = FloatProperty(name="Crown",
+    crown: FloatProperty(name="Crown",
             description="Inward pointing extend of crown teeth",
             min=0.0,
             max=100.0,
@@ -660,8 +660,7 @@ class AddGear(Operator):
             )
 
         # Actually create the mesh object from this geometry data.
-        base = create_mesh_object(context, verts, [], faces, "Gear")
-        obj = base.object
+        obj = create_mesh_object(context, verts, [], faces, "Gear")
 
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
@@ -681,21 +680,21 @@ class AddWormGear(Operator):
     bl_description = "Construct a worm gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    number_of_teeth = IntProperty(
+    number_of_teeth: IntProperty(
             name="Number of Teeth",
             description="Number of teeth on the gear",
             min=2,
             max=265,
             default=12
             )
-    number_of_rows = IntProperty(
+    number_of_rows: IntProperty(
             name="Number of Rows",
             description="Number of rows on the worm gear",
             min=2,
             max=265,
             default=32
             )
-    radius = FloatProperty(
+    radius: FloatProperty(
             name="Radius",
             description="Radius of the gear, negative for crown gear",
             min=-100.0,
@@ -703,7 +702,7 @@ class AddWormGear(Operator):
             unit='LENGTH',
             default=1.0
             )
-    addendum = FloatProperty(
+    addendum: FloatProperty(
             name="Addendum",
             description="Addendum, extent of tooth above radius",
             min=0.01,
@@ -711,7 +710,7 @@ class AddWormGear(Operator):
             unit='LENGTH',
             default=0.1
             )
-    dedendum = FloatProperty(
+    dedendum: FloatProperty(
             name="Dedendum",
             description="Dedendum, extent of tooth below radius",
             min=0.0,
@@ -719,7 +718,7 @@ class AddWormGear(Operator):
             unit='LENGTH',
             default=0.1
             )
-    angle = FloatProperty(
+    angle: FloatProperty(
             name="Pressure Angle",
             description="Pressure angle, skewness of tooth tip",
             min=0.0,
@@ -727,7 +726,7 @@ class AddWormGear(Operator):
             default=radians(20.0),
             unit='ROTATION'
             )
-    row_height = FloatProperty(
+    row_height: FloatProperty(
             name="Row Height",
             description="Height of each Row",
             min=0.05,
@@ -735,7 +734,7 @@ class AddWormGear(Operator):
             unit='LENGTH',
             default=0.2
             )
-    skew = FloatProperty(
+    skew: FloatProperty(
             name="Skewness per Row",
             description="Skew of each row",
             min=radians(-90.0),
@@ -743,7 +742,7 @@ class AddWormGear(Operator):
             default=radians(11.25),
             unit='ROTATION'
             )
-    crown = FloatProperty(
+    crown: FloatProperty(
             name="Crown",
             description="Inward pointing extend of crown teeth",
             min=0.0,
@@ -784,16 +783,15 @@ class AddWormGear(Operator):
             )
 
         # Actually create the mesh object from this geometry data.
-        base = create_mesh_object(context, verts, [], faces, "Worm Gear")
-        obj = base.object
+        obj = create_mesh_object(context, verts, [], faces, "Worm Gear")
 
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
             # Create vertex groups from stored vertices.
-            tipGroup = obj.vertex_groups.new(name='Tips')
+            tipGroup = obj.vertex_groups.new(name = 'Tips')
             tipGroup.add(verts_tip, 1.0, 'ADD')
 
-            valleyGroup = obj.vertex_groups.new('Valleys')
+            valleyGroup = obj.vertex_groups.new(name = 'Valleys')
             valleyGroup.add(verts_valley, 1.0, 'ADD')
 
         return {'FINISHED'}

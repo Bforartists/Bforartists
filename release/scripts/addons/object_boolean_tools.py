@@ -20,18 +20,15 @@
 
 bl_info = {
     "name": "Bool Tool",
-    "author": "Vitor Balbio, Mikhail Rachinskiy, TynkaTopi, Meta-Androcto",
-    "version": (0, 3, 9),
-    "blender": (2, 79, 2),
-    "location": "View3D > Toolshelf",
+    "author": "Vitor Balbio, Mikhail Rachinskiy, TynkaTopi, Meta-Androcto, Simon Appelt",
+    "version": (0, 4, 0),
+    "blender": (2, 80, 0),
+    "location": "View3D > Sidebar",
     "description": "Bool Tool Hotkey: Ctrl Shift B",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Object/BoolTool",
     "category": "Object",
     }
 
 import bpy
-from bpy.app.handlers import persistent
 from bpy.types import (
         AddonPreferences,
         Operator,
@@ -41,7 +38,6 @@ from bpy.types import (
 from bpy.props import (
         BoolProperty,
         StringProperty,
-        EnumProperty,
         )
 
 
@@ -50,12 +46,12 @@ from bpy.props import (
 
 # Hide boolean objects
 def update_BoolHide(self, context):
-    ao = context.scene.objects.active
+    ao = context.view_layer.objects.active
     objs = [i.object for i in ao.modifiers if i.type == 'BOOLEAN']
     hide_state = context.scene.BoolHide
 
     for o in objs:
-        o.hide = hide_state
+        o.hide_viewport = hide_state
 
 
 # Object is a Canvas
@@ -86,14 +82,14 @@ def isPolyBrush(_obj):
 
 
 def BT_ObjectByName(obj):
-    for ob in bpy.context.scene.objects:
+    for ob in bpy.context.view_layer.objects:
         if isCanvas(ob) or isBrush(ob):
             if ob.name == obj:
                 return ob
 
 
 def FindCanvas(obj):
-    for ob in bpy.context.scene.objects:
+    for ob in bpy.context.view_layer.objects:
         if isCanvas(ob):
             for mod in ob.modifiers:
                 if ("BTool_" in mod.name):
@@ -132,10 +128,10 @@ def isMakeBoundary():
 
 
 def ConvertToMesh(obj):
-    act = bpy.context.scene.objects.active
-    bpy.context.scene.objects.active = obj
+    act = bpy.context.view_layer.objects.active
+    bpy.context.view_layer.objects.active = obj
     bpy.ops.object.convert(target="MESH")
-    bpy.context.scene.objects.active = act
+    bpy.context.view_layer.objects.active = act
 
 
 # Do the Union, Difference and Intersection Operations with a Brush
@@ -152,7 +148,7 @@ def Operation(context, _operation):
             selObj.hide_render = True
             cyclesVis = selObj.cycles_visibility
             """
-            for obj in bpy.context.scene.objects:
+            for obj in bpy.context.view_layer.objects:
                 if isCanvas(obj):
                     for mod in obj.modifiers:
                         if(mod.name == "BTool_" + selObj.name):
@@ -171,8 +167,8 @@ def Operation(context, _operation):
             if _operation == "SLICE":
                 # copies instance_collection property(empty), but group property is empty (users_group = None)
                 clone = context.active_object.copy()
-                # clone.select = True
-                context.scene.objects.link(clone)
+                # clone.select_set(state=True)
+                context.collection.objects.link(clone)
                 sliceMod = clone.modifiers.new("BTool_" + selObj.name, "BOOLEAN")  # add mod to clone obj
                 sliceMod.object = selObj
                 sliceMod.operation = "DIFFERENCE"
@@ -196,7 +192,7 @@ def Remove(context, thisObj_name, Prop):
 
     # Restore the Brush
     def RemoveThis(_thisObj_name):
-        for obj in bpy.context.scene.objects:
+        for obj in bpy.context.view_layer.objects:
             # if it's the brush object
             if obj.name == _thisObj_name:
                 cyclesVis = obj.cycles_visibility
@@ -261,7 +257,7 @@ def EnableBrush(context, objList, canvas):
 # Find the Canvas and Enable this Brush
 def EnableThisBrush(context, set):
     canvas = None
-    for obj in bpy.context.scene.objects:
+    for obj in bpy.context.view_layer.objects:
         if obj != bpy.context.active_object:
             if isCanvas(obj):
                 for mod in obj.modifiers:
@@ -322,7 +318,7 @@ def ApplyAll(context, list):
 
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objDeleteList:
-        obj.select = True
+        obj.select_set(state=True)
     bpy.ops.object.delete()
 
 
@@ -336,20 +332,20 @@ def ApplyThisBrush(context, brush):
                     # EXPERIMENTAL
                     if isMakeVertexGroup():
                         # Turn all faces of the Brush selected
-                        bpy.context.scene.objects.active = brush
+                        bpy.context.view_layer.objects.active = brush
                         bpy.ops.object.mode_set(mode='EDIT')
                         bpy.ops.mesh.select_all(action='SELECT')
                         bpy.ops.object.mode_set(mode='OBJECT')
 
                         # Turn off al faces of the Canvas selected
-                        bpy.context.scene.objects.active = canvas
+                        bpy.context.view_layer.objects.active = canvas
                         bpy.ops.object.mode_set(mode='EDIT')
                         bpy.ops.mesh.select_all(action='DESELECT')
                         bpy.ops.object.mode_set(mode='OBJECT')
                     """
 
                     # Apply This Brush
-                    context.scene.objects.active = obj
+                    context.view_layer.objects.active = obj
                     try:
                         bpy.ops.object.modifier_apply(modifier=mod.name)
                     except:  # if fails the means it is multiuser data
@@ -371,30 +367,8 @@ def ApplyThisBrush(context, brush):
                     """
 
     # Garbage Collector
-    brush.select = True
+    brush.select_set(state=True)
     # bpy.ops.object.delete()
-
-
-def GCollector(_obj):
-    if isCanvas(_obj):
-        BTRoot = False
-        for mod in _obj.modifiers:
-            if ("BTool_" in mod.name):
-                BTRoot = True
-                if mod.object is None:
-                    _obj.modifiers.remove(mod)
-        if not BTRoot:
-            del _obj["BoolToolRoot"]
-
-
-# Handle the callbacks when modifying things in the scene
-@persistent
-def HandleScene(scene):
-    if bpy.data.objects.is_updated:
-        for ob in bpy.data.objects:
-            if ob.is_updated:
-                GCollector(ob)
-
 
 # ------------------ Bool Tool OPERATORS --------------------------------------
 
@@ -426,7 +400,7 @@ class BTool_DrawPolyBrush(Operator):
         self.count += 1
         actObj = bpy.context.active_object
         if self.count == 1:
-            actObj.select = True
+            actObj.select_set(state=True)
             bpy.ops.gpencil.draw('INVOKE_DEFAULT', mode="DRAW_POLY")
 
         if event.type in {'RIGHTMOUSE'}:
@@ -441,9 +415,9 @@ class BTool_DrawPolyBrush(Operator):
             for obj in context.selected_objects:
                 if obj.type == "CURVE":
                     obj.name = "PolyDraw"
-                    bpy.context.scene.objects.active = obj
+                    bpy.context.view_layer.objects.active = obj
                     bpy.ops.object.select_all(action='DESELECT')
-                    obj.select = True
+                    obj.select_set(state=True)
                     bpy.ops.object.convert(target="MESH")
                     bpy.ops.object.mode_set(mode='EDIT')
                     bpy.ops.mesh.select_all(action='SELECT')
@@ -460,12 +434,12 @@ class BTool_DrawPolyBrush(Operator):
                     obj["BoolToolPolyBrush"] = True
 
                     bpy.ops.object.select_all(action='DESELECT')
-                    bpy.context.scene.objects.active = actObj
-                    bpy.context.scene.update()
-                    actObj.select = True
-                    obj.select = True
+                    bpy.context.view_layer.objects.active = actObj
+                    bpy.context.view_layer.update()
+                    actObj.select_set(state=True)
+                    obj.select_set(state=True)
 
-                    bpy.context.scene.grease_pencil.clear()
+                    bpy.context.view_layer.grease_pencil.clear()
                     bpy.ops.gpencil.data_unlink()
 
             return {'FINISHED'}
@@ -496,7 +470,7 @@ class BTool_FastTransform(Operator):
     bl_label = "Fast Transform"
     bl_description = "Enable Fast Transform"
 
-    operator = StringProperty("")
+    operator : StringProperty("")
 
     count = 0
 
@@ -616,33 +590,32 @@ class Auto_Boolean:
     def objects_prepare(self):
         for ob in bpy.context.selected_objects:
             if ob.type != 'MESH':
-                ob.select = False
+                ob.select_set(state=False)
         bpy.ops.object.make_single_user(object=True, obdata=True)
         bpy.ops.object.convert(target='MESH')
 
     def mesh_selection(self, ob, select_action):
-        scene = bpy.context.scene
         obj = bpy.context.active_object
 
-        scene.objects.active = ob
+        bpy.context.view_layer.objects.active = ob
         bpy.ops.object.mode_set(mode='EDIT')
 
         bpy.ops.mesh.reveal()
         bpy.ops.mesh.select_all(action=select_action)
 
         bpy.ops.object.mode_set(mode='OBJECT')
-        scene.objects.active = obj
+        bpy.context.view_layer.objects.active = obj
 
     def boolean_operation(self):
         obj = bpy.context.active_object
-        obj.select = False
+        obj.select_set(state=False)
         obs = bpy.context.selected_objects
 
         self.mesh_selection(obj, 'DESELECT')
         for ob in obs:
             self.mesh_selection(ob, 'SELECT')
             self.boolean_mod(obj, ob, self.mode)
-        obj.select = True
+        obj.select_set(state=True)
 
     def boolean_mod(self, obj, ob, mode, ob_delete=True):
         md = obj.modifiers.new("Auto Boolean", 'BOOLEAN')
@@ -653,7 +626,7 @@ class Auto_Boolean:
         bpy.ops.object.modifier_apply(modifier="Auto Boolean")
         if not ob_delete:
             return
-        bpy.context.scene.objects.unlink(ob)
+        # bpy.context.scene.objects.unlink(ob)
         bpy.data.objects.remove(ob)
 
 
@@ -708,9 +681,8 @@ class OBJECT_OT_BoolTool_Auto_Slice(Operator, Auto_Boolean):
     def execute(self, context):
         self.objects_prepare()
 
-        scene = context.scene
         obj = context.active_object
-        obj.select = False
+        obj.select_set(state=False)
         ob = context.selected_objects[0]
 
         self.mesh_selection(obj, 'DESELECT')
@@ -718,12 +690,12 @@ class OBJECT_OT_BoolTool_Auto_Slice(Operator, Auto_Boolean):
 
         obj_copy = obj.copy()
         obj_copy.data = obj.data.copy()
-        scene.objects.link(obj_copy)
+        context.collection.objects.link(obj_copy)
 
         self.boolean_mod(obj, ob, 'DIFFERENCE', ob_delete=False)
-        scene.objects.active = obj_copy
+        bpy.context.view_layer.objects.active = obj_copy
         self.boolean_mod(obj_copy, ob, 'INTERSECT')
-        obj_copy.select = True
+        obj_copy.select_set(state=True)
 
         return {'FINISHED'}
 
@@ -738,7 +710,7 @@ class OBJECT_OT_BoolTool_Auto_Subtract(Operator, Auto_Boolean):
         self.objects_prepare()
 
         obj = context.active_object
-        obj.select = False
+        obj.select_set(state=False)
         ob = context.selected_objects[0]
 
         self.mesh_selection(obj, 'DESELECT')
@@ -756,19 +728,19 @@ class BTool_FindBrush(Operator):
     bl_label = ""
     bl_description = "Find the selected brush"
 
-    obj = StringProperty("")
+    obj : StringProperty("")
 
     @classmethod
     def poll(cls, context):
         return context.active_object is not None
 
     def execute(self, context):
-        for ob in bpy.context.scene.objects:
+        for ob in bpy.context.view_layer.objects:
             if (ob.name == self.obj):
                 bpy.ops.object.select_all(action='TOGGLE')
                 bpy.ops.object.select_all(action='DESELECT')
-                bpy.context.scene.objects.active = ob
-                ob.select = True
+                bpy.context.view_layer.objects.active = ob
+                ob.set_select(state=True)
         return {'FINISHED'}
 
 
@@ -778,8 +750,8 @@ class BTool_MoveStack(Operator):
     bl_label = ""
     bl_description = "Move this Brush Up/Down in the Stack"
 
-    modif = StringProperty("")
-    direction = StringProperty("")
+    modif : StringProperty("")
+    direction : StringProperty("")
 
     @classmethod
     def poll(cls, context):
@@ -799,7 +771,7 @@ class BTool_EnableBrush(Operator):
     bl_label = ""
     bl_description = "Removes all BoolTool config assigned to it"
 
-    thisObj = StringProperty("")
+    thisObj : StringProperty("")
 
     @classmethod
     def poll(cls, context):
@@ -850,8 +822,8 @@ class BTool_Remove(Operator):
     bl_description = "Removes all BoolTool config assigned to it"
     bl_options = {'UNDO'}
 
-    thisObj = StringProperty("")
-    Prop = StringProperty("")
+    thisObj : StringProperty("")
+    Prop : StringProperty("")
 
     @classmethod
     def poll(cls, context):
@@ -913,7 +885,7 @@ class VIEW3D_MT_booltool_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.label("Auto Boolean:")
+        layout.label(text="Auto Boolean:")
         layout.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon='PIVOT_ACTIVE')
         layout.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon='PIVOT_INDIVIDUAL')
         layout.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon='PIVOT_MEDIAN')
@@ -921,7 +893,7 @@ class VIEW3D_MT_booltool_menu(Menu):
         layout.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon='PIVOT_ACTIVE')
         layout.separator()
 
-        layout.label("Brush Boolean:")
+        layout.label(text="Brush Boolean:")
         layout.operator(BTool_Diff.bl_idname, icon='PIVOT_ACTIVE')
         layout.operator(BTool_Union.bl_idname, icon='PIVOT_INDIVIDUAL')
         layout.operator(BTool_Inters.bl_idname, icon='PIVOT_MEDIAN')
@@ -949,10 +921,10 @@ def VIEW3D_BoolTool_Menu(self, context):
 # ---------------- Toolshelf: Tools ---------------------
 
 class VIEW3D_PT_booltool_tools(Panel):
-    bl_category = "Tools"
+    bl_category = 'objectmode'
     bl_label = "Bool Tool"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_context = 'objectmode'
 
     @classmethod
@@ -964,8 +936,8 @@ class VIEW3D_PT_booltool_tools(Panel):
         obj = context.active_object
         obs_len = len(context.selected_objects)
 
-        row = layout.split(0.7)
-        row.label("Help:")
+        row = layout.split(factor=0.7)
+        row.label(text="Help:")
         row.operator("wm.booltool_help", text="", icon="QUESTION")
 
         main = layout.column(align=True)
@@ -975,7 +947,7 @@ class VIEW3D_PT_booltool_tools(Panel):
 
         col = main.column(align=True)
         col.enabled = obs_len > 1
-        col.label("Auto Boolean:", icon="MODIFIER")
+        col.label(text="Auto Boolean:", icon="MODIFIER")
         col.separator()
         col.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon='PIVOT_ACTIVE')
         col.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon='PIVOT_INDIVIDUAL')
@@ -992,28 +964,29 @@ class VIEW3D_PT_booltool_tools(Panel):
 
         col = main.column(align=True)
         col.enabled = obs_len > 1
-        col.label("Brush Boolean:", icon="MODIFIER")
+        col.label(text="Brush Boolean:", icon="MODIFIER")
         col.separator()
         col.operator(BTool_Diff.bl_idname, text="Difference", icon='PIVOT_ACTIVE')
         col.operator(BTool_Union.bl_idname, text="Union", icon='PIVOT_INDIVIDUAL')
         col.operator(BTool_Inters.bl_idname, text="Intersect", icon='PIVOT_MEDIAN')
         col.operator(BTool_Slice.bl_idname, text="Slice", icon='PIVOT_MEDIAN')
 
-        main.separator()
+        #TODO Draw Poly Brush
+        # main.separator()
 
-        col = main.column(align=True)
-        col.label("Draw:", icon="MESH_CUBE")
-        col.separator()
-        col.operator(BTool_DrawPolyBrush.bl_idname, icon="LINE_DATA")
+        # col = main.column(align=True)
+        # col.label(text="Draw:", icon="MESH_CUBE")
+        # col.separator()
+        # col.operator(BTool_DrawPolyBrush.bl_idname, icon="LINE_DATA")
 
 
 # ---------- Toolshelf: Properties --------------------------------------------------------
 
 class VIEW3D_PT_booltool_config(Panel):
-    bl_category = "Tools"
+    bl_category = 'objectmode'
     bl_label = "Properties"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_context = 'objectmode'
 
     @classmethod
@@ -1030,17 +1003,17 @@ class VIEW3D_PT_booltool_config(Panel):
         icon = ""
 
         layout = self.layout
-        row = layout.row(True)
+        row = layout.row(align=True)
 
         # CANVAS ---------------------------------------------------
         if isCanvas(actObj):
-            row.label("CANVAS", icon="MESH_GRID")
+            row.label(text="CANVAS", icon="MESH_GRID")
             row = layout.row()
             row.prop(context.scene, 'BoolHide', text="Hide Bool objects")
-            row = layout.row(True)
+            row = layout.row(align=True)
             row.operator(BTool_AllBrushToMesh.bl_idname, icon="MOD_LATTICE", text="Apply All")
 
-            row = layout.row(True)
+            row = layout.row(align=True)
             Rem = row.operator(BTool_Remove.bl_idname, icon="CANCEL", text="Remove All")
             Rem.thisObj = ""
             Rem.Prop = "CANVAS"
@@ -1052,16 +1025,16 @@ class VIEW3D_PT_booltool_config(Panel):
         if isBrush(actObj):
 
             if (actObj["BoolToolBrush"] == "UNION"):
-                icon = "ROTATECOLLECTION"
+                icon = "PIVOT_INDIVIDUAL"
             if (actObj["BoolToolBrush"] == "DIFFERENCE"):
-                icon = "ROTATECENTER"
+                icon = "PIVOT_MEDIAN"
             if (actObj["BoolToolBrush"] == "INTERSECT"):
-                icon = "ROTACTIVE"
+                icon = "PIVOT_ACTIVE"
             if (actObj["BoolToolBrush"] == "SLICE"):
-                icon = "ROTATECENTER"
+                icon = "PIVOT_MEDIAN"
 
-            row = layout.row(True)
-            row.label("BRUSH", icon=icon)
+            row = layout.row(align=True)
+            row.label(text="BRUSH", icon=icon)
 
             icon = ""
             if actObj["BoolTool_FTransform"] == "True":
@@ -1072,26 +1045,26 @@ class VIEW3D_PT_booltool_config(Panel):
                 pass
 
             if isFTransf():
-                row = layout.row(True)
+                row = layout.row(align=True)
                 row.operator(BTool_EnableFTransform.bl_idname, text="Fast Vis", icon=icon)
                 row.operator(BTool_EnableThisBrush.bl_idname, text="Enable", icon="VISIBLE_IPO_ON")
-                row = layout.row(True)
+                row = layout.row(align=True)
             else:
                 row.operator(BTool_EnableThisBrush.bl_idname, icon="VISIBLE_IPO_ON")
-                row = layout.row(True)
+                row = layout.row(align=True)
 
         if isPolyBrush(actObj):
-            row = layout.row(False)
-            row.label("POLY BRUSH", icon="LINE_DATA")
+            row = layout.row(align=False)
+            row.label(text="POLY BRUSH", icon="LINE_DATA")
             mod = actObj.modifiers["BTool_PolyBrush"]
-            row = layout.row(False)
+            row = layout.row(align=False)
             row.prop(mod, "thickness", text="Size")
             layout.separator()
 
         if isBrush(actObj):
-            row = layout.row(True)
+            row = layout.row(align=True)
             row.operator(BTool_BrushToMesh.bl_idname, icon="MOD_LATTICE", text="Apply Brush")
-            row = layout.row(True)
+            row = layout.row(align=True)
             Rem = row.operator(BTool_Remove.bl_idname, icon="CANCEL", text="Remove Brush")
             Rem.thisObj = ""
             Rem.Prop = "BRUSH"
@@ -1102,10 +1075,10 @@ class VIEW3D_PT_booltool_config(Panel):
 # ---------- Toolshelf: Brush Viewer -------------------------------------------------------
 
 class VIEW3D_PT_booltool_bviewer(Panel):
-    bl_category = "Tools"
+    bl_category = 'objectmode'
     bl_label = "Brush Viewer"
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_context = 'objectmode'
 
     @classmethod
@@ -1126,17 +1099,17 @@ class VIEW3D_PT_booltool_bviewer(Panel):
 
             for mod in actObj.modifiers:
                 container = self.layout.box()
-                row = container.row(True)
+                row = container.row(align=True)
                 icon = ""
                 if ("BTool_" in mod.name):
                     if (mod.operation == "UNION"):
-                        icon = "ROTATECOLLECTION"
+                        icon = "PIVOT_INDIVIDUAL"
                     if (mod.operation == "DIFFERENCE"):
-                        icon = "ROTATECENTER"
+                        icon = "PIVOT_MEDIAN"
                     if (mod.operation == "INTERSECT"):
-                        icon = "ROTACTIVE"
+                        icon = "PIVOT_ACTIVE"
                     if (mod.operation == "SLICE"):
-                        icon = "ROTATECENTER"
+                        icon = "PIVOT_MEDIAN"
 
                     objSelect = row.operator("btool.find_brush", text=mod.object.name, icon=icon, emboss=False)
                     objSelect.obj = mod.object.name
@@ -1182,20 +1155,20 @@ class WM_OT_BoolTool_Help(Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.label("To use:")
-        layout.label("Select two or more objects,")
-        layout.label("choose one option from the panel")
-        layout.label("or from the Ctrl + Shift + B menu")
+        layout.label(text="To use:")
+        layout.label(text="Select two or more objects,")
+        layout.label(text="choose one option from the panel")
+        layout.label(text="or from the Ctrl + Shift + B menu")
 
         layout.separator()
 
-        layout.label("Auto Boolean:")
-        layout.label("Apply Boolean operation directly.")
+        layout.label(text="Auto Boolean:")
+        layout.label(text="Apply Boolean operation directly.")
 
         layout.separator()
 
-        layout.label("Brush Boolean:")
-        layout.label("Create a Boolean brush setup.")
+        layout.label(text="Brush Boolean:")
+        layout.label(text="Create a Boolean brush setup.")
 
     def execute(self, context):
         return {'FINISHED'}
@@ -1242,37 +1215,37 @@ def update_panels(self, context):
 class PREFS_BoolTool_Props(AddonPreferences):
     bl_idname = __name__
 
-    fast_transform = BoolProperty(
+    fast_transform : BoolProperty(
             name="Fast Transformations",
             default=False,
             update=UpdateBoolTool_Pref,
             description="Replace the Transform HotKeys (G,R,S)\n"
                         "for a custom version that can optimize the visualization of Brushes",
             )
-    make_vertex_groups = BoolProperty(
+    make_vertex_groups : BoolProperty(
             name="Make Vertex Groups",
             default=False,
             description="When Applying a Brush to the Object it will create\n"
                         "a new vertex group for the new faces",
             )
-    make_boundary = BoolProperty(
+    make_boundary : BoolProperty(
             name="Make Boundary",
             default=False,
             description="When Apply a Brush to the Object it will create a\n"
                         "new vertex group of the boundary boolean area",
             )
-    use_wire = BoolProperty(
+    use_wire : BoolProperty(
             name="Use Bmesh",
             default=False,
             description="Use The Wireframe Instead of Bounding Box for visualization",
             )
-    category = StringProperty(
+    category : StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",
             update=update_panels,
             )
-    Enable_Tab_01 = BoolProperty(
+    Enable_Tab_01 : BoolProperty(
             default=False
             )
 
@@ -1280,15 +1253,15 @@ class PREFS_BoolTool_Props(AddonPreferences):
         layout = self.layout
         split_percent = 0.3
 
-        split = layout.split(percentage=split_percent)
+        split = layout.split(factor=split_percent)
         col = split.column()
         col.label(text="Tab Category:")
         col = split.column()
         col.prop(self, "category", text="")
 
-        split = layout.split(percentage=split_percent)
+        split = layout.split(factor=split_percent)
         col = split.column()
-        col.label("Experimental Features:")
+        col.label(text="Experimental Features:")
         col = split.column()
         col.prop(self, "fast_transform")
         col.prop(self, "use_wire", text="Use Wire Instead Of Bbox")
@@ -1306,26 +1279,26 @@ class PREFS_BoolTool_Props(AddonPreferences):
             row = layout.row()
 
             col = row.column()
-            col.label("Hotkey List:")
-            col.label("Menu: Ctrl Shift B")
+            col.label(text="Hotkey List:")
+            col.label(text="Menu: Ctrl Shift B")
 
             row = layout.row()
             col = row.column()
-            col.label("Brush Operators:")
-            col.label("Union: Ctrl Num +")
-            col.label("Diff: Ctrl Num -")
-            col.label("Intersect: Ctrl Num *")
-            col.label("Slice: Ctrl Num /")
+            col.label(text="Brush Operators:")
+            col.label(text="Union: Ctrl Num +")
+            col.label(text="Diff: Ctrl Num -")
+            col.label(text="Intersect: Ctrl Num *")
+            col.label(text="Slice: Ctrl Num /")
 
             row = layout.row()
             col = row.column()
-            col.label("Auto Operators:")
-            col.label("Difference: Ctrl Shift Num -")
-            col.label("Union: Ctrl Shift Num +")
-            col.label("Intersect: Ctrl Shift Num *")
-            col.label("Slice: Ctrl Shift Num /")
-            col.label("BTool Brush To Mesh: Ctrl Num Enter")
-            col.label("BTool All Brush To Mesh: Ctrl Shift Num Enter")
+            col.label(text="Auto Operators:")
+            col.label(text="Difference: Ctrl Shift Num -")
+            col.label(text="Union: Ctrl Shift Num +")
+            col.label(text="Intersect: Ctrl Shift Num *")
+            col.label(text="Slice: Ctrl Shift Num /")
+            col.label(text="BTool Brush To Mesh: Ctrl Num Enter")
+            col.label(text="BTool All Brush To Mesh: Ctrl Shift Num Enter")
 
 
 # ------------------- Class List ------------------------------------------------
@@ -1348,7 +1321,8 @@ classes = (
     BTool_Diff,
     BTool_Inters,
     BTool_Slice,
-    BTool_DrawPolyBrush,
+    #TODO Draw Poly Brush
+    # BTool_DrawPolyBrush,
     BTool_Remove,
     BTool_AllBrushToMesh,
     BTool_BrushToMesh,
@@ -1409,8 +1383,6 @@ def register():
             description="Hide boolean objects",
             update=update_BoolHide,
             )
-    # Handlers
-    bpy.app.handlers.scene_update_post.append(HandleScene)
 
     bpy.types.VIEW3D_MT_object.append(VIEW3D_BoolTool_Menu)
     try:

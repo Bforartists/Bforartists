@@ -11,6 +11,12 @@ from mathutils import (
                 Vector,
                 Quaternion,
                 )
+from bpy.props import (
+                BoolProperty,
+                IntProperty,
+                FloatProperty,
+                StringProperty,
+                )
 
 # ################### Globals #################### #
 
@@ -23,7 +29,7 @@ Verts = []
 Polygons = []
 dVerts = []
 dPolygons = []
-i_prots = []        # index of the top polygons on which we'll generate the doodads
+i_prots = []        # index of the top polygons on which we"ll generate the doodads
 i_dood_type = []    # type of doodad (given by index of the doodad obj)
 
 
@@ -332,18 +338,18 @@ def doodads(object1, mesh1, dmin, dmax):
         while(j <= doods_nbr):
             origin_dood = randVertex(object1.data.polygons[i].vertices[0], object1.data.polygons[i].vertices[1],
                                      object1.data.polygons[i].vertices[2], object1.data.polygons[i].vertices[3], Verts)
-            type_dood = random.randint(0, len(bpy.context.scene.discomb.DISC_doodads) - 1)
+            type_dood = random.randint(0, len(self.DISC_doodads) - 1)
             polygons_add = []
             verts_add = []
 
             # First we have to apply scaling and rotation to the mesh
-            bpy.ops.object.select_pattern(pattern=bpy.context.scene.discomb.DISC_doodads[type_dood], extend=False)
-            bpy.context.scene.objects.active = bpy.data.objects[bpy.context.scene.discomb.DISC_doodads[type_dood]]
-            bpy.ops.object.transform_apply(rotation=True, scale=True)
+            bpy.ops.object.select_pattern(pattern=self.DISC_doodads[type_dood], extend=False)
+            bpy.context.view_layer.objects.active = bpy.data.objects[self.DISC_doodads[type_dood]]
+            bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
-            for polygon in bpy.data.objects[bpy.context.scene.discomb.DISC_doodads[type_dood]].data.polygons:
+            for polygon in bpy.data.objects[self.DISC_doodads[type_dood]].data.polygons:
                 polygons_add.append(polygon.vertices)
-            for vertex in bpy.data.objects[bpy.context.scene.discomb.DISC_doodads[type_dood]].data.vertices:
+            for vertex in bpy.data.objects[self.DISC_doodads[type_dood]].data.vertices:
                 verts_add.append(vertex.co.copy())
             normal_original_polygon = object1.data.polygons[i].normal
 
@@ -361,7 +367,7 @@ def doodads(object1, mesh1, dmin, dmax):
 
             for polygon in polygons_add:
                 dPolygons.append([polygon[0] + findex, polygon[1] + findex, polygon[2] + findex, polygon[3] + findex])
-                i_dood_type.append(bpy.data.objects[bpy.context.scene.discomb.DISC_doodads[type_dood]].name)
+                i_dood_type.append(bpy.data.objects[self.DISC_doodads[type_dood]].name)
 
             for vertex in verts_add:
                 dVerts.append(vertex)
@@ -382,7 +388,7 @@ def protusions_repeat(object1, mesh1, r_prot):
 def setMatProt(discObj, origObj, sideProtMat, topProtMat):
     # First we put the materials in their slots
     bpy.ops.object.select_pattern(pattern=discObj.name, extend=False)
-    bpy.context.scene.objects.active = bpy.data.objects[discObj.name]
+    bpy.context.view_layer.objects.active = bpy.data.objects[discObj.name]
     try:
         origObj.material_slots[topProtMat]
         origObj.material_slots[sideProtMat]
@@ -402,11 +408,11 @@ def setMatProt(discObj, origObj, sideProtMat, topProtMat):
             polygon.material_index = 1
 
 
-def setMatDood(doodObj):
+def setMatDood(self, doodObj):
     # First we add the materials slots
     bpy.ops.object.select_pattern(pattern=doodObj.name, extend=False)
-    bpy.context.scene.objects.active = doodObj
-    for name in bpy.context.scene.discomb.DISC_doodads:
+    bpy.context.view_layer.objects.active = doodObj
+    for name in self.DISC_doodads:
         try:
             bpy.ops.object.material_slot_add()
             doodObj.material_slots[-1].material = bpy.data.objects[name].material_slots[0].material
@@ -417,15 +423,15 @@ def setMatDood(doodObj):
             print()
 
 
-def clean_doodads():
-    current_doodads = list(bpy.context.scene.discomb.DISC_doodads)
+def clean_doodads(self):
+    current_doodads = list(self.DISC_doodads)
 
     for name in current_doodads:
         if name not in bpy.data.objects:
-            bpy.context.scene.discomb.DISC_doodads.remove(name)
+            self.DISC_doodads.remove(name)
 
 
-def discombobulate(minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
+def discombobulate(self, minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
                    dmin, dmax, r_prot, sideProtMat, topProtMat, isLast):
     global doprots
     global nVerts
@@ -438,13 +444,13 @@ def discombobulate(minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
 
     bpy.ops.object.mode_set(mode="OBJECT")
 
-    # start by cleaning up doodads that don't exist anymore
-    clean_doodads()
+    # start by cleaning up doodads that don"t exist anymore
+    clean_doodads(self)
 
     # Create the discombobulated mesh
     mesh = bpy.data.meshes.new("tmp")
     object = bpy.data.objects.new("tmp", mesh)
-    bpy.context.scene.objects.link(object)
+    bpy.context.collection.objects.link(object)
 
     # init final verts and polygons tuple
     nPolygons = []
@@ -477,7 +483,7 @@ def discombobulate(minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
     # Reload the datas
     bpy.ops.object.select_all(action="DESELECT")
     bpy.ops.object.select_pattern(pattern=object.name, extend=False)
-    bpy.context.scene.objects.active = bpy.data.objects[object.name]
+    bpy.context.view_layer.objects.active = bpy.data.objects[object.name]
     obverts = bpy.context.active_object.data.vertices
     obpolygons = bpy.context.active_object.data.polygons
 
@@ -486,41 +492,41 @@ def discombobulate(minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3, sf4,
     # Fill in the discombobulated mesh with the new polygons
     mesh1 = bpy.data.meshes.new("discombobulated_object")
     object1 = bpy.data.objects.new("discombobulated_mesh", mesh1)
-    bpy.context.scene.objects.link(object1)
+    bpy.context.collection.objects.link(object1)
     mesh1.from_pydata(Verts, [], Polygons)
     mesh1.update(calc_edges=True)
 
-    # Set the material's of discombobulated object
+    # Set the material"s of discombobulated object
     setMatProt(object1, origObj, sideProtMat, topProtMat)
 
     bpy.ops.object.select_pattern(pattern=object1.name, extend=False)
-    bpy.context.scene.objects.active = bpy.data.objects[object1.name]
-    bpy.ops.object.mode_set(mode='EDIT')
+    bpy.context.view_layer.objects.active = bpy.data.objects[object1.name]
+    bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.normals_make_consistent(inside=False)
-    bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.ops.mesh.select_all(action="DESELECT")
+    bpy.ops.object.mode_set(mode="OBJECT")
 
     # if(bpy.context.scene.repeatprot):
     protusions_repeat(object1, mesh1, r_prot)
 
-    if(len(bpy.context.scene.discomb.DISC_doodads) != 0 and bpy.context.scene.discomb.dodoodads and isLast):
+    if(len(self.DISC_doodads) != 0 and self.dodoodads and isLast):
         doodads(object1, mesh1, dmin, dmax)
         mesh2 = bpy.data.meshes.new("dood_mesh")
         object2 = bpy.data.objects.new("dood_obj", mesh2)
-        bpy.context.scene.objects.link(object2)
+        bpy.context.collection.objects.link(object2)
         mesh2.from_pydata(dVerts, [], dPolygons)
         mesh2.update(calc_edges=True)
-        setMatDood(object2)
+        setMatDood(self, object2)
         object2.location = to_translate
         object2.rotation_euler = to_rotate
         object2.scale = to_scale
 
     bpy.ops.object.select_pattern(pattern=object.name, extend=False)
-    bpy.context.scene.objects.active = bpy.data.objects[object.name]
+    bpy.context.view_layer.objects.active = bpy.data.objects[object.name]
     bpy.ops.object.delete()
 
     bpy.ops.object.select_pattern(pattern=object1.name, extend=False)
-    bpy.context.scene.objects.active = bpy.data.objects[object1.name]
+    bpy.context.view_layer.objects.active = bpy.data.objects[object1.name]
     bpy.context.scene.update()
 
     # translate, scale and rotate discombobulated results
@@ -540,7 +546,7 @@ class chooseDoodad(Operator):
     bl_label = "Discombobulate set doodad object"
     bl_description = ("Save the Active Object as Doodad \n"
                       "Object has to be quads only")
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     @classmethod
     def poll(cls, context):
@@ -560,48 +566,48 @@ class chooseDoodad(Operator):
         obj_name = bpy.context.active_object.name
         msg = "Object with this name already saved"
 
-        if obj_name not in bpy.context.scene.discomb.DISC_doodads:
-            bpy.context.scene.discomb.DISC_doodads.append(obj_name)
+        if obj_name not in self.DISC_doodads:
+            self.DISC_doodads.append(obj_name)
             msg = "Saved Doodad object: {}".format(obj_name)
 
-        self.report({'INFO'}, message=msg)
+        self.report({"INFO"}, message=msg)
 
     def invoke(self, context, event):
         self.execute(context)
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class unchooseDoodad(Operator):
     bl_idname = "object.discombobulate_unset_doodad"
     bl_label = "Discombobulate unset doodad object"
     bl_description = "Remove the saved Doodad Object(s)"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
-    remove_all = bpy.props.BoolProperty(
+    remove_all: bpy.props.BoolProperty(
                         name="Remove all Doodads",
                         default=False,
                         )
 
     def execute(self, context):
         msg = ("No doodads to remove")
-        doodadery = bpy.context.scene.discomb.DISC_doodads
+        doodadery = self.DISC_doodads
         if len(doodadery) > 0:
             if not self.remove_all:
                 name = bpy.context.active_object.name
                 if name in doodadery:
-                    bpy.context.scene.discomb.DISC_doodads.remove(name)
+                    self.DISC_doodads.remove(name)
                     msg = ("Removed Doodad object: {}".format(name))
             else:
-                bpy.context.scene.discomb.DISC_doodads[:] = []
+                self.DISC_doodads[:] = []
                 msg = "Removed all Doodads"
         else:
             msg = "No Doodads to Remove"
 
-        self.report({'INFO'}, message=msg)
+        self.report({"INFO"}, message=msg)
 
     def invoke(self, context, event):
         self.execute(context)
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 # ################## Interpolygon ################## #
@@ -610,36 +616,35 @@ class discombobulator(Operator):
     bl_idname = "object.discombobulate"
     bl_label = "Discombobulate"
     bl_description = "Apply"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
-        scn = context.scene.discomb
         i = 0
-        while i < bpy.context.scene.discomb.repeatprot:
+        while i < self.repeatprot:
             isLast = False
-            if i == scn.repeatprot - 1:
+            if i == self.repeatprot - 1:
                 isLast = True
-            discombobulate(scn.minHeight, scn.maxHeight, scn.minTaper, scn.maxTaper, scn.subpolygon1,
-                           scn.subpolygon2, scn.subpolygon3, scn.subpolygon4, scn.mindoodads, scn.maxdoodads,
-                           scn.repeatprot, scn.sideProtMat, scn.topProtMat, isLast)
+            discombobulate(self.minHeight, self.maxHeight, self.minTaper, self.maxTaper, self.subpolygon1,
+                           self.subpolygon2, self.subpolygon3, self.subpolygon4, self.mindoodads, self.maxdoodads,
+                           self.repeatprot, self.sideProtMat, self.topProtMat, isLast)
             i += 1
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class discombobulator_dodads_list(Menu):
     bl_idname = "OBJECT_MT_discombobulator_dodad_list"
     bl_label = "List of saved Doodads"
     bl_description = "List of the saved Doodad Object Names"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     def draw(self, context):
         layout = self.layout
 
-        doodle = len(bpy.context.scene.discomb.DISC_doodads)
-        layout.label("Saved doodads : {}".format(doodle))
+        doodle = len(self.DISC_doodads)
+        layout.label(text="Saved doodads : {}".format(doodle))
         layout.separator()
         if doodle > 0:
-            for name in bpy.context.scene.discomb.DISC_doodads:
+            for name in self.DISC_doodads:
                 layout.label(text=name)
 
 
@@ -647,37 +652,131 @@ class discombob_help(Menu):
     bl_idname = "HELP_MT_discombobulator"
     bl_label = "Usage Information"
     bl_description = "Help"
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     def draw(self, context):
         layout = self.layout
         layout.label(text="Usage Information:", icon="INFO")
         layout.separator()
         layout.label(text="Quads only, not Triangles or Ngons", icon="ERROR")
-        layout.label("Works only with Mesh object that have faces")
+        layout.label(text="Works only with Mesh object that have faces")
         layout.separator()
-        layout.label("Select a face or faces")
-        layout.label("Press Discombobulate to create greebles")
-        layout.label("In object mode, still needs a selection in Edit Mode")
+        layout.label(text="Select a face or faces")
+        layout.label(text="Press Discombobulate to create greebles")
+        layout.label(text="In object mode, still needs a selection in Edit Mode")
         layout.separator()
-        layout.label("Doodads - additional objects layered on the mesh surface")
+        layout.label(text="Doodads - additional objects layered on the mesh surface")
         layout.label("(Similar to dupliverts - but as one separate object)")
         layout.separator()
         layout.label(text="Limitations:", icon="MOD_EXPLODE")
-        layout.label("Be careful with the repeat protusions setting")
+        layout.label(text="Be careful with the repeat protusions setting")
         layout.label("(Runs reqursively)")
-        layout.label("If possible, avoid using on a high polycount base mesh")
+        layout.label(text="If possible, avoid using on a high polycount base mesh")
         layout.label("(It can run out of memory and take a long time to compute)")
-
 
 class VIEW3D_OT_tools_discombobulate(Operator):
     bl_idname = "discombobulate.ops"
     bl_label = "Discombobulator"
     bl_description = ("Easily add sci-fi details to a surface \n"
                       "Needs an existing active Mesh with Faces")
-    bl_options = {'REGISTER'}
+    bl_options = {"REGISTER"}
 
     executing = False
+    
+    DISC_doodads = []
+    # Protusions Buttons:
+    repeatprot: IntProperty(
+            name="Repeat protusions",
+            description=("Make several layers of protusion \n"
+                         "Use carefully, runs recursively the discombulator"),
+            default=1, min=1, max=4  # set to 4 because it's 2**n reqursive
+            )
+    doprots: BoolProperty(
+            name="Make protusions",
+            description="Check if we want to add protusions to the mesh",
+            default=True
+            )
+    subpolygon1: BoolProperty(
+            name="1",
+            default=True
+            )
+    subpolygon2: BoolProperty(
+            name="2",
+            default=True
+            )
+    subpolygon3: BoolProperty(
+            name="3",
+            default=True
+            )
+    subpolygon4: BoolProperty(
+            name="4",
+            default=True
+            )
+    polygonschangedpercent: FloatProperty(
+            name="Polygon %",
+            description="Percentage of changed polygons",
+            default=1.0
+            )
+    minHeight: FloatProperty(
+            name="Min height",
+            description="Minimal height of the protusions",
+            default=0.2
+            )
+    maxHeight: FloatProperty(
+            name="Max height",
+            description="Maximal height of the protusions",
+            default=0.4
+            )
+    minTaper: FloatProperty(
+            name="Min taper",
+            description="Minimal height of the protusions",
+            default=0.15, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
+    maxTaper: FloatProperty(
+            name="Max taper",
+            description="Maximal height of the protusions",
+            default=0.35, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
+    # Doodads buttons:
+    dodoodads: BoolProperty(
+            name="Make doodads",
+            description="Check if we want to generate doodads",
+            default=False
+            )
+    mindoodads: IntProperty(
+            name="Minimum doodads number",
+            description="Ask for the minimum number of doodads to generate per polygon",
+            default=1, min=0, max=50
+            )
+    maxdoodads: IntProperty(
+            name="Maximum doodads number",
+            description="Ask for the maximum number of doodads to generate per polygon",
+            default=6, min=1, max=50
+            )
+    doodMinScale: FloatProperty(
+            name="Scale min", description="Minimum scaling of doodad",
+            default=0.5, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
+    doodMaxScale: FloatProperty(
+            name="Scale max",
+            description="Maximum scaling of doodad",
+            default=1.0, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
+    # Materials buttons:
+    sideProtMat: IntProperty(
+            name="Side's prot mat",
+            description="Material of protusion's sides",
+            default=0, min=0
+            )
+    topProtMat: IntProperty(
+            name="Prot's top mat",
+            description="Material of protusion's top",
+            default=0, min=0
+            )
 
     @classmethod
     def poll(cls, context):
@@ -688,48 +787,48 @@ class VIEW3D_OT_tools_discombobulate(Operator):
         layout = self.layout
 
         row = layout.row()
-        row.menu('HELP_MT_discombobulator', icon='INFO')
+        row.menu("HELP_MT_discombobulator", icon="INFO")
         box = layout.box()
-        box.label("Protusions settings")
+        box.label(text="Protusions settings")
         row = box.row()
-        row.prop(context.scene.discomb, 'doprots')
+        row.prop(self, "doprots")
         row = box.row()
-        row.prop(context.scene.discomb, 'minHeight')
+        row.prop(self, "minHeight")
         row = box.row()
-        row.prop(context.scene.discomb, 'maxHeight')
+        row.prop(self, "maxHeight")
         row = box.row()
-        row.prop(context.scene.discomb, 'minTaper')
+        row.prop(self, "minTaper")
         row = box.row()
-        row.prop(context.scene.discomb, 'maxTaper')
+        row.prop(self, "maxTaper")
         row = box.row()
         col1 = row.column(align=True)
-        col1.prop(context.scene.discomb, "subpolygon1")
+        col1.prop(self, "subpolygon1")
         col2 = row.column(align=True)
-        col2.prop(context.scene.discomb, "subpolygon2")
+        col2.prop(self, "subpolygon2")
         col3 = row.column(align=True)
-        col3.prop(context.scene.discomb, "subpolygon3")
+        col3.prop(self, "subpolygon3")
         col4 = row.column(align=True)
-        col4.prop(context.scene.discomb, "subpolygon4")
+        col4.prop(self, "subpolygon4")
         row = box.row()
-        row.prop(context.scene.discomb, "repeatprot")
+        row.prop(self, "repeatprot")
         box = layout.box()
-        box.label("Doodads settings")
+        box.label(text="Doodads settings")
         row = box.row()
-        is_doodad = context.scene.discomb.dodoodads
-        row.prop(context.scene.discomb, 'dodoodads')
+        is_doodad = self.dodoodads
+        row.prop(self, "dodoodads")
 
         row = box.row()
         row.enabled = is_doodad
-        row.prop(context.scene.discomb, "mindoodads")
+        row.prop(self, "mindoodads")
         row = box.row()
         row.enabled = is_doodad
-        row.prop(context.scene.discomb, "maxdoodads")
+        row.prop(self, "maxdoodads")
         row = box.row()
         row.enabled = is_doodad
-        row.operator("object.discombobulate_set_doodad", text="Pick doodad")
+        oper = row.operator("object.discombobulate_set_doodad", text="Pick doodad")
 
         row = box.row()
-        splits = row.split(0.5)
+        splits = row.split(factor = 0.5)
         splits.enabled = is_doodad
         splits.operator("object.discombobulate_unset_doodad",
                         text="Remove active doodad").remove_all = False
@@ -737,18 +836,18 @@ class VIEW3D_OT_tools_discombobulate(Operator):
                         text="Remove all doodads").remove_all = True
 
         col = box.column(align=True)
-        doodle = len(bpy.context.scene.discomb.DISC_doodads)
+        doodle = len(self.DISC_doodads)
 
         col.enabled = (True if doodle > 0 else False)
         col.menu("OBJECT_MT_discombobulator_dodad_list",
                      text="List of saved Doodads ({})".format(doodle))
 
         box = layout.box()
-        box.label("Materials settings")
+        box.label(text="Materials settings")
         row = box.row()
-        row.prop(context.scene.discomb, 'topProtMat')
+        row.prop(self, "topProtMat")
         row = box.row()
-        row.prop(context.scene.discomb, "sideProtMat")
+        row.prop(self, "sideProtMat")
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self, width=300)
@@ -758,6 +857,14 @@ class VIEW3D_OT_tools_discombobulate(Operator):
 
     def execute(self, context):
         self.executing = True
-        bpy.ops.object.discombobulate('INVOKE_DEFAULT')
-
-        return {'FINISHED'}
+        i = 0
+        while i < self.repeatprot:
+            isLast = False
+            if i == self.repeatprot - 1:
+                isLast = True
+            discombobulate(self, self.minHeight, self.maxHeight, self.minTaper, self.maxTaper, self.subpolygon1,
+                           self.subpolygon2, self.subpolygon3, self.subpolygon4, self.mindoodads, self.maxdoodads,
+                           self.repeatprot, self.sideProtMat, self.topProtMat, isLast)
+            i += 1
+        return {"FINISHED"}
+        #bpy.ops.object.discombobulate("INVOKE_DEFAULT")

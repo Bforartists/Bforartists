@@ -539,7 +539,7 @@ class OP_Tracking_auto_tracker(Operator):
 
 class AutotrackerSettings(PropertyGroup):
     """Create properties"""
-    df_margin = FloatProperty(
+    df_margin: FloatProperty(
             name="Detect Features Margin",
             description="Only consider features from pixels located outside\n"
                         "the defined margin from the clip borders",
@@ -548,7 +548,7 @@ class AutotrackerSettings(PropertyGroup):
             min=0,
             max=100
             )
-    df_threshold = FloatProperty(
+    df_threshold: FloatProperty(
             name="Detect Features Threshold",
             description="Threshold level to deem a feature being good enough for tracking",
             default=0.3,
@@ -556,7 +556,7 @@ class AutotrackerSettings(PropertyGroup):
             max=1.0
             )
     # Note: merge this one with delete_threshold
-    df_distance = FloatProperty(
+    df_distance: FloatProperty(
             name="Detect Features Distance",
             description="Minimal acceptable distance between two features",
             subtype='PERCENTAGE',
@@ -564,7 +564,7 @@ class AutotrackerSettings(PropertyGroup):
             min=1,
             max=100
             )
-    delete_threshold = FloatProperty(
+    delete_threshold: FloatProperty(
             name="New Marker Threshold",
             description="Threshold of how close a new features can appear during tracking",
             subtype='PERCENTAGE',
@@ -572,7 +572,7 @@ class AutotrackerSettings(PropertyGroup):
             min=1,
             max=100
             )
-    small_tracks = IntProperty(
+    small_tracks: IntProperty(
             name="Minimum track length",
             description="Delete tracks shorter than this number of frames\n"
                         "Note: set to 0 for keeping all tracks",
@@ -580,14 +580,14 @@ class AutotrackerSettings(PropertyGroup):
             min=1,
             max=1000
             )
-    frame_separation = IntProperty(
+    frame_separation: IntProperty(
             name="Frame Separation",
             description="How often new features are generated",
             default=5,
             min=1,
             max=100
             )
-    jump_cut = FloatProperty(
+    jump_cut: FloatProperty(
             name="Jump Cut",
             description="How much distance a marker can travel before it is considered "
                         "to be a bad track and cut.\nA new track will be added "
@@ -596,7 +596,7 @@ class AutotrackerSettings(PropertyGroup):
             min=0.0,
             max=50.0
             )
-    track_backwards = BoolProperty(
+    track_backwards: BoolProperty(
             name="AutoTrack Backwards",
             description="Track from the last frame of the selected clip",
             default=False
@@ -607,7 +607,7 @@ class AutotrackerSettings(PropertyGroup):
             ("INSIDE_GPENCIL", "Inside Grease Pencil", "", 2),
             ("OUTSIDE_GPENCIL", "Outside Grease Pencil", "", 3),
             ]
-    placement_list = EnumProperty(
+    placement_list: EnumProperty(
             name="Placement",
             description="Feature Placement",
             items=list_items

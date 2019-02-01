@@ -25,7 +25,7 @@ bl_info = {
         'location': '"Shift+Q" and also in EditMode "W-Specials/ KTools"',
         'description': "Adds my personal collection of small handy scripts (mostly modeling tools)",
         'category': "Mesh",
-        'blender': (2, 7, 6),
+        'blender': (2, 76, 0),
         'version': (0, 2, 8),
         'wiki_url': 'http://www.kjartantysdal.com/scripts',
 }
@@ -64,26 +64,26 @@ class lattice_to_selection(bpy.types.Operator):
         bl_label = "Lattice to Selection"
         bl_options = {'REGISTER', 'UNDO'}
 
-        apply_rot = BoolProperty(
+        apply_rot: BoolProperty(
                         name = "Local",
                         description = "Orient the lattice to the active object",
                         default = True
                         )
-        parent_to = BoolProperty(
+        parent_to: BoolProperty(
                         name = "Parent to Lattice",
                         description = "Parents all the objects to the Lattice",
                         default = False
                         )
-        move_first = BoolProperty(name = "First in Modifier Stack", description = "Moves the lattice modifier to be first in the stack", default = False)
-        interpolation = bpy.props.EnumProperty(
+        move_first: BoolProperty(name = "First in Modifier Stack", description = "Moves the lattice modifier to be first in the stack", default = False)
+        interpolation: bpy.props.EnumProperty(
                                    items= (('KEY_LINEAR', 'Linear', 'Linear Interpolation'),
                                    ('KEY_CARDINAL', 'Cardinal', 'Cardinal Interpolation'),
                                    ('KEY_CATMULL_ROM', 'Catmull Rom', 'Catmull Rom Interpolation'),
                                    ('KEY_BSPLINE', 'BSpline', 'BSpline Interpolation')),
                                    name = "Interpolation", default = 'KEY_BSPLINE')
-        seg_u = IntProperty( name = "Lattice U", default = 2, soft_min = 2)
-        seg_v = IntProperty( name = "Lattice V", default = 2, soft_min = 2 )
-        seg_w = IntProperty( name = "Lattice W", default = 2, soft_min = 2 )
+        seg_u: IntProperty( name = "Lattice U", default = 2, soft_min = 2)
+        seg_v: IntProperty( name = "Lattice V", default = 2, soft_min = 2 )
+        seg_w: IntProperty( name = "Lattice W", default = 2, soft_min = 2 )
 
         def execute(self, context):
 
@@ -93,13 +93,13 @@ class lattice_to_selection(bpy.types.Operator):
                 interpolation = self.interpolation
 
                 # check if there exists an active object
-                if bpy.context.scene.objects.active:
-                    active_obj = bpy.context.scene.objects.active.name
+                if bpy.context.view_layer.objects.active:
+                    active_obj = bpy.context.view_layer.objects.active.name
                 else:
                     for x in bpy.context.selected_objects:
                         if bpy.data.objects[x.name].type == 'MESH':
-                            bpy.context.scene.objects.active = bpy.data.objects[x.name]
-                            active_obj = bpy.context.scene.objects.active.name
+                            bpy.context.view_layer.objects.active = bpy.data.objects[x.name]
+                            active_obj = bpy.context.view_layer.objects.active.name
                             break
 
 
@@ -117,7 +117,7 @@ class lattice_to_selection(bpy.types.Operator):
                     # check if object type is not MESH and then deselect it
                     for x in bpy.context.selected_objects:
                         if bpy.data.objects[x.name].type != 'MESH':
-                            bpy.data.objects[x.name].select = False
+                            bpy.data.objects[x.name].select_set(False)
 
 
                     org_objs = bpy.context.selected_objects
@@ -153,14 +153,14 @@ class lattice_to_selection(bpy.types.Operator):
                     bpy.ops.object.select_all(action='DESELECT')
 
                     # select and delete the tmp_object
-                    bpy.data.objects[tmp_obj].select = True
+                    bpy.data.objects[tmp_obj].select_set(True)
                     bpy.ops.object.delete(use_global=False)
 
                     # select all the original objects and assign the lattice deformer
                     for i in org_objs:
                        if bpy.data.objects[i.name].type == 'MESH' :
-                           bpy.context.scene.objects.active = bpy.data.objects[i.name]
-                           bpy.data.objects[i.name].select = True
+                           bpy.context.view_layer.objects.active = bpy.data.objects[i.name]
+                           bpy.data.objects[i.name].select_set(True)
 
                            bpy.ops.object.modifier_add(type='LATTICE')
                            lattice_name = bpy.context.object.modifiers[len(bpy.context.object.modifiers)-1].name
@@ -169,20 +169,20 @@ class lattice_to_selection(bpy.types.Operator):
                                for x in bpy.context.object.modifiers:
                                    bpy.ops.object.modifier_move_up(modifier=lattice_name)
                        else:
-                           bpy.data.objects[i.name].select = True
+                           bpy.data.objects[i.name].select_set(True)
 
 
                     if parent_to:
 
-                        bpy.data.objects[lattice_obj.name].select = True
-                        bpy.context.scene.objects.active = bpy.data.objects[lattice_obj.name]
+                        bpy.data.objects[lattice_obj.name].select_set(True)
+                        bpy.context.view_layer.objects.active = bpy.data.objects[lattice_obj.name]
 
                         bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
                     else:
 
                         bpy.ops.object.select_all(action='DESELECT')
-                        bpy.data.objects[lattice_obj.name].select = True
-                        bpy.context.scene.objects.active = bpy.data.objects[lattice_obj.name]
+                        bpy.data.objects[lattice_obj.name].select_set(True)
+                        bpy.context.view_layer.objects.active = bpy.data.objects[lattice_obj.name]
 
 
                     bpy.context.object.data.interpolation_type_u = interpolation
@@ -221,8 +221,8 @@ class lattice_to_selection(bpy.types.Operator):
 
                     bpy.ops.object.select_all(action='DESELECT')
 
-                    bpy.context.scene.objects.active = bpy.data.objects[tmp_obj]
-                    bpy.data.objects[tmp_obj].select = True
+                    bpy.context.view_layer.objects.active = bpy.data.objects[tmp_obj]
+                    bpy.data.objects[tmp_obj].select_set(True)
 
 
                     if bpy.context.object.modifiers:
@@ -248,12 +248,12 @@ class lattice_to_selection(bpy.types.Operator):
                     bpy.ops.object.select_all(action='DESELECT')
 
 
-                    bpy.data.objects[tmp_obj].select = True
+                    bpy.data.objects[tmp_obj].select_set(True)
 
                     bpy.ops.object.delete(use_global=False)
 
-                    bpy.context.scene.objects.active = bpy.data.objects[active_obj]
-                    bpy.data.objects[active_obj].select = True
+                    bpy.context.view_layer.objects.active = bpy.data.objects[active_obj]
+                    bpy.data.objects[active_obj].select_set(True)
 
                     bpy.ops.object.modifier_add(type='LATTICE')
                     lattice_name = bpy.context.object.modifiers[len(bpy.context.object.modifiers)-1].name
@@ -267,8 +267,8 @@ class lattice_to_selection(bpy.types.Operator):
 
                     bpy.ops.object.select_all(action='DESELECT')
 
-                    bpy.data.objects[lattice_obj.name].select = True
-                    bpy.context.scene.objects.active = bpy.data.objects[lattice_obj.name]
+                    bpy.data.objects[lattice_obj.name].select_set(True)
+                    bpy.context.view_layer.objects.active = bpy.data.objects[lattice_obj.name]
 
                     bpy.context.object.data.interpolation_type_u = interpolation
                     bpy.context.object.data.interpolation_type_v = interpolation
@@ -298,7 +298,7 @@ class calc_normals(bpy.types.Operator):
         bl_label = "Calculate Normals"
         bl_options = {'REGISTER', 'UNDO'}
 
-        invert = BoolProperty(name = "Invert Normals", description = "Inverts the normals.", default = False)
+        invert: BoolProperty(name = "Invert Normals", description = "Inverts the normals.", default = False)
 
         def execute(self, context):
 
@@ -308,20 +308,20 @@ class calc_normals(bpy.types.Operator):
                 if mode == 'OBJECT':
 
                         sel = bpy.context.selected_objects
-                        active = bpy.context.scene.objects.active.name
+                        active = bpy.context.view_layer.objects.active.name
 
                         bpy.ops.object.shade_smooth()
 
 
                         for ob in sel:
                                 ob = ob.name
-                                bpy.context.scene.objects.active = bpy.data.objects[ob]
+                                bpy.context.view_layer.objects.active = bpy.data.objects[ob]
                                 bpy.ops.object.editmode_toggle()
                                 bpy.ops.mesh.select_all(action='SELECT')
                                 bpy.ops.mesh.normals_make_consistent(inside=invert)
                                 bpy.ops.object.editmode_toggle()
 
-                        bpy.context.scene.objects.active = bpy.data.objects[active]
+                        bpy.context.view_layer.objects.active = bpy.data.objects[active]
 
                 elif mode == 'EDIT':
                         bpy.ops.mesh.normals_make_consistent(inside=invert)
@@ -343,16 +343,16 @@ class snaptoaxis(bpy.types.Operator):
         #                                                                                         ('WORLD', 'World Space', 'Snap to the global axis')),
         #                                                                                         name = "Object/World", default = 'OBJECT')
 
-        snap_x = BoolProperty(name = "Snap to X", description = "Snaps to zero in X. Also sets the axis for the mirror modifier if that button is turned on", default = True)
-        snap_y = BoolProperty(name = "Snap to Y", description = "Snaps to zero in Y. Also sets the axis for the mirror modifier if that button is turned on", default = False)
-        snap_z = BoolProperty(name = "Snap to Z", description = "Snaps to zero in Z. Also sets the axis for the mirror modifier if that button is turned on", default = False)
+        snap_x: BoolProperty(name = "Snap to X", description = "Snaps to zero in X. Also sets the axis for the mirror modifier if that button is turned on", default = True)
+        snap_y: BoolProperty(name = "Snap to Y", description = "Snaps to zero in Y. Also sets the axis for the mirror modifier if that button is turned on", default = False)
+        snap_z: BoolProperty(name = "Snap to Z", description = "Snaps to zero in Z. Also sets the axis for the mirror modifier if that button is turned on", default = False)
 
-        mirror_add = BoolProperty(name = "Add Mirror Modifier", description = "Adds a mirror modifer", default = False)
+        mirror_add: BoolProperty(name = "Add Mirror Modifier", description = "Adds a mirror modifer", default = False)
 
-        mirror_x = BoolProperty(name = "Mirror on X", description = "Sets the modifier to mirror on X", default = True)
-        mirror_y = BoolProperty(name = "Mirror on Y", description = "Sets the modifier to mirror on Y", default = False)
-        mirror_z = BoolProperty(name = "Mirror on Z", description = "Sets the modifier to mirror on Z", default = False)
-        clipping = BoolProperty(name = "Enable Clipping", description = "Prevents vertices from going through the mirror during transform", default = True)
+        mirror_x: BoolProperty(name = "Mirror on X", description = "Sets the modifier to mirror on X", default = True)
+        mirror_y: BoolProperty(name = "Mirror on Y", description = "Sets the modifier to mirror on Y", default = False)
+        mirror_z: BoolProperty(name = "Mirror on Z", description = "Sets the modifier to mirror on Z", default = False)
+        clipping: BoolProperty(name = "Enable Clipping", description = "Prevents vertices from going through the mirror during transform", default = True)
 
 
 
@@ -455,9 +455,9 @@ class quickbool(bpy.types.Operator):
         bl_label = "Quick Bool"
         bl_options = {'REGISTER', 'UNDO'}
 
-        del_bool = BoolProperty(name="Delete BoolMesh", description="Deletes the objects used for the boolean operation.", default= True)
-        move_to = BoolProperty(name="Move to layer 10", description="Moves the objects used for the boolean operation to layer 10", default= False)
-        operation = EnumProperty(items= (('UNION', 'Union', 'Combines'),
+        del_bool: BoolProperty(name="Delete BoolMesh", description="Deletes the objects used for the boolean operation.", default= True)
+        move_to: BoolProperty(name="Move to layer 10", description="Moves the objects used for the boolean operation to layer 10", default= False)
+        operation: EnumProperty(items= (('UNION', 'Union', 'Combines'),
                                                                                                  ('INTERSECT', 'Intersect', 'Keep the part that overlaps'),
                                                                                                  ('DIFFERENCE', 'Difference', 'Cuts out')),
                                                                                                  name = "Operation", default = 'DIFFERENCE')
@@ -506,7 +506,7 @@ class quickbool(bpy.types.Operator):
                     bpy.ops.object.select_all(action='DESELECT')
                     bpy.ops.object.select_pattern(pattern=bool)
 
-                    bpy.context.scene.objects.active = bpy.data.objects[bool]
+                    bpy.context.view_layer.objects.active = bpy.data.objects[bool]
 
                     #Delete all geo inside Shrink_Object
                     bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
@@ -517,7 +517,7 @@ class quickbool(bpy.types.Operator):
                     bpy.ops.object.delete()
 
                     #re-enter edit mode on Original object
-                    bpy.context.scene.objects.active = bpy.data.objects[original]
+                    bpy.context.view_layer.objects.active = bpy.data.objects[original]
                     bpy.ops.object.select_pattern(pattern=original)
                     bpy.ops.object.editmode_toggle()
 
@@ -549,7 +549,7 @@ class quickbool(bpy.types.Operator):
 
                                         bpy.ops.object.select_all(action='DESELECT')
                                         bpy.ops.object.select_pattern(pattern=name)
-                                        bpy.context.scene.objects.active = bpy.data.objects[name]
+                                        bpy.context.view_layer.objects.active = bpy.data.objects[name]
 
                             #Delete all geo inside Shrink_Object
                                         bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
@@ -558,11 +558,11 @@ class quickbool(bpy.types.Operator):
                                         bpy.ops.object.mode_set(mode = 'OBJECT', toggle = False)
 
                                         bpy.ops.object.delete(use_global=False)
-                                        bpy.context.scene.objects.active = bpy.data.objects[original]
+                                        bpy.context.view_layer.objects.active = bpy.data.objects[original]
                                 else:
                                         bpy.ops.object.select_all(action='DESELECT')
                                         bpy.ops.object.select_pattern(pattern=name)
-                                        bpy.context.scene.objects.active = bpy.data.objects[name]
+                                        bpy.context.view_layer.objects.active = bpy.data.objects[name]
 
                                         bpy.context.object.display_type = 'WIRE'
 
@@ -570,7 +570,7 @@ class quickbool(bpy.types.Operator):
                                         if move_to == True:
                                                 bpy.ops.object.move_to_layer(layers=(False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False))
 
-                                        bpy.context.scene.objects.active = bpy.data.objects[original]
+                                        bpy.context.view_layer.objects.active = bpy.data.objects[original]
 
 
                         bpy.ops.object.mode_set(mode=mode, toggle=False)
@@ -587,8 +587,8 @@ class autotubes(bpy.types.Operator):
         bl_label = "Auto Tubes"
         bl_options = {'REGISTER', 'UNDO'}
 
-        bevel = FloatProperty(name="Tube Width", description="Change width of the tube.", default=0.1, min = 0)
-        res = IntProperty(name="Tube Resolution", description="Change resolution of the tube.", default=2, min = 0, max = 20)
+        bevel: FloatProperty(name="Tube Width", description="Change width of the tube.", default=0.1, min = 0)
+        res: IntProperty(name="Tube Resolution", description="Change resolution of the tube.", default=2, min = 0, max = 20)
 
 
         def execute(self, context):
@@ -648,11 +648,11 @@ class basicRename(bpy.types.Operator):
         bl_label = "Basic Renamer"
         bl_options = {'REGISTER', 'UNDO'}
 
-        name = StringProperty(name="Rename", description="Rename selected objects", default="banana")
-        padding = IntProperty(name = "Number Padding", description = "Adds how many padded numbers", default = 3, min = 1, max = 8)
-        prefix =    StringProperty(name="Pre Fix", description="Adds a Prefix to the name", default="")
-        post_ob = StringProperty(name="Post Fix Object", description="Adds ending to object name", default="_MDL")
-        post_data = StringProperty(name="Post Fix Data", description="Adds ending to data name", default="_DATA")
+        name: StringProperty(name="Rename", description="Rename selected objects", default="banana")
+        padding: IntProperty(name = "Number Padding", description = "Adds how many padded numbers", default = 3, min = 1, max = 8)
+        prefix:    StringProperty(name="Pre Fix", description="Adds a Prefix to the name", default="")
+        post_ob: StringProperty(name="Post Fix Object", description="Adds ending to object name", default="_MDL")
+        post_data: StringProperty(name="Post Fix Data", description="Adds ending to data name", default="_DATA")
 
 
         def execute(self, context):
@@ -682,10 +682,10 @@ class cut_tool(bpy.types.Operator):
         bl_label = "Cut Tool"
         bl_options = {'REGISTER', 'UNDO'}
 
-        cuts = IntProperty(name="Number of Cuts", description="Change the number of cuts.", default=1, min = 1, soft_max = 10)
-        loopcut = BoolProperty(name="Insert LoopCut", description="Makes a loop cut based on the selected edges", default= False)
-        smoothness = FloatProperty(name="Smoothness", description="Change the smoothness.", default=0, min = 0, soft_max = 1)
-        quad_corners = bpy.props.EnumProperty(items= (('INNERVERT', 'Inner Vert', 'How to subdivide quad corners'),
+        cuts: IntProperty(name="Number of Cuts", description="Change the number of cuts.", default=1, min = 1, soft_max = 10)
+        loopcut: BoolProperty(name="Insert LoopCut", description="Makes a loop cut based on the selected edges", default= False)
+        smoothness: FloatProperty(name="Smoothness", description="Change the smoothness.", default=0, min = 0, soft_max = 1)
+        quad_corners: bpy.props.EnumProperty(items= (('INNERVERT', 'Inner Vert', 'How to subdivide quad corners'),
                                                                                                  ('PATH', 'Path', 'How to subdivide quad corners'),
                                                                                                  ('STRAIGHT_CUT', 'Straight Cut', 'How to subdivide quad corners'),
                                                                                                  ('FAN', 'Fan', 'How to subdivide quad corners')),
@@ -903,7 +903,7 @@ class customAutoSmooth(bpy.types.Operator):
         bl_label = "Autosmooth"
         bl_options = {'REGISTER', 'UNDO'}
 
-        angle = FloatProperty(name="AutoSmooth Angle", description="Set AutoSmooth angle", default= 30.0, min = 0.0, max = 180.0)
+        angle: FloatProperty(name="AutoSmooth Angle", description="Set AutoSmooth angle", default= 30.0, min = 0.0, max = 180.0)
 
 
         def execute(self, context):
@@ -936,8 +936,8 @@ class shrinkwrapSmooth(bpy.types.Operator):
         bl_label = "Shrinkwrap Smooth"
         bl_options = {'REGISTER', 'UNDO'}
 
-        pin = BoolProperty(name="Pin Selection Border", description="Pins the outer edge of the selection.", default = True)
-        subsurf = IntProperty(name="Subsurf Levels", description="More reliable, but slower results", default = 0, min = 0, soft_max = 4)
+        pin: BoolProperty(name="Pin Selection Border", description="Pins the outer edge of the selection.", default = True)
+        subsurf: IntProperty(name="Subsurf Levels", description="More reliable, but slower results", default = 0, min = 0, soft_max = 4)
 
 
         def execute(self, context):
@@ -965,7 +965,7 @@ class shrinkwrapSmooth(bpy.types.Operator):
 
                 bpy.ops.object.select_all(action='DESELECT')
                 bpy.ops.object.select_pattern(pattern=tmp_ob)
-                bpy.context.scene.objects.active = bpy.data.objects[tmp_ob]
+                bpy.context.view_layer.objects.active = bpy.data.objects[tmp_ob]
 
                 bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
                 bpy.ops.mesh.select_mode(use_extend=False, use_expand=False, type='VERT')
@@ -1029,7 +1029,7 @@ class shrinkwrapSmooth(bpy.types.Operator):
 
                 bpy.ops.object.select_all(action='DESELECT')
                 bpy.ops.object.select_pattern(pattern=shrink_ob)
-                bpy.context.scene.objects.active = bpy.data.objects[shrink_ob]
+                bpy.context.view_layer.objects.active = bpy.data.objects[shrink_ob]
 
                 #Delete all geo inside Shrink_Object
                 bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
@@ -1040,7 +1040,7 @@ class shrinkwrapSmooth(bpy.types.Operator):
                 bpy.ops.object.delete(use_global=True)
 
                 bpy.ops.object.select_pattern(pattern=tmp_ob)
-                bpy.context.scene.objects.active = bpy.data.objects[tmp_ob]
+                bpy.context.view_layer.objects.active = bpy.data.objects[tmp_ob]
 
 
                 bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
@@ -1055,7 +1055,7 @@ class shrinkwrapSmooth(bpy.types.Operator):
 
 
                 bpy.ops.object.select_pattern(pattern=org_ob)
-                bpy.context.scene.objects.active = bpy.data.objects[org_ob]
+                bpy.context.view_layer.objects.active = bpy.data.objects[org_ob]
 
                 bpy.ops.object.mode_set(mode = 'EDIT', toggle = False)
 
@@ -1074,7 +1074,7 @@ class buildCorner(bpy.types.Operator):
         bl_label = "Build Corner"
         bl_options = {'REGISTER', 'UNDO'}
 
-        offset = IntProperty()
+        offset: IntProperty()
 
         def modal(self, context, event):
 
@@ -1187,13 +1187,13 @@ class drawPoly(bpy.types.Operator):
     bl_idname = "mesh.draw_poly"
     bl_label = "Draw Poly"
 
-    cursor_co = FloatVectorProperty()
+    cursor_co: FloatVectorProperty()
     vert_count = 0
-    manip = BoolProperty()
-    vgrp = IntProperty()
+    manip: BoolProperty()
+    vgrp: IntProperty()
     sel_mode = BoolVectorProperty()
-    cursor_depth = BoolProperty()
-    snap = BoolProperty()
+    cursor_depth: BoolProperty()
+    snap: BoolProperty()
 
 
     def modal(self, context, event):
@@ -1437,10 +1437,10 @@ class toggleSilhouette(bpy.types.Operator):
     bl_label = "Toggle Silhouette"
 
 
-    diff_col = FloatVectorProperty(default = (0.226, 0.179, 0.141))
-    disp_mode = StringProperty(default = 'SOLID')
-    matcap = BoolProperty(default = False)
-    only_render = BoolProperty(default = False)
+    diff_col: FloatVectorProperty(default = (0.226, 0.179, 0.141))
+    disp_mode: StringProperty(default = 'SOLID')
+    matcap: BoolProperty(default = False)
+    only_render: BoolProperty(default = False)
 
     def execute(self, context):
 
@@ -1483,7 +1483,7 @@ class growLoop(bpy.types.Operator):
         bl_label = "Grow Loop"
         bl_options = {'REGISTER', 'UNDO'}
 
-        grow = IntProperty(name="Grow Selection", description="How much to grow selection", default= 1, min=1, soft_max=10)
+        grow: IntProperty(name="Grow Selection", description="How much to grow selection", default= 1, min=1, soft_max=10)
 
         def execute(self, context):
 
@@ -1656,7 +1656,7 @@ class extendLoop(bpy.types.Operator):
         bl_label = "Extend Loop"
         bl_options = {'REGISTER', 'UNDO'}
 
-        extend = IntProperty(name="Extend Selection", description="How much to extend selection", default= 1, min=1, soft_max=10)
+        extend: IntProperty(name="Extend Selection", description="How much to extend selection", default= 1, min=1, soft_max=10)
 
         def execute(self, context):
 
@@ -1954,7 +1954,7 @@ class shrinkLoop(bpy.types.Operator):
         bl_label = "Shrink Loop"
         bl_options = {'REGISTER', 'UNDO'}
 
-        shrink = IntProperty(name="Shrink Selection", description="How much to shrink selection", default= 1, min=1, soft_max=15)
+        shrink: IntProperty(name="Shrink Selection", description="How much to shrink selection", default= 1, min=1, soft_max=15)
 
         def execute(self, context):
 
@@ -2096,10 +2096,10 @@ class paintSelect(bpy.types.Operator):
     bl_label = "Paint Select"
     bl_options = {'REGISTER', 'UNDO'}
 
-    deselect = BoolProperty(default = False, description = 'Deselect objects, polys, edges or verts')
-    toggle = BoolProperty(default = False, description = 'Toggles the selection. NOTE: this option can be slow on heavy meshes')
-    sel_before = IntProperty(description = 'Do Not Touch', options = {'HIDDEN'})
-    sel_after = IntProperty(description = 'Do Not Touch', options = {'HIDDEN'})
+    deselect: BoolProperty(default = False, description = 'Deselect objects, polys, edges or verts')
+    toggle: BoolProperty(default = False, description = 'Toggles the selection. NOTE: this option can be slow on heavy meshes')
+    sel_before: IntProperty(description = 'Do Not Touch', options = {'HIDDEN'})
+    sel_after: IntProperty(description = 'Do Not Touch', options = {'HIDDEN'})
 
     def modal(self, context, event):
 
@@ -2203,8 +2203,8 @@ class pathSelectRing(bpy.types.Operator):
     bl_label = "Path Select Ring"
     bl_options = {'REGISTER', 'UNDO'}
 
-    pick = BoolProperty(name = "Pick Mode", description = "Pick Mode", default = False)
-    collapse = BoolProperty(name = "Collapse", description = "Collapses everything between your two selected edges", default = False)
+    pick: BoolProperty(name = "Pick Mode", description = "Pick Mode", default = False)
+    collapse: BoolProperty(name = "Collapse", description = "Collapses everything between your two selected edges", default = False)
 
     def draw(self, context):
         layout = self.layout

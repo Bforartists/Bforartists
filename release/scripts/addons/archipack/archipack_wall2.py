@@ -738,9 +738,9 @@ class archipack_wall2_part(PropertyGroup):
 
         row = layout.row(align=True)
         if self.expand:
-            row.prop(self, 'expand', icon="TRIA_DOWN", icon_only=True, text="Part " + str(index + 1), emboss=False)
+            row.prop(self, 'expand', icon="TRIA_DOWN", text="Part " + str(index + 1), emboss=False)
         else:
-            row.prop(self, 'expand', icon="TRIA_RIGHT", icon_only=True, text="Part " + str(index + 1), emboss=False)
+            row.prop(self, 'expand', icon="TRIA_RIGHT", text="Part " + str(index + 1), emboss=False)
 
         row.prop(self, "type", text="")
 

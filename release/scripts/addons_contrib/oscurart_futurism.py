@@ -52,7 +52,7 @@ def object_osc_futurism (self, context,STEP, HOLD):
     EMPTY["FUTURISM_HOLDIN"] = 0
     EMPTY["FUTURISM_HOLDOUT"] = 0
 
-    bpy.context.scene.objects.active = OBACT  # RECUPERO OBJETO ACTIVO
+    bpy.context.view_layer.objects.active = OBACT  # RECUPERO OBJETO ACTIVO
 
     for OBJETO in range((FE+1)-FS):
         if STEPINC == STEP:
@@ -61,7 +61,7 @@ def object_osc_futurism (self, context,STEP, HOLD):
             # CREO OBJETO
             OBJECT=bpy.data.objects.new(ACTOBJ.name[:3]+str(FC), MESH)
             # CONECTO A LA ESCENA
-            bpy.context.scene.objects.link(OBJECT)
+            bpy.context.collection.objects.link(OBJECT)
             # SETEO FRAME CURRENT
             bpy.context.scene.frame_set(FC)
             # MARCO EXPRESIONES PARA VIEW
@@ -112,9 +112,9 @@ class Oscurart_futurism (bpy.types.Operator):
     bl_description = "Duplicate object per frame"
     bl_options = {'REGISTER', 'UNDO'}
 
-    scale = bpy.props.IntProperty(name='Step',default=1, min=1, max=1000)
+    scale: bpy.props.IntProperty(name='Step',default=1, min=1, max=1000)
 
-    hold = bpy.props.IntProperty(name='Hold', default=0, min=0)
+    hold: bpy.props.IntProperty(name='Hold', default=0, min=0)
 
     @classmethod
     def poll(cls, context):

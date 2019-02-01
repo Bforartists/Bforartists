@@ -35,15 +35,15 @@ from .achm_tools import *
 # Define UI class
 # Stairs
 # ------------------------------------------------------------------
-class AchmStairs(Operator):
+class ARCHIMESH_OT_Stairs(Operator):
     bl_idname = "mesh.archimesh_stairs"
     bl_label = "Stairs"
     bl_description = "Stairs Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
     # Define properties
-    model = EnumProperty(
+    model: EnumProperty(
             items=(
                 ('1', "Rectangular", ""),
                 ('2', "Rounded", ""),
@@ -51,85 +51,85 @@ class AchmStairs(Operator):
             name="Model",
             description="Type of steps",
             )
-    radio = FloatProperty(
+    radio: FloatProperty(
             name='',
             min=0.001, max=0.500,
             default=0.20, precision=3,
             description='Radius factor for rounded',
             )
-    curve = BoolProperty(
+    curve: BoolProperty(
             name="Include deformation handles",
             description="Include a curve to modify the stairs curve",
             default=False,
             )
 
-    step_num = IntProperty(
+    step_num: IntProperty(
             name='Number of steps',
             min=1, max=1000,
             default=3,
             description='Number total of steps',
             )
-    max_width = FloatProperty(
+    max_width: FloatProperty(
             name='Width',
             min=0.001, max=10,
             default=1, precision=3,
             description='Step maximum width',
             )
-    depth = FloatProperty(
+    depth: FloatProperty(
             name='Depth',
             min=0.001, max=10,
             default=0.30, precision=3,
             description='Depth of the step',
             )
-    shift = FloatProperty(
+    shift: FloatProperty(
             name='Shift',
             min=0.001, max=1,
             default=1, precision=3,
             description='Step shift in Y axis',
             )
-    thickness = FloatProperty(
+    thickness: FloatProperty(
             name='Thickness',
             min=0.001, max=10,
             default=0.03, precision=3,
             description='Step thickness',
             )
-    sizev = BoolProperty(
+    sizev: BoolProperty(
             name="Variable width",
             description="Steps are not equal in width",
             default=False,
             )
-    back = BoolProperty(
+    back: BoolProperty(
             name="Close sides",
             description="Close all steps side to make a solid structure",
             default=False,
             )
-    min_width = FloatProperty(
+    min_width: FloatProperty(
             name='',
             min=0.001, max=10,
             default=1, precision=3,
             description='Step minimum width',
             )
 
-    height = FloatProperty(
+    height: FloatProperty(
             name='height',
             min=0.001, max=10,
             default=0.14, precision=3,
             description='Step height',
             )
-    front_gap = FloatProperty(
+    front_gap: FloatProperty(
             name='Front',
             min=0, max=10,
             default=0.03,
             precision=3,
             description='Front gap',
             )
-    side_gap = FloatProperty(
+    side_gap: FloatProperty(
             name='Side',
             min=0, max=10,
             default=0, precision=3,
             description='Side gap',
             )
-    crt_mat = BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
@@ -146,7 +146,7 @@ class AchmStairs(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
             row = box.row()
@@ -178,12 +178,12 @@ class AchmStairs(Operator):
                 row.prop(self, 'side_gap')
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -206,8 +206,8 @@ def create_stairs_mesh(self):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
     bpy.ops.object.select_all(False)
 
@@ -216,8 +216,8 @@ def create_stairs_mesh(self):
     # ------------------------
     mydata = create_stairs(self, "Stairs")
     mystairs = mydata[0]
-    mystairs.select = True
-    bpy.context.scene.objects.active = mystairs
+    mystairs.select_set(True)
+    bpy.context.view_layer.objects.active = mystairs
     remove_doubles(mystairs)
     set_normals(mystairs)
     set_modifier_mirror(mystairs, "X")
@@ -240,14 +240,14 @@ def create_stairs_mesh(self):
     # ------------------------
     # Create materials
     # ------------------------
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # Stairs material
         mat = create_diffuse_material("Stairs_material", False, 0.8, 0.8, 0.8)
         set_material(mystairs, mat)
 
     bpy.ops.object.select_all(False)
-    mystairs.select = True
-    bpy.context.scene.objects.active = mystairs
+    mystairs.select_set(True)
+    bpy.context.view_layer.objects.active = mystairs
 
     return
 
@@ -274,7 +274,7 @@ def create_stairs(self, objname):
     myobject = bpy.data.objects.new(objname, mesh)
 
     myobject.location = bpy.context.scene.cursor_location
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
     mesh.update(calc_edges=True)
@@ -422,7 +422,7 @@ def create_bezier(objname, points, origin):
     myobject.location = origin
     myobject.rotation_euler[2] = radians(90)
 
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     polyline = curvedata.splines.new('BEZIER')
     polyline.bezier_points.add(len(points) - 1)

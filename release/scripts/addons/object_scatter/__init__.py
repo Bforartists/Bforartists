@@ -38,4 +38,4 @@ def register():
 
 def unregister():
     ui.unregister()
-    operator.register()
+    operator.unregister()

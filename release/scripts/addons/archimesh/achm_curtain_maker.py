@@ -28,6 +28,7 @@ import bpy
 from copy import copy
 from math import cos, sin, radians
 from bpy.types import Operator
+from bpy.props import BoolProperty, IntProperty, FloatProperty
 from .achm_tools import *
 
 
@@ -35,62 +36,62 @@ from .achm_tools import *
 # Define UI class
 # Japanese curtains
 # ------------------------------------------------------------------
-class AchmJapan(Operator):
+class ARCHIMESH_OT_Japan(Operator):
     bl_idname = "mesh.archimesh_japan"
     bl_label = "Japanese curtains"
     bl_description = "Japanese curtains Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
-    width = bpy.props.FloatProperty(
+    width: FloatProperty(
             name='Width',
             min=0.30, max=4, default=1, precision=3,
             description='Total width',
             )
-    height = bpy.props.FloatProperty(
+    height: FloatProperty(
             name='Height',
             min=0.20, max=50, default=1.8, precision=3,
             description='Total height',
             )
-    num = bpy.props.IntProperty(
+    num: IntProperty(
             name='Rails',
             min=2, max=5, default=2,
             description='Number total of rails',
             )
-    palnum = bpy.props.IntProperty(
+    palnum: IntProperty(
             name='Panels',
             min=1, max=2, default=1,
             description='Panels by rail',
             )
 
-    open01 = bpy.props.FloatProperty(
+    open01: FloatProperty(
             name='Position 01',
             min=0, max=1, default=0, precision=3,
             description='Position of the panel',
             )
-    open02 = bpy.props.FloatProperty(
+    open02: FloatProperty(
             name='Position 02',
             min=0, max=1, default=0, precision=3,
             description='Position of the panel',
             )
-    open03 = bpy.props.FloatProperty(
+    open03: FloatProperty(
             name='Position 03',
             min=0, max=1, default=0, precision=3,
             description='Position of the panel',
             )
-    open04 = bpy.props.FloatProperty(
+    open04: FloatProperty(
             name='Position 04',
             min=0, max=1, default=0, precision=3,
             description='Position of the panel',
             )
-    open05 = bpy.props.FloatProperty(
+    open05: FloatProperty(
             name='Position 05',
             min=0, max=1, default=0, precision=3,
             description='Position of the panel',
             )
 
     # Materials
-    crt_mat = bpy.props.BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
@@ -107,7 +108,7 @@ class AchmJapan(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
             row = box.row()
@@ -134,14 +135,14 @@ class AchmJapan(Operator):
                 row.prop(self, 'open05', slider=True)
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
             if self.crt_mat:
-                box.label("* Remember to verify fabric texture folder")
+                box.label(text="* Remember to verify fabric texture folder")
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -163,8 +164,8 @@ class AchmJapan(Operator):
 def create_japan_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
     bpy.ops.object.select_all(False)
     # Create units
     generate_japan(self)
@@ -176,26 +177,26 @@ def create_japan_mesh(self):
 # Define UI class
 # Roller curtains
 # ------------------------------------------------------------------
-class AchmRoller(Operator):
+class ARCHIMESH_OT_Roller(Operator):
     bl_idname = "mesh.archimesh_roller"
     bl_label = "Roller curtains"
     bl_description = "Roller_curtains Generator"
-    bl_category = 'Archimesh'
+    bl_category = 'View'
     bl_options = {'REGISTER', 'UNDO'}
 
-    width = bpy.props.FloatProperty(
+    width: FloatProperty(
             name='Width',
             min=0.30, max=4, default=1, precision=3,
             description='Total width',
             )
-    height = bpy.props.FloatProperty(
+    height: FloatProperty(
             name='Height',
             min=0.01, max=50, default=1.7, precision=3,
             description='Total height',
             )
 
     # Materials
-    crt_mat = bpy.props.BoolProperty(
+    crt_mat: BoolProperty(
             name="Create default Cycles materials",
             description="Create default materials for Cycles render",
             default=True,
@@ -212,7 +213,7 @@ class AchmRoller(Operator):
             # Imperial units warning
             if bpy.context.scene.unit_settings.system == "IMPERIAL":
                 row = layout.row()
-                row.label("Warning: Imperial units not supported", icon='COLOR_RED')
+                row.label(text="Warning: Imperial units not supported", icon='COLOR_RED')
 
             box = layout.box()
             row = box.row()
@@ -220,14 +221,14 @@ class AchmRoller(Operator):
             row.prop(self, 'height')
 
             box = layout.box()
-            if not context.scene.render.engine == 'CYCLES':
+            if not context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
                 box.enabled = False
             box.prop(self, 'crt_mat')
             if self.crt_mat:
-                box.label("* Remember to verify fabric texture folder")
+                box.label(text="* Remember to verify fabric texture folder")
         else:
             row = layout.row()
-            row.label("Warning: Operator does not work in local view mode", icon='ERROR')
+            row.label(text="Warning: Operator does not work in local view mode", icon='ERROR')
 
     # -----------------------------------------------------
     # Execute
@@ -249,8 +250,8 @@ class AchmRoller(Operator):
 def create_roller_mesh(self):
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
     bpy.ops.object.select_all(False)
     generate_roller(self)
 
@@ -356,7 +357,7 @@ def generate_japan(self):
     posz = -0.008
     x = 1
     fabricmat = None
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         fabricmat = create_fabric_material("Fabric_material", False, 0.653, 0.485, 0.265,
                                            0.653, 0.485, 0.265)
 
@@ -396,7 +397,7 @@ def generate_japan(self):
     mycurve2.location.y = -0.01
     mycurve2.location.z = 0.005
 
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material("String_material", False, 0.1, 0.1, 0.1,
                                       0.1, 0.1, 0.1, 0.01)
         set_material(mycurve1, mat)
@@ -409,11 +410,11 @@ def generate_japan(self):
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    myrail.select = True
-    bpy.context.scene.objects.active = myrail
+    myrail.select_set(True)
+    bpy.context.view_layer.objects.active = myrail
 
     return
 
@@ -482,7 +483,7 @@ def create_japan_rail(objname, sx, ways, px, py, pz, mat):
     myobject.location[0] = px
     myobject.location[1] = py
     myobject.location[2] = pz
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -490,7 +491,7 @@ def create_japan_rail(objname, sx, ways, px, py, pz, mat):
     # ---------------------------------
     # Materials
     # ---------------------------------
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # External
         mat = create_diffuse_material(objname + "_material", False, 0.8, 0.8, 0.8, 0.6, 0.6, 0.6, 0.15)
         set_material(myobject, mat)
@@ -529,7 +530,7 @@ def create_japan_support(objname, sx, px, py, pz, mat):
     myobject.location[0] = px
     myobject.location[1] = py
     myobject.location[2] = pz
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -537,7 +538,7 @@ def create_japan_support(objname, sx, px, py, pz, mat):
     # ---------------------------------
     # Materials
     # ---------------------------------
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         # External
         mat = create_diffuse_material(objname + "_material", False, 0.8, 0.8, 0.8, 0.6, 0.6, 0.6, 0.15)
         set_material(myobject, mat)
@@ -570,7 +571,7 @@ def create_japan_panel(objname, sx, sz, px, py, pz, mat, fabricmat):
     myobject.location[0] = px
     myobject.location[1] = py
     myobject.location[2] = pz
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -578,7 +579,7 @@ def create_japan_panel(objname, sx, sz, px, py, pz, mat, fabricmat):
     # ---------------------------------
     # Materials
     # ---------------------------------
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         unwrap_mesh(myobject, True)
         # remap UV to use all texture
         for uv_loop in myobject.data.uv_layers.active.data:
@@ -603,7 +604,7 @@ def create_bezier(objname, points, origin, depth=0.001, fill='FULL'):
     myobject = bpy.data.objects.new(objname, curvedata)
     myobject.location = origin
 
-    bpy.context.scene.objects.link(myobject)
+    bpy.context.collection.objects.link(myobject)
 
     polyline = curvedata.splines.new('BEZIER')
     polyline.bezier_points.add(len(points) - 1)
@@ -631,7 +632,7 @@ def generate_roller(self):
     # Roller Top
     # ------------------
     fabricsolid = None
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         fabricsolid = create_diffuse_material("Fabric_solid_material", False, 0.653, 0.485, 0.265)
 
     myroller = create_roller_rail("Roller",
@@ -647,7 +648,7 @@ def generate_roller(self):
     # Sides
     # --------------------------------------------------------------------------------
     plastic = None
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         plastic = create_diffuse_material("Plastic_roller_material", False, 0.653, 0.485, 0.265, 0.653, 0.485, 0.265,
                                           0.2)
 
@@ -669,7 +670,7 @@ def generate_roller(self):
     # Panel
     # --------------------------------------------------------------------------------
     fabricmat = None
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         fabricmat = create_fabric_material("Fabric_translucent_material", False, 0.653, 0.485, 0.265, 0.653, 0.485,
                                            0.265)
 
@@ -707,17 +708,17 @@ def generate_roller(self):
     mycurve.location.x = self.width + 0.015
     mycurve.location.y = 0
     mycurve.location.z = -0.38
-    if self.crt_mat and bpy.context.scene.render.engine == 'CYCLES':
+    if self.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         mat = create_diffuse_material("String_material", False, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.01)
         set_material(mycurve, mat)
 
     # deactivate others
     for o in bpy.data.objects:
-        if o.select is True:
-            o.select = False
+        if o.select_get() is True:
+            o.select_set(False)
 
-    myroller.select = True
-    bpy.context.scene.objects.active = myroller
+    myroller.select_set(True)
+    bpy.context.view_layer.objects.active = myroller
 
     return
 
@@ -771,7 +772,7 @@ def create_roller_rail(objname, width, radio, px, py, pz, mat, mymaterial):
 
     mymesh = bpy.data.meshes.new(objname)
     myroll = bpy.data.objects.new(objname, mymesh)
-    bpy.context.scene.objects.link(myroll)
+    bpy.context.collection.objects.link(myroll)
 
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
@@ -781,7 +782,7 @@ def create_roller_rail(objname, width, radio, px, py, pz, mat, mymaterial):
     myroll.location.z = pz
 
     # Materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(myroll, mymaterial)
 
     # Smooth
@@ -811,7 +812,7 @@ def create_roller_sides(myroller, side, px, py, pz, mat, plastic):
 
     mymesh = bpy.data.meshes.new("Side." + side)
     myside = bpy.data.objects.new("Side." + side, mymesh)
-    bpy.context.scene.objects.link(myside)
+    bpy.context.collection.objects.link(myside)
     mymesh.from_pydata(myvertex, [], myfaces)
     mymesh.update(calc_edges=True)
     # Position
@@ -825,7 +826,7 @@ def create_roller_sides(myroller, side, px, py, pz, mat, plastic):
     myside.parent = myroller
 
     # Materials
-    if mat and bpy.context.scene.render.engine == 'CYCLES':
+    if mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
         set_material(myside, plastic)
 
     # Smooth
@@ -1103,7 +1104,7 @@ def roller_side():
 # myObject: Curve object
 # --------------------------------------------------------------------
 def set_curve_cycle(myobject):
-    bpy.context.scene.objects.active = myobject
+    bpy.context.view_layer.objects.active = myobject
     # go edit mode
     bpy.ops.object.mode_set(mode='EDIT')
     # select all faces

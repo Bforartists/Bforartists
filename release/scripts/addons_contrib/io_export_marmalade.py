@@ -1335,16 +1335,16 @@ class MarmaladeExporter(bpy.types.Operator):
     bl_idname = "export.marmalade"
     bl_label = "Export Marmalade"
 
-    filepath = StringProperty(subtype='FILE_PATH')
+    filepath: StringProperty(subtype='FILE_PATH')
      #Export Mode
-    ExportMode = EnumProperty(
+    ExportMode: EnumProperty(
         name="Export",
         description="Select which objects to export. Only Mesh, Empty, " \
                     "and Armature objects will be exported",
         items=ExportModes,
         default="1")
 
-    MergeModes = EnumProperty(
+    MergeModes: EnumProperty(
         name="Merge",
         description="Select if objects should be merged in one Geo File (it can be usefull if a scene is done by several cube/forms)." \
                     "Do not merge rigged character that have an armature.",
@@ -1352,66 +1352,66 @@ class MarmaladeExporter(bpy.types.Operator):
         default="0")
 
     #General Options
-    Scale = IntProperty(
+    Scale: IntProperty(
         name="Scale Percent",
         description="Scale percentage applied for export",
         default=100, min=1, max=1000)
 
-    FlipNormals = BoolProperty(
+    FlipNormals: BoolProperty(
         name="Flip Normals",
         description="",
         default=False)
-    ApplyModifiers = BoolProperty(
+    ApplyModifiers: BoolProperty(
         name="Apply Modifiers",
         description="Apply object modifiers before export",
         default=False)
-    ExportVertexColors = BoolProperty(
+    ExportVertexColors: BoolProperty(
         name="Export Vertices Colors",
         description="Export colors set on vertices, if any",
         default=True)
-    ExportMaterialColors = BoolProperty(
+    ExportMaterialColors: BoolProperty(
         name="Export Material Colors",
         description="Ambient color is exported on the Material",
         default=True)
-    ExportTextures = BoolProperty(
+    ExportTextures: BoolProperty(
         name="Export Textures and UVs",
         description="Exports UVs and Reference external image files to be used by the model",
         default=True)
-    CopyTextureFiles = BoolProperty(
+    CopyTextureFiles: BoolProperty(
         name="Copy Textures Files",
         description="Copy referenced Textures files in the models\\textures directory",
         default=True)
-    ExportArmatures = BoolProperty(
+    ExportArmatures: BoolProperty(
         name="Export Armatures",
         description="Export the bones of any armatures to deform meshes",
         default=True)
-    ExportAnimationFrames = EnumProperty(
+    ExportAnimationFrames: EnumProperty(
         name="Animations Frames",
         description="Select the type of animations to export. Only object " \
                     "and armature bone animations can be exported. Keyframes exports only the keyed frames" \
                     "Full Animation exports every frames, None disables animationq export. ",
         items=AnimationFrameModes,
         default="1")
-    ExportAnimationActions = EnumProperty(
+    ExportAnimationActions: EnumProperty(
         name="Animations Actions",
         description="By default only the Default Animation Action assoiated to an armature is exported." \
                     "However if you have defined several animations on the same armature,"\
                     "you can select to export all animations. You can see the list of animation actions in the DopeSheet window.",
         items=AnimationActions,
         default="0")
-    AnimFPS = IntProperty(
+    AnimFPS: IntProperty(
         name="Animation FPS",
         description="Frame rate used to export animation in seconds (can be used to artficially slow down the exported animation, or to speed up it",
         default=30, min=1, max=300)
 
     #Advance Options
-    CoordinateSystem = EnumProperty(
+    CoordinateSystem: EnumProperty(
         name="System",
         description="Select a coordinate system to export to",
         items=CoordinateSystems,
         default="1")
 
-    Verbose = BoolProperty(
+    Verbose: BoolProperty(
         name="Verbose",
         description="Run the exporter in debug mode. Check the console for output",
         default=True)

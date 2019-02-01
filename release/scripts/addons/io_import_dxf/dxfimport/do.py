@@ -1410,7 +1410,7 @@ class Do:
         for o in (o for o in scene.objects if "BEVEL" not in o.name and "TAPER" not in o.name
                   and o not in self.objects_before and o.parent is None):
             o.location = o.location - center
-            o.select = True
+            o.select_set(True)
 
         if not self.did_group_instance:
             bpy.ops.object.origin_set(type='ORIGIN_CURSOR')

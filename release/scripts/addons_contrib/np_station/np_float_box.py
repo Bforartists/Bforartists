@@ -218,8 +218,8 @@ class NPFBPrepareContext(bpy.types.Operator):
         if flag == 'RUNTRANS0':
             helper = NP020FB.helper
             bpy.ops.object.select_all(action = 'DESELECT')
-            helper.select = True
-            bpy.context.scene.objects.active = helper
+            helper.select_set(True)
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -265,12 +265,12 @@ class NPFBPrepareContext(bpy.types.Operator):
 
             bpy.ops.object.select_all(action = 'DESELECT')
             if corner_brush == False: helper.location = pointloc
-            helper.select = True
+            helper.select_set(True)
             bpy.ops.transform.rotate(value = ang_hor ,axis = Vector((0.0, 0.0, 1.0)))
             bpy.ops.transform.rotate(value = rot_ang ,axis = rot_axis)
             NP020FB.trans_custom = True
             bpy.ops.transform.create_orientation(use = True)
-            bpy.context.scene.objects.active = helper
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -278,7 +278,7 @@ class NPFBPrepareContext(bpy.types.Operator):
 
         elif flag in ('RUNTRANS2', 'RUNTRANS3'):
             helper = NP020FB.helper
-            bpy.context.scene.objects.active = helper
+            bpy.context.view_layer.objects.active = helper
             bpy.context.tool_settings.use_snap = False
             bpy.context.tool_settings.snap_element = 'VERTEX'
             bpy.context.tool_settings.snap_target = 'ACTIVE'
@@ -693,7 +693,7 @@ class NPFBGenerateGeometry(bpy.types.Operator):
             bpy.ops.mesh.normals_make_consistent()
             bpy.ops.object.mode_set(mode = 'OBJECT')
             bpy.ops.object.select_all(action = 'DESELECT')
-            boxob.select = True
+            boxob.select_set(True)
             bpy.ops.object.origin_set(type = 'ORIGIN_GEOMETRY')
             if wire:
                 boxob.show_wire = True
@@ -725,17 +725,17 @@ class NPFBRestoreContext(bpy.types.Operator):
         boxob = NP020FB.boxob
         helper.hide = False
         bpy.ops.object.select_all(action = 'DESELECT')
-        helper.select = True
+        helper.select_set(True)
         bpy.ops.object.delete('EXEC_DEFAULT')
         if boxob == None:
             for ob in selob:
-                ob.select = True
+                ob.select_set(True)
             if NP020FB.acob is not None:
-                bpy.context.scene.objects.active = NP020FB.acob
+                bpy.context.view_layer.objects.active = NP020FB.acob
                 bpy.ops.object.mode_set(mode = NP020FB.edit_mode)
         else:
-            boxob.select = True
-            bpy.context.scene.objects.active = boxob
+            boxob.select_set(True)
+            bpy.context.view_layer.objects.active = boxob
             bpy.ops.object.mode_set(mode = NP020FB.edit_mode)
         if NP020FB.trans_custom: bpy.ops.transform.delete_orientation()
         bpy.context.tool_settings.use_snap = NP020FB.use_snap

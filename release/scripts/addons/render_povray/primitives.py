@@ -73,7 +73,7 @@ class POVRAY_OT_lathe_add(bpy.types.Operator):
             rotation=(0, 0, 0),
             layers=layers,
         )
-        ob = context.scene.objects.active
+        ob = context.view_layer.objects.active
         ob_data = ob.data
         ob.name = ob_data.name = "PovLathe"
         ob_data.dimensions = '2D'
@@ -216,29 +216,29 @@ class POVRAY_OT_superellipsoid_add(bpy.types.Operator):
 
     # XXX Keep it in sync with __init__'s RenderPovSettingsConePrimitive
     #     If someone knows how to define operators' props from a func, I'd be delighted to learn it!
-    se_param1 = FloatProperty(
+    se_param1: FloatProperty(
             name="Parameter 1",
             description="",
             min=0.00, max=10.0, default=0.04)
 
-    se_param2 = FloatProperty(
+    se_param2: FloatProperty(
             name="Parameter 2",
             description="",
             min=0.00, max=10.0, default=0.04)
 
-    se_u = IntProperty(name = "U-segments",
+    se_u: IntProperty(name = "U-segments",
                     description = "radial segmentation",
                     default = 20, min = 4, max = 265)
-    se_v = IntProperty(name = "V-segments",
+    se_v: IntProperty(name = "V-segments",
                     description = "lateral segmentation",
                     default = 20, min = 4, max = 265)
-    se_n1 = FloatProperty(name = "Ring manipulator",
+    se_n1: FloatProperty(name = "Ring manipulator",
                       description = "Manipulates the shape of the Ring",
                       default = 1.0, min = 0.01, max = 100.0)
-    se_n2 = FloatProperty(name = "Cross manipulator",
+    se_n2: FloatProperty(name = "Cross manipulator",
                       description = "Manipulates the shape of the cross-section",
                       default = 1.0, min = 0.01, max = 100.0)
-    se_edit = EnumProperty(items=[("NOTHING", "Nothing", ""),
+    se_edit: EnumProperty(items=[("NOTHING", "Nothing", ""),
                                 ("NGONS", "N-Gons", ""),
                                 ("TRIANGLES", "Triangles", "")],
                         name="Fill up and down",
@@ -414,28 +414,28 @@ class POVRAY_OT_supertorus_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
-    st_R = FloatProperty(name = "big radius",
+    st_R: FloatProperty(name = "big radius",
                       description = "The radius inside the tube",
                       default = 1.0, min = 0.01, max = 100.0)
-    st_r = FloatProperty(name = "small radius",
+    st_r: FloatProperty(name = "small radius",
                       description = "The radius of the tube",
                       default = 0.3, min = 0.01, max = 100.0)
-    st_u = IntProperty(name = "U-segments",
+    st_u: IntProperty(name = "U-segments",
                     description = "radial segmentation",
                     default = 16, min = 3, max = 265)
-    st_v = IntProperty(name = "V-segments",
+    st_v: IntProperty(name = "V-segments",
                     description = "lateral segmentation",
                     default = 8, min = 3, max = 265)
-    st_n1 = FloatProperty(name = "Ring manipulator",
+    st_n1: FloatProperty(name = "Ring manipulator",
                       description = "Manipulates the shape of the Ring",
                       default = 1.0, min = 0.01, max = 100.0)
-    st_n2 = FloatProperty(name = "Cross manipulator",
+    st_n2: FloatProperty(name = "Cross manipulator",
                       description = "Manipulates the shape of the cross-section",
                       default = 1.0, min = 0.01, max = 100.0)
-    st_ie = BoolProperty(name = "Use Int.+Ext. radii",
+    st_ie: BoolProperty(name = "Use Int.+Ext. radii",
                       description = "Use internal and external radii",
                       default = False)
-    st_edit = BoolProperty(name="",
+    st_edit: BoolProperty(name="",
                         description="",
                         default=False,
                         options={'HIDDEN'})
@@ -482,22 +482,22 @@ class POVRAY_OT_loft_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
-    loft_n = IntProperty(name = "Segments",
+    loft_n: IntProperty(name = "Segments",
                     description = "Vertical segments",
                     default = 16, min = 3, max = 720)
-    loft_rings_bottom = IntProperty(name = "Bottom",
+    loft_rings_bottom: IntProperty(name = "Bottom",
                     description = "Bottom rings",
                     default = 5, min = 2, max = 100)
-    loft_rings_side = IntProperty(name = "Side",
+    loft_rings_side: IntProperty(name = "Side",
                     description = "Side rings",
                     default = 10, min = 2, max = 100)
-    loft_thick = FloatProperty(name = "Thickness",
+    loft_thick: FloatProperty(name = "Thickness",
                       description = "Manipulates the shape of the Ring",
                       default = 0.3, min = 0.01, max = 1.0)
-    loft_r = FloatProperty(name = "Radius",
+    loft_r: FloatProperty(name = "Radius",
                       description = "Radius",
                       default = 1, min = 0.01, max = 10)
-    loft_height = FloatProperty(name = "Height",
+    loft_height: FloatProperty(name = "Height",
                       description = "Manipulates the shape of the Ring",
                       default = 2, min = 0.01, max = 10.0)
 
@@ -585,7 +585,7 @@ class POVRAY_OT_loft_add(bpy.types.Operator):
         scn = bpy.context.scene
         scn.objects.link(ob)
         scn.objects.active = ob
-        ob.select = True
+        ob.select_set(True)
         ob.pov.curveshape = "loft"
         return {'FINISHED'}
 
@@ -672,14 +672,14 @@ class POVRAY_OT_cylinder_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # XXX Keep it in sync with __init__'s cylinder Primitive
-    R = FloatProperty(name="Cylinder radius", min=0.00, max=10.0, default=1.0)
+    R: FloatProperty(name="Cylinder radius", min=0.00, max=10.0, default=1.0)
 
-    imported_cyl_loc = FloatVectorProperty(
+    imported_cyl_loc: FloatVectorProperty(
         name="Imported Pov base location",
         precision=6,
         default=(0.0, 0.0, 0.0))
 
-    imported_cyl_loc_cap = FloatVectorProperty(
+    imported_cyl_loc_cap: FloatVectorProperty(
         name="Imported Pov cap location",
         precision=6,
         default=(0.0, 0.0, 2.0))
@@ -780,9 +780,9 @@ class POVRAY_OT_sphere_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # XXX Keep it in sync with __init__'s torus Primitive
-    R = FloatProperty(name="Sphere radius",min=0.00, max=10.0, default=0.5)
+    R: FloatProperty(name="Sphere radius",min=0.00, max=10.0, default=0.5)
 
-    imported_loc = FloatVectorProperty(
+    imported_loc: FloatVectorProperty(
         name="Imported Pov location",
         precision=6,
         default=(0.0, 0.0, 0.0))
@@ -914,16 +914,16 @@ class POVRAY_OT_cone_add(bpy.types.Operator):
 
     # XXX Keep it in sync with __init__'s RenderPovSettingsConePrimitive
     #     If someone knows how to define operators' props from a func, I'd be delighted to learn it!
-    base = FloatProperty(
+    base: FloatProperty(
         name = "Base radius", description = "The first radius of the cone",
         default = 1.0, min = 0.01, max = 100.0)
-    cap = FloatProperty(
+    cap: FloatProperty(
         name = "Cap radius", description = "The second radius of the cone",
         default = 0.3, min = 0.0, max = 100.0)
-    seg = IntProperty(
+    seg: IntProperty(
         name = "Segments", description = "Radial segmentation of the proxy mesh",
         default = 16, min = 3, max = 265)
-    height = FloatProperty(
+    height: FloatProperty(
         name = "Height", description = "Height of the cone",
         default = 2.0, min = 0.01, max = 100.0)
 
@@ -1073,8 +1073,8 @@ class POVRAY_OT_rainbow_add(bpy.types.Operator):
         ob.location = -cam.location
 
         #refocus on the actual rainbow
-        bpy.context.scene.objects.active = ob
-        ob.select=True
+        bpy.context.view_layer.objects.active = ob
+        ob.select_set(True)
 
         return {'FINISHED'}
 
@@ -1091,32 +1091,32 @@ class POVRAY_OT_height_field_add(bpy.types.Operator, ImportHelper):
             # default="*.exr;*.gif;*.hdr;*.iff;*.jpeg;*.jpg;*.pgm;*.png;*.pot;*.ppm;*.sys;*.tga;*.tiff;*.EXR;*.GIF;*.HDR;*.IFF;*.JPEG;*.JPG;*.PGM;*.PNG;*.POT;*.PPM;*.SYS;*.TGA;*.TIFF",
             # options={'HIDDEN'},
             # )
-    quality = IntProperty(name = "Quality",
+    quality: IntProperty(name = "Quality",
                       description = "",
                       default = 100, min = 1, max = 100)
-    hf_filename = StringProperty(maxlen = 1024)
+    hf_filename: StringProperty(maxlen = 1024)
 
-    hf_gamma = FloatProperty(
+    hf_gamma: FloatProperty(
             name="Gamma",
             description="Gamma",
             min=0.0001, max=20.0, default=1.0)
 
-    hf_premultiplied = BoolProperty(
+    hf_premultiplied: BoolProperty(
             name="Premultiplied",
             description="Premultiplied",
             default=True)
 
-    hf_smooth = BoolProperty(
+    hf_smooth: BoolProperty(
             name="Smooth",
             description="Smooth",
             default=False)
 
-    hf_water = FloatProperty(
+    hf_water: FloatProperty(
             name="Water Level",
             description="Wather Level",
             min=0.00, max=1.00, default=0.0)
 
-    hf_hierarchy = BoolProperty(
+    hf_hierarchy: BoolProperty(
             name="Hierarchy",
             description="Height field hierarchy",
             default=True)
@@ -1209,16 +1209,16 @@ class POVRAY_OT_torus_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # XXX Keep it in sync with __init__'s torus Primitive
-    mas = IntProperty(name = "Major Segments",
+    mas: IntProperty(name = "Major Segments",
                     description = "",
                     default = 48, min = 3, max = 720)
-    mis = IntProperty(name = "Minor Segments",
+    mis: IntProperty(name = "Minor Segments",
                     description = "",
                     default = 12, min = 3, max = 720)
-    mar = FloatProperty(name = "Major Radius",
+    mar: FloatProperty(name = "Major Radius",
                     description = "",
                     default = 1.0)
-    mir = FloatProperty(name = "Minor Radius",
+    mir: FloatProperty(name = "Minor Radius",
                     description = "",
                     default = 0.25)
     def execute(self,context):
@@ -1261,10 +1261,10 @@ class POVRAY_OT_prism_add(bpy.types.Operator):
     bl_description = "Create Prism"
     bl_options = {'REGISTER', 'UNDO'}
 
-    prism_n = IntProperty(name = "Sides",
+    prism_n: IntProperty(name = "Sides",
                 description = "Number of sides",
                 default = 5, min = 3, max = 720)
-    prism_r = FloatProperty(name = "Radius",
+    prism_r: FloatProperty(name = "Radius",
                     description = "Radius",
                     default = 1.0)
     def execute(self,context):
@@ -1296,7 +1296,7 @@ class POVRAY_OT_prism_add(bpy.types.Operator):
         scn = bpy.context.scene
         scn.objects.link(ob)
         scn.objects.active = ob
-        ob.select = True
+        ob.select_set(True)
         ob.pov.curveshape = "prism"
         ob.name = ob.data.name = "Prism"
         return {'FINISHED'}
@@ -1368,23 +1368,23 @@ class POVRAY_OT_parametric_add(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # XXX Keep it in sync with __init__'s Parametric primitive
-    u_min = FloatProperty(name = "U Min",
+    u_min: FloatProperty(name = "U Min",
                     description = "",
                     default = 0.0)
-    v_min = FloatProperty(name = "V Min",
+    v_min: FloatProperty(name = "V Min",
                     description = "",
                     default = 0.0)
-    u_max = FloatProperty(name = "U Max",
+    u_max: FloatProperty(name = "U Max",
                     description = "",
                     default = 6.28)
-    v_max = FloatProperty(name = "V Max",
+    v_max: FloatProperty(name = "V Max",
                     description = "",
                     default = 12.57)
-    x_eq = StringProperty(
+    x_eq: StringProperty(
                     maxlen=1024, default = "cos(v)*(1+cos(u))*sin(v/8)")
-    y_eq = StringProperty(
+    y_eq: StringProperty(
                     maxlen=1024, default = "sin(u)*sin(v/8)+cos(v/8)*1.5")
-    z_eq = StringProperty(
+    z_eq: StringProperty(
                     maxlen=1024, default = "sin(v)*(1+cos(u))*sin(v/8)")
 
     def execute(self,context):
@@ -1429,16 +1429,16 @@ class POVRAY_OT_shape_polygon_to_circle_add(bpy.types.Operator):
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     # XXX Keep it in sync with __init__'s polytocircle properties
-    polytocircle_resolution = IntProperty(name = "Resolution",
+    polytocircle_resolution: IntProperty(name = "Resolution",
                     description = "",
                     default = 3, min = 0, max = 256)
-    polytocircle_ngon = IntProperty(name = "NGon",
+    polytocircle_ngon: IntProperty(name = "NGon",
                     description = "",
                     min = 3, max = 64,default = 5)
-    polytocircle_ngonR = FloatProperty(name = "NGon Radius",
+    polytocircle_ngonR: FloatProperty(name = "NGon Radius",
                     description = "",
                     default = 0.3)
-    polytocircle_circleR = FloatProperty(name = "Circle Radius",
+    polytocircle_circleR: FloatProperty(name = "Circle Radius",
                     description = "",
                     default = 1.0)
     def execute(self,context):
@@ -1487,16 +1487,16 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
 
     # -----------
     # File props.
-    files = CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
-    directory = StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
+    files: CollectionProperty(type=bpy.types.OperatorFileListElement, options={'HIDDEN', 'SKIP_SAVE'})
+    directory: StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
 
     filename_ext = {".pov",".inc"}
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.pov;*.inc",
             options={'HIDDEN'},
             )
 
-    import_at_cur = BoolProperty(name="Import at Cursor Location",
+    import_at_cur: BoolProperty(name="Import at Cursor Location",
                                     description = "Ignore Object Matrix",
                                     default=False)
 
@@ -1826,7 +1826,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
 
                             me = bpy.data.meshes.new(name) ########
                             ob = bpy.data.objects.new(name, me) ##########
-                            bpy.context.scene.objects.link(ob) #########
+                            bpy.context.collection.objects.link(ob) #########
                             me.from_pydata(verts, [], faces) ############
 
                             for mat in bpy.data.materials: ##############

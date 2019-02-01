@@ -330,7 +330,7 @@ class MakeSurfacePlane(Operator, MakeSurfaceHelpers):
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
         # transform scale
-        bpy.ops.object.transform_apply(scale=True)
+        bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
 
         # bring object to 3d cursor
         bpy.ops.object.mode_set(mode='OBJECT')

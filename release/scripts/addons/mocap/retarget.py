@@ -120,9 +120,9 @@ def createIntermediate(performer_obj, enduser_obj, root, s_frame, e_frame, scene
     #creates the intermediate armature object
     inter_obj = enduser_obj.copy()
     inter_obj.data = inter_obj.data.copy()  # duplicate data
-    bpy.context.scene.objects.link(inter_obj)
+    bpy.context.collection.objects.link(inter_obj)
     inter_obj.name = "intermediate"
-    bpy.context.scene.objects.active = inter_obj
+    bpy.context.view_layer.objects.active = inter_obj
     bpy.ops.object.mode_set(mode='EDIT')
     #add some temporary connecting bones in case end user bones are not connected to their parents
     rollDict = {}
@@ -538,7 +538,7 @@ def totalRetarget(performer_obj, enduser_obj, scene, s_frame, e_frame):
     if not advanced:
         print("hry")
         bpy.ops.object.select_all(action='DESELECT')
-        bpy.context.scene.objects.active = enduser_obj
+        bpy.context.view_layer.objects.active = enduser_obj
         bpy.ops.object.select_pattern(pattern=enduser_obj.name, extend=False)
         IKRetarget(performer_obj, enduser_obj, s_frame, e_frame, scene, step)
         bpy.ops.object.select_pattern(pattern=stride_bone.name, extend=False)

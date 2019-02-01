@@ -32,7 +32,7 @@ bl_info = {
     "name": "UV to Mesh",
     "author": "Alessandro Zomparelli (Co-de-iT)",
     "version": (0, 1, 1),
-    "blender": (2, 7, 9),
+    "blender": (2, 79, 0),
     "location": "",
     "description": "Create a new Mesh based on active UV",
     "warning": "",
@@ -53,22 +53,22 @@ class uv_to_mesh(Operator):
     bl_description = ("Create a new Mesh based on active UV")
     bl_options = {'REGISTER', 'UNDO'}
 
-    apply_modifiers = BoolProperty(
+    apply_modifiers: BoolProperty(
             name="Apply Modifiers",
             default=False,
             description="Apply object's modifiers"
             )
-    vertex_groups = BoolProperty(
+    vertex_groups: BoolProperty(
             name="Keep Vertex Groups",
             default=False,
             description="Transfer all the Vertex Groups"
             )
-    materials = BoolProperty(
+    materials: BoolProperty(
             name="Keep Materials",
             default=True,
             description="Transfer all the Materials"
             )
-    auto_scale = BoolProperty(
+    auto_scale: BoolProperty(
             name="Resize",
             default=True,
             description="Scale the new object in order to preserve the average surface area"
@@ -77,8 +77,8 @@ class uv_to_mesh(Operator):
     def execute(self, context):
         bpy.ops.object.mode_set(mode='OBJECT')
         for o in bpy.data.objects:
-            o.select = False
-        bpy.context.object.select = True
+            o.select_set(False)
+        bpy.context.object.select_set(True)
 
         if self.apply_modifiers:
             bpy.ops.object.duplicate_move()
@@ -121,7 +121,7 @@ class uv_to_mesh(Operator):
         scn = bpy.context.scene
         scn.objects.link(ob)
         scn.objects.active = ob
-        ob.select = True
+        ob.select_set(True)
 
         # Create mesh from given verts, faces.
         me.from_pydata(verts, [], faces)
@@ -148,7 +148,7 @@ class uv_to_mesh(Operator):
             except:
                 pass
 
-        ob0.select = False
+        ob0.select_set(False)
         if self.auto_scale:
             scaleFactor = math.pow(area / new_area, 1 / 2)
             ob.scale = Vector((scaleFactor, scaleFactor, scaleFactor))
@@ -173,11 +173,11 @@ class uv_to_mesh(Operator):
 
         if self.apply_modifiers:
             bpy.ops.object.mode_set(mode='OBJECT')
-            ob.select = False
-            ob0.select = True
+            ob.select_set(False)
+            ob0.select_set(True)
             bpy.ops.object.delete(use_global=False)
-            ob.select = True
-            bpy.context.scene.objects.active = ob
+            ob.select_set(True)
+            bpy.context.view_layer.objects.active = ob
 
         return {'FINISHED'}
 

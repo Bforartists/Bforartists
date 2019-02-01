@@ -67,6 +67,8 @@ def __gather_extensions(blender_shader_sockets_or_texture_slots, export_settings
 
     texture_node = texture_socket.links[0].from_node
     texture_transform = gltf2_blender_get.get_texture_transform_from_texture_node(texture_node)
+    if texture_transform is None:
+        return None
 
     extension = Extension("KHR_texture_transform", texture_transform)
     return {"KHR_texture_transform": extension}
@@ -77,6 +79,15 @@ def __gather_extras(blender_shader_sockets_or_texture_slots, export_settings):
 
 
 def __gather_scale(blender_shader_sockets_or_texture_slots, export_settings):
+    if __is_socket(blender_shader_sockets_or_texture_slots):
+        result = gltf2_blender_search_node_tree.from_socket(
+            blender_shader_sockets_or_texture_slots[0],
+            gltf2_blender_search_node_tree.FilterByType(bpy.types.ShaderNodeNormalMap))
+        if not result:
+            return None
+        strengthInput = result[0].shader_node.inputs['Strength']
+        if not strengthInput.is_linked and strengthInput.default_value != 1:
+            return strengthInput.default_value
     return None
 
 

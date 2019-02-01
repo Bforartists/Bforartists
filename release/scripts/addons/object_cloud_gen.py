@@ -183,7 +183,7 @@ def CreateNodeGroup(Type):
 # and adds a bounding box to it.
 # It will add or subtract the bound box size by the variable sizeDifference.
 
-def getMeshandPutinEditMode(scene, object):
+def getMeshandPutinEditMode(view_layer, object):
 
     # Go into Object Mode
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -192,8 +192,8 @@ def getMeshandPutinEditMode(scene, object):
     bpy.ops.object.select_all(action='DESELECT')
 
     # Select the object
-    object.select = True
-    scene.objects.active = object
+    object.select_set(True)
+    view_layer.objects.active = object
 
     # Go into Edit Mode
     bpy.ops.object.mode_set(mode='EDIT')
@@ -201,9 +201,9 @@ def getMeshandPutinEditMode(scene, object):
     return object.data
 
 
-def maxAndMinVerts(scene, object):
+def maxAndMinVerts(view_layer, object):
 
-    mesh = getMeshandPutinEditMode(scene, object)
+    mesh = getMeshandPutinEditMode(view_layer, object)
     verts = mesh.vertices
 
     # Set the max and min verts to the first vertex on the list
@@ -231,13 +231,13 @@ def maxAndMinVerts(scene, object):
     return [maxVert, minVert]
 
 
-def makeObjectIntoBoundBox(scene, objects, sizeDifference, takeFromObject):
+def makeObjectIntoBoundBox(view_layer, objects, sizeDifference, takeFromObject):
     # Let's find the max and min of the reference object,
     # it can be the same as the destination object
-    [maxVert, minVert] = maxAndMinVerts(scene, takeFromObject)
+    [maxVert, minVert] = maxAndMinVerts(view_layer, takeFromObject)
 
     # get objects mesh
-    mesh = getMeshandPutinEditMode(scene, objects)
+    mesh = getMeshandPutinEditMode(view_layer, objects)
 
     # Add the size difference to the max size of the box
     maxVert[0] = maxVert[0] + sizeDifference
@@ -292,28 +292,28 @@ def makeObjectIntoBoundBox(scene, objects, sizeDifference, takeFromObject):
     mesh.update()
 
 
-def applyScaleRotLoc(scene, obj):
+def applyScaleRotLoc(view_layer, obj):
     # Deselect All
     bpy.ops.object.select_all(action='DESELECT')
 
     # Select the object
-    obj.select = True
-    scene.objects.active = obj
+    obj.select_set(True)
+    view_layer.objects.active = obj
 
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 
 
-def totallyDeleteObject(scene, obj):
+def totallyDeleteObject(obj):
     bpy.data.objects.remove(obj, do_unlink=True)
 
 
-def makeParent(parentobj, childobj, scene):
-    applyScaleRotLoc(scene, parentobj)
-    applyScaleRotLoc(scene, childobj)
+def makeParent(parentobj, childobj, view_layer):
+    applyScaleRotLoc(view_layer, parentobj)
+    applyScaleRotLoc(view_layer, childobj)
     childobj.parent = parentobj
 
 
-def addNewObject(scene, name, copyobj):
+def addNewObject(collection, name, copyobj):
     # avoid creating not needed meshes pro forme
     # Create a new object
     tempme = copyobj.data
@@ -323,8 +323,8 @@ def addNewObject(scene, name, copyobj):
     ob_new.location = copyobj.location
 
     # Link new object to the given scene and select it
-    scene.objects.link(ob_new)
-    ob_new.select = True
+    collection.objects.link(ob_new)
+    ob_new.select_set(True)
 
     return ob_new
 
@@ -343,13 +343,13 @@ def getpdensitytexture(object):
                             return tex
 
 
-def removeParticleSystemFromObj(scene, obj):
+def removeParticleSystemFromObj(view_layer, obj):
     # Deselect All
     bpy.ops.object.select_all(action='DESELECT')
 
     # Select the object
-    obj.select = True
-    scene.objects.active = obj
+    obj.select_set(True)
+    view_layer.objects.active = obj
 
     bpy.ops.object.particle_system_remove()
 
@@ -357,10 +357,10 @@ def removeParticleSystemFromObj(scene, obj):
     bpy.ops.object.select_all(action='DESELECT')
 
 
-def convertParticlesToMesh(scene, particlesobj, destobj, replacemesh):
+def convertParticlesToMesh(view_layer, particlesobj, destobj, replacemesh):
     # Select the Destination object
-    destobj.select = True
-    scene.objects.active = destobj
+    destobj.select_set(True)
+    view_layer.objects.active = destobj
 
     # Go to Edit Mode
     bpy.ops.object.mode_set(mode='EDIT', toggle=False)
@@ -389,7 +389,7 @@ def convertParticlesToMesh(scene, particlesobj, destobj, replacemesh):
     meshPnts.update()
 
 
-def combineObjects(scene, combined, listobjs):
+def combineObjects(view_layer, combined, listobjs):
     # scene is the current scene
     # combined is the object we want to combine everything into
     # listobjs is the list of objects to stick into combined
@@ -398,8 +398,8 @@ def combineObjects(scene, combined, listobjs):
     bpy.ops.object.select_all(action='DESELECT')
 
     # Select the new object.
-    combined.select = True
-    scene.objects.active = combined
+    combined.select_set(True)
+    view_layer.objects.active = combined
 
     # Add data
     if len(listobjs) > 0:
@@ -508,7 +508,9 @@ class GenerateCloud(Operator):
         active_object = context.active_object
 
         # Make variable scene that is current scene
+        collection = context.collection
         scene = context.scene
+        view_layer = context.view_layer
 
         # Parameters the user may want to change:
         # Number of points this number is multiplied by the volume to get
@@ -543,7 +545,7 @@ class GenerateCloud(Operator):
             definitionObjects = []
 
             for member in cloudMembers:
-                applyScaleRotLoc(scene, member)
+                applyScaleRotLoc(view_layer, member)
                 if member["CloudMember"] == "CreatedObj":
                     createdObjects.append(member)
                 else:
@@ -555,16 +557,16 @@ class GenerateCloud(Operator):
                     del(defObj["CloudMember"])
 
             for createdObj in createdObjects:
-                totallyDeleteObject(scene, createdObj)
+                totallyDeleteObject(createdObj)
 
             # Delete the blend_data object
-            totallyDeleteObject(scene, mainObj)
+            totallyDeleteObject(mainObj)
 
             # Select all of the left over boxes so people can immediately
             # press generate again if they want
             for eachMember in definitionObjects:
                 eachMember.display_type = 'SOLID'
-                eachMember.select = True
+                eachMember.select_set(True)
                 eachMember.hide_render = False
 
         elif WhatToDo == 'CLOUD_CONVERT_TO_MESH':
@@ -574,14 +576,14 @@ class GenerateCloud(Operator):
 
             # Create CloudPnts for putting points in #
             # Create a new object cloudPnts
-            cloudPnts = addNewObject(scene, "CloudPoints", bounds)
+            cloudPnts = addNewObject(collection, "CloudPoints", bounds)
             cloudPnts["CloudMember"] = "CreatedObj"
             cloudPnts.display_type = 'WIRE'
             cloudPnts.hide_render = True
 
-            makeParent(bounds, cloudPnts, scene)
-            convertParticlesToMesh(scene, cloudParticles, cloudPnts, True)
-            removeParticleSystemFromObj(scene, active_object)
+            makeParent(bounds, cloudPnts, view_layer)
+            convertParticlesToMesh(view_layer, cloudParticles, cloudPnts, True)
+            removeParticleSystemFromObj(view_layer, active_object)
 
             pDensity = getpdensitytexture(bounds)
             pDensity.point_density.point_source = 'OBJECT'
@@ -589,7 +591,7 @@ class GenerateCloud(Operator):
 
             # Let's resize the bound box to be more accurate
             how_much_bigger = pDensity.point_density.radius
-            makeObjectIntoBoundBox(scene, bounds, how_much_bigger, cloudPnts)
+            makeObjectIntoBoundBox(view_layer, bounds, how_much_bigger, cloudPnts)
 
         else:
             # Generate Cloud
@@ -602,7 +604,7 @@ class GenerateCloud(Operator):
 
             # Create a new object bounds
             bounds = addNewObject(
-                            scene, "CloudBounds",
+                            collection, "CloudBounds",
                             selectedObjects[0]
                             )
 
@@ -619,12 +621,12 @@ class GenerateCloud(Operator):
             del selectedObjects[0]
 
             # Apply location Rotation and Scale to all objects involved
-            applyScaleRotLoc(scene, bounds)
+            applyScaleRotLoc(view_layer, bounds)
             for each in selectedObjects:
-                applyScaleRotLoc(scene, each)
+                applyScaleRotLoc(view_layer, each)
 
             # Let's combine all of them together.
-            combineObjects(scene, bounds, selectedObjects)
+            combineObjects(view_layer, bounds, selectedObjects)
 
             # Let's add some property info to the objects
             for selObj in selectedObjects:
@@ -633,23 +635,23 @@ class GenerateCloud(Operator):
                 selObj.display_type = 'WIRE'
                 selObj.hide_render = True
                 selObj.hide = True
-                makeParent(bounds, selObj, scene)
+                makeParent(bounds, selObj, view_layer)
 
             # Do the same to the 1. object since it is no longer in list.
             firstObject["CloudMember"] = "DefinitionObj"
             firstObject.name = "DefinitionObj"
             firstObject.display_type = 'WIRE'
             firstObject.hide_render = True
-            makeParent(bounds, firstObject, scene)
+            makeParent(bounds, firstObject, view_layer)
 
             # Create Cloud for putting Cloud Mesh #
             # Create a new object cloud.
-            cloud = addNewObject(scene, "CloudMesh", bounds)
+            cloud = addNewObject(collection, "CloudMesh", bounds)
             cloud["CloudMember"] = "CreatedObj"
             cloud.display_type = 'WIRE'
             cloud.hide_render = True
 
-            makeParent(bounds, cloud, scene)
+            makeParent(bounds, cloud, view_layer)
 
             bpy.ops.object.editmode_toggle()
             bpy.ops.mesh.select_all(action='SELECT')
@@ -692,11 +694,11 @@ class GenerateCloud(Operator):
             bpy.ops.object.select_all(action='DESELECT')
 
             # Select the object.
-            bounds.select = True
-            scene.objects.active = bounds
+            bounds.select_set(True)
+            view_layer.objects.active = bounds
 
             # Turn bounds object into a box. Use itself as a reference
-            makeObjectIntoBoundBox(scene, bounds, 1.0, bounds)
+            makeObjectIntoBoundBox(view_layer, bounds, 1.0, bounds)
 
             # Delete all material slots in bounds object
             for i in range(len(bounds.material_slots)):
@@ -834,13 +836,13 @@ class GenerateCloud(Operator):
             if not scene.cloudparticles:
                 # Create CloudPnts for putting points in #
                 # Create a new object cloudPnts
-                cloudPnts = addNewObject(scene, "CloudPoints", bounds)
+                cloudPnts = addNewObject(collection, "CloudPoints", bounds)
                 cloudPnts["CloudMember"] = "CreatedObj"
                 cloudPnts.display_type = 'WIRE'
                 cloudPnts.hide_render = True
 
-                makeParent(bounds, cloudPnts, scene)
-                convertParticlesToMesh(scene, cloudParticles, cloudPnts, True)
+                makeParent(bounds, cloudPnts, view_layer)
+                convertParticlesToMesh(view_layer, cloudParticles, cloudPnts, True)
 
                 # Add a modifier.
                 bpy.ops.object.modifier_add(type='DISPLACE')
@@ -863,7 +865,7 @@ class GenerateCloud(Operator):
                     PointDensityNode.point_source = 'OBJECT'
                     PointDensityNode.object = cloudPnts
 
-                removeParticleSystemFromObj(scene, cloud)
+                removeParticleSystemFromObj(view_layer, cloud)
 
             else:
                 if bpy.context.scene.render.engine == 'BLENDER_RENDER':
@@ -922,17 +924,17 @@ class GenerateCloud(Operator):
                 cloud.hide = True
 
             # Select the object.
-            bounds.select = True
-            scene.objects.active = bounds
+            bounds.select_set(True)
+            view_layer.objects.active = bounds
 
             # Let's resize the bound box to be more accurate.
             how_much_bigger = PDensityRadius + 0.1
 
             # If it's a particle cloud use cloud mesh if otherwise use point mesh
             if not scene.cloudparticles:
-                makeObjectIntoBoundBox(scene, bounds, how_much_bigger, cloudPnts)
+                makeObjectIntoBoundBox(view_layer, bounds, how_much_bigger, cloudPnts)
             else:
-                makeObjectIntoBoundBox(scene, bounds, how_much_bigger, cloud)
+                makeObjectIntoBoundBox(view_layer, bounds, how_much_bigger, cloud)
 
             cloud_string = "Cumulous" if scene.cloud_type == '1' else "Cirrus" if \
                            scene.cloud_type == '2' else "Stratus" if \

@@ -52,7 +52,7 @@ def save(self, context, filepath="",
         last_mode = 'OBJECT'
 
         if bpy.data.objects:
-            context.scene.objects.active = bpy.data.objects[0]
+            context.view_layer.objects.active = bpy.data.objects[0]
         else:
             return "Nothing to export."
 

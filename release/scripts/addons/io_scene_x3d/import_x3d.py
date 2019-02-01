@@ -2981,7 +2981,7 @@ def appearance_LoadPixelTexture(pixelTexture, ancestry):
 # Called from importShape to insert a data object (typically a mesh)
 # into the scene
 def importShape_ProcessObject(
-        bpyscene, vrmlname, bpydata, geom, geom_spec, node,
+        bpycollection, vrmlname, bpydata, geom, geom_spec, node,
         bpymat, has_alpha, texmtx, ancestry,
         global_matrix):
 
@@ -3028,7 +3028,7 @@ def importShape_ProcessObject(
     # bpymesh.transform(getFinalMatrix(node))
     bpyob = node.blendObject = bpy.data.objects.new(vrmlname, bpydata)
     bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
-    bpyscene.objects.link(bpyob).select = True
+    bpycollection.objects.link(bpyob).select_set(True)
 
     if DEBUG:
         bpyob["source_line_no"] = geom.lineno
@@ -3071,7 +3071,7 @@ geometry_importers = {
     }
 
 
-def importShape(bpyscene, node, ancestry, global_matrix):
+def importShape(bpycollection, node, ancestry, global_matrix):
     # Under Shape, we can only have Appearance, MetadataXXX and a geometry node
     def isGeometry(spec):
         return spec != "Appearance" and not spec.startswith("Metadata")
@@ -3082,7 +3082,7 @@ def importShape(bpyscene, node, ancestry, global_matrix):
         bpyob = node.blendData = node.blendObject = bpyob.copy()
         # Could transform data, but better the object so we can instance the data
         bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
-        bpyscene.objects.link(bpyob).select = True
+        bpycollection.objects.link(bpyob).select_set(True)
         return
 
     vrmlname = node.getDefName()
@@ -3124,7 +3124,7 @@ def importShape(bpyscene, node, ancestry, global_matrix):
         # There are no geometry importers that can legally return
         # no object.  It's either a bpy object, or an exception
         importShape_ProcessObject(
-                bpyscene, vrmlname, bpydata, geom, geom_spec,
+                bpycollection, vrmlname, bpydata, geom, geom_spec,
                 node, bpymat, tex_has_alpha, texmtx,
                 ancestry, global_matrix)
     else:
@@ -3218,7 +3218,7 @@ def importLamp_SpotLight(node, ancestry):
     return bpylamp, mtx
 
 
-def importLamp(bpyscene, node, spec, ancestry, global_matrix):
+def importLamp(bpycollection, node, spec, ancestry, global_matrix):
     if spec == 'PointLight':
         bpylamp, mtx = importLamp_PointLight(node, ancestry)
     elif spec == 'DirectionalLight':
@@ -3230,7 +3230,7 @@ def importLamp(bpyscene, node, spec, ancestry, global_matrix):
         raise ValueError
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(bpylamp.name, bpylamp)
-    bpyscene.objects.link(bpyob).select = True
+    bpycollection.objects.link(bpyob).select_set(True)
 
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
@@ -3238,7 +3238,7 @@ def importLamp(bpyscene, node, spec, ancestry, global_matrix):
 # -----------------------------------------------------------------------------------
 
 
-def importViewpoint(bpyscene, node, ancestry, global_matrix):
+def importViewpoint(bpycollection, node, ancestry, global_matrix):
     name = node.getDefName()
     if not name:
         name = 'Viewpoint'
@@ -3256,17 +3256,17 @@ def importViewpoint(bpyscene, node, ancestry, global_matrix):
     mtx = Matrix.Translation(Vector(position)) * translateRotation(orientation)
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, bpycam)
-    bpyscene.objects.link(bpyob).select = True
+    bpycollection.objects.link(bpyob).select_set(True)
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
 
-def importTransform(bpyscene, node, ancestry, global_matrix):
+def importTransform(bpycollection, node, ancestry, global_matrix):
     name = node.getDefName()
     if not name:
         name = 'Transform'
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, None)
-    bpyscene.objects.link(bpyob).select = True
+    bpycollection.objects.link(bpyob).select_set(True)
 
     bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
 
@@ -3451,7 +3451,7 @@ ROUTE champFly001.bindTime TO vpTs.set_startTime
 
 
 def load_web3d(
-        bpyscene,
+        bpycontext,
         filepath,
         *,
         PREF_FLAT=False,
@@ -3463,6 +3463,8 @@ def load_web3d(
     # Used when adding blender primitives
     GLOBALS['CIRCLE_DETAIL'] = PREF_CIRCLE_DIV
 
+    bpyscene = bpycontext.scene
+    bpycollection = bpycontext.collection
     #root_node = vrml_parse('/_Cylinder.wrl')
     if filepath.lower().endswith('.x3d'):
         root_node, msg = x3d_parse(filepath)
@@ -3495,15 +3497,15 @@ def load_web3d(
             # by an external script. - gets first pick
             pass
         if spec == 'Shape':
-            importShape(bpyscene, node, ancestry, global_matrix)
+            importShape(bpycollection, node, ancestry, global_matrix)
         elif spec in {'PointLight', 'DirectionalLight', 'SpotLight'}:
-            importLamp(bpyscene, node, spec, ancestry, global_matrix)
+            importLamp(bpycollection, node, spec, ancestry, global_matrix)
         elif spec == 'Viewpoint':
-            importViewpoint(bpyscene, node, ancestry, global_matrix)
+            importViewpoint(bpycollection, node, ancestry, global_matrix)
         elif spec == 'Transform':
             # Only use transform nodes when we are not importing a flat object hierarchy
             if PREF_FLAT == False:
-                importTransform(bpyscene, node, ancestry, global_matrix)
+                importTransform(bpycollection, node, ancestry, global_matrix)
             '''
         # These are delt with later within importRoute
         elif spec=='PositionInterpolator':
@@ -3528,7 +3530,7 @@ def load_web3d(
                 node = defDict[key]
                 if node.blendData is None:  # Add an object if we need one for animation
                     node.blendData = node.blendObject = bpy.data.objects.new('AnimOb', None)  # , name)
-                    bpyscene.objects.link(node.blendObject).select = True
+                    bpycollection.objects.link(node.blendObject).select_set(True)
 
                 if node.blendData.animation_data is None:
                     node.blendData.animation_data_create()
@@ -3579,7 +3581,7 @@ def load_with_profiler(
     import cProfile
     import pstats
     pro = cProfile.Profile()
-    pro.runctx("load_web3d(context.scene, filepath, PREF_FLAT=True, "
+    pro.runctx("load_web3d(context, filepath, PREF_FLAT=True, "
                "PREF_CIRCLE_DIV=16, global_matrix=global_matrix)",
                globals(), locals())
     st = pstats.Stats(pro)
@@ -3595,7 +3597,7 @@ def load(context,
          ):
 
     # loadWithProfiler(operator, context, filepath, global_matrix)
-    load_web3d(context.scene, filepath,
+    load_web3d(context, filepath,
                PREF_FLAT=True,
                PREF_CIRCLE_DIV=16,
                global_matrix=global_matrix,

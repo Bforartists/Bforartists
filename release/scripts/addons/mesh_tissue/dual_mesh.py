@@ -33,7 +33,7 @@ bl_info = {
     "name": "Dual Mesh",
     "author": "Alessandro Zomparelli (Co-de-iT)",
     "version": (0, 3),
-    "blender": (2, 7, 8),
+    "blender": (2, 78, 0),
     "location": "",
     "description": "Convert a generic mesh to its dual",
     "warning": "",
@@ -55,7 +55,7 @@ class dual_mesh(Operator):
     bl_description = ("Convert a generic mesh into a polygonal mesh")
     bl_options = {'REGISTER', 'UNDO'}
 
-    quad_method = EnumProperty(
+    quad_method: EnumProperty(
             items=[('BEAUTY', 'Beauty',
                     'Split the quads in nice triangles, slower method'),
                     ('FIXED', 'Fixed',
@@ -70,7 +70,7 @@ class dual_mesh(Operator):
             default="FIXED",
             options={'LIBRARY_EDITABLE'}
             )
-    polygon_method = EnumProperty(
+    polygon_method: EnumProperty(
             items=[
                 ('BEAUTY', 'Beauty', 'Arrange the new triangles evenly'),
                 ('CLIP', 'Clip',
@@ -80,12 +80,12 @@ class dual_mesh(Operator):
             default="BEAUTY",
             options={'LIBRARY_EDITABLE'}
             )
-    preserve_borders = BoolProperty(
+    preserve_borders: BoolProperty(
             name="Preserve Borders",
             default=True,
             description="Preserve original borders"
             )
-    apply_modifiers = BoolProperty(
+    apply_modifiers: BoolProperty(
             name="Apply Modifiers",
             default=True,
             description="Apply object's modifiers"
@@ -138,8 +138,8 @@ class dual_mesh(Operator):
                 bpy.ops.object.convert(target='MESH')
             ob.data = ob.data.copy()
             bpy.ops.object.select_all(action='DESELECT')
-            ob.select = True
-            bpy.context.scene.objects.active = ob0
+            ob.select_set(True)
+            bpy.context.view_layer.objects.active = ob0
             bpy.ops.object.mode_set(mode='EDIT')
 
             # prevent borders erosion
@@ -274,9 +274,9 @@ class dual_mesh(Operator):
                 o.data = ob.data
 
         for o in sel:
-            o.select = True
+            o.select_set(True)
 
-        bpy.context.scene.objects.active = act
+        bpy.context.view_layer.objects.active = act
         bpy.ops.object.mode_set(mode=mode)
 
         return {'FINISHED'}

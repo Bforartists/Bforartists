@@ -37,7 +37,7 @@ def func_osc_screw(self, STRETCH,TURNS,DIAMETER,RESOLUTION):
     # DATA PARA EL MESH
     me = bpy.data.meshes.new("threadData")
     obj = bpy.data.objects.new("Thread", me)
-    bpy.context.scene.objects.link(obj)
+    bpy.context.collection.objects.link(obj)
 
     # VARIABLES
     vertexlist=[]
@@ -66,10 +66,10 @@ class oscMakeScrew (bpy.types.Operator):
     bl_description = "Create a Thread"
     bl_options = {'REGISTER', 'UNDO'}
 
-    resolution = bpy.props.IntProperty (name="Resolution",default=10,min=3,max=1000)
-    stretch = bpy.props.FloatProperty (name="Stretch",default=1,min=0.000001,max=1000)
-    turns = bpy.props.IntProperty (name="Turns Steps",default=19,min=0)
-    diameter = bpy.props.FloatProperty (name="Diameter",default=1,min=0,max=1000)
+    resolution: bpy.props.IntProperty (name="Resolution",default=10,min=3,max=1000)
+    stretch: bpy.props.FloatProperty (name="Stretch",default=1,min=0.000001,max=1000)
+    turns: bpy.props.IntProperty (name="Turns Steps",default=19,min=0)
+    diameter: bpy.props.FloatProperty (name="Diameter",default=1,min=0,max=1000)
 
 
 

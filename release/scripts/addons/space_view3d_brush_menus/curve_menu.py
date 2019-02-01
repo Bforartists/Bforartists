@@ -63,9 +63,9 @@ class CurvePopup(Operator):
                 layout.column().template_curve_mapping(has_brush,
                                                                "curve", brush=True)
             else:
-                layout.row().label("No brushes available", icon="INFO")
+                layout.row().label(text="No brushes available", icon="INFO")
         else:
-            layout.row().label("No brushes available", icon="INFO")
+            layout.row().label(text="No brushes available", icon="INFO")
 
     def execute(self, context):
         return context.window_manager.invoke_popup(self, width=180)

@@ -29,8 +29,8 @@ bl_info = {
     "name": "Archimesh",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Add > Mesh > Archimesh",
-    "version": (1, 1, 4),
-    "blender": (2, 6, 8),
+    "version": (1, 2, 0),
+    "blender": (2, 80, 0),
     "description": "Generate rooms, doors, windows, and other architecture objects",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Archimesh",
     "category": "Add Mesh"
@@ -53,7 +53,7 @@ if "bpy" in locals():
     importlib.reload(achm_kitchen_maker)
     importlib.reload(achm_shelves_maker)
     importlib.reload(achm_books_maker)
-    importlib.reload(achm_light_maker)
+    importlib.reload(achm_lamp_maker)
     importlib.reload(achm_curtain_maker)
     importlib.reload(achm_venetian_maker)
     importlib.reload(achm_main_panel)
@@ -66,7 +66,7 @@ else:
     from . import achm_venetian_maker
     from . import achm_door_maker
     from . import achm_kitchen_maker
-    from . import achm_light_maker
+    from . import achm_lamp_maker
     from . import achm_main_panel
     from . import achm_roof_maker
     from . import achm_room_maker
@@ -101,90 +101,44 @@ from bpy.types import (
 # ----------------------------------------------------------
 
 
-class AchmInfoMtMeshDecorationAdd(Menu):
+class ARCHIMESH_MT_MeshDecorationAdd(Menu):
     bl_idname = "VIEW3D_MT_mesh_decoration_add"
     bl_label = "Decoration assets"
 
     # noinspection PyUnusedLocal
     def draw(self, context):
-        self.layout.operator("mesh.archimesh_books", text="Add Books")
-        self.layout.operator("mesh.archimesh_light", text="Add Lamp")
-        self.layout.operator("mesh.archimesh_roller", text="Add Roller curtains")
-        self.layout.operator("mesh.archimesh_venetian", text="Add Venetian blind")
-        self.layout.operator("mesh.archimesh_japan", text="Add Japanese curtains")
+        self.layout.operator("mesh.archimesh_books", text="Books")
+        self.layout.operator("mesh.archimesh_light", text="Lamp")
+        self.layout.operator("mesh.archimesh_roller", text="Roller curtains")
+        self.layout.operator("mesh.archimesh_venetian", text="Venetian blind")
+        self.layout.operator("mesh.archimesh_japan", text="Japanese curtains")
 
 # ----------------------------------------------------------
 # Registration
 # ----------------------------------------------------------
 
 
-class AchmInfoMtMeshCustomMenuAdd(Menu):
+class ARCHIMESH_MT_CustomMenuAdd(Menu):
     bl_idname = "VIEW3D_MT_mesh_custom_menu_add"
     bl_label = "Archimesh"
 
     # noinspection PyUnusedLocal
     def draw(self, context):
         self.layout.operator_context = 'INVOKE_REGION_WIN'
-        self.layout.operator("mesh.archimesh_room", text="Add Room")
-        self.layout.operator("mesh.archimesh_door", text="Add Door")
-        self.layout.operator("mesh.archimesh_window", text="Add Rail Window")
-        self.layout.operator("mesh.archimesh_winpanel", text="Add Panel Window")
-        self.layout.operator("mesh.archimesh_kitchen", text="Add Cabinet")
-        self.layout.operator("mesh.archimesh_shelves", text="Add Shelves")
-        self.layout.operator("mesh.archimesh_column", text="Add Column")
-        self.layout.operator("mesh.archimesh_stairs", text="Add Stairs")
-        self.layout.operator("mesh.archimesh_roof", text="Add Roof")
+        self.layout.operator("mesh.archimesh_room", text="Room")
+        self.layout.operator("mesh.archimesh_door", text="Door")
+        self.layout.operator("mesh.archimesh_window", text="Rail Window")
+        self.layout.operator("mesh.archimesh_winpanel", text="Panel Window")
+        self.layout.operator("mesh.archimesh_kitchen", text="Cabinet")
+        self.layout.operator("mesh.archimesh_shelves", text="Shelves")
+        self.layout.operator("mesh.archimesh_column", text="Column")
+        self.layout.operator("mesh.archimesh_stairs", text="Stairs")
+        self.layout.operator("mesh.archimesh_roof", text="Roof")
         self.layout.menu("VIEW3D_MT_mesh_decoration_add", text="Decoration props", icon="GROUP")
 
 # --------------------------------------------------------------
 # Register all operators and panels
 # --------------------------------------------------------------
-
-
-# Add-ons Preferences Update Panel
-
-# Define Panel classes for updating
-panels = (
-        achm_main_panel.ArchimeshMainPanel,
-        )
-
-
-def update_panel(self, context):
-    message = "Archimesh: Updating Panel locations has failed"
-    try:
-        for panel in panels:
-            if "bl_rna" in panel.__dict__:
-                bpy.utils.unregister_class(panel)
-
-        for panel in panels:
-            panel.bl_category = context.preferences.addons[__name__].preferences.category
-            bpy.utils.register_class(panel)
-
-    except Exception as e:
-        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
-        pass
-
-
-class Archi_Pref(AddonPreferences):
-    # this must match the addon name, use '__package__'
-    # when defining this in a submodule of a python package.
-    bl_idname = __name__
-
-    category = StringProperty(
-            name="Tab Category",
-            description="Choose a name for the category of the panel",
-            default="Create",
-            update=update_panel
-            )
-
-    def draw(self, context):
-        layout = self.layout
-
-        row = layout.row()
-        col = row.column()
-        col.label(text="Tab Category:")
-        col.prop(self, "category", text="")
-
 
 # Define menu
 # noinspection PyUnusedLocal
@@ -192,38 +146,44 @@ def AchmMenu_func(self, context):
     self.layout.menu("VIEW3D_MT_mesh_custom_menu_add", icon="GROUP")
 
 
+classes = (
+    ARCHIMESH_MT_CustomMenuAdd,
+    ARCHIMESH_MT_MeshDecorationAdd,
+    achm_room_maker.ARCHIMESH_OT_Room,
+    achm_room_maker.ARCHIMESH_PT_RoomGenerator,
+    achm_room_maker.ARCHIMESH_OT_ExportRoom,
+    achm_room_maker.ARCHIMESH_OT_ImportRoom,
+    achm_door_maker.ARCHIMESH_OT_Door,
+    achm_door_maker.ARCHIMESH_PT_DoorObjectgenerator,
+    achm_window_maker.ARCHIMESH_OT_Windows,
+    achm_window_maker.ARCHIMESH_PT_WindowObjectgenerator,
+    achm_roof_maker.ARCHIMESH_OT_Roof,
+    achm_column_maker.ARCHIMESH_OT_Column,
+    achm_stairs_maker.ARCHIMESH_OT_Stairs,
+    achm_kitchen_maker.ARCHIMESH_OT_Kitchen,
+    achm_kitchen_maker.ARCHIMESH_OT_ExportInventory,
+    achm_shelves_maker.ARCHIMESH_OT_Shelves,
+    achm_books_maker.ARCHIMESH_OT_Books,
+    achm_lamp_maker.ARCHIMESH_PT_Lamp,
+    achm_curtain_maker.ARCHIMESH_OT_Roller,
+    achm_curtain_maker.ARCHIMESH_OT_Japan,
+    achm_venetian_maker.ARCHIMESH_OT_Venetian,
+    achm_venetian_maker.ARCHIMESH_PT_VenetianObjectgenerator,
+    achm_main_panel.ARCHIMESH_PT_Main,
+    achm_main_panel.ARCHIMESH_OT_Hole,
+    achm_main_panel.ARCHIMESH_OT_Pencil,
+    achm_main_panel.ARCHIMESH_OT_HintDisplay,
+    achm_window_panel.ARCHIMESH_PT_Win,
+    achm_window_panel.ARCHIMESH_PT_WindowEdit
+)
+
 def register():
-    bpy.utils.register_class(AchmInfoMtMeshCustomMenuAdd)
-    bpy.utils.register_class(AchmInfoMtMeshDecorationAdd)
-    bpy.utils.register_class(achm_room_maker.AchmRoom)
-    bpy.utils.register_class(achm_room_maker.AchmRoomGeneratorPanel)
-    bpy.utils.register_class(achm_room_maker.AchmExportRoom)
-    bpy.utils.register_class(achm_room_maker.AchmImportRoom)
-    bpy.utils.register_class(achm_door_maker.AchmDoor)
-    bpy.utils.register_class(achm_door_maker.AchmDoorObjectgeneratorpanel)
-    bpy.utils.register_class(achm_window_maker.AchmWindows)
-    bpy.utils.register_class(achm_window_maker.AchmWindowObjectgeneratorpanel)
-    bpy.utils.register_class(achm_roof_maker.AchmRoof)
-    bpy.utils.register_class(achm_column_maker.AchmColumn)
-    bpy.utils.register_class(achm_stairs_maker.AchmStairs)
-    bpy.utils.register_class(achm_kitchen_maker.AchmKitchen)
-    bpy.utils.register_class(achm_kitchen_maker.AchmExportInventory)
-    bpy.utils.register_class(achm_shelves_maker.AchmShelves)
-    bpy.utils.register_class(achm_books_maker.AchmBooks)
-    bpy.utils.register_class(achm_light_maker.AchmLamp)
-    bpy.utils.register_class(achm_curtain_maker.AchmRoller)
-    bpy.utils.register_class(achm_curtain_maker.AchmJapan)
-    bpy.utils.register_class(achm_venetian_maker.AchmVenetian)
-    bpy.utils.register_class(achm_venetian_maker.AchmVenetianObjectgeneratorpanel)
-    bpy.utils.register_class(achm_main_panel.ArchimeshMainPanel)
-    bpy.utils.register_class(achm_main_panel.AchmHoleAction)
-    bpy.utils.register_class(achm_main_panel.AchmPencilAction)
-    bpy.utils.register_class(achm_main_panel.AchmRunHintDisplayButton)
-    bpy.utils.register_class(achm_window_panel.AchmWinPanel)
-    bpy.utils.register_class(achm_window_panel.AchmWindowEditPanel)
-    bpy.utils.register_class(Archi_Pref)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
     VIEW3D_MT_mesh_add.append(AchmMenu_func)
-    update_panel(None, bpy.context)
+
     # Define properties
     Scene.archimesh_select_only = BoolProperty(
             name="Only selected",
@@ -304,35 +264,10 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(AchmInfoMtMeshCustomMenuAdd)
-    bpy.utils.unregister_class(AchmInfoMtMeshDecorationAdd)
-    bpy.utils.unregister_class(achm_room_maker.AchmRoom)
-    bpy.utils.unregister_class(achm_room_maker.AchmRoomGeneratorPanel)
-    bpy.utils.unregister_class(achm_room_maker.AchmExportRoom)
-    bpy.utils.unregister_class(achm_room_maker.AchmImportRoom)
-    bpy.utils.unregister_class(achm_door_maker.AchmDoor)
-    bpy.utils.unregister_class(achm_door_maker.AchmDoorObjectgeneratorpanel)
-    bpy.utils.unregister_class(achm_window_maker.AchmWindows)
-    bpy.utils.unregister_class(achm_window_maker.AchmWindowObjectgeneratorpanel)
-    bpy.utils.unregister_class(achm_roof_maker.AchmRoof)
-    bpy.utils.unregister_class(achm_column_maker.AchmColumn)
-    bpy.utils.unregister_class(achm_stairs_maker.AchmStairs)
-    bpy.utils.unregister_class(achm_kitchen_maker.AchmKitchen)
-    bpy.utils.unregister_class(achm_kitchen_maker.AchmExportInventory)
-    bpy.utils.unregister_class(achm_shelves_maker.AchmShelves)
-    bpy.utils.unregister_class(achm_books_maker.AchmBooks)
-    bpy.utils.unregister_class(achm_light_maker.AchmLamp)
-    bpy.utils.unregister_class(achm_curtain_maker.AchmRoller)
-    bpy.utils.unregister_class(achm_curtain_maker.AchmJapan)
-    bpy.utils.unregister_class(achm_venetian_maker.AchmVenetian)
-    bpy.utils.unregister_class(achm_venetian_maker.AchmVenetianObjectgeneratorpanel)
-    bpy.utils.unregister_class(achm_main_panel.ArchimeshMainPanel)
-    bpy.utils.unregister_class(achm_main_panel.AchmHoleAction)
-    bpy.utils.unregister_class(achm_main_panel.AchmPencilAction)
-    bpy.utils.unregister_class(achm_main_panel.AchmRunHintDisplayButton)
-    bpy.utils.unregister_class(achm_window_panel.AchmWinPanel)
-    bpy.utils.unregister_class(achm_window_panel.AchmWindowEditPanel)
-    bpy.utils.unregister_class(Archi_Pref)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+
     VIEW3D_MT_mesh_add.remove(AchmMenu_func)
 
     # Remove properties
@@ -349,7 +284,7 @@ def unregister():
     del Scene.archimesh_gl_name
     del Scene.archimesh_gl_ghost
     # remove OpenGL data
-    achm_main_panel.AchmRunHintDisplayButton.handle_remove(achm_main_panel.AchmRunHintDisplayButton, bpy.context)
+    achm_main_panel.ARCHIMESH_OT_HintDisplay.handle_remove(achm_main_panel.ARCHIMESH_OT_HintDisplay, bpy.context)
     wm = bpy.context.window_manager
     p = 'archimesh_run_opengl'
     if p in wm:

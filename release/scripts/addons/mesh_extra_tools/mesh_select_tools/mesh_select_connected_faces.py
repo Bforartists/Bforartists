@@ -107,14 +107,14 @@ class Select_init(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # Iterations
-    iterations = IntProperty(
+    iterations: IntProperty(
             name="Iterations",
             description="Run the selection the given number of times",
             default=1,
             min=0, max=300,
             soft_min=0, soft_max=100
             )
-    extend = BoolProperty(
+    extend: BoolProperty(
             name="Extend",
             description="Extend the current selection",
             default=False

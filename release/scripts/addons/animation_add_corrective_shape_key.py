@@ -200,12 +200,12 @@ class add_corrective_pose_shape(bpy.types.Operator):
         return {'FINISHED'}
 
 
-def func_object_duplicate_flatten_modifiers(scene, obj):
-    mesh = obj.to_mesh(scene, True, 'PREVIEW')
+def func_object_duplicate_flatten_modifiers(context, obj):
+    mesh = obj.to_mesh(context.scene, True, 'PREVIEW')
     name = obj.name + "_clean"
     new_object = bpy.data.objects.new(name, mesh)
     new_object.data = mesh
-    scene.objects.link(new_object)
+    context.collection.objects.link(new_object)
     return new_object
 
 
@@ -220,16 +220,15 @@ class object_duplicate_flatten_modifiers(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        scene = context.scene
         obj_act = context.active_object
 
-        new_object = func_object_duplicate_flatten_modifiers(scene, obj_act)
+        new_object = func_object_duplicate_flatten_modifiers(context, obj_act)
 
         # setup the context
         bpy.ops.object.select_all(action='DESELECT')
 
-        scene.objects.active = new_object
-        new_object.select = True
+        context.view_layer.objects.active = new_object
+        new_object.select_set(True)
 
         return {'FINISHED'}
 
