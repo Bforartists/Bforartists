@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -115,7 +115,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     animation_play : BoolProperty(name="Play", default=False, description = "Display the Play Toolbar\nAll Modes", )
     animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Toolbar\nAll Modes", )
     animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
-    animation_keyingset : BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Toolbar\nAll Modes", )
+    animation_keyingset : BoolProperty(name="Keyingset", default=True, description = "Display the Keyingset Toolbar\nAll Modes", )
     
     # edit
 
@@ -130,7 +130,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_undoredo : BoolProperty(name="Undo / Redo", default=True, description = "Display the Undo Redo toolbar\nAll Modes", )
     misc_undohistory : BoolProperty(name="Undo History", default=True, description = "Display the Undo History Toolbar\nAll Modes", )
     misc_repeat : BoolProperty(name="Repeat", default=True, description = "Display the Repeat Toolbar\nAll Modes", )
-    misc_scene : BoolProperty(name="Scene", default=True, description = "Display the Scene dropdown box", )
+    misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )
     misc_misc : BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
 
 
