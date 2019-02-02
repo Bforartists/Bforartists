@@ -23,7 +23,6 @@ from .properties_grease_pencil_common import (
     GPENCIL_UL_layer,
 )
 
-
 class TOPBAR_HT_upper_bar(Header):
     bl_space_type = 'TOPBAR'
 
@@ -571,26 +570,6 @@ class TOPBAR_MT_file(Menu):
         layout.operator("wm.save_as_mainfile", text="Save Copy", icon='SAVE_COPY').copy = True
 
         layout.separator()
-        layout.operator_context = 'INVOKE_AREA'
-
-        if any(bpy.utils.app_template_paths()):
-            app_template = context.preferences.app_template
-        else:
-            app_template = None
-
-        if app_template:
-            layout.label(text=bpy.path.display_name(app_template, has_ext=False))
-            layout.operator("wm.save_homefile")
-            layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon='LOAD_FACTORY').app_template = app_template
-        else:
-            layout.operator("wm.save_homefile", icon='SAVE_PREFS')
-            layout.operator("wm.read_factory_settings", icon='LOAD_FACTORY')
-
-        layout.separator()
-
-        layout.operator("wm.app_template_install", text="Install Application Template")
-
-        layout.separator()
 
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("wm.link", text="Link", icon='LINK_BLEND')
@@ -830,6 +809,27 @@ class TOPBAR_MT_edit(Menu):
         layout.separator()
 
         layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
+
+        layout.separator()
+
+        layout.operator_context = 'INVOKE_AREA'
+
+        if any(bpy.utils.app_template_paths()):
+            app_template = context.preferences.app_template
+        else:
+            app_template = None
+
+        if app_template:
+            layout.label(text=bpy.path.display_name(app_template, has_ext=False))
+            layout.operator("wm.save_homefile")
+            layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon='LOAD_FACTORY').app_template = app_template
+        else:
+            layout.operator("wm.save_homefile", icon='SAVE_PREFS')
+            layout.operator("wm.read_factory_settings", icon='LOAD_FACTORY')
+
+        layout.separator()
+
+        layout.operator("wm.app_template_install", text="Install Application Template")
 
 
 class TOPBAR_MT_window(Menu):
