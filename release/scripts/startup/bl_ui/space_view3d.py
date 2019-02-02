@@ -4744,6 +4744,7 @@ class VIEW3D_PT_view3d_properties(Panel):
     bl_region_type = 'UI'
     bl_category = "View"
     bl_label = "View"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -4820,6 +4821,7 @@ class VIEW3D_PT_view3d_cursor(Panel):
     bl_region_type = 'UI'
     bl_category = "View"
     bl_label = "3D Cursor"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
