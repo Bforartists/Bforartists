@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2002-2008 full recode
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/object/object_edit.c
@@ -78,6 +72,7 @@
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
+#include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_softbody.h"
 #include "BKE_editmesh.h"
@@ -537,6 +532,7 @@ bool ED_object_editmode_exit_ex(Main *bmain, Scene *scene, Object *obedit, int f
 		}
 		BLI_freelistN(&pidlist);
 
+		BKE_particlesystem_reset_all(obedit);
 		BKE_ptcache_object_reset(scene, obedit, PTCACHE_RESET_OUTDATED);
 
 		/* also flush ob recalc, doesn't take much overhead, but used for particles */
@@ -649,15 +645,11 @@ bool ED_object_editmode_enter(bContext *C, int flag)
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
-	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Object *ob;
 
-	if ((flag & EM_IGNORE_LAYER) == 0) {
-		ob = CTX_data_active_object(C); /* active layer checked here for view3d */
-	}
-	else {
-		ob = view_layer->basact->object;
-	}
+	/* Active layer checked here for view3d,
+	 * callers that don't want view context can call the extended version. */
+	ob = CTX_data_active_object(C);
 	if ((ob == NULL) || ID_IS_LINKED(ob)) {
 		return false;
 	}

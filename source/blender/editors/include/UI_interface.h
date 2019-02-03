@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file UI_interface.h
@@ -38,50 +30,50 @@
 
 /* Struct Declarations */
 
-struct ID;
-struct IDProperty;
-struct ListBase;
 struct ARegion;
 struct ARegionType;
-struct ScrArea;
-struct bScreen;
-struct wmEvent;
-struct wmWindow;
-struct wmOperator;
 struct AutoComplete;
-struct bContext;
-struct bContextStore;
+struct ID;
+struct IDProperty;
+struct ImBuf;
+struct Image;
+struct ImageUser;
+struct ListBase;
+struct MTex;
 struct Panel;
 struct PanelType;
 struct PointerRNA;
 struct PropertyRNA;
 struct ReportList;
-struct rcti;
-struct uiList;
-struct uiStyle;
-struct uiFontStyle;
-struct uiWidgetColors;
-struct Image;
-struct ImageUser;
-struct wmKeyConfig;
-struct wmOperatorType;
-struct MTex;
-struct ImBuf;
-struct bNodeTree;
+struct ScrArea;
+struct bContext;
+struct bContextStore;
 struct bNode;
 struct bNodeSocket;
-struct wmDropBox;
+struct bNodeTree;
+struct bScreen;
+struct rcti;
+struct uiFontStyle;
+struct uiList;
+struct uiStyle;
+struct uiWidgetColors;
 struct wmDrag;
+struct wmDropBox;
+struct wmEvent;
 struct wmEvent;
 struct wmGizmo;
-struct wmMsgBus;
+struct wmKeyConfig;
 struct wmKeyMap;
 struct wmKeyMapItem;
+struct wmMsgBus;
+struct wmOperator;
+struct wmOperatorType;
+struct wmWindow;
 
-typedef struct uiBut uiBut;
 typedef struct uiBlock uiBlock;
-typedef struct uiPopupBlockHandle uiPopupBlockHandle;
+typedef struct uiBut uiBut;
 typedef struct uiLayout uiLayout;
+typedef struct uiPopupBlockHandle uiPopupBlockHandle;
 
 /* Defines */
 
@@ -741,7 +733,7 @@ enum {
 	BUT_GET_RNA_TIP,
 	BUT_GET_RNAENUM_TIP,
 	BUT_GET_OP_KEYMAP,
-	BUT_GET_PROP_KEYMAP
+	BUT_GET_PROP_KEYMAP,
 };
 
 typedef struct uiStringInfo {

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Miika Hämäläinen
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/dynamicpaint.c
@@ -89,10 +83,14 @@
 
 #include "atomic_ops.h"
 
+#include "CLG_log.h"
+
 /* could enable at some point but for now there are far too many conversions */
 #ifdef __GNUC__
 //#  pragma GCC diagnostic ignored "-Wdouble-promotion"
 #endif
+
+static CLG_LogRef LOG = {"bke.dynamicpaint"};
 
 /* precalculated gaussian factors for 5x super sampling */
 static const float gaussianFactors[5] = {
@@ -240,6 +238,7 @@ static int setError(DynamicPaintCanvasSettings *canvas, const char *string)
 {
 	/* Add error to canvas ui info label */
 	BLI_strncpy(canvas->error, string, sizeof(canvas->error));
+	CLOG_STR_ERROR(&LOG, string);
 	return 0;
 }
 
@@ -2810,7 +2809,7 @@ int dynamicPaint_createUVSurface(Scene *scene, DynamicPaintSurface *surface, flo
 	/*
 	 * Start generating the surface
 	 */
-	printf("DynamicPaint: Preparing UV surface of %ix%i pixels and %i tris.\n", w, h, tottri);
+	CLOG_INFO(&LOG, 1, "Preparing UV surface of %ix%i pixels and %i tris.", w, h, tottri);
 
 	/* Init data struct */
 	if (surface->data)
@@ -4448,7 +4447,7 @@ static int dynamicPaint_paintParticles(DynamicPaintSurface *surface,
 		particlesAdded++;
 	}
 	if (invalidParticles)
-		printf("Warning: Invalid particle(s) found!\n");
+		CLOG_WARN(&LOG, "Invalid particle(s) found!");
 
 	/* If no suitable particles were found, exit */
 	if (particlesAdded < 1) {
@@ -5962,8 +5961,6 @@ static int dynamicPaint_doStep(
 					    psys_check_enabled(brushObj, brush->psys, for_render))
 					{
 						/* Paint a particle system */
-						BKE_animsys_evaluate_animdata(depsgraph, scene, &brush->psys->part->id, brush->psys->part->adt,
-						                              BKE_scene_frame_get(scene), ADT_RECALC_ANIM);
 						dynamicPaint_paintParticles(surface, brush->psys, brush, timescale);
 					}
 					/* Object center distance: */

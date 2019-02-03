@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2010), Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_animviz.c
@@ -47,7 +41,7 @@ const EnumPropertyItem rna_enum_motionpath_bake_location_items[] = {
 	{MOTIONPATH_BAKE_HEADS, "HEADS", 0, "Heads", "Calculate bone paths from heads"},
 	{0, "TAILS", 0, "Tails", "Calculate bone paths from tails"},
 	//{MOTIONPATH_BAKE_CENTERS, "CENTROID", 0, "Centers", "Calculate bone paths from center of mass"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -205,7 +199,7 @@ static void rna_def_animviz_ghosts(BlenderRNA *brna)
 		{GHOST_TYPE_ACFRA, "CURRENT_FRAME", 0, "Around Current Frame", "Show ghosts from around the current frame"},
 		{GHOST_TYPE_RANGE, "RANGE", 0, "In Range", "Show ghosts for the specified frame range"},
 		{GHOST_TYPE_KEYS, "KEYS", 0, "On Keyframes", "Show ghosts on keyframes"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 
@@ -279,7 +273,7 @@ static void rna_def_animviz_paths(BlenderRNA *brna)
 		{MOTIONPATH_TYPE_ACFRA, "CURRENT_FRAME", 0, "Around Frame",
 		 "Display Paths of poses within a fixed number of frames around the current frame"},
 		{MOTIONPATH_TYPE_RANGE, "RANGE", 0, "In Range", "Display Paths of poses within specified range"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "AnimVizMotionPaths", NULL);

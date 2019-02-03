@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_action/action_edit.c
@@ -675,7 +667,7 @@ static const EnumPropertyItem prop_actkeys_insertkey_types[] = {
 	{1, "ALL", 0, "All Channels", ""},
 	{2, "SEL", 0, "Only Selected Channels", ""},
 	{3, "GROUP", 0, "In Active Group", ""},  /* XXX not in all cases */
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for inserting new keyframes */
@@ -1139,7 +1131,7 @@ static const EnumPropertyItem prop_actkeys_expo_types[] = {
 
 	{MAKE_CYCLIC_EXPO, "MAKE_CYCLIC", 0, "Make Cyclic (F-Modifier)", "Add Cycles F-Modifier if one doesn't exist already"},
 	{CLEAR_CYCLIC_EXPO, "CLEAR_CYCLIC", 0, "Clear Cyclic (F-Modifier)", "Remove Cycles F-Modifier if not needed anymore"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for setting extrapolation mode for keyframes */
@@ -1582,7 +1574,7 @@ static const EnumPropertyItem prop_actkeys_snap_types[] = {
 	 "Snap selected keyframes to the nearest second"},
 	{ACTKEYS_SNAP_NEAREST_MARKER, "NEAREST_MARKER", 0, "Nearest Marker",
 	 "Snap selected keyframes to the nearest marker"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for snapping keyframes to frame-times */
@@ -1691,7 +1683,7 @@ static const EnumPropertyItem prop_actkeys_mirror_types[] = {
 	 "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
 	{ACTKEYS_MIRROR_MARKER, "MARKER", 0, "By Times over First Selected Marker",
 	 "Flip times of selected keyframes using the first selected marker as the reference point"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for mirroring keyframes */

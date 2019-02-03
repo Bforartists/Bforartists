@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_GPENCIL_H__
@@ -28,30 +22,29 @@
 
  /** \file BKE_gpencil.h
   *  \ingroup bke
-  *  \author Joshua Leung
   */
 
+struct ArrayGpencilModifierData;
+struct BoundBox;
+struct Brush;
 struct CurveMapping;
 struct Depsgraph;
 struct GpencilModifierData;
-struct ToolSettings;
+struct LatticeGpencilModifierData;
 struct ListBase;
-struct bGPdata;
-struct bGPDlayer;
-struct bGPDframe;
-struct bGPDspoint;
-struct bGPDstroke;
+struct Main;
 struct Material;
+struct Object;
+struct SimplifyGpencilModifierData;
+struct ToolSettings;
+struct bDeformGroup;
+struct bGPDframe;
+struct bGPDlayer;
 struct bGPDpalette;
 struct bGPDpalettecolor;
-struct Main;
-struct BoundBox;
-struct Brush;
-struct Object;
-struct bDeformGroup;
-struct SimplifyGpencilModifierData;
-struct ArrayGpencilModifierData;
-struct LatticeGpencilModifierData;
+struct bGPDspoint;
+struct bGPDstroke;
+struct bGPdata;
 
 struct MDeformVert;
 struct MDeformWeight;

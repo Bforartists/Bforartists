@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2002-2009, Xavier Thomas
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_image/image_ops.c
@@ -525,7 +519,7 @@ static int image_view_zoom_exec(bContext *C, wmOperator *op)
 enum {
 	VIEW_PASS = 0,
 	VIEW_APPLY,
-	VIEW_CONFIRM
+	VIEW_CONFIRM,
 };
 
 static int image_view_zoom_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -2816,7 +2810,7 @@ static int image_unpack_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	if (G.fileflags & G_AUTOPACK)
+	if (G.fileflags & G_FILE_AUTOPACK)
 		BKE_report(op->reports, RPT_WARNING, "AutoPack is enabled, so image will be packed again on file save");
 
 	/* XXX unpackImage frees image buffers */
@@ -2844,7 +2838,7 @@ static int image_unpack_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSE
 		return OPERATOR_CANCELLED;
 	}
 
-	if (G.fileflags & G_AUTOPACK)
+	if (G.fileflags & G_FILE_AUTOPACK)
 		BKE_report(op->reports, RPT_WARNING, "AutoPack is enabled, so image will be packed again on file save");
 
 	unpack_menu(C, "IMAGE_OT_unpack", ima->id.name + 2, ima->name, "textures", BKE_image_has_packedfile(ima) ? ((ImagePackedFile *)ima->packedfiles.first)->packedfile : NULL);
@@ -3257,7 +3251,7 @@ void IMAGE_OT_curves_point_set(wmOperatorType *ot)
 	static const EnumPropertyItem point_items[] = {
 		{0, "BLACK_POINT", 0, "Black Point", ""},
 		{1, "WHITE_POINT", 0, "White Point", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -3761,6 +3755,7 @@ static int render_border_exec(bContext *C, wmOperator *op)
 		scene->r.mode |= R_BORDER;
 	}
 
+	DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
 	return OPERATOR_FINISHED;

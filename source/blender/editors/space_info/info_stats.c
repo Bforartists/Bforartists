@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_info/info_stats.c
@@ -38,6 +32,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_scene_types.h"
+#include "DNA_windowmanager_types.h"
 
 #include "BLI_listbase.h"
 #include "BLI_math.h"
@@ -52,6 +47,7 @@
 #include "BKE_displist.h"
 #include "BKE_key.h"
 #include "BKE_layer.h"
+#include "BKE_main.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
 #include "BKE_editmesh.h"
@@ -385,12 +381,6 @@ static void stats_dupli_object(Object *ob, SceneStats *stats)
 		stats->totobj += tot;
 		stats_object(ob, is_selected, tot, stats);
 	}
-	else if (ob->transflag & OB_DUPLIFRAMES) {
-		/* Dupli Frames */
-		int tot = count_duplilist(ob);
-		stats->totobj += tot;
-		stats_object(ob, is_selected, tot, stats);
-	}
 	else if ((ob->transflag & OB_DUPLICOLLECTION) && ob->dup_group) {
 		/* Dupli Group */
 		int tot = count_duplilist(ob);
@@ -597,8 +587,15 @@ void ED_info_stats_clear(ViewLayer *view_layer)
 	}
 }
 
-const char *ED_info_stats_string(Scene *scene, ViewLayer *view_layer)
+const char *ED_info_stats_string(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
+	/* Loopin through dependency graph when interface is locked in not safe.
+	 * Thew interface is marked as locked when jobs wants to modify the
+	 * dependency graph. */
+	wmWindowManager *wm = bmain->wm.first;
+	if (wm->is_interface_locked) {
+		return "";
+	}
 	Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer, true);
 	if (!view_layer->stats) {
 		stats_update(depsgraph, view_layer);

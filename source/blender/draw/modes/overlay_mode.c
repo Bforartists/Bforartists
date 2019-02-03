@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file overlay_mode.c
@@ -119,7 +113,8 @@ static void overlay_engine_init(void *vedata)
 		sh_data->face_orientation = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_orientation_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_overlay_face_orientation_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		});
 	}
 
 	if (!sh_data->face_wireframe) {
@@ -127,18 +122,19 @@ static void overlay_engine_init(void *vedata)
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_wireframe_vert_glsl, NULL},
 		        .geom = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_wireframe_geom_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_depth_only_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define SELECT_EDGES\n", NULL}});
-
+		        .defs = (const char *[]){world_clip_def_or_empty, "#define SELECT_EDGES\n", NULL},
+		});
 		sh_data->face_wireframe = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_wireframe_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_overlay_face_wireframe_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
-
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		});
 		sh_data->face_wireframe_sculpt = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_wireframe_vert_glsl, NULL},
 		        .geom = (const char *[]){world_clip_lib_or_empty, datatoc_overlay_face_wireframe_geom_glsl, NULL},
 		        .frag = (const char *[]){datatoc_overlay_face_wireframe_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define USE_SCULPT\n", NULL}});
+		        .defs = (const char *[]){world_clip_def_or_empty, "#define USE_SCULPT\n", NULL},
+		});
 	}
 }
 

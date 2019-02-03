@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Brecht Van Lommel.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_shader.c
@@ -674,8 +666,8 @@ void GPU_shader_uniform_texture(GPUShader *UNUSED(shader), int location, GPUText
 int GPU_shader_get_attribute(GPUShader *shader, const char *name)
 {
 	BLI_assert(shader && shader->program);
-	const GPUShaderInput *attrib = GPU_shaderinterface_attr(shader->interface, name);
-	return attrib ? attrib->location : -1;
+	const GPUShaderInput *attr = GPU_shaderinterface_attr(shader->interface, name);
+	return attr ? attr->location : -1;
 }
 
 static const GPUShaderStages builtin_shader_stages[GPU_NUM_BUILTIN_SHADERS] = {
@@ -893,7 +885,7 @@ static const GPUShaderStages builtin_shader_stages[GPU_NUM_BUILTIN_SHADERS] = {
 	},
 
 	[GPU_SHADER_3D_GROUNDPOINT] = {
-		.vert= datatoc_gpu_shader_3D_groundpoint_vert_glsl,
+		.vert = datatoc_gpu_shader_3D_groundpoint_vert_glsl,
 		.frag = datatoc_gpu_shader_point_uniform_color_frag_glsl,
 	},
 	[GPU_SHADER_3D_GROUNDLINE] = {

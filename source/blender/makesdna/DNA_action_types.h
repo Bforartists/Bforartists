@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Original design: Reevan McKay
- * Contributor(s): Full recode, Ton Roosendaal, Crete 2005
- * Contributor(s): Animation recode, Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_action_types.h
@@ -41,10 +33,10 @@
 #include "DNA_view2d_types.h"
 #include "DNA_userdef_types.h" /* ThemeWireColor */
 
-struct SpaceLink;
-struct Object;
 struct Collection;
 struct GHash;
+struct Object;
+struct SpaceLink;
 
 /* ************************************************ */
 /* Visualization */
@@ -221,8 +213,8 @@ typedef struct bPoseChannelDrawData {
 	float bbone_matrix[0][4][4];
 } bPoseChannelDrawData;
 
-struct Mat4;
 struct DualQuat;
+struct Mat4;
 
 typedef struct bPoseChannelRuntime {
 	int bbone_segments;

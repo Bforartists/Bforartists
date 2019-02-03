@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2012 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/bmesh/bmesh_py_utils.c
@@ -818,7 +812,7 @@ static struct PyMethodDef BPy_BM_utils_methods[] = {
 	{"face_vert_separate",  (PyCFunction)bpy_bm_utils_face_vert_separate,  METH_VARARGS, bpy_bm_utils_face_vert_separate_doc},
 	{"face_flip",           (PyCFunction)bpy_bm_utils_face_flip,           METH_O,       bpy_bm_utils_face_flip_doc},
 	{"loop_separate",       (PyCFunction)bpy_bm_utils_loop_separate,       METH_O,       bpy_bm_utils_loop_separate_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 

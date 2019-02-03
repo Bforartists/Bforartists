@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file source/blender/freestyle/intern/python/BPy_StrokeAttribute.cpp
@@ -371,7 +367,7 @@ static PyMethodDef BPy_StrokeAttribute_methods[] = {
 	                       StrokeAttribute_set_attribute_vec2_doc},
 	{"set_attribute_vec3", (PyCFunction) StrokeAttribute_set_attribute_vec3, METH_VARARGS | METH_KEYWORDS,
 	                       StrokeAttribute_set_attribute_vec3_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 /*----------------------mathutils callbacks ----------------------------*/
@@ -479,7 +475,7 @@ static Mathutils_Callback StrokeAttribute_mathutils_cb = {
 	StrokeAttribute_mathutils_get,
 	StrokeAttribute_mathutils_set,
 	StrokeAttribute_mathutils_get_index,
-	StrokeAttribute_mathutils_set_index
+	StrokeAttribute_mathutils_set_index,
 };
 
 static unsigned char StrokeAttribute_mathutils_cb_index = -1;

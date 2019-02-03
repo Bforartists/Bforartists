@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_screen_types.h
@@ -37,12 +31,12 @@
 
 #include "DNA_ID.h"
 
-struct SpaceType;
-struct SpaceLink;
 struct ARegion;
 struct ARegionType;
 struct PanelType;
 struct Scene;
+struct SpaceLink;
+struct SpaceType;
 struct uiLayout;
 struct wmDrawBuffer;
 struct wmTimer;

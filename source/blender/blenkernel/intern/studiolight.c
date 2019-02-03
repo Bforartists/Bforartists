@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,13 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006-2007 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/blenkernel/intern/studiolight.c
@@ -331,7 +322,7 @@ static void cube_face_uv_to_direction(float r_dir[3], float x, float y, int face
 		{{ 1.0f, 0.0f,  0.0f}, {0.0f,  0.0f, -1.0f}, { 0.0f,  1.0f,  0.0f}},
 		{{ 1.0f, 0.0f,  0.0f}, {0.0f,  0.0f,  1.0f}, { 0.0f, -1.0f,  0.0f}},
 		{{ 1.0f, 0.0f,  0.0f}, {0.0f, -1.0f,  0.0f}, { 0.0f,  0.0f, -1.0f}},
-		{{-1.0f, 0.0f,  0.0f}, {0.0f, -1.0f,  0.0f}, { 0.0f,  0.0f,  1.0f}}
+		{{-1.0f, 0.0f,  0.0f}, {0.0f, -1.0f,  0.0f}, { 0.0f,  0.0f,  1.0f}},
 	};
 
 	copy_v3_fl3(r_dir, x * 2.0f - 1.0f, y * 2.0f - 1.0f, 1.0f);
@@ -731,7 +722,7 @@ static void studiolight_spherical_harmonics_apply_band_factors(StudioLight *sl, 
 		2.0f / 3.0f,
 		1.0f / 4.0f,
 		0.0f,
-		-1.0f / 24.0f
+		-1.0f / 24.0f,
 	};
 
 	int index = 0, dst_idx = 0;

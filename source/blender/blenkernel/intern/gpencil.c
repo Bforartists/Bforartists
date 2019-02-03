@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Joshua Leung, Antonio Vazquez
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/gpencil.c
@@ -33,6 +27,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -63,6 +59,8 @@
 #include "BKE_material.h"
 
 #include "DEG_depsgraph.h"
+
+static CLG_LogRef LOG = {"bke.gpencil"};
 
 /* ************************************************** */
 /* Draw Engine */
@@ -262,7 +260,7 @@ bGPDframe *BKE_gpencil_frame_addnew(bGPDlayer *gpl, int cframe)
 
 	/* check whether frame was added successfully */
 	if (state == -1) {
-		printf("Error: Frame (%d) existed already for this layer. Using existing frame\n", cframe);
+		CLOG_ERROR(&LOG, "Frame (%d) existed already for this layer. Using existing frame", cframe);
 
 		/* free the newly created one, and use the old one instead */
 		MEM_freeN(gpf);
@@ -887,7 +885,7 @@ bGPDframe *BKE_gpencil_layer_getframe(bGPDlayer *gpl, int cframe, eGP_GetFrame_M
 			gpl->actframe = gpf;
 		else {
 			/* unresolved errogenous situation! */
-			printf("Error: cannot find appropriate gp-frame\n");
+			CLOG_STR_ERROR(&LOG, "cannot find appropriate gp-frame");
 			/* gpl->actframe should still be NULL */
 		}
 	}

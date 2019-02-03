@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file draw_cache_impl.h
@@ -30,15 +24,15 @@
 #define __DRAW_CACHE_IMPL_H__
 
 struct CurveCache;
-struct GPUMaterial;
-struct GPUTexture;
 struct GPUBatch;
 struct GPUIndexBuf;
+struct GPUMaterial;
+struct GPUTexture;
 struct GPUVertBuf;
 struct ListBase;
 struct ModifierData;
-struct ParticleSystem;
 struct PTCacheEdit;
+struct ParticleSystem;
 struct SpaceImage;
 struct ToolSettings;
 

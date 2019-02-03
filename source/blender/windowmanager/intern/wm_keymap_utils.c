@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/intern/wm_keymap_utils.c
@@ -170,7 +166,9 @@ wmKeyMap *WM_keymap_guess_opname(const bContext *C, const char *opname)
 	SpaceLink *sl = CTX_wm_space_data(C);
 
 	/* Window */
-	if (STRPREFIX(opname, "WM_OT")) {
+	if (STRPREFIX(opname, "WM_OT") ||
+	    STRPREFIX(opname, "ED_OT_undo"))
+	{
 		if (STREQ(opname, "WM_OT_tool_set_by_name")) {
 			km = WM_keymap_guess_from_context(C);
 		}

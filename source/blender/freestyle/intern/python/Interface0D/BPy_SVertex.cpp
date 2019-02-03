@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file source/blender/freestyle/intern/python/Interface0D/BPy_SVertex.cpp
@@ -138,7 +134,7 @@ static PyObject *SVertex_add_fedge(BPy_SVertex *self, PyObject *args, PyObject *
 static PyMethodDef BPy_SVertex_methods[] = {
 	{"add_normal", (PyCFunction)SVertex_add_normal, METH_VARARGS | METH_KEYWORDS, SVertex_add_normal_doc},
 	{"add_fedge", (PyCFunction)SVertex_add_fedge, METH_VARARGS | METH_KEYWORDS, SVertex_add_fedge_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 /*----------------------mathutils callbacks ----------------------------*/
@@ -253,7 +249,7 @@ static Mathutils_Callback SVertex_mathutils_cb = {
 	SVertex_mathutils_get,
 	SVertex_mathutils_set,
 	SVertex_mathutils_get_index,
-	SVertex_mathutils_set_index
+	SVertex_mathutils_set_index,
 };
 
 static unsigned char SVertex_mathutils_cb_index = -1;

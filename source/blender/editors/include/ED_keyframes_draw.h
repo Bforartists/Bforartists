@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung (full recode)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_keyframes_draw.h
@@ -32,21 +24,21 @@
 #ifndef __ED_KEYFRAMES_DRAW_H__
 #define __ED_KEYFRAMES_DRAW_H__
 
-struct bAnimContext;
 struct AnimData;
 struct CacheFile;
+struct DLRBT_Tree;
 struct FCurve;
-struct bDopeSheet;
-struct bAction;
-struct bActionGroup;
-struct Object;
 struct ListBase;
-struct bGPDlayer;
-struct Palette;
 struct MaskLayer;
+struct Object;
+struct Palette;
 struct Scene;
 struct View2D;
-struct DLRBT_Tree;
+struct bAction;
+struct bActionGroup;
+struct bAnimContext;
+struct bDopeSheet;
+struct bGPDlayer;
 
 /* ****************************** Base Structs ****************************** */
 

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/transform/transform_ops.c
@@ -125,7 +119,7 @@ static TransformModeItem transform_modes[] =
 	{OP_EDGE_BWEIGHT, TFM_BWEIGHT, TRANSFORM_OT_edge_bevelweight},
 	{OP_SEQ_SLIDE, TFM_SEQ_SLIDE, TRANSFORM_OT_seq_slide},
 	{OP_NORMAL_ROTATION, TFM_NORMAL_ROTATION, TRANSFORM_OT_rotate_normal},
-	{NULL, 0}
+	{NULL, 0},
 };
 
 const EnumPropertyItem rna_enum_transform_mode_types[] =
@@ -161,7 +155,7 @@ const EnumPropertyItem rna_enum_transform_mode_types[] =
 	{TFM_ALIGN, "ALIGN", 0, "Align", ""},
 	{TFM_EDGE_SLIDE, "EDGESLIDE", 0, "Edge Slide", ""},
 	{TFM_SEQ_SLIDE, "SEQSLIDE", 0, "Sequence Slide", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int select_orientation_exec(bContext *C, wmOperator *op)

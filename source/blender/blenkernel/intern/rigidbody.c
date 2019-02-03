@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2013 Blender Foundation
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung, Sergej Reich
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file rigidbody.c
@@ -36,6 +28,8 @@
 #include <float.h>
 #include <math.h>
 #include <limits.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -72,6 +66,10 @@
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
+
+#ifdef WITH_BULLET
+static CLG_LogRef LOG = {"bke.rigidbody"};
+#endif
 
 /* ************************************** */
 /* Memory Management */
@@ -291,14 +289,14 @@ static rbCollisionShape *rigidbody_get_shape_convexhull_from_mesh(Object *ob, fl
 		totvert = (mesh) ? mesh->totvert : 0;
 	}
 	else {
-		printf("ERROR: cannot make Convex Hull collision shape for non-Mesh object\n");
+		CLOG_ERROR(&LOG, "cannot make Convex Hull collision shape for non-Mesh object");
 	}
 
 	if (totvert) {
 		shape = RB_shape_new_convex_hull((float *)mvert, sizeof(MVert), totvert, margin, can_embed);
 	}
 	else {
-		printf("ERROR: no vertices to define Convex Hull collision shape with\n");
+		CLOG_ERROR(&LOG, "no vertices to define Convex Hull collision shape with");
 	}
 
 	return shape;
@@ -333,7 +331,7 @@ static rbCollisionShape *rigidbody_get_shape_trimesh_from_mesh(Object *ob)
 
 		/* sanity checking - potential case when no data will be present */
 		if ((totvert == 0) || (tottri == 0)) {
-			printf("WARNING: no geometry data converted for Mesh Collision Shape (ob = %s)\n", ob->id.name + 2);
+			CLOG_WARN(&LOG, "no geometry data converted for Mesh Collision Shape (ob = %s)", ob->id.name + 2);
 		}
 		else {
 			rbMeshData *mdata;
@@ -381,7 +379,7 @@ static rbCollisionShape *rigidbody_get_shape_trimesh_from_mesh(Object *ob)
 		}
 	}
 	else {
-		printf("ERROR: cannot make Triangular Mesh collision shape for non-Mesh object\n");
+		CLOG_ERROR(&LOG, "cannot make Triangular Mesh collision shape for non-Mesh object");
 	}
 
 	return shape;
@@ -1412,6 +1410,8 @@ static void rigidbody_update_sim_ob(Depsgraph *depsgraph, Scene *scene, RigidBod
  */
 static void rigidbody_update_simulation(Depsgraph *depsgraph, Scene *scene, RigidBodyWorld *rbw, bool rebuild)
 {
+	float ctime = DEG_get_ctime(depsgraph);
+
 	/* update world */
 	if (rebuild)
 		BKE_rigidbody_validate_sim_world(scene, rbw, true);
@@ -1443,7 +1443,7 @@ static void rigidbody_update_simulation(Depsgraph *depsgraph, Scene *scene, Rigi
 			/* validate that we've got valid object set up here... */
 			RigidBodyOb *rbo = ob->rigidbody_object;
 			/* update transformation matrix of the object so we don't get a frame of lag for simple animations */
-			BKE_object_where_is_calc(depsgraph, scene, ob);
+			BKE_object_where_is_calc_time(depsgraph, scene, ob, ctime);
 
 			/* TODO remove this whole block once we are sure we never get NULL rbo here anymore. */
 			/* This cannot be done in CoW evaluation context anymore... */
@@ -1497,7 +1497,7 @@ static void rigidbody_update_simulation(Depsgraph *depsgraph, Scene *scene, Rigi
 		/* validate that we've got valid object set up here... */
 		RigidBodyCon *rbc = ob->rigidbody_constraint;
 		/* update transformation matrix of the object so we don't get a frame of lag for simple animations */
-		BKE_object_where_is_calc(depsgraph, scene, ob);
+		BKE_object_where_is_calc_time(depsgraph, scene, ob, ctime);
 
 		/* TODO remove this whole block once we are sure we never get NULL rbo here anymore. */
 		/* This cannot be done in CoW evaluation context anymore... */

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2012 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/bmesh/bmesh_py_api.c
@@ -167,7 +161,7 @@ static struct PyMethodDef BPy_BM_methods[] = {
 	{"new",            (PyCFunction)bpy_bm_new,            METH_VARARGS | METH_KEYWORDS,  bpy_bm_new_doc},
 	{"from_edit_mesh", (PyCFunction)bpy_bm_from_edit_mesh, METH_O,       bpy_bm_from_edit_mesh_doc},
 	{"update_edit_mesh", (PyCFunction)bpy_bm_update_edit_mesh, METH_VARARGS | METH_KEYWORDS, bpy_bm_update_edit_mesh_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 PyDoc_STRVAR(BPy_BM_doc,

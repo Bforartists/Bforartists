@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_outliner/outliner_intern.h
@@ -37,20 +30,20 @@
 /* internal exports only */
 
 struct ARegion;
+struct EditBone;
+struct ID;
 struct ListBase;
-struct wmOperatorType;
+struct Main;
+struct Object;
+struct Scene;
 struct TreeElement;
 struct TreeStoreElem;
-struct Main;
-struct bContext;
-struct Scene;
 struct ViewLayer;
-struct ID;
-struct Object;
+struct bContext;
 struct bPoseChannel;
-struct EditBone;
 struct wmEvent;
 struct wmKeyConfig;
+struct wmOperatorType;
 
 typedef enum TreeElementInsertType {
 	TE_INSERT_BEFORE,

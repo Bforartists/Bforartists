@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2017, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file external_engine.c
@@ -226,7 +220,7 @@ RenderEngineType DRW_engine_viewport_external_type = {
 	EXTERNAL_ENGINE, N_("External"), RE_INTERNAL,
 	NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 	&draw_engine_external_type,
-	{NULL, NULL, NULL}
+	{NULL, NULL, NULL},
 };
 
 #undef EXTERNAL_ENGINE

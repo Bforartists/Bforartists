@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/sculpt_paint/paint_utils.c
@@ -220,7 +212,7 @@ void paint_stroke_operator_properties(wmOperatorType *ot)
 		{BRUSH_STROKE_NORMAL, "NORMAL", 0, "Normal", "Apply brush normally"},
 		{BRUSH_STROKE_INVERT, "INVERT", 0, "Invert", "Invert action of brush for duration of stroke"},
 		{BRUSH_STROKE_SMOOTH, "SMOOTH", 0, "Smooth", "Switch brush to smooth mode for duration of stroke"},
-		{0}
+		{0},
 	};
 
 	PropertyRNA *prop;
@@ -594,7 +586,8 @@ void BRUSH_OT_curve_preset(wmOperatorType *ot)
 		{CURVE_PRESET_LINE, "LINE", 0, "Line", ""},
 		{CURVE_PRESET_ROUND, "ROUND", 0, "Round", ""},
 		{CURVE_PRESET_ROOT, "ROOT", 0, "Root", ""},
-		{0, NULL, 0, NULL, NULL}};
+		{0, NULL, 0, NULL, NULL},
+	};
 
 	ot->name = "Preset";
 	ot->description = "Preset\nSet brush shape";

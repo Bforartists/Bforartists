@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 by Mike Erwin.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_primitive.c
@@ -47,7 +41,7 @@ GPUPrimClass GPU_primtype_class(GPUPrimType prim_type)
 		[GPU_PRIM_LINE_STRIP_ADJ] = GPU_PRIM_CLASS_LINE,
 		[GPU_PRIM_TRIS_ADJ] = GPU_PRIM_CLASS_SURFACE,
 
-		[GPU_PRIM_NONE] = GPU_PRIM_CLASS_NONE
+		[GPU_PRIM_NONE] = GPU_PRIM_CLASS_NONE,
 	};
 
 	return classes[prim_type];

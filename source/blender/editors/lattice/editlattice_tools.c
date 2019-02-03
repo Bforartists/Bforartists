@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/lattice/editlattice_tools.c
@@ -352,7 +346,8 @@ void LATTICE_OT_flip(wmOperatorType *ot)
 		{LATTICE_FLIP_U, "U", 0, "U (X) Axis", ""},
 		{LATTICE_FLIP_V, "V", 0, "V (Y) Axis", ""},
 		{LATTICE_FLIP_W, "W", 0, "W (Z) Axis", ""},
-		{0, NULL, 0, NULL, NULL}};
+		{0, NULL, 0, NULL, NULL},
+	};
 
 	/* identifiers */
 	ot->name = "Flip (Distortion Free)";
