@@ -1,0 +1,55 @@
+{
+	"NodeSetup":[
+
+	{
+		"label": "Correct strength vector math",
+		"type": "ShaderNodeVectorMath",
+		"location": [0, 0],
+		"operation": "\"SUBTRACT\"",
+		"in": [
+		["Add noise", "\"Vector\""],
+		["Transform to RGB", "\"Color\""]
+		]
+	},
+	{
+		"label": "Add noise",
+		"type": "ShaderNodeVectorMath",
+		"location": [-200, 0],
+		"in": [
+		["Correct strength", "\"Color\"", 1]
+		]
+	},
+	{
+		"label": "Correct strength",
+		"type": "ShaderNodeMixRGB",
+		"location": [-400, 0],
+		"inputs[1].default_value": "(0, 0, 0, 1)",
+		"in": [
+		["Blur strength", 0],
+		["Noise source", "\"Color\"", "\"Color2\""]
+		]
+	},
+	{
+		"label": "Transform to RGB",
+		"type": "ShaderNodeMixRGB",
+		"location": [-400, -200],
+		"inputs[1].default_value": "(1, 1, 1, 1)",
+		"inputs[2].default_value": "(0, 0, 0, 1)",
+		"in": [
+		["Blur strength", 0]
+		]
+	},
+	{
+		"label": "Blur strength",
+		"type": "ShaderNodeValue",
+		"location": [-800, -50]
+	},
+	{
+		"label": "Noise source",
+		"type": "ShaderNodeTexNoise",
+		"location": [-600, -150],
+		"inputs[1].default_value": "1000.0"
+	}
+
+	]
+}
