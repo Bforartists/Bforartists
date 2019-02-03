@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2011 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation,
- *                 Sergey Sharybin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_clip/tracking_select.c
@@ -990,7 +982,7 @@ void CLIP_OT_select_grouped(wmOperatorType *ot)
 		{4, "DISABLED", 0, "Disabled tracks", "Select all disabled tracks"},
 		{5, "COLOR", 0, "Tracks with same color", "Select all tracks with same color as active track"},
 		{6, "FAILED", 0, "Failed Tracks", "Select all tracks which failed to be reconstructed"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

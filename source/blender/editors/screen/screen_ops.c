@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,9 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/screen/screen_ops.c
@@ -2191,7 +2186,7 @@ static int area_split_modal(bContext *C, wmOperator *op, const wmEvent *event)
 static const EnumPropertyItem prop_direction_items[] = {
 	{'h', "HORIZONTAL", 0, "Horizontal", ""},
 	{'v', "VERTICAL", 0, "Vertical", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void SCREEN_OT_area_split(wmOperatorType *ot)
@@ -5018,6 +5013,12 @@ static void SCREEN_OT_region_blend(wmOperatorType *ot)
 /** \name Space Type Set or Cycle Operator
  * \{ */
 
+static bool space_type_set_or_cycle_poll(bContext *C)
+{
+	ScrArea *sa = CTX_wm_area(C);
+	return (sa && !ELEM(sa->spacetype, SPACE_TOPBAR, SPACE_STATUSBAR));
+}
+
 static int space_type_set_or_cycle_exec(bContext *C, wmOperator *op)
 {
 	const int space_type = RNA_enum_get(op->ptr, "space_type");
@@ -5066,7 +5067,7 @@ static void SCREEN_OT_space_type_set_or_cycle(wmOperatorType *ot)
 
 	/* api callbacks */
 	ot->exec = space_type_set_or_cycle_exec;
-	ot->poll = ED_operator_areaactive;
+	ot->poll = space_type_set_or_cycle_poll;
 
 	ot->flag = 0;
 
@@ -5083,7 +5084,7 @@ static void SCREEN_OT_space_type_set_or_cycle(wmOperatorType *ot)
 static const EnumPropertyItem space_context_cycle_direction[] = {
 	{SPACE_CONTEXT_CYCLE_PREV, "PREV", 0, "Previous", ""},
 	{SPACE_CONTEXT_CYCLE_NEXT, "NEXT", 0, "Next", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static bool space_context_cycle_poll(bContext *C)
@@ -5309,7 +5310,8 @@ static void keymap_modal_set(wmKeyConfig *keyconf)
 		{KM_MODAL_APPLY, "APPLY", 0, "Apply", ""},
 		{KM_MODAL_SNAP_ON, "SNAP", 0, "Snap on", ""},
 		{KM_MODAL_SNAP_OFF, "SNAP_OFF", 0, "Snap off", ""},
-		{0, NULL, 0, NULL, NULL}};
+		{0, NULL, 0, NULL, NULL},
+	};
 	wmKeyMap *keymap;
 
 	/* Standard Modal keymap ------------------------------------------------ */

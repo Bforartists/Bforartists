@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file eevee_private.h
@@ -31,12 +25,12 @@
 
 #include "DNA_lightprobe_types.h"
 
-struct Object;
 struct EEVEE_BoundSphere;
 struct EEVEE_ShadowCasterBuffer;
+struct GPUFrameBuffer;
+struct Object;
 struct RenderLayer;
 struct RenderResult;
-struct GPUFrameBuffer;
 
 extern struct DrawEngineType draw_engine_eevee_type;
 
@@ -821,7 +815,7 @@ typedef struct EEVEE_PrivateData {
 	float mist_start, mist_inv_dist, mist_falloff;
 
 	/* Color Management */
-	bool use_color_view_settings;
+	bool use_color_render_settings;
 } EEVEE_PrivateData; /* Transient data */
 
 /* eevee_data.c */
@@ -1018,7 +1012,7 @@ static const float texcomat[4][4] = { /* From NDC to TexCo */
 	{0.5f, 0.0f, 0.0f, 0.0f},
 	{0.0f, 0.5f, 0.0f, 0.0f},
 	{0.0f, 0.0f, 0.5f, 0.0f},
-	{0.5f, 0.5f, 0.5f, 1.0f}
+	{0.5f, 0.5f, 0.5f, 1.0f},
 };
 
 /* Cubemap Matrices */

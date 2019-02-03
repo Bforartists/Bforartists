@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009, Blender Foundation, Joshua Leung
  * This is a new part of Blender
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/armature/pose_slide.c
@@ -165,7 +159,7 @@ static const EnumPropertyItem prop_channels_types[] = {
 	{PS_TFM_SIZE, "SIZE", 0, "Scale", "Scale only"},
 	{PS_TFM_BBONE_SHAPE, "BBONE", 0, "Bendy Bone", "Bendy Bone shape properties"},
 	{PS_TFM_PROPS, "CUSTOM", 0, "Custom Properties", "Custom properties"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* Axis Locks */
@@ -182,7 +176,7 @@ static const EnumPropertyItem prop_axis_lock_types[] = {
 	{PS_LOCK_Y, "Y", 0, "Y", "Only Y-axis transforms are affected"},
 	{PS_LOCK_Z, "Z", 0, "Z", "Only Z-axis transforms are affected"},
 	/* TODO: Combinations? */
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* ------------------------------------ */
@@ -1665,7 +1659,8 @@ void POSE_OT_propagate(wmOperatorType *ot)
 	     "Propagate pose to all selected keyframes"},
 		{POSE_PROPAGATE_SELECTED_MARKERS, "SELECTED_MARKERS", 0, "On Selected Markers",
 	     "Propagate pose to all keyframes occurring on frames with Scene Markers after the current frame"},
-		{0, NULL, 0, NULL, NULL}};
+		{0, NULL, 0, NULL, NULL},
+	};
 
 	/* identifiers */
 	ot->name = "Propagate Pose";

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2009)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_ui.c
@@ -58,14 +52,14 @@ const EnumPropertyItem rna_enum_operator_context_items[] = {
 	{WM_OP_EXEC_REGION_PREVIEW, "EXEC_REGION_PREVIEW", 0, "Exec Region Preview", ""},
 	{WM_OP_EXEC_AREA, "EXEC_AREA", 0, "Exec Area", ""},
 	{WM_OP_EXEC_SCREEN, "EXEC_SCREEN", 0, "Exec Screen", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 const EnumPropertyItem rna_enum_uilist_layout_type_items[] = {
 	{UILST_LAYOUT_DEFAULT, "DEFAULT", 0, "Default Layout", "Use the default, multi-rows layout"},
 	{UILST_LAYOUT_COMPACT, "COMPACT", 0, "Compact Layout", "Use the compact, single-row layout"},
 	{UILST_LAYOUT_GRID, "GRID", 0, "Grid Layout", "Use the grid-based layout"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -1036,13 +1030,13 @@ static void rna_def_ui_layout(BlenderRNA *brna)
 		{UI_LAYOUT_ALIGN_LEFT, "LEFT", 0, "Left", ""},
 		{UI_LAYOUT_ALIGN_CENTER, "CENTER", 0, "Center", ""},
 		{UI_LAYOUT_ALIGN_RIGHT, "RIGHT", 0, "Right", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static const EnumPropertyItem direction_items[] = {
 		{UI_LAYOUT_HORIZONTAL, "HORIZONTAL", 0, "Horizontal", ""},
 		{UI_LAYOUT_VERTICAL, "VERTICAL", 0, "Vertical", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static const EnumPropertyItem emboss_items[] = {
@@ -1050,7 +1044,7 @@ static void rna_def_ui_layout(BlenderRNA *brna)
 		{UI_EMBOSS_NONE, "NONE", 0, "None", "Draw only text and icons"},
 		{UI_EMBOSS_PULLDOWN, "PULLDOWN_MENU", 0, "Pulldown Menu", "Draw pulldown menu style"},
 		{UI_EMBOSS_RADIAL, "RADIAL_MENU", 0, "Radial Menu", "Draw radial menu style"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* layout */
@@ -1128,7 +1122,7 @@ static void rna_def_panel(BlenderRNA *brna)
 		{PNL_NO_HEADER, "HIDE_HEADER", 0, "Hide Header",
 		                "If set to False, the panel shows a header, which contains a clickable "
 		                "arrow to collapse the panel and the label (see bl_label)"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "Panel", NULL);

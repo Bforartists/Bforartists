@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Daniel Dunbar
- *                 Ton Roosendaal,
- *                 Ben Batt,
- *                 Brecht Van Lommel,
- *                 Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/modifiers/intern/MOD_cloth.c
@@ -140,6 +129,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 		DEG_add_collision_relations(ctx->node, ctx->object, clmd->coll_parms->group, eModifierType_Collision, NULL, "Cloth Collision");
 		DEG_add_forcefield_relations(ctx->node, ctx->object, clmd->sim_parms->effector_weights, true, 0, "Cloth Field");
 	}
+	DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "Cloth Modifier");
 }
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)

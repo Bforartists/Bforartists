@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung (full recode)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/fcurve.c
@@ -67,6 +59,8 @@
 
 #include "atomic_ops.h"
 
+#include "CLG_log.h"
+
 #ifdef WITH_PYTHON
 #include "BPY_extern.h"
 #endif
@@ -77,6 +71,8 @@
 #ifdef WITH_PYTHON
 static ThreadMutex python_driver_lock = BLI_MUTEX_INITIALIZER;
 #endif
+
+static CLG_LogRef LOG = {"bke.fcurve"};
 
 /* ************************** Data-Level Functions ************************* */
 
@@ -434,7 +430,7 @@ static int binarysearch_bezt_index_ex(BezTriple array[], float frame, int arrayl
 	 * - keyframe to be added would replace one of the existing ones on bounds
 	 */
 	if ((arraylen <= 0) || (array == NULL)) {
-		printf("Warning: binarysearch_bezt_index() encountered invalid array\n");
+		CLOG_WARN(&LOG, "encountered invalid array");
 		return 0;
 	}
 	else {
@@ -484,10 +480,10 @@ static int binarysearch_bezt_index_ex(BezTriple array[], float frame, int arrayl
 
 	/* print error if loop-limit exceeded */
 	if (loopbreaker == (maxloop - 1)) {
-		printf("Error: binarysearch_bezt_index() was taking too long\n");
+		CLOG_ERROR(&LOG, "search taking too long");
 
 		/* include debug info */
-		printf("\tround = %d: start = %d, end = %d, arraylen = %d\n", loopbreaker, start, end, arraylen);
+		CLOG_ERROR(&LOG, "\tround = %d: start = %d, end = %d, arraylen = %d", loopbreaker, start, end, arraylen);
 	}
 
 	/* not found, so return where to place it */
@@ -849,13 +845,13 @@ void fcurve_store_samples(FCurve *fcu, void *data, int start, int end, FcuSample
 	int cfra;
 
 	/* sanity checks */
-	/* TODO: make these tests report errors using reports not printf's */
+	/* TODO: make these tests report errors using reports not CLOG's */
 	if (ELEM(NULL, fcu, sample_cb)) {
-		printf("Error: No F-Curve with F-Curve Modifiers to Bake\n");
+		CLOG_ERROR(&LOG, "No F-Curve with F-Curve Modifiers to Bake");
 		return;
 	}
 	if (start > end) {
-		printf("Error: Frame range for Sampled F-Curve creation is inappropriate\n");
+		CLOG_ERROR(&LOG, "Error: Frame range for Sampled F-Curve creation is inappropriate");
 		return;
 	}
 
@@ -1166,7 +1162,7 @@ static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
 	/* error check for missing pointer... */
 	if (id == NULL) {
 		if (G.debug & G_DEBUG) {
-			printf("Error: driver has an invalid target to use (path = %s)\n", dtar->rna_path);
+			CLOG_ERROR(&LOG, "driver has an invalid target to use (path = %s)", dtar->rna_path);
 		}
 
 		driver->flag |= DRIVER_FLAG_INVALID;
@@ -1199,8 +1195,8 @@ static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
 			else {
 				/* out of bounds */
 				if (G.debug & G_DEBUG) {
-					printf("Driver Evaluation Error: array index is out of bounds for %s -> %s (%d)",
-					       id->name, dtar->rna_path, index);
+					CLOG_ERROR(&LOG, "Driver Evaluation Error: array index is out of bounds for %s -> %s (%d)",
+					           id->name, dtar->rna_path, index);
 				}
 
 				driver->flag |= DRIVER_FLAG_INVALID;
@@ -1231,7 +1227,7 @@ static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
 	else {
 		/* path couldn't be resolved */
 		if (G.debug & G_DEBUG) {
-			printf("Driver Evaluation Error: cannot resolve target for %s -> %s\n", id->name, dtar->rna_path);
+			CLOG_ERROR(&LOG, "Driver Evaluation Error: cannot resolve target for %s -> %s", id->name, dtar->rna_path);
 		}
 
 		driver->flag |= DRIVER_FLAG_INVALID;
@@ -1266,7 +1262,7 @@ bool driver_get_variable_property(
 	/* error check for missing pointer... */
 	if (id == NULL) {
 		if (G.debug & G_DEBUG) {
-			printf("Error: driver has an invalid target to use (path = %s)\n", dtar->rna_path);
+			CLOG_ERROR(&LOG, "driver has an invalid target to use (path = %s)", dtar->rna_path);
 		}
 
 		driver->flag |= DRIVER_FLAG_INVALID;
@@ -1288,7 +1284,7 @@ bool driver_get_variable_property(
 	else {
 		/* path couldn't be resolved */
 		if (G.debug & G_DEBUG) {
-			printf("Driver Evaluation Error: cannot resolve target for %s -> %s\n", id->name, dtar->rna_path);
+			CLOG_ERROR(&LOG, "Driver Evaluation Error: cannot resolve target for %s -> %s", id->name, dtar->rna_path);
 		}
 
 		ptr = PointerRNA_NULL;
@@ -1351,8 +1347,8 @@ static float dvar_eval_rotDiff(ChannelDriver *driver, DriverVar *dvar)
 	/* make sure we have enough valid targets to use - all or nothing for now... */
 	if (driver_check_valid_targets(driver, dvar) != 2) {
 		if (G.debug & G_DEBUG) {
-			printf("RotDiff DVar: not enough valid targets (n = %d) (a = %p, b = %p)\n",
-			        valid_targets, dvar->targets[0].id, dvar->targets[1].id);
+			CLOG_WARN(&LOG, "RotDiff DVar: not enough valid targets (n = %d) (a = %p, b = %p)",
+			          valid_targets, dvar->targets[0].id, dvar->targets[1].id);
 		}
 		return 0.0f;
 	}
@@ -1408,8 +1404,8 @@ static float dvar_eval_locDiff(ChannelDriver *driver, DriverVar *dvar)
 	/* make sure we have enough valid targets to use - all or nothing for now... */
 	if (valid_targets < dvar->num_targets) {
 		if (G.debug & G_DEBUG) {
-			printf("LocDiff DVar: not enough valid targets (n = %d) (a = %p, b = %p)\n",
-			        valid_targets, dvar->targets[0].id, dvar->targets[1].id);
+			CLOG_WARN(&LOG, "LocDiff DVar: not enough valid targets (n = %d) (a = %p, b = %p)",
+			          valid_targets, dvar->targets[0].id, dvar->targets[1].id);
 		}
 		return 0.0f;
 	}
@@ -1749,7 +1745,7 @@ void driver_variable_name_validate(DriverVar *dvar)
 	const char special_char_blacklist[] = {
 	    '~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '+', '=', '-',
 	    '/', '\\', '?', ':', ';',  '<', '>', '{', '}', '[', ']', '|',
-	    ' ', '.', '\t', '\n', '\r'
+	    ' ', '.', '\t', '\n', '\r',
 	};
 
 	/* sanity checks */
@@ -1933,14 +1929,14 @@ static bool driver_evaluate_simple_expr(ChannelDriver *driver, ExprPyLike_Parsed
 		case EXPR_PYLIKE_DIV_BY_ZERO:
 		case EXPR_PYLIKE_MATH_ERROR:
 			message = (status == EXPR_PYLIKE_DIV_BY_ZERO) ? "Division by Zero" : "Math Domain Error";
-			fprintf(stderr, "\n%s in Driver: '%s'\n", message, driver->expression);
+			CLOG_ERROR(&LOG, "%s in Driver: '%s'", message, driver->expression);
 
 			driver->flag |= DRIVER_FLAG_INVALID;
 			return true;
 
 		default:
 			/* arriving here means a bug, not user error */
-			printf("Error: simple driver expression evaluation failed: '%s'\n", driver->expression);
+			CLOG_ERROR(&LOG, "simple driver expression evaluation failed: '%s'", driver->expression);
 			return false;
 	}
 }
@@ -2796,6 +2792,14 @@ float evaluate_fcurve(FCurve *fcu, float evaltime)
 {
 	BLI_assert(fcu->driver == NULL);
 
+	return evaluate_fcurve_ex(fcu, evaltime, 0.0);
+}
+
+float evaluate_fcurve_only_curve(FCurve *fcu, float evaltime)
+{
+	/* Can be used to evaluate the (keyframed) fcurve only.
+	 * Also works for driver-fcurves when the driver itself is not relevant.
+	 * E.g. when inserting a keyframe in a driver fcurve. */
 	return evaluate_fcurve_ex(fcu, evaltime, 0.0);
 }
 

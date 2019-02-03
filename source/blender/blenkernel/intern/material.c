@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/material.c
@@ -33,6 +25,8 @@
 #include <string.h>
 #include <math.h>
 #include <stddef.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -78,6 +72,8 @@
 
 /* used in UI and render */
 Material defmaterial;
+
+static CLG_LogRef LOG = {"bke.material"};
 
 /* called on startup, creator.c */
 void init_def_material(void)
@@ -135,7 +131,7 @@ void BKE_material_init(Material *ma)
 
 	ma->r = ma->g = ma->b = 0.8;
 	ma->specr = ma->specg = ma->specb = 1.0;
-	// ma->alpha = 1.0;  /* DEPRECATED */
+	ma->a = 1.0f;
 	ma->spec = 0.5;
 
 	ma->roughness = 0.25f;
@@ -524,7 +520,7 @@ Material **give_current_material_p(Object *ob, short act)
 		return NULL;
 	else if (act <= 0) {
 		if (act < 0) {
-			printf("Negative material index!\n");
+			CLOG_ERROR(&LOG, "Negative material index!");
 		}
 		return NULL;
 	}
@@ -938,7 +934,7 @@ bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
 
 	/* this should never happen and used to crash */
 	if (ob->actcol <= 0) {
-		printf("%s: invalid material index %d, report a bug!\n", __func__, ob->actcol);
+		CLOG_ERROR(&LOG, "invalid material index %d, report a bug!", ob->actcol);
 		BLI_assert(0);
 		return false;
 	}

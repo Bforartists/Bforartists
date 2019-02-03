@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Full recode, Ton Roosendaal, Crete 2005
- *                 Full recode, Joshua Leung, 2009
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_ACTION_H__
@@ -29,23 +22,19 @@
 /** \file BKE_action.h
  *  \ingroup bke
  *  \brief Blender kernel action and pose functionality.
- *  \author Reevan McKay
- *  \author Ton Roosendaal (full recode 2005)
- *  \author Joshua Leung (full recode 2009)
- *  \since may 2001
  */
 
 #include "DNA_listBase.h"
 
 /* The following structures are defined in DNA_action_types.h, and DNA_anim_types.h */
-struct bAction;
-struct bActionGroup;
 struct FCurve;
-struct bPose;
-struct bItasc;
-struct bPoseChannel;
 struct Main;
 struct Object;
+struct bAction;
+struct bActionGroup;
+struct bItasc;
+struct bPose;
+struct bPoseChannel;
 
 /* Kernel prototypes */
 #ifdef __cplusplus

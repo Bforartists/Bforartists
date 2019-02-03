@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Ove M Henriksen.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/object/object_vgroup.c
@@ -682,7 +674,7 @@ static const EnumPropertyItem WT_vertex_group_select_item[] = {
 	 "BONE_DEFORM", 0, "Deform Pose Bones", "All Vertex Groups assigned to Deform Bones"},
 	{WT_VGROUP_ALL,
 	 "ALL", 0, "All Groups", "All Vertex Groups"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 const EnumPropertyItem *ED_object_vgroup_selection_itemf_helper(
@@ -1624,7 +1616,7 @@ enum {
 	VGROUP_TOGGLE,
 	VGROUP_LOCK,
 	VGROUP_UNLOCK,
-	VGROUP_INVERT
+	VGROUP_INVERT,
 };
 
 static const EnumPropertyItem vgroup_lock_actions[] = {
@@ -1632,7 +1624,7 @@ static const EnumPropertyItem vgroup_lock_actions[] = {
 	{VGROUP_LOCK, "LOCK", 0, "Lock", "Lock all vertex groups"},
 	{VGROUP_UNLOCK, "UNLOCK", 0, "Unlock", "Unlock all vertex groups"},
 	{VGROUP_INVERT, "INVERT", 0, "Invert", "Invert the lock state of all vertex groups"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void vgroup_lock_all(Object *ob, int action)
@@ -3672,7 +3664,7 @@ void OBJECT_OT_vertex_group_sort(wmOperatorType *ot)
 	static const EnumPropertyItem vgroup_sort_type[] = {
 		{SORT_TYPE_NAME, "NAME", 0, "Name", ""},
 		{SORT_TYPE_BONEHIERARCHY, "BONE_HIERARCHY", 0, "Bone Hierarchy", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	ot->name = "Sort Vertex Groups";
@@ -3723,7 +3715,7 @@ void OBJECT_OT_vertex_group_move(wmOperatorType *ot)
 	static const EnumPropertyItem vgroup_slot_move[] = {
 		{-1, "UP", 0, "Up", ""},
 		{1, "DOWN", 0, "Down", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

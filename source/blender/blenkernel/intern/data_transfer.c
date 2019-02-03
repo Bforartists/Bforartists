@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,17 +15,13 @@
  *
  * The Original Code is Copyright (C) 2014 by Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Bastien Montagne.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/data_transfer.c
  *  \ingroup bke
  */
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -54,6 +48,7 @@
 
 #include "data_transfer_intern.h"
 
+static CLG_LogRef LOG = {"bke.data_transfer"};
 
 CustomDataMask BKE_object_data_transfer_dttypes_to_cdmask(const int dtdata_types)
 {
@@ -1117,7 +1112,7 @@ bool BKE_object_data_transfer_ex(
 		me_src = ob_src->runtime.mesh_eval;
 
 		if (me_src == NULL || (me_src_mask & ~ob_src->runtime.last_data_mask) != 0) {
-			printf("Data Transfer: source mesh data is not ready - dependency cycle?\n");
+			CLOG_WARN(&LOG, "Data Transfer: source mesh data is not ready - dependency cycle?");
 			return changed;
 		}
 	}

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Mike Erwin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/GPU_batch_presets.h
@@ -34,8 +27,8 @@
 #ifndef __GPU_BATCH_PRESETS_H__
 #define __GPU_BATCH_PRESETS_H__
 
-struct rctf;
 struct GPUVertFormat;
+struct rctf;
 
 #include "BLI_compiler_attrs.h"
 #include "BLI_sys_types.h"

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2014 by Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Bastien Montagne.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/object/object_data_transfer.c
@@ -89,7 +81,7 @@ static const EnumPropertyItem DT_layer_items[] = {
 	{0, "", 0, "Face Data", ""},
 	{DT_TYPE_SHARP_FACE, "SMOOTH", 0, "Smooth", "Transfer flat/smooth mark"},
 	{DT_TYPE_FREESTYLE_FACE, "FREESTYLE_FACE", 0, "Freestyle Mark", "Transfer Freestyle face mark"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* Note: rna_enum_dt_layers_select_src_items enum is from rna_modifier.c */

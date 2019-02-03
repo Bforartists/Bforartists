@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2018, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 #include "workbench_private.h"
@@ -42,22 +36,23 @@ void workbench_private_data_init(WORKBENCH_PrivateData *wpd)
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	const Scene *scene = draw_ctx->scene;
 	wpd->material_hash = BLI_ghash_ptr_new(__func__);
+	wpd->material_transp_hash = BLI_ghash_ptr_new(__func__);
 	wpd->preferences = &U;
 
 	View3D *v3d = draw_ctx->v3d;
 	if (!v3d) {
 		wpd->shading = scene->display.shading;
-		wpd->use_color_view_settings = true;
+		wpd->use_color_render_settings = true;
 	}
 	else if (v3d->shading.type == OB_RENDER &&
 	         BKE_scene_uses_blender_workbench(scene))
 	{
 		wpd->shading = scene->display.shading;
-		wpd->use_color_view_settings = true;
+		wpd->use_color_render_settings = true;
 	}
 	else {
 		wpd->shading = v3d->shading;
-		wpd->use_color_view_settings = false;
+		wpd->use_color_render_settings = false;
 	}
 
 	if (wpd->shading.light == V3D_LIGHTING_MATCAP) {
@@ -75,6 +70,12 @@ void workbench_private_data_init(WORKBENCH_PrivateData *wpd)
 		        wpd->shading.studio_light, STUDIOLIGHT_TYPE_STUDIO);
 	}
 
+
+	float shadow_focus = scene->display.shadow_focus;
+	/* Clamp to avoid overshadowing and shading errors. */
+	CLAMP(shadow_focus, 0.0001f, 0.99999f);
+	wpd->shadow_shift = scene->display.shadow_shift;
+	wpd->shadow_focus = 1.0f - shadow_focus * (1.0f - wpd->shadow_shift);
 	wpd->shadow_multiplier = 1.0 - wpd->shading.shadow_intensity;
 
 	WORKBENCH_UBO_World *wd = &wpd->world_data;
@@ -141,7 +142,7 @@ void workbench_private_data_init(WORKBENCH_PrivateData *wpd)
 		float viewvecs[3][4] = {
 		    {-1.0f, -1.0f, -1.0f, 1.0f},
 		    {1.0f, -1.0f, -1.0f, 1.0f},
-		    {-1.0f, 1.0f, -1.0f, 1.0f}
+		    {-1.0f, 1.0f, -1.0f, 1.0f},
 		};
 		int i;
 		const float *size = DRW_viewport_size_get();
@@ -216,6 +217,7 @@ void workbench_private_data_get_light_direction(WORKBENCH_PrivateData *wpd, floa
 void workbench_private_data_free(WORKBENCH_PrivateData *wpd)
 {
 	BLI_ghash_free(wpd->material_hash, NULL, MEM_freeN);
+	BLI_ghash_free(wpd->material_transp_hash, NULL, MEM_freeN);
 	DRW_UBO_FREE_SAFE(wpd->world_ubo);
 	DRW_UBO_FREE_SAFE(wpd->dof_ubo);
 	GPU_BATCH_DISCARD_SAFE(wpd->world_clip_planes_batch);

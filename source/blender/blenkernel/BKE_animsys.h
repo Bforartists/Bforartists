@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * Contributor(s): Joshua Leung (original author)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_ANIMSYS_H__
@@ -28,7 +22,6 @@
 
 /** \file BKE_animsys.h
  *  \ingroup bke
- *  \author Joshua Leung
  */
 
 struct AnimData;
@@ -40,6 +33,7 @@ struct KS_Path;
 struct KeyingSet;
 struct ListBase;
 struct Main;
+struct NlaKeyframingContext;
 struct PathResolvedRNA;
 struct PointerRNA;
 struct PropertyRNA;
@@ -48,7 +42,6 @@ struct Scene;
 struct bAction;
 struct bActionGroup;
 struct bContext;
-struct NlaKeyframingContext;
 
 /* ************************************* */
 /* AnimData API */
@@ -185,6 +178,13 @@ void BKE_animsys_free_nla_keyframing_context_cache(struct ListBase *cache);
 
 /* ------------- Main API -------------------- */
 /* In general, these ones should be called to do all animation evaluation */
+
+/* Flags for recalc parameter, indicating which part to recalculate. */
+typedef enum eAnimData_Recalc {
+	ADT_RECALC_DRIVERS      = (1 << 0),
+	ADT_RECALC_ANIM         = (1 << 1),
+	ADT_RECALC_ALL          = (ADT_RECALC_DRIVERS | ADT_RECALC_ANIM),
+} eAnimData_Recalc;
 
 /* Evaluation loop for evaluating animation data  */
 void BKE_animsys_evaluate_animdata(struct Depsgraph *depsgraph, struct Scene *scene, struct ID *id, struct AnimData *adt, float ctime, short recalc);

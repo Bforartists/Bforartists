@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/intern/bpy_rna_callback.c
@@ -61,7 +55,7 @@ static const EnumPropertyItem region_draw_mode_items[] = {
 	{REGION_DRAW_POST_PIXEL, "POST_PIXEL", 0, "Post Pixel", ""},
 	{REGION_DRAW_POST_VIEW, "POST_VIEW", 0, "Post View", ""},
 	{REGION_DRAW_PRE_VIEW, "PRE_VIEW", 0, "Pre View", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void cb_region_draw(const bContext *C, ARegion *UNUSED(ar), void *customdata)

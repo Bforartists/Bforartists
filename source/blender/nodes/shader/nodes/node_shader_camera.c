@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/shader/nodes/node_shader_camera.c
@@ -37,7 +29,7 @@ static bNodeSocketTemplate sh_node_camera_out[] = {
 	{	SOCK_VECTOR, 0, N_("View Vector")},
 	{	SOCK_FLOAT, 0, N_("View Z Depth")},
 	{	SOCK_FLOAT, 0, N_("View Distance")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static int gpu_shader_camera(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)

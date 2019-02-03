@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung (full recode)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/animation/drivers.c
@@ -773,7 +765,7 @@ EnumPropertyItem prop_driver_create_mapping_types[] = {
 	 "Create drivers for all properties without assigning any targets yet"},
 	{CREATEDRIVER_MAPPING_NONE,     "NONE_SINGLE", 0, "Manually Create Later (Single)",
 	 "Create driver for this property only and without assigning any targets yet"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* Filtering callback for driver mapping types enum */

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file source/blender/freestyle/intern/python/Interface0D/BPy_ViewVertex.cpp
@@ -121,7 +117,7 @@ static PyMethodDef BPy_ViewVertex_methods[] = {
 	{"edges_end", (PyCFunction)ViewVertex_edges_end, METH_NOARGS, ViewVertex_edges_end_doc},
 	{"edges_iterator", (PyCFunction)ViewVertex_edges_iterator, METH_VARARGS | METH_KEYWORDS,
 	                   ViewVertex_edges_iterator_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 /*----------------------ViewVertex get/setters ----------------------------*/

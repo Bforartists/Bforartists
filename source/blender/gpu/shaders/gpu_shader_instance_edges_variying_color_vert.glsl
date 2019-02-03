@@ -16,7 +16,7 @@ uniform mat4 ProjectionMatrix;
 in vec3 pos;
 in vec3 N1, N2; // normals of faces this edge joins (object coords)
 
-/* instance attrib */
+/* Instance attrs */
 in vec3 color;
 in mat4 InstanceModelMatrix;
 
@@ -37,7 +37,8 @@ void main()
 
 	mat4 ModelViewMatrix = ViewMatrix * InstanceModelMatrix;
 
-	MV_pos = ModelViewMatrix * vec4(pos, 1.0);
+	vec4 pos_4d = vec4(pos, 1.0);
+	MV_pos = ModelViewMatrix * pos_4d;
 
 	mat3 NormalMatrix = transpose(inverse(mat3(ModelViewMatrix)));
 
@@ -60,4 +61,8 @@ void main()
 		edgeClass = -1.0; // back-facing edge
 
 	fCol = color;
+
+#ifdef USE_WORLD_CLIP_PLANES
+	world_clip_planes_calc_clip_distance((InstanceModelMatrix * vec4(pos, 1.0)).xyz);
+#endif
 }

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Kanzaki Wataru, Kinouti Takahiro
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #include "../node_shader_util.h"
@@ -31,13 +23,13 @@
 
 static bNodeSocketTemplate sh_node_shadertorgb_in[] = {
 	{	SOCK_SHADER, 1, N_("Shader")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate sh_node_shadertorgb_out[] = {
 	{	SOCK_RGBA, 0, N_("Color")},
 	{	SOCK_FLOAT, 0, N_("Alpha")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static int node_shader_gpu_shadertorgb(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)

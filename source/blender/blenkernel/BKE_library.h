@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,20 +15,12 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_LIBRARY_H__
 #define __BKE_LIBRARY_H__
 
 /** \file BKE_library.h
  *  \ingroup bke
- *  \since March 2001
- *  \author nzc
  */
 #ifdef __cplusplus
 extern "C" {
@@ -58,15 +48,15 @@ extern "C" {
 
 struct BlendThumbnail;
 struct GHash;
-struct ListBase;
 struct ID;
 struct ImBuf;
-struct Main;
 struct Library;
-struct wmWindowManager;
-struct bContext;
+struct ListBase;
+struct Main;
 struct PointerRNA;
 struct PropertyRNA;
+struct bContext;
+struct wmWindowManager;
 
 size_t BKE_libblock_get_alloc_info(short type, const char **name);
 void *BKE_libblock_alloc_notest(short type) ATTR_WARN_UNUSED_RESULT;
@@ -194,6 +184,9 @@ void BKE_main_id_flag_all(struct Main *bmain, const int flag, const bool value);
 void BKE_main_id_clear_newpoins(struct Main *bmain);
 
 void BKE_main_lib_objects_recalc_all(struct Main *bmain);
+
+/* Only for repairing files via versioning, avoid for general use. */
+void BKE_main_id_repair_duplicate_names_listbase(struct ListBase *lb);
 
 #define MAX_ID_FULL_NAME (64 + 64 + 3 + 1)  /* 64 is MAX_ID_NAME - 2 */
 #define MAX_ID_FULL_NAME_UI (MAX_ID_FULL_NAME + 3)  /* Adds 'keycode' two letters at begining. */

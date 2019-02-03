@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/gizmo/WM_gizmo_types.h
@@ -38,10 +32,10 @@
 
 #include "BLI_compiler_attrs.h"
 
-struct wmGizmoMapType;
-struct wmGizmoGroupType;
-struct wmGizmoGroup;
 struct wmGizmo;
+struct wmGizmoGroup;
+struct wmGizmoGroupType;
+struct wmGizmoMapType;
 struct wmGizmoProperty;
 struct wmKeyConfig;
 

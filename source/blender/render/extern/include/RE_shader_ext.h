@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 by Blender Foundation
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL/BL DUAL LICENSE BLOCK *****
  */
 /** \file RE_shader_ext.h
  *  \ingroup render
@@ -50,11 +42,11 @@ typedef struct BakeImBufuserData {
 } BakeImBufuserData;
 
 /* node shaders... */
-struct Tex;
-struct MTex;
 struct ImBuf;
 struct ImagePool;
+struct MTex;
 struct Object;
+struct Tex;
 
 /* this one uses nodes */
 int multitex_ext(struct Tex *tex,

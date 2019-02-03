@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,13 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006-2007 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/blenkernel/intern/icons.c
@@ -34,6 +25,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -76,6 +69,8 @@ enum {
 };
 
 /* GLOBALS */
+
+static CLG_LogRef LOG = {"bke.icons"};
 
 static GHash *gIcons = NULL;
 
@@ -588,7 +583,7 @@ int BKE_icon_id_ensure(struct ID *id)
 	id->icon_id = get_next_free_id();
 
 	if (!id->icon_id) {
-		printf("%s: Internal error - not enough IDs\n", __func__);
+		CLOG_ERROR(&LOG, "not enough IDs");
 		return 0;
 	}
 
@@ -633,7 +628,7 @@ int BKE_icon_gplayer_color_ensure(bGPDlayer *gpl)
 	gpl->runtime.icon_id = get_next_free_id();
 
 	if (!gpl->runtime.icon_id) {
-		printf("%s: Internal error - not enough IDs\n", __func__);
+		CLOG_ERROR(&LOG, "not enough IDs");
 		return 0;
 	}
 
@@ -665,7 +660,7 @@ int BKE_icon_preview_ensure(ID *id, PreviewImage *preview)
 	preview->icon_id = get_next_free_id();
 
 	if (!preview->icon_id) {
-		printf("%s: Internal error - not enough IDs\n", __func__);
+		CLOG_ERROR(&LOG, "not enough IDs");
 		return 0;
 	}
 
@@ -690,7 +685,7 @@ Icon *BKE_icon_get(const int icon_id)
 	icon = BLI_ghash_lookup(gIcons, POINTER_FROM_INT(icon_id));
 
 	if (!icon) {
-		printf("%s: Internal error, no icon for icon ID: %d\n", __func__, icon_id);
+		CLOG_ERROR(&LOG, "no icon for icon ID: %d", icon_id);
 		return NULL;
 	}
 
@@ -704,7 +699,7 @@ void BKE_icon_set(const int icon_id, struct Icon *icon)
 	void **val_p;
 
 	if (BLI_ghash_ensure_p(gIcons, POINTER_FROM_INT(icon_id), &val_p)) {
-		printf("%s: Internal error, icon already set: %d\n", __func__, icon_id);
+		CLOG_ERROR(&LOG, "icon already set: %d", icon_id);
 		return;
 	}
 

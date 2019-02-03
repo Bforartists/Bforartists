@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Campbell Barton <ideasman42@gmail.com>
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/pointcache.c
@@ -33,6 +27,8 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -123,6 +119,8 @@
 /* could be made into a pointcache option */
 #define DURIAN_POINTCACHE_LIB_OK 1
 
+static CLG_LogRef LOG = {"bke.pointcache"};
+
 static int ptcache_data_size[] = {
 		sizeof(unsigned int), // BPHYS_DATA_INDEX
 		3 * sizeof(float), // BPHYS_DATA_LOCATION
@@ -131,7 +129,7 @@ static int ptcache_data_size[] = {
 		3 * sizeof(float), // BPHYS_DATA_AVELOCITY / BPHYS_DATA_XCONST
 		sizeof(float), // BPHYS_DATA_SIZE
 		3 * sizeof(float), // BPHYS_DATA_TIMES
-		sizeof(BoidData) // case BPHYS_DATA_BOIDS
+		sizeof(BoidData), // case BPHYS_DATA_BOIDS
 };
 
 static int ptcache_extra_datasize[] = {
@@ -1243,7 +1241,7 @@ static int ptcache_dynamicpaint_read(PTCacheFile *pf, void *dp_v)
 	/* version header */
 	ptcache_file_read(pf, version, 1, sizeof(char) * 4);
 	if (!STREQLEN(version, DPAINT_CACHE_VERSION, 4)) {
-		printf("Dynamic Paint: Invalid cache version: '%c%c%c%c'!\n", UNPACK4(version));
+		CLOG_ERROR(&LOG, "Dynamic Paint: Invalid cache version: '%c%c%c%c'!", UNPACK4(version));
 		return 0;
 	}
 
@@ -2479,7 +2477,7 @@ static int ptcache_mem_frame_to_disk(PTCacheID *pid, PTCacheMem *pm)
 
 	pf = ptcache_file_open(pid, PTCACHE_FILE_WRITE, pm->frame);
 
-	if (pf==NULL) {
+	if (pf == NULL) {
 		if (G.debug & G_DEBUG)
 			printf("Error opening disk cache file for writing\n");
 		return 0;

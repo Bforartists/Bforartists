@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,38 +15,30 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_IMAGE_H__
 #define __BKE_IMAGE_H__
 
 /** \file BKE_image.h
  *  \ingroup bke
- *  \since March 2001
- *  \author nzc
  */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct Image;
 struct ImBuf;
-struct ImbFormatOptions;
-struct anim;
-struct Scene;
-struct Object;
+struct Image;
 struct ImageFormatData;
 struct ImagePool;
+struct ImbFormatOptions;
 struct Main;
-struct ReportList;
+struct Object;
 struct RenderResult;
+struct ReportList;
+struct Scene;
 struct StampData;
+struct anim;
 
 #define IMA_MAX_SPACE       64
 

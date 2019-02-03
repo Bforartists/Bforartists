@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2014 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Antony Riakiotakis.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_select_sample_query.c
@@ -98,7 +92,7 @@ void gpu_select_query_begin(
 	g_query_state.id = MEM_mallocN(g_query_state.num_of_queries * sizeof(*g_query_state.id), "gpu selection ids");
 	glGenQueries(g_query_state.num_of_queries, g_query_state.queries);
 
-	gpuPushAttrib(GPU_DEPTH_BUFFER_BIT | GPU_VIEWPORT_BIT | GPU_SCISSOR_BIT);
+	gpuPushAttr(GPU_DEPTH_BUFFER_BIT | GPU_VIEWPORT_BIT | GPU_SCISSOR_BIT);
 	/* disable writing to the framebuffer */
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -219,7 +213,7 @@ uint gpu_select_query_end(void)
 	glDeleteQueries(g_query_state.num_of_queries, g_query_state.queries);
 	MEM_freeN(g_query_state.queries);
 	MEM_freeN(g_query_state.id);
-	gpuPopAttrib();
+	gpuPopAttr();
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 	return hits;

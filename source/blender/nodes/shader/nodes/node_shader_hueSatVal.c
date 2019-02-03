@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Juho Vepsäläinen
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/shader/nodes/node_shader_hueSatVal.c
@@ -40,11 +32,11 @@ static bNodeSocketTemplate sh_node_hue_sat_in[] = {
 	{	SOCK_FLOAT, 1, N_("Value"),			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, PROP_NONE},
 	{	SOCK_FLOAT, 1, N_("Fac"),			1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
 	{	SOCK_RGBA, 1, N_("Color"),			0.8f, 0.8f, 0.8f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 static bNodeSocketTemplate sh_node_hue_sat_out[] = {
 	{	SOCK_RGBA, 0, N_("Color")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 /* note: it would be possible to use CMP version for both nodes */

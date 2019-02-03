@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s):
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/uvedit/uvedit_parametrizer.c
@@ -91,11 +85,11 @@ typedef struct PHash {
 
 
 
-struct PVert;
+struct PChart;
 struct PEdge;
 struct PFace;
-struct PChart;
 struct PHandle;
+struct PVert;
 
 /* Simplices */
 
@@ -214,7 +208,7 @@ enum PHandleState {
 	PHANDLE_STATE_ALLOCATED,
 	PHANDLE_STATE_CONSTRUCTED,
 	PHANDLE_STATE_LSCM,
-	PHANDLE_STATE_STRETCH
+	PHANDLE_STATE_STRETCH,
 };
 
 typedef struct PHandle {
@@ -247,7 +241,7 @@ typedef struct PHandle {
 static int PHashSizes[] = {
 	1, 3, 5, 11, 17, 37, 67, 131, 257, 521, 1031, 2053, 4099, 8209,
 	16411, 32771, 65537, 131101, 262147, 524309, 1048583, 2097169,
-	4194319, 8388617, 16777259, 33554467, 67108879, 134217757, 268435459
+	4194319, 8388617, 16777259, 33554467, 67108879, 134217757, 268435459,
 };
 
 #define PHASH_hash(ph, item) (((uintptr_t) (item)) % ((unsigned int) (ph)->cursize))

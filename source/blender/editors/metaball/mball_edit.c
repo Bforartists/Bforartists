@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,11 +16,7 @@
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
  *
- * The Original Code is: all of this file.
 
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/metaball/mball_edit.c
@@ -189,7 +183,7 @@ enum {
 	SIMMBALL_TYPE = 1,
 	SIMMBALL_RADIUS,
 	SIMMBALL_STIFFNESS,
-	SIMMBALL_ROTATION
+	SIMMBALL_ROTATION,
 };
 
 static const EnumPropertyItem prop_similar_types[] = {
@@ -197,7 +191,7 @@ static const EnumPropertyItem prop_similar_types[] = {
 	{SIMMBALL_RADIUS, "RADIUS", 0, "Radius", ""},
 	{SIMMBALL_STIFFNESS, "STIFFNESS", 0, "Stiffness", ""},
 	{SIMMBALL_ROTATION, "ROTATION", 0, "Rotation", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void mball_select_similar_type_get(Object *obedit, MetaBall *mb, int  type, KDTree *r_tree)

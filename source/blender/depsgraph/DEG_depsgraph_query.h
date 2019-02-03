@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2013 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Joshua Leung
- * Contributor(s): Sergey Sharybin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/DEG_depsgraph_query.h
@@ -38,8 +31,8 @@
 
 struct ID;
 
-struct Base;
 struct BLI_Iterator;
+struct Base;
 struct Depsgraph;
 struct DupliObject;
 struct ListBase;
@@ -129,12 +122,10 @@ typedef struct DEGObjectIterData {
 	/* Next duplicated object to step into. */
 	struct DupliObject *dupli_object_next;
 	/* Corresponds to current object: current iterator object is evaluated from
-	 * this duplicated object.
-	 */
+	 * this duplicated object. */
 	struct DupliObject *dupli_object_current;
 	/* Temporary storage to report fully populated DNA to the render engine or
-	 * other users of the iterator.
-	 */
+	 * other users of the iterator. */
 	struct Object temp_dupli_object;
 
 	/* **** Iteration over ID nodes **** */
@@ -155,7 +146,7 @@ void DEG_iterator_objects_end(struct BLI_Iterator *iter);
 	{                                                                             \
 		DEGObjectIterData data_ = {                                               \
 			graph_,                                                               \
-			flag_                                                                 \
+			flag_,                                                                \
 		};                                                                        \
                                                                                   \
 		ITER_BEGIN(DEG_iterator_objects_begin,                                    \

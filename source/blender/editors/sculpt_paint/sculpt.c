@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,7 @@
  *
  * The Original Code is Copyright (C) 2006 by Nicholas Bishop
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Jason Wilkins, Tom Musgrove.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Implements the Sculpt Mode tools
- *
  */
 
 /** \file blender/editors/sculpt_paint/sculpt.c
@@ -67,7 +57,9 @@
 #include "BKE_node.h"
 #include "BKE_object.h"
 #include "BKE_paint.h"
+#include "BKE_particle.h"
 #include "BKE_pbvh.h"
+#include "BKE_pointcache.h"
 #include "BKE_report.h"
 #include "BKE_screen.h"
 #include "BKE_subsurf.h"
@@ -731,7 +723,6 @@ static bool sculpt_brush_test_cyl(SculptBrushTest *test, float co[3], float loca
 #endif
 
 /* ===== Sculpting =====
- *
  */
 static void flip_v3(float v[3], const char symm)
 {
@@ -2151,7 +2142,7 @@ static void bmesh_topology_rake(
 	for (iteration = 0; iteration <= count; ++iteration) {
 
 		SculptThreadedTaskData data = {
-			.sd = sd,.ob = ob,.brush = brush,.nodes = nodes,
+			.sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 			.strength = factor,
 		};
 		ParallelRangeSettings settings;
@@ -4575,7 +4566,7 @@ static void sculpt_update_brush_delta(UnifiedPaintSettings *ups, Object *ob, Bru
 	StrokeCache *cache = ss->cache;
 	const float mouse[2] = {
 		cache->mouse[0],
-		cache->mouse[1]
+		cache->mouse[1],
 	};
 	int tool = brush->sculpt_tool;
 
@@ -5166,8 +5157,8 @@ static void sculpt_stroke_update_step(bContext *C, struct PaintStroke *UNUSED(st
 	sculpt_restore_mesh(sd, ob);
 
 	if (sd->flags & (SCULPT_DYNTOPO_DETAIL_CONSTANT | SCULPT_DYNTOPO_DETAIL_MANUAL)) {
-		float object_space_constant_detail = sd->constant_detail * mat4_to_scale(ob->imat);
-		BKE_pbvh_bmesh_detail_size_set(ss->pbvh, 1.0f / object_space_constant_detail);
+		float object_space_constant_detail = mat4_to_scale(ob->obmat) / sd->constant_detail;
+		BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
 	}
 	else if (sd->flags & SCULPT_DYNTOPO_DETAIL_BRUSH) {
 		BKE_pbvh_bmesh_detail_size_set(ss->pbvh, ss->cache->radius * sd->detail_percent / 100.0f);
@@ -5568,6 +5559,9 @@ void sculpt_dynamic_topology_disable_ex(
 		BM_log_free(ss->bm_log);
 		ss->bm_log = NULL;
 	}
+
+	BKE_particlesystem_reset_all(ob);
+	BKE_ptcache_object_reset(scene, ob, PTCACHE_RESET_OUTDATED);
 
 	/* Refresh */
 	sculpt_update_after_dynamic_topology_toggle(depsgraph, scene, ob);
@@ -6110,8 +6104,8 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *UNUSED(op))
 	size = max_fff(dim[0], dim[1], dim[2]);
 
 	/* update topology size */
-	float object_space_constant_detail = sd->constant_detail * mat4_to_scale(ob->imat);
-	BKE_pbvh_bmesh_detail_size_set(ss->pbvh, 1.0f / object_space_constant_detail);
+	float object_space_constant_detail = mat4_to_scale(ob->obmat) / sd->constant_detail;
+	BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
 
 	sculpt_undo_push_begin("Dynamic topology flood fill");
 	sculpt_undo_push_node(ob, NULL, SCULPT_UNDO_COORDS);

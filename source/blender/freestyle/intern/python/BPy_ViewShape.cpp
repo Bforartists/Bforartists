@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file source/blender/freestyle/intern/python/BPy_ViewShape.cpp
@@ -165,7 +161,7 @@ static PyObject *ViewShape_add_vertex(BPy_ViewShape *self, PyObject *args, PyObj
 static PyMethodDef BPy_ViewShape_methods[] = {
 	{"add_edge", (PyCFunction)ViewShape_add_edge, METH_VARARGS | METH_KEYWORDS, ViewShape_add_edge_doc},
 	{"add_vertex", (PyCFunction)ViewShape_add_vertex, METH_VARARGS | METH_KEYWORDS, ViewShape_add_vertex_doc},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 /*----------------------ViewShape get/setters ----------------------------*/

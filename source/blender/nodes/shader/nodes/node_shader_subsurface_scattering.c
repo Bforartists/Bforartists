@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #include "../node_shader_util.h"
@@ -36,12 +28,12 @@ static bNodeSocketTemplate sh_node_subsurface_scattering_in[] = {
 	{	SOCK_FLOAT, 1, N_("Sharpness"),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
 	{	SOCK_FLOAT, 1, N_("Texture Blur"),	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
 	{	SOCK_VECTOR, 1, N_("Normal"),		0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, PROP_NONE, SOCK_HIDE_VALUE},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate sh_node_subsurface_scattering_out[] = {
 	{	SOCK_SHADER, 0, N_("BSSRDF")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_shader_init_subsurface_scattering(bNodeTree *UNUSED(ntree), bNode *node)

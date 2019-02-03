@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file RE_pipeline.h
@@ -36,8 +28,6 @@
 #include "DNA_vec_types.h"
 #include "DEG_depsgraph.h"
 
-struct bMovieHandle;
-struct bNodeTree;
 struct Depsgraph;
 struct Image;
 struct ImageFormatData;
@@ -48,8 +38,10 @@ struct RenderData;
 struct RenderResult;
 struct ReportList;
 struct Scene;
-struct ViewLayer;
 struct StampData;
+struct ViewLayer;
+struct bMovieHandle;
+struct bNodeTree;
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* this include is what is exposed of render to outside world */

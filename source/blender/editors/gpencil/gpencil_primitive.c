@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2017, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Antonio Vazquez, Charlie Jolly
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Operators for creating new Grease Pencil primitives (boxes, circles, ...)
  */
 
@@ -1792,7 +1785,7 @@ void GPENCIL_OT_primitive(wmOperatorType *ot)
 		{GP_STROKE_CIRCLE, "CIRCLE", 0, "Circle", ""},
 		{GP_STROKE_ARC, "ARC", 0, "Arc", ""},
 		{GP_STROKE_CURVE, "CURVE", 0, "Curve", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

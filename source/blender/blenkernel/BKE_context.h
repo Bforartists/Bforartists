@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation (2008).
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_CONTEXT_H__
@@ -38,41 +32,41 @@ extern "C" {
 #endif
 
 struct ARegion;
-struct bScreen;
+struct Base;
+struct Brush;
 struct CacheFile;
 struct Collection;
 struct Depsgraph;
+struct EditBone;
+struct ID;
+struct Image;
 struct LayerCollection;
 struct ListBase;
 struct Main;
 struct Object;
-struct Base;
 struct PointerRNA;
+struct RegionView3D;
+struct RenderEngineType;
 struct ReportList;
 struct Scene;
-struct ViewLayer;
 struct ScrArea;
+struct SpaceClip;
+struct SpaceImage;
 struct SpaceLink;
-struct View3D;
-struct ViewRender;
-struct RegionView3D;
+struct SpaceText;
 struct StructRNA;
-struct ToolSettings;
-struct Image;
 struct Text;
-struct EditBone;
-struct bPoseChannel;
-struct bGPdata;
-struct bGPDlayer;
+struct ToolSettings;
+struct View3D;
+struct ViewLayer;
+struct ViewRender;
 struct bGPDframe;
-struct Brush;
+struct bGPDlayer;
+struct bGPdata;
+struct bPoseChannel;
+struct bScreen;
 struct wmWindow;
 struct wmWindowManager;
-struct RenderEngineType;
-struct SpaceText;
-struct SpaceImage;
-struct SpaceClip;
-struct ID;
 
 #include "DNA_object_enums.h"
 
@@ -201,7 +195,7 @@ void CTX_wm_operator_poll_msg_set(struct bContext *C, const char *msg);
 /* data type, needed so we can tell between a NULL pointer and an empty list */
 enum {
 	CTX_DATA_TYPE_POINTER = 0,
-	CTX_DATA_TYPE_COLLECTION
+	CTX_DATA_TYPE_COLLECTION,
 };
 
 PointerRNA CTX_data_pointer_get(const bContext *C, const char *member);

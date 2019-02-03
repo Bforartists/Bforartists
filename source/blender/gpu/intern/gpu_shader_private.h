@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file gpu_shader_private.h
@@ -29,13 +25,18 @@
 #include "GPU_shader_interface.h"
 
 struct GPUShader {
-	GLuint program;  /* handle for full program (links shader stages below) */
+	/** Handle for full program (links shader stages below). */
+	GLuint program;
 
-	GLuint vertex;   /* handle for vertex shader */
-	GLuint geometry; /* handle for geometry shader */
-	GLuint fragment; /* handle for fragment shader */
+	/** Handle for vertex shader. */
+	GLuint vertex;
+	/** Handle for geometry shader. */
+	GLuint geometry;
+	/** Handle for fragment shader. */
+	GLuint fragment;
 
-	GPUShaderInterface *interface; /* cached uniform & attrib interface for shader */
+	/** Cached uniform & attribute interface for shader. */
+	GPUShaderInterface *interface;
 
 	int feedback_transform_type;
 #ifndef NDEBUG

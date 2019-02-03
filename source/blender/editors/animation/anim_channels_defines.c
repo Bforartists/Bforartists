@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/animation/anim_channels_defines.c
@@ -4419,6 +4413,12 @@ static void draw_setting_widget(bAnimContext *ac, bAnimListElem *ale, const bAni
 					break;
 			}
 		}
+	}
+
+	if ((ale->fcurve_owner_id != NULL && ID_IS_LINKED(ale->fcurve_owner_id)) ||
+	    (ale->id != NULL && ID_IS_LINKED(ale->id)))
+	{
+		UI_but_flag_enable(but, UI_BUT_DISABLED);
 	}
 }
 

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_object_api.c
@@ -59,7 +52,7 @@ static const EnumPropertyItem space_items[] = {
 	                            "The local space of a bone's parent bone"},
 	{CONSTRAINT_SPACE_LOCAL,    "LOCAL", 0, "Local Space",
 	                            "The local space of an object/bone"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -501,7 +494,7 @@ void RNA_api_object(StructRNA *srna)
 	static const EnumPropertyItem mesh_type_items[] = {
 		{eModifierMode_Realtime, "PREVIEW", 0, "Preview", "Apply modifier preview settings"},
 		{eModifierMode_Render, "RENDER", 0, "Render", "Apply modifier render settings"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 #ifndef NDEBUG
@@ -509,7 +502,7 @@ void RNA_api_object(StructRNA *srna)
 		{0, "SOURCE", 0, "Source", "Source mesh"},
 		{1, "DEFORM", 0, "Deform", "Objects deform mesh"},
 		{2, "FINAL", 0, "Final", "Objects final mesh"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 #endif
 
