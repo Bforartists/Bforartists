@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/intern/wm_operators.c
@@ -3229,7 +3222,7 @@ static void gesture_circle_modal_keymap(wmKeyConfig *keyconf)
 		{GESTURE_MODAL_DESELECT, "DESELECT", 0, "DeSelect", ""},
 		{GESTURE_MODAL_NOP, "NOP", 0, "No Operation", ""},
 
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* WARNING - name is incorrect, use for non-3d views */
@@ -3258,7 +3251,7 @@ static void gesture_straightline_modal_keymap(wmKeyConfig *keyconf)
 		{GESTURE_MODAL_CANCEL,  "CANCEL", 0, "Cancel", ""},
 		{GESTURE_MODAL_SELECT,  "SELECT", 0, "Select", ""},
 		{GESTURE_MODAL_BEGIN,   "BEGIN", 0, "Begin", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Straight Line");
@@ -3283,7 +3276,7 @@ static void gesture_box_modal_keymap(wmKeyConfig *keyconf)
 		{GESTURE_MODAL_SELECT,  "SELECT", 0, "Select", ""},
 		{GESTURE_MODAL_DESELECT, "DESELECT", 0, "DeSelect", ""},
 		{GESTURE_MODAL_BEGIN,   "BEGIN", 0, "Begin", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Box");
@@ -3331,7 +3324,7 @@ static void gesture_zoom_border_modal_keymap(wmKeyConfig *keyconf)
 		{GESTURE_MODAL_IN,  "IN", 0, "In", ""},
 		{GESTURE_MODAL_OUT, "OUT", 0, "Out", ""},
 		{GESTURE_MODAL_BEGIN, "BEGIN", 0, "Begin", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	wmKeyMap *keymap = WM_modalkeymap_get(keyconf, "Gesture Zoom Border");

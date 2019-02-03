@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Daniel Dunbar
- *                 Ton Roosendaal,
- *                 Ben Batt,
- *                 Brecht Van Lommel,
- *                 Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/modifiers/intern/MOD_particlesystem.c
@@ -138,6 +127,9 @@ static void deformVerts(
 	else if (psmd->flag & eParticleSystemFlag_file_loaded) {
 		/* in file read mesh just wasn't saved in file so no need to reset everything */
 		psmd->flag &= ~eParticleSystemFlag_file_loaded;
+		/* TODO(sergey): With copy-on-write this is more like duplicating an
+		 * object which does need to reset particles. */
+		psys->recalc |= ID_RECALC_PSYS_RESET;
 	}
 	else {
 		/* no dm before, so recalc particles fully */
@@ -185,18 +177,6 @@ static void deformVerts(
 
 	if (mesh_src != psmd->mesh_final && mesh_src != mesh) {
 		BKE_id_free(NULL, mesh_src);
-	}
-
-	/* report change in mesh structure */
-	if (psmd->mesh_final->totvert != psmd->totdmvert ||
-	    psmd->mesh_final->totedge != psmd->totdmedge ||
-	    psmd->mesh_final->totface != psmd->totdmface)
-	{
-		psys->recalc |= ID_RECALC_PSYS_RESET;
-
-		psmd->totdmvert = psmd->mesh_final->totvert;
-		psmd->totdmedge = psmd->mesh_final->totedge;
-		psmd->totdmface = psmd->mesh_final->totface;
 	}
 
 	if (!(ctx->object->transflag & OB_NO_PSYS_UPDATE)) {

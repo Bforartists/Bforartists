@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_image/space_image.c
@@ -98,7 +91,7 @@ static void image_scopes_tag_refresh(ScrArea *sa)
 
 	/* only while histogram is visible */
 	for (ar = sa->regionbase.first; ar; ar = ar->next) {
-		if (ar->regiontype == RGN_TYPE_TOOLS && ar->flag & RGN_FLAG_HIDDEN)
+		if (ar->regiontype == RGN_TYPE_TOOL_PROPS && ar->flag & RGN_FLAG_HIDDEN)
 			return;
 	}
 

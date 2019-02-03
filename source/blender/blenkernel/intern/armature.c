@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Full recode, Ton Roosendaal, Crete 2005
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/armature.c
@@ -74,6 +68,10 @@
 #include "BIK_api.h"
 
 #include "atomic_ops.h"
+
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"bke.armature"};
 
 /* **************** Generic Functions, data level *************** */
 
@@ -1153,7 +1151,7 @@ void armature_deform_verts(
 	}
 
 	if ((armOb->pose->flag & POSE_RECALC) != 0) {
-		printf("ERROR! Trying to evaluate influence of armature '%s' which needs Pose recalc!\n", armOb->id.name);
+		CLOG_ERROR(&LOG, "Trying to evaluate influence of armature '%s' which needs Pose recalc!", armOb->id.name);
 		BLI_assert(0);
 	}
 
@@ -1169,7 +1167,7 @@ void armature_deform_verts(
 	ObjectBBoneDeform *bbone_deform =
 	        BKE_armature_cached_bbone_deformation_get(armOb);
 	if (bbone_deform == NULL || bbone_deform->pdef_info_array == NULL) {
-		fprintf(stderr,
+		CLOG_ERROR(&LOG,
 		        "Armature does not have bbone cache %s, "
 		        "usually happens due to a dependency cycle.\n",
 		        armOb->id.name + 2);
@@ -1997,7 +1995,7 @@ static void pose_proxy_synchronize(Object *ob, Object *from, int layer_protected
 	for (pchan = pose->chanbase.first; pchan; pchan = pchan->next) {
 		if (pchan->bone->layer & layer_protected) {
 			if (BKE_pose_channel_find_name(frompose, pchan->name) == NULL) {
-				printf("failed to sync proxy armature because '%s' is missing pose channel '%s'\n",
+				CLOG_ERROR(&LOG, "failed to sync proxy armature because '%s' is missing pose channel '%s'",
 				       from->id.name, pchan->name);
 				error = 1;
 			}

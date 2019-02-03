@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 by Mike Erwin.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/GPU_attr_binding.h
@@ -35,8 +29,10 @@
 #include "GPU_common.h"
 
 typedef struct GPUAttrBinding {
-	uint64_t loc_bits; /* store 4 bits for each of the 16 attribs */
-	uint16_t enabled_bits; /* 1 bit for each attrib */
+	/** Store 4 bits for each of the 16 attributes. */
+	uint64_t loc_bits;
+	/** 1 bit for each attribute. */
+	uint16_t enabled_bits;
 } GPUAttrBinding;
 
 #endif /* __GPU_ATTR_BINDING_H__ */

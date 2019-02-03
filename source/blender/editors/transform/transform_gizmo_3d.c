@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/transform/transform_gizmo_3d.c
@@ -1907,7 +1903,7 @@ void TRANSFORM_GGT_gizmo(wmGizmoGroupType *gzgt)
 		{SCE_GIZMO_SHOW_ROTATE, "ROTATE", 0, "Rotate", ""},
 		{SCE_GIZMO_SHOW_SCALE, "SCALE", 0, "Scale", ""},
 		{0, "NONE", 0, "None", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	RNA_def_enum(gzgt->srna, "drag_action", rna_enum_gizmo_items, SCE_GIZMO_SHOW_TRANSLATE, "Drag Action", "");
 }

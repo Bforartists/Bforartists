@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/shader/nodes/node_shader_math.c
@@ -280,7 +272,7 @@ static int gpu_shader_math(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(
 	    "math_divide", "math_sine", "math_cosine", "math_tangent", "math_asin",
 	    "math_acos", "math_atan", "math_pow", "math_log", "math_min", "math_max",
 	    "math_round", "math_less_than", "math_greater_than", "math_modulo", "math_abs",
-	    "math_atan2", "math_floor", "math_ceil", "math_fract", "math_sqrt"
+	    "math_atan2", "math_floor", "math_ceil", "math_fract", "math_sqrt",
 	};
 
 	switch (node->custom1) {

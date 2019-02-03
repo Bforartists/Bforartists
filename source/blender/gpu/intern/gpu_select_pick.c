@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,8 +15,6 @@
  *
  * The Original Code is Copyright (C) 2017 Blender Foundation.
  * All rights reserved.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_select_pick.c
@@ -317,7 +313,7 @@ void gpu_select_pick_begin(
 
 	/* Restrict OpenGL operations for when we don't have cache */
 	if (ps->is_cached == false) {
-		gpuPushAttrib(GPU_DEPTH_BUFFER_BIT | GPU_VIEWPORT_BIT);
+		gpuPushAttr(GPU_DEPTH_BUFFER_BIT | GPU_VIEWPORT_BIT);
 
 		/* disable writing to the framebuffer */
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -539,7 +535,7 @@ uint gpu_select_pick_end(void)
 			/* force finishing last pass */
 			gpu_select_pick_load_id(ps->gl.prev_id);
 		}
-		gpuPopAttrib();
+		gpuPopAttr();
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	}
 

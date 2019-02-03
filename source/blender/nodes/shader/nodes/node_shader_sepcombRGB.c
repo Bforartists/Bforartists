@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Juho Vepsäläinen
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/shader/nodes/node_shader_sepcombRGB.c
@@ -35,13 +27,13 @@
 /* **************** SEPARATE RGBA ******************** */
 static bNodeSocketTemplate sh_node_seprgb_in[] = {
 	{	SOCK_RGBA, 1, N_("Image"),			0.8f, 0.8f, 0.8f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 static bNodeSocketTemplate sh_node_seprgb_out[] = {
 	{	SOCK_FLOAT, 0, N_("R")},
 	{	SOCK_FLOAT, 0, N_("G")},
 	{	SOCK_FLOAT, 0, N_("B")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_shader_exec_seprgb(void *UNUSED(data), int UNUSED(thread), bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), bNodeStack **in, bNodeStack **out)
@@ -78,11 +70,11 @@ static bNodeSocketTemplate sh_node_combrgb_in[] = {
 	{	SOCK_FLOAT, 1, N_("R"),			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, PROP_UNSIGNED},
 	{	SOCK_FLOAT, 1, N_("G"),			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, PROP_UNSIGNED},
 	{	SOCK_FLOAT, 1, N_("B"),			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, PROP_UNSIGNED},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 static bNodeSocketTemplate sh_node_combrgb_out[] = {
 	{	SOCK_RGBA, 0, N_("Image")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_shader_exec_combrgb(void *UNUSED(data), int UNUSED(thread), bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), bNodeStack **in, bNodeStack **out)

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file source/blender/freestyle/intern/python/BPy_FrsNoise.cpp
@@ -289,7 +285,7 @@ static PyMethodDef BPy_FrsNoise_methods[] = {
 	{"smoothNoise3", (PyCFunction)FrsNoise_smoothNoise3, METH_VARARGS | METH_KEYWORDS, FrsNoise_smoothNoise3_doc},
 	{"rand", (PyCFunction)FrsNoise_drand, METH_VARARGS | METH_KEYWORDS, NULL},
 	{"turbulence_smooth", (PyCFunction)FrsNoise_turbulence_smooth, METH_VARARGS | METH_KEYWORDS, NULL},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 /*-----------------------BPy_FrsNoise type definition ------------------------------*/

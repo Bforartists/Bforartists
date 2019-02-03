@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/object.c
@@ -33,6 +25,8 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -138,6 +132,8 @@
 
 #include "CCGSubSurf.h"
 #include "atomic_ops.h"
+
+static CLG_LogRef LOG = {"bke.object"};
 
 /* Vertex parent modifies original BMesh which is not safe for threading.
  * Ideally such a modification should be handled as a separate DAG update
@@ -782,7 +778,7 @@ static const char *get_obdata_defname(int type)
 		case OB_EMPTY: return DATA_("Empty");
 		case OB_GPENCIL: return DATA_("GPencil");
 		default:
-			printf("get_obdata_defname: Internal error, bad type: %d\n", type);
+			CLOG_ERROR(&LOG, "Internal error, bad type: %d", type);
 			return DATA_("Empty");
 	}
 }
@@ -808,7 +804,7 @@ void *BKE_object_obdata_add_from_type(Main *bmain, int type, const char *name)
 		case OB_GPENCIL:   return BKE_gpencil_data_addnew(bmain, name);
 		case OB_EMPTY:     return NULL;
 		default:
-			printf("%s: Internal error, bad type: %d\n", __func__, type);
+			CLOG_ERROR(&LOG, "Internal error, bad type: %d", type);
 			return NULL;
 	}
 }
@@ -857,8 +853,6 @@ void BKE_object_init(Object *ob)
 		ob->upflag = OB_POSZ;
 	}
 
-	ob->dupon = 1; ob->dupoff = 0;
-	ob->dupsta = 1; ob->dupend = 100;
 	ob->dupfacesca = 1.0;
 
 	ob->col_group = 0x01;
@@ -1565,7 +1559,7 @@ void BKE_object_make_proxy(Main *bmain, Object *ob, Object *target, Object *cob)
 {
 	/* paranoia checks */
 	if (ID_IS_LINKED(ob) || !ID_IS_LINKED(target)) {
-		printf("cannot make proxy\n");
+		CLOG_ERROR(&LOG, "cannot make proxy");
 		return;
 	}
 
@@ -1915,8 +1909,7 @@ void BKE_object_matrix_local_get(struct Object *ob, float mat[4][4])
  * \param depsgraph: Used for dupli-frame time.
  * \return success if \a mat is set.
  */
-static bool ob_parcurve(Object *ob, Object *par,
-                        float dupli_ctime, int dupli_transflag, float mat[4][4])
+static bool ob_parcurve(Object *ob, Object *par, float mat[4][4])
 {
 	Curve *cu = par->data;
 	float vec[4], dir[3], quat[4], radius, ctime;
@@ -1936,29 +1929,19 @@ static bool ob_parcurve(Object *ob, Object *par,
 		return false;
 	}
 
-	/* catch exceptions: curve paths used as a duplicator */
-	if ((dupli_transflag & OB_DUPLINOSPEED) == 0) {
-		/* ctime is now a proper var setting of Curve which gets set by Animato like any other var that's animated,
-		 * but this will only work if it actually is animated...
-		 *
-		 * we divide the curvetime calculated in the previous step by the length of the path, to get a time
-		 * factor, which then gets clamped to lie within 0.0 - 1.0 range
-		 */
-		if (cu->pathlen) {
-			ctime = cu->ctime / cu->pathlen;
-		}
-		else {
-			ctime = cu->ctime;
-		}
-		CLAMP(ctime, 0.0f, 1.0f);
+	/* ctime is now a proper var setting of Curve which gets set by Animato like any other var that's animated,
+	 * but this will only work if it actually is animated...
+	 *
+	 * we divide the curvetime calculated in the previous step by the length of the path, to get a time
+	 * factor, which then gets clamped to lie within 0.0 - 1.0 range
+	 */
+	if (cu->pathlen) {
+		ctime = cu->ctime / cu->pathlen;
 	}
 	else {
-		ctime = dupli_ctime;
-		if (cu->pathlen) {
-			ctime /= cu->pathlen;
-		}
-		CLAMP(ctime, 0.0f, 1.0f);
+		ctime = cu->ctime;
 	}
+	CLAMP(ctime, 0.0f, 1.0f);
 
 	unit_m4(mat);
 
@@ -1994,7 +1977,7 @@ static void ob_parbone(Object *ob, Object *par, float mat[4][4])
 	/* Make sure the bone is still valid */
 	pchan = BKE_pose_channel_find_name(par->pose, ob->parsubstr);
 	if (!pchan || !pchan->bone) {
-		printf("Object %s with Bone parent: bone %s doesn't exist\n", ob->id.name + 2, ob->parsubstr);
+		CLOG_ERROR(&LOG, "Object %s with Bone parent: bone %s doesn't exist", ob->id.name + 2, ob->parsubstr);
 		unit_m4(mat);
 		return;
 	}
@@ -2078,9 +2061,8 @@ static void give_parvert(Object *par, int nr, float vec[3])
 			}
 		}
 		else {
-			fprintf(stderr,
-			        "%s: Evaluated mesh is needed to solve parenting, "
-			        "object position can be wrong now\n", __func__);
+			CLOG_ERROR(&LOG, "Evaluated mesh is needed to solve parenting, "
+			           "object position can be wrong now");
 		}
 	}
 	else if (ELEM(par->type, OB_CURVE, OB_SURF)) {
@@ -2145,9 +2127,7 @@ static void ob_parvert3(Object *ob, Object *par, float mat[4][4])
 	}
 }
 
-void BKE_object_get_parent_matrix_for_dupli(Object *ob, Object *par,
-                                            float dupli_ctime, int dupli_transflag,
-                                            float parentmat[4][4])
+void BKE_object_get_parent_matrix(Object *ob, Object *par, float parentmat[4][4])
 {
 	float tmat[4][4];
 	float vec[3];
@@ -2158,7 +2138,7 @@ void BKE_object_get_parent_matrix_for_dupli(Object *ob, Object *par,
 			ok = 0;
 			if (par->type == OB_CURVE) {
 				if ((((Curve *)par->data)->flag & CU_PATH) &&
-				    (ob_parcurve(ob, par, dupli_ctime, dupli_transflag, tmat)))
+				    (ob_parcurve(ob, par, tmat)))
 				{
 					ok = 1;
 				}
@@ -2188,20 +2168,13 @@ void BKE_object_get_parent_matrix_for_dupli(Object *ob, Object *par,
 			copy_m4_m4(parentmat, par->obmat);
 			break;
 	}
-
-}
-
-void BKE_object_get_parent_matrix(Object *ob, Object *par, float parentmat[4][4])
-{
-	BKE_object_get_parent_matrix_for_dupli(ob, par, 0, 0, parentmat);
 }
 
 /**
  * \param r_originmat: Optional matrix that stores the space the object is in (without its own matrix applied)
  */
-static void solve_parenting(Object *ob, Object *par, float obmat[4][4], float slowmat[4][4],
-                            float r_originmat[3][3], const bool set_origin,
-                            float dupli_ctime, int dupli_transflag)
+static void solve_parenting(Object *ob, Object *par, float obmat[4][4],
+                            float r_originmat[3][3], const bool set_origin)
 {
 	float totmat[4][4];
 	float tmat[4][4];
@@ -2209,9 +2182,7 @@ static void solve_parenting(Object *ob, Object *par, float obmat[4][4], float sl
 
 	BKE_object_to_mat4(ob, locmat);
 
-	if (ob->partype & PARSLOW) copy_m4_m4(slowmat, obmat);
-
-	BKE_object_get_parent_matrix_for_dupli(ob, par, dupli_ctime, dupli_transflag, totmat);
+	BKE_object_get_parent_matrix(ob, par, totmat);
 
 	/* total */
 	mul_m4_m4m4(tmat, totmat, ob->parentinv);
@@ -2233,51 +2204,16 @@ static void solve_parenting(Object *ob, Object *par, float obmat[4][4], float sl
 	}
 }
 
-static bool where_is_object_parslow(Object *ob, float obmat[4][4], float slowmat[4][4])
-{
-	float *fp1, *fp2;
-	float fac1, fac2;
-	int a;
-
-	/* include framerate */
-	fac1 = (1.0f / (1.0f + fabsf(ob->sf)));
-	if (fac1 >= 1.0f) return false;
-	fac2 = 1.0f - fac1;
-
-	fp1 = obmat[0];
-	fp2 = slowmat[0];
-	for (a = 0; a < 16; a++, fp1++, fp2++) {
-		fp1[0] = fac1 * fp1[0] + fac2 * fp2[0];
-	}
-
-	return true;
-}
-
 /* note, scene is the active scene while actual_scene is the scene the object resides in */
-void BKE_object_where_is_calc_time_ex(
-        Depsgraph *depsgraph, Scene *scene, Object *ob, float ctime, int dupli_transflag,
+static void object_where_is_calc_ex(
+        Depsgraph *depsgraph, Scene *scene, Object *ob, float ctime,
         RigidBodyWorld *rbw, float r_originmat[3][3])
 {
-	if (ob == NULL) return;
-
-	/* execute drivers only, as animation has already been done */
-	BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, ctime, ADT_RECALC_DRIVERS);
-
 	if (ob->parent) {
 		Object *par = ob->parent;
-		float slowmat[4][4];
 
 		/* calculate parent matrix */
-		solve_parenting(ob, par, ob->obmat, slowmat, r_originmat, true,
-		                ctime, dupli_transflag);
-
-		/* "slow parent" is definitely not threadsafe, and may also give bad results jumping around
-		 * An old-fashioned hack which probably doesn't really cut it anymore
-		 */
-		if (ob->partype & PARSLOW) {
-			if (!where_is_object_parslow(ob, ob->obmat, slowmat))
-				return;
-		}
+		solve_parenting(ob, par, ob->obmat, r_originmat, true);
 	}
 	else {
 		BKE_object_to_mat4(ob, ob->obmat);
@@ -2303,15 +2239,10 @@ void BKE_object_where_is_calc_time_ex(
 
 void BKE_object_where_is_calc_time(Depsgraph *depsgraph, Scene *scene, Object *ob, float ctime)
 {
-	BKE_object_where_is_calc_time_ex(depsgraph, scene, ob, ctime, 0, NULL, NULL);
+	/* Execute drivers and animation. */
+	BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, ctime, ADT_RECALC_ALL);
+	object_where_is_calc_ex(depsgraph, scene, ob, ctime, NULL, NULL);
 }
-
-void BKE_object_where_is_calc_time_for_dupli(
-        Depsgraph *depsgraph, Scene *scene, struct Object *ob, float ctime, int dupli_transflag)
-{
-	BKE_object_where_is_calc_time_ex(depsgraph, scene, ob, ctime, dupli_transflag, NULL, NULL);
-}
-
 
 /* get object transformation matrix without recalculating dependencies and
  * constraints -- assume dependencies are already solved by depsgraph.
@@ -2319,16 +2250,9 @@ void BKE_object_where_is_calc_time_for_dupli(
  * used for bundles orientation in 3d space relative to parented blender camera */
 void BKE_object_where_is_calc_mat4(Object *ob, float obmat[4][4])
 {
-
 	if (ob->parent) {
-		float slowmat[4][4];
-
 		Object *par = ob->parent;
-
-		solve_parenting(ob, par, obmat, slowmat, NULL, false, 0.0f, 0);
-
-		if (ob->partype & PARSLOW)
-			where_is_object_parslow(ob, obmat, slowmat);
+		solve_parenting(ob, par, obmat, NULL, false);
 	}
 	else {
 		BKE_object_to_mat4(ob, obmat);
@@ -2337,11 +2261,13 @@ void BKE_object_where_is_calc_mat4(Object *ob, float obmat[4][4])
 
 void BKE_object_where_is_calc_ex(Depsgraph *depsgraph, Scene *scene, RigidBodyWorld *rbw, Object *ob, float r_originmat[3][3])
 {
-	BKE_object_where_is_calc_time_ex(depsgraph, scene, ob, DEG_get_ctime(depsgraph), 0, rbw, r_originmat);
+	float ctime = DEG_get_ctime(depsgraph);
+	object_where_is_calc_ex(depsgraph, scene, ob, ctime, rbw, r_originmat);
 }
 void BKE_object_where_is_calc(Depsgraph *depsgraph, Scene *scene, Object *ob)
 {
-	BKE_object_where_is_calc_time_ex(depsgraph, scene, ob, DEG_get_ctime(depsgraph), 0, NULL, NULL);
+	float ctime = DEG_get_ctime(depsgraph);
+	object_where_is_calc_ex(depsgraph, scene, ob, ctime, NULL, NULL);
 }
 
 /**
@@ -4081,16 +4007,17 @@ bool BKE_object_modifier_update_subframe(
 	/* was originally ID_RECALC_ALL - TODO - which flags are really needed??? */
 	/* TODO(sergey): What about animation? */
 	ob->id.recalc |= ID_RECALC_ALL;
-	BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, frame, ADT_RECALC_ANIM);
 	if (update_mesh) {
+		BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, frame, ADT_RECALC_ANIM);
 		/* ignore cache clear during subframe updates
 		 * to not mess up cache validity */
 		object_cacheIgnoreClear(ob, 1);
 		BKE_object_handle_update(depsgraph, scene, ob);
 		object_cacheIgnoreClear(ob, 0);
 	}
-	else
+	else {
 		BKE_object_where_is_calc_time(depsgraph, scene, ob, frame);
+	}
 
 	/* for curve following objects, parented curve has to be updated too */
 	if (ob->type == OB_CURVE) {

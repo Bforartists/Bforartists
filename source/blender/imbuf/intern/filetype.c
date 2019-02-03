@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation, 2010.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/imbuf/intern/filetype.c
@@ -85,7 +79,7 @@ const ImFileType IMB_FILE_TYPES[] = {
 #ifdef WITH_OPENIMAGEIO
 	{NULL, NULL, NULL, imb_is_a_photoshop, imb_ftype_default, NULL, imb_load_photoshop, NULL, NULL, IM_FTYPE_FLOAT, IMB_FTYPE_PSD, COLOR_ROLE_DEFAULT_FLOAT},
 #endif
-	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0}
+	{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0},
 };
 
 const ImFileType *IMB_FILE_TYPES_LAST = &IMB_FILE_TYPES[sizeof(IMB_FILE_TYPES) / sizeof(ImFileType) - 1];

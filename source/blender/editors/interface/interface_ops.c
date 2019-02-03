@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/interface/interface_ops.c
@@ -408,7 +402,7 @@ static EnumPropertyItem override_type_items[] = {
 	{UIOverride_Type_Replace, "REPLACE", 0, "Replace", "Completely replace value from linked data by local one"},
 	{UIOverride_Type_Difference, "DIFFERENCE", 0, "Difference", "Store difference to linked data value"},
 	{UIOverride_Type_Factor, "FACTOR", 0, "Factor", "Store factor to linked data value (useful e.g. for scale)"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 

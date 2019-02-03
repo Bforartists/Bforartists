@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,9 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file draw_builtin_shader.c
@@ -46,7 +41,15 @@ extern char datatoc_common_world_clip_lib_glsl[];
 	     GPU_SHADER_3D_DEPTH_ONLY, \
 	     GPU_SHADER_CAMERA, \
 	     GPU_SHADER_INSTANCE_VARIYING_COLOR_VARIYING_SIZE, \
-	     GPU_SHADER_INSTANCE_VARIYING_COLOR_VARIYING_SCALE)
+	     GPU_SHADER_INSTANCE_VARIYING_COLOR_VARIYING_SCALE, \
+	     GPU_SHADER_3D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_OUTLINE_AA, \
+	     GPU_SHADER_3D_POINT_UNIFORM_SIZE_UNIFORM_COLOR_AA, \
+	     GPU_SHADER_3D_SCREENSPACE_VARIYING_COLOR, \
+	     GPU_SHADER_3D_INSTANCE_SCREEN_ALIGNED, \
+	     GPU_SHADER_3D_GROUNDLINE, \
+	     GPU_SHADER_3D_GROUNDPOINT, \
+	     GPU_SHADER_DISTANCE_LINES, \
+	     GPU_SHADER_INSTANCE_EDGES_VARIYING_COLOR)
 
 /* cache of built-in shaders (each is created on first use) */
 static struct {
@@ -66,11 +69,13 @@ static GPUShader *drw_shader_get_builtin_shader_clipped(eGPUBuiltinShader shader
 	        &shader_code.geom,
 	        &shader_code.defs);
 
+	/* In rare cases geometry shaders calculate clipping themselves. */
 	return DRW_shader_create_from_arrays({
 	        .vert = (const char *[]){world_clip_lib, shader_code.vert, NULL},
-	        .geom = (const char *[]){shader_code.geom, NULL},
+	        .geom = (const char *[]){shader_code.geom ? world_clip_lib : NULL, shader_code.geom, NULL},
 	        .frag = (const char *[]){shader_code.frag, NULL},
-	        .defs = (const char *[]){world_clip_def, shader_code.defs, NULL}});
+	        .defs = (const char *[]){world_clip_def, shader_code.defs, NULL},
+	});
 }
 
 GPUShader *DRW_shader_get_builtin_shader(eGPUBuiltinShader shader_id, eDRW_ShaderSlot slot)

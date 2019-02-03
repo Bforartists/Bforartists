@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2009).
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_context.c
@@ -57,7 +51,7 @@ const EnumPropertyItem rna_enum_context_mode_items[] = {
 	{CTX_MODE_EDIT_GPENCIL, "EDIT_GPENCIL", 0, "Grease Pencil Edit", "" },
 	{CTX_MODE_SCULPT_GPENCIL, "SCULPT_GPENCIL", 0, "Grease Pencil Sculpt", "" },
 	{CTX_MODE_WEIGHT_GPENCIL, "WEIGHT_GPENCIL", 0, "Grease Pencil Weight Paint", "" },
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME

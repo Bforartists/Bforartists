@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/blenloader/intern/readfile.c
@@ -1573,14 +1565,17 @@ static void change_idid_adr(ListBase *mainlist, FileData *basefd, void *old, voi
 /* lib linked proxy objects point to our local data, we need
  * to clear that pointer before reading the undo memfile since
  * the object might be removed, it is set again in reading
- * if the local object still exists */
+ * if the local object still exists.
+ * This is only valid for local proxy objects though, linked ones should not be affected here.
+ */
 void blo_clear_proxy_pointers_from_lib(Main *oldmain)
 {
 	Object *ob = oldmain->object.first;
 
 	for (; ob; ob = ob->id.next) {
-		if (ob->id.lib)
+		if (ob->id.lib != NULL && ob->proxy_from != NULL && ob->proxy_from->id.lib == NULL) {
 			ob->proxy_from = NULL;
+		}
 	}
 }
 
@@ -4177,7 +4172,7 @@ static const char *ptcache_data_struct[] = {
 	"", // BPHYS_DATA_AVELOCITY / BPHYS_DATA_XCONST */
 	"", // BPHYS_DATA_SIZE:
 	"", // BPHYS_DATA_TIMES:
-	"BoidData" // case BPHYS_DATA_BOIDS:
+	"BoidData", // case BPHYS_DATA_BOIDS:
 };
 
 static void direct_link_pointcache_cb(FileData *fd, void *data)

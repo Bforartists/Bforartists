@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2004 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation (2008).
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_SEQUENCER_H__
@@ -30,13 +24,11 @@
  *  \ingroup bke
  */
 
-struct bContext;
 struct Depsgraph;
-struct StripColorBalance;
 struct Editing;
-struct GSet;
-struct GPUOffScreen;
 struct GPUFX;
+struct GPUOffScreen;
+struct GSet;
 struct ImBuf;
 struct Main;
 struct Mask;
@@ -45,8 +37,10 @@ struct Scene;
 struct Sequence;
 struct SequenceModifierData;
 struct Stereo3dFormat;
+struct StripColorBalance;
 struct StripElem;
 struct TextVars;
+struct bContext;
 struct bSound;
 
 struct SeqIndexBuildContext;
@@ -129,7 +123,7 @@ enum {
 	DO_BOX_WIPE,
 	DO_CROSS_WIPE,
 	DO_IRIS_WIPE,
-	DO_CLOCK_WIPE
+	DO_CLOCK_WIPE,
 };
 
 struct SeqEffectHandle {
@@ -416,7 +410,7 @@ enum {
 	SEQ_SIDE_NONE = 0,
 	SEQ_SIDE_LEFT,
 	SEQ_SIDE_RIGHT,
-	SEQ_SIDE_BOTH
+	SEQ_SIDE_BOTH,
 };
 int BKE_sequencer_find_next_prev_edit(
         struct Scene *scene, int cfra, const short side,

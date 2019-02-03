@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -20,7 +18,6 @@
 
  * The Original Code is: some of this file.
  *
- * ***** END GPL LICENSE BLOCK *****
  * */
 
 /** \file blender/blenlib/intern/math_rotation.c
@@ -1799,9 +1796,6 @@ void eulO_to_gimbal_axis(float gmat[3][3], const float eul[3], const short order
  * 2. Altered source versions must be plainly marked as such, and must not be
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
- *
- * \author Ladislav Kavan, kavanl@cs.tcd.ie
- *
  * Changes for Blender:
  * - renaming, style changes and optimization's
  * - added support for scaling
@@ -2023,7 +2017,7 @@ void quat_apply_track(float quat[4], short axis, short upflag)
 		/* Quaternion((1,0,0), radians(-90)) * Quaternion((0,1,0), radians(-90)) */
 		{0.5, -0.5, -0.5, 0.5},
 		/* no rotation */
-		{0.0, sqrt_1_2, sqrt_1_2, 0.0}
+		{0.0, sqrt_1_2, sqrt_1_2, 0.0},
 	};
 
 	assert(axis >= 0 && axis <= 5);

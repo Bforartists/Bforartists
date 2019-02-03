@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Daniel Dunbar
- *                 Ton Roosendaal,
- *                 Ben Batt,
- *                 Brecht Van Lommel,
- *                 Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/modifiers/intern/MOD_explode.c
@@ -214,7 +203,7 @@ static const short add_faces[24] = {
 	0,
 	0, 0, 2, 0, 1, 2, 2, 0, 2, 1,
 	2, 2, 2, 2, 3, 0, 0, 0, 1, 0,
-	1, 1, 2
+	1, 1, 2,
 };
 
 static MFace *get_dface(Mesh *mesh, Mesh *split, int cur, int i, MFace *mf)

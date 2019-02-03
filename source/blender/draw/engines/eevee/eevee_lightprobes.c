@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file eevee_lightprobes.c
@@ -408,8 +402,8 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
 
 		/* Planar Display */
 		DRW_shgroup_instance_format(e_data.format_probe_display_planar, {
-		    {"probe_id", DRW_ATTRIB_INT, 1},
-		    {"probe_mat", DRW_ATTRIB_FLOAT, 16},
+		    {"probe_id", DRW_ATTR_INT, 1},
+		    {"probe_mat", DRW_ATTR_FLOAT, 16},
 		});
 
 		DRWShadingGroup *grp = DRW_shgroup_instance_create(

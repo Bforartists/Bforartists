@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, full recode and added functions
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_view3d/drawobject.c
@@ -70,7 +64,7 @@ static bool check_ob_drawface_dot(Scene *sce, View3D *vd, char dt)
 	if ((sce->toolsettings->selectmode & SCE_SELECT_FACE) == 0)
 		return false;
 
-	if (G.f & G_BACKBUFSEL)
+	if (G.f & G_FLAG_BACKBUFSEL)
 		return false;
 
 	/* if its drawing textures with zbuf sel, then don't draw dots */
@@ -116,7 +110,7 @@ static const float sinval[CIRCLE_RESOL] = {
 	-0.57126821,
 	-0.39435585,
 	-0.20129852,
-	0.00000000
+	0.00000000,
 };
 
 /* 32 values of cos function (still same result!) */
@@ -152,7 +146,7 @@ static const float cosval[CIRCLE_RESOL] = {
 	0.82076344,
 	0.91895781,
 	0.97952994,
-	1.00000000
+	1.00000000,
 };
 
 static void circball_array_fill(float verts[CIRCLE_RESOL][3], const float cent[3], float rad, const float tmat[4][4])

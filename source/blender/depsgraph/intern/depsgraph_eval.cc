@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2013 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Joshua Leung
- * Contributor(s): None Yet
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/intern/depsgraph_eval.cc
@@ -49,9 +42,9 @@ extern "C" {
 #include "intern/eval/deg_eval.h"
 #include "intern/eval/deg_eval_flush.h"
 
-#include "intern/nodes/deg_node.h"
-#include "intern/nodes/deg_node_operation.h"
-#include "intern/nodes/deg_node_time.h"
+#include "intern/node/deg_node.h"
+#include "intern/node/deg_node_operation.h"
+#include "intern/node/deg_node_time.h"
 
 #include "intern/depsgraph.h"
 
@@ -61,7 +54,7 @@ void DEG_evaluate_on_refresh(Depsgraph *graph)
 	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
 	deg_graph->ctime = BKE_scene_frame_get(deg_graph->scene);
 	/* Update time on primary timesource. */
-	DEG::TimeSourceDepsNode *tsrc = deg_graph->find_time_source();
+	DEG::TimeSourceNode *tsrc = deg_graph->find_time_source();
 	tsrc->cfra = deg_graph->ctime;
 	/* Update time in scene. */
 	if (deg_graph->scene_cow) {
@@ -78,7 +71,7 @@ void DEG_evaluate_on_framechange(Main *bmain,
 	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
 	deg_graph->ctime = ctime;
 	/* Update time on primary timesource. */
-	DEG::TimeSourceDepsNode *tsrc = deg_graph->find_time_source();
+	DEG::TimeSourceNode *tsrc = deg_graph->find_time_source();
 	tsrc->cfra = ctime;
 	tsrc->tag_update(deg_graph, DEG::DEG_UPDATE_SOURCE_TIME);
 	DEG::deg_graph_flush_updates(bmain, deg_graph);

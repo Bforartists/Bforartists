@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation, Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_sequencer/sequencer_intern.h
@@ -36,18 +29,18 @@
 
 /* internal exports only */
 
-struct Depsgraph;
-struct Sequence;
-struct bContext;
-struct rctf;
-struct SpaceSeq;
-struct ScrArea;
 struct ARegion;
 struct ARegionType;
-struct Scene;
+struct Depsgraph;
 struct Main;
-struct wmOperator;
+struct Scene;
+struct ScrArea;
+struct Sequence;
+struct SpaceSeq;
 struct StripElem;
+struct bContext;
+struct rctf;
+struct wmOperator;
 
 /* space_sequencer.c */
 struct ARegion *sequencer_has_buttons_region(struct ScrArea *sa);
@@ -87,8 +80,8 @@ extern EnumPropertyItem sequencer_prop_effect_types[];
 extern EnumPropertyItem prop_side_types[];
 
 /* operators */
-struct wmOperatorType;
 struct wmKeyConfig;
+struct wmOperatorType;
 
 void SEQUENCER_OT_cut(struct wmOperatorType *ot);
 void SEQUENCER_OT_slip(struct wmOperatorType *ot);
@@ -163,18 +156,18 @@ void SEQUENCER_OT_effect_strip_add(struct wmOperatorType *ot);
 
 enum {
 	SEQ_CUT_SOFT,
-	SEQ_CUT_HARD
+	SEQ_CUT_HARD,
 };
 enum {
 	SEQ_SELECTED,
-	SEQ_UNSELECTED
+	SEQ_UNSELECTED,
 };
 
 enum {
 	SEQ_SELECT_LR_NONE = 0,
 	SEQ_SELECT_LR_MOUSE,
 	SEQ_SELECT_LR_LEFT,
-	SEQ_SELECT_LR_RIGHT
+	SEQ_SELECT_LR_RIGHT,
 };
 
 /* defines used internally */

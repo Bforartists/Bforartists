@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file primitive3d_gizmo.c
@@ -177,7 +173,7 @@ static void GIZMO_GT_primitive_3d(wmGizmoType *gzt)
 
 	static EnumPropertyItem rna_enum_draw_style[] = {
 		{ED_GIZMO_PRIMITIVE_STYLE_PLANE, "PLANE", 0, "Plane", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	RNA_def_enum(gzt->srna, "draw_style", rna_enum_draw_style, ED_GIZMO_PRIMITIVE_STYLE_PLANE, "Draw Style", "");
 }

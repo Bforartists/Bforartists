@@ -1,7 +1,4 @@
 /*
- *
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/intern/wm_keymap.c
@@ -1593,7 +1585,8 @@ void WM_keyconfig_update(wmWindowManager *wm)
 		    &wm->userconf->keymaps,
 		    &wm->defaultconf->keymaps,
 		    &wm->addonconf->keymaps,
-		    NULL};
+		    NULL,
+		};
 
 		int i;
 

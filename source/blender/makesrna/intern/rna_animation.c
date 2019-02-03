@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2009), Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_animation.c
@@ -51,7 +45,7 @@ const EnumPropertyItem rna_enum_keyingset_path_grouping_items[] = {
 	{KSP_GROUP_NAMED, "NAMED", 0, "Named Group", ""},
 	{KSP_GROUP_NONE, "NONE", 0, "None", ""},
 	{KSP_GROUP_KSNAME, "KEYINGSET", 0, "Keying Set Name", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* It would be cool to get rid of this 'INSERTKEY_' prefix in 'py strings' values, but it would break existing
@@ -65,7 +59,7 @@ const EnumPropertyItem rna_enum_keying_flag_items[] = {
 	{INSERTKEY_XYZ2RGB, "INSERTKEY_XYZ_TO_RGB", 0, "XYZ=RGB Colors",
 	                    "Color for newly added transformation F-Curves (Location, Rotation, Scale) "
 	                    "and also Color is based on the transform axis"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -947,7 +941,6 @@ static void rna_def_keyingset(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "bl_description", PROP_STRING, PROP_NONE);
 	RNA_def_property_string_sdna(prop, NULL, "description");
 	RNA_def_property_string_maxlength(prop, RNA_DYN_DESCR_MAX); /* else it uses the pointer size! */
-
 	RNA_def_property_ui_text(prop, "Description", "A short description of the keying set");
 
 	/* KeyingSetInfo (Type Info) for Builtin Sets only  */

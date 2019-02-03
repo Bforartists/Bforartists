@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,15 +12,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/freestyle/intern/system/RandGen.cpp
  *  \ingroup freestyle
  *  \brief Pseudo-random number generator
- *  \author Fredo Durand
- *  \date 20/05/2003
  */
 
 #include "RandGen.h"
@@ -91,12 +85,12 @@ namespace Freestyle {
 static unsigned x[3] = {
 	X0,
 	X1,
-	X2
+	X2,
 };
 static unsigned a[3] = {
 	A0,
 	A1,
-	A2
+	A2,
 };
 static unsigned c = C;
 

@@ -4,10 +4,10 @@ uniform vec3 screen_vecs[2];
 uniform float size;
 uniform float pixel_size;
 
-/* ---- Instantiated Attribs ---- */
+/* ---- Instantiated Attrs ---- */
 in vec2 pos;
 
-/* ---- Per instance Attribs ---- */
+/* ---- Per instance Attrs ---- */
 in vec3 world_pos;
 in vec3 color;
 
@@ -26,4 +26,8 @@ void main()
 	vec3 screen_pos = screen_vecs[0].xyz * pos.x + screen_vecs[1].xyz * pos.y;
 	gl_Position = ViewProjectionMatrix * vec4(world_pos + screen_pos * size * pix_size, 1.0);
 	finalColor = vec4(color, 1.0);
+
+#ifdef USE_WORLD_CLIP_PLANES
+   world_clip_planes_calc_clip_distance(world_pos);
+#endif
 }

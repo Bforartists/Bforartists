@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/render/intern/source/pipeline.c
@@ -132,7 +124,6 @@
  *
  * 5) Image Files
  * - save file or append in movie
- *
  */
 
 
@@ -1234,7 +1225,7 @@ bool RE_allow_render_generic_object(Object *ob)
 	if (ob->transflag & OB_DUPLIPARTS) {
 		/* pass */  /* let particle system(s) handle showing vs. not showing */
 	}
-	else if ((ob->transflag & OB_DUPLI) && !(ob->transflag & OB_DUPLIFRAMES)) {
+	else if (ob->transflag & OB_DUPLI) {
 		return false;
 	}
 	return true;

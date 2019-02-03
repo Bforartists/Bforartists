@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_gpencil.h
@@ -35,31 +29,31 @@ struct ListBase;
 struct PointerRNA;
 struct rcti;
 
-struct bGPdata;
-struct bGPDlayer;
-struct bGPDframe;
-struct bGPDstroke;
-struct bGPDspoint;
 struct Brush;
+struct bGPDframe;
+struct bGPDlayer;
+struct bGPDspoint;
+struct bGPDstroke;
+struct bGPdata;
 
-struct Main;
-struct bContext;
-struct EvaluationContext;
-struct Depsgraph;
-struct ScrArea;
 struct ARegion;
+struct Depsgraph;
+struct EvaluationContext;
+struct Main;
 struct RegionView3D;
 struct ReportList;
 struct Scene;
+struct ScrArea;
 struct ToolSettings;
-struct ViewLayer;
 struct View3D;
+struct ViewLayer;
+struct bContext;
 
-struct Object;
 struct Material;
+struct Object;
 
-struct bAnimContext;
 struct KeyframeEditData;
+struct bAnimContext;
 
 struct wmKeyConfig;
 struct wmOperator;

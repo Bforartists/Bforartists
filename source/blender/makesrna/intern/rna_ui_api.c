@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_ui_api.c
@@ -53,7 +46,7 @@
 #define DEF_ICON_BLANK(name)
 const EnumPropertyItem rna_enum_icon_items[] = {
 #include "UI_icons.h"
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -508,13 +501,13 @@ void RNA_api_ui_layout(StructRNA *srna)
 		{'v', "VECTOR", 0, "Vector", ""},
 		{'c', "COLOR", 0, "Color", ""},
 		{'h', "HUE", 0, "Hue", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static const EnumPropertyItem id_template_filter_items[] = {
 		{UI_TEMPLATE_ID_FILTER_ALL, "ALL", 0, "All", ""},
 		{UI_TEMPLATE_ID_FILTER_AVAILABLE, "AVAILABLE", 0, "Available", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static float node_socket_color_default[] = { 0.0f, 0.0f, 0.0f, 1.0f };

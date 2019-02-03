@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #include "../node_shader_util.h"
@@ -31,13 +23,13 @@
 
 static bNodeSocketTemplate sh_node_tex_image_in[] = {
 	{	SOCK_VECTOR, 1, N_("Vector"),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_NONE, SOCK_HIDE_VALUE},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate sh_node_tex_image_out[] = {
 	{	SOCK_RGBA, 0, N_("Color"),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 0, N_("Alpha"),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_shader_init_tex_image(bNodeTree *UNUSED(ntree), bNode *node)
@@ -59,19 +51,19 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat, bNode *node, bNodeExecDat
 	    "node_tex_image_linear",
 	    "node_tex_image_nearest",
 	    "node_tex_image_cubic",
-	    "node_tex_image_smart"
+	    "node_tex_image_smart",
 	};
 	static const char *names_box[] = {
 	    "tex_box_sample_linear",
 	    "tex_box_sample_nearest",
 	    "tex_box_sample_cubic",
-	    "tex_box_sample_smart"
+	    "tex_box_sample_smart",
 	};
 	static const char *names_clip[] = {
 	    "tex_clip_linear",
 	    "tex_clip_nearest",
 	    "tex_clip_cubic",
-	    "tex_clip_smart"
+	    "tex_clip_smart",
 	};
 
 	Image *ima = (Image *)node->id;

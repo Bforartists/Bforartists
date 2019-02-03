@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/draw/modes/paint_vertex_mode.c
@@ -111,22 +105,23 @@ static void PAINT_VERTEX_engine_init(void *UNUSED(vedata))
 		sh_data->vcolor_face = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_paint_vertex_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_paint_vertex_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
-
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		});
 		sh_data->wire_overlay = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_paint_wire_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_paint_wire_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define VERTEX_MODE\n", NULL}});
-
+		        .defs = (const char *[]){world_clip_def_or_empty, "#define VERTEX_MODE\n", NULL},
+		});
 		sh_data->face_overlay = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_paint_face_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_uniform_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
-
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		});
 		sh_data->vert_overlay = DRW_shader_create_from_arrays({
 		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_paint_wire_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_paint_vert_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL}});
+		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		});
 	}
 }
 

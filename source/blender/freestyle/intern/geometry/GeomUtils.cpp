@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,15 +12,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/freestyle/intern/geometry/GeomUtils.cpp
  *  \ingroup freestyle
  *  \brief Various tools for geometry
- *  \author Stephane Grabli
- *  \date 12/04/2002
  */
 
 #include "GeomUtils.h"
@@ -670,7 +664,7 @@ void fromCameraToWorld(const Vec3r& p, Vec3r& q, const real model_view_matrix[4]
 	real translation[3] = {
 		model_view_matrix[0][3],
 		model_view_matrix[1][3],
-		model_view_matrix[2][3]
+		model_view_matrix[2][3],
 	};
 	for (unsigned short i = 0; i < 3; i++) {
 		q[i] = 0.0;

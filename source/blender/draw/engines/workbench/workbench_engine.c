@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file workbench_engine.c
@@ -43,7 +37,7 @@ RenderEngineType DRW_engine_viewport_workbench_type = {
 	NULL, &DRW_render_to_image, NULL, NULL, NULL, NULL,
 	&workbench_render_update_passes,
 	&draw_engine_workbench_solid,
-	{NULL, NULL, NULL}
+	{NULL, NULL, NULL},
 };
 
 

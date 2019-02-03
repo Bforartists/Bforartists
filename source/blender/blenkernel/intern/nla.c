@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung (full recode)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/nla.c
@@ -36,6 +28,8 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -66,7 +60,7 @@
 #include "RNA_access.h"
 #include "nla_private.h"
 
-
+static CLG_LogRef LOG = {"bke.nla"};
 
 /* *************************************************** */
 /* Data Management */
@@ -1712,7 +1706,7 @@ bool BKE_nla_action_stash(AnimData *adt)
 
 	/* sanity check */
 	if (ELEM(NULL, adt, adt->action)) {
-		printf("%s: Invalid argument - %p %p\n", __func__, adt, adt->action);
+		CLOG_ERROR(&LOG, "Invalid argument - %p %p", adt, adt->action);
 		return false;
 	}
 
@@ -1790,7 +1784,7 @@ void BKE_nla_action_pushdown(AnimData *adt)
 	 */
 	/* TODO: what about modifiers? */
 	if (action_has_motion(adt->action) == 0) {
-		printf("BKE_nla_action_pushdown(): action has no data\n");
+		CLOG_ERROR(&LOG, "action has no data");
 		return;
 	}
 

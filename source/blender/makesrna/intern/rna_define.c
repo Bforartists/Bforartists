@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2008).
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_define.c
@@ -429,7 +423,7 @@ static int rna_validate_identifier(const char *identifier, char *error, bool pro
 		"class", "continue", "def", "del", "elif", "else", "except",
 		"finally", "for", "from", "global", "if", "import", "in",
 		"is", "lambda", "nonlocal", "not", "or", "pass", "raise",
-		"return", "try", "while", "with", "yield", NULL
+		"return", "try", "while", "with", "yield", NULL,
 	};
 
 
@@ -472,7 +466,7 @@ static int rna_validate_identifier(const char *identifier, char *error, bool pro
 		static const char *kwlist_prop[] = {
 			/* not keywords but reserved all the same because py uses */
 			"keys", "values", "items", "get",
-			NULL
+			NULL,
 		};
 
 		for (a = 0; kwlist_prop[a]; a++) {
@@ -497,7 +491,7 @@ void RNA_identifier_sanitize(char *identifier, int property)
 		"class", "continue", "def", "del", "elif", "else", "except",
 		"finally", "for", "from", "global", "if", "import", "in",
 		"is", "lambda", "nonlocal", "not", "or", "pass", "raise",
-		"return", "try", "while", "with", "yield", NULL
+		"return", "try", "while", "with", "yield", NULL,
 	};
 
 
@@ -543,7 +537,7 @@ void RNA_identifier_sanitize(char *identifier, int property)
 		static const char *kwlist_prop[] = {
 			/* not keywords but reserved all the same because py uses */
 			"keys", "values", "items", "get",
-			NULL
+			NULL,
 		};
 
 		for (a = 0; kwlist_prop[a]; a++) {

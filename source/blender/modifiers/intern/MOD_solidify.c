@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,13 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Campbell Barton
- *                 Shinsuke Irie
- *                 Martin Felke
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/modifiers/intern/MOD_solidify.c
@@ -379,7 +370,10 @@ static Mesh *applyModifier(
 		CustomData_copy_data(&mesh->edata, &result->edata, 0, (int)numEdges, (int)numEdges);
 
 		CustomData_copy_data(&mesh->ldata, &result->ldata, 0, 0, (int)numLoops);
-		CustomData_copy_data(&mesh->ldata, &result->ldata, 0, (int)numLoops, (int)numLoops);
+		/* DO NOT copy here the 'copied' part of loop data, we want to reverse loops
+		 * (so that winding of copied face get reversed, so that normals get reversed
+		 * and point in expected direction...).
+		 * If we also copy data here, then this data get overwritten (and allocated memory becomes memleak). */
 
 		CustomData_copy_data(&mesh->pdata, &result->pdata, 0, 0, (int)numFaces);
 		CustomData_copy_data(&mesh->pdata, &result->pdata, 0, (int)numFaces, (int)numFaces);
