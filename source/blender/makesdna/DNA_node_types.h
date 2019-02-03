@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Bob Holcomb, Xavier Thomas
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_node_types.h
@@ -38,17 +30,17 @@
 #include "DNA_texture_types.h"
 #include "DNA_scene_types.h"
 
-struct ID;
-struct ListBase;
-struct bNodeLink;
-struct bNodeType;
-struct bNodeTreeExec;
-struct bNodePreview;
-struct bNodeInstanceHash;
 struct AnimData;
-struct bGPdata;
-struct uiBlock;
+struct ID;
 struct Image;
+struct ListBase;
+struct bGPdata;
+struct bNodeInstanceHash;
+struct bNodeLink;
+struct bNodePreview;
+struct bNodeTreeExec;
+struct bNodeType;
+struct uiBlock;
 
 /* In writefile.c: write deprecated DNA data,
  * to ensure forward compatibility in 2.6x versions.

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_wm_gizmo.c
@@ -1026,7 +1022,7 @@ static void rna_def_gizmo(BlenderRNA *brna, PropertyRNA *cprop)
 	static EnumPropertyItem tweak_actions[] = {
 		{WM_GIZMO_TWEAK_PRECISE, "PRECISE", 0, "Precise", ""},
 		{WM_GIZMO_TWEAK_SNAP, "SNAP", 0, "Snap", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	func = RNA_def_function(srna, "modal", NULL);
 	RNA_def_function_ui_description(func, "");
@@ -1307,7 +1303,7 @@ static void rna_def_gizmogroup(BlenderRNA *brna)
 		 "Show all while interacting"},
 		{WM_GIZMOGROUPTYPE_TOOL_INIT, "TOOL_INIT", 0, "Tool Init",
 		 "Postpone running until tool operator run (when used with a tool)"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	prop = RNA_def_property(srna, "bl_options", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type->flag");

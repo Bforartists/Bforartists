@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/render/intern/include/render_result.h
@@ -40,6 +32,8 @@
 #define RR_ALL_LAYERS	NULL
 #define RR_ALL_VIEWS	NULL
 
+struct ColorManagedDisplaySettings;
+struct ColorManagedViewSettings;
 struct ImBuf;
 struct ListBase;
 struct Render;
@@ -49,8 +43,6 @@ struct RenderLayer;
 struct RenderResult;
 struct Scene;
 struct rcti;
-struct ColorManagedDisplaySettings;
-struct ColorManagedViewSettings;
 
 /* New */
 

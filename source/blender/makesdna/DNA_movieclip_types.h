@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,19 +15,10 @@
  *
  * The Original Code is Copyright (C) 2011 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Blender Foundation,
- *                 Sergey Sharybin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_movieclip_types.h
  *  \ingroup DNA
- *  \since may-2011
- *  \author Sergey Sharybin
  */
 
 #ifndef __DNA_MOVIECLIP_TYPES_H__
@@ -39,13 +28,13 @@
 #include "DNA_tracking_types.h"
 #include "DNA_color_types.h"  /* for color management */
 
-struct anim;
 struct AnimData;
-struct bGPdata;
 struct ImBuf;
 struct MovieClipProxy;
-struct MovieTrackingTrack;
 struct MovieTrackingMarker;
+struct MovieTrackingTrack;
+struct anim;
+struct bGPdata;
 
 typedef struct MovieClipUser {
 	/** Current frame number. */

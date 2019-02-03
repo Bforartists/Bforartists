@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_UNDO_SYSTEM_H__
 #define __BKE_UNDO_SYSTEM_H__
@@ -29,6 +25,7 @@ struct UndoStep;
 struct bContext;
 
 /* ID's */
+struct Main;
 struct Mesh;
 struct Object;
 struct Scene;
@@ -49,6 +46,11 @@ UNDO_REF_ID_TYPE(Text);
 typedef struct UndoStack {
 	ListBase         steps;
 	struct UndoStep *step_active;
+	/**
+	 * The last memfile state read, used so we can be sure the names from the
+	 * library state matches the state an undo step was written in.
+	 */
+	struct UndoStep *step_active_memfile;
 
 	/**
 	 * Some undo systems require begin/end, see: #UndoType.step_encode_init
@@ -68,6 +70,8 @@ typedef struct UndoStep {
 	size_t data_size;
 	/** Users should never see this step (only use for internal consistency). */
 	bool skip;
+	/** Some situations require the global state to be stored, edge cases when exiting modes. */
+	bool use_memfile_step;
 	/* Over alloc 'type->struct_size'. */
 } UndoStep;
 
@@ -108,8 +112,8 @@ typedef struct UndoType {
 	 */
 	void (*step_encode_init)(struct bContext *C, UndoStep *us);
 
-	bool (*step_encode)(struct bContext *C, UndoStep *us);
-	void (*step_decode)(struct bContext *C, UndoStep *us, int dir);
+	bool (*step_encode)(struct bContext *C, struct Main *bmain, UndoStep *us);
+	void (*step_decode)(struct bContext *C, struct Main *bmain, UndoStep *us, int dir);
 
 	/**
 	 * \note When freeing all steps,

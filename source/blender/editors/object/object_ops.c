@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/object/object_ops.c
@@ -87,8 +80,6 @@ void ED_operatortypes_object(void)
 	WM_operatortype_append(OBJECT_OT_vertex_parent_set);
 	WM_operatortype_append(OBJECT_OT_track_set);
 	WM_operatortype_append(OBJECT_OT_track_clear);
-	WM_operatortype_append(OBJECT_OT_slow_parent_set);
-	WM_operatortype_append(OBJECT_OT_slow_parent_clear);
 	WM_operatortype_append(OBJECT_OT_make_local);
 	WM_operatortype_append(OBJECT_OT_make_override_static);
 	WM_operatortype_append(OBJECT_OT_make_single_user);

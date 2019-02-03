@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,31 +15,23 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_PACKEDFILE_H__
 #define __BKE_PACKEDFILE_H__
 
 /** \file BKE_packedFile.h
  *  \ingroup bke
- *  \since March 2001
- *  \author nzc
  */
 #define RET_OK      0
 #define RET_ERROR   1
 
 struct ID;
-struct bSound;
 struct Image;
 struct Main;
 struct PackedFile;
 struct ReportList;
 struct VFont;
+struct bSound;
 
 /* pack */
 struct PackedFile *dupPackedFile(const struct PackedFile *pf_src);

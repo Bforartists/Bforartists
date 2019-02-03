@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __WM_API_H__
 #define __WM_API_H__
@@ -46,41 +39,41 @@
 extern "C" {
 #endif
 
+struct ARegion;
+struct GHashIterator;
+struct GPUViewport;
+struct IDProperty;
+struct ImBuf;
+struct ImageFormatData;
+struct Main;
+struct MenuType;
+struct PointerRNA;
+struct PropertyRNA;
+struct ScrArea;
+struct ViewLayer;
 struct bContext;
 struct bToolRef_Runtime;
-struct GHashIterator;
-struct IDProperty;
+struct rcti;
+struct wmDrag;
+struct wmDropBox;
 struct wmEvent;
 struct wmEventHandler;
 struct wmGesture;
 struct wmJob;
 struct wmMsgSubscribeKey;
 struct wmMsgSubscribeValue;
-struct wmOperatorType;
 struct wmOperator;
+struct wmOperatorType;
 struct wmPaintCursor;
-struct rcti;
-struct PointerRNA;
-struct PropertyRNA;
-struct MenuType;
-struct wmDropBox;
-struct wmDrag;
-struct ImBuf;
-struct ImageFormatData;
-struct ARegion;
-struct ScrArea;
-struct Main;
-struct ViewLayer;
-struct GPUViewport;
 
 #ifdef WITH_INPUT_NDOF
 struct wmNDOFMotionData;
 #endif
 
-typedef struct wmJob wmJob;
 typedef struct wmGizmo wmGizmo;
 typedef struct wmGizmoMap wmGizmoMap;
 typedef struct wmGizmoMapType wmGizmoMapType;
+typedef struct wmJob wmJob;
 
 /* general API */
 void		WM_init_state_app_template_set(const char *app_template);
@@ -622,6 +615,9 @@ bool        WM_event_is_tablet(const struct wmEvent *event);
 #ifdef WITH_INPUT_IME
 bool        WM_event_is_ime_switch(const struct wmEvent *event);
 #endif
+
+/* For testing only 'G_FLAG_EVENT_SIMULATE' */
+struct wmEvent *WM_event_add_simulate(struct wmWindow *win, const struct wmEvent *event_to_add);
 
 const char *WM_window_cursor_keymap_status_get(const struct wmWindow *win, int button_index, int type_index);
 void WM_window_cursor_keymap_status_refresh(struct bContext *C, struct wmWindow *win);

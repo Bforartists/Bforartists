@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor:
- *      Sergey Sharybin
  */
 
 #ifndef __COM_PLANETRACKOPERATION_H__
@@ -52,7 +49,7 @@ public:
 	void setMovieClip(MovieClip *clip) {this->m_movieClip = clip;}
 	void setTrackingObject(char *object) { BLI_strncpy(this->m_trackingObjectName, object, sizeof(this->m_trackingObjectName)); }
 	void setPlaneTrackName(char *plane_track) { BLI_strncpy(this->m_planeTrackName, plane_track, sizeof(this->m_planeTrackName)); }
-	void setFramenumber(int framenumber) {this->m_framenumber = framenumber;}
+	void setFramenumber(int framenumber) { this->m_framenumber = framenumber; }
 };
 
 

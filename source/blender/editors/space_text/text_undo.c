@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_text/text_undo.c
@@ -94,7 +90,7 @@ static void text_undosys_step_encode_init(struct bContext *C, UndoStep *us_p)
 	us->data.pos = -1;
 }
 
-static bool text_undosys_step_encode(struct bContext *C, UndoStep *us_p)
+static bool text_undosys_step_encode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p)
 {
 	TextUndoStep *us = (TextUndoStep *)us_p;
 
@@ -112,7 +108,7 @@ static bool text_undosys_step_encode(struct bContext *C, UndoStep *us_p)
 	return true;
 }
 
-static void text_undosys_step_decode(struct bContext *C, UndoStep *us_p, int dir)
+static void text_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p, int dir)
 {
 	TextUndoStep *us = (TextUndoStep *)us_p;
 	Text *text = us->text_ref.ptr;

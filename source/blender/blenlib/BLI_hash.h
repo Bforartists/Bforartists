@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BLI_HASH_H__
@@ -24,6 +20,10 @@
 /** \file BLI_hash.h
  *  \ingroup bli
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 BLI_INLINE unsigned int BLI_hash_int_2d(unsigned int kx, unsigned int ky)
 {
@@ -79,5 +79,9 @@ BLI_INLINE void BLI_hash_pointer_to_color(const void *ptr, int *r, int *g, int *
 	*g = (hash & 0x00ff00) >> 8;
 	*b = hash & 0x0000ff;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __BLI_HASH_H__

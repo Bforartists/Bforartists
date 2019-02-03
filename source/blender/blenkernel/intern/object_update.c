@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 20014 by Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Sergey Sharybin.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/object_update.c
@@ -145,7 +139,9 @@ void BKE_object_eval_constraints(Depsgraph *depsgraph,
 void BKE_object_eval_transform_final(Depsgraph *depsgraph, Object *ob)
 {
 	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
-
+	/* Make sure inverse matrix is always up to date. This way users of it
+	 * do not need to worry about relcalculating it. */
+	invert_m4_m4(ob->imat, ob->obmat);
 	/* Set negative scale flag in object. */
 	if (is_negative_m4(ob->obmat)) ob->transflag |= OB_NEG_SCALE;
 	else ob->transflag &= ~OB_NEG_SCALE;
@@ -156,26 +152,9 @@ void BKE_object_handle_data_update(
         Scene *scene,
         Object *ob)
 {
-	ID *data_id = (ID *)ob->data;
-	AnimData *adt = BKE_animdata_from_id(data_id);
-	Key *key;
 	float ctime = BKE_scene_frame_get(scene);
 
 	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
-
-	/* TODO(sergey): Only used by legacy depsgraph. */
-	if (adt) {
-		/* evaluate drivers - datalevel */
-		/* XXX: for mesh types, should we push this to evaluated mesh instead? */
-		BKE_animsys_evaluate_animdata(depsgraph, scene, data_id, adt, ctime, ADT_RECALC_DRIVERS);
-	}
-
-	/* TODO(sergey): Only used by legacy depsgraph. */
-	key = BKE_key_from_object(ob);
-	if (key && key->block.first) {
-		if (!(ob->shapeflag & OB_SHAPE_LOCK))
-			BKE_animsys_evaluate_animdata(depsgraph, scene, &key->id, key->adt, ctime, ADT_RECALC_DRIVERS);
-	}
 
 	/* includes all keys and modifiers */
 	switch (ob->type) {
@@ -297,6 +276,7 @@ void BKE_object_synchronize_to_original(Depsgraph *depsgraph, Object *object)
 	object_orig->base_flag = object->base_flag;
 	/* Transformation flags. */
 	copy_m4_m4(object_orig->obmat, object->obmat);
+	copy_m4_m4(object_orig->imat, object->imat);
 	copy_m4_m4(object_orig->constinv, object->constinv);
 	object_orig->transflag = object->transflag;
 	object_orig->flag = object->flag;

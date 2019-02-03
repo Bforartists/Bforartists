@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 by Mike Erwin.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_attr_binding_private.h
@@ -35,11 +29,11 @@
 #include "GPU_vertex_format.h"
 #include "GPU_shader_interface.h"
 
-void AttribBinding_clear(GPUAttrBinding *binding);
+void AttrBinding_clear(GPUAttrBinding *binding);
 
-void get_attrib_locations(
+void get_attr_locations(
         const GPUVertFormat *format, GPUAttrBinding *binding, const GPUShaderInterface *shaderface);
-uint read_attrib_location(
+uint read_attr_location(
         const GPUAttrBinding *binding, uint a_idx);
 
 #endif /* __GPU_ATTR_BINDING_PRIVATE_H__ */

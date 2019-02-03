@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 by Nicholas Bishop
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_PAINT_H__
@@ -32,38 +24,38 @@
  *  \ingroup bke
  */
 
-struct bContext;
-struct bToolRef;
-struct BMesh;
 struct BMFace;
+struct BMesh;
 struct Brush;
 struct CurveMapping;
+struct Depsgraph;
 struct EnumPropertyItem;
-struct MeshElemMap;
 struct GridPaintMask;
-struct Main;
-struct Mesh;
+struct ImagePool;
+struct MFace;
 struct MLoop;
 struct MLoopTri;
-struct MFace;
 struct MVert;
+struct Main;
+struct Mesh;
+struct MeshElemMap;
 struct Object;
+struct PBVH;
 struct Paint;
 struct PaintCurve;
 struct Palette;
 struct PaletteColor;
-struct PBVH;
 struct ReportList;
 struct Scene;
-struct ViewLayer;
 struct Sculpt;
 struct StrokeCache;
 struct SubdivCCG;
 struct Tex;
-struct ImagePool;
-struct UnifiedPaintSettings;
-struct Depsgraph;
 struct ToolSettings;
+struct UnifiedPaintSettings;
+struct ViewLayer;
+struct bContext;
+struct bToolRef;
 
 enum eOverlayFlags;
 

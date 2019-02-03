@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2008), Nathan Letwory
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_material.c
@@ -62,7 +56,7 @@ const EnumPropertyItem rna_enum_ramp_blend_items[] = {
 	{MA_RAMP_SAT, "SATURATION", 0, "Saturation", ""},
 	{MA_RAMP_COLOR, "COLOR", 0, "Color", ""},
 	{MA_RAMP_VAL, "VALUE", 0, "Value", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #ifdef RNA_RUNTIME
@@ -354,7 +348,7 @@ static void rna_def_material_display(StructRNA *srna)
 
 	prop = RNA_def_property(srna, "diffuse_color", PROP_FLOAT, PROP_COLOR);
 	RNA_def_property_float_sdna(prop, NULL, "r");
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_ui_text(prop, "Diffuse Color", "Diffuse color of the material");
 	RNA_def_property_update(prop, 0, "rna_Material_draw_update");
 
@@ -409,14 +403,14 @@ static void rna_def_material_greasepencil(BlenderRNA *brna)
 		{GP_STYLE_MODE_LINE, "LINE", 0, "Line", "Draw strokes using a continuous line"},
 		{GP_STYLE_MODE_DOTS, "DOTS", 0, "Dots", "Draw strokes using separated dots"},
 		{GP_STYLE_MODE_BOX, "BOX", 0, "Boxes", "Draw strokes using separated rectangle boxes"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* stroke styles */
 	static EnumPropertyItem stroke_style_items[] = {
 		{GP_STYLE_STROKE_STYLE_SOLID, "SOLID", 0, "Solid", "Draw strokes with solid color"},
 		{GP_STYLE_STROKE_STYLE_TEXTURE, "TEXTURE", 0, "Texture", "Draw strokes using texture"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* fill styles */
@@ -425,13 +419,13 @@ static void rna_def_material_greasepencil(BlenderRNA *brna)
 		{GP_STYLE_FILL_STYLE_GRADIENT, "GRADIENT", 0, "Gradient", "Fill area with gradient color"},
 		{GP_STYLE_FILL_STYLE_CHESSBOARD, "CHESSBOARD", 0, "Checker Board", "Fill area with chessboard pattern"},
 		{GP_STYLE_FILL_STYLE_TEXTURE, "TEXTURE", 0, "Texture", "Fill area with image texture"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static EnumPropertyItem fill_gradient_items[] = {
 		{GP_STYLE_GRADIENT_LINEAR, "LINEAR", 0, "Linear", "Fill area with gradient color"},
 		{GP_STYLE_GRADIENT_RADIAL, "RADIAL", 0, "Radial", "Fill area with radial gradient"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "MaterialGPencilStyle", NULL);
@@ -667,7 +661,7 @@ void RNA_def_material(BlenderRNA *brna)
 		{MA_MONKEY, "MONKEY", ICON_MONKEY, "Monkey", "Monkey"},
 		{MA_HAIR, "HAIR", ICON_HAIR, "Hair", "Hair strands"},
 		{MA_SPHERE_A, "SPHERE_A", ICON_MAT_SPHERE_SKY, "World Sphere", "Large sphere with sky"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static EnumPropertyItem prop_eevee_blend_items[] = {
@@ -677,7 +671,7 @@ void RNA_def_material(BlenderRNA *brna)
 		{MA_BM_CLIP, "CLIP", 0, "Alpha Clip", "Use the alpha threshold to clip the visibility (binary visibility)"},
 		{MA_BM_HASHED, "HASHED", 0, "Alpha Hashed", "Use noise to dither the binary visibility (works well with multi-samples)"},
 		{MA_BM_BLEND, "BLEND", 0, "Alpha Blend", "Render polygon transparent, depending on alpha channel of the texture"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static EnumPropertyItem prop_eevee_blend_shadow_items[] = {
@@ -685,7 +679,7 @@ void RNA_def_material(BlenderRNA *brna)
 		{MA_BS_SOLID, "OPAQUE", 0, "Opaque", "Material will cast shadows without transparency"},
 		{MA_BS_CLIP, "CLIP", 0, "Clip", "Use the alpha threshold to clip the visibility (binary visibility)"},
 		{MA_BS_HASHED, "HASHED", 0, "Hashed", "Use noise to dither the binary visibility and use filtering to reduce the noise"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "Material", "ID");

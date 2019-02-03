@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2008), Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_armature.c
@@ -699,7 +693,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
 		{BBONE_HANDLE_ABSOLUTE, "ABSOLUTE", 0, "Absolute", "Use the position of the specified bone to compute the handle"},
 		{BBONE_HANDLE_RELATIVE, "RELATIVE", 0, "Relative", "Use the offset of the specified bone from rest pose to compute the handle"},
 		{BBONE_HANDLE_TANGENT, "TANGENT", 0, "Tangent", "Use the orientation of the specified bone to compute the handle, ignoring the location"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	PropertyRNA *prop;
@@ -782,7 +776,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
 
 	/* Number values */
 	/* envelope deform settings */
-	prop = RNA_def_property(srna, "envelope_distance", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "envelope_distance", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "dist");
 	RNA_def_property_range(prop, 0.0f, 1000.0f);
 	RNA_def_property_ui_text(prop, "Envelope Deform Distance", "Bone deformation distance (for Envelope deform only)");
@@ -794,7 +788,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
 	RNA_def_property_ui_text(prop, "Envelope Deform Weight", "Bone deformation weight (for Envelope deform only)");
 	RNA_def_property_update(prop, 0, "rna_Armature_update_data");
 
-	prop = RNA_def_property(srna, "head_radius", PROP_FLOAT, PROP_UNSIGNED);
+	prop = RNA_def_property(srna, "head_radius", PROP_FLOAT, PROP_DISTANCE);
 	if (editbone) RNA_def_property_update(prop, 0, "rna_Armature_editbone_transform_update");
 	else RNA_def_property_update(prop, 0, "rna_Armature_update_data");
 	RNA_def_property_float_sdna(prop, NULL, "rad_head");
@@ -803,7 +797,7 @@ static void rna_def_bone_common(StructRNA *srna, int editbone)
 	RNA_def_property_ui_range(prop, 0.01, 100, 0.1, 3);
 	RNA_def_property_ui_text(prop, "Envelope Head Radius", "Radius of head of bone (for Envelope deform only)");
 
-	prop = RNA_def_property(srna, "tail_radius", PROP_FLOAT, PROP_UNSIGNED);
+	prop = RNA_def_property(srna, "tail_radius", PROP_FLOAT, PROP_DISTANCE);
 	if (editbone) RNA_def_property_update(prop, 0, "rna_Armature_editbone_transform_update");
 	else RNA_def_property_update(prop, 0, "rna_Armature_update_data");
 	RNA_def_property_float_sdna(prop, NULL, "rad_tail");
@@ -1154,19 +1148,19 @@ static void rna_def_armature(BlenderRNA *brna)
 		{ARM_ENVELOPE, "ENVELOPE", 0, "Envelope",
 		               "Display bones as extruded spheres, showing deformation influence volume"},
 		{ARM_WIRE, "WIRE", 0, "Wire", "Display bones as thin wires, showing subdivision and B-Splines"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	static const EnumPropertyItem prop_ghost_type_items[] = {
 		{ARM_GHOST_CUR, "CURRENT_FRAME", 0, "Around Frame",
 		                "Display Ghosts of poses within a fixed number of frames around the current frame"},
 		{ARM_GHOST_RANGE, "RANGE", 0, "In Range", "Display Ghosts of poses within specified range"},
 		{ARM_GHOST_KEYS, "KEYS", 0, "On Keyframes", "Display Ghosts of poses on Keyframes"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	static const EnumPropertyItem prop_pose_position_items[] = {
 		{0, "POSE", 0, "Pose Position", "Show armature in posed state"},
 		{ARM_RESTPOS, "REST", 0, "Rest Position", "Show Armature in binding pose state (no posing possible)"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "Armature", "ID");

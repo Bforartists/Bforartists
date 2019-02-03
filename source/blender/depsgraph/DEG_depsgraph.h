@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2013 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Joshua Leung
- * Contributor(s): None Yet
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/DEG_depsgraph.h
@@ -37,8 +30,6 @@
  * to determine the set of operations need to ensure that all data has been
  * correctly evaluated in response to changes, based on dependencies and visibility
  * of affected data.
- *
- *
  * Evaluation Engine
  * =================
  *
@@ -79,12 +70,10 @@ typedef enum eEvaluationMode {
 enum {
 	/* Regardless to curve->path animation flag path is to be evaluated anyway,
 	 * to meet dependencies with such a things as curve modifier and other guys
-	 * who're using curve deform, where_on_path and so.
-	 */
+	 * who're using curve deform, where_on_path and so. */
 	DAG_EVAL_NEED_CURVE_PATH = (1 << 0),
 	/* A shrinkwrap modifier or constraint targeting this mesh needs information
-	 * about non-manifold boundary edges for the Target Normal Project mode.
-	 */
+	 * about non-manifold boundary edges for the Target Normal Project mode. */
 	DAG_EVAL_NEED_SHRINKWRAP_BOUNDARY = (1 << 1),
 };
 

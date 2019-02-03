@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,17 +15,9 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 /** \file DNA_sequence_types.h
  *  \ingroup DNA
- *  \since mar-2001
- *  \author nzc
  *
  * Structs for use by the 'Sequencer' (Video Editor)
  *
@@ -48,9 +38,9 @@
 #include "DNA_vfont_types.h"
 
 struct Ipo;
+struct MovieClip;
 struct Scene;
 struct bSound;
-struct MovieClip;
 
 /* strlens; 256= FILE_MAXFILE, 768= FILE_MAXDIR */
 
@@ -625,7 +615,7 @@ enum {
 	seqModifierType_WhiteBalance   = 6,
 	seqModifierType_Tonemap        = 7,
 
-	NUM_SEQUENCE_MODIFIER_TYPES
+	NUM_SEQUENCE_MODIFIER_TYPES,
 };
 
 /* SequenceModifierData->flag */

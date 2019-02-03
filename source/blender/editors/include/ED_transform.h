@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_transform.h
@@ -36,17 +28,17 @@
 
 struct ARegion;
 struct ListBase;
+struct Main;
 struct Object;
+struct SnapObjectContext;
+struct SnapObjectParams;
 struct View3D;
+struct WorkSpace;
 struct bContext;
 struct wmEvent;
 struct wmKeyConfig;
 struct wmKeyMap;
 struct wmOperatorType;
-struct WorkSpace;
-struct Main;
-struct SnapObjectContext;
-struct SnapObjectParams;
 
 void ED_keymap_transform(struct wmKeyConfig *keyconf);
 void transform_operatortypes(void);
@@ -111,9 +103,9 @@ enum TfmMode {
  * */
 bool calculateTransformCenter(struct bContext *C, int centerMode, float cent3d[3], float cent2d[2]);
 
-struct TransInfo;
-struct Scene;
 struct Object;
+struct Scene;
+struct TransInfo;
 struct wmGizmoGroup;
 struct wmGizmoGroupType;
 struct wmOperator;
@@ -121,9 +113,9 @@ struct wmOperator;
 /* UNUSED */
 // int BIF_snappingSupported(struct Object *obedit);
 
+struct ReportList;
 struct TransformOrientation;
 struct bContext;
-struct ReportList;
 
 void BIF_clearTransformOrientation(struct bContext *C);
 void BIF_removeTransformOrientation(struct bContext *C, struct TransformOrientation *ts);

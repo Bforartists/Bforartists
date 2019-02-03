@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,12 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_OBJECT_H__
@@ -36,24 +28,24 @@ extern "C" {
 #include "BLI_compiler_attrs.h"
 
 struct Base;
+struct BoundBox;
 struct Depsgraph;
 struct GpencilModifierData;
-struct Scene;
-struct ShaderFxData;
-struct ViewLayer;
+struct HookGpencilModifierData;
+struct HookModifierData;
 struct ID;
-struct Object;
-struct BoundBox;
-struct View3D;
-struct SoftBody;
-struct MovieClip;
 struct Main;
 struct Mesh;
-struct RigidBodyWorld;
-struct HookModifierData;
 struct ModifierData;
-struct HookGpencilModifierData;
+struct MovieClip;
+struct Object;
 struct RegionView3D;
+struct RigidBodyWorld;
+struct Scene;
+struct ShaderFxData;
+struct SoftBody;
+struct View3D;
+struct ViewLayer;
 
 #include "DNA_object_enums.h"
 
@@ -159,8 +151,6 @@ struct Base **BKE_object_pose_base_array_get(struct ViewLayer *view_layer, struc
 
 void BKE_object_get_parent_matrix(
         struct Object *ob, struct Object *par, float parentmat[4][4]);
-void BKE_object_get_parent_matrix_for_dupli(
-        struct Object *ob, struct Object *par, float dupli_ctime, int dupli_transflag, float parentmat[4][4]);
 void BKE_object_where_is_calc(
         struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob);
 void BKE_object_where_is_calc_ex(
@@ -168,11 +158,6 @@ void BKE_object_where_is_calc_ex(
         struct Object *ob, float r_originmat[3][3]);
 void BKE_object_where_is_calc_time(
         struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob, float ctime);
-void BKE_object_where_is_calc_time_for_dupli(
-        struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob, float ctime, int dupli_transflag);
-void BKE_object_where_is_calc_time_ex(
-        struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob, float ctime, int dupli_transflag,
-        struct RigidBodyWorld *rbw, float r_originmat[3][3]);
 void BKE_object_where_is_calc_mat4(struct Object *ob, float obmat[4][4]);
 
 /* possibly belong in own moduke? */

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2002-2009 full recode.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/armature/editarmature_undo.c
@@ -149,7 +143,7 @@ static bool armature_undosys_poll(bContext *C)
 	return editarm_object_from_context(C) != NULL;
 }
 
-static bool armature_undosys_step_encode(struct bContext *C, UndoStep *us_p)
+static bool armature_undosys_step_encode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p)
 {
 	ArmatureUndoStep *us = (ArmatureUndoStep *)us_p;
 
@@ -173,7 +167,7 @@ static bool armature_undosys_step_encode(struct bContext *C, UndoStep *us_p)
 	return true;
 }
 
-static void armature_undosys_step_decode(struct bContext *C, UndoStep *us_p, int UNUSED(dir))
+static void armature_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p, int UNUSED(dir))
 {
 	/* TODO(campbell): undo_system: use low-level API to set mode. */
 	ED_object_mode_set(C, OB_MODE_EDIT);

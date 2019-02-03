@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Chingiz Dyussenov, Arystanbek Dyussenov.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/collada/collada_internal.cpp
@@ -206,7 +200,7 @@ const unsigned char translate_start_name_map[256] = {
 	224, 225, 226, 227, 228, 229, 230, 231,
 	232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247,
-	248, 249, 250, 251, 252, 253, 254, 255
+	248, 249, 250, 251, 252, 253, 254, 255,
 };
 
 const unsigned char translate_name_map[256] = {
@@ -243,7 +237,7 @@ const unsigned char translate_name_map[256] = {
 	224, 225, 226, 227, 228, 229, 230, 231,
 	232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247,
-	248, 249, 250, 251, 252, 253, 254, 255
+	248, 249, 250, 251, 252, 253, 254, 255,
 };
 
 typedef std::map< std::string, std::vector<std::string> > map_string_list;

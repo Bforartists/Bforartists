@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Andrea Weikert (c) 2008 Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_file/file_ops.c
@@ -749,7 +742,7 @@ void FILE_OT_select_walk(wmOperatorType *ot)
 		{FILE_SELECT_WALK_DOWN,  "DOWN",  0, "Next",  ""},
 		{FILE_SELECT_WALK_LEFT,  "LEFT",  0, "Left",  ""},
 		{FILE_SELECT_WALK_RIGHT, "RIGHT", 0, "Right", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	PropertyRNA *prop;
 

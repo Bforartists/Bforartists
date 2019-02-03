@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2004 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/mesh/editmesh_select_similar.c
@@ -64,7 +56,7 @@ static const EnumPropertyItem prop_similar_compare_types[] = {
 	{SIM_CMP_GT, "GREATER", 0, "Greater", ""},
 	{SIM_CMP_LT, "LESS", 0, "Less", ""},
 
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static const EnumPropertyItem prop_similar_types[] = {
@@ -97,7 +89,7 @@ static const EnumPropertyItem prop_similar_types[] = {
 	{SIMFACE_FREESTYLE, "FREESTYLE_FACE", 0, "Freestyle Face Marks", ""},
 #endif
 
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int mesh_select_similar_compare_int(const int delta, const int compare)

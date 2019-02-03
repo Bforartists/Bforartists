@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,7 @@
  *
  * The Original Code is Copyright (C) 2006 by Nicholas Bishop
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Implements the Sculpt Mode tools
- *
  */
 
 /** \file blender/editors/sculpt_paint/sculpt_undo.c
@@ -1031,10 +1021,8 @@ typedef struct SculptUndoStep {
 
 static bool sculpt_undosys_poll(bContext *C)
 {
-	ScrArea *sa = CTX_wm_area(C);
-	if (sa && (sa->spacetype == SPACE_VIEW3D)) {
-		ViewLayer *view_layer = CTX_data_view_layer(C);
-		Object *obact = OBACT(view_layer);
+	Object *obact = CTX_data_active_object(C);
+	if (obact && obact->type == OB_MESH) {
 		if (obact && (obact->mode & OB_MODE_SCULPT)) {
 			return true;
 		}
@@ -1049,16 +1037,21 @@ static void sculpt_undosys_step_encode_init(struct bContext *UNUSED(C), UndoStep
 	BLI_listbase_clear(&us->data.nodes);
 }
 
-static bool sculpt_undosys_step_encode(struct bContext *UNUSED(C), UndoStep *us_p)
+static bool sculpt_undosys_step_encode(struct bContext *UNUSED(C), struct Main *UNUSED(bmain), UndoStep *us_p)
 {
 	/* dummy, encoding is done along the way by adding tiles
 	 * to the current 'SculptUndoStep' added by encode_init. */
 	SculptUndoStep *us = (SculptUndoStep *)us_p;
 	us->step.data_size = us->data.undo_size;
+
+	SculptUndoNode *unode = us->data.nodes.last;
+	if (unode && unode->type == SCULPT_UNDO_DYNTOPO_END) {
+		us->step.use_memfile_step = true;
+	}
 	return true;
 }
 
-static void sculpt_undosys_step_decode(struct bContext *C, UndoStep *us_p, int UNUSED(dir))
+static void sculpt_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p, int UNUSED(dir))
 {
 	/* TODO(campbell): undo_system: use low-level API to set mode. */
 	ED_object_mode_set(C, OB_MODE_SCULPT);

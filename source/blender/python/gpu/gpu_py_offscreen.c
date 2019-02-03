@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,8 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2015, Blender Foundation.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/gpu/gpu_py_offscreen.c
@@ -322,7 +318,7 @@ static struct PyMethodDef bpygpu_offscreen_methods[] = {
 	{"free", (PyCFunction)bpygpu_offscreen_free, METH_NOARGS, bpygpu_offscreen_free_doc},
 	{"__enter__", (PyCFunction)bpygpu_offscreen_bind_context_enter, METH_NOARGS},
 	{"__exit__",  (PyCFunction)bpygpu_offscreen_bind_context_exit,  METH_VARARGS},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 PyDoc_STRVAR(bpygpu_offscreen_doc,

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/animation/anim_channels_edit.c
@@ -716,7 +710,7 @@ static const EnumPropertyItem prop_animchannel_rearrange_types[] = {
 	{REARRANGE_ANIMCHAN_UP, "UP", 0, "Up", ""},
 	{REARRANGE_ANIMCHAN_DOWN, "DOWN", 0, "Down", ""},
 	{REARRANGE_ANIMCHAN_BOTTOM, "BOTTOM", 0, "To Bottom", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* Reordering "Islands" Defines ----------------------------------- */
@@ -1787,7 +1781,7 @@ static const EnumPropertyItem prop_animchannel_setflag_types[] = {
 	{ACHANNEL_SETFLAG_CLEAR, "DISABLE", 0, "Disable", ""},
 	{ACHANNEL_SETFLAG_ADD, "ENABLE", 0, "Enable", ""},
 	{ACHANNEL_SETFLAG_INVERT, "INVERT", 0, "Invert", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* defines for set animation-channel settings */
@@ -1795,7 +1789,7 @@ static const EnumPropertyItem prop_animchannel_setflag_types[] = {
 static const EnumPropertyItem prop_animchannel_settings_types[] = {
 	{ACHANNEL_SETTING_PROTECT, "PROTECT", 0, "Protect", ""},
 	{ACHANNEL_SETTING_MUTE, "MUTE", 0, "Mute", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 

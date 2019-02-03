@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2017, Blender Foundation.
- * Contributor(s): Antonio Vazquez
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/draw/engines/gpencil/gpencil_render.c
@@ -148,7 +142,7 @@ static void GPENCIL_render_update_viewvecs(float invproj[4][4], float winmat[4][
 		{-1.0f, -1.0f, -1.0f, 1.0f},
 		{1.0f, -1.0f, -1.0f, 1.0f},
 		{-1.0f,  1.0f, -1.0f, 1.0f},
-		{-1.0f, -1.0f,  1.0f, 1.0f}
+		{-1.0f, -1.0f,  1.0f, 1.0f},
 	};
 
 	/* convert the view vectors to view space */

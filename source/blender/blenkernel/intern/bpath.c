@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Campbell barton, Alex Fraser
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/bpath.c
@@ -81,9 +75,13 @@
 
 #include "BKE_bpath.h"  /* own include */
 
+#include "CLG_log.h"
+
 #ifndef _MSC_VER
 #  include "BLI_strict_flags.h"
 #endif
+
+static CLG_LogRef LOG = {"bke.bpath"};
 
 static bool checkMissingFiles_visit_cb(void *userdata, char *UNUSED(path_dst), const char *path_src)
 {
@@ -141,7 +139,7 @@ void BKE_bpath_relative_convert(Main *bmain, const char *basedir, ReportList *re
 	const int flag = BKE_BPATH_TRAVERSE_SKIP_LIBRARY;
 
 	if (basedir[0] == '\0') {
-		printf("%s: basedir='', this is a bug\n", __func__);
+		CLOG_ERROR(&LOG, "basedir='', this is a bug");
 		return;
 	}
 
@@ -185,7 +183,7 @@ void BKE_bpath_absolute_convert(Main *bmain, const char *basedir, ReportList *re
 	const int flag = BKE_BPATH_TRAVERSE_SKIP_LIBRARY;
 
 	if (basedir[0] == '\0') {
-		printf("%s: basedir='', this is a bug\n", __func__);
+		CLOG_ERROR(&LOG, "basedir='', this is a bug");
 		return;
 	}
 
@@ -684,8 +682,7 @@ bool BKE_bpath_relocate_visitor(void *pathbase_v, char *path_dst, const char *pa
 	const char *base_old = ((char **)pathbase_v)[1];
 
 	if (BLI_path_is_rel(base_old)) {
-		printf("%s: error, old base path '%s' is not absolute.\n",
-		       __func__, base_old);
+		CLOG_ERROR(&LOG, "old base path '%s' is not absolute.", base_old);
 		return false;
 	}
 

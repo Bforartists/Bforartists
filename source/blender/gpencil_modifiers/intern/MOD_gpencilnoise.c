@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2017, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Antonio Vazquez
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/gpencil_modifiers/intern/MOD_gpencilnoise.c
@@ -115,10 +108,10 @@ static void deformStroke(
 	}
 
 	if (!is_stroke_affected_by_modifier(
-		ob,
-		mmd->layername, mmd->pass_index, mmd->layer_pass, 1, gpl, gps,
-		mmd->flag & GP_NOISE_INVERT_LAYER, mmd->flag & GP_NOISE_INVERT_PASS,
-		mmd->flag & GP_NOISE_INVERT_LAYERPASS))
+	            ob,
+	            mmd->layername, mmd->pass_index, mmd->layer_pass, 1, gpl, gps,
+	            mmd->flag & GP_NOISE_INVERT_LAYER, mmd->flag & GP_NOISE_INVERT_PASS,
+	            mmd->flag & GP_NOISE_INVERT_LAYERPASS))
 	{
 		return;
 	}
@@ -182,7 +175,7 @@ static void deformStroke(
 			sc_diff = abs(mmd->scene_frame - sc_frame);
 			/* only recalc if the gp frame change or the number of scene frames is bigger than step */
 			if ((!gpl->actframe) || (mmd->gp_frame != gpl->actframe->framenum) ||
-				(sc_diff >= mmd->step))
+			    (sc_diff >= mmd->step))
 			{
 				vran = mmd->vrand1 = BLI_rng_get_float(mmd->rng);
 				vdir = mmd->vrand2 = BLI_rng_get_float(mmd->rng);

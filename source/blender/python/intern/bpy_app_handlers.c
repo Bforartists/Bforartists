@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/intern/bpy_app_handlers.c
@@ -72,14 +66,14 @@ static PyStructSequence_Field app_cb_info_fields[] = {
 #define APP_CB_OTHER_FIELDS 1
 	{(char *)"persistent",        (char *)"Function decorator for callback functions not to be removed when loading new files"},
 
-	{NULL}
+	{NULL},
 };
 
 static PyStructSequence_Desc app_cb_info_desc = {
 	(char *)"bpy.app.handlers",     /* name */
 	(char *)"This module contains callback lists",  /* doc */
 	app_cb_info_fields,    /* fields */
-	ARRAY_SIZE(app_cb_info_fields) - 1
+	ARRAY_SIZE(app_cb_info_fields) - 1,
 };
 
 #if 0

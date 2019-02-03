@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,13 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * various string, file, list operations.
  */
 
@@ -330,7 +321,7 @@ bool BLI_filename_make_safe(char *fname)
 		    "con", "prn", "aux", "null",
 		    "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
 		    "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
-		    NULL
+		    NULL,
 		};
 		char *lower_fname = BLI_strdup(fname);
 		const char **iname;

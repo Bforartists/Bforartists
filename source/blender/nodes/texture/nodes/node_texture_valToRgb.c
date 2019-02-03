@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Robin Allen
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/texture/nodes/node_texture_valToRgb.c
@@ -37,11 +29,11 @@
 /* **************** VALTORGB ******************** */
 static bNodeSocketTemplate valtorgb_in[] = {
 	{	SOCK_FLOAT, 1, N_("Fac"),			0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 static bNodeSocketTemplate valtorgb_out[] = {
 	{	SOCK_RGBA, 0, N_("Color")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void valtorgb_colorfn(float *out, TexParams *p, bNode *node, bNodeStack **in, short thread)
@@ -80,11 +72,11 @@ void register_node_type_tex_valtorgb(void)
 /* **************** RGBTOBW ******************** */
 static bNodeSocketTemplate rgbtobw_in[] = {
 	{	SOCK_RGBA, 1, N_("Color"),			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 static bNodeSocketTemplate rgbtobw_out[] = {
 	{	SOCK_FLOAT, 0, N_("Val"),			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 
