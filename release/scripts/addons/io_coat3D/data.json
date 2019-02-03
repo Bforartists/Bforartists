@@ -1,0 +1,83 @@
+{
+
+  "color": {
+    "name": "color",
+    "colorspace":  "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Color", "Base Color" ],
+    "input": 0,
+    "rampnode":  "no",
+    "node_location":  [ -400, 400 ]
+  },
+
+  "metalness": {
+    "name": "metalness",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Metallic" ],
+    "input": 1,
+    "rampnode": "yes",
+    "node_location": [ -830, 160 ]
+  },
+
+  "rough": {
+    "name": "rough",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Roughness" ],
+    "input": 2,
+    "rampnode": "yes",
+    "node_location": [ -550, 0 ]
+  },
+
+  "nmap": {
+    "name": "nmap",
+    "colorspace": "noncolor",
+    "normal": "yes",
+    "displacement": "no",
+    "find_input": [ "Normal" ],
+    "input": 3,
+    "rampnode": "no",
+    "node_location": [ -650, -500 ],
+    "normal_node_location": [ -350, -350 ]
+  },
+
+  "displacement": {
+    "name": "displacement",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "yes",
+    "rampnode": "yes",
+    "input": 4
+  },
+
+  "emissive": {
+    "name": "emissive",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "find_input": [ "Emissive" ],
+    "rampnode": "no",
+    "input": 5
+  },
+
+  "emissive_power": {
+    "name": "emissive_power",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "rampnode": "no"
+  },
+
+  "ao": {
+    "name": "ao",
+    "colorspace": "color",
+    "normal": "no",
+    "displacement": "no",
+    "rampnode": "yes"
+  }
+
+}
