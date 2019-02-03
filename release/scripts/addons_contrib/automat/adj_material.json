@@ -1,0 +1,146 @@
+{
+	"NodeSetup":[
+		{
+			"type": "ShaderNodeTexCoord",
+			"label": "Texture Co-ordinate",
+			"location": [-3700, 0]
+		},
+		{
+			"type": "ShaderNodeMath",
+			"label": "Greater Than",
+			"location": [-1900, 0],
+			"operation": "\"GREATER_THAN\"",
+			"inputs[1].default_value": 0.4
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Bumpmap Mix RGB",
+			"location": [-1700, 0],
+			"in": [
+			["Greater Than", 0]
+			]
+		},
+		{
+			"type": "ShaderNodeTexImage",
+			"label": "Color Image",
+			"location": [-450, 100],
+			"in": [
+			["Texture Co-ordinate", "\"UV\""]
+			]
+		},
+		{
+			"type": "ShaderNodeTexImage",
+			"label": "Bump Image",
+			"location": [-1350, -150],
+			"in": [
+			["Bumpmap Mix RGB", "\"Color\""]
+			]
+		},
+		{
+			"type": "ShaderNodeLayerWeight",
+			"label": "Layer Weight",
+			"location": [-500, 500],
+			"in": [
+			["Adjust normal strength", "\"Color\""]
+			]
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Multiply bumpmap",
+			"location": [-950, -150],
+			"in": [
+			["Add bumpmap", "\"Color\"", 1]
+			],
+			"blend_type": "\"MULTIPLY\"",
+			"inputs[0].default_value": 1,
+			"inputs[2].default_value": "(0, 0, 1, 1)"
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Adjust normal strength",
+			"location": [-750, -150],
+			"in": [
+			["Multiply bumpmap", "\"Color\"", 1]
+			],
+			"blend_type": "\"MIX\"",
+			"inputs[0].default_value": 0.5,
+			"inputs[2].default_value": "(0, 0, 0.5, 1)"
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Add bumpmap",
+			"location": [-1150, -150],
+			"in": [
+			["Bump Image", "\"Color\"", 1]
+			],
+			"blend_type": "\"ADD\"",
+			"inputs[0].default_value": 1,
+			"inputs[2].default_value": "(0, 0, 1, 1)"
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Add fresnel reflection",
+			"location": [-300, 500],
+			"in": [
+			["Layer Weight", "\"Fresnel\"", 1],
+			["Color Image", "\"Color\"", 2]
+			],
+			"blend_type": "\"MULTIPLY\"",
+			"inputs[0].default_value": 1
+		},
+		{
+			"type": "ShaderNodeBsdfDiffuse",
+			"label": "Diffuse component",
+			"location": [-100, 100],
+			"in": [
+			["Color Image", "\"Color\""],
+			["Adjust normal strength", "\"Color\"", "\"Normal\""]
+			]
+		},
+		{
+			"type": "ShaderNodeBsdfGlossy",
+			"label": "Glossy component",
+			"location": [-100, -100],
+			"in": [
+			["Desaturate reflection", "\"Color\""],
+			["Adjust normal strength", "\"Color\"", "\"Normal\""]
+			],
+			"distribution": "\"ASHIKHMIN_SHIRLEY\""
+		},
+		{
+			"type": "ShaderNodeMixShader",
+			"label": "Mix shader",
+			"location": [100, 0],
+			"in": [
+			["Modify specularity", 0],
+			["Diffuse component", 0],
+			["Glossy component", 0]
+			]
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Desaturate reflection",
+			"location": [-270, 0],
+			"in": [
+			["Color Image", "\"Color\"", 1]
+			],
+			"inputs[0].default_value": 0.7
+		},
+		{
+			"type": "ShaderNodeOutputMaterial",
+			"label": "Output",
+			"location": [400, 0],
+			"in": [
+			["Mix shader", "\"Shader\""]
+			]
+		},
+		{
+			"type": "ShaderNodeValToRGB",
+			"label": "Modify specularity",
+			"location": [-150, 320],
+			"in": [
+			["Add fresnel reflection", 0]
+			]
+		}
+	]
+}
