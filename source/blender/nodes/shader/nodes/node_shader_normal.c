@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/shader/nodes/node_shader_normal.c
@@ -35,13 +27,13 @@
 /* **************** NORMAL  ******************** */
 static bNodeSocketTemplate sh_node_normal_in[] = {
 	{	SOCK_VECTOR, 1, N_("Normal"),	0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, PROP_DIRECTION},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate sh_node_normal_out[] = {
 	{	SOCK_VECTOR, 0, N_("Normal"), 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 1.0f, PROP_DIRECTION},
 	{	SOCK_FLOAT, 0, N_("Dot")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 /* generates normal, does dot product */

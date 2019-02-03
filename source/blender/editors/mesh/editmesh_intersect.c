@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/mesh/editmesh_intersect.c
@@ -232,7 +228,7 @@ void MESH_OT_intersect(struct wmOperatorType *ot)
 		 "Self intersect selected faces"},
 		{ISECT_SEL_UNSEL, "SELECT_UNSELECT", 0, "Selected/Unselected",
 		 "Intersect selected with unselected faces"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static const EnumPropertyItem isect_separate_items[] = {
@@ -242,7 +238,7 @@ void MESH_OT_intersect(struct wmOperatorType *ot)
 		 "Cut into geometry keeping each side separate (Selected/Unselected only)"},
 		{ISECT_SEPARATE_NONE, "NONE", 0, "Merge",
 		 "Merge all geometry from the intersection"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -328,7 +324,7 @@ void MESH_OT_intersect_boolean(struct wmOperatorType *ot)
 		{BMESH_ISECT_BOOLEAN_ISECT, "INTERSECT", 0, "Intersect", ""},
 		{BMESH_ISECT_BOOLEAN_UNION, "UNION", 0, "Union", ""},
 		{BMESH_ISECT_BOOLEAN_DIFFERENCE, "DIFFERENCE", 0, "Difference", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

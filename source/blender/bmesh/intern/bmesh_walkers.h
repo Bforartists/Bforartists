@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Joseph Eagar.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BMESH_WALKERS_H__
@@ -131,7 +125,7 @@ enum {
 
 	/* do not intitialze function pointers and struct size in BMW_init */
 	BMW_CUSTOM,
-	BMW_MAXWALKERS
+	BMW_MAXWALKERS,
 };
 
 /* use with BMW_init, so as not to confuse with restrict flags */

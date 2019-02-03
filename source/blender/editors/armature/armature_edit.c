@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2002-2009 full recode.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Armature EditMode tools - transforms, chain based editing, and other settings
  */
 
@@ -289,7 +282,7 @@ static const EnumPropertyItem prop_calc_roll_types[] = {
 	{CALC_ROLL_ACTIVE, "ACTIVE", 0, "Active Bone", ""},
 	{CALC_ROLL_VIEW, "VIEW", 0, "View Axis", ""},
 	{CALC_ROLL_CURSOR, "CURSOR", 0, "Cursor", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 
@@ -1029,7 +1022,7 @@ void ARMATURE_OT_merge(wmOperatorType *ot)
 {
 	static const EnumPropertyItem merge_types[] = {
 		{1, "WITHIN_CHAIN", 0, "Within Chains", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

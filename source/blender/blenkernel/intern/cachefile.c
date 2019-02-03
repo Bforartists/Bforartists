@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Kevin Dietrich.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/cachefile.c
@@ -184,7 +178,8 @@ void BKE_cachefile_update_frame(
 	char filename[FILE_MAX];
 
 	for (cache_file = bmain->cachefiles.first; cache_file; cache_file = cache_file->id.next) {
-		/* Execute drivers only, as animation has already been done. */
+		/* TODO: dependency graph should be updated to do drivers on cachefile.
+		 * Execute drivers only, as animation has already been done. */
 		BKE_animsys_evaluate_animdata(depsgraph, scene, &cache_file->id, cache_file->adt, ctime, ADT_RECALC_DRIVERS);
 
 		if (!cache_file->is_sequence) {

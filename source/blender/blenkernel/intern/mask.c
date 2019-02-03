@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2012 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation,
- *                 Sergey Sharybin,
- *                 Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/mask.c
@@ -31,6 +23,8 @@
 
 #include <stddef.h>
 #include <string.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -62,6 +56,8 @@
 #include "BKE_image.h"
 
 #include "DEG_depsgraph_build.h"
+
+static CLG_LogRef LOG = {"bke.mask"};
 
 static struct {
 	ListBase splines;
@@ -1489,8 +1485,8 @@ void BKE_mask_layer_shape_from_mask(MaskLayer *masklay, MaskLayerShape *masklay_
 		}
 	}
 	else {
-		printf("%s: vert mismatch %d != %d (frame %d)\n",
-		       __func__, masklay_shape->tot_vert, tot, masklay_shape->frame);
+		CLOG_ERROR(&LOG, "vert mismatch %d != %d (frame %d)",
+				   masklay_shape->tot_vert, tot, masklay_shape->frame);
 	}
 }
 
@@ -1511,8 +1507,8 @@ void BKE_mask_layer_shape_to_mask(MaskLayer *masklay, MaskLayerShape *masklay_sh
 		}
 	}
 	else {
-		printf("%s: vert mismatch %d != %d (frame %d)\n",
-		       __func__, masklay_shape->tot_vert, tot, masklay_shape->frame);
+		CLOG_ERROR(&LOG, "vert mismatch %d != %d (frame %d)",
+		           masklay_shape->tot_vert, tot, masklay_shape->frame);
 	}
 }
 
@@ -1550,9 +1546,9 @@ void BKE_mask_layer_shape_to_mask_interp(MaskLayer *masklay,
 		}
 	}
 	else {
-		printf("%s: vert mismatch %d != %d != %d (frame %d - %d)\n",
-		       __func__, masklay_shape_a->tot_vert, masklay_shape_b->tot_vert, tot,
-		       masklay_shape_a->frame, masklay_shape_b->frame);
+		CLOG_ERROR(&LOG, "vert mismatch %d != %d != %d (frame %d - %d)",
+		           masklay_shape_a->tot_vert, masklay_shape_b->tot_vert, tot,
+		           masklay_shape_a->frame, masklay_shape_b->frame);
 	}
 }
 
@@ -1806,8 +1802,8 @@ void BKE_mask_layer_shape_changed_add(MaskLayer *masklay, int index,
 				masklay_shape->data = data_resized;
 			}
 			else {
-				printf("%s: vert mismatch %d != %d (frame %d)\n",
-				       __func__, masklay_shape->tot_vert, tot, masklay_shape->frame);
+				CLOG_ERROR(&LOG, "vert mismatch %d != %d (frame %d)",
+				           masklay_shape->tot_vert, tot, masklay_shape->frame);
 			}
 		}
 	}
@@ -1847,8 +1843,8 @@ void BKE_mask_layer_shape_changed_remove(MaskLayer *masklay, int index, int coun
 			masklay_shape->data = data_resized;
 		}
 		else {
-			printf("%s: vert mismatch %d != %d (frame %d)\n",
-			       __func__, masklay_shape->tot_vert - count, tot, masklay_shape->frame);
+			CLOG_ERROR(&LOG, "vert mismatch %d != %d (frame %d)",
+			           masklay_shape->tot_vert - count, tot, masklay_shape->frame);
 		}
 	}
 }

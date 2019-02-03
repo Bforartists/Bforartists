@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation,
- *                 Sergey Sharybin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_clip/tracking_ops_orient.c
@@ -509,7 +501,7 @@ void CLIP_OT_set_plane(wmOperatorType *ot)
 	static const EnumPropertyItem plane_items[] = {
 		{0, "FLOOR", 0, "Floor", "Set floor plane"},
 		{1, "WALL", 0, "Wall", "Set wall plane"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -583,7 +575,7 @@ void CLIP_OT_set_axis(wmOperatorType *ot)
 	static const EnumPropertyItem axis_actions[] = {
 		{0, "X", 0, "X", "Align bundle align X axis"},
 		{1, "Y", 0, "Y", "Align bundle align Y axis"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

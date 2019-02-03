@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_BRUSH_H__
@@ -28,16 +24,16 @@
  */
 
 enum eCurveMappingPreset;
-struct bContext;
 struct Brush;
-struct Paint;
 struct ImBuf;
 struct ImagePool;
 struct Main;
+struct Material;
+struct Paint;
 struct Scene;
 struct ToolSettings;
 struct UnifiedPaintSettings;
-struct Material;
+struct bContext;
 
 // enum eCurveMappingPreset;
 

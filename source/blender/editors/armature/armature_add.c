@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2002-2009 full recode.
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Operators and API's for creating bones
  */
 
@@ -848,7 +841,7 @@ void ARMATURE_OT_symmetrize(wmOperatorType *ot)
 	static const EnumPropertyItem arm_symmetrize_direction_items[] = {
 		{-1, "NEGATIVE_X", 0, "-X to +X", ""},
 		{+1, "POSITIVE_X", 0, "+X to -X", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

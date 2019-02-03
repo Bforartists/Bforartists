@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_object.h
@@ -35,33 +28,33 @@
 extern "C" {
 #endif
 
-struct bFaceMap;
 struct Base;
+struct Depsgraph;
+struct EnumPropertyItem;
 struct EnumPropertyItem;
 struct ID;
 struct Main;
 struct Menu;
 struct ModifierData;
-struct ShaderFxData;
 struct Object;
+struct PointerRNA;
+struct PropertyRNA;
 struct ReportList;
 struct Scene;
+struct ShaderFxData;
 struct View3D;
 struct ViewLayer;
 struct bConstraint;
 struct bContext;
+struct bFaceMap;
 struct bPoseChannel;
+struct uiLayout;
 struct wmKeyConfig;
 struct wmKeyMap;
 struct wmOperator;
 struct wmOperatorType;
 struct wmWindow;
 struct wmWindowManager;
-struct PointerRNA;
-struct PropertyRNA;
-struct EnumPropertyItem;
-struct Depsgraph;
-struct uiLayout;
 
 #include "DNA_object_enums.h"
 #include "BLI_compiler_attrs.h"
@@ -133,8 +126,7 @@ void ED_object_parent(struct Object *ob, struct Object *parent, const int type, 
 /* bitflags for enter/exit editmode */
 enum {
 	EM_FREEDATA         = (1 << 0),
-	EM_IGNORE_LAYER     = (1 << 3),
-	EM_NO_CONTEXT       = (1 << 4),
+	EM_NO_CONTEXT       = (1 << 1),
 };
 bool ED_object_editmode_exit_ex(
         struct Main *bmain, struct Scene *scene, struct Object *obedit, int flag);
@@ -238,7 +230,7 @@ bool ED_object_mode_generic_has_data(
 /* object_modifier.c */
 enum {
 	MODIFIER_APPLY_DATA = 1,
-	MODIFIER_APPLY_SHAPE
+	MODIFIER_APPLY_SHAPE,
 };
 
 struct ModifierData *ED_object_modifier_add(

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2008).
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_main.c
@@ -45,7 +39,7 @@
 
 static bool rna_Main_use_autopack_get(PointerRNA *UNUSED(ptr))
 {
-	if (G.fileflags & G_AUTOPACK)
+	if (G.fileflags & G_FILE_AUTOPACK)
 		return 1;
 
 	return 0;
@@ -54,9 +48,9 @@ static bool rna_Main_use_autopack_get(PointerRNA *UNUSED(ptr))
 static void rna_Main_use_autopack_set(PointerRNA *UNUSED(ptr), bool value)
 {
 	if (value)
-		G.fileflags |= G_AUTOPACK;
+		G.fileflags |= G_FILE_AUTOPACK;
 	else
-		G.fileflags &= ~G_AUTOPACK;
+		G.fileflags &= ~G_FILE_AUTOPACK;
 }
 
 static bool rna_Main_is_saved_get(PointerRNA *UNUSED(ptr))
@@ -617,7 +611,7 @@ void RNA_def_main(BlenderRNA *brna)
 		{"paint_curves", "PaintCurve", "rna_Main_paintcurves_begin", "Paint Curves", "Paint Curves data-blocks", RNA_def_main_paintcurves, "rna_Main_paintcurve_lookup_string"},
 		{"workspaces", "WorkSpace", "rna_Main_workspaces_begin", "Workspaces", "Workspace data-blocks", RNA_def_main_workspaces, "rna_Main_workspace_lookup_string"},
 		{"lightprobes", "LightProbe", "rna_Main_lightprobes_begin", "LightProbes", "LightProbe data-blocks", RNA_def_main_lightprobes, "rna_Main_lightprobe_lookup_string"},
-		{NULL, NULL, NULL, NULL, NULL, NULL}
+		{NULL, NULL, NULL, NULL, NULL, NULL},
 	};
 
 	int i;

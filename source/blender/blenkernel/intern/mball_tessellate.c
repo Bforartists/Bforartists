@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Jiri Hnidek <jiri.hnidek@vslib.cz>.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/mball_tessellate.c
@@ -466,17 +460,17 @@ static char faces[256];
 
 /* edge: LB, LT, LN, LF, RB, RT, RN, RF, BN, BF, TN, TF */
 static int corner1[12] = {
-	LBN, LTN, LBN, LBF, RBN, RTN, RBN, RBF, LBN, LBF, LTN, LTF
+	LBN, LTN, LBN, LBF, RBN, RTN, RBN, RBF, LBN, LBF, LTN, LTF,
 };
 static int corner2[12] = {
-	LBF, LTF, LTN, LTF, RBF, RTF, RTN, RTF, RBN, RBF, RTN, RTF
+	LBF, LTF, LTN, LTF, RBF, RTF, RTN, RTF, RBN, RBF, RTN, RTF,
 };
 static int leftface[12] = {
-	B, L, L, F, R, T, N, R, N, B, T, F
+	B, L, L, F, R, T, N, R, N, B, T, F,
 };
 /* face on left when going corner1 to corner2 */
 static int rightface[12] = {
-	L, T, N, L, B, R, R, F, B, F, N, T
+	L, T, N, L, B, R, R, F, B, F, N, T,
 };
 /* face on right when going corner1 to corner2 */
 

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Brecht Van Lommel.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file GPU_material.h
@@ -41,28 +33,28 @@
 extern "C" {
 #endif
 
+struct GPUMaterial;
+struct GPUNode;
+struct GPUNodeLink;
+struct GPUNodeStack;
+struct GPUTexture;
+struct GPUUniformBuffer;
+struct GPUVertAttrLayers;
 struct Image;
 struct ImageUser;
 struct ListBase;
 struct Main;
 struct Material;
 struct Object;
-struct Scene;
-struct GPUVertexAttribs;
-struct GPUNode;
-struct GPUNodeLink;
-struct GPUNodeStack;
-struct GPUMaterial;
-struct GPUTexture;
-struct GPUUniformBuffer;
 struct PreviewImage;
+struct Scene;
 struct World;
 struct bNode;
 struct bNodeTree;
 
+typedef struct GPUMaterial GPUMaterial;
 typedef struct GPUNode GPUNode;
 typedef struct GPUNodeLink GPUNodeLink;
-typedef struct GPUMaterial GPUMaterial;
 
 typedef struct GPUParticleInfo GPUParticleInfo;
 
@@ -90,7 +82,7 @@ typedef enum eGPUType {
 	GPU_CLOSURE = 1006,
 
 	/* Opengl Attributes */
-	GPU_ATTRIB = 3001,
+	GPU_ATTR = 3001,
 } eGPUType;
 
 typedef enum eGPUBuiltin {
@@ -189,9 +181,9 @@ struct GPUUniformBuffer *GPU_material_uniform_buffer_get(GPUMaterial *material);
 void GPU_material_uniform_buffer_create(GPUMaterial *material, ListBase *inputs);
 struct GPUUniformBuffer *GPU_material_create_sss_profile_ubo(void);
 
-void GPU_material_vertex_attributes(
+void GPU_material_vertex_attrs(
         GPUMaterial *material,
-        struct GPUVertexAttribs *attrib);
+        struct GPUVertAttrLayers *attrs);
 
 bool GPU_material_do_color_management(GPUMaterial *mat);
 bool GPU_material_use_domain_surface(GPUMaterial *mat);

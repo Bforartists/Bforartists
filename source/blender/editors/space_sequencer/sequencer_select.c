@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2003-2009, Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_sequencer/sequencer_select.c
@@ -555,7 +549,7 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
 		{SEQ_SELECT_LR_MOUSE, "MOUSE", 0, "Mouse", "Use mouse position for selection"},
 		{SEQ_SELECT_LR_LEFT, "LEFT", 0, "Left", "Select left"},
 		{SEQ_SELECT_LR_RIGHT, "RIGHT", 0, "Right", "Select right"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -965,7 +959,7 @@ static const EnumPropertyItem sequencer_prop_select_grouped_types[] = {
 	{SEQ_SELECT_GROUP_EFFECT_LINK, "EFFECT_LINK", 0, "Effect/Linked",
 	 "Other strips affected by the active one (sharing some time, and below or effect-assigned)"},
 	{SEQ_SELECT_GROUP_OVERLAP, "OVERLAP", 0, "Overlap", "Overlapping time"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 #define SEQ_IS_SOUND(_seq) ((_seq->type & SEQ_TYPE_SOUND_RAM) && !(_seq->type & SEQ_TYPE_EFFECT))

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/freestyle/intern/blender_interface/FRS_freestyle.cpp
@@ -346,7 +342,7 @@ static void prepare(Render *re, ViewLayer *view_layer, Depsgraph *depsgraph)
 				{FREESTYLE_FE_MATERIAL_BOUNDARY, 0},
 				{FREESTYLE_FE_CONTOUR, 0},
 				{FREESTYLE_FE_EXTERNAL_CONTOUR, 0},
-				{FREESTYLE_FE_EDGE_MARK, 0}
+				{FREESTYLE_FE_EDGE_MARK, 0},
 			};
 			int num_edge_types = sizeof(conditions) / sizeof(struct edge_type_condition);
 			if (G.debug & G_DEBUG_FREESTYLE) {

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,13 +15,6 @@
  *
  * The Original Code is Copyright (C) 2012 by Nicholas Bishop
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s):
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/editors/sculpt_paint/paint_mask.c
@@ -535,7 +526,7 @@ void PAINT_OT_mask_lasso_gesture(wmOperatorType *ot)
 
 	ot->poll = sculpt_mode_poll;
 
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	ot->flag = OPTYPE_REGISTER;
 
 	/* properties */
 	WM_operator_properties_gesture_lasso(ot);

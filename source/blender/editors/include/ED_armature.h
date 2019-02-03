@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_armature.h
@@ -34,27 +28,27 @@
 extern "C" {
 #endif
 
-struct bArmature;
 struct Base;
-struct bContext;
 struct Bone;
-struct bPoseChannel;
 struct Depsgraph;
 struct IDProperty;
 struct ListBase;
 struct Main;
-struct MeshDeformModifierData;
+struct Main;
 struct Mesh;
+struct MeshDeformModifierData;
 struct Object;
 struct ReportList;
 struct Scene;
+struct UndoType;
 struct View3D;
-struct ViewLayer;
 struct ViewContext;
+struct ViewLayer;
+struct bArmature;
+struct bContext;
+struct bPoseChannel;
 struct wmKeyConfig;
 struct wmOperator;
-struct Main;
-struct UndoType;
 
 typedef struct EditBone {
 	struct EditBone *next, *prev;

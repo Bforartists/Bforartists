@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Björn C. Schaefer
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/composite/nodes/node_composite_curves.c
@@ -38,7 +30,7 @@
 /* custom1 = sfra, custom2 = efra */
 static bNodeSocketTemplate cmp_node_time_out[] = {
 	{	SOCK_FLOAT, 0, N_("Fac")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_composit_init_curves_time(bNodeTree *UNUSED(ntree), bNode *node)
@@ -66,12 +58,12 @@ void register_node_type_cmp_curve_time(void)
 /* **************** CURVE VEC  ******************** */
 static bNodeSocketTemplate cmp_node_curve_vec_in[] = {
 	{	SOCK_VECTOR, 1, N_("Vector"),	0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, PROP_NONE},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate cmp_node_curve_vec_out[] = {
 	{	SOCK_VECTOR, 0, N_("Vector")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_composit_init_curve_vec(bNodeTree *UNUSED(ntree), bNode *node)
@@ -99,12 +91,12 @@ static bNodeSocketTemplate cmp_node_curve_rgb_in[] = {
 	{	SOCK_RGBA, 1, N_("Image"),	1.0f, 1.0f, 1.0f, 1.0f},
 	{	SOCK_RGBA, 1, N_("Black Level"),	0.0f, 0.0f, 0.0f, 1.0f},
 	{	SOCK_RGBA, 1, N_("White Level"),	1.0f, 1.0f, 1.0f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static bNodeSocketTemplate cmp_node_curve_rgb_out[] = {
 	{	SOCK_RGBA, 0, N_("Image")},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void node_composit_init_curve_rgb(bNodeTree *UNUSED(ntree), bNode *node)

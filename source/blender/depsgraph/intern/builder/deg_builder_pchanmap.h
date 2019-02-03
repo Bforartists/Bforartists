@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2015 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Sergey Sharybin
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/intern/builder/deg_builder_pchanmap.h
@@ -54,8 +47,7 @@ protected:
 	 * - Values are "sets" (const char *) - not dynamically allocated.
 	 *
 	 * We don't use the C++ maps here, as it's more convenient to use
-	 * Blender's GHash and be able to compare by-value instead of by-ref.
-	 */
+	 * Blender's GHash and be able to compare by-value instead of by-ref. */
 	struct GHash *map_;
 };
 

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2018 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Joshua Leung
- * Contributor(s): None Yet
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/intern/depsgraph_query_filter.cc
@@ -53,18 +46,15 @@ extern "C" {
 #include "DEG_depsgraph_query.h"
 #include "DEG_depsgraph_debug.h"
 
-#include "util/deg_util_foreach.h"
-
 #include "intern/eval/deg_eval_copy_on_write.h"
 
 #include "intern/depsgraph.h"
-#include "intern/depsgraph_types.h"
-#include "intern/depsgraph_intern.h"
+#include "intern/depsgraph_type.h"
 
-#include "intern/nodes/deg_node.h"
-#include "intern/nodes/deg_node_component.h"
-#include "intern/nodes/deg_node_id.h"
-#include "intern/nodes/deg_node_operation.h"
+#include "intern/node/deg_node.h"
+#include "intern/node/deg_node_component.h"
+#include "intern/node/deg_node_id.h"
+#include "intern/node/deg_node_operation.h"
 
 
 /* *************************************************** */
@@ -89,25 +79,25 @@ static void deg_add_retained_id_cb(ID *id, void *user_data)
 
 /* ------------------------------------------- */
 
-/* Remove relations pointing to the given OperationDepsNode */
-/* TODO: Make this part of OperationDepsNode? */
-static void deg_unlink_opnode(Depsgraph *graph, OperationDepsNode *op_node)
+/* Remove relations pointing to the given OperationNode */
+/* TODO: Make this part of OperationNode? */
+static void deg_unlink_opnode(Depsgraph *graph, OperationNode *op_node)
 {
-	std::vector<DepsRelation *> all_links;
+	vector<Relation *> all_links;
 
 	/* Collect all inlinks to this operation */
-	foreach (DepsRelation *rel, op_node->inlinks) {
+	for (Relation *rel : op_node->inlinks) {
 		all_links.push_back(rel);
 	}
 	/* Collect all outlinks from this operation */
-	foreach (DepsRelation *rel, op_node->outlinks) {
+	for (Relation *rel : op_node->outlinks) {
 		all_links.push_back(rel);
 	}
 
 	/* Delete all collected relations */
-	foreach (DepsRelation *rel, all_links) {
+	for (Relation *rel : all_links) {
 		rel->unlink();
-		OBJECT_GUARDED_DELETE(rel, DepsRelation);
+		OBJECT_GUARDED_DELETE(rel, Relation);
 	}
 
 	/* Remove from entry tags */
@@ -121,14 +111,13 @@ static void deg_filter_remove_unwanted_ids(Depsgraph *graph, GSet *retained_ids)
 {
 	/* 1) First pass over ID nodes + their operations
 	 * - Identify and tag ID's (via "custom_flags = 1") to be removed
-	 * - Remove all links to/from operations that will be removed
-	 */
-	foreach (IDDepsNode *id_node, graph->id_nodes) {
+	 * - Remove all links to/from operations that will be removed. */
+	for (IDNode *id_node : graph->id_nodes) {
 		id_node->custom_flags = !BLI_gset_haskey(retained_ids, (void *)id_node->id_orig);
 		if (id_node->custom_flags) {
-			GHASH_FOREACH_BEGIN(ComponentDepsNode *, comp_node, id_node->components)
+			GHASH_FOREACH_BEGIN(ComponentNode *, comp_node, id_node->components)
 			{
-				foreach (OperationDepsNode *op_node, comp_node->operations) {
+				for (OperationNode *op_node : comp_node->operations) {
 					deg_unlink_opnode(graph, op_node);
 				}
 			}
@@ -141,8 +130,8 @@ static void deg_filter_remove_unwanted_ids(Depsgraph *graph, GSet *retained_ids)
 	     it_opnode != graph->operations.end();
 	     )
 	{
-		OperationDepsNode *op_node = *it_opnode;
-		IDDepsNode *id_node = op_node->owner->owner;
+		OperationNode *op_node = *it_opnode;
+		IDNode *id_node = op_node->owner->owner;
 		if (id_node->custom_flags) {
 			it_opnode = graph->operations.erase(it_opnode);
 		}
@@ -155,13 +144,12 @@ static void deg_filter_remove_unwanted_ids(Depsgraph *graph, GSet *retained_ids)
 	 *
 	 * This is loosely based on Depsgraph::clear_id_nodes().
 	 * However, we don't worry about the conditional freeing for physics
-	 * stuff, since it's rarely needed currently.
-	 */
+	 * stuff, since it's rarely needed currently. */
 	for (Depsgraph::IDDepsNodes::iterator it_id = graph->id_nodes.begin();
 	     it_id != graph->id_nodes.end();
 	     )
 	{
-		IDDepsNode *id_node = *it_id;
+		IDNode *id_node = *it_id;
 		ID *id = id_node->id_orig;
 
 		if (id_node->custom_flags) {
@@ -171,7 +159,7 @@ static void deg_filter_remove_unwanted_ids(Depsgraph *graph, GSet *retained_ids)
 			BLI_ghash_remove(graph->id_hash, id, NULL, NULL);
 			it_id = graph->id_nodes.erase(it_id);
 
-			OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
+			OBJECT_GUARDED_DELETE(id_node, IDNode);
 		}
 		else {
 			/* This node has not been marked for deletion. Increment iterator */
@@ -210,7 +198,7 @@ Depsgraph *DEG_graph_filter(const Depsgraph *graph_src, Main *bmain, DEG_FilterQ
 	GSet *retained_ids = BLI_gset_ptr_new(__func__);
 	DEG::RetainedIdUserData retained_id_data = {query, retained_ids};
 
-	LISTBASE_FOREACH(DEG_FilterTarget *, target, &query->targets) {
+	LISTBASE_FOREACH (DEG_FilterTarget *, target, &query->targets) {
 		/* Target Itself */
 		BLI_gset_add(retained_ids, (void *)target->id);
 

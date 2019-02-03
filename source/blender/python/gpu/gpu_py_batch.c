@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,8 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2015, Blender Foundation.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/gpu/gpu_py_batch.c
@@ -284,7 +280,7 @@ static struct PyMethodDef bpygpu_Batch_methods[] = {
 	 METH_NOARGS, ""},
 	{"_program_use_end", (PyCFunction)bpygpu_Batch_program_use_end,
 	 METH_NOARGS, ""},
-	{NULL, NULL, 0, NULL}
+	{NULL, NULL, 0, NULL},
 };
 
 #ifdef USE_GPU_PY_REFERENCES

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file blender/draw/intern/draw_view.c
@@ -129,7 +123,7 @@ GPUBatch *DRW_draw_background_clipping_batch_from_rv3d(const RegionView3D *rv3d)
 		{4, 7, 6, 5},
 		{7, 3, 2, 6},
 		{1, 5, 6, 2},
-		{7, 4, 0, 3}
+		{7, 4, 0, 3},
 	};
 	GPUVertBuf *vbo;
 	GPUIndexBuf *el;

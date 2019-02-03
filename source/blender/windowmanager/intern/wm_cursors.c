@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2005-2007 Blender Foundation
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Matt Ebb
- *
- * ***** END GPL/BL DUAL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/intern/wm_cursors.c
@@ -306,7 +298,7 @@ void WM_cursor_time(wmWindow *win, int nr)
 		{0,  56,   4,   4,  60,  68,  68,  56},
 		{0, 124,  64,  32,  16,   8,   8,   8},
 		{0,  60,  66,  66,  60,  66,  66,  60},
-		{0,  56,  68,  68, 120,  64,  68,  56}
+		{0,  56,  68,  68, 120,  64,  68,  56},
 	};
 	unsigned char mask[16][2];
 	unsigned char bitmap[16][2] = {{0}};
@@ -405,7 +397,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_NW_ARROWCURSOR] = &NWArrowCursor;
@@ -417,14 +409,14 @@ BEGIN_CURSOR_BLOCK
 		0x40,  0x01,  0x20,  0x02,  0x10,  0x04,  0x08,  0x08,
 		0x04,  0x10,  0x3c,  0x1e,  0x20,  0x02,  0x20,  0x02,
 		0x20,  0x02,  0x20,  0x02,  0x3c,  0x1e,  0x04,  0x10,
-		0x08,  0x08,  0x10,  0x04,  0x20,  0x02,  0x40,  0x01
+		0x08,  0x08,  0x10,  0x04,  0x20,  0x02,  0x40,  0x01,
 	};
 
 	static char ns_smsk[] = {
 		0xc0,  0x01,  0xe0,  0x03,  0xf0,  0x07,  0xf8,  0x0f,
 		0xfc,  0x1f,  0xfc,  0x1f,  0xe0,  0x03,  0xe0,  0x03,
 		0xe0,  0x03,  0xe0,  0x03,  0xfc,  0x1f,  0xfc,  0x1f,
-		0xf8,  0x0f,  0xf0,  0x07,  0xe0,  0x03,  0xc0,  0x01
+		0xf8,  0x0f,  0xf0,  0x07,  0xe0,  0x03,  0xc0,  0x01,
 	};
 
 	static BCursor NSArrowCursor = {
@@ -437,7 +429,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_NS_ARROWCURSOR] = &NSArrowCursor;
@@ -469,7 +461,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_EW_ARROWCURSOR] = &EWArrowCursor;
@@ -539,7 +531,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_WAITCURSOR] = &WaitCursor;
@@ -608,7 +600,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_CROSSCURSOR] = &CrossCursor;
@@ -640,7 +632,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_EDITCROSSCURSOR] = &EditCrossCursor;
@@ -660,7 +652,6 @@ BEGIN_CURSOR_BLOCK
 		0x63,  0x06,  0x7f,  0x06,  0x7f,  0x06,  0x00,  0x0f,
 		0xf0,  0xf9,  0xf0,  0xf9,  0x00,  0x0f,  0x00,  0x06,
 		0x00,  0x06,  0x00,  0x06,  0x00,  0x06,  0x00,  0x06,
-
 	};
 
 	static BCursor BoxSelCursor = {
@@ -673,7 +664,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_BOXSELCURSOR] = &BoxSelCursor;
@@ -685,14 +676,14 @@ BEGIN_CURSOR_BLOCK
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x2c,
 		0x00, 0x5a, 0x00, 0x34, 0x00, 0x2a, 0x00, 0x17,
 		0x80, 0x06, 0x40, 0x03, 0xa0, 0x03, 0xd0, 0x01,
-		0x68, 0x00, 0x1c, 0x00, 0x06, 0x00, 0x00, 0x00
+		0x68, 0x00, 0x1c, 0x00, 0x06, 0x00, 0x00, 0x00,
 	};
 
 	static char knife_smsk[] = {
 		0x00, 0x60, 0x00, 0xf0, 0x00, 0xfc, 0x00, 0xfe,
 		0x00, 0xfe, 0x00, 0x7e, 0x00, 0x7f, 0x80, 0x3f,
 		0xc0, 0x0e, 0x60, 0x07, 0xb0, 0x07, 0xd8, 0x03,
-		0xec, 0x01, 0x7e, 0x00, 0x1f, 0x00, 0x07, 0x00
+		0xec, 0x01, 0x7e, 0x00, 0x1f, 0x00, 0x07, 0x00,
 	};
 
 	static char knife_lbm[] = {
@@ -712,7 +703,6 @@ BEGIN_CURSOR_BLOCK
 		0xc0,  0x03,  0x00,  0x00,  0xe0,  0x00,  0x00,  0x00,
 		0x30,  0x00,  0x00,  0x00,  0x08,  0x00,  0x00,  0x00,
 		0x00,  0x00,  0x00,  0x00,  0x00,  0x00,  0x00,  0x00,
-
 	};
 
 	static char knife_lmsk[] = {
@@ -732,7 +722,6 @@ BEGIN_CURSOR_BLOCK
 		0xe0,  0x1b,  0x00,  0x00,  0xf0,  0x06,  0x00,  0x00,
 		0xb8,  0x01,  0x00,  0x00,  0x6c,  0x00,  0x00,  0x00,
 		0x1c,  0x00,  0x00,  0x00,  0x00,  0x00,  0x00,  0x00,
-
 	};
 
 	static BCursor KnifeCursor = {
@@ -745,7 +734,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		0, 31,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_KNIFECURSOR] = &KnifeCursor;
@@ -821,7 +810,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		0, 0,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_VLOOPCURSOR] = &VLoopCursor;
@@ -855,7 +844,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_TEXTEDITCURSOR] = &TextEditCursor;
@@ -870,9 +859,6 @@ BEGIN_CURSOR_BLOCK
 		0x00,  0x21,  0x80,  0x20,  0x40,  0x13,  0x40,  0x17,
 		0xa0,  0x0b,  0x98,  0x05,  0x04,  0x02,  0x02,  0x01,
 		0x02,  0x01,  0x02,  0x01,  0x81,  0x00,  0x7f,  0x00,
-
-
-
 	};
 
 	static char paintbrush_smsk[] = {
@@ -880,8 +866,6 @@ BEGIN_CURSOR_BLOCK
 		0x00,  0x3f,  0x80,  0x3f,  0xc0,  0x1f,  0xc0,  0x1f,
 		0xe0,  0x0f,  0xf8,  0x07,  0xfc,  0x03,  0xfe,  0x01,
 		0xfe,  0x01,  0xfe,  0x01,  0xff,  0x00,  0x7f,  0x00,
-
-
 	};
 
 	static BCursor PaintBrushCursor = {
@@ -894,7 +878,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_PAINTBRUSHCURSOR] = &PaintBrushCursor;
@@ -929,7 +913,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_HANDCURSOR] = &HandCursor;
@@ -964,7 +948,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_NSEW_SCROLLCURSOR] = &NSEWScrollCursor;
@@ -1000,7 +984,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_NS_SCROLLCURSOR] = &NSScrollCursor;
@@ -1036,7 +1020,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_EW_SCROLLCURSOR] = &EWScrollCursor;
@@ -1071,7 +1055,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_BLACK, BC_WHITE
+		BC_BLACK, BC_WHITE,
 	};
 
 	BlenderCursor[BC_EYEDROPPER_CURSOR] = &EyedropperCursor;
@@ -1104,7 +1088,7 @@ BEGIN_CURSOR_BLOCK
 		32, 32,
 		15, 15,
 		/*color*/
-		BC_YELLOW, BC_BLUE
+		BC_YELLOW, BC_BLUE,
 	};
 
 	BlenderCursor[BC_SWAPAREA_CURSOR] = &SwapCursor;

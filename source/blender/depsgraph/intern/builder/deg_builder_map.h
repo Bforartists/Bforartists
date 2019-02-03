@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2018 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Sergey Sharybin
- * Contributor(s): None Yet
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/intern/builder/deg_builder_map.h
@@ -41,16 +34,14 @@ public:
 	~BuilderMap();
 
 	/* Check whether given ID is already handled by builder (or if it's being
-	 * handled).
-	 */
+	 * handled). */
 	bool checkIsBuilt(ID *id);
 
 	/* Tag given ID as handled/built. */
 	void tagBuild(ID *id);
 
 	/* Combination of previous two functions, returns truth if ID was already
-	 * handled, or tags is handled otherwise and return false.
-	 */
+	 * handled, or tags is handled otherwise and return false. */
 	bool checkIsBuiltAndTag(ID *id);
 
 	template<typename T> bool checkIsBuilt(T *datablock) {

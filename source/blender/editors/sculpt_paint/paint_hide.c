@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,15 +15,7 @@
  *
  * The Original Code is Copyright (C) 2010 by Nicholas Bishop
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s):
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Implements the PBVH node hiding operator
- *
  */
 
 /** \file blender/editors/sculpt_paint/paint_hide.c
@@ -453,7 +443,7 @@ void PAINT_OT_hide_show(struct wmOperatorType *ot)
 	static const EnumPropertyItem action_items[] = {
 		{PARTIALVIS_HIDE, "HIDE", 0, "Hide", "Hide vertices"},
 		{PARTIALVIS_SHOW, "SHOW", 0, "Show", "Show vertices"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	static const EnumPropertyItem area_items[] = {
@@ -461,7 +451,7 @@ void PAINT_OT_hide_show(struct wmOperatorType *ot)
 		{PARTIALVIS_INSIDE, "INSIDE", 0, "Inside", "Hide or show vertices inside the selection"},
 		{PARTIALVIS_ALL, "ALL", 0, "All", "Hide or show all vertices"},
 		{PARTIALVIS_MASKED, "MASKED", 0, "Masked", "Hide or show vertices that are masked (minimum mask value of 0.5)"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */

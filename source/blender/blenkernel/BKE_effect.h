@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,34 +15,26 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_EFFECT_H__
 #define __BKE_EFFECT_H__
 
 /** \file BKE_effect.h
  *  \ingroup bke
- *  \since March 2001
- *  \author nzc
  */
 
 #include "DNA_modifier_types.h"
 
 #include "BLI_utildefines.h"
 
-struct Object;
-struct Scene;
-struct ListBase;
 struct Collection;
-struct ParticleSimulationData;
+struct Depsgraph;
+struct ListBase;
+struct Object;
 struct ParticleData;
 struct ParticleKey;
-struct Depsgraph;
+struct ParticleSimulationData;
+struct Scene;
 struct ViewLayer;
 
 struct EffectorWeights *BKE_effector_add_weights(struct Collection *collection);
@@ -105,7 +95,6 @@ typedef struct EffectorCache {
 	/* precalculated for guides */
 	struct GuideEffectorData *guide_data;
 	float guide_loc[4], guide_dir[3], guide_radius;
-	float velocity[3];
 
 	float frame;
 	int flag;

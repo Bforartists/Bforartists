@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2008), Juho Vepsalainen, Jiri Hnidek
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_meta.c
@@ -302,7 +296,7 @@ static void rna_def_metaball(BlenderRNA *brna)
 		{MB_UPDATE_HALFRES, "HALFRES", 0, "Half", "While editing, update metaball in half resolution"},
 		{MB_UPDATE_FAST, "FAST", 0, "Fast", "While editing, update metaball without polygonization"},
 		{MB_UPDATE_NEVER, "NEVER", 0, "Never", "While editing, don't update metaball at all"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	srna = RNA_def_struct(brna, "MetaBall", "ID");

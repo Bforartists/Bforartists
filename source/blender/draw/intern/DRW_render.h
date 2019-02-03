@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file DRW_render.h
@@ -66,28 +60,28 @@
 
 #include "DEG_depsgraph.h"
 
-struct rcti;
-struct bContext;
-struct GPUFrameBuffer;
-struct GPUShader;
-struct GPUMaterial;
-struct GPUTexture;
-struct GPUUniformBuffer;
-struct Object;
-struct GPUBatch;
+struct DRWTextStore;
 struct DefaultFramebufferList;
 struct DefaultTextureList;
-struct DRWTextStore;
+struct GPUBatch;
+struct GPUFrameBuffer;
+struct GPUMaterial;
+struct GPUShader;
+struct GPUTexture;
+struct GPUUniformBuffer;
 struct LampEngineData;
+struct Object;
 struct ParticleSystem;
 struct RenderEngineType;
 struct ViewportEngineData;
 struct ViewportEngineData_Info;
+struct bContext;
+struct rcti;
 
-typedef struct DRWUniform DRWUniform;
 typedef struct DRWInterface DRWInterface;
 typedef struct DRWPass DRWPass;
 typedef struct DRWShadingGroup DRWShadingGroup;
+typedef struct DRWUniform DRWUniform;
 
 /* TODO Put it somewhere else? */
 typedef struct BoundSphere {
@@ -238,7 +232,7 @@ void DRW_uniformbuffer_free(struct GPUUniformBuffer *ubo);
 	} \
 } while (0)
 
-void DRW_transform_to_display(struct GPUTexture *tex, bool use_view_settings);
+void DRW_transform_to_display(struct GPUTexture *tex, bool use_view_transform, bool use_render_settings);
 void DRW_transform_none(struct GPUTexture *tex);
 void DRW_multisamples_resolve(
         struct GPUTexture *src_depth, struct GPUTexture *src_color, bool use_depth);
@@ -319,21 +313,21 @@ typedef enum {
 #define DRW_STATE_DEFAULT (DRW_STATE_WRITE_DEPTH | DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_LESS_EQUAL)
 
 typedef enum {
-	DRW_ATTRIB_INT,
-	DRW_ATTRIB_FLOAT,
-} DRWAttribType;
+	DRW_ATTR_INT,
+	DRW_ATTR_FLOAT,
+} eDRWAttrType;
 
-typedef struct DRWInstanceAttribFormat {
+typedef struct DRWInstanceAttrFormat {
 	char name[32];
-	DRWAttribType type;
+	eDRWAttrType type;
 	int components;
-} DRWInstanceAttribFormat;
+} DRWInstanceAttrFormat;
 
-struct GPUVertFormat *DRW_shgroup_instance_format_array(const DRWInstanceAttribFormat attribs[], int arraysize);
+struct GPUVertFormat *DRW_shgroup_instance_format_array(const DRWInstanceAttrFormat attrs[], int arraysize);
 #define DRW_shgroup_instance_format(format, ...) do { \
 	if (format == NULL) { \
-		DRWInstanceAttribFormat drw_format[] = __VA_ARGS__;\
-		format = DRW_shgroup_instance_format_array(drw_format, (sizeof(drw_format) / sizeof(DRWInstanceAttribFormat))); \
+		DRWInstanceAttrFormat drw_format[] = __VA_ARGS__;\
+		format = DRW_shgroup_instance_format_array(drw_format, (sizeof(drw_format) / sizeof(DRWInstanceAttrFormat))); \
 	} \
 } while (0)
 
@@ -383,7 +377,7 @@ void DRW_shgroup_call_object_add_ex(
 void DRW_shgroup_call_object_add_with_callback(
         DRWShadingGroup *shgroup, struct GPUBatch *geom, struct Object *ob, struct Material *ma,
         DRWCallVisibilityFn *callback, void *user_data);
-/* Used for drawing a batch with instancing without instance attribs. */
+/* Used for drawing a batch with instancing without instance attributes. */
 void DRW_shgroup_call_instances_add(
         DRWShadingGroup *shgroup, struct GPUBatch *geom, float (*obmat)[4], uint *count);
 void DRW_shgroup_call_object_instances_add(

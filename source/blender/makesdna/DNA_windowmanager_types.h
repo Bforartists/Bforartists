@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_windowmanager_types.h
@@ -39,28 +32,27 @@
 #include "DNA_ID.h"
 
 /* defined here: */
-struct wmWindowManager;
 struct wmWindow;
+struct wmWindowManager;
 
-struct wmMsgBus;
 struct wmEvent;
 struct wmGesture;
-struct wmOperatorType;
-struct wmOperator;
-struct wmKeyMap;
 struct wmKeyConfig;
+struct wmKeyMap;
+struct wmMsgBus;
+struct wmOperator;
+struct wmOperatorType;
 
 /* forwards */
-struct bContext;
-struct bScreen;
-struct wmSubWindow;
-struct wmTimer;
 struct PointerRNA;
-struct ReportList;
 struct Report;
-struct uiLayout;
+struct ReportList;
 struct Stereo3dFormat;
 struct UndoStep;
+struct bContext;
+struct bScreen;
+struct uiLayout;
+struct wmTimer;
 
 #define OP_MAX_TYPENAME 64
 #define KMAP_MAX_NAME   64

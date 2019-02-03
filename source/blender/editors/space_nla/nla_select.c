@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation, Joshua Leung
  * All rights reserved.
- *
- *
- * Contributor(s): Joshua Leung (major recode)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_nla/nla_select.c
@@ -370,7 +363,7 @@ static const EnumPropertyItem prop_nlaedit_leftright_select_types[] = {
 	{NLAEDIT_LRSEL_TEST, "CHECK", 0, "Check if Select Left or Right", ""},
 	{NLAEDIT_LRSEL_LEFT, "LEFT", 0, "Before current frame", ""},
 	{NLAEDIT_LRSEL_RIGHT, "RIGHT", 0, "After current frame", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* ------------------- */
