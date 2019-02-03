@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2007, Blender Foundation
  * This is a new part of Blender
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/armature/pose_lib.c
@@ -795,7 +789,7 @@ void POSELIB_OT_pose_move(wmOperatorType *ot)
 	static const EnumPropertyItem pose_lib_pose_move[] = {
 		{-1, "UP", 0, "Up", ""},
 		{1, "DOWN", 0, "Down", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -879,7 +873,7 @@ enum {
 	PL_PREVIEW_RUNNING,
 	PL_PREVIEW_CONFIRM,
 	PL_PREVIEW_CANCEL,
-	PL_PREVIEW_RUNONCE
+	PL_PREVIEW_RUNONCE,
 };
 
 /* defines for tPoseLib_PreviewData->redraw values */

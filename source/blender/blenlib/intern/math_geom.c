@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -20,7 +18,6 @@
  *
  * The Original Code is: some of this file.
  *
- * ***** END GPL LICENSE BLOCK *****
  * */
 
 /** \file blender/blenlib/intern/math_geom.c
@@ -1357,7 +1354,7 @@ int isect_line_sphere_v3(const float l1[3], const float l2[3],
 	const float ldir[3] = {
 		l2[0] - l1[0],
 		l2[1] - l1[1],
-		l2[2] - l1[2]
+		l2[2] - l1[2],
 	};
 
 	const float a = len_squared_v3(ldir);
@@ -2098,8 +2095,6 @@ bool isect_plane_plane_plane_v3(
 /**
  * Intersect two planes, return a point on the intersection and a vector
  * that runs on the direction of the intersection.
- *
- *
  * \note this is a slightly reduced version of #isect_plane_plane_plane_v3
  *
  * \param plane_a, plane_b: Planes.

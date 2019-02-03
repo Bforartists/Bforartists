@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file DNA_material_types.h
@@ -40,10 +32,10 @@
 #define MAX_MTEX	18
 #endif
 
-struct Image;
-struct bNodeTree;
 struct AnimData;
+struct Image;
 struct Ipo;
+struct bNodeTree;
 
 /* WATCH IT: change type? also make changes in ipo.h  */
 
@@ -145,7 +137,7 @@ typedef struct Material {
 	short flag, pad1[7];
 
 	/* Colors from Blender Internal that we are still using. */
-	float r, g, b;
+	float r, g, b, a;
 	float specr, specg, specb;
 	float alpha DNA_DEPRECATED;
 	float ray_mirror  DNA_DEPRECATED;
@@ -154,7 +146,7 @@ typedef struct Material {
 	float gloss_mir  DNA_DEPRECATED;
 	float roughness;
 	float metallic;
-	float pad4[2];
+	float pad4;
 
 	/* Ror buttons and render. */
 	char pr_type, use_nodes;
@@ -323,7 +315,7 @@ enum {
 /* Grease Pencil Stroke styles */
 enum {
 	GP_STYLE_STROKE_STYLE_SOLID = 0,
-	GP_STYLE_STROKE_STYLE_TEXTURE
+	GP_STYLE_STROKE_STYLE_TEXTURE,
 };
 
 /* Grease Pencil Fill styles */
@@ -331,13 +323,13 @@ enum {
 	GP_STYLE_FILL_STYLE_SOLID = 0,
 	GP_STYLE_FILL_STYLE_GRADIENT,
 	GP_STYLE_FILL_STYLE_CHESSBOARD,
-	GP_STYLE_FILL_STYLE_TEXTURE
+	GP_STYLE_FILL_STYLE_TEXTURE,
 };
 
 /* Grease Pencil Gradient Types */
 enum {
 	GP_STYLE_GRADIENT_LINEAR = 0,
-	GP_STYLE_GRADIENT_RADIAL
+	GP_STYLE_GRADIENT_RADIAL,
 };
 
 #endif

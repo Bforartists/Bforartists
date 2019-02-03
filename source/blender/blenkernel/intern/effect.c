@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/effect.c
@@ -183,16 +175,6 @@ static void precalculate_effector(struct Depsgraph *depsgraph, EffectorCache *ef
 	}
 	else if (eff->psys)
 		psys_update_particle_tree(eff->psys, ctime);
-
-	/* Store object velocity */
-	if (eff->ob) {
-		float old_vel[3];
-
-		BKE_object_where_is_calc_time(depsgraph, eff->scene, eff->ob, cfra - 1.0f);
-		copy_v3_v3(old_vel, eff->ob->obmat[3]);
-		BKE_object_where_is_calc_time(depsgraph, eff->scene, eff->ob, cfra);
-		sub_v3_v3v3(eff->velocity, eff->ob->obmat[3], old_vel);
-	}
 }
 
 static void add_effector_relation(ListBase *relations, Object *ob, ParticleSystem *psys, PartDeflect *pd)
@@ -690,9 +672,7 @@ int get_effector_data(EffectorCache *eff, EffectorData *efd, EffectedPoint *poin
 			copy_v3_v3(efd->loc, ob->obmat[3]);
 		}
 
-		if (real_velocity) {
-			copy_v3_v3(efd->vel, eff->velocity);
-		}
+		zero_v3(efd->vel);
 		efd->size = 0.0f;
 
 		ret = 1;

@@ -2170,7 +2170,7 @@ class WM_OT_addon_remove(Operator):
         addon_utils.disable(self.module, default_set=True)
 
         import shutil
-        if isdir:
+        if isdir and (not os.path.islink(path)):
             shutil.rmtree(path)
         else:
             os.remove(path)

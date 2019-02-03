@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,19 +15,9 @@
  *
  * The Original Code is Copyright (C) 2005 by the Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Daniel Dunbar
- *                 Ton Roosendaal,
- *                 Ben Batt,
- *                 Brecht Van Lommel,
- *                 Campbell Barton
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  * Modifier stack implementation.
  *
  * BKE_modifier.h contains the function prototypes for this file.
- *
  */
 
 /** \file blender/blenkernel/intern/modifier.c
@@ -80,6 +68,9 @@
 
 #include "MOD_modifiertypes.h"
 
+#include "CLG_log.h"
+
+static CLG_LogRef LOG = {"bke.modifier"};
 static ModifierTypeInfo *modifier_types[NUM_MODIFIER_TYPES] = {NULL};
 static VirtualModifierData virtualModifierCommonData;
 
@@ -392,6 +383,7 @@ void modifier_setError(ModifierData *md, const char *_format, ...)
 
 	md->error = BLI_strdup(buffer);
 
+	CLOG_STR_ERROR(&LOG, md->error);
 }
 
 /* used for buttons, to find out if the 'draw deformed in editmode' option is

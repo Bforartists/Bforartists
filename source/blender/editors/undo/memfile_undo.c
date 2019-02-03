@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/undo/memfile_undo.c
@@ -71,12 +67,11 @@ static bool memfile_undosys_poll(bContext *C)
 	return true;
 }
 
-static bool memfile_undosys_step_encode(struct bContext *C, UndoStep *us_p)
+static bool memfile_undosys_step_encode(struct bContext *UNUSED(C), struct Main *bmain, UndoStep *us_p)
 {
 	MemFileUndoStep *us = (MemFileUndoStep *)us_p;
 
 	/* Important we only use 'main' from the context (see: BKE_undosys_stack_init_from_main). */
-	struct Main *bmain = CTX_data_main(C);
 	UndoStack *ustack = ED_undo_stack_get();
 
 	/* can be NULL, use when set. */
@@ -87,13 +82,16 @@ static bool memfile_undosys_step_encode(struct bContext *C, UndoStep *us_p)
 	return true;
 }
 
-static void memfile_undosys_step_decode(struct bContext *C, UndoStep *us_p, int UNUSED(dir))
+static void memfile_undosys_step_decode(struct bContext *C, struct Main *bmain, UndoStep *us_p, int UNUSED(dir))
 {
-	struct Main *bmain = CTX_data_main(C);
 	ED_editors_exit(bmain, false);
 
 	MemFileUndoStep *us = (MemFileUndoStep *)us_p;
 	BKE_memfile_undo_decode(us->data, C);
+
+	/* bmain has been freed. */
+	bmain = CTX_data_main(C);
+	ED_editors_init_for_undo(bmain);
 
 	WM_event_add_notifier(C, NC_SCENE | ND_LAYER_CONTENT, CTX_data_scene(C));
 }

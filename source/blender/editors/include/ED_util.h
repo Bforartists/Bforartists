@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_util.h
@@ -33,11 +26,12 @@
 
 #include "BLI_compiler_attrs.h"
 
+struct Main;
 struct bContext;
 struct wmOperatorType;
-struct Main;
 
 /* ed_util.c */
+void ED_editors_init_for_undo(struct Main *bmain);
 void ED_editors_init(struct bContext *C);
 void ED_editors_exit(struct Main *bmain, bool do_undo_system);
 bool ED_editors_flush_edits(struct Main *bmain, bool for_render);

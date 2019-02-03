@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_text/text_ops.c
@@ -1091,7 +1083,8 @@ enum { TO_SPACES, TO_TABS };
 static const EnumPropertyItem whitespace_type_items[] = {
 	{TO_SPACES, "SPACES", 0, "To Spaces", NULL},
 	{TO_TABS, "TABS", 0, "To Tabs", NULL},
-	{0, NULL, 0, NULL, NULL}};
+	{0, NULL, 0, NULL, NULL},
+};
 
 static int text_convert_whitespace_exec(bContext *C, wmOperator *op)
 {
@@ -1331,7 +1324,7 @@ void TEXT_OT_move_lines(wmOperatorType *ot)
 	static const EnumPropertyItem direction_items[] = {
 		{TXT_MOVE_LINE_UP, "UP", 0, "Up", ""},
 		{TXT_MOVE_LINE_DOWN, "DOWN", 0, "Down", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -1365,7 +1358,8 @@ static const EnumPropertyItem move_type_items[] = {
 	{NEXT_LINE, "NEXT_LINE", 0, "Next Line", ""},
 	{PREV_PAGE, "PREVIOUS_PAGE", 0, "Previous Page", ""},
 	{NEXT_PAGE, "NEXT_PAGE", 0, "Next Page", ""},
-	{0, NULL, 0, NULL, NULL}};
+	{0, NULL, 0, NULL, NULL},
+};
 
 /* get cursor position in line by relative wrapped line and column positions */
 static int text_get_cursor_rel(SpaceText *st, ARegion *ar, TextLine *linein, int rell, int relc)
@@ -1979,7 +1973,8 @@ static const EnumPropertyItem delete_type_items[] = {
 	{DEL_PREV_CHAR, "PREVIOUS_CHARACTER", 0, "Previous Character", ""},
 	{DEL_NEXT_WORD, "NEXT_WORD", 0, "Next Word", ""},
 	{DEL_PREV_WORD, "PREVIOUS_WORD", 0, "Previous Word", ""},
-	{0, NULL, 0, NULL, NULL}};
+	{0, NULL, 0, NULL, NULL},
+};
 
 static int text_delete_exec(bContext *C, wmOperator *op)
 {
@@ -2128,7 +2123,7 @@ static void txt_screen_skip(SpaceText *st, ARegion *ar, int lines)
 enum {
 	SCROLLHANDLE_BAR,
 	SCROLLHANDLE_MIN_OUTSIDE,
-	SCROLLHANDLE_MAX_OUTSIDE
+	SCROLLHANDLE_MAX_OUTSIDE,
 };
 
 typedef struct TextScroll {
@@ -3164,7 +3159,7 @@ static const EnumPropertyItem resolution_items[] = {
 	{RESOLVE_RELOAD, "RELOAD", 0, "Reload", ""},
 	{RESOLVE_SAVE, "SAVE", 0, "Save", ""},
 	{RESOLVE_MAKE_INTERNAL, "MAKE_INTERNAL", 0, "Make Internal", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int text_resolve_conflict_exec(bContext *C, wmOperator *op)

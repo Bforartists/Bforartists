@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/mesh_evaluate.c
@@ -30,6 +24,8 @@
  */
 
 #include <limits.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -66,6 +62,8 @@
 #ifdef DEBUG_TIME
 #  include "PIL_time_utildefines.h"
 #endif
+
+static CLG_LogRef LOG = {"bke.mesh_evaluate"};
 
 /* -------------------------------------------------------------------- */
 /** \name Mesh Normal Calculation
@@ -135,7 +133,7 @@ void BKE_mesh_calc_normals_mapping_ex(
 
 	/* if we are not calculating verts and no verts were passes then we have nothing to do */
 	if ((only_face_normals == true) && (r_polyNors == NULL) && (r_faceNors == NULL)) {
-		printf("%s: called with nothing to do\n", __func__);
+		CLOG_WARN(&LOG, "called with nothing to do");
 		return;
 	}
 
@@ -168,7 +166,7 @@ void BKE_mesh_calc_normals_mapping_ex(
 			}
 			else {
 				/* eek, we're not corresponding to polys */
-				printf("error in %s: tessellation face indices are incorrect.  normals may look bad.\n", __func__);
+				CLOG_ERROR(&LOG, "tessellation face indices are incorrect.  normals may look bad.");
 			}
 		}
 	}
@@ -1899,7 +1897,6 @@ void BKE_mesh_normals_loop_to_vertex(
  * Computes the normal of a planar
  * polygon See Graphics Gems for
  * computing newell normal.
- *
  */
 static void mesh_calc_ngon_normal(
         const MPoly *mpoly, const MLoop *loopstart,

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  * meshlaplacian.c: Algorithms using the mesh laplacian.
  */
 
@@ -806,7 +800,7 @@ void heat_bone_weighting(
 #define MESHDEFORM_MIN_INFLUENCE 0.0005f
 
 static const int MESHDEFORM_OFFSET[7][3] = {
-	{0, 0, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}
+	{0, 0, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1},
 };
 
 typedef struct MDefBoundIsect {

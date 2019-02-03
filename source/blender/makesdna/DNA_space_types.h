@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,17 +15,9 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 /** \file DNA_space_types.h
  *  \ingroup DNA
- *  \since mar-2001
- *  \author nzc
  *
  * Structs for each of space type in the user interface.
  */
@@ -47,25 +37,25 @@
 /* Hum ... Not really nice... but needed for spacebuts. */
 #include "DNA_view2d_types.h"
 
-struct ID;
-struct Text;
-struct Script;
-struct Image;
-struct Scopes;
-struct Histogram;
-struct SpaceIpo;
-struct bNodeTree;
-struct FileList;
-struct bGPdata;
-struct bDopeSheet;
-struct FileSelectParams;
+struct BLI_mempool;
 struct FileLayout;
-struct wmOperator;
-struct wmTimer;
+struct FileList;
+struct FileSelectParams;
+struct Histogram;
+struct ID;
+struct Image;
+struct Mask;
 struct MovieClip;
 struct MovieClipScopes;
-struct Mask;
-struct BLI_mempool;
+struct Scopes;
+struct Script;
+struct SpaceIpo;
+struct Text;
+struct bDopeSheet;
+struct bGPdata;
+struct bNodeTree;
+struct wmOperator;
+struct wmTimer;
 
 /* TODO 2.8: We don't write the global areas to files currently. Uncomment
  * define to enable writing (should become the default in a bit). */

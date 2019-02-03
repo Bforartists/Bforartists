@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2011 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation,
- *                 Sergey Sharybin
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 #ifndef __BKE_TRACKING_H__
@@ -29,25 +22,24 @@
 
 /** \file BKE_tracking.h
  *  \ingroup bke
- *  \author Sergey Sharybin
  */
 
+struct Camera;
 struct Depsgraph;
-struct bGPDlayer;
 struct ImBuf;
 struct ListBase;
-struct MovieReconstructContext;
-struct MovieTrackingTrack;
-struct MovieTrackingMarker;
-struct MovieTrackingPlaneTrack;
-struct MovieTrackingPlaneMarker;
-struct MovieTracking;
-struct MovieTrackingObject;
 struct MovieClipUser;
 struct MovieDistortion;
-struct Camera;
+struct MovieReconstructContext;
+struct MovieTracking;
+struct MovieTrackingMarker;
+struct MovieTrackingObject;
+struct MovieTrackingPlaneMarker;
+struct MovieTrackingPlaneTrack;
+struct MovieTrackingTrack;
 struct Object;
 struct Scene;
+struct bGPDlayer;
 struct rcti;
 
 /* **** Common functions **** */

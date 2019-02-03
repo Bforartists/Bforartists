@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): (mar-2001 nzc)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 #ifndef __BKE_MESH_H__
 #define __BKE_MESH_H__
@@ -37,37 +29,37 @@
 /* defines CustomDataMask */
 #include "BKE_customdata.h"
 
-struct ID;
+struct BLI_Stack;
+struct BMEditMesh;
+struct BMesh;
 struct BMeshCreateParams;
 struct BMeshFromMeshParams;
 struct BMeshToMeshParams;
 struct BoundBox;
+struct CustomData;
 struct Depsgraph;
 struct EdgeHash;
-struct ListBase;
-struct LinkNode;
-struct BLI_Stack;
-struct MemArena;
-struct BMesh;
+struct ID;
 struct KeyBlock;
-struct MLoopTri;
-struct Main;
-struct Mesh;
-struct ModifierData;
-struct MPoly;
-struct MLoop;
-struct MFace;
-struct MEdge;
-struct MVert;
-struct MVertTri;
+struct LinkNode;
+struct ListBase;
 struct MDeformVert;
 struct MDisps;
-struct Object;
-struct CustomData;
-struct Scene;
+struct MEdge;
+struct MFace;
+struct MLoop;
+struct MLoopTri;
 struct MLoopUV;
+struct MPoly;
+struct MVert;
+struct MVertTri;
+struct Main;
+struct MemArena;
+struct Mesh;
+struct ModifierData;
+struct Object;
 struct ReportList;
-struct BMEditMesh;
+struct Scene;
 
 #ifdef __cplusplus
 extern "C" {

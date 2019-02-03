@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_lightprobe.c
@@ -57,14 +51,14 @@ static void rna_LightProbe_recalc(Main *UNUSED(bmain), Scene *UNUSED(scene), Poi
 static EnumPropertyItem parallax_type_items[] = {
 	{LIGHTPROBE_SHAPE_ELIPSOID, "ELIPSOID", ICON_NONE, "Sphere", ""},
 	{LIGHTPROBE_SHAPE_BOX, "BOX", ICON_NONE, "Box", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static EnumPropertyItem lightprobe_type_items[] = {
 	{LIGHTPROBE_TYPE_CUBE, "CUBEMAP", ICON_LIGHTPROBE_CUBEMAP, "Reflection Cubemap", "Capture reflections"},
 	{LIGHTPROBE_TYPE_PLANAR, "PLANAR", ICON_LIGHTPROBE_PLANAR, "Reflection Plane", ""},
 	{LIGHTPROBE_TYPE_GRID, "GRID", ICON_LIGHTPROBE_GRID, "Irradiance Volume", "Volume used for precomputing indirect lighting"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void rna_def_lightprobe(BlenderRNA *brna)

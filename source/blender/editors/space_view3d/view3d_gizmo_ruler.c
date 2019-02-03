@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_view3d/view3d_gizmo_ruler.c
@@ -84,7 +80,7 @@ enum {
 
 enum {
 	RULERITEM_DIRECTION_IN = 0,
-	RULERITEM_DIRECTION_OUT
+	RULERITEM_DIRECTION_OUT,
 };
 
 /* keep smaller then selection, since we may want click elsewhere without selecting a ruler */
@@ -99,7 +95,7 @@ enum {
 
 enum {
 	RULER_STATE_NORMAL = 0,
-	RULER_STATE_DRAG
+	RULER_STATE_DRAG,
 };
 
 enum {

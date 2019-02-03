@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 20137Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Sergey Sharybin
- * Contributor(s): None Yet
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/intern/eval/deg_eval_copy_on_write.h
@@ -52,13 +45,13 @@ namespace DEG {
 
 struct Depsgraph;
 struct DepsgraphNodeBuilder;
-struct IDDepsNode;
+struct IDNode;
 
 /* Get fully expanded (ready for use) copy-on-write datablock for the given
  * original datablock.
  */
 ID *deg_expand_copy_on_write_datablock(const struct Depsgraph *depsgraph,
-                                       const IDDepsNode *id_node,
+                                       const IDNode *id_node,
                                        DepsgraphNodeBuilder *node_builder = NULL,
                                        bool create_placeholders = false);
 ID *deg_expand_copy_on_write_datablock(const struct Depsgraph *depsgraph,
@@ -70,7 +63,7 @@ ID *deg_expand_copy_on_write_datablock(const struct Depsgraph *depsgraph,
  * datablock.
  */
 ID *deg_update_copy_on_write_datablock(const struct Depsgraph *depsgraph,
-                                       const IDDepsNode *id_node);
+                                       const IDNode *id_node);
 ID *deg_update_copy_on_write_datablock(const struct Depsgraph *depsgraph,
                                        struct ID *id_orig);
 
@@ -81,7 +74,7 @@ void deg_free_copy_on_write_datablock(struct ID *id_cow);
  * datablock is ready for use by further evaluation routines.
  */
 void deg_evaluate_copy_on_write(struct ::Depsgraph *depsgraph,
-                                const struct IDDepsNode *id_node);
+                                const struct IDNode *id_node);
 
 /* Check that given ID is properly expanded and does not have any shallow
  * copies inside.

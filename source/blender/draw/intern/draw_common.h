@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file draw_common.h
@@ -33,11 +27,11 @@ struct DRWPass;
 struct DRWShadingGroup;
 struct GPUBatch;
 struct GPUMaterial;
-struct Object;
-struct ViewLayer;
 struct ModifierData;
-struct ParticleSystem;
+struct Object;
 struct PTCacheEdit;
+struct ParticleSystem;
+struct ViewLayer;
 
 /**
  * Support selecting shaders with different options compiled in.
@@ -142,21 +136,21 @@ void DRW_shgroup_world_clip_planes_from_rv3d(struct DRWShadingGroup *shgrp, cons
 
 struct DRWShadingGroup *shgroup_dynlines_flat_color(struct DRWPass *pass);
 struct DRWShadingGroup *shgroup_dynlines_dashed_uniform_color(struct DRWPass *pass, const float color[4]);
-struct DRWShadingGroup *shgroup_dynpoints_uniform_color(struct DRWPass *pass, const float color[4], const float *size);
-struct DRWShadingGroup *shgroup_groundlines_uniform_color(struct DRWPass *pass, const float color[4]);
-struct DRWShadingGroup *shgroup_groundpoints_uniform_color(struct DRWPass *pass, const float color[4]);
-struct DRWShadingGroup *shgroup_instance_screenspace(struct DRWPass *pass, struct GPUBatch *geom, const float *size);
+struct DRWShadingGroup *shgroup_dynpoints_uniform_color(struct DRWPass *pass, const float color[4], const float *size, eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_groundlines_uniform_color(struct DRWPass *pass, const float color[4], eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_groundpoints_uniform_color(struct DRWPass *pass, const float color[4], eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_instance_screenspace(struct DRWPass *pass, struct GPUBatch *geom, const float *size, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_solid(struct DRWPass *pass, struct GPUBatch *geom);
 struct DRWShadingGroup *shgroup_instance_wire(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_instance_screen_aligned(struct DRWPass *pass, struct GPUBatch *geom);
+struct DRWShadingGroup *shgroup_instance_screen_aligned(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_empty_axes(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_scaled(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_alpha(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_outline(struct DRWPass *pass, struct GPUBatch *geom, int *baseid);
 struct DRWShadingGroup *shgroup_camera_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
-struct DRWShadingGroup *shgroup_distance_lines_instance(struct DRWPass *pass, struct GPUBatch *geom);
-struct DRWShadingGroup *shgroup_spot_instance(struct DRWPass *pass, struct GPUBatch *geom);
+struct DRWShadingGroup *shgroup_distance_lines_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
+struct DRWShadingGroup *shgroup_spot_instance(struct DRWPass *pass, struct GPUBatch *geom, eDRW_ShaderSlot shader_slot);
 struct DRWShadingGroup *shgroup_instance_mball_handles(struct DRWPass *pass);
 struct DRWShadingGroup *shgroup_instance_bone_axes(struct DRWPass *pass);
 struct DRWShadingGroup *shgroup_instance_bone_envelope_distance(struct DRWPass *pass);

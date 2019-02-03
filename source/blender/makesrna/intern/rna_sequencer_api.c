@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Blender Foundation (2010)
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/makesrna/intern/rna_sequencer_api.c
@@ -475,7 +469,7 @@ void RNA_api_sequences(BlenderRNA *brna, PropertyRNA *cprop)
 		{SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", ""},
 		{SEQ_TYPE_TEXT, "TEXT", 0, "Text", ""},
 		{SEQ_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	RNA_def_property_srna(cprop, "Sequences");

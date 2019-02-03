@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2014 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/gizmo/intern/wm_gizmo_group.c
@@ -635,7 +629,7 @@ static wmKeyMap *gizmogroup_tweak_modal_keymap(wmKeyConfig *keyconf, const char 
 		{TWEAK_MODAL_PRECISION_OFF, "PRECISION_OFF", 0, "Disable Precision", ""},
 		{TWEAK_MODAL_SNAP_ON, "SNAP_ON", 0, "Enable Snap", ""},
 		{TWEAK_MODAL_SNAP_OFF, "SNAP_OFF", 0, "Disable Snap", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 

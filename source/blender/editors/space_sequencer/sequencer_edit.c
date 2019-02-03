@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, 2003-2009
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_sequencer/sequencer_edit.c
@@ -95,7 +89,7 @@ EnumPropertyItem sequencer_prop_effect_types[] = {
 	{SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", ""},
 	{SEQ_TYPE_TEXT, "TEXT", 0, "Text", ""},
 	{SEQ_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* mute operator */
@@ -107,13 +101,13 @@ EnumPropertyItem prop_side_types[] = {
 	{SEQ_SIDE_LEFT, "LEFT", 0, "Left", "" },
 	{SEQ_SIDE_RIGHT, "RIGHT", 0, "Right", ""},
 	{SEQ_SIDE_BOTH, "BOTH", 0, "Both", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static const EnumPropertyItem prop_side_lr_types[] = {
 	{SEQ_SIDE_LEFT, "LEFT", 0, "Left", ""},
 	{SEQ_SIDE_RIGHT, "RIGHT", 0, "Right", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 typedef struct TransSeq {
@@ -2046,7 +2040,7 @@ void SEQUENCER_OT_swap_inputs(struct wmOperatorType *ot)
 static const EnumPropertyItem prop_cut_types[] = {
 	{SEQ_CUT_SOFT, "SOFT", 0, "Soft", ""},
 	{SEQ_CUT_HARD, "HARD", 0, "Hard", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int sequencer_cut_exec(bContext *C, wmOperator *op)
@@ -2846,7 +2840,7 @@ static const EnumPropertyItem view_type_items[] = {
 	{SEQ_VIEW_SEQUENCE, "SEQUENCER", ICON_SEQ_SEQUENCER, "Sequencer", ""},
 	{SEQ_VIEW_PREVIEW,  "PREVIEW", ICON_SEQ_PREVIEW, "Image Preview", ""},
 	{SEQ_VIEW_SEQUENCE_PREVIEW,  "SEQUENCER_PREVIEW", ICON_SEQ_SEQUENCER, "Sequencer and Image Preview", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 #endif
 
@@ -3609,7 +3603,7 @@ static const EnumPropertyItem prop_change_effect_input_types[] = {
 	{0, "A_B", 0, "A -> B", ""},
 	{1, "B_C", 0, "B -> C", ""},
 	{2, "A_C", 0, "A -> C", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int sequencer_change_effect_input_exec(bContext *C, wmOperator *op)

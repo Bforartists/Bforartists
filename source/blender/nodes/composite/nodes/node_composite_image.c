@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/nodes/composite/nodes/node_composite_image.c
@@ -77,7 +69,7 @@ static bNodeSocketTemplate cmp_node_rlayers_out[] = {
 	{	SOCK_RGBA,   0, N_(RE_PASSNAME_SUBSURFACE_DIRECT),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	SOCK_RGBA,   0, N_(RE_PASSNAME_SUBSURFACE_INDIRECT),	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
 	{	SOCK_RGBA,   0, N_(RE_PASSNAME_SUBSURFACE_COLOR),		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-	{	-1, 0, ""	}
+	{	-1, 0, ""	},
 };
 
 static void cmp_node_image_add_pass_output(bNodeTree *ntree, bNode *node,
@@ -384,7 +376,7 @@ const char *node_cmp_rlayers_sock_to_pass(int sock_index)
 		RE_PASSNAME_DIFFUSE_DIRECT, RE_PASSNAME_DIFFUSE_INDIRECT, RE_PASSNAME_DIFFUSE_COLOR,
 		RE_PASSNAME_GLOSSY_DIRECT, RE_PASSNAME_GLOSSY_INDIRECT, RE_PASSNAME_GLOSSY_COLOR,
 		RE_PASSNAME_TRANSM_DIRECT, RE_PASSNAME_TRANSM_INDIRECT, RE_PASSNAME_TRANSM_COLOR,
-		RE_PASSNAME_SUBSURFACE_DIRECT, RE_PASSNAME_SUBSURFACE_INDIRECT, RE_PASSNAME_SUBSURFACE_COLOR
+		RE_PASSNAME_SUBSURFACE_DIRECT, RE_PASSNAME_SUBSURFACE_INDIRECT, RE_PASSNAME_SUBSURFACE_COLOR,
 	};
 	if (sock_index > 30) {
 		return NULL;

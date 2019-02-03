@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,16 +15,9 @@
  *
  * The Original Code is Copyright (C) 2007 by Janne Karhu.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Raul Fernandez Hernandez (Farsthary), Stephen Swhitehorn.
- *
  * Adaptive time step
  * Classical SPH
  * Copyright 2011-2012 AutoCRC
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/particle_system.c
@@ -993,8 +984,6 @@ static void evaluate_emitter_anim(struct Depsgraph *depsgraph, Scene *scene, Obj
 	if (ob->parent)
 		evaluate_emitter_anim(depsgraph, scene, ob->parent, cfra);
 
-	/* we have to force RECALC_ANIM here since where_is_objec_time only does drivers */
-	BKE_animsys_evaluate_animdata(depsgraph, scene, &ob->id, ob->adt, cfra, ADT_RECALC_ANIM);
 	BKE_object_where_is_calc_time(depsgraph, scene, ob, cfra);
 }
 
@@ -4239,9 +4228,6 @@ void particle_system_update(struct Depsgraph *depsgraph, Scene *scene, Object *o
 		BKE_mesh_tessface_ensure(sim.psmd->mesh_final);
 	}
 
-	/* execute drivers only, as animation has already been done */
-	BKE_animsys_evaluate_animdata(depsgraph, scene, &part->id, part->adt, cfra, ADT_RECALC_DRIVERS);
-
 	/* to verify if we need to restore object afterwards */
 	psys->flag &= ~PSYS_OB_ANIM_RESTORE;
 
@@ -4370,6 +4356,9 @@ void particle_system_update(struct Depsgraph *depsgraph, Scene *scene, Object *o
 		psys_orig->edit->flags |= PT_CACHE_EDIT_UPDATE_PARTICLE_FROM_EVAL;
 	}
 
+	psys->cfra = cfra;
+	psys->recalc = 0;
+
 	if (DEG_is_active(depsgraph)) {
 		if (psys_orig != psys) {
 			if (psys_orig->edit != NULL &&
@@ -4379,11 +4368,10 @@ void particle_system_update(struct Depsgraph *depsgraph, Scene *scene, Object *o
 				psys_orig->edit->psmd_eval = psmd;
 			}
 			psys_orig->flag = (psys->flag & ~PSYS_SHARED_CACHES);
+			psys_orig->cfra = psys->cfra;
+			psys_orig->recalc = psys->recalc;
 		}
 	}
-
-	psys->cfra = cfra;
-	psys->recalc = 0;
 
 	/* save matrix for duplicators, at rendertime the actual dupliobject's matrix is used so don't update! */
 	invert_m4_m4(psys->imat, ob->obmat);
@@ -4414,6 +4402,18 @@ void BKE_particlesystem_id_loop(ParticleSystem *psys, ParticleSystemIDFunc func,
 		for (p = 0, pa = psys->particles; p < psys->totpart; p++, pa++) {
 			func(psys, (ID **)&pa->boid->ground, userdata, IDWALK_CB_NOP);
 		}
+	}
+}
+
+void BKE_particlesystem_reset_all(struct Object *object)
+{
+	for (ModifierData *md = object->modifiers.first; md != NULL; md = md->next) {
+		if (md->type != eModifierType_ParticleSystem) {
+			continue;
+		}
+		ParticleSystemModifierData *psmd = (ParticleSystemModifierData *)md;
+		ParticleSystem *psys = psmd->psys;
+		psys->recalc |= ID_RECALC_PSYS_RESET;
 	}
 }
 

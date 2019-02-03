@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenkernel/intern/library.c
@@ -38,6 +30,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <assert.h>
+
+#include "CLG_log.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -140,6 +134,8 @@
 #  include "PIL_time_utildefines.h"
 #endif
 
+static CLG_LogRef LOG = {"bke.library"};
+
 /* GS reads the memory pointed at in a specific ordering.
  * only use this definition, makes little and big endian systems
  * work fine, in conjunction with MAKE_ID */
@@ -166,8 +162,9 @@ void id_lib_extern(ID *id)
 	if (id && ID_IS_LINKED(id)) {
 		BLI_assert(BKE_idcode_is_linkable(GS(id->name)));
 		if (id->tag & LIB_TAG_INDIRECT) {
-			id->tag -= LIB_TAG_INDIRECT;
+			id->tag &= ~LIB_TAG_INDIRECT;
 			id->tag |= LIB_TAG_EXTERN;
+			id->lib->parent = NULL;
 		}
 	}
 }
@@ -184,7 +181,7 @@ void id_us_ensure_real(ID *id)
 		id->tag |= LIB_TAG_EXTRAUSER;
 		if (id->us <= limit) {
 			if (id->us < limit || ((id->us == limit) && (id->tag & LIB_TAG_EXTRAUSER_SET))) {
-				printf("ID user count error: %s (from '%s')\n", id->name, id->lib ? id->lib->filepath : "[Main]");
+				CLOG_ERROR(&LOG, "ID user count error: %s (from '%s')", id->name, id->lib ? id->lib->filepath : "[Main]");
 				BLI_assert(0);
 			}
 			id->us = limit + 1;
@@ -240,8 +237,8 @@ void id_us_min(ID *id)
 		const int limit = ID_FAKE_USERS(id);
 
 		if (id->us <= limit) {
-			printf("ID user decrement error: %s (from '%s'): %d <= %d\n",
-			       id->name, id->lib ? id->lib->filepath : "[Main]", id->us, limit);
+			CLOG_ERROR(&LOG, "ID user decrement error: %s (from '%s'): %d <= %d",
+			           id->name, id->lib ? id->lib->filepath : "[Main]", id->us, limit);
 			BLI_assert(0);
 			id->us = limit;
 		}
@@ -999,6 +996,37 @@ void BKE_main_id_flag_all(Main *bmain, const int flag, const bool value)
 	}
 }
 
+void BKE_main_id_repair_duplicate_names_listbase(ListBase *lb)
+{
+	int lb_len = 0;
+	for (ID *id = lb->first; id; id = id->next) {
+		if (id->lib == NULL) {
+			lb_len += 1;
+		}
+	}
+	if (lb_len <= 1) {
+		return;
+	}
+
+	/* Fill an array because renaming sorts. */
+	ID **id_array = MEM_mallocN(sizeof(*id_array) * lb_len, __func__);
+	GSet *gset = BLI_gset_str_new_ex(__func__, lb_len);
+	int i = 0;
+	for (ID *id = lb->first; id; id = id->next) {
+		if (id->lib == NULL) {
+			id_array[i] = id;
+			i++;
+		}
+	}
+	for (i = 0; i < lb_len; i++) {
+		if (!BLI_gset_add(gset, id_array[i]->name + 2)) {
+			new_id(lb, id_array[i], NULL);
+		}
+	}
+	BLI_gset_free(gset, NULL);
+	MEM_freeN(id_array);
+}
+
 void BKE_main_lib_objects_recalc_all(Main *bmain)
 {
 	Object *ob;
@@ -1646,8 +1674,11 @@ void id_clear_lib_data_ex(Main *bmain, ID *id, const bool id_in_mainlist)
 
 	id->lib = NULL;
 	id->tag &= ~(LIB_TAG_INDIRECT | LIB_TAG_EXTERN);
-	if (id_in_mainlist)
-		new_id(which_libbase(bmain, GS(id->name)), id, NULL);
+	if (id_in_mainlist) {
+		if (new_id(which_libbase(bmain, GS(id->name)), id, NULL)) {
+			bmain->is_memfile_undo_written = false;
+		}
+	}
 
 	/* Internal bNodeTree blocks inside datablocks also stores id->lib, make sure this stays in sync. */
 	if ((ntree = ntreeFromID(id))) {
@@ -1942,8 +1973,8 @@ void BKE_library_make_local(
 
 			/* Proxies only work when the proxified object is linked-in from a library. */
 			if (ob->proxy->id.lib == NULL) {
-				printf("Warning, proxy object %s will loose its link to %s, because the "
-				       "proxified object is local.\n", id->newid->name, ob->proxy->id.name);
+				CLOG_WARN(&LOG, "proxy object %s will loose its link to %s, because the "
+				       "proxified object is local.", id->newid->name, ob->proxy->id.name);
 				continue;
 			}
 
@@ -1953,8 +1984,8 @@ void BKE_library_make_local(
 			 * referred to from a library. Not checking for local use; if new local proxy
 			 * was not used locally would be a nasty bug! */
 			if (is_local || is_lib) {
-				printf("Warning, made-local proxy object %s will loose its link to %s, "
-				       "because the linked-in proxy is referenced (is_local=%i, is_lib=%i).\n",
+				CLOG_WARN(&LOG, "made-local proxy object %s will loose its link to %s, "
+				       "because the linked-in proxy is referenced (is_local=%i, is_lib=%i).",
 				       id->newid->name, ob->proxy->id.name, is_local, is_lib);
 			}
 			else {
@@ -2015,9 +2046,11 @@ void BLI_libblock_ensure_unique_name(Main *bmain, const char *name)
 
 	/* search for id */
 	idtest = BLI_findstring(lb, name + 2, offsetof(ID, name) + 2);
-
-	if (idtest && !new_id(lb, idtest, idtest->name + 2)) {
-		id_sort_by_name(lb, idtest);
+	if (idtest != NULL) {
+		if (!new_id(lb, idtest, idtest->name + 2)) {
+			id_sort_by_name(lb, idtest);
+		}
+		bmain->is_memfile_undo_written = false;
 	}
 }
 
@@ -2027,7 +2060,9 @@ void BLI_libblock_ensure_unique_name(Main *bmain, const char *name)
 void BKE_libblock_rename(Main *bmain, ID *id, const char *name)
 {
 	ListBase *lb = which_libbase(bmain, GS(id->name));
-	new_id(lb, id, name);
+	if (new_id(lb, id, name)) {
+		bmain->is_memfile_undo_written = false;
+	}
 }
 
 /**

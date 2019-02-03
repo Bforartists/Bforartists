@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/blenloader/intern/writefile.c
@@ -58,8 +51,6 @@
  * Almost all data in Blender are structures. Each struct saved
  * gets a BHead header.  With BHead the struct can be linked again
  * and compared with StructDNA .
- *
- *
  * WRITE
  * =====
  *
@@ -1341,11 +1332,11 @@ static const char *ptcache_data_struct[] = {
 	"", // BPHYS_DATA_AVELOCITY / BPHYS_DATA_XCONST */
 	"", // BPHYS_DATA_SIZE:
 	"", // BPHYS_DATA_TIMES:
-	"BoidData" // case BPHYS_DATA_BOIDS:
+	"BoidData", // case BPHYS_DATA_BOIDS:
 };
 static const char *ptcache_extra_struct[] = {
 	"",
-	"ParticleSpring"
+	"ParticleSpring",
 };
 static void write_pointcaches(WriteData *wd, ListBase *ptcaches)
 {
@@ -3794,7 +3785,7 @@ static void write_global(WriteData *wd, int fileflags, Main *mainvar)
 	fg.cur_view_layer = view_layer;
 
 	/* prevent to save this, is not good convention, and feature with concerns... */
-	fg.fileflags = (fileflags & ~G_FILE_FLAGS_RUNTIME);
+	fg.fileflags = (fileflags & ~G_FILE_FLAG_ALL_RUNTIME);
 
 	fg.globalf = G.f;
 	BLI_strncpy(fg.filename, mainvar->name, sizeof(fg.filename));

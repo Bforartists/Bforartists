@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): John Roper
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/curve/editcurve_select.c
@@ -1334,7 +1326,7 @@ static const EnumPropertyItem curve_prop_similar_compare_types[] = {
 	{SIM_CMP_GT, "GREATER", 0, "Greater", ""},
 	{SIM_CMP_LT, "LESS", 0, "Less", ""},
 
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 enum {
@@ -1349,7 +1341,7 @@ static const EnumPropertyItem curve_prop_similar_types[] = {
 	{SIMCURHAND_RADIUS, "RADIUS", 0, "Radius", ""},
 	{SIMCURHAND_WEIGHT, "WEIGHT", 0, "Weight", ""},
 	{SIMCURHAND_DIRECTION, "DIRECTION", 0, "Direction", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static void nurb_bezt_direction_worldspace_get(Object *ob, Nurb *nu, BezTriple *bezt, float r_dir[3])

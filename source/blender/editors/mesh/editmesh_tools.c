@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2004 by Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joseph Eagar
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/mesh/editmesh_tools.c
@@ -149,7 +141,7 @@ static const EnumPropertyItem prop_mesh_cornervert_types[] = {
 	{SUBD_CORNER_PATH,          "PATH", 0,           "Path", ""},
 	{SUBD_CORNER_STRAIGHT_CUT,  "STRAIGHT_CUT", 0,   "Straight Cut", ""},
 	{SUBD_CORNER_FAN,           "FAN", 0,            "Fan", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 void MESH_OT_subdivide(wmOperatorType *ot)
@@ -214,7 +206,7 @@ static void mesh_operator_edgering_props(wmOperatorType *ot, const int cuts_min,
 		{SUBD_RING_INTERP_LINEAR, "LINEAR", 0, "Linear", ""},
 		{SUBD_RING_INTERP_PATH, "PATH", 0, "Blend Path", ""},
 		{SUBD_RING_INTERP_SURF, "SURFACE", 0, "Blend Surface", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	PropertyRNA *prop;
@@ -500,7 +492,7 @@ void MESH_OT_delete(wmOperatorType *ot)
 		{MESH_DELETE_FACE,      "FACE",      0, "Faces", ""},
 		{MESH_DELETE_EDGE_FACE, "EDGE_FACE", 0, "Only Edges & Faces", ""},
 		{MESH_DELETE_ONLY_FACE, "ONLY_FACE", 0, "Only Faces", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -2845,7 +2837,7 @@ static const EnumPropertyItem merge_type_items[] = {
 	{MESH_MERGE_CENTER, "CENTER", 0, "At Center", ""},
 	{MESH_MERGE_CURSOR, "CURSOR", 0, "At Cursor", ""},
 	{MESH_MERGE_COLLAPSE, "COLLAPSE", 0, "Collapse", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static const EnumPropertyItem *merge_type_itemf(bContext *C, PointerRNA *UNUSED(ptr),  PropertyRNA *UNUSED(prop), bool *r_free)
@@ -3364,26 +3356,6 @@ void MESH_OT_solidify(wmOperatorType *ot)
 /** \name Knife Subdivide Operator
  * \{ */
 
-/* ******************************************************************** */
-/* Knife Subdivide Tool.  Subdivides edges intersected by a mouse trail
- * drawn by user.
- *
- * Currently mapped to KKey when in MeshEdit mode.
- * Usage:
- * - Hit Shift K, Select Centers or Exact
- * - Hold LMB down to draw path, hit RETKEY.
- * - ESC cancels as expected.
- *
- * Contributed by Robert Wenzlaff (Det. Thorn).
- *
- * 2.5 Revamp:
- * - non modal (no menu before cutting)
- * - exit on mouse release
- * - polygon/segment drawing can become handled by WM cb later
- *
- * bmesh port version
- */
-
 #define KNIFE_EXACT     1
 #define KNIFE_MIDPOINT  2
 #define KNIFE_MULTICUT  3
@@ -3392,7 +3364,7 @@ static const EnumPropertyItem knife_items[] = {
 	{KNIFE_EXACT, "EXACT", 0, "Exact", ""},
 	{KNIFE_MIDPOINT, "MIDPOINTS", 0, "Midpoints", ""},
 	{KNIFE_MULTICUT, "MULTICUT", 0, "Multicut", ""},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* bm_edge_seg_isect() Determines if and where a mouse trail intersects an BMEdge */
@@ -4105,7 +4077,7 @@ void MESH_OT_separate(wmOperatorType *ot)
 		{MESH_SEPARATE_SELECTED, "SELECTED", 0, "Selection", ""},
 		{MESH_SEPARATE_MATERIAL, "MATERIAL", 0, "By Material", ""},
 		{MESH_SEPARATE_LOOSE, "LOOSE", 0, "By loose parts", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -4671,7 +4643,8 @@ void MESH_OT_poke(wmOperatorType *ot)
 		{BMOP_POKE_MEDIAN_WEIGHTED, "MEDIAN_WEIGHTED", 0, "Weighted Median", "Weighted median face center"},
 		{BMOP_POKE_MEDIAN, "MEDIAN", 0, "Median", "Median face center"},
 		{BMOP_POKE_BOUNDS, "BOUNDS", 0, "Bounds", "Face bounds center"},
-		{0, NULL, 0, NULL, NULL}};
+		{0, NULL, 0, NULL, NULL},
+	};
 
 
 	/* identifiers */
@@ -6409,7 +6382,7 @@ void MESH_OT_bridge_edge_loops(wmOperatorType *ot)
 		{MESH_BRIDGELOOP_SINGLE, "SINGLE", 0, "Open Loop", ""},
 		{MESH_BRIDGELOOP_CLOSED, "CLOSED", 0, "Closed Loop", ""},
 		{MESH_BRIDGELOOP_PAIRS, "PAIRS", 0, "Loop Pairs", ""},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 
 	/* identifiers */
@@ -7151,7 +7124,7 @@ wmKeyMap *point_normals_modal_keymap(wmKeyConfig *keyconf)
 		 "Set new 3D cursor position and use it"},
 		{EDBM_CLNOR_MODAL_POINTTO_SET_USE_SELECTED, "SET_USE_SELECTED", 0, "Select and Use Mesh Item",
 		 "Select new active mesh element and use its location"},
-		{0, NULL, 0, NULL, NULL}
+		{0, NULL, 0, NULL, NULL},
 	};
 	static const char *keymap_name = "Custom Normals Modal Map";
 
@@ -7181,7 +7154,7 @@ static EnumPropertyItem clnors_pointto_mode_items[] = {
 	{EDBM_CLNOR_POINTTO_MODE_COORDINATES, "COORDINATES", 0, "Coordinates",
 	                                      "Use static coordinates (defined by various means)"},
 	{EDBM_CLNOR_POINTTO_MODE_MOUSE, "MOUSE", 0, "Mouse", "Follow mouse cursor"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* Initialize loop normal data */
@@ -7797,7 +7770,7 @@ static EnumPropertyItem average_method_items[] = {
 	{EDBM_CLNOR_AVERAGE_LOOP, "CUSTOM_NORMAL", 0, "Custom Normal", "Take Average of vert Normals"},
 	{EDBM_CLNOR_AVERAGE_FACE_AREA, "FACE_AREA", 0, "Face Area", "Set all vert normals by Face Area"},
 	{EDBM_CLNOR_AVERAGE_ANGLE, "CORNER_ANGLE", 0, "Corner Angle", "Set all vert normals by Corner Angle"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int edbm_average_normals_exec(bContext *C, wmOperator *op)
@@ -7994,7 +7967,7 @@ static EnumPropertyItem normal_vector_tool_items[] = {
 	{EDBM_CLNOR_TOOLS_ADD, "ADD", 0, "Add Normal", "Add normal vector with selection"},
 	{EDBM_CLNOR_TOOLS_MULTIPLY, "MULTIPLY", 0, "Multiply Normal", "Multiply normal vector with selection"},
 	{EDBM_CLNOR_TOOLS_RESET, "RESET", 0, "Reset Normal", "Reset buffer and/or normal of selected element"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 static int edbm_normals_tools_exec(bContext *C, wmOperator *op)

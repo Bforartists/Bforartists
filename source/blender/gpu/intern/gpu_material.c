@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2006 Blender Foundation.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Brecht Van Lommel.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/gpu/intern/gpu_material.c
@@ -82,7 +74,7 @@ struct GPUMaterial {
 	/* for binding the material */
 	GPUPass *pass;
 	ListBase inputs;  /* GPUInput */
-	GPUVertexAttribs attribs;
+	GPUVertAttrLayers attrs;
 	int builtins;
 	int alpha, obcolalpha;
 	int dynproperty;
@@ -569,9 +561,9 @@ struct GPUUniformBuffer *GPU_material_create_sss_profile_ubo(void)
 #undef SSS_EXPONENT
 #undef SSS_SAMPLES
 
-void GPU_material_vertex_attributes(GPUMaterial *material, GPUVertexAttribs *attribs)
+void GPU_material_vertex_attrs(GPUMaterial *material, GPUVertAttrLayers *r_attrs)
 {
-	*attribs = material->attribs;
+	*r_attrs = material->attrs;
 }
 
 void GPU_material_output_link(GPUMaterial *material, GPUNodeLink *link)
@@ -676,15 +668,15 @@ GPUMaterial *GPU_material_from_nodetree(
 	}
 
 	if (mat->outlink) {
-		/* Prune the unused nodes and extract attribs before compiling so the
+		/* Prune the unused nodes and extract attributes before compiling so the
 		 * generated VBOs are ready to accept the future shader. */
 		GPU_nodes_prune(&mat->nodes, mat->outlink);
-		GPU_nodes_get_vertex_attributes(&mat->nodes, &mat->attribs);
+		GPU_nodes_get_vertex_attrs(&mat->nodes, &mat->attrs);
 		/* Create source code and search pass cache for an already compiled version. */
 		mat->pass = GPU_generate_pass(
 		        mat,
 		        mat->outlink,
-		        &mat->attribs,
+		        &mat->attrs,
 		        &mat->nodes,
 		        &mat->builtins,
 		        vert_code,

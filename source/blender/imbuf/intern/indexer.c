@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Peter Schlaile <peter [at] schlaile [dot] de> 2011
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/imbuf/intern/indexer.c
@@ -413,7 +407,7 @@ static void get_tc_filename(struct anim *anim, IMB_Timecode_Type tc,
 		"record_run%s%s.blen_tc",
 		"free_run%s%s.blen_tc",
 		"interp_free_run%s%s.blen_tc",
-		"record_run_no_gaps%s%s.blen_tc"
+		"record_run_no_gaps%s%s.blen_tc",
 	};
 
 	char stream_suffix[20];

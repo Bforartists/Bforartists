@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,12 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): Joshua Leung
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/space_graph/graph_edit.c
@@ -516,7 +508,7 @@ static const EnumPropertyItem prop_graphkeys_insertkey_types[] = {
 	 "Active Channels At Cursor", "Insert a keyframe for the active F-Curve at the cursor point"},
 	{GRAPHKEYS_INSERTKEY_SEL | GRAPHKEYS_INSERTKEY_CURSOR, "CURSOR_SEL", 0,
 	 "Selected Channels At Cursor", "Insert a keyframe for selected F-Curves at the cursor point"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for snapping keyframes to frame-times */
@@ -616,7 +608,7 @@ static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode)
 				else if (adt)
 					cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
 
-				const float curval = evaluate_fcurve(fcu, cfra);
+				const float curval = evaluate_fcurve_only_curve(fcu, cfra);
 				insert_vert_fcurve(fcu, cfra, curval, ts->keyframe_type, 0);
 			}
 
@@ -1480,7 +1472,7 @@ static const EnumPropertyItem prop_graphkeys_expo_types[] = {
 
 	{MAKE_CYCLIC_EXPO, "MAKE_CYCLIC", 0, "Make Cyclic (F-Modifier)", "Add Cycles F-Modifier if one doesn't exist already"},
 	{CLEAR_CYCLIC_EXPO, "CLEAR_CYCLIC", 0, "Clear Cyclic (F-Modifier)", "Remove Cycles F-Modifier if not needed anymore"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for setting extrapolation mode for keyframes */
@@ -2093,7 +2085,7 @@ static const EnumPropertyItem prop_graphkeys_snap_types[] = {
 	 "Snap selected keyframes to the nearest marker"},
 	{GRAPHKEYS_SNAP_HORIZONTAL, "HORIZONTAL", 0, "Flatten Handles",
 	 "Flatten handles for a smoother transition"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for snapping keyframes to frame-times */
@@ -2220,7 +2212,7 @@ static const EnumPropertyItem prop_graphkeys_mirror_types[] = {
 	 "Flip values of selected keyframes (i.e. negative values become positive, and vice versa)"},
 	{GRAPHKEYS_MIRROR_MARKER, "MARKER", 0, "By Times over First Selected Marker",
 	 "Flip times of selected keyframes using the first selected marker as the reference point"},
-	{0, NULL, 0, NULL, NULL}
+	{0, NULL, 0, NULL, NULL},
 };
 
 /* this function is responsible for mirroring keyframes */

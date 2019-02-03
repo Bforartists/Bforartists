@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2016 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): none yet.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/windowmanager/gizmo/WM_gizmo_api.h
@@ -41,16 +35,16 @@ struct GHashIterator;
 struct IDProperty;
 struct Main;
 struct PropertyRNA;
-struct wmKeyConfig;
 struct wmGizmo;
-struct wmGizmoProperty;
-struct wmGizmoPropertyType;
-struct wmGizmoType;
 struct wmGizmoGroup;
 struct wmGizmoGroupType;
 struct wmGizmoMap;
 struct wmGizmoMapType;
 struct wmGizmoMapType_Params;
+struct wmGizmoProperty;
+struct wmGizmoPropertyType;
+struct wmGizmoType;
+struct wmKeyConfig;
 struct wmMsgSubscribeKey;
 struct wmMsgSubscribeValue;
 

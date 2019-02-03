@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,10 +14,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Copyright 2016, Blender Foundation.
- * Contributor(s): Blender Institute
- *
- * ***** END GPL LICENSE BLOCK *****
- *
  */
 
 /** \file eevee_lights.c
@@ -1058,7 +1052,7 @@ static void eevee_shadow_cascade_setup(
 			{ 1.0f, -1.0f, splits_end_ndc[c]},
 			{-1.0f, -1.0f, splits_end_ndc[c]},
 			{-1.0f,  1.0f, splits_end_ndc[c]},
-			{ 1.0f,  1.0f, splits_end_ndc[c]}
+			{ 1.0f,  1.0f, splits_end_ndc[c]},
 		};
 
 		/* Transform them into world space */

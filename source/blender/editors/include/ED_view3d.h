@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_view3d.h
@@ -43,6 +36,10 @@ struct BoundBox;
 struct Camera;
 struct Depsgraph;
 struct EditBone;
+struct GPUFX;
+struct GPUFXSettings;
+struct GPUOffScreen;
+struct GPUViewport;
 struct ImBuf;
 struct MVert;
 struct Main;
@@ -53,10 +50,11 @@ struct RV3DMatrixStore;
 struct RegionView3D;
 struct RenderEngineType;
 struct Scene;
-struct ViewLayer;
 struct ScrArea;
 struct View3D;
 struct ViewContext;
+struct ViewLayer;
+struct WorkSpace;
 struct bContext;
 struct bPoseChannel;
 struct bScreen;
@@ -66,11 +64,6 @@ struct wmOperator;
 struct wmOperatorType;
 struct wmWindow;
 struct wmWindowManager;
-struct GPUFX;
-struct GPUOffScreen;
-struct GPUFXSettings;
-struct GPUViewport;
-struct WorkSpace;
 enum eGPUFXFlags;
 
 /* for derivedmesh drawing callbacks, for view3d_select, .... */

@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2013 Blender Foundation.
  * All rights reserved.
- *
- * Original Author: Joshua Leung
- * Contributor(s): Lukas Toenne
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/depsgraph/DEG_depsgraph_build.h
@@ -41,8 +34,8 @@ struct Depsgraph;
 /* ------------------------------------------------ */
 
 struct CacheFile;
-struct EffectorWeights;
 struct Collection;
+struct EffectorWeights;
 struct ID;
 struct Main;
 struct ModifierData;
@@ -89,12 +82,10 @@ struct DepsNodeHandle;
 
 typedef enum eDepsSceneComponentType {
 	/* Parameters Component - Default when nothing else fits
-	 * (i.e. just SDNA property setting).
-	 */
+	 * (i.e. just SDNA property setting). */
 	DEG_SCENE_COMP_PARAMETERS,
 	/* Animation Component
-	 * TODO(sergey): merge in with parameters?
-	 */
+	 * TODO(sergey): merge in with parameters?  */
 	DEG_SCENE_COMP_ANIMATION,
 	/* Sequencer Component (Scene Only). */
 	DEG_SCENE_COMP_SEQUENCER,
@@ -102,17 +93,14 @@ typedef enum eDepsSceneComponentType {
 
 typedef enum eDepsObjectComponentType {
 	/* Parameters Component - Default when nothing else fits
-	 * (i.e. just SDNA property setting).
-	 */
+	 * (i.e. just SDNA property setting). */
 	DEG_OB_COMP_PARAMETERS,
 	/* Generic "Proxy-Inherit" Component.
-	 * TODO(sergey): Also for instancing of subgraphs?
-	 */
+	 * TODO(sergey): Also for instancing of subgraphs? */
 	DEG_OB_COMP_PROXY,
 	/* Animation Component.
 	 *
-	 * TODO(sergey): merge in with parameters?
-	 */
+	 * TODO(sergey): merge in with parameters? */
 	DEG_OB_COMP_ANIMATION,
 	/* Transform Component (Parenting/Constraints) */
 	DEG_OB_COMP_TRANSFORM,

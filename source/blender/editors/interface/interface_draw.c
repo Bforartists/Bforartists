@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/interface/interface_draw.c
@@ -251,15 +245,15 @@ void UI_draw_roundbox_4fv(bool filled, float minx, float miny, float maxx, float
 }
 
 #if 0
-static void round_box_shade_col(unsigned attrib, const float col1[3], float const col2[3], const float fac)
+static void round_box_shade_col(uint attr, const float col1[3], float const col2[3], const float fac)
 {
 	float col[4] = {
 		fac * col1[0] + (1.0f - fac) * col2[0],
 		fac * col1[1] + (1.0f - fac) * col2[1],
 		fac * col1[2] + (1.0f - fac) * col2[2],
-		1.0f
+		1.0f,
 	};
-	immAttr4fv(attrib, col);
+	immAttr4fv(attr, col);
 }
 #endif
 
@@ -686,8 +680,8 @@ void ui_draw_but_IMAGE(ARegion *UNUSED(ar), uiBut *but, const uiWidgetColors *UN
  *
  * \Note This functionn is to be used with the 2D dashed shader enabled.
  *
- * \param pos: is a PRIM_FLOAT, 2, GPU_FETCH_FLOAT vertex attrib
- * \param line_origin: is a PRIM_FLOAT, 2, GPU_FETCH_FLOAT vertex attrib
+ * \param pos: is a PRIM_FLOAT, 2, GPU_FETCH_FLOAT vertex attribute.
+ * \param line_origin: is a PRIM_FLOAT, 2, GPU_FETCH_FLOAT vertex attribute.
  *
  * The next 4 parameters are the offsets for the view, not the zones.
  */
@@ -733,7 +727,7 @@ static void draw_scope_end(const rctf *rect, GLint *scissor)
 static void histogram_draw_one(
         float r, float g, float b, float alpha,
         float x, float y, float w, float h, const float *data, int res, const bool is_line,
-        uint pos_attrib)
+        uint pos_attr)
 {
 	float color[4] = {r, g, b, alpha};
 
@@ -753,19 +747,19 @@ static void histogram_draw_one(
 		immBegin(GPU_PRIM_LINE_STRIP, res);
 		for (int i = 0; i < res; i++) {
 			float x2 = x + i * (w / (float)res);
-			immVertex2f(pos_attrib, x2, y + (data[i] * h));
+			immVertex2f(pos_attr, x2, y + (data[i] * h));
 		}
 		immEnd();
 	}
 	else {
 		/* under the curve */
 		immBegin(GPU_PRIM_TRI_STRIP, res * 2);
-		immVertex2f(pos_attrib, x, y);
-		immVertex2f(pos_attrib, x, y + (data[0] * h));
+		immVertex2f(pos_attr, x, y);
+		immVertex2f(pos_attr, x, y + (data[0] * h));
 		for (int i = 1; i < res; i++) {
 			float x2 = x + i * (w / (float)res);
-			immVertex2f(pos_attrib, x2, y + (data[i] * h));
-			immVertex2f(pos_attrib, x2, y);
+			immVertex2f(pos_attr, x2, y + (data[i] * h));
+			immVertex2f(pos_attr, x2, y);
 		}
 		immEnd();
 
@@ -776,7 +770,7 @@ static void histogram_draw_one(
 		immBegin(GPU_PRIM_LINE_STRIP, res);
 		for (int i = 0; i < res; i++) {
 			float x2 = x + i * (w / (float)res);
-			immVertex2f(pos_attrib, x2, y + (data[i] * h));
+			immVertex2f(pos_attr, x2, y + (data[i] * h));
 		}
 		immEnd();
 	}
@@ -2011,7 +2005,7 @@ void ui_draw_but_NODESOCKET(ARegion *ar, uiBut *but, const uiWidgetColors *UNUSE
 	    0.00000000f, 0.39435585f, 0.72479278f, 0.93775213f,
 	    0.99871650f, 0.89780453f, 0.65137248f, 0.29936312f,
 	    -0.10116832f, -0.48530196f, -0.79077573f, -0.96807711f,
-	    -0.98846832f, -0.84864425f, -0.57126821f, -0.20129852f
+	    -0.98846832f, -0.84864425f, -0.57126821f, -0.20129852f,
 	};
 	/* 16 values of cos function */
 	const float co[16] = {
@@ -2078,7 +2072,7 @@ void ui_draw_but_NODESOCKET(ARegion *ar, uiBut *but, const uiWidgetColors *UNUSE
  * would replace / modify the following 3 functions  - merwin
  */
 
-static void ui_shadowbox(unsigned pos, unsigned color, float minx, float miny, float maxx, float maxy, float shadsize, uchar alpha)
+static void ui_shadowbox(uint pos, uint color, float minx, float miny, float maxx, float maxy, float shadsize, uchar alpha)
 {
 	/**
 	 * <pre>

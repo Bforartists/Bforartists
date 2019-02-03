@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/curve/editcurve_undo.c
@@ -214,7 +210,7 @@ static bool curve_undosys_poll(bContext *C)
 	return (obedit != NULL);
 }
 
-static bool curve_undosys_step_encode(struct bContext *C, UndoStep *us_p)
+static bool curve_undosys_step_encode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p)
 {
 	CurveUndoStep *us = (CurveUndoStep *)us_p;
 
@@ -237,7 +233,7 @@ static bool curve_undosys_step_encode(struct bContext *C, UndoStep *us_p)
 	return true;
 }
 
-static void curve_undosys_step_decode(struct bContext *C, UndoStep *us_p, int UNUSED(dir))
+static void curve_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p, int UNUSED(dir))
 {
 	/* TODO(campbell): undo_system: use low-level API to set mode. */
 	ED_object_mode_set(C, OB_MODE_EDIT);

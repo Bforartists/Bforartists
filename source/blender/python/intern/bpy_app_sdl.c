@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,10 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Contributor(s): Sergey Sharybin, Sybren A. Stuvel
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/python/intern/bpy_app_sdl.c
@@ -58,14 +52,14 @@ static PyStructSequence_Field app_sdl_info_fields[] = {
 	{(char *)"available", (char *)("Boolean, True when SDL is available. This is False when "
 	                               "either *supported* is False, or *dynload* is True and "
 	                               "Bforartists cannot find the correct library.")},
-	{NULL}
+	{NULL},
 };
 
 static PyStructSequence_Desc app_sdl_info_desc = {
 	(char *)"bpy.app.sdl",     /* name */
 	(char *)"This module contains information about SDL blender is linked against",    /* doc */
 	app_sdl_info_fields,    /* fields */
-	ARRAY_SIZE(app_sdl_info_fields) - 1
+	ARRAY_SIZE(app_sdl_info_fields) - 1,
 };
 
 static PyObject *make_sdl_info(void)

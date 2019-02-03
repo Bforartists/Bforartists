@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_uvedit.h
@@ -31,19 +25,19 @@
 #define __ED_UVEDIT_H__
 
 struct ARegionType;
-struct BMesh;
 struct BMEditMesh;
 struct BMFace;
 struct BMLoop;
+struct BMesh;
 struct Depsgraph;
 struct Image;
 struct ImageUser;
 struct Main;
 struct Object;
 struct Scene;
+struct SpaceImage;
 struct View3D;
 struct ViewLayer;
-struct SpaceImage;
 struct bNode;
 struct wmKeyConfig;
 

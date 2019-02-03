@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file ED_screen.h
@@ -41,29 +34,29 @@
 
 #include "BLI_compiler_attrs.h"
 
+struct ARegion;
 struct Depsgraph;
-struct wmWindowManager;
-struct wmWindow;
-struct wmNotifier;
-struct wmEvent;
-struct wmKeyConfig;
+struct IDProperty;
+struct Main;
+struct MenuType;
+struct PropertyRNA;
+struct Scene;
+struct ViewLayer;
 struct WorkSpace;
 struct WorkSpaceInstanceHook;
 struct bContext;
-struct Scene;
-struct ViewLayer;
 struct bScreen;
-struct ARegion;
-struct uiBlock;
 struct rcti;
-struct Main;
+struct uiBlock;
+struct wmEvent;
+struct wmKeyConfig;
 struct wmMsgBus;
 struct wmMsgSubscribeKey;
 struct wmMsgSubscribeValue;
+struct wmNotifier;
 struct wmOperatorType;
-struct IDProperty;
-struct MenuType;
-struct PropertyRNA;
+struct wmWindow;
+struct wmWindowManager;
 
 /* regions */
 void    ED_region_do_listen(

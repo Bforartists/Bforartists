@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,11 +15,6 @@
  *
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
- *
- *
- * Contributor(s): Blender Foundation
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file blender/editors/util/ed_util.c
@@ -59,6 +52,7 @@
 #include "BKE_screen.h"
 #include "BKE_undo_system.h"
 #include "BKE_workspace.h"
+#include "BKE_material.h"
 
 #include "ED_armature.h"
 #include "ED_buttons.h"
@@ -84,6 +78,24 @@
 
 
 /* ********* general editor util funcs, not BKE stuff please! ********* */
+
+void ED_editors_init_for_undo(Main *bmain)
+{
+	wmWindowManager *wm = bmain->wm.first;
+	for (wmWindow *win = wm->windows.first; win; win = win->next) {
+		ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+		Base *base = BASACT(view_layer);
+		if (base != NULL) {
+			Object *ob = base->object;
+			if (ob->mode & OB_MODE_TEXTURE_PAINT) {
+				Scene *scene = WM_window_get_active_scene(win);
+
+				BKE_texpaint_slots_refresh_object(scene, ob);
+				BKE_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
+			}
+		}
+	}
+}
 
 void ED_editors_init(bContext *C)
 {

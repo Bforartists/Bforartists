@@ -1,6 +1,4 @@
 /*
- * ***** BEGIN GPL LICENSE BLOCK *****
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -17,10 +15,6 @@
  *
  * The Original Code is Copyright (C) 2017 by Blender Foundation.
  * All rights reserved.
- *
- * Contributor(s): Blender Foundation, Mike Erwin, Dalai Felinto
- *
- * ***** END GPL LICENSE BLOCK *****
  */
 
 /** \file draw_hair_private.h
@@ -35,10 +29,10 @@
 #define MAX_THICKRES        2 /* see eHairType */
 #define MAX_HAIR_SUBDIV     4 /* see hair_subdiv rna */
 
-struct Object;
-struct ParticleSystem;
 struct ModifierData;
+struct Object;
 struct ParticleHairCache;
+struct ParticleSystem;
 
 typedef struct ParticleHairFinalCache {
 	/* Output of the subdivision stage: vertex buff sized to subdiv level. */
