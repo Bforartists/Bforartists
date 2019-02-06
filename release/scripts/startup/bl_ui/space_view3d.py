@@ -260,18 +260,10 @@ class VIEW3D_HT_header(Header):
         layout.separator_spacer()
 
         # Collection Visibility
-        layout.popover(
-            panel="VIEW3D_PT_collections",
-            icon='GROUP',
-            text="",
-        )
+        # layout.popover(panel="VIEW3D_PT_collections", icon='GROUP', text="")
 
         # Viewport Settings
-        layout.popover(
-            panel="VIEW3D_PT_object_type_visibility",
-            icon_value=view.icon_from_show_object_viewport,
-            text="",
-        )
+        layout.popover(panel = "VIEW3D_PT_object_type_visibility", icon_value = view.icon_from_show_object_viewport, text="")
 
         row = layout.row(align=True)
         row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
