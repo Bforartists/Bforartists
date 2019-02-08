@@ -223,7 +223,7 @@ set(ICON_NAMES
 	decorate_unlocked
 	decorate_locked
 	decorate_override
-	sealed
+	#sealed
 	heart
 	orphan_data
 	user
