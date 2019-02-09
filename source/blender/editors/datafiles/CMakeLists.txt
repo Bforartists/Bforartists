@@ -104,7 +104,7 @@ set(ICON_NAMES
 	light
 	material
 	texture
-	anim
+	#anim
 	world
 	scene
 	output
