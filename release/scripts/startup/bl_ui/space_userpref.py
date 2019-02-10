@@ -210,10 +210,10 @@ class USERPREF_PT_interface_editors(PreferencePanel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.row().prop(view, "header_align_default", expand=True)
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_layout_ui", text="Corner Splitting")
         flow.prop(view, "color_picker_type")
+        flow.row().prop(view, "header_align")
 
 
 class USERPREF_PT_interface_menus(Panel):
@@ -1282,7 +1282,6 @@ class USERPREF_PT_saveload_blend_autosave(PreferencePanel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(paths, "use_keep_session")
         flow.prop(paths, "use_auto_save_temporary_files")
         sub = flow.column()
         sub.active = paths.use_auto_save_temporary_files

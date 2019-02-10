@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/modifiers/intern/MOD_meshsequencecache.c
- *  \ingroup modifiers
+/** \file \ingroup modifiers
  */
 
 #include "DNA_cachefile_types.h"
@@ -122,8 +121,7 @@ static Mesh *applyModifier(
 			               LIB_ID_CREATE_NO_MAIN |
 			               LIB_ID_CREATE_NO_USER_REFCOUNT |
 			               LIB_ID_CREATE_NO_DEG_TAG |
-			               LIB_ID_COPY_NO_PREVIEW,
-			               false);
+			               LIB_ID_COPY_NO_PREVIEW);
 		}
 	}
 

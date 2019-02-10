@@ -16,14 +16,13 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file blender/draw/modes/edit_mesh_mode.c
- *  \ingroup draw
+/** \file \ingroup draw
  */
 
 #include "DRW_engine.h"
 #include "DRW_render.h"
 
-#include "GPU_shader.h"
+#include "GPU_extensions.h"
 
 #include "DNA_mesh_types.h"
 #include "DNA_view3d_types.h"
@@ -38,10 +37,10 @@
 #include "BKE_editmesh.h"
 #include "BKE_object.h"
 
+#include "BIF_glutil.h"
+
 #include "BLI_dynstr.h"
 #include "BLI_string_utils.h"
-
-extern char datatoc_common_world_clip_lib_glsl[];
 
 extern char datatoc_paint_weight_vert_glsl[];
 extern char datatoc_paint_weight_frag_glsl[];
@@ -49,11 +48,7 @@ extern char datatoc_paint_weight_frag_glsl[];
 extern char datatoc_edit_mesh_overlay_common_lib_glsl[];
 extern char datatoc_edit_mesh_overlay_frag_glsl[];
 extern char datatoc_edit_mesh_overlay_vert_glsl[];
-extern char datatoc_edit_mesh_overlay_geom_tri_glsl[];
-extern char datatoc_edit_mesh_overlay_geom_edge_glsl[];
-extern char datatoc_edit_mesh_overlay_points_vert_glsl[];
-extern char datatoc_edit_mesh_overlay_facedot_frag_glsl[];
-extern char datatoc_edit_mesh_overlay_facedot_vert_glsl[];
+extern char datatoc_edit_mesh_overlay_geom_glsl[];
 extern char datatoc_edit_mesh_overlay_mix_frag_glsl[];
 extern char datatoc_edit_mesh_overlay_facefill_vert_glsl[];
 extern char datatoc_edit_mesh_overlay_facefill_frag_glsl[];
@@ -62,6 +57,7 @@ extern char datatoc_edit_normals_geom_glsl[];
 extern char datatoc_common_globals_lib_glsl[];
 
 extern char datatoc_gpu_shader_uniform_color_frag_glsl[];
+extern char datatoc_gpu_shader_3D_smooth_color_frag_glsl[];
 extern char datatoc_gpu_shader_flat_color_frag_glsl[];
 extern char datatoc_gpu_shader_point_varying_color_frag_glsl[];
 extern char datatoc_gpu_shader_depth_only_frag_glsl[];
@@ -103,12 +99,12 @@ typedef struct EDIT_MESH_Shaders {
 	GPUShader *weight_face;
 
 	/* Geometry */
-	GPUShader *overlay_tri_cache[MAX_SHADERS];
-	GPUShader *overlay_loose_edge_cache[MAX_SHADERS];
-
 	GPUShader *overlay_vert;
-	GPUShader *overlay_lvert;
+	GPUShader *overlay_edge;
+	GPUShader *overlay_edge_flat;
+	GPUShader *overlay_face;
 	GPUShader *overlay_facedot;
+
 	GPUShader *overlay_mix;
 	GPUShader *overlay_facefill;
 	GPUShader *normals_face;
@@ -120,7 +116,7 @@ typedef struct EDIT_MESH_Shaders {
 
 /* *********** STATIC *********** */
 static struct {
-	EDIT_MESH_Shaders sh_data[DRW_SHADER_SLOT_LEN];
+	EDIT_MESH_Shaders sh_data[GPU_SHADER_CFG_LEN];
 
 	/* temp buffer texture */
 	struct GPUTexture *occlude_wire_depth_tx;
@@ -136,12 +132,10 @@ typedef struct EDIT_MESH_PrivateData {
 	DRWShadingGroup *vnormals_shgrp;
 	DRWShadingGroup *lnormals_shgrp;
 
+	DRWShadingGroup *vert_shgrp;
+	DRWShadingGroup *edge_shgrp;
 	DRWShadingGroup *face_shgrp;
 	DRWShadingGroup *face_cage_shgrp;
-
-	DRWShadingGroup *verts_shgrp;
-	DRWShadingGroup *ledges_shgrp;
-	DRWShadingGroup *lverts_shgrp;
 	DRWShadingGroup *facedot_shgrp;
 
 	DRWShadingGroup *facefill_occluded_shgrp;
@@ -152,104 +146,17 @@ typedef struct EDIT_MESH_PrivateData {
 	bool do_zbufclip;
 	bool do_faces;
 	bool do_edges;
-	float edge_width_scale;
 } EDIT_MESH_PrivateData; /* Transient data */
 
 /* *********** FUNCTIONS *********** */
 
-static int EDIT_MESH_sh_index(ToolSettings *tsettings, RegionView3D *rv3d, bool supports_fast_mode)
-{
-	int result = tsettings->selectmode << 1;
-	if (supports_fast_mode) {
-		SET_FLAG_FROM_TEST(result, (rv3d->rflag & RV3D_NAVIGATING), 1 << 0);
-	}
-	return result;
-}
-
-static char *EDIT_MESH_sh_defines(ToolSettings *tsettings, RegionView3D *rv3d, bool anti_alias, bool looseedge)
-{
-	const int selectmode = tsettings->selectmode;
-	const int fast_mode = rv3d->rflag & RV3D_NAVIGATING;
-
-	char *str = NULL;
-	DynStr *ds = BLI_dynstr_new();
-
-	if (selectmode & SCE_SELECT_VERTEX) {
-		BLI_dynstr_append(ds, "#define VERTEX_SELECTION\n");
-	}
-
-	if (selectmode & SCE_SELECT_EDGE) {
-		BLI_dynstr_append(ds, "#define EDGE_SELECTION\n");
-	}
-
-	if (selectmode & SCE_SELECT_FACE) {
-		BLI_dynstr_append(ds, "#define FACE_SELECTION\n");
-	}
-
-	if (!fast_mode || looseedge) {
-		BLI_dynstr_append(ds, "#define EDGE_FIX\n");
-	}
-
-	if (anti_alias) {
-		BLI_dynstr_append(ds, "#define ANTI_ALIASING\n");
-	}
-
-	if (!looseedge) {
-		BLI_dynstr_append(ds, "#define VERTEX_FACING\n");
-	}
-	str = BLI_dynstr_get_cstring(ds);
-	BLI_dynstr_free(ds);
-	return str;
-}
-static GPUShader *EDIT_MESH_ensure_shader(
-        EDIT_MESH_Shaders *sh_data,
-        ToolSettings *tsettings, RegionView3D *rv3d, bool supports_fast_mode, bool looseedge)
-{
-	const int index = EDIT_MESH_sh_index(tsettings, rv3d, supports_fast_mode);
-	const bool fast_mode = (rv3d->rflag & RV3D_NAVIGATING) != 0;
-	const bool is_clip = (rv3d->rflag & RV3D_CLIPPING) != 0;
-	const char *world_clip_lib_or_empty = is_clip ? datatoc_common_world_clip_lib_glsl : "";
-	const char *world_clip_def_or_empty = is_clip ? "#define USE_WORLD_CLIP_PLANES\n" : "";
-
-	if (looseedge) {
-		if (!sh_data->overlay_loose_edge_cache[index]) {
-			char *lib = BLI_string_joinN(world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_common_lib_glsl);
-			char *defines = EDIT_MESH_sh_defines(tsettings, rv3d, true, true);
-			sh_data->overlay_loose_edge_cache[index] = DRW_shader_create_from_arrays({
-			        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
-			        .geom = (const char *[]){lib, datatoc_edit_mesh_overlay_geom_edge_glsl, NULL},
-			        .frag = (const char *[]){lib, datatoc_edit_mesh_overlay_frag_glsl, NULL},
-			        .defs = (const char *[]){world_clip_def_or_empty, defines, NULL},
-			});
-			MEM_freeN(lib);
-			MEM_freeN(defines);
-		}
-		return sh_data->overlay_loose_edge_cache[index];
-	}
-	else {
-		if (!sh_data->overlay_tri_cache[index]) {
-			char *lib = BLI_string_joinN(world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_common_lib_glsl);
-			char *defines = EDIT_MESH_sh_defines(tsettings, rv3d, true, false);
-			sh_data->overlay_tri_cache[index] = DRW_shader_create_from_arrays({
-			        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
-			        .geom = fast_mode ? NULL : (const char *[]){lib, datatoc_edit_mesh_overlay_geom_tri_glsl, NULL},
-			        .frag = (const char *[]){lib, datatoc_edit_mesh_overlay_frag_glsl, NULL},
-			        .defs = (const char *[]){world_clip_def_or_empty, defines, NULL},
-			});
-			MEM_freeN(lib);
-			MEM_freeN(defines);
-		}
-		return sh_data->overlay_tri_cache[index];
-	}
-}
 
 static void EDIT_MESH_engine_init(void *vedata)
 {
 	EDIT_MESH_FramebufferList *fbl = ((EDIT_MESH_Data *)vedata)->fbl;
 
 	const DRWContextState *draw_ctx = DRW_context_state_get();
-	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
-	const bool is_clip = (draw_ctx->rv3d->rflag & RV3D_CLIPPING) != 0;
+	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
 
 	const float *viewport_size = DRW_viewport_size_get();
 	const int size[2] = {(int)viewport_size[0], (int)viewport_size[1]};
@@ -264,103 +171,116 @@ static void EDIT_MESH_engine_init(void *vedata)
 		GPU_ATTACHMENT_TEXTURE(e_data.occlude_wire_color_tx)
 	});
 
-	if (is_clip) {
+	if (draw_ctx->sh_cfg == GPU_SHADER_CFG_CLIPPED) {
 		DRW_state_clip_planes_set_from_rv3d(draw_ctx->rv3d);
 	}
 
-	const char *world_clip_lib_or_empty = is_clip ? datatoc_common_world_clip_lib_glsl : "";
-	const char *world_clip_def_or_empty = is_clip ? "#define USE_WORLD_CLIP_PLANES\n" : "";
+	const GPUShaderConfigData *sh_cfg_data = &GPU_shader_cfg_data[draw_ctx->sh_cfg];
 
 	if (!sh_data->weight_face) {
-		sh_data->weight_face = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_paint_weight_vert_glsl, NULL},
+		sh_data->weight_face = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){sh_cfg_data->lib, datatoc_common_globals_lib_glsl, datatoc_paint_weight_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_common_globals_lib_glsl, datatoc_paint_weight_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
-		});
-	}
-
-	if (!sh_data->overlay_vert) {
-		char *lib = BLI_string_joinN(world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_common_lib_glsl);
-		sh_data->overlay_vert = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_points_vert_glsl, NULL},
-		        .frag = (const char *[]){datatoc_gpu_shader_point_varying_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define VERTEX_FACING\n", NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, NULL},
 		});
 
-		sh_data->overlay_lvert = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_points_vert_glsl, NULL},
+		char *lib = BLI_string_joinN(sh_cfg_data->lib, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_common_lib_glsl);
+		/* Use geometry shader to draw edge wireframe. This ensure us
+		 * the same result accross platforms and more flexibility. But
+		 * we pay the cost of running a geometry shader.
+		 * In the future we might consider using only the vertex shader
+		 * and loading data manually with buffer textures. */
+		const bool use_geom_shader = true;
+		const char *geom_sh_code[] = {lib, datatoc_edit_mesh_overlay_geom_glsl, NULL};
+		if (!use_geom_shader) {
+			geom_sh_code[0] = NULL;
+		}
+		const char *use_geom_def = use_geom_shader ? "#define USE_GEOM_SHADER\n" : "";
+		sh_data->overlay_face = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
+		        .frag = (const char *[]){datatoc_gpu_shader_3D_smooth_color_frag_glsl, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, "#define FACE\n", NULL},
+		});
+		sh_data->overlay_edge = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
+		        .frag = (const char *[]){lib, datatoc_edit_mesh_overlay_frag_glsl, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, use_geom_def, "#define EDGE\n", NULL},
+		        .geom = (use_geom_shader) ? geom_sh_code : NULL,
+		});
+		sh_data->overlay_edge_flat = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
+		        .frag = (const char *[]){lib, datatoc_edit_mesh_overlay_frag_glsl, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, use_geom_def, "#define EDGE\n", "#define FLAT\n", NULL},
+		        .geom = (use_geom_shader) ? geom_sh_code : NULL,
+		});
+		sh_data->overlay_vert = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_point_varying_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, "#define VERT\n", NULL},
+		});
+		sh_data->overlay_facedot = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_vert_glsl, NULL},
+		        .frag = (const char *[]){datatoc_gpu_shader_point_varying_color_frag_glsl, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, "#define FACEDOT\n", NULL},
+		});
+		sh_data->overlay_facefill = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){lib, datatoc_edit_mesh_overlay_facefill_vert_glsl, NULL},
+		        .frag = (const char *[]){lib, datatoc_edit_mesh_overlay_facefill_frag_glsl, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, NULL},
 		});
 		MEM_freeN(lib);
-	}
-	if (!sh_data->overlay_facedot) {
-		sh_data->overlay_facedot = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_facedot_vert_glsl, NULL},
-		        .frag = (const char *[]){datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_facedot_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define VERTEX_FACING\n", NULL},
-		});
-	}
-	if (!sh_data->overlay_mix) {
+
 		sh_data->overlay_mix = DRW_shader_create_fullscreen(datatoc_edit_mesh_overlay_mix_frag_glsl, NULL);
-	}
-	if (!sh_data->overlay_facefill) {
-		sh_data->overlay_facefill = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_facefill_vert_glsl, NULL},
-		        .frag = (const char *[]){datatoc_common_globals_lib_glsl, datatoc_edit_mesh_overlay_facefill_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
-		});
-	}
-	if (!sh_data->normals_face) {
-		sh_data->normals_face = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_vert_glsl, NULL},
-		        .geom = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_geom_glsl, NULL},
+
+		sh_data->normals_face = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_vert_glsl, NULL},
+		        .geom = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_geom_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_uniform_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define FACE_NORMALS\n", NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, "#define FACE_NORMALS\n", NULL},
 		});
-	}
-	if (!sh_data->normals_loop) {
-		sh_data->normals_loop = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_vert_glsl, NULL},
-		        .geom = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_geom_glsl, NULL},
+
+		sh_data->normals_loop = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_vert_glsl, NULL},
+		        .geom = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_geom_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_uniform_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, "#define LOOP_NORMALS\n", NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, "#define LOOP_NORMALS\n", NULL},
 		});
-	}
-	if (!sh_data->normals) {
-		sh_data->normals = DRW_shader_create_from_arrays({
-		        .vert = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_vert_glsl, NULL},
-		        .geom = (const char *[]){world_clip_lib_or_empty, datatoc_edit_normals_geom_glsl, NULL},
+
+		sh_data->normals = GPU_shader_create_from_arrays({
+		        .vert = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_vert_glsl, NULL},
+		        .geom = (const char *[]){sh_cfg_data->lib, datatoc_edit_normals_geom_glsl, NULL},
 		        .frag = (const char *[]){datatoc_gpu_shader_uniform_color_frag_glsl, NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, NULL},
 		});
-	}
-	if (!sh_data->depth) {
-		sh_data->depth = DRW_shader_create_3D_depth_only(draw_ctx->shader_slot);
-	}
-	if (!sh_data->ghost_clear_depth) {
+
+		sh_data->depth = DRW_shader_create_3D_depth_only(draw_ctx->sh_cfg);
+
 		sh_data->ghost_clear_depth = DRW_shader_create_fullscreen(datatoc_gpu_shader_depth_only_frag_glsl, NULL);
 	}
-
 }
 
 static DRWPass *edit_mesh_create_overlay_pass(
-        float *face_alpha, float *edge_width_scale, int *data_mask, bool do_edges, bool xray,
+        float *face_alpha, int *data_mask, bool do_edges, bool UNUSED(xray),
         DRWState statemod,
-        DRWShadingGroup **r_face_shgrp, DRWShadingGroup **r_face_cage_shgrp,
-        DRWShadingGroup **r_verts_shgrp, DRWShadingGroup **r_ledges_shgrp,
-        DRWShadingGroup **r_lverts_shgrp, DRWShadingGroup **r_facedot_shgrp)
+        DRWShadingGroup **r_face_shgrp, DRWShadingGroup **r_face_cage_shgrp, DRWShadingGroup **r_facedot_shgrp,
+        DRWShadingGroup **r_edge_shgrp, DRWShadingGroup **r_vert_shgrp)
 {
-	GPUShader *tri_sh, *ledge_sh;
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	RegionView3D *rv3d = draw_ctx->rv3d;
 	Scene *scene = draw_ctx->scene;
 	ToolSettings *tsettings = scene->toolsettings;
-	const int fast_mode = rv3d->rflag & RV3D_NAVIGATING;
-	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
-
-	ledge_sh = EDIT_MESH_ensure_shader(sh_data, tsettings, rv3d, false, true);
-	tri_sh = EDIT_MESH_ensure_shader(sh_data, tsettings, rv3d, true, false);
+	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
+	const bool select_vert = (tsettings->selectmode & SCE_SELECT_VERTEX) != 0;
+	const bool select_face = (tsettings->selectmode & SCE_SELECT_FACE) != 0;
+	const bool select_edge = (tsettings->selectmode & SCE_SELECT_EDGE) != 0;
+	float winmat[4][4];
+	float viewdist = rv3d->dist;
+	DRW_viewport_matrix_get(winmat, DRW_MAT_WIN);
+	/* special exception for ortho camera (viewdist isnt used for perspective cameras) */
+	if (rv3d->persp == RV3D_CAMOB && rv3d->is_persp == false) {
+		viewdist = 1.0f / max_ff(fabsf(rv3d->winmat[0][0]), fabsf(rv3d->winmat[1][1]));
+	}
+	const float depth_ofs = bglPolygonOffsetCalc((float *)winmat, viewdist, 1.0f);
 
 	DRWPass *pass = DRW_pass_create(
 	        "Edit Mesh Face Overlay Pass",
@@ -368,52 +288,27 @@ static DRWPass *edit_mesh_create_overlay_pass(
 
 	DRWShadingGroup *grp;
 
-	if ((tsettings->selectmode & SCE_SELECT_VERTEX) != 0) {
-		grp = *r_lverts_shgrp = DRW_shgroup_create(sh_data->overlay_lvert, pass);
-		DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
-		DRW_shgroup_uniform_vec2(grp, "viewportSize", DRW_viewport_size_get(), 1);
-		DRW_shgroup_uniform_float(grp, "edgeScale", edge_width_scale, 1);
-		DRW_shgroup_state_enable(grp, DRW_STATE_WRITE_DEPTH);
-		DRW_shgroup_state_disable(grp, DRW_STATE_BLEND);
-		if (rv3d->rflag & RV3D_CLIPPING) {
-			DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
-		}
+	GPUShader *vert_sh = sh_data->overlay_vert;
+	GPUShader *edge_sh = (select_vert) ? sh_data->overlay_edge : sh_data->overlay_edge_flat;
+	GPUShader *face_sh = sh_data->overlay_face;
+	GPUShader *facedot_sh = sh_data->overlay_facedot;
 
-		grp = *r_verts_shgrp = DRW_shgroup_create(sh_data->overlay_vert, pass);
+	/* Faces */
+	if (select_face) {
+		grp = *r_facedot_shgrp = DRW_shgroup_create(facedot_sh, pass);
 		DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
-		DRW_shgroup_uniform_vec2(grp, "viewportSize", DRW_viewport_size_get(), 1);
-		DRW_shgroup_uniform_float(grp, "edgeScale", edge_width_scale, 1);
-		DRW_shgroup_state_enable(grp, DRW_STATE_WRITE_DEPTH);
-		DRW_shgroup_state_disable(grp, DRW_STATE_BLEND);
-		if (rv3d->rflag & RV3D_CLIPPING) {
-			DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
-		}
-	}
-
-	if ((tsettings->selectmode & SCE_SELECT_FACE) != 0) {
-		grp = *r_facedot_shgrp = DRW_shgroup_create(sh_data->overlay_facedot, pass);
-		DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
-		DRW_shgroup_uniform_float(grp, "edgeScale", edge_width_scale, 1);
 		DRW_shgroup_state_enable(grp, DRW_STATE_WRITE_DEPTH);
 		if (rv3d->rflag & RV3D_CLIPPING) {
 			DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
 		}
 	}
 
-	grp = *r_face_shgrp = DRW_shgroup_create(tri_sh, pass);
+	grp = *r_face_shgrp = DRW_shgroup_create(face_sh, pass);
 	DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
-	DRW_shgroup_uniform_vec2(grp, "viewportSize", DRW_viewport_size_get(), 1);
 	DRW_shgroup_uniform_float(grp, "faceAlphaMod", face_alpha, 1);
-	DRW_shgroup_uniform_float(grp, "edgeScale", edge_width_scale, 1);
 	DRW_shgroup_uniform_ivec4(grp, "dataMask", data_mask, 1);
 	DRW_shgroup_uniform_bool_copy(grp, "doEdges", do_edges);
-	if (!fast_mode) {
-		DRW_shgroup_uniform_bool_copy(grp, "isXray", xray);
-	}
-	else {
-		/* To be able to use triple load. */
-		DRW_shgroup_state_enable(grp, DRW_STATE_FIRST_VERTEX_CONVENTION);
-	}
+	DRW_shgroup_uniform_float_copy(grp, "ofs", 0.0f);
 	if (rv3d->rflag & RV3D_CLIPPING) {
 		DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
 	}
@@ -422,14 +317,33 @@ static DRWPass *edit_mesh_create_overlay_pass(
 	grp = *r_face_cage_shgrp = DRW_shgroup_create_sub(*r_face_shgrp);
 	DRW_shgroup_state_enable(grp, DRW_STATE_OFFSET_NEGATIVE);
 
-	grp = *r_ledges_shgrp = DRW_shgroup_create(ledge_sh, pass);
+	/* Edges */
+	grp = *r_edge_shgrp = DRW_shgroup_create(edge_sh, pass);
 	DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
 	DRW_shgroup_uniform_vec2(grp, "viewportSize", DRW_viewport_size_get(), 1);
-	DRW_shgroup_uniform_float(grp, "edgeScale", edge_width_scale, 1);
+	DRW_shgroup_uniform_vec2(grp, "viewportSizeInv", DRW_viewport_invert_size_get(), 1);
 	DRW_shgroup_uniform_ivec4(grp, "dataMask", data_mask, 1);
 	DRW_shgroup_uniform_bool_copy(grp, "doEdges", do_edges);
+	DRW_shgroup_uniform_float_copy(grp, "ofs", depth_ofs);
+	DRW_shgroup_uniform_float_copy(grp, "edgeScale", select_edge ? 1.75f : 1.0f);
+	DRW_shgroup_state_enable(grp, DRW_STATE_OFFSET_NEGATIVE);
+	/* To match blender loop structure. */
+	DRW_shgroup_state_enable(grp, DRW_STATE_FIRST_VERTEX_CONVENTION);
 	if (rv3d->rflag & RV3D_CLIPPING) {
 		DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
+	}
+
+	/* Verts */
+	if (select_vert) {
+		grp = *r_vert_shgrp = DRW_shgroup_create(vert_sh, pass);
+		DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
+		DRW_shgroup_uniform_vec2(grp, "viewportSize", DRW_viewport_size_get(), 1);
+		DRW_shgroup_uniform_float_copy(grp, "ofs", depth_ofs * 1.5f);
+		DRW_shgroup_state_enable(grp, DRW_STATE_OFFSET_NEGATIVE | DRW_STATE_WRITE_DEPTH);
+		DRW_shgroup_state_disable(grp, DRW_STATE_BLEND);
+		if (rv3d->rflag & RV3D_CLIPPING) {
+			DRW_shgroup_world_clip_planes_from_rv3d(grp, rv3d);
+		}
 	}
 
 	return pass;
@@ -450,7 +364,7 @@ static void EDIT_MESH_cache_init(void *vedata)
 	RegionView3D *rv3d = draw_ctx->rv3d;
 	Scene *scene = draw_ctx->scene;
 	ToolSettings *tsettings = scene->toolsettings;
-	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+	EDIT_MESH_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
 	static float zero = 0.0f;
 
 	if (!stl->g_data) {
@@ -463,9 +377,6 @@ static void EDIT_MESH_cache_init(void *vedata)
 	stl->g_data->do_edges = true;
 
 	stl->g_data->do_zbufclip = ((v3d)->shading.flag & XRAY_FLAG(v3d)) != 0;
-
-	/* Applies on top of the theme edge width, so edge-mode can have thick edges. */
-	stl->g_data->edge_width_scale = (tsettings->selectmode & (SCE_SELECT_EDGE)) ? 1.75f : 1.0f;
 
 	stl->g_data->data_mask[0] = 0xFF; /* Face Flag */
 	stl->g_data->data_mask[1] = 0xFF; /* Edge Flag */
@@ -480,6 +391,9 @@ static void EDIT_MESH_cache_init(void *vedata)
 			if ((v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACES) == 0) {
 				stl->g_data->data_mask[0] &= ~(VFLAG_FACE_SELECTED & VFLAG_FACE_FREESTYLE);
 				stl->g_data->do_faces = false;
+			}
+			if ((tsettings->selectmode & SCE_SELECT_FACE) == 0) {
+				stl->g_data->data_mask[0] &= ~VFLAG_FACE_ACTIVE;
 			}
 			if ((v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_SEAMS) == 0) {
 				stl->g_data->data_mask[1] &= ~VFLAG_EDGE_SEAM;
@@ -573,26 +487,24 @@ static void EDIT_MESH_cache_init(void *vedata)
 
 	if (!stl->g_data->do_zbufclip) {
 		psl->edit_face_overlay = edit_mesh_create_overlay_pass(
-		        &face_mod, &stl->g_data->edge_width_scale, stl->g_data->data_mask, stl->g_data->do_edges, false,
+		        &face_mod, stl->g_data->data_mask, stl->g_data->do_edges, false,
 		        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_BLEND,
 		        &stl->g_data->face_shgrp,
 		        &stl->g_data->face_cage_shgrp,
-		        &stl->g_data->verts_shgrp,
-		        &stl->g_data->ledges_shgrp,
-		        &stl->g_data->lverts_shgrp,
-		        &stl->g_data->facedot_shgrp);
+		        &stl->g_data->facedot_shgrp,
+		        &stl->g_data->edge_shgrp,
+		        &stl->g_data->vert_shgrp);
 	}
 	else {
 		/* We render all wires with depth and opaque to a new fbo and blend the result based on depth values */
 		psl->edit_face_occluded = edit_mesh_create_overlay_pass(
-		        &zero, &stl->g_data->edge_width_scale, stl->g_data->data_mask, stl->g_data->do_edges, true,
+		        &zero, stl->g_data->data_mask, stl->g_data->do_edges, true,
 		        DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WRITE_DEPTH,
 		        &stl->g_data->face_shgrp,
 		        &stl->g_data->face_cage_shgrp,
-		        &stl->g_data->verts_shgrp,
-		        &stl->g_data->ledges_shgrp,
-		        &stl->g_data->lverts_shgrp,
-		        &stl->g_data->facedot_shgrp);
+		        &stl->g_data->facedot_shgrp,
+		        &stl->g_data->edge_shgrp,
+		        &stl->g_data->vert_shgrp);
 
 		/* however we loose the front faces value (because we need the depth of occluded wires and
 		 * faces are alpha blended ) so we recover them in a new pass. */
@@ -627,7 +539,7 @@ static void edit_mesh_add_ob_to_pass(
         DRWShadingGroup *facedot_shgrp,
         DRWShadingGroup *facefill_shgrp)
 {
-	struct GPUBatch *geom_tris, *geom_verts, *geom_ledges, *geom_ledges_nor, *geom_lverts, *geom_fcenter;
+	struct GPUBatch *geom_tris, *geom_verts, *geom_edges, *geom_fcenter;
 	ToolSettings *tsettings = scene->toolsettings;
 
 	bool has_edit_mesh_cage = false;
@@ -639,30 +551,22 @@ static void edit_mesh_add_ob_to_pass(
 	}
 
 	DRWShadingGroup *face_shgrp = (has_edit_mesh_cage) ? g_data->face_cage_shgrp : g_data->face_shgrp;
-	DRWShadingGroup *verts_shgrp = g_data->verts_shgrp;
-	DRWShadingGroup *ledges_shgrp = g_data->ledges_shgrp;
-	DRWShadingGroup *lverts_shgrp = g_data->lverts_shgrp;
+	DRWShadingGroup *vert_shgrp = g_data->vert_shgrp;
+	DRWShadingGroup *edge_shgrp = g_data->edge_shgrp;
+
+	face_shgrp = (facefill_shgrp != NULL) ? facefill_shgrp : face_shgrp;
 
 	geom_tris = DRW_mesh_batch_cache_get_edit_triangles(ob->data);
-	geom_ledges = DRW_mesh_batch_cache_get_edit_loose_edges(ob->data);
+	geom_edges = DRW_mesh_batch_cache_get_edit_edges(ob->data);
+	DRW_shgroup_call_add(edge_shgrp, geom_edges, ob->obmat);
 	DRW_shgroup_call_add(face_shgrp, geom_tris, ob->obmat);
-	DRW_shgroup_call_add(ledges_shgrp, geom_ledges, ob->obmat);
-
-	if (facefill_shgrp) {
-		DRW_shgroup_call_add(facefill_shgrp, geom_tris, ob->obmat);
-	}
 
 	if ((tsettings->selectmode & SCE_SELECT_VERTEX) != 0) {
-		/* Thoses are point batches. */
 		geom_verts = DRW_mesh_batch_cache_get_edit_vertices(ob->data);
-		geom_ledges_nor = DRW_mesh_batch_cache_get_edit_loose_edges_nor(ob->data);
-		geom_lverts = DRW_mesh_batch_cache_get_edit_loose_verts(ob->data);
-		DRW_shgroup_call_add(verts_shgrp, geom_verts, ob->obmat);
-		DRW_shgroup_call_add(lverts_shgrp, geom_ledges_nor, ob->obmat);
-		DRW_shgroup_call_add(lverts_shgrp, geom_lverts, ob->obmat);
+		DRW_shgroup_call_add(vert_shgrp, geom_verts, ob->obmat);
 	}
 
-	if (facedot_shgrp && (tsettings->selectmode & SCE_SELECT_FACE) != 0 ) {
+	if (facedot_shgrp && (tsettings->selectmode & SCE_SELECT_FACE) != 0) {
 		geom_fcenter = DRW_mesh_batch_cache_get_edit_facedots(ob->data);
 		DRW_shgroup_call_add(facedot_shgrp, geom_fcenter, ob->obmat);
 	}
@@ -717,15 +621,11 @@ static void EDIT_MESH_cache_populate(void *vedata, Object *ob)
 			}
 
 			if (vnormals_do) {
-				geom = DRW_mesh_batch_cache_get_edit_triangles_nor(ob->data);
-				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
-				geom = DRW_mesh_batch_cache_get_edit_loose_verts(ob->data);
-				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
-				geom = DRW_mesh_batch_cache_get_edit_loose_edges_nor(ob->data);
+				geom = DRW_mesh_batch_cache_get_edit_vertices(ob->data);
 				DRW_shgroup_call_add(stl->g_data->vnormals_shgrp, geom, ob->obmat);
 			}
 			if (lnormals_do) {
-				geom = DRW_mesh_batch_cache_get_edit_triangles_lnor(ob->data);
+				geom = DRW_mesh_batch_cache_get_edit_lnors(ob->data);
 				DRW_shgroup_call_add(stl->g_data->lnormals_shgrp, geom, ob->obmat);
 			}
 			if (fnormals_do) {
@@ -798,27 +698,34 @@ static void EDIT_MESH_draw_scene(void *vedata)
 		const DRWContextState *draw_ctx = DRW_context_state_get();
 		View3D *v3d = draw_ctx->v3d;
 
-		if (v3d->shading.type == OB_SOLID && (v3d->shading.flag & XRAY_FLAG(v3d)) == 0) {
-			if (stl->g_data->ghost_ob == 1 && stl->g_data->edit_ob == 1) {
-				/* In the case of single ghost object edit (common case for retopology):
-				 * we duplicate the depht+stencil buffer and clear all depth to 1.0f where
-				 * the stencil buffer is no 0x00. */
-				const float *viewport_size = DRW_viewport_size_get();
-				const int size[2] = {(int)viewport_size[0], (int)viewport_size[1]};
-				struct GPUTexture *ghost_depth_tx = DRW_texture_pool_query_2D(size[0], size[1], GPU_DEPTH24_STENCIL8, &draw_engine_edit_mesh_type);
-				GPU_framebuffer_ensure_config(&fbl->ghost_wire_fb, {
-					GPU_ATTACHMENT_TEXTURE(ghost_depth_tx),
-					GPU_ATTACHMENT_TEXTURE(dtxl->color),
-				});
+		if (v3d->shading.type == OB_SOLID && (v3d->shading.flag & XRAY_FLAG(v3d)) == 0 &&
+		    stl->g_data->ghost_ob == 1 && stl->g_data->edit_ob == 1)
+		{
+			/* In the case of single ghost object edit (common case for retopology):
+			 * we duplicate the depht+stencil buffer and clear all depth to 1.0f where
+			 * the stencil buffer is no 0x00. */
+			const float *viewport_size = DRW_viewport_size_get();
+			const int size[2] = {(int)viewport_size[0], (int)viewport_size[1]};
+			struct GPUTexture *ghost_depth_tx = DRW_texture_pool_query_2D(size[0], size[1], GPU_DEPTH24_STENCIL8, &draw_engine_edit_mesh_type);
+			GPU_framebuffer_ensure_config(&fbl->ghost_wire_fb, {
+				GPU_ATTACHMENT_TEXTURE(ghost_depth_tx),
+				GPU_ATTACHMENT_TEXTURE(dtxl->color),
+			});
 
-				GPU_framebuffer_blit(dfbl->depth_only_fb, 0, fbl->ghost_wire_fb, 0, GPU_DEPTH_BIT | GPU_STENCIL_BIT);
-				GPU_framebuffer_bind(fbl->ghost_wire_fb);
+			GPU_framebuffer_blit(dfbl->depth_only_fb, 0, fbl->ghost_wire_fb, 0, GPU_DEPTH_BIT | GPU_STENCIL_BIT);
+			GPU_framebuffer_bind(fbl->ghost_wire_fb);
 
-				DRW_draw_pass(psl->ghost_clear_depth);
-			}
+			DRW_draw_pass(psl->ghost_clear_depth);
+
+			DRW_draw_pass(psl->edit_face_overlay);
 		}
+		else {
+			// MULTISAMPLE_SYNC_ENABLE(dfbl, dtxl);
 
-		DRW_draw_pass(psl->edit_face_overlay);
+			DRW_draw_pass(psl->edit_face_overlay);
+
+			// MULTISAMPLE_SYNC_DISABLE(dfbl, dtxl)
+		}
 	}
 
 	DRW_state_clip_planes_reset();
