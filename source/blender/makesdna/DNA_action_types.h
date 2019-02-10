@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file DNA_action_types.h
- *  \ingroup DNA
+/** \file \ingroup DNA
  *
  * Define actions data-block for the animation system.
  * A collection of animation curves and drivers to be assigned to data-blocks
@@ -106,20 +105,6 @@ typedef enum eMotionPath_Flag {
 
 /* Animation Visualization Settings (avs) */
 typedef struct bAnimVizSettings {
-	/* Onion-Skinning Settings ----------------- */
-	/** Start and end frames of ghost-drawing range (only used for GHOST_TYPE_RANGE). */
-	int ghost_sf, ghost_ef;
-	/** Number of frames befo.re/after current frame to show */
-	int ghost_bc, ghost_ac;
-
-	/** #eOnionSkin_Types. */
-	short ghost_type;
-	/** Number of frames between each ghost shown (not for GHOST_TYPE_KEYS). */
-	short ghost_step;
-
-	/** #eOnionSkin_Flag. */
-	short ghost_flag;
-
 	/* General Settings ------------------------ */
 	/** #eAnimViz_RecalcFlags. */
 	short recalc;
@@ -134,6 +119,7 @@ typedef struct bAnimVizSettings {
 	short path_viewflag;
 	/** #eMotionPaths_BakeFlag. */
 	short path_bakeflag;
+	char pad[6];
 
 	/** Start and end frames of path-calculation range. */
 	int path_sf, path_ef;
@@ -147,26 +133,6 @@ typedef enum eAnimViz_RecalcFlags {
 	/* motionpaths need recalculating */
 	ANIMVIZ_RECALC_PATHS    = (1 << 0),
 } eAnimViz_RecalcFlags;
-
-
-/* bAnimVizSettings->ghost_type */
-typedef enum eOnionSkin_Types {
-	/* no ghosts at all */
-	GHOST_TYPE_NONE = 0,
-	/* around current frame */
-	GHOST_TYPE_ACFRA = 1,
-	/* show ghosts within the specified frame range */
-	GHOST_TYPE_RANGE = 2,
-	/* show ghosts on keyframes within the specified range only */
-	GHOST_TYPE_KEYS = 3,
-} eOnionSkin_Types;
-
-/* bAnimVizSettings->ghost_flag */
-typedef enum eOnionSkin_Flag {
-	/* only show selected bones in ghosts */
-	GHOST_FLAG_ONLYSEL  = (1 << 0),
-} eOnionSkin_Flag;
-
 
 /* bAnimVizSettings->path_type */
 typedef enum eMotionPaths_Types {
@@ -727,12 +693,12 @@ typedef struct bDopeSheet {
 
 	/** Flags to use for filtering data. */
 	int filterflag;
+	int filterflag2;
 	/** Standard flags. */
 	int flag;
 
 	/** Index+1 of channel to rename - only gets set by renaming operator. */
 	int renameIndex;
-	int pad;
 } bDopeSheet;
 
 
@@ -795,6 +761,11 @@ typedef enum eDopeSheet_FilterFlag {
 	ADS_FILTER_NOOBDATA = (ADS_FILTER_NOCAM | ADS_FILTER_NOMAT | ADS_FILTER_NOLAM | ADS_FILTER_NOCUR | ADS_FILTER_NOPART | ADS_FILTER_NOARM | ADS_FILTER_NOSPK | ADS_FILTER_NOMODIFIERS),
 } eDopeSheet_FilterFlag;
 
+/* DopeSheet filter-flags - Overflow (filterflag2) */
+typedef enum eDopeSheet_FilterFlag2 {
+	ADS_FILTER_NOCACHEFILES      = (1 << 1),
+} eDopeSheet_FilterFlag2;
+
 /* DopeSheet general flags */
 typedef enum eDopeSheet_Flag {
 	/** when summary is shown, it is collapsed, so all other channels get hidden */
@@ -807,8 +778,6 @@ typedef enum eDopeSheet_Flag {
 	ADS_FLAG_FUZZY_NAMES        = (1 << 2),
 	/** do not sort datablocks (mostly objects) by name (NOTE: potentially expensive operation) */
 	ADS_FLAG_NO_DB_SORT         = (1 << 3),
-
-	/* NOTE: datablock filter flags continued (1 << 10) onwards... */
 } eDopeSheet_Flag;
 
 

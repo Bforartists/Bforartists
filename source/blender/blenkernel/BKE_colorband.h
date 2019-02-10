@@ -19,7 +19,7 @@
 #ifndef __BKE_COLORBAND_H__
 #define __BKE_COLORBAND_H__
 
-/** \file BKE_colorband.h
+/** \file \ingroup bke
  */
 
 #ifdef __cplusplus

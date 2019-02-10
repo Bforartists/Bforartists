@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/image.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 
@@ -378,7 +377,7 @@ static void copy_image_packedfiles(ListBase *lb_dst, const ListBase *lb_src)
 
 /**
  * Only copy internal data of Image ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -420,7 +419,7 @@ void BKE_image_copy_data(Main *UNUSED(bmain), Image *ima_dst, const Image *ima_s
 Image *BKE_image_copy(Main *bmain, const Image *ima)
 {
 	Image *ima_copy;
-	BKE_id_copy_ex(bmain, &ima->id, (ID **)&ima_copy, 0, false);
+	BKE_id_copy(bmain, &ima->id, (ID **)&ima_copy);
 	return ima_copy;
 }
 
@@ -2095,6 +2094,38 @@ struct StampData *BKE_stamp_info_from_scene_static(Scene *scene)
 	return stamp_data;
 }
 
+static const char *stamp_metadata_fields[] = {
+	"File",
+	"Note",
+	"Date",
+	"Marker",
+	"Time",
+	"Frame",
+	"FrameRange",
+	"Camera",
+	"Lens",
+	"Scene",
+	"Strip",
+	"RenderTime",
+	"Memory",
+	"Hostname",
+	NULL
+};
+
+/* Check whether the given metadata field name translates to a known field of
+ * a stamp. */
+bool BKE_stamp_is_known_field(const char *field_name)
+{
+	int i = 0;
+	while (stamp_metadata_fields[i] != NULL) {
+		if (STREQ(field_name, stamp_metadata_fields[i])) {
+			return true;
+		}
+		i++;
+	}
+	return false;
+}
+
 void BKE_stamp_info_callback(void *data, struct StampData *stamp_data, StampCallback callback, bool noskip)
 {
 	if ((callback == NULL) || (stamp_data == NULL)) {
@@ -2106,6 +2137,8 @@ void BKE_stamp_info_callback(void *data, struct StampData *stamp_data, StampCall
 		callback(data, value_str, stamp_data->member, sizeof(stamp_data->member)); \
 	} ((void)0)
 
+	/* TODO(sergey): Use stamp_metadata_fields somehow, or make it more generic
+	 * meta information to avoid duplication. */
 	CALL(file, "File");
 	CALL(note, "Note");
 	CALL(date, "Date");
@@ -2178,11 +2211,28 @@ void BKE_imbuf_stamp_info(RenderResult *rr, struct ImBuf *ibuf)
 	BKE_stamp_info_callback(ibuf, stamp_data, metadata_set_field, false);
 }
 
+static void metadata_copy_custom_fields(
+        const char *field,
+        const char *value,
+        void *rr_v)
+{
+	if (BKE_stamp_is_known_field(field)) {
+		return;
+	}
+	RenderResult *rr = (RenderResult *)rr_v;
+	BKE_render_result_stamp_data(rr, field, value);
+}
+
 void BKE_stamp_info_from_imbuf(RenderResult *rr, struct ImBuf *ibuf)
 {
+	if (rr->stamp_data == NULL) {
+		rr->stamp_data = MEM_callocN(sizeof(StampData), "RenderResult.stamp_data");
+	}
 	struct StampData *stamp_data = rr->stamp_data;
 	IMB_metadata_ensure(&ibuf->metadata);
 	BKE_stamp_info_callback(ibuf, stamp_data, metadata_get_field, true);
+	/* Copy render engine specific settings. */
+	IMB_metadata_foreach(ibuf, metadata_copy_custom_fields, rr);
 }
 
 bool BKE_imbuf_alpha_test(ImBuf *ibuf)
@@ -3073,8 +3123,10 @@ static void image_create_multilayer(Image *ima, ImBuf *ibuf, int framenr)
 	IMB_exr_close(ibuf->userdata);
 
 	ibuf->userdata = NULL;
-	if (ima->rr)
+	if (ima->rr != NULL) {
 		ima->rr->framenr = framenr;
+		BKE_stamp_info_from_imbuf(ima->rr, ibuf);
+	}
 
 	/* set proper views */
 	image_init_multilayer_multiview(ima, ima->rr);
@@ -3274,6 +3326,8 @@ static ImBuf *image_load_sequence_multilayer(Image *ima, ImageUser *iuser, int f
 			ibuf->flags |= IB_rectfloat;
 			ibuf->mall = IB_rectfloat;
 			ibuf->channels = rpass->channels;
+
+			BKE_imbuf_stamp_info(ima->rr, ibuf);
 
 			image_initialize_after_load(ima, ibuf);
 			image_assign_ibuf(ima, ibuf, iuser ? iuser->multi_index : 0, frame);
@@ -3585,6 +3639,8 @@ static ImBuf *image_get_ibuf_multilayer(Image *ima, ImageUser *iuser)
 			ibuf->rect_float = rpass->rect;
 			ibuf->flags |= IB_rectfloat;
 			ibuf->channels = rpass->channels;
+
+			BKE_imbuf_stamp_info(ima->rr, ibuf);
 
 			image_assign_ibuf(ima, ibuf, iuser ? iuser->multi_index : IMA_NO_INDEX, 0);
 		}

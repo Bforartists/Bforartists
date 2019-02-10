@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/editors/space_clip/tracking_ops.c
- *  \ingroup spclip
+/** \file \ingroup spclip
  */
 
 #include "MEM_guardedalloc.h"
@@ -1420,7 +1419,7 @@ static int frame_jump_exec(bContext *C, wmOperator *op)
 			sc->user.framenr += delta;
 		}
 	}
-	else {  /* to to failed frame */
+	else {  /* to failed frame */
 		if (tracking->reconstruction.flag & TRACKING_RECONSTRUCTED) {
 			int framenr = ED_space_clip_get_clip_frame_number(sc);
 			MovieTrackingObject *object = BKE_tracking_object_get_active(tracking);

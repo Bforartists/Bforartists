@@ -16,11 +16,6 @@
 #
 # The Original Code is Copyright (C) 2006, Blender Foundation
 # All rights reserved.
-#
-# The Original Code is: all of this file.
-#
-# Contributor(s): Jacques Beaurain.
-#
 # ***** END GPL LICENSE BLOCK *****
 
 # WITH_OPENGL limits the visibility of the opengl headers to just GPU and bg_gpu,
@@ -246,6 +241,8 @@ data_to_c_simple(shaders/gpu_shader_gpencil_stroke_geom.glsl SRC)
 
 data_to_c_simple(shaders/gpu_shader_gpencil_fill_vert.glsl SRC)
 data_to_c_simple(shaders/gpu_shader_gpencil_fill_frag.glsl SRC)
+
+data_to_c_simple(shaders/gpu_shader_cfg_world_clip_lib.glsl SRC)
 
 
 if(WITH_MOD_SMOKE)

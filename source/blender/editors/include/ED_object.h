@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file ED_object.h
- *  \ingroup editors
+/** \file \ingroup editors
  */
 
 #ifndef __ED_OBJECT_H__
@@ -152,7 +151,7 @@ void ED_object_wpaintmode_exit(struct bContext *C);
 
 void ED_object_sculptmode_enter_ex(
         struct Main *bmain, struct Depsgraph *depsgraph,
-        struct Scene *scene, struct Object *ob,
+        struct Scene *scene, struct Object *ob, const bool force_dyntopo,
         struct ReportList *reports);
 void ED_object_sculptmode_enter(struct bContext *C, struct ReportList *reports);
 void ED_object_sculptmode_exit_ex(

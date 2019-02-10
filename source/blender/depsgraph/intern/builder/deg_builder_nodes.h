@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/depsgraph/intern/builder/deg_builder_nodes.h
- *  \ingroup depsgraph
+/** \file \ingroup depsgraph
  */
 
 #pragma once
@@ -68,9 +67,9 @@ struct PropertyRNA;
 namespace DEG {
 
 struct ComponentNode;
-struct Node;
 struct Depsgraph;
 struct IDNode;
+struct Node;
 struct OperationNode;
 struct TimeSourceNode;
 

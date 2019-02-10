@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/depsgraph/intern/node/deg_node_operation.cc
- *  \ingroup depsgraph
+/** \file \ingroup depsgraph
  */
 
 #include "intern/node/deg_node_operation.h"
@@ -50,13 +49,13 @@ const char *operationCodeAsString(OperationCode opcode)
 		/* Object related. */
 		case OperationCode::OBJECT_BASE_FLAGS: return "OBJECT_BASE_FLAGS";
 		/* Transform. */
+		case OperationCode::TRANSFORM_INIT: return "TRANSFORM_INIT";
 		case OperationCode::TRANSFORM_LOCAL: return "TRANSFORM_LOCAL";
 		case OperationCode::TRANSFORM_PARENT: return "TRANSFORM_PARENT";
 		case OperationCode::TRANSFORM_CONSTRAINTS:
 			return "TRANSFORM_CONSTRAINTS";
 		case OperationCode::TRANSFORM_FINAL: return "TRANSFORM_FINAL";
-		case OperationCode::TRANSFORM_OBJECT_UBEREVAL:
-			return "TRANSFORM_OBJECT_UBEREVAL";
+		case OperationCode::TRANSFORM_EVAL: return "TRANSFORM_EVAL";
 		/* Rigid body. */
 		case OperationCode::RIGIDBODY_REBUILD: return "RIGIDBODY_REBUILD";
 		case OperationCode::RIGIDBODY_SIM: return "RIGIDBODY_SIM";

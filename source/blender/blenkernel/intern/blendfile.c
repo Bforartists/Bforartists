@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/blenkernel/intern/blendfile.c
- *  \ingroup bke
+/** \file \ingroup bke
  *
  * High level `.blend` file read/write,
  * and functions for writing *partial* files (only selected data-blocks).
@@ -204,7 +203,7 @@ static void setup_app_data(
 		}
 
 		/* BKE_blender_globals_clear will free G_MAIN, here we can still restore pointers */
-		blo_lib_link_restore(bfd->main, CTX_wm_manager(C), curscene, cur_view_layer);
+		blo_lib_link_restore(bmain, bfd->main, CTX_wm_manager(C), curscene, cur_view_layer);
 		if (win) {
 			curscene = win->scene;
 		}

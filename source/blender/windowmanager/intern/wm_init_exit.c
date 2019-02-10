@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/windowmanager/intern/wm_init_exit.c
- *  \ingroup wm
+/** \file \ingroup wm
  *
  * Manage initializing resources and correctly shutting down.
  */
@@ -264,8 +263,9 @@ void WM_init(bContext *C, int argc, const char **argv)
 		WM_init_opengl(G_MAIN);
 
 		UI_init();
-		BKE_studiolight_init();
 	}
+
+	BKE_studiolight_init();
 
 	ED_spacemacros_init();
 
@@ -312,12 +312,7 @@ void WM_init(bContext *C, int argc, const char **argv)
 	}
 #endif
 
-	/* load last session, uses regular file reading so it has to be in end (after init py etc) */
-	if (U.uiflag2 & USER_KEEP_SESSION) {
-		/* calling WM_recover_last_session(C, NULL) has been moved to creator.c */
-		/* that prevents loading both the kept session, and the file on the command line */
-	}
-	else {
+	{
 		Main *bmain = CTX_data_main(C);
 		/* note, logic here is from wm_file_read_post,
 		 * call functions that depend on Python being initialized. */
@@ -430,7 +425,7 @@ void WM_exit_ext(bContext *C, const bool do_python)
 
 		if (!G.background) {
 			struct MemFile *undo_memfile = wm->undo_stack ? ED_undosys_stack_memfile_get_active(wm->undo_stack) : NULL;
-			if ((U.uiflag2 & USER_KEEP_SESSION) || (undo_memfile != NULL)) {
+			if (undo_memfile != NULL) {
 				/* save the undo state as quit.blend */
 				Main *bmain = CTX_data_main(C);
 				char filename[FILE_MAX];

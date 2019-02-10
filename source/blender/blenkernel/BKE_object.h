@@ -17,8 +17,7 @@
 #ifndef __BKE_OBJECT_H__
 #define __BKE_OBJECT_H__
 
-/** \file BKE_object.h
- *  \ingroup bke
+/** \file \ingroup bke
  *  \brief General operations, lookup, etc. for blender objects.
  */
 #ifdef __cplusplus
@@ -301,6 +300,8 @@ bool BKE_object_is_animated(struct Scene *scene, struct Object *ob);
 /* return ModifierMode flag */
 int BKE_object_is_modified(struct Scene *scene, struct Object *ob);
 int BKE_object_is_deform_modified(struct Scene *scene, struct Object *ob);
+
+int BKE_object_scenes_users_get(struct Main *bmain, struct Object *ob);
 
 struct MovieClip *BKE_object_movieclip_get(struct Scene *scene, struct Object *ob, bool use_default);
 
