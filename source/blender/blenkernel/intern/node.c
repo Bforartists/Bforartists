@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/node.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include "CLG_log.h"
@@ -1291,7 +1290,7 @@ bNodeTree *ntreeAddTree(Main *bmain, const char *name, const char *idname)
 
 /**
  * Only copy internal data of NodeTree ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -1378,7 +1377,7 @@ bNodeTree *ntreeCopyTree_ex(const bNodeTree *ntree, Main *bmain, const bool do_i
 {
 	bNodeTree *ntree_copy;
 	const int flag = do_id_user ? LIB_ID_CREATE_NO_USER_REFCOUNT | LIB_ID_CREATE_NO_MAIN : 0;
-	BKE_id_copy_ex(bmain, (ID *)ntree, (ID **)&ntree_copy, flag, false);
+	BKE_id_copy_ex(bmain, (ID *)ntree, (ID **)&ntree_copy, flag);
 	return ntree_copy;
 }
 bNodeTree *ntreeCopyTree(Main *bmain, const bNodeTree *ntree)
@@ -2035,11 +2034,8 @@ bNodeTree *ntreeLocalize(bNodeTree *ntree)
 		 */
 		BKE_id_copy_ex(
 		        NULL, &ntree->id, (ID **)&ltree,
-		        (LIB_ID_CREATE_NO_MAIN |
-		         LIB_ID_CREATE_NO_USER_REFCOUNT |
-		         LIB_ID_COPY_NO_PREVIEW |
-		         LIB_ID_COPY_NO_ANIMDATA),
-		        false);
+		        (LIB_ID_COPY_LOCALIZE |
+		         LIB_ID_COPY_NO_ANIMDATA));
 
 		for (node = ltree->nodes.first; node; node = node->next) {
 			if (node->type == NODE_GROUP && node->id) {

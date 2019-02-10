@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/object.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 
@@ -1313,7 +1312,7 @@ void BKE_object_transform_copy(Object *ob_tar, const Object *ob_src)
 
 /**
  * Only copy internal data of Object ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -1425,7 +1424,7 @@ void BKE_object_copy_data(Main *bmain, Object *ob_dst, const Object *ob_src, con
 Object *BKE_object_copy(Main *bmain, const Object *ob)
 {
 	Object *ob_copy;
-	BKE_id_copy_ex(bmain, &ob->id, (ID **)&ob_copy, 0, false);
+	BKE_id_copy(bmain, &ob->id, (ID **)&ob_copy);
 
 	/* We increase object user count when linking to Collections. */
 	id_us_min(&ob_copy->id);
@@ -2608,15 +2607,27 @@ bool BKE_object_empty_image_is_visible_in_view3d(const Object *ob, const RegionV
 	char visibility_flag = ob->empty_image_visibility_flag;
 
 	if ((visibility_flag & (OB_EMPTY_IMAGE_HIDE_BACK | OB_EMPTY_IMAGE_HIDE_FRONT)) != 0) {
-		/* TODO: this isn't correct with perspective projection. */
-		const float dot = dot_v3v3((float *)&ob->obmat[2], (float *)&rv3d->viewinv[2]);
+		float eps, dot;
+		if (rv3d->is_persp) {
+			/* Note, we could normalize the 'view_dir' then use 'eps'
+			 * however the issue with empty objects being visible when viewed from the side
+			 * is only noticeable in orthographic views. */
+			float view_dir[3];
+			sub_v3_v3v3(view_dir, rv3d->viewinv[3], ob->obmat[3]);
+			dot = dot_v3v3(ob->obmat[2], view_dir);
+			eps = 0.0f;
+		}
+		else {
+			dot = dot_v3v3(ob->obmat[2], rv3d->viewinv[2]);
+			eps = 1e-5f;
+		}
 		if (visibility_flag & OB_EMPTY_IMAGE_HIDE_BACK) {
-			if (dot < 0.0f) {
+			if (dot < eps) {
 				return false;
 			}
 		}
 		if (visibility_flag & OB_EMPTY_IMAGE_HIDE_FRONT) {
-			if (dot > 0.0f) {
+			if (dot > -eps) {
 				return false;
 			}
 		}
@@ -3501,6 +3512,18 @@ bool BKE_object_is_animated(Scene *scene, Object *ob)
 			return true;
 		}
 	return false;
+}
+
+/** Return the number of scenes using (instantiating) that object in their collections. */
+int BKE_object_scenes_users_get(Main *bmain, Object *ob)
+{
+	int num_scenes = 0;
+	for (Scene *scene = bmain->scene.first; scene != NULL; scene = scene->id.next) {
+		if (BKE_collection_has_object_recursive(BKE_collection_master(scene), ob)) {
+			num_scenes++;
+		}
+	}
+	return num_scenes;
 }
 
 MovieClip *BKE_object_movieclip_get(Scene *scene, Object *ob, bool use_default)

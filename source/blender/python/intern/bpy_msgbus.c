@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/python/intern/bpy_msgbus.c
- *  \ingroup pythonintern
+/** \file \ingroup pythonintern
  * This file defines '_bpy_msgbus' module, exposed as 'bpy.msgbus'.
  */
 
@@ -249,7 +248,7 @@ static PyObject *bpy_msgbus_subscribe_rna(PyObject *UNUSED(self), PyObject *args
 		"options",
 		NULL,
 	};
-	static _PyArg_Parser _parser = {"$OOO!OO!:subscribe_rna", _keywords, 0};
+	static _PyArg_Parser _parser = {"$OOO!O|O!:subscribe_rna", _keywords, 0};
 	if (!_PyArg_ParseTupleAndKeywordsFast(
 	        args, kw, &_parser,
 	        &py_sub, &py_owner,

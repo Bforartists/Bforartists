@@ -17,8 +17,7 @@
 #ifndef __RNA_ACCESS_H__
 #define __RNA_ACCESS_H__
 
-/** \file RNA_access.h
- *  \ingroup RNA
+/** \file \ingroup RNA
  */
 
 #include <stdarg.h>
@@ -61,7 +60,6 @@ extern StructRNA RNA_AndController;
 extern StructRNA RNA_AnimData;
 extern StructRNA RNA_AnimViz;
 extern StructRNA RNA_AnimVizMotionPaths;
-extern StructRNA RNA_AnimVizOnionSkinning;
 extern StructRNA RNA_AnyType;
 extern StructRNA RNA_Area;
 extern StructRNA RNA_AreaLight;

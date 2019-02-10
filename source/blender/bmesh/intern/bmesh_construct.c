@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/bmesh/intern/bmesh_construct.c
- *  \ingroup bmesh
+/** \file \ingroup bmesh
  *
  * BM construction functions.
  */
@@ -265,7 +264,7 @@ error:
  * Makes an ngon from an unordered list of edges.
  * Verts \a v1 and \a v2 define the winding of the new face.
  *
- * \a edges are not required to be ordered, simply to to form
+ * \a edges are not required to be ordered, simply to form
  * a single closed loop as a whole.
  *
  * \note While this function will work fine when the edges

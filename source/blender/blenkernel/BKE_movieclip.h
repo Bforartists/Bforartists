@@ -20,8 +20,7 @@
 #ifndef __BKE_MOVIECLIP_H__
 #define __BKE_MOVIECLIP_H__
 
-/** \file BKE_movieclip.h
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 struct Depsgraph;
@@ -44,6 +43,8 @@ struct MovieClip *BKE_movieclip_file_add_exists(struct Main *bmain, const char *
 void BKE_movieclip_reload(struct Main *bmain, struct MovieClip *clip);
 void BKE_movieclip_clear_cache(struct MovieClip *clip);
 void BKE_movieclip_clear_proxy_cache(struct MovieClip *clip);
+
+void BKE_movieclip_convert_multilayer_ibuf(struct ImBuf *ibuf);
 
 struct ImBuf *BKE_movieclip_get_ibuf(struct MovieClip *clip, struct MovieClipUser *user);
 struct ImBuf *BKE_movieclip_get_postprocessed_ibuf(struct MovieClip *clip, struct MovieClipUser *user, int postprocess_flag);

@@ -16,8 +16,7 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file blender/draw/modes/edit_lattice_mode.c
- *  \ingroup draw
+/** \file \ingroup draw
  */
 
 #include "DRW_engine.h"
@@ -30,9 +29,6 @@
 
 #include "draw_common.h"
 
-#include "draw_builtin_shader.h"
-
-extern char datatoc_common_world_clip_lib_glsl[];
 extern char datatoc_common_globals_lib_glsl[];
 
 extern char datatoc_edit_lattice_overlay_loosevert_vert_glsl[];
@@ -99,7 +95,7 @@ static struct {
 	 * init in EDIT_LATTICE_engine_init();
 	 * free in EDIT_LATTICE_engine_free(); */
 
-	EDIT_LATTICE_Shaders sh_data[DRW_SHADER_SLOT_LEN];
+	EDIT_LATTICE_Shaders sh_data[GPU_SHADER_CFG_LEN];
 
 } e_data = {NULL}; /* Engine data */
 
@@ -139,22 +135,20 @@ static void EDIT_LATTICE_engine_init(void *vedata)
 	 */
 
 	const DRWContextState *draw_ctx = DRW_context_state_get();
-	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
-	const bool is_clip = (draw_ctx->rv3d->rflag & RV3D_CLIPPING) != 0;
-	if (is_clip) {
+	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
+	if (draw_ctx->sh_cfg == GPU_SHADER_CFG_CLIPPED) {
 		DRW_state_clip_planes_set_from_rv3d(draw_ctx->rv3d);
 	}
-	const char *world_clip_lib_or_empty = is_clip ? datatoc_common_world_clip_lib_glsl : "";
-	const char *world_clip_def_or_empty = is_clip ? "#define USE_WORLD_CLIP_PLANES\n" : "";
+	const GPUShaderConfigData *sh_cfg_data = &GPU_shader_cfg_data[draw_ctx->sh_cfg];
 
 	if (!sh_data->wire) {
-		sh_data->wire = DRW_shader_get_builtin_shader(GPU_SHADER_3D_SMOOTH_COLOR, draw_ctx->shader_slot);
+		sh_data->wire = GPU_shader_get_builtin_shader_with_config(GPU_SHADER_3D_SMOOTH_COLOR, draw_ctx->sh_cfg);
 	}
 
 	if (!sh_data->overlay_vert) {
-		sh_data->overlay_vert = DRW_shader_create_from_arrays({
+		sh_data->overlay_vert = GPU_shader_create_from_arrays({
 		        .vert = (const char *[]){
-		            world_clip_lib_or_empty,
+		            sh_cfg_data->lib,
 		            datatoc_common_globals_lib_glsl,
 		            datatoc_edit_lattice_overlay_loosevert_vert_glsl,
 		            NULL},
@@ -162,7 +156,7 @@ static void EDIT_LATTICE_engine_init(void *vedata)
 		            datatoc_common_globals_lib_glsl,
 		            datatoc_edit_lattice_overlay_frag_glsl,
 		            NULL},
-		        .defs = (const char *[]){world_clip_def_or_empty, NULL},
+		        .defs = (const char *[]){sh_cfg_data->def, NULL},
 		});
 
 	}
@@ -177,7 +171,7 @@ static void EDIT_LATTICE_cache_init(void *vedata)
 
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	RegionView3D *rv3d = draw_ctx->rv3d;
-	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->shader_slot];
+	EDIT_LATTICE_Shaders *sh_data = &e_data.sh_data[draw_ctx->sh_cfg];
 
 	if (!stl->g_data) {
 		/* Alloc transient pointers */

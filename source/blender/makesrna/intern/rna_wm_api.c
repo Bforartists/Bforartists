@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/makesrna/intern/rna_wm_api.c
- *  \ingroup RNA
+/** \file \ingroup RNA
  */
 
 
@@ -66,6 +65,7 @@ const EnumPropertyItem rna_enum_window_cursor_items[] = {
 #ifdef RNA_RUNTIME
 
 #include "BKE_context.h"
+#include "BKE_undo_system.h"
 
 #include "WM_types.h"
 
@@ -457,6 +457,11 @@ static void rna_PieMenuEnd(bContext *C, PointerRNA *handle)
 	UI_pie_menu_end(C, handle->data);
 }
 
+static void rna_WindowManager_print_undo_steps(wmWindowManager *wm)
+{
+	BKE_undosys_print(wm->undo_stack);
+}
+
 static PointerRNA rna_WindoManager_operator_properties_last(const char *idname)
 {
 	wmOperatorType *ot = WM_operatortype_find(idname, true);
@@ -516,7 +521,7 @@ static wmEvent *rna_Window_event_add_simulate(
 		}
 	}
 
-	wmEvent e = {NULL};
+	wmEvent e = *win->eventstate;
 	e.type = type;
 	e.val = value;
 	e.x = x;
@@ -527,12 +532,13 @@ static wmEvent *rna_Window_event_add_simulate(
 	e.alt = alt;
 	e.oskey = oskey;
 
-	const wmEvent *evt = win->eventstate;
-	e.prevx = evt->x;
-	e.prevy = evt->y;
-	e.prevval = evt->val;
-	e.prevtype = evt->type;
+	e.prevx = win->eventstate->x;
+	e.prevy = win->eventstate->y;
+	e.prevval = win->eventstate->val;
+	e.prevtype = win->eventstate->type;
 
+	e.ascii = '\0';
+	e.utf8_buf[0] = '\0';
 	if (unicode != NULL) {
 		e.ascii = ascii;
 		STRNCPY(e.utf8_buf, unicode);
@@ -783,6 +789,7 @@ void RNA_api_wm(StructRNA *srna)
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_RNAPTR);
 	RNA_def_function_return(func, parm);
 
+	RNA_def_function(srna, "print_undo_steps", "rna_WindowManager_print_undo_steps");
 }
 
 void RNA_api_operator(StructRNA *srna)
