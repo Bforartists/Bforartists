@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/blenloader/intern/versioning_260.c
- *  \ingroup blenloader
+/** \file \ingroup blenloader
  */
 
 #include "BLI_utildefines.h"
@@ -2395,6 +2394,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					SCULPT_SYMM_X = (1 << 0),
 					SCULPT_SYMM_Y = (1 << 1),
 					SCULPT_SYMM_Z = (1 << 2),
+					SCULPT_SYMMETRY_FEATHER = (1 << 6),
 				};
 				int symmetry_flags = sd->flags & 7;
 

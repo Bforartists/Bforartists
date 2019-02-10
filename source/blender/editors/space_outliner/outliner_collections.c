@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/editors/space_outliner/outliner_collections.c
- *  \ingroup spoutliner
+/** \file \ingroup spoutliner
  */
 
 #include <string.h>
@@ -138,6 +137,11 @@ bool ED_outliner_collections_editor_poll(bContext *C)
 	return (so != NULL) && ELEM(so->outlinevis, SO_VIEW_LAYER, SO_SCENES, SO_LIBRARIES);
 }
 
+static bool outliner_view_layer_collections_editor_poll(bContext *C)
+{
+	SpaceOops *so = CTX_wm_space_outliner(C);
+	return (so != NULL) && (so->outlinevis == SO_VIEW_LAYER);
+}
 
 /********************************* New Collection ****************************/
 
@@ -242,7 +246,7 @@ static TreeTraversalAction collection_find_data_to_edit(TreeElement *te, void *c
 		return TRAVERSE_SKIP_CHILDS;
 	}
 
-	if (collection == BKE_collection_master(data->scene)) {
+	if (collection->flag & COLLECTION_IS_MASTER) {
 		/* skip - showing warning/error message might be misleading
 		 * when deleting multiple collections, so just do nothing */
 	}
@@ -708,16 +712,14 @@ static int collection_view_layer_exec(bContext *C, wmOperator *op)
 	GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
 		LayerCollection *lc = BLI_gsetIterator_getKey(&collections_to_edit_iter);
 
-		if (!(lc->collection->flag & COLLECTION_IS_MASTER)) {
-			if (clear) {
-				lc->flag &= ~flag;
-			}
-			else {
-				lc->flag |= flag;
-			}
-
-			layer_collection_flag_recursive_set(lc, flag);
+		if (clear) {
+			lc->flag &= ~flag;
 		}
+		else {
+			lc->flag |= flag;
+		}
+
+		layer_collection_flag_recursive_set(lc, flag);
 	}
 
 	BLI_gset_free(data.collections_to_edit, NULL);
@@ -815,6 +817,478 @@ void OUTLINER_OT_collection_indirect_only_clear(wmOperatorType *ot)
 	/* api callbacks */
 	ot->exec = collection_view_layer_exec;
 	ot->poll = collections_indirect_only_clear_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/************************** Visibility Operators ******************************/
+
+static int collection_isolate_exec(bContext *C, wmOperator *op)
+{
+	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	const bool extend = RNA_boolean_get(op->ptr, "extend");
+	bool depsgraph_changed = false;
+	struct CollectionEditData data = {.scene = scene, .soops = soops,};
+	data.collections_to_edit = BLI_gset_ptr_new(__func__);
+
+	/* Hide all collections before the isolate function - needed in order to support multiple selected collections. */
+	if (!extend) {
+		LayerCollection *lc_master = view_layer->layer_collections.first;
+		for (LayerCollection *lc_iter = lc_master->layer_collections.first; lc_iter; lc_iter = lc_iter->next) {
+			lc_iter->flag |= LAYER_COLLECTION_RESTRICT_VIEW;
+			layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_RESTRICT_VIEW);
+		}
+	}
+
+	outliner_tree_traverse(soops, &soops->tree, 0, TSE_SELECTED, layer_collection_find_data_to_edit, &data);
+
+	GSetIterator collections_to_edit_iter;
+	GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
+		LayerCollection *layer_collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
+		depsgraph_changed |= BKE_layer_collection_isolate(scene, view_layer, layer_collection, true);
+	}
+	BLI_gset_free(data.collections_to_edit, NULL);
+
+	BKE_layer_collection_sync(scene, view_layer);
+	DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
+
+	if (depsgraph_changed) {
+		DEG_relations_tag_update(CTX_data_main(C));
+	}
+
+	WM_main_add_notifier(NC_SCENE | ND_LAYER_CONTENT, NULL);
+	return OPERATOR_FINISHED;
+}
+
+static int collection_isolate_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	PropertyRNA *prop = RNA_struct_find_property(op->ptr, "extend");
+	if (!RNA_property_is_set(op->ptr, prop) && (event->shift)) {
+		RNA_property_boolean_set(op->ptr, prop, true);
+	}
+	return collection_isolate_exec(C, op);
+}
+
+void OUTLINER_OT_collection_isolate(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Isolate Collection";
+	ot->idname = "OUTLINER_OT_collection_isolate";
+	ot->description = "Hide all but this collection and its parents";
+
+	/* api callbacks */
+	ot->exec = collection_isolate_exec;
+	ot->invoke = collection_isolate_invoke;
+	ot->poll = ED_outliner_collections_editor_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	/* properties */
+	PropertyRNA *prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend current visible collections");
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+}
+
+static bool collection_show_poll(bContext *C)
+{
+	return collections_view_layer_poll(C, true, LAYER_COLLECTION_RESTRICT_VIEW);
+}
+
+static bool collection_hide_poll(bContext *C)
+{
+	return collections_view_layer_poll(C, false, LAYER_COLLECTION_RESTRICT_VIEW);
+}
+
+static bool collection_inside_poll(bContext *C)
+{
+	if (!ED_outliner_collections_editor_poll(C)) {
+		return false;
+	}
+	return outliner_active_layer_collection(C) != NULL;
+}
+
+static int collection_visibility_exec(bContext *C, wmOperator *op)
+{
+	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	const bool is_inside = strstr(op->idname, "inside") != NULL;
+	const bool show = strstr(op->idname, "show") != NULL;
+	bool depsgraph_changed = false;
+	struct CollectionEditData data = {.scene = scene, .soops = soops,};
+	data.collections_to_edit = BLI_gset_ptr_new(__func__);
+
+	outliner_tree_traverse(soops, &soops->tree, 0, TSE_SELECTED, layer_collection_find_data_to_edit, &data);
+
+	GSetIterator collections_to_edit_iter;
+	GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
+		LayerCollection *layer_collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
+		depsgraph_changed |= BKE_layer_collection_set_visible(view_layer, layer_collection, show, is_inside);
+	}
+	BLI_gset_free(data.collections_to_edit, NULL);
+
+	BKE_layer_collection_sync(scene, view_layer);
+	DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
+
+	if (depsgraph_changed) {
+		DEG_relations_tag_update(CTX_data_main(C));
+	}
+
+	WM_main_add_notifier(NC_SCENE | ND_LAYER_CONTENT, NULL);
+	return OPERATOR_FINISHED;
+}
+
+void OUTLINER_OT_collection_show(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Show Collection";
+	ot->idname = "OUTLINER_OT_collection_show";
+	ot->description = "Show the collection in this view layer";
+
+	/* api callbacks */
+	ot->exec = collection_visibility_exec;
+	ot->poll = collection_show_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_hide(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Hide Collection";
+	ot->idname = "OUTLINER_OT_collection_hide";
+	ot->description = "Hide the collection in this view layer";
+
+	/* api callbacks */
+	ot->exec = collection_visibility_exec;
+	ot->poll = collection_hide_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_show_inside(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Show Inside Collection";
+	ot->idname = "OUTLINER_OT_collection_show_inside";
+	ot->description = "Show all the objects and collections inside the collection";
+
+	/* api callbacks */
+	ot->exec = collection_visibility_exec;
+	ot->poll = collection_inside_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_hide_inside(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Hide Inside Collection";
+	ot->idname = "OUTLINER_OT_collection_hide_inside";
+	ot->description = "Hide all the objects and collections inside the collection";
+
+	/* api callbacks */
+	ot->exec = collection_visibility_exec;
+	ot->poll = collection_inside_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+static bool collection_flag_poll(bContext *C, bool clear, int flag)
+{
+	if (!ED_outliner_collections_editor_poll(C)) {
+		return false;
+	}
+
+	TreeElement *te = outliner_active_collection(C);
+	if (te == NULL) {
+		return false;
+	}
+
+	Collection *collection = outliner_collection_from_tree_element(te);
+	if (collection == NULL) {
+		return false;
+	}
+
+	if (clear && (collection->flag & flag)) {
+		return true;
+	}
+	else if (!clear && !(collection->flag & flag)) {
+		return true;
+	}
+
+	return false;
+}
+
+static bool collection_enable_poll(bContext *C)
+{
+	return collection_flag_poll(C, true, COLLECTION_RESTRICT_VIEW);
+}
+
+static bool collection_disable_poll(bContext *C)
+{
+	return collection_flag_poll(C, false, COLLECTION_RESTRICT_VIEW);
+}
+
+static bool collection_enable_render_poll(bContext *C)
+{
+	return collection_flag_poll(C, true, COLLECTION_RESTRICT_RENDER);
+}
+
+static bool collection_disable_render_poll(bContext *C)
+{
+	return collection_flag_poll(C, false, COLLECTION_RESTRICT_RENDER);
+}
+
+static int collection_flag_exec(bContext *C, wmOperator *op)
+{
+	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	const bool is_render = strstr(op->idname, "render");
+	const bool clear = strstr(op->idname, "show") || strstr(op->idname, "enable");
+	int flag = is_render ? COLLECTION_RESTRICT_RENDER : COLLECTION_RESTRICT_VIEW;
+	struct CollectionEditData data = {.scene = scene, .soops = soops,};
+	data.collections_to_edit = BLI_gset_ptr_new(__func__);
+	const bool has_layer_collection = soops->outlinevis == SO_VIEW_LAYER;
+
+	if (has_layer_collection) {
+		outliner_tree_traverse(soops, &soops->tree, 0, TSE_SELECTED, layer_collection_find_data_to_edit, &data);
+		GSetIterator collections_to_edit_iter;
+		GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
+			LayerCollection *layer_collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
+			Collection *collection = layer_collection->collection;
+			if (ID_IS_LINKED(collection)) {
+				continue;
+			}
+			if (clear) {
+				collection->flag &= ~flag;
+			}
+			else {
+				collection->flag |= flag;
+			}
+
+			/* Make sure (at least for this view layer) the collection is visible. */
+			if (clear && !is_render) {
+				layer_collection->flag &= ~LAYER_COLLECTION_RESTRICT_VIEW;
+			}
+		}
+		BLI_gset_free(data.collections_to_edit, NULL);
+	}
+	else {
+		outliner_tree_traverse(soops, &soops->tree, 0, TSE_SELECTED, collection_find_data_to_edit, &data);
+		GSetIterator collections_to_edit_iter;
+		GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
+			Collection *collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
+
+			if (clear) {
+				collection->flag &= ~flag;
+			}
+			else {
+				collection->flag |= flag;
+			}
+		}
+		BLI_gset_free(data.collections_to_edit, NULL);
+	}
+
+	BKE_layer_collection_sync(scene, view_layer);
+	DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
+
+	if (!is_render) {
+		DEG_relations_tag_update(CTX_data_main(C));
+	}
+
+	WM_main_add_notifier(NC_SCENE | ND_LAYER_CONTENT, NULL);
+	return OPERATOR_FINISHED;
+}
+
+void OUTLINER_OT_collection_enable(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Enable Collection";
+	ot->idname = "OUTLINER_OT_collection_enable";
+	ot->description = "Enable viewport drawing in the view layers";
+
+	/* api callbacks */
+	ot->exec = collection_flag_exec;
+	ot->poll = collection_enable_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_disable(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Disable Collection";
+	ot->idname = "OUTLINER_OT_collection_disable";
+	ot->description = "Disable viewport drawing in the view layers";
+
+	/* api callbacks */
+	ot->exec = collection_flag_exec;
+	ot->poll = collection_disable_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_enable_render(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Enable Collection in Render";
+	ot->idname = "OUTLINER_OT_collection_enable_render";
+	ot->description = "Render the collection";
+
+	/* api callbacks */
+	ot->exec = collection_flag_exec;
+	ot->poll = collection_enable_render_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_disable_render(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Disable Collection in Render";
+	ot->idname = "OUTLINER_OT_collection_disable_render";
+	ot->description = "Do not render this collection";
+
+	/* api callbacks */
+	ot->exec = collection_flag_exec;
+	ot->poll = collection_disable_render_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+struct OutlinerHideEditData {
+	Scene *scene;
+	ViewLayer *view_layer;
+	SpaceOops *soops;
+	GSet *collections_to_edit;
+	GSet *bases_to_edit;
+};
+
+static TreeTraversalAction outliner_hide_find_data_to_edit(TreeElement *te, void *customdata)
+{
+	struct OutlinerHideEditData *data = customdata;
+	TreeStoreElem *tselem = TREESTORE(te);
+
+	if (tselem == NULL) {
+		return TRAVERSE_CONTINUE;
+	}
+
+	if (tselem->type == TSE_LAYER_COLLECTION) {
+		LayerCollection *lc = te->directdata;
+
+		if (lc->collection->flag & COLLECTION_IS_MASTER) {
+			/* skip - showing warning/error message might be misleading
+			* when deleting multiple collections, so just do nothing */
+		}
+		else {
+			/* Delete, duplicate and link don't edit children, those will come along
+			* with the parents. */
+			BLI_gset_add(data->collections_to_edit, lc);
+		}
+	}
+	else if (tselem->type == 0 && te->idcode == ID_OB) {
+		Object *ob = (Object *)tselem->id;
+		Base *base = BKE_view_layer_base_find(data->view_layer, ob);
+		BLI_gset_add(data->bases_to_edit, base);
+	}
+
+	return TRAVERSE_CONTINUE;
+}
+
+static int outliner_hide_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	struct OutlinerHideEditData data = {.scene = scene, .view_layer = view_layer, .soops = soops,};
+	data.collections_to_edit = BLI_gset_ptr_new("outliner_hide_exec__collections_to_edit");
+	data.bases_to_edit = BLI_gset_ptr_new("outliner_hide_exec__bases_to_edit");
+
+	outliner_tree_traverse(soops, &soops->tree, 0, TSE_SELECTED, outliner_hide_find_data_to_edit, &data);
+
+	GSetIterator collections_to_edit_iter;
+	GSET_ITER(collections_to_edit_iter, data.collections_to_edit) {
+		LayerCollection *layer_collection = BLI_gsetIterator_getKey(&collections_to_edit_iter);
+		BKE_layer_collection_set_visible(view_layer, layer_collection, false, false);
+	}
+	BLI_gset_free(data.collections_to_edit, NULL);
+
+	GSetIterator bases_to_edit_iter;
+	GSET_ITER(bases_to_edit_iter, data.bases_to_edit) {
+		Base *base = BLI_gsetIterator_getKey(&bases_to_edit_iter);
+		base->flag |= BASE_HIDDEN;
+	}
+	BLI_gset_free(data.bases_to_edit, NULL);
+
+	BKE_layer_collection_sync(scene, view_layer);
+	DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
+
+	WM_main_add_notifier(NC_SCENE | ND_LAYER_CONTENT, NULL);
+	return OPERATOR_FINISHED;
+}
+
+void OUTLINER_OT_hide(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Hide";
+	ot->idname = "OUTLINER_OT_hide";
+	ot->description = "Hide selected objects and collections";
+
+	/* api callbacks */
+	ot->exec = outliner_hide_exec;
+	ot->poll = outliner_view_layer_collections_editor_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+static int outliner_unhide_all_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+
+	/* Unhide all the collections. */
+	LayerCollection *lc_master = view_layer->layer_collections.first;
+	for (LayerCollection *lc_iter = lc_master->layer_collections.first; lc_iter; lc_iter = lc_iter->next) {
+		lc_iter->flag &= ~LAYER_COLLECTION_RESTRICT_VIEW;
+		layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_RESTRICT_VIEW);
+	}
+
+	/* Unhide all objects. */
+	for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+		base->flag &= ~BASE_HIDDEN;
+	}
+
+	BKE_layer_collection_sync(scene, view_layer);
+	DEG_id_tag_update(&scene->id, ID_RECALC_BASE_FLAGS);
+
+	WM_main_add_notifier(NC_SCENE | ND_LAYER_CONTENT, NULL);
+	return OPERATOR_FINISHED;
+}
+
+void OUTLINER_OT_unhide_all(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Unhide All";
+	ot->idname = "OUTLINER_OT_unhide_all";
+	ot->description = "Unhide all objects and collections";
+
+	/* api callbacks */
+	ot->exec = outliner_unhide_all_exec;
+	ot->poll = outliner_view_layer_collections_editor_poll;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;

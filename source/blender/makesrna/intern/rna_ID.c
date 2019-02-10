@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/makesrna/intern/rna_ID.c
- *  \ingroup RNA
+/** \file \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -363,8 +362,10 @@ static ID *rna_ID_copy(ID *id, Main *bmain)
 {
 	ID *newid;
 
-	if (id_copy(bmain, id, &newid, false)) {
-		if (newid) id_us_min(newid);
+	if (BKE_id_copy(bmain, id, &newid)) {
+		if (newid != NULL) {
+			id_us_min(newid);
+		}
 		return newid;
 	}
 

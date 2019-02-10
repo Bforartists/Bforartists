@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/depsgraph/intern/builder/deg_builder_relations.h
- *  \ingroup depsgraph
+/** \file \ingroup depsgraph
  */
 
 #pragma once
@@ -81,12 +80,12 @@ struct PropertyRNA;
 namespace DEG {
 
 struct ComponentNode;
-struct Node;
 struct DepsNodeHandle;
-struct Relation;
 struct Depsgraph;
 struct IDNode;
+struct Node;
 struct OperationNode;
+struct Relation;
 struct RootPChanMap;
 struct TimeSourceNode;
 

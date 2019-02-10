@@ -22,8 +22,7 @@
  * texture coordinates are patched within the displist
  */
 
-/** \file blender/blenkernel/intern/mball.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include <stdio.h>
@@ -96,7 +95,7 @@ MetaBall *BKE_mball_add(Main *bmain, const char *name)
 
 /**
  * Only copy internal data of MetaBall ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -116,7 +115,7 @@ void BKE_mball_copy_data(Main *UNUSED(bmain), MetaBall *mb_dst, const MetaBall *
 MetaBall *BKE_mball_copy(Main *bmain, const MetaBall *mb)
 {
 	MetaBall *mb_copy;
-	BKE_id_copy_ex(bmain, &mb->id, (ID **)&mb_copy, 0, false);
+	BKE_id_copy(bmain, &mb->id, (ID **)&mb_copy);
 	return mb_copy;
 }
 

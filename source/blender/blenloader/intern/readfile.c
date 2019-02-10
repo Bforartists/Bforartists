@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenloader/intern/readfile.c
- *  \ingroup blenloader
+/** \file \ingroup blenloader
  */
 
 
@@ -3938,6 +3937,12 @@ static void direct_link_image(FileData *fd, Image *ima)
 		}
 		ima->rr = NULL;
 	}
+	else {
+		for (int i = 0; i < TEXTARGET_COUNT; i++) {
+			ima->gputexture[i] = newimaadr(fd, ima->gputexture[i]);
+		}
+		ima->rr = newimaadr(fd, ima->rr);
+	}
 
 	/* undo system, try to restore render buffers */
 	link_list(fd, &(ima->renderslots));
@@ -6568,6 +6573,11 @@ static void direct_link_gpencil(FileData *fd, bGPdata *gpd)
 	gpd->adt = newdataadr(fd, gpd->adt);
 	direct_link_animdata(fd, gpd->adt);
 
+	/* init stroke buffer */
+	gpd->runtime.sbuffer = NULL;
+	gpd->runtime.sbuffer_size = 0;
+	gpd->runtime.tot_cp_points = 0;
+
 	/* relink palettes (old palettes deprecated, only to convert old files) */
 	link_list(fd, &gpd->palettes);
 	if (gpd->palettes.first != NULL) {
@@ -7630,9 +7640,9 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map, Main
  * Used to link a file (without UI) to the current UI.
  * Note that it assumes the old pointers in UI are still valid, so old Main is not freed.
  */
-void blo_lib_link_restore(Main *newmain, wmWindowManager *curwm, Scene *curscene, ViewLayer *cur_view_layer)
+void blo_lib_link_restore(Main *oldmain, Main *newmain, wmWindowManager *curwm, Scene *curscene, ViewLayer *cur_view_layer)
 {
-	struct IDNameLib_Map *id_map = BKE_main_idmap_create(newmain);
+	struct IDNameLib_Map *id_map = BKE_main_idmap_create(newmain, true, oldmain);
 
 	for (WorkSpace *workspace = newmain->workspaces.first; workspace; workspace = workspace->id.next) {
 		ListBase *layouts = BKE_workspace_layouts_get(workspace);

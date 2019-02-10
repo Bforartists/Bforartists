@@ -18,8 +18,7 @@
  * Implements the Sculpt Mode tools
  */
 
-/** \file blender/editors/sculpt_paint/sculpt.c
- *  \ingroup edsculpt
+/** \file \ingroup edsculpt
  */
 
 
@@ -4095,7 +4094,7 @@ void sculpt_cache_calc_brushdata_symm(
 	/* XXX This reduces the length of the grab delta if it approaches the line of symmetry
 	 * XXX However, a different approach appears to be needed */
 #if 0
-	if (sd->paint.symmetry_flags & SCULPT_SYMMETRY_FEATHER) {
+	if (sd->paint.symmetry_flags & PAINT_SYMMETRY_FEATHER) {
 		float frac = 1.0f / max_overlap_count(sd);
 		float reduce = (feather - frac) / (1 - frac);
 
@@ -5846,7 +5845,7 @@ static int ed_object_sculptmode_flush_recalc_flag(Scene *scene, Object *ob, Mult
 
 void ED_object_sculptmode_enter_ex(
         Main *bmain, Depsgraph *depsgraph,
-        Scene *scene, Object *ob,
+        Scene *scene, Object *ob, const bool force_dyntopo,
         ReportList *reports)
 {
 	const int mode_flag = OB_MODE_SCULPT;
@@ -5927,7 +5926,7 @@ void ED_object_sculptmode_enter_ex(
 			}
 		}
 
-		if (message_unsupported == NULL) {
+		if ((message_unsupported == NULL) || force_dyntopo) {
 			/* Needed because we may be entering this mode before the undo system loads. */
 			wmWindowManager *wm = bmain->wm.first;
 			bool has_undo = wm->undo_stack != NULL;
@@ -5960,7 +5959,7 @@ void ED_object_sculptmode_enter(struct bContext *C, ReportList *reports)
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Object *ob = OBACT(view_layer);
 	Depsgraph *depsgraph = CTX_data_depsgraph(C);
-	ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, reports);
+	ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, false, reports);
 }
 
 void ED_object_sculptmode_exit_ex(
@@ -6042,7 +6041,7 @@ static int sculpt_mode_toggle_exec(bContext *C, wmOperator *op)
 		ED_object_sculptmode_exit_ex(depsgraph, scene, ob);
 	}
 	else {
-		ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, op->reports);
+		ED_object_sculptmode_enter_ex(bmain, depsgraph, scene, ob, false, op->reports);
 		BKE_paint_toolslots_brush_validate(bmain, &ts->sculpt->paint);
 	}
 
