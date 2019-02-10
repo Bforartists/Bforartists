@@ -25,8 +25,7 @@
  *      FRANCE
  */
 
-/** \file blender/freestyle/intern/geometry/matrix_util.cpp
- *  \ingroup freestyle
+/** \file \ingroup freestyle
  */
 
 #include "matrix_util.h"
@@ -235,7 +234,7 @@ namespace MatrixUtil {
 
 		// Step 7: save the eigen vectors
 
-		// back from Fortran to to C++
+		// back from Fortran to C++
 		v++;
 
 		ij = 0;

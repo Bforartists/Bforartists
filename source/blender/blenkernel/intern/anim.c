@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/anim.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include "MEM_guardedalloc.h"
@@ -74,15 +73,6 @@ void animviz_settings_init(bAnimVizSettings *avs)
 	/* sanity check */
 	if (avs == NULL)
 		return;
-
-	/* ghosting settings */
-	avs->ghost_bc = avs->ghost_ac = 10;
-
-	avs->ghost_sf = 1; /* xxx - take from scene instead? */
-	avs->ghost_ef = 250; /* xxx - take from scene instead? */
-
-	avs->ghost_step = 1;
-
 
 	/* path settings */
 	avs->path_bc = avs->path_ac = 10;

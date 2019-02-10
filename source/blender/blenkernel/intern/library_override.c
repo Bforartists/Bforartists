@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/library_override.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include <stdlib.h>
@@ -164,7 +163,7 @@ static ID *override_static_create_from(Main *bmain, ID *reference_id)
 {
 	ID *local_id;
 
-	if (!id_copy(bmain, reference_id, (ID **)&local_id, false)) {
+	if (!BKE_id_copy(bmain, reference_id, (ID **)&local_id)) {
 		return NULL;
 	}
 	id_us_min(local_id);
@@ -621,7 +620,7 @@ void BKE_override_static_update(Main *bmain, ID *local)
 	 * a (performances) issue here. */
 
 	ID *tmp_id;
-	id_copy(bmain, local->override_static->reference, &tmp_id, false);
+	BKE_id_copy(bmain, local->override_static->reference, &tmp_id);
 
 	if (tmp_id == NULL) {
 		return;
@@ -727,7 +726,7 @@ ID *BKE_override_static_operations_store_start(Main *bmain, OverrideStaticStorag
 	/* This would imply change in handling of usercout all over RNA (and possibly all over Blender code).
 	 * Not impossible to do, but would rather see first is extra useless usual user handling is actually
 	 * a (performances) issue here, before doing it. */
-	id_copy((Main *)override_storage, local, &storage_id, false);
+	BKE_id_copy((Main *)override_storage, local, &storage_id);
 
 	if (storage_id != NULL) {
 		PointerRNA rnaptr_reference, rnaptr_final, rnaptr_storage;

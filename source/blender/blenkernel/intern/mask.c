@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/mask.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include <stddef.h>
@@ -844,7 +843,7 @@ Mask *BKE_mask_copy_nolib(Mask *mask)
 
 /**
  * Only copy internal data of Mask ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -863,7 +862,7 @@ void BKE_mask_copy_data(Main *UNUSED(bmain), Mask *mask_dst, const Mask *mask_sr
 Mask *BKE_mask_copy(Main *bmain, const Mask *mask)
 {
 	Mask *mask_copy;
-	BKE_id_copy_ex(bmain, &mask->id, (ID **)&mask_copy, 0, false);
+	BKE_id_copy(bmain, &mask->id, (ID **)&mask_copy);
 	return mask_copy;
 }
 
@@ -1486,7 +1485,7 @@ void BKE_mask_layer_shape_from_mask(MaskLayer *masklay, MaskLayerShape *masklay_
 	}
 	else {
 		CLOG_ERROR(&LOG, "vert mismatch %d != %d (frame %d)",
-				   masklay_shape->tot_vert, tot, masklay_shape->frame);
+		           masklay_shape->tot_vert, tot, masklay_shape->frame);
 	}
 }
 

@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/imbuf/intern/metadata.c
- *  \ingroup imbuf
+/** \file \ingroup imbuf
  */
 
 
@@ -102,4 +101,14 @@ void IMB_metadata_set_field(struct IDProperty *metadata, const char *key, const 
 	}
 
 	IDP_AssignString(prop, value, METADATA_MAX_VALUE_LENGTH);
+}
+
+void IMB_metadata_foreach(struct ImBuf *ibuf, IMBMetadataForeachCb callback, void *userdata)
+{
+	if (ibuf->metadata == NULL) {
+		return;
+	}
+	for (IDProperty *prop = ibuf->metadata->data.group.first; prop != NULL; prop = prop->next) {
+		callback(prop->name, IDP_String(prop), userdata);
+	}
 }

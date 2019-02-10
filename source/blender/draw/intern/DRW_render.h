@@ -16,8 +16,7 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file DRW_render.h
- *  \ingroup draw
+/** \file \ingroup draw
  */
 
 /* This is the Render Functions used by Realtime engines to draw with OpenGL */
@@ -240,11 +239,6 @@ void DRW_multisamples_resolve(
 /* Shaders */
 struct GPUShader *DRW_shader_create(
         const char *vert, const char *geom, const char *frag, const char *defines);
-struct DRW_ShaderCreateFromArray_Params { const char **vert, **geom, **frag, **defs; };
-struct GPUShader *DRW_shader_create_from_arrays_impl(
-        const struct DRW_ShaderCreateFromArray_Params *params);
-#define DRW_shader_create_from_arrays(...) \
-	DRW_shader_create_from_arrays_impl(&(const struct DRW_ShaderCreateFromArray_Params)__VA_ARGS__)
 struct GPUShader *DRW_shader_create_with_lib(
         const char *vert, const char *geom, const char *frag, const char *lib, const char *defines);
 struct GPUShader *DRW_shader_create_with_transform_feedback(
@@ -253,7 +247,7 @@ struct GPUShader *DRW_shader_create_with_transform_feedback(
 struct GPUShader *DRW_shader_create_2D(const char *frag, const char *defines);
 struct GPUShader *DRW_shader_create_3D(const char *frag, const char *defines);
 struct GPUShader *DRW_shader_create_fullscreen(const char *frag, const char *defines);
-struct GPUShader *DRW_shader_create_3D_depth_only(eDRW_ShaderSlot slot);
+struct GPUShader *DRW_shader_create_3D_depth_only(eGPUShaderConfig slot);
 struct GPUMaterial *DRW_shader_find_from_world(struct World *wo, const void *engine_type, int options, bool deferred);
 struct GPUMaterial *DRW_shader_find_from_material(struct Material *ma, const void *engine_type, int options, bool deferred);
 struct GPUMaterial *DRW_shader_create_from_world(
@@ -289,7 +283,7 @@ typedef enum {
 	DRW_STATE_OFFSET_POSITIVE = (1 << 12),
 	/** Polygon offset. Does not work with lines and points. */
 	DRW_STATE_OFFSET_NEGATIVE = (1 << 13),
-	/* DRW_STATE_STIPPLE_4     = (1 << 14), */ /* Not used */
+	DRW_STATE_WIRE_WIDE     = (1 << 14),
 	DRW_STATE_BLEND         = (1 << 15),
 	DRW_STATE_ADDITIVE      = (1 << 16),
 	DRW_STATE_MULTIPLY      = (1 << 17),
@@ -584,7 +578,7 @@ typedef struct DRWContextState {
 
 	eObjectMode object_mode;
 
-	eDRW_ShaderSlot shader_slot;
+	eGPUShaderConfig sh_cfg;
 
 	/** Last resort (some functions take this as an arg so we can't easily avoid).
 	 * May be NULL when used for selection or depth buffer. */

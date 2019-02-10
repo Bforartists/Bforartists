@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/action.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 
@@ -117,7 +116,7 @@ void BKE_action_free(bAction *act)
 
 /**
  * Only copy internal data of Action ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -163,7 +162,7 @@ void BKE_action_copy_data(Main *UNUSED(bmain), bAction *act_dst, const bAction *
 bAction *BKE_action_copy(Main *bmain, const bAction *act_src)
 {
 	bAction *act_copy;
-	BKE_id_copy_ex(bmain, &act_src->id, (ID **)&act_copy, 0, false);
+	BKE_id_copy(bmain, &act_src->id, (ID **)&act_copy);
 	return act_copy;
 }
 

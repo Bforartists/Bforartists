@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file depsgraph/intern/node/deg_node.h
- *  \ingroup depsgraph
+/** \file \ingroup depsgraph
  */
 
 #pragma once
@@ -33,9 +32,9 @@ struct Scene;
 
 namespace DEG {
 
-struct Relation;
 struct Depsgraph;
 struct OperationNode;
+struct Relation;
 
 /* Metatype of Nodes - The general "level" in the graph structure
  * the node serves. */

@@ -18,8 +18,7 @@
  */
 
 
-/** \file blender/depsgraph/intern/eval/deg_eval_copy_on_write.cc
- *  \ingroup depsgraph
+/** \file \ingroup depsgraph
  */
 
 /* Enable special; trickery to treat nested owned IDs (such as nodetree of
@@ -275,7 +274,7 @@ struct ValidateData {
 	bool is_valid;
 };
 
-/* Similar to generic id_copy() but does not require main and assumes pointer
+/* Similar to generic BKE_id_copy() but does not require main and assumes pointer
  * is already allocated,
  */
 bool id_copy_inplace_no_main(const ID *id, ID *newid)
@@ -290,12 +289,8 @@ bool id_copy_inplace_no_main(const ID *id, ID *newid)
 	bool result = BKE_id_copy_ex(NULL,
 	                             (ID *)id_for_copy,
 	                             &newid,
-	                             (LIB_ID_CREATE_NO_MAIN |
-	                              LIB_ID_CREATE_NO_USER_REFCOUNT |
-	                              LIB_ID_CREATE_NO_ALLOCATE |
-	                              LIB_ID_CREATE_NO_DEG_TAG |
-	                              LIB_ID_COPY_CACHES),
-	                             false);
+	                             (LIB_ID_COPY_LOCALIZE |
+	                              LIB_ID_CREATE_NO_ALLOCATE));
 
 #ifdef NESTED_ID_NASTY_WORKAROUND
 	if (result) {
@@ -322,11 +317,8 @@ bool scene_copy_inplace_no_main(const Scene *scene, Scene *new_scene)
 	bool result = BKE_id_copy_ex(NULL,
 	                             id_for_copy,
 	                             (ID **)&new_scene,
-	                             LIB_ID_CREATE_NO_MAIN |
-	                             LIB_ID_CREATE_NO_USER_REFCOUNT |
-	                             LIB_ID_CREATE_NO_ALLOCATE |
-	                             LIB_ID_CREATE_NO_DEG_TAG,
-	                             false);
+	                             LIB_ID_COPY_LOCALIZE |
+	                             LIB_ID_CREATE_NO_ALLOCATE);
 
 #ifdef NESTED_ID_NASTY_WORKAROUND
 	if (result) {
@@ -366,23 +358,23 @@ void scene_remove_unused_view_layers(const Depsgraph *depsgraph,
 	scene_cow->view_layers.last = view_layer_eval;
 }
 
-/* Makes it so given view layer only has bases corresponding to a visible
+/* Makes it so given view layer only has bases corresponding to enabled
  * objects. */
-void view_layer_remove_invisible_bases(const Depsgraph *depsgraph,
-                                       ViewLayer *view_layer)
+void view_layer_remove_disabled_bases(const Depsgraph *depsgraph,
+                                      ViewLayer *view_layer)
 {
-	const int base_visible_flag = (depsgraph->mode == DAG_EVAL_VIEWPORT) ?
+	const int base_enabled_flag = (depsgraph->mode == DAG_EVAL_VIEWPORT) ?
 		BASE_ENABLED_VIEWPORT : BASE_ENABLED_RENDER;
-	ListBase visible_bases = {NULL, NULL};
+	ListBase enabled_bases = {NULL, NULL};
 	for (Base *base = reinterpret_cast<Base *>(view_layer->object_bases.first),
 	          *base_next;
 	     base != NULL;
 	     base = base_next)
 	{
 		base_next = base->next;
-		const bool is_object_visible = (base->flag & base_visible_flag);
-		if (is_object_visible) {
-			BLI_addtail(&visible_bases, base);
+		const bool is_object_enabled = (base->flag & base_enabled_flag);
+		if (is_object_enabled) {
+			BLI_addtail(&enabled_bases, base);
 		}
 		else {
 			if (base == view_layer->basact) {
@@ -391,13 +383,13 @@ void view_layer_remove_invisible_bases(const Depsgraph *depsgraph,
 			MEM_freeN(base);
 		}
 	}
-	view_layer->object_bases = visible_bases;
+	view_layer->object_bases = enabled_bases;
 }
 
 void scene_cleanup_view_layers(const Depsgraph *depsgraph, Scene *scene_cow)
 {
 	scene_remove_unused_view_layers(depsgraph, scene_cow);
-	view_layer_remove_invisible_bases(
+	view_layer_remove_disabled_bases(
 	        depsgraph,
 	        reinterpret_cast<ViewLayer *>(scene_cow->view_layers.first));
 	/* TODO(sergey): Remove objects from collections as well.
@@ -704,7 +696,7 @@ ID *deg_expand_copy_on_write_datablock(const Depsgraph *depsgraph,
 	 * - We don't want heap-allocations here.
 	 * - We don't want bmain's content to be freed when main is freed. */
 	bool done = false;
-	/* First we handle special cases which are not covered by id_copy() yet.
+	/* First we handle special cases which are not covered by BKE_id_copy() yet.
 	 * or cases where we want to do something smarter than simple datablock
 	 * copy. */
 	const ID_Type id_type = GS(id_orig->name);
