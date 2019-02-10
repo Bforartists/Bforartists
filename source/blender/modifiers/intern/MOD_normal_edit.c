@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/modifiers/intern/MOD_normal_edit.c
- *  \ingroup modifiers
+/** \file \ingroup modifiers
  */
 
 #include <string.h>
@@ -411,13 +410,7 @@ static Mesh *normalEditModifier_do(
 	if (mesh->medge == ((Mesh *)ob->data)->medge) {
 		/* We need to duplicate data here, otherwise setting custom normals (which may also affect sharp edges) could
 		 * modify org mesh, see T43671. */
-		BKE_id_copy_ex(
-		        NULL, &mesh->id, (ID **)&result,
-		        LIB_ID_CREATE_NO_MAIN |
-		        LIB_ID_CREATE_NO_USER_REFCOUNT |
-		        LIB_ID_CREATE_NO_DEG_TAG |
-		        LIB_ID_COPY_NO_PREVIEW,
-		        false);
+		BKE_id_copy_ex(NULL, &mesh->id, (ID **)&result, LIB_ID_COPY_LOCALIZE);
 	}
 	else {
 		result = mesh;

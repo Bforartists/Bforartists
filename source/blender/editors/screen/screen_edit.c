@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/editors/screen/screen_edit.c
- *  \ingroup edscr
+/** \file \ingroup edscr
  */
 
 
@@ -476,6 +475,12 @@ void ED_screens_initialize(Main *bmain, wmWindowManager *wm)
 		ED_screen_refresh(wm, win);
 		if (win->eventstate) {
 			ED_screen_set_active_region(NULL, win, &win->eventstate->x);
+		}
+	}
+
+	if (U.uiflag & USER_HEADER_FROM_PREF) {
+		for (bScreen *screen = bmain->screen.first; screen; screen = screen->id.next) {
+			BKE_screen_header_alignment_reset(screen);
 		}
 	}
 }

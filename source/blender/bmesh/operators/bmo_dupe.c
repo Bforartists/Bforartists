@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/bmesh/operators/bmo_dupe.c
- *  \ingroup bmesh
+/** \file \ingroup bmesh
  *
  * Duplicate, Split, Split operators.
  */
@@ -550,13 +549,14 @@ void bmo_spin_exec(BMesh *bm, BMOperator *op)
 					if (elem_array[i]->head.htype == BM_EDGE) {
 						BMEdge *e_src = (BMEdge *)elem_array[i];
 						BMEdge *e_dst = BM_edge_find_double(e_src);
-						BM_edge_splice(bm, e_dst, e_src);
-						elem_array_len--;
-						elem_array[i] = elem_array[elem_array_len];
+						if (e_dst != NULL) {
+							BM_edge_splice(bm, e_dst, e_src);
+							elem_array_len--;
+							elem_array[i] = elem_array[elem_array_len];
+							continue;
+						}
 					}
-					else {
-						i++;
-					}
+					i++;
 				}
 				/* Full copies of faces may cause overlap. */
 				for (int i = 0; i < elem_array_len; ) {

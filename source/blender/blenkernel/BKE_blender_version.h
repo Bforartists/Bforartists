@@ -16,15 +16,14 @@
 #ifndef __BKE_BLENDER_VERSION_H__
 #define __BKE_BLENDER_VERSION_H__
 
-/** \file BKE_blender_version.h
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 /* these lines are grep'd, watch out for our not-so-awesome regex
  * and keep comment above the defines.
  * Use STRINGIFY() rather than defining with quotes */
 #define BLENDER_VERSION         280
-#define BLENDER_SUBVERSION      43
+#define BLENDER_SUBVERSION      44
 /* Several breakages with 280, e.g. collections vs layers */
 #define BLENDER_MINVERSION      280
 #define BLENDER_MINSUBVERSION   0

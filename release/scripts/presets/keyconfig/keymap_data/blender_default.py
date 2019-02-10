@@ -62,9 +62,8 @@ class Params:
             use_v3d_tab_menu=False,
             use_v3d_shade_ex_pie=False,
     ):
-        import platform
-
-        self.apple = platform.system() == 'Darwin'
+        from sys import platform
+        self.apple = (platform == 'darwin')
         self.legacy = legacy
 
         if select_mouse == 'RIGHT':
@@ -686,6 +685,8 @@ def km_outliner(params):
         ("object.link_to_collection", {"type": 'M', "value": 'PRESS', "shift": True}, None),
         ("outliner.collection_exclude_set", {"type": 'E', "value": 'PRESS'}, None),
         ("outliner.collection_exclude_clear", {"type": 'E', "value": 'PRESS', "alt": True}, None),
+        ("outliner.hide", {"type": 'H', "value": 'PRESS'}, None),
+        ("outliner.unhide_all", {"type": 'H', "value": 'PRESS', "alt": True}, None),
         ("object.hide_view_clear", {"type": 'H', "value": 'PRESS', "alt": True},
          {"properties": [("select", False)]}),
         ("object.hide_view_set", {"type": 'H', "value": 'PRESS'},

@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-/** \file blender/blenkernel/intern/armature.c
- *  \ingroup bke
+/** \file \ingroup bke
  */
 
 #include <ctype.h>
@@ -83,7 +82,6 @@ bArmature *BKE_armature_add(Main *bmain, const char *name)
 	arm->deformflag = ARM_DEF_VGROUP | ARM_DEF_ENVELOPE;
 	arm->flag = ARM_COL_CUSTOM; /* custom bone-group colors */
 	arm->layer = 1;
-	arm->ghostsize = 1;
 	return arm;
 }
 
@@ -168,7 +166,7 @@ static void copy_bonechildren(
 
 /**
  * Only copy internal data of Armature ID from source to already allocated/initialized destination.
- * You probably nerver want to use that directly, use id_copy or BKE_id_copy_ex for typical needs.
+ * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -201,7 +199,7 @@ void BKE_armature_copy_data(Main *UNUSED(bmain), bArmature *arm_dst, const bArma
 bArmature *BKE_armature_copy(Main *bmain, const bArmature *arm)
 {
 	bArmature *arm_copy;
-	BKE_id_copy_ex(bmain, &arm->id, (ID **)&arm_copy, 0, false);
+	BKE_id_copy(bmain, &arm->id, (ID **)&arm_copy);
 	return arm_copy;
 }
 

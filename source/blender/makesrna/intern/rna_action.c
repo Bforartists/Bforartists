@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file blender/makesrna/intern/rna_action.c
- *  \ingroup RNA
+/** \file \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -481,6 +480,12 @@ static void rna_def_dopesheet(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "filterflag", ADS_FILTER_NOSPK);
 	RNA_def_property_ui_text(prop, "Display Speaker", "Include visualization of speaker related animation data");
 	RNA_def_property_ui_icon(prop, ICON_OUTLINER_OB_SPEAKER, 0);
+	RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, NULL);
+
+	prop = RNA_def_property(srna, "show_cache_files", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "filterflag2", ADS_FILTER_NOCACHEFILES);
+	RNA_def_property_ui_text(prop, "Display Cache Files", "Include visualization of cache file related animation data");
+	RNA_def_property_ui_icon(prop, ICON_FILE, 0);
 	RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, NULL);
 
 	prop = RNA_def_property(srna, "show_gpencil", PROP_BOOLEAN, PROP_NONE);
