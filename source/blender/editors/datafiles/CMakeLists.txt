@@ -566,7 +566,7 @@ set(ICON_NAMES
 	loop_forwards
 	back
 	forward
-	file_volume
+	#file_volume
 	alembic
 	volume
 	file_hidden
