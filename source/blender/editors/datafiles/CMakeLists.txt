@@ -191,7 +191,7 @@ set(ICON_NAMES
 	render_still
 	library_data_broken
 	boids
-	strands
+	#strands
 	library_data_indirect
 	greasepencil
 	line_data
@@ -202,7 +202,7 @@ set(ICON_NAMES
 	group_uvs
 	face_maps
 	rna
-	rna_add
+	#rna_add
 	mouse_lmb
 	mouse_mmb
 	mouse_rmb
