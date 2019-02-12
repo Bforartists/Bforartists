@@ -52,7 +52,7 @@ class VIEW3D_HT_header(Header):
         object_mode = 'OBJECT' if obj is None else obj.mode
 
         act_mode_item = bpy.types.Object.bl_rna.properties["mode"].enum_items[object_mode]
-        
+
         row = layout.row(align=True)
         row.separator()
 
@@ -244,7 +244,7 @@ class VIEW3D_HT_header(Header):
                 text=lk_name,
                 icon=lk_icon,
             )
-            
+
         if object_mode in {'PAINT_GPENCIL'}:
             if context.workspace.tools.from_space_view3d_mode(object_mode).name == "Draw":
                 settings = tool_settings.gpencil_sculpt.guide
@@ -315,7 +315,7 @@ class VIEW3D_MT_editor_menus(Menu):
 
         layout.menu("VIEW3D_MT_view")
         layout.menu("VIEW3D_MT_view_navigation")
-        
+
 
         # Select Menu
         if gp_edit:
@@ -536,7 +536,7 @@ class VIEW3D_MT_snap(Menu):
     def draw(self, context):
         layout = self.layout
 
-        
+
         layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
         layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
         layout.operator("view3d.snap_selected_to_active", text="Selection to Active", icon = "SELECTIONTOACTIVE")
@@ -545,7 +545,7 @@ class VIEW3D_MT_snap(Menu):
         layout.separator()
 
         layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")       
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
         layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon = "CURSORTOACTIVE")
         layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
 
@@ -650,8 +650,8 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", icon='RENDER_STILL')
-        layout.operator("render.opengl", text="Viewport Render Animation", icon='RENDER_ANIMATION').animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL') #BFA - by Draise
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
 
         layout.separator()
 
@@ -672,7 +672,7 @@ class VIEW3D_MT_view(Menu):
         layout.menu("VIEW3D_MT_view_align_selected")
 
         layout.separator()
-        
+
         layout.operator("view3d.localview", text="Toggle Local View", icon = "VIEW_GLOBAL_LOCAL")
         layout.operator("view3d.localview_remove_from", icon = "VIEW_REMOVE_LOCAL")
 
@@ -847,7 +847,7 @@ class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.object.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_object(Menu):
@@ -916,7 +916,7 @@ class VIEW3D_MT_select_grouped(Menu):
         layout = self.layout
 
         layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
-        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'      
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'
         layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
         layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
 
@@ -984,7 +984,7 @@ class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.pose.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_pose(Menu):
@@ -1031,7 +1031,7 @@ class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.particle.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_particle(Menu):
@@ -1076,7 +1076,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
     def draw(self, context):
         layout = self.layout
 
-        select_mode = context.tool_settings.mesh_select_mode 
+        select_mode = context.tool_settings.mesh_select_mode
 
         # Vertices select mode
         if tuple(select_mode) == (True, False, False):
@@ -1085,7 +1085,7 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
             layout.operator("mesh.select_similar", text= "Amount of Adjacent Faces", icon = "FACESEL").type='FACE'
             layout.operator("mesh.select_similar", text= "Vertex Groups", icon = "GROUP_VERTEX").type='VGROUP'
             layout.operator("mesh.select_similar", text= "Amount of connecting Edges", icon = "EDGESEL").type='EDGE'
-        
+
         # Edges select mode
         if tuple(select_mode) == (False, True, False):
 
@@ -1098,11 +1098,11 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
             layout.operator("mesh.select_similar", text= "Seam", icon = "MARK_SEAM").type='SEAM'
             layout.operator("mesh.select_similar", text= "Sharpness", icon = "SELECT_SHARPEDGES").type='SHARP'
             layout.operator("mesh.select_similar", text= "Freestyle Edge Marks", icon = "MARK_FS_EDGE").type='FREESTYLE_EDGE'
-        
+
         # Faces select mode
         if tuple(select_mode) == (False, False, True ):
 
-            layout.operator("mesh.select_similar", text= "Material", icon = "MATERIAL").type='MATERIAL'           
+            layout.operator("mesh.select_similar", text= "Material", icon = "MATERIAL").type='MATERIAL'
             layout.operator("mesh.select_similar", text= "Area", icon = "AREA").type='AREA'
             layout.operator("mesh.select_similar", text= "Polygon Sides", icon = "POLYGONSIDES").type='SIDES'
             layout.operator("mesh.select_similar", text= "Perimeter", icon = "PERIMETER").type='PERIMETER'
@@ -1141,7 +1141,7 @@ class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.mesh.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_edit_mesh(Menu):
@@ -1174,7 +1174,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        # other 
+        # other
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
 
         layout.separator()
@@ -1209,7 +1209,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")        
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
         layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
         layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
@@ -1228,7 +1228,7 @@ class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.curve.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_edit_curve(Menu):
@@ -1341,7 +1341,7 @@ class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.mball.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_edit_metaball(Menu):
@@ -1432,7 +1432,7 @@ class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.armature.select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_edit_armature(Menu):
@@ -1536,7 +1536,7 @@ class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.paint.face_select_all(action = 'INVERT')
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_select_paint_mask(Menu):
@@ -1920,7 +1920,7 @@ class VIEW3D_MT_object(Menu):
         myvar.use_global = False
         myvar.confirm = False
         layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
-        
+
         layout.separator()
 
         layout.operator("view3d.copybuffer", text="Copy Objects", icon='COPYDOWN')
@@ -2233,7 +2233,7 @@ class VIEW3D_MT_object_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE") 
+        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
         props.location, props.rotation, props.scale = True, False, False
 
         props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
@@ -2270,7 +2270,7 @@ class VIEW3D_MT_object_parent(Menu):
 
         layout.separator()
 
-        layout.operator_enum("object.parent_clear", "type")       
+        layout.operator_enum("object.parent_clear", "type")
 
 
 class VIEW3D_MT_object_track(Menu):
@@ -2347,7 +2347,7 @@ class VIEW3D_hide_view_set_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.object.hide_view_set(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_object_showhide(Menu):
@@ -2813,7 +2813,7 @@ class VIEW3D_particle_hide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.particle.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_particle_show_hide(Menu):
@@ -3017,7 +3017,7 @@ class VIEW3D_MT_pose_hide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.pose.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_pose_show_hide(Menu):
@@ -3797,7 +3797,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED') 
+        layout.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED')
 
         layout.separator()
 
@@ -3814,7 +3814,7 @@ class VIEW3D_mesh_hide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.mesh.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_edit_mesh_show_hide(Menu):
@@ -4023,7 +4023,7 @@ class VIEW3D_curve_hide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.curve.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_edit_curve_show_hide(Menu):
@@ -4165,7 +4165,7 @@ class VIEW3D_MT_edit_meta_showhide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.mball.hide_metaelems(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_edit_meta_showhide(Menu):
@@ -4176,7 +4176,7 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
 
         layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
         layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
-        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") 
+        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_edit_lattice(Menu):
@@ -4276,7 +4276,7 @@ class VIEW3D_armature_hide_unselected(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.armature.hide(unselected = True)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_armature_show_hide(Menu):
@@ -4532,7 +4532,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
         layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
-        
+
         layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
 
         layout.separator()
@@ -5898,7 +5898,7 @@ class VIEW3D_PT_gpencil_lock(Panel):
         col = row.column()
         col.prop(context.tool_settings.gpencil_sculpt, "lock_axis", expand=True)
 
-        
+
 class VIEW3D_PT_gpencil_guide(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -5911,34 +5911,34 @@ class VIEW3D_PT_gpencil_guide(Panel):
 
         layout = self.layout
         layout.label(text="Guides")
-        
+
         col = layout.column()
         col.active = settings.use_guide
         col.prop(settings, "type", expand=True)
-                
+
         if settings.type in {'PARALLEL'}:
             col.prop(settings, "angle")
             row = col.row(align=True)
-        
-        col.prop(settings, "use_snapping")        
+
+        col.prop(settings, "use_snapping")
         if settings.use_snapping:
-            
+
             if settings.type in {'RADIAL'}:
                 col.prop(settings, "angle_snap")
             else:
                 col.prop(settings, "spacing")
-        
+
         col.label(text="Reference Point")
         row = col.row(align=True)
-        row.prop(settings, "reference_point", expand=True)    
+        row.prop(settings, "reference_point", expand=True)
         if settings.reference_point in {'CUSTOM'}:
-            col.prop(settings, "location", text="Custom Location")        
+            col.prop(settings, "location", text="Custom Location")
         if settings.reference_point in {'OBJECT'}:
-            col.prop(settings, "reference_object", text="Object Location")     
+            col.prop(settings, "reference_object", text="Object Location")
             if not settings.reference_object:
                 col.label(text="No object selected, using cursor")
 
-        
+
 class VIEW3D_PT_overlay_gpencil_options(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
