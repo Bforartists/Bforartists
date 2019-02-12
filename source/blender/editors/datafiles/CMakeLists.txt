@@ -221,7 +221,7 @@ set(ICON_NAMES
 	decorate_locked
 	decorate_override
 	#sealed
-	heart
+	#heart
 	orphan_data
 	user
 	system
@@ -334,7 +334,7 @@ set(ICON_NAMES
 	force_turbulence
 	force_drag
 	force_smokeflow
-	image_plane
+	#image_plane
 	image_background
 	image_reference
 	node_insert_on
@@ -403,7 +403,7 @@ set(ICON_NAMES
 	mod_offset
 	mod_simplify
 	mod_thickness
-	mod_instance
+	#mod_instance
 	mod_time
 	mod_opacity
 	rec
@@ -580,9 +580,9 @@ set(ICON_NAMES
 	aliased
 	antialiased
 	mat_sphere_sky
-	matshaderball
-	matcloth
-	matfluid
+	#matshaderball
+	#matcloth
+	#matfluid
 	wordwrap_off
 	wordwrap_on
 	syntax_off
