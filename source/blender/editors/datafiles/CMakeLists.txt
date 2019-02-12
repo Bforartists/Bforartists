@@ -210,7 +210,7 @@ set(ICON_NAMES
 	mouse_lmb_drag
 	mouse_mmb_drag
 	mouse_rmb_drag
-	preset_new
+	#preset_new
 	decorate
 	decorate_keyframe
 	decorate_animate
