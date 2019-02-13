@@ -1184,7 +1184,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         if tool_settings.mesh_select_mode[2] is False:
             layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
         layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SELECT_INTERIOR")
         layout.operator("mesh.select_face_by_sides", text="Faces by Sides", icon = "SELECT_FACES_BY_SIDE")
 
         layout.separator()
