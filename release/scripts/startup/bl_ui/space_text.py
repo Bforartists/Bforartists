@@ -318,11 +318,6 @@ class TEXT_MT_edit(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo", icon = "UNDO")
-        layout.operator("ed.redo", icon = "REDO")
-
-        layout.separator()
-
         layout.operator("text.cut", icon = "CUT")
         layout.operator("text.copy", icon = "COPYDOWN")
         layout.operator("text.paste", icon = "PASTEDOWN")
