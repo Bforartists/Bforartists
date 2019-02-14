@@ -780,25 +780,25 @@ class TOPBAR_MT_edit(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon='UNDO')
+        layout.operator("ed.redo", icon='REDO')
 
         layout.separator()
 
-        layout.operator("ed.undo_history", text="Undo History...")
+        layout.operator("ed.undo_history", text="Undo History", icon='UNDO_HISTORY')
 
         layout.separator()
 
-        layout.operator("screen.repeat_last")
-        layout.operator("screen.repeat_history", text="Repeat History...")
+        layout.operator("screen.repeat_last", icon='REPEAT',)
+        layout.operator("screen.repeat_history", text="Repeat History", icon='REDO_HISTORY',)
 
         layout.separator()
 
-        layout.operator("screen.redo_last", text="Adjust Last Operation...")
+        layout.operator("screen.redo_last", text="Adjust Last Operation", icon = "LASTOPERATOR")
 
         layout.separator()
 
-        layout.operator("wm.search_menu", text="Operator Search...", icon='VIEWZOOM')
+        layout.operator("wm.search_menu", text="Operator Search", icon='VIEWZOOM')
 
         layout.separator()
 
@@ -807,8 +807,8 @@ class TOPBAR_MT_edit(Menu):
         layout.prop(tool_settings, "lock_object_mode")
 
         layout.separator()
-
-        layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
+       
+        layout.operator("wm.app_template_install", text="Install Application Template", icon = "TEMPLATE")
 
         layout.separator()
 
@@ -829,7 +829,9 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("wm.app_template_install", text="Install Application Template")
+        layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
+
+        
 
 
 class TOPBAR_MT_window(Menu):
