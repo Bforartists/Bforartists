@@ -1201,17 +1201,6 @@ class TOOLBAR_MT_animation(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator("pose.push", icon = 'PUSH_POSE', text="")
-                    row.operator("pose.relax", icon = 'RELAX_POSE',text="")
-                    row.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="")
-
-                    row = layout.row(align=True)
-
-                    row.operator("pose.propagate", text="Propagate")
-                    row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
-
-                    row = layout.row(align=True)
-
                     row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
                     row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
                     row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
