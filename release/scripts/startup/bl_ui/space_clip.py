@@ -652,7 +652,7 @@ class CLIP_PT_tools_cleanup(CLIP_PT_tracking_panel, Panel):
         col = layout.column()
         col.prop(settings, "clean_frames", text="Frames")
         col.prop(settings, "clean_error", text="Error")
-        col.prop(settings, "clean_action", text="Type")
+        col.prop(settings, "clean_action", text="Action")
         col.separator()
         col.operator("clip.clean_tracks")
         col.operator("clip.filter_tracks")
