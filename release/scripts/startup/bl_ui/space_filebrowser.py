@@ -262,6 +262,10 @@ class FILEBROWSER_MT_view(Menu):
         st = context.space_data
         params = st.params
 
+        layout.operator("file.bookmark_toggle", text = "Tool Shelf", icon='MENU_PANEL')
+
+        layout.separator()
+
         layout.prop_menu_enum(params, "display_size")
         layout.prop_menu_enum(params, "recursion_level")
 
