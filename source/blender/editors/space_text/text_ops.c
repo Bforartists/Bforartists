@@ -1951,9 +1951,9 @@ void TEXT_OT_jump(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Jump";
+	ot->name = "Go To Line";
 	ot->idname = "TEXT_OT_jump";
-	ot->description = "Jump\nJump cursor to line";
+	ot->description = "Go To Line\nGo to a specific line number";
 
 	/* api callbacks */
 	ot->invoke = text_jump_invoke;
@@ -1961,7 +1961,7 @@ void TEXT_OT_jump(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	prop = RNA_def_int(ot->srna, "line", 1, 1, INT_MAX, "Line", "Line number to jump to", 1, 10000);
+	prop = RNA_def_int(ot->srna, "line", 1, 1, INT_MAX, "Line", "Line number to go to", 1, 10000);
 	RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_TEXT);
 }
 
