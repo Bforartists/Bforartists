@@ -1039,7 +1039,6 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
         layout.use_property_decorate = False
 
         tracking = context.space_data.clip.tracking
@@ -1049,11 +1048,10 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
         layout.prop(stab, "anchor_frame")
 
-        row = layout.row(align=True)
-        row.prop(stab, "use_stabilize_rotation", text="Rotation")
-        sub = row.row(align=True)
-        sub.active = stab.use_stabilize_rotation
-        sub.prop(stab, "use_stabilize_scale", text="Scale")
+        row = layout.row(align=False)
+        row.prop(stab, "use_stabilize_rotation", text="Rotation")    
+        if stab.use_stabilize_rotation:  
+            row.prop(stab, "use_stabilize_scale", text="Scale")
 
         box = layout.box()
         row = box.row(align=True)
@@ -1096,22 +1094,28 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
         col.prop(stab, "use_autoscale")
         sub = col.row()
         sub.active = stab.use_autoscale
-        sub.prop(stab, "scale_max", text="Max")
+        if stab.use_autoscale:
+            sub.prop(stab, "scale_max", text="Max")
 
+        layout.label(text = "Expected Position:")
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(stab, "target_position", text="Target")
+        row = col.row(align=True)      
+        row.prop(stab, "target_position", text = "")
         col.prop(stab, "target_rotation")
         row = col.row(align=True)
-        row.prop(stab, "target_scale")
-        row.active = not stab.use_autoscale
+        
+        if not stab.use_autoscale:
+            row.prop(stab, "target_scale")
+        #row.active = not stab.use_autoscale
 
         col = layout.column(align=True)
         col.prop(stab, "influence_location")
         sub = col.column(align=True)
-        sub.active = stab.use_stabilize_rotation
-        sub.prop(stab, "influence_rotation")
-        sub.prop(stab, "influence_scale")
+        
+        if stab.use_stabilize_rotation:
+        #sub.active = stab.use_stabilize_rotation
+            sub.prop(stab, "influence_rotation")
+            sub.prop(stab, "influence_scale")
 
         layout.prop(stab, "filter_type")
 
