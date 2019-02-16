@@ -1166,11 +1166,8 @@ class CLIP_PT_proxy(CLIP_PT_clip_view_panel, Panel):
         if clip.use_proxy_custom_directory:
             col.prop(clip.proxy, "directory")
 
-        col.operator(
-            "clip.rebuild_proxy",
-            text="Build Proxy / Timecode" if clip.source == 'MOVIE'
-            else "Build Proxy"
-        )
+        col.operator("clip.rebuild_proxy", text="Build Proxy / Timecode" if clip.source == 'MOVIE' else "Build Proxy", icon = "MAKE_PROXY")
+        col.operator("clip.delete_proxy", text="Delete Proxy", icon = "DELETE")
 
         if clip.source == 'MOVIE':
             col2 = col.column()
@@ -1355,17 +1352,6 @@ class CLIP_MT_clip(Menu):
         if clip:
             layout.operator("clip.prefetch", icon = "PREFETCH")
             layout.operator("clip.reload", icon = "FILE_REFRESH")
-            layout.menu("CLIP_MT_proxy")
-
-
-class CLIP_MT_proxy(Menu):
-    bl_label = "Proxy"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("clip.rebuild_proxy", icon = "MAKE_PROXY")
-        layout.operator("clip.delete_proxy", icon = "DELETE")
 
 
 class CLIP_MT_track(Menu):
@@ -1598,7 +1584,6 @@ classes = (
     CLIP_PT_tools_grease_pencil_draw,
     CLIP_MT_view,
     CLIP_MT_clip,
-    CLIP_MT_proxy,
     CLIP_MT_reconstruction,
     CLIP_MT_track_visibility,
     CLIP_MT_track_transform,
