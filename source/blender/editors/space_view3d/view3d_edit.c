@@ -295,10 +295,10 @@ static bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
 				/* use the boundbox if we can */
 				Object *ob_eval = base_eval->object;
 
-				if (ob_eval->bb && !(ob_eval->bb->flag & BOUNDBOX_DIRTY)) {
+				if (ob_eval->runtime.bb && !(ob_eval->runtime.bb->flag & BOUNDBOX_DIRTY)) {
 					float cent[3];
 
-					BKE_boundbox_calc_center_aabb(ob_eval->bb, cent);
+					BKE_boundbox_calc_center_aabb(ob_eval->runtime.bb, cent);
 
 					mul_m4_v3(ob_eval->obmat, cent);
 					add_v3_v3(select_center, cent);
@@ -2639,7 +2639,7 @@ static void view3d_from_minmax(
 			new_dist = ED_view3d_radius_to_dist(v3d, ar, CTX_data_depsgraph(C), persp, true, (size / 2) * VIEW3D_MARGIN);
 			if (rv3d->is_persp) {
 				/* don't zoom closer than the near clipping plane */
-				new_dist = max_ff(new_dist, v3d->near * 1.5f);
+				new_dist = max_ff(new_dist, v3d->clip_start * 1.5f);
 			}
 		}
 	}
@@ -3438,7 +3438,7 @@ static int view3d_zoom_border_exec(bContext *C, wmOperator *op)
 		new_dist = len_v3(dvec);
 
 		/* ignore dist_range min */
-		dist_range[0] = v3d->near * 1.5f;
+		dist_range[0] = v3d->clip_start * 1.5f;
 	}
 	else { /* othographic */
 		/* find the current window width and height */

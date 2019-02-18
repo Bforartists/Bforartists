@@ -81,7 +81,7 @@
 /* ****************************************************** */
 /* Tree Size Functions */
 
-static void outliner_height(SpaceOops *soops, ListBase *lb, int *h)
+static void outliner_height(SpaceOutliner *soops, ListBase *lb, int *h)
 {
 	TreeElement *te = lb->first;
 	while (te) {
@@ -95,7 +95,7 @@ static void outliner_height(SpaceOops *soops, ListBase *lb, int *h)
 }
 
 #if 0  // XXX this is currently disabled until te->xend is set correctly
-static void outliner_width(SpaceOops *soops, ListBase *lb, int *w)
+static void outliner_width(SpaceOutliner *soops, ListBase *lb, int *w)
 {
 	TreeElement *te = lb->first;
 	while (te) {
@@ -112,7 +112,7 @@ static void outliner_width(SpaceOops *soops, ListBase *lb, int *w)
 }
 #endif
 
-static void outliner_rna_width(SpaceOops *soops, ListBase *lb, int *w, int startx)
+static void outliner_rna_width(SpaceOutliner *soops, ListBase *lb, int *w, int startx)
 {
 	TreeElement *te = lb->first;
 	while (te) {
@@ -245,8 +245,11 @@ static void restrictbutton_ebone_visibility_cb(bContext *C, void *UNUSED(poin), 
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, NULL);
 }
 
-static void restrictbutton_gp_layer_flag_cb(bContext *C, void *UNUSED(poin), void *UNUSED(poin2))
+static void restrictbutton_gp_layer_flag_cb(bContext *C, void *poin, void *UNUSED(poin2))
 {
+	ID *id = (ID *)poin;
+
+	DEG_id_tag_update(id, ID_RECALC_GEOMETRY);
 	WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 }
 
@@ -368,7 +371,7 @@ static void hidebutton_layer_collection_flag_cb(bContext *C, void *poin, void *p
 static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 {
 	Main *bmain = CTX_data_main(C);
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	Object *obedit = CTX_data_edit_object(C);
 	BLI_mempool *ts = soops->treestore;
 	TreeStoreElem *tselem = tsep;
@@ -535,7 +538,7 @@ static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 }
 
 static void outliner_draw_restrictbuts(
-        uiBlock *block, Scene *scene, ViewLayer *view_layer, ARegion *ar, SpaceOops *soops, ListBase *lb)
+        uiBlock *block, Scene *scene, ViewLayer *view_layer, ARegion *ar, SpaceOutliner *soops, ListBase *lb)
 {
 	/* Get RNA properties (once for speed). */
 	static struct RestrictProperties {
@@ -681,6 +684,7 @@ static void outliner_draw_restrictbuts(
 				UI_but_drawflag_enable(bt, UI_BUT_ICON_REVERSE);
 			}
 			else if (tselem->type == TSE_GP_LAYER) {
+				ID *id = tselem->id;
 				bGPDlayer *gpl = (bGPDlayer *)te->directdata;
 
 				bt = uiDefIconButBitS(
@@ -688,7 +692,7 @@ static void outliner_draw_restrictbuts(
 				        (int)(ar->v2d.cur.xmax - OL_TOG_RESTRICT_VIEWX), te->ys, UI_UNIT_X,
 				        UI_UNIT_Y, &gpl->flag, 0, 0, 0, 0,
 				        TIP_("Restrict/Allow visibility in the 3D View"));
-				UI_but_func_set(bt, restrictbutton_gp_layer_flag_cb, NULL, gpl);
+				UI_but_func_set(bt, restrictbutton_gp_layer_flag_cb, id, gpl);
 				UI_but_flag_enable(bt, UI_BUT_DRAG_LOCK);
 				UI_but_drawflag_enable(bt, UI_BUT_ICON_REVERSE);
 
@@ -697,10 +701,8 @@ static void outliner_draw_restrictbuts(
 				        (int)(ar->v2d.cur.xmax - OL_TOG_RESTRICT_SELECTX), te->ys, UI_UNIT_X,
 				        UI_UNIT_Y, &gpl->flag, 0, 0, 0, 0,
 				        TIP_("Restrict/Allow editing of strokes and keyframes in this layer"));
-				UI_but_func_set(bt, restrictbutton_gp_layer_flag_cb, NULL, gpl);
+				UI_but_func_set(bt, restrictbutton_gp_layer_flag_cb, id, gpl);
 				UI_but_flag_enable(bt, UI_BUT_DRAG_LOCK);
-
-				/* TODO: visibility in renders */
 			}
 			else if (outliner_is_collection_tree_element(te)) {
 				LayerCollection *lc = (tselem->type == TSE_LAYER_COLLECTION) ? te->directdata : NULL;
@@ -759,7 +761,7 @@ static void outliner_draw_restrictbuts(
 	}
 }
 
-static void outliner_draw_userbuts(uiBlock *block, ARegion *ar, SpaceOops *soops, ListBase *lb)
+static void outliner_draw_userbuts(uiBlock *block, ARegion *ar, SpaceOutliner *soops, ListBase *lb)
 {
 
 	for (TreeElement *te = lb->first; te; te = te->next) {
@@ -844,7 +846,7 @@ static void outliner_draw_rnacols(ARegion *ar, int sizex)
 	immUnbindProgram();
 }
 
-static void outliner_draw_rnabuts(uiBlock *block, ARegion *ar, SpaceOops *soops, int sizex, ListBase *lb)
+static void outliner_draw_rnabuts(uiBlock *block, ARegion *ar, SpaceOutliner *soops, int sizex, ListBase *lb)
 {
 	PointerRNA *ptr;
 	PropertyRNA *prop;
@@ -1302,7 +1304,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
 				case OB_LIGHTPROBE:
 					data.icon = ICON_OUTLINER_OB_LIGHTPROBE; break;
 				case OB_EMPTY:
-					if (ob->dup_group) {
+					if (ob->instance_collection) {
 						data.icon = ICON_OUTLINER_OB_GROUP_INSTANCE;
 					}
 					else if (ob->empty_drawtype == OB_EMPTY_IMAGE) {
@@ -1564,7 +1566,7 @@ typedef struct MergedIconRow {
 } MergedIconRow;
 
 static void outliner_draw_iconrow(
-        bContext *C, uiBlock *block, const uiFontStyle *fstyle, Scene *scene, ViewLayer *view_layer, SpaceOops *soops,
+        bContext *C, uiBlock *block, const uiFontStyle *fstyle, Scene *scene, ViewLayer *view_layer, SpaceOutliner *soops,
         ListBase *lb, int level, int xmax, int *offsx, int ys, float alpha_fac, MergedIconRow *merged)
 {
 	eOLDrawState active;
@@ -1661,7 +1663,7 @@ static void outliner_set_coord_tree_element(TreeElement *te, int startx, int sta
 
 static void outliner_draw_tree_element(
         bContext *C, uiBlock *block, const uiFontStyle *fstyle, Scene *scene, ViewLayer *view_layer,
-        ARegion *ar, SpaceOops *soops, TreeElement *te, bool draw_grayed_out,
+        ARegion *ar, SpaceOutliner *soops, TreeElement *te, bool draw_grayed_out,
         int startx, int *starty, TreeElement **te_edit)
 {
 	TreeStoreElem *tselem;
@@ -1897,7 +1899,7 @@ static void outliner_draw_tree_element(
 }
 
 static void outliner_draw_hierarchy_lines_recursive(
-        unsigned pos, SpaceOops *soops, ListBase *lb, int startx,
+        unsigned pos, SpaceOutliner *soops, ListBase *lb, int startx,
         const unsigned char col[4], bool draw_grayed_out,
         int *starty)
 {
@@ -1956,7 +1958,7 @@ static void outliner_draw_hierarchy_lines_recursive(
 	}
 }
 
-static void outliner_draw_hierarchy_lines(SpaceOops *soops, ListBase *lb, int startx, int *starty)
+static void outliner_draw_hierarchy_lines(SpaceOutliner *soops, ListBase *lb, int startx, int *starty)
 {
 	GPUVertFormat *format = immVertexFormat();
 	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
@@ -1973,7 +1975,7 @@ static void outliner_draw_hierarchy_lines(SpaceOops *soops, ListBase *lb, int st
 	immUnbindProgram();
 }
 
-static void outliner_draw_struct_marks(ARegion *ar, SpaceOops *soops, ListBase *lb, int *starty)
+static void outliner_draw_struct_marks(ARegion *ar, SpaceOutliner *soops, ListBase *lb, int *starty)
 {
 	for (TreeElement *te = lb->first; te; te = te->next) {
 		TreeStoreElem *tselem = TREESTORE(te);
@@ -2011,7 +2013,7 @@ static void outliner_draw_struct_marks(ARegion *ar, SpaceOops *soops, ListBase *
 }
 
 static void outliner_draw_highlights_recursive(
-        unsigned pos, const ARegion *ar, const SpaceOops *soops, const ListBase *lb,
+        unsigned pos, const ARegion *ar, const SpaceOutliner *soops, const ListBase *lb,
         const float col_selection[4], const float col_highlight[4], const float col_searchmatch[4],
         int start_x, int *io_start_y)
 {
@@ -2077,7 +2079,7 @@ static void outliner_draw_highlights_recursive(
 	}
 }
 
-static void outliner_draw_highlights(ARegion *ar, SpaceOops *soops, int startx, int *starty)
+static void outliner_draw_highlights(ARegion *ar, SpaceOutliner *soops, int startx, int *starty)
 {
 	const float col_highlight[4] = {1.0f, 1.0f, 1.0f, 0.13f};
 	float col_selection[4], col_searchmatch[4];
@@ -2100,7 +2102,7 @@ static void outliner_draw_highlights(ARegion *ar, SpaceOops *soops, int startx, 
 
 static void outliner_draw_tree(
         bContext *C, uiBlock *block, Scene *scene, ViewLayer *view_layer,
-        ARegion *ar, SpaceOops *soops, const bool has_restrict_icons,
+        ARegion *ar, SpaceOutliner *soops, const bool has_restrict_icons,
         TreeElement **te_edit)
 {
 	const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
@@ -2219,7 +2221,7 @@ void draw_outliner(const bContext *C)
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	ARegion *ar = CTX_wm_region(C);
 	View2D *v2d = &ar->v2d;
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	uiBlock *block;
 	int sizey = 0, sizex = 0, sizex_rna = 0;
 	TreeElement *te_edit = NULL;

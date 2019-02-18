@@ -423,25 +423,24 @@ typedef struct bTheme {
 
 	/* Individual Spacetypes */
 	/* note: ensure UI_THEMESPACE_END is updated when adding */
-	ThemeSpace tbuts;
-	ThemeSpace tv3d;
-	ThemeSpace tfile;
-	ThemeSpace tipo;
-	ThemeSpace tinfo;
-	ThemeSpace tact;
-	ThemeSpace tnla;
-	ThemeSpace tseq;
-	ThemeSpace tima;
-	ThemeSpace text;
-	ThemeSpace toops;
-	ThemeSpace ttime;
-	ThemeSpace tnode;
-	ThemeSpace tuserpref;
-	ThemeSpace tconsole;
-	ThemeSpace ttoolbar;
-	ThemeSpace tclip;
-	ThemeSpace ttopbar;
-	ThemeSpace tstatusbar;
+	ThemeSpace space_properties;
+	ThemeSpace space_view3d;
+	ThemeSpace space_file;
+	ThemeSpace space_graph;
+	ThemeSpace space_info;
+	ThemeSpace space_action;
+	ThemeSpace space_nla;
+	ThemeSpace space_sequencer;
+	ThemeSpace space_image;
+	ThemeSpace space_text;
+	ThemeSpace space_outliner;
+	ThemeSpace space_node;
+	ThemeSpace space_preferences;
+	ThemeSpace space_console;
+	ThemeSpace space_clip;
+	ThemeSpace space_toolbar;
+	ThemeSpace space_topbar;
+	ThemeSpace space_statusbar;
 
 	/* 20 sets of bone colors for this theme */
 	ThemeWireColor tarm[20];
@@ -642,7 +641,7 @@ typedef struct UserDef {
 	short edit_studio_light;
 	char _pad6[4];
 	short textimeout, texcollectrate;
-	short dragthreshold;
+	char _pad14[2];
 	int memcachelimit;
 	int prefetchframes;
 	/** Control the rotation step of the view when PAD2, PAD4, PAD6&PAD8 is use. */

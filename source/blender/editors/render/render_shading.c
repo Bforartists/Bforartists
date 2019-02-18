@@ -99,9 +99,9 @@
 static Object **object_array_for_shading(bContext *C, uint *r_objects_len)
 {
 	ScrArea *sa = CTX_wm_area(C);
-	SpaceButs *sbuts = NULL;
+	SpaceProperties *sbuts = NULL;
 	View3D *v3d = NULL;
-	if (sa->spacetype == SPACE_BUTS) {
+	if (sa->spacetype == SPACE_PROPERTIES) {
 		sbuts = sa->spacedata.first;
 	}
 	else if (sa->spacetype == SPACE_VIEW3D) {
@@ -526,7 +526,9 @@ static int new_material_exec(bContext *C, wmOperator *UNUSED(op))
 
 	/* add or copy material */
 	if (ma) {
-		ma = BKE_material_copy(bmain, ma);
+		Material *new_ma = NULL;
+		BKE_id_copy_ex(bmain, &ma->id, (ID **)&new_ma, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
+		ma = new_ma;
 	}
 	else {
 		const char *name = DATA_("Material");

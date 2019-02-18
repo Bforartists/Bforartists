@@ -26,7 +26,7 @@ from bpy.props import (
     )
 
 
-class SnapUtilitiesLinePreferences(bpy.types.AddonPreferences):
+class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __package__
@@ -68,9 +68,9 @@ class SnapUtilitiesLinePreferences(bpy.types.AddonPreferences):
             precision=3)
 
     out_color: FloatVectorProperty(name="OUT", default=(0.0, 0.0, 0.0, 0.5), size=4, subtype="COLOR", min=0, max=1)
-    face_color: FloatVectorProperty(name="FACE", default=(1.0, 0.8, 0.0, 1.0), size=4, subtype="COLOR", min=0, max=1)
-    edge_color: FloatVectorProperty(name="EDGE", default=(0.0, 0.8, 1.0, 1.0), size=4, subtype="COLOR", min=0, max=1)
-    vert_color: FloatVectorProperty(name="VERT", default=(1.0, 0.5, 0.0, 1.0), size=4, subtype="COLOR", min=0, max=1)
+    face_color: FloatVectorProperty(name="FACE", default=(1.0, 0.8, 0.0, 0.5), size=4, subtype="COLOR", min=0, max=1)
+    edge_color: FloatVectorProperty(name="EDGE", default=(0.0, 0.8, 1.0, 0.5), size=4, subtype="COLOR", min=0, max=1)
+    vert_color: FloatVectorProperty(name="VERT", default=(1.0, 0.5, 0.0, 0.5), size=4, subtype="COLOR", min=0, max=1)
     center_color: FloatVectorProperty(name="CENTER", default=(1.0, 0.0, 1.0, 1.0), size=4, subtype="COLOR", min=0, max=1)
     perpendicular_color: FloatVectorProperty(name="PERPENDICULAR", default=(0.1, 0.5, 0.5, 1.0), size=4, subtype="COLOR", min=0, max=1)
     constrain_shift_color: FloatVectorProperty(name="SHIFT CONSTRAIN", default=(0.8, 0.5, 0.4, 1.0), size=4, subtype="COLOR", min=0, max=1)

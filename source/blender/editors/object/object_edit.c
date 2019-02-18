@@ -200,21 +200,7 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 	Scene *scene = CTX_data_scene(C);
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	const bool unselected = RNA_boolean_get(op->ptr, "unselected");
-
-	/* Do nothing if no objects was selected. */
-	bool have_selected = false;
-	for (Base *base = view_layer->object_bases.first; base; base = base->next) {
-		if (base->flag & BASE_VISIBLE) {
-			if (base->flag & BASE_SELECTED) {
-				have_selected = true;
-				break;
-			}
-		}
-	}
-
-	if (!have_selected) {
-		return OPERATOR_CANCELLED;
-	}
+	bool changed = false;
 
 	/* Hide selected or unselected objects. */
 	for (Base *base = view_layer->object_bases.first; base; base = base->next) {
@@ -226,14 +212,19 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 			if (base->flag & BASE_SELECTED) {
 				ED_object_base_select(base, BA_DESELECT);
 				base->flag |= BASE_HIDDEN;
+				changed = true;
 			}
 		}
 		else {
 			if (!(base->flag & BASE_SELECTED)) {
 				ED_object_base_select(base, BA_DESELECT);
 				base->flag |= BASE_HIDDEN;
+				changed = true;
 			}
 		}
+	}
+	if (!changed) {
+		return OPERATOR_CANCELLED;
 	}
 
 	BKE_layer_collection_sync(scene, view_layer);
@@ -416,11 +407,11 @@ static bool ED_object_editmode_load_ex(Main *bmain, Object *obedit, const bool f
 
 	if (obedit->type == OB_MESH) {
 		Mesh *me = obedit->data;
-		if (me->edit_btmesh == NULL) {
+		if (me->edit_mesh == NULL) {
 			return false;
 		}
 
-		if (me->edit_btmesh->bm->totvert > MESH_MAX_VERTS) {
+		if (me->edit_mesh->bm->totvert > MESH_MAX_VERTS) {
 			error("Too many vertices");
 			return false;
 		}
@@ -428,9 +419,9 @@ static bool ED_object_editmode_load_ex(Main *bmain, Object *obedit, const bool f
 		EDBM_mesh_load(bmain, obedit);
 
 		if (freedata) {
-			EDBM_mesh_free(me->edit_btmesh);
-			MEM_freeN(me->edit_btmesh);
-			me->edit_btmesh = NULL;
+			EDBM_mesh_free(me->edit_mesh);
+			MEM_freeN(me->edit_mesh);
+			me->edit_mesh = NULL;
 		}
 		/* will be recalculated as needed. */
 		{

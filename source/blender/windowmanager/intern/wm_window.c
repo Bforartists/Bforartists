@@ -95,23 +95,32 @@
 /* the global to talk to ghost */
 static GHOST_SystemHandle g_system = NULL;
 
-typedef enum WinOverrideFlag {
+typedef enum eWinOverrideFlag {
 	WIN_OVERRIDE_GEOM     = (1 << 0),
 	WIN_OVERRIDE_WINSTATE = (1 << 1),
-} WinOverrideFlag;
+} eWinOverrideFlag;
 
-/* set by commandline */
+#define GHOST_WINDOW_STATE_DEFAULT GHOST_kWindowStateMaximized
+
+/**
+ * Override defaults or startup file when #eWinOverrideFlag is set.
+ * These values are typically set by command line arguments.
+ */
 static struct WMInitStruct {
 	/* window geometry */
 	int size_x, size_y;
 	int start_x, start_y;
 
 	int windowstate;
-	WinOverrideFlag override_flag;
+	eWinOverrideFlag override_flag;
 
 	bool window_focus;
 	bool native_pixels;
-} wm_init_state = {0, 0, 0, 0, GHOST_kWindowStateNormal, 0, true, true};
+} wm_init_state = {
+	.windowstate = GHOST_WINDOW_STATE_DEFAULT,
+	.window_focus = true,
+	.native_pixels = true,
+};
 
 /* ******** win open & close ************ */
 
@@ -748,8 +757,13 @@ void wm_window_ghostwindows_ensure(wmWindowManager *wm)
 				win->sizex = wm_init_state.size_x;
 				win->sizey = wm_init_state.size_y;
 
-				win->windowstate = GHOST_kWindowStateNormal;
-				wm_init_state.override_flag &= ~WIN_OVERRIDE_GEOM;
+				if (wm_init_state.override_flag & WIN_OVERRIDE_GEOM) {
+					win->windowstate = GHOST_kWindowStateNormal;
+					wm_init_state.override_flag &= ~WIN_OVERRIDE_GEOM;
+				}
+				else {
+					win->windowstate = GHOST_WINDOW_STATE_DEFAULT;
+				}
 			}
 
 			if (wm_init_state.override_flag & WIN_OVERRIDE_WINSTATE) {
@@ -933,7 +947,7 @@ wmWindow *WM_window_open_temp(bContext *C, int x, int y, int sizex, int sizey, i
 		ED_area_newspace(C, sa, SPACE_IMAGE, false);
 	}
 	else if (type == WM_WINDOW_DRIVERS) {
-		ED_area_newspace(C, sa, SPACE_IPO, false);
+		ED_area_newspace(C, sa, SPACE_GRAPH, false);
 	}
 	else {
 		ED_area_newspace(C, sa, SPACE_USERPREF, false);
@@ -953,7 +967,7 @@ wmWindow *WM_window_open_temp(bContext *C, int x, int y, int sizex, int sizey, i
 		title = IFACE_("Bforartists User Preferences");//bfa - changed from blender to bforartists
 	else if (sa->spacetype == SPACE_FILE)
 		title = IFACE_("Bforartists File View");//bfa - changed from blender to bforartists
-	else if (sa->spacetype == SPACE_IPO)
+	else if (sa->spacetype == SPACE_GRAPH)
 		title = IFACE_("Bforartists Drivers Editor");//bfa - changed from blender to bforartists
 	else
 		title = "Bforartists";//bfa - changed from blender to bforartists
@@ -1969,6 +1983,12 @@ void WM_init_state_fullscreen_set(void)
 void WM_init_state_normal_set(void)
 {
 	wm_init_state.windowstate = GHOST_kWindowStateNormal;
+	wm_init_state.override_flag |= WIN_OVERRIDE_WINSTATE;
+}
+
+void WM_init_state_maximized_set(void)
+{
+	wm_init_state.windowstate = GHOST_kWindowStateMaximized;
 	wm_init_state.override_flag |= WIN_OVERRIDE_WINSTATE;
 }
 

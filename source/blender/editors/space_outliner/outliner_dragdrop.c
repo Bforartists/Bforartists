@@ -87,7 +87,7 @@ static TreeElement *outliner_dropzone_element(TreeElement *te, const float fmval
 }
 
 /* Find tree element to drop into. */
-static TreeElement *outliner_dropzone_find(const SpaceOops *soops, const float fmval[2], const bool children)
+static TreeElement *outliner_dropzone_find(const SpaceOutliner *soops, const float fmval[2], const bool children)
 {
 	TreeElement *te;
 
@@ -102,7 +102,7 @@ static TreeElement *outliner_dropzone_find(const SpaceOops *soops, const float f
 static TreeElement *outliner_drop_find(bContext *C, const wmEvent *event)
 {
 	ARegion *ar = CTX_wm_region(C);
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	float fmval[2];
 	UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
 
@@ -127,7 +127,7 @@ static TreeElement *outliner_drop_insert_find(
         bContext *C, const wmEvent *event,
         TreeElementInsertType *r_insert_type)
 {
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	ARegion *ar = CTX_wm_region(C);
 	TreeElement *te_hovered;
 	float view_mval[2];
@@ -223,7 +223,7 @@ static TreeElement *outliner_drop_insert_collection_find(
 
 /* ******************** Parent Drop Operator *********************** */
 
-static bool parent_drop_allowed(SpaceOops *soops, TreeElement *te, Object *potential_child)
+static bool parent_drop_allowed(SpaceOutliner *soops, TreeElement *te, Object *potential_child)
 {
 	TreeStoreElem *tselem = TREESTORE(te);
 	if (te->idcode != ID_OB || tselem->type != 0) {
@@ -240,9 +240,8 @@ static bool parent_drop_allowed(SpaceOops *soops, TreeElement *te, Object *poten
 	Scene *scene = (Scene *)outliner_search_back(soops, te, ID_SCE);
 
 	/* currently outliner organized in a way that if there's no parent scene
-		* element for object it means that all displayed objects belong to
-		* active scene and parenting them is allowed (sergey)
-		*/
+	 * element for object it means that all displayed objects belong to
+	 * active scene and parenting them is allowed (sergey) */
 	if (scene) {
 		for (ViewLayer *view_layer = scene->view_layers.first;
 		     view_layer;
@@ -259,7 +258,7 @@ static bool parent_drop_allowed(SpaceOops *soops, TreeElement *te, Object *poten
 	}
 }
 
-static bool allow_parenting_without_modifier_key(SpaceOops *soops)
+static bool allow_parenting_without_modifier_key(SpaceOutliner *soops)
 {
 	switch (soops->outlinevis) {
 		case SO_VIEW_LAYER:
@@ -273,7 +272,7 @@ static bool allow_parenting_without_modifier_key(SpaceOops *soops)
 
 static bool parent_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **UNUSED(tooltip))
 {
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 
 	bool changed = outliner_flag_set(&soops->tree, TSE_DRAG_ANY, false);
 	if (changed) ED_region_tag_redraw_no_rebuild(CTX_wm_region(C));
@@ -328,7 +327,7 @@ static int parent_drop_exec(bContext *C, wmOperator *op)
 static int parent_drop_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	Main *bmain = CTX_data_main(C);
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	TreeElement *te = outliner_drop_find(C, event);
 	TreeStoreElem *tselem = te ? TREESTORE(te) : NULL;
 
@@ -473,7 +472,7 @@ void OUTLINER_OT_parent_drop(wmOperatorType *ot)
 
 static bool parent_clear_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **UNUSED(tooltip))
 {
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 
 	if (!allow_parenting_without_modifier_key(soops)) {
 		if (!event->shift) return false;
@@ -674,7 +673,7 @@ static Collection *collection_parent_from_ID(ID *id)
 
 static bool collection_drop_init(bContext *C, wmDrag *drag, const wmEvent *event, CollectionDrop *data)
 {
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 
 	/* Get collection to drop into. */
 	TreeElementInsertType insert_type;
@@ -730,7 +729,7 @@ static bool collection_drop_init(bContext *C, wmDrag *drag, const wmEvent *event
 
 static bool collection_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **tooltip)
 {
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	ARegion *ar = CTX_wm_region(C);
 	bool changed = outliner_flag_set(&soops->tree, TSE_HIGHLIGHTED | TSE_DRAG_ANY, false);
 
@@ -803,7 +802,7 @@ static int collection_drop_invoke(bContext *C, wmOperator *UNUSED(op), const wmE
 	bool relative_after = false;
 
 	if (ELEM(data.insert_type, TE_INSERT_BEFORE, TE_INSERT_AFTER)) {
-		SpaceOops *soops = CTX_wm_space_outliner(C);
+		SpaceOutliner *soops = CTX_wm_space_outliner(C);
 
 		relative = data.to;
 		relative_after = (data.insert_type == TE_INSERT_AFTER);
@@ -874,7 +873,7 @@ void OUTLINER_OT_collection_drop(wmOperatorType *ot)
 
 /* ********************* Outliner Drag Operator ******************** */
 
-static TreeElement *outliner_item_drag_element_find(SpaceOops *soops, ARegion *ar, const wmEvent *event)
+static TreeElement *outliner_item_drag_element_find(SpaceOutliner *soops, ARegion *ar, const wmEvent *event)
 {
 	/* note: using EVT_TWEAK_ events to trigger dragging is fine,
 	 * it sends coordinates from where dragging was started */
@@ -885,7 +884,7 @@ static TreeElement *outliner_item_drag_element_find(SpaceOops *soops, ARegion *a
 static int outliner_item_drag_drop_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
 {
 	ARegion *ar = CTX_wm_region(C);
-	SpaceOops *soops = CTX_wm_space_outliner(C);
+	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	TreeElement *te = outliner_item_drag_element_find(soops, ar, event);
 
 	if (!te) {
