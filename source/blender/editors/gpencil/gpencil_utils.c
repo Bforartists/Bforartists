@@ -95,7 +95,7 @@ bGPdata **ED_gpencil_data_get_pointers_direct(ID *screen_id, ScrArea *sa, Scene 
 
 		switch (sa->spacetype) {
 			/* XXX: Should we reduce reliance on context.gpencil_data for these cases? */
-			case SPACE_BUTS: /* properties */
+			case SPACE_PROPERTIES: /* properties */
 			case SPACE_INFO: /* header info (needed after workspaces merge) */
 			{
 				if (ob && (ob->type == OB_GPENCIL)) {
@@ -460,7 +460,7 @@ bool ED_gpencil_stroke_can_use_direct(const ScrArea *sa, const bGPDstroke *gps)
 	/* filter stroke types by flags + spacetype */
 	if (gps->flag & GP_STROKE_3DSPACE) {
 		/* 3D strokes - only in 3D view */
-		return ((sa->spacetype == SPACE_VIEW3D) || (sa->spacetype == SPACE_BUTS));
+		return ((sa->spacetype == SPACE_VIEW3D) || (sa->spacetype == SPACE_PROPERTIES));
 	}
 	else if (gps->flag & GP_STROKE_2DIMAGE) {
 		/* Special "image" strokes - only in Image Editor */
@@ -720,8 +720,8 @@ void gp_point_to_xy_fl(
 
 
 /**
-* generic based on gp_point_to_xy_fl
-*/
+ * generic based on gp_point_to_xy_fl
+ */
 void gp_point_3d_to_xy(const GP_SpaceConversion *gsc, const short flag, const float pt[3], float xy[2])
 {
 	const ARegion *ar = gsc->ar;
@@ -1648,54 +1648,53 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	/* for paint use paint brush size and color */
 	if (gpd->flag & GP_DATA_STROKE_PAINTMODE) {
 		brush = scene->toolsettings->gp_paint->paint.brush;
+		if ((brush == NULL) || (brush->gpencil_settings == NULL)) {
+			return;
+		}
+
 		/* while drawing hide */
 		if ((gpd->runtime.sbuffer_size > 0) &&
-		    (brush) && ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
+		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
 		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP) == 0))
 		{
 			return;
 		}
 
-		if (brush) {
-			if ((brush->gpencil_settings->flag & GP_BRUSH_ENABLE_CURSOR) == 0) {
-				return;
-			}
+		if ((brush->gpencil_settings->flag & GP_BRUSH_ENABLE_CURSOR) == 0) {
+			return;
+		}
 
-			/* eraser has special shape and use a different shader program */
-			if (brush->gpencil_tool == GPAINT_TOOL_ERASE) {
-				ED_gpencil_brush_draw_eraser(brush, x, y);
-				return;
-			}
+		/* eraser has special shape and use a different shader program */
+		if (brush->gpencil_tool == GPAINT_TOOL_ERASE) {
+			ED_gpencil_brush_draw_eraser(brush, x, y);
+			return;
+		}
 
-			/* get current drawing color */
-			ma = BKE_gpencil_get_material_from_brush(brush);
-			if (ma == NULL) {
-				BKE_gpencil_material_ensure(bmain, ob);
-				/* assign the first material to the brush */
-				ma = give_current_material(ob, 1);
-				brush->gpencil_settings->material = ma;
-			}
-			gp_style = ma->gp_style;
+		/* get current drawing color */
+		ma = BKE_gpencil_get_material_from_brush(brush);
+		if (ma == NULL) {
+			BKE_gpencil_material_ensure(bmain, ob);
+			/* assign the first material to the brush */
+			ma = give_current_material(ob, 1);
+			brush->gpencil_settings->material = ma;
+		}
+		gp_style = ma->gp_style;
 
-			/* after some testing, display the size of the brush is not practical because
-			 * is too disruptive and the size of cursor does not change with zoom factor.
-			 * The decision was to use a fix size, instead of brush->thickness value.
-			 */
-			if ((gp_style) && (GPENCIL_PAINT_MODE(gpd)) &&
-			    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
-			    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP) == 0) &&
-			    (brush->gpencil_tool == GPAINT_TOOL_DRAW))
-			{
-				radius = 2.0f;
-				copy_v3_v3(color, gp_style->stroke_rgba);
-			}
-			else {
-				radius = 5.0f;
-				copy_v3_v3(color, brush->add_col);
-			}
+		/* after some testing, display the size of the brush is not practical because
+		 * is too disruptive and the size of cursor does not change with zoom factor.
+		 * The decision was to use a fix size, instead of brush->thickness value.
+		 */
+		if ((gp_style) && (GPENCIL_PAINT_MODE(gpd)) &&
+		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
+		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP) == 0) &&
+		    (brush->gpencil_tool == GPAINT_TOOL_DRAW))
+		{
+			radius = 2.0f;
+			copy_v3_v3(color, gp_style->stroke_rgba);
 		}
 		else {
-			return;
+			radius = 5.0f;
+			copy_v3_v3(color, brush->add_col);
 		}
 	}
 

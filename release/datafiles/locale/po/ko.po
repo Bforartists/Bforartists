@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -375,10 +375,6 @@ msgid "Replace"
 msgstr "교체"
 
 
-msgid "Result strip replaces the accumulated results by amount specified by influence"
-msgstr "결과 스트립은 영향력으로 지정된 양에 의하여 누적된 결과를 대체합니다"
-
-
 msgid "Add"
 msgstr "추가"
 
@@ -493,14 +489,6 @@ msgstr "모션 경로"
 
 msgid "Motion Path settings for visualization"
 msgstr "시각화에 대한 모션 경로 설정"
-
-
-msgid "Onion Skinning"
-msgstr "어니언 스키닝"
-
-
-msgid "Onion Skinning (ghosting) settings for visualization"
-msgstr "시각화에 대한 어니언 스키닝 (고스팅) 설정"
 
 
 msgid "Motion Path Settings"
@@ -637,70 +625,6 @@ msgstr "범위에서"
 
 msgid "Display Paths of poses within specified range"
 msgstr "지정된 범위 내에서 포즈의 경로를 표시"
-
-
-msgid "Onion Skinning Settings"
-msgstr "어니언 스키닝 설정"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "애니메이션 시각화에 대한 어니언 스키닝 설정"
-
-
-msgid "End frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "표시할 고스트 범위의 종료 프레임 ( '현재 프레임 주위에' 어니언-스키닝 방법이 아님)"
-
-
-msgid "Starting frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "표시하는 고스트 범위의 시작하는 프레임 ('현재 프레임 주위에' 어니언 스키닝 메서드에 대해 하지 않음)"
-
-
-msgid "Number of frames between ghosts shown (not for 'On Keyframes' Onion-skinning method)"
-msgstr "표시된 고스트 사이의 프레임의 수 ('키 프레임 에서' 어니언 스키닝 메서드에 대해서 만)"
-
-
-msgid "On Selected Bones Only"
-msgstr "오직 선택된 본에"
-
-
-msgid "For Pose-Mode drawing, only draw ghosts for selected bones"
-msgstr "포즈 모드 그리기의 경우 선택한 뼈에 대한 유령 만 그립니다"
-
-
-msgid "Type"
-msgstr "유형"
-
-
-msgid "Method used for determining what ghosts get drawn"
-msgstr "그려지는 고스트를 정의하기 위해 사용되는 메서드"
-
-
-msgid "No Ghosts"
-msgstr "고스트 없음"
-
-
-msgid "Do not show any ghosts"
-msgstr "모든 고스트 표시하지 않음"
-
-
-msgid "Around Current Frame"
-msgstr "현재 프레임 주위에"
-
-
-msgid "Show ghosts from around the current frame"
-msgstr "현재 프레임 주위에서 고스트를 표시"
-
-
-msgid "Show ghosts for the specified frame range"
-msgstr "지정된 프레임 범위에 대한 고스트를 표시"
-
-
-msgid "On Keyframes"
-msgstr "키 프레임에서"
-
-
-msgid "Show ghosts on keyframes"
-msgstr "키 프레임에서 고스트를 표시"
 
 
 msgid "Any Type"
@@ -1871,6 +1795,10 @@ msgid "Boid rule name"
 msgstr "보이드 규칙 이름"
 
 
+msgid "Type"
+msgstr "유형"
+
+
 msgid "Goal"
 msgstr "목표"
 
@@ -2703,10 +2631,6 @@ msgid "Brush Capabilities"
 msgstr "브러시 기능"
 
 
-msgid "Read-only indications of which brush operations are supported by the current brush"
-msgstr "현재 브러시에서 지원되는 브러시 작업의 읽기 전용 표시"
-
-
 msgid "Has Overlay"
 msgstr "중첩이 있음"
 
@@ -2721,6 +2645,78 @@ msgstr "스무스 스트로크가 있음"
 
 msgid "Has Spacing"
 msgstr "간격이 있음"
+
+
+msgid "Image Paint Capabilities"
+msgstr "이미지의 페​​인트 기능"
+
+
+msgid "Has Accumulate"
+msgstr "누적이 있음"
+
+
+msgid "Has Radius"
+msgstr "반경이 있음"
+
+
+msgid "Has Space Attenuation"
+msgstr "공간 감쇠가 있음"
+
+
+msgid "Sculpt Capabilities"
+msgstr "조형 기능"
+
+
+msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
+msgstr "현재 조형 도구에서 지원되는 브러시 작업에 읽기 전용 표시"
+
+
+msgid "Has Auto Smooth"
+msgstr "자동 스무스가 있음"
+
+
+msgid "Has Gravity"
+msgstr "중력이 있음"
+
+
+msgid "Has Height"
+msgstr "높이가 있음"
+
+
+msgid "Has Jitter"
+msgstr "지터가 있음"
+
+
+msgid "Has Crease/Pinch Factor"
+msgstr "주름/핀치 팩터가 있음"
+
+
+msgid "Has Persistence"
+msgstr "지속성이 있음"
+
+
+msgid "Has Pinch Factor"
+msgstr "핀치 팩터가 있음"
+
+
+msgid "Has Plane Offset"
+msgstr "평면 오프셋이 있음"
+
+
+msgid "Has Rake Factor"
+msgstr "레이크 팩터가 있음"
+
+
+msgid "Has Sculpt Plane"
+msgstr "조형 평면이 있음"
+
+
+msgid "Has Secondary Color"
+msgstr "보조의 색상이 있음"
+
+
+msgid "Has Strength Pressure"
+msgstr "강도 압력을 가짐"
 
 
 msgid "Angle"
@@ -6200,10 +6196,6 @@ msgid "Safe Areas"
 msgstr "안전 영역"
 
 
-msgid "Safe Areas used in 3D view and the VSE"
-msgstr "3D 뷰와 VSE에서 사용된 안전 영역"
-
-
 msgid "Action Safe Margins"
 msgstr "액션 안전 여백"
 
@@ -7855,10 +7847,6 @@ msgid "Muted"
 msgstr "음소거된"
 
 
-msgid "F-Curve is not evaluated"
-msgstr "F-커브는 평가되지 않음"
-
-
 msgid "Sampled Points"
 msgstr "샘플된 포인트"
 
@@ -8242,10 +8230,6 @@ msgstr "사용 중지됨"
 
 msgid "F-Curve Modifier has invalid settings and will not be evaluated"
 msgstr "F-커브 모디파이어는 잘못된 설정을 가지고 있으며 평가되지 않음"
-
-
-msgid "F-Curve Modifier will not be evaluated"
-msgstr "F-커브 수정이 평가되지 않음"
 
 
 msgid "F-Curve Modifier's panel is expanded in UI"
@@ -11052,6 +11036,10 @@ msgid "Factor of tinting color"
 msgstr "착색하는 색상의 팩터"
 
 
+msgid "Onion Skinning"
+msgstr "어니언 스키닝"
+
+
 msgid "GPencil Sculpt Brush"
 msgstr "GPencil 조형 브러시"
 
@@ -11106,6 +11094,14 @@ msgstr "강도 압력"
 
 msgid "Enable tablet pressure sensitivity for strength"
 msgstr "강도에 대한 타블렛 압력 감도를 사용"
+
+
+msgid "Spacing"
+msgstr "간격"
+
+
+msgid "Grid"
+msgstr "격자"
 
 
 msgid "GPencil Sculpt Settings"
@@ -11272,6 +11268,14 @@ msgid "Enable cyclic drawing, closing the stroke"
 msgstr "스트로크를 닫기, 순환 그리기를 사용"
 
 
+msgid "End Cap"
+msgstr "종료 캡"
+
+
+msgid "Flat"
+msgstr "플래트"
+
+
 msgid "Groups"
 msgstr "그룹"
 
@@ -11298,6 +11302,10 @@ msgstr "스트로크 데이터 포인트"
 
 msgid "Stroke is selected for viewport editing"
 msgstr "스트로크는 뷰포트 편집을 위해 선택되었습니다"
+
+
+msgid "Start Cap"
+msgstr "시작 캡"
 
 
 msgid "Triangles"
@@ -11939,50 +11947,6 @@ msgid "Edit Bones"
 msgstr "본을 편집"
 
 
-msgid "Ghosting End Frame"
-msgstr "고스팅 종료 프레임"
-
-
-msgid "Ghosting Start Frame"
-msgstr "고스팅 시작 프레임"
-
-
-msgid "Ghosting Frame Step"
-msgstr "고스팅 프레임 단계"
-
-
-msgid "Frame step for Ghosts (not for 'On Keyframes' Onion-skinning method)"
-msgstr "고스트를 위한 프레임 단계 ( '키 프레임' 어니언-스키닝 방법이 아님)"
-
-
-msgid "Ghosting Step"
-msgstr "고스팅 단계"
-
-
-msgid "Number of frame steps on either side of current frame to show as ghosts (only for 'Around Current Frame' Onion-skinning method)"
-msgstr "고스트로 표시하는 현재 프레임의 양측에 있는 프레임 단계 수 ( '현재 프레임 주변' 어니언 스키닝 방법에 대해서 만)"
-
-
-msgid "Ghost Type"
-msgstr "고스트 유형"
-
-
-msgid "Method of Onion-skinning for active Action"
-msgstr "활성 액션에 대한 어니언 스키닝의 메서드 "
-
-
-msgid "Display Ghosts of poses within a fixed number of frames around the current frame"
-msgstr "현재 프레임 주위의 고정 된 프레임 수 내에서 포즈의 고스트를 표시합니다"
-
-
-msgid "Display Ghosts of poses within specified range"
-msgstr "지정된 범위 내에서 포즈의 고스트를 표시"
-
-
-msgid "Display Ghosts of poses on Keyframes"
-msgstr "키 프레임에 포즈의 고스트를 표시"
-
-
 msgid "Is Editmode"
 msgstr "편집 모드의 여부"
 
@@ -12351,14 +12315,6 @@ msgid "File path to brush icon"
 msgstr "브러시 아이콘에 파일 경로"
 
 
-msgid "Image Painting Capabilities"
-msgstr "이미지 페인팅 기능"
-
-
-msgid "Brush's capabilities in image paint mode"
-msgstr "이미지 페인트 모드에서 브러시의 기능"
-
-
 msgid "Image Paint Tool"
 msgstr "이미지 페인트 도구"
 
@@ -12459,14 +12415,6 @@ msgid "Interval between paints for Airbrush"
 msgstr "에어 브러시에 대한 간격 사이의 페이트"
 
 
-msgid "Sculpt Capabilities"
-msgstr "조형 기능"
-
-
-msgid "Brush's capabilities in sculpt mode"
-msgstr "조형 모드에서 브러시의 기능"
-
-
 msgid "Sculpt Plane"
 msgstr "조형 평면"
 
@@ -12561,10 +12509,6 @@ msgstr "스무스 스트로크 반경"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "스트로크 계속하기 전에 마지막 포인트로부터의 최소 거리"
-
-
-msgid "Spacing"
-msgstr "간격"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -15304,10 +15248,6 @@ msgid "Type of preview render"
 msgstr "미리보기 렌더의 유형"
 
 
-msgid "Flat"
-msgstr "플래트"
-
-
 msgid "Flat XY plane"
 msgstr "플래트 XY 평면"
 
@@ -16056,10 +15996,6 @@ msgid "Extra scaling added to the scale of the object"
 msgstr "오브젝트의 규모에 추가된 추가 규모 조절"
 
 
-msgid "Absolute bounding box dimensions of the object"
-msgstr "오브젝트의 절대적인 경계 상자 크기"
-
-
 msgid "Object boundary display type"
 msgstr "오브젝트 경계 표시 유형"
 
@@ -16126,10 +16062,6 @@ msgstr "오리진 오프셋 거리"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "물리 시뮬레이션에서 필드로 오브젝트를 사용하는 설정"
-
-
-msgid "Number of frames to use between DupOff frames"
-msgstr "듀플오프 프레임 사이에 사용하는 프레임의 번호"
 
 
 msgid "Verts"
@@ -16472,14 +16404,6 @@ msgid "Add the object's wireframe over solid drawing"
 msgstr "솔리드 그리기를 통해 오브젝트의 와이어프레임을 추가"
 
 
-msgid "Slow Parent Offset"
-msgstr "느린 부모 오프셋"
-
-
-msgid "Delay in the parent relationship"
-msgstr "부모 관계에서 지연"
-
-
 msgid "Soft Body Settings"
 msgstr "소프트 바디 설정"
 
@@ -16522,14 +16446,6 @@ msgstr "셰이프 키 편집 모드"
 
 msgid "Apply shape keys in edit mode (for Meshes only)"
 msgstr "편집 모드에서 셰이프 키를 적용 (메쉬 전용에 대한)"
-
-
-msgid "Slow Parent"
-msgstr "느린 부모"
-
-
-msgid "Create a delay in the parent relationship (beware: this isn't renderfarm safe and may be invalid after jumping around the timeline)"
-msgstr "부모 관계에서 지연을 사용 (조심: 이것은 안전하게 렌더 팜이 되지 않고 타임 라인 주위에 점프하기 이후 유효하지 않을 수 있습니다)"
 
 
 msgid "Vertex Groups"
@@ -16904,10 +16820,6 @@ msgid "Jittered"
 msgstr "지터화"
 
 
-msgid "Grid"
-msgstr "격자"
-
-
 msgid "Amount of air-drag"
 msgstr "공기 드래그의 총액"
 
@@ -17214,10 +17126,6 @@ msgstr "물리 유형"
 
 msgid "Particle physics type"
 msgstr "파티클 물리 유형"
-
-
-msgid "No"
-msgstr "없음"
 
 
 msgid "Newtonian"
@@ -19836,26 +19744,6 @@ msgstr "프레임 변경에 항상 이미지를 새로 고침"
 
 msgid "Cycle the images in the movie"
 msgstr "동영상에서 사이클 이미지"
-
-
-msgid "Image Paint Capabilities"
-msgstr "이미지의 페​​인트 기능"
-
-
-msgid "Read-only indications of which brush operations are supported by the current image paint brush"
-msgstr "현재 이미지 페인트 브러시에서 지원되는 브러시 작업에 읽기 전용 표시"
-
-
-msgid "Has Accumulate"
-msgstr "누적이 있음"
-
-
-msgid "Has Radius"
-msgstr "반경이 있음"
-
-
-msgid "Has Space Attenuation"
-msgstr "공간 감쇠가 있음"
 
 
 msgid "Key Configuration"
@@ -23067,10 +22955,6 @@ msgid "Help"
 msgstr "도움말"
 
 
-msgid "Online Resources"
-msgstr "온라인 참조"
-
-
 msgid "Presets"
 msgstr "프리셋"
 
@@ -24003,10 +23887,6 @@ msgid "Curve object to fit array length to"
 msgstr "다음으로 배열 길이에 맞게 곡선 오브젝트"
 
 
-msgid "End Cap"
-msgstr "종료 캡"
-
-
 msgid "Mesh object to use as an end cap"
 msgstr "종료 캡으로 사용하는 메쉬 오브젝트"
 
@@ -24079,10 +23959,6 @@ msgid "The size of the geometry will determine the distance between arrayed item
 msgstr "배열된 항목들 사이에 결정하려는 지오메트리의 크기"
 
 
-msgid "Start Cap"
-msgstr "시작 캡"
-
-
 msgid "Mesh object to use as a start cap"
 msgstr "시작 캡으로 사용하는 메쉬 오브젝트"
 
@@ -24147,8 +24023,8 @@ msgid "Largest"
 msgstr "최대"
 
 
-msgid "Face Area"
-msgstr "페이스 영역"
+msgid "New"
+msgstr "새로운"
 
 
 msgid "Limit Method"
@@ -24249,10 +24125,6 @@ msgstr "버텍스/코너를 베벨, 에지 안함"
 
 msgid "Vertex group name"
 msgstr "버텍스 그룹 이름"
-
-
-msgid "Bevel value/amount"
-msgstr "베벨 값/총액"
 
 
 msgid "Boolean Modifier"
@@ -27106,6 +26978,10 @@ msgid "Distance between the waves"
 msgstr "웨이브 사이의 거리"
 
 
+msgid "Face Area"
+msgstr "페이스 영역"
+
+
 msgid "Wireframe Modifier"
 msgstr "와이어프레임 모디파이어"
 
@@ -28474,10 +28350,6 @@ msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "참조된 액션에서 모든 F-커브에 영향을 미치는 모디파이어"
 
 
-msgid "NLA Strip is not evaluated"
-msgstr "NLA 스트립은 평가되지 않음"
-
-
 msgid "Number of times to repeat the action range"
 msgstr "액션 범위를 반복하는 횟수"
 
@@ -28616,10 +28488,6 @@ msgstr "NLA 트랙 자체가 평가됩니다 (즉, 활성 액션 및 동일한 A
 
 msgid "NLA Track is locked"
 msgstr "NLA 트랙이 잠김"
-
-
-msgid "NLA Track is not evaluated"
-msgstr "NLA 트랙은 평가되지 않음"
 
 
 msgid "NLA Track is selected"
@@ -37904,10 +37772,6 @@ msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "직사각형의 지역 내에서 그리스 팬슬 스트로크를 선택"
 
 
-msgid "New"
-msgstr "새로운"
-
-
 msgid "Select Grease Pencil strokes using brush selection"
 msgstr "브러시 선택을 사용하여 그리스 펜슬 스트로크를 선택"
 
@@ -43854,10 +43718,6 @@ msgid "Apply active object links to other selected objects"
 msgstr "다른 선택된 오브젝트에 활성 오브젝트 연결을 적용"
 
 
-msgid "DupliGroup"
-msgstr "듀플리 그룹"
-
-
 msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "오브젝트를 장면에 연결"
@@ -44781,24 +44641,6 @@ msgstr "루트로 선택된 버텍스를 마크"
 
 
 msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "느린 부모를 지우기"
-
-
-msgid "Clear the object's slow parent"
-msgstr "오브젝트의 느린 부모을 지우기"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "느린 부모를 설정"
-
-
-msgid "Set the object's slow parent"
-msgstr "오브젝트의 느린 부모를 설정"
-
-
-msgctxt "Operator"
 msgid "Add Speaker"
 msgstr "스피커를 추가"
 
@@ -45646,10 +45488,6 @@ msgid "Purge All"
 msgstr "모두를 퍼지"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file (cannot be undone, saves to current .blend file)"
-msgstr "파일에서 사용자가 없는 모든 고아 데이터 블록을 지우기 (실행 취소할 수 없으며 현재 .blend 파일로 저장)"
-
-
 msgctxt "Operator"
 msgid "Drop to Clear Parent"
 msgstr "부모를 지우기하는 드롭"
@@ -45994,10 +45832,6 @@ msgstr "마스크하는 버텍스를 표시 또는 숨기기 (0.5의 최소의 �
 msgctxt "Operator"
 msgid "Image from View"
 msgstr "뷰에서 이미지"
-
-
-msgid "Make an image from the current 3D view for re-projection"
-msgstr "재투영을 위해 현재 3D 뷰에서 이미지를 만들기"
 
 
 msgid "Name of the file"
@@ -47228,34 +47062,6 @@ msgid "Set the rotation representation used by selected bones"
 msgstr "선택된 본에 의해 사용된 회전 표현을 설정"
 
 
-msgid "No Gimbal Lock (default)"
-msgstr "짐벌 락 없음 (기본 값)"
-
-
-msgid "XYZ Rotation Order (prone to Gimbal Lock)"
-msgstr "XYZ 회전 순서 (짐벌 락하는 경향)"
-
-
-msgid "XZY Rotation Order (prone to Gimbal Lock)"
-msgstr "XZY 회전 순서 (짐벌 락하는 경향)"
-
-
-msgid "YXZ Rotation Order (prone to Gimbal Lock)"
-msgstr "YXZ 회전 순서 (짐벌 락하는 경향)"
-
-
-msgid "YZX Rotation Order (prone to Gimbal Lock)"
-msgstr "YZX 회전 순서 (짐벌 락하는 경향)"
-
-
-msgid "ZXY Rotation Order (prone to Gimbal Lock)"
-msgstr "ZXY 회전 오일러(짐벌 락하는 경향)"
-
-
-msgid "ZYX Rotation Order (prone to Gimbal Lock)"
-msgstr "ZYX 회전 오일러 (짐벌 락하는 경향)"
-
-
 msgctxt "Operator"
 msgid "Clear Pose Scale"
 msgstr "포즈 규모를 지우기"
@@ -47364,24 +47170,6 @@ msgstr "캐시에서 베이크"
 
 msgid "Bake from cache"
 msgstr "캐시에서 베이크"
-
-
-msgctxt "Operator"
-msgid "Free Physics Bake"
-msgstr "자유 물리 베이크"
-
-
-msgid "Free physics bake"
-msgstr "자유 물리 베이크"
-
-
-msgctxt "Operator"
-msgid "Free All Physics Bakes"
-msgstr "모두 자유 물리 베이크"
-
-
-msgid "Free all baked caches of all objects in the current scene"
-msgstr "현재 장면에서 모든 오브젝트의 캐시를 모두 자유 베이크됨"
 
 
 msgctxt "Operator"
@@ -52254,10 +52042,6 @@ msgid "Run as Background Job"
 msgstr "백그라운드 작업으로 실행"
 
 
-msgid "Enable this to run the import in the background, disable to block Blender while importing"
-msgstr "백그라운드에서 가져오기를 실행하려면 이 옵션을 활성화하고, 가져오는 동안 블렌더를 차단하려면 비활성화 하십시오"
-
-
 msgid "Ogawa"
 msgstr "오가와"
 
@@ -52401,10 +52185,6 @@ msgstr "엘렘빅을 가져오기"
 
 msgid "Load an Alembic archive"
 msgstr "엘렘빅 아카이브에서 블러오기"
-
-
-msgid "Enable this to run the export in the background, disable to block Blender while exporting"
-msgstr "백그라운드에서 내보내기를 실행하려면 이 옵션을 활성화하고, 내보내는 동안 블렌더를 차단하려면 비활성화 하십시오"
 
 
 msgid "Is Sequence"
@@ -53521,10 +53301,6 @@ msgid "Load Factory Settings"
 msgstr "최초 설정을 불러오기"
 
 
-msgid "Load default file and user preferences"
-msgstr "기본 파일 및 사용자 환경 설정을 불러오기"
-
-
 msgctxt "Operator"
 msgid "Reload History File"
 msgstr "기록 파일을 다시 불러오기"
@@ -53688,10 +53464,6 @@ msgstr "블렌더 파일 저장"
 
 msgid "Save the current Blender file"
 msgstr "현재 블렌더 파일을 저장함"
-
-
-msgid "Save user preferences separately, overrides startup file preferences"
-msgstr "별도로 사용자의 기본 설정을 저장, 스타트업 파일의 환경 설정 보다 우선합니다"
 
 
 msgctxt "Operator"
@@ -54212,10 +53984,6 @@ msgid "Constant Detail"
 msgstr "상수 디테일"
 
 
-msgid "Mesh detail is constant in object space according to detail size"
-msgstr "메쉬 디테일은 디테일 크기에 따라 오즈젝트 공간에서 상수"
-
-
 msgid "Brush Detail"
 msgstr "브러시 디테일"
 
@@ -54388,6 +54156,70 @@ msgid "Render Presets"
 msgstr "렌더 프리셋"
 
 
+msgid "Timeline"
+msgstr "타임라인"
+
+
+msgid "Walk"
+msgstr "걷기"
+
+
+msgid "Auto Run Python Scripts"
+msgstr "파이썬 스크립트 자동 실행"
+
+
+msgid "Bone Color Sets"
+msgstr "본 색상 설정"
+
+
+msgid "Styles"
+msgstr "스타일"
+
+
+msgid "Text Style"
+msgstr "텍스트 스타일"
+
+
+msgid "User Interface"
+msgstr "사용자 인터페이스"
+
+
+msgid "Pie Menu"
+msgstr "파이 메뉴"
+
+
+msgid "Regular"
+msgstr "정규"
+
+
+msgid "Theme Space"
+msgstr "테마 공간"
+
+
+msgid "Theme Space List"
+msgstr "테마 공백 목록"
+
+
+msgid "Panel Colors"
+msgstr "패널 색상"
+
+
+msgid "Video Sequence Editor"
+msgstr "비디오 시퀀스 편집기"
+
+
+msgid "3D View"
+msgstr "3D 뷰"
+
+
+msgid "Gradient Colors"
+msgstr "그라디언트 색상"
+
+
+msgid "Development"
+msgstr "개발"
+
+
 msgid "Bone Constraints"
 msgstr "본 제약"
 
@@ -54551,10 +54383,6 @@ msgid "Geometry Data"
 msgstr "지오메트리 데이터"
 
 
-msgid "Ghost"
-msgstr "고스트"
-
-
 msgid "Paragraph"
 msgstr "단락"
 
@@ -54603,6 +54431,10 @@ msgid "System"
 msgstr "시스템"
 
 
+msgid "Scopes"
+msgstr "범위"
+
+
 msgid "Sample Line"
 msgstr "샘플 라인"
 
@@ -54629,10 +54461,6 @@ msgstr "UV 조형 곡선"
 
 msgid "Histogram"
 msgstr "히스토그램"
-
-
-msgid "Scopes"
-msgstr "범위"
 
 
 msgid "Vectorscope"
@@ -55599,6 +55427,10 @@ msgid "Compression method to be used"
 msgstr "사용되는 압축 메서드 "
 
 
+msgid "No"
+msgstr "없음"
+
+
 msgid "No compression"
 msgstr "압축 없음"
 
@@ -56007,12 +55839,12 @@ msgid "Active Section"
 msgstr "활성 섹션"
 
 
-msgid "Active section of the user preferences shown in the user interface"
-msgstr "사용자 인터페이스에 표시된 사용자 환경 설정의 활성 섹션"
-
-
 msgid "Editing"
 msgstr "편집"
+
+
+msgid "File Paths"
+msgstr "파일 경로"
 
 
 msgid "Application Template"
@@ -56031,10 +55863,6 @@ msgid "Settings for interacting with Blender data"
 msgstr "블렌더 데이터와 함께 상호 작용에 대한 설정"
 
 
-msgid "File Paths"
-msgstr "파일 경로"
-
-
 msgid "Default paths for external files"
 msgstr "외부 파일에 대한 기본 경로"
 
@@ -56049,10 +55877,6 @@ msgstr "시스템 & OpenGL"
 
 msgid "Graphics driver and operating system settings"
 msgstr "그래픽 드라이버 및 운영 체제 설정"
-
-
-msgid "Styles"
-msgstr "스타일"
 
 
 msgid "Version of Blender the userpref.blend was saved with"
@@ -56203,12 +56027,12 @@ msgid "Show warning indicators when transforming objects and bones if auto keyin
 msgstr "자동 키잉을 사용하는 경우 오브젝트와 본을 변환할 때 경고 표시자를 표시"
 
 
-msgid "Release confirms"
-msgstr "릴리즈 확인"
+msgid "Cursor Lock Adjust"
+msgstr "커서 잠금 조정"
 
 
-msgid "Moving things with a mouse drag confirms when releasing the button"
-msgstr "버튼을 해제하면 마우스 드래그와 함께 물건을 이동을 확인"
+msgid "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)"
+msgstr "새 위치로 '이동'하지 않고 커서를 놓습니다 (커서를 잠근 경우)"
 
 
 msgid "Duplicate Action"
@@ -56499,14 +56323,6 @@ msgid "Alternate script path, matching the default layout with subdirs: startup,
 msgstr "기본 레이아웃을 하위 디렉토리와 일치 시키는 대체 스크립트 경로: 시작, 추가 기능 및 모듈 (다시 시작해야 함)"
 
 
-msgid "Hide Dot Files/Data-Blocks"
-msgstr "도트 파일/데이터 블록을 숨기기"
-
-
-msgid "Hide files/data-blocks that start with a dot (.*)"
-msgstr "도트 (.*)로 시작하는 파일/데이터 블록을 숨기기"
-
-
 msgid "Show Thumbnails"
 msgstr "썸네일을 표시"
 
@@ -56563,14 +56379,6 @@ msgid "Display only files with extensions in the image select window"
 msgstr "이미지 선택 창에서 확장자를 가진 파일만 표시"
 
 
-msgid "Keep Session"
-msgstr "세션을 유지"
-
-
-msgid "Always load session recovery and save it after quitting Blender"
-msgstr "항상 세션 복구를 불러오기 및 블렌더를 종료 한 이후에 저장"
-
-
 msgid "Load user interface setup when loading .blend files"
 msgstr ".blend 파일을 불러올 때 사용자 인터페이스 설정을 불러오기"
 
@@ -56587,12 +56395,12 @@ msgid "Enables automatic saving of preview images in the .blend file"
 msgstr ".blend 파일에서 미리보기 이미지의 자동 저장을 사용"
 
 
-msgid "Key Config"
-msgstr "키 구성"
+msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
+msgstr "자동으로 스트립트를 시작에 모든 .blend 파일을 허용 (신뢰할수 없는 소스로 부터 blend 파일과 함께 위험)"
 
 
-msgid "The name of the active key configuration"
-msgstr "활성 키 구성의 이름"
+msgid "Automatically convert all new tabs into spaces for new and loaded text files"
+msgstr "자동으로 새로운 및 불러온 텍스트 파일에 대한 공간으로 모든 새로운 탭을 변환"
 
 
 msgid "Drag Threshold"
@@ -56633,10 +56441,6 @@ msgstr "뷰 네비게이션"
 
 msgid "Which method to use for viewport navigation"
 msgstr "뷰포트 네비게이션에 대해 사용하는 메서드"
-
-
-msgid "Walk"
-msgstr "걷기"
 
 
 msgid "Interactively walk or free navigate around the scene"
@@ -56783,6 +56587,26 @@ msgid "Number of pixels you have to drag before tweak event is triggered"
 msgstr "트윅 이벤트가 트리거되기 전에 드래그해야 하는 픽셀 수"
 
 
+msgid "Auto Perspective"
+msgstr "자동 원근법"
+
+
+msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
+msgstr "위쪽/앞쪽/측면 뷰에서 변경 시 자동으로 정사영과 원근법 사이에서 전환"
+
+
+msgid "Camera Parent Lock"
+msgstr "카메라 부모를 잠금"
+
+
+msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
+msgstr "카메라가 뷰와 플라이 모드에 고정되어 있으면 카메라가 아닌 부모를 변형"
+
+
+msgid "Moving things with a mouse drag confirms when releasing the button"
+msgstr "버튼을 해제하면 마우스 드래그와 함께 물건을 이동을 확인"
+
+
 msgid "Emulate Numpad"
 msgstr "넘버패드를 에뮬레이트"
 
@@ -56799,12 +56623,20 @@ msgid "Allow moving the mouse outside the view on some manipulations (transform,
 msgstr "일부 조작에 뷰 외부로 마우스 이동을 허용 (변환, UI 제어 드래그)"
 
 
+msgid "Auto Depth"
+msgstr "자동 깊이"
+
+
+msgid "Use the depth under the mouse to improve view pan/rotate/zoom functionality"
+msgstr "마우스 아래의 깊이를 사용하여 보기 이동/회전/확대/축소 기능을 향상 시킵니다"
+
+
 msgid "Emulate 3 Button Mouse"
 msgstr "3 버튼 마우스를 에뮬레이트"
 
 
-msgid "Emulate Middle Mouse with Alt+Left Mouse (doesn't work with Left Mouse Select option)"
-msgstr "Alt+Left Mouse 시 Middle Mouse를 에뮬레이트 (왼쪽 마우스 선택 옵션일 때 작동하지 않음)"
+msgid "Use selection as the pivot point"
+msgstr "피벗 포인트로 선택을 사용"
 
 
 msgid "Trackpad Natural"
@@ -56815,8 +56647,12 @@ msgid "If your system uses 'natural' scrolling, this option keeps consistent tra
 msgstr "시스템이 '자연스러운' 스크롤링을 사용하는 경우이 옵션은 UI 전체에서 일관된 트랙 패드 사용을 유지합니다"
 
 
-msgid "View Rotation"
-msgstr "뷰 회전"
+msgid "Zoom To Mouse Position"
+msgstr "마우스 위치로 줌"
+
+
+msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgstr "2D 창 중심 대신 3D뷰에서 마우스 포인터의 위치를 확대"
 
 
 msgid "Zoom Axis"
@@ -56873,6 +56709,14 @@ msgstr "휠 스크롤 라인"
 
 msgid "Number of lines scrolled at a time with the mouse wheel"
 msgstr "마우스 휠로 한 번에 스크롤되는 라인 수"
+
+
+msgid "Key Config"
+msgstr "키 구성"
+
+
+msgid "The name of the active key configuration"
+msgstr "활성 키 구성의 이름"
 
 
 msgid "Anisotropic Filter"
@@ -57047,12 +56891,188 @@ msgid "Set audio sampling rate to 192000 samples per second"
 msgstr "오디오 샘플링 비율을 초 당 192000 샘플로 설정"
 
 
-msgid "Author"
-msgstr "작성자"
+msgid "Clip Alpha"
+msgstr "클립 알파"
 
 
-msgid "Name that will be used in exported files when format supports such feature"
-msgstr "형식이 해당 기능을 지원할 때 내보낸 파일에 사용될 이름입니다"
+msgid "Clip alpha below this threshold in the 3D textured view"
+msgstr "3D 텍스처된 뷰에서 이 임계 값 아래로 알파를 클립"
+
+
+msgid "GL Texture Limit"
+msgstr "GL 텍스처 제한"
+
+
+msgid "Limit the texture size to save graphics memory"
+msgstr "그래픽 메모리를 절약하기 위하여 텍스처 크기를 제한"
+
+
+msgid "No MultiSample"
+msgstr "멀티 샘플 없음"
+
+
+msgid "Do not use OpenGL MultiSample"
+msgstr "OpenGL의 멀티 샘플링을 사용하지 않습니다"
+
+
+msgid "MultiSample: 2"
+msgstr "멀티 샘플: 2"
+
+
+msgid "Use 2x OpenGL MultiSample (requires restart)"
+msgstr "2x OpenGL 멀티 샘플을 사용 (다시 시작해야 함)"
+
+
+msgid "MultiSample: 4"
+msgstr "멀티 샘플: 4"
+
+
+msgid "Use 4x OpenGL MultiSample (requires restart)"
+msgstr "4x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
+
+
+msgid "MultiSample: 8"
+msgstr "멀티 샘플: 8"
+
+
+msgid "Use 8x OpenGL MultiSample (requires restart)"
+msgstr "8x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
+
+
+msgid "MultiSample: 16"
+msgstr "멀티 샘플: 16"
+
+
+msgid "Use 16x OpenGL MultiSample (requires restart)"
+msgstr "16x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
+
+
+msgid "Method used for displaying images on the screen"
+msgstr "화면에 이미지를 표시에 대한 사용되는 메서드"
+
+
+msgid "2D Texture"
+msgstr "2D 텍스처"
+
+
+msgid "Use CPU for display transform and draw image with 2D texture"
+msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 CPU를 사용"
+
+
+msgid "Use GLSL shaders for display transform and draw image with 2D texture"
+msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 GLSL 새이터를 사용"
+
+
+msgid "DrawPixels"
+msgstr "픽셀 그리기"
+
+
+msgid "Use CPU for display transform and draw image using DrawPixels"
+msgstr "픽셀 그리기를 사용하여 이미지 그리기 및 변환 표시를 위해 CPU를 사용"
+
+
+msgid "Legacy Compute Device Type"
+msgstr "레거시 계산 장치 유형"
+
+
+msgid "For backwards compatibility only"
+msgstr "이전 버전과의 호환성을 위해서만"
+
+
+msgid "Ambient Color"
+msgstr "주변 색상"
+
+
+msgid "Memory Cache Limit"
+msgstr "메모리 캐시 제한"
+
+
+msgid "Memory cache limit (in megabytes)"
+msgstr "메모리 캐시 제한 (메가바이트에서)"
+
+
+msgid "MultiSample"
+msgstr "멀티 셈플"
+
+
+msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
+msgstr "OpenGL 멀티 샘플링을 사용합니다. 시스템에서 지원하는 경우 만, 다시 시작해야 합니다"
+
+
+msgid "OpenSubdiv Compute Type"
+msgstr "OpenSubdiv 계산 유형"
+
+
+msgid "Type of computer back-end used with OpenSubdiv"
+msgstr "OpenSubdiv과 함께 사용되는 컴퓨터 백엔드의 유형"
+
+
+msgid "OpenMP"
+msgstr "OpenMP"
+
+
+msgid "GLSL Transform Feedback"
+msgstr "GLSL 변환  피드백"
+
+
+msgid "GLSL Compute"
+msgstr "GLSL 계산"
+
+
+msgid "Prefetch Frames"
+msgstr "프리페치 프레임"
+
+
+msgid "Number of frames to render ahead during playback (sequencer only)"
+msgstr "재생 중에 미리 렌더하는 프레임 수 (시퀀서 만)"
+
+
+msgid "Maximum number of lines to store for the console buffer"
+msgstr "콘솔 버퍼에 저장할 라인의 최대치 수"
+
+
+msgid "Solid Lights"
+msgstr "솔리드 조명"
+
+
+msgid "Lights user to display objects in solid draw mode"
+msgstr "솔리드 그리기 모드에서 오브젝트를 표시하는 조명 사용자"
+
+
+msgid "Texture Collection Rate"
+msgstr "텍스처 컬렉션 비율"
+
+
+msgid "Number of seconds between each run of the GL texture garbage collector"
+msgstr "GL 텍스처 가비지 컬렉터가 실행될 때 까지의 시간"
+
+
+msgid "Texture Time Out"
+msgstr "텍스처 시간 아웃"
+
+
+msgid "Time since last access of a GL texture in seconds after which it is freed (set to 0 to keep textures allocated)"
+msgstr "GL 텍스처를 마지막으로 액세스한 후 경과된 시간 (텍스처가 할당된 채로 유지되도록 0으로 설정됨)"
+
+
+msgid "UI Line Width"
+msgstr "UI 라인 폭"
+
+
+msgid "UI Scale"
+msgstr "UI 규모"
+
+
+msgid "Region Overlap"
+msgstr "지역 겹침"
+
+
+msgid "OpenGL Depth Picking"
+msgstr "OpenGL 깊이 피킹"
+
+
+msgid "Use the depth buffer for picking 3D View selection"
+msgstr "3D 뷰 선택을 피킹하기 위해 깊이 버퍼 사용"
 
 
 msgid "Color Picker Type"
@@ -57119,280 +57139,8 @@ msgid "Path to interface mono-space Font"
 msgstr "인터페이스 모노스페이스 폰트에 경로"
 
 
-msgid "Clip Alpha"
-msgstr "클립 알파"
-
-
-msgid "Clip alpha below this threshold in the 3D textured view"
-msgstr "3D 텍스처된 뷰에서 이 임계 값 아래로 알파를 클립"
-
-
-msgid "GL Texture Limit"
-msgstr "GL 텍스처 제한"
-
-
-msgid "Limit the texture size to save graphics memory"
-msgstr "그래픽 메모리를 절약하기 위하여 텍스처 크기를 제한"
-
-
-msgid "No MultiSample"
-msgstr "멀티 샘플 없음"
-
-
-msgid "Do not use OpenGL MultiSample"
-msgstr "OpenGL의 멀티 샘플링을 사용하지 않습니다"
-
-
-msgid "MultiSample: 2"
-msgstr "멀티 샘플: 2"
-
-
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "2x OpenGL 멀티 샘플을 사용 (다시 시작해야 함)"
-
-
-msgid "MultiSample: 4"
-msgstr "멀티 샘플: 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "4x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
-
-
-msgid "MultiSample: 8"
-msgstr "멀티 샘플: 8"
-
-
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "8x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
-
-
-msgid "MultiSample: 16"
-msgstr "멀티 샘플: 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "16x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
-
-
-msgid "Image Draw Method"
-msgstr "이미지 그리기 메서드"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "화면에 이미지를 표시에 대한 사용되는 메서드"
-
-
-msgid "2D Texture"
-msgstr "2D 텍스처"
-
-
-msgid "Use CPU for display transform and draw image with 2D texture"
-msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 CPU를 사용"
-
-
-msgid "Use GLSL shaders for display transform and draw image with 2D texture"
-msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 GLSL 새이터를 사용"
-
-
-msgid "DrawPixels"
-msgstr "픽셀 그리기"
-
-
-msgid "Use CPU for display transform and draw image using DrawPixels"
-msgstr "픽셀 그리기를 사용하여 이미지 그리기 및 변환 표시를 위해 CPU를 사용"
-
-
 msgid "Language used for translation"
 msgstr "사용할 언어"
-
-
-msgid "Legacy Compute Device Type"
-msgstr "레거시 계산 장치 유형"
-
-
-msgid "For backwards compatibility only"
-msgstr "이전 버전과의 호환성을 위해서만"
-
-
-msgid "Ambient Color"
-msgstr "주변 색상"
-
-
-msgid "Memory Cache Limit"
-msgstr "메모리 캐시 제한"
-
-
-msgid "Memory cache limit (in megabytes)"
-msgstr "메모리 캐시 제한 (메가바이트에서)"
-
-
-msgid "MultiSample"
-msgstr "멀티 셈플"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "OpenGL 멀티 샘플링을 사용합니다. 시스템에서 지원하는 경우 만, 다시 시작해야 합니다"
-
-
-msgid "OpenSubdiv Compute Type"
-msgstr "OpenSubdiv 계산 유형"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "OpenSubdiv과 함께 사용되는 컴퓨터 백엔드의 유형"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL 변환  피드백"
-
-
-msgid "GLSL Compute"
-msgstr "GLSL 계산"
-
-
-msgid "Prefetch Frames"
-msgstr "프리페치 프레임"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "재생 중에 미리 렌더하는 프레임 수 (시퀀서 만)"
-
-
-msgid "Maximum number of lines to store for the console buffer"
-msgstr "콘솔 버퍼에 저장할 라인의 최대치 수"
-
-
-msgid "Selection Method"
-msgstr "선택 메서드"
-
-
-msgid "Use OpenGL occlusion queries or selection render mode to accelerate selection"
-msgstr "선택을 가속하는 OpenGL 어클루션 쿼리 또는 선택 렌더 모드를 사용"
-
-
-msgid "OpenGL Select"
-msgstr "OpenGL 선택"
-
-
-msgid "OpenGL Occlusion Queries"
-msgstr "OpenGL 폐색 쿼리"
-
-
-msgid "Solid Lights"
-msgstr "솔리드 조명"
-
-
-msgid "Lights user to display objects in solid draw mode"
-msgstr "솔리드 그리기 모드에서 오브젝트를 표시하는 조명 사용자"
-
-
-msgid "Texture Collection Rate"
-msgstr "텍스처 컬렉션 비율"
-
-
-msgid "Number of seconds between each run of the GL texture garbage collector"
-msgstr "GL 텍스처 가비지 컬렉터가 실행될 때 까지의 시간"
-
-
-msgid "Texture Time Out"
-msgstr "텍스처 시간 아웃"
-
-
-msgid "Time since last access of a GL texture in seconds after which it is freed (set to 0 to keep textures allocated)"
-msgstr "GL 텍스처를 마지막으로 액세스한 후 경과된 시간 (텍스처가 할당된 채로 유지되도록 0으로 설정됨)"
-
-
-msgid "UI Line Width"
-msgstr "UI 라인 폭"
-
-
-msgid "UI Scale"
-msgstr "UI 규모"
-
-
-msgid "16 Bit Float Textures"
-msgstr "16 비트 실수 텍스처"
-
-
-msgid "Use 16 bit per component texture for float images"
-msgstr "실수 이미지에 대해 구성 요소 텍스처 당 16 비트를 사용"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "GPU MIP 맵 생성"
-
-
-msgid "Generate Image Mipmaps on the GPU"
-msgstr "GPU의 이미지 MIP 맵을 생성"
-
-
-msgid "Region Overlap"
-msgstr "지역 겹침"
-
-
-msgid "Draw tool/property regions over the main region, when using Triple Buffer"
-msgstr "트리플 버퍼를 사용할 때 메인 지역 위에 도구/속성 지역을 그립니다"
-
-
-msgid "Auto Run Python Scripts"
-msgstr "파이썬 스크립트 자동 실행"
-
-
-msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
-msgstr "자동으로 스트립트를 시작에 모든 .blend 파일을 허용 (신뢰할수 없는 소스로 부터 blend 파일과 함께 위험)"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "OpenGL 깊이 피킹"
-
-
-msgid "Use the depth buffer for picking 3D View selection"
-msgstr "3D 뷰 선택을 피킹하기 위해 깊이 버퍼 사용"
-
-
-msgid "Automatically convert all new tabs into spaces for new and loaded text files"
-msgstr "자동으로 새로운 및 불러온 텍스트 파일에 대한 공간으로 모든 새로운 탭을 변환"
-
-
-msgid "Text Anti-aliasing"
-msgstr "안티앨리어싱 텍스트"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "안티 앨리언스된 사용자 인터페이스 텍스트를 그리기"
-
-
-msgid "Translate Interface"
-msgstr "인터페이스를 번역"
-
-
-msgid "Translate New Names"
-msgstr "새로운 이름을 번역"
-
-
-msgid "Translate Tooltips"
-msgstr "툴팁을 번역"
-
-
-msgid "Use Weight Color Range"
-msgstr "웨이트 색상 범위를 사용"
-
-
-msgid "Enable color range used for weight visualization in weight painting mode"
-msgstr "웨이트 페인팅 모드에서 웨이트 시각화에 사용되는 색상 범위 사용"
-
-
-msgid "Weight Color Range"
-msgstr "웨이트 색상 범위"
-
-
-msgid "Color range used for weight visualization in weight painting mode"
-msgstr "웨이트 페인트 모드에서 웨이트 시각화를 위해 사용된 색상 범위"
 
 
 msgid "Mini Axes Brightness"
@@ -57413,22 +57161,6 @@ msgstr "축 아이콘의 크기"
 
 msgid "Object Origin Size"
 msgstr "오브젝트 오리진 크기"
-
-
-msgid "Hold LMB Open Toolbox Delay"
-msgstr "LMB 열기 도구 상자 지연을 유지"
-
-
-msgid "Time in 1/10 seconds to hold the Left Mouse Button before opening the toolbox"
-msgstr "툴 박스를 열기 이전에 마우스 왼쪽 버튼을 유지하는 1/10 초의 시간"
-
-
-msgid "Hold RMB Open Toolbox Delay"
-msgstr "RMB 열기 도구 상자 지연을 유지"
-
-
-msgid "Time in 1/10 seconds to hold the Right Mouse Button before opening the toolbox"
-msgstr "툴 박스를 열기 이전에 마우스 오른쪽 버튼을 유지하는 1/10 초의 시간"
 
 
 msgid "Sub Level Menu Open Delay"
@@ -57631,44 +57363,12 @@ msgid "Changes the size of the fonts and buttons in the interface"
 msgstr "인터페이스의 글꼴 및 버튼 크기를 변경합니다"
 
 
-msgid "Auto Perspective"
-msgstr "자동 원근법"
-
-
-msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
-msgstr "위쪽/앞쪽/측면 뷰에서 변경 시 자동으로 정사영과 원근법 사이에서 전환"
-
-
-msgid "Camera Parent Lock"
-msgstr "카메라 부모를 잠금"
-
-
-msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
-msgstr "카메라가 뷰와 플라이 모드에 고정되어 있으면 카메라가 아닌 부모를 변형"
-
-
-msgid "Cursor Lock Adjust"
-msgstr "커서 잠금 조정"
-
-
-msgid "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)"
-msgstr "새 위치로 '이동'하지 않고 커서를 놓습니다 (커서를 잠근 경우)"
-
-
 msgid "Contents Follow Opening Direction"
 msgstr "내용 따라가기 오프닝 방향"
 
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "그렇지 않으면 메뉴, 등은 항상 위에서 아래로, 왼쪽에서 오른쪽으로, 문제 여는 방향이 없음"
-
-
-msgid "Auto Depth"
-msgstr "자동 깊이"
-
-
-msgid "Use the depth under the mouse to improve view pan/rotate/zoom functionality"
-msgstr "마우스 아래의 깊이를 사용하여 보기 이동/회전/확대/축소 기능을 향상 시킵니다"
 
 
 msgid "Open On Mouse Over"
@@ -57683,24 +57383,32 @@ msgid "Prompt Quit"
 msgstr "블렌더 종료 확인하기"
 
 
-msgid "Ask for confirmation when quitting through the window close button"
-msgstr "창 닫기 버튼을 이용해 종료할 때 확인 요청"
+msgid "Text Anti-aliasing"
+msgstr "안티앨리어싱 텍스트"
 
 
-msgid "Rotate Around Selection"
-msgstr "선택 주위에 회전"
+msgid "Draw user interface text anti-aliased"
+msgstr "안티 앨리언스된 사용자 인터페이스 텍스트를 그리기"
 
 
-msgid "Use selection as the pivot point"
-msgstr "피벗 포인트로 선택을 사용"
+msgid "Translate Interface"
+msgstr "인터페이스를 번역"
 
 
-msgid "Zoom To Mouse Position"
-msgstr "마우스 위치로 줌"
+msgid "Translate New Names"
+msgstr "새로운 이름을 번역"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
-msgstr "2D 창 중심 대신 3D뷰에서 마우스 포인터의 위치를 확대"
+msgid "Translate Tooltips"
+msgstr "툴팁을 번역"
+
+
+msgid "Use Weight Color Range"
+msgstr "웨이트 색상 범위를 사용"
+
+
+msgid "Enable color range used for weight visualization in weight painting mode"
+msgstr "웨이트 페인팅 모드에서 웨이트 시각화에 사용되는 색상 범위 사용"
 
 
 msgid "2D View Minimum Grid Spacing"
@@ -57741,6 +57449,14 @@ msgstr "범위를 유지"
 
 msgid "Seconds"
 msgstr "초"
+
+
+msgid "Weight Color Range"
+msgstr "웨이트 색상 범위"
+
+
+msgid "Color range used for weight visualization in weight painting mode"
+msgstr "웨이트 페인트 모드에서 웨이트 시각화를 위해 사용된 색상 범위"
 
 
 msgid "ID Property Group"
@@ -58967,10 +58683,6 @@ msgid "Layer Samples"
 msgstr "레이어 셈플"
 
 
-msgid "How to use per render layer sample settings"
-msgstr "렌더링 레이어 별 샘플 설정 사용 방법"
-
-
 msgid "Per render layer number of samples override scene samples"
 msgstr "렌더 레이어 당 하나의 샘플이 장면 샘플을 재정의 합니다"
 
@@ -59375,6 +59087,10 @@ msgid "View Perspective"
 msgstr "뷰 원근법"
 
 
+msgid "View Rotation"
+msgstr "뷰 회전"
+
+
 msgid "Rotation in quaternions (keep normalized)"
 msgstr "쿼터니언에서 회전 (노멀라이즈된을 유지)"
 
@@ -59451,10 +59167,6 @@ msgid "Deliver glossy indirect pass"
 msgstr "광택 간접 패스를 제공"
 
 
-msgid "Deliver indirect lighting pass"
-msgstr "간접 조명 패스를 제공"
-
-
 msgid "Deliver material index pass"
 msgstr "매트리얼 인덱스 패스를 제공"
 
@@ -59473,10 +59185,6 @@ msgstr "오브젝트 인덱스 패스를 제공"
 
 msgid "Deliver shadow pass"
 msgstr "그림자 패스를 제공"
-
-
-msgid "Deliver specular pass"
-msgstr "반사 패스를 제공"
 
 
 msgid "Subsurface Color"
@@ -61029,58 +60737,6 @@ msgstr "YCbCr (ITU 709)"
 
 msgid "YCbCr (Jpeg)"
 msgstr "YCbCr (Jpeg)"
-
-
-msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
-msgstr "현재 조형 도구에서 지원되는 브러시 작업에 읽기 전용 표시"
-
-
-msgid "Has Auto Smooth"
-msgstr "자동 스무스가 있음"
-
-
-msgid "Has Gravity"
-msgstr "중력이 있음"
-
-
-msgid "Has Height"
-msgstr "높이가 있음"
-
-
-msgid "Has Jitter"
-msgstr "지터가 있음"
-
-
-msgid "Has Crease/Pinch Factor"
-msgstr "주름/핀치 팩터가 있음"
-
-
-msgid "Has Persistence"
-msgstr "지속성이 있음"
-
-
-msgid "Has Pinch Factor"
-msgstr "핀치 팩터가 있음"
-
-
-msgid "Has Plane Offset"
-msgstr "평면 오프셋이 있음"
-
-
-msgid "Has Rake Factor"
-msgstr "레이크 팩터가 있음"
-
-
-msgid "Has Sculpt Plane"
-msgstr "조형 평면이 있음"
-
-
-msgid "Has Secondary Color"
-msgstr "보조의 색상이 있음"
-
-
-msgid "Has Strength Pressure"
-msgstr "강도 압력을 가짐"
 
 
 msgid "Sequence strip in the sequence editor"
@@ -63734,10 +63390,6 @@ msgid "Edit all keyframes in scene"
 msgstr "장면의 모든 키 프레임을 편집"
 
 
-msgid "Timeline"
-msgstr "타임라인"
-
-
 msgid "Timeline and playback controls"
 msgstr "타임 라인및 재생 컨트롤"
 
@@ -64390,14 +64042,6 @@ msgid "Sort Alphabetically"
 msgstr "알파벳순으로 분류"
 
 
-msgid "Space User Preferences"
-msgstr "공간 사용자 환경 설정"
-
-
-msgid "User preferences space data"
-msgstr "사용자 환경 설정 공간 데이터"
-
-
 msgid "Search term for filtering in the UI"
 msgstr "UI에서 필터링의 조건을 검색"
 
@@ -64786,14 +64430,6 @@ msgid "Enable view navigation within the camera view"
 msgstr "카메라 뷰 내에서 네비게이션 뷰를 사용"
 
 
-msgid "Lock Camera and Layers"
-msgstr "카메라 및 레이어를 잠금"
-
-
-msgid "Use the scene's active camera and layers in this view, rather than local layers"
-msgstr "로컬 레이어 대신 뷰에서 장면의 활성 카메라 및 레이어를 사용"
-
-
 msgid "Lock to Cursor"
 msgstr "커서에 잠금"
 
@@ -64954,6 +64590,10 @@ msgid "Constraint to stay within the image bounds while editing"
 msgstr "편집하는 동안 이미지 경계 내에서 머무르기 위한 제약"
 
 
+msgid "Snap to Pixels"
+msgstr "픽셀에 스냅"
+
+
 msgid "Sticky Selection Mode"
 msgstr "점착 선택 모드"
 
@@ -64988,14 +64628,6 @@ msgstr "실시간 펼치기"
 
 msgid "Continuously unwrap the selected UV island while transforming pinned vertices"
 msgstr "고정된 버텍스를 변환하는 동안 선택된 UV 아일랜드를 연속적으로 펼칩니다"
-
-
-msgid "Snap to Pixels"
-msgstr "픽셀에 스냅"
-
-
-msgid "Snap UVs to pixel locations while editing"
-msgstr "편집하는 동안 UV를 픽셀 위치에 스냅"
 
 
 msgid "Element of a curve, either NURBS, Bezier or Polyline or a character with text objects"
@@ -65270,14 +64902,6 @@ msgid "Value to use for Ref, Spec, Amb, Emit, Alpha, RayMir, TransLu and Hard"
 msgstr "Ref, Spec, Amb, Emit, Alpha, RayMir, TransLu 및 Hard에 사용할 값입니다"
 
 
-msgid "Negate"
-msgstr "부정"
-
-
-msgid "Invert the values of the texture to reverse its effect"
-msgstr "그 이펙트를 반대하는 텍스처의 값을 반전"
-
-
 msgid "Texture slot name"
 msgstr "텍스처 슬롯 이름"
 
@@ -65302,22 +64926,6 @@ msgid "Texture data-block used by this texture slot"
 msgstr "이 텍스쳐 슬롯으로 사용되는 텍스처 데이터 블록"
 
 
-msgid "RGB to Intensity"
-msgstr "강도로 RGB"
-
-
-msgid "Convert texture RGB values to intensity (gray) values"
-msgstr "강도 (회색) 값에 텍스처 RGB 값을 변환"
-
-
-msgid "Stencil"
-msgstr "스텐실"
-
-
-msgid "Use this texture as a blending value on the next texture"
-msgstr "다음 텍스처에 블렌딩 값으로 이 텍스처를 사용"
-
-
 msgid "Brush Texture Slot"
 msgstr "브러시 텍스처 슬롯"
 
@@ -65336,6 +64944,10 @@ msgstr "텍스처 각도 소스가 있음"
 
 msgid "Tiled"
 msgstr "타일된"
+
+
+msgid "Stencil"
+msgstr "스텐실"
 
 
 msgid "Random Angle"
@@ -65618,10 +65230,6 @@ msgid "Theme settings defining draw style and colors in the user interface"
 msgstr "사용자 인터페이스에 스타일 및 색상 그리기를 정의하는 테마 설정"
 
 
-msgid "Bone Color Sets"
-msgstr "본 색상 설정"
-
-
 msgid "Clip Editor"
 msgstr "클립 편집기"
 
@@ -65632,22 +65240,6 @@ msgstr "테마의 이름"
 
 msgid "Active Theme Area"
 msgstr "활성 테마 영역"
-
-
-msgid "User Interface"
-msgstr "사용자 인터페이스"
-
-
-msgid "Text Style"
-msgstr "텍스트 스타일"
-
-
-msgid "3D View"
-msgstr "3D 뷰"
-
-
-msgid "Video Sequence Editor"
-msgstr "비디오 시퀀스 편집기"
 
 
 msgid "Theme Bone Color Set"
@@ -65814,16 +65406,8 @@ msgid "Color of selected marker"
 msgstr "선택된 마커의 색상"
 
 
-msgid "Theme Space"
-msgstr "테마 공간"
-
-
 msgid "Settings for space"
 msgstr "공간에 대한 설정"
-
-
-msgid "Theme Space List"
-msgstr "테마 공백 목록"
 
 
 msgid "Settings for space list"
@@ -66462,14 +66046,6 @@ msgid "Theme settings for panel colors"
 msgstr "패널 색상에 대한 테마 설정"
 
 
-msgid "Theme User Preferences"
-msgstr "테마 사용자 환경 설정"
-
-
-msgid "Theme settings for the User Preferences"
-msgstr "사용자 환경 설정에 대한 테마 설정"
-
-
 msgid "Theme Properties"
 msgstr "테마 속성"
 
@@ -66554,10 +66130,6 @@ msgid "Header Text Highlight"
 msgstr "헤더 텍스트 강조"
 
 
-msgid "Panel Colors"
-msgstr "패널 색상"
-
-
 msgid "Tab Active"
 msgstr "탭 활성"
 
@@ -66576,10 +66148,6 @@ msgstr "탭 윤곽선"
 
 msgid "Text Highlight"
 msgstr "텍스트 강조"
-
-
-msgid "Gradient Colors"
-msgstr "그라디언트 색상"
 
 
 msgid "Theme Space List Settings"
@@ -66676,10 +66244,6 @@ msgstr "아이콘 알파"
 
 msgid "Transparency of icons in the interface, to reduce contrast"
 msgstr "명암을 줄이는 인터페이스의 아이콘 투명성"
-
-
-msgid "Icon File"
-msgstr "아이콘 파일"
 
 
 msgid "Menu Shadow Strength"
@@ -67532,10 +67096,6 @@ msgstr "이름으로 분류"
 
 msgid "Sort items by their name"
 msgstr "이름으로 항목을 분류"
-
-
-msgid "Invert the order of shown items"
-msgstr "표시하는 항목의 순서를 반전"
 
 
 msgid "Collection of uv loop layers"
@@ -68874,10 +68434,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "외부 .osl 파일 옆에 .oso 파일을 쓰지 못했습니다"
 
 
-msgid "Cycles Compute Device:"
-msgstr "사이클 연산 장치:"
-
-
 msgid "Total Samples:"
 msgstr "전체 샘플:"
 
@@ -69353,14 +68909,6 @@ msgid "Keyframe Numbers"
 msgstr "키 프레임 번호"
 
 
-msgid "Display:"
-msgstr "표시:"
-
-
-msgid "Selected Only"
-msgstr "선택된 만"
-
-
 msgid "After"
 msgstr "이후"
 
@@ -69667,10 +69215,6 @@ msgstr "뷰 형식:"
 
 msgid "Render U"
 msgstr "렌더 U"
-
-
-msgid "Regular"
-msgstr "정규"
 
 
 msgid "Bold & Italic"
@@ -70224,11 +69768,6 @@ msgid "Delimit:"
 msgstr "범위를 정하기:"
 
 
-msgctxt "Operator"
-msgid "Free Bake"
-msgstr "자유 베이크"
-
-
 msgid "Use Channel:"
 msgstr "채널을 사용:"
 
@@ -70556,14 +70095,6 @@ msgid "Lock Frame"
 msgstr "프레임을 잠금"
 
 
-msgid "CCW"
-msgstr "CCW"
-
-
-msgid "CW"
-msgstr "CW"
-
-
 msgctxt "Operator"
 msgid "More..."
 msgstr "더 많이..."
@@ -70575,6 +70106,14 @@ msgstr "잠금 해제됨"
 
 msgid "Frame: %d (%s)"
 msgstr "프레임: %d (%s)"
+
+
+msgid "CCW"
+msgstr "CCW"
+
+
+msgid "CW"
+msgstr "CW"
 
 
 msgid "Parent:"
@@ -70612,10 +70151,6 @@ msgstr "모두"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "반전"
-
-
-msgid "On"
-msgstr "On"
 
 
 msgid "Not for Axis-Angle"
@@ -70753,11 +70288,6 @@ msgid "%d fluid particles for this frame"
 msgstr "이 프레임에 대한 %d 유체 파티클"
 
 
-msgctxt "Operator"
-msgid "Free Edit"
-msgstr "자유 편집"
-
-
 msgid "Use Timing"
 msgstr "타이밍을 사용"
 
@@ -70791,11 +70321,6 @@ msgstr "에 대한 물리 사용:"
 msgctxt "Operator"
 msgid "Current Cache to Bake"
 msgstr "현재 캐시를 베이크하기"
-
-
-msgctxt "Operator"
-msgid "Free All Bakes"
-msgstr "모두 자유 베이크"
 
 
 msgctxt "Operator"
@@ -72088,24 +71613,8 @@ msgid "Python API Reference"
 msgstr "파이썬 API 참조"
 
 
-msgid "View Name"
-msgstr "뷰 이름"
-
-
-msgid "Playback FPS"
-msgstr "재생 FPS"
-
-
-msgid "2D Viewports:"
-msgstr "2D 뷰포트:"
-
-
-msgid "Minimum Grid Spacing"
-msgstr "최소의 격자 간격"
-
-
-msgid "Menus:"
-msgstr "메뉴:"
+msgid "New Data"
+msgstr "새로운 데이터"
 
 
 msgid "Top Level"
@@ -72114,30 +71623,6 @@ msgstr "상위 레벨"
 
 msgid "Sub Level"
 msgstr "하위 레벨"
-
-
-msgid "Pie Menus:"
-msgstr "파이 메뉴:"
-
-
-msgid "Link Materials To:"
-msgstr "다음으로 매트리얼을 연결:"
-
-
-msgid "New Objects:"
-msgstr "새로운 오브젝트:"
-
-
-msgid "Align To:"
-msgstr "다음으로 정렬:"
-
-
-msgid "Undo:"
-msgstr "실행 취소:"
-
-
-msgid "Memory Limit"
-msgstr "메모리 제한"
 
 
 msgid "Manhattan Distance"
@@ -72160,24 +71645,12 @@ msgid "Simplify Stroke"
 msgstr "스트로크를 단순화"
 
 
-msgid "Playback:"
-msgstr "재생:"
+msgid "Sculpt Overlay Color"
+msgstr "조형 중첩 색상"
 
 
-msgid "Node Editor:"
-msgstr "노드 편집:"
-
-
-msgid "Animation Editors:"
-msgstr "애니메이션 편집기:"
-
-
-msgid "F-Curve Visibility"
-msgstr "F-커브 가시성"
-
-
-msgid "Keyframing:"
-msgstr "키 프레이밍:"
+msgid "Minimum Grid Spacing"
+msgstr "최소의 격자 간격"
 
 
 msgid "Only Insert Needed"
@@ -72188,32 +71661,12 @@ msgid "Only Insert Available"
 msgstr "이용 가능 만 삽입"
 
 
-msgid "New F-Curve Defaults:"
-msgstr "새로운 F-커브 기본 값:"
+msgid "F-Curve Visibility"
+msgstr "F-커브 가시성"
 
 
 msgid "XYZ to RGB"
 msgstr "XYZ를 RGB로 표현"
-
-
-msgid "Sculpt Overlay Color"
-msgstr "조형 중첩 색상"
-
-
-msgid "Duplicate Data:"
-msgstr "데이터를 복제:"
-
-
-msgid "General:"
-msgstr "일반:"
-
-
-msgid "Console Scrollback"
-msgstr "콘솔 스크롤"
-
-
-msgid "Sound:"
-msgstr "사운드:"
 
 
 msgid "Mixing Buffer"
@@ -72224,116 +71677,24 @@ msgid "Sample Format"
 msgstr "샘플 포맷"
 
 
-msgid "OpenGL:"
-msgstr "OpenGL:"
+msgid "View Name"
+msgstr "뷰 이름"
 
 
-msgid "Text Draw Options:"
-msgstr "택스트 그리기 옵션:"
+msgid "Playback FPS"
+msgstr "재생 FPS"
 
 
 msgid "Limit Size"
 msgstr "크기를 제한"
 
 
-msgid "Time Out"
-msgstr "타임 아웃"
-
-
-msgid "Collection Rate"
-msgstr "컬렉션 비율"
-
-
-msgid "Images Draw Method:"
-msgstr "이미지 그리기 메서드:"
-
-
-msgid "Sequencer/Clip Editor:"
-msgstr "시퀀서/클립 편집기:"
-
-
-msgid "Color Picker Type:"
-msgstr "색상 선택기 유형:"
-
-
-msgid "Custom Weight Paint Range"
-msgstr "사용자 정의 웨이트 페인트 범위"
-
-
-msgid "Kerning Style:"
-msgstr "자간 스타일:"
-
-
-msgid "Shadow Offset:"
-msgstr "그림자 오프셋:"
-
-
-msgid "Presets:"
-msgstr "프리셋:"
-
-
-msgid "File Paths:"
-msgstr "파일 경로:"
-
-
-msgid "Fonts:"
-msgstr "폰트:"
-
-
-msgid "Render Output:"
-msgstr "렌더 출력:"
-
-
-msgid "Scripts:"
-msgstr "스크립트:"
-
-
-msgid "Sounds:"
-msgstr "사운드:"
-
-
-msgid "Temp:"
-msgstr "임시:"
-
-
-msgid "Render Cache:"
-msgstr "렌더 캐시:"
-
-
-msgid "I18n Branches:"
-msgstr "I18n 분기:"
-
-
-msgid "Image Editor:"
-msgstr "이미지 편집기:"
-
-
-msgid "Animation Player:"
-msgstr "애니메이션 플레이어:"
-
-
-msgid "Auto Execution:"
-msgstr "자동 실행 :"
-
-
-msgid "Save & Load:"
-msgstr "저장 & 불러오기:"
-
-
-msgid "Auto Save:"
-msgstr "자동 저장:"
+msgid "Excluded Paths:"
+msgstr "제외 경로:"
 
 
 msgid "Timer (mins)"
 msgstr "타이머(분)"
-
-
-msgid "Text Editor:"
-msgstr "텍스트 편집기:"
-
-
-msgid "Author:"
-msgstr "작성자:"
 
 
 msgid "Pan Options"
@@ -72344,137 +71705,16 @@ msgid "Zoom Options"
 msgstr "줌 옵션 "
 
 
-msgid "Mouse:"
-msgstr "마우스:"
-
-
-msgid "Double Click:"
-msgstr "더블 클릭:"
-
-
-msgid "Orbit Style:"
-msgstr "오비트 스타일:"
-
-
-msgid "Zoom Style:"
-msgstr "줌 스타일:"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "휠 줌 방향을 반전"
 
 
-msgid "View Navigation:"
-msgstr "뷰 네비게이션:"
-
-
-msgid "Walk Navigation:"
-msgstr "걷기 네비게이션:"
-
-
-msgid "Supported Level"
-msgstr "지원 가능 레벨"
-
-
-msgid "Categories"
-msgstr "범주"
+msgid "Pan Sensitivity"
+msgstr "팬 감도"
 
 
 msgid "Might fail for Mesh editing selection!"
 msgstr "메쉬 편집 선택에 실패할 수 있습니다!"
-
-
-msgctxt "WindowManager"
-msgid "Translate:"
-msgstr "옮기기:"
-
-
-msgid "New Data"
-msgstr "새로운 데이터"
-
-
-msgid "Regular:"
-msgstr "정규:"
-
-
-msgid "Tool:"
-msgstr "도구:"
-
-
-msgid "Radio Buttons:"
-msgstr "라디오 버튼:"
-
-
-msgid "Text:"
-msgstr "텍스트:"
-
-
-msgid "Option:"
-msgstr "옵션:"
-
-
-msgid "Toggle:"
-msgstr "전환:"
-
-
-msgid "Number Field:"
-msgstr "번호 필드:"
-
-
-msgid "Value Slider:"
-msgstr "값 슬라이더:"
-
-
-msgid "Box:"
-msgstr "박스:"
-
-
-msgid "Menu:"
-msgstr "메뉴:"
-
-
-msgid "Pie Menu:"
-msgstr "파이 메뉴:"
-
-
-msgid "Pulldown:"
-msgstr "풀다운:"
-
-
-msgid "Menu Back:"
-msgstr "메뉴 뒤쪽:"
-
-
-msgid "Tooltip:"
-msgstr "도움말:"
-
-
-msgid "Menu Item:"
-msgstr "메뉴 항목:"
-
-
-msgid "Scroll Bar:"
-msgstr "스크롤바:"
-
-
-msgid "Progress Bar:"
-msgstr "진행 바:"
-
-
-msgid "List Item:"
-msgstr "목록 항목:"
-
-
-msgid "State:"
-msgstr "상태:"
-
-
-msgid "Styles:"
-msgstr "스타일:"
-
-
-msgid "Excluded Paths:"
-msgstr "제외 경로:"
 
 
 msgid "Orbit Style"
@@ -72489,53 +71729,12 @@ msgid "Fly/Walk Options"
 msgstr "비행/걷기 옵션"
 
 
-msgid "Invert Mouse Zoom Direction"
-msgstr "마우스 줌 방향을 반전"
-
-
 msgid "Natural Trackpad Direction"
 msgstr "자연 트랙 패드 방향"
 
 
-msgid "NDOF Device:"
-msgstr "NDOF 장치:"
-
-
-msgid "Pan Sensitivity"
-msgstr "팬 감도"
-
-
-msgid "Navigation Style:"
-msgstr "네비게이션 스타일:"
-
-
-msgid "Rotation Style:"
-msgstr "회전 스타일:"
-
-
-msgctxt "Operator"
-msgid "Add-ons Catalog"
-msgstr "에드온 카탈로그"
-
-
-msgctxt "Operator"
-msgid "How to share your add-on"
-msgstr "당신의 에드온을 공유하는 방법"
-
-
-msgctxt "Operator"
-msgid "Add-on Guidelines"
-msgstr "에드온 안내"
-
-
-msgctxt "Operator"
-msgid "API Concepts"
-msgstr "API 개념"
-
-
-msgctxt "Operator"
-msgid "Add-on Tutorial"
-msgstr "에드온 튜토리얼"
+msgid "Invert Mouse Zoom Direction"
+msgstr "마우스 줌 방향을 반전"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -72550,18 +71749,6 @@ msgid ":"
 msgstr ":"
 
 
-msgid "Panel Title:"
-msgstr "패널 타이틀:"
-
-
-msgid "Widget:"
-msgstr "위젯:"
-
-
-msgid "Widget Label:"
-msgstr "위젯 레이블:"
-
-
 msgid "Description:"
 msgstr "설명:"
 
@@ -72572,6 +71759,10 @@ msgstr "설명"
 
 msgid "location"
 msgstr "위치"
+
+
+msgid "Author:"
+msgstr "작성자:"
 
 
 msgid "author"
@@ -73222,6 +72413,10 @@ msgstr "메쉬 분석"
 
 msgid "Edge Marks"
 msgstr "에지 마크"
+
+
+msgid "Display:"
+msgstr "표시:"
 
 
 msgctxt "Operator"
@@ -75200,6 +74395,10 @@ msgid "No active frame(s) to delete"
 msgstr "삭제하는 활성 프레임(들)이 없음"
 
 
+msgid "No active area"
+msgstr "활성 영역 없음"
+
+
 msgid "There is no layer number %d"
 msgstr "레이어 번호 %d이 없습니다"
 
@@ -75238,10 +74437,6 @@ msgstr "그리스 펜슬 세션: 끝내려면 ESC/Enter (또는 이 영역 외�
 
 msgid "Grease Pencil operator is already active"
 msgstr "그리스 펜슬 연산자는 이미 활성"
-
-
-msgid "No active area"
-msgstr "활성 영역 없음"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -75387,10 +74582,6 @@ msgid "Active button not found"
 msgstr "활성 버튼을 찾을 수 없음"
 
 
-msgid "Please set your User Preferences' 'Translation Branches Directory' path to a valid directory"
-msgstr "유효한 디렉토리로 사용자 환경 설정의 '번역 지점 디렉토리' 경로를 설정하십시오"
-
-
 msgid "File '%s' cannot be opened"
 msgstr "파일 '%s' 은 열 수 없음"
 
@@ -75405,14 +74596,6 @@ msgstr "연산자 '%s'를 찾을 수 없습니다! 사용자 환경 설정에서
 
 msgid "No valid po found for language '%s' under %s"
 msgstr "언어 '%s'에 대한 %s에서 유효한 po를 찾을 수 없습니다"
-
-
-msgid "HSL"
-msgstr "HSL"
-
-
-msgid "HSV"
-msgstr "HSV"
 
 
 msgid "Hex"
@@ -78678,10 +77861,6 @@ msgid "No Recent Files"
 msgstr "최근 파일이 없음"
 
 
-msgid "Open Recent..."
-msgstr "최근 파일을 열기"
-
-
 msgid "Control Point:"
 msgstr "컨트롤 포인트:"
 
@@ -79912,14 +79091,6 @@ msgid "Could not remove ShapeKey"
 msgstr "섀입 키를 제거 할 수 없습니다"
 
 
-msgid "Object '%s' has no mesh data to be used for ray casting"
-msgstr "오브젝트 '%s'에 광선 캐스팅에 사용할 메쉬 데이터가 없습니다"
-
-
-msgid "Object '%s' has no mesh data to be used for finding nearest point"
-msgstr "오브젝트 '%s'에 가장 가까운 포인트를 찾는 데 사용할 메쉬 데이터가 없습니다"
-
-
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "오브젝트 '%s'가 가장 가까운 포인트를 찾기 위한 내부 데이터를 생성하지 못했습니다"
 
@@ -80335,6 +79506,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "On"
 
 
 msgid "Val"
@@ -80994,20 +80169,12 @@ msgid "Add Mesh"
 msgstr "메쉬를 추가"
 
 
-msgid "Development"
-msgstr "개발"
-
-
 msgid "Import-Export"
 msgstr "가져오기-내보내기"
 
 
 msgid "MakeHuman"
 msgstr "MakeHuman"
-
-
-msgid "Pie Menu"
-msgstr "파이 메뉴"
 
 
 msgid "Rigging"

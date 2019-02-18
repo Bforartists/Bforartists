@@ -836,7 +836,7 @@ typedef struct ObjectBBoneDeform {
 
 static void allocate_bbone_cache(bPoseChannel *pchan, int segments)
 {
-	bPoseChannelRuntime *runtime = &pchan->runtime;
+	bPoseChannel_Runtime *runtime = &pchan->runtime;
 
 	if (runtime->bbone_segments != segments) {
 		if (runtime->bbone_segments != 0) {
@@ -844,17 +844,17 @@ static void allocate_bbone_cache(bPoseChannel *pchan, int segments)
 		}
 
 		runtime->bbone_segments = segments;
-		runtime->bbone_rest_mats = MEM_malloc_arrayN(sizeof(Mat4), (uint)segments, "bPoseChannelRuntime::bbone_rest_mats");
-		runtime->bbone_pose_mats = MEM_malloc_arrayN(sizeof(Mat4), (uint)segments, "bPoseChannelRuntime::bbone_pose_mats");
-		runtime->bbone_deform_mats = MEM_malloc_arrayN(sizeof(Mat4), 1 + (uint)segments, "bPoseChannelRuntime::bbone_deform_mats");
-		runtime->bbone_dual_quats = MEM_malloc_arrayN(sizeof(DualQuat), (uint)segments, "bPoseChannelRuntime::bbone_dual_quats");
+		runtime->bbone_rest_mats = MEM_malloc_arrayN(sizeof(Mat4), (uint)segments, "bPoseChannel_Runtime::bbone_rest_mats");
+		runtime->bbone_pose_mats = MEM_malloc_arrayN(sizeof(Mat4), (uint)segments, "bPoseChannel_Runtime::bbone_pose_mats");
+		runtime->bbone_deform_mats = MEM_malloc_arrayN(sizeof(Mat4), 1 + (uint)segments, "bPoseChannel_Runtime::bbone_deform_mats");
+		runtime->bbone_dual_quats = MEM_malloc_arrayN(sizeof(DualQuat), (uint)segments, "bPoseChannel_Runtime::bbone_dual_quats");
 	}
 }
 
 /** Compute and cache the B-Bone shape in the channel runtime struct. */
 void BKE_pchan_bbone_segments_cache_compute(bPoseChannel *pchan)
 {
-	bPoseChannelRuntime *runtime = &pchan->runtime;
+	bPoseChannel_Runtime *runtime = &pchan->runtime;
 	Bone *bone = pchan->bone;
 	int segments = bone->segments;
 
@@ -897,8 +897,8 @@ void BKE_pchan_bbone_segments_cache_compute(bPoseChannel *pchan)
 /** Copy cached B-Bone segments from one channel to another */
 void BKE_pchan_bbone_segments_cache_copy(bPoseChannel *pchan, bPoseChannel *pchan_from)
 {
-	bPoseChannelRuntime *runtime = &pchan->runtime;
-	bPoseChannelRuntime *runtime_from = &pchan_from->runtime;
+	bPoseChannel_Runtime *runtime = &pchan->runtime;
+	bPoseChannel_Runtime *runtime_from = &pchan_from->runtime;
 	int segments = runtime_from->bbone_segments;
 
 	if (segments <= 1) {
@@ -2466,10 +2466,10 @@ static void boundbox_armature(Object *ob)
 	BoundBox *bb;
 	float min[3], max[3];
 
-	if (ob->bb == NULL) {
-		ob->bb = MEM_callocN(sizeof(BoundBox), "Armature boundbox");
+	if (ob->runtime.bb == NULL) {
+		ob->runtime.bb = MEM_callocN(sizeof(BoundBox), "Armature boundbox");
 	}
-	bb = ob->bb;
+	bb = ob->runtime.bb;
 
 	INIT_MINMAX(min, max);
 	if (!minmax_armature(ob, min, max)) {
@@ -2486,7 +2486,7 @@ BoundBox *BKE_armature_boundbox_get(Object *ob)
 {
 	boundbox_armature(ob);
 
-	return ob->bb;
+	return ob->runtime.bb;
 }
 
 bool BKE_pose_minmax(Object *ob, float r_min[3], float r_max[3], bool use_hidden, bool use_select)

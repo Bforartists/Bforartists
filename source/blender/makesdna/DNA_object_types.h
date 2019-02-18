@@ -114,10 +114,6 @@ typedef struct LodLevel {
 	int obhysteresis;
 } LodLevel;
 
-typedef struct ObjectDisplay {
-	int flag;
-} ObjectDisplay;
-
 /* Forward declaration for cache bbone deformation information.
  *
  * TODO(sergey): Consider moving it to more appropriate place. */
@@ -125,6 +121,15 @@ struct ObjectBBoneDeform;
 
 /* Not saved in file! */
 typedef struct Object_Runtime {
+	/**
+	 * The custom data layer mask that was last used
+	 * to calculate mesh_eval and mesh_deform_eval.
+	 */
+	uint64_t last_data_mask;
+
+	/** Axis aligned boundbox (in localspace). */
+	struct BoundBox *bb;
+
 	/**
 	 * Original mesh pointer, before object->data was changed to point
 	 * to mesh_eval.
@@ -142,7 +147,6 @@ typedef struct Object_Runtime {
 	 */
 	struct Mesh *mesh_deform_eval;
 
-
 	/** Runtime evaluated curve-specific data, not stored in the file. */
 	struct CurveCache *curve_cache;
 
@@ -150,12 +154,6 @@ typedef struct Object_Runtime {
 	struct GpencilBatchCache *gpencil_cache;
 
 	struct ObjectBBoneDeform *cached_bbone_deformation;
-
-	/**
-	 * The custom data layer mask that was last used
-	 * to calculate mesh_eval and mesh_deform_eval.
-	 */
-	uint64_t last_data_mask;
 
 	/** Did last modifier stack generation need mapping support? */
 	char last_need_mapping;
@@ -183,8 +181,6 @@ typedef struct Object {
 	/** Old animation system, deprecated for 2.5. */
 	struct Ipo *ipo  DNA_DEPRECATED;
 	/* struct Path *path; */
-	/** Axis aligned boundbox (in localspace). */
-	struct BoundBox *bb;
 	struct bAction *action  DNA_DEPRECATED;	 // XXX deprecated... old animation system
 	struct bAction *poselib;
 	/** Pose data, armature objects only. */
@@ -308,7 +304,7 @@ typedef struct Object {
 	char empty_drawtype;
 	float empty_drawsize;
 	/** Dupliface scale. */
-	float dupfacesca;
+	float instance_faces_scale;
 
 	/** Custom index, for renderpasses. */
 	short index;
@@ -339,7 +335,7 @@ typedef struct Object {
 	/** If exists, saved in file. */
 	struct SoftBody *soft;
 	/** Object duplicator for group. */
-	struct Collection *dup_group;
+	struct Collection *instance_collection;
 	void *pad10;
 
 	char  pad4;
@@ -380,12 +376,8 @@ typedef struct Object {
 	int pad6;
 	int select_color;
 
-	/* Runtime evaluation data. */
+	/* Runtime evaluation data (keep last). */
 	Object_Runtime runtime;
-
-	/* Object Display */
-	struct ObjectDisplay display;
-	int pad9;
 } Object;
 
 /* Warning, this is not used anymore because hooks are now modifiers */
@@ -442,11 +434,6 @@ enum {
 	OB_GPENCIL  = 26,
 
 	OB_TYPE_MAX,
-};
-
-/* ObjectDisplay.flag */
-enum {
-	OB_SHOW_SHADOW = (1 << 0),
 };
 
 /* check if the object type supports materials */
@@ -545,6 +532,7 @@ enum {
 	/* enable transparent draw */
 	OB_DRAWTRANSP     = 1 << 7,
 	OB_DRAW_ALL_EDGES = 1 << 8,  /* only for meshes currently */
+	OB_DRAW_NO_SHADOW_CAST = 1 << 9,
 };
 
 /* empty_drawtype: no flags */

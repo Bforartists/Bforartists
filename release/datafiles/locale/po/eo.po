@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,6 +57,10 @@ msgid "Help"
 msgstr "Helpo"
 
 
+msgid "New"
+msgstr "Nova"
+
+
 msgctxt "Operator"
 msgid "Select"
 msgstr "Elektas"
@@ -64,10 +68,6 @@ msgstr "Elektas"
 
 msgid "Timing Mode"
 msgstr "Prilaborado Modo"
-
-
-msgid "New"
-msgstr "Nova"
 
 
 msgid "Interpolation method"
@@ -107,10 +107,6 @@ msgstr "Restaŭri lasta kunsido"
 
 msgid "Recent"
 msgstr "Freŝaj"
-
-
-msgid "Keep Session"
-msgstr "Restaŭri lasta kunsido"
 
 
 msgctxt "Operator"

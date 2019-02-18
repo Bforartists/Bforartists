@@ -20,14 +20,15 @@
 
 import bpy
 import bmesh
-from .snap_context_l import SnapContext
+
 from mathutils import Vector
 from mathutils.geometry import (
         intersect_point_line,
         intersect_line_line,
-        intersect_line_plane,
         intersect_ray_tri,
         )
+
+from .snap_context_l import SnapContext
 
 
 def get_units_info(scale, unit_system, separate_units):
@@ -149,15 +150,10 @@ def get_snap_bm_geom(sctx, main_snap_obj, mcursor):
 
 class SnapCache:
     snp_obj = None
-    elem = None
+    edge = None
 
-    v0 = None
-    v1 = None
     vmid = None
     vperp = None
-
-    v2d0 = None
-    v2d1 = None
     v2dmid = None
     v2dperp = None
 
@@ -198,20 +194,18 @@ def snap_utilities(
             r_loc = loc
 
     elif len(elem) == 2:
-        if SnapCache.snp_obj is not snp_obj or not (elem == SnapCache.elem).all():
+        if SnapCache.snp_obj is not snp_obj or not (elem == SnapCache.edge).all():
             SnapCache.snp_obj = snp_obj
-            SnapCache.elem = elem
+            SnapCache.edge = elem
 
-            SnapCache.v0 = elem_co[0]
-            SnapCache.v1 = elem_co[1]
-            SnapCache.vmid = 0.5 * (SnapCache.v0 + SnapCache.v1)
-            SnapCache.v2d0 = location_3d_to_region_2d(sctx.region, sctx.rv3d, SnapCache.v0)
-            SnapCache.v2d1 = location_3d_to_region_2d(sctx.region, sctx.rv3d, SnapCache.v1)
+            v0 = elem_co[0]
+            v1 = elem_co[1]
+            SnapCache.vmid = 0.5 * (v0 + v1)
             SnapCache.v2dmid = location_3d_to_region_2d(sctx.region, sctx.rv3d, SnapCache.vmid)
 
             if previous_vert and (not bm_geom or previous_vert not in bm_geom.verts):
                 pvert_co = main_snap_obj.mat @ previous_vert.co
-                perp_point = intersect_point_line(pvert_co, SnapCache.v0, SnapCache.v1)
+                perp_point = intersect_point_line(pvert_co, v0, v1)
                 SnapCache.vperp = perp_point[0]
                 #factor = point_perpendicular[1]
                 SnapCache.v2dperp = location_3d_to_region_2d(sctx.region, sctx.rv3d, perp_point[0])
@@ -222,7 +216,7 @@ def snap_utilities(
             #else: SnapCache.v2dperp = None
 
         if constrain:
-            t_loc = intersect_line_line(constrain[0], constrain[1], SnapCache.v0, SnapCache.v1)
+            t_loc = intersect_line_line(constrain[0], constrain[1], elem_co[0], elem_co[1])
 
             if t_loc is None:
                 is_increment = True
@@ -266,4 +260,4 @@ def snap_utilities(
 
     return snp_obj, loc, r_loc, r_type, bm, bm_geom, r_len
 
-snap_utilities.cache = SnapCache
+snap_utilities.edge_cache = SnapCache

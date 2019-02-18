@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -222,10 +222,6 @@ msgid "In Range"
 msgstr "Dalam Jarak"
 
 
-msgid "Type"
-msgstr "Tipe"
-
-
 msgid "Height"
 msgstr "Tinggi"
 
@@ -342,6 +338,10 @@ msgid "Textures"
 msgstr "Tekstur"
 
 
+msgid "Type"
+msgstr "Tipe"
+
+
 msgid "Object to avoid"
 msgstr "Data Objek"
 
@@ -372,6 +372,26 @@ msgstr "Induk"
 
 msgid "Relative Parenting"
 msgstr "Kamera"
+
+
+msgid "Has Space Attenuation"
+msgstr "lokasi"
+
+
+msgid "Has Height"
+msgstr "Tinggi"
+
+
+msgid "Has Plane Offset"
+msgstr "Kamera"
+
+
+msgid "Has Sculpt Plane"
+msgstr "Modus Pahat"
+
+
+msgid "Has Secondary Color"
+msgstr "Saluran"
 
 
 msgid "Mode"
@@ -963,14 +983,6 @@ msgid "Edit Bones"
 msgstr "Modus Sunting"
 
 
-msgid "Ghosting Start Frame"
-msgstr "Data Animasi"
-
-
-msgid "Ghost Type"
-msgstr "Tipe"
-
-
 msgid "Auto IK"
 msgstr "Otomatis"
 
@@ -1378,10 +1390,6 @@ msgid "Shape Key Edit Mode"
 msgstr "Modus Sunting"
 
 
-msgid "Slow Parent"
-msgstr "Induk"
-
-
 msgid "Particle Settings"
 msgstr "Partikel"
 
@@ -1730,10 +1738,6 @@ msgid "10 bit color channels"
 msgstr "Saluran"
 
 
-msgid "Has Space Attenuation"
-msgstr "lokasi"
-
-
 msgid "UI Name"
 msgstr "Nama"
 
@@ -2001,6 +2005,10 @@ msgstr "Kamera"
 
 msgid "Edge Weight Method"
 msgstr "Modus Sunting"
+
+
+msgid "New"
+msgstr "Baru"
 
 
 msgid "Cast Type"
@@ -3969,10 +3977,6 @@ msgid "Add New Layer"
 msgstr "Lapisan"
 
 
-msgid "New"
-msgstr "Baru"
-
-
 msgctxt "Operator"
 msgid "Hide Selection"
 msgstr "Modus Sunting"
@@ -5303,16 +5307,6 @@ msgstr "Warna Standar"
 
 msgid "Mark selected vertices as roots"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -6740,6 +6734,34 @@ msgid "Fluid Presets"
 msgstr "Kamera"
 
 
+msgid "Text Style"
+msgstr "Adegan"
+
+
+msgid "Theme Space"
+msgstr "Tekstur"
+
+
+msgid "Theme Space List"
+msgstr "Tekstur"
+
+
+msgid "Panel Colors"
+msgstr "Warna Standar"
+
+
+msgid "3D View"
+msgstr "Tampilan 3D"
+
+
+msgid "Gradient Colors"
+msgstr "Warna Standar"
+
+
+msgid "Development"
+msgstr "Pengembangan"
+
+
 msgid "Active Point"
 msgstr "Tambah Baru"
 
@@ -6822,14 +6844,6 @@ msgstr "Warna Standar"
 
 msgid "MultiSample"
 msgstr "Gerakan"
-
-
-msgid "16 Bit Float Textures"
-msgstr "Tekstur"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "lokasi"
 
 
 msgid "Aperture Type"
@@ -6990,22 +7004,6 @@ msgstr "Gerakan"
 
 msgid "SPH Solver"
 msgstr "Kamera"
-
-
-msgid "Has Height"
-msgstr "Tinggi"
-
-
-msgid "Has Plane Offset"
-msgstr "Kamera"
-
-
-msgid "Has Sculpt Plane"
-msgstr "Modus Pahat"
-
-
-msgid "Has Secondary Color"
-msgstr "Saluran"
 
 
 msgid "Use Linear Modifiers"
@@ -7232,24 +7230,8 @@ msgid "Clip Editor"
 msgstr "Penyunting Grafik"
 
 
-msgid "Text Style"
-msgstr "Adegan"
-
-
-msgid "3D View"
-msgstr "Tampilan 3D"
-
-
 msgid "Theme Clip Editor"
 msgstr "Penyunting Teks"
-
-
-msgid "Theme Space"
-msgstr "Tekstur"
-
-
-msgid "Theme Space List"
-msgstr "Tekstur"
 
 
 msgid "Theme Background Color"
@@ -7326,14 +7308,6 @@ msgstr "Gambar Latar"
 
 msgid "Theme Space Settings"
 msgstr "Partikel"
-
-
-msgid "Panel Colors"
-msgstr "Warna Standar"
-
-
-msgid "Gradient Colors"
-msgstr "Warna Standar"
 
 
 msgid "Menu Shadow Strength"
@@ -7854,64 +7828,8 @@ msgid "Blender Website"
 msgstr "Situs Blender"
 
 
-msgid "Animation Editors:"
-msgstr "Data Animasi"
-
-
 msgid "F-Curve Visibility"
 msgstr "Penampakan"
-
-
-msgid "Sound:"
-msgstr "Suara:"
-
-
-msgid "Kerning Style:"
-msgstr "Adegan"
-
-
-msgid "Shadow Offset:"
-msgstr "Kamera"
-
-
-msgid "Fonts:"
-msgstr "Huruf:"
-
-
-msgid "Sounds:"
-msgstr "Suara:"
-
-
-msgid "Image Editor:"
-msgstr "Penyunting Gambar"
-
-
-msgid "Save & Load:"
-msgstr "Simpan & Buka:"
-
-
-msgid "Auto Save:"
-msgstr "Penyimpanan Otomatis"
-
-
-msgid "Author:"
-msgstr "Pembuat:"
-
-
-msgid "Mouse:"
-msgstr "Tetikus:"
-
-
-msgid "Text:"
-msgstr "Teks:"
-
-
-msgid "Option:"
-msgstr "Pilihan:"
-
-
-msgid "Tooltip:"
-msgstr "Alat"
 
 
 msgid "Description:"
@@ -7924,6 +7842,10 @@ msgstr "penjelasan"
 
 msgid "location"
 msgstr "lokasi"
+
+
+msgid "Author:"
+msgstr "Pembuat:"
 
 
 msgid "author"
@@ -9050,10 +8972,6 @@ msgid "No active sequence!"
 msgstr "Orientasi Transformasi"
 
 
-msgid "Open Recent..."
-msgstr "Buka Terakhir"
-
-
 msgid "Control Point:"
 msgstr "Bahan"
 
@@ -9349,10 +9267,6 @@ msgstr "Menampilkan Berkas Blender"
 
 msgid "Add Mesh"
 msgstr "Tambahkan Mesh"
-
-
-msgid "Development"
-msgstr "Pengembangan"
 
 
 msgid "Import-Export"

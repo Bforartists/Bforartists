@@ -48,7 +48,7 @@ struct MovieClip;
 struct MovieClipScopes;
 struct Scopes;
 struct Script;
-struct SpaceIpo;
+struct SpaceGraph;
 struct Text;
 struct bDopeSheet;
 struct bGPdata;
@@ -115,7 +115,7 @@ typedef enum eSpaceInfo_RptMask {
  * \{ */
 
 /* Properties Editor */
-typedef struct SpaceButs {
+typedef struct SpaceProperties {
 	SpaceLink *next, *prev;
 	/** Storage of regions for inactive spaces. */
 	ListBase regionbase;
@@ -134,9 +134,8 @@ typedef struct SpaceButs {
 	short mainb, mainbo, mainbuser;
 	/** Preview is signal to refresh. */
 	short preview;
-	short pad[2];
+	char _pad[5];
 	char flag;
-	char collection_context;
 
 	/** Runtime. */
 	void *path;
@@ -145,12 +144,12 @@ typedef struct SpaceButs {
 	ID *pinid;
 
 	void *texuser;
-} SpaceButs;
+} SpaceProperties;
 
 /* button defines (deprecated) */
 #ifdef DNA_DEPRECATED_ALLOW
-/* warning: the values of these defines are used in SpaceButs.tabs[8] */
-/* SpaceButs.mainb new */
+/* warning: the values of these defines are used in SpaceProperties.tabs[8] */
+/* SpaceProperties.mainb new */
 #define CONTEXT_SCENE   0
 #define CONTEXT_OBJECT  1
 // #define CONTEXT_TYPES   2
@@ -159,7 +158,7 @@ typedef struct SpaceButs {
 // #define CONTEXT_SCRIPT  5
 // #define CONTEXT_LOGIC   6
 
-/* SpaceButs.mainb old (deprecated) */
+/* SpaceProperties.mainb old (deprecated) */
 // #define BUTS_VIEW           0
 #define BUTS_LAMP           1
 #define BUTS_MAT            2
@@ -177,7 +176,7 @@ typedef struct SpaceButs {
 // #define BUTS_EFFECTS        14
 #endif /* DNA_DEPRECATED_ALLOW */
 
-/* SpaceButs.mainb new */
+/* SpaceProperties.mainb new */
 typedef enum eSpaceButtons_Context {
 	BCONTEXT_RENDER = 0,
 	BCONTEXT_SCENE = 1,
@@ -201,7 +200,7 @@ typedef enum eSpaceButtons_Context {
 	BCONTEXT_TOT
 } eSpaceButtons_Context;
 
-/* SpaceButs.flag */
+/* SpaceProperties.flag */
 typedef enum eSpaceButtons_Flag {
 	SB_PRV_OSA = (1 << 0),
 	SB_PIN_CONTEXT = (1 << 1),
@@ -219,7 +218,7 @@ typedef enum eSpaceButtons_Flag {
  * \{ */
 
 /* Outliner */
-typedef struct SpaceOops {
+typedef struct SpaceOutliner {
 	SpaceLink *next, *prev;
 	/** Storage of regions for inactive spaces. */
 	ListBase regionbase;
@@ -255,10 +254,10 @@ typedef struct SpaceOops {
 	 * Pointers to treestore elements, grouped by (id, type, nr)
 	 * in hashtable for faster searching */
 	void *treehash;
-} SpaceOops;
+} SpaceOutliner;
 
 
-/* SpaceOops.flag */
+/* SpaceOutliner.flag */
 typedef enum eSpaceOutliner_Flag {
 	SO_TESTBLOCKS           = (1 << 0),
 	SO_NEWSELECTED          = (1 << 1),
@@ -267,7 +266,7 @@ typedef enum eSpaceOutliner_Flag {
 	SO_SKIP_SORT_ALPHA      = (1 << 4),
 } eSpaceOutliner_Flag;
 
-/* SpaceOops.filter */
+/* SpaceOutliner.filter */
 typedef enum eSpaceOutliner_Filter {
 	SO_FILTER_SEARCH           = (1 << 0),  /* Run-time flag. */
 	SO_FILTER_DEPRECATED_1     = (1 << 1),  /* cleared */
@@ -309,7 +308,7 @@ typedef enum eSpaceOutliner_Filter {
                        SO_FILTER_OB_STATE | \
                        SO_FILTER_NO_COLLECTION)
 
-/* SpaceOops.filter_state */
+/* SpaceOutliner.filter_state */
 typedef enum eSpaceOutliner_StateFilter {
 	SO_FILTER_OB_ALL           = 0,
 	SO_FILTER_OB_VISIBLE       = 1,
@@ -317,7 +316,7 @@ typedef enum eSpaceOutliner_StateFilter {
 	SO_FILTER_OB_ACTIVE        = 3,
 } eSpaceOutliner_StateFilter;
 
-/* SpaceOops.outlinevis */
+/* SpaceOutliner.outlinevis */
 typedef enum eSpaceOutliner_Mode {
 	SO_SCENES            = 0,
 	/* SO_CUR_SCENE      = 1, */  /* deprecated! */
@@ -337,7 +336,7 @@ typedef enum eSpaceOutliner_Mode {
 	SO_VIEW_LAYER        = 15,
 } eSpaceOutliner_Mode;
 
-/* SpaceOops.storeflag */
+/* SpaceOutliner.storeflag */
 typedef enum eSpaceOutliner_StoreFlag {
 	/* cleanup tree */
 	SO_TREESTORE_CLEANUP    = (1 << 0),
@@ -347,7 +346,7 @@ typedef enum eSpaceOutliner_StoreFlag {
 	SO_TREESTORE_REBUILD    = (1 << 2),
 } eSpaceOutliner_StoreFlag;
 
-/* outliner search flags (SpaceOops.search_flags) */
+/* outliner search flags (SpaceOutliner.search_flags) */
 typedef enum eSpaceOutliner_Search_Flags {
 	SO_FIND_CASE_SENSITIVE  = (1 << 0),
 	SO_FIND_COMPLETE        = (1 << 1),
@@ -360,16 +359,16 @@ typedef enum eSpaceOutliner_Search_Flags {
 /** \name Graph Editor
  * \{ */
 
-typedef struct SpaceIpo_Runtime {
+typedef struct SpaceGraph_Runtime {
 	/** #eGraphEdit_Runtime_Flag */
 	char flag;
 	char _pad[7];
 	/** Sampled snapshots of F-Curves used as in-session guides */
 	ListBase ghost_curves;
-} SpaceIpo_Runtime;
+} SpaceGraph_Runtime;
 
 /* 'Graph' Editor (formerly known as the IPO Editor) */
-typedef struct SpaceIpo {
+typedef struct SpaceGraph {
 	SpaceLink *next, *prev;
 	/** Storage of regions for inactive spaces. */
 	ListBase regionbase;
@@ -403,11 +402,11 @@ typedef struct SpaceIpo {
 	int around;
 	int pad;
 
-	SpaceIpo_Runtime runtime;
-} SpaceIpo;
+	SpaceGraph_Runtime runtime;
+} SpaceGraph;
 
 
-/* SpaceIpo.flag (Graph Editor Settings) */
+/* SpaceGraph.flag (Graph Editor Settings) */
 typedef enum eGraphEdit_Flag {
 	/* OLD DEPRECEATED SETTING */
 	/* SIPO_LOCK_VIEW            = (1 << 0), */
@@ -442,7 +441,7 @@ typedef enum eGraphEdit_Flag {
 	SIPO_NORMALIZE_FREEZE     = (1 << 15),
 } eGraphEdit_Flag;
 
-/* SpaceIpo.mode (Graph Editor Mode) */
+/* SpaceGraph.mode (Graph Editor Mode) */
 typedef enum eGraphEdit_Mode {
 	/* all animation curves (from all over Blender) */
 	SIPO_MODE_ANIMATION = 0,
@@ -499,28 +498,6 @@ typedef enum eSpaceNla_Flag {
 	/* don't show local strip marker indications */
 	SNLA_NOLOCALMARKERS    = (1 << 7),
 } eSpaceNla_Flag;
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Timeline
- * \{ */
-
-/* SpaceTime.redraws (now bScreen.redraws_flag) */
-typedef enum eScreen_Redraws_Flag {
-	TIME_REGION            = (1 << 0),
-	TIME_ALL_3D_WIN        = (1 << 1),
-	TIME_ALL_ANIM_WIN      = (1 << 2),
-	TIME_ALL_BUTS_WIN      = (1 << 3),
-	// TIME_WITH_SEQ_AUDIO    = (1 << 4), /* DEPRECATED */
-	TIME_SEQ               = (1 << 5),
-	TIME_ALL_IMAGE_WIN     = (1 << 6),
-	// TIME_CONTINUE_PHYSICS  = (1 << 7), /* UNUSED */
-	TIME_NODES             = (1 << 8),
-	TIME_CLIPS             = (1 << 9),
-
-	TIME_FOLLOW            = (1 << 15),
-} eScreen_Redraws_Flag;
 
 /** \} */
 
@@ -1605,9 +1582,9 @@ typedef struct SpaceStatusBar {
 typedef enum eSpace_Type {
 	SPACE_EMPTY    = 0,
 	SPACE_VIEW3D   = 1,
-	SPACE_IPO      = 2,
+	SPACE_GRAPH      = 2,
 	SPACE_OUTLINER = 3,
-	SPACE_BUTS     = 4,
+	SPACE_PROPERTIES     = 4,
 	SPACE_FILE     = 5,
 	SPACE_IMAGE    = 6,
 	SPACE_INFO     = 7,

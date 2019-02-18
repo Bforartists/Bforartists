@@ -476,7 +476,7 @@ static const char *wm_context_member_from_ptr(bContext *C, const PointerRNA *ptr
 				CTX_TEST_SPACE_TYPE(SPACE_IMAGE, "space_data.uv_editor", space_data);
 				CTX_TEST_SPACE_TYPE(SPACE_VIEW3D, "space_data.fx_settings", &(CTX_wm_view3d(C)->fx_settings));
 				CTX_TEST_SPACE_TYPE(SPACE_NLA, "space_data.dopesheet", CTX_wm_space_nla(C)->ads);
-				CTX_TEST_SPACE_TYPE(SPACE_IPO, "space_data.dopesheet", CTX_wm_space_graph(C)->ads);
+				CTX_TEST_SPACE_TYPE(SPACE_GRAPH, "space_data.dopesheet", CTX_wm_space_graph(C)->ads);
 				CTX_TEST_SPACE_TYPE(SPACE_ACTION, "space_data.dopesheet", &(CTX_wm_space_action(C)->ads));
 				CTX_TEST_SPACE_TYPE(SPACE_FILE, "space_data.params", CTX_wm_space_file(C)->params);
 				break;
@@ -1212,8 +1212,8 @@ int WM_operator_ui_popup(bContext *C, wmOperator *op, int width, int height)
 {
 	wmOpPopUp *data = MEM_callocN(sizeof(wmOpPopUp), "WM_operator_ui_popup");
 	data->op = op;
-	data->width = width;
-	data->height = height;
+	data->width = width * U.dpi_fac;
+	data->height = height * U.dpi_fac;
 	data->free_op = true; /* if this runs and gets registered we may want not to free it */
 	UI_popup_block_ex(C, wm_operator_ui_create, NULL, wm_operator_ui_popup_cancel, data, op);
 	return OPERATOR_RUNNING_MODAL;

@@ -22,6 +22,8 @@
 #ifndef __DNA_SDNA_TYPES_H__
 #define __DNA_SDNA_TYPES_H__
 
+struct MemArena;
+
 #
 #
 typedef struct SDNA {
@@ -32,7 +34,7 @@ typedef struct SDNA {
 	bool data_alloc;
 
 	/** Total number of struct members. */
-	int nr_names;
+	int nr_names, nr_names_alloc;
 	/** Struct member names. */
 	const char **names;
 
@@ -59,6 +61,17 @@ typedef struct SDNA {
 
 	/** #GHash for faster lookups, requires WITH_DNA_GHASH to be used for now. */
 	struct GHash *structs_map;
+
+	/** Temporary memory currently only used for version patching DNA. */
+	struct MemArena *mem_arena;
+	/** Runtime versions of data stored in DNA, lazy initialized,
+	 * only different when renaming is done. */
+	struct {
+		/** Aligned with #SDNA.names, same pointers when unchanged. */
+		const char **names;
+		/** Aligned with #SDNA.types, same pointers when unchanged. */
+		const char **types;
+	} alias;
 } SDNA;
 
 #

@@ -34,7 +34,7 @@ def get_mesh_vert_co_array(me):
         me.vertices.foreach_get("co", verts_co)
         verts_co.shape = (-1, 3)
         return verts_co
-    return None
+    return ()
 
 
 def get_bmesh_vert_co_array(bm):
@@ -43,7 +43,7 @@ def get_bmesh_vert_co_array(bm):
         import numpy as np
 
         return np.array([v.co for v in bm.verts], 'f4')
-    return None
+    return ()
 
 
 def get_mesh_tri_verts_array(me):
@@ -56,32 +56,35 @@ def get_mesh_tri_verts_array(me):
         me.loop_triangles.foreach_get("vertices", tris)
         tris.shape = (-1, 3)
         return tris
-    return None
+    return ()
 
 
 def get_bmesh_tri_verts_array(bm):
-    import numpy as np
+    if bm.faces:
+        import numpy as np
 
-    l_tri_layer = bm.faces.layers.int.get("l_tri")
-    if l_tri_layer is None:
-        l_tri_layer = bm.faces.layers.int.new("l_tri")
+        l_tri_layer = bm.faces.layers.int.get("l_tri")
+        if l_tri_layer is None:
+            l_tri_layer = bm.faces.layers.int.new("l_tri")
 
-    ltris = bm.calc_loop_triangles()
-    tris = np.empty((len(ltris), 3), 'i4')
-    i = 0
-    last_face = bm.faces[-1]
-    for ltri in ltris:
-        face = ltri[0].face
-        if not face.hide:
-            tris[i] = ltri[0].vert.index, ltri[1].vert.index, ltri[2].vert.index
-            if last_face != face:
-                last_face = face
-                face[l_tri_layer] = i
-            i += 1
-    if i:
-        tris.resize((i, 3), refcheck=False)
-        return tris
-    return None
+        ltris = bm.calc_loop_triangles()
+        tris = np.empty((len(ltris), 3), 'i4')
+        i = 0
+
+        bm.faces.ensure_lookup_table()
+        last_face = bm.faces[-1]
+        for ltri in ltris:
+            face = ltri[0].face
+            if not face.hide:
+                tris[i] = ltri[0].vert.index, ltri[1].vert.index, ltri[2].vert.index
+                if last_face != face:
+                    last_face = face
+                    face[l_tri_layer] = i
+                i += 1
+        if i:
+            tris.resize((i, 3), refcheck=False)
+            return tris
+    return ()
 
 
 def get_mesh_edge_verts_array(me):
@@ -93,7 +96,7 @@ def get_mesh_edge_verts_array(me):
         me.edges.foreach_get("vertices", edge_verts)
         edge_verts.shape = tot_edges, 2
         return edge_verts
-    return None
+    return ()
 
 
 def get_bmesh_edge_verts_array(bm):
@@ -102,7 +105,7 @@ def get_bmesh_edge_verts_array(bm):
     if edges:
         import numpy as np
         return np.array(edges, 'i4')
-    return None
+    return ()
 
 
 def get_mesh_loosevert_array(me, edges):
@@ -115,7 +118,7 @@ def get_mesh_loosevert_array(me, edges):
     verts = verts[mask]
     if len(verts):
         return verts
-    return None
+    return ()
 
 
 def get_bmesh_loosevert_array(bm):
@@ -123,7 +126,7 @@ def get_bmesh_loosevert_array(bm):
     if looseverts:
         import numpy as np
         return np.array(looseverts, 'i4')
-    return None
+    return ()
 
 
 class _Mesh_Arrays():
@@ -174,7 +177,7 @@ class _Mesh_Arrays():
 
 class GPU_Indices_Mesh():
     __slots__ = (
-        "obj",
+        "ob_data",
         "draw_tris",
         "draw_edges",
         "draw_verts",
@@ -230,11 +233,11 @@ class GPU_Indices_Mesh():
         gpu.matrix.load_matrix(MV)
 
 
-    def __init__(self, obj, draw_tris, draw_edges, draw_verts):
-        self.obj = obj
+    def __init__(self, depsgraph, obj, draw_tris, draw_edges, draw_verts):
+        self.ob_data = obj.original.data
 
-        if obj.data in GPU_Indices_Mesh._Hash:
-            src = GPU_Indices_Mesh._Hash[obj.data]
+        if self.ob_data in GPU_Indices_Mesh._Hash:
+            src = GPU_Indices_Mesh._Hash[self.ob_data]
             dst = self
 
             dst.draw_tris    = src.draw_tris
@@ -250,10 +253,10 @@ class GPU_Indices_Mesh():
             dst.users        = src.users
             dst.users.append(self)
 
-            update = obj.type == 'MESH' and obj.data.is_editmode
+            update = False
 
         else:
-            GPU_Indices_Mesh._Hash[obj.data] = self
+            GPU_Indices_Mesh._Hash[self.ob_data] = self
             self.users = [self]
             update = True;
 
@@ -267,15 +270,15 @@ class GPU_Indices_Mesh():
             GPU_Indices_Mesh.init_opengl()
 
             ## Init Array ##
-            mesh_arrays = _Mesh_Arrays(obj, draw_tris, draw_edges, draw_verts)
+            mesh_arrays = _Mesh_Arrays(depsgraph.id_eval_get(obj), draw_tris, draw_edges, draw_verts)
 
             if mesh_arrays.verts_co is None:
                 self.draw_tris = False
                 self.draw_edges = False
                 self.draw_verts = False
-                self.tri_verts = None
-                self.edge_verts = None
-                self.looseverts = None
+                self.tri_verts = ()
+                self.edge_verts = ()
+                self.looseverts = ()
                 return
 
             ## Create VBO for vertices ##
@@ -293,7 +296,7 @@ class GPU_Indices_Mesh():
             vbo.attr_fill(0, data = self.verts_co)
 
             ## Create Batch for Tris ##
-            if self.tri_verts is not None:
+            if len(self.tri_verts) > 0:
                 ebo = gpu.types.GPUIndexBuf(type = "TRIS", seq = self.tri_verts)
                 self.batch_tris = gpu.types.GPUBatch(type = "TRIS", buf = vbo, elem = ebo)
                 self.batch_tris.program_set(self.shader)
@@ -302,7 +305,7 @@ class GPU_Indices_Mesh():
                 self.batch_tris = None
 
             ## Create Batch for Edges ##
-            if self.edge_verts is not None:
+            if len(self.edge_verts) > 0:
                 ebo = gpu.types.GPUIndexBuf(type = "LINES", seq = self.edge_verts)
                 self.batch_edges = gpu.types.GPUBatch(type = "LINES", buf = vbo, elem = ebo)
                 self.batch_edges.program_set(self.shader)
@@ -311,7 +314,7 @@ class GPU_Indices_Mesh():
                 self.batch_edges = None
 
             ## Create Batch for Loose Verts ##
-            if self.looseverts is not None:
+            if len(self.looseverts) > 0:
                 ebo = gpu.types.GPUIndexBuf(type = "POINTS", seq = self.looseverts)
                 self.batch_lverts = gpu.types.GPUBatch(type = "POINTS", buf = vbo, elem = ebo)
                 self.batch_lverts.program_set(self.shader)
@@ -335,9 +338,9 @@ class GPU_Indices_Mesh():
 
 
     def set_draw_mode(self, draw_tris, draw_edges, draw_verts):
-        self.draw_tris = draw_tris and self.tri_verts is not None
-        self.draw_edges = draw_edges and self.edge_verts is not None
-        self.draw_verts = draw_verts and self.looseverts is not None
+        self.draw_tris = draw_tris and len(self.tri_verts) > 0
+        self.draw_edges = draw_edges and len(self.edge_verts) > 0
+        self.draw_verts = draw_verts and len(self.looseverts) > 0
 
 
     def Draw(self, index_offset, depth_offset = -0.00005):
@@ -387,8 +390,8 @@ class GPU_Indices_Mesh():
         return self.looseverts[index]
 
     def free(self):
-        if len(self.users) == 1:
-            GPU_Indices_Mesh._Hash.pop(self.obj.data)
+        self.users.remove(self)
+        if len(self.users) == 0:
             del self.batch_tris
             del self.batch_edges
             del self.batch_lverts
@@ -396,8 +399,8 @@ class GPU_Indices_Mesh():
             del self.tri_verts
             del self.edge_verts
             del self.looseverts
+            GPU_Indices_Mesh._Hash.pop(self.ob_data)
 
-        self.users.remove(self)
         #print('mesh_del', self.obj.name)
 
 

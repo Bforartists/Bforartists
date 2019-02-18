@@ -66,6 +66,12 @@ class ParseArrayOfFloatsTest(unittest.TestCase):
     def test_all_commas(self):
         self.assertEqual(parse_array_of_floats(",,,"), [0, 0, 0, 0])
 
+    def test_value_with_decimal_separator(self):
+        self.assertEqual(parse_array_of_floats("3.5"), [3.5])
+
+    def test_comma_separated_values_with_decimal_separator(self):
+        self.assertEqual(parse_array_of_floats("2.75,8.5"), [2.75, 8.5])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

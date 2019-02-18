@@ -1099,7 +1099,7 @@ int BKE_scene_base_iter_next(Depsgraph *depsgraph, SceneBaseIter *iter,
 						/* collections cannot be duplicated for mballs yet,
 						 * this enters eternal loop because of
 						 * makeDispListMBall getting called inside of collection_duplilist */
-						if ((*base)->object->dup_group == NULL) {
+						if ((*base)->object->instance_collection == NULL) {
 							iter->duplilist = object_duplilist(depsgraph, (*scene), (*base)->object);
 
 							iter->dupob = iter->duplilist->first;
@@ -1453,7 +1453,7 @@ static void prepare_mesh_for_viewport_render(
 		     (mesh->id.recalc & ID_RECALC_ALL)))
 		{
 			if (check_rendered_viewport_visible(bmain)) {
-				BMesh *bm = mesh->edit_btmesh->bm;
+				BMesh *bm = mesh->edit_mesh->bm;
 				BM_mesh_bm_to_me(
 				        bmain, bm, mesh,
 				        (&(struct BMeshToMeshParams){

@@ -681,8 +681,8 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 			while (sa) {
 				SpaceLink *sl = sa->spacedata.first;
 				while (sl) {
-					if (sl->spacetype == SPACE_IPO) {
-						SpaceIpo *sipo = (SpaceIpo *)sl;
+					if (sl->spacetype == SPACE_GRAPH) {
+						SpaceGraph *sipo = (SpaceGraph *)sl;
 						sipo->v2d.max[0] = 15000.0;
 					}
 					sl = sl->next;
@@ -873,7 +873,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 				SpaceLink *sl;
 
 				for (sl = sa->spacedata.first; sl; sl = sl->next) {
-					if (sl->spacetype == SPACE_IPO) {
+					if (sl->spacetype == SPACE_GRAPH) {
 						SpaceSeq *sseq = (SpaceSeq *)sl;
 						sseq->v2d.keeptot = 0;
 					}
@@ -1013,8 +1013,8 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 				SpaceLink *sl;
 
 				for (sl = sa->spacedata.first; sl; sl = sl->next) {
-					if (sl->spacetype == SPACE_BUTS) {
-						SpaceButs *sbuts = (SpaceButs *)sl;
+					if (sl->spacetype == SPACE_PROPERTIES) {
+						SpaceProperties *sbuts = (SpaceProperties *)sl;
 
 						sbuts->v2d.maxzoom = 1.2f;
 
@@ -2293,7 +2293,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 
 					for (; dup; dup = dup->id.next) {
 						if (ob == blo_do_versions_newlibadr(fd, lib, dup->parent)) {
-							part->dup_ob = dup;
+							part->instance_object = dup;
 							ob->transflag |= OB_DUPLIPARTS;
 							ob->transflag &= ~OB_DUPLIVERTS;
 
@@ -2344,7 +2344,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 
 		/* dupliface scale */
 		for (ob = bmain->object.first; ob; ob = ob->id.next)
-			ob->dupfacesca = 1.0f;
+			ob->instance_faces_scale = 1.0f;
 	}
 
 	if ((bmain->versionfile < 245) || (bmain->versionfile == 245 && bmain->subversionfile < 11)) {
@@ -2501,9 +2501,9 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
 							sact->autosnap = SACTSNAP_FRAME;
 							break;
 						}
-						case SPACE_IPO:
+						case SPACE_GRAPH:
 						{
-							SpaceIpo *sipo = (SpaceIpo *)sl;
+							SpaceGraph *sipo = (SpaceGraph *)sl;
 							sipo->autosnap = SACTSNAP_FRAME;
 							break;
 						}

@@ -61,11 +61,6 @@ if "bpy" in locals():
     importlib.reload(add_mesh_beam_builder)
     importlib.reload(Blocks)
     importlib.reload(Wallfactory)
-    importlib.reload(add_shape_geodesic)
-    importlib.reload(forms_271)
-    importlib.reload(geodesic_classes_271)
-    importlib.reload(third_domes_panel_271)
-    importlib.reload(vefm_271)
     importlib.reload(add_mesh_triangles)
 else:
     from . import add_mesh_star
@@ -91,21 +86,8 @@ else:
     from . import Wallfactory
     from . import add_mesh_triangles
 
-    from .geodesic_domes import add_shape_geodesic
-    from .geodesic_domes import forms_271
-    from .geodesic_domes import geodesic_classes_271
-    from .geodesic_domes import third_domes_panel_271
-    from .geodesic_domes import vefm_271
-
 import bpy
 from bpy.types import Menu
-from bpy.props import (
-                BoolProperty,
-                IntProperty,
-                FloatProperty,
-                StringProperty,
-                )
-
 
 class VIEW3D_MT_mesh_vert_add(Menu):
     # Define the "Single Vert" menu
@@ -268,8 +250,6 @@ def menu_func(self, context):
     lay_out.menu("VIEW3D_MT_mesh_torus_add",
                 text="Torus Objects")
     lay_out.separator()
-    lay_out.operator("mesh.generate_geodesic_dome",
-                    text="Geodesic Dome")
     lay_out.operator("discombobulate.ops",
                     text="Discombobulator")
     lay_out.separator()
@@ -325,9 +305,6 @@ classes = [
     mesh_discombobulator.unchooseDoodad,
     add_mesh_beam_builder.addBeam,
     Wallfactory.add_mesh_wallb,
-    add_shape_geodesic.add_corrective_pose_shape_fast,
-    third_domes_panel_271.GenerateGeodesicDome,
-    third_domes_panel_271.DialogOperator,
     add_mesh_triangles.MakeTriangle
 ]
 

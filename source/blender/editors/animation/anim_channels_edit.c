@@ -663,7 +663,7 @@ static bool animedit_poll_channels_active(bContext *C)
 	if (ELEM(NULL, sa, CTX_wm_region(C)))
 		return 0;
 	/* animation editor test */
-	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_IPO, SPACE_NLA) == 0)
+	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_GRAPH, SPACE_NLA) == 0)
 		return 0;
 
 	return 1;
@@ -680,7 +680,7 @@ static bool animedit_poll_channels_nla_tweakmode_off(bContext *C)
 	if (ELEM(NULL, sa, CTX_wm_region(C)))
 		return 0;
 	/* animation editor test */
-	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_IPO, SPACE_NLA) == 0)
+	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_GRAPH, SPACE_NLA) == 0)
 		return 0;
 
 	/* NLA TweakMode test */
@@ -1437,9 +1437,9 @@ static bool animchannels_grouping_poll(bContext *C)
 
 			break;
 		}
-		case SPACE_IPO:
+		case SPACE_GRAPH:
 		{
-			SpaceIpo *sipo = (SpaceIpo *)sl;
+			SpaceGraph *sipo = (SpaceGraph *)sl;
 
 			/* drivers can't have groups... */
 			if (sipo->mode != SIPO_MODE_ANIMATION)
@@ -1625,6 +1625,27 @@ static void ANIM_OT_channels_ungroup(wmOperatorType *ot)
 
 /* ******************** Delete Channel Operator *********************** */
 
+static void update_dependencies_on_delete(bAnimListElem *ale)
+{
+	ID *id = ale->id;
+	AnimData *adt = BKE_animdata_from_id(id);
+	/* TODO(sergey): Technically, if the animation element is being deleted
+	 * from a driver we don't have to tag action. This is something we can check
+	 * for in the future. For now just do most reliable tag whic hwas always
+	 * happening. */
+	if (adt != NULL) {
+		DEG_id_tag_update(id, ID_RECALC_ANIMATION);
+		if (adt->action != NULL) {
+			DEG_id_tag_update(&adt->action->id, ID_RECALC_COPY_ON_WRITE);
+		}
+	}
+	/* Deals with NLA and drivers.
+	 * Doesn't cause overhead for action updates, since object will receive
+	 * animation update after dependency graph flushes update from action to
+	 * all its users. */
+	DEG_id_tag_update(id, ID_RECALC_ANIMATION);
+}
+
 static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	bAnimContext ac;
@@ -1697,7 +1718,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 
 				/* try to free F-Curve */
 				ANIM_fcurve_delete_from_animdata(&ac, adt, fcu);
-				ale->update = ANIM_UPDATE_DEPS;
+				update_dependencies_on_delete(ale);
 				break;
 			}
 			case ANIMTYPE_NLACURVE:
@@ -1719,7 +1740,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				/* unlink and free the F-Curve */
 				BLI_remlink(&strip->fcurves, fcu);
 				free_fcurve(fcu);
-				ale->update = ANIM_UPDATE_DEPS;
+				update_dependencies_on_delete(ale);
 				break;
 			}
 			case ANIMTYPE_GPLAYER:
@@ -1747,7 +1768,6 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 	}
 
 	/* cleanup */
-	ANIM_animdata_update(&ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 
 	/* send notifier that things have changed */
@@ -1824,7 +1844,7 @@ static void setflag_anim_channels(bAnimContext *ac, eAnimChannel_Settings settin
 	 * - but for Graph Editor, this gets used also from main region
 	 *   where hierarchy doesn't apply [#21276]
 	 */
-	if ((ac->spacetype == SPACE_IPO) && (ac->regiontype != RGN_TYPE_CHANNELS)) {
+	if ((ac->spacetype == SPACE_GRAPH) && (ac->regiontype != RGN_TYPE_CHANNELS)) {
 		/* graph editor (case 2) */
 		filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_CHANNELS | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
 	}
@@ -2203,7 +2223,7 @@ static bool animchannels_enable_poll(bContext *C)
 		return 0;
 
 	/* animation editor test - Action/Dopesheet/etc. and Graph only */
-	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_IPO) == 0)
+	if (ELEM(sa->spacetype, SPACE_ACTION, SPACE_GRAPH) == 0)
 		return 0;
 
 	return 1;
@@ -2275,7 +2295,7 @@ static bool animchannels_find_poll(bContext *C)
 		return 0;
 
 	/* animation editor with dopesheet */
-	return ELEM(sa->spacetype, SPACE_ACTION, SPACE_IPO, SPACE_NLA);
+	return ELEM(sa->spacetype, SPACE_ACTION, SPACE_GRAPH, SPACE_NLA);
 }
 
 /* find_invoke() - Get initial channels */

@@ -212,7 +212,7 @@ class DATA_PT_camera(CameraButtonsPanel, Panel):
 class DATA_PT_camera_dof(CameraButtonsPanel, Panel):
     bl_label = "Depth of Field"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
@@ -230,7 +230,7 @@ class DATA_PT_camera_dof(CameraButtonsPanel, Panel):
 class DATA_PT_camera_dof_aperture(CameraButtonsPanel, Panel):
     bl_label = "Aperture"
     bl_parent_id = "DATA_PT_camera_dof"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     def draw(self, context):
         layout = self.layout
@@ -241,19 +241,13 @@ class DATA_PT_camera_dof_aperture(CameraButtonsPanel, Panel):
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
-        if context.engine == 'BLENDER_EEVEE':
-            col = flow.column()
-            col.prop(dof_options, "fstop")
-            col.prop(dof_options, "blades")
+        col = flow.column()
+        col.prop(dof_options, "fstop")
+        col.prop(dof_options, "blades")
 
-            col = flow.column()
-            col.prop(dof_options, "rotation")
-            col.prop(dof_options, "ratio")
-        else:
-            col = flow.column()
-            col.label(text="Viewport")
-            col.prop(dof_options, "fstop")
-            col.prop(dof_options, "blades")
+        col = flow.column()
+        col.prop(dof_options, "rotation")
+        col.prop(dof_options, "ratio")
 
 
 class DATA_PT_camera_background_image(CameraButtonsPanel, Panel):

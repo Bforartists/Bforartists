@@ -119,7 +119,7 @@ static void copy_dupli_context(DupliContext *r_ctx, const DupliContext *ctx, Obj
 
 	/* XXX annoying, previously was done by passing an ID* argument, this at least is more explicit */
 	if (ctx->gen->type == OB_DUPLICOLLECTION)
-		r_ctx->collection = ctx->object->dup_group;
+		r_ctx->collection = ctx->object->instance_collection;
 
 	r_ctx->object = ob;
 	if (mat)
@@ -270,8 +270,8 @@ static void make_duplis_collection(const DupliContext *ctx)
 	Collection *collection;
 	float collection_mat[4][4];
 
-	if (ob->dup_group == NULL) return;
-	collection = ob->dup_group;
+	if (ob->instance_collection == NULL) return;
+	collection = ob->instance_collection;
 
 	/* combine collection offset and obmat */
 	unit_m4(collection_mat);
@@ -305,7 +305,7 @@ static const DupliGenerator gen_dupli_collection = {
 /* OB_DUPLIVERTS */
 typedef struct VertexDupliData {
 	Mesh *me_eval;
-	BMEditMesh *edit_btmesh;
+	BMEditMesh *edit_mesh;
 	int totvert;
 	float (*orco)[3];
 	bool use_rotation;
@@ -387,7 +387,6 @@ static void make_child_duplis_verts(const DupliContext *ctx, void *userdata, Obj
 
 static void make_duplis_verts(const DupliContext *ctx)
 {
-	Scene *scene = ctx->scene;
 	Object *parent = ctx->object;
 	bool use_texcoords = (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER);
 	VertexDupliData vdd;
@@ -397,16 +396,21 @@ static void make_duplis_verts(const DupliContext *ctx)
 
 	/* gather mesh info */
 	{
-		CustomDataMask dm_mask = (use_texcoords ? CD_MASK_BAREMESH | CD_MASK_ORCO : CD_MASK_BAREMESH);
-		vdd.edit_btmesh = BKE_editmesh_from_object(parent);
+		vdd.edit_mesh = BKE_editmesh_from_object(parent);
 
-		/* We do not need any render-smecific handling anymore, depsgraph takes care of that. */
-		if (vdd.edit_btmesh != NULL) {
-			/* XXX TODO replace with equivalent of editbmesh_get_eval_cage when available. */
-			vdd.me_eval = mesh_get_eval_deform(ctx->depsgraph, scene, parent, dm_mask);
+		/* We do not need any render-specific handling anymore, depsgraph takes care of that. */
+		/* NOTE: Do direct access to the evaluated mesh: this function is used
+		 * during meta balls evaluation. But even without those all the objects
+		 * which are needed for correct instancing are already evaluated. */
+		if (vdd.edit_mesh != NULL) {
+			vdd.me_eval = vdd.edit_mesh->mesh_eval_cage;
 		}
 		else {
-			vdd.me_eval = mesh_get_eval_final(ctx->depsgraph, scene, parent, dm_mask);
+			vdd.me_eval = parent->runtime.mesh_eval;
+		}
+
+		if (vdd.me_eval == NULL) {
+			return;
 		}
 
 		if (use_texcoords) {
@@ -610,7 +614,7 @@ static void make_child_duplis_faces(const DupliContext *ctx, void *userdata, Obj
 			continue;
 
 		/* obmat is transform to face */
-		get_dupliface_transform(mp, loopstart, mvert, fdd->use_scale, ctx->object->dupfacesca, obmat);
+		get_dupliface_transform(mp, loopstart, mvert, fdd->use_scale, ctx->object->instance_faces_scale, obmat);
 		/* make offset relative to inst_ob using relative child transform */
 		mul_mat3_m4_v3(child_imat, obmat[3]);
 
@@ -658,7 +662,6 @@ static void make_child_duplis_faces(const DupliContext *ctx, void *userdata, Obj
 
 static void make_duplis_faces(const DupliContext *ctx)
 {
-	Scene *scene = ctx->scene;
 	Object *parent = ctx->object;
 	bool use_texcoords = (DEG_get_mode(ctx->depsgraph) == DAG_EVAL_RENDER);
 	FaceDupliData fdd;
@@ -668,15 +671,20 @@ static void make_duplis_faces(const DupliContext *ctx)
 	/* gather mesh info */
 	{
 		BMEditMesh *em = BKE_editmesh_from_object(parent);
-		CustomDataMask dm_mask = (use_texcoords ? CD_MASK_BAREMESH | CD_MASK_ORCO | CD_MASK_MLOOPUV : CD_MASK_BAREMESH);
 
 		/* We do not need any render-smecific handling anymore, depsgraph takes care of that. */
+		/* NOTE: Do direct access to the evaluated mesh: this function is used
+		 * during meta balls evaluation. But even without those all the objects
+		 * which are needed for correct instancing are already evaluated. */
 		if (em != NULL) {
-			/* XXX TODO replace with equivalent of editbmesh_get_eval_cage when available. */
-			fdd.me_eval = mesh_get_eval_deform(ctx->depsgraph, scene, parent, dm_mask);
+			fdd.me_eval = em->mesh_eval_cage;
 		}
 		else {
-			fdd.me_eval = mesh_get_eval_final(ctx->depsgraph, scene, parent, dm_mask);
+			fdd.me_eval = parent->runtime.mesh_eval;
+		}
+
+		if (fdd.me_eval == NULL) {
+			return;
 		}
 
 		if (use_texcoords) {
@@ -759,14 +767,14 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 
 		/* first check for loops (particle system object used as dupli object) */
 		if (part->ren_as == PART_DRAW_OB) {
-			if (ELEM(part->dup_ob, NULL, par))
+			if (ELEM(part->instance_object, NULL, par))
 				return;
 		}
 		else { /*PART_DRAW_GR */
-			if (part->dup_group == NULL)
+			if (part->instance_collection == NULL)
 				return;
 
-			const ListBase dup_collection_objects = BKE_collection_object_cache_get(part->dup_group);
+			const ListBase dup_collection_objects = BKE_collection_object_cache_get(part->instance_collection);
 			if (BLI_listbase_is_empty(&dup_collection_objects))
 				return;
 
@@ -798,8 +806,8 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 			if (part->draw & PART_DRAW_COUNT_GR) {
 				psys_find_group_weights(part);
 
-				for (dw = part->dupliweights.first; dw; dw = dw->next) {
-					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				for (dw = part->instance_weights.first; dw; dw = dw->next) {
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->instance_collection, object, mode)
 					{
 						if (dw->ob == object) {
 							totcollection += dw->count;
@@ -810,7 +818,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 				}
 			}
 			else {
-				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->instance_collection, object, mode)
 				{
 					(void) object;
 					totcollection++;
@@ -822,8 +830,8 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 
 			if (part->draw & PART_DRAW_COUNT_GR) {
 				a = 0;
-				for (dw = part->dupliweights.first; dw; dw = dw->next) {
-					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				for (dw = part->instance_weights.first; dw; dw = dw->next) {
+					FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->instance_collection, object, mode)
 					{
 						if (dw->ob == object) {
 							for (b = 0; b < dw->count; b++, a++) {
@@ -837,7 +845,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 			}
 			else {
 				a = 0;
-				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->instance_collection, object, mode)
 				{
 					oblist[a] = object;
 					a++;
@@ -846,7 +854,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 			}
 		}
 		else {
-			ob = part->dup_ob;
+			ob = part->instance_object;
 		}
 
 		if (totchild == 0 || part->draw & PART_DRAW_PARENT)
@@ -925,7 +933,7 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 
 			if (part->ren_as == PART_DRAW_GR && psys->part->draw & PART_DRAW_WHOLE_GR) {
 				b = 0;
-				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->dup_group, object, mode)
+				FOREACH_COLLECTION_VISIBLE_OBJECT_RECURSIVE_BEGIN(part->instance_collection, object, mode)
 				{
 					copy_m4_m4(tmat, oblist[b]->obmat);
 
@@ -934,8 +942,8 @@ static void make_duplis_particle_system(const DupliContext *ctx, ParticleSystem 
 					mul_v3_fl(tmat[3], size * scale);
 
 					/* collection dupli offset, should apply after everything else */
-					if (!is_zero_v3(part->dup_group->dupli_ofs)) {
-						sub_v3_v3(tmat[3], part->dup_group->dupli_ofs);
+					if (!is_zero_v3(part->instance_collection->dupli_ofs)) {
+						sub_v3_v3(tmat[3], part->instance_collection->dupli_ofs);
 					}
 
 					/* individual particle transform */
@@ -1093,29 +1101,4 @@ void free_object_duplilist(ListBase *lb)
 {
 	BLI_freelistN(lb);
 	MEM_freeN(lb);
-}
-
-int count_duplilist(Object *ob)
-{
-	if (ob->transflag & OB_DUPLI) {
-		if (ob->transflag & OB_DUPLIVERTS) {
-			if (ob->type == OB_MESH) {
-				if (ob->transflag & OB_DUPLIVERTS) {
-					ParticleSystem *psys = ob->particlesystem.first;
-					int pdup = 0;
-
-					for (; psys; psys = psys->next)
-						pdup += psys->totpart;
-
-					if (pdup == 0) {
-						Mesh *me = ob->data;
-						return me->totvert;
-					}
-					else
-						return pdup;
-				}
-			}
-		}
-	}
-	return 1;
 }

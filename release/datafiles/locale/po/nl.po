@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -130,10 +130,6 @@ msgid "In Range"
 msgstr "In Bereik"
 
 
-msgid "Type"
-msgstr "Type"
-
-
 msgid "Height"
 msgstr "Hoogte"
 
@@ -208,6 +204,10 @@ msgstr "Vetkrijt"
 
 msgid "Lights"
 msgstr "Lichten"
+
+
+msgid "Type"
+msgstr "Type"
 
 
 msgid "Speed"
@@ -568,6 +568,14 @@ msgid "Parent Object"
 msgstr "Ouder Object"
 
 
+msgid "Grid"
+msgstr "Rooster"
+
+
+msgid "Flat"
+msgstr "Vlak"
+
+
 msgid "Window"
 msgstr "Scherm"
 
@@ -827,10 +835,6 @@ msgid "Resolution Y"
 msgstr "Y resolutie"
 
 
-msgid "Flat"
-msgstr "Vlak"
-
-
 msgid "Cube"
 msgstr "Kubus"
 
@@ -897,10 +901,6 @@ msgstr "Weegave"
 
 msgid "Distribution"
 msgstr "Verdeling"
-
-
-msgid "Grid"
-msgstr "Rooster"
 
 
 msgid "Material Slot"
@@ -1290,6 +1290,10 @@ msgstr "Grote X"
 
 msgid "Data Transfer"
 msgstr "Gegevens Overdracht"
+
+
+msgid "New"
+msgstr "Nieuw"
 
 
 msgid "Hair Grid Resolution"
@@ -2583,10 +2587,6 @@ msgstr "Vergrendel Alle Lagen"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Plak Strepen"
-
-
-msgid "New"
-msgstr "Nieuw"
 
 
 msgctxt "Operator"
@@ -4424,6 +4424,14 @@ msgid "Pin"
 msgstr "Prik"
 
 
+msgid "Timeline"
+msgstr "Tijdslijn"
+
+
+msgid "Development"
+msgstr "Ontwikkeling"
+
+
 msgid "Active Point"
 msgstr "Actieve Punt"
 
@@ -4715,10 +4723,6 @@ msgstr "Toon Rode Kanaal"
 msgctxt "MovieClip"
 msgid "View"
 msgstr "Weergave"
-
-
-msgid "Timeline"
-msgstr "Tijdslijn"
 
 
 msgid "Active Bookmark"
@@ -5465,49 +5469,12 @@ msgid "Manual"
 msgstr "Handleiding"
 
 
-msgid "Image Editor:"
-msgstr "Afbeeling Bewerker:"
-
-
-msgid "Animation Player:"
-msgstr "Animatie Speler:"
-
-
-msgid "Auto Execution:"
-msgstr "Auto Executie:"
-
-
-msgid "Save & Load:"
-msgstr "Opslaan & Laden"
-
-
-msgid "Auto Save:"
-msgstr "Auto Opslaan:"
-
-
 msgid "Timer (mins)"
 msgstr "Stopwatch (mins)"
 
 
-msgid "Text Editor:"
-msgstr "Tekst Bewerker:"
-
-
 msgid "Author:"
 msgstr "Auteur:"
-
-
-msgid "Mouse:"
-msgstr "Muis:"
-
-
-msgid "Double Click:"
-msgstr "Dubbelklik:"
-
-
-msgctxt "Operator"
-msgid "API Concepts"
-msgstr "API Concepten"
 
 
 msgctxt "Operator"
@@ -6230,10 +6197,6 @@ msgid "Page Down"
 msgstr "Volgende Pagina"
 
 
-msgid "Open Recent..."
-msgstr "Open Recent..."
-
-
 msgid "Mean Crease:"
 msgstr "Gemiddelde Vouw:"
 
@@ -6330,10 +6293,6 @@ msgstr "Voeg Curve Toe"
 
 msgid "Add Mesh"
 msgstr "Voeg Mesh Toe"
-
-
-msgid "Development"
-msgstr "Ontwikkeling"
 
 
 msgid "Import-Export"
