@@ -239,16 +239,20 @@ class BlenderIdPreferences(AddonPreferences):
                 else:
                     exp_str = 'within seconds'
 
-                if time_left.days < 14:
-                    layout.label(text='You are logged in as %s.' % active_profile.username,
-                                 icon='WORLD_DATA')
-                    layout.label(text='Your token will expire %s. Please log out and log in again '
-                                      'to refresh it.' % exp_str, icon='PREVIEW_RANGE')
+                endpoint = communication.blender_id_endpoint()
+                if endpoint == communication.BLENDER_ID_ENDPOINT:
+                    msg = 'You are logged in as %s.' % active_profile.username
                 else:
-                    layout.label(
-                        text='You are logged in as %s. Your authentication token expires %s.'
-                             % (active_profile.username, exp_str),
-                        icon='WORLD_DATA')
+                    msg = 'You are logged in as %s at %s.' % (active_profile.username, endpoint)
+
+                col = layout.column(align=True)
+                col.label(text=msg, icon='WORLD_DATA')
+                if time_left.days < 14:
+                    col.label(text='Your token will expire %s. Please log out and log in again '
+                                   'to refresh it.' % exp_str, icon='PREVIEW_RANGE')
+                else:
+                    col.label(text='Your authentication token expires %s.' % exp_str,
+                              icon='BLANK1')
 
             row = layout.row().split(factor=0.8)
             row.operator('blender_id.logout')
@@ -263,9 +267,14 @@ class BlenderIdPreferences(AddonPreferences):
 class BlenderIdMixin:
     @staticmethod
     def addon_prefs(context):
-        preferences = context.preferences.addons[__name__].preferences
-        preferences.reset_messages()
-        return preferences
+        try:
+            prefs = context.preferences
+        except AttributeError:
+            prefs = context.user_preferences
+
+        addon_prefs = prefs.addons[__name__].preferences
+        addon_prefs.reset_messages()
+        return addon_prefs
 
 
 class BlenderIdLogin(BlenderIdMixin, Operator):
@@ -352,7 +361,7 @@ def register():
     bpy.utils.register_class(BlenderIdPreferences)
     bpy.utils.register_class(BlenderIdValidate)
 
-    preferences = bpy.context.preferences.addons[__name__].preferences
+    preferences = BlenderIdMixin.addon_prefs(bpy.context)
     preferences.reset_messages()
 
 

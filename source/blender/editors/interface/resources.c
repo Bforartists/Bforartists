@@ -108,62 +108,62 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 		else {
 
 			switch (spacetype) {
-				case SPACE_BUTS:
-					ts = &btheme->tbuts;
+				case SPACE_PROPERTIES:
+					ts = &btheme->space_properties;
 					break;
 				case SPACE_VIEW3D:
-					ts = &btheme->tv3d;
+					ts = &btheme->space_view3d;
 					break;
-				case SPACE_IPO:
-					ts = &btheme->tipo;
+				case SPACE_GRAPH:
+					ts = &btheme->space_graph;
 					break;
 				case SPACE_FILE:
-					ts = &btheme->tfile;
+					ts = &btheme->space_file;
 					break;
 				case SPACE_NLA:
-					ts = &btheme->tnla;
+					ts = &btheme->space_nla;
 					break;
 				case SPACE_ACTION:
-					ts = &btheme->tact;
+					ts = &btheme->space_action;
 					break;
 				case SPACE_SEQ:
-					ts = &btheme->tseq;
+					ts = &btheme->space_sequencer;
 					break;
 				case SPACE_IMAGE:
-					ts = &btheme->tima;
+					ts = &btheme->space_image;
 					break;
 				case SPACE_TEXT:
-					ts = &btheme->text;
+					ts = &btheme->space_text;
 					break;
 				case SPACE_OUTLINER:
-					ts = &btheme->toops;
+					ts = &btheme->space_outliner;
 					break;
 				case SPACE_INFO:
-					ts = &btheme->tinfo;
+					ts = &btheme->space_info;
 					break;
 				case SPACE_USERPREF:
-					ts = &btheme->tuserpref;
+					ts = &btheme->space_preferences;
 					break;
 				case SPACE_CONSOLE:
-					ts = &btheme->tconsole;
+					ts = &btheme->space_console;
 					break;
 				case SPACE_NODE:
-					ts = &btheme->tnode;
+					ts = &btheme->space_node;
 					break;
 				case SPACE_CLIP:
-					ts = &btheme->tclip;
+					ts = &btheme->space_clip;
 					break;
 				case SPACE_TOPBAR:
-					ts = &btheme->ttopbar;
+					ts = &btheme->space_topbar;
 					break;
 				case SPACE_STATUSBAR:
-					ts = &btheme->tstatusbar;
+					ts = &btheme->space_statusbar;
 					break;
 				case SPACE_TOOLBAR:
-					ts = &btheme->tv3d;
+					ts = &btheme->space_view3d;
 					break;
 				default:
-					ts = &btheme->tv3d;
+					ts = &btheme->space_view3d;
 					break;
 			}
 
@@ -782,7 +782,7 @@ void UI_SetTheme(int spacetype, int regionid)
 	else if (regionid) {
 		/* popups */
 		theme_active = U.themes.first;
-		theme_spacetype = SPACE_BUTS;
+		theme_spacetype = SPACE_PROPERTIES;
 		theme_regionid = regionid;
 	}
 	else {
@@ -930,6 +930,17 @@ void UI_GetThemeColor4fv(int colorid, float col[4])
 	const uchar *cp;
 
 	cp = UI_ThemeGetColorPtr(theme_active, theme_spacetype, colorid);
+	col[0] = ((float)cp[0]) / 255.0f;
+	col[1] = ((float)cp[1]) / 255.0f;
+	col[2] = ((float)cp[2]) / 255.0f;
+	col[3] = ((float)cp[3]) / 255.0f;
+}
+
+void UI_GetThemeColorType4fv(int colorid, int spacetype, float col[4])
+{
+	const unsigned char *cp;
+
+	cp = UI_ThemeGetColorPtr(theme_active, spacetype, colorid);
 	col[0] = ((float)cp[0]) / 255.0f;
 	col[1] = ((float)cp[1]) / 255.0f;
 	col[2] = ((float)cp[2]) / 255.0f;

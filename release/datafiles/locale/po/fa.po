@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -248,14 +248,6 @@ msgid "Motion Path settings for visualization"
 msgstr "ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺖﮐﺮﺣ ﺮﯿﺴﻣ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Onion Skinning"
-msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ"
-
-
-msgid "Onion Skinning (ghosting) settings for visualization"
-msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻀﻨﺗ (ﯼﺯﺍﺪﻧﺍ ﻪﯾﺎﺳ) ﻢﺴﺠﺗ ﯼﺍﺮﺑ"
-
-
 msgid "Motion Path Settings"
 msgstr "ﺖﮐﺮﺣ ﺮﯿﺴﻣ ﺕﺎﻤﯿﻈﻨﺗ"
 
@@ -314,30 +306,6 @@ msgstr "ﺮﯿﺴﻣ ﻉﻮﻧ"
 
 msgid "In Range"
 msgstr "ﻩﺩﻭﺪﺤﻣ ﺭﺩ"
-
-
-msgid "Onion Skinning Settings"
-msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "On Selected Bones Only"
-msgstr "ﺐﺨﺘﻨﻣ ﯼﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ ﺮﺑ ﻂﻘﻓ"
-
-
-msgid "Type"
-msgstr "ﻉﻮﻧ"
-
-
-msgid "Around Current Frame"
-msgstr "ﯽﻠﻌﻓ ﻢﯾﺮﻓ ﻑﺍﺮﻃﺍ ﺭﺩ"
-
-
-msgid "On Keyframes"
-msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ‌ﻢﯾﺮﻓ ﺭﺩ"
 
 
 msgid "Any Type"
@@ -540,6 +508,10 @@ msgid "Boid rule name"
 msgstr "Boid ﻥﻮﻧﺎﻗ ﻢﺳﺍ"
 
 
+msgid "Type"
+msgstr "ﻉﻮﻧ"
+
+
 msgid "Goal"
 msgstr "ﻑﺪﻫ"
 
@@ -702,6 +674,30 @@ msgstr "ﻢﻬﯾﻭﺭ"
 
 msgid "Has Spacing"
 msgstr "ﻪﻠﺻﺎﻓ"
+
+
+msgid "Has Space Attenuation"
+msgstr "ﺖﻬﺟ"
+
+
+msgid "Has Height"
+msgstr "ﻉﺎﻔﺗﺭﺍ"
+
+
+msgid "Has Pinch Factor"
+msgstr "ﻥﺎﺳﻮﻧ ﺭﻮﺘﮐﺎﻓ"
+
+
+msgid "Has Plane Offset"
+msgstr "X ﺖﺴﻓﺍ"
+
+
+msgid "Has Sculpt Plane"
+msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
+
+
+msgid "Has Secondary Color"
+msgstr "ﻪﯾﻮﻧﺎﺛ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 
 msgid "Mode"
@@ -2502,8 +2498,16 @@ msgid "Type of parent relation"
 msgstr "ﺖﯾﺩﻭﺪﺤﻣ ﻉﻮﻧ"
 
 
+msgid "Onion Skinning"
+msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ"
+
+
 msgid "Direction"
 msgstr "ﺎﺘﺳﺍﺭ"
+
+
+msgid "Spacing"
+msgstr "ﻪﻠﺻﺎﻓ"
 
 
 msgid "Brush"
@@ -2524,6 +2528,18 @@ msgstr "ﺎﻀﻓ"
 
 msgid "2D Image"
 msgstr "ﺮﯾﻮﺼﺗ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgid "End Cap"
+msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
+
+
+msgid "Flat"
+msgstr "ﺖﺨﺗ"
+
+
+msgid "Start Cap"
+msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
 
 msgid "Triangles"
@@ -2662,18 +2678,6 @@ msgid "Edit Bones"
 msgstr "ﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ ﺶﯾﺍﺮﯾﻭ"
 
 
-msgid "Ghosting End Frame"
-msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
-
-
-msgid "Ghosting Start Frame"
-msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
-
-
-msgid "Ghost Type"
-msgstr "ﺮﯿﺴﻣ ﻉﻮﻧ"
-
-
 msgid "Armature layer visibility"
 msgstr "ﺪﯾﺩ"
 
@@ -2764,10 +2768,6 @@ msgstr "ﻪﻧﺎﺳﺭ ﻒﻗﻮﺗ"
 
 msgid "Rotate"
 msgstr "ﻥﺍﺭﻭﺩ"
-
-
-msgid "Spacing"
-msgstr "ﻪﻠﺻﺎﻓ"
 
 
 msgid "Stroke Method"
@@ -3210,10 +3210,6 @@ msgid "Cycles Material Settings"
 msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Flat"
-msgstr "ﺖﺨﺗ"
-
-
 msgid "Cube"
 msgstr "ﺐﻌﮑﻣ"
 
@@ -3538,10 +3534,6 @@ msgid "Rotation in Eulers"
 msgstr "ﺎﻫ Euler ﺭﺩ ﺶﺧﺮﭼ"
 
 
-msgid "Delay in the parent relationship"
-msgstr "ﺖﯾﺩﻭﺪﺤﻣ ﻉﻮﻧ"
-
-
 msgid "Settings for soft body simulation"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
@@ -3560,10 +3552,6 @@ msgstr "ﻮﮔﺪﻨﻠﺑ"
 
 msgid "Shape Key Edit Mode"
 msgstr "ﯽﺸﯾﺍﺮﯾﻭ ﺖﻟﺎﺣ"
-
-
-msgid "Slow Parent"
-msgstr "ﻊﺒﻨﻣ"
 
 
 msgid "Vertex Groups"
@@ -4383,10 +4371,6 @@ msgid "Z Buffer"
 msgstr "ﺲﮑﯿﻣ ﺮﻓﺎﺑ"
 
 
-msgid "Has Space Attenuation"
-msgstr "ﺖﻬﺟ"
-
-
 msgid "Alt"
 msgstr "Alt"
 
@@ -4740,10 +4724,6 @@ msgid "Array Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
-msgid "End Cap"
-msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
-
-
 msgid "Fit Type"
 msgstr "ﯽﻓﺎﺻ"
 
@@ -4762,10 +4742,6 @@ msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 msgid "Merge Distance"
 msgstr "DOF ﻪﻠﺻﺎﻓ"
-
-
-msgid "Start Cap"
-msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
 
 msgid "Constant Offset"
@@ -4788,8 +4764,8 @@ msgid "Sharpest"
 msgstr "ﯼﺰﯿﺗ"
 
 
-msgid "Face Area"
-msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
+msgid "New"
+msgstr "ﺪﯾﺪﺟ"
 
 
 msgid "Limit Method"
@@ -4798,10 +4774,6 @@ msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 msgid "Mark Seams"
 msgstr "ﺯﺭﺩ ﻥﺍﻮﻨﻋ ﻪﺑ ﯼﺭﺍﺬﮔ ﺖﻣﻼ﻿ﻋ"
-
-
-msgid "Bevel value/amount"
-msgstr "(ﺽﺮﻓ ﺶﯿﭘ) ﺭﺪﻨﻠﺑ"
 
 
 msgid "Boolean Modifier"
@@ -5398,6 +5370,10 @@ msgstr "Y ﻝﺎﻣﺮﻧ"
 
 msgid "Z Normal"
 msgstr "Z ﻝﺎﻣﺮﻧ"
+
+
+msgid "Face Area"
+msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
 
 
 msgid "Boundary"
@@ -8186,10 +8162,6 @@ msgid "Mouse location"
 msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
 
 
-msgid "New"
-msgstr "ﺪﯾﺪﺟ"
-
-
 msgctxt "Operator"
 msgid "Hide Selection"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
@@ -10251,16 +10223,6 @@ msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ ﻪﺑ ﺱﺃﺭ ﺏﺎﺨﺘﻧﺍ"
 
 msgid "Mark selected vertices as roots"
 msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ ﻪﺑ ﺱﺃﺭ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "ﻊﺒﻨﻣ"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "ﻊﺒﻨﻣ"
 
 
 msgctxt "Operator"
@@ -12465,6 +12427,34 @@ msgid "Fluid Presets"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
+msgid "Timeline"
+msgstr "ﻥﺎﻣﺯ ﺭﻮﺤﻣ"
+
+
+msgid "Text Style"
+msgstr "ﺖﻟﺎﺣ"
+
+
+msgid "Theme Space"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgid "Theme Space List"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgid "Panel Colors"
+msgstr "ﻞﻨﭘ ﮓﻧﺭ"
+
+
+msgid "3D View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
+
+
+msgid "Gradient Colors"
+msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
+
+
 msgid "Bone Constraints"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
@@ -12515,10 +12505,6 @@ msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
 
 msgid "Geometry Data"
 msgstr "DOF ﻪﻠﺻﺎﻓ"
-
-
-msgid "Ghost"
-msgstr "ﺡﻭﺭ"
 
 
 msgid "Path Animation"
@@ -12661,10 +12647,6 @@ msgid "Image Editor"
 msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Keep Session"
-msgstr "ﺕﺭﺎﺒﻋ"
-
-
 msgid "Invert Zoom Direction"
 msgstr "ﺩﻮﺷ ﺲﮑﻋﺮﺑ ﻡﻭﺯ ﺖﻬﺟ"
 
@@ -12731,14 +12713,6 @@ msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 msgid "MultiSample"
 msgstr "ﺏﺮﺿ"
-
-
-msgid "16 Bit Float Textures"
-msgstr "ﯽﺘﯿﺑ 16 ﺭﻭﺎﻨﺷ ﺖﻓﺎﺑ"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "ﻉﺎﺒﺷﺍ"
 
 
 msgid "Aperture Rotation"
@@ -13047,26 +13021,6 @@ msgstr "ﻩﺪﻨﻨﮐ ﻞﺣ"
 
 msgid "Double-Density"
 msgstr "ﯽﯾﺎﺗﻭﺩ"
-
-
-msgid "Has Height"
-msgstr "ﻉﺎﻔﺗﺭﺍ"
-
-
-msgid "Has Pinch Factor"
-msgstr "ﻥﺎﺳﻮﻧ ﺭﻮﺘﮐﺎﻓ"
-
-
-msgid "Has Plane Offset"
-msgstr "X ﺖﺴﻓﺍ"
-
-
-msgid "Has Sculpt Plane"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
-msgid "Has Secondary Color"
-msgstr "ﻪﯾﻮﻧﺎﺛ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 
 msgid "Modifiers affecting this strip"
@@ -13409,10 +13363,6 @@ msgid "Dopesheet view for tracking data"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Timeline"
-msgstr "ﻥﺎﻣﺯ ﺭﻮﺤﻣ"
-
-
 msgid "Show Group Colors"
 msgstr "ﮓﻧﺭ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -13509,14 +13459,6 @@ msgid "Clip Editor"
 msgstr "ﻑﺍﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Text Style"
-msgstr "ﺖﻟﺎﺣ"
-
-
-msgid "3D View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
-
-
 msgid "Theme Clip Editor"
 msgstr "ﻢﺗ ﭗﯿﻠﮐ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -13545,16 +13487,8 @@ msgid "Color of selected marker"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
 
 
-msgid "Theme Space"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
-
-
 msgid "Settings for space"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Theme Space List"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
 msgid "Settings for space list"
@@ -13655,14 +13589,6 @@ msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ ﻥﺍﻮﻨﻋ ﻪﺑ ﻢﯿﻈ�
 
 msgid "Theme Space Settings"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Panel Colors"
-msgstr "ﻞﻨﭘ ﮓﻧﺭ"
-
-
-msgid "Gradient Colors"
-msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 
 msgid "Theme Space List Settings"
@@ -13862,10 +13788,6 @@ msgstr "ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 msgctxt "Operator"
 msgid "Edit"
 msgstr "ﺶﯾﺍﺮﯾﻭ"
-
-
-msgid "Display:"
-msgstr "ﺮﮕﺸﯾﺎﻤﻧ:"
 
 
 msgctxt "Operator"
@@ -14196,10 +14118,6 @@ msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ:"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "ﻥﻭﺭﺍﻭ"
-
-
-msgid "On"
-msgstr "ﻦﺷﻭﺭ"
 
 
 msgid "Old"
@@ -14740,40 +14658,8 @@ msgid "Python API Reference"
 msgstr "ﻥﻮﺘﯾﺎﭘ API ﻊﺟﺮﻣ"
 
 
-msgid "View Name"
-msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
-
-
-msgid "Menus:"
-msgstr "ﺎﻫﻮﻨﻣ:"
-
-
-msgid "Link Materials To:"
-msgstr "ﻪﺑ ﺩﺍﻮﻣ ﺪﻧﻮﯿﭘ:"
-
-
-msgid "New Objects:"
-msgstr "ﺪﯾﺪﺟ ءﺎﯿﺷﺍ:"
-
-
-msgid "Undo:"
-msgstr "ﺩﺮﮔﺍﻭ:"
-
-
-msgid "Memory Limit"
-msgstr "ﻪﻈﻓﺎﺣ ﻥﺍﺰﯿﻣ"
-
-
 msgid "Simplify Stroke"
 msgstr "ﻩﺩﺎﺳ ﻩﺭﺎﺘﺳ"
-
-
-msgid "Playback:"
-msgstr "ﺶﺨﭘ:"
-
-
-msgid "Animation Editors:"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﻩٔﺩﺍﺩ"
 
 
 msgid "F-Curve Visibility"
@@ -14784,10 +14670,6 @@ msgid "XYZ to RGB"
 msgstr "XYZ ﻪﺑ RGB"
 
 
-msgid "Sound:"
-msgstr "ﺍﺪﺻ:"
-
-
 msgid "Mixing Buffer"
 msgstr "ﺲﮑﯿﻣ ﺮﻓﺎﺑ"
 
@@ -14796,169 +14678,16 @@ msgid "Sample Format"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
 
 
-msgid "OpenGL:"
-msgstr "OpenGL:"
+msgid "View Name"
+msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
 
 
 msgid "Limit Size"
 msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 
-msgid "Time Out"
-msgstr "ﺝﻭﺮﺧ ﻥﺎﻣﺯ"
-
-
-msgid "Kerning Style:"
-msgstr "ﺭﺍﺪﻣ ﻩﻮﯿﺷ:"
-
-
-msgid "Shadow Offset:"
-msgstr "X ﺖﺴﻓﺍ"
-
-
-msgid "File Paths:"
-msgstr "ﻞﯾﺎﻓ ﯼﺎﻫﺮﯿﺴﻣ:"
-
-
-msgid "Fonts:"
-msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
-
-
-msgid "Render Output:"
-msgstr "ﺭﺪﻧﺭ ﯽﺟﻭﺮﺧ:"
-
-
-msgid "Scripts:"
-msgstr "ﺎﻫ‌ﺖﭙﯾﺮﮑﺳﺍ:"
-
-
-msgid "Sounds:"
-msgstr "ﺎﻫﺍﺪﺻ:"
-
-
-msgid "Temp:"
-msgstr "ﺖﻗﻮﻣ:"
-
-
-msgid "Image Editor:"
-msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ:"
-
-
-msgid "Animation Player:"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ:"
-
-
-msgid "Save & Load:"
-msgstr "ﯼﺭﺍﺬﮔﺭﺎﺑ ﻭ ﻩﺮﯿﺧﺫ:"
-
-
-msgid "Auto Save:"
-msgstr "ﺭﺎﮐﺩﻮﺧ ﻩﺮﯿﺧﺫ:"
-
-
 msgid "Timer (mins)"
 msgstr "(ﻪﻘﯿﻗﺩ) ﺮﻤﯾﺎﺗ"
-
-
-msgid "Author:"
-msgstr "ﻩﺪﻨﺴﯾﻮﻧ:"
-
-
-msgid "Mouse:"
-msgstr "ﺱﻭﺎﻣ:"
-
-
-msgid "Double Click:"
-msgstr "ﮏﯿﻠﮐ ﺭﺎﺑﻭﺩ:"
-
-
-msgid "Orbit Style:"
-msgstr "ﺭﺍﺪﻣ ﻩﻮﯿﺷ:"
-
-
-msgid "Zoom Style:"
-msgstr "ﻡﻭﺯ ﻩﻮﯿﺷ:"
-
-
-msgid "Supported Level"
-msgstr "ﯽﻧﺎﺒﯿﺘﺸﭘ ﺢﻄﺳ"
-
-
-msgid "Categories"
-msgstr "ﺎﻫ ﻪﺘﺳﺩ"
-
-
-msgid "Regular:"
-msgstr "ﯽﻟﻮﻤﻌﻣ:"
-
-
-msgid "Tool:"
-msgstr "ﺭﺍﺰﺑﺍ:"
-
-
-msgid "Radio Buttons:"
-msgstr "ﯽﯾﻮﯾﺩﺍﺭ ﯼﺎﻫ‌ﻪﻤﮐﺩ:"
-
-
-msgid "Text:"
-msgstr "ﻦﺘﻣ:"
-
-
-msgid "Option:"
-msgstr "ﻪﻨﯾﺰﮔ:"
-
-
-msgid "Toggle:"
-msgstr "ﭻﯾﻮﺳ:"
-
-
-msgid "Number Field:"
-msgstr "ﻩﺭﺎﻤﺷ ﺪﻠﯿﻓ:"
-
-
-msgid "Box:"
-msgstr "ﻪﺒﻌﺟ:"
-
-
-msgid "Menu:"
-msgstr "ﻮﻨﻣ:"
-
-
-msgid "Menu Back:"
-msgstr "ﺖﺸﮔﺯﺎﺑ ﯼﻮﻨﻣ:"
-
-
-msgid "Tooltip:"
-msgstr "ﺭﺍﺰﺑﺍ:"
-
-
-msgid "Menu Item:"
-msgstr "ﻮﻨﻣ ﻢﺘﯾﺁ:"
-
-
-msgid "Scroll Bar:"
-msgstr "ﻝﻭﺮﮑﺳﺍ ﺭﺍﻮﻧ:"
-
-
-msgid "Progress Bar:"
-msgstr "ﺖﻓﺮﺸﯿﭘ ﺭﺍﻮﻧ:"
-
-
-msgid "List Item:"
-msgstr "ﺖﺴﯿﻟ ﻢﺘﯾﺁ:"
-
-
-msgid "State:"
-msgstr "ﺖﯿﻌﺿﻭ:"
-
-
-msgid "NDOF Device:"
-msgstr "NDOF ﻩﺎﮕﺘﺳﺩ:"
-
-
-msgctxt "Operator"
-msgid "API Concepts"
-msgstr "API ﻢﯿﻫﺎﻔﻣ"
 
 
 msgid "Description:"
@@ -14971,6 +14700,10 @@ msgstr "ﺡﺮﺷ"
 
 msgid "location"
 msgstr "ﻥﺎﮑﻣ"
+
+
+msgid "Author:"
+msgstr "ﻩﺪﻨﺴﯾﻮﻧ:"
 
 
 msgid "author"
@@ -15402,6 +15135,10 @@ msgstr "ﺎﻫ ﻦﯿﭼ"
 
 msgid "Seams"
 msgstr "ﺎﻫ ﺯﺭﺩ"
+
+
+msgid "Display:"
+msgstr "ﺮﮕﺸﯾﺎﻤﻧ:"
 
 
 msgctxt "Operator"
@@ -15986,10 +15723,6 @@ msgstr "ﻥﻮﺘﯾﺎﭘ API ﻊﺟﺮﻣ"
 
 msgid "Active button not found"
 msgstr "ﺪﺸﻧ ﺖﻓﺎﯾ ﻝﺎﻌﻓ ﻪﻤﮐﺩ"
-
-
-msgid "HSV"
-msgstr "HSV"
 
 
 msgid "Hex"
@@ -16944,10 +16677,6 @@ msgid "No Recent Files"
 msgstr "ﺩﺭﺍﺪﻧ ﺩﻮﺟﻭ ﺮﯿﺧﺍ ﻞﯾﺎﻓ"
 
 
-msgid "Open Recent..."
-msgstr "ﺮﯿﺧﺍ ﻥﺩﺮﮐ‌ﺯﺎﺑ..."
-
-
 msgid "Control Point:"
 msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
 
@@ -17210,6 +16939,10 @@ msgstr "C"
 
 msgid "Cr"
 msgstr "C"
+
+
+msgid "On"
+msgstr "ﻦﺷﻭﺭ"
 
 
 msgid "Val"

@@ -130,6 +130,10 @@ static void deformVerts(
 		if (psys->particles == NULL) {
 			psys->recalc |= ID_RECALC_PSYS_RESET;
 		}
+		/* TODO(sergey): This is not how particles were working prior to copy on
+		 * write, but now evaluation is similar to case when one duplicates the
+		 * object. In that case particles were doing reset here. */
+		psys->recalc |= ID_RECALC_PSYS_RESET;
 	}
 
 	/* make new mesh */
@@ -146,11 +150,11 @@ static void deformVerts(
 		Mesh *mesh_original = NULL;
 
 		if (ctx->object->type == OB_MESH) {
-			BMEditMesh *edit_btmesh = BKE_editmesh_from_object(ctx->object);
+			BMEditMesh *em = BKE_editmesh_from_object(ctx->object);
 
-			if (edit_btmesh) {
+			if (em) {
 				/* In edit mode get directly from the edit mesh. */
-				psmd->mesh_original = BKE_mesh_from_bmesh_for_eval_nomain(edit_btmesh->bm, 0);
+				psmd->mesh_original = BKE_mesh_from_bmesh_for_eval_nomain(em->bm, 0);
 			}
 			else {
 				/* Otherwise get regular mesh. */

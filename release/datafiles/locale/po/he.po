@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -513,16 +513,16 @@ msgid "Show Diffuse Color"
 msgstr "חתפמ עבצ"
 
 
+msgid "Text Style"
+msgstr "האבה הבכש"
+
+
 msgid "System"
 msgstr "תכרעמ"
 
 
 msgid "Color Management"
 msgstr "עבצ לוהינ"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "היוור"
 
 
 msgid "Tile Order"
@@ -571,10 +571,6 @@ msgstr "רצוימ"
 
 msgid "Blender File"
 msgstr "Blender לש טנרטניאה רתא"
-
-
-msgid "Text Style"
-msgstr "האבה הבכש"
 
 
 msgid "Theme Background Color"

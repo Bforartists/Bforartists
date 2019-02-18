@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -374,10 +374,6 @@ msgid "Replace"
 msgstr "Remplacer"
 
 
-msgid "Result strip replaces the accumulated results by amount specified by influence"
-msgstr "La piste de résultat remplace les résultats accumulés par le niveau spécifié par l’influence"
-
-
 msgid "Add"
 msgstr "Ajouter"
 
@@ -492,14 +488,6 @@ msgstr "Chemins de mouvement"
 
 msgid "Motion Path settings for visualization"
 msgstr "Réglages des chemins de mouvement, pour la visualisation"
-
-
-msgid "Onion Skinning"
-msgstr "Peau d’oignon"
-
-
-msgid "Onion Skinning (ghosting) settings for visualization"
-msgstr "Réglages de “peau d’oignon” (effet fantôme) pour la visualisation"
 
 
 msgid "Motion Path Settings"
@@ -636,70 +624,6 @@ msgstr "Dans intervalle"
 
 msgid "Display Paths of poses within specified range"
 msgstr "Afficher les chemins des poses dans l’intervalle spécifié"
-
-
-msgid "Onion Skinning Settings"
-msgstr "Réglages de “peau d’oignon”"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "Réglages “peau d’oignon” pour la visualisation d’animation"
-
-
-msgid "End frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "Frame finale de l’intervalle de fantômes à afficher (pas pour la méthode “peau d’oignon” “Autour de la frame courante”)"
-
-
-msgid "Starting frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "Frame de départ de l’intervalle de fantômes à afficher (pas pour la méthode “peau d’oignon” “Autour de la frame courante”)"
-
-
-msgid "Number of frames between ghosts shown (not for 'On Keyframes' Onion-skinning method)"
-msgstr "Nombre d’images entre les fantômes montrés (pas pour la méthode “peau d’oignon” “Sur images clé”)"
-
-
-msgid "On Selected Bones Only"
-msgstr "Sur os sélectionnés uniquement"
-
-
-msgid "For Pose-Mode drawing, only draw ghosts for selected bones"
-msgstr "Pour l’affichage du mode Pose, n’afficher que les fantômes des os sélectionnés"
-
-
-msgid "Type"
-msgstr "Type"
-
-
-msgid "Method used for determining what ghosts get drawn"
-msgstr "Méthode utilisée pour déterminer les fantômes à afficher"
-
-
-msgid "No Ghosts"
-msgstr "Pas de fantôme"
-
-
-msgid "Do not show any ghosts"
-msgstr "N’afficher aucun fantôme"
-
-
-msgid "Around Current Frame"
-msgstr "Autour de la frame courante"
-
-
-msgid "Show ghosts from around the current frame"
-msgstr "Afficher les fantômes autour de la frame courante"
-
-
-msgid "Show ghosts for the specified frame range"
-msgstr "Afficher les fantômes pour l’intervalle de frames spécifié"
-
-
-msgid "On Keyframes"
-msgstr "Sur images clé"
-
-
-msgid "Show ghosts on keyframes"
-msgstr "Afficher les fantômes sur les images clé"
 
 
 msgid "Any Type"
@@ -1922,6 +1846,10 @@ msgid "Boid rule name"
 msgstr "Nom de la règle de boïd"
 
 
+msgid "Type"
+msgstr "Type"
+
+
 msgid "Goal"
 msgstr "But"
 
@@ -2778,10 +2706,6 @@ msgid "Brush Capabilities"
 msgstr "Capacités de brosse"
 
 
-msgid "Read-only indications of which brush operations are supported by the current brush"
-msgstr "Indications en lecture seule de quelles opérations de brosse sont supportées par la brosse courante"
-
-
 msgid "Has Overlay"
 msgstr "A superposition"
 
@@ -2796,6 +2720,78 @@ msgstr "A trait doux"
 
 msgid "Has Spacing"
 msgstr "A espacement"
+
+
+msgid "Image Paint Capabilities"
+msgstr "Capacités de peinture d’image"
+
+
+msgid "Has Accumulate"
+msgstr "A accumuler"
+
+
+msgid "Has Radius"
+msgstr "A rayon"
+
+
+msgid "Has Space Attenuation"
+msgstr "A atténuation d’espace"
+
+
+msgid "Sculpt Capabilities"
+msgstr "Capacités de sculpture"
+
+
+msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
+msgstr "Indications en lecture seule de quelles opérations de brosse sont supportées par l’outil de sculpture courant"
+
+
+msgid "Has Auto Smooth"
+msgstr "A auto-lisser"
+
+
+msgid "Has Gravity"
+msgstr "A gravité"
+
+
+msgid "Has Height"
+msgstr "A hauteur"
+
+
+msgid "Has Jitter"
+msgstr "A bruit"
+
+
+msgid "Has Crease/Pinch Factor"
+msgstr "A facteur de pli/pincement"
+
+
+msgid "Has Persistence"
+msgstr "A persistance"
+
+
+msgid "Has Pinch Factor"
+msgstr "A facteur de pincement"
+
+
+msgid "Has Plane Offset"
+msgstr "A décalage de plan"
+
+
+msgid "Has Rake Factor"
+msgstr "A facteur de ratissage"
+
+
+msgid "Has Sculpt Plane"
+msgstr "A plan de sculpture"
+
+
+msgid "Has Secondary Color"
+msgstr "A couleur secondaire"
+
+
+msgid "Has Strength Pressure"
+msgstr "A force de pression"
 
 
 msgid "Settings for grease pencil brush"
@@ -6475,10 +6471,6 @@ msgid "Safe Areas"
 msgstr "Aires sûres"
 
 
-msgid "Safe Areas used in 3D view and the VSE"
-msgstr "Zones de sécurité utilisées dans les vues 3D et le VSE"
-
-
 msgid "Action Safe Margins"
 msgstr "Marges de sécurité action"
 
@@ -8130,10 +8122,6 @@ msgid "Muted"
 msgstr "Muet"
 
 
-msgid "F-Curve is not evaluated"
-msgstr "La F-courbe n’est pas évaluée"
-
-
 msgid "Sampled Points"
 msgstr "Points échantillonnés"
 
@@ -8517,10 +8505,6 @@ msgstr "Désactivé"
 
 msgid "F-Curve Modifier has invalid settings and will not be evaluated"
 msgstr "Le modificateur de F-courbe a des paramètres invalides et ne sera pas évalué"
-
-
-msgid "F-Curve Modifier will not be evaluated"
-msgstr "Le modificateur de F-courbe ne sera pas évalué"
 
 
 msgid "F-Curve Modifier's panel is expanded in UI"
@@ -11327,6 +11311,10 @@ msgid "Factor of tinting color"
 msgstr "Facteur de couleur de nuance"
 
 
+msgid "Onion Skinning"
+msgstr "Peau d’oignon"
+
+
 msgid "GPencil Sculpt Brush"
 msgstr "Brosse de sculpture crayon gras"
 
@@ -11381,6 +11369,14 @@ msgstr "Pression force"
 
 msgid "Enable tablet pressure sensitivity for strength"
 msgstr "Activer la pression de la tablette pour la force"
+
+
+msgid "Spacing"
+msgstr "Espacement"
+
+
+msgid "Grid"
+msgstr "Grille"
 
 
 msgid "GPencil Sculpt Settings"
@@ -11547,6 +11543,14 @@ msgid "Enable cyclic drawing, closing the stroke"
 msgstr "Activer le dessin cyclique, qui referme le trait"
 
 
+msgid "End Cap"
+msgstr "Élément final"
+
+
+msgid "Flat"
+msgstr "Plat"
+
+
 msgid "Groups"
 msgstr "Groupes"
 
@@ -11573,6 +11577,10 @@ msgstr "Données des points du tracé"
 
 msgid "Stroke is selected for viewport editing"
 msgstr "Le trait est sélectionné pour l’édition dans la vue"
+
+
+msgid "Start Cap"
+msgstr "Élément initial"
 
 
 msgid "Triangles"
@@ -12214,50 +12222,6 @@ msgid "Edit Bones"
 msgstr "Éditer os"
 
 
-msgid "Ghosting End Frame"
-msgstr "Frame de fin des fantômes"
-
-
-msgid "Ghosting Start Frame"
-msgstr "Frame de départ des fantômes"
-
-
-msgid "Ghosting Frame Step"
-msgstr "Étape (pas) de frame des fantômes"
-
-
-msgid "Frame step for Ghosts (not for 'On Keyframes' Onion-skinning method)"
-msgstr "Étapes/pas de frame pour les fantômes (pas pour la méthode “peau d’oignon” “Sur images clé”)"
-
-
-msgid "Ghosting Step"
-msgstr "Étape/pas des fantômes"
-
-
-msgid "Number of frame steps on either side of current frame to show as ghosts (only for 'Around Current Frame' Onion-skinning method)"
-msgstr "Nombre d’étapes/pas de frames de chaque côté de la frame courante à afficher comme fantômes (uniquement pour la méthode “peu d’oignon” “Autour de la frame courante”)"
-
-
-msgid "Ghost Type"
-msgstr "Type de fantôme"
-
-
-msgid "Method of Onion-skinning for active Action"
-msgstr "Méthode de “peau d’oignon” pour l’action active"
-
-
-msgid "Display Ghosts of poses within a fixed number of frames around the current frame"
-msgstr "Afficher les fantômes des poses sur un nombre fixe de frames autour de la frame courante"
-
-
-msgid "Display Ghosts of poses within specified range"
-msgstr "Afficher les fantômes des poses dans l’intervalle spécifié"
-
-
-msgid "Display Ghosts of poses on Keyframes"
-msgstr "Afficher les fantômes des poses aux images clé"
-
-
 msgid "Is Editmode"
 msgstr "En mode Edit"
 
@@ -12626,14 +12590,6 @@ msgid "File path to brush icon"
 msgstr "Chemin de fichier de l’icône de la brosse"
 
 
-msgid "Image Painting Capabilities"
-msgstr "Capacités de peinture d’image"
-
-
-msgid "Brush's capabilities in image paint mode"
-msgstr "Capacités de la brosse en mode de peinture image"
-
-
 msgid "Image Paint Tool"
 msgstr "Outil de peinture d’image"
 
@@ -12734,14 +12690,6 @@ msgid "Interval between paints for Airbrush"
 msgstr "Intervalles entre peintures pour l’aérographe"
 
 
-msgid "Sculpt Capabilities"
-msgstr "Capacités de sculpture"
-
-
-msgid "Brush's capabilities in sculpt mode"
-msgstr "Capacités de la brosse en mode sculpture"
-
-
 msgid "Sculpt Plane"
 msgstr "Plan de sculpture"
 
@@ -12836,10 +12784,6 @@ msgstr "Rayon de lissage du trait"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Distance minimum depuis le dernier point avant que le trait ne continue"
-
-
-msgid "Spacing"
-msgstr "Espacement"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -15579,10 +15523,6 @@ msgid "Type of preview render"
 msgstr "Type de rendu de prévisualisation"
 
 
-msgid "Flat"
-msgstr "Plat"
-
-
 msgid "Flat XY plane"
 msgstr "Plan XY plat"
 
@@ -16335,10 +16275,6 @@ msgid "Extra scaling added to the scale of the object"
 msgstr "Redimensionnement supplémentaire ajouté à l’échelle de l’objet"
 
 
-msgid "Absolute bounding box dimensions of the object"
-msgstr "Dimensions absolues de la boîte englobante de l’objet"
-
-
 msgid "Object boundary display type"
 msgstr "Type d’affichage des limites de l’objet"
 
@@ -16405,10 +16341,6 @@ msgstr "Distance de décalage de l’origine"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Réglages pour utiliser l’objet comme un champ de force dans une simulation physique"
-
-
-msgid "Number of frames to use between DupOff frames"
-msgstr "Nombre de frames à utiliser entre les frames en duplication Off"
 
 
 msgid "Verts"
@@ -16751,14 +16683,6 @@ msgid "Add the object's wireframe over solid drawing"
 msgstr "Ajouter le fil de fer de l’objet par-dessus l’affichage solide"
 
 
-msgid "Slow Parent Offset"
-msgstr "Décalage de parent ralenti"
-
-
-msgid "Delay in the parent relationship"
-msgstr "Délai dans la relation de parenté"
-
-
 msgid "Soft Body Settings"
 msgstr "Réglages de corps souple"
 
@@ -16801,14 +16725,6 @@ msgstr "Mode Edit clé de forme"
 
 msgid "Apply shape keys in edit mode (for Meshes only)"
 msgstr "Appliquer les clés de forme en mode Edit (pour les meshes uniquement)"
-
-
-msgid "Slow Parent"
-msgstr "Ralentir parent"
-
-
-msgid "Create a delay in the parent relationship (beware: this isn't renderfarm safe and may be invalid after jumping around the timeline)"
-msgstr "Créer un délai dans la relation de parenté (attention : cela n’est pas sûr avec une ferme de rendu, et peut devenir invalide après avoir fait un saut dans la timeline)"
 
 
 msgid "Vertex Groups"
@@ -17183,10 +17099,6 @@ msgid "Jittered"
 msgstr "Bruité"
 
 
-msgid "Grid"
-msgstr "Grille"
-
-
 msgid "Amount of air-drag"
 msgstr "Quantité d’air-drag"
 
@@ -17493,10 +17405,6 @@ msgstr "Type de physiques"
 
 msgid "Particle physics type"
 msgstr "Type de physique de particules"
-
-
-msgid "No"
-msgstr "Non"
 
 
 msgid "Newtonian"
@@ -20135,26 +20043,6 @@ msgstr "Toujours rafraîchir l’image aux changements de frame"
 
 msgid "Cycle the images in the movie"
 msgstr "Lire en boucle les images de la vidéo"
-
-
-msgid "Image Paint Capabilities"
-msgstr "Capacités de peinture d’image"
-
-
-msgid "Read-only indications of which brush operations are supported by the current image paint brush"
-msgstr "Indications en lecture seule des opérations de brosse supportées par la brosse de peinture d’image courante"
-
-
-msgid "Has Accumulate"
-msgstr "A accumuler"
-
-
-msgid "Has Radius"
-msgstr "A rayon"
-
-
-msgid "Has Space Attenuation"
-msgstr "A atténuation d’espace"
 
 
 msgid "Key Configuration"
@@ -23364,10 +23252,6 @@ msgid "Help"
 msgstr "Aide"
 
 
-msgid "Online Resources"
-msgstr "Ressource en ligne"
-
-
 msgid "Presets"
 msgstr "Pré-réglages"
 
@@ -24300,10 +24184,6 @@ msgid "Curve object to fit array length to"
 msgstr "Objet courbe auquel ajuster la longueur du tableau"
 
 
-msgid "End Cap"
-msgstr "Élément final"
-
-
 msgid "Mesh object to use as an end cap"
 msgstr "Objet mesh à utiliser comme élément final"
 
@@ -24376,10 +24256,6 @@ msgid "The size of the geometry will determine the distance between arrayed item
 msgstr "La taille de la géométrie va déterminer la distance entre les éléments du tableau"
 
 
-msgid "Start Cap"
-msgstr "Élément initial"
-
-
 msgid "Mesh object to use as a start cap"
 msgstr "Objet mesh à utiliser comme élément initial"
 
@@ -24444,8 +24320,8 @@ msgid "Largest"
 msgstr "La plus grande"
 
 
-msgid "Face Area"
-msgstr "Aires des faces"
+msgid "New"
+msgstr "Nouveau"
 
 
 msgid "Limit Method"
@@ -24546,10 +24422,6 @@ msgstr "Biseauter les vertices (coins), pas les arêtes"
 
 msgid "Vertex group name"
 msgstr "Nom de groupe de vertices"
-
-
-msgid "Bevel value/amount"
-msgstr "Quantité/valeur de biseautage"
 
 
 msgid "Boolean Modifier"
@@ -27415,6 +27287,10 @@ msgid "Distance between the waves"
 msgstr "Distance entre les vagues"
 
 
+msgid "Face Area"
+msgstr "Aires des faces"
+
+
 msgid "Wireframe Modifier"
 msgstr "Modificateur fil de fer"
 
@@ -28787,10 +28663,6 @@ msgid "Modifiers affecting all the F-Curves in the referenced Action"
 msgstr "Modificateurs affectant toutes les F-courbes de l’action référencée"
 
 
-msgid "NLA Strip is not evaluated"
-msgstr "La bande NLA n’est pas évaluée"
-
-
 msgid "Number of times to repeat the action range"
 msgstr "Nombres de répétitions de l’intervalle de l’action"
 
@@ -28929,10 +28801,6 @@ msgstr "La piste NLA est évaluée pour elle-même (c-à-d que l’action active
 
 msgid "NLA Track is locked"
 msgstr "La piste NLA est verrouillée"
-
-
-msgid "NLA Track is not evaluated"
-msgstr "La piste NLA n’est pas évaluée"
 
 
 msgid "NLA Track is selected"
@@ -38273,10 +38141,6 @@ msgid "Select Grease Pencil strokes within a rectangular region"
 msgstr "Sélectionner les traits de crayon gras au sein d’une région rectangulaire"
 
 
-msgid "New"
-msgstr "Nouveau"
-
-
 msgid "Select Grease Pencil strokes using brush selection"
 msgstr "Sélectionner les traits de crayon gras avec un pinceau"
 
@@ -44232,10 +44096,6 @@ msgid "Apply active object links to other selected objects"
 msgstr "Appliquer les liens d’objet actif aux autres objets sélectionnés"
 
 
-msgid "DupliGroup"
-msgstr "Dupligroupe"
-
-
 msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Lier objets à scène"
@@ -45159,24 +45019,6 @@ msgstr "Marquer les vertices sélectionnés comme bases"
 
 
 msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "Supprimer parent lent"
-
-
-msgid "Clear the object's slow parent"
-msgstr "Supprimer le parent lent de l’objet"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "Définir parent lent"
-
-
-msgid "Set the object's slow parent"
-msgstr "Définir le parent lent de l’objet"
-
-
-msgctxt "Operator"
 msgid "Add Speaker"
 msgstr "Ajouter haut-parleur"
 
@@ -46024,10 +45866,6 @@ msgid "Purge All"
 msgstr "Purger tous"
 
 
-msgid "Clear all orphaned data-blocks without any users from the file (cannot be undone, saves to current .blend file)"
-msgstr "Supprimer tous les blocs de données orphelins (sans utilisateur) du fichier (ne peut être annulé, enregistre le fichier .blend actuel)"
-
-
 msgctxt "Operator"
 msgid "Drop to Clear Parent"
 msgstr "Lâcher pour effacer parent"
@@ -46372,10 +46210,6 @@ msgstr "Cacher ou afficher les vertices masqués (valeur de masque minimale de 0
 msgctxt "Operator"
 msgid "Image from View"
 msgstr "Image depuis vue"
-
-
-msgid "Make an image from the current 3D view for re-projection"
-msgstr "Créer une image à partir de la vue 3D courante, pour re-projection"
 
 
 msgid "Name of the file"
@@ -47606,34 +47440,6 @@ msgid "Set the rotation representation used by selected bones"
 msgstr "Définir la représentation de rotation utilisée par les os sélectionnées"
 
 
-msgid "No Gimbal Lock (default)"
-msgstr "Pas de verrouillage “gimbal” (par défaut)"
-
-
-msgid "XYZ Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation YXZ – sujet au verrouillage “gimbal”"
-
-
-msgid "XZY Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation XZY – sujet au verrouillage “gimbal”"
-
-
-msgid "YXZ Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation YXZ – sujet au verrouillage “gimbal”"
-
-
-msgid "YZX Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation YZX – sujet au verrouillage “gimbal”"
-
-
-msgid "ZXY Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation ZXY – sujet au verrouillage “gimbal”"
-
-
-msgid "ZYX Rotation Order (prone to Gimbal Lock)"
-msgstr "Ordre de rotation ZYX – sujet au verrouillage “gimbal”"
-
-
 msgctxt "Operator"
 msgid "Clear Pose Scale"
 msgstr "Effacer taille de pose"
@@ -47742,24 +47548,6 @@ msgstr "Pré-calculer d’après cache"
 
 msgid "Bake from cache"
 msgstr "Pré-calculer depuis le cache"
-
-
-msgctxt "Operator"
-msgid "Free Physics Bake"
-msgstr "Effacer pré-calculs physiques"
-
-
-msgid "Free physics bake"
-msgstr "Effacer les pré-calculs des physiques"
-
-
-msgctxt "Operator"
-msgid "Free All Physics Bakes"
-msgstr "Effacer tous les pré-calculs des physiques"
-
-
-msgid "Free all baked caches of all objects in the current scene"
-msgstr "Libérer tous les caches pré-calculés de tous les objets dans la scène courante"
 
 
 msgctxt "Operator"
@@ -52648,10 +52436,6 @@ msgid "Run as Background Job"
 msgstr "Lancer en tâche de fond"
 
 
-msgid "Enable this to run the import in the background, disable to block Blender while importing"
-msgstr "Activer cette option pour effectuer l’import en arrière-plan, la désactiver pour bloquer Blender durant l’import"
-
-
 msgid "Ogawa"
 msgstr "Ogawa"
 
@@ -52795,10 +52579,6 @@ msgstr "Importer Alembic"
 
 msgid "Load an Alembic archive"
 msgstr "Charger une archive Alembic"
-
-
-msgid "Enable this to run the export in the background, disable to block Blender while exporting"
-msgstr "Activer cette option pour effectuer l’export en arrière-plan, la désactiver pour bloquer Blender durant l’export"
 
 
 msgid "Is Sequence"
@@ -53919,10 +53699,6 @@ msgid "Load Factory Settings"
 msgstr "Charger réglages d’usine"
 
 
-msgid "Load default file and user preferences"
-msgstr "Charger le fichier et les préférences utilisateur par défaut"
-
-
 msgctxt "Operator"
 msgid "Reload History File"
 msgstr "Recharger historique des fichiers"
@@ -54086,10 +53862,6 @@ msgstr "Enregistrer fichier Blender"
 
 msgid "Save the current Blender file"
 msgstr "Sauvegarde le fichier blender en cours"
-
-
-msgid "Save user preferences separately, overrides startup file preferences"
-msgstr "Enregistrer les préférences utilisateur séparément, remplacent les préférences du fichier de lancement"
 
 
 msgctxt "Operator"
@@ -54610,10 +54382,6 @@ msgid "Constant Detail"
 msgstr "Détails constants"
 
 
-msgid "Mesh detail is constant in object space according to detail size"
-msgstr "Les détails de mesh sont constants dans l’espace objet en fonction de la taille de détail"
-
-
 msgid "Brush Detail"
 msgstr "Détail de brosse"
 
@@ -54792,6 +54560,70 @@ msgstr "Pré-réglages de FFMPEG"
 
 msgid "Render Presets"
 msgstr "Pré-réglages de rendu"
+
+
+msgid "Timeline"
+msgstr "Timeline"
+
+
+msgid "Walk"
+msgstr "Marcher"
+
+
+msgid "Auto Run Python Scripts"
+msgstr "Lancement auto scripts Python"
+
+
+msgid "Bone Color Sets"
+msgstr "Ensemble de couleurs d’os"
+
+
+msgid "Styles"
+msgstr "Styles"
+
+
+msgid "Text Style"
+msgstr "Style de texte"
+
+
+msgid "User Interface"
+msgstr "Interface utilisateur"
+
+
+msgid "Pie Menu"
+msgstr "Menu camembert"
+
+
+msgid "Regular"
+msgstr "Standard"
+
+
+msgid "Theme Space"
+msgstr "Espace de thème"
+
+
+msgid "Theme Space List"
+msgstr "Liste des espaces de thème"
+
+
+msgid "Panel Colors"
+msgstr "Couleurs de panneaux"
+
+
+msgid "Video Sequence Editor"
+msgstr "Éditeur de séquences vidéo"
+
+
+msgid "3D View"
+msgstr "Vue 3D"
+
+
+msgid "Gradient Colors"
+msgstr "Couleurs de dégradé"
+
+
+msgid "Development"
+msgstr "Développement"
 
 
 msgid "Bone Constraints"
@@ -54977,10 +54809,6 @@ msgid "Geometry Data"
 msgstr "Données de géométrie"
 
 
-msgid "Ghost"
-msgstr "Fantôme"
-
-
 msgid "Paragraph"
 msgstr "Paragraphe"
 
@@ -55033,6 +54861,10 @@ msgid "System"
 msgstr "Système"
 
 
+msgid "Scopes"
+msgstr "Graphiques"
+
+
 msgid "Sample Line"
 msgstr "Ligne échantillon"
 
@@ -55063,10 +54895,6 @@ msgstr "Superpositions"
 
 msgid "Histogram"
 msgstr "Histogramme"
-
-
-msgid "Scopes"
-msgstr "Graphiques"
 
 
 msgid "Vectorscope"
@@ -56137,6 +55965,10 @@ msgid "Compression method to be used"
 msgstr "Méthode de compression à utiliser"
 
 
+msgid "No"
+msgstr "Non"
+
+
 msgid "No compression"
 msgstr "Aucune compression"
 
@@ -56545,12 +56377,12 @@ msgid "Active Section"
 msgstr "Section active"
 
 
-msgid "Active section of the user preferences shown in the user interface"
-msgstr "Section des préférences utilisateur actives affichée dans l’interface utilisateur"
-
-
 msgid "Editing"
 msgstr "Edition"
+
+
+msgid "File Paths"
+msgstr "Chemins de fichier"
 
 
 msgid "Application Template"
@@ -56569,10 +56401,6 @@ msgid "Settings for interacting with Blender data"
 msgstr "Réglages pour l’interaction avec le données de Blender"
 
 
-msgid "File Paths"
-msgstr "Chemins de fichier"
-
-
 msgid "Default paths for external files"
 msgstr "Chemins par défaut pour les fichiers externes"
 
@@ -56587,10 +56415,6 @@ msgstr "Système & OpenGL"
 
 msgid "Graphics driver and operating system settings"
 msgstr "Réglages du pilote graphique et du système d’exploitation"
-
-
-msgid "Styles"
-msgstr "Styles"
 
 
 msgid "Version of Blender the userpref.blend was saved with"
@@ -56741,12 +56565,12 @@ msgid "Show warning indicators when transforming objects and bones if auto keyin
 msgstr "Afficher un avertissement lors de la transformation d’objets ou d ’os si la définition automatique d’images clé est activée"
 
 
-msgid "Release confirms"
-msgstr "Valider par relâchement"
+msgid "Cursor Lock Adjust"
+msgstr "Ajustement verrouillage curseur"
 
 
-msgid "Moving things with a mouse drag confirms when releasing the button"
-msgstr "Quand on déplace des choses par cliquer-tirer de souris, relâcher le bouton valide l’action"
+msgid "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)"
+msgstr "Placer le curseur 3D sans “sauter” à ce nouvel emplacement (quand le verrouillage au curseur est activé)"
 
 
 msgid "Duplicate Action"
@@ -57037,14 +56861,6 @@ msgid "Alternate script path, matching the default layout with subdirs: startup,
 msgstr "Chemin alternatif pour scripts, respectant l'arborescence par défaut avec sous-dossiers : startup, add-ons & modules (nécessite un redémarrage)"
 
 
-msgid "Hide Dot Files/Data-Blocks"
-msgstr "Masquer fichiers/blocs de données précédés d’un point"
-
-
-msgid "Hide files/data-blocks that start with a dot (.*)"
-msgstr "Masquer les fichiers/blocs de données précédés d’un point (.*)"
-
-
 msgid "Show Thumbnails"
 msgstr "Afficher miniatures"
 
@@ -57101,14 +56917,6 @@ msgid "Display only files with extensions in the image select window"
 msgstr "N’afficher que les fichiers avec extensions dans la fenêtre de sélection d’images"
 
 
-msgid "Keep Session"
-msgstr "Conserver session"
-
-
-msgid "Always load session recovery and save it after quitting Blender"
-msgstr "Toujours charger la sauvegarde de session, et l’enregistrer lorsqu’on quitte Blender"
-
-
 msgid "Load user interface setup when loading .blend files"
 msgstr "Charge l'interface utilisateur lors du chargement du .blend"
 
@@ -57125,12 +56933,12 @@ msgid "Enables automatic saving of preview images in the .blend file"
 msgstr "Active la sauvegarde automatique des prévisualisation dans le .blend"
 
 
-msgid "Key Config"
-msgstr "Configuration clavier"
+msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
+msgstr "Permettre à n’importe quel fichier .blend de lancer automatiquement des scripts (risqué avec des fichiers .blend provenant de sources non fiables)"
 
 
-msgid "The name of the active key configuration"
-msgstr "Nom de la configuration clavier active"
+msgid "Automatically convert all new tabs into spaces for new and loaded text files"
+msgstr "Convertir automatiquement toutes les nouvelles tabulations en espaces, pour les fichiers textes nouveaux ou chargés"
 
 
 msgid "Drag Threshold"
@@ -57171,10 +56979,6 @@ msgstr "Déplacement de vue"
 
 msgid "Which method to use for viewport navigation"
 msgstr "Quel méthode utiliser pour le déplacement de la vue"
-
-
-msgid "Walk"
-msgstr "Marcher"
 
 
 msgid "Interactively walk or free navigate around the scene"
@@ -57321,6 +57125,26 @@ msgid "Number of pixels you have to drag before tweak event is triggered"
 msgstr "Nombre de pixels à cliquer-tirer avant d’activer l’événement d’ajustage"
 
 
+msgid "Auto Perspective"
+msgstr "Perspective auto"
+
+
+msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
+msgstr "Basculer automatiquement entre vue orthogonale et vue en perspective lors d’un changement à partir des vues de dessus/face/côté"
+
+
+msgid "Camera Parent Lock"
+msgstr "Verrouiller parent de la caméra"
+
+
+msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
+msgstr "Quand la caméra est verrouillée sur la vue et en mode vol, transformer le parent plutôt que la caméra"
+
+
+msgid "Moving things with a mouse drag confirms when releasing the button"
+msgstr "Quand on déplace des choses par cliquer-tirer de souris, relâcher le bouton valide l’action"
+
+
 msgid "Emulate Numpad"
 msgstr "Émuler pavé numérique"
 
@@ -57337,12 +57161,20 @@ msgid "Allow moving the mouse outside the view on some manipulations (transform,
 msgstr "Permettre de déplacer la souris en dehors de la vue pour certaines manipulations (transformation, cliquer-tirer dans un contrôle de l’UI)"
 
 
+msgid "Auto Depth"
+msgstr "Profondeur auto"
+
+
+msgid "Use the depth under the mouse to improve view pan/rotate/zoom functionality"
+msgstr "Utiliser la profondeur sous la souris pour améliorer translation/rotation/zoom de la vue"
+
+
 msgid "Emulate 3 Button Mouse"
 msgstr "Émuler souris à 3 boutons"
 
 
-msgid "Emulate Middle Mouse with Alt+Left Mouse (doesn't work with Left Mouse Select option)"
-msgstr "Émuler le bouton du milieu de la souris avec Alt+clic gauche (ne fonctionne pas avec l’option Sélection clic gauche)"
+msgid "Use selection as the pivot point"
+msgstr "Utiliser la sélection en tant que point pivot"
 
 
 msgid "Trackpad Natural"
@@ -57353,8 +57185,12 @@ msgid "If your system uses 'natural' scrolling, this option keeps consistent tra
 msgstr "Si votre système utilise le défilement “naturel”, cette option conserve un usage cohérent du trackpad dans toute l’UI"
 
 
-msgid "View Rotation"
-msgstr "Rotation de la vue"
+msgid "Zoom To Mouse Position"
+msgstr "Zoomer sur la position de la souris"
+
+
+msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
+msgstr "Zoomer sur la position du pointeur de la souris dans la vue 3D, à la place du centre de la vue"
 
 
 msgid "Zoom Axis"
@@ -57411,6 +57247,14 @@ msgstr "Lignes défilées à la molette"
 
 msgid "Number of lines scrolled at a time with the mouse wheel"
 msgstr "Nombre de lignes défilées à chaque impulsion de la molette de la souris"
+
+
+msgid "Key Config"
+msgstr "Configuration clavier"
+
+
+msgid "The name of the active key configuration"
+msgstr "Nom de la configuration clavier active"
 
 
 msgid "Anisotropic Filter"
@@ -57585,12 +57429,188 @@ msgid "Set audio sampling rate to 192000 samples per second"
 msgstr "Définir le taux d’échantillonnage audio à 192000 échantillons par seconde"
 
 
-msgid "Author"
-msgstr "Auteur"
+msgid "Clip Alpha"
+msgstr "Tronquer alpha"
 
 
-msgid "Name that will be used in exported files when format supports such feature"
-msgstr "Nom qui sera utilisé dans les fichiers exportés quand le format supporte une telle fonctionnalité"
+msgid "Clip alpha below this threshold in the 3D textured view"
+msgstr "Tronquer l’alpha en dessous de ce seuil, dans le vue 3D texturée"
+
+
+msgid "GL Texture Limit"
+msgstr "Limite de texture GL"
+
+
+msgid "Limit the texture size to save graphics memory"
+msgstr "Limiter la taille de la texture pour épargner la mémoire graphique"
+
+
+msgid "No MultiSample"
+msgstr "Pas de multi-échantillonnage"
+
+
+msgid "Do not use OpenGL MultiSample"
+msgstr "Ne pas utiliser le multi-échantillonnage OpenGL"
+
+
+msgid "MultiSample: 2"
+msgstr "Multi-échantillonnage : 2"
+
+
+msgid "Use 2x OpenGL MultiSample (requires restart)"
+msgstr "Utiliser le multi-échantillonnage OpenGL 2× (nécessite un redémarrage)"
+
+
+msgid "MultiSample: 4"
+msgstr "Multi-échantillonnage : 4"
+
+
+msgid "Use 4x OpenGL MultiSample (requires restart)"
+msgstr "Utiliser le multi-échantillonnage OpenGL 4× (nécessite un redémarrage)"
+
+
+msgid "MultiSample: 8"
+msgstr "Multi-échantillonnage : 8"
+
+
+msgid "Use 8x OpenGL MultiSample (requires restart)"
+msgstr "Utiliser le multi-échantillonnage OpenGL 8× (nécessite un redémarrage)"
+
+
+msgid "MultiSample: 16"
+msgstr "Multi-échantillonnage : 16"
+
+
+msgid "Use 16x OpenGL MultiSample (requires restart)"
+msgstr "Utiliser le multi-échantillonnage OpenGL 16× (nécessite un redémarrage)"
+
+
+msgid "Method used for displaying images on the screen"
+msgstr "Méthode utilisée pour afficher les images à l’écran"
+
+
+msgid "2D Texture"
+msgstr "Texture 2D"
+
+
+msgid "Use CPU for display transform and draw image with 2D texture"
+msgstr "Utiliser le CPU pour la transformation d’affichage et dessiner l’image avec une texture 2D"
+
+
+msgid "Use GLSL shaders for display transform and draw image with 2D texture"
+msgstr "Utiliser les shaders GLSL pour la transformation d’affichage et dessiner l’image avec une texture 2D"
+
+
+msgid "DrawPixels"
+msgstr "DrawPixels"
+
+
+msgid "Use CPU for display transform and draw image using DrawPixels"
+msgstr "Utiliser le CPU pour la transformation d’affichage et dessiner l’image avec DrawPixels"
+
+
+msgid "Legacy Compute Device Type"
+msgstr "Ancien type de périphérique de calculs"
+
+
+msgid "For backwards compatibility only"
+msgstr "Pour compatibilité arrière uniquement"
+
+
+msgid "Ambient Color"
+msgstr "Couleur ambiante"
+
+
+msgid "Memory Cache Limit"
+msgstr "Limite de mémoire cache"
+
+
+msgid "Memory cache limit (in megabytes)"
+msgstr "Limite de mémoire cache (en mégaoctets)"
+
+
+msgid "MultiSample"
+msgstr "Multi-échantillonnage"
+
+
+msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
+msgstr "Activer le multi-échantillonnage OpenGL, uniquement pour les systèmes qui le supportent, nécessite un redémarrage"
+
+
+msgid "OpenSubdiv Compute Type"
+msgstr "Type de calcul OpenSubdiv"
+
+
+msgid "Type of computer back-end used with OpenSubdiv"
+msgstr "Type de “back-end” de calcul utilisé par OpenSubdiv"
+
+
+msgid "OpenMP"
+msgstr "OpenMP"
+
+
+msgid "GLSL Transform Feedback"
+msgstr "GLSL Transform Feedback"
+
+
+msgid "GLSL Compute"
+msgstr "Calculs GLSL"
+
+
+msgid "Prefetch Frames"
+msgstr "Pré-rendre images"
+
+
+msgid "Number of frames to render ahead during playback (sequencer only)"
+msgstr "Nombre de frames à rendre en avance pendant la lecture (séquenceur uniquement)"
+
+
+msgid "Maximum number of lines to store for the console buffer"
+msgstr "Nombre maximum de lignes à conserver dans le tampon de la console"
+
+
+msgid "Solid Lights"
+msgstr "Lumières en vue Solide"
+
+
+msgid "Lights user to display objects in solid draw mode"
+msgstr "Lumières de l’utilisateur pour afficher les objets en mode d’affichage solide"
+
+
+msgid "Texture Collection Rate"
+msgstr "Taux de collection des textures"
+
+
+msgid "Number of seconds between each run of the GL texture garbage collector"
+msgstr "Nombre de secondes entre chaque exécution du ramasse-miettes des textures GL"
+
+
+msgid "Texture Time Out"
+msgstr "Péremption de texture"
+
+
+msgid "Time since last access of a GL texture in seconds after which it is freed (set to 0 to keep textures allocated)"
+msgstr "Temps, en secondes, depuis le dernier accès à la texture GL, après quoi elle est libérée (mettre à 0 pour conserver les textures allouées)"
+
+
+msgid "UI Line Width"
+msgstr "Épaisseur ligne UI"
+
+
+msgid "UI Scale"
+msgstr "Échelle UI"
+
+
+msgid "Region Overlap"
+msgstr "Superposition de région"
+
+
+msgid "OpenGL Depth Picking"
+msgstr "Depth Picking OpenGL"
+
+
+msgid "Use the depth buffer for picking 3D View selection"
+msgstr "Utiliser le tampon de profondeur pour la sélection dans la vue 3D"
 
 
 msgid "Color Picker Type"
@@ -57657,280 +57677,8 @@ msgid "Path to interface mono-space Font"
 msgstr "Chemin vers la police d’interface à chasse fixe"
 
 
-msgid "Clip Alpha"
-msgstr "Tronquer alpha"
-
-
-msgid "Clip alpha below this threshold in the 3D textured view"
-msgstr "Tronquer l’alpha en dessous de ce seuil, dans le vue 3D texturée"
-
-
-msgid "GL Texture Limit"
-msgstr "Limite de texture GL"
-
-
-msgid "Limit the texture size to save graphics memory"
-msgstr "Limiter la taille de la texture pour épargner la mémoire graphique"
-
-
-msgid "No MultiSample"
-msgstr "Pas de multi-échantillonnage"
-
-
-msgid "Do not use OpenGL MultiSample"
-msgstr "Ne pas utiliser le multi-échantillonnage OpenGL"
-
-
-msgid "MultiSample: 2"
-msgstr "Multi-échantillonnage : 2"
-
-
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 2× (nécessite un redémarrage)"
-
-
-msgid "MultiSample: 4"
-msgstr "Multi-échantillonnage : 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 4× (nécessite un redémarrage)"
-
-
-msgid "MultiSample: 8"
-msgstr "Multi-échantillonnage : 8"
-
-
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 8× (nécessite un redémarrage)"
-
-
-msgid "MultiSample: 16"
-msgstr "Multi-échantillonnage : 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 16× (nécessite un redémarrage)"
-
-
-msgid "Image Draw Method"
-msgstr "Méthode d’affichage d’image"
-
-
-msgid "Method used for displaying images on the screen"
-msgstr "Méthode utilisée pour afficher les images à l’écran"
-
-
-msgid "2D Texture"
-msgstr "Texture 2D"
-
-
-msgid "Use CPU for display transform and draw image with 2D texture"
-msgstr "Utiliser le CPU pour la transformation d’affichage et dessiner l’image avec une texture 2D"
-
-
-msgid "Use GLSL shaders for display transform and draw image with 2D texture"
-msgstr "Utiliser les shaders GLSL pour la transformation d’affichage et dessiner l’image avec une texture 2D"
-
-
-msgid "DrawPixels"
-msgstr "DrawPixels"
-
-
-msgid "Use CPU for display transform and draw image using DrawPixels"
-msgstr "Utiliser le CPU pour la transformation d’affichage et dessiner l’image avec DrawPixels"
-
-
 msgid "Language used for translation"
 msgstr "Langue utilisée pour la traduction"
-
-
-msgid "Legacy Compute Device Type"
-msgstr "Ancien type de périphérique de calculs"
-
-
-msgid "For backwards compatibility only"
-msgstr "Pour compatibilité arrière uniquement"
-
-
-msgid "Ambient Color"
-msgstr "Couleur ambiante"
-
-
-msgid "Memory Cache Limit"
-msgstr "Limite de mémoire cache"
-
-
-msgid "Memory cache limit (in megabytes)"
-msgstr "Limite de mémoire cache (en mégaoctets)"
-
-
-msgid "MultiSample"
-msgstr "Multi-échantillonnage"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "Activer le multi-échantillonnage OpenGL, uniquement pour les systèmes qui le supportent, nécessite un redémarrage"
-
-
-msgid "OpenSubdiv Compute Type"
-msgstr "Type de calcul OpenSubdiv"
-
-
-msgid "Type of computer back-end used with OpenSubdiv"
-msgstr "Type de “back-end” de calcul utilisé par OpenSubdiv"
-
-
-msgid "OpenMP"
-msgstr "OpenMP"
-
-
-msgid "GLSL Transform Feedback"
-msgstr "GLSL Transform Feedback"
-
-
-msgid "GLSL Compute"
-msgstr "Calculs GLSL"
-
-
-msgid "Prefetch Frames"
-msgstr "Pré-rendre images"
-
-
-msgid "Number of frames to render ahead during playback (sequencer only)"
-msgstr "Nombre de frames à rendre en avance pendant la lecture (séquenceur uniquement)"
-
-
-msgid "Maximum number of lines to store for the console buffer"
-msgstr "Nombre maximum de lignes à conserver dans le tampon de la console"
-
-
-msgid "Selection Method"
-msgstr "Mode de sélection"
-
-
-msgid "Use OpenGL occlusion queries or selection render mode to accelerate selection"
-msgstr "Utiliser les “requêtes de d’occlusion” ou “mode de rendu sélection” OpenGL pour accélérer la sélection"
-
-
-msgid "OpenGL Select"
-msgstr "Sélection OpenGL"
-
-
-msgid "OpenGL Occlusion Queries"
-msgstr "Requêtes d’occlusion OpenGL"
-
-
-msgid "Solid Lights"
-msgstr "Lumières en vue Solide"
-
-
-msgid "Lights user to display objects in solid draw mode"
-msgstr "Lumières de l’utilisateur pour afficher les objets en mode d’affichage solide"
-
-
-msgid "Texture Collection Rate"
-msgstr "Taux de collection des textures"
-
-
-msgid "Number of seconds between each run of the GL texture garbage collector"
-msgstr "Nombre de secondes entre chaque exécution du ramasse-miettes des textures GL"
-
-
-msgid "Texture Time Out"
-msgstr "Péremption de texture"
-
-
-msgid "Time since last access of a GL texture in seconds after which it is freed (set to 0 to keep textures allocated)"
-msgstr "Temps, en secondes, depuis le dernier accès à la texture GL, après quoi elle est libérée (mettre à 0 pour conserver les textures allouées)"
-
-
-msgid "UI Line Width"
-msgstr "Épaisseur ligne UI"
-
-
-msgid "UI Scale"
-msgstr "Échelle UI"
-
-
-msgid "16 Bit Float Textures"
-msgstr "Textures de flottants 16 bits"
-
-
-msgid "Use 16 bit per component texture for float images"
-msgstr "Utiliser 16 bits par composantes de texture pour les images en flottants"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "Génération de mipmap GPU"
-
-
-msgid "Generate Image Mipmaps on the GPU"
-msgstr "Générer les mipmaps d’images sur le GPU"
-
-
-msgid "Region Overlap"
-msgstr "Superposition de région"
-
-
-msgid "Draw tool/property regions over the main region, when using Triple Buffer"
-msgstr "Dessiner les régions de propriétés/outils par-dessus la région principale, quand le triple-tampon est utilisé"
-
-
-msgid "Auto Run Python Scripts"
-msgstr "Lancement auto scripts Python"
-
-
-msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
-msgstr "Permettre à n’importe quel fichier .blend de lancer automatiquement des scripts (risqué avec des fichiers .blend provenant de sources non fiables)"
-
-
-msgid "OpenGL Depth Picking"
-msgstr "Depth Picking OpenGL"
-
-
-msgid "Use the depth buffer for picking 3D View selection"
-msgstr "Utiliser le tampon de profondeur pour la sélection dans la vue 3D"
-
-
-msgid "Automatically convert all new tabs into spaces for new and loaded text files"
-msgstr "Convertir automatiquement toutes les nouvelles tabulations en espaces, pour les fichiers textes nouveaux ou chargés"
-
-
-msgid "Text Anti-aliasing"
-msgstr "Anti-aliasing du texte"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "Afficher le texte anti-aliasé dans l’interface"
-
-
-msgid "Translate Interface"
-msgstr "Traduire interface"
-
-
-msgid "Translate New Names"
-msgstr "Traduire nouveaux noms"
-
-
-msgid "Translate Tooltips"
-msgstr "Traduire infobulles"
-
-
-msgid "Use Weight Color Range"
-msgstr "Utiliser gradient de couleur de poids"
-
-
-msgid "Enable color range used for weight visualization in weight painting mode"
-msgstr "Activer le gradient de couleur utilisé pour la visualisation des poids en mode peinture de poids"
-
-
-msgid "Weight Color Range"
-msgstr "Gradient de couleur de poids"
-
-
-msgid "Color range used for weight visualization in weight painting mode"
-msgstr "Gradient de couleur utilisé pour la visualisation des poids en mode peinture de poids"
 
 
 msgid "Mini Axes Brightness"
@@ -57951,22 +57699,6 @@ msgstr "Taille de l’icône des axes"
 
 msgid "Object Origin Size"
 msgstr "Taille de l’origine des objets"
-
-
-msgid "Hold LMB Open Toolbox Delay"
-msgstr "Délai maintien du clic gauche pour ouvrir boîte à outils"
-
-
-msgid "Time in 1/10 seconds to hold the Left Mouse Button before opening the toolbox"
-msgstr "Temps, en dixièmes de secondes, à maintenir le bouton gauche de la souris pour ouvrir la boîte à outils"
-
-
-msgid "Hold RMB Open Toolbox Delay"
-msgstr "Délai maintien clic droit pour ouvrir boîte à outils"
-
-
-msgid "Time in 1/10 seconds to hold the Right Mouse Button before opening the toolbox"
-msgstr "Temps, en dixièmes de secondes, à maintenir le bouton droit de la souris pour ouvrir la boîtes à outils"
 
 
 msgid "Sub Level Menu Open Delay"
@@ -58035,14 +57767,6 @@ msgstr "Grands curseurs"
 
 msgid "Use large mouse cursors when available"
 msgstr "Utiliser les grands curseurs de souris si disponibles"
-
-
-msgid "Show Layout Widgets"
-msgstr "Afficher widgets de disposition"
-
-
-msgid "Show screen layout editing UI"
-msgstr "Afficher l’UI d’édition de la disposition d’écran"
 
 
 msgid "Display Object Info"
@@ -58177,44 +57901,12 @@ msgid "Changes the size of the fonts and buttons in the interface"
 msgstr "Modifier les tailles des polices et boutons de l’interface"
 
 
-msgid "Auto Perspective"
-msgstr "Perspective auto"
-
-
-msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
-msgstr "Basculer automatiquement entre vue orthogonale et vue en perspective lors d’un changement à partir des vues de dessus/face/côté"
-
-
-msgid "Camera Parent Lock"
-msgstr "Verrouiller parent de la caméra"
-
-
-msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
-msgstr "Quand la caméra est verrouillée sur la vue et en mode vol, transformer le parent plutôt que la caméra"
-
-
-msgid "Cursor Lock Adjust"
-msgstr "Ajustement verrouillage curseur"
-
-
-msgid "Place the cursor without 'jumping' to the new location (when lock-to-cursor is used)"
-msgstr "Placer le curseur 3D sans “sauter” à ce nouvel emplacement (quand le verrouillage au curseur est activé)"
-
-
 msgid "Contents Follow Opening Direction"
 msgstr "Contenu suit la direction d’ouverture"
 
 
 msgid "Otherwise menus, etc will always be top to bottom, left to right, no matter opening direction"
 msgstr "Autrement les menus et autres seront toujours du haut vers le bas, de gauche à droite, quelle que soit la direction de l’ouverture"
-
-
-msgid "Auto Depth"
-msgstr "Profondeur auto"
-
-
-msgid "Use the depth under the mouse to improve view pan/rotate/zoom functionality"
-msgstr "Utiliser la profondeur sous la souris pour améliorer translation/rotation/zoom de la vue"
 
 
 msgid "Open On Mouse Over"
@@ -58229,24 +57921,32 @@ msgid "Prompt Quit"
 msgstr "Afficher Quitter"
 
 
-msgid "Ask for confirmation when quitting through the window close button"
-msgstr "Demander confirmation quand on quitte par le bouton “fermer” de la fenêtre"
+msgid "Text Anti-aliasing"
+msgstr "Anti-aliasing du texte"
 
 
-msgid "Rotate Around Selection"
-msgstr "Tourner autour de la sélection"
+msgid "Draw user interface text anti-aliased"
+msgstr "Afficher le texte anti-aliasé dans l’interface"
 
 
-msgid "Use selection as the pivot point"
-msgstr "Utiliser la sélection en tant que point pivot"
+msgid "Translate Interface"
+msgstr "Traduire interface"
 
 
-msgid "Zoom To Mouse Position"
-msgstr "Zoomer sur la position de la souris"
+msgid "Translate New Names"
+msgstr "Traduire nouveaux noms"
 
 
-msgid "Zoom in towards the mouse pointer's position in the 3D view, rather than the 2D window center"
-msgstr "Zoomer sur la position du pointeur de la souris dans la vue 3D, à la place du centre de la vue"
+msgid "Translate Tooltips"
+msgstr "Traduire infobulles"
+
+
+msgid "Use Weight Color Range"
+msgstr "Utiliser gradient de couleur de poids"
+
+
+msgid "Enable color range used for weight visualization in weight painting mode"
+msgstr "Activer le gradient de couleur utilisé pour la visualisation des poids en mode peinture de poids"
 
 
 msgid "2D View Minimum Grid Spacing"
@@ -58287,6 +57987,14 @@ msgstr "Conserver intervalle"
 
 msgid "Seconds"
 msgstr "Secondes"
+
+
+msgid "Weight Color Range"
+msgstr "Gradient de couleur de poids"
+
+
+msgid "Color range used for weight visualization in weight painting mode"
+msgstr "Gradient de couleur utilisé pour la visualisation des poids en mode peinture de poids"
 
 
 msgid "ID Property Group"
@@ -59573,10 +59281,6 @@ msgid "Layer Samples"
 msgstr "Échantillons de calque"
 
 
-msgid "How to use per render layer sample settings"
-msgstr "Comment utiliser les réglages d’échantillonnage des calques de rendu"
-
-
 msgid "Per render layer number of samples override scene samples"
 msgstr "Le nombre d’échantillons des calques de rendu remplace celui de la scène"
 
@@ -59981,6 +59685,10 @@ msgid "View Perspective"
 msgstr "Vue en perspective"
 
 
+msgid "View Rotation"
+msgstr "Rotation de la vue"
+
+
 msgid "Rotation in quaternions (keep normalized)"
 msgstr "Rotation en quaternions (garder normalisée)"
 
@@ -60057,10 +59765,6 @@ msgid "Deliver glossy indirect pass"
 msgstr "Délivrer la passe de brillance indirecte"
 
 
-msgid "Deliver indirect lighting pass"
-msgstr "Délivrer la passe d’éclairage indirect"
-
-
 msgid "Deliver material index pass"
 msgstr "Délivrer la passe d’indices de matériau"
 
@@ -60079,10 +59783,6 @@ msgstr "Délivrer la passe d’indices d’objet"
 
 msgid "Deliver shadow pass"
 msgstr "Délivrer la passe des ombres"
-
-
-msgid "Deliver specular pass"
-msgstr "Délivrer la passe spéculaire"
 
 
 msgid "Subsurface Color"
@@ -61635,58 +61335,6 @@ msgstr "YCbCr (ITU 709)"
 
 msgid "YCbCr (Jpeg)"
 msgstr "YCbCr (Jpeg)"
-
-
-msgid "Read-only indications of which brush operations are supported by the current sculpt tool"
-msgstr "Indications en lecture seule de quelles opérations de brosse sont supportées par l’outil de sculpture courant"
-
-
-msgid "Has Auto Smooth"
-msgstr "A auto-lisser"
-
-
-msgid "Has Gravity"
-msgstr "A gravité"
-
-
-msgid "Has Height"
-msgstr "A hauteur"
-
-
-msgid "Has Jitter"
-msgstr "A bruit"
-
-
-msgid "Has Crease/Pinch Factor"
-msgstr "A facteur de pli/pincement"
-
-
-msgid "Has Persistence"
-msgstr "A persistance"
-
-
-msgid "Has Pinch Factor"
-msgstr "A facteur de pincement"
-
-
-msgid "Has Plane Offset"
-msgstr "A décalage de plan"
-
-
-msgid "Has Rake Factor"
-msgstr "A facteur de ratissage"
-
-
-msgid "Has Sculpt Plane"
-msgstr "A plan de sculpture"
-
-
-msgid "Has Secondary Color"
-msgstr "A couleur secondaire"
-
-
-msgid "Has Strength Pressure"
-msgstr "A force de pression"
 
 
 msgid "Sequence strip in the sequence editor"
@@ -64397,10 +64045,6 @@ msgid "Edit all keyframes in scene"
 msgstr "Éditer toutes les images clé de la scène"
 
 
-msgid "Timeline"
-msgstr "Timeline"
-
-
 msgid "Timeline and playback controls"
 msgstr "Contrôles de ligne de temps et de lecture"
 
@@ -65057,14 +64701,6 @@ msgid "Sort Alphabetically"
 msgstr "Trier alphabétiquement"
 
 
-msgid "Space User Preferences"
-msgstr "Espace des préférences utilisateur"
-
-
-msgid "User preferences space data"
-msgstr "Données de l’espace des préférences utilisateur"
-
-
 msgid "Search term for filtering in the UI"
 msgstr "Terme de recherche pour le filtrage dans l’UI"
 
@@ -65453,14 +65089,6 @@ msgid "Enable view navigation within the camera view"
 msgstr "Activer la navigation de la vue dans la vue caméra"
 
 
-msgid "Lock Camera and Layers"
-msgstr "Verrouiller caméra et calques"
-
-
-msgid "Use the scene's active camera and layers in this view, rather than local layers"
-msgstr "Utiliser les calques et la caméra actifs de la scène dans la vue, plutôt que les calques locaux"
-
-
 msgid "Lock to Cursor"
 msgstr "Verrouiller au curseur"
 
@@ -65621,6 +65249,10 @@ msgid "Constraint to stay within the image bounds while editing"
 msgstr "Contrainte pour rester dans les limites de l’image pendant l’édition"
 
 
+msgid "Snap to Pixels"
+msgstr "Aimanter aux pixels"
+
+
 msgid "Sticky Selection Mode"
 msgstr "Mode de sélection collant"
 
@@ -65655,14 +65287,6 @@ msgstr "Dépliage live"
 
 msgid "Continuously unwrap the selected UV island while transforming pinned vertices"
 msgstr "Déplier continuellement l’île UV sélectionnée lors de la transformation des vertices épinglés"
-
-
-msgid "Snap to Pixels"
-msgstr "Aimanter aux pixels"
-
-
-msgid "Snap UVs to pixel locations while editing"
-msgstr "Aimnater les UVs aux emplacements des pixels pendant l’édition"
 
 
 msgid "Element of a curve, either NURBS, Bezier or Polyline or a character with text objects"
@@ -65937,14 +65561,6 @@ msgid "Value to use for Ref, Spec, Amb, Emit, Alpha, RayMir, TransLu and Hard"
 msgstr "Valeur à utiliser pour Réflexion, Spéculaire, Ambiante, Émission, Alpha, Réflexion ray, Translucidité et Dureté"
 
 
-msgid "Negate"
-msgstr "Inverser"
-
-
-msgid "Invert the values of the texture to reverse its effect"
-msgstr "Inverser les valeurs de la texture, pour inverser son effet"
-
-
 msgid "Texture slot name"
 msgstr "Nom de l’emplacement de texture"
 
@@ -65969,22 +65585,6 @@ msgid "Texture data-block used by this texture slot"
 msgstr "Bloc de données texture utilisé par cet emplacement de texture"
 
 
-msgid "RGB to Intensity"
-msgstr "RGB vers intensité"
-
-
-msgid "Convert texture RGB values to intensity (gray) values"
-msgstr "Convertir les valeurs RGB de la texture en valeurs d’intensité (niveaux de gris)"
-
-
-msgid "Stencil"
-msgstr "Masque"
-
-
-msgid "Use this texture as a blending value on the next texture"
-msgstr "Utiliser cette texture comme une valeur de mélange pour la texture suivante"
-
-
 msgid "Brush Texture Slot"
 msgstr "Emplacement de texture de brosse"
 
@@ -66003,6 +65603,10 @@ msgstr "A source d’angle de texture"
 
 msgid "Tiled"
 msgstr "En damier"
+
+
+msgid "Stencil"
+msgstr "Masque"
 
 
 msgid "Random Angle"
@@ -66297,10 +65901,6 @@ msgid "Theme settings defining draw style and colors in the user interface"
 msgstr "Réglages de thème définissant le style d’affichage et les couleurs de l’interface utilisateur"
 
 
-msgid "Bone Color Sets"
-msgstr "Ensemble de couleurs d’os"
-
-
 msgid "Clip Editor"
 msgstr "Éditeur de clip"
 
@@ -66311,22 +65911,6 @@ msgstr "Nom du thème"
 
 msgid "Active Theme Area"
 msgstr "Zone du thème actif"
-
-
-msgid "User Interface"
-msgstr "Interface utilisateur"
-
-
-msgid "Text Style"
-msgstr "Style de texte"
-
-
-msgid "3D View"
-msgstr "Vue 3D"
-
-
-msgid "Video Sequence Editor"
-msgstr "Éditeur de séquences vidéo"
 
 
 msgid "Theme Bone Color Set"
@@ -66493,16 +66077,8 @@ msgid "Color of selected marker"
 msgstr "Couleur du marqueur sélectionné"
 
 
-msgid "Theme Space"
-msgstr "Espace de thème"
-
-
 msgid "Settings for space"
 msgstr "Réglages des espaces"
-
-
-msgid "Theme Space List"
-msgstr "Liste des espaces de thème"
 
 
 msgid "Settings for space list"
@@ -67141,14 +66717,6 @@ msgid "Theme settings for panel colors"
 msgstr "Réglages du thème pour les couleurs des panneaux"
 
 
-msgid "Theme User Preferences"
-msgstr "Thème des préférences utilisateur"
-
-
-msgid "Theme settings for the User Preferences"
-msgstr "Réglages du thème pour les préférences utilisateur"
-
-
 msgid "Theme Properties"
 msgstr "Thème des propriétés"
 
@@ -67233,10 +66801,6 @@ msgid "Header Text Highlight"
 msgstr "Texte d’en-tête surligné"
 
 
-msgid "Panel Colors"
-msgstr "Couleurs de panneaux"
-
-
 msgid "Tab Active"
 msgstr "Onglet actif"
 
@@ -67255,10 +66819,6 @@ msgstr "Contour d’onglet"
 
 msgid "Text Highlight"
 msgstr "Texte surligné"
-
-
-msgid "Gradient Colors"
-msgstr "Couleurs de dégradé"
 
 
 msgid "Theme Space List Settings"
@@ -67355,10 +66915,6 @@ msgstr "Alpha d’icône"
 
 msgid "Transparency of icons in the interface, to reduce contrast"
 msgstr "Transparence des icônes dans l’interface, pour réduire le contraste"
-
-
-msgid "Icon File"
-msgstr "Fichier d’icônes"
 
 
 msgid "Menu Shadow Strength"
@@ -68211,10 +67767,6 @@ msgstr "Trier par nom"
 
 msgid "Sort items by their name"
 msgstr "Trier les éléments par leurs noms"
-
-
-msgid "Invert the order of shown items"
-msgstr "Inverser l’ordre des éléments affichés"
 
 
 msgid "Collection of uv loop layers"
@@ -69566,10 +69118,6 @@ msgid "Failed to write .oso file next to external .osl file at "
 msgstr "Impossible d’écrire le fichier .oso à côté du fichier externe .osl en "
 
 
-msgid "Cycles Compute Device:"
-msgstr "Périphérique de calculs Cycles :"
-
-
 msgid "Total Samples:"
 msgstr "Échantillons totaux :"
 
@@ -70073,14 +69621,6 @@ msgid "Keyframe Numbers"
 msgstr "Numéros d’image clé"
 
 
-msgid "Display:"
-msgstr "Affichage :"
-
-
-msgid "Selected Only"
-msgstr "Sélectionnés seulement"
-
-
 msgid "After"
 msgstr "Après"
 
@@ -70391,10 +69931,6 @@ msgstr "Format des vues :"
 
 msgid "Render U"
 msgstr "Rendu U"
-
-
-msgid "Regular"
-msgstr "Standard"
 
 
 msgid "Bold & Italic"
@@ -70968,11 +70504,6 @@ msgid "Delimit:"
 msgstr "Délimiter :"
 
 
-msgctxt "Operator"
-msgid "Free Bake"
-msgstr "Effacer pré-calculs"
-
-
 msgid "Use Channel:"
 msgstr "Utiliser canal :"
 
@@ -71309,14 +70840,6 @@ msgid "Lock Frame"
 msgstr "Verrouiller frame"
 
 
-msgid "CCW"
-msgstr "CCW"
-
-
-msgid "CW"
-msgstr "CW"
-
-
 msgctxt "Operator"
 msgid "More..."
 msgstr "Plus…"
@@ -71328,6 +70851,14 @@ msgstr "Déverrouillé"
 
 msgid "Frame: %d (%s)"
 msgstr "Frame : %d  (%s)"
+
+
+msgid "CCW"
+msgstr "CCW"
+
+
+msgid "CW"
+msgstr "CW"
 
 
 msgid "Parent:"
@@ -71369,10 +70900,6 @@ msgstr "Inverser"
 
 msgid "Tracking Axis"
 msgstr "Axes de suivi"
-
-
-msgid "On"
-msgstr "On"
 
 
 msgid "Not for Axis-Angle"
@@ -71530,11 +71057,6 @@ msgid "%d fluid particles for this frame"
 msgstr "%d particules fluides pour cette frame"
 
 
-msgctxt "Operator"
-msgid "Free Edit"
-msgstr "Effacer édition"
-
-
 msgid "Use Timing"
 msgstr "Utiliser timing"
 
@@ -71576,11 +71098,6 @@ msgstr "Activer physiques pour :"
 msgctxt "Operator"
 msgid "Current Cache to Bake"
 msgstr "Cache courant à pré-calculer"
-
-
-msgctxt "Operator"
-msgid "Free All Bakes"
-msgstr "Effacer tous les pré-calculs"
 
 
 msgctxt "Operator"
@@ -72971,28 +72488,8 @@ msgid "Python API Reference"
 msgstr "Références de l’API Python (en)"
 
 
-msgid "View Name"
-msgstr "Afficher nom"
-
-
-msgid "Playback FPS"
-msgstr "Images/Sec en lecture"
-
-
-msgid "Development:"
-msgstr "Développement :"
-
-
-msgid "2D Viewports:"
-msgstr "Fenêtres 2D :"
-
-
-msgid "Minimum Grid Spacing"
-msgstr "Espacement minimum de la grille"
-
-
-msgid "Menus:"
-msgstr "Menus :"
+msgid "New Data"
+msgstr "Nouvelles données"
 
 
 msgid "Top Level"
@@ -73001,46 +72498,6 @@ msgstr "Niveau supérieur"
 
 msgid "Sub Level"
 msgstr "Niveau inférieur"
-
-
-msgid "Pie Menus:"
-msgstr "Menus camembert :"
-
-
-msgid "Header:"
-msgstr "En-tête :"
-
-
-msgid "App Template:"
-msgstr "Patron d’application :"
-
-
-msgid "Options intended for use with app-templates only"
-msgstr "Options conçues pour être utilisées avec les patrons d’application uniquement"
-
-
-msgid "Link Materials To:"
-msgstr "Lier matériaux à :"
-
-
-msgid "New Objects:"
-msgstr "Nouveaux objets :"
-
-
-msgid "Align To:"
-msgstr "Aligner sur :"
-
-
-msgid "Undo:"
-msgstr "Historique des actions :"
-
-
-msgid "Memory Limit"
-msgstr "Limite de mémoire"
-
-
-msgid "Grease Pencil/Annotations:"
-msgstr "Crayon gras/Annotations :"
 
 
 msgid "Manhattan Distance"
@@ -73063,24 +72520,12 @@ msgid "Simplify Stroke"
 msgstr "Simplifier le trait"
 
 
-msgid "Playback:"
-msgstr "Lecture :"
+msgid "Sculpt Overlay Color"
+msgstr "Couleur de superposition de sculpture"
 
 
-msgid "Node Editor:"
-msgstr "Éditeur de nœuds :"
-
-
-msgid "Animation Editors:"
-msgstr "Éditeurs d’animation :"
-
-
-msgid "F-Curve Visibility"
-msgstr "Visibilité F-courbe"
-
-
-msgid "Keyframing:"
-msgstr "Animation par images clés :"
+msgid "Minimum Grid Spacing"
+msgstr "Espacement minimum de la grille"
 
 
 msgid "Only Insert Needed"
@@ -73091,32 +72536,12 @@ msgid "Only Insert Available"
 msgstr "N’insérer que si dispo"
 
 
-msgid "New F-Curve Defaults:"
-msgstr "Réglages par défaut de nouvelle F-courbe :"
+msgid "F-Curve Visibility"
+msgstr "Visibilité F-courbe"
 
 
 msgid "XYZ to RGB"
 msgstr "XYZ vers RGB"
-
-
-msgid "Sculpt Overlay Color"
-msgstr "Couleur de superposition de sculpture"
-
-
-msgid "Duplicate Data:"
-msgstr "Dupliquer données :"
-
-
-msgid "General:"
-msgstr "Général :"
-
-
-msgid "Console Scrollback"
-msgstr "Historique console"
-
-
-msgid "Sound:"
-msgstr "Audio :"
 
 
 msgid "Mixing Buffer"
@@ -73127,124 +72552,24 @@ msgid "Sample Format"
 msgstr "Format d’échantillonnage"
 
 
-msgid "OpenGL:"
-msgstr "OpenGL :"
+msgid "View Name"
+msgstr "Afficher nom"
 
 
-msgid "Anisotropic Filtering:"
-msgstr "Filtrage anisotrope :"
-
-
-msgid "Grease Pencil Options:"
-msgstr "Options crayon gras :"
-
-
-msgid "Text Draw Options:"
-msgstr "Options de dessin de texte :"
+msgid "Playback FPS"
+msgstr "Images/Sec en lecture"
 
 
 msgid "Limit Size"
 msgstr "Limiter taille"
 
 
-msgid "Time Out"
-msgstr "Délai de péremption"
-
-
-msgid "Collection Rate"
-msgstr "Délai de nettoyage"
-
-
-msgid "Images Draw Method:"
-msgstr "Méthode d’affichage d’image :"
-
-
-msgid "Sequencer/Clip Editor:"
-msgstr "Éditeurs de séquence/de clip :"
-
-
-msgid "Color Picker Type:"
-msgstr "Type de sélecteur de couleur :"
-
-
-msgid "Custom Weight Paint Range"
-msgstr "Dégradé de pondération personnalisé"
-
-
-msgid "Kerning Style:"
-msgstr "Style de crénage :"
-
-
-msgid "Shadow Offset:"
-msgstr "Décalage de l’ombre :"
-
-
-msgid "Presets:"
-msgstr "Pré-réglages :"
-
-
-msgid "File Paths:"
-msgstr "Chemins de fichier :"
-
-
-msgid "Fonts:"
-msgstr "Polices :"
-
-
-msgid "Render Output:"
-msgstr "Sortie rendu :"
-
-
-msgid "Scripts:"
-msgstr "Scripts :"
-
-
-msgid "Sounds:"
-msgstr "Sons :"
-
-
-msgid "Temp:"
-msgstr "Temp :"
-
-
-msgid "Render Cache:"
-msgstr "Cache de rendu :"
-
-
-msgid "I18n Branches:"
-msgstr "Branches i18n :"
-
-
-msgid "Image Editor:"
-msgstr "Éditeur d’image :"
-
-
-msgid "Animation Player:"
-msgstr "Lecteur d’animation :"
-
-
-msgid "Auto Execution:"
-msgstr "Exécution automatique :"
-
-
-msgid "Save & Load:"
-msgstr "Enregistrer & ouvrir :"
-
-
-msgid "Auto Save:"
-msgstr "Sauvegarde auto :"
+msgid "Excluded Paths:"
+msgstr "Chemins exclus :"
 
 
 msgid "Timer (mins)"
 msgstr "Délai (mins)"
-
-
-msgid "Text Editor:"
-msgstr "Éditeur de texte :"
-
-
-msgid "Author:"
-msgstr "Auteur :"
 
 
 msgid "Pan Options"
@@ -73255,145 +72580,16 @@ msgid "Zoom Options"
 msgstr "Options de zoom"
 
 
-msgid "Mouse:"
-msgstr "Souris :"
-
-
-msgid "Double Click:"
-msgstr "Double clic :"
-
-
-msgid "Orbit Style:"
-msgstr "Style de rotation :"
-
-
-msgid "Zoom Style:"
-msgstr "Style de zoom :"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Inverser direction du zoom"
 
 
-msgid "View Navigation:"
-msgstr "Déplacement de la vue :"
-
-
-msgid "Walk Navigation:"
-msgstr "Déplacement par marche :"
-
-
-msgid "Tablet Pressure:"
-msgstr "Pression tablette :"
-
-
-msgid "Supported Level"
-msgstr "Niveau supporté"
-
-
-msgid "Categories"
-msgstr "Catégories"
+msgid "Pan Sensitivity"
+msgstr "Sensibilité en panoramique"
 
 
 msgid "Might fail for Mesh editing selection!"
 msgstr "Peut échouer lors de la sélection de mesh en mode Edit !"
-
-
-msgctxt "WindowManager"
-msgid "Translate:"
-msgstr "Traduire :"
-
-
-msgid "New Data"
-msgstr "Nouvelles données"
-
-
-msgid "Regular:"
-msgstr "Standard :"
-
-
-msgid "Tool:"
-msgstr "Outil :"
-
-
-msgid "Radio Buttons:"
-msgstr "Boutons radio :"
-
-
-msgid "Text:"
-msgstr "Texte :"
-
-
-msgid "Option:"
-msgstr "Option :"
-
-
-msgid "Toggle:"
-msgstr "Bouton “bascule” :"
-
-
-msgid "Number Field:"
-msgstr "Champ numérique :"
-
-
-msgid "Value Slider:"
-msgstr "Curseur de valeur :"
-
-
-msgid "Box:"
-msgstr "Boîte :"
-
-
-msgid "Menu:"
-msgstr "Menu :"
-
-
-msgid "Pie Menu:"
-msgstr "Menu camembert :"
-
-
-msgid "Pulldown:"
-msgstr "Liste déroulante :"
-
-
-msgid "Menu Back:"
-msgstr "Fond de menu :"
-
-
-msgid "Tooltip:"
-msgstr "Infobulles :"
-
-
-msgid "Menu Item:"
-msgstr "Élément de menu :"
-
-
-msgid "Scroll Bar:"
-msgstr "Barre de défilement :"
-
-
-msgid "Progress Bar:"
-msgstr "Barre de progression :"
-
-
-msgid "List Item:"
-msgstr "Élément de liste :"
-
-
-msgid "Tab:"
-msgstr "Tab :"
-
-
-msgid "State:"
-msgstr "État :"
-
-
-msgid "Styles:"
-msgstr "Styles :"
-
-
-msgid "Excluded Paths:"
-msgstr "Chemins exclus :"
 
 
 msgid "Orbit Style"
@@ -73408,53 +72604,12 @@ msgid "Fly/Walk Options"
 msgstr "Options de vol/marche"
 
 
-msgid "Invert Mouse Zoom Direction"
-msgstr "Inverser direction du zoom de la souris"
-
-
 msgid "Natural Trackpad Direction"
 msgstr "Direction trackpad naturelle"
 
 
-msgid "NDOF Device:"
-msgstr "Périphérique NDOF :"
-
-
-msgid "Pan Sensitivity"
-msgstr "Sensibilité en panoramique"
-
-
-msgid "Navigation Style:"
-msgstr "Style de navigation :"
-
-
-msgid "Rotation Style:"
-msgstr "Style de rotation :"
-
-
-msgctxt "Operator"
-msgid "Add-ons Catalog"
-msgstr "Catalogue d’add-ons"
-
-
-msgctxt "Operator"
-msgid "How to share your add-on"
-msgstr "Comment partager votre add-on"
-
-
-msgctxt "Operator"
-msgid "Add-on Guidelines"
-msgstr "Guide d’add-on"
-
-
-msgctxt "Operator"
-msgid "API Concepts"
-msgstr "Concepts de l’API"
-
-
-msgctxt "Operator"
-msgid "Add-on Tutorial"
-msgstr "Tutoriel d’add-on"
+msgid "Invert Mouse Zoom Direction"
+msgstr "Inverser direction du zoom de la souris"
 
 
 msgid "Multiple add-ons with the same name found!"
@@ -73469,18 +72624,6 @@ msgid ":"
 msgstr ":"
 
 
-msgid "Panel Title:"
-msgstr "Titre de panneau :"
-
-
-msgid "Widget:"
-msgstr "Widget :"
-
-
-msgid "Widget Label:"
-msgstr "Label de widget :"
-
-
 msgid "Description:"
 msgstr "Description :"
 
@@ -73491,6 +72634,10 @@ msgstr "description"
 
 msgid "location"
 msgstr "position"
+
+
+msgid "Author:"
+msgstr "Auteur :"
 
 
 msgid "author"
@@ -74150,6 +73297,10 @@ msgstr "Analyse du mesh"
 
 msgid "Edge Marks"
 msgstr "Marques d’arête"
+
+
+msgid "Display:"
+msgstr "Affichage :"
 
 
 msgctxt "Operator"
@@ -76172,6 +75323,10 @@ msgid "No active frame(s) to delete"
 msgstr "Aucune frame active à supprimer"
 
 
+msgid "No active area"
+msgstr "Pas de zone active"
+
+
 msgid "There is no layer number %d"
 msgstr "Il n’y a pas de claque numéro %d"
 
@@ -76214,10 +75369,6 @@ msgstr "Session de crayon gras : Echap/Entrée pour finaliser (ou cliquer en de
 
 msgid "Grease Pencil operator is already active"
 msgstr "L’opérateur de crayon gras est déjà actif"
-
-
-msgid "No active area"
-msgstr "Pas de zone active"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -76363,10 +75514,6 @@ msgid "Active button not found"
 msgstr "Aucun bouton actif trouvé"
 
 
-msgid "Please set your User Preferences' 'Translation Branches Directory' path to a valid directory"
-msgstr "Merci de définir le chemin “Translation Branches Directory” de vos préférences utilisateur à un dossier valide"
-
-
 msgid "File '%s' cannot be opened"
 msgstr "Impossible d’ouvrir le fichier “%s”"
 
@@ -76381,14 +75528,6 @@ msgstr "Impossible de trouver l’opérateur “%s” ! Veuillez activer l’ad
 
 msgid "No valid po found for language '%s' under %s"
 msgstr "Pas de po valide trouvé pour le langage “%s” dans %s"
-
-
-msgid "HSL"
-msgstr "TSL"
-
-
-msgid "HSV"
-msgstr "TSV"
 
 
 msgid "Hex"
@@ -79666,10 +78805,6 @@ msgid "No Recent Files"
 msgstr "Pas de fichier récents"
 
 
-msgid "Open Recent..."
-msgstr "Ouvrir récent…"
-
-
 msgid "Control Point:"
 msgstr "Point de contrôle :"
 
@@ -80928,14 +80063,6 @@ msgid "Could not remove ShapeKey"
 msgstr "Impossible de supprimer la clé de forme"
 
 
-msgid "Object '%s' has no mesh data to be used for ray casting"
-msgstr "L’objet “%s” n’a aucune donnée de mesh utilisable pour le lancer de rayons"
-
-
-msgid "Object '%s' has no mesh data to be used for finding nearest point"
-msgstr "L’objet “%s” n’a pas de donnée de mesh utilisable pour trouver le point le plus proche"
-
-
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "L’objet “%s” n’a pu créer les données internes nécessaires pour trouver le point le plus proche"
 
@@ -81363,6 +80490,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "On"
 
 
 msgid "Val"
@@ -82026,20 +81157,12 @@ msgid "Add Mesh"
 msgstr "Ajouter mesh"
 
 
-msgid "Development"
-msgstr "Développement"
-
-
 msgid "Import-Export"
 msgstr "Import-export"
 
 
 msgid "MakeHuman"
 msgstr "MakeHuman"
-
-
-msgid "Pie Menu"
-msgstr "Menu camembert"
 
 
 msgid "Rigging"

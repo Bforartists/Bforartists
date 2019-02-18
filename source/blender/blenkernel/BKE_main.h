@@ -140,14 +140,39 @@ void BKE_main_relations_free(struct Main *bmain);
 struct GSet *BKE_main_gset_create(struct Main *bmain, struct GSet *gset);
 
 /* *** Generic utils to loop over whole Main database. *** */
-/** \return false to stop iteration, true to keep going. */
-typedef bool (*MainForeachIDCallback) (struct Main *bmain, struct ID *id, void *user_data);
-bool BKE_main_listbase_foreach_id(
-        struct Main *bmain, struct ListBase *lb,
-        MainForeachIDCallback callback, void *user_data);
-bool BKE_main_foreach_id(
-        struct Main *bmain, const bool reverse_type_order,
-        MainForeachIDCallback callback, void *user_data);
+
+#define FOREACH_MAIN_LISTBASE_ID_BEGIN(_lb, _id)                          \
+	for (_id = _lb->first; _id != NULL; _id = _id->next) {                \
+
+#define FOREACH_MAIN_LISTBASE_ID_END                                      \
+	} ((void)0)
+
+
+#define FOREACH_MAIN_ID_BEGIN(_bmain, _id)                                \
+	{                                                                     \
+		ListBase *_lbarray[MAX_LIBARRAY];                                 \
+		int i = set_listbasepointers(_bmain, _lbarray);                   \
+		while (i--) {                                                     \
+			FOREACH_MAIN_LISTBASE_ID_BEGIN(_lbarray[i], _id)              \
+
+#define FOREACH_MAIN_ID_END                                               \
+			FOREACH_MAIN_LISTBASE_ID_END;                                 \
+		}                                                                 \
+	} ((void)0)
+
+/** \param _do_break A boolean, to allow breaking iteration (only used to break by type,
+ *                   you must also use an explicit `break;` operation if you want to
+ *                   immediately break from inner by-ID loop).
+ */
+#define FOREACH_MAIN_ID_BREAKABLE_BEGIN(_bmain, _id, _do_break)           \
+	{                                                                     \
+		ListBase *_lbarray[MAX_LIBARRAY];                                 \
+		int i = set_listbasepointers(_bmain, _lbarray);                   \
+		while (i-- && !_do_break) {                                       \
+			FOREACH_MAIN_LISTBASE_ID_BEGIN(_lbarray[i], _id)              \
+
+#define FOREACH_MAIN_ID_BREAKABLE_END FOREACH_MAIN_ID_END
+
 
 struct BlendThumbnail *BKE_main_thumbnail_from_imbuf(struct Main *bmain, struct ImBuf *img);
 struct ImBuf *BKE_main_thumbnail_to_imbuf(struct Main *bmain, struct BlendThumbnail *data);
@@ -169,8 +194,12 @@ int set_listbasepointers(struct Main *main, struct ListBase *lb[MAX_LIBARRAY]);
 
 #define BLEN_THUMB_SIZE 128
 
-#define BLEN_THUMB_MEMSIZE(_x, _y) (sizeof(BlendThumbnail) + ((size_t)(_x) * (size_t)(_y)) * sizeof(int))
-#define BLEN_THUMB_SAFE_MEMSIZE(_x, _y) ((uint64_t)_x * (uint64_t)_y < (SIZE_MAX / (sizeof(int) * 4)))
+#define BLEN_THUMB_MEMSIZE(_x, _y) \
+	(sizeof(BlendThumbnail) + ((size_t)(_x) * (size_t)(_y)) * sizeof(int))
+/** Protect against buffer overflow vulnerability & negative sizes. */
+#define BLEN_THUMB_MEMSIZE_IS_VALID(_x, _y) \
+	(((_x) > 0 && (_y) > 0) && \
+	 ((uint64_t)(_x) * (uint64_t)(_y) < (SIZE_MAX / (sizeof(int) * 4))))
 
 #ifdef __cplusplus
 }

@@ -44,15 +44,6 @@ struct wmTimer;
 #include "DNA_movieclip_types.h"
 #include "DNA_gpu_types.h"
 
-/* ******************************** */
-
-/* The near/far thing is a Win EXCEPTION, caused by indirect includes from <windows.h>.
- * Thus, leave near/far in the code, and undef for windows. */
-#ifdef _WIN32
-#  undef near
-#  undef far
-#endif
-
 typedef struct RegionView3D {
 
 	/** GL_PROJECTION matrix. */
@@ -243,12 +234,10 @@ typedef struct View3D {
 	float bundle_size;
 	/** Display style for bundle. */
 	char bundle_drawtype;
-	char pad[3];
+	char _pad3[2];
 
-	/** For active layer toggle. */
-	unsigned int lay_prev DNA_DEPRECATED;
-	/** Used while drawing. */
-	unsigned int lay_used DNA_DEPRECATED;
+	/** Multiview current eye - for internal use. */
+	char multiview_eye;
 
 	int object_type_exclude_viewport;
 	int object_type_exclude_select;
@@ -277,7 +266,7 @@ typedef struct View3D {
 	int flag2;
 
 	float lens, grid;
-	float near, far;
+	float clip_start, clip_end;
 	float ofs[3] DNA_DEPRECATED;
 
 	char _pad[4];
@@ -290,17 +279,8 @@ typedef struct View3D {
 	short gridsubdiv;
 	char gridflag;
 
-	/* transform gizmo info */
-	char _pad5[2], gizmo_flag;
-
-	short _pad2;
-
-	/* drawflags, denoting state */
-	char _pad3;
-	char transp, xray;
-
-	/** Multiview current eye - for internal use. */
-	char multiview_eye;
+	/** Transform gizmo info. */
+	char gizmo_flag;
 
 	/* actually only used to define the opacity of the grease pencil vertex in edit mode */
 	float vertex_opacity;

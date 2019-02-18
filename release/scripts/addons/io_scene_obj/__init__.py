@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Wavefront OBJ format",
     "author": "Campbell Barton, Bastien Montagne",
-    "version": (3, 5, 5),
+    "version": (3, 5, 9),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
@@ -86,7 +86,7 @@ class ImportOBJ(bpy.types.Operator, ImportHelper):
     use_split_groups: BoolProperty(
             name="Group",
             description="Import OBJ Groups into Blender Objects",
-            default=True,
+            default=False,
             )
 
     use_groups_as_vgroups: BoolProperty(
