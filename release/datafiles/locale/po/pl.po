@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -274,10 +274,6 @@ msgid "Replace"
 msgstr "Zastąp"
 
 
-msgid "Result strip replaces the accumulated results by amount specified by influence"
-msgstr "Wynikowy pasek zastępuje połączone rezultaty w stopniu określonym przez wpływ"
-
-
 msgid "Add"
 msgstr "Dodaj"
 
@@ -376,14 +372,6 @@ msgstr "Trajektorie"
 
 msgid "Motion Path settings for visualization"
 msgstr "Ustawienia wizualizacji trajektorii"
-
-
-msgid "Onion Skinning"
-msgstr "Pokrywanie wielowarstwowe"
-
-
-msgid "Onion Skinning (ghosting) settings for visualization"
-msgstr "Ustawienia pokrywania wielowarstwowego (eterycznego) dla wizualizacji"
 
 
 msgid "Motion Path Settings"
@@ -512,70 +500,6 @@ msgstr "W zakresie"
 
 msgid "Display Paths of poses within specified range"
 msgstr "Wyświetlaj trajektorie póz w określonym zakresie"
-
-
-msgid "Onion Skinning Settings"
-msgstr "Ustawienia pokrywania warstwowego"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "Pokrywanie warstwowe dla wizualizacji animacji"
-
-
-msgid "End frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "Końcowa klatka w której duchy zaczynają być wyświetlane (nie dla 'wokół bieżącej klatki' dla metody pokrywania wielowarstwowego)"
-
-
-msgid "Starting frame of range of Ghosts to display (not for 'Around Current Frame' Onion-skinning method)"
-msgstr "Początkowa klatka w której duchy zaczynają być wyświetlane (nie dla 'wokół bieżącej klatki' dla metody pokrywania wielowarstwowego)"
-
-
-msgid "Number of frames between ghosts shown (not for 'On Keyframes' Onion-skinning method)"
-msgstr "Liczba klatek pomiędzy którymi pokazane są duchy (nie dla 'w klatkach kluczowych' dla metody pokrywania wielowarstwowego)"
-
-
-msgid "On Selected Bones Only"
-msgstr "Tylko dla wybranych kości"
-
-
-msgid "For Pose-Mode drawing, only draw ghosts for selected bones"
-msgstr "Dla trybu szkicowania pozy rysuj duchy tylko dla wybranych kości"
-
-
-msgid "Type"
-msgstr "Rodzaj"
-
-
-msgid "Method used for determining what ghosts get drawn"
-msgstr "Metoda używana do określania który duch będzie narysowany"
-
-
-msgid "No Ghosts"
-msgstr "Brak duchów"
-
-
-msgid "Do not show any ghosts"
-msgstr "Nie pokazuj żadnego ducha"
-
-
-msgid "Around Current Frame"
-msgstr "Wokół bieżącej klatki"
-
-
-msgid "Show ghosts from around the current frame"
-msgstr "Pokazuj duchy wokół bieżącej klatki"
-
-
-msgid "Show ghosts for the specified frame range"
-msgstr "Pokazuj duchy w określonym przedziale klatek"
-
-
-msgid "On Keyframes"
-msgstr "W klatkach kluczowych"
-
-
-msgid "Show ghosts on keyframes"
-msgstr "Pokazuj duchy w miejscu klatek kluczowych"
 
 
 msgid "Any Type"
@@ -1224,6 +1148,10 @@ msgstr "Reguły boidów"
 
 msgid "Boid rule name"
 msgstr "Nazwa reguły boidów"
+
+
+msgid "Type"
+msgstr "Rodzaj"
 
 
 msgid "Goal"
@@ -1920,10 +1848,6 @@ msgstr "Grupy kanałów pozy (kości)"
 
 msgid "Brush Capabilities"
 msgstr "Możliwości narzędzia"
-
-
-msgid "Read-only indications of which brush operations are supported by the current brush"
-msgstr "Wykazanie możliwości bieżącego narzędzia"
 
 
 msgid "Has Overlay"
@@ -4919,10 +4843,6 @@ msgid "Safe Areas"
 msgstr "Obszary bezpieczne"
 
 
-msgid "Safe Areas used in 3D view and the VSE"
-msgstr "Obszary bezpieczne używane w widoku 3D oraz w Edytorze Wideo"
-
-
 msgid "Action Safe Margins"
 msgstr "Bezpieczne marginesy akcji"
 
@@ -5807,10 +5727,6 @@ msgid "Muted"
 msgstr "Wyciszony"
 
 
-msgid "F-Curve is not evaluated"
-msgstr "Krzywa-F nie jest obliczana"
-
-
 msgid "F-Curve is selected for editing"
 msgstr "Krzywa-F jest wybrana do edycji"
 
@@ -6086,10 +6002,6 @@ msgstr "Wyłączone"
 
 msgid "F-Curve Modifier has invalid settings and will not be evaluated"
 msgstr "Krzywa-F ma niewłaściwe ustawienia i nie będzie przetwarzana"
-
-
-msgid "F-Curve Modifier will not be evaluated"
-msgstr "Krzywa-F nie będzie przetwarzana"
 
 
 msgid "F-Curve Modifier's panel is expanded in UI"
@@ -6476,12 +6388,20 @@ msgid "Parent Object"
 msgstr "Obiekt rodzica"
 
 
+msgid "Onion Skinning"
+msgstr "Pokrywanie wielowarstwowe"
+
+
 msgid "Direction"
 msgstr "Kierunek"
 
 
 msgid "Brush"
 msgstr "Pędzel"
+
+
+msgid "Flat"
+msgstr "Płaskie"
 
 
 msgid "Groups"
@@ -6574,10 +6494,6 @@ msgstr "Maks"
 
 msgid "Use Nodes"
 msgstr "Używaj Węzłów"
-
-
-msgid "Flat"
-msgstr "Płaskie"
 
 
 msgid "Cube"
@@ -6711,6 +6627,10 @@ msgstr "Zewnętrzne Dane"
 
 msgid "Ball"
 msgstr "Kula"
+
+
+msgid "New"
+msgstr "Nowy"
 
 
 msgid "Local"
@@ -6855,10 +6775,6 @@ msgid "Limit"
 msgstr "Ograniczenie"
 
 
-msgid "New"
-msgstr "Nowy"
-
-
 msgid "Warning"
 msgstr "Uwaga"
 
@@ -6952,12 +6868,24 @@ msgid "Pin"
 msgstr "Przypnij"
 
 
+msgid "Timeline"
+msgstr "Oś czasu"
+
+
+msgid "Video Sequence Editor"
+msgstr "Edytor Sekwencji Wideo"
+
+
+msgid "3D View"
+msgstr "Widok 3D"
+
+
+msgid "Development"
+msgstr "Rozwój"
+
+
 msgid "Performance"
 msgstr "Wydajność"
-
-
-msgid "Ghost"
-msgstr "Duch"
 
 
 msgid "Dynamics"
@@ -6992,24 +6920,12 @@ msgid "Animated"
 msgstr "Animowana"
 
 
-msgid "Timeline"
-msgstr "Oś czasu"
-
-
 msgid "Timeline and playback controls"
 msgstr "Oś czasu oraz kontrolki odtwarzania"
 
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "3D View"
-msgstr "Widok 3D"
-
-
-msgid "Video Sequence Editor"
-msgstr "Edytor Sekwencji Wideo"
 
 
 msgid "Laplacian"
@@ -8236,12 +8152,12 @@ msgid "No active frame to delete"
 msgstr "Brak aktywnej klatki do usunięcia"
 
 
-msgid "Grease Pencil operator is already active"
-msgstr "Operator Szkicownik jest już aktywny"
-
-
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
+
+
+msgid "Grease Pencil operator is already active"
+msgstr "Operator Szkicownik jest już aktywny"
 
 
 msgid "Shift+Left Mouse"
@@ -8359,10 +8275,6 @@ msgid "Active button not found"
 msgstr "Nie odnaleziono aktywnego przycisku"
 
 
-msgid "Please set your User Preferences' 'Translation Branches Directory' path to a valid directory"
-msgstr "W Ustawieniach Użytkownika ustaw ścieżkę 'Ścieżka Gałęzi Tłumaczeń' na prawidłową ścieżkę"
-
-
 msgid "File '%s' cannot be opened"
 msgstr "Nie można otworzyć pliku '%s'"
 
@@ -8373,14 +8285,6 @@ msgstr "Patrz '%s' w edytorze tekstu"
 
 msgid "No valid po found for language '%s' under %s"
 msgstr "Nie odnaleziono prawidłowego 'po' dla języka '%s' pod '%s'"
-
-
-msgid "HSL"
-msgstr "HSL"
-
-
-msgid "HSV"
-msgstr "HSV"
 
 
 msgid "Hex"
@@ -11248,10 +11152,6 @@ msgid "No Recent Files"
 msgstr "Brak Ostatnich Plików"
 
 
-msgid "Open Recent..."
-msgstr "Otwórz Ostatnie..."
-
-
 msgid "Control Point:"
 msgstr "Punkt Kontrolny:"
 
@@ -12354,14 +12254,6 @@ msgid "Object '%s' does not support shapes"
 msgstr "Obiekt '%s' nie obsługuje kształtów"
 
 
-msgid "Object '%s' has no mesh data to be used for ray casting"
-msgstr "Obiekt '%s' nie posiada danych siatki możliwych do użycia do rzutu promienia"
-
-
-msgid "Object '%s' has no mesh data to be used for finding nearest point"
-msgstr "Obiekt '%s' nie posiada danych siatki możliwych do użycia do znalezienia najbliższego punktu"
-
-
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "Obiekt '%s' nie zdołał stworzyć wewnętrznych danych do znalezienia najbliższego punktu"
 
@@ -13154,10 +13046,6 @@ msgstr "Dodaj krzywą"
 
 msgid "Add Mesh"
 msgstr "Dodaj Siatkę"
-
-
-msgid "Development"
-msgstr "Rozwój"
 
 
 msgid "Import-Export"

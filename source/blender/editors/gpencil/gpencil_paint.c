@@ -279,33 +279,33 @@ static bool gpencil_draw_poll(bContext *C)
 {
 	if (ED_operator_regionactive(C)) {
 		ScrArea *sa = CTX_wm_area(C);
-		if (!ELEM(sa->spacetype, SPACE_VIEW3D)) {
-			/* check if current context can support GPencil data */
-			if (ED_gpencil_data_get_pointers(C, NULL) != NULL) {
-				/* check if Grease Pencil isn't already running */
-				if (ED_gpencil_session_active() == 0)
-					return 1;
-				else
-					CTX_wm_operator_poll_msg_set(C, "Grease Pencil operator is already active");
-			}
-			else {
-				CTX_wm_operator_poll_msg_set(C, "Failed to find Grease Pencil data to draw into");
-			}
-			return 0;
-		}
 		/* 3D Viewport */
-		else {
-			if (ED_gpencil_session_active() == 0) {
-				return 1;
-			}
-			else {
-				return 0;
-			}
+		if (sa->spacetype != SPACE_VIEW3D) {
+			return false;
 		}
+
+		/* check if Grease Pencil isn't already running */
+		if (ED_gpencil_session_active() != 0) {
+			CTX_wm_operator_poll_msg_set(C, "Grease Pencil operator is already active");
+			return false;
+		}
+
+		/* only grease pencil object type */
+		Object *ob = CTX_data_active_object(C);
+		if ((ob == NULL) || (ob->type != OB_GPENCIL)) {
+			return false;
+		}
+
+		bGPdata *gpd = (bGPdata *)ob->data;
+		if (!GPENCIL_PAINT_MODE(gpd)) {
+			return false;
+		}
+
+		return true;
 	}
 	else {
 		CTX_wm_operator_poll_msg_set(C, "Active region not set");
-		return 0;
+		return false;
 	}
 }
 
@@ -439,12 +439,7 @@ static void gp_stroke_convertcoords(tGPsdata *p, const float mval[2], float out[
 
 		/* Current method just converts each point in screen-coordinates to
 		 * 3D-coordinates using the 3D-cursor as reference. In general, this
-		 * works OK, but it could of course be improved.
-		 *
-		 * TODO:
-		 * - investigate using nearest point(s) on a previous stroke as
-		 *   reference point instead or as offset, for easier stroke matching
-		 */
+		 * works OK, but it could of course be improved. */
 
 		gp_get_3d_reference(p, rvec);
 		zfac = ED_view3d_calc_zfac(p->ar->regiondata, rvec, NULL);
@@ -1771,7 +1766,7 @@ static void gp_set_default_eraser(Main *bmain, Brush *brush_dft)
 	}
 
 	for (Brush *brush = bmain->brush.first; brush; brush = brush->id.next) {
-		if (brush->gpencil_tool == GPAINT_TOOL_ERASE) {
+		if ((brush->gpencil_settings) && (brush->gpencil_tool == GPAINT_TOOL_ERASE)) {
 			if (brush == brush_dft) {
 				brush->gpencil_settings->flag |= GP_BRUSH_DEFAULT_ERASER;
 			}
@@ -2084,7 +2079,8 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 		if (p->custom_color[3])
 			copy_v3_v3(p->gpl->color, p->custom_color);
 	}
-	if (p->gpl->flag & GP_LAYER_LOCKED) {
+	if ((paintmode != GP_PAINTMODE_ERASER) &&
+		(p->gpl->flag & GP_LAYER_LOCKED)) {
 		p->status = GP_STATUS_ERROR;
 		if (G.debug & G_DEBUG)
 			printf("Error: Cannot paint on locked layer\n");
@@ -2137,8 +2133,6 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 
 		if (has_layer_to_erase == false) {
 			p->status = GP_STATUS_ERROR;
-			//if (G.debug & G_DEBUG)
-			printf("Error: Eraser will not be affecting anything (gpencil_paint_init)\n");
 			return;
 		}
 	}
@@ -3125,6 +3119,8 @@ static void gpencil_guide_event_handling(bContext *C, wmOperator *op, const wmEv
 static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	tGPsdata *p = NULL;
+	Object *ob = CTX_data_active_object(C);
+	bGPdata *gpd = (bGPdata *)ob->data;
 
 	if (G.debug & G_DEBUG)
 		printf("GPencil - Starting Drawing\n");
@@ -3132,6 +3128,33 @@ static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event
 	/* support for tablets eraser pen */
 	if (gpencil_is_tablet_eraser_active(event)) {
 		RNA_enum_set(op->ptr, "mode", GP_PAINTMODE_ERASER);
+	}
+
+	/* do not draw in locked or invisible layers */
+	eGPencil_PaintModes paintmode = RNA_enum_get(op->ptr, "mode");
+	if (paintmode != GP_PAINTMODE_ERASER) {
+		bGPDlayer *gpl = CTX_data_active_gpencil_layer(C);
+		if ((gpl) && ((gpl->flag & GP_LAYER_LOCKED) || (gpl->flag & GP_LAYER_HIDE))) {
+			BKE_report(op->reports, RPT_ERROR, "Active layer is locked or hide");
+			return OPERATOR_CANCELLED;
+		}
+	}
+	else {
+		/* don't erase empty frames */
+		bool has_layer_to_erase = false;
+		for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+			/* Skip if layer not editable */
+			if (gpencil_layer_is_editable(gpl)) {
+				if (gpl->actframe && gpl->actframe->strokes.first) {
+					has_layer_to_erase = true;
+					break;
+				}
+			}
+		}
+		if (!has_layer_to_erase) {
+			BKE_report(op->reports, RPT_ERROR, "Nothing to erase or all layers locked");
+			return OPERATOR_FINISHED;
+		}
 	}
 
 	/* try to initialize context data needed while drawing */
@@ -3180,28 +3203,24 @@ static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event
 	}
 
 	/* enable paint mode */
-	if (p->sa->spacetype == SPACE_VIEW3D) {
-
 		/* handle speed guide events before drawing inside view3d */
-		if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP)) {
-			gpencil_guide_event_handling(C, op, event, p);
-		}
+	if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP)) {
+		gpencil_guide_event_handling(C, op, event, p);
+	}
 
-		Object *ob = CTX_data_active_object(C);
-		if (ob && (ob->type == OB_GPENCIL) && ((p->gpd->flag & GP_DATA_STROKE_PAINTMODE) == 0)) {
-			/* FIXME: use the mode switching operator, this misses notifiers, messages. */
-			/* Just set paintmode flag... */
-			p->gpd->flag |= GP_DATA_STROKE_PAINTMODE;
-			/* disable other GP modes */
-			p->gpd->flag &= ~GP_DATA_STROKE_EDITMODE;
-			p->gpd->flag &= ~GP_DATA_STROKE_SCULPTMODE;
-			p->gpd->flag &= ~GP_DATA_STROKE_WEIGHTMODE;
-			/* set workspace mode */
-			ob->restore_mode = ob->mode;
-			ob->mode = OB_MODE_PAINT_GPENCIL;
-			/* redraw mode on screen */
-			WM_event_add_notifier(C, NC_SCENE | ND_MODE, NULL);
-		}
+	if (ob && (ob->type == OB_GPENCIL) && ((p->gpd->flag & GP_DATA_STROKE_PAINTMODE) == 0)) {
+		/* FIXME: use the mode switching operator, this misses notifiers, messages. */
+		/* Just set paintmode flag... */
+		p->gpd->flag |= GP_DATA_STROKE_PAINTMODE;
+		/* disable other GP modes */
+		p->gpd->flag &= ~GP_DATA_STROKE_EDITMODE;
+		p->gpd->flag &= ~GP_DATA_STROKE_SCULPTMODE;
+		p->gpd->flag &= ~GP_DATA_STROKE_WEIGHTMODE;
+		/* set workspace mode */
+		ob->restore_mode = ob->mode;
+		ob->mode = OB_MODE_PAINT_GPENCIL;
+		/* redraw mode on screen */
+		WM_event_add_notifier(C, NC_SCENE | ND_MODE, NULL);
 	}
 
 	WM_event_add_notifier(C, NC_GPENCIL | NA_EDITED, NULL);

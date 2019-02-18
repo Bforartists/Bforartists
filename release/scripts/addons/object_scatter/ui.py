@@ -35,14 +35,16 @@ ScatterSettings = namedtuple("ScatterSettings",
 class ObjectScatterProperties(bpy.types.PropertyGroup):
     seed: IntProperty(
         name="Seed",
-        default=0
+        default=0,
+        description="Change it to get a different scatter pattern",
     )
 
     density: FloatProperty(
         name="Density",
         default=10,
         min=0,
-        soft_max=50
+        soft_max=50,
+        description="The amount of objects per unit on the line",
     )
 
     radius: FloatProperty(
@@ -51,14 +53,16 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
         min=0,
         soft_max=5,
         subtype='DISTANCE',
-        unit='LENGTH'
+        unit='LENGTH',
+        description="Maximum distance of the objects to the line",
     )
 
     scale: FloatProperty(
         name="Scale",
         default=0.3,
         min=0.00001,
-        soft_max=1
+        soft_max=1,
+        description="Size of the generated objects",
     )
 
     random_scale_percentage: FloatProperty(
@@ -67,7 +71,8 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
         min=0,
         max=100,
         subtype='PERCENTAGE',
-        precision=0
+        precision=0,
+        description="Increase to get a larger range of sizes",
     )
 
     rotation: FloatProperty(
@@ -77,14 +82,16 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
         max=math.pi * 2,
         soft_max=math.pi / 2,
         subtype='ANGLE',
-        unit='ROTATION'
+        unit='ROTATION',
+        description="Maximum rotation of the generated objects",
     )
 
     normal_offset: FloatProperty(
         name="Normal Offset",
         default=0,
         soft_min=-1.0,
-        soft_max=1.0
+        soft_max=1.0,
+        description="Distance from the surface",
     )
 
     def to_settings(self):
@@ -100,6 +107,7 @@ class ObjectScatterProperties(bpy.types.PropertyGroup):
 
 
 class ObjectScatterPanel(bpy.types.Panel):
+    bl_idname = "OBJECT_PT_object_scatter"
     bl_label = "Object Scatter"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'

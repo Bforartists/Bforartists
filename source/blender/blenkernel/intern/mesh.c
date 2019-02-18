@@ -330,7 +330,7 @@ static void mesh_ensure_tessellation_customdata(Mesh *me)
 
 void BKE_mesh_ensure_skin_customdata(Mesh *me)
 {
-	BMesh *bm = me->edit_btmesh ? me->edit_btmesh->bm : NULL;
+	BMesh *bm = me->edit_mesh ? me->edit_mesh->bm : NULL;
 	MVertSkin *vs;
 
 	if (bm) {
@@ -369,7 +369,7 @@ void BKE_mesh_ensure_skin_customdata(Mesh *me)
 
 bool BKE_mesh_ensure_facemap_customdata(struct Mesh *me)
 {
-	BMesh *bm = me->edit_btmesh ? me->edit_btmesh->bm : NULL;
+	BMesh *bm = me->edit_mesh ? me->edit_mesh->bm : NULL;
 	bool changed = false;
 	if (bm) {
 		if (!CustomData_has_layer(&bm->pdata, CD_FACEMAP)) {
@@ -393,7 +393,7 @@ bool BKE_mesh_ensure_facemap_customdata(struct Mesh *me)
 
 bool BKE_mesh_clear_facemap_customdata(struct Mesh *me)
 {
-	BMesh *bm = me->edit_btmesh ? me->edit_btmesh->bm : NULL;
+	BMesh *bm = me->edit_mesh ? me->edit_mesh->bm : NULL;
 	bool changed = false;
 	if (bm) {
 		if (CustomData_has_layer(&bm->pdata, CD_FACEMAP)) {
@@ -447,8 +447,8 @@ void BKE_mesh_update_customdata_pointers(Mesh *me, const bool do_ensure_tess_cd)
 
 bool BKE_mesh_has_custom_loop_normals(Mesh *me)
 {
-	if (me->edit_btmesh) {
-		return CustomData_has_layer(&me->edit_btmesh->bm->ldata, CD_CUSTOMLOOPNORMAL);
+	if (me->edit_mesh) {
+		return CustomData_has_layer(&me->edit_mesh->bm->ldata, CD_CUSTOMLOOPNORMAL);
 	}
 	else {
 		return CustomData_has_layer(&me->ldata, CD_CUSTOMLOOPNORMAL);
@@ -471,7 +471,7 @@ void BKE_mesh_free(Mesh *me)
 	MEM_SAFE_FREE(me->mat);
 	MEM_SAFE_FREE(me->bb);
 	MEM_SAFE_FREE(me->mselect);
-	MEM_SAFE_FREE(me->edit_btmesh);
+	MEM_SAFE_FREE(me->edit_mesh);
 }
 
 static void mesh_tessface_clear_intern(Mesh *mesh, int free_customdata)
@@ -525,6 +525,14 @@ Mesh *BKE_mesh_add(Main *bmain, const char *name)
  */
 void BKE_mesh_copy_data(Main *bmain, Mesh *me_dst, const Mesh *me_src, const int flag)
 {
+	BKE_mesh_runtime_reset_on_copy(me_dst, flag);
+	if ((me_src->id.tag & LIB_TAG_NO_MAIN) == 0) {
+		/* This is a direct copy of a main mesh, so for now it has the same topology. */
+		me_dst->runtime.deformed_only = true;
+	}
+	/* XXX WHAT? Why? Comment, please! And pretty sure this is not valid for regular Mesh copying? */
+	me_dst->runtime.is_original = false;
+
 	const bool do_tessface = ((me_src->totface != 0) && (me_src->totpoly == 0)); /* only do tessface if we have no polys */
 	CustomDataMask mask = CD_MASK_MESH;
 
@@ -549,22 +557,7 @@ void BKE_mesh_copy_data(Main *bmain, Mesh *me_dst, const Mesh *me_src, const int
 
 	BKE_mesh_update_customdata_pointers(me_dst, do_tessface);
 
-	me_dst->edit_btmesh = NULL;
-
-	/* Call BKE_mesh_runtime_reset? */
-	me_dst->runtime.batch_cache = NULL;
-	me_dst->runtime.looptris.array = NULL;
-	me_dst->runtime.bvh_cache = NULL;
-	me_dst->runtime.shrinkwrap_data = NULL;
-
-	if (me_src->id.tag & LIB_TAG_NO_MAIN) {
-		me_dst->runtime.deformed_only = me_src->runtime.deformed_only;
-	}
-	else {
-		/* This is a direct copy of a main mesh, so for now it has the same topology. */
-		me_dst->runtime.deformed_only = 1;
-	}
-	me_dst->runtime.is_original = false;
+	me_dst->edit_mesh = NULL;
 
 	me_dst->mselect = MEM_dupallocN(me_dst->mselect);
 	me_dst->bb = MEM_dupallocN(me_dst->bb);
@@ -779,8 +772,8 @@ bool BKE_mesh_uv_cdlayer_rename_index(
 	CustomData *ldata, *fdata;
 	CustomDataLayer *cdlu, *cdlf;
 
-	if (me->edit_btmesh) {
-		ldata = &me->edit_btmesh->bm->ldata;
+	if (me->edit_mesh) {
+		ldata = &me->edit_mesh->bm->ldata;
 		fdata = NULL;  /* No tessellated data in BMesh! */
 	}
 	else {
@@ -812,8 +805,8 @@ bool BKE_mesh_uv_cdlayer_rename_index(
 bool BKE_mesh_uv_cdlayer_rename(Mesh *me, const char *old_name, const char *new_name, bool do_tessface)
 {
 	CustomData *ldata, *fdata;
-	if (me->edit_btmesh) {
-		ldata = &me->edit_btmesh->bm->ldata;
+	if (me->edit_mesh) {
+		ldata = &me->edit_mesh->bm->ldata;
 		/* No tessellated data in BMesh! */
 		fdata = NULL;
 		do_tessface = false;
@@ -904,7 +897,7 @@ void BKE_mesh_texspace_calc(Mesh *me)
 BoundBox *BKE_mesh_boundbox_get(Object *ob)
 {
 	/* This is Object-level data access, DO NOT touch to Mesh's bb, would be totally thread-unsafe. */
-	if (ob->bb == NULL || ob->bb->flag & BOUNDBOX_DIRTY) {
+	if (ob->runtime.bb == NULL || ob->runtime.bb->flag & BOUNDBOX_DIRTY) {
 		Mesh *me = ob->data;
 		float min[3], max[3];
 
@@ -914,14 +907,14 @@ BoundBox *BKE_mesh_boundbox_get(Object *ob)
 			max[0] = max[1] = max[2] = 1.0f;
 		}
 
-		if (ob->bb == NULL) {
-			ob->bb = MEM_mallocN(sizeof(*ob->bb), __func__);
+		if (ob->runtime.bb == NULL) {
+			ob->runtime.bb = MEM_mallocN(sizeof(*ob->runtime.bb), __func__);
 		}
-		BKE_boundbox_init_from_minmax(ob->bb, min, max);
-		ob->bb->flag &= ~BOUNDBOX_DIRTY;
+		BKE_boundbox_init_from_minmax(ob->runtime.bb, min, max);
+		ob->runtime.bb->flag &= ~BOUNDBOX_DIRTY;
 	}
 
-	return ob->bb;
+	return ob->runtime.bb;
 }
 
 BoundBox *BKE_mesh_texspace_get(Mesh *me, float r_loc[3], float r_rot[3], float r_size[3])
@@ -1152,8 +1145,8 @@ void BKE_mesh_material_remap(Mesh *me, const unsigned int *remap, unsigned int r
 		n = remap[n]; \
 	} ((void)0)
 
-	if (me->edit_btmesh) {
-		BMEditMesh *em = me->edit_btmesh;
+	if (me->edit_mesh) {
+		BMEditMesh *em = me->edit_mesh;
 		BMIter iter;
 		BMFace *efa;
 
@@ -1554,8 +1547,8 @@ void BKE_mesh_mselect_active_set(Mesh *me, int index, int type)
 void BKE_mesh_count_selected_items(const Mesh *mesh, int r_count[3])
 {
 	r_count[0] = r_count[1] = r_count[2] = 0;
-	if (mesh->edit_btmesh) {
-		BMesh *bm = mesh->edit_btmesh->bm;
+	if (mesh->edit_mesh) {
+		BMesh *bm = mesh->edit_mesh->bm;
 		r_count[0] = bm->totvertsel;
 		r_count[1] = bm->totedgesel;
 		r_count[2] = bm->totfacesel;
