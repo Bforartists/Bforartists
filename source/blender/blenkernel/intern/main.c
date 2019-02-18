@@ -19,7 +19,7 @@
 
 /** \file \ingroup bke
  *
- * Contains management of Main database itself.
+ * Contains management of #Main database itself.
  */
 
 #include <string.h>
@@ -173,12 +173,6 @@ static int main_relations_create_idlink_cb(void *user_data, ID *id_self, ID **id
 	return IDWALK_RET_NOP;
 }
 
-static bool main_relations_create_id_cb(Main *bmain, ID *id, void *UNUSED(user_data))
-{
-	BKE_library_foreach_ID_link(NULL, id, main_relations_create_idlink_cb, bmain->relations, IDWALK_READONLY);
-	return true;
-}
-
 /** Generate the mappings between used IDs and their users, and vice-versa. */
 void BKE_main_relations_create(Main *bmain)
 {
@@ -191,7 +185,12 @@ void BKE_main_relations_create(Main *bmain)
 	bmain->relations->id_user_to_used = BLI_ghash_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
 	bmain->relations->entry_pool = BLI_mempool_create(sizeof(MainIDRelationsEntry), 128, 128, BLI_MEMPOOL_NOP);
 
-	BKE_main_foreach_id(bmain, false, main_relations_create_id_cb, NULL);
+	ID *id;
+	FOREACH_MAIN_ID_BEGIN(bmain, id)
+	{
+		BKE_library_foreach_ID_link(NULL, id, main_relations_create_idlink_cb, bmain->relations, IDWALK_READONLY);
+	}
+	FOREACH_MAIN_ID_END;
 }
 
 void BKE_main_relations_free(Main *bmain)
@@ -209,75 +208,24 @@ void BKE_main_relations_free(Main *bmain)
 	}
 }
 
-static bool main_gset_create(Main *UNUSED(bmain), ID *id, void *user_data)
-{
-	GSet *gset = user_data;
-	BLI_gset_add(gset, id);
-	return true;
-}
-
 /**
  * Create a GSet storing all IDs present in given \a bmain, by their pointers.
  *
- * \param gset If not NULL, given GSet will be extended with IDs from given \a bmain, instead of creating a new one.
+ * \param gset: If not NULL, given GSet will be extended with IDs from given \a bmain, instead of creating a new one.
  */
 GSet *BKE_main_gset_create(Main *bmain, GSet *gset)
 {
 	if (gset == NULL) {
 		gset = BLI_gset_new(BLI_ghashutil_ptrhash, BLI_ghashutil_ptrcmp, __func__);
 	}
-	BKE_main_foreach_id(bmain, false, main_gset_create, gset);
-	return gset;
-}
 
-/**
- * Call given callback over every IDs of given \a lb listbase (assumed to be part of given \a bmain).
- *
- * \return false if the iteration was iterrupted by the callback.
- *
- * \warning \a callback may affect the ID, but DO NOT change the listbase or Main database (add/remove/reorder its IDs).
- */
-bool BKE_main_listbase_foreach_id(
-        Main *bmain, ListBase *lb,
-        MainForeachIDCallback callback, void *user_data)
-{
-	bool keep_looping = true;
-	for (ID *id = lb->first; id; id = id->next) {
-		if (!(keep_looping = callback(bmain, id, user_data))) {
-			return keep_looping;
-		}
-	}
-	return keep_looping;
-}
-
-/**
- * Call given callback over every IDs of given \a bmain Main database.
- *
- * \param reverse_type_order Allow to reverse order in which ID *types* are handled
- *                           (i.e. does not reverse the order in which IDs themselves are handled
- *                           whithin a give listbase).
- *                           Note that in most cases, you want to set that parameter to true.
- * \return false if the iteration was iterrupted by the callback.
- *
- * \warning \a callback may affect the ID, but DO NOT change the Main database (add/remove/reorder its IDs).
- */
-bool BKE_main_foreach_id(
-        Main *bmain, const bool reverse_type_order,
-        MainForeachIDCallback callback, void *user_data)
-{
-	ListBase *lbarray[MAX_LIBARRAY];
-	const int nbr_types = set_listbasepointers(bmain, lbarray);
-
-	bool keep_looping = true;
-	for (int i = reverse_type_order ? nbr_types - 1 : 0;
-	     reverse_type_order ? i >= 0 : i < nbr_types;
-	     reverse_type_order ? i-- : i++)
+	ID *id;
+	FOREACH_MAIN_ID_BEGIN(bmain, id)
 	{
-		if (!(keep_looping = BKE_main_listbase_foreach_id(bmain, lbarray[i], callback, user_data))) {
-			return keep_looping;
-		}
+		BLI_gset_add(gset, id);
 	}
-	return keep_looping;
+	FOREACH_MAIN_ID_END;
+	return gset;
 }
 
 /**
@@ -357,7 +305,7 @@ const char *BKE_main_blendfile_path(const Main *bmain)
 }
 
 /**
- * Return filepath of global main (G_MAIN).
+ * Return filepath of global main #G_MAIN.
  *
  * \warning Usage is not recommended, you should always try to get a valid Main pointer from context...
  */
@@ -449,12 +397,12 @@ ListBase *which_libbase(Main *bmain, short type)
 }
 
 /**
- * puts into array *lb pointers to all the ListBase structs in main,
+ * puts into array *lb pointers to all the #ListBase structs in main,
  * and returns the number of them as the function result. This is useful for
  * generic traversal of all the blocks in a Main (by traversing all the
  * lists in turn), without worrying about block types.
  *
- * \note MAX_LIBARRAY define should match this code */
+ * \note #MAX_LIBARRAY define should match this code */
 int set_listbasepointers(Main *bmain, ListBase **lb)
 {
 	/* BACKWARDS! also watch order of free-ing! (mesh<->mat), first items freed last.

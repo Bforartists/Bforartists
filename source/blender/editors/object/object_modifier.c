@@ -105,7 +105,7 @@ static void object_force_modifier_update_for_bind(Depsgraph *depsgraph, Scene *s
 		BKE_displist_make_mball(depsgraph, scene, ob);
 	}
 	else if (ELEM(ob->type, OB_CURVE, OB_SURF, OB_FONT)) {
-		BKE_displist_make_curveTypes(depsgraph, scene, ob, false, false);
+		BKE_displist_make_curveTypes(depsgraph, scene, ob, false, false, NULL);
 	}
 }
 
@@ -260,8 +260,8 @@ static bool object_has_modifier_cb(Object *ob, void *data)
 }
 
 /* Use with ED_object_iter_other(). Sets the total number of levels
-* for any multires modifiers on the object to the int pointed to by
-* callback_data. */
+ * for any multires modifiers on the object to the int pointed to by
+ * callback_data. */
 bool ED_object_multires_update_totlevels_cb(Object *ob, void *totlevel_v)
 {
 	ModifierData *md;
@@ -1485,7 +1485,7 @@ void OBJECT_OT_multires_base_apply(wmOperatorType *ot)
 static void modifier_skin_customdata_delete(Object *ob)
 {
 	Mesh *me = ob->data;
-	BMEditMesh *em = me->edit_btmesh;
+	BMEditMesh *em = me->edit_mesh;
 
 	if (em)
 		BM_data_layer_free(em->bm, &em->bm->vdata, CD_MVERT_SKIN);

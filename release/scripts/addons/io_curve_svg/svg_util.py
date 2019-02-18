@@ -31,7 +31,7 @@ def check_points_equal(point_a, point_b):
     return (abs(point_a[0] - point_b[0]) < 1e-6 and
             abs(point_a[1] - point_b[1]) < 1e-6)
 
-match_number = r"-?\d+([eE][-+]?\d+)?"
+match_number = r"-?\d+(\.\d+)?([eE][-+]?\d+)?"
 match_first_comma = r"^\s*(?=,)"
 match_comma_pair = r",\s*(?=,)"
 match_last_comma = r",\s*$"

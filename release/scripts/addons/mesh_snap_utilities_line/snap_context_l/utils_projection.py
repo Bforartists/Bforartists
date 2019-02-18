@@ -97,19 +97,22 @@ def intersect_boundbox_threshold(sctx, MVP, ray_origin_local, ray_direction_loca
         tmin[0] = (local_bvmin[0] - ray_origin_local[0]) / ray_direction_local[0]
         tmax[0] = (local_bvmax[0] - ray_origin_local[0]) / ray_direction_local[0]
     else:
-        tmin[0] = tmax[0] = sctx.depth_range[1]
+        tmin[0] = sctx.depth_range[0]
+        tmax[0] = sctx.depth_range[1]
 
     if (ray_direction_local[1]):
         tmin[1] = (local_bvmin[1] - ray_origin_local[1]) / ray_direction_local[1]
         tmax[1] = (local_bvmax[1] - ray_origin_local[1]) / ray_direction_local[1]
     else:
-        tmin[1] = tmax[1] = sctx.depth_range[1]
+        tmin[1] = sctx.depth_range[0]
+        tmax[1] = sctx.depth_range[1]
 
     if (ray_direction_local[2]):
         tmin[2] = (local_bvmin[2] - ray_origin_local[2]) / ray_direction_local[2]
         tmax[2] = (local_bvmax[2] - ray_origin_local[2]) / ray_direction_local[2]
     else:
-        tmin[2] = tmax[2] = sctx.depth_range[1]
+        tmin[2] = sctx.depth_range[0]
+        tmax[2] = sctx.depth_range[1]
 
     # `va` and `vb` are the coordinates of the AABB edge closest to the ray #
     va = Vector()
@@ -133,12 +136,10 @@ def intersect_boundbox_threshold(sctx, MVP, ray_origin_local, ray_direction_loca
         rtmin = tmin[0]
         va[0] = vb[0] = local_bvmin[0]
         main_axis -= 3
-
     elif ((tmin[1] >= tmin[0]) and (tmin[1] >= tmin[2])):
         rtmin = tmin[1]
         va[1] = vb[1] = local_bvmin[1]
         main_axis -= 1
-
     else:
         rtmin = tmin[2]
         va[2] = vb[2] = local_bvmin[2]

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -272,30 +272,6 @@ msgstr "Mostrar tots els fotogrames"
 
 msgid "In Range"
 msgstr "Joc"
-
-
-msgid "Onion Skinning Settings"
-msgstr "Eines"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "On Selected Bones Only"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Around Current Frame"
-msgstr "Començar Joc"
-
-
-msgid "On Keyframes"
-msgstr "Esborrar"
-
-
-msgid "Show ghosts on keyframes"
-msgstr "Començar Joc"
 
 
 msgid "Any Type"
@@ -796,6 +772,42 @@ msgstr "Reduir"
 
 msgid "Has Spacing"
 msgstr "Seleccionar fila"
+
+
+msgid "Has Accumulate"
+msgstr "Duplicar"
+
+
+msgid "Has Space Attenuation"
+msgstr "Esborrar Rotació"
+
+
+msgid "Has Auto Smooth"
+msgstr "Començar Joc"
+
+
+msgid "Has Height"
+msgstr "Dreta"
+
+
+msgid "Has Crease/Pinch Factor"
+msgstr "Seleccionar connectats"
+
+
+msgid "Has Pinch Factor"
+msgstr "Reduir"
+
+
+msgid "Has Plane Offset"
+msgstr "Joc"
+
+
+msgid "Has Sculpt Plane"
+msgstr "Mode d'Edició"
+
+
+msgid "Has Secondary Color"
+msgstr "Començar Joc"
 
 
 msgid "Mode"
@@ -3900,6 +3912,14 @@ msgid "Strength Pressure"
 msgstr "Duplicar"
 
 
+msgid "Spacing"
+msgstr "Seleccionar fila"
+
+
+msgid "Grid"
+msgstr "Reixa"
+
+
 msgid "Tool"
 msgstr "Eines"
 
@@ -3944,6 +3964,10 @@ msgid "2D Image"
 msgstr "Zoom d'Imatge"
 
 
+msgid "End Cap"
+msgstr "Mostrar tots els fotogrames"
+
+
 msgid "Groups"
 msgstr "Seleccionar fila"
 
@@ -3954,6 +3978,10 @@ msgstr "Guardar com"
 
 msgid "Stroke Points"
 msgstr "Seleccionar connectats"
+
+
+msgid "Start Cap"
+msgstr "Començar Joc"
 
 
 msgid "Triangles"
@@ -4224,30 +4252,6 @@ msgid "Edit Bones"
 msgstr "Mode d'Edició"
 
 
-msgid "Ghosting End Frame"
-msgstr "Mostrar tots els fotogrames"
-
-
-msgid "Ghosting Start Frame"
-msgstr "Començar Joc"
-
-
-msgid "Ghosting Frame Step"
-msgstr "Joc"
-
-
-msgid "Ghosting Step"
-msgstr "Rotar"
-
-
-msgid "Ghost Type"
-msgstr "Seleccionar fila"
-
-
-msgid "Display Ghosts of poses on Keyframes"
-msgstr "Començar Joc"
-
-
 msgid "Visible Layers"
 msgstr "Moure a Capa"
 
@@ -4426,10 +4430,6 @@ msgstr "Pintura Vectorial"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Esborrar"
-
-
-msgid "Spacing"
-msgstr "Seleccionar fila"
 
 
 msgid "Stroke Method"
@@ -5928,14 +5928,6 @@ msgid "Display the object's texture space"
 msgstr "Duplicar"
 
 
-msgid "Slow Parent Offset"
-msgstr "Joc"
-
-
-msgid "Delay in the parent relationship"
-msgstr "Image Displist"
-
-
 msgid "Soft Body Settings"
 msgstr "Eines"
 
@@ -5962,10 +5954,6 @@ msgstr "Dreta"
 
 msgid "Shape Key Edit Mode"
 msgstr "Mode d'Edició"
-
-
-msgid "Slow Parent"
-msgstr "Esborrar Str"
 
 
 msgid "Vertex Groups"
@@ -6156,10 +6144,6 @@ msgid "Jittered"
 msgstr "Pintura Vectorial"
 
 
-msgid "Grid"
-msgstr "Reixa"
-
-
 msgid "Amount of air-drag"
 msgstr "Seleccionar connectats"
 
@@ -6297,10 +6281,6 @@ msgstr "Seleccionar fila"
 
 
 msgid "Particle physics type"
-msgstr "Image Displist"
-
-
-msgid "No"
 msgstr "Image Displist"
 
 
@@ -7378,14 +7358,6 @@ msgid "Cycle the images in the movie"
 msgstr "Seleccionar connectats"
 
 
-msgid "Has Accumulate"
-msgstr "Duplicar"
-
-
-msgid "Has Space Attenuation"
-msgstr "Esborrar Rotació"
-
-
 msgid "Owner"
 msgstr "Propietari"
 
@@ -8247,10 +8219,6 @@ msgid "Number of duplicates to make"
 msgstr "Seleccionar connectats"
 
 
-msgid "End Cap"
-msgstr "Mostrar tots els fotogrames"
-
-
 msgid "Fit Type"
 msgstr "Arxiu"
 
@@ -8273,10 +8241,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Relative Offset Displacement"
 msgstr "Emparentar"
-
-
-msgid "Start Cap"
-msgstr "Començar Joc"
 
 
 msgid "Constant Offset"
@@ -8311,8 +8275,8 @@ msgid "Largest"
 msgstr "Joc"
 
 
-msgid "Face Area"
-msgstr "Corba NURBS"
+msgid "New"
+msgstr "Nou"
 
 
 msgid "Limit Method"
@@ -8333,10 +8297,6 @@ msgstr "Corba"
 
 msgid "Vertex group name"
 msgstr "Pintura Vectorial"
-
-
-msgid "Bevel value/amount"
-msgstr "Render"
 
 
 msgid "Boolean Modifier"
@@ -9503,6 +9463,10 @@ msgid "Distance between the waves"
 msgstr "Esborrar"
 
 
+msgid "Face Area"
+msgstr "Corba NURBS"
+
+
 msgid "Boundary"
 msgstr "Centre"
 
@@ -9953,10 +9917,6 @@ msgstr "Moure a Capa"
 
 msgid "NLA Track is locked"
 msgstr "Seleccionar fila"
-
-
-msgid "NLA Track is not evaluated"
-msgstr "Amagar Seleccionats"
 
 
 msgid "NLA Track is selected"
@@ -14220,10 +14180,6 @@ msgid "Mouse location"
 msgstr "Esborrar Posició"
 
 
-msgid "New"
-msgstr "Nou"
-
-
 msgid "Shared layers"
 msgstr "Moure a Capa"
 
@@ -16980,10 +16936,6 @@ msgid "Link Data"
 msgstr "Comprimir Dades"
 
 
-msgid "DupliGroup"
-msgstr "Seleccionar fila"
-
-
 msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Duplicar"
@@ -17509,16 +17461,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Mark selected vertices as roots"
 msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "Desparentar"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "Esborrar Str"
 
 
 msgctxt "Operator"
@@ -18685,16 +18627,6 @@ msgstr "Moure a Capa"
 
 msgid "Bake from cache"
 msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Free Physics Bake"
-msgstr "Desparentar"
-
-
-msgctxt "Operator"
-msgid "Free All Physics Bakes"
-msgstr "Desparentar"
 
 
 msgctxt "Operator"
@@ -21349,6 +21281,46 @@ msgid "Render Presets"
 msgstr "Render"
 
 
+msgid "Bone Color Sets"
+msgstr "Desparentar"
+
+
+msgid "Styles"
+msgstr "Seleccionar connectats"
+
+
+msgid "Text Style"
+msgstr "Seleccionar connectats"
+
+
+msgid "User Interface"
+msgstr "Superfície"
+
+
+msgid "Regular"
+msgstr "Crear aresta/cara"
+
+
+msgid "Theme Space"
+msgstr "Texte"
+
+
+msgid "Theme Space List"
+msgstr "Començar a renderitzar una seqüència"
+
+
+msgid "Panel Colors"
+msgstr "Seleccionar fila"
+
+
+msgid "3D View"
+msgstr "Vista"
+
+
+msgid "Gradient Colors"
+msgstr "Seleccionar fila"
+
+
 msgid "Bone Constraints"
 msgstr "Afegir Tira"
 
@@ -21489,6 +21461,10 @@ msgid "System"
 msgstr "Sistema"
 
 
+msgid "Scopes"
+msgstr "Àmbits"
+
+
 msgid "Sample Line"
 msgstr "Partir"
 
@@ -21503,10 +21479,6 @@ msgstr "Mode d'Edició"
 
 msgid "UV Sculpt Curve"
 msgstr "Corba NURBS"
-
-
-msgid "Scopes"
-msgstr "Àmbits"
 
 
 msgid "Waveform"
@@ -22081,6 +22053,10 @@ msgid "Target Particle System"
 msgstr "Image Displist"
 
 
+msgid "No"
+msgstr "Image Displist"
+
+
 msgid "No compression"
 msgstr "Eines"
 
@@ -22198,10 +22174,6 @@ msgstr "Arxiu"
 
 
 msgid "Default paths for external files"
-msgstr "Seleccionar connectats"
-
-
-msgid "Styles"
 msgstr "Seleccionar connectats"
 
 
@@ -22357,10 +22329,6 @@ msgid "Filter File Extensions"
 msgstr "Filtrar extensions de fitxers"
 
 
-msgid "Keep Session"
-msgstr "Esborrar Origen"
-
-
 msgid "Save Preview Images"
 msgstr "Guardar imatge"
 
@@ -22409,8 +22377,8 @@ msgid "Tweak Threshold"
 msgstr "Corba de Bezier"
 
 
-msgid "View Rotation"
-msgstr "Esborrar Rotació"
+msgid "Auto Depth"
+msgstr "Autotangents"
 
 
 msgid "Zoom Axis"
@@ -22453,10 +22421,6 @@ msgid "192 kHz"
 msgstr "192 khz"
 
 
-msgid "Author"
-msgstr "Autor"
-
-
 msgid "GL Texture Limit"
 msgstr "Texte"
 
@@ -22481,10 +22445,6 @@ msgid "MultiSample: 16"
 msgstr "Esborrar Rotació"
 
 
-msgid "Language used for translation"
-msgstr "Començar a renderitzar una seqüència"
-
-
 msgid "Ambient Color"
 msgstr "Seleccionar fila"
 
@@ -22505,28 +22465,12 @@ msgid "Texture Time Out"
 msgstr "Reduir"
 
 
-msgid "16 Bit Float Textures"
-msgstr "Corba NURBS"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "Esborrar Rotació"
-
-
-msgid "Generate Image Mipmaps on the GPU"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Region Overlap"
 msgstr "Mode d'Edició"
 
 
-msgid "Translate Interface"
-msgstr "Superfície"
-
-
-msgid "Translate Tooltips"
-msgstr "Seleccionar connectats"
+msgid "Language used for translation"
+msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "Display Object Info"
@@ -22553,11 +22497,11 @@ msgid "Only Seconds"
 msgstr "Corba"
 
 
-msgid "Auto Depth"
-msgstr "Autotangents"
+msgid "Translate Interface"
+msgstr "Superfície"
 
 
-msgid "Rotate Around Selection"
+msgid "Translate Tooltips"
 msgstr "Seleccionar connectats"
 
 
@@ -22993,6 +22937,10 @@ msgid "View Perspective"
 msgstr "Amagar Seleccionats"
 
 
+msgid "View Rotation"
+msgstr "Esborrar Rotació"
+
+
 msgid "Rotation in quaternions (keep normalized)"
 msgstr "Esborrar Rotació"
 
@@ -23375,34 +23323,6 @@ msgstr "Esborrar Origen"
 
 msgid "Waveform Mode"
 msgstr "Esborrar Rotació"
-
-
-msgid "Has Auto Smooth"
-msgstr "Començar Joc"
-
-
-msgid "Has Height"
-msgstr "Dreta"
-
-
-msgid "Has Crease/Pinch Factor"
-msgstr "Seleccionar connectats"
-
-
-msgid "Has Pinch Factor"
-msgstr "Reduir"
-
-
-msgid "Has Plane Offset"
-msgstr "Joc"
-
-
-msgid "Has Sculpt Plane"
-msgstr "Mode d'Edició"
-
-
-msgid "Has Secondary Color"
-msgstr "Començar Joc"
 
 
 msgid "Sequence strip in the sequence editor"
@@ -24689,10 +24609,6 @@ msgid "Show column"
 msgstr "Mostrar columna"
 
 
-msgid "Space User Preferences"
-msgstr "Guardar preferències"
-
-
 msgid "Properties Space"
 msgstr "Image Displist"
 
@@ -24809,10 +24725,6 @@ msgid "Lock Camera to View"
 msgstr "Càmera"
 
 
-msgid "Lock Camera and Layers"
-msgstr "Render"
-
-
 msgid "Lock to Cursor"
 msgstr "Seleccionar connectats"
 
@@ -24877,6 +24789,10 @@ msgid "Constrain to Image Bounds"
 msgstr "Afegir Tira"
 
 
+msgid "Snap to Pixels"
+msgstr "Afegir Tira"
+
+
 msgid "Sticky Selection Mode"
 msgstr "Seleccionar connectats"
 
@@ -24887,10 +24803,6 @@ msgstr "Esborrar Posició"
 
 msgid "Shared Vertex"
 msgstr "Moure a Capa"
-
-
-msgid "Snap to Pixels"
-msgstr "Afegir Tira"
 
 
 msgid "Bezier Points"
@@ -24981,24 +24893,12 @@ msgid "Text Line"
 msgstr "Deseleccionar Enllaçats"
 
 
-msgid "Negate"
-msgstr "Negar"
-
-
 msgid "Texture slot name"
 msgstr "Texte"
 
 
 msgid "Output Node"
 msgstr "Render"
-
-
-msgid "RGB to Intensity"
-msgstr "Seleccionar fila"
-
-
-msgid "Stencil"
-msgstr "Plantilla"
 
 
 msgid "Brush Texture Slot"
@@ -25015,6 +24915,10 @@ msgstr "Texte"
 
 msgid "Tiled"
 msgstr "Arxiu"
+
+
+msgid "Stencil"
+msgstr "Plantilla"
 
 
 msgid "Alpha Factor"
@@ -25137,10 +25041,6 @@ msgid "Velocity Factor"
 msgstr "Desparentar"
 
 
-msgid "Bone Color Sets"
-msgstr "Desparentar"
-
-
 msgid "Clip Editor"
 msgstr "Image Displist"
 
@@ -25151,18 +25051,6 @@ msgstr "Nom del tema"
 
 msgid "Active Theme Area"
 msgstr "Moure a Capa"
-
-
-msgid "User Interface"
-msgstr "Superfície"
-
-
-msgid "Text Style"
-msgstr "Seleccionar connectats"
-
-
-msgid "3D View"
-msgstr "Vista"
 
 
 msgid "Theme Bone Color Set"
@@ -25285,15 +25173,7 @@ msgid "Color of selected marker"
 msgstr "Menú Esborrar"
 
 
-msgid "Theme Space"
-msgstr "Texte"
-
-
 msgid "Settings for space"
-msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Theme Space List"
 msgstr "Començar a renderitzar una seqüència"
 
 
@@ -25625,10 +25505,6 @@ msgid "Theme settings for panel colors"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Theme User Preferences"
-msgstr "Guardar preferències"
-
-
 msgid "Theme Properties"
 msgstr "Image Displist"
 
@@ -25701,16 +25577,8 @@ msgid "Region Text Titles"
 msgstr "Seleccionar fila"
 
 
-msgid "Panel Colors"
-msgstr "Seleccionar fila"
-
-
 msgid "Text Highlight"
 msgstr "Partir"
-
-
-msgid "Gradient Colors"
-msgstr "Seleccionar fila"
 
 
 msgid "Theme Space List Settings"
@@ -25775,10 +25643,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Icon Alpha"
 msgstr "Desparentar"
-
-
-msgid "Icon File"
-msgstr "Arxiu"
 
 
 msgid "Menu Shadow Strength"
@@ -26479,10 +26343,6 @@ msgid "Keyframe Numbers"
 msgstr "Joc"
 
 
-msgid "Selected Only"
-msgstr "Amagar Seleccionats"
-
-
 msgid "+ Non-Grouped Keyframes"
 msgstr "Esborrar"
 
@@ -26630,10 +26490,6 @@ msgstr "Zoom d'Imatge"
 
 msgid "Render U"
 msgstr "Render"
-
-
-msgid "Regular"
-msgstr "Crear aresta/cara"
 
 
 msgid "Bold & Italic"
@@ -26954,11 +26810,6 @@ msgid "Clear Loose"
 msgstr "Esborrar Posició"
 
 
-msgctxt "Operator"
-msgid "Free Bake"
-msgstr "Desparentar"
-
-
 msgid "Use Channel:"
 msgstr "Finestra de Render"
 
@@ -27051,10 +26902,6 @@ msgid "Invert"
 msgstr "Esborrar"
 
 
-msgid "On"
-msgstr "Obrir"
-
-
 msgid "Not for Axis-Angle"
 msgstr "Mode d'Edició"
 
@@ -27077,18 +26924,8 @@ msgstr "Duplicar"
 
 
 msgctxt "Operator"
-msgid "Free Edit"
-msgstr "Image Displist"
-
-
-msgctxt "Operator"
 msgid "Current Cache to Bake"
 msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Free All Bakes"
-msgstr "Desparentar"
 
 
 msgctxt "Operator"
@@ -27748,6 +27585,14 @@ msgid "Render Image"
 msgstr "Render"
 
 
+msgid "Simplify Stroke"
+msgstr "Esborrar"
+
+
+msgid "F-Curve Visibility"
+msgstr "Cíclic"
+
+
 msgid "View Name"
 msgstr "Arxiu"
 
@@ -27756,136 +27601,16 @@ msgid "Playback FPS"
 msgstr "Finestra de Render"
 
 
-msgid "Menus:"
-msgstr "Menús:"
-
-
-msgid "New Objects:"
-msgstr "Comprimir Dades"
-
-
-msgid "Simplify Stroke"
-msgstr "Esborrar"
-
-
-msgid "Animation Editors:"
-msgstr "Image Displist"
-
-
-msgid "F-Curve Visibility"
-msgstr "Cíclic"
-
-
-msgid "Duplicate Data:"
-msgstr "Duplicar"
-
-
-msgid "Sound:"
-msgstr "So:"
-
-
-msgid "OpenGL:"
-msgstr "Obrir"
-
-
-msgid "Time Out"
-msgstr "Reduir"
-
-
-msgid "Kerning Style:"
-msgstr "Moure a Capa"
-
-
-msgid "Shadow Offset:"
-msgstr "Joc"
-
-
-msgid "File Paths:"
-msgstr "Arxiu"
-
-
-msgid "Render Output:"
-msgstr "Render"
-
-
-msgid "Sounds:"
-msgstr "Sons:"
-
-
-msgid "Image Editor:"
-msgstr "Image Displist"
-
-
-msgid "Animation Player:"
-msgstr "Finestra de Render"
-
-
-msgid "Auto Save:"
-msgstr "Autotangents"
-
-
-msgid "Author:"
-msgstr "Autor"
-
-
-msgid "Mouse:"
-msgstr "Ratolí:"
-
-
-msgid "Zoom Style:"
-msgstr "Reduir"
-
-
-msgid "Tool:"
-msgstr "Eines"
-
-
-msgid "Text:"
-msgstr "Texte"
-
-
-msgid "Option:"
-msgstr "Opció:"
-
-
-msgid "Menu:"
-msgstr "Menú:"
-
-
-msgid "Tooltip:"
-msgstr "Eines"
-
-
-msgid "List Item:"
-msgstr "Moure a Capa"
-
-
-msgid "State:"
-msgstr "Rotar"
-
-
-msgid "NDOF Device:"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Panel Title:"
-msgstr "Seleccionar connectats"
-
-
-msgid "Widget:"
-msgstr "Seleccionar connectats"
-
-
-msgid "Widget Label:"
-msgstr "Seleccionar connectats"
-
-
 msgid "description"
 msgstr "Seleccionar connectats"
 
 
 msgid "location"
 msgstr "Esborrar Posició"
+
+
+msgid "Author:"
+msgstr "Autor"
 
 
 msgid "Version:"
@@ -29720,10 +29445,6 @@ msgid "No active sequence!"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Open Recent..."
-msgstr "Obrir"
-
-
 msgid "Control Point:"
 msgstr "Esborrar Rotació"
 
@@ -30030,6 +29751,10 @@ msgstr "Rotar"
 
 msgid "Cb"
 msgstr "Cub"
+
+
+msgid "On"
+msgstr "Obrir"
 
 
 msgid "Val"

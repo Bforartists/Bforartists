@@ -58,6 +58,7 @@ extern "C" {
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_mesh_types.h"
+#include "DNA_modifier_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_object_types.h"
 #include "DNA_particle_types.h"
@@ -519,22 +520,22 @@ void update_lattice_edit_mode_pointers(const Depsgraph * /*depsgraph*/,
 void update_mesh_edit_mode_pointers(const Depsgraph *depsgraph,
                                     const ID *id_orig, ID *id_cow)
 {
-	/* For meshes we need to update edit_btmesh to make it to point
+	/* For meshes we need to update edit_mesh to make it to point
 	 * to the CoW version of object.
 	 *
 	 * This is kind of confusing, because actual bmesh is not owned by
 	 * the CoW object, so need to be accurate about using link from
-	 * edit_btmesh to object. */
+	 * edit_mesh to object. */
 	const Mesh *mesh_orig = (const Mesh *)id_orig;
 	Mesh *mesh_cow = (Mesh *)id_cow;
-	if (mesh_orig->edit_btmesh == NULL) {
+	if (mesh_orig->edit_mesh == NULL) {
 		return;
 	}
-	mesh_cow->edit_btmesh = (BMEditMesh *)MEM_dupallocN(mesh_orig->edit_btmesh);
-	mesh_cow->edit_btmesh->ob =
-	    (Object *)depsgraph->get_cow_id(&mesh_orig->edit_btmesh->ob->id);
-	mesh_cow->edit_btmesh->mesh_eval_cage = NULL;
-	mesh_cow->edit_btmesh->mesh_eval_final = NULL;
+	mesh_cow->edit_mesh = (BMEditMesh *)MEM_dupallocN(mesh_orig->edit_mesh);
+	mesh_cow->edit_mesh->ob =
+	    (Object *)depsgraph->get_cow_id(&mesh_orig->edit_mesh->ob->id);
+	mesh_cow->edit_mesh->mesh_eval_cage = NULL;
+	mesh_cow->edit_mesh->mesh_eval_final = NULL;
 }
 
 /* Edit data is stored and owned by original datablocks, copied ones
@@ -576,6 +577,18 @@ void update_particle_system_orig_pointers(const Object *object_orig,
 		psys_cow->orig_psys = psys_orig;
 		psys_cow = psys_cow->next;
 		psys_orig = psys_orig->next;
+	}
+}
+
+void set_particle_system_modifiers_loaded(Object *object_cow)
+{
+	LISTBASE_FOREACH(ModifierData *, md, &object_cow->modifiers) {
+		if (md->type != eModifierType_ParticleSystem) {
+			continue;
+		}
+		ParticleSystemModifierData *psmd =
+		        reinterpret_cast<ParticleSystemModifierData*>(md);
+		psmd->flag |= eParticleSystemFlag_file_loaded;
 	}
 }
 
@@ -621,6 +634,7 @@ void update_special_pointers(const Depsgraph *depsgraph,
 				}
 			}
 			update_particle_system_orig_pointers(object_orig, object_cow);
+			set_particle_system_modifiers_loaded(object_cow);
 			break;
 		}
 		case ID_SCE:
@@ -836,10 +850,10 @@ static void deg_restore_object_runtime(
 			/* Do same thing as object update: override actual object data
 			 * pointer with evaluated datablock. */
 			object->data = mesh_eval;
-			/* Evaluated mesh simply copied edit_btmesh pointer from
+			/* Evaluated mesh simply copied edit_mesh pointer from
 			 * original mesh during update, need to make sure no dead
 			 * pointers are left behind. */
-			mesh_eval->edit_btmesh = mesh_orig->edit_btmesh;
+			mesh_eval->edit_mesh = mesh_orig->edit_mesh;
 		}
 	}
 	object->base_flag = object_runtime_backup->base_flag;
@@ -871,7 +885,7 @@ ID *deg_update_copy_on_write_datablock(const Depsgraph *depsgraph,
 	ListBase *gpumaterial_ptr = NULL;
 	DrawDataList drawdata_backup;
 	DrawDataList *drawdata_ptr = NULL;
-	ObjectRuntimeBackup object_runtime_backup = {{NULL}};
+	ObjectRuntimeBackup object_runtime_backup = {{0}};
 	if (check_datablock_expanded(id_cow)) {
 		switch (id_type) {
 			case ID_MA:
@@ -978,12 +992,12 @@ void discard_lattice_edit_mode_pointers(ID *id_cow)
 void discard_mesh_edit_mode_pointers(ID *id_cow)
 {
 	Mesh *mesh_cow = (Mesh *)id_cow;
-	if (mesh_cow->edit_btmesh == NULL) {
+	if (mesh_cow->edit_mesh == NULL) {
 		return;
 	}
-	BKE_editmesh_free_derivedmesh(mesh_cow->edit_btmesh);
-	MEM_freeN(mesh_cow->edit_btmesh);
-	mesh_cow->edit_btmesh = NULL;
+	BKE_editmesh_free_derivedmesh(mesh_cow->edit_mesh);
+	MEM_freeN(mesh_cow->edit_mesh);
+	mesh_cow->edit_mesh = NULL;
 }
 
 void discard_scene_pointers(ID *id_cow)

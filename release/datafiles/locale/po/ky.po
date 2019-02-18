@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -75,10 +75,6 @@ msgstr "Эч нерсе"
 
 msgid "Drivers"
 msgstr "Драйверлер"
-
-
-msgid "Type"
-msgstr "Түрү"
 
 
 msgid "Empty"
@@ -247,6 +243,10 @@ msgstr "Терезе менеджерлери"
 
 msgid "Worlds"
 msgstr "Дүйнөлөр"
+
+
+msgid "Type"
+msgstr "Түрү"
 
 
 msgid "Speed"
@@ -815,6 +815,10 @@ msgid "Tool"
 msgstr "Аспап"
 
 
+msgid "Flat"
+msgstr "Жалпак"
+
+
 msgid "Window"
 msgstr "Терезе"
 
@@ -1101,10 +1105,6 @@ msgid "Opaque"
 msgstr "Күңүрттүк"
 
 
-msgid "Flat"
-msgstr "Жалпак"
-
-
 msgid "Monkey"
 msgstr "Маймыл"
 
@@ -1215,10 +1215,6 @@ msgstr "Жаш"
 
 msgid "Draw Size"
 msgstr "Тартуу өлчөмү"
-
-
-msgid "No"
-msgstr "Жок"
 
 
 msgid "Collision"
@@ -1569,6 +1565,10 @@ msgstr "Океан"
 
 msgid "Smoke"
 msgstr "Түтүн"
+
+
+msgid "New"
+msgstr "Жаңы"
 
 
 msgid "Percent"
@@ -2123,10 +2123,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "New"
-msgstr "Жаңы"
 
 
 msgctxt "Operator"
@@ -2895,6 +2891,22 @@ msgid "New World"
 msgstr "Жаңы дүйнө"
 
 
+msgid "Styles"
+msgstr "Стилдер"
+
+
+msgid "Panel Colors"
+msgstr "Панель түстөрү"
+
+
+msgid "3D View"
+msgstr "3D-көрүнүш"
+
+
+msgid "Development"
+msgstr "Иштетүү"
+
+
 msgid "Solve"
 msgstr "Чечим"
 
@@ -2925,10 +2937,6 @@ msgstr "Тасма"
 
 msgid "Transparency"
 msgstr "Тунуктук"
-
-
-msgid "Ghost"
-msgstr "Элес"
 
 
 msgid "Paragraph"
@@ -2995,12 +3003,12 @@ msgid "Print3D"
 msgstr "3D-басма"
 
 
+msgid "No"
+msgstr "Жок"
+
+
 msgid "Editing"
 msgstr "Оңдоо"
-
-
-msgid "Styles"
-msgstr "Стилдер"
 
 
 msgid "Add/Replace"
@@ -3073,10 +3081,6 @@ msgstr "96 кГц"
 
 msgid "192 kHz"
 msgstr "192 кГц"
-
-
-msgid "Author"
-msgstr "Автор"
 
 
 msgid "Ambient Color"
@@ -3284,10 +3288,6 @@ msgid "Clip Editor"
 msgstr "Клип редактору"
 
 
-msgid "3D View"
-msgstr "3D-көрүнүш"
-
-
 msgid "Active Marker"
 msgstr "Активдүү маркер"
 
@@ -3312,20 +3312,12 @@ msgid "Window Background"
 msgstr "Терезе фону"
 
 
-msgid "Panel Colors"
-msgstr "Панель түстөрү"
-
-
 msgid "Widget Style"
 msgstr "Виджет стили"
 
 
 msgid "Icon Alpha"
 msgstr "Белги тунуктугу"
-
-
-msgid "Icon File"
-msgstr "Белги файлы"
 
 
 msgid "Island"
@@ -3780,81 +3772,8 @@ msgid "Python API Reference"
 msgstr "Python API маалымдамасы"
 
 
-msgid "General:"
-msgstr "Жалпы:"
-
-
-msgid "Sound:"
-msgstr "Үн:"
-
-
-msgid "OpenGL:"
-msgstr "OpenGL:"
-
-
-msgid "Kerning Style:"
-msgstr "Кернинг стили:"
-
-
-msgid "Fonts:"
-msgstr "Ариптер:"
-
-
-msgid "Scripts:"
-msgstr "Скрипттер:"
-
-
-msgid "Sounds:"
-msgstr "Үндөр:"
-
-
-msgid "Temp:"
-msgstr "Убактылуу файлдар:"
-
-
-msgid "Save & Load:"
-msgstr "Сактоо жана жүктөө:"
-
-
-msgid "Author:"
-msgstr "Автору:"
-
-
-msgid "Supported Level"
-msgstr "Колдоо деңгээли"
-
-
-msgid "Categories"
-msgstr "Категориялар"
-
-
-msgctxt "WindowManager"
-msgid "Translate:"
-msgstr "Которуу:"
-
-
 msgid "New Data"
 msgstr "Жаңы маалыматтар"
-
-
-msgid "Tool:"
-msgstr "Аспап:"
-
-
-msgid "Text:"
-msgstr "Текст:"
-
-
-msgid "Option:"
-msgstr "Опция:"
-
-
-msgid "Menu:"
-msgstr "Меню:"
-
-
-msgid "Widget:"
-msgstr "Виджет:"
 
 
 msgid "Description:"
@@ -3867,6 +3786,10 @@ msgstr "баяндама"
 
 msgid "location"
 msgstr "жайгашкан жери"
+
+
+msgid "Author:"
+msgstr "Автору:"
 
 
 msgid "author"
@@ -4066,10 +3989,6 @@ msgstr "Топ"
 msgctxt "Curve"
 msgid "Surface"
 msgstr "Бет"
-
-
-msgid "HSV"
-msgstr "HSV"
 
 
 msgid "Hex"
@@ -4388,10 +4307,6 @@ msgid "No Recent Files"
 msgstr "Акыркы файлдар жок"
 
 
-msgid "Open Recent..."
-msgstr "Жакындагы файлдар..."
-
-
 msgid "Vertex:"
 msgstr "Чоку:"
 
@@ -4496,10 +4411,6 @@ msgstr "күй."
 
 msgid "Add Curve"
 msgstr "Ийрилерди кошуу"
-
-
-msgid "Development"
-msgstr "Иштетүү"
 
 
 msgid "Import-Export"
