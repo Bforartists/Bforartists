@@ -4,7 +4,6 @@
       <ThemeUserInterface
         menu_shadow_fac="0.3"
         menu_shadow_width="4"
-        icon_file=""
         icon_alpha="1"
         icon_saturation="0.5"
         widget_emboss="#00000005"
