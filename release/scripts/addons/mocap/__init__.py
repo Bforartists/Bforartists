@@ -85,11 +85,11 @@ class MocapConstraint(bpy.types.PropertyGroup):
         default="",
         description="Other Constrained Bone (optional, depends on type)",
         update=mocap_constraints.setConstraint)
-    s_frame: IntProperty(name="S",
+    s_frame: IntProperty(name="Start",
         default=0,
         description="Start frame of Fix",
         update=mocap_constraints.setConstraint)
-    e_frame: IntProperty(name="E",
+    e_frame: IntProperty(name="End",
         default=100,
         description="End frame of Fix",
         update=mocap_constraints.setConstraint)

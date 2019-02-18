@@ -253,15 +253,15 @@ class UIControlPanel(Panel):
                     oldcontext = e[0]
 
                 row = box.row(align=True)
-                row.label(e[1])
+                row.label(text=e[1])
         else:
             cmd = mychecker.getlast()
             if cmd is not None:
                 box = layout.box()
                 if mychecker.isvalidkey(mychecker.getlastkey()) is False:
-                    box.label(str(mychecker.getlastkey()) + " looks not valid key", icon="ERROR")
+                    box.label(text=str(mychecker.getlastkey()) + " looks not valid key", icon="ERROR")
                 else:
-                    box.label(str(cmd) + " is free", icon="FILE_TICK")
+                    box.label(text=str(cmd) + " is free", icon="FILE_TICK")
 
 
 # ------------------------------------------------------

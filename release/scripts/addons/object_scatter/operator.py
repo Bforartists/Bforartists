@@ -34,8 +34,6 @@ from bpy_extras.view3d_utils import (
     region_2d_to_origin_3d
 )
 
-uniform_color_shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-
 
 # Modal Operator
 ################################################################
@@ -352,14 +350,15 @@ box_indices = (
 box_vertices = tuple(Vector(vertex) * 0.5 for vertex in box_vertices)
 
 def draw_matrices_batches(batches):
-    uniform_color_shader.bind()
-    uniform_color_shader.uniform_float("color", (0.4, 0.4, 1.0, 0.3))
+    shader = get_uniform_color_shader()
+    shader.bind()
+    shader.uniform_float("color", (0.4, 0.4, 1.0, 0.3))
 
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glDepthMask(bgl.GL_FALSE)
 
     for batch in batches:
-        batch.draw(uniform_color_shader)
+        batch.draw(shader)
 
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glDepthMask(bgl.GL_TRUE)
@@ -375,18 +374,20 @@ def create_batch_for_matrices(matrices, base_scale):
         coords.extend((matrix @ vertex for vertex in scaled_box_vertices))
         indices.extend(tuple(index + offset for index in element) for element in box_indices)
 
-    batch = batch_for_shader(uniform_color_shader, 'TRIS', {"pos" : coords}, indices = indices)
+    batch = batch_for_shader(get_uniform_color_shader(),
+        'TRIS', {"pos" : coords}, indices = indices)
     return batch
 
 
 def draw_line_strip_batch(batch, color, thickness=1):
+    shader = get_uniform_color_shader()
     bgl.glLineWidth(thickness)
-    uniform_color_shader.bind()
-    uniform_color_shader.uniform_float("color", color)
-    batch.draw(uniform_color_shader)
+    shader.bind()
+    shader.uniform_float("color", color)
+    batch.draw(shader)
 
 def create_line_strip_batch(coords):
-    return batch_for_shader(uniform_color_shader, 'LINE_STRIP', {"pos" : coords})
+    return batch_for_shader(get_uniform_color_shader(), 'LINE_STRIP', {"pos" : coords})
 
 
 def draw_text(location, text, size=15, color=(1, 1, 1, 1)):
@@ -494,6 +495,9 @@ def get_max_object_side_length(objects):
         max(obj.dimensions[1] for obj in objects),
         max(obj.dimensions[2] for obj in objects)
     )
+
+def get_uniform_color_shader():
+    return gpu.shader.from_builtin('3D_UNIFORM_COLOR')
 
 
 # Registration

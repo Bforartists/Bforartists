@@ -4,7 +4,6 @@
       <ThemeUserInterface
         menu_shadow_fac="0.5"
         menu_shadow_width="12"
-        icon_file=""
         icon_alpha="1"
         icon_saturation="0.5"
         widget_emboss="#ffffff05"
@@ -916,7 +915,7 @@
         node_backdrop="#9b9b9ba0"
         converter_node="#686a75"
         color_node="#6f6a64"
-        group_node="#69756e"
+        group_node="#69756eff"
         group_socket_node="#dfca35"
         frame_node="#9b9b9ba0"
         matte_node="#977474"

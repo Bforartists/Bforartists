@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -177,20 +177,12 @@ msgid "Multiply"
 msgstr "Biderkatu"
 
 
-msgid "Onion Skinning"
-msgstr "Tipula-azapa"
-
-
 msgid "Heads"
 msgstr "Buruak"
 
 
 msgid "Tails"
 msgstr "Isatsak"
-
-
-msgid "Type"
-msgstr "Mota"
 
 
 msgid "Height"
@@ -275,6 +267,10 @@ msgstr "ektorea"
 
 msgid "Weight"
 msgstr "Pisua"
+
+
+msgid "Type"
+msgstr "Mota"
 
 
 msgid "Distance"
@@ -401,8 +397,16 @@ msgid "Sort alphabetically"
 msgstr "Alfabetikoki ordenatu"
 
 
+msgid "Onion Skinning"
+msgstr "Tipula-azapa"
+
+
 msgid "Direction"
 msgstr "Norabidea"
+
+
+msgid "Grid"
+msgstr "Sarea"
 
 
 msgid "Groups"
@@ -488,10 +492,6 @@ msgstr "Bozgorailua"
 
 msgid "Angular Velocity"
 msgstr "Abiadura-angeluarra"
-
-
-msgid "Grid"
-msgstr "Sarea"
 
 
 msgid "World"
@@ -621,6 +621,10 @@ msgstr "Laguntza"
 
 msgid "Relations"
 msgstr "Loturak"
+
+
+msgid "New"
+msgstr "Berria"
 
 
 msgid "Local"
@@ -1473,10 +1477,6 @@ msgid "(De)select All Strokes"
 msgstr "(Ez)hautatu trazu guztiak"
 
 
-msgid "New"
-msgstr "Berria"
-
-
 msgid "Shared layers"
 msgstr "Geruza partekatuak"
 
@@ -1848,6 +1848,22 @@ msgid "Save System Info"
 msgstr "Sistemaren Informazioa Gorde"
 
 
+msgid "Timeline"
+msgstr "Denbora-lerroa"
+
+
+msgid "Video Sequence Editor"
+msgstr "Bideo Sekuentzia Editorea"
+
+
+msgid "3D View"
+msgstr "3D Bista"
+
+
+msgid "Development"
+msgstr "Garapena"
+
+
 msgid "Physics"
 msgstr "Fisikak"
 
@@ -1932,10 +1948,6 @@ msgid "Sepia"
 msgstr "Sepia"
 
 
-msgid "Timeline"
-msgstr "Denbora-lerroa"
-
-
 msgid "Blender File"
 msgstr "Blender Fitxategia"
 
@@ -1954,14 +1966,6 @@ msgstr "Alfabetikoki Ordenatu"
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "3D View"
-msgstr "3D Bista"
-
-
-msgid "Video Sequence Editor"
-msgstr "Bideo Sekuentzia Editorea"
 
 
 msgid "Speed Factor"
@@ -2407,10 +2411,6 @@ msgid "Page Down"
 msgstr "Orria Behera"
 
 
-msgid "Open Recent..."
-msgstr "Azkena ireki..."
-
-
 msgid "normal"
 msgstr "Normala"
 
@@ -2742,10 +2742,6 @@ msgstr "Blender Fitxategi Bista"
 
 msgid "Add Curve"
 msgstr "Kurba Gehitu"
-
-
-msgid "Development"
-msgstr "Garapena"
 
 
 msgid "Import-Export"

@@ -21,7 +21,7 @@
 defs = """
     SPACE_EMPTY,
     SPACE_VIEW3D,
-    SPACE_IPO,
+    SPACE_GRAPH,
     SPACE_OUTLINER,
     SPACE_BUTS,
     SPACE_FILE,

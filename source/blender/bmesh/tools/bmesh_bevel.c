@@ -847,6 +847,9 @@ static void offset_meet(EdgeHalf *e1, EdgeHalf *e2, BMVert *v, BMFace *f, bool e
 	if (ang < BEVEL_EPSILON_ANG) {
 		/* special case: e1 and e2 are parallel; put offset point perp to both, from v.
 		 * need to find a suitable plane.
+		 * this code used to just use offset and dir1, but that makes for visible errors
+		 * on a circle with > 200 sides, which trips this "nearly perp" code (see T61214).
+		 * so use the average of the two, and the offset formula for angle bisector.
 		 * if offsets are different, we're out of luck:
 		 * use the max of the two (so get consistent looking results if the same situation
 		 * arises elsewhere in the object but with opposite roles for e1 and e2 */
@@ -854,10 +857,12 @@ static void offset_meet(EdgeHalf *e1, EdgeHalf *e2, BMVert *v, BMFace *f, bool e
 			copy_v3_v3(norm_v, f->no);
 		else
 			copy_v3_v3(norm_v, v->no);
+		add_v3_v3(dir1, dir2);
 		cross_v3_v3v3(norm_perp1, dir1, norm_v);
 		normalize_v3(norm_perp1);
 		copy_v3_v3(off1a, v->co);
 		d = max_ff(e1->offset_r, e2->offset_l);
+		d = d / cos(ang / 2.0f);
 		madd_v3_v3fl(off1a, norm_perp1, d);
 		copy_v3_v3(meetco, off1a);
 	}
@@ -1348,8 +1353,8 @@ static bool make_unit_square_map(
 	add_v3_v3v3(vd, vo, vddir);
 
 	/* The cols of m are: {vmid - va, vmid - vb, vmid + vd - va -vb, va + vb - vmid;
-		* blender transform matrices are stored such that m[i][*] is ith column;
-		* the last elements of each col remain as they are in unity matrix */
+	 * blender transform matrices are stored such that m[i][*] is ith column;
+	 * the last elements of each col remain as they are in unity matrix. */
 	sub_v3_v3v3(&r_mat[0][0], vmid, va);
 	r_mat[0][3] = 0.0f;
 	sub_v3_v3v3(&r_mat[1][0], vmid, vb);
@@ -1777,11 +1782,11 @@ static void bevel_edges_sharp_boundary(BMesh *bm, BevelParams *bp)
 	}
 }
 
-/*
+/**
  * Harden normals for bevel.
- * The desired effect is that the newly created F_EDGE and F_VERT faces appear smoothly shaded
- * with the the normals at the boundaries with F_RECON faces matching those recon faces.
- * And at boundaries between F_EDGE and F_VERT faces, the normals should match the F_EDGE ones.
+ * The desired effect is that the newly created #F_EDGE and F_VERT faces appear smoothly shaded
+ * with the normals at the boundaries with #F_RECON faces matching those recon faces.
+ * And at boundaries between #F_EDGE and #F_VERT faces, the normals should match the #F_EDGE ones.
  * Assumes custom loop normals are in use.
  */
 static void bevel_harden_normals(BMesh *bm, BevelParams *bp)
@@ -2816,10 +2821,11 @@ static void adjust_the_cycle_or_chain(BoundVert *vstart, bool iscycle)
 static void adjust_offsets(BevelParams *bp)
 {
 	BevVert *bv, *bvcur;
-	BoundVert *v, *vanchor, *vchainstart, *vnext;
+	BoundVert *v, *vanchor, *vchainstart, *vchainend, *vnext;
 	EdgeHalf *enext;
 	GHashIterator giter;
 	bool iscycle;
+	int chainlen;
 
 	/* find and process chains and cycles of unvisited BoundVerts that have eon set */
 	GHASH_ITER(giter, bp->vert_hash) {
@@ -2840,8 +2846,9 @@ static void adjust_offsets(BevelParams *bp)
 			 * pairs with the right side of the next edge in the cycle or chain. */
 
 			/* first follow paired edges in left->right direction */
-			v = vchainstart = vanchor;
+			v = vchainstart = vchainend = vanchor;
 			iscycle = false;
+			chainlen = 1;
 			while (v->eon && !v->visited && !iscycle) {
 				v->visited = true;
 				if (!v->efirst)
@@ -2852,6 +2859,8 @@ static void adjust_offsets(BevelParams *bp)
 				BLI_assert(enext != NULL);
 				vnext = enext->leftv;
 				v->adjchain = vnext;
+				vchainend = vnext;
+				chainlen++;
 				if (vnext->visited) {
 					if (vnext != vchainstart) {
 						break;
@@ -2874,10 +2883,12 @@ static void adjust_offsets(BevelParams *bp)
 						break;
 					vnext = enext->rightv;
 					vnext->adjchain = v;
+					chainlen++;
 					vchainstart = vnext;
 					v = vnext;
 				} while (!v->visited && v->eon);
-				adjust_the_cycle_or_chain(vchainstart, false);
+				if (chainlen >= 3 && !vchainstart->eon && !vchainend->eon)
+					adjust_the_cycle_or_chain(vchainstart, false);
 			}
 		} while ((vanchor = vanchor->next) != bv->vmesh->boundstart);
 	}

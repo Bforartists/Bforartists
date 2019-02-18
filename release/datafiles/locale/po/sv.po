@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 39) (b'6d89337257b6')\n"
+"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-24 15:04:25\n"
+"POT-Creation-Date: 2019-02-10 11:10:46\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -213,10 +213,6 @@ msgid "Motion Path settings for visualization"
 msgstr "Rörelsebanor"
 
 
-msgid "Onion Skinning"
-msgstr "Lökskal"
-
-
 msgid "Motion Path Settings"
 msgstr "Rörelsebanor"
 
@@ -287,38 +283,6 @@ msgstr "Aktivera alla Nyckelbilder"
 
 msgid "In Range"
 msgstr "Omfång"
-
-
-msgid "Onion Skinning Settings"
-msgstr "Lökskal"
-
-
-msgid "Onion Skinning settings for animation visualization"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "On Selected Bones Only"
-msgstr "Göm Markerad"
-
-
-msgid "Type"
-msgstr "Typ"
-
-
-msgid "No Ghosts"
-msgstr "Spöke"
-
-
-msgid "Around Current Frame"
-msgstr "Starta Spel"
-
-
-msgid "On Keyframes"
-msgstr "Animationsnycklar"
-
-
-msgid "Show ghosts on keyframes"
-msgstr "Starta Spel"
 
 
 msgid "Any Type"
@@ -603,6 +567,10 @@ msgstr "Strukturell"
 
 msgid "Boid rule name"
 msgstr "Arkiv"
+
+
+msgid "Type"
+msgstr "Typ"
 
 
 msgid "Avoid Collision"
@@ -923,6 +891,50 @@ msgstr "Vektor Måla"
 
 msgid "Has Spacing"
 msgstr "Mellanrum:"
+
+
+msgid "Has Accumulate"
+msgstr "Simulera"
+
+
+msgid "Has Space Attenuation"
+msgstr "Rensa Rotation"
+
+
+msgid "Has Auto Smooth"
+msgstr "Jämn"
+
+
+msgid "Has Height"
+msgstr "Höjd"
+
+
+msgid "Has Jitter"
+msgstr "Mönster"
+
+
+msgid "Has Crease/Pinch Factor"
+msgstr "Hårdhet"
+
+
+msgid "Has Persistence"
+msgstr "Markera Rad"
+
+
+msgid "Has Pinch Factor"
+msgstr "Zooma Ut"
+
+
+msgid "Has Plane Offset"
+msgstr "Rutförskjutning"
+
+
+msgid "Has Sculpt Plane"
+msgstr "Redigerings Läge"
+
+
+msgid "Has Secondary Color"
+msgstr "Starta Spel"
 
 
 msgid "Angle"
@@ -4499,6 +4511,10 @@ msgid "Thickness"
 msgstr "Tjocklek"
 
 
+msgid "Onion Skinning"
+msgstr "Lökskal"
+
+
 msgid "Direction"
 msgstr "Riktning"
 
@@ -4521,6 +4537,14 @@ msgstr "Bild Displist"
 
 msgid "Strength Pressure"
 msgstr "Styrka"
+
+
+msgid "Spacing"
+msgstr "Mellanrum:"
+
+
+msgid "Grid"
+msgstr "Rutnät"
 
 
 msgid "Tool"
@@ -4563,6 +4587,10 @@ msgid "2D Image"
 msgstr "Bild Zoom"
 
 
+msgid "End Cap"
+msgstr "Aktivera alla Nyckelbilder"
+
+
 msgid "Groups"
 msgstr "Grupper"
 
@@ -4573,6 +4601,10 @@ msgstr "Spara som"
 
 msgid "Stroke Points"
 msgstr "Markera Länkad"
+
+
+msgid "Start Cap"
+msgstr "Starta"
 
 
 msgid "Triangles"
@@ -4879,30 +4911,6 @@ msgid "Edit Bones"
 msgstr "Redigerings Läge"
 
 
-msgid "Ghosting End Frame"
-msgstr "Aktivera alla Nyckelbilder"
-
-
-msgid "Ghosting Start Frame"
-msgstr "Starta Spel"
-
-
-msgid "Ghosting Frame Step"
-msgstr "Spel"
-
-
-msgid "Ghosting Step"
-msgstr "Rotera"
-
-
-msgid "Ghost Type"
-msgstr "Markera Rad"
-
-
-msgid "Display Ghosts of poses on Keyframes"
-msgstr "Starta Spel"
-
-
 msgid "Visible Layers"
 msgstr "Synliga lager"
 
@@ -5101,10 +5109,6 @@ msgstr "Vektor Måla"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Radera"
-
-
-msgid "Spacing"
-msgstr "Mellanrum:"
 
 
 msgid "Stroke Method"
@@ -6815,14 +6819,6 @@ msgid "Display the object's texture space"
 msgstr "Visa endast objekt som renderas"
 
 
-msgid "Slow Parent Offset"
-msgstr "Startförskjutning"
-
-
-msgid "Delay in the parent relationship"
-msgstr "Markera Länkad"
-
-
 msgid "Soft Body Settings"
 msgstr "Inställningar för mjuk kropp"
 
@@ -6849,10 +6845,6 @@ msgstr "Ljus"
 
 msgid "Shape Key Edit Mode"
 msgstr "Redigerings Läge"
-
-
-msgid "Slow Parent"
-msgstr "Radera Stripp"
 
 
 msgid "Vertex Groups"
@@ -7091,10 +7083,6 @@ msgid "Jittered"
 msgstr "Mönster"
 
 
-msgid "Grid"
-msgstr "Rutnät"
-
-
 msgid "Amount of air-drag"
 msgstr "Markera Länkad"
 
@@ -7257,10 +7245,6 @@ msgstr "Fysik"
 
 msgid "Particle physics type"
 msgstr "Partikelsystem"
-
-
-msgid "No"
-msgstr "Anteckning"
 
 
 msgid "Scaling"
@@ -8589,14 +8573,6 @@ msgid "Cycle the images in the movie"
 msgstr "Markera Länkad"
 
 
-msgid "Has Accumulate"
-msgstr "Simulera"
-
-
-msgid "Has Space Attenuation"
-msgstr "Rensa Rotation"
-
-
 msgid "Owner"
 msgstr "Texturrum"
 
@@ -9578,10 +9554,6 @@ msgid "Number of duplicates to make"
 msgstr "Antal klyvningar"
 
 
-msgid "End Cap"
-msgstr "Aktivera alla Nyckelbilder"
-
-
 msgid "Fit Type"
 msgstr "Filtertyp:"
 
@@ -9608,10 +9580,6 @@ msgstr "Visa inställningar för kant"
 
 msgid "Relative Offset Displacement"
 msgstr "Skapa Förälder"
-
-
-msgid "Start Cap"
-msgstr "Starta"
 
 
 msgid "Constant Offset"
@@ -9654,8 +9622,8 @@ msgid "Largest"
 msgstr "Mål:"
 
 
-msgid "Face Area"
-msgstr "NURBS Kurva"
+msgid "New"
+msgstr "Ny"
 
 
 msgid "Limit Method"
@@ -9680,10 +9648,6 @@ msgstr "Bana"
 
 msgid "Vertex group name"
 msgstr "Vertexgrupp:"
-
-
-msgid "Bevel value/amount"
-msgstr "Blanda"
 
 
 msgid "Boolean Modifier"
@@ -10926,6 +10890,10 @@ msgid "Distance between the waves"
 msgstr "Radera"
 
 
+msgid "Face Area"
+msgstr "NURBS Kurva"
+
+
 msgid "Boundary"
 msgstr "Gränser"
 
@@ -11416,10 +11384,6 @@ msgstr "Flytta Till Lager"
 
 msgid "NLA Track is locked"
 msgstr "Markera Rad"
-
-
-msgid "NLA Track is not evaluated"
-msgstr "Göm Markerad"
 
 
 msgid "NLA Track is selected"
@@ -16405,10 +16369,6 @@ msgid "Mouse location"
 msgstr "Rensa Placering"
 
 
-msgid "New"
-msgstr "Ny"
-
-
 msgid "Shared layers"
 msgstr "Flytta Till Lager"
 
@@ -19537,10 +19497,6 @@ msgid "Link Data"
 msgstr "Packa Data"
 
 
-msgid "DupliGroup"
-msgstr "Markera Rad"
-
-
 msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Duplicera"
@@ -20234,24 +20190,6 @@ msgstr "Markera Länkad"
 
 msgid "Mark selected vertices as roots"
 msgstr "Göm Markerad"
-
-
-msgctxt "Operator"
-msgid "Clear Slow Parent"
-msgstr "Rensa Förälder"
-
-
-msgid "Clear the object's slow parent"
-msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Set Slow Parent"
-msgstr "Radera Stripp"
-
-
-msgid "Set the object's slow parent"
-msgstr "Duplicera"
 
 
 msgctxt "Operator"
@@ -21590,24 +21528,6 @@ msgstr "Markera Rad"
 
 msgid "Bake from cache"
 msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Free Physics Bake"
-msgstr "Frigör bakning"
-
-
-msgid "Free physics bake"
-msgstr "Frigör bakning"
-
-
-msgctxt "Operator"
-msgid "Free All Physics Bakes"
-msgstr "Frigör bakning"
-
-
-msgid "Free all baked caches of all objects in the current scene"
-msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
@@ -24674,10 +24594,6 @@ msgid "Load Factory Settings"
 msgstr "Verktyg"
 
 
-msgid "Load default file and user preferences"
-msgstr "Spara användarinställn."
-
-
 msgctxt "Operator"
 msgid "Reload Start-Up File"
 msgstr "Läs in förinställning"
@@ -24941,6 +24857,46 @@ msgid "Render Presets"
 msgstr "Lägg till renderingsförinställning"
 
 
+msgid "Bone Color Sets"
+msgstr "Rensa Förälder"
+
+
+msgid "Styles"
+msgstr "Markera Länkad"
+
+
+msgid "Text Style"
+msgstr "Markera Länkad"
+
+
+msgid "User Interface"
+msgstr "Yta"
+
+
+msgid "Regular"
+msgstr "Regulär"
+
+
+msgid "Theme Space"
+msgstr "Text"
+
+
+msgid "Theme Space List"
+msgstr "Starta rendering av sekvens"
+
+
+msgid "Panel Colors"
+msgstr "Markera Rad"
+
+
+msgid "3D View"
+msgstr "Visa"
+
+
+msgid "Gradient Colors"
+msgstr "Markera Rad"
+
+
 msgid "Bone Constraints"
 msgstr "Benbegränsningar"
 
@@ -25045,10 +25001,6 @@ msgid "Geometry Data"
 msgstr "Visa inställningar för kant"
 
 
-msgid "Ghost"
-msgstr "Spöke"
-
-
 msgid "Alignment"
 msgstr "Justerad"
 
@@ -25081,6 +25033,10 @@ msgid "System"
 msgstr "System"
 
 
+msgid "Scopes"
+msgstr "Instrument"
+
+
 msgid "Sample Line"
 msgstr "Samplinglinje"
 
@@ -25099,10 +25055,6 @@ msgstr "NURBS Kurva"
 
 msgid "Histogram"
 msgstr "Histogram"
-
-
-msgid "Scopes"
-msgstr "Instrument"
 
 
 msgid "Vectorscope"
@@ -25717,6 +25669,10 @@ msgid "Cache Compression"
 msgstr "Kompression"
 
 
+msgid "No"
+msgstr "Anteckning"
+
+
 msgid "No compression"
 msgstr "Kompression"
 
@@ -25897,10 +25853,6 @@ msgid "System & OpenGL"
 msgstr "Systeminformation"
 
 
-msgid "Styles"
-msgstr "Markera Länkad"
-
-
 msgid "View & Controls"
 msgstr "Arkiv"
 
@@ -26037,10 +25989,6 @@ msgid "Textures Directory"
 msgstr "Bild Displist"
 
 
-msgid "Keep Session"
-msgstr "Rensa Ursprung"
-
-
 msgid "Save Preview Images"
 msgstr "Spara Bild"
 
@@ -26089,8 +26037,8 @@ msgid "Tweak Threshold"
 msgstr "Tröskel"
 
 
-msgid "View Rotation"
-msgstr "Rensa Rotation"
+msgid "Auto Depth"
+msgstr "Automatiskt djup"
 
 
 msgid "Zoom Axis"
@@ -26149,10 +26097,6 @@ msgid "MultiSample: 16"
 msgstr "Rörelsesamplingar"
 
 
-msgid "Language used for translation"
-msgstr "Starta rendering av sekvens"
-
-
 msgid "Ambient Color"
 msgstr "Markera Rad"
 
@@ -26173,28 +26117,12 @@ msgid "Texture Time Out"
 msgstr "Zooma Ut"
 
 
-msgid "16 Bit Float Textures"
-msgstr "NURBS Kurva"
-
-
-msgid "GPU Mipmap Generation"
-msgstr "Mättnad"
-
-
-msgid "Generate Image Mipmaps on the GPU"
-msgstr "Visa inställningar för kant"
-
-
 msgid "Region Overlap"
 msgstr "Redigerings Läge"
 
 
-msgid "Translate Interface"
-msgstr "Översätt gränssnittet"
-
-
-msgid "Translate Tooltips"
-msgstr "Översätt verktygstipsen"
+msgid "Language used for translation"
+msgstr "Starta rendering av sekvens"
 
 
 msgid "Mini Axes Brightness"
@@ -26229,12 +26157,12 @@ msgid "Only Seconds"
 msgstr "Endast sekunder"
 
 
-msgid "Auto Depth"
-msgstr "Automatiskt djup"
+msgid "Translate Interface"
+msgstr "Översätt gränssnittet"
 
 
-msgid "Rotate Around Selection"
-msgstr "Rotera runt markering"
+msgid "Translate Tooltips"
+msgstr "Översätt verktygstipsen"
 
 
 msgid "ID Property Group"
@@ -26687,6 +26615,10 @@ msgstr "Rensa Rotation"
 
 msgid "View Perspective"
 msgstr "Göm Markerad"
+
+
+msgid "View Rotation"
+msgstr "Rensa Rotation"
 
 
 msgid "Rotation in quaternions (keep normalized)"
@@ -27155,42 +27087,6 @@ msgstr "Genomskinlighet för vektroskop"
 
 msgid "Waveform Mode"
 msgstr "Rensa Rotation"
-
-
-msgid "Has Auto Smooth"
-msgstr "Jämn"
-
-
-msgid "Has Height"
-msgstr "Höjd"
-
-
-msgid "Has Jitter"
-msgstr "Mönster"
-
-
-msgid "Has Crease/Pinch Factor"
-msgstr "Hårdhet"
-
-
-msgid "Has Persistence"
-msgstr "Markera Rad"
-
-
-msgid "Has Pinch Factor"
-msgstr "Zooma Ut"
-
-
-msgid "Has Plane Offset"
-msgstr "Rutförskjutning"
-
-
-msgid "Has Sculpt Plane"
-msgstr "Redigerings Läge"
-
-
-msgid "Has Secondary Color"
-msgstr "Starta Spel"
 
 
 msgid "Sequence strip in the sequence editor"
@@ -28557,10 +28453,6 @@ msgid "Display Filter"
 msgstr "Visa inställningar för kant"
 
 
-msgid "Space User Preferences"
-msgstr "Spara användarinställn."
-
-
 msgid "Properties Space"
 msgstr "Bild Displist"
 
@@ -28681,10 +28573,6 @@ msgid "Lock Camera to View"
 msgstr "Kamera"
 
 
-msgid "Lock Camera and Layers"
-msgstr "Rendera"
-
-
 msgid "Lock to Cursor"
 msgstr "Markera Länkad"
 
@@ -28757,6 +28645,10 @@ msgid "Constrain to Image Bounds"
 msgstr "Lägg till Stripp"
 
 
+msgid "Snap to Pixels"
+msgstr "Lägg till Stripp"
+
+
 msgid "Sticky Selection Mode"
 msgstr "Markera Länkad"
 
@@ -28767,10 +28659,6 @@ msgstr "Rensa Placering"
 
 msgid "Shared Vertex"
 msgstr "Flytta Till Lager"
-
-
-msgid "Snap to Pixels"
-msgstr "Lägg till Stripp"
 
 
 msgid "Bezier Points"
@@ -28865,20 +28753,12 @@ msgid "Text Line"
 msgstr "Avmarkera Länkad"
 
 
-msgid "Negate"
-msgstr "Negera"
-
-
 msgid "Texture slot name"
 msgstr "Namn på texturplats"
 
 
 msgid "Output Node"
 msgstr "Rendera"
-
-
-msgid "RGB to Intensity"
-msgstr "Markera Rad"
 
 
 msgid "Brush Texture Slot"
@@ -29033,28 +28913,12 @@ msgid "Velocity Factor"
 msgstr "Hastighetsstyrka:"
 
 
-msgid "Bone Color Sets"
-msgstr "Rensa Förälder"
-
-
 msgid "Clip Editor"
 msgstr "Bild Displist"
 
 
 msgid "Active Theme Area"
 msgstr "Aktiv temadel"
-
-
-msgid "User Interface"
-msgstr "Yta"
-
-
-msgid "Text Style"
-msgstr "Markera Länkad"
-
-
-msgid "3D View"
-msgstr "Visa"
 
 
 msgid "Theme Bone Color Set"
@@ -29177,15 +29041,7 @@ msgid "Color of selected marker"
 msgstr "Raderings Meny"
 
 
-msgid "Theme Space"
-msgstr "Text"
-
-
 msgid "Settings for space"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "Theme Space List"
 msgstr "Starta rendering av sekvens"
 
 
@@ -29529,14 +29385,6 @@ msgid "Theme settings for panel colors"
 msgstr "Materialets volym-inställningar"
 
 
-msgid "Theme User Preferences"
-msgstr "Spara användarinställn."
-
-
-msgid "Theme settings for the User Preferences"
-msgstr "Materialets volym-inställningar"
-
-
 msgid "Theme Properties"
 msgstr "Spelinställningar"
 
@@ -29609,16 +29457,8 @@ msgid "Region Text Titles"
 msgstr "Markera Rad"
 
 
-msgid "Panel Colors"
-msgstr "Markera Rad"
-
-
 msgid "Text Highlight"
 msgstr "Dela"
-
-
-msgid "Gradient Colors"
-msgstr "Markera Rad"
 
 
 msgid "Theme Space List Settings"
@@ -29687,10 +29527,6 @@ msgstr "Materialets volym-inställningar"
 
 msgid "Icon Alpha"
 msgstr "Färg och alfa"
-
-
-msgid "Icon File"
-msgstr "Arkiv"
 
 
 msgid "Menu Shadow Strength"
@@ -30408,14 +30244,6 @@ msgid "Keyframe Numbers"
 msgstr "Animationsnyckel-nummer"
 
 
-msgid "Display:"
-msgstr "Visa:"
-
-
-msgid "Selected Only"
-msgstr "Bara Markerad"
-
-
 msgid "After"
 msgstr "Efter"
 
@@ -30639,10 +30467,6 @@ msgstr "Kontextuppsättning"
 
 msgid "Render U"
 msgstr "Rendering U"
-
-
-msgid "Regular"
-msgstr "Regulär"
 
 
 msgid "Bold & Italic"
@@ -31029,11 +30853,6 @@ msgid "Clear Loose"
 msgstr "Rensa Placering"
 
 
-msgctxt "Operator"
-msgid "Free Bake"
-msgstr "Frigör bakning"
-
-
 msgid "Use Channel:"
 msgstr "4 Kanaler"
 
@@ -31140,10 +30959,6 @@ msgid "Invert"
 msgstr "Invertera"
 
 
-msgid "On"
-msgstr "På"
-
-
 msgid "Not for Axis-Angle"
 msgstr "Inte för axelvinkeln"
 
@@ -31201,11 +31016,6 @@ msgid "Jittering Amount"
 msgstr "Darrningsmängd"
 
 
-msgctxt "Operator"
-msgid "Free Edit"
-msgstr "Bild Displist"
-
-
 msgid "Use Timing"
 msgstr "Tidtagning:"
 
@@ -31220,11 +31030,6 @@ msgstr "Strukturell"
 
 msgid "Enable physics for:"
 msgstr "Aktivera fysik för:"
-
-
-msgctxt "Operator"
-msgid "Free All Bakes"
-msgstr "Frigör bakning"
 
 
 msgctxt "Operator"
@@ -32032,48 +31837,12 @@ msgid "Python API Reference"
 msgstr "Referens till Pythons API"
 
 
-msgid "View Name"
-msgstr "Arkiv"
-
-
-msgid "Playback FPS"
-msgstr "Renderings Fönster"
-
-
-msgid "2D Viewports:"
-msgstr "Visa"
-
-
-msgid "Minimum Grid Spacing"
-msgstr "Visa inställningar för kant"
-
-
-msgid "Menus:"
-msgstr "Bana"
-
-
 msgid "Top Level"
 msgstr "Nivå"
 
 
 msgid "Sub Level"
 msgstr "Nivå"
-
-
-msgid "Link Materials To:"
-msgstr "Material"
-
-
-msgid "New Objects:"
-msgstr "Packa Data"
-
-
-msgid "Align To:"
-msgstr "Duplicera"
-
-
-msgid "Memory Limit"
-msgstr "Felgräns"
 
 
 msgid "Manhattan Distance"
@@ -32092,40 +31861,20 @@ msgid "Simplify Stroke"
 msgstr "Samplar"
 
 
-msgid "Playback:"
-msgstr "Uppspelning"
+msgid "Sculpt Overlay Color"
+msgstr "Glansighetsfärg"
 
 
-msgid "Animation Editors:"
-msgstr "Bild Displist"
-
-
-msgid "F-Curve Visibility"
-msgstr "Växla synlighet"
-
-
-msgid "Keyframing:"
-msgstr "Animationsnycklar"
+msgid "Minimum Grid Spacing"
+msgstr "Visa inställningar för kant"
 
 
 msgid "Only Insert Available"
 msgstr "Rendera endast aktivt lager"
 
 
-msgid "Sculpt Overlay Color"
-msgstr "Glansighetsfärg"
-
-
-msgid "Duplicate Data:"
-msgstr "Duplicera data:"
-
-
-msgid "General:"
-msgstr "Separera"
-
-
-msgid "Sound:"
-msgstr "Ljud"
+msgid "F-Curve Visibility"
+msgstr "Växla synlighet"
 
 
 msgid "Mixing Buffer"
@@ -32136,197 +31885,28 @@ msgid "Sample Format"
 msgstr "Samplingsfrekvens"
 
 
-msgid "OpenGL:"
-msgstr "OpenGL:"
+msgid "View Name"
+msgstr "Arkiv"
 
 
-msgid "Text Draw Options:"
-msgstr "Rensa Rotation"
+msgid "Playback FPS"
+msgstr "Renderings Fönster"
 
 
 msgid "Limit Size"
 msgstr "Rensa Förälder"
 
 
-msgid "Time Out"
-msgstr "Tidsgräns"
-
-
-msgid "Collection Rate"
-msgstr "Markera Länkad"
-
-
-msgid "Color Picker Type:"
-msgstr "Filtertyp:"
-
-
-msgid "Custom Weight Paint Range"
-msgstr "Vektor Måla"
-
-
-msgid "Kerning Style:"
-msgstr "Flytta Till Lager"
-
-
-msgid "Shadow Offset:"
-msgstr "Spel"
-
-
-msgid "Presets:"
-msgstr "Förinställningar:"
-
-
-msgid "File Paths:"
-msgstr "Sökvägar:"
-
-
-msgid "Fonts:"
-msgstr "Typsnitt"
-
-
-msgid "Render Output:"
-msgstr "Renderingsresultat:"
-
-
-msgid "Scripts:"
-msgstr "Duplicera"
-
-
-msgid "Sounds:"
-msgstr "Ljud"
-
-
-msgid "Temp:"
-msgstr "Mallar"
-
-
-msgid "Image Editor:"
-msgstr "Bildredigerare:"
-
-
-msgid "Animation Player:"
-msgstr "Animationsspelare:"
-
-
-msgid "Save & Load:"
-msgstr "Spara kopia"
-
-
-msgid "Auto Save:"
-msgstr "Autospara:"
-
-
 msgid "Timer (mins)"
 msgstr "Zooma Ut"
-
-
-msgid "Mouse:"
-msgstr "Packa Data"
-
-
-msgid "Double Click:"
-msgstr "Cyclist"
-
-
-msgid "Orbit Style:"
-msgstr "Markera Länkad"
-
-
-msgid "Zoom Style:"
-msgstr "Zoom-metod"
 
 
 msgid "Invert Wheel Zoom Direction"
 msgstr "Markera Länkad"
 
 
-msgid "Supported Level"
-msgstr "Nivå"
-
-
-msgid "Regular:"
-msgstr "Regulär"
-
-
-msgid "Tool:"
-msgstr "Verktyg:"
-
-
-msgid "Radio Buttons:"
-msgstr "Radie:"
-
-
-msgid "Text:"
-msgstr "Text:"
-
-
-msgid "Option:"
-msgstr "Alternativ:"
-
-
-msgid "Toggle:"
-msgstr "Växla:"
-
-
-msgid "Number Field:"
-msgstr "Kraftfält:"
-
-
-msgid "Value Slider:"
-msgstr "Flytta Till Lager"
-
-
-msgid "Menu Back:"
-msgstr "Ram Markering"
-
-
-msgid "Tooltip:"
-msgstr "Verktygstips"
-
-
-msgid "Menu Item:"
-msgstr "Vertexfärger"
-
-
-msgid "Scroll Bar:"
-msgstr "Höger"
-
-
-msgid "Progress Bar:"
-msgstr "Rendera"
-
-
-msgid "List Item:"
-msgstr "Listelement:"
-
-
-msgid "State:"
-msgstr "Tillstånd:"
-
-
-msgid "NDOF Device:"
-msgstr "Fokusavstånd"
-
-
-msgctxt "Operator"
-msgid "API Concepts"
-msgstr "Bezier Kurva"
-
-
 msgid "Missing script files"
 msgstr "Flytta Till Lager"
-
-
-msgid "Panel Title:"
-msgstr "Markera Länkad"
-
-
-msgid "Widget:"
-msgstr "Markera Länkad"
-
-
-msgid "Widget Label:"
-msgstr "Markera Länkad"
 
 
 msgid "Description:"
@@ -32801,6 +32381,10 @@ msgstr "Vecka:"
 
 msgid "Seams"
 msgstr "Arkiv"
+
+
+msgid "Display:"
+msgstr "Visa:"
 
 
 msgctxt "Operator"
@@ -34343,10 +33927,6 @@ msgid "unknown error stating file"
 msgstr "Arkiv"
 
 
-msgid "Open Recent..."
-msgstr "Öppna…"
-
-
 msgid "Control Point:"
 msgstr "Styr rotation"
 
@@ -34685,6 +34265,10 @@ msgstr "Kub"
 
 msgid "Cr"
 msgstr "Beskär"
+
+
+msgid "On"
+msgstr "På"
 
 
 msgid "Val"

@@ -17,8 +17,8 @@ IGNORE_HASHES = {
 }
 
 # Start revisions from both repositories.
-CYCLES_START_COMMIT = b"b6cb165"
-BLENDER_START_COMMIT = b"aa844ad"
+CYCLES_START_COMMIT = b"6d08526"
+BLENDER_START_COMMIT = b"8e331c3"
 
 # Prefix which is common for all the subjects.
 GIT_SUBJECT_COMMON_PREFIX = b"Subject: [PATCH] "
@@ -43,7 +43,8 @@ def subject_strip(common_prefix, subject):
     for prefix in SUBJECT_SKIP_PREFIX:
         full_prefix = common_prefix + prefix
         if subject.startswith(full_prefix):
-            subject = common_prefix + subject[len(full_prefix):]
+            subject = subject[len(full_prefix):].capitalize()
+            subject = common_prefix + subject
             break
     return subject
 
@@ -181,7 +182,7 @@ def main():
     print("Missing commits were saved to the blender and cycles repositories.")
     print("Check them and if they're all fine run:")
     print("")
-    print("  git am *.path")
+    print("  git am *.patch")
 
 
 if __name__ == '__main__':
