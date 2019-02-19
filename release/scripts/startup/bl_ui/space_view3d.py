@@ -1900,6 +1900,10 @@ class VIEW3D_MT_object(Menu):
     def draw(self, context):
         layout = self.layout
 
+        obj = context.object
+        is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
+        view = context.space_data
+
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_origin_set")
         layout.menu("VIEW3D_MT_mirror")
@@ -1958,6 +1962,140 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_showhide")
 
+
+        if obj is None:
+            pass
+
+        elif obj.type == 'CAMERA':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            layout.separator()
+
+            if obj.data.type == 'PERSP':
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.lens"
+                props.input_scale = 0.1
+                if obj.data.lens_unit == 'MILLIMETERS':
+                    props.header_text = "Camera Lens Angle: %.1fmm"
+                else:
+                    props.header_text = "Camera Lens Angle: %.1f\u00B0"
+
+            else:
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.ortho_scale"
+                props.input_scale = 0.01
+                props.header_text = "Camera Lens Scale: %.3f"
+
+            if not obj.data.dof_object:
+                if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
+                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.dof_distance"
+                    props.input_scale = 0.02
+                    props.header_text = "DOF Distance: %.3f"
+
+        elif obj.type in {'CURVE', 'FONT'}:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            layout.separator()
+
+            props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
+            props.data_path_iter = "selected_editable_objects"
+            props.data_path_item = "data.extrude"
+            props.input_scale = 0.01
+            props.header_text = "Extrude Size: %.3f"
+
+            props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE")
+            props.data_path_iter = "selected_editable_objects"
+            props.data_path_item = "data.offset"
+            props.input_scale = 0.01
+            props.header_text = "Width Size: %.3f"
+
+        elif obj.type == 'GPENCIL':
+
+            layout.separator()
+
+            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "OUTLINER_OB_CURVE").type = 'PATH'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_OB_MESH").type = 'POLY'
+
+        elif obj.type == 'EMPTY':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            layout.separator()
+
+            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
+            props.data_path_iter = "selected_editable_objects"
+            props.data_path_item = "empty_display_size"
+            props.input_scale = 0.01
+            props.header_text = "Empty Draw Size: %.3f"
+
+        elif obj.type == 'LIGHT':
+            light = obj.data
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            layout.separator()
+
+            emission_node = None
+            if light.node_tree:
+                for node in light.node_tree.nodes:
+                    if getattr(node, "type", None) == 'EMISSION':
+                        emission_node = node
+                        break
+
+            if is_eevee and not emission_node:
+                props = layout.operator("wm.context_modal_mouse", text="Energy", icon = "LIGHT_STRENGTH")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.energy"
+                props.header_text = "Light Energy: %.3f"
+
+            if emission_node is not None:
+                props = layout.operator("wm.context_modal_mouse", text="Energy", icon = "LIGHT_STRENGTH")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = (
+                    "data.node_tree"
+                    ".nodes[\"" + emission_node.name + "\"]"
+                    ".inputs[\"Strength\"].default_value"
+                )
+                props.header_text = "Light Energy: %.3f"
+                props.input_scale = 0.1
+
+            if light.type == 'AREA':
+                props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.size"
+                props.header_text = "Light Size X: %.3f"
+
+                if light.shape in {'RECTANGLE', 'ELLIPSE'}:
+                    props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.size_y"
+                    props.header_text = "Light Size Y: %.3f"
+
+            elif light.type in {'SPOT', 'POINT', 'SUN'}:
+                props = layout.operator("wm.context_modal_mouse", text="Radius", icon = "RADIUS")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.shadow_soft_size"
+                props.header_text = "Light Radius: %.3f"
+
+            if light.type == 'SPOT':
+                layout.separator()
+
+                props = layout.operator("wm.context_modal_mouse", text="Spot Size", icon = "LIGHT_SIZE")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.spot_size"
+                props.input_scale = 0.01
+                props.header_text = "Spot Size: %.2f"
+
+                props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.spot_blend"
+                props.input_scale = -0.01
+                props.header_text = "Spot Blend: %.2f"
 
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
