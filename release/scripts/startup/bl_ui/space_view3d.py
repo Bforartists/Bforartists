@@ -1953,6 +1953,8 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_quick_effects")
         layout.menu("VIEW3D_MT_subdivision_set")
+        col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
+        col.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
 
         layout.separator()
 
@@ -3632,6 +3634,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
         layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
+        layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian")
 
         layout.separator()
 
@@ -3710,6 +3713,14 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
+        layout.operator("mesh.loopcut_slide")
+        layout.operator("mesh.offset_edge_loops_slide")
+        layout.operator("mesh.knife_tool")
+        layout.operator("mesh.bisect")
+        layout.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops")
+
+        layout.separator()
+
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
         layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
 
@@ -3775,13 +3786,17 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Faces", icon = 'EXTRUDE_REGION')
-        layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'SHRINK_FATTEN')
+        layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Extrude Faces Along Normals", icon = 'EXTRUDE_REGION')
         layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces", icon = 'EXTRUDE_REGION')
 
         layout.separator()
 
         layout.operator("mesh.inset", icon='INSET_FACES')
         layout.operator("mesh.poke", icon = "POKEFACES")
+        layout.operator("mesh.bridge_edge_loops", text="Bridge Faces")
+
+        layout.separator()
+
         props = layout.operator("mesh.quads_convert_to_tris", icon = "TRIANGULATE")
         props.quad_method = props.ngon_method = 'BEAUTY'
         layout.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
