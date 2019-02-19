@@ -4020,6 +4020,16 @@ def draw_curve(self, context):
 
     layout.separator()
 
+    layout.operator("transform.tilt", icon = "TILT")
+    layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
+
+    layout.separator()
+
+    layout.operator_menu_enum("curve.handle_type_set", "type")
+    layout.operator("curve.normals_make_consistent")
+
+    layout.separator()
+
     layout.menu("VIEW3D_MT_edit_curve_show_hide")
     layout.menu("VIEW3D_MT_edit_curve_delete")
 
