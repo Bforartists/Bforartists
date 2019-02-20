@@ -4715,11 +4715,29 @@ class VIEW3D_MT_weight_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
         layout.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
-        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
+        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')  
+        
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_assign_material")
 
         layout.separator()
-        layout.menu("VIEW3D_MT_gpencil_autoweights")
+
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon = "DUPLICATE").mode = 'ALL'
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")  
+        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
+
+        if context.mode == 'WEIGHT_GPENCIL':
+            layout.separator()
+            layout.menu("VIEW3D_MT_gpencil_autoweights")
 
 
 class VIEW3D_MT_gpencil_animation(Menu):
