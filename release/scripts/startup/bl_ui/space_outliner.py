@@ -165,6 +165,10 @@ class OUTLINER_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("outliner.show_active", icon = "CENTER")
+
+        layout.separator()
+
         layout.operator("outliner.show_one_level", text = "Show One Level", icon = "HIERARCHY_DOWN")
         layout.operator("outliner.hide_one_level", text = "Hide One Level", icon = "HIERARCHY_UP") # bfa - separated tooltip
         layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
