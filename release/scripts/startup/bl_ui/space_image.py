@@ -414,6 +414,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.prop(uv, "use_live_unwrap")
         layout.operator("uv.unwrap", icon='UNWRAP_ABF')
+        layout.operator("uv.follow_active_quads")
         layout.operator("uv.pin", text="Unpin", icon = "PINNED").clear = True
         layout.operator("uv.pin", icon = "UNPINNED").clear = False
 
