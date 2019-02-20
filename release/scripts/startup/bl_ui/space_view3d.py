@@ -321,6 +321,9 @@ class VIEW3D_MT_editor_menus(Menu):
         if gp_edit:
             if mode_string not in {'PAINT_GPENCIL', 'WEIGHT_GPENCIL'}:
                 layout.menu("VIEW3D_MT_select_gpencil")
+            if mode_string in {'SCULPT_GPENCIL'}:
+                layout.menu("VIEW3D_MT_gpencil_sculpt")
+
         elif mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
             mesh = obj.data
             if mesh.use_paint_mask:
@@ -6376,9 +6379,32 @@ class VIEW3D_MT_gpencil_sculpt_specials(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide")
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide")  
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify")
         layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative")
+
+        if context.mode == 'WEIGHT_GPENCIL':
+            layout.separator()
+            layout.menu("VIEW3D_MT_gpencil_autoweights")
+
+class VIEW3D_MT_gpencil_sculpt(Menu):
+    bl_label = "Sculpt"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.menu("VIEW3D_MT_assign_material")
+        layout.separator()
+
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon = "DUPLICATE").mode = 'ALL'
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")  
+        layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
 
         if context.mode == 'WEIGHT_GPENCIL':
             layout.separator()
@@ -6581,6 +6607,7 @@ classes = (
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_gpencil_edit_specials,
     VIEW3D_MT_gpencil_sculpt_specials,
+    VIEW3D_MT_gpencil_sculpt,
     VIEW3D_PT_quad_view,
     VIEW3D_PT_view3d_stereo,
     VIEW3D_PT_shading,
