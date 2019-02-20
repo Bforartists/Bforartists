@@ -4651,21 +4651,24 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_gpencil_animation")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_gpencil_interpolate")
-
-        layout.separator()
-
-        layout.operator("gpencil.duplicate_move", text="Duplicate", icon = "DUPLICATE")
-        layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "SMOOTH")
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
+        layout.menu("VIEW3D_MT_gpencil_copy_layer")
         layout.menu("VIEW3D_MT_gpencil_simplify")
 
         layout.separator()
 
-        #layout.operator_menu_enum("gpencil.stroke_separate", "mode", text="Separate")
+        layout.operator("gpencil.duplicate_move", text="Duplicate", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame All Layers", icon = "DUPLICATE").mode = 'ALL'
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "SMOOTH")
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")      
+        layout.operator("gpencil.stroke_merge", text="Merge")
+
+        layout.separator()
+
         layout.menu("GPENCIL_MT_separate")
         layout.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
         layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
