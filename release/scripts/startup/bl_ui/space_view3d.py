@@ -4398,6 +4398,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.fill", icon = "FILLBETWEEN")
         layout.operator("armature.split", icon = "SPLIT")
         layout.operator("armature.separate", icon = "SEPARATE")
+        layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
 
         layout.separator()
 
