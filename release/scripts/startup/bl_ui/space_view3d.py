@@ -3033,6 +3033,7 @@ class VIEW3D_MT_pose_transform(Menu):
         layout = self.layout
 
         layout.operator("pose.transforms_clear", text="All")
+        layout.operator("pose.user_transforms_clear")
 
         layout.separator()
 
