@@ -4604,6 +4604,14 @@ class VIEW3D_MT_paint_gpencil(Menu):
         layout.operator("gpencil.delete", text="Delete Frame", icon = "DELETE").type = 'FRAME'
         layout.operator("gpencil.active_frames_delete_all", icon = "DELETE")
 
+        layout.separator()
+
+        layout.operator("gpencil.primitive", text="Line", icon='IPO_CONSTANT').type = 'LINE'
+        layout.operator("gpencil.primitive", text="Rectangle", icon='UV_FACESEL').type = 'BOX'
+        layout.operator("gpencil.primitive", text="Circle", icon='ANTIALIASED').type = 'CIRCLE'
+        layout.operator("gpencil.primitive", text="Arc", icon='SPHERECURVE').type = 'ARC'
+        layout.operator("gpencil.primitive", text="Curve", icon='CURVE_BEZCURVE').type = 'CURVE'
+
 
 class VIEW3D_MT_assign_material(Menu):
     bl_label = "Assign Material"
