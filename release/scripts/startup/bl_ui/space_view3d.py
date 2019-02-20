@@ -1953,8 +1953,8 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_quick_effects")
         layout.menu("VIEW3D_MT_subdivision_set")
-        col.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-        col.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
+        layout.operator("mesh.subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
+        layout.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
 
         layout.separator()
 
