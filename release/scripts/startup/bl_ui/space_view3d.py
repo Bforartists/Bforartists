@@ -863,7 +863,7 @@ class VIEW3D_MT_select_object(Menu):
         layout = self.layout
 
         layout.operator("object.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("object.select_all", text="None").action = 'DESELECT'
+        layout.operator("object.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("object.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1000,7 +1000,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout = self.layout
 
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("pose.select_all", text="None").action = 'DESELECT'
+        layout.operator("pose.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("pose.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1047,7 +1047,7 @@ class VIEW3D_MT_select_particle(Menu):
         layout = self.layout
 
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("particle.select_all", text="None").action = 'DESELECT'
+        layout.operator("particle.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("particle.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1158,7 +1158,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         # primitive
         layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("mesh.select_all", text="None").action = 'DESELECT'
+        layout.operator("mesh.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("mesh.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1244,7 +1244,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout = self.layout
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("curve.select_all", text="None").action = 'DESELECT'
+        layout.operator("curve.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE')
 
         layout.separator()
@@ -1293,7 +1293,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout = self.layout
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("curve.select_all", text="None").action = 'DESELECT'
+        layout.operator("curve.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("curve.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
@@ -1357,7 +1357,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         layout = self.layout
 
         layout.operator("mball.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("mball.select_all", text="None").action = 'DESELECT'
+        layout.operator("mball.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("mball.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1405,7 +1405,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout = self.layout
 
         layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("lattice.select_all", text="None").action = 'DESELECT'
+        layout.operator("lattice.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1448,7 +1448,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout = self.layout
 
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("armature.select_all", text="None").action = 'DESELECT'
+        layout.operator("armature.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("armature.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1497,7 +1497,7 @@ class VIEW3D_MT_select_gpencil(Menu):
         layout = self.layout
 
         layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("gpencil.select_all", text="None").action = 'DESELECT'
+        layout.operator("gpencil.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("gpencil.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
@@ -1509,7 +1509,7 @@ class VIEW3D_MT_select_gpencil(Menu):
         layout.separator()
 
         layout.operator("gpencil.select_linked", text="Linked", icon = "LINKED")
-        layout.operator("gpencil.select_alternate")
+        layout.operator("gpencil.select_alternate", icon = "ALTERNATED")
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
         layout.separator()
@@ -1552,7 +1552,7 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout = self.layout
 
         layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("paint.face_select_all", text="None").action = 'DESELECT'
+        layout.operator("paint.face_select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1586,7 +1586,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout = self.layout
 
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("paint.vert_select_all", text="None").action = 'DESELECT'
+        layout.operator("paint.vert_select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -2922,7 +2922,7 @@ class VIEW3D_MT_particle_specials(Menu):
             layout.separator()
 
             layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-            layout.operator("particle.select_all", text="None").action = 'DESELECT'
+            layout.operator("particle.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
             layout.operator("particle.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
             layout.separator()
