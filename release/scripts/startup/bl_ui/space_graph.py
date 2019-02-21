@@ -355,7 +355,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
-        layout.operator("graph.frame_jump")
+        layout.operator("graph.frame_jump", icon = "CENTER")
 
         layout.separator()
         layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
@@ -380,7 +380,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake", icon = "BAKE_CURVE")
 
         layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 
 class GRAPH_MT_key_transform(Menu):
