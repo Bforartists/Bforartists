@@ -252,9 +252,9 @@ class SEQUENCER_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("sequencer.select_all", text="All").action = 'SELECT'
-        layout.operator("sequencer.select_all", text="None").action = 'DESELECT'
-        layout.operator("sequencer.select_all", text="Invert").action = 'INVERT'
+        layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("sequencer.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
+        layout.operator("sequencer.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
