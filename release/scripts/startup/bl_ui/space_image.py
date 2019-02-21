@@ -187,7 +187,7 @@ class IMAGE_MT_select(Menu):
         layout = self.layout
 
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("uv.select_all", text="None").action = 'DESELECT'
+        layout.operator("uv.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE') # bfa - separated tooltip
 
         layout.separator()

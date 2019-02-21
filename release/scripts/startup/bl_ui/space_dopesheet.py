@@ -401,7 +401,7 @@ class DOPESHEET_MT_select(Menu):
         layout = self.layout
 
         layout.operator("action.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("action.select_all", text="None").action = 'DESELECT'
+        layout.operator("action.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("action.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()

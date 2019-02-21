@@ -181,7 +181,7 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.operator("outliner.select_all", text = "Select All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("outliner.select_all", text = "Deselect All", icon = 'SELECT_ALL').action = 'DESELECT'
+        layout.operator("outliner.select_all", text = "Deselect All", icon = 'SELECT_NONE').action = 'DESELECT'
         layout.operator("outliner.select_all", text = "Invert Selection", icon ='INVERSE').action = 'INVERT'
 
         layout.separator()
