@@ -3827,11 +3827,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH')
-        layout.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT')
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_mesh_faces_data")
 
 
@@ -3892,8 +3887,8 @@ class VIEW3D_MT_edit_mesh_shading(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.faces_shade_smooth", text="Smooth Faces", icon = 'SHADING_SMOOTH')
-        layout.operator("mesh.faces_shade_flat", text="Flat Faces", icon = 'SHADING_FLAT')
+        layout.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH')
+        layout.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT')
 
         layout.separator()
 
