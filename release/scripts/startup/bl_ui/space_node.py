@@ -253,9 +253,9 @@ class NODE_MT_select(Menu):
         layout.separator()
         layout.operator("node.select_all", icon = 'SELECT_ALL').action = 'TOGGLE'
         layout.operator("node.select_all", text="Inverse", icon = 'INVERSE').action = 'INVERT'
-        
+
         layout.separator()
-        
+
         layout.operator("node.select_linked_from", text = "Linked From", icon = "LINKED")
         layout.operator("node.select_linked_to", text = "Linked To", icon = "LINKED")
 
@@ -319,7 +319,7 @@ class NODE_MT_node(Menu):
         layout.separator()
 
         layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
-        layout.operator("node.group_edit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP").exit = True
+        layout.operator("node.group_edit_exit", text="Exit Edit Group", icon = "NODE_EXITEDITGROUP").exit = True # bfa - separated tooltip
         layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
         layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
         layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")
@@ -651,6 +651,17 @@ def node_draw_tree_view(layout, context):
     pass
 
 
+# Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
+class NODE_PT_exit_edit_group(bpy.types.Operator):
+    """Exit Edit Group\nExit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Group Edit Exit"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):         # execute() is called by blender when running the operator.
+        bpy.ops.node.group_edit(exit=True)
+        return {'FINISHED'}
+
 classes = (
     ALL_MT_editormenu,
     NODE_HT_header,
@@ -673,6 +684,7 @@ classes = (
     NODE_PT_grease_pencil_tools,
     EEVEE_NODE_PT_material_settings,
     NODE_PT_material_viewport,
+    NODE_PT_exit_edit_group, # BFA - Draise
 )
 
 
