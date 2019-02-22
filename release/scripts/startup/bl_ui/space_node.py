@@ -652,7 +652,7 @@ def node_draw_tree_view(layout, context):
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
-class NODE_PT_exit_edit_group(bpy.types.Operator):
+class NODE_MT_exit_edit_group(bpy.types.Operator):
     """Exit Edit Group\nExit edit node group"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "node.group_edit_exit"        # unique identifier for buttons and menu items to reference.
     bl_label = "Group Edit Exit"         # display name in the interface.
@@ -684,7 +684,7 @@ classes = (
     NODE_PT_grease_pencil_tools,
     EEVEE_NODE_PT_material_settings,
     NODE_PT_material_viewport,
-    NODE_PT_exit_edit_group, # BFA - Draise
+    NODE_MT_exit_edit_group, # BFA - Draise
 )
 
 
