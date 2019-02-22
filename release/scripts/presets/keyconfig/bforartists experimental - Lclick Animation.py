@@ -2637,6 +2637,7 @@ keyconfig_data = \
       },
      ),
     ("transform.transform", {"type": 'LEFTMOUSE', "value": 'CLICK_DRAG'}, None),
+    ("sequencer.select_all", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ],
    },
   ),
