@@ -565,31 +565,31 @@ class VIEW3D_MT_uv_map(Menu):
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("uv.smart_project")
-        layout.operator("uv.lightmap_pack")
-        layout.operator("uv.follow_active_quads")
+        layout.operator("uv.smart_project", icon = "MOD_UVPROJECT")
+        layout.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
+        layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("uv.cube_project")
-        layout.operator("uv.cylinder_project")
-        layout.operator("uv.sphere_project")
+        layout.operator("uv.cube_project", icon = "CUBEPROJECT")
+        layout.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
+        layout.operator("uv.sphere_project", icon = "SPHEREPROJECT")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("uv.project_from_view").scale_to_bounds = False
-        layout.operator("uv.project_from_view", text="Project from View (Bounds)").scale_to_bounds = True
+        layout.operator("uv.project_from_view", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+        layout.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW").scale_to_bounds = True
 
         layout.separator()
 
-        layout.operator("mesh.mark_seam").clear = False
-        layout.operator("mesh.mark_seam", text="Clear Seam").clear = True
+        layout.operator("mesh.mark_seam", icon = "MARK_SEAM").clear = False
+        layout.operator("mesh.mark_seam", text="Clear Seam", icon = "CLEAR_SEAM").clear = True
 
         layout.separator()
 
-        layout.operator("uv.reset")
+        layout.operator("uv.reset", icon = "RESET")
 
 
 class VIEW3D_MT_edit_proportional(Menu):
