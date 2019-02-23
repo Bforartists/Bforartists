@@ -2099,7 +2099,7 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Spot Size: %.2f"
 
-                props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
+                props = layout.operator("wm.context_modal_mouse", text="Spot Blend", icon = "SPOT_BLEND")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
