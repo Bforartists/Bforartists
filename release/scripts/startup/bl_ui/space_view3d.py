@@ -4674,7 +4674,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "SMOOTH")
         layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")      
-        layout.operator("gpencil.stroke_merge", text="Merge")
+        layout.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
 
         layout.separator()
 
@@ -4697,7 +4697,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
         layout.menu("VIEW3D_MT_assign_material")
-        layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes")
+        layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")
 
         layout.separator()
 
@@ -4713,6 +4713,17 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("GPENCIL_MT_cleanup")
+
+class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
+    bl_label = "Arrange Strokes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.stroke_arrange", text="Bring Forward", icon='MOVE_UP').direction = 'UP'
+        layout.operator("gpencil.stroke_arrange", text="Send Backward", icon='MOVE_DOWN').direction = 'DOWN'
+        layout.operator("gpencil.stroke_arrange", text="Bring to Front", icon='MOVE_TO_TOP').direction = 'TOP'
+        layout.operator("gpencil.stroke_arrange", text="Send to Back", icon='MOVE_TO_BOTTOM').direction = 'BOTTOM'
 
 
 class VIEW3D_MT_weight_gpencil(Menu):
@@ -6580,6 +6591,7 @@ classes = (
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
+    VIEW3D_MT_edit_gpencil_arrange_strokes,
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_weight_gpencil,
     VIEW3D_MT_gpencil_animation,
