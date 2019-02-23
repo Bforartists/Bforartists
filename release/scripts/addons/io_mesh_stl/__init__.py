@@ -247,11 +247,11 @@ class ExportSTL(Operator, ExportHelper):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)")
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)", icon = "LOAD_STL")
 
 
 def menu_export(self, context):
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)")
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)", icon = "SAVE_STL")
 
 
 classes = (
