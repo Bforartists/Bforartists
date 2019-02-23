@@ -182,11 +182,11 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportPLY.bl_idname, text="Stanford (.ply)")
+    self.layout.operator(ImportPLY.bl_idname, text="Stanford (.ply)", icon = "LOAD_PLY")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportPLY.bl_idname, text="Stanford (.ply)")
+    self.layout.operator(ExportPLY.bl_idname, text="Stanford (.ply)", icon = "SAVE_PLY")
 
 
 classes = (
