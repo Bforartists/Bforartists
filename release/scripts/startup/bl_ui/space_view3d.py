@@ -3038,18 +3038,18 @@ class VIEW3D_MT_pose_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.transforms_clear", text="All")
-        layout.operator("pose.user_transforms_clear")
+        layout.operator("pose.transforms_clear", text="All", icon = "CLEAR")
+        layout.operator("pose.user_transforms_clear", icon = "CLEAR")
 
         layout.separator()
 
-        layout.operator("pose.loc_clear", text="Location")
-        layout.operator("pose.rot_clear", text="Rotation")
-        layout.operator("pose.scale_clear", text="Scale")
+        layout.operator("pose.loc_clear", text="Location", icon = "CLEARMOVE")
+        layout.operator("pose.rot_clear", text="Rotation", icon = "CLEARROTATE")
+        layout.operator("pose.scale_clear", text="Scale", icon = "CLEARSCALE")
 
         layout.separator()
 
-        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed")
+        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed", icon = "RESET")
 
 
 class VIEW3D_MT_pose_slide(Menu):
@@ -3069,12 +3069,12 @@ class VIEW3D_MT_pose_propagate(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.propagate").mode = 'WHILE_HELD'
+        layout.operator("pose.propagate", icon = "PROPAGATE").mode = 'WHILE_HELD'
 
         layout.separator()
 
-        layout.operator("pose.propagate", text="To Next Keyframe").mode = 'NEXT_KEY'
-        layout.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)").mode = 'LAST_KEY'
+        layout.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE").mode = 'NEXT_KEY'
+        layout.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE").mode = 'LAST_KEY'
 
         layout.separator()
 
@@ -3091,7 +3091,7 @@ class VIEW3D_MT_pose_library(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("poselib.browse_interactive", text="Browse Poses")
+        layout.operator("poselib.browse_interactive", text="Browse Poses", icon = "FILEBROWSER")
 
         layout.separator()
 
@@ -3106,8 +3106,8 @@ class VIEW3D_MT_pose_motion(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.paths_calculate", text="Calculate")
-        layout.operator("pose.paths_clear", text="Clear")
+        layout.operator("pose.paths_calculate", text="Calculate", icon ='MOTIONPATHS_CALCULATE')
+        layout.operator("pose.paths_clear", text="Clear", icon ='MOTIONPATHS_CLEAR')
 
 
 class VIEW3D_MT_pose_group(Menu):
@@ -3187,7 +3187,7 @@ class VIEW3D_MT_pose_apply(Menu):
 
         layout.separator()
 
-        props = layout.operator("object.assign_property_defaults")
+        props = layout.operator("object.assign_property_defaults", icon = "ASSIGN")
         props.process_bones = True
 
 
