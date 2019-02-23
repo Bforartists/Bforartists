@@ -651,14 +651,14 @@ class GPENCIL_MT_cleanup(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("gpencil.frame_clean_loose", text="Loose Points")
+        layout.operator("gpencil.frame_clean_loose", text="Loose Points", icon = "DELETE_LOOSE")
         layout.separator()
 
-        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes").mode = 'ACTIVE'
-        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames").mode = 'ALL'
+        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS").mode = 'ALL'
         layout.separator()
 
-        layout.operator("gpencil.reproject")
+        layout.operator("gpencil.reproject", icon = "REPROJECT")
 
 
 class GPENCIL_UL_annotation_layer(UIList):
