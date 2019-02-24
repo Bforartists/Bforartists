@@ -1990,7 +1990,7 @@ class VIEW3D_MT_object(Menu):
                     props.header_text = "Camera Lens Angle: %.1f\u00B0"
 
             else:
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale", icon = "LENS_SCALE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.ortho_scale"
                 props.input_scale = 0.01
