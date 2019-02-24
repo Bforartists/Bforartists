@@ -232,7 +232,7 @@ class TEXT_MT_text(Menu):
             layout.operator("text.save_as", icon='SAVE_AS')
 
             if text.filepath:
-                layout.operator("text.make_internal")
+                layout.operator("text.make_internal", icon = "MAKE_INTERNAL")
 
             layout.column()
             layout.operator("text.run_script", icon = "PLAY")
