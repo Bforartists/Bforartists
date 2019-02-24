@@ -19,7 +19,8 @@
 #ifndef __BKE_CURVE_H__
 #define __BKE_CURVE_H__
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 struct BezTriple;
@@ -234,5 +235,8 @@ unsigned int BKE_curve_decimate_bezt_array(
 void BKE_curve_decimate_nurb(
         struct Nurb *nu, const unsigned int resolu,
         const float error_sq_max, const unsigned int error_target_len);
+
+extern void (*BKE_curve_batch_cache_dirty_tag_cb)(struct Curve *cu, int mode);
+extern void (*BKE_curve_batch_cache_free_cb)(struct Curve *cu);
 
 #endif  /* __BKE_CURVE_H__ */

@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 /* Private functions / structs of the draw manager */
@@ -425,5 +426,7 @@ void drw_debug_draw(void);
 void drw_debug_init(void);
 
 void drw_batch_cache_generate_requested(struct Object *ob);
+
+extern struct GPUVertFormat *g_pos_format;
 
 #endif /* __DRAW_MANAGER_H__ */

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup wm
+/** \file
+ * \ingroup wm
  *
  * Animation player for image sequences & video's with sound support.
  * Launched in a separate process from Blender's #RENDER_OT_play_rendered_anim
@@ -1255,8 +1256,6 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 		GHOST_AddEventConsumer(g_WS.ghost_system, consumer);
 
 		playanim_window_open("Blender:Anim", start_x, start_y, ibuf->x, ibuf->y);
-
-		playanim_gl_matrix();
 	}
 
 	GHOST_GetMainDisplayDimensions(g_WS.ghost_system, &maxwinx, &maxwiny);
@@ -1285,6 +1284,12 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 
 	glClearColor(0.1, 0.1, 0.1, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	int win_x, win_y;
+	playanim_window_get_size(&win_x, &win_y);
+	glViewport(0, 0, win_x, win_y);
+	glScissor(0, 0, win_x, win_y);
+	playanim_gl_matrix();
 
 	GHOST_SwapWindowBuffers(g_WS.ghost_window);
 
@@ -1535,6 +1540,8 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 
 	GPU_shader_free_builtin_shaders();
 
+	immDeactivate();
+
 	if (g_WS.gpu_context) {
 		GPU_context_active_set(g_WS.gpu_context);
 		GPU_context_discard(g_WS.gpu_context);
@@ -1543,7 +1550,6 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 
 	BLF_exit();
 
-	immDeactivate();
 	GPU_exit();
 
 	GHOST_DisposeWindow(g_WS.ghost_system, g_WS.ghost_window);

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup edobj
+/** \file
+ * \ingroup edobj
  */
 
 
@@ -439,7 +440,7 @@ static int object_add_exec(bContext *C, wmOperator *op)
 	if (ob->type == OB_LATTICE) {
 		/* lattice is a special case!
 		 * we never want to scale the obdata since that is the rest-state */
-		copy_v3_fl(ob->size, radius);
+		copy_v3_fl(ob->scale, radius);
 	}
 	else {
 		BKE_object_obdata_size_init(ob, radius);
@@ -2526,8 +2527,6 @@ static int duplicate_exec(bContext *C, wmOperator *op)
 
 	copy_object_set_idnew(C);
 
-	BKE_main_id_clear_newpoins(bmain);
-
 	DEG_relations_tag_update(bmain);
 	DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE | ID_RECALC_SELECT);
 
@@ -2605,8 +2604,6 @@ static int add_named_exec(bContext *C, wmOperator *op)
 	ED_object_base_activate(C, basen);
 
 	copy_object_set_idnew(C);
-
-	BKE_main_id_clear_newpoins(bmain);
 
 	/* TODO(sergey): Only update relations for the current scene. */
 	DEG_relations_tag_update(bmain);

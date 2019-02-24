@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup edmesh
+/** \file
+ * \ingroup edmesh
  */
 
 #include "MEM_guardedalloc.h"
@@ -579,7 +580,8 @@ static int edbm_bevel_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 	/* When activated from toolbar, need to convert leftmouse release to confirm */
 	if (etype == LEFTMOUSE && eval == KM_RELEASE &&
-			RNA_boolean_get(op->ptr, "release_confirm")) {
+	    RNA_boolean_get(op->ptr, "release_confirm"))
+	{
 	    etype = EVT_MODAL_MAP;
 	    eval = BEV_MODAL_CONFIRM;
 	}

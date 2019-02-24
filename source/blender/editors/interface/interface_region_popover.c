@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup edinterface
+/** \file
+ * \ingroup edinterface
  *
  * Pop-Over Region
  *
@@ -75,7 +76,7 @@ struct uiPopover {
 	/* Needed for keymap removal. */
 	wmWindow *window;
 	wmKeyMap *keymap;
-	struct wmEventHandler *keymap_handler;
+	struct wmEventHandler_Keymap *keymap_handler;
 
 	uiMenuCreateFunc menu_func;
 	void *menu_arg;
@@ -347,7 +348,7 @@ void UI_popover_end(bContext *C, uiPopover *pup, wmKeyMap *keymap)
 		UI_block_flag_enable(pup->block, UI_BLOCK_SHOW_SHORTCUT_ALWAYS);
 		pup->keymap = keymap;
 		pup->keymap_handler = WM_event_add_keymap_handler_priority(&window->modalhandlers, keymap, 0);
-		WM_event_set_keymap_handler_callback(pup->keymap_handler, popover_keymap_fn, pup);
+		WM_event_set_keymap_handler_post_callback(pup->keymap_handler, popover_keymap_fn, pup);
 	}
 
 	handle = ui_popup_block_create(C, NULL, NULL, NULL, ui_block_func_POPOVER, pup);

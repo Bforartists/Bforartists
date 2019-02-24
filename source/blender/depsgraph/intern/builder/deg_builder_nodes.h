@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup depsgraph
+/** \file
+ * \ingroup depsgraph
  */
 
 #pragma once
@@ -186,10 +187,12 @@ struct DepsgraphNodeBuilder {
 	void build_particle_settings(ParticleSettings *part);
 	void build_animdata(ID *id);
 	void build_animdata_nlastrip_targets(ListBase *strips);
+	void build_animation_images(ID *id);
 	void build_action(bAction *action);
 	void build_driver(ID *id, FCurve *fcurve, int driver_index);
 	void build_driver_variables(ID *id, FCurve *fcurve);
 	void build_driver_id_property(ID *id, const char *rna_path);
+	void build_parameters(ID *id);
 	void build_ik_pose(Object *object,
 	                   bPoseChannel *pchan,
 	                   bConstraint *con);
@@ -237,7 +240,7 @@ protected:
 		ID *id_orig;
 		NodeType component_type;
 		OperationCode opcode;
-		const char *name;
+		string name;
 		int name_tag;
 	};
 	vector<SavedEntryTag> saved_entry_tags_;

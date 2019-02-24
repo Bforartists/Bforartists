@@ -16,7 +16,8 @@
  * Copyright 2017, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "BLI_polyfill_2d.h"
@@ -301,6 +302,8 @@ static DRWShadingGroup *DRW_gpencil_shgroup_fill_create(
 	DRW_shgroup_uniform_int(grp, "texture_flip", &stl->shgroups[id].texture_flip, 1);
 
 	DRW_shgroup_uniform_int(grp, "xraymode", (const int *) &gpd->xray_mode, 1);
+	DRW_shgroup_uniform_int(grp, "drawmode", (const int *) &gpd->draw_mode, 1);
+
 	/* image texture */
 	if ((gp_style->flag & GP_STYLE_COLOR_TEX_MIX) ||
 	    (gp_style->fill_style & GP_STYLE_FILL_STYLE_TEXTURE))
@@ -318,7 +321,7 @@ static DRWShadingGroup *DRW_gpencil_shgroup_fill_create(
 			BKE_image_release_ibuf(image, ibuf, NULL);
 		}
 		else {
-			GPUTexture *texture = GPU_texture_from_blender(gp_style->ima, &iuser, GL_TEXTURE_2D, true, 0.0);
+			GPUTexture *texture = GPU_texture_from_blender(gp_style->ima, &iuser, GL_TEXTURE_2D, true);
 			DRW_shgroup_uniform_texture(grp, "myTexture", texture);
 
 			stl->shgroups[id].texture_clamp = gp_style->flag & GP_STYLE_COLOR_TEX_CLAMP ? 1 : 0;
@@ -431,7 +434,7 @@ DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
 			BKE_image_release_ibuf(image, ibuf, NULL);
 		}
 		else {
-			GPUTexture *texture = GPU_texture_from_blender(gp_style->sima, &iuser, GL_TEXTURE_2D, true, 0.0f);
+			GPUTexture *texture = GPU_texture_from_blender(gp_style->sima, &iuser, GL_TEXTURE_2D, true);
 			DRW_shgroup_uniform_texture(grp, "myTexture", texture);
 
 			BKE_image_release_ibuf(image, ibuf, NULL);
@@ -524,7 +527,7 @@ static DRWShadingGroup *DRW_gpencil_shgroup_point_create(
 			BKE_image_release_ibuf(image, ibuf, NULL);
 		}
 		else {
-			GPUTexture *texture = GPU_texture_from_blender(gp_style->sima, &iuser, GL_TEXTURE_2D, true, 0.0f);
+			GPUTexture *texture = GPU_texture_from_blender(gp_style->sima, &iuser, GL_TEXTURE_2D, true);
 			DRW_shgroup_uniform_texture(grp, "myTexture", texture);
 
 			BKE_image_release_ibuf(image, ibuf, NULL);
@@ -1305,6 +1308,7 @@ static void DRW_gpencil_shgroups_create(
 	GPENCIL_StorageList *stl = ((GPENCIL_Data *)vedata)->stl;
 	GPENCIL_PassList *psl = ((GPENCIL_Data *)vedata)->psl;
 	bGPdata *gpd = (bGPdata *)ob->data;
+	DRWPass *stroke_pass = GPENCIL_3D_DRAWMODE(gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d;
 
 	GpencilBatchGroup *elm = NULL;
 	DRWShadingGroup *shgrp = NULL;
@@ -1363,7 +1367,7 @@ static void DRW_gpencil_shgroups_create(
 				const int len = elm->vertex_idx - start_stroke;
 
 				shgrp = DRW_gpencil_shgroup_stroke_create(
-				        e_data, vedata, psl->stroke_pass, e_data->gpencil_stroke_sh,
+				        e_data, vedata, stroke_pass, e_data->gpencil_stroke_sh,
 				        ob, gpd, gps, gp_style, stl->storage->shgroup_id, elm->onion, scale);
 
 				DRW_shgroup_call_range_add(
@@ -1380,7 +1384,7 @@ static void DRW_gpencil_shgroups_create(
 				const int len = elm->vertex_idx - start_point;
 
 				shgrp = DRW_gpencil_shgroup_point_create(
-				        e_data, vedata, psl->stroke_pass, e_data->gpencil_point_sh,
+				        e_data, vedata, stroke_pass, e_data->gpencil_point_sh,
 				        ob, gpd, gp_style, stl->storage->shgroup_id, elm->onion, scale);
 
 				DRW_shgroup_call_range_add(
@@ -1397,7 +1401,7 @@ static void DRW_gpencil_shgroups_create(
 				const int len = elm->vertex_idx - start_fill;
 
 				shgrp = DRW_gpencil_shgroup_fill_create(
-				        e_data, vedata, psl->stroke_pass, e_data->gpencil_fill_sh,
+				        e_data, vedata, stroke_pass, e_data->gpencil_fill_sh,
 				        gpd, gpl, gp_style, stl->storage->shgroup_id);
 
 				DRW_shgroup_call_range_add(

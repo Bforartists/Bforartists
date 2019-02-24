@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup bli
+/** \file
+ * \ingroup bli
  */
 
 
@@ -45,7 +46,8 @@
 #define ADDEND      0xB
 #define LOWSEED     0x330E
 
-extern unsigned char hash[];    // noise.c
+extern unsigned char BLI_noise_hash_uchar_512[512];  /* noise.c */
+#define hash BLI_noise_hash_uchar_512
 
 /**
  * Random Number Generator.
@@ -73,6 +75,11 @@ RNG *BLI_rng_new_srandom(unsigned int seed)
 	BLI_rng_srandom(rng, seed);
 
 	return rng;
+}
+
+RNG *BLI_rng_copy(RNG *rng)
+{
+	return MEM_dupallocN(rng);
 }
 
 void BLI_rng_free(RNG *rng)
