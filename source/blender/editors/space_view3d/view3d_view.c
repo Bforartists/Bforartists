@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup spview3d
+/** \file
+ * \ingroup spview3d
  */
 
 #include "DNA_camera_types.h"
@@ -57,6 +58,9 @@
 #include "ED_screen.h"
 
 #include "DRW_engine.h"
+
+#include "RNA_access.h"
+#include "RNA_define.h"
 
 #include "view3d_intern.h"  /* own include */
 
@@ -1072,7 +1076,7 @@ int view3d_opengl_select(
 			.rect = &rect,
 			.gpu_select_mode = gpu_select_mode,
 		};
-		draw_surface = true;
+		draw_surface = (v3d->shading.type > OB_WIRE);
 		DRW_draw_select_loop(
 		        depsgraph, ar, v3d,
 		        use_obedit_skip, draw_surface, use_nearest, &rect,
@@ -1147,12 +1151,13 @@ static bool view3d_localview_init(
         Main *bmain,
         ViewLayer *view_layer,
         ScrArea *sa,
+        const bool frame_selected,
         const int smooth_viewtx,
         ReportList *reports)
 {
 	View3D *v3d = sa->spacedata.first;
 	Base *base;
-	float min[3], max[3], box[3], mid[3];
+	float min[3], max[3], box[3];
 	float size = 0.0f;
 	unsigned int local_view_bit;
 	bool ok = false;
@@ -1194,27 +1199,32 @@ static bool view3d_localview_init(
 		size = max_fff(box[0], box[1], box[2]);
 	}
 
-	if (ok == true) {
-		ARegion *ar;
+	if (ok == false) {
+		return false;
+	}
 
-		v3d->localvd = MEM_mallocN(sizeof(View3D), "localview");
+	ARegion *ar;
 
-		memcpy(v3d->localvd, v3d, sizeof(View3D));
+	v3d->localvd = MEM_mallocN(sizeof(View3D), "localview");
 
-		mid_v3_v3v3(mid, min, max);
+	memcpy(v3d->localvd, v3d, sizeof(View3D));
+	v3d->local_view_uuid = local_view_bit;
 
-		for (ar = sa->regionbase.first; ar; ar = ar->next) {
-			if (ar->regiontype == RGN_TYPE_WINDOW) {
-				RegionView3D *rv3d = ar->regiondata;
-				bool ok_dist = true;
+	for (ar = sa->regionbase.first; ar; ar = ar->next) {
+		if (ar->regiontype == RGN_TYPE_WINDOW) {
+			RegionView3D *rv3d = ar->regiondata;
+			bool ok_dist = true;
 
-				/* New view values. */
-				Object *camera_old = NULL;
-				float dist_new, ofs_new[3];
+			/* New view values. */
+			Object *camera_old = NULL;
+			float dist_new, ofs_new[3];
 
-				rv3d->localvd = MEM_mallocN(sizeof(RegionView3D), "localview region");
-				memcpy(rv3d->localvd, rv3d, sizeof(RegionView3D));
+			rv3d->localvd = MEM_mallocN(sizeof(RegionView3D), "localview region");
+			memcpy(rv3d->localvd, rv3d, sizeof(RegionView3D));
 
+			if (frame_selected) {
+				float mid[3];
+				mid_v3_v3v3(mid, min, max);
 				negate_v3_v3(ofs_new, mid);
 
 				if (rv3d->persp == RV3D_CAMOB) {
@@ -1247,45 +1257,48 @@ static bool view3d_localview_init(
 				            });
 			}
 		}
-
-		v3d->local_view_uuid = local_view_bit;
 	}
 
-	DEG_on_visible_update(bmain, false);
 	return ok;
 }
 
-static void restore_localviewdata(
+static void view3d_localview_exit(
         const Depsgraph *depsgraph,
         wmWindowManager *wm,
         wmWindow *win,
-        Main *bmain,
+        ViewLayer *view_layer,
         ScrArea *sa,
+        const bool frame_selected,
         const int smooth_viewtx)
 {
-	const bool free = true;
-	ARegion *ar;
 	View3D *v3d = sa->spacedata.first;
-	Object *camera_old, *camera_new;
 
 	if (v3d->localvd == NULL) return;
 
-	camera_old = v3d->camera;
-	camera_new = v3d->localvd->camera;
+	for (Base *base = FIRSTBASE(view_layer); base; base = base->next) {
+		if (base->local_view_bits & v3d->local_view_uuid) {
+			base->local_view_bits &= ~v3d->local_view_uuid;
+		}
+	}
+
+	Object *camera_old = v3d->camera;
+	Object *camera_new = v3d->localvd->camera;
 
 	v3d->local_view_uuid = 0;
 	v3d->camera = v3d->localvd->camera;
 
-	if (free) {
-		MEM_freeN(v3d->localvd);
-		v3d->localvd = NULL;
-	}
+	MEM_freeN(v3d->localvd);
+	v3d->localvd = NULL;
 
-	for (ar = sa->regionbase.first; ar; ar = ar->next) {
+	for (ARegion *ar = sa->regionbase.first; ar; ar = ar->next) {
 		if (ar->regiontype == RGN_TYPE_WINDOW) {
 			RegionView3D *rv3d = ar->regiondata;
 
-			if (rv3d->localvd) {
+			if (rv3d->localvd == NULL) {
+				continue;
+			}
+
+			if (frame_selected) {
 				Object *camera_old_rv3d, *camera_new_rv3d;
 
 				camera_old_rv3d = (rv3d->persp          == RV3D_CAMOB) ? camera_old : NULL;
@@ -1304,53 +1317,11 @@ static void restore_localviewdata(
 				            .ofs = rv3d->localvd->ofs, .quat = rv3d->localvd->viewquat,
 				            .dist = &rv3d->localvd->dist,
 				        });
-
-				if (free) {
-					MEM_freeN(rv3d->localvd);
-					rv3d->localvd = NULL;
-				}
 			}
 
-			ED_view3d_shade_update(bmain, v3d, sa);
+			MEM_freeN(rv3d->localvd);
+			rv3d->localvd = NULL;
 		}
-	}
-}
-
-static bool view3d_localview_exit(
-        const Depsgraph *depsgraph,
-        wmWindowManager *wm,
-        wmWindow *win,
-        Main *bmain,
-        ViewLayer *view_layer,
-        ScrArea *sa,
-        const int smooth_viewtx)
-{
-	View3D *v3d = sa->spacedata.first;
-	struct Base *base;
-	unsigned int local_view_bit;
-
-	if (v3d->localvd) {
-
-		local_view_bit = v3d->local_view_uuid;
-
-		restore_localviewdata(depsgraph, wm, win, bmain, sa, smooth_viewtx);
-
-		Object *obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
-		for (base = FIRSTBASE(view_layer); base; base = base->next) {
-			if (base->local_view_bits & local_view_bit) {
-				base->local_view_bits &= ~local_view_bit;
-				if (base->object != obedit) {
-					ED_object_base_select(base, BA_SELECT);
-				}
-			}
-		}
-
-		DEG_on_visible_update(bmain, false);
-
-		return true;
-	}
-	else {
-		return false;
 	}
 }
 
@@ -1365,13 +1336,15 @@ static int localview_exec(bContext *C, wmOperator *op)
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	ScrArea *sa = CTX_wm_area(C);
 	View3D *v3d = CTX_wm_view3d(C);
+	bool frame_selected = RNA_boolean_get(op->ptr, "frame_selected");
 	bool changed;
 
 	if (v3d->localvd) {
-		changed = view3d_localview_exit(depsgraph, wm, win, bmain, view_layer, sa, smooth_viewtx);
+		view3d_localview_exit(depsgraph, wm, win, view_layer, sa, frame_selected, smooth_viewtx);
+		changed = true;
 	}
 	else {
-		changed = view3d_localview_init(depsgraph, wm, win, bmain, view_layer, sa, smooth_viewtx, op->reports);
+		changed = view3d_localview_init(depsgraph, wm, win, bmain, view_layer, sa, frame_selected, smooth_viewtx, op->reports);
 	}
 
 	if (changed) {
@@ -1406,6 +1379,8 @@ void VIEW3D_OT_localview(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO; /* localview changes object layer bitflags */
 
 	ot->poll = ED_operator_view3d_active;
+
+	RNA_def_boolean(ot->srna, "frame_selected", true, "Frame Selected", "Move the view to frame the selected objects");
 }
 
 static int localview_remove_from_exec(bContext *C, wmOperator *op)

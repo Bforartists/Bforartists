@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 #ifndef __BKE_SUBDIV_H__
@@ -144,8 +145,7 @@ typedef struct SubdivDisplacement {
 typedef struct Subdiv {
 	/* Settings this subdivision surface is created for.
 	 *
-	 * It is read-only after assignment in BKE_subdiv_new_from_FOO().
-	 */
+	 * It is read-only after assignment in BKE_subdiv_new_from_FOO(). */
 	SubdivSettings settings;
 	/* Topology refiner includes all the glue logic to feed Blender side
 	 * topology to OpenSubdiv. It can be shared by both evaluator and GL mesh
@@ -161,7 +161,7 @@ typedef struct Subdiv {
 	/* Cached values, are not supposed to be accessed directly. */
 	struct {
 		/* Indexed by base face index, element indicates total number of ptex
-		 *faces created for preceding base faces. */
+		 * faces created for preceding base faces. */
 		int *face_ptex_offset;
 	} cache_;
 } Subdiv;

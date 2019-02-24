@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup collada
+/** \file
+ * \ingroup collada
  */
 
 #ifndef __GEOMETRYEXPORTER_H__
@@ -84,7 +85,7 @@ public:
 						     std::string& geom_id);
 
 	// powerful because it handles both cases when there is material and when there's not
-	void createPolylist(short material_index,
+	void create_mesh_primitive_list(short material_index,
 						bool has_uvs,
 						bool has_color,
 						Object *ob,

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup edtransform
+/** \file
+ * \ingroup edtransform
  */
 
 #include <string.h>
@@ -5781,13 +5782,30 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
 	if (t->mode == TFM_DUMMY)
 		skip_invert = true;
 
+	/* NOTE: This is not really following copy-on-write design and we shoud not
+	 * be re-evaluating the evaluated object. But as the comment above mentioned
+	 * this is part of a hack.
+	 * More proper solution would be to make a shallwe copy of the object  and
+	 * evaluate that, and access matrix of that evaluated copy of the object.
+	 * Might be more tricky than it sounds, if some logic later on accesses the
+	 * object matrix via td->ob->obmat. */
+	Object *object_eval = DEG_get_evaluated_object(t->depsgraph, ob);
 	if (skip_invert == false && constinv == false) {
 		ob->transflag |= OB_NO_CONSTRAINTS;  /* BKE_object_where_is_calc checks this */
-		BKE_object_where_is_calc(t->depsgraph, t->scene, ob);
+		BKE_object_where_is_calc(t->depsgraph, t->scene, object_eval);
 		ob->transflag &= ~OB_NO_CONSTRAINTS;
 	}
-	else
-		BKE_object_where_is_calc(t->depsgraph, t->scene, ob);
+	else {
+		BKE_object_where_is_calc(t->depsgraph, t->scene, object_eval);
+	}
+	/* Copy newly evaluated fields to the original object, similar to how
+	 * active dependency graph will do it. */
+	copy_m4_m4(ob->obmat, object_eval->obmat);
+	/* Hack over hack, looks like in some cases eval object has not yet been fully flushed or so?
+	 * In some cases, macro operators starting transform just after creating a new object (OBJECT_OT_duplicate),
+	 * if dupli flags are not protected, they can be erased here (see T61787). */
+	ob->transflag = ((object_eval->transflag & ~(OB_DUPLI | OB_DUPLIFACES_SCALE | OB_DUPLIROT)) |
+	                 (ob->transflag & (OB_DUPLI | OB_DUPLIFACES_SCALE | OB_DUPLIROT)));
 
 	td->ob = ob;
 
@@ -5825,8 +5843,8 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
 	}
 	td->ext->rotOrder = ob->rotmode;
 
-	td->ext->size = ob->size;
-	copy_v3_v3(td->ext->isize, ob->size);
+	td->ext->size = ob->scale;
+	copy_v3_v3(td->ext->isize, ob->scale);
 	copy_v3_v3(td->ext->dscale, ob->dscale);
 
 	copy_v3_v3(td->center, ob->obmat[3]);
@@ -8599,6 +8617,7 @@ void createTransData(bContext *C, TransInfo *t)
 	ViewLayer *view_layer = t->view_layer;
 	Object *ob = OBACT(view_layer);
 
+	bool has_transform_context = true;
 	t->data_len_all = -1;
 
 	/* if tests must match recalcData for correct updates */
@@ -8671,6 +8690,9 @@ void createTransData(bContext *C, TransInfo *t)
 				createTransPaintCurveVerts(C, t);
 				countAndCleanTransDataContainer(t);
 			}
+			else {
+				has_transform_context = false;
+			}
 		}
 		else if (t->obedit_type == OB_MESH) {
 
@@ -8685,6 +8707,9 @@ void createTransData(bContext *C, TransInfo *t)
 				set_prop_dist(t, 1);
 				sort_trans_data_dist(t);
 			}
+		}
+		else {
+			has_transform_context = false;
 		}
 	}
 	else if (t->spacetype == SPACE_ACTION) {
@@ -8765,6 +8790,9 @@ void createTransData(bContext *C, TransInfo *t)
 				sort_trans_data_dist(t);
 			}
 		}
+		else {
+			has_transform_context = false;
+		}
 	}
 	else if (t->obedit_type != -1) {
 		/* Multi object editing. */
@@ -8839,6 +8867,7 @@ void createTransData(bContext *C, TransInfo *t)
 	else if (ob && (ob->mode & OB_MODE_WEIGHT_PAINT) && !(t->options & CTX_PAINT_CURVE)) {
 		/* important that ob_armature can be set even when its not selected [#23412]
 		 * lines below just check is also visible */
+		has_transform_context = false;
 		Object *ob_armature = modifiers_isDeformedByArmature(ob);
 		if (ob_armature && ob_armature->mode & OB_MODE_POSE) {
 			Base *base_arm = BKE_view_layer_base_find(t->view_layer, ob_armature);
@@ -8851,12 +8880,9 @@ void createTransData(bContext *C, TransInfo *t)
 					initTransDataContainers_FromObjectData(t, ob_armature, objects, objects_len);
 					createTransPose(t);
 					countAndCleanTransDataContainer(t);
+					has_transform_context = true;
 				}
 			}
-		}
-		/* Mark as initialized if above checks fail. */
-		if (t->data_len_all == -1) {
-			t->data_len_all = 0;
 		}
 	}
 	else if (ob && (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_start_edit(PE_get_current(scene, ob))) {
@@ -8876,9 +8902,8 @@ void createTransData(bContext *C, TransInfo *t)
 			createTransPaintCurveVerts(C, t);
 			countAndCleanTransDataContainer(t);
 		}
-		/* Mark as initialized if above checks fail. */
-		if (t->data_len_all == -1) {
-			t->data_len_all = 0;
+		else {
+			has_transform_context = false;
 		}
 	}
 	else {
@@ -8906,7 +8931,13 @@ void createTransData(bContext *C, TransInfo *t)
 	}
 
 	/* Check that 'countAndCleanTransDataContainer' ran. */
-	BLI_assert(t->data_len_all != -1);
+	if (has_transform_context) {
+		BLI_assert(t->data_len_all != -1);
+	}
+	else {
+		BLI_assert(t->data_len_all == -1);
+		t->data_len_all = 0;
+	}
 
 	BLI_assert((!(t->flag & T_EDIT)) == (!(t->obedit_type != -1)));
 }

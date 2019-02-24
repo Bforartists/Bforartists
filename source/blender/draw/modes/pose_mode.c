@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 #include "BKE_modifier.h"
 
@@ -30,6 +31,7 @@
 #include "GPU_shader.h"
 
 #include "draw_common.h"
+#include "draw_mode_engines.h"
 
 /* *********** LISTS *********** */
 /* All lists are per viewport specific datas.

@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include <stdio.h>
@@ -30,7 +31,12 @@
 #include "BLF_api.h"
 
 #include "BKE_colortools.h"
+#include "BKE_curve.h"
 #include "BKE_global.h"
+#include "BKE_gpencil.h"
+#include "BKE_lattice.h"
+#include "BKE_mball.h"
+#include "BKE_mesh.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
@@ -89,8 +95,6 @@
 DRWManager DST = {NULL};
 
 static ListBase DRW_engines = {NULL, NULL};
-
-extern struct GPUUniformBuffer *view_ubo; /* draw_manager_exec.c */
 
 static void drw_state_prepare_clean_for_draw(DRWManager *dst)
 {
@@ -641,8 +645,8 @@ static void drw_viewport_var_init(void)
 		DST.RST.bound_ubo_slots = MEM_callocN(sizeof(char) * GPU_max_ubo_binds(), "Bound Ubo Slots");
 	}
 
-	if (view_ubo == NULL) {
-		view_ubo = DRW_uniformbuffer_create(sizeof(ViewUboStorage), NULL);
+	if (G_draw.view_ubo == NULL) {
+		G_draw.view_ubo = DRW_uniformbuffer_create(sizeof(ViewUboStorage), NULL);
 	}
 
 	DST.override_mat = 0;
@@ -2158,7 +2162,7 @@ void DRW_draw_select_loop(
 					/* This relies on dupli instances being after their instancing object. */
 					if ((ob->base_flag & BASE_FROM_DUPLI) == 0) {
 						Object *ob_orig = DEG_get_original_object(ob);
-						DRW_select_load_id(ob_orig->select_color);
+						DRW_select_load_id(ob_orig->select_id);
 					}
 					DST.dupli_parent = data_.dupli_parent;
 					DST.dupli_source = data_.dupli_object_current;
@@ -2546,25 +2550,6 @@ void DRW_engines_register(void)
 
 	/* setup callbacks */
 	{
-		/* BKE: mball.c */
-		extern void *BKE_mball_batch_cache_dirty_tag_cb;
-		extern void *BKE_mball_batch_cache_free_cb;
-		/* BKE: curve.c */
-		extern void *BKE_curve_batch_cache_dirty_tag_cb;
-		extern void *BKE_curve_batch_cache_free_cb;
-		/* BKE: mesh.c */
-		extern void *BKE_mesh_batch_cache_dirty_tag_cb;
-		extern void *BKE_mesh_batch_cache_free_cb;
-		/* BKE: lattice.c */
-		extern void *BKE_lattice_batch_cache_dirty_tag_cb;
-		extern void *BKE_lattice_batch_cache_free_cb;
-		/* BKE: particle.c */
-		extern void *BKE_particle_batch_cache_dirty_tag_cb;
-		extern void *BKE_particle_batch_cache_free_cb;
-		/* BKE: gpencil.c */
-		extern void *BKE_gpencil_batch_cache_dirty_tag_cb;
-		extern void *BKE_gpencil_batch_cache_free_cb;
-
 		BKE_mball_batch_cache_dirty_tag_cb = DRW_mball_batch_cache_dirty_tag;
 		BKE_mball_batch_cache_free_cb = DRW_mball_batch_cache_free;
 
@@ -2585,7 +2570,6 @@ void DRW_engines_register(void)
 	}
 }
 
-extern struct GPUVertFormat *g_pos_format; /* draw_shgroup.c */
 void DRW_engines_free(void)
 {
 	DRW_opengl_context_enable();
@@ -2609,7 +2593,7 @@ void DRW_engines_free(void)
 	}
 
 	DRW_UBO_FREE_SAFE(G_draw.block_ubo);
-	DRW_UBO_FREE_SAFE(view_ubo);
+	DRW_UBO_FREE_SAFE(G_draw.view_ubo);
 	DRW_TEXTURE_FREE_SAFE(G_draw.ramp);
 	DRW_TEXTURE_FREE_SAFE(G_draw.weight_ramp);
 	MEM_SAFE_FREE(g_pos_format);

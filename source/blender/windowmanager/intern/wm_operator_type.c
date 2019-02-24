@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup wm
+/** \file
+ * \ingroup wm
  *
  * Operator Registry.
  */
@@ -408,12 +409,12 @@ static int wm_macro_modal(bContext *C, wmOperator *op, const wmEvent *event)
 			/* if new operator is modal and also added its own handler */
 			if (retval & OPERATOR_RUNNING_MODAL && op->opm != opm) {
 				wmWindow *win = CTX_wm_window(C);
-				wmEventHandler *handler;
+				wmEventHandler_Op *handler;
 
-				handler = BLI_findptr(&win->modalhandlers, op, offsetof(wmEventHandler, op));
+				handler = BLI_findptr(&win->modalhandlers, op, offsetof(wmEventHandler_Op, op));
 				if (handler) {
 					BLI_remlink(&win->modalhandlers, handler);
-					wm_event_free_handler(handler);
+					wm_event_free_handler(&handler->head);
 				}
 
 				/* if operator is blocking, grab cursor
