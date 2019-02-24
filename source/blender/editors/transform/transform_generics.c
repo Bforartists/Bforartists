@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup edtransform
+/** \file
+ * \ingroup edtransform
  */
 
 #include <string.h>
@@ -1231,6 +1232,7 @@ void initTransDataContainers_FromObjectData(TransInfo *t, Object *obact, Object 
 			tc->mirror.axis_flag = (
 			        ((t->flag & T_NO_MIRROR) == 0) &&
 			        ((t->options & CTX_NO_MIRROR) == 0) &&
+			        (objects[i]->type == OB_MESH) &&
 			        (((Mesh *)objects[i]->data)->editflag & ME_EDIT_MIRROR_X) != 0);
 
 			if (object_mode & OB_MODE_EDIT) {
@@ -1511,11 +1513,19 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 	}
 
 	if (op && ((prop = RNA_struct_find_property(op->ptr, "constraint_matrix")) &&
-	           RNA_property_is_set(op->ptr, prop)))
+	           RNA_property_is_set(op->ptr, prop)) &&
+	    ((t->flag & T_MODAL) ||
+	     /* When using redo, don't use the the custom constraint matrix
+	      * if the user selects a different orientation. */
+	     (RNA_enum_get(op->ptr, "constraint_orientation") ==
+	      RNA_enum_get(op->ptr, "constraint_matrix_orientation"))))
 	{
 		RNA_property_float_get_array(op->ptr, prop, &t->spacemtx[0][0]);
 		t->orientation.user = V3D_ORIENT_CUSTOM_MATRIX;
 		t->orientation.custom = 0;
+		if (t->flag & T_MODAL) {
+			RNA_enum_set(op->ptr, "constraint_matrix_orientation", RNA_enum_get(op->ptr, "constraint_orientation"));
+		}
 	}
 	else if (op && ((prop = RNA_struct_find_property(op->ptr, "constraint_orientation")) &&
 	                RNA_property_is_set(op->ptr, prop)))

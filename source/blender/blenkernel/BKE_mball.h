@@ -19,7 +19,8 @@
 #ifndef __BKE_MBALL_H__
 #define __BKE_MBALL_H__
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 struct BoundBox;
 struct Depsgraph;
@@ -81,5 +82,9 @@ enum {
 };
 void BKE_mball_batch_cache_dirty_tag(struct MetaBall *mb, int mode);
 void BKE_mball_batch_cache_free(struct MetaBall *mb);
+
+extern void (*BKE_mball_batch_cache_dirty_tag_cb)(struct MetaBall *mb, int mode);
+extern void (*BKE_mball_batch_cache_free_cb)(struct MetaBall *mb);
+
 
 #endif

@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "DRW_engine.h"
@@ -26,6 +27,7 @@
 #include "DNA_view3d_types.h"
 
 #include "draw_common.h"
+#include "draw_mode_engines.h"
 
 /* *********** LISTS *********** */
 typedef struct EDIT_ARMATURE_PassList {

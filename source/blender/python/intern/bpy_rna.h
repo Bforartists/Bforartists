@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup pythonintern
+/** \file
+ * \ingroup pythonintern
  */
 
 #ifndef __BPY_RNA_H__
@@ -221,5 +222,7 @@ extern PyMethodDef meth_bpy_unregister_class;
 /* bpy.utils._bl_owner_(get/set) */
 extern PyMethodDef meth_bpy_owner_id_set;
 extern PyMethodDef meth_bpy_owner_id_get;
+
+extern BPy_StructRNA *bpy_context_module;
 
 #endif

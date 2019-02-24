@@ -19,7 +19,8 @@
 #ifndef __BKE_MESH_H__
 #define __BKE_MESH_H__
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 /* defines BLI_INLINE */
@@ -514,6 +515,9 @@ enum {
 };
 void BKE_mesh_batch_cache_dirty_tag(struct Mesh *me, int mode);
 void BKE_mesh_batch_cache_free(struct Mesh *me);
+
+extern void (*BKE_mesh_batch_cache_dirty_tag_cb)(struct Mesh *me, int mode);
+extern void (*BKE_mesh_batch_cache_free_cb)(struct Mesh *me);
 
 
 /* Inlines */

@@ -16,7 +16,8 @@
  * Copyright 2017, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #ifndef __GPENCIL_ENGINE_H__
@@ -173,7 +174,8 @@ typedef struct GPENCIL_StorageList {
 } GPENCIL_StorageList;
 
 typedef struct GPENCIL_PassList {
-	struct DRWPass *stroke_pass;
+	struct DRWPass *stroke_pass_2d;
+	struct DRWPass *stroke_pass_3d;
 	struct DRWPass *edit_pass;
 	struct DRWPass *drawing_pass;
 	struct DRWPass *mix_pass;
@@ -449,5 +451,8 @@ void GPENCIL_render_to_image(void *vedata, struct RenderEngine *engine, struct R
 		DRW_stats_query_end(); \
 	} \
 }
+
+#define GPENCIL_3D_DRAWMODE(gpd) \
+	((gpd) && (gpd->draw_mode == GP_DRAWMODE_3D) && (gpd->xray_mode == GP_XRAY_3DSPACE))
 
 #endif /* __GPENCIL_ENGINE_H__ */
