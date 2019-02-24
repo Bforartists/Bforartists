@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup spview3d
+/** \file
+ * \ingroup spview3d
  */
 
 #ifndef __VIEW3D_INTERN_H__
@@ -259,6 +260,7 @@ void VIEW3D_GGT_mesh_preselect_edgering(struct wmGizmoGroupType *gzgt);
 void VIEW3D_GGT_ruler(struct wmGizmoGroupType *gzgt);
 void VIEW3D_GT_ruler_item(struct wmGizmoType *gzt);
 void VIEW3D_OT_ruler_add(struct wmOperatorType *ot);
+void VIEW3D_OT_ruler_remove(struct wmOperatorType *ot);
 
 void VIEW3D_GT_navigate_rotate(struct wmGizmoType *gzt);
 

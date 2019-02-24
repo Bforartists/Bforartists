@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup RNA
+/** \file
+ * \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -3944,7 +3945,7 @@ static void rna_def_bake_data(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Margin", "Extends the baked result as a post process filter");
 	RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
-	prop = RNA_def_property(srna, "cage_extrusion", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "cage_extrusion", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_range(prop, 0.0, FLT_MAX);
 	RNA_def_property_ui_range(prop, 0.0, 1.0, 1, 3);
 	RNA_def_property_ui_text(prop, "Cage Extrusion",
@@ -5042,9 +5043,10 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
 
-	prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_UNSIGNED);
+	prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "blurfac");
-	RNA_def_property_ui_range(prop, 0.01f, 2.0f, 1, 2);
+	RNA_def_property_range(prop, 0.01f, 2.0f);
+	RNA_def_property_ui_range(prop, 0.01f, 1.0f, 1, 2);
 	RNA_def_property_ui_text(prop, "Shutter", "Time taken in frames between shutter open and close");
 	RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_glsl_update");
 
@@ -5210,7 +5212,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "bake_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_bitflag_sdna(prop, NULL, "bake_mode");
 	RNA_def_property_enum_items(prop, bake_mode_items);
-	RNA_def_property_ui_text(prop, "Bake Mode", "Choose shading information to bake into the image");
+	RNA_def_property_ui_text(prop, "Bake Type", "Choose shading information to bake into the image");
 	RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
 	prop = RNA_def_property(srna, "use_bake_selected_to_active", PROP_BOOLEAN, PROP_NONE);
@@ -5360,7 +5362,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Stamp Hostname", "Include the hostname of the machine that rendered the frame");
 	RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
-	prop = RNA_def_property(srna, "stamp_font_size", PROP_INT, PROP_NONE);
+	prop = RNA_def_property(srna, "stamp_font_size", PROP_INT, PROP_PIXEL);
 	RNA_def_property_int_sdna(prop, NULL, "stamp_font_id");
 	RNA_def_property_range(prop, 8, 64);
 	RNA_def_property_ui_text(prop, "Font Size", "Size of the font used when rendering stamp text");
@@ -5910,13 +5912,13 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Show Cubemap Cache", "Display captured cubemaps in the viewport");
 	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 
-	prop = RNA_def_property(srna, "gi_irradiance_display_size", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "gi_irradiance_display_size", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "gi_irradiance_draw_size");
 	RNA_def_property_range(prop, 0.05f, 10.0f);
 	RNA_def_property_float_default(prop, 0.1f);
 	RNA_def_property_ui_text(prop, "Irradiance Display Size", "Size of the irradiance sample spheres to debug captured light");
 
-	prop = RNA_def_property(srna, "gi_cubemap_display_size", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "gi_cubemap_display_size", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "gi_cubemap_draw_size");
 	RNA_def_property_range(prop, 0.05f, 10.0f);
 	RNA_def_property_float_default(prop, 0.3f);
@@ -6212,10 +6214,11 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
 	RNA_def_property_range(prop, 1, 64);
 	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 
-	prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_UNSIGNED);
+	prop = RNA_def_property(srna, "motion_blur_shutter", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_default(prop, 1.0f);
 	RNA_def_property_ui_text(prop, "Shutter", "Time taken in frames between shutter open and close");
-	RNA_def_property_ui_range(prop, 0.01f, 2.0f, 1, 2);
+	RNA_def_property_range(prop, 0.01f, 2.0f);
+	RNA_def_property_ui_range(prop, 0.01f, 1.0f, 1, 2);
 	RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
 
 	/* Shadows */
@@ -6633,7 +6636,7 @@ void RNA_def_scene(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Distance Model", "Distance model for distance attenuation calculation");
 	RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
-	prop = RNA_def_property(srna, "audio_volume", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "audio_volume", PROP_FLOAT, PROP_PERCENTAGE);
 	RNA_def_property_float_sdna(prop, NULL, "audio.volume");
 	RNA_def_property_range(prop, 0.0f, 100.0f);
 	RNA_def_property_ui_text(prop, "Volume", "Audio volume");

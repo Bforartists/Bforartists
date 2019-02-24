@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "draw_manager.h"
@@ -39,8 +40,6 @@
 #include "intern/gpu_codegen.h"
 
 struct GPUVertFormat *g_pos_format = NULL;
-
-extern struct GPUUniformBuffer *view_ubo; /* draw_manager_exec.c */
 
 /* -------------------------------------------------------------------- */
 /** \name Uniform Buffer Object (DRW_uniformbuffer)
@@ -580,7 +579,34 @@ static void sculpt_draw_cb(
 
 	if (pbvh) {
 		BKE_pbvh_draw_cb(
-		        pbvh, NULL, NULL, fast_mode, false,
+		        pbvh, NULL, NULL, fast_mode, false, false,
+		        (void (*)(void *, GPUBatch *))draw_fn, shgroup);
+	}
+}
+
+static void sculpt_draw_wires_cb(
+        DRWShadingGroup *shgroup,
+        void (*draw_fn)(DRWShadingGroup *shgroup, GPUBatch *geom),
+        void *user_data)
+{
+	Object *ob = user_data;
+
+	/* XXX should be ensured before but sometime it's not... go figure (see T57040). */
+	PBVH *pbvh = BKE_sculpt_object_pbvh_ensure(DST.draw_ctx.depsgraph, ob);
+
+	const DRWContextState *drwctx = DRW_context_state_get();
+	int fast_mode = 0;
+
+	if (drwctx->evil_C != NULL) {
+		Paint *p = BKE_paint_get_active_from_context(drwctx->evil_C);
+		if (p && (p->flags & PAINT_FAST_NAVIGATE)) {
+			fast_mode = drwctx->rv3d->rflag & RV3D_NAVIGATING;
+		}
+	}
+
+	if (pbvh) {
+		BKE_pbvh_draw_cb(
+		        pbvh, NULL, NULL, fast_mode, true, false,
 		        (void (*)(void *, GPUBatch *))draw_fn, shgroup);
 	}
 }
@@ -588,6 +614,11 @@ static void sculpt_draw_cb(
 void DRW_shgroup_call_sculpt_add(DRWShadingGroup *shgroup, Object *ob, float (*obmat)[4])
 {
 	DRW_shgroup_call_generate_add(shgroup, sculpt_draw_cb, ob, obmat);
+}
+
+void DRW_shgroup_call_sculpt_wires_add(DRWShadingGroup *shgroup, Object *ob, float (*obmat)[4])
+{
+	DRW_shgroup_call_generate_add(shgroup, sculpt_draw_wires_cb, ob, obmat);
 }
 
 void DRW_shgroup_call_dynamic_add_array(DRWShadingGroup *shgroup, const void *attr[], uint attr_len)
@@ -637,7 +668,7 @@ static void drw_shgroup_init(DRWShadingGroup *shgroup, GPUShader *shader)
 	int view_ubo_location = GPU_shader_get_uniform_block(shader, "viewBlock");
 
 	if (view_ubo_location != -1) {
-		drw_shgroup_uniform_create_ex(shgroup, view_ubo_location, DRW_UNIFORM_BLOCK_PERSIST, view_ubo, 0, 1);
+		drw_shgroup_uniform_create_ex(shgroup, view_ubo_location, DRW_UNIFORM_BLOCK_PERSIST, G_draw.view_ubo, 0, 1);
 	}
 	else {
 		/* Only here to support builtin shaders. This should not be used by engines. */
@@ -815,8 +846,7 @@ static DRWShadingGroup *drw_shgroup_material_inputs(DRWShadingGroup *grp, struct
 			GPUTexture *tex = NULL;
 
 			if (input->ima) {
-				double time = 0.0; /* TODO make time variable */
-				tex = GPU_texture_from_blender(input->ima, input->iuser, GL_TEXTURE_2D, input->image_isdata, time);
+				tex = GPU_texture_from_blender(input->ima, input->iuser, GL_TEXTURE_2D, input->image_isdata);
 			}
 			else {
 				/* Color Ramps */

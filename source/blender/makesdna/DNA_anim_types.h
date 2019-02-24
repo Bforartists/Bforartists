@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup DNA
+/** \file
+ * \ingroup DNA
  */
 
 #ifndef __DNA_ANIM_TYPES_H__
@@ -566,8 +567,7 @@ typedef struct FCurve {
 		/* value cache + settings */
 	/** Value stored from last time curve was evaluated (not threadsafe, debug display only!). */
 	float curval;
-	/* Value which comes from original DNA ddatablock at a time f-curve was evaluated. */
-	float orig_dna_val;
+	char pad2[4];
 	/** User-editable settings for this curve. */
 	short flag;
 	/** Value-extending mode for this curve (does not cover). */

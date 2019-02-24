@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 
@@ -150,7 +151,7 @@ void BKE_object_workob_clear(Object *workob)
 {
 	memset(workob, 0, sizeof(Object));
 
-	workob->size[0] = workob->size[1] = workob->size[2] = 1.0f;
+	workob->scale[0] = workob->scale[1] = workob->scale[2] = 1.0f;
 	workob->dscale[0] = workob->dscale[1] = workob->dscale[2] = 1.0f;
 	workob->rotmode = ROT_MODE_EUL;
 }
@@ -449,10 +450,7 @@ void BKE_object_free_derived_caches(Object *ob)
 		}
 	}
 
-	if (ob->runtime.bb) {
-		MEM_freeN(ob->runtime.bb);
-		ob->runtime.bb = NULL;
-	}
+	MEM_SAFE_FREE(ob->runtime.bb);
 
 	object_update_from_subsurf_ccg(ob);
 	BKE_object_free_derived_mesh_caches(ob);
@@ -812,10 +810,9 @@ void BKE_object_init(Object *ob)
 {
 	/* BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(ob, id)); */  /* ob->type is already initialized... */
 
-	ob->col[0] = ob->col[1] = ob->col[2] = 1.0;
-	ob->col[3] = 1.0;
+	copy_v4_fl(ob->color, 1.0f);
 
-	ob->size[0] = ob->size[1] = ob->size[2] = 1.0;
+	ob->scale[0] = ob->scale[1] = ob->scale[2] = 1.0;
 	ob->dscale[0] = ob->dscale[1] = ob->dscale[2] = 1.0;
 
 	/* objects should default to having Euler XYZ rotations,
@@ -1305,7 +1302,7 @@ void BKE_object_transform_copy(Object *ob_tar, const Object *ob_src)
 	copy_v3_v3(ob_tar->rotAxis, ob_src->rotAxis);
 	ob_tar->rotAngle = ob_src->rotAngle;
 	ob_tar->rotmode = ob_src->rotmode;
-	copy_v3_v3(ob_tar->size, ob_src->size);
+	copy_v3_v3(ob_tar->scale, ob_src->scale);
 }
 
 /**
@@ -1578,7 +1575,7 @@ void BKE_object_make_proxy(Main *bmain, Object *ob, Object *target, Object *cob)
 		mul_m4_m4m4(ob->obmat, cob->obmat, target->obmat);
 		if (cob->instance_collection) { /* should always be true */
 			float tvec[3];
-			mul_v3_mat3_m4v3(tvec, ob->obmat, cob->instance_collection->dupli_ofs);
+			mul_v3_mat3_m4v3(tvec, ob->obmat, cob->instance_collection->instance_offset);
 			sub_v3_v3(ob->obmat[3], tvec);
 		}
 		BKE_object_apply_mat4(ob, ob->obmat, false, true);
@@ -1711,7 +1708,7 @@ void BKE_object_obdata_size_init(struct Object *ob, const float size)
 void BKE_object_scale_to_mat3(Object *ob, float mat[3][3])
 {
 	float vec[3];
-	mul_v3_v3v3(vec, ob->size, ob->dscale);
+	mul_v3_v3v3(vec, ob->scale, ob->dscale);
 	size_to_mat3(mat, vec);
 }
 
@@ -1808,7 +1805,7 @@ void BKE_object_tfm_protected_backup(const Object *ob,
 
 	TFMCPY3D(loc);
 	TFMCPY3D(dloc);
-	TFMCPY3D(size);
+	TFMCPY3D(scale);
 	TFMCPY3D(dscale);
 	TFMCPY3D(rot);
 	TFMCPY3D(drot);
@@ -1838,7 +1835,7 @@ void BKE_object_tfm_protected_restore(Object *ob,
 		}
 
 		if (protectflag & (OB_LOCK_SCALEX << i)) {
-			ob->size[i] =  obtfm->size[i];
+			ob->scale[i] =  obtfm->scale[i];
 			ob->dscale[i] = obtfm->dscale[i];
 		}
 
@@ -1869,7 +1866,7 @@ void BKE_object_to_mat3(Object *ob, float mat[3][3]) /* no parent */
 	float rmat[3][3];
 	/*float q1[4];*/
 
-	/* size */
+	/* scale */
 	BKE_object_scale_to_mat3(ob, smat);
 
 	/* rot */
@@ -2193,10 +2190,10 @@ static void solve_parenting(Object *ob, Object *par, float obmat[4][4],
 	/* origin, for help line */
 	if (set_origin) {
 		if ((ob->partype & PARTYPE) == PARSKEL) {
-			copy_v3_v3(ob->orig, par->obmat[3]);
+			copy_v3_v3(ob->runtime.parent_display_origin, par->obmat[3]);
 		}
 		else {
-			copy_v3_v3(ob->orig, totmat[3]);
+			copy_v3_v3(ob->runtime.parent_display_origin, totmat[3]);
 		}
 	}
 }
@@ -2325,19 +2322,19 @@ void BKE_object_apply_mat4_ex(Object *ob, float mat[4][4], Object *parent, float
 		mul_m4_m4m4(rmat, imat, mat); /* get the parent relative matrix */
 
 		/* same as below, use rmat rather than mat */
-		mat4_to_loc_rot_size(ob->loc, rot, ob->size, rmat);
+		mat4_to_loc_rot_size(ob->loc, rot, ob->scale, rmat);
 	}
 	else {
-		mat4_to_loc_rot_size(ob->loc, rot, ob->size, mat);
+		mat4_to_loc_rot_size(ob->loc, rot, ob->scale, mat);
 	}
 
 	BKE_object_mat3_to_rot(ob, rot, use_compat);
 
 	sub_v3_v3(ob->loc, ob->dloc);
 
-	if (ob->dscale[0] != 0.0f) ob->size[0] /= ob->dscale[0];
-	if (ob->dscale[1] != 0.0f) ob->size[1] /= ob->dscale[1];
-	if (ob->dscale[2] != 0.0f) ob->size[2] /= ob->dscale[2];
+	if (ob->dscale[0] != 0.0f) ob->scale[0] /= ob->dscale[0];
+	if (ob->dscale[1] != 0.0f) ob->scale[1] /= ob->dscale[1];
+	if (ob->dscale[2] != 0.0f) ob->scale[2] /= ob->dscale[2];
 
 	/* BKE_object_mat3_to_rot handles delta rotations */
 }
@@ -2490,7 +2487,7 @@ void BKE_object_dimensions_set(Object *ob, const float value[3], int axis_mask)
 		for (int i = 0; i < 3; i++) {
 			if (((1 << i) & axis_mask) == 0) {
 				if (len[i] > 0.0f) {
-					ob->size[i] = copysignf(value[i] / len[i], ob->size[i]);
+					ob->scale[i] = copysignf(value[i] / len[i], ob->scale[i]);
 				}
 			}
 		}
@@ -2562,7 +2559,7 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 	if (changed == false) {
 		float size[3];
 
-		copy_v3_v3(size, ob->size);
+		copy_v3_v3(size, ob->scale);
 		if ((ob->type == OB_EMPTY) || (ob->type == OB_GPENCIL)) {
 			mul_v3_fl(size, ob->empty_drawsize);
 		}
@@ -2724,9 +2721,9 @@ void BKE_scene_foreach_display_point(
 
 /* copied from DNA_object_types.h */
 typedef struct ObTfmBack {
-	float loc[3], dloc[3], orig[3];
+	float loc[3], dloc[3];
 	/** scale and delta scale. */
-	float size[3], dscale[3];
+	float scale[3], dscale[3];
 	/** euler rotation. */
 	float rot[3], drot[3];
 	/** quaternion rotation. */
@@ -2750,8 +2747,7 @@ void *BKE_object_tfm_backup(Object *ob)
 	ObTfmBack *obtfm = MEM_mallocN(sizeof(ObTfmBack), "ObTfmBack");
 	copy_v3_v3(obtfm->loc, ob->loc);
 	copy_v3_v3(obtfm->dloc, ob->dloc);
-	copy_v3_v3(obtfm->orig, ob->orig);
-	copy_v3_v3(obtfm->size, ob->size);
+	copy_v3_v3(obtfm->scale, ob->scale);
 	copy_v3_v3(obtfm->dscale, ob->dscale);
 	copy_v3_v3(obtfm->rot, ob->rot);
 	copy_v3_v3(obtfm->drot, ob->drot);
@@ -2774,8 +2770,7 @@ void BKE_object_tfm_restore(Object *ob, void *obtfm_pt)
 	ObTfmBack *obtfm = (ObTfmBack *)obtfm_pt;
 	copy_v3_v3(ob->loc, obtfm->loc);
 	copy_v3_v3(ob->dloc, obtfm->dloc);
-	copy_v3_v3(ob->orig, obtfm->orig);
-	copy_v3_v3(ob->size, obtfm->size);
+	copy_v3_v3(ob->scale, obtfm->scale);
 	copy_v3_v3(ob->dscale, obtfm->dscale);
 	copy_v3_v3(ob->rot, obtfm->rot);
 	copy_v3_v3(ob->drot, obtfm->drot);

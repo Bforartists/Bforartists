@@ -16,6 +16,10 @@
  * Copyright 2018, Blender Foundation.
  */
 
+/** \file
+ * \ingroup draw_engine
+ */
+
 #include "workbench_private.h"
 
 #include "BIF_gl.h"
@@ -59,7 +63,7 @@ void workbench_material_update_data(WORKBENCH_PrivateData *wpd, Object *ob, Mate
 		copy_v3_v3(data->base_color, data->diffuse_color);
 	}
 	else if (color_type == V3D_SHADING_OBJECT_COLOR) {
-		copy_v3_v3(data->diffuse_color, ob->col);
+		copy_v3_v3(data->diffuse_color, ob->color);
 		copy_v3_v3(data->base_color, data->diffuse_color);
 	}
 	else {
@@ -221,10 +225,24 @@ void workbench_material_get_image_and_mat(Object *ob, int mat_nr, Image **r_imag
 	bNode *node;
 	*r_mat = give_current_material(ob, mat_nr);
 	ED_object_get_active_image(ob, mat_nr, r_image, NULL, &node, NULL);
-	if (node) {
-		BLI_assert(node->type == SH_NODE_TEX_IMAGE);
-		NodeTexImage *storage = node->storage;
-		*r_interp = storage->interpolation;
+	if (node && *r_image) {
+		switch (node->type) {
+			case SH_NODE_TEX_IMAGE:
+			{
+				NodeTexImage *storage = node->storage;
+				*r_interp = storage->interpolation;
+				break;
+			}
+			case SH_NODE_TEX_ENVIRONMENT:
+			{
+				NodeTexEnvironment *storage = node->storage;
+				*r_interp = storage->interpolation;
+				break;
+			}
+			default:
+				BLI_assert(!"Node type not supported by workbench");
+				*r_interp = 0;
+		}
 	}
 	else {
 		*r_interp = 0;
@@ -243,7 +261,7 @@ void workbench_material_shgroup_uniform(
 		ImBuf *ibuf = BKE_image_acquire_ibuf(material->ima, NULL, NULL);
 		const bool do_color_correction = (ibuf && (ibuf->colormanage_flag & IMB_COLORMANAGE_IS_DATA) == 0);
 		BKE_image_release_ibuf(material->ima, ibuf, NULL);
-		GPUTexture *tex = GPU_texture_from_blender(material->ima, NULL, GL_TEXTURE_2D, false, 0.0f);
+		GPUTexture *tex = GPU_texture_from_blender(material->ima, NULL, GL_TEXTURE_2D, false);
 		DRW_shgroup_uniform_texture(grp, "image", tex);
 		DRW_shgroup_uniform_bool_copy(grp, "imageSrgb", do_color_correction);
 		DRW_shgroup_uniform_bool_copy(grp, "imageNearest", (interp == SHD_INTERP_CLOSEST));

@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 #include "MEM_guardedalloc.h"
@@ -5714,7 +5715,7 @@ static void dynamic_paint_generate_bake_data_cb(
 			/* Prepare surface normal directional scale to easily convert
 			 * brush intersection amount between global and local space */
 			float scaled_nor[3];
-			mul_v3_v3v3(scaled_nor, temp_nor, ob->size);
+			mul_v3_v3v3(scaled_nor, temp_nor, ob->scale);
 			bData->bNormal[index].normal_scale = len_v3(scaled_nor);
 		}
 		mul_mat3_m4_v3(ob->obmat, temp_nor);
@@ -5751,7 +5752,7 @@ static void dynamic_paint_generate_bake_data_cb(
 			/* Prepare surface normal directional scale to easily convert
 			 * brush intersection amount between global and local space */
 			float scaled_nor[3];
-			mul_v3_v3v3(scaled_nor, temp_nor, ob->size);
+			mul_v3_v3v3(scaled_nor, temp_nor, ob->scale);
 			bData->bNormal[index].normal_scale = len_v3(scaled_nor);
 		}
 		mul_mat3_m4_v3(ob->obmat, temp_nor);

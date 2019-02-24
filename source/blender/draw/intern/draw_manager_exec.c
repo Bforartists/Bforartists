@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "draw_manager.h"
@@ -43,8 +44,6 @@ void DRW_select_load_id(uint id)
 #endif
 
 #define DEBUG_UBO_BINDING
-
-struct GPUUniformBuffer *view_ubo;
 
 /* -------------------------------------------------------------------- */
 /** \name Draw State (DRW_state)
@@ -1293,7 +1292,7 @@ static void drw_update_view(void)
 		DST.state_cache_id++;
 		DST.dirty_mat = false;
 
-		DRW_uniformbuffer_update(view_ubo, &DST.view_data);
+		DRW_uniformbuffer_update(G_draw.view_ubo, &DST.view_data);
 
 		/* Catch integer wrap around. */
 		if (UNLIKELY(DST.state_cache_id == 0)) {
