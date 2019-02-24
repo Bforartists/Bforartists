@@ -16,7 +16,8 @@
  * Copyright 2017, Blender Foundation.
  */
 
-/** \file \ingroup draw_engine
+/** \file
+ * \ingroup draw_engine
  *
  * Base engine for external render engines.
  * We use it for depth and non-mesh objects.
@@ -27,12 +28,13 @@
 #include "DNA_screen_types.h"
 #include "DNA_view3d_types.h"
 
-
 #include "ED_screen.h"
 
 #include "GPU_matrix.h"
 #include "GPU_shader.h"
 #include "GPU_viewport.h"
+
+#include "external_engine.h"  /* own include */
 
 /* Shaders */
 
@@ -196,7 +198,7 @@ static void external_engine_free(void)
 
 static const DrawEngineDataSize external_data_size = DRW_VIEWPORT_DATA_SIZE(EXTERNAL_Data);
 
-DrawEngineType draw_engine_external_type = {
+static DrawEngineType draw_engine_external_type = {
 	NULL, NULL,
 	N_("External"),
 	&external_data_size,

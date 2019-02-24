@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "DRW_engine.h"
@@ -306,6 +307,7 @@ typedef struct OBJECT_PrivateData {
 	int id_ofs_prb_transform;
 
 	bool xray_enabled;
+	bool xray_enabled_and_not_wire;
 } OBJECT_PrivateData; /* Transient data */
 
 static struct {
@@ -548,12 +550,15 @@ static void OBJECT_engine_init(void *vedata)
 			grid_res = viewdist / grid_scale;
 
 			if (ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT)) {
+				e_data.draw_grid = true;
 				e_data.grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
 			}
 			else if (ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM)) {
+				e_data.draw_grid = true;
 				e_data.grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y | SHOW_GRID | GRID_BACK;
 			}
 			else if (ELEM(rv3d->view, RV3D_VIEW_FRONT, RV3D_VIEW_BACK)) {
+				e_data.draw_grid = true;
 				e_data.grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
 			}
 			else { /* RV3D_VIEW_USER */
@@ -923,7 +928,7 @@ static void DRW_shgroup_empty_image(
 	GPUTexture *tex = NULL;
 
 	if (ob->data != NULL) {
-		tex = GPU_texture_from_blender(ob->data, ob->iuser, GL_TEXTURE_2D, false, 0.0f);
+		tex = GPU_texture_from_blender(ob->data, ob->iuser, GL_TEXTURE_2D, false);
 		if (tex) {
 			size[0] = GPU_texture_width(tex);
 			size[1] = GPU_texture_height(tex);
@@ -939,7 +944,7 @@ static void DRW_shgroup_empty_image(
 	/* OPTI(fclem) We need sorting only for transparent images. If an image as no alpha channel and
 	 * ob->col[3] == 1.0f,  we could remove it from the sorting pass. */
 
-	if (tex && (ob->col[3] > 0.0f)) {
+	if (tex && (ob->color[3] > 0.0f)) {
 		DRWShadingGroup *grp = DRW_shgroup_create(sh_data->object_empty_image, sgl->image_empties);
 		DRW_shgroup_uniform_texture(grp, "image", tex);
 		/* TODO(fclem) implement DRW_shgroup_uniform_vec2_copy */
@@ -948,7 +953,7 @@ static void DRW_shgroup_empty_image(
 		DRW_shgroup_uniform_int_copy(grp, "depthMode", ob->empty_image_depth);
 		DRW_shgroup_uniform_float(grp, "size", &ob->empty_drawsize, 1);
 		DRW_shgroup_uniform_vec2(grp, "offset", ob->ima_ofs, 1);
-		DRW_shgroup_uniform_vec4(grp, "objectColor", ob->col, 1);
+		DRW_shgroup_uniform_vec4(grp, "objectColor", ob->color, 1);
 		if (sh_cfg == GPU_SHADER_CFG_CLIPPED) {
 			DRW_shgroup_world_clip_planes_from_rv3d(grp, DRW_context_state_get()->rv3d);
 		}
@@ -991,7 +996,9 @@ static void OBJECT_cache_init(void *vedata)
 	}
 
 	g_data = stl->g_data;
-	g_data->xray_enabled = XRAY_ENABLED(draw_ctx->v3d) && (draw_ctx->v3d->shading.type < OB_MATERIAL);
+	g_data->xray_enabled = XRAY_ENABLED(draw_ctx->v3d) &&
+	                       (draw_ctx->v3d->shading.type < OB_MATERIAL);
+	g_data->xray_enabled_and_not_wire = g_data->xray_enabled && draw_ctx->v3d->shading.type > OB_WIRE;
 
 	{
 		DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WIRE;
@@ -999,7 +1006,7 @@ static void OBJECT_cache_init(void *vedata)
 
 		GPUShader *sh = sh_data->outline_prepass;
 
-		if (g_data->xray_enabled) {
+		if (g_data->xray_enabled_and_not_wire) {
 			sh = sh_data->outline_prepass_wire;
 		}
 
@@ -1046,7 +1053,7 @@ static void OBJECT_cache_init(void *vedata)
 
 		psl->outlines_search = DRW_pass_create("Outlines Detect Pass", state);
 
-		GPUShader *sh = (g_data->xray_enabled) ? sh_data->outline_detect_wire : sh_data->outline_detect;
+		GPUShader *sh = (g_data->xray_enabled_and_not_wire) ? sh_data->outline_detect_wire : sh_data->outline_detect;
 		DRWShadingGroup *grp = DRW_shgroup_create(sh, psl->outlines_search);
 		DRW_shgroup_uniform_texture_ref(grp, "outlineId", &e_data.outlines_id_tx);
 		DRW_shgroup_uniform_texture_ref(grp, "outlineDepth", &e_data.outlines_depth_tx);
@@ -2015,7 +2022,7 @@ static void DRW_shgroup_camera(OBJECT_ShadingGroupList *sgl, Object *ob, ViewLay
 				}
 
 				if (is_select) {
-					DRW_select_load_id(camera_object->select_color | (track_index << 16));
+					DRW_select_load_id(camera_object->select_id | (track_index << 16));
 					track_index++;
 				}
 
@@ -2552,7 +2559,7 @@ static void DRW_shgroup_relationship_lines(
         Object *ob)
 {
 	if (ob->parent && (DRW_object_visibility_in_active_context(ob->parent) & OB_VISIBLE_SELF)) {
-		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->orig);
+		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->runtime.parent_display_origin);
 		DRW_shgroup_call_dynamic_add(sgl->relationship_lines, ob->obmat[3]);
 	}
 
@@ -2902,8 +2909,9 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 		return;
 	}
 
-	const bool do_outlines = (draw_ctx->v3d->flag & V3D_SELECT_OUTLINE) && ((ob->base_flag & BASE_SELECTED) != 0) &&
-	                         ((DRW_object_is_renderable(ob) && (ob->dt > OB_WIRE)) || (ob->dt == OB_WIRE));
+	const bool do_outlines = (
+	        (draw_ctx->v3d->flag & V3D_SELECT_OUTLINE) && ((ob->base_flag & BASE_SELECTED) != 0) &&
+	        ((DRW_object_is_renderable(ob) && (ob->dt > OB_WIRE)) || (ob->dt == OB_WIRE)));
 	const bool show_relations = ((draw_ctx->v3d->flag & V3D_HIDE_HELPLINES) == 0);
 	const bool hide_object_extra = (v3d->overlay.flag & V3D_OVERLAY_HIDE_OBJECT_XTRAS) != 0;
 
@@ -2920,7 +2928,7 @@ static void OBJECT_cache_populate(void *vedata, Object *ob)
 			        DRW_object_is_flat(ob, &flat_axis) &&
 			        DRW_object_axis_orthogonal_to_view(ob, flat_axis));
 
-			if (stl->g_data->xray_enabled || is_flat_object_viewed_from_side) {
+			if (stl->g_data->xray_enabled_and_not_wire || is_flat_object_viewed_from_side) {
 				geom = DRW_cache_object_edge_detection_get(ob, NULL);
 			}
 			else {

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 
@@ -1523,7 +1524,7 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph,
 	/* Update animated image textures for particles, modifiers, gpu, etc,
 	 * call this at the start so modifiers with textures don't lag 1 frame.
 	 */
-	BKE_image_update_frame(bmain, scene->r.cfra);
+	BKE_image_editors_update_frame(bmain, scene->r.cfra);
 	BKE_sound_set_cfra(scene->r.cfra);
 	DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
 	/* Update animated cache files for modifiers.
@@ -1801,6 +1802,7 @@ double BKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, doubl
 		case B_UNIT_LENGTH:
 			return value * (double)unit->scale_length;
 		case B_UNIT_AREA:
+		case B_UNIT_POWER:
 			return value * pow(unit->scale_length, 2);
 		case B_UNIT_VOLUME:
 			return value * pow(unit->scale_length, 3);

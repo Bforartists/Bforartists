@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "DRW_engine.h"
@@ -720,11 +721,7 @@ static void EDIT_MESH_draw_scene(void *vedata)
 			DRW_draw_pass(psl->edit_face_overlay);
 		}
 		else {
-			// MULTISAMPLE_SYNC_ENABLE(dfbl, dtxl);
-
 			DRW_draw_pass(psl->edit_face_overlay);
-
-			// MULTISAMPLE_SYNC_DISABLE(dfbl, dtxl)
 		}
 	}
 

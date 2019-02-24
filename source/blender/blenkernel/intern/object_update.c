@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 #include "DNA_anim_types.h"
@@ -105,10 +106,10 @@ void BKE_object_eval_parent(Depsgraph *depsgraph, Object *ob)
 
 	/* origin, for help line */
 	if ((ob->partype & PARTYPE) == PARSKEL) {
-		copy_v3_v3(ob->orig, par->obmat[3]);
+		copy_v3_v3(ob->runtime.parent_display_origin, par->obmat[3]);
 	}
 	else {
-		copy_v3_v3(ob->orig, totmat[3]);
+		copy_v3_v3(ob->runtime.parent_display_origin, totmat[3]);
 	}
 }
 
@@ -151,8 +152,6 @@ void BKE_object_handle_data_update(
         Scene *scene,
         Object *ob)
 {
-	float ctime = BKE_scene_frame_get(scene);
-
 	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* includes all keys and modifiers */
@@ -207,12 +206,6 @@ void BKE_object_handle_data_update(
 
 		case OB_LATTICE:
 			BKE_lattice_modifiers_calc(depsgraph, scene, ob);
-			break;
-
-		case OB_EMPTY:
-			if (ob->empty_drawtype == OB_EMPTY_IMAGE && ob->data)
-				if (BKE_image_is_animated(ob->data))
-					BKE_image_user_check_frame_calc(ob->iuser, (int)ctime);
 			break;
 	}
 
@@ -307,7 +300,7 @@ bool BKE_object_eval_proxy_copy(Depsgraph *depsgraph,
 			mul_m4_m4m4(object->obmat, imat, object->proxy_from->obmat);
 			/* Should always be true. */
 			if (obg->instance_collection) {
-				add_v3_v3(object->obmat[3], obg->instance_collection->dupli_ofs);
+				add_v3_v3(object->obmat[3], obg->instance_collection->instance_offset);
 			}
 		}
 		else {

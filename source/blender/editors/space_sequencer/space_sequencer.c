@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup spseq
+/** \file
+ * \ingroup spseq
  */
 
 
@@ -115,7 +116,7 @@ static SpaceLink *sequencer_new(const ScrArea *UNUSED(sa), const Scene *scene)
 	sseq->chanshown = 0;
 	sseq->view = SEQ_VIEW_SEQUENCE;
 	sseq->mainb = SEQ_DRAW_IMG_IMBUF;
-	sseq->flag = SEQ_SHOW_GPENCIL | SEQ_USE_ALPHA;
+	sseq->flag = SEQ_SHOW_GPENCIL | SEQ_USE_ALPHA | SEQ_SHOW_MARKER_LINES;
 
 	/* header */
 	ar = MEM_callocN(sizeof(ARegion), "header for sequencer");
@@ -431,6 +432,7 @@ static void sequencer_dropboxes(void)
 /* ************* end drop *********** */
 
 /* DO NOT make this static, this hides the symbol and breaks API generation script. */
+extern const char *sequencer_context_dir[];  /* quiet warning. */
 const char *sequencer_context_dir[] = {"edit_mask", NULL};
 
 static int sequencer_context(const bContext *C, const char *member, bContextDataResult *result)

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup DNA
+/** \file
+ * \ingroup DNA
  */
 
 #ifndef __DNA_SCREEN_TYPES_H__
@@ -477,9 +478,10 @@ enum {
 	HEADER_TOOLBAR_MISC = (1 << 17),
 };
 
-#define AREAGRID	4
-#define AREAMINX	32
-#define HEADERY		26
+#define AREAGRID          4
+#define AREAMINX          32
+#define HEADER_PADDING_Y  6
+#define HEADERY           (20 + HEADER_PADDING_Y)
 
 /** #bScreen.flag */
 enum {

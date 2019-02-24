@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  *
  * High level `.blend` file read/write,
  * and functions for writing *partial* files (only selected data-blocks).
@@ -459,23 +460,16 @@ bool BKE_blendfile_read_from_memfile(
 void BKE_blendfile_read_make_empty(bContext *C)
 {
 	Main *bmain = CTX_data_main(C);
-
-	ListBase *lbarray[MAX_LIBARRAY];
 	ID *id;
-	int a;
 
-	a = set_listbasepointers(bmain, lbarray);
-	while (a--) {
-		id = lbarray[a]->first;
-		if (id != NULL) {
-			if (ELEM(GS(id->name), ID_SCE, ID_SCR, ID_WM, ID_WS)) {
-				continue;
-			}
-			while ((id = lbarray[a]->first)) {
-				BKE_id_delete(bmain, id);
-			}
+	FOREACH_MAIN_ID_BEGIN(bmain, id)
+	{
+		if (ELEM(GS(id->name), ID_SCE, ID_SCR, ID_WM, ID_WS)) {
+			break;  /* Only breaks iter on that ID type, and continues with IDs of next type. */
 		}
+		BKE_id_delete(bmain, id);
 	}
+	FOREACH_MAIN_ID_END;
 }
 
 /* only read the userdef from a .blend */
