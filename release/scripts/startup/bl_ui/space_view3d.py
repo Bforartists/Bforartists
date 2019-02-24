@@ -2580,7 +2580,7 @@ class VIEW3D_MT_brush(Menu):
 
         # brush tool
         if context.sculpt_object:
-            layout.operator("brush.reset")
+            layout.operator("brush.reset", icon = "BRUSH_RESET")
             layout.prop_menu_enum(brush, "sculpt_tool")
         elif context.image_paint_object:
             layout.prop_menu_enum(brush, "image_tool")
@@ -2597,7 +2597,9 @@ class VIEW3D_MT_brush(Menu):
             sculpt_tool = brush.sculpt_tool
 
             layout.separator()
-            layout.operator_menu_enum("brush.curve_preset", "shape", text="Curve Preset")
+
+            layout.menu("VIEW3D_MT_brush_curve_presets")
+
             layout.separator()
 
             if sculpt_tool != 'GRAB':
@@ -2615,6 +2617,22 @@ class VIEW3D_MT_brush(Menu):
         layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
 
         layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
+
+class VIEW3D_MT_brush_curve_presets(Menu):
+    bl_label = "Curve Preset"
+
+    def draw(self, context):
+        layout = self.layout
+
+        toolsettings = context.tool_settings.image_paint
+        brush = toolsettings.brush
+
+        layout.operator("brush.curve_preset", icon='SHARPCURVE', text="Sharp").shape = 'SHARP'
+        layout.operator("brush.curve_preset", icon='SMOOTHCURVE', text="Smooth").shape = 'SMOOTH'
+        layout.operator("brush.curve_preset", icon='NOCURVE', text="Max").shape = 'MAX'  
+        layout.operator("brush.curve_preset", icon='LINCURVE', text="Line").shape = 'LINE'         
+        layout.operator("brush.curve_preset", icon='ROOTCURVE', text="Root").shape = 'ROOT'
+        layout.operator("brush.curve_preset", icon='SPHERECURVE', text="Round").shape = 'ROUND'
 
 # Show hide menu for face selection masking
 class VIEW3D_MT_facemask_showhide(Menu):
@@ -6583,6 +6601,7 @@ classes = (
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,
+    VIEW3D_MT_brush_curve_presets,
     VIEW3D_MT_facemask_showhide,
     VIEW3D_MT_brush_paint_modes,
     VIEW3D_MT_paint_vertex,
