@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  */
 
 #include "DRW_render.h"
@@ -25,6 +26,7 @@
 #include "GPU_shader.h"
 
 #include "draw_common.h"
+#include "draw_mode_engines.h"
 
 #include "DNA_mesh_types.h"
 #include "DNA_view3d_types.h"

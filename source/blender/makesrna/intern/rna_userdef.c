@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup RNA
+/** \file
+ * \ingroup RNA
  */
 
 #include <limits.h>
@@ -850,13 +851,13 @@ static void rna_def_userdef_theme_ui_font_style(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Shadow Y Offset", "Shadow offset in pixels");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-	prop = RNA_def_property(srna, "shadow_alpha", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "shadow_alpha", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "shadowalpha");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Shadow Alpha", "");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-	prop = RNA_def_property(srna, "shadow_value", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "shadow_value", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "shadowcolor");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Shadow Brightness", "Shadow color in gray value");
@@ -3712,7 +3713,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 
 	/* View  */
 	prop = RNA_def_property(srna, "ui_scale", PROP_FLOAT, PROP_NONE);
-	RNA_def_property_ui_text(prop, "UI Scale", "Changes the size of the fonts and buttons in the interface");
+	RNA_def_property_ui_text(prop, "UI Scale", "Changes the size of the fonts and widgets in the interface");
 	RNA_def_property_range(prop, 0.25f, 4.0f);
 	RNA_def_property_ui_range(prop, 0.5f, 2.0f, 1, 2);
 	RNA_def_property_float_default(prop, 1.0f);
@@ -3721,7 +3722,8 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "ui_line_width", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_items(prop, line_width);
 	RNA_def_property_ui_text(prop, "UI Line Width",
-	                         "Changes the thickness of lines and points in the interface");
+	                         "Changes the thickness of widget outlines, lines and points in the interface, "
+	                         "for high DPI displays");
 	RNA_def_property_update(prop, 0, "rna_userdef_dpi_update");
 
 	/* display */
@@ -4444,7 +4446,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 	                               "View the result of the studio light editor in the viewport");
 	RNA_def_property_update(prop, 0, "rna_UserDef_viewport_lights_update");
 
-	prop = RNA_def_property(srna, "gl_clip_alpha", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "gl_clip_alpha", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "glalphaclip");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Clip Alpha", "Clip alpha below this threshold in the 3D textured view");

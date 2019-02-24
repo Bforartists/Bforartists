@@ -17,8 +17,9 @@
 #ifndef __BKE_OBJECT_H__
 #define __BKE_OBJECT_H__
 
-/** \file \ingroup bke
- *  \brief General operations, lookup, etc. for blender objects.
+/** \file
+ * \ingroup bke
+ * \brief General operations, lookup, etc. for blender objects.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -192,7 +193,7 @@ void  BKE_object_tfm_restore(struct Object *ob, void *obtfm_pt);
 
 typedef struct ObjectTfmProtectedChannels {
 	float loc[3],     dloc[3];
-	float size[3],    dscale[3];
+	float scale[3],   dscale[3];
 	float rot[3],     drot[3];
 	float quat[4],    dquat[4];
 	float rotAxis[3], drotAxis[3];

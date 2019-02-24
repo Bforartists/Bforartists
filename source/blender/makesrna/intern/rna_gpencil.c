@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup RNA
+/** \file
+ * \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -50,6 +51,12 @@ static const EnumPropertyItem parent_type_items[] = {
 };
 
 #ifndef RNA_RUNTIME
+static EnumPropertyItem rna_enum_gpencil_drawmodes_items[] = {
+	{GP_DRAWMODE_2D, "2D", 0, "2D Layers",	"Draw strokes using grease pencil layers to define order"},
+	{GP_DRAWMODE_3D, "3D", 0, "3D Location", "Draw strokes using real 3D position in 3D space"},
+	{0, NULL, 0, NULL, NULL},
+};
+
 static EnumPropertyItem rna_enum_gpencil_xraymodes_items[] = {
 	{GP_XRAY_FRONT, "FRONT", 0, "Front", "Draw all strokes in front"},
 	{GP_XRAY_3DSPACE, "3DSPACE", 0, "3D Space", "Draw strokes relative to other objects in 3D space"},
@@ -774,19 +781,19 @@ static void rna_def_gpencil_stroke_point(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Coordinates", "");
 	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
 
-	prop = RNA_def_property(srna, "pressure", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "pressure", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pressure");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Pressure", "Pressure of tablet at point when drawing it");
 	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
 
-	prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "strength");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Strength", "Color intensity (alpha factor)");
 	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
 
-	prop = RNA_def_property(srna, "uv_factor", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "uv_factor", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "uv_fac");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "UV Factor", "Internal UV factor");
@@ -899,7 +906,7 @@ static void rna_def_gpencil_mvert_group(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Group Index", "");
 	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
 
-	prop = RNA_def_property(srna, "weight", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "weight", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Weight", "Vertex Weight");
 	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
@@ -1488,6 +1495,14 @@ static void rna_def_gpencil_data(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Materials", "");
 	RNA_def_property_srna(prop, "IDMaterials"); /* see rna_ID.c */
 	RNA_def_property_collection_funcs(prop, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "rna_IDMaterials_assign_int");
+
+	/* draw modes */
+	prop = RNA_def_property(srna, "draw_mode", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "draw_mode");
+	RNA_def_property_enum_items(prop, rna_enum_gpencil_drawmodes_items);
+	RNA_def_property_ui_text(prop, "Mode",
+		"Defines how the strokes are ordered in 3D space");
+	RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, "rna_GPencil_update");
 
 	/* xray modes */
 	prop = RNA_def_property(srna, "xray_mode", PROP_ENUM, PROP_NONE);

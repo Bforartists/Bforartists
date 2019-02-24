@@ -20,7 +20,8 @@
 #ifndef __BKE_LATTICE_H__
 #define __BKE_LATTICE_H__
 
-/** \file \ingroup bke
+/** \file
+ * \ingroup bke
  */
 
 #include "BLI_compiler_attrs.h"
@@ -107,5 +108,8 @@ enum {
 };
 void BKE_lattice_batch_cache_dirty_tag(struct Lattice *lt, int mode);
 void BKE_lattice_batch_cache_free(struct Lattice *lt);
+
+extern void (*BKE_lattice_batch_cache_dirty_tag_cb)(struct Lattice *lt, int mode);
+extern void (*BKE_lattice_batch_cache_free_cb)(struct Lattice *lt);
 
 #endif  /* __BKE_LATTICE_H__ */

@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup RNA
+/** \file
+ * \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -715,7 +716,7 @@ static void rna_def_constrainttarget_bone(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Sub-Target", "Target armature bone");
 	RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_ConstraintTarget_dependency_update");
 
-	prop = RNA_def_property(srna, "weight", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "weight", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "weight");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Blend Weight", "Blending weight of this bone");
@@ -2405,7 +2406,7 @@ static void rna_def_constraint_pivot(BlenderRNA *brna)
 	                         "Offset will be an absolute point in space instead of relative to the target");
 	RNA_def_property_update(prop, NC_OBJECT | ND_CONSTRAINT, "rna_Constraint_update");
 
-	prop = RNA_def_property(srna, "offset", PROP_FLOAT, PROP_XYZ);
+	prop = RNA_def_property(srna, "offset", PROP_FLOAT, PROP_TRANSLATION);
 	RNA_def_property_float_sdna(prop, NULL, "offset");
 	RNA_def_property_ui_text(prop, "Offset",
 	                         "Offset of pivot from target (when set), or from owner's location "

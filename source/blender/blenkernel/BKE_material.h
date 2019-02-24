@@ -20,8 +20,9 @@
 #ifndef __BKE_MATERIAL_H__
 #define __BKE_MATERIAL_H__
 
-/** \file \ingroup bke
- *  \brief General operations, lookup, etc. for materials.
+/** \file
+ * \ingroup bke
+ * \brief General operations, lookup, etc. for materials.
  */
 #ifdef __cplusplus
 extern "C" {
@@ -105,6 +106,8 @@ void paste_matcopybuf(struct Main *bmain, struct Material *ma);
 struct Depsgraph;
 
 void BKE_material_eval(struct Depsgraph *depsgraph, struct Material *material);
+
+extern struct Material defmaterial;
 
 #ifdef __cplusplus
 }

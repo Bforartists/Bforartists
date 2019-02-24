@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup depsgraph
+/** \file
+ * \ingroup depsgraph
  *
  * Methods for constructing depsgraph
  */
@@ -71,6 +72,7 @@ extern "C" {
 #include "BKE_effect.h"
 #include "BKE_collision.h"
 #include "BKE_fcurve.h"
+#include "BKE_image.h"
 #include "BKE_key.h"
 #include "BKE_material.h"
 #include "BKE_mball.h"
@@ -708,6 +710,8 @@ void DepsgraphRelationBuilder::build_object(Base *base, Object *object)
 	                             OperationCode::SYNCHRONIZE_TO_ORIGINAL);
 	add_relation(
 	        final_transform_key, synchronize_key, "Synchronize to Original");
+	/* Parameters. */
+	build_parameters(&object->id);
 }
 
 void DepsgraphRelationBuilder::build_object_flags(Base *base, Object *object)
@@ -804,8 +808,8 @@ void DepsgraphRelationBuilder::build_object_data_lamp(Object *object)
 {
 	Lamp *lamp = (Lamp *)object->data;
 	build_lamp(lamp);
-	ComponentKey object_parameters_key(&object->id, NodeType::PARAMETERS);
 	ComponentKey lamp_parameters_key(&lamp->id, NodeType::PARAMETERS);
+	ComponentKey object_parameters_key(&object->id, NodeType::PARAMETERS);
 	add_relation(lamp_parameters_key, object_parameters_key, "Light -> Object");
 }
 
@@ -1198,6 +1202,8 @@ void DepsgraphRelationBuilder::build_constraints(ID *id,
 
 void DepsgraphRelationBuilder::build_animdata(ID *id)
 {
+	/* Images. */
+	build_animation_images(id);
 	/* Animation curves and NLA. */
 	build_animdata_curves(id);
 	/* Drivers. */
@@ -1213,10 +1219,19 @@ void DepsgraphRelationBuilder::build_animdata_curves(ID *id)
 	if (adt->action != NULL) {
 		build_action(adt->action);
 	}
-	if (adt->action == NULL && adt->nla_tracks.first == NULL) {
+	if (adt->action == NULL && BLI_listbase_is_empty(&adt->nla_tracks)) {
 		return;
 	}
-	/* Wire up dependency to time source. */
+	/* Ensure evaluation order from entry to exit. */
+	OperationKey animation_entry_key(
+	        id, NodeType::ANIMATION, OperationCode::ANIMATION_ENTRY);
+	OperationKey animation_eval_key(
+	        id, NodeType::ANIMATION, OperationCode::ANIMATION_EVAL);
+	OperationKey animation_exit_key(
+	        id, NodeType::ANIMATION, OperationCode::ANIMATION_EXIT);
+	add_relation(animation_entry_key, animation_eval_key, "Init -> Eval");
+	add_relation(animation_eval_key, animation_exit_key, "Eval -> Exit");
+	/* Wire up dependency from action. */
 	ComponentKey adt_key(id, NodeType::ANIMATION);
 	/* Relation from action itself. */
 	if (adt->action != NULL) {
@@ -1233,14 +1248,12 @@ void DepsgraphRelationBuilder::build_animdata_curves(ID *id)
 	BLI_assert(operation_from != NULL);
 	/* Build relations from animation operation to properties it changes. */
 	if (adt->action != NULL) {
-		build_animdata_curves_targets(id, adt_key,
-	                              operation_from,
-	                              &adt->action->curves);
+		build_animdata_curves_targets(
+		        id, adt_key, operation_from, &adt->action->curves);
 	}
 	LISTBASE_FOREACH(NlaTrack *, nlt, &adt->nla_tracks) {
-		build_animdata_nlastrip_targets(id, adt_key,
-		                                operation_from,
-		                                &nlt->strips);
+		build_animdata_nlastrip_targets(
+		        id, adt_key, operation_from, &nlt->strips);
 	}
 }
 
@@ -1256,8 +1269,8 @@ void DepsgraphRelationBuilder::build_animdata_curves_targets(
 		PointerRNA ptr;
 		PropertyRNA *prop;
 		int index;
-		if (!RNA_path_resolve_full(&id_ptr, fcu->rna_path,
-		                           &ptr, &prop, &index))
+		if (!RNA_path_resolve_full(
+		        &id_ptr, fcu->rna_path,  &ptr, &prop, &index))
 		{
 			continue;
 		}
@@ -1271,9 +1284,8 @@ void DepsgraphRelationBuilder::build_animdata_curves_targets(
 		 * each of the bones. Bone evaluation could only start from pose
 		 * init anyway. */
 		if (operation_to->opcode == OperationCode::BONE_LOCAL) {
-			OperationKey pose_init_key(id,
-			                           NodeType::EVAL_POSE,
-			                           OperationCode::POSE_INIT);
+			OperationKey pose_init_key(
+			        id, NodeType::EVAL_POSE, OperationCode::POSE_INIT);
 			add_relation(adt_key,
 			             pose_init_key,
 			             "Animation -> Prop",
@@ -1288,8 +1300,7 @@ void DepsgraphRelationBuilder::build_animdata_curves_targets(
 		const IDNode *id_node_from = operation_from->owner->owner;
 		const IDNode *id_node_to = operation_to->owner->owner;
 		if (id_node_from != id_node_to) {
-			ComponentKey cow_key(id_node_to->id_orig,
-			                     NodeType::COPY_ON_WRITE);
+			ComponentKey cow_key(id_node_to->id_orig, NodeType::COPY_ON_WRITE);
 			add_relation(cow_key,
 			             adt_key,
 			             "Animated CoW -> Animation",
@@ -1310,14 +1321,12 @@ void DepsgraphRelationBuilder::build_animdata_nlastrip_targets(
 			ComponentKey action_key(&strip->act->id, NodeType::ANIMATION);
 			add_relation(action_key, adt_key, "Action -> Animation");
 
-			build_animdata_curves_targets(id, adt_key,
-			                              operation_from,
-			                              &strip->act->curves);
+			build_animdata_curves_targets(
+			        id, adt_key, operation_from, &strip->act->curves);
 		}
 		else if (strip->strips.first != NULL) {
-			build_animdata_nlastrip_targets(id, adt_key,
-			                                operation_from,
-			                                &strip->strips);
+			build_animdata_nlastrip_targets(
+			        id, adt_key, operation_from, &strip->strips);
 		}
 	}
 }
@@ -1387,6 +1396,18 @@ void DepsgraphRelationBuilder::build_animdata_drivers(ID *id)
 		if (adt->action || adt->nla_tracks.first) {
 			add_relation(adt_key, driver_key, "AnimData Before Drivers");
 		}
+	}
+}
+
+void DepsgraphRelationBuilder::build_animation_images(ID *id)
+{
+	/* TODO: can we check for existance of node for performance? */
+	if (BKE_image_user_id_has_animation(id)) {
+		OperationKey image_animation_key(id,
+		                                 NodeType::ANIMATION,
+		                                 OperationCode::IMAGE_ANIMATION);
+		TimeSourceKey time_src_key;
+		add_relation(time_src_key, image_animation_key, "TimeSrc -> Image Animation");
 	}
 }
 
@@ -1604,6 +1625,20 @@ void DepsgraphRelationBuilder::build_driver_variables(ID *id, FCurve *fcu)
 		}
 		DRIVER_TARGETS_LOOPER_END;
 	}
+}
+
+void DepsgraphRelationBuilder::build_parameters(ID *id)
+{
+	OperationKey parameters_entry_key(
+	        id, NodeType::PARAMETERS, OperationCode::PARAMETERS_ENTRY);
+	OperationKey parameters_eval_key(
+	        id, NodeType::PARAMETERS, OperationCode::PARAMETERS_EVAL);
+	OperationKey parameters_exit_key(
+	        id, NodeType::PARAMETERS, OperationCode::PARAMETERS_EXIT);
+	add_relation(
+	        parameters_entry_key, parameters_eval_key, "Entry -> Eval");
+	add_relation(
+	        parameters_eval_key, parameters_exit_key, "Entry -> Exit");
 }
 
 void DepsgraphRelationBuilder::build_world(World *world)

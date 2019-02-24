@@ -18,7 +18,8 @@
  * Implements the Sculpt Mode tools
  */
 
-/** \file \ingroup edsculpt
+/** \file
+ * \ingroup edsculpt
  */
 
 
@@ -4411,12 +4412,12 @@ static void sculpt_update_cache_invariants(
 	else {
 		max_scale = 0.0f;
 		for (i = 0; i < 3; i ++) {
-			max_scale = max_ff(max_scale, fabsf(ob->size[i]));
+			max_scale = max_ff(max_scale, fabsf(ob->scale[i]));
 		}
 	}
-	cache->scale[0] = max_scale / ob->size[0];
-	cache->scale[1] = max_scale / ob->size[1];
-	cache->scale[2] = max_scale / ob->size[2];
+	cache->scale[0] = max_scale / ob->scale[0];
+	cache->scale[1] = max_scale / ob->scale[1];
+	cache->scale[2] = max_scale / ob->scale[2];
 
 	cache->plane_trim_squared = brush->plane_trim * brush->plane_trim;
 
@@ -5156,7 +5157,7 @@ static void sculpt_stroke_update_step(bContext *C, struct PaintStroke *UNUSED(st
 	sculpt_restore_mesh(sd, ob);
 
 	if (sd->flags & (SCULPT_DYNTOPO_DETAIL_CONSTANT | SCULPT_DYNTOPO_DETAIL_MANUAL)) {
-		float object_space_constant_detail = mat4_to_scale(ob->obmat) / sd->constant_detail;
+		float object_space_constant_detail = 1.0f / (sd->constant_detail * mat4_to_scale(ob->obmat));
 		BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
 	}
 	else if (sd->flags & SCULPT_DYNTOPO_DETAIL_BRUSH) {
@@ -5880,7 +5881,7 @@ void ED_object_sculptmode_enter_ex(
 		BKE_sculpt_mask_layers_ensure(ob, mmd);
 	}
 
-	if (!(fabsf(ob->size[0] - ob->size[1]) < 1e-4f && fabsf(ob->size[1] - ob->size[2]) < 1e-4f)) {
+	if (!(fabsf(ob->scale[0] - ob->scale[1]) < 1e-4f && fabsf(ob->scale[1] - ob->scale[2]) < 1e-4f)) {
 		BKE_report(reports, RPT_WARNING,
 		           "Object has non-uniform scale, sculpting may be unpredictable");
 	}
@@ -6103,7 +6104,7 @@ static int sculpt_detail_flood_fill_exec(bContext *C, wmOperator *UNUSED(op))
 	size = max_fff(dim[0], dim[1], dim[2]);
 
 	/* update topology size */
-	float object_space_constant_detail = mat4_to_scale(ob->obmat) / sd->constant_detail;
+	float object_space_constant_detail = 1.0f / (sd->constant_detail * mat4_to_scale(ob->obmat));
 	BKE_pbvh_bmesh_detail_size_set(ss->pbvh, object_space_constant_detail);
 
 	sculpt_undo_push_begin("Dynamic topology flood fill");

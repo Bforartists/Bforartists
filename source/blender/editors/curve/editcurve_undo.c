@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup edcurve
+/** \file
+ * \ingroup edcurve
  */
 
 #include "MEM_guardedalloc.h"
@@ -34,6 +35,7 @@
 #include "BKE_curve.h"
 #include "BKE_fcurve.h"
 #include "BKE_layer.h"
+#include "BKE_main.h"
 #include "BKE_undo_system.h"
 
 #include "DEG_depsgraph.h"
@@ -71,7 +73,7 @@ typedef struct {
 	size_t undo_size;
 } UndoCurve;
 
-static void undocurve_to_editcurve(UndoCurve *ucu, Curve *cu, short *r_shapenr)
+static void undocurve_to_editcurve(Main *bmain, UndoCurve *ucu, Curve *cu, short *r_shapenr)
 {
 	ListBase *undobase = &ucu->nubase;
 	ListBase *editbase = BKE_curve_editNurbs_get(cu);
@@ -111,7 +113,7 @@ static void undocurve_to_editcurve(UndoCurve *ucu, Curve *cu, short *r_shapenr)
 	cu->actnu = ucu->actnu;
 	cu->flag = ucu->flag;
 	*r_shapenr = ucu->obedit.shapenr;
-	ED_curve_updateAnimPaths(cu);
+	ED_curve_updateAnimPaths(bmain, cu);
 }
 
 static void undocurve_from_editcurve(UndoCurve *ucu, Curve *cu, const short shapenr)
@@ -234,7 +236,7 @@ static bool curve_undosys_step_encode(struct bContext *C, struct Main *UNUSED(bm
 	return true;
 }
 
-static void curve_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bmain), UndoStep *us_p, int UNUSED(dir))
+static void curve_undosys_step_decode(struct bContext *C, struct Main *bmain, UndoStep *us_p, int UNUSED(dir))
 {
 	CurveUndoStep *us = (CurveUndoStep *)us_p;
 
@@ -254,7 +256,7 @@ static void curve_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bm
 			           us_p->name, obedit->id.name);
 			continue;
 		}
-		undocurve_to_editcurve(&elem->data, obedit->data, &obedit->shapenr);
+		undocurve_to_editcurve(bmain, &elem->data, obedit->data, &obedit->shapenr);
 		DEG_id_tag_update(&obedit->id, ID_RECALC_GEOMETRY);
 	}
 

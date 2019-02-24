@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup RNA
+/** \file
+ * \ingroup RNA
  */
 
 #include <stdlib.h>
@@ -885,31 +886,31 @@ static void rna_def_collision(BlenderRNA *brna)
 
 	/* Particle Interaction */
 
-	prop = RNA_def_property(srna, "damping_factor", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "damping_factor", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_damp");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Damping Factor", "Amount of damping during particle collision");
 	RNA_def_property_update(prop, 0, "rna_CollisionSettings_update");
 
-	prop = RNA_def_property(srna, "damping_random", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "damping_random", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_rdamp");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Random Damping", "Random variation of damping");
 	RNA_def_property_update(prop, 0, "rna_CollisionSettings_update");
 
-	prop = RNA_def_property(srna, "friction_factor", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "friction_factor", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_frict");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Friction Factor", "Amount of friction during particle collision");
 	RNA_def_property_update(prop, 0, "rna_CollisionSettings_update");
 
-	prop = RNA_def_property(srna, "friction_random", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "friction_random", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_rfrict");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Random Friction", "Random variation of friction");
 	RNA_def_property_update(prop, 0, "rna_CollisionSettings_update");
 
-	prop = RNA_def_property(srna, "permeability", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "permeability", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_perm");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Permeability", "Chance that the particle will pass through the mesh");
@@ -940,7 +941,7 @@ static void rna_def_collision(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Outer Thickness", "Outer face thickness");
 	RNA_def_property_update(prop, 0, "rna_CollisionSettings_update");
 
-	prop = RNA_def_property(srna, "damping", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "damping", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "pdef_sbdamp");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Damping", "Amount of damping during collision");
@@ -1263,13 +1264,13 @@ static void rna_def_field(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Falloff Power", "How quickly strength falls off with distance from the force field");
 	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
 
-	prop = RNA_def_property(srna, "distance_min", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "distance_min", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "mindist");
 	RNA_def_property_range(prop, 0.0f, 1000.0f);
 	RNA_def_property_ui_text(prop, "Minimum Distance", "Minimum distance for the field's fall-off");
 	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
 
-	prop = RNA_def_property(srna, "distance_max", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "distance_max", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "maxdist");
 	RNA_def_property_range(prop, 0.0f, FLT_MAX);
 	RNA_def_property_ui_range(prop, 0.0f, 1000.0f, 1.0f, 3);
@@ -1507,7 +1508,7 @@ static void rna_def_softbody(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Friction", "General media friction for point movements");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 
-	prop = RNA_def_property(srna, "mass", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "mass", PROP_FLOAT, PROP_UNIT_MASS);
 	RNA_def_property_float_sdna(prop, NULL, "nodemass");
 	RNA_def_property_range(prop, 0.0f, 50000.0f);
 	RNA_def_property_ui_text(prop, "Mass", "General Mass value");
@@ -1542,19 +1543,19 @@ static void rna_def_softbody(BlenderRNA *brna)
 	                              "rna_SoftBodySettings_goal_vgroup_set");
 	RNA_def_property_ui_text(prop, "Goal Vertex Group", "Control point weight values");
 
-	prop = RNA_def_property(srna, "goal_min", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "goal_min", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "mingoal");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Goal Minimum", "Goal minimum, vertex weights are scaled to match this range");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 
-	prop = RNA_def_property(srna, "goal_max", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "goal_max", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "maxgoal");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Goal Maximum", "Goal maximum, vertex weights are scaled to match this range");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 
-	prop = RNA_def_property(srna, "goal_default", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "goal_default", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "defgoal");
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
@@ -1618,7 +1619,7 @@ static void rna_def_softbody(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Bending", "Bending Stiffness");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 
-	prop = RNA_def_property(srna, "shear", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "shear", PROP_FLOAT, PROP_FACTOR);
 	RNA_def_property_float_sdna(prop, NULL, "shearstiff");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Shear", "Shear Stiffness");
@@ -1638,7 +1639,7 @@ static void rna_def_softbody(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Collision Type", "Choose Collision Type");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 
-	prop = RNA_def_property(srna, "ball_size", PROP_FLOAT, PROP_NONE);
+	prop = RNA_def_property(srna, "ball_size", PROP_FLOAT, PROP_DISTANCE);
 	RNA_def_property_float_sdna(prop, NULL, "colball");
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE); /* code is not ready for that yet */
 	RNA_def_property_range(prop, -10.0f, 10.0f);

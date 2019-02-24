@@ -14,7 +14,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/** \file \ingroup pythonintern
+/** \file
+ * \ingroup pythonintern
  *
  * This file defines the '_bpy' module which is used by python's 'bpy' package
  * to access C defined builtin functions.
@@ -293,7 +294,6 @@ static PyObject *bpy_import_test(const char *modname)
  ******************************************************************************/
 void BPy_init_modules(void)
 {
-	extern BPy_StructRNA *bpy_context_module;
 	PointerRNA ctx_ptr;
 	PyObject *mod;
 

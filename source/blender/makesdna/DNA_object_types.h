@@ -17,8 +17,9 @@
  * All rights reserved.
  */
 
-/** \file \ingroup DNA
- *  \brief Object is a sort of wrapper for general info.
+/** \file
+ * \ingroup DNA
+ * \brief Object is a sort of wrapper for general info.
  */
 
 #ifndef __DNA_OBJECT_TYPES_H__
@@ -57,7 +58,7 @@ typedef struct bDeformGroup {
 	/** MAX_VGROUP_NAME. */
 	char name[64];
 	/* need this flag for locking weights */
-	char flag, pad[7];
+	char flag, _pad0[7];
 } bDeformGroup;
 
 /* Face Maps*/
@@ -66,7 +67,7 @@ typedef struct bFaceMap {
 	/** MAX_VGROUP_NAME. */
 	char name[64];
 	char flag;
-	char pad[7];
+	char _pad0[7];
 } bFaceMap;
 
 #define MAX_VGROUP_NAME 64
@@ -97,7 +98,8 @@ typedef struct bFaceMap {
  */
 typedef struct BoundBox {
 	float vec[8][3];
-	int flag, pad;
+	int flag;
+	char _pad0[4];
 } BoundBox;
 
 /* boundbox flag */
@@ -110,7 +112,8 @@ typedef struct LodLevel {
 	struct LodLevel *next, *prev;
 	struct Object *source;
 	int flags;
-	float distance, pad;
+	float distance;
+	char _pad0[4];
 	int obhysteresis;
 } LodLevel;
 
@@ -126,6 +129,15 @@ typedef struct Object_Runtime {
 	 * to calculate mesh_eval and mesh_deform_eval.
 	 */
 	uint64_t last_data_mask;
+
+	/** Did last modifier stack generation need mapping support? */
+	char last_need_mapping;
+
+	char _pad0[3];
+
+	/** Only used for drawing the parent/child help-line. */
+	float parent_display_origin[3];
+
 
 	/** Axis aligned boundbox (in localspace). */
 	struct BoundBox *bb;
@@ -155,9 +167,6 @@ typedef struct Object_Runtime {
 
 	struct ObjectBBoneDeform *cached_bbone_deformation;
 
-	/** Did last modifier stack generation need mapping support? */
-	char last_need_mapping;
-	char pad[7];
 } Object_Runtime;
 
 typedef struct Object {
@@ -195,7 +204,7 @@ typedef struct Object {
 	bAnimVizSettings avs;
 	/** Motion path cache for this object. */
 	bMotionPath *mpath;
-	void *pad1;
+	void *_pad0;
 
 	ListBase constraintChannels  DNA_DEPRECATED; // XXX deprecated... old animation system
 	ListBase effect  DNA_DEPRECATED;             // XXX deprecated... keep for readfile
@@ -225,9 +234,9 @@ typedef struct Object {
 	int actcol;
 
 	/* rot en drot have to be together! (transform('r' en 's')) */
-	float loc[3], dloc[3], orig[3];
-	/** Scale in fact. */
-	float size[3];
+	float loc[3], dloc[3];
+	/** Scale (can be negative). */
+	float scale[3];
 	/** DEPRECATED, 2.60 and older only. */
 	float dsize[3] DNA_DEPRECATED ;
 	/** Ack!, changing. */
@@ -275,9 +284,8 @@ typedef struct Object {
 	short trackflag, upflag;
 	/** Used for DopeSheet filtering settings (expanded/collapsed). */
 	short nlaflag;
-	short pad[2];
 
-	char pad12;
+	char _pad1;
 	char duplicator_visibility_flag;
 
 	/* Depsgraph */
@@ -312,16 +320,22 @@ typedef struct Object {
 	unsigned short actdef;
 	/** Current face map, note: index starts at 1. */
 	unsigned short actfmap;
-	unsigned char pad5[2];
-	/** Object color. */
-	float col[4];
+	char _pad2[2];
+	/** Object color (in most cases the material color is used for drawing). */
+	float color[4];
+
+	/** Softbody settings. */
+	short softflag;
 
 	/** For restricting view, select, render etc. accessible in outliner. */
 	char restrictflag;
-	char pad3;
-	/** Softbody settings. */
-	short softflag;
-	int pad2;
+
+	/** Flag for pinning. */
+	char  shapeflag;
+	/** Current shape key for menu or pinned. */
+	short shapenr;
+
+	char _pad3[2];
 
 	/** Object constraints. */
 	ListBase constraints;
@@ -336,21 +350,11 @@ typedef struct Object {
 	struct SoftBody *soft;
 	/** Object duplicator for group. */
 	struct Collection *instance_collection;
-	void *pad10;
-
-	char  pad4;
-	/** Flag for pinning. */
-	char  shapeflag;
-	/** Current shape key for menu or pinned. */
-	short shapenr;
-	/** Smoothresh is phong interpolation ray_shadow correction in render. */
-	float smoothresh;
 
 	/** If fluidsim enabled, store additional settings. */
 	struct FluidsimSettings *fluidsimSettings;
 
 	struct DerivedMesh *derivedDeform, *derivedFinal;
-	void *pad7;
 
 	ListBase pc_ids;
 
@@ -365,7 +369,9 @@ typedef struct Object {
 	ImageUser *iuser;
 	char empty_image_visibility_flag;
 	char empty_image_depth;
-	char pad11[6];
+	char _pad8[2];
+
+	int select_id;
 
 	/** Contains data for levels of detail. */
 	ListBase lodlevels;
@@ -373,10 +379,7 @@ typedef struct Object {
 
 	struct PreviewImage *preview;
 
-	int pad6;
-	int select_color;
-
-	/* Runtime evaluation data (keep last). */
+	/** Runtime evaluation data (keep last). */
 	Object_Runtime runtime;
 } Object;
 

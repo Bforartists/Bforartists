@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup depsgraph
+/** \file
+ * \ingroup depsgraph
  */
 
 #include "intern/node/deg_node_component.h"
@@ -163,7 +164,7 @@ OperationNode *ComponentNode::find_operation(OperationIDKey key) const
 		for (OperationNode *op_node : operations) {
 			if (op_node->opcode == key.opcode &&
 			    op_node->name_tag == key.name_tag &&
-			    STREQ(op_node->name, key.name))
+			    STREQ(op_node->name.c_str(), key.name))
 			{
 				node = op_node;
 				break;

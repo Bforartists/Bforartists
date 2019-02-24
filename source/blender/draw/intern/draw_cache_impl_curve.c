@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup draw
+/** \file
+ * \ingroup draw
  *
  * \brief Curve API for render engines
  */
@@ -738,8 +739,12 @@ static void curve_create_edit_data_and_handles(
 	for (Nurb *nu = rdata->nurbs->first; nu; nu = nu->next, nu_id++) {
 		const BezTriple *bezt = nu->bezt;
 		const BPoint *bp = nu->bp;
-		if (bezt && bezt->hide == false) {
+		if (bezt) {
 			for (int a = 0; a < nu->pntsu; a++, bezt++) {
+				if (bezt->hide == true) {
+					continue;
+				}
+
 				if (elbp_verts) {
 					GPU_indexbuf_add_point_vert(elbp_verts, vbo_len_used + 1);
 				}
@@ -769,14 +774,17 @@ static void curve_create_edit_data_and_handles(
 		else if (bp) {
 			int pt_len = nu->pntsu * nu->pntsv;
 			for (int a = 0; a < pt_len; a++, bp++) {
+				if (bp->hide == true) {
+					continue;
+				}
 				int u = (a % nu->pntsu);
 				int v = (a / nu->pntsu);
 				/* Use indexed rendering for bezier.
 				 * Specify all points and use indices to hide/show. */
-				if (elbp_verts && bp->hide == false) {
+				if (elbp_verts) {
 					GPU_indexbuf_add_point_vert(elbp_verts, vbo_len_used);
 				}
-				if (elbp_lines && bp->hide == false) {
+				if (elbp_lines) {
 					const BPoint *bp_next_u = (u < (nu->pntsu - 1)) ? &nu->bp[a + 1] : NULL;
 					const BPoint *bp_next_v = (v < (nu->pntsv - 1)) ? &nu->bp[a + nu->pntsu] : NULL;
 					if (bp_next_u && (bp_next_u->hide == false)) {

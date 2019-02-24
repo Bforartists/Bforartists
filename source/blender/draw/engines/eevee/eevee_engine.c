@@ -16,7 +16,8 @@
  * Copyright 2016, Blender Foundation.
  */
 
-/** \file \ingroup draw_engine
+/** \file
+ * \ingroup draw_engine
  */
 
 #include "DRW_render.h"
@@ -29,6 +30,8 @@
 #include "DNA_world_types.h"
 
 #include "eevee_private.h"
+
+#include "eevee_engine.h"  /* own include */
 
 #define EEVEE_ENGINE "BLENDER_EEVEE"
 

@@ -17,7 +17,8 @@
  * All rights reserved.
  */
 
-/** \file \ingroup depsgraph
+/** \file
+ * \ingroup depsgraph
  */
 
 #pragma once
@@ -237,10 +238,12 @@ struct DepsgraphRelationBuilder
 	                                     OperationNode *operation_from,
 	                                     ListBase *strips);
 	void build_animdata_drivers(ID *id);
+	void build_animation_images(ID *id);
 	void build_action(bAction *action);
 	void build_driver(ID *id, FCurve *fcurve);
 	void build_driver_data(ID *id, FCurve *fcurve);
 	void build_driver_variables(ID *id, FCurve *fcurve);
+	void build_parameters(ID *id);
 	void build_world(World *world);
 	void build_rigidbody(Scene *scene);
 	void build_particle_systems(Object *object);
