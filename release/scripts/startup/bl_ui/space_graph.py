@@ -348,23 +348,23 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
         layout.menu("GRAPH_MT_key_snap")
-        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
+        layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
+
         layout.operator_menu_enum("graph.keyframe_insert", "type")
         layout.operator_menu_enum("graph.fmodifier_add", "type")
         layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
+
         layout.operator("graph.frame_jump", icon = "CENTER")
 
         layout.separator()
+
         layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
         layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
         layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
-
-
-
         layout.operator("graph.duplicate_move", icon = "DUPLICATE")
         layout.operator("graph.delete", icon = "DELETE")
         layout.separator()
@@ -381,7 +381,22 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake", icon = "BAKE_CURVE")
 
         layout.separator()
+
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+
+
+class GRAPH_MT_key_mirror(Menu):
+    bl_label = "Mirror"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.mirror", text="By Times over Current Frame", icon = "MIRROR_TIME").type = 'CFRA'
+        layout.operator("graph.mirror", text="By Values over Cursor Value", icon = "MIRROR_CURSORVALUE").type = 'VALUE'
+        layout.operator("graph.mirror", text="By Times over Time=0", icon = "MIRROR_TIME").type = 'YAXIS'
+        layout.operator("graph.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
+        layout.operator("graph.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
+
 
 class GRAPH_MT_key_snap(Menu):
     bl_label = "Snap"
@@ -533,6 +548,7 @@ classes = (
     GRAPH_MT_channel_extrapolation,
     GRAPH_MT_channel_move,
     GRAPH_MT_key,
+    GRAPH_MT_key_mirror,
     GRAPH_MT_key_snap,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
