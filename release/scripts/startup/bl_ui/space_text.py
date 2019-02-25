@@ -295,7 +295,8 @@ class TEXT_MT_format(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("text.convert_whitespace", "type")
+        layout.operator("text.convert_whitespace", text = "Whitespace to Spaces", icon = "WHITESPACE_SPACES").type = 'SPACES'
+        layout.operator("text.convert_whitespace", text = "Whitespace to Tabs", icon = "WHITESPACE_TABS").type = 'TABS'
 
 
 class TEXT_MT_edit_to3d(Menu):
