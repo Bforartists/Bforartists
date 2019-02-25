@@ -76,7 +76,7 @@ class R3DV_OT_reset3dview(bpy.types.Operator):
         return {'FINISHED'}
     
 def menu_func(self, context):
-    self.layout.operator(R3DV_OT_reset3dview.bl_idname)
+    self.layout.operator(R3DV_OT_reset3dview.bl_idname, icon ="VIEW_RESET")
     
 # store keymaps here to access after registration
 addon_keymaps = []
@@ -114,6 +114,5 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-            
             
             
