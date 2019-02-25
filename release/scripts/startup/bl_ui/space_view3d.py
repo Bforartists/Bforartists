@@ -763,6 +763,7 @@ class VIEW3D_MT_view_align(Menu):
         layout.separator()
 
         layout.operator("view3d.view_lock_to_active", icon = "LOCKTOACTIVE")
+        layout.operator("view3d.view_center_lock", icon = "LOCKTOCENTER")
         layout.operator("view3d.view_lock_clear", icon = "LOCK_CLEAR")
 
         layout.separator()
