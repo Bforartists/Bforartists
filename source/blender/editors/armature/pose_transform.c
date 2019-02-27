@@ -875,7 +875,7 @@ void POSE_OT_rot_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Pose Rotation";
 	ot->idname = "POSE_OT_rot_clear";
-	ot->description = "Clear Pose Rotatio\nReset rotations of selected bones to their default values";
+	ot->description = "Clear Pose Rotation\nReset rotations of selected bones to their default values";
 
 	/* api callbacks */
 	ot->exec = pose_clear_rot_exec;
@@ -917,7 +917,7 @@ void POSE_OT_transforms_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Pose Transforms";
 	ot->idname = "POSE_OT_transforms_clear";
-	ot->description = "Reset location, rotation, and scaling of selected bones to their default values";
+	ot->description = "Clear Pose Transforms\nReset location, rotation, and scaling of selected bones to their default values";
 
 	/* api callbacks */
 	ot->exec = pose_clear_transforms_exec;
