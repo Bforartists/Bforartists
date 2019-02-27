@@ -222,13 +222,13 @@ class OUTLINER_MT_edit_datablocks(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("outliner.keyingset_add_selected")
-        layout.operator("outliner.keyingset_remove_selected")
+        layout.operator("outliner.keyingset_add_selected", icon = "KEYINGSET")
+        layout.operator("outliner.keyingset_remove_selected", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("outliner.drivers_add_selected")
-        layout.operator("outliner.drivers_delete_selected")
+        layout.operator("outliner.drivers_add_selected", icon = "DRIVER")
+        layout.operator("outliner.drivers_delete_selected", icon = "DELETE")
 
 
 class OUTLINER_MT_collection_view_layer(Menu):
