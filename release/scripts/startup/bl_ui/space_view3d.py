@@ -4634,8 +4634,8 @@ class VIEW3D_MT_gpencil_autoweights(Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("gpencil.generate_weights", text="With Empty Groups", icon = "ADD").mode = 'NAME'
-        layout.operator("gpencil.generate_weights", text="With Automatic Weights").mode = 'AUTO'
+        layout.operator("gpencil.generate_weights", text="With Empty Groups", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
+        layout.operator("gpencil.generate_weights", text="With Automatic Weights", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
 
 
 class VIEW3D_MT_gpencil_simplify(Menu):
