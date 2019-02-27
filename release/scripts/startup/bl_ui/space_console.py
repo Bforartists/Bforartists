@@ -90,9 +90,7 @@ class CONSOLE_MT_console(Menu):
 
         layout.separator()
 
-        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
+        layout.menu("INFO_MT_area")
         
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
