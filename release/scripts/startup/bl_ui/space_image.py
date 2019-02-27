@@ -246,7 +246,7 @@ class IMAGE_MT_image(Menu):
         layout.operator("image.new", text="New", icon='IMAGE_DATA')
         layout.operator("image.open", text="Open...", icon='FILE_FOLDER')
 
-        layout.operator("image.read_viewlayers")
+        layout.operator("image.read_viewlayers", icon = "RENDERLAYERS")
 
         if ima:
             layout.separator()
@@ -255,7 +255,7 @@ class IMAGE_MT_image(Menu):
                 layout.operator("image.replace", text="Replace", icon='FILE_FOLDER')
                 layout.operator("image.reload", text="Reload",icon = "FILE_REFRESH")
 
-            layout.operator("image.external_edit", text="Edit Externally")
+            layout.operator("image.external_edit", text="Edit Externally", icon = "EDIT_EXTERNAL")
 
         layout.separator()
 
@@ -277,7 +277,7 @@ class IMAGE_MT_image(Menu):
             if not show_render:
                 if not ima.packed_file:
                     layout.separator()
-                    layout.operator("image.pack", text="Pack")
+                    layout.operator("image.pack", text="Pack", icon = "PACKAGE")
 
                 # Only for dirty && specific image types, perhaps
                 # this could be done in operator poll too.
@@ -285,7 +285,7 @@ class IMAGE_MT_image(Menu):
                     if ima.source in {'FILE', 'GENERATED'} and ima.type != 'OPEN_EXR_MULTILAYER':
                         if ima.packed_file:
                             layout.separator()
-                        layout.operator("image.pack", text="Pack As PNG").as_png = True
+                        layout.operator("image.pack", text="Pack As PNG", icon = "PACKAGE").as_png = True
 
 
 class IMAGE_MT_image_invert(Menu):
