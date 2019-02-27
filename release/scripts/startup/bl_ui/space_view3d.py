@@ -4856,7 +4856,7 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.reproject")
+        layout.operator("gpencil.reproject", icon = "REPROJECT")
 
 
 class VIEW3D_MT_edit_gpencil_interpolate(Menu):
