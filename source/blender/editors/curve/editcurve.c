@@ -3758,11 +3758,11 @@ static int set_spline_type_exec(bContext *C, wmOperator *op)
 void CURVE_OT_spline_type_set(wmOperatorType *ot)
 {
 	static const EnumPropertyItem type_items[] = {
-		{CU_POLY, "POLY", 0, "Poly", ""},
-		{CU_BEZIER, "BEZIER", 0, "Bezier", ""},
+		{CU_POLY, "POLY", ICON_MESH_DATA, "Poly", ""},
+		{CU_BEZIER, "BEZIER", ICON_CURVE_DATA, "Bezier", ""},
 //		{CU_CARDINAL, "CARDINAL", 0, "Cardinal", ""},
 //		{CU_BSPLINE, "B_SPLINE", 0, "B-Spline", ""},
-		{CU_NURBS, "NURBS", 0, "NURBS", ""},
+		{CU_NURBS, "NURBS", ICON_CURVE_DATA, "NURBS", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 
