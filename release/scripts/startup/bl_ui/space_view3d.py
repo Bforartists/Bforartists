@@ -1890,7 +1890,7 @@ class VIEW3D_MT_origin_set(Menu):
         layout.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text = "Origin to Geometry").type='ORIGIN_GEOMETRY'
         layout.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text = "Origin to 3D Cursor").type='ORIGIN_CURSOR'
         layout.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text = "Origin to Center of Mass (Surface)").type='ORIGIN_CENTER_OF_MASS'
-        layout.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text = "Origin to Center of Mass (Volume)").type='ORIGIN_CENTER_OF_VOLUME'
+        layout.operator("object.origin_set", icon ='ORIGIN_TO_VOLUME', text = "Origin to Center of Mass (Volume)").type='ORIGIN_CENTER_OF_VOLUME'
 
 
 # ********** Object menu **********
