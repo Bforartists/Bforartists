@@ -3909,36 +3909,41 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout = self.layout
 
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
-        layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
+        layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip       
+        layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
 
         layout.separator()
 
-        layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
 
-        layout.operator("transform.rotate_normal", text="Rotate Normal")
-        layout.operator("mesh.point_normals", text="Point normals to target")
+        layout.operator("transform.rotate_normal", text="Rotate Normal", icon = "NORMAL_ROTATE")
+        layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
 
-        layout.operator("mesh.merge_normals", text="Merge")
-        layout.operator("mesh.split_normals", text="Split")
+        layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
+        layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
 
-        layout.operator("mesh.average_normals", text="Average Normals")
+        layout.operator("mesh.average_normals", text="Average Normals", icon = "NORMAL_AVERAGE")
 
-        layout.label(text="Normal Vector")
+        layout.separator()
 
-        layout.operator("mesh.normals_tools", text="Copy").mode = 'COPY'
-        layout.operator("mesh.normals_tools", text="Paste").mode = 'PASTE'
+        layout.label(text="-- NORMAL VECTOR --")
 
-        layout.operator("mesh.normals_tools", text="Multiply").mode = 'MULTIPLY'
-        layout.operator("mesh.normals_tools", text="Add").mode = 'ADD'
+        layout.operator("mesh.normals_tools", text="Copy", icon = "COPYDOWN").mode = 'COPY'
+        layout.operator("mesh.normals_tools", text="Paste", icon = "PASTEDOWN").mode = 'PASTE'
 
-        layout.operator("mesh.normals_tools", text="Reset").mode = 'RESET'
+        layout.operator("mesh.normals_tools", text="Multiply", icon = "NORMAL_MULTIPLY").mode = 'MULTIPLY'
+        layout.operator("mesh.normals_tools", text="Add", icon = "ADD").mode = 'ADD'
 
-        layout.operator("mesh.smoothen_normals", text="Smoothen")
+        layout.operator("mesh.normals_tools", text="Reset", icon = "RESET").mode = 'RESET'
 
-        layout.label(text="Face Strength")
+        layout.operator("mesh.smoothen_normals", text="Smoothen", icon = "NORMAL_SMOOTH")
+
+        layout.separator()
+
+        layout.label(text="-- FACE STRENGTH --")
+
         layout.operator("mesh.mod_weighted_strength", text="Face Select", icon='FACESEL').set = False
-        layout.operator("mesh.mod_weighted_strength", text="Set Strength", icon='ADD').set = True
+        layout.operator("mesh.mod_weighted_strength", text="Set Strength", icon='NORMAL_SETSTRENGTH').set = True
 
 
 class VIEW3D_MT_edit_mesh_shading(Menu):
