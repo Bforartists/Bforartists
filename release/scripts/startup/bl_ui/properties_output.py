@@ -289,6 +289,23 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
 
         layout.prop(rd, "filepath", text="")
 
+        layout.template_image_settings(image_settings, color_management=False)
+
+# Options subpanel for the output panel
+class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
+    bl_label = "Options"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_parent_id = "RENDER_PT_output"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        layout.use_property_decorate = False  # No animation.
+
+        rd = context.scene.render
+        image_settings = rd.image_settings
+
         layout.use_property_split = True
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
@@ -303,8 +320,6 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
         col.prop(rd, "use_file_extension")
         col = flow.column()
         col.prop(rd, "use_render_cache")
-
-        layout.template_image_settings(image_settings, color_management=False)
 
 
 class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
@@ -507,6 +522,7 @@ classes = (
     RENDER_PT_dimensions,
     RENDER_PT_frame_remapping,
     RENDER_PT_output,
+    RENDER_PT_output_options,
     RENDER_PT_output_views,
     RENDER_PT_encoding,
     RENDER_PT_encoding_video,
