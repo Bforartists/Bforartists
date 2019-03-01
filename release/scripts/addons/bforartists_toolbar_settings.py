@@ -130,7 +130,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_undoredo : BoolProperty(name="Undo / Redo", default=True, description = "Display the Undo Redo toolbar\nAll Modes", )
     misc_undohistory : BoolProperty(name="Undo History", default=True, description = "Display the Undo History Toolbar\nAll Modes", )
     misc_repeat : BoolProperty(name="Repeat", default=True, description = "Display the Repeat Toolbar\nAll Modes", )
-    misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )
+    misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )    
+    misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
+    misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
     misc_misc : BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
 
 
@@ -271,7 +273,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "misc_undohistory")
         row.prop(self, "misc_repeat")
         row.prop(self, "misc_scene")
+        row.prop(self, "misc_last")
         row.prop(self, "misc_misc")
+        row.prop(self, "misc_operatorsearch")
         
 
 
