@@ -1509,6 +1509,8 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         layout.prop(addon_prefs, "misc_repeat")
         layout.prop(addon_prefs, "misc_scene")
         layout.prop(addon_prefs, "misc_misc")
+        layout.prop(addon_prefs, "misc_last")
+        layout.prop(addon_prefs, "misc_operatorsearch")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1557,6 +1559,18 @@ class TOOLBAR_MT_misc(Menu):
             row = layout.row(align=True)
 
             layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+
+        if addon_prefs.misc_last:
+
+            row = layout.row(align=True)
+
+            row.operator("screen.redo_last", text="Last", icon = "LASTOPERATOR")
+
+        if addon_prefs.misc_operatorsearch:
+
+            row = layout.row(align=True)
+
+            row.operator("wm.search_menu", text="", icon='VIEWZOOM')
 
         if addon_prefs.misc_misc:
 
