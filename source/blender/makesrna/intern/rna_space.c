@@ -5068,7 +5068,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
 
 	/* show search */
 	prop = RNA_def_property(srna, "show_marker_search", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_ui_text(prop, "Show Marker Search", "Show Marker Search\nShow search boundbox for markers");
+	RNA_def_property_ui_text(prop, "Show Marker Search", "Show Marker Search\nShow search boundbox for markers\nTo scale just the Marker press scale hotkey twice");
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", SC_SHOW_MARKER_SEARCH);
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, NULL);
 
