@@ -3508,7 +3508,7 @@ static void SCREEN_OT_redo_last(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Redo Last";
-	ot->description = "Redo Last\nDisplay menu for last action performed";
+	ot->description = "Adjust Last Operation\nAdjust the settings for last action performed";
 	ot->idname = "SCREEN_OT_redo_last";
 
 	/* api callbacks */
