@@ -528,10 +528,14 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
         layout.prop(addon_prefs, "primitives_curve")
         layout.prop(addon_prefs, "primitives_surface")
         layout.prop(addon_prefs, "primitives_metaball")
+        layout.prop(addon_prefs, "primitives_gpencil")
         layout.prop(addon_prefs, "primitives_light")
         layout.prop(addon_prefs, "primitives_other")
         layout.prop(addon_prefs, "primitives_empties")
+        layout.prop(addon_prefs, "primitives_image")
+        layout.prop(addon_prefs, "primitives_lightprobe")
         layout.prop(addon_prefs, "primitives_forcefield")
+        layout.prop(addon_prefs, "primitives_collection")
 
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -604,6 +608,14 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                 row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
+            if addon_prefs.primitives_gpencil:
+                 
+                row = layout.row(align=True)
+
+                row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
+                row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
+                row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+
             if addon_prefs.primitives_light: 
 
                 row = layout.row(align=True)
@@ -636,6 +648,21 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
                 row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
+            if addon_prefs.primitives_image: 
+
+                row = layout.row(align=True)
+
+                row.operator("object.load_reference_image", text="", icon='IMAGE_REFERENCE')
+                row.operator("object.load_background_image", text="", icon='IMAGE_BACKGROUND')
+
+            if addon_prefs.primitives_lightprobe: 
+
+                row = layout.row(align=True)
+
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
+                row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+
             if addon_prefs.primitives_forcefield: 
 
                 row = layout.row(align=True)
@@ -653,6 +680,12 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
                 row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
                 row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+
+            if addon_prefs.primitives_collection: 
+
+                row = layout.row(align=True)
+
+                row.operator("object.collection_instance_add", text="", icon='GROUP')
 
         elif obj is not None:
 
@@ -707,6 +740,14 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                     row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
+                if addon_prefs.primitives_gpencil:
+                 
+                    row = layout.row(align=True)
+
+                    row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
+                    row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
+                    row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+
                 if addon_prefs.primitives_light: 
 
                     row = layout.row(align=True)
@@ -739,6 +780,21 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
                     row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
+                if addon_prefs.primitives_image: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.load_reference_image", text="", icon='IMAGE_REFERENCE')
+                    row.operator("object.load_background_image", text="", icon='IMAGE_BACKGROUND')
+
+                if addon_prefs.primitives_lightprobe: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_CUBEMAP').type='CUBEMAP'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_PLANAR').type='PLANAR'
+                    row.operator("object.lightprobe_add", text="", icon='LIGHTPROBE_GRID').type='GRID'
+
                 if addon_prefs.primitives_forcefield: 
 
                     row = layout.row(align=True)
@@ -756,6 +812,12 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
                     row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
                     row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+
+                if addon_prefs.primitives_collection: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.collection_instance_add", text="", icon='GROUP')
 
             if mode == 'EDIT':
 
@@ -811,6 +873,7 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
                         row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                         row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+
 
 ######################################## Image ##############################################
 
