@@ -1953,10 +1953,16 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links", text="Make Links")
 
-        layout.separator()
+        # shading just for mesh objects
+        if obj is None:
+            pass
 
-        layout.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
-        layout.operator("object.shade_flat", icon ='SHADING_FLAT')
+        elif obj.type == 'MESH':
+
+            layout.separator()
+
+            layout.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
+            layout.operator("object.shade_flat", icon ='SHADING_FLAT')
 
         layout.separator()
 
