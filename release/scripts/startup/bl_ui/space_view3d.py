@@ -4672,11 +4672,16 @@ class VIEW3D_MT_paint_gpencil(Menu):
 
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_gpencil_animation")
         layout.menu("VIEW3D_MT_edit_gpencil_interpolate")
 
         layout.separator()
 
+        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
+        layout.operator("gpencil.frame_duplicate", text="Duplicate All Layers", icon = "DUPLICATE").mode = 'ALL'
+
+        layout.separator()
+
+        layout.operator("gpencil.blank_frame_add", icon = "ADD")
         layout.operator("gpencil.delete", text="Delete Frame", icon = "DELETE").type = 'FRAME'
         layout.operator("gpencil.active_frames_delete_all", icon = "DELETE")
 
@@ -4737,10 +4742,14 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_gpencil_animation")
         layout.menu("VIEW3D_MT_edit_gpencil_interpolate")
         layout.menu("VIEW3D_MT_gpencil_copy_layer")
         layout.menu("VIEW3D_MT_gpencil_simplify")
+
+        layout.separator()
+
+        layout.operator("gpencil.blank_frame_add", icon = "ADD")
+        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)", icon = "DELETE")
 
         layout.separator()
 
@@ -4833,26 +4842,6 @@ class VIEW3D_MT_weight_gpencil(Menu):
         if context.mode == 'WEIGHT_GPENCIL':
             layout.separator()
             layout.menu("VIEW3D_MT_gpencil_autoweights")
-
-
-class VIEW3D_MT_gpencil_animation(Menu):
-    bl_label = "Animation"
-
-    @classmethod
-    def poll(cls, context):
-        ob = context.active_object
-        return ob and ob.type == 'GPENCIL' and ob.mode != 'OBJECT'
-
-    @staticmethod
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("gpencil.blank_frame_add", icon = "ADD")
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)", icon = "DELETE")
-
-        layout.separator()
-        layout.operator("gpencil.frame_duplicate", text="Duplicate Active Frame", icon = "DUPLICATE")
-        layout.operator("gpencil.frame_duplicate", text="Duplicate All Layers", icon = "DUPLICATE").mode = 'ALL'
 
 
 class VIEW3D_MT_edit_gpencil_transform(Menu):
@@ -6679,7 +6668,6 @@ classes = (
     VIEW3D_MT_edit_gpencil_arrange_strokes,
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_weight_gpencil,
-    VIEW3D_MT_gpencil_animation,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_copy_layer,
     VIEW3D_MT_edit_curve,
