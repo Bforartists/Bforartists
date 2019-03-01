@@ -81,14 +81,18 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # primitives
 
-    primitives_mesh : BoolProperty(name="Mesh", default=True, description = "Display the Mesh Toolbar\nDisplay is mode dependant", )
-    primitives_curve : BoolProperty(name="Curve", default=False, description = "Display the Curve Toolbar\nDisplay is mode dependant", )
-    primitives_surface : BoolProperty(name="Surface", default=False, description = "Display the Surface Toolbar\nDisplay is mode dependant", )
-    primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball Toolbar\nDisplay is mode dependant", )
-    primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light Toolbar\nDisplay is mode dependant", )
-    primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other Toolbar\nDisplay is mode dependant", )
-    primitives_empties : BoolProperty(name="Empties", default=False, description = "Display the Empties Toolbar\nDisplay is mode dependant", )
-    primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode dependant", )
+    primitives_mesh : BoolProperty(name="Mesh", default=True, description = "Display the Mesh primitive Toolbar\nDisplay is mode dependant", )
+    primitives_curve : BoolProperty(name="Curve", default=False, description = "Display the Curve primitive Toolbar\nDisplay is mode dependant", )
+    primitives_surface : BoolProperty(name="Surface", default=False, description = "Display the Surface primitive Toolbar\nDisplay is mode dependant", )
+    primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball primitive Toolbar\nDisplay is mode dependant", )
+    primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Greasepencil primitive Toolbar\nDisplay is mode dependant", )
+    primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light primitive Toolbar\nDisplay is mode dependant", )
+    primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other primitive Toolbar\nDisplay is mode dependant", )
+    primitives_empties : BoolProperty(name="Empties", default=False, description = "Display the Empties primitive Toolbar\nDisplay is mode dependant", )
+    primitives_image : BoolProperty(name="Image", default=False, description = "Display the Image primitive Toolbar\nDisplay is mode dependant", )
+    primitives_lightprobe : BoolProperty(name="Light Probe", default=False, description = "Display the light probe primitive Toolbar\nDisplay is mode dependant", )
+    primitives_forcefield : BoolProperty(name="Force Field", default=False, description = "Display the Forcefield primitive Toolbar\nDisplay is mode dependant", )
+    primitives_collection : BoolProperty(name="Collection", default=False, description = "Display the Collection primitive Toolbar\nDisplay is mode dependant", )
 
     # Image
 
@@ -209,10 +213,17 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = layout.row()
 
+        row.prop(self, "primitives_gpencil")
         row.prop(self, "primitives_light")
         row.prop(self, "primitives_other")
         row.prop(self, "primitives_empties")
+
+        row = layout.row()
+
+        row.prop(self, "primitives_image")
+        row.prop(self, "primitives_lightprobe")
         row.prop(self, "primitives_forcefield")
+        row.prop(self, "primitives_collection")
 
         layout.label(text="The Image toolbar container")
 
