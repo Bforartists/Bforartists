@@ -1,4 +1,4 @@
-﻿# This script creates two kinds of isometric cameras. 
+# This script creates two kinds of isometric cameras. 
 #The one, TrueIsocam called camera, is the mathematical correct isometric camera with the 54.736 rotation to get the 30 degrees angles at the sides of the rhombus. 
 #The other, GameIsocam called camera, is a camera with which you can render isometric tiles for a 2d game. Here we need a 60 degrees angle instedad of the 54.736 one to get a proper stairs effect and a ratio of 2:1
 # Then there is the special case with a 4:3 ratio, which is button 3. You can also make 2D games with that one. The view is more topdown though as with a 2:1 ratio of the traditional game iso view.
@@ -135,10 +135,10 @@ class CIC_MT_createisocammenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("scene.cic_create_trueisocam", text="TrueIsocam")
-        layout.operator("scene.cic_create_gameisocam", text="GameIsocam")
-        layout.operator("scene.cic_create_gameisocam4to3", text="GameIso4to3cam")
-        layout.operator("scene.cic_create_groundplane", text="Groundplane")
+        layout.operator("scene.cic_create_trueisocam", text="TrueIsocam", icon = "OUTLINER_OB_CAMERA")
+        layout.operator("scene.cic_create_gameisocam", text="GameIsocam", icon = "OUTLINER_OB_CAMERA")
+        layout.operator("scene.cic_create_gameisocam4to3", text="GameIso4to3cam", icon = "OUTLINER_OB_CAMERA")
+        layout.operator("scene.cic_create_groundplane", text="Groundplane", icon='MESH_PLANE')
 
 classes = (
     CIC_OT_createtrueisocam, 
@@ -186,5 +186,4 @@ def unregister():
     # clear the list
     del addon_keymaps[:]
 
-            
             
