@@ -54,6 +54,17 @@ class TEXT_HT_header(Header):
 
         if text:
             is_osl = text.name.endswith((".osl", ".osl"))
+            
+            if is_osl:
+                row = layout.row()
+                row.operator("node.shader_script_update")
+            else:
+                row = layout.row()
+                row.active = text.name.endswith(".py")
+                row.prop(text, "use_module")
+
+                row = layout.row()
+                row.operator("text.run_script")
 
             row = layout.row()
             if text.filepath:
@@ -73,16 +84,7 @@ class TEXT_HT_header(Header):
                     if text.library
                     else "Text: Internal"
                 )
-            if is_osl:
-                row = layout.row()
-                row.operator("node.shader_script_update")
-            else:
-                row = layout.row()
-                row.active = text.name.endswith(".py")
-                row.prop(text, "use_module")
 
-                row = layout.row()
-                row.operator("text.run_script")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
