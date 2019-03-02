@@ -1540,13 +1540,13 @@ void OBJECT_OT_make_links_scene(wmOperatorType *ot)
 void OBJECT_OT_make_links_data(wmOperatorType *ot)
 {
 	static const EnumPropertyItem make_links_items[] = {
-		{MAKE_LINKS_OBDATA,     "OBDATA", 0, "Object Data", ""},
-		{MAKE_LINKS_MATERIALS,  "MATERIAL", 0, "Materials", ""},
-		{MAKE_LINKS_ANIMDATA,   "ANIMATION", 0, "Animation Data", ""},
-		{MAKE_LINKS_GROUP,      "GROUPS", 0, "Collection", ""},
-		{MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", 0, "Instance Collection", ""},
-		{MAKE_LINKS_MODIFIERS,  "MODIFIERS", 0, "Modifiers", ""},
-		{MAKE_LINKS_FONTS,      "FONTS", 0, "Fonts", ""},
+		{MAKE_LINKS_OBDATA,     "OBDATA", ICON_LINK_DATA, "Object Data", ""},
+		{MAKE_LINKS_MATERIALS,  "MATERIAL", ICON_LINK_DATA, "Materials", ""},
+		{MAKE_LINKS_ANIMDATA,   "ANIMATION", ICON_LINK_DATA, "Animation Data", ""},
+		{MAKE_LINKS_GROUP,      "GROUPS", ICON_LINK_DATA, "Collection", ""},
+		{MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", ICON_LINK_DATA, "Instance Collection", ""},
+		{MAKE_LINKS_MODIFIERS,  "MODIFIERS", ICON_LINK_DATA, "Modifiers", ""},
+		{MAKE_LINKS_FONTS,      "FONTS", ICON_LINK_DATA, "Fonts", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 
