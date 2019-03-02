@@ -2564,7 +2564,9 @@ class VIEW3D_MT_make_links(Menu):
 
         layout.operator_enum("object.make_links_data", "type")  # inline
 
-        layout.operator("object.join_uvs")  # stupid place to add this!
+        layout.separator()
+
+        layout.operator("object.join_uvs", icon = "TRANSFER_UV")  # stupid place to add this!
 
 
 class VIEW3D_MT_brush(Menu):
