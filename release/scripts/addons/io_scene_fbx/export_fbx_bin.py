@@ -3019,7 +3019,7 @@ def defaults_unity3d():
         # with the old transforms.
         "bake_space_transform": False,
 
-        "use_selection": False,
+        "use_selection": True,
 
         "object_types": {'ARMATURE', 'EMPTY', 'MESH', 'OTHER'},
         "use_mesh_modifiers": True,
@@ -3049,7 +3049,7 @@ def defaults_unity3d():
 
 def save(operator, context,
          filepath="",
-         use_selection=False,
+         use_selection=True,
          use_active_collection=False,
          batch_mode='OFF',
          use_batch_own_dir=False,
