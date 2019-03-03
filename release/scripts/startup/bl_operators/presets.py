@@ -563,7 +563,7 @@ class AddPresetKeyconfig(AddPresetBase, Operator):
     preset_subdir = "keyconfig"
 
     def add(self, context, filepath):
-        bpy.ops.wm.keyconfig_export(filepath=filepath)
+        bpy.ops.preferences.keyconfig_export(filepath=filepath)
         bpy.utils.keyconfig_set(filepath)
 
     def pre_cb(self, context):
@@ -673,6 +673,7 @@ class AddPresetGpencilBrush(AddPresetBase, Operator):
         "settings.uv_random",
         "settings.pen_jitter",
         "settings.use_jitter_pressure",
+        "settings.trim",
     ]
 
     preset_subdir = "gpencil_brush"

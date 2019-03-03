@@ -88,7 +88,7 @@ class NPRMGetContext(bpy.types.Operator):
         NP020RM.snap_target = copy.deepcopy(bpy.context.tool_settings.snap_target)
         NP020RM.pivot_point = copy.deepcopy(bpy.context.space_data.pivot_point)
         NP020RM.trans_orient = copy.deepcopy(bpy.context.space_data.transform_orientation)
-        NP020RM.curloc = copy.deepcopy(bpy.context.scene.cursor_location)
+        NP020RM.curloc = copy.deepcopy(bpy.context.scene.cursor.location)
         NP020RM.acob = bpy.context.active_object
         if bpy.context.mode == 'OBJECT':
             NP020RM.edit_mode = 'OBJECT'
@@ -199,7 +199,7 @@ class NPRMPrepareContext(bpy.types.Operator):
             bpy.context.tool_settings.snap_target = 'ACTIVE'
             bpy.context.space_data.pivot_point = 'CURSOR'
             #bpy.context.space_data.transform_orientation = 'GLOBAL'
-            bpy.context.scene.cursor_location = centerloc
+            bpy.context.scene.cursor.location = centerloc
         else:
             for ob in selob:
                 ob.select_set(False)
@@ -934,7 +934,7 @@ class NPRMRestoreContext(bpy.types.Operator):
         bpy.context.tool_settings.snap_target = NP020RM.snap_target
         bpy.context.space_data.pivot_point = NP020RM.pivot_point
         bpy.context.space_data.transform_orientation = NP020RM.trans_orient
-        bpy.context.scene.cursor_location = NP020RM.curloc
+        bpy.context.scene.cursor.location = NP020RM.curloc
         if NP020RM.acob is not None:
             bpy.context.view_layer.objects.active = NP020RM.acob
             bpy.ops.object.mode_set(mode = NP020RM.edit_mode)

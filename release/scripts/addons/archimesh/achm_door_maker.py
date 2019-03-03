@@ -76,7 +76,7 @@ def create_object(self, context):
     # we create main object and mesh
     mainmesh = bpy.data.meshes.new("DoorFrane")
     mainobject = bpy.data.objects.new("DoorFrame", mainmesh)
-    mainobject.location = bpy.context.scene.cursor_location
+    mainobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(mainobject)
     mainobject.DoorObjectGenerator.add()
 
@@ -601,7 +601,7 @@ def create_door_data(self, myframe, width, openside):
     mymesh = bpy.data.meshes.new("Door")
     myobject = bpy.data.objects.new("Door", mymesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(verts, [], faces)
@@ -653,7 +653,7 @@ def create_handle(self, mydoor, pos, frame_width, openside):
     mymesh = bpy.data.meshes.new("Handle_" + pos)
     myobject = bpy.data.objects.new("Handle_" + pos, mymesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(verts, [], faces)

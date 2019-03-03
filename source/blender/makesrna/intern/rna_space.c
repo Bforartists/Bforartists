@@ -2858,7 +2858,8 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "show_face_center", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "overlay.edit_flag", V3D_OVERLAY_EDIT_FACE_DOT);
-	RNA_def_property_ui_text(prop, "Draw Face Center", "Display face center");
+	RNA_def_property_ui_text(prop, "Draw Face Center", "Display face center "
+	                         "(when disabled, edges display wider in edge mode)");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "show_edge_crease", PROP_BOOLEAN, PROP_NONE);
@@ -2949,11 +2950,6 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 	RNA_def_property_float_sdna(prop, NULL, "overlay.backwire_opacity");
 	RNA_def_property_ui_text(prop, "Backwire Opacity", "Opacity when rendering transparent wires");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
-	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
-
-	prop = RNA_def_property(srna, "show_transparent_bones", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "overlay.arm_flag", V3D_OVERLAY_ARM_TRANSP_BONES);
-	RNA_def_property_ui_text(prop, "Transparent Bones", "Display bones as transparent");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "texture_paint_mode_opacity", PROP_FLOAT, PROP_FACTOR);
@@ -4025,6 +4021,12 @@ static void rna_def_space_dopesheet(BlenderRNA *brna)
 	                         "Mark keyframes where the key value flow changes direction, based on comparison with adjacent keys");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_DOPESHEET, NULL);
 
+	prop = RNA_def_property(srna, "show_marker_lines", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", SACTION_SHOW_MARKER_LINES);
+	RNA_def_property_ui_text(prop, "Show Marker Lines",
+	                         "Show a vertical line for every marker");
+	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
+
 	/* editing */
 	prop = RNA_def_property(srna, "use_auto_merge_keyframes", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SACTION_NOTRANSKEYCULL);
@@ -4270,6 +4272,12 @@ static void rna_def_space_nla(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Show Local Markers",
 	                         "Show action-local markers on the strips, useful when synchronizing timing across strips");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_NLA, NULL);
+
+	prop = RNA_def_property(srna, "show_marker_lines", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", SNLA_SHOW_MARKER_LINES);
+	RNA_def_property_ui_text(prop, "Show Marker Lines",
+	                         "Show a vertical line for every marker");
+	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
 
 	/* editing */
 	prop = RNA_def_property(srna, "use_realtime_update", PROP_BOOLEAN, PROP_NONE);

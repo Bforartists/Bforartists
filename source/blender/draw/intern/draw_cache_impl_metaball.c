@@ -202,14 +202,19 @@ GPUBatch *DRW_metaball_batch_cache_get_wireframes_face(Object *ob)
 	if (cache->face_wire.batch == NULL) {
 		ListBase *lb = &ob->runtime.curve_cache->disp;
 
-		GPUVertBuf *vbo_pos_nor = MEM_callocN(sizeof(GPUVertBuf), __func__);
-		GPUVertBuf *vbo_wireframe_data = MEM_callocN(sizeof(GPUVertBuf), __func__);
+		GPUVertBuf *vbo_wiredata = MEM_callocN(sizeof(GPUVertBuf), __func__);
+		DRW_displist_vertbuf_create_wiredata(lb, vbo_wiredata);
 
-		DRW_displist_vertbuf_create_pos_and_nor_and_uv_tess(lb, vbo_pos_nor, NULL);
-		DRW_displist_vertbuf_create_wireframe_data_tess(lb, vbo_wireframe_data);
+		GPUIndexBuf *ibo = MEM_callocN(sizeof(GPUIndexBuf), __func__);
+		DRW_displist_indexbuf_create_lines_in_order(lb, ibo);
 
-		cache->face_wire.batch = GPU_batch_create_ex(GPU_PRIM_TRIS, vbo_pos_nor, NULL, GPU_BATCH_OWNS_VBO);
-		GPU_batch_vertbuf_add_ex(cache->face_wire.batch, vbo_wireframe_data, true);
+		cache->face_wire.batch = GPU_batch_create_ex(
+		        GPU_PRIM_LINES,
+		        mball_batch_cache_get_pos_and_normals(ob, cache),
+		        ibo,
+		        GPU_BATCH_OWNS_INDEX);
+
+		GPU_batch_vertbuf_add_ex(cache->face_wire.batch, vbo_wiredata, true);
 	}
 
 	return cache->face_wire.batch;

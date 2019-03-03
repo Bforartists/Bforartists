@@ -69,7 +69,7 @@ class P2E(Operator):
             pass
 
         if self.locat == 'CURSOR':
-            loc = sce.cursor_location
+            loc = sce.cursor.location
         elif self.locat == 'ACTIVE':
             loc = act.location
         else:

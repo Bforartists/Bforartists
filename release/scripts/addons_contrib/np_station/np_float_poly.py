@@ -2103,7 +2103,7 @@ class NPFPRunExtrude(bpy.types.Operator):
             else:
                 bpy.ops.transform.translate('INVOKE_DEFAULT',
                                             constraint_axis=(False, False, True),
-                                            constraint_orientation='NORMAL')
+                                            orient_type='NORMAL')
 
             np_print('B')
             np_print('10_run_EXTRUDE_count_1_INVOKE_DEFAULT')

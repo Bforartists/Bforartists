@@ -19,22 +19,23 @@
 bl_info = {
     "name": "Object Color Rules",
     "author": "Campbell Barton",
-    "version": (0, 0, 1),
-    "blender": (2, 73, 0),
+    "version": (0, 0, 2),
+    "blender": (2, 80, 0),
     "location": "Properties > Object Buttons",
-    "description": "Rules for assigning object color (used for wireframe colors).",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Object/Color_Rules",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "description": "Rules for assigning object color (for object & wireframe colors).",
     "category": "Object",
-    }
+}
 
 
-def test_name(rule, needle, haystack):
-    # TODO, compile expression for re-use
+def test_name(rule, needle, haystack, cache):
     if rule.use_match_regex:
-        import re
-        return (re.match(needle, haystack) is not None)
+        if not cache:
+            import re
+            re_needle = re.compile(needle)
+            cache[:] = [re_needle]
+        else:
+            re_needle = cache[0]
+        return (re_needle.match(haystack) is not None)
     else:
         return (needle in haystack)
 
@@ -48,21 +49,21 @@ class rule_test:
     @staticmethod
     def NAME(obj, rule, cache):
         match_name = rule.match_name
-        return test_name(rule, match_name, obj.name)
+        return test_name(rule, match_name, obj.name, cache)
 
     def DATA(obj, rule, cache):
         match_name = rule.match_name
         obj_data = obj.data
         if obj_data is not None:
-            return test_name(rule, match_name, obj_data.name)
+            return test_name(rule, match_name, obj_data.name, cache)
         else:
             return False
 
     @staticmethod
-    def GROUP(obj, rule, cache):
+    def COLLECTION(obj, rule, cache):
         if not cache:
             match_name = rule.match_name
-            objects = {o for g in bpy.data.collections if test_name(rule, match_name, g.name) for o in g.objects}
+            objects = {o for g in bpy.data.collections if test_name(rule, match_name, g.name, cache) for o in g.objects}
             cache["objects"] = objects
         else:
             objects = cache["objects"]
@@ -76,13 +77,6 @@ class rule_test:
 
         return ((materials is not None) and
                 (any((test_name(rule, match_name, m.name) for m in materials if m is not None))))
-
-    @staticmethod
-    def LAYER(obj, rule, cache):
-        match_layers = rule.match_layers[:]
-        obj_layers = obj.layers[:]
-
-        return any((match_layers[i] and obj_layers[i]) for i in range(20))
 
     @staticmethod
     def TYPE(obj, rule, cache):
@@ -133,7 +127,7 @@ class rule_draw:
         rule_draw._generic_match_name(layout, rule)
 
     @staticmethod
-    def GROUP(layout, rule):
+    def COLLECTION(layout, rule):
         rule_draw._generic_match_name(layout, rule)
 
     @staticmethod
@@ -144,11 +138,6 @@ class rule_draw:
     def TYPE(layout, rule):
         row = layout.row()
         row.prop(rule, "match_object_type")
-
-    @staticmethod
-    def LAYER(layout, rule):
-        row = layout.row()
-        row.prop(rule, "match_layers")
 
     @staticmethod
     def EXPR(layout, rule):
@@ -165,6 +154,7 @@ def object_colors_calc(rules, objects):
     rules_color = [Color(rule.color) for rule in rules]
     rules_cache = [{} for i in range(len(rules))]
     rules_inv = [rule.use_invert for rule in rules]
+    changed_count = 0
 
     for obj in objects:
         is_set = False
@@ -185,8 +175,9 @@ def object_colors_calc(rules, objects):
                 is_set = True
 
         if is_set:
-            obj.show_wire_color = True
             obj.color[0:3] = obj_color
+            changed_count += 1
+    return changed_count
 
 
 def object_colors_select(rule, objects):
@@ -202,7 +193,7 @@ def object_colors_select(rule, objects):
 def object_colors_rule_validate(rule, report):
     rule_type = rule.type
 
-    if rule_type in {'NAME', 'DATA', 'GROUP', 'MATERIAL'}:
+    if rule_type in {'NAME', 'DATA', 'COLLECTION', 'MATERIAL'}:
         if rule.use_match_regex:
             import re
             try:
@@ -224,20 +215,20 @@ def object_colors_rule_validate(rule, report):
 
 import bpy
 from bpy.types import (
-        Operator,
-        Panel,
-        UIList,
-        )
+    Operator,
+    Panel,
+    UIList,
+)
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        IntProperty,
-        FloatProperty,
-        EnumProperty,
-        CollectionProperty,
-        BoolVectorProperty,
-        FloatVectorProperty,
-        )
+    StringProperty,
+    BoolProperty,
+    IntProperty,
+    FloatProperty,
+    EnumProperty,
+    CollectionProperty,
+    BoolVectorProperty,
+    FloatVectorProperty,
+)
 
 
 class OBJECT_PT_color_rules(Panel):
@@ -254,9 +245,10 @@ class OBJECT_PT_color_rules(Panel):
         # Rig type list
         row = layout.row()
         row.template_list(
-                "OBJECT_UL_color_rule", "color_rules",
-                scene, "color_rules",
-                scene, "color_rules_active_index")
+            "OBJECT_UL_color_rule", "color_rules",
+            scene, "color_rules",
+            scene, "color_rules_active_index",
+        )
 
         col = row.column()
         colsub = col.column(align=True)
@@ -283,7 +275,7 @@ class OBJECT_PT_color_rules(Panel):
             draw_cb = getattr(rule_draw, rule.type)
             draw_cb(box, rule)
 
-            row = layout.split(0.75, align=True)
+            row = layout.split(factor=0.75, align=True)
             props = row.operator("object.color_rules_assign", text="Assign Selected")
             props.use_selection = True
             props = row.operator("object.color_rules_assign", text="All")
@@ -294,10 +286,10 @@ class OBJECT_UL_color_rule(UIList):
     def draw_item(self, context, layout, data, rule, icon, active_data, active_propname, index):
         # assert(isinstance(rule, bpy.types.ShapeKey))
         # scene = active_data
-        split = layout.split(0.5)
+        split = layout.split(factor=0.5)
         row = split.split(align=False)
         row.label(text="%s (%s)" % (rule.name, rule.type.lower()))
-        split = split.split(0.7)
+        split = split.split(factor=0.7)
         split.prop(rule, "factor", text="", emboss=False)
         split.prop(rule, "color", text="")
 
@@ -309,10 +301,11 @@ class OBJECT_OT_color_rules_assign(Operator):
     bl_options = {'UNDO'}
 
     use_selection: BoolProperty(
-            name="Selected",
-            description="Apply to selected (otherwise all objects in the scene)",
-            default=True,
-            )
+        name="Selected",
+        description="Apply to selected (otherwise all objects in the scene)",
+        default=True,
+    )
+
     def execute(self, context):
         scene = context.scene
 
@@ -326,7 +319,8 @@ class OBJECT_OT_color_rules_assign(Operator):
             if not object_colors_rule_validate(rule, self.report):
                 return {'CANCELLED'}
 
-        object_colors_calc(rules, objects)
+        changed_count = object_colors_calc(rules, objects)
+        self.report({'INFO'}, "Set colors for {} of {} objects".format(changed_count, len(objects)))
         return {'FINISHED'}
 
 
@@ -397,66 +391,65 @@ class OBJECT_OT_color_rules_move(Operator):
 
 class ColorRule(bpy.types.PropertyGroup):
     name: StringProperty(
-            name="Rule Name",
-            )
+        name="Rule Name",
+    )
     color: FloatVectorProperty(
-            name="Color",
-            description="Color to assign",
-            subtype='COLOR', size=3, min=0, max=1, precision=3, step=0.1,
-            default=(0.5, 0.5, 0.5),
-            )
+        name="Color",
+        description="Color to assign",
+        subtype='COLOR', size=3, min=0, max=1, precision=3, step=0.1,
+        default=(0.5, 0.5, 0.5),
+    )
     factor: FloatProperty(
-            name="Opacity",
-            description="Color to assign",
-            min=0, max=1, precision=1, step=0.1,
-            default=1.0,
-            )
+        name="Opacity",
+        description="Color to assign",
+        min=0, max=1, precision=1, step=0.1,
+        default=1.0,
+    )
     type: EnumProperty(
-            name="Rule Type",
-            items=(('NAME', "Name", ""),
-                   ('DATA', "Data Name", "Name of the object data"),
-                   ('GROUP', "Group Name", "Object in group"),
-                   ('MATERIAL', "Material Name", "Object uses material"),
-                   ('TYPE', "Type", "Object type"),
-                   ('LAYER', "Layer", "Object in layer"),
-                   ('EXPR', "Expression", "Scripted expression"),
-                   ),
+        name="Rule Type",
+        items=(
+            ('NAME', "Name", "Object name contains this text (or matches regex)"),
+            ('DATA', "Data Name", "Object data name contains this text (or matches regex)"),
+            ('COLLECTION', "Collection Name", "Object in collection that contains this text (or matches regex)"),
+            ('MATERIAL', "Material Name", "Object uses a material name that contains this text (or matches regex)"),
+            ('TYPE', "Type", "Object type"),
+            ('EXPR', "Expression", (
+                "Scripted expression (using 'self' for the object) eg:\n"
+                "  self.type == 'MESH' and len(self.data.vertices) > 20"
             )
+            ),
+        ),
+    )
 
     use_invert: BoolProperty(
-            name="Invert",
-            description="Match when the rule isn't met",
-            )
+        name="Invert",
+        description="Match when the rule isn't met",
+    )
 
     # ------------------
     # Matching Variables
 
     # shared by all name matching
     match_name: StringProperty(
-            name="Match Name",
-            )
+        name="Match Name",
+    )
     use_match_regex: BoolProperty(
-            name="Regex",
-            description="Use regular expressions for pattern matching",
-            )
-    # type == 'LAYER'
-    match_layers = BoolVectorProperty(
-            name="Layers",
-            size=20,
-            subtype='LAYER',
-            )
+        name="Regex",
+        description="Use regular expressions for pattern matching",
+    )
     # type == 'TYPE'
     match_object_type: EnumProperty(
-            name="Object Type",
-            items=([(i.identifier, i.name, "")
-                    for i in bpy.types.Object.bl_rna.properties['type'].enum_items]
-                    )
-            )
+        name="Object Type",
+        items=([(i.identifier, i.name, "")
+                for i in bpy.types.Object.bl_rna.properties['type'].enum_items]
+               )
+    )
     # type == 'EXPR'
     match_expr: StringProperty(
-            name="Expression",
-            description="Python expression, where 'self' is the object variable"
-            )
+        name="Expression",
+        description="Python expression, where 'self' is the object variable"
+    )
+
 
 classes = (
     OBJECT_PT_color_rules,
@@ -467,7 +460,7 @@ classes = (
     OBJECT_OT_color_rules_select,
     OBJECT_UL_color_rule,
     ColorRule,
-    )
+)
 
 
 def register():

@@ -2667,10 +2667,10 @@ class Dimension(bpy.types.Operator):
     def invoke(self, context, event):
         bpy.context.scene.update()
         if self.Dimension_Change:
-            bpy.context.scene.cursor_location = self.Dimension_startlocation
+            bpy.context.scene.cursor.location = self.Dimension_startlocation
         else:
             if self.Dimension_width_or_location == 'width':
-                self.Dimension_startlocation = bpy.context.scene.cursor_location
+                self.Dimension_startlocation = bpy.context.scene.cursor.location
 
             if self.Dimension_width_or_location == 'location':
                 if (self.Dimension_endlocation[2] - self.Dimension_startlocation[2]) !=  0 :
@@ -2734,7 +2734,7 @@ class DimensionAdd(bpy.types.Panel):
 
         if len(vertex) == 1:
             startvertex = vertex[0]
-            endvertex = bpy.context.scene.cursor_location
+            endvertex = bpy.context.scene.cursor.location
             layout = self.layout
             col = layout.column()
             col.label(text="Note:")
@@ -3000,7 +3000,7 @@ class DimensionPanel(bpy.types.Panel):
 #location update
 def StartLocationUpdate(self, context):
 
-    bpy.context.scene.cursor_location = self.Dimension_startlocation
+    bpy.context.scene.cursor.location = self.Dimension_startlocation
 
     return
 
