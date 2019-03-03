@@ -150,7 +150,7 @@ class makestructure(Operator):
                 bpy.ops.mesh.select_all(action='SELECT')
                 bpy.ops.transform.resize(
                     value=(sx, sy, sz), constraint_axis=(True, True, True),
-                    constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                    orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True
                     )
                 bpy.ops.object.mode_set(mode='OBJECT')
@@ -160,17 +160,17 @@ class makestructure(Operator):
             bpy.ops.object.select_grouped(type='GROUP')
             bpy.ops.transform.rotate(
                     value=rot[0], axis=(1, 0, 0), constraint_axis=(False, False, False),
-                    constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                    orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True
                     )
             bpy.ops.transform.rotate(
                     value=rot[1], axis=(0, 1, 0), constraint_axis=(False, False, False),
-                    constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                    orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True
                     )
             bpy.ops.transform.rotate(
                     value=rot[2], axis=(0, 0, 1), constraint_axis=(False, False, False),
-                    constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                    orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH', proportional_size=1, release_confirm=True
                     )
             bpy.context.view_layer.objects.active = obj  # Again needed to avoid poll() taking me down

@@ -1603,7 +1603,7 @@ def addTree(props):
     treeOb = bpy.data.objects.new('tree', cu)
     bpy.context.scene.collection.objects.link(treeOb)
 
-    # treeOb.location=bpy.context.scene.cursor_location attractUp
+    # treeOb.location=bpy.context.scene.cursor.location attractUp
 
     cu.dimensions = '3D'
     cu.fill_mode = 'FULL'

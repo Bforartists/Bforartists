@@ -150,7 +150,7 @@ class NPPIGetContext(bpy.types.Operator):
         NP020PI.snap_target = copy.deepcopy(bpy.context.tool_settings.snap_target)
         NP020PI.pivot_point = copy.deepcopy(bpy.context.space_data.pivot_point)
         NP020PI.trans_orient = copy.deepcopy(bpy.context.space_data.transform_orientation)
-        NP020PI.curloc = copy.deepcopy(bpy.context.scene.cursor_location)
+        NP020PI.curloc = copy.deepcopy(bpy.context.scene.cursor.location)
         NP020PI.acob = bpy.context.active_object
         if bpy.context.mode == 'OBJECT':
             NP020PI.edit_mode = 'OBJECT'

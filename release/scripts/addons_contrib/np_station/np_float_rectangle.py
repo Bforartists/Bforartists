@@ -127,7 +127,7 @@ class NPFRGetContext(bpy.types.Operator):
         NP020FR.snap_target = copy.deepcopy(bpy.context.tool_settings.snap_target)
         NP020FR.pivot_point = copy.deepcopy(bpy.context.space_data.pivot_point)
         NP020FR.trans_orient = copy.deepcopy(bpy.context.space_data.transform_orientation)
-        NP020FR.curloc = copy.deepcopy(bpy.context.scene.cursor_location)
+        NP020FR.curloc = copy.deepcopy(bpy.context.scene.cursor.location)
         NP020FR.acob = bpy.context.active_object
         if bpy.context.mode == 'OBJECT':
             NP020FR.edit_mode = 'OBJECT'

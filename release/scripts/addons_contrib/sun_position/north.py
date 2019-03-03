@@ -12,7 +12,7 @@ class NorthClass:
         self.isActive = False
 
     def refresh_screen(self):
-        bpy.context.scene.cursor_location.x += 0.0
+        bpy.context.scene.cursor.location.x += 0.0
 
     def activate(self, context):
 

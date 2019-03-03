@@ -49,11 +49,11 @@ class PivotToSelection(Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        saved_location = context.scene.cursor_location.copy()
+        saved_location = context.scene.cursor.location.copy()
         bpy.ops.view3d.snap_cursor_to_selected()
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-        context.scene.cursor_location = saved_location
+        context.scene.cursor.location = saved_location
 
         return {'FINISHED'}
 

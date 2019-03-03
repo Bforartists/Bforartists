@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -2743,10 +2743,6 @@ msgid "Acceleration"
 msgstr "Esborrar Rotació"
 
 
-msgid "Dry Speed"
-msgstr "Seleccionar fila"
-
-
 msgid "Effect Type"
 msgstr "Afegir Tira"
 
@@ -3432,8 +3428,8 @@ msgid "Save"
 msgstr "Guardar"
 
 
-msgid "Normal"
-msgstr "Calcular Normals"
+msgid "Regular"
+msgstr "Crear aresta/cara"
 
 
 msgid "Display Mode"
@@ -5940,18 +5936,6 @@ msgid "Type of Object"
 msgstr "Comprimir Dades"
 
 
-msgid "Mesh"
-msgstr "Malla"
-
-
-msgid "Meta"
-msgstr "MetaBall"
-
-
-msgid "Light"
-msgstr "Dreta"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "Mode d'Edició"
 
@@ -6254,6 +6238,10 @@ msgstr "Seleccionar connectats"
 
 msgid "Material Slot"
 msgstr "Guardar com"
+
+
+msgid "Normal"
+msgstr "Calcular Normals"
 
 
 msgid "Object Aligned"
@@ -7907,6 +7895,10 @@ msgid "Interpolate"
 msgstr "Esborrar Rotació"
 
 
+msgid "Mesh"
+msgstr "Malla"
+
+
 msgid "Normals"
 msgstr "Calcular Normals"
 
@@ -7925,6 +7917,10 @@ msgstr "MetaBall"
 
 msgid "Hide/Mask"
 msgstr "Mostrar"
+
+
+msgid "Light"
+msgstr "Dreta"
 
 
 msgid "Make Links"
@@ -9893,6 +9889,10 @@ msgstr "Afegir Tira"
 
 msgid "Action Clip"
 msgstr "Seleccionar fila"
+
+
+msgid "Meta"
+msgstr "MetaBall"
 
 
 msgid "Sound Clip"
@@ -15965,11 +15965,6 @@ msgid "Remove vertex color layer"
 msgstr "Render"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Pintura Vectorial"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Seleccionar connectats"
 
@@ -15988,11 +15983,6 @@ msgstr "Duplicar"
 
 msgid "Smooth along the Z axis"
 msgstr "Duplicar"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Pintura Vectorial"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -17364,10 +17354,6 @@ msgstr "Seleccionar fila"
 
 msgid "Select objects matching a naming pattern"
 msgstr "Comprimir Dades"
-
-
-msgid "Rim"
-msgstr "Superior"
 
 
 msgctxt "Operator"
@@ -21297,10 +21283,6 @@ msgid "User Interface"
 msgstr "Superfície"
 
 
-msgid "Regular"
-msgstr "Crear aresta/cara"
-
-
 msgid "Theme Space"
 msgstr "Texte"
 
@@ -22373,10 +22355,6 @@ msgid "Softness"
 msgstr "Blandura"
 
 
-msgid "Tweak Threshold"
-msgstr "Corba de Bezier"
-
-
 msgid "Auto Depth"
 msgstr "Autotangents"
 
@@ -23001,10 +22979,6 @@ msgid "Render Pass"
 msgstr "Render"
 
 
-msgid "Bake Mode"
-msgstr "Comprimir Dades"
-
-
 msgid "Bake normals"
 msgstr "Crear Meta"
 
@@ -23257,18 +23231,6 @@ msgid "Time Scale"
 msgstr "Escalar"
 
 
-msgid "Factor Radius"
-msgstr "Reduir"
-
-
-msgid "Factor Repulsion"
-msgstr "Reduir"
-
-
-msgid "Factor Rest Length"
-msgstr "Esborrar Origen"
-
-
 msgid "Interaction Radius"
 msgstr "Esborrar Rotació"
 
@@ -23315,6 +23277,18 @@ msgstr "Arxiu"
 
 msgid "Factor Density"
 msgstr "Seleccionar fila"
+
+
+msgid "Factor Radius"
+msgstr "Reduir"
+
+
+msgid "Factor Repulsion"
+msgstr "Reduir"
+
+
+msgid "Factor Rest Length"
+msgstr "Esborrar Origen"
 
 
 msgid "Initial Rest Length"
@@ -23533,12 +23507,12 @@ msgid "Multiply Speed"
 msgstr "Moure a Capa"
 
 
-msgid "Scale to length"
-msgstr "Esborrar Origen"
-
-
 msgid "Use as speed"
 msgstr "Començar Joc"
+
+
+msgid "Scale to length"
+msgstr "Esborrar Origen"
 
 
 msgid "Subtract Sequence"
@@ -23670,14 +23644,6 @@ msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "Sound Sequence"
-msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Draw Waveform"
-msgstr "Esborrar Rotació"
-
-
-msgid "Whether to draw the sound's waveform"
 msgstr "Començar a renderitzar una seqüència"
 
 
@@ -23843,10 +23809,6 @@ msgstr "Seleccionar fila"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Esborrar Rotació"
-
-
-msgid "Mute this shape key"
-msgstr "Començar Joc"
 
 
 msgid "Name of Shape Key"
@@ -26540,10 +26502,6 @@ msgid "Lock Invert All"
 msgstr "Finestra de Render"
 
 
-msgid "Resolution:"
-msgstr "Seleccionar connectats"
-
-
 msgid "Object:"
 msgstr "Comprimir Dades"
 
@@ -26661,6 +26619,10 @@ msgstr "Ampliar"
 
 msgid "Deform:"
 msgstr "Esborrar Rotació"
+
+
+msgid "Rim"
+msgstr "Superior"
 
 
 msgid "Material Index Offset:"
@@ -28760,11 +28722,6 @@ msgstr "Nou"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Nou"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Nou"
 

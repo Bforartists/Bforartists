@@ -1911,7 +1911,7 @@ class BasicShapesMenu(bpy.types.Menu):
             #col = box.column()
             layout.label(text="Please enable Add Mesh: Extra Objects addon", icon="INFO")
             #layout.separator()
-            layout.operator("wm.addon_userpref_show",
+            layout.operator("preferences.addon_show",
                          text="Go to Add Mesh: Extra Objects addon",
                          icon="PREFERENCES").module = "add_mesh_extra_objects"
 
@@ -2121,7 +2121,7 @@ class TEXT_PT_povray_custom_code(TextButtonsPanel, bpy.types.Panel):
             layout.label(text="default pov include path ")
             layout.label(text="in addon preferences")
             #layout.separator()
-            layout.operator("wm.addon_userpref_show",
+            layout.operator("preferences.addon_show",
                          text="Go to Render: POV-Ray addon",
                          icon="PREFERENCES").module = "render_povray"
 

@@ -76,7 +76,7 @@ def create_object(self, context):
     # we create main object and mesh
     mainmesh = bpy.data.meshes.new("WindowFrane")
     mainobject = bpy.data.objects.new("WindowFrame", mainmesh)
-    mainobject.location = bpy.context.scene.cursor_location
+    mainobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(mainobject)
     mainobject.WindowObjectGenerator.add()
 
@@ -526,7 +526,7 @@ class ARCHIMESH_PT_WindowObjectgenerator(Panel):
 # Generate rail windows
 # ------------------------------------------------------------------------------
 def generate_rail_window(myframe, mp, mymesh):
-    myloc = bpy.context.scene.cursor_location
+    myloc = bpy.context.scene.cursor.location
 
     alummat = None
     if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
@@ -617,7 +617,7 @@ def generate_rail_window(myframe, mp, mymesh):
 # Generate leaf windows
 # ------------------------------------------------------------------------------
 def generate_leaf_window(myframe, mp, mymesh):
-    myloc = bpy.context.scene.cursor_location
+    myloc = bpy.context.scene.cursor.location
 
     alummat = None
     if mp.crt_mat and bpy.context.scene.render.engine in {'CYCLES', 'BLENDER_EEVEE'}:
@@ -1750,7 +1750,7 @@ def create_leaf_handle(objname, mat):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -2091,7 +2091,7 @@ def create_rail_handle(objname, mat):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -2129,7 +2129,7 @@ def create_sill(objname, x, y, z, mat):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -2167,7 +2167,7 @@ def create_blind_box(objname, x, y, z):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
