@@ -789,7 +789,7 @@ class EdgeRoundifier(Operator):
         old_location = self.obj.location.copy()
         bpy.ops.transform.translate(
                             value=-old_location, constraint_axis=(False, False, False),
-                            constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                            orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                             proportional_edit_falloff='SMOOTH', proportional_size=1
                             )
         bpy.ops.object.mode_set(mode='EDIT')
@@ -820,7 +820,7 @@ class EdgeRoundifier(Operator):
         # PKHG>INFO move origin object back print("old location = " , old_location)
         bpy.ops.transform.translate(
                         value=old_location, constraint_axis=(False, False, False),
-                        constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                        orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                         proportional_edit_falloff='SMOOTH', proportional_size=1
                         )
         bpy.ops.object.mode_set(mode='EDIT')
@@ -1065,7 +1065,7 @@ class EdgeRoundifier(Operator):
         if parameters["refObject"] == "ORG":
             refObjectLocation = [0, 0, 0]
         elif parameters["refObject"] == "CUR":
-            refObjectLocation = bpy.context.scene.cursor_location - objectLocation
+            refObjectLocation = bpy.context.scene.cursor.location - objectLocation
         else:
             refObjectLocation = self.calc.getEdgeReference(edge, edgeCenter, parameters["plane"])
 

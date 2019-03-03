@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -1445,6 +1445,10 @@ msgid "Directory displayed in the file browser"
 msgstr "निर्देशिका संचिका विचरक में प्रदर्शित"
 
 
+msgid "Regular"
+msgstr "नियमित"
+
+
 msgid "Display Mode"
 msgstr "प्रदर्शित रूप"
 
@@ -2222,49 +2226,24 @@ msgid "Light color"
 msgstr "हल्का रंग"
 
 
-msgid "Energy"
-msgstr "ऊर्जा"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "प्रकार"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "बिंदु"
-
-
 msgid "Omnidirectional point light source"
 msgstr "सर्वदिशात्मक बिंदु प्रकाश स्रोत"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "सूर्य"
 
 
 msgid "Constant direction parallel ray light source"
 msgstr "लगातार दिशा समानांतर रश्मि प्रकाश स्रोत"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "बिंदु"
-
-
 msgid "Directional cone light source"
 msgstr "दिशात्मक शंकु प्रकाश स्रोत"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "क्षेत्र"
-
-
 msgid "Directional area light source"
 msgstr "दिशात्मक क्षेत्र प्रकाश स्रोत"
+
+
+msgid "Power"
+msgstr "शक्ति"
 
 
 msgid "Show Cone"
@@ -2453,22 +2432,6 @@ msgstr "ZXY यूलर"
 
 msgid "ZYX Euler"
 msgstr "ZYX यूलर"
-
-
-msgid "Mesh"
-msgstr "जाल"
-
-
-msgid "Meta"
-msgstr "मेटा"
-
-
-msgid "GPencil"
-msgstr "तैलीय पेंसिल"
-
-
-msgid "Light"
-msgstr "प्रकाश"
 
 
 msgid "Pixel"
@@ -3145,6 +3108,10 @@ msgid "Bone Roll"
 msgstr "हड्डी पंजी"
 
 
+msgid "Mesh"
+msgstr "जाल"
+
+
 msgid "Edge"
 msgstr "किनारा"
 
@@ -3159,6 +3126,10 @@ msgstr "छुपाएँ/आवरण"
 
 msgid "Hooks"
 msgstr "खूँटी"
+
+
+msgid "Light"
+msgstr "प्रकाश"
 
 
 msgid "Make Single User"
@@ -3406,6 +3377,10 @@ msgid "Custom Color"
 msgstr "रुचिनुकूल रंग"
 
 
+msgid "Meta"
+msgstr "मेटा"
+
+
 msgid "Solo"
 msgstr "एकल"
 
@@ -3436,10 +3411,6 @@ msgstr "उत्थापन"
 
 msgid "Basis"
 msgstr "आधार"
-
-
-msgid "Power"
-msgstr "शक्ति"
 
 
 msgid "Slope"
@@ -4334,11 +4305,6 @@ msgid "Fan"
 msgstr "प्रशंसक"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "िचकनी शिरोबिन्दु"
-
-
 msgid "Remove original faces"
 msgstr "मूल चेहरों को हटाएँ"
 
@@ -4461,14 +4427,6 @@ msgstr "सक्रिय प्रतिबिंबक का चयन क�
 
 msgid "Child"
 msgstr "कारक"
-
-
-msgid "Glow"
-msgstr "चमक"
-
-
-msgid "Rim"
-msgstr "रिम"
 
 
 msgid "Mark"
@@ -4634,6 +4592,10 @@ msgstr "टोपोलॉजी संशोधन symmetrize"
 
 msgid "Wipe"
 msgstr "मार्जन"
+
+
+msgid "Glow"
+msgstr "चमक"
 
 
 msgctxt "Operator"
@@ -5112,10 +5074,6 @@ msgid "Text Style"
 msgstr "पाठ शैली"
 
 
-msgid "Regular"
-msgstr "नियमित"
-
-
 msgid "Video Sequence Editor"
 msgstr "वीडियो अनुक्रम संपादक"
 
@@ -5428,12 +5386,12 @@ msgid "Base"
 msgstr "आधार"
 
 
-msgid "Factor Rest Length"
-msgstr "कारक शेष लंबाई"
-
-
 msgid "Rest Density"
 msgstr "शेष घनत्व"
+
+
+msgid "Factor Rest Length"
+msgstr "कारक शेष लंबाई"
 
 
 msgid "Blend Opacity"
@@ -5532,6 +5490,10 @@ msgstr "अक्ष चित्रण"
 
 msgid "Curve Mapping"
 msgstr "वक्र प्रतिचित्रण"
+
+
+msgid "Energy"
+msgstr "ऊर्जा"
 
 
 msgid "Rigid"
@@ -6242,10 +6204,6 @@ msgid "Remove All Groups"
 msgstr "सभी समूह हटाएँ"
 
 
-msgid "Resolution:"
-msgstr "बिंदू विस्तार:"
-
-
 msgid "Object:"
 msgstr "वस्तु"
 
@@ -6305,6 +6263,10 @@ msgstr "विरूपण:"
 
 msgid "Outer"
 msgstr "बाहरी"
+
+
+msgid "Rim"
+msgstr "रिम"
 
 
 msgid "From:"
@@ -7153,6 +7115,10 @@ msgid "Key %d"
 msgstr "कुंजी %d"
 
 
+msgid "GPencil"
+msgstr "तैलीय पेंसिल"
+
+
 msgid "No new files have been packed"
 msgstr "कोई संचिकाएँ संकुल नहीं की गईं"
 
@@ -7553,11 +7519,6 @@ msgstr "नई"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "नई"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "नई"
 

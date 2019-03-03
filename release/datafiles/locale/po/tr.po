@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -2495,16 +2495,8 @@ msgid "Displacement"
 msgstr "Çıkarma"
 
 
-msgid "Dissolve Speed"
-msgstr "Hız Kontrol"
-
-
 msgid "Velocity"
 msgstr "Hız:"
-
-
-msgid "Dry Speed"
-msgstr "Hız Kontrol"
 
 
 msgid "Effect Type"
@@ -4892,10 +4884,6 @@ msgid "Light color"
 msgstr "Ekran Rengi:"
 
 
-msgid "Energy"
-msgstr "Enerji"
-
-
 msgid "Specular Factor"
 msgstr "Harekete bağlı bulanıklık derecesi"
 
@@ -5570,14 +5558,6 @@ msgstr "Fabrika Ayarlarını Yükle"
 
 msgid "Type of Object"
 msgstr "Nesne Tipini Değiştir..."
-
-
-msgid "Mesh"
-msgstr "Örüntü"
-
-
-msgid "Meta"
-msgstr "Meta"
 
 
 msgid "Vertex Groups"
@@ -7314,6 +7294,10 @@ msgid "Bone Roll"
 msgstr "Kemik Kısıtlamaları"
 
 
+msgid "Mesh"
+msgstr "Örüntü"
+
+
 msgid "Edge"
 msgstr "Kenar"
 
@@ -8940,6 +8924,10 @@ msgstr "Film Klibi"
 
 msgid "NLA Strip references some Action"
 msgstr "NLA Strip'i eyleme çevir"
+
+
+msgid "Meta"
+msgstr "Meta"
 
 
 msgid "Sound Clip"
@@ -14466,11 +14454,6 @@ msgid "Remove vertex color layer"
 msgstr "Yeni bir nokta rengi katmanı oluştur"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Nokta Boyama"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Seçili yüzeylerin açılarını düzleştirir"
 
@@ -14485,11 +14468,6 @@ msgstr "Eksenlerde Çevir"
 
 msgid "Smooth along the Z axis"
 msgstr "Eksenlerde Çevir"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Nokta Boyama"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -15722,10 +15700,6 @@ msgstr "Bul (Büyük Küçük Harfe Duyarlı)"
 
 msgid "Do a case sensitive compare"
 msgstr "Eksiksiz Bul (Büyük Küçük Harfe Duyarlı)"
-
-
-msgid "Glow"
-msgstr "Parlama"
 
 
 msgctxt "Operator"
@@ -17239,6 +17213,10 @@ msgstr "Geçerli Karenin Tersine"
 
 msgid "Wipe"
 msgstr "Silme"
+
+
+msgid "Glow"
+msgstr "Parlama"
 
 
 msgid "Adjustment Layer"
@@ -21153,10 +21131,6 @@ msgid "Anti-Aliasing Samples"
 msgstr "Keskinlikleri yumuşat (Anti-aliasing)"
 
 
-msgid "Bake Mode"
-msgstr "Düzenleme Modu"
-
-
 msgid "Bake normals"
 msgstr "Normalleri Çiz"
 
@@ -21417,22 +21391,6 @@ msgid "Time Scale"
 msgstr "Döndürme & Ölçek"
 
 
-msgid "Factor Radius"
-msgstr "Yarıçap Ortalaması:"
-
-
-msgid "Factor Repulsion"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
-msgid "Factor Rest Length"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
 msgid "Interaction Radius"
 msgstr "Yarıçap Ortalaması:"
 
@@ -21466,6 +21424,22 @@ msgstr "Kare/Saniye"
 
 
 msgid "Factor Density"
+msgstr "Harekete bağlı bulanıklık derecesi"
+
+
+msgid "Factor Radius"
+msgstr "Yarıçap Ortalaması:"
+
+
+msgid "Factor Repulsion"
+msgstr "Harekete bağlı bulanıklık derecesi"
+
+
+msgid "Factor Rest Length"
+msgstr "Harekete bağlı bulanıklık derecesi"
+
+
+msgid "Factor Stiff Viscosity"
 msgstr "Harekete bağlı bulanıklık derecesi"
 
 
@@ -21649,12 +21623,12 @@ msgid "Multiply Speed"
 msgstr "Hız Kontrol"
 
 
-msgid "Scale to length"
-msgstr "Nesneleri ızgara birimlerince ölçekle"
-
-
 msgid "Use as speed"
 msgstr "Yörünge merkezi olarak seçimi kullan"
+
+
+msgid "Scale to length"
+msgstr "Nesneleri ızgara birimlerince ölçekle"
 
 
 msgid "Subtract Sequence"
@@ -21755,10 +21729,6 @@ msgstr "Kamerayı Görüntüye Hizala"
 
 msgid "Sound Sequence"
 msgstr "Ses Pasif"
-
-
-msgid "Draw Waveform"
-msgstr "Kenarları Vurgula"
 
 
 msgid "Playback volume of the sound"
@@ -21905,6 +21875,10 @@ msgid "Sepia"
 msgstr "Sepya"
 
 
+msgid "Energy"
+msgstr "Enerji"
+
+
 msgid "Shape Key"
 msgstr "Şekil Anahtarı Ekle"
 
@@ -21991,6 +21965,10 @@ msgstr "Son Açılan..."
 
 msgid "Collide All"
 msgstr "Tümünü Normalleştir"
+
+
+msgid "Dissolve Speed"
+msgstr "Hız Kontrol"
 
 
 msgid "res"
@@ -24355,10 +24333,6 @@ msgstr "Arabellek rengini yapıştır"
 msgctxt "Operator"
 msgid "Lock Invert All"
 msgstr "Tüm Katmanları Göster"
-
-
-msgid "Resolution:"
-msgstr "Detay:"
 
 
 msgid "Object:"
@@ -26981,11 +26955,6 @@ msgstr "Yeni"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Yeni"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Yeni"
 

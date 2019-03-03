@@ -2134,7 +2134,7 @@ void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Smooth Vertex Operator
+/** \name Smooth Vertices Operator
  * \{ */
 
 static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
@@ -2219,8 +2219,8 @@ static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
 void MESH_OT_vertices_smooth(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Smooth Vertex";
-	ot->description = "Smooth Vertex\nFlatten angles of selected vertices";
+	ot->name = "Smooth Vertices";
+	ot->description = "Smooth Vertices\nFlatten angles of selected vertices";
 	ot->idname = "MESH_OT_vertices_smooth";
 
 	/* api callbacks */
@@ -2243,7 +2243,7 @@ void MESH_OT_vertices_smooth(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Laplacian Vertex Smooth Operator
+/** \name Laplacian Smooth Vertices Operator
  * \{ */
 
 static int edbm_do_smooth_laplacian_vertex_exec(bContext *C, wmOperator *op)
@@ -2340,8 +2340,8 @@ static int edbm_do_smooth_laplacian_vertex_exec(bContext *C, wmOperator *op)
 void MESH_OT_vertices_smooth_laplacian(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Laplacian Smooth Vertex";
-	ot->description = "Laplacian Smooth Vertex\nLaplacian smooth of selected vertices";
+	ot->name = "Laplacian Smooth Vertices";
+	ot->description = "Laplacian Smooth Vertices\nLaplacian smooth of selected vertices";
 	ot->idname = "MESH_OT_vertices_smooth_laplacian";
 
 	/* api callbacks */

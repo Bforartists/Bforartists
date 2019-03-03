@@ -964,8 +964,9 @@ static int actionzone_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 				/* Have we dragged off the zone and are not on an edge? */
 				if ((ED_area_actionzone_find_xy(sad->sa1, &event->x) != sad->az) &&
-					(screen_geom_area_map_find_active_scredge(
-						AREAMAP_FROM_SCREEN(sc), &screen_rect, event->x, event->y) == NULL)) {
+				    (screen_geom_area_map_find_active_scredge(
+				            AREAMAP_FROM_SCREEN(sc), &screen_rect, event->x, event->y) == NULL))
+				{
 					/* Are we still in same area? */
 					if (BKE_screen_find_area_xy(sc, SPACE_TYPE_ANY, event->x, event->y) == sad->sa1) {
 						/* Same area, so possible split. */
@@ -5225,7 +5226,7 @@ static int space_workspace_cycle_invoke(bContext *C, wmOperator *op, const wmEve
 	WorkSpace *workspace_dst = NULL;
 
 	ListBase ordered;
-	BKE_id_ordered_list(&ordered, &bmain->workspaces);
+	BKE_id_ordered_list(&ordered, &bmain->workspace);
 
 	for (LinkData *link = ordered.first; link; link = link->next) {
 		if (link->data == workspace_src) {

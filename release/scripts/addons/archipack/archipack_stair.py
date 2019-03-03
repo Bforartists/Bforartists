@@ -2768,7 +2768,7 @@ class ARCHIPACK_OT_stair(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.location = context.scene.cursor_location
+            o.location = context.scene.cursor.location
             o.select_set(state=True)
             context.view_layer.objects.active = o
             self.manipulate()

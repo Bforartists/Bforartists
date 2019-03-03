@@ -42,6 +42,7 @@
 
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_message.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -263,8 +264,11 @@ static TreeTraversalAction collection_find_data_to_edit(TreeElement *te, void *c
 
 static int collection_delete_exec(bContext *C, wmOperator *op)
 {
+	struct wmMsgBus *mbus = CTX_wm_message_bus(C);
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	const Base *basact_prev = BASACT(view_layer);
 	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	struct CollectionEditData data = {.scene = scene, .soops = soops,};
 	bool hierarchy = RNA_boolean_get(op->ptr, "hierarchy");
@@ -291,6 +295,10 @@ static int collection_delete_exec(bContext *C, wmOperator *op)
 	DEG_relations_tag_update(bmain);
 
 	WM_main_add_notifier(NC_SCENE | ND_LAYER, NULL);
+
+	if (basact_prev != BASACT(view_layer)) {
+		WM_msg_publish_rna_prop(mbus, &scene->id, view_layer, LayerObjects, active);
+	}
 
 	return OPERATOR_FINISHED;
 }
@@ -440,6 +448,7 @@ static int collection_duplicate_exec(bContext *C, wmOperator *op)
 	Main *bmain = CTX_data_main(C);
 	SpaceOutliner *soops = CTX_wm_space_outliner(C);
 	TreeElement *te = outliner_active_collection(C);
+	bool linked = strstr(op->idname, "linked") != NULL;
 
 	/* Can happen when calling from a key binding. */
 	if (te == NULL) {
@@ -459,7 +468,7 @@ static int collection_duplicate_exec(bContext *C, wmOperator *op)
 		case SO_SCENES:
 		case SO_VIEW_LAYER:
 		case SO_LIBRARIES:
-			BKE_collection_copy(bmain, parent, collection);
+			BKE_collection_duplicate(bmain, parent, collection, true, !linked);
 			break;
 	}
 
@@ -474,7 +483,22 @@ void OUTLINER_OT_collection_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Collection";
 	ot->idname = "OUTLINER_OT_collection_duplicate";
-	ot->description = "Duplicate selected collections";
+	ot->description = "Duplicate all objects and collections and make them single user";
+
+	/* api callbacks */
+	ot->exec = collection_duplicate_exec;
+	ot->poll = ED_outliner_collections_editor_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+void OUTLINER_OT_collection_duplicate_linked(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Duplicate Linked Collection";
+	ot->idname = "OUTLINER_OT_collection_duplicate_linked";
+	ot->description = "Duplicate all objects and collections with linked object data";
 
 	/* api callbacks */
 	ot->exec = collection_duplicate_exec;

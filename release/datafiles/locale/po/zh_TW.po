@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -6288,10 +6288,6 @@ msgid "Displacement"
 msgstr "錯置"
 
 
-msgid "Dissolve Speed"
-msgstr "消融速度"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "消融大約應在多少幀內發生"
 
@@ -6310,10 +6306,6 @@ msgstr "速度"
 
 msgid "How much surface velocity affects dripping"
 msgstr "表面速度影響滴落的程度"
-
-
-msgid "Dry Speed"
-msgstr "風乾速度"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -8113,7 +8105,7 @@ msgid "Small"
 msgstr "小"
 
 
-msgid "Normal"
+msgid "Regular"
 msgstr "一般"
 
 
@@ -12990,53 +12982,28 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "衰落距離 - 位於此點時光照為原始強度的一半"
 
 
-msgid "Energy"
-msgstr "能量"
-
-
 msgid "Specular Factor"
 msgstr "高光因子"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "類型"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "點光"
 
 
 msgid "Omnidirectional point light source"
 msgstr "全向點光源"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "日光"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "定向平行光線光源"
-
-
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "聚光"
 
 
 msgid "Directional cone light source"
 msgstr "定向錐形光源"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "域光"
-
-
 msgid "Directional area light source"
 msgstr "定向區域光源"
+
+
+msgid "Power"
+msgstr "次方"
 
 
 msgid "Falloff Type"
@@ -14419,26 +14386,6 @@ msgid "Type of Object"
 msgstr "物體的類型"
 
 
-msgid "Mesh"
-msgstr "網格"
-
-
-msgid "Meta"
-msgstr "變幻"
-
-
-msgid "GPencil"
-msgstr "蠟筆"
-
-
-msgid "Light"
-msgstr "光照"
-
-
-msgid "Speaker"
-msgstr "喇叭"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "動態拓樸雕塑"
 
@@ -15039,6 +14986,10 @@ msgid "Dummy"
 msgstr "偽"
 
 
+msgid "Normal"
+msgstr "一般"
+
+
 msgid "Object Aligned"
 msgstr "物體對齊"
 
@@ -15113,14 +15064,6 @@ msgstr "碰撞"
 
 msgid "Reactor"
 msgstr "反應子"
-
-
-msgid "Regrow"
-msgstr "重生"
-
-
-msgid "Regrow hair for each frame"
-msgstr "每幀重生毛髮"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -15449,6 +15392,14 @@ msgstr "起始/結束"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "讓最終尚未反應的粒子誕生"
+
+
+msgid "Regrow"
+msgstr "重生"
+
+
+msgid "Regrow hair for each frame"
+msgstr "每幀重生毛髮"
 
 
 msgid "Draw steps of the particle path"
@@ -15987,10 +15938,6 @@ msgstr "音高"
 
 msgid "Playback pitch of the sound"
 msgstr "回播聲音的音調"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "來源是否相對於攝影機"
 
 
 msgid "Sound"
@@ -19176,6 +19123,10 @@ msgid "Interpolate"
 msgstr "插補"
 
 
+msgid "Mesh"
+msgstr "網格"
+
+
 msgid "Edge"
 msgstr "邊線"
 
@@ -19226,6 +19177,10 @@ msgstr "隱藏/遮罩"
 
 msgid "Hooks"
 msgstr "鉤"
+
+
+msgid "Light"
+msgstr "光照"
 
 
 msgid "Make Links"
@@ -23571,6 +23526,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "在相鄰片段之間的 NLA 片段「過渡」"
 
 
+msgid "Meta"
+msgstr "變幻"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "行為類似相鄰片段容器的 NLA 片段"
 
@@ -24073,10 +24032,6 @@ msgstr "陰影校正"
 
 msgid "Basis"
 msgstr "基礎"
-
-
-msgid "Power"
-msgstr "次方"
 
 
 msgid "Slope"
@@ -34847,11 +34802,6 @@ msgid "Remove vertex color layer"
 msgstr "移除頂點色彩分層"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "平滑頂點"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "平展所選頂點的角度"
 
@@ -34874,11 +34824,6 @@ msgstr "沿 Y 軸平滑"
 
 msgid "Smooth along the Z axis"
 msgstr "沿 Z 軸平滑"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "拉普拉斯平滑頂點"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -37130,14 +37075,6 @@ msgstr "使用面法線算繪而顯示出統一的面"
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "使用插補式頂點法線算繪而顯示出平滑的面"
-
-
-msgid "Glow"
-msgstr "發光"
-
-
-msgid "Rim"
-msgstr "邊框"
 
 
 msgctxt "Operator"
@@ -40469,6 +40406,10 @@ msgstr "擦除"
 
 msgid "Wipe effect strip type"
 msgstr "擦除效果片段類型"
+
+
+msgid "Glow"
+msgstr "發光"
 
 
 msgid "Glow effect strip type"
@@ -45062,10 +45003,6 @@ msgid "Pie Menu"
 msgstr "圓派選單"
 
 
-msgid "Regular"
-msgstr "一般"
-
-
 msgid "Theme Space"
 msgstr "主題空間"
 
@@ -47101,10 +47038,6 @@ msgid "Drag Threshold"
 msgstr "拖曳閾值"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "在拖曳 UI 項目發生前您必須拖曳的像素量"
-
-
 msgid "Invert Zoom Direction"
 msgstr "反轉調焦方向"
 
@@ -47231,14 +47164,6 @@ msgstr "使用相反方向來調整遠近焦距"
 
 msgid "Softness"
 msgstr "柔度"
-
-
-msgid "Tweak Threshold"
-msgstr "調校閾值"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "在觸發調校事件之前您必須拖曳的像素數"
 
 
 msgid "Auto Perspective"
@@ -49161,10 +49086,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "用於從多解析度烘焙周遭遮擋的樣本數"
 
 
-msgid "Bake Mode"
-msgstr "烘培模式"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "選擇著色資訊來烘培至影像中"
 
@@ -50025,38 +49946,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "在流體中基於壓力差以重力的負向人造浮力"
 
 
-msgid "Factor Radius"
-msgstr "因子半徑"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "互動半徑為 4 * 粒子大小的因子"
-
-
-msgid "Factor Repulsion"
-msgstr "因子排斥"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "斥力是剛度的因子"
-
-
-msgid "Factor Rest Length"
-msgstr "因子靜止長度"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "彈簧靜止長度為 2 * 粒子大小的因子"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "因子剛性黏滯度"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "剛性黏滯度為法線黏滯度的因子"
-
-
 msgid "Interaction Radius"
 msgstr "互動半徑"
 
@@ -50147,6 +50036,38 @@ msgstr "因子密度"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "以密度作為預設密度 (取決於粒子大小) 的因子來計算"
+
+
+msgid "Factor Radius"
+msgstr "因子半徑"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "互動半徑為 4 * 粒子大小的因子"
+
+
+msgid "Factor Repulsion"
+msgstr "因子排斥"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "斥力是剛度的因子"
+
+
+msgid "Factor Rest Length"
+msgstr "因子靜止長度"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "彈簧靜止長度為 2 * 粒子大小的因子"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "因子剛性黏滯度"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "剛性黏滯度為法線黏滯度的因子"
 
 
 msgid "Initial Rest Length"
@@ -50697,20 +50618,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "在速度因子之後乘以結果速度"
 
 
-msgid "Scale to length"
-msgstr "縮放至長度"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "縮放值從 0.0 至 1.0 至目標序段長度"
-
-
 msgid "Use as speed"
 msgstr "作為速度"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "將值直譯為速度而不是幀數"
+
+
+msgid "Scale to length"
+msgstr "縮放至長度"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "縮放值從 0.0 至 1.0 至目標序段長度"
 
 
 msgid "Subtract Sequence"
@@ -50895,14 +50816,6 @@ msgstr "定義可播放一段時間的聲音之序段片段"
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "聲音的播放控制平展 (僅適用於單聲道來源)"
-
-
-msgid "Draw Waveform"
-msgstr "描繪波形"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "是否描繪聲音的波形"
 
 
 msgid "Playback volume of the sound"
@@ -51169,6 +51082,10 @@ msgid "Ambient"
 msgstr "周遭"
 
 
+msgid "Energy"
+msgstr "能量"
+
+
 msgid "Shape Key"
 msgstr "外形鍵"
 
@@ -51179,10 +51096,6 @@ msgstr "絕對鍵的框幀"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "絕對外形鍵的插補類型"
-
-
-msgid "Mute this shape key"
-msgstr "閉鎖此外形鍵"
 
 
 msgid "Name of Shape Key"
@@ -51375,6 +51288,10 @@ msgstr "密度網格"
 
 msgid "Smoke density grid"
 msgstr "煙霧密度網格"
+
+
+msgid "Dissolve Speed"
+msgstr "消融速度"
 
 
 msgid "res"
@@ -53334,6 +53251,10 @@ msgid "Show reconstructed camera path"
 msgstr "顯示重建的攝影機路徑"
 
 
+msgid "Speaker"
+msgstr "喇叭"
+
+
 msgid "Show Reconstruction"
 msgstr "顯示重建"
 
@@ -55290,10 +55211,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "移除複本與「自動合併」的限制"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "變更邊線縫合重算 UV 拆解"
-
-
 msgid "Edge Tag Mode"
 msgstr "邊線標籤模式"
 
@@ -55440,6 +55357,10 @@ msgstr "自動歸一化權重繪製"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "確保所有骨骼變形頂點群組當權重繪製時添加高至 1.0"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "變更邊線縫合重算 UV 拆解"
 
 
 msgid "Only Endpoints"
@@ -56656,6 +56577,14 @@ msgid "Portal"
 msgstr "入口"
 
 
+msgid "Extrusion"
+msgstr "擠出"
+
+
+msgid "Ray Distance"
+msgstr "光線距離"
+
+
 msgid "Curve subdivisions"
 msgstr "曲線細分"
 
@@ -56668,14 +56597,6 @@ msgstr "指派"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "取消選取"
-
-
-msgid "Extrusion"
-msgstr "擠出"
-
-
-msgid "Ray Distance"
-msgstr "光線距離"
 
 
 msgid "Cameras & Markers (.py)"
@@ -57363,10 +57284,6 @@ msgid "Move To Bottom"
 msgstr "移至底端"
 
 
-msgid "Resolution:"
-msgstr "解析度："
-
-
 msgid "Object:"
 msgstr "物體："
 
@@ -57554,6 +57471,10 @@ msgstr "硬邊："
 
 msgid "Outer"
 msgstr "外部"
+
+
+msgid "Rim"
+msgstr "邊框"
 
 
 msgid "Material Index Offset:"
@@ -60587,6 +60508,10 @@ msgid "Key %d"
 msgstr "鍵 %d"
 
 
+msgid "GPencil"
+msgstr "蠟筆"
+
+
 msgid "No new files have been packed"
 msgstr "未有打包新檔案"
 
@@ -62027,11 +61952,6 @@ msgstr "新增"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "新增"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "新增"
 
@@ -63999,10 +63919,6 @@ msgid "Could not reopen file"
 msgstr "無法重新開啟檔案"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Python 指令稿執行失敗，現在請查看主控臺..."
-
-
 msgid "Python disabled in this build"
 msgstr "此建置版已停用 Python"
 
@@ -65716,10 +65632,6 @@ msgstr "情境中遺失「window」"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "信任的來源 [未受信任的路徑]"
-
-
-msgid "Save Over?"
-msgstr "儲存覆蓋舊檔？"
 
 
 msgid "unable to open the file"

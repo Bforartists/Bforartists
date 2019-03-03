@@ -448,7 +448,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
     bpy.ops.object.skin_root_mark(override)
     bpy.ops.transform.skin_resize(override,
             value=(1 * thickness * (size / 10), 1 * thickness * (size / 10), 1 * thickness * (size / 10)),
-            constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+            constraint_axis=(False, False, False), orient_type='GLOBAL',
             mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
             proportional_size=1
             )
@@ -463,7 +463,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
         # by default set fingers thickness to 25 percent of body thickness
         bpy.ops.transform.skin_resize(override,
                     value=(finger_thickness, finger_thickness, finger_thickness),
-                    constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+                    constraint_axis=(False, False, False), orient_type='GLOBAL',
                     mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
                     proportional_size=1
                     )
@@ -492,7 +492,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
         bpy.ops.mesh.merge(type='CENTER')
         bpy.ops.transform.skin_resize(override,
                 value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+                constraint_axis=(False, False, False), orient_type='GLOBAL',
                 mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
                 proportional_size=1
                 )
@@ -505,7 +505,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
         bpy.ops.mesh.merge(type='CENTER')
         bpy.ops.transform.skin_resize(override,
                 value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+                constraint_axis=(False, False, False), orient_type='GLOBAL',
                 mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
                 proportional_size=1
                 )
@@ -519,7 +519,7 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
         corrective_thickness = 0.7
         bpy.ops.transform.skin_resize(override,
                 value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+                constraint_axis=(False, False, False), orient_type='GLOBAL',
                 mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
                 proportional_size=1
                 )

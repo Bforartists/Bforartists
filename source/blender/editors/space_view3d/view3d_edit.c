@@ -287,7 +287,7 @@ static bool view3d_orbit_calc_center(bContext *C, float r_dyn_ofs[3])
 	else if (ob_act == NULL || ob_act->mode == OB_MODE_OBJECT) {
 		/* object mode use boundbox centers */
 		Base *base_eval;
-		unsigned int tot = 0;
+		uint tot = 0;
 		float select_center[3];
 
 		zero_v3(select_center);
@@ -1701,7 +1701,7 @@ static int viewmove_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 	viewops_data_alloc(C, op);
 	viewops_data_create(
 	        C, op, event,
-	        viewops_flag_from_prefs() |
+	        (viewops_flag_from_prefs() & ~VIEWOPS_FLAG_ORBIT_SELECT) |
 	        (use_mouse_init ? VIEWOPS_FLAG_USE_MOUSE_INIT : 0));
 	vod = op->customdata;
 
@@ -2198,7 +2198,7 @@ static int viewzoom_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 	viewops_data_alloc(C, op);
 	viewops_data_create(
 	        C, op, event,
-	        viewops_flag_from_prefs() |
+	        (viewops_flag_from_prefs() & ~VIEWOPS_FLAG_ORBIT_SELECT) |
 	        (use_mouse_init ? VIEWOPS_FLAG_USE_MOUSE_INIT : 0));
 	vod = op->customdata;
 
@@ -2515,7 +2515,7 @@ static int viewdolly_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
 	viewops_data_create(
 	        C, op, event,
-	        viewops_flag_from_prefs() |
+	        (viewops_flag_from_prefs() & ~VIEWOPS_FLAG_ORBIT_SELECT) |
 	        (use_mouse_init ? VIEWOPS_FLAG_USE_MOUSE_INIT : 0));
 
 
@@ -2712,7 +2712,10 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
 		zero_v3(min);
 		zero_v3(max);
 		zero_v3(cursor->location);
-		unit_qt(cursor->rotation);
+		unit_qt(cursor->rotation_quaternion);
+		zero_v3(cursor->rotation_euler);
+		ARRAY_SET_ITEMS(cursor->rotation_axis, 0.0f, 1.0f, 0.0f);
+		cursor->rotation_angle = 0.0f;
 	}
 	else {
 		INIT_MINMAX(min, max);
@@ -4296,7 +4299,7 @@ static int viewpan_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 	else if (pandir == V3D_VIEW_PANDOWN)   { y =  25; }
 
 	viewops_data_alloc(C, op);
-	viewops_data_create(C, op, event, viewops_flag_from_prefs());
+	viewops_data_create(C, op, event, (viewops_flag_from_prefs() & ~VIEWOPS_FLAG_ORBIT_SELECT));
 	ViewOpsData *vod = op->customdata;
 
 	viewmove_apply(vod, vod->prev.event_xy[0] + x, vod->prev.event_xy[1] + y);
@@ -4762,10 +4765,30 @@ void ED_view3d_cursor3d_update(
 	View3DCursor *cursor_curr = &scene->cursor;
 	View3DCursor  cursor_prev = *cursor_curr;
 
-	ED_view3d_cursor3d_position_rotation(
-	        C, mval,
-	        use_depth, orientation,
-	        cursor_curr->location, cursor_curr->rotation);
+	{
+		float quat[4], quat_prev[4];
+		BKE_scene_cursor_rot_to_quat(cursor_curr, quat);
+		copy_qt_qt(quat_prev, quat);
+		ED_view3d_cursor3d_position_rotation(
+		        C, mval,
+		        use_depth, orientation,
+		        cursor_curr->location, quat);
+
+		if (!equals_v4v4(quat_prev, quat)) {
+			if ((cursor_curr->rotation_mode == ROT_MODE_AXISANGLE) &&
+			    RV3D_VIEW_IS_AXIS(rv3d->view))
+			{
+				float tmat[3][3], cmat[3][3];
+				quat_to_mat3(tmat, quat);
+				negate_v3_v3(cursor_curr->rotation_axis, tmat[2]);
+				axis_angle_to_mat3(cmat, cursor_curr->rotation_axis, 0.0f);
+				cursor_curr->rotation_angle = angle_signed_on_axis_v3v3_v3(cmat[0], tmat[0], cursor_curr->rotation_axis);
+			}
+			else {
+				BKE_scene_cursor_quat_to_rot(cursor_curr, quat, true);
+			}
+		}
+	}
 
 	/* offset the cursor lock to avoid jumping to new offset */
 	if (v3d->ob_centre_cursor) {
@@ -4796,8 +4819,9 @@ void ED_view3d_cursor3d_update(
 
 	{
 		struct wmMsgBus *mbus = CTX_wm_message_bus(C);
-		WM_msg_publish_rna_prop(
-		        mbus, &scene->id, scene, Scene, cursor_location);
+		wmMsgParams_RNA msg_key_params = {{{0}}};
+		RNA_pointer_create(&scene->id, &RNA_View3DCursor, &scene->cursor, &msg_key_params.ptr);
+		WM_msg_publish_rna_params(mbus, &msg_key_params);
 	}
 
 	DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);

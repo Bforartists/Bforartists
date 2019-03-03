@@ -239,7 +239,7 @@ class Ms3dImporter():
                 FORMAT_GROUP.format(ms3d_model.name))
         blender_empty_object = blender_context.blend_data.objects.new(
                 FORMAT_EMPTY_OBJECT.format(ms3d_model.name), None)
-        blender_empty_object.location = blender_scene.cursor_location
+        blender_empty_object.location = blender_scene.cursor.location
         blender_collection.objects.link(blender_empty_object)
         blender_group.objects.link(blender_empty_object)
 
@@ -288,7 +288,7 @@ class Ms3dImporter():
         blender_collection = blender_context.collection
         blender_view_layer = blender_context.view_layer
         blender_collection.objects.link(blender_mesh_object)
-        #blender_mesh_object.location = blender_scene.cursor_location
+        #blender_mesh_object.location = blender_scene.cursor.location
         enable_edit_mode(False, blender_context)
         select_all(False)
         blender_mesh_object.select_set(True)
@@ -699,7 +699,7 @@ class Ms3dImporter():
         blender_armature_object = blender_context.blend_data.objects.new(
                 ms3d_armature_object_name, blender_armature)
         blender_collection.objects.link(blender_armature_object)
-        #blender_armature_object.location = blender_scene.cursor_location
+        #blender_armature_object.location = blender_scene.cursor.location
         blender_armature_object.show_in_front = True
 
         ##########################

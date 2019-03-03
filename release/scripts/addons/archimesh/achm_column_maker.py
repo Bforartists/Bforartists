@@ -605,7 +605,7 @@ def create_circular_column(self, objname, radio_top, radio_mid, radio_bottom, he
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -677,7 +677,7 @@ def create_torus(objname, radio_inside, radio_outside, height):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -726,7 +726,7 @@ def create_rectangular_base(self, objname, x, y, z, ramp=False):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
@@ -792,7 +792,7 @@ def create_arc(objname, radio, gap, thickness, center):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)
