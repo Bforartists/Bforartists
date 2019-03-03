@@ -33,13 +33,13 @@ from bpy.props import *
 
 # addon description
 bl_info = {
-    "name": "import BrushSet",
-    "author": "Daniel Grauer (kromar)",
-    "version": (1, 2, 1),
-    "blender": (2, 74, 0),
+    "name": "Import BrushSet",
+    "author": "Daniel Grauer (kromar), CansecoGPC",
+    "version": (1, 2, 2),
+    "blender": (2, 80, 0),
     "category": "Import-Export",
     "location": "File > Import > BrushSet",
-    "description": "imports all image files from a folder",
+    "description": "Imports all image files from a folder.",
     "warning": '',    # used for warning icon and text in addons panel
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/Scripts/Import-Export/BrushSet",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
@@ -75,24 +75,23 @@ def LoadBrushSet(filepath, filename):
         (f3, foldername) = os.path.split(f1)
 
         # filter files by extensions (filter images)
-        for i in ext_list:
-            if file.endswith(i):
-                print("file: ", file)
-                # create new texture
-                texture = bpy.data.textures.new(file, 'IMAGE')
-                texture.use_fake_user = fakeUser
-                print("texture: ", texture)
+        if any(file.lower().endswith(ext) for ext in ext_list):
+            print("file: ", file)
+            # create new texture
+            texture = bpy.data.textures.new(file, 'IMAGE')
+            texture.use_fake_user = fakeUser
+            print("texture: ", texture)
 
-                # now we need to load the image into data
-                image = bpy.data.images.load(path)
-                image.use_fake_user = fakeUser
-                # image.source = 'FILE' #default is FILE so can remove this
-                # image.filepath = path
-                print("image: ", image, " ", path)
-                print("texturename: ", texture.name)
+            # now we need to load the image into data
+            image = bpy.data.images.load(path)
+            image.use_fake_user = fakeUser
+            # image.source = 'FILE' #default is FILE so can remove this
+            # image.filepath = path
+            print("image: ", image, " ", path)
+            print("texturename: ", texture.name)
 
-                # and assign the image to the texture
-                bpy.data.textures[texture.name].image = image
+            # and assign the image to the texture
+            bpy.data.textures[texture.name].image = image
 
 
     print("Brush Set imported!")
@@ -104,14 +103,14 @@ class BrushSetImporter(bpy.types.Operator):
     bl_idname = "import_image.brushset"
     bl_label = "Import BrushSet"
 
-    filename = StringProperty(name = "File Name",
+    filename: StringProperty(name = "File Name",
                               description = "filepath",
                               default = "",
                               maxlen = 1024,
                               options = {'ANIMATABLE'},
                               subtype = 'NONE')
 
-    filepath = StringProperty(name = "File Name",
+    filepath: StringProperty(name = "File Name",
                               description = "filepath",
                               default = "",
                               maxlen = 1024,
@@ -159,13 +158,24 @@ class Brush_set_UI(bpy.types.Panel):
 
 #---------------------------------------------#
 
+classes = (
+    BrushSetImporter,
+)
+
+
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
     bpy.types.TOPBAR_MT_file_import.append(menu_func)
 
+
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func)
+
 
 if __name__ == "__main__":
     register()

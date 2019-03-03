@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
 "Last-Translator: Lockal <lockalsash@gmail.com>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/translateblender/teams/82039/ru/)\n"
@@ -8062,10 +8062,6 @@ msgid "Displacement"
 msgstr "Смещения"
 
 
-msgid "Dissolve Speed"
-msgstr "Скорость рассеивания"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "Примерное число кадров, после которых происходит растворение"
 
@@ -8084,10 +8080,6 @@ msgstr "Скорость"
 
 msgid "How much surface velocity affects dripping"
 msgstr "Уровень влияния скорости поверхности на стекание"
-
-
-msgid "Dry Speed"
-msgstr "Скорость высыхания"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -10169,6 +10161,10 @@ msgstr "Крошечные"
 
 msgid "Small"
 msgstr "Маленькие"
+
+
+msgid "Regular"
+msgstr "Обычный"
 
 
 msgid "Large"
@@ -13467,12 +13463,12 @@ msgid "Mirror Modifier"
 msgstr "Модификатор «Зеркало»"
 
 
-msgid "Clip points"
-msgstr "Ограничить точки"
-
-
 msgid "Object used as center"
 msgstr "Объект, используемый в качестве центра"
+
+
+msgid "Clip points"
+msgstr "Ограничить точки"
 
 
 msgid "Mirror this axis"
@@ -13693,10 +13689,6 @@ msgstr "Оценка времени в секундах"
 
 msgid "First frame of the range"
 msgstr "Первый кадр диапазона"
-
-
-msgid "Apply offset in normal animation direction"
-msgstr "Применять смещение в обычном направлении анимации"
 
 
 msgid "Reverse"
@@ -17348,14 +17340,6 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Расстояние полурассеивания - расстояние, на котором интенсивность освещения уменьшается в два раза"
 
 
-msgid "Energy"
-msgstr "Энергия"
-
-
-msgid "Amount of light emitted"
-msgstr "Яркость излучаемого света"
-
-
 msgid "Node tree for node based lights"
 msgstr "Система нодов для источников света"
 
@@ -17368,45 +17352,20 @@ msgid "Specular reflection multiplier"
 msgstr "Множитель зеркального отражения"
 
 
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Тип"
-
-
 msgid "Type of Light"
 msgstr "Тип освещения"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Точка"
 
 
 msgid "Omnidirectional point light source"
 msgstr "Всенаправленный точечный источник света"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Солнце"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "Источник света с параллельными однонаправленными лучами"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Прожектор"
-
-
 msgid "Directional cone light source"
 msgstr "Направленный конусообразный источник света"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Область"
 
 
 msgid "Directional area light source"
@@ -17471,6 +17430,14 @@ msgstr "Толщина контактных теней"
 
 msgid "Pixel thickness used to detect occlusion"
 msgstr "Толщина пикселей для определения перекрытий"
+
+
+msgid "Power"
+msgstr "Степень"
+
+
+msgid "Amount of light emitted"
+msgstr "Яркость излучаемого света"
 
 
 msgid "Custom light falloff curve"
@@ -17643,14 +17610,6 @@ msgstr "Контактная тень"
 
 msgid "Use screen space raytracing to have correct shadowing near occluder, or for small features that does not appear in shadow maps"
 msgstr "Использовать трассировку лучей в экранном пространстве чтобы получить правильные тени возле перекрывающих объектов или для мелких деталей, которые не попали в теневые карты"
-
-
-msgid "Hemi Light"
-msgstr "Полусферический источник света"
-
-
-msgid "180 degree constant Light"
-msgstr "180-градусный постоянный источник света"
 
 
 msgid "Point Light"
@@ -19565,30 +19524,6 @@ msgid "Type of Object"
 msgstr "Тип объекта"
 
 
-msgid "Mesh"
-msgstr "Меш"
-
-
-msgid "Meta"
-msgstr "Мета"
-
-
-msgid "GPencil"
-msgstr "ЭскизныйКарандаш"
-
-
-msgid "Light"
-msgstr "Свет"
-
-
-msgid "Speaker"
-msgstr "Источник звука"
-
-
-msgid "Probe"
-msgstr "Проба"
-
-
 msgid "Axis that points in the upward direction (applies to InstanceFrame when parent 'Follow' is enabled)"
 msgstr "Ось, определяющая направление вверх (применяется к кадру экземпляра при включённой опции «Следовать» для родителя)"
 
@@ -20365,14 +20300,6 @@ msgid "Let the vector away from the target particle's location give the particle
 msgstr "Задавать начальную скорость частиц по вектору, направленному из места положения частицы наружу"
 
 
-msgid "Regrow"
-msgstr "Доращивать"
-
-
-msgid "Regrow hair for each frame"
-msgstr "Доращивать волосы на каждом кадре"
-
-
 msgid "How many steps paths are rendered with (power of 2)"
 msgstr "Количество шагов, за которое выполняется рендер путей (степень двойки)"
 
@@ -20769,6 +20696,14 @@ msgid "Give birth to unreacted particles eventually"
 msgstr "В заданный момент начать порождение непрореагировавших частиц"
 
 
+msgid "Regrow"
+msgstr "Доращивать"
+
+
+msgid "Regrow hair for each frame"
+msgstr "Доращивать волосы на каждом кадре"
+
+
 msgid "Adaptive Render"
 msgstr "Адаптивный рендер"
 
@@ -20967,10 +20902,6 @@ msgstr "Положение курсора"
 
 msgid "3D cursor location"
 msgstr "Положение 3D-курсора"
-
-
-msgid "Cursor Rotation"
-msgstr "Вращение курсора"
 
 
 msgid "3D cursor rotation in quaternions (keep normalized)"
@@ -21437,10 +21368,6 @@ msgstr "Высота"
 
 msgid "Playback pitch of the sound"
 msgstr "Высота воспроизведения звука"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "Источник звука является относительным к камере"
 
 
 msgid "Sound"
@@ -26925,6 +26852,10 @@ msgid "Interpolate"
 msgstr "Интерполировать"
 
 
+msgid "Mesh"
+msgstr "Меш"
+
+
 msgid "Edge"
 msgstr "Ребро"
 
@@ -26999,6 +26930,10 @@ msgstr "Крюки"
 
 msgid "Add Image"
 msgstr "Добавить изображение"
+
+
+msgid "Light"
+msgstr "Свет"
 
 
 msgid "Light Probe"
@@ -32660,6 +32595,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "Переходы НЛА-дорожек между соседними лентами"
 
 
+msgid "Meta"
+msgstr "Мета"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "НЛА-дорожка, выступающая в роли контейнера для дорожек"
 
@@ -33214,10 +33153,6 @@ msgstr "Основа"
 
 msgid "Support negative color by using this as the RGB basis"
 msgstr "Включить поддержку отрицательного цвета, используя это значение как основу RGB"
-
-
-msgid "Power"
-msgstr "Степень"
 
 
 msgid "Slope"
@@ -41280,14 +41215,6 @@ msgid "Export vertex tangents with shape keys (morph targets)"
 msgstr "Экспортировать касательные вершин с ключами формы (целями морфинга)"
 
 
-msgid "Keyframes Start at 0"
-msgstr "Начало ключевых кадров с 0"
-
-
-msgid "Keyframes start at 0, instead of 1"
-msgstr "Начинать ключевые кадры с 0, а не с 1"
-
-
 msgid "Export vertex normals with meshes"
 msgstr "Экспортировать нормали вершин вместе с мешами"
 
@@ -41310,14 +41237,6 @@ msgstr "Экспортировать касательные к вершинам 
 
 msgid "Export UVs (texture coordinates) with meshes"
 msgstr "Экспортировать UV-развертки (текстурные координаты) вместе с мешами"
-
-
-msgid "Texture Transforms"
-msgstr "Преобразования текстур"
-
-
-msgid "Export texture or UV position, rotation, and scale. Uses \"KHR_texture_transform\" glTF extension"
-msgstr "Экспортировать положение, вращение и масштаб текстур или UV. Использует расширение glTF «KHR_texture_transform»"
 
 
 msgid "+Y Up"
@@ -41346,10 +41265,6 @@ msgstr "Настройки меша"
 
 msgid "Object settings"
 msgstr "Настройки объектов"
-
-
-msgid "Material settings"
-msgstr "Настройки материалов"
 
 
 msgid "Animation settings"
@@ -46986,11 +46901,6 @@ msgid "Remove vertex color layer"
 msgstr "Удалить слой цветов вершин"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Сгладить вершины"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Распрямить углы выделенных вершин"
 
@@ -47013,11 +46923,6 @@ msgstr "Сглаживание по оси Y"
 
 msgid "Smooth along the Z axis"
 msgstr "Сглаживание по оси Z"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Сгладить вершины по Лапласу"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -49535,14 +49440,6 @@ msgstr "Рендерить и отображать грани равномерн
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Рендерить и отображать грани гладко с использованием нормалей вершин"
-
-
-msgid "Glow"
-msgstr "Свечение"
-
-
-msgid "Rim"
-msgstr "Обод"
 
 
 msgid "Name of the shaderfx to edit"
@@ -53246,6 +53143,10 @@ msgstr "Затирание"
 
 msgid "Wipe effect strip type"
 msgstr "Дорожка с эффектом затирания"
+
+
+msgid "Glow"
+msgstr "Свечение"
 
 
 msgid "Glow effect strip type"
@@ -58493,6 +58394,10 @@ msgid "Fluid Presets"
 msgstr "Предустановки жидкости"
 
 
+msgid "Material settings"
+msgstr "Настройки материалов"
+
+
 msgid "Predefined node color"
 msgstr "Предопределённый цвет ноды"
 
@@ -58535,10 +58440,6 @@ msgstr "Стиль текста"
 
 msgid "User Interface"
 msgstr "Интерфейс"
-
-
-msgid "Regular"
-msgstr "Обычный"
 
 
 msgid "Theme Space"
@@ -58722,6 +58623,10 @@ msgstr "Текстурное пространство"
 
 msgid "Geometry Data"
 msgstr "Геометрические данные"
+
+
+msgid "Probe"
+msgstr "Проба"
 
 
 msgid "Paragraph"
@@ -60668,10 +60573,6 @@ msgid "Drag Threshold"
 msgstr "Чувствительность перетаскивания"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "Количество пикселей, на которое нужно сдвинуть элемент пользовательского интерфеса, чтобы началось его реальное перетаскивание"
-
-
 msgid "Invert Zoom Direction"
 msgstr "Инв. направление масштабирования"
 
@@ -60830,14 +60731,6 @@ msgstr "Масштабировать в противоположном напр�
 
 msgid "Softness"
 msgstr "Мягкость"
-
-
-msgid "Tweak Threshold"
-msgstr "Порог подстройки"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "Количество пикселей, на которое необходимо осуществить перетаскивание перед срабатыванием события подстройки"
 
 
 msgid "Auto Perspective"
@@ -61144,14 +61037,6 @@ msgid "Set audio sampling rate to 192000 samples per second"
 msgstr "Установить частоту дискретизации 192000 выборок в секунду"
 
 
-msgid "Edit Studio Light"
-msgstr "Редактировать студийный свет"
-
-
-msgid "View the result of the studio light editor in the viewport"
-msgstr "Предпросмотр реактора студийного освещения в вьюпорте"
-
-
 msgid "Clip Alpha"
 msgstr "Альфа-отсечение"
 
@@ -61298,6 +61183,14 @@ msgstr "Время с момента последнего доступа к те
 
 msgid "Region Overlap"
 msgstr "Разрешить перекрытие регионов"
+
+
+msgid "Edit Studio Light"
+msgstr "Редактировать студийный свет"
+
+
+msgid "View the result of the studio light editor in the viewport"
+msgstr "Предпросмотр реактора студийного освещения в вьюпорте"
 
 
 msgid "Color Picker Type"
@@ -63168,10 +63061,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Количество сэмплов, используемый для запекания Ambient Occlusion из мультиразрешения"
 
 
-msgid "Bake Mode"
-msgstr "Режим запекания"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Тип информации о затенении, запекаемой в изображение"
 
@@ -64252,38 +64141,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "Искусственная сила выталкивания в противоположном гравитации направлении на основе разницы давлений внутри жидкости"
 
 
-msgid "Factor Radius"
-msgstr "Радиус по множителю"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "Радиус взаимодействия определяется как результат выражения 4  * размер частицы"
-
-
-msgid "Factor Repulsion"
-msgstr "Отталкивание по множителю"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "Отталкивание является множителем для жёсткости"
-
-
-msgid "Factor Rest Length"
-msgstr "Длина покоя по множителю"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "Длина пружины в состоянии покоя определяется результатом выражения 2 * размер частицы"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "Жёсткая вязкость по множителю"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "Жёсткая вязкость является множителем к обычной вязкости"
-
-
 msgid "Interaction Radius"
 msgstr "Радиус взаимодействия"
 
@@ -64382,6 +64239,38 @@ msgstr "Плотность по множителю"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "Вычисление плотности в качестве множителя к стандартной плотности (зависит от размера частиц)"
+
+
+msgid "Factor Radius"
+msgstr "Радиус по множителю"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "Радиус взаимодействия определяется как результат выражения 4  * размер частицы"
+
+
+msgid "Factor Repulsion"
+msgstr "Отталкивание по множителю"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "Отталкивание является множителем для жёсткости"
+
+
+msgid "Factor Rest Length"
+msgstr "Длина покоя по множителю"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "Длина пружины в состоянии покоя определяется результатом выражения 2 * размер частицы"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "Жёсткая вязкость по множителю"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "Жёсткая вязкость является множителем к обычной вязкости"
 
 
 msgid "Initial Rest Length"
@@ -65013,20 +64902,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "Умножить результирующую скорость после коэффициента скорости"
 
 
-msgid "Scale to length"
-msgstr "Масштабировать в длину"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Масштабировать значения от 0.0 до 1.0 в длину целевой последовательности"
-
-
 msgid "Use as speed"
 msgstr "Использовать как скорость"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "Интерпретировать значение как скорость, а не как номер кадра"
+
+
+msgid "Scale to length"
+msgstr "Масштабировать в длину"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "Масштабировать значения от 0.0 до 1.0 в длину целевой последовательности"
 
 
 msgid "Subtract Sequence"
@@ -65231,14 +65120,6 @@ msgstr "Дорожка видеоредактора, определяющая з
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "Панорамировать звук при воспроизведении (только для моноканальных источников)"
-
-
-msgid "Draw Waveform"
-msgstr "Показать форму волны"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "Показывать форму звукового сигнала"
 
 
 msgid "Sound data-block used by this sequence"
@@ -65589,6 +65470,10 @@ msgid "Ambient"
 msgstr "Среда"
 
 
+msgid "Energy"
+msgstr "Энергия"
+
+
 msgid "Shape Key"
 msgstr "Ключ формы"
 
@@ -65599,10 +65484,6 @@ msgstr "Кадр для абсолютных ключей"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Тип интерполяции для абсолютных ключей формы"
-
-
-msgid "Mute this shape key"
-msgstr "Отключить этот ключ формы"
 
 
 msgid "Name of Shape Key"
@@ -65803,6 +65684,10 @@ msgstr "Сетка плотности дыма"
 
 msgid "Thickness of smoke drawing in the viewport"
 msgstr "Плотность дыма во вьюпорте"
+
+
+msgid "Dissolve Speed"
+msgstr "Скорость рассеивания"
 
 
 msgid "res"
@@ -67946,6 +67831,10 @@ msgid "Active tool gizmo"
 msgstr "Манипулятор активного инструмента"
 
 
+msgid "Speaker"
+msgstr "Источник звука"
+
+
 msgid "Show Reconstruction"
 msgstr "Показать реконструкцию"
 
@@ -70038,10 +69927,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "Ограничить удаление дубликатов и автообъединение"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Пересчёт UV-развёртки при изменении рёбер швов"
-
-
 msgid "Edge Tag Mode"
 msgstr "Режим тегирования рёбер"
 
@@ -70196,6 +70081,10 @@ msgstr "Автонормализовать веса"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Обеспечить верхнюю границу в 1.0 для всех групп вершин деформации кости при рисовании весов"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "Пересчёт UV-развёртки при изменении рёбер швов"
 
 
 msgid "Gizmo Mode"
@@ -71994,6 +71883,14 @@ msgid "Portal"
 msgstr "Портал"
 
 
+msgid "Extrusion"
+msgstr "Выдавливание"
+
+
+msgid "Ray Distance"
+msgstr "Расстояние луча"
+
+
 msgid "Curve subdivisions"
 msgstr "Подразделений кривой"
 
@@ -72006,14 +71903,6 @@ msgstr "Назначить"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Снять выделение"
-
-
-msgid "Extrusion"
-msgstr "Выдавливание"
-
-
-msgid "Ray Distance"
-msgstr "Расстояние луча"
 
 
 msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
@@ -72753,10 +72642,6 @@ msgid "Move To Bottom"
 msgstr "Переместить в конец"
 
 
-msgid "Resolution:"
-msgstr "Разрешение:"
-
-
 msgid "Object:"
 msgstr "Объект:"
 
@@ -72952,6 +72837,10 @@ msgstr "Складка:"
 
 msgid "Outer"
 msgstr "Снаружи"
+
+
+msgid "Rim"
+msgstr "Обод"
 
 
 msgid "Material Index Offset:"
@@ -76408,6 +76297,10 @@ msgid "Mball"
 msgstr "МСфера"
 
 
+msgid "GPencil"
+msgstr "ЭскизныйКарандаш"
+
+
 msgid "No new files have been packed"
 msgstr "Нет новых упакованных файлов"
 
@@ -78072,11 +77965,6 @@ msgid "New"
 msgstr "Создать"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Создать"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Создать"
@@ -78483,11 +78371,6 @@ msgstr "Результат объединения состоит из %d вер�
 
 msgid "SoundTrack"
 msgstr "Звуковая дорожка"
-
-
-msgctxt "Lamp"
-msgid "LightProbe"
-msgstr "Зонд освещения"
 
 
 msgctxt "Object"
@@ -80634,10 +80517,6 @@ msgid "Could not reopen file"
 msgstr "Не удалось переоткрыть файл"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Ошибка скрипта Python, см. дополнительную информацию в консоли…"
-
-
 msgid "Python disabled in this build"
 msgstr "Python отключён в этой сборке"
 
@@ -82599,10 +82478,6 @@ msgstr "Отсутствует окно в контексте"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "Надёжный источник [Ненадёжный путь]"
-
-
-msgid "Save Over?"
-msgstr "Перезаписать файл?"
 
 
 msgid "unable to open the file"

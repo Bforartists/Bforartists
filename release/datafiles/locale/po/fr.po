@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -7414,10 +7414,6 @@ msgid "Displacement"
 msgstr "Déplacement"
 
 
-msgid "Dissolve Speed"
-msgstr "Vitesse de dissolution"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "En combien de frames approximativement devrait se passer la dissolution"
 
@@ -7436,10 +7432,6 @@ msgstr "Vitesse"
 
 msgid "How much surface velocity affects dripping"
 msgstr "À quel point la vélocité de surface affecte l’égouttement"
-
-
-msgid "Dry Speed"
-msgstr "Vitesse de séchage"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -9387,8 +9379,8 @@ msgid "Small"
 msgstr "Petites"
 
 
-msgid "Normal"
-msgstr "Normale"
+msgid "Regular"
+msgstr "Standard"
 
 
 msgid "Large"
@@ -15174,49 +15166,20 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Distance d’atténuation – la lumière est à la moitié de son intensité de départ à cette distance"
 
 
-msgid "Energy"
-msgstr "Énergie"
-
-
 msgid "Specular Factor"
 msgstr "Facteur spéculaire"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Type"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Point"
 
 
 msgid "Omnidirectional point light source"
 msgstr "Source de luimère omnidirectionnelle ponctuelle"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Soleil"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "Source de lumière à la direction constante (rayons parallèles)"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Spot"
-
-
 msgid "Directional cone light source"
 msgstr "Source de lumière directionnelle conique"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Surface"
 
 
 msgid "Directional area light source"
@@ -15229,6 +15192,10 @@ msgstr "Coefficient constant"
 
 msgid "Constant distance attenuation coefficient"
 msgstr "Coefficient d’atténuation de distance constante"
+
+
+msgid "Power"
+msgstr "Puissance"
 
 
 msgid "Falloff Type"
@@ -16695,26 +16662,6 @@ msgid "Type of Object"
 msgstr "Type d'objet"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
-msgid "Meta"
-msgstr "Méta"
-
-
-msgid "GPencil"
-msgstr "CrayonG"
-
-
-msgid "Light"
-msgstr "Légère"
-
-
-msgid "Speaker"
-msgstr "Haut-parleur"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "Sculpture à topologie dynamique"
 
@@ -17347,6 +17294,10 @@ msgid "Dummy"
 msgstr "Stupide"
 
 
+msgid "Normal"
+msgstr "Normale"
+
+
 msgid "Let the surface normal give the particle a starting velocity"
 msgstr "Laisser la normale de la surface donner à la particule une vélocité initiale"
 
@@ -17441,14 +17392,6 @@ msgstr "Réacteur"
 
 msgid "Let the vector away from the target particle's location give the particle a starting velocity"
 msgstr "Laisser le vecteur s’éloignant de la position de la particule cible donner à la particule une vélocité initiale"
-
-
-msgid "Regrow"
-msgstr "Refaire pousser"
-
-
-msgid "Regrow hair for each frame"
-msgstr "Faire repousser les cheveux à chaque frame"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -17821,6 +17764,14 @@ msgstr "Début/fin"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "Donner finalement naissance aux particules non-réagies"
+
+
+msgid "Regrow"
+msgstr "Refaire pousser"
+
+
+msgid "Regrow hair for each frame"
+msgstr "Faire repousser les cheveux à chaque frame"
 
 
 msgid "Adaptive Render"
@@ -18419,10 +18370,6 @@ msgstr "Hauteur"
 
 msgid "Playback pitch of the sound"
 msgstr "Hauteur du son à la lecture"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "Si la source est relative à la caméra ou pas"
 
 
 msgid "Sound"
@@ -23296,6 +23243,10 @@ msgid "Interpolate"
 msgstr "Interpoler"
 
 
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Edge"
 msgstr "Arête"
 
@@ -23354,6 +23305,10 @@ msgstr "Cacher/Masquer"
 
 msgid "Hooks"
 msgstr "Crochets"
+
+
+msgid "Light"
+msgstr "Légère"
 
 
 msgid "Make Links"
@@ -28707,6 +28662,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "Les “transitions” de bande NLA entre bandes adjacentes"
 
 
+msgid "Meta"
+msgstr "Méta"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "La bande NLA se comporte comme un conteneur pour des bandes adjacentes"
 
@@ -29261,10 +29220,6 @@ msgstr "Base"
 
 msgid "Support negative color by using this as the RGB basis"
 msgstr "Supporter les couleurs négatives en utilisant cela comme base RGB"
-
-
-msgid "Power"
-msgstr "Puissance"
 
 
 msgid "Slope"
@@ -42296,11 +42251,6 @@ msgid "Remove vertex color layer"
 msgstr "Enlever un calque de couleur de vertices"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Adoucir vertices"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Aplatit les angles des vertices sélectionnés"
 
@@ -42323,11 +42273,6 @@ msgstr "Adoucir le long de l’axe Y"
 
 msgid "Smooth along the Z axis"
 msgstr "Adoucir le long de l’axe Z"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Adoucir vertices par Laplacien"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -44849,14 +44794,6 @@ msgstr "Rendre et afficher les faces plates, en utilisant les normales de face"
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Rendre et afficher les faces lissées, en utilisant les normales de vertex interpolées"
-
-
-msgid "Glow"
-msgstr "Lumineux"
-
-
-msgid "Rim"
-msgstr "Bordure"
 
 
 msgctxt "Operator"
@@ -48827,6 +48764,10 @@ msgstr "Volet"
 
 msgid "Wipe effect strip type"
 msgstr "Type de bande d’effet volet"
+
+
+msgid "Glow"
+msgstr "Lumineux"
 
 
 msgid "Glow effect strip type"
@@ -54594,10 +54535,6 @@ msgid "Pie Menu"
 msgstr "Menu camembert"
 
 
-msgid "Regular"
-msgstr "Standard"
-
-
 msgid "Theme Space"
 msgstr "Espace de thème"
 
@@ -56945,10 +56882,6 @@ msgid "Drag Threshold"
 msgstr "Seuil de cliquer-tirer"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "Nombre de pixels à cliquer-tirer avant d’activer le cliquer-tirer sur un élément de l’UI"
-
-
 msgid "Invert Zoom Direction"
 msgstr "Inverser direction du zoom"
 
@@ -57115,14 +57048,6 @@ msgstr "Zoomer avec les directions opposées"
 
 msgid "Softness"
 msgstr "Douceur"
-
-
-msgid "Tweak Threshold"
-msgstr "Limite d’ajustage"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "Nombre de pixels à cliquer-tirer avant d’activer l’événement d’ajustage"
 
 
 msgid "Auto Perspective"
@@ -57873,10 +57798,6 @@ msgid "Direct conversion of frame numbers to seconds"
 msgstr "Conversion directe des numéros de frame en secondes"
 
 
-msgid "Changes the thickness of lines and points in the interface"
-msgstr "Modifier l’épaisseur des lignes et points dans lginterface"
-
-
 msgid "Thin"
 msgstr "Fin"
 
@@ -57895,10 +57816,6 @@ msgstr "Épaisse"
 
 msgid "Thicker lines than the default"
 msgstr "Des lignes plus épaisses que par défaut"
-
-
-msgid "Changes the size of the fonts and buttons in the interface"
-msgstr "Modifier les tailles des polices et boutons de l’interface"
 
 
 msgid "Contents Follow Opening Direction"
@@ -59913,10 +59830,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Nombre d’échantillons utilisés par le pré-calcul d’occlusion ambiante de la multi-résolution"
 
 
-msgid "Bake Mode"
-msgstr "Mode de pré-calcul"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Choisir les informations d’ombrage à pré-calculer dans l’image"
 
@@ -61097,38 +61010,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "Force de flottabilité artificielle dans la direction opposée à la gravité, basée sur les différences de pression au sein du fluide"
 
 
-msgid "Factor Radius"
-msgstr "Facteur rayon"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "Rayon d'interaction est un facteur de 4 fois la taille de la particule"
-
-
-msgid "Factor Repulsion"
-msgstr "Facteur répulsion"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "La répulsion est un facteur de raideur"
-
-
-msgid "Factor Rest Length"
-msgstr "Facteur longueur au repos"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "La longueur au repos de ressort est un facteur de 2 × taille de particule"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "Facteur viscosité de raideur"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "La viscosité de raideur est un facteur de viscosité normale"
-
-
 msgid "Interaction Radius"
 msgstr "Rayon d’interaction"
 
@@ -61227,6 +61108,38 @@ msgstr "Facteur densité"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "La densité est calculée comme un facteur de densité par défaut (dépend de la taille des particules)"
+
+
+msgid "Factor Radius"
+msgstr "Facteur rayon"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "Rayon d'interaction est un facteur de 4 fois la taille de la particule"
+
+
+msgid "Factor Repulsion"
+msgstr "Facteur répulsion"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "La répulsion est un facteur de raideur"
+
+
+msgid "Factor Rest Length"
+msgstr "Facteur longueur au repos"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "La longueur au repos de ressort est un facteur de 2 × taille de particule"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "Facteur viscosité de raideur"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "La viscosité de raideur est un facteur de viscosité normale"
 
 
 msgid "Initial Rest Length"
@@ -61851,20 +61764,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "Multiplier la vitesse résultante après le facteur de vitesse"
 
 
-msgid "Scale to length"
-msgstr "Redimensionner à la longueur"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Redimensionner les valeurs de 0.0 à 1.0 à la longueur de la séquence"
-
-
 msgid "Use as speed"
 msgstr "Utiliser comme vitesse"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "Interpréter la valeur comme la vitesse, au lieu d’un numéro de frame"
+
+
+msgid "Scale to length"
+msgstr "Redimensionner à la longueur"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "Redimensionner les valeurs de 0.0 à 1.0 à la longueur de la séquence"
 
 
 msgid "Subtract Sequence"
@@ -62166,14 +62079,6 @@ msgstr "Bande séquence définissant un son à lire sur une période de temps"
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "Lecture au balayage du son (uniquement pour les sources mono)"
-
-
-msgid "Draw Waveform"
-msgstr "Afficher forme d’onde"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "S‘il faut afficher la forme d’onde du son"
 
 
 msgid "Sound data-block used by this sequence"
@@ -62584,12 +62489,12 @@ msgid "Sepia"
 msgstr "Sépia"
 
 
-msgid "Bi-Tone"
-msgstr "Bi-ton"
-
-
 msgid "Ambient"
 msgstr "Ambiante"
+
+
+msgid "Energy"
+msgstr "Énergie"
 
 
 msgid "Shadow Effect"
@@ -62614,10 +62519,6 @@ msgstr "Frame pour les clés absolues"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Type d’interpolation pour les clés de forme absolues"
-
-
-msgid "Mute this shape key"
-msgstr "Rendre muette cette clé de forme"
 
 
 msgid "Name of Shape Key"
@@ -62928,8 +62829,8 @@ msgid "Thickness of smoke drawing in the viewport"
 msgstr "Épaisseur de l’affichage de la fumée dans la vue 3D"
 
 
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "(Dés)activer la visualisation du champs de vélocité par des aiguilles"
+msgid "Dissolve Speed"
+msgstr "Vitesse de dissolution"
 
 
 msgid "res"
@@ -63038,6 +62939,10 @@ msgstr "Afficher haute résolution"
 
 msgid "Show high resolution (using amplification)"
 msgstr "Afficher en haute résolution (en usant de l’amplification)"
+
+
+msgid "Toggle visualization of the velocity field as needles"
+msgstr "(Dés)activer la visualisation du champs de vélocité par des aiguilles"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -65135,6 +65040,10 @@ msgstr "Afficher chemin caméra"
 
 msgid "Show reconstructed camera path"
 msgstr "Afficher le chemin reconstitué de la caméra"
+
+
+msgid "Speaker"
+msgstr "Haut-parleur"
 
 
 msgid "Show Reconstruction"
@@ -67265,10 +67174,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "Limite pour enlever les copies et pour l’“Auto-fusion”"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Modifier les arêtes de couture re-calcule le dépliage UV"
-
-
 msgid "Edge Tag Mode"
 msgstr "Mode de tagage d’arête"
 
@@ -67439,6 +67344,10 @@ msgstr "PPeinture auto-normaliser"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "S’assurer que tous les groupes de vertices déformant des os ont toujours une somme unitaire, pendant la peinture"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "Modifier les arêtes de couture re-calcule le dépliage UV"
 
 
 msgid "Use Additive Drawing"
@@ -69182,10 +69091,6 @@ msgid "OpenCL Flags:"
 msgstr "Drapeaux OpenCL :"
 
 
-msgid "Kernel"
-msgstr "Noyau"
-
-
 msgid "%s AA"
 msgstr "%s AA"
 
@@ -69210,6 +69115,18 @@ msgid "Portal"
 msgstr "Portail"
 
 
+msgid "Swizzle R"
+msgstr "Mélange R"
+
+
+msgid "Extrusion"
+msgstr "Extrusion"
+
+
+msgid "Ray Distance"
+msgstr "Distance de rayon"
+
+
 msgid "Curve subdivisions"
 msgstr "Subdivisions de courbe"
 
@@ -69222,18 +69139,6 @@ msgstr "Assigner"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Désélectionner"
-
-
-msgid "Swizzle R"
-msgstr "Mélange R"
-
-
-msgid "Extrusion"
-msgstr "Extrusion"
-
-
-msgid "Ray Distance"
-msgstr "Distance de rayon"
 
 
 msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
@@ -70050,10 +69955,6 @@ msgid "Relative To"
 msgstr "Relatif à"
 
 
-msgid "Resolution:"
-msgstr "Résolution :"
-
-
 msgid "Object:"
 msgstr "Objet :"
 
@@ -70265,6 +70166,10 @@ msgstr "Plis :"
 
 msgid "Outer"
 msgstr "Externe"
+
+
+msgid "Rim"
+msgstr "Bordure"
 
 
 msgid "Material Index Offset:"
@@ -74119,6 +74024,10 @@ msgid "Mball"
 msgstr "Mballe"
 
 
+msgid "GPencil"
+msgstr "CrayonG"
+
+
 msgid "No new files have been packed"
 msgstr "Aucun nouveau fichier n’a été empaqueté"
 
@@ -74537,10 +74446,6 @@ msgstr "Compositing | Initialisation de l’exécution"
 
 msgid "Compositing | De-initializing execution"
 msgstr "Compositing | Dés-initialisation de l’exécution"
-
-
-msgid "PaintWeightMode"
-msgstr "Mode de peinture de poids"
 
 
 msgid "Dope Sheet Summary"
@@ -75953,11 +75858,6 @@ msgid "New"
 msgstr "Nouveau"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Nouvelle"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Nouvelle"
@@ -76134,10 +76034,6 @@ msgstr "Sphère"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Icosphère"
-
-
-msgid "Confirm: (Enter/LMB), Cancel: (Esc/RMB), Mode: %s (M), Clamp Overlap: %s (C), Vertex Only: %s (V), Profile Control: %s (P), Offset: %s, Segments: %d, Profile: %.3f"
-msgstr "Confirmer : (Entrée/ClicG), Annuler : (Esc/ClicD), Mode: %s (M), Limiter Recouvrement : %s (C), Vertices uniquement : %s (V), Contrôle Profil : %s (P), Décalage : %s, Segments : %d, Profile : %.3f"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -78777,10 +78673,6 @@ msgid "Could not reopen file"
 msgstr "Impossible de ré-ouvrir le fichier"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Le script Python a échoué, voyez la console pour l’instant…"
-
-
 msgid "Python disabled in this build"
 msgstr "Python est désactivé dans cette build"
 
@@ -80886,10 +80778,6 @@ msgstr "“window” manque au contexte"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "Source de confiance [chemin non-fiable]"
-
-
-msgid "Save Over?"
-msgstr "Écraser ?"
 
 
 msgid "Allow Execution"

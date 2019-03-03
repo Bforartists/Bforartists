@@ -103,7 +103,7 @@ def Add_Chain():
     bpy.ops.transform.translate(
             value=(2, 0, 0),
             constraint_axis=(True, False, False),
-            constraint_orientation='GLOBAL',
+            orient_type='GLOBAL',
             mirror=False,
             proportional='DISABLED',
             proportional_edit_falloff='SMOOTH',

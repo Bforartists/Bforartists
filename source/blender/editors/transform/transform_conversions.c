@@ -405,15 +405,39 @@ static void createTransCursor_view3d(TransInfo *t)
 	td->ob = NULL;
 
 	unit_m3(td->mtx);
-	quat_to_mat3(td->axismtx, cursor->rotation);
+	BKE_scene_cursor_rot_to_mat3(cursor, td->axismtx);
 	normalize_m3(td->axismtx);
 	pseudoinverse_m3_m3(td->smtx, td->mtx, PSEUDOINVERSE_EPSILON);
 
 	td->loc = cursor->location;
 	copy_v3_v3(td->iloc, cursor->location);
 
-	td->ext->quat = cursor->rotation;
-	copy_qt_qt(td->ext->iquat, cursor->rotation);
+	if (cursor->rotation_mode > 0) {
+		td->ext->rot = cursor->rotation_euler;
+		td->ext->rotAxis = NULL;
+		td->ext->rotAngle = NULL;
+		td->ext->quat = NULL;
+
+		copy_v3_v3(td->ext->irot, cursor->rotation_euler);
+	}
+	else if (cursor->rotation_mode == ROT_MODE_AXISANGLE) {
+		td->ext->rot = NULL;
+		td->ext->rotAxis = cursor->rotation_axis;
+		td->ext->rotAngle = &cursor->rotation_angle;
+		td->ext->quat = NULL;
+
+		td->ext->irotAngle = cursor->rotation_angle;
+		copy_v3_v3(td->ext->irotAxis, cursor->rotation_axis);
+	}
+	else {
+		td->ext->rot = NULL;
+		td->ext->rotAxis = NULL;
+		td->ext->rotAngle = NULL;
+		td->ext->quat = cursor->rotation_quaternion;
+
+		copy_qt_qt(td->ext->iquat, cursor->rotation_quaternion);
+	}
+	td->ext->rotOrder = cursor->rotation_mode;
 }
 
 /** \} */
@@ -5791,9 +5815,13 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
 	 * object matrix via td->ob->obmat. */
 	Object *object_eval = DEG_get_evaluated_object(t->depsgraph, ob);
 	if (skip_invert == false && constinv == false) {
-		ob->transflag |= OB_NO_CONSTRAINTS;  /* BKE_object_where_is_calc checks this */
+		object_eval->transflag |= OB_NO_CONSTRAINTS;  /* BKE_object_where_is_calc checks this */
+		/* It is possiblre to have transform data initialization prior to a
+		 * complete dependency graph evaluated. Happens, for example, when
+		 * changing transformation mode. */
+		BKE_object_tfm_copy(object_eval, ob);
 		BKE_object_where_is_calc(t->depsgraph, t->scene, object_eval);
-		ob->transflag &= ~OB_NO_CONSTRAINTS;
+		object_eval->transflag &= ~OB_NO_CONSTRAINTS;
 	}
 	else {
 		BKE_object_where_is_calc(t->depsgraph, t->scene, object_eval);
@@ -5801,11 +5829,11 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
 	/* Copy newly evaluated fields to the original object, similar to how
 	 * active dependency graph will do it. */
 	copy_m4_m4(ob->obmat, object_eval->obmat);
-	/* Hack over hack, looks like in some cases eval object has not yet been fully flushed or so?
-	 * In some cases, macro operators starting transform just after creating a new object (OBJECT_OT_duplicate),
-	 * if dupli flags are not protected, they can be erased here (see T61787). */
-	ob->transflag = ((object_eval->transflag & ~(OB_DUPLI | OB_DUPLIFACES_SCALE | OB_DUPLIROT)) |
-	                 (ob->transflag & (OB_DUPLI | OB_DUPLIFACES_SCALE | OB_DUPLIROT)));
+	/* Only copy negative scale flag, this is the only flag which is modifed by
+	 * the BKE_object_where_is_calc(). The rest of the flags we need to keep,
+	 * otherwise we might loose dupli flags  (see T61787). */
+	ob->transflag &= ~OB_NEG_SCALE;
+	ob->transflag |= (object_eval->transflag & OB_NEG_SCALE);
 
 	td->ob = ob;
 

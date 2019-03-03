@@ -172,7 +172,7 @@ def extruir_vertices(longitud, cuantos_segmentos):
             TRANSFORM_OT_translate={
                     "value": (longitud / cuantos_segmentos, 0, 0),
                     "constraint_axis": (True, False, False),
-                    "constraint_orientation": 'GLOBAL', "mirror": False,
+                    "orient_type": 'GLOBAL', "mirror": False,
                     "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH',
                     "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST',
                     "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0),
@@ -341,7 +341,7 @@ class ClothRope(Operator):
                 MESH_OT_extrude_region={"mirror": False},
                 TRANSFORM_OT_translate={
                         "value": (0, 0.005, 0), "constraint_axis": (False, True, False),
-                        "constraint_orientation": 'GLOBAL', "mirror": False,
+                        "orient_type": 'GLOBAL', "mirror": False,
                         "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH',
                         "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST',
                         "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0),
@@ -383,7 +383,7 @@ class ClothRope(Operator):
                 MESH_OT_duplicate={"mode": 1},
                 TRANSFORM_OT_translate={
                         "value": (0, 0, 0), "constraint_axis": (False, False, False),
-                        "constraint_orientation": 'GLOBAL', "mirror": False,
+                        "orient_type": 'GLOBAL', "mirror": False,
                         "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH',
                         "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST',
                         "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0),
@@ -694,7 +694,7 @@ class BallRope(Operator):
                         TRANSFORM_OT_translate={
                             "value": (0, 0, z / i),
                             "constraint_axis": (False, False, True),
-                            "constraint_orientation": 'GLOBAL', "mirror": False,
+                            "orient_type": 'GLOBAL', "mirror": False,
                             "proportional": 'DISABLED', "proportional_edit_falloff": 'SMOOTH',
                             "proportional_size": 1, "snap": False, "snap_target": 'CLOSEST',
                             "snap_point": (0, 0, 0), "snap_align": False, "snap_normal": (0, 0, 0),
@@ -721,13 +721,13 @@ class BallRope(Operator):
                 )
         bpy.ops.transform.translate(
                 value=(0, 0, -z + 2), constraint_axis=(False, False, True),
-                constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                 proportional_edit_falloff='SMOOTH', proportional_size=1
                 )
         bpy.ops.transform.resize(
                 value=(longitud / 2, longitud / 2, longitud / 2),
                 constraint_axis=(False, False, False),
-                constraint_orientation='GLOBAL',
+                orient_type='GLOBAL',
                 mirror=False, proportional='DISABLED',
                 proportional_edit_falloff='SMOOTH', proportional_size=1
                 )
@@ -743,7 +743,7 @@ class BallRope(Operator):
         bpy.ops.transform.translate(
                 value=(0, 0, offset_del_suelo_real),
                 constraint_axis=(False, False, True),
-                constraint_orientation='GLOBAL', mirror=False,
+                orient_type='GLOBAL', mirror=False,
                 proportional='DISABLED', proportional_edit_falloff='SMOOTH',
                 proportional_size=1
                 )
@@ -765,7 +765,7 @@ class BallRope(Operator):
         bpy.ops.transform.rotate(
                 value=rotrope, axis=(1, 0, 0),
                 constraint_axis=(True, False, False),
-                constraint_orientation='GLOBAL',
+                orient_type='GLOBAL',
                 mirror=False, proportional='DISABLED',
                 proportional_edit_falloff='SMOOTH',
                 proportional_size=1

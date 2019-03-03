@@ -528,7 +528,7 @@ class IvyGen(Operator):
         # radius = computeBoundingSphere(ob)  # Not needed anymore
 
         # Get the seeding point
-        seedPoint = context.scene.cursor_location
+        seedPoint = context.scene.cursor.location
 
         # Fix the random seed
         rand_seed(randomSeed)

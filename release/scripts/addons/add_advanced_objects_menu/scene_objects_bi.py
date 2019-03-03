@@ -162,7 +162,7 @@ class add_BI_scene(Operator):
             bpy.ops.object.editmode_toggle()
             bpy.ops.transform.rotate(
                     value=-0.8, axis=(0, 0, 1), constraint_axis=(False, False, True),
-                    constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
+                    orient_type='GLOBAL', mirror=False, proportional='DISABLED',
                     proportional_edit_falloff='SMOOTH', proportional_size=1
                     )
             bpy.ops.uv.unwrap(method='CONFORMAL', margin=0.001)

@@ -4201,7 +4201,13 @@ def km_object_non_modal(params):
         {"items": items},
     )
 
-    if not params.use_v3d_tab_menu:
+    if params.use_pie_click_drag:
+        items.extend([
+            ("object.mode_set", {"type": 'TAB', "value": 'CLICK'},
+             {"properties": [("mode", 'EDIT'), ("toggle", True)]}),
+            op_menu_pie("VIEW3D_MT_object_mode_pie", {"type": 'TAB', "value": 'CLICK_DRAG'}),
+        ])
+    elif not params.use_v3d_tab_menu:
         items.extend([
             ("object.mode_set", {"type": 'TAB', "value": 'PRESS'},
              {"properties": [("mode", 'EDIT'), ("toggle", True)]}),
@@ -5217,8 +5223,10 @@ def km_3d_view_tool_select_circle(params):
         {"items": [
             ("view3d.select_circle", {"type": params.tool_mouse, "value": 'PRESS'},
              {"properties": [("wait_for_input", False)]}),
+            ("view3d.select_circle", {"type": params.tool_mouse, "value": 'PRESS', "shift": True},
+             {"properties": [("wait_for_input", False), ("mode", 'ADD')]}),
             ("view3d.select_circle", {"type": params.tool_mouse, "value": 'PRESS', "ctrl": True},
-             {"properties": [("wait_for_input", False), ("deselect", True)]}),
+             {"properties": [("wait_for_input", False), ("mode", 'SUB')]}),
         ]},
     )
 

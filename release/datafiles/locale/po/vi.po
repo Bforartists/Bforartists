@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -7138,10 +7138,6 @@ msgid "Displacement"
 msgstr "Dịch"
 
 
-msgid "Dissolve Speed"
-msgstr "Tốc Độ Biến Mất"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "Khoảng bao nhiêu bức ảnh cho hoàn thành mất biến"
 
@@ -7160,10 +7156,6 @@ msgstr "Vận Tốc"
 
 msgid "How much surface velocity affects dripping"
 msgstr "Vận tốc mặt được ảnh hưởng nhiểu bao nhiêu"
-
-
-msgid "Dry Speed"
-msgstr "Tốc Độ Khô"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -9111,8 +9103,8 @@ msgid "Small"
 msgstr "Nhỏ"
 
 
-msgid "Normal"
-msgstr "Pháp Tuyến"
+msgid "Regular"
+msgstr "Bình Thường"
 
 
 msgid "Large"
@@ -14898,49 +14890,20 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Khoảng cách giảm sáng - khoảng cách cường độ ánh sáng là phần nữa"
 
 
-msgid "Energy"
-msgstr "Năng Lượng"
-
-
 msgid "Specular Factor"
 msgstr "Trị Số Cao Quang"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Loại"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Điểm"
 
 
 msgid "Omnidirectional point light source"
 msgstr "Nguồn ánh sáng điểm phát tia sáng toàn hướng "
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Mặt Trời"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "Nguồn ánh sánh phát tia đẳng hướng song song"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Nón"
-
-
 msgid "Directional cone light source"
 msgstr "Nguồn ánh sáng phát tia cùnh hướng trong một hình nón"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Điện Tích"
 
 
 msgid "Directional area light source"
@@ -14953,6 +14916,10 @@ msgstr "Hệ Số Hầng"
 
 msgid "Constant distance attenuation coefficient"
 msgstr "Hệ số hằng cho sự giảm bởi quãng"
+
+
+msgid "Power"
+msgstr "Lũy Thừa"
 
 
 msgid "Falloff Type"
@@ -16415,26 +16382,6 @@ msgid "Type of Object"
 msgstr "Loại Vật Thể"
 
 
-msgid "Mesh"
-msgstr "Lưới"
-
-
-msgid "Meta"
-msgstr "Siêu"
-
-
-msgid "GPencil"
-msgstr "Bút Sáp"
-
-
-msgid "Light"
-msgstr "Nhẹ"
-
-
-msgid "Speaker"
-msgstr "Loa"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "Khắc Hình Dạng Học Động Lý"
 
@@ -17067,6 +17014,10 @@ msgid "Dummy"
 msgstr "Giả"
 
 
+msgid "Normal"
+msgstr "Pháp Tuyến"
+
+
 msgid "Let the surface normal give the particle a starting velocity"
 msgstr "Cho pháp tuyến mặt đặt tốc độ bắt đầu của hạt"
 
@@ -17161,14 +17112,6 @@ msgstr "Phản Ứng"
 
 msgid "Let the vector away from the target particle's location give the particle a starting velocity"
 msgstr "Dùng vectơ chỉ hướng xa từ vị trí hạt mục tiêu đặt tốc độ bắt đầu cho hạt"
-
-
-msgid "Regrow"
-msgstr "Móc Lên Lại"
-
-
-msgid "Regrow hair for each frame"
-msgstr "Móc tóc lại cho mỗi bức ảnh"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -17533,6 +17476,14 @@ msgstr "Đầu/Cuối"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "Từ từ sanh hạt chưa phản ứng"
+
+
+msgid "Regrow"
+msgstr "Móc Lên Lại"
+
+
+msgid "Regrow hair for each frame"
+msgstr "Móc tóc lại cho mỗi bức ảnh"
 
 
 msgid "Adaptive Render"
@@ -18119,10 +18070,6 @@ msgstr "Tần Số"
 
 msgid "Playback pitch of the sound"
 msgstr "Tần số khi hát âm thanh"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "Nguồn này được tương đối với máy quay phim hay không"
 
 
 msgid "Sound"
@@ -22996,6 +22943,10 @@ msgid "Interpolate"
 msgstr "Suy Nội"
 
 
+msgid "Mesh"
+msgstr "Lưới"
+
+
 msgid "Edge"
 msgstr "Cạnh"
 
@@ -23054,6 +23005,10 @@ msgstr "Ẩn/Mặt Nạ"
 
 msgid "Hooks"
 msgstr "Móc"
+
+
+msgid "Light"
+msgstr "Nhẹ"
 
 
 msgid "Make Links"
@@ -28399,6 +28354,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "Đãy NLA 'tiến triển' giữa dãy kề"
 
 
+msgid "Meta"
+msgstr "Siêu"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "Đoạn NLA làm như vật đựng cho đaọn kề"
 
@@ -28953,10 +28912,6 @@ msgstr "Cơ Sở"
 
 msgid "Support negative color by using this as the RGB basis"
 msgstr "Hỗ trợ màu âm bằng dùng cái này làm cơ sở RGB"
-
-
-msgid "Power"
-msgstr "Lũy Thừa"
 
 
 msgid "Slope"
@@ -41936,11 +41891,6 @@ msgid "Remove vertex color layer"
 msgstr "Bỏ lớp màu đỉnh"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Mịn Đỉnh"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Băng Thẳng hóa góc của các đỉnh được chọn"
 
@@ -41963,11 +41913,6 @@ msgstr "Mịn hướng trục Y"
 
 msgid "Smooth along the Z axis"
 msgstr "Mịn hướng trục Z"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Mịn Hóa Lapace Đỉnh"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -44489,14 +44434,6 @@ msgstr "Kết xuất và chiếu các mặt đều, dùng Pháp Tuyến Mặt"
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Kết xuất và chiếu các mặt mịn, suy nội Pháp Tuyến Đỉnh"
-
-
-msgid "Glow"
-msgstr "Hào Quang"
-
-
-msgid "Rim"
-msgstr "Tỉa"
 
 
 msgctxt "Operator"
@@ -48467,6 +48404,10 @@ msgstr "Lau"
 
 msgid "Wipe effect strip type"
 msgstr "Loại đoạn hiệu ứng lau"
+
+
+msgid "Glow"
+msgstr "Hào Quang"
 
 
 msgid "Glow effect strip type"
@@ -54214,10 +54155,6 @@ msgid "Pie Menu"
 msgstr "Danh Bạ Quạt"
 
 
-msgid "Regular"
-msgstr "Bình Thường"
-
-
 msgid "Theme Space"
 msgstr "Phong Cách Không Gian"
 
@@ -56433,10 +56370,6 @@ msgid "Drag Threshold"
 msgstr "Ngưỡng Kéo"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "Số lượng điểm ảnh bạn cần kéo trước có thể kéo đi khiển tố giao diện"
-
-
 msgid "Invert Zoom Direction"
 msgstr "Đẳo Nghịch Hương Phóng Vào"
 
@@ -56603,14 +56536,6 @@ msgstr "Phóng vào dùng hướng nghịch chiều"
 
 msgid "Softness"
 msgstr "Độ Mịn"
-
-
-msgid "Tweak Threshold"
-msgstr "Ngưỡng Chỉnh"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "Số lượng điểm ảnh bạn cần kéo trước phát sự kiện"
 
 
 msgid "Auto Perspective"
@@ -57361,10 +57286,6 @@ msgid "Direct conversion of frame numbers to seconds"
 msgstr "Biến đổi bức ảnh thẳng thành giây"
 
 
-msgid "Changes the thickness of lines and points in the interface"
-msgstr "Để đổi bề rộng nét và kích cỡ điểm trong giao diện"
-
-
 msgid "Thin"
 msgstr "Mỏng"
 
@@ -57383,10 +57304,6 @@ msgstr "Đày"
 
 msgid "Thicker lines than the default"
 msgstr "Nét mập hơn mặc định"
-
-
-msgid "Changes the size of the fonts and buttons in the interface"
-msgstr "Đổi cỡ thước phông và nút trong giao diện"
 
 
 msgid "Contents Follow Opening Direction"
@@ -59377,10 +59294,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Số lượng mẫu vật cho che khuất bao quanh khi nướng từ đa phân giải"
 
 
-msgid "Bake Mode"
-msgstr "Chế Độ Nướng"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Chọn thông tin tô bóng cho nướng vào ảnh"
 
@@ -60561,38 +60474,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "Lực nổi giả nghịch hướng với hấp dẫn tùy chênh lẹch áp suất trong chất lỏng"
 
 
-msgid "Factor Radius"
-msgstr "Trị Số Bán Kính"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "Bán kính tương tác = 4 * kích cỡ hạt"
-
-
-msgid "Factor Repulsion"
-msgstr "Trị Số Đẩy Lui"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "Đẩy lui là trị số của độ cứng"
-
-
-msgid "Factor Rest Length"
-msgstr "Trị Số Bề Dài Nghỉ"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "Bề dài lò xo là tiô số của kích cỡ hạt * 2"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "Tỉ Số Độ Cứng Của Độ Nhớt"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "Độ nhớt cứng là tỉ số của độ nhớt bình thường"
-
-
 msgid "Interaction Radius"
 msgstr "Bán Kín Tương tác"
 
@@ -60691,6 +60572,38 @@ msgstr "Trị Số Tỉ Trọng"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "Tỉ trọng là trị số của tỉ trọng mặc định (tùy kích cỡ hạt)"
+
+
+msgid "Factor Radius"
+msgstr "Trị Số Bán Kính"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "Bán kính tương tác = 4 * kích cỡ hạt"
+
+
+msgid "Factor Repulsion"
+msgstr "Trị Số Đẩy Lui"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "Đẩy lui là trị số của độ cứng"
+
+
+msgid "Factor Rest Length"
+msgstr "Trị Số Bề Dài Nghỉ"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "Bề dài lò xo là tiô số của kích cỡ hạt * 2"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "Tỉ Số Độ Cứng Của Độ Nhớt"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "Độ nhớt cứng là tỉ số của độ nhớt bình thường"
 
 
 msgid "Initial Rest Length"
@@ -61315,20 +61228,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "Nhân tốc độ kết qủa sau trị số tốc độ"
 
 
-msgid "Scale to length"
-msgstr "Phóng to đến bề dài"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Phón to giá trị từ 0.0 tới 1.0 đến bề dài của dãy mục tiêu"
-
-
 msgid "Use as speed"
 msgstr "Làm làm tốc độ"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "Dịch giá trị là tốc độ thay là số bức ảnh"
+
+
+msgid "Scale to length"
+msgstr "Phóng to đến bề dài"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "Phón to giá trị từ 0.0 tới 1.0 đến bề dài của dãy mục tiêu"
 
 
 msgid "Subtract Sequence"
@@ -61605,14 +61518,6 @@ msgstr "Đoạn dãy xác định một âm tank cho hát qua một giai đoạn
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "Hát dời âm thanh (chỉ cho nguồn độc kênh)"
-
-
-msgid "Draw Waveform"
-msgstr "Vẽ Lan Sóng"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "Vẽ hay không vẽ lag sóng của âm thanh"
 
 
 msgid "Sound data-block used by this sequence"
@@ -62027,6 +61932,10 @@ msgid "Ambient"
 msgstr "Bao Quanh"
 
 
+msgid "Energy"
+msgstr "Năng Lượng"
+
+
 msgid "Shape Key"
 msgstr "Mẫu Dạng"
 
@@ -62041,10 +61950,6 @@ msgstr "Bức ảnh cho mẫu dạng tuyệt đối"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Loại suy nội cho mẫu dạng tuyết đối"
-
-
-msgid "Mute this shape key"
-msgstr "Cắt tiệng mẫu dạng này"
 
 
 msgid "Name of Shape Key"
@@ -62355,8 +62260,8 @@ msgid "Thickness of smoke drawing in the viewport"
 msgstr "Độ dục khi vẻ khói trong màn chiếu"
 
 
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "Bật/tắt chiếu vận tốc trường như cây kim"
+msgid "Dissolve Speed"
+msgstr "Tốc Độ Biến Mất"
 
 
 msgid "res"
@@ -62465,6 +62370,10 @@ msgstr "Chiếu Phân Giải Cao"
 
 msgid "Show high resolution (using amplification)"
 msgstr "Chiếu phân giải cao (dùng tăng phân giải)"
+
+
+msgid "Toggle visualization of the velocity field as needles"
+msgstr "Bật/tắt chiếu vận tốc trường như cây kim"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -64554,6 +64463,10 @@ msgstr "Chiếu Đường Máy Quay Phim"
 
 msgid "Show reconstructed camera path"
 msgstr "Chiếu đường máy quay phim được xây lại"
+
+
+msgid "Speaker"
+msgstr "Loa"
 
 
 msgid "Show Reconstruction"
@@ -66672,10 +66585,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "Giới hạnh cho bỏ đỉnh đôi (cần nhau) and 'Tự Động Gồm'"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Đổi cạnh vết sẹo tính lại gở gói UV"
-
-
 msgid "Edge Tag Mode"
 msgstr "Chế Độ Nhãn Cạnh"
 
@@ -66846,6 +66755,10 @@ msgstr "Sơn Quyền Lượng Tự Động-Đơn Vị Hóa"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Bắt hết nhóm làm méo xương cộng đến 1.0 khi sơn quyền lượng"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "Đổi cạnh vết sẹo tính lại gở gói UV"
 
 
 msgid "Use Additive Drawing"
@@ -68572,10 +68485,6 @@ msgid "OpenCL Flags:"
 msgstr "Cờ OpenCL:"
 
 
-msgid "Kernel"
-msgstr "Hạt"
-
-
 msgid "%s AA"
 msgstr "%s AA"
 
@@ -68600,6 +68509,14 @@ msgid "Portal"
 msgstr "Cổng"
 
 
+msgid "Extrusion"
+msgstr "Kéo Ra"
+
+
+msgid "Ray Distance"
+msgstr "Khoảng Cách Tia"
+
+
 msgid "Curve subdivisions"
 msgstr "Phân phụ đường cong"
 
@@ -68612,14 +68529,6 @@ msgstr "Chỉ Định"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Thả"
-
-
-msgid "Extrusion"
-msgstr "Kéo Ra"
-
-
-msgid "Ray Distance"
-msgstr "Khoảng Cách Tia"
 
 
 msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
@@ -69416,10 +69325,6 @@ msgid "Move To Bottom"
 msgstr "Đến Dưới Cùng"
 
 
-msgid "Resolution:"
-msgstr "Phân Giải:"
-
-
 msgid "Object:"
 msgstr "Vật Thể:"
 
@@ -69623,6 +69528,10 @@ msgstr "Nhăn:"
 
 msgid "Outer"
 msgstr "Ngoài"
+
+
+msgid "Rim"
+msgstr "Tỉa"
 
 
 msgid "Material Index Offset:"
@@ -73289,6 +73198,10 @@ msgid "Mball"
 msgstr "SiêuTráiBanh"
 
 
+msgid "GPencil"
+msgstr "Bút Sáp"
+
+
 msgid "No new files have been packed"
 msgstr "Không có tệp nào mới được gói lại"
 
@@ -75115,11 +75028,6 @@ msgid "New"
 msgstr "Mới"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Mới"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Mới"
@@ -75296,10 +75204,6 @@ msgstr "Hình Cầu"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Hình Cầu Diện"
-
-
-msgid "Confirm: (Enter/LMB), Cancel: (Esc/RMB), Mode: %s (M), Clamp Overlap: %s (C), Vertex Only: %s (V), Profile Control: %s (P), Offset: %s, Segments: %d, Profile: %.3f"
-msgstr "Chấp Nhận: (Enter/NCT), Hủy: (Esc/NCP), Chế Độ: %s (M), Kẹp Lại Lấn: %s (C), Chỉ Đỉnh: %s (V), Duy Trì Trình Bày: %s (P), Dịch: %s, Khúc: %d, Trình Bày: %.3f"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -77923,10 +77827,6 @@ msgid "Could not reopen file"
 msgstr "Không thể mở tệp"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Bản thảo Python bị thất bại, xem bảng điều khiển..."
-
-
 msgid "Python disabled in this build"
 msgstr "Python bị tắt trong xây dựng này"
 
@@ -79992,10 +79892,6 @@ msgstr "Thiếu 'cửa sổ' trong bố cảnh"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "Nguồn Tin Tưởng [Đường Dẩn Không Tin]"
-
-
-msgid "Save Over?"
-msgstr "Lưu Lên Trên?"
 
 
 msgid "unable to open the file"
