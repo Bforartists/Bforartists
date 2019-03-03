@@ -242,7 +242,7 @@ def create_roof(self):
     mymesh = bpy.data.meshes.new("Roof")
     myobject = bpy.data.objects.new("Roof", mymesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mymesh.from_pydata(verts, [], faces)

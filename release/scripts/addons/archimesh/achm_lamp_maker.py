@@ -412,7 +412,7 @@ def create_light_mesh(self):
 # All custom values are passed using self container (self.myvariable)
 # ------------------------------------------------------------------------------
 def generate_light(self):
-    location = bpy.context.scene.cursor_location
+    location = bpy.context.scene.cursor.location
     myloc = copy(location)  # copy location to keep 3D cursor position
     # ---------------------
     # Lamp base

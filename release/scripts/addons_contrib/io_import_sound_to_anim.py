@@ -836,7 +836,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
                                             bpy.ops.transform.translate(value=(ilocationXAnt*-1,                ilocationYAnt*-1, \
                                                                                 ilocationZAnt*-1),               constraint_axis=(bEixoX, bEixoY,bEixoZ), \
-                                                                                constraint_orientation='GLOBAL', mirror=False, \
+                                                                                orient_type='GLOBAL', mirror=False, \
                                                                                 proportional='DISABLED',         proportional_edit_falloff='SMOOTH', \
                                                                                 proportional_size=1,             snap=False, \
                                                                                 snap_target='CLOSEST',           snap_point=(0, 0, 0), \
@@ -850,7 +850,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
                                         bpy.ops.transform.translate(value=(ilocationX,                       ilocationY, \
                                                                             ilocationZ),                      constraint_axis=(bEixoX, bEixoY,bEixoZ), \
-                                                                            constraint_orientation='GLOBAL',  mirror=False, \
+                                                                            orient_type='GLOBAL',  mirror=False, \
                                                                             proportional='DISABLED',          proportional_edit_falloff='SMOOTH', \
                                                                             proportional_size=1,              snap=False, \
                                                                             snap_target='CLOSEST',            snap_point=(0, 0, 0), snap_align=False, \
@@ -870,7 +870,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
                                             bpy.ops.transform.resize(value=(tmpscaleXAnt,                    tmpscaleYAnt, \
                                                                             tmpscaleZAnt ),                   constraint_axis=(False, False, False), \
-                                                                            constraint_orientation='GLOBAL',  mirror=False, \
+                                                                            orient_type='GLOBAL',  mirror=False, \
                                                                             proportional='DISABLED',          proportional_edit_falloff='SMOOTH', \
                                                                             proportional_size=1, snap=False, snap_target='CLOSEST', \
                                                                             snap_point=(0, 0, 0),             snap_align=False, \
@@ -883,7 +883,7 @@ class OBJECT_OT_Botao_Import(bpy.types.Operator):
 
                                         bpy.ops.transform.resize(value=(iscaleX,                        iscaleY, \
                                                                         iscaleZ),                        constraint_axis=(False, False, False), \
-                                                                        constraint_orientation='GLOBAL', mirror=False, \
+                                                                        orient_type='GLOBAL', mirror=False, \
                                                                         proportional='DISABLED',         proportional_edit_falloff='SMOOTH', \
                                                                         proportional_size=1,             snap=False, \
                                                                         snap_target='CLOSEST',           snap_point=(0, 0, 0), \

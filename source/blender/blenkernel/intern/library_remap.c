@@ -41,7 +41,7 @@
 #include "DNA_gpencil_types.h"
 #include "DNA_ipo_types.h"
 #include "DNA_key_types.h"
-#include "DNA_lamp_types.h"
+#include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
@@ -80,7 +80,7 @@
 #include "BKE_image.h"
 #include "BKE_ipo.h"
 #include "BKE_key.h"
-#include "BKE_lamp.h"
+#include "BKE_light.h"
 #include "BKE_lattice.h"
 #include "BKE_layer.h"
 #include "BKE_library.h"
@@ -732,7 +732,7 @@ void BKE_libblock_free_datablock(ID *id, const int UNUSED(flag))
 			BKE_lattice_free((Lattice *)id);
 			break;
 		case ID_LA:
-			BKE_lamp_free((Lamp *)id);
+			BKE_light_free((Light *)id);
 			break;
 		case ID_CA:
 			BKE_camera_free((Camera *) id);
@@ -956,6 +956,7 @@ static void id_delete(Main *bmain, const bool do_tagged_deletion)
 {
 	const int tag = LIB_TAG_DOIT;
 	ListBase *lbarray[MAX_LIBARRAY];
+	Link dummy_link = {0};
 	int base_count, i;
 
 	/* Used by batch tagged deletion, when we call BKE_id_free then, id is no more in Main database,
@@ -1000,11 +1001,8 @@ static void id_delete(Main *bmain, const bool do_tagged_deletion)
 				}
 			}
 			if (last_remapped_id == NULL) {
-				last_remapped_id = tagged_deleted_ids.first;
-				if (last_remapped_id == NULL) {
-					BLI_assert(!keep_looping);
-					break;
-				}
+				dummy_link.next = tagged_deleted_ids.first;
+				last_remapped_id = (ID *)(&dummy_link);
 			}
 			for (id = last_remapped_id->next; id; id = id->next) {
 				/* Will tag 'never NULL' users of this ID too.

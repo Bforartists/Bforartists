@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6508,18 +6508,6 @@ msgid "Faces"
 msgstr "Ściany"
 
 
-msgid "Mesh"
-msgstr "Siatka"
-
-
-msgid "GPencil"
-msgstr "Szkicownik"
-
-
-msgid "Speaker"
-msgstr "Głośnik"
-
-
 msgid "Angular Velocity"
 msgstr "Prędkość kątowa"
 
@@ -6623,6 +6611,10 @@ msgstr "Plik"
 
 msgid "External Data"
 msgstr "Zewnętrzne Dane"
+
+
+msgid "Mesh"
+msgstr "Siatka"
 
 
 msgid "Ball"
@@ -6924,6 +6916,10 @@ msgid "Timeline and playback controls"
 msgstr "Oś czasu oraz kontrolki odtwarzania"
 
 
+msgid "Speaker"
+msgstr "Głośnik"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -6935,10 +6931,6 @@ msgstr "Laplacian"
 msgctxt "Operator"
 msgid "Remove"
 msgstr "Usuń"
-
-
-msgid "Resolution:"
-msgstr "Rozdzielczość:"
 
 
 msgid "Layer:"
@@ -7140,6 +7132,10 @@ msgstr "Surf"
 
 msgid "Mball"
 msgstr "Mball"
+
+
+msgid "GPencil"
+msgstr "Szkicownik"
 
 
 msgid "No new files have been packed"
@@ -8681,11 +8677,6 @@ msgstr "Nowy"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Nowa"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Nowa"
 
@@ -11124,10 +11115,6 @@ msgid "Could not reopen file"
 msgstr "Ponowne otwarcie pliku nie powiodło się"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Skrypt Python zawiódł, na razie sprawdź komunikat w konsoli..."
-
-
 msgid "Python disabled in this build"
 msgstr "Python wyłączony w tej wersji (build)"
 
@@ -12865,10 +12852,6 @@ msgstr "Wklej nazwę"
 
 msgid "Missing 'window' in context"
 msgstr "Brakuje \"Okna\" w kontekście"
-
-
-msgid "Save Over?"
-msgstr "Nadpisać?"
 
 
 msgid "unable to open the file"

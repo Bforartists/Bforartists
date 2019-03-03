@@ -877,7 +877,7 @@ class add_mesh_wallb(Operator):
         context.view_layer.objects.active = ob_new
         ob_new.select_set(True)
 
-        ob_new.location = tuple(context.scene.cursor_location)
+        ob_new.location = tuple(context.scene.cursor.location)
         ob_new.rotation_quaternion = [1.0, 0.0, 0.0, 0.0]
 
         return {'FINISHED'}

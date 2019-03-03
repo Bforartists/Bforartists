@@ -115,7 +115,7 @@ typedef struct RegionView3D {
 	char viewlock;
 	/** Options for quadview (store while out of quad view). */
 	char viewlock_quad;
-	char pad[3];
+	char _pad[3];
 	/** Normalized offset for locked view: (-1, -1) bottom left, (1, 1) upper right. */
 	float ofs_lock[2];
 
@@ -136,8 +136,13 @@ typedef struct RegionView3D {
 
 typedef struct View3DCursor {
 	float location[3];
-	float rotation[4];
-	char _pad[4];
+
+	float rotation_quaternion[4];
+	float rotation_euler[3];
+	float rotation_axis[3], rotation_angle;
+	short rotation_mode;
+
+	char _pad[6];
 } View3DCursor;
 
 /* 3D Viewport Shading settings */
@@ -155,7 +160,7 @@ typedef struct View3DShading {
 	char background_type;
 	char cavity_type;
 	char wire_color_type;
-	char pad[6];
+	char _pad[6];
 
 	/** FILE_MAXFILE. */
 	char studio_light[256];
@@ -206,7 +211,7 @@ typedef struct View3DOverlay {
 	float weight_paint_mode_opacity;
 
 	/* Armature edit/pose mode settings */
-	int arm_flag;
+	int _pad3;
 	float xray_alpha_bone;
 
 	/* Other settings */
@@ -301,14 +306,14 @@ typedef struct View3D {
 	/* Stereoscopy settings */
 	short stereo3d_flag;
 	char stereo3d_camera;
-	char pad4;
+	char _pad4;
 	float stereo3d_convergence_factor;
 	float stereo3d_volume_alpha;
 	float stereo3d_convergence_alpha;
 
 	/* Display settings */
 	short drawtype DNA_DEPRECATED;
-	short pad5[3];
+	char _pad5[6];
 
 	View3DShading shading;
 	View3DOverlay overlay;
@@ -484,11 +489,6 @@ enum {
 
 	V3D_OVERLAY_EDIT_CU_HANDLES   = (1 << 20),
 	V3D_OVERLAY_EDIT_CU_NORMALS   = (1 << 21),
-};
-
-/* View3DOverlay->arm_flag */
-enum {
-	V3D_OVERLAY_ARM_TRANSP_BONES  = (1 << 0),
 };
 
 /* View3DOverlay->paint_flag */

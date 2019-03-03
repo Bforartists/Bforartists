@@ -320,7 +320,7 @@ typedef struct wmNotifier {
 #define	ND_SHADING_LINKS	(32<<16)
 #define	ND_SHADING_PREVIEW	(33<<16)
 
-	/* NC_LAMP Lamp */
+	/* NC_LAMP Light */
 #define	ND_LIGHTING			(40<<16)
 #define	ND_LIGHTING_DRAW	(41<<16)
 #define ND_SKY				(42<<16)
@@ -428,6 +428,8 @@ typedef struct wmGesture {
 	/* For modal operators which may be running idle, waiting for an event to activate the gesture.
 	 * Typically this is set when the user is click-dragging the gesture (border and circle select for eg). */
 	uint is_active : 1;
+	/* Previous value of is-active (use to detect first run & edge cases). */
+	uint is_active_prev : 1;
 	/* Use for gestures that support both immediate or delayed activation. */
 	uint wait_for_input : 1;
 

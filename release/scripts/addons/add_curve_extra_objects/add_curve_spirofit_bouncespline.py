@@ -926,10 +926,10 @@ def move_origin_to_start():
         start = active.matrix_world @ spline.points[0].co
         start = start[:-1]
 
-    cursor = bpy.context.scene.cursor_location.copy()
-    bpy.context.scene.cursor_location = start
+    cursor = bpy.context.scene.cursor.location.copy()
+    bpy.context.scene.cursor.location = start
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-    bpy.context.scene.cursor_location = cursor
+    bpy.context.scene.cursor.location = cursor
 
 
 def draw_spline_settings(self):

@@ -155,7 +155,7 @@ class dual_mesh(Operator):
                     MESH_OT_extrude_region={"mirror": False},
                     TRANSFORM_OT_translate={"value": (0, 0, 0),
                     "constraint_axis": (False, False, False),
-                    "constraint_orientation": 'GLOBAL', "mirror": False,
+                    "orient_type": 'GLOBAL', "mirror": False,
                     "proportional": 'DISABLED',
                     "proportional_edit_falloff": 'SMOOTH', "proportional_size": 1,
                     "snap": False, "snap_target": 'CLOSEST',

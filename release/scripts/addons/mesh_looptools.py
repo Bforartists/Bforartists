@@ -299,9 +299,9 @@ def calculate_plane(bm_mod, loop, method="best_fit", object=False):
         # calculate view normal
         rotation = bpy.context.space_data.region_3d.view_matrix.to_3x3().\
             inverted()
-        normal = rotation * mathutils.Vector((0.0, 0.0, 1.0))
+        normal = rotation @ mathutils.Vector((0.0, 0.0, 1.0))
         if object:
-            normal = object.matrix_world.inverted().to_euler().to_matrix() * \
+            normal = object.matrix_world.inverted().to_euler().to_matrix() @ \
                      normal
 
     return(com, normal)

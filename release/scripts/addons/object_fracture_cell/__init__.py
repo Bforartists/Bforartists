@@ -110,7 +110,7 @@ def main_object(context, obj, level, **kw):
                     if recursion_chance_select == 'SIZE_MAX':
                         objects_recurse_input.reverse()
                 elif recursion_chance_select in {'CURSOR_MIN', 'CURSOR_MAX'}:
-                    c = scene.cursor_location.copy()
+                    c = scene.cursor.location.copy()
                     objects_recurse_input.sort(key=lambda ob_pair:
                         (ob_pair[1].location - c).length_squared)
                     if recursion_chance_select == 'CURSOR_MAX':

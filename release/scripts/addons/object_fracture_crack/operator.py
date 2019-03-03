@@ -123,7 +123,7 @@ class crackitPanel(Panel):
             col = box.column()
             col.label(text="Please enable Object: Cell Fracture addon", icon="INFO")
             col.separator()
-            col.operator("wm.addon_userpref_show",
+            col.operator("preferences.addon_show",
                          text="Go to Cell Fracture addon",
                          icon="PREFERENCES").module = "object_fracture_cell"
 
