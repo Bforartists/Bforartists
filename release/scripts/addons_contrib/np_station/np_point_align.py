@@ -86,7 +86,7 @@ class NPPLGetContext(bpy.types.Operator):
         NP020PL.snap_target = copy.deepcopy(bpy.context.tool_settings.snap_target)
         NP020PL.pivot_point = copy.deepcopy(bpy.context.space_data.pivot_point)
         NP020PL.trans_orient = copy.deepcopy(bpy.context.space_data.transform_orientation)
-        NP020PL.curloc = copy.deepcopy(bpy.context.scene.cursor_location)
+        NP020PL.curloc = copy.deepcopy(bpy.context.scene.cursor.location)
         NP020PL.acob = bpy.context.active_object
         if bpy.context.mode == 'OBJECT':
             NP020PL.edit_mode = 'OBJECT'
@@ -580,7 +580,7 @@ class NPPLAlignSelected(bpy.types.Operator):
                 rot_axis = geometry.normal(tome.vertices[0].co, tome.vertices[1].co, (fromme.vertices[1].co + fromob.location))
                 rot_ang = (((fromme.vertices[1].co + fromob.location) - tome.vertices[0].co)).angle((tome.vertices[1].co - tome.vertices[0].co))
                 np_print('rot_axis, rot_ang =', rot_axis, rot_ang)
-                bpy.context.scene.cursor_location = tome.vertices[0].co
+                bpy.context.scene.cursor.location = tome.vertices[0].co
                 bpy.context.space_data.pivot_point = 'CURSOR'
                 bpy.ops.transform.rotate(value = -rot_ang, axis = rot_axis)
                 np_print('fromme.vertices = ', fromme.vertices)
@@ -600,7 +600,7 @@ class NPPLAlignSelected(bpy.types.Operator):
                     rot_axis = tome.vertices[1].co - tome.vertices[0].co
                     rot_ang = ((tome.vertices[2].co - proj_t)).angle(((fromme.vertices[2].co + fromob.location) - proj_f))
                     np_print('rot_axis, rot_ang =', rot_axis, rot_ang)
-                    bpy.context.scene.cursor_location = tome.vertices[1].co
+                    bpy.context.scene.cursor.location = tome.vertices[1].co
                     bpy.ops.transform.rotate(value = -rot_ang, axis = rot_axis)
                     bpy.ops.object.select_all(action = 'DESELECT')
                     fromob.select_set(True)
@@ -636,7 +636,7 @@ class NPPLRestoreContext(bpy.types.Operator):
         bpy.context.tool_settings.snap_target = NP020PL.snap_target
         bpy.context.space_data.pivot_point = NP020PL.pivot_point
         bpy.context.space_data.transform_orientation = NP020PL.trans_orient
-        bpy.context.scene.cursor_location = NP020PL.curloc
+        bpy.context.scene.cursor.location = NP020PL.curloc
 
         NP020PL.flag = 'RUNTRANSF0'
         return {'FINISHED'}

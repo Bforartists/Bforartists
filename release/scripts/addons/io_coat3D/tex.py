@@ -60,7 +60,6 @@ def UVTiling(objekti, texturelist):
             uvtiles_index.append([poly.material_index, objekti.data.uv_layers.active.data[loop_index].uv[0]])
         if (len(final_material_indexs) == len(objekti.material_slots)):
             break
-    print(final_material_indexs)
 
     for texture_info in texturelist:
         name = texture_info[0]
@@ -70,19 +69,36 @@ def UVTiling(objekti, texturelist):
             if(list_tiles[1] >= (tiling_number - 1) and list_tiles[1] <= tiling_number ):
                 texture_info[0] = objekti.material_slots[list_tiles[0]].material.name
 
-
-    print('uvtiles_index', uvtiles_index)
     return texturelist
+
+def updatetextures(objekti): # Update 3DC textures
+
+    for index_mat in objekti.material_slots:
+
+        for node in index_mat.material.node_tree.nodes:
+            if (node.type == 'TEX_IMAGE'):
+                if (node.name == '3DC_color'):
+                    node.image.reload()
+                elif (node.name == '3DC_metalness'):
+                    node.image.reload()
+                elif (node.name == '3DC_rough'):
+                    node.image.reload()
+                elif (node.name == '3DC_nmap'):
+                    node.image.reload()
+                elif (node.name == '3DC_displacement'):
+                    node.image.reload()
+                elif (node.name == '3DC_emissive'):
+                    node.image.reload()
+                elif (node.name == '3DC_AO'):
+                    node.image.reload()
 
 
 def readtexturefolder(objekti, mat_list, texturelist, is_new): #read textures from texture file
 
     create_nodes = False
-
-    if texturelist[0][0] == '1001':
+    if texturelist[0][0].startswith('100'):
         print('This is UVTiling')
         texturelist = UVTiling(objekti, texturelist)
-    print('texturelist:', texturelist)
 
     for index_mat in objekti.material_slots:
 
@@ -138,14 +154,6 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new): #read textures fr
             createnodes(index_mat, texcoat, create_group_node)
 
 
-def checkmaterial(mat_list, objekti): #check how many materials object has
-    mat_list = []
-
-    for obj_mate in objekti.material_slots:
-        if(obj_mate.material.use_nodes == False):
-            obj_mate.material.use_nodes = True
-
-
 def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and link textures into them
     bring_color = True # Meaning of these is to check if we can only update textures or do we need to create new nodes
     bring_metalness = True
@@ -163,7 +171,8 @@ def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and l
     act_material = coatMat.node_tree
     main_material = coatMat.node_tree
     applink_group_node = False
-    #ensimmaiseksi kaydaan kaikki image nodet lapi ja tarkistetaan onko nimi 3DC alkunen jos on niin reload
+
+    # First go throug all image nodes and let's check if it starts with 3DC and reload if needed
 
     for node in coatMat.node_tree.nodes:
         if (node.type == 'OUTPUT_MATERIAL'):
@@ -183,27 +192,21 @@ def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and l
         if(node.type == 'TEX_IMAGE'):
             if(node.name == '3DC_color'):
                 bring_color = False
-                node.image.reload()
             elif(node.name == '3DC_metalness'):
                 bring_metalness = False
-                node.image.reload()
             elif(node.name == '3DC_rough'):
                 bring_roughness = False
-                node.image.reload()
             elif(node.name == '3DC_nmap'):
                 bring_normal = False
-                node.image.reload()
             elif(node.name == '3DC_displacement'):
                 bring_displacement = False
-                node.image.reload()
             elif (node.name == '3DC_emissive'):
                 bring_emissive = False
-                node.image.reload()
             elif (node.name == '3DC_AO'):
                 bring_AO = False
-                node.image.reload()
 
-    #seuraavaksi lahdemme rakentamaan node tree. Lahdetaan Material Outputista rakentaa
+    #Let's start to build new node tree. Let's start linking with Material Output
+
     if(create_group_node):
         if(applink_group_node == False):
             main_mat2 = out_mat.inputs['Surface'].links[0].from_node
@@ -218,8 +221,8 @@ def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and l
             group_tree.outputs.new("NodeSocketColor", "Metallic")
             group_tree.outputs.new("NodeSocketColor", "Roughness")
             group_tree.outputs.new("NodeSocketVector", "Normal map")
-            group_tree.outputs.new("NodeSocketColor", "Displacement")
             group_tree.outputs.new("NodeSocketColor", "Emissive")
+            group_tree.outputs.new("NodeSocketColor", "Displacement")
             group_tree.outputs.new("NodeSocketColor", "Emissive Power")
             group_tree.outputs.new("NodeSocketColor", "AO")
             applink_tree = act_material.nodes.new('ShaderNodeGroup')
@@ -239,7 +242,7 @@ def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and l
                     emission_shader.name = '3DC_Emission'
 
                     add_shader.location = 420, 110
-                    emission_shader.location = 40, -330
+                    emission_shader.location = 70, -330
                     out_mat.location = 670, 130
 
                     main_material.links.new(from_output.outputs[0], add_shader.inputs[0])
@@ -263,62 +266,33 @@ def createnodes(active_mat,texcoat, create_group_node): # Cretes new nodes and l
                     break
 
         # READ DATA.JSON FILE
+
         json_address = os.path.dirname(bpy.app.binary_path) + os.sep + '2.80' + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
         with open(json_address, encoding='utf-8') as data_file:
             data = json.loads(data_file.read())
 
         if(out_mat.inputs['Surface'].is_linked == True):
             if(bring_color == True and texcoat['color'] != []):
-                CreateTextureLine(data['color'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree)
+                CreateTextureLine(data['color'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat)
 
             if(bring_metalness == True and texcoat['metalness'] != []):
-                CreateTextureLine(data['metalness'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree)
+                CreateTextureLine(data['metalness'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat)
 
             if(bring_roughness == True and texcoat['rough'] != []):
-                CreateTextureLine(data['rough'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree)
+                CreateTextureLine(data['rough'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat)
 
             if(bring_normal == True and texcoat['nmap'] != []):
-                CreateTextureLine(data['nmap'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree)
+                CreateTextureLine(data['nmap'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat)
 
-            if (bring_normal == True and texcoat['emissive'] != []):
-                CreateTextureLine(data['emissive'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree)
-
-
-            ''' DISPLACEMENT '''
+            if (bring_emissive == True and texcoat['emissive'] != []):
+                CreateTextureLine(data['emissive'], act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat)
 
             if (bring_displacement == True and texcoat['displacement'] != []):
-                node = act_material.nodes.new('ShaderNodeTexImage')
-                node.name = '3DC_displacement'
-                node.label = 'Displacement'
-                # input_color = main_mat.inputs.find('Roughness') Blender 2.8 Does not support Displacement yet.
-                if (texcoat['displacement']):
-                    node.image = bpy.data.images.load(texcoat['displacement'][0])
-                    node.color_space = 'NONE'
+                CreateTextureLine(data['displacement'], act_material, main_mat, texcoat, coat3D, notegroup, main_material,
+                                  applink_tree, out_mat, coatMat)
 
-                if (coat3D.createnodes):
-                    '''
-                    curvenode = act_material.nodes.new('ShaderNodeRGBCurve')
-                    curvenode.name = '3DC_RGBCurve'
-                    huenode = act_material.nodes.new('ShaderNodeHueSaturation')
-                    huenode.name = '3DC_HueSaturation'
-                    rampnode = act_material.nodes.new('ShaderNodeValToRGB')
-                    rampnode.name = '3DC_ColorRamp'
-    
-                    act_material.links.new(node.outputs[0], curvenode.inputs[1])
-                    act_material.links.new(curvenode.outputs[0], rampnode.inputs[0])
-                    act_material.links.new(rampnode.outputs[0], huenode.inputs[4])
-                    '''
-                    act_material.links.new(node.outputs[0], notegroup.inputs[4])
 
-                    #if (main_mat.type == 'BSDF_PRINCIPLED'):
-                        #main_material.links.new(applink_tree.outputs[2], main_mat.inputs[input_color])
-                    node.location = -276, -579
-
-                else:
-                    node.location = -550, 0
-                    act_material.links.new(node.outputs[0], notegroup.inputs[4])
-
-def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree):
+def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, main_material, applink_tree, out_mat, coatMat):
 
     node = act_material.nodes.new('ShaderNodeTexImage')
 
@@ -328,19 +302,28 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
         normal_node.location = -350, -350
         normal_node.name = '3DC_normalnode'
 
+    elif type['name'] == 'displacement':
+        disp_node = main_material.nodes.new('ShaderNodeDisplacement')
+        node.location = -630, -1160
+        disp_node.location = 90, -460
+        disp_node.inputs[2].default_value = 0.1
+        disp_node.name = '3DC_dispnode'
+
     node.name = '3DC_' + type['name']
     node.label = type['name']
 
-    for input_index in type['find_input']:
-        input_color = main_mat.inputs.find(input_index)
-        if(input_color != -1):
-            break
+    if (type['name'] != 'displacement'):
+        for input_index in type['find_input']:
+            input_color = main_mat.inputs.find(input_index)
+            if(input_color != -1):
+                break
 
     node.image = bpy.data.images.load(texcoat[type['name']][0])
     if(type['colorspace'] == 'noncolor'):
         node.color_space = 'NONE'
 
     if (coat3D.createnodes):
+
         if(type['name'] == 'nmap'):
             act_material.links.new(node.outputs[0], normal_node.inputs[1])
             if(input_color != -1):
@@ -349,6 +332,20 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             act_material.links.new(normal_node.outputs[0], notegroup.inputs[type['input']])
             if (main_mat.inputs[input_color].name == 'Normal' and input_color != -1):
                 main_material.links.new(applink_tree.outputs[type['input']], main_mat.inputs[input_color])
+
+        elif (type['name'] == 'displacement'):
+
+            rampnode = act_material.nodes.new('ShaderNodeValToRGB')
+            rampnode.name = '3DC_ColorRamp'
+            rampnode.location = -270, -956
+
+            act_material.links.new(node.outputs[0], rampnode.inputs[0])
+            act_material.links.new(rampnode.outputs[0], notegroup.inputs[5])
+
+            main_material.links.new(applink_tree.outputs[5], disp_node.inputs[0])
+            main_material.links.new(disp_node.outputs[0], out_mat.inputs[2])
+            coatMat.cycles.displacement_method = 'BOTH'
+
         else:
 
             huenode = createExtraNodes(act_material, node, type)
@@ -380,8 +377,6 @@ def createExtraNodes(act_material, node, type):
     curvenode.name = '3DC_RGBCurve'
     huenode = act_material.nodes.new('ShaderNodeHueSaturation')
     huenode.name = '3DC_HueSaturation'
-    print('tieto:', type)
-    print('ttoto: ', type['rampnode'])
     if(type['rampnode'] == 'yes'):
         rampnode = act_material.nodes.new('ShaderNodeValToRGB')
         rampnode.name = '3DC_ColorRamp'
@@ -425,7 +420,9 @@ def matlab(objekti,mat_list,texturelist,is_new):
         RemoveFbxNodes(objekti)
 
     '''Main Loop for Texture Update'''
-    #checkmaterial(mat_list, objekti)
-    readtexturefolder(objekti,mat_list,texturelist,is_new)
+
+    updatetextures(objekti)
+    if(texturelist != []):
+        readtexturefolder(objekti,mat_list,texturelist,is_new)
 
     return('FINISHED')

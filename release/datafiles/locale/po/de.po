@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -4099,20 +4099,12 @@ msgid "Displacement"
 msgstr "Verschiebung"
 
 
-msgid "Dissolve Speed"
-msgstr "Auflösegeschwindigkeit"
-
-
 msgid "Acceleration"
 msgstr "Beschleunigung"
 
 
 msgid "Velocity"
 msgstr "Geschwindigkeit"
-
-
-msgid "Dry Speed"
-msgstr "Trocknungs-Geschwindigkeit"
 
 
 msgid "Effect Type"
@@ -5212,8 +5204,8 @@ msgid "Directory"
 msgstr "Verzeichnis"
 
 
-msgid "Normal"
-msgstr "Normalen"
+msgid "Regular"
+msgstr "Regular"
 
 
 msgid "Display Mode"
@@ -8173,53 +8165,28 @@ msgid "Light color"
 msgstr "Lichtfarbe"
 
 
-msgid "Energy"
-msgstr "Energie"
-
-
 msgid "Specular Factor"
 msgstr "Anzeigefilter"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Typ"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Punkt"
 
 
 msgid "Omnidirectional point light source"
 msgstr "Ungerichtete Punkt-Lichtquelle"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Sonne"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "Lichtquelle mit konstanten, gerichteten parallelen Strahlen"
-
-
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Scheinwerfer"
 
 
 msgid "Directional cone light source"
 msgstr "Gerichtete kegelförmige Lichtquelle"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Fläche"
-
-
 msgid "Directional area light source"
 msgstr "Gerichtete Flächen-Lichtquelle"
+
+
+msgid "Power"
+msgstr "Potenz"
 
 
 msgid "Falloff Type"
@@ -9074,22 +9041,6 @@ msgid "Type of Object"
 msgstr "Typ des Objekts"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
-msgid "Meta"
-msgstr "Meta"
-
-
-msgid "Light"
-msgstr "Leicht"
-
-
-msgid "Speaker"
-msgstr "Lautsprecher"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "Formschlüssel-Editiermodus"
 
@@ -9432,6 +9383,10 @@ msgstr "Beschränkung"
 
 msgid "Mass of the particles"
 msgstr "Masse der Partikel"
+
+
+msgid "Normal"
+msgstr "Normalen"
 
 
 msgid "Object Aligned"
@@ -11662,6 +11617,10 @@ msgid "Names"
 msgstr "Namen"
 
 
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Edge"
 msgstr "Kante"
 
@@ -11684,6 +11643,10 @@ msgstr "Metaball"
 
 msgid "Hide/Mask"
 msgstr "Verbergen/Maskieren"
+
+
+msgid "Light"
+msgstr "Leicht"
 
 
 msgid "Make Single User"
@@ -13993,6 +13956,10 @@ msgid "NLA Strips"
 msgstr "NLA-Streifen"
 
 
+msgid "Meta"
+msgstr "Meta"
+
+
 msgid "Sound Clip"
 msgstr "Klangclip"
 
@@ -14315,10 +14282,6 @@ msgstr "Korrekturen für Mitteltöne"
 
 msgid "Correction for Shadows"
 msgstr "Schattenkorretur"
-
-
-msgid "Power"
-msgstr "Potenz"
 
 
 msgid "Color Correction"
@@ -20837,11 +20800,6 @@ msgid "Remove vertex color layer"
 msgstr "Vertex-Farbebene löschen"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Weicher Vertex"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Winkel der ausgewählten Vertices abflachen"
 
@@ -20856,11 +20814,6 @@ msgstr "Entlang der Y-Achse glätten"
 
 msgid "Smooth along the Z axis"
 msgstr "Entlang der Z-Achse glätten"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Weicher Vertex"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -22400,14 +22353,6 @@ msgstr "Rendern und Darstellen von einheitlichen Flächen, durch Verwendung der 
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Rendern und Darstellen von weichen Flächen, durch Verwendung von interpolierten Vertex-Normalen"
-
-
-msgid "Glow"
-msgstr "Glühen"
-
-
-msgid "Rim"
-msgstr "Rand"
 
 
 msgctxt "Operator"
@@ -24098,6 +24043,10 @@ msgstr "Überblendung"
 
 msgid "Alpha Over effect strip type"
 msgstr "Alpha über Effektstreifen-Typ"
+
+
+msgid "Glow"
+msgstr "Glühen"
 
 
 msgid "Glow effect strip type"
@@ -26635,10 +26584,6 @@ msgid "User Interface"
 msgstr "Benutzeroberfläche"
 
 
-msgid "Regular"
-msgstr "Regular"
-
-
 msgid "Theme Space"
 msgstr "Texturraum"
 
@@ -27859,10 +27804,6 @@ msgid "Drag Threshold"
 msgstr "Zieh-Schwellenwert"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "Anzahl der Pixel bevor das UI-Objekt gezogen wird"
-
-
 msgid "Invert Zoom Direction"
 msgstr "Zoomrichtung umkehren"
 
@@ -27929,14 +27870,6 @@ msgstr "Kugel-Stil-Rotation im Ansichtenfenster verwenden"
 
 msgid "Invert Zoom"
 msgstr "Zoom umkehren"
-
-
-msgid "Tweak Threshold"
-msgstr "Optimierungs-Schwellenwert"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "Anzahl der Pixel bevor das Optimierungsereignis ausgelöst wird"
 
 
 msgid "Auto Perspective"
@@ -29203,10 +29136,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Anzahl der Samples, die vom Audiomix-Puffer verwendet wird"
 
 
-msgid "Bake Mode"
-msgstr "Backmodus"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Shading-Informationen wählen, um in ein Abbild zu backen"
 
@@ -30143,12 +30072,12 @@ msgid "Multiply Speed"
 msgstr "Geschwindigkeit multiplizieren"
 
 
-msgid "Scale to length"
-msgstr "Brennweite"
-
-
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "Den Wert als Geschwindigkeit statt als Einzelbildnummer interpretieren"
+
+
+msgid "Scale to length"
+msgstr "Brennweite"
 
 
 msgid "Subtract Sequence"
@@ -30255,10 +30184,6 @@ msgid "Sequence strip defining a sound to be played over a period of time"
 msgstr "Sequenzstreifen, der einen über einen Zeitraum abzuspielenden Klang definiert"
 
 
-msgid "Draw Waveform"
-msgstr "Wellenform zeichnen"
-
-
 msgid "Sequence Color Balance Data"
 msgstr "Sequenzer"
 
@@ -30357,6 +30282,10 @@ msgstr "Sepia"
 
 msgid "Ambient"
 msgstr "Umgebung"
+
+
+msgid "Energy"
+msgstr "Energie"
 
 
 msgid "Shape Key"
@@ -30481,6 +30410,10 @@ msgstr "Zellengröße"
 
 msgid "Border Collisions"
 msgstr "Randkollisionen"
+
+
+msgid "Dissolve Speed"
+msgstr "Auflösegeschwindigkeit"
 
 
 msgid "res"
@@ -31553,6 +31486,10 @@ msgstr "Kamerapfad anzeigen"
 
 msgid "Show reconstructed camera path"
 msgstr "Rekonstruierten Kamerapfad anzeigen"
+
+
+msgid "Speaker"
+msgstr "Lautsprecher"
 
 
 msgid "Show Reconstruction"
@@ -32671,10 +32608,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "Begrenzung für Löschen von Doppeltem und 'Automatischen Zusammenführen'"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Veränderte Nahtkanten berechnen die UV-Abwicklung neu"
-
-
 msgid "Edge Tag Mode"
 msgstr "Kanten Bezeichnungsmodus"
 
@@ -32769,6 +32702,10 @@ msgstr "Einrastelement"
 
 msgid "Unified Paint Settings"
 msgstr "Partikelsystem-Einstellungen"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "Veränderte Nahtkanten berechnen die UV-Abwicklung neu"
 
 
 msgid "Only Endpoints"
@@ -33405,6 +33342,10 @@ msgid "No output node"
 msgstr "Kein Ausgabeknoten"
 
 
+msgid "Ray Distance"
+msgstr "Strahlenabstand"
+
+
 msgid "Curve subdivisions"
 msgstr "Kurven-Unterteilungen"
 
@@ -33417,10 +33358,6 @@ msgstr "Zuweisen"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Abwählen"
-
-
-msgid "Ray Distance"
-msgstr "Strahlenabstand"
 
 
 msgid "Position:"
@@ -33778,10 +33715,6 @@ msgid "Delete All Groups"
 msgstr "Alle Gruppen löschen"
 
 
-msgid "Resolution:"
-msgstr "Auflösung:"
-
-
 msgid "Object:"
 msgstr "Objekt:"
 
@@ -33891,6 +33824,10 @@ msgstr "Deformieren:"
 
 msgid "Crease:"
 msgstr "Falte:"
+
+
+msgid "Rim"
+msgstr "Rand"
 
 
 msgid "Material Index Offset:"
@@ -36906,11 +36843,6 @@ msgid "New"
 msgstr "Neu"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Neu"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Neu"
@@ -38712,10 +38644,6 @@ msgstr "Alle Render-Ebenen sind deaktiviert"
 
 msgid "Paste name"
 msgstr "Name einfügen"
-
-
-msgid "Save Over?"
-msgstr "Überschreiben?"
 
 
 msgid "unable to open the file"

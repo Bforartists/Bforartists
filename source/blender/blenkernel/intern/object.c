@@ -38,7 +38,7 @@
 #include "DNA_gpencil_types.h"
 #include "DNA_gpencil_modifier_types.h"
 #include "DNA_key_types.h"
-#include "DNA_lamp_types.h"
+#include "DNA_light_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_material_types.h"
 #include "DNA_meta_types.h"
@@ -85,7 +85,7 @@
 #include "BKE_gpencil_modifier.h"
 #include "BKE_icons.h"
 #include "BKE_key.h"
-#include "BKE_lamp.h"
+#include "BKE_light.h"
 #include "BKE_layer.h"
 #include "BKE_lattice.h"
 #include "BKE_library.h"
@@ -793,7 +793,7 @@ void *BKE_object_obdata_add_from_type(Main *bmain, int type, const char *name)
 		case OB_FONT:      return BKE_curve_add(bmain, name, OB_FONT);
 		case OB_MBALL:     return BKE_mball_add(bmain, name);
 		case OB_CAMERA:    return BKE_camera_add(bmain, name);
-		case OB_LAMP:      return BKE_lamp_add(bmain, name);
+		case OB_LAMP:      return BKE_light_add(bmain, name);
 		case OB_LATTICE:   return BKE_lattice_add(bmain, name);
 		case OB_ARMATURE:  return BKE_armature_add(bmain, name);
 		case OB_SPEAKER:   return BKE_speaker_add(bmain, name);
@@ -1427,6 +1427,240 @@ Object *BKE_object_copy(Main *bmain, const Object *ob)
 	return ob_copy;
 }
 
+Object *BKE_object_duplicate(Main *bmain, const Object *ob, const int dupflag)
+{
+	Material ***matarar;
+	ID *id;
+	int a, didit;
+	Object *obn = BKE_object_copy(bmain, ob);
+
+	/* 0 == full linked. */
+	if (dupflag == 0) {
+		return obn;
+	}
+
+#define ID_NEW_REMAP_US(a)	if (      (a)->id.newid) { (a) = (void *)(a)->id.newid;       (a)->id.us++; }
+#define ID_NEW_REMAP_US2(a)	if (((ID *)a)->newid)    { (a) = ((ID  *)a)->newid;     ((ID *)a)->us++;    }
+
+	/* duplicates using userflags */
+	if (dupflag & USER_DUP_ACT) {
+		BKE_animdata_copy_id_action(bmain, &obn->id, true);
+	}
+
+	if (dupflag & USER_DUP_MAT) {
+		for (a = 0; a < obn->totcol; a++) {
+			id = (ID *)obn->mat[a];
+			if (id) {
+				ID_NEW_REMAP_US(obn->mat[a])
+				else {
+					obn->mat[a] = ID_NEW_SET(obn->mat[a], BKE_material_copy(bmain, obn->mat[a]));
+				}
+				id_us_min(id);
+
+				if (dupflag & USER_DUP_ACT) {
+					BKE_animdata_copy_id_action(bmain, &obn->mat[a]->id, true);
+				}
+			}
+		}
+	}
+	if (dupflag & USER_DUP_PSYS) {
+		ParticleSystem *psys;
+		for (psys = obn->particlesystem.first; psys; psys = psys->next) {
+			id = (ID *) psys->part;
+			if (id) {
+				ID_NEW_REMAP_US(psys->part)
+				else {
+					psys->part = ID_NEW_SET(psys->part, BKE_particlesettings_copy(bmain, psys->part));
+				}
+
+				if (dupflag & USER_DUP_ACT) {
+					BKE_animdata_copy_id_action(bmain, &psys->part->id, true);
+				}
+
+				id_us_min(id);
+			}
+		}
+	}
+
+	id = obn->data;
+	didit = 0;
+
+	switch (obn->type) {
+		case OB_MESH:
+			if (dupflag & USER_DUP_MESH) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_mesh_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_CURVE:
+			if (dupflag & USER_DUP_CURVE) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_curve_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_SURF:
+			if (dupflag & USER_DUP_SURF) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_curve_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_FONT:
+			if (dupflag & USER_DUP_FONT) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_curve_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_MBALL:
+			if (dupflag & USER_DUP_MBALL) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_mball_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_LAMP:
+			if (dupflag & USER_DUP_LAMP) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_light_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_ARMATURE:
+			DEG_id_tag_update(&obn->id, ID_RECALC_GEOMETRY);
+			if (obn->pose)
+				BKE_pose_tag_recalc(bmain, obn->pose);
+			if (dupflag & USER_DUP_ARM) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_armature_copy(bmain, obn->data));
+					BKE_pose_rebuild(bmain, obn, obn->data, true);
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_LATTICE:
+			if (dupflag != 0) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_lattice_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_CAMERA:
+			if (dupflag != 0) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_camera_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_LIGHTPROBE:
+			if (dupflag != 0) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_lightprobe_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_SPEAKER:
+			if (dupflag != 0) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_speaker_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+		case OB_GPENCIL:
+			if (dupflag != 0) {
+				ID_NEW_REMAP_US2(obn->data)
+				else {
+					obn->data = ID_NEW_SET(obn->data, BKE_gpencil_copy(bmain, obn->data));
+					didit = 1;
+				}
+				id_us_min(id);
+			}
+			break;
+	}
+
+	/* Check if obdata is copied. */
+	if (didit) {
+		Key *key = BKE_key_from_object(obn);
+
+		Key *oldkey = BKE_key_from_object(ob);
+		if (oldkey != NULL) {
+			ID_NEW_SET(oldkey, key);
+		}
+
+		if (dupflag & USER_DUP_ACT) {
+			BKE_animdata_copy_id_action(bmain, (ID *)obn->data, true);
+			if (key) {
+				BKE_animdata_copy_id_action(bmain, (ID *)key, true);
+			}
+		}
+
+		if (dupflag & USER_DUP_MAT) {
+			matarar = give_matarar(obn);
+			if (matarar) {
+				for (a = 0; a < obn->totcol; a++) {
+					id = (ID *)(*matarar)[a];
+					if (id) {
+						ID_NEW_REMAP_US((*matarar)[a])
+						else {
+							(*matarar)[a] = ID_NEW_SET((*matarar)[a], BKE_material_copy(bmain, (*matarar)[a]));
+						}
+						id_us_min(id);
+					}
+				}
+			}
+		}
+	}
+
+#undef ID_NEW_REMAP_US
+#undef ID_NEW_REMAP_US2
+
+	BKE_libblock_relink_to_newid(&obn->id);
+
+	/* DAG_relations_tag_update(bmain); */ /* caller must do */
+
+	if (ob->data != NULL) {
+		DEG_id_tag_update_ex(bmain, (ID *)obn->data, ID_RECALC_EDITORS);
+	}
+
+	/* BKE_main_id_clear_newpoins(bmain); */ /* Called must do. */
+
+	return obn;
+}
+
 void BKE_object_make_local_ex(Main *bmain, Object *ob, const bool lib_local, const bool clear_proxy)
 {
 	bool is_local = false, is_lib = false;
@@ -1661,11 +1895,6 @@ void BKE_object_obdata_size_init(struct Object *ob, const float size)
 			ob->empty_drawsize *= size;
 			break;
 		}
-		case OB_GPENCIL:
-		{
-			ob->empty_drawsize *= size;
-			break;
-		}
 		case OB_FONT:
 		{
 			Curve *cu = ob->data;
@@ -1680,7 +1909,7 @@ void BKE_object_obdata_size_init(struct Object *ob, const float size)
 		}
 		case OB_LAMP:
 		{
-			Lamp *lamp = ob->data;
+			Light *lamp = ob->data;
 			lamp->dist *= size;
 			lamp->area_size  *= size;
 			lamp->area_sizey *= size;
@@ -1858,6 +2087,30 @@ void BKE_object_tfm_protected_restore(Object *ob,
 		ob->rotAngle =  obtfm->rotAngle;
 		ob->drotAngle = obtfm->drotAngle;
 	}
+}
+
+void BKE_object_tfm_copy(Object *object_dst, const Object *object_src)
+{
+#define TFMCPY(_v) (object_dst->_v = object_src->_v)
+#define TFMCPY3D(_v) copy_v3_v3(object_dst->_v, object_src->_v)
+#define TFMCPY4D(_v) copy_v4_v4(object_dst->_v, object_src->_v)
+
+	TFMCPY3D(loc);
+	TFMCPY3D(dloc);
+	TFMCPY3D(scale);
+	TFMCPY3D(dscale);
+	TFMCPY3D(rot);
+	TFMCPY3D(drot);
+	TFMCPY4D(quat);
+	TFMCPY4D(dquat);
+	TFMCPY3D(rotAxis);
+	TFMCPY3D(drotAxis);
+	TFMCPY(rotAngle);
+	TFMCPY(drotAngle);
+
+#undef TFMCPY
+#undef TFMCPY3D
+#undef TFMCPY4D
 }
 
 void BKE_object_to_mat3(Object *ob, float mat[3][3]) /* no parent */
@@ -2560,7 +2813,7 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 		float size[3];
 
 		copy_v3_v3(size, ob->scale);
-		if ((ob->type == OB_EMPTY) || (ob->type == OB_GPENCIL)) {
+		if (ob->type == OB_EMPTY) {
 			mul_v3_fl(size, ob->empty_drawsize);
 		}
 

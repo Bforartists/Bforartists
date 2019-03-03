@@ -28,6 +28,7 @@ class BlenderScene():
     @staticmethod
     def create(gltf, scene_idx):
         """Scene creation."""
+        gltf.blender_active_collection = None
         if scene_idx is not None:
             pyscene = gltf.data.scenes[scene_idx]
             list_nodes = pyscene.nodes
@@ -38,6 +39,8 @@ class BlenderScene():
                 # TODO: There is a bug in 2.8 alpha that break CLEAR_KEEP_TRANSFORM
                 # if we are creating a new scene
                 scene = bpy.context.scene
+                if bpy.context.collection.name in bpy.data.collections: # avoid master collection
+                    gltf.blender_active_collection = bpy.context.collection.name
                 scene.render.engine = "BLENDER_EEVEE"
 
                 gltf.blender_scene = scene.name
@@ -46,11 +49,15 @@ class BlenderScene():
 
             # Switch to newly created main scene
             bpy.context.window.scene = bpy.data.scenes[gltf.blender_scene]
+            if bpy.context.collection.name in bpy.data.collections: # avoid master collection
+                gltf.blender_active_collection = bpy.context.collection.name
 
         else:
             # No scene in glTF file, create all objects in current scene
             scene = bpy.context.scene
             scene.render.engine = "BLENDER_EEVEE"
+            if bpy.context.collection.name in bpy.data.collections: # avoid master collection
+                gltf.blender_active_collection = bpy.context.collection.name
             gltf.blender_scene = scene.name
             list_nodes = BlenderScene.get_root_nodes(gltf)
 
@@ -59,7 +66,10 @@ class BlenderScene():
         obj_rotation.rotation_mode = 'QUATERNION'
         obj_rotation.rotation_quaternion = Quaternion((sqrt(2) / 2, sqrt(2) / 2, 0.0, 0.0))
 
-        bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj_rotation)
+        if gltf.blender_active_collection is not None:
+            bpy.data.collections[gltf.blender_active_collection].objects.link(obj_rotation)
+        else:
+            bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj_rotation)
 
         if list_nodes is not None:
             for node_idx in list_nodes:
@@ -111,6 +121,13 @@ class BlenderScene():
 
 
 
+
+                # Avoid rotation bug if collection is hidden or disabled
+                if gltf.blender_active_collection is not None:
+                    gltf.collection_hide_viewport = bpy.data.collections[gltf.blender_active_collection].hide_viewport
+                    bpy.data.collections[gltf.blender_active_collection].hide_viewport = False
+                    # TODO for visibility ... but seems not exposed on bpy for now
+
                 for node_idx in list_nodes:
 
                     if node_idx in exclude_nodes:
@@ -130,8 +147,13 @@ class BlenderScene():
                     bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
 
                 # remove object
-                bpy.context.scene.collection.objects.unlink(obj_rotation)
+                #bpy.context.scene.collection.objects.unlink(obj_rotation)
                 bpy.data.objects.remove(obj_rotation)
+
+                # Restore collection hiden / disabled values
+                if gltf.blender_active_collection is not None:
+                    bpy.data.collections[gltf.blender_active_collection].hide_viewport = gltf.collection_hide_viewport
+                    # TODO restore visibility when expose in bpy
 
     @staticmethod
     def get_root_nodes(gltf):
