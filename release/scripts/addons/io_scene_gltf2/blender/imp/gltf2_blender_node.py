@@ -39,15 +39,28 @@ class BlenderNode():
             instance = False
             if gltf.data.meshes[pynode.mesh].blender_name is not None:
                 # Mesh is already created, only create instance
-                instance = True
-                mesh = bpy.data.meshes[gltf.data.meshes[pynode.mesh].blender_name]
-            else:
+                # Except is current node is animated with path weight
+                # Or if previous instance is animation at node level
+                if pynode.weight_animation is True:
+                    instance = False
+                else:
+                    if gltf.data.meshes[pynode.mesh].is_weight_animated is True:
+                        instance = False
+                    else:
+                        instance = True
+                        mesh = bpy.data.meshes[gltf.data.meshes[pynode.mesh].blender_name]
+
+            if instance is False:
                 if pynode.name:
                     gltf.log.info("Blender create Mesh node " + pynode.name)
                 else:
                     gltf.log.info("Blender create Mesh node")
 
                 mesh = BlenderMesh.create(gltf, pynode.mesh, node_idx, parent)
+
+            if pynode.weight_animation is True:
+                # flag this mesh instance as created only for this node, because of weight animation
+                gltf.data.meshes[pynode.mesh].is_weight_animated = True
 
             if pynode.name:
                 name = pynode.name
@@ -60,14 +73,17 @@ class BlenderNode():
 
             obj = bpy.data.objects.new(name, mesh)
             obj.rotation_mode = 'QUATERNION'
-            bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
+            if gltf.blender_active_collection is not None:
+                bpy.data.collections[gltf.blender_active_collection].objects.link(obj)
+            else:
+                bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
 
             # Transforms apply only if this mesh is not skinned
             # See implementation node of gltf2 specification
             if not (pynode.mesh and pynode.skin is not None):
                 BlenderNode.set_transforms(gltf, node_idx, pynode, obj, parent)
             pynode.blender_object = obj.name
-            BlenderNode.set_parent(gltf, pynode, obj, parent)
+            BlenderNode.set_parent(gltf, obj, parent)
 
             if instance == False:
                 BlenderMesh.set_mesh(gltf, gltf.data.meshes[pynode.mesh], mesh, obj)
@@ -86,7 +102,11 @@ class BlenderNode():
             obj = BlenderCamera.create(gltf, pynode.camera)
             BlenderNode.set_transforms(gltf, node_idx, pynode, obj, parent)  # TODO default rotation of cameras ?
             pynode.blender_object = obj.name
-            BlenderNode.set_parent(gltf, pynode, obj, parent)
+            BlenderNode.set_parent(gltf, obj, parent)
+
+            if pynode.children:
+                for child_idx in pynode.children:
+                    BlenderNode.create(gltf, child_idx, node_idx)
 
             return
 
@@ -114,7 +134,7 @@ class BlenderNode():
                 BlenderNode.set_transforms(gltf, node_idx, pynode, obj, parent, correction=True)
                 pynode.blender_object = obj.name
                 pynode.correction_needed = True
-                BlenderNode.set_parent(gltf, pynode, obj, parent)
+                BlenderNode.set_parent(gltf, obj, parent)
 
                 if pynode.children:
                     for child_idx in pynode.children:
@@ -131,17 +151,21 @@ class BlenderNode():
             gltf.log.info("Blender create Empty node")
             obj = bpy.data.objects.new("Node", None)
         obj.rotation_mode = 'QUATERNION'
-        bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
+        if gltf.blender_active_collection is not None:
+            bpy.data.collections[gltf.blender_active_collection].objects.link(obj)
+        else:
+            bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
+
         BlenderNode.set_transforms(gltf, node_idx, pynode, obj, parent)
         pynode.blender_object = obj.name
-        BlenderNode.set_parent(gltf, pynode, obj, parent)
+        BlenderNode.set_parent(gltf, obj, parent)
 
         if pynode.children:
             for child_idx in pynode.children:
                 BlenderNode.create(gltf, child_idx, node_idx)
 
     @staticmethod
-    def set_parent(gltf, pynode, obj, parent):
+    def set_parent(gltf, obj, parent):
         """Set parent."""
         if parent is None:
             return

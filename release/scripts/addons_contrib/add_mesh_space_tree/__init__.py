@@ -98,7 +98,7 @@ def pointInsideMesh(pointrelativetocursor, ob):
     # adapted from http://blenderartists.org/forum/showthread.php?"
     # "195605-Detecting-if-a-point-is-inside-a-mesh-2-5-API&p=1691633&viewfull=1#post1691633
     mat = ob.matrix_world.inverted()
-    orig = mat * (pointrelativetocursor + bpy.context.scene.cursor_location)
+    orig = mat * (pointrelativetocursor + bpy.context.scene.cursor.location)
     count = 0
     axis = Vector((0, 0, 1))
     while True:
@@ -214,7 +214,7 @@ def groupExtends(group):
 
 def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1,
                  randomrot=0.1, maxconnections=2, bunchiness=1.0, connectoffset=-0.1):
-    p = bpy.context.scene.cursor_location
+    p = bpy.context.scene.cursor.location
 
     verts = []
     faces = []
@@ -266,7 +266,7 @@ def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1,
 
 def createMarkers(tree, scale=0.05):
     # not used as markers are parented to tree object that is created at the cursor position
-    # p=bpy.context.scene.cursor_location
+    # p=bpy.context.scene.cursor.location
 
     verts = []
     faces = []
@@ -292,7 +292,7 @@ def createObjects(tree, parent=None, objectname=None, probability=0.5, size=0.5,
     if (parent is None) or (objectname is None) or (objectname == 'None'):
         return
 
-    # not necessary, we parent the new objects: p=bpy.context.scene.cursor_location
+    # not necessary, we parent the new objects: p=bpy.context.scene.cursor.location
 
     theobject = bpy.data.objects[objectname]
 
@@ -436,7 +436,7 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5,
 
     timings = Timer()
 
-    p = bpy.context.scene.cursor_location
+    p = bpy.context.scene.cursor.location
     verts = []
     edges = []
     faces = []
@@ -943,7 +943,7 @@ class SCATree(bpy.types.Operator):
             size, minp = groupExtends(self.crownGroup)
             volumefie = partial(
                             groupdistribution, self.crownGroup, self.shadowGroup,
-                            self.randomSeed, size, minp - bpy.context.scene.cursor_location
+                            self.randomSeed, size, minp - bpy.context.scene.cursor.location
                         )
         else:
             volumefie = partial(
@@ -956,7 +956,7 @@ class SCATree(bpy.types.Operator):
         if self.useTrunkGroup:
             if bpy.data.collections.find(self.trunkGroup) >= 0:
                 for ob in bpy.data.collections[self.trunkGroup].objects:
-                    p = ob.location - context.scene.cursor_location
+                    p = ob.location - context.scene.cursor.location
                     startingpoints.append(Branchpoint(p, None))
 
         timings.add('scastart')

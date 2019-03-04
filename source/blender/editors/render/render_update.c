@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "DNA_lamp_types.h"
+#include "DNA_light_types.h"
 #include "DNA_material_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_node_types.h"
@@ -206,11 +206,13 @@ void ED_render_engine_changed(Main *bmain)
 
 static void material_changed(Main *UNUSED(bmain), Material *ma)
 {
+	BKE_texpaint_slot_refresh_cache(ma);
+
 	/* icons */
 	BKE_icon_changed(BKE_icon_id_ensure(&ma->id));
 }
 
-static void lamp_changed(Main *UNUSED(bmain), Lamp *la)
+static void lamp_changed(Main *UNUSED(bmain), Light *la)
 {
 	/* icons */
 	BKE_icon_changed(BKE_icon_id_ensure(&la->id));
@@ -266,7 +268,7 @@ static void scene_changed(Main *bmain, Scene *scene)
 	/* glsl */
 	for (ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ob->mode & OB_MODE_TEXTURE_PAINT) {
-			BKE_texpaint_slots_refresh_object(scene, ob);
+			BKE_texpaint_slots_refresh_object(ob);
 			BKE_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
 		}
 	}
@@ -293,7 +295,7 @@ void ED_render_id_flush_update(const DEGEditorUpdateContext *update_ctx, ID *id)
 			world_changed(bmain, (World *)id);
 			break;
 		case ID_LA:
-			lamp_changed(bmain, (Lamp *)id);
+			lamp_changed(bmain, (Light *)id);
 			break;
 		case ID_IM:
 			image_changed(bmain, (Image *)id);

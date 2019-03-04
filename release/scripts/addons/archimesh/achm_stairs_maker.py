@@ -273,7 +273,7 @@ def create_stairs(self, objname):
     mesh = bpy.data.meshes.new(objname)
     myobject = bpy.data.objects.new(objname, mesh)
 
-    myobject.location = bpy.context.scene.cursor_location
+    myobject.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobject)
 
     mesh.from_pydata(myvertex, [], myfaces)

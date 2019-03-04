@@ -5049,7 +5049,7 @@ class ARCHIPACK_OT_roof(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.location = context.scene.cursor_location
+            o.location = context.scene.cursor.location
             o.select_set(state=True)
             context.view_layer.objects.active = o
             self.manipulate()
@@ -5101,7 +5101,7 @@ class ARCHIPACK_OT_roof_cutter(ArchipackCreateTool, Operator):
             pd = archipack_roof.datablock(parent)
             pd.boundary = o.name
         else:
-            o.location = context.scene.cursor_location
+            o.location = context.scene.cursor.location
         # make manipulators selectable
         d.manipulable_selectable = True
         self.link_object_to_scene(context, o)

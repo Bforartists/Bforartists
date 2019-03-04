@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -3464,20 +3464,12 @@ msgid "Displacement"
 msgstr "Izdizanje"
 
 
-msgid "Dissolve Speed"
-msgstr "Brzina rastapanja"
-
-
 msgid "Acceleration"
 msgstr "Ubrzanje"
 
 
 msgid "Velocity"
 msgstr "Brzina"
-
-
-msgid "Dry Speed"
-msgstr "Brzina sušenja"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -4321,7 +4313,7 @@ msgid "Small"
 msgstr "Malo"
 
 
-msgid "Normal"
+msgid "Regular"
 msgstr "Normalno"
 
 
@@ -6738,49 +6730,24 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Udaljenost opadanja - svetlost ima polovinu svoje vrednosti u ovoj tački"
 
 
-msgid "Energy"
-msgstr "Energija"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Vrsta"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Tačkasto"
-
-
 msgid "Omnidirectional point light source"
 msgstr "Omni tačka kao izvor svetlosti"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Sunce"
 
 
 msgid "Constant direction parallel ray light source"
 msgstr "Konstantni usmereni izvor svetlosti sa paralelnim sracima"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Reflektor"
-
-
 msgid "Directional cone light source"
 msgstr "Usmereni kupasti izvor svetlosti"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Površinska"
-
-
 msgid "Directional area light source"
 msgstr "Usmereni površinski izvor svetlosti"
+
+
+msgid "Power"
+msgstr "Snaga"
 
 
 msgid "Falloff Type"
@@ -7595,22 +7562,6 @@ msgid "Type of Object"
 msgstr "Spoj objekte"
 
 
-msgid "Mesh"
-msgstr "Meš"
-
-
-msgid "Meta"
-msgstr "Meta"
-
-
-msgid "Light"
-msgstr "Svetlost"
-
-
-msgid "Speaker"
-msgstr "Zvučnik"
-
-
 msgid "Vertex Groups"
 msgstr "Grupa temena"
 
@@ -7901,6 +7852,10 @@ msgstr "Slot materijala korišćen za renderovanje čestica"
 
 msgid "Dummy"
 msgstr "Lutka"
+
+
+msgid "Normal"
+msgstr "Normalno"
 
 
 msgid "Path End"
@@ -10027,6 +9982,10 @@ msgid "Bone Roll"
 msgstr "Rolna kostiju"
 
 
+msgid "Mesh"
+msgstr "Meš"
+
+
 msgid "Edge"
 msgstr "Ivica"
 
@@ -10061,6 +10020,10 @@ msgstr "Sakrij/maskiraj"
 
 msgid "Hooks"
 msgstr "Udice"
+
+
+msgid "Light"
+msgstr "Svetlost"
 
 
 msgid "Make Links"
@@ -11846,6 +11809,10 @@ msgid "Blending"
 msgstr "Mešanje"
 
 
+msgid "Meta"
+msgstr "Meta"
+
+
 msgid "Sound Clip"
 msgstr "Zvučni snimak"
 
@@ -12032,10 +11999,6 @@ msgstr "Ispravka senki"
 
 msgid "Basis"
 msgstr "Osnova"
-
-
-msgid "Power"
-msgstr "Snaga"
 
 
 msgid "Slope"
@@ -17800,18 +17763,8 @@ msgid "Add Vertex Color"
 msgstr "Dodaj boju temena"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Umekšaj temena"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Poravnava uglove izabranih temena"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Laplasovo umekšavanje temena"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -19018,14 +18971,6 @@ msgstr "Poredi razlikujući velika i mala slova"
 
 msgid "Name filter using '*', '?' and '[abc]' unix style wildcards"
 msgstr "Nazovi filter koristeći džoker znake '*' i '?'"
-
-
-msgid "Glow"
-msgstr "Sjaj"
-
-
-msgid "Rim"
-msgstr "Obod"
 
 
 msgctxt "Operator"
@@ -20518,6 +20463,10 @@ msgstr "Brisanje"
 
 msgid "Wipe effect strip type"
 msgstr "Efekat brisanje tip trake"
+
+
+msgid "Glow"
+msgstr "Sjaj"
 
 
 msgid "Glow effect strip type"
@@ -22848,10 +22797,6 @@ msgid "User Interface"
 msgstr "Korisničko okruženje"
 
 
-msgid "Regular"
-msgstr "Normalno"
-
-
 msgid "Theme Space"
 msgstr "Prostor teme"
 
@@ -23985,10 +23930,6 @@ msgid "Softness"
 msgstr "Umekšanje"
 
 
-msgid "Tweak Threshold"
-msgstr "Podesi prag"
-
-
 msgid "Auto Perspective"
 msgstr "Orto./perspektiva"
 
@@ -24773,10 +24714,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Broj uzoraka korišćenih za pečenje ambijentalnog senčenja za višerezolucijone objekte"
 
 
-msgid "Bake Mode"
-msgstr "Mod pečenja"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Izaberite informaciju senčenja za pretvaranje (pečenje) u sliku"
 
@@ -25121,10 +25058,6 @@ msgid "Settings for particle fluids physics"
 msgstr "Podešavanja korišćena za tečnosti."
 
 
-msgid "Factor Radius"
-msgstr "Faktor poluprečnika"
-
-
 msgid "Rest Density"
 msgstr "Gustina odmora"
 
@@ -25155,6 +25088,10 @@ msgstr "Faktor gustine"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "Gustina se računa kao faktor početne gustine (zavisi od veličine čestice)"
+
+
+msgid "Factor Radius"
+msgstr "Faktor poluprečnika"
 
 
 msgid "YCbCr (ITU 601)"
@@ -25557,6 +25494,10 @@ msgid "Ambient"
 msgstr "Ambijent"
 
 
+msgid "Energy"
+msgstr "Energija"
+
+
 msgid "Shape Key"
 msgstr "Ključ oblika"
 
@@ -25663,6 +25604,10 @@ msgstr "Dim se sudara sa svim stranama"
 
 msgid "Smoke density grid"
 msgstr "Mreža gustine dima"
+
+
+msgid "Dissolve Speed"
+msgstr "Brzina rastapanja"
 
 
 msgid "res"
@@ -26398,6 +26343,10 @@ msgstr "Prikaži putanju kamere"
 
 msgid "Show reconstructed camera path"
 msgstr "Prikaži rekonstruisanu putanju kamere"
+
+
+msgid "Speaker"
+msgstr "Zvučnik"
 
 
 msgid "3D"
@@ -28330,10 +28279,6 @@ msgid "Lock Invert All"
 msgstr "Zaključaj sve obrnuto"
 
 
-msgid "Resolution:"
-msgstr "Rezolucija:"
-
-
 msgid "Object:"
 msgstr "Objekat:"
 
@@ -28480,6 +28425,10 @@ msgstr "Nabor:"
 
 msgid "Outer"
 msgstr "Spoljašnje"
+
+
+msgid "Rim"
+msgstr "Obod"
 
 
 msgid "Material Index Offset:"
@@ -31063,11 +31012,6 @@ msgid "New"
 msgstr "Novo"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Novo"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Novo"
@@ -32554,10 +32498,6 @@ msgstr "Sva pravila su prosečna"
 
 msgid "Paste name"
 msgstr "Ubaci ključne kadrove"
-
-
-msgid "Save Over?"
-msgstr "Sačuvaj preko?"
 
 
 msgid "unable to open the file"

@@ -23,13 +23,13 @@
 
 #pragma once
 
+#include "intern/builder/deg_builder.h"
 #include "intern/builder/deg_builder_map.h"
 #include "intern/depsgraph_type.h"
-
-#include "DEG_depsgraph.h"
-
 #include "intern/node/deg_node_id.h"
 #include "intern/node/deg_node_operation.h"
+
+#include "DEG_depsgraph.h"
 
 struct Base;
 struct CacheFile;
@@ -40,8 +40,8 @@ struct GHash;
 struct ID;
 struct Image;
 struct Key;
-struct Lamp;
 struct LayerCollection;
+struct Light;
 struct LightProbe;
 struct ListBase;
 struct MTex;
@@ -74,7 +74,8 @@ struct Node;
 struct OperationNode;
 struct TimeSourceNode;
 
-struct DepsgraphNodeBuilder {
+class DepsgraphNodeBuilder : public DepsgraphBuilder {
+public:
 	DepsgraphNodeBuilder(Main *bmain, Depsgraph *graph);
 	~DepsgraphNodeBuilder();
 
@@ -172,7 +173,7 @@ struct DepsgraphNodeBuilder {
 	void build_object_data_geometry(Object *object, bool is_object_visible);
 	void build_object_data_geometry_datablock(ID *obdata,
 	                                          bool is_object_visible);
-	void build_object_data_lamp(Object *object);
+	void build_object_data_light(Object *object);
 	void build_object_data_lightprobe(Object *object);
 	void build_object_data_speaker(Object *object);
 	void build_object_transform(Object *object);
@@ -204,7 +205,7 @@ struct DepsgraphNodeBuilder {
 	void build_armature(bArmature *armature);
 	void build_shapekeys(Key *key);
 	void build_camera(Camera *camera);
-	void build_lamp(Lamp *lamp);
+	void build_light(Light *lamp);
 	void build_nodetree(bNodeTree *ntree);
 	void build_material(Material *ma);
 	void build_texture(Tex *tex);
@@ -258,10 +259,6 @@ protected:
 	                            ID **idpoin,
 	                            bool is_reference,
 	                            void *user_data);
-
-	/* State which never changes, same for the whole builder time. */
-	Main *bmain_;
-	Depsgraph *graph_;
 
 	/* State which demotes currently built entities. */
 	Scene *scene_;

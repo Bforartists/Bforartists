@@ -148,7 +148,7 @@ def align_matrix(self, context):
     if self.absolute_location:
         loc = Matrix.Translation(Vector((0, 0, 0)))
     else:
-        loc = Matrix.Translation(context.scene.cursor_location)
+        loc = Matrix.Translation(context.scene.cursor.location)
 
 # user defined location & translation
     userLoc = Matrix.Translation(self.location)

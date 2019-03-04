@@ -125,7 +125,7 @@ class NPPMGetContext(bpy.types.Operator):
         NP020PM.snap_target = copy.deepcopy(bpy.context.tool_settings.snap_target)
         NP020PM.pivot_point = copy.deepcopy(bpy.context.space_data.pivot_point)
         NP020PM.trans_orient = copy.deepcopy(bpy.context.space_data.transform_orientation)
-        NP020PM.curloc = copy.deepcopy(bpy.context.scene.cursor_location)
+        NP020PM.curloc = copy.deepcopy(bpy.context.scene.cursor.location)
         NP020PM.acob = bpy.context.active_object
         if bpy.context.mode == 'OBJECT':
             NP020PM.edit_mode = 'OBJECT'

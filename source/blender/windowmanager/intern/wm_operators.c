@@ -1809,18 +1809,19 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 
 static int wm_exit_blender_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
+	wm_exit_schedule_delayed(C);
 	return OPERATOR_FINISHED;
 }
 
-static int wm_exit_blender_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+static int wm_exit_blender_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
 {
-	if (U.uiflag & USER_QUIT_PROMPT) {
-		return wm_exit_blender_exec(C, op);
+	if (U.uiflag & USER_SAVE_PROMPT) {
+		wm_quit_with_optional_confirmation_prompt(C, CTX_wm_window(C));
 	}
 	else {
-		return WM_operator_confirm(C, op, event);
+		wm_exit_schedule_delayed(C);
 	}
+	return OPERATOR_FINISHED;
 }
 
 static void WM_OT_quit_blender(wmOperatorType *ot)
@@ -2988,7 +2989,7 @@ static int previews_id_ensure_callback(void *userdata, ID *UNUSED(self_id), ID *
 static int previews_ensure_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Main *bmain = CTX_data_main(C);
-	ListBase *lb[] = {&bmain->mat, &bmain->tex, &bmain->image, &bmain->world, &bmain->lamp, NULL};
+	ListBase *lb[] = {&bmain->mat, &bmain->tex, &bmain->image, &bmain->world, &bmain->light, NULL};
 	PreviewsIDEnsureData preview_id_data;
 	Scene *scene;
 	ID *id;
@@ -3054,7 +3055,7 @@ static int previews_clear_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	ListBase *lb[] = {&bmain->object, &bmain->collection,
-	                  &bmain->mat, &bmain->world, &bmain->lamp, &bmain->tex, &bmain->image, NULL};
+	                  &bmain->mat, &bmain->world, &bmain->light, &bmain->tex, &bmain->image, NULL};
 	int i;
 
 	const int id_filters = RNA_enum_get(op->ptr, "id_type");
