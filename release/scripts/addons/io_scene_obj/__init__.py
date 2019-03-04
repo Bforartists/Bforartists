@@ -189,7 +189,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper):
     use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=False,
+            default=True,
             )
     use_animation: BoolProperty(
             name="Animation",

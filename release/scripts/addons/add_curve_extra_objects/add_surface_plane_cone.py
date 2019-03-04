@@ -123,7 +123,7 @@ class MakeSurfaceWedge(Operator, MakeSurfaceHelpers):
         # change name
         context.active_object.name = 'SurfaceWedge'
         # get the wedge to the 3d cursor.
-        context.active_object.location = context.scene.cursor_location
+        context.active_object.location = context.scene.cursor.location
         bpy.ops.transform.resize(value=(size, size, size))
 
         # adjust resolution in u and v direction
@@ -186,7 +186,7 @@ class MakeSurfaceCone(Operator, MakeSurfaceHelpers):
         bpy.ops.object.editmode_toggle()
         # bring object to cursor
         bpy.ops.object.mode_set(mode='OBJECT')
-        context.active_object.location = context.scene.cursor_location
+        context.active_object.location = context.scene.cursor.location
         # adjust size
         bpy.ops.transform.resize(value=(size, size, size))
 
@@ -266,7 +266,7 @@ class MakeSurfaceStar(Operator, MakeSurfaceHelpers):
         # origin to geometry
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
         # get object to 3d cursor
-        context.active_object.location = context.scene.cursor_location
+        context.active_object.location = context.scene.cursor.location
         # change name
         ao.name = 'SurfaceStar'
         # adjust size
@@ -334,7 +334,7 @@ class MakeSurfacePlane(Operator, MakeSurfaceHelpers):
 
         # bring object to 3d cursor
         bpy.ops.object.mode_set(mode='OBJECT')
-        context.active_object.location = context.scene.cursor_location
+        context.active_object.location = context.scene.cursor.location
         bpy.ops.transform.resize(value=(size, size, size))
 
         # adjust resolution in u and v direction

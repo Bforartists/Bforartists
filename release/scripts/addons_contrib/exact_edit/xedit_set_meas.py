@@ -92,7 +92,7 @@ def backup_blender_settings():
         deepcopy(bpy.context.space_data.pivot_point),
         deepcopy(bpy.context.space_data.transform_orientation),
         deepcopy(bpy.context.space_data.show_manipulator),
-        deepcopy(bpy.context.scene.cursor_location)]
+        deepcopy(bpy.context.scene.cursor.location)]
     return backup
 
 
@@ -113,7 +113,7 @@ def restore_blender_settings(backup):
     bpy.context.space_data.pivot_point = deepcopy(backup[3])
     bpy.context.space_data.transform_orientation = deepcopy(backup[4])
     bpy.context.space_data.show_manipulator = deepcopy(backup[5])
-    bpy.context.scene.cursor_location = deepcopy(backup[6])
+    bpy.context.scene.cursor.location = deepcopy(backup[6])
     return
 
 
@@ -1059,9 +1059,9 @@ def do_translation(new_co, old_co):
 def do_scale(ref_pts, s_fac):
     # back up settings before changing them
     piv_back = deepcopy(bpy.context.space_data.pivot_point)
-    curs_back = bpy.context.scene.cursor_location.copy()
+    curs_back = bpy.context.scene.cursor.location.copy()
     bpy.context.space_data.pivot_point = 'CURSOR'
-    bpy.context.scene.cursor_location = ref_pts[1].co3d.copy()
+    bpy.context.scene.cursor.location = ref_pts[1].co3d.copy()
     ax_multip, cnstrt_bls = (), ()
     if   RotDat.axis_lock is None:
         ax_multip, cnstrt_bls = (s_fac, s_fac, s_fac), (True, True, True)
@@ -1073,7 +1073,7 @@ def do_scale(ref_pts, s_fac):
         ax_multip, cnstrt_bls = (1, 1, s_fac), (False, False, True)
     bpy.ops.transform.resize(value=ax_multip, constraint_axis=cnstrt_bls)
     # restore settings back to their pre "do_scale" state
-    bpy.context.scene.cursor_location = curs_back.copy()
+    bpy.context.scene.cursor.location = curs_back.copy()
     bpy.context.space_data.pivot_point = deepcopy(piv_back)
 
 
@@ -1196,9 +1196,9 @@ def prep_rotation_info(curr_ms_stor, new_ms_stor):
 def do_rotate(self):
     # back up settings before changing them
     piv_back = deepcopy(bpy.context.space_data.pivot_point)
-    curs_back = bpy.context.scene.cursor_location.copy()
+    curs_back = bpy.context.scene.cursor.location.copy()
     bpy.context.space_data.pivot_point = 'CURSOR'
-    bpy.context.scene.cursor_location = self.pts[2].co3d.copy()
+    bpy.context.scene.cursor.location = self.pts[2].co3d.copy()
     
     axis_lock = RotDat.axis_lock
     ops_lock = ()  # axis lock data for bpy.ops.transform
@@ -1217,7 +1217,7 @@ def do_rotate(self):
         editmode_refresh()
 
     # restore settings back to their pre "do_rotate" state
-    bpy.context.scene.cursor_location = curs_back.copy()
+    bpy.context.scene.cursor.location = curs_back.copy()
     bpy.context.space_data.pivot_point = deepcopy(piv_back)
 
 

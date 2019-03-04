@@ -63,7 +63,7 @@ def pick_object(context, event, pick_objects, ray_max=10000.0):
     ray_origin = view3d_utils.region_2d_to_origin_3d(region, rv3d, coord)
     ray_target = ray_origin + (view_vector * ray_max)
 
-    scene.cursor_location = ray_target
+    scene.cursor.location = ray_target
 
     def visible_objects_and_duplis():
         """Loop over (object, matrix) pairs (mesh only)"""

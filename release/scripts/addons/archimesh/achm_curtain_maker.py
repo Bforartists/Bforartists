@@ -266,7 +266,7 @@ def generate_japan(self):
     support = []
     panel = []
 
-    location = bpy.context.scene.cursor_location
+    location = bpy.context.scene.cursor.location
     myloc = copy(location)  # copy location to keep 3D cursor position
 
     # ------------------
@@ -625,7 +625,7 @@ def create_bezier(objname, points, origin, depth=0.001, fill='FULL'):
 # All custom values are passed using self container (self.myvariable)
 # ------------------------------------------------------------------------------
 def generate_roller(self):
-    location = bpy.context.scene.cursor_location
+    location = bpy.context.scene.cursor.location
     myloc = copy(location)  # copy location to keep 3D cursor position
 
     # ------------------

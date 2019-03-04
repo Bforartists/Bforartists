@@ -245,9 +245,9 @@ struct ARegion *view3d_has_tools_region(struct ScrArea *sa);
 extern const char *view3d_context_dir[]; /* doc access */
 
 /* view3d_widgets.c */
-void VIEW3D_GGT_lamp_spot(struct wmGizmoGroupType *gzgt);
-void VIEW3D_GGT_lamp_area(struct wmGizmoGroupType *gzgt);
-void VIEW3D_GGT_lamp_target(struct wmGizmoGroupType *gzgt);
+void VIEW3D_GGT_light_spot(struct wmGizmoGroupType *gzgt);
+void VIEW3D_GGT_light_area(struct wmGizmoGroupType *gzgt);
+void VIEW3D_GGT_light_target(struct wmGizmoGroupType *gzgt);
 void VIEW3D_GGT_camera(struct wmGizmoGroupType *gzgt);
 void VIEW3D_GGT_camera_view(struct wmGizmoGroupType *gzgt);
 void VIEW3D_GGT_force_field(struct wmGizmoGroupType *gzgt);
@@ -271,7 +271,7 @@ void VIEW3D_GT_navigate_rotate(struct wmGizmoType *gzt);
  * any direction it starts to fail */
 #define VIEW3D_CAMERA_BORDER_HACK
 #ifdef VIEW3D_CAMERA_BORDER_HACK
-extern unsigned char view3d_camera_border_hack_col[3];
+extern uchar view3d_camera_border_hack_col[3];
 extern bool view3d_camera_border_hack_test;
 #endif
 

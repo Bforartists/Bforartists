@@ -239,7 +239,7 @@ def create_window():
     # Link object to scene
     bpy.context.collection.objects.link(window_object)
     window_object.WindowPanelGenerator.add()
-    window_object.location = bpy.context.scene.cursor_location
+    window_object.location = bpy.context.scene.cursor.location
 
     # Shape the mesh.
     do_mesh(window_object, window_mesh)
@@ -1540,7 +1540,7 @@ def create_ctrl_box(parentobj, objname):
     mymesh = bpy.data.meshes.new(objname)
     myobj = bpy.data.objects.new(objname, mymesh)
 
-    myobj.location = bpy.context.scene.cursor_location
+    myobj.location = bpy.context.scene.cursor.location
     bpy.context.collection.objects.link(myobj)
 
     mymesh.from_pydata(myvertex, [], myfaces)

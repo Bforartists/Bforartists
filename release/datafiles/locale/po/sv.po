@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -3150,19 +3150,11 @@ msgid "Displacement"
 msgstr "Visa inställningar för kant"
 
 
-msgid "Dissolve Speed"
-msgstr "Lös upp"
-
-
 msgid "Acceleration"
 msgstr "Accelerationsmetod:"
 
 
 msgid "Velocity"
-msgstr "Hastighet"
-
-
-msgid "Dry Speed"
 msgstr "Hastighet"
 
 
@@ -3979,8 +3971,8 @@ msgid "Save"
 msgstr "Spara som"
 
 
-msgid "Normal"
-msgstr "Beräkna Normaler"
+msgid "Regular"
+msgstr "Regulär"
 
 
 msgid "Display Mode"
@@ -6003,6 +5995,10 @@ msgid "Specular Factor"
 msgstr "Glansighetsfärg"
 
 
+msgid "Power"
+msgstr "Styrka"
+
+
 msgid "Falloff Type"
 msgstr "Avtagandekurva"
 
@@ -6831,18 +6827,6 @@ msgid "Type of Object"
 msgstr "Tänjningsobjekt:"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
-msgid "Meta"
-msgstr "Metaball"
-
-
-msgid "Light"
-msgstr "Ljus"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "Redigerings Läge"
 
@@ -7207,6 +7191,10 @@ msgid "Material Slot"
 msgstr "Spara som"
 
 
+msgid "Normal"
+msgstr "Beräkna Normaler"
+
+
 msgid "Object Aligned"
 msgstr "Packa Data"
 
@@ -7265,10 +7253,6 @@ msgstr "Krock"
 
 msgid "Reactor"
 msgstr "Faktor"
-
-
-msgid "Regrow hair for each frame"
-msgstr "Längd i antal rutor:"
 
 
 msgid "Particle Rendering"
@@ -7465,6 +7449,10 @@ msgstr "Flera motorer"
 
 msgid "Start/End"
 msgstr "Starta"
+
+
+msgid "Regrow hair for each frame"
+msgstr "Längd i antal rutor:"
 
 
 msgid "Draw steps of the particle path"
@@ -9178,6 +9166,10 @@ msgid "Interpolate"
 msgstr "Interpolering:"
 
 
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Edge"
 msgstr "Kant"
 
@@ -9208,6 +9200,10 @@ msgstr "Tecken:"
 
 msgid "Hide/Mask"
 msgstr "Göm"
+
+
+msgid "Light"
+msgstr "Ljus"
 
 
 msgid "Make Links"
@@ -11366,6 +11362,10 @@ msgid "Action Clip"
 msgstr "Markera Rad"
 
 
+msgid "Meta"
+msgstr "Metaball"
+
+
 msgid "Sound Clip"
 msgstr "Ljud"
 
@@ -11620,10 +11620,6 @@ msgstr "Markera Länkad"
 
 msgid "Basis"
 msgstr "Bas"
-
-
-msgid "Power"
-msgstr "Styrka"
 
 
 msgid "Slope"
@@ -18373,11 +18369,6 @@ msgid "Remove vertex color layer"
 msgstr "Rendera"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Flytta Till Lager"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Markera Länkad"
 
@@ -18396,11 +18387,6 @@ msgstr "Vektor Måla"
 
 msgid "Smooth along the Z axis"
 msgstr "Vektor Måla"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Flytta Till Lager"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -20061,14 +20047,6 @@ msgstr "Jämför skiftlägeskänsligt"
 
 msgid "Set select on random visible objects"
 msgstr "Göm Markerad"
-
-
-msgid "Glow"
-msgstr "Glöd"
-
-
-msgid "Rim"
-msgstr "Ovan"
 
 
 msgctxt "Operator"
@@ -22082,6 +22060,10 @@ msgstr "Torka"
 
 msgid "Wipe effect strip type"
 msgstr "Markera Länkad"
+
+
+msgid "Glow"
+msgstr "Glöd"
 
 
 msgid "Glow effect strip type"
@@ -24873,10 +24855,6 @@ msgid "User Interface"
 msgstr "Yta"
 
 
-msgid "Regular"
-msgstr "Regulär"
-
-
 msgid "Theme Space"
 msgstr "Text"
 
@@ -26033,10 +26011,6 @@ msgid "Softness"
 msgstr "Styvhet"
 
 
-msgid "Tweak Threshold"
-msgstr "Tröskel"
-
-
 msgid "Auto Depth"
 msgstr "Automatiskt djup"
 
@@ -26689,10 +26663,6 @@ msgid "Bias"
 msgstr "Justering"
 
 
-msgid "Bake Mode"
-msgstr "Packa Data"
-
-
 msgid "Bake normals"
 msgstr "Skapa Meta"
 
@@ -27009,18 +26979,6 @@ msgid "Buoyancy"
 msgstr "Flytkraft"
 
 
-msgid "Factor Radius"
-msgstr "Zooma Ut"
-
-
-msgid "Factor Repulsion"
-msgstr "Zooma Ut"
-
-
-msgid "Factor Rest Length"
-msgstr "Zooma Ut"
-
-
 msgid "Interaction Radius"
 msgstr "Interaktion:"
 
@@ -27071,6 +27029,18 @@ msgstr "Viskositet"
 
 msgid "Factor Density"
 msgstr "Markera Rad"
+
+
+msgid "Factor Radius"
+msgstr "Zooma Ut"
+
+
+msgid "Factor Repulsion"
+msgstr "Zooma Ut"
+
+
+msgid "Factor Rest Length"
+msgstr "Zooma Ut"
 
 
 msgid "Initial Rest Length"
@@ -27305,12 +27275,12 @@ msgid "Multiply Speed"
 msgstr "Multiplicera"
 
 
-msgid "Scale to length"
-msgstr "Ljudhastighet"
-
-
 msgid "Use as speed"
 msgstr "Spridning"
+
+
+msgid "Scale to length"
+msgstr "Ljudhastighet"
 
 
 msgid "Subtract Sequence"
@@ -27458,14 +27428,6 @@ msgstr "Rendera endast aktivt lager"
 
 
 msgid "Sound Sequence"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "Draw Waveform"
-msgstr "Rensa Rotation"
-
-
-msgid "Whether to draw the sound's waveform"
 msgstr "Starta rendering av sekvens"
 
 
@@ -27637,10 +27599,6 @@ msgid "Interpolation type for absolute shape keys"
 msgstr "Interpoleringsmetod"
 
 
-msgid "Mute this shape key"
-msgstr "Starta Spel"
-
-
 msgid "Name of Shape Key"
 msgstr "Flytta Till Lager"
 
@@ -27735,6 +27693,10 @@ msgstr "Bana"
 
 msgid "Collide All"
 msgstr "Normalisera samtliga"
+
+
+msgid "Dissolve Speed"
+msgstr "Lös upp"
 
 
 msgid "res"
@@ -30522,10 +30484,6 @@ msgid "New Shape From Mix"
 msgstr "Flytta Till Lager"
 
 
-msgid "Resolution:"
-msgstr "Upplösning:"
-
-
 msgid "Object:"
 msgstr "Objekt:"
 
@@ -30684,6 +30642,10 @@ msgstr "Vecka:"
 
 msgid "Outer"
 msgstr "Yttre"
+
+
+msgid "Rim"
+msgstr "Ovan"
 
 
 msgid "Material Index Offset:"
@@ -33186,11 +33148,6 @@ msgstr "Ny"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Ny"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Ny"
 

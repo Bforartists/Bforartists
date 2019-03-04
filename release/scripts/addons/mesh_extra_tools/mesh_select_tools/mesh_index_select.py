@@ -93,7 +93,7 @@ class SelVertEdgeFace(Operator):
         if self.select_type == 'VERT':
             bpy.context.tool_settings.mesh_select_mode = [True, False, False]
             ver = obj.data.vertices
-            loc = context.scene.cursor_location
+            loc = context.scene.cursor.location
             sel = []
             for v in ver:
                 d = v.co - loc

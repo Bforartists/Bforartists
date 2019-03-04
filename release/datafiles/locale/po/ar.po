@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -5848,10 +5848,6 @@ msgid "Displacement"
 msgstr "ﻖﺜﺒﻟﺍ"
 
 
-msgid "Dissolve Speed"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻲﺷﻼ﻿ﺗ"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "ﻲﺷﻼ﻿ﺘﻟﺍ ﺙﺪﺤﻳ ﻥﺃ ﺐﺠﻳ ﺮﻃﻷ﻿ﺎﺑ ﺎﺒﻳﺮﻘﺗ ﻢﻛ"
 
@@ -5870,10 +5866,6 @@ msgstr "ﺔﻋﺮﺳ"
 
 msgid "How much surface velocity affects dripping"
 msgstr "ﺮﻴﻄﻘﺘﻟﺍ ﻲﻓ ﺢﻄﺴﻟﺍ ﺔﻋﺮﺳ ﺮﺛّﺄﺗ ﻢﻛ"
-
-
-msgid "Dry Speed"
-msgstr "ﻑﺎﻔﺠﻟﺍ ﺔﻋﺮﺳ"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -7673,8 +7665,8 @@ msgid "Small"
 msgstr "ﺮﻴﻐﺻ"
 
 
-msgid "Normal"
-msgstr "ﻢﻇﺎﻧ"
+msgid "Regular"
+msgstr "ﻱﺩﺎﻋ"
 
 
 msgid "Large"
@@ -12671,53 +12663,28 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻩﺬﻫ ﺪﻨﻋ ﻪﺗﺪﺷ ﻒﺼﻨﺑ ءﻮﻀﻟﺍ ﻥﻮﻜﻳ - ﻝﺅﺎﻀﺘﻟﺍ ﺔﻓﺎﺴﻣ"
 
 
-msgid "Energy"
-msgstr "ﺔﻗﺎﻃ"
-
-
 msgid "Specular Factor"
 msgstr "ﻖﻳﺮﺒﻟﺍ ﻞﻣﺎﻌﻣ"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "ﻉﻮﻨﻟﺍ"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Omnidirectional point light source"
 msgstr "ﻩﺎﺠﺗﻹ﻿ﺍ ﻲﻋﺎﻌﺷ ءﻮﺿ ﺔﻄﻘﻧ ﺭﺪﺼﻣ"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "ﺲﻤﺷ"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "ﺔﻳﺯﺍﻮﻣ ﺔﻌﺷﺃ ﻊﻣ ﺖﺑﺎﺛ ﻩﺎﺠﺗﺎﺑ ءﻮﺿ ﺭﺪﺼﻣ"
-
-
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "ﺔﻌﻘﺑ"
 
 
 msgid "Directional cone light source"
 msgstr "ﻲﻃﻭﺮﺨﻣ ﻪﺠﺘﻣ ءﻮﺿ ﺭﺪﺼﻣ"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "ﺔﻘﻄﻨﻣ"
-
-
 msgid "Directional area light source"
 msgstr "ﻪﺠﺘﻣ ﺔﻘﻄﻨﻣ ءﻮﺿ ﺭﺪﺼﻣ"
+
+
+msgid "Power"
+msgstr "ﺓﺭﺪﻘﻟﺍ"
 
 
 msgid "Falloff Type"
@@ -14108,22 +14075,6 @@ msgid "Type of Object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻉﻮﻧ"
 
 
-msgid "Mesh"
-msgstr "ﻢﺴﺠﻣ"
-
-
-msgid "Meta"
-msgstr "ﻊﻤّﺠﺗ"
-
-
-msgid "Light"
-msgstr "ءﻮﺿ"
-
-
-msgid "Speaker"
-msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "ﻞﻜﻴﻬﻣ ﻱﻮﻴﺣ ﺖﺤﻧ"
 
@@ -14752,6 +14703,10 @@ msgid "Dummy"
 msgstr "ﻲﻤﻫﻭ"
 
 
+msgid "Normal"
+msgstr "ﻢﻇﺎﻧ"
+
+
 msgid "Object Aligned"
 msgstr "ﻯﺫﺎﺤﻣ ﻦﺋﺎﻜﻟﺍ"
 
@@ -14826,14 +14781,6 @@ msgstr "ﻡﺍﺪﻄﺻﻹ﻿ﺍ"
 
 msgid "Reactor"
 msgstr "ﻞﻋﺎﻔﻤﻟﺍ"
-
-
-msgid "Regrow"
-msgstr "ﻮﻤﻨﻟﺍ ﺪﻋﺃ"
-
-
-msgid "Regrow hair for each frame"
-msgstr "ﺭﺎﻃﺇ ﻞﻜﻟ ﺮﻌﺸﻟﺍ ﺮﺒّﻛ"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -15190,6 +15137,14 @@ msgstr "ﻲﻬﻧﺍ/ﺃﺪﺑﺇ"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "ﺍﺮﻴﺧﺍ ﺔﻠﻋﺎﻔﺘﻤﻟﺍ ﺮﻴﻐﻟﺍ ﺕﺎﺌﻳﺰﺠﻟﺍ ﺊﺸﻧﺃ"
+
+
+msgid "Regrow"
+msgstr "ﻮﻤﻨﻟﺍ ﺪﻋﺃ"
+
+
+msgid "Regrow hair for each frame"
+msgstr "ﺭﺎﻃﺇ ﻞﻜﻟ ﺮﻌﺸﻟﺍ ﺮﺒّﻛ"
 
 
 msgid "Draw steps of the particle path"
@@ -15736,10 +15691,6 @@ msgstr "ﺓﺮﺒﻨﻟﺍ"
 
 msgid "Playback pitch of the sound"
 msgstr "ﺕﻮﺼﻠﻟ ﺽﺮﻌﻟﺍ ﺔﻤﻐﻧ"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "ﻻ﻿ ﻡﺍ ﺍﺮﻴﻣﺎﻜﻟﺍ ﻊﻣ ﺎﻴﺒﺴﻧ ﺭﺪﺼﻤﻟﺍ ﻥﺎﻛ ﺎﻣ ﺍﺫﺍ"
 
 
 msgid "Sound"
@@ -19000,6 +18951,10 @@ msgid "Interpolate"
 msgstr "ﺪﻟّﻭ"
 
 
+msgid "Mesh"
+msgstr "ﻢﺴﺠﻣ"
+
+
 msgid "Edge"
 msgstr "ﺔﻓﺎﺣ"
 
@@ -19046,6 +19001,10 @@ msgstr "ءﺎﻔﺧﺇ"
 
 msgid "Hooks"
 msgstr "ﺕﺎﻓﺎﻄﺧ"
+
+
+msgid "Light"
+msgstr "ءﻮﺿ"
 
 
 msgid "Make Links"
@@ -21779,6 +21738,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr " ﻦﻳﺭﻭﺎﺠﺘﻣ ﻦﻴﻄﻳﺮﺷ ﻦﻴﺑ 'ﺕﻻ﻿ﺎﻘﺘﻧﺍ' ﺔﻛﺮﺤﻟﺍ ﻂﻳﺮﺷ"
 
 
+msgid "Meta"
+msgstr "ﻊﻤّﺠﺗ"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "ﻦﻳﺭﻭﺎﺠﺘﻣ ﻦﻴﻄﻳﺮﺸﻠﻟ ﺔﻳﻭﺎﺤﻛ ﻞﻣﺎﻌﺘﻳ ﺔﻛﺮﺣ ﻂﻳﺮﺷ"
 
@@ -22105,10 +22068,6 @@ msgstr "ﺔﻄﺳﻮﺘﻤﻟﺍ ﺕﺎﺟﺭﺪﻟﺍ ﺢﻴﺤﺼﺗ"
 
 msgid "Basis"
 msgstr "ﺱﺎﺳﺍ"
-
-
-msgid "Power"
-msgstr "ﺓﺭﺪﻘﻟﺍ"
 
 
 msgid "Slope"
@@ -28359,11 +28318,6 @@ msgid "Remove Vertex Color"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﻮﻟ ﻑﺬﺣﺍ"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﺡﺭﺍ"
-
-
 msgid "Smoothing factor"
 msgstr "ﻢﻴﻌﻨﺘﻟﺍ ﻞﻣﺎﻌﻣ"
 
@@ -28382,11 +28336,6 @@ msgstr "X ﺭﻮﺤﻣ ﻝﻮﻃ ﻰﻠﻋ ﻢﻌّﻧ"
 
 msgid "Smooth along the Z axis"
 msgstr "Z ﺭﻮﺤﻣ ﻝﻮﻃ ﻰﻠﻋ ﻢﻌّﻧ"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﺡﺭﺍ"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -29640,10 +29589,6 @@ msgstr "ﺔﻟﺎﺤﻠﻟ ﺔﺳﺎﺴﺣ ﺔﻧﺭﺎﻘﻣ ﺬﻔﻧ"
 
 msgid "Name filter using '*', '?' and '[abc]' unix style wildcards"
 msgstr "[ﺝ ﺏ ﺍ] ﻭ ؟ ﻭ * ﺲﻜﻧﻮﻳ ﻉﻮﻧ ﻦﻣ ﺕﺎﻴﻔﺼﻣ ﻡﺍﺪﺨﺘﺳﺈﺑ ﻲﻔﺼﻤﻟﺍ ﻲﻤّﺳ"
-
-
-msgid "Rim"
-msgstr "ﺔﻓﺎﺣ"
 
 
 msgctxt "Operator"
@@ -33792,10 +33737,6 @@ msgid "Text Style"
 msgstr "ﻂﻤﻨﻟﺍ ﻊﺿ"
 
 
-msgid "Regular"
-msgstr "ﻱﺩﺎﻋ"
-
-
 msgid "Theme Space"
 msgstr "ﻂﻤﻨﻟﺍ ءﺎﻀﻓ"
 
@@ -35729,10 +35670,6 @@ msgid "Drag Threshold"
 msgstr "ﺐﺤﺴﻟﺍ ﺔﺒﺘﻋ"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "ﺔﻬﺟﺍﻭ ﺮﺼﻨﻋ ﺐﺤﺳ ﻞﺼﺤﻳ ﻥﺃ ﻞﺒﻗ ﻪﺒﺤﺳ ﻚﻴﻠﻋ ﻱﺬﻟﺍ ﺕﻼ﻿ﺴﻜﺒﻟﺍ ﺭﺍﺪﻘﻣ"
-
-
 msgid "Invert Zoom Direction"
 msgstr "ﻢﻴﺠﺤﺘﻟﺍ ﻩﺎﺠﺗﺍ ﺲﻜﻋﺇ"
 
@@ -35859,14 +35796,6 @@ msgstr "ﺲﻛﺎﻌﻤﻟﺍ ﻩﺎﺠﺗﻹ﻿ﺍ ﻝﺎﻤﻌﺘﺳﺎﺑ ﺏ
 
 msgid "Softness"
 msgstr "ﺔﻣﻮﻌﻧ"
-
-
-msgid "Tweak Threshold"
-msgstr "ﺔﺒﺘﻌﻟﺍ ﺭﺮﺣ"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "ﻞﻳﺪﻌﺘﻟﺍ ﺙﺪﺣ ﻞﺼﺤﻳ ﻥﺃ ﻞﺒﻗ ﺎﻬﺒﺤﺳ ﻚﻴﻠﻋ ﻲﺘﻟﺍ ﺕﻼ﻿ﺴﻜﺒﻟﺍ ﺩﺪﻋ"
 
 
 msgid "Auto Perspective"
@@ -37381,10 +37310,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "ﺕﻮﺼﻟﺍ ﺝﺰﻣ ﻥﺰﺨﻣ ﻑﺮﻃ ﻦﻣ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺕﺎﻨﻴﻌﻟﺍ ﺩﺪﻋ"
 
 
-msgid "Bake Mode"
-msgstr "ﻦﻳﺰﺨﺘﻟﺍ ﻊﺿﻭ"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻰﻟﺇ ﻦﻳﺰﺨﺘﻠﻟ ﻞﻴﻠﻈﺘﻟﺍ ﺕﺎﻣﻮﻠﻌﻣ ﺭﺎﻴﺘﺧﺇ"
 
@@ -37989,38 +37914,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr " ﻞﺋﺎﺴﻟﺍ ﻞﺧﺍﺩ ﺕﺎﻓﻼ﻿ﺘﺧﻹ﻿ﺍ ﻰﻠﻋ ﺍﺩﺎﻤﺘﻋﺍ ﺲﻛﺎﻌﻤﻟﺍ ﺔﻴﺑﺫﺎﺠﻟﺍ ﻩﺎﺠﺗﺎﺑ ﻲﻋﺎﻨﺻ ﻮﻔﻃ ﺓﺪﺷ"
 
 
-msgid "Factor Radius"
-msgstr "ﻞﻣﺎﻌﻟﺍ ﻉﺎﻌﺷ"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "ءﻱﺰﺠﻟﺍ ﻢﺠﺣ×4 ﻞﻣﺎﻋ ﻮﻫ ﻞﻋﺎﻔﺘﻟﺍ ﻉﺎﻌﺷ"
-
-
-msgid "Factor Repulsion"
-msgstr "ﺮﻓﺎﺘﻟﺍ ﻞﻣﺎﻋ"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "ﺔﺑﻼ﻿ﺻ ﻞﻣﺎﻋ ﻮﻫ ﺮﻓﺎﻨﺘﻟﺍ"
-
-
-msgid "Factor Rest Length"
-msgstr "ﻥﻮﻜﺴﻟﺍ ﻝﻮﻃ ﻞﻣﺎﻋ"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "ءﻱﺰﺠﻟﺍ ﻢﺠﺣ×2 ﻞﻣﺎﻋ ﻮﻫ ﺎﻨﻛﺎﺳ ﺾﺑﺎﻨﻟﺍ ﻝﻮﻃ"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "ﺔﺑﻼ﻿ﺼﻟﺍ ﺔﺟﻭﺰﻟ ﻞﻣﺎﻋ"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "ﺔﻳﺩﺎﻋ ﺔﺟﻭﺰﻟ ﻞﻣﺎﻋ ﻮﻫ ﺔﺑﻼ﻿ﺼﻟﺍ ﺔﺟﻭﺰﻟ"
-
-
 msgid "Interaction Radius"
 msgstr "ﻞﻋﺎﻔﺘﻟﺍ ﻉﺎﻌﺷ"
 
@@ -38111,6 +38004,38 @@ msgstr "ﺔﻓﺎﺜﻜﻟﺍ ﻞﻣﺎﻋ"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "(ءﻱﺰﺠﻟﺍ ﻢﺠﺣ ﻰﻠﻋ ﺪﻤﺘﻌﻳ) ﺔﻴﺿﺍﺮﺘﻓﻹ﻿ﺍ ﺔﻓﺎﺜﻜﻠﻟ ﻞﻣﺎﻌﻛ ﺐﺴﺤﺗ ﺔﻓﺎﺜﻜﻟﺍ"
+
+
+msgid "Factor Radius"
+msgstr "ﻞﻣﺎﻌﻟﺍ ﻉﺎﻌﺷ"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "ءﻱﺰﺠﻟﺍ ﻢﺠﺣ×4 ﻞﻣﺎﻋ ﻮﻫ ﻞﻋﺎﻔﺘﻟﺍ ﻉﺎﻌﺷ"
+
+
+msgid "Factor Repulsion"
+msgstr "ﺮﻓﺎﺘﻟﺍ ﻞﻣﺎﻋ"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "ﺔﺑﻼ﻿ﺻ ﻞﻣﺎﻋ ﻮﻫ ﺮﻓﺎﻨﺘﻟﺍ"
+
+
+msgid "Factor Rest Length"
+msgstr "ﻥﻮﻜﺴﻟﺍ ﻝﻮﻃ ﻞﻣﺎﻋ"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "ءﻱﺰﺠﻟﺍ ﻢﺠﺣ×2 ﻞﻣﺎﻋ ﻮﻫ ﺎﻨﻛﺎﺳ ﺾﺑﺎﻨﻟﺍ ﻝﻮﻃ"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "ﺔﺑﻼ﻿ﺼﻟﺍ ﺔﺟﻭﺰﻟ ﻞﻣﺎﻋ"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "ﺔﻳﺩﺎﻋ ﺔﺟﻭﺰﻟ ﻞﻣﺎﻋ ﻮﻫ ﺔﺑﻼ﻿ﺼﻟﺍ ﺔﺟﻭﺰﻟ"
 
 
 msgid "Initial Rest Length"
@@ -38414,12 +38339,12 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ ﺪﻌﺑ ﺔﺠﺗﺎﻨﻟﺍ ﺔﻋﺮﺴﻟﺍ ﻒﻋﺎﺿ"
 
 
-msgid "Scale to length"
-msgstr "ﻝﻮﻄﻟ ﻢﺠّﺣ"
-
-
 msgid "Use as speed"
 msgstr "ﺔﻋﺮﺴﻛ ﻡﺪﺨﺘﺳﺍ"
+
+
+msgid "Scale to length"
+msgstr "ﻝﻮﻄﻟ ﻢﺠّﺣ"
 
 
 msgid "Subtract Sequence"
@@ -38566,10 +38491,6 @@ msgid "Sequence strip defining a sound to be played over a period of time"
 msgstr "ﻦﻣﺰﻟﺍ ﻦﻣ ﺓﺮﺘﻓ ﻰﻠﻋ ﺕﻮﺼﻟﺍ ﺽﺮﻋ ﻒﻳﺮﻌﺘﻟ ﻞﺴﻠﺴﺗ ﻂﻳﺮﺷ"
 
 
-msgid "Draw Waveform"
-msgstr "ﺔﺟﻮﻤﻟﺍ ﻞﻜﺸﺗ ﻢﺳﺭﺃ"
-
-
 msgid "Sequence Color Balance Data"
 msgstr "ﻞﺴﻠﺴﺘﻠﻟ ﻥﻮﻠﻟﺍ ﻥﺯﺍﻮﺗ ﺕﺎﻧﺎﻴﺑ"
 
@@ -38662,6 +38583,10 @@ msgid "Ambient"
 msgstr "ﻂﻴﺤﻣ"
 
 
+msgid "Energy"
+msgstr "ﺔﻗﺎﻃ"
+
+
 msgid "Frame for absolute keys"
 msgstr "ﺔﻘﻠﻄﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻠﻟ ﺭﺎﻃﺇ"
 
@@ -38724,6 +38649,10 @@ msgstr "ﺔﻴﺘﺤﺘﻟﺍ ﻭ ﺔﻴﻗﻮﻔﻟﺍ ﺐﻧﺍﻮﺠﻟﺍ �
 
 msgid "Smoke density grid"
 msgstr "ﻥﺎﺧﺪﻟﺍ ﺔﻓﺎﺜﻛ ﺔﻜﺒﺷ"
+
+
+msgid "Dissolve Speed"
+msgstr "ﺔﻋﺮﺴﻟﺍ ﻲﺷﻼ﻿ﺗ"
 
 
 msgid "res"
@@ -39400,6 +39329,10 @@ msgstr "ﺎﻫﺅﺎﻨﺑ ﺩﺎﻌﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ ﺕﺎﻨ
 
 msgid "Show reconstructed camera path"
 msgstr "ﻩﺅﺎﻨﺑ ﺩﺎﻌﻤﻟﺍ ﺍﺮﻴﻣﺎﻜﻟﺍ ﺭﺎﺴﻣ ﺮﻬﻇﺇ"
+
+
+msgid "Speaker"
+msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
 
 
 msgid "Show Reconstruction"
@@ -40462,10 +40395,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "'ﺎﻴﺗﺍﺫ ﺞﻣﺪﻟﺍ' ﻭ ﺕﺍﺭﺮﻜﺘﻤﻟﺍ ﻑﺬﺣ ﺪﺣ"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "UV ـﻟﺍ ﻁﺎﻘﺳﺇ ﺏﺎﺴﺣ ﺪﻴﻌﺗ ﻑﺍﻮﺤﻟﺍ ﺓﺯﺭﺩ ﺮﻴﻴﻐﺗ"
-
-
 msgid "Edge Tag Mode"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﻢﺳﻭ ﻊﺿﻭ"
 
@@ -40568,6 +40497,10 @@ msgstr "ﻥﺯﻮﻟﺍ ﻢﺳﺮﻟ ﻲﺗﺍﺫ ﻢﻴﻈﻨﺗ"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "ﻥﺯﻮﻟﺍ ﻦﻳﻮﻠﺗ ﺪﻨﻋ 1.0 ﻒﻴﻀﺗ ﺔﻋﻮّﻄﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻂﻘﻧ ﺕﺎﻋﻮﻤﺠﻣ ﻞﻛ ﻥﺃ ﻦﻣ ﺪﻛﺄﺗ"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "UV ـﻟﺍ ﻁﺎﻘﺳﺇ ﺏﺎﺴﺣ ﺪﻴﻌﺗ ﻑﺍﻮﺤﻟﺍ ﺓﺯﺭﺩ ﺮﻴﻴﻐﺗ"
 
 
 msgid "Only Endpoints"
@@ -41540,6 +41473,14 @@ msgid "Deformation"
 msgstr "ﻩﻮّﺸﺘﻟﺍ"
 
 
+msgid "Extrusion"
+msgstr "ﻖﺜﺑ"
+
+
+msgid "Ray Distance"
+msgstr "ﻉﺎﻌﺸﻟﺍ ﺪﻌﺑ"
+
+
 msgid "Curve subdivisions"
 msgstr "ﺢﻄﺴﻟﺍ ﺕﺎﻤﻴﺴﻘﺗ"
 
@@ -41552,14 +41493,6 @@ msgstr "ﻦﻴﻴﻌﺗ"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "ﺪﻳﺪﺤﺗ ءﺎﻐﻟﺇ"
-
-
-msgid "Extrusion"
-msgstr "ﻖﺜﺑ"
-
-
-msgid "Ray Distance"
-msgstr "ﻉﺎﻌﺸﻟﺍ ﺪﻌﺑ"
 
 
 msgid "Position:"
@@ -42034,10 +41967,6 @@ msgid "New Shape From Mix"
 msgstr "ﻂﻴﻠﺨﻟﺍ ﻦﻣ ﺪﻳﺪﺟ ﻞﻜﺷ"
 
 
-msgid "Resolution:"
-msgstr ":ﺔﻗﺩ"
-
-
 msgid "Object:"
 msgstr ":ﻦﺋﺎﻛ"
 
@@ -42221,6 +42150,10 @@ msgstr ":ﺪﻌﺠﺘﻟﺍ"
 
 msgid "Outer"
 msgstr "ﻲﺟﺭﺎﺧ"
+
+
+msgid "Rim"
+msgstr "ﺔﻓﺎﺣ"
 
 
 msgid "Material Index Offset:"
@@ -45707,11 +45640,6 @@ msgstr "ﺪﻳﺪﺟ"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "ﺪﻳﺪﺟ"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "ﺪﻳﺪﺟ"
 

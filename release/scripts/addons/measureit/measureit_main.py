@@ -1824,7 +1824,7 @@ class MEASUREIT_OT_AddNote(Operator):
         if context.area.type == 'VIEW_3D':
             bpy.ops.object.empty_add(type='PLAIN_AXES')
             myempty = bpy.data.objects[bpy.context.active_object.name]
-            myempty.location = bpy.context.scene.cursor_location
+            myempty.location = bpy.context.scene.cursor.location
             myempty.empty_display_size = 0.01
             myempty.name = "Annotation"
             # Add properties

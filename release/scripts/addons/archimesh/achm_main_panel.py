@@ -341,9 +341,9 @@ class ARCHIMESH_OT_Pencil(Operator):
             # ----------------------------
             if len(mypoints) > 1 and len(clearangles) > 0:
                 # Move cursor
-                bpy.context.scene.cursor_location.x = mypoints[0][0]
-                bpy.context.scene.cursor_location.y = mypoints[0][1]
-                bpy.context.scene.cursor_location.z = 0  # always on grid floor
+                bpy.context.scene.cursor.location.x = mypoints[0][0]
+                bpy.context.scene.cursor.location.y = mypoints[0][1]
+                bpy.context.scene.cursor.location.z = 0  # always on grid floor
 
                 # Add room mesh
                 bpy.ops.mesh.archimesh_room()

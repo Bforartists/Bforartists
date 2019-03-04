@@ -112,13 +112,13 @@ def draw_callback_px():
 
     offset_y = 20
     if data_quat:
-        loc = context.scene.cursor_location.copy()
+        loc = context.scene.cursor.location.copy()
         for key, mat in data_quat.items():
             draw_text(key, loc, dy=-offset_y)
             offset_y += 20
 
     if data_euler:
-        loc = context.scene.cursor_location.copy()
+        loc = context.scene.cursor.location.copy()
         for key, mat in data_euler.items():
             draw_text(key, loc, dy=-offset_y)
             offset_y += 20
@@ -143,7 +143,7 @@ def draw_callback_view():
         draw_matrices(list(data_matrix.values()), scale, with_bounding_box)
 
     if data_euler or data_quat:
-        cursor = bpy.context.scene.cursor_location.copy()
+        cursor = bpy.context.scene.cursor.location.copy()
         derived_matrices = []
         for quat in data_quat.values():
             matrix = quat.to_matrix().to_4x4()
