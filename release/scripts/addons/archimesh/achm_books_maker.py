@@ -184,7 +184,7 @@ def create_book_mesh(self):
 # ------------------------------------------------------------------------------
 def generate_books(self):
     boxes = []
-    location = bpy.context.scene.cursor_location
+    location = bpy.context.scene.cursor.location
     myloc = copy(location)  # copy location to keep 3D cursor position
 
     # Create

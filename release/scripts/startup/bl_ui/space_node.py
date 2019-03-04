@@ -58,7 +58,7 @@ class NODE_HT_header(Header):
 
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-                # No shader nodes for Eevee lamps
+                # No shader nodes for Eevee lights
                 if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob.type == 'LIGHT'):
                     row = layout.row()
                     row.prop(snode_id, "use_nodes")
@@ -319,7 +319,7 @@ class NODE_MT_node(Menu):
         layout.separator()
 
         layout.operator("node.group_edit", icon = "NODE_EDITGROUP").exit = False
-        layout.operator("node.group_edit_exit", text="Exit Edit Group", icon = "NODE_EXITEDITGROUP").exit = True # bfa - separated tooltip
+        layout.operator("node.group_edit_exit", text="Exit Edit Group", icon = "NODE_EXITEDITGROUP") # bfa - separated tooltip
         layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
         layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
         layout.operator("node.group_insert", icon = "NODE_GROUPINSERT")

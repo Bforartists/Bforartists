@@ -598,6 +598,9 @@ def create_persistent_rig_ui(obj, script):
     skip = False
     driver = None
 
+    if not obj.animation_data:
+        obj.animation_data_create()
+
     for fcurve in obj.animation_data.drivers:
         if fcurve.data_path == 'pass_index':
             driver = fcurve.driver

@@ -46,7 +46,7 @@ extern "C" {
 #include "DNA_effect_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_key_types.h"
-#include "DNA_lamp_types.h"
+#include "DNA_light_types.h"
 #include "DNA_material_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_mesh_types.h"
@@ -131,8 +131,7 @@ void free_copy_on_write_datablock(void *id_info_v)
 /* **** General purpose functions **** */
 
 DepsgraphNodeBuilder::DepsgraphNodeBuilder(Main *bmain, Depsgraph *graph)
-    : bmain_(bmain),
-      graph_(graph),
+    : DepsgraphBuilder(bmain, graph),
       scene_(NULL),
       view_layer_(NULL),
       view_layer_index_(-1),
@@ -424,7 +423,7 @@ void DepsgraphNodeBuilder::build_id(ID *id)
 			build_shapekeys((Key *)id);
 			break;
 		case ID_LA:
-			build_lamp((Lamp *)id);
+			build_light((Light *)id);
 			break;
 		case ID_LP:
 			build_lightprobe((LightProbe *)id);
@@ -658,7 +657,7 @@ void DepsgraphNodeBuilder::build_object_flags(
 	add_operation_node(&object->id,
 	                   NodeType::OBJECT_FROM_LAYER,
 	                   OperationCode::OBJECT_BASE_FLAGS,
-	                   function_bind(BKE_object_eval_flush_base_flags,
+	                   function_bind(BKE_object_eval_eval_base_flags,
 	                                 _1,
 	                                 scene_cow,
 	                                 view_layer_index_,
@@ -692,7 +691,7 @@ void DepsgraphNodeBuilder::build_object_data(
 			}
 			break;
 		case OB_LAMP:
-			build_object_data_lamp(object);
+			build_object_data_light(object);
 			break;
 		case OB_CAMERA:
 			build_object_data_camera(object);
@@ -720,10 +719,10 @@ void DepsgraphNodeBuilder::build_object_data_camera(Object *object)
 	build_camera(camera);
 }
 
-void DepsgraphNodeBuilder::build_object_data_lamp(Object *object)
+void DepsgraphNodeBuilder::build_object_data_light(Object *object)
 {
-	Lamp *lamp = (Lamp *)object->data;
-	build_lamp(lamp);
+	Light *lamp = (Light *)object->data;
+	build_light(lamp);
 }
 
 void DepsgraphNodeBuilder::build_object_data_lightprobe(Object *object)
@@ -1417,7 +1416,7 @@ void DepsgraphNodeBuilder::build_camera(Camera *camera)
 	op_node->set_as_exit();
 }
 
-void DepsgraphNodeBuilder::build_lamp(Lamp *lamp)
+void DepsgraphNodeBuilder::build_light(Light *lamp)
 {
 	if (built_map_.checkIsBuiltAndTag(lamp)) {
 		return;
@@ -1428,11 +1427,11 @@ void DepsgraphNodeBuilder::build_lamp(Lamp *lamp)
 	        &lamp->id, NodeType::PARAMETERS, OperationCode::PARAMETERS_EVAL);
 	/* NOTE: We mark this node as both entry and exit. This way we have a
 	 * node to link all dependencies for shading (which includes relation to the
-	 * lamp object, and incldues relation from node tree) without adding a
+	 * light object, and incldues relation from node tree) without adding a
 	 * dedicated component type. */
 	op_node->set_as_entry();
 	op_node->set_as_exit();
-	/* lamp's nodetree */
+	/* light's nodetree */
 	build_nodetree(lamp->nodetree);
 }
 

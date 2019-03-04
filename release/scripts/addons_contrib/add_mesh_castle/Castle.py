@@ -1199,7 +1199,7 @@ class add_castle(bpy.types.Operator):
         blockArea = [self.properties.cBaseD, self.properties.cBaseW, self.properties.cBaseT, self.properties.blockZ, settings['hv'], self.properties.Grout]
 
         # Block floor uses wall to generate... initialize location values.
-        wallLoc = [castleScene.cursor_location.x, castleScene.cursor_location.y, castleScene.cursor_location.z]
+        wallLoc = [castleScene.cursor.location.x, castleScene.cursor.location.y, castleScene.cursor.location.z]
 
         baseRotate = False  # rotate for blocks...
         if self.properties.CBaseB:  # make floor with blocks.
@@ -1250,7 +1250,7 @@ class add_castle(bpy.types.Operator):
         wallMtl = uMatRGBSet('cWall_mat', self.wallRGB, matMod=True)
 
         # Block floor uses wall to generate... reset location values.
-        wallLoc[1] = castleScene.cursor_location.y
+        wallLoc[1] = castleScene.cursor.location.y
 
         wallLvl = 0  # make per level as selected...
         while wallLvl < self.properties.CLvls:  # make castle levels
@@ -1627,12 +1627,12 @@ class add_castle(bpy.types.Operator):
                 floorObj = makePlaneObj(objName, floorBounds, baseMtl, floorPW)
 
                 # adjust floor location for 3D cursor since parented to Base...
-                yMod = castleScene.cursor_location.y
+                yMod = castleScene.cursor.location.y
                 if floorDisc:  # make a disc shaped floor
                     yMod += self.properties.cBaseD / 2
-                floorObj.location.x -= castleScene.cursor_location.x
+                floorObj.location.x -= castleScene.cursor.location.x
                 floorObj.location.y -= yMod
-                floorObj.location.z -= castleScene.cursor_location.z
+                floorObj.location.z -= castleScene.cursor.location.z
 
                 castleScene.objects.link(floorObj)  # must do for generation/rotation
 
@@ -1670,7 +1670,7 @@ class add_castle(bpy.types.Operator):
             # Make "tower" wall.
             wallLoc[0] = 0
             wallLoc[1] = 0
-            wallLoc[2] = castleScene.cursor_location.z
+            wallLoc[2] = castleScene.cursor.location.z
 
             # generate tower...
             cTower1Obj = makeWallObj(self, castleScene, wallLoc, "CTower1", blockArea, [], wallExtOpts, wallMtl)
@@ -1696,7 +1696,7 @@ class add_castle(bpy.types.Operator):
             settings['Slope'] = True  # force curvature
             settings['sdv'] = 0.12
 
-            wallLoc[0] = castleScene.cursor_location.x
+            wallLoc[0] = castleScene.cursor.location.x
             wallLoc[1] = midWallD
             wallLoc[2] = self.properties.cDomeZ
 
@@ -2058,7 +2058,7 @@ def makePlaneObj(objName, objArea, objMat, objDiv):
     objMesh.materials.append(objMat)
 
     newObj = bpy.data.objects.new(objName, objMesh)
-    newObj.location = bpy.context.scene.cursor_location
+    newObj.location = bpy.context.scene.cursor.location
 
     return newObj
 

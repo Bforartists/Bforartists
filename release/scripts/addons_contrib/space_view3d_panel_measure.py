@@ -190,7 +190,7 @@ def getMeasurePoints(context):
                 # We measure the distance from...
                 # local  ... the object center to the 3D cursor.
                 # global ... the origin to the 3D cursor.
-                cur_loc = sce.cursor_location
+                cur_loc = sce.cursor.location
                 obj_loc = obj.matrix_world.to_translation()
 
                 # Convert to local space, if needed.
@@ -208,7 +208,7 @@ def getMeasurePoints(context):
                 # One vertex selected.
                 # We measure the distance from the
                 # selected vertex object to the 3D cursor.
-                cur_loc = sce.cursor_location
+                cur_loc = sce.cursor.location
                 vert_loc = verts_selected[0].co.copy()
 
                 # Convert to local or global space.
@@ -260,7 +260,7 @@ def getMeasurePoints(context):
         elif obj:
             # One object selected.
             # We measure the distance from the object to the 3D cursor.
-            cur_loc = sce.cursor_location
+            cur_loc = sce.cursor.location
             obj_loc = obj.matrix_world.to_translation()
             return (obj_loc, cur_loc, COLOR_GLOBAL)
 
@@ -268,7 +268,7 @@ def getMeasurePoints(context):
             # Nothing selected.
             # We measure the distance from the origin to the 3D cursor.
             p1 = Vector((0.0, 0.0, 0.0))
-            p2 = sce.cursor_location
+            p2 = sce.cursor.location
             return (p1, p2, COLOR_GLOBAL)
 
         else:

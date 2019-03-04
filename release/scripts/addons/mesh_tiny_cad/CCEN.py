@@ -90,7 +90,7 @@ def generate_3PT(pts, obj, nv, mode=1):
     if r:
         p1, _ = r
         cp = mw @ p1
-        bpy.context.scene.cursor_location = cp
+        bpy.context.scene.cursor.location = cp
 
         if mode == 0:
             pass

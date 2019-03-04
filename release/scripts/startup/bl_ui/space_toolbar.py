@@ -1570,10 +1570,10 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         layout.prop(addon_prefs, "misc_undoredo")
         layout.prop(addon_prefs, "misc_undohistory")
         layout.prop(addon_prefs, "misc_repeat")
-        layout.prop(addon_prefs, "misc_scene")
-        layout.prop(addon_prefs, "misc_misc")
+        layout.prop(addon_prefs, "misc_scene")       
         layout.prop(addon_prefs, "misc_last")
         layout.prop(addon_prefs, "misc_operatorsearch")
+        layout.prop(addon_prefs, "misc_info")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1635,11 +1635,21 @@ class TOOLBAR_MT_misc(Menu):
 
             row.operator("wm.search_menu", text="", icon='VIEWZOOM')
 
-        if addon_prefs.misc_misc:
+        if addon_prefs.misc_info:
 
             row = layout.row(align=True)
 
-            row.label(text=" - Misc Toolbar, Nothing yet - ")
+            row.separator_spacer()
+
+            # messages
+            row.template_reports_banner()
+            row.template_running_jobs()
+
+            # stats
+            scene = context.scene
+            view_layer = context.view_layer
+
+            row.label(text=scene.statistics(view_layer), translate=False)
 
 classes = (
 

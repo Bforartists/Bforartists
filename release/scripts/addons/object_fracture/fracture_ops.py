@@ -468,7 +468,7 @@ def import_object(obname):
             instance_groups=True)
 
     for ob in bpy.context.selected_objects:
-        ob.location = bpy.context.scene.cursor_location
+        ob.location = bpy.context.scene.cursor.location
 
 
 class ImportFractureRecorder(bpy.types.Operator):

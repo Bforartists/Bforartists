@@ -1,0 +1,30 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Report-Msgid-Bugs-To: \n"
+"\"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Daniel Tlisha <daniel.abzakh@gmail.com>\n"
+"Language-Team: Abkhaz language team <daniel.abzakh@gmail.com>\n"
+"Language: ab\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgid "Texts"
+msgstr "Аҳәоуқәа"
+
+
+msgid "Main Images"
+msgstr "Ихадоу Асахьақәа"
+
+
+msgid "Main Lights"
+msgstr "Ихадоу Алашарақәа"
+
+
+msgid "Main Meshes"
+msgstr "Ихадоу Аҿарԥагақәа"
+
