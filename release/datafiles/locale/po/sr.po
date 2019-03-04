@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -3464,20 +3464,12 @@ msgid "Displacement"
 msgstr "Издизање"
 
 
-msgid "Dissolve Speed"
-msgstr "Брзина растапања"
-
-
 msgid "Acceleration"
 msgstr "Убрзање"
 
 
 msgid "Velocity"
 msgstr "Брзина"
-
-
-msgid "Dry Speed"
-msgstr "Брзина сушења"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -4321,7 +4313,7 @@ msgid "Small"
 msgstr "Мало"
 
 
-msgid "Normal"
+msgid "Regular"
 msgstr "Нормално"
 
 
@@ -6738,49 +6730,24 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Удаљеност опадања - светлост има половину своје вредности у овој тачки"
 
 
-msgid "Energy"
-msgstr "Енергија"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Врста"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Тачкасто"
-
-
 msgid "Omnidirectional point light source"
 msgstr "Омни тачка као извор светлости"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Сунце"
 
 
 msgid "Constant direction parallel ray light source"
 msgstr "Константни усмерени извор светлости са паралелним срацима"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Рефлектор"
-
-
 msgid "Directional cone light source"
 msgstr "Усмерени купасти извор светлости"
 
 
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Површинска"
-
-
 msgid "Directional area light source"
 msgstr "Усмерени површински извор светлости"
+
+
+msgid "Power"
+msgstr "Снага"
 
 
 msgid "Falloff Type"
@@ -7595,22 +7562,6 @@ msgid "Type of Object"
 msgstr "Спој објекте"
 
 
-msgid "Mesh"
-msgstr "Меш"
-
-
-msgid "Meta"
-msgstr "Мета"
-
-
-msgid "Light"
-msgstr "Светлост"
-
-
-msgid "Speaker"
-msgstr "Звучник"
-
-
 msgid "Vertex Groups"
 msgstr "Група темена"
 
@@ -7901,6 +7852,10 @@ msgstr "Слот материјала коришћен за рендеровањ
 
 msgid "Dummy"
 msgstr "Лутка"
+
+
+msgid "Normal"
+msgstr "Нормално"
 
 
 msgid "Path End"
@@ -10027,6 +9982,10 @@ msgid "Bone Roll"
 msgstr "Ролна костију"
 
 
+msgid "Mesh"
+msgstr "Меш"
+
+
 msgid "Edge"
 msgstr "Ивица"
 
@@ -10061,6 +10020,10 @@ msgstr "Сакриј/маскирај"
 
 msgid "Hooks"
 msgstr "Удице"
+
+
+msgid "Light"
+msgstr "Светлост"
 
 
 msgid "Make Links"
@@ -11846,6 +11809,10 @@ msgid "Blending"
 msgstr "Мешање"
 
 
+msgid "Meta"
+msgstr "Мета"
+
+
 msgid "Sound Clip"
 msgstr "Звучни снимак"
 
@@ -12032,10 +11999,6 @@ msgstr "Исправка сенки"
 
 msgid "Basis"
 msgstr "Основа"
-
-
-msgid "Power"
-msgstr "Снага"
 
 
 msgid "Slope"
@@ -17800,18 +17763,8 @@ msgid "Add Vertex Color"
 msgstr "Додај боју темена"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Умекшај темена"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Поравнава углове изабраних темена"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Лапласово умекшавање темена"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -19018,14 +18971,6 @@ msgstr "Пореди разликујући велика и мала слова"
 
 msgid "Name filter using '*', '?' and '[abc]' unix style wildcards"
 msgstr "Назови филтер користећи џокер знаке '*' и '?'"
-
-
-msgid "Glow"
-msgstr "Сјај"
-
-
-msgid "Rim"
-msgstr "Обод"
 
 
 msgctxt "Operator"
@@ -20518,6 +20463,10 @@ msgstr "Брисање"
 
 msgid "Wipe effect strip type"
 msgstr "Ефекат брисање тип траке"
+
+
+msgid "Glow"
+msgstr "Сјај"
 
 
 msgid "Glow effect strip type"
@@ -22848,10 +22797,6 @@ msgid "User Interface"
 msgstr "Корисничко окружење"
 
 
-msgid "Regular"
-msgstr "Нормално"
-
-
 msgid "Theme Space"
 msgstr "Простор теме"
 
@@ -23985,10 +23930,6 @@ msgid "Softness"
 msgstr "Умекшање"
 
 
-msgid "Tweak Threshold"
-msgstr "Подеси праг"
-
-
 msgid "Auto Perspective"
 msgstr "Орто./перспектива"
 
@@ -24773,10 +24714,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Број узорака коришћених за печење амбијенталног сенчења за вишерезолуцијоне објекте"
 
 
-msgid "Bake Mode"
-msgstr "Мод печења"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Изаберите информацију сенчења за претварање (печење) у слику"
 
@@ -25121,10 +25058,6 @@ msgid "Settings for particle fluids physics"
 msgstr "Подешавања коришћена за течности."
 
 
-msgid "Factor Radius"
-msgstr "Фактор полупречника"
-
-
 msgid "Rest Density"
 msgstr "Густина одмора"
 
@@ -25155,6 +25088,10 @@ msgstr "Фактор густине"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "Густина се рачуна као фактор почетне густине (зависи од величине честице)"
+
+
+msgid "Factor Radius"
+msgstr "Фактор полупречника"
 
 
 msgid "YCbCr (ITU 601)"
@@ -25557,6 +25494,10 @@ msgid "Ambient"
 msgstr "Амбијент"
 
 
+msgid "Energy"
+msgstr "Енергија"
+
+
 msgid "Shape Key"
 msgstr "Кључ облика"
 
@@ -25663,6 +25604,10 @@ msgstr "Дим се судара са свим странама"
 
 msgid "Smoke density grid"
 msgstr "Мрежа густине дима"
+
+
+msgid "Dissolve Speed"
+msgstr "Брзина растапања"
 
 
 msgid "res"
@@ -26398,6 +26343,10 @@ msgstr "Прикажи путању камере"
 
 msgid "Show reconstructed camera path"
 msgstr "Прикажи реконструисану путању камере"
+
+
+msgid "Speaker"
+msgstr "Звучник"
 
 
 msgid "3D"
@@ -28330,10 +28279,6 @@ msgid "Lock Invert All"
 msgstr "Закључај све обрнуто"
 
 
-msgid "Resolution:"
-msgstr "Резолуција:"
-
-
 msgid "Object:"
 msgstr "Објекат:"
 
@@ -28480,6 +28425,10 @@ msgstr "Набор:"
 
 msgid "Outer"
 msgstr "Спољашње"
+
+
+msgid "Rim"
+msgstr "Обод"
 
 
 msgid "Material Index Offset:"
@@ -31063,11 +31012,6 @@ msgid "New"
 msgstr "Ново"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Ново"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Ново"
@@ -32554,10 +32498,6 @@ msgstr "Сва правила су просечна"
 
 msgid "Paste name"
 msgstr "Убаци кључне кадрове"
-
-
-msgid "Save Over?"
-msgstr "Сачувај преко?"
 
 
 msgid "unable to open the file"

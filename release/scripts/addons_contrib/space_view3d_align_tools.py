@@ -272,7 +272,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             ref2_co = [ref_points[2], ref_points[5], ref_points[8]]
             ref2_co = Vector(ref2_co)
         elif ref2 == "4":
-            ref2_co = bpy.context.scene.cursor_location
+            ref2_co = bpy.context.scene.cursor.location
 
         return ref2_co
 
@@ -416,7 +416,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             ref2_co = find_ref2_co(act_obj)
         else:
             if ref2 == "4":
-                ref2_co = bpy.context.scene.cursor_location
+                ref2_co = bpy.context.scene.cursor.location
             else:
                 ref2_co = act_obj.location
 
@@ -510,32 +510,32 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
 
             if ref2 == "0":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = ref_points[0] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = ref_points[0] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = ref_points[3] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = ref_points[3] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = ref_points[6] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = ref_points[6] + loc_offset[2]
             elif ref2 == "1":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = ref_points[1] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = ref_points[1] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = ref_points[4] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = ref_points[4] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = ref_points[7] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = ref_points[7] + loc_offset[2]
             elif ref2 == "2":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = act_obj.location[0] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = act_obj.location[0] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = act_obj.location[1] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = act_obj.location[1] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = act_obj.location[2] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = act_obj.location[2] + loc_offset[2]
             elif ref2 == "3":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = ref_points[2] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = ref_points[2] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = ref_points[5] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = ref_points[5] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = ref_points[8] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = ref_points[8] + loc_offset[2]
         elif self_or_active == "2":
             ref_co = point_in_selection(act_obj, sel_obj)
 
@@ -544,25 +544,25 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
 
             if ref2 == "0":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = sel_min[0] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = sel_min[0] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = sel_min[1] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = sel_min[1] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = sel_min[2] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = sel_min[2] + loc_offset[2]
             elif ref2 == "1":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = sel_center[0] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = sel_center[0] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = sel_center[1] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = sel_center[1] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = sel_center[2] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = sel_center[2] + loc_offset[2]
             elif ref2 == "3":
                 if loc_x is True:
-                    bpy.context.scene.cursor_location[0] = sel_max[0] + loc_offset[0]
+                    bpy.context.scene.cursor.location[0] = sel_max[0] + loc_offset[0]
                 if loc_y is True:
-                    bpy.context.scene.cursor_location[1] = sel_max[1] + loc_offset[1]
+                    bpy.context.scene.cursor.location[1] = sel_max[1] + loc_offset[1]
                 if loc_z is True:
-                    bpy.context.scene.cursor_location[2] = sel_max[2] + loc_offset[2]
+                    bpy.context.scene.cursor.location[2] = sel_max[2] + loc_offset[2]
 
 
 # Classes #

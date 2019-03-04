@@ -45,6 +45,7 @@
 #include "BKE_context.h"
 #include "BKE_object.h"
 #include "BKE_screen.h"
+#include "BKE_scene.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -88,13 +89,15 @@ void ED_view3d_background_color_get(const Scene *scene, const View3D *v3d, float
 void ED_view3d_cursor3d_calc_mat3(const Scene *scene, float mat[3][3])
 {
 	const View3DCursor *cursor = &scene->cursor;
-	quat_to_mat3(mat, cursor->rotation);
+	BKE_scene_cursor_rot_to_mat3(cursor, mat);
 }
 
 void ED_view3d_cursor3d_calc_mat4(const Scene *scene, float mat[4][4])
 {
 	const View3DCursor *cursor = &scene->cursor;
-	quat_to_mat4(mat, cursor->rotation);
+	float mat3[3][3];
+	BKE_scene_cursor_rot_to_mat3(cursor, mat3);
+	copy_m4_m3(mat, mat3);
 	copy_v3_v3(mat[3], cursor->location);
 }
 
@@ -1334,7 +1337,7 @@ void ED_view3d_to_m4(float mat[4][4], const float ofs[3], const float quat[4], c
  * \param ofs: The view offset to be set, normally from RegionView3D.ofs.
  * \param quat: The view rotation to be set, quaternion normally from RegionView3D.viewquat.
  * \param dist: The view distance from ofs to be set, normally from RegionView3D.dist.
- * \param lens: The view lens angle set for cameras and lamps, normally from View3D.lens.
+ * \param lens: The view lens angle set for cameras and lights, normally from View3D.lens.
  */
 void ED_view3d_from_object(const Object *ob, float ofs[3], float quat[4], float *dist, float *lens)
 {

@@ -69,7 +69,7 @@ class POVRAY_OT_lathe_add(bpy.types.Operator):
         layers=[False]*20
         layers[0]=True
         bpy.ops.curve.primitive_bezier_curve_add(
-            location=context.scene.cursor_location,
+            location=context.scene.cursor.location,
             rotation=(0, 0, 0),
             layers=layers,
         )
@@ -634,7 +634,7 @@ class POVRAY_OT_box_add(bpy.types.Operator):
 def pov_cylinder_define(context, op, ob, radius, loc, loc_cap):
     if op:
         R = op.R
-        loc = bpy.context.scene.cursor_location
+        loc = bpy.context.scene.cursor.location
         loc_cap[0] = loc[0]
         loc_cap[1] = loc[1]
         loc_cap[2] = (loc[2]+2)
@@ -697,7 +697,7 @@ class POVRAY_OT_cylinder_add(bpy.types.Operator):
                 LOC_CAP = ob.pov.imported_cyl_loc_cap
         else:
             if not props.imported_cyl_loc:
-                LOC_CAP = LOC = bpy.context.scene.cursor_location
+                LOC_CAP = LOC = bpy.context.scene.cursor.location
                 LOC_CAP[2] += 2.0
             else:
                 LOC = props.imported_cyl_loc
@@ -738,7 +738,7 @@ class POVRAY_OT_cylinder_update(bpy.types.Operator):
 def pov_sphere_define(context, op, ob, loc):
         if op:
             R = op.R
-            loc = bpy.context.scene.cursor_location
+            loc = bpy.context.scene.cursor.location
         else:
             assert(ob)
             R = ob.pov.sphere_radius
@@ -753,7 +753,7 @@ def pov_sphere_define(context, op, ob, loc):
             bpy.ops.mesh.select_all(action='SELECT')
             bpy.ops.mesh.delete(type='VERT')
             bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, size=ob.pov.sphere_radius, location=loc, rotation=obrot)
-            #bpy.ops.transform.rotate(axis=obrot,constraint_orientation='GLOBAL')
+            #bpy.ops.transform.rotate(axis=obrot,orient_type='GLOBAL')
             bpy.ops.transform.resize(value=obscale)
             #bpy.ops.transform.rotate(axis=obrot, proportional_size=1)
 
@@ -761,7 +761,7 @@ def pov_sphere_define(context, op, ob, loc):
             bpy.ops.mesh.hide(unselected=False)
             bpy.ops.object.mode_set(mode="OBJECT")
             bpy.ops.object.shade_smooth()
-            #bpy.ops.transform.rotate(axis=obrot,constraint_orientation='GLOBAL')
+            #bpy.ops.transform.rotate(axis=obrot,orient_type='GLOBAL')
 
         if not ob:
             bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, size=R, location=loc)
@@ -799,7 +799,7 @@ class POVRAY_OT_sphere_add(bpy.types.Operator):
                 LOC = ob.pov.imported_loc
         else:
             if not props.imported_loc:
-                LOC = bpy.context.scene.cursor_location
+                LOC = bpy.context.scene.cursor.location
 
             else:
                 LOC = props.imported_loc
@@ -1327,7 +1327,7 @@ def pov_parametric_define(context, op, ob):
             obrot = ob.rotation_euler # In radians
             #Parametric addon has no loc rot, some extra work is needed
             #in case cursor has moved
-            curloc = bpy.context.scene.cursor_location
+            curloc = bpy.context.scene.cursor.location
 
 
             bpy.ops.object.mode_set(mode="EDIT")
@@ -1710,7 +1710,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                                 # bpy.ops.object.mode_set(mode='EDIT')
                                 # bpy.ops.mesh.reveal()
                                 # bpy.ops.mesh.select_all(action='SELECT')
-                                # bpy.ops.transform.resize(value=(1,1,scaleZ), constraint_orientation='LOCAL')
+                                # bpy.ops.transform.resize(value=(1,1,scaleZ), orient_type='LOCAL')
                                 # bpy.ops.mesh.hide(unselected=False)
                                 # bpy.ops.object.mode_set(mode='OBJECT')
 

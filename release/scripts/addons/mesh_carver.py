@@ -1332,7 +1332,7 @@ def CreateCutSquare(self, context):
     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
     self.ViewVector = depthLocation
     if self.snapCursor:
-        PlanePoint = context.scene.cursor_location
+        PlanePoint = context.scene.cursor.location
     else:
         PlanePoint = self.OpsObj.location if self.OpsObj is not None else Vector((0.0, 0.0, 0.0))
 
@@ -1402,7 +1402,7 @@ def CreateCutLine(self, context):
     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
     self.ViewVector = depthLocation
 
-    PlanePoint = context.scene.cursor_location if self.snapCursor else Vector((0.0, 0.0, 0.0))
+    PlanePoint = context.scene.cursor.location if self.snapCursor else Vector((0.0, 0.0, 0.0))
     PlaneNormal = depthLocation
     PlaneNormalised = PlaneNormal.normalized()
 
@@ -1501,7 +1501,7 @@ def CreateCutCircle(self, context):
     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
     self.ViewVector = depthLocation
 
-    PlanePoint = context.scene.cursor_location if self.snapCursor else Vector((0.0, 0.0, 0.0))
+    PlanePoint = context.scene.cursor.location if self.snapCursor else Vector((0.0, 0.0, 0.0))
     PlaneNormal = depthLocation
     PlaneNormalised = PlaneNormal.normalized()
 
@@ -1740,14 +1740,14 @@ def Picking(context, event):
                 hit_world = matrix * hit
                 length_squared = (hit_world - ray_origin).length_squared
                 if best_obj is None or length_squared < best_length_squared:
-                    scene.cursor_location = hit_world
+                    scene.cursor.location = hit_world
                     best_length_squared = length_squared
                     best_obj = obj
             else:
                 if best_obj is None:
                     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
                     loc = region_2d_to_location_3d(region, rv3d, coord, depthLocation)
-                    scene.cursor_location = loc
+                    scene.cursor.location = loc
 
 
 def CreatePrimitive(self, _AngleStep, _radius):
@@ -2093,7 +2093,7 @@ def Rebool(context, self):
         TRANSFORM_OT_translate={
             "value": (0, 0, 0),
             "constraint_axis": (False, False, False),
-            "constraint_orientation": 'GLOBAL',
+            "orient_type": 'GLOBAL',
             "mirror": False,
             "proportional": 'DISABLED',
             "proportional_edit_falloff": 'SMOOTH',
@@ -3168,13 +3168,13 @@ class Carver(bpy.types.Operator):
         bpy.ops.mesh.normals_make_consistent()
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        saved_location_0 = context.scene.cursor_location.copy()
+        saved_location_0 = context.scene.cursor.location.copy()
         bpy.ops.view3d.snap_cursor_to_active()
-        saved_location = context.scene.cursor_location.copy()
+        saved_location = context.scene.cursor.location.copy()
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        context.scene.cursor_location = saved_location
+        context.scene.cursor.location = saved_location
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-        context.scene.cursor_location = saved_location_0
+        context.scene.cursor.location = saved_location_0
 
         bpy.data.objects[self.CurrentObj.name].select_set(True)
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
@@ -3203,7 +3203,7 @@ class Carver(bpy.types.Operator):
             bpy.ops.view3d.localview()
 
         # Save cursor position
-        CursorLocation = context.scene.cursor_location.copy()
+        CursorLocation = context.scene.cursor.location.copy()
 
         ActiveObjList = []
         if (self.ObjectMode is False) and (self.ProfileMode is False):
@@ -3250,7 +3250,7 @@ class Carver(bpy.types.Operator):
         lastSelected = []
 
         for ActiveObj in ActiveObjList:
-            context.scene.cursor_location = CursorLocation
+            context.scene.cursor.location = CursorLocation
 
             if len(context.selected_objects) > 0:
                 bpy.ops.object.select_all(action='TOGGLE')
@@ -3322,12 +3322,12 @@ class Carver(bpy.types.Operator):
                             CreateBevel(context, context.selected_objects[0])
                         UndoAdd(self, "REBOOL", context.selected_objects[0])
 
-                        context.scene.cursor_location = ActiveObj.location
+                        context.scene.cursor.location = ActiveObj.location
                         bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
                     else:
                         bpy.ops.object.delete(use_global=False)
 
-                context.scene.cursor_location = CursorLocation
+                context.scene.cursor.location = CursorLocation
 
                 if self.ObjectMode:
                     context.view_layer.objects.active = self.ObjectBrush
@@ -3351,7 +3351,7 @@ class Carver(bpy.types.Operator):
                         # Get the last object selected
                         lastSelected.append(context.selected_objects[0])
 
-        context.scene.cursor_location = CursorLocation
+        context.scene.cursor.location = CursorLocation
 
         if self.DontApply is False:
             # Remove cut object

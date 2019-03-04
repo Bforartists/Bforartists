@@ -35,7 +35,7 @@
 /* alpha/beta/rc/release, docs use this */
 #define BLENDER_VERSION_CYCLE   beta
 
-#define BFORARTISTS_VERSION     010
+#define BFORARTISTS_VERSION     020
 
 extern char versionstr[]; /* from blender.c */
 

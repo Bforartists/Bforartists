@@ -1212,7 +1212,7 @@ class drawPoly(bpy.types.Operator):
                 bpy.ops.view3d.cursor3d('INVOKE_DEFAULT')
 
                 obj = bpy.context.active_object
-                vert_co = bpy.context.scene.cursor_location
+                vert_co = bpy.context.scene.cursor.location
                 world = obj.matrix_world.inverted_safe()
 
                 bpy.ops.mesh.select_all(action='DESELECT')
@@ -1245,7 +1245,7 @@ class drawPoly(bpy.types.Operator):
 
                 mesh.vertices[new_vert_id].select = True
                 bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-                bpy.context.scene.cursor_location = self.cursor_co
+                bpy.context.scene.cursor.location = self.cursor_co
 
 
                 if self.vert_count >= 4:
@@ -1425,7 +1425,7 @@ class drawPoly(bpy.types.Operator):
         self.vgrp = bpy.context.object.vertex_groups.active_index
         bpy.context.object.vertex_groups.active.name = "drawPoly_temp"
 
-        self.cursor_co = bpy.context.scene.cursor_location
+        self.cursor_co = bpy.context.scene.cursor.location
 
 
         context.window_manager.modal_handler_add(self)

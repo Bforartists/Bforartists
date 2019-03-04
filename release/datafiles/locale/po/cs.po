@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -3548,16 +3548,8 @@ msgid "Displacement"
 msgstr "Zobrazit:"
 
 
-msgid "Dissolve Speed"
-msgstr "Skrýt označené"
-
-
 msgid "Acceleration"
 msgstr "Zrychlení"
-
-
-msgid "Dry Speed"
-msgstr "Rozdělit"
 
 
 msgid "Effect Type"
@@ -4549,8 +4541,8 @@ msgid "Directory"
 msgstr "Směr"
 
 
-msgid "Normal"
-msgstr "Dle normály"
+msgid "Regular"
+msgstr "Normální"
 
 
 msgid "Display Mode"
@@ -6821,16 +6813,16 @@ msgid "Light color"
 msgstr "Smyčka hran"
 
 
-msgid "Energy"
-msgstr "Energie:"
-
-
 msgid "Specular Factor"
 msgstr "Speciality"
 
 
 msgid "Directional area light source"
 msgstr "Nastavit tvar zdroje světla"
+
+
+msgid "Power"
+msgstr "Smazat nižší"
 
 
 msgid "Falloff Type"
@@ -7769,22 +7761,6 @@ msgid "Type of Object"
 msgstr "Typ události"
 
 
-msgid "Mesh"
-msgstr "Síť"
-
-
-msgid "Meta"
-msgstr "Metaobjekt"
-
-
-msgid "Light"
-msgstr "Světlo"
-
-
-msgid "Speaker"
-msgstr "Reproduktor"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "Opustit Editační mód"
 
@@ -8167,6 +8143,10 @@ msgstr "Materiál"
 
 msgid "Dummy"
 msgstr "Zobrazit názvy"
+
+
+msgid "Normal"
+msgstr "Dle normály"
 
 
 msgid "Object Aligned"
@@ -10288,6 +10268,10 @@ msgid "Interpolate"
 msgstr "Mód Interpolace"
 
 
+msgid "Mesh"
+msgstr "Síť"
+
+
 msgid "Edge"
 msgstr "Hrana"
 
@@ -10322,6 +10306,10 @@ msgstr "Skrýt"
 
 msgid "Hooks"
 msgstr "Háky"
+
+
+msgid "Light"
+msgstr "Světlo"
 
 
 msgid "Make Links"
@@ -12612,6 +12600,10 @@ msgid "Action Clip"
 msgstr "Akce"
 
 
+msgid "Meta"
+msgstr "Metaobjekt"
+
+
 msgid "Sound Clip"
 msgstr "Zvuk"
 
@@ -12902,10 +12894,6 @@ msgstr "Odznačit spojené"
 
 msgid "Correction for Shadows"
 msgstr "Odznačit spojené"
-
-
-msgid "Power"
-msgstr "Smazat nižší"
 
 
 msgid "Color Correction"
@@ -19879,11 +19867,6 @@ msgid "Remove vertex color layer"
 msgstr "Načíst uložené Render Hladiny"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Hladké "
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Vyrovná úhly označených plošek"
 
@@ -19902,11 +19885,6 @@ msgstr "Limituje rotaci po Y ose"
 
 msgid "Smooth along the Z axis"
 msgstr "Limituje rotaci po Z ose"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Hladké "
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -21567,10 +21545,6 @@ msgstr "Bude rozlišovat velká a malá písmena"
 
 msgid "Set select on random visible objects"
 msgstr "Nastaví výběr na náhodné viditelné objekty"
-
-
-msgid "Rim"
-msgstr "Nahoře"
 
 
 msgctxt "Operator"
@@ -26483,10 +26457,6 @@ msgid "User Interface"
 msgstr "Uživatelské rozhraní"
 
 
-msgid "Regular"
-msgstr "Normální"
-
-
 msgid "Theme Space"
 msgstr "Prostor textury"
 
@@ -27883,10 +27853,6 @@ msgid "Softness"
 msgstr "Vyhladit"
 
 
-msgid "Tweak Threshold"
-msgstr "Práh"
-
-
 msgid "Auto Perspective"
 msgstr "Perspektivní promítání"
 
@@ -28703,10 +28669,6 @@ msgid "Render Pass"
 msgstr "Úroveň (render):"
 
 
-msgid "Bake Mode"
-msgstr "Pózy kostí"
-
-
 msgid "Bake normals"
 msgstr "normály plošky"
 
@@ -29043,18 +29005,6 @@ msgid "Time Scale"
 msgstr "Změna velikosti"
 
 
-msgid "Factor Radius"
-msgstr "Činitel"
-
-
-msgid "Factor Repulsion"
-msgstr "Činitel"
-
-
-msgid "Factor Rest Length"
-msgstr "Délky hran"
-
-
 msgid "Interaction Radius"
 msgstr "Font rozhraní:  "
 
@@ -29109,6 +29059,18 @@ msgstr "Viskozita"
 
 msgid "Factor Density"
 msgstr "Činitel"
+
+
+msgid "Factor Radius"
+msgstr "Činitel"
+
+
+msgid "Factor Repulsion"
+msgstr "Činitel"
+
+
+msgid "Factor Rest Length"
+msgstr "Délky hran"
 
 
 msgid "Initial Rest Length"
@@ -29359,12 +29321,12 @@ msgid "Multiply Speed"
 msgstr "Multivrstva"
 
 
-msgid "Scale to length"
-msgstr "Zvětšení podél osy"
-
-
 msgid "Use as speed"
 msgstr "Vlákna"
+
+
+msgid "Scale to length"
+msgstr "Zvětšení podél osy"
 
 
 msgid "Subtract Sequence"
@@ -29509,14 +29471,6 @@ msgstr "Pohled aktivní kamery"
 
 msgid "Sound Sequence"
 msgstr "Sekvence "
-
-
-msgid "Draw Waveform"
-msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "První frame animace"
 
 
 msgid "Sequence Color Balance Data"
@@ -29691,16 +29645,16 @@ msgid "Sepia"
 msgstr "Sépie"
 
 
+msgid "Energy"
+msgstr "Energie:"
+
+
 msgid "Shape Key"
 msgstr "Samochytavé Klíče"
 
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Mód Interpolace"
-
-
-msgid "Mute this shape key"
-msgstr "Jméno aktuálního klíče pro tvar"
 
 
 msgid "Name of Shape Key"
@@ -29817,6 +29771,10 @@ msgstr "Vertikální"
 
 msgid "Collide All"
 msgstr "Normály "
+
+
+msgid "Dissolve Speed"
+msgstr "Skrýt označené"
 
 
 msgid "res"
@@ -30845,6 +30803,10 @@ msgstr "Generátory"
 
 msgid "Show reconstructed camera path"
 msgstr "Jemnost dělení"
+
+
+msgid "Speaker"
+msgstr "Reproduktor"
 
 
 msgid "Show Reconstruction"
@@ -32916,10 +32878,6 @@ msgid "New Shape From Mix"
 msgstr "Renderovaci okno"
 
 
-msgid "Resolution:"
-msgstr "Jemnost dělení"
-
-
 msgid "Object:"
 msgstr "Objekt:"
 
@@ -33070,6 +33028,10 @@ msgstr "Deformace"
 
 msgid "Crease:"
 msgstr "Ostrost: "
+
+
+msgid "Rim"
+msgstr "Nahoře"
 
 
 msgid "Material Index Offset:"
@@ -35742,11 +35704,6 @@ msgstr "Nový"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Nový"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Nový"
 

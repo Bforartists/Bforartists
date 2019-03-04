@@ -1072,7 +1072,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
 
         elif self.size_mode == 'CAMERA':
             x, y = compute_camera_size(
-                context, context.scene.cursor_location,
+                context, context.scene.cursor.location,
                 self.fill_mode, px / py
             )
 

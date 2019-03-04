@@ -221,7 +221,7 @@ if __name__ == "__main__":
             engine = arg[7:]
     try:
         # log("### ENABLE %s ADDON ############################" % module)
-        bpy.ops.wm.addon_enable(module=module)
+        bpy.ops.preferences.addon_enable(module=module)
         # log("### MATLIB PATH ############################")
         bpy.context.preferences.addons[module].preferences.matlib_path = matlib
     except:

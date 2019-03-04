@@ -348,7 +348,7 @@ class Extrude_and_Reshape(Operator):
             bmesh.update_edit_mesh(self.mesh, loop_triangles=True, destructive=True)
             bpy.ops.transform.translate(
                         'INVOKE_DEFAULT', constraint_axis=(False, False, True),
-                        constraint_orientation='NORMAL', release_confirm=True
+                        orient_type='NORMAL', release_confirm=True
                         )
 
         context.window_manager.modal_handler_add(self)
