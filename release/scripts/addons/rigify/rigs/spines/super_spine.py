@@ -642,7 +642,7 @@ class Rig:
                     if len(bones['neck']['original_names']) > 3:
                         self.make_constraint(b, {
                             'constraint': 'COPY_SCALE',
-                            'subtarget': org(l['original_names'][j+1]),
+                            'subtarget': bones['neck']['ctrl_neck'],
                             'influence': 1.0
                         })
 

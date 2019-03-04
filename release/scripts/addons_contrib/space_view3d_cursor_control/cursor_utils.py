@@ -48,11 +48,11 @@ class CursorAccess:
     def setCursor(cls, coordinates):
         spc = cls.findSpace()
         try:
-            spc.cursor_location = coordinates
+            spc.cursor.location = coordinates
         except:
             pass
 
     @classmethod
     def getCursor(cls):
         spc = cls.findSpace()
-        return spc.cursor_location if spc else None
+        return spc.cursor.location if spc else None

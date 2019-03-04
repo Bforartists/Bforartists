@@ -112,7 +112,7 @@ class AddSurroundCamerasOperator(bpy.types.Operator):
             bpy.ops.object.add()
             obj_origin = context.active_object
             obj_origin.name = CAMERA_ORIGIN_NAME
-            obj_origin.location = scene.cursor_location
+            obj_origin.location = scene.cursor.location
 
         for i in range(0,numScreens):
 

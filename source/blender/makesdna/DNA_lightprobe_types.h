@@ -66,7 +66,7 @@ typedef struct LightProbe {
 	int grid_resolution_x;
 	int grid_resolution_y;
 	int grid_resolution_z;
-	int pad1;
+	char _pad1[4];
 
 	/** Object to use as a parallax origin. */
 	struct Object *parallax_ob;
@@ -77,7 +77,7 @@ typedef struct LightProbe {
 
 	/* Runtime display data */
 	float distfalloff, distgridinf;
-	float pad[2];
+	char _pad[8];
 } LightProbe;
 
 /* Probe->type */
@@ -115,15 +115,20 @@ enum {
 /* Needs to be there because written to file
  * with the lightcache. */
 
+/* IMPORTANT Padding in these structs is essential. It must match
+ * GLSL struct definition in lightprobe_lib.glsl. */
+
+/* Must match CubeData. */
 typedef struct LightProbeCache {
 	float position[3], parallax_type;
 	float attenuation_fac;
 	float attenuation_type;
-	float pad3[2];
+	float _pad3[2];
 	float attenuationmat[4][4];
 	float parallaxmat[4][4];
 } LightProbeCache;
 
+/* Must match GridData. */
 typedef struct LightGridCache {
 	float mat[4][4];
 	/** Offset to the first irradiance sample in the pool. */
@@ -132,8 +137,8 @@ typedef struct LightGridCache {
 	/** World space vector between 2 opposite cells. */
 	float increment_x[3], attenuation_bias;
 	float increment_y[3], level_bias;
-	float increment_z[3], pad4;
-	float visibility_bias, visibility_bleed, visibility_range, pad5;
+	float increment_z[3], _pad4;
+	float visibility_bias, visibility_bleed, visibility_range, _pad5;
 } LightGridCache;
 
 /* ------ Eevee Lightcache ------- */
@@ -145,7 +150,7 @@ typedef struct LightCacheTexture {
 	int tex_size[3];
 	char data_type;
 	char components;
-	char pad[2];
+	char _pad[2];
 } LightCacheTexture;
 
 typedef struct LightCache {
@@ -157,7 +162,7 @@ typedef struct LightCache {
 	int mips_len;
 	/** Size of a visibility/reflection sample. */
 	int vis_res, ref_res;
-	int pad[2];
+	char _pad[4][2];
 	/* In the future, we could create a bigger texture containing
 	 * multiple caches (for animation) and interpolate between the
 	 * caches overtime to another texture. */

@@ -60,7 +60,7 @@ class _Properties:
                 bd_size = common.get_uvimg_editor_board_size(area)
             else:
                 bd_size = [1.0, 1.0]
-            loc = space.cursor_location
+            loc = space.cursor.location
 
             if bd_size[0] < 0.000001:
                 cx = 0.0
@@ -84,7 +84,7 @@ class _Properties:
                 bd_size = [1.0, 1.0]
             cx = bd_size[0] * value[0]
             cy = bd_size[1] * value[1]
-            space.cursor_location = Vector((cx, cy))
+            space.cursor.location = Vector((cx, cy))
 
         scene.muv_align_uv_cursor_enabled = BoolProperty(
             name="Align UV Cursor Enabled",
@@ -264,6 +264,6 @@ class MUV_OT_AlignUVCursor(bpy.types.Operator):
         cx = cx * bd_size[0]
         cy = cy * bd_size[1]
 
-        space.cursor_location = Vector((cx, cy))
+        space.cursor.location = Vector((cx, cy))
 
         return {'FINISHED'}

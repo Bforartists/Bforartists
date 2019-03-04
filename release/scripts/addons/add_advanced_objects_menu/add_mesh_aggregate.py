@@ -247,7 +247,7 @@ class OBJECT_OT_agregate_mesh(Operator):
             msv.append(obj.modifiers[i].show_viewport)
             obj.modifiers[i].show_viewport = False
 
-        cur = scn.cursor_location
+        cur = scn.cursor.location
         for i in range(self.numP):
 
             mes = choice(par).data
@@ -310,7 +310,7 @@ class OBJECT_OT_agregate_mesh(Operator):
                 bpy.ops.object.join()
 
             if self.track:
-                cur = scn.cursor_location = cpom[1]
+                cur = scn.cursor.location = cpom[1]
 
         for i in range(len(msv)):
             obj.modifiers[i].show_viewport = msv[i]

@@ -937,7 +937,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
 			Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
 			Object *ob_src_eval = DEG_get_evaluated_object(depsgraph, ob_src);
 
-			me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_src_eval, CD_MASK_BAREMESH | CD_MLOOPUV);
+			me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_src_eval, CD_MASK_BAREMESH | CD_MASK_MLOOPUV);
 			num_data = CustomData_number_of_layers(&me_eval->ldata, CD_MLOOPUV);
 
 			RNA_enum_item_add_separator(&item, &totitem);
@@ -959,7 +959,7 @@ static const EnumPropertyItem *rna_DataTransferModifier_layers_select_src_itemf(
 			Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
 			Object *ob_src_eval = DEG_get_evaluated_object(depsgraph, ob_src);
 
-			me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_src_eval, CD_MASK_BAREMESH | CD_MLOOPCOL);
+			me_eval = mesh_get_eval_final(depsgraph, scene_eval, ob_src_eval, CD_MASK_BAREMESH | CD_MASK_MLOOPCOL);
 			num_data = CustomData_number_of_layers(&me_eval->ldata, CD_MLOOPCOL);
 
 			RNA_enum_item_add_separator(&item, &totitem);
@@ -3035,14 +3035,6 @@ static void rna_def_modifier_bevel(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL},
 	};
 
-	/* TO BE DEPRECATED */
-	static const EnumPropertyItem prop_edge_weight_method_items[] = {
-		{0, "AVERAGE", 0, "Average", ""},
-		{MOD_BEVEL_EMIN, "SHARPEST", 0, "Sharpest", ""},
-		{MOD_BEVEL_EMAX, "LARGEST", 0, "Largest", ""},
-		{0, NULL, 0, NULL, NULL},
-	};
-
 	static EnumPropertyItem prop_harden_normals_items[] = {
 		{ MOD_BEVEL_FACE_STRENGTH_NONE, "FSTR_NONE", 0, "None", "Do not set face strength" },
 		{ MOD_BEVEL_FACE_STRENGTH_NEW, "FSTR_NEW", 0, "New", "Set face strength on new faces only" },
@@ -3093,13 +3085,6 @@ static void rna_def_modifier_bevel(BlenderRNA *brna)
 	RNA_def_property_enum_sdna(prop, NULL, "lim_flags");
 	RNA_def_property_enum_items(prop, prop_limit_method_items);
 	RNA_def_property_ui_text(prop, "Limit Method", "");
-	RNA_def_property_update(prop, 0, "rna_Modifier_update");
-
-	/* TO BE DEPRECATED */
-	prop = RNA_def_property(srna, "edge_weight_method", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_sdna(prop, NULL, "e_flags");
-	RNA_def_property_enum_items(prop, prop_edge_weight_method_items);
-	RNA_def_property_ui_text(prop, "Edge Weight Method", "What edge weight to use for weighting a vertex");
 	RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
 	prop = RNA_def_property(srna, "angle_limit", PROP_FLOAT, PROP_ANGLE);
@@ -4367,6 +4352,13 @@ static void rna_def_modifier_triangulate(BlenderRNA *brna)
 	RNA_def_property_enum_sdna(prop, NULL, "ngon_method");
 	RNA_def_property_enum_items(prop, rna_enum_modifier_triangulate_ngon_method_items);
 	RNA_def_property_ui_text(prop, "Polygon Method", "Method for splitting the polygons into triangles");
+	RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+	prop = RNA_def_property(srna, "keep_custom_normals", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_TRIANGULATE_KEEP_CUSTOMLOOP_NORMALS);
+	RNA_def_property_ui_text(prop, "Keep Normals",
+	                         "Try to preserve custom normals (WARNING: depending on chosen triangulation method, "
+	                         "shading may not be fully preserved, 'Fixed' method usually gives the best result here)");
 	RNA_def_property_update(prop, 0, "rna_Modifier_update");
 }
 

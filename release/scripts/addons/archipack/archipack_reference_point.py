@@ -230,7 +230,7 @@ class ARCHIPACK_OT_reference_point(ArchipackCollectionManager, Operator):
         row.label(text="Use Properties panel (N) to define parms", icon='INFO')
 
     def create(self, context):
-        x, y, z = context.scene.cursor_location
+        x, y, z = context.scene.cursor.location
         # bpy.ops.object.empty_add(type='ARROWS', radius=0.5, location=Vector((x, y, 0)))
         m = bpy.data.meshes.new(name="Reference")
         o = bpy.data.objects.new("Reference", m)

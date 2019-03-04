@@ -73,19 +73,19 @@ def align_to_view(context):
         em.scale = Vector((prop * scale[0], scale[0], 1))
     else:
         em.scale = Vector((prop * scale[0], scale[1], 1))
-    pos_cur = em.location - sd.cursor_location
+    pos_cur = em.location - sd.cursor.location
     rot_cur1 = em.rotation_euler.to_quaternion()
     em.location = v + ob.location
     em.rotation_euler = Quaternion.to_euler(vr * quat)
     if em.custom_c3d:
         if em.custom_old_scale != em.custom_scale:
-            pos_cur = em.location - sd.cursor_location
+            pos_cur = em.location - sd.cursor.location
         rot_cur2 = em.rotation_euler.to_quaternion()
         rot_cur1.invert()
         pos_cur.rotate(rot_cur1)
         pos_cur.rotate(rot_cur2)
         v = em.location - pos_cur
-        sd.cursor_location = v
+        sd.cursor.location = v
 
 
 def applyimage(context):
@@ -214,7 +214,7 @@ def update_Rotation(self, context):
         angle = em.custom_rotation - em.custom_old_rotation
         sd = context.space_data
         vr = sd.region_3d.view_rotation.copy()
-        c = sd.cursor_location - ob.location
+        c = sd.cursor.location - ob.location
         e = bpy.data.objects[BProjection_Empty].location - ob.location
         vo = Vector((0.0, 0.0, 1.0))
         vo.rotate(vr)
@@ -242,7 +242,7 @@ def update_Scale(self, context):
         vr = r3d.view_rotation.copy()
         vr.invert()
         e = em.location - ob.location
-        c = sd.cursor_location - ob.location
+        c = sd.cursor.location - ob.location
         ce = e - c
 
         s = em.custom_scale
@@ -1367,7 +1367,7 @@ class BP_Paint(Operator):
         sd = context.space_data
         l = sd.region_3d
         v_init = Vector((0.0, 0.0, 1.0))
-        context.scene.cursor_location = view3d_utils.region_2d_to_location_3d(
+        context.scene.cursor.location = view3d_utils.region_2d_to_location_3d(
                                                     context.region, l,
                                                     [event.mouse_region_x,
                                                      event.mouse_region_y], v_init
@@ -1677,7 +1677,7 @@ class BP_Rotate(Operator):
         sd = context.space_data
 
         center = view3d_utils.location_3d_to_region_2d(context.region, sd.region_3d, em.location if
-                                                       em.custom_rotc3d else context.scene.cursor_location)
+                                                       em.custom_rotc3d else context.scene.cursor.location)
         vec_init = self.first_mouse - center
         vec_act = Vector((event.mouse_region_x, event.mouse_region_y)) - center
         rot = -vec_init.angle_signed(vec_act) * 180 / pi

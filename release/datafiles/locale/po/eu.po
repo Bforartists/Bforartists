@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -377,10 +377,6 @@ msgid "Save"
 msgstr "Gorde"
 
 
-msgid "Normal"
-msgstr "Normala"
-
-
 msgid "Display Mode"
 msgstr "Bistaraketa Modua"
 
@@ -459,21 +455,6 @@ msgid "Selected"
 msgstr "Hautatutako"
 
 
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Mota"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Puntua"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Eguzkia"
-
-
 msgid "Cube"
 msgstr "Kuboa"
 
@@ -486,12 +467,12 @@ msgid "Circle"
 msgstr "Zirkulua"
 
 
-msgid "Speaker"
-msgstr "Bozgorailua"
-
-
 msgid "Angular Velocity"
 msgstr "Abiadura-angeluarra"
+
+
+msgid "Normal"
+msgstr "Normala"
 
 
 msgid "World"
@@ -1964,6 +1945,10 @@ msgid "Sort Alphabetically"
 msgstr "Alfabetikoki Ordenatu"
 
 
+msgid "Speaker"
+msgstr "Bozgorailua"
+
+
 msgid "3D"
 msgstr "3D"
 
@@ -2292,11 +2277,6 @@ msgstr "Berria"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Berria"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Berria"
 
@@ -2678,10 +2658,6 @@ msgstr "%s: errorea '%s' kargatzean "
 
 msgid "Paste name"
 msgstr "Izena itsatsi"
-
-
-msgid "Save Over?"
-msgstr "Gaingorde?"
 
 
 msgid "unable to open the file"

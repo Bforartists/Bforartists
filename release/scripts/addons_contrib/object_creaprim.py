@@ -151,9 +151,9 @@ class CreaPrim(bpy.types.Operator):
 
         if len(txtlist) > 1:
             makeinit(txtlist, namelist, groupname, addondir)
-            bpy.ops.wm.addon_enable(module="add_mesh_" + groupname)
+            bpy.ops.preferences.addon_enable(module="add_mesh_" + groupname)
         else:
-            bpy.ops.wm.addon_enable(module="add_mesh_" + str.lower(objname))
+            bpy.ops.preferences.addon_enable(module="add_mesh_" + str.lower(objname))
 
         if scriptdir == 1:
             message = "Add Mesh addon " + groupname + " saved to user scripts directory."
@@ -285,7 +285,7 @@ def do_creaprim(self, mesh, objname, addondir):
     strlist.append("        collection = bpy.context.collection\n")
     strlist.append("        scene = bpy.context.scene\n")
     strlist.append("        collection.objects.link(obj)\n")
-    strlist.append("        obj.location = scene.cursor_location\n")
+    strlist.append("        obj.location = scene.cursor.location\n")
     strlist.append("        bm = bmesh.new()\n")
     strlist.append("        bm.from_mesh(mesh)\n")
     strlist.append("\n")
