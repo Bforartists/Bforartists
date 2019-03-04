@@ -1466,7 +1466,7 @@ class ARCHIPACK_OT_slab(ArchipackCreateTool, Operator):
         if context.mode == "OBJECT":
             bpy.ops.object.select_all(action="DESELECT")
             o = self.create(context)
-            o.location = bpy.context.scene.cursor_location
+            o.location = bpy.context.scene.cursor.location
             o.select_set(state=True)
             context.view_layer.objects.active = o
             self.manipulate()
@@ -1578,7 +1578,7 @@ class ARCHIPACK_OT_slab_from_wall(Operator):
             # parenting childs to wall reference point
             if wall.parent is None:
                 x, y, z = wall.bound_box[0]
-                context.scene.cursor_location = wall.matrix_world @ Vector((x, y, z))
+                context.scene.cursor.location = wall.matrix_world @ Vector((x, y, z))
                 # fix issue #9
                 context.view_layer.objects.active = wall
                 bpy.ops.archipack.reference_point()
@@ -1651,7 +1651,7 @@ class ARCHIPACK_OT_slab_cutter(ArchipackCreateTool, Operator):
             pd = archipack_slab.datablock(parent)
             pd.boundary = o.name
         else:
-            o.location = context.scene.cursor_location
+            o.location = context.scene.cursor.location
         # make manipulators selectable
         d.manipulable_selectable = True
         self.link_object_to_scene(context, o)

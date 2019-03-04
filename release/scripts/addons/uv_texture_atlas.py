@@ -618,7 +618,7 @@ class TexAtl_MergeObjects(Operator):
 
         me = bpy.data.meshes.new(self.group_name + '_mergedObject')
         ob_merge = bpy.data.objects.new(self.group_name + '_mergedObject', me)
-        ob_merge.location = scene.cursor_location   # position object at 3d-cursor
+        ob_merge.location = scene.cursor.location   # position object at 3d-cursor
         collection.objects.link(ob_merge)           # Link object to collection
         me.update()
         ob_merge.select_set(False)

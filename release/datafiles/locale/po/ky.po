@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -763,10 +763,6 @@ msgid "Save"
 msgstr "Сактоо"
 
 
-msgid "Normal"
-msgstr "Нормаль"
-
-
 msgid "Fonts"
 msgstr "Ариптер"
 
@@ -1060,35 +1056,6 @@ msgid "Light color"
 msgstr "Жарык түсү"
 
 
-msgid "Energy"
-msgstr "Энергия"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Түрү"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Чекит"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Күн"
-
-
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Прожектор"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Аянт"
-
-
 msgid "Rectangle"
 msgstr "Тик бурчтук"
 
@@ -1193,18 +1160,6 @@ msgid "Proxy"
 msgstr "Прокси"
 
 
-msgid "Mesh"
-msgstr "Политор"
-
-
-msgid "Meta"
-msgstr "Мета"
-
-
-msgid "Speaker"
-msgstr "Үн булагы"
-
-
 msgid "Animate"
 msgstr "Анимация"
 
@@ -1215,6 +1170,10 @@ msgstr "Жаш"
 
 msgid "Draw Size"
 msgstr "Тартуу өлчөмү"
+
+
+msgid "Normal"
+msgstr "Нормаль"
 
 
 msgid "Collision"
@@ -1511,6 +1470,10 @@ msgid "Help"
 msgstr "Жардам"
 
 
+msgid "Mesh"
+msgstr "Политор"
+
+
 msgid "Edge"
 msgstr "Кыр"
 
@@ -1629,6 +1592,10 @@ msgstr "Фокус аралыгы, K1, K2"
 
 msgid "K1, K2"
 msgstr "K1, K2"
+
+
+msgid "Meta"
+msgstr "Мета"
 
 
 msgid "Interface"
@@ -3119,10 +3086,6 @@ msgid "Sky"
 msgstr "Асман"
 
 
-msgid "Bake Mode"
-msgstr "Бышыруу режими"
-
-
 msgid "Bake normals"
 msgstr "Нормалдарды бышыруу"
 
@@ -3235,6 +3198,10 @@ msgid "Ambient"
 msgstr "Чөйрөсү"
 
 
+msgid "Energy"
+msgstr "Энергия"
+
+
 msgid "Aero"
 msgstr "Аэро"
 
@@ -3270,6 +3237,10 @@ msgstr "Z-буфер"
 
 msgid "UV Editor"
 msgstr "UV-редактор"
+
+
+msgid "Speaker"
+msgstr "Үн булагы"
 
 
 msgid "3D"
@@ -3530,10 +3501,6 @@ msgstr "Өчүрүү"
 msgctxt "Operator"
 msgid "Add Image"
 msgstr "Сүрөттү кошуу"
-
-
-msgid "Resolution:"
-msgstr "Чечими:"
 
 
 msgid "Object:"
@@ -4052,11 +4019,6 @@ msgstr "Жаңы"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Жаңы"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Жаңы"
 

@@ -494,7 +494,7 @@ static void stats_string(ViewLayer *view_layer)
 		                    stats_fmt.totobj, memstr, gpumemstr);
 	}
 
-	ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, " | %s", versionstr);
+	/*ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, " | %s", versionstr);/*bfa - turned off the blender version number in the info string */
 #undef MAX_INFO_MEM_LEN
 }
 

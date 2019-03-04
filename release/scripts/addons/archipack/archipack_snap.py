@@ -328,7 +328,7 @@ class ARCHIPACK_OT_snap(ArchipackSnapBase, Operator):
 
             bpy.ops.transform.translate('INVOKE_DEFAULT',
                                         constraint_axis=SnapStore.constraint_axis,
-                                        constraint_orientation=SnapStore.transform_orientation,
+                                        orient_type=SnapStore.transform_orientation,
                                         release_confirm=SnapStore.release_confirm)
 
             logger.debug("Snap.invoke transform.translate done")

@@ -40,7 +40,10 @@ class BlenderLight():
 
         # TODO range
 
-        bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
+        if gltf.blender_active_collection is not None:
+            bpy.data.collections[gltf.blender_active_collection].objects.link(obj)
+        else:
+            bpy.data.scenes[gltf.blender_scene].collection.objects.link(obj)
 
         return obj
 

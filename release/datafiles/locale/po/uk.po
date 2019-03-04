@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2019-02-08 13:58+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -8066,10 +8066,6 @@ msgid "Displacement"
 msgstr "Зміщення"
 
 
-msgid "Dissolve Speed"
-msgstr "Швидкість розчинення"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "Приблизно через скільки кадрів повинне завершитися розчинення"
 
@@ -8088,10 +8084,6 @@ msgstr "Швидкість"
 
 msgid "How much surface velocity affects dripping"
 msgstr "Наскільки швидкість поверхні впливає на стікання"
-
-
-msgid "Dry Speed"
-msgstr "Швидкість висихання"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -10175,8 +10167,8 @@ msgid "Small"
 msgstr "Малі"
 
 
-msgid "Normal"
-msgstr "Нормаль"
+msgid "Regular"
+msgstr "Звичайний"
 
 
 msgid "Large"
@@ -13475,12 +13467,12 @@ msgid "Mirror Modifier"
 msgstr "Модифікатор Дзеркалення"
 
 
-msgid "Clip points"
-msgstr "Відсікання точок"
-
-
 msgid "Object used as center"
 msgstr "Об'єкт, використовуваний як центр"
+
+
+msgid "Clip points"
+msgstr "Відсікання точок"
 
 
 msgid "Mirror this axis"
@@ -13701,10 +13693,6 @@ msgstr "Розраховувати час у секундах"
 
 msgid "First frame of the range"
 msgstr "Перший кадр діапазону"
-
-
-msgid "Apply offset in normal animation direction"
-msgstr "Застосовує зсув у звичайному напрямку анімації"
 
 
 msgid "Reverse"
@@ -17356,14 +17344,6 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "Відстань спаду - інтенсивність світла у цій точці становить половину початкової"
 
 
-msgid "Energy"
-msgstr "Енергія"
-
-
-msgid "Amount of light emitted"
-msgstr "Величина емітованого світла"
-
-
 msgid "Node tree for node based lights"
 msgstr "Дерево вузлів для базованих на вузлах освітлювачів"
 
@@ -17376,45 +17356,20 @@ msgid "Specular reflection multiplier"
 msgstr "Множник блікового відбиття"
 
 
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Тип"
-
-
 msgid "Type of Light"
 msgstr "Тип джерела світла"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Точка"
 
 
 msgid "Omnidirectional point light source"
 msgstr "Всюдиспрямоване точкове джерело світла"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Сонце"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "Джерело паралельних променів постійного напряму"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Прожектор"
-
-
 msgid "Directional cone light source"
 msgstr "Спрямоване конічне джерело світла"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Площина"
 
 
 msgid "Directional area light source"
@@ -17439,6 +17394,14 @@ msgstr "Постійний коефіцієнт"
 
 msgid "Constant distance attenuation coefficient"
 msgstr "Постійний коефіцієнт згасання з відстанню"
+
+
+msgid "Power"
+msgstr "Степінь"
+
+
+msgid "Amount of light emitted"
+msgstr "Величина емітованого світла"
 
 
 msgid "Falloff Type"
@@ -18901,26 +18864,6 @@ msgid "Type of Object"
 msgstr "Тип об'єкта"
 
 
-msgid "Mesh"
-msgstr "Сіть"
-
-
-msgid "Meta"
-msgstr "Мета"
-
-
-msgid "GPencil"
-msgstr "НарОлівець"
-
-
-msgid "Light"
-msgstr "Слабко"
-
-
-msgid "Speaker"
-msgstr "Гучномовець"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "Ліплення динамічної топології"
 
@@ -19553,6 +19496,10 @@ msgid "Dummy"
 msgstr "Фіктивне"
 
 
+msgid "Normal"
+msgstr "Нормаль"
+
+
 msgid "Let the surface normal give the particle a starting velocity"
 msgstr "Хай нормаль поверхні надає частинкам стартової скорості"
 
@@ -19647,14 +19594,6 @@ msgstr "Реактор"
 
 msgid "Let the vector away from the target particle's location give the particle a starting velocity"
 msgstr "Надавати стартової скорості за вектором, спрямованим від положення цільової частинки"
-
-
-msgid "Regrow"
-msgstr "Дорощувати"
-
-
-msgid "Regrow hair for each frame"
-msgstr "Доростити волосся для кожного кадру"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -20027,6 +19966,14 @@ msgstr "Початок/кінець"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "В заданий момент розпочати породження частинок, які не прореагували"
+
+
+msgid "Regrow"
+msgstr "Дорощувати"
+
+
+msgid "Regrow hair for each frame"
+msgstr "Доростити волосся для кожного кадру"
 
 
 msgid "Adaptive Render"
@@ -20621,10 +20568,6 @@ msgstr "Висота"
 
 msgid "Playback pitch of the sound"
 msgstr "Висота відтворення звуку"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "Чи є джерело звуку відносним до камери"
 
 
 msgid "Sound"
@@ -25498,6 +25441,10 @@ msgid "Interpolate"
 msgstr "Інтерполювати"
 
 
+msgid "Mesh"
+msgstr "Сіть"
+
+
 msgid "Edge"
 msgstr "Контур"
 
@@ -25556,6 +25503,10 @@ msgstr "Приховати/маскувати"
 
 msgid "Hooks"
 msgstr "Гачки"
+
+
+msgid "Light"
+msgstr "Слабко"
 
 
 msgid "Make Links"
@@ -30901,6 +30852,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "НЛА-перехід між суміжними смужками"
 
 
+msgid "Meta"
+msgstr "Мета"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "Смужка НЛА діє як контейнер для сусідніх смужок"
 
@@ -31455,10 +31410,6 @@ msgstr "Базис"
 
 msgid "Support negative color by using this as the RGB basis"
 msgstr "Підтримка від'ємного кольору, використовуючи це як базу RGB"
-
-
-msgid "Power"
-msgstr "Степінь"
 
 
 msgid "Slope"
@@ -44499,11 +44450,6 @@ msgid "Remove vertex color layer"
 msgstr "Вилучити шар кольорів вершин"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Згладити вершини"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "Зробити плоскішими кути вибраних вершин"
 
@@ -44526,11 +44472,6 @@ msgstr "Згладити уздовж осі Y"
 
 msgid "Smooth along the Z axis"
 msgstr "Згладити уздовж осі Z"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "Лапласове згладжування вершин"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -47052,14 +46993,6 @@ msgstr "Вималювати і показати грані однорідним
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "Вималювати і показати грані згладженими, з використанням інтерпольованих нормалей вершин"
-
-
-msgid "Glow"
-msgstr "Сяяння"
-
-
-msgid "Rim"
-msgstr "Обід"
 
 
 msgctxt "Operator"
@@ -51030,6 +50963,10 @@ msgstr "Затирання"
 
 msgid "Wipe effect strip type"
 msgstr "Смужка з ефектом затирання"
+
+
+msgid "Glow"
+msgstr "Сяяння"
 
 
 msgid "Glow effect strip type"
@@ -56793,10 +56730,6 @@ msgid "Pie Menu"
 msgstr "Кругове меню"
 
 
-msgid "Regular"
-msgstr "Звичайний"
-
-
 msgid "Theme Space"
 msgstr "Тема простору"
 
@@ -59032,10 +58965,6 @@ msgid "Drag Threshold"
 msgstr "Поріг перетягування"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "Кількість пікселів, на яку потрібно пересунути елемент інтерфейсу, щоб почалося перетягування"
-
-
 msgid "Invert Zoom Direction"
 msgstr "Інвертувати напрям зумування"
 
@@ -59202,14 +59131,6 @@ msgstr "Присувати/відсувати, використовуючи зв
 
 msgid "Softness"
 msgstr "М'якість"
-
-
-msgid "Tweak Threshold"
-msgstr "Поріг підправлення"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "На скільки пікселів потрібно перетягнути, щоб спрацювало підправлення"
 
 
 msgid "Auto Perspective"
@@ -59968,10 +59889,6 @@ msgid "Direct conversion of frame numbers to seconds"
 msgstr "Пряме перетворення номерів кадрів у секунди"
 
 
-msgid "Changes the thickness of lines and points in the interface"
-msgstr "Змінює товщину ліній та точок в інтерфейсі"
-
-
 msgid "Thin"
 msgstr "Тонкі"
 
@@ -59990,10 +59907,6 @@ msgstr "Товщина"
 
 msgid "Thicker lines than the default"
 msgstr "Товстіші лінії, ніж типово"
-
-
-msgid "Changes the size of the fonts and buttons in the interface"
-msgstr "Змінити розміри шрифтів і кнопок в інтерфейсі"
 
 
 msgid "Contents Follow Opening Direction"
@@ -62008,10 +61921,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "Кількість вибірок для запікання впливу середовища з багатороздільного"
 
 
-msgid "Bake Mode"
-msgstr "Режим запікання"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "Виберіть тип відтінення для запікання в зображення"
 
@@ -63192,38 +63101,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "Штучна виштовхувальна сила, протилежна до тяжіння, на основі різниці тисків всередині рідини"
 
 
-msgid "Factor Radius"
-msgstr "Радіус за множником"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "Радіус взаємодії становить 4 * розмір частинки"
-
-
-msgid "Factor Repulsion"
-msgstr "Відштовхування за множником"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "Відштовхування є коефіцієнтом тугості"
-
-
-msgid "Factor Rest Length"
-msgstr "Довжина спокою за множником"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "Довжина спокою пружини є результатом множення розміру частинок на 2"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "Коефіцієнт жорсткої в'язкості"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "Жорстка в'язкість є множником до нормальної в'язкості"
-
-
 msgid "Interaction Radius"
 msgstr "Радіус взаємодії"
 
@@ -63322,6 +63199,38 @@ msgstr "Коефіцієнт густини"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "Щільність визначається як коефіцієнт стандартної щільності (в залежності від розміру частинок)"
+
+
+msgid "Factor Radius"
+msgstr "Радіус за множником"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "Радіус взаємодії становить 4 * розмір частинки"
+
+
+msgid "Factor Repulsion"
+msgstr "Відштовхування за множником"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "Відштовхування є коефіцієнтом тугості"
+
+
+msgid "Factor Rest Length"
+msgstr "Довжина спокою за множником"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "Довжина спокою пружини є результатом множення розміру частинок на 2"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "Коефіцієнт жорсткої в'язкості"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "Жорстка в'язкість є множником до нормальної в'язкості"
 
 
 msgid "Initial Rest Length"
@@ -63946,20 +63855,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "Помножити кінцеву швидкість на коефіцієнт швидкості"
 
 
-msgid "Scale to length"
-msgstr "Масштабування за довжиною"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Перевести значення з 0.0 - 1.0 до довжини цільової послідовності"
-
-
 msgid "Use as speed"
 msgstr "Вжити як швидкість"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "Інтерпретувати значення, як швидкість, а не номер кадру"
+
+
+msgid "Scale to length"
+msgstr "Масштабування за довжиною"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "Перевести значення з 0.0 - 1.0 до довжини цільової послідовності"
 
 
 msgid "Subtract Sequence"
@@ -64261,14 +64170,6 @@ msgstr "Смужка послідовності, що визначає звук,
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "Панорамування відтворення звуку (лише для моно-джерел)"
-
-
-msgid "Draw Waveform"
-msgstr "Малювати форму хвилі"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "Чи показувати форму звукової хвилі"
 
 
 msgid "Sound data-block used by this sequence"
@@ -64683,6 +64584,10 @@ msgid "Ambient"
 msgstr "Навколишній"
 
 
+msgid "Energy"
+msgstr "Енергія"
+
+
 msgid "Shape Key"
 msgstr "Ключ форми"
 
@@ -64697,10 +64602,6 @@ msgstr "Кадр для абсолютного ключа"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "Тип інтерполяції для абсолютних ключів форм"
-
-
-msgid "Mute this shape key"
-msgstr "Вимкнути цей ключ форми"
 
 
 msgid "Name of Shape Key"
@@ -65011,8 +64912,8 @@ msgid "Thickness of smoke drawing in the viewport"
 msgstr "Товщина прорису диму в області перегляду"
 
 
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "Перемкнути візуалльне представлення поля швидкості при потребі"
+msgid "Dissolve Speed"
+msgstr "Швидкість розчинення"
 
 
 msgid "res"
@@ -65121,6 +65022,10 @@ msgstr "Показ з високою роздільністю"
 
 msgid "Show high resolution (using amplification)"
 msgstr "Показати у високій роздільності (з підсиленням)"
+
+
+msgid "Toggle visualization of the velocity field as needles"
+msgstr "Перемкнути візуалльне представлення поля швидкості при потребі"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -67246,6 +67151,10 @@ msgstr "Показати гізмо"
 
 msgid "Show gizmos of all types"
 msgstr "Показати гізмо всіх типів"
+
+
+msgid "Speaker"
+msgstr "Гучномовець"
 
 
 msgid "Show Reconstruction"
@@ -69388,10 +69297,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "Межа для видалення дублікатів та автооб'єднання"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Зміна ребер шва переобчислює UV-розгортку"
-
-
 msgid "Edge Tag Mode"
 msgstr "Режим позначення ребер"
 
@@ -69562,6 +69467,10 @@ msgstr "Автоматична нормалізація при малюванн�
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Забезпечити при малюванні вагомості верхню межу 1,0 для всіх груп вершин  деформації кістки"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "Зміна ребер шва переобчислює UV-розгортку"
 
 
 msgid "Gizmo Mode"
@@ -71383,10 +71292,6 @@ msgid "OpenCL Flags:"
 msgstr "Прапорці OpenCL:"
 
 
-msgid "Kernel"
-msgstr "Ядро"
-
-
 msgid "%s AA"
 msgstr "%s згладж."
 
@@ -71411,6 +71316,14 @@ msgid "Portal"
 msgstr "Портал"
 
 
+msgid "Extrusion"
+msgstr "Витискання"
+
+
+msgid "Ray Distance"
+msgstr "Відстань променя"
+
+
 msgid "Curve subdivisions"
 msgstr "Поділи кривої"
 
@@ -71423,14 +71336,6 @@ msgstr "Присвоїти"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "Зняти вибір"
-
-
-msgid "Extrusion"
-msgstr "Витискання"
-
-
-msgid "Ray Distance"
-msgstr "Відстань променя"
 
 
 msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
@@ -72227,10 +72132,6 @@ msgid "Move To Bottom"
 msgstr "Пересунути на низ"
 
 
-msgid "Resolution:"
-msgstr "Роздільність:"
-
-
 msgid "Object:"
 msgstr "Об'єкт:"
 
@@ -72434,6 +72335,10 @@ msgstr "Складка:"
 
 msgid "Outer"
 msgstr "Назовні"
+
+
+msgid "Rim"
+msgstr "Обід"
 
 
 msgid "Material Index Offset:"
@@ -76100,6 +76005,10 @@ msgid "Mball"
 msgstr "Метакуля"
 
 
+msgid "GPencil"
+msgstr "НарОлівець"
+
+
 msgid "No new files have been packed"
 msgstr "Жодного нового файлу не упаковано"
 
@@ -77926,11 +77835,6 @@ msgid "New"
 msgstr "Новий"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "Новий"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "Новий"
@@ -78107,10 +78011,6 @@ msgstr "Сфера"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Iкосфера"
-
-
-msgid "Confirm: (Enter/LMB), Cancel: (Esc/RMB), Mode: %s (M), Clamp Overlap: %s (C), Vertex Only: %s (V), Profile Control: %s (P), Offset: %s, Segments: %d, Profile: %.3f"
-msgstr "Підтвердити: (Enter/LMB), Скасувати: (Esc/RMB), Режим: %s (M), Фікс. перекриття: %s (C), Лише вершини: %s (V), Керув. профілем: %s (P), Зсув: %s, Сегментів: %d, Профіль: %.3f"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -80742,10 +80642,6 @@ msgid "Could not reopen file"
 msgstr "Неможливо повторно відкрити файл"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "Скрипт Python перервано; детальніше див. консоль"
-
-
 msgid "Python disabled in this build"
 msgstr "У цій збірці Python вимкнено"
 
@@ -82859,10 +82755,6 @@ msgstr "Відсутнє вікно в контексті"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "Надійне джерело [Ненадійний шлях]"
-
-
-msgid "Save Over?"
-msgstr "Перезаписати?"
 
 
 msgid "unable to open the file"

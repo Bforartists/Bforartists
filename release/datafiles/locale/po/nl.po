@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -790,31 +790,6 @@ msgid "Movie"
 msgstr "Film"
 
 
-msgctxt "Lamp"
-msgid "Type"
-msgstr "Type"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "Punt"
-
-
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "Zon"
-
-
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "Spot"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "Gebied"
-
-
 msgid "Falloff Type"
 msgstr "Type Afvlakking"
 
@@ -885,10 +860,6 @@ msgstr "Star Lichaam Instellingen"
 
 msgid "Rigid Body Constraint"
 msgstr "Star Lichaam Beperking"
-
-
-msgid "Meta"
-msgstr "Meta"
 
 
 msgid "Cross"
@@ -1373,6 +1344,10 @@ msgstr "Selecteer Patroon"
 
 msgid "Custom Color"
 msgstr "Eigen Kleur"
+
+
+msgid "Meta"
+msgstr "Meta"
 
 
 msgid "Sound Clip"
@@ -2949,11 +2924,6 @@ msgstr "Voeg Kleur van Punt Toe"
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Verwijder Kleur van Punt"
-
-
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "Maak Punt Glad"
 
 
 msgctxt "Operator"
@@ -5018,10 +4988,6 @@ msgid "Lock Invert All"
 msgstr "Vergrende Al het Tegenovergestelde"
 
 
-msgid "Resolution:"
-msgstr "Resolutie:"
-
-
 msgid "Sharp Edges"
 msgstr "Scherpe Randen"
 
@@ -5974,11 +5940,6 @@ msgstr "Nieuw"
 
 
 msgctxt "Lattice"
-msgid "New"
-msgstr "Nieuw"
-
-
-msgctxt "Lamp"
 msgid "New"
 msgstr "Nieuw"
 

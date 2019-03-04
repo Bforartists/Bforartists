@@ -92,7 +92,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
     use_selection: BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=False,
+            default=True,
             )
     use_mesh_modifiers: BoolProperty(
             name="Apply Modifiers",

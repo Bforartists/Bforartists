@@ -60,7 +60,8 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
         row.use_property_decorate = False
         row.prop(ob, "lock_location", text="", emboss=False, icon='DECORATE_UNLOCKED')
 
-        if ob.rotation_mode == 'QUATERNION':
+        rotation_mode = ob.rotation_mode
+        if rotation_mode == 'QUATERNION':
             col = flow.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_quaternion", text="Rotation")
@@ -68,10 +69,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             sub.use_property_decorate = False
             sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
             sub.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
-        elif ob.rotation_mode == 'AXIS_ANGLE':
-            # row.column().label(text="Rotation")
-            #row.column().prop(pchan, "rotation_angle", text="Angle")
-            #row.column().prop(pchan, "rotation_axis", text="Axis")
+        elif rotation_mode == 'AXIS_ANGLE':
             col = flow.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_axis_angle", text="Rotation")
@@ -114,13 +112,10 @@ class OBJECT_PT_delta_transform(ObjectButtonsPanel, Panel):
         col.prop(ob, "delta_location")
 
         col = flow.column()
-        if ob.rotation_mode == 'QUATERNION':
+        rotation_mode = ob.rotation_mode
+        if rotation_mode == 'QUATERNION':
             col.prop(ob, "delta_rotation_quaternion", text="Rotation")
-        elif ob.rotation_mode == 'AXIS_ANGLE':
-            # row.column().label(text="Rotation")
-            #row.column().prop(pchan, "delta_rotation_angle", text="Angle")
-            #row.column().prop(pchan, "delta_rotation_axis", text="Axis")
-            #row.column().prop(ob, "delta_rotation_axis_angle", text="Rotation")
+        elif rotation_mode == 'AXIS_ANGLE':
             col.label(text="Not for Axis-Angle")
         else:
             col.prop(ob, "delta_rotation_euler", text="Delta Rotation")
@@ -226,6 +221,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         is_wire = (obj_type in {'CAMERA', 'EMPTY'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
+        is_gpencil = (obj_type == 'GPENCIL')
 
         col = flow.column()
         col.prop(obj, "show_name", text="Name")
@@ -261,19 +257,33 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
             col.active = is_dupli
         col.prop(obj, "display_type", text="Display As")
 
-        split = flow.split(factor=0.6)
-        split.prop(obj, "show_bounds", text="Bounds")
-        row = split.row()
-        row.active = obj.show_bounds or (obj.display_type == 'BOUNDS')
-        row.prop(obj, "display_bounds_type", text="")
-
-        if is_geometry or is_empty_image:
+        if is_geometry or is_empty_image or is_gpencil:
             # Only useful with object having faces/materials...
             col = flow.column()
             col.prop(obj, "color")
 
 
-class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
+class OBJECT_PT_display_bounds(ObjectButtonsPanel, Panel):
+    bl_label = "Boundary"
+    bl_parent_id = "OBJECT_PT_display"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+
+        obj = context.object
+
+        self.layout.prop(obj, "show_bounds", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        obj = context.object
+        layout.use_property_split = True
+
+        layout.active = obj.show_bounds or (obj.display_type == 'BOUNDS')
+        layout.prop(obj, "display_bounds_type", text="Shape")
+
+
+class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
     bl_label = "Instancing"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -291,13 +301,6 @@ class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
         if ob.instance_type == 'VERTS':
             layout.prop(ob, "use_instance_vertices_rotation", text="Rotation")
 
-        elif ob.instance_type == 'FACES':
-            col = flow.column()
-            col.prop(ob, "use_instance_faces_scale", text="Scale")
-            sub = col.column()
-            sub.active = ob.use_instance_faces_scale
-            sub.prop(ob, "instance_faces_scale", text="Inherit Scale")
-
         elif ob.instance_type == 'COLLECTION':
             col = flow.column()
             col.prop(ob, "instance_collection", text="Collection")
@@ -312,6 +315,29 @@ from .properties_animviz import (
     MotionPathButtonsPanel,
     MotionPathButtonsPanel_display,
 )
+
+
+class OBJECT_PT_instancing_size(ObjectButtonsPanel, Panel):
+    bl_label = "Size"
+    bl_parent_id = "OBJECT_PT_instancing"
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return ob.instance_type == 'FACES'
+
+    def draw_header(self, context):
+
+        ob = context.object
+        self.layout.prop(ob, "use_instance_faces_scale", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.object
+        layout.use_property_split = True
+
+        layout.active = ob.use_instance_faces_scale
+        layout.prop(ob, "instance_faces_scale", text="Inherit Scale")
 
 
 class OBJECT_PT_motion_paths(MotionPathButtonsPanel, Panel):
@@ -366,10 +392,12 @@ classes = (
     OBJECT_PT_relations,
     COLLECTION_MT_specials,
     OBJECT_PT_collections,
-    OBJECT_PT_duplication,
+    OBJECT_PT_instancing,
+    OBJECT_PT_instancing_size,
     OBJECT_PT_motion_paths,
     OBJECT_PT_motion_paths_display,
     OBJECT_PT_display,
+    OBJECT_PT_display_bounds,
     OBJECT_PT_custom_props,
 )
 

@@ -23,13 +23,14 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_utildefines.h"
+
+#include "BLI_math.h"
+
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
-
-#include "BLI_utildefines.h"
-#include "BLI_math.h"
 
 #include "BKE_deform.h"
 #include "BKE_mesh.h"
@@ -61,16 +62,11 @@ static void initData(ModifierData *md)
 	bmd->profile = 0.5f;
 	bmd->bevel_angle = DEG2RADF(30.0f);
 	bmd->defgrp_name[0] = '\0';
-	bmd->clnordata.faceHash = NULL;
 }
 
 static void copyData(const ModifierData *md_src, ModifierData *md_dst, const int flag)
 {
-	BevelModifierData *bmd_dst = (BevelModifierData *)md_dst;
-
 	modifier_copyData_generic(md_src, md_dst, flag);
-
-	bmd_dst->clnordata.faceHash = NULL;
 }
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
@@ -198,9 +194,6 @@ static Mesh *applyModifier(ModifierData *md, const ModifierEvalContext *ctx, Mes
 	           bm->etoolflagpool == NULL &&
 	           bm->ftoolflagpool == NULL);  /* make sure we never alloc'd these */
 	BM_mesh_free(bm);
-
-	if (bmd->clnordata.faceHash)
-		BLI_ghash_free(bmd->clnordata.faceHash, NULL, NULL);
 
 	result->runtime.cd_dirty_vert |= CD_MASK_NORMAL;
 

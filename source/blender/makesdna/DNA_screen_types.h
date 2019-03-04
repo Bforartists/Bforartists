@@ -87,7 +87,7 @@ typedef struct bScreen {
 	char skip_handling;
 	/** Set when scrubbing to avoid some costly updates. */
 	char scrubbing;
-	char pad[1];
+	char _pad[1];
 
 	/** Active region that has mouse focus. */
 	struct ARegion *active_region;
@@ -116,7 +116,7 @@ typedef struct ScrEdge {
 	/** 1 when at edge of screen. */
 	short border;
 	short flag;
-	int pad;
+	char _pad[4];
 } ScrEdge;
 
 typedef struct ScrAreaMap {
@@ -149,7 +149,8 @@ typedef struct Panel {
 	int sizex, sizey;
 	/** Panel size excluding children. */
 	int blocksizex, blocksizey;
-	short labelofs, pad;
+	short labelofs;
+	char _pad[2];
 	short flag, runtime_flag;
 	short control;
 	short snap;
@@ -260,7 +261,7 @@ typedef struct TransformOrientation {
 	/** MAX_NAME. */
 	char name[64];
 	float mat[3][3];
-	int pad;
+	char _pad[4];
 } TransformOrientation;
 
 /** Some preview UI data need to be saved in file. */
@@ -270,7 +271,7 @@ typedef struct uiPreview {
 	/** Defined as UI_MAX_NAME_STR. */
 	char preview_id[64];
 	short height;
-	short pad1[3];
+	char _pad1[6];
 } uiPreview;
 
 /* These two lines with # tell makesdna this struct can be excluded.
@@ -292,7 +293,7 @@ typedef struct ScrGlobalAreaData {
 
 	/** GlobalAreaFlag. */
 	short flag;
-	short pad;
+	char _pad[2];
 } ScrGlobalAreaData;
 
 enum GlobalAreaFlag {
@@ -337,7 +338,7 @@ typedef struct ScrArea {
 	char headertype DNA_DEPRECATED;/* OLD! 0=no header, 1= down, 2= up */
 	char do_refresh;				/* private, for spacetype refresh callback */
 
-	char temp, pad[5]; /* bfa - changed to allow int*/
+	char temp, _pad[5]; /* bfa - changed to allow int*/
 
 	struct SpaceType *type;		/* callbacks for this space type */
 
@@ -404,7 +405,7 @@ typedef struct ARegion {
 	short overlap;
 	/** Temporary copy of flag settings for clean fullscreen. */
 	short flagfullscreen;
-	short pad1, pad2;
+	char _pad[4];
 
 	/** Callbacks for this region type. */
 	struct ARegionType *type;

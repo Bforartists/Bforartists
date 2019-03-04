@@ -33,7 +33,7 @@
 #include "DNA_modifier_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_armature_types.h"
-#include "DNA_lamp_types.h"
+#include "DNA_light_types.h"
 #include "DNA_workspace_types.h"
 #include "DNA_gpencil_types.h"
 
@@ -866,16 +866,16 @@ static bool select_grouped_siblings(bContext *C, Object *ob)
 	CTX_DATA_END;
 	return changed;
 }
-static bool select_grouped_lamptype(bContext *C, Object *ob)
+static bool select_grouped_lighttype(bContext *C, Object *ob)
 {
-	Lamp *la = ob->data;
+	Light *la = ob->data;
 
 	bool changed = false;
 
 	CTX_DATA_BEGIN (C, Base *, base, selectable_bases)
 	{
 		if (base->object->type == OB_LAMP) {
-			Lamp *la_test = base->object->data;
+			Light *la_test = base->object->data;
 			if ((la->type == la_test->type) && ((base->flag & BASE_SELECTED) == 0)) {
 				ED_object_base_select(base, BA_SELECT);
 				changed = true;
@@ -1038,7 +1038,7 @@ static int object_select_grouped_exec(bContext *C, wmOperator *op)
 				BKE_report(op->reports, RPT_ERROR, "Active object must be a light");
 				break;
 			}
-			changed |= select_grouped_lamptype(C, ob);
+			changed |= select_grouped_lighttype(C, ob);
 			break;
 		default:
 			break;

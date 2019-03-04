@@ -145,7 +145,7 @@ void ED_view3d_update_viewmat(
 		rv3d->viewcamtexcofac[2] = rv3d->viewcamtexcofac[3] = 0.0f;
 	}
 
-	/* calculate pixelsize factor once, is used for lamps and obcenters */
+	/* calculate pixelsize factor once, is used for lights and obcenters */
 	{
 		/* note:  '1.0f / len_v3(v1)'  replaced  'len_v3(rv3d->viewmat[0])'
 		 * because of float point precision problems at large values [#23908] */
@@ -790,12 +790,11 @@ float ED_view3d_grid_view_scale(
 			/* Allow 3 more subdivisions (see OBJECT_engine_init). */
 			grid_scale /= powf(grid_subdiv, 3);
 
-			float grid_distance = rv3d->dist;
-			float lvl = (logf(grid_distance / grid_scale) / logf(grid_subdiv));
+			/* `3.0` was a value obtained by trial and error in order to get
+			 * a nice snap distance.*/
+			float grid_res = 3.0 * (rv3d->dist / v3d->lens);
+			float lvl = (logf(grid_res / grid_scale) / logf(grid_subdiv));
 
-			/* 1.3f is a visually chosen offset for the
-			 * subdivision to match the visible grid. */
-			lvl -= 1.3f;
 			CLAMP_MIN(lvl, 0.0f);
 
 			grid_scale *= pow(grid_subdiv, (int)lvl);
@@ -820,7 +819,7 @@ static void draw_view_axis(RegionView3D *rv3d, const rcti *rect)
 	const float starty = rect->ymax - (k + UI_UNIT_Y);
 
 	float axis_pos[3][2];
-	unsigned char axis_col[3][4];
+	uchar axis_col[3][4];
 
 	int axis_order[3] = {0, 1, 2};
 	axis_sort_v3(rv3d->viewinv[2], axis_order);
@@ -1466,7 +1465,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
         Depsgraph *depsgraph, Scene *scene,
         int drawtype,
         View3D *v3d, ARegion *ar, int sizex, int sizey,
-        unsigned int flag, unsigned int draw_flags,
+        uint flag, uint draw_flags,
         int alpha_mode, int samples, const char *viewname,
         /* output vars */
         GPUOffScreen *ofs, char err_out[256])
@@ -1592,7 +1591,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
 			        &fx_settings, ofs, viewport);
 			GPU_offscreen_read_pixels(ofs, GL_FLOAT, rect_temp);
 
-			unsigned int i = sizex * sizey * 4;
+			uint i = sizex * sizey * 4;
 			while (i--) {
 				accum_buffer[i] += rect_temp[i];
 			}
@@ -1610,16 +1609,16 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
 
 		if (ibuf->rect_float) {
 			float *rect_float = ibuf->rect_float;
-			unsigned int i = sizex * sizey * 4;
+			uint i = sizex * sizey * 4;
 			while (i--) {
 				rect_float[i] = accum_buffer[i] / samples;
 			}
 		}
 		else {
-			unsigned char *rect_ub = (unsigned char *)ibuf->rect;
-			unsigned int i = sizex * sizey * 4;
+			uchar *rect_ub = (uchar *)ibuf->rect;
+			uint i = sizex * sizey * 4;
 			while (i--) {
-				rect_ub[i] = (unsigned char)(255.0f * accum_buffer[i] / samples);
+				rect_ub[i] = (uchar)(255.0f * accum_buffer[i] / samples);
 			}
 		}
 
@@ -1657,7 +1656,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(
         Depsgraph *depsgraph, Scene *scene,
         int drawtype,
         Object *camera, int width, int height,
-        unsigned int flag, unsigned int draw_flags,
+        uint flag, uint draw_flags,
         int alpha_mode, int samples, const char *viewname,
         GPUOffScreen *ofs, char err_out[256])
 {

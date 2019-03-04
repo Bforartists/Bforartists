@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 44) (b'0b6dbbc306b0')\n"
+"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-10 11:10:46\n"
+"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -7139,10 +7139,6 @@ msgid "Displacement"
 msgstr "변위"
 
 
-msgid "Dissolve Speed"
-msgstr "디졸브 속력"
-
-
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "대략 얼마나 많은 프레임이 디졸브되어야 하는지"
 
@@ -7161,10 +7157,6 @@ msgstr "속도"
 
 msgid "How much surface velocity affects dripping"
 msgstr "얼마나 많은 표면 속도가 물방울에 영향을 미치는지"
-
-
-msgid "Dry Speed"
-msgstr "건조 속력"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -9112,8 +9104,8 @@ msgid "Small"
 msgstr "작은"
 
 
-msgid "Normal"
-msgstr "노멀"
+msgid "Regular"
+msgstr "정규"
 
 
 msgid "Large"
@@ -14899,49 +14891,20 @@ msgid "Falloff distance - the light is at half the original intensity at this po
 msgstr "감소 거리 - 이 포인트에서 조명은 원본 강도의 절반"
 
 
-msgid "Energy"
-msgstr "에너지"
-
-
 msgid "Specular Factor"
 msgstr "반사 팩터"
-
-
-msgctxt "Lamp"
-msgid "Type"
-msgstr "유형"
-
-
-msgctxt "Lamp"
-msgid "Point"
-msgstr "포인트"
 
 
 msgid "Omnidirectional point light source"
 msgstr "전방향의 포인트 광원"
 
 
-msgctxt "Lamp"
-msgid "Sun"
-msgstr "태양"
-
-
 msgid "Constant direction parallel ray light source"
 msgstr "등방성 평행 광선 조명 소스"
 
 
-msgctxt "Lamp"
-msgid "Spot"
-msgstr "스폿"
-
-
 msgid "Directional cone light source"
 msgstr "지향성의 원뿔 광원"
-
-
-msgctxt "Lamp"
-msgid "Area"
-msgstr "영역"
 
 
 msgid "Directional area light source"
@@ -14954,6 +14917,10 @@ msgstr "상수 계수"
 
 msgid "Constant distance attenuation coefficient"
 msgstr "상수 거리 감쇠 계수"
+
+
+msgid "Power"
+msgstr "파워"
 
 
 msgid "Falloff Type"
@@ -16416,26 +16383,6 @@ msgid "Type of Object"
 msgstr "오브젝트의 유형"
 
 
-msgid "Mesh"
-msgstr "메쉬"
-
-
-msgid "Meta"
-msgstr "메타"
-
-
-msgid "GPencil"
-msgstr "G펜슬"
-
-
-msgid "Light"
-msgstr "조명"
-
-
-msgid "Speaker"
-msgstr "스피커"
-
-
 msgid "Dynamic Topology Sculpting"
 msgstr "다이나믹 토폴로지 조형하기"
 
@@ -17068,6 +17015,10 @@ msgid "Dummy"
 msgstr "모형"
 
 
+msgid "Normal"
+msgstr "노멀"
+
+
 msgid "Let the surface normal give the particle a starting velocity"
 msgstr "표면의 노멀이 파티클에게 시작 속도를 부여하게 합니다"
 
@@ -17162,14 +17113,6 @@ msgstr "반응기"
 
 msgid "Let the vector away from the target particle's location give the particle a starting velocity"
 msgstr "벡터가 대상 파티클의 위치에서 멀어지게 하여 파티클에게 시작 속도를 부여합니다"
-
-
-msgid "Regrow"
-msgstr "재성장"
-
-
-msgid "Regrow hair for each frame"
-msgstr "각 프레임마다 머리카락을 다시 재성장"
 
 
 msgid "How many steps paths are rendered with (power of 2)"
@@ -17534,6 +17477,14 @@ msgstr "시작/종료"
 
 msgid "Give birth to unreacted particles eventually"
 msgstr "결국 미 반응 입자들로 출생합니다"
+
+
+msgid "Regrow"
+msgstr "재성장"
+
+
+msgid "Regrow hair for each frame"
+msgstr "각 프레임마다 머리카락을 다시 재성장"
 
 
 msgid "Adaptive Render"
@@ -18120,10 +18071,6 @@ msgstr "피치"
 
 msgid "Playback pitch of the sound"
 msgstr "사운드의 재생 피치"
-
-
-msgid "Whether the source is relative to the camera or not"
-msgstr "소스가 카메라와 관련이 있는지 없는지"
 
 
 msgid "Sound"
@@ -22999,6 +22946,10 @@ msgid "Interpolate"
 msgstr "보간"
 
 
+msgid "Mesh"
+msgstr "메쉬"
+
+
 msgid "Edge"
 msgstr "에지"
 
@@ -23057,6 +23008,10 @@ msgstr "숨기기/마스크"
 
 msgid "Hooks"
 msgstr "후크"
+
+
+msgid "Light"
+msgstr "조명"
 
 
 msgid "Make Links"
@@ -28394,6 +28349,10 @@ msgid "NLA Strip 'transitions' between adjacent strips"
 msgstr "인접한 스트립 사이의 NLA 스트립 '전환'"
 
 
+msgid "Meta"
+msgstr "메타"
+
+
 msgid "NLA Strip acts as a container for adjacent strips"
 msgstr "인접한 스트립들에 대해 컨테이너로 NLA 스트립 역할"
 
@@ -28948,10 +28907,6 @@ msgstr "기반"
 
 msgid "Support negative color by using this as the RGB basis"
 msgstr "RGB 기반으로 이를 이용하여 음성 색상을 지원"
-
-
-msgid "Power"
-msgstr "파워"
 
 
 msgid "Slope"
@@ -41918,11 +41873,6 @@ msgid "Remove vertex color layer"
 msgstr "버텍스 색상 레이어를 제거"
 
 
-msgctxt "Operator"
-msgid "Smooth Vertex"
-msgstr "스무스 버텍스"
-
-
 msgid "Flatten angles of selected vertices"
 msgstr "선택된 버텍스의 각도를 평평하게"
 
@@ -41945,11 +41895,6 @@ msgstr "Y 축 따라 스무스"
 
 msgid "Smooth along the Z axis"
 msgstr "Z 축 따라 스무스"
-
-
-msgctxt "Operator"
-msgid "Laplacian Smooth Vertex"
-msgstr "라플라시안 스무스 버텍스"
 
 
 msgid "Laplacian smooth of selected vertices"
@@ -44471,14 +44416,6 @@ msgstr "균일한 페이스를 표시 및 렌더, 페이스 노멀을 사용"
 
 msgid "Render and display faces smooth, using interpolated Vertex Normals"
 msgstr "매끄러운 페이스를 표시 및 렌더, 보간된 버텍스 노멀을 사용"
-
-
-msgid "Glow"
-msgstr "발광"
-
-
-msgid "Rim"
-msgstr "가장자리"
 
 
 msgctxt "Operator"
@@ -48449,6 +48386,10 @@ msgstr "웨이프"
 
 msgid "Wipe effect strip type"
 msgstr "웨이프 이펙트 스트립 유형"
+
+
+msgid "Glow"
+msgstr "발광"
 
 
 msgid "Glow effect strip type"
@@ -54188,10 +54129,6 @@ msgid "Pie Menu"
 msgstr "파이 메뉴"
 
 
-msgid "Regular"
-msgstr "정규"
-
-
 msgid "Theme Space"
 msgstr "테마 공간"
 
@@ -56407,10 +56344,6 @@ msgid "Drag Threshold"
 msgstr "드래그 임계 값"
 
 
-msgid "Amount of pixels you have to drag before dragging UI items happens"
-msgstr "UI 항목을 드래그하기 전에 사용자가 드래그해야 하는 픽셀의 양"
-
-
 msgid "Invert Zoom Direction"
 msgstr "줌 방향을 반전"
 
@@ -56577,14 +56510,6 @@ msgstr "반대편 방향을 사용하여 줌"
 
 msgid "Softness"
 msgstr "유연성"
-
-
-msgid "Tweak Threshold"
-msgstr "트윅 임계 값"
-
-
-msgid "Number of pixels you have to drag before tweak event is triggered"
-msgstr "트윅 이벤트가 트리거되기 전에 드래그해야 하는 픽셀 수"
 
 
 msgid "Auto Perspective"
@@ -57335,10 +57260,6 @@ msgid "Direct conversion of frame numbers to seconds"
 msgstr "초 단위로 프레임 번호의 직접 변환"
 
 
-msgid "Changes the thickness of lines and points in the interface"
-msgstr "인터페이스에서 선과 점의 두께를 변경합니다"
-
-
 msgid "Thin"
 msgstr "얇은"
 
@@ -57357,10 +57278,6 @@ msgstr "두꺼운"
 
 msgid "Thicker lines than the default"
 msgstr "기본 값보다 더 두꺼운 선"
-
-
-msgid "Changes the size of the fonts and buttons in the interface"
-msgstr "인터페이스의 글꼴 및 버튼 크기를 변경합니다"
 
 
 msgid "Contents Follow Opening Direction"
@@ -59315,10 +59232,6 @@ msgid "Number of samples used for ambient occlusion baking from multires"
 msgstr "멀티리스에서의 베이크하는 주변 폐색에 대해 사용된 샘플의 수"
 
 
-msgid "Bake Mode"
-msgstr "베이크 모드"
-
-
 msgid "Choose shading information to bake into the image"
 msgstr "이미지로 베이크하는 셰이딩 정보를 선택하기"
 
@@ -60499,38 +60412,6 @@ msgid "Artificial buoyancy force in negative gravity direction based on pressure
 msgstr "유체 내부의 압력차에 근거한 반중력 방향의 인위적인 부력 포스"
 
 
-msgid "Factor Radius"
-msgstr "팩터 반경"
-
-
-msgid "Interaction radius is a factor of 4 * particle size"
-msgstr "상호 작용 반경은 4 * 파티클 크기의 팩터"
-
-
-msgid "Factor Repulsion"
-msgstr "팩터 반발"
-
-
-msgid "Repulsion is a factor of stiffness"
-msgstr "반발 은 강성의 팩터임"
-
-
-msgid "Factor Rest Length"
-msgstr "팩터 휴식 길이"
-
-
-msgid "Spring rest length is a factor of 2 * particle size"
-msgstr "스프링 나머지 길이는 2 * 파티클 크기의 팩터"
-
-
-msgid "Factor Stiff Viscosity"
-msgstr "팩터 뻑뻑한 점도"
-
-
-msgid "Stiff viscosity is a factor of normal viscosity"
-msgstr "뻑뻑한 점도는 노멀 점도의 팩터"
-
-
 msgid "Interaction Radius"
 msgstr "상호작용 반경"
 
@@ -60629,6 +60510,38 @@ msgstr "팩터 밀도"
 
 msgid "Density is calculated as a factor of default density (depends on particle size)"
 msgstr "밀도는 기본 농도의 요소로 계산됩니다 (파티클 크기에 따라 다름)"
+
+
+msgid "Factor Radius"
+msgstr "팩터 반경"
+
+
+msgid "Interaction radius is a factor of 4 * particle size"
+msgstr "상호 작용 반경은 4 * 파티클 크기의 팩터"
+
+
+msgid "Factor Repulsion"
+msgstr "팩터 반발"
+
+
+msgid "Repulsion is a factor of stiffness"
+msgstr "반발 은 강성의 팩터임"
+
+
+msgid "Factor Rest Length"
+msgstr "팩터 휴식 길이"
+
+
+msgid "Spring rest length is a factor of 2 * particle size"
+msgstr "스프링 나머지 길이는 2 * 파티클 크기의 팩터"
+
+
+msgid "Factor Stiff Viscosity"
+msgstr "팩터 뻑뻑한 점도"
+
+
+msgid "Stiff viscosity is a factor of normal viscosity"
+msgstr "뻑뻑한 점도는 노멀 점도의 팩터"
 
 
 msgid "Initial Rest Length"
@@ -61253,20 +61166,20 @@ msgid "Multiply the resulting speed after the speed factor"
 msgstr "속력 팩터 이후 속력 결과를 곱하기"
 
 
-msgid "Scale to length"
-msgstr "길이에 확장"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "대상 시퀀스 길이로 1.0에 0.0에서 규모 값"
-
-
 msgid "Use as speed"
 msgstr "속력으로 사용"
 
 
 msgid "Interpret the value as speed instead of a frame number"
 msgstr "프레임 번호의 대신에 속력으로 값을 해석"
+
+
+msgid "Scale to length"
+msgstr "길이에 확장"
+
+
+msgid "Scale values from 0.0 to 1.0 to target sequence length"
+msgstr "대상 시퀀스 길이로 1.0에 0.0에서 규모 값"
 
 
 msgid "Subtract Sequence"
@@ -61543,14 +61456,6 @@ msgstr "일정 시간 동안 재생할 사운드를 정의하는 시퀀스 스�
 
 msgid "Playback panning of the sound (only for Mono sources)"
 msgstr "사운드의 재생 패닝 (모노 소스에만 해당)"
-
-
-msgid "Draw Waveform"
-msgstr "파형을 그리기"
-
-
-msgid "Whether to draw the sound's waveform"
-msgstr "사운드 파형을 그릴 때 물어보기"
 
 
 msgid "Sound data-block used by this sequence"
@@ -61965,6 +61870,10 @@ msgid "Ambient"
 msgstr "주변"
 
 
+msgid "Energy"
+msgstr "에너지"
+
+
 msgid "Shape Key"
 msgstr "셰이프 키"
 
@@ -61979,10 +61888,6 @@ msgstr "절대적인 키에 대한 프레임"
 
 msgid "Interpolation type for absolute shape keys"
 msgstr "절대적인 셰이프 키의 보간 유형"
-
-
-msgid "Mute this shape key"
-msgstr "이 셰이프 키를 음소거"
 
 
 msgid "Name of Shape Key"
@@ -62285,8 +62190,8 @@ msgid "Thickness of smoke drawing in the viewport"
 msgstr "뷰포트에서 그리는 스모크의 두께"
 
 
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "니들로 속도 필드의 시각화를 전환"
+msgid "Dissolve Speed"
+msgstr "디졸브 속력"
 
 
 msgid "res"
@@ -62387,6 +62292,10 @@ msgstr "고해상도를 표시"
 
 msgid "Show high resolution (using amplification)"
 msgstr "고해상도를 표시 (증폭을 사용)"
+
+
+msgid "Toggle visualization of the velocity field as needles"
+msgstr "니들로 속도 필드의 시각화를 전환"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -64476,6 +64385,10 @@ msgstr "카메라 경로를 표시"
 
 msgid "Show reconstructed camera path"
 msgstr "복원된 카메라 경로를 표시"
+
+
+msgid "Speaker"
+msgstr "스피커"
 
 
 msgid "Show Reconstruction"
@@ -66594,10 +66507,6 @@ msgid "Limit for removing duplicates and 'Auto Merge'"
 msgstr "중복 제거 및 '자동 병합'에 대한 제한"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "변경 에지의 씨임 UV 펼치기를 다시 계산"
-
-
 msgid "Edge Tag Mode"
 msgstr "에지 태그 모드"
 
@@ -66768,6 +66677,10 @@ msgstr "W페인트 자동-노멀라이즈"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "웨이트 페인팅 중에 모든 본 변형 버텍스 그룹이 최대 1.0에 추가되는지 확인"
+
+
+msgid "Changing edges seam re-calculates UV unwrap"
+msgstr "변경 에지의 씨임 UV 펼치기를 다시 계산"
 
 
 msgid "Use Additive Drawing"
@@ -68486,10 +68399,6 @@ msgid "OpenCL Flags:"
 msgstr "OpenCL 플래그:"
 
 
-msgid "Kernel"
-msgstr "커널"
-
-
 msgid "%s AA"
 msgstr "%s AA"
 
@@ -68514,6 +68423,14 @@ msgid "Portal"
 msgstr "포탈"
 
 
+msgid "Extrusion"
+msgstr "돌출 부분"
+
+
+msgid "Ray Distance"
+msgstr "광선 거리"
+
+
 msgid "Curve subdivisions"
 msgstr "곡선 하위 분할"
 
@@ -68526,14 +68443,6 @@ msgstr "할당"
 msgctxt "Operator"
 msgid "Deselect"
 msgstr "선택 취소"
-
-
-msgid "Extrusion"
-msgstr "돌출 부분"
-
-
-msgid "Ray Distance"
-msgstr "광선 거리"
 
 
 msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
@@ -69330,10 +69239,6 @@ msgid "Move To Bottom"
 msgstr "맨 아래로 이동"
 
 
-msgid "Resolution:"
-msgstr "해상도:"
-
-
 msgid "Object:"
 msgstr "오브젝트:"
 
@@ -69537,6 +69442,10 @@ msgstr "주름:"
 
 msgid "Outer"
 msgstr "바깥"
+
+
+msgid "Rim"
+msgstr "가장자리"
 
 
 msgid "Material Index Offset:"
@@ -73203,6 +73112,10 @@ msgid "Mball"
 msgstr "Mball"
 
 
+msgid "GPencil"
+msgstr "G펜슬"
+
+
 msgid "No new files have been packed"
 msgstr "포장된 새로운 파일이 없음"
 
@@ -75021,11 +74934,6 @@ msgid "New"
 msgstr "새로운"
 
 
-msgctxt "Lamp"
-msgid "New"
-msgstr "새로운"
-
-
 msgctxt "Camera"
 msgid "New"
 msgstr "새로운"
@@ -75202,10 +75110,6 @@ msgstr "구체"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "아이코 구체"
-
-
-msgid "Confirm: (Enter/LMB), Cancel: (Esc/RMB), Mode: %s (M), Clamp Overlap: %s (C), Vertex Only: %s (V), Profile Control: %s (P), Offset: %s, Segments: %d, Profile: %.3f"
-msgstr "확인: (Enter/LMB), 취소: (Esc/RMB), 모드: %s (M), 겹침을 클램프: %s (C), 버텍스 만: %s (V), 단면 제어: %s (P), 오프셋: %s, 부분: %d, 단면: %.3f"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -77833,10 +77737,6 @@ msgid "Could not reopen file"
 msgstr "파일을 다시 열 수 없음"
 
 
-msgid "Python script fail, look in the console for now..."
-msgstr "파이썬 스크립트 실패, 자세한 내용은 콘솔에서 확인..."
-
-
 msgid "Python disabled in this build"
 msgstr "이 빌드에서 파이썬 사용 중지됨"
 
@@ -79902,10 +79802,6 @@ msgstr "컨텍스트에서 '창' 누락"
 
 msgid "Trusted Source [Untrusted Path]"
 msgstr "신뢰할 수있는 소스 [신뢰할 수없는 경로]"
-
-
-msgid "Save Over?"
-msgstr "파일에 작업을 저장하시겠습니까?"
 
 
 msgid "unable to open the file"
