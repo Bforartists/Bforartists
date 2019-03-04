@@ -137,7 +137,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )    
     misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
     misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
-    misc_misc : BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
+    misc_info : BoolProperty(name="Info", default=True, description = "Displays the Info and Messages string", )
 
 
     def draw(self, context):
@@ -285,7 +285,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "misc_repeat")
         row.prop(self, "misc_scene")
         row.prop(self, "misc_last")
-        row.prop(self, "misc_misc")
+        row.prop(self, "misc_info")
         row.prop(self, "misc_operatorsearch")
         
 
