@@ -1982,7 +1982,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.convert", "target")
+        layout.menu("VIEW3D_MT_object_convert")
 
         layout.separator()
 
@@ -2041,13 +2041,6 @@ class VIEW3D_MT_object(Menu):
             props.input_scale = 0.01
             props.header_text = "Width Size: %.3f"
 
-        elif obj.type == 'GPENCIL':
-
-            layout.separator()
-
-            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "OUTLINER_OB_CURVE").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_OB_MESH").type = 'POLY'
 
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -2122,6 +2115,25 @@ class VIEW3D_MT_object(Menu):
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
+
+class VIEW3D_MT_object_convert(Menu):
+    bl_label = "Convert To"
+
+    def draw(self, context):
+        layout = self.layout
+
+        obj = context.object
+
+        layout.operator_enum("object.convert", "target")
+
+        if obj.type == 'GPENCIL':
+
+            layout.separator()
+
+            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "OUTLINER_OB_CURVE").type = 'PATH'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_OB_MESH").type = 'POLY'
+
 
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
@@ -6600,6 +6612,7 @@ classes = (
     VIEW3D_MT_origin_set,
     VIEW3D_MT_object_delete_global,
     VIEW3D_MT_object,
+    VIEW3D_MT_object_convert,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_rigid_body,
     VIEW3D_MT_object_clear,
