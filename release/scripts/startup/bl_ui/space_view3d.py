@@ -3931,35 +3931,42 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip       
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
 
-        layout.separator()
+        layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_facestrength")
+
+
+class VIEW3D_MT_edit_mesh_normals_advanced(Menu):
+    bl_label = "Advanced"
+
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
-
         layout.operator("transform.rotate_normal", text="Rotate Normal", icon = "NORMAL_ROTATE")
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
-
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
-
         layout.operator("mesh.average_normals", text="Average Normals", icon = "NORMAL_AVERAGE")
 
-        layout.separator()
+class VIEW3D_MT_edit_mesh_normals_vector(Menu):
+    bl_label = "Vector"
 
-        layout.label(text="-- NORMAL VECTOR --")
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.normals_tools", text="Copy", icon = "COPYDOWN").mode = 'COPY'
         layout.operator("mesh.normals_tools", text="Paste", icon = "PASTEDOWN").mode = 'PASTE'
-
         layout.operator("mesh.normals_tools", text="Multiply", icon = "NORMAL_MULTIPLY").mode = 'MULTIPLY'
         layout.operator("mesh.normals_tools", text="Add", icon = "ADD").mode = 'ADD'
-
         layout.operator("mesh.normals_tools", text="Reset", icon = "RESET").mode = 'RESET'
-
         layout.operator("mesh.smoothen_normals", text="Smoothen", icon = "NORMAL_SMOOTH")
 
-        layout.separator()
+class VIEW3D_MT_edit_mesh_normals_facestrength(Menu):
+    bl_label = "Face Strength"
 
-        layout.label(text="-- FACE STRENGTH --")
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.mod_weighted_strength", text="Face Select", icon='FACESEL').set = False
         layout.operator("mesh.mod_weighted_strength", text="Set Strength", icon='NORMAL_SETSTRENGTH').set = True
@@ -6656,6 +6663,9 @@ classes = (
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_MT_edit_mesh_normals,
+    VIEW3D_MT_edit_mesh_normals_advanced,
+    VIEW3D_MT_edit_mesh_normals_vector,
+    VIEW3D_MT_edit_mesh_normals_facestrength,
     VIEW3D_MT_edit_mesh_shading,
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
