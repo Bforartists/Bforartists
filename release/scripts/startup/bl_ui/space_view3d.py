@@ -4761,7 +4761,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator("gpencil.blank_frame_add", icon = "ADD")
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)", icon = "DELETE")
 
         layout.separator()
 
