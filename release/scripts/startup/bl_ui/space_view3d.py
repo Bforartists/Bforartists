@@ -650,6 +650,21 @@ class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
         bpy.ops.view3d.view_all(center = True)
         return {'FINISHED'}
 
+class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
+    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
+    bl_idname = "view3d.switchactivecamto"
+    bl_label = "Set active Camera"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+
+        context = bpy.context
+        scene = context.scene
+        if context.active_object is not None:
+            currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
+            scene.camera = currentCameraObj     
+        return {'FINISHED'} 
+
 
 class VIEW3D_MT_view(Menu):
     bl_label = "View"
@@ -676,6 +691,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
+        layout.operator("view3d.switchactivecamto", text="Set Active Camera", icon ="VIEW_SWITCHACTIVECAM")
         layout.operator("view3d.view_camera", text="Active Camera", icon = 'VIEW_SWITCHTOCAM')
         layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
 
@@ -6557,6 +6573,7 @@ classes = (
     VIEW3D_MT_view_view_selected_all_regions,
     VIEW3D_MT_view_all_all_regions,
     VIEW3D_MT_view_center_cursor_and_view_all,
+    VIEW3D_MT_switchactivecamto,
     VIEW3D_MT_view,
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
