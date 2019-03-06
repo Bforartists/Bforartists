@@ -745,8 +745,8 @@ static void bone_connect_to_new_parent(ListBase *edbo, EditBone *selbone, EditBo
 
 
 static const EnumPropertyItem prop_editarm_make_parent_types[] = {
-	{ARM_PAR_CONNECT, "CONNECTED", 0, "Connected", ""},
-	{ARM_PAR_OFFSET, "OFFSET", 0, "Keep Offset", ""},
+	{ARM_PAR_CONNECT, "CONNECTED", ICON_PARENT_BONE, "Connected", ""},
+	{ARM_PAR_OFFSET, "OFFSET", ICON_PARENT_BONE, "Keep Offset", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
