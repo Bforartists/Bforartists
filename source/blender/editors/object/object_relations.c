@@ -440,11 +440,11 @@ typedef enum eObClearParentTypes {
 } eObClearParentTypes;
 
 EnumPropertyItem prop_clear_parent_types[] = {
-	{CLEAR_PARENT_ALL, "CLEAR", 0, "Clear Parent",
+	{CLEAR_PARENT_ALL, "CLEAR", ICON_DELETE, "Clear Parent",
 	 "Completely clear the parenting relationship, including involved modifiers if any"},
-	{CLEAR_PARENT_KEEP_TRANSFORM, "CLEAR_KEEP_TRANSFORM", 0, "Clear and Keep Transformation",
+	{CLEAR_PARENT_KEEP_TRANSFORM, "CLEAR_KEEP_TRANSFORM", ICON_DELETE, "Clear and Keep Transformation",
 	 "As 'Clear Parent', but keep the current visual transformations of the object"},
-	{CLEAR_PARENT_INVERSE, "CLEAR_INVERSE", 0, "Clear Parent Inverse",
+	{CLEAR_PARENT_INVERSE, "CLEAR_INVERSE", ICON_DELETE, "Clear Parent Inverse",
 	 "Reset the transform corrections applied to the parenting relationship, does not remove parenting itself"},
 	{0, NULL, 0, NULL, NULL},
 };
@@ -593,19 +593,19 @@ void ED_object_parent(Object *ob, Object *par, const int type, const char *subst
 
 /* Operator Property */
 EnumPropertyItem prop_make_parent_types[] = {
-	{PAR_OBJECT, "OBJECT", 0, "Object", ""},
-	{PAR_ARMATURE, "ARMATURE", 0, "Armature Deform", ""},
-	{PAR_ARMATURE_NAME, "ARMATURE_NAME", 0, "   With Empty Groups", ""},
-	{PAR_ARMATURE_AUTO, "ARMATURE_AUTO", 0, "   With Automatic Weights", ""},
-	{PAR_ARMATURE_ENVELOPE, "ARMATURE_ENVELOPE", 0, "   With Envelope Weights", ""},
-	{PAR_BONE, "BONE", 0, "Bone", ""},
-	{PAR_BONE_RELATIVE, "BONE_RELATIVE", 0, "Bone Relative", ""},
-	{PAR_CURVE, "CURVE", 0, "Curve Deform", ""},
-	{PAR_FOLLOW, "FOLLOW", 0, "Follow Path", ""},
-	{PAR_PATH_CONST, "PATH_CONST", 0, "Path Constraint", ""},
-	{PAR_LATTICE, "LATTICE", 0, "Lattice Deform", ""},
-	{PAR_VERTEX, "VERTEX", 0, "Vertex", ""},
-	{PAR_VERTEX_TRI, "VERTEX_TRI", 0, "Vertex (Triangle)", ""},
+	{PAR_OBJECT, "OBJECT", ICON_PARENT_OBJECT, "Object", ""},
+	{PAR_ARMATURE, "ARMATURE", ICON_PARENT_BONE, "Armature Deform", ""},
+	{PAR_ARMATURE_NAME, "ARMATURE_NAME", ICON_PARENT_BONE, "   With Empty Groups", ""},
+	{PAR_ARMATURE_AUTO, "ARMATURE_AUTO", ICON_PARENT_BONE, "   With Automatic Weights", ""},
+	{PAR_ARMATURE_ENVELOPE, "ARMATURE_ENVELOPE", ICON_PARENT_BONE, "   With Envelope Weights", ""},
+	{PAR_BONE, "BONE", ICON_PARENT_BONE, "Bone", ""},
+	{PAR_BONE_RELATIVE, "BONE_RELATIVE", ICON_PARENT_BONE, "Bone Relative", ""},
+	{PAR_CURVE, "CURVE", ICON_PARENT_CURVE, "Curve Deform", ""},
+	{PAR_FOLLOW, "FOLLOW", ICON_PARENT_CURVE, "Follow Path", ""},
+	{PAR_PATH_CONST, "PATH_CONST", ICON_PARENT_CURVE, "Path Constraint", ""},
+	{PAR_LATTICE, "LATTICE", ICON_PARENT_LATTICE, "Lattice Deform", ""},
+	{PAR_VERTEX, "VERTEX", ICON_VERTEX_PARENT, "Vertex", ""},
+	{PAR_VERTEX_TRI, "VERTEX_TRI", ICON_VERTEX_PARENT, "Vertex (Triangle)", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -923,12 +923,12 @@ static int parent_set_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent 
 #if 0
 	uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_OBJECT);
 #else
-	uiItemFullO_ptr(layout, ot, IFACE_("Object"), ICON_NONE, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
+	uiItemFullO_ptr(layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
 	RNA_enum_set(&opptr, "type", PAR_OBJECT);
 	RNA_boolean_set(&opptr, "keep_transform", false);
 
 	uiItemFullO_ptr(
-	        layout, ot, IFACE_("Object (Keep Transform)"), ICON_NONE,
+	        layout, ot, IFACE_("Object (Keep Transform)"), ICON_PARENT_OBJECT,
 	        NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
 	RNA_enum_set(&opptr, "type", PAR_OBJECT);
 	RNA_boolean_set(&opptr, "keep_transform", true);
@@ -953,28 +953,28 @@ static int parent_set_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent 
 	CTX_DATA_END;
 
 	if (parent->type == OB_ARMATURE) {
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_ARMATURE);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_ARMATURE_NAME);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_ARMATURE_ENVELOPE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_NAME);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_ENVELOPE);
 		if (has_children_of_type.mesh || has_children_of_type.gpencil) {
-			uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_ARMATURE_AUTO);
+			uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_ARMATURE_AUTO);
 		}
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_BONE);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_BONE_RELATIVE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_BONE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_BONE, "type", PAR_BONE_RELATIVE);
 	}
 	else if (parent->type == OB_CURVE) {
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_CURVE);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_FOLLOW);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_PATH_CONST);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_CURVE, "type", PAR_CURVE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_CURVE, "type", PAR_FOLLOW);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_CURVE, "type", PAR_PATH_CONST);
 	}
 	else if (parent->type == OB_LATTICE) {
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_LATTICE);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_PARENT_LATTICE, "type", PAR_LATTICE);
 	}
 
 	/* vertex parenting */
 	if (OB_TYPE_SUPPORT_PARVERT(parent->type)) {
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_VERTEX);
-		uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_VERTEX_TRI);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_VERTEX_PARENT, "type", PAR_VERTEX);
+		uiItemEnumO_ptr(layout, ot, NULL, ICON_VERTEX_PARENT, "type", PAR_VERTEX_TRI);
 	}
 
 	UI_popup_menu_end(C, pup);

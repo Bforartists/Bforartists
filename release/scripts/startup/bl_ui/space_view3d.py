@@ -650,6 +650,21 @@ class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
         bpy.ops.view3d.view_all(center = True)
         return {'FINISHED'}
 
+class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
+    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
+    bl_idname = "view3d.switchactivecamto"
+    bl_label = "Set active Camera"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+
+        context = bpy.context
+        scene = context.scene
+        if context.active_object is not None:
+            currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
+            scene.camera = currentCameraObj     
+        return {'FINISHED'} 
+
 
 class VIEW3D_MT_view(Menu):
     bl_label = "View"
@@ -676,6 +691,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
+        layout.operator("view3d.switchactivecamto", text="Set Active Camera", icon ="VIEW_SWITCHACTIVECAM")
         layout.operator("view3d.view_camera", text="Active Camera", icon = 'VIEW_SWITCHTOCAM')
         layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
 
@@ -1982,7 +1998,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.convert", "target")
+        layout.menu("VIEW3D_MT_object_convert")
 
         layout.separator()
 
@@ -2041,13 +2057,6 @@ class VIEW3D_MT_object(Menu):
             props.input_scale = 0.01
             props.header_text = "Width Size: %.3f"
 
-        elif obj.type == 'GPENCIL':
-
-            layout.separator()
-
-            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "OUTLINER_OB_CURVE").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_OB_MESH").type = 'POLY'
 
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -2122,6 +2131,25 @@ class VIEW3D_MT_object(Menu):
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
+
+class VIEW3D_MT_object_convert(Menu):
+    bl_label = "Convert To"
+
+    def draw(self, context):
+        layout = self.layout
+
+        obj = context.object
+
+        layout.operator_enum("object.convert", "target")
+
+        if obj.type == 'GPENCIL':
+
+            layout.separator()
+
+            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "OUTLINER_OB_CURVE").type = 'PATH'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_OB_MESH").type = 'POLY'
+
 
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
@@ -2429,7 +2457,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout = self.layout
 
         layout.operator_enum("object.parent_set", "type")
-        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
+        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse", icon = "PARENT" )
 
         layout.separator()
 
@@ -3931,35 +3959,42 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip       
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
 
-        layout.separator()
+        layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_facestrength")
+
+
+class VIEW3D_MT_edit_mesh_normals_advanced(Menu):
+    bl_label = "Advanced"
+
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.set_normals_from_faces", text="Set From Faces", icon = 'SET_FROM_FACES')
-
         layout.operator("transform.rotate_normal", text="Rotate Normal", icon = "NORMAL_ROTATE")
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
-
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
-
         layout.operator("mesh.average_normals", text="Average Normals", icon = "NORMAL_AVERAGE")
 
-        layout.separator()
+class VIEW3D_MT_edit_mesh_normals_vector(Menu):
+    bl_label = "Vector"
 
-        layout.label(text="-- NORMAL VECTOR --")
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.normals_tools", text="Copy", icon = "COPYDOWN").mode = 'COPY'
         layout.operator("mesh.normals_tools", text="Paste", icon = "PASTEDOWN").mode = 'PASTE'
-
         layout.operator("mesh.normals_tools", text="Multiply", icon = "NORMAL_MULTIPLY").mode = 'MULTIPLY'
         layout.operator("mesh.normals_tools", text="Add", icon = "ADD").mode = 'ADD'
-
         layout.operator("mesh.normals_tools", text="Reset", icon = "RESET").mode = 'RESET'
-
         layout.operator("mesh.smoothen_normals", text="Smoothen", icon = "NORMAL_SMOOTH")
 
-        layout.separator()
+class VIEW3D_MT_edit_mesh_normals_facestrength(Menu):
+    bl_label = "Face Strength"
 
-        layout.label(text="-- FACE STRENGTH --")
+    def draw(self, context):
+        layout = self.layout
 
         layout.operator("mesh.mod_weighted_strength", text="Face Select", icon='FACESEL').set = False
         layout.operator("mesh.mod_weighted_strength", text="Set Strength", icon='NORMAL_SETSTRENGTH').set = True
@@ -4761,7 +4796,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator("gpencil.blank_frame_add", icon = "ADD")
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame(s)", icon = "DELETE")
 
         layout.separator()
 
@@ -6539,6 +6573,7 @@ classes = (
     VIEW3D_MT_view_view_selected_all_regions,
     VIEW3D_MT_view_all_all_regions,
     VIEW3D_MT_view_center_cursor_and_view_all,
+    VIEW3D_MT_switchactivecamto,
     VIEW3D_MT_view,
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
@@ -6594,6 +6629,7 @@ classes = (
     VIEW3D_MT_origin_set,
     VIEW3D_MT_object_delete_global,
     VIEW3D_MT_object,
+    VIEW3D_MT_object_convert,
     VIEW3D_MT_object_animation,
     VIEW3D_MT_object_rigid_body,
     VIEW3D_MT_object_clear,
@@ -6657,6 +6693,9 @@ classes = (
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_MT_edit_mesh_normals,
+    VIEW3D_MT_edit_mesh_normals_advanced,
+    VIEW3D_MT_edit_mesh_normals_vector,
+    VIEW3D_MT_edit_mesh_normals_facestrength,
     VIEW3D_MT_edit_mesh_shading,
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
