@@ -62,7 +62,7 @@ class ImportSVG(bpy.types.Operator, ImportHelper):
 
 def menu_func_import(self, context):
     self.layout.operator(ImportSVG.bl_idname,
-        text="Scalable Vector Graphics (.svg)")
+        text="Scalable Vector Graphics (.svg)", icon = 'LOAD_SVG')
 
 
 def register():

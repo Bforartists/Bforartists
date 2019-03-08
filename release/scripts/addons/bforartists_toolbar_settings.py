@@ -59,7 +59,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     file_render : BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
     file_render_opengl : BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
     file_render_misc : BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
-    file_window_search : BoolProperty(name="Window Search", default=False, description = "Display the Search Toolbar\nAll Modes", )
 
     # meshedit
 
@@ -137,7 +136,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )    
     misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
     misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
-    misc_info : BoolProperty(name="Info", default=True, description = "Displays the Info and Messages string", )
+    misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
 
 
     def draw(self, context):
@@ -173,7 +172,6 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "file_render")
         row.prop(self, "file_render_opengl")
         row.prop(self, "file_render_misc")
-        row.prop(self, "file_window_search")
 
         layout.label(text="The Mesh Edit toolbar container")
 

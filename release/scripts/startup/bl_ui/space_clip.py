@@ -1187,7 +1187,6 @@ from .properties_mask_common import (
     MASK_PT_spline,
     MASK_PT_point,
     MASK_PT_display,
-    MASK_PT_transforms,
 )
 
 
@@ -1218,12 +1217,6 @@ class CLIP_PT_active_mask_point(MASK_PT_point, Panel):
 class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Mask"
-
-
-class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
     bl_category = "Mask"
 
 
@@ -1578,7 +1571,6 @@ classes = (
     CLIP_PT_mask_display,
     CLIP_PT_active_mask_spline,
     CLIP_PT_active_mask_point,
-    CLIP_PT_tools_mask_transforms,
     CLIP_PT_tools_scenesetup,
     CLIP_PT_grease_pencil,
     CLIP_PT_tools_grease_pencil_draw,
