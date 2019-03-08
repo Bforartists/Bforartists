@@ -231,34 +231,6 @@ class MASK_PT_display:
         sub.prop(space_data, "mask_overlay_mode", text="")
 
 
-class MASK_PT_transforms:
-    # subclasses must define...
-    # ~ bl_space_type = 'CLIP_EDITOR'
-    # ~ bl_region_type = 'TOOLS'
-    bl_label = "Transforms"
-    bl_category = "Mask"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        space_data = context.space_data
-        return space_data.mask and space_data.mode == 'MASK'
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate", icon = "TRANSFORM_MOVE")
-        col.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        col.operator("transform.resize", text = "Scale", icon = "TRANSFORM_SCALE")
-        col.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
-
-        layout.separator()
-
-        col.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
-
-
 class MASK_MT_add(Menu):
     bl_label = "Add"
 
