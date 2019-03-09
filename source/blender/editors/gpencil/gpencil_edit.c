@@ -2158,9 +2158,9 @@ static int gp_delete_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_delete(wmOperatorType *ot)
 {
 	static const EnumPropertyItem prop_gpencil_delete_types[] = {
-		{GP_DELETEOP_POINTS, "POINTS", 0, "Points", "Delete selected points and split strokes into segments"},
-		{GP_DELETEOP_STROKES, "STROKES", 0, "Strokes", "Delete selected strokes"},
-		{GP_DELETEOP_FRAME, "FRAME", 0, "Frame", "Delete active frame"},
+		{GP_DELETEOP_POINTS, "POINTS", ICON_DELETE, "Points", "Delete selected points and split strokes into segments"},
+		{GP_DELETEOP_STROKES, "STROKES", ICON_DELETE, "Strokes", "Delete selected strokes"},
+		{GP_DELETEOP_FRAME, "FRAME", ICON_DELETE, "Frame", "Delete active frame"},
 		{0, NULL, 0, NULL, NULL},
 	};
 
@@ -2191,9 +2191,9 @@ static int gp_dissolve_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_dissolve(wmOperatorType *ot)
 {
 	static EnumPropertyItem prop_gpencil_dissolve_types[] = {
-		{GP_DISSOLVE_POINTS, "POINTS", 0, "Dissolve", "Dissolve selected points"},
-		{GP_DISSOLVE_BETWEEN, "BETWEEN", 0, "Dissolve Between", "Dissolve points between selected points"},
-		{GP_DISSOLVE_UNSELECT, "UNSELECT", 0, "Dissolve Unselect", "Dissolve all unselected points"},
+		{GP_DISSOLVE_POINTS, "POINTS", ICON_DISSOLVE_VERTS, "Dissolve", "Dissolve selected points"},
+		{GP_DISSOLVE_BETWEEN, "BETWEEN", ICON_DISSOLVE_BETWEEN, "Dissolve Between", "Dissolve points between selected points"},
+		{GP_DISSOLVE_UNSELECT, "UNSELECT", ICON_DISSOLVE_UNSELECTED, "Dissolve Unselect", "Dissolve all unselected points"},
 		{0, NULL, 0, NULL, NULL},
 	};
 
