@@ -3433,6 +3433,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
+        layout.menu("VIEW3D_MT_edit_mesh_dissolve")      
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
@@ -4063,6 +4064,14 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
 
         layout.separator()
 
+        layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
+
+class VIEW3D_MT_edit_mesh_dissolve(Menu):
+    bl_label = "Dissolve"
+
+    def draw(self, context):
+        layout = self.layout
+
         layout.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
         layout.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
         layout.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
@@ -4074,7 +4083,6 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.separator()
 
         layout.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
-        layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
 
 
 # Workaround to separate the tooltips for Show Hide for Mesh in Edit Mode
@@ -6699,6 +6707,7 @@ classes = (
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
+    VIEW3D_MT_edit_mesh_dissolve,
     VIEW3D_mesh_hide_unselected,
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
