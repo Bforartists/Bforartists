@@ -487,11 +487,11 @@ static int edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
 	static const EnumPropertyItem prop_mesh_delete_types[] = {
-		{MESH_DELETE_VERT,      "VERT",      0, "Vertices", ""},
-		{MESH_DELETE_EDGE,      "EDGE",      0, "Edges", ""},
-		{MESH_DELETE_FACE,      "FACE",      0, "Faces", ""},
-		{MESH_DELETE_EDGE_FACE, "EDGE_FACE", 0, "Only Edges & Faces", ""},
-		{MESH_DELETE_ONLY_FACE, "ONLY_FACE", 0, "Only Faces", ""},
+		{MESH_DELETE_VERT,      "VERT",      ICON_DELETE, "Vertices", ""},
+		{MESH_DELETE_EDGE,      "EDGE",      ICON_DELETE, "Edges", ""},
+		{MESH_DELETE_FACE,      "FACE",      ICON_DELETE, "Faces", ""},
+		{MESH_DELETE_EDGE_FACE, "EDGE_FACE", ICON_DELETE, "Only Edges & Faces", ""},
+		{MESH_DELETE_ONLY_FACE, "ONLY_FACE", ICON_DELETE, "Only Faces", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 
