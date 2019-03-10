@@ -303,28 +303,11 @@ void WM_operator_properties_gesture_box_zoom(wmOperatorType *ot)
 /**
  * Use with #WM_gesture_lasso_invoke
  */
-void WM_operator_properties_gesture_lasso_ex(wmOperatorType *ot, bool deselect, bool extend)
+void WM_operator_properties_gesture_lasso(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
 	prop = RNA_def_collection_runtime(ot->srna, "path", &RNA_OperatorMousePath, "Path", "");
 	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
-
-	if (deselect) {
-		RNA_def_boolean(ot->srna, "deselect", false, "Deselect", "Deselect rather than select items");
-	}
-	if (extend) {
-		RNA_def_boolean(ot->srna, "extend", true, "Extend", "Extend selection instead of deselecting everything first");
-	}
-}
-
-void WM_operator_properties_gesture_lasso(wmOperatorType *ot)
-{
-	WM_operator_properties_gesture_lasso_ex(ot, false, false);
-}
-
-void WM_operator_properties_gesture_lasso_select(wmOperatorType *ot)
-{
-	WM_operator_properties_gesture_lasso_ex(ot, true, true);
 }
 
 /**
@@ -353,7 +336,7 @@ void WM_operator_properties_gesture_straightline(wmOperatorType *ot, int cursor)
 /**
  * Use with #WM_gesture_circle_invoke
  */
-void WM_operator_properties_gesture_circle_ex(wmOperatorType *ot, bool deselect)
+void WM_operator_properties_gesture_circle(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
 	const int radius_default = 25;
@@ -366,21 +349,6 @@ void WM_operator_properties_gesture_circle_ex(wmOperatorType *ot, bool deselect)
 
 	prop = RNA_def_boolean(ot->srna, "wait_for_input", true, "Wait for Input", "");
 	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
-
-	if (deselect) {
-		prop = RNA_def_boolean(ot->srna, "deselect", false, "Deselect", "Deselect rather than select items");
-		RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	}
-}
-
-void WM_operator_properties_gesture_circle(wmOperatorType *ot)
-{
-	WM_operator_properties_gesture_circle_ex(ot, false);
-}
-
-void WM_operator_properties_gesture_circle_select(wmOperatorType *ot)
-{
-	WM_operator_properties_gesture_circle_ex(ot, true);
 }
 
 void WM_operator_properties_mouse_select(wmOperatorType *ot)

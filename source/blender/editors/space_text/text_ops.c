@@ -84,7 +84,7 @@ static bool text_edit_poll(bContext *C)
 		return 0;
 
 	if (ID_IS_LINKED(text)) {
-		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
+		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external library data");
 		return 0;
 	}
 
@@ -100,7 +100,7 @@ bool text_space_edit_poll(bContext *C)
 		return 0;
 
 	if (ID_IS_LINKED(text)) {
-		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
+		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external library data");
 		return 0;
 	}
 
@@ -120,7 +120,7 @@ static bool text_region_edit_poll(bContext *C)
 		return 0;
 
 	if (ID_IS_LINKED(text)) {
-		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
+		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external library data");
 		return 0;
 	}
 
@@ -186,7 +186,7 @@ static int text_new_exec(bContext *C, wmOperator *UNUSED(op))
 void TEXT_OT_new(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Create Text Block";
+	ot->name = "New Text";
 	ot->idname = "TEXT_OT_new";
 	ot->description = "Create Text Block\nCreate a new text data block";
 
@@ -280,7 +280,7 @@ static int text_open_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(e
 void TEXT_OT_open(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Open Text Block";
+	ot->name = "Open Text";
 	ot->idname = "TEXT_OT_open";
 	ot->description = "Open Text Block\nOpen a new text data block";
 
@@ -665,7 +665,7 @@ static int text_refresh_pyconstraints_exec(bContext *UNUSED(C), wmOperator *UNUS
 	short update;
 
 	/* check all pyconstraints */
-	for (ob = CTX_data_main(C)->object.first; ob; ob = ob->id.next) {
+	for (ob = CTX_data_main(C)->objects.first; ob; ob = ob->id.next) {
 		update = 0;
 		if (ob->type == OB_ARMATURE && ob->pose) {
 			bPoseChannel *pchan;
@@ -3040,7 +3040,7 @@ static int text_find_and_replace(bContext *C, wmOperator *op, short mode)
 		if (text->id.next)
 			text = st->text = text->id.next;
 		else
-			text = st->text = bmain->text.first;
+			text = st->text = bmain->texts.first;
 		txt_move_toline(text, 0, 0);
 		text_update_cursor_moved(C);
 		WM_event_add_notifier(C, NC_TEXT | ND_CURSOR, text);

@@ -1625,39 +1625,40 @@ static void psys_particle_on_shape(int UNUSED(distr), int UNUSED(index),
 /*			Particles on emitter				*/
 /************************************************/
 
-CustomDataMask psys_emitter_customdata_mask(ParticleSystem *psys)
+void psys_emitter_customdata_mask(ParticleSystem *psys, CustomData_MeshMasks *r_cddata_masks)
 {
-	CustomDataMask dataMask = 0;
 	MTex *mtex;
 	int i;
 
 	if (!psys->part)
-		return 0;
+		return;
 
 	for (i = 0; i < MAX_MTEX; i++) {
 		mtex = psys->part->mtex[i];
 		if (mtex && mtex->mapto && (mtex->texco & TEXCO_UV))
-			dataMask |= CD_MASK_MTFACE;
+			r_cddata_masks->fmask |= CD_MASK_MTFACE;
 	}
 
 	if (psys->part->tanfac != 0.0f)
-		dataMask |= CD_MASK_MTFACE;
+		r_cddata_masks->fmask |= CD_MASK_MTFACE;
 
 	/* ask for vertexgroups if we need them */
 	for (i = 0; i < PSYS_TOT_VG; i++) {
 		if (psys->vgroup[i]) {
-			dataMask |= CD_MASK_MDEFORMVERT;
+			r_cddata_masks->vmask |= CD_MASK_MDEFORMVERT;
 			break;
 		}
 	}
 
 	/* particles only need this if they are after a non deform modifier, and
 	 * the modifier stack will only create them in that case. */
-	dataMask |= CD_MASK_ORIGSPACE_MLOOP | CD_MASK_ORIGINDEX;
+	r_cddata_masks->lmask |= CD_MASK_ORIGSPACE_MLOOP;
+	/* XXX Check we do need all those? */
+	r_cddata_masks->vmask |= CD_MASK_ORIGINDEX;
+	r_cddata_masks->emask |= CD_MASK_ORIGINDEX;
+	r_cddata_masks->pmask |= CD_MASK_ORIGINDEX;
 
-	dataMask |= CD_MASK_ORCO;
-
-	return dataMask;
+	r_cddata_masks->vmask |= CD_MASK_ORCO;
 }
 
 void psys_particle_on_emitter(ParticleSystemModifierData *psmd, int from, int index, int index_dmcache,
@@ -3062,6 +3063,10 @@ ModifierData *object_add_particle_system(Main *bmain, Scene *scene, Object *ob, 
 	if (!ob || ob->type != OB_MESH)
 		return NULL;
 
+	if (name == NULL) {
+		name = DATA_("ParticleSettings");
+	}
+
 	psys = ob->particlesystem.first;
 	for (; psys; psys = psys->next)
 		psys->flag &= ~PSYS_CURRENT;
@@ -3069,20 +3074,12 @@ ModifierData *object_add_particle_system(Main *bmain, Scene *scene, Object *ob, 
 	psys = MEM_callocN(sizeof(ParticleSystem), "particle_system");
 	psys->pointcache = BKE_ptcache_add(&psys->ptcaches);
 	BLI_addtail(&ob->particlesystem, psys);
+	psys_unique_name(ob, psys, name);
 
-	psys->part = BKE_particlesettings_add(bmain, DATA_("ParticleSettings"));
-
-	if (BLI_listbase_count_at_most(&ob->particlesystem, 2) > 1)
-		BLI_snprintf(psys->name, sizeof(psys->name), DATA_("ParticleSystem %i"), BLI_listbase_count(&ob->particlesystem));
-	else
-		BLI_strncpy(psys->name, DATA_("ParticleSystem"), sizeof(psys->name));
+	psys->part = BKE_particlesettings_add(bmain, psys->name);
 
 	md = modifier_new(eModifierType_ParticleSystem);
-
-	if (name)
-		BLI_strncpy_utf8(md->name, name, sizeof(md->name));
-	else
-		BLI_snprintf(md->name, sizeof(md->name), DATA_("ParticleSystem %i"), BLI_listbase_count(&ob->particlesystem));
+	BLI_strncpy(md->name, psys->name, sizeof(md->name));
 	modifier_unique_name(&ob->modifiers, md);
 
 	psmd = (ParticleSystemModifierData *) md;

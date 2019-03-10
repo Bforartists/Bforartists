@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -4676,10 +4676,6 @@ msgid "Loop"
 msgstr "Kenar Döngüsü"
 
 
-msgid "X-Ray"
-msgstr "Işın İzleme"
-
-
 msgid "Alpha Mode"
 msgstr "Düzenleme Modu"
 
@@ -5828,10 +5824,6 @@ msgid "Randomize particle orientation"
 msgstr "Kullanacağınız eksen takımını burdan değiştirebilirsiniz. (Alt Space)"
 
 
-msgid "Orientation axis"
-msgstr "Yatay Eksen"
-
-
 msgid "Velocity / Hair"
 msgstr "Önizleme Biçimi: Saç-Tel-İplik"
 
@@ -6016,12 +6008,8 @@ msgid "Background set scene"
 msgstr "Arkaplan resminin şeffaflık ayarı."
 
 
-msgid "Cursor Location"
-msgstr "Konum Kısıtlamaları"
-
-
-msgid "3D cursor location"
-msgstr "3D İmlecin X koordinatı"
+msgid "3D Cursor"
+msgstr "3D İmleç "
 
 
 msgid "Cycles Render Settings"
@@ -7664,10 +7652,6 @@ msgstr "Yalnız Noktalar"
 
 msgid "Bevel Modifier"
 msgstr "Değiştirici Ekle"
-
-
-msgid "Edge Weight Method"
-msgstr "Görüntü çevirme metodu:"
 
 
 msgid "New"
@@ -13033,11 +13017,6 @@ msgstr "Bitiş Zamanı"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Render Sınırını Ayarla"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Eğrileri sil"
 
@@ -15002,10 +14981,6 @@ msgid "Scene Origin"
 msgstr "Sahne Merkezi"
 
 
-msgid "3D Cursor"
-msgstr "3D İmleç "
-
-
 msgctxt "Operator"
 msgid "Add Armature"
 msgstr "Değiştirici Ekle"
@@ -16784,6 +16759,75 @@ msgid "Only visible/selected bones"
 msgstr "Seçili İşaretler arasında"
 
 
+msgid "Target Path"
+msgstr "Dosya yolu"
+
+
+msgid "User Prefs"
+msgstr "Kullanıcı Toplulukları"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Otomatik Yenile"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Fabrika Ayarlarını Yükle"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Uluslararası arabirim aktif"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgid "All Keymaps"
+msgstr "Tümünü Normalleştir"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgid "Keep original"
+msgstr "Orijinali Koru"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgid "Remove key config"
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgid "Restore key map(s)"
+msgstr "Şekil Anahtarı Ekle"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Ses aramak için varsayılan dizin"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Anahtarkare Ekle..."
+
+
 msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Yeni bir değiştirici ekle"
@@ -17733,16 +17777,6 @@ msgstr "Seçimi İmlece"
 
 
 msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Ses blok butonları"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Ses blok butonları"
-
-
-msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Altı Çizili Yap"
 
@@ -18057,11 +18091,6 @@ msgstr "Metin bağlarına gözat"
 
 msgctxt "Operator"
 msgid "Reset to Default Value"
-msgstr "Ses aramak için varsayılan dizin"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
 msgstr "Ses aramak için varsayılan dizin"
 
 
@@ -18534,11 +18563,6 @@ msgstr "İmleci Merkez al"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Render Sınırını Ayarla"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "Görüntüyü Çevir"
 
@@ -18755,19 +18779,6 @@ msgid "Zoom Camera 1:1"
 msgstr "Kamerayı 1:1 Yap"
 
 
-msgid "Target Path"
-msgstr "Dosya yolu"
-
-
-msgid "User Prefs"
-msgstr "Kullanıcı Toplulukları"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Otomatik Yenile"
-
-
 msgctxt "Operator"
 msgid "Call Menu"
 msgstr "Yakınlaştır"
@@ -18904,11 +18915,6 @@ msgstr "Altı Çizili Yap"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "Döngü/Kesim Menüsü "
 
@@ -18992,49 +18998,8 @@ msgstr "Kütüphaneye Ekle"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Uluslararası arabirim aktif"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Şekil Anahtarı Ekle"
-
-
-msgid "All Keymaps"
-msgstr "Tümünü Normalleştir"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Şekil Anahtarı Ekle"
-
-
-msgid "Keep original"
-msgstr "Orijinali Koru"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Kütüphaneye Ekle"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Şekil Anahtarı Ekle"
-
-
-msgid "Remove key config"
-msgstr "Şekil Anahtarı Ekle"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Şekil Anahtarı Ekle"
-
-
-msgid "Restore key map(s)"
-msgstr "Şekil Anahtarı Ekle"
 
 
 msgctxt "Operator"
@@ -19239,11 +19204,6 @@ msgstr "Döngü/Kesim Menüsü "
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "Tam Ekran Resim Al"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Anahtarkare Ekle..."
 
 
 msgid "URL to open"
@@ -20691,10 +20651,6 @@ msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Fare, menü butonları ve açılır menü üzerinde beklediğinde otomatik olarak aç"
 
 
-msgid "Prompt Quit"
-msgstr "Hızlı Çıkış"
-
-
 msgid "Text Anti-aliasing"
 msgstr "Keskinlikleri yumuşat (Anti-aliasing)"
 
@@ -21139,22 +21095,6 @@ msgid "Bake displacement"
 msgstr "Eylem Pişir..."
 
 
-msgid "Border Maximum X"
-msgstr "Çerçeve Seçim"
-
-
-msgid "Border Maximum Y"
-msgstr "Çerçeve Seçim"
-
-
-msgid "Border Minimum X"
-msgstr "Çerçeve Seçim"
-
-
-msgid "Border Minimum Y"
-msgstr "Çerçeve Seçim"
-
-
 msgid "New Window"
 msgstr "Ses Penceresi "
 
@@ -21245,10 +21185,6 @@ msgstr "Mesh Gölgesini Çiz"
 
 msgid "Bake from Multires"
 msgstr "Bake Render Meshes"
-
-
-msgid "Crop to Border"
-msgstr "Anahtarları Seç"
 
 
 msgid "File Extensions"
@@ -22551,6 +22487,10 @@ msgid "Backdrop zoom factor"
 msgstr "Tekerle Yaklaş/Uzaklaş"
 
 
+msgid "Cursor Location"
+msgstr "Konum Kısıtlamaları"
+
+
 msgid "Edit Tree"
 msgstr "Arkaplan Kaynağı"
 
@@ -22769,10 +22709,6 @@ msgstr "Ekstrüzyon Boyutu"
 
 msgid "Tracks Display Type"
 msgstr "Nesne Tipini Değiştir..."
-
-
-msgid "Render Border"
-msgstr "Render Sınırını Ayarla"
 
 
 msgid "Space UV Editor"
@@ -24688,11 +24624,6 @@ msgstr "Seçimi İmlece"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Çember"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "Ters Seçim"
 
@@ -25564,11 +25495,6 @@ msgstr "Kullanıcı Tercihleri "
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Eğri Önayarı"
-
-
-msgctxt "Operator"
 msgid "Interactive Mirror"
 msgstr "Etkileşimli Aynala"
 
@@ -25649,11 +25575,6 @@ msgstr "Sol Fare"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Render Sınırını Ayarla"
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "Ebeveyn Nesne"
 
@@ -25731,6 +25652,11 @@ msgstr "Düzlem"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Küp"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Çember"
 
 
 msgctxt "Operator"
@@ -26015,6 +25941,11 @@ msgstr "Görüntü:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Eğri Önayarı"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Doku Alanını Taşı"
 
@@ -26152,6 +26083,10 @@ msgstr "Küçük Harf Yap"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Özellik Seti"
+
+
+msgid "X-Ray"
+msgstr "Işın İzleme"
 
 
 msgctxt "Operator"
