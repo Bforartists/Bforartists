@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -705,11 +705,6 @@ msgstr "Blender שמתשמ תופדעה"
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "ץווכ"
-
-
-msgctxt "Operator"
 msgid "Right"
 msgstr "ןימי"
 
@@ -737,6 +732,11 @@ msgstr "בוביס"
 msgctxt "Operator"
 msgid "Make"
 msgstr "הכסמ"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ץווכ"
 
 
 msgctxt "Operator"

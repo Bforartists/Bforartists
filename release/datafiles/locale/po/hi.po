@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2102,10 +2102,6 @@ msgid "Loop"
 msgstr "कुण्डली"
 
 
-msgid "X-Ray"
-msgstr "एक्स-रे"
-
-
 msgid "Alpha Mode"
 msgstr "पारदर्शिता रूप"
 
@@ -2594,8 +2590,8 @@ msgid "Active Movie Clip"
 msgstr "सक्रिय चलचित्र छांटन"
 
 
-msgid "3D cursor location"
-msgstr "त्रि-आयाम प्रसंकेतक स्थिति"
+msgid "3D Cursor"
+msgstr "त्रि-आयाम प्रसंकेतक"
 
 
 msgid "No Sync"
@@ -4090,10 +4086,6 @@ msgid "Relative Paths"
 msgstr "सापेक्ष पथ"
 
 
-msgid "Warning"
-msgstr "चेतावनी"
-
-
 msgid "Report"
 msgstr "विवरण"
 
@@ -4328,10 +4320,6 @@ msgstr "प्रेक्षक  प्रतिपादन"
 
 msgid "Set the boundaries for viewer operations"
 msgstr "दर्शक संचालन के लिए सीमाएँ सेट करें"
-
-
-msgid "3D Cursor"
-msgstr "त्रि-आयाम प्रसंकेतक"
 
 
 msgctxt "Operator"
@@ -4818,11 +4806,6 @@ msgstr "पृष्ठ"
 msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "त्रि-आयाम प्रसंकेतक स्थापना"
-
-
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr " प्रतिपादन सीमांत स्थापना"
 
 
 msgid "Orbit"
@@ -5671,10 +5654,6 @@ msgid "3D"
 msgstr "त्रि-आयाम"
 
 
-msgid "Render Border"
-msgstr "सीमांत  प्रतिपादन"
-
-
 msgid "Tiled"
 msgstr "खण्ड की गईं"
 
@@ -6381,11 +6360,6 @@ msgstr "प्रसंकेतक के लिए चयन"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "चक्र"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "व्युत्क्रम चयन करें"
 
@@ -6808,11 +6782,6 @@ msgstr "बाईं ओर"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "सीमांत  प्रतिपादन..."
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "कारण"
 
@@ -6840,6 +6809,11 @@ msgstr "समतल"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "घन"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "चक्र"
 
 
 msgctxt "Operator"
@@ -6982,6 +6956,10 @@ msgstr "निष्क्रिय जोड़ें"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "स्थापित पंजी"
+
+
+msgid "X-Ray"
+msgstr "एक्स-रे"
 
 
 msgctxt "Operator"
@@ -7137,6 +7115,10 @@ msgstr "अस्थायी संचिका पुनर्स्थाप�
 
 msgid "Error deleting '%s' (ignored)"
 msgstr "हटाने में त्रुटि '%s' (अनदेखी)"
+
+
+msgid "Warning"
+msgstr "चेतावनी"
 
 
 msgid "Invalid Input Error"

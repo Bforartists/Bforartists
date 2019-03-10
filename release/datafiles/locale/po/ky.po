@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -988,10 +988,6 @@ msgid "Max"
 msgstr "Макс."
 
 
-msgid "X-Ray"
-msgstr "Рентген"
-
-
 msgid "Iris"
 msgstr "Iris"
 
@@ -1182,6 +1178,10 @@ msgstr "Кагылышуу"
 
 msgid "Halo"
 msgstr "Гало"
+
+
+msgid "3D Cursor"
+msgstr "3D-курсор"
 
 
 msgid "Display Settings"
@@ -2257,10 +2257,6 @@ msgid "Tool Shelf"
 msgstr "Аспап панели"
 
 
-msgid "3D Cursor"
-msgstr "3D-курсор"
-
-
 msgctxt "Operator"
 msgid "Add Armature"
 msgstr "Скелетти кошуу"
@@ -2409,6 +2405,11 @@ msgstr "Иерархия"
 
 msgid "Reload"
 msgstr "Кайтадан жүктөө"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Жаңылоо"
 
 
 msgid "Bake"
@@ -2776,11 +2777,6 @@ msgstr "Кичирейтүү"
 msgctxt "Operator"
 msgid "Remove Background Image"
 msgstr "Фон сүрөтүн өчүрүү"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Жаңылоо"
 
 
 msgid "Save a Collada file"
@@ -3555,11 +3551,6 @@ msgstr "Масштаб"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Тегерек"
-
-
-msgctxt "Operator"
 msgid "Delete..."
 msgstr "Өчүрүү..."
 
@@ -3831,6 +3822,11 @@ msgstr "Куб"
 
 
 msgctxt "Operator"
+msgid "Circle"
+msgstr "Тегерек"
+
+
+msgctxt "Operator"
 msgid "UV Sphere"
 msgstr "UV-сфера"
 
@@ -3925,6 +3921,10 @@ msgid "Lattice"
 msgstr "Решётка"
 
 
+msgid "X-Ray"
+msgstr "Рентген"
+
+
 msgctxt "Operator"
 msgid "Energy"
 msgstr "Энергия"
@@ -3942,10 +3942,6 @@ msgstr "Тез оңдоо"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "Колдонуу"
-
-
-msgid "Untitled"
-msgstr "Аты жок"
 
 
 msgctxt "Action"
@@ -4191,6 +4187,10 @@ msgstr "Болот"
 
 msgid "Stone"
 msgstr "Таш"
+
+
+msgid "Untitled"
+msgstr "Аты жок"
 
 
 msgid "OK"

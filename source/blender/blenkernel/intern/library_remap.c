@@ -180,6 +180,11 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
 	}
 
 	if (*id_p && (*id_p == old_id)) {
+		/* Better remap to NULL than not remapping at all, then we can handle it as a regular remap-to-NULL case... */
+		if ((cb_flag & IDWALK_CB_NEVER_SELF) && (new_id == id_self)) {
+			new_id = NULL;
+		}
+
 		const bool is_reference = (cb_flag & IDWALK_CB_STATIC_OVERRIDE_REFERENCE) != 0;
 		const bool is_indirect = (cb_flag & IDWALK_CB_INDIRECT_USAGE) != 0;
 		const bool skip_indirect = (id_remap_data->flag & ID_REMAP_SKIP_INDIRECT_USAGE) != 0;
@@ -189,7 +194,8 @@ static int foreach_libblock_remap_callback(void *user_data, ID *id_self, ID **id
 		const bool is_obj = (GS(id->name) == ID_OB);
 		const bool is_obj_proxy = (is_obj && (((Object *)id)->proxy || ((Object *)id)->proxy_group));
 		const bool is_obj_editmode = (is_obj && BKE_object_is_in_editmode((Object *)id));
-		const bool is_never_null = ((cb_flag & IDWALK_CB_NEVER_NULL) && (new_id == NULL) &&
+		const bool is_never_null = ((cb_flag & IDWALK_CB_NEVER_NULL) &&
+		                            (new_id == NULL) &&
 		                            (id_remap_data->flag & ID_REMAP_FORCE_NEVER_NULL_USAGE) == 0);
 		const bool skip_reference = (id_remap_data->flag & ID_REMAP_SKIP_STATIC_OVERRIDE) != 0;
 		const bool skip_never_null = (id_remap_data->flag & ID_REMAP_SKIP_NEVER_NULL_USAGE) != 0;
@@ -314,14 +320,14 @@ static void libblock_remap_data_postprocess_object_update(Main *bmain, Object *o
 	BKE_main_collection_sync_remap(bmain);
 
 	if (old_ob == NULL) {
-		for (Object *ob = bmain->object.first; ob != NULL; ob = ob->id.next) {
+		for (Object *ob = bmain->objects.first; ob != NULL; ob = ob->id.next) {
 			if (ob->type == OB_MBALL && BKE_mball_is_basis(ob)) {
 				DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 			}
 		}
 	}
 	else {
-		for (Object *ob = bmain->object.first; ob != NULL; ob = ob->id.next) {
+		for (Object *ob = bmain->objects.first; ob != NULL; ob = ob->id.next) {
 			if (ob->type == OB_MBALL && BKE_mball_is_basis_for(ob, old_ob)) {
 				DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 				break;  /* There is only one basis... */
@@ -530,7 +536,7 @@ void BKE_libblock_remap_locked(
 		case ID_CU:
 		case ID_MB:
 			if (new_id) {  /* Only affects us in case obdata was relinked (changed). */
-				for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
+				for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
 					libblock_remap_data_postprocess_obdata_relink(bmain, ob, new_id);
 				}
 			}
@@ -673,7 +679,7 @@ static int id_relink_to_newid_looper(void *UNUSED(user_data), ID *UNUSED(self_id
 
 /** Similar to libblock_relink_ex, but is remapping IDs to their newid value if non-NULL, in given \a id.
  *
- * Very specific usage, not sure we'll keep it on the long run, currently only used in Object duplication code...
+ * Very specific usage, not sure we'll keep it on the long run, currently only used in Object/Collection duplication code...
  */
 void BKE_libblock_relink_to_newid(ID *id)
 {

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: congcong009 <congcong009@gmail.com>\n"
 "Language-Team: \n"
@@ -9874,10 +9874,6 @@ msgid "Falloff Curve"
 msgstr "衰减曲线"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "自定义灯光衰减曲线"
-
-
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "如果不为0, 则表示钩挂与影响的结束位置间的距离"
 
@@ -12298,10 +12294,6 @@ msgstr "洋葱皮"
 
 msgid "Stroke Edit Mode"
 msgstr "笔触编辑模式"
-
-
-msgid "X-Ray"
-msgstr "透视模式"
 
 
 msgid "Alpha Mode"
@@ -14852,10 +14844,6 @@ msgid "Keyed"
 msgstr "键控"
 
 
-msgid "Scaling"
-msgstr "缩放比例"
-
-
 msgid "React On"
 msgstr "作用目标"
 
@@ -14914,10 +14902,6 @@ msgstr "随机朝向"
 
 msgid "Randomize particle orientation"
 msgstr "对粒子朝向进行随机化设定"
-
-
-msgid "Orientation axis"
-msgstr "坐标系轴向"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -15368,12 +15352,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "活动摄像机, 用于渲染场景"
 
 
-msgid "Cursor Location"
-msgstr "游标位置"
-
-
-msgid "3D cursor location"
-msgstr "3D 游标的位置"
+msgid "3D Cursor"
+msgstr "3D 游标"
 
 
 msgid "Cycles Render Settings"
@@ -15650,10 +15630,6 @@ msgstr "动画回放"
 
 msgid "Animation playback is active"
 msgstr "动画回放处于激活状态"
-
-
-msgid "Layout Name"
-msgstr "布局名称"
 
 
 msgid "Maximize"
@@ -17791,6 +17767,10 @@ msgid "Insert a keyframe on each of the scale channels"
 msgstr "在各个缩放通道上插入关键帧"
 
 
+msgid "Scaling"
+msgstr "缩放比例"
+
+
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
 msgstr "为角色绑定中所有可能进行动画设定的属性插入关键帧"
 
@@ -19118,10 +19098,6 @@ msgid "Align View to Active"
 msgstr "将视图对齐至激活项"
 
 
-msgid "View Borders"
-msgstr "视图边界"
-
-
 msgid "Local View"
 msgstr "自身视图"
 
@@ -19884,22 +19860,6 @@ msgstr "倒角修改器, 用于使边线和顶点更加圆滑"
 
 msgid "Angle above which to bevel edges"
 msgstr "边线倒角的起始角度值"
-
-
-msgid "Edge Weight Method"
-msgstr "边线权重方法"
-
-
-msgid "What edge weight to use for weighting a vertex"
-msgstr "用于为顶点加权的边线权重"
-
-
-msgid "Sharpest"
-msgstr "最锐利"
-
-
-msgid "Largest"
-msgstr "最大"
 
 
 msgid "New"
@@ -26988,14 +26948,6 @@ msgid "Axis Range"
 msgstr "轴范围"
 
 
-msgid "Deselect rather than select items"
-msgstr "取消选择而不是选择项目"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "扩展选择, 而不是先取消选择"
-
-
 msgid "Wait for Input"
 msgstr "等待输入"
 
@@ -27044,6 +26996,14 @@ msgstr "在选择的最小 / 最大标记之间"
 msgctxt "Operator"
 msgid "Lasso Select"
 msgstr "套索选择"
+
+
+msgid "Deselect rather than select items"
+msgstr "取消选择而不是选择项目"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "扩展选择, 而不是先取消选择"
 
 
 msgctxt "Operator"
@@ -32298,15 +32258,6 @@ msgstr "重置可视区域并显示选定关键帧的范围"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "清除渲染框"
-
-
-msgid "Clear the boundaries of the border render and disable border render"
-msgstr "清除渲染框并禁用区块渲染"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "设置曲线的光标"
 
@@ -32467,10 +32418,6 @@ msgstr "重新载入图像"
 
 msgid "Reload current image from disk"
 msgstr "从磁盘中重新载入图像"
-
-
-msgid "Set the boundaries of the border render and enable border render"
-msgstr "开启框选渲染并设置边界框"
 
 
 msgctxt "Operator"
@@ -32753,10 +32700,6 @@ msgid "Manual Orientation"
 msgstr "手动朝向"
 
 
-msgid "Warning"
-msgstr "注意"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "导入OBJ"
@@ -32857,10 +32800,6 @@ msgstr "更新报告显示"
 
 msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "在Blender界面中更新报告显示 (内部使用)"
-
-
-msgid "Select or deselect all reports"
-msgstr "选中 / 取消选中全部报告"
 
 
 msgctxt "Operator"
@@ -36503,10 +36442,6 @@ msgid "Scene Origin"
 msgstr "场景原点"
 
 
-msgid "3D Cursor"
-msgstr "3D 游标"
-
-
 msgctxt "Operator"
 msgid "Animated Transforms to Deltas"
 msgstr "形变动画为增量"
@@ -39806,6 +39741,196 @@ msgstr "将骨骼的最终约束结果应用到自身变换"
 
 
 msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "禁用插件"
+
+
+msgid "Disable an add-on"
+msgstr "禁用插件"
+
+
+msgid "Target Path"
+msgstr "目标路径"
+
+
+msgid "User Prefs"
+msgstr "用户设置"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "刷新"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "从文件安装模板..."
+
+
+msgid "Install an application-template"
+msgstr "安装应用模板"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "复制前一个设置"
+
+
+msgid "Copy settings from previous version"
+msgstr "复制前一版的设定"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "激活热键配置"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "导出键配置..."
+
+
+msgid "Export key configuration to a python script"
+msgstr "将键配置导出为 Python 脚本"
+
+
+msgid "All Keymaps"
+msgstr "全部按键功能映射表"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "导入键配置..."
+
+
+msgid "Import key configuration from a python script"
+msgstr "从 phthon 脚本文件导入键配置"
+
+
+msgid "Keep original"
+msgstr "保留原始文件"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "在复制到配置文件夹之后保留原始文件"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "移除键配置"
+
+
+msgid "Remove key config"
+msgstr "移除键配置"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "测试键配置冲突"
+
+
+msgid "Test key-config for conflicts"
+msgstr "测试键配置的冲突"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "添加键位映射条目"
+
+
+msgid "Add key map item"
+msgstr "添加键位映射条目"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "移除键位映射条目"
+
+
+msgid "Remove key map item"
+msgstr "移除键位映射条目"
+
+
+msgid "Item Identifier"
+msgstr "项ID"
+
+
+msgid "Identifier of the item to remove"
+msgstr "待移除的项ID"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "还原全部键位映射条目"
+
+
+msgid "Restore key map item"
+msgstr "还原全部键位映射条目"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "还原全部键位映射"
+
+
+msgid "Restore key map(s)"
+msgstr "还原全部键位映射"
+
+
+msgid "Restore all keymaps to default"
+msgstr "重置键映射项至默认"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "恢复到默认主题"
+
+
+msgid "Reset to the default theme colors"
+msgstr "恢复到默认主题色调"
+
+
+msgctxt "Operator"
+msgid "Copy Studio Light settings"
+msgstr "复制棚灯设置"
+
+
+msgctxt "Operator"
+msgid "Install Custom Studio Light"
+msgstr "安装自定义棚灯"
+
+
+msgid "Install a user defined studio light"
+msgstr "安装用户自定义棚灯"
+
+
+msgid "MatCap"
+msgstr "快照材质"
+
+
+msgctxt "Operator"
+msgid "Save custom Studio light"
+msgstr "保存自定义棚灯"
+
+
+msgid "Show light preferences"
+msgstr "显示光照偏好"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "安装主题..."
+
+
+msgid "Load and apply a Blender XML theme file"
+msgstr "载入并应用一个Blender的XML主题文件"
+
+
+msgid "Remove existing theme file if exists"
+msgstr "如果主题文件存在则移除"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "添加新缓存"
 
@@ -41897,16 +42022,6 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "上下移动当前所选的对象"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "创建文本块"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "打开文本块"
-
-
 msgid "Make text file internal after loading"
 msgstr "加载后将文本设置为内部文件"
 
@@ -42213,10 +42328,6 @@ msgstr "旋转"
 
 msgid "Rotate selected items"
 msgstr "旋转选中的对象"
-
-
-msgid "The axis around which the transformation occurs"
-msgstr "形变发生的坐标轴"
 
 
 msgctxt "Operator"
@@ -42718,15 +42829,6 @@ msgstr "恢复到默认值"
 
 msgid "Reset this property's value to its default value"
 msgstr "将当前属性值恢复到默认值"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "恢复到默认主题"
-
-
-msgid "Reset to the default theme colors"
-msgstr "恢复到默认主题色调"
 
 
 msgctxt "Operator"
@@ -43518,6 +43620,10 @@ msgid "Move the camera so selected objects are framed"
 msgstr "移动摄像机, 以便覆盖选中的物体"
 
 
+msgid "Clear the boundaries of the border render and disable border render"
+msgstr "清除渲染框并禁用区块渲染"
+
+
 msgctxt "Operator"
 msgid "Copy Selection to Buffer"
 msgstr "将选中项复制到缓存"
@@ -43627,9 +43733,8 @@ msgid "Contents of copy buffer gets pasted"
 msgstr "复制的缓存内容已粘贴"
 
 
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "设置框选渲染"
+msgid "Set the boundaries of the border render and enable border render"
+msgstr "开启框选渲染并设置边界框"
 
 
 msgctxt "Operator"
@@ -43948,28 +44053,6 @@ msgstr "设置摄像机为渲染输出的相同比例尺寸"
 
 
 msgctxt "Operator"
-msgid "Disable Add-on"
-msgstr "禁用插件"
-
-
-msgid "Disable an add-on"
-msgstr "禁用插件"
-
-
-msgid "Target Path"
-msgstr "目标路径"
-
-
-msgid "User Prefs"
-msgstr "用户设置"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "刷新"
-
-
-msgctxt "Operator"
 msgid "Export Alembic"
 msgstr "导出Alembic"
 
@@ -44125,15 +44208,6 @@ msgstr "加载Alembic文档"
 
 msgid "Set Frame Range"
 msgstr "设置帧范围"
-
-
-msgctxt "Operator"
-msgid "Install Template from File..."
-msgstr "从文件安装模板..."
-
-
-msgid "Install an application-template"
-msgstr "安装应用模板"
 
 
 msgid "Select new objects"
@@ -44466,15 +44540,6 @@ msgstr "切换枚举"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "复制前一个设置"
-
-
-msgid "Copy settings from previous version"
-msgstr "复制前一版的设定"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "调试菜单"
 
@@ -44623,113 +44688,12 @@ msgstr "新增或删除一个主题预设"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "激活热键配置"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "导出键配置..."
-
-
-msgid "Export key configuration to a python script"
-msgstr "将键配置导出为 Python 脚本"
-
-
-msgid "All Keymaps"
-msgstr "全部按键功能映射表"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "导入键配置..."
-
-
-msgid "Import key configuration from a python script"
-msgstr "从 phthon 脚本文件导入键配置"
-
-
-msgid "Keep original"
-msgstr "保留原始文件"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "在复制到配置文件夹之后保留原始文件"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "新增键配置预设"
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "新增或删除一个键配置预设"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "移除键配置"
-
-
-msgid "Remove key config"
-msgstr "移除键配置"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "测试键配置冲突"
-
-
-msgid "Test key-config for conflicts"
-msgstr "测试键配置的冲突"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "添加键位映射条目"
-
-
-msgid "Add key map item"
-msgstr "添加键位映射条目"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "移除键位映射条目"
-
-
-msgid "Remove key map item"
-msgstr "移除键位映射条目"
-
-
-msgid "Item Identifier"
-msgstr "项ID"
-
-
-msgid "Identifier of the item to remove"
-msgstr "待移除的项ID"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "还原全部键位映射条目"
-
-
-msgid "Restore key map item"
-msgstr "还原全部键位映射条目"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "还原全部键位映射"
-
-
-msgid "Restore key map(s)"
-msgstr "还原全部键位映射"
-
-
-msgid "Restore all keymaps to default"
-msgstr "重置键映射项至默认"
 
 
 msgctxt "Operator"
@@ -45241,52 +45205,12 @@ msgstr "启动画面"
 
 
 msgctxt "Operator"
-msgid "Copy Studio Light settings"
-msgstr "复制棚灯设置"
-
-
-msgctxt "Operator"
-msgid "Install Custom Studio Light"
-msgstr "安装自定义棚灯"
-
-
-msgid "Install a user defined studio light"
-msgstr "安装用户自定义棚灯"
-
-
-msgid "MatCap"
-msgstr "快照材质"
-
-
-msgctxt "Operator"
-msgid "Save custom Studio light"
-msgstr "保存自定义棚灯"
-
-
-msgid "Show light preferences"
-msgstr "显示光照偏好"
-
-
-msgctxt "Operator"
 msgid "Save System Info"
 msgstr "保存系统信息"
 
 
 msgid "Generate system information, saved into a text file"
 msgstr "生成系统信息，并保存为文本文件。"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "安装主题..."
-
-
-msgid "Load and apply a Blender XML theme file"
-msgstr "载入并应用一个Blender的XML主题文件"
-
-
-msgid "Remove existing theme file if exists"
-msgstr "如果主题文件存在则移除"
 
 
 msgid "Cycle"
@@ -45903,6 +45827,10 @@ msgid "Bendy Bones"
 msgstr "软骨骼"
 
 
+msgid "Viewport Display"
+msgstr "视图显示"
+
+
 msgid "Active Point"
 msgstr "活动点"
 
@@ -46058,8 +45986,12 @@ msgid "Area Shape"
 msgstr "面形状"
 
 
-msgid "Viewport Display"
-msgstr "视图显示"
+msgid "Passepartout"
+msgstr "外边框"
+
+
+msgid "Center-Cut Safe Areas"
+msgstr "中间裁切安全区"
 
 
 msgid "Texture Space"
@@ -46426,10 +46358,6 @@ msgid "Transform Orientations"
 msgstr "变换参照坐标系"
 
 
-msgid "Camera Lock"
-msgstr "相机锁定"
-
-
 msgid "Filter Add-ons"
 msgstr "过滤插件"
 
@@ -46616,10 +46544,6 @@ msgstr "绘制粒子"
 
 msgid "Draw actual particles"
 msgstr "绘制实际粒子"
-
-
-msgid "Don't use any brush"
-msgstr "不使用任何笔刷"
 
 
 msgid "Comb"
@@ -48574,32 +48498,16 @@ msgid "MultiSample: 2"
 msgstr "多重采样: 2"
 
 
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "使用2x OpenGL多重采样(需要重启)"
-
-
 msgid "MultiSample: 4"
 msgstr "多重采样: 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "使用4x OpenGL多重采样(需要重启)"
 
 
 msgid "MultiSample: 8"
 msgstr "多重采样: 8"
 
 
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "使用8x OpenGL多重采样(需要重启)"
-
-
 msgid "MultiSample: 16"
 msgstr "多重采样: 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "使用16x OpenGL多重采样(需要重启)"
 
 
 msgid "Viewport Quality"
@@ -48632,10 +48540,6 @@ msgstr "内存缓存限值(MB)"
 
 msgid "MultiSample"
 msgstr "多重采样"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "开启OpenGL多采样计算, 仅适用于硬件支持的系统, 需重启"
 
 
 msgid "OpenSubdiv Compute Type"
@@ -48980,10 +48884,6 @@ msgstr "鼠标划过时开启菜单"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "鼠标经过即开启菜单或下拉菜单"
-
-
-msgid "Prompt Quit"
-msgstr "退出时提示"
 
 
 msgid "Text Anti-aliasing"
@@ -50350,38 +50250,6 @@ msgid "Bake displacement"
 msgstr "烘培置换"
 
 
-msgid "Border Maximum X"
-msgstr "框选渲染的 X 向最大值"
-
-
-msgid "Maximum X value for the render border"
-msgstr "为框选渲染设置 X 轴的最大值"
-
-
-msgid "Border Maximum Y"
-msgstr "框选渲染的 Y 向最大值"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "为框选渲染设置 Y 轴的最大值"
-
-
-msgid "Border Minimum X"
-msgstr "框选渲染的 X 向最小值"
-
-
-msgid "Minimum X value for the render border"
-msgstr "为框选渲染设置 Y 轴的最小值"
-
-
-msgid "Border Minimum Y"
-msgstr "框选渲染的 Y 向最小值"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "为框选渲染设置 Y 轴的最小值"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "选择显示渲染图像的位置"
 
@@ -50660,14 +50528,6 @@ msgstr "使用缩放值"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "将渲染结果导入至节点编辑器, 需事先开启节点合成"
-
-
-msgid "Crop to Border"
-msgstr "框选渲染"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "使用框选来渲染部分画面"
 
 
 msgid "File Extensions"
@@ -54113,6 +53973,10 @@ msgid "Backdrop zoom factor"
 msgstr "背景的缩放参数"
 
 
+msgid "Cursor Location"
+msgstr "游标位置"
+
+
 msgid "Location for adding new nodes"
 msgstr "新增节点的位置"
 
@@ -54379,10 +54243,6 @@ msgstr "使用斑马纹显示曝光过度的区域"
 
 msgid "Show TV title safe and action safe areas in preview"
 msgstr "在摄像机视图中显示电视字幕和动作安全区"
-
-
-msgid "Center-Cut Safe Areas"
-msgstr "中间裁切安全区"
 
 
 msgid "Separate Colors"
@@ -54691,10 +54551,6 @@ msgstr "追踪点的显示类型"
 
 msgid "Viewport display style for tracks"
 msgstr "追踪点在视图中的显示样式"
-
-
-msgid "Render Border"
-msgstr "渲染区域"
 
 
 msgid "Space UV Editor"
@@ -58614,10 +58470,6 @@ msgid "Add Image"
 msgstr "添加图像"
 
 
-msgid "Passepartout"
-msgstr "外边框"
-
-
 msgid "Not Set"
 msgstr "未设置"
 
@@ -59398,11 +59250,6 @@ msgstr "选中项 -> 游标 (保持偏移)"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "圆环"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "设置"
 
@@ -59566,17 +59413,9 @@ msgid "Strand Shape"
 msgstr "发股形状"
 
 
-msgid "Radius Scaling"
-msgstr "范围缩放"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "新建"
-
-
-msgid "Multiply mass with size"
-msgstr "按大小定质量"
 
 
 msgid "Spacing: %g"
@@ -60548,6 +60387,10 @@ msgid "Convert to Float"
 msgstr "转换浮点数"
 
 
+msgid "Storage"
+msgstr "存储"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "查看所有序列"
@@ -60711,10 +60554,6 @@ msgstr "追踪器:"
 
 msgid "Distortion:"
 msgstr "畸变:"
-
-
-msgid "Storage"
-msgstr "存储"
 
 
 msgctxt "Operator"
@@ -61167,10 +61006,6 @@ msgid "Pan Sensitivity"
 msgstr "平移敏感度"
 
 
-msgid "Might fail for Mesh editing selection!"
-msgstr "可能会导致网格编辑选择失败!"
-
-
 msgid "Natural Trackpad Direction"
 msgstr "触控板的固有方向"
 
@@ -61230,11 +61065,6 @@ msgstr "偏好设置:"
 
 msgid "Error (see console)"
 msgstr "错误 (详见控制台)"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "法向缩放"
 
 
 msgctxt "Operator"
@@ -61320,11 +61150,6 @@ msgstr "右视图"
 msgctxt "Operator"
 msgid "Left"
 msgstr "左视图"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "渲染区域..."
 
 
 msgctxt "Operator"
@@ -61440,6 +61265,11 @@ msgstr "平面"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "立方体"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "圆环"
 
 
 msgctxt "Operator"
@@ -61903,6 +61733,11 @@ msgstr "显示:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "法向缩放"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "移动纹理空间"
 
@@ -62234,6 +62069,10 @@ msgid "Lock to 3D Cursor"
 msgstr "锁定到3D游标"
 
 
+msgid "X-Ray"
+msgstr "透视模式"
+
+
 msgid "Marker Names"
 msgstr "标记名称"
 
@@ -62443,10 +62282,6 @@ msgstr "自动规格化"
 
 msgid "Multi-Paint"
 msgstr "多次绘制"
-
-
-msgid "Untitled"
-msgstr "未命名"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -62767,14 +62602,6 @@ msgid "ParticleSettings"
 msgstr "粒子设定"
 
 
-msgid "ParticleSystem %i"
-msgstr "粒子系统 %i"
-
-
-msgid "ParticleSystem"
-msgstr "粒子系统"
-
-
 msgid "%i frames found!"
 msgstr "找到 %i 帧!"
 
@@ -62805,6 +62632,10 @@ msgstr "%s, 缓存已过期!"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s, 未精确匹配, 自第 %i 帧起"
+
+
+msgid "Warning"
+msgstr "注意"
 
 
 msgid "Invalid Input Error"
@@ -63840,10 +63671,6 @@ msgid "ID-Block:"
 msgstr "ID 块:"
 
 
-msgid "Can't edit external libdata"
-msgstr "无法编辑外部库数据"
-
-
 msgid "%s parent deform"
 msgstr "%s 父级形变"
 
@@ -64541,10 +64368,6 @@ msgstr "无法复制物体"
 
 msgid "This data does not support joining in edit mode"
 msgstr "此数据不支持在编辑模式中接合"
-
-
-msgid "Cannot edit external libdata"
-msgstr "无法编辑外部库数据"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -65317,6 +65140,10 @@ msgstr "图像需要四色通道进行绘制"
 
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "打包的多图层文件无法被绘制"
+
+
+msgid "Untitled"
+msgstr "未命名"
 
 
 msgid "No active mesh object"
@@ -67441,6 +67268,10 @@ msgstr "物体 '%s' 不支持形变"
 
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "物体 '%s' 无法创建用于寻找最近点的内部数据"
+
+
+msgid "ParticleSystem"
+msgstr "粒子系统"
 
 
 msgid "Mesh has no UV data"

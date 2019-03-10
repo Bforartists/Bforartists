@@ -53,33 +53,23 @@ static const string fast_compiled_kernels =
 	"indirect_subsurface "
 	"buffer_update";
 
-const string OpenCLDevice::get_opencl_program_name(bool single_program, const string& kernel_name)
+const string OpenCLDevice::get_opencl_program_name(const string& kernel_name)
 {
-	if (single_program) {
-		return "split";
+	if (fast_compiled_kernels.find(kernel_name) != std::string::npos) {
+		return "split_bundle";
 	}
 	else {
-		if (fast_compiled_kernels.find(kernel_name) != std::string::npos) {
-			return "split_bundle";
-		}
-		else {
-			return "split_" + kernel_name;
-		}
+		return "split_" + kernel_name;
 	}
 }
 
-const string OpenCLDevice::get_opencl_program_filename(bool single_program, const string& kernel_name)
+const string OpenCLDevice::get_opencl_program_filename(const string& kernel_name)
 {
-	if (single_program) {
-		return "kernel_split.cl";
+	if (fast_compiled_kernels.find(kernel_name) != std::string::npos) {
+		return "kernel_split_bundle.cl";
 	}
 	else {
-		if (fast_compiled_kernels.find(kernel_name) != std::string::npos) {
-			return "kernel_split_bundle.cl";
-		}
-		else {
-			return "kernel_" + kernel_name + ".cl";
-		}
+		return "kernel_" + kernel_name + ".cl";
 	}
 }
 
@@ -91,8 +81,8 @@ string OpenCLDevice::get_build_options(const DeviceRequestedFeatures& requested_
 	}
 	else if (opencl_program_name == "bake") {
 		/* Note: get_build_options for bake is only requested when baking is enabled.
-		   displace and background are always requested.
-		   `__SPLIT_KERNEL__` must not be present in the compile directives for bake */
+		 * displace and background are always requested.
+		 * `__SPLIT_KERNEL__` must not be present in the compile directives for bake */
 		DeviceRequestedFeatures features(requested_features);
 		features.use_denoising = false;
 		features.use_object_motion = false;
@@ -101,7 +91,7 @@ string OpenCLDevice::get_build_options(const DeviceRequestedFeatures& requested_
 	}
 	else if (opencl_program_name == "displace") {
 		/* As displacement does not use any nodes from the Shading group (eg BSDF).
-		   We disable all features that are related to shading. */
+		 * We disable all features that are related to shading. */
 		DeviceRequestedFeatures features(requested_features);
 		features.use_denoising = false;
 		features.use_object_motion = false;
@@ -118,15 +108,15 @@ string OpenCLDevice::get_build_options(const DeviceRequestedFeatures& requested_
 	}
 	else if (opencl_program_name == "background") {
 		/* Background uses Background shading
-		   It is save to disable shadow features, subsurface and volumetric. */
+		 * It is save to disable shadow features, subsurface and volumetric. */
 		DeviceRequestedFeatures features(requested_features);
 		features.use_baking = false;
 		features.use_transparent = false;
 		features.use_shadow_tricks = false;
 		features.use_denoising = false;
 		/* NOTE: currently possible to use surface nodes like `Hair Info`, `Bump` node.
-		   Perhaps we should remove them in UI as it does not make any sense when
-		   rendering background. */
+		 * Perhaps we should remove them in UI as it does not make any sense when
+		 * rendering background. */
 		features.nodes_features &= ~NODE_FEATURE_VOLUME;
 		features.use_subsurface = false;
 		features.use_volume = false;
@@ -149,19 +139,19 @@ string OpenCLDevice::get_build_options(const DeviceRequestedFeatures& requested_
 	}
 	else if (opencl_program_name == "split_subsurface_scatter" && !requested_features.use_subsurface) {
 		/* When subsurface is off, the kernel updates indexes and does not need any
-		   Compile directives */
+		 * Compile directives */
 		build_options += nofeatures.get_build_options();
 	}
 	else {
 		DeviceRequestedFeatures features(requested_features);
 
 		/* Always turn off baking at this point. Baking is only usefull when building the bake kernel.
-		   this also makes sure that the kernels that are build during baking can be reused
-		   when not doing any baking. */
+		 * this also makes sure that the kernels that are build during baking can be reused
+		 * when not doing any baking. */
 		features.use_baking = false;
 
 		/* Do not vary on shaders when program doesn't do any shading.
-		   We have bundled them in a single program. */
+		 * We have bundled them in a single program. */
 		if (opencl_program_name == "split_bundle") {
 			features.max_nodes_group = 0;
 			features.nodes_features = 0;
@@ -280,12 +270,11 @@ public:
 	{
 		OpenCLSplitKernelFunction* kernel = new OpenCLSplitKernelFunction(device, cached_memory);
 
-		bool single_program = OpenCLInfo::use_single_program();
-		const string program_name = device->get_opencl_program_name(single_program, kernel_name);
+		const string program_name = device->get_opencl_program_name(kernel_name);
 		kernel->program =
 			OpenCLDevice::OpenCLProgram(device,
 			                            program_name,
-			                            device->get_opencl_program_filename(single_program, kernel_name),
+			                            device->get_opencl_program_filename(kernel_name),
 			                            device->get_build_options(requested_features, program_name));
 
 		kernel->program.add_kernel(ustring("path_trace_" + kernel_name));
@@ -663,10 +652,8 @@ bool OpenCLDevice::load_kernels(const DeviceRequestedFeatures& requested_feature
 		programs.push_back(&background_program);
 	}
 
-	bool single_program = OpenCLInfo::use_single_program();
-
-#define ADD_SPLIT_KERNEL_SINGLE_PROGRAM(kernel_name) program_split.add_kernel(ustring("path_trace_"#kernel_name));
-#define ADD_SPLIT_KERNEL_SPLIT_PROGRAM(kernel_name) \
+#define ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(kernel_name) program_split.add_kernel(ustring("path_trace_"#kernel_name));
+#define ADD_SPLIT_KERNEL_PROGRAM(kernel_name) \
 		const string program_name_##kernel_name = "split_"#kernel_name; \
 		program_##kernel_name = \
 			OpenCLDevice::OpenCLProgram(this, \
@@ -676,71 +663,41 @@ bool OpenCLDevice::load_kernels(const DeviceRequestedFeatures& requested_feature
 		program_##kernel_name.add_kernel(ustring("path_trace_"#kernel_name)); \
 		programs.push_back(&program_##kernel_name);
 
-	if (single_program) {
-		program_split = OpenCLDevice::OpenCLProgram(this,
-		                                            "split" ,
-		                                            "kernel_split.cl",
-		                                            get_build_options(requested_features, "split"));
-
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(state_buffer_size);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(data_init);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(path_init);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(scene_intersect);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(lamp_emission);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(do_volume);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(queue_enqueue);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(indirect_background);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shader_setup);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shader_sort);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shader_eval);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(holdout_emission_blurring_pathtermination_ao);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(subsurface_scatter);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(direct_lighting);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shadow_blocked_ao);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shadow_blocked_dl);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(enqueue_inactive);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(next_iteration_setup);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(indirect_subsurface);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(buffer_update);
-
-		programs.push_back(&program_split);
+	/* Ordered with most complex kernels first, to reduce overall compile time. */
+	ADD_SPLIT_KERNEL_PROGRAM(subsurface_scatter);
+	if (requested_features.use_volume) {
+		ADD_SPLIT_KERNEL_PROGRAM(do_volume);
 	}
-	else {
-		/* Ordered with most complex kernels first, to reduce overall compile time. */
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(subsurface_scatter);
-		if (requested_features.use_volume) {
-			ADD_SPLIT_KERNEL_SPLIT_PROGRAM(do_volume);
-		}
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(shadow_blocked_dl);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(shadow_blocked_ao);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(holdout_emission_blurring_pathtermination_ao);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(lamp_emission);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(direct_lighting);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(indirect_background);
-		ADD_SPLIT_KERNEL_SPLIT_PROGRAM(shader_eval);
+	ADD_SPLIT_KERNEL_PROGRAM(shadow_blocked_dl);
+	ADD_SPLIT_KERNEL_PROGRAM(shadow_blocked_ao);
+	ADD_SPLIT_KERNEL_PROGRAM(holdout_emission_blurring_pathtermination_ao);
+	ADD_SPLIT_KERNEL_PROGRAM(lamp_emission);
+	ADD_SPLIT_KERNEL_PROGRAM(direct_lighting);
+	ADD_SPLIT_KERNEL_PROGRAM(indirect_background);
+	ADD_SPLIT_KERNEL_PROGRAM(shader_eval);
 
-		/* Quick kernels bundled in a single program to reduce overhead of starting
-			* Blender processes. */
-		program_split = OpenCLDevice::OpenCLProgram(this,
-		                                            "split_bundle" ,
-		                                            "kernel_split_bundle.cl",
-		                                            get_build_options(requested_features, "split_bundle"));
+	/* Quick kernels bundled in a single program to reduce overhead of starting
+		* Blender processes. */
+	program_split = OpenCLDevice::OpenCLProgram(this,
+												"split_bundle" ,
+												"kernel_split_bundle.cl",
+												get_build_options(requested_features, "split_bundle"));
 
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(data_init);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(state_buffer_size);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(path_init);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(scene_intersect);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(queue_enqueue);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shader_setup);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(shader_sort);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(enqueue_inactive);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(next_iteration_setup);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(indirect_subsurface);
-		ADD_SPLIT_KERNEL_SINGLE_PROGRAM(buffer_update);
-		programs.push_back(&program_split);
-	}
-#undef ADD_SPLIT_KERNEL_SPLIT_PROGRAM
-#undef ADD_SPLIT_KERNEL_SINGLE_PROGRAM
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(data_init);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(state_buffer_size);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(path_init);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(scene_intersect);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(queue_enqueue);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(shader_setup);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(shader_sort);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(enqueue_inactive);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(next_iteration_setup);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(indirect_subsurface);
+	ADD_SPLIT_KERNEL_BUNDLE_PROGRAM(buffer_update);
+	programs.push_back(&program_split);
+
+#undef ADD_SPLIT_KERNEL_PROGRAM
+#undef ADD_SPLIT_KERNEL_BUNDLE_PROGRAM
 
 	base_program = OpenCLProgram(this, "base", "kernel_base.cl", get_build_options(requested_features, "base"));
 	base_program.add_kernel(ustring("convert_to_byte"));
@@ -1230,13 +1187,13 @@ void OpenCLDevice::thread_run(DeviceTask *task)
 
 				/* Complete kernel execution before release tile. */
 				/* This helps in multi-device render;
-					* The device that reaches the critical-section function
-					* release_tile waits (stalling other devices from entering
-					* release_tile) for all kernels to complete. If device1 (a
-					* slow-render device) reaches release_tile first then it would
-					* stall device2 (a fast-render device) from proceeding to render
-					* next tile.
-					*/
+				 * The device that reaches the critical-section function
+				 * release_tile waits (stalling other devices from entering
+				 * release_tile) for all kernels to complete. If device1 (a
+				 * slow-render device) reaches release_tile first then it would
+				 * stall device2 (a fast-render device) from proceeding to render
+				 * next tile.
+				 */
 				clFinish(cqCommandQueue);
 			}
 			else if(tile.task == RenderTile::DENOISE) {
