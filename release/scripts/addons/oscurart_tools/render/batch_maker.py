@@ -27,10 +27,12 @@ def batchMaker(BIN):
 
     with open(SHFILE, "w") as FILE:
         if not BIN:
-            FILE.writelines(r"'%s' -b '%s' --python-text Text -a" % (bpy.app.binary_path,bpy.data.filepath))
+            for scene in bpy.data.scenes:
+                FILE.writelines("'%s' -b '%s' --scene %s --python-text Text -a \n" % (bpy.app.binary_path,bpy.data.filepath,scene.name))
         else:
-            FILE.writelines(r"blender -b '%s' --python-text Text -a" % (bpy.data.filepath))
-            
+            for scene in bpy.data.scenes:
+                FILE.writelines("blender -b '%s' --scene %s --python-text Text -a \n" % (bpy.data.filepath,scene.name))
+                
             
 
 class oscBatchMaker (bpy.types.Operator):

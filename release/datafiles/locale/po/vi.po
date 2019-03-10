@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -11559,10 +11559,6 @@ msgid "Falloff Curve"
 msgstr "Cong Sự Giảm"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "Cong Sự Giảm Bóng Đèn Tự Chón"
-
-
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "Nếu không = 0, khoảng cách kết thúc sự ảnh hưởng của móc"
 
@@ -14346,10 +14342,6 @@ msgid "Edit Grease Pencil strokes instead of viewport data"
 msgstr "Biên soạn nét Bút Sáp thay thế dữ liệu màn chiếu"
 
 
-msgid "X-Ray"
-msgstr "X-Quang"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Cục dữ liệu ảnh liên lạc với ảnh ngoài hay ảnh bị gói"
 
@@ -17086,10 +17078,6 @@ msgid "Keyed"
 msgstr "Bức Ảnh Mẫu"
 
 
-msgid "Scaling"
-msgstr "Phóng To"
-
-
 msgid "React On"
 msgstr "Phản Ứng"
 
@@ -17152,10 +17140,6 @@ msgstr "Định Hướng Ngẫu Nhiên"
 
 msgid "Randomize particle orientation"
 msgstr "Cho các hạt định hướng ngẫu nhiên"
-
-
-msgid "Orientation axis"
-msgstr "Trục định hướng"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -17658,12 +17642,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Máy quay phim hoạt động đang dùng cho kết xuất cảnh"
 
 
-msgid "Cursor Location"
-msgstr "Vị Trí Con Trỏ"
-
-
-msgid "3D cursor location"
-msgstr "Vị trị con tro 3 chiều"
+msgid "3D Cursor"
+msgstr "Con Trỏ 3 Chiều"
 
 
 msgid "Cycles Render Settings"
@@ -21348,6 +21328,10 @@ msgid "Insert a keyframe on each of the scale channels"
 msgstr "Chèn một bức ảnh mẫu trong mỗi kênh phóng to"
 
 
+msgid "Scaling"
+msgstr "Phóng To"
+
+
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
 msgstr "Chèn bức ảnh cho hết đặc tính có thể chuyển động trong giàn nhân vật"
 
@@ -23071,10 +23055,6 @@ msgid "Align View to Active"
 msgstr "Sắp Hàng Màn Với Hoạt Động"
 
 
-msgid "View Borders"
-msgstr "Ranh Giới Màn Chiếu"
-
-
 msgid "Local View"
 msgstr "Màn Địa Phương"
 
@@ -23957,22 +23937,6 @@ msgstr "Cụ sửa đổi cho làm cạnh và đỉnh còng hơn"
 
 msgid "Angle above which to bevel edges"
 msgstr "Xiên cạnh có góc hơn giá trị này"
-
-
-msgid "Edge Weight Method"
-msgstr "Phương Pháp Quyền Lượng Cạnh"
-
-
-msgid "What edge weight to use for weighting a vertex"
-msgstr "Dùng quyền lượng cạnh nào làm quyền lượng cho đỉnh"
-
-
-msgid "Sharpest"
-msgstr "Nhọn Nhất"
-
-
-msgid "Largest"
-msgstr "Lớn Nhất"
 
 
 msgid "New"
@@ -31981,14 +31945,6 @@ msgid "Axis Range"
 msgstr "Phạm Vi Trục"
 
 
-msgid "Deselect rather than select items"
-msgstr "Thả thay chọn mặt hàng"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "Kéo dài sự lựa chọn thay thả hết trước"
-
-
 msgid "Wait for Input"
 msgstr "Chờ Ngõ Vào"
 
@@ -32045,6 +32001,14 @@ msgstr "Dây Trói Chọn"
 
 msgid "Select keyframe points using lasso selection"
 msgstr "Chọn điểm bức ảnh mẫu dùng lựa chọn dây trói"
+
+
+msgid "Deselect rather than select items"
+msgstr "Thả thay chọn mặt hàng"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "Kéo dài sự lựa chọn thay thả hết trước"
 
 
 msgctxt "Operator"
@@ -38347,15 +38311,6 @@ msgstr "Đặt lại vùng có thể thấy cho chiếu phạm vi bức ảnh m�
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Xóa Ranh Giời Kết Xuất"
-
-
-msgid "Clear the boundaries of the border render and disable border render"
-msgstr "Xóa các ranh giới của ranh giới kết xuất và tắt kết xuất ràng giới"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Đặt Điểm Cong"
 
@@ -38532,15 +38487,6 @@ msgstr "Đọc Lại Ảnh"
 
 msgid "Reload current image from disk"
 msgstr "Đọc lại ảnh từ dĩa"
-
-
-msgctxt "Operator"
-msgid "Render Border"
-msgstr "Kết Xuất Ranh Giới"
-
-
-msgid "Set the boundaries of the border render and enable border render"
-msgstr "Đặt biên giới của ranh giới kết xuất và bật kết xuất ranh giới"
 
 
 msgctxt "Operator"
@@ -38947,10 +38893,6 @@ msgid "Use pre/post rotation from FBX transform (you may have to disable that in
 msgstr "Dùng xoay trước/sau từ biến hóa FBX (bạn có lẻ phải tắt cái đó cho vài trường hợp)"
 
 
-msgid "Warning"
-msgstr "Cảnh Cáo"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Nhập OBJ"
@@ -39055,10 +38997,6 @@ msgstr "Nâng Cấp Hiển Thị Biên Bản"
 
 msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "Nâng cấp hiển thị của biên bản trong giao diện Blender (dùng nội bộ)"
-
-
-msgid "Select or deselect all reports"
-msgstr "Chọn hay thả hết biên bản"
 
 
 msgctxt "Operator"
@@ -39638,10 +39576,6 @@ msgstr "Ưa trượt theo cạnh cho giữ bề rộng đều"
 
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Chất liệu cho xiên mặt (-1 nghĩa là dùng mặt kề)"
-
-
-msgid "What distance Amount measures"
-msgstr "Khoảng cách nào Lượng được đo"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -43072,10 +43006,6 @@ msgstr "Tọa Độ Gốc Cảnh"
 
 msgid "Use the Scene Origin as the position for the selected objects to align to"
 msgstr "Dùng Gốc Cảnh để đặt vị trí cho sắp hàng vật thể được chọn"
-
-
-msgid "3D Cursor"
-msgstr "Con Trỏ 3 Chiều"
 
 
 msgid "Use the 3D cursor as the position for the selected objects to align to"
@@ -47088,6 +47018,228 @@ msgstr "Áp dụng vị trí ràng buộc cuối cùng của xương dạng đ�
 
 
 msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "Tắt Đồ Kèm"
+
+
+msgid "Disable an add-on"
+msgstr "Tắt một đồ kèm"
+
+
+msgid "Module name of the add-on to disable"
+msgstr "Tên mô khối của đồ kèm để tắt"
+
+
+msgctxt "Operator"
+msgid "Enable Add-on"
+msgstr "Bật Đồ Kèm"
+
+
+msgid "Enable an add-on"
+msgstr "Bật một đồ kèm"
+
+
+msgid "Module name of the add-on to enable"
+msgstr "Tên mô khối đồ kèm để bật"
+
+
+msgid "Display information and preferences for this add-on"
+msgstr "Chiếu thông tin và tùy chọn cho đồ kèm này"
+
+
+msgid "Module name of the add-on to expand"
+msgstr "Tên mô kối của đồ kèm để mở rộng"
+
+
+msgctxt "Operator"
+msgid "Install Add-on from File..."
+msgstr "Cài đạt từ Độ Kèm từ Tệp…"
+
+
+msgid "Install an add-on"
+msgstr "Cài đạt một đồ kèm"
+
+
+msgid "Remove existing add-ons with the same ID"
+msgstr "Xóa đồ kèm tồn tại cùng ID (tên)"
+
+
+msgid "Target Path"
+msgstr "Đường Dẫn Mục Tiêu"
+
+
+msgid "User Prefs"
+msgstr "Tùy Chọn Người Dùng"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Đọc Lại"
+
+
+msgid "Scan add-on directories for new modules"
+msgstr "Tìm trong thư mục đồ kèm cho mô khối mới"
+
+
+msgctxt "Operator"
+msgid "Remove Add-on"
+msgstr "Xóa Đồ Kèm"
+
+
+msgid "Delete the add-on from the file system"
+msgstr "Xóa đồ kèm từ hệ thống tệp"
+
+
+msgid "Module name of the add-on to remove"
+msgstr "Tên mô khối của đồ kèm để xóa"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "Cài đạt Mẫu Khởi Đầu từ Tệp..."
+
+
+msgid "Install an application-template"
+msgstr "Cài đặt mẫu khởi đầu ứng dụng"
+
+
+msgid "Remove existing template with the same ID"
+msgstr "Xóa mẫu tồn tại có cùng mã số"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Chép Sắp Đặt Trước"
+
+
+msgid "Copy settings from previous version"
+msgstr "Chép sắp đặt từ phiên bản trước"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Hoạt Động Cấu Hình Bàn Phím"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Xuất Cấu Hình Bàn Phím..."
+
+
+msgid "Export key configuration to a python script"
+msgstr "Xuất cầu hình bàn phím đến một bản thảo Python"
+
+
+msgid "All Keymaps"
+msgstr "Hết Ánh Xạ Bàn Phím"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Nhập Cấu Hình Bàn Phím..."
+
+
+msgid "Import key configuration from a python script"
+msgstr "Nhập cấu hình bàn phím từ một bản thảo Python"
+
+
+msgid "Keep original"
+msgstr "Giữ ban đầu"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "Giữ tệp ban đầu sao chép nó vào hồ sơ cấu hình"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Xóa Cấu Hình Bàn Phím"
+
+
+msgid "Remove key config"
+msgstr "Xóa cấu hình bàn phím"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Kiểm Tra Cấu Hình Bàn Phím Có Mâu Thuẫn"
+
+
+msgid "Test key-config for conflicts"
+msgstr "Kiểm tra cấu hình bàn phím có mâu thuẫn"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "Thêm Mặt Hàng Ánh Xạ Bàn Phím"
+
+
+msgid "Add key map item"
+msgstr "Thêm mặt hàng ánh xạ bàn phím"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Xóa Mặt Hàng Ánh Xạ Bàn Phím"
+
+
+msgid "Remove key map item"
+msgstr "Xóa mặt hàng ánh xạ bàn phím"
+
+
+msgid "Item Identifier"
+msgstr "Tên Mặt Hàng"
+
+
+msgid "Identifier of the item to remove"
+msgstr "Tên của mặt hàng để xóa"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "Hoàn Lại Mặt Hàng Ánh Xạ Bàn Phím"
+
+
+msgid "Restore key map item"
+msgstr "Hoàn lại mặt hàng ánh xạ bàn phím"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Hoàn Lại Ánh Xạ Bàn Phím"
+
+
+msgid "Restore key map(s)"
+msgstr "Hoàn lại hết ánh xạ bàn phím"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Hoàn lại hết ánh xạ bàn phím đến mặc định"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Đặt Lại Phong Cách Mặc Định"
+
+
+msgid "Reset to the default theme colors"
+msgstr "Đặt lại màu phong cách mặc định"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Cải Phong Cách..."
+
+
+msgid "Load and apply a Blender XML theme file"
+msgstr "Đọc và áp dụng tệp phong cách XML Blender"
+
+
+msgid "Remove existing theme file if exists"
+msgstr "Xóa tệp phong cách nếu có"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Thêm Đệm Mới"
 
@@ -48575,10 +48727,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Đặt Đại Lỵ Đoạn Được Chọn"
 
 
-msgid "Enable selected proxies on all selected Movie strips"
-msgstr "Bật đại lý được chọn cho hết đoạn Phim được chọn"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Xuất Phụ Đề"
@@ -49549,18 +49697,8 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Di chuyển các hàng đang chọn lên/xuống"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Tạo Cục Văn Bản"
-
-
 msgid "Create a new text data-block"
 msgstr "Tạo một cục dữ liệu văn bản mới"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Mở Cục Văn Bản"
 
 
 msgid "Open a new text data-block"
@@ -49937,10 +50075,6 @@ msgstr "Xoay"
 
 msgid "Rotate selected items"
 msgstr "Xoay mặt hàng được chọn"
-
-
-msgid "The axis around which the transformation occurs"
-msgstr "Thức hành biến hóa quanh trục nào"
 
 
 msgctxt "Operator"
@@ -50552,15 +50686,6 @@ msgstr "Đặt Lại Giá Trí Mặc Định"
 
 msgid "Reset this property's value to its default value"
 msgstr "Đặt lại giá trị của đặc tính này bằng mặc định"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "Đặt Lại Phong Cách Mặc Định"
-
-
-msgid "Reset to the default theme colors"
-msgstr "Đặt lại màu phong cách mặc định"
 
 
 msgctxt "Operator"
@@ -51397,6 +51522,10 @@ msgid "Move the camera so selected objects are framed"
 msgstr "Di chuyển máy quay phim cho các vật thể lựa chọn ở trong khung máy quay phim"
 
 
+msgid "Clear the boundaries of the border render and disable border render"
+msgstr "Xóa các ranh giới của ranh giới kết xuất và tắt kết xuất ràng giới"
+
+
 msgctxt "Operator"
 msgid "Copy Selection to Buffer"
 msgstr "Chép Lựa Chọn Vào Đệm"
@@ -51539,9 +51668,8 @@ msgid "Select pasted objects"
 msgstr "Chọn vật thể dán"
 
 
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Đặt Ranh Giới Kết Xuất"
+msgid "Set the boundaries of the border render and enable border render"
+msgstr "Đặt biên giới của ranh giới kết xuất và bật kết xuất ranh giới"
 
 
 msgctxt "Operator"
@@ -51904,83 +52032,6 @@ msgstr "Phóng màn máy quay phim đến 1:1 với kích cỡ ảnh kết xuậ
 
 
 msgctxt "Operator"
-msgid "Disable Add-on"
-msgstr "Tắt Đồ Kèm"
-
-
-msgid "Disable an add-on"
-msgstr "Tắt một đồ kèm"
-
-
-msgid "Module name of the add-on to disable"
-msgstr "Tên mô khối của đồ kèm để tắt"
-
-
-msgctxt "Operator"
-msgid "Enable Add-on"
-msgstr "Bật Đồ Kèm"
-
-
-msgid "Enable an add-on"
-msgstr "Bật một đồ kèm"
-
-
-msgid "Module name of the add-on to enable"
-msgstr "Tên mô khối đồ kèm để bật"
-
-
-msgid "Display information and preferences for this add-on"
-msgstr "Chiếu thông tin và tùy chọn cho đồ kèm này"
-
-
-msgid "Module name of the add-on to expand"
-msgstr "Tên mô kối của đồ kèm để mở rộng"
-
-
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Cài đạt từ Độ Kèm từ Tệp…"
-
-
-msgid "Install an add-on"
-msgstr "Cài đạt một đồ kèm"
-
-
-msgid "Remove existing add-ons with the same ID"
-msgstr "Xóa đồ kèm tồn tại cùng ID (tên)"
-
-
-msgid "Target Path"
-msgstr "Đường Dẫn Mục Tiêu"
-
-
-msgid "User Prefs"
-msgstr "Tùy Chọn Người Dùng"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Đọc Lại"
-
-
-msgid "Scan add-on directories for new modules"
-msgstr "Tìm trong thư mục đồ kèm cho mô khối mới"
-
-
-msgctxt "Operator"
-msgid "Remove Add-on"
-msgstr "Xóa Đồ Kèm"
-
-
-msgid "Delete the add-on from the file system"
-msgstr "Xóa đồ kèm từ hệ thống tệp"
-
-
-msgid "Module name of the add-on to remove"
-msgstr "Tên mô khối của đồ kèm để xóa"
-
-
-msgctxt "Operator"
 msgid "Export Alembic"
 msgstr "Xuất Alembic"
 
@@ -52168,19 +52219,6 @@ msgstr "Kiểm Tra Mạng Lưới"
 
 msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Kiểm tra dữ liệu của vật thể mạng lới hợp lệ (chậm)"
-
-
-msgctxt "Operator"
-msgid "Install Template from File..."
-msgstr "Cài đạt Mẫu Khởi Đầu từ Tệp..."
-
-
-msgid "Install an application-template"
-msgstr "Cài đặt mẫu khởi đầu ứng dụng"
-
-
-msgid "Remove existing template with the same ID"
-msgstr "Xóa mẫu tồn tại có cùng mã số"
 
 
 msgctxt "Operator"
@@ -52619,15 +52657,6 @@ msgstr "Bật/Tắt Liệt Kê"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Chép Sắp Đặt Trước"
-
-
-msgid "Copy settings from previous version"
-msgstr "Chép sắp đặt từ phiên bản trước"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "Danh Bạ Kiểm Tra Sai Lầm"
 
@@ -52785,113 +52814,12 @@ msgstr "Thêm hay xóa một phong cách đặt sẵn"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Hoạt Động Cấu Hình Bàn Phím"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Xuất Cấu Hình Bàn Phím..."
-
-
-msgid "Export key configuration to a python script"
-msgstr "Xuất cầu hình bàn phím đến một bản thảo Python"
-
-
-msgid "All Keymaps"
-msgstr "Hết Ánh Xạ Bàn Phím"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Nhập Cấu Hình Bàn Phím..."
-
-
-msgid "Import key configuration from a python script"
-msgstr "Nhập cấu hình bàn phím từ một bản thảo Python"
-
-
-msgid "Keep original"
-msgstr "Giữ ban đầu"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "Giữ tệp ban đầu sao chép nó vào hồ sơ cấu hình"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Thêm Cấu Hình Bàn Phím Đặt Sẵn "
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "Thêm hay xóa một cấu hình bàn phím đặt sẵn"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Xóa Cấu Hình Bàn Phím"
-
-
-msgid "Remove key config"
-msgstr "Xóa cấu hình bàn phím"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Kiểm Tra Cấu Hình Bàn Phím Có Mâu Thuẫn"
-
-
-msgid "Test key-config for conflicts"
-msgstr "Kiểm tra cấu hình bàn phím có mâu thuẫn"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "Thêm Mặt Hàng Ánh Xạ Bàn Phím"
-
-
-msgid "Add key map item"
-msgstr "Thêm mặt hàng ánh xạ bàn phím"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Xóa Mặt Hàng Ánh Xạ Bàn Phím"
-
-
-msgid "Remove key map item"
-msgstr "Xóa mặt hàng ánh xạ bàn phím"
-
-
-msgid "Item Identifier"
-msgstr "Tên Mặt Hàng"
-
-
-msgid "Identifier of the item to remove"
-msgstr "Tên của mặt hàng để xóa"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "Hoàn Lại Mặt Hàng Ánh Xạ Bàn Phím"
-
-
-msgid "Restore key map item"
-msgstr "Hoàn lại mặt hàng ánh xạ bàn phím"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Hoàn Lại Ánh Xạ Bàn Phím"
-
-
-msgid "Restore key map(s)"
-msgstr "Hoàn lại hết ánh xạ bàn phím"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Hoàn lại hết ánh xạ bàn phím đến mặc định"
 
 
 msgctxt "Operator"
@@ -53547,19 +53475,6 @@ msgstr "Lưu Thông Tin Hệ Thống"
 
 msgid "Generate system information, saved into a text file"
 msgstr "Phát ra thông tin hệ thống, lưu trong một tệp văn bản"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Cải Phong Cách..."
-
-
-msgid "Load and apply a Blender XML theme file"
-msgstr "Đọc và áp dụng tệp phong cách XML Blender"
-
-
-msgid "Remove existing theme file if exists"
-msgstr "Xóa tệp phong cách nếu có"
 
 
 msgid "Open a website in the web-browser"
@@ -54334,6 +54249,14 @@ msgid "Area Shape"
 msgstr "Hình Dạng Diện Tích"
 
 
+msgid "Passepartout"
+msgstr "Lớp Che"
+
+
+msgid "Center-Cut Safe Areas"
+msgstr "Vùng An Toàn Cắt Tâm"
+
+
 msgid "Stereoscopy"
 msgstr "Nhị Kênh"
 
@@ -54820,10 +54743,6 @@ msgstr "Vé Hạt"
 
 msgid "Draw actual particles"
 msgstr "Vẽ hạt thật sự"
-
-
-msgid "Don't use any brush"
-msgstr "Đừng dùng bút nào"
 
 
 msgid "Comb"
@@ -56870,32 +56789,16 @@ msgid "MultiSample: 2"
 msgstr "Đa Mẫu Vật: 2"
 
 
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "Dùng 2x (2 lần) Đa Mẫu Vật OpenGL (cần bắt lại)"
-
-
 msgid "MultiSample: 4"
 msgstr "Đa Mẫu Vật: 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "Dùng 4x (4 lần) Đa Mẫu Vật OpenGL (cần bắt lại)"
 
 
 msgid "MultiSample: 8"
 msgstr "Đa Mẫu Vật: 8"
 
 
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "Dùng 8x (8 lần) Đa Mẫu Vật OpenGL (cần bắt lại)"
-
-
 msgid "MultiSample: 16"
 msgstr "Đa Mẫu Vật: 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "Dùng 16x (16 lần) Đa Mẫu Vật OpenGL (cần bắt lại)"
 
 
 msgid "Method used for displaying images on the screen"
@@ -56944,10 +56847,6 @@ msgstr "Giới hạn cho bộ đệm trí nhớ (megabyte)"
 
 msgid "MultiSample"
 msgstr "Đa Mẫu Vật"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "Bật đa mẫu vật OpenGL, chỉ cho hệ thống hỗ trợ nó, cần bắt lại"
 
 
 msgid "OpenSubdiv Compute Type"
@@ -57320,10 +57219,6 @@ msgstr "Mở Khi Chuột Lên"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Mở nút chuột và danh bạ kéo tự động khi chuột đang dừng lại lên trên"
-
-
-msgid "Prompt Quit"
-msgstr "Hỏi Trước Nghỉ"
 
 
 msgid "Text Anti-aliasing"
@@ -59310,38 +59205,6 @@ msgid "Instead of automatically normalizing to 0..1, apply a user scale to the d
 msgstr "Thay thế tự động đơn vị hoá trong phạm vị 0..1, dùng phóng to người dùng cho hàm số bản đồ"
 
 
-msgid "Border Maximum X"
-msgstr "Ranh Gới X Cực Đại"
-
-
-msgid "Maximum X value for the render border"
-msgstr "Gía trị X cực đại cho kết xuất rang giới"
-
-
-msgid "Border Maximum Y"
-msgstr "Ranh Giới Y Cực Đại"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "Gía trị Y cực đại cho kết xuất rang giới"
-
-
-msgid "Border Minimum X"
-msgstr "Ranh Giới X Cực Tiểu"
-
-
-msgid "Minimum X value for the render border"
-msgstr "Gía trị X cực tiểu cho kết xuất rang giới"
-
-
-msgid "Border Minimum Y"
-msgstr "Ranh Giới Y Cực Tiểu"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "Gía trị Y cực tiểu cho kết xuất rang giới"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "Chọn chổ nào cho chiếu ảnh kết xuất"
 
@@ -59648,14 +59511,6 @@ msgstr "Dùng phóng to người dùng cho bản đồ hàm số"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "Gởi kết qủa kết xuất xuyên đường ống ghép, nếu bật giao điểm ghép"
-
-
-msgid "Crop to Border"
-msgstr "Cắt Đến Ranh Giới"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "Cắt khun ảnh kết xuất vừa kích cỡ ranh giới"
 
 
 msgid "File Extensions"
@@ -63857,6 +63712,10 @@ msgid "Backdrop zoom factor"
 msgstr "Trị số phóng to nền"
 
 
+msgid "Cursor Location"
+msgstr "Vị Trí Con Trỏ"
+
+
 msgid "Location for adding new nodes"
 msgstr "Vị trí cho thêm giao điểm mới"
 
@@ -64175,10 +64034,6 @@ msgstr "Chiếu khu vực bị hứng dư bằng sọc ngựa quảng"
 
 msgid "Show TV title safe and action safe areas in preview"
 msgstr "Chiếu vùng an toàn cho tựa truyền hình và an toàn hành động trong dự khán"
-
-
-msgid "Center-Cut Safe Areas"
-msgstr "Vùng An Toàn Cắt Tâm"
 
 
 msgid "Separate Colors"
@@ -64539,14 +64394,6 @@ msgstr "Kiểu Chiếu Đuổi Theo"
 
 msgid "Viewport display style for tracks"
 msgstr "Phong cách chiếu đường duổi theo trong màn chiếu"
-
-
-msgid "Render Border"
-msgstr "Kết Xuất Ranh Giới"
-
-
-msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
-msgstr "Dùng khu vực trong kích cỡ khung cho màn chiếu kết xuất (khi không xem qua máy quay phim)"
 
 
 msgid "Get the node tree path as a string"
@@ -69196,10 +69043,6 @@ msgid "Add Image"
 msgstr "Thêm Ảnh"
 
 
-msgid "Passepartout"
-msgstr "Lớp Che"
-
-
 msgid "Not Set"
 msgstr "Không Đặt"
 
@@ -70032,11 +69875,6 @@ msgstr "Lựa Chọn Đến Con Trỏ"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Vòng Tròn"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "Sắp Đặt..."
 
@@ -70238,10 +70076,6 @@ msgid "Strand Shape"
 msgstr "Hình Dạng Sợi Tóc"
 
 
-msgid "Radius Scaling"
-msgstr "Phóng To Bán Kính"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Mới"
@@ -70253,10 +70087,6 @@ msgstr "Lặp Lặi: %d .. %d (t.b. %d)"
 
 msgid "Error: %.5f .. %.5f (avg. %.5f)"
 msgstr "Sai Lầm: %.5f .. %.5f (t.b. %.5f)"
-
-
-msgid "Multiply mass with size"
-msgstr "Nhân khối lượng với kích cỡ"
 
 
 msgid "Spacing: %g"
@@ -71222,6 +71052,10 @@ msgid "Convert to Float"
 msgstr "Đổi Sang Float"
 
 
+msgid "Storage"
+msgstr "Kho Giữ"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "Chiếu hết Dãy"
@@ -71395,10 +71229,6 @@ msgstr "Đuổi Theo:"
 
 msgid "Distortion:"
 msgstr "Méo Hóa:"
-
-
-msgid "Storage"
-msgstr "Kho Giữ"
 
 
 msgid "Build JPEG Quality"
@@ -71708,10 +71538,6 @@ msgid "Pan Sensitivity"
 msgstr "Cảm Biến Di Chuyển"
 
 
-msgid "Might fail for Mesh editing selection!"
-msgstr "Có thể bị thết bại cho chọn biên soạn Mạng Lưới"
-
-
 msgid "Orbit Style"
 msgstr "Phong Cách Qũy Đạo"
 
@@ -71787,11 +71613,6 @@ msgstr "Tùy Chọn:"
 
 msgid "Error (see console)"
 msgstr "Sai Lầm (xem diện điều khiển)"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Thu Nhỏ-Phình Lên"
 
 
 msgctxt "Operator"
@@ -71882,11 +71703,6 @@ msgstr "Phải"
 msgctxt "Operator"
 msgid "Left"
 msgstr "Trái"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Ranh Giới Kết Xuất"
 
 
 msgctxt "Operator"
@@ -72007,6 +71823,11 @@ msgstr "Mặt Phẳng"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Lập Phương"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Vòng Tròn"
 
 
 msgctxt "Operator"
@@ -72415,6 +72236,11 @@ msgstr "Chiếu:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Thu Nhỏ-Phình Lên"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Di Chuyển Không Gian Họa Tiết"
 
@@ -72708,6 +72534,10 @@ msgid "Set Roll"
 msgstr "Đặt Lăn"
 
 
+msgid "X-Ray"
+msgstr "X-Quang"
+
+
 msgctxt "Operator"
 msgid "Assign Automatic From Bones"
 msgstr "Tự Chỉ Định Từ Xương"
@@ -72898,10 +72728,6 @@ msgstr "Tự Đơn Vị Hóa"
 
 msgid "Multi-Paint"
 msgstr "Đa-Sơn"
-
-
-msgid "Untitled"
-msgstr "Vô Danh"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -73254,14 +73080,6 @@ msgid "ParticleSettings"
 msgstr "SắpĐặtHạt"
 
 
-msgid "ParticleSystem %i"
-msgstr "HệThốngHạt.%i"
-
-
-msgid "ParticleSystem"
-msgstr "HệThốngHạt"
-
-
 msgid "%i frames found!"
 msgstr "Kiếm được %i bức ảnh!"
 
@@ -73292,6 +73110,10 @@ msgstr "%s, đệm bị lỗi thời!"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s, không chính xác từ bức ảnh %i"
+
+
+msgid "Warning"
+msgstr "Cảnh Cáo"
 
 
 msgid "Invalid Input Error"
@@ -74701,10 +74523,6 @@ msgid "ID-Block:"
 msgstr "Cục-ID"
 
 
-msgid "Can't edit external libdata"
-msgstr "Không thể biên soạn dữ lịệu ngoại bộ"
-
-
 msgid "%s parent deform"
 msgstr "Méo phụ huynh %s"
 
@@ -75490,10 +75308,6 @@ msgstr "Không thể sao chép vật thể"
 
 msgid "This data does not support joining in edit mode"
 msgstr "Đữ liệu này không hỗ trợ nối trong chế độ biên soạn"
-
-
-msgid "Cannot edit external libdata"
-msgstr "Không thể biên soạn dữ liệu thư viện ngoài"
 
 
 msgid "Cannot delete indirectly linked object '%s'"
@@ -76494,6 +76308,10 @@ msgstr "Ảnh cần có 4 kênh màu để sơn"
 
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Không thể sơn tệp Đa Lớp Gói Lại"
+
+
+msgid "Untitled"
+msgstr "Vô Danh"
 
 
 msgid "No active mesh object"
@@ -79087,6 +78905,10 @@ msgstr "Vật thể '%s' không được tạo nên dữ liệu nội bộ để
 
 msgid "Palette '%s' does not contain color given"
 msgstr "Bảng '%s' không có mẫu cong xác định"
+
+
+msgid "ParticleSystem"
+msgstr "HệThốngHạt"
 
 
 msgid "Mesh has no UV data"

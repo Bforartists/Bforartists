@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1447,10 +1447,6 @@ msgid "Randomize particle orientation"
 msgstr "Orientasi Transformasi"
 
 
-msgid "Orientation axis"
-msgstr "Orientasi Transformasi"
-
-
 msgid "Object X"
 msgstr "Objek"
 
@@ -1513,14 +1509,6 @@ msgstr "Gambar Latar"
 
 msgid "Background set scene"
 msgstr "Gambar Latar"
-
-
-msgid "Cursor Location"
-msgstr "lokasi"
-
-
-msgid "3D cursor location"
-msgstr "lokasi"
 
 
 msgid "Cycles Hair Rendering Settings"
@@ -1986,10 +1974,6 @@ msgstr "Kamera"
 
 msgid "Relative Offset"
 msgstr "Kamera"
-
-
-msgid "Edge Weight Method"
-msgstr "Modus Sunting"
 
 
 msgid "New"
@@ -4033,11 +4017,6 @@ msgstr "Gambar Latar"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Modus Pahat"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Tekstur"
 
@@ -4158,10 +4137,6 @@ msgstr "Skala FPS"
 
 msgid "Decal Offset"
 msgstr "Decal Offset"
-
-
-msgid "Warning"
-msgstr "Bahaya:"
 
 
 msgid "Clamp Size"
@@ -5747,6 +5722,26 @@ msgstr "Modus Sunting"
 
 
 msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Partikel"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Tekstur"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Induk"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Induk"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Tambah Baru"
 
@@ -6416,11 +6411,6 @@ msgstr "Atur objek sebagai induk"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Modus Pahat"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "Rotasi"
 
@@ -6544,11 +6534,6 @@ msgid "Toggle enum"
 msgstr "Kamera"
 
 
-msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Partikel"
-
-
 msgid "Play"
 msgstr "Putar"
 
@@ -6565,21 +6550,6 @@ msgstr "lokasi"
 msgctxt "Operator"
 msgid "View Manual"
 msgstr "Bahan"
-
-
-msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -7153,6 +7123,10 @@ msgid "Show Mask Editor"
 msgstr "Penyunting Grafik"
 
 
+msgid "Cursor Location"
+msgstr "lokasi"
+
+
 msgid "Edit Tree"
 msgstr "Gambar Latar"
 
@@ -7179,10 +7153,6 @@ msgstr "Nama"
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "Render Border"
-msgstr "Modus Pahat"
 
 
 msgid "Brush Texture Slot"
@@ -7889,11 +7859,6 @@ msgstr "Kiri"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Modus Pahat"
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "Induk"
 
@@ -8157,6 +8122,10 @@ msgstr "Gerakan"
 
 msgid "No valid data to read!"
 msgstr "Orientasi Transformasi"
+
+
+msgid "Warning"
+msgstr "Bahaya:"
 
 
 msgid "Undefined Type"
