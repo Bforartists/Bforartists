@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2019-02-08 13:58+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -13353,10 +13353,6 @@ msgid "Falloff Curve"
 msgstr "Крива спаду"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "Користувацька крива затухання світла лампи"
-
-
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "Якщо не нуль, то відстань від гачка, де закінчується вплив"
 
@@ -16660,14 +16656,6 @@ msgid "Scale conversion factor for pixel size (use larger values for thicker lin
 msgstr "Фактор перетворення масштабу для піксельного розміру (використовуйте більші значення для товстіших ліній)"
 
 
-msgid "Keep Thickness"
-msgstr "Утримання Товщини"
-
-
-msgid "Maintain the thickness of the stroke when the viewport zoom changes"
-msgstr "Утримує товщину штриха при змінах зумування оглядвікна"
-
-
 msgid "Show Direction"
 msgstr "Показати напрям"
 
@@ -16750,22 +16738,6 @@ msgstr "Режим правки штриха"
 
 msgid "Edit Grease Pencil strokes instead of viewport data"
 msgstr "Редагувати штрихи нарисного олівця замість даних з вигляду"
-
-
-msgid "X-Ray"
-msgstr "Рентген"
-
-
-msgid "Draw all strokes in front"
-msgstr "Рисує усі кадри на переді"
-
-
-msgid "Draw strokes relative to other objects in 3D space"
-msgstr "Рисує штрихи відносно до інших об'єктів у просторі 3D"
-
-
-msgid "Draw all strokes last"
-msgstr "Рисує усі штрихи останніми"
 
 
 msgid "Surface Offset"
@@ -19568,10 +19540,6 @@ msgid "Keyed"
 msgstr "Ключована"
 
 
-msgid "Scaling"
-msgstr "Розмір"
-
-
 msgid "React On"
 msgstr "Реагувати на"
 
@@ -19634,10 +19602,6 @@ msgstr "Випадкова орієнтація"
 
 msgid "Randomize particle orientation"
 msgstr "Рандомізувати орієнтацію частинок"
-
-
-msgid "Orientation axis"
-msgstr "Вісь орієнтації"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -20156,12 +20120,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Активна камера, що використовується для вимальовування сцени"
 
 
-msgid "Cursor Location"
-msgstr "Розташування курсора"
-
-
-msgid "3D cursor location"
-msgstr "Позиція 3D-курсора"
+msgid "3D Cursor"
+msgstr "3D-курсор"
 
 
 msgid "Cycles Render Settings"
@@ -23846,6 +23806,10 @@ msgid "Insert a keyframe on each of the scale channels"
 msgstr "Вставити ключові кадри у кожному каналі масштабу"
 
 
+msgid "Scaling"
+msgstr "Розмір"
+
+
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
 msgstr "Вставити ключові кадри для всіх властивостей, котрі часто анімують в оснащенні персонажів "
 
@@ -25569,10 +25533,6 @@ msgid "Align View to Active"
 msgstr "Вирівняти перегляд за активним"
 
 
-msgid "View Borders"
-msgstr "Межі огляду"
-
-
 msgid "Local View"
 msgstr "Локальний вигляд"
 
@@ -26455,22 +26415,6 @@ msgstr "Модифікатор Фаска: робить ребра і верши
 
 msgid "Angle above which to bevel edges"
 msgstr "При більшому куті між гранями на ребрі буде зроблено фаску"
-
-
-msgid "Edge Weight Method"
-msgstr "Метод вагомості ребра"
-
-
-msgid "What edge weight to use for weighting a vertex"
-msgstr "Вагомість якого ребра використовувати для виважування вершин"
-
-
-msgid "Sharpest"
-msgstr "Найгостріший"
-
-
-msgid "Largest"
-msgstr "Найбільший"
 
 
 msgid "New"
@@ -34519,14 +34463,6 @@ msgid "Axis Range"
 msgstr "Діапазон осі"
 
 
-msgid "Deselect rather than select items"
-msgstr "Зняти вибір, а не вибрати елементи"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "Розширити вибір замість того, щоб спочатку зняти вибір з усього"
-
-
 msgid "Wait for Input"
 msgstr "Затримка перед вводом"
 
@@ -34583,6 +34519,14 @@ msgstr "Вибір петлею"
 
 msgid "Select keyframe points using lasso selection"
 msgstr "Вибрати точки ключових кадрів за допомогою петлі"
+
+
+msgid "Deselect rather than select items"
+msgstr "Зняти вибір, а не вибрати елементи"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "Розширити вибір замість того, щоб спочатку зняти вибір з усього"
 
 
 msgctxt "Operator"
@@ -40906,15 +40850,6 @@ msgstr "Скинути видиму область, щоб показати ді
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Зчистити межі зображування"
-
-
-msgid "Clear the boundaries of the border render and disable border render"
-msgstr "Зчистити межі зображування та вимкнути їх"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Встановити точки кривої"
 
@@ -41091,15 +41026,6 @@ msgstr "Перезавантажити зображення"
 
 msgid "Reload current image from disk"
 msgstr "Перезавантажити поточне зображення з диска"
-
-
-msgctxt "Operator"
-msgid "Render Border"
-msgstr "Зображ у межах"
-
-
-msgid "Set the boundaries of the border render and enable border render"
-msgstr "Встановити межі вимальовування та увімкнути їх"
 
 
 msgctxt "Operator"
@@ -41506,10 +41432,6 @@ msgid "Use pre/post rotation from FBX transform (you may have to disable that in
 msgstr "Використати перед/після обертання для трансформацій з FBX (можливи у деяких випадках це слід вимкнути)"
 
 
-msgid "Warning"
-msgstr "Попередження"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Імпортувати OBJ"
@@ -41614,10 +41536,6 @@ msgstr "Оновити екран звітів"
 
 msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "Поновити показ звітів у інтерфейсі Blender (для внутрішнього використання)"
-
-
-msgid "Select or deselect all reports"
-msgstr "Вибрати або зняти вибір всіх звітів"
 
 
 msgctxt "Operator"
@@ -42197,10 +42115,6 @@ msgstr "Надати перевагу ковзанню уздовж ребра �
 
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Матеріал для граней фаски (-1 - використати суміжні грані)"
-
-
-msgid "What distance Amount measures"
-msgstr "Яку відстань визначає величина"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -45631,10 +45545,6 @@ msgstr "Опорна точка сцени"
 
 msgid "Use the Scene Origin as the position for the selected objects to align to"
 msgstr "Використати початок сцени як позицію для вирівнення виділених об'єктів"
-
-
-msgid "3D Cursor"
-msgstr "3D-курсор"
 
 
 msgid "Use the 3D cursor as the position for the selected objects to align to"
@@ -49647,6 +49557,228 @@ msgstr "Застосувати кінцеве обмежене положенн�
 
 
 msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "Вимкнути додаток"
+
+
+msgid "Disable an add-on"
+msgstr "Вимкнути додаток"
+
+
+msgid "Module name of the add-on to disable"
+msgstr "Назва модуля додатку для вимкнення"
+
+
+msgctxt "Operator"
+msgid "Enable Add-on"
+msgstr "Увімкнути додаток"
+
+
+msgid "Enable an add-on"
+msgstr "Увімкнути додаток"
+
+
+msgid "Module name of the add-on to enable"
+msgstr "Назва модуля додатку для увімкнення"
+
+
+msgid "Display information and preferences for this add-on"
+msgstr "Показати інформацію та налаштунки для цього додатку"
+
+
+msgid "Module name of the add-on to expand"
+msgstr "Назва модуля додатку для розгорнення"
+
+
+msgctxt "Operator"
+msgid "Install Add-on from File..."
+msgstr "Встановити додаток з файлу..."
+
+
+msgid "Install an add-on"
+msgstr "Встановити додаток"
+
+
+msgid "Remove existing add-ons with the same ID"
+msgstr "Вилучити існуючі додатки з однаковим ID"
+
+
+msgid "Target Path"
+msgstr "Цільовий шлях"
+
+
+msgid "User Prefs"
+msgstr "Уподобання користувача"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Відновити"
+
+
+msgid "Scan add-on directories for new modules"
+msgstr "Сканувати теки додатків на нові модулі"
+
+
+msgctxt "Operator"
+msgid "Remove Add-on"
+msgstr "Вилучити додаток"
+
+
+msgid "Delete the add-on from the file system"
+msgstr "Вилучити додаток з файлової системи"
+
+
+msgid "Module name of the add-on to remove"
+msgstr "Назва модуля додатку для вилучення"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "Встановити шаблон з файлу..."
+
+
+msgid "Install an application-template"
+msgstr "Встановити шаблони застосунка"
+
+
+msgid "Remove existing template with the same ID"
+msgstr "Вилучити наявний шаблон з таким самим ID"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Скопіювати попередні налаштування"
+
+
+msgid "Copy settings from previous version"
+msgstr "Скопіювати налаштування з попередньої версії"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Активувати конфігурацію клавіш"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Експорт конфігурації клавіш..."
+
+
+msgid "Export key configuration to a python script"
+msgstr "Експортувати конфігурацію клавіш до скрипту на Python"
+
+
+msgid "All Keymaps"
+msgstr "Всі розкладки"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Імпорт конфігурації клавіш..."
+
+
+msgid "Import key configuration from a python script"
+msgstr "Імпортувати конфігурацію клавіш зі скрипту на Python"
+
+
+msgid "Keep original"
+msgstr "Зберегти оригінал"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "Залишити оригінальний файл після копіювання до теки конфігурації"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Вилучити конфігурацію клавіш"
+
+
+msgid "Remove key config"
+msgstr "Вилучити конфігурацію клавіш"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Перевірити конфігурацію клавіш щодо конфліктів"
+
+
+msgid "Test key-config for conflicts"
+msgstr "Перевірити конфігурацію клавіш щодо конфліктів"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "Додати елемент розкладки клавіш"
+
+
+msgid "Add key map item"
+msgstr "Додати елемент розкладки клавіш"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Вилучити елемент розкладки клавіш"
+
+
+msgid "Remove key map item"
+msgstr "Вилучити елемент розкладки клавіш"
+
+
+msgid "Item Identifier"
+msgstr "Ідентифікатор елемента"
+
+
+msgid "Identifier of the item to remove"
+msgstr "Ідентифікатор елемента, що вилучається"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "Відновити елемент розкладки клавіш"
+
+
+msgid "Restore key map item"
+msgstr "Відновити елемент розкладки клавіш"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Відновити розкладку(и) клавіш"
+
+
+msgid "Restore key map(s)"
+msgstr "Відновити розкладку(и) клавіш"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Відновити всі стандартні розкладки"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Відновити стандартну тему"
+
+
+msgid "Reset to the default theme colors"
+msgstr "Відновити кольори стандартної теми"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Встановити тему ..."
+
+
+msgid "Load and apply a Blender XML theme file"
+msgstr "Завантажити та застосувати XML-файл з темою Blender'а"
+
+
+msgid "Remove existing theme file if exists"
+msgstr "Вилучити файл теми, якщо існує"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Додати кеш"
 
@@ -51134,10 +51266,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Задати замісники для вибраної смужки"
 
 
-msgid "Enable selected proxies on all selected Movie strips"
-msgstr "Увімкнути вибрані замісники на всіх вибраних смужках типу «Фільм»"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Експорт субтитрів"
@@ -52108,18 +52236,8 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Пересунути вибрані рядок(ки) уверх/вниз"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Створити текстовий блок"
-
-
 msgid "Create a new text data-block"
 msgstr "Створити новий блок даних тексту"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Відкрити текстовий блок"
 
 
 msgid "Open a new text data-block"
@@ -52496,10 +52614,6 @@ msgstr "Оберт"
 
 msgid "Rotate selected items"
 msgstr "Повернути вибрані елементи"
-
-
-msgid "The axis around which the transformation occurs"
-msgstr "Вісь, навколо якої відбувається трансформування"
 
 
 msgctxt "Operator"
@@ -53111,15 +53225,6 @@ msgstr "Скинути до стандартного значення"
 
 msgid "Reset this property's value to its default value"
 msgstr "Скинути значення цієї властивості до її стандартного значення"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "Відновити стандартну тему"
-
-
-msgid "Reset to the default theme colors"
-msgstr "Відновити кольори стандартної теми"
 
 
 msgctxt "Operator"
@@ -53956,6 +54061,10 @@ msgid "Move the camera so selected objects are framed"
 msgstr "Навести камеру так, щоб вибрані об'єкти були в кадрі"
 
 
+msgid "Clear the boundaries of the border render and disable border render"
+msgstr "Зчистити межі зображування та вимкнути їх"
+
+
 msgctxt "Operator"
 msgid "Copy Selection to Buffer"
 msgstr "Скопіювати вибране до буфера"
@@ -54114,9 +54223,8 @@ msgid "Select pasted objects"
 msgstr "Вибрати вставлені об'єкти"
 
 
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Задати межі вимальовування"
+msgid "Set the boundaries of the border render and enable border render"
+msgstr "Встановити межі вимальовування та увімкнути їх"
 
 
 msgctxt "Operator"
@@ -54479,83 +54587,6 @@ msgstr "Задати масштаб камери 1:1 відносно вивод
 
 
 msgctxt "Operator"
-msgid "Disable Add-on"
-msgstr "Вимкнути додаток"
-
-
-msgid "Disable an add-on"
-msgstr "Вимкнути додаток"
-
-
-msgid "Module name of the add-on to disable"
-msgstr "Назва модуля додатку для вимкнення"
-
-
-msgctxt "Operator"
-msgid "Enable Add-on"
-msgstr "Увімкнути додаток"
-
-
-msgid "Enable an add-on"
-msgstr "Увімкнути додаток"
-
-
-msgid "Module name of the add-on to enable"
-msgstr "Назва модуля додатку для увімкнення"
-
-
-msgid "Display information and preferences for this add-on"
-msgstr "Показати інформацію та налаштунки для цього додатку"
-
-
-msgid "Module name of the add-on to expand"
-msgstr "Назва модуля додатку для розгорнення"
-
-
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Встановити додаток з файлу..."
-
-
-msgid "Install an add-on"
-msgstr "Встановити додаток"
-
-
-msgid "Remove existing add-ons with the same ID"
-msgstr "Вилучити існуючі додатки з однаковим ID"
-
-
-msgid "Target Path"
-msgstr "Цільовий шлях"
-
-
-msgid "User Prefs"
-msgstr "Уподобання користувача"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Відновити"
-
-
-msgid "Scan add-on directories for new modules"
-msgstr "Сканувати теки додатків на нові модулі"
-
-
-msgctxt "Operator"
-msgid "Remove Add-on"
-msgstr "Вилучити додаток"
-
-
-msgid "Delete the add-on from the file system"
-msgstr "Вилучити додаток з файлової системи"
-
-
-msgid "Module name of the add-on to remove"
-msgstr "Назва модуля додатку для вилучення"
-
-
-msgctxt "Operator"
 msgid "Export Alembic"
 msgstr "Експорт Alembic"
 
@@ -54743,19 +54774,6 @@ msgstr "Перевірка сітей"
 
 msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Перевірити імпортовані сітьові об'єкти на хибні дані (повільно)"
-
-
-msgctxt "Operator"
-msgid "Install Template from File..."
-msgstr "Встановити шаблон з файлу..."
-
-
-msgid "Install an application-template"
-msgstr "Встановити шаблони застосунка"
-
-
-msgid "Remove existing template with the same ID"
-msgstr "Вилучити наявний шаблон з таким самим ID"
 
 
 msgctxt "Operator"
@@ -55194,15 +55212,6 @@ msgstr "Перемкнути перелік"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Скопіювати попередні налаштування"
-
-
-msgid "Copy settings from previous version"
-msgstr "Скопіювати налаштування з попередньої версії"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "Меню налагодження"
 
@@ -55360,113 +55369,12 @@ msgstr "Додати або вилучити передустановку тем
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Активувати конфігурацію клавіш"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Експорт конфігурації клавіш..."
-
-
-msgid "Export key configuration to a python script"
-msgstr "Експортувати конфігурацію клавіш до скрипту на Python"
-
-
-msgid "All Keymaps"
-msgstr "Всі розкладки"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Імпорт конфігурації клавіш..."
-
-
-msgid "Import key configuration from a python script"
-msgstr "Імпортувати конфігурацію клавіш зі скрипту на Python"
-
-
-msgid "Keep original"
-msgstr "Зберегти оригінал"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "Залишити оригінальний файл після копіювання до теки конфігурації"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Додати передустановку клавіш"
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "Додати або вилучити передустановку конфігурації клавіш"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Вилучити конфігурацію клавіш"
-
-
-msgid "Remove key config"
-msgstr "Вилучити конфігурацію клавіш"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Перевірити конфігурацію клавіш щодо конфліктів"
-
-
-msgid "Test key-config for conflicts"
-msgstr "Перевірити конфігурацію клавіш щодо конфліктів"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "Додати елемент розкладки клавіш"
-
-
-msgid "Add key map item"
-msgstr "Додати елемент розкладки клавіш"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Вилучити елемент розкладки клавіш"
-
-
-msgid "Remove key map item"
-msgstr "Вилучити елемент розкладки клавіш"
-
-
-msgid "Item Identifier"
-msgstr "Ідентифікатор елемента"
-
-
-msgid "Identifier of the item to remove"
-msgstr "Ідентифікатор елемента, що вилучається"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "Відновити елемент розкладки клавіш"
-
-
-msgid "Restore key map item"
-msgstr "Відновити елемент розкладки клавіш"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Відновити розкладку(и) клавіш"
-
-
-msgid "Restore key map(s)"
-msgstr "Відновити розкладку(и) клавіш"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Відновити всі стандартні розкладки"
 
 
 msgctxt "Operator"
@@ -56122,19 +56030,6 @@ msgstr "Зберегти системну інформацію"
 
 msgid "Generate system information, saved into a text file"
 msgstr "Згенерувати системну інформацію, збережену у текстовий файл"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Встановити тему ..."
-
-
-msgid "Load and apply a Blender XML theme file"
-msgstr "Завантажити та застосувати XML-файл з темою Blender'а"
-
-
-msgid "Remove existing theme file if exists"
-msgstr "Вилучити файл теми, якщо існує"
 
 
 msgid "Open a website in the web-browser"
@@ -56909,6 +56804,14 @@ msgid "Area Shape"
 msgstr "Форма ділянки"
 
 
+msgid "Passepartout"
+msgstr "Затінювальна маска"
+
+
+msgid "Center-Cut Safe Areas"
+msgstr "Центровано-обрізані безпечні області"
+
+
 msgid "Stereoscopy"
 msgstr "Стереоскопія"
 
@@ -57399,10 +57302,6 @@ msgstr "Малювати частинки"
 
 msgid "Draw actual particles"
 msgstr "Малювати реальні частинки"
-
-
-msgid "Don't use any brush"
-msgstr "Не використовувати пензель"
 
 
 msgid "Comb"
@@ -59465,32 +59364,16 @@ msgid "MultiSample: 2"
 msgstr "Мультивибірка: 2"
 
 
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "Вжити 2x  мультивибірку OpenGL (потрібен перезапуск)"
-
-
 msgid "MultiSample: 4"
 msgstr "Мультивибірка: 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "Вжити 4x  мультивибірку OpenGL (потрібен перезапуск)"
 
 
 msgid "MultiSample: 8"
 msgstr "Мультивибірка: 8"
 
 
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "Вжити 8x  мультивибірку OpenGL (потрібен перезапуск)"
-
-
 msgid "MultiSample: 16"
 msgstr "Мультивибірка: 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "Вжити 16x  мультивибірку OpenGL (потрібен перезапуск)"
 
 
 msgid "Method used for displaying images on the screen"
@@ -59539,10 +59422,6 @@ msgstr "Межа кешу пам'яті (мегабайт)"
 
 msgid "MultiSample"
 msgstr "Мультивибірка"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr " Увімкнути багато-відбір OpenGL; лише для систем, що його підтримують; потрібен перезапуск"
 
 
 msgid "OpenSubdiv Compute Type"
@@ -59923,10 +59802,6 @@ msgstr "Відкривати при наведенні миші"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Відкривати меню та списки при наведенні вказівника автоматично"
-
-
-msgid "Prompt Quit"
-msgstr "Нагадування при виході"
 
 
 msgid "Text Anti-aliasing"
@@ -61937,38 +61812,6 @@ msgid "Instead of automatically normalizing to 0..1, apply a user scale to the d
 msgstr "Замість автоматичної нормалізації до 0..1, застосувати власний масштаб для карти похідних"
 
 
-msgid "Border Maximum X"
-msgstr "Межовий максимум X"
-
-
-msgid "Maximum X value for the render border"
-msgstr "Найбільше значення X для межі вимальовування"
-
-
-msgid "Border Maximum Y"
-msgstr "Межовий максимум Y"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "Найбільше значення Y для межі вимальовування"
-
-
-msgid "Border Minimum X"
-msgstr "Межовий мінімум X"
-
-
-msgid "Minimum X value for the render border"
-msgstr "Мінімальне X-значення для межі зображування"
-
-
-msgid "Border Minimum Y"
-msgstr "Межовий мінімум Y"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "Найменше значення Y для межі вимальовування"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "Виберіть, де буде показано вималюване зображення"
 
@@ -62275,14 +62118,6 @@ msgstr "Використати масштаб користувача для ка
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "Обробити результат вимальовування за допомогою конвеєра компонування, якщо вузли компонування увімкнені"
-
-
-msgid "Crop to Border"
-msgstr "Обрізати до меж"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "Обрізати вималюваний кадр до вказаних розмірів рамки"
 
 
 msgid "File Extensions"
@@ -66537,6 +66372,10 @@ msgid "Backdrop zoom factor"
 msgstr "Коефіцієнт присунення/відсунення тла"
 
 
+msgid "Cursor Location"
+msgstr "Розташування курсора"
+
+
 msgid "Location for adding new nodes"
 msgstr "Місце для додавання нових вузлів"
 
@@ -66855,10 +66694,6 @@ msgstr "Позначити переекспоновані ділянки сму�
 
 msgid "Show TV title safe and action safe areas in preview"
 msgstr "Показати область титрів та область сюжету ТБ у передогляді"
-
-
-msgid "Center-Cut Safe Areas"
-msgstr "Центровано-обрізані безпечні області"
 
 
 msgid "Separate Colors"
@@ -67227,14 +67062,6 @@ msgstr "Тип показу стежок"
 
 msgid "Viewport display style for tracks"
 msgstr "Стиль показу стежок в області перегляду"
-
-
-msgid "Render Border"
-msgstr "Зображ у межах"
-
-
-msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
-msgstr "Використати область з розміром кадру для вимальовуваної області перегляду (якщо увімкнено вигляд не з камери)"
 
 
 msgid "Get the node tree path as a string"
@@ -72003,10 +71830,6 @@ msgid "Add Image"
 msgstr "Додати зображення"
 
 
-msgid "Passepartout"
-msgstr "Затінювальна маска"
-
-
 msgid "Not Set"
 msgstr "Не встановлено"
 
@@ -72839,11 +72662,6 @@ msgstr "Вибране до курсора"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Коло"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "Налаштування..."
 
@@ -73045,10 +72863,6 @@ msgid "Strand Shape"
 msgstr "Форма пасма"
 
 
-msgid "Radius Scaling"
-msgstr "Масштаб радіуса"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Новий"
@@ -73060,10 +72874,6 @@ msgstr "Повтори: %d .. %d (сер. %d)"
 
 msgid "Error: %.5f .. %.5f (avg. %.5f)"
 msgstr "Помилка: %.5f .. %.5f (сер. %.5f)"
-
-
-msgid "Multiply mass with size"
-msgstr "Помножити масу на розмір"
 
 
 msgid "Spacing: %g"
@@ -74025,6 +73835,10 @@ msgid "Convert to Float"
 msgstr "Конвертувати у дійсночислове"
 
 
+msgid "Storage"
+msgstr "Сховище"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "Показати усі послідовності"
@@ -74198,10 +74012,6 @@ msgstr "Відстежник:"
 
 msgid "Distortion:"
 msgstr "Спотворення:"
-
-
-msgid "Storage"
-msgstr "Сховище"
 
 
 msgid "Build JPEG Quality"
@@ -74515,10 +74325,6 @@ msgid "Pan Sensitivity"
 msgstr "Чутливість панорамування"
 
 
-msgid "Might fail for Mesh editing selection!"
-msgstr "Можливі помилки при зміні виділу сіті!"
-
-
 msgid "Orbit Style"
 msgstr "Стиль обльоту"
 
@@ -74594,11 +74400,6 @@ msgstr "Уподобання:"
 
 msgid "Error (see console)"
 msgstr "Помилка (див. консоль)"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Стиснути/розширити"
 
 
 msgctxt "Operator"
@@ -74689,11 +74490,6 @@ msgstr "Справа"
 msgctxt "Operator"
 msgid "Left"
 msgstr "Зліва"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Зображ у межах..."
 
 
 msgctxt "Operator"
@@ -74814,6 +74610,11 @@ msgstr "Площина"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Куб"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Коло"
 
 
 msgctxt "Operator"
@@ -75222,6 +75023,11 @@ msgstr "Показувати:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Стиснути/розширити"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Простір пересуву текстури"
 
@@ -75515,6 +75321,10 @@ msgid "Set Roll"
 msgstr "Задати вертіння"
 
 
+msgid "X-Ray"
+msgstr "Рентген"
+
+
 msgctxt "Operator"
 msgid "Assign Automatic From Bones"
 msgstr "Додати автоматично з кісток"
@@ -75705,10 +75515,6 @@ msgstr "Автонормалізація"
 
 msgid "Multi-Paint"
 msgstr "Мультималювання"
-
-
-msgid "Untitled"
-msgstr "Без назви"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -76061,14 +75867,6 @@ msgid "ParticleSettings"
 msgstr "ПараметриЧастинок"
 
 
-msgid "ParticleSystem %i"
-msgstr "СистемаЧастинок %i"
-
-
-msgid "ParticleSystem"
-msgstr "СистемаЧастинок"
-
-
 msgid "%i frames found!"
 msgstr "%i кадрів знайдено!"
 
@@ -76099,6 +75897,10 @@ msgstr "%s, кеш застарів!"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s, неточно з %i кадру"
+
+
+msgid "Warning"
+msgstr "Попередження"
 
 
 msgid "Invalid Input Error"
@@ -77508,10 +77310,6 @@ msgid "ID-Block:"
 msgstr "ID-блок:"
 
 
-msgid "Can't edit external libdata"
-msgstr "Неможливо редагувати дані з зовнішньої бібліотеки"
-
-
 msgid "%s parent deform"
 msgstr "Деформація предка %s"
 
@@ -78297,10 +78095,6 @@ msgstr "Об'єкт неможливо продублювати"
 
 msgid "This data does not support joining in edit mode"
 msgstr "Ці дані не підтримують сполучення у режимі редагування"
-
-
-msgid "Cannot edit external libdata"
-msgstr "Неможливо редагувати дані з зовнішньої бібліотеки"
 
 
 msgid "Cannot delete indirectly linked object '%s'"
@@ -79301,6 +79095,10 @@ msgstr "Зображення потребує для малювання 4 кол
 
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Неможливо малювати по упакованих багатошарових файлах"
+
+
+msgid "Untitled"
+msgstr "Без назви"
 
 
 msgid "No active mesh object"
@@ -81910,6 +81708,10 @@ msgstr "об'єкт '%s' не може створити внутрішніх д�
 
 msgid "Palette '%s' does not contain color given"
 msgstr "Палітра '%s' не містить даного кольору"
+
+
+msgid "ParticleSystem"
+msgstr "СистемаЧастинок"
 
 
 msgid "Mesh has no UV data"

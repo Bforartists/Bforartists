@@ -447,7 +447,7 @@ void wm_file_read_report(bContext *C, Main *bmain)
 	ReportList *reports = NULL;
 	Scene *sce;
 
-	for (sce = bmain->scene.first; sce; sce = sce->id.next) {
+	for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
 		if (sce->r.engine[0] &&
 		    BLI_findstring(&R_engines, sce->r.engine, offsetof(RenderEngineType, idname)) == NULL)
 		{
@@ -485,12 +485,6 @@ static void wm_file_read_post(
 
 	CTX_wm_window_set(C, wm->windows.first);
 
-	Main *bmain = CTX_data_main(C);
-	DEG_on_visible_update(bmain, true);
-	wm_event_do_depsgraph(C);
-
-	ED_editors_init(C);
-
 #ifdef WITH_PYTHON
 	if (is_startup_file) {
 		/* possible python hasn't been initialized */
@@ -523,11 +517,19 @@ static void wm_file_read_post(
 	WM_operatortype_last_properties_clear_all();
 
 	/* important to do before NULL'ing the context */
+	Main *bmain = CTX_data_main(C);
 	BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
 	BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
 	if (is_factory_startup) {
 		BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_FACTORY_STARTUP_POST);
 	}
+
+	/* After load post, so for example the driver namespace can be filled
+	 * before evaluating the depsgraph. */
+	DEG_on_visible_update(bmain, true);
+	wm_event_do_depsgraph(C);
+
+	ED_editors_init(C);
 
 #if 1
 	WM_event_add_notifier(C, NC_WM | ND_FILEREAD, NULL);
@@ -1264,7 +1266,7 @@ static bool wm_file_write(bContext *C, const char *filepath, int fileflags, Repo
 	 * its handy for scripts to save to a predefined name without blender editing it */
 
 	/* send the OnSave event */
-	for (li = bmain->library.first; li; li = li->id.next) {
+	for (li = bmain->libraries.first; li; li = li->id.next) {
 		if (BLI_path_cmp(li->filepath, filepath) == 0) {
 			BKE_reportf(reports, RPT_ERROR, "Cannot overwrite used library '%.240s'", filepath);
 			return ok;

@@ -749,7 +749,7 @@ bool BKE_object_exists_check(Main *bmain, const Object *obtest)
 
 	if (obtest == NULL) return false;
 
-	ob = bmain->object.first;
+	ob = bmain->objects.first;
 	while (ob) {
 		if (ob == obtest) return true;
 		ob = ob->id.next;
@@ -2527,7 +2527,6 @@ void BKE_object_where_is_calc(Depsgraph *depsgraph, Scene *scene, Object *ob)
  */
 void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *ob, Object *workob)
 {
-	Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
 	BKE_object_workob_clear(workob);
 
 	unit_m4(workob->obmat);
@@ -2537,17 +2536,17 @@ void BKE_object_workob_calc_parent(Depsgraph *depsgraph, Scene *scene, Object *o
 	/* Since this is used while calculating parenting, at this moment ob_eval->parent is still NULL. */
 	workob->parent = DEG_get_evaluated_object(depsgraph, ob->parent);
 
-	workob->trackflag = ob_eval->trackflag;
-	workob->upflag = ob_eval->upflag;
+	workob->trackflag = ob->trackflag;
+	workob->upflag = ob->upflag;
 
-	workob->partype = ob_eval->partype;
-	workob->par1 = ob_eval->par1;
-	workob->par2 = ob_eval->par2;
-	workob->par3 = ob_eval->par3;
+	workob->partype = ob->partype;
+	workob->par1 = ob->par1;
+	workob->par2 = ob->par2;
+	workob->par3 = ob->par3;
 
-	workob->constraints = ob_eval->constraints;
+	workob->constraints = ob->constraints;
 
-	BLI_strncpy(workob->parsubstr, ob_eval->parsubstr, sizeof(workob->parsubstr));
+	BLI_strncpy(workob->parsubstr, ob->parsubstr, sizeof(workob->parsubstr));
 
 	BKE_object_where_is_calc(depsgraph, scene, workob);
 }
@@ -2850,9 +2849,23 @@ void BKE_object_empty_draw_type_set(Object *ob, const int value)
 	}
 }
 
-bool BKE_object_empty_image_is_visible_in_view3d(const Object *ob, const RegionView3D *rv3d)
+bool BKE_object_empty_image_frame_is_visible_in_view3d(const Object *ob, const RegionView3D *rv3d)
 {
-	char visibility_flag = ob->empty_image_visibility_flag;
+	const char visibility_flag = ob->empty_image_visibility_flag;
+	if (rv3d->is_persp) {
+		return (visibility_flag & OB_EMPTY_IMAGE_HIDE_PERSPECTIVE) == 0;
+	}
+	else {
+		return (visibility_flag & OB_EMPTY_IMAGE_HIDE_ORTHOGRAPHIC) == 0;
+	}
+}
+
+bool BKE_object_empty_image_data_is_visible_in_view3d(const Object *ob, const RegionView3D *rv3d)
+{
+	/* Caller is expected to check this. */
+	BLI_assert(BKE_object_empty_image_frame_is_visible_in_view3d(ob, rv3d));
+
+	const char visibility_flag = ob->empty_image_visibility_flag;
 
 	if ((visibility_flag & (OB_EMPTY_IMAGE_HIDE_BACK | OB_EMPTY_IMAGE_HIDE_FRONT)) != 0) {
 		float eps, dot;
@@ -2881,12 +2894,7 @@ bool BKE_object_empty_image_is_visible_in_view3d(const Object *ob, const RegionV
 		}
 	}
 
-	if (rv3d->is_persp) {
-		return (visibility_flag & OB_EMPTY_IMAGE_HIDE_PERSPECTIVE) == 0;
-	}
-	else {
-		return (visibility_flag & OB_EMPTY_IMAGE_HIDE_ORTHOGRAPHIC) == 0;
-	}
+	return true;
 }
 
 bool BKE_object_minmax_dupli(Depsgraph *depsgraph, Scene *scene, Object *ob, float r_min[3], float r_max[3], const bool use_hidden)
@@ -3764,7 +3772,7 @@ bool BKE_object_is_animated(Scene *scene, Object *ob)
 int BKE_object_scenes_users_get(Main *bmain, Object *ob)
 {
 	int num_scenes = 0;
-	for (Scene *scene = bmain->scene.first; scene != NULL; scene = scene->id.next) {
+	for (Scene *scene = bmain->scenes.first; scene != NULL; scene = scene->id.next) {
 		if (BKE_collection_has_object_recursive(BKE_collection_master(scene), ob)) {
 			num_scenes++;
 		}

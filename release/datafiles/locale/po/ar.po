@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -9621,10 +9621,6 @@ msgid "Falloff Curve"
 msgstr "ﺺﻗﺎﻨﺘﻟﺍ ﻰﻨﺤﻨﻣ"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "ﺺﺼﺨﻣ ﺡﺎﺒﺼﻤﻟﺍ ﻲﺷﻼ﻿ﺘﻟ ﻰﻨﺤﻨﻣ"
-
-
 msgctxt "Curve"
 msgid "Falloff Type"
 msgstr "ﻲﺷﻼ﻿ﺘﻟﺍ ﻉﻮﻧ"
@@ -12149,10 +12145,6 @@ msgstr "ﺔﻴﺤﺒﺸﻟﺍ ﺮﻃﻸ﻿ﻟ ﺔﺼﺼﺨﻣ ﻥﺍﻮﻟﺍ �
 
 msgid "Stroke Edit Mode"
 msgstr "ﺔﺒﻄﺸﻟﺍ ﺮﻳﺮﺤﺗ ﻊﺿﻭ"
-
-
-msgid "X-Ray"
-msgstr "ﺔﻴﻨﻴﺴﻟﺍ ﺔﻌﺷﻷ﻿ﺍ"
 
 
 msgid "Alpha Mode"
@@ -14759,10 +14751,6 @@ msgid "Keyed"
 msgstr "ﻞﺠّﺴﻣ"
 
 
-msgid "Scaling"
-msgstr "ﻢﻴﺠﺤﺘﻟﺍ"
-
-
 msgid "React On"
 msgstr "ﺩﻭﺩﺮﻟﺍ ﻞﻌﻓ"
 
@@ -14821,10 +14809,6 @@ msgstr "ﻲﺋﺍﻮﺸﻋ ﻩﺎﺠﺗﺍ"
 
 msgid "Randomize particle orientation"
 msgstr "ءﻱﺰﺠﻠﻟ ﻲﺋﺍﻮﺸﻋ ﻩﺎﺠﺗﺍ"
-
-
-msgid "Orientation axis"
-msgstr "ﻪﺟﻮﺘﻟﺍ ﺭﻮﺠﻣ"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -15305,14 +15289,6 @@ msgstr "ﺔﻴﻔﻠﺨﻟﺍ ﺪﻬﺸﻣ ﺩﺪﺣ"
 
 msgid "Active camera, used for rendering the scene"
 msgstr "ﺪﻬﺸﻤﻟﺍ ﺮﻴﻴﺼﺘﻟ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ,ﺔﻟﺎﻌﻔﻟﺍ ﺍﺮﻴﻤﻜﻟﺍ"
-
-
-msgid "Cursor Location"
-msgstr "ﺮﺷﺆﻤﻟﺍ ﻊﻗﻮﻣ"
-
-
-msgid "3D cursor location"
-msgstr "3D ـﻟﺍﺮﺷﺆﻣ ﻊﻗﻮﻣ"
 
 
 msgid "Cycles Render Settings"
@@ -18237,6 +18213,10 @@ msgid "LocRotScale"
 msgstr "ﻢﺠﺤﻟﺍ ﻭ ﻥﺍﺭﻭﺪﻟﺍ ﻭ ﻊﻗﻮﻤﻟﺍ"
 
 
+msgid "Scaling"
+msgstr "ﻢﻴﺠﺤﺘﻟﺍ"
+
+
 msgid "Whole Character"
 msgstr "ﺔﻴﺼﺨﺸﻟﺍ ﻞﻣﺎﻛ"
 
@@ -19597,18 +19577,6 @@ msgstr "ﺔﻴﺒﺴﻧ ﺔﺣﺍﺯﺍ"
 
 msgid "Bevel Modifier"
 msgstr "ﺔﻔﻄﺸﻟﺍ ﺮﻴﻐﻣ"
-
-
-msgid "Edge Weight Method"
-msgstr "ﺔﻓﺎﺤﻟﺍ ﻥﺯﻭ ﺔﻘﻳﺮﻃ"
-
-
-msgid "Sharpest"
-msgstr "ﺪﺣﻻ﻿ﺍ"
-
-
-msgid "Largest"
-msgstr "ﺮﺒﻛﻻ﻿ﺍ"
 
 
 msgid "New"
@@ -23735,10 +23703,6 @@ msgid "Select all keyframes within the specified region"
 msgstr "ﺩﺪﺤﻤﻟﺍ ﺔﻘﻄﻨﻤﻟﺍ ﻦﻤﺿ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
 
 
-msgid "Extend selection instead of deselecting everything first"
-msgstr "ﺎﻴﺋﺪﺑ ءﻲﺷ ﻞﻛ ﺭﺎﻴﺘﺧﺍ ءﺎﻐﻟﺇ ﻝﺪﺑ ﺭﺎﻴﺘﺧﻹ﻿ﺍ ﺩﺪﻣ"
-
-
 msgid "X Max"
 msgstr "ﻲﻘﻓﺃ ﺭﻮﺤﻣ ﻰﺼﻗﺃ"
 
@@ -23775,6 +23739,10 @@ msgstr "ﻞﺒﺤﻟﺎﺑ ﺭﺎﻴﺘﺧﻻ﻿ﺍ"
 
 msgid "Select keyframe points using lasso selection"
 msgstr "ﻞﺒﺤﻟﺎﺑ ﺭﺎﻴﺘﺧﻹ﻿ﺍ ﻡﺍﺪﺨﺘﺳﺈﺑ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻂﻘﻧ ﺮﺘﺧﺇ"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "ﺎﻴﺋﺪﺑ ءﻲﺷ ﻞﻛ ﺭﺎﻴﺘﺧﺍ ءﺎﻐﻟﺇ ﻝﺪﺑ ﺭﺎﻴﺘﺧﻹ﻿ﺍ ﺩﺪﻣ"
 
 
 msgctxt "Operator"
@@ -26650,11 +26618,6 @@ msgstr "ﺩﺩﺮﺗ ﻰﻠﻋﺍ"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺪﺣ ﻊﺿ"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "ﺕﺎﻴﻨﺤﻨﻤﻟﺍ ﺔﻄﻘﻧ ﻊﺿ"
 
@@ -26723,11 +26686,6 @@ msgstr "ﺓﺭﻮﺼﻟﺍ ﻞﻴﻤﺤﺗ ﺪﻋﺍ"
 
 msgid "Reload current image from disk"
 msgstr "ﺹﺮﻘﻟﺍ ﻦﻣ ﺔﻴﻟﺎﺤﻟﺍ ﺓﺭﻮﺼﻟﺍ ﻞﻴﻤﺤﺗ ﺪﻋﺍ"
-
-
-msgctxt "Operator"
-msgid "Render Border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺩﺪﺣ"
 
 
 msgctxt "Operator"
@@ -26883,10 +26841,6 @@ msgid "Manual Orientation"
 msgstr "ﻱﻭﺪﻳ ﻪﻴﺟﻮﺗ"
 
 
-msgid "Warning"
-msgstr ":ﺮﻳﺬﺤﺗ"
-
-
 msgid "Clamp Size"
 msgstr "X ﻢﻠﻗ"
 
@@ -26917,10 +26871,6 @@ msgstr "ﻞﻣﺍﻮﻌﻟﺍ ﺽﺮﻋ ﺪﻋﺍ"
 msgctxt "Operator"
 msgid "Update Reports Display"
 msgstr "ﺮﻳﺭﺎﻘﺘﻟﺍ ﺽﺮﻋ ﺙﺪَﺣ"
-
-
-msgid "Select or deselect all reports"
-msgstr "ﺮﻳﺭﺎﻘﺘﻟﺍ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺭﺎﺘﺧﺇ"
 
 
 msgctxt "Operator"
@@ -30834,6 +30784,75 @@ msgstr "ﺔﻔﻗﻮﻠﻟ ﻱﺮﻫﺎﻈﻟﺍ ﻝﻮﺤﺘﻟﺍ ﻖﺒﻃ"
 
 
 msgctxt "Operator"
+msgid "Refresh"
+msgstr "ﺙﺪّﺣ"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "ﺔﻘﺑﺎﺴﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﺦﺴﻧ"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﺣﻮﻟ ﺭﺍﺭﺯﺃ ﻒﺋﺎﻇﻭ ﺕﺍﺭﺎﻴﺧ ﻞﻴﻌﻔﺗ"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺭﺪّﺻ"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺩﺭﻮﺘﺳﺍ"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﺪﻠﺠﻣ ﻰﻟﺇ ﺦﺴﻨﻟﺍ ﺪﻌﺑ ﻲﻠﺻﻷ﻿ﺍ ﻒﻠﻤﻟﺍ ﻖﺑﺃ"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻑﺬﺣ"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺽﺭﺎﻌﺗ ﺺﺤﻓﺃ"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺨﻟ ﺮﺼﻨﻋ ﻒﺿﺍ"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺨﻟ ﺮﺼﻨﻋ ﻑﺬﺣﺍ"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺧ ﺮﺼﻨﻋ ﻊﺟﺮﺘﺳﺍ"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺧ ﻊﺟﺮﺘﺳﺍ"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "ﺽﺮﺘﻔﻤﻟﺍ ﻂﻤﻨﻠﻟ ﻂﺒﻀﻟﺍ ﺪﻋﺍ"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "...ﻂﻤﻨﻟﺍ ﺐﺼّﻧ"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "ﺪﻳﺪﺟ ﻖﺒﺴﻣ ﺏﺎﺴﺣ ﻒﺿﺃ"
 
@@ -32017,10 +32036,6 @@ msgid "Rotate"
 msgstr "ﺭﻭﺩ"
 
 
-msgid "The axis around which the transformation occurs"
-msgstr "ﺕﻻ﻿ﻮﺤﺘﻟﺍ ﻪﻟﻮﺣ ﻢﺘﻳ ﻱﺬﻟﺍ ﺭﻮﺤﻤﻟﺍ"
-
-
 msgctxt "Operator"
 msgid "Select Orientation"
 msgstr "ﻪﺟّﻮﺘﻟﺍ ﺮﺘﺧﺍ "
@@ -32232,11 +32247,6 @@ msgstr "ﺺﻧ ﺔﻠﺘﻛ ﻰﻟﺍ ﺮﻳﺭﺎﻘﺘﻟﺍ"
 msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "ﺔﺿﺮﺘﻔﻤﻟﺍ ﺔﻤﻴﻘﻠﻟ ﻂﺒﻀﻟﺍ ﺪﻋﺍ"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "ﺽﺮﺘﻔﻤﻟﺍ ﻂﻤﻨﻠﻟ ﻂﺒﻀﻟﺍ ﺪﻋﺍ"
 
 
 msgctxt "Operator"
@@ -32662,11 +32672,6 @@ msgstr "ﻩﺬﻫ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻠﺘﻜﻟ ﻚﻳﺮﺤﺘﻟﺍ
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺪﺣ ﻊﺿ"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﺭﻭّﺩ"
 
@@ -32828,11 +32833,6 @@ msgstr "ﻦﻴﻤﻴﻠﻟ ﻞﻴّﻣ"
 msgctxt "Operator"
 msgid "Walk Navigation"
 msgstr "ﻲﺸﻤﻟﺍ ﺢﻔّﺼﺗ"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "ﺙﺪّﺣ"
 
 
 msgctxt "Operator"
@@ -33073,11 +33073,6 @@ msgstr "ﺩﺍﺪﻌﻟﺍ ﺐﻠﻗﺍ"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "ﺔﻘﺑﺎﺴﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﺦﺴﻧ"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "ﺢﻴﺤﺼﺘﻟﺍ ﺔﻤﺋﺎﻗ"
 
@@ -33165,61 +33160,12 @@ msgstr "ﻂﻤﻨﻠﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻎﻟﺍ ﻭﺃ ﻒﺿﺍ"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﺣﻮﻟ ﺭﺍﺭﺯﺃ ﻒﺋﺎﻇﻭ ﺕﺍﺭﺎﻴﺧ ﻞﻴﻌﻔﺗ"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺭﺪّﺻ"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺩﺭﻮﺘﺳﺍ"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﺪﻠﺠﻣ ﻰﻟﺇ ﺦﺴﻨﻟﺍ ﺪﻌﺑ ﻲﻠﺻﻷ﻿ﺍ ﻒﻠﻤﻟﺍ ﻖﺑﺃ"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻞﻴﻜﺸﺘﻟ ﻖﺒﺴﻤﻟﺍ ﺩﺍﺪﻋﺇ ﻒﺿﺍ"
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻠﻴﻜﺸﺘﻟ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻎﻟﺍ ﻭﺃ ﻒﺿﺃ"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﻹ﻿ ﻖﺒﺴﻣ ﺩﺍﺪﻋﺇ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺽﺭﺎﻌﺗ ﺺﺤﻓﺃ"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺨﻟ ﺮﺼﻨﻋ ﻒﺿﺍ"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺨﻟ ﺮﺼﻨﻋ ﻑﺬﺣﺍ"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺧ ﺮﺼﻨﻋ ﻊﺟﺮﺘﺳﺍ"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻄﻳﺮﺧ ﻊﺟﺮﺘﺳﺍ"
 
 
 msgctxt "Operator"
@@ -33480,11 +33426,6 @@ msgstr "ﺭﺎﺴﻳ/ﻦﻴﻤﻳ ﺐﻠﻗﺍ"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "ﺔﻳﺍﺪﺒﻟﺍ ﺔﺷﺎﺷ"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "...ﻂﻤﻨﻟﺍ ﺐﺼّﻧ"
 
 
 msgid "Open a website in the web-browser"
@@ -33876,6 +33817,10 @@ msgstr "ﻢﻴﻌﻨﺗ"
 
 msgid "Area Shape"
 msgstr "ﺔﺣﺎﺴﻤﻟﺍ ﻞﻜﺷ"
+
+
+msgid "Passepartout"
+msgstr "ﻲﻔﺨﻤﻟﺍ ءﺰﺠﻟﺍ ﻞﻠﻇ"
 
 
 msgid "Texture Space"
@@ -34276,10 +34221,6 @@ msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻢﺳﺭﺃ"
 
 msgid "Draw actual particles"
 msgstr "ﺔﻴﻟﺎﺤﻟﺍ ﺕﺎﺌﻳﺰﺠﻟﺍ ﻢﺳﺭﺃ"
-
-
-msgid "Don't use any brush"
-msgstr "ﺓﺍﺩﺃ ﻱﺃ ﻞﻤﻌﺘﺴﺗ ﻻ﻿"
 
 
 msgid "Comb"
@@ -36402,10 +36343,6 @@ msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "ﻰﻠﻋ ﺓﺭﺄﻔﻟﺍ ﻥﻮﻜﺗ ﺎﻣﺪﻨﻋ ﺎﻴﺗﺍﺫ ﺢﺋﺍﻮﻠﻟﺍ ﻭ ﺔﻤﺋﺎﻘﻟﺍ ﺭﺍﺭﺯﺃ ﺢﺘﻓﺇ"
 
 
-msgid "Prompt Quit"
-msgstr "ﺝﻭﺮﺨﻟﺍ ﻝﺍﺆﺳ"
-
-
 msgid "Text Anti-aliasing"
 msgstr "ﺺﻨﻠﻟ ﺭﻮﻠﺒﺘﻟﺍ ﺪﺿ"
 
@@ -37322,38 +37259,6 @@ msgid "Bake displacement"
 msgstr "ﻖﺜﺒﻟﺍ ﻥﺰﺧ"
 
 
-msgid "Border Maximum X"
-msgstr " ﻲﻘﻓﻷ﻿ﺍ ﺩﻭﺪﺤﻟﺍ ﻰﺼﻗﺃ"
-
-
-msgid "Maximum X value for the render border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺩﻭﺪﺤﻟ ﺔﻳﺩﻮﻤﻋ ﺔﻤﻴﻗ ﻰﺼﻗﺃ"
-
-
-msgid "Border Maximum Y"
-msgstr " ﻱﺩﻮﻣﺎﻌﻟﺍ ﺩﻭﺪﺤﻟﺍ ﻰﺼﻗﺃ"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺩﻭﺪﺤﻟ ﺔﻳﺩﻮﻣﺎﻋ ﺔﻤﻴﻗ ﻰﺼﻗﺃ"
-
-
-msgid "Border Minimum X"
-msgstr "ﻲﻘﻓﻷ﻿ﺍ ﺩﻭﺪﺤﻟﺍ ﻰﻧﺩﺃ"
-
-
-msgid "Minimum X value for the render border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺩﻭﺪﺤﻟ ﺔﻳﺩﻮﻣﺎﻋ X ﺔﻤﻴﻗ ﻰﻧﺩﺃ"
-
-
-msgid "Border Minimum Y"
-msgstr "ﻱﺩﻮﻣﺎﻌﻟﺍ ﺩﻭﺪﺤﻟﺍ ﻰﻧﺩﺃ"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺩﻭﺪﺤﻟ ﺔﻳﺩﻮﻣﺎﻋ ﺔﻤﻴﻗ ﻰﻧﺩﺃ"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "ﺓﺮﻴّﺼﻤﻟﺍ ﺭﻮﺼﻟﺍ ﺽﺮﻋ ﻢﺘﻳ ﻦﻳﺃ ﺭﺎﻴﺘﺧﺇ"
 
@@ -37608,14 +37513,6 @@ msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﻢﻴﺠﺤﺗ"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "ﺔﻠﻌﻔﻣ ﺐﻴﻛﺮﺘﻟﺍ ﺪﻘﻋ ﺖﻧﺎﻛ ﺍﺫﺇ ،ﺐﻴﻛﺮﺘﻟﺍ ﻞﺣﺍﺮﻣ ﺮﺒﻋ ﺮﻴﻴﺼﺘﻟﺍ ﺔﺠﻴﺘﻧ ﺔﺠﻟﺎﻌﻣ"
-
-
-msgid "Crop to Border"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﻰﻟﺇ ﻊﻴﻄﻘﺗ"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "ﺩﺪﺤﻤﻟﺍ ﺩﻭﺪﺤﻟﺍ ﻢﺠﺣ ﻰﻟﺇ ﺮﻴّﺼﻤﻟﺍ ﺭﺎﻃﻹ﻿ﺍ ﻊﻴﻄﻘﺗ"
 
 
 msgid "File Extensions"
@@ -39179,6 +39076,10 @@ msgid "Node editor space data"
 msgstr "ﺪﻘﻌﻟﺍ ﺭﺮﺤﻣ ﺔﻘﻄﻨﻣ ﺕﺎﻧﺎﻴﺑ"
 
 
+msgid "Cursor Location"
+msgstr "ﺮﺷﺆﻤﻟﺍ ﻊﻗﻮﻣ"
+
+
 msgid "Location for adding new nodes"
 msgstr "ﺓﺪﻳﺪﺠﻟﺍ ﺪﻘﻌﻟﺍ ﺔﻓﺎﺿﺍ ﻊﻗﻮﻣ"
 
@@ -39373,10 +39274,6 @@ msgstr "ﺕﺍﺭﺎﺴﻤﻠﻟ ﺽﺮﻌﻟﺍ ﻉﻮﻧ"
 
 msgid "Viewport display style for tracks"
 msgstr "ﺕﺍﺭﺎﺴﻤﻠﻟ ﺬﻔﻨﻤﻟﺍ ﺽﺮﻋ ﻂﻤﻧ"
-
-
-msgid "Render Border"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺪﺣ"
 
 
 msgid "UV editor data for the image editor space"
@@ -41868,10 +41765,6 @@ msgid "Add Image"
 msgstr "ﺓﺭﻮﺻ ﻒﺿﺃ"
 
 
-msgid "Passepartout"
-msgstr "ﻲﻔﺨﻤﻟﺍ ءﺰﺠﻟﺍ ﻞﻠﻇ"
-
-
 msgid "Not Set"
 msgstr "ﺩﺪﺤﻣ ﺮﻴﻏ"
 
@@ -42493,11 +42386,6 @@ msgstr "ﺮﺷﺆﻤﻟﺍ ﻰﻟﺇ ﺭﺎﻴﺘﺧﺍ"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "ﺓﺮﺋﺍﺩ ﻒﺿﺍ"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "...ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
@@ -42613,17 +42501,9 @@ msgid "Strand Shape"
 msgstr "ءﻮﻀﻟﺍ ﺔﻌﻘﺑ ﻞﻜﺷ"
 
 
-msgid "Radius Scaling"
-msgstr " ﺮﻄﻘﻟﺍ ﻒﺼﻧ ﻢﻴﺠﺤﺗ"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "ﺪﻳﺪﺟ"
-
-
-msgid "Multiply mass with size"
-msgstr "ﺔﻠﺘﻜﻟﺍ ﻲﻓ ﻢﺠﺤﻟﺍ ﻒﻋﺎﺿ"
 
 
 msgid "Endpoint"
@@ -43340,6 +43220,10 @@ msgid "Video:"
 msgstr ":ﻮﻳﺪﻴﻓ"
 
 
+msgid "Storage"
+msgstr "ﺔﻴﻄﻐﺘﻟﺍ"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "ﺕﻼ﻿ﺴﻠﺴﺘﻟﺍ ﻞﻛ ﺮﻬﻇﺃ"
@@ -43465,10 +43349,6 @@ msgstr ":ﻖﺣﻼ﻿ﻤﻟﺍ"
 
 msgid "Distortion:"
 msgstr ":ﻩﻮّﺸﺘﻟﺍ"
-
-
-msgid "Storage"
-msgstr "ﺔﻴﻄﻐﺘﻟﺍ"
 
 
 msgid "Default fade"
@@ -43739,11 +43619,6 @@ msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
-
-
-msgctxt "Operator"
 msgid "Interactive Mirror"
 msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺁﺮﻣ"
 
@@ -43821,11 +43696,6 @@ msgstr "ﻦﻴﻤﻳ"
 msgctxt "Operator"
 msgid "Left"
 msgstr "ﺭﺎﺴﻳ"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "...ﺮﻴﻴﺼﺘﻟﺍ ﺪﺣ"
 
 
 msgctxt "Operator"
@@ -43921,6 +43791,11 @@ msgstr "ﺢﻄﺳ"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "ﺐﻌﻜﻣ"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "ﺓﺮﺋﺍﺩ ﻒﺿﺍ"
 
 
 msgctxt "Operator"
@@ -44251,6 +44126,11 @@ msgstr ":ﺮﻬﻇﺃ"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "ﺞﻴﺴﻨﻟﺍ ءﺎﻀﻓ ﻙﺮّﺣ"
 
@@ -44493,6 +44373,10 @@ msgstr "ﺔﻴﻧﺎﺒﺳﺃ ﺐﺠﻌﺗ ﺔﻣﻼ﻿ﻋ"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "ﺔﻔﻠﻟﺍ ﺩﺪﺣ"
+
+
+msgid "X-Ray"
+msgstr "ﺔﻴﻨﻴﺴﻟﺍ ﺔﻌﺷﻷ﻿ﺍ"
 
 
 msgctxt "Operator"
@@ -44739,16 +44623,12 @@ msgid "ParticleSettings"
 msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "ParticleSystem %i"
-msgstr "i% ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ"
-
-
-msgid "ParticleSystem"
-msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ"
-
-
 msgid "No valid data to read!"
 msgstr "ﻁﺎﺒﺗﺭﻺ﻿ﻟ ﺪﻌﻤﻟﺍ ﺙﺪﺤﻟﺍ ﺢﻔّﺼﺗ"
+
+
+msgid "Warning"
+msgstr ":ﺮﻳﺬﺤﺗ"
 
 
 msgid "Out Of Memory Error"
@@ -45357,10 +45237,6 @@ msgid "ID-Block:"
 msgstr "ﻑﺮﻌﻤﻟﺍ-ﺔﻠﺘﻛ"
 
 
-msgid "Can't edit external libdata"
-msgstr "ﻲﺟﺭﺎﺧ ﻊﻗﻮﻣ ﻦﻣ ﻦﻳﺰﺨﺘﻟﺍ ﺃﺮﻗﺇ"
-
-
 msgid "Make Real"
 msgstr "ﺎﻴﻘﻴﻘﺣ ﻞﻌﺟﺇ"
 
@@ -45900,10 +45776,6 @@ msgstr "ﺩﻮﺟﻮﻣ ﺮﻴﻏ ﻦﺋﺎﻜﻟﺍ"
 
 msgid "Object could not be duplicated"
 msgstr "ﻩﺭﺍﺮﻜﺗ ﻦﻜﻤﻳ ﻻ﻿ ﻦﺋﺎﻜﻟﺍ"
-
-
-msgid "Cannot edit external libdata"
-msgstr "ﻲﺟﺭﺎﺧ ﻊﻗﻮﻣ ﻦﻣ ﻦﻳﺰﺨﺘﻟﺍ ﺃﺮﻗﺇ"
 
 
 msgid "To Active Bone"
@@ -47080,6 +46952,10 @@ msgstr "ﺎﻬﻛﺮّﺣ ﻭ ﺓﺪﻳﺪﺟ ﺔﻄﻘﻧ ﻒﺿﺃ"
 
 msgid "ShapeKey not found"
 msgstr "ﺩﻮﺟﻮﻣ ﺮﻴﻏ ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ"
+
+
+msgid "ParticleSystem"
+msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ"
 
 
 msgctxt "Armature"

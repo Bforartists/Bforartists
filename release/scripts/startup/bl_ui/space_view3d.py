@@ -141,6 +141,17 @@ class VIEW3D_HT_header(Header):
                 icon_value=trans_icon,
             )
 
+        # Pivot
+        if object_mode in {'OBJECT', 'EDIT', 'POSE', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
+            pivot_point = tool_settings.transform_pivot_point
+            act_pivot_point = bpy.types.ToolSettings.bl_rna.properties["transform_pivot_point"].enum_items[pivot_point]
+            row = layout.row(align=True)
+            row.popover(
+                panel="VIEW3D_PT_pivot_point",
+                icon=act_pivot_point.icon,
+                text="",
+            )
+
         # Snap
         show_snap = False
         if obj is None:
@@ -183,48 +194,30 @@ class VIEW3D_HT_header(Header):
             )
 
         # Proportional editing
-        if obj:
-            gpd = context.gpencil_data
-            if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "proportional_edit", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.proportional_edit != 'DISABLED'
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-            elif object_mode == 'OBJECT':
-                row = layout.row(align=True)
-                row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.use_proportional_edit_objects
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-            elif gpd is not None and obj.type == 'GPENCIL':
-                if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
-                    row = layout.row(align=True)
-                    row.prop(tool_settings, "proportional_edit", icon_only=True)
-
-                    sub = row.row(align=True)
-                    sub.active = tool_settings.proportional_edit != 'DISABLED'
-                    sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-        else:
-            if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "proportional_edit", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.proportional_edit != 'DISABLED'
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        # Pivot
-        if object_mode in {'OBJECT', 'EDIT', 'POSE', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
-            pivot_point = tool_settings.transform_pivot_point
-            act_pivot_point = bpy.types.ToolSettings.bl_rna.properties["transform_pivot_point"].enum_items[pivot_point]
+        gpd = context.gpencil_data
+        if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
             row = layout.row(align=True)
-            row.popover(
-                panel="VIEW3D_PT_pivot_point",
-                icon=act_pivot_point.icon,
-                text="",
-            )
+            row.prop(tool_settings, "proportional_edit", icon_only=True)
+            sub = row.row(align=True)
+            sub.active = tool_settings.proportional_edit != 'DISABLED'
+            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif object_mode == 'OBJECT':
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
+            sub = row.row(align=True)
+            sub.active = tool_settings.use_proportional_edit_objects
+            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif gpd is not None and obj.type == 'GPENCIL':
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
+                row = layout.row(align=True)
+                row.prop(tool_settings, "proportional_edit", icon_only=True)
+
+                sub = row.row(align=True)
+                sub.active = tool_settings.proportional_edit != 'DISABLED'
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
         # grease pencil
         if object_mode == 'PAINT_GPENCIL':
             origin = tool_settings.gpencil_stroke_placement_view3d

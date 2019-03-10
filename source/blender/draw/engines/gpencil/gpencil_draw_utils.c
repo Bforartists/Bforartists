@@ -77,7 +77,7 @@ static void gpencil_calc_vertex(
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	const bool main_onion = draw_ctx->v3d != NULL ? (draw_ctx->v3d->gp_flag & V3D_GP_SHOW_ONION_SKIN) : true;
 	const bool playing = stl->storage->is_playing;
-	const bool overlay = draw_ctx->v3d != NULL ? (bool)((draw_ctx->v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) : true;
+	const bool overlay = draw_ctx->v3d != NULL ? (bool)((draw_ctx->v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) : true;
 	const bool do_onion = (bool)((gpd->flag & GP_DATA_STROKE_WEIGHTMODE) == 0) &&
 		overlay && main_onion && DRW_gpencil_onion_active(gpd) && !playing;
 
@@ -226,7 +226,7 @@ static void gpencil_calc_stroke_fill_uv(
 
 /* recalc the internal geometry caches for fill and uvs */
 static void DRW_gpencil_recalc_geometry_caches(
-	Object *ob, bGPDlayer *gpl, MaterialGPencilStyle *gp_style, bGPDstroke *gps)
+        Object *ob, bGPDlayer *gpl, MaterialGPencilStyle *gp_style, bGPDstroke *gps)
 {
 	if (gps->flag & GP_STROKE_RECALC_GEOMETRY) {
 		/* Calculate triangles cache for filling area (must be done only after changes) */
@@ -247,9 +247,10 @@ static void DRW_gpencil_recalc_geometry_caches(
 	}
 }
 
-static void set_wireframe_color(Object *ob, bGPDlayer *gpl, View3D *v3d,
-	GPENCIL_StorageList *stl,
-	MaterialGPencilStyle *gp_style, int id, const bool is_fill)
+static void set_wireframe_color(
+        Object *ob, bGPDlayer *gpl, View3D *v3d,
+        GPENCIL_StorageList *stl,
+        MaterialGPencilStyle *gp_style, int id, const bool is_fill)
 {
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	World *world = draw_ctx->scene->world;
@@ -268,9 +269,10 @@ static void set_wireframe_color(Object *ob, bGPDlayer *gpl, View3D *v3d,
 
 	/* wire color */
 	if ((v3d) && (id > -1)) {
-		const char type = (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
-							v3d->shading.wire_color_type :
-							v3d->shading.color_type;
+		const char type = (
+		        (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
+		        v3d->shading.wire_color_type :
+		        v3d->shading.color_type);
 		/* if fill and wire, use background color */
 		if ((is_fill) && (stl->shgroups[id].shading_type[0] == OB_WIRE)) {
 			if (v3d->shading.background_type == V3D_SHADING_BACKGROUND_THEME) {
@@ -414,7 +416,8 @@ static DRWShadingGroup *DRW_gpencil_shgroup_fill_create(
 	stl->shgroups[id].texture_flip = gp_style->flag & GP_STYLE_COLOR_FLIP_FILL ? 1 : 0;
 	DRW_shgroup_uniform_int(grp, "texture_flip", &stl->shgroups[id].texture_flip, 1);
 
-	DRW_shgroup_uniform_int(grp, "xraymode", (const int *) &gpd->xray_mode, 1);
+	stl->shgroups[id].xray_mode = (ob->dtx & OB_DRAWXRAY) ? GP_XRAY_FRONT : GP_XRAY_3DSPACE;
+	DRW_shgroup_uniform_int(grp, "xraymode", &stl->shgroups[id].xray_mode, 1);
 	DRW_shgroup_uniform_int(grp, "drawmode", (const int *) &gpd->draw_mode, 1);
 
 	/* viewport x-ray */
@@ -423,9 +426,10 @@ static DRWShadingGroup *DRW_gpencil_shgroup_fill_create(
 	/* shading type */
 	stl->shgroups[id].shading_type[0] = GPENCIL_USE_SOLID(stl) ? (int)OB_RENDER : shading_type[0];
 	if (v3d) {
-		stl->shgroups[id].shading_type[1] = (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
-											v3d->shading.wire_color_type :
-											v3d->shading.color_type;
+		stl->shgroups[id].shading_type[1] = (
+		        (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
+		        v3d->shading.wire_color_type :
+		        v3d->shading.color_type);
 	}
 
 	DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
@@ -532,9 +536,10 @@ DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
 
 		stl->shgroups[id].shading_type[0] = (GPENCIL_USE_SOLID(stl) || onion) ? (int)OB_RENDER : shading_type[0];
 		if (v3d) {
-			stl->shgroups[id].shading_type[1] = (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
-												v3d->shading.wire_color_type :
-												v3d->shading.color_type;
+			stl->shgroups[id].shading_type[1] = (
+			        (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
+			        v3d->shading.wire_color_type :
+			        v3d->shading.color_type);
 		}
 		DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
 
@@ -560,13 +565,12 @@ DRWShadingGroup *DRW_gpencil_shgroup_stroke_create(
 
 		/* viewport x-ray */
 		DRW_shgroup_uniform_int(grp, "viewport_xray", &stl->storage->is_xray, 1);
-
-		stl->shgroups[id].shading_type[0] = (int)OB_RENDER;
-		DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
+		DRW_shgroup_uniform_int(grp, "shading_type", (const int *)&stl->storage->shade_render, 2);
 	}
 
 	if ((gpd) && (id > -1)) {
-		DRW_shgroup_uniform_int(grp, "xraymode", (const int *) &gpd->xray_mode, 1);
+		stl->shgroups[id].xray_mode = (ob->dtx & OB_DRAWXRAY) ? GP_XRAY_FRONT : GP_XRAY_3DSPACE;
+		DRW_shgroup_uniform_int(grp, "xraymode", &stl->shgroups[id].xray_mode, 1);
 	}
 	else {
 		/* for drawing always on predefined z-depth */
@@ -650,9 +654,10 @@ static DRWShadingGroup *DRW_gpencil_shgroup_point_create(
 
 		stl->shgroups[id].shading_type[0] = (GPENCIL_USE_SOLID(stl) || onion) ? (int)OB_RENDER : shading_type[0];
 		if (v3d) {
-			stl->shgroups[id].shading_type[1] = (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
-												v3d->shading.wire_color_type :
-												v3d->shading.color_type;
+			stl->shgroups[id].shading_type[1] = (
+			        (stl->shgroups[id].shading_type[0] == OB_WIRE) ?
+			        v3d->shading.wire_color_type :
+			        v3d->shading.color_type);
 		}
 		DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
 
@@ -678,16 +683,15 @@ static DRWShadingGroup *DRW_gpencil_shgroup_point_create(
 		}
 		/* viewport x-ray */
 		DRW_shgroup_uniform_int(grp, "viewport_xray", &stl->storage->is_xray, 1);
-
-		stl->shgroups[id].shading_type[0] = (int)OB_RENDER;
-		DRW_shgroup_uniform_int(grp, "shading_type", &stl->shgroups[id].shading_type[0], 2);
+		DRW_shgroup_uniform_int(grp, "shading_type", (const int *)&stl->storage->shade_render, 2);
 	}
 
-	if (gpd) {
-		DRW_shgroup_uniform_int(grp, "xraymode", (const int *)&gpd->xray_mode, 1);
+	if ((gpd) && (id > -1)) {
+		stl->shgroups[id].xray_mode = (ob->dtx & OB_DRAWXRAY) ? GP_XRAY_FRONT : GP_XRAY_3DSPACE;
+		DRW_shgroup_uniform_int(grp, "xraymode", (const int *)&stl->shgroups[id].xray_mode, 1);
 	}
 	else {
-		/* for drawing always on on predefined z-depth */
+		/* for drawing always on predefined z-depth */
 		DRW_shgroup_uniform_int(grp, "xraymode", &stl->storage->xray, 1);
 	}
 
@@ -857,7 +861,7 @@ static void gpencil_add_editpoints_vertexdata(
 
 		if (cache->is_dirty) {
 			if ((obact == ob) &&
-			    ((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) &&
+			    ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
 			    (v3d->gp_flag & V3D_GP_SHOW_EDIT_LINES))
 			{
 				/* line of the original stroke */
@@ -1332,14 +1336,13 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 	GPENCIL_StorageList *stl = ((GPENCIL_Data *)vedata)->stl;
 	const DRWContextState *draw_ctx = DRW_context_state_get();
 	View3D *v3d = draw_ctx->v3d;
-	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) : true;
+	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) : true;
 	Brush *brush = BKE_paint_brush(&ts->gp_paint->paint);
 	bGPdata *gpd_eval = ob->data;
 	/* need the original to avoid cow overhead while drawing */
 	bGPdata *gpd = (bGPdata *)DEG_get_original_id(&gpd_eval->id);
 
 	MaterialGPencilStyle *gp_style = NULL;
-	const int shade_render[2] = { OB_RENDER, 0 };
 	float obscale = mat4_to_scale(ob->obmat);
 
 	/* use the brush material */
@@ -1367,12 +1370,14 @@ void DRW_gpencil_populate_buffer_strokes(GPENCIL_e_data *e_data, void *vedata, T
 				if ((gp_style) && (gp_style->mode == GP_STYLE_MODE_LINE)) {
 					stl->g_data->shgrps_drawing_stroke = DRW_gpencil_shgroup_stroke_create(
 						e_data, vedata, psl->drawing_pass, e_data->gpencil_stroke_sh, NULL,
-						gpd, NULL, NULL, gp_style, -1, false, 1.0f, shade_render);
+						gpd, NULL, NULL, gp_style, -1,
+						false, 1.0f, (const int *)stl->storage->shade_render);
 				}
 				else {
 					stl->g_data->shgrps_drawing_stroke = DRW_gpencil_shgroup_point_create(
 						e_data, vedata, psl->drawing_pass, e_data->gpencil_point_sh, NULL,
-						gpd, NULL, gp_style, -1, false, 1.0f, shade_render);
+						gpd, NULL, gp_style, -1,
+						false, 1.0f, (const int *)stl->storage->shade_render);
 				}
 
 				/* clean previous version of the batch */
@@ -1490,7 +1495,7 @@ static void DRW_gpencil_shgroups_create(
 	GPENCIL_StorageList *stl = ((GPENCIL_Data *)vedata)->stl;
 	GPENCIL_PassList *psl = ((GPENCIL_Data *)vedata)->psl;
 	bGPdata *gpd = (bGPdata *)ob->data;
-	DRWPass *stroke_pass = GPENCIL_3D_DRAWMODE(gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d;
+	DRWPass *stroke_pass = GPENCIL_3D_DRAWMODE(ob, gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d;
 
 	GpencilBatchGroup *elm = NULL;
 	DRWShadingGroup *shgrp = NULL;
@@ -1726,7 +1731,7 @@ void DRW_gpencil_populate_datablock(
 	const bool main_onion = v3d != NULL ? (v3d->gp_flag & V3D_GP_SHOW_ONION_SKIN) : true;
 	const bool do_onion = (bool)((gpd->flag & GP_DATA_STROKE_WEIGHTMODE) == 0) &&
 		main_onion && DRW_gpencil_onion_active(gpd);
-	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) : true;
+	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) : true;
 	const bool time_remap = BKE_gpencil_has_time_modifiers(ob);
 
 	float opacity;
