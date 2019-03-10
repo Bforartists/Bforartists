@@ -117,7 +117,7 @@ class RENDER_PT_color_management_curves(RenderButtonsPanel, Panel):
 
         layout.enabled = view.use_curve_mapping
 
-        layout.template_curve_mapping(view, "curve_mapping", levels=True)
+        layout.template_curve_mapping(view, "curve_mapping", type='COLOR', levels=True)
 
 
 class RENDER_PT_eevee_ambient_occlusion(RenderButtonsPanel, Panel):
@@ -632,7 +632,7 @@ class RENDER_PT_simplify_viewport(RenderButtonsPanel, Panel):
         col.prop(rd, "simplify_child_particles", text="Max Child Particles")
 
         col = flow.column()
-        col.prop(rd, "use_simplify_smoke_highres")
+        col.prop(rd, "use_simplify_smoke_highres", text="High-resolution Smoke")
 
 
 class RENDER_PT_simplify_render(RenderButtonsPanel, Panel):

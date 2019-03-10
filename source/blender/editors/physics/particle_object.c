@@ -621,8 +621,9 @@ static void disconnect_hair(
 
 	psys->flag |= PSYS_GLOBAL_HAIR;
 
-	if (ELEM(pset->brushtype, PE_BRUSH_ADD, PE_BRUSH_PUFF))
-		pset->brushtype = PE_BRUSH_NONE;
+	if (ELEM(pset->brushtype, PE_BRUSH_ADD, PE_BRUSH_PUFF)) {
+		pset->brushtype = PE_BRUSH_COMB;
+	}
 
 	PE_update_object(depsgraph, scene, ob, 0);
 }
@@ -1028,7 +1029,7 @@ static bool copy_particle_systems_to_object(const bContext *C,
 	ParticleSystem *psys_start = NULL, *psys, *psys_from;
 	ParticleSystem **tmp_psys;
 	Mesh *final_mesh;
-	CustomDataMask cdmask;
+	CustomData_MeshMasks cdmask = {0};
 	int i, totpsys;
 
 	if (ob_to->type != OB_MESH)
@@ -1050,7 +1051,6 @@ static bool copy_particle_systems_to_object(const bContext *C,
 
 	tmp_psys = MEM_mallocN(sizeof(ParticleSystem *) * totpsys, "temporary particle system array");
 
-	cdmask = 0;
 	for (psys_from = PSYS_FROM_FIRST, i = 0;
 	     psys_from;
 	     psys_from = PSYS_FROM_NEXT(psys_from), ++i)
@@ -1061,7 +1061,7 @@ static bool copy_particle_systems_to_object(const bContext *C,
 		if (psys_start == NULL)
 			psys_start = psys;
 
-		cdmask |= psys_emitter_customdata_mask(psys);
+		psys_emitter_customdata_mask(psys, &cdmask);
 	}
 	/* to iterate source and target psys in sync,
 	 * we need to know where the newly added psys start
@@ -1069,7 +1069,7 @@ static bool copy_particle_systems_to_object(const bContext *C,
 	psys_start = totpsys > 0 ? tmp_psys[0] : NULL;
 
 	/* Get the evaluated mesh (psys and their modifiers have not been appended yet) */
-	final_mesh = mesh_get_eval_final(depsgraph, scene, ob_to, cdmask);
+	final_mesh = mesh_get_eval_final(depsgraph, scene, ob_to, &cdmask);
 
 	/* now append psys to the object and make modifiers */
 	for (i = 0, psys_from = PSYS_FROM_FIRST;

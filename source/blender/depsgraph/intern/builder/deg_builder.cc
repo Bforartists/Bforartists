@@ -73,7 +73,8 @@ void visibility_animated_check_cb(ID * /*id*/, FCurve *fcu, void *user_data)
 		if (STREQ(fcu->rna_path, "hide_viewport")) {
 			data->is_visibility_animated = true;
 		}
-	} else if (data->eval_mode == DAG_EVAL_RENDER) {
+	}
+	else if (data->eval_mode == DAG_EVAL_RENDER) {
 		if (STREQ(fcu->rna_path, "hide_render")) {
 			data->is_visibility_animated = true;
 		}
@@ -82,7 +83,7 @@ void visibility_animated_check_cb(ID * /*id*/, FCurve *fcu, void *user_data)
 
 bool is_object_visibility_animated(const Depsgraph *graph, Object *object)
 {
-	AnimData* anim_data = BKE_animdata_from_id(&object->id);
+	AnimData *anim_data = BKE_animdata_from_id(&object->id);
 	if (anim_data == NULL) {
 		return false;
 	}
@@ -202,7 +203,7 @@ void deg_graph_build_finalize(Main *bmain, Depsgraph *graph)
 			flag |= ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY;
 		}
 		/* Tag rebuild if the custom data mask changed. */
-		if (id_node->customdata_mask != id_node->previous_customdata_mask) {
+		if (id_node->customdata_masks != id_node->previous_customdata_masks) {
 			flag |= ID_RECALC_GEOMETRY;
 		}
 		if (!deg_copy_on_write_is_expanded(id_node->id_cow)) {
