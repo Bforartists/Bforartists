@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6767,10 +6767,6 @@ msgid "Limit"
 msgstr "Ograniczenie"
 
 
-msgid "Warning"
-msgstr "Uwaga"
-
-
 msgid "Flat/Smooth"
 msgstr "Płaskie/Gładkie"
 
@@ -7190,14 +7186,6 @@ msgid "ParticleSettings"
 msgstr "DaneCząsteczek"
 
 
-msgid "ParticleSystem %i"
-msgstr "SystemCząsteczek %i"
-
-
-msgid "ParticleSystem"
-msgstr "SystemCząsteczek"
-
-
 msgid "%i frames found!"
 msgstr "Odnaleziono %i klatek!"
 
@@ -7228,6 +7216,10 @@ msgstr "%s, schowek jest przestarzały"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s nie dokładne w klatce %i"
+
+
+msgid "Warning"
+msgstr "Uwaga"
 
 
 msgid "Invalid Input Error"
@@ -8379,10 +8371,6 @@ msgid "ID-Block:"
 msgstr "Blok ID:"
 
 
-msgid "Can't edit external libdata"
-msgstr "Nie mogę edytować zewnętrznych danych biblioteki"
-
-
 msgid "%s parent deform"
 msgstr "%s zniekształcenie rodzicem"
 
@@ -9099,10 +9087,6 @@ msgstr "Obiekt nie mógł być zduplikowany"
 
 msgid "This data does not support joining in edit mode"
 msgstr "Te dane nie obsługują łączenia w trybie edycji"
-
-
-msgid "Cannot edit external libdata"
-msgstr "Nie można edytować zewnętrznych libdata"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -12243,6 +12227,10 @@ msgstr "Obiekt '%s' nie obsługuje kształtów"
 
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "Obiekt '%s' nie zdołał stworzyć wewnętrznych danych do znalezienia najbliższego punktu"
+
+
+msgid "ParticleSystem"
+msgstr "SystemCząsteczek"
 
 
 msgid "Mesh has no UV data"

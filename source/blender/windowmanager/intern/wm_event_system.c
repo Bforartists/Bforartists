@@ -47,6 +47,7 @@
 #include "BLI_timer.h"
 
 #include "BKE_context.h"
+#include "BKE_customdata.h"
 #include "BKE_idprop.h"
 #include "BKE_global.h"
 #include "BKE_layer.h"
@@ -273,7 +274,7 @@ void WM_main_remap_editor_id_reference(ID *old_id, ID *new_id)
 	Main *bmain = G_MAIN;
 	bScreen *sc;
 
-	for (sc = bmain->screen.first; sc; sc = sc->id.next) {
+	for (sc = bmain->screens.first; sc; sc = sc->id.next) {
 		ScrArea *sa;
 
 		for (sa = sc->areabase.first; sa; sa = sa->next) {
@@ -314,14 +315,14 @@ void wm_event_do_depsgraph(bContext *C)
 		return;
 	}
 	/* Combine datamasks so 1 win doesn't disable UV's in another [#26448]. */
-	uint64_t win_combine_v3d_datamask = 0;
+	CustomData_MeshMasks win_combine_v3d_datamask = {0};
 	for (wmWindow *win = wm->windows.first; win; win = win->next) {
 		const Scene *scene = WM_window_get_active_scene(win);
 		const bScreen *screen = WM_window_get_active_screen(win);
 
-		win_combine_v3d_datamask |= ED_view3d_screen_datamask(C, scene, screen);
+		ED_view3d_screen_datamask(C, scene, screen, &win_combine_v3d_datamask);
 	}
-	/* Update all the dependency graphs of visible vew layers. */
+	/* Update all the dependency graphs of visible view layers. */
 	for (wmWindow *win = wm->windows.first; win; win = win->next) {
 		Scene *scene = WM_window_get_active_scene(win);
 		ViewLayer *view_layer = WM_window_get_active_view_layer(win);
@@ -329,7 +330,7 @@ void wm_event_do_depsgraph(bContext *C)
 		/* Copied to set's in scene_update_tagged_recursive() */
 		scene->customdata_mask = win_combine_v3d_datamask;
 		/* XXX, hack so operators can enforce datamasks [#26482], gl render */
-		scene->customdata_mask |= scene->customdata_mask_modal;
+		CustomData_MeshMasks_update(&scene->customdata_mask, &scene->customdata_mask_modal);
 		/* TODO(sergey): For now all dependency graphs which are evaluated from
 		 * workspace are considered active. This will work all fine with "locked"
 		 * view layer and time across windows. This is to be granted separately,
@@ -1928,6 +1929,20 @@ static bool wm_eventmatch(const wmEvent *winevent, const wmKeyMapItem *kmi)
 	return true;
 }
 
+static wmKeyMapItem *wm_eventmatch_modal_keymap_items(const wmKeyMap *keymap, wmOperator *op, const wmEvent *event)
+{
+	for (wmKeyMapItem *kmi = keymap->items.first; kmi; kmi = kmi->next) {
+		if (wm_eventmatch(event, kmi)) {
+			if ((keymap->poll_modal_item == NULL) ||
+			    (keymap->poll_modal_item(op, kmi->propvalue)))
+			{
+				return kmi;
+			}
+		}
+	}
+	return NULL;
+}
+
 
 /* operator exists */
 static void wm_event_modalkeymap(const bContext *C, wmOperator *op, wmEvent *event, bool *dbl_click_disabled)
@@ -1938,20 +1953,27 @@ static void wm_event_modalkeymap(const bContext *C, wmOperator *op, wmEvent *eve
 
 	if (op->type->modalkeymap) {
 		wmKeyMap *keymap = WM_keymap_active(CTX_wm_manager(C), op->type->modalkeymap);
-		wmKeyMapItem *kmi;
+		wmKeyMapItem *kmi = NULL;
 
-		for (kmi = keymap->items.first; kmi; kmi = kmi->next) {
-			if (wm_eventmatch(event, kmi)) {
-				if ((keymap->poll_modal_item == NULL) ||
-				    (keymap->poll_modal_item(op, kmi->propvalue)))
-				{
-					event->prevtype = event->type;
-					event->prevval = event->val;
-					event->type = EVT_MODAL_MAP;
-					event->val = kmi->propvalue;
-					break;
-				}
+		const wmEvent *event_match = NULL;
+		wmEvent event_no_dbl_click;
+
+		if ((kmi = wm_eventmatch_modal_keymap_items(keymap, op, event))) {
+			event_match = event;
+		}
+		else if (event->val == KM_DBL_CLICK) {
+			event_no_dbl_click = *event;
+			event_no_dbl_click.val = KM_PRESS;
+			if ((kmi = wm_eventmatch_modal_keymap_items(keymap, op, &event_no_dbl_click))) {
+				event_match = &event_no_dbl_click;
 			}
+		}
+
+		if (event_match != NULL) {
+			event->prevtype = event_match->type;
+			event->prevval = event_match->val;
+			event->type = EVT_MODAL_MAP;
+			event->val = kmi->propvalue;
 		}
 	}
 	else {

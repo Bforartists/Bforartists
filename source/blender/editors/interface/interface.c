@@ -3056,6 +3056,61 @@ void UI_block_theme_style_set(uiBlock *block, char theme_style)
 	block->theme_style = theme_style;
 }
 
+static void ui_but_build_drawstr_float(uiBut *but, double value)
+{
+	size_t slen = 0;
+	STR_CONCAT(but->drawstr, slen, but->str);
+
+	PropertySubType subtype = PROP_NONE;
+	if (but->rnaprop) {
+		subtype = RNA_property_subtype(but->rnaprop);
+	}
+
+	if (value == (double)FLT_MAX) {
+		STR_CONCAT(but->drawstr, slen, "inf");
+	}
+	else if (value == (double)-FLT_MIN) {
+		STR_CONCAT(but->drawstr, slen, "-inf");
+	}
+	else if (subtype == PROP_PERCENTAGE) {
+		int prec = ui_but_calc_float_precision(but, value);
+		STR_CONCATF(but->drawstr, slen, "%.*f %%", prec, value);
+	}
+	else if (subtype == PROP_PIXEL) {
+		int prec = ui_but_calc_float_precision(but, value);
+		STR_CONCATF(but->drawstr, slen, "%.*f px", prec, value);
+	}
+	else if (ui_but_is_unit(but)) {
+		char new_str[sizeof(but->drawstr)];
+		ui_get_but_string_unit(but, new_str, sizeof(new_str), value, true, -1);
+		STR_CONCAT(but->drawstr, slen, new_str);
+	}
+	else {
+		int prec = ui_but_calc_float_precision(but, value);
+		STR_CONCATF(but->drawstr, slen, "%.*f", prec, value);
+	}
+}
+
+static void ui_but_build_drawstr_int(uiBut *but, int value)
+{
+	size_t slen = 0;
+	STR_CONCAT(but->drawstr, slen, but->str);
+
+	PropertySubType subtype = PROP_NONE;
+	if (but->rnaprop) {
+		subtype = RNA_property_subtype(but->rnaprop);
+	}
+
+	STR_CONCATF(but->drawstr, slen, "%d", value);
+
+	if (subtype == PROP_PERCENTAGE) {
+		STR_CONCAT(but->drawstr, slen, "%");
+	}
+	else if (subtype == PROP_PIXEL) {
+		STR_CONCAT(but->drawstr, slen, " px");
+	}
+}
+
 /**
  * \param but: Button to update.
  * \param validate: When set, this function may change the button value.
@@ -3145,52 +3200,15 @@ void ui_but_update_ex(uiBut *but, const bool validate)
 
 		case UI_BTYPE_NUM:
 		case UI_BTYPE_NUM_SLIDER:
-
-			if (!but->editstr) {
-				const char *drawstr_suffix = NULL;
-				size_t slen;
-
-				UI_GET_BUT_VALUE_INIT(but, value);
-
-				slen = BLI_strncpy_rlen(but->drawstr, but->str, sizeof(but->drawstr));
-
-				if (ui_but_is_float(but)) {
-					if (value == (double) FLT_MAX) {
-						slen += BLI_strncpy_rlen(but->drawstr + slen, "inf", sizeof(but->drawstr) - slen);
-					}
-					else if (value == (double) -FLT_MAX) {
-						slen += BLI_strncpy_rlen(but->drawstr + slen, "-inf", sizeof(but->drawstr) - slen);
-					}
-					/* support length type buttons */
-					else if (ui_but_is_unit(but)) {
-						char new_str[sizeof(but->drawstr)];
-						ui_get_but_string_unit(but, new_str, sizeof(new_str), value, true, -1);
-						slen += BLI_strncpy_rlen(but->drawstr + slen, new_str, sizeof(but->drawstr) - slen);
-					}
-					else {
-						const int prec = ui_but_calc_float_precision(but, value);
-						slen += BLI_snprintf_rlen(but->drawstr + slen, sizeof(but->drawstr) - slen, "%.*f", prec, value);
-					}
-				}
-				else {
-					slen += BLI_snprintf_rlen(but->drawstr + slen, sizeof(but->drawstr) - slen, "%d", (int)value);
-				}
-
-				if (but->rnaprop) {
-					PropertySubType pstype = RNA_property_subtype(but->rnaprop);
-
-					if (pstype == PROP_PERCENTAGE) {
-						drawstr_suffix = "%";
-					}
-					else if (pstype == PROP_PIXEL) {
-						drawstr_suffix = " px";
-					}
-				}
-
-				if (drawstr_suffix) {
-					BLI_strncpy(but->drawstr + slen, drawstr_suffix, sizeof(but->drawstr) - slen);
-				}
-
+			if (but->editstr) {
+				break;
+			}
+			UI_GET_BUT_VALUE_INIT(but, value);
+			if (ui_but_is_float(but)) {
+				ui_but_build_drawstr_float(but, value);
+			}
+			else {
+				ui_but_build_drawstr_int(but, (int)value);
 			}
 			break;
 
@@ -3500,7 +3518,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 
 	int totitems = 0;
 	int columns, rows, a, b;
-	int column_start = 0, column_end = 0;
+	int column_end = 0;
 	int nbr_entries_nosepr = 0;
 
 	UI_block_flag_enable(block, UI_BLOCK_MOVEMOUSE_QUIT);
@@ -3513,7 +3531,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 
 	for (item = item_array; item->identifier; item++, totitems++) {
 		if (!item->identifier[0]) {
-			/* inconsistent, but menus with labels do not look good flipped */
+			/* inconsistent, but menus with categories do not look good flipped */
 			if (item->name) {
 				block->flag |= UI_BLOCK_NO_FLIP;
 				nbr_entries_nosepr++;
@@ -3537,10 +3555,12 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	while (rows * columns < totitems)
 		rows++;
 
-	/* Title */
-	uiDefBut(block, UI_BTYPE_LABEL, 0, RNA_property_ui_name(but->rnaprop),
-	         0, 0, UI_UNIT_X * 5, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
-	uiItemS(layout);
+	if (block->flag & UI_BLOCK_NO_FLIP) {
+		/* Title at the top for menus with categories. */
+		uiDefBut(block, UI_BTYPE_LABEL, 0, RNA_property_ui_name(but->rnaprop),
+		         0, 0, UI_UNIT_X * 5, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
+		uiItemS(layout);
+	}
 
 	/* note, item_array[...] is reversed on access */
 
@@ -3551,7 +3571,6 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 		if (a == column_end) {
 			/* start new column, and find out where it ends in advance, so we
 			 * can flip the order of items properly per column */
-			column_start = a;
 			column_end = totitems;
 
 			for (b = a + 1; b < totitems; b++) {
@@ -3567,12 +3586,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 			column = uiLayoutColumn(split, false);
 		}
 
-		if (block->flag & UI_BLOCK_NO_FLIP) {
-			item = &item_array[a];
-		}
-		else {
-			item = &item_array[(column_start + column_end - 1 - a)];
-		}
+		item = &item_array[a];
 
 		if (!item->identifier[0]) {
 			if (item->name) {
@@ -3601,6 +3615,13 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 				        UI_UNIT_X * 5, UI_UNIT_X, &handle->retvalue, item->value, 0.0, 0, -1, item->description);
 			}
 		}
+	}
+
+	if (!(block->flag & UI_BLOCK_NO_FLIP)) {
+		/* Title at the bottom for menus without categories. */
+		uiItemS(layout);
+		uiDefBut(block, UI_BTYPE_LABEL, 0, RNA_property_ui_name(but->rnaprop),
+		         0, 0, UI_UNIT_X * 5, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
 	}
 
 	UI_block_layout_set_current(block, layout);

@@ -93,6 +93,7 @@ LANGUAGES = (
     (43, "Hausa (Hausa)", "ha"),
     (44, "Kazakh (қазақша)", "kk_KZ"),
     (45, "Abkhaz (Аԥсуа бызшәа)", "ab"),
+    (46, "Thai (ภาษาไทย)", "th_TH"),
 )
 
 # Default context, in py!

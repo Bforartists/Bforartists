@@ -211,10 +211,12 @@ void DEG_add_special_eval_flag(struct DepsNodeHandle *node_handle,
 
 void DEG_add_customdata_mask(struct DepsNodeHandle *node_handle,
                              struct Object *object,
-                             uint64_t mask)
+                             const CustomData_MeshMasks *masks)
 {
 	DEG::DepsNodeHandle *deg_node_handle = get_node_handle(node_handle);
-	deg_node_handle->builder->add_customdata_mask(object, mask);
+	deg_node_handle->builder->add_customdata_mask(
+	            object,
+	            DEG::DEGCustomDataMeshMasks(masks));
 }
 
 struct ID *DEG_get_id_from_handle(struct DepsNodeHandle *node_handle)
@@ -328,7 +330,7 @@ void DEG_graph_relations_update(Depsgraph *graph,
 void DEG_relations_tag_update(Main *bmain)
 {
 	DEG_GLOBAL_DEBUG_PRINTF(TAG, "%s: Tagging relations for update.\n", __func__);
-	LISTBASE_FOREACH (Scene *, scene, &bmain->scene) {
+	LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
 		LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
 			Depsgraph *depsgraph =
 			        (Depsgraph *)BKE_scene_get_depsgraph(scene,

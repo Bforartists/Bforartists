@@ -107,12 +107,7 @@ bool ED_scene_delete(bContext *C, Main *bmain, wmWindow *win, Scene *scene)
 
 	WM_window_set_active_scene(bmain, C, win, scene_new);
 
-	BKE_libblock_remap(bmain, scene, scene_new, ID_REMAP_SKIP_INDIRECT_USAGE | ID_REMAP_SKIP_NEVER_NULL_USAGE);
-
-	id_us_clear_real(&scene->id);
-	if (scene->id.us == 0) {
-		BKE_id_free(bmain, scene);
-	}
+	BKE_id_delete(bmain, scene);
 
 	return true;
 }
@@ -152,7 +147,7 @@ static void view_layer_remove_unset_nodetrees(const Main *bmain, Scene *scene, V
 {
 	int act_layer_index = BLI_findindex(&scene->view_layers, layer);
 
-	for (Scene *sce = bmain->scene.first; sce; sce = sce->id.next) {
+	for (Scene *sce = bmain->scenes.first; sce; sce = sce->id.next) {
 		if (sce->nodetree) {
 			BKE_nodetree_remove_layer_n(sce->nodetree, scene, act_layer_index);
 		}

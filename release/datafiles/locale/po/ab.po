@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -11,6 +11,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
+
+
+msgid "Select"
+msgstr "Алхра"
+
+
+msgid "Add"
+msgstr "Ацҵара"
+
+
+msgid "Subtract"
+msgstr "Ацхра"
+
+
+msgid "Object"
+msgstr "Аматәар"
 
 
 msgid "Texts"
@@ -27,4 +43,181 @@ msgstr "Ихадоу Алашарақәа"
 
 msgid "Main Meshes"
 msgstr "Ихадоу Аҿарԥагақәа"
+
+
+msgid "Mode"
+msgstr "А́иҿкаашьа"
+
+
+msgid "Marker"
+msgstr "Ашьҭа"
+
+
+msgid "Image"
+msgstr "Асахьа"
+
+
+msgid "Curve"
+msgstr "Архәара"
+
+
+msgid "Difference"
+msgstr "Аиԥшымра"
+
+
+msgid "Armature"
+msgstr "Абаҩ"
+
+
+msgid "Plane"
+msgstr "Аҟьаҟьа"
+
+
+msgid "View"
+msgstr "Аԥшра"
+
+
+msgid "Vertex"
+msgstr "Ақәыцә"
+
+
+msgid "Shading"
+msgstr "Аршәшьра"
+
+
+msgid "End"
+msgstr "Алгара"
+
+
+msgid "Start"
+msgstr "Алагара"
+
+
+msgid "Edit Mode"
+msgstr "Аиҭакра Аиҿкаашьа"
+
+
+msgid "Cube"
+msgstr "Акуб"
+
+
+msgid "Monkey"
+msgstr "Амаамын"
+
+
+msgid "Circle"
+msgstr "Аицыгьежь"
+
+
+msgid "Object Mode"
+msgstr "Аматәар Аиҿкаашьа"
+
+
+msgid "Sculpt Mode"
+msgstr "Ашәаҳара Аиҿкаашьа"
+
+
+msgid "Vertex Paint"
+msgstr "Ақәыцә Ашәра"
+
+
+msgid "Global"
+msgstr "Азеиԥш"
+
+
+msgid "Edit"
+msgstr "Аиҭакра"
+
+
+msgid "Text"
+msgstr "Аҳәоу"
+
+
+msgid "File"
+msgstr "Ашәҟәы"
+
+
+msgid "Mesh"
+msgstr "Аҿарҧага"
+
+
+msgid "Edge"
+msgstr "Аган"
+
+
+msgid "Face"
+msgstr "Ахаҿы"
+
+
+msgid "Light"
+msgstr "Алашара"
+
+
+msgid "Intersect"
+msgstr "Аихҵәара"
+
+
+msgid "Ball"
+msgstr "Ампыл"
+
+
+msgid "New"
+msgstr "Аҿыц"
+
+
+msgid "Keying"
+msgstr " Аиҭаганҵа"
+
+
+msgctxt "Operator"
+msgid "Add Circle"
+msgstr "Ацҵара Аицыгьежь"
+
+
+msgctxt "Operator"
+msgid "Add Cube"
+msgstr "Ацҵара Акуб"
+
+
+msgctxt "Operator"
+msgid "Add Ico Sphere"
+msgstr "Ацҵара Ico Асфера"
+
+
+msgctxt "Operator"
+msgid "Add Monkey"
+msgstr "Ацҵара Амаамын"
+
+
+msgctxt "Operator"
+msgid "Add Plane"
+msgstr "Ацҵара Аҟьаҟьа"
+
+
+msgctxt "Operator"
+msgid "Add UV Sphere"
+msgstr "Ацҵара UV Асфера"
+
+
+msgctxt "Operator"
+msgid "Add Armature"
+msgstr "Ацҵара Абаҩ"
+
+
+msgctxt "Operator"
+msgid "Add Light"
+msgstr "Ацҵара Алашара"
+
+
+msgctxt "Operator"
+msgid "Add Text"
+msgstr "Ацҵара Аҳәоу"
+
+
+msgid "Overlays"
+msgstr "Ақәҵакәа"
+
+
+msgid "Playback"
+msgstr "Арҳәара"
 

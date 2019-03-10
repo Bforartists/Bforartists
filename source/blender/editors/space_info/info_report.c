@@ -35,6 +35,7 @@
 #include "WM_types.h"
 
 #include "ED_screen.h"
+#include "ED_select_utils.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -154,34 +155,40 @@ void INFO_OT_select_pick(wmOperatorType *ot)
 	RNA_def_int(ot->srna, "report_index", 0, 0, INT_MAX, "Report", "Index of the report", 0, INT_MAX);
 }
 
-
-
-static int report_select_all_toggle_exec(bContext *C, wmOperator *UNUSED(op))
+static int report_select_all_exec(bContext *C, wmOperator *op)
 {
 	SpaceInfo *sinfo = CTX_wm_space_info(C);
 	ReportList *reports = CTX_wm_reports(C);
-	int report_mask = info_report_mask(sinfo);
-	int deselect = 0;
+	const int report_mask = info_report_mask(sinfo);
 
-	Report *report;
+	int action = RNA_enum_get(op->ptr, "action");
 
-	for (report = reports->list.last; report; report = report->prev) {
-		if ((report->type & report_mask) && (report->flag & SELECT)) {
-			deselect = 1;
-			break;
+	if (action == SEL_TOGGLE) {
+		action = SEL_SELECT;
+		for (Report *report = reports->list.last; report; report = report->prev) {
+			if ((report->type & report_mask) && (report->flag & SELECT)) {
+				action = SEL_DESELECT;
+				break;
+			}
 		}
 	}
 
-
-	if (deselect) {
-		for (report = reports->list.last; report; report = report->prev)
-			if (report->type & report_mask)
-				report->flag &= ~SELECT;
-	}
-	else {
-		for (report = reports->list.last; report; report = report->prev)
-			if (report->type & report_mask)
-				report->flag |= SELECT;
+	for (Report *report = reports->list.last; report; report = report->prev) {
+		if (report->type & report_mask) {
+			switch (action) {
+				case SEL_SELECT:
+					report->flag = SELECT;
+					break;
+				case SEL_DESELECT:
+					report->flag = ~SELECT;
+					break;
+				case SEL_INVERT:
+					report->flag ^= SELECT;
+					break;
+				default:
+					BLI_assert(0);
+			}
+		}
 	}
 
 	ED_area_tag_redraw(CTX_wm_area(C));
@@ -189,21 +196,19 @@ static int report_select_all_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 	return OPERATOR_FINISHED;
 }
 
-void INFO_OT_select_all_toggle(wmOperatorType *ot)
+void INFO_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
 	ot->description = "(De)select All\nSelect or deselect all reports";
-	ot->idname = "INFO_OT_select_all_toggle";
+	ot->idname = "INFO_OT_select_all";
 
 	/* api callbacks */
 	ot->poll = ED_operator_info_active;
-	ot->exec = report_select_all_toggle_exec;
-
-	/* flags */
-	/*ot->flag = OPTYPE_REGISTER;*/
+	ot->exec = report_select_all_exec;
 
 	/* properties */
+	WM_operator_properties_select_action(ot, SEL_SELECT);
 }
 
 /* box_select operator */
@@ -213,25 +218,18 @@ static int box_select_exec(bContext *C, wmOperator *op)
 	ARegion *ar = CTX_wm_region(C);
 	ReportList *reports = CTX_wm_reports(C);
 	int report_mask = info_report_mask(sinfo);
-	const bool extend = RNA_boolean_get(op->ptr, "extend");
-	Report *report_min, *report_max, *report;
-
-	//View2D *v2d = UI_view2d_fromcontext(C);
-
-
+	Report *report_min, *report_max;
 	rcti rect;
-	//rctf rectf, rq;
-	const bool select = !RNA_boolean_get(op->ptr, "deselect");
-	//int mval[2];
 
 	WM_operator_properties_border_to_rcti(op, &rect);
 
-	if (!extend) {
-		for (report = reports->list.first; report; report = report->next) {
-
-			if ((report->type & report_mask) == 0)
+	const eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
+	const int select = (sel_op != SEL_OP_SUB);
+	if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
+		for (Report *report = reports->list.first; report; report = report->next) {
+			if ((report->type & report_mask) == 0) {
 				continue;
-
+			}
 			report->flag &= ~SELECT;
 		}
 	}
@@ -242,7 +240,7 @@ static int box_select_exec(bContext *C, wmOperator *op)
 	/* get the first report if none found */
 	if (report_min == NULL) {
 		// printf("find_min\n");
-		for (report = reports->list.first; report; report = report->next) {
+		for (Report *report = reports->list.first; report; report = report->next) {
 			if (report->type & report_mask) {
 				report_min = report;
 				break;
@@ -252,7 +250,7 @@ static int box_select_exec(bContext *C, wmOperator *op)
 
 	if (report_max == NULL) {
 		// printf("find_max\n");
-		for (report = reports->list.last; report; report = report->prev) {
+		for (Report *report = reports->list.last; report; report = report->prev) {
 			if (report->type & report_mask) {
 				report_max = report;
 				break;
@@ -260,18 +258,15 @@ static int box_select_exec(bContext *C, wmOperator *op)
 		}
 	}
 
-	if (report_min == NULL || report_max == NULL)
+	if (report_min == NULL || report_max == NULL) {
 		return OPERATOR_CANCELLED;
+	}
 
-	for (report = report_min; (report != report_max->next); report = report->next) {
-
-		if ((report->type & report_mask) == 0)
+	for (Report *report = report_min; (report != report_max->next); report = report->next) {
+		if ((report->type & report_mask) == 0) {
 			continue;
-
-		if (select)
-			report->flag |= SELECT;
-		else
-			report->flag &= ~SELECT;
+		}
+		SET_FLAG_FROM_TEST(report->flag, select, SELECT);
 	}
 
 	ED_area_tag_redraw(CTX_wm_area(C));
@@ -299,11 +294,10 @@ void INFO_OT_select_box(wmOperatorType *ot)
 	/* flags */
 	/* ot->flag = OPTYPE_REGISTER; */
 
-	/* rna */
-	WM_operator_properties_gesture_box_select(ot);
+	/* properties */
+	WM_operator_properties_gesture_box(ot);
+	WM_operator_properties_select_operation_simple(ot);
 }
-
-
 
 static int report_delete_exec(bContext *C, wmOperator *UNUSED(op))
 {
