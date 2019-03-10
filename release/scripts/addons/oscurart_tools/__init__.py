@@ -49,6 +49,7 @@ from oscurart_tools.object import search_and_select
 from oscurart_tools.mesh import apply_linked_meshes
 from oscurart_tools.render import render_tokens
 from oscurart_tools.render import batch_maker
+from oscurart_tools.render import material_overrides
 
 
 from bpy.types import (
@@ -149,7 +150,14 @@ classes = (
     apply_linked_meshes.ApplyLRT,
     batch_maker.oscBatchMaker,
     remove_modifiers.RemoveModifiers,
-    vertex_color_id.createVCMask
+    vertex_color_id.createVCMask,
+    material_overrides.OscOverridesGUI,
+    material_overrides.OscTransferOverrides,
+    material_overrides.OscAddOverridesSlot,
+    material_overrides.OscRemoveOverridesSlot,
+    material_overrides.OscOverridesUp,
+    material_overrides.OscOverridesDown,
+    material_overrides.OscOverridesKill
     )
 
 def register():   
@@ -161,8 +169,10 @@ def register():
     bpy.app.handlers.render_pre.append(render_tokens.replaceTokens)
     bpy.app.handlers.render_cancel.append(render_tokens.restoreTokens) 
     bpy.app.handlers.render_post.append(render_tokens.restoreTokens) 
+    bpy.app.handlers.render_pre.append(material_overrides.ApplyOverrides)   
+    bpy.app.handlers.render_cancel.append(material_overrides.RestoreOverrides) 
+    bpy.app.handlers.render_post.append(material_overrides.RestoreOverrides) 
     
-
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)                                            

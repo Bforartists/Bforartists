@@ -1613,7 +1613,8 @@ class CYCLES_MATERIAL_PT_preview(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.material and CyclesButtonsPanel.poll(context)
+        mat = context.material
+        return mat and (not mat.grease_pencil) and CyclesButtonsPanel.poll(context)
 
     def draw(self, context):
         self.layout.template_preview(context.material)
@@ -1625,7 +1626,8 @@ class CYCLES_MATERIAL_PT_surface(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.material and CyclesButtonsPanel.poll(context)
+        mat = context.material
+        return mat and (not mat.grease_pencil) and CyclesButtonsPanel.poll(context)
 
     def draw(self, context):
         layout = self.layout
@@ -1643,7 +1645,7 @@ class CYCLES_MATERIAL_PT_volume(CyclesButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         mat = context.material
-        return mat and mat.node_tree and CyclesButtonsPanel.poll(context)
+        return mat and (not mat.grease_pencil) and mat.node_tree and CyclesButtonsPanel.poll(context)
 
     def draw(self, context):
         layout = self.layout
@@ -1661,7 +1663,7 @@ class CYCLES_MATERIAL_PT_displacement(CyclesButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         mat = context.material
-        return mat and mat.node_tree and CyclesButtonsPanel.poll(context)
+        return mat and (not mat.grease_pencil) and mat.node_tree and CyclesButtonsPanel.poll(context)
 
     def draw(self, context):
         layout = self.layout
@@ -1677,7 +1679,8 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.material and CyclesButtonsPanel.poll(context)
+        mat = context.material
+        return mat and (not mat.grease_pencil) and CyclesButtonsPanel.poll(context)
 
     @staticmethod
     def draw_shared(self, mat):
@@ -1929,7 +1932,6 @@ class CYCLES_RENDER_PT_debug(CyclesButtonsPanel, Panel):
         col = layout.column()
         col.label(text='OpenCL Flags:')
         col.prop(cscene, "debug_opencl_device_type", text="Device")
-        col.prop(cscene, "debug_opencl_kernel_single_program", text="Single Program")
         col.prop(cscene, "debug_use_opencl_debug", text="Debug")
         col.prop(cscene, "debug_opencl_mem_limit")
 
