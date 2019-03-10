@@ -29,7 +29,6 @@ bl_info = {
     "category": "3D View",
 }
 
-
 if "bpy" in locals():
     import importlib
     importlib.reload(coat)
@@ -54,7 +53,6 @@ from bpy.props import (
         StringProperty,
         PointerProperty,
         )
-
 
 bpy.coat3D = dict()
 bpy.coat3D['active_coat'] = ''
@@ -212,7 +210,7 @@ def make_texture_list(texturefolder):
 #Updating objects MESH part ( Mesh, Vertex Groups, Vertex Colors )
 '''
 
-def updatemesh(objekti, proxy):
+def updatemesh(objekti, proxy, texturelist):
 
     # Vertex colors
     if(len(proxy.data.vertex_colors) > 0):
@@ -245,31 +243,35 @@ def updatemesh(objekti, proxy):
 
     # UV -Sets
 
+    udim_textures = False
+    if(texturelist[0][0].startswith('100')):
+        udim_textures =True
+
     proxy.select_set(True)
     objekti.select_set(True)
 
-    for poly in objekti.data.polygons:
-        for indi in poly.loop_indices:
-            objekti.data.uv_layers[0].data[indi].uv[0] = proxy.data.uv_layers[0].data[indi].uv[0]
-            objekti.data.uv_layers[0].data[indi].uv[1] = proxy.data.uv_layers[0].data[indi].uv[1]
+    uv_count = len(proxy.data.uv_layers)
+    index = 0
+    while(index < uv_count):
+        for poly in proxy.data.polygons:
+            for indi in poly.loop_indices:
+                if(proxy.data.uv_layers[index].data[indi].uv[0] != 0 and proxy.data.uv_layers[index].data[indi].uv[1] != 0):
 
+                    if(udim_textures):
+                        udim = proxy.data.uv_layers[index].name
+                        udim_index = int(udim[2:]) - 1
+
+                    objekti.data.uv_layers[0].data[indi].uv[0] = proxy.data.uv_layers[index].data[indi].uv[0]
+                    objekti.data.uv_layers[0].data[indi].uv[1] = proxy.data.uv_layers[index].data[indi].uv[1]
+                    if(udim_textures):
+                        objekti.data.uv_layers[0].data[indi].uv[0] += udim_index
+        index = index + 1
 
     # Mesh Copy
 
     for ind, v in enumerate(objekti.data.vertices):
         v.co = proxy.data.vertices[ind].co
 
-
-
-
-    '''
-    proxy.select_set(True)
-    obj_data = objekti.data.id_data
-    objekti.data = proxy.data.id_data
-    objekti.data.id_data.name = obj_data.name
-    if (bpy.data.meshes[obj_data.name].users == 0):
-        bpy.data.meshes.remove(obj_data)
-    '''
 def running():
     n=0# number of instances of the program running
     prog=[line.split() for line in subprocess.check_output("tasklist").splitlines()]
@@ -354,6 +356,176 @@ class SCENE_OT_opencoat(bpy.types.Operator):
 
         return {'FINISHED'}
 
+def deleteNodes(type):
+
+    deletelist = []
+    deleteimages = []
+    deletegroup =[]
+    delete_images = bpy.context.scene.coat3D.delete_images
+
+    if type == 'Material':
+        if(len(bpy.context.selected_objects) == 1):
+            material = bpy.context.selected_objects[0].active_material
+            if(material.use_nodes):
+                for node in material.node_tree.nodes:
+                    if(node.name.startswith('3DC')):
+                        if (node.type == 'GROUP'):
+                            deletegroup.append(node.node_tree.name)
+                        deletelist.append(node.name)
+                        if node.type == 'TEX_IMAGE' and delete_images == True:
+                            deleteimages.append(node.image.name)
+                if deletelist:
+                    for node in deletelist:
+                        material.node_tree.nodes.remove(material.node_tree.nodes[node])
+                if deleteimages:
+                    for image in deleteimages:
+                        bpy.data.images.remove(bpy.data.images[image])
+
+    elif type == 'Object':
+        if (len(bpy.context.selected_objects) > 0):
+            for objekti in bpy.context.selected_objects:
+                for material in objekti.material_slots:
+                    if (material.material.use_nodes):
+                        for node in material.material.node_tree.nodes:
+                            if (node.name.startswith('3DC')):
+                                if(node.type == 'GROUP'):
+                                    deletegroup.append(node.node_tree.name)
+                                deletelist.append(node.name)
+                                if node.type == 'TEX_IMAGE' and delete_images == True:
+                                    deleteimages.append(node.image.name)
+                    if deletelist:
+                        for node in deletelist:
+                            material.material.node_tree.nodes.remove(material.material.node_tree.nodes[node])
+                            deletelist = []
+
+                    if deleteimages:
+                        for image in deleteimages:
+                            bpy.data.images.remove(bpy.data.images[image])
+                            deleteimages = []
+
+    elif type == 'Collection':
+        for collection_object in bpy.context.view_layer.active_layer_collection.collection.all_objects:
+            if(collection_object.type == 'MESH'):
+                for material in collection_object.material_slots:
+                    if (material.material.use_nodes):
+                        for node in material.material.node_tree.nodes:
+                            if (node.name.startswith('3DC')):
+                                if (node.type == 'GROUP'):
+                                    deletegroup.append(node.node_tree.name)
+                                deletelist.append(node.name)
+                                if node.type == 'TEX_IMAGE' and delete_images == True:
+                                    deleteimages.append(node.image.name)
+
+                    if deletelist:
+                        for node in deletelist:
+                            material.material.node_tree.nodes.remove(material.material.node_tree.nodes[node])
+                            deletelist = []
+
+                    if deleteimages:
+                        for image in deleteimages:
+                            bpy.data.images.remove(bpy.data.images[image])
+                            deleteimages = []
+
+    elif type == 'Scene':
+        for collection in bpy.data.collections:
+            for collection_object in collection.all_objects:
+                if (collection_object.type == 'MESH'):
+                    for material in collection_object.material_slots:
+                        if (material.material.use_nodes):
+                            for node in material.material.node_tree.nodes:
+                                if (node.name.startswith('3DC')):
+                                    if (node.type == 'GROUP'):
+                                        deletegroup.append(node.node_tree.name)
+
+                                    deletelist.append(node.name)
+                                    if node.type == 'TEX_IMAGE' and delete_images == True:
+                                        deleteimages.append(node.image.name)
+                        if deletelist:
+                            for node in deletelist:
+                                material.material.node_tree.nodes.remove(material.material.node_tree.nodes[node])
+                                deletelist = []
+
+                        if deleteimages:
+                            for image in deleteimages:
+                                bpy.data.images.remove(bpy.data.images[image])
+                                deleteimages = []
+
+        if(deletelist):
+            for node in deletelist:
+                bpy.data.node_groups.remove(bpy.data.node_groups[node])
+
+        for image in bpy.data.images:
+            if (image.name.startswith('3DC') and image.name[6] == '_'):
+                deleteimages.append(image.name)
+
+
+    if(deletegroup):
+        for node in deletegroup:
+            bpy.data.node_groups.remove(bpy.data.node_groups[node])
+
+    if deleteimages:
+        for image in deleteimages:
+            bpy.data.images.remove(bpy.data.images[image])
+
+
+def delete_materials_from_end(keep_materials_count, objekti):
+    bpy.context.object.active_material_index = 0
+    index_t = 0
+    while (index_t < keep_materials_count):
+        temp_len = len(objekti.material_slots)-1
+        bpy.context.object.active_material_index = temp_len
+        bpy.ops.object.material_slot_remove()
+        index_t +=1
+
+''' DELETE NODES BUTTONS'''
+
+class SCENE_OT_delete_material_nodes(bpy.types.Operator):
+    bl_idname = "delete_material_nodes.pilgway_3d_coat"
+    bl_label = "Delete material nodes"
+    bl_description = "Delete material nodes"
+    bl_options = {'UNDO'}
+
+    def invoke(self, context, event):
+        type = bpy.context.scene.coat3D.deleteMode = 'Material'
+        deleteNodes(type)
+        return {'FINISHED'}
+
+class SCENE_OT_delete_object_nodes(bpy.types.Operator):
+    bl_idname = "delete_object_nodes.pilgway_3d_coat"
+    bl_label = "Delete material nodes"
+    bl_description = "Delete material nodes"
+    bl_options = {'UNDO'}
+
+    def invoke(self, context, event):
+        type = bpy.context.scene.coat3D.deleteMode = 'Object'
+        deleteNodes(type)
+        return {'FINISHED'}
+
+class SCENE_OT_delete_collection_nodes(bpy.types.Operator):
+    bl_idname = "delete_collection_nodes.pilgway_3d_coat"
+    bl_label = "Delete material nodes"
+    bl_description = "Delete material nodes"
+    bl_options = {'UNDO'}
+
+    def invoke(self, context, event):
+        type = bpy.context.scene.coat3D.deleteMode = 'Collection'
+        deleteNodes(type)
+        return {'FINISHED'}
+
+class SCENE_OT_delete_scene_nodes(bpy.types.Operator):
+    bl_idname = "delete_scene_nodes.pilgway_3d_coat"
+    bl_label = "Delete material nodes"
+    bl_description = "Delete material nodes"
+    bl_options = {'UNDO'}
+
+    def invoke(self, context, event):
+        type = bpy.context.scene.coat3D.deleteMode = 'Scene'
+        deleteNodes(type)
+        return {'FINISHED'}
+
+
+''' TRANSFER AND UPDATE BUTTONS'''
+
 class SCENE_OT_export(bpy.types.Operator):
     bl_idname = "export_applink.pilgway_3d_coat"
     bl_label = "Export your custom property"
@@ -361,8 +533,6 @@ class SCENE_OT_export(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
-
-
 
         for mesh in bpy.data.meshes:
             if (mesh.users == 0 and mesh.coat3D.name == '3DC'):
@@ -379,10 +549,15 @@ class SCENE_OT_export(bpy.types.Operator):
             return {'FINISHED'}
         else:
             for objec in bpy.context.selected_objects:
+                delete_uvmaps = []
                 if objec.type == 'MESH':
+                    if(len(objec.data.uv_layers) == 0):
+                        objec.data.uv_layers.new(name='UVMap', do_init = False)
+
                     export_ok = True
             if (export_ok == False):
                 return {'FINISHED'}
+
 
         activeobj = bpy.context.active_object.name
         checkname = ''
@@ -394,7 +569,6 @@ class SCENE_OT_export(bpy.types.Operator):
         if (not os.path.isdir(coat3D.exchangedir)):
             coat3D.exchange_found = False
             return {'FINISHED'}
-
 
         folder_objects = set_working_folders()
         folder_size(folder_objects)
@@ -455,8 +629,6 @@ class SCENE_OT_export(bpy.types.Operator):
                 objekti.data.name = nimi2
                 objekti.name = nimi2
 
-
-
             else:
                 objekti.name = name_boxs[0]
                 objekti.data.name = name_boxs[0]
@@ -498,7 +670,6 @@ class SCENE_OT_export(bpy.types.Operator):
                             mod_mat_list[objekti.name].append([material_index, temp_mat])
                         material_index = material_index + 1
 
-
                 bake_list = []
                 if(coat3D.bake_diffuse):
                     bake_list.append(['DIFFUSE', '$LOADTEX'])
@@ -527,7 +698,6 @@ class SCENE_OT_export(bpy.types.Operator):
                     res_size = 4096
                 elif (coat3D.bake_resolution == 'res_8192'):
                     res_size = 8192
-
 
                 if(len(bake_list) > 0):
                     index_bake_tex = 0
@@ -605,6 +775,8 @@ class SCENE_OT_export(bpy.types.Operator):
             objekti.coat3D.type = coat3D.type
             objekti.coat3D.applink_mesh = True
             objekti.coat3D.obj_mat = ''
+            objekti.coat3D.applink_index = ("3DC%.3d" % (object_index))
+
             objekti.coat3D.applink_firsttime = True
             if(coat3D.type != 'autopo'):
                 objekti.coat3D.applink_address = coa.applink_address
@@ -657,6 +829,16 @@ class SCENE_OT_import(bpy.types.Operator):
                         bpy.data.images.remove(del_img)
 
                 bpy.data.materials.remove(material)
+
+        image_del_list = []
+        for image in bpy.data.images:
+            if (image.name.startswith('3DC')):
+                if image.users == 0:
+                    image_del_list.append(image.name)
+
+        if (image_del_list != []):
+            for image in image_del_list:
+                bpy.data.images.remove(bpy.data.images[image])
 
         coat3D = bpy.context.scene.coat3D
         coat = bpy.coat3D
@@ -768,7 +950,6 @@ class SCENE_OT_import(bpy.types.Operator):
                         print('ONAME:',oname)
                         if(objekti.coat3D.type):
                             for proxy_objects in diff_objects:
-                                print('tryis to found: ',proxy_objects)
                                 if (proxy_objects.startswith(objekti.coat3D.applink_name + '.')):
                                     obj_proxy = bpy.data.objects[proxy_objects]
                                     obj_proxy.coat3D.delete_proxy_mesh = True
@@ -830,18 +1011,14 @@ class SCENE_OT_import(bpy.types.Operator):
                             else:
 
                                 bpy.context.view_layer.objects.active = obj_proxy
-                                mat_count = len(obj_proxy.material_slots) - len(objekti.material_slots)
-                                bpy.context.object.active_material_index = 0
-                                index_t = 0
-                                while (index_t < mat_count):
-                                    temp_len = len(obj_proxy.material_slots)-1
-                                    bpy.context.object.active_material_index = temp_len
-                                    bpy.ops.object.material_slot_remove()
-                                    index_t +=1
+                                keep_materials_count = len(obj_proxy.material_slots) - len(objekti.material_slots)
+
+                                delete_materials_from_end(keep_materials_count, obj_proxy)
+
                                 for index, material in enumerate(objekti.material_slots):
                                     obj_proxy.material_slots[index-1].material = material.material
 
-                                updatemesh(objekti,obj_proxy)
+                                updatemesh(objekti,obj_proxy, texturelist)
                                 bpy.context.view_layer.objects.active = objekti
 
 
@@ -913,7 +1090,6 @@ class SCENE_OT_import(bpy.types.Operator):
                     bpy.ops.import_scene.fbx(filepath=coat3D.bring_retopo_path, global_scale=1, axis_forward='X', use_custom_normals=False)
                     os.remove(coat3D.bring_retopo_path)
 
-
         else:
 
             '''
@@ -961,13 +1137,12 @@ class SCENE_OT_import(bpy.types.Operator):
                 bpy.data.objects[c_index].material_slots[0].material = bpy.data.materials[diff_mat[laskuri]]
                 laskuri += 1
 
-
             bpy.ops.object.select_all(action='DESELECT')
             for new_obj in bpy.context.collection.objects:
 
                 if(new_obj.coat3D.applink_old == False):
                     new_obj.select_set(True)
-                    new_obj.scale = (0.01, 0.01, 0.01)
+                    new_obj.scale = (1, 1, 1)
                     new_obj.coat3D.applink_firsttime = False
                     new_obj.select_set(False)
                     new_obj.coat3D.type = 'ppp'
@@ -975,8 +1150,12 @@ class SCENE_OT_import(bpy.types.Operator):
                     new_obj.coat3D.applink_mesh = True
                     new_obj.coat3D.objecttime = str(os.path.getmtime(new_obj.coat3D.applink_address))
 
-                    new_obj.coat3D.applink_name = new_obj.material_slots[0].material.name
+                    new_obj.coat3D.applink_name = new_obj.name
                     index = index + 1
+
+                    bpy.context.view_layer.objects.active = new_obj
+                    keep_materials_count = len(new_obj.material_slots) - len(new_obj.data.uv_layers)
+                    delete_materials_from_end(keep_materials_count, new_obj)
 
                     new_obj.coat3D.applink_export = True
                     if(osoite_3b != ''):
@@ -1036,7 +1215,7 @@ class SCENE_PT_Main(bpy.types.Panel):
             coa = bpy.context.active_object.coat3D
         if(coat['status'] == 0):
             row = layout.row()
-            row.label(text="Applink didn't find your 3d-Coat/Excahnge folder.")
+            row.label(text="Applink didn't find your 3d-Coat/Exchange folder.")
             row = layout.row()
             row.label("Please select it before using Applink.")
             row = layout.row()
@@ -1071,6 +1250,46 @@ class SCENE_PT_Settings(ObjectButtonsPanel,bpy.types.Panel):
 
     def draw(self, context):
         pass
+
+class MaterialButtonsPanel():
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "material"
+
+class SCENE_PT_Material(MaterialButtonsPanel,bpy.types.Panel):
+    bl_label = "3D-Coat Applink"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "material"
+
+    def draw(self, context):
+        pass
+
+class SCENE_PT_Material_Import(MaterialButtonsPanel, bpy.types.Panel):
+    bl_label = "Import Textures:"
+    bl_parent_id = "SCENE_PT_Material"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        coat3D = bpy.context.active_object.active_material
+
+        layout.active = True
+
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
+
+        col = flow.column()
+        col.prop(coat3D, "coat3D_diffuse", text="Diffuse")
+        col.prop(coat3D, "coat3D_metalness", text="Metalness")
+        col.prop(coat3D, "coat3D_roughness", text="Roughness")
+        col.prop(coat3D, "coat3D_ao", text="AO")
+        col = flow.column()
+        col.prop(coat3D, "coat3D_normal", text="NormalMap")
+        col.prop(coat3D, "coat3D_displacement", text="Displacement")
+        col.prop(coat3D, "coat3D_emissive", text="Emissive")
+
+
 
 class SCENE_PT_Settings_Update(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "Update"
@@ -1143,6 +1362,32 @@ class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
         col = flow.column()
         col.prop(coat3D, "coat3D_exe", text="3D-Coat.exe")
 
+class SCENE_PT_Settings_DeleteNodes(ObjectButtonsPanel, bpy.types.Panel):
+    bl_label = "Delete 3DC nodes from selected..."
+    bl_parent_id = "SCENE_PT_Settings"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        coat3D = bpy.context.scene.coat3D
+
+        layout.active = True
+
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
+
+        col = flow.column()
+        col.operator("delete_material_nodes.pilgway_3d_coat", text="Material")
+
+        col.operator("delete_object_nodes.pilgway_3d_coat", text="Object(s)")
+
+        col = flow.column()
+        col.operator("delete_collection_nodes.pilgway_3d_coat", text="Collection")
+
+        col.operator("delete_scene_nodes.pilgway_3d_coat", text="Scene")
+        col = flow.column()
+        col.prop(coat3D, "delete_images", text="Delete nodes images")
+
 
 
 # 3D-Coat Dynamic Menu
@@ -1157,18 +1402,37 @@ class VIEW3D_MT_Coat_Dynamic_Menu(bpy.types.Menu):
         ob = context
         if ob.mode == 'OBJECT':
             if(len(context.selected_objects) > 0):
-                layout.operator("import_applink.pilgway_3d_coat", text="Update Scene")
+                layout.operator("import_applink.pilgway_3d_coat",
+                                text="Update Scene")
                 layout.separator()
 
-                layout.operator("export_applink.pilgway_3d_coat", text="Copy selected object(s) into 3D-Coat")
+                layout.operator("export_applink.pilgway_3d_coat",
+                                text="Copy selected object(s) into 3D-Coat")
                 layout.separator()
+
                 if(context.selected_objects[0].coat3D.applink_3b_path != ''):
-                    layout.operator("open_3dcoat.pilgway_3d_coat", text="Open .3b file" +context.selected_objects[0].coat3D.applink_3b_just_name)
+                    layout.operator("open_3dcoat.pilgway_3d_coat",
+                                    text="Open .3b file" +context.selected_objects[0].coat3D.applink_3b_just_name)
                     layout.separator()
 
             else:
-                layout.operator("import_applink.pilgway_3d_coat", text="Update Scene")
+                layout.operator("import_applink.pilgway_3d_coat",
+                                text="Update Scene")
                 layout.separator()
+
+            if (len(context.selected_objects) > 0):
+                layout.operator("delete_material_nodes.pilgway_3d_coat",
+                                text="Delete 3D-Coat nodes from active material")
+
+                layout.operator("delete_object_nodes.pilgway_3d_coat",
+                                text="Delete 3D-Coat nodes from selected obejcts")
+
+            layout.operator("delete_object_nodes.pilgway_3d_coat",
+                            text="Delete 3D-Coat nodes from active collection")
+
+            layout.operator("delete_object_nodes.pilgway_3d_coat",
+                            text="Delete all 3D-Coat nodes")
+            layout.separator()
 
 
 
@@ -1179,6 +1443,9 @@ class ObjectCoat3D(PropertyGroup):
         default=''
     )
     applink_address: StringProperty(
+        name="Object_Applink_address"
+    )
+    applink_index: StringProperty(
         name="Object_Applink_address"
     )
     applink_3b_path: StringProperty(
@@ -1246,15 +1513,16 @@ class ObjectCoat3D(PropertyGroup):
         name="Scale",
         description="Scale"
     )
-class MaterialCoat3D(PropertyGroup):
-    Nodegroup: StringProperty(
-        name="NodeGroup",
-    )
 
 class SceneCoat3D(PropertyGroup):
     defaultfolder: StringProperty(
         name="FilePath",
         subtype="DIR_PATH",
+    )
+    deleteMode: StringProperty(
+        name="FilePath",
+        subtype="DIR_PATH",
+        default=''
     )
     coat3D_exe: StringProperty(
         name="FilePath",
@@ -1272,6 +1540,11 @@ class SceneCoat3D(PropertyGroup):
         name="Import window",
         description="Allows to skip import dialog",
         default=False
+    )
+    delete_images: BoolProperty(
+        name="Import window",
+        description="Allows to skip import dialog",
+        default=True
     )
     bring_retopo_path: StringProperty(
         name="FilePath",
@@ -1421,29 +1694,66 @@ class SceneCoat3D(PropertyGroup):
         default=False
     )
 
-
 class MeshCoat3D(PropertyGroup):
     applink_address: StringProperty(
         name="ApplinkAddress",
         subtype="APPLINK_ADDRESS",
     )
+
 class MaterialCoat3D(PropertyGroup):
-    name: StringProperty(
+    name: BoolProperty(
         name="ApplinkAddress",
         subtype="APPLINK_ADDRESS",
+        default=True
+    )
+    bring_diffuse: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bring_metalness: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bring_roughness: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bring_normal: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bring_displacement: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bring_emissive: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
     )
 
 classes = (
-    #ObjectButtonsPanel,
     SCENE_PT_Main,
     SCENE_PT_Settings,
+    SCENE_PT_Material,
     SCENE_PT_Settings_Update,
     SCENE_PT_Bake_Settings,
     SCENE_PT_Settings_Folders,
+    SCENE_PT_Settings_DeleteNodes,
+    SCENE_PT_Material_Import,
     SCENE_OT_folder,
     SCENE_OT_opencoat,
     SCENE_OT_export,
     SCENE_OT_import,
+    SCENE_OT_delete_material_nodes,
+    SCENE_OT_delete_object_nodes,
+    SCENE_OT_delete_collection_nodes,
+    SCENE_OT_delete_scene_nodes,
     VIEW3D_MT_Coat_Dynamic_Menu,
     ObjectCoat3D,
     SceneCoat3D,
@@ -1456,6 +1766,43 @@ def register():
     bpy.coat3D['active_coat'] = ''
     bpy.coat3D['status'] = 1
     bpy.coat3D['kuva'] = 1
+
+    bpy.types.Material.coat3D_diffuse = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_roughness = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_metalness = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_normal = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_displacement = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_emissive = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+    bpy.types.Material.coat3D_ao = BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
+
 
     from bpy.utils import register_class
     for cls in classes:
@@ -1480,7 +1827,13 @@ def unregister():
 
     del bpy.types.Object.coat3D
     del bpy.types.Scene.coat3D
-    del bpy.types.Mesh.coat3D
+    del bpy.types.Material.coat3D
+    bpy.types.Material.coat3D_diffuse
+    bpy.types.Material.coat3D_metalness
+    bpy.types.Material.coat3D_roughness
+    bpy.types.Material.coat3D_normal
+    bpy.types.Material.coat3D_displacement
+    bpy.types.Material.coat3D_emissive
     del bpy.coat3D
 
     kc = bpy.context.window_manager.keyconfigs.addon

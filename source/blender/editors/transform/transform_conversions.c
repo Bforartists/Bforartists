@@ -1887,8 +1887,8 @@ static void createTransCurveVerts(TransInfo *t)
 								td->ival = bezt->radius;
 							}
 							else if (t->mode == TFM_TILT) {
-								td->val = &(bezt->alfa);
-								td->ival = bezt->alfa;
+								td->val = &(bezt->tilt);
+								td->ival = bezt->tilt;
 							}
 							else {
 								td->val = NULL;
@@ -1998,8 +1998,8 @@ static void createTransCurveVerts(TransInfo *t)
 								td->ival = bp->radius;
 							}
 							else {
-								td->val = &(bp->alfa);
-								td->ival = bp->alfa;
+								td->val = &(bp->tilt);
+								td->ival = bp->tilt;
 							}
 
 							copy_m3_m3(td->smtx, smtx);
@@ -6696,7 +6696,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 
 				// XXX: BAD! this get gpencil datablocks directly from main db...
 				// but that's how this currently works :/
-				for (gpd = bmain->gpencil.first; gpd; gpd = gpd->id.next) {
+				for (gpd = bmain->gpencils.first; gpd; gpd = gpd->id.next) {
 					if (ID_REAL_USERS(gpd))
 						posttrans_gpd_clean(gpd);
 				}
@@ -6716,7 +6716,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 
 				// XXX: BAD! this get gpencil datablocks directly from main db...
 				// but that's how this currently works :/
-				for (mask = bmain->mask.first; mask; mask = mask->id.next) {
+				for (mask = bmain->masks.first; mask; mask = mask->id.next) {
 					if (ID_REAL_USERS(mask))
 						posttrans_mask_clean(mask);
 				}

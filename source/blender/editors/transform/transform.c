@@ -624,6 +624,9 @@ static void viewRedrawForce(const bContext *C, TransInfo *t)
 			wmWindow *window = CTX_wm_window(C);
 			WM_paint_cursor_tag_redraw(window, t->ar);
 		}
+		else if (t->flag & T_CURSOR) {
+			ED_area_tag_redraw(t->sa);
+		}
 		else {
 			// XXX how to deal with lock?
 			SpaceImage *sima = (SpaceImage *)t->sa->spacedata.first;
@@ -1946,7 +1949,7 @@ static bool transinfo_show_overlay(const struct bContext *C, TransInfo *t, ARegi
 		ScrArea *sa = CTX_wm_area(C);
 		if (sa->spacetype == SPACE_VIEW3D) {
 			View3D *v3d = sa->spacedata.first;
-			if ((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) {
+			if ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) {
 				ok = true;
 			}
 		}
@@ -2160,6 +2163,9 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 	}
 
 	/* Orientation used for redo. */
+	const bool use_orient_axis = (
+	        t->orient_matrix_is_set &&
+	        (RNA_struct_find_property(op->ptr, "orient_axis") != NULL));
 	short orientation;
 	if (t->con.mode & CON_APPLY) {
 		orientation = t->con.orientation;
@@ -2177,9 +2183,12 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 	{
 		orientation = RNA_property_enum_get(op->ptr, prop);
 	}
-	else {
+	else if (use_orient_axis) {
 		/* We're not using an orientation, use the fallback. */
 		orientation = t->orientation.unset;
+	}
+	else {
+		orientation = V3D_ORIENT_GLOBAL;
 	}
 
 
@@ -2212,7 +2221,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 			if (t->con.mode & CON_APPLY) {
 				RNA_float_set_array(op->ptr, "orient_matrix", &t->con.mtx[0][0]);
 			}
-			else if (t->orient_matrix_is_set) {
+			else if (use_orient_axis) {
 				RNA_float_set_array(op->ptr, "orient_matrix", &t->orient_matrix[0][0]);
 			}
 			else {
@@ -2391,10 +2400,10 @@ bool initTransform(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 		/* keymap for shortcut header prints */
 		t->keymap = WM_keymap_active(CTX_wm_manager(C), op->type->modalkeymap);
 
-		/* Stupid code to have Ctrl-Click on gizmo work ok
+		/* Stupid code to have Ctrl-Click on gizmo work ok.
 		 *
-		 * do this only for translation/rotation/resize due to only this
-		 * moded are available from gizmo and doing such check could
+		 * Do this only for translation/rotation/resize because only these
+		 * modes are available from gizmo and doing such check could
 		 * lead to keymap conflicts for other modes (see #31584)
 		 */
 		if (ELEM(mode, TFM_TRANSLATION, TFM_ROTATION, TFM_RESIZE)) {
