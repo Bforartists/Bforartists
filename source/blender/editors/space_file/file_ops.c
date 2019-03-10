@@ -21,9 +21,11 @@
  * \ingroup spfile
  */
 
-#include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
+
+#include "BLI_blenlib.h"
 #include "BLI_linklist.h"
+#include "BLI_math.h"
 
 #include "BLO_readfile.h"
 
@@ -40,6 +42,7 @@
 
 #include "ED_screen.h"
 #include "ED_fileselect.h"
+#include "ED_select_utils.h"
 
 #include "UI_interface.h"
 
@@ -422,12 +425,12 @@ static int file_box_select_exec(bContext *C, wmOperator *op)
 	SpaceFile *sfile = CTX_wm_space_file(C);
 	rcti rect;
 	FileSelect ret;
-	const bool select = !RNA_boolean_get(op->ptr, "deselect");
-	const bool extend = RNA_boolean_get(op->ptr, "extend");
 
 	WM_operator_properties_border_to_rcti(op, &rect);
 
-	if (!extend) {
+	const eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
+	const bool select = (sel_op != SEL_OP_SUB);
+	if (SEL_OP_USE_PRE_DESELECT(sel_op)) {
 		file_deselect_all(sfile, FILE_SEL_SELECTED);
 	}
 
@@ -463,7 +466,8 @@ void FILE_OT_select_box(wmOperatorType *ot)
 	ot->cancel = WM_gesture_box_cancel;
 
 	/* properties */
-	WM_operator_properties_gesture_box_select(ot);
+	WM_operator_properties_gesture_box(ot);
+	WM_operator_properties_select_operation_simple(ot);
 }
 
 static int file_select_invoke(bContext *C, wmOperator *op, const wmEvent *event)
@@ -1580,7 +1584,7 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 	ARegion *ar, *oldar = CTX_wm_region(C);
 	int offset;
 	int numfiles, numfiles_layout;
-	int edit_idx = 0;
+	int edit_idx = -1;
 	int i;
 
 	/* escape if not our timer */
@@ -1589,18 +1593,29 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 
 	numfiles = filelist_files_ensure(sfile->files);
 
+	/* Due to async nature of file listing, we may execute this code before `file_refresh()`
+	 * editing entry is available in our listing, so we also have to handle switching to rename mode here. */
+	FileSelectParams *params = ED_fileselect_get_params(sfile);
+	if ((params->rename_flag & (FILE_PARAMS_RENAME_PENDING | FILE_PARAMS_RENAME_POSTSCROLL_PENDING)) != 0) {
+		file_params_renamefile_activate(sfile, params);
+	}
+
 	/* check if we are editing a name */
 	for (i = 0; i < numfiles; ++i) {
-		if (filelist_entry_select_index_get(sfile->files, i, CHECK_ALL) ) {
+		if (filelist_entry_select_index_get(sfile->files, i, CHECK_ALL) & (FILE_SEL_EDITING | FILE_SEL_HIGHLIGHTED)) {
 			edit_idx = i;
 			break;
 		}
 	}
 
 	/* if we are not editing, we are done */
-	if (0 == edit_idx) {
-		WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), sfile->smoothscroll_timer);
-		sfile->smoothscroll_timer = NULL;
+	if (edit_idx == -1) {
+		/* Do not invalidate timer if filerename is still pending, we might still be building the filelist
+		 * and yet have to find edited entry... */
+		if (params->rename_flag == 0) {
+			WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), sfile->smoothscroll_timer);
+			sfile->smoothscroll_timer = NULL;
+		}
 		return OPERATOR_PASS_THROUGH;
 	}
 
@@ -1612,8 +1627,7 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 		return OPERATOR_PASS_THROUGH;
 	}
 
-	offset = ED_fileselect_layout_offset(sfile->layout, (int)ar->v2d.cur.xmin, (int)-ar->v2d.cur.ymax);
-	if (offset < 0) offset = 0;
+	offset = max_ii(0, ED_fileselect_layout_offset(sfile->layout, (int)ar->v2d.cur.xmin, (int)-ar->v2d.cur.ymax));
 
 	/* scroll offset is the first file in the row/column we are editing in */
 	if (sfile->scroll_offset == 0) {
@@ -1628,11 +1642,21 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 	}
 
 	numfiles_layout = ED_fileselect_layout_numfiles(sfile->layout, ar);
+	/* Using margins helps avoiding scrolling to stop when target item is barely visible on one side of the screen
+	 * (i.e. it centers a bit more the target). */
+	int numfiles_layout_margin = max_ii(0, numfiles_layout / 3);
 
 	/* check if we have reached our final scroll position */
-	if ( (sfile->scroll_offset >= offset) && (sfile->scroll_offset < offset + numfiles_layout) ) {
+	if ((sfile->scroll_offset >= offset + numfiles_layout_margin) &&
+	    (sfile->scroll_offset < offset + numfiles_layout - numfiles_layout_margin))
+	{
 		WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), sfile->smoothscroll_timer);
 		sfile->smoothscroll_timer = NULL;
+		/* Postscroll (after rename has been validated by user) is done, rename process is totally finisehd, cleanup. */
+		if ((params->rename_flag & FILE_PARAMS_RENAME_POSTSCROLL_ACTIVE) != 0) {
+			params->renamefile[0] = '\0';
+			params->rename_flag = 0;
+		}
 		return OPERATOR_FINISHED;
 	}
 
@@ -1670,7 +1694,6 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
 
 void FILE_OT_smoothscroll(wmOperatorType *ot)
 {
-
 	/* identifiers */
 	ot->name = "Smooth Scroll";
 	ot->idname = "FILE_OT_smoothscroll";
@@ -1801,9 +1824,13 @@ int file_directory_new_exec(bContext *C, wmOperator *op)
 
 	/* now remember file to jump into editing */
 	BLI_strncpy(sfile->params->renamefile, name, FILE_MAXFILE);
+	sfile->params->rename_flag = FILE_PARAMS_RENAME_PENDING;
 
 	/* set timer to smoothly view newly generated file */
 	/* max 30 frs/sec */
+	if (sfile->smoothscroll_timer != NULL) {
+		WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), sfile->smoothscroll_timer);
+	}
 	sfile->smoothscroll_timer = WM_event_add_timer(wm, CTX_wm_window(C), TIMER1, 1.0 / 1000.0);
 	sfile->scroll_offset = 0;
 
@@ -2192,8 +2219,9 @@ static int file_rename_exec(bContext *C, wmOperator *UNUSED(op))
 		if ((0 <= idx) && (idx < numfiles)) {
 			FileDirEntry *file = filelist_file(sfile->files, idx);
 			filelist_entry_select_index_set(sfile->files, idx, FILE_SEL_ADD, FILE_SEL_EDITING, CHECK_ALL);
-			BLI_strncpy(sfile->params->renameedit, file->relpath, FILE_MAXFILE);
-			sfile->params->renamefile[0] = '\0';
+			BLI_strncpy(sfile->params->renamefile, file->relpath, FILE_MAXFILE);
+			/* We can skip the pending state, as we can directly set FILE_SEL_EDITING on the expected entry here. */
+			sfile->params->rename_flag = FILE_PARAMS_RENAME_ACTIVE;
 		}
 		ED_area_tag_redraw(sa);
 	}

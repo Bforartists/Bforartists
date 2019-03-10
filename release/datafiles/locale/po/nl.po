@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -3553,6 +3553,11 @@ msgstr "Pas Visuele Transformatie Toe aan Pose"
 
 
 msgctxt "Operator"
+msgid "Refresh"
+msgstr "Ververs"
+
+
+msgctxt "Operator"
 msgid "Play Rendered Animation"
 msgstr "Speel gerenderde Animatie"
 
@@ -3937,16 +3942,6 @@ msgstr "Verplaats Lijnen"
 
 
 msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Maak Tekstblok"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Open Tekstblok"
-
-
-msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Overschrijven Aan/Uit"
 
@@ -4199,11 +4194,6 @@ msgstr "Rol Links"
 
 msgid "Roll Right"
 msgstr "Rol Rechts"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Ververs"
 
 
 msgctxt "Operator"
@@ -5156,11 +5146,6 @@ msgstr "Selectie naar Cursor"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Cirkel"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "Instellingen..."
 
@@ -5541,6 +5526,11 @@ msgstr "Vlak"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kubus"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cirkel"
 
 
 msgctxt "Operator"

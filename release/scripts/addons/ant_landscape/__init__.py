@@ -76,13 +76,12 @@ def menu_func_landscape(self, context):
 
 # Landscape Add Panel
 class AntLandscapeAddPanel(bpy.types.Panel):
+    bl_category = "A.N.T. Landscape"
+    bl_label = "Landscape"
     bl_idname = "ANTLANDSCAPE_PT_add"
     bl_space_type = "VIEW_3D"
-    bl_context = "objectmode"
     bl_region_type = "UI"
-    bl_label = "Landscape"
-    bl_category = "A.N.T. Landscape"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_context = "objectmode"
 
     def draw(self, context):
         col = self.layout.column()
@@ -91,12 +90,12 @@ class AntLandscapeAddPanel(bpy.types.Panel):
 
 # Landscape Tools:
 class AntLandscapeToolsPanel(bpy.types.Panel):
+    bl_category = "A.N.T. Landscape"
+    bl_label = "Landscape Tools"
     bl_idname = "ANTLANDSCAPE_PT_tools"
     bl_space_type = "VIEW_3D"
-    bl_context = "objectmode"
     bl_region_type = "UI"
-    bl_label = "Landscape Tools"
-    bl_category = "A.N.T. Landscape"
+    bl_context = "objectmode"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -116,12 +115,12 @@ class AntLandscapeToolsPanel(bpy.types.Panel):
 
 # Landscape Main Settings
 class AntMainSettingsPanel(bpy.types.Panel):
-    bl_idname = "ANTMAIN_PT_layout"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_context = "object"
+    bl_category = "A.N.T. Landscape"
     bl_label = "Landscape Main"
+    bl_idname = "ANTLANDSCAPE_PT_main"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -139,7 +138,7 @@ class AntMainSettingsPanel(bpy.types.Panel):
         col.operator('mesh.ant_landscape_regenerate', text="Regenerate", icon="LOOP_FORWARDS")
         row = box.row(align=True)
         split = row.split(align=True)
-        split.prop(ant, "smooth_mesh", toggle=True, text="Smooth", icon='SOLID')
+        split.prop(ant, "smooth_mesh", toggle=True, text="Smooth", icon='SHADING_SOLID')
         split.prop(ant, "tri_face", toggle=True, text="Triangulate", icon='MESH_DATA')
         if ant.sphere_mesh:
             split.prop(ant, "remove_double", toggle=True, text="Remove Doubles", icon='MESH_DATA')
@@ -158,12 +157,12 @@ class AntMainSettingsPanel(bpy.types.Panel):
 
 # Landscape Noise Settings
 class AntNoiseSettingsPanel(bpy.types.Panel):
-    bl_idname = "ANTNOISE_PT_layout"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_context = "object"
+    bl_category = "A.N.T. Landscape"
     bl_label = "Landscape Noise"
+    bl_idname = "ANTLANDSCAPE_PT_noise"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -348,7 +347,7 @@ class AntNoiseSettingsPanel(bpy.types.Panel):
             col.prop(ant, "fx_turb")
 
             col = box.column(align=True)
-            row = col.row(align=True).split(0.92, align=True)
+            row = col.row(align=True).split(factor=0.92, align=True)
             row.prop(ant, "fx_height")
             row.prop(ant, "fx_invert", toggle=True, text="", icon='ARROW_LEFTRIGHT')
             col.prop(ant, "fx_offset")
@@ -356,12 +355,12 @@ class AntNoiseSettingsPanel(bpy.types.Panel):
 
 # Landscape Displace Settings
 class AntDisplaceSettingsPanel(bpy.types.Panel):
-    bl_idname = "ANTDISP_PT_layout"
-    bl_options = {'DEFAULT_CLOSED'}
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_context = "object"
+    bl_category = "A.N.T. Landscape"
     bl_label = "Landscape Displace"
+    bl_idname = "ANTLANDSCAPE_PT_disp"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -382,7 +381,7 @@ class AntDisplaceSettingsPanel(bpy.types.Panel):
             col.operator('mesh.ant_landscape_refresh', text="Refresh", icon="FILE_REFRESH")
 
         col = box.column(align=True)
-        row = col.row(align=True).split(0.92, align=True)
+        row = col.row(align=True).split(factor=0.92, align=True)
         row.prop(ant, "height")
         row.prop(ant, "height_invert", toggle=True, text="", icon='ARROW_LEFTRIGHT')
         col.prop(ant, "height_offset")
@@ -568,7 +567,7 @@ class AntLandscapePropertiesGroup(bpy.types.PropertyGroup):
             name="vlNoise Basis",
             default=ant_noise.noise_basis_default,
             description="VLNoise basis algorithms",
-            items =  ant_noise.noise_basis
+            items = ant_noise.noise_basis
             )
     distortion: FloatProperty(
             name="Distortion",

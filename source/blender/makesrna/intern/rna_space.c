@@ -506,7 +506,7 @@ static void rna_Space_view2d_sync_update(Main *UNUSED(bmain), Scene *UNUSED(scen
 static void rna_GPencil_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *UNUSED(ptr))
 {
 	/* need set all caches as dirty to recalculate onion skinning */
-	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
+	for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
 		if (ob->type == OB_GPENCIL) {
 			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 		}
@@ -651,7 +651,7 @@ static void rna_3DViewShading_type_update(Main *bmain, Scene *UNUSED(scene), Poi
 		return;
 	}
 
-	for (Material *ma = bmain->mat.first; ma; ma = ma->id.next) {
+	for (Material *ma = bmain->materials.first; ma; ma = ma->id.next) {
 		/* XXX Dependency graph does not support CD mask tracking,
 		 * so we trigger  materials shading for until it's properly supported.
 		 * This is to ensure material batches are all recreated when switching
@@ -1032,13 +1032,12 @@ static void rna_SpaceImageEditor_image_set(PointerRNA *ptr, PointerRNA value)
 {
 	SpaceImage *sima = (SpaceImage *)(ptr->data);
 	bScreen *sc = (bScreen *)ptr->id.data;
-	wmWindow *win;
-	Scene *scene = ED_screen_scene_find_with_window(sc, G_MAIN->wm.first, &win);
+	wmWindow *win = ED_screen_window_find(sc, G_MAIN->wm.first);
 	ViewLayer *view_layer = WM_window_get_active_view_layer(win);
 	Object *obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
 
 	BLI_assert(BKE_id_is_in_global_main(value.data));
-	ED_space_image_set(G_MAIN, sima, scene, obedit, (Image *)value.data);
+	ED_space_image_set(G_MAIN, sima, obedit, (Image *)value.data);
 }
 
 static void rna_SpaceImageEditor_mask_set(PointerRNA *ptr, PointerRNA value)
@@ -2664,7 +2663,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 	RNA_def_struct_ui_text(srna, "3D View Overlay Settings", "Settings for display of overlays in the 3D viewport");
 
 	prop = RNA_def_property(srna, "show_overlays", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag2", V3D_RENDER_OVERRIDE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag2", V3D_HIDE_OVERLAYS);
 	RNA_def_property_ui_text(prop, "Show Overlays", "Display overlays like gizmos and outlines");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_GPencil_update");
 
@@ -3087,32 +3086,32 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_render_border", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag2", V3D_RENDER_BORDER);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Render Border", "Toggle Render Border\nUse a region within the frame size for rendered viewport "
+	RNA_def_property_ui_text(prop, "Render Region", "Render Region\nUse a region within the frame size for rendered viewport"
 	                         "(when not viewing through the camera)");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "render_border_min_x", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "render_border.xmin");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
-	RNA_def_property_ui_text(prop, "Border Minimum X", "Minimum X value for the render border");
+	RNA_def_property_ui_text(prop, "Region Minimum X", "Minimum X value for the render region");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "render_border_min_y", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "render_border.ymin");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
-	RNA_def_property_ui_text(prop, "Border Minimum Y", "Minimum Y value for the render border");
+	RNA_def_property_ui_text(prop, "Region Minimum Y", "Minimum Y value for the render region");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "render_border_max_x", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "render_border.xmax");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
-	RNA_def_property_ui_text(prop, "Border Maximum X", "Maximum X value for the render border");
+	RNA_def_property_ui_text(prop, "Region Maximum X", "Maximum X value for the render region");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "render_border_max_y", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "render_border.ymax");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
-	RNA_def_property_ui_text(prop, "Border Maximum Y", "Maximum Y value for the render border");
+	RNA_def_property_ui_text(prop, "Region Maximum Y", "Maximum Y value for the render region");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "lock_object", PROP_POINTER, PROP_NONE);
@@ -5131,7 +5130,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, NULL);
 
 	prop = RNA_def_property(srna, "show_metadata", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "flag", 	SC_SHOW_METADATA);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", SC_SHOW_METADATA);
 	RNA_def_property_ui_text(prop, "Show Metadata", "Show Metadata\nShow metadata of clip");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, NULL);
 
