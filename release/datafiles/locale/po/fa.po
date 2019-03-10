@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -3742,10 +3742,6 @@ msgid "Randomize particle orientation"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Orientation axis"
-msgstr "ﺖﻬﺟ"
-
-
 msgid "Velocity / Hair"
 msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
@@ -3860,14 +3856,6 @@ msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
 
 msgid "Background set scene"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgid "Cursor Location"
-msgstr "ﻝﺎﻌﻓ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
-
-
-msgid "3D cursor location"
-msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
 
 
 msgid "Cycles Render Settings"
@@ -4750,14 +4738,6 @@ msgstr "X ﺖﺴﻓﺍ"
 
 msgid "Bevel Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgid "Edge Weight Method"
-msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ"
-
-
-msgid "Sharpest"
-msgstr "ﯼﺰﯿﺗ"
 
 
 msgid "New"
@@ -8252,11 +8232,6 @@ msgstr "ﯽﻨﺤﻨﻣ-F ﯼﺎﻫ ﻩﻭﺮﮔ"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
@@ -8426,10 +8401,6 @@ msgid "Import STL"
 msgstr "ﻥﺩﺮﮐ ﺩﺭﺍﻭ"
 
 
-msgid "Warning"
-msgstr "ﺭﺍﺪﺸﻫ:"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "ﻥﺩﺮﮐ ﺩﺭﺍﻭ"
@@ -8462,10 +8433,6 @@ msgstr "ﻞﻣﺎﻋ"
 msgctxt "Operator"
 msgid "Update Reports Display"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻪﻨﯿﺸﯿﺑ"
-
-
-msgid "Select or deselect all reports"
-msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
 
 
 msgctxt "Operator"
@@ -10867,6 +10834,46 @@ msgstr "ﯽﻠﺤﻣ ﺕﺭﻮﺻ ﻪﺑ ﺖﺷﺎﮕﻧ ﻝﺎﻤﻋﺍ"
 
 
 msgctxt "Operator"
+msgid "Refresh"
+msgstr "ﺎﻫ ﻢﺗ"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "ﻪﻧﻭﺰﻓﺍ ﻑﺬﺣ"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "UV ﻪﺸﻘﻧ ﻑﺬﺣ"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "ﻥﺪﻧﺍﺩﺮﮔﺯﺎﺑ"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "ﻥﺪﻧﺍﺩﺮﮔﺯﺎﺑ"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "ﻪﻧﻭﺰﻓﺍ ﻥﺩﺮﮐ‌ﻝﺎﻌﻓ ﺮﯿﻏ"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "ﺪﯾﺪﺟ ﺩﺍﺪﯾﻭﺭ ﻥﺩﻭﺰﻓﺍ"
 
@@ -11916,11 +11923,6 @@ msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "ﻥﺍﺭﻭﺩ"
 
@@ -12007,11 +12009,6 @@ msgstr "ﺕﺎﻤﯿﻈﻨﺗ"
 msgctxt "Operator"
 msgid "Zoom Camera 1:1"
 msgstr "ﯽﻠﺤﻣ ﻦﯿﺑﺭﻭﺩ:"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "ﺎﻫ ﻢﺗ"
 
 
 msgctxt "Operator"
@@ -12135,11 +12132,6 @@ msgstr "ﭻﯾﻮﺳ"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
 msgid "Control"
 msgstr "ﻝﺮﺘﻨﮐ"
 
@@ -12183,33 +12175,8 @@ msgstr "ﺎﻤﻨﻫﺍﺭ ﻩﺪﻫﺎﺸﻣ"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "ﻪﻧﻭﺰﻓﺍ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "UV ﻪﺸﻘﻧ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "ﻥﺪﻧﺍﺩﺮﮔﺯﺎﺑ"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "ﻥﺪﻧﺍﺩﺮﮔﺯﺎﺑ"
 
 
 msgctxt "Operator"
@@ -12333,11 +12300,6 @@ msgstr "ﻮﺠﺘﺴﺟ"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "ﺖﺴﺨﻧ ﻪﺤﻔﺻ"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "ﻪﻧﻭﺰﻓﺍ ﻥﺩﺮﮐ‌ﻝﺎﻌﻓ ﺮﯿﻏ"
 
 
 msgid "URL"
@@ -13365,6 +13327,10 @@ msgid "Show Mask Editor"
 msgstr "ﺶﯾﺍﺮﯾﻭ"
 
 
+msgid "Cursor Location"
+msgstr "ﻝﺎﻌﻓ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
+
+
 msgid "Edit Tree"
 msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
@@ -13403,10 +13369,6 @@ msgstr "ﻮﮔﺪﻨﻠﺑ"
 
 msgid "3D"
 msgstr "3D"
-
-
-msgid "Render Border"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
 
 
 msgid "X Mapping"
@@ -14077,11 +14039,6 @@ msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "ﻩﺮﯾﺍﺩ"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "ﺎﺑ ﺏﺎﺨﺘﻧﺍ:"
 
@@ -14137,10 +14094,6 @@ msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 msgctxt "Operator"
 msgid "New"
 msgstr "ﺪﯾﺪﺟ"
-
-
-msgid "Multiply mass with size"
-msgstr "ﻩﺯﺍﺪﻧﺍ ﺎﺑ ﻡﺮﺟ ﺏﺮﺿ"
 
 
 msgid "Endpoint"
@@ -14787,11 +14740,6 @@ msgstr "ﭗﭼ"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "ﻊﺒﻨﻣ"
 
@@ -14874,6 +14822,11 @@ msgstr "ﻪﺤﻔﺻ"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "ﺐﻌﮑﻣ"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "ﻩﺮﯾﺍﺩ"
 
 
 msgctxt "Operator"
@@ -15363,6 +15316,10 @@ msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 msgid "No valid data to read!"
 msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﺭﺍﺩﺮﮐ ﺶﻨﯾﺰﮔ"
+
+
+msgid "Warning"
+msgstr "ﺭﺍﺪﺸﻫ:"
 
 
 msgid "Undefined Type"

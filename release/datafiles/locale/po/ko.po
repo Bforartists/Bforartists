@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -11560,10 +11560,6 @@ msgid "Falloff Curve"
 msgstr "감소 곡선"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "사용자 정의 램프 감소 곡선"
-
-
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "0이 아닌 경우, 영향이 종료되는 후크로부터의 거리"
 
@@ -14347,10 +14343,6 @@ msgid "Edit Grease Pencil strokes instead of viewport data"
 msgstr "뷰포트 데이터 대신 그리스 펜슬 스트로크를 편집"
 
 
-msgid "X-Ray"
-msgstr "X-레이"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "외부 또는 포장된 이미지를 참조하는 이미지 데이터 블록"
 
@@ -17087,10 +17079,6 @@ msgid "Keyed"
 msgstr "키드"
 
 
-msgid "Scaling"
-msgstr "규모 조절"
-
-
 msgid "React On"
 msgstr "반응 On"
 
@@ -17153,10 +17141,6 @@ msgstr "랜덤 방향정위"
 
 msgid "Randomize particle orientation"
 msgstr "랜덤으로 파티클 방향정위"
-
-
-msgid "Orientation axis"
-msgstr "방향정위 축"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -17659,12 +17643,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "활성 카메라, 장면을 렌더링하는 데 사용"
 
 
-msgid "Cursor Location"
-msgstr "커서 위치"
-
-
-msgid "3D cursor location"
-msgstr "3D 커서 위치"
+msgid "3D Cursor"
+msgstr "3D 커서"
 
 
 msgid "Cycles Render Settings"
@@ -21349,6 +21329,10 @@ msgid "Insert a keyframe on each of the scale channels"
 msgstr "각 규모 조절 채널에 키 프레임을 삽입"
 
 
+msgid "Scaling"
+msgstr "규모 조절"
+
+
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
 msgstr "캐릭터 리깅에 애니메이션을 적용할 가능성이 있는 모든 속성에 대한 키 프레임을 삽입"
 
@@ -23074,10 +23058,6 @@ msgid "Align View to Active"
 msgstr "활성에 뷰를 정렬"
 
 
-msgid "View Borders"
-msgstr "뷰 경계 "
-
-
 msgid "Local View"
 msgstr "로컬 뷰"
 
@@ -23960,22 +23940,6 @@ msgstr "에지와 버텍스를 더 둥글게 만드는 베벨 모디파이어"
 
 msgid "Angle above which to bevel edges"
 msgstr "에지를 베벨하는 이상의 각도"
-
-
-msgid "Edge Weight Method"
-msgstr "에지 웨이트 메서드"
-
-
-msgid "What edge weight to use for weighting a vertex"
-msgstr "버텍스에 웨이트를 줄 때 어떤 에지 웨이트를 사용하는지"
-
-
-msgid "Sharpest"
-msgstr "날카로운"
-
-
-msgid "Largest"
-msgstr "최대"
 
 
 msgid "New"
@@ -31972,14 +31936,6 @@ msgid "Axis Range"
 msgstr "축 범위"
 
 
-msgid "Deselect rather than select items"
-msgstr "항목 선택 대신 선택 취소"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "먼저 선택을 모두 취소하는 대신 선택 영역을 확장"
-
-
 msgid "Wait for Input"
 msgstr "입력에 대해 대기"
 
@@ -32036,6 +31992,14 @@ msgstr "올가미 선택"
 
 msgid "Select keyframe points using lasso selection"
 msgstr "올가미 선택을 사용하여 키 프레임 포인트를 선택"
+
+
+msgid "Deselect rather than select items"
+msgstr "항목 선택 대신 선택 취소"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "먼저 선택을 모두 취소하는 대신 선택 영역을 확장"
 
 
 msgctxt "Operator"
@@ -38329,15 +38293,6 @@ msgstr "선택된 키 프레임 범위를 표시하는 가시 영역을 재설�
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "렌더 경계를 지우기"
-
-
-msgid "Clear the boundaries of the border render and disable border render"
-msgstr "경계 렌더를 사용 중지 및 경계 렌더의 경계를 지우기"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "곡선 포인트를 설정"
 
@@ -38514,15 +38469,6 @@ msgstr "이미지를 다시 불러오기"
 
 msgid "Reload current image from disk"
 msgstr "디스크에서 현재 이미지를 다시 불러오기"
-
-
-msgctxt "Operator"
-msgid "Render Border"
-msgstr "렌더 경계"
-
-
-msgid "Set the boundaries of the border render and enable border render"
-msgstr "경계 렌더를 사용 및 경계 렌더의 경계를 설정 "
 
 
 msgctxt "Operator"
@@ -38929,10 +38875,6 @@ msgid "Use pre/post rotation from FBX transform (you may have to disable that in
 msgstr "FBX 변환에서 전/후  회전을 사용 (경우에 따라 비활성화해야 할 수도 있음)"
 
 
-msgid "Warning"
-msgstr "경고"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "OBJ를 가져오기"
@@ -39037,10 +38979,6 @@ msgstr "업데이트 보고서 표시"
 
 msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "블렌더 UI에서 보고서의 표시를 업데이트 (내부 사용)"
-
-
-msgid "Select or deselect all reports"
-msgstr "모든 보고서를 선택 또는 취소"
 
 
 msgctxt "Operator"
@@ -39620,10 +39558,6 @@ msgstr "균일한 폭으로 에지를 따라 슬라이드를 선호"
 
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "베벨 페이스에 대한 매트리얼 (-1 방법 인접한 페이스를 사용)"
-
-
-msgid "What distance Amount measures"
-msgstr "어떤 거리 총액 측정치"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -43054,10 +42988,6 @@ msgstr "장면 오리진"
 
 msgid "Use the Scene Origin as the position for the selected objects to align to"
 msgstr "선택한 오브젝트가 다음과 정렬되도록 위치로 장면 오리진을 사용"
-
-
-msgid "3D Cursor"
-msgstr "3D 커서"
 
 
 msgid "Use the 3D cursor as the position for the selected objects to align to"
@@ -47070,6 +47000,228 @@ msgstr "해당 변환에 포즈 본의 최종 제약된 위치를 적용"
 
 
 msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "에드온을 사용 중지"
+
+
+msgid "Disable an add-on"
+msgstr "에드온을 사용 안함"
+
+
+msgid "Module name of the add-on to disable"
+msgstr "사용하지 않는 에드온의 모듈 이름"
+
+
+msgctxt "Operator"
+msgid "Enable Add-on"
+msgstr "에드온을 사용"
+
+
+msgid "Enable an add-on"
+msgstr "에드온을 사용"
+
+
+msgid "Module name of the add-on to enable"
+msgstr "사용하는 에드온의 모듈 이름"
+
+
+msgid "Display information and preferences for this add-on"
+msgstr "이 애드온에 대한 환경 설정및 정보를 표시"
+
+
+msgid "Module name of the add-on to expand"
+msgstr "확장하는 애드온의 모듈 이름"
+
+
+msgctxt "Operator"
+msgid "Install Add-on from File..."
+msgstr "파일에서 에드온을 설치..."
+
+
+msgid "Install an add-on"
+msgstr "애드온을 설치"
+
+
+msgid "Remove existing add-ons with the same ID"
+msgstr "동일한 ID와 기존의 애드온을 제거"
+
+
+msgid "Target Path"
+msgstr "대상 경로"
+
+
+msgid "User Prefs"
+msgstr "사용자 환경 설정"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "새로 고침"
+
+
+msgid "Scan add-on directories for new modules"
+msgstr "새로운 모듈에 대한 애드온 디렉토리를 검사"
+
+
+msgctxt "Operator"
+msgid "Remove Add-on"
+msgstr "에드온을 제거"
+
+
+msgid "Delete the add-on from the file system"
+msgstr "파일 시스템에서 애드온을 삭제"
+
+
+msgid "Module name of the add-on to remove"
+msgstr "제거하는 애드온의 모듈 이름"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "파일에서 템플릿을 설치..."
+
+
+msgid "Install an application-template"
+msgstr "응용프로그램 테플릿을 설치"
+
+
+msgid "Remove existing template with the same ID"
+msgstr "동일한 ID를 가진 기존 템플릿을 제거"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "이전 설정을 복사"
+
+
+msgid "Copy settings from previous version"
+msgstr "이전 버전의 설정을 복사"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "활성 키 설정"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "키 구성을 내보내기..."
+
+
+msgid "Export key configuration to a python script"
+msgstr "파이썬 스크립트로 키 구성을 내 보냄"
+
+
+msgid "All Keymaps"
+msgstr "모든 키 맵"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "키 구성을 가져오기..."
+
+
+msgid "Import key configuration from a python script"
+msgstr "파이썬 스크립트에서 키 설정을 가져오기"
+
+
+msgid "Keep original"
+msgstr "원본을 유지"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "구성 폴더로 복사한 이후에 원본 파일을 유지"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "키 구성을 제거"
+
+
+msgid "Remove key config"
+msgstr "키 구성을 제거"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "충돌에 대한 테스트 키 구성"
+
+
+msgid "Test key-config for conflicts"
+msgstr "충돌에 대한 키 설정을 테스트"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "키 맵 항목을 추가"
+
+
+msgid "Add key map item"
+msgstr "키 맵 항목을 추가"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "키맵 항목을 제거"
+
+
+msgid "Remove key map item"
+msgstr "키 맵 항목을 제거"
+
+
+msgid "Item Identifier"
+msgstr "항목 식별자"
+
+
+msgid "Identifier of the item to remove"
+msgstr "제거하는 항목의 식별자"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "키 맵 항목을 복원"
+
+
+msgid "Restore key map item"
+msgstr "키 맵 항목을 복원"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "키 맵(들)을 복원"
+
+
+msgid "Restore key map(s)"
+msgstr "키 맵(들)을 복원"
+
+
+msgid "Restore all keymaps to default"
+msgstr "기본 값으로 모든 키맵을 복원"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "기본 테마로 초기화"
+
+
+msgid "Reset to the default theme colors"
+msgstr "기본 테마 색상으로 재설정"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "테마를 설치..."
+
+
+msgid "Load and apply a Blender XML theme file"
+msgstr "블렌더 XML 테마 파일을 불러오기 및 적용"
+
+
+msgid "Remove existing theme file if exists"
+msgstr "존재하는 경우 기존의 테마 파일을 제거"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "새로운 캐시를 추가"
 
@@ -48557,10 +48709,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "선택된  스트립 플록시를 설정"
 
 
-msgid "Enable selected proxies on all selected Movie strips"
-msgstr "모든 선택된  동영상 스트립에 선택된 플록시를 사용"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "자막을 내보내기"
@@ -49531,18 +49679,8 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "위/아래로 현재의 선택된 라인(들)을 이동"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "텍스트 블록을 만들기"
-
-
 msgid "Create a new text data-block"
 msgstr "새 텍스트 데이터 블록을 만들기"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "텍스트 블록을 열기"
 
 
 msgid "Open a new text data-block"
@@ -49919,10 +50057,6 @@ msgstr "회전"
 
 msgid "Rotate selected items"
 msgstr "선택된 항목을 회전"
-
-
-msgid "The axis around which the transformation occurs"
-msgstr "변환이 발생하는 주위에 축"
 
 
 msgctxt "Operator"
@@ -50534,15 +50668,6 @@ msgstr "기본 값으로 초기화"
 
 msgid "Reset this property's value to its default value"
 msgstr "기본 값으로 이 속성의 값을 재설정"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "기본 테마로 초기화"
-
-
-msgid "Reset to the default theme colors"
-msgstr "기본 테마 색상으로 재설정"
 
 
 msgctxt "Operator"
@@ -51379,6 +51504,10 @@ msgid "Move the camera so selected objects are framed"
 msgstr "선택된 오브젝트가 프레임되도록 카메라를 이동"
 
 
+msgid "Clear the boundaries of the border render and disable border render"
+msgstr "경계 렌더를 사용 중지 및 경계 렌더의 경계를 지우기"
+
+
 msgctxt "Operator"
 msgid "Copy Selection to Buffer"
 msgstr "선택을 버퍼에 복사"
@@ -51521,9 +51650,8 @@ msgid "Select pasted objects"
 msgstr "붙여 넣은 오브젝트를 선택"
 
 
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "렌더 경계를 설정"
+msgid "Set the boundaries of the border render and enable border render"
+msgstr "경계 렌더를 사용 및 경계 렌더의 경계를 설정 "
 
 
 msgctxt "Operator"
@@ -51886,83 +52014,6 @@ msgstr "렌더 출력에 카메라를 1:1 일치"
 
 
 msgctxt "Operator"
-msgid "Disable Add-on"
-msgstr "에드온을 사용 중지"
-
-
-msgid "Disable an add-on"
-msgstr "에드온을 사용 안함"
-
-
-msgid "Module name of the add-on to disable"
-msgstr "사용하지 않는 에드온의 모듈 이름"
-
-
-msgctxt "Operator"
-msgid "Enable Add-on"
-msgstr "에드온을 사용"
-
-
-msgid "Enable an add-on"
-msgstr "에드온을 사용"
-
-
-msgid "Module name of the add-on to enable"
-msgstr "사용하는 에드온의 모듈 이름"
-
-
-msgid "Display information and preferences for this add-on"
-msgstr "이 애드온에 대한 환경 설정및 정보를 표시"
-
-
-msgid "Module name of the add-on to expand"
-msgstr "확장하는 애드온의 모듈 이름"
-
-
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "파일에서 에드온을 설치..."
-
-
-msgid "Install an add-on"
-msgstr "애드온을 설치"
-
-
-msgid "Remove existing add-ons with the same ID"
-msgstr "동일한 ID와 기존의 애드온을 제거"
-
-
-msgid "Target Path"
-msgstr "대상 경로"
-
-
-msgid "User Prefs"
-msgstr "사용자 환경 설정"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "새로 고침"
-
-
-msgid "Scan add-on directories for new modules"
-msgstr "새로운 모듈에 대한 애드온 디렉토리를 검사"
-
-
-msgctxt "Operator"
-msgid "Remove Add-on"
-msgstr "에드온을 제거"
-
-
-msgid "Delete the add-on from the file system"
-msgstr "파일 시스템에서 애드온을 삭제"
-
-
-msgid "Module name of the add-on to remove"
-msgstr "제거하는 애드온의 모듈 이름"
-
-
-msgctxt "Operator"
 msgid "Export Alembic"
 msgstr "엘렘빅을 내보내기"
 
@@ -52150,19 +52201,6 @@ msgstr "메쉬를 검증"
 
 msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "유효하지 않은 데이터에 대해 가져온 메쉬 오브젝트를 확인 (느림)"
-
-
-msgctxt "Operator"
-msgid "Install Template from File..."
-msgstr "파일에서 템플릿을 설치..."
-
-
-msgid "Install an application-template"
-msgstr "응용프로그램 테플릿을 설치"
-
-
-msgid "Remove existing template with the same ID"
-msgstr "동일한 ID를 가진 기존 템플릿을 제거"
 
 
 msgctxt "Operator"
@@ -52601,15 +52639,6 @@ msgstr "열거를 전환"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "이전 설정을 복사"
-
-
-msgid "Copy settings from previous version"
-msgstr "이전 버전의 설정을 복사"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "디버그 메뉴"
 
@@ -52767,113 +52796,12 @@ msgstr "테마 프리셋을 추가 또는 제거"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "활성 키 설정"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "키 구성을 내보내기..."
-
-
-msgid "Export key configuration to a python script"
-msgstr "파이썬 스크립트로 키 구성을 내 보냄"
-
-
-msgid "All Keymaps"
-msgstr "모든 키 맵"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "키 구성을 가져오기..."
-
-
-msgid "Import key configuration from a python script"
-msgstr "파이썬 스크립트에서 키 설정을 가져오기"
-
-
-msgid "Keep original"
-msgstr "원본을 유지"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "구성 폴더로 복사한 이후에 원본 파일을 유지"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "키 환경 프리셋을 추가"
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "키 환경 프리셋을 추가 또는 제거"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "키 구성을 제거"
-
-
-msgid "Remove key config"
-msgstr "키 구성을 제거"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "충돌에 대한 테스트 키 구성"
-
-
-msgid "Test key-config for conflicts"
-msgstr "충돌에 대한 키 설정을 테스트"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "키 맵 항목을 추가"
-
-
-msgid "Add key map item"
-msgstr "키 맵 항목을 추가"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "키맵 항목을 제거"
-
-
-msgid "Remove key map item"
-msgstr "키 맵 항목을 제거"
-
-
-msgid "Item Identifier"
-msgstr "항목 식별자"
-
-
-msgid "Identifier of the item to remove"
-msgstr "제거하는 항목의 식별자"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "키 맵 항목을 복원"
-
-
-msgid "Restore key map item"
-msgstr "키 맵 항목을 복원"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "키 맵(들)을 복원"
-
-
-msgid "Restore key map(s)"
-msgstr "키 맵(들)을 복원"
-
-
-msgid "Restore all keymaps to default"
-msgstr "기본 값으로 모든 키맵을 복원"
 
 
 msgctxt "Operator"
@@ -53529,19 +53457,6 @@ msgstr "시스템 정보를 저장"
 
 msgid "Generate system information, saved into a text file"
 msgstr "시스템 정보를 생성, 텍스트 파일에 저장됨"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "테마를 설치..."
-
-
-msgid "Load and apply a Blender XML theme file"
-msgstr "블렌더 XML 테마 파일을 불러오기 및 적용"
-
-
-msgid "Remove existing theme file if exists"
-msgstr "존재하는 경우 기존의 테마 파일을 제거"
 
 
 msgid "Open a website in the web-browser"
@@ -54308,6 +54223,14 @@ msgid "Area Shape"
 msgstr "영역 셰이프"
 
 
+msgid "Passepartout"
+msgstr "대지"
+
+
+msgid "Center-Cut Safe Areas"
+msgstr "중심 자르기 안전 영역"
+
+
 msgid "Stereoscopy"
 msgstr "입체 영상"
 
@@ -54794,10 +54717,6 @@ msgstr "파티클을 그리기"
 
 msgid "Draw actual particles"
 msgstr "실제 파티클을 그리기"
-
-
-msgid "Don't use any brush"
-msgstr "모든 브러시를 사용하지 않음"
 
 
 msgid "Comb"
@@ -56844,32 +56763,16 @@ msgid "MultiSample: 2"
 msgstr "멀티 샘플: 2"
 
 
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "2x OpenGL 멀티 샘플을 사용 (다시 시작해야 함)"
-
-
 msgid "MultiSample: 4"
 msgstr "멀티 샘플: 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "4x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
 
 
 msgid "MultiSample: 8"
 msgstr "멀티 샘플: 8"
 
 
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "8x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
-
-
 msgid "MultiSample: 16"
 msgstr "멀티 샘플: 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "16x OpenGL 멀티 샘플을 사용 (재시작해야 함)"
 
 
 msgid "Method used for displaying images on the screen"
@@ -56918,10 +56821,6 @@ msgstr "메모리 캐시 제한 (메가바이트에서)"
 
 msgid "MultiSample"
 msgstr "멀티 셈플"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "OpenGL 멀티 샘플링을 사용합니다. 시스템에서 지원하는 경우 만, 다시 시작해야 합니다"
 
 
 msgid "OpenSubdiv Compute Type"
@@ -57294,10 +57193,6 @@ msgstr "마우스 오버에서 열기"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "메뉴 버튼을 열고 마우스가 움직일 때 자동으로 풀다운"
-
-
-msgid "Prompt Quit"
-msgstr "블렌더 종료 확인하기"
 
 
 msgid "Text Anti-aliasing"
@@ -59248,38 +59143,6 @@ msgid "Instead of automatically normalizing to 0..1, apply a user scale to the d
 msgstr "자동으로 0..1로 노멀라이즈하는 대신, 사용자 눈금을 미분 맵에 적용"
 
 
-msgid "Border Maximum X"
-msgstr "경계 최대 X"
-
-
-msgid "Maximum X value for the render border"
-msgstr "렌더 경계에 대한 최대의 X 값"
-
-
-msgid "Border Maximum Y"
-msgstr "경계 최대의 Y"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "렌더 경계에 대한 최대의 Y 값"
-
-
-msgid "Border Minimum X"
-msgstr "경계 최소의 X"
-
-
-msgid "Minimum X value for the render border"
-msgstr "렌더 경계에 대한 최소의 X 값"
-
-
-msgid "Border Minimum Y"
-msgstr "경계 최소의 Y"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "렌더 경계에 대한 최소의 Y 값"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "렌더된 이미지를 표시할 위치를 선택"
 
@@ -59586,14 +59449,6 @@ msgstr "디리버티브 맵에 대한 사용자 스케일을 사용"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "합성 파이프 라인을 통해 결과를 렌더하는 방법, 합성 노드를 사용할 수 있는 경우"
-
-
-msgid "Crop to Border"
-msgstr "경계로 자르기"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "정의된 경계 크기로 렌더된 프레임을 자르기"
 
 
 msgid "File Extensions"
@@ -63779,6 +63634,10 @@ msgid "Backdrop zoom factor"
 msgstr "배경 줌 팩터"
 
 
+msgid "Cursor Location"
+msgstr "커서 위치"
+
+
 msgid "Location for adding new nodes"
 msgstr "새로운 노드를 추가하는 위치"
 
@@ -64097,10 +63956,6 @@ msgstr "얼룩말 줄무늬 과다 노출 영역을 표시"
 
 msgid "Show TV title safe and action safe areas in preview"
 msgstr "미리보기에서 TV 타이틀 안전 및 액션 안전 영역을 표시"
-
-
-msgid "Center-Cut Safe Areas"
-msgstr "중심 자르기 안전 영역"
 
 
 msgid "Separate Colors"
@@ -64461,14 +64316,6 @@ msgstr "트랙 표시 유형"
 
 msgid "Viewport display style for tracks"
 msgstr "트랙에 대한 뷰포트 표시 스타일"
-
-
-msgid "Render Border"
-msgstr "렌더 경계"
-
-
-msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
-msgstr "렌더된 뷰포트를 표시 할때 경계로 표시된 뷰포트의 일부 지역 만을 렌더링 하도록 설정합니다. (카메라 시점이 아닌 뷰포트 화면에 대한 설정 입니다.)"
 
 
 msgid "Get the node tree path as a string"
@@ -69110,10 +68957,6 @@ msgid "Add Image"
 msgstr "이미지를 추가"
 
 
-msgid "Passepartout"
-msgstr "대지"
-
-
 msgid "Not Set"
 msgstr "설정 없음"
 
@@ -69946,11 +69789,6 @@ msgstr "선택을 커서에 스냅"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "원형"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "설정..."
 
@@ -70152,10 +69990,6 @@ msgid "Strand Shape"
 msgstr "가닥 셰이프"
 
 
-msgid "Radius Scaling"
-msgstr "반경 규모 조절"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "새로운"
@@ -70167,10 +70001,6 @@ msgstr "반복: %d .. %d (avg. %d)"
 
 msgid "Error: %.5f .. %.5f (avg. %.5f)"
 msgstr "오류: %.5f .. %.5f (avg. %.5f)"
-
-
-msgid "Multiply mass with size"
-msgstr "크기와 함께 질량을 곱하기"
 
 
 msgid "Spacing: %g"
@@ -71136,6 +70966,10 @@ msgid "Convert to Float"
 msgstr "실수로 변환"
 
 
+msgid "Storage"
+msgstr "스토리지"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "모든 시퀀스를 보기"
@@ -71309,10 +71143,6 @@ msgstr "트래커:"
 
 msgid "Distortion:"
 msgstr "왜곡:"
-
-
-msgid "Storage"
-msgstr "스토리지"
 
 
 msgid "Build JPEG Quality"
@@ -71622,10 +71452,6 @@ msgid "Pan Sensitivity"
 msgstr "팬 감도"
 
 
-msgid "Might fail for Mesh editing selection!"
-msgstr "메쉬 편집 선택에 실패할 수 있습니다!"
-
-
 msgid "Orbit Style"
 msgstr "오비트 스타일"
 
@@ -71701,11 +71527,6 @@ msgstr "환경 설정:"
 
 msgid "Error (see console)"
 msgstr "오류 (콘솔 참조)"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "수축 팽창"
 
 
 msgctxt "Operator"
@@ -71796,11 +71617,6 @@ msgstr "오른쪽"
 msgctxt "Operator"
 msgid "Left"
 msgstr "왼쪽"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "렌더 경계..."
 
 
 msgctxt "Operator"
@@ -71921,6 +71737,11 @@ msgstr "평면"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "큐브"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "원형"
 
 
 msgctxt "Operator"
@@ -72329,6 +72150,11 @@ msgstr "표시:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "수축 팽창"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "텍스처 공간 이동"
 
@@ -72622,6 +72448,10 @@ msgid "Set Roll"
 msgstr "롤을 설정"
 
 
+msgid "X-Ray"
+msgstr "X-레이"
+
+
 msgctxt "Operator"
 msgid "Assign Automatic From Bones"
 msgstr "본에서 자동 할당"
@@ -72812,10 +72642,6 @@ msgstr "자동 노멀라이즈"
 
 msgid "Multi-Paint"
 msgstr "다중 페인트"
-
-
-msgid "Untitled"
-msgstr "Untitled"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -73168,14 +72994,6 @@ msgid "ParticleSettings"
 msgstr "파티클 설정"
 
 
-msgid "ParticleSystem %i"
-msgstr "파티클 시스템 %i"
-
-
-msgid "ParticleSystem"
-msgstr "파티클시스템"
-
-
 msgid "%i frames found!"
 msgstr "%i 프레임 발견!"
 
@@ -73206,6 +73024,10 @@ msgstr "%s, 캐시가 구형!"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s, 프레임 %i 이후 정확하지 않음"
+
+
+msgid "Warning"
+msgstr "경고"
 
 
 msgid "Invalid Input Error"
@@ -74607,10 +74429,6 @@ msgid "ID-Block:"
 msgstr "ID-블록"
 
 
-msgid "Can't edit external libdata"
-msgstr "외부 Libdata를 편집할 수 없습니다"
-
-
 msgid "%s parent deform"
 msgstr "%s 부모 변형"
 
@@ -75396,10 +75214,6 @@ msgstr "오브젝트를 복제 할 수 없음"
 
 msgid "This data does not support joining in edit mode"
 msgstr "이 데이터는 편집 모드에서 합치기 지원하지 않음"
-
-
-msgid "Cannot edit external libdata"
-msgstr "외부 Libdata을 편집 할 수 없음"
 
 
 msgid "Cannot delete indirectly linked object '%s'"
@@ -76400,6 +76214,10 @@ msgstr "페인트하는 이미지는 4 색 채널이 필요"
 
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "포장된 멀티 레이어 파일을 페인트할 수 없습니다."
+
+
+msgid "Untitled"
+msgstr "Untitled"
 
 
 msgid "No active mesh object"
@@ -78997,6 +78815,10 @@ msgstr "오브젝트 '%s'가 가장 가까운 포인트를 찾기 위한 내부 
 
 msgid "Palette '%s' does not contain color given"
 msgstr "파레트 '%s'에 주어진 색상이 없습니다"
+
+
+msgid "ParticleSystem"
+msgstr "파티클시스템"
 
 
 msgid "Mesh has no UV data"

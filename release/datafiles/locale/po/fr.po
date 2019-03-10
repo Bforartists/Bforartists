@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -11835,10 +11835,6 @@ msgid "Falloff Curve"
 msgstr "Courbe d’atténuation"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "Courbe d’atténuation lumineuse personnalisée"
-
-
 msgid "If not zero, the distance from the hook where influence ends"
 msgstr "Si non nulle, la distance au crochet à laquelle l’influence disparaît"
 
@@ -14622,10 +14618,6 @@ msgid "Edit Grease Pencil strokes instead of viewport data"
 msgstr "Éditer les traits de crayon gras au lieu des données de la vue 3D"
 
 
-msgid "X-Ray"
-msgstr "Rayons X"
-
-
 msgid "Image data-block referencing an external or packed image"
 msgstr "Bloc de données image référençant une image externe ou empaquetée"
 
@@ -17366,10 +17358,6 @@ msgid "Keyed"
 msgstr "À clés"
 
 
-msgid "Scaling"
-msgstr "Taille"
-
-
 msgid "React On"
 msgstr "Réagir à"
 
@@ -17432,10 +17420,6 @@ msgstr "Orientation aléatoire"
 
 msgid "Randomize particle orientation"
 msgstr "Randomiser l’orientation des particules"
-
-
-msgid "Orientation axis"
-msgstr "Axe d’orientation"
 
 
 msgid "Particle orientation axis (does not affect Explode modifier's results)"
@@ -17954,12 +17938,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Caméra active, utilisée pour rendre la scène"
 
 
-msgid "Cursor Location"
-msgstr "Position du curseur"
-
-
-msgid "3D cursor location"
-msgstr "Position du curseur 3D"
+msgid "3D Cursor"
+msgstr "Curseur 3D"
 
 
 msgid "Cycles Render Settings"
@@ -21648,6 +21628,10 @@ msgid "Insert a keyframe on each of the scale channels"
 msgstr "Insérer une image clé sur chacun des canaux de taille"
 
 
+msgid "Scaling"
+msgstr "Taille"
+
+
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig "
 msgstr "Insérer une image clé pour toutes les propriétés qui sont susceptibles d’être animées dans un système d’animation de personnage "
 
@@ -23371,10 +23355,6 @@ msgid "Align View to Active"
 msgstr "Aligner vue sur actif"
 
 
-msgid "View Borders"
-msgstr "Limites de vue"
-
-
 msgid "Local View"
 msgstr "Vue locale"
 
@@ -24257,22 +24237,6 @@ msgstr "Modificateur de biseautage pour rendre les arêtes et vertices plus arro
 
 msgid "Angle above which to bevel edges"
 msgstr "Angle au-dessus duquel biseauter les arêtes"
-
-
-msgid "Edge Weight Method"
-msgstr "Méthode de pondération des arêtes"
-
-
-msgid "What edge weight to use for weighting a vertex"
-msgstr "Quelle poids d’arête à utiliser pour pondérer un vertex"
-
-
-msgid "Sharpest"
-msgstr "La plus dure"
-
-
-msgid "Largest"
-msgstr "La plus grande"
 
 
 msgid "New"
@@ -32329,14 +32293,6 @@ msgid "Axis Range"
 msgstr "Intervalle d’axe"
 
 
-msgid "Deselect rather than select items"
-msgstr "Désélectionner plutôt que sélectionner les éléments"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "Etendre la slection au lieu de tout désélectionner"
-
-
 msgid "Wait for Input"
 msgstr "Attendre une entrée"
 
@@ -32393,6 +32349,14 @@ msgstr "Sélectionner par lasso"
 
 msgid "Select keyframe points using lasso selection"
 msgstr "Sélectionner des points d’image clé avec la sélection par lasso"
+
+
+msgid "Deselect rather than select items"
+msgstr "Désélectionner plutôt que sélectionner les éléments"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "Etendre la slection au lieu de tout désélectionner"
 
 
 msgctxt "Operator"
@@ -38707,15 +38671,6 @@ msgstr "Réinitialiser la zone visible pour montrer l’intervalle d’images cl
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Effacer rendu partiel"
-
-
-msgid "Clear the boundaries of the border render and disable border render"
-msgstr "Effacer les limites du rendu partiel et désactiver ce dernier"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Définir point de courbes"
 
@@ -38892,15 +38847,6 @@ msgstr "Recharger image"
 
 msgid "Reload current image from disk"
 msgstr "Recharger l’image courante depuis le disque"
-
-
-msgctxt "Operator"
-msgid "Render Border"
-msgstr "Rendu partiel"
-
-
-msgid "Set the boundaries of the border render and enable border render"
-msgstr "Définir les limites du rendu partiel et active ce dernier"
 
 
 msgctxt "Operator"
@@ -39307,10 +39253,6 @@ msgid "Use pre/post rotation from FBX transform (you may have to disable that in
 msgstr "Utiliser les pré-/post-rotations des transformations FBX (vous pouvez avoir besoin de désactiver cela dans certains cas)"
 
 
-msgid "Warning"
-msgstr "Avertissement"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Importer OBJ"
@@ -39415,10 +39357,6 @@ msgstr "Rafraîchir affichage des rapports"
 
 msgid "Update the display of reports in Blender UI (internal use)"
 msgstr "Mettre à jour l’affichage des rapports dans l’interface de Blender (usage interne)"
-
-
-msgid "Select or deselect all reports"
-msgstr "(Dé)sélectionner tous tous les rapports"
 
 
 msgctxt "Operator"
@@ -39998,10 +39936,6 @@ msgstr "Préférer glisser le long des arêtes plutôt que des largeurs égales"
 
 msgid "Material for bevel faces (-1 means use adjacent faces)"
 msgstr "Matériau pour les faces chanfreinées (-1 pour utiliser celui des faces adjacentes)"
-
-
-msgid "What distance Amount measures"
-msgstr "Qu’est-ce que mesure la Quantité"
 
 
 msgid "Controls profile shape (0.5 = round)"
@@ -43432,10 +43366,6 @@ msgstr "Origine de la scène"
 
 msgid "Use the Scene Origin as the position for the selected objects to align to"
 msgstr "Utiliser l’origine de la scène comme position sur laquelle aligner les objets sélectionnés"
-
-
-msgid "3D Cursor"
-msgstr "Curseur 3D"
 
 
 msgid "Use the 3D cursor as the position for the selected objects to align to"
@@ -47448,6 +47378,228 @@ msgstr "Appliquer la position finale contrainte des os posés à leur transforma
 
 
 msgctxt "Operator"
+msgid "Disable Add-on"
+msgstr "Désactiver add-on"
+
+
+msgid "Disable an add-on"
+msgstr "Désactiver un add-on"
+
+
+msgid "Module name of the add-on to disable"
+msgstr "Nom du module de l’add-on à désactiver"
+
+
+msgctxt "Operator"
+msgid "Enable Add-on"
+msgstr "Activer add-on"
+
+
+msgid "Enable an add-on"
+msgstr "Activer un add-on"
+
+
+msgid "Module name of the add-on to enable"
+msgstr "Nom du module de l’add-on à activer"
+
+
+msgid "Display information and preferences for this add-on"
+msgstr "Afficher les informations et préférences pour cet add-on"
+
+
+msgid "Module name of the add-on to expand"
+msgstr "Nom du module de l’add-on à déployer"
+
+
+msgctxt "Operator"
+msgid "Install Add-on from File..."
+msgstr "Installer add-on depuis fichier…"
+
+
+msgid "Install an add-on"
+msgstr "Installer un add-on"
+
+
+msgid "Remove existing add-ons with the same ID"
+msgstr "Enlever add-ons existants ayant le même ID"
+
+
+msgid "Target Path"
+msgstr "Chemin de la cible"
+
+
+msgid "User Prefs"
+msgstr "Préférences utilisateur"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Rafraîchir"
+
+
+msgid "Scan add-on directories for new modules"
+msgstr "Scanner le répertoire des add-ons pour rechercher de nouveaux modules"
+
+
+msgctxt "Operator"
+msgid "Remove Add-on"
+msgstr "Enlever add-on"
+
+
+msgid "Delete the add-on from the file system"
+msgstr "Supprimer l’add-on du système de fichier"
+
+
+msgid "Module name of the add-on to remove"
+msgstr "Nom du module de l’add-on à enlever"
+
+
+msgctxt "Operator"
+msgid "Install Template from File..."
+msgstr "Installer patron depuis fichier…"
+
+
+msgid "Install an application-template"
+msgstr "Installer un patron d’application"
+
+
+msgid "Remove existing template with the same ID"
+msgstr "Enlever patrons existants ayant le même ID"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Copier réglages précédents"
+
+
+msgid "Copy settings from previous version"
+msgstr "Copier les réglages de la version précédente"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Activer configuration clavier"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Exporter configuration clavier…"
+
+
+msgid "Export key configuration to a python script"
+msgstr "Exporter la configuration clavier dans un script python"
+
+
+msgid "All Keymaps"
+msgstr "Tous les ensembles de raccourcis"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Importer configuration clavier…"
+
+
+msgid "Import key configuration from a python script"
+msgstr "Importer une configuration clavier depuis un script python"
+
+
+msgid "Keep original"
+msgstr "Conserver original"
+
+
+msgid "Keep original file after copying to configuration folder"
+msgstr "Conserver le fichier original après copie dans le fichier de configuration"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Enlever configuration clavier"
+
+
+msgid "Remove key config"
+msgstr "Enlever une configuration clavier"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Vérifier conflits dans configuration clavier"
+
+
+msgid "Test key-config for conflicts"
+msgstr "Tester les conflits dans une configuration clavier"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "Ajouter raccourci"
+
+
+msgid "Add key map item"
+msgstr "Ajouter un raccourci"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Enlever raccourci"
+
+
+msgid "Remove key map item"
+msgstr "Enlever un raccourci"
+
+
+msgid "Item Identifier"
+msgstr "Identifiant raccourci"
+
+
+msgid "Identifier of the item to remove"
+msgstr "Identifiant de l’élément à enlever"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "Restaurer raccourci"
+
+
+msgid "Restore key map item"
+msgstr "Restaurer un raccourci"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Restaurer raccourcis"
+
+
+msgid "Restore key map(s)"
+msgstr "Restaurer les raccourcis"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Restaurer tous les raccourcis à leur valeur par défaut"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Réinitialiser au thème par défaut"
+
+
+msgid "Reset to the default theme colors"
+msgstr "Réinitialiser aux couleurs du thème par défaut"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Installer thème…"
+
+
+msgid "Load and apply a Blender XML theme file"
+msgstr "Charger et appliquer une fichier XML de thème Blender"
+
+
+msgid "Remove existing theme file if exists"
+msgstr "Supprimer le fichier de thème existant, si présent"
+
+
+msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Ajouter nouveau cache"
 
@@ -48935,10 +49087,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Définir proxies des bandes sélectionnées"
 
 
-msgid "Enable selected proxies on all selected Movie strips"
-msgstr "Activer les proxies sélectionnés pour toutes les bandes vidéo sélectionnées"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Exporter sous-titres"
@@ -49909,18 +50057,8 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Déplacer les ligne sélectionnées vers le haut/le bas"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Créer bloc de texte"
-
-
 msgid "Create a new text data-block"
 msgstr "Créer un nouveau bloc de données texte"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Ouvrir bloc de texte"
 
 
 msgid "Open a new text data-block"
@@ -50297,10 +50435,6 @@ msgstr "Tourner"
 
 msgid "Rotate selected items"
 msgstr "Faire tourner les éléments sélectionnés"
-
-
-msgid "The axis around which the transformation occurs"
-msgstr "L’axe autour duquel a lieu la transformation"
 
 
 msgctxt "Operator"
@@ -50912,15 +51046,6 @@ msgstr "Réinitialiser à valeur par défaut"
 
 msgid "Reset this property's value to its default value"
 msgstr "Réinitialiser cette propriété à sa valeur par défaut"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "Réinitialiser au thème par défaut"
-
-
-msgid "Reset to the default theme colors"
-msgstr "Réinitialiser aux couleurs du thème par défaut"
 
 
 msgctxt "Operator"
@@ -51757,6 +51882,10 @@ msgid "Move the camera so selected objects are framed"
 msgstr "Déplacer la caméra  de façon que les objets sélectionnés soient dans le cadre"
 
 
+msgid "Clear the boundaries of the border render and disable border render"
+msgstr "Effacer les limites du rendu partiel et désactiver ce dernier"
+
+
 msgctxt "Operator"
 msgid "Copy Selection to Buffer"
 msgstr "Copier sélection dans tampon"
@@ -51915,9 +52044,8 @@ msgid "Select pasted objects"
 msgstr "Sélectionner les objets collés"
 
 
-msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Définir rendu partiel"
+msgid "Set the boundaries of the border render and enable border render"
+msgstr "Définir les limites du rendu partiel et active ce dernier"
 
 
 msgctxt "Operator"
@@ -52280,83 +52408,6 @@ msgstr "Fait correspondre la caméra 1:1 à la sortie du rendu"
 
 
 msgctxt "Operator"
-msgid "Disable Add-on"
-msgstr "Désactiver add-on"
-
-
-msgid "Disable an add-on"
-msgstr "Désactiver un add-on"
-
-
-msgid "Module name of the add-on to disable"
-msgstr "Nom du module de l’add-on à désactiver"
-
-
-msgctxt "Operator"
-msgid "Enable Add-on"
-msgstr "Activer add-on"
-
-
-msgid "Enable an add-on"
-msgstr "Activer un add-on"
-
-
-msgid "Module name of the add-on to enable"
-msgstr "Nom du module de l’add-on à activer"
-
-
-msgid "Display information and preferences for this add-on"
-msgstr "Afficher les informations et préférences pour cet add-on"
-
-
-msgid "Module name of the add-on to expand"
-msgstr "Nom du module de l’add-on à déployer"
-
-
-msgctxt "Operator"
-msgid "Install Add-on from File..."
-msgstr "Installer add-on depuis fichier…"
-
-
-msgid "Install an add-on"
-msgstr "Installer un add-on"
-
-
-msgid "Remove existing add-ons with the same ID"
-msgstr "Enlever add-ons existants ayant le même ID"
-
-
-msgid "Target Path"
-msgstr "Chemin de la cible"
-
-
-msgid "User Prefs"
-msgstr "Préférences utilisateur"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Rafraîchir"
-
-
-msgid "Scan add-on directories for new modules"
-msgstr "Scanner le répertoire des add-ons pour rechercher de nouveaux modules"
-
-
-msgctxt "Operator"
-msgid "Remove Add-on"
-msgstr "Enlever add-on"
-
-
-msgid "Delete the add-on from the file system"
-msgstr "Supprimer l’add-on du système de fichier"
-
-
-msgid "Module name of the add-on to remove"
-msgstr "Nom du module de l’add-on à enlever"
-
-
-msgctxt "Operator"
 msgid "Export Alembic"
 msgstr "Exporter Alembic"
 
@@ -52544,19 +52595,6 @@ msgstr "Valider meshes"
 
 msgid "Check imported mesh objects for invalid data (slow)"
 msgstr "Vérifier que les objets mesh importés ont des données valides (lent)"
-
-
-msgctxt "Operator"
-msgid "Install Template from File..."
-msgstr "Installer patron depuis fichier…"
-
-
-msgid "Install an application-template"
-msgstr "Installer un patron d’application"
-
-
-msgid "Remove existing template with the same ID"
-msgstr "Enlever patrons existants ayant le même ID"
 
 
 msgctxt "Operator"
@@ -52999,15 +53037,6 @@ msgstr "Alterner enum"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Copier réglages précédents"
-
-
-msgid "Copy settings from previous version"
-msgstr "Copier les réglages de la version précédente"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "Menu débug"
 
@@ -53165,113 +53194,12 @@ msgstr "Ajouter ou supprimer un pré-réglage de thème"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Activer configuration clavier"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Exporter configuration clavier…"
-
-
-msgid "Export key configuration to a python script"
-msgstr "Exporter la configuration clavier dans un script python"
-
-
-msgid "All Keymaps"
-msgstr "Tous les ensembles de raccourcis"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Importer configuration clavier…"
-
-
-msgid "Import key configuration from a python script"
-msgstr "Importer une configuration clavier depuis un script python"
-
-
-msgid "Keep original"
-msgstr "Conserver original"
-
-
-msgid "Keep original file after copying to configuration folder"
-msgstr "Conserver le fichier original après copie dans le fichier de configuration"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Ajouter pré-réglage de configuration clavier"
 
 
 msgid "Add or remove a Key-config Preset"
 msgstr "Ajouter ou supprimer un pré-réglage de configuration clavier"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Enlever configuration clavier"
-
-
-msgid "Remove key config"
-msgstr "Enlever une configuration clavier"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Vérifier conflits dans configuration clavier"
-
-
-msgid "Test key-config for conflicts"
-msgstr "Tester les conflits dans une configuration clavier"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "Ajouter raccourci"
-
-
-msgid "Add key map item"
-msgstr "Ajouter un raccourci"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Enlever raccourci"
-
-
-msgid "Remove key map item"
-msgstr "Enlever un raccourci"
-
-
-msgid "Item Identifier"
-msgstr "Identifiant raccourci"
-
-
-msgid "Identifier of the item to remove"
-msgstr "Identifiant de l’élément à enlever"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "Restaurer raccourci"
-
-
-msgid "Restore key map item"
-msgstr "Restaurer un raccourci"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Restaurer raccourcis"
-
-
-msgid "Restore key map(s)"
-msgstr "Restaurer les raccourcis"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Restaurer tous les raccourcis à leur valeur par défaut"
 
 
 msgctxt "Operator"
@@ -53929,19 +53857,6 @@ msgid "Generate system information, saved into a text file"
 msgstr "Générer les informations système, enregistrées dans un fichier texte"
 
 
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Installer thème…"
-
-
-msgid "Load and apply a Blender XML theme file"
-msgstr "Charger et appliquer une fichier XML de thème Blender"
-
-
-msgid "Remove existing theme file if exists"
-msgstr "Supprimer le fichier de thème existant, si présent"
-
-
 msgid "Open a website in the web-browser"
 msgstr "Ouvrir un site web dans le navigateur internet"
 
@@ -54571,6 +54486,10 @@ msgid "Bendy Bones"
 msgstr "Os Bendy"
 
 
+msgid "Viewport Display"
+msgstr "Affichage vues 3D"
+
+
 msgid "Active Point"
 msgstr "Point actif"
 
@@ -54730,8 +54649,12 @@ msgid "Area Shape"
 msgstr "Forme d’area"
 
 
-msgid "Viewport Display"
-msgstr "Affichage vues 3D"
+msgid "Passepartout"
+msgstr "Passe-partout"
+
+
+msgid "Center-Cut Safe Areas"
+msgstr "Zones de sécurité coupe centrale"
 
 
 msgid "Stereoscopy"
@@ -55316,10 +55239,6 @@ msgstr "Afficher particules"
 
 msgid "Draw actual particles"
 msgstr "Afficher les vraies particules"
-
-
-msgid "Don't use any brush"
-msgstr "N’utiliser aucune brosse"
 
 
 msgid "Comb"
@@ -57382,32 +57301,16 @@ msgid "MultiSample: 2"
 msgstr "Multi-échantillonnage : 2"
 
 
-msgid "Use 2x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 2× (nécessite un redémarrage)"
-
-
 msgid "MultiSample: 4"
 msgstr "Multi-échantillonnage : 4"
-
-
-msgid "Use 4x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 4× (nécessite un redémarrage)"
 
 
 msgid "MultiSample: 8"
 msgstr "Multi-échantillonnage : 8"
 
 
-msgid "Use 8x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 8× (nécessite un redémarrage)"
-
-
 msgid "MultiSample: 16"
 msgstr "Multi-échantillonnage : 16"
-
-
-msgid "Use 16x OpenGL MultiSample (requires restart)"
-msgstr "Utiliser le multi-échantillonnage OpenGL 16× (nécessite un redémarrage)"
 
 
 msgid "Method used for displaying images on the screen"
@@ -57456,10 +57359,6 @@ msgstr "Limite de mémoire cache (en mégaoctets)"
 
 msgid "MultiSample"
 msgstr "Multi-échantillonnage"
-
-
-msgid "Enable OpenGL multi-sampling, only for systems that support it, requires restart"
-msgstr "Activer le multi-échantillonnage OpenGL, uniquement pour les systèmes qui le supportent, nécessite un redémarrage"
 
 
 msgid "OpenSubdiv Compute Type"
@@ -57832,10 +57731,6 @@ msgstr "Ouvrir au survol de la souris"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "Ouvrir automatiquement les menus et listes déroulantes au passage de la souris"
-
-
-msgid "Prompt Quit"
-msgstr "Afficher Quitter"
 
 
 msgid "Text Anti-aliasing"
@@ -59846,38 +59741,6 @@ msgid "Instead of automatically normalizing to 0..1, apply a user scale to the d
 msgstr "Au lieu de normaliser automatiquement sur [0, 1], appliquer une échelle utilisateur à la carte dérivée"
 
 
-msgid "Border Maximum X"
-msgstr "X maximum de la boîte"
-
-
-msgid "Maximum X value for the render border"
-msgstr "Valeur X maximum pour le rendu partiel"
-
-
-msgid "Border Maximum Y"
-msgstr "Y maximum de la boîte"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "Valeur Y maximum pour le rendu partiel"
-
-
-msgid "Border Minimum X"
-msgstr "X minimum de la boîte"
-
-
-msgid "Minimum X value for the render border"
-msgstr "Valeur X minimum pour le rendu partiel"
-
-
-msgid "Border Minimum Y"
-msgstr "Y minimum de la boîte"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "Valeur Y minimum pour le rendu partiel"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "Sélectionner où les images rendues seront affichées"
 
@@ -60184,14 +60047,6 @@ msgstr "Utiliser une échelle utilisateur pour la carte dérivée"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "Faire passer le résultat du rendu dans le pipeline de compositing, si les nœuds de compositing sont activés"
-
-
-msgid "Crop to Border"
-msgstr "Découper aux bords"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "Découper l’image rendue aux dimensions définies"
 
 
 msgid "File Extensions"
@@ -64430,6 +64285,10 @@ msgid "Backdrop zoom factor"
 msgstr "Facteur de zoom du fond"
 
 
+msgid "Cursor Location"
+msgstr "Position du curseur"
+
+
 msgid "Location for adding new nodes"
 msgstr "Position où ajouter les nouveaux nœuds"
 
@@ -64752,10 +64611,6 @@ msgstr "Montrer les zones surexposées avec les bandes zebra"
 
 msgid "Show TV title safe and action safe areas in preview"
 msgstr "Afficher les zones TV de texte et d’action sûres, dans les prévisualisations"
-
-
-msgid "Center-Cut Safe Areas"
-msgstr "Zones de sécurité coupe centrale"
 
 
 msgid "Separate Colors"
@@ -65116,14 +64971,6 @@ msgstr "Type d’affichage des pistes"
 
 msgid "Viewport display style for tracks"
 msgstr "Style d’affichage dans la vue des pistes"
-
-
-msgid "Render Border"
-msgstr "Rendu partiel"
-
-
-msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
-msgstr "Utiliser une région dans la taille de la frame pour le rendu dans la vue 3D (vue caméra exclue)"
 
 
 msgid "Get the node tree path as a string"
@@ -69822,10 +69669,6 @@ msgid "Add Image"
 msgstr "Ajouter image"
 
 
-msgid "Passepartout"
-msgstr "Passe-partout"
-
-
 msgid "Not Set"
 msgstr "Indéfini"
 
@@ -70687,11 +70530,6 @@ msgstr "Sélection vers curseur"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Cercle"
-
-
-msgctxt "Operator"
 msgid "Settings..."
 msgstr "Réglages…"
 
@@ -70917,10 +70755,6 @@ msgid "Strand Shape"
 msgstr "Forme de fibre"
 
 
-msgid "Radius Scaling"
-msgstr "Taille de rayon"
-
-
 msgctxt "Operator"
 msgid "New"
 msgstr "Nouveau"
@@ -70932,10 +70766,6 @@ msgstr "Itérations : %d … %d (moy. %d)"
 
 msgid "Error: %.5f .. %.5f (avg. %.5f)"
 msgstr "Erreur : %.5f … %.5f (moy. %.5f)"
-
-
-msgid "Multiply mass with size"
-msgstr "Multiplier masse par taille"
 
 
 msgid "Spacing: %g"
@@ -71966,6 +71796,10 @@ msgid "Convert to Float"
 msgstr "Convertir en flottants"
 
 
+msgid "Storage"
+msgstr "Stockage"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "Afficher toutes les séquences"
@@ -72139,10 +71973,6 @@ msgstr "Tracker :"
 
 msgid "Distortion:"
 msgstr "Distorsion :"
-
-
-msgid "Storage"
-msgstr "Stockage"
 
 
 msgid "Build JPEG Quality"
@@ -72493,10 +72323,6 @@ msgid "Pan Sensitivity"
 msgstr "Sensibilité en panoramique"
 
 
-msgid "Might fail for Mesh editing selection!"
-msgstr "Peut échouer lors de la sélection de mesh en mode Edit !"
-
-
 msgid "Orbit Style"
 msgstr "Style d’orbite"
 
@@ -72572,11 +72398,6 @@ msgstr "Préférences :"
 
 msgid "Error (see console)"
 msgstr "Erreur (voyez la console)"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Compresser Dilater"
 
 
 msgctxt "Operator"
@@ -72667,11 +72488,6 @@ msgstr "Droite"
 msgctxt "Operator"
 msgid "Left"
 msgstr "Gauche"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Rendu partiel…"
 
 
 msgctxt "Operator"
@@ -72792,6 +72608,11 @@ msgstr "Plan"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Cube"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cercle"
 
 
 msgctxt "Operator"
@@ -73209,6 +73030,11 @@ msgstr "Affichage :"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Compresser Dilater"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Déplacer espace texture"
 
@@ -73516,6 +73342,10 @@ msgid "With Automatic Weights"
 msgstr "Avec poids automatiques"
 
 
+msgid "X-Ray"
+msgstr "Rayons X"
+
+
 msgid "Zero Weights"
 msgstr "Poids nuls"
 
@@ -73724,10 +73554,6 @@ msgstr "Auto-normaliser"
 
 msgid "Multi-Paint"
 msgstr "Multi-peinture"
-
-
-msgid "Untitled"
-msgstr "Sans nom"
 
 
 msgid "Modifier requires original data, bad stack position"
@@ -74080,14 +73906,6 @@ msgid "ParticleSettings"
 msgstr "RéglagesParticules"
 
 
-msgid "ParticleSystem %i"
-msgstr "SystèmeParticules %i"
-
-
-msgid "ParticleSystem"
-msgstr "SystèmeParticules"
-
-
 msgid "%i frames found!"
 msgstr "%i frames trouvées !"
 
@@ -74118,6 +73936,10 @@ msgstr "%s, le cache est obsolète !"
 
 msgid "%s, not exact since frame %i"
 msgstr "%s, non-exact depuis la frame %i"
+
+
+msgid "Warning"
+msgstr "Avertissement"
 
 
 msgid "Invalid Input Error"
@@ -75531,10 +75353,6 @@ msgid "ID-Block:"
 msgstr "Bloc-ID :"
 
 
-msgid "Can't edit external libdata"
-msgstr "Impossible d’éditer les données de bibliothèque externe"
-
-
 msgid "%s parent deform"
 msgstr "%s déformation parent"
 
@@ -76320,10 +76138,6 @@ msgstr "Impossible de dupliquer l’objet"
 
 msgid "This data does not support joining in edit mode"
 msgstr "Ces données ne supportent pas la jonction en mode édition"
-
-
-msgid "Cannot edit external libdata"
-msgstr "Impossible d’éditer les données de bibliothèque externe"
 
 
 msgid "Cannot delete indirectly linked object '%s'"
@@ -77324,6 +77138,10 @@ msgstr "L’image nécessite quatre canaux de couleur pour être peinte"
 
 msgid "Packed MultiLayer files cannot be painted"
 msgstr "Les fichiers multi-calques empaquetés ne peuvent être peints"
+
+
+msgid "Untitled"
+msgstr "Sans nom"
 
 
 msgid "No active mesh object"
@@ -79961,6 +79779,10 @@ msgstr "L’objet “%s” n’a pu créer les données internes nécessaires po
 
 msgid "Palette '%s' does not contain color given"
 msgstr "La palette “%s” ne contient pas la couleur donnée"
+
+
+msgid "ParticleSystem"
+msgstr "SystèmeParticules"
 
 
 msgid "Mesh has no UV data"

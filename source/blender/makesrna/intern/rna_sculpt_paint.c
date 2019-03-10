@@ -48,7 +48,6 @@
 #include "bmesh.h"
 
 const EnumPropertyItem rna_enum_particle_edit_hair_brush_items[] = {
-	{PE_BRUSH_NONE, "NONE", 0, "None", "Don't use any brush"},
 	{PE_BRUSH_COMB, "COMB", 0, "Comb", "Comb hairs"},
 	{PE_BRUSH_SMOOTH, "SMOOTH", 0, "Smooth", "Smooth hairs"},
 	{PE_BRUSH_ADD, "ADD", 0, "Add", "Add hairs"},
@@ -136,7 +135,6 @@ static void rna_GPencil_update(Main *UNUSED(bmain), Scene *scene, PointerRNA *UN
 }
 
 const EnumPropertyItem rna_enum_particle_edit_disconnected_hair_brush_items[] = {
-	{PE_BRUSH_NONE, "NONE", ICON_PARTICLEBRUSH_NONE, "None", "Don't use any brush"},
 	{PE_BRUSH_COMB, "COMB", ICON_PARTICLEBRUSH_COMB, "Comb", "Comb hairs"},
 	{PE_BRUSH_SMOOTH, "SMOOTH", ICON_PARTICLEBRUSH_SMOOTH, "Smooth", "Smooth hairs"},
 	{PE_BRUSH_LENGTH, "LENGTH", ICON_PARTICLEBRUSH_ADD, "Length", "Make hairs longer or shorter"},
@@ -146,7 +144,6 @@ const EnumPropertyItem rna_enum_particle_edit_disconnected_hair_brush_items[] = 
 };
 
 static const EnumPropertyItem particle_edit_cache_brush_items[] = {
-	{PE_BRUSH_NONE, "NONE", 0, "None", "Don't use any brush"},
 	{PE_BRUSH_COMB, "COMB", 0, "Comb", "Comb paths"},
 	{PE_BRUSH_SMOOTH, "SMOOTH", 0, "Smooth", "Smooth paths"},
 	{PE_BRUSH_LENGTH, "LENGTH", 0, "Length", "Make paths longer or shorter"},
@@ -158,8 +155,7 @@ static PointerRNA rna_ParticleEdit_brush_get(PointerRNA *ptr)
 	ParticleEditSettings *pset = (ParticleEditSettings *)ptr->data;
 	ParticleBrushData *brush = NULL;
 
-	if (pset->brushtype != PE_BRUSH_NONE)
-		brush = &pset->brush[pset->brushtype];
+	brush = &pset->brush[pset->brushtype];
 
 	return rna_pointer_inherit_refine(ptr, &RNA_ParticleBrush, brush);
 }
@@ -455,7 +451,7 @@ static void rna_ImaPaint_mode_update(bContext *C, PointerRNA *UNUSED(ptr))
 
 	if (ob && ob->type == OB_MESH) {
 		/* of course we need to invalidate here */
-		BKE_texpaint_slots_refresh_object(ob);
+		BKE_texpaint_slots_refresh_object(scene, ob);
 
 		/* we assume that changing the current mode will invalidate the uv layers so we need to refresh display */
 		BKE_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
@@ -485,7 +481,7 @@ static void rna_ImaPaint_canvas_update(bContext *C, PointerRNA *UNUSED(ptr))
 	bScreen *sc;
 	Image *ima = scene->toolsettings->imapaint.canvas;
 
-	for (sc = bmain->screen.first; sc; sc = sc->id.next) {
+	for (sc = bmain->screens.first; sc; sc = sc->id.next) {
 		ScrArea *sa;
 		for (sa = sc->areabase.first; sa; sa = sa->next) {
 			SpaceLink *slink;
@@ -494,7 +490,7 @@ static void rna_ImaPaint_canvas_update(bContext *C, PointerRNA *UNUSED(ptr))
 					SpaceImage *sima = (SpaceImage *)slink;
 
 					if (!sima->pin)
-						ED_space_image_set(bmain, sima, scene, obedit, ima);
+						ED_space_image_set(bmain, sima, obedit, ima);
 				}
 			}
 		}
