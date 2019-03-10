@@ -2915,7 +2915,7 @@ static void brush_drawcursor(bContext *C, int x, int y, void *UNUSED(customdata)
 	ParticleEditSettings *pset = PE_settings(scene);
 	ParticleBrushData *brush;
 
-	if (pset->brushtype < 0) {
+	if (!WM_toolsystem_active_tool_is_brush(C)) {
 		return;
 	}
 
@@ -3593,9 +3593,9 @@ static int particle_intersect_mesh(Depsgraph *depsgraph, Scene *UNUSED(scene), O
 		Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
 		Object *ob_eval = DEG_get_evaluated_object(depsgraph, ob);
 
-		mesh = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, CD_MASK_BAREMESH);
+		mesh = mesh_get_eval_final(depsgraph, scene_eval, ob_eval, &CD_MASK_BAREMESH);
 		if (mesh == NULL) {
-			mesh = mesh_get_eval_deform(depsgraph, scene_eval, ob_eval, CD_MASK_BAREMESH);
+			mesh = mesh_get_eval_deform(depsgraph, scene_eval, ob_eval, &CD_MASK_BAREMESH);
 		}
 
 		psys_enable_all(ob);
@@ -4078,14 +4078,14 @@ static int brush_edit_init(bContext *C, wmOperator *op)
 	Scene *scene = CTX_data_scene(C);
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Object *ob = CTX_data_active_object(C);
-	ParticleEditSettings *pset = PE_settings(scene);
 	PTCacheEdit *edit = PE_get_current(scene, ob);
 	ARegion *ar = CTX_wm_region(C);
 	BrushEdit *bedit;
 	float min[3], max[3];
 
-	if (pset->brushtype < 0)
+	if (!WM_toolsystem_active_tool_is_brush(C)) {
 		return 0;
+	}
 
 	/* set the 'distance factor' for grabbing (used in comb etc) */
 	INIT_MINMAX(min, max);

@@ -1171,8 +1171,8 @@ static int object_select_menu_exec(bContext *C, wmOperator *op)
 
 	CTX_DATA_BEGIN (C, Base *, base, selectable_bases)
 	{
-		/* this is a bit dodjy, there should only be ONE object with this name,
-		 * but library objects can mess this up */
+		/* This is a bit dodgy, there should only be ONE object with this name,
+		 * but library objects can mess this up. */
 		if (STREQ(name, base->object->id.name + 2)) {
 			ED_object_base_activate(C, base);
 			ED_object_base_select(base, BA_SELECT);
@@ -3351,17 +3351,12 @@ static bool object_circle_select(ViewContext *vc, const eSelectOp sel_op, const 
 static int view3d_circle_select_exec(bContext *C, wmOperator *op)
 {
 	ViewContext vc;
-	const bool is_first = (op->customdata && (((wmGesture *)op->customdata)->is_active_prev == false));
 	const int radius = RNA_int_get(op->ptr, "radius");
-	eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
 	const int mval[2] = {RNA_int_get(op->ptr, "x"),
 	                     RNA_int_get(op->ptr, "y")};
 
-	if (is_first == false) {
-		if (sel_op == SEL_OP_SET) {
-			sel_op = SEL_OP_ADD;
-		}
-	}
+	const eSelectOp sel_op = ED_select_op_modal(
+	        RNA_enum_get(op->ptr, "mode"), WM_gesture_is_modal_first(op->customdata));
 
 	ED_view3d_viewcontext_init(C, &vc);
 
@@ -3369,7 +3364,7 @@ static int view3d_circle_select_exec(bContext *C, wmOperator *op)
 	Object *obedit = vc.obedit;
 
 	if (obedit || BKE_paint_select_elem_test(obact) ||
-	    (obact && (obact->mode & (OB_MODE_PARTICLE_EDIT | OB_MODE_POSE))) )
+	    (obact && (obact->mode & OB_MODE_POSE)))
 	{
 		view3d_operator_needs_opengl(C);
 

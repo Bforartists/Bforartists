@@ -59,7 +59,7 @@ class CAMERATURN_OT_RunAction(Operator):
         turn_camera = scene.turn_camera
         selectobject = context.active_object
         camera = context.scene.camera
-        savedcursor = bpy.context.scene.cursor_location.copy()  # cursor position
+        savedcursor = bpy.context.scene.cursor.location.copy()  # cursor position
         savedframe = scene.frame_current
         if turn_camera.use_cursor is False:
             bpy.ops.view3d.snap_cursor_to_selected()
@@ -166,7 +166,7 @@ class CAMERATURN_OT_RunAction(Operator):
 
         # back previous configuration
         context.preferences.edit.keyframe_new_interpolation_type = savedinterpolation
-        bpy.context.scene.cursor_location = savedcursor
+        bpy.context.scene.cursor.location = savedcursor
 
         # -------------------------
         # Back to old selection

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -4747,10 +4747,6 @@ msgid "Falloff Curve"
 msgstr "Avtagandekurva"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "Avtagandekurva"
-
-
 msgid "Matrix"
 msgstr "Kamera"
 
@@ -7235,10 +7231,6 @@ msgid "Particle physics type"
 msgstr "Partikelsystem"
 
 
-msgid "Scaling"
-msgstr "Sampling:"
-
-
 msgid "React On"
 msgstr "Bara Markerad"
 
@@ -7285,10 +7277,6 @@ msgstr "Rensa Rotation"
 
 msgid "Randomize particle orientation"
 msgstr "Slumpmässigt rotationsvärde"
-
-
-msgid "Orientation axis"
-msgstr "Rensa Rotation"
 
 
 msgid "Velocity / Hair"
@@ -7559,12 +7547,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Sökväg att skriva till"
 
 
-msgid "Cursor Location"
-msgstr "Markörposition"
-
-
-msgid "3D cursor location"
-msgstr "Rensa Placering"
+msgid "3D Cursor"
+msgstr "3D-markör"
 
 
 msgid "Cycles Render Settings"
@@ -8717,6 +8701,10 @@ msgid "LocRotScale"
 msgstr "Skala"
 
 
+msgid "Scaling"
+msgstr "Sampling:"
+
+
 msgid "Whole Character"
 msgstr "Rendera"
 
@@ -9604,18 +9592,6 @@ msgstr "Markera Länkad"
 
 msgid "Bevel Modifier"
 msgstr "Markera Rad"
-
-
-msgid "Edge Weight Method"
-msgstr "Längd"
-
-
-msgid "Sharpest"
-msgstr "Hårdhet"
-
-
-msgid "Largest"
-msgstr "Mål:"
 
 
 msgid "New"
@@ -13112,10 +13088,6 @@ msgid "Axis Range"
 msgstr "Redigerings Läge"
 
 
-msgid "Deselect rather than select items"
-msgstr "Markera Länkad"
-
-
 msgctxt "Operator"
 msgid "Circle Select"
 msgstr "Göm Markerad"
@@ -13144,6 +13116,10 @@ msgstr "Raderings Meny"
 msgctxt "Operator"
 msgid "Lasso Select"
 msgstr "Markera Rad"
+
+
+msgid "Deselect rather than select items"
+msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
@@ -16559,11 +16535,6 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Sätt Ram"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Markera Länkad"
 
@@ -16845,10 +16816,6 @@ msgid "Image Search"
 msgstr "Bild Displist"
 
 
-msgid "Warning"
-msgstr "Spridning:"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Importera"
@@ -16905,10 +16872,6 @@ msgstr "Göm Markerad"
 msgctxt "Operator"
 msgid "Update Reports Display"
 msgstr "Rendera"
-
-
-msgid "Select or deselect all reports"
-msgstr "(Av)Markera Alla"
 
 
 msgctxt "Operator"
@@ -19120,10 +19083,6 @@ msgstr "Relativ"
 
 msgid "Scene Origin"
 msgstr "Rensa Ursprung"
-
-
-msgid "3D Cursor"
-msgstr "3D-markör"
 
 
 msgctxt "Operator"
@@ -21468,6 +21427,123 @@ msgid "Apply Visual Transform to Pose"
 msgstr "Applicera Deformering"
 
 
+msgid "Target Path"
+msgstr "Bana"
+
+
+msgid "User Prefs"
+msgstr "Yta"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Uppdatera"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Kopiera föregående inställningar"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Aktivera tangentkonfiguration"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Använd tangentinställning"
+
+
+msgid "Export key configuration to a python script"
+msgstr "Lägg till tangentinställning"
+
+
+msgid "All Keymaps"
+msgstr "Flytta Till Lager"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Använd tangentinställning"
+
+
+msgid "Keep original"
+msgstr "Rensa Ursprung"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Aktivera tangentkonfiguration"
+
+
+msgid "Remove key config"
+msgstr "Höger"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Förvald programkonfiguration"
+
+
+msgid "Test key-config for conflicts"
+msgstr "Förvald programkonfiguration"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "Starta Spel"
+
+
+msgid "Add key map item"
+msgstr "Starta Spel"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Starta Spel"
+
+
+msgid "Remove key map item"
+msgstr "Starta Spel"
+
+
+msgid "Item Identifier"
+msgstr "Markera Rad"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "Starta Spel"
+
+
+msgid "Restore key map item"
+msgstr "Starta Spel"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Starta Spel"
+
+
+msgid "Restore key map(s)"
+msgstr "Starta Spel"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Starta Spel"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Förvalt övertoning"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Visa"
+
+
 msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Text"
@@ -22790,16 +22866,6 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Rensa Rotation"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Rensa Rotation"
-
-
 msgid "Make text file internal after loading"
 msgstr "Skapa Meta"
 
@@ -23227,11 +23293,6 @@ msgstr "Rensa Rotation"
 
 msgctxt "Operator"
 msgid "Reset to Default Value"
-msgstr "Förvalt övertoning"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
 msgstr "Förvalt övertoning"
 
 
@@ -23857,11 +23918,6 @@ msgstr "Beräkna benbanor från svans"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Sätt Ram"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "Rotera"
 
@@ -24078,19 +24134,6 @@ msgid "Zoom Camera 1:1"
 msgstr "Kamera"
 
 
-msgid "Target Path"
-msgstr "Bana"
-
-
-msgid "User Prefs"
-msgstr "Yta"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Uppdatera"
-
-
 msgctxt "Operator"
 msgid "Call Menu"
 msgstr "Beräkna Normaler"
@@ -24250,11 +24293,6 @@ msgstr "Växla skiftläge"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Kopiera föregående inställningar"
-
-
-msgctxt "Operator"
 msgid "Debug Menu"
 msgstr "Värde"
 
@@ -24328,97 +24366,8 @@ msgstr "Lägg till tygförinställning"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Aktivera tangentkonfiguration"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Använd tangentinställning"
-
-
-msgid "Export key configuration to a python script"
-msgstr "Lägg till tangentinställning"
-
-
-msgid "All Keymaps"
-msgstr "Flytta Till Lager"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Använd tangentinställning"
-
-
-msgid "Keep original"
-msgstr "Rensa Ursprung"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Lägg till tangentinställning"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Aktivera tangentkonfiguration"
-
-
-msgid "Remove key config"
-msgstr "Höger"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Förvald programkonfiguration"
-
-
-msgid "Test key-config for conflicts"
-msgstr "Förvald programkonfiguration"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "Starta Spel"
-
-
-msgid "Add key map item"
-msgstr "Starta Spel"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Starta Spel"
-
-
-msgid "Remove key map item"
-msgstr "Starta Spel"
-
-
-msgid "Item Identifier"
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "Starta Spel"
-
-
-msgid "Restore key map item"
-msgstr "Starta Spel"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Starta Spel"
-
-
-msgid "Restore key map(s)"
-msgstr "Starta Spel"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Starta Spel"
 
 
 msgctxt "Operator"
@@ -24667,11 +24616,6 @@ msgstr "Sökmeny"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "Skapa Förälder"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Visa"
 
 
 msgid "Open a website in the web-browser"
@@ -24969,6 +24913,10 @@ msgstr "Uppdelning"
 
 msgid "Area Shape"
 msgstr "Flytta Till Lager"
+
+
+msgid "Passepartout"
+msgstr "Passepartout"
 
 
 msgid "Texture Space"
@@ -26671,18 +26619,6 @@ msgid "Bake displacement"
 msgstr "Skapa Förälder"
 
 
-msgid "Maximum X value for the render border"
-msgstr "Frövärde för slumpgeneratorn"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "Frövärde för slumpgeneratorn"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "Frövärde för slumpgeneratorn"
-
-
 msgid "New Window"
 msgstr "Nytt fönster"
 
@@ -26793,10 +26729,6 @@ msgstr "Lågupplöst mesh"
 
 msgid "Calculate heights against unsubdivided low resolution mesh"
 msgstr "Beräkna höjder mot icke-uppdelat lågupplöst mesh"
-
-
-msgid "Crop to Border"
-msgstr "Ram Markering"
 
 
 msgid "File Extensions"
@@ -28375,6 +28307,10 @@ msgid "Backdrop Zoom"
 msgstr "Ram Markering"
 
 
+msgid "Cursor Location"
+msgstr "Markörposition"
+
+
 msgid "Location for adding new nodes"
 msgstr "Markera Länkad"
 
@@ -28589,10 +28525,6 @@ msgstr "Rendera"
 
 msgid "Viewport display style for tracks"
 msgstr "Rendera"
-
-
-msgid "Render Border"
-msgstr "Sätt Ram"
 
 
 msgid "Space UV Editor"
@@ -30419,10 +30351,6 @@ msgid "Add Image"
 msgstr "Bild Zoom"
 
 
-msgid "Passepartout"
-msgstr "Passepartout"
-
-
 msgid "Not Set"
 msgstr "Kontextuppsättning"
 
@@ -30874,11 +30802,6 @@ msgstr "Markerade till markör"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Cirkel"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "Markera Rad"
 
@@ -30956,10 +30879,6 @@ msgstr "Beräkna Normaler"
 msgctxt "Operator"
 msgid "New"
 msgstr "Ny"
-
-
-msgid "Multiply mass with size"
-msgstr "Multiplicera massa med storlek"
 
 
 msgid "Endpoint"
@@ -31900,11 +31819,6 @@ msgstr "Programnställningar…"
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Krymp/sväll"
-
-
-msgctxt "Operator"
 msgid "Interactive Mirror"
 msgstr "Markera Rad"
 
@@ -31977,11 +31891,6 @@ msgstr "Svart"
 msgctxt "Operator"
 msgid "Right"
 msgstr "Höger"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Sätt Ram"
 
 
 msgctxt "Operator"
@@ -32067,6 +31976,11 @@ msgstr "Plan"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kub"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cirkel"
 
 
 msgctxt "Operator"
@@ -32347,6 +32261,11 @@ msgstr "Arkiv"
 
 msgid "Display:"
 msgstr "Visa:"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Krymp/sväll"
 
 
 msgctxt "Operator"
@@ -32633,6 +32552,10 @@ msgstr "Steg"
 
 msgid "No valid data to read!"
 msgstr "Rendera"
+
+
+msgid "Warning"
+msgstr "Spridning:"
 
 
 msgid "Undefined Type"
@@ -33029,10 +32952,6 @@ msgid "(Gamma Corrected)"
 msgstr "Markera Länkad"
 
 
-msgid "Can't edit external libdata"
-msgstr "Markera Länkad"
-
-
 msgid "Make Real"
 msgstr "Skapa kant/yta"
 
@@ -33334,10 +33253,6 @@ msgstr "Markera Länkad"
 
 msgid "Cannot create editmode armature"
 msgstr "Duplicera"
-
-
-msgid "Cannot edit external libdata"
-msgstr "Markera Länkad"
 
 
 msgid "Child Of constraint not found"
