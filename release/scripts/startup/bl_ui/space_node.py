@@ -286,9 +286,10 @@ class NODE_MT_node(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        myvar.release_confirm = True
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")       
 
         layout.separator()
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
