@@ -438,6 +438,7 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
         layout.menu("IMAGE_MT_uvs_weldalign")
+        layout.menu("IMAGE_MT_uvs_select_mode")
 
         layout.separator()
 
