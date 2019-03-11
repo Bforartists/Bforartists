@@ -141,6 +141,17 @@ class VIEW3D_HT_header(Header):
                 icon_value=trans_icon,
             )
 
+        # Pivot
+        if object_mode in {'OBJECT', 'EDIT', 'POSE', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
+            pivot_point = tool_settings.transform_pivot_point
+            act_pivot_point = bpy.types.ToolSettings.bl_rna.properties["transform_pivot_point"].enum_items[pivot_point]
+            row = layout.row(align=True)
+            row.popover(
+                panel="VIEW3D_PT_pivot_point",
+                icon=act_pivot_point.icon,
+                text="",
+            )
+
         # Snap
         show_snap = False
         if obj is None:
@@ -183,48 +194,30 @@ class VIEW3D_HT_header(Header):
             )
 
         # Proportional editing
-        if obj:
-            gpd = context.gpencil_data
-            if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "proportional_edit", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.proportional_edit != 'DISABLED'
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-            elif object_mode == 'OBJECT':
-                row = layout.row(align=True)
-                row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.use_proportional_edit_objects
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-            elif gpd is not None and obj.type == 'GPENCIL':
-                if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
-                    row = layout.row(align=True)
-                    row.prop(tool_settings, "proportional_edit", icon_only=True)
-
-                    sub = row.row(align=True)
-                    sub.active = tool_settings.proportional_edit != 'DISABLED'
-                    sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-        else:
-            if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "proportional_edit", icon_only=True)
-                sub = row.row(align=True)
-                sub.active = tool_settings.proportional_edit != 'DISABLED'
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        # Pivot
-        if object_mode in {'OBJECT', 'EDIT', 'POSE', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
-            pivot_point = tool_settings.transform_pivot_point
-            act_pivot_point = bpy.types.ToolSettings.bl_rna.properties["transform_pivot_point"].enum_items[pivot_point]
+        gpd = context.gpencil_data
+        if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
             row = layout.row(align=True)
-            row.popover(
-                panel="VIEW3D_PT_pivot_point",
-                icon=act_pivot_point.icon,
-                text="",
-            )
+            row.prop(tool_settings, "proportional_edit", icon_only=True)
+            sub = row.row(align=True)
+            sub.active = tool_settings.proportional_edit != 'DISABLED'
+            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif object_mode == 'OBJECT':
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
+            sub = row.row(align=True)
+            sub.active = tool_settings.use_proportional_edit_objects
+            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        elif gpd is not None and obj.type == 'GPENCIL':
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
+                row = layout.row(align=True)
+                row.prop(tool_settings, "proportional_edit", icon_only=True)
+
+                sub = row.row(align=True)
+                sub.active = tool_settings.proportional_edit != 'DISABLED'
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
         # grease pencil
         if object_mode == 'PAINT_GPENCIL':
             origin = tool_settings.gpencil_stroke_placement_view3d
@@ -3433,6 +3426,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
+        layout.menu("VIEW3D_MT_edit_mesh_dissolve")      
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
@@ -4063,6 +4057,14 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
 
         layout.separator()
 
+        layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
+
+class VIEW3D_MT_edit_mesh_dissolve(Menu):
+    bl_label = "Dissolve"
+
+    def draw(self, context):
+        layout = self.layout
+
         layout.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
         layout.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
         layout.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
@@ -4074,7 +4076,6 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.separator()
 
         layout.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
-        layout.operator("mesh.delete_edgeloop", text="Edge Loops", icon = "DELETE")
 
 
 # Workaround to separate the tooltips for Show Hide for Mesh in Edit Mode
@@ -4107,10 +4108,6 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
         layout = self.layout
 
         layout.operator_enum("gpencil.delete", "type")
-
-        layout.separator()
-
-        layout.operator_enum("gpencil.dissolve", "type")
 
         layout.separator()
 
@@ -4828,6 +4825,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
+        layout.menu("GPENCIL_MT_gpencil_vertex_group")
         layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
         layout.menu("VIEW3D_MT_assign_material")
         layout.menu("VIEW3D_MT_edit_gpencil_arrange_strokes")
@@ -4839,8 +4837,11 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
-        layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+        layout.operator_menu_enum("gpencil.dissolve", "type")
 
+        layout.separator()
+
+        layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
         layout.operator_menu_enum("gpencil.stroke_caps_set", text="Toggle Caps...", property="type")
 
         layout.separator()
@@ -6700,6 +6701,7 @@ classes = (
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
+    VIEW3D_MT_edit_mesh_dissolve,
     VIEW3D_mesh_hide_unselected,
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,

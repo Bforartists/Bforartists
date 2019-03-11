@@ -248,6 +248,8 @@ void GPENCIL_engine_init(void *vedata)
 
 		/* unit matrix */
 		unit_m4(stl->storage->unit_matrix);
+		stl->storage->shade_render[0] = OB_RENDER;
+		stl->storage->shade_render[1] = 0;
 	}
 
 	stl->storage->multisamples = U.gpencil_multisamples;
@@ -620,7 +622,7 @@ void GPENCIL_cache_populate(void *vedata, Object *ob)
 
 		/* grid */
 		if ((v3d) &&
-		    ((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) &&
+		    ((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
 		    (v3d->gp_flag & V3D_GP_SHOW_GRID) &&
 		    (ob->type == OB_GPENCIL) && (ob == draw_ctx->obact))
 		{
@@ -678,8 +680,10 @@ void GPENCIL_cache_finish(void *vedata)
 		stl->storage->framebuffer_flag |= GP_FRAMEBUFFER_DRAW;
 	}
 
-	/* create framebuffers */
-	GPENCIL_create_framebuffers(vedata);
+	/* create framebuffers (only for normal drawing) */
+	if (!DRW_state_is_select()) {
+		GPENCIL_create_framebuffers(vedata);
+	}
 }
 
 /* helper function to sort inverse gpencil objects using qsort */
@@ -740,7 +744,7 @@ static void gpencil_free_obj_runtime(GPENCIL_StorageList *stl)
 static void gpencil_draw_pass_range(
 	GPENCIL_FramebufferList *fbl, GPENCIL_StorageList *stl,
 	GPENCIL_PassList *psl, GPENCIL_TextureList *txl,
-	GPUFrameBuffer *fb, bGPdata *gpd,
+	GPUFrameBuffer *fb, Object *ob, bGPdata *gpd,
 	DRWShadingGroup *init_shgrp, DRWShadingGroup *end_shgrp, bool multi)
 {
 	if (init_shgrp == NULL) {
@@ -753,7 +757,7 @@ static void gpencil_draw_pass_range(
 	}
 
 	DRW_draw_pass_subset(
-		GPENCIL_3D_DRAWMODE(gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d,
+		GPENCIL_3D_DRAWMODE(ob, gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d,
 		init_shgrp, end_shgrp);
 
 	if ((!stl->storage->is_mat_preview) && (multi)) {
@@ -771,7 +775,7 @@ static void drw_gpencil_select_render(GPENCIL_StorageList *stl, GPENCIL_PassList
 
 	/* Draw all pending objects */
 	if ((stl->g_data->gp_cache_used > 0) &&
-		(stl->g_data->gp_object_cache))
+	    (stl->g_data->gp_object_cache))
 	{
 		/* sort by zdepth */
 		qsort(stl->g_data->gp_object_cache, stl->g_data->gp_cache_used,
@@ -780,6 +784,7 @@ static void drw_gpencil_select_render(GPENCIL_StorageList *stl, GPENCIL_PassList
 		for (int i = 0; i < stl->g_data->gp_cache_used; i++) {
 			cache_ob = &stl->g_data->gp_object_cache[i];
 			if (cache_ob) {
+				Object *ob = cache_ob->ob;
 				bGPdata *gpd = cache_ob->gpd;
 				init_shgrp = NULL;
 				if (cache_ob->tot_layers > 0) {
@@ -792,7 +797,7 @@ static void drw_gpencil_select_render(GPENCIL_StorageList *stl, GPENCIL_PassList
 					}
 					/* draw group */
 					DRW_draw_pass_subset(
-						GPENCIL_3D_DRAWMODE(gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d,
+						GPENCIL_3D_DRAWMODE(ob, gpd) ? psl->stroke_pass_3d : psl->stroke_pass_2d,
 						init_shgrp, end_shgrp);
 				}
 				/* the cache must be dirty for next loop */
@@ -827,7 +832,7 @@ void GPENCIL_draw_scene(void *ved)
 	const bool is_render = stl->storage->is_render;
 	bGPdata *gpd_act = (obact) && (obact->type == OB_GPENCIL) ? (bGPdata *)obact->data : NULL;
 	const bool is_edit = GPENCIL_ANY_EDIT_MODE(gpd_act);
-	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) : true;
+	const bool overlay = v3d != NULL ? (bool)((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) : true;
 
 	/* if the draw is for select, do a basic drawing and return */
 	if (DRW_state_is_select()) {
@@ -839,7 +844,7 @@ void GPENCIL_draw_scene(void *ved)
 
 	/* paper pass to display a comfortable area to draw over complex scenes with geometry */
 	if ((!is_render) && (obact) && (obact->type == OB_GPENCIL)) {
-		if (((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) &&
+		if (((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
 		    (v3d->gp_flag & V3D_GP_SHOW_PAPER))
 		{
 			DRW_draw_pass(psl->paper_pass);
@@ -862,7 +867,7 @@ void GPENCIL_draw_scene(void *ved)
 
 		/* grid pass */
 		if ((!is_render) && (obact) && (obact->type == OB_GPENCIL)) {
-			if (((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) &&
+			if (((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
 			    (v3d->gp_flag & V3D_GP_SHOW_GRID))
 			{
 				DRW_draw_pass(psl->grid_pass);
@@ -911,7 +916,7 @@ void GPENCIL_draw_scene(void *ved)
 							/* draw pending groups */
 							gpencil_draw_pass_range(
 								fbl, stl, psl, txl, fbl->temp_fb_a,
-								gpd, init_shgrp, end_shgrp, is_last);
+								ob, gpd, init_shgrp, end_shgrp, is_last);
 
 							/* draw current group in separated texture */
 							init_shgrp = array_elm->init_shgrp;
@@ -921,7 +926,7 @@ void GPENCIL_draw_scene(void *ved)
 							GPU_framebuffer_clear_color_depth(fbl->temp_fb_fx, clearcol, 1.0f);
 							gpencil_draw_pass_range(
 							        fbl, stl, psl, txl, fbl->temp_fb_fx,
-							        gpd, init_shgrp, end_shgrp,
+							        ob, gpd, init_shgrp, end_shgrp,
 							        is_last);
 
 							/* Blend A texture and FX texture */
@@ -949,7 +954,7 @@ void GPENCIL_draw_scene(void *ved)
 					/* last group */
 					gpencil_draw_pass_range(
 					        fbl, stl, psl, txl, fbl->temp_fb_a,
-					        gpd, init_shgrp, end_shgrp,
+					        ob, gpd, init_shgrp, end_shgrp,
 					        true);
 				}
 
@@ -977,18 +982,20 @@ void GPENCIL_draw_scene(void *ved)
 				stl->storage->tonemapping = stl->storage->is_render ? 1 : 0;
 
 				/* active select flag and selection color */
-				stl->storage->do_select_outline = ((overlay) &&
-										   (ob->base_flag & BASE_SELECTED) &&
-										   (ob->mode == OB_MODE_OBJECT) &&
-										   (!is_render) && (!playing) &&
-										   (v3d->flag & V3D_SELECT_OUTLINE));
+				stl->storage->do_select_outline = (
+				        (overlay) &&
+				        (ob->base_flag & BASE_SELECTED) &&
+				        (ob->mode == OB_MODE_OBJECT) &&
+				        (!is_render) && (!playing) &&
+				        (v3d->flag & V3D_SELECT_OUTLINE));
 
 				/* if active object is not object mode, disable for all objects */
 				if ((draw_ctx->obact) && (draw_ctx->obact->mode != OB_MODE_OBJECT)) {
 					stl->storage->do_select_outline = 0;
 				}
-				UI_GetThemeColorShadeAlpha4fv((ob == draw_ctx->obact) ? TH_ACTIVE : TH_SELECT, 0, -40,
-											stl->storage->select_color);
+				UI_GetThemeColorShadeAlpha4fv(
+				        (ob == draw_ctx->obact) ? TH_ACTIVE : TH_SELECT, 0, -40,
+				        stl->storage->select_color);
 
 				/* draw mix pass */
 				DRW_draw_pass(psl->mix_pass);
@@ -1014,7 +1021,7 @@ void GPENCIL_draw_scene(void *ved)
 		}
 		/* grid pass */
 		if ((!is_render) && (obact) && (obact->type == OB_GPENCIL)) {
-			if (((v3d->flag2 & V3D_RENDER_OVERRIDE) == 0) &&
+			if (((v3d->flag2 & V3D_HIDE_OVERLAYS) == 0) &&
 			    (v3d->gp_flag & V3D_GP_SHOW_GRID))
 			{
 				DRW_draw_pass(psl->grid_pass);

@@ -151,12 +151,12 @@ class AntLandscapeRefresh(bpy.types.Operator):
         bpy.ops.object.mode_set(mode = 'EDIT')
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
-        if obj and obj.ant_landscape.keys():
+        keys = obj.ant_landscape.keys()
+        if keys:
             ob = obj.ant_landscape
-            obi = ob.items()
             prop = []
-            for i in range(len(obi)):
-                prop.append(obi[i][1])
+            for key in keys:
+                prop.append(getattr(ob, key))
 
             # redraw verts
             mesh = obj.data
@@ -209,12 +209,12 @@ class AntLandscapeRegenerate(bpy.types.Operator):
         # ant object items
         obj = bpy.context.active_object
 
-        if obj and obj.ant_landscape.keys():
+        keys = obj.ant_landscape.keys()
+        if keys:
             ob = obj.ant_landscape
-            obi = ob.items()
             ant_props = []
-            for i in range(len(obi)):
-                ant_props.append(obi[i][1])
+            for key in keys:
+                ant_props.append(getattr(ob, key))
 
             new_name = obj.name
 
@@ -230,7 +230,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                         False,
                         0.0
                         )
-                new_ob = create_mesh_object(context, verts, [], faces, new_name).object
+                new_ob = create_mesh_object(context, verts, [], faces, new_name)
                 if ob['remove_double']:
                     new_ob.select_set(True)
                     bpy.ops.object.mode_set(mode = 'EDIT')
@@ -248,7 +248,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                         False,
                         0.0
                         )
-                new_ob = create_mesh_object(context, verts, [], faces, new_name).object
+                new_ob = create_mesh_object(context, verts, [], faces, new_name)
 
             new_ob.select_set(True)
 
@@ -273,7 +273,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                             ob['water_plane'],
                             ob['water_level']
                             )
-                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane").object
+                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane")
                     if ob['remove_double']:
                         wobj.select_set(True)
                         bpy.ops.object.mode_set(mode = 'EDIT')
@@ -291,7 +291,7 @@ class AntLandscapeRegenerate(bpy.types.Operator):
                             ob['water_plane'],
                             ob['water_level']
                             )
-                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane").object
+                    wobj = create_mesh_object(context, verts, [], faces, new_name+"_plane")
 
                 wobj.select_set(True)
 
@@ -406,7 +406,7 @@ class AntVgSlopeMap(bpy.types.Operator):
 
             if self.select_flat:
                 if zval >= (1.0 - self.select_range):
-                    v.select_set(True)
+                    v.select = True
 
         vg_normal.name = self.group_name
 
@@ -1095,13 +1095,13 @@ class Eroder(bpy.types.Operator):
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Thermal (Diffusion)")
+        col.label(text="Thermal (Diffusion)")
         col.prop(self, 'Kd')
         col.prop(self, 'IterDiffuse')
 
         box = layout.box()
         col = box.column(align=True)
-        col.label("Avalanche (Talus)")
+        col.label(text="Avalanche (Talus)")
         col.prop(self, 'Pa')
         col.prop(self, 'IterAva')
         col.prop(self, 'Kt')
