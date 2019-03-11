@@ -1206,7 +1206,7 @@ static void write_renderinfo(WriteData *wd, Main *mainvar)
 	/* XXX in future, handle multiple windows with multiple screens? */
 	current_screen_compat(mainvar, false, &curscreen, &curscene, &view_layer);
 
-	for (sce = mainvar->scene.first; sce; sce = sce->id.next) {
+	for (sce = mainvar->scenes.first; sce; sce = sce->id.next) {
 		if (sce->id.lib == NULL && (sce == curscene || (sce->r.scemode & R_BG_RENDER))) {
 			data.sfra = sce->r.sfra;
 			data.efra = sce->r.efra;
@@ -2101,14 +2101,15 @@ static void write_grid_paint_mask(WriteData *wd, int count, GridPaintMask *grid_
 }
 
 static void write_customdata(
-        WriteData *wd, ID *id, int count, CustomData *data, CustomDataLayer *layers,
+        WriteData *wd, ID *id,
+        int count, CustomData *data, CustomDataLayer *layers, CustomDataMask cddata_mask,
         int partial_type, int partial_count)
 {
 	int i;
 
 	/* write external customdata (not for undo) */
 	if (data->external && (wd->use_memfile == false)) {
-		CustomData_external_write(data, id, CD_MASK_MESH, count, 0);
+		CustomData_external_write(data, id, cddata_mask, count, 0);
 	}
 
 	writestruct_at_address(wd, DATA, CustomDataLayer, data->totlayer, data->layers, layers);
@@ -2209,12 +2210,12 @@ static void write_mesh(WriteData *wd, Mesh *mesh)
 			writedata(wd, DATA, sizeof(void *) * mesh->totcol, mesh->mat);
 			writedata(wd, DATA, sizeof(MSelect) * mesh->totselect, mesh->mselect);
 
-			write_customdata(wd, &mesh->id, mesh->totvert, &mesh->vdata, vlayers, -1, 0);
-			write_customdata(wd, &mesh->id, mesh->totedge, &mesh->edata, elayers, -1, 0);
+			write_customdata(wd, &mesh->id, mesh->totvert, &mesh->vdata, vlayers, CD_MASK_MESH.vmask, -1, 0);
+			write_customdata(wd, &mesh->id, mesh->totedge, &mesh->edata, elayers, CD_MASK_MESH.emask, -1, 0);
 			/* fdata is really a dummy - written so slots align */
-			write_customdata(wd, &mesh->id, mesh->totface, &mesh->fdata, flayers, -1, 0);
-			write_customdata(wd, &mesh->id, mesh->totloop, &mesh->ldata, llayers, -1, 0);
-			write_customdata(wd, &mesh->id, mesh->totpoly, &mesh->pdata, players, -1, 0);
+			write_customdata(wd, &mesh->id, mesh->totface, &mesh->fdata, flayers, CD_MASK_MESH.fmask, -1, 0);
+			write_customdata(wd, &mesh->id, mesh->totloop, &mesh->ldata, llayers, CD_MASK_MESH.lmask, -1, 0);
+			write_customdata(wd, &mesh->id, mesh->totpoly, &mesh->pdata, players, CD_MASK_MESH.pmask, -1, 0);
 
 			/* restore pointer */
 			mesh = old_mesh;

@@ -404,10 +404,10 @@ class Do:
         r = r * en.radius
 
         try:
-            b[0].co = vc + r
-            b[1].co = vc + r @ clockwise
-            b[2].co = vc + r @ clockwise @ clockwise
-            b[3].co = vc + r @ clockwise @ clockwise @ clockwise
+            b[0].co = self.proj(vc + r)
+            b[1].co = self.proj(vc + r @ clockwise)
+            b[2].co = self.proj(vc + r @ clockwise @ clockwise)
+            b[3].co = self.proj(vc + r @ clockwise @ clockwise @ clockwise)
         except:
             print("Circle center: ", vc, "radius: ", r)
             raise
