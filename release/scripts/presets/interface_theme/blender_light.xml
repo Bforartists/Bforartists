@@ -1416,11 +1416,11 @@
       <ThemeFontStyle
         points="12"
         font_kerning_style="FITTED"
-        shadow="1"
+        shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
-        shadow_alpha="0.15"
-        shadow_value="1"
+        shadow_alpha="0.3"
+        shadow_value="0.7"
         >
       </ThemeFontStyle>
     </panel_title>
@@ -1431,8 +1431,8 @@
         shadow="3"
         shadow_offset_x="0"
         shadow_offset_y="-1"
-        shadow_alpha="0.15"
-        shadow_value="1"
+        shadow_alpha="0.3"
+        shadow_value="0.7"
         >
       </ThemeFontStyle>
     </widget_label>
@@ -1440,11 +1440,11 @@
       <ThemeFontStyle
         points="11"
         font_kerning_style="FITTED"
-        shadow="0"
+        shadow="1"
         shadow_offset_x="0"
-        shadow_offset_y="0"
-        shadow_alpha="0.25"
-        shadow_value="0"
+        shadow_offset_y="-1"
+        shadow_alpha="0.3"
+        shadow_value="0.7"
         >
       </ThemeFontStyle>
     </widget>

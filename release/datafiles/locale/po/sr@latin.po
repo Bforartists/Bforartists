@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -6414,10 +6414,6 @@ msgid "Stroke Edit Mode"
 msgstr "Mod izmene poteza"
 
 
-msgid "X-Ray"
-msgstr "X-zrak"
-
-
 msgid "Alpha Mode"
 msgstr "Providnost materijala"
 
@@ -7890,10 +7886,6 @@ msgid "Particle physics type"
 msgstr "Vrsta fizike čestica"
 
 
-msgid "Scaling"
-msgstr "Veličina"
-
-
 msgid "React On"
 msgstr "Reaguj na"
 
@@ -7936,10 +7928,6 @@ msgstr "Nasumično okretanje"
 
 msgid "Randomize particle orientation"
 msgstr "Nasumično okretanje čestica"
-
-
-msgid "Orientation axis"
-msgstr "Orijentacija osa"
 
 
 msgid "Velocity / Hair"
@@ -8166,12 +8154,8 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Aktivna kamera, koja se koristi za renderovanje scene"
 
 
-msgid "Cursor Location"
-msgstr "Pozicija kursora:"
-
-
-msgid "3D cursor location"
-msgstr "Lokacija 3D kursora"
+msgid "3D Cursor"
+msgstr "3D kursor"
 
 
 msgid "Display Settings"
@@ -9432,6 +9416,10 @@ msgid "LocRotScale"
 msgstr "LokRotVeličina"
 
 
+msgid "Scaling"
+msgstr "Veličina"
+
+
 msgid "Whole Character"
 msgstr "Ceo znak"
 
@@ -10492,14 +10480,6 @@ msgstr "Modifikator iskošavanja"
 
 msgid "Angle above which to bevel edges"
 msgstr "Ugao iznad kog se iskosi ivice"
-
-
-msgid "Sharpest"
-msgstr "Najoštrija"
-
-
-msgid "Largest"
-msgstr "Najveća"
 
 
 msgid "New"
@@ -16192,11 +16172,6 @@ msgstr "Najniža frekfencija"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Poništi okvir isecanja"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Tačke bazierove krive"
 
@@ -16456,10 +16431,6 @@ msgid "Manual Orientation"
 msgstr "Ručna orijentacija"
 
 
-msgid "Warning"
-msgstr "Upozorenje"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Uvoz OBJ"
@@ -16495,10 +16466,6 @@ msgstr "Briše izabrani izveštaj"
 msgctxt "Operator"
 msgid "Update Reports Display"
 msgstr "Osveži prikaz izveštaja"
-
-
-msgid "Select or deselect all reports"
-msgstr "Izaberi/poništi sve izveštaje"
 
 
 msgctxt "Operator"
@@ -18294,10 +18261,6 @@ msgid "Scene Origin"
 msgstr "Centar scene"
 
 
-msgid "3D Cursor"
-msgstr "3D kursor"
-
-
 msgctxt "Operator"
 msgid "Add Armature"
 msgstr "Dodaj kostur"
@@ -19912,6 +19875,73 @@ msgid "Only visible/selected bones"
 msgstr "Samo vidljive/izabrane kosti"
 
 
+msgid "Target Path"
+msgstr "Ciljna putanja"
+
+
+msgid "User Prefs"
+msgstr "Korisnička podešavanja"
+
+
+msgctxt "Operator"
+msgid "Refresh"
+msgstr "Osveži"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Izvezi podešavanje prečica sa tastature..."
+
+
+msgid "All Keymaps"
+msgstr "Svi mapirani tasteri"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Uvezi konfiguracije prečica sa tastature..."
+
+
+msgid "Keep original"
+msgstr "Sačuvaj original"
+
+
+msgid "Remove key config"
+msgstr "Ukloni podešavanje ključa"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Konfiguracije prečica"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Povrati mapu tastera"
+
+
+msgid "Restore key map(s)"
+msgstr "Povrati mapu tastera"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Vrati sve mape tastera na početno"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Vrati na početnu temu"
+
+
+msgid "Reset to the default theme colors"
+msgstr "Ponovo postavlja izvorne boje teme"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Instaliraj dodatak..."
+
+
 msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Dodaj novu ostavu"
@@ -21016,16 +21046,6 @@ msgstr "Premešta izabrane linije gore i dole"
 
 
 msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Napravi blok teksta"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Otvori blok teksta"
-
-
-msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "film"
 
@@ -21428,15 +21448,6 @@ msgstr "Napiši izveštaj "
 msgctxt "Operator"
 msgid "Reset to Default Value"
 msgstr "Vrati na početnu vrednosti"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
-msgstr "Vrati na početnu temu"
-
-
-msgid "Reset to the default theme colors"
-msgstr "Ponovo postavlja izvorne boje teme"
 
 
 msgctxt "Operator"
@@ -21907,11 +21918,6 @@ msgstr "Naziv aktivnog objekta"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Podesi okvir renderinga"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "Okreni pogled"
 
@@ -22130,19 +22136,6 @@ msgid "Interactively walk around the scene"
 msgstr "Interaktivano šetanje kroz scenu"
 
 
-msgid "Target Path"
-msgstr "Ciljna putanja"
-
-
-msgid "User Prefs"
-msgstr "Korisnička podešavanja"
-
-
-msgctxt "Operator"
-msgid "Refresh"
-msgstr "Osveži"
-
-
 msgctxt "Operator"
 msgid "Call Menu"
 msgstr "Pozovi meni"
@@ -22316,46 +22309,6 @@ msgstr "Pokreće obmah demo"
 msgctxt "Operator"
 msgid "View Manual"
 msgstr "Pomeri pogled"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Izvezi podešavanje prečica sa tastature..."
-
-
-msgid "All Keymaps"
-msgstr "Svi mapirani tasteri"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Uvezi konfiguracije prečica sa tastature..."
-
-
-msgid "Keep original"
-msgstr "Sačuvaj original"
-
-
-msgid "Remove key config"
-msgstr "Ukloni podešavanje ključa"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Konfiguracije prečica"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Povrati mapu tastera"
-
-
-msgid "Restore key map(s)"
-msgstr "Povrati mapu tastera"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Vrati sve mape tastera na početno"
 
 
 msgctxt "Operator"
@@ -22609,11 +22562,6 @@ msgstr "Meni pretrage"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "Početni ekran"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Instaliraj dodatak..."
 
 
 msgid "Open a website in the web-browser"
@@ -22928,6 +22876,10 @@ msgstr "Podela površi"
 
 msgid "Mist Pass"
 msgstr "Prolaz magle"
+
+
+msgid "Passepartout"
+msgstr "Paspartu"
 
 
 msgid "Texture Space"
@@ -23272,10 +23224,6 @@ msgstr "Prikazuj čestice"
 
 msgid "Draw actual particles"
 msgstr "Prikazuje konkretne čestice"
-
-
-msgid "Don't use any brush"
-msgstr "Ne koristi četkice"
 
 
 msgid "Comb"
@@ -24250,10 +24198,6 @@ msgid "Thin"
 msgstr "Tanko"
 
 
-msgid "Prompt Quit"
-msgstr "Pitaj"
-
-
 msgid "Text Anti-aliasing"
 msgstr "Umekšavanje teksta"
 
@@ -24722,34 +24666,6 @@ msgid "Bake normals"
 msgstr "Ispeci normale"
 
 
-msgid "Border Maximum X"
-msgstr "Maksimalni okvir X"
-
-
-msgid "Maximum X value for the render border"
-msgstr "Postavlja maksimalnu X vrednost renderovanog okvira"
-
-
-msgid "Border Maximum Y"
-msgstr "Maksimalni okvir Y"
-
-
-msgid "Maximum Y value for the render border"
-msgstr "Postavlja maksimalnu Y vrednost renderovanog okvira"
-
-
-msgid "Border Minimum X"
-msgstr "Minimalni okvir X"
-
-
-msgid "Border Minimum Y"
-msgstr "Minimalni okvir Y"
-
-
-msgid "Minimum Y value for the render border"
-msgstr "Postavlja minimalnu Y vrednost renderovanog okvira"
-
-
 msgid "Select where rendered images will be displayed"
 msgstr "Izaberite gde želite da prikažete renderovane slike"
 
@@ -24852,14 +24768,6 @@ msgstr "Korisnička razmera"
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
 msgstr "Obradi rezultat renderovanja kroz proces slaganje, ako su omogućeni čvorovi slaganja"
-
-
-msgid "Crop to Border"
-msgstr "Iseci do ivice"
-
-
-msgid "Crop the rendered frame to the defined border size"
-msgstr "Iseci renderovani kadar do veličine definisane ivice"
 
 
 msgid "File Extensions"
@@ -26185,6 +26093,10 @@ msgid "Backdrop zoom factor"
 msgstr "Faktor uvećanja prikaza pozadine"
 
 
+msgid "Cursor Location"
+msgstr "Pozicija kursora:"
+
+
 msgid "Location for adding new nodes"
 msgstr "Lokacija novoformiranih čvorova"
 
@@ -26355,10 +26267,6 @@ msgstr "3D"
 
 msgid "Tracks Size"
 msgstr "Veličina staza"
-
-
-msgid "Render Border"
-msgstr "Okvir renderinga"
 
 
 msgid "Constrain to Image Bounds"
@@ -28223,10 +28131,6 @@ msgid "Add Image"
 msgstr "Dodaj sliku"
 
 
-msgid "Passepartout"
-msgstr "Paspartu"
-
-
 msgid "Not Set"
 msgstr "Nije postavljeno"
 
@@ -28735,11 +28639,6 @@ msgstr "Izabrano za kursor"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Krug"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "Izaberi obrnuto"
 
@@ -28803,10 +28702,6 @@ msgstr "Oblik niti"
 msgctxt "Operator"
 msgid "New"
 msgstr "Novo"
-
-
-msgid "Multiply mass with size"
-msgstr "Pomnoži masu sa veličinom"
 
 
 msgid "Endpoint"
@@ -29287,6 +29182,10 @@ msgid "Video:"
 msgstr "Video:"
 
 
+msgid "Storage"
+msgstr "Skladište"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "Prikaži sve sekvence"
@@ -29365,10 +29264,6 @@ msgstr "Staza"
 
 msgid "Distortion:"
 msgstr "Izobličenje:"
-
-
-msgid "Storage"
-msgstr "Skladište"
 
 
 msgid "File:"
@@ -29602,11 +29497,6 @@ msgstr "Vaša podešavanja"
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Skupi udebljaj"
-
-
-msgctxt "Operator"
 msgid "Interactive Mirror"
 msgstr "Interaktivno ogledalo"
 
@@ -29684,11 +29574,6 @@ msgstr "Desno"
 msgctxt "Operator"
 msgid "Left"
 msgstr "Levo"
-
-
-msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Okvir renderinga..."
 
 
 msgctxt "Operator"
@@ -29774,6 +29659,11 @@ msgstr "Ploča"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kocka"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Krug"
 
 
 msgctxt "Operator"
@@ -30068,6 +29958,11 @@ msgstr "Prikaz:"
 
 
 msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Skupi udebljaj"
+
+
+msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Premesti prostor teksture"
 
@@ -30200,6 +30095,10 @@ msgstr "Sva mala slova"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Izoštri"
+
+
+msgid "X-Ray"
+msgstr "X-zrak"
 
 
 msgctxt "Operator"
@@ -30362,14 +30261,6 @@ msgid "ParticleSettings"
 msgstr "PodešavanjeČestica"
 
 
-msgid "ParticleSystem %i"
-msgstr "Sistem čestica %i"
-
-
-msgid "ParticleSystem"
-msgstr "SistemČestica"
-
-
 msgid "%i frames found!"
 msgstr "Pronađeno je %i kadrova!"
 
@@ -30380,6 +30271,10 @@ msgstr "Pronađeno je %i tačaka!"
 
 msgid "%i frames on disk"
 msgstr "%i kadrova na disku"
+
+
+msgid "Warning"
+msgstr "Upozorenje"
 
 
 msgid "Undefined Type"
@@ -30779,10 +30674,6 @@ msgstr "Python: %s.%s"
 
 msgid "ID-Block:"
 msgstr "ID-blok"
-
-
-msgid "Can't edit external libdata"
-msgstr "Čitaj skladište sa spoljne lokacije"
 
 
 msgid "Unknown"
@@ -32186,6 +32077,10 @@ msgstr "Loš mod pridruživanja"
 
 msgid "Bad vertex index in list"
 msgstr "Loš indeks temena u listi"
+
+
+msgid "ParticleSystem"
+msgstr "SistemČestica"
 
 
 msgid "Cannot execute boolean operation"
