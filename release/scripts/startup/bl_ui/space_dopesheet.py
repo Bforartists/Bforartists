@@ -121,7 +121,7 @@ class DopesheetFilterPopoverBase:
             flow.prop(dopesheet, "show_armatures", text="Armatures")
         if bpy.data.cameras:
             flow.prop(dopesheet, "show_cameras", text="Cameras")
-        if bpy.data.grease_pencil:
+        if bpy.data.grease_pencils:
             flow.prop(dopesheet, "show_gpencil", text="Grease Pencil Objects")
         if bpy.data.lights:
             flow.prop(dopesheet, "show_lights", text="Lights")
@@ -366,7 +366,7 @@ class DOPESHEET_MT_view(Menu):
 
         # Add this to show key-binding (reverse action in dope-sheet).
         layout.separator()
-        props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon="GRAPH")
+        props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
 

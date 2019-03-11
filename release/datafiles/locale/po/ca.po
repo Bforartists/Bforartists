@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 45) (b'7efc26709cef')\n"
+"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-25 20:41:30\n"
+"POT-Creation-Date: 2019-03-07 11:46:22\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -4112,10 +4112,6 @@ msgid "Falloff Curve"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Custom Lamp Falloff Curve"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgid "Matrix"
 msgstr "Càmera"
 
@@ -6272,10 +6268,6 @@ msgid "Particle physics type"
 msgstr "Image Displist"
 
 
-msgid "Scaling"
-msgstr "Partir"
-
-
 msgid "React On"
 msgstr "Amagar Seleccionats"
 
@@ -6309,10 +6301,6 @@ msgstr "Esborrar Rotació"
 
 
 msgid "Randomize particle orientation"
-msgstr "Esborrar Rotació"
-
-
-msgid "Orientation axis"
 msgstr "Esborrar Rotació"
 
 
@@ -6542,14 +6530,6 @@ msgstr "Guardar imatge"
 
 msgid "Active camera, used for rendering the scene"
 msgstr "Guardar com"
-
-
-msgid "Cursor Location"
-msgstr "Esborrar Posició"
-
-
-msgid "3D cursor location"
-msgstr "Esborrar Posició"
 
 
 msgid "Cycles Render Settings"
@@ -7502,6 +7482,10 @@ msgid "LocRotScale"
 msgstr "Escalar"
 
 
+msgid "Scaling"
+msgstr "Partir"
+
+
 msgid "Whole Character"
 msgstr "Arxiu"
 
@@ -8261,14 +8245,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Bevel Modifier"
 msgstr "Seleccionar fila"
-
-
-msgid "Edge Weight Method"
-msgstr "Mode d'Edició"
-
-
-msgid "Largest"
-msgstr "Joc"
 
 
 msgid "New"
@@ -11453,10 +11429,6 @@ msgid "Select all keyframes within the specified region"
 msgstr "Seleccionar connectats"
 
 
-msgid "Deselect rather than select items"
-msgstr "Seleccionar connectats"
-
-
 msgctxt "Operator"
 msgid "Circle Select"
 msgstr "Amagar Seleccionats"
@@ -11485,6 +11457,10 @@ msgstr "Menú Esborrar"
 msgctxt "Operator"
 msgid "Lasso Select"
 msgstr "Seleccionar fila"
+
+
+msgid "Deselect rather than select items"
+msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -14338,11 +14314,6 @@ msgstr "Llindar rectangular"
 
 
 msgctxt "Operator"
-msgid "Clear Render Border"
-msgstr "Fixar Límits"
-
-
-msgctxt "Operator"
 msgid "Set Curves Point"
 msgstr "Seleccionar connectats"
 
@@ -14558,10 +14529,6 @@ msgid "Image Search"
 msgstr "Image Displist"
 
 
-msgid "Warning"
-msgstr "Mostrar propietats de les arestes"
-
-
 msgctxt "Operator"
 msgid "Import OBJ"
 msgstr "Seleccionar fila"
@@ -14618,10 +14585,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Update Reports Display"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Select or deselect all reports"
-msgstr "(De)Seleccionar Tot"
 
 
 msgctxt "Operator"
@@ -18587,6 +18550,90 @@ msgid "Apply Visual Transform to Pose"
 msgstr "Aplicar Deformació"
 
 
+msgid "Target Path"
+msgstr "Camí"
+
+
+msgid "User Prefs"
+msgstr "Superfície"
+
+
+msgctxt "Operator"
+msgid "Copy Previous Settings"
+msgstr "Eines"
+
+
+msgctxt "Operator"
+msgid "Activate Keyconfig"
+msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "Export Key Configuration..."
+msgstr "Finestra de Render"
+
+
+msgid "All Keymaps"
+msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "Import Key Configuration..."
+msgstr "Finestra de Render"
+
+
+msgid "Keep original"
+msgstr "Esborrar Origen"
+
+
+msgctxt "Operator"
+msgid "Remove Key Config"
+msgstr "Afegir Tira"
+
+
+msgctxt "Operator"
+msgid "Test Key Configuration for Conflicts"
+msgstr "Finestra de Render"
+
+
+msgctxt "Operator"
+msgid "Add Key Map Item"
+msgstr "Començar Joc"
+
+
+msgctxt "Operator"
+msgid "Remove Key Map Item"
+msgstr "Començar Joc"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map Item"
+msgstr "Començar Joc"
+
+
+msgid "Restore key map item"
+msgstr "Començar Joc"
+
+
+msgctxt "Operator"
+msgid "Restore Key Map(s)"
+msgstr "Començar Joc"
+
+
+msgid "Restore all keymaps to default"
+msgstr "Començar Joc"
+
+
+msgctxt "Operator"
+msgid "Reset to Default Theme"
+msgstr "Començar Joc"
+
+
+msgctxt "Operator"
+msgid "Install Theme..."
+msgstr "Vista"
+
+
 msgctxt "Operator"
 msgid "Add New Cache"
 msgstr "Texte"
@@ -19595,16 +19642,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Create Text Block"
-msgstr "Esborrar Rotació"
-
-
-msgctxt "Operator"
-msgid "Open Text Block"
-msgstr "Esborrar Rotació"
-
-
-msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Render"
 
@@ -19988,11 +20025,6 @@ msgstr "Esborrar Rotació"
 
 msgctxt "Operator"
 msgid "Reset to Default Value"
-msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Reset to Default Theme"
 msgstr "Començar Joc"
 
 
@@ -20501,11 +20533,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Set Render Border"
-msgstr "Fixar Límits"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "Rotar"
 
@@ -20636,14 +20663,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Zoom Camera 1:1"
 msgstr "Càmera"
-
-
-msgid "Target Path"
-msgstr "Camí"
-
-
-msgid "User Prefs"
-msgstr "Superfície"
 
 
 msgctxt "Operator"
@@ -20784,11 +20803,6 @@ msgstr "Cíclic"
 
 
 msgctxt "Operator"
-msgid "Copy Previous Settings"
-msgstr "Eines"
-
-
-msgctxt "Operator"
 msgid "Control"
 msgstr "Seleccionar fila"
 
@@ -20853,69 +20867,8 @@ msgstr "Render"
 
 
 msgctxt "Operator"
-msgid "Activate Keyconfig"
-msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
-msgid "Export Key Configuration..."
-msgstr "Finestra de Render"
-
-
-msgid "All Keymaps"
-msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
-msgid "Import Key Configuration..."
-msgstr "Finestra de Render"
-
-
-msgid "Keep original"
-msgstr "Esborrar Origen"
-
-
-msgctxt "Operator"
 msgid "Add Keyconfig Preset"
 msgstr "Finestra de Render"
-
-
-msgctxt "Operator"
-msgid "Remove Key Config"
-msgstr "Afegir Tira"
-
-
-msgctxt "Operator"
-msgid "Test Key Configuration for Conflicts"
-msgstr "Finestra de Render"
-
-
-msgctxt "Operator"
-msgid "Add Key Map Item"
-msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Remove Key Map Item"
-msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map Item"
-msgstr "Començar Joc"
-
-
-msgid "Restore key map item"
-msgstr "Començar Joc"
-
-
-msgctxt "Operator"
-msgid "Restore Key Map(s)"
-msgstr "Començar Joc"
-
-
-msgid "Restore all keymaps to default"
-msgstr "Començar Joc"
 
 
 msgctxt "Operator"
@@ -21123,11 +21076,6 @@ msgstr "Duplicar"
 msgctxt "Operator"
 msgid "Splash Screen"
 msgstr "Esborrar Str"
-
-
-msgctxt "Operator"
-msgid "Install Theme..."
-msgstr "Vista"
 
 
 msgid "URL"
@@ -23063,10 +23011,6 @@ msgid "Low Resolution Mesh"
 msgstr "Seleccionar connectats"
 
 
-msgid "Crop to Border"
-msgstr "Seleccionar amb límit"
-
-
 msgid "File Extensions"
 msgstr "Extensions de Fitxer"
 
@@ -24531,6 +24475,10 @@ msgid "Backdrop Zoom"
 msgstr "Seleccionar amb límit"
 
 
+msgid "Cursor Location"
+msgstr "Esborrar Posició"
+
+
 msgid "Edit Tree"
 msgstr "Rotar"
 
@@ -24733,10 +24681,6 @@ msgstr "Render"
 
 msgid "Viewport display style for tracks"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Render Border"
-msgstr "Fixar Límits"
 
 
 msgid "Space UV Editor"
@@ -26826,11 +26770,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "Cercle"
-
-
-msgctxt "Operator"
 msgid "Select Inverse"
 msgstr "Seleccionar fila"
 
@@ -27347,6 +27286,10 @@ msgid "Image Crop"
 msgstr "Image Displist"
 
 
+msgid "Storage"
+msgstr "Emmagatzematge"
+
+
 msgctxt "Operator"
 msgid "View all Sequences"
 msgstr "Començar a renderitzar una seqüència"
@@ -27454,10 +27397,6 @@ msgstr "Crear Pista"
 
 msgid "Distortion:"
 msgstr "Seleccionar connectats"
-
-
-msgid "Storage"
-msgstr "Emmagatzematge"
 
 
 msgid "File:"
@@ -27584,11 +27523,6 @@ msgstr "Començar a renderitzar una seqüència"
 
 
 msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "Contreure/Engreixar"
-
-
-msgctxt "Operator"
 msgid "Interactive Mirror"
 msgstr "Seleccionar fila"
 
@@ -27664,11 +27598,6 @@ msgstr "Dreta"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Fixar Límits"
-
-
-msgctxt "Operator"
 msgid "Parent"
 msgstr "Seleccionar fila"
 
@@ -27741,6 +27670,11 @@ msgstr "Pla"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Cub"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cercle"
 
 
 msgctxt "Operator"
@@ -27984,6 +27918,11 @@ msgstr "Moure a Capa"
 msgctxt "Operator"
 msgid "Move to Layer"
 msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "Contreure/Engreixar"
 
 
 msgctxt "Operator"
@@ -28236,6 +28175,10 @@ msgstr "Duplicar"
 
 msgid "No valid data to read!"
 msgstr "Duplicar"
+
+
+msgid "Warning"
+msgstr "Mostrar propietats de les arestes"
 
 
 msgid "Undefined Type"

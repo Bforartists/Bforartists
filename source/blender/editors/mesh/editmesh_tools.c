@@ -487,11 +487,11 @@ static int edbm_delete_exec(bContext *C, wmOperator *op)
 void MESH_OT_delete(wmOperatorType *ot)
 {
 	static const EnumPropertyItem prop_mesh_delete_types[] = {
-		{MESH_DELETE_VERT,      "VERT",      0, "Vertices", ""},
-		{MESH_DELETE_EDGE,      "EDGE",      0, "Edges", ""},
-		{MESH_DELETE_FACE,      "FACE",      0, "Faces", ""},
-		{MESH_DELETE_EDGE_FACE, "EDGE_FACE", 0, "Only Edges & Faces", ""},
-		{MESH_DELETE_ONLY_FACE, "ONLY_FACE", 0, "Only Faces", ""},
+		{MESH_DELETE_VERT,      "VERT",      ICON_DELETE, "Vertices", ""},
+		{MESH_DELETE_EDGE,      "EDGE",      ICON_DELETE, "Edges", ""},
+		{MESH_DELETE_FACE,      "FACE",      ICON_DELETE, "Faces", ""},
+		{MESH_DELETE_EDGE_FACE, "EDGE_FACE", ICON_DELETE, "Only Edges & Faces", ""},
+		{MESH_DELETE_ONLY_FACE, "ONLY_FACE", ICON_DELETE, "Only Faces", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 
@@ -3709,10 +3709,10 @@ static Base *mesh_separate_tagged(Main *bmain, Scene *scene, ViewLayer *view_lay
 	        &((struct BMeshCreateParams){.use_toolflags = true,}));
 	BM_mesh_elem_toolflags_ensure(bm_new);  /* needed for 'duplicate' bmo */
 
-	CustomData_copy(&bm_old->vdata, &bm_new->vdata, CD_MASK_BMESH, CD_CALLOC, 0);
-	CustomData_copy(&bm_old->edata, &bm_new->edata, CD_MASK_BMESH, CD_CALLOC, 0);
-	CustomData_copy(&bm_old->ldata, &bm_new->ldata, CD_MASK_BMESH, CD_CALLOC, 0);
-	CustomData_copy(&bm_old->pdata, &bm_new->pdata, CD_MASK_BMESH, CD_CALLOC, 0);
+	CustomData_copy(&bm_old->vdata, &bm_new->vdata, CD_MASK_BMESH.vmask, CD_CALLOC, 0);
+	CustomData_copy(&bm_old->edata, &bm_new->edata, CD_MASK_BMESH.emask, CD_CALLOC, 0);
+	CustomData_copy(&bm_old->ldata, &bm_new->ldata, CD_MASK_BMESH.lmask, CD_CALLOC, 0);
+	CustomData_copy(&bm_old->pdata, &bm_new->pdata, CD_MASK_BMESH.pmask, CD_CALLOC, 0);
 
 	CustomData_bmesh_init_pool(&bm_new->vdata, bm_mesh_allocsize_default.totvert, BM_VERT);
 	CustomData_bmesh_init_pool(&bm_new->edata, bm_mesh_allocsize_default.totedge, BM_EDGE);
@@ -4086,9 +4086,9 @@ static int edbm_separate_exec(bContext *C, wmOperator *op)
 void MESH_OT_separate(wmOperatorType *ot)
 {
 	static const EnumPropertyItem prop_separate_types[] = {
-		{MESH_SEPARATE_SELECTED, "SELECTED", 0, "Selection", ""},
-		{MESH_SEPARATE_MATERIAL, "MATERIAL", 0, "By Material", ""},
-		{MESH_SEPARATE_LOOSE, "LOOSE", 0, "By loose parts", ""},
+		{MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
+		{MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE, "By Material", ""},
+		{MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE, "By loose parts", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 

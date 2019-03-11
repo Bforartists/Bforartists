@@ -1006,7 +1006,8 @@ def blen_read_geom_layer_uv(fbx_obj, mesh):
             fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, b'UV'))
             fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'UVIndex'))
 
-            uv_lay = mesh.uv_layers.new(name=fbx_layer_name)
+            # Always init our new layers with (0, 0) UVs.
+            uv_lay = mesh.uv_layers.new(name=fbx_layer_name, do_init=False)
             if uv_lay is None:
                 print("Failed to add {%r %r} UVLayer to %r (probably too many of them?)"
                       "" % (layer_id, fbx_layer_name, mesh.name))
@@ -1040,7 +1041,8 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
             fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, b'Colors'))
             fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'ColorIndex'))
 
-            color_lay = mesh.vertex_colors.new(name=fbx_layer_name)
+            # Always init our new layers with full white opaque color.
+            color_lay = mesh.vertex_colors.new(name=fbx_layer_name, do_init=False)
             blen_data = color_lay.data
 
             # some valid files omit this data
