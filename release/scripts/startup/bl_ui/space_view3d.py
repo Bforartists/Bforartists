@@ -4507,12 +4507,12 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
 
-        layout.separator() #Draises Edits - added seperator to keep these together
+        layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_armature_roll") #Draises Edits - moved title up a level
+        layout.menu("VIEW3D_MT_edit_armature_roll")
 
-        layout.operator("transform.transform", text="Set Bone Roll", icon = "SET_ROLL").mode = 'BONE_ROLL' #Draises Edits - added bone to title
-        layout.operator("armature.roll_clear", text="Clear Bone Roll", icon = "CLEAR_ROLL")        #Draises Edits - added text title
+        layout.operator("transform.transform", text="Set Bone Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
+        layout.operator("armature.roll_clear", text="Clear Bone Roll", icon = "CLEAR_ROLL")
 
 
 
@@ -4646,20 +4646,10 @@ class VIEW3D_MT_edit_armature_parent(Menu):
 
 
 class VIEW3D_MT_edit_armature_roll(Menu):
-#    bl_label = "Bone Roll"
-    bl_label = "Recalculate Bone Roll" # Draises Edits - added Bone to the description
+    bl_label = "Recalculate Bone Roll"
     def draw(self, context):
         layout = self.layout
 
-## Draises Edits - to be removed due to being moved up#
-#        layout.menu("VIEW3D_MT_edit_recalc_roll")
-#
-#        layout.separator()
-#
-#        layout.operator("transform.transform", text="Set Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
-#        layout.operator("armature.roll_clear", icon = "CLEAR_ROLL")
-
-# Draises Edits - moved this back up one level
         layout.label(text="- Positive: -")
         layout.operator("armature.calculate_roll", text= "Local + X Tangent", icon = "ROLL_X_TANG_POS").type = 'POS_X'
         layout.operator("armature.calculate_roll", text= "Local + Z Tangent", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
@@ -4676,31 +4666,7 @@ class VIEW3D_MT_edit_armature_roll(Menu):
         layout.operator("armature.calculate_roll", text= "Active Bone", icon = "BONE_DATA").type = 'ACTIVE'
         layout.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
         layout.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
-# Draises Edits - end of the content moved
 
-## Draises Edits - to be removed - though I'm not sure if it's a floating menu?
-class VIEW3D_MT_edit_recalc_roll(Menu):
-    bl_label = "Recalculate Roll"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text="- Positive: -")
-        layout.operator("armature.calculate_roll", text= "Local + X Tangent", icon = "ROLL_X_TANG_POS").type = 'POS_X'
-        layout.operator("armature.calculate_roll", text= "Local + Z Tangent", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
-        layout.operator("armature.calculate_roll", text= "Global + X Axis", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
-        layout.operator("armature.calculate_roll", text= "Global + Y Axis", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
-        layout.operator("armature.calculate_roll", text= "Global + Z Axis", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
-        layout.label(text="- Negative: -")
-        layout.operator("armature.calculate_roll", text= "Local - X Tangent", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
-        layout.operator("armature.calculate_roll", text= "Local - Z Tangent", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
-        layout.operator("armature.calculate_roll", text= "Global - X Axis", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
-        layout.operator("armature.calculate_roll", text= "Global - Y Axis", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
-        layout.operator("armature.calculate_roll", text= "Global - Z Axis", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
-        layout.label(text="- Other: -")
-        layout.operator("armature.calculate_roll", text= "Active Bone", icon = "BONE_DATA").type = 'ACTIVE'
-        layout.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
-        layout.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
-# Draises Edits - end of the content to be removed
 
 class VIEW3D_MT_edit_armature_delete(Menu):
     bl_label = "Delete"
@@ -6767,7 +6733,6 @@ classes = (
     VIEW3D_MT_armature_specials,
     VIEW3D_MT_edit_armature_parent,
     VIEW3D_MT_edit_armature_roll,
-    VIEW3D_MT_edit_recalc_roll,
     VIEW3D_MT_edit_armature_names,
     VIEW3D_MT_edit_armature_delete,
     VIEW3D_MT_edit_gpencil_transform,
