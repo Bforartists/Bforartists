@@ -649,14 +649,14 @@ class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
     bl_label = "Set active Camera"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context): 
+    def execute(self, context):
 
         context = bpy.context
         scene = context.scene
         if context.active_object is not None:
             currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
-            scene.camera = currentCameraObj     
-        return {'FINISHED'} 
+            scene.camera = currentCameraObj
+        return {'FINISHED'}
 
 
 class VIEW3D_MT_view(Menu):
@@ -2674,8 +2674,8 @@ class VIEW3D_MT_brush_curve_presets(Menu):
 
         layout.operator("brush.curve_preset", icon='SHARPCURVE', text="Sharp").shape = 'SHARP'
         layout.operator("brush.curve_preset", icon='SMOOTHCURVE', text="Smooth").shape = 'SMOOTH'
-        layout.operator("brush.curve_preset", icon='NOCURVE', text="Max").shape = 'MAX'  
-        layout.operator("brush.curve_preset", icon='LINCURVE', text="Line").shape = 'LINE'         
+        layout.operator("brush.curve_preset", icon='NOCURVE', text="Max").shape = 'MAX'
+        layout.operator("brush.curve_preset", icon='LINCURVE', text="Line").shape = 'LINE'
         layout.operator("brush.curve_preset", icon='ROOTCURVE', text="Root").shape = 'ROOT'
         layout.operator("brush.curve_preset", icon='SPHERECURVE', text="Round").shape = 'ROUND'
 
@@ -3430,7 +3430,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_delete")
-        layout.menu("VIEW3D_MT_edit_mesh_dissolve")      
+        layout.menu("VIEW3D_MT_edit_mesh_dissolve")
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
 
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
@@ -3954,7 +3954,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout = self.layout
 
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
-        layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip       
+        layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
 
         layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
@@ -4506,7 +4506,15 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.menu("VIEW3D_MT_transform_armature")
         layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_edit_armature_roll")
+
+        layout.operator("transform.transform", text="Set Bone Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
+        layout.operator("armature.roll_clear", text="Clear Bone Roll", icon = "CLEAR_ROLL")
+
+
 
         layout.separator()
 
@@ -4638,24 +4646,10 @@ class VIEW3D_MT_edit_armature_parent(Menu):
 
 
 class VIEW3D_MT_edit_armature_roll(Menu):
-    bl_label = "Bone Roll"
-
+    bl_label = "Recalculate Bone Roll"
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_edit_recalc_roll")
-
-        layout.separator()
-
-        layout.operator("transform.transform", text="Set Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
-        layout.operator("armature.roll_clear", icon = "CLEAR_ROLL")
-
-
-class VIEW3D_MT_edit_recalc_roll(Menu):
-    bl_label = "Recalculate Roll"
-
-    def draw(self, context):
-        layout = self.layout
         layout.label(text="- Positive: -")
         layout.operator("armature.calculate_roll", text= "Local + X Tangent", icon = "ROLL_X_TANG_POS").type = 'POS_X'
         layout.operator("armature.calculate_roll", text= "Local + Z Tangent", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
@@ -4807,7 +4801,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator("gpencil.stroke_smooth", text="Smooth", icon = "SMOOTH")
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")      
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
 
         layout.separator()
@@ -4873,8 +4867,8 @@ class VIEW3D_MT_weight_gpencil(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
-        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')  
-        
+        layout.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
+
         layout.separator()
 
         layout.menu("VIEW3D_MT_assign_material")
@@ -4886,7 +4880,7 @@ class VIEW3D_MT_weight_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")  
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
         layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
 
@@ -6547,7 +6541,7 @@ class VIEW3D_MT_gpencil_sculpt(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")  
+        layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
         layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
 
@@ -6739,7 +6733,6 @@ classes = (
     VIEW3D_MT_armature_specials,
     VIEW3D_MT_edit_armature_parent,
     VIEW3D_MT_edit_armature_roll,
-    VIEW3D_MT_edit_recalc_roll,
     VIEW3D_MT_edit_armature_names,
     VIEW3D_MT_edit_armature_delete,
     VIEW3D_MT_edit_gpencil_transform,
