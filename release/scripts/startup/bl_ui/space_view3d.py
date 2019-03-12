@@ -2604,6 +2604,8 @@ class VIEW3D_MT_brush(Menu):
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
 
+        mesh = context.object.data # face selection masking for painting
+
         ups = tool_settings.unified_paint_settings
         layout.prop(ups, "use_unified_size", text="Unified Size")
         layout.prop(ups, "use_unified_strength", text="Unified Strength")
@@ -2655,7 +2657,9 @@ class VIEW3D_MT_brush(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
+        # If face selection masking for painting is active
+        if mesh.use_paint_mask:
+            layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
 
         layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
 
