@@ -424,9 +424,16 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
         # base menu
         VIEW3D_MT_transform_base.draw(self, context)
 
+        obj = context.object
+
         # generic
         layout = self.layout
-        layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
+
+        if obj.type == 'MESH':
+            layout.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
+
+        elif obj.type == 'CURVE':
+            layout.operator("transform.transform", text="Shrink Fatten", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
         layout.separator()
 
