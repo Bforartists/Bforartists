@@ -1781,19 +1781,16 @@ static int uv_align_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
+/*bfa-added icons to the enum*/
 static void UV_OT_align(wmOperatorType *ot)
 {
 	static const EnumPropertyItem axis_items[] = {
-		{UV_STRAIGHTEN, "ALIGN_S", 0, "Straighten",
-		 "Align UVs along the line defined by the endpoints"},
-		{UV_STRAIGHTEN_X, "ALIGN_T", 0, "Straighten X",
-		 "Align UVs along the line defined by the endpoints along the X axis"},
-		{UV_STRAIGHTEN_Y, "ALIGN_U", 0, "Straighten Y",
-		 "Align UVs along the line defined by the endpoints along the Y axis"},
-		{UV_ALIGN_AUTO, "ALIGN_AUTO", 0, "Align Auto",
-		 "Automatically choose the axis on which there is most alignment already"},
-		{UV_ALIGN_X, "ALIGN_X", 0, "Align X", "Align UVs on X axis"},
-		{UV_ALIGN_Y, "ALIGN_Y", 0, "Align Y", "Align UVs on Y axis"},
+		{UV_STRAIGHTEN, "ALIGN_S", ICON_STRAIGHTEN, "Straighten", "Align UVs along the line defined by the endpoints"},
+		{UV_STRAIGHTEN_X, "ALIGN_T", ICON_STRAIGHTEN_X, "Straighten X", "Align UVs along the line defined by the endpoints along the X axis"},
+		{UV_STRAIGHTEN_Y, "ALIGN_U", ICON_STRAIGHTEN_Y, "Straighten Y", "Align UVs along the line defined by the endpoints along the Y axis"},
+		{UV_ALIGN_AUTO, "ALIGN_AUTO", ICON_ALIGNAUTO, "Align Auto", "Automatically choose the axis on which there is most alignment already"},
+		{UV_ALIGN_X, "ALIGN_X", ICON_ALIGNHORIZONTAL, "Align X", "Align UVs on X axis"},
+		{UV_ALIGN_Y, "ALIGN_Y", ICON_ALIGNVERTICAL, "Align Y", "Align UVs on Y axis"},
 		{0, NULL, 0, NULL, NULL},
 	};
 
