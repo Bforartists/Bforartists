@@ -2133,10 +2133,10 @@ static int make_local_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_make_local(wmOperatorType *ot)
 {
 	static const EnumPropertyItem type_items[] = {
-		{MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", 0, "Selected Objects", ""},
-		{MAKE_LOCAL_SELECT_OBDATA, "SELECT_OBDATA", 0, "Selected Objects and Data", ""},
-		{MAKE_LOCAL_SELECT_OBDATA_MATERIAL, "SELECT_OBDATA_MATERIAL", 0, "Selected Objects, Data and Materials", ""},
-		{MAKE_LOCAL_ALL, "ALL", 0, "All", ""},
+		{MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", ICON_MAKE_LOCAL, "Selected Objects", ""},
+		{MAKE_LOCAL_SELECT_OBDATA, "SELECT_OBDATA", ICON_MAKE_LOCAL, "Selected Objects and Data", ""},
+		{MAKE_LOCAL_SELECT_OBDATA_MATERIAL, "SELECT_OBDATA_MATERIAL", ICON_MAKE_LOCAL, "Selected Objects, Data and Materials", ""},
+		{MAKE_LOCAL_ALL, "ALL", ICON_MAKE_LOCAL, "All", ""},
 		{0, NULL, 0, NULL, NULL},
 	};
 
