@@ -4845,6 +4845,22 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("GPENCIL_MT_cleanup")
+        layout.menu("VIEW3D_MT_edit_gpencil_hide")
+
+class VIEW3D_MT_edit_gpencil_hide(Menu):
+    bl_label = "Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.reveal", text="Show Hidden Layer", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("gpencil.hide", text="Hide selected Layer", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("gpencil.hide", text="Hide unselected Layer", icon = "HIDE_UNSELECTED").unselected = True
+
+        layout.separator()
+
+        layout.operator("gpencil.selection_opacity_toggle", text="Toggle Opacity", icon = "RESTRICT_VIEW_OFF")
+
 
 class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
     bl_label = "Arrange Strokes"
@@ -6706,6 +6722,7 @@ classes = (
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
+    VIEW3D_MT_edit_gpencil_hide,
     VIEW3D_MT_edit_gpencil_arrange_strokes,
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_weight_gpencil,
