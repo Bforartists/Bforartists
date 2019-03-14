@@ -4111,7 +4111,7 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
         layout.operator("mesh.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
-
+# Grease Pencil Edit Mode - Strokes, Delete menu
 class VIEW3D_MT_edit_gpencil_delete(Menu):
     bl_label = "Delete"
 
@@ -4123,10 +4123,10 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
         layout.separator()
 
         layout.operator("gpencil.active_frames_delete_all", icon = "DELETE")
+
+
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
-
-
 def draw_curve(self, context):
     layout = self.layout
 
