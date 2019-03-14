@@ -220,6 +220,7 @@ class NODE_MT_view(Menu):
 
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
