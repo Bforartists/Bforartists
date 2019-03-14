@@ -98,6 +98,7 @@ class IMAGE_MT_view(Menu):
 
         layout.operator("image.view_zoom_in", icon = "ZOOM_IN")
         layout.operator("image.view_zoom_out", icon = "ZOOM_OUT")
+        layout.operator("image.view_zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
 
