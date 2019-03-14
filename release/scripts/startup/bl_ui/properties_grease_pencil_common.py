@@ -643,7 +643,7 @@ class GPENCIL_MT_gpencil_draw_delete(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("gpencil.active_frames_delete_all", text="Delete Frame", icon = "DELETE")
+        layout.operator("gpencil.active_frames_delete_all", icon = "DELETE")
 
 
 class GPENCIL_MT_cleanup(Menu):
