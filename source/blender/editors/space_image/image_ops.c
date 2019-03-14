@@ -1029,8 +1029,8 @@ static int image_view_zoom_border_exec(bContext *C, wmOperator *op)
 void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Zoom to Border";
-	ot->description = "Zoom to Border\nZoom in the view to the nearest item contained in the border";
+	ot->name = "Zoom Border";
+	ot->description = "Zoom Border\nZoom in the view to the nearest item contained in the border";
 	ot->idname = "IMAGE_OT_view_zoom_border";
 
 	/* api callbacks */
