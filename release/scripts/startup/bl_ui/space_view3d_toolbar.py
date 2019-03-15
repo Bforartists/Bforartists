@@ -336,9 +336,9 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
                 row = col.row()
                 row.prop(brush, "use_plane_trim", text="Trim")
-                row = col.row()
-                row.active = brush.use_plane_trim
-                row.prop(brush, "plane_trim", slider=True, text="Distance")
+                if brush.use_plane_trim:
+                    row.active = brush.use_plane_trim
+                    row.prop(brush, "plane_trim", slider=True, text="Distance")
 
             # height
             if capabilities.has_height:
@@ -346,14 +346,11 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row.prop(brush, "height", slider=True, text="Height")
 
             # use_frontface
-            col.separator()
             col.prop(brush, "use_frontface", text="Front Faces Only")
             col.prop(brush, "use_projected")
 
             # use_accumulate
             if capabilities.has_accumulate:
-                col.separator()
-
                 col.prop(brush, "use_accumulate")
 
             # use_persistent, set_persistent_base
