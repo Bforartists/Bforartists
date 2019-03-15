@@ -418,12 +418,13 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             if not self.is_popover:
                 brush_basic_vpaint_settings(col, context, brush)
+            
+            col.separator()
 
             col.prop(brush, "use_alpha")
 
             if brush.vertex_tool != 'SMEAR':
                 col.prop(brush, "use_accumulate")
-                col.separator()
 
             col.prop(brush, "use_frontface", text="Front Faces Only")
             row = col.row()
