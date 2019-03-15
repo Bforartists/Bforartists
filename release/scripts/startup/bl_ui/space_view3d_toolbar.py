@@ -288,14 +288,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row = col.row()
                 row.prop(brush, "topology_rake_factor", slider=True)
 
-            # auto_smooth_factor and use_inverse_smooth_pressure
-            if capabilities.has_auto_smooth:
-                col.separator()
-
-                row = col.row(align=True)
-                row.prop(brush, "auto_smooth_factor", slider=True)
-                row.prop(brush, "use_inverse_smooth_pressure", toggle=True, text="")
-
             # normal_weight
             if capabilities.has_normal_weight:
                 col.separator()
@@ -316,13 +308,13 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # use_original_normal and sculpt_plane
             if capabilities.has_sculpt_plane:
+                
                 col.separator()
+                
                 row = col.row(align=True)
-
                 row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
-
                 row.prop(brush, "sculpt_plane", text="")
-
+                               
             if brush.sculpt_tool == 'MASK':
                 col.prop(brush, "mask_tool", text="")
 
@@ -339,13 +331,16 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 if brush.use_plane_trim:
                     row.active = brush.use_plane_trim
                     row.prop(brush, "plane_trim", slider=True, text="Distance")
-
+            else:               
+                col.separator()
+                
             # height
             if capabilities.has_height:
                 row = col.row()
                 row.prop(brush, "height", slider=True, text="Height")
+                col.separator()
 
-            # use_frontface
+            # use_frontface         
             col.prop(brush, "use_frontface", text="Front Faces Only")
             col.prop(brush, "use_projected")
 
@@ -355,7 +350,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # use_persistent, set_persistent_base
             if capabilities.has_persistence:
-                col.separator()
 
                 ob = context.sculpt_object
                 do_persistent = True
@@ -367,8 +361,9 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                         break
 
                 if do_persistent:
-                    col.prop(brush, "use_persistent")
-                    col.operator("sculpt.set_persistent_base")
+                    row = col.row()
+                    row.prop(brush, "use_persistent")
+                    row.operator("sculpt.set_persistent_base")
 
         # Texture Paint Mode #
 
@@ -440,6 +435,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             col.prop(brush, "use_projected")
 
             col.separator()
+            
             col.template_ID(settings, "palette", new="palette.new")
 
 
