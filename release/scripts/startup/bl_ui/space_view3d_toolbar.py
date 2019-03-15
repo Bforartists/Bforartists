@@ -290,32 +290,23 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # normal_weight
             if capabilities.has_normal_weight:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "normal_weight", slider=True)
 
-            # crease_pinch_factor
-            if capabilities.has_pinch_factor:
-                col.separator()
-                row = col.row(align=True)
-                row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
-
             # rake_factor
             if capabilities.has_rake_factor:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "rake_factor", slider=True)
 
             # use_original_normal and sculpt_plane
             if capabilities.has_sculpt_plane:
-                
                 col.separator()
-                
-                row = col.row(align=True)
+                row = col.row(align=True)               
                 row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
                 row.prop(brush, "sculpt_plane", text="")
                                
             if brush.sculpt_tool == 'MASK':
+                col.separator()
                 col.prop(brush, "mask_tool", text="")
 
             # plane_offset, use_offset_pressure, use_plane_trim, plane_trim
@@ -383,14 +374,15 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             if brush.weight_tool != 'SMEAR':
                 col.prop(brush, "use_accumulate")
-                col.separator()
 
             col.prop(brush, "use_frontface", text="Front Faces Only")
             row = col.row()
             row.prop(brush, "use_frontface_falloff", text="Falloff Angle")
-            sub = row.row()
-            sub.active = brush.use_frontface_falloff
-            sub.prop(brush, "falloff_angle", text="")
+            
+            if brush.use_frontface_falloff:
+                sub = row.row()
+                sub.active = brush.use_frontface_falloff
+                sub.prop(brush, "falloff_angle", text="")
 
             col.prop(brush, "use_projected")
 
@@ -429,9 +421,10 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             col.prop(brush, "use_frontface", text="Front Faces Only")
             row = col.row()
             row.prop(brush, "use_frontface_falloff", text="Falloff Angle")
-            sub = row.row()
-            sub.active = brush.use_frontface_falloff
-            sub.prop(brush, "falloff_angle", text="")
+            if brush.use_frontface_falloff:
+                sub = row.row()
+                sub.active = brush.use_frontface_falloff
+                sub.prop(brush, "falloff_angle", text="")
 
             col.prop(brush, "use_projected")
 
