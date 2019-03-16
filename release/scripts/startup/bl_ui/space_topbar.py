@@ -881,59 +881,22 @@ class TOPBAR_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        show_developer = context.preferences.view.show_developer_ui
-
-        layout.operator(
-            "wm.url_open", text="Manual", icon='HELP',
-        ).url = "https://docs.blender.org/manual/en/dev/"
-
-        layout.operator(
-            "wm.url_open", text="Report a Bug", icon='URL',
-        ).url = "https://developer.blender.org/maniphest/task/edit/form/1"
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/wiki/Manual"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
 
         layout.separator()
 
-        layout.operator(
-            "wm.url_open", text="User Communities", icon='URL',
-        ).url = "https://www.blender.org/community/"
-        layout.operator(
-            "wm.url_open", text="Developer Community", icon='URL',
-        ).url = "https://www.blender.org/get-involved/developers/"
+        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
+        layout.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/playlist?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5Og"
 
         layout.separator()
 
-        layout.operator(
-            "wm.url_open", text="Blender Website", icon='URL',
-        ).url = "https://www.blender.org"
-        layout.operator(
-            "wm.url_open", text="Release Notes", icon='URL',
-        ).url = "https://www.blender.org/download/releases/%d-%d/" % bpy.app.version[:2]
-        layout.operator(
-            "wm.url_open", text="Credits", icon='URL',
-        ).url = "https://www.blender.org/about/credits/"
+        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://github.com/Bforartists/Bforartists/issues"
 
         layout.separator()
 
-        layout.operator(
-            "wm.url_open", text="Blender Store", icon='URL',
-        ).url = "https://store.blender.org"
-        layout.operator(
-            "wm.url_open", text="Development Fund", icon='URL'
-        ).url = "https://fund.blender.org"
-        layout.operator(
-            "wm.url_open", text="Donate", icon='URL',
-        ).url = "https://www.blender.org/foundation/donation-payment/"
-
-        layout.separator()
-
-        if show_developer:
-            layout.operator(
-                "wm.url_open", text="Python API Reference", icon='URL',
-            ).url = bpy.types.WM_OT_doc_view._prefix
-
-            layout.operator("wm.operator_cheat_sheet", icon='TEXT')
-
-        layout.operator("wm.sysinfo")
+        layout.operator("wm.url_open", text="Blender Python API Reference", icon='URL').url = "https://docs.blender.org/api/blender_python_api_master/#"
+        layout.operator("wm.sysinfo", icon='TEXT')
 
         layout.separator()
 
