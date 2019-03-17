@@ -6,7 +6,7 @@ import bpy
 # Globals #
 
 # change the name for the properties settings
-MAT_SPEC_NAME = "materials_specials"
+MAT_SPEC_NAME = "materials_context_menu"
 
 # collect messages for the report operator
 COLLECT_REPORT = []
@@ -139,7 +139,7 @@ def collect_report(collection="", is_start=False, is_final=False):
     # collection passes a string for appending to COLLECT_REPORT global
     # is_final switches to the final report with the operator in __init__
     global COLLECT_REPORT
-    scene = bpy.context.scene.mat_specials
+    scene = bpy.context.scene.mat_context_menu
     use_report = scene.enable_report
 
     if is_start:

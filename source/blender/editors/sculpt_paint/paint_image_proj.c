@@ -381,10 +381,10 @@ typedef struct ProjPaintState {
 	 */
 
 #define PROJ_PAINT_STATE_SHARED_MEMCPY(ps_dst, ps_src) \
-	MEMCPY_STRUCT_OFS(ps_dst, ps_src, is_shared_user)
+	MEMCPY_STRUCT_AFTER(ps_dst, ps_src, is_shared_user)
 
 #define PROJ_PAINT_STATE_SHARED_CLEAR(ps) \
-	MEMSET_STRUCT_OFS(ps, 0, is_shared_user)
+	MEMSET_STRUCT_AFTER(ps, 0, is_shared_user)
 
 	bool is_shared_user;
 
@@ -5367,17 +5367,8 @@ static void paint_proj_stroke_ps(
 		ps->blend = IMB_BLEND_ERASE_ALPHA;
 
 	/* handle gradient and inverted stroke color here */
-	if (ps->tool == PAINT_TOOL_DRAW) {
+	if (ELEM(ps->tool, PAINT_TOOL_DRAW, PAINT_TOOL_FILL)) {
 		paint_brush_color_get(scene, brush, false, ps->mode == BRUSH_STROKE_INVERT, distance, pressure,  ps->paint_color, NULL);
-		if (ps->use_colormanagement) {
-			srgb_to_linearrgb_v3_v3(ps->paint_color_linear, ps->paint_color);
-		}
-		else {
-			copy_v3_v3(ps->paint_color_linear, ps->paint_color);
-		}
-	}
-	else if (ps->tool == PAINT_TOOL_FILL) {
-		copy_v3_v3(ps->paint_color, BKE_brush_color_get(scene, brush));
 		if (ps->use_colormanagement) {
 			srgb_to_linearrgb_v3_v3(ps->paint_color_linear, ps->paint_color);
 		}

@@ -483,6 +483,19 @@ Collection *BKE_collection_master(const Scene *scene)
 	return scene->master_collection;
 }
 
+Scene *BKE_collection_master_scene_search(const Main *bmain, const Collection *master_collection)
+{
+	BLI_assert((master_collection->flag & COLLECTION_IS_MASTER) != 0);
+
+	for (Scene *scene = bmain->scenes.first; scene != NULL; scene = scene->id.next) {
+		if (scene->master_collection == master_collection) {
+			return scene;
+		}
+	}
+
+	return NULL;
+}
+
 /*********************** Cyclic Checks ************************/
 
 static bool collection_object_cyclic_check_internal(Object *object, Collection *collection)
@@ -545,17 +558,32 @@ bool BKE_collection_has_object_recursive(Collection *collection, Object *ob)
 	return (BLI_findptr(&objects, ob, offsetof(Base, object)));
 }
 
-Collection *BKE_collection_object_find(Main *bmain, Collection *collection, Object *ob)
+static Collection *collection_next_find(Main *bmain, Scene *scene, Collection *collection)
 {
-	if (collection)
-		collection = collection->id.next;
-	else
+	if (scene && collection == BKE_collection_master(scene)) {
+		return bmain->collections.first;
+	}
+	else {
+		return collection->id.next;
+	}
+}
+
+Collection *BKE_collection_object_find(Main *bmain, Scene *scene, Collection *collection, Object *ob)
+{
+	if (collection) {
+		collection = collection_next_find(bmain, scene, collection);
+	}
+	else if (scene) {
+		collection = BKE_collection_master(scene);
+	}
+	else {
 		collection = bmain->collections.first;
+	}
 
 	while (collection) {
 		if (BKE_collection_has_object(collection, ob))
 			return collection;
-		collection = collection->id.next;
+		collection = collection_next_find(bmain, scene, collection);
 	}
 	return NULL;
 }

@@ -949,7 +949,7 @@ class VIEW3D_OT_set_new_material_name(Operator):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene.mat_specials
+        scene = context.scene.mat_context_menu
 
         box = layout.box()
         box.label(text="Base name:")
@@ -1004,7 +1004,7 @@ class VIEW3D_OT_assign_material(Operator):
 
     def execute(self, context):
         actob = context.active_object
-        scene = context.scene.mat_specials
+        scene = context.scene.mat_context_menu
         mn = self.matname
         tweak = scene.use_tweak
 
@@ -1206,7 +1206,7 @@ class VIEW3D_OT_select_material_by_name(Operator):
     def execute(self, context):
         if use_mat_menu_type() == 'POPUP':
             mats_col = context.scene.mat_specials_mats
-            scene = context.scene.mat_specials
+            scene = context.scene.mat_context_menu
             len_mats = len(mats_col)
             mat_index = scene.index_mat
 
@@ -1579,7 +1579,7 @@ class MATERIAL_OT_check_converter_path(Operator):
 
     def check_valid_path(self, context):
         sc = context.scene
-        paths = bpy.path.abspath(sc.mat_specials.conv_path)
+        paths = bpy.path.abspath(sc.mat_context_menu.conv_path)
 
         if bpy.data.filepath == "":
             warning_messages(self, "DIR_PATH_EMPTY", override=True)
@@ -1665,10 +1665,10 @@ def draw_ui_list_popups(self, context, obj_data=False):
 
     col.template_list(
         "VIEW3D_UL_assign_material_popup_ui",
-        'mat_specials',
+        'mat_context_menu',
         context.scene,
         'mat_specials_mats',
-        context.scene.mat_specials,
+        context.scene.mat_context_menu,
         'index_mat',
         rows=10
     )
@@ -1689,7 +1689,7 @@ class VIEW3D_MT_assign_material(Menu):
             layout.label(text="*No active Object in the Scene*", icon="INFO")
             use_separator(self, context)
 
-        mat_prop_name = context.scene.mat_specials.set_material_name
+        mat_prop_name = context.scene.mat_context_menu.set_material_name
         add_new = layout.operator(
                         "view3d.assign_material",
                         text="Add New", icon='ZOOMIN'
@@ -1975,7 +1975,7 @@ class MATERIAL_MT_scenemassive_opt(Menu):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene.mat_specials
+        scene = context.scene.mat_context_menu
 
         layout.prop(scene, "EXTRACT_ALPHA",
                     text="Extract Alpha Textures (slow)")
@@ -2037,7 +2037,7 @@ class MATERIAL_PT_scenemassive(Panel):
         box = col.box()
         box.label(text="Save Directory")
         split = box.split(0.85)
-        split.prop(sc.mat_specials, "conv_path", text="", icon="RENDER_RESULT")
+        split.prop(sc.mat_context_menu, "conv_path", text="", icon="RENDER_RESULT")
         split.operator("material.check_converter_path",
                        text="", icon="EXTERNAL_DATA")
 
@@ -2378,7 +2378,7 @@ class VIEW3D_MT_material_utils_pref(AddonPreferences):
         box = col_m.box()
         box.label(text="Save Directory")
         split = box.split(0.85)
-        split.prop(sc.mat_specials, "conv_path", text="", icon="RENDER_RESULT")
+        split.prop(sc.mat_context_menu, "conv_path", text="", icon="RENDER_RESULT")
         split.operator(
             "material.check_converter_path",
             text="", icon="EXTERNAL_DATA"
@@ -2664,7 +2664,7 @@ def register():
     warning_messages_utils.MAT_SPEC_NAME = __name__
 
     # Register Scene Properties
-    bpy.types.Scene.mat_specials = PointerProperty(
+    bpy.types.Scene.mat_context_menu = PointerProperty(
         type=material_specials_scene_props
     )
     bpy.types.Scene.mat_specials_mats = CollectionProperty(
@@ -2678,8 +2678,8 @@ def register():
         kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS', shift=True)
         kmi.properties.name = "VIEW3D_MT_master_material"
 
-    bpy.types.MATERIAL_MT_specials.prepend(menu_move)
-    bpy.types.MATERIAL_MT_specials.append(menu_func)
+    bpy.types.MATERIAL_MT_context_menu.prepend(menu_move)
+    bpy.types.MATERIAL_MT_context_menu.append(menu_func)
 
 
 def unregister():
@@ -2692,10 +2692,10 @@ def unregister():
                     km.keymap_items.remove(kmi)
                     break
 
-    bpy.types.MATERIAL_MT_specials.remove(menu_move)
-    bpy.types.MATERIAL_MT_specials.remove(menu_func)
+    bpy.types.MATERIAL_MT_context_menu.remove(menu_move)
+    bpy.types.MATERIAL_MT_context_menu.remove(menu_func)
 
-    del bpy.types.Scene.mat_specials
+    del bpy.types.Scene.mat_context_menu
     del bpy.types.Scene.mat_specials_mats
 
     bpy.utils.unregister_module(__name__)

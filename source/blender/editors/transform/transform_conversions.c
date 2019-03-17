@@ -2255,7 +2255,7 @@ void flushTransParticles(TransInfo *t)
 		}
 
 		PE_update_object(t->depsgraph, scene, OBACT(view_layer), 1);
-		DEG_id_tag_update(&ob->id, ID_RECALC_SHADING);
+		DEG_id_tag_update(&ob->id, ID_RECALC_PSYS_REDO);
 	}
 }
 
@@ -6442,7 +6442,7 @@ static void special_aftertrans_update__node(bContext *C, TransInfo *t)
 			for (node = ntree->nodes.first; node; node = node_next) {
 				node_next = node->next;
 				if (node->flag & NODE_SELECT)
-					nodeDeleteNode(bmain, ntree, node);
+					nodeRemoveNode(bmain, ntree, node, true);
 			}
 		}
 	}
@@ -8480,8 +8480,9 @@ static void createTransGPencil(bContext *C, TransInfo *t)
 					float falloff = 1.0f; /* by default no falloff */
 					if ((is_multiedit) && (use_multiframe_falloff)) {
 						/* Faloff depends on distance to active frame (relative to the overall frame range) */
-						falloff = BKE_gpencil_multiframe_falloff_calc(gpf, gpl->actframe->framenum,
-							f_init, f_end, ts->gp_sculpt.cur_falloff);
+						falloff = BKE_gpencil_multiframe_falloff_calc(
+						        gpf, gpl->actframe->framenum,
+						        f_init, f_end, ts->gp_sculpt.cur_falloff);
 					}
 
 					for (gps = gpf->strokes.first; gps; gps = gps->next) {

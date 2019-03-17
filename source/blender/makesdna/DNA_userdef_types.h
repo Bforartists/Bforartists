@@ -574,7 +574,9 @@ typedef struct UserDef {
 	/** #eUserpref_UI_Flag. */
 	int uiflag;
 	/** #eUserpref_UI_Flag2. */
-	int uiflag2;
+	char uiflag2;
+	char gpu_flag;
+	char _pad8[2];
 	/* Experimental flag for app-templates to make changes to behavior
 	 * which are outside the scope of typical preferences. */
 	short app_flag;
@@ -665,8 +667,7 @@ typedef struct UserDef {
 	char  ipo_new;
 	/** Handle types for newly added keyframes. */
 	char  keyhandles_new;
-	char  gpu_select_pick_deph;
-	char  _pad11[2];
+	char  _pad11[3];
 	/** #eZoomFrame_Mode. */
 	char  view_frame_type;
 
@@ -758,7 +759,9 @@ typedef struct UserDef {
 	/** #eMultiSample_Type, amount of samples for Grease Pencil. */
 	short gpencil_multisamples;
 
-	char _pad5[4];
+	char factor_display_type;
+
+	char _pad5[3];
 } UserDef;
 
 /* from blenkernel blender.c */
@@ -799,32 +802,32 @@ typedef enum eUserPref_SectionFlag {
 
 /** #UserDef.flag */
 typedef enum eUserPref_Flag {
-	USER_AUTOSAVE			= (1 << 0),
+	USER_AUTOSAVE           = (1 << 0),
 	USER_FLAG_NUMINPUT_ADVANCED = (1 << 1),
-	USER_FLAG_DEPRECATED_2	= (1 << 2),  /* cleared */
-	USER_FLAG_DEPRECATED_3	= (1 << 3),  /* cleared */
-	USER_FLAG_DEPRECATED_4  = (1 << 4),  /* cleared */
-	USER_TRACKBALL			= (1 << 5),
-	USER_FLAG_DEPRECATED_6	= (1 << 6),  /* cleared */
-	USER_FLAG_DEPRECATED_7	= (1 << 7),  /* cleared */
-	USER_MAT_ON_OB			= (1 << 8),
-	USER_FLAG_DEPRECATED_9	= (1 << 9),   /* cleared */
-	USER_DEVELOPER_UI		= (1 << 10),
-	USER_TOOLTIPS			= (1 << 11),
-	USER_TWOBUTTONMOUSE		= (1 << 12),
-	USER_NONUMPAD			= (1 << 13),
-	USER_FLAG_DEPRECATED_14	= (1 << 14),  /* cleared */
-	USER_FILECOMPRESS		= (1 << 15),
-	USER_SAVE_PREVIEWS		= (1 << 16),
-	USER_CUSTOM_RANGE		= (1 << 17),
-	USER_ADD_EDITMODE		= (1 << 18),
-	USER_ADD_VIEWALIGNED	= (1 << 19),
-	USER_RELPATHS			= (1 << 20),
-	USER_RELEASECONFIRM		= (1 << 21),
-	USER_SCRIPT_AUTOEXEC_DISABLE	= (1 << 22),
-	USER_FILENOUI			= (1 << 23),
-	USER_NONEGFRAMES		= (1 << 24),
-	USER_TXT_TABSTOSPACES_DISABLE	= (1 << 25),
+	USER_FLAG_UNUSED_2      = (1 << 2),  /* cleared */
+	USER_FLAG_UNUSED_3      = (1 << 3),  /* cleared */
+	USER_FLAG_UNUSED_4      = (1 << 4),  /* cleared */
+	USER_TRACKBALL          = (1 << 5),
+	USER_FLAG_UNUSED_6      = (1 << 6),  /* cleared */
+	USER_FLAG_UNUSED_7      = (1 << 7),  /* cleared */
+	USER_MAT_ON_OB          = (1 << 8),
+	USER_FLAG_UNUSED_9      = (1 << 9),  /* cleared */
+	USER_DEVELOPER_UI       = (1 << 10),
+	USER_TOOLTIPS           = (1 << 11),
+	USER_TWOBUTTONMOUSE     = (1 << 12),
+	USER_NONUMPAD           = (1 << 13),
+	USER_FLAG_UNUSED_14     = (1 << 14),  /* cleared */
+	USER_FILECOMPRESS       = (1 << 15),
+	USER_SAVE_PREVIEWS      = (1 << 16),
+	USER_CUSTOM_RANGE       = (1 << 17),
+	USER_ADD_EDITMODE       = (1 << 18),
+	USER_ADD_VIEWALIGNED    = (1 << 19),
+	USER_RELPATHS           = (1 << 20),
+	USER_RELEASECONFIRM     = (1 << 21),
+	USER_SCRIPT_AUTOEXEC_DISABLE = (1 << 22),
+	USER_FILENOUI           = (1 << 23),
+	USER_NONEGFRAMES        = (1 << 24),
+	USER_TXT_TABSTOSPACES_DISABLE = (1 << 25),
 	USER_TOOLTIPS_PYTHON    = (1 << 26),
 } eUserPref_Flag;
 
@@ -860,8 +863,8 @@ typedef enum eWalkNavigation_Flag {
 
 /** #UserDef.uiflag */
 typedef enum eUserpref_UI_Flag {
-	USER_UIFLAG_DEPRECATED_0    = (1 << 0),  /* cleared */
-	USER_UIFLAG_DEPRECATED_1    = (1 << 1),  /* cleared */
+	USER_UIFLAG_UNUSED_0        = (1 << 0),  /* cleared */
+	USER_UIFLAG_UNUSED_1        = (1 << 1),  /* cleared */
 	USER_WHEELZOOMDIR           = (1 << 2),
 	USER_FILTERFILEEXTS         = (1 << 3),
 	USER_DRAWVIEWINFO           = (1 << 4),
@@ -873,7 +876,7 @@ typedef enum eUserpref_UI_Flag {
 	USER_MENUOPENAUTO           = (1 << 9),
 	USER_DEPTH_CURSOR           = (1 << 10),
 	USER_AUTOPERSP              = (1 << 11),
-	USER_UIFLAG_DEPRECATED_12   = (1 << 12),  /* cleared */
+	USER_UIFLAG_UNUSED_12       = (1 << 12),  /* cleared */
 	USER_GLOBALUNDO             = (1 << 13),
 	USER_ORBIT_SELECTION        = (1 << 14),
 	USER_DEPTH_NAVIGATE         = (1 << 15),
@@ -883,7 +886,7 @@ typedef enum eUserpref_UI_Flag {
 	USER_CAM_LOCK_NO_PARENT     = (1 << 19),
 	USER_ZOOM_TO_MOUSEPOS       = (1 << 20),
 	USER_SHOW_FPS               = (1 << 21),
-	USER_UIFLAG_DEPRECATED_22   = (1 << 22),  /* cleared */
+	USER_UIFLAG_UNUSED_22       = (1 << 22),  /* cleared */
 	USER_MENUFIXEDORDER         = (1 << 23),
 	USER_CONTINUOUS_MOUSE       = (1 << 24),
 	USER_ZOOM_INVERT            = (1 << 25),
@@ -895,13 +898,20 @@ typedef enum eUserpref_UI_Flag {
 	USER_HIDE_SYSTEM_BOOKMARKS  = (1u << 31),
 } eUserpref_UI_Flag;
 
-/** #UserDef.uiflag2 */
+/** #UserDef.uiflag2
+ *
+ * \note don't add new flags here, use 'uiflag' which has flags free. */
 typedef enum eUserpref_UI_Flag2 {
-	USER_UIFLAG2_DEPRECATED_0   = (1 << 0),
-	USER_REGION_OVERLAP			= (1 << 1),
-	USER_TRACKPAD_NATURAL		= (1 << 2),
-	USER_EDIT_MODE_SMOOTH_WIRE	= (1 << 3),
+	USER_UIFLAG2_UNUSED_0       = (1 << 0),  /* cleared */
+	USER_REGION_OVERLAP         = (1 << 1),
+	USER_TRACKPAD_NATURAL       = (1 << 2),
+	USER_UIFLAG2_UNUSED_3       = (1 << 3),  /* dirty */
 } eUserpref_UI_Flag2;
+
+typedef enum eUserpref_GPU_Flag {
+	USER_GPU_FLAG_NO_DEPT_PICK              = (1 << 0),
+	USER_GPU_FLAG_NO_EDIT_MODE_SMOOTH_WIRE  = (1 << 1),
+} eUserpref_GPU_Flag;
 
 /** #UserDef.tablet_api */
 typedef enum eUserpref_TableAPI {
@@ -954,15 +964,15 @@ typedef enum eAutokey_Flag {
 
 /** #UserDef.transopts */
 typedef enum eUserpref_Translation_Flags {
-	USER_TR_TOOLTIPS		= (1 << 0),
-	USER_TR_IFACE			= (1 << 1),
-	USER_TR_DEPRECATED_2	= (1 << 2),  /* cleared */
-	USER_TR_DEPRECATED_3	= (1 << 3),  /* cleared */
-	USER_TR_DEPRECATED_4	= (1 << 4),  /* cleared */
-	USER_DOTRANSLATE		= (1 << 5),
-	USER_TR_DEPRECATED_6	= (1 << 6),  /* cleared */
-	USER_TR_DEPRECATED_7	= (1 << 7),  /* cleared */
-	USER_TR_NEWDATANAME		= (1 << 8),
+	USER_TR_TOOLTIPS        = (1 << 0),
+	USER_TR_IFACE           = (1 << 1),
+	USER_TR_UNUSED_2        = (1 << 2),  /* cleared */
+	USER_TR_UNUSED_3        = (1 << 3),  /* cleared */
+	USER_TR_UNUSED_4        = (1 << 4),  /* cleared */
+	USER_DOTRANSLATE        = (1 << 5),
+	USER_TR_UNUSED_6        = (1 << 6),  /* cleared */
+	USER_TR_UNUSED_7        = (1 << 7),  /* cleared */
+	USER_TR_NEWDATANAME     = (1 << 8),
 } eUserpref_Translation_Flags;
 
 /** #UserDef.dupflag */
@@ -1002,8 +1012,8 @@ typedef enum eText_Draw_Options {
 /** Grease Pencil Settings.
  * #UserDef.gp_settings */
 typedef enum eGP_UserdefSettings {
-	GP_PAINT_DEPRECATED_0       = (1 << 0),
-	GP_PAINT_DOSIMPLIFY		    = (1 << 1),
+	GP_PAINT_UNUSED_0           = (1 << 0),
+	GP_PAINT_DOSIMPLIFY         = (1 << 1),
 } eGP_UserdefSettings;
 
 enum {
@@ -1111,6 +1121,12 @@ typedef enum eOpensubdiv_Computee_Type {
 	USER_OPENSUBDIV_COMPUTE_GLSL_TRANSFORM_FEEDBACK = 5,
 	USER_OPENSUBDIV_COMPUTE_GLSL_COMPUTE = 6,
 } eOpensubdiv_Computee_Type;
+
+/** #UserDef.factor_display_type */
+typedef enum eUserpref_FactorDisplay {
+	USER_FACTOR_AS_FACTOR = 0,
+	USER_FACTOR_AS_PERCENTAGE = 1,
+} eUserpref_FactorDisplay;
 
 #ifdef __cplusplus
 }

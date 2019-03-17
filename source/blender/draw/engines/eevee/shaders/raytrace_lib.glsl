@@ -59,7 +59,7 @@ float refine_isect(float prev_delta, float curr_delta)
 }
 
 void prepare_raycast(
-        vec3 ray_origin, vec3 ray_dir, float thickness, out vec4 ss_step, out vec4 ss_ray, out float max_time)
+        vec3 ray_origin, vec3 ray_dir, float thickness, int index, out vec4 ss_step, out vec4 ss_ray, out float max_time)
 {
 	/* Negate the ray direction if it goes towards the camera.
 	 * This way we don't need to care if the projected point
@@ -91,7 +91,7 @@ void prepare_raycast(
 
 	/* If the line is degenerate, make it cover at least one pixel
 	 * to not have to handle zero-pixel extent as a special case later */
-	ss_step.xy += vec2((dot(ss_step.xy, ss_step.xy) < 0.000001) ? 0.001 : 0.0);
+	ss_step.xy += vec2((dot(ss_step.xy, ss_step.xy) < 0.00001) ? 0.001 : 0.0);
 
 	/* Make ss_step cover one pixel. */
 	ss_step /= max(abs(ss_step.x), abs(ss_step.y));
@@ -106,10 +106,16 @@ void prepare_raycast(
 	/* Convert to texture coords. Z component included
 	 * since this is how it's stored in the depth buffer.
 	 * 4th component how far we are on the ray */
-	ss_ray = ss_start * 0.5 + 0.5;
-	ss_step *= 0.5;
+#ifdef PLANAR_PROBE_RAYTRACE
+	/* Planar Reflections have X mirrored. */
+	vec2 m = (index > -1) ? vec2(-0.5, 0.5) : vec2(0.5);
+#else
+	const vec2 m = vec2(0.5);
+#endif
+	ss_ray = ss_start * m.xyyy + 0.5;
+	ss_step *= m.xyyy;
 
-	ss_ray.xy += 0.5 * ssrPixelSize * 2.0; /* take the center of the texel. * 2 because halfres. */
+	ss_ray.xy += m * ssrPixelSize * 2.0; /* take the center of the texel. * 2 because halfres. */
 }
 
 /* See times_and_deltas. */
@@ -127,9 +133,9 @@ vec3 raycast(
 {
 	vec4 ss_step, ss_start;
 	float max_time;
-	prepare_raycast(ray_origin, ray_dir, thickness, ss_step, ss_start, max_time);
+	prepare_raycast(ray_origin, ray_dir, thickness, index, ss_step, ss_start, max_time);
 
-	float max_trace_time = max(0.001, max_time - 0.01);
+	float max_trace_time = max(0.01, max_time - 0.01);
 
 #ifdef GROUPED_FETCHES
 	ray_jitter *= 0.25;

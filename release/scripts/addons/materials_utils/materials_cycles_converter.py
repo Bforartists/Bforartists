@@ -117,8 +117,8 @@ def BakingText(tex, mode, tex_type=None):
         sizeX = tex.texture.image.size[0]
         sizeY = tex.texture.image.size[1]
     else:
-        bake_size = (int(sc.mat_specials.img_bake_size) if
-                     sc.mat_specials.img_bake_size else 1024)
+        bake_size = (int(sc.mat_context_menu.img_bake_size) if
+                     sc.mat_context_menu.img_bake_size else 1024)
         sizeX = bake_size
         sizeY = bake_size
 
@@ -143,7 +143,7 @@ def BakingText(tex, mode, tex_type=None):
         check_area = False
 
     if check_area:
-        paths = bpy.path.abspath(sc.mat_specials.conv_path)
+        paths = bpy.path.abspath(sc.mat_context_menu.conv_path)
         tex_name = getattr(getattr(tex.texture, "image", None), "name", None)
         texture_name = (tex_name.rpartition(".")[0] if tex_name else tex.texture.name)
         new_tex_name = "baked"
@@ -207,7 +207,7 @@ def AutoNodeInitiate(active=False, operator=None):
         CHECK_AUTONODE = True
         collect_report("_______________________", True, False)
         AutoNode(active, operator)
-        if sc.mat_specials.SET_FAKE_USER:
+        if sc.mat_context_menu.SET_FAKE_USER:
             SetFakeUserTex()
     else:
         warning_messages(operator, 'DIR_PATH_CONVERT', override=True)
@@ -281,7 +281,7 @@ def AutoNode(active=False, operator=None):
                 link_fail = True
 
             # Create other shader types only sculpt/texture paint mode is False
-            sculpt_paint = sc.mat_specials.SCULPT_PAINT
+            sculpt_paint = sc.mat_context_menu.SCULPT_PAINT
             if sculpt_paint is False:
 
                 cmat_is_transp = cmat.use_transparency and cmat.alpha < 1
@@ -451,10 +451,10 @@ def AutoNode(active=False, operator=None):
                         img = None
 
                         if tex.texture.type == 'IMAGE':
-                            if sc.mat_specials.EXTRACT_ALPHA and tex.texture.use_alpha:
+                            if sc.mat_context_menu.EXTRACT_ALPHA and tex.texture.use_alpha:
                                 if (not
                                    os_path.exists(bpy.path.abspath(tex.texture.image.filepath + "_BAKING.png")) or
-                                   sc.mat_specials.EXTRACT_OW):
+                                   sc.mat_context_menu.EXTRACT_OW):
                                     baked_path = BakingText(tex, 'ALPHA')
 
                                     if baked_path:
@@ -488,9 +488,9 @@ def AutoNode(active=False, operator=None):
                                 collect_report("ERROR: A problem occurred with loading an image for {} "
                                                "(possibly missing)".format(tex.texture.name))
                         else:
-                            if sc.mat_specials.EXTRACT_PTEX or (sc.mat_specials.EXTRACT_ALPHA and ma_alpha):
+                            if sc.mat_context_menu.EXTRACT_PTEX or (sc.mat_context_menu.EXTRACT_ALPHA and ma_alpha):
                                 if (not os_path.exists(bpy.path.abspath(tex.texture.name + "_PTEXT.jpg")) or
-                                   sc.mat_specials.EXTRACT_OW):
+                                   sc.mat_context_menu.EXTRACT_OW):
                                     tex_type = tex.texture.type.lower()
                                     collect_report("Attempting to Extract Procedural Texture type: " + tex_type)
                                     baked_path = BakingText(tex, 'PTEX', tex_type)
@@ -673,8 +673,8 @@ def AutoNode(active=False, operator=None):
                 if sculpt_paint:
                     try:
                         # create a new image for texture painting and make it active
-                        img_size = (int(sc.mat_specials.img_bake_size) if
-                                    sc.mat_specials.img_bake_size else 1024)
+                        img_size = (int(sc.mat_context_menu.img_bake_size) if
+                                    sc.mat_context_menu.img_bake_size else 1024)
                         paint_mat_name = getattr(cmat, "name", "NO NAME")
                         paint_img_name = "Paint Base Image {}".format(paint_mat_name)
                         bpy.ops.image.new(name=paint_img_name, width=img_size, height=img_size,
@@ -848,7 +848,7 @@ def create_mix_node(TreeNodes, links, nodes, loc, start, median_point, row, fram
 
 
 def unwrap_active_object(context):
-    enable_unwrap = context.scene.mat_specials.UV_UNWRAP
+    enable_unwrap = context.scene.mat_context_menu.UV_UNWRAP
     if enable_unwrap:
         obj_name = getattr(context.active_object, "name", "UNNAMED OBJECT")
         try:

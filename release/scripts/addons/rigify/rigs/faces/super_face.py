@@ -750,7 +750,7 @@ class Rig:
     def constraints( self, all_bones ):
         ## Def bone constraints
 
-        def_specials = {
+        def_context_menu = {
             # 'bone'             : 'target'
             'DEF-jaw'               : 'chin',
             'DEF-chin.L'            : 'lips.L',
@@ -788,9 +788,9 @@ class Rig:
         pattern = r'^DEF-(\w+\.?\w?\.?\w?)(\.?)(\d*?)(\d?)$'
 
         for bone in [ bone for bone in all_bones['deform']['all'] if 'lid' not in bone ]:
-            if bone in def_specials:
-                if def_specials[bone] is not None:
-                    self.make_constraits('def_tweak', bone, def_specials[bone] )
+            if bone in def_context_menu:
+                if def_context_menu[bone] is not None:
+                    self.make_constraits('def_tweak', bone, def_context_menu[bone] )
             else:
                 matches = re.match( pattern, bone ).groups()
                 if len( matches ) > 1 and matches[-1]:
@@ -1042,7 +1042,7 @@ def add_parameters(params):
         )
     params.primary_layers = bpy.props.BoolVectorProperty(
         size=32,
-        description="Layers for the 1st tweak controls to be on",
+        description="Layers for the primary controls to be on",
         default=tuple([i == 1 for i in range(0, 32)])
         )
     params.secondary_layers_extra = bpy.props.BoolProperty(
@@ -1052,7 +1052,7 @@ def add_parameters(params):
         )
     params.secondary_layers = bpy.props.BoolVectorProperty(
         size=32,
-        description="Layers for the 2nd tweak controls to be on",
+        description="Layers for the secondary controls to be on",
         default=tuple([i == 1 for i in range(0, 32)])
         )
 

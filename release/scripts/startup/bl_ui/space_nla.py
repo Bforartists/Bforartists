@@ -157,7 +157,7 @@ class NLA_MT_marker(Menu):
         layout = self.layout
 
         from .space_time import marker_menu_generic
-        marker_menu_generic(layout)
+        marker_menu_generic(layout, context)
 
 
 class NLA_MT_edit(Menu):

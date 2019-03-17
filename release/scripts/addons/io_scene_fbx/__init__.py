@@ -321,7 +321,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
             )
     use_mesh_modifiers_render: BoolProperty(
             name="Use Modifiers Render Setting",
-            description="Use render settings when applying modifiers to mesh objects",
+            description="Use render settings when applying modifiers to mesh objects (DISABLED in Blender 2.8)",
             default=True,
             )
     mesh_smooth_type: EnumProperty(
@@ -504,7 +504,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper):
         elif self.ui_tab == 'GEOMETRY':
             layout.prop(self, "use_mesh_modifiers")
             sub = layout.row()
-            sub.enabled = self.use_mesh_modifiers
+            sub.enabled = self.use_mesh_modifiers and False  # disabled in 2.8...
             sub.prop(self, "use_mesh_modifiers_render")
             layout.prop(self, "mesh_smooth_type")
             layout.prop(self, "use_mesh_edges")

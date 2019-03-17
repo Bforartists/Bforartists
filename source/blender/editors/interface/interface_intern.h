@@ -440,7 +440,8 @@ struct uiBlock {
 
 	/** for doing delayed */
 	eBlockBoundsCalc bounds_type;
-	int mx, my;
+	/** Offset to use when calculating bounds (in pixels). */
+	int bounds_offset[2];
 	/** for doing delayed */
 	int bounds, minbounds;
 
@@ -522,7 +523,6 @@ extern uiButExtraIconType ui_but_icon_extra_get(uiBut *but);
 
 extern void ui_but_default_set(struct bContext *C, const bool all, const bool use_afterfunc);
 
-extern void ui_but_update_ex(uiBut *but, const bool validate);
 extern void ui_but_update(uiBut *but);
 extern void ui_but_update_edited(uiBut *but);
 extern bool ui_but_is_float(const uiBut *but) ATTR_WARN_UNUSED_RESULT;
@@ -613,7 +613,7 @@ struct uiPopupBlockHandle {
 	rctf prev_block_rect;
 	rctf prev_butrct;
 	short prev_dir1, prev_dir2;
-	int prev_mx, prev_my;
+	int prev_bounds_offset[2];
 
 	/* Maximum estimated size to avoid having to reposition on refresh. */
 	float max_size_x, max_size_y;
@@ -727,6 +727,7 @@ extern void ui_but_execute_begin(struct bContext *C, struct ARegion *ar, uiBut *
 extern void ui_but_execute_end(struct bContext *C, struct ARegion *ar, uiBut *but, void *active_back);
 extern void ui_but_active_free(const struct bContext *C, uiBut *but);
 extern bool ui_but_is_active(struct ARegion *ar) ATTR_WARN_UNUSED_RESULT;
+extern bool ui_but_is_editing(uiBut *but);
 extern int ui_but_menu_direction(uiBut *but);
 extern void ui_but_text_password_hide(char password_str[UI_MAX_DRAW_STR], uiBut *but, const bool restore);
 extern uiBut *ui_but_find_select_in_enum(uiBut *but, int direction);
@@ -898,5 +899,9 @@ typedef struct uiRNACollectionSearch {
 	bool *but_changed; /* pointer to uiBut.changed */
 } uiRNACollectionSearch;
 void ui_rna_collection_search_cb(const struct bContext *C, void *arg, const char *str, uiSearchItems *items);
+
+/* interface_ops.c */
+bool ui_jump_to_target_button_poll(struct bContext *C);
+
 
 #endif  /* __INTERFACE_INTERN_H__ */

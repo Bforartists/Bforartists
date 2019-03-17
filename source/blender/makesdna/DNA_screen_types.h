@@ -286,8 +286,7 @@ typedef struct ScrGlobalAreaData {
 	 * and winx/winy don't) */
 	short cur_fixed_height;
 	/* For global areas, this is the min and max size they can use depending on
-	 * if they are 'collapsed' or not. Value is set on area creation and not
-	 * touched afterwards. */
+	 * if they are 'collapsed' or not. */
 	short size_min, size_max;
 	/** GlobalAreaAlign. */
 	short align;
@@ -393,9 +392,8 @@ typedef struct ARegion {
 	/** Hide, .... */
 	short flag;
 
-	/** Current split size in float (unused). */
-	float fsize;
-	/** Current split size in pixels (if zero it uses regiontype). */
+	/** Current split size in unscaled pixels (if zero it uses regiontype).
+	 * To convert to pixels use: `UI_DPI_FAC * ar->sizex + 0.5f`. */
 	short sizex, sizey;
 
 	/** Private, cached notifier events. */
@@ -406,7 +404,6 @@ typedef struct ARegion {
 	short overlap;
 	/** Temporary copy of flag settings for clean fullscreen. */
 	short flagfullscreen;
-	char _pad[4];
 
 	/** Callbacks for this region type. */
 	struct ARegionType *type;
@@ -443,15 +440,15 @@ typedef struct ARegion {
 /** #ScrArea.flag */
 enum {
 	HEADER_NO_PULLDOWN           = (1 << 0),
-//	AREA_FLAG_DEPRECATED_1       = (1 << 1),
-//	AREA_FLAG_DEPRECATED_2       = (1 << 2),
+//	AREA_FLAG_UNUSED_1           = (1 << 1),
+//	AREA_FLAG_UNUSED_2           = (1 << 2),
 #ifdef DNA_DEPRECATED_ALLOW
 	AREA_TEMP_INFO               = (1 << 3), /* versioned to make slot reusable */
 #endif
 	/* update size of regions within the area */
 	AREA_FLAG_REGION_SIZE_UPDATE = (1 << 3),
 	AREA_FLAG_ACTIVE_TOOL_UPDATE = (1 << 4),
-//	AREA_FLAG_DEPRECATED_5       = (1 << 5),
+//	AREA_FLAG_UNUSED_5           = (1 << 5),
 	/* used to check if we should switch back to prevspace (of a different type) */
 	AREA_FLAG_TEMP_TYPE          = (1 << 6),
 	/* for temporary fullscreens (file browser, image editor render)
@@ -636,6 +633,9 @@ enum {
 	RGN_FLAG_TEMP_REGIONDATA    = (1 << 3),
 	/* The region must either use its prefsizex/y or be hidden. */
 	RGN_FLAG_PREFSIZE_OR_HIDDEN = (1 << 4),
+	/** Size has been clamped (floating regions only). */
+	RGN_FLAG_SIZE_CLAMP_X      = (1 << 5),
+	RGN_FLAG_SIZE_CLAMP_Y      = (1 << 6),
 };
 
 /** #ARegion.do_draw */
