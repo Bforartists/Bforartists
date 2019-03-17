@@ -60,7 +60,7 @@ def button_refresh(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_SCENE_OT_refresh)
-    bpy.types.VIEW3D_MT_object_specials.append(button_refresh)
+    bpy.types.VIEW3D_MT_object_context_menu.append(button_refresh)
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name="Window")
     kmi = km.keymap_items.new("scene.refresh", "F5", "PRESS",
@@ -70,7 +70,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(AMTH_SCENE_OT_refresh)
-    bpy.types.VIEW3D_MT_object_specials.remove(button_refresh)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(button_refresh)
     for km, kmi in KEYMAPS:
         km.keymap_items.remove(kmi)
     KEYMAPS.clear()

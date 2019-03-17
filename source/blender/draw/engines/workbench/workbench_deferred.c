@@ -445,6 +445,7 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 		const int size[2] = {(int)viewport_size[0], (int)viewport_size[1]};
 		const eGPUTextureFormat nor_tex_format = NORMAL_ENCODING_ENABLED() ? GPU_RG16 : GPU_RGBA32F;
 		const eGPUTextureFormat comp_tex_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_R11F_G11F_B10F;
+		const eGPUTextureFormat col_tex_format = DRW_state_is_image_render() ? GPU_RGBA16F : GPU_RGBA8;
 		const eGPUTextureFormat id_tex_format = OBJECT_ID_PASS_ENABLED(wpd) ? GPU_R32UI : GPU_R8;
 
 		e_data.object_id_tx = NULL;
@@ -456,7 +457,7 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 		e_data.composite_buffer_tx = DRW_texture_pool_query_2D(size[0], size[1], comp_tex_format, &draw_engine_workbench_solid);
 
 		if (MATDATA_PASS_ENABLED(wpd) || GPU_unused_fb_slot_workaround()) {
-			e_data.color_buffer_tx = DRW_texture_pool_query_2D(size[0], size[1], GPU_RGBA8, &draw_engine_workbench_solid);
+			e_data.color_buffer_tx = DRW_texture_pool_query_2D(size[0], size[1], col_tex_format, &draw_engine_workbench_solid);
 		}
 		if (OBJECT_ID_PASS_ENABLED(wpd) || GPU_unused_fb_slot_workaround()) {
 			e_data.object_id_tx = DRW_texture_pool_query_2D(size[0], size[1], id_tex_format, &draw_engine_workbench_solid);
@@ -488,7 +489,7 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
 		});
 
 		if (!MATDATA_PASS_ENABLED(wpd) && !GPU_unused_fb_slot_workaround()) {
-			e_data.color_buffer_tx = DRW_texture_pool_query_2D(size[0], size[1], GPU_RGBA8, &draw_engine_workbench_solid);
+			e_data.color_buffer_tx = DRW_texture_pool_query_2D(size[0], size[1], col_tex_format, &draw_engine_workbench_solid);
 		}
 
 		GPU_framebuffer_ensure_config(&fbl->effect_fb, {
@@ -793,7 +794,7 @@ void workbench_deferred_cache_init(WORKBENCH_Data *vedata)
 }
 
 static WORKBENCH_MaterialData *get_or_create_material_data(
-        WORKBENCH_Data *vedata, Object *ob, Material *mat, Image *ima, int color_type, int interp)
+        WORKBENCH_Data *vedata, Object *ob, Material *mat, Image *ima, ImageUser *iuser, int color_type, int interp)
 {
 	WORKBENCH_StorageList *stl = vedata->stl;
 	WORKBENCH_PassList *psl = vedata->psl;
@@ -809,6 +810,7 @@ static WORKBENCH_MaterialData *get_or_create_material_data(
 	material_template.object_id = OBJECT_ID_PASS_ENABLED(wpd) ? engine_object_data->object_id : 1;
 	material_template.color_type = color_type;
 	material_template.ima = ima;
+	material_template.iuser = iuser;
 	material_template.interp = interp;
 	uint hash = workbench_material_get_hash(&material_template, is_ghost);
 
@@ -843,9 +845,6 @@ static void workbench_cache_populate_particles(WORKBENCH_Data *vedata, Object *o
 			continue;
 		}
 		ParticleSystem *psys = ((ParticleSystemModifierData *)md)->psys;
-		if (!psys_check_enabled(ob, psys, false)) {
-			continue;
-		}
 		if (!DRW_object_is_visible_psys_in_active_context(ob, psys)) {
 			continue;
 		}
@@ -855,10 +854,11 @@ static void workbench_cache_populate_particles(WORKBENCH_Data *vedata, Object *o
 		if (draw_as == PART_DRAW_PATH) {
 			Material *mat;
 			Image *image;
+			ImageUser *iuser;
 			int interp;
-			workbench_material_get_image_and_mat(ob, part->omat, &image, &interp, &mat);
+			workbench_material_get_image_and_mat(ob, part->omat, &image, &iuser, &interp, &mat);
 			int color_type = workbench_material_determine_color_type(wpd, image, ob);
-			WORKBENCH_MaterialData *material = get_or_create_material_data(vedata, ob, mat, image, color_type, interp);
+			WORKBENCH_MaterialData *material = get_or_create_material_data(vedata, ob, mat, image, iuser, color_type, interp);
 
 			struct GPUShader *shader = (color_type != V3D_SHADING_TEXTURE_COLOR) ?
 			        wpd->prepass_solid_hair_sh :
@@ -923,10 +923,11 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 				if (geom_array != NULL && geom_array[i] != NULL) {
 					Material *mat;
 					Image *image;
+					ImageUser *iuser;
 					int interp;
-					workbench_material_get_image_and_mat(ob, i + 1, &image, &interp, &mat);
+					workbench_material_get_image_and_mat(ob, i + 1, &image, &iuser, &interp, &mat);
 					int color_type = workbench_material_determine_color_type(wpd, image, ob);
-					material = get_or_create_material_data(vedata, ob, mat, image, color_type, interp);
+					material = get_or_create_material_data(vedata, ob, mat, image, iuser, color_type, interp);
 					DRW_shgroup_call_object_add(material->shgrp, geom_array[i], ob);
 				}
 			}
@@ -939,12 +940,12 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 			{
 				/* Hack */
 				wpd->shading.xray_alpha = ob->color[3];
-				material = workbench_forward_get_or_create_material_data(vedata, ob, NULL, NULL, wpd->shading.color_type, 0);
+				material = workbench_forward_get_or_create_material_data(vedata, ob, NULL, NULL, NULL, wpd->shading.color_type, 0);
 				has_transp_mat = true;
 			}
 			else {
 				/* Draw solid color */
-				material = get_or_create_material_data(vedata, ob, NULL, NULL, wpd->shading.color_type, 0);
+				material = get_or_create_material_data(vedata, ob, NULL, NULL, NULL, wpd->shading.color_type, 0);
 			}
 			if (is_sculpt_mode) {
 				DRW_shgroup_call_sculpt_add(material->shgrp, ob, ob->obmat);
@@ -961,7 +962,7 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 			if (is_sculpt_mode) {
 				/* Multiple materials are not supported in sculpt mode yet. */
 				Material *mat = give_current_material(ob, 1);
-				material = get_or_create_material_data(vedata, ob, mat, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
+				material = get_or_create_material_data(vedata, ob, mat, NULL, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
 				DRW_shgroup_call_sculpt_add(material->shgrp, ob, ob->obmat);
 			}
 			else {
@@ -976,11 +977,11 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 						if (mat != NULL && mat->a < 1.0f) {
 							/* Hack */
 							wpd->shading.xray_alpha = mat->a;
-							material = workbench_forward_get_or_create_material_data(vedata, ob, mat, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
+							material = workbench_forward_get_or_create_material_data(vedata, ob, mat, NULL, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
 							has_transp_mat = true;
 						}
 						else {
-							material = get_or_create_material_data(vedata, ob, mat, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
+							material = get_or_create_material_data(vedata, ob, mat, NULL, NULL, V3D_SHADING_MATERIAL_COLOR, 0);
 						}
 						DRW_shgroup_call_object_add(material->shgrp, geoms[i], ob);
 					}

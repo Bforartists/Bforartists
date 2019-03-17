@@ -56,9 +56,9 @@ def button_render_border_camera(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_VIEW3D_OT_render_border_camera)
-    bpy.types.VIEW3D_MT_object_specials.append(button_render_border_camera)
+    bpy.types.VIEW3D_MT_object_context_menu.append(button_render_border_camera)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_VIEW3D_OT_render_border_camera)
-    bpy.types.VIEW3D_MT_object_specials.remove(button_render_border_camera)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(button_render_border_camera)

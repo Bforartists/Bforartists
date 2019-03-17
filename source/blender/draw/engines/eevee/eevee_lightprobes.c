@@ -314,7 +314,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
 		const float *col = G_draw.block.colorBackground;
 
 		/* LookDev */
-		EEVEE_lookdev_cache_init(vedata, &grp, psl->probe_background, wo, pinfo);
+		EEVEE_lookdev_cache_init(vedata, &grp, psl->probe_background, 1.0f, wo, pinfo);
 		/* END */
 		if (!grp && wo) {
 			col = &wo->horr;
@@ -328,7 +328,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
 				switch (status) {
 					case GPU_MAT_SUCCESS:
 						grp = DRW_shgroup_material_create(gpumat, psl->probe_background);
-						DRW_shgroup_uniform_float(grp, "backgroundAlpha", &stl->g_data->background_alpha, 1);
+						DRW_shgroup_uniform_float_copy(grp, "backgroundAlpha", 1.0f);
 						/* TODO (fclem): remove those (need to clean the GLSL files). */
 						DRW_shgroup_uniform_block(grp, "common_block", sldata->common_ubo);
 						DRW_shgroup_uniform_block(grp, "grid_block", sldata->grid_ubo);
@@ -349,7 +349,7 @@ void EEVEE_lightprobes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedat
 		if (grp == NULL) {
 			grp = DRW_shgroup_create(EEVEE_shaders_probe_default_sh_get(), psl->probe_background);
 			DRW_shgroup_uniform_vec3(grp, "color", col, 1);
-			DRW_shgroup_uniform_float(grp, "backgroundAlpha", &stl->g_data->background_alpha, 1);
+			DRW_shgroup_uniform_float_copy(grp, "backgroundAlpha", 1.0f);
 			DRW_shgroup_call_add(grp, geom, NULL);
 		}
 	}
@@ -654,23 +654,19 @@ void EEVEE_lightprobes_planar_data_from_object(Object *ob, EEVEE_PlanarReflectio
 }
 
 static void lightbake_planar_compute_render_matrices(
-        EEVEE_PlanarReflection *eplanar, DRWMatrixState *r_matstate, const float viewmat[4][4])
+        EEVEE_PlanarReflection *eplanar, DRWMatrixState *r_matstate,
+        const float viewmat[4][4], const float winmat[4][4])
 {
 	/* Reflect Camera Matrix. */
 	mul_m4_m4m4(r_matstate->viewmat, viewmat, eplanar->mtx);
-	/* TODO FOV margin */
-	/* Temporal sampling jitter should be already applied to the DRW_MAT_WIN. */
-	DRW_viewport_matrix_get(r_matstate->winmat, DRW_MAT_WIN);
+	/* Invert X to avoid flipping the triangle facing direction. */
+	r_matstate->viewmat[0][0] = -r_matstate->viewmat[0][0];
+	r_matstate->viewmat[1][0] = -r_matstate->viewmat[1][0];
+	r_matstate->viewmat[2][0] = -r_matstate->viewmat[2][0];
+	r_matstate->viewmat[3][0] = -r_matstate->viewmat[3][0];
 	/* Apply Projection Matrix. */
-	mul_m4_m4m4(r_matstate->persmat, r_matstate->winmat, r_matstate->viewmat);
-
-	/* This is the matrix used to reconstruct texture coordinates.
-	 * We use the original view matrix because it does not create
-	 * visual artifacts if receiver is not perfectly aligned with
-	 * the planar reflection probe. */
-	mul_m4_m4m4(eplanar->reflectionmat, r_matstate->winmat, viewmat); /* TODO FOV margin */
-	/* Convert from [-1, 1] to [0, 1] (NDC to Texture coord). */
-	mul_m4_m4m4(eplanar->reflectionmat, texcomat, eplanar->reflectionmat);
+	/* Temporal sampling jitter should be already applied to the DRW_MAT_WIN. */
+	mul_m4_m4m4(r_matstate->persmat, winmat, r_matstate->viewmat);
 }
 
 static void eevee_lightprobes_extract_from_cache(EEVEE_LightProbesInfo *pinfo, LightCache *lcache)
@@ -783,12 +779,13 @@ static void render_reflections(
 {
 	DRWMatrixState matstate;
 
-	float original_viewmat[4][4];
+	float original_viewmat[4][4], original_winmat[4][4];
 	DRW_viewport_matrix_get(original_viewmat, DRW_MAT_VIEW);
+	DRW_viewport_matrix_get(original_winmat, DRW_MAT_WIN);
 
 	for (int i = 0; i < ref_count; ++i) {
 		/* Setup custom matrices */
-		lightbake_planar_compute_render_matrices(planar_data + i, &matstate, original_viewmat);
+		lightbake_planar_compute_render_matrices(planar_data + i, &matstate, original_viewmat, original_winmat);
 		invert_m4_m4(matstate.persinv, matstate.persmat);
 		invert_m4_m4(matstate.viewinv, matstate.viewmat);
 		invert_m4_m4(matstate.wininv, matstate.winmat);
@@ -884,9 +881,7 @@ static void lightbake_render_scene_reflected(int layer, EEVEE_BakeRenderData *us
 
 	/* Be sure that cascaded shadow maps are updated. */
 	EEVEE_draw_shadows(sldata, vedata);
-	/* Since we are rendering with an inverted view matrix, we need
-	 * to invert the facing for backface culling to be the same. */
-	DRW_state_invert_facing();
+
 	/* Compute offset plane equation (fix missing texels near reflection plane). */
 	copy_v4_v4(sldata->clip_data.clip_planes[0], eplanar->plane_equation);
 	sldata->clip_data.clip_planes[0][3] += eplanar->clipsta;
@@ -896,6 +891,8 @@ static void lightbake_render_scene_reflected(int layer, EEVEE_BakeRenderData *us
 
 	GPU_framebuffer_bind(fbl->planarref_fb);
 	GPU_framebuffer_clear_depth(fbl->planarref_fb, 1.0);
+
+	vedata->stl->g_data->background_alpha = 1.0f;
 
 	/* Slight modification: we handle refraction as normal
 	 * shading and don't do SSRefraction. */
@@ -924,7 +921,6 @@ static void lightbake_render_scene_reflected(int layer, EEVEE_BakeRenderData *us
 	}
 	DRW_draw_pass(psl->transparent_pass);
 
-	DRW_state_invert_facing();
 	DRW_state_clip_planes_reset();
 
 	DRW_stats_group_end();

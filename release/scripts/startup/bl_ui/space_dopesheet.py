@@ -247,7 +247,6 @@ class DOPESHEET_HT_editor_buttons(Header):
     def draw(self, context):
         pass
 
-    @staticmethod
     def draw_header(context, layout):
         st = context.space_data
         tool_settings = context.tool_settings
@@ -440,7 +439,7 @@ class DOPESHEET_MT_marker(Menu):
         layout = self.layout
 
         from .space_time import marker_menu_generic
-        marker_menu_generic(layout)
+        marker_menu_generic(layout, context)
 
         st = context.space_data
 
@@ -674,7 +673,7 @@ class DOPESHEET_MT_delete(Menu):
         layout.operator("action.clean", text="Clean Channels").channels = True
 
 
-class DOPESHEET_MT_specials(Menu):
+class DOPESHEET_MT_context_menu(Menu):
     bl_label = "Dope Sheet Context Menu"
 
     def draw(self, context):
@@ -702,7 +701,7 @@ class DOPESHEET_MT_specials(Menu):
         layout.operator_menu_enum("action.snap", "type", text="Snap")
 
 
-class DOPESHEET_MT_channel_specials(Menu):
+class DOPESHEET_MT_channel_context_menu(Menu):
     bl_label = "Dope Sheet Channel Context Menu"
 
     def draw(self, context):
@@ -767,8 +766,8 @@ classes = (
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_gpencil_frame,
     DOPESHEET_MT_delete,
-    DOPESHEET_MT_specials,
-    DOPESHEET_MT_channel_specials,
+    DOPESHEET_MT_context_menu,
+    DOPESHEET_MT_channel_context_menu,
     DOPESHEET_MT_snap_pie,
     DOPESHEET_PT_filters,
 )

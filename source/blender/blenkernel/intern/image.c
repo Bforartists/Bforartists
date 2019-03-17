@@ -293,7 +293,7 @@ void BKE_image_free(Image *ima)
 /* only image block itself */
 static void image_init(Image *ima, short source, short type)
 {
-	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(ima, id));
+	BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(ima, id));
 
 	ima->ok = IMA_OK;
 
@@ -1259,6 +1259,8 @@ char BKE_imtype_from_arg(const char *imtype_arg)
 	else if (STREQ(imtype_arg, "TIFF")) return R_IMF_IMTYPE_TIFF;
 #endif
 #ifdef WITH_OPENEXR
+	else if (STREQ(imtype_arg, "OPEN_EXR")) return R_IMF_IMTYPE_OPENEXR;
+	else if (STREQ(imtype_arg, "OPEN_EXR_MULTILAYER")) return R_IMF_IMTYPE_MULTILAYER;
 	else if (STREQ(imtype_arg, "EXR")) return R_IMF_IMTYPE_OPENEXR;
 	else if (STREQ(imtype_arg, "MULTILAYER")) return R_IMF_IMTYPE_MULTILAYER;
 #endif
@@ -2684,8 +2686,8 @@ static void image_walk_ntree_all_users(bNodeTree *ntree, void *customdata,
 	}
 }
 
-void BKE_image_walk_id_all_users(ID *id, void *customdata,
-                                 void callback(Image *ima, ImageUser *iuser, void *customdata))
+static void image_walk_id_all_users(ID *id, bool skip_nested_nodes, void *customdata,
+                                    void callback(Image *ima, ImageUser *iuser, void *customdata))
 {
 	switch (GS(id->name)) {
 		case ID_OB:
@@ -2699,8 +2701,24 @@ void BKE_image_walk_id_all_users(ID *id, void *customdata,
 		case ID_MA:
 		{
 			Material *ma = (Material *)id;
-			if (ma->nodetree && ma->use_nodes) {
+			if (ma->nodetree && ma->use_nodes && !skip_nested_nodes) {
 				image_walk_ntree_all_users(ma->nodetree, customdata, callback);
+			}
+			break;
+		}
+		case ID_LA:
+		{
+			Light *light = (Light *)id;
+			if (light->nodetree && light->use_nodes && !skip_nested_nodes) {
+				image_walk_ntree_all_users(light->nodetree, customdata, callback);
+			}
+			break;
+		}
+		case ID_WO:
+		{
+			World *world = (World *)id;
+			if (world->nodetree && world->use_nodes && !skip_nested_nodes) {
+				image_walk_ntree_all_users(world->nodetree, customdata, callback);
 			}
 			break;
 		}
@@ -2710,7 +2728,7 @@ void BKE_image_walk_id_all_users(ID *id, void *customdata,
 			if (tex->type == TEX_IMAGE && tex->ima) {
 				callback(tex->ima, &tex->iuser, customdata);
 			}
-			if (tex->nodetree && tex->use_nodes) {
+			if (tex->nodetree && tex->use_nodes && !skip_nested_nodes) {
 				image_walk_ntree_all_users(tex->nodetree, customdata, callback);
 			}
 			break;
@@ -2747,7 +2765,7 @@ void BKE_image_walk_id_all_users(ID *id, void *customdata,
 		case ID_SCE:
 		{
 			Scene *scene = (Scene *)id;
-			if (scene->nodetree && scene->use_nodes) {
+			if (scene->nodetree && scene->use_nodes && !skip_nested_nodes) {
 				image_walk_ntree_all_users(scene->nodetree, customdata, callback);
 			}
 		}
@@ -2760,31 +2778,39 @@ void BKE_image_walk_all_users(const Main *mainp, void *customdata,
                               void callback(Image *ima, ImageUser *iuser, void *customdata))
 {
 	for (Scene *scene = mainp->scenes.first; scene; scene = scene->id.next) {
-		BKE_image_walk_id_all_users(&scene->id, customdata, callback);
+		image_walk_id_all_users(&scene->id, false, customdata, callback);
 	}
 
 	for (Object *ob = mainp->objects.first; ob; ob = ob->id.next) {
-		BKE_image_walk_id_all_users(&ob->id, customdata, callback);
+		image_walk_id_all_users(&ob->id, false, customdata, callback);
 	}
 
 	for (bNodeTree *ntree = mainp->nodetrees.first; ntree; ntree = ntree->id.next) {
-		BKE_image_walk_id_all_users(&ntree->id, customdata, callback);
+		image_walk_id_all_users(&ntree->id, false, customdata, callback);
 	}
 
 	for (Material *ma = mainp->materials.first; ma; ma = ma->id.next) {
-		BKE_image_walk_id_all_users(&ma->id, customdata, callback);
+		image_walk_id_all_users(&ma->id, false, customdata, callback);
+	}
+
+	for (Light *light = mainp->materials.first; light; light = light->id.next) {
+		image_walk_id_all_users(&light->id, false, customdata, callback);
+	}
+
+	for (World *world = mainp->materials.first; world; world = world->id.next) {
+		image_walk_id_all_users(&world->id, false, customdata, callback);
 	}
 
 	for (Tex *tex = mainp->textures.first; tex; tex = tex->id.next) {
-		BKE_image_walk_id_all_users(&tex->id, customdata, callback);
+		image_walk_id_all_users(&tex->id, false, customdata, callback);
 	}
 
 	for (Camera *cam = mainp->cameras.first; cam; cam = cam->id.next) {
-		BKE_image_walk_id_all_users(&cam->id, customdata, callback);
+		image_walk_id_all_users(&cam->id, false, customdata, callback);
 	}
 
 	for (wmWindowManager *wm = mainp->wm.first; wm; wm = wm->id.next) { /* only 1 wm */
-		BKE_image_walk_id_all_users(&wm->id, customdata, callback);
+		image_walk_id_all_users(&wm->id, false, customdata, callback);
 	}
 }
 
@@ -3301,10 +3327,6 @@ static ImBuf *load_sequence_single(Image *ima, ImageUser *iuser, int frame, cons
 	int flag;
 	ImageUser iuser_t = {0};
 
-	/* XXX temp stuff? */
-	if (ima->lastframe != frame)
-		ima->gpuflag |= IMA_GPU_REFRESH;
-
 	ima->lastframe = frame;
 
 	if (iuser) {
@@ -3317,7 +3339,7 @@ static ImBuf *load_sequence_single(Image *ima, ImageUser *iuser, int frame, cons
 	iuser_t.view = view_id;
 	BKE_image_user_file_path(&iuser_t, ima, name);
 
-	flag = IB_rect | IB_multilayer;
+	flag = IB_rect | IB_multilayer | IB_metadata;
 	flag |= imbuf_alpha_flags_for_image(ima);
 
 	/* read ibuf */
@@ -4034,20 +4056,12 @@ static ImBuf *image_get_cached_ibuf(Image *ima, ImageUser *iuser, int *r_frame, 
 	if (ima->source == IMA_SRC_MOVIE) {
 		frame = iuser ? iuser->framenr : ima->lastframe;
 		ibuf = image_get_cached_ibuf_for_index_frame(ima, index, frame);
-		/* XXX temp stuff? */
-		if (ima->lastframe != frame)
-			ima->gpuflag |= IMA_GPU_REFRESH;
 		ima->lastframe = frame;
 	}
 	else if (ima->source == IMA_SRC_SEQUENCE) {
 		if (ima->type == IMA_TYPE_IMAGE) {
 			frame = iuser ? iuser->framenr : ima->lastframe;
 			ibuf = image_get_cached_ibuf_for_index_frame(ima, index, frame);
-
-			/* XXX temp stuff? */
-			if (ima->lastframe != frame) {
-				ima->gpuflag |= IMA_GPU_REFRESH;
-			}
 			ima->lastframe = frame;
 
 			/* counter the fact that image is set as invalid when loading a frame
@@ -4447,15 +4461,21 @@ void BKE_image_user_frame_calc(ImageUser *iuser, int cfra)
 }
 
 /* goes over all ImageUsers, and sets frame numbers if auto-refresh is set */
-static void image_editors_update_frame(struct Image *UNUSED(ima), struct ImageUser *iuser, void *customdata)
+static void image_editors_update_frame(struct Image *ima, struct ImageUser *iuser, void *customdata)
 {
 	int cfra = *(int *)customdata;
 
 	if ((iuser->flag & IMA_ANIM_ALWAYS) ||
 	    (iuser->flag & IMA_NEED_FRAME_RECALC))
 	{
+		int framenr = iuser->framenr;
+
 		BKE_image_user_frame_calc(iuser, cfra);
 		iuser->flag &= ~IMA_NEED_FRAME_RECALC;
+
+		if (ima && iuser->framenr != framenr) {
+			ima->gpuflag |= IMA_GPU_REFRESH;
+		}
 	}
 }
 
@@ -4464,7 +4484,7 @@ void BKE_image_editors_update_frame(const Main *bmain, int cfra)
 	/* This only updates images used by the user interface. For others the
 	 * dependency graph will call BKE_image_user_id_eval_animation. */
 	wmWindowManager *wm = bmain->wm.first;
-	BKE_image_walk_id_all_users(&wm->id, &cfra, image_editors_update_frame);
+	image_walk_id_all_users(&wm->id, false, &cfra, image_editors_update_frame);
 }
 
 static void image_user_id_has_animation(struct Image *ima, struct ImageUser *UNUSED(iuser), void *customdata)
@@ -4476,8 +4496,11 @@ static void image_user_id_has_animation(struct Image *ima, struct ImageUser *UNU
 
 bool BKE_image_user_id_has_animation(ID *id)
 {
+	/* For the dependency graph, this does not consider nested node
+	 * trees as these are handled as their own datablock. */
 	bool has_animation = false;
-	BKE_image_walk_id_all_users(id, &has_animation, image_user_id_has_animation);
+	bool skip_nested_nodes = true;
+	image_walk_id_all_users(id, skip_nested_nodes, &has_animation, image_user_id_has_animation);
 	return has_animation;
 }
 
@@ -4510,8 +4533,11 @@ void BKE_image_user_id_eval_animation(Depsgraph *depsgraph, ID *id)
 {
 	/* This is called from the dependency graph to update the image
 	 * users in datablocks. It computes the current frame number
-	 * and tags the image to be refreshed. */
-	BKE_image_walk_id_all_users(id, depsgraph, image_user_id_eval_animation);
+	 * and tags the image to be refreshed.
+	 * This does not consider nested node trees as these are handled
+	 * as their own datablock. */
+	bool skip_nested_nodes = true;
+	image_walk_id_all_users(id, skip_nested_nodes, depsgraph, image_user_id_eval_animation);
 }
 
 void BKE_image_user_file_path(ImageUser *iuser, Image *ima, char *filepath)

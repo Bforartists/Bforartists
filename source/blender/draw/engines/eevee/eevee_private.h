@@ -563,16 +563,18 @@ typedef struct EEVEE_EffectsInfo {
 	struct GPUTexture *gtao_horizons; /* Textures from pool */
 	struct GPUTexture *gtao_horizons_debug;
 	/* Motion Blur */
+	float current_world_to_ndc[4][4];
 	float current_ndc_to_world[4][4];
 	float past_world_to_ndc[4][4];
 	int motion_blur_samples;
+	bool motion_blur_mat_cached;
 	/* Velocity Pass */
 	float velocity_curr_persinv[4][4];
 	float velocity_past_persmat[4][4];
 	struct GPUTexture *velocity_tx; /* Texture from pool */
 	/* Depth Of Field */
 	float dof_near_far[2];
-	float dof_params[3];
+	float dof_params[2];
 	float dof_bokeh[4];
 	float dof_bokeh_sides[4];
 	int dof_target_size[2];
@@ -1001,7 +1003,9 @@ void EEVEE_render_draw(EEVEE_Data *vedata, struct RenderEngine *engine, struct R
 void EEVEE_render_update_passes(struct RenderEngine *engine, struct Scene *scene, struct ViewLayer *view_layer);
 
 /** eevee_lookdev.c */
-void EEVEE_lookdev_cache_init(EEVEE_Data *vedata, DRWShadingGroup **grp, DRWPass *pass, struct World *world, EEVEE_LightProbesInfo *pinfo);
+void EEVEE_lookdev_cache_init(
+        EEVEE_Data *vedata, DRWShadingGroup **grp, DRWPass *pass, float background_alpha,
+        struct World *world, EEVEE_LightProbesInfo *pinfo);
 void EEVEE_lookdev_draw_background(EEVEE_Data *vedata);
 
 /** eevee_engine.c */

@@ -159,7 +159,17 @@ bool ED_object_get_active_image(
 
 	if (node && is_image_texture_node(node)) {
 		if (r_ima) *r_ima = (Image *)node->id;
-		if (r_iuser) *r_iuser = NULL;
+		if (r_iuser) {
+			if (node->type == SH_NODE_TEX_IMAGE) {
+				*r_iuser = &((NodeTexImage *)node->storage)->iuser;
+			}
+			else if (node->type == SH_NODE_TEX_ENVIRONMENT) {
+				*r_iuser = &((NodeTexEnvironment *)node->storage)->iuser;
+			}
+			else {
+				*r_iuser = NULL;
+			}
+		}
 		if (r_node) *r_node = node;
 		if (r_ntree) *r_ntree = ntree;
 		return true;
@@ -183,14 +193,6 @@ void ED_object_assign_active_image(Main *bmain, Object *ob, int mat_nr, Image *i
 		ED_node_tag_update_nodetree(bmain, ma->nodetree, node);
 	}
 }
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Assign Image
- * \{ */
-
-//#define USE_SWITCH_ASPECT
 
 /** \} */
 
@@ -2132,7 +2134,6 @@ static void UV_OT_weld(wmOperatorType *ot)
 /** \name (De)Select All Operator
  * \{ */
 
-
 static bool uv_select_is_any_selected(Scene *scene, Image *ima, Object *obedit)
 {
 	ToolSettings *ts = scene->toolsettings;
@@ -2701,7 +2702,8 @@ static int uv_select_linked_internal(bContext *C, wmOperator *op, const wmEvent 
 	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Image *ima = CTX_data_edit_image(C);
 	float limit[2];
-	int extend, deselect;
+	bool extend = true;
+	bool deselect = false;
 	bool select_faces = (ts->uv_flag & UV_SYNC_SELECTION) && (ts->selectmode & SCE_SELECT_FACE);
 
 	UvNearestHit hit = UV_NEAREST_HIT_INIT;
@@ -2711,8 +2713,10 @@ static int uv_select_linked_internal(bContext *C, wmOperator *op, const wmEvent 
 		return OPERATOR_CANCELLED;
 	}
 
-	extend = RNA_boolean_get(op->ptr, "extend");
-	deselect = RNA_boolean_get(op->ptr, "deselect");
+	if (pick) {
+		extend = RNA_boolean_get(op->ptr, "extend");
+		deselect = RNA_boolean_get(op->ptr, "deselect");
+	}
 	uvedit_pixel_to_float(sima, limit, 0.05f);
 
 	uint objects_len = 0;
@@ -2781,12 +2785,13 @@ static void UV_OT_select_linked(wmOperatorType *ot)
 	/* api callbacks */
 	ot->exec = uv_select_linked_exec;
 	ot->poll = ED_operator_uvedit;    /* requires space image */
-
-	/* properties */
-	RNA_def_boolean(ot->srna, "extend", 0,
-	                "Extend", "Extend selection rather than clearing the existing selection");
-	RNA_def_boolean(ot->srna, "deselect", 0, "Deselect", "Deselect linked UV vertices rather than selecting them");
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Select Linked (Cursor Pick) Operator
+ * \{ */
 
 static int uv_select_linked_pick_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -2818,6 +2823,12 @@ static void UV_OT_select_linked_pick(wmOperatorType *ot)
 	RNA_def_float_vector(ot->srna, "location", 2, NULL, -FLT_MAX, FLT_MAX,
 	                     "Location", "Mouse location in normalized coordinates, 0.0 to 1.0 is within the image bounds", -100.0f, 100.0f);
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Select Split Operator
+ * \{ */
 
 /* note: this is based on similar use case to MESH_OT_split(), which has a similar effect
  * but in this case they are not joined to begin with (only having the behavior of being joined)

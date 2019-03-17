@@ -121,7 +121,7 @@ def add_parameters(params):
 
     """
     params.use_complex_leg = bpy.props.BoolProperty(name="Complex Leg Rig", default=True, description="Generate the full, complex leg rig with twist bones and rubber-hose controls")
-    params.bend_hint = bpy.props.BoolProperty(name="Bend Hint", default=True, description="Give IK chain a hint about which way to bend (useful for perfectly straight chains)")
+    params.bend_hint = bpy.props.BoolProperty(name="Bend Hint", default=True, description="Give IK chain a hint about which way to bend. Useful for perfectly straight chains")
 
     items = [('X', 'X', ''), ('Y', 'Y', ''), ('Z', 'Z', ''), ('-X', '-X', ''), ('-Y', '-Y', ''), ('-Z', '-Z', '')]
     params.primary_rotation_axis = bpy.props.EnumProperty(items=items, name="Primary Rotation Axis", default='X')

@@ -4,6 +4,7 @@ from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import put_bone, create_sphere_widget
 from ...utils import create_circle_widget, align_bone_x_axis
 from ...utils import MetarigError
+from ...utils import ControlLayersOption
 
 
 class Rig:
@@ -14,11 +15,6 @@ class Rig:
         self.params = params
 
         self.copy_rotation_axes = params.copy_rotation_axes
-
-        if params.tweak_extra_layers:
-            self.tweak_layers = list(params.tweak_layers)
-        else:
-            self.tweak_layers = None
 
         if len(self.org_bones) <= 1:
             raise MetarigError(
@@ -118,9 +114,7 @@ class Rig:
                 tweak_pb.lock_rotation = (True, True, True)
                 tweak_pb.lock_scale = (True, True, True)
 
-            # Set up tweak bone layers
-            if self.tweak_layers:
-                tweak_pb.bone.layers = self.tweak_layers
+        ControlLayersOption.TWEAK.assign(self.params, self.obj.pose.bones, tweak_chain)
 
         return tweak_chain
 
@@ -250,17 +244,7 @@ def add_parameters(params):
         )
 
     # Setting up extra tweak layers
-    params.tweak_extra_layers = bpy.props.BoolProperty(
-        name="tweak_extra_layers",
-        default=True,
-        description=""
-        )
-
-    params.tweak_layers = bpy.props.BoolVectorProperty(
-        size=32,
-        description="Layers for the tweak controls to be on",
-        default=tuple([i == 1 for i in range(0, 32)])
-        )
+    ControlLayersOption.TWEAK.add_parameters(params)
 
     items = [('automatic', 'Automatic', ''), ('manual', 'Manual', '')]
     params.roll_alignment = bpy.props.EnumProperty(items=items, name="Bone roll alignment", default='automatic')
@@ -277,45 +261,7 @@ def parameters_ui(layout, params):
     for i, axis in enumerate(['x', 'y', 'z']):
         row.prop(params, "copy_rotation_axes", index=i, toggle=True, text=axis)
 
-    r = layout.row()
-    r.prop(params, "tweak_extra_layers")
-    r.active = params.tweak_extra_layers
-
-    col = r.column(align=True)
-    row = col.row(align=True)
-
-    bone_layers = bpy.context.active_pose_bone.bone.layers[:]
-
-    for i in range(8):    # Layers 0-7
-        icon = "NONE"
-        if bone_layers[i]:
-            icon = "LAYER_ACTIVE"
-        row.prop(params, "tweak_layers", index=i, toggle=True, text="", icon=icon)
-
-    row = col.row(align=True)
-
-    for i in range(16, 24):     # Layers 16-23
-        icon = "NONE"
-        if bone_layers[i]:
-            icon = "LAYER_ACTIVE"
-        row.prop(params, "tweak_layers", index=i, toggle=True, text="", icon=icon)
-
-    col = r.column(align=True)
-    row = col.row(align=True)
-
-    for i in range(8, 16):  # Layers 8-15
-        icon = "NONE"
-        if bone_layers[i]:
-            icon = "LAYER_ACTIVE"
-        row.prop(params, "tweak_layers", index=i, toggle=True, text="", icon=icon)
-
-    row = col.row(align=True)
-
-    for i in range(24, 32):     # Layers 24-31
-        icon = "NONE"
-        if bone_layers[i]:
-            icon = "LAYER_ACTIVE"
-        row.prop(params, "tweak_layers", index=i, toggle=True, text="", icon=icon)
+    ControlLayersOption.TWEAK.parameters_ui(layout, params)
 
 
 def create_sample(obj):
