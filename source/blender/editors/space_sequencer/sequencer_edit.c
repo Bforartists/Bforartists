@@ -1850,7 +1850,7 @@ void SEQUENCER_OT_unlock(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unlock Strips";
 	ot->idname = "SEQUENCER_OT_unlock";
-	ot->description = "UnLock Strips\nUnlock the active strip so that it can't be transformed";
+	ot->description = "UnLock Strips\nUnlock strips so they can be transformed";
 
 	/* api callbacks */
 	ot->exec = sequencer_unlock_exec;

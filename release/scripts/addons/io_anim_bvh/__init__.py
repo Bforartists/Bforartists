@@ -230,11 +230,11 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon='LOAD_BVH')
+    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon='SAVE_BVH')
+    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)")
 
 
 classes = (

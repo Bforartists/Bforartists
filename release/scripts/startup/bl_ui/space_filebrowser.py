@@ -165,7 +165,7 @@ class FILEBROWSER_PT_system_bookmarks(Panel):
                               space, "system_bookmarks_active", item_dyntip_propname="path", rows=1, maxrows=10)
 
 
-class FILEBROWSER_MT_bookmarks_specials(Menu):
+class FILEBROWSER_MT_bookmarks_context_menu(Menu):
     bl_label = "Bookmarks Specials"
 
     def draw(self, context):
@@ -197,7 +197,7 @@ class FILEBROWSER_PT_bookmarks(Panel):
             col = row.column(align=True)
             col.operator("file.bookmark_add", icon='ADD', text="")
             col.operator("file.bookmark_delete", icon='REMOVE', text="")
-            col.menu("FILEBROWSER_MT_bookmarks_specials", icon='DOWNARROW_HLT', text="")
+            col.menu("FILEBROWSER_MT_bookmarks_context_menu", icon='DOWNARROW_HLT', text="")
 
             if num_rows > 1:
                 col.separator()
@@ -280,7 +280,7 @@ classes = (
     FILEBROWSER_UL_dir,
     FILEBROWSER_PT_system_folders,
     FILEBROWSER_PT_system_bookmarks,
-    FILEBROWSER_MT_bookmarks_specials,
+    FILEBROWSER_MT_bookmarks_context_menu,
     FILEBROWSER_PT_bookmarks,
     FILEBROWSER_PT_recent_folders,
     FILEBROWSER_PT_advanced_filter,

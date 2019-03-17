@@ -1701,6 +1701,8 @@ void node_attribute_volume_density(sampler3D tex, out vec4 outcol, out vec3 outv
 	outf = dot(vec3(1.0 / 3.0), outvec);
 }
 
+uniform vec3 volumeColor = vec3(1.0);
+
 void node_attribute_volume_color(sampler3D tex, out vec4 outcol, out vec3 outvec, out float outf)
 {
 #if defined(MESH_SHADER) && defined(VOLUMETRICS)
@@ -1714,7 +1716,7 @@ void node_attribute_volume_color(sampler3D tex, out vec4 outcol, out vec3 outvec
 	if (value.a > 1e-8)
 		value.rgb /= value.a;
 
-	outvec = value.rgb;
+	outvec = value.rgb * volumeColor;
 	outcol = vec4(outvec, 1.0);
 	outf = dot(vec3(1.0 / 3.0), outvec);
 }
@@ -1780,7 +1782,7 @@ void node_tangentmap(vec4 attr_tangent, mat4 toworld, out vec3 tangent)
 void node_tangent(vec3 N, vec3 orco, mat4 objmat, mat4 toworld, out vec3 T)
 {
 #ifndef VOLUMETRICS
-	N = normalize(worldNormal);
+	N = normalize(gl_FrontFacing ? worldNormal : -worldNormal);
 #else
 	N = (toworld * vec4(N, 0.0)).xyz;
 #endif
@@ -1809,8 +1811,7 @@ void node_geometry(
 
 	position = worldPosition;
 #  ifndef VOLUMETRICS
-	normal = normalize(worldNormal);
-
+	normal = normalize(gl_FrontFacing ? worldNormal : -worldNormal);
 	vec3 B = dFdx(worldPosition);
 	vec3 T = dFdy(worldPosition);
 	true_normal = normalize(cross(B, T));
@@ -2966,6 +2967,11 @@ void node_object_info(mat4 obmat, vec3 info, out vec3 location, out float object
 
 void node_normal_map(vec4 tangent, vec3 normal, vec3 texnormal, out vec3 outnormal)
 {
+	if (all(equal(tangent, vec4(0.0, 0.0, 0.0, 1.0)))) {
+		outnormal = normal;
+		return;
+	}
+	tangent *= (gl_FrontFacing ? 1.0 : -1.0);
 	vec3 B = tangent.w * cross(normal, tangent.xyz);
 
 	outnormal = texnormal.x * tangent.xyz + texnormal.y * B + texnormal.z * normal;
@@ -3071,7 +3077,7 @@ uniform float backgroundAlpha;
 void node_output_world(Closure surface, Closure volume, out Closure result)
 {
 #ifndef VOLUMETRICS
-	result.radiance = surface.radiance;
+	result.radiance = surface.radiance * backgroundAlpha;
 	result.opacity = backgroundAlpha;
 #else
 	result = volume;

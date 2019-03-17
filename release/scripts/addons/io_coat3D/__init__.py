@@ -69,17 +69,20 @@ def update_exe_path():
 
 def folder_size(path):
 
-    tosi = True
-    while tosi:
-        list_of_files = []
-        for file in os.listdir(path):
-            list_of_files.append(path + os.sep + file)
+    folder_size_max = int(bpy.context.scene.coat3D.folder_size)
 
-        if len(list_of_files) >= 400:
-            oldest_file = min(list_of_files, key=os.path.getctime)
-            os.remove(os.path.abspath(oldest_file))
-        else:
-            tosi = False
+    if(bpy.context.scene.coat3D.defaultfolder == ''):
+        tosi = True
+        while tosi:
+            list_of_files = []
+            for file in os.listdir(path):
+                list_of_files.append(path + os.sep + file)
+
+            if len(list_of_files) >= folder_size_max:
+                oldest_file = min(list_of_files, key=os.path.getctime)
+                os.remove(os.path.abspath(oldest_file))
+            else:
+                tosi = False
 
 def set_exchange_folder():
     platform = os.sys.platform
@@ -1362,6 +1365,9 @@ class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
         col = flow.column()
         col.prop(coat3D, "coat3D_exe", text="3D-Coat.exe")
 
+        col = flow.column()
+        col.prop(coat3D, "folder_size", text="Max count in Applink folder")
+
 class SCENE_PT_Settings_DeleteNodes(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "Delete 3DC nodes from selected..."
     bl_parent_id = "SCENE_PT_Settings"
@@ -1385,8 +1391,10 @@ class SCENE_PT_Settings_DeleteNodes(ObjectButtonsPanel, bpy.types.Panel):
         col.operator("delete_collection_nodes.pilgway_3d_coat", text="Collection")
 
         col.operator("delete_scene_nodes.pilgway_3d_coat", text="Scene")
+
         col = flow.column()
         col.prop(coat3D, "delete_images", text="Delete nodes images")
+
 
 
 
@@ -1652,6 +1660,18 @@ class SceneCoat3D(PropertyGroup):
                ("res_8192", "8192 x 8192", ""),
                ),
         default="res_1024"
+    )
+    folder_size: EnumProperty(
+        name="Applink folder size",
+        description="Applink folder size.",
+        items=(("10", "10", ""),
+               ("100", "100", ""),
+               ("500", "500", ""),
+               ("1000", "1000", ""),
+               ("5000", "5000", ""),
+               ("10000", "10000", ""),
+               ),
+        default="500"
     )
     bake_textures: BoolProperty(
         name="Bake all textures",

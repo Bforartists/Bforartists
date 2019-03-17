@@ -419,7 +419,7 @@ def modifiers_draw(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.MESH_MT_shape_key_specials.append(vgroups_draw)
+    bpy.types.MESH_MT_shape_key_context_menu.append(vgroups_draw)
     bpy.types.DATA_PT_modifiers.append(modifiers_draw)
 
 

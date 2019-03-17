@@ -101,7 +101,7 @@ class BlenderBoneAnim():
             quat_keyframes = [quaternion_gltf_to_blender(vals) for vals in values]
 
 
-        if not node.parent:
+        if node.parent is None:
             final_rots = [
                 bind_rotation.inverted() @ quat_keyframe
                 for quat_keyframe in quat_keyframes
@@ -157,7 +157,7 @@ class BlenderBoneAnim():
             )
         else:
             scale_mats = (scale_to_matrix(loc_gltf_to_blender(vals)) for vals in values)
-        if not node.parent:
+        if node.parent is None:
             final_scales = [
                 (bind_scale.inverted() @ scale_mat).to_scale()
                 for scale_mat in scale_mats

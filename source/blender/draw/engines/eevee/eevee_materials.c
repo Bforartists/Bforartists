@@ -38,6 +38,8 @@
 
 #include "GPU_material.h"
 
+#include "DEG_depsgraph_query.h"
+
 #include "eevee_engine.h"
 #include "eevee_lut.h"
 #include "eevee_private.h"
@@ -441,7 +443,7 @@ static void eevee_init_noise_texture(void)
 
 static void eevee_init_util_texture(void)
 {
-	const int layers = 3 + 16;
+	const int layers = 4 + 16;
 	float (*texels)[4] = MEM_mallocN(sizeof(float[4]) * 64 * 64 * layers, "utils texels");
 	float (*texels_layer)[4] = texels;
 
@@ -450,12 +452,12 @@ static void eevee_init_util_texture(void)
 	texels_layer += 64 * 64;
 
 	/* Copy bsdf_split_sum_ggx into 2nd layer red and green channels.
-	   Copy ltc_mag_ggx into 2nd layer blue channel. */
+	   Copy ltc_mag_ggx into 2nd layer blue and alpha channel. */
 	for (int i = 0; i < 64 * 64; i++) {
 		texels_layer[i][0] = bsdf_split_sum_ggx[i * 2 + 0];
 		texels_layer[i][1] = bsdf_split_sum_ggx[i * 2 + 1];
-		texels_layer[i][2] = ltc_mag_ggx[i];
-		texels_layer[i][3] = ltc_disk_integral[i];
+		texels_layer[i][2] = ltc_mag_ggx[i * 2 + 0];
+		texels_layer[i][3] = ltc_mag_ggx[i * 2 + 1];
 	}
 	texels_layer += 64 * 64;
 
@@ -468,13 +470,22 @@ static void eevee_init_util_texture(void)
 	}
 	texels_layer += 64 * 64;
 
-	/* Copy Refraction GGX LUT in layer 4 - 20 */
+	/* Copy ltc_disk_integral in 4th layer  */
+	for (int i = 0; i < 64 * 64; i++) {
+		texels_layer[i][0] = ltc_disk_integral[i];
+		texels_layer[i][1] = 0.0; /* UNUSED */
+		texels_layer[i][2] = 0.0; /* UNUSED */
+		texels_layer[i][3] = 0.0; /* UNUSED */
+	}
+	texels_layer += 64 * 64;
+
+	/* Copy Refraction GGX LUT in layer 5 - 21 */
 	for (int j = 0; j < 16; ++j) {
 		for (int i = 0; i < 64 * 64; i++) {
 			texels_layer[i][0] = btdf_split_sum_ggx[j * 2][i];
-			texels_layer[i][1] = btdf_split_sum_ggx[j * 2][i];
-			texels_layer[i][2] = btdf_split_sum_ggx[j * 2][i];
-			texels_layer[i][3] = btdf_split_sum_ggx[j * 2][i];
+			texels_layer[i][1] = 0.0; /* UNUSED */
+			texels_layer[i][2] = 0.0; /* UNUSED */
+			texels_layer[i][3] = 0.0; /* UNUSED */
 		}
 		texels_layer += 64 * 64;
 	}
@@ -958,7 +969,7 @@ void EEVEE_materials_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		const float *col = G_draw.block.colorBackground;
 
 		/* LookDev */
-		EEVEE_lookdev_cache_init(vedata, &grp, psl->background_pass, wo, NULL);
+		EEVEE_lookdev_cache_init(vedata, &grp, psl->background_pass, stl->g_data->background_alpha, wo, NULL);
 		/* END */
 
 		if (!grp && wo) {
@@ -1640,9 +1651,6 @@ void EEVEE_hair_cache_populate(EEVEE_Data *vedata, EEVEE_ViewLayerData *sldata, 
 					continue;
 				}
 				ParticleSystem *psys = ((ParticleSystemModifierData *)md)->psys;
-				if (!psys_check_enabled(ob, psys, false)) {
-					continue;
-				}
 				if (!DRW_object_is_visible_psys_in_active_context(ob, psys)) {
 					continue;
 				}

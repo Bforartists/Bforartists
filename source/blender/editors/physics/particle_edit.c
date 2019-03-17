@@ -451,7 +451,7 @@ static void PE_set_view3d_data(bContext *C, PEData *data)
 			/* needed or else the draw matrix can be incorrect */
 			view3d_operator_needs_opengl(C);
 
-			ED_view3d_backbuf_validate(&data->vc);
+			ED_view3d_backbuf_depth_validate(&data->vc);
 			/* we may need to force an update here by setting the rv3d as dirty
 			 * for now it seems ok, but take care!:
 			 * rv3d->depths->dirty = 1; */
@@ -4320,7 +4320,7 @@ static void brush_edit_apply(bContext *C, wmOperator *op, PointerRNA *itemptr)
 		if (edit->psys) {
 			WM_event_add_notifier(C, NC_OBJECT | ND_PARTICLE | NA_EDITED, ob);
 			BKE_particle_batch_cache_dirty_tag(edit->psys, BKE_PARTICLE_BATCH_DIRTY_ALL);
-			DEG_id_tag_update(&ob->id, ID_RECALC_SELECT);
+			DEG_id_tag_update(&ob->id, ID_RECALC_PSYS_REDO);
 		}
 		else {
 			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
@@ -4477,8 +4477,8 @@ static bool shape_cut_test_point(PEData *data, ParticleCacheKey *key)
 	userdata.num_hits = 0;
 
 	BLI_bvhtree_ray_cast_all(
-		shape_bvh->tree, key->co, dir, 0.0f, BVH_RAYCAST_DIST_MAX,
-		point_inside_bvh_cb, &userdata);
+	        shape_bvh->tree, key->co, dir, 0.0f, BVH_RAYCAST_DIST_MAX,
+	        point_inside_bvh_cb, &userdata);
 
 	/* for any point inside a watertight mesh the number of hits is uneven */
 	return (userdata.num_hits % 2) == 1;
@@ -4589,7 +4589,7 @@ static int shape_cut_exec(bContext *C, wmOperator *UNUSED(op))
 		if (edit->psys) {
 			WM_event_add_notifier(C, NC_OBJECT | ND_PARTICLE | NA_EDITED, ob);
 			BKE_particle_batch_cache_dirty_tag(edit->psys, BKE_PARTICLE_BATCH_DIRTY_ALL);
-			DEG_id_tag_update(&ob->id, ID_RECALC_SELECT);
+			DEG_id_tag_update(&ob->id, ID_RECALC_PSYS_REDO);
 		}
 		else {
 			DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
