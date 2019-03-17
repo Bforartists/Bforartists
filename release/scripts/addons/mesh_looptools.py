@@ -5117,7 +5117,7 @@ classes = (
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_func)
     bpy.types.WindowManager.looptools = PointerProperty(type=LoopToolsProps)
     update_panel(None, bpy.context)
 
@@ -5126,7 +5126,7 @@ def register():
 def unregister():
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_func)
     try:
         del bpy.types.WindowManager.looptools
     except Exception as e:

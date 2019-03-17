@@ -24,26 +24,37 @@
 #
 #  Start of project              : 2011-12-01 by Clemens Barth
 #  First publication in Blender  : 2011-12-18
-#  Last modified                 : 2014-08-19
+#  Last modified                 : 2019-03-15
 #
 #  Acknowledgements
 #  ================
 #
-#  Blender: ideasman, meta_androcto, truman, kilon, CoDEmanX, dairin0d, PKHG,
-#           Valter, ...
-#  Other: Frank Palmino
+#  Blender developers
+#  ------------------
+#  Campbell Barton      (ideasman) 
+#  Brendon Murphy       (meta_androcto) 
+#  Truman Melton (?)    (truman)
+#  Kilon Alios          (kilon)
+#  ??                   (CoDEmanX)
+#  Dima Glib            (dairin0d)
+#  Peter K.H. Gragert   (PKHG)
+#  Valter Battioli (?)  (valter)
+#
+#  Other
+#  -----
+#  Frank Palmino
+#
 #
 
 bl_info = {
     "name": "Atomic Blender - XYZ",
-    "description": "Import/export of atoms described in .xyz files",
+    "description": "Importing atoms described in XYZ files as balls into Blender",
     "author": "Clemens Barth",
-    "version": (1, 0),
-    "blender": (2, 71, 0),
+    "version": (1, 1),
+    "blender": (2, 80, 0),
     "location": "File -> Import -> XYZ (.xyz)",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Import-Export/XYZ",
+    "wiki_url": "... will be updated asap ...",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Import-Export"}
 
@@ -65,7 +76,7 @@ from . import export_xyz
 
 
 # This is the class for the file dialog.
-class ImportXYZ(Operator, ImportHelper):
+class IMPORT_OT_xyz(Operator, ImportHelper):
     bl_idname = "import_mesh.xyz"
     bl_label  = "Import XYZ (*.xyz)"
     bl_options = {'PRESET', 'UNDO'}
@@ -198,7 +209,7 @@ class ImportXYZ(Operator, ImportHelper):
 
 
 # This is the class for the file dialog of the exporter.
-class ExportXYZ(Operator, ExportHelper):
+class EXPORT_OT_xyz(Operator, ExportHelper):
     bl_idname = "export_mesh.xyz"
     bl_label  = "Export XYZ (*.xyz)"
     filename_ext = ".xyz"
@@ -228,19 +239,28 @@ class ExportXYZ(Operator, ExportHelper):
 
 # The entry into the menu 'file -> import'
 def menu_func(self, context):
-    self.layout.operator(ImportXYZ.bl_idname, text="XYZ (.xyz)")
+    self.layout.operator(IMPORT_OT_xyz.bl_idname, text="XYZ (.xyz)")
 
 # The entry into the menu 'file -> export'
 def menu_func_export(self, context):
-    self.layout.operator(ExportXYZ.bl_idname, text="XYZ (.xyz)")
+    self.layout.operator(EXPORT_OT_xyz.bl_idname, text="XYZ (.xyz)")
+
+classes = (IMPORT_OT_xyz, 
+           EXPORT_OT_xyz)
 
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+        
     bpy.types.TOPBAR_MT_file_import.append(menu_func)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        unregister_class(cls)
+        
     bpy.types.TOPBAR_MT_file_import.remove(menu_func)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 

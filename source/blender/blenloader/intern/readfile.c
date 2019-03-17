@@ -3614,13 +3614,15 @@ static void direct_link_nodetree(FileData *fd, bNodeTree *ntree)
 				}
 			}
 			else if (ntree->type == NTREE_COMPOSIT) {
-				if (ELEM(node->type, CMP_NODE_TIME, CMP_NODE_CURVE_VEC, CMP_NODE_CURVE_RGB, CMP_NODE_HUECORRECT))
+				if (ELEM(node->type, CMP_NODE_TIME, CMP_NODE_CURVE_VEC, CMP_NODE_CURVE_RGB, CMP_NODE_HUECORRECT)) {
 					direct_link_curvemapping(fd, node->storage);
+				}
 				else if (ELEM(node->type, CMP_NODE_IMAGE, CMP_NODE_R_LAYERS, CMP_NODE_VIEWER, CMP_NODE_SPLITVIEWER)) {
 					ImageUser *iuser = node->storage;
 					iuser->ok = 1;
 					iuser->scene = NULL;
-				} else if (node->type == CMP_NODE_CRYPTOMATTE) {
+				}
+				else if (node->type == CMP_NODE_CRYPTOMATTE) {
 					NodeCryptomatte *nc = (NodeCryptomatte *)node->storage;
 					nc->matte_id = newdataadr(fd, nc->matte_id);
 				}
@@ -4582,6 +4584,7 @@ static void direct_link_pointcache(FileData *fd, PointCache *cache)
 	cache->edit = NULL;
 	cache->free_edit = NULL;
 	cache->cached_frames = NULL;
+	cache->cached_frames_len = 0;
 }
 
 static void direct_link_pointcache_list(FileData *fd, ListBase *ptcaches, PointCache **ocache, int force_disk)
@@ -6742,15 +6745,13 @@ static void direct_link_scene(FileData *fd, Scene *sce)
 					seq->strip->stripdata = NULL;
 				}
 				if (seq->flag & SEQ_USE_CROP) {
-					seq->strip->crop = newdataadr(
-						fd, seq->strip->crop);
+					seq->strip->crop = newdataadr(fd, seq->strip->crop);
 				}
 				else {
 					seq->strip->crop = NULL;
 				}
 				if (seq->flag & SEQ_USE_TRANSFORM) {
-					seq->strip->transform = newdataadr(
-						fd, seq->strip->transform);
+					seq->strip->transform = newdataadr(fd, seq->strip->transform);
 				}
 				else {
 					seq->strip->transform = NULL;
@@ -7084,7 +7085,6 @@ static void direct_link_region(FileData *fd, ARegion *ar, int spacetype)
 				rv3d->clipbb = newdataadr(fd, rv3d->clipbb);
 
 				rv3d->depths = NULL;
-				rv3d->gpuoffscreen = NULL;
 				rv3d->render_engine = NULL;
 				rv3d->sms = NULL;
 				rv3d->smooth_timer = NULL;

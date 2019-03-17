@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 import bpy
-from bpy.types import Panel, UIList
+from bpy.types import Panel
 
 
 class ViewLayerButtonsPanel:
@@ -55,7 +55,7 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
         scene = context.scene
         rd = scene.render
-        layer = bpy.context.view_layer
+        layer = context.view_layer
 
         col = flow.column()
         col.prop(layer, "use", text="Use for Rendering")

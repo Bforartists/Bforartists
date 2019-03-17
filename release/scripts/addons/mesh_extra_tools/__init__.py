@@ -53,7 +53,7 @@ if "bpy" in locals():
     importlib.reload(mesh_fastloop)
     importlib.reload(mesh_edgetools)
     importlib.reload(mesh_pen_tool)
-    importlib.reload(vfe_specials)
+    importlib.reload(vfe_context_menu)
     importlib.reload(mesh_help)
     importlib.reload(mesh_select_by_direction)
     importlib.reload(mesh_select_by_edge_length)
@@ -83,7 +83,7 @@ else:
     from . import mesh_fastloop
     from . import mesh_edgetools
     from . import mesh_pen_tool
-    from . import vfe_specials
+    from . import vfe_context_menu
     from . import mesh_help
     from . import mesh_extrude_and_reshape
     from . import mesh_check
@@ -678,7 +678,7 @@ class VIEW3D_MT_selectvert_edit_mesh_add(Menu):
         layout.operator("mesh.v2v_facewise", text="Neighbors by Face - Edge")
 
 
-class VIEW3D_MT_utils_specials(Menu):
+class VIEW3D_MT_utils_context_menu(Menu):
     bl_label = "Specials Menu"
     bl_idname = "mesh.utils specials"
     bl_description = "Utils Quick Specials"
@@ -857,7 +857,7 @@ class mesh_extra_tools_pref(AddonPreferences):
 
 def register():
     mesh_pen_tool.register()
-    vfe_specials.register()
+    vfe_context_menu.register()
     mesh_extrude_and_reshape.register()
     mesh_check.register()
 
@@ -871,7 +871,7 @@ def register():
     bpy.types.Object.tkkey = IntVectorProperty(size=4)
 
     # Add "Extras" menu to the "W-key Specials" menu
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_func)
     bpy.types.VIEW3D_MT_select_edit_mesh.prepend(menu_select)
 
     try:
@@ -882,7 +882,7 @@ def register():
 
 def unregister():
     mesh_pen_tool.unregister()
-    vfe_specials.unregister()
+    vfe_context_menu.unregister()
     mesh_extrude_and_reshape.unregister()
     mesh_check.unregister()
 
@@ -892,7 +892,7 @@ def unregister():
     bpy.utils.unregister_module(__name__)
 
     # Remove "Extras" menu from the "" menu.
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_func)
     bpy.types.VIEW3D_MT_select_edit_mesh.remove(menu_select)
 
     try:

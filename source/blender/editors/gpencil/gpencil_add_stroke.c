@@ -31,6 +31,7 @@
 #include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_gpencil.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
 
@@ -47,7 +48,8 @@ typedef struct ColorTemplate {
 } ColorTemplate;
 
 /* Add color an ensure duplications (matched by name) */
-static int gp_stroke_material(Main *bmain, Object *ob, const ColorTemplate *pct)
+static int gp_stroke_material(
+	Main *bmain, Object *ob, const ColorTemplate *pct, const bool fill)
 {
 	short *totcol = give_totcolp(ob);
 	Material *ma = NULL;
@@ -62,11 +64,12 @@ static int gp_stroke_material(Main *bmain, Object *ob, const ColorTemplate *pct)
 	BKE_object_material_slot_add(bmain, ob);
 	ma = BKE_material_add_gpencil(bmain, pct->name);
 	assign_material(bmain, ob, ma, ob->totcol, BKE_MAT_ASSIGN_USERPREF);
+	id_us_min(&ma->id);
 
 	copy_v4_v4(ma->gp_style->stroke_rgba, pct->line);
 	copy_v4_v4(ma->gp_style->fill_rgba, pct->fill);
 
-	if (pct->fill) {
+	if (fill) {
 		ma->gp_style->flag |= GP_STYLE_FILL_SHOW;
 	}
 
@@ -219,12 +222,12 @@ void ED_gpencil_create_stroke(bContext *C, Object *ob, float mat[4][4])
 	bGPDstroke *gps;
 
 	/* create colors */
-	int color_black = gp_stroke_material(bmain, ob, &gp_stroke_material_black);
-	gp_stroke_material(bmain, ob, &gp_stroke_material_white);
-	gp_stroke_material(bmain, ob, &gp_stroke_material_red);
-	gp_stroke_material(bmain, ob, &gp_stroke_material_green);
-	gp_stroke_material(bmain, ob, &gp_stroke_material_blue);
-	gp_stroke_material(bmain, ob, &gp_stroke_material_grey);
+	int color_black = gp_stroke_material(bmain, ob, &gp_stroke_material_black, false);
+	gp_stroke_material(bmain, ob, &gp_stroke_material_white, false);
+	gp_stroke_material(bmain, ob, &gp_stroke_material_red, false);
+	gp_stroke_material(bmain, ob, &gp_stroke_material_green, false);
+	gp_stroke_material(bmain, ob, &gp_stroke_material_blue, false);
+	gp_stroke_material(bmain, ob, &gp_stroke_material_grey, true);
 
 	/* set first color as active and in brushes */
 	ob->actcol = color_black + 1;

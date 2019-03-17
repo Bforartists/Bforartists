@@ -36,10 +36,10 @@ def button_frame_current(self, context):
 
 
 def register():
-    bpy.types.VIEW3D_MT_object_specials.append(button_frame_current)
-    bpy.types.VIEW3D_MT_pose_specials.append(button_frame_current)
+    bpy.types.VIEW3D_MT_object_context_menu.append(button_frame_current)
+    bpy.types.VIEW3D_MT_pose_context_menu.append(button_frame_current)
 
 
 def unregister():
-    bpy.types.VIEW3D_MT_object_specials.remove(button_frame_current)
-    bpy.types.VIEW3D_MT_pose_specials.remove(button_frame_current)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(button_frame_current)
+    bpy.types.VIEW3D_MT_pose_context_menu.remove(button_frame_current)

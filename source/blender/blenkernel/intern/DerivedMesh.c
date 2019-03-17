@@ -624,7 +624,7 @@ void DM_to_mesh(DerivedMesh *dm, Mesh *me, Object *ob, const CustomData_MeshMask
 	}
 
 	/* skip the listbase */
-	MEMCPY_STRUCT_OFS(me, &tmp, id.prev);
+	MEMCPY_STRUCT_AFTER(me, &tmp, id.prev);
 
 	if (take_ownership) {
 		if (alloctype == CD_ASSIGN) {
@@ -1482,7 +1482,12 @@ static void mesh_calc_modifiers(
 				}
 
 				nextmask.vmask &= ~CD_MASK_ORCO;
-				CustomData_MeshMasks temp_cddata_masks = {.vmask=CD_MASK_ORIGINDEX, .emask=CD_MASK_ORIGINDEX, .fmask=CD_MASK_ORIGINDEX, .pmask=CD_MASK_ORIGINDEX};
+				CustomData_MeshMasks temp_cddata_masks = {
+					.vmask = CD_MASK_ORIGINDEX,
+					.emask = CD_MASK_ORIGINDEX,
+					.fmask = CD_MASK_ORIGINDEX,
+					.pmask = CD_MASK_ORIGINDEX,
+				};
 				if (mti->requiredDataMask != NULL) {
 					mti->requiredDataMask(ob, md, &temp_cddata_masks);
 				}

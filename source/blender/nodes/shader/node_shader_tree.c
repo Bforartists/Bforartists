@@ -143,7 +143,7 @@ static void localize(bNodeTree *localtree, bNodeTree *UNUSED(ntree))
 
 		if (node->flag & NODE_MUTED || node->type == NODE_REROUTE) {
 			nodeInternalRelink(localtree, node);
-			nodeFreeNode(localtree, node);
+			ntreeFreeLocalNode(localtree, node);
 		}
 	}
 }
@@ -247,7 +247,7 @@ static bNode *ntree_shader_relink_output_from_group(bNodeTree *ntree,
 		                     SH_NODE_OUTPUT_WORLD,
 		                     SH_NODE_OUTPUT_LIGHT))
 		{
-			nodeFreeNode(ntree, node);
+			ntreeFreeLocalNode(ntree, node);
 		}
 	}
 
@@ -290,7 +290,7 @@ static bNode *ntree_shader_output_node_from_group(bNodeTree *ntree, int target)
 
 	/* Search if node groups do not contain valid output nodes (recursively). */
 	for (bNode *node = ntree->nodes.first; node; node = node->next) {
-		if (!ELEM(node->type, NODE_GROUP)) {
+		if (!ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP)) {
 			continue;
 		}
 		if (node->id != NULL) {
@@ -448,11 +448,12 @@ static void ntree_shader_groups_expand_inputs(bNodeTree *localtree)
 	bNodeSocketValueVector *src_vector;
 	bNodeSocketValueRGBA *src_rgba, *dst_rgba;
 	bNodeSocketValueFloat *src_float, *dst_float;
+	bNodeSocketValueInt *src_int;
 	bool link_added = false;
 
 	for (group_node = localtree->nodes.first; group_node; group_node = group_node->next) {
 
-		if (group_node->type != NODE_GROUP || group_node->id == NULL)
+		if (!(ELEM(group_node->type, NODE_GROUP, NODE_CUSTOM_GROUP)) || group_node->id == NULL)
 			continue;
 
 		/* Do it recursively. */
@@ -484,6 +485,15 @@ static void ntree_shader_groups_expand_inputs(bNodeTree *localtree)
 					src_rgba = group_socket->default_value;
 					dst_rgba = value_socket->default_value;
 					copy_v4_v4(dst_rgba->value, src_rgba->value);
+					break;
+				case SOCK_INT:
+					/* HACK: Support as float. */
+					value_node = nodeAddStaticNode(NULL, localtree, SH_NODE_VALUE);
+					value_socket = ntree_shader_node_find_output(value_node, "Value");
+					BLI_assert(value_socket != NULL);
+					src_int = group_socket->default_value;
+					dst_float = value_socket->default_value;
+					dst_float->value = (float)(src_int->value);
 					break;
 				case SOCK_FLOAT:
 					value_node = nodeAddStaticNode(NULL, localtree, SH_NODE_VALUE);
@@ -664,7 +674,7 @@ static void ntree_shader_link_builtin_normal(bNodeTree *ntree,
 			/* Don't connect node itself! */
 			continue;
 		}
-		if (node->type == NODE_GROUP && node->id) {
+		if ((ELEM(node->type, NODE_GROUP, NODE_CUSTOM_GROUP)) && node->id) {
 			/* Special re-linking for group nodes. */
 			ntree_shader_link_builtin_group_normal(ntree,
 			                                       node,
@@ -755,6 +765,7 @@ static bool ntree_tag_bsdf_cb(bNode *fromnode, bNode *UNUSED(tonode), void *user
 
 	switch (fromnode->type) {
 		case NODE_GROUP:
+		case NODE_CUSTOM_GROUP:
 			/* Recursive */
 			if (fromnode->id != NULL) {
 				bNodeTree *ntree = (bNodeTree *)fromnode->id;

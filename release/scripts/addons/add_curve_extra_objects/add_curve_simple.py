@@ -1476,7 +1476,7 @@ def register():
         register_class(cls)
 
     bpy.types.VIEW3D_MT_curve_add.append(menu)
-    bpy.types.VIEW3D_MT_edit_curve_specials.prepend(Simple_curve_edit_menu)
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.prepend(Simple_curve_edit_menu)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -1484,7 +1484,7 @@ def unregister():
         unregister_class(cls)
 
     bpy.types.VIEW3D_MT_curve_add.remove(menu)
-    bpy.types.VIEW3D_MT_edit_curve_specials.remove(Simple_curve_edit_menu)
+    bpy.types.VIEW3D_MT_edit_curve_context_menu.remove(Simple_curve_edit_menu)
 
 if __name__ == "__main__":
     register()

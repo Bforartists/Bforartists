@@ -229,7 +229,7 @@ class GRAPH_MT_marker(Menu):
         layout = self.layout
 
         from .space_time import marker_menu_generic
-        marker_menu_generic(layout)
+        marker_menu_generic(layout, context)
 
         # TODO: pose markers for action edit mode only?
 
@@ -438,7 +438,7 @@ class GRAPH_MT_delete(Menu):
         layout.operator("graph.clean", text="Clean Channels").channels = True
 
 
-class GRAPH_MT_specials(Menu):
+class GRAPH_MT_context_menu(Menu):
     bl_label = "F-Curve Context Menu"
 
     def draw(self, context):
@@ -494,7 +494,7 @@ class GRAPH_MT_snap_pie(Menu):
         pie.operator("graph.snap", text="Flatten Handles").type = 'HORIZONTAL'
 
 
-class GRAPH_MT_channel_specials(Menu):
+class GRAPH_MT_channel_context_menu(Menu):
     bl_label = "F-Curve Channel Context Menu"
 
     def draw(self, context):
@@ -552,8 +552,8 @@ classes = (
     GRAPH_MT_key_snap,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
-    GRAPH_MT_specials,
-    GRAPH_MT_channel_specials,
+    GRAPH_MT_context_menu,
+    GRAPH_MT_channel_context_menu,
     GRAPH_MT_pivot_pie,
     GRAPH_MT_snap_pie,
     GRAPH_PT_filters,

@@ -24,16 +24,26 @@
 #
 #  Start of project              : 2011-12-01 by Clemens Barth
 #  First publication in Blender  : 2012-11-03
-#  Last modified                 : 2014-08-19
+#  Last modified                 : 2019-03-16
 #
 #  Acknowledgements
 #  ================
-#  Blender: ideasman_42, meta_androcto, truman, kilon, CoDEmanX, dairin0d, PKHG,
-#           Valter, ...
-#  Other  : Frank Palmino
 #
+#  Blender developers
+#  ------------------
+#  Campbell Barton      (ideasman) 
+#  Brendon Murphy       (meta_androcto) 
+#  Truman Melton (?)    (truman)
+#  Kilon Alios          (kilon)
+#  ??                   (CoDEmanX)
+#  Dima Glib            (dairin0d)
+#  Peter K.H. Gragert   (PKHG)
+#  Valter Battioli (?)  (valter)
 #
-#  To do: change radii also for the sticks represented by the skin modifier
+#  Other
+#  -----
+#  Frank Palmino
+#
 #
 
 bl_info = {
@@ -41,12 +51,10 @@ bl_info = {
     "description": "Utilities for manipulating atom structures",
     "author": "Clemens Barth",
     "version": (0, 95),
-    "blender": (2, 71, 0),
+    "blender": (2, 80, 0),
     "location": "Panel: View 3D - Tools",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Import-Export/PDB",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "wiki_url": "... will be updated asap ...",
     "category": "Import-Export"}
 
 
@@ -63,10 +71,10 @@ from . import io_atomblend_utilities
 #                                                                           GUI
 
 # The panel.
-class PreparePanel(Panel):
+class PANEL_PT_prepare(Panel):
     bl_label       = "Atomic Blender Utilities"
     bl_space_type  = "VIEW_3D"
-    bl_region_type = "TOOL_PROPS"
+    bl_region_type = "UI"
 
     def draw(self, context):
         layout = self.layout
@@ -436,13 +444,31 @@ class SticksAllSmallerButton(Operator):
         return {'FINISHED'}
 
 
+classes = (PANEL_PT_prepare, 
+           PanelProperties,
+           DatafileApply, 
+           DefaultAtom, 
+           ReplaceAtom, 
+           SeparateAtom, 
+           DistanceButton, 
+           RadiusAllBiggerButton, 
+           RadiusAllSmallerButton, 
+           SticksAllBiggerButton, 
+           SticksAllSmallerButton)
+
 def register():
+    from bpy.utils import register_class
+    
     io_atomblend_utilities.read_elements()
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        register_class(cls)
+        
     bpy.types.Scene.atom_blend = bpy.props.PointerProperty(type=PanelProperties)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        unregister_class(cls)
 
 
 if __name__ == "__main__":

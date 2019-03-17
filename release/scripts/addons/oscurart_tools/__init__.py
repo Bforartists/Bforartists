@@ -163,12 +163,12 @@ classes = (
 def register():   
     from bpy.types import Scene
     Scene.multimeshedit = StringProperty()
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_funcMesh)
-    bpy.types.IMAGE_MT_uvs_specials.prepend(menu_funcImage)
-    bpy.types.VIEW3D_MT_object_specials.prepend(menu_funcObject)
-    bpy.app.handlers.render_pre.append(render_tokens.replaceTokens)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_funcMesh)
+    bpy.types.IMAGE_MT_uvs_context_menu.prepend(menu_funcImage)
+    bpy.types.VIEW3D_MT_object_context_menu.prepend(menu_funcObject)
+    bpy.app.handlers.render_init.append(render_tokens.replaceTokens)
     bpy.app.handlers.render_cancel.append(render_tokens.restoreTokens) 
-    bpy.app.handlers.render_post.append(render_tokens.restoreTokens) 
+    bpy.app.handlers.render_complete.append(render_tokens.restoreTokens) 
     bpy.app.handlers.render_pre.append(material_overrides.ApplyOverrides)   
     bpy.app.handlers.render_cancel.append(material_overrides.RestoreOverrides) 
     bpy.app.handlers.render_post.append(material_overrides.RestoreOverrides) 
@@ -179,9 +179,9 @@ def register():
                                                                               
 
 def unregister():
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_funcMesh)
-    bpy.types.IMAGE_MT_uvs_specials.remove(menu_funcImage)
-    bpy.types.VIEW3D_MT_object_specials.remove(menu_funcObject)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_funcMesh)
+    bpy.types.IMAGE_MT_uvs_context_menu.remove(menu_funcImage)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(menu_funcObject)
 
     from bpy.utils import unregister_class
     for cls in reversed(classes):

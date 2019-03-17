@@ -25,6 +25,7 @@ import os
 import shlex
 import math
 from math import sin, cos, pi
+from itertools import chain
 
 texture_cache = {}
 material_cache = {}
@@ -1537,7 +1538,7 @@ def translateTransform(node, ancestry):
     mats = [tx_mat, cent_mat, rot_mat, scaori_mat, sca_mat, scaori_imat, cent_imat]
     for mtx in mats:
         if mtx:
-            new_mat = new_mat * mtx
+            new_mat = new_mat @ mtx
 
     return new_mat
 
@@ -1577,7 +1578,7 @@ def translateTexTransform(node, ancestry):
 
     for mtx in mats:
         if mtx:
-            new_mat = new_mat * mtx
+            new_mat = new_mat @ mtx
 
     return new_mat
 
@@ -1593,10 +1594,10 @@ def getFinalMatrix(node, mtx, ancestry, global_matrix):
 
     for node_tx in transform_nodes:
         mat = translateTransform(node_tx, ancestry)
-        mtx = mat * mtx
+        mtx = mat @ mtx
 
     # worldspace matrix
-    mtx = global_matrix * mtx
+    mtx = global_matrix @ mtx
 
     return mtx
 
@@ -1604,38 +1605,34 @@ def getFinalMatrix(node, mtx, ancestry, global_matrix):
 # -----------------------------------------------------------------------------------
 # Mesh import utilities
 
-# Assumes that the mesh has tessfaces - doesn't support polygons.
-# Also assumes that tessfaces are all triangles.
-# Assumes that the sequence of the mesh vertices array matches
-# the source file. For indexed meshes, that's almost a given;
-# for nonindexed ones, this is a consideration.
-
-
+# Assumes that the mesh has polygons.
 def importMesh_ApplyColors(bpymesh, geom, ancestry):
     colors = geom.getChildBySpec(['ColorRGBA', 'Color'])
     if colors:
         if colors.getSpec() == 'ColorRGBA':
-            # Array of arrays; no need to flatten
-            rgb = [c[:3] for c
-                   in colors.getFieldAsArray('color', 4, ancestry)]
+            rgb = colors.getFieldAsArray('color', 4, ancestry)
         else:
-            rgb = colors.getFieldAsArray('color', 3, ancestry)
-        tc = bpymesh.tessface_vertex_colors.new()
-        tc.data.foreach_set("color1", [i for face
-                                       in bpymesh.tessfaces
-                                       for i in rgb[face.vertices[0]]])
-        tc.data.foreach_set("color2", [i for face
-                                       in bpymesh.tessfaces
-                                       for i in rgb[face.vertices[1]]])
-        tc.data.foreach_set("color3", [i for face
-                                       in bpymesh.tessfaces
-                                       for i in rgb[face.vertices[2]]])
+            # Array of arrays; no need to flatten
+            rgb = [c + [1.0] for c in colors.getFieldAsArray('color', 3, ancestry)]
+        lcol_layer = bpymesh.vertex_colors.new()
+
+        if len(rgb) == len(bpymesh.vertices):
+            rgb = [rgb[l.vertex_index] for l in bpymesh.loops]
+            rgb = tuple(chain(*rgb))
+        elif len(rgb) == len(bpymesh.loops):
+            rgb = tuple(chain(*rgb))
+        else:
+            printf("WARNING not applying vertex colors, non matching numbers of vertices or loops (%d vs %d/%d)"
+                   "" % (len(rgb), len(bpymesh.vertices), len(bpymesh.loops)))
+            return
+
+        lcol_layer.data.foreach_set("color", rgb)
 
 
 # Assumes that the vertices have not been rearranged compared to the
 # source file order # or in the order assumed by the spec (e. g. in
 # Elevation, in rows by x).
-# Assumes tessfaces have been set, doesn't support polygons.
+# Assumes polygons have been set.
 def importMesh_ApplyNormals(bpymesh, geom, ancestry):
     normals = geom.getChildBySpec('Normal')
     if not normals:
@@ -1646,14 +1643,14 @@ def importMesh_ApplyNormals(bpymesh, geom, ancestry):
     if per_vertex:
         bpymesh.vertices.foreach_set("normal", vectors)
     else:
-        bpymesh.tessfaces.foreach_set("normal", vectors)
+        bpymesh.polygons.foreach_set("normal", vectors)
 
 
 # Reads the standard Coordinate object - common for all mesh elements
 # Feeds the vertices in the mesh.
 # Rearranging the vertex order is a bad idea - other elements
 # in X3D might rely on it,  if you need to rearrange, please play with
-# vertex indices in the tessfaces/polygons instead.
+# vertex indices in the polygons instead.
 #
 # Vertex culling that we have in IndexedFaceSet is an unfortunate exception,
 # brought forth by a very specific issue.
@@ -1667,39 +1664,34 @@ def importMesh_ReadVertices(bpymesh, geom, ancestry):
     bpymesh.vertices.foreach_set("co", points)
 
 
-# Assumes the mesh only contains triangular tessfaces, and the order
-# of vertices matches the source file.
+# Assumes that the order of vertices matches the source file.
 # Relies upon texture coordinates in the X3D node; if a coordinate generation
 # algorithm for a geometry is in the spec (e. g. for ElevationGrid), it needs
 # to be implemented by the geometry handler.
 #
 # Texture transform is applied in ProcessObject.
-def importMesh_ApplyTextureToTessfaces(bpymesh, geom, ancestry, bpyima):
-    if not bpyima:
-        return
-
+def importMesh_ApplyUVs(bpymesh, geom, ancestry):
     tex_coord = geom.getChildBySpec('TextureCoordinate')
     if not tex_coord:
         return
 
-    coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
-    if not coord_points:
+    uvs = tex_coord.getFieldAsArray('point', 2, ancestry)
+    if not uvs:
         return
 
-    d = bpymesh.tessface_uv_textures.new().data
-    for face in d:  # No foreach_set for nonscalars
-        face.image = bpyima
-    uv = [i for face in bpymesh.tessfaces
-          for vno in range(3) for i in coord_points[face.vertices[vno]]]
-    d.foreach_set('uv', uv)
+    d = bpymesh.uv_layers.new().data
+    uvs = [i for poly in bpymesh.polygons
+            for vidx in poly.vertices
+            for i in uvs[vidx]]
+    d.foreach_set('uv', uvs)
 
 
 # Common steps for all triangle meshes once the geometry has been set:
-# normals, vertex colors, and texture.
-def importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima):
+# normals, vertex colors, and UVs.
+def importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry):
     importMesh_ApplyNormals(bpymesh, geom, ancestry)
     importMesh_ApplyColors(bpymesh, geom, ancestry)
-    importMesh_ApplyTextureToTessfaces(bpymesh, geom, ancestry, bpyima)
+    importMesh_ApplyUVs(bpymesh, geom, ancestry)
     bpymesh.validate()
     bpymesh.update()
     return bpymesh
@@ -1708,11 +1700,9 @@ def importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima):
 # Assumes that the mesh is stored as polygons and loops, and the premade array
 # of texture coordinates follows the loop array.
 # The loops array must be flat.
-def importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops):
-    d = bpymesh.uv_textures.new().data
-    for f in d:
-        f.image = bpyima
-    bpymesh.uv_layers[0].data.foreach_set('uv', loops)
+def importMesh_ApplyTextureToLoops(bpymesh, loops):
+    d = bpymesh.uv_layers.new().data
+    d.foreach_set('uv', loops)
 
 
 def flip(r, ccw):
@@ -1722,7 +1712,7 @@ def flip(r, ccw):
 # Now specific geometry importers
 
 
-def importMesh_IndexedTriangleSet(geom, ancestry, bpyima):
+def importMesh_IndexedTriangleSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     ccw = geom.getFieldAsBool('ccw', True, ancestry)
@@ -1732,16 +1722,20 @@ def importMesh_IndexedTriangleSet(geom, ancestry, bpyima):
 
     # Read the faces
     index = geom.getFieldAsArray('index', 0, ancestry)
-    n = len(index) // 3
+    num_polys = len(index) // 3
     if not ccw:
-        index = [index[3 * i + j] for i in range(n) for j in (1, 0, 2)]
-    bpymesh.tessfaces.add(n)
-    bpymesh.tessfaces.foreach_set("vertices", index)
+        index = [index[3 * i + j] for i in range(num_polys) for j in (1, 0, 2)]
 
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
+    bpymesh.polygons.foreach_set("vertices", index)
+
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_IndexedTriangleStripSet(geom, ancestry, bpyima):
+def importMesh_IndexedTriangleStripSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
@@ -1753,7 +1747,11 @@ def importMesh_IndexedTriangleStripSet(geom, ancestry, bpyima):
     while index[-1] == -1:
         del index[-1]
     ngaps = sum(1 for i in index if i == -1)
-    bpymesh.tessfaces.add(len(index) - 2 - 3 * ngaps)
+    num_polys = len(index) - 2 - 3 * ngaps
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         i = 0
@@ -1769,11 +1767,11 @@ def importMesh_IndexedTriangleStripSet(geom, ancestry, bpyima):
             if index[i + 2] == -1:
                 i += 3
                 odd = cw
-    bpymesh.tessfaces.foreach_set("vertices", [f for f in triangles()])
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    bpymesh.polygons.foreach_set("vertices", [f for f in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_IndexedTriangleFanSet(geom, ancestry, bpyima):
+def importMesh_IndexedTriangleFanSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
@@ -1785,7 +1783,11 @@ def importMesh_IndexedTriangleFanSet(geom, ancestry, bpyima):
     while index[-1] == -1:
         del index[-1]
     ngaps = sum(1 for i in index if i == -1)
-    bpymesh.tessfaces.add(len(index) - 2 - 3 * ngaps)
+    num_polys = len(index) - 2 - 3 * ngaps
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         i = 0
@@ -1800,35 +1802,44 @@ def importMesh_IndexedTriangleFanSet(geom, ancestry, bpyima):
             if index[i + j + 1] == -1:
                 i = j + 2
                 j = 1
-    bpymesh.tessfaces.foreach_set("vertices", [f for f in triangles()])
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    bpymesh.polygons.foreach_set("vertices", [f for f in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_TriangleSet(geom, ancestry, bpyima):
+def importMesh_TriangleSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     ccw = geom.getFieldAsBool('ccw', True, ancestry)
     bpymesh = bpy.data.meshes.new(name="TriangleSet")
     importMesh_ReadVertices(bpymesh, geom, ancestry)
     n = len(bpymesh.vertices)
-    bpymesh.tessfaces.add(n // 3)
+    num_polys = n // 3
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
+
     if ccw:
         fv = [i for i in range(n)]
     else:
         fv = [3 * i + j for i in range(n // 3) for j in (1, 0, 2)]
-    bpymesh.tessfaces.foreach_set("vertices", fv)
+    bpymesh.polygons.foreach_set("vertices", fv)
 
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_TriangleStripSet(geom, ancestry, bpyima):
+def importMesh_TriangleStripSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
     bpymesh = bpy.data.meshes.new(name="TriangleStripSet")
     importMesh_ReadVertices(bpymesh, geom, ancestry)
     counts = geom.getFieldAsArray('stripCount', 0, ancestry)
-    bpymesh.tessfaces.add(sum([n - 2 for n in counts]))
+    num_polys = sum([n - 2 for n in counts])
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         b = 0
@@ -1838,19 +1849,23 @@ def importMesh_TriangleStripSet(geom, ancestry, bpyima):
                 yield b + j + 1 - (j + cw) % 2
                 yield b + j + 2
             b += counts[i]
-    bpymesh.tessfaces.foreach_set("vertices", [x for x in triangles()])
+    bpymesh.polygons.foreach_set("vertices", [x for x in triangles()])
 
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_TriangleFanSet(geom, ancestry, bpyima):
+def importMesh_TriangleFanSet(geom, ancestry):
     # Ignoring solid
     # colorPerVertex is always true
     cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
     bpymesh = bpy.data.meshes.new(name="TriangleStripSet")
     importMesh_ReadVertices(bpymesh, geom, ancestry)
     counts = geom.getFieldAsArray('fanCount', 0, ancestry)
-    bpymesh.tessfaces.add(sum([n - 2 for n in counts]))
+    num_polys = sum([n - 2 for n in counts])
+    bpymesh.loops.add(num_polys * 3)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 3, 3))
+    bpymesh.polygons.foreach_set("loop_total", (3,) * num_polys)
 
     def triangles():
         b = 0
@@ -1860,11 +1875,11 @@ def importMesh_TriangleFanSet(geom, ancestry, bpyima):
                 yield b + j + cw
                 yield b + j + 1 - cw
             b += counts[i]
-    bpymesh.tessfaces.foreach_set("vertices", [x for x in triangles()])
-    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
+    bpymesh.polygons.foreach_set("vertices", [x for x in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry)
 
 
-def importMesh_IndexedFaceSet(geom, ancestry, bpyima):
+def importMesh_IndexedFaceSet(geom, ancestry):
     # Saw the following structure in X3Ds: the first mesh has a huge set
     # of vertices and a reasonably sized index. The rest of the meshes
     # reference the Coordinate node from the first one, and have their
@@ -1953,91 +1968,95 @@ def importMesh_IndexedFaceSet(geom, ancestry, bpyima):
         normal_index = geom.getFieldAsArray('normalIndex', 0, ancestry)
         if per_vertex:
             co = [co for f in processPerVertexIndex(normal_index)
-                  for v in f for co in vectors[v]]
+                     for v in f
+                     for co in vectors[v]]
             bpymesh.vertices.foreach_set("normal", co)
         else:
-            co = [co for (i, f) in enumerate(faces) for j in f
-                  for co in vectors[normal_index[i] if normal_index else i]]
+            co = [co for (i, f) in enumerate(faces)
+                     for j in f
+                     for co in vectors[normal_index[i] if normal_index else i]]
             bpymesh.polygons.foreach_set("normal", co)
 
     # Apply vertex/face colors
     colors = geom.getChildBySpec(['ColorRGBA', 'Color'])
     if colors:
         if colors.getSpec() == 'ColorRGBA':
-            # Array of arrays; no need to flatten
-            rgb = [c[:3] for c
-                   in colors.getFieldAsArray('color', 4, ancestry)]
+            rgb = colors.getFieldAsArray('color', 4, ancestry)
         else:
-            rgb = colors.getFieldAsArray('color', 3, ancestry)
+            # Array of arrays; no need to flatten
+            rgb = [c + [1.0] for c in colors.getFieldAsArray('color', 3, ancestry)]
 
-        color_per_vertex = geom.getFieldAsBool('colorPerVertex',
-                                               True, ancestry)
+        color_per_vertex = geom.getFieldAsBool('colorPerVertex', True, ancestry)
         color_index = geom.getFieldAsArray('colorIndex', 0, ancestry)
 
         d = bpymesh.vertex_colors.new().data
         if color_per_vertex:
             cco = [cco for f in processPerVertexIndex(color_index)
-                   for v in f for cco in rgb[v]]
+                       for v in f
+                       for cco in rgb[v]]
         elif color_index:  # Color per face with index
-            cco = [cco for (i, f) in enumerate(faces) for j in f
-                   for cco in rgb[color_index[i]]]
+            cco = [cco for (i, f) in enumerate(faces)
+                       for j in f
+                       for cco in rgb[color_index[i]]]
         else:  # Color per face without index
-            cco = [cco for (i, f) in enumerate(faces) for j in f
-                   for cco in rgb[i]]
+            cco = [cco for (i, f) in enumerate(faces)
+                       for j in f
+                       for cco in rgb[i]]
         d.foreach_set('color', cco)
 
-    # Texture
-    if bpyima:
-        tex_coord = geom.getChildBySpec('TextureCoordinate')
-        if tex_coord:
-            tex_coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
-            tex_index = geom.getFieldAsArray('texCoordIndex', 0, ancestry)
-            tex_index = processPerVertexIndex(tex_index)
-            loops = [co for f in tex_index
-                     for v in f for co in tex_coord_points[v]]
-        else:
-            x_min = x_max = y_min = y_max = z_min = z_max = None
-            for f in faces:
-                # Unused vertices don't participate in size; X3DOM does so
-                for v in f:
-                    (x, y, z) = points[v]
-                    if x_min is None or x < x_min:
-                        x_min = x
-                    if x_max is None or x > x_max:
-                        x_max = x
-                    if y_min is None or y < y_min:
-                        y_min = y
-                    if y_max is None or y > y_max:
-                        y_max = y
-                    if z_min is None or z < z_min:
-                        z_min = z
-                    if z_max is None or z > z_max:
-                        z_max = z
+    # Texture coordinates (UVs)
+    tex_coord = geom.getChildBySpec('TextureCoordinate')
+    if tex_coord:
+        tex_coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
+        tex_index = geom.getFieldAsArray('texCoordIndex', 0, ancestry)
+        tex_index = processPerVertexIndex(tex_index)
+        loops = [co for f in tex_index
+                    for v in f
+                    for co in tex_coord_points[v]]
+    else:
+        x_min = x_max = y_min = y_max = z_min = z_max = None
+        for f in faces:
+            # Unused vertices don't participate in size; X3DOM does so
+            for v in f:
+                (x, y, z) = points[v]
+                if x_min is None or x < x_min:
+                    x_min = x
+                if x_max is None or x > x_max:
+                    x_max = x
+                if y_min is None or y < y_min:
+                    y_min = y
+                if y_max is None or y > y_max:
+                    y_max = y
+                if z_min is None or z < z_min:
+                    z_min = z
+                if z_max is None or z > z_max:
+                    z_max = z
 
-            mins = (x_min, y_min, z_min)
-            deltas = (x_max - x_min, y_max - y_min, z_max - z_min)
-            axes = [0, 1, 2]
-            axes.sort(key=lambda a: (-deltas[a], a))
-            # Tuple comparison breaks ties
-            (s_axis, t_axis) = axes[0:2]
-            s_min = mins[s_axis]
-            ds = deltas[s_axis]
-            t_min = mins[t_axis]
-            dt = deltas[t_axis]
+        mins = (x_min, y_min, z_min)
+        deltas = (x_max - x_min, y_max - y_min, z_max - z_min)
+        axes = [0, 1, 2]
+        axes.sort(key=lambda a: (-deltas[a], a))
+        # Tuple comparison breaks ties
+        (s_axis, t_axis) = axes[0:2]
+        s_min = mins[s_axis]
+        ds = deltas[s_axis]
+        t_min = mins[t_axis]
+        dt = deltas[t_axis]
 
-            def generatePointCoords(pt):
-                return (pt[s_axis] - s_min) / ds, (pt[t_axis] - t_min) / dt
-            loops = [co for f in faces for v in f
-                     for co in generatePointCoords(points[v])]
+        def generatePointCoords(pt):
+            return (pt[s_axis] - s_min) / ds, (pt[t_axis] - t_min) / dt
+        loops = [co for f in faces
+                    for v in f
+                    for co in generatePointCoords(points[v])]
 
-        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+    importMesh_ApplyTextureToLoops(bpymesh, loops)
 
     bpymesh.validate()
     bpymesh.update()
     return bpymesh
 
 
-def importMesh_ElevationGrid(geom, ancestry, bpyima):
+def importMesh_ElevationGrid(geom, ancestry):
     height = geom.getFieldAsArray('height', 0, ancestry)
     x_dim = geom.getFieldAsInt('xDimension', 0, ancestry)
     x_spacing = geom.getFieldAsFloat('xSpacing', 1, ancestry)
@@ -2052,17 +2071,22 @@ def importMesh_ElevationGrid(geom, ancestry, bpyima):
           for w in (x * x_spacing, height[x_dim * z + x], z * z_spacing)]
     bpymesh.vertices.foreach_set("co", co)
 
-    bpymesh.tessfaces.add((x_dim - 1) * (z_dim - 1))
+    num_polys = (x_dim - 1) * (z_dim - 1)
+    bpymesh.loops.add(num_polys * 4)
+    bpymesh.polygons.add(num_polys)
+    bpymesh.polygons.foreach_set("loop_start", range(0, num_polys * 4, 4))
+    bpymesh.polygons.foreach_set("loop_total", (4,) * num_polys)
     # If the ccw is off, we flip the 2nd and the 4th vertices of each face.
-    # For quad tessfaces, it's important that the final vertex index is not 0
-    # (Blender treats it as a triangle then).
-    # So simply reversing the face is not an option.
+    # For quad tessfaces, it was important that the final vertex index was not 0
+    # (Blender treated it as a triangle then).
+    # So simply reversing the face was not an option.
+    # With bmesh polygons, this has no importance anymore, but keep existing code for now.
     verts = [i for x in range(x_dim - 1) for z in range(z_dim - 1)
              for i in (z * x_dim + x,
                        z * x_dim + x + 1 if ccw else (z + 1) * x_dim + x,
                        (z + 1) * x_dim + x + 1,
                        (z + 1) * x_dim + x if ccw else z * x_dim + x + 1)]
-    bpymesh.tessfaces.foreach_set("vertices_raw", verts)
+    bpymesh.polygons.foreach_set("vertices", verts)
 
     importMesh_ApplyNormals(bpymesh, geom, ancestry)
     # ApplyColors won't work here; faces are quads, and also per-face
@@ -2076,60 +2100,49 @@ def importMesh_ElevationGrid(geom, ancestry, bpyima):
         else:
             rgb = colors.getFieldAsArray('color', 3, ancestry)
 
-        tc = bpymesh.tessface_vertex_colors.new()
-        tcd = tc.data
+        tc = bpymesh.vertex_colors.new().data
         if geom.getFieldAsBool('colorPerVertex', True, ancestry):
             # Per-vertex coloring
             # Note the 2/4 flip here
-            tcd.foreach_set("color1", [c for x in range(x_dim - 1)
-                            for z in range(z_dim - 1)
-                            for c in rgb[z * x_dim + x]])
-            tcd.foreach_set("color2" if ccw else "color4",
-                            [c for x in range(x_dim - 1)
-                             for z in range(z_dim - 1)
-                             for c in rgb[z * x_dim + x + 1]])
-            tcd.foreach_set("color3", [c for x in range(x_dim - 1)
-                            for z in range(z_dim - 1)
-                            for c in rgb[(z + 1) * x_dim + x + 1]])
-            tcd.foreach_set("color4" if ccw else "color2",
-                            [c for x in range(x_dim - 1)
-                             for z in range(z_dim - 1)
-                             for c in rgb[(z + 1) * x_dim + x]])
+            tc.foreach_set("color",
+                           [c for x in range(x_dim - 1)
+                              for z in range(z_dim - 1)
+                              for rgb_idx in (z * x_dim + x,
+                                              z * x_dim + x + 1 if ccw else (z + 1) * x_dim + x,
+                                              (z + 1) * x_dim + x + 1,
+                                              (z + 1) * x_dim + x if ccw else z * x_dim + x + 1)
+                              for c in rgb[rgb_idx]])
         else:  # Coloring per face
-            colors = [c for x in range(x_dim - 1)
-                      for z in range(z_dim - 1) for c in rgb[z * (x_dim - 1) + x]]
-            tcd.foreach_set("color1", colors)
-            tcd.foreach_set("color2", colors)
-            tcd.foreach_set("color3", colors)
-            tcd.foreach_set("color4", colors)
+            tc.foreach_set("color",
+                           [c for x in range(x_dim - 1)
+                              for z in range(z_dim - 1)
+                              for rgb_idx in (z * (x_dim - 1) + x,) * 4
+                              for c in rgb[rgb_idx]])
 
     # Textures also need special treatment; it's all quads,
     # and there's a builtin algorithm for coordinate generation
-    if bpyima:
-        tex_coord = geom.getChildBySpec('TextureCoordinate')
-        if tex_coord:
-            coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
-        else:
-            coord_points = [(i / (x_dim - 1), j / (z_dim - 1))
-                            for i in range(x_dim)
-                            for j in range(z_dim)]
+    tex_coord = geom.getChildBySpec('TextureCoordinate')
+    if tex_coord:
+        uvs = tex_coord.getFieldAsArray('point', 2, ancestry)
+    else:
+        uvs = [(i / (x_dim - 1), j / (z_dim - 1))
+                        for i in range(x_dim)
+                        for j in range(z_dim)]
 
-        d = bpymesh.tessface_uv_textures.new().data
-        for face in d:  # No foreach_set for nonscalars
-            face.image = bpyima
-        # Rather than repeat the face/vertex algorithm from above, we read
-        # the vertex index back from tessfaces. Might be suboptimal.
-        uv = [i for face in bpymesh.tessfaces
-              for vno in range(4)
-              for i in coord_points[face.vertices[vno]]]
-        d.foreach_set('uv_raw', uv)
+    d = bpymesh.uv_layers.new().data
+    # Rather than repeat the face/vertex algorithm from above, we read
+    # the vertex index back from polygon. Might be suboptimal.
+    uvs = [i for poly in bpymesh.polygons
+            for vidx in poly.vertices
+            for i in uvs[vidx]]
+    d.foreach_set('uv', uv)
 
     bpymesh.validate()
     bpymesh.update()
     return bpymesh
 
 
-def importMesh_Extrusion(geom, ancestry, bpyima):
+def importMesh_Extrusion(geom, ancestry):
     # Interestingly, the spec doesn't allow for vertex/face colors in this
     # element, nor for normals.
     # Since coloring and normals are not supported here, and also large
@@ -2230,15 +2243,15 @@ def importMesh_Extrusion(geom, ancestry, bpyima):
         if orient:
             mrot = orient[i] if len(orient) > 1 else orient[0]
             if mrot:
-                m *= mrot  # Not sure about this. Counterexample???
+                m @= mrot  # Not sure about this. Counterexample???
         if scale:
             mscale = scale[i] if len(scale) > 1 else scale[0]
             if mscale:
-                m *= mscale
+                m @= mscale
                 # First the cross-section 2-vector is scaled,
                 # then applied to the xz plane unit vectors
         for cpt in cross:
-            verts.append((spt + m * cpt).to_tuple())
+            verts.append((spt + m @ cpt).to_tuple())
             # Could've done this with a single 4x4 matrix... Oh well
 
     # The method from_pydata() treats correctly quads with final vertex
@@ -2275,60 +2288,58 @@ def importMesh_Extrusion(geom, ancestry, bpyima):
     bpymesh = bpy.data.meshes.new(name="Extrusion")
     bpymesh.from_pydata(verts, [], faces)
 
-    # Polygons and loops here, not tessfaces. The way we deal with
-    # textures in triangular meshes doesn't apply.
-    if bpyima:
-        # The structure of the loop array goes: cap, side, cap
-        if begin_cap or end_cap:  # Need dimensions
-            x_min = x_max = z_min = z_max = None
-            for c in cross:
-                (x, z) = (c.x, c.z)
-                if x_min is None or x < x_min:
-                    x_min = x
-                if x_max is None or x > x_max:
-                    x_max = x
-                if z_min is None or z < z_min:
-                    z_min = z
-                if z_max is None or z > z_max:
-                    z_max = z
-            dx = x_max - x_min
-            dz = z_max - z_min
-            cap_scale = dz if dz > dx else dx
+    # The way we deal with textures in triangular meshes doesn't apply.
+    # The structure of the loop array goes: cap, side, cap
+    if begin_cap or end_cap:  # Need dimensions
+        x_min = x_max = z_min = z_max = None
+        for c in cross:
+            (x, z) = (c.x, c.z)
+            if x_min is None or x < x_min:
+                x_min = x
+            if x_max is None or x > x_max:
+                x_max = x
+            if z_min is None or z < z_min:
+                z_min = z
+            if z_max is None or z > z_max:
+                z_max = z
+        dx = x_max - x_min
+        dz = z_max - z_min
+        cap_scale = dz if dz > dx else dx
 
-        # Takes an index in the cross array, returns scaled
-        # texture coords for cap texturing purposes
-        def scaledLoopVertex(i):
-            c = cross[i]
-            return (c.x - x_min) / cap_scale, (c.z - z_min) / cap_scale
+    # Takes an index in the cross array, returns scaled
+    # texture coords for cap texturing purposes
+    def scaledLoopVertex(i):
+        c = cross[i]
+        return (c.x - x_min) / cap_scale, (c.z - z_min) / cap_scale
 
-        # X3DOM uses raw cap shape, not a scaled one. So we will, too.
+    # X3DOM uses raw cap shape, not a scaled one. So we will, too.
 
-        loops = []
-        mloops = bpymesh.loops
-        if begin_cap:  # vertex indices match the indices in cross
-            # Rely on the loops in the mesh; don't repeat the face
-            # generation logic here
-            loops += [co for i in range(nc)
-                      for co in scaledLoopVertex(mloops[i].vertex_index)]
+    loops = []
+    mloops = bpymesh.loops
+    if begin_cap:  # vertex indices match the indices in cross
+        # Rely on the loops in the mesh; don't repeat the face
+        # generation logic here
+        loops += [co for i in range(nc)
+                  for co in scaledLoopVertex(mloops[i].vertex_index)]
 
-        # Sides
-        # Same order of vertices as in face generation
-        # We don't rely on the loops in the mesh; instead,
-        # we repeat the face generation logic.
-        loops += [co for s in range(nsf)
-                  for c in range(ncf)
-                  for v in flip(((c / ncf, s / nsf),
-                                 ((c + 1) / ncf, s / nsf),
-                                 ((c + 1) / ncf, (s + 1) / nsf),
-                                 (c / ncf, (s + 1) / nsf)), ccw) for co in v]
+    # Sides
+    # Same order of vertices as in face generation
+    # We don't rely on the loops in the mesh; instead,
+    # we repeat the face generation logic.
+    loops += [co for s in range(nsf)
+              for c in range(ncf)
+              for v in flip(((c / ncf, s / nsf),
+                             ((c + 1) / ncf, s / nsf),
+                             ((c + 1) / ncf, (s + 1) / nsf),
+                             (c / ncf, (s + 1) / nsf)), ccw) for co in v]
 
-        if end_cap:
-            # Base loop index for end cap
-            lb = ncf * nsf * 4 + (nc if begin_cap else 0)
-            # Rely on the loops here too.
-            loops += [co for i in range(nc) for co
-                      in scaledLoopVertex(mloops[lb + i].vertex_index % nc)]
-        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+    if end_cap:
+        # Base loop index for end cap
+        lb = ncf * nsf * 4 + (nc if begin_cap else 0)
+        # Rely on the loops here too.
+        loops += [co for i in range(nc) for co
+                  in scaledLoopVertex(mloops[lb + i].vertex_index % nc)]
+    importMesh_ApplyTextureToLoops(bpymesh, loops)
 
     bpymesh.validate(True)
     bpymesh.update()
@@ -2339,7 +2350,7 @@ def importMesh_Extrusion(geom, ancestry, bpyima):
 # Line and point sets
 
 
-def importMesh_LineSet(geom, ancestry, bpyima):
+def importMesh_LineSet(geom, ancestry):
     # TODO: line display properties are ignored
     # Per-vertex color is ignored
     coord = geom.getChildBySpec('Coordinate')
@@ -2438,7 +2449,7 @@ def importMesh_PointSet(geom, ancestry, _):
 GLOBALS['CIRCLE_DETAIL'] = 12
 
 
-def importMesh_Sphere(geom, ancestry, bpyima):
+def importMesh_Sphere(geom, ancestry):
     # solid is ignored.
     # Extra field 'subdivision="n m"' attribute, specifying how many
     # rings and segments to use (X3DOM).
@@ -2467,7 +2478,7 @@ def importMesh_Sphere(geom, ancestry, bpyima):
                        -cos(lou * seg) * sin(lau * ring))]
     bpymesh.vertices.foreach_set('co', co)
 
-    tf = bpymesh.tessfaces
+    tf = bpymesh.polygons
     tf.add(ns * nr)
     vb = 2 + (nr - 2) * ns  # First vertex index for the bottom cap
     fb = (nr - 1) * ns  # First face index for the bottom cap
@@ -2476,10 +2487,7 @@ def importMesh_Sphere(geom, ancestry, bpyima):
     # face creation. Can't easily do foreach_set, 'cause caps are triangles and
     # sides are quads.
 
-    if bpyima:
-        tex = bpymesh.tessface_uv_textures.new().data
-        for face in tex:  # No foreach_set for nonscalars
-            face.image = bpyima
+    tex = bpymesh.uv_layers.new().data
 
     # Faces go in order: top cap, sides, bottom cap.
     # Sides go by ring then by segment.
@@ -2491,13 +2499,16 @@ def importMesh_Sphere(geom, ancestry, bpyima):
     for seg in range(ns):
         tf[seg].vertices = (0, seg + 2, (seg + 1) % ns + 2)
         tf[fb + seg].vertices = (1, vb + (seg + 1) % ns, vb + seg)
-        if bpyima:
-            tex[seg].uv = (((seg + 0.5) / ns, 1),
-                           (seg / ns, 1 - 1 / nr),
-                           ((seg + 1) / ns, 1 - 1 / nr))
-            tex[fb + seg].uv = (((seg + 0.5) / ns, 0),
-                                ((seg + 1) / ns, 1 / nr),
-                                (seg / ns, 1 / nr))
+        for lidx, uv in zip(tf[seg].loops,
+                            (((seg + 0.5) / ns, 1),
+                             (seg / ns, 1 - 1 / nr),
+                             ((seg + 1) / ns, 1 - 1 / nr))):
+            tex[lidx].uv = uv
+        for lidx, uv in zip(tf[fb + seg].loops,
+                            (((seg + 0.5) / ns, 0),
+                             ((seg + 1) / ns, 1 / nr),
+                             (seg / ns, 1 / nr))):
+            tex[lidx].uv = uv
 
     # Sides
     # Side face vertices go in order:  down right up left
@@ -2511,18 +2522,19 @@ def importMesh_Sphere(geom, ancestry, bpyima):
         for seg in range(ns):
             nseg = (seg + 1) % ns
             tf[rfb + seg].vertices_raw = (tvb + seg, bvb + seg, bvb + nseg, tvb + nseg)
-            if bpyima:
-                tex[rfb + seg].uv_raw = (seg / ns, 1 - (ring + 1) / nr,
-                                         seg / ns, 1 - (ring + 2) / nr,
-                                         (seg + 1) / ns, 1 - (ring + 2) / nr,
-                                         (seg + 1) / ns, 1 - (ring + 1) / nr)
+            for lidx, uv in zip(tf[rfb + seg].loops,
+                                ((seg / ns, 1 - (ring + 1) / nr),
+                                 (seg / ns, 1 - (ring + 2) / nr),
+                                 ((seg + 1) / ns, 1 - (ring + 2) / nr),
+                                 ((seg + 1) / ns, 1 - (ring + 1) / nr))):
+                tex[lidx].uv = uv
 
     bpymesh.validate(False)
     bpymesh.update()
     return bpymesh
 
 
-def importMesh_Cylinder(geom, ancestry, bpyima):
+def importMesh_Cylinder(geom, ancestry):
     # solid is ignored
     # no ccw in this element
     # Extra parameter subdivision="n" - how many faces to use
@@ -2560,29 +2572,27 @@ def importMesh_Cylinder(geom, ancestry, bpyima):
 
     bpymesh.validate(False)
 
-    # Polygons here, not tessfaces
     # The structure of the loop array goes: cap, side, cap.
-    if bpyima:
-        loops = []
-        if side:
-            loops += [co for i in range(n)
-                      for co in ((i + 1) / n, 0, (i + 1) / n, 1, i / n, 1, i / n, 0)]
+    loops = []
+    if side:
+        loops += [co for i in range(n)
+                  for co in ((i + 1) / n, 0, (i + 1) / n, 1, i / n, 1, i / n, 0)]
 
-        if top:
-            loops += [0.5 + co / 2 for i in range(n)
-                      for co in (-sin(angle * i), cos(angle * i))]
+    if top:
+        loops += [0.5 + co / 2 for i in range(n)
+                  for co in (-sin(angle * i), cos(angle * i))]
 
-        if bottom:
-            loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
-                      for co in (sin(angle * i), cos(angle * i))]
+    if bottom:
+        loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
+                  for co in (sin(angle * i), cos(angle * i))]
 
-        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+    importMesh_ApplyTextureToLoops(bpymesh, loops)
 
     bpymesh.update()
     return bpymesh
 
 
-def importMesh_Cone(geom, ancestry, bpyima):
+def importMesh_Cone(geom, ancestry):
     # Solid ignored
     # Extra parameter subdivision="n" - how many faces to use
     n = geom.getFieldAsInt('subdivision', GLOBALS['CIRCLE_DETAIL'], ancestry)
@@ -2610,21 +2620,20 @@ def importMesh_Cone(geom, ancestry, bpyima):
     bpymesh.from_pydata(verts, [], faces)
 
     bpymesh.validate(False)
-    if bpyima:
-        loops = []
-        if side:
-            loops += [co for i in range(n)
-                      for co in ((i + 1) / n, 0, (i + 0.5) / n, 1, i / n, 0)]
-        if bottom:
-            loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
-                      for co in (sin(angle * i), cos(angle * i))]
-        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+    loops = []
+    if side:
+        loops += [co for i in range(n)
+                  for co in ((i + 1) / n, 0, (i + 0.5) / n, 1, i / n, 0)]
+    if bottom:
+        loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
+                  for co in (sin(angle * i), cos(angle * i))]
+    importMesh_ApplyTextureToLoops(bpymesh, loops)
 
     bpymesh.update()
     return bpymesh
 
 
-def importMesh_Box(geom, ancestry, bpyima):
+def importMesh_Box(geom, ancestry):
     # Solid is ignored
     # No ccw in this element
     (dx, dy, dz) = geom.getFieldAsFloatTuple('size', (2.0, 2.0, 2.0), ancestry)
@@ -2641,8 +2650,11 @@ def importMesh_Box(geom, ancestry, bpyima):
           dx, -dy, dz, -dx, -dy, dz, -dx, -dy, -dz, dx, -dy, -dz)
     bpymesh.vertices.foreach_set('co', co)
 
-    bpymesh.tessfaces.add(6)
-    bpymesh.tessfaces.foreach_set('vertices_raw', (
+    bpymesh.loops.add(6 * 4)
+    bpymesh.polygons.add(6)
+    bpymesh.polygons.foreach_set('loop_start', range(0, 6 * 4, 4))
+    bpymesh.polygons.foreach_set('loop_total', (4,) * 6)
+    bpymesh.polygons.foreach_set('vertices', (
         0, 1, 2, 3,   # +y
         4, 0, 3, 7,   # +x
         7, 3, 2, 6,   # -z
@@ -2651,17 +2663,14 @@ def importMesh_Box(geom, ancestry, bpyima):
         7, 6, 5, 4))  # -y
 
     bpymesh.validate(False)
-    if bpyima:
-        d = bpymesh.tessface_uv_textures.new().data
-        for face in d:  # No foreach_set for nonscalars
-            face.image = bpyima
-        d.foreach_set('uv_raw', (
-            1, 0, 0, 0, 0, 1, 1, 1,
-            0, 0, 0, 1, 1, 1, 1, 0,
-            0, 0, 0, 1, 1, 1, 1, 0,
-            0, 0, 0, 1, 1, 1, 1, 0,
-            0, 0, 0, 1, 1, 1, 1, 0,
-            1, 0, 0, 0, 0, 1, 1, 1))
+    d = bpymesh.uv_layers.new().data
+    d.foreach_set('uv', (
+        1, 0, 0, 0, 0, 1, 1, 1,
+        0, 0, 0, 1, 1, 1, 1, 0,
+        0, 0, 0, 1, 1, 1, 1, 0,
+        0, 0, 0, 1, 1, 1, 1, 0,
+        0, 0, 0, 1, 1, 1, 1, 0,
+        1, 0, 0, 0, 0, 1, 1, 1))
 
     bpymesh.update()
     return bpymesh
@@ -2676,6 +2685,7 @@ def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
     # texture is applied later, in appearance_Create().
     # All values between 0.0 and 1.0, defaults from VRML docs.
     bpymat = bpy.data.materials.new(vrmlname)
+    return  # XXX For now...
     bpymat.ambient = mat.getFieldAsFloat('ambientIntensity', 0.2, ancestry)
     diff_color = mat.getFieldAsFloatTuple('diffuseColor',
                                           [0.8, 0.8, 0.8],
@@ -2707,6 +2717,7 @@ def appearance_CreateDefaultMaterial():
     # (but possibly with a texture).
 
     bpymat = bpy.data.materials.new("Material")
+    return # XXX For now...
     bpymat.ambient = 0.2
     bpymat.diffuse_color = [0.8, 0.8, 0.8]
     bpymat.mirror_color = (0, 0, 0)
@@ -2809,7 +2820,7 @@ def appearance_LoadTexture(tex_node, ancestry, node):
 
 
 def appearance_ExpandCachedMaterial(bpymat):
-    if bpymat.texture_slots[0] is not None:
+    if 0 and bpymat.texture_slots[0] is not None:
         bpyima = bpymat.texture_slots[0].texture.image
         tex_has_alpha = bpyima.use_alpha
         return (bpymat, bpyima, tex_has_alpha)
@@ -2846,10 +2857,10 @@ def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
     if tex_node:  # Texture caching inside there
         bpyima = appearance_LoadTexture(tex_node, ancestry, node)
 
-    if is_vcol:
+    if 0 & is_vcol:
         bpymat.use_vertex_color_paint = True
 
-    if bpyima:
+    if 0 and bpyima:
         tex_has_alpha = bpyima.use_alpha
 
         texture = bpy.data.textures.new(bpyima.name, 'IMAGE')
@@ -3003,22 +3014,19 @@ def importShape_ProcessObject(
         if bpymat:
             bpydata.materials.append(bpymat)
 
-        if bpydata.tessface_uv_textures:
-            if has_alpha:  # set the faces alpha flag?
-                # transp = Mesh.FaceTranspModes.ALPHA
-                for f in bpydata.tessface_uv_textures.active.data:
-                    f.blend_type = 'ALPHA'
+        if bpydata.uv_layers:
+            if has_alpha and bpymat:  # set the faces alpha flag?
+                bpymat.blend_method = 'BLEND'
 
             if texmtx:
                 # Apply texture transform?
                 uv_copy = Vector()
-                for f in bpydata.tessface_uv_textures.active.data:
-                    fuv = f.uv
-                    for i, uv in enumerate(fuv):
-                        uv_copy.x = uv[0]
-                        uv_copy.y = uv[1]
+                for l in bpydata.uv_layers.active.data:
+                    luv = l.uv
+                    uv_copy.x = luv[0]
+                    uv_copy.y = luv[1]
+                    l.uv[:] = (uv_copy @ texmtx)[0:2]
 
-                        fuv[i] = (uv_copy * texmtx)[0:2]
         # Done transforming the texture
         # TODO: check if per-polygon textures are supported here.
     elif type(bpydata) == bpy.types.TextCurve:
@@ -3031,13 +3039,14 @@ def importShape_ProcessObject(
     # bpymesh.transform(getFinalMatrix(node))
     bpyob = node.blendObject = bpy.data.objects.new(vrmlname, bpydata)
     bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
-    bpycollection.objects.link(bpyob).select_set(True)
+    bpycollection.objects.link(bpyob)
+    bpyob.select_set(True)
 
     if DEBUG:
         bpyob["source_line_no"] = geom.lineno
 
 
-def importText(geom, ancestry, bpyima):
+def importText(geom, ancestry):
     fmt = geom.getChildBySpec('FontStyle')
     size = fmt.getFieldAsFloat("size", 1, ancestry) if fmt else 1.
     body = geom.getFieldAsString("string", None, ancestry)
@@ -3085,7 +3094,8 @@ def importShape(bpycollection, node, ancestry, global_matrix):
         bpyob = node.blendData = node.blendObject = bpyob.copy()
         # Could transform data, but better the object so we can instance the data
         bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
-        bpycollection.objects.link(bpyob).select_set(True)
+        bpycollection.objects.link(bpyob)
+        bpyob.select_set(True)
         return
 
     vrmlname = node.getDefName()
@@ -3122,7 +3132,7 @@ def importShape(bpycollection, node, ancestry, global_matrix):
     # geometries are easier to flip than others
     geom_fn = geometry_importers.get(geom_spec)
     if geom_fn is not None:
-        bpydata = geom_fn(geom, ancestry, bpyima)
+        bpydata = geom_fn(geom, ancestry)
 
         # There are no geometry importers that can legally return
         # no object.  It's either a bpy object, or an exception
@@ -3216,7 +3226,7 @@ def importLamp_SpotLight(node, ancestry):
     # Convert
 
     # lamps have their direction as -z, y==up
-    mtx = Matrix.Translation(location) * Vector(direction).to_track_quat('-Z', 'Y').to_matrix().to_4x4()
+    mtx = Matrix.Translation(location) @ Vector(direction).to_track_quat('-Z', 'Y').to_matrix().to_4x4()
 
     return bpylamp, mtx
 
@@ -3233,7 +3243,8 @@ def importLamp(bpycollection, node, spec, ancestry, global_matrix):
         raise ValueError
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(bpylamp.name, bpylamp)
-    bpycollection.objects.link(bpyob).select_set(True)
+    bpycollection.objects.link(bpyob)
+    bpyob.select_set(True)
 
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
@@ -3256,10 +3267,11 @@ def importViewpoint(bpycollection, node, ancestry, global_matrix):
 
     bpycam.angle = fieldOfView
 
-    mtx = Matrix.Translation(Vector(position)) * translateRotation(orientation)
+    mtx = Matrix.Translation(Vector(position)) @ translateRotation(orientation)
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, bpycam)
-    bpycollection.objects.link(bpyob).select_set(True)
+    bpycollection.objects.link(bpyob)
+    bpyob.select_set(True)
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
 
@@ -3269,7 +3281,8 @@ def importTransform(bpycollection, node, ancestry, global_matrix):
         name = 'Transform'
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, None)
-    bpycollection.objects.link(bpyob).select_set(True)
+    bpycollection.objects.link(bpyob)
+    bpyob.select_set(True)
 
     bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
 
@@ -3533,7 +3546,8 @@ def load_web3d(
                 node = defDict[key]
                 if node.blendData is None:  # Add an object if we need one for animation
                     node.blendData = node.blendObject = bpy.data.objects.new('AnimOb', None)  # , name)
-                    bpycollection.objects.link(node.blendObject).select_set(True)
+                    bpycollection.objects.link(node.blendObject)
+                    bpyob.select_set(True)
 
                 if node.blendData.animation_data is None:
                     node.blendData.animation_data_create()

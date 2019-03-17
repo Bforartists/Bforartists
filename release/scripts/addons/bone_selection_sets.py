@@ -62,7 +62,7 @@ class SelectionSet(PropertyGroup):
 
 # UI Panel w/ UIList ##########################################################
 
-class POSE_MT_selection_sets_specials(Menu):
+class POSE_MT_selection_sets_context_menu(Menu):
     bl_label = "Selection Sets Specials"
 
     def draw(self, context):
@@ -107,7 +107,7 @@ class POSE_PT_selection_sets(Panel):
         col = row.column(align=True)
         col.operator("pose.selection_set_add", icon='ADD', text="")
         col.operator("pose.selection_set_remove", icon='REMOVE', text="")
-        col.menu("POSE_MT_selection_sets_specials", icon='DOWNARROW_HLT', text="")
+        col.menu("POSE_MT_selection_sets_context_menu", icon='DOWNARROW_HLT', text="")
 
         # move up/down arrows
         if len(arm.selection_sets) > 0:
@@ -512,7 +512,7 @@ def uniqify(name: str, other_names: list) -> str:
 
 classes = (
     POSE_MT_selection_set_create,
-    POSE_MT_selection_sets_specials,
+    POSE_MT_selection_sets_context_menu,
     POSE_MT_selection_sets_select,
     POSE_PT_selection_sets,
     POSE_UL_selection_set,

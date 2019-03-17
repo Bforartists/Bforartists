@@ -38,8 +38,8 @@ def button_camera_passepartout(self, context):
 
 
 def register():
-    bpy.types.VIEW3D_MT_object_specials.append(button_camera_passepartout)
+    bpy.types.VIEW3D_MT_object_context_menu.append(button_camera_passepartout)
 
 
 def unregister():
-    bpy.types.VIEW3D_MT_object_specials.remove(button_camera_passepartout)
+    bpy.types.VIEW3D_MT_object_context_menu.remove(button_camera_passepartout)

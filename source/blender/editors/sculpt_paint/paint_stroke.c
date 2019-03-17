@@ -808,9 +808,9 @@ static void stroke_done(struct bContext *C, struct wmOperator *op)
 
 	if (stroke->timer) {
 		WM_event_remove_timer(
-			CTX_wm_manager(C),
-			CTX_wm_window(C),
-			stroke->timer);
+		        CTX_wm_manager(C),
+		        CTX_wm_window(C),
+		        stroke->timer);
 	}
 
 	if (stroke->rng) {
@@ -1363,6 +1363,11 @@ void *paint_stroke_mode_data(struct PaintStroke *stroke)
 bool paint_stroke_flipped(struct PaintStroke *stroke)
 {
 	return stroke->pen_flip;
+}
+
+bool paint_stroke_inverted(struct PaintStroke *stroke)
+{
+	return stroke->stroke_mode == BRUSH_STROKE_INVERT;
 }
 
 float paint_stroke_distance_get(struct PaintStroke *stroke)

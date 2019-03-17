@@ -676,7 +676,7 @@ def create_mesh(new_objects,
         me.loops.foreach_set("normal", loops_nor)
 
     if verts_tex and me.polygons:
-        me.uv_layers.new()
+        me.uv_layers.new(do_init=False)
         loops_uv = tuple(uv for (_, _, face_vert_tex_indices, _, _, _, _) in faces for face_uvidx in face_vert_tex_indices for uv in verts_tex[face_uvidx])
         me.uv_layers[0].data.foreach_set("uv", loops_uv)
 
