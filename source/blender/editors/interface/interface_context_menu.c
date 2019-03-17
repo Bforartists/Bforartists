@@ -110,7 +110,7 @@ static uiBlock *menu_change_shortcut(bContext *C, ARegion *ar, void *arg)
 
 	uiItemR(layout, &ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
 
-	UI_block_bounds_set_popup(block, 6, -50, 26);
+	UI_block_bounds_set_popup(block, 6, (const int[2]){-50, 26});
 
 	return block;
 }
@@ -159,7 +159,7 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *ar, void *arg)
 
 	uiItemR(layout, &ptr, "type", UI_ITEM_R_FULL_EVENT | UI_ITEM_R_IMMEDIATE, "", ICON_NONE);
 
-	UI_block_bounds_set_popup(block, 6, -50, 26);
+	UI_block_bounds_set_popup(block, 6, (const int[2]){-50, 26});
 
 #ifdef USE_KEYMAP_ADD_HACK
 	g_kmi_id_hack = kmi_id;
@@ -678,9 +678,13 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
 	/* Pointer properties and string properties with
 	 * prop_search support jumping to target object/bone. */
 	if (but->rnapoin.data && but->rnaprop) {
-		const PropertyType type = RNA_property_type(but->rnaprop);
-
-		if ((type == PROP_POINTER) || (type == PROP_STRING && but->type == UI_BTYPE_SEARCH_MENU && but->search_func == ui_rna_collection_search_cb)) {
+		const PropertyType prop_type = RNA_property_type(but->rnaprop);
+		if (((prop_type == PROP_POINTER) ||
+		     (prop_type == PROP_STRING &&
+		      but->type == UI_BTYPE_SEARCH_MENU &&
+		      but->search_func == ui_rna_collection_search_cb)) &&
+		      ui_jump_to_target_button_poll(C))
+		{
 			uiItemO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Jump To Target"),
 			        ICON_NONE, "UI_OT_jump_to_target_button");
 			uiItemS(layout);

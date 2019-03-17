@@ -28,7 +28,7 @@ from bpy.props import (
 
 from mathutils import Color
 
-from .utils import get_rig_type, MetarigError
+from .utils import MetarigError
 from .utils import write_metarig, write_widget
 from .utils import unique_name
 from .utils import upgradeMetarigTypes, outdated_types
@@ -38,6 +38,18 @@ from .rigs.utils import get_limb_generated_names
 from . import rig_lists
 from . import generate
 from . import rot_mode
+from . import feature_sets
+
+
+def build_type_list(context, rigify_types):
+    rigify_types.clear()
+
+    for r in sorted(rig_lists.rigs):
+        if (context.object.data.active_feature_set in ('all', rig_lists.rigs[r]['feature_set'])
+                or len(feature_sets.feature_set_items(context.scene, context)) == 2
+                ):
+            a = rigify_types.add()
+            a.name = r
 
 
 class DATA_PT_rigify_buttons(bpy.types.Panel):
@@ -65,21 +77,18 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
 
             check_props = ['IK_follow', 'root/parent', 'FK_limb_follow', 'IK_Stretch']
 
-            for obj in bpy.data.objects:
-                if type(obj.data) != bpy.types.Armature:
-                    continue
-                for bone in obj.pose.bones:
-                    if bone.bone.layers[30] and (list(set(bone.keys()) & set(check_props))):
-                        show_warning = True
+            for bone in obj.pose.bones:
+                if bone.bone.layers[30] and (list(set(bone.keys()) & set(check_props))):
+                    show_warning = True
+                    break
+            for b in obj.pose.bones:
+                if b.rigify_type in outdated_types.keys():
+                    if outdated_types[b.rigify_type]:
+                        show_update_metarig = True
+                    else:
+                        show_update_metarig = False
+                        show_not_updatable = True
                         break
-                for b in obj.pose.bones:
-                    if b.rigify_type in outdated_types.keys():
-                        if outdated_types[b.rigify_type]:
-                            show_update_metarig = True
-                        else:
-                            show_update_metarig = False
-                            show_not_updatable = True
-                            break
 
             if show_warning:
                 layout.label(text=WARNING, icon='ERROR')
@@ -99,7 +108,15 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
                 layout.operator("pose.rigify_upgrade_types", text="Upgrade Metarig")
 
             row = layout.row()
+            # Rig type field
+
+            col = layout.column(align=True)
+            col.active = (not 'rig_id' in C.object.data)
+
+            col.separator()
+            row = col.row()
             row.operator("pose.rigify_generate", text="Generate Rig", icon='POSE_HLT')
+
             row.enabled = enable_generate_and_advanced
 
             if id_store.rigify_advanced_generation:
@@ -162,24 +179,15 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
 
         elif obj.mode == 'EDIT':
             # Build types list
-            collection_name = str(id_store.rigify_collection).replace(" ", "")
+            build_type_list(context, id_store.rigify_types)
 
-            for i in range(0, len(id_store.rigify_types)):
-                id_store.rigify_types.remove(0)
-
-            for r in rig_lists.rig_list:
-
-                if collection_name == "All":
-                    a = id_store.rigify_types.add()
-                    a.name = r
-                elif r.startswith(collection_name + '.'):
-                    a = id_store.rigify_types.add()
-                    a.name = r
-                elif (collection_name == "None") and ("." not in r):
-                    a = id_store.rigify_types.add()
-                    a.name = r
+            if id_store.rigify_active_type > len(id_store.rigify_types):
+                id_store.rigify_active_type = 0
 
             # Rig type list
+            if len(feature_sets.feature_set_items(context.scene, context)) > 2:
+                row = layout.row()
+                row.prop(context.object.data, "active_feature_set")
             row = layout.row()
             row.template_list("UI_UL_list", "rigify_types", id_store, "rigify_types", id_store, 'rigify_active_type')
 
@@ -514,7 +522,7 @@ class DATA_UL_rigify_bone_groups(bpy.types.UIList):
         row2.enabled = not bpy.context.object.data.rigify_colors_lock
 
 
-class DATA_MT_rigify_bone_groups_specials(bpy.types.Menu):
+class DATA_MT_rigify_bone_groups_context_menu(bpy.types.Menu):
     bl_label = 'Rigify Bone Groups Specials'
 
     def draw(self, context):
@@ -556,7 +564,7 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
         col = row.column(align=True)
         col.operator("armature.rigify_bone_group_add", icon='ZOOM_IN', text="")
         col.operator("armature.rigify_bone_group_remove", icon='ZOOM_OUT', text="").idx = obj.data.rigify_colors_index
-        col.menu("DATA_MT_rigify_bone_groups_specials", icon='DOWNARROW_HLT', text="")
+        col.menu("DATA_MT_rigify_bone_groups_context_menu", icon='DOWNARROW_HLT', text="")
         row = layout.row()
         row.prop(armature, 'rigify_theme_to_add', text = 'Theme')
         op = row.operator("armature.rigify_bone_group_add_theme", text="Add From Theme")
@@ -582,38 +590,24 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
         C = context
         id_store = C.window_manager
         bone = context.active_pose_bone
-        collection_name = str(id_store.rigify_collection).replace(" ", "")
         rig_name = str(context.active_pose_bone.rigify_type).replace(" ", "")
 
         layout = self.layout
 
         # Build types list
-        for i in range(0, len(id_store.rigify_types)):
-            id_store.rigify_types.remove(0)
-
-        for r in rig_lists.rig_list:
-            if r in rig_lists.implementation_rigs:
-                continue
-            # collection = r.split('.')[0]  # UNUSED
-            if collection_name == "All":
-                a = id_store.rigify_types.add()
-                a.name = r
-            elif r.startswith(collection_name + '.'):
-                a = id_store.rigify_types.add()
-                a.name = r
-            elif collection_name == "None" and len(r.split('.')) == 1:
-                a = id_store.rigify_types.add()
-                a.name = r
+        build_type_list(context, id_store.rigify_types)
 
         # Rig type field
+        if len(feature_sets.feature_set_items(context.scene, context)) > 2:
+            row = layout.row()
+            row.prop(context.object.data, "active_feature_set")
         row = layout.row()
-        row.prop_search(bone, "rigify_type", id_store, "rigify_types", text="Rig type:")
+        row.prop_search(bone, "rigify_type", id_store, "rigify_types", text="Rig type")
 
         # Rig type parameters / Rig type non-exist alert
         if rig_name != "":
             try:
-                rig = get_rig_type(rig_name)
-                rig.Rig
+                rig = rig_lists.rigs[rig_name]['module']
             except (ImportError, AttributeError):
                 row = layout.row()
                 box = row.box()
@@ -636,6 +630,10 @@ class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'View'
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in ['EDIT_ARMATURE', 'EDIT_MESH']
 
     @classmethod
     def poll(cls, context):
@@ -818,7 +816,7 @@ class Sample(bpy.types.Operator):
             use_global_undo = context.preferences.edit.use_global_undo
             context.preferences.edit.use_global_undo = False
             try:
-                rig = get_rig_type(self.metarig_type)
+                rig = rig_lists.rigs[self.metarig_type]["module"]
                 create_sample = rig.create_sample
             except (ImportError, AttributeError):
                 raise Exception("rig type '" + self.metarig_type + "' has no sample.")
@@ -1333,7 +1331,7 @@ classes = (
     DATA_OT_rigify_bone_group_remove,
     DATA_OT_rigify_bone_group_remove_all,
     DATA_UL_rigify_bone_groups,
-    DATA_MT_rigify_bone_groups_specials,
+    DATA_MT_rigify_bone_groups_context_menu,
     DATA_PT_rigify_bone_groups,
     DATA_PT_rigify_layer_names,
     DATA_PT_rigify_buttons,

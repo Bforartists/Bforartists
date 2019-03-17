@@ -2475,8 +2475,8 @@ def register():
         bpy.utils.register_class(ktools)
         bpy.utils.register_class(ktools_mesh)
 
-        bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
-        bpy.types.VIEW3D_MT_object_specials.prepend(menu_func_ob)
+        bpy.types.VIEW3D_MT_edit_mesh_context_menu.prepend(menu_func)
+        bpy.types.VIEW3D_MT_object_context_menu.prepend(menu_func_ob)
 
         kc = bpy.context.window_manager.keyconfigs.addon
         if kc:
@@ -2509,8 +2509,8 @@ def unregister():
         bpy.utils.unregister_class(ktools)
         bpy.utils.unregister_class(ktools_mesh)
 
-        bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
-        bpy.types.VIEW3D_MT_object_specials.remove(menu_func_ob)
+        bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_func)
+        bpy.types.VIEW3D_MT_object_context_menu.remove(menu_func_ob)
 
         kc = bpy.context.window_manager.keyconfigs.addon
         if kc:

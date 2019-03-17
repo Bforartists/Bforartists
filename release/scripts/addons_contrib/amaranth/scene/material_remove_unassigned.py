@@ -100,9 +100,9 @@ def ui_material_remove_unassigned(self, context):
 
 def register():
     bpy.utils.register_class(AMTH_OBJECT_OT_material_remove_unassigned)
-    bpy.types.MATERIAL_MT_specials.append(ui_material_remove_unassigned)
+    bpy.types.MATERIAL_MT_context_menu.append(ui_material_remove_unassigned)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_OBJECT_OT_material_remove_unassigned)
-    bpy.types.MATERIAL_MT_specials.remove(ui_material_remove_unassigned)
+    bpy.types.MATERIAL_MT_context_menu.remove(ui_material_remove_unassigned)

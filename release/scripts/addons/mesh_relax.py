@@ -118,13 +118,13 @@ def menu_func(self, context):
 def register():
     bpy.utils.register_class(Relax)
 
-    bpy.types.VIEW3D_MT_edit_mesh_specials.append(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.append(menu_func)
     bpy.types.VIEW3D_MT_edit_mesh_vertices.append(menu_func)
 
 def unregister():
     bpy.utils.unregister_class(Relax)
 
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_context_menu.remove(menu_func)
     bpy.types.VIEW3D_MT_edit_mesh_vertices.remove(menu_func)
 
 if __name__ == "__main__":

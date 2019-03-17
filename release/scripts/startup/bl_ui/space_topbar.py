@@ -19,9 +19,6 @@
 # <pep8 compliant>
 import bpy
 from bpy.types import Header, Menu, Panel
-from .properties_grease_pencil_common import (
-    GPENCIL_UL_layer,
-)
 
 class TOPBAR_HT_upper_bar(Header):
     bl_space_type = 'TOPBAR'
@@ -80,12 +77,10 @@ class TOPBAR_HT_lower_bar(Header):
     def draw(self, context):
         region = context.region
 
-        if region.alignment == 'LEFT':
-            self.draw_left(context)
-        elif region.alignment == 'RIGHT':
+        if region.alignment == 'RIGHT':
             self.draw_right(context)
         else:
-            self.draw_center(context)
+            self.draw_left(context)
 
     def draw_left(self, context):
         layout = self.layout
@@ -148,9 +143,6 @@ class TOPBAR_HT_lower_bar(Header):
                     layout.popover_group(space_type='PROPERTIES', region_type='WINDOW', context=".paint_common_2d", category="")
             elif context.uv_sculpt_object is not None:
                 layout.popover_group(space_type='PROPERTIES', region_type='WINDOW', context=".uv_sculpt", category="")
-
-    def draw_center(self, context):
-        pass
 
     def draw_right(self, context):
         layout = self.layout
@@ -293,9 +285,10 @@ class _draw_left_context_mode:
                 return
 
             is_paint = True
-            if tool.name in {"Line", "Box", "Circle", "Arc", "Curve"}:
+            # FIXME: tools must use their own UI drawing!
+            if tool.idname in {"builtin.line", "builtin.box", "builtin.circle", "builtin.arc", "builtin.curve"}:
                 is_paint = False
-            elif tool.name == "Cutter":
+            elif tool.idname == "Cutter":
                 row = layout.row(align=True)
                 row.prop(context.tool_settings.gpencil_sculpt, "intersection_threshold")
                 return
@@ -347,7 +340,8 @@ class _draw_left_context_mode:
             )
             brush_basic_gpencil_paint_settings(layout, context, brush, compact=True)
 
-            if tool.name in {"Arc", "Curve", "Line", "Box", "Circle"}:
+            # FIXME: tools must use their own UI drawing!
+            if tool.idname in {"builtin.arc", "builtin.curve", "builtin.line", "builtin.box", "builtin.circle"}:
                 settings = context.tool_settings.gpencil_sculpt
                 row = layout.row(align=True)
                 row.prop(settings, "use_thickness_curve", text="", icon='CURVE_DATA')
@@ -432,11 +426,11 @@ class _draw_left_context_mode:
 
                         row = layout.row(align=True)
                         UnifiedPaintPanel.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
-                        UnifiedPaintPanel.prop_unified_size(row, context, brush, "use_pressure_size")
+                        UnifiedPaintPanel.prop_unified_size(row, context, brush, "use_pressure_size", text="")
 
                         row = layout.row(align=True)
                         UnifiedPaintPanel.prop_unified_strength(row, context, brush, "strength", slider=True, text="Strength")
-                        UnifiedPaintPanel.prop_unified_strength(row, context, brush, "use_pressure_strength")
+                        UnifiedPaintPanel.prop_unified_strength(row, context, brush, "use_pressure_strength", text="")
 
         @staticmethod
         def PAINT(context, layout, tool):
@@ -477,7 +471,6 @@ class TOPBAR_PT_gpencil_layers(Panel):
 
         return False
 
-    @staticmethod
     def draw(self, context):
         layout = self.layout
         gpd = context.gpencil_data
@@ -517,7 +510,7 @@ class TOPBAR_PT_gpencil_layers(Panel):
 
         gpl = context.active_gpencil_layer
         if gpl:
-            sub.menu("GPENCIL_MT_layer_specials", icon='DOWNARROW_HLT', text="")
+            sub.menu("GPENCIL_MT_layer_context_menu", icon='DOWNARROW_HLT', text="")
 
             if len(gpd.layers) > 1:
                 col.separator()
@@ -903,7 +896,7 @@ class TOPBAR_MT_help(Menu):
         layout.operator("wm.splash", icon='BLENDER')
 
 
-class TOPBAR_MT_file_specials(Menu):
+class TOPBAR_MT_file_context_menu(Menu):
     bl_label = "File Context Menu"
 
     def draw(self, context):
@@ -924,7 +917,7 @@ class TOPBAR_MT_file_specials(Menu):
         layout.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
-class TOPBAR_MT_window_specials(Menu):
+class TOPBAR_MT_window_context_menu(Menu):
     bl_label = "Window Context Menu"
 
     def draw(self, context):
@@ -1016,8 +1009,8 @@ class TOPBAR_PT_gpencil_primitive(Panel):
 classes = (
     TOPBAR_HT_upper_bar,
     TOPBAR_HT_lower_bar,
-    TOPBAR_MT_file_specials,
-    TOPBAR_MT_window_specials,
+    TOPBAR_MT_file_context_menu,
+    TOPBAR_MT_window_context_menu,
     TOPBAR_MT_workspace_menu,
     TOPBAR_MT_editor_menus,
     TOPBAR_MT_file,

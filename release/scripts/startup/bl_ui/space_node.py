@@ -21,9 +21,8 @@ import bpy
 import nodeitems_utils
 from bpy.types import Header, Menu, Panel
 from bpy.app.translations import pgettext_iface as iface_
-from bl_operators.presets import PresetMenu
+from bl_ui.utils import PresetPanel
 from .properties_grease_pencil_common import (
-    AnnotationDrawingToolsPanel,
     AnnotationDataPanel,
     GreasePencilToolsPanel,
 )
@@ -342,7 +341,7 @@ class NODE_MT_node(Menu):
         layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
-class NODE_PT_node_color_presets(PresetMenu):
+class NODE_PT_node_color_presets(PresetPanel, Panel):
     """Predefined node color"""
     bl_label = "Color Presets"
     preset_subdir = "node_color"
@@ -350,7 +349,7 @@ class NODE_PT_node_color_presets(PresetMenu):
     preset_add_operator = "node.node_color_preset_add"
 
 
-class NODE_MT_node_color_specials(Menu):
+class NODE_MT_node_color_context_menu(Menu):
     bl_label = "Node Color Specials"
 
     def draw(self, context):
@@ -359,7 +358,7 @@ class NODE_MT_node_color_specials(Menu):
         layout.operator("node.node_copy_color", icon='COPY_ID')
 
 
-class NODE_MT_specials(Menu):
+class NODE_MT_context_menu(Menu):
     bl_label = "Node Context Menu"
 
     def draw(self, context):
@@ -456,7 +455,7 @@ class NODE_PT_active_node_color(Panel):
 
         row = layout.row()
         row.prop(node, "color", text="")
-        row.menu("NODE_MT_node_color_specials", text="", icon='DOWNARROW_HLT')
+        row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
 class NODE_PT_active_node_properties(Panel):
@@ -674,8 +673,8 @@ classes = (
     NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_PT_node_color_presets,
-    NODE_MT_node_color_specials,
-    NODE_MT_specials,
+    NODE_MT_node_color_context_menu,
+    NODE_MT_context_menu,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color,
     NODE_PT_active_node_properties,

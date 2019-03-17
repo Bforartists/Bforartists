@@ -272,11 +272,15 @@ typedef struct PointCache {
 	char info[64];
 	/** File path, 1024 = FILE_MAX. */
 	char path[1024];
+
 	/**
 	 * Array of length endframe-startframe+1 with flags to indicate cached frames.
 	 * Can be later used for other per frame flags too if needed.
 	 */
 	char *cached_frames;
+	int cached_frames_len;
+	char _pad1[4];
+
 	struct ListBase mem_cache;
 
 	struct PTCacheEdit *edit;
@@ -378,18 +382,18 @@ typedef struct SoftBody {
 	/* self collision*/
 	/** Fixed collision ball size if > 0. */
 	float colball;
-	/** Cooling down collision response . */
+	/** Cooling down collision response. */
 	float balldamp;
-	/** Pressure the ball is loaded with . */
+	/** Pressure the ball is loaded with. */
 	float ballstiff;
 	short sbc_mode;
-	short aeroedge,
-		minloops,
-		maxloops,
-		choke,
-		solver_ID,
-		plastic, springpreload
-		;
+	short aeroedge;
+	short minloops;
+	short maxloops;
+	short choke;
+	short solver_ID;
+	short plastic;
+	short springpreload;
 
 	/** Scratchpad/cache on live time not saved in file. */
 	struct SBScratch *scratch;
