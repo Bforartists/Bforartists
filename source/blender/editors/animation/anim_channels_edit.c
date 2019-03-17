@@ -1258,8 +1258,9 @@ static void rearrange_nla_control_channels(bAnimContext *ac, AnimData *adt, eRea
 	/* we cannot rearrange between strips, but within each strip, we can rearrange those curves */
 	for (nlt = adt->nla_tracks.first; nlt; nlt = nlt->next) {
 		for (strip = nlt->strips.first; strip; strip = strip->next) {
-			rearrange_animchannel_islands(&strip->fcurves, rearrange_func, mode, ANIMTYPE_NLACURVE,
-				                          &anim_data_visible);
+			rearrange_animchannel_islands(
+			        &strip->fcurves, rearrange_func, mode, ANIMTYPE_NLACURVE,
+			        &anim_data_visible);
 		}
 	}
 
@@ -1350,7 +1351,7 @@ static int animchannels_rearrange_exec(bContext *C, wmOperator *op)
 			switch (ac.datatype) {
 				case ANIMCONT_NLA: /* NLA-tracks only */
 					rearrange_nla_channels(&ac, adt, mode);
-					DEG_id_tag_update(ale->id, ID_RECALC_ANIMATION | ID_RECALC_COPY_ON_WRITE);
+					DEG_id_tag_update(ale->id, ID_RECALC_ANIMATION);
 					break;
 
 				case ANIMCONT_DRIVERS: /* Drivers list only */
@@ -1637,7 +1638,7 @@ static void update_dependencies_on_delete(bAnimListElem *ale)
 	if (adt != NULL) {
 		DEG_id_tag_update(id, ID_RECALC_ANIMATION);
 		if (adt->action != NULL) {
-			DEG_id_tag_update(&adt->action->id, ID_RECALC_COPY_ON_WRITE);
+			DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION);
 		}
 	}
 	/* Deals with NLA and drivers.
@@ -1693,7 +1694,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				/* free the group itself */
 				if (adt->action) {
 					BLI_freelinkN(&adt->action->groups, agrp);
-					DEG_id_tag_update_ex(CTX_data_main(C), &adt->action->id, ID_RECALC_COPY_ON_WRITE);
+					DEG_id_tag_update_ex(CTX_data_main(C), &adt->action->id, ID_RECALC_ANIMATION);
 				}
 				else
 					MEM_freeN(agrp);

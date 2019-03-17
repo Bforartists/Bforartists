@@ -509,7 +509,7 @@ static void *undomesh_from_editmesh(UndoMesh *um, BMEditMesh *em, Key *key)
 	        NULL, em->bm, &um->me, (&(struct BMeshToMeshParams){
 	            /* Undo code should not be manipulating 'G_MAIN->object' hooks/vertex-parent. */
 	            .calc_object_remap = false,
-	            .cd_mask_extra = {.vmask=CD_MASK_SHAPE_KEYINDEX},
+	            .cd_mask_extra = {.vmask = CD_MASK_SHAPE_KEYINDEX},
 	        }));
 
 	um->selectmode = em->selectmode;
@@ -747,6 +747,9 @@ static void mesh_undosys_step_decode(struct bContext *C, struct Main *UNUSED(bma
 
 	/* The first element is always active */
 	ED_undo_object_set_active_or_warn(CTX_data_view_layer(C), us->elems[0].obedit_ref.ptr, us_p->name, &LOG);
+
+	Scene *scene = CTX_data_scene(C);
+	scene->toolsettings->selectmode = us->elems[0].data.selectmode;
 
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, NULL);
 }

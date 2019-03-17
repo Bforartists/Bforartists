@@ -84,7 +84,8 @@ typedef enum eGPencil_PaintStatus {
 	GP_STATUS_IDLING = 0,   /* stroke isn't in progress yet */
 	GP_STATUS_PAINTING,     /* a stroke is in progress */
 	GP_STATUS_ERROR,        /* something wasn't correctly set up */
-	GP_STATUS_DONE          /* painting done */
+	GP_STATUS_DONE,         /* painting done */
+	GP_STATUS_CAPTURE       /* capture event, but cancel */
 } eGPencil_PaintStatus;
 
 /* Return flags for adding points to stroke buffer */
@@ -223,10 +224,10 @@ static bool gpencil_draw_poll(bContext *C)
 	Object *obact = CTX_data_active_object(C);
 	ScrArea *sa = CTX_wm_area(C);
 	if ((sa) && (sa->spacetype == SPACE_VIEW3D)) {
-		if ((obact) && (obact->type == OB_GPENCIL)
-			&& (obact->mode == OB_MODE_PAINT_GPENCIL)) {
-			CTX_wm_operator_poll_msg_set(C,
-				"Annotation cannot be used in grease pencil draw mode");
+		if ((obact) && (obact->type == OB_GPENCIL) &&
+		    (obact->mode == OB_MODE_PAINT_GPENCIL))
+		{
+			CTX_wm_operator_poll_msg_set(C, "Annotation cannot be used in grease pencil draw mode");
 			return false;
 		}
 	}
@@ -1328,7 +1329,7 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 		}
 
 		if (has_layer_to_erase == false) {
-			p->status = GP_STATUS_ERROR;
+			p->status = GP_STATUS_CAPTURE;
 			//if (G.debug & G_DEBUG)
 				printf("Error: Eraser will not be affecting anything (gpencil_paint_init)\n");
 			return;
@@ -1713,6 +1714,7 @@ static void gpencil_draw_status_indicators(bContext *C, tGPsdata *p)
 
 		case GP_STATUS_ERROR:
 		case GP_STATUS_DONE:
+		case GP_STATUS_CAPTURE:
 			/* clear status string */
 			ED_workspace_status_text(C, NULL);
 			break;
@@ -2013,6 +2015,14 @@ static int gpencil_draw_invoke(bContext *C, wmOperator *op, const wmEvent *event
 	else
 		p = op->customdata;
 
+	/* if empty erase capture and finish */
+	if (p->status == GP_STATUS_CAPTURE) {
+		gpencil_draw_exit(C, op);
+
+		BKE_report(op->reports, RPT_ERROR, "Nothing to erase");
+		return OPERATOR_FINISHED;
+	}
+
 	/* TODO: set any additional settings that we can take from the events?
 	 * TODO? if tablet is erasing, force eraser to be on? */
 
@@ -2122,8 +2132,7 @@ static void annotation_add_missing_events(bContext *C, wmOperator *op, const wmE
 		interp_v2_v2v2(pt, a, b, 0.5f);
 		sub_v2_v2v2(pt, b, pt);
 		/* create fake event */
-		annotation_draw_apply_event(op, event, CTX_data_depsgraph(C),
-			pt[0], pt[1]);
+		annotation_draw_apply_event(op, event, CTX_data_depsgraph(C), pt[0], pt[1]);
 	}
 	else if (dist >= factor) {
 		int slices = 2 + (int)((dist - 1.0) / factor);
@@ -2132,8 +2141,9 @@ static void annotation_add_missing_events(bContext *C, wmOperator *op, const wmE
 			interp_v2_v2v2(pt, a, b, n * i);
 			sub_v2_v2v2(pt, b, pt);
 			/* create fake event */
-			annotation_draw_apply_event(op, event, CTX_data_depsgraph(C),
-				pt[0], pt[1]);
+			annotation_draw_apply_event(
+			        op, event, CTX_data_depsgraph(C),
+			        pt[0], pt[1]);
 		}
 	}
 }
@@ -2270,8 +2280,8 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 				if (G.debug & G_DEBUG) {
 					printf("found alternative region %p (old was %p) - at %d %d (sa: %d %d -> %d %d)\n",
-						current_region, p->ar, event->x, event->y,
-						p->sa->totrct.xmin, p->sa->totrct.ymin, p->sa->totrct.xmax, p->sa->totrct.ymax);
+					       current_region, p->ar, event->x, event->y,
+					       p->sa->totrct.xmin, p->sa->totrct.ymin, p->sa->totrct.xmax, p->sa->totrct.ymax);
 				}
 
 				if (current_region) {

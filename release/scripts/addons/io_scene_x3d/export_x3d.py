@@ -53,7 +53,7 @@ def clight_color(col):
 
 
 def matrix_direction_neg_z(matrix):
-    return (matrix.to_3x3() * mathutils.Vector((0.0, 0.0, -1.0))).normalized()[:]
+    return (matrix.to_3x3() @ mathutils.Vector((0.0, 0.0, -1.0))).normalized()[:]
 
 
 def prefix_quoted_str(value, prefix):
@@ -218,6 +218,7 @@ def h3d_is_object_view(scene, obj):
 def export(file,
            global_matrix,
            scene,
+           view_layer,
            use_mesh_modifiers=False,
            use_selection=True,
            use_triangulate=False,
@@ -410,11 +411,11 @@ def export(file,
         fw('%s</Transform>\n' % ident)
         return ident
 
-    def writeSpotLight(ident, obj, matrix, lamp, world):
+    def writeSpotLight(ident, obj, matrix, light, world):
         # note, light_id is not re-used
         light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
-        if world:
+        if world and 0:
             ambi = world.ambient_color
             amb_intensity = ((ambi[0] + ambi[1] + ambi[2]) / 3.0) / 2.5
             del ambi
@@ -439,18 +440,18 @@ def export(file,
         fw(ident_step + 'radius="%.4f"\n' % radius)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
         fw(ident_step + 'beamWidth="%.4f"\n' % beamWidth)
         fw(ident_step + 'cutOffAngle="%.4f"\n' % cutOffAngle)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
         fw(ident_step + 'location="%.4f %.4f %.4f"\n' % location)
         fw(ident_step + '/>\n')
 
-    def writeDirectionalLight(ident, obj, matrix, lamp, world):
+    def writeDirectionalLight(ident, obj, matrix, light, world):
         # note, light_id is not re-used
         light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
-        if world:
+        if world and 0:
             ambi = world.ambient_color
             # ambi = world.amb
             amb_intensity = ((float(ambi[0] + ambi[1] + ambi[2])) / 3.0) / 2.5
@@ -458,7 +459,7 @@ def export(file,
             ambi = 0
             amb_intensity = 0.0
 
-        intensity = min(lamp.energy / 1.75, 1.0)
+        intensity = min(light.energy / 1.75, 1.0)
 
         orientation = matrix_direction_neg_z(matrix)
 
@@ -466,16 +467,16 @@ def export(file,
         fw('%s<DirectionalLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
         fw(ident_step + '/>\n')
 
-    def writePointLight(ident, obj, matrix, lamp, world):
+    def writePointLight(ident, obj, matrix, light, world):
         # note, light_id is not re-used
         light_id = quoteattr(unique_name(obj, LA_ + obj.name, uuid_cache_light, clean_func=clean_def, sep="_"))
 
-        if world:
+        if world and 0:
             ambi = world.ambient_color
             # ambi = world.amb
             amb_intensity = ((float(ambi[0] + ambi[1] + ambi[2])) / 3.0) / 2.5
@@ -483,17 +484,17 @@ def export(file,
             ambi = 0.0
             amb_intensity = 0.0
 
-        intensity = min(lamp.energy / 1.75, 1.0)
+        intensity = min(light.energy / 1.75, 1.0)
         location = matrix.to_translation()[:]
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<PointLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(lamp.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
 
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
-        fw(ident_step + 'radius="%.4f" \n' % lamp.distance)
+        fw(ident_step + 'radius="%.4f" \n' % light.distance)
         fw(ident_step + 'location="%.4f %.4f %.4f"\n' % location)
         fw(ident_step + '/>\n')
 
@@ -504,12 +505,10 @@ def export(file,
         mesh_id_coords = prefix_quoted_str(mesh_id, 'coords_')
         mesh_id_normals = prefix_quoted_str(mesh_id, 'normals_')
 
-        # tessellation faces may not exist
-        if not mesh.tessfaces and mesh.polygons:
-            mesh.update(calc_tessface=True)
-
-        if not mesh.tessfaces:
-            return
+        # Be sure tessellated loop triangles are available!
+        if use_triangulate:
+            if not mesh.loop_triangles and mesh.polygons:
+                mesh.calc_loop_triangles()
 
         use_collnode = bool([mod for mod in obj.modifiers
                              if mod.type == 'COLLISION'
@@ -531,7 +530,7 @@ def export(file,
             fw('%s<Group DEF=%s>\n' % (ident, mesh_id_group))
             ident += '\t'
 
-            is_uv = bool(mesh.tessface_uv_textures.active)
+            is_uv = bool(mesh.uv_layers.active)
             # is_col, defined for each material
 
             is_coords_written = False
@@ -545,7 +544,7 @@ def export(file,
             mesh_material_images = [None] * len(mesh_materials)
 
             for i, material in enumerate(mesh_materials):
-                if material:
+                if 0 and material:
                     for mtex in material.texture_slots:
                         if mtex:
                             tex = mtex.texture
@@ -557,44 +556,34 @@ def export(file,
                                     mesh_material_images[i] = image
                                     break
 
-            mesh_materials_use_face_texture = [getattr(material, 'use_face_texture', True) for material in mesh_materials]
-
             # fast access!
             mesh_vertices = mesh.vertices[:]
-            mesh_faces = mesh.tessfaces[:]
-            mesh_faces_materials = [f.material_index for f in mesh_faces]
-            mesh_faces_vertices = [f.vertices[:] for f in mesh_faces]
+            mesh_loops = mesh.loops[:]
+            mesh_polygons = mesh.polygons[:]
+            mesh_polygons_materials = [p.material_index for p in mesh_polygons]
+            mesh_polygons_vertices = [p.vertices[:] for p in mesh_polygons]
 
-            if is_uv and True in mesh_materials_use_face_texture:
-                mesh_faces_image = [(fuv.image
-                                     if mesh_materials_use_face_texture[mesh_faces_materials[i]]
-                                     else mesh_material_images[mesh_faces_materials[i]])
-                                     for i, fuv in enumerate(mesh.tessface_uv_textures.active.data)]
-
-                mesh_faces_image_unique = set(mesh_faces_image)
-            elif len(set(mesh_material_images) | {None}) > 1:  # make sure there is at least one image
-                mesh_faces_image = [mesh_material_images[material_index] for material_index in mesh_faces_materials]
-                mesh_faces_image_unique = set(mesh_faces_image)
+            if len(set(mesh_material_images)) > 0:  # make sure there is at least one image
+                mesh_polygons_image = [mesh_material_images[material_index] for material_index in mesh_polygons_materials]
             else:
-                mesh_faces_image = [None] * len(mesh_faces)
-                mesh_faces_image_unique = {None}
+                mesh_polygons_image = [None] * len(mesh_polygons)
+            mesh_polygons_image_unique = set(mesh_polygons_image)
 
             # group faces
-            face_groups = {}
+            polygons_groups = {}
             for material_index in range(len(mesh_materials)):
-                for image in mesh_faces_image_unique:
-                    face_groups[material_index, image] = []
-            del mesh_faces_image_unique
+                for image in mesh_polygons_image_unique:
+                    polygons_groups[material_index, image] = []
+            del mesh_polygons_image_unique
 
-            for i, (material_index, image) in enumerate(zip(mesh_faces_materials, mesh_faces_image)):
-                face_groups[material_index, image].append(i)
+            for i, (material_index, image) in enumerate(zip(mesh_polygons_materials, mesh_polygons_image)):
+                polygons_groups[material_index, image].append(i)
 
-            # same as face_groups.items() but sorted so we can get predictable output.
-            face_groups_items = list(face_groups.items())
-            face_groups_items.sort(key=lambda m: (m[0][0], getattr(m[0][1], 'name', '')))
+            # Py dict are sorted now, so we can use directly polygons_groups.items()
+            # and still get consistent reproducible outputs.
 
-            is_col = (mesh.tessface_vertex_colors.active and (material is None or material.use_vertex_color_paint))
-            mesh_faces_col = mesh.tessface_vertex_colors.active.data if is_col else None
+            is_col = (mesh.vertex_colors.active and (material is None or material.use_vertex_color_paint))
+            mesh_loops_col = mesh.vertex_colors.active.data if is_col else None
 
             # Check if vertex colors can be exported in per-vertex mode.
             # Do we have just one color per vertex in every face that uses the vertex?
@@ -602,13 +591,12 @@ def export(file,
                 def calc_vertex_color():
                     vert_color = [None] * len(mesh.vertices)
 
-                    for i, face in enumerate(mesh_faces):
-                        fcol = mesh_faces_col[i]
-                        face_colors = (fcol.color1, fcol.color2, fcol.color3, fcol.color4)
-                        for j, vert_index in enumerate(face.vertices):
-                            if vert_color[vert_index] is None:
-                                vert_color[vert_index] = face_colors[j][:]
-                            elif vert_color[vert_index] != face_colors[j][:]:
+                    for i, p in enumerate(mesh_polygons):
+                        for lidx in p.loop_indices:
+                            l = mesh_loops[lidx]
+                            if vert_color[l.vertex_index] is None:
+                                vert_color[l.vertex_index] = mesh_loops_col[lidx].color[:]
+                            elif vert_color[l.vertex_index] != mesh_loops_col[lidx].color[:]:
                                 return False, ()
 
                     return True, vert_color
@@ -616,8 +604,14 @@ def export(file,
                 is_col_per_vertex, vert_color = calc_vertex_color()
                 del calc_vertex_color
 
-            for (material_index, image), face_group in face_groups_items:  # face_groups.items()
-                if face_group:
+            # If using looptris, we need a mapping poly_index -> loop_tris_indices...
+            if use_triangulate:
+                polygons_to_loop_triangles_indices = [[] for  i in range(len(mesh_polygons))]
+                for ltri in mesh.loop_triangles:
+                    polygons_to_loop_triangles_indices[ltri.polygon_index].append(ltri)
+
+            for (material_index, image), polygons_group in polygons_groups.items():
+                if polygons_group:
                     material = mesh_materials[material_index]
 
                     fw('%s<Shape>\n' % ident)
@@ -626,8 +620,8 @@ def export(file,
                     is_smooth = False
 
                     # kludge but as good as it gets!
-                    for i in face_group:
-                        if mesh_faces[i].use_smooth:
+                    for i in polygons_group:
+                        if mesh_polygons[i].use_smooth:
                             is_smooth = True
                             break
 
@@ -659,34 +653,30 @@ def export(file,
                     if image and not use_h3d:
                         writeImageTexture(ident, image)
 
-                        if mesh_materials_use_face_texture[material_index]:
-                            if image.use_tiles:
-                                fw('%s<TextureTransform scale="%s %s" />\n' % (ident, image.tiles_x, image.tiles_y))
+                        # transform by mtex
+                        loc = mesh_material_mtex[material_index].offset[:2]
+
+                        # mtex_scale * tex_repeat
+                        sca_x, sca_y = mesh_material_mtex[material_index].scale[:2]
+
+                        sca_x *= mesh_material_tex[material_index].repeat_x
+                        sca_y *= mesh_material_tex[material_index].repeat_y
+
+                        # flip x/y is a sampling feature, convert to transform
+                        if mesh_material_tex[material_index].use_flip_axis:
+                            rot = math.pi / -2.0
+                            sca_x, sca_y = sca_y, -sca_x
                         else:
-                            # transform by mtex
-                            loc = mesh_material_mtex[material_index].offset[:2]
+                            rot = 0.0
 
-                            # mtex_scale * tex_repeat
-                            sca_x, sca_y = mesh_material_mtex[material_index].scale[:2]
-
-                            sca_x *= mesh_material_tex[material_index].repeat_x
-                            sca_y *= mesh_material_tex[material_index].repeat_y
-
-                            # flip x/y is a sampling feature, convert to transform
-                            if mesh_material_tex[material_index].use_flip_axis:
-                                rot = math.pi / -2.0
-                                sca_x, sca_y = sca_y, -sca_x
-                            else:
-                                rot = 0.0
-
-                            ident_step = ident + (' ' * (-len(ident) + \
-                            fw('%s<TextureTransform ' % ident)))
-                            fw('\n')
-                            # fw('center="%.6f %.6f" ' % (0.0, 0.0))
-                            fw(ident_step + 'translation="%.6f %.6f"\n' % loc)
-                            fw(ident_step + 'scale="%.6f %.6f"\n' % (sca_x, sca_y))
-                            fw(ident_step + 'rotation="%.6f"\n' % rot)
-                            fw(ident_step + '/>\n')
+                        ident_step = ident + (' ' * (-len(ident) + \
+                        fw('%s<TextureTransform ' % ident)))
+                        fw('\n')
+                        # fw('center="%.6f %.6f" ' % (0.0, 0.0))
+                        fw(ident_step + 'translation="%.6f %.6f"\n' % loc)
+                        fw(ident_step + 'scale="%.6f %.6f"\n' % (sca_x, sca_y))
+                        fw(ident_step + 'rotation="%.6f"\n' % rot)
+                        fw(ident_step + '/>\n')
 
                     if use_h3d:
                         mat_tmp = material if material else gpu_shader_dummy_mat
@@ -700,7 +690,7 @@ def export(file,
                     ident = ident[:-1]
                     fw('%s</Appearance>\n' % ident)
 
-                    mesh_faces_uv = mesh.tessface_uv_textures.active.data if is_uv else None
+                    mesh_loops_uv = mesh.uv_layers.active.data if is_uv else None
 
                     #-- IndexedFaceSet or IndexedLineSet
                     if use_triangulate:
@@ -708,7 +698,7 @@ def export(file,
                         fw('%s<IndexedTriangleSet ' % ident)))
 
                         # --- Write IndexedTriangleSet Attributes (same as IndexedFaceSet)
-                        fw('solid="%s"\n' % bool_as_str(material and material.game_settings.use_backface_culling))
+                        fw('solid="false"\n')  # not available anymore: bool_as_str(material and material.game_settings.use_backface_culling))
 
                         if use_normals or is_force_normals:
                             fw(ident_step + 'normalPerVertex="true"\n')
@@ -723,67 +713,56 @@ def export(file,
                             slot_uv = 0
                             slot_col = 1
 
-                            def vertex_key(fidx, f_cnr_idx):
+                            def vertex_key(lidx):
                                 return (
-                                    mesh_faces_uv[fidx].uv[f_cnr_idx][:],
-                                    getattr(mesh_faces_col[fidx], "color%d" % (f_cnr_idx + 1))[:],
+                                    mesh_loops_uv[lidx].uv[:],
+                                    mesh_loops_col[lidx].color[:],
                                 )
                         elif is_uv:
                             slot_uv = 0
 
-                            def vertex_key(fidx, f_cnr_idx):
+                            def vertex_key(lidx):
                                 return (
-                                    mesh_faces_uv[fidx].uv[f_cnr_idx][:],
+                                    mesh_loops_uv[lidx].uv[:],
                                 )
                         elif is_col:
                             slot_col = 0
 
-                            def vertex_key(fidx, f_cnr_idx):
+                            def vertex_key(lidx):
                                 return (
-                                    getattr(mesh_faces_col[fidx], "color%d" % (f_cnr_idx + 1))[:],
+                                    mesh_loops_col[lidx].color[:],
                                 )
                         else:
                             # ack, not especially efficient in this case
-                            def vertex_key(fidx, f_cnr_idx):
+                            def vertex_key(lidx):
                                 return None
 
                         # build a mesh mapping dict
                         vertex_hash = [{} for i in range(len(mesh.vertices))]
                         # worst case every face is a quad
-                        face_tri_list = [[None, None, None] for i in range(len(mesh.tessfaces) * 2)]
+                        face_tri_list = [[None, None, None] for i in range(len(mesh.loop_triangles))]
                         vert_tri_list = []
                         totvert = 0
                         totface = 0
-                        temp_face = [None] * 4
-                        for i in face_group:
-                            fv = mesh_faces_vertices[i]
-                            for j, v_idx in enumerate(fv):
-                                key = vertex_key(i, j)
-                                vh = vertex_hash[v_idx]
-                                x3d_v = vh.get(key)
-                                if x3d_v is None:
-                                    x3d_v = key, v_idx, totvert
-                                    vh[key] = x3d_v
-                                    # key / original_vertex / new_vertex
-                                    vert_tri_list.append(x3d_v)
-                                    totvert += 1
-                                temp_face[j] = x3d_v
+                        temp_tri = [None] * 3
+                        for pidx in polygons_group:
+                            for ltri in polygons_to_loop_triangles_indices[pidx]:
+                                for tri_vidx, (lidx, vidx) in enumerate(zip(ltri.loops, ltri.vertices)):
+                                    key = vertex_key(lidx)
+                                    vh = vertex_hash[vidx]
+                                    x3d_v = vh.get(key)
+                                    if x3d_v is None:
+                                        x3d_v = key, vidx, totvert
+                                        vh[key] = x3d_v
+                                        # key / original_vertex / new_vertex
+                                        vert_tri_list.append(x3d_v)
+                                        totvert += 1
+                                    temp_tri[tri_vidx] = x3d_v
 
-                            if len(fv) == 4:
-                                f_iter = ((0, 1, 2), (0, 2, 3))
-                            else:
-                                f_iter = ((0, 1, 2), )
-
-                            for f_it in f_iter:
-                                # loop over a quad as 2 tris
-                                f_tri = face_tri_list[totface]
-                                for ji, j in enumerate(f_it):
-                                    f_tri[ji] = temp_face[j]
-                                # quads run this twice
+                                face_tri_list[totface][:] = temp_tri[:]
                                 totface += 1
 
-                        # clear unused faces
-                        face_tri_list[totface:] = []
+                        assert(len(face_tri_list) == len(mesh.loop_triangles))
 
                         fw(ident_step + 'index="')
                         for x3d_f in face_tri_list:
@@ -814,9 +793,9 @@ def export(file,
                             fw('" />\n')
 
                         if is_col:
-                            fw('%s<Color color="' % ident)
+                            fw('%s<ColorRGBA color="' % ident)
                             for x3d_v in vert_tri_list:
-                                fw('%.3f %.3f %.3f ' % x3d_v[0][slot_col])
+                                fw('%.3f %.3f %.3f %.3f ' % x3d_v[0][slot_col])
                             fw('" />\n')
 
                         if use_h3d:
@@ -851,7 +830,7 @@ def export(file,
                         fw('%s<IndexedFaceSet ' % ident)))
 
                         # --- Write IndexedFaceSet Attributes (same as IndexedTriangleSet)
-                        fw('solid="%s"\n' % bool_as_str(material and material.game_settings.use_backface_culling))
+                        fw('solid="false"\n')  # not available anymore: bool_as_str(material and material.game_settings.use_backface_culling)
                         if is_smooth:
                             # use Auto-Smooth angle, if enabled. Otherwise make
                             # the mesh perfectly smooth by creaseAngle > pi.
@@ -865,29 +844,23 @@ def export(file,
                         if is_col and not is_col_per_vertex:
                             fw(ident_step + 'colorPerVertex="false"\n')
 
-                        # for IndexedTriangleSet we use a uv per vertex so this isnt needed.
+                        # for IndexedTriangleSet we use a uv per vertex so this isn't needed.
                         if is_uv:
                             fw(ident_step + 'texCoordIndex="')
 
                             j = 0
-                            for i in face_group:
-                                if len(mesh_faces_vertices[i]) == 4:
-                                    fw('%d %d %d %d -1 ' % (j, j + 1, j + 2, j + 3))
-                                    j += 4
-                                else:
-                                    fw('%d %d %d -1 ' % (j, j + 1, j + 2))
-                                    j += 3
+                            for i in polygons_group:
+                                num_poly_verts = len(mesh_polygons_vertices[i])
+                                fw('%s -1 ' % ' '.join((str(i) for i in range(j, j + num_poly_verts))))
+                                j += num_poly_verts
                             fw('"\n')
                             # --- end texCoordIndex
 
                         if True:
                             fw(ident_step + 'coordIndex="')
-                            for i in face_group:
-                                fv = mesh_faces_vertices[i]
-                                if len(fv) == 3:
-                                    fw('%i %i %i -1 ' % fv)
-                                else:
-                                    fw('%i %i %i %i -1 ' % fv)
+                            for i in polygons_group:
+                                poly_verts = mesh_polygons_vertices[i]
+                                fw('%s -1 ' % ' '.join((str(i) for i in poly_verts)))
 
                             fw('"\n')
                             # --- end coordIndex
@@ -926,25 +899,24 @@ def export(file,
 
                         if is_uv:
                             fw('%s<TextureCoordinate point="' % ident)
-                            for i in face_group:
-                                for uv in mesh_faces_uv[i].uv:
-                                    fw('%.4f %.4f ' % uv[:])
-                            del mesh_faces_uv
+                            for i in polygons_group:
+                                for lidx in mesh_polygons[i].loop_indices:
+                                    fw('%.4f %.4f ' % mesh_loops_uv[lidx].uv[:])
                             fw('" />\n')
 
                         if is_col:
                             # Need better logic here, dynamic determination
                             # which of the X3D coloring models fits better this mesh - per face
                             # or per vertex. Probably with an explicit fallback mode parameter.
-                            fw('%s<Color color="' % ident)
+                            fw('%s<ColorRGBA color="' % ident)
                             if is_col_per_vertex:
                                 for i in range(len(mesh.vertices)):
                                     # may be None,
-                                    fw('%.3f %.3f %.3f ' % (vert_color[i] or (0.0, 0.0, 0.0)))
+                                    fw('%.3f %.3f %.3f %.3f ' % (vert_color[i] or (0.0, 0.0, 0.0, 0.0)))
                             else: # Export as colors per face.
                                 # TODO: average them rather than using the first one!
-                                for i in face_group:
-                                    fw('%.3f %.3f %.3f ' % mesh_faces_col[i].color1[:])
+                                for i in polygons_group:
+                                    fw('%.3f %.3f %.3f %.3f ' % mesh_loops_col[mesh_polygons[i].loop_start].color[:])
                             fw('" />\n')
 
                         #--- output vertexColors
@@ -981,23 +953,23 @@ def export(file,
         else:
             material.tag = True
 
-            emit = material.emit
-            ambient = material.ambient / 3.0
-            diffuseColor = material.diffuse_color[:]
-            if world:
+            emit = 0.0 #material.emit
+            ambient = 0.0 #material.ambient / 3.0
+            diffuseColor = material.diffuse_color[:3]
+            if world and 0:
                 ambiColor = ((material.ambient * 2.0) * world.ambient_color)[:]
             else:
                 ambiColor = 0.0, 0.0, 0.0
 
             emitColor = tuple(((c * emit) + ambiColor[i]) / 2.0 for i, c in enumerate(diffuseColor))
-            shininess = material.specular_hardness / 512.0
+            shininess = material.specular_intensity
             specColor = tuple((c + 0.001) / (1.25 / (material.specular_intensity + 0.001)) for c in material.specular_color)
-            transp = 1.0 - material.alpha
+            transp = 1.0 - material.diffuse_color[3]
 
-            if material.use_shadeless:
-                ambient = 1.0
-                shininess = 0.0
-                specColor = emitColor = diffuseColor
+            # ~ if material.use_shadeless:
+                # ~ ambient = 1.0
+                # ~ shininess = 0.0
+                # ~ specColor = emitColor = diffuseColor
 
             ident_step = ident + (' ' * (-len(ident) + \
             fw('%s<Material ' % ident)))
@@ -1328,10 +1300,17 @@ def export(file,
         # note, not re-used
         world_id = quoteattr(unique_name(world, WO_ + world.name, uuid_cache_world, clean_func=clean_def, sep="_"))
 
-        blending = world.use_sky_blend, world.use_sky_paper, world.use_sky_real
+        # XXX World changed a lot in 2.8... For now do minimal get-it-to-work job.
+        # ~ blending = world.use_sky_blend, world.use_sky_paper, world.use_sky_real
 
-        grd_triple = clight_color(world.horizon_color)
-        sky_triple = clight_color(world.zenith_color)
+        # ~ grd_triple = clight_color(world.horizon_color)
+        # ~ sky_triple = clight_color(world.zenith_color)
+        # ~ mix_triple = clight_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
+
+        blending = (False, False, False)
+
+        grd_triple = clight_color(world.color)
+        sky_triple = clight_color(world.color)
         mix_triple = clight_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
 
         ident_step = ident + (' ' * (-len(ident) + \
@@ -1400,14 +1379,14 @@ def export(file,
         if use_hierarchy:
             obj_main_matrix_world = obj_main.matrix_world
             if obj_main_parent:
-                obj_main_matrix = obj_main_parent.matrix_world.inverted(matrix_fallback) * obj_main_matrix_world
+                obj_main_matrix = obj_main_parent.matrix_world.inverted(matrix_fallback) @ obj_main_matrix_world
             else:
                 obj_main_matrix = obj_main_matrix_world
             obj_main_matrix_world_invert = obj_main_matrix_world.inverted(matrix_fallback)
 
             obj_main_id = quoteattr(unique_name(obj_main, obj_main.name, uuid_cache_object, clean_func=clean_def, sep="_"))
 
-            ident = writeTransform_begin(ident, obj_main_matrix if obj_main_parent else global_matrix * obj_main_matrix, suffix_quoted_str(obj_main_id, _TRANSFORM))
+            ident = writeTransform_begin(ident, obj_main_matrix if obj_main_parent else global_matrix @ obj_main_matrix, suffix_quoted_str(obj_main_id, _TRANSFORM))
 
         # Set here just incase we dont enter the loop below.
         is_dummy_tx = False
@@ -1417,9 +1396,9 @@ def export(file,
 
             if use_hierarchy:
                 # make transform node relative
-                obj_matrix = obj_main_matrix_world_invert * obj_matrix
+                obj_matrix = obj_main_matrix_world_invert @ obj_matrix
             else:
-                obj_matrix = global_matrix * obj_matrix
+                obj_matrix = global_matrix @ obj_matrix
 
             # H3D - use for writing a dummy transform parent
             is_dummy_tx = False
@@ -1513,9 +1492,9 @@ def export(file,
         bpy.data.images.tag(False)
 
         if use_selection:
-            objects = [obj for obj in scene.objects if obj.is_visible(scene) and obj.select]
+            objects = [obj for obj in scene.objects if obj.visible_get(view_layer=view_layer) and obj.select]
         else:
-            objects = [obj for obj in scene.objects if obj.is_visible(scene)]
+            objects = [obj for obj in scene.objects if obj.visible_get(view_layer=view_layer)]
 
         print('Info: starting X3D export to %r...' % file.name)
         ident = ''
@@ -1607,6 +1586,7 @@ def save(context,
     export(file,
            global_matrix,
            context.scene,
+           context.view_layer,
            use_mesh_modifiers=use_mesh_modifiers,
            use_selection=use_selection,
            use_triangulate=use_triangulate,

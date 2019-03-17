@@ -1391,6 +1391,7 @@ static BMOpDefine bmo_duplicate_def = {
 	/* destination bmesh, if NULL will use current on */
 	 {"dest", BMO_OP_SLOT_PTR, {(int)BMO_OP_SLOT_SUBTYPE_PTR_BMESH}},
 	 {"use_select_history", BMO_OP_SLOT_BOOL},
+	 {"use_edge_flip_from_face", BMO_OP_SLOT_BOOL},
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1764,11 +1765,11 @@ static BMOpDefine bmo_bevel_def = {
 	 {"mark_sharp", BMO_OP_SLOT_BOOL},		/* extend edge data to allow sharp edges to run across bevels */
 	 {"harden_normals", BMO_OP_SLOT_BOOL},  /* harden normals */
 	 {"face_strength_mode", BMO_OP_SLOT_INT, {(int)BMO_OP_SLOT_SUBTYPE_INT_ENUM},
-	 	bmo_enum_bevel_face_strength_type}, /* whether to set face strength, and which faces to set if so */
+	  bmo_enum_bevel_face_strength_type}, /* whether to set face strength, and which faces to set if so */
 	 {"miter_outer", BMO_OP_SLOT_INT, {(int)BMO_OP_SLOT_SUBTYPE_INT_ENUM},
-	 	bmo_enum_bevel_miter_type},         /* outer miter kind */
+	  bmo_enum_bevel_miter_type},         /* outer miter kind */
 	 {"miter_inner", BMO_OP_SLOT_INT, {(int)BMO_OP_SLOT_SUBTYPE_INT_ENUM},
-		bmo_enum_bevel_miter_type},         /* outer miter kind */
+	  bmo_enum_bevel_miter_type},         /* outer miter kind */
 	 {"spread", BMO_OP_SLOT_FLT},           /* amount to offset beveled edge */
 	 {"smoothresh", BMO_OP_SLOT_FLT},       /* for passing mesh's smoothresh, used in hardening */
 	 {{'\0'}},

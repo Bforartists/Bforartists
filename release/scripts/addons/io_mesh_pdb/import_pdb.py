@@ -38,112 +38,112 @@ from copy import copy
 # The list is fixed and cannot be changed ... (see below)
 
 ELEMENTS_DEFAULT = (
-( 1,      "Hydrogen",        "H", (  1.0,   1.0,   1.0), 0.32, 0.32, 0.79 , -1 , 1.54 ),
-( 2,        "Helium",       "He", ( 0.85,   1.0,   1.0), 0.93, 0.93, 0.49 ),
-( 3,       "Lithium",       "Li", (  0.8,  0.50,   1.0), 1.23, 1.23, 2.05 ,  1 , 0.68 ),
-( 4,     "Beryllium",       "Be", ( 0.76,   1.0,   0.0), 0.90, 0.90, 1.40 ,  1 , 0.44 ,  2 , 0.35 ),
-( 5,         "Boron",        "B", (  1.0,  0.70,  0.70), 0.82, 0.82, 1.17 ,  1 , 0.35 ,  3 , 0.23 ),
-( 6,        "Carbon",        "C", ( 0.56,  0.56,  0.56), 0.77, 0.77, 0.91 , -4 , 2.60 ,  4 , 0.16 ),
-( 7,      "Nitrogen",        "N", ( 0.18,  0.31,  0.97), 0.75, 0.75, 0.75 , -3 , 1.71 ,  1 , 0.25 ,  3 , 0.16 ,  5 , 0.13 ),
-( 8,        "Oxygen",        "O", (  1.0,  0.05,  0.05), 0.73, 0.73, 0.65 , -2 , 1.32 , -1 , 1.76 ,  1 , 0.22 ,  6 , 0.09 ),
-( 9,      "Fluorine",        "F", ( 0.56,  0.87,  0.31), 0.72, 0.72, 0.57 , -1 , 1.33 ,  7 , 0.08 ),
-(10,          "Neon",       "Ne", ( 0.70,  0.89,  0.96), 0.71, 0.71, 0.51 ,  1 , 1.12 ),
-(11,        "Sodium",       "Na", ( 0.67,  0.36,  0.94), 1.54, 1.54, 2.23 ,  1 , 0.97 ),
-(12,     "Magnesium",       "Mg", ( 0.54,   1.0,   0.0), 1.36, 1.36, 1.72 ,  1 , 0.82 ,  2 , 0.66 ),
-(13,     "Aluminium",       "Al", ( 0.74,  0.65,  0.65), 1.18, 1.18, 1.82 ,  3 , 0.51 ),
-(14,       "Silicon",       "Si", ( 0.94,  0.78,  0.62), 1.11, 1.11, 1.46 , -4 , 2.71 , -1 , 3.84 ,  1 , 0.65 ,  4 , 0.42 ),
-(15,    "Phosphorus",        "P", (  1.0,  0.50,   0.0), 1.06, 1.06, 1.23 , -3 , 2.12 ,  3 , 0.44 ,  5 , 0.35 ),
-(16,        "Sulfur",        "S", (  1.0,   1.0,  0.18), 1.02, 1.02, 1.09 , -2 , 1.84 ,  2 , 2.19 ,  4 , 0.37 ,  6 , 0.30 ),
-(17,      "Chlorine",       "Cl", ( 0.12,  0.94,  0.12), 0.99, 0.99, 0.97 , -1 , 1.81 ,  5 , 0.34 ,  7 , 0.27 ),
-(18,         "Argon",       "Ar", ( 0.50,  0.81,  0.89), 0.98, 0.98, 0.88 ,  1 , 1.54 ),
-(19,     "Potassium",        "K", ( 0.56,  0.25,  0.83), 2.03, 2.03, 2.77 ,  1 , 0.81 ),
-(20,       "Calcium",       "Ca", ( 0.23,   1.0,   0.0), 1.74, 1.74, 2.23 ,  1 , 1.18 ,  2 , 0.99 ),
-(21,      "Scandium",       "Sc", ( 0.90,  0.90,  0.90), 1.44, 1.44, 2.09 ,  3 , 0.73 ),
-(22,      "Titanium",       "Ti", ( 0.74,  0.76,  0.78), 1.32, 1.32, 2.00 ,  1 , 0.96 ,  2 , 0.94 ,  3 , 0.76 ,  4 , 0.68 ),
-(23,      "Vanadium",        "V", ( 0.65,  0.65,  0.67), 1.22, 1.22, 1.92 ,  2 , 0.88 ,  3 , 0.74 ,  4 , 0.63 ,  5 , 0.59 ),
-(24,      "Chromium",       "Cr", ( 0.54,   0.6,  0.78), 1.18, 1.18, 1.85 ,  1 , 0.81 ,  2 , 0.89 ,  3 , 0.63 ,  6 , 0.52 ),
-(25,     "Manganese",       "Mn", ( 0.61,  0.47,  0.78), 1.17, 1.17, 1.79 ,  2 , 0.80 ,  3 , 0.66 ,  4 , 0.60 ,  7 , 0.46 ),
-(26,          "Iron",       "Fe", ( 0.87,   0.4,   0.2), 1.17, 1.17, 1.72 ,  2 , 0.74 ,  3 , 0.64 ),
-(27,        "Cobalt",       "Co", ( 0.94,  0.56,  0.62), 1.16, 1.16, 1.67 ,  2 , 0.72 ,  3 , 0.63 ),
-(28,        "Nickel",       "Ni", ( 0.31,  0.81,  0.31), 1.15, 1.15, 1.62 ,  2 , 0.69 ),
-(29,        "Copper",       "Cu", ( 0.78,  0.50,   0.2), 1.17, 1.17, 1.57 ,  1 , 0.96 ,  2 , 0.72 ),
-(30,          "Zinc",       "Zn", ( 0.49,  0.50,  0.69), 1.25, 1.25, 1.53 ,  1 , 0.88 ,  2 , 0.74 ),
-(31,       "Gallium",       "Ga", ( 0.76,  0.56,  0.56), 1.26, 1.26, 1.81 ,  1 , 0.81 ,  3 , 0.62 ),
-(32,     "Germanium",       "Ge", (  0.4,  0.56,  0.56), 1.22, 1.22, 1.52 , -4 , 2.72 ,  2 , 0.73 ,  4 , 0.53 ),
-(33,       "Arsenic",       "As", ( 0.74,  0.50,  0.89), 1.20, 1.20, 1.33 , -3 , 2.22 ,  3 , 0.58 ,  5 , 0.46 ),
-(34,      "Selenium",       "Se", (  1.0,  0.63,   0.0), 1.16, 1.16, 1.22 , -2 , 1.91 , -1 , 2.32 ,  1 , 0.66 ,  4 , 0.50 ,  6 , 0.42 ),
-(35,       "Bromine",       "Br", ( 0.65,  0.16,  0.16), 1.14, 1.14, 1.12 , -1 , 1.96 ,  5 , 0.47 ,  7 , 0.39 ),
-(36,       "Krypton",       "Kr", ( 0.36,  0.72,  0.81), 1.31, 1.31, 1.24 ),
-(37,      "Rubidium",       "Rb", ( 0.43,  0.18,  0.69), 2.16, 2.16, 2.98 ,  1 , 1.47 ),
-(38,     "Strontium",       "Sr", (  0.0,   1.0,   0.0), 1.91, 1.91, 2.45 ,  2 , 1.12 ),
-(39,       "Yttrium",        "Y", ( 0.58,   1.0,   1.0), 1.62, 1.62, 2.27 ,  3 , 0.89 ),
-(40,     "Zirconium",       "Zr", ( 0.58,  0.87,  0.87), 1.45, 1.45, 2.16 ,  1 , 1.09 ,  4 , 0.79 ),
-(41,       "Niobium",       "Nb", ( 0.45,  0.76,  0.78), 1.34, 1.34, 2.08 ,  1 , 1.00 ,  4 , 0.74 ,  5 , 0.69 ),
-(42,    "Molybdenum",       "Mo", ( 0.32,  0.70,  0.70), 1.30, 1.30, 2.01 ,  1 , 0.93 ,  4 , 0.70 ,  6 , 0.62 ),
-(43,    "Technetium",       "Tc", ( 0.23,  0.61,  0.61), 1.27, 1.27, 1.95 ,  7 , 0.97 ),
-(44,     "Ruthenium",       "Ru", ( 0.14,  0.56,  0.56), 1.25, 1.25, 1.89 ,  4 , 0.67 ),
-(45,       "Rhodium",       "Rh", ( 0.03,  0.49,  0.54), 1.25, 1.25, 1.83 ,  3 , 0.68 ),
-(46,     "Palladium",       "Pd", (  0.0,  0.41,  0.52), 1.28, 1.28, 1.79 ,  2 , 0.80 ,  4 , 0.65 ),
-(47,        "Silver",       "Ag", ( 0.75,  0.75,  0.75), 1.34, 1.34, 1.75 ,  1 , 1.26 ,  2 , 0.89 ),
-(48,       "Cadmium",       "Cd", (  1.0,  0.85,  0.56), 1.48, 1.48, 1.71 ,  1 , 1.14 ,  2 , 0.97 ),
-(49,        "Indium",       "In", ( 0.65,  0.45,  0.45), 1.44, 1.44, 2.00 ,  3 , 0.81 ),
-(50,           "Tin",       "Sn", (  0.4,  0.50,  0.50), 1.41, 1.41, 1.72 , -4 , 2.94 , -1 , 3.70 ,  2 , 0.93 ,  4 , 0.71 ),
-(51,      "Antimony",       "Sb", ( 0.61,  0.38,  0.70), 1.40, 1.40, 1.53 , -3 , 2.45 ,  3 , 0.76 ,  5 , 0.62 ),
-(52,     "Tellurium",       "Te", ( 0.83,  0.47,   0.0), 1.36, 1.36, 1.42 , -2 , 2.11 , -1 , 2.50 ,  1 , 0.82 ,  4 , 0.70 ,  6 , 0.56 ),
-(53,        "Iodine",        "I", ( 0.58,   0.0,  0.58), 1.33, 1.33, 1.32 , -1 , 2.20 ,  5 , 0.62 ,  7 , 0.50 ),
-(54,         "Xenon",       "Xe", ( 0.25,  0.61,  0.69), 1.31, 1.31, 1.24 ),
-(55,       "Caesium",       "Cs", ( 0.34,  0.09,  0.56), 2.35, 2.35, 3.35 ,  1 , 1.67 ),
-(56,        "Barium",       "Ba", (  0.0,  0.78,   0.0), 1.98, 1.98, 2.78 ,  1 , 1.53 ,  2 , 1.34 ),
-(57,     "Lanthanum",       "La", ( 0.43,  0.83,   1.0), 1.69, 1.69, 2.74 ,  1 , 1.39 ,  3 , 1.06 ),
-(58,        "Cerium",       "Ce", (  1.0,   1.0,  0.78), 1.65, 1.65, 2.70 ,  1 , 1.27 ,  3 , 1.03 ,  4 , 0.92 ),
-(59,  "Praseodymium",       "Pr", ( 0.85,   1.0,  0.78), 1.65, 1.65, 2.67 ,  3 , 1.01 ,  4 , 0.90 ),
-(60,     "Neodymium",       "Nd", ( 0.78,   1.0,  0.78), 1.64, 1.64, 2.64 ,  3 , 0.99 ),
-(61,    "Promethium",       "Pm", ( 0.63,   1.0,  0.78), 1.63, 1.63, 2.62 ,  3 , 0.97 ),
-(62,      "Samarium",       "Sm", ( 0.56,   1.0,  0.78), 1.62, 1.62, 2.59 ,  3 , 0.96 ),
-(63,      "Europium",       "Eu", ( 0.38,   1.0,  0.78), 1.85, 1.85, 2.56 ,  2 , 1.09 ,  3 , 0.95 ),
-(64,    "Gadolinium",       "Gd", ( 0.27,   1.0,  0.78), 1.61, 1.61, 2.54 ,  3 , 0.93 ),
-(65,       "Terbium",       "Tb", ( 0.18,   1.0,  0.78), 1.59, 1.59, 2.51 ,  3 , 0.92 ,  4 , 0.84 ),
-(66,    "Dysprosium",       "Dy", ( 0.12,   1.0,  0.78), 1.59, 1.59, 2.49 ,  3 , 0.90 ),
-(67,       "Holmium",       "Ho", (  0.0,   1.0,  0.61), 1.58, 1.58, 2.47 ,  3 , 0.89 ),
-(68,        "Erbium",       "Er", (  0.0,  0.90,  0.45), 1.57, 1.57, 2.45 ,  3 , 0.88 ),
-(69,       "Thulium",       "Tm", (  0.0,  0.83,  0.32), 1.56, 1.56, 2.42 ,  3 , 0.87 ),
-(70,     "Ytterbium",       "Yb", (  0.0,  0.74,  0.21), 1.74, 1.74, 2.40 ,  2 , 0.93 ,  3 , 0.85 ),
-(71,      "Lutetium",       "Lu", (  0.0,  0.67,  0.14), 1.56, 1.56, 2.25 ,  3 , 0.85 ),
-(72,       "Hafnium",       "Hf", ( 0.30,  0.76,   1.0), 1.44, 1.44, 2.16 ,  4 , 0.78 ),
-(73,      "Tantalum",       "Ta", ( 0.30,  0.65,   1.0), 1.34, 1.34, 2.09 ,  5 , 0.68 ),
-(74,      "Tungsten",        "W", ( 0.12,  0.58,  0.83), 1.30, 1.30, 2.02 ,  4 , 0.70 ,  6 , 0.62 ),
-(75,       "Rhenium",       "Re", ( 0.14,  0.49,  0.67), 1.28, 1.28, 1.97 ,  4 , 0.72 ,  7 , 0.56 ),
-(76,        "Osmium",       "Os", ( 0.14,   0.4,  0.58), 1.26, 1.26, 1.92 ,  4 , 0.88 ,  6 , 0.69 ),
-(77,       "Iridium",       "Ir", ( 0.09,  0.32,  0.52), 1.27, 1.27, 1.87 ,  4 , 0.68 ),
-(78,     "Platinium",       "Pt", ( 0.81,  0.81,  0.87), 1.30, 1.30, 1.83 ,  2 , 0.80 ,  4 , 0.65 ),
-(79,          "Gold",       "Au", (  1.0,  0.81,  0.13), 1.34, 1.34, 1.79 ,  1 , 1.37 ,  3 , 0.85 ),
-(80,       "Mercury",       "Hg", ( 0.72,  0.72,  0.81), 1.49, 1.49, 1.76 ,  1 , 1.27 ,  2 , 1.10 ),
-(81,      "Thallium",       "Tl", ( 0.65,  0.32,  0.30), 1.48, 1.48, 2.08 ,  1 , 1.47 ,  3 , 0.95 ),
-(82,          "Lead",       "Pb", ( 0.34,  0.34,  0.38), 1.47, 1.47, 1.81 ,  2 , 1.20 ,  4 , 0.84 ),
-(83,       "Bismuth",       "Bi", ( 0.61,  0.30,  0.70), 1.46, 1.46, 1.63 ,  1 , 0.98 ,  3 , 0.96 ,  5 , 0.74 ),
-(84,      "Polonium",       "Po", ( 0.67,  0.36,   0.0), 1.46, 1.46, 1.53 ,  6 , 0.67 ),
-(85,      "Astatine",       "At", ( 0.45,  0.30,  0.27), 1.45, 1.45, 1.43 , -3 , 2.22 ,  3 , 0.85 ,  5 , 0.46 ),
-(86,         "Radon",       "Rn", ( 0.25,  0.50,  0.58), 1.00, 1.00, 1.34 ),
-(87,      "Francium",       "Fr", ( 0.25,   0.0,   0.4), 1.00, 1.00, 1.00 ,  1 , 1.80 ),
-(88,        "Radium",       "Ra", (  0.0,  0.49,   0.0), 1.00, 1.00, 1.00 ,  2 , 1.43 ),
-(89,      "Actinium",       "Ac", ( 0.43,  0.67,  0.98), 1.00, 1.00, 1.00 ,  3 , 1.18 ),
-(90,       "Thorium",       "Th", (  0.0,  0.72,   1.0), 1.65, 1.65, 1.00 ,  4 , 1.02 ),
-(91,  "Protactinium",       "Pa", (  0.0,  0.63,   1.0), 1.00, 1.00, 1.00 ,  3 , 1.13 ,  4 , 0.98 ,  5 , 0.89 ),
-(92,       "Uranium",        "U", (  0.0,  0.56,   1.0), 1.42, 1.42, 1.00 ,  4 , 0.97 ,  6 , 0.80 ),
-(93,     "Neptunium",       "Np", (  0.0,  0.50,   1.0), 1.00, 1.00, 1.00 ,  3 , 1.10 ,  4 , 0.95 ,  7 , 0.71 ),
-(94,     "Plutonium",       "Pu", (  0.0,  0.41,   1.0), 1.00, 1.00, 1.00 ,  3 , 1.08 ,  4 , 0.93 ),
-(95,     "Americium",       "Am", ( 0.32,  0.36,  0.94), 1.00, 1.00, 1.00 ,  3 , 1.07 ,  4 , 0.92 ),
-(96,        "Curium",       "Cm", ( 0.47,  0.36,  0.89), 1.00, 1.00, 1.00 ),
-(97,     "Berkelium",       "Bk", ( 0.54,  0.30,  0.89), 1.00, 1.00, 1.00 ),
-(98,   "Californium",       "Cf", ( 0.63,  0.21,  0.83), 1.00, 1.00, 1.00 ),
-(99,   "Einsteinium",       "Es", ( 0.70,  0.12,  0.83), 1.00, 1.00, 1.00 ),
-(100,       "Fermium",       "Fm", ( 0.70,  0.12,  0.72), 1.00, 1.00, 1.00 ),
-(101,   "Mendelevium",       "Md", ( 0.70,  0.05,  0.65), 1.00, 1.00, 1.00 ),
-(102,      "Nobelium",       "No", ( 0.74,  0.05,  0.52), 1.00, 1.00, 1.00 ),
-(103,    "Lawrencium",       "Lr", ( 0.78,   0.0,   0.4), 1.00, 1.00, 1.00 ),
-(104,       "Vacancy",      "Vac", (  0.5,   0.5,   0.5), 1.00, 1.00, 1.00),
-(105,       "Default",  "Default", (  1.0,   1.0,   1.0), 1.00, 1.00, 1.00),
-(106,         "Stick",    "Stick", (  0.5,   0.5,   0.5), 1.00, 1.00, 1.00),
+( 1,      "Hydrogen",        "H",  (  1.0,   1.0,   1.0, 1.0), 0.32, 0.32, 0.79 , -1 , 1.54 ),
+( 2,        "Helium",       "He",  ( 0.85,   1.0,   1.0, 1.0), 0.93, 0.93, 0.49 ),
+( 3,       "Lithium",       "Li",  (  0.8,  0.50,   1.0, 1.0), 1.23, 1.23, 2.05 ,  1 , 0.68 ),
+( 4,     "Beryllium",       "Be",  ( 0.76,   1.0,   0.0, 1.0), 0.90, 0.90, 1.40 ,  1 , 0.44 ,  2 , 0.35 ),
+( 5,         "Boron",        "B",  (  1.0,  0.70,  0.70, 1.0), 0.82, 0.82, 1.17 ,  1 , 0.35 ,  3 , 0.23 ),
+( 6,        "Carbon",        "C",  ( 0.56,  0.56,  0.56, 1.0), 0.77, 0.77, 0.91 , -4 , 2.60 ,  4 , 0.16 ),
+( 7,      "Nitrogen",        "N",  ( 0.18,  0.31,  0.97, 1.0), 0.75, 0.75, 0.75 , -3 , 1.71 ,  1 , 0.25 ,  3 , 0.16 ,  5 , 0.13 ),
+( 8,        "Oxygen",        "O",  (  1.0,  0.05,  0.05, 1.0), 0.73, 0.73, 0.65 , -2 , 1.32 , -1 , 1.76 ,  1 , 0.22 ,  6 , 0.09 ),
+( 9,      "Fluorine",        "F",  ( 0.56,  0.87,  0.31, 1.0), 0.72, 0.72, 0.57 , -1 , 1.33 ,  7 , 0.08 ),
+(10,          "Neon",       "Ne",  ( 0.70,  0.89,  0.96, 1.0), 0.71, 0.71, 0.51 ,  1 , 1.12 ),
+(11,        "Sodium",       "Na",  ( 0.67,  0.36,  0.94, 1.0), 1.54, 1.54, 2.23 ,  1 , 0.97 ),
+(12,     "Magnesium",       "Mg",  ( 0.54,   1.0,   0.0, 1.0), 1.36, 1.36, 1.72 ,  1 , 0.82 ,  2 , 0.66 ),
+(13,     "Aluminium",       "Al",  ( 0.74,  0.65,  0.65, 1.0), 1.18, 1.18, 1.82 ,  3 , 0.51 ),
+(14,       "Silicon",       "Si",  ( 0.94,  0.78,  0.62, 1.0), 1.11, 1.11, 1.46 , -4 , 2.71 , -1 , 3.84 ,  1 , 0.65 ,  4 , 0.42 ),
+(15,    "Phosphorus",        "P",  (  1.0,  0.50,   0.0, 1.0), 1.06, 1.06, 1.23 , -3 , 2.12 ,  3 , 0.44 ,  5 , 0.35 ),
+(16,        "Sulfur",        "S",  (  1.0,   1.0,  0.18, 1.0), 1.02, 1.02, 1.09 , -2 , 1.84 ,  2 , 2.19 ,  4 , 0.37 ,  6 , 0.30 ),
+(17,      "Chlorine",       "Cl",  ( 0.12,  0.94,  0.12, 1.0), 0.99, 0.99, 0.97 , -1 , 1.81 ,  5 , 0.34 ,  7 , 0.27 ),
+(18,         "Argon",       "Ar",  ( 0.50,  0.81,  0.89, 1.0), 0.98, 0.98, 0.88 ,  1 , 1.54 ),
+(19,     "Potassium",        "K",  ( 0.56,  0.25,  0.83, 1.0), 2.03, 2.03, 2.77 ,  1 , 0.81 ),
+(20,       "Calcium",       "Ca",  ( 0.23,   1.0,   0.0, 1.0), 1.74, 1.74, 2.23 ,  1 , 1.18 ,  2 , 0.99 ),
+(21,      "Scandium",       "Sc",  ( 0.90,  0.90,  0.90, 1.0), 1.44, 1.44, 2.09 ,  3 , 0.73 ),
+(22,      "Titanium",       "Ti",  ( 0.74,  0.76,  0.78, 1.0), 1.32, 1.32, 2.00 ,  1 , 0.96 ,  2 , 0.94 ,  3 , 0.76 ,  4 , 0.68 ),
+(23,      "Vanadium",        "V",  ( 0.65,  0.65,  0.67, 1.0), 1.22, 1.22, 1.92 ,  2 , 0.88 ,  3 , 0.74 ,  4 , 0.63 ,  5 , 0.59 ),
+(24,      "Chromium",       "Cr",  ( 0.54,   0.6,  0.78, 1.0), 1.18, 1.18, 1.85 ,  1 , 0.81 ,  2 , 0.89 ,  3 , 0.63 ,  6 , 0.52 ),
+(25,     "Manganese",       "Mn",  ( 0.61,  0.47,  0.78, 1.0), 1.17, 1.17, 1.79 ,  2 , 0.80 ,  3 , 0.66 ,  4 , 0.60 ,  7 , 0.46 ),
+(26,          "Iron",       "Fe",  ( 0.87,   0.4,   0.2, 1.0), 1.17, 1.17, 1.72 ,  2 , 0.74 ,  3 , 0.64 ),
+(27,        "Cobalt",       "Co",  ( 0.94,  0.56,  0.62, 1.0), 1.16, 1.16, 1.67 ,  2 , 0.72 ,  3 , 0.63 ),
+(28,        "Nickel",       "Ni",  ( 0.31,  0.81,  0.31, 1.0), 1.15, 1.15, 1.62 ,  2 , 0.69 ),
+(29,        "Copper",       "Cu",  ( 0.78,  0.50,   0.2, 1.0), 1.17, 1.17, 1.57 ,  1 , 0.96 ,  2 , 0.72 ),
+(30,          "Zinc",       "Zn",  ( 0.49,  0.50,  0.69, 1.0), 1.25, 1.25, 1.53 ,  1 , 0.88 ,  2 , 0.74 ),
+(31,       "Gallium",       "Ga",  ( 0.76,  0.56,  0.56, 1.0), 1.26, 1.26, 1.81 ,  1 , 0.81 ,  3 , 0.62 ),
+(32,     "Germanium",       "Ge",  (  0.4,  0.56,  0.56, 1.0), 1.22, 1.22, 1.52 , -4 , 2.72 ,  2 , 0.73 ,  4 , 0.53 ),
+(33,       "Arsenic",       "As",  ( 0.74,  0.50,  0.89, 1.0), 1.20, 1.20, 1.33 , -3 , 2.22 ,  3 , 0.58 ,  5 , 0.46 ),
+(34,      "Selenium",       "Se",  (  1.0,  0.63,   0.0, 1.0), 1.16, 1.16, 1.22 , -2 , 1.91 , -1 , 2.32 ,  1 , 0.66 ,  4 , 0.50 ,  6 , 0.42 ),
+(35,       "Bromine",       "Br",  ( 0.65,  0.16,  0.16, 1.0), 1.14, 1.14, 1.12 , -1 , 1.96 ,  5 , 0.47 ,  7 , 0.39 ),
+(36,       "Krypton",       "Kr",  ( 0.36,  0.72,  0.81, 1.0), 1.31, 1.31, 1.24 ),
+(37,      "Rubidium",       "Rb",  ( 0.43,  0.18,  0.69, 1.0), 2.16, 2.16, 2.98 ,  1 , 1.47 ),
+(38,     "Strontium",       "Sr",  (  0.0,   1.0,   0.0, 1.0), 1.91, 1.91, 2.45 ,  2 , 1.12 ),
+(39,       "Yttrium",        "Y",  ( 0.58,   1.0,   1.0, 1.0), 1.62, 1.62, 2.27 ,  3 , 0.89 ),
+(40,     "Zirconium",       "Zr",  ( 0.58,  0.87,  0.87, 1.0), 1.45, 1.45, 2.16 ,  1 , 1.09 ,  4 , 0.79 ),
+(41,       "Niobium",       "Nb",  ( 0.45,  0.76,  0.78, 1.0), 1.34, 1.34, 2.08 ,  1 , 1.00 ,  4 , 0.74 ,  5 , 0.69 ),
+(42,    "Molybdenum",       "Mo",  ( 0.32,  0.70,  0.70, 1.0), 1.30, 1.30, 2.01 ,  1 , 0.93 ,  4 , 0.70 ,  6 , 0.62 ),
+(43,    "Technetium",       "Tc",  ( 0.23,  0.61,  0.61, 1.0), 1.27, 1.27, 1.95 ,  7 , 0.97 ),
+(44,     "Ruthenium",       "Ru",  ( 0.14,  0.56,  0.56, 1.0), 1.25, 1.25, 1.89 ,  4 , 0.67 ),
+(45,       "Rhodium",       "Rh",  ( 0.03,  0.49,  0.54, 1.0), 1.25, 1.25, 1.83 ,  3 , 0.68 ),
+(46,     "Palladium",       "Pd",  (  0.0,  0.41,  0.52, 1.0), 1.28, 1.28, 1.79 ,  2 , 0.80 ,  4 , 0.65 ),
+(47,        "Silver",       "Ag",  ( 0.75,  0.75,  0.75, 1.0), 1.34, 1.34, 1.75 ,  1 , 1.26 ,  2 , 0.89 ),
+(48,       "Cadmium",       "Cd",  (  1.0,  0.85,  0.56, 1.0), 1.48, 1.48, 1.71 ,  1 , 1.14 ,  2 , 0.97 ),
+(49,        "Indium",       "In",  ( 0.65,  0.45,  0.45, 1.0), 1.44, 1.44, 2.00 ,  3 , 0.81 ),
+(50,           "Tin",       "Sn",  (  0.4,  0.50,  0.50, 1.0), 1.41, 1.41, 1.72 , -4 , 2.94 , -1 , 3.70 ,  2 , 0.93 ,  4 , 0.71 ),
+(51,      "Antimony",       "Sb",  ( 0.61,  0.38,  0.70, 1.0), 1.40, 1.40, 1.53 , -3 , 2.45 ,  3 , 0.76 ,  5 , 0.62 ),
+(52,     "Tellurium",       "Te",  ( 0.83,  0.47,   0.0, 1.0), 1.36, 1.36, 1.42 , -2 , 2.11 , -1 , 2.50 ,  1 , 0.82 ,  4 , 0.70 ,  6 , 0.56 ),
+(53,        "Iodine",        "I",  ( 0.58,   0.0,  0.58, 1.0), 1.33, 1.33, 1.32 , -1 , 2.20 ,  5 , 0.62 ,  7 , 0.50 ),
+(54,         "Xenon",       "Xe",  ( 0.25,  0.61,  0.69, 1.0), 1.31, 1.31, 1.24 ),
+(55,       "Caesium",       "Cs",  ( 0.34,  0.09,  0.56, 1.0), 2.35, 2.35, 3.35 ,  1 , 1.67 ),
+(56,        "Barium",       "Ba",  (  0.0,  0.78,   0.0, 1.0), 1.98, 1.98, 2.78 ,  1 , 1.53 ,  2 , 1.34 ),
+(57,     "Lanthanum",       "La",  ( 0.43,  0.83,   1.0, 1.0), 1.69, 1.69, 2.74 ,  1 , 1.39 ,  3 , 1.06 ),
+(58,        "Cerium",       "Ce",  (  1.0,   1.0,  0.78, 1.0), 1.65, 1.65, 2.70 ,  1 , 1.27 ,  3 , 1.03 ,  4 , 0.92 ),
+(59,  "Praseodymium",       "Pr",  ( 0.85,   1.0,  0.78, 1.0), 1.65, 1.65, 2.67 ,  3 , 1.01 ,  4 , 0.90 ),
+(60,     "Neodymium",       "Nd",  ( 0.78,   1.0,  0.78, 1.0), 1.64, 1.64, 2.64 ,  3 , 0.99 ),
+(61,    "Promethium",       "Pm",  ( 0.63,   1.0,  0.78, 1.0), 1.63, 1.63, 2.62 ,  3 , 0.97 ),
+(62,      "Samarium",       "Sm",  ( 0.56,   1.0,  0.78, 1.0), 1.62, 1.62, 2.59 ,  3 , 0.96 ),
+(63,      "Europium",       "Eu",  ( 0.38,   1.0,  0.78, 1.0), 1.85, 1.85, 2.56 ,  2 , 1.09 ,  3 , 0.95 ),
+(64,    "Gadolinium",       "Gd",  ( 0.27,   1.0,  0.78, 1.0), 1.61, 1.61, 2.54 ,  3 , 0.93 ),
+(65,       "Terbium",       "Tb",  ( 0.18,   1.0,  0.78, 1.0), 1.59, 1.59, 2.51 ,  3 , 0.92 ,  4 , 0.84 ),
+(66,    "Dysprosium",       "Dy",  ( 0.12,   1.0,  0.78, 1.0), 1.59, 1.59, 2.49 ,  3 , 0.90 ),
+(67,       "Holmium",       "Ho",  (  0.0,   1.0,  0.61, 1.0), 1.58, 1.58, 2.47 ,  3 , 0.89 ),
+(68,        "Erbium",       "Er",  (  0.0,  0.90,  0.45, 1.0), 1.57, 1.57, 2.45 ,  3 , 0.88 ),
+(69,       "Thulium",       "Tm",  (  0.0,  0.83,  0.32, 1.0), 1.56, 1.56, 2.42 ,  3 , 0.87 ),
+(70,     "Ytterbium",       "Yb",  (  0.0,  0.74,  0.21, 1.0), 1.74, 1.74, 2.40 ,  2 , 0.93 ,  3 , 0.85 ),
+(71,      "Lutetium",       "Lu",  (  0.0,  0.67,  0.14, 1.0), 1.56, 1.56, 2.25 ,  3 , 0.85 ),
+(72,       "Hafnium",       "Hf",  ( 0.30,  0.76,   1.0, 1.0), 1.44, 1.44, 2.16 ,  4 , 0.78 ),
+(73,      "Tantalum",       "Ta",  ( 0.30,  0.65,   1.0, 1.0), 1.34, 1.34, 2.09 ,  5 , 0.68 ),
+(74,      "Tungsten",        "W",  ( 0.12,  0.58,  0.83, 1.0), 1.30, 1.30, 2.02 ,  4 , 0.70 ,  6 , 0.62 ),
+(75,       "Rhenium",       "Re",  ( 0.14,  0.49,  0.67, 1.0), 1.28, 1.28, 1.97 ,  4 , 0.72 ,  7 , 0.56 ),
+(76,        "Osmium",       "Os",  ( 0.14,   0.4,  0.58, 1.0), 1.26, 1.26, 1.92 ,  4 , 0.88 ,  6 , 0.69 ),
+(77,       "Iridium",       "Ir",  ( 0.09,  0.32,  0.52, 1.0), 1.27, 1.27, 1.87 ,  4 , 0.68 ),
+(78,     "Platinium",       "Pt",  ( 0.81,  0.81,  0.87, 1.0), 1.30, 1.30, 1.83 ,  2 , 0.80 ,  4 , 0.65 ),
+(79,          "Gold",       "Au",  (  1.0,  0.81,  0.13, 1.0), 1.34, 1.34, 1.79 ,  1 , 1.37 ,  3 , 0.85 ),
+(80,       "Mercury",       "Hg",  ( 0.72,  0.72,  0.81, 1.0), 1.49, 1.49, 1.76 ,  1 , 1.27 ,  2 , 1.10 ),
+(81,      "Thallium",       "Tl",  ( 0.65,  0.32,  0.30, 1.0), 1.48, 1.48, 2.08 ,  1 , 1.47 ,  3 , 0.95 ),
+(82,          "Lead",       "Pb",  ( 0.34,  0.34,  0.38, 1.0), 1.47, 1.47, 1.81 ,  2 , 1.20 ,  4 , 0.84 ),
+(83,       "Bismuth",       "Bi",  ( 0.61,  0.30,  0.70, 1.0), 1.46, 1.46, 1.63 ,  1 , 0.98 ,  3 , 0.96 ,  5 , 0.74 ),
+(84,      "Polonium",       "Po",  ( 0.67,  0.36,   0.0, 1.0), 1.46, 1.46, 1.53 ,  6 , 0.67 ),
+(85,      "Astatine",       "At",  ( 0.45,  0.30,  0.27, 1.0), 1.45, 1.45, 1.43 , -3 , 2.22 ,  3 , 0.85 ,  5 , 0.46 ),
+(86,         "Radon",       "Rn",  ( 0.25,  0.50,  0.58, 1.0), 1.00, 1.00, 1.34 ),
+(87,      "Francium",       "Fr",  ( 0.25,   0.0,   0.4, 1.0), 1.00, 1.00, 1.00 ,  1 , 1.80 ),
+(88,        "Radium",       "Ra",  (  0.0,  0.49,   0.0, 1.0), 1.00, 1.00, 1.00 ,  2 , 1.43 ),
+(89,      "Actinium",       "Ac",  ( 0.43,  0.67,  0.98, 1.0), 1.00, 1.00, 1.00 ,  3 , 1.18 ),
+(90,       "Thorium",       "Th",  (  0.0,  0.72,   1.0, 1.0), 1.65, 1.65, 1.00 ,  4 , 1.02 ),
+(91,  "Protactinium",       "Pa",  (  0.0,  0.63,   1.0, 1.0), 1.00, 1.00, 1.00 ,  3 , 1.13 ,  4 , 0.98 ,  5 , 0.89 ),
+(92,       "Uranium",        "U",  (  0.0,  0.56,   1.0, 1.0), 1.42, 1.42, 1.00 ,  4 , 0.97 ,  6 , 0.80 ),
+(93,     "Neptunium",       "Np",  (  0.0,  0.50,   1.0, 1.0), 1.00, 1.00, 1.00 ,  3 , 1.10 ,  4 , 0.95 ,  7 , 0.71 ),
+(94,     "Plutonium",       "Pu",  (  0.0,  0.41,   1.0, 1.0), 1.00, 1.00, 1.00 ,  3 , 1.08 ,  4 , 0.93 ),
+(95,     "Americium",       "Am",  ( 0.32,  0.36,  0.94, 1.0), 1.00, 1.00, 1.00 ,  3 , 1.07 ,  4 , 0.92 ),
+(96,        "Curium",       "Cm",  ( 0.47,  0.36,  0.89, 1.0), 1.00, 1.00, 1.00 ),
+(97,     "Berkelium",       "Bk",  ( 0.54,  0.30,  0.89, 1.0), 1.00, 1.00, 1.00 ),
+(98,   "Californium",       "Cf",  ( 0.63,  0.21,  0.83, 1.0), 1.00, 1.00, 1.00 ),
+(99,   "Einsteinium",       "Es",  ( 0.70,  0.12,  0.83, 1.0), 1.00, 1.00, 1.00 ),
+(100,       "Fermium",       "Fm", ( 0.70,  0.12,  0.72, 1.0), 1.00, 1.00, 1.00 ),
+(101,   "Mendelevium",       "Md", ( 0.70,  0.05,  0.65, 1.0), 1.00, 1.00, 1.00 ),
+(102,      "Nobelium",       "No", ( 0.74,  0.05,  0.52, 1.0), 1.00, 1.00, 1.00 ),
+(103,    "Lawrencium",       "Lr", ( 0.78,   0.0,   0.4, 1.0), 1.00, 1.00, 1.00 ),
+(104,       "Vacancy",      "Vac", (  0.5,   0.5,   0.5, 1.0), 1.00, 1.00, 1.00),
+(105,       "Default",  "Default", (  1.0,   1.0,   1.0, 1.0), 1.00, 1.00, 1.00),
+(106,         "Stick",    "Stick", (  0.5,   0.5,   0.5, 1.0), 1.00, 1.00, 1.00),
 )
 
 # This list here contains all data of the elements and will be used during
@@ -247,7 +247,8 @@ def read_pdb_file(filepath_pdb, radiustype):
             short_name = "TER"
             name = "TER"
             radius = 0.0
-            color = [0,0,0]
+            # 2019-03-14, New
+            color = [0,0,0, 0]
             location = Vector((0,0,0))
             # Append the TER into the list. Material remains empty so far.
             all_atoms.append(AtomProp(short_name,
@@ -291,6 +292,7 @@ def read_pdb_file(filepath_pdb, radiustype):
                             break
                     if FOUND == False:
                         short_name = short_name2
+
             # ....................................................... to here.
 
             # Go through all elements and find the element of the current atom.
@@ -364,10 +366,10 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
     split_list = line.split(' ')
 
     # Go to the first entry
-    if "CONNECT" not in split_list[0]:
+    if "CONECT" not in split_list[0]:
         for line in filepath_pdb_p:
             split_list = line.split(' ')
-            if "CONNECT" in split_list[0]:
+            if "CONECT" in split_list[0]:
                 break
 
     Number_of_sticks = 0
@@ -379,22 +381,26 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
         # ... which is broken here (EOF) ...
         if line == "":
             break
-        # ... or here, when no 'CONNECT' appears anymore.
-        if "CONNECT" not in line:
+        # ... or here, when no 'CONECT' appears anymore.
+        if "CONECT" not in line:
             break
+
+        # Note 2019-03-16: in a PDB file the identifier for sticks is called 
+        # 'CONECT' and NOT 'CONNECT'! Please leave this as is, otherwise the 
+        # sticks are NOT correctly loaded.
 
         # The strings of the atom numbers do have a clear position in the file
         # (From 7 to 12, from 13 to 18 and so on.) and one needs to consider
         # this. One could also use the split function but then one gets into
         # trouble if there are lots of atoms: For instance, it may happen that
         # one has
-        #                   CONNECT 11111  22244444
+        #                   CONECT 11111  22244444
         #
         # In Fact it means that atom No. 11111 has a connection with atom
         # No. 222 but also with atom No. 44444. The split function would give
         # me only two numbers (11111 and 22244444), which is wrong.
 
-        # Cut spaces from the right and 'CONNECT' at the beginning
+        # Cut spaces from the right and 'CONECT' at the beginning
         line = line.rstrip()
         line = line[6:]
         # Amount of loops
@@ -421,7 +427,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
 
                 if number == 2 or number == 3:
                     basis_list = list(set(atom_list[1:]))
-
+                    
                     if len(basis_list) > 1:
                         basis1 = (all_atoms[atom1-1].location
                                 - all_atoms[basis_list[0]-1].location)
@@ -438,6 +444,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
                                 - all_atoms[atom2-1].location)
                         dist_n = Vector((dist_n[1],-dist_n[0],0))
                         dist_n = dist_n / dist_n.length
+
                 elif number > 3:
                     number = 1
                     dist_n = None
@@ -475,7 +482,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
 
 
 # Function, which produces a cylinder. All is somewhat easy to understand.
-def build_stick(radius, length, sectors):
+def build_stick(radius, length, sectors, element_name):
 
     dphi = 2.0 * pi/(float(sectors)-1)
 
@@ -518,17 +525,17 @@ def build_stick(radius, length, sectors):
         faces2.append(face_bottom)
 
     # Build the mesh, Cylinder
-    cylinder = bpy.data.meshes.new("Sticks_Cylinder")
+    cylinder = bpy.data.meshes.new(element_name+"_sticks_cylinder")
     cylinder.from_pydata(vertices, [], faces1)
     cylinder.update()
-    new_cylinder = bpy.data.objects.new("Sticks_Cylinder", cylinder)
+    new_cylinder = bpy.data.objects.new(element_name+"_sticks_cylinder", cylinder)
     bpy.context.collection.objects.link(new_cylinder)
 
     # Build the mesh, Cups
-    cups = bpy.data.meshes.new("Sticks_Cups")
+    cups = bpy.data.meshes.new(element_name+"_sticks_cup")
     cups.from_pydata(vertices, [], faces2)
     cups.update()
-    new_cups = bpy.data.objects.new("Sticks_Cups", cups)
+    new_cups = bpy.data.objects.new(element_name+"_sticks_cup", cups)
     bpy.context.collection.objects.link(new_cups)
 
     return (new_cylinder, new_cups)
@@ -556,13 +563,11 @@ def camera_light_source(use_camera,
         camera_xyz_vec = object_center_vec + object_camera_vec
 
         # Create the camera
-        current_layers=bpy.context.scene.layers
         camera_data = bpy.data.cameras.new("A_camera")
         camera_data.lens = 45
         camera_data.clip_end = 500.0
         camera = bpy.data.objects.new("A_camera", camera_data)
         camera.location = camera_xyz_vec
-        camera.layers = current_layers
         bpy.context.collection.objects.link(camera)
 
         # Here the camera is rotated such it looks towards the center of
@@ -580,16 +585,20 @@ def camera_light_source(use_camera,
         # camera position and view onto the object.
         bpy.ops.object.select_all(action='DESELECT')
         camera.select_set(True)
-        bpy.ops.transform.rotate(value=(90.0*2*pi/360.0),
-                                 axis=object_camera_vec,
-                                 constraint_axis=(False, False, False),
-                                 orient_type='GLOBAL',
-                                 mirror=False, proportional='DISABLED',
-                                 proportional_edit_falloff='SMOOTH',
-                                 proportional_size=1, snap=False,
-                                 snap_target='CLOSEST', snap_point=(0, 0, 0),
-                                 snap_align=False, snap_normal=(0, 0, 0),
-                                 release_confirm=False)
+        
+        # This will be done at some point ...
+        #
+        #bpy.ops.transform.rotate(value=(90.0*2*pi/360.0),
+        #                         axis=object_camera_vec,
+        #                         orient_matrix=camera.rotation_euler,
+        #                         constraint_axis=(False, False, False),
+        #                         orient_type='GLOBAL',
+        #                         mirror=False, proportional='DISABLED',
+        #                         proportional_edit_falloff='SMOOTH',
+        #                         proportional_size=1, snap=False,
+        #                         snap_target='CLOSEST', snap_point=(0, 0, 0),
+        #                         snap_align=False, snap_normal=(0, 0, 0),
+        #                         release_confirm=False)
 
     # Here a lamp is put into the scene, if chosen.
     if use_light == True:
@@ -606,14 +615,11 @@ def camera_light_source(use_camera,
         light_xyz_vec = object_center_vec + object_light_vec
 
         # Create the lamp
-        current_layers=bpy.context.scene.layers
-        light_data = bpy.data.lights.new(name="A_light", type="POINT")
+        light_data = bpy.data.lights.new(name="A_light", type="SUN")
         light_data.distance = 500.0
         light_data.energy = 3.0
-        light_data.shadow_method = 'RAY_SHADOW'
         lamp = bpy.data.objects.new("A_light", light_data)
         lamp.location = light_xyz_vec
-        lamp.layers = current_layers
         bpy.context.collection.objects.link(lamp)
 
         # Some settings for the World: a bit ambient occlusion
@@ -644,45 +650,41 @@ def draw_atoms_one_type(draw_all_atoms_type,
     atom_mesh = bpy.data.meshes.new("Mesh_"+atom[0])
     atom_mesh.from_pydata(atom_vertices, [], [])
     atom_mesh.update()
-    new_atom_mesh = bpy.data.objects.new(atom[0], atom_mesh)
+    new_atom_mesh = bpy.data.objects.new(atom[0] + "_mesh", atom_mesh)
     bpy.context.collection.objects.link(new_atom_mesh)
 
     # Now, build a representative sphere (atom).
-    current_layers = bpy.context.scene.layers
 
     if atom[0] == "Vacancy":
         bpy.ops.mesh.primitive_cube_add(
                         view_align=False, enter_editmode=False,
                         location=(0.0, 0.0, 0.0),
-                        rotation=(0.0, 0.0, 0.0),
-                        layers=current_layers)
+                        rotation=(0.0, 0.0, 0.0))
     else:
         # NURBS balls
         if Ball_type == "0":
             bpy.ops.surface.primitive_nurbs_surface_sphere_add(
                         view_align=False, enter_editmode=False,
-                        location=(0,0,0), rotation=(0.0, 0.0, 0.0),
-                        layers=current_layers)
+                        location=(0,0,0), rotation=(0.0, 0.0, 0.0))
         # UV balls
         elif Ball_type == "1":
             bpy.ops.mesh.primitive_uv_sphere_add(
                         segments=Ball_azimuth, ring_count=Ball_zenith,
                         size=1, view_align=False, enter_editmode=False,
-                        location=(0,0,0), rotation=(0, 0, 0),
-                        layers=current_layers)
+                        location=(0,0,0), rotation=(0, 0, 0))
         # Meta balls
         elif Ball_type == "2":
             bpy.ops.object.metaball_add(type='BALL', view_align=False,
                         enter_editmode=False, location=(0, 0, 0),
-                        rotation=(0, 0, 0), layers=current_layers)
+                        rotation=(0, 0, 0))
 
     ball = bpy.context.view_layer.objects.active
     ball.scale  = (atom[3]*Ball_radius_factor,) * 3
 
     if atom[0] == "Vacancy":
-        ball.name = "Cube_"+atom[0]
+        ball.name = atom[0] + "_cube"
     else:
-        ball.name = "Ball_"+atom[0]
+        ball.name = atom[0] + "_ball" 
     ball.active_material = atom[1]
     ball.parent = new_atom_mesh
     new_atom_mesh.instance_type = 'VERTS'
@@ -720,7 +722,6 @@ def draw_sticks_dupliverts(all_atoms,
                 continue
             sticks_list = []
             for stick in all_sticks:
-
                 for repeat in range(stick.number):
 
                     atom1 = copy(all_atoms[stick.atom1-1].location)-center
@@ -809,7 +810,7 @@ def draw_sticks_dupliverts(all_atoms,
             dv = stick[2]
             v1 = stick[1]
             n  = dv / dv.length
-            gamma = -n * v1
+            gamma = -n.dot(v1)
             b     = v1 + gamma * n
             n_b   = b / b.length
 
@@ -834,15 +835,18 @@ def draw_sticks_dupliverts(all_atoms,
                 i += 1
 
         # Build the mesh.
-        mesh = bpy.data.meshes.new("Sticks"+stick[0])
+        mesh = bpy.data.meshes.new("Sticks_"+stick[0][1:])
         mesh.from_pydata(vertices, [], faces)
         mesh.update()
-        new_mesh = bpy.data.objects.new("Sticks"+stick[0], mesh)
+        new_mesh = bpy.data.objects.new(stick[0][1:]+"_sticks_mesh", mesh)
         bpy.context.collection.objects.link(new_mesh)
 
         # Build the object.
         # Get the cylinder from the 'build_stick' function.
-        object_stick = build_stick(Stick_diameter, dl, Stick_sectors)
+        object_stick = build_stick(Stick_diameter, 
+                                   dl, 
+                                   Stick_sectors, 
+                                   stick[0][1:])
         stick_cylinder = object_stick[0]
         stick_cylinder.active_material = stick[3]
         stick_cups = object_stick[1]
@@ -1004,7 +1008,6 @@ def draw_sticks_skin(all_atoms,
                              snap_point=(0, 0, 0),
                              snap_align=False,
                              snap_normal=(0, 0, 0),
-                             texture_space=False,
                              release_confirm=False)
     # Back to the OBJECT mode.
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
@@ -1029,7 +1032,6 @@ def draw_sticks_normal(all_atoms,
     stick_material.diffuse_color = ELEMENTS[-1].color
 
     up_axis = Vector([0.0, 0.0, 1.0])
-    current_layers = bpy.context.scene.layers
 
     # For all sticks, do ...
     list_group = []
@@ -1059,8 +1061,7 @@ def draw_sticks_normal(all_atoms,
                                             view_align=False,
                                             enter_editmode=False,
                                             location=location,
-                                            rotation=(0, 0, 0),
-                                            layers=current_layers)
+                                            rotation=(0, 0, 0))
         # Put the stick into the scene ...
         stick = bpy.context.view_layer.objects.active
         # ... and rotate the stick.
@@ -1110,8 +1111,7 @@ def draw_sticks_normal(all_atoms,
         bpy.ops.object.empty_add(type='ARROWS',
                                   view_align=False,
                                   location=(0, 0, 0),
-                                  rotation=(0, 0, 0),
-                                  layers=current_layers)
+                                  rotation=(0, 0, 0))
         sticks = bpy.context.view_layer.objects.active
         for stick in list_group_sub:
             stick.parent = sticks
@@ -1147,8 +1147,7 @@ def import_pdb(Ball_type,
                use_camera,
                use_light,
                filepath_pdb):
-
-
+        
     # List of materials
     atom_material_list = []
 
@@ -1227,7 +1226,6 @@ def import_pdb(Ball_type,
     all_sticks = read_pdb_file_sticks(filepath_pdb,
                                       use_sticks_bonds,
                                       all_atoms)
-
     #
     # So far, all atoms, sticks and materials have been registered.
     #

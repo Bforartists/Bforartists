@@ -27,6 +27,7 @@
 #include "GPU_matrix.h"
 #include "GPU_state.h"
 
+#include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_rect.h"
 
@@ -370,6 +371,10 @@ void ED_screen_draw_edges(wmWindow *win)
 		return;
 	}
 
+	if (screen->temp && BLI_listbase_is_single(&screen->areabase)) {
+		return;
+	}
+
 	const int winsize_x = WM_window_pixels_x(win);
 	const int winsize_y = WM_window_pixels_y(win);
 	float col[4], corner_scale, edge_thickness;
@@ -407,6 +412,7 @@ void ED_screen_draw_edges(wmWindow *win)
 	edge_thickness = corner_scale * 0.21f;
 
 	GPU_blend(true);
+	GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
 
 	GPUBatch *batch = batch_screen_edges_get(&verts_per_corner);
 	GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_AREA_EDGES);
@@ -479,6 +485,8 @@ void ED_screen_draw_split_preview(ScrArea *sa, const int dir, const float fac)
 
 	/* splitpoint */
 	GPU_blend(true);
+	GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+
 	immUniformColor4ub(255, 255, 255, 100);
 
 	immBegin(GPU_PRIM_LINES, 2);

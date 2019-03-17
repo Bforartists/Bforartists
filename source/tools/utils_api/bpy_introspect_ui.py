@@ -50,7 +50,7 @@ class AttributeBuilder:
         data = [self._attr_single, self._args, [child._as_py() for child in self._attr_list]]
         return data
 
-    def _as_xml(self, indent="    "):
+    def _as_xml(self, indent="  "):
 
         def to_xml_str(value):
             if type(value) == str:
@@ -109,7 +109,12 @@ class AttributeBuilder:
         return self
 
     def __getattr__(self, attr):
-        attr_obj = NewAttr(self._attr + "." + attr, attr)
+        attr_next = self._attr + "." + attr
+        # Useful for debugging.
+        # print(attr_next)
+        attr_obj = _attribute_builder_overrides.get(attr_next, ...)
+        if attr_obj is ...:
+            attr_obj = NewAttr(attr_next, attr)
         self._attr_list.append(attr_obj)
         return attr_obj
 
@@ -177,8 +182,34 @@ class AttributeBuilder:
         return []
 
 
+class AttributeBuilder_Seq(AttributeBuilder):
+    def __len__(self):
+        return 0
+
+
+
+_attribute_builder_overrides = {
+    "context.gpencil.layers": AttributeBuilder_Seq("context.gpencil.layers", "layers"),
+    "context.gpencil_data.layers": AttributeBuilder_Seq("context.gpencil_data.layers", "layers"),
+    "context.object.material_slots": (),
+    "context.selected_nodes": (),
+    "context.selected_sequences": (),
+    "context.space_data.bookmarks": (),
+    "context.space_data.text.filepath": "",
+    "context.preferences.filepaths.script_directory": "",
+    "context.tool_settings.snap_elements": (True, ) * 3,
+    "context.selected_objects": (),
+    "context.tool_settings.mesh_select_mode": (True, ) * 3,
+    "context.mode": 'PAINT_TEXTURE',
+}
+
+
 def NewAttr(attr, attr_single):
     obj = AttributeBuilder(attr, attr_single)
+    return obj
+
+def NewAttr_Seq(attr, attr_single):
+    obj = AttributeBuilder_Seq(attr, attr_single)
     return obj
 
 
@@ -189,7 +220,10 @@ class BaseFakeUI:
 
 
 class Panel(BaseFakeUI):
-    pass
+
+    @property
+    def is_popover(self):
+        return False
 
 
 class UIList:
@@ -205,13 +239,21 @@ class Menu(BaseFakeUI):
     def draw_preset(self, context):
         pass
 
-    def path_menu(self, a, b, c):
+    def path_menu(
+            self, searchpaths, operator, *,
+            props_default=None, prop_filepath="filepath",
+            filter_ext=None, filter_path=None, display_name=None,
+            add_operator=None
+    ):
         pass
 
     @classmethod
     def draw_collapsible(cls, context, layout):
-        cls.draw_menus(layout, context)
+        cls.draw(layout, context)
 
+    @classmethod
+    def is_extended(cls):
+        return False
 
 class Operator(BaseFakeUI):
     pass
@@ -236,37 +278,49 @@ def fake_main():
 
     # ID Subclasses
     bpy.types.Armature = type("Armature", (), {})
-    bpy.types.Bone = type("Bone", (), {})
-    bpy.types.EditBone = type("EditBone", (), {})
-    bpy.types.FreestyleLineStyle = type("FreestyleLineStyle", (), {})
-    bpy.types.PoseBone = type("PoseBone", (), {})
-    bpy.types.Material = type("Material", (), {})
-    bpy.types.Lamp = type("Lamp", (), {})
+    bpy.types.Brush = type("Brush", (), {})
     bpy.types.Camera = type("Camera", (), {})
     bpy.types.Curve = type("Curve", (), {})
-    bpy.types.SurfaceCurve = type("SurfaceCurve", (), {})
-    bpy.types.TextCurve = type("SurfaceCurve", (), {})
+    bpy.types.GreasePencil = type("GreasePencil", (), {})
     bpy.types.Lattice = type("Lattice", (), {})
+    bpy.types.Light = type("Light", (), {})
+    bpy.types.Material = type("Material", (), {})
     bpy.types.Mesh = type("Mesh", (), {})
     bpy.types.MetaBall = type("MetaBall", (), {})
     bpy.types.Object = type("Object", (), {})
-    bpy.types.Speaker = type("Speaker", (), {})
-    bpy.types.Texture = type("Texture", (), {})
+    bpy.types.Object.bl_rna = NewAttr("bpy.types.Object.bl_rna", "bl_rna")
     bpy.types.ParticleSettings = type("ParticleSettings", (), {})
-    bpy.types.World = type("World", (), {})
-    bpy.types.Brush = type("Brush", (), {})
-    bpy.types.WindowManager = type("WindowManager", (), {})
     bpy.types.Scene = type("Scene", (), {})
-    bpy.types.Scene.EnumProperty = NewAttr("bpy.types.Scene.EnumProperty", "EnumProperty")
-    bpy.types.Scene.StringProperty = NewAttr("bpy.types.Scene.StringProperty", "StringProperty")
+    bpy.types.Sequence = type("Sequence", (), {})
+    bpy.types.Speaker = type("Speaker", (), {})
+    bpy.types.SurfaceCurve = type("SurfaceCurve", (), {})
+    bpy.types.TextCurve = type("SurfaceCurve", (), {})
+    bpy.types.Texture = type("Texture", (), {})
+    bpy.types.WindowManager = type("WindowManager", (), {})
+    bpy.types.WorkSpace = type("WorkSpace", (), {})
+    bpy.types.World = type("World", (), {})
+
+    # Other types
+    bpy.types.Bone = type("Bone", (), {})
+    bpy.types.EditBone = type("EditBone", (), {})
     bpy.types.Event = type("Event", (), {})
     bpy.types.Event.bl_rna = NewAttr("bpy.types.Event.bl_rna", "bl_rna")
+    bpy.types.FreestyleLineStyle = type("FreestyleLineStyle", (), {})
+    bpy.types.PoseBone = type("PoseBone", (), {})
+    bpy.types.Theme = type("Theme", (), {})
+    bpy.types.Theme.bl_rna = NewAttr("bpy.types.Theme.bl_rna", "bl_rna")
+    bpy.types.ToolSettings = type("bpy.types.ToolSettings", (), {})
+    bpy.types.ToolSettings.bl_rna = NewAttr("bpy.types.ToolSettings.bl_rna", "bl_rna")
 
     bpy.props = module_add("bpy.props")
     bpy.props.StringProperty = dict
     bpy.props.BoolProperty = dict
+    bpy.props.BoolVectorProperty = dict
     bpy.props.IntProperty = dict
     bpy.props.EnumProperty = dict
+    bpy.props.FloatProperty = dict
+    bpy.props.FloatVectorProperty = dict
+    bpy.props.CollectionProperty = dict
 
     bpy.app = module_add("bpy.app")
     bpy.app.build_options = module_add("bpy.app.build_options")
@@ -274,9 +328,14 @@ def fake_main():
     bpy.app.build_options.mod_fluid = True
     bpy.app.build_options.collada = True
     bpy.app.build_options.international = True
+    bpy.app.build_options.mod_smoke = True
+    bpy.app.build_options.alembic = True
+    bpy.app.build_options.bullet = True
 
     bpy.app.translations = module_add("bpy.app.translations")
-    bpy.app.translations.pgettext_iface = lambda s: s
+    bpy.app.translations.pgettext_iface = lambda s, context="": s
+    bpy.app.translations.pgettext_data = lambda s: s
+    bpy.app.translations.pgettext_tip = lambda s: s
     # id's are chosen at random here...
     bpy.app.translations.contexts = module_add("bpy.app.translations.contexts")
     bpy.app.translations.contexts.default = "CONTEXT_DEFAULT"
@@ -286,6 +345,7 @@ def fake_main():
 
     bpy.utils = module_add("bpy.utils")
     bpy.utils.register_class = lambda cls: ()
+    bpy.utils.app_template_paths = lambda: ()
 
 
 def fake_helper():
@@ -313,12 +373,14 @@ def fake_runtime():
     bpy.data = module_add("bpy.data")
     bpy.data.scenes = ()
     bpy.data.speakers = ()
-    bpy.data.groups = ()
+    bpy.data.collections = ()
     bpy.data.meshes = ()
     bpy.data.shape_keys = ()
     bpy.data.materials = ()
     bpy.data.lattices = ()
-    bpy.data.lamps = ()
+    bpy.data.lights = ()
+    bpy.data.lightprobes = ()
+    bpy.data.fonts = ()
     bpy.data.textures = ()
     bpy.data.cameras = ()
     bpy.data.curves = ()
@@ -328,9 +390,12 @@ def fake_runtime():
     bpy.data.movieclips = ()
     bpy.data.armatures = ()
     bpy.data.particles = ()
-    bpy.data.grease_pencil = ()
+    bpy.data.grease_pencils = ()
+    bpy.data.cache_files = ()
+    bpy.data.workspaces = ()
 
     bpy.data.is_dirty = True
+    bpy.data.is_saved = True
     bpy.data.use_autopack = True
 
     # defined in fake_main()
@@ -343,7 +408,7 @@ def fake_runtime():
     bpy.app.autoexec_fail = False
 
     bpy.path = module_add("bpy.path")
-    bpy.path.display_name = lambda f: ""
+    bpy.path.display_name = lambda f, has_ext=False: ""
 
     bpy_extras = module_add("bpy_extras")
     bpy_extras.keyconfig_utils = module_add("bpy_extras.keyconfig_utils")

@@ -24,26 +24,37 @@
 #
 #  Start of project              : 2011-08-31 by Clemens Barth
 #  First publication in Blender  : 2011-11-11
-#  Last modified                 : 2014-08-19
+#  Last modified                 : 2019-03-15
 #
 #  Acknowledgements
 #  ================
-#  Blender: ideasman, meta_androcto, truman, kilon, CoDEmanX, dairin0d, PKHG,
-#           Valter, ...
-#  Other  : Frank Palmino
+#
+#  Blender developers
+#  ------------------
+#  Campbell Barton      (ideasman) 
+#  Brendon Murphy       (meta_androcto) 
+#  Truman Melton (?)    (truman)
+#  Kilon Alios          (kilon)
+#  ??                   (CoDEmanX)
+#  Dima Glib            (dairin0d)
+#  Peter K.H. Gragert   (PKHG)
+#  Valter Battioli (?)  (valter)
+#
+#  Other
+#  -----
+#  Frank Palmino
 #
 #
 
 bl_info = {
     "name": "Atomic Blender - PDB",
-    "description": "Loading and manipulating atoms from PDB files",
+    "description": "Importing atoms described in PDB files as balls into Blender",
     "author": "Clemens Barth",
-    "version": (1, 7),
-    "blender": (2, 71, 0),
+    "version": (1, 8),
+    "blender": (2, 80, 0),
     "location": "File -> Import -> PDB (.pdb)",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/PDB",
+    "wiki_url": "... will be updated asap ...",
     "category": "Import-Export",
 }
 
@@ -68,7 +79,7 @@ from . import (
 #                                                                           GUI
 
 # This is the class for the file dialog of the importer.
-class ImportPDB(Operator, ImportHelper):
+class IMPORT_OT_pdb(Operator, ImportHelper):
     bl_idname = "import_mesh.pdb"
     bl_label  = "Import Protein Data Bank(*.pdb)"
     bl_options = {'PRESET', 'UNDO'}
@@ -263,7 +274,7 @@ class ImportPDB(Operator, ImportHelper):
 
 
 # This is the class for the file dialog of the exporter.
-class ExportPDB(Operator, ExportHelper):
+class EXPORT_OT_pdb(Operator, ExportHelper):
     bl_idname = "export_mesh.pdb"
     bl_label  = "Export Protein Data Bank(*.pdb)"
     filename_ext = ".pdb"
@@ -293,19 +304,28 @@ class ExportPDB(Operator, ExportHelper):
 
 # The entry into the menu 'file -> import'
 def menu_func_import(self, context):
-    self.layout.operator(ImportPDB.bl_idname, text="Protein Data Bank (.pdb)")
+    self.layout.operator(IMPORT_OT_pdb.bl_idname, text="Protein Data Bank (.pdb)")
 
 # The entry into the menu 'file -> export'
 def menu_func_export(self, context):
-    self.layout.operator(ExportPDB.bl_idname, text="Protein Data Bank (.pdb)")
+    self.layout.operator(EXPORT_OT_pdb.bl_idname, text="Protein Data Bank (.pdb)")
+
+classes = (IMPORT_OT_pdb, 
+           EXPORT_OT_pdb)
 
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+    
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        unregister_class(cls)
+
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
