@@ -171,13 +171,13 @@ class OUTLINER_MT_view(Menu):
 
         layout.operator("outliner.show_one_level", text = "Show One Level", icon = "HIERARCHY_DOWN")
         layout.operator("outliner.hide_one_level", text = "Hide One Level", icon = "HIERARCHY_UP") # bfa - separated tooltip
+        layout.operator("outliner.expanded_toggle", icon = 'INVERSE')
         layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
 
         layout.separator()
 
         layout.operator("outliner.select_box", icon = 'BORDER_RECT')
-        layout.operator("outliner.expanded_toggle", icon = 'INVERSE')
-
+        
         layout.separator()
 
         layout.operator("outliner.select_all", text = "Select All", icon='SELECT_ALL').action = 'SELECT'
