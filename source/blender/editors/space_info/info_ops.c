@@ -209,7 +209,7 @@ static const EnumPropertyItem unpack_all_method_items[] = {
 	{PF_WRITE_LOCAL, "WRITE_LOCAL", 0, "Write files to current directory (overwrite existing files)", ""},
 	{PF_USE_ORIGINAL, "USE_ORIGINAL", 0, "Use files in original location (create when necessary)", ""},
 	{PF_WRITE_ORIGINAL, "WRITE_ORIGINAL", 0, "Write files to original location (overwrite existing files)", ""},
-	{PF_KEEP, "KEEP", 0, "Disable Auto-pack, keep all packed files", ""},
+	/*{PF_KEEP, "KEEP", 0, "Disable Auto-pack, keep all packed files", ""},*/ // bfa - disabled this nonsense menu item. Abandon by move the mouse out of menu. And auto-pack is a checkbox in same menu.
 	/* {PF_ASK, "ASK", 0, "Ask for each file", ""}, */
 	{0, NULL, 0, NULL, NULL},
 };
