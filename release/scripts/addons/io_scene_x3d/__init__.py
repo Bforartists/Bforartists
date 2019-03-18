@@ -159,13 +159,11 @@ class ExportX3D(bpy.types.Operator, ExportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportX3D.bl_idname,
-                         text="X3D Extensible 3D (.x3d/.wrl)")
+    self.layout.operator(ImportX3D.bl_idname, text="X3D Extensible 3D (.x3d/.wrl)", icon = "LOAD_WRL")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportX3D.bl_idname,
-                         text="X3D Extensible 3D (.x3d)")
+    self.layout.operator(ExportX3D.bl_idname, text="X3D Extensible 3D (.x3d)", icon = "SAVE_WRL")
 
 
 classes = (
