@@ -190,13 +190,17 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
     def draw(self, context):
         layout = self.layout
 
+    def draw(self, context):
+        layout = self.layout
+
         layout.prop(self, "ui_tab", expand=True)
         if self.ui_tab == 'MAIN':
-            layout.prop(self, "use_manual_orientation"),
-            sub = layout.column()
-            sub.enabled = self.use_manual_orientation
-            sub.prop(self, "axis_forward")
-            sub.prop(self, "axis_up")
+            layout.prop(self, "use_manual_orientation"),          
+            #sub.enabled = self.use_manual_orientation # bfa - made the props hidden instead of deactivated.
+            if self.use_manual_orientation: 
+                sub = layout.column()
+                sub.prop(self, "axis_forward")
+                sub.prop(self, "axis_up")
             layout.prop(self, "global_scale")
             layout.prop(self, "bake_space_transform")
 
@@ -220,9 +224,10 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             layout.prop(self, "force_connect_children"),
             layout.prop(self, "automatic_bone_orientation"),
             sub = layout.column()
-            sub.enabled = not self.automatic_bone_orientation
-            sub.prop(self, "primary_bone_axis")
-            sub.prop(self, "secondary_bone_axis")
+            # sub.enabled = not self.automatic_bone_orientation # bfa - made the props hidden instead of deactivated.
+            if not self.automatic_bone_orientation:
+                sub.prop(self, "primary_bone_axis")
+                sub.prop(self, "secondary_bone_axis")
 
     def execute(self, context):
         keywords = self.as_keywords(ignore=("filter_glob", "directory", "ui_tab"))
