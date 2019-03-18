@@ -2616,6 +2616,7 @@ class VIEW3D_MT_brush(Menu):
         tool_settings = context.tool_settings
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
+        obj = context.active_object
 
         mesh = context.object.data # face selection masking for painting
 
@@ -2666,15 +2667,22 @@ class VIEW3D_MT_brush(Menu):
 
                 if sculpt_tool == 'LAYER':
                     layout.prop(brush, "use_persistent")
-                    layout.operator("sculpt.set_persistent_base")
-
-        layout.separator()
+                    layout.operator("sculpt.set_persistent_base")  
 
         # If face selection masking for painting is active
         if mesh.use_paint_mask:
+
+            layout.separator()
+
             layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
 
-        layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
+        # Color picker just in vertex and texture paint
+        if obj.mode in {'VERTEX_PAINT', 'TEXTURE_PAINT'}:
+
+            layout.separator()
+
+            layout.operator("paint.sample_color", text = "Color Picker", icon='EYEDROPPER')
+
 
 class VIEW3D_MT_brush_curve_presets(Menu):
     bl_label = "Curve Preset"
