@@ -838,8 +838,8 @@ class TOPBAR_MT_window(Menu):
 
         layout = self.layout
 
-        layout.operator("wm.window_new")
-        layout.operator("wm.window_new_main")
+        layout.operator("wm.window_new", icon = "NEW_WINDOW")
+        layout.operator("wm.window_new_main", icon = "NEW_WINDOW")
 
         layout.separator()
 
@@ -847,8 +847,8 @@ class TOPBAR_MT_window(Menu):
 
         layout.separator()
 
-        layout.operator("screen.workspace_cycle", text="Next Workspace").direction = 'NEXT'
-        layout.operator("screen.workspace_cycle", text="Previous Workspace").direction = 'PREV'
+        layout.operator("screen.workspace_cycle", text="Next Workspace", icon = "FRAME_NEXT").direction = 'NEXT'
+        layout.operator("screen.workspace_cycle", text="Previous Workspace", icon = "FRAME_PREV").direction = 'PREV'
 
         layout.separator()
 
@@ -857,7 +857,7 @@ class TOPBAR_MT_window(Menu):
 
         layout.separator()
 
-        layout.operator("screen.screenshot")
+        layout.operator("screen.screenshot", icon='MAKE_SCREENSHOT')
 
         if sys.platform[:3] == "win":
             layout.separator()
@@ -865,7 +865,7 @@ class TOPBAR_MT_window(Menu):
 
         if context.scene.render.use_multiview:
             layout.separator()
-            layout.operator("wm.set_stereo_3d")
+            layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
 
 
 class TOPBAR_MT_help(Menu):
