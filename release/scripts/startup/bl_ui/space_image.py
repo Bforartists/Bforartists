@@ -225,11 +225,13 @@ class IMAGE_MT_brush(Menu):
         ups = context.tool_settings.unified_paint_settings
         layout.prop(ups, "use_unified_size", text="Unified Size")
         layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        layout.prop(ups, "use_unified_color", text="Unified Color")
-        layout.separator()
+        layout.prop(ups, "use_unified_color", text="Unified Color")      
 
         # Brush tool.
-        layout.prop_menu_enum(brush, "image_tool")
+
+        #layout.separator()
+
+        #layout.prop_menu_enum(brush, "image_tool") - bfa deactivated the brush enum. The brushes are in the tool shelf already.
 
 
 class IMAGE_MT_image(Menu):
