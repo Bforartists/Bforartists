@@ -1901,11 +1901,11 @@ static int outliner_operator_menu(bContext *C, const char *opname)
 	uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
 	uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-	MenuType *mt = WM_menutype_find("OUTLINER_MT_context", false);
-	if (mt) {
+	/*MenuType *mt = WM_menutype_find("OUTLINER_MT_context", false);*/ //- bfa - removed the OUTLINER_MT_context menu
+	/*if (mt) {
 		uiItemS(layout);
 		UI_menutype_draw(C, mt, layout);
-	}
+	}*/
 
 	UI_popup_menu_end(C, pup);
 
@@ -2046,7 +2046,7 @@ static int outliner_operation(bContext *C, wmOperator *UNUSED(op), const wmEvent
 		return OPERATOR_FINISHED;
 	}
 
-	WM_menu_name_call(C, "OUTLINER_MT_context", WM_OP_INVOKE_REGION_WIN);
+	/*WM_menu_name_call(C, "OUTLINER_MT_context", WM_OP_INVOKE_REGION_WIN);*/ //- bfa, removed the OUTLINER_MT_context menu
 	return OPERATOR_FINISHED;
 }
 
