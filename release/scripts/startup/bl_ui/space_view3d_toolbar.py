@@ -822,6 +822,26 @@ class VIEW3D_PT_tools_imagepaint_options_unified(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(layout, context)
 
+class VIEW3D_PT_imagepaint_brush_paint_modes(Panel, View3DPaintPanel):
+    bl_context = ".imagepaint"  # dot on purpose (access from topbar)
+    bl_parent_id = "VIEW3D_PT_tools_imagepaint_options"
+    bl_label = "Enabled Modes"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = settings.brush
+
+        row = layout.row()
+        row.prop(brush, "use_paint_sculpt", text="Sculpt")
+        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
+
+        row = layout.row()
+        row.prop(brush, "use_paint_weight", text="Weight Paint")
+        row.prop(brush, "use_paint_image", text="Texture Paint")
+
 
 # TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_curve(Panel, View3DPaintPanel):
@@ -985,7 +1005,28 @@ class VIEW3D_PT_sculpt_options_unified(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         
-        self.unified_paint_settings(layout, context)       
+        self.unified_paint_settings(layout, context)
+
+
+class VIEW3D_PT_sculpt_brush_paint_modes(Panel, View3DPaintPanel):
+    bl_context = ".sculpt_mode"  # dot on purpose (access from topbar)
+    bl_parent_id = "VIEW3D_PT_sculpt_options"
+    bl_label = "Enabled Modes"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = settings.brush
+
+        row = layout.row()
+        row.prop(brush, "use_paint_sculpt", text="Sculpt")
+        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
+
+        row = layout.row()
+        row.prop(brush, "use_paint_weight", text="Weight Paint")
+        row.prop(brush, "use_paint_image", text="Texture Paint")
 
 
 class VIEW3D_PT_sculpt_options_gravity(Panel, View3DPaintPanel):
@@ -1208,6 +1249,28 @@ class VIEW3D_PT_weightpaint_options_unified(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(layout, context)
 
+
+class VIEW3D_PT_weightpaint_brush_paint_modes(Panel, View3DPaintPanel):
+    bl_context = ".weightpaint"  # dot on purpose (access from topbar)
+    bl_parent_id = "VIEW3D_PT_tools_weightpaint_options"
+    bl_label = "Enabled Modes"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = settings.brush
+
+        row = layout.row()
+        row.prop(brush, "use_paint_sculpt", text="Sculpt")
+        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
+
+        row = layout.row()
+        row.prop(brush, "use_paint_weight", text="Weight Paint")
+        row.prop(brush, "use_paint_image", text="Texture Paint")
+
+
 # ********** default tools for vertex-paint ****************
 
 
@@ -1234,6 +1297,26 @@ class VIEW3D_PT_vertexpaint_options_unified(Panel, View3DPaintPanel):
         layout.use_property_decorate = False
 
         self.unified_paint_settings(layout, context)
+
+class VIEW3D_PT_vertexpaint_brush_paint_modes(Panel, View3DPaintPanel):
+    bl_context = ".vertexpaint"  # dot on purpose (access from topbar)
+    bl_parent_id = "VIEW3D_PT_tools_vertexpaint"
+    bl_label = "Enabled Modes"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        
+        settings = UnifiedPaintPanel.paint_settings(context)
+        brush = settings.brush
+
+        row = layout.row()
+        row.prop(brush, "use_paint_sculpt", text="Sculpt")
+        row.prop(brush, "use_paint_vertex", text="Vertex Paint")
+
+        row = layout.row()
+        row.prop(brush, "use_paint_weight", text="Weight Paint")
+        row.prop(brush, "use_paint_image", text="Texture Paint")
 
 
 # TODO, move to space_view3d.py
@@ -1893,11 +1976,13 @@ classes = (
     VIEW3D_PT_tools_brush_stroke_smooth_stroke,
     VIEW3D_PT_tools_imagepaint_options,
     VIEW3D_PT_tools_imagepaint_options_unified,
+    VIEW3D_PT_imagepaint_brush_paint_modes,
     VIEW3D_PT_tools_brush_curve,
     VIEW3D_PT_sculpt_dyntopo,
     VIEW3D_PT_sculpt_dyntopo_remesh,
     VIEW3D_PT_sculpt_options,
     VIEW3D_PT_sculpt_options_unified,
+    VIEW3D_PT_sculpt_brush_paint_modes,
     VIEW3D_PT_sculpt_options_gravity,
     VIEW3D_PT_sculpt_symmetry,
     VIEW3D_PT_tools_brush_appearance,
@@ -1906,8 +1991,10 @@ classes = (
     VIEW3D_PT_tools_weightpaint_symmetry,
     VIEW3D_PT_tools_weightpaint_options,
     VIEW3D_PT_weightpaint_options_unified,
+    VIEW3D_PT_weightpaint_brush_paint_modes,
     VIEW3D_PT_tools_vertexpaint,
     VIEW3D_PT_vertexpaint_options_unified,
+    VIEW3D_PT_vertexpaint_brush_paint_modes,
     VIEW3D_PT_tools_vertexpaint_symmetry,
     VIEW3D_PT_tools_imagepaint_external,
     VIEW3D_PT_tools_imagepaint_symmetry,
