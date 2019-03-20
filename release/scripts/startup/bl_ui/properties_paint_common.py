@@ -220,7 +220,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
 
 # Used in both the View3D toolbar and texture properties
-def brush_texture_settings(layout, brush, sculpt):
+def brush_texture_settings(layout, brush, sculpt, vertex_paint, image_paint):
     tex_slot = brush.texture_slot
 
     layout.use_property_split = True
