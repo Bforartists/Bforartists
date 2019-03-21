@@ -2627,7 +2627,6 @@ class VIEW3D_MT_brush(Menu):
         # brush tool
         if context.sculpt_object:
             layout.operator("brush.reset", icon = "BRUSH_RESET")
-            layout.prop_menu_enum(brush, "sculpt_tool")
         elif context.image_paint_object:
             layout.prop_menu_enum(brush, "image_tool")
         elif context.vertex_paint_object:
@@ -4555,7 +4554,8 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_armature_delete")
+        layout.operator("armature.delete", icon = "DELETE")
+        layout.operator("armature.dissolve", icon = "DELETE")
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
@@ -4666,7 +4666,7 @@ class VIEW3D_MT_edit_armature_roll(Menu):
         layout.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
         layout.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
 
-
+# bfa - not functional in the BFA keymap. But menu class remains for the Blender keymap. DO NOT DELETE!
 class VIEW3D_MT_edit_armature_delete(Menu):
     bl_label = "Delete"
 
