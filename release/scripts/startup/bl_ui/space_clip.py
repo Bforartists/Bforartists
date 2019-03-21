@@ -114,6 +114,8 @@ class CLIP_PT_clip_display(Panel):
         col = row.column()
         col.prop(sc.clip_user, "use_render_undistorted", text="Render Undistorted")
         col.prop(sc, "lock_selection", text="Lock to Selection")
+        col.prop(sc, "show_metadata")
+
         col = row.column()
         col.prop(sc, "show_stable", text="Show Stable")
         col.prop(sc, "show_grid", text="Grid")
@@ -1305,8 +1307,6 @@ class CLIP_MT_view(Menu):
             layout.operator("clip.view_zoom_in", icon = "ZOOM_IN")
             layout.operator("clip.view_zoom_out", icon = "ZOOM_OUT")
 
-            layout.separator()
-            layout.prop(sc, "show_metadata")
             layout.separator()
 
             ratios = ((1, 8), (1, 4), (1, 2), (1, 1), (2, 1), (4, 1), (8, 1))
