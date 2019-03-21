@@ -845,7 +845,7 @@ class VIEW3D_PT_imagepaint_brush_paint_modes(Panel, View3DPaintPanel):
 
 # TODO, move to space_view3d.py
 class VIEW3D_PT_tools_brush_curve(Panel, View3DPaintPanel):
-    bl_context = ".imagepaint"  # dot on purpose (access from topbar)
+    bl_context = ".paint_common"  # dot on purpose (access from topbar)
     bl_label = "Curve"
     bl_options = {'DEFAULT_CLOSED'}
 
