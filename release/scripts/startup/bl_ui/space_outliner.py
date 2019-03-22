@@ -106,10 +106,6 @@ class OUTLINER_HT_header(Header):
         elif space.display_mode == 'DATA_API':
             layout.separator()
 
-            row = layout.row(align=True)
-            row.operator("outliner.keyingset_add_selected", icon='ADD', text="")
-            row.operator("outliner.keyingset_remove_selected", icon='REMOVE', text="")
-
             if ks:
                 row = layout.row()
                 row.prop_search(scene.keying_sets, "active", scene, "keying_sets", text="")
