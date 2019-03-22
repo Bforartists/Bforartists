@@ -2881,30 +2881,12 @@ class VIEW3D_MT_sculpt(Menu):
         tool_settings = context.tool_settings
         sculpt = tool_settings.sculpt
 
-        layout.operator("sculpt.dynamic_topology_toggle", text="Toggle Dynamic Topology")
+        layout.operator("sculpt.dynamic_topology_toggle", text="Toggle Dynamic Topology", icon = "SCULPT_DYNTOPO")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_subdivision_set")
 
-        layout.prop(sculpt, "use_symmetry_x")
-        layout.prop(sculpt, "use_symmetry_y")
-        layout.prop(sculpt, "use_symmetry_z")
-
-        layout.separator()
-
-        layout.prop(sculpt, "lock_x")
-        layout.prop(sculpt, "lock_y")
-        layout.prop(sculpt, "lock_z")
-
-        layout.separator()
-
-        layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
-        layout.prop(sculpt, "show_low_resolution")
-        layout.prop(sculpt, "show_brush")
-        layout.prop(sculpt, "use_deform_only")
-        layout.prop(sculpt, "show_diffuse_color")
-        layout.prop(sculpt, "show_mask")
 
 
 class VIEW3D_MT_sculpt_specials(Menu):
