@@ -576,7 +576,7 @@ def brush_basic_sculpt_settings(layout, context, brush, *, compact=False):
     myvar.fill_color_override_test_path = ''
     myvar.zoom_path = ''
     myvar.image_id = 'tool_settings.sculpt.brush'
-    myvar.secondary_tex = False   
+    myvar.secondary_tex = False
 
     # strength, use_strength_pressure, and use_strength_attenuation
     layout.separator()
@@ -590,19 +590,19 @@ def brush_basic_sculpt_settings(layout, context, brush, *, compact=False):
     if capabilities.has_strength_pressure:
         UnifiedPaintPanel.prop_unified_strength(row, context, brush, "use_pressure_strength", text="")
         
-        #radial control button brush strength
-        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
-        myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
-        myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
-        myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
-        myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
-        myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
-        myvar.fill_color_path = ''
-        myvar.fill_color_override_path = ''
-        myvar.fill_color_override_test_path = ''
-        myvar.zoom_path = ''
-        myvar.image_id = 'tool_settings.sculpt.brush'
-        myvar.secondary_tex = False
+    #radial control button brush strength
+    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+    myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
+    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+    myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+    myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+    myvar.fill_color_path = ''
+    myvar.fill_color_override_path = ''
+    myvar.fill_color_override_test_path = ''
+    myvar.zoom_path = ''
+    myvar.image_id = 'tool_settings.sculpt.brush'
+    myvar.secondary_tex = False
 
 
     # direction
