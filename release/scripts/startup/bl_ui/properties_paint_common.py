@@ -444,20 +444,6 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
         UnifiedPaintPanel.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
         UnifiedPaintPanel.prop_unified_size(row, context, brush, "use_pressure_size", text="")
 
-        #radial control button brushsize
-        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
-        myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
-        myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
-        myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
-        myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
-        myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
-        myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
-        myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
-        myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
-        myvar.zoom_path = 'space_data.zoom'
-        myvar.image_id = 'tool_settings.image_paint.brush'
-        myvar.secondary_tex = True
-
 
     row = layout.row(align=True)
 
@@ -471,19 +457,6 @@ def brush_basic_texpaint_settings(layout, context, brush, *, compact=False):
         layout.separator()
         layout.prop(brush, "blend", text="" if compact else "Blend")
 
-    #radial control button brushsize
-    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
-    myvar.data_path_primary = 'tool_settings.image_paint.brush.strength'
-    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
-    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
-    myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
-    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
-    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
-    myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
-    myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
-    myvar.zoom_path = ''
-    myvar.image_id = 'tool_settings.image_paint.brush'
-    myvar.secondary_tex = True
 
     if brush.image_tool in {'DRAW', 'FILL'}:
         layout.separator()
