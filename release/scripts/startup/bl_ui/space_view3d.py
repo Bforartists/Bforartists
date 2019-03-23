@@ -3172,6 +3172,17 @@ class VIEW3D_MT_particle(Menu):
 
         layout.operator("particle.delete", icon = "DELETE")
 
+        layout.separator()
+
+
+        #radial control button brush size
+        myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.particle_edit.brush.size'
+
+        #radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
+
 
 class VIEW3D_MT_particle_context_menu(Menu):
     bl_label = "Particle Context Menu"
