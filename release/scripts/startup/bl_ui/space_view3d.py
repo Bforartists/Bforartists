@@ -2631,7 +2631,7 @@ class VIEW3D_MT_brush(Menu):
             layout.separator()
 
             #radial control button brush size
-            myvar = layout.operator("wm.radial_control", text = "Brush Size", icon = "BRUSHSIZE")
+            myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
             myvar.data_path_primary = 'tool_settings.sculpt.brush.size'
             myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
             myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
