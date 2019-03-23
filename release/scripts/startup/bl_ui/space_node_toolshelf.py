@@ -34,7 +34,7 @@ class NODES_PT_Prop(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
         layout.prop(addon_prefs,"Node_text_or_icon")
@@ -62,7 +62,7 @@ class NODES_PT_Input_connect(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -121,7 +121,7 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -176,7 +176,7 @@ class NODES_PT_Input_input_comp(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -279,7 +279,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -336,7 +336,7 @@ class NODES_PT_Input_textures_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -462,7 +462,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -529,7 +529,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
 #--------------------------------------------------------------------- Shader Node Tree --------------------------------------------------------------------------------
 
@@ -667,7 +667,7 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -760,7 +760,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -885,7 +885,7 @@ class NODES_PT_Input_input_advanced_comp(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -955,7 +955,7 @@ class NODES_PT_Input_input_advanced_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -1008,7 +1008,7 @@ class NODES_PT_Input_pattern(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -1063,7 +1063,7 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -1153,7 +1153,7 @@ class NODES_PT_Input_color_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -1241,7 +1241,7 @@ class NODES_PT_Input_color_advanced(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -1329,7 +1329,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         ##### Textbuttons
 
@@ -1410,7 +1410,7 @@ class NODES_PT_Input_output_comp(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         #### Text Buttons
 
@@ -1491,7 +1491,7 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
         scene = context.scene
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
 
         #### Text Buttons
@@ -1544,7 +1544,7 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -1692,7 +1692,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -1849,7 +1849,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2027,7 +2027,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2176,7 +2176,7 @@ class NODES_PT_Modify_converter_comp(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2348,7 +2348,7 @@ class NODES_PT_Modify_converter_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2430,7 +2430,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2514,7 +2514,7 @@ class NODES_PT_Modify_vector_comp(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2597,7 +2597,7 @@ class NODES_PT_Modify_distort_tex(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene 
 
@@ -2666,7 +2666,7 @@ class NODES_PT_Modify_distort_comp(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene      
 
@@ -2822,7 +2822,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2922,7 +2922,7 @@ class NODES_PT_Modify_script(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -2964,7 +2964,7 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
@@ -3015,7 +3015,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         preferences = context.preferences
-        addon_prefs = preferences.addons["bforartists_UI_flags"].preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
         
         scene = context.scene
 
