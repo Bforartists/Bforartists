@@ -2822,6 +2822,20 @@ class VIEW3D_MT_brush(Menu):
             myvar.image_id = 'tool_settings.weight_paint.brush'
             myvar.secondary_tex = False
 
+            #radial control button brush weight
+            myvar = layout.operator("wm.radial_control", text = "Brush Weight", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.weight_paint.brush.weight'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.weight'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_weight'
+            myvar.rotation_path = 'tool_settings.weight_paint.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.weight_paint.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.weight_paint.brush'
+            myvar.secondary_tex = False
+
 
 
         # TODO: still missing a lot of brush options here
