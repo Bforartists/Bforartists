@@ -2661,6 +2661,36 @@ class VIEW3D_MT_brush(Menu):
 
         elif context.image_paint_object:
             layout.prop_menu_enum(brush, "image_tool")
+
+            #radial control button brushsize
+            myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+            myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+            myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+            myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+            myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+            myvar.zoom_path = 'space_data.zoom'
+            myvar.image_id = 'tool_settings.image_paint.brush'
+            myvar.secondary_tex = True
+
+            #radial control button brushsize
+            myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.image_paint.brush.strength'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+            myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+            myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+            myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+            myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.image_paint.brush'
+            myvar.secondary_tex = True
+
+
         elif context.vertex_paint_object:
             layout.prop_menu_enum(brush, "vertex_tool")
 
