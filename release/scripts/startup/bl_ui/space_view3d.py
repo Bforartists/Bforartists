@@ -6838,6 +6838,17 @@ class VIEW3D_MT_gpencil_sculpt(Menu):
             layout.separator()
             layout.menu("VIEW3D_MT_gpencil_autoweights")
 
+        layout.separator()
+
+        #radial control button brush size
+        myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
+
+        #radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+
+
 class VIEW3D_PT_sculpt_context_menu(Panel):
     # Only for popover, these are dummy values.
     bl_space_type = 'VIEW_3D'
