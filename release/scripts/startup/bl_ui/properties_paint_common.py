@@ -238,16 +238,6 @@ def brush_texture_settings(layout, brush, sculpt, vertex_paint, image_paint):
         if brush.texture and brush.texture.type == 'IMAGE':
             layout.operator("brush.stencil_fit_image_aspect", icon = "IMAGE_ASPECT", text = " Image Aspect")       
 
-        # bfa - stencil brush control buttons
-        col = layout.column()
-        col.label(text="Stencil Brush Controls:")
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
-        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "")
-
 
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
@@ -292,23 +282,6 @@ def brush_mask_texture_settings(layout, brush):
         if brush.mask_texture and brush.mask_texture.type == 'IMAGE':
             layout.operator("brush.stencil_fit_image_aspect").mask = True
         layout.operator("brush.stencil_reset_transform").mask = True
-
-        # stencil brush controls hotkeys. This is the secondary set.
-
-        col = layout.column()
-        col.label(text="Stencil Brush Control Secondary:")
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        myvar = row.operator("brush.stencil_control", text = "", icon ='TRANSFORM_MOVE')
-        myvar.mode = 'TRANSLATION'
-        myvar.texmode = 'SECONDARY'
-        myvar = row.operator("brush.stencil_control", text = "", icon ='TRANSFORM_ROTATE')
-        myvar.mode = 'ROTATION'
-        myvar.texmode = 'SECONDARY'
-        myvar = row.operator("brush.stencil_control", text = "", icon ='TRANSFORM_SCALE')
-        myvar.mode = 'SCALE'
-        myvar.texmode = 'SECONDARY'
-        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "").mask = True
         
         layout.separator()
 
