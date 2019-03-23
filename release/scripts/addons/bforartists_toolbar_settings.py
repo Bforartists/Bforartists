@@ -138,6 +138,11 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
     misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
 
+    # THE ONE FLAG IN THE NODE EDITOR!
+    # Node Editor, text or icon buttons
+
+    Node_text_or_icon : BoolProperty(name="Icon / Text Buttons", default = False, description = "Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state")
+
 
     def draw(self, context):
         layout = self.layout
@@ -285,7 +290,14 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "misc_last")
         row.prop(self, "misc_info")
         row.prop(self, "misc_operatorsearch")
-        
+
+    # THE ONE FLAG IN THE NODE EDITOR!
+    # Node Editor, text or icon buttons
+
+        layout.label(text="THE ONE FLAG IN THE NODE EDITOR! Text or icon buttons in Properties sidebar")
+
+        row = layout.row()
+        row.prop(self, "Node_text_or_icon")
 
 
 class BFA_OT_toolbar_prefs(Operator):
