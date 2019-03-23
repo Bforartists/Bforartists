@@ -4901,6 +4901,20 @@ class VIEW3D_MT_paint_gpencil(Menu):
         layout.operator("gpencil.primitive", text="Arc", icon='SPHERECURVE').type = 'ARC'
         layout.operator("gpencil.primitive", text="Curve", icon='CURVE_BEZCURVE').type = 'CURVE'
 
+        layout.separator()
+
+        #radial control button brush size
+        myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.gpencil_paint.brush.size'
+
+        #radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.gpencil_paint.brush.gpencil_settings.pen_strength'
+
+        #radial control button brush strength
+        myvar = layout.operator("wm.radial_control", text = "Eraser Radius (Old Toolsystem)", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'preferences.edit.grease_pencil_eraser_radius'
+
 
 class VIEW3D_MT_assign_material(Menu):
     bl_label = "Assign Material"
