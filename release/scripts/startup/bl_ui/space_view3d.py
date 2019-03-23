@@ -2836,6 +2836,29 @@ class VIEW3D_MT_brush(Menu):
             myvar.image_id = 'tool_settings.weight_paint.brush'
             myvar.secondary_tex = False
 
+        if tex_slot.map_mode == 'STENCIL':
+
+            layout.separator()
+
+            layout.operator("brush.stencil_control", text = 'Move Stencil Texture', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
+            layout.operator("brush.stencil_control", text = 'Rotate Stencil Texture', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
+            layout.operator("brush.stencil_control", text = 'Scale Stencil Texture', icon ='TRANSFORM_SCALE').mode = 'SCALE'
+            layout.operator("brush.stencil_reset_transform", text = "Reset Stencil Texture position", icon = "RESET")
+
+        if mask_tex_slot.map_mode == 'STENCIL':
+
+            layout.separator()
+
+            myvar = layout.operator("brush.stencil_control", text = "Move Stencil Mask Texture", icon ='TRANSFORM_MOVE')
+            myvar.mode = 'TRANSLATION'
+            myvar.texmode = 'SECONDARY'
+            myvar = layout.operator("brush.stencil_control", text = "Rotate Stencil Mask Texture", icon ='TRANSFORM_ROTATE')
+            myvar.mode = 'ROTATION'
+            myvar.texmode = 'SECONDARY'
+            myvar = layout.operator("brush.stencil_control", text = "Scale Stencil Mask Texture", icon ='TRANSFORM_SCALE')
+            myvar.mode = 'SCALE'
+            myvar.texmode = 'SECONDARY'
+            layout.operator("brush.stencil_reset_transform", text = "Reset Stencil Mask Texture position", icon = "RESET").mask = True
 
 
         # TODO: still missing a lot of brush options here
