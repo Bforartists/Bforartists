@@ -454,38 +454,9 @@ def brush_basic_vpaint_settings(layout, context, brush, *, compact=False):
     UnifiedPaintPanel.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
     UnifiedPaintPanel.prop_unified_size(row, context, brush, "use_pressure_size", text="")
 
-    #radial control button brush size
-    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
-    myvar.data_path_primary = 'tool_settings.vertex_paint.brush.size'
-    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
-    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
-    myvar.rotation_path = 'tool_settings.vertex_paint.brush.texture_slot.angle'
-    myvar.color_path = 'tool_settings.vertex_paint.brush.cursor_color_add'
-    myvar.fill_color_path = 'tool_settings.vertex_paint.brush.color'
-    myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
-    myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
-    myvar.zoom_path = ''
-    myvar.image_id = 'tool_settings.vertex_paint.brush'
-    myvar.secondary_tex = False
-
     row = layout.row(align=True)
     UnifiedPaintPanel.prop_unified_strength(row, context, brush, "strength", text="Strength")
     UnifiedPaintPanel.prop_unified_strength(row, context, brush, "use_pressure_strength", text="")
-
-
-    #radial control button brush strength
-    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
-    myvar.data_path_primary = 'tool_settings.vertex_paint.brush.strength'
-    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
-    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
-    myvar.rotation_path = 'tool_settings.vertex_paint.brush.texture_slot.angle'
-    myvar.color_path = 'tool_settings.vertex_paint.brush.cursor_color_add'
-    myvar.fill_color_path = 'tool_settings.vertex_paint.brush.color'
-    myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
-    myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
-    myvar.zoom_path = ''
-    myvar.image_id = 'tool_settings.vertex_paint.brush'
-    myvar.secondary_tex = False
 
 
     if capabilities.has_color:
