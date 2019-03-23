@@ -2618,11 +2618,13 @@ class VIEW3D_MT_brush(Menu):
         obj = context.active_object
         mesh = context.object.data # face selection masking for painting
 
-
         # skip if no active brush
         if not brush:
-            layout.label(text="No Brushes currently available", icon='INFO')
+            layout.label(text="No Brushes currently available. Please add a texture first.", icon='INFO')
             return
+
+        tex_slot = brush.texture_slot
+        mask_tex_slot = brush.mask_texture_slot
 
         # brush tool
         if context.sculpt_object:
@@ -2658,9 +2660,28 @@ class VIEW3D_MT_brush(Menu):
             myvar.image_id = 'tool_settings.sculpt.brush'
             myvar.secondary_tex = False
 
+            if tex_slot.has_texture_angle:
+
+                #radial control button brushsize for texture paint mode
+                myvar = layout.operator("wm.radial_control", text = "Texture Brush Angle", icon = "BRUSHANGLE")
+                myvar.data_path_primary = 'tool_settings.sculpt.brush.texture_slot.angle'
+                myvar.data_path_secondary = ''
+                myvar.use_secondary = ''
+                myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+                myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+                myvar.fill_color_path = ''
+                myvar.fill_color_override_path = ''
+                myvar.fill_color_override_test_path = ''
+                myvar.zoom_path = ''
+                myvar.image_id = 'tool_settings.sculpt.brush'
+                myvar.secondary_tex = False
+
 
         elif context.image_paint_object:
             layout.prop_menu_enum(brush, "image_tool")
+
+            if not brush:
+                return
 
             #radial control button brushsize
             myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
@@ -2690,6 +2711,37 @@ class VIEW3D_MT_brush(Menu):
             myvar.image_id = 'tool_settings.image_paint.brush'
             myvar.secondary_tex = True
 
+            if tex_slot.has_texture_angle:
+
+                #radial control button brushsize for texture paint mode
+                myvar = layout.operator("wm.radial_control", text = "Texture Brush Angle", icon = "BRUSHANGLE")
+                myvar.data_path_primary = 'tool_settings.image_paint.brush.texture_slot.angle'
+                myvar.data_path_secondary = ''
+                myvar.use_secondary = ''
+                myvar.rotation_path = 'tool_settings.image_paint.brush.texture_slot.angle'
+                myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+                myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+                myvar.zoom_path = ''
+                myvar.image_id = 'tool_settings.image_paint.brush'
+                myvar.secondary_tex = False
+
+            if mask_tex_slot.has_texture_angle:
+
+                #radial control button brushsize
+                myvar = layout.operator("wm.radial_control", text = "Texure Mask Brush Angle", icon = "BRUSHANGLE")
+                myvar.data_path_primary = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                myvar.data_path_secondary = ''
+                myvar.use_secondary = ''
+                myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+                myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+                myvar.zoom_path = ''
+                myvar.image_id = 'tool_settings.image_paint.brush'
+                myvar.secondary_tex = True
 
         elif context.vertex_paint_object:
             layout.prop_menu_enum(brush, "vertex_tool")
@@ -2708,7 +2760,7 @@ class VIEW3D_MT_brush(Menu):
             myvar.image_id = 'tool_settings.vertex_paint.brush'
             myvar.secondary_tex = False
 
-                #radial control button brush strength
+            #radial control button brush strength
             myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
             myvar.data_path_primary = 'tool_settings.vertex_paint.brush.strength'
             myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
@@ -2721,6 +2773,22 @@ class VIEW3D_MT_brush(Menu):
             myvar.zoom_path = ''
             myvar.image_id = 'tool_settings.vertex_paint.brush'
             myvar.secondary_tex = False
+
+            if tex_slot.has_texture_angle:
+
+                #radial control button brushsize for texture paint mode
+                myvar = layout.operator("wm.radial_control", text = "Texture Brush Angle", icon = "BRUSHANGLE")
+                myvar.data_path_primary = 'tool_settings.vertex_paint.brush.texture_slot.angle'
+                myvar.data_path_secondary = ''
+                myvar.use_secondary = ''
+                myvar.rotation_path = 'tool_settings.vertex_paint.brush.texture_slot.angle'
+                myvar.color_path = 'tool_settings.vertex_paint.brush.cursor_color_add'
+                myvar.fill_color_path = 'tool_settings.vertex_paint.brush.color'
+                myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+                myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+                myvar.zoom_path = ''
+                myvar.image_id = 'tool_settings.vertex_paint.brush'
+                myvar.secondary_tex = False
 
 
         elif context.weight_paint_object:
