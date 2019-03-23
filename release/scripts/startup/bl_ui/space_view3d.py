@@ -2627,6 +2627,38 @@ class VIEW3D_MT_brush(Menu):
         # brush tool
         if context.sculpt_object:
             layout.operator("brush.reset", icon = "BRUSH_RESET")
+
+            layout.separator()
+
+            #radial control button brush size
+            myvar = layout.operator("wm.radial_control", text = "Brush Size", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.size'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.secondary_tex = False
+
+            #radial control button brush strength
+            myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.secondary_tex = False
+
+
         elif context.image_paint_object:
             layout.prop_menu_enum(brush, "image_tool")
         elif context.vertex_paint_object:
