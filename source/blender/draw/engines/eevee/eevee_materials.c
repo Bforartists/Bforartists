@@ -137,7 +137,7 @@ static struct GPUTexture *create_ggx_lut_texture(int UNUSED(w), int UNUSED(h))
 
 	float *texels = MEM_mallocN(sizeof(float[2]) * w * h, "lut");
 
-	tex = DRW_texture_create_2D(w, h, GPU_RG16F, DRW_TEX_FILTER, (float *)texels);
+	tex = DRW_texture_create_2d(w, h, GPU_RG16F, DRW_TEX_FILTER, (float *)texels);
 
 	DRWFboTexture tex_filter = {&tex, GPU_RG16F, DRW_TEX_FILTER};
 	GPU_framebuffer_init(&fb, &draw_engine_eevee_type, w, h, &tex_filter, 1);
@@ -199,7 +199,7 @@ static struct GPUTexture *create_ggx_refraction_lut_texture(int w, int h)
 
 	float *texels = MEM_mallocN(sizeof(float[2]) * w * h, "lut");
 
-	tex = DRW_texture_create_2D(w, h, GPU_R16F, DRW_TEX_FILTER, (float *)texels);
+	tex = DRW_texture_create_2d(w, h, GPU_R16F, DRW_TEX_FILTER, (float *)texels);
 
 	DRWFboTexture tex_filter = {&tex, GPU_R16F, DRW_TEX_FILTER};
 	GPU_framebuffer_init(&fb, &draw_engine_eevee_type, w, h, &tex_filter, 1);
@@ -274,58 +274,58 @@ static char *eevee_get_defines(int options)
 	char *str = NULL;
 
 	DynStr *ds = BLI_dynstr_new();
-	BLI_dynstr_appendf(ds, SHADER_DEFINES);
+	BLI_dynstr_append(ds, SHADER_DEFINES);
 
 	if ((options & VAR_MAT_MESH) != 0) {
-		BLI_dynstr_appendf(ds, "#define MESH_SHADER\n");
+		BLI_dynstr_append(ds, "#define MESH_SHADER\n");
 	}
 	if ((options & VAR_MAT_HAIR) != 0) {
-		BLI_dynstr_appendf(ds, "#define HAIR_SHADER\n");
+		BLI_dynstr_append(ds, "#define HAIR_SHADER\n");
 	}
 	if ((options & VAR_MAT_PROBE) != 0) {
-		BLI_dynstr_appendf(ds, "#define PROBE_CAPTURE\n");
+		BLI_dynstr_append(ds, "#define PROBE_CAPTURE\n");
 	}
 	if ((options & VAR_MAT_FLAT) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_FLAT_NORMAL\n");
+		BLI_dynstr_append(ds, "#define USE_FLAT_NORMAL\n");
 	}
 	if ((options & VAR_MAT_CLIP) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_ALPHA_CLIP\n");
+		BLI_dynstr_append(ds, "#define USE_ALPHA_CLIP\n");
 	}
 	if ((options & VAR_MAT_SHADOW) != 0) {
-		BLI_dynstr_appendf(ds, "#define SHADOW_SHADER\n");
+		BLI_dynstr_append(ds, "#define SHADOW_SHADER\n");
 	}
 	if ((options & VAR_MAT_HASH) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_ALPHA_HASH\n");
+		BLI_dynstr_append(ds, "#define USE_ALPHA_HASH\n");
 	}
 	if ((options & VAR_MAT_BLEND) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_ALPHA_BLEND\n");
+		BLI_dynstr_append(ds, "#define USE_ALPHA_BLEND\n");
 	}
 	if ((options & VAR_MAT_MULT) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_MULTIPLY\n");
+		BLI_dynstr_append(ds, "#define USE_MULTIPLY\n");
 	}
 	if ((options & VAR_MAT_REFRACT) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_REFRACTION\n");
+		BLI_dynstr_append(ds, "#define USE_REFRACTION\n");
 	}
 	if ((options & VAR_MAT_SSS) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_SSS\n");
+		BLI_dynstr_append(ds, "#define USE_SSS\n");
 	}
 	if ((options & VAR_MAT_SSSALBED) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_SSS_ALBEDO\n");
+		BLI_dynstr_append(ds, "#define USE_SSS_ALBEDO\n");
 	}
 	if ((options & VAR_MAT_TRANSLUC) != 0) {
-		BLI_dynstr_appendf(ds, "#define USE_TRANSLUCENCY\n");
+		BLI_dynstr_append(ds, "#define USE_TRANSLUCENCY\n");
 	}
 	if ((options & VAR_MAT_VSM) != 0) {
-		BLI_dynstr_appendf(ds, "#define SHADOW_VSM\n");
+		BLI_dynstr_append(ds, "#define SHADOW_VSM\n");
 	}
 	if ((options & VAR_MAT_ESM) != 0) {
-		BLI_dynstr_appendf(ds, "#define SHADOW_ESM\n");
+		BLI_dynstr_append(ds, "#define SHADOW_ESM\n");
 	}
 	if (((options & VAR_MAT_VOLUME) != 0) && ((options & VAR_MAT_BLEND) != 0)) {
-		BLI_dynstr_appendf(ds, "#define USE_ALPHA_BLEND_VOLUMETRICS\n");
+		BLI_dynstr_append(ds, "#define USE_ALPHA_BLEND_VOLUMETRICS\n");
 	}
 	if ((options & VAR_MAT_LOOKDEV) != 0) {
-		BLI_dynstr_appendf(ds, "#define LOOKDEV\n");
+		BLI_dynstr_append(ds, "#define LOOKDEV\n");
 	}
 
 	str = BLI_dynstr_get_cstring(ds);
@@ -339,11 +339,11 @@ static char *eevee_get_volume_defines(int options)
 	char *str = NULL;
 
 	DynStr *ds = BLI_dynstr_new();
-	BLI_dynstr_appendf(ds, SHADER_DEFINES);
-	BLI_dynstr_appendf(ds, "#define VOLUMETRICS\n");
+	BLI_dynstr_append(ds, SHADER_DEFINES);
+	BLI_dynstr_append(ds, "#define VOLUMETRICS\n");
 
 	if ((options & VAR_MAT_VOLUME) != 0) {
-		BLI_dynstr_appendf(ds, "#define MESH_SHADER\n");
+		BLI_dynstr_append(ds, "#define MESH_SHADER\n");
 	}
 
 	str = BLI_dynstr_get_cstring(ds);
@@ -354,7 +354,7 @@ static char *eevee_get_volume_defines(int options)
 
 /**
  * ssr_id can be null to disable ssr contribution.
- **/
+ */
 static void add_standard_uniforms(
         DRWShadingGroup *shgrp, EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata,
         int *ssr_id, float *refract_depth,
@@ -438,7 +438,7 @@ static void eevee_init_dummys(void)
 
 static void eevee_init_noise_texture(void)
 {
-	e_data.noise_tex = DRW_texture_create_2D(64, 64, GPU_RGBA16F, 0, (float *)blue_noise);
+	e_data.noise_tex = DRW_texture_create_2d(64, 64, GPU_RGBA16F, 0, (float *)blue_noise);
 }
 
 static void eevee_init_util_texture(void)
@@ -490,7 +490,7 @@ static void eevee_init_util_texture(void)
 		texels_layer += 64 * 64;
 	}
 
-	e_data.util_tex = DRW_texture_create_2D_array(
+	e_data.util_tex = DRW_texture_create_2d_array(
 	        64, 64, layers, GPU_RGBA16F, DRW_TEX_FILTER | DRW_TEX_WRAP, (float *)texels);
 
 	MEM_freeN(texels);
@@ -508,7 +508,7 @@ void EEVEE_update_noise(EEVEE_PassList *psl, EEVEE_FramebufferList *fbl, const d
 	DRW_draw_pass(psl->update_noise_pass);
 }
 
-static void EEVEE_update_viewvecs(float invproj[4][4], float winmat[4][4], float (*r_viewvecs)[4])
+void EEVEE_update_viewvecs(float invproj[4][4], float winmat[4][4], float (*r_viewvecs)[4])
 {
 	/* view vectors for the corners of the view frustum.
 	 * Can be used to recreate the world space position easily */
@@ -539,7 +539,7 @@ static void EEVEE_update_viewvecs(float invproj[4][4], float winmat[4][4], float
 	 *            when Z = 1, and top-left corner if Z = 1.
 	 *            view_vecs[0].z the near clip distance and view_vecs[1].z is the (signed)
 	 *            distance from the near plane to the far clip plane.
-	 **/
+	 */
 	copy_v4_v4(r_viewvecs[0], view_vecs[0]);
 
 	/* we need to store the differences */
@@ -640,7 +640,7 @@ void EEVEE_materials_init(EEVEE_ViewLayerData *sldata, EEVEE_StorageList *stl, E
 	}
 	else {
 		double r;
-		BLI_halton_1D(5, 0.0, stl->effects->taa_current_sample - 1, &r);
+		BLI_halton_1d(5, 0.0, stl->effects->taa_current_sample - 1, &r);
 		e_data.alpha_hash_offset = (float)r;
 		e_data.alpha_hash_scale = 0.01f;
 	}
@@ -842,7 +842,7 @@ struct GPUMaterial *EEVEE_material_hair_get(
 
 /**
  * Create a default shading group inside the given pass.
- **/
+ */
 static struct DRWShadingGroup *EEVEE_default_shading_group_create(
         EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata, DRWPass *pass,
         bool is_hair, bool is_flat_normal, bool use_blend, bool use_ssr, int shadow_method)
@@ -871,7 +871,7 @@ static struct DRWShadingGroup *EEVEE_default_shading_group_create(
 
 /**
  * Create a default shading group inside the default pass without standard uniforms.
- **/
+ */
 static struct DRWShadingGroup *EEVEE_default_shading_group_get(
         EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata,
         Object *ob, ParticleSystem *psys, ModifierData *md,
@@ -919,7 +919,7 @@ static struct DRWShadingGroup *EEVEE_default_shading_group_get(
 
 /**
  * Create a default shading group inside the lookdev pass without standard uniforms.
- **/
+ */
 static struct DRWShadingGroup *EEVEE_lookdev_shading_group_get(
         EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata,
         bool use_ssr, int shadow_method)
@@ -1037,7 +1037,8 @@ void EEVEE_materials_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 
 	{
 		DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_CLIP_PLANES | DRW_STATE_WIRE;
-		psl->material_pass = DRW_pass_create("Material Shader Pass", state);
+		psl->material_pass = DRW_pass_create("Material Pass", state);
+		psl->material_pass_cull = DRW_pass_create("Material Pass Cull", state | DRW_STATE_CULL_BACK);
 	}
 
 	{
@@ -1075,6 +1076,7 @@ void EEVEE_materials_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		        DRW_STATE_WRITE_COLOR | DRW_STATE_DEPTH_EQUAL | DRW_STATE_CLIP_PLANES |
 		        DRW_STATE_WIRE | DRW_STATE_WRITE_STENCIL);
 		psl->sss_pass = DRW_pass_create("Subsurface Pass", state);
+		psl->sss_pass_cull = DRW_pass_create("Subsurface Pass Cull", state | DRW_STATE_CULL_BACK);
 		e_data.sss_count = 0;
 	}
 
@@ -1230,7 +1232,8 @@ static void material_opaque(
 				*shgrp = DRW_shgroup_material_create(
 				        *gpumat,
 				        (use_ssrefract) ? psl->refract_pass :
-				        (use_sss) ? psl->sss_pass : psl->material_pass);
+				        (use_sss) ? ((do_cull) ? psl->sss_pass_cull : psl->sss_pass)
+				                  : ((do_cull) ? psl->material_pass_cull : psl->material_pass));
 
 				add_standard_uniforms(*shgrp, sldata, vedata, ssr_id, &ma->refract_depth,
 				                      use_diffuse, use_glossy, use_refract, use_ssrefract, false);

@@ -181,7 +181,7 @@ enum {
 	UI_BUT_DRAG_LOCK       = 1 << 10,
 	/** grayed out and uneditable */
 	UI_BUT_DISABLED        = 1 << 11,
-	UI_BUT_COLOR_LOCK      = 1 << 12,
+
 	UI_BUT_ANIMATED        = 1 << 13,
 	UI_BUT_ANIMATED_KEY    = 1 << 14,
 	UI_BUT_DRIVEN          = 1 << 15,
@@ -193,14 +193,12 @@ enum {
 	UI_BUT_IMMEDIATE       = 1 << 20,
 	UI_BUT_NO_UTF8         = 1 << 21,
 
-	/** used to flag if color hsv-circle should keep luminance */
-	UI_BUT_VEC_SIZE_LOCK   = 1 << 22,
-	/** cubic saturation for the color wheel */
-	UI_BUT_COLOR_CUBIC     = 1 << 23,
 	/** This but is "inside" a list item (currently used to change theme colors). */
 	UI_BUT_LIST_ITEM       = 1 << 24,
 	/** edit this button as well as the active button (not just dragging) */
 	UI_BUT_DRAG_MULTI      = 1 << 25,
+	/** Use for popups to start editing the button on initialization. */
+	UI_BUT_ACTIVATE_ON_INIT = 1 << 26,
 
 	/** #uiBut.str contains #UI_SEP_CHAR, used for key shortcuts */
 	UI_BUT_HAS_SEP_CHAR    = 1 << 27,
@@ -631,6 +629,7 @@ void    UI_but_type_set_menu_from_pulldown(uiBut *but);
 
 /* special button case, only draw it when used actively, for outliner etc */
 bool    UI_but_active_only(const struct bContext *C, struct ARegion *ar, uiBlock *block, uiBut *but);
+bool    UI_block_active_only_flagged_buttons(const struct bContext *C, struct ARegion *ar, struct uiBlock *block);
 
 void    UI_but_execute(const struct bContext *C, uiBut *but);
 
@@ -836,6 +835,7 @@ uiBut *uiDefAutoButR(uiBlock *block, struct PointerRNA *ptr, struct PropertyRNA 
 eAutoPropButsReturn uiDefAutoButsRNA(
         uiLayout *layout, struct PointerRNA *ptr,
         bool (*check_prop)(struct PointerRNA *ptr, struct PropertyRNA *prop, void *user_data), void *user_data,
+        struct PropertyRNA *prop_activate_init,
         eButLabelAlign label_align, const bool compact);
 
 /* use inside searchfunc to add items */
@@ -843,7 +843,7 @@ bool    UI_search_item_add(uiSearchItems *items, const char *name, void *poin, i
 /* bfunc gets search item *poin as arg2, or if NULL the old string */
 void    UI_but_func_search_set(
         uiBut *but, uiButSearchCreateFunc cfunc, uiButSearchFunc sfunc,
-        void *arg1, uiButHandleFunc bfunc, void *active);
+        void *arg, bool free_arg, uiButHandleFunc bfunc, void *active);
 /* height in pixels, it's using hardcoded values still */
 int     UI_searchbox_size_y(void);
 int     UI_searchbox_size_x(void);
@@ -1053,6 +1053,7 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but);
 
 void uiLayoutSetOperatorContext(uiLayout *layout, int opcontext);
 void uiLayoutSetActive(uiLayout *layout, bool active);
+void uiLayoutSetActivateInit(uiLayout *layout, bool active);
 void uiLayoutSetEnabled(uiLayout *layout, bool enabled);
 void uiLayoutSetRedAlert(uiLayout *layout, bool redalert);
 void uiLayoutSetAlignment(uiLayout *layout, char alignment);
@@ -1068,6 +1069,7 @@ int uiLayoutGetLocalDir(const uiLayout *layout);
 
 int uiLayoutGetOperatorContext(uiLayout *layout);
 bool uiLayoutGetActive(uiLayout *layout);
+bool uiLayoutGetActivateInit(uiLayout *layout);
 bool uiLayoutGetEnabled(uiLayout *layout);
 bool uiLayoutGetRedAlert(uiLayout *layout);
 int uiLayoutGetAlignment(uiLayout *layout);
@@ -1185,6 +1187,8 @@ void uiTemplateKeymapItemProperties(uiLayout *layout, struct PointerRNA *ptr);
 void uiTemplateComponentMenu(uiLayout *layout, struct PointerRNA *ptr, const char *propname, const char *name);
 void uiTemplateNodeSocket(uiLayout *layout, struct bContext *C, float *color);
 void uiTemplateCacheFile(uiLayout *layout, struct bContext *C, struct PointerRNA *ptr, const char *propname);
+
+struct ColorBand *UI_block_get_colorband_from_template_menu(struct uiBlock *block);
 
 /* Default UIList class name, keep in sync with its declaration in bl_ui/__init__.py */
 #define UI_UL_DEFAULT_CLASS_NAME "UI_UL_list"

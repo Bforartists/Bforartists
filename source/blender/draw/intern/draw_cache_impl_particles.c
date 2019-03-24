@@ -793,8 +793,12 @@ static int particle_batch_cache_fill_strands_data(
 			continue;
 		}
 
+		/* XXX: We might need something more robust.
+		 * Adjust shader code accordingly. (see unpack_strand_data() ) */
+		BLI_assert((path->segments - 1) <= 0x3FF);
+
 		uint *seg_data = (uint *)GPU_vertbuf_raw_step(data_step);
-		*seg_data = (curr_point & 0xFFFFFF) | (path->segments << 24);
+		*seg_data = (curr_point & 0x3FFFFF) | ((path->segments - 1) << 22);
 		curr_point += path->segments + 1;
 
 		if (psmd != NULL) {
@@ -918,7 +922,7 @@ static void particle_batch_cache_ensure_procedural_strand_data(
 		BLI_snprintf(cache->uv_layer_names[i][n++], MAX_LAYER_NAME_LEN, "a%u", hash);
 
 		if (i == active_uv) {
-			BLI_snprintf(cache->uv_layer_names[i][n], MAX_LAYER_NAME_LEN, "u");
+			BLI_strncpy(cache->uv_layer_names[i][n], "u", MAX_LAYER_NAME_LEN);
 		}
 	}
 	/* Vertex colors */
@@ -938,7 +942,7 @@ static void particle_batch_cache_ensure_procedural_strand_data(
 		}
 
 		if (i == active_col) {
-			BLI_snprintf(cache->col_layer_names[i][n], MAX_LAYER_NAME_LEN, "c");
+			BLI_strncpy(cache->col_layer_names[i][n], "c", MAX_LAYER_NAME_LEN);
 		}
 	}
 

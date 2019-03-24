@@ -1052,8 +1052,9 @@ static char *rna_SPHFluidSettings_path(PointerRNA *ptr)
 	if (particle_id_check(ptr)) {
 		ParticleSettings *part = (ParticleSettings *)ptr->id.data;
 
-		if (part->fluid == fluid)
-			return BLI_sprintfN("fluid");
+		if (part->fluid == fluid) {
+			return BLI_strdup("fluid");
+		}
 	}
 	return NULL;
 }
@@ -3005,7 +3006,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "instance_collection", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "instance_collection");
 	RNA_def_property_struct_type(prop, "Collection");
-	RNA_def_property_flag(prop, PROP_EDITABLE);
+	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
 	RNA_def_property_ui_text(prop, "Dupli Collection", "Show Objects in this collection in place of particles");
 	RNA_def_property_update(prop, 0, "rna_Particle_redo_count");
 
