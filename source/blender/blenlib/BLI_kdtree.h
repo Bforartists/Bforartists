@@ -22,54 +22,48 @@
  * \brief A kd-tree for nearest neighbor search.
  */
 
-#include "BLI_compiler_attrs.h"
+/* 1D version */
+#define KD_DIMS 1
+#define KDTREE_PREFIX_ID BLI_kdtree_1d
+#define KDTree KDTree_1d
+#define KDTreeNearest KDTreeNearest_1d
+#include "BLI_kdtree_impl.h"
+#undef KD_DIMS
+#undef KDTree
+#undef KDTreeNearest
+#undef KDTREE_PREFIX_ID
 
-struct KDTree;
-typedef struct KDTree KDTree;
+/* 2D version */
+#define KD_DIMS 2
+#define KDTREE_PREFIX_ID BLI_kdtree_2d
+#define KDTree KDTree_2d
+#define KDTreeNearest KDTreeNearest_2d
+#include "BLI_kdtree_impl.h"
+#undef KD_DIMS
+#undef KDTree
+#undef KDTreeNearest
+#undef KDTREE_PREFIX_ID
 
-typedef struct KDTreeNearest {
-	int index;
-	float dist;
-	float co[3];
-} KDTreeNearest;
+/* 3D version */
+#define KD_DIMS 3
+#define KDTREE_PREFIX_ID BLI_kdtree_3d
+#define KDTree KDTree_3d
+#define KDTreeNearest KDTreeNearest_3d
+#include "BLI_kdtree_impl.h"
+#undef KD_DIMS
+#undef KDTree
+#undef KDTreeNearest
+#undef KDTREE_PREFIX_ID
 
-KDTree *BLI_kdtree_new(unsigned int maxsize);
-void BLI_kdtree_free(KDTree *tree);
-void BLI_kdtree_balance(KDTree *tree) ATTR_NONNULL(1);
-
-void BLI_kdtree_insert(
-        KDTree *tree, int index,
-        const float co[3]) ATTR_NONNULL(1, 3);
-int BLI_kdtree_find_nearest(
-        const KDTree *tree, const float co[3],
-        KDTreeNearest *r_nearest) ATTR_NONNULL(1, 2);
-
-#define BLI_kdtree_find_nearest_n(tree, co, r_nearest, n) \
-        BLI_kdtree_find_nearest_n__normal(tree, co, NULL, r_nearest, n)
-#define BLI_kdtree_range_search(tree, co, r_nearest, range) \
-        BLI_kdtree_range_search__normal(tree, co, NULL, r_nearest, range)
-
-int BLI_kdtree_find_nearest_cb(
-        const KDTree *tree, const float co[3],
-        int (*filter_cb)(void *user_data, int index, const float co[3], float dist_sq), void *user_data,
-        KDTreeNearest *r_nearest);
-void BLI_kdtree_range_search_cb(
-        const KDTree *tree, const float co[3], float range,
-        bool (*search_cb)(void *user_data, int index, const float co[3], float dist_sq), void *user_data);
-
-int BLI_kdtree_calc_duplicates_fast(
-        const KDTree *tree, const float range, bool use_index_order,
-        int *doubles);
-
-/* Normal use is deprecated */
-/* remove __normal functions when last users drop */
-int BLI_kdtree_find_nearest_n__normal(
-        const KDTree *tree, const float co[3], const float nor[3],
-        KDTreeNearest *r_nearest,
-        unsigned int n) ATTR_NONNULL(1, 2, 4);
-int BLI_kdtree_range_search__normal(
-        const KDTree *tree, const float co[3], const float nor[3],
-        KDTreeNearest **r_nearest,
-        float range) ATTR_NONNULL(1, 2, 4) ATTR_WARN_UNUSED_RESULT;
+/* 4D version */
+#define KD_DIMS 4
+#define KDTREE_PREFIX_ID BLI_kdtree_4d
+#define KDTree KDTree_4d
+#define KDTreeNearest KDTreeNearest_4d
+#include "BLI_kdtree_impl.h"
+#undef KD_DIMS
+#undef KDTree
+#undef KDTreeNearest
+#undef KDTREE_PREFIX_ID
 
 #endif  /* __BLI_KDTREE_H__ */

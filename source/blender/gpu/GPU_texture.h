@@ -34,6 +34,7 @@ struct GPUVertBuf;
 struct Image;
 struct ImageUser;
 struct PreviewImage;
+struct rcti;
 
 struct GPUFrameBuffer;
 typedef struct GPUTexture GPUTexture;
@@ -153,17 +154,17 @@ GPUTexture *GPU_texture_create_nD(
         eGPUTextureFormat tex_format, eGPUDataFormat gpu_data_format, int samples,
         const bool can_rescale, char err_out[256]);
 
-GPUTexture *GPU_texture_create_1D(
+GPUTexture *GPU_texture_create_1d(
         int w, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
-GPUTexture *GPU_texture_create_1D_array(
+GPUTexture *GPU_texture_create_1d_array(
         int w, int h, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
-GPUTexture *GPU_texture_create_2D(
+GPUTexture *GPU_texture_create_2d(
         int w, int h, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
-GPUTexture *GPU_texture_create_2D_multisample(
+GPUTexture *GPU_texture_create_2d_multisample(
         int w, int h, eGPUTextureFormat data_type, const float *pixels, int samples, char err_out[256]);
-GPUTexture *GPU_texture_create_2D_array(
+GPUTexture *GPU_texture_create_2d_array(
         int w, int h, int d, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
-GPUTexture *GPU_texture_create_3D(
+GPUTexture *GPU_texture_create_3d(
         int w, int h, int d, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
 GPUTexture *GPU_texture_create_cube(
         int w, eGPUTextureFormat data_type, const float *pixels, char err_out[256]);
@@ -185,6 +186,9 @@ void GPU_texture_update_sub(
         int offset_x, int offset_y, int offset_z, int width, int height, int depth);
 
 void *GPU_texture_read(GPUTexture *tex, eGPUDataFormat gpu_data_format, int miplvl);
+void GPU_texture_read_rect(
+        GPUTexture *tex, eGPUDataFormat gpu_data_format,
+        const struct rcti *rect, void *r_buf);
 
 void GPU_invalid_tex_init(void);
 void GPU_invalid_tex_bind(int mode);

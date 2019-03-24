@@ -532,16 +532,16 @@ static char *rna_FieldSettings_path(PointerRNA *ptr)
 		ParticleSettings *part = (ParticleSettings *)ptr->id.data;
 
 		if (part->pd == pd)
-			return BLI_sprintfN("force_field_1");
+			return BLI_strdup("force_field_1");
 		else if (part->pd2 == pd)
-			return BLI_sprintfN("force_field_2");
+			return BLI_strdup("force_field_2");
 	}
 	else {
 		/* object force field */
 		Object *ob = (Object *)ptr->id.data;
 
 		if (ob->pd == pd)
-			return BLI_sprintfN("field");
+			return BLI_strdup("field");
 	}
 	return NULL;
 }
@@ -582,8 +582,9 @@ static char *rna_EffectorWeight_path(PointerRNA *ptr)
 		/* particle effector weights */
 		ParticleSettings *part = (ParticleSettings *)ptr->id.data;
 
-		if (part->effector_weights == ew)
-			return BLI_sprintfN("effector_weights");
+		if (part->effector_weights == ew) {
+			return BLI_strdup("effector_weights");
+		}
 	}
 	else {
 		Object *ob = (Object *)ptr->id.data;
@@ -1359,12 +1360,12 @@ static void rna_def_field(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "apply_to_location", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", PFIELD_DO_LOCATION);
-	RNA_def_property_ui_text(prop, "Location", "Effect particles' location");
+	RNA_def_property_ui_text(prop, "Location", "Affect particle's location");
 	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
 
 	prop = RNA_def_property(srna, "apply_to_rotation", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", PFIELD_DO_ROTATION);
-	RNA_def_property_ui_text(prop, "Rotation", "Effect particles' dynamic rotation");
+	RNA_def_property_ui_text(prop, "Rotation", "Affect particle's dynamic rotation");
 	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
 
 	prop = RNA_def_property(srna, "use_absorption", PROP_BOOLEAN, PROP_NONE);

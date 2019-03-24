@@ -74,19 +74,19 @@ static struct GPUShader *eevee_effects_screen_raytrace_shader_get(int options)
 		        datatoc_effect_ssr_frag_glsl);
 
 		DynStr *ds_defines = BLI_dynstr_new();
-		BLI_dynstr_appendf(ds_defines, SHADER_DEFINES);
+		BLI_dynstr_append(ds_defines, SHADER_DEFINES);
 		if (options & SSR_RESOLVE) {
-			BLI_dynstr_appendf(ds_defines, "#define STEP_RESOLVE\n");
+			BLI_dynstr_append(ds_defines, "#define STEP_RESOLVE\n");
 		}
 		else {
-			BLI_dynstr_appendf(ds_defines, "#define STEP_RAYTRACE\n");
-			BLI_dynstr_appendf(ds_defines, "#define PLANAR_PROBE_RAYTRACE\n");
+			BLI_dynstr_append(ds_defines, "#define STEP_RAYTRACE\n");
+			BLI_dynstr_append(ds_defines, "#define PLANAR_PROBE_RAYTRACE\n");
 		}
 		if (options & SSR_FULL_TRACE) {
-			BLI_dynstr_appendf(ds_defines, "#define FULLRES\n");
+			BLI_dynstr_append(ds_defines, "#define FULLRES\n");
 		}
 		if (options & SSR_AO) {
-			BLI_dynstr_appendf(ds_defines, "#define SSR_AO\n");
+			BLI_dynstr_append(ds_defines, "#define SSR_AO\n");
 		}
 		char *ssr_define_str = BLI_dynstr_get_cstring(ds_defines);
 		BLI_dynstr_free(ds_defines);
@@ -121,7 +121,7 @@ int EEVEE_screen_raytrace_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 
 		if (use_refraction) {
 			/* TODO: Opti: Could be shared. */
-			DRW_texture_ensure_fullscreen_2D(&txl->refract_color, GPU_R11F_G11F_B10F, DRW_TEX_FILTER | DRW_TEX_MIPMAP);
+			DRW_texture_ensure_fullscreen_2d(&txl->refract_color, GPU_R11F_G11F_B10F, DRW_TEX_FILTER | DRW_TEX_MIPMAP);
 
 			GPU_framebuffer_ensure_config(&fbl->refract_fb, {
 				GPU_ATTACHMENT_NONE,
@@ -156,15 +156,15 @@ int EEVEE_screen_raytrace_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		const eGPUTextureFormat format = (high_qual_input) ? GPU_RGBA16F : GPU_RGBA8;
 
 		/* MRT for the shading pass in order to output needed data for the SSR pass. */
-		effects->ssr_specrough_input = DRW_texture_pool_query_2D(size_fs[0], size_fs[1], format,
+		effects->ssr_specrough_input = DRW_texture_pool_query_2d(size_fs[0], size_fs[1], format,
 		                                                         &draw_engine_eevee_type);
 
 		GPU_framebuffer_texture_attach(fbl->main_fb, effects->ssr_specrough_input, 2, 0);
 
 		/* Raytracing output */
-		effects->ssr_hit_output = DRW_texture_pool_query_2D(tracing_res[0], tracing_res[1], GPU_RG16I,
+		effects->ssr_hit_output = DRW_texture_pool_query_2d(tracing_res[0], tracing_res[1], GPU_RG16I,
 		                                                    &draw_engine_eevee_type);
-		effects->ssr_pdf_output = DRW_texture_pool_query_2D(tracing_res[0], tracing_res[1], GPU_R16F,
+		effects->ssr_pdf_output = DRW_texture_pool_query_2d(tracing_res[0], tracing_res[1], GPU_R16F,
 		                                                    &draw_engine_eevee_type);
 
 		GPU_framebuffer_ensure_config(&fbl->screen_tracing_fb, {

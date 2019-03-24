@@ -405,9 +405,9 @@ static GLenum gpu_get_gl_internalformat(eGPUTextureFormat format)
 		case GPU_DEPTH24_STENCIL8: return GL_DEPTH24_STENCIL8;
 		case GPU_DEPTH32F_STENCIL8: return GL_DEPTH32F_STENCIL8;
 		/* Texture only format */
-		/* ** Add Format here **/
+		/* ** Add Format here */
 		/* Special formats texture only */
-		/* ** Add Format here **/
+		/* ** Add Format here */
 		/* Depth Formats */
 		case GPU_DEPTH_COMPONENT32F: return GL_DEPTH_COMPONENT32F;
 		case GPU_DEPTH_COMPONENT24: return GL_DEPTH_COMPONENT24;
@@ -439,7 +439,7 @@ static GLenum gpu_get_gl_datatype(eGPUDataFormat format)
 	}
 }
 
-static float *GPU_texture_3D_rescale(GPUTexture *tex, int w, int h, int d, int channels, const float *fpixels)
+static float *GPU_texture_rescale_3d(GPUTexture *tex, int w, int h, int d, int channels, const float *fpixels)
 {
 	const uint xf = w / tex->w, yf = h / tex->h, zf = d / tex->d;
 	float *nfpixels = MEM_mallocN(channels * sizeof(float) * tex->w * tex->h * tex->d, "GPUTexture Rescaled 3Dtex");
@@ -575,7 +575,7 @@ static bool gpu_texture_try_alloc(
 					return false;
 				case GL_PROXY_TEXTURE_3D:
 					BLI_assert(data_type == GL_FLOAT);
-					*rescaled_fpixels = GPU_texture_3D_rescale(tex, w, h, d, channels, fpixels);
+					*rescaled_fpixels = GPU_texture_rescale_3d(tex, w, h, d, channels, fpixels);
 					return (bool)*rescaled_fpixels;
 			}
 		}
@@ -645,10 +645,12 @@ GPUTexture *GPU_texture_create_nD(
 	tex->bindcode = GPU_tex_alloc();
 
 	if (!tex->bindcode) {
-		if (err_out)
-			BLI_snprintf(err_out, 256, "GPUTexture: texture create failed\n");
-		else
+		if (err_out) {
+			BLI_strncpy(err_out, "GPUTexture: texture create failed\n", 256);
+		}
+		else {
 			fprintf(stderr, "GPUTexture: texture create failed\n");
+		}
 		GPU_texture_free(tex);
 		return NULL;
 	}
@@ -685,7 +687,7 @@ GPUTexture *GPU_texture_create_nD(
 
 	if (!valid) {
 		if (err_out) {
-			BLI_snprintf(err_out, 256, "GPUTexture: texture alloc failed\n");
+			BLI_strncpy(err_out, "GPUTexture: texture alloc failed\n", 256);
 		}
 		else {
 			fprintf(stderr, "GPUTexture: texture alloc failed. Likely not enough Video Memory.\n");
@@ -790,10 +792,12 @@ static GPUTexture *GPU_texture_cube_create(
 	tex->bindcode = GPU_tex_alloc();
 
 	if (!tex->bindcode) {
-		if (err_out)
-			BLI_snprintf(err_out, 256, "GPUTexture: texture create failed\n");
-		else
+		if (err_out) {
+			BLI_strncpy(err_out, "GPUTexture: texture create failed\n", 256);
+		}
+		else {
 			fprintf(stderr, "GPUTexture: texture create failed\n");
+		}
 		GPU_texture_free(tex);
 		return NULL;
 	}
@@ -985,7 +989,7 @@ GPUTexture *GPU_texture_from_preview(PreviewImage *prv, int mipmap)
 
 }
 
-GPUTexture *GPU_texture_create_1D(
+GPUTexture *GPU_texture_create_1d(
         int w, eGPUTextureFormat tex_format, const float *pixels, char err_out[256])
 {
 	BLI_assert(w > 0);
@@ -993,7 +997,7 @@ GPUTexture *GPU_texture_create_1D(
 	return GPU_texture_create_nD(w, 0, 0, 1, pixels, tex_format, data_format, 0, false, err_out);
 }
 
-GPUTexture *GPU_texture_create_1D_array(
+GPUTexture *GPU_texture_create_1d_array(
         int w, int h, eGPUTextureFormat tex_format, const float *pixels, char err_out[256])
 {
 	BLI_assert(w > 0 && h > 0);
@@ -1001,7 +1005,7 @@ GPUTexture *GPU_texture_create_1D_array(
 	return GPU_texture_create_nD(w, h, 0, 1, pixels, tex_format, data_format, 0, false, err_out);
 }
 
-GPUTexture *GPU_texture_create_2D(
+GPUTexture *GPU_texture_create_2d(
         int w, int h, eGPUTextureFormat tex_format, const float *pixels, char err_out[256])
 {
 	BLI_assert(w > 0 && h > 0);
@@ -1009,7 +1013,7 @@ GPUTexture *GPU_texture_create_2D(
 	return GPU_texture_create_nD(w, h, 0, 2, pixels, tex_format, data_format, 0, false, err_out);
 }
 
-GPUTexture *GPU_texture_create_2D_multisample(
+GPUTexture *GPU_texture_create_2d_multisample(
         int w, int h, eGPUTextureFormat tex_format, const float *pixels, int samples, char err_out[256])
 {
 	BLI_assert(w > 0 && h > 0);
@@ -1017,7 +1021,7 @@ GPUTexture *GPU_texture_create_2D_multisample(
 	return GPU_texture_create_nD(w, h, 0, 2, pixels, tex_format, data_format, samples, false, err_out);
 }
 
-GPUTexture *GPU_texture_create_2D_array(
+GPUTexture *GPU_texture_create_2d_array(
         int w, int h, int d, eGPUTextureFormat tex_format, const float *pixels, char err_out[256])
 {
 	BLI_assert(w > 0 && h > 0 && d > 0);
@@ -1025,7 +1029,7 @@ GPUTexture *GPU_texture_create_2D_array(
 	return GPU_texture_create_nD(w, h, d, 2, pixels, tex_format, data_format, 0, false, err_out);
 }
 
-GPUTexture *GPU_texture_create_3D(
+GPUTexture *GPU_texture_create_3d(
         int w, int h, int d, eGPUTextureFormat tex_format, const float *pixels, char err_out[256])
 {
 	BLI_assert(w > 0 && h > 0 && d > 0);
@@ -1266,6 +1270,35 @@ void *GPU_texture_read(GPUTexture *tex, eGPUDataFormat gpu_data_format, int mipl
 	return buf;
 }
 
+void GPU_texture_read_rect(
+        GPUTexture *tex, eGPUDataFormat gpu_data_format,
+        const rcti *rect, void *r_buf)
+{
+	gpu_validate_data_format(tex->format, gpu_data_format);
+
+	GPUFrameBuffer *cur_fb = GPU_framebuffer_active_get();
+	GPUFrameBuffer *tmp_fb = GPU_framebuffer_create();
+	GPU_framebuffer_texture_attach(tmp_fb, tex, 0, 0);
+
+	GPU_framebuffer_bind(tmp_fb);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+	GLenum data_format = gpu_get_gl_dataformat(tex->format, &tex->format_flag);
+	GLenum data_type = gpu_get_gl_datatype(gpu_data_format);
+
+	glReadPixels(rect->xmin, rect->ymin,
+	             BLI_rcti_size_x(rect), BLI_rcti_size_y(rect),
+	             data_format, data_type, r_buf);
+
+	if (cur_fb) {
+		GPU_framebuffer_bind(cur_fb);
+	}
+	else {
+		GPU_framebuffer_restore();
+	}
+	GPU_framebuffer_free(tmp_fb);
+}
+
 void GPU_texture_update(GPUTexture *tex, eGPUDataFormat data_format, const void *pixels)
 {
 	GPU_texture_update_sub(tex, data_format, pixels, 0, 0, 0, tex->w, tex->h, tex->d);
@@ -1275,9 +1308,9 @@ void GPU_invalid_tex_init(void)
 {
 	memory_usage = 0;
 	const float color[4] = {1.0f, 0.0f, 1.0f, 1.0f};
-	GG.invalid_tex_1D = GPU_texture_create_1D(1, GPU_RGBA8, color, NULL);
-	GG.invalid_tex_2D = GPU_texture_create_2D(1, 1, GPU_RGBA8, color, NULL);
-	GG.invalid_tex_3D = GPU_texture_create_3D(1, 1, 1, GPU_RGBA8, color, NULL);
+	GG.invalid_tex_1D = GPU_texture_create_1d(1, GPU_RGBA8, color, NULL);
+	GG.invalid_tex_2D = GPU_texture_create_2d(1, 1, GPU_RGBA8, color, NULL);
+	GG.invalid_tex_3D = GPU_texture_create_3d(1, 1, 1, GPU_RGBA8, color, NULL);
 }
 
 void GPU_invalid_tex_bind(int mode)

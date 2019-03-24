@@ -69,7 +69,13 @@ class DATA_PT_light(DataButtonsPanel, Panel):
 
         light = context.light
 
-        layout.row().prop(light, "type", expand=True)
+        # Compact layout for node editor.
+        if self.bl_space_type == 'PROPERTIES':
+            layout.row().prop(light, "type", expand=True)
+            layout.use_property_split = True
+        else:
+            layout.use_property_split = True
+            layout.row().prop(light, "type")
 
 
 class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
@@ -80,9 +86,13 @@ class DATA_PT_EEVEE_light(DataButtonsPanel, Panel):
         layout = self.layout
         light = context.light
 
-        layout.row().prop(light, "type", expand=True)
-
-        layout.use_property_split = True
+        # Compact layout for node editor.
+        if self.bl_space_type == 'PROPERTIES':
+            layout.row().prop(light, "type", expand=True)
+            layout.use_property_split = True
+        else:
+            layout.use_property_split = True
+            layout.row().prop(light, "type")
 
         col = layout.column()
         col.prop(light, "color")
@@ -144,7 +154,10 @@ class DATA_PT_EEVEE_shadow(DataButtonsPanel, Panel):
     def poll(cls, context):
         light = context.light
         engine = context.engine
-        return (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and (engine in cls.COMPAT_ENGINES)
+        return (
+            (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and
+            (engine in cls.COMPAT_ENGINES)
+        )
 
     def draw_header(self, context):
         light = context.light
@@ -209,7 +222,10 @@ class DATA_PT_EEVEE_shadow_contact(DataButtonsPanel, Panel):
     def poll(cls, context):
         light = context.light
         engine = context.engine
-        return (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and (engine in cls.COMPAT_ENGINES)
+        return (
+            (light and light.type in {'POINT', 'SUN', 'SPOT', 'AREA'}) and
+            (engine in cls.COMPAT_ENGINES)
+        )
 
     def draw_header(self, context):
         light = context.light
@@ -293,7 +309,10 @@ class DATA_PT_falloff_curve(DataButtonsPanel, Panel):
         light = context.light
         engine = context.engine
 
-        return (light and light.type in {'POINT', 'SPOT'} and light.falloff_type == 'CUSTOM_CURVE') and (engine in cls.COMPAT_ENGINES)
+        return (
+            (light and light.type in {'POINT', 'SPOT'} and light.falloff_type == 'CUSTOM_CURVE') and
+            (engine in cls.COMPAT_ENGINES)
+        )
 
     def draw(self, context):
         light = context.light
