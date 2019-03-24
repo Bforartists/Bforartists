@@ -237,7 +237,7 @@ class SEQUENCER_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="Sequence Render", icon='RENDER_STILL').sequencer = True
+        layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
         props.animation = True
         props.sequencer = True
@@ -1159,6 +1159,7 @@ class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
         layout.prop(strip, "use_float", text="Convert to Float")
+
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
     bl_label = "Proxy settings"

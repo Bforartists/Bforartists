@@ -136,7 +136,7 @@ void EEVEE_volumes_set_jitter(EEVEE_ViewLayerData *sldata, uint current_sample)
 	double ht_offset[3] = {0.0, 0.0};
 	uint ht_primes[3] = {3, 7, 2};
 
-	BLI_halton_3D(ht_primes, ht_offset, current_sample, ht_point);
+	BLI_halton_3d(ht_primes, ht_offset, current_sample, ht_point);
 
 	common_data->vol_jitter[0] = (float)ht_point[0];
 	common_data->vol_jitter[1] = (float)ht_point[1];
@@ -209,30 +209,30 @@ int EEVEE_volumes_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		if (txl->volume_prop_scattering == NULL) {
 			/* Volume properties: We evaluate all volumetric objects
 			 * and store their final properties into each froxel */
-			txl->volume_prop_scattering = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_prop_scattering = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                    GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
-			txl->volume_prop_extinction = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_prop_extinction = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                    GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
-			txl->volume_prop_emission = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_prop_emission = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                  GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
-			txl->volume_prop_phase = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_prop_phase = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                               GPU_RG16F, DRW_TEX_FILTER, NULL);
 
 			/* Volume scattering: We compute for each froxel the
 			 * Scattered light towards the view. We also resolve temporal
 			 * super sampling during this stage. */
-			txl->volume_scatter = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_scatter = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                            GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
-			txl->volume_transmittance = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_transmittance = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                  GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
 
 			/* Final integration: We compute for each froxel the
 			 * amount of scattered light and extinction coef at this
 			 * given depth. We use theses textures as double buffer
 			 * for the volumetric history. */
-			txl->volume_scatter_history = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_scatter_history = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                    GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
-			txl->volume_transmittance_history = DRW_texture_create_3D(tex_size[0], tex_size[1], tex_size[2],
+			txl->volume_transmittance_history = DRW_texture_create_3d(tex_size[0], tex_size[1], tex_size[2],
 			                                                          GPU_R11F_G11F_B10F, DRW_TEX_FILTER, NULL);
 		}
 
@@ -289,6 +289,12 @@ int EEVEE_volumes_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		if ((scene_eval->eevee.flag & SCE_EEVEE_VOLUMETRIC_SHADOWS) == 0) {
 			common_data->vol_shadow_steps = 0;
 		}
+
+		/* Update view_vecs */
+		float invproj[4][4], winmat[4][4];
+		DRW_viewport_matrix_get(winmat, DRW_MAT_WIN);
+		DRW_viewport_matrix_get(invproj, DRW_MAT_WININV);
+		EEVEE_update_viewvecs(invproj, winmat, sldata->common_data.view_vecs);
 
 		if (DRW_viewport_is_persp_get()) {
 			float sample_distribution = scene_eval->eevee.volumetric_sample_distribution;
@@ -378,7 +384,7 @@ void EEVEE_volumes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 		 *   for "every" positions in the frustum. We only need to sample
 		 *   them and blend the scene color with those factors. This also
 		 *   work for alpha blended materials.
-		 **/
+		 */
 
 		/* World pass is not additive as it also clear the buffer. */
 		psl->volumetric_world_ps = DRW_pass_create("Volumetric World", DRW_STATE_WRITE_COLOR);
@@ -454,6 +460,11 @@ void EEVEE_volumes_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 	}
 }
 
+typedef struct EEVEE_InstanceVolumeMatrix {
+	DrawData dd;
+	float volume_mat[4][4];
+} EEVEE_InstanceVolumeMatrix;
+
 void EEVEE_volumes_cache_object_add(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata, Scene *scene, Object *ob)
 {
 	const DRWContextState *draw_ctx = DRW_context_state_get();
@@ -474,12 +485,27 @@ void EEVEE_volumes_cache_object_add(EEVEE_ViewLayerData *sldata, EEVEE_Data *ved
 		return;
 	}
 
-	DRWShadingGroup *grp = DRW_shgroup_material_empty_tri_batch_create(mat, vedata->psl->volumetric_objects_ps, sldata->common_data.vol_tex_size[2]);
+	DRWShadingGroup *grp = DRW_shgroup_material_empty_tri_batch_create(mat,
+	                                                                   vedata->psl->volumetric_objects_ps,
+	                                                                   sldata->common_data.vol_tex_size[2]);
 
 	/* Making sure it's updated. */
 	invert_m4_m4(ob->imat, ob->obmat);
 
 	BKE_mesh_texspace_get_reference((struct Mesh *)ob->data, NULL, &texcoloc, NULL, &texcosize);
+
+	float (*imat)[4] = ob->imat;
+
+	if ((ob->base_flag & BASE_FROM_DUPLI) != 0) {
+		/* TODO Remove from here and use a dedicated buffer. */
+		EEVEE_InstanceVolumeMatrix *ivm = (EEVEE_InstanceVolumeMatrix *)DRW_drawdata_ensure(
+		        &ob->id,
+		        (DrawEngineType *)EEVEE_volumes_cache_object_add,
+		        sizeof(EEVEE_InstanceVolumeMatrix),
+		        NULL, NULL);
+		copy_m4_m4(ivm->volume_mat, ob->imat);
+		imat = ivm->volume_mat;
+	}
 
 	/* TODO(fclem) remove those "unnecessary" UBOs */
 	DRW_shgroup_uniform_block(grp, "planar_block", sldata->planar_ubo);
@@ -489,7 +515,7 @@ void EEVEE_volumes_cache_object_add(EEVEE_ViewLayerData *sldata, EEVEE_Data *ved
 	DRW_shgroup_uniform_block(grp, "grid_block", sldata->grid_ubo);
 
 	DRW_shgroup_uniform_block(grp, "common_block", sldata->common_ubo);
-	DRW_shgroup_uniform_mat4(grp, "volumeObjectMatrix", ob->imat);
+	DRW_shgroup_uniform_mat4(grp, "volumeObjectMatrix", imat);
 	DRW_shgroup_uniform_vec3(grp, "volumeOrcoLoc", texcoloc, 1);
 	DRW_shgroup_uniform_vec3(grp, "volumeOrcoSize", texcosize, 1);
 

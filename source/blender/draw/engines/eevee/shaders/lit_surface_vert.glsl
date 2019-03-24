@@ -61,13 +61,13 @@ void main()
 	worldPosition = pos;
 	hairTangent = normalize(hairTangent);
 	worldNormal = cross(binor, hairTangent);
-	viewNormal = normalize(mat3(ViewMatrix) * worldNormal);
+	viewNormal = mat3(ViewMatrix) * worldNormal;
 #else
 	gl_Position = ModelViewProjectionMatrix * vec4(pos, 1.0);
 	viewPosition = (ModelViewMatrix * vec4(pos, 1.0)).xyz;
 	worldPosition = (ModelMatrix * vec4(pos, 1.0)).xyz;
-	worldNormal = WorldNormalMatrix * nor;
-	viewNormal = NormalMatrix * nor;
+	worldNormal = normalize(WorldNormalMatrix * nor);
+	viewNormal = normalize(NormalMatrix * nor);
 #endif
 
 	/* Used for planar reflections */
