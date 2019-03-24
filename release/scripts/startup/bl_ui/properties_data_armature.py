@@ -21,6 +21,10 @@ import bpy
 from bpy.types import Panel, Menu
 from rna_prop_ui import PropertyPanel
 
+from .properties_animviz import (
+    MotionPathButtonsPanel,
+    MotionPathButtonsPanel_display,
+)
 
 class ArmatureButtonsPanel:
     bl_space_type = 'PROPERTIES'
@@ -80,13 +84,19 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         layout.prop(arm, "display_type", text="Display As")
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
-        flow.prop(arm, "show_names", text="Names")
-        flow.prop(arm, "show_axes", text="Axes")
-        flow.prop(arm, "show_bone_custom_shapes", text="Shapes")
-        flow.prop(arm, "show_group_colors", text="Group Colors")
+        col = flow.column()
+        col.prop(arm, "show_names", text="Names")
+        col = flow.column()
+        col.prop(arm, "show_axes", text="Axes")
+        col = flow.column()
+        col.prop(arm, "show_bone_custom_shapes", text="Shapes")
+        col = flow.column()
+        col.prop(arm, "show_group_colors", text="Group Colors")
         if ob:
-            flow.prop(ob, "show_in_front", text="In Front")
-        flow.prop(arm, "use_deform_delay", text="Delay Refresh")
+            col = flow.column()
+            col.prop(ob, "show_in_front", text="In Front")
+        col = flow.column()
+        col.prop(arm, "use_deform_delay", text="Delay Refresh")
 
 
 class DATA_MT_bone_group_context_menu(Menu):
@@ -255,12 +265,6 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
                 col.separator()
                 col.prop(itasc, "damping_max", text="Damping Max", slider=True)
                 col.prop(itasc, "damping_epsilon", text="Damping Epsilon", slider=True)
-
-
-from .properties_animviz import (
-    MotionPathButtonsPanel,
-    MotionPathButtonsPanel_display,
-)
 
 
 class DATA_PT_motion_paths(MotionPathButtonsPanel, Panel):

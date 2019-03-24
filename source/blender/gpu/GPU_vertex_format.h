@@ -29,7 +29,7 @@
 #include "GPU_common.h"
 
 #define GPU_VERT_ATTR_MAX_LEN 16
-#define GPU_VERT_ATTR_MAX_NAMES 3
+#define GPU_VERT_ATTR_MAX_NAMES 4
 #define GPU_VERT_ATTR_NAME_AVERAGE_LEN 11
 #define GPU_VERT_ATTR_NAMES_BUF_LEN ((GPU_VERT_ATTR_NAME_AVERAGE_LEN + 1) * GPU_VERT_ATTR_MAX_LEN)
 
@@ -97,7 +97,7 @@ int GPU_vertformat_attr_id_get(const GPUVertFormat *, const char *name);
  * IMPORTANT:
  * - Call this before creating the vertex buffer and after creating all attributes
  * - Only first vertex out of 3 has the correct information. Use flat output with GL_FIRST_VERTEX_CONVENTION.
- **/
+ */
 void GPU_vertformat_triple_load(GPUVertFormat *format);
 
 /* format conversion */

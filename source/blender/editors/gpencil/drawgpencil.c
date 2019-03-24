@@ -720,9 +720,12 @@ static void gp_draw_stroke_3d(tGPDdraw *tgpw, short thickness, const float ink[4
 	immUniform1f("objscale", obj_scale);
 	int keep_size = (int)((tgpw->gpd) && (tgpw->gpd->flag & GP_DATA_STROKE_KEEPTHICKNESS));
 	immUniform1i("keep_size", keep_size);
-	immUniform1i("pixfactor", tgpw->gpd->pixfactor);
+	immUniform1f("pixfactor", tgpw->gpd->pixfactor);
 	/* xray mode always to 3D space to avoid wrong zdepth calculation (T60051) */
 	immUniform1i("xraymode", GP_XRAY_3DSPACE);
+	immUniform1i("caps_start", (int)tgpw->gps->caps[0]);
+	immUniform1i("caps_end", (int)tgpw->gps->caps[1]);
+	immUniform1i("fill_stroke", (int)tgpw->is_fill_stroke);
 
 	/* draw stroke curve */
 	GPU_line_width(max_ff(curpressure * thickness, 1.0f));
@@ -733,23 +736,22 @@ static void gp_draw_stroke_3d(tGPDdraw *tgpw, short thickness, const float ink[4
 		/* first point for adjacency (not drawn) */
 		if (i == 0) {
 			gp_set_point_varying_color(points, ink, attr_id.color);
-			immAttr1f(attr_id.thickness, max_ff(curpressure * thickness, 1.0f));
+
 			if ((cyclic) && (totpoints > 2)) {
+				immAttr1f(attr_id.thickness, max_ff((points + totpoints - 1)->pressure * thickness, 1.0f));
 				mul_v3_m4v3(fpt, tgpw->diff_mat, &(points + totpoints - 1)->x);
 			}
 			else {
+				immAttr1f(attr_id.thickness, max_ff((points + 1)->pressure * thickness, 1.0f));
 				mul_v3_m4v3(fpt, tgpw->diff_mat, &(points + 1)->x);
 			}
-			mul_v3_fl(fpt, -1.0f);
 			immVertex3fv(attr_id.pos, fpt);
 		}
 		/* set point */
 		gp_set_point_varying_color(pt, ink, attr_id.color);
-		immAttr1f(attr_id.thickness, max_ff(curpressure * thickness, 1.0f));
+		immAttr1f(attr_id.thickness, max_ff(pt->pressure * thickness, 1.0f));
 		mul_v3_m4v3(fpt, tgpw->diff_mat, &pt->x);
 		immVertex3fv(attr_id.pos, fpt);
-
-		curpressure = pt->pressure;
 	}
 
 	if (cyclic && totpoints > 2) {
@@ -765,10 +767,9 @@ static void gp_draw_stroke_3d(tGPDdraw *tgpw, short thickness, const float ink[4
 	}
 	/* last adjacency point (not drawn) */
 	else {
-		gp_set_point_varying_color(points + totpoints - 1, ink, attr_id.color);
-		immAttr1f(attr_id.thickness, max_ff(curpressure * thickness, 1.0f));
+		gp_set_point_varying_color(points + totpoints - 2, ink, attr_id.color);
+		immAttr1f(attr_id.thickness, max_ff((points + totpoints - 2)->pressure * thickness, 1.0f));
 		mul_v3_m4v3(fpt, tgpw->diff_mat, &(points + totpoints - 2)->x);
-		mul_v3_fl(fpt, -1.0f);
 		immVertex3fv(attr_id.pos, fpt);
 	}
 
@@ -1028,6 +1029,10 @@ static void gp_draw_strokes(tGPDdraw *tgpw)
 
 		/* calculate thickness */
 		sthickness = gps->thickness + tgpw->lthick;
+
+		if (tgpw->is_fill_stroke) {
+			sthickness = (short)max_ii(1, sthickness / 2);
+		}
 
 		if (sthickness <= 0) {
 			continue;
@@ -1427,6 +1432,7 @@ static void gp_draw_data_layers(RegionView3D *rv3d,
 	tgpw.winx = winx;
 	tgpw.winy = winy;
 	tgpw.dflag = dflag;
+	tgpw.is_fill_stroke = false;
 
 	for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
 		/* calculate parent position */
@@ -1684,73 +1690,4 @@ void ED_gpencil_draw_view3d(
 
 	/* draw it! */
 	gp_draw_data_all(view_layer, rv3d, scene, gpd, offsx, offsy, winx, winy, CFRA, dflag, v3d->spacetype);
-}
-
-/* draw grease-pencil sketches to specified 3d-view for gp object
- * assuming that matrices are already set correctly
- */
-void ED_gpencil_draw_view3d_object(wmWindowManager *wm, Scene *scene, Depsgraph *depsgraph, Object *ob, View3D *v3d, ARegion *ar, bool only3d)
-{
-	int dflag = 0;
-	RegionView3D *rv3d = ar->regiondata;
-	int offsx, offsy, winx, winy;
-
-	/* check that we have grease-pencil stuff to draw */
-	bGPdata *gpd = ob->data;
-	if (gpd == NULL) return;
-
-	/* when rendering to the offscreen buffer we don't want to
-	 * deal with the camera border, otherwise map the coords to the camera border. */
-	if ((rv3d->persp == RV3D_CAMOB) && !(G.f & G_FLAG_RENDER_VIEWPORT)) {
-		rctf rectf;
-		ED_view3d_calc_camera_border(scene, depsgraph, ar, v3d, rv3d, &rectf, true); /* no shift */
-
-		offsx = round_fl_to_int(rectf.xmin);
-		offsy = round_fl_to_int(rectf.ymin);
-		winx = round_fl_to_int(rectf.xmax - rectf.xmin);
-		winy = round_fl_to_int(rectf.ymax - rectf.ymin);
-	}
-	else {
-		offsx = 0;
-		offsy = 0;
-		winx = ar->winx;
-		winy = ar->winy;
-	}
-
-	/* set flags */
-	if (only3d) {
-		/* 3D strokes/3D space:
-		 * - only 3D space points
-		 * - don't status text either (as it's the wrong space)
-		 */
-		dflag |= (GP_DRAWDATA_ONLY3D | GP_DRAWDATA_NOSTATUS);
-	}
-
-	if (v3d->flag2 & V3D_HIDE_OVERLAYS) {
-		/* don't draw status text when "only render" flag is set */
-		dflag |= GP_DRAWDATA_NOSTATUS;
-	}
-
-	if ((wm == NULL) || ED_screen_animation_playing(wm)) {
-		/* don't show onion-skins during animation playback/scrub (i.e. it obscures the poses)
-		 * OpenGL Renders (i.e. final output), or depth buffer (i.e. not real strokes)
-		 */
-		dflag |= GP_DRAWDATA_NO_ONIONS;
-	}
-
-	/* draw it! */
-	ToolSettings *ts = scene->toolsettings;
-	Brush *brush = BKE_paint_brush(&ts->gp_paint->paint);
-	if (brush != NULL) {
-		gp_draw_data(rv3d, brush, 1.0f, ob, gpd, offsx, offsy, winx, winy, CFRA, dflag);
-	}
-}
-
-void ED_gpencil_draw_ex(
-	ViewLayer *view_layer, RegionView3D *rv3d, Scene *scene,
-	bGPdata *gpd, int winx, int winy, const int cfra, const char spacetype)
-{
-	int dflag = GP_DRAWDATA_NOSTATUS | GP_DRAWDATA_ONLYV2D;
-
-	gp_draw_data_all(view_layer, rv3d, scene, gpd, 0, 0, winx, winy, cfra, dflag, spacetype);
 }

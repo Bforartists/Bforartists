@@ -453,10 +453,10 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
         col.operator("clip.detect_features", icon = "DETECT")
 
         col = layout.column(align=True)
-        col.operator("clip.add_marker_at_click", text="Add Marker            ", icon = "MARKER")   
-        col.operator("clip.disable_markers", text="Enable Markers    " , icon = "ENABLE").action = 'ENABLE'
-        col.operator("clip.disable_markers", text="Disable markers    ", icon = "DISABLE").action = 'DISABLE'
-        col.operator("clip.delete_marker", text="Delete Marker        ", icon = "DELETE")
+        col.operator("clip.add_marker_at_click", text="Add Marker", icon = "MARKER")   
+        col.operator("clip.disable_markers", text="Enable Markers" , icon = "ENABLE").action = 'ENABLE'
+        col.operator("clip.disable_markers", text="Disable markers", icon = "DISABLE").action = 'DISABLE'
+        col.operator("clip.delete_marker", text="Delete Marker", icon = "DELETE")
         
         col = layout.column(align=True)       
         

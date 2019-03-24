@@ -439,10 +439,12 @@ static void blf_glyph_calc_rect(rctf *rect, GlyphBLF *g, float x, float y)
 
 static void blf_glyph_calc_rect_test(rctf *rect, GlyphBLF *g, float x, float y)
 {
-	/* intentionally check clipping without shadow offset and negative kerning */
-	rect->xmin = floorf(x + MAX2(0.0f, g->pos_x));
-	rect->xmax = rect->xmin + (float)g->width;
-	rect->ymin = floorf(y + MAX2(0.0f, g->pos_y));
+	/* Intentionally check with g->advance, because this is the
+	 * width used by BLF_width. This allows that the text slightly
+	 * overlaps the clipping border to achieve better alignment. */
+	rect->xmin = floorf(x);
+	rect->xmax = rect->xmin + MIN2(g->advance, (float)g->width);
+	rect->ymin = floorf(y);
 	rect->ymax = rect->ymin - (float)g->height;
 }
 
