@@ -491,6 +491,20 @@ typedef struct wmEvent {
 
 } wmEvent;
 
+/**
+ * Values below are considered a click, above are considered a drag.
+ */
+#define WM_EVENT_CURSOR_CLICK_DRAG_THRESHOLD (U.tweak_threshold * U.dpi_fac)
+
+/**
+ * Values below are ignored when detecting if the user interntionally moved the cursor.
+ * Keep this very small since it's used for selection cycling for eg,
+ * where we want intended adjustments to pass this threshold and select new items.
+ *
+ * Always check for <= this value since it may be zero.
+ */
+#define WM_EVENT_CURSOR_MOTION_THRESHOLD ((float)U.move_threshold * U.dpi_fac)
+
 /* ************** custom wmEvent data ************** */
 typedef struct wmTabletData {
 	int Active;			/* 0=EVT_TABLET_NONE, 1=EVT_TABLET_STYLUS, 2=EVT_TABLET_ERASER */
@@ -598,8 +612,13 @@ typedef struct wmOperatorType {
 	/* previous settings - for initializing on re-use */
 	struct IDProperty *last_properties;
 
-	/* Default rna property to use for generic invoke functions.
-	 * menus, enum search... etc. Example: Enum 'type' for a Delete menu */
+	/**
+	 * Default rna property to use for generic invoke functions.
+	 * menus, enum search... etc. Example: Enum 'type' for a Delete menu.
+	 *
+	 * When assigned a string/number property,
+	 * immediately edit the value when used in a popup. see: #UI_BUT_ACTIVATE_ON_INIT.
+	 */
 	PropertyRNA *prop;
 
 	/* struct wmOperatorTypeMacro */

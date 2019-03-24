@@ -426,7 +426,7 @@ void DRW_state_invert_facing(void)
  * This only works if DRWPasses have been tagged with DRW_STATE_CLIP_PLANES,
  * and if the shaders have support for it (see usage of gl_ClipDistance).
  * Be sure to call DRW_state_clip_planes_reset() after you finish drawing.
- **/
+ */
 void DRW_state_clip_planes_len_set(uint plane_len)
 {
 	BLI_assert(plane_len <= MAX_CLIP_PLANES);
@@ -464,24 +464,17 @@ void DRW_state_clip_planes_set_from_rv3d(RegionView3D *rv3d)
  */
 static void draw_frustum_boundbox_calc(const float(*projmat)[4], BoundBox *r_bbox)
 {
-	float near, far, left, right, bottom, top;
+	float left, right, bottom, top, near, far;
 	bool is_persp = projmat[3][3] == 0.0f;
 
+	projmat_dimensions(
+	        projmat, &left, &right, &bottom, &top, &near, &far);
+
 	if (is_persp) {
-		near   = projmat[3][2] / (projmat[2][2] - 1.0f);
-		far    = projmat[3][2] / (projmat[2][2] + 1.0f);
-		left   = near * (projmat[2][0] - 1.0f) / projmat[0][0];
-		right  = near * (projmat[2][0] + 1.0f) / projmat[0][0];
-		bottom = near * (projmat[2][1] - 1.0f) / projmat[1][1];
-		top    = near * (projmat[2][1] + 1.0f) / projmat[1][1];
-	}
-	else {
-		near   = ( projmat[3][2] + 1.0f) / projmat[2][2];
-		far    = ( projmat[3][2] - 1.0f) / projmat[2][2];
-		left   = (-projmat[3][0] - 1.0f) / projmat[0][0];
-		right  = (-projmat[3][0] + 1.0f) / projmat[0][0];
-		bottom = (-projmat[3][1] - 1.0f) / projmat[1][1];
-		top    = (-projmat[3][1] + 1.0f) / projmat[1][1];
+		left   *= near;
+		right  *= near;
+		bottom *= near;
+		top    *= near;
 	}
 
 	r_bbox->vec[0][2] = r_bbox->vec[3][2] = r_bbox->vec[7][2] = r_bbox->vec[4][2] = -near;
@@ -494,8 +487,8 @@ static void draw_frustum_boundbox_calc(const float(*projmat)[4], BoundBox *r_bbo
 	if (is_persp) {
 		float sca_far = far / near;
 		left   *= sca_far;
-		bottom *= sca_far;
 		right  *= sca_far;
+		bottom *= sca_far;
 		top    *= sca_far;
 	}
 
@@ -803,7 +796,6 @@ static void draw_matrices_model_prepare(DRWCallState *st)
 		copy_m3_m4(st->normalview, st->modelview);
 		invert_m3(st->normalview);
 		transpose_m3(st->normalview);
-		normalize_m3(st->normalview);
 	}
 	if (st->matflag & DRW_CALL_EYEVEC) {
 		/* Used by orthographic wires */
@@ -822,7 +814,6 @@ static void draw_matrices_model_prepare(DRWCallState *st)
 		copy_m3_m4(st->normalworld, st->model);
 		invert_m3(st->normalworld);
 		transpose_m3(st->normalworld);
-		normalize_m3(st->normalworld);
 		st->matflag &= ~DRW_CALL_NORMALWORLD;
 	}
 }

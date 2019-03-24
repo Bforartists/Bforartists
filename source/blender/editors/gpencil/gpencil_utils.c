@@ -75,6 +75,7 @@
 
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
+#include "GPU_state.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -937,8 +938,12 @@ void ED_gpencil_project_stroke_to_view(bContext *C, bGPDlayer *gpl, bGPDstroke *
  * Reproject all points of the stroke to a plane locked to axis to avoid stroke offset
  */
 void ED_gp_project_stroke_to_plane(
-        const Object *ob, const RegionView3D *rv3d, bGPDstroke *gps, const float origin[3], const int axis)
+        const Scene *scene, const Object *ob,
+        const RegionView3D *rv3d, bGPDstroke *gps,
+        const float origin[3], const int axis)
 {
+	const ToolSettings *ts = scene->toolsettings;
+	const View3DCursor *cursor = &scene->cursor;
 	float plane_normal[3];
 	float vn[3];
 
@@ -953,12 +958,36 @@ void ED_gp_project_stroke_to_plane(
 		 */
 		ED_view3d_global_to_vector(rv3d, origin, plane_normal);
 	}
-	else {
+	else if (axis < 3) {
 		plane_normal[axis] = 1.0f;
 		/* if object, apply object rotation */
 		if (ob && (ob->type == OB_GPENCIL)) {
-			mul_mat3_m4_v3(ob->obmat, plane_normal);
+			float mat[4][4];
+			copy_m4_m4(mat, ob->obmat);
+
+			/* move origin to cursor */
+			if (ts->gpencil_v3d_align & GP_PROJECT_CURSOR) {
+				copy_v3_v3(mat[3], cursor->location);
+			}
+
+			mul_mat3_m4_v3(mat, plane_normal);
 		}
+	}
+	else {
+		float scale[3] = { 1.0f, 1.0f, 1.0f };
+		plane_normal[2] = 1.0f;
+		float mat[4][4];
+		loc_eul_size_to_mat4(mat,
+			cursor->location,
+			cursor->rotation_euler,
+			scale);
+
+		/* move origin to object */
+		if ((ts->gpencil_v3d_align & GP_PROJECT_CURSOR) == 0) {
+			copy_v3_v3(mat[3], ob->obmat[3]);
+		}
+
+		mul_mat3_m4_v3(mat, plane_normal);
 	}
 
 	/* Reproject the points in the plane */
@@ -984,8 +1013,12 @@ void ED_gp_project_stroke_to_plane(
  * \param[in, out] pt : Point to affect
  */
 void ED_gp_project_point_to_plane(
-        const Object *ob, const RegionView3D *rv3d, const float origin[3], const int axis, bGPDspoint *pt)
+        const Scene *scene, const Object *ob,
+        const RegionView3D *rv3d, const float origin[3],
+        const int axis, bGPDspoint *pt)
 {
+	const ToolSettings *ts = scene->toolsettings;
+	const View3DCursor *cursor = &scene->cursor;
 	float plane_normal[3];
 	float vn[3];
 
@@ -1000,14 +1033,37 @@ void ED_gp_project_point_to_plane(
 		 */
 		ED_view3d_global_to_vector(rv3d, origin, plane_normal);
 	}
-	else {
+	else if (axis < 3) {
 		plane_normal[axis] = 1.0f;
 		/* if object, apply object rotation */
 		if (ob && (ob->type == OB_GPENCIL)) {
-			mul_mat3_m4_v3(ob->obmat, plane_normal);
+			float mat[4][4];
+			copy_m4_m4(mat, ob->obmat);
+
+			/* move origin to cursor */
+			if (ts->gpencil_v3d_align & GP_PROJECT_CURSOR) {
+				copy_v3_v3(mat[3], cursor->location);
+			}
+
+			mul_mat3_m4_v3(mat, plane_normal);
 		}
 	}
+	else {
+		float scale[3] = { 1.0f, 1.0f, 1.0f };
+		plane_normal[2] = 1.0f;
+		float mat[4][4];
+		loc_eul_size_to_mat4(mat,
+			cursor->location,
+			cursor->rotation_euler,
+			scale);
 
+		/* move origin to object */
+		if ((ts->gpencil_v3d_align & GP_PROJECT_CURSOR) == 0) {
+			copy_v3_v3(mat[3], ob->obmat[3]);
+		}
+
+		mul_mat3_m4_v3(mat, plane_normal);
+	}
 
 	/* Reproject the points in the plane */
 	/* get a vector from the point with the current view direction of the viewport */
@@ -1572,7 +1628,7 @@ void ED_gpencil_brush_draw_eraser(Brush *brush, int x, int y)
 	const uint shdr_pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
-	glEnable(GL_LINE_SMOOTH);
+	GPU_line_smooth(true);
 	glEnable(GL_BLEND);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -1601,7 +1657,7 @@ void ED_gpencil_brush_draw_eraser(Brush *brush, int x, int y)
 	immUnbindProgram();
 
 	glDisable(GL_BLEND);
-	glDisable(GL_LINE_SMOOTH);
+	GPU_line_smooth(false);
 }
 
 static bool gp_brush_cursor_poll(bContext *C)
@@ -1721,7 +1777,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
-	glEnable(GL_LINE_SMOOTH);
+	GPU_line_smooth(true);
 	glEnable(GL_BLEND);
 
 	/* Inner Ring: Color from UI panel */
@@ -1743,13 +1799,13 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	imm_draw_circle_wire_2d(pos, x, y, radius + 1, 40);
 
 	glDisable(GL_BLEND);
-	glDisable(GL_LINE_SMOOTH);
+	GPU_line_smooth(false);
 
 	/* Draw line for lazy mouse */
 	if ((last_mouse_position) &&
 	    (brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP))
 	{
-		glEnable(GL_LINE_SMOOTH);
+		GPU_line_smooth(true);
 		glEnable(GL_BLEND);
 
 		copy_v3_v3(color, brush->add_col);
@@ -1764,7 +1820,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 		immEnd();
 
 		glDisable(GL_BLEND);
-		glDisable(GL_LINE_SMOOTH);
+		GPU_line_smooth(false);
 	}
 
 	immUnbindProgram();

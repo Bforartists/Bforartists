@@ -132,7 +132,6 @@ class VIEW3D_HT_header(Header):
         # Orientation
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
             orient_slot = scene.transform_orientation_slots[0]
-            custom_orientation = orient_slot.custom_orientation
             trans_name, trans_icon = orient_slot.ui_info()
 
             row = layout.row(align=True)
@@ -254,7 +253,7 @@ class VIEW3D_HT_header(Header):
         if object_mode == 'PAINT_GPENCIL':
             # FIXME: this is bad practice!
             # Tool options are to be displayed in the topbar.
-            if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin.draw":
+            if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
                 settings = tool_settings.gpencil_sculpt.guide
                 row = layout.row(align=True)
                 row.prop(settings, "use_guide", text="", icon='GRID')
@@ -1344,6 +1343,28 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_more", text= "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text= "Less", icon = "SELECTLESS")
 
+class VIEW3D_MT_edit_text_context_menu(Menu):
+    bl_label = "Text Context Menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("font.text_paste", text="Paste", icon='PASTEDOWN')
+
+        layout.separator()
+
+        layout.operator("font.select_all")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_font")
+
 class VIEW3D_MT_select_edit_text(Menu):
     # intentional name mismatch
     # select menu for 3d-text doesn't make sense
@@ -1363,6 +1384,8 @@ class VIEW3D_MT_select_edit_text(Menu):
         layout.separator()
 
         layout.operator("font.select_all", icon = "SELECT_ALL")
+
+        layout.menu("VIEW3D_MT_edit_font")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
@@ -1422,6 +1445,23 @@ class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.lattice.select_all(action = 'INVERT')
         return {'FINISHED'}
+
+
+class VIEW3D_MT_edit_lattice_context_menu(Menu):
+    bl_label = "Lattice Context Menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout = self.layout
+
+        layout.menu("VIEW3D_MT_mirror")
+        layout.operator_menu_enum("lattice.flip", "axis")
+        layout.menu("VIEW3D_MT_snap")
+
+        layout.separator()
+
+        layout.operator("lattice.make_regular")
 
 
 class VIEW3D_MT_select_edit_lattice(Menu):
@@ -1719,6 +1759,30 @@ class VIEW3D_MT_surface_add(Menu):
                         text="Nurbs Cylinder", icon='SURFACE_NCYLINDER')
         layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Nurbs Sphere", icon='SURFACE_NSPHERE')
         layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
+
+
+class VIEW3D_MT_edit_metaball_context_menu(Menu):
+    bl_label = "Metaball Context Menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        # Add
+        layout.operator("mball.duplicate_move")
+
+        layout.separator()
+
+        # Modify
+        layout.menu("VIEW3D_MT_mirror")
+        layout.menu("VIEW3D_MT_snap")
+
+        layout.separator()
+
+        # Remove
+        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator("mball.delete_metaelems", text="Delete")
 
 
 class VIEW3D_MT_metaball_add(Menu):
@@ -2392,6 +2456,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_snap")
         layout.menu("VIEW3D_MT_object_parent")
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -4545,7 +4610,7 @@ class VIEW3D_MT_edit_surface(Menu):
 
 
 class VIEW3D_MT_edit_font(Menu):
-    bl_label = "Text"
+    bl_label = "Font"
 
     def draw(self, context):
         layout = self.layout
@@ -4574,6 +4639,10 @@ class VIEW3D_MT_edit_font(Menu):
         layout.separator()
 
         layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_text_chars")
 
 
 # move_select submenu
@@ -4812,10 +4881,9 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        # Add
         layout.operator("armature.subdivide", text="Subdivide")
-
         layout.operator("armature.duplicate_move", text="Duplicate", icon = "DUPLICATE")
-
         layout.operator("armature.extrude_move", icon='EXTRUDE_REGION')
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked", icon='EXTRUDE_REGION')
@@ -4824,9 +4892,13 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.operator("armature.fill")
 
+        layout.separator()
+
+        # Modify
+        layout.menu("VIEW3D_MT_mirror")
+        layout.menu("VIEW3D_MT_snap")
         layout.operator("armature.switch_direction", text="Switch Direction")
         layout.operator("armature.symmetrize")
-
         layout.menu("VIEW3D_MT_edit_armature_names")
 
         layout.separator()
@@ -4835,6 +4907,7 @@ class VIEW3D_MT_armature_context_menu(Menu):
 
         layout.separator()
 
+        # Remove
         layout.operator("armature.split")
         layout.operator("armature.merge")
         layout.operator("armature.dissolve")
@@ -5443,13 +5516,14 @@ class VIEW3D_PT_collections(Panel):
                 need_separator = False
 
             icon = 'BLANK1'
-            has_objects = True
+            #has_objects = True
             if child.has_selected_objects(view_layer):
                 icon = 'LAYER_ACTIVE'
             elif child.has_objects():
                 icon = 'LAYER_USED'
             else:
-                has_objects = False
+                #has_objects = False
+                pass
 
             has_visible_objects = has_objects and child.has_visible_objects(view_layer)
 
@@ -5479,7 +5553,7 @@ class VIEW3D_PT_collections(Panel):
         layout.use_property_split = False
 
         layout.label(text="Collections Visibility")
-        col = layout.column()
+        layout.column()
 
         view_layer = context.view_layer
         # We pass index 0 here beause the index is increased
@@ -6001,7 +6075,6 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
 
         view = context.space_data
         overlay = view.overlay
-        shading = view.shading
         display_all = overlay.show_overlays
 
         col = layout.column()
@@ -6346,11 +6419,7 @@ class VIEW3D_PT_pivot_point(Panel):
         if (obj is None) or (mode in {'OBJECT', 'POSE', 'WEIGHT_PAINT'}):
             col.separator()
 
-            col.prop(
-                tool_settings,
-                "use_transform_pivot_point_align",
-                text="Only Origins",
-            )
+            col.prop(tool_settings, "use_transform_pivot_point_align", text="Only Origins")
 
 
 class VIEW3D_PT_snapping(Panel):
@@ -6755,6 +6824,11 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_mirror")
+        layout.menu("VIEW3D_MT_snap")
+
+        layout.separator()
+
         # Remove
         if is_3d_view:
             layout.menu("GPENCIL_MT_cleanup")
@@ -6820,9 +6894,11 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         brush = context.tool_settings.image_paint.brush
-        UnifiedPaintPanel.prop_unified_size(layout, context, brush, "size", slider=True)
+        capabilities = brush.image_paint_capabilities
+
+        if capabilities.has_radius:
+            UnifiedPaintPanel.prop_unified_size(layout, context, brush, "size", slider=True)
         UnifiedPaintPanel.prop_unified_strength(layout, context, brush, "strength")
 
 
@@ -6917,9 +6993,29 @@ class VIEW3D_PT_sculpt_context_menu(Panel):
         layout = self.layout
 
         brush = context.tool_settings.sculpt.brush
+        capabilities = brush.sculpt_capabilities
 
         UnifiedPaintPanel.prop_unified_size(layout, context, brush, "size", slider=True)
         UnifiedPaintPanel.prop_unified_strength(layout, context, brush, "strength")
+
+        if capabilities.has_auto_smooth:
+            layout.prop(brush, "auto_smooth_factor", slider=True)
+
+        if capabilities.has_normal_weight:
+            layout.prop(brush, "normal_weight", slider=True)
+
+        if capabilities.has_pinch_factor:
+            layout.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
+
+        if capabilities.has_rake_factor:
+            layout.prop(brush, "rake_factor", slider=True)
+
+        if capabilities.has_plane_offset:
+            layout.prop(brush, "plane_offset", slider=True)
+            layout.prop(brush, "plane_trim", slider=True, text="Distance")
+
+        if capabilities.has_height:
+            layout.prop(brush, "height", slider=True, text="Height")
 
 
 class TOPBAR_PT_gpencil_materials(GreasePencilMaterialsPanel, Panel):
@@ -6969,9 +7065,11 @@ classes = (
     VIEW3D_MT_select_edit_curve,
     VIEW3D_MT_select_edit_curve_select_similar,
     VIEW3D_MT_select_edit_surface,
+    VIEW3D_MT_edit_text_context_menu,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball_inverse,
     VIEW3D_MT_select_edit_metaball,
+    VIEW3D_MT_edit_lattice_context_menu,
     VIEW3D_MT_select_edit_metaball_select_similar,
     VIEW3D_MT_select_edit_lattice_inverse,
     VIEW3D_MT_select_edit_lattice,
@@ -6987,6 +7085,7 @@ classes = (
     VIEW3D_MT_mesh_add,
     VIEW3D_MT_curve_add,
     VIEW3D_MT_surface_add,
+    VIEW3D_MT_edit_metaball_context_menu,
     VIEW3D_MT_metaball_add,
     TOPBAR_MT_edit_curve_add,
     TOPBAR_MT_edit_armature_add,

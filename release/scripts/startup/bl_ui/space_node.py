@@ -30,6 +30,13 @@ from .properties_material import (
     EEVEE_MATERIAL_PT_settings,
     MATERIAL_PT_viewport
 )
+from .properties_world import (
+    WORLD_PT_viewport_display
+)
+from .properties_data_light import (
+    DATA_PT_light,
+    DATA_PT_EEVEE_light,
+)
 
 
 class NODE_HT_header(Header):
@@ -607,47 +614,6 @@ class NODE_PT_grease_pencil_tools(GreasePencilToolsPanel, Panel):
     # toolbar, but which may not necessarily be open
 
 
-class EEVEE_NODE_PT_material_settings(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_label = "Settings"
-    COMPAT_ENGINES = {'BLENDER_EEVEE'}
-
-    @classmethod
-    def poll(cls, context):
-        snode = context.space_data
-        return (
-            (context.engine in cls.COMPAT_ENGINES) and
-            (snode.tree_type == 'ShaderNodeTree' and snode.id) and
-            (snode.id.bl_rna.identifier == 'Material')
-        )
-
-    def draw(self, context):
-        material = context.space_data.id
-        EEVEE_MATERIAL_PT_settings.draw_shared(self, material)
-
-
-class NODE_PT_material_viewport(Panel):
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Node"
-    bl_label = "Viewport Display"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        snode = context.space_data
-        return (
-            (snode.tree_type == 'ShaderNodeTree' and snode.id) and
-            (snode.id.bl_rna.identifier == "Material")
-        )
-
-    def draw(self, context):
-        material = context.space_data.id
-        MATERIAL_PT_viewport.draw_shared(self, material)
-
-
 def node_draw_tree_view(layout, context):
     pass
 
@@ -659,9 +625,18 @@ class NODE_MT_exit_edit_group(bpy.types.Operator):
     bl_label = "Group Edit Exit"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
-    def execute(self, context):         # execute() is called by blender when running the operator.
-        bpy.ops.node.group_edit(exit=True)
-        return {'FINISHED'}
+# Adapt properties editor panel to display in node editor. We have to
+# copy the class rather than inherit due to the way bpy registration works.
+def node_panel(cls):
+    node_cls = type('NODE_' + cls.__name__, cls.__bases__, dict(cls.__dict__))
+
+    node_cls.bl_space_type = 'NODE_EDITOR'
+    node_cls.bl_region_type = 'UI'
+    node_cls.bl_category = "Node"
+    if hasattr(node_cls, 'bl_parent_id'):
+        node_cls.bl_parent_id = 'NODE_' + node_cls.bl_parent_id
+
+    return node_cls
 
 classes = (
     ALL_MT_editormenu,
@@ -683,8 +658,11 @@ classes = (
     NODE_UL_interface_sockets,
     NODE_PT_grease_pencil,
     NODE_PT_grease_pencil_tools,
-    EEVEE_NODE_PT_material_settings,
-    NODE_PT_material_viewport,
+    node_panel(EEVEE_MATERIAL_PT_settings),
+    node_panel(MATERIAL_PT_viewport),
+    node_panel(WORLD_PT_viewport_display),
+    node_panel(DATA_PT_light),
+    node_panel(DATA_PT_EEVEE_light),
     NODE_MT_exit_edit_group, # BFA - Draise
 )
 
