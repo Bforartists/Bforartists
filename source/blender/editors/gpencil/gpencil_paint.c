@@ -398,7 +398,9 @@ static void gp_reproject_toplane(tGPsdata *p, bGPDstroke *gps)
 
 	/* get drawing origin */
 	gp_get_3d_reference(p, origin);
-	ED_gp_project_stroke_to_plane(obact, rv3d, gps, origin, p->lock_axis - 1);
+	ED_gp_project_stroke_to_plane(
+	        p->scene, obact, rv3d, gps,
+	        origin, p->lock_axis - 1);
 }
 
 /* convert screen-coordinates to buffer-coordinates */
@@ -426,8 +428,8 @@ static void gp_stroke_convertcoords(tGPsdata *p, const float mval[2], float out[
 			 * - nothing more needs to be done here, since view_autodist_simple() has already done it
 			 */
 
-			 /* verify valid zdepth, if it's wrong, the default drawing mode is used
-			  * and the function doesn't return now */
+			/* verify valid zdepth, if it's wrong, the default drawing mode is used
+			 * and the function doesn't return now */
 			if ((depth == NULL) || (*depth <= 1.0f)) {
 				return;
 			}
@@ -752,11 +754,11 @@ static short gp_stroke_addpoint(
 			gp_get_3d_reference(p, origin);
 			/* reproject current */
 			ED_gpencil_tpoint_to_point(p->ar, origin, pt, &spt);
-			ED_gp_project_point_to_plane(obact, rv3d, origin, p->lock_axis - 1, &spt);
+			ED_gp_project_point_to_plane(p->scene, obact, rv3d, origin, p->lock_axis - 1, &spt);
 
 			/* reproject previous */
 			ED_gpencil_tpoint_to_point(p->ar, origin, ptb, &spt2);
-			ED_gp_project_point_to_plane(obact, rv3d, origin, p->lock_axis - 1, &spt2);
+			ED_gp_project_point_to_plane(p->scene, obact, rv3d, origin, p->lock_axis - 1, &spt2);
 			p->totpixlen += len_v3v3(&spt.x, &spt2.x) / pixsize;
 			pt->uv_fac = p->totpixlen;
 			if ((gp_style) && (gp_style->sima)) {

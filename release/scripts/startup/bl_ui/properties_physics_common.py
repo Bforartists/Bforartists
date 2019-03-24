@@ -66,7 +66,7 @@ class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
         layout = self.layout
 
         row = layout.row(align=True)
-        row.alignment = 'RIGHT'
+        row.alignment = 'LEFT'
         row.label(text="Enable physics for:")
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
@@ -306,7 +306,7 @@ def basic_force_field_settings_ui(self, context, field):
         col.prop(field, "flow")
 
     col.prop(field, "apply_to_location", text="Affect Location")
-    col.prop(field, "apply_to_rotation", text="Rotation")
+    col.prop(field, "apply_to_rotation", text="Affect Rotation")
 
     col = flow.column()
     sub = col.column(align=True)

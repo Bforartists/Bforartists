@@ -172,7 +172,7 @@ enum {
 enum {
 	MCLIP_USE_PROXY               = (1 << 0),
 	MCLIP_USE_PROXY_CUSTOM_DIR    = (1 << 1),
-	/* MCLIP_CUSTOM_START_FRAME    = (1<<2), */ /* UNUSED */
+	/* MCLIP_CUSTOM_START_FRAME    = (1 << 2), */ /* UNUSED */
 	MCLIP_DATA_EXPAND             = (1 << 3),
 
 	MCLIP_TIMECODE_FLAGS          =  (MCLIP_USE_PROXY | MCLIP_USE_PROXY_CUSTOM_DIR),
@@ -190,6 +190,8 @@ enum {
 /* MovieClip->render_flag */
 enum {
 	MCLIP_PROXY_RENDER_UNDISTORT = 1,
+	/** Use original, if proxy is not found. */
+	MCLIP_PROXY_RENDER_USE_FALLBACK_RENDER = 2,
 };
 
 #endif

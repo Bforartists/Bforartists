@@ -250,7 +250,6 @@ class GreasePencilStrokeSculptPanel:
         layout.use_property_decorate = False
 
         settings = context.tool_settings.gpencil_sculpt
-        tool = settings.sculpt_tool
         brush = settings.brush
 
         layout.template_icon_view(settings, "sculpt_tool", show_labels=True)
@@ -787,6 +786,7 @@ class AnnotationOnionSkin:
         row = sub.row(align=True)
         row.prop(gpl, "annotation_onion_after_color", text="")
         sub.prop(gpl, "annotation_onion_after_range", text="After")
+
 
 class GreasePencilToolsPanel:
     # For use in "2D" Editors without their own toolbar

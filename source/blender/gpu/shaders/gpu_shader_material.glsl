@@ -525,6 +525,25 @@ void curves_rgb(
 	outcol = mix(col, outcol, fac);
 }
 
+void curves_rgb_opti(
+        float fac, vec4 col, sampler1DArray curvemap, float layer,
+        vec4 range, vec4 ext_a,
+        out vec4 outcol)
+{
+	vec4 co = vec4(RANGE_RESCALE(col.rgb, ext_a.x, range.a), layer);
+	vec3 samp;
+	samp.r = texture(curvemap, co.xw).a;
+	samp.g = texture(curvemap, co.yw).a;
+	samp.b = texture(curvemap, co.zw).a;
+
+	outcol.r = curve_extrapolate(co.x, samp.r, ext_a);
+	outcol.g = curve_extrapolate(co.y, samp.g, ext_a);
+	outcol.b = curve_extrapolate(co.z, samp.b, ext_a);
+	outcol.a = col.a;
+
+	outcol = mix(col, outcol, fac);
+}
+
 void set_value(float val, out float outval)
 {
 	outval = val;
@@ -1585,11 +1604,11 @@ void node_volume_principled(
 	/* Compute density. */
 	density = max(density, 0.0);
 
-	if(density > 1e-5) {
+	if (density > 1e-5) {
 		density = max(density * density_attribute, 0.0);
 	}
 
-	if(density > 1e-5) {
+	if (density > 1e-5) {
 		/* Compute scattering and absorption coefficients. */
 		vec3 scatter_color = color.rgb * color_attribute.rgb;
 
@@ -1601,20 +1620,21 @@ void node_volume_principled(
 	/* Compute emission. */
 	emission_strength = max(emission_strength, 0.0);
 
-	if(emission_strength > 1e-5) {
+	if (emission_strength > 1e-5) {
 		emission_coeff += emission_strength * emission_color.rgb;
 	}
 
-	if(blackbody_intensity > 1e-3) {
+	if (blackbody_intensity > 1e-3) {
 		/* Add temperature from attribute. */
 		float T = max(temperature * max(temperature_attribute, 0.0), 0.0);
 
 		/* Stefan-Boltzman law. */
-		float T4 = (T * T) * (T * T);
+		float T2 = T * T;
+		float T4 = T2 * T2;
 		float sigma = 5.670373e-8 * 1e-6 / M_PI;
 		float intensity = sigma * mix(1.0, T4, blackbody_intensity);
 
-		if(intensity > 1e-5) {
+		if (intensity > 1e-5) {
 			vec4 bb;
 			node_blackbody(T, spectrummap, layer, bb);
 			emission_coeff += bb.rgb * blackbody_tint.rgb * intensity;
@@ -1776,7 +1796,7 @@ void tangent_orco_z(vec3 orco_in, out vec3 orco_out)
 
 void node_tangentmap(vec4 attr_tangent, mat4 toworld, out vec3 tangent)
 {
-	tangent = (toworld * vec4(attr_tangent.xyz, 0.0)).xyz;
+	tangent = normalize((toworld * vec4(attr_tangent.xyz, 0.0)).xyz);
 }
 
 void node_tangent(vec3 N, vec3 orco, mat4 objmat, mat4 toworld, out vec3 T)

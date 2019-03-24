@@ -451,41 +451,62 @@ void GPU_matrix_project(const float world[3], const float model[4][4], const flo
 	win[2] = (v[2] + 1) * 0.5f;
 }
 
+/**
+ * The same result could be obtained as follows:
+ *
+ * \code{.c}
+ * float projinv[4][4];
+ * invert_m4_m4(projinv, projmat);
+ * co[0] = 2 * co[0] - 1;
+ * co[1] = 2 * co[1] - 1;
+ * co[2] = 2 * co[2] - 1;
+ * mul_project_m4_v3(projinv, co);
+ * \endcode
+ *
+ * But that solution loses much precision.
+ * Therefore, get the same result without inverting the matrix.
+ */
+static void gpu_mul_invert_projmat_m4_unmapped_v3(const float projmat[4][4], float co[3])
+{
+	float left, right, bottom, top, near, far;
+	bool is_persp = projmat[3][3] == 0.0f;
+
+	projmat_dimensions(
+	        projmat, &left, &right, &bottom, &top, &near, &far);
+
+	co[0] = left   + co[0] * (right - left);
+	co[1] = bottom + co[1] * (top - bottom);
+
+	if (is_persp) {
+		co[2] = far * near / (far + co[2] * (near - far));
+		co[0] *= co[2];
+		co[1] *= co[2];
+	}
+	else {
+		co[2] = near + co[2] * (far - near);
+	}
+	co[2] *= -1;
+}
+
 bool GPU_matrix_unproject(const float win[3], const float model[4][4], const float proj[4][4], const int view[4], float world[3])
 {
-	float pm[4][4];
-	float in[4];
-	float out[4];
+	float in[3];
+	float viewinv[4][4];
 
-	mul_m4_m4m4(pm, proj, model);
-
-	if (!invert_m4(pm)) {
+	if (!invert_m4_m4(viewinv, model)) {
 		zero_v3(world);
 		return false;
 	}
 
-	in[0] = win[0];
-	in[1] = win[1];
-	in[2] = win[2];
-	in[3] = 1;
+	copy_v3_v3(in, win);
 
 	/* Map x and y from window coordinates */
 	in[0] = (in[0] - view[0]) / view[2];
 	in[1] = (in[1] - view[1]) / view[3];
 
-	/* Map to range -1 to +1 */
-	in[0] = 2 * in[0] - 1;
-	in[1] = 2 * in[1] - 1;
-	in[2] = 2 * in[2] - 1;
+	gpu_mul_invert_projmat_m4_unmapped_v3(proj, in);
+	mul_v3_m4v3(world, viewinv, in);
 
-	mul_v4_m4v3(out, pm, in);
-
-	if (out[3] == 0.0f) {
-		copy_v3_v3(world, out);
-		return false;
-	}
-
-	mul_v3_v3fl(world, out, 1.0f / out[3]);
 	return true;
 }
 

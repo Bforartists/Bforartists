@@ -253,7 +253,9 @@ typedef struct EEVEE_PassList {
 	struct DRWPass *refract_depth_pass_clip_cull;
 	struct DRWPass *default_pass[VAR_MAT_MAX];
 	struct DRWPass *sss_pass;
+	struct DRWPass *sss_pass_cull;
 	struct DRWPass *material_pass;
+	struct DRWPass *material_pass_cull;
 	struct DRWPass *refract_pass;
 	struct DRWPass *transparent_pass;
 	struct DRWPass *background_pass;
@@ -486,8 +488,6 @@ typedef struct EEVEE_LightProbesInfo {
 	float visibility_blur;
 	float intensity_fac;
 	int shres;
-	int studiolight_index;
-	float studiolight_rot_z;
 	EEVEE_LightProbeVisTest planar_vis_tests[MAX_PLANAR];
 	/* UBO Storage : data used by UBO */
 	EEVEE_LightProbe probe_data[MAX_PROBE];
@@ -818,6 +818,11 @@ typedef struct EEVEE_PrivateData {
 
 	/* Color Management */
 	bool use_color_render_settings;
+
+	/* LookDev Settings */
+	int studiolight_index;
+	float studiolight_rot_z;
+
 } EEVEE_PrivateData; /* Transient data */
 
 /* eevee_data.c */
@@ -855,6 +860,7 @@ struct GPUMaterial *EEVEE_material_hair_get(struct Scene *scene, Material *ma, i
 void EEVEE_materials_free(void);
 void EEVEE_draw_default_passes(EEVEE_PassList *psl);
 void EEVEE_update_noise(EEVEE_PassList *psl, EEVEE_FramebufferList *fbl, const double offsets[3]);
+void EEVEE_update_viewvecs(float invproj[4][4], float winmat[4][4], float (*r_viewvecs)[4]);
 
 /* eevee_lights.c */
 void EEVEE_lights_init(EEVEE_ViewLayerData *sldata);

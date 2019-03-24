@@ -429,6 +429,28 @@ void GPU_create_gl_tex(
 {
 	ImBuf *ibuf = NULL;
 
+	if (textarget == GL_TEXTURE_2D &&
+	    is_over_resolution_limit(textarget, rectw, recth))
+	{
+		int tpx = rectw;
+		int tpy = recth;
+		rectw = smaller_power_of_2_limit(rectw);
+		recth = smaller_power_of_2_limit(recth);
+
+		if (use_high_bit_depth) {
+			ibuf = IMB_allocFromBuffer(NULL, frect, tpx, tpy);
+			IMB_scaleImBuf(ibuf, rectw, recth);
+
+			frect = ibuf->rect_float;
+		}
+		else {
+			ibuf = IMB_allocFromBuffer(rect, NULL, tpx, tpy);
+			IMB_scaleImBuf(ibuf, rectw, recth);
+
+			rect = ibuf->rect;
+		}
+	}
+
 	/* create image */
 	glGenTextures(1, (GLuint *)bind);
 	glBindTexture(textarget, *bind);
@@ -855,7 +877,7 @@ static GPUTexture *create_transfer_function(int type, const ColorBand *coba)
 			break;
 	}
 
-	GPUTexture *tex = GPU_texture_create_1D(TFUNC_WIDTH, GPU_RGBA8, data, NULL);
+	GPUTexture *tex = GPU_texture_create_1d(TFUNC_WIDTH, GPU_RGBA8, data, NULL);
 
 	MEM_freeN(data);
 
@@ -1067,9 +1089,9 @@ void GPU_create_smoke_velocity(SmokeModifierData *smd)
 		}
 
 		if (!sds->tex_velocity_x) {
-			sds->tex_velocity_x = GPU_texture_create_3D(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_x, NULL);
-			sds->tex_velocity_y = GPU_texture_create_3D(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_y, NULL);
-			sds->tex_velocity_z = GPU_texture_create_3D(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_z, NULL);
+			sds->tex_velocity_x = GPU_texture_create_3d(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_x, NULL);
+			sds->tex_velocity_y = GPU_texture_create_3d(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_y, NULL);
+			sds->tex_velocity_z = GPU_texture_create_3d(sds->res[0], sds->res[1], sds->res[2], GPU_R16F, vel_z, NULL);
 		}
 	}
 #else // WITH_SMOKE
