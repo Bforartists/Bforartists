@@ -98,7 +98,7 @@ class OUTLINER_HT_header(Header):
             sub.prop(space, "filter_id_type", text="", icon_only=True)
 
         if display_mode == 'VIEW_LAYER':
-            layout.operator("outliner.collection_new", text="", icon='GROUP').nested = True
+            layout.operator("outliner.collection_new", text="", icon='GROUP')
 
         elif display_mode == 'ORPHAN_DATA':
             layout.operator("outliner.orphans_purge", text="Purge")
@@ -252,7 +252,8 @@ class OUTLINER_MT_collection(Menu):
 
         space = context.space_data
 
-        layout.operator("outliner.collection_new", text="New").nested = True
+        layout.operator("outliner.collection_new", text="New")
+        layout.operator("outliner.collection_new", text="New Nested").nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection")
         layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked")
 
@@ -293,7 +294,8 @@ class OUTLINER_MT_collection_new(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("outliner.collection_new", text="New").nested = False
+        layout.operator("outliner.collection_new", text="New")
+        layout.operator("outliner.collection_new", text="New Nested").nested = True
 
 
 class OUTLINER_MT_object(Menu):
