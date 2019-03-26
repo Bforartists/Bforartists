@@ -308,7 +308,7 @@ typedef enum eOutliner_PropSceneOps {
 } eOutliner_PropSceneOps;
 
 static const EnumPropertyItem prop_scene_op_types[] = {
-	{OL_SCENE_OP_DELETE, "DELETE", ICON_X, "Delete", ""},
+	{OL_SCENE_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -985,13 +985,13 @@ enum {
 
 static const EnumPropertyItem prop_object_op_types[] = {
 	{OL_OP_SELECT, "SELECT", ICON_RESTRICT_SELECT_OFF, "Select", ""},
-	{OL_OP_DESELECT, "DESELECT", 0, "Deselect", ""},
-	{OL_OP_SELECT_HIERARCHY, "SELECT_HIERARCHY", 0, "Select Hierarchy", ""},
-	{OL_OP_DELETE, "DELETE", ICON_X, "Delete", ""},
-	{OL_OP_DELETE_HIERARCHY, "DELETE_HIERARCHY", 0, "Delete Hierarchy", ""},
-	{OL_OP_REMAP, "REMAP",   0, "Remap Users",
+	{OL_OP_DESELECT, "DESELECT", ICON_SELECT_NONE, "Deselect", ""},
+	{OL_OP_SELECT_HIERARCHY, "SELECT_HIERARCHY", ICON_RESTRICT_SELECT_OFF, "Select Hierarchy", ""},
+	{OL_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+	{OL_OP_DELETE_HIERARCHY, "DELETE_HIERARCHY", ICON_DELETE, "Delete Hierarchy", ""},
+	{OL_OP_REMAP, "REMAP",   ICON_USER, "Remap Users",
 	 "Make all users of selected data-blocks to use instead a new chosen one"},
-	{OL_OP_RENAME, "RENAME", 0, "Rename", ""},
+	{OL_OP_RENAME, "RENAME", ICON_RENAME, "Rename", ""},
 	{OL_OP_OBJECT_MODE_ENTER, "OBJECT_MODE_ENTER", 0, "Enter Mode", ""},
 	{OL_OP_OBJECT_MODE_EXIT, "OBJECT_MODE_EXIT", 0, "Exit Mode", ""},
 	{0, NULL, 0, NULL, NULL},
@@ -1161,19 +1161,19 @@ typedef enum eOutlinerIdOpTypes {
 
 // TODO: implement support for changing the ID-block used
 static const EnumPropertyItem prop_id_op_types[] = {
-	{OUTLINER_IDOP_UNLINK, "UNLINK", 0, "Unlink", ""},
-	{OUTLINER_IDOP_LOCAL, "LOCAL", 0, "Make Local", ""},
+	{OUTLINER_IDOP_UNLINK, "UNLINK", ICON_UNLINKED, "Unlink", ""},
+	{OUTLINER_IDOP_LOCAL, "LOCAL", ICON_MAKE_LOCAL, "Make Local", ""},
 	{OUTLINER_IDOP_STATIC_OVERRIDE, "STATIC_OVERRIDE", 0, "Add Static Override",
 	 "Add a local static override of this data-block"},
-	{OUTLINER_IDOP_SINGLE, "SINGLE", 0, "Make Single User", ""},
-	{OUTLINER_IDOP_DELETE, "DELETE", ICON_X, "Delete", ""},
-	{OUTLINER_IDOP_REMAP, "REMAP", 0, "Remap Users",
+	{OUTLINER_IDOP_SINGLE, "SINGLE", ICON_MAKE_SINGLE_USER, "Make Single User", ""},
+	{OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
+	{OUTLINER_IDOP_REMAP, "REMAP", ICON_USER, "Remap Users",
 	 "Make all users of selected data-blocks to use instead current (clicked) one"},
-	{OUTLINER_IDOP_FAKE_ADD, "ADD_FAKE", 0, "Add Fake User",
+	{OUTLINER_IDOP_FAKE_ADD, "ADD_FAKE", ICON_FAKE_USER_ON, "Add Fake User",
 	 "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material libraries)"},
-	{OUTLINER_IDOP_FAKE_CLEAR, "CLEAR_FAKE", 0, "Clear Fake User", ""},
-	{OUTLINER_IDOP_RENAME, "RENAME", 0, "Rename", ""},
-	{OUTLINER_IDOP_SELECT_LINKED, "SELECT_LINKED", 0, "Select Linked", ""},
+	{OUTLINER_IDOP_FAKE_CLEAR, "CLEAR_FAKE", ICON_FAKE_USER_OFF, "Clear Fake User", ""},
+	{OUTLINER_IDOP_RENAME, "RENAME", ICON_RENAME, "Rename", ""},
+	{OUTLINER_IDOP_SELECT_LINKED, "SELECT_LINKED", ICON_LINKED, "Select Linked", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -1396,9 +1396,9 @@ typedef enum eOutlinerLibOpTypes {
 } eOutlinerLibOpTypes;
 
 static const EnumPropertyItem outliner_lib_op_type_items[] = {
-	{OL_LIB_RENAME, "RENAME", 0, "Rename", ""},
-	{OL_LIB_DELETE, "DELETE", ICON_X, "Delete", "Delete this library and all its item from Blender - WARNING: no undo"},
-	{OL_LIB_RELOCATE, "RELOCATE", 0, "Relocate", "Select a new path for this library, and reload all its data"},
+	{OL_LIB_RENAME, "RENAME", ICON_RENAME, "Rename", ""},
+	{OL_LIB_DELETE, "DELETE", ICON_DELETE, "Delete", "Delete this library and all its item from Blender - WARNING: no undo"},
+	{OL_LIB_RELOCATE, "RELOCATE", ICON_FILE_REFRESH, "Relocate", "Select a new path for this library, and reload all its data"},
 	{OL_LIB_RELOAD, "RELOAD", ICON_FILE_REFRESH, "Reload", "Reload all data from this library"},
 	{0, NULL, 0, NULL, NULL},
 };
@@ -1605,13 +1605,13 @@ typedef enum eOutliner_AnimDataOps {
 } eOutliner_AnimDataOps;
 
 static const EnumPropertyItem prop_animdata_op_types[] = {
-	{OUTLINER_ANIMOP_CLEAR_ADT, "CLEAR_ANIMDATA", 0, "Clear Animation Data", "Remove this animation data container"},
-	{OUTLINER_ANIMOP_SET_ACT, "SET_ACT", 0, "Set Action", ""},
-	{OUTLINER_ANIMOP_CLEAR_ACT, "CLEAR_ACT", 0, "Unlink Action", ""},
-	{OUTLINER_ANIMOP_REFRESH_DRV, "REFRESH_DRIVERS", 0, "Refresh Drivers", ""},
+	{OUTLINER_ANIMOP_CLEAR_ADT, "CLEAR_ANIMDATA", ICON_CLEAR, "Clear Animation Data", "Remove this animation data container"},
+	{OUTLINER_ANIMOP_SET_ACT, "SET_ACT", ICON_ACTION, "Set Action", ""},
+	{OUTLINER_ANIMOP_CLEAR_ACT, "CLEAR_ACT", ICON_CLEAR, "Unlink Action", ""},
+	{OUTLINER_ANIMOP_REFRESH_DRV, "REFRESH_DRIVERS", ICON_FILE_REFRESH, "Refresh Drivers", ""},
 	//{OUTLINER_ANIMOP_COPY_DRIVERS, "COPY_DRIVERS", 0, "Copy Drivers", ""},
 	//{OUTLINER_ANIMOP_PASTE_DRIVERS, "PASTE_DRIVERS", 0, "Paste Drivers", ""},
-	{OUTLINER_ANIMOP_CLEAR_DRV, "CLEAR_DRIVERS", 0, "Clear Drivers", ""},
+	{OUTLINER_ANIMOP_CLEAR_DRV, "CLEAR_DRIVERS", ICON_CLEAR, "Clear Drivers", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -1706,7 +1706,7 @@ void OUTLINER_OT_animdata_operation(wmOperatorType *ot)
 static const EnumPropertyItem prop_constraint_op_types[] = {
 	{OL_CONSTRAINTOP_ENABLE, "ENABLE", ICON_HIDE_OFF, "Enable", ""},
 	{OL_CONSTRAINTOP_DISABLE, "DISABLE", ICON_HIDE_ON, "Disable", ""},
-	{OL_CONSTRAINTOP_DELETE, "DELETE", ICON_X, "Delete", ""},
+	{OL_CONSTRAINTOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -1751,7 +1751,7 @@ void OUTLINER_OT_constraint_operation(wmOperatorType *ot)
 static const EnumPropertyItem prop_modifier_op_types[] = {
 	{OL_MODIFIER_OP_TOGVIS, "TOGVIS", ICON_RESTRICT_VIEW_OFF, "Toggle viewport use", ""},
 	{OL_MODIFIER_OP_TOGREN, "TOGREN", ICON_RESTRICT_RENDER_OFF, "Toggle render use", ""},
-	{OL_MODIFIER_OP_DELETE, "DELETE", ICON_X, "Delete", ""},
+	{OL_MODIFIER_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
@@ -1795,11 +1795,11 @@ void OUTLINER_OT_modifier_operation(wmOperatorType *ot)
 
 // XXX: select linked is for RNA structs only
 static const EnumPropertyItem prop_data_op_types[] = {
-	{OL_DOP_SELECT, "SELECT", 0, "Select", ""},
-	{OL_DOP_DESELECT, "DESELECT", 0, "Deselect", ""},
-	{OL_DOP_HIDE, "HIDE", 0, "Hide", ""},
-	{OL_DOP_UNHIDE, "UNHIDE", 0, "Unhide", ""},
-	{OL_DOP_SELECT_LINKED, "SELECT_LINKED", 0, "Select Linked", ""},
+	{OL_DOP_SELECT, "SELECT", ICON_RESTRICT_SELECT_OFF, "Select", ""},
+	{OL_DOP_DESELECT, "DESELECT", ICON_SELECT_NONE, "Deselect", ""},
+	{OL_DOP_HIDE, "HIDE", ICON_HIDE_ON, "Hide", ""},
+	{OL_DOP_UNHIDE, "UNHIDE", ICON_HIDE_OFF, "Unhide", ""},
+	{OL_DOP_SELECT_LINKED, "SELECT_LINKED", ICON_LINKED, "Select Linked", ""},
 	{0, NULL, 0, NULL, NULL},
 };
 
