@@ -439,7 +439,6 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_snap")
 
         layout.prop_menu_enum(uv, "pixel_snap_mode")
-        layout.prop(uv, "lock_bounds")
 
         layout.separator()
 
@@ -447,7 +446,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.prop(uv, "use_live_unwrap")
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
         layout.operator("uv.follow_active_quads")
@@ -805,6 +803,9 @@ class IMAGE_PT_image_options(Panel):
 
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
+
+        layout.prop(uv, "lock_bounds")
+        layout.prop(uv, "use_live_unwrap")
 
         layout.prop(sima, "use_realtime_update")
         if show_uvedit:
