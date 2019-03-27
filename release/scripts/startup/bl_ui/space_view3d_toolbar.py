@@ -1592,7 +1592,8 @@ class VIEW3D_PT_tools_particlemode_options_shapecut(View3DPanel, Panel):
         pe = context.tool_settings.particle_edit
 
         layout.prop(pe, "shape_object")
-        layout.operator("particle.shape_cut", text="Cut")
+        if pe.shape_object:
+            layout.operator("particle.shape_cut", text="Cut")
 
 
 class VIEW3D_PT_tools_particlemode_options_display(View3DPanel, Panel):
