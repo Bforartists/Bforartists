@@ -791,11 +791,6 @@ class IMAGE_PT_image_options(Panel):
     def draw(self, context):
         layout = self.layout
 
-        tool_settings = context.tool_settings
-        settings = tool_settings.image_paint
-        brush = settings.brush
-        ups = context.tool_settings.unified_paint_settings
-
         sima = context.space_data
         uv = sima.uv_editor
         tool_settings = context.tool_settings
@@ -804,8 +799,10 @@ class IMAGE_PT_image_options(Panel):
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
-        layout.prop(uv, "lock_bounds")
-        layout.prop(uv, "use_live_unwrap")
+        if sima.mode == 'UV':
+
+            layout.prop(uv, "lock_bounds")
+            layout.prop(uv, "use_live_unwrap")
 
         layout.prop(sima, "use_realtime_update")
         if show_uvedit:
@@ -817,10 +814,25 @@ class IMAGE_PT_image_options(Panel):
             layout.prop(uv, "show_texpaint")
             layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
 
-        layout.label(text = "Unified Brush")
+class IMAGE_PT_image_options_unified(Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'UI'
+    bl_parent_id = "IMAGE_PT_image_options"
+    bl_category = "Image"
+    bl_label = "Unified Brush"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        settings = tool_settings.image_paint
+        brush = settings.brush
+        ups = context.tool_settings.unified_paint_settings
+
         layout.prop(ups, "use_unified_size", text="Unified Size")
         layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        layout.prop(ups, "use_unified_color", text="Unified Color")    
+        layout.prop(ups, "use_unified_color", text="Unified Color")
 
 
 class IMAGE_PT_image_properties(Panel):
@@ -1679,6 +1691,7 @@ classes = (
     IMAGE_PT_active_mask_spline,
     IMAGE_PT_active_mask_point,
     IMAGE_PT_image_options,
+    IMAGE_PT_image_options_unified,
     IMAGE_PT_image_properties,
     IMAGE_UL_render_slots,
     IMAGE_PT_render_slots,
