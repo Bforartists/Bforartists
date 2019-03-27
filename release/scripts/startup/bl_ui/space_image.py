@@ -74,27 +74,11 @@ class IMAGE_MT_view(Menu):
         layout = self.layout
 
         sima = context.space_data
-        uv = sima.uv_editor
-        tool_settings = context.tool_settings
-        paint = tool_settings.image_paint
-
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
         layout.operator("image.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.operator("image.toolshelf", text = "Tool Shelf", icon='MENU_PANEL')
-
-        layout.separator()
-
-        layout.prop(sima, "use_realtime_update")
-        if show_uvedit:
-            layout.prop(tool_settings, "show_uv_local_view")
-
-        layout.prop(uv, "show_metadata")
-
-        if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
-            layout.prop(uv, "show_texpaint")
-            layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
 
         layout.separator()
 
@@ -812,8 +796,25 @@ class IMAGE_PT_image_options(Panel):
         tool_settings = context.tool_settings
         settings = tool_settings.image_paint
         brush = settings.brush
-
         ups = context.tool_settings.unified_paint_settings
+
+        sima = context.space_data
+        uv = sima.uv_editor
+        tool_settings = context.tool_settings
+        paint = tool_settings.image_paint
+
+        show_uvedit = sima.show_uvedit
+        show_render = sima.show_render
+
+        layout.prop(sima, "use_realtime_update")
+        if show_uvedit:
+            layout.prop(tool_settings, "show_uv_local_view")
+
+        layout.prop(uv, "show_metadata")
+
+        if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
+            layout.prop(uv, "show_texpaint")
+            layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
 
         layout.label(text = "Unified Brush")
         layout.prop(ups, "use_unified_size", text="Unified Size")
