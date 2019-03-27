@@ -223,8 +223,6 @@ class IMAGE_MT_brush(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_context = 'EXEC_AREA'
-
         #radial control button brush size
         myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
         myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
