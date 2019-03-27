@@ -222,20 +222,8 @@ class IMAGE_MT_brush(Menu):
 
     def draw(self, context):
         layout = self.layout
-        tool_settings = context.tool_settings
-        settings = tool_settings.image_paint
-        brush = settings.brush
 
-        ups = context.tool_settings.unified_paint_settings
-        layout.prop(ups, "use_unified_size", text="Unified Size")
-        layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        layout.prop(ups, "use_unified_color", text="Unified Color")      
-
-        # Brush tool.
-
-        #layout.separator()
-
-        #layout.prop_menu_enum(brush, "image_tool") - bfa deactivated the brush enum. The brushes are in the tool shelf already.
+        layout.label(text = "empty")
 
 
 class IMAGE_MT_image(Menu):
@@ -756,6 +744,27 @@ class IMAGE_PT_active_mask_point(MASK_PT_point, Panel):
 
 
 # --- end mask ---
+
+class IMAGE_PT_image_options(Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Image"
+    bl_label = "Options"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        settings = tool_settings.image_paint
+        brush = settings.brush
+
+        ups = context.tool_settings.unified_paint_settings
+
+        layout.label(text = "Unified Brush")
+        layout.prop(ups, "use_unified_size", text="Unified Size")
+        layout.prop(ups, "use_unified_strength", text="Unified Strength")
+        layout.prop(ups, "use_unified_color", text="Unified Color")    
 
 
 class IMAGE_PT_image_properties(Panel):
@@ -1613,6 +1622,7 @@ classes = (
     IMAGE_PT_mask_display,
     IMAGE_PT_active_mask_spline,
     IMAGE_PT_active_mask_point,
+    IMAGE_PT_image_options,
     IMAGE_PT_image_properties,
     IMAGE_UL_render_slots,
     IMAGE_PT_render_slots,
