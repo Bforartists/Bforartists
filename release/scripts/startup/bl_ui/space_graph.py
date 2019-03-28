@@ -102,6 +102,40 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
 
+class GRAPH_PT_properties_view_options(Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+
+        layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_frame_indicator")
+        layout.prop(st, "show_cursor")
+        layout.prop(st, "show_sliders")
+        layout.prop(st, "show_group_colors")
+        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "use_auto_merge_keyframes")
+
+        layout.separator()
+
+        layout.prop(st, "use_beauty_drawing")
+
+        layout.separator()
+
+        layout.prop(st, "show_handles")
+
+        layout.prop(st, "use_only_selected_curves_handles")
+        layout.prop(st, "use_only_selected_keyframe_handles")
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
+
 class GRAPH_MT_editor_menus(Menu):
     bl_idname = "GRAPH_MT_editor_menus"
     bl_label = ""
@@ -124,30 +158,9 @@ class GRAPH_MT_view(Menu):
         st = context.space_data
 
         layout.operator("graph.properties", text = "Sidebar", icon='MENU_PANEL')
-        layout.separator()
-
-        layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_frame_indicator")
-        layout.prop(st, "show_cursor")
-        layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "show_marker_lines")
-        layout.prop(st, "use_auto_merge_keyframes")
-
-        layout.separator()
-        layout.prop(st, "use_beauty_drawing")
 
         layout.separator()
 
-        layout.prop(st, "show_handles")
-
-        layout.prop(st, "use_only_selected_curves_handles")
-        layout.prop(st, "use_only_selected_keyframe_handles")
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.separator()
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
@@ -160,11 +173,13 @@ class GRAPH_MT_view(Menu):
 
         # Add this to show key-binding (reverse action in dope-sheet).
         layout.separator()
+
         props = layout.operator("wm.context_set_enum", text="Toggle Dope Sheet")
         props.data_path = "area.type"
         props.value = 'DOPESHEET_EDITOR'
 
         layout.separator()
+
         layout.menu("INFO_MT_area")
 
 
@@ -557,6 +572,7 @@ classes = (
     GRAPH_MT_pivot_pie,
     GRAPH_MT_snap_pie,
     GRAPH_PT_filters,
+    GRAPH_PT_properties_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
