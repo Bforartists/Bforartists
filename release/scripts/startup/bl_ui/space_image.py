@@ -180,12 +180,12 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_box", icon='BORDER_RECT').pinned = False
-        layout.operator("uv.select_box", icon='BORDER_RECT').pinned = True
+        layout.operator("uv.select_box", text = "Box Select Pinned", icon='BORDER_RECT').pinned = True
         layout.operator("uv.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
       
-        layout.operator("uv.select_linked", text = "Linked", icon = "LINKED").extend = False
+        layout.operator("uv.select_linked", text = "Linked", icon = "LINKED")
         layout.operator("uv.select_linked_extend", text = "Linked Extend", icon = "LINKED") # bfa - separated tooltip
         layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED").extend = False
         layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend", icon = "LINKED") # bfa - separated tooltip
