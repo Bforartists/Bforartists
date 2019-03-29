@@ -807,7 +807,7 @@ class TOPBAR_MT_edit(Menu):
         layout.separator()
 
         # Mainly to expose shortcut since this depends on the context.
-        props = layout.operator("wm.call_panel", text="Rename Active Item...", icon='OUTLINER_DATA_FONT')
+        props = layout.operator("wm.call_panel", text="Rename Active Item", icon='OUTLINER_DATA_FONT')
         props.name = "TOPBAR_PT_name"
         props.keep_open = False
 
@@ -819,7 +819,7 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
        
-        layout.operator("preferences.app_template_install", text="Install Application Template...")
+        layout.operator("preferences.app_template_install", text="Install Application Template", icon = "APPTEMPLATE")
 
         layout.separator()
 
@@ -840,7 +840,7 @@ class TOPBAR_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
+        layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
 
         
 
