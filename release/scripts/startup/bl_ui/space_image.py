@@ -438,8 +438,6 @@ class IMAGE_MT_uvs(Menu):
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
 
-        layout.prop_menu_enum(uv, "pixel_snap_mode")
-
         layout.separator()
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
@@ -463,9 +461,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_transform")
-        layout.menu("IMAGE_MT_uvs_mirror")
-        layout.menu("IMAGE_MT_uvs_snap")
         layout.menu("IMAGE_MT_uvs_weldalign")
         layout.menu("IMAGE_MT_uvs_select_mode")
 
@@ -599,6 +594,7 @@ class IMAGE_HT_header(Header):
         ima = sima.image
         iuser = sima.image_user
         tool_settings = context.tool_settings
+        uv = sima.uv_editor
 
         show_render = sima.show_render
         show_uvedit = sima.show_uvedit
@@ -623,7 +619,7 @@ class IMAGE_HT_header(Header):
 
             layout.prop(tool_settings, "use_uv_sculpt", text = "", icon = "SCULPTMODE_HLT")
 
-        MASK_MT_editor_menus.draw_collapsible(context, layout)
+        MASK_MT_editor_menus.draw_collapsible(context, layout)    
 
         layout.separator_spacer()
 
@@ -648,7 +644,9 @@ class IMAGE_HT_header(Header):
             layout.prop(sima, "pivot_point", icon_only=True)
 
         if show_uvedit:
-            # Snap.
+            # Snap.           
+            row = layout.row(align=True)
+            row.prop(uv, "pixel_snap_mode", icon_only=True)
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
             row.prop(tool_settings, "snap_uv_element", icon_only=True)
