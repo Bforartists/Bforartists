@@ -466,10 +466,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_proportional")
-
-        layout.separator()
-
         layout.menu("IMAGE_MT_uvs_showhide")
 
 
