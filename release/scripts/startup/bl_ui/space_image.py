@@ -442,10 +442,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.prop(tool_settings, "use_uv_sculpt")
-
-        layout.separator()
-
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
         layout.operator("uv.follow_active_quads")
@@ -624,6 +620,8 @@ class IMAGE_HT_header(Header):
             else:
                 layout.prop(tool_settings, "uv_select_mode", text="", expand=True)
                 layout.prop(uvedit, "sticky_select_mode", icon_only=True)
+
+            layout.prop(tool_settings, "use_uv_sculpt", text = "", icon = "SCULPTMODE_HLT")
 
         MASK_MT_editor_menus.draw_collapsible(context, layout)
 
