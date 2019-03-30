@@ -2178,9 +2178,9 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
 	};
 
 	static const EnumPropertyItem pixel_snap_mode_items[] = {
-		{SI_PIXEL_SNAP_DISABLED, "DISABLED", 0, "Disabled", "Disabled\nDon't snap to pixels"},
-		{SI_PIXEL_SNAP_CORNER, "CORNER", 0, "Corner", "Corner\nSnap to pixel corners"},
-		{SI_PIXEL_SNAP_CENTER, "CENTER", 0, "Center", "Center\nSnap to pixel centers"},
+		{SI_PIXEL_SNAP_DISABLED, "DISABLED", ICON_SNAPTOPIXEL_OFF, "Disabled", "Disabled\nDon't snap to pixels"},
+		{SI_PIXEL_SNAP_CORNER, "CORNER", ICON_SNAPTOPIXEL_CORNER, "Corner", "Corner\nSnap to pixel corners"},
+		{SI_PIXEL_SNAP_CENTER, "CENTER", ICON_SNAPTOPIXEL_CENTER, "Center", "Center\nSnap to pixel centers"},
 		{0, NULL, 0, NULL, NULL},
 	};
 
