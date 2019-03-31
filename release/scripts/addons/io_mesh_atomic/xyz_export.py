@@ -17,29 +17,30 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from io_mesh_atomic.xyz_import import ELEMENTS_DEFAULT
 
-from . import import_pdb
 
-class AtomPropExport(object):
+class AtomsExport(object):
     __slots__ = ('element', 'location')
     def __init__(self, element, location):
         self.element  = element
         self.location = location
 
 
-def export_pdb(obj_type, filepath_pdb):
+def export_xyz(obj_type, filepath_xyz):
 
     list_atoms = []
+    counter = 0
     for obj in bpy.context.selected_objects:
 
-        if "Stick" in obj.name:
+        if "STICK" in obj.name.upper():
             continue
 
         if obj.type not in {'MESH', 'SURFACE', 'META'}:
             continue
 
         name = ""
-        for element in import_pdb.ELEMENTS_DEFAULT:
+        for element in ELEMENTS_DEFAULT:
             if element[1] in obj.name:
                 if element[2] == "Vac":
                     name = "X"
@@ -54,30 +55,29 @@ def export_pdb(obj_type, filepath_pdb):
 
         if len(obj.children) != 0:
             for vertex in obj.data.vertices:
-                location = obj.matrix_world*vertex.co
-                list_atoms.append(AtomPropExport(name, location))
+                location = obj.matrix_world @ vertex.co
+                list_atoms.append(AtomsExport(name, location))
+                counter += 1
         else:
             if not obj.parent:
                 location = obj.location
-                list_atoms.append(AtomPropExport(name, location))
+                list_atoms.append(AtomsExport(name, location))
+                counter += 1
 
-    pdb_file_p = open(filepath_pdb, "w")
-    pdb_file_p.write("REMARK This pdb file has been created with Blender "
-                     "and the addon Atomic Blender - PDB\n"
-                     "REMARK For more details see wiki.blender.org/index.php/"
-                     "Extensions:2.6/Py/Scripts/Import-Export/PDB\n"
-                     "REMARK\n"
-                     "REMARK\n")
+    xyz_file_p = open(filepath_xyz, "w")
+    xyz_file_p.write("%d\n" % counter)
+    xyz_file_p.write("This XYZ file has been created with Blender "
+                     "and the addon Atomic Blender - XYZ. "
+                     "For more details see the wiki pages of Blender.\n")
 
     for i, atom in enumerate(list_atoms):
-        string = "ATOM %6d%3s%24.3f%8.3f%8.3f%6.2f%6.2f%12s\n" % (
-                                      i, atom.element,
+        string = "%3s%15.5f%15.5f%15.5f\n" % (
+                                      atom.element,
                                       atom.location[0],
                                       atom.location[1],
-                                      atom.location[2],
-                                      1.00, 1.00, atom.element)
-        pdb_file_p.write(string)
+                                      atom.location[2])
+        xyz_file_p.write(string)
 
-    pdb_file_p.close()
+    xyz_file_p.close()
 
     return True

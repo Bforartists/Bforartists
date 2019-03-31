@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -429,10 +429,6 @@ msgstr "Vlastnosti"
 
 msgid "File Browser"
 msgstr "Prohlížeč souborů"
-
-
-msgid "Default"
-msgstr "Základní"
 
 
 msgid "Width"
@@ -1159,16 +1155,16 @@ msgid "Stroke"
 msgstr "Tah (štětcem)"
 
 
+msgid "Default"
+msgstr "Základní"
+
+
 msgid "Strokes"
 msgstr "Vzorkovat:"
 
 
-msgid "Control"
-msgstr "Odstranit pruh"
-
-
-msgid "Both"
-msgstr "Oba"
+msgid "Resolution"
+msgstr "Rozlišení"
 
 
 msgid "Simplify"
@@ -1920,6 +1916,10 @@ msgid "Track To"
 msgstr "Sledování"
 
 
+msgid "Armature"
+msgstr "Kostra"
+
+
 msgid "Child Of"
 msgstr "Potomek"
 
@@ -1934,10 +1934,6 @@ msgstr "Následovat Cestu"
 
 msgid "Shrinkwrap"
 msgstr "Smrštit/roztáhnout"
-
-
-msgid "Armature"
-msgstr "Kostra"
 
 
 msgid "Action Constraint"
@@ -3592,10 +3588,6 @@ msgid "Directory to save the textures"
 msgstr "Vyhlazuje hrany textury"
 
 
-msgid "Resolution"
-msgstr "Rozlišení"
-
-
 msgid "Output image resolution"
 msgstr "Jemnost dělení"
 
@@ -4721,6 +4713,10 @@ msgid "Particle"
 msgstr "Částice"
 
 
+msgid "Control"
+msgstr "Odstranit pruh"
+
+
 msgid "Control Fluid Simulation Settings"
 msgstr "Přpíná simulaci mlhy"
 
@@ -4939,6 +4935,10 @@ msgstr "Výpočet UV souřadnic"
 
 msgid "Use only the outer shell of the mesh"
 msgstr "Vzbrat vše podle typu"
+
+
+msgid "Both"
+msgstr "Oba"
 
 
 msgid "Inflow Fluid Simulation Settings"
@@ -7821,50 +7821,6 @@ msgid "Apply effectors to children"
 msgstr "Omezit osvětlení na lampy v této skupině"
 
 
-msgid "Align to"
-msgstr "Automatické zarovnání"
-
-
-msgid "Animate"
-msgstr "Armatura"
-
-
-msgid "Age"
-msgstr "Úhel"
-
-
-msgid "Billboard Object"
-msgstr "Zrcadlový objekt:"
-
-
-msgid "Billboard Offset"
-msgstr "Obdelníkové výběr"
-
-
-msgid "Billboard Scale"
-msgstr "Vypocitat normaly"
-
-
-msgid "Tilt of the billboards"
-msgstr "Název prohlížeče souborů"
-
-
-msgid "Random Tilt"
-msgstr "Náhodné"
-
-
-msgid "UV Split"
-msgstr "Rozdělit"
-
-
-msgid "Billboard Velocity Head"
-msgstr "Autovyhlazení"
-
-
-msgid "Billboard Velocity Tail"
-msgstr "Vypocitat normaly"
-
-
 msgid "Length of child paths"
 msgstr "Označit vrstvu"
 
@@ -8111,10 +8067,6 @@ msgstr "Životnost:"
 
 msgid "Life span of the particles"
 msgstr "Velikost štětce"
-
-
-msgid "Lock Billboard"
-msgstr "Změna velikosti"
 
 
 msgid "Boids 2D"
@@ -14480,10 +14432,6 @@ msgid "Lasso Select"
 msgstr "Volný výběr"
 
 
-msgid "Deselect rather than select items"
-msgstr "Označí neoznačené plošky a zruší označení označených plošek"
-
-
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Z prava"
@@ -14662,6 +14610,10 @@ msgstr "Vytvořit nový soubor"
 
 msgid "Toggle selection of all animation channels"
 msgstr "Vzbrat vše podle typu"
+
+
+msgid "Deselect rather than select items"
+msgstr "Označí neoznačené plošky a zruší označení označených plošek"
 
 
 msgctxt "Operator"
@@ -17111,6 +17063,14 @@ msgstr "Smazat koordináty nálepky textury"
 
 msgid "Polygroups"
 msgstr "Žádné skupiny"
+
+
+msgid "Compress"
+msgstr "Komprimovat"
+
+
+msgid "Hierarchy"
+msgstr "Vybrat klíče"
 
 
 msgctxt "Operator"
@@ -21911,10 +21871,6 @@ msgid "Clear Drivers"
 msgstr "Odstranit Rodiče Inverzně"
 
 
-msgid "Hierarchy"
-msgstr "Vybrat klíče"
-
-
 msgctxt "Operator"
 msgid "Outliner Data Operation"
 msgstr "Boolean operace"
@@ -26156,10 +26112,6 @@ msgid "Save the current file in the desired location"
 msgstr "Uloží současný soubor na vybrané umístění"
 
 
-msgid "Compress"
-msgstr "Komprimovat"
-
-
 msgid "Save Copy"
 msgstr "Uložit kopii"
 
@@ -26341,88 +26293,12 @@ msgid "Restrict"
 msgstr "Restart"
 
 
-msgid "Camera Presets"
-msgstr "Port frameserveru "
-
-
-msgid "Color Presets"
-msgstr "Předvolby pro látku"
-
-
-msgid "Tracking Presets"
-msgstr "Sledování"
-
-
-msgid "Cloth Presets"
-msgstr "Předvolby pro látku"
-
-
-msgid "Integrator Presets"
-msgstr "Generátory"
-
-
-msgid "Fluid Presets"
-msgstr "Vlastnosti..."
-
-
-msgid "FFMPEG Presets"
-msgstr "Načíst:"
-
-
-msgid "Render Presets"
-msgstr "Předvolby renderu"
-
-
-msgid "Timeline"
-msgstr "Časová osa"
-
-
-msgid "Auto Run Python Scripts"
-msgstr "Spustit Python skript"
-
-
-msgid "Bone Color Sets"
-msgstr "Barva "
-
-
-msgid "Styles"
-msgstr "Kroky:"
-
-
-msgid "Text Style"
-msgstr "Zhranatit"
-
-
-msgid "User Interface"
-msgstr "Uživatelské rozhraní"
-
-
-msgid "Theme Space"
-msgstr "Prostor textury"
-
-
-msgid "Theme Space List"
-msgstr "Nelineární video editor"
-
-
-msgid "Panel Colors"
-msgstr "Horizontální"
-
-
-msgid "Video Sequence Editor"
-msgstr "Nelineární video editor "
-
-
-msgid "3D View"
-msgstr "3D pohled"
-
-
-msgid "Gradient Colors"
-msgstr "Horizontální"
-
-
 msgid "Bone Constraints"
 msgstr "Vazby kostí"
+
+
+msgid "Camera Presets"
+msgstr "Port frameserveru "
 
 
 msgid "Active Point"
@@ -26453,12 +26329,24 @@ msgid "Clean up"
 msgstr "Vyčistit"
 
 
+msgid "Color Presets"
+msgstr "Předvolby pro látku"
+
+
 msgid "Tracking Settings"
 msgstr "Zobrazit klíče"
 
 
 msgid "Lens"
 msgstr "Čočka"
+
+
+msgid "Tracking Presets"
+msgstr "Sledování"
+
+
+msgid "Cloth Presets"
+msgstr "Předvolby pro látku"
 
 
 msgid "Depth of Field"
@@ -26475,6 +26363,10 @@ msgstr "Transformace"
 
 msgid "Ray Visibility"
 msgstr "Viditelnost"
+
+
+msgid "Integrator Presets"
+msgstr "Generátory"
 
 
 msgid "Pixel Filter"
@@ -26561,12 +26453,20 @@ msgid "System"
 msgstr "Systém"
 
 
+msgid "Fluid Presets"
+msgstr "Vlastnosti..."
+
+
 msgid "Sample Line"
 msgstr "Vzorky"
 
 
 msgid "Appearance"
 msgstr "Přidat"
+
+
+msgid "2D Cursor"
+msgstr "3D kurzor:"
 
 
 msgid "UV Sculpt"
@@ -26661,6 +26561,14 @@ msgid "Audio"
 msgstr "Zvuk kodek"
 
 
+msgid "FFMPEG Presets"
+msgstr "Načíst:"
+
+
+msgid "Render Presets"
+msgstr "Předvolby renderu"
+
+
 msgid "Edit Strip"
 msgstr "NLA Proužky"
 
@@ -26681,8 +26589,56 @@ msgid "Playback"
 msgstr "Přehrávka"
 
 
+msgid "Timeline"
+msgstr "Časová osa"
+
+
+msgid "Auto Run Python Scripts"
+msgstr "Spustit Python skript"
+
+
 msgid "Themes"
 msgstr "Témata vzhledu"
+
+
+msgid "Bone Color Sets"
+msgstr "Barva "
+
+
+msgid "Theme Space"
+msgstr "Prostor textury"
+
+
+msgid "Theme Space List"
+msgstr "Nelineární video editor"
+
+
+msgid "Panel Colors"
+msgstr "Horizontální"
+
+
+msgid "Styles"
+msgstr "Kroky:"
+
+
+msgid "Video Sequence Editor"
+msgstr "Nelineární video editor "
+
+
+msgid "Text Style"
+msgstr "Zhranatit"
+
+
+msgid "User Interface"
+msgstr "Uživatelské rozhraní"
+
+
+msgid "3D View"
+msgstr "3D pohled"
+
+
+msgid "Gradient Colors"
+msgstr "Horizontální"
 
 
 msgid "Motion Tracking"
@@ -26699,10 +26655,6 @@ msgstr "Možnosti deformace"
 
 msgid "Pose Options"
 msgstr "Možnosti deformace"
-
-
-msgid "Project Paint"
-msgstr "Textový editor"
 
 
 msgid "Transform Orientations"
@@ -26955,10 +26907,6 @@ msgstr "Nastavení částic"
 
 msgid "Active Particle Target Index"
 msgstr "Aktivovat materiálové uzly"
-
-
-msgid "Billboard Normal UV"
-msgstr "Vypocitat normaly"
 
 
 msgid "Child Particles"
@@ -27243,10 +27191,6 @@ msgstr "Částicový systém"
 
 msgid "Cache Compression"
 msgstr "Komprimovat soubor"
-
-
-msgid "No"
-msgstr "Uzel"
 
 
 msgid "No compression"
@@ -30037,10 +29981,6 @@ msgid "Bounding Box Center"
 msgstr "Střed obálky"
 
 
-msgid "2D Cursor"
-msgstr "3D kurzor:"
-
-
 msgid "Individual Origins"
 msgstr "Jednotlivé středové body"
 
@@ -32760,6 +32700,10 @@ msgid "UnLock All"
 msgstr "NLA Proužky"
 
 
+msgid "Before"
+msgstr "Předchozí"
+
+
 msgctxt "Operator"
 msgid "Assign to Active Group"
 msgstr "Přidat ke aktivní skupině"
@@ -33153,10 +33097,6 @@ msgid "Cursor to Grid"
 msgstr "Kurzor k mřížce"
 
 
-msgid "Before"
-msgstr "Předchozí"
-
-
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Kreslit"
@@ -33295,10 +33235,6 @@ msgstr "Jméno aktuálního klíče pro tvar"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Silové pole"
-
-
-msgid "Use Lib Path"
-msgstr "Limity"
 
 
 msgctxt "Operator"
@@ -34067,6 +34003,10 @@ msgid "Sub Level"
 msgstr "Submenu:"
 
 
+msgid "Align to"
+msgstr "Automatické zarovnání"
+
+
 msgid "Eraser Radius"
 msgstr "Poloměr mazání"
 
@@ -34389,10 +34329,6 @@ msgstr "Přiřadit rodiče..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Vytvořit lokální"
-
-
-msgid "Make Links..."
-msgstr "Vytvořit propojení..."
 
 
 msgctxt "Operator"

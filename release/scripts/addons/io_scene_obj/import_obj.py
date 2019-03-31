@@ -58,6 +58,21 @@ def line_value(line_split):
         return b' '.join(line_split[1:])
 
 
+def filenames_group_by_ext(line, ext):
+    """
+    Splits material libraries supporting spaces, so:
+    b'foo bar.mtl baz spam.MTL' -> (b'foo bar.mtl', b'baz spam.MTL')
+    """
+    line_lower = line.lower()
+    i_prev = 0
+    while i_prev != -1 and i_prev < len(line):
+        i = line_lower.find(ext, i_prev)
+        if i != -1:
+            i += len(ext)
+        yield line[i_prev:i].strip()
+        i_prev = i
+
+
 def obj_image_load(context_imagepath_map, line, DIR, recursive, relpath):
     """
     Mainly uses comprehensiveImageLoad
@@ -1118,7 +1133,8 @@ def load(context,
                 elif line_start == b'mtllib':  # usemap or usemat
                     # can have multiple mtllib filenames per line, mtllib can appear more than once,
                     # so make sure only occurrence of material exists
-                    material_libs |= {os.fsdecode(f) for f in line.split()[1:]}
+                    material_libs |= {os.fsdecode(f) for f in filenames_group_by_ext(line.lstrip()[7:].strip(), b'.mtl')
+                    }
 
                     # Nurbs support
                 elif line_start == b'cstype':

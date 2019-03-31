@@ -8,6 +8,8 @@ from trailing_space_clean_config import PATHS
 SOURCE_EXT = (
     # C/C++
     ".c", ".h", ".cpp", ".hpp", ".cc", ".hh", ".cxx", ".hxx", ".inl",
+    # Objective C
+    ".m", ".mm",
     # GLSL
     ".glsl",
     # Python

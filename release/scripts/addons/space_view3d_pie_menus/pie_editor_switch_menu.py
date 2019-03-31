@@ -62,7 +62,7 @@ class AreaTypePieOperator(Operator):
 
 
 class AreaPieEditor(Menu):
-    bl_idname = "pie.editor"
+    bl_idname = "PIE_MT_editor"
     bl_label = "Editor Switch"
 
     def draw(self, context):
@@ -167,7 +167,7 @@ def register():
         # Snapping
         km = wm.keyconfigs.addon.keymaps.new(name='Window')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', ctrl=True, alt=True)
-        kmi.properties.name = "pie.editor"
+        kmi.properties.name = "PIE_MT_editor"
         addon_keymaps.append((km, kmi))
 
 

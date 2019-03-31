@@ -4,7 +4,8 @@ from ...utils    import strip_org, make_deformer_name, connected_children_names
 from ...utils    import make_mechanism_name, put_bone, create_sphere_widget
 from ...utils    import create_widget, create_circle_widget
 from ...utils    import MetarigError
-from rna_prop_ui import rna_idprop_ui_prop_get
+
+from ....utils.mechanism import make_property
 
 script = """
 controls    = [%s]
@@ -263,14 +264,7 @@ class Rig:
             prop_names = [ prop_name_r, prop_name_s ]
 
             for prop_name in prop_names:
-                master_pb[prop_name] = 1.0
-
-                prop = rna_idprop_ui_prop_get( master_pb, prop_name )
-                prop["min"] = 0.0
-                prop["max"] = 1.0
-                prop["soft_min"] = 0.0
-                prop["soft_max"] = 1.0
-                prop["description"] = prop_name
+                make_property(master_pb, prop_name, 1.0)
 
                 # driving the MCH follow rotation switch
 

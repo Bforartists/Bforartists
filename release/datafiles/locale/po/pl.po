@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -648,10 +648,6 @@ msgstr "Przeglądaj pliki i zasoby"
 
 msgid "Edit persistent configuration settings"
 msgstr "Zmieniaj ustawienia konfiguracyjne programu"
-
-
-msgid "Default"
-msgstr "Domyślnie"
 
 
 msgid "Width"
@@ -1868,6 +1864,10 @@ msgstr "Odstępy"
 
 msgid "Mode"
 msgstr "Tryb"
+
+
+msgid "Default"
+msgstr "Domyślnie"
 
 
 msgid "Threshold"
@@ -3195,6 +3195,10 @@ msgid "Use transform property of target to look up pose for owner from an Action
 msgstr "Użyj własności transformacji obiektu docelowego z Akcji aby wyszukać pozę dla posiadacza"
 
 
+msgid "Armature"
+msgstr "Szkielet"
+
+
 msgid "Child Of"
 msgstr "Dziecko"
 
@@ -3229,10 +3233,6 @@ msgstr "Owijanie"
 
 msgid "Restrict movements to surface of target mesh"
 msgstr "Wymuś ruchy tylko po powierzchni docelowego obiektu"
-
-
-msgid "Armature"
-msgstr "Szkielet"
 
 
 msgid "Action Constraint"
@@ -6856,22 +6856,6 @@ msgid "Pin"
 msgstr "Przypnij"
 
 
-msgid "Timeline"
-msgstr "Oś czasu"
-
-
-msgid "Video Sequence Editor"
-msgstr "Edytor Sekwencji Wideo"
-
-
-msgid "3D View"
-msgstr "Widok 3D"
-
-
-msgid "Development"
-msgstr "Rozwój"
-
-
 msgid "Performance"
 msgstr "Wydajność"
 
@@ -6882,6 +6866,22 @@ msgstr "Dynamika"
 
 msgid "Behavior"
 msgstr "Zachowanie"
+
+
+msgid "Timeline"
+msgstr "Oś czasu"
+
+
+msgid "Development"
+msgstr "Rozwój"
+
+
+msgid "Video Sequence Editor"
+msgstr "Edytor Sekwencji Wideo"
+
+
+msgid "3D View"
+msgstr "Widok 3D"
 
 
 msgid "Continue"

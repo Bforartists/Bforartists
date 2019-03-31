@@ -242,7 +242,6 @@ class VIEW3D_PT_PanelLinkedEdit(bpy.types.Panel):
 
 class TOPBAR_MT_edit_linked_submenu(bpy.types.Menu):
     bl_label = 'Edit Linked Library'
-    bl_idname = 'view3d.TOPBAR_MT_edit_linked_submenu'
 
     def draw(self, context):
         self.layout.separator()

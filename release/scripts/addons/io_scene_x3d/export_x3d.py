@@ -708,6 +708,8 @@ def export(file,
 
                         slot_uv = None
                         slot_col = None
+                        def _tuple_from_rounded_iter(it):
+                            return tuple(round(v, 5) for v in it)
 
                         if is_uv and is_col:
                             slot_uv = 0
@@ -715,22 +717,22 @@ def export(file,
 
                             def vertex_key(lidx):
                                 return (
-                                    mesh_loops_uv[lidx].uv[:],
-                                    mesh_loops_col[lidx].color[:],
+                                    _tuple_from_rounded_iter(mesh_loops_uv[lidx].uv),
+                                    _tuple_from_rounded_iter(mesh_loops_col[lidx].color),
                                 )
                         elif is_uv:
                             slot_uv = 0
 
                             def vertex_key(lidx):
                                 return (
-                                    mesh_loops_uv[lidx].uv[:],
+                                    _tuple_from_rounded_iter(mesh_loops_uv[lidx].uv),
                                 )
                         elif is_col:
                             slot_col = 0
 
                             def vertex_key(lidx):
                                 return (
-                                    mesh_loops_col[lidx].color[:],
+                                    _tuple_from_rounded_iter(mesh_loops_col[lidx].color),
                                 )
                         else:
                             # ack, not especially efficient in this case
@@ -739,7 +741,6 @@ def export(file,
 
                         # build a mesh mapping dict
                         vertex_hash = [{} for i in range(len(mesh.vertices))]
-                        # worst case every face is a quad
                         face_tri_list = [[None, None, None] for i in range(len(mesh.loop_triangles))]
                         vert_tri_list = []
                         totvert = 0
@@ -762,6 +763,8 @@ def export(file,
                                 face_tri_list[totface][:] = temp_tri[:]
                                 totface += 1
 
+                        del vertex_key
+                        del _tuple_from_rounded_iter
                         assert(len(face_tri_list) == len(mesh.loop_triangles))
 
                         fw(ident_step + 'index="')

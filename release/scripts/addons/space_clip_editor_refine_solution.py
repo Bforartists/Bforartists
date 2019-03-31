@@ -44,7 +44,7 @@ from bpy.props import FloatProperty
 from mathutils import Vector
 
 
-class OP_Tracking_refine_solution(Operator):
+class TRACKING_OP_refine_solution(Operator):
     bl_idname = "tracking.refine_solution"
     bl_label = "Refine"
     bl_description = "Set track weight by error and solve camera motion"
@@ -130,7 +130,7 @@ class OP_Tracking_refine_solution(Operator):
         return{'FINISHED'}
 
 
-class OP_Tracking_reset_solution(Operator):
+class TRACKING_OP_reset_solution(Operator):
     bl_idname = "tracking.reset_solution"
     bl_label = "Reset"
     bl_description = "Reset track weight and solve camera motion"
@@ -168,7 +168,7 @@ class OP_Tracking_reset_solution(Operator):
         return{'FINISHED'}
 
 
-class RefineMotionTrackingPanel(Panel):
+class TRACKING_PT_RefineMotionTracking(Panel):
     bl_label = "Refine solution"
     bl_space_type = "CLIP_EDITOR"
     bl_region_type = "TOOLS"
@@ -193,9 +193,9 @@ class RefineMotionTrackingPanel(Panel):
 
 
 classes =(
-    OP_Tracking_refine_solution,
-    OP_Tracking_reset_solution,
-    RefineMotionTrackingPanel
+    TRACKING_OP_refine_solution,
+    TRACKING_OP_reset_solution,
+    TRACKING_PT_RefineMotionTracking
     )
 
 

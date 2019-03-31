@@ -142,6 +142,7 @@ void BKE_material_init(Material *ma)
 
 	ma->alpha_threshold = 0.5f;
 
+	ma->blend_shadow = MA_BS_SOLID;
 }
 
 Material *BKE_material_add(Main *bmain, const char *name)
@@ -164,7 +165,6 @@ Material *BKE_material_add_gpencil(Main *bmain, const char *name)
 	/* grease pencil settings */
 	if (ma != NULL) {
 		BKE_material_init_gpencil_settings(ma);
-		BKE_brush_update_material(bmain, ma, NULL);
 	}
 	return ma;
 }

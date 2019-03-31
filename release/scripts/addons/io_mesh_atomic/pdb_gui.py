@@ -16,51 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-#
-#
-#  Authors           : Clemens Barth (Blendphys@root-1.de), ...
-#
-#  Homepage(Wiki)    : http://development.root-1.de/Atomic_Blender.php
-#
-#  Start of project              : 2011-08-31 by Clemens Barth
-#  First publication in Blender  : 2011-11-11
-#  Last modified                 : 2019-03-15
-#
-#  Acknowledgements
-#  ================
-#
-#  Blender developers
-#  ------------------
-#  Campbell Barton      (ideasman) 
-#  Brendon Murphy       (meta_androcto) 
-#  Truman Melton (?)    (truman)
-#  Kilon Alios          (kilon)
-#  ??                   (CoDEmanX)
-#  Dima Glib            (dairin0d)
-#  Peter K.H. Gragert   (PKHG)
-#  Valter Battioli (?)  (valter)
-#
-#  Other
-#  -----
-#  Frank Palmino
-#
-#
-
-bl_info = {
-    "name": "Atomic Blender - PDB",
-    "description": "Importing atoms described in PDB files as balls into Blender",
-    "author": "Clemens Barth",
-    "version": (1, 8),
-    "blender": (2, 80, 0),
-    "location": "File -> Import -> PDB (.pdb)",
-    "warning": "",
-    "wiki_url": "... will be updated asap ...",
-    "category": "Import-Export",
-}
-
-
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, AddonPreferences
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 from bpy.props import (
         StringProperty,
@@ -70,13 +27,11 @@ from bpy.props import (
         FloatProperty,
         )
 
-from . import (
-        import_pdb,
-        export_pdb,
-        )
+from io_mesh_atomic.pdb_import import import_pdb
+from io_mesh_atomic.pdb_export import export_pdb
 
 # -----------------------------------------------------------------------------
-#                                                                           GUI
+#                                                                     Operators
 
 # This is the class for the file dialog of the importer.
 class IMPORT_OT_pdb(Operator, ImportHelper):
@@ -169,6 +124,13 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
         name = "", description="Path to your custom data file",
         maxlen = 256, default = "", subtype='FILE_PATH')
 
+    # This thing here just guarantees that the menu entry is not active when the 
+    # check box in the addon preferences is not activated! See __init__.py
+    @classmethod
+    def poll(cls, context):
+        pref = context.preferences
+        return pref.addons[__package__].preferences.bool_pdb
+
     def draw(self, context):
         layout = self.layout
         row = layout.row()
@@ -245,30 +207,29 @@ class IMPORT_OT_pdb(Operator, ImportHelper):
         filepath_pdb = bpy.path.abspath(self.filepath)
 
         # Execute main routine
-        import_pdb.import_pdb(
-                      self.ball,
-                      self.mesh_azimuth,
-                      self.mesh_zenith,
-                      self.scale_ballradius,
-                      self.atomradius,
-                      self.scale_distances,
-                      self.use_sticks,
-                      self.use_sticks_type,
-                      self.sticks_subdiv_view,
-                      self.sticks_subdiv_render,
-                      self.use_sticks_color,
-                      self.use_sticks_smooth,
-                      self.use_sticks_bonds,
-                      self.use_sticks_one_object,
-                      self.use_sticks_one_object_nr,
-                      self.sticks_unit_length,
-                      self.sticks_dist,
-                      self.sticks_sectors,
-                      self.sticks_radius,
-                      self.use_center,
-                      self.use_camera,
-                      self.use_light,
-                      filepath_pdb)
+        import_pdb(self.ball,
+                   self.mesh_azimuth,
+                   self.mesh_zenith,
+                   self.scale_ballradius,
+                   self.atomradius,
+                   self.scale_distances,
+                   self.use_sticks,
+                   self.use_sticks_type,
+                   self.sticks_subdiv_view,
+                   self.sticks_subdiv_render,
+                   self.use_sticks_color,
+                   self.use_sticks_smooth,
+                   self.use_sticks_bonds,
+                   self.use_sticks_one_object,
+                   self.use_sticks_one_object_nr,
+                   self.sticks_unit_length,
+                   self.sticks_dist,
+                   self.sticks_sectors,
+                   self.sticks_radius,
+                   self.use_center,
+                   self.use_camera,
+                   self.use_light,
+                   filepath_pdb)
 
         return {'FINISHED'}
 
@@ -290,45 +251,20 @@ class EXPORT_OT_pdb(Operator, ExportHelper):
                                  " a proper element name")),
                default='1',)
 
+    # This thing here just guarantees that the menu entry is not active when the 
+    # check box in the addon preferences is not activated! See __init__.py
+    @classmethod
+    def poll(cls, context):
+        pref = context.preferences
+        return pref.addons[__package__].preferences.bool_pdb
+
     def draw(self, context):
         layout = self.layout
         row = layout.row()
         row.prop(self, "atom_pdb_export_type")
 
     def execute(self, context):
-        export_pdb.export_pdb(self.atom_pdb_export_type,
-                              bpy.path.abspath(self.filepath))
+        export_pdb(self.atom_pdb_export_type,
+                   bpy.path.abspath(self.filepath))
 
         return {'FINISHED'}
-
-
-# The entry into the menu 'file -> import'
-def menu_func_import(self, context):
-    self.layout.operator(IMPORT_OT_pdb.bl_idname, text="Protein Data Bank (.pdb)")
-
-# The entry into the menu 'file -> export'
-def menu_func_export(self, context):
-    self.layout.operator(EXPORT_OT_pdb.bl_idname, text="Protein Data Bank (.pdb)")
-
-classes = (IMPORT_OT_pdb, 
-           EXPORT_OT_pdb)
-
-def register():
-    from bpy.utils import register_class
-    for cls in classes:
-        register_class(cls)
-    
-    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
-    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
-
-def unregister():
-    from bpy.utils import register_class
-    for cls in classes:
-        unregister_class(cls)
-
-    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
-    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
-
-if __name__ == "__main__":
-
-    register()

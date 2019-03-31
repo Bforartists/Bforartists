@@ -2,6 +2,7 @@
 uniform mat4 ModelViewMatrix;
 uniform mat4 ModelViewMatrixInverse;
 uniform mat3 NormalMatrix;
+uniform mat3 NormalMatrixInverse;
 
 #ifndef USE_ATTR
 uniform mat4 ModelMatrix;
@@ -185,6 +186,11 @@ void vect_normalize(vec3 vin, out vec3 vout)
 void direction_transform_m4v3(vec3 vin, mat4 mat, out vec3 vout)
 {
 	vout = (mat * vec4(vin, 0.0)).xyz;
+}
+
+void mat3_mul(vec3 vin, mat3 mat, out vec3 vout)
+{
+	vout = mat * vin;
 }
 
 void point_transform_m4v3(vec3 vin, mat4 mat, out vec3 vout)
@@ -1868,7 +1874,7 @@ void node_tex_coord(
         out vec3 camera, out vec3 window, out vec3 reflection)
 {
 	generated = attr_orco;
-	normal = normalize((obinvmat * (viewinvmat * vec4(N, 0.0))).xyz);
+	normal = normalize(NormalMatrixInverse * N);
 	uv = attr_uv;
 	object = (obinvmat * (viewinvmat * vec4(I, 1.0))).xyz;
 	camera = vec3(I.xy, -I.z);
@@ -1905,9 +1911,7 @@ void node_tex_coord_background(
 	object = coords;
 
 	camera = vec3(co.xy, -co.z);
-	window = (ProjectionMatrix[3][3] == 0.0) ?
-	         vec3(mtex_2d_mapping(I).xy * camerafac.xy + camerafac.zw, 0.0) :
-	         vec3(vec2(0.5) * camerafac.xy + camerafac.zw, 0.0);
+	window = vec3(mtex_2d_mapping(I).xy * camerafac.xy + camerafac.zw, 0.0);
 
 	reflection = -coords;
 }
@@ -2321,7 +2325,7 @@ void node_tex_image_box(vec3 texco,
 	}
 	else {
 		/* last case, we have a mix between three */
-		weight = ((2.0 - limit) * N + (limit - 1.0)) / max(1e-8, 2.0 * limit - 1.0);
+		weight = ((2.0 - limit) * N + (limit - 1.0)) / max(1e-8, blend);
 	}
 
 	color = weight.x * color1 + weight.y * color2 + weight.z * color3;
@@ -2791,17 +2795,12 @@ void node_tex_voronoi(vec3 co, float scale, float exponent, float coloring, floa
 {
 	vec3 p = co * scale;
 	int xx, yy, zz, xi, yi, zi;
-	float da[4];
-	vec3 pa[4];
+	vec4 da = vec4(1e10);
+	vec3 pa[4] = vec3[4](vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
 
 	xi = floor_to_int(p[0]);
 	yi = floor_to_int(p[1]);
 	zi = floor_to_int(p[2]);
-
-	da[0] = 1e+10;
-	da[1] = 1e+10;
-	da[2] = 1e+10;
-	da[3] = 1e+10;
 
 	for (xx = xi - 1; xx <= xi + 1; xx++) {
 		for (yy = yi - 1; yy <= yi + 1; yy++) {
@@ -2826,18 +2825,16 @@ void node_tex_voronoi(vec3 co, float scale, float exponent, float coloring, floa
 
 				vp += vec3(xx, yy, zz);
 				if (d < da[0]) {
-					da[3] = da[2];
-					da[2] = da[1];
-					da[1] = da[0];
+					da.yzw = da.xyz;
 					da[0] = d;
+
 					pa[3] = pa[2];
 					pa[2] = pa[1];
 					pa[1] = pa[0];
 					pa[0] = vp;
 				}
 				else if (d < da[1]) {
-					da[3] = da[2];
-					da[2] = da[1];
+					da.zw = da.yz;
 					da[1] = d;
 
 					pa[3] = pa[2];
@@ -2977,7 +2974,7 @@ void node_light_falloff(float strength, float tsmooth, out float quadratic, out 
 	constant = strength;
 }
 
-void node_object_info(mat4 obmat, vec3 info, out vec3 location, out float object_index, out float material_index, out float random)
+void node_object_info(mat4 obmat, vec4 info, out vec3 location, out float object_index, out float material_index, out float random)
 {
 	location = obmat[3].xyz;
 	object_index = info.x;
@@ -2985,14 +2982,14 @@ void node_object_info(mat4 obmat, vec3 info, out vec3 location, out float object
 	random = info.z;
 }
 
-void node_normal_map(vec4 tangent, vec3 normal, vec3 texnormal, out vec3 outnormal)
+void node_normal_map(vec4 info, vec4 tangent, vec3 normal, vec3 texnormal, out vec3 outnormal)
 {
 	if (all(equal(tangent, vec4(0.0, 0.0, 0.0, 1.0)))) {
 		outnormal = normal;
 		return;
 	}
 	tangent *= (gl_FrontFacing ? 1.0 : -1.0);
-	vec3 B = tangent.w * cross(normal, tangent.xyz);
+	vec3 B = tangent.w * cross(normal, tangent.xyz) * info.w;
 
 	outnormal = texnormal.x * tangent.xyz + texnormal.y * B + texnormal.z * normal;
 	outnormal = normalize(outnormal);

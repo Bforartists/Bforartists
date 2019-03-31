@@ -39,6 +39,32 @@ def find_layer_collection_by_collection(layer_collection, collection):
             return layer_collection
 
 
+def list_layer_collections(layer_collection, visible=False, selectable=False):
+    """Returns a list of the collection and its children, with optional filtering by settings."""
+
+    if layer_collection.exclude:
+        return []
+
+    collection = layer_collection.collection
+    is_visible = not (layer_collection.hide_viewport or collection.hide_viewport)
+    is_selectable = is_visible and not collection.hide_select
+
+    if (selectable and not is_selectable) or (visible and not is_visible):
+        return []
+
+    found = [layer_collection]
+
+    for child in layer_collection.children:
+        found += list_layer_collections(child, visible, selectable)
+
+    return found
+
+
+def filter_layer_collections_by_object(layer_collections, obj):
+    """Returns a subset of collections that contain the given object."""
+    return [lc for lc in layer_collections if obj in lc.collection.objects.values()]
+
+
 def ensure_widget_collection(context):
     wgts_collection_name = "Widgets"
 

@@ -65,31 +65,34 @@ static int view3d_copybuffer_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	char str[FILE_MAX];
+	int num_copied = 0;
 
 	BKE_copybuffer_begin(bmain);
 
 	/* context, selection, could be generalized */
 	CTX_DATA_BEGIN (C, Object *, ob, selected_objects)
 	{
-		BKE_copybuffer_tag_ID(&ob->id);
+		if ((ob->id.tag & LIB_TAG_DOIT) == 0) {
+			BKE_copybuffer_tag_ID(&ob->id);
+			num_copied++;
+		}
 	}
 	CTX_DATA_END;
 
 	BLI_make_file_string("/", str, BKE_tempdir_base(), "copybuffer.blend");
 	BKE_copybuffer_save(bmain, str, op->reports);
 
-	BKE_report(op->reports, RPT_INFO, "Copied selected objects to buffer");
+	BKE_reportf(op->reports, RPT_INFO, "Copied %d selected objects", num_copied);
 
 	return OPERATOR_FINISHED;
 }
 
 static void VIEW3D_OT_copybuffer(wmOperatorType *ot)
 {
-
 	/* identifiers */
-	ot->name = "Copy Selection to Buffer";
+	ot->name = "Copy Objects";
 	ot->idname = "VIEW3D_OT_copybuffer";
-	ot->description = "Copy Selection to Buffer\nSelected objects are saved in a temp file";
+	ot->description = "Selected objects are copied to the clipboard";
 
 	/* api callbacks */
 	ot->exec = view3d_copybuffer_exec;
@@ -101,32 +104,35 @@ static int view3d_pastebuffer_exec(bContext *C, wmOperator *op)
 	char str[FILE_MAX];
 	short flag = 0;
 
-	if (RNA_boolean_get(op->ptr, "autoselect"))
+	if (RNA_boolean_get(op->ptr, "autoselect")) {
 		flag |= FILE_AUTOSELECT;
-	if (RNA_boolean_get(op->ptr, "active_collection"))
+	}
+	if (RNA_boolean_get(op->ptr, "active_collection")) {
 		flag |= FILE_ACTIVE_COLLECTION;
-
-	BLI_make_file_string("/", str, BKE_tempdir_base(), "copybuffer.blend");
-	if (BKE_copybuffer_paste(C, str, flag, op->reports)) {
-		WM_event_add_notifier(C, NC_WINDOW, NULL);
-
-		BKE_report(op->reports, RPT_INFO, "Objects pasted from buffer");
-
-		return OPERATOR_FINISHED;
 	}
 
-	BKE_report(op->reports, RPT_INFO, "No buffer to paste from");
+	BLI_make_file_string("/", str, BKE_tempdir_base(), "copybuffer.blend");
 
-	return OPERATOR_CANCELLED;
+	const int num_pasted = BKE_copybuffer_paste(C, str, flag, op->reports, FILTER_ID_OB);
+	if (num_pasted == 0) {
+		BKE_report(op->reports, RPT_INFO, "No objects to paste");
+		return OPERATOR_CANCELLED;
+	}
+
+	WM_event_add_notifier(C, NC_WINDOW, NULL);
+
+	BKE_reportf(op->reports, RPT_INFO, "%d objects pasted", num_pasted);
+
+	return OPERATOR_FINISHED;
 }
 
 static void VIEW3D_OT_pastebuffer(wmOperatorType *ot)
 {
 
 	/* identifiers */
-	ot->name = "Paste Selection from Buffer";
+	ot->name = "Paste Objects";
 	ot->idname = "VIEW3D_OT_pastebuffer";
-	ot->description = "Paste Selection from Buffer\nContents of copy buffer gets pasted";
+	ot->description = "Paste Objects\nObjects from the clipboard are pasted";
 
 	/* api callbacks */
 	ot->exec = view3d_pastebuffer_exec;
@@ -136,7 +142,8 @@ static void VIEW3D_OT_pastebuffer(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	RNA_def_boolean(ot->srna, "autoselect", true, "Select", "Select pasted objects");
-	RNA_def_boolean(ot->srna, "active_collection", true, "Active Collection", "Put pasted objects on the active collection");
+	RNA_def_boolean(ot->srna, "active_collection", true,
+	                "Active Collection", "Put pasted objects in the active collection");
 }
 
 /* ************************** registration **********************************/

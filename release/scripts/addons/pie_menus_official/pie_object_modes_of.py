@@ -16,8 +16,7 @@ from bpy.types import Menu
 
 
 # Pie Object Mode - Tab
-class VIEW3D_PIE_object_mode_of(Menu):
-    bl_idname = "pie.object_mode_of"
+class VIEW3D_MT_object_mode_of(Menu):
     bl_label = "Mode"
 
     def draw(self, context):
@@ -28,8 +27,8 @@ class VIEW3D_PIE_object_mode_of(Menu):
 
 
 classes = (
-    VIEW3D_PIE_object_mode_of,
-    )
+    VIEW3D_MT_object_mode_of,
+)
 
 addon_keymaps = []
 
@@ -44,13 +43,13 @@ def register():
         # Object Modes
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
-        kmi.properties.name = "pie.object_mode_of"
+        kmi.properties.name = VIEW3D_MT_object_mode_of.__name__
         addon_keymaps.append((km, kmi))
 
         # Grease Pencil Edit Modes
         km = wm.keyconfigs.addon.keymaps.new(name='Grease Pencil Stroke Edit Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
-        kmi.properties.name = "pie.object_mode_of"
+        kmi.properties.name = VIEW3D_MT_object_mode_of.__name__
         addon_keymaps.append((km, kmi))
 
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -319,10 +319,6 @@ msgid "File Browser"
 msgstr "संचिका विचरक"
 
 
-msgid "Default"
-msgstr "मूलभूत"
-
-
 msgid "Width"
 msgstr "चौड़ाई"
 
@@ -603,8 +599,12 @@ msgid "Hard"
 msgstr "कठोर"
 
 
-msgid "Both"
-msgstr "दोनों"
+msgid "Default"
+msgstr "मूलभूत"
+
+
+msgid "Resolution"
+msgstr "बिंदू विस्तार"
 
 
 msgid "Marker"
@@ -1184,10 +1184,6 @@ msgid "Output Path"
 msgstr "उत्पादन पथ"
 
 
-msgid "Resolution"
-msgstr "बिंदू विस्तार"
-
-
 msgid "Output image resolution"
 msgstr "उत्पादित छवि बिंदू विस्तार"
 
@@ -1547,6 +1543,10 @@ msgstr "समाप्तिम"
 
 msgid "Shell"
 msgstr "कवच"
+
+
+msgid "Both"
+msgstr "दोनों"
 
 
 msgid "Drops"
@@ -2444,10 +2444,6 @@ msgstr "वैश्विक y"
 
 msgid "Global Z"
 msgstr "वैश्विक z"
-
-
-msgid "Age"
-msgstr "आयु"
 
 
 msgid "Clump"
@@ -5021,50 +5017,6 @@ msgid "Predefined tracking camera intrinsics"
 msgstr "पूर्वनिर्धारित प्रतिबिंबक intrinsics पर नज़र रखने"
 
 
-msgid "Predefined track color"
-msgstr "पूर्वनिर्धारित ट्रैक रंग"
-
-
-msgid "Color Presets"
-msgstr "पूर्वनिश्चित रंग"
-
-
-msgid "Cloth Presets"
-msgstr "पूर्वनिश्चित कपड़ा"
-
-
-msgid "Fluid Presets"
-msgstr "पूर्वनिश्चित द्रव"
-
-
-msgid "Predefined node color"
-msgstr "पूर्वनिर्धारित नोड रंग"
-
-
-msgid "Render Presets"
-msgstr "पूर्वनिश्चित  प्रतिपादन"
-
-
-msgid "Timeline"
-msgstr "समय रेखा"
-
-
-msgid "Bone Color Sets"
-msgstr "हड्डी रंग समूह"
-
-
-msgid "Text Style"
-msgstr "पाठ शैली"
-
-
-msgid "Video Sequence Editor"
-msgstr "वीडियो अनुक्रम संपादक"
-
-
-msgid "3D View"
-msgstr "त्रि-आयाम दृश्य"
-
-
 msgid "Solve"
 msgstr "का समाधान"
 
@@ -5073,8 +5025,20 @@ msgid "Clean up"
 msgstr "साफ़ करें"
 
 
+msgid "Predefined track color"
+msgstr "पूर्वनिर्धारित ट्रैक रंग"
+
+
+msgid "Color Presets"
+msgstr "पूर्वनिश्चित रंग"
+
+
 msgid "Lens"
 msgstr "केन्द्रण-वीक्ष"
+
+
+msgid "Cloth Presets"
+msgstr "पूर्वनिश्चित कपड़ा"
 
 
 msgid "Depth of Field"
@@ -5105,6 +5069,14 @@ msgid "Recent"
 msgstr "हाल ही में"
 
 
+msgid "Fluid Presets"
+msgstr "पूर्वनिश्चित द्रव"
+
+
+msgid "Predefined node color"
+msgstr "पूर्वनिर्धारित नोड रंग"
+
+
 msgid "Physics"
 msgstr "भौतिकी"
 
@@ -5125,6 +5097,10 @@ msgid "Audio"
 msgstr "श्रव्य"
 
 
+msgid "Render Presets"
+msgstr "पूर्वनिश्चित  प्रतिपादन"
+
+
 msgid "Note"
 msgstr "टिप्पणी"
 
@@ -5135,6 +5111,26 @@ msgstr "खोजें"
 
 msgid "Playback"
 msgstr "प्रतिदृश्य"
+
+
+msgid "Timeline"
+msgstr "समय रेखा"
+
+
+msgid "Bone Color Sets"
+msgstr "हड्डी रंग समूह"
+
+
+msgid "Video Sequence Editor"
+msgstr "वीडियो अनुक्रम संपादक"
+
+
+msgid "Text Style"
+msgstr "पाठ शैली"
+
+
+msgid "3D View"
+msgstr "त्रि-आयाम दृश्य"
 
 
 msgid "Motion Tracking"
@@ -5175,10 +5171,6 @@ msgstr "लचीला-पदार्थ"
 
 msgid "Enemy"
 msgstr "विरोधी"
-
-
-msgid "No"
-msgstr "नहीं"
 
 
 msgid "Duplicate Particle"
@@ -5890,10 +5882,6 @@ msgstr "प्रतिबिंबकएवं चिन्हक (.py)"
 
 msgid "Position:"
 msgstr "स्थिति:"
-
-
-msgid "Object %r can't be written into a 3DS file"
-msgstr "ऑब्जेक्ट %r एक 3DS संचिका में लिखा जा सकता"
 
 
 msgctxt "Operator"

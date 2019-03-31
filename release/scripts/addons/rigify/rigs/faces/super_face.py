@@ -4,7 +4,7 @@ from   ...utils       import copy_bone, flip_bone
 from   ...utils       import org, strip_org, make_deformer_name, connected_children_names, make_mechanism_name
 from   ...utils       import create_circle_widget, create_sphere_widget, create_widget, create_cube_widget
 from   ...utils       import MetarigError
-from   rna_prop_ui    import rna_idprop_ui_prop_get
+from   ...utils.mechanism import make_property
 from   ..widgets import create_face_widget, create_eye_widget, create_eyes_widget, create_ear_widget, create_jaw_widget, create_teeth_widget
 
 
@@ -750,7 +750,7 @@ class Rig:
     def constraints( self, all_bones ):
         ## Def bone constraints
 
-        def_context_menu = {
+        def_specials = {
             # 'bone'             : 'target'
             'DEF-jaw'               : 'chin',
             'DEF-chin.L'            : 'lips.L',
@@ -788,9 +788,9 @@ class Rig:
         pattern = r'^DEF-(\w+\.?\w?\.?\w?)(\.?)(\d*?)(\d?)$'
 
         for bone in [ bone for bone in all_bones['deform']['all'] if 'lid' not in bone ]:
-            if bone in def_context_menu:
-                if def_context_menu[bone] is not None:
-                    self.make_constraits('def_tweak', bone, def_context_menu[bone] )
+            if bone in def_specials:
+                if def_specials[bone] is not None:
+                    self.make_constraits('def_tweak', bone, def_specials[bone] )
             else:
                 matches = re.match( pattern, bone ).groups()
                 if len( matches ) > 1 and matches[-1]:
@@ -936,16 +936,11 @@ class Rig:
 
         for bone, prop_name in zip( [ jaw_ctrl, eyes_ctrl ], [ jaw_prop, eyes_prop ] ):
             if bone == jaw_ctrl:
-                pb[ bone ][ prop_name ] = 0.0
+                defval = 0.0
             else:
-                pb[ bone ][ prop_name ] = 1.0
+                defval = 1.0
 
-            prop = rna_idprop_ui_prop_get( pb[ bone ], prop_name )
-            prop["min"]         = 0.0
-            prop["max"]         = 1.0
-            prop["soft_min"]    = 0.0
-            prop["soft_max"]    = 1.0
-            prop["description"] = prop_name
+            make_property(pb[ bone ], prop_name, defval)
 
         # Jaw drivers
         mch_jaws = all_bones['mch']['jaw'][1:-1]

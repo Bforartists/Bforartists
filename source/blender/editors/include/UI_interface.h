@@ -193,6 +193,11 @@ enum {
 	UI_BUT_IMMEDIATE       = 1 << 20,
 	UI_BUT_NO_UTF8         = 1 << 21,
 
+	/** For popups, pressing return activates this button, overriding the highlighted button.
+	 * For non-popups this is just used as a display hint for the user to let them
+	 * know the action which is activated when pressing return (file selector for eg). */
+	UI_BUT_ACTIVE_DEFAULT = 1 << 23,
+
 	/** This but is "inside" a list item (currently used to change theme colors). */
 	UI_BUT_LIST_ITEM       = 1 << 24,
 	/** edit this button as well as the active button (not just dragging) */
@@ -906,7 +911,7 @@ int UI_autocomplete_end(AutoComplete *autocpl, char *autoname);
  * not clear yet so we postpone that. */
 
 void UI_panels_begin(const struct bContext *C, struct ARegion *ar);
-void UI_panels_end(const struct bContext *C, struct ARegion *ar, int *x, int *y);
+void UI_panels_end(const struct bContext *C, struct ARegion *ar, int *r_x, int *r_y);
 void UI_panels_draw(const struct bContext *C, struct ARegion *ar);
 
 struct Panel *UI_panel_find_by_type(struct ListBase *lb, struct PanelType *pt);
@@ -916,7 +921,7 @@ struct Panel *UI_panel_begin(
         bool *r_open);
 void UI_panel_end(uiBlock *block, int width, int height);
 void UI_panels_scale(struct ARegion *ar, float new_width);
-void UI_panel_label_offset(struct uiBlock *block, int *x, int *y);
+void UI_panel_label_offset(struct uiBlock *block, int *r_x, int *r_y);
 int UI_panel_size_y(const struct Panel *pa);
 
 bool                       UI_panel_category_is_visible(struct ARegion *ar);
@@ -1034,7 +1039,7 @@ enum {
 
 uiLayout *UI_block_layout(uiBlock *block, int dir, int type, int x, int y, int size, int em, int padding, struct uiStyle *style);
 void UI_block_layout_set_current(uiBlock *block, uiLayout *layout);
-void UI_block_layout_resolve(uiBlock *block, int *x, int *y);
+void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y);
 
 void UI_region_message_subscribe(struct ARegion *ar, struct wmMsgBus *mbus);
 
@@ -1053,6 +1058,7 @@ void uiLayoutSetContextFromBut(uiLayout *layout, uiBut *but);
 
 void uiLayoutSetOperatorContext(uiLayout *layout, int opcontext);
 void uiLayoutSetActive(uiLayout *layout, bool active);
+void uiLayoutSetActiveDefault(uiLayout *layout, bool active_default);
 void uiLayoutSetActivateInit(uiLayout *layout, bool active);
 void uiLayoutSetEnabled(uiLayout *layout, bool enabled);
 void uiLayoutSetRedAlert(uiLayout *layout, bool redalert);
@@ -1069,6 +1075,7 @@ int uiLayoutGetLocalDir(const uiLayout *layout);
 
 int uiLayoutGetOperatorContext(uiLayout *layout);
 bool uiLayoutGetActive(uiLayout *layout);
+bool uiLayoutGetActiveDefault(uiLayout *layout);
 bool uiLayoutGetActivateInit(uiLayout *layout);
 bool uiLayoutGetEnabled(uiLayout *layout);
 bool uiLayoutGetRedAlert(uiLayout *layout);
@@ -1239,7 +1246,17 @@ void uiItemFullOMenuHold_ptr(
         PointerRNA *r_opptr);
 
 void uiItemR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int flag, const char *name, int icon);
-void uiItemFullR(uiLayout *layout, struct PointerRNA *ptr, struct PropertyRNA *prop, int index, int value, int flag, const char *name, int icon);
+void uiItemFullR(
+        uiLayout *layout, struct PointerRNA *ptr, struct PropertyRNA *prop, int index, int value, int flag,
+        const char *name, int icon);
+void uiItemFullR_with_popover(
+        uiLayout *layout, struct PointerRNA *ptr, struct PropertyRNA *prop, int index, int value, int flag,
+        const char *name, int icon,
+        const char *panel_type);
+void uiItemFullR_with_menu(
+        uiLayout *layout, struct PointerRNA *ptr, struct PropertyRNA *prop, int index, int value, int flag,
+        const char *name, int icon,
+        const char *menu_type);
 void uiItemEnumR_prop(uiLayout *layout, const char *name, int icon, struct PointerRNA *ptr, PropertyRNA *prop, int value);
 void uiItemEnumR(uiLayout *layout, const char *name, int icon, struct PointerRNA *ptr, const char *propname, int value);
 void uiItemEnumR_string_prop(uiLayout *layout, struct PointerRNA *ptr, PropertyRNA *prop, const char *value, const char *name, int icon);

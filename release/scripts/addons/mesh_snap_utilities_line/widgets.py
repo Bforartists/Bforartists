@@ -30,7 +30,9 @@ from .drawing_utilities import SnapDrawn
 #    return False
 
 
-class SnapWidgetCommon(SnapUtilities):
+class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
+#    __slots__ = ('inited', 'mode', 'last_mval', 'depsgraph')
+
     snap_to_update = False
 
     def handler(self, scene):
@@ -71,17 +73,18 @@ class SnapWidgetCommon(SnapUtilities):
         SnapUtilities.snapwidgets.append(self)
 
     def end_snapwidget(self):
-        SnapUtilities.snapwidgets.remove(self)
+        if self in SnapUtilities.snapwidgets:
+            SnapUtilities.snapwidgets.remove(self)
 
-        #from .snap_context_l import global_snap_context_get
-        #sctx = global_snap_context_get(None, None, None)
+            #from .snap_context_l import global_snap_context_get
+            #sctx = global_snap_context_get(None, None, None)
 
-        sctx = object.__getattribute__(self, 'sctx')
-        if sctx and not SnapUtilities.snapwidgets:
-            sctx.clear_snap_objects()
+            sctx = object.__getattribute__(self, 'sctx')
+            if sctx and not SnapUtilities.snapwidgets:
+                sctx.clear_snap_objects()
 
-        handler = object.__getattribute__(self, 'handler')
-        bpy.app.handlers.depsgraph_update_post.remove(handler)
+            handler = object.__getattribute__(self, 'handler')
+            bpy.app.handlers.depsgraph_update_post.remove(handler)
 
     def update_snap(self, context, mval):
         if self.last_mval == mval:
@@ -109,7 +112,7 @@ class SnapWidgetCommon(SnapUtilities):
             self.sctx.set_snap_mode(
                      self.snap_vert, self.snap_edge, self.snap_face)
 
-        snap_utilities.edge_cache.snp_obj = None # hack for snap edge elemens update
+        snap_utilities.cache.clear()
         self.snap_obj, prev_loc, self.location, self.type, self.bm, self.geom, len = snap_utilities(
                 self.sctx,
                 None,
@@ -118,8 +121,10 @@ class SnapWidgetCommon(SnapUtilities):
         )
 
 
-class SnapPointWidget(SnapWidgetCommon, bpy.types.Gizmo):
+class SnapPointWidget(SnapWidgetCommon):
     bl_idname = "VIEW3D_GT_snap_point"
+
+    __slots__ = ()
 
     def test_select(self, context, mval):
         if not self.inited:
@@ -138,6 +143,7 @@ class SnapPointWidget(SnapWidgetCommon, bpy.types.Gizmo):
     def setup(self):
         self.init_delayed()
 
+
 def context_mode_check(context, widget_group):
     workspace = context.workspace
     mode = workspace.tools_mode
@@ -150,7 +156,7 @@ def context_mode_check(context, widget_group):
     return True
 
 
-class SnapWidgetGroupCommon:
+class SnapWidgetGroupCommon(bpy.types.GizmoGroup):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'WINDOW'
     bl_options = {'3D'}
@@ -167,7 +173,7 @@ class SnapWidgetGroupCommon:
             object.__getattribute__(self.widget, 'end_snapwidget')()
 
 
-class SnapPointWidgetGroup(SnapWidgetGroupCommon, bpy.types.GizmoGroup):
+class SnapPointWidgetGroup(SnapWidgetGroupCommon):
     bl_idname = "MESH_GGT_snap_point"
     bl_label = "Draw Snap Point"
 
