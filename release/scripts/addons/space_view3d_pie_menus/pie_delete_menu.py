@@ -36,7 +36,7 @@ from bpy.types import Menu
 
 # Pie Delete - X
 class PieDelete(Menu):
-    bl_idname = "pie.delete"
+    bl_idname = "PIE_MT_delete"
     bl_label = "Pie Delete"
 
     def draw(self, context):
@@ -83,7 +83,7 @@ def register():
         # Delete
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'X', 'PRESS')
-        kmi.properties.name = "pie.delete"
+        kmi.properties.name = "PIE_MT_delete"
         addon_keymaps.append((km, kmi))
 
 

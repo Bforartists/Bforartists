@@ -260,7 +260,7 @@ class PieInteractiveModeGreasePencil(Operator):
 # Menus
 class PieObjectEditotherModes(Menu):
     """Edit/Object Others modes"""
-    bl_idname = "menu.objecteditmodeothermodes"
+    bl_idname = "MENU_MT_objecteditmodeothermodes"
     bl_label = "Edit Selection Modes"
 
     def draw(self, context):
@@ -281,7 +281,7 @@ class PieObjectEditotherModes(Menu):
 
 class PieObjectEditMode(Menu):
     """Modes Switch"""
-    bl_idname = "pie.objecteditmode"
+    bl_idname = "PIE_MT_objecteditmode"
     bl_label = "Modes Menu (Tab)"
 
     def draw(self, context):
@@ -297,7 +297,7 @@ class PieObjectEditMode(Menu):
             # 6 - RIGHT
             pie.operator("class.pietexturepaint", text="Texture Paint", icon='TPAINT_HLT')
             # 2 - BOTTOM
-            pie.menu("menu.objecteditmodeothermodes", text="Vert,Edge,Face Modes", icon='EDITMODE_HLT')
+            pie.menu("MENU_MT_objecteditmodeothermodes", text="Vert,Edge,Face Modes", icon='EDITMODE_HLT')
             # 8 - TOP
             pie.operator("class.object", text="Edit/Object Toggle", icon='OBJECT_DATAMODE')
             # 7 - TOP - LEFT
@@ -320,7 +320,7 @@ class PieObjectEditMode(Menu):
             # 6 - RIGHT
             pie.operator("class.pietexturepaint", text="Texture Paint", icon='TPAINT_HLT')
             # 2 - BOTTOM
-            pie.menu("menu.objecteditmodeothermodes", text="Edit Modes", icon='EDITMODE_HLT')
+            pie.menu("MENU_MT_objecteditmodeothermodes", text="Edit Modes", icon='EDITMODE_HLT')
             # 8 - TOP
             pie.operator("class.object", text="Edit/Object Toggle", icon='OBJECT_DATAMODE')
             # 7 - TOP - LEFT
@@ -470,12 +470,12 @@ def register():
         # Select Mode
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
-        kmi.properties.name = "pie.objecteditmode"
+        kmi.properties.name = "PIE_MT_objecteditmode"
         addon_keymaps.append((km, kmi))
 
         km = wm.keyconfigs.addon.keymaps.new(name='Grease Pencil Stroke Edit Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS')
-        kmi.properties.name = "pie.objecteditmode"
+        kmi.properties.name = "PIE_MT_objecteditmode"
         addon_keymaps.append((km, kmi))
 
 

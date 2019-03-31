@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -814,8 +814,8 @@ msgid "Mode"
 msgstr "Mode d'Edició"
 
 
-msgid "Control"
-msgstr "Seleccionar fila"
+msgid "Resolution"
+msgstr "Seleccionar connectats"
 
 
 msgid "Simplify"
@@ -1367,16 +1367,16 @@ msgid "Track To"
 msgstr "Crear Pista"
 
 
+msgid "Armature"
+msgstr "Armadura"
+
+
 msgid "Follow Path"
 msgstr "Desparentar"
 
 
 msgid "Shrinkwrap"
 msgstr "Contreure/Engreixar"
-
-
-msgid "Armature"
-msgstr "Armadura"
 
 
 msgid "Action Constraint"
@@ -2775,10 +2775,6 @@ msgid "Output Path"
 msgstr "Render"
 
 
-msgid "Resolution"
-msgstr "Seleccionar connectats"
-
-
 msgid "Output image resolution"
 msgstr "Seleccionar connectats"
 
@@ -3518,6 +3514,10 @@ msgstr "Seleccionar connectats"
 
 msgid "Object removes fluid from the simulation"
 msgstr "Seleccionar connectats"
+
+
+msgid "Control"
+msgstr "Seleccionar fila"
 
 
 msgid "Control Fluid Simulation Settings"
@@ -5988,38 +5988,6 @@ msgid "Effect Children"
 msgstr "Seleccionar fila"
 
 
-msgid "Align to"
-msgstr "Duplicar"
-
-
-msgid "Animate"
-msgstr "Finestra de Render"
-
-
-msgid "Age"
-msgstr "Cíclic"
-
-
-msgid "Billboard Object"
-msgstr "Comprimir Dades"
-
-
-msgid "Billboard Offset"
-msgstr "Seleccionar amb límit"
-
-
-msgid "Billboard Scale"
-msgstr "Desparentar"
-
-
-msgid "Random Tilt"
-msgstr "Seleccionar fila"
-
-
-msgid "UV Split"
-msgstr "Partir"
-
-
 msgid "Length of child paths"
 msgstr "Esborrar"
 
@@ -6218,10 +6186,6 @@ msgstr "Seleccionar fila"
 
 msgid "Life span of the particles"
 msgstr "Seleccionar connectats"
-
-
-msgid "Lock Billboard"
-msgstr "Escalar"
 
 
 msgid "Constrain boids to a surface"
@@ -11459,10 +11423,6 @@ msgid "Lasso Select"
 msgstr "Seleccionar fila"
 
 
-msgid "Deselect rather than select items"
-msgstr "Seleccionar connectats"
-
-
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Dreta"
@@ -11611,6 +11571,10 @@ msgstr "Render"
 
 
 msgid "Toggle selection of all animation channels"
+msgstr "Seleccionar connectats"
+
+
+msgid "Deselect rather than select items"
 msgstr "Seleccionar connectats"
 
 
@@ -13624,6 +13588,10 @@ msgstr "Calcular Tangents"
 
 msgid "Polygroups"
 msgstr "Pintura Vectorial"
+
+
+msgid "Hierarchy"
+msgstr "Mostrar"
 
 
 msgctxt "Operator"
@@ -17692,10 +17660,6 @@ msgid "Clear Drivers"
 msgstr "Seleccionar fila"
 
 
-msgid "Hierarchy"
-msgstr "Mostrar"
-
-
 msgctxt "Operator"
 msgid "Outliner Data Operation"
 msgstr "Duplicar"
@@ -21187,72 +21151,12 @@ msgid "Restrict"
 msgstr "Començar Joc"
 
 
-msgid "Camera Presets"
-msgstr "Render"
-
-
-msgid "Color Presets"
-msgstr "Render"
-
-
-msgid "Tracking Presets"
-msgstr "Crear Pista"
-
-
-msgid "Cloth Presets"
-msgstr "Render"
-
-
-msgid "Integrator Presets"
-msgstr "Render"
-
-
-msgid "Fluid Presets"
-msgstr "Render"
-
-
-msgid "Render Presets"
-msgstr "Render"
-
-
-msgid "Bone Color Sets"
-msgstr "Desparentar"
-
-
-msgid "Styles"
-msgstr "Seleccionar connectats"
-
-
-msgid "Text Style"
-msgstr "Seleccionar connectats"
-
-
-msgid "User Interface"
-msgstr "Superfície"
-
-
-msgid "Theme Space"
-msgstr "Texte"
-
-
-msgid "Theme Space List"
-msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Panel Colors"
-msgstr "Seleccionar fila"
-
-
-msgid "3D View"
-msgstr "Vista"
-
-
-msgid "Gradient Colors"
-msgstr "Seleccionar fila"
-
-
 msgid "Bone Constraints"
 msgstr "Afegir Tira"
+
+
+msgid "Camera Presets"
+msgstr "Render"
 
 
 msgid "Active Point"
@@ -21287,12 +21191,24 @@ msgid "Clean up"
 msgstr "Esborrar Tamany"
 
 
+msgid "Color Presets"
+msgstr "Render"
+
+
 msgid "Tracking Settings"
 msgstr "Moure a Capa"
 
 
 msgid "Lens"
 msgstr "Lent"
+
+
+msgid "Tracking Presets"
+msgstr "Crear Pista"
+
+
+msgid "Cloth Presets"
+msgstr "Render"
 
 
 msgid "Depth of Field"
@@ -21309,6 +21225,10 @@ msgstr "Esborrar Rotació"
 
 msgid "Ray Visibility"
 msgstr "Cíclic"
+
+
+msgid "Integrator Presets"
+msgstr "Render"
 
 
 msgid "Film"
@@ -21391,6 +21311,10 @@ msgid "System"
 msgstr "Sistema"
 
 
+msgid "Fluid Presets"
+msgstr "Render"
+
+
 msgid "Scopes"
 msgstr "Àmbits"
 
@@ -21401,6 +21325,10 @@ msgstr "Partir"
 
 msgid "Appearance"
 msgstr "Afegir"
+
+
+msgid "2D Cursor"
+msgstr "Seleccionar connectats"
 
 
 msgid "UV Sculpt"
@@ -21467,6 +21395,10 @@ msgid "Audio"
 msgstr "Duplicar"
 
 
+msgid "Render Presets"
+msgstr "Render"
+
+
 msgid "Edit Strip"
 msgstr "Afegir Tira"
 
@@ -21487,6 +21419,42 @@ msgid "Playback"
 msgstr "Finestra de Render"
 
 
+msgid "Bone Color Sets"
+msgstr "Desparentar"
+
+
+msgid "Theme Space"
+msgstr "Texte"
+
+
+msgid "Theme Space List"
+msgstr "Començar a renderitzar una seqüència"
+
+
+msgid "Panel Colors"
+msgstr "Seleccionar fila"
+
+
+msgid "Styles"
+msgstr "Seleccionar connectats"
+
+
+msgid "Text Style"
+msgstr "Seleccionar connectats"
+
+
+msgid "User Interface"
+msgstr "Superfície"
+
+
+msgid "3D View"
+msgstr "Vista"
+
+
+msgid "Gradient Colors"
+msgstr "Seleccionar fila"
+
+
 msgid "Motion Tracking"
 msgstr "Esborrar Rotació"
 
@@ -21501,10 +21469,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Pose Options"
 msgstr "Esborrar Rotació"
-
-
-msgid "Project Paint"
-msgstr "Image Displist"
 
 
 msgid "Transform Orientations"
@@ -21980,10 +21944,6 @@ msgstr "Image Displist"
 
 
 msgid "Target Particle System"
-msgstr "Image Displist"
-
-
-msgid "No"
 msgstr "Image Displist"
 
 
@@ -24121,10 +24081,6 @@ msgstr "Blanc"
 
 msgid "Length of displaying path, in frames"
 msgstr "Esborrar"
-
-
-msgid "2D Cursor"
-msgstr "Seleccionar connectats"
 
 
 msgid "Pivot around the median point of selected objects"
@@ -26417,6 +26373,10 @@ msgid "UnLock All"
 msgstr "Afegir Tira"
 
 
+msgid "Before"
+msgstr "Començar Joc"
+
+
 msgctxt "Operator"
 msgid "Assign to Active Group"
 msgstr "Afegir Tira"
@@ -26738,10 +26698,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Cursor to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Before"
-msgstr "Començar Joc"
 
 
 msgctxt "Operator"
@@ -27486,6 +27442,10 @@ msgid "Render Image"
 msgstr "Render"
 
 
+msgid "Align to"
+msgstr "Duplicar"
+
+
 msgid "Simplify Stroke"
 msgstr "Esborrar"
 
@@ -27740,10 +27700,6 @@ msgstr "Emparentar"
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Esborrar Posició"
-
-
-msgid "Make Links..."
-msgstr "Guardar com"
 
 
 msgctxt "Operator"

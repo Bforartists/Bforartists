@@ -29,7 +29,7 @@ from collections import OrderedDict
 from .utils import MetarigError, new_bone
 from .utils import MCH_PREFIX, DEF_PREFIX, WGT_PREFIX, ROOT_NAME, make_original_name
 from .utils import create_root_widget
-from .utils.collections import ensure_widget_collection
+from .utils.collections import ensure_widget_collection, list_layer_collections, filter_layer_collections_by_object
 from .utils import random_id
 from .utils import copy_attributes
 from .utils import gamma_correct
@@ -73,9 +73,16 @@ def generate_rig(context, metarig):
 
     scene = context.scene
     view_layer = context.view_layer
-    collection = context.collection
     layer_collection = context.layer_collection
     id_store = context.window_manager
+
+    usable_collections = list_layer_collections(view_layer.layer_collection, selectable=True)
+
+    if layer_collection not in usable_collections:
+        metarig_collections = filter_layer_collections_by_object(usable_collections, metarig)
+        layer_collection = (metarig_collections + [view_layer.layer_collection])[0]
+
+    collection = layer_collection.collection
 
     #------------------------------------------
     # Create/find the rig object and set it up
@@ -96,6 +103,11 @@ def generate_rig(context, metarig):
             obj = scene.objects[name]
             rig_old_name = name
             obj.name = rig_new_name or name
+
+            rig_collections = filter_layer_collections_by_object(usable_collections, obj)
+            layer_collection = (rig_collections + [layer_collection])[0]
+            collection = layer_collection.collection
+
         except KeyError:
             rig_old_name = name
             name = rig_new_name or name

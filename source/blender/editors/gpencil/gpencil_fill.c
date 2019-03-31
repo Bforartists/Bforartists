@@ -241,7 +241,7 @@ static void gp_draw_datablock(tGPDfill *tgpf, const float ink[4])
 	tgpw.disable_fill = 1;
 	tgpw.dflag |= (GP_DRAWFILLS_ONLY3D | GP_DRAWFILLS_NOSTATUS);
 
-	glEnable(GL_BLEND);
+	GPU_blend(true);
 
 	for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
 		/* calculate parent position */
@@ -309,7 +309,7 @@ static void gp_draw_datablock(tGPDfill *tgpf, const float ink[4])
 		}
 	}
 
-	glDisable(GL_BLEND);
+	GPU_blend(false);
 }
 
 /* draw strokes in offscreen buffer */
@@ -1017,12 +1017,7 @@ static void gpencil_stroke_from_buffer(tGPDfill *tgpf)
 	gps->flag |= GP_STROKE_CYCLIC;
 	gps->flag |= GP_STROKE_3DSPACE;
 
-	gps->mat_nr = BKE_gpencil_get_material_index(tgpf->ob, tgpf->mat) - 1;
-	if (gps->mat_nr < 0) {
-		BKE_object_material_slot_add(tgpf->bmain, tgpf->ob);
-		assign_material(tgpf->bmain, tgpf->ob, tgpf->mat, tgpf->ob->totcol, BKE_MAT_ASSIGN_USERPREF);
-		gps->mat_nr = tgpf->ob->totcol - 1;
-	}
+	gps->mat_nr = BKE_gpencil_handle_material(tgpf->bmain, tgpf->ob, tgpf->mat);
 
 	/* allocate memory for storage points */
 	gps->totpoints = tgpf->sbuffer_size;
@@ -1155,19 +1150,28 @@ static void gpencil_fill_draw_3d(const bContext *C, ARegion *UNUSED(ar), void *a
 /* check if context is suitable for filling */
 static bool gpencil_fill_poll(bContext *C)
 {
+	Object *obact = CTX_data_active_object(C);
+
 	if (ED_operator_regionactive(C)) {
 		ScrArea *sa = CTX_wm_area(C);
 		if (sa->spacetype == SPACE_VIEW3D) {
-			return 1;
+			if ((obact == NULL) ||
+			    (obact->type != OB_GPENCIL) ||
+			    (obact->mode != OB_MODE_PAINT_GPENCIL))
+			{
+				return false;
+			}
+
+			return true;
 		}
 		else {
 			CTX_wm_operator_poll_msg_set(C, "Active region not valid for filling operator");
-			return 0;
+			return false;
 		}
 	}
 	else {
 		CTX_wm_operator_poll_msg_set(C, "Active region not set");
-		return 0;
+		return false;
 	}
 }
 
@@ -1215,16 +1219,17 @@ static tGPDfill *gp_session_init_fill(bContext *C, wmOperator *UNUSED(op))
 	tgpf->fill_draw_mode = brush->gpencil_settings->fill_draw_mode;
 	tgpf->fill_factor = (short)max_ii(1, min_ii((int)brush->gpencil_settings->fill_factor, 8));
 
+	int totcol = tgpf->ob->totcol;
+
 	/* get color info */
-	Material *ma = BKE_gpencil_get_material_from_brush(brush);
-	/* if no brush defaults, get material and color info */
-	if ((ma == NULL) || (ma->gp_style == NULL)) {
-		ma = BKE_gpencil_material_ensure(bmain, tgpf->ob);
-		/* assign always the first material to the brush */
-		brush->gpencil_settings->material = give_current_material(tgpf->ob, 1);
-	}
+	Material *ma = BKE_gpencil_current_input_brush_material(bmain, tgpf->ob, brush);
 
 	tgpf->mat = ma;
+
+	/* check whether the material was newly added */
+	if (totcol != tgpf->ob->totcol) {
+		WM_event_add_notifier(C, NC_SPACE | ND_SPACE_PROPERTIES, NULL);
+	}
 
 	/* init undo */
 	gpencil_undo_init(tgpf->gpd);

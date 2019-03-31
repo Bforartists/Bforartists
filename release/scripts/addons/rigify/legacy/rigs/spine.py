@@ -27,13 +27,14 @@ from math import floor
 
 import bpy
 from mathutils import Vector
-from rna_prop_ui import rna_idprop_ui_prop_get
 
 from ..utils import MetarigError
 from ..utils import copy_bone, new_bone, flip_bone, put_bone
 from ..utils import connected_children_names
 from ..utils import strip_org, make_mechanism_name, make_deformer_name
 from ..utils import create_circle_widget, create_cube_widget
+
+from ...utils.mechanism import make_property
 
 script = """
 main = "%s"
@@ -202,20 +203,10 @@ class Rig:
             bone = pb[par_name]
 
             # Custom bend_alpha property
-            prop = rna_idprop_ui_prop_get(pb[name], "bend_alpha", create=True)
-            pb[name]["bend_alpha"] = i / (len(self.org_bones) - 1)  # set bend alpha
-            prop["min"] = 0.0
-            prop["max"] = 1.0
-            prop["soft_min"] = 0.0
-            prop["soft_max"] = 1.0
+            make_property(pb[name], "bend_alpha", i / (len(self.org_bones) - 1)) # set bend alpha
 
             # Custom auto_rotate
-            prop = rna_idprop_ui_prop_get(pb[name], "auto_rotate", create=True)
-            pb[name]["auto_rotate"] = 1.0
-            prop["min"] = 0.0
-            prop["max"] = 1.0
-            prop["soft_min"] = 0.0
-            prop["soft_max"] = 1.0
+            make_property(pb[name], "auto_rotate", 1.0)
 
             # Constraints
             con1 = bone.constraints.new('COPY_TRANSFORMS')
@@ -351,12 +342,11 @@ class Rig:
         main_control_p = pb[main_control]
 
         # Custom pivot_slide property
-        prop = rna_idprop_ui_prop_get(main_control_p, "pivot_slide", create=True)
-        main_control_p["pivot_slide"] = self.pivot_rest
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 1.0 / len(self.org_bones)
-        prop["soft_max"] = 1.0 - (1.0 / len(self.org_bones))
+        make_property(
+            main_control_p, "pivot_slide", self.pivot_rest,
+            soft_min = 1.0 / len(self.org_bones),
+            soft_max = 1.0 - (1.0 / len(self.org_bones))
+        )
 
         # Anchor constraints
         con = bone_p.constraints.new('COPY_LOCATION')
@@ -408,12 +398,7 @@ class Rig:
                 for n in range(i + 1, j):
                     bone = pb[flex_subs[n]]
                     # Custom bend_alpha property
-                    prop = rna_idprop_ui_prop_get(bone, "bend_alpha", create=True)
-                    bone["bend_alpha"] = (n - i) / (j - i)  # set bend alpha
-                    prop["min"] = 0.0
-                    prop["max"] = 1.0
-                    prop["soft_min"] = 0.0
-                    prop["soft_max"] = 1.0
+                    make_property(bone, "bend_alpha", (n - i) / (j - i), overridable=False)  # set bend alpha
 
                     con = bone.constraints.new('COPY_TRANSFORMS')
                     con.name = "copy_transforms"

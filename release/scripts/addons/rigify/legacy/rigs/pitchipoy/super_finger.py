@@ -4,7 +4,8 @@ from ...utils import copy_bone, flip_bone
 from ...utils import strip_org, make_deformer_name, connected_children_names, make_mechanism_name
 from ...utils import create_circle_widget, create_sphere_widget, create_widget
 from ...utils import MetarigError
-from rna_prop_ui import rna_idprop_ui_prop_get
+
+from ....utils.mechanism import make_property
 
 script = """
 controls    = [%s]
@@ -149,13 +150,7 @@ class Rig:
         pb[tip_name].lock_rotation   = True,True,True
         pb[tip_name].lock_rotation_w = True
 
-        pb_master['finger_curve'] = 0.0
-        prop = rna_idprop_ui_prop_get(pb_master, 'finger_curve')
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
-        prop["description"] = "Rubber hose finger cartoon effect"
+        make_property(pb_master, 'finger_curve', 0.0, description="Rubber hose finger cartoon effect")
 
         # Pose settings
         for org, ctrl, deform, mch, mch_drv in zip(self.org_bones, ctrl_chain, def_chain, mch_chain, mch_drv_chain):

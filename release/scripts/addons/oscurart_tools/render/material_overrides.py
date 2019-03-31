@@ -37,9 +37,9 @@ bpy.utils.register_class(OscOverridesProp)
 bpy.types.Scene.ovlist = bpy.props.CollectionProperty(type=OscOverridesProp)    
 
 
-class OscOverridesGUI(bpy.types.Panel):
+class OVERRIDES_PT_OscOverridesGUI(bpy.types.Panel):
     bl_label = "Oscurart Material Overrides"
-    bl_idname = "Oscurart Overrides List"
+    bl_idname = "OVERRIDES_PT_layout"
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "render"

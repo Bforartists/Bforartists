@@ -477,6 +477,7 @@ class BTool_Union(Operator):
     bl_idname = "btool.boolean_union"
     bl_label = "Brush Union"
     bl_description = "This operator add a union brush to a canvas"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -492,6 +493,7 @@ class BTool_Inters(Operator):
     bl_idname = "btool.boolean_inters"
     bl_label = "Brush Intersection"
     bl_description = "This operator add a intersect brush to a canvas"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -507,6 +509,7 @@ class BTool_Diff(Operator):
     bl_idname = "btool.boolean_diff"
     bl_label = "Brush Difference"
     bl_description = "This operator add a difference brush to a canvas"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -522,6 +525,7 @@ class BTool_Slice(Operator):
     bl_idname = "btool.boolean_slice"
     bl_label = "Brush Slice"
     bl_description = "This operator add a intersect brush to a canvas"
+    bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
     def poll(cls, context):
@@ -747,7 +751,7 @@ class BTool_EnableFTransform(Operator):
 # Remove a Brush or a Canvas
 class BTool_Remove(Operator):
     bl_idname = "btool.remove"
-    bl_label = ""
+    bl_label = "Bool Tool Remove"
     bl_description = "Removes all BoolTool config assigned to it"
     bl_options = {"UNDO"}
 

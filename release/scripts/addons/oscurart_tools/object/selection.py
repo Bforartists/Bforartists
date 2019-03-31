@@ -48,7 +48,7 @@ def select_osc():
                         bpy.selection_osc.remove(it)
 
 
-class OscSelection(bpy.types.Header):
+class OSSELECTION_HT_OscSelection(bpy.types.Header):
     bl_label = "Selection Osc"
     bl_space_type = "VIEW_3D"
 

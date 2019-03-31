@@ -36,7 +36,7 @@ from bpy.types import Menu
 
 # Pie Selection Object Mode - A
 class PieSelectionsMore(Menu):
-    bl_idname = "pie.selectionsmore"
+    bl_idname = "PIE_MT_selectionsmore"
     bl_label = "Pie Selections Object Mode"
 
     def draw(self, context):
@@ -51,7 +51,7 @@ class PieSelectionsMore(Menu):
 
 # Pie Selection Object Mode - A
 class PieSelectionsOM(Menu):
-    bl_idname = "pie.selectionsom"
+    bl_idname = "PIE_MT_selectionsom"
     bl_label = "Pie Selections Object Mode"
 
     def draw(self, context):
@@ -74,12 +74,12 @@ class PieSelectionsOM(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("object.select_camera", text="Select Camera", icon='CAMERA_DATA')
         # 3 - BOTTOM - RIGHT
-        pie.menu("pie.selectionsmore", text="Select Menu", icon='RESTRICT_SELECT_OFF')
+        pie.menu("PIE_MT_selectionsmore", text="Select Menu", icon='RESTRICT_SELECT_OFF')
 
 
 # Pie Selection Edit Mode
 class PieSelectionsEM(Menu):
-    bl_idname = "pie.selectionsem"
+    bl_idname = "PIE_MT_selectionsem"
     bl_label = "Pie Selections Edit Mode"
 
     def draw(self, context):
@@ -89,7 +89,7 @@ class PieSelectionsEM(Menu):
         pie.operator("view3d.select_box", text="Box Select",
                     icon='NONE')
         # 6 - RIGHT
-        pie.menu("object.selectloopselection", text="Select Loop Menu", icon='LOOPSEL')
+        pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu", icon='LOOPSEL')
         # 2 - BOTTOM
         pie.operator("mesh.select_all", text="Select None",
                     icon='RESTRICT_SELECT_ON').action = 'DESELECT'
@@ -106,12 +106,12 @@ class PieSelectionsEM(Menu):
         pie.operator("view3d.select_circle", text="Circle Select",
                     icon='NONE')
         # 3 - BOTTOM - RIGHT
-        pie.menu("object.selectallbyselection", text="Multi Select Menu", icon='SNAP_EDGE')
+        pie.menu("PIE_MT_selectallbyselection", text="Multi Select Menu", icon='SNAP_EDGE')
 
 
 # Select All By Selection
 class SelectAllBySelection(Menu):
-    bl_idname = "object.selectallbyselection"
+    bl_idname = "PIE_MT_selectallbyselection"
     bl_label = "Verts Edges Faces"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -142,7 +142,7 @@ class SelectAllBySelection(Menu):
 
 
 class SelectLoopSelection(Menu):
-    bl_idname = "object.selectloopselection"
+    bl_idname = "OBJECT_MT_selectloopselection"
     bl_label = "Verts Edges Faces"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -175,13 +175,13 @@ def register():
         # Selection Object Mode
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS')
-        kmi.properties.name = "pie.selectionsom"
+        kmi.properties.name = "PIE_MT_selectionsom"
         addon_keymaps.append((km, kmi))
 
         # Selection Edit Mode
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS')
-        kmi.properties.name = "pie.selectionsem"
+        kmi.properties.name = "PIE_MT_selectionsem"
         addon_keymaps.append((km, kmi))
 
 

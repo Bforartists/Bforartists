@@ -322,7 +322,7 @@ class ProportionalRandomEdt(Operator):
 
 # Pie ProportionalEditObj - O
 class PieProportionalObj(Menu):
-    bl_idname = "pie.proportional_obj"
+    bl_idname = "PIE_MT_proportional_obj"
     bl_label = "Pie Proportional Obj"
 
     def draw(self, context):
@@ -348,7 +348,7 @@ class PieProportionalObj(Menu):
 
 # Pie ProportionalEditEdt - O
 class PieProportionalEdt(Menu):
-    bl_idname = "pie.proportional_edt"
+    bl_idname = "PIE_MT_proportional_edt"
     bl_label = "Pie Proportional Edit"
 
     def draw(self, context):
@@ -369,12 +369,12 @@ class PieProportionalEdt(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("proportional_edt.constant", text="Constant", icon='NOCURVE')
         # 3 - BOTTOM - RIGHT
-        pie.menu("pie.proportional_more", text="More", icon='LINCURVE')
+        pie.menu("PIE_MT_proportional_more", text="More", icon='LINCURVE')
 
 
 # Pie ProportionalEditEdt - O
 class PieProportionalMore(Menu):
-    bl_idname = "pie.proportional_more"
+    bl_idname = "PIE_MT_proportional_more"
     bl_label = "Pie Proportional More"
 
     def draw(self, context):
@@ -422,13 +422,13 @@ def register():
         # ProportionalEditObj
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
-        kmi.properties.name = "pie.proportional_obj"
+        kmi.properties.name = "PIE_MT_proportional_obj"
         addon_keymaps.append((km, kmi))
 
         # ProportionalEditEdt
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
-        kmi.properties.name = "pie.proportional_edt"
+        kmi.properties.name = "PIE_MT_proportional_edt"
         addon_keymaps.append((km, kmi))
 
 

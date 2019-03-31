@@ -198,6 +198,27 @@ class SnapContext():
     :type space: :class:`bpy.types.SpaceView3D`
     """
 
+    __slots__ = (
+        '_dist_px',
+        '_dist_px_sq',
+        '_offscreen',
+        '_offset_cur',
+        '_snap_buffer',
+        '_snap_mode',
+        'depsgraph',
+        'depth_range',
+        'drawn_count',
+        'freed',
+        'last_ray',
+        'mval',
+        'proj_mat',
+        'region',
+        'rv3d',
+        'snap_objects',
+        'threshold',
+        'winsize',
+        )
+
     def __init__(self, depsgraph, region, space):
         #print('Render:', bgl.glGetString(bgl.GL_RENDERER))
         #print('OpenGL Version:', bgl.glGetString(bgl.GL_VERSION))
@@ -208,7 +229,8 @@ class SnapContext():
         self._offset_cur = 1 # Starts with index 1
 
         self.proj_mat = None
-        self.mval = Vector((0, 0))
+        self.mval = Vector((0.0, 0.0))
+        self.last_ray = Vector((1.0, 0.0, 0.0))
         self._snap_mode = VERT | EDGE | FACE
 
         self.set_pixel_dist(12)

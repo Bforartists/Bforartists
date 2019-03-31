@@ -40,7 +40,7 @@ from bpy.props import EnumProperty
 
 # Pie Align - Alt + X
 class PieAlign(Menu):
-    bl_idname = "pie.align"
+    bl_idname = "PIE_MT_align"
     bl_label = "Pie Align"
 
     def draw(self, context):
@@ -253,7 +253,7 @@ def register():
         # Align
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'X', 'PRESS', alt=True)
-        kmi.properties.name = "pie.align"
+        kmi.properties.name = "PIE_MT_align"
         addon_keymaps.append((km, kmi))
 
 

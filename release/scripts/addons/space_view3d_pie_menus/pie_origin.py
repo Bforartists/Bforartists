@@ -95,7 +95,7 @@ class PivotBottom(Operator):
 
 # Pie Origin/Pivot - Shift + S
 class PieOriginPivot(Menu):
-    bl_idname = "origin.pivotmenu"
+    bl_idname = "ORIGIN_MT_pivotmenu"
     bl_label = "Origin Menu"
 
     def draw(self, context):
@@ -158,7 +158,7 @@ def register():
         # Origin/Pivot
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS', shift=True, alt=True)
-        kmi.properties.name = "origin.pivotmenu"
+        kmi.properties.name = "ORIGIN_MT_pivotmenu"
         addon_keymaps.append((km, kmi))
 
 

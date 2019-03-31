@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Dynamic Context Menu",
     "author": "meta-androcto",
-    "version": (1, 8, 8),
+    "version": (1, 8, 9),
     "blender": (2, 80, 0),
     "location": "View3D > Spacebar",
     "description": "Object Mode Context Sensitive Spacebar Menu",
@@ -898,7 +898,7 @@ class VIEW3D_MT_MirrorMenu(Menu):
 
 
 # ********** Object Snap Cursor **********
-class VIEW3D_Snap_Context(Menu):
+class VIEW3D_MT_Snap_Context(Menu):
     bl_label = "Snapping"
 
     def draw(self, context):
@@ -908,7 +908,7 @@ class VIEW3D_Snap_Context(Menu):
         layout.prop(toolsettings, "use_snap")
 
 
-class VIEW3D_Snap_Origin(Menu):
+class VIEW3D_MT_Snap_Origin(Menu):
     bl_label = "Snap  "
 
     def draw(self, context):
@@ -981,7 +981,7 @@ class VIEW3D_MT_CursorMenuLite(Menu):
 
 
 # ********** Object Interactive Mode **********
-class InteractiveMode(Menu):
+class VIEW3D_MT_InteractiveMode(Menu):
     bl_idname = "VIEW3D_MT_Object_Interactive_Mode"
     bl_label = "Interactive Mode"
     bl_description = "Menu of objects' interactive modes (Window Types)"
@@ -1006,7 +1006,7 @@ class InteractiveMode(Menu):
 
 
 # ********** Object Armature Interactive Mode **********
-class InteractiveModeArmature(Menu):
+class VIEW3D_MT_InteractiveModeArmature(Menu):
     bl_idname = "VIEW3D_MT_Object_Interactive_Armature"
     bl_label = "Interactive Mode"
     bl_description = "Menu of objects interactive mode"
@@ -1022,7 +1022,7 @@ class InteractiveModeArmature(Menu):
 
 
 # ********** Interactive Mode Other **********
-class InteractiveModeOther(Menu):
+class VIEW3D_MT_InteractiveModeOther(Menu):
     bl_idname = "VIEW3D_MT_Object_Interactive_Other"
     bl_label = "Interactive Mode"
     bl_description = "Menu of objects interactive mode"
@@ -2763,7 +2763,7 @@ class VIEW3D_OT_CursorToEdgeIntersection(Operator):
 
 
 # Set Mode Operator #
-class SetObjectMode(Operator):
+class VIEW3D_OT_SetObjectMode(Operator):
     bl_idname = "object.set_object_mode"
     bl_label = "Set the object interactive mode"
     bl_description = "I set the interactive mode of object"
@@ -2804,7 +2804,7 @@ def vfeOrigin(context):
         return False
 
 
-class SetOriginToSelected(Operator):
+class VIEW3D_OT_SetOriginToSelected(Operator):
     bl_idname = "object.setorigintoselected"
     bl_label = "Set Origin to Selected"
     bl_description = "Set Origin to Selected"
@@ -2823,7 +2823,7 @@ class SetOriginToSelected(Operator):
 
 
 # Code thanks to Isaac Weaver (wisaac) D1963
-class SnapCursSelToCenter(Operator):
+class VIEW3D_OT_SnapCursSelToCenter(Operator):
     bl_idname = "view3d.snap_cursor_selected_to_center"
     bl_label = "Snap Cursor & Selection to World Origin"
     bl_description = ("Snap 3D cursor and selected objects to the center \n"
@@ -2935,9 +2935,10 @@ classes = (
     VIEW3D_OT_CursorToEdgeIntersection,
     VIEW3D_MT_UndoS,
     VIEW3D_MT_Camera_Options,
-    InteractiveMode,
-    InteractiveModeArmature,
-    SetObjectMode,
+    VIEW3D_MT_InteractiveMode,
+    VIEW3D_MT_InteractiveModeArmature,
+    VIEW3D_MT_InteractiveModeOther,
+    VIEW3D_OT_SetObjectMode,
     VIEW3D_MT_View_Directions,
     VIEW3D_MT_View_Border,
     VIEW3D_MT_View_Menu,
@@ -2947,10 +2948,10 @@ classes = (
     VIEW3D_MT_View_Cameras,
     VIEW3D_MT_View_Local,
     VIEW3D_MT_UV_Map,
-    VIEW3D_Snap_Context,
-    VIEW3D_Snap_Origin,
+    VIEW3D_MT_Snap_Context,
+    VIEW3D_MT_Snap_Origin,
     VIEW3D_MT_Shade,
-    SetOriginToSelected,
+    VIEW3D_OT_SetOriginToSelected,
     VIEW3D_MT_Object_Data_Link,
     VIEW3D_MT_Duplicate,
     VIEW3D_MT_Space_Dynamic_Menu_Pref,
@@ -2958,7 +2959,7 @@ classes = (
     VIEW3D_MT_AutoSmooth,
     VIEW3D_MT_Animation_Player,
     VIEW3D_OT_Interactive_Mode_Text,
-    SnapCursSelToCenter,
+    VIEW3D_OT_SnapCursSelToCenter,
     VIEW3D_MT_Sculpt_Specials,
     VIEW3D_MT_Brush_Settings,
     VIEW3D_MT_Brush_Selection,
@@ -2968,8 +2969,7 @@ classes = (
     VIEW3D_MT_Vertex_Colors,
     VIEW3D_MT_Paint_Weights,
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,
-    VIEW3D_MT_Edit_Gpencil,
-    InteractiveModeOther,
+    VIEW3D_MT_Edit_Gpencil
 )
 
 
@@ -2997,7 +2997,7 @@ def unregister():
                 if kmi.properties.name == "VIEW3D_MT_Space_Dynamic_Menu":
                     km.keymap_items.remove(kmi)
                     break
-    for cls in classes:
+    for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
 
 

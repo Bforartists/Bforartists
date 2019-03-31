@@ -19,7 +19,6 @@
 # <pep8 compliant>
 
 import bpy
-from rna_prop_ui import rna_idprop_ui_prop_get
 
 from ..utils import MetarigError
 from ..utils import copy_bone, new_bone, put_bone
@@ -27,6 +26,7 @@ from ..utils import connected_children_names
 from ..utils import strip_org, make_mechanism_name, make_deformer_name
 from ..utils import create_circle_widget
 
+from ...utils.mechanism import make_property
 
 script1 = """
 head_neck = ["%s", "%s"]
@@ -190,27 +190,11 @@ class Rig:
         head_ctrl_p.custom_shape_transform = pb[self.org_bones[-1]]
 
         # Custom properties
-        prop = rna_idprop_ui_prop_get(head_ctrl_p, "inf_extent", create=True)
-        head_ctrl_p["inf_extent"] = 0.5
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
-
-        prop = rna_idprop_ui_prop_get(head_ctrl_p, "neck_follow", create=True)
-        head_ctrl_p["neck_follow"] = 1.0
-        prop["min"] = 0.0
-        prop["max"] = 2.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
+        make_property(head_ctrl_p, "inf_extent", 0.5)
+        make_property(head_ctrl_p, "neck_follow", 1.0, max=2.0, soft_max=1.0)
 
         if self.isolate:
-            prop = rna_idprop_ui_prop_get(head_ctrl_p, "isolate", create=True)
-            head_ctrl_p["isolate"] = 0.0
-            prop["min"] = 0.0
-            prop["max"] = 1.0
-            prop["soft_min"] = 0.0
-            prop["soft_max"] = 1.0
+            make_property(head_ctrl_p, "isolate", 0.0)
 
         # Constraints
 

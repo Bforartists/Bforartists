@@ -50,18 +50,18 @@ class WManupulators(Operator):
 
 # Pie Manipulators - Ctrl + Space
 class PieManipulator(Menu):
-    bl_idname = "pie.manipulator"
+    bl_idname = "PIE_MT_manipulator"
     bl_label = "Pie Manipulator"
 
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("wm.tool_set_by_name", text="Translate", icon='NONE').name = "Move"
+        pie.operator("wm.tool_set_by_id", text="Translate", icon='NONE').name = "builtin.move"
         # 6 - RIGHT
-        pie.operator("wm.tool_set_by_name", text="Rotate", icon='NONE').name = "Rotate"
+        pie.operator("wm.tool_set_by_id", text="Rotate", icon='NONE').name = "builtin.rotate"
         # 2 - BOTTOM
-        pie.operator("wm.tool_set_by_name", text="Scale", icon='NONE').name = "Scale"
+        pie.operator("wm.tool_set_by_id", text="Scale", icon='NONE').name = "builtin.scale"
         # 8 - TOP
         pie.operator("w.manupulators", text="Show/Hide Toggle", icon='NONE')
 
@@ -83,7 +83,7 @@ def register():
         # Manipulators
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', ctrl=True)
-        kmi.properties.name = "pie.manipulator"
+        kmi.properties.name = "PIE_MT_manipulator"
         addon_keymaps.append((km, kmi))
 
 

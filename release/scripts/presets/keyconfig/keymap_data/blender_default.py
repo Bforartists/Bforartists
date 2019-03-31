@@ -207,18 +207,41 @@ def _template_items_gizmo_tweak_modal():
     ]
 
 
-def _template_items_editmode_mesh_select_mode():
-    return [
-        (
-            "mesh.select_mode",
-            {"type": k, "value": 'PRESS', **key_expand, **key_extend},
-            {"properties": [*prop_extend, *prop_expand, ("type", e)]}
-        )
-        for key_expand, prop_expand in (({}, ()), ({"ctrl": True}, (("use_expand", True),)))
-        for key_extend, prop_extend in (({}, ()), ({"shift": True}, (("use_extend", True),)))
-        for k, e in (('ONE', 'VERT'), ('TWO', 'EDGE'), ('THREE', 'FACE'))
-    ]
+def _template_items_editmode_mesh_select_mode(params):
+    if params.legacy:
+        return [
+            op_menu("VIEW3D_MT_edit_mesh_select_mode", {"type": 'TAB', "value": 'PRESS', "ctrl": True}),
+        ]
+    else:
+        return [
+            (
+                "mesh.select_mode",
+                {"type": k, "value": 'PRESS', **key_expand, **key_extend},
+                {"properties": [*prop_extend, *prop_expand, ("type", e)]}
+            )
+            for key_expand, prop_expand in (({}, ()), ({"ctrl": True}, (("use_expand", True),)))
+            for key_extend, prop_extend in (({}, ()), ({"shift": True}, (("use_extend", True),)))
+            for k, e in (('ONE', 'VERT'), ('TWO', 'EDGE'), ('THREE', 'FACE'))
+        ]
 
+def _template_items_uv_select_mode(params):
+    if params.legacy:
+        return [
+            op_menu("IMAGE_MT_uvs_select_mode", {"type": 'TAB', "value": 'PRESS', "ctrl": True}),
+        ]
+    else:
+        return [
+            *_template_items_editmode_mesh_select_mode(params),
+            ("mesh.select_mode", {"type": 'FOUR', "value": 'PRESS'}, None),
+            ("wm.context_set_enum", {"type": 'ONE', "value": 'PRESS'},
+             {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'VERTEX')]}),
+            ("wm.context_set_enum", {"type": 'TWO', "value": 'PRESS'},
+             {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'EDGE')]}),
+            ("wm.context_set_enum", {"type": 'THREE', "value": 'PRESS'},
+             {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'FACE')]}),
+            ("wm.context_set_enum", {"type": 'FOUR', "value": 'PRESS'},
+             {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'ISLAND')]}),
+        ]
 
 def _template_items_proportional_editing(*, connected=False):
     return [
@@ -297,6 +320,25 @@ def km_window(params):
             ("wm.search_menu", {"type": 'F', "value": 'PRESS', "oskey": True}, None),
         ])
 
+    if params.legacy:
+        # Old shorctus
+        items.extend([
+            ("wm.save_homefile", {"type": 'U', "value": 'PRESS', "ctrl": True}, None),
+            ("wm.open_mainfile", {"type": 'F1', "value": 'PRESS'}, None),
+            ("wm.link", {"type": 'O', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+            ("wm.append", {"type": 'F1', "value": 'PRESS', "shift": True}, None),
+            ("wm.save_mainfile", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
+            ("wm.save_as_mainfile", {"type": 'F2', "value": 'PRESS'}, None),
+            ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True},
+             {"properties": [("copy", True)]}),
+            ("wm.window_new", {"type": 'W', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+            ("wm.window_fullscreen_toggle", {"type": 'F11', "value": 'PRESS', "alt": True}, None),
+            ("wm.doc_view_manual_ui_context", {"type": 'F1', "value": 'PRESS', "alt": True}, None),
+            ("wm.search_menu", {"type": 'SPACE', "value": 'PRESS'}, None),
+            ("wm.redraw_timer", {"type": 'T', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+            ("wm.debug_menu", {"type": 'D', "value": 'PRESS', "ctrl": True, "alt": True}, None),
+        ])
+
     items.extend([
         # File operations
         ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
@@ -366,25 +408,6 @@ def km_window(params):
             )
         else:
             assert False
-
-    else:
-        # Old shorctus
-        items.extend([
-            ("wm.window_new", {"type": 'W', "value": 'PRESS', "ctrl": True, "alt": True}, None),
-            ("wm.save_homefile", {"type": 'U', "value": 'PRESS', "ctrl": True}, None),
-            ("wm.open_mainfile", {"type": 'F1', "value": 'PRESS'}, None),
-            ("wm.link", {"type": 'O', "value": 'PRESS', "ctrl": True, "alt": True}, None),
-            ("wm.append", {"type": 'F1', "value": 'PRESS', "shift": True}, None),
-            ("wm.save_mainfile", {"type": 'W', "value": 'PRESS', "ctrl": True}, None),
-            ("wm.save_as_mainfile", {"type": 'F2', "value": 'PRESS'}, None),
-            ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True, "alt": True},
-             {"properties": [("copy", True)]}),
-            ("wm.window_fullscreen_toggle", {"type": 'F11', "value": 'PRESS', "alt": True}, None),
-            ("wm.doc_view_manual_ui_context", {"type": 'F1', "value": 'PRESS', "alt": True}, None),
-            ("wm.search_menu", {"type": 'SPACE', "value": 'PRESS'}, None),
-            ("wm.redraw_timer", {"type": 'T', "value": 'PRESS', "ctrl": True, "alt": True}, None),
-            ("wm.debug_menu", {"type": 'D', "value": 'PRESS', "ctrl": True, "alt": True}, None),
-        ])
 
     return keymap
 
@@ -698,6 +721,15 @@ def km_outliner(params):
         ("outliner.collection_exclude_clear", {"type": 'E', "value": 'PRESS', "alt": True}, None),
         ("outliner.hide", {"type": 'H', "value": 'PRESS'}, None),
         ("outliner.unhide_all", {"type": 'H', "value": 'PRESS', "alt": True}, None),
+        # Copy/paste.
+        ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
+        ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
+    ])
+
+    if params.apple:
+        items.extend([
+            ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "oskey": True}, None),
+            ("outliner.id_paste", {"type": 'V', "value": 'PRESS', "oskey": True}, None),
     ])
 
     return keymap
@@ -713,16 +745,7 @@ def km_uv_editor(params):
 
     items.extend([
         # Selection modes.
-        *_template_items_editmode_mesh_select_mode(),
-        ("mesh.select_mode", {"type": 'FOUR', "value": 'PRESS'}, None),
-        ("wm.context_set_enum", {"type": 'ONE', "value": 'PRESS'},
-         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'VERTEX')]}),
-        ("wm.context_set_enum", {"type": 'TWO', "value": 'PRESS'},
-         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'EDGE')]}),
-        ("wm.context_set_enum", {"type": 'THREE', "value": 'PRESS'},
-         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'FACE')]}),
-        ("wm.context_set_enum", {"type": 'FOUR', "value": 'PRESS'},
-         {"properties": [("data_path", 'tool_settings.uv_select_mode'), ("value", 'ISLAND')]}),
+        *_template_items_uv_select_mode(params),
         ("uv.mark_seam", {"type": 'E', "value": 'PRESS', "ctrl": True}, None),
         ("uv.select", {"type": params.select_mouse, "value": params.select_mouse_value},
          {"properties": [("extend", False)]}),
@@ -1024,7 +1047,7 @@ def km_view3d(params):
            {"type": params.select_mouse, "value": params.select_mouse_value, **{m: True for m in mods}},
            {"properties": [(c, True) for c in props]},
         ) for operator, props, mods in (
-            ("view3d.select_or_deselect_all" if not params.legacy else "view3d.select", (), ()),
+            ("view3d.select", ("deselect_all",) if not params.legacy else (), ()),
             ("view3d.select", ("toggle",), ("shift",)),
             ("view3d.select", ("center", "object"), ("ctrl",)),
             ("view3d.select", ("enumerate",), ("alt",)),
@@ -1763,6 +1786,8 @@ def km_file_browser_main(_params):
         ("file.select_all", {"type": 'A', "value": 'PRESS'}, None),
         ("file.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("file.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
+        ("file.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True},
+         {"properties": [("mode", 'ADD')]}),
         ("file.rename", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
         ("file.highlight", {"type": 'MOUSEMOVE', "value": 'ANY', "any": True}, None),
         ("file.filenum", {"type": 'NUMPAD_PLUS', "value": 'PRESS'},
@@ -3815,7 +3840,7 @@ def km_mesh(params):
         ("mesh.bevel", {"type": 'B', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("vertex_only", True)]}),
         # Selection modes.
-        *_template_items_editmode_mesh_select_mode(),
+        *_template_items_editmode_mesh_select_mode(params),
         # Loop Select with alt. Double click in case MMB emulation is on (below).
         ("mesh.loop_select", {"type": params.select_mouse, "value": params.select_mouse_value, "alt": True},
          {"properties": [("extend", False), ("deselect", False), ("toggle", False)]}),
@@ -4206,7 +4231,18 @@ def km_object_non_modal(params):
         {"items": items},
     )
 
-    if params.use_pie_click_drag:
+    if params.legacy:
+        items.extend([
+            ("object.mode_set", {"type": 'TAB', "value": 'PRESS'},
+             {"properties": [("mode", 'EDIT'), ("toggle", True)]}),
+            ("object.mode_set", {"type": 'TAB', "value": 'PRESS', "ctrl": True},
+             {"properties": [("mode", 'POSE'), ("toggle", True)]}),
+            ("object.mode_set", {"type": 'V', "value": 'PRESS'},
+             {"properties": [("mode", 'VERTEX_PAINT'), ("toggle", True)]}),
+            ("object.mode_set", {"type": 'TAB', "value": 'PRESS', "ctrl": True},
+             {"properties": [("mode", 'WEIGHT_PAINT'), ("toggle", True)]}),
+        ])
+    elif params.use_pie_click_drag:
         items.extend([
             ("object.mode_set", {"type": 'TAB', "value": 'CLICK'},
              {"properties": [("mode", 'EDIT'), ("toggle", True)]}),
@@ -5142,7 +5178,7 @@ def km_image_editor_tool_uv_select_circle(params):
         {"space_type": 'IMAGE_EDITOR', "region_type": 'WINDOW'},
         {"items": _template_items_tool_select_actions_simple(
             "uv.select_circle", type=params.tool_mouse, value='PRESS',
-            properties=[("wait_for_input", True)],
+            properties=[("wait_for_input", False)],
         )},
     )
 

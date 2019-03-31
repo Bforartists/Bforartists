@@ -148,16 +148,35 @@ def get_snap_bm_geom(sctx, main_snap_obj, mcursor):
     return r_snp_obj, r_loc, r_elem, r_elem_co, r_view_vector, r_orig, r_bm, r_bm_geom
 
 
-class SnapCache:
-    snp_obj = None
-    edge = None
+class SnapCache(object):
+    __slots__ = 'edge', 'face'
 
-    vmid = None
-    vperp = None
-    v2dmid = None
-    v2dperp = None
+    class Edge:
+        __slots__ = 'snp_obj', 'elem', 'vmid', 'vperp', 'v2dmid', 'v2dperp', 'is_increment'
 
-    is_increment = False
+        def __init__(self):
+            self.snp_obj = None
+            self.elem = None
+            self.vmid = None
+            self.vperp = None
+            self.v2dmid = None
+            self.v2dperp = None
+            self.is_increment = False
+
+    class Face:
+        __slots__ = 'bm_face', 'vmid', 'v2dmid'
+
+        def __init__(self):
+            self.bm_face = None
+
+    def __init__(self):
+        self.edge = self.Edge()
+        self.face = self.Face()
+
+    def clear(self):
+        self.edge.snp_obj = self.face.bm_face = None
+
+_snap_cache = SnapCache()
 
 
 def snap_utilities(
@@ -171,7 +190,7 @@ def snap_utilities(
 
     is_increment = False
     r_loc = None
-    r_type = None
+    r_type = 'OUT'
     r_len = 0.0
 
     if not snp_obj:
@@ -183,71 +202,89 @@ def snap_utilities(
                 t_loc = constrain
             r_loc = t_loc[0]
         else:
-            r_type = 'OUT'
             r_loc = out_Location(sctx.rv3d, orig, view_vector)
 
     elif len(elem) == 1:
         r_type = 'VERT'
+
         if constrain:
             r_loc = intersect_point_line(loc, constrain[0], constrain[1])[0]
         else:
             r_loc = loc
 
     elif len(elem) == 2:
-        if SnapCache.snp_obj is not snp_obj or not (elem == SnapCache.edge).all():
-            SnapCache.snp_obj = snp_obj
-            SnapCache.edge = elem
+        r_type = 'EDGE'
+
+        if _snap_cache.edge.snp_obj is not snp_obj or not (elem == _snap_cache.edge.elem).all():
+            _snap_cache.edge.snp_obj = snp_obj
+            _snap_cache.edge.elem = elem
 
             v0 = elem_co[0]
             v1 = elem_co[1]
-            SnapCache.vmid = 0.5 * (v0 + v1)
-            SnapCache.v2dmid = location_3d_to_region_2d(sctx.region, sctx.rv3d, SnapCache.vmid)
+            _snap_cache.edge.vmid = 0.5 * (v0 + v1)
+            _snap_cache.edge.v2dmid = location_3d_to_region_2d(
+                    sctx.region, sctx.rv3d, _snap_cache.edge.vmid)
 
             if previous_vert and (not bm_geom or previous_vert not in bm_geom.verts):
                 pvert_co = main_snap_obj.mat @ previous_vert.co
                 perp_point = intersect_point_line(pvert_co, v0, v1)
-                SnapCache.vperp = perp_point[0]
+                _snap_cache.edge.vperp = perp_point[0]
                 #factor = point_perpendicular[1]
-                SnapCache.v2dperp = location_3d_to_region_2d(sctx.region, sctx.rv3d, perp_point[0])
-                SnapCache.is_increment = False
+                _snap_cache.edge.v2dperp = location_3d_to_region_2d(sctx.region, sctx.rv3d, perp_point[0])
+                _snap_cache.edge.is_increment = False
             else:
-                SnapCache.is_increment = True
+                _snap_cache.edge.is_increment = True
 
-            #else: SnapCache.v2dperp = None
+            #else: _snap_cache.edge.v2dperp = None
 
         if constrain:
             t_loc = intersect_line_line(constrain[0], constrain[1], elem_co[0], elem_co[1])
-
             if t_loc is None:
                 is_increment = True
                 end = orig + view_vector
                 t_loc = intersect_line_line(constrain[0], constrain[1], orig, end)
             r_loc = t_loc[0]
 
-        elif SnapCache.v2dperp and\
-            abs(SnapCache.v2dperp[0] - mcursor[0]) < 10 and abs(SnapCache.v2dperp[1] - mcursor[1]) < 10:
+        elif _snap_cache.edge.v2dperp and\
+            abs(_snap_cache.edge.v2dperp[0] - mcursor[0]) < 10 and abs(_snap_cache.edge.v2dperp[1] - mcursor[1]) < 10:
                 r_type = 'PERPENDICULAR'
-                r_loc = SnapCache.vperp
+                r_loc = _snap_cache.edge.vperp
 
-        elif abs(SnapCache.v2dmid[0] - mcursor[0]) < 10 and abs(SnapCache.v2dmid[1] - mcursor[1]) < 10:
-            r_type = 'CENTER'
-            r_loc = SnapCache.vmid
+        elif abs(_snap_cache.edge.v2dmid[0] - mcursor[0]) < 10 and abs(_snap_cache.edge.v2dmid[1] - mcursor[1]) < 10:
+                r_type = 'CENTER'
+                r_loc = _snap_cache.edge.vmid
 
         else:
-            is_increment = SnapCache.is_increment
-
-            r_type = 'EDGE'
-            r_loc = loc
+                r_loc = loc
+                is_increment = _snap_cache.edge.is_increment
 
     elif len(elem) == 3:
         r_type = 'FACE'
 
+#        vmid = v2dmid = None
+#        if bm_geom and _snap_cache.face is not bm_geom:
+#            _snap_cache.face.bm_face = bm_geom
+#            vmid = _snap_cache.face.vmid = bm_geom.calc_center_median()
+#            v2dmid = _snap_cache.face.v2dmid = location_3d_to_region_2d(
+#                    sctx.region, sctx.rv3d, _snap_cache.face.vmid)
+
         if constrain:
             is_increment = False
+#            elem_world_co = [snp_obj.mat @ co for co in elem_co]
+#            ray_dir = constrain[1] - constrain[0]
+#            r_loc = intersect_ray_tri(*elem_world_co, ray_dir, constrain[0], False)
+#            if r_loc is None:
+#                r_loc = intersect_ray_tri(*elem_world_co, -ray_dir, constrain[0], False)
+#            if r_loc is None:
             r_loc = intersect_point_line(loc, constrain[0], constrain[1])[0]
+
+#        elif v2dmid and abs(v2dmid[0] - mcursor[0]) < 10 and abs(v2dmid[1] - mcursor[1]) < 10:
+#            r_type = 'CENTER'
+#            r_loc = vmid
+
         else:
-            is_increment = True
             r_loc = loc
+            is_increment = True
 
     if previous_vert:
         pv_co = main_snap_obj.mat @ previous_vert.co
@@ -260,4 +297,4 @@ def snap_utilities(
 
     return snp_obj, loc, r_loc, r_type, bm, bm_geom, r_len
 
-snap_utilities.edge_cache = SnapCache
+snap_utilities.cache = _snap_cache

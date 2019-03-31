@@ -260,24 +260,6 @@ bool ED_gpencil_data_owner_is_annotation(PointerRNA *owner_ptr)
 	return ((owner_ptr) && (owner_ptr->type != &RNA_Object));
 }
 
-/* -------------------------------------------------------- */
-
-// XXX: this should be removed... We really shouldn't duplicate logic like this!
-bGPdata *ED_gpencil_data_get_active_v3d(ViewLayer *view_layer, View3D *v3d)
-{
-	Base *base = view_layer->basact;
-	bGPdata *gpd = NULL;
-
-	/* We have to make sure active object is actually visible and selected, else we must use default scene gpd,
-	 * to be consistent with ED_gpencil_data_get_active's behavior.
-	 */
-	if (base && BASE_SELECTED(v3d, base)) {
-		if (base->object->type == OB_GPENCIL)
-			gpd = base->object->data;
-	}
-	return gpd ? gpd : NULL;
-}
-
 /* ******************************************************** */
 /* Keyframe Indicator Checks */
 
@@ -1341,17 +1323,6 @@ void ED_gpencil_add_defaults(bContext *C, Object *ob)
 	Main *bmain = CTX_data_main(C);
 	ToolSettings *ts = CTX_data_tool_settings(C);
 
-	/* first try to reuse default material */
-	if (ob->actcol > 0) {
-		Material *ma = give_current_material(ob, ob->actcol);
-		if ((ma) && (ma->gp_style == NULL)) {
-			BKE_material_init_gpencil_settings(ma);
-		}
-	}
-
-	/* ensure color exist */
-	BKE_gpencil_material_ensure(bmain, ob);
-
 	BKE_paint_ensure(ts, (Paint **)&ts->gp_paint);
 	Paint *paint = &ts->gp_paint->paint;
 	/* if not exist, create a new one */
@@ -1359,6 +1330,9 @@ void ED_gpencil_add_defaults(bContext *C, Object *ob)
 		/* create new brushes */
 		BKE_brush_gpencil_presets(C);
 	}
+
+	/* ensure a color exists and is assigned to object */
+	BKE_gpencil_current_input_toolsettings_material(bmain, ob, ts);
 
 	/* ensure multiframe falloff curve */
 	if (ts->gp_sculpt.cur_falloff == NULL) {
@@ -1629,7 +1603,7 @@ void ED_gpencil_brush_draw_eraser(Brush *brush, int x, int y)
 	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
 	GPU_line_smooth(true);
-	glEnable(GL_BLEND);
+	GPU_blend(true);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	immUniformColor4ub(255, 100, 100, 20);
@@ -1656,7 +1630,7 @@ void ED_gpencil_brush_draw_eraser(Brush *brush, int x, int y)
 
 	immUnbindProgram();
 
-	glDisable(GL_BLEND);
+	GPU_blend(false);
 	GPU_line_smooth(false);
 }
 
@@ -1671,7 +1645,6 @@ static bool gp_brush_cursor_poll(bContext *C)
 /* Helper callback for drawing the cursor itself */
 static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 {
-	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = CTX_data_active_object(C);
 	ARegion *ar = CTX_wm_region(C);
@@ -1728,30 +1701,27 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 		}
 
 		/* get current drawing color */
-		ma = BKE_gpencil_get_material_from_brush(brush);
-		if (ma == NULL) {
-			BKE_gpencil_material_ensure(bmain, ob);
-			/* assign the first material to the brush */
-			ma = give_current_material(ob, 1);
-			brush->gpencil_settings->material = ma;
-		}
-		gp_style = ma->gp_style;
+		ma = BKE_gpencil_get_material_for_brush(ob, brush);
 
-		/* after some testing, display the size of the brush is not practical because
-		 * is too disruptive and the size of cursor does not change with zoom factor.
-		 * The decision was to use a fix size, instead of brush->thickness value.
-		 */
-		if ((gp_style) && (GPENCIL_PAINT_MODE(gpd)) &&
-		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
-		    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP) == 0) &&
-		    (brush->gpencil_tool == GPAINT_TOOL_DRAW))
-		{
-			radius = 2.0f;
-			copy_v3_v3(color, gp_style->stroke_rgba);
-		}
-		else {
-			radius = 5.0f;
-			copy_v3_v3(color, brush->add_col);
+		if (ma) {
+			gp_style = ma->gp_style;
+
+			/* after some testing, display the size of the brush is not practical because
+			 * is too disruptive and the size of cursor does not change with zoom factor.
+			 * The decision was to use a fix size, instead of brush->thickness value.
+			 */
+			if ((gp_style) && (GPENCIL_PAINT_MODE(gpd)) &&
+			    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE) == 0) &&
+			    ((brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP) == 0) &&
+			    (brush->gpencil_tool == GPAINT_TOOL_DRAW))
+			{
+				radius = 2.0f;
+				copy_v3_v3(color, gp_style->stroke_rgba);
+			}
+			else {
+				radius = 5.0f;
+				copy_v3_v3(color, brush->add_col);
+			}
 		}
 	}
 
@@ -1778,7 +1748,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
 	GPU_line_smooth(true);
-	glEnable(GL_BLEND);
+	GPU_blend(true);
 
 	/* Inner Ring: Color from UI panel */
 	immUniformColor4f(color[0], color[1], color[2], 0.8f);
@@ -1798,7 +1768,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	immUniformColor4f(darkcolor[0], darkcolor[1], darkcolor[2], 0.8f);
 	imm_draw_circle_wire_2d(pos, x, y, radius + 1, 40);
 
-	glDisable(GL_BLEND);
+	GPU_blend(false);
 	GPU_line_smooth(false);
 
 	/* Draw line for lazy mouse */
@@ -1806,7 +1776,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 	    (brush->gpencil_settings->flag & GP_BRUSH_STABILIZE_MOUSE_TEMP))
 	{
 		GPU_line_smooth(true);
-		glEnable(GL_BLEND);
+		GPU_blend(true);
 
 		copy_v3_v3(color, brush->add_col);
 		immUniformColor4f(color[0], color[1], color[2], 0.8f);
@@ -1819,7 +1789,7 @@ static void gp_brush_cursor_draw(bContext *C, int x, int y, void *customdata)
 		        last_mouse_position[1] + ar->winrct.ymin);
 		immEnd();
 
-		glDisable(GL_BLEND);
+		GPU_blend(false);
 		GPU_line_smooth(false);
 	}
 

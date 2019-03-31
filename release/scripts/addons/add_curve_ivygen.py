@@ -23,7 +23,7 @@ bl_info = {
     "author": "testscreenings, PKHG, TrumanBlending",
     "version": (0, 1, 5),
     "blender": (2, 80, 0),
-    "location": "View3D > Properties Panel > Ivy Generator",
+    "location": "View3D > Sidebar > Ivy Generator (Create Tab)",
     "description": "Adds generated ivy to a mesh object starting "
                    "at the 3D cursor",
     "warning": "",
@@ -601,7 +601,7 @@ class CURVE_PT_IvyGenPanel(Panel):
     bl_idname = "CURVE_PT_IvyGenPanel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "View"
+    bl_category = "Create"
     bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
