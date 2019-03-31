@@ -3765,7 +3765,7 @@ class NodeWranglerPanel(Panel, NWBase):
     remove: StringProperty()
 
     def draw(self, context):
-        self.layout.label(text="(Quick access: Ctrl+Space)")
+        self.layout.label(text="(Quick access: Shift+W)")
         drawlayout(context, self.layout, mode='panel')
 
 
@@ -4663,7 +4663,7 @@ kmi_defs = (
     # Reset Nodes (Back Space)
     (NWResetNodes.bl_idname, 'BACK_SPACE', 'PRESS', False, False, False, None, "Revert node back to default state, but keep connections"),
     # MENUS
-    ('wm.call_menu', 'SPACE', 'PRESS', True, True, False, (('name', NodeWranglerMenu.bl_idname),), "Node Wrangler menu"),
+    ('wm.call_menu', 'W', 'PRESS', False, True, False, (('name', NodeWranglerMenu.bl_idname),), "Node Wrangler menu"),
     ('wm.call_menu', 'SLASH', 'PRESS', False, False, False, (('name', NWAddReroutesMenu.bl_idname),), "Add Reroutes menu"),
     ('wm.call_menu', 'NUMPAD_SLASH', 'PRESS', False, False, False, (('name', NWAddReroutesMenu.bl_idname),), "Add Reroutes menu"),
     ('wm.call_menu', 'BACK_SLASH', 'PRESS', False, False, False, (('name', NWLinkActiveToSelectedMenu.bl_idname),), "Link active to selected (menu)"),

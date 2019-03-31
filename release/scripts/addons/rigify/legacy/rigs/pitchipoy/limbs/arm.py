@@ -23,7 +23,8 @@ from ....utils       import create_widget, copy_bone
 from ....utils       import strip_org
 from .limb_utils     import *
 from ..super_widgets import create_hand_widget
-from rna_prop_ui     import rna_idprop_ui_prop_get
+
+from .....utils.mechanism import make_property
 
 def create_arm( cls, bones ):
     org_bones = cls.org_bones
@@ -81,13 +82,7 @@ def create_arm( cls, bones ):
     # Create ik/fk switch property
     pb_parent = pb[ bones['parent'] ]
 
-    pb_parent['IK_Strertch'] = 1.0
-    prop = rna_idprop_ui_prop_get( pb_parent, 'IK_Strertch', create=True )
-    prop["min"]         = 0.0
-    prop["max"]         = 1.0
-    prop["soft_min"]    = 0.0
-    prop["soft_max"]    = 1.0
-    prop["description"] = 'IK Stretch'
+    prop = make_property(pb_parent, 'IK_Strertch', 1.0, description='IK Stretch')
 
     # Add driver to limit scale constraint influence
     b        = bones['ik']['mch_str']

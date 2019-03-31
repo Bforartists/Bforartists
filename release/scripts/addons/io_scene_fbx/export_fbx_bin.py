@@ -2245,7 +2245,6 @@ def fbx_data_from_scene(scene, depsgraph, settings):
 
         for shape in me.shape_keys.key_blocks[1:]:
             # Only write vertices really different from org coordinates!
-            # XXX FBX does not like empty shapes (makes Unity crash e.g.), so we have to do this here... :/
             shape_verts_co = []
             shape_verts_idx = []
 
@@ -2258,8 +2257,13 @@ def fbx_data_from_scene(scene, depsgraph, settings):
                     continue
                 shape_verts_co.extend(Vector(sv_co) - Vector(ref_co))
                 shape_verts_idx.append(idx)
+
+            # FBX does not like empty shapes (makes Unity crash e.g.).
+            # To prevent this, we add a vertex that does nothing, but it keeps the shape key intact
             if not shape_verts_co:
-                continue
+                shape_verts_co.extend((0, 0, 0))
+                shape_verts_idx.append(0)
+
             channel_key, geom_key = get_blender_mesh_shape_channel_key(me, shape)
             data = (channel_key, geom_key, shape_verts_co, shape_verts_idx)
             data_deformers_shape.setdefault(me, (me_key, shapes_key, {}))[2][shape] = data
@@ -3019,7 +3023,7 @@ def defaults_unity3d():
         # with the old transforms.
         "bake_space_transform": False,
 
-        "use_selection": True,
+        "use_selection": False,
 
         "object_types": {'ARMATURE', 'EMPTY', 'MESH', 'OTHER'},
         "use_mesh_modifiers": True,
@@ -3049,7 +3053,7 @@ def defaults_unity3d():
 
 def save(operator, context,
          filepath="",
-         use_selection=True,
+         use_selection=False,
          use_active_collection=False,
          batch_mode='OFF',
          use_batch_own_dir=False,

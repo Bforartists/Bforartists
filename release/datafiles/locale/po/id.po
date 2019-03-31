@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1377,14 +1377,6 @@ msgstr "Modus Sunting"
 
 msgid "Particle Settings"
 msgstr "Partikel"
-
-
-msgid "Billboard Offset"
-msgstr "Kamera"
-
-
-msgid "Random Tilt"
-msgstr "Acak"
 
 
 msgid "Child Size"
@@ -6663,50 +6655,6 @@ msgid "Camera Presets"
 msgstr "Kamera"
 
 
-msgid "Tracking Presets"
-msgstr "Kamera"
-
-
-msgid "Integrator Presets"
-msgstr "Kamera"
-
-
-msgid "Sampling Presets"
-msgstr "Contoh Tersedia"
-
-
-msgid "Fluid Presets"
-msgstr "Kamera"
-
-
-msgid "Text Style"
-msgstr "Adegan"
-
-
-msgid "Theme Space"
-msgstr "Tekstur"
-
-
-msgid "Theme Space List"
-msgstr "Tekstur"
-
-
-msgid "Panel Colors"
-msgstr "Warna Standar"
-
-
-msgid "3D View"
-msgstr "Tampilan 3D"
-
-
-msgid "Gradient Colors"
-msgstr "Warna Standar"
-
-
-msgid "Development"
-msgstr "Pengembangan"
-
-
 msgid "Active Point"
 msgstr "Tambah Baru"
 
@@ -6717,6 +6665,18 @@ msgstr "Partikel"
 
 msgid "Mask Display"
 msgstr "Grup"
+
+
+msgid "Tracking Presets"
+msgstr "Kamera"
+
+
+msgid "Integrator Presets"
+msgstr "Kamera"
+
+
+msgid "Sampling Presets"
+msgstr "Contoh Tersedia"
 
 
 msgid "Light Paths"
@@ -6731,6 +6691,10 @@ msgid "System Bookmarks"
 msgstr "Hapus"
 
 
+msgid "Fluid Presets"
+msgstr "Kamera"
+
+
 msgid "UV Sculpt"
 msgstr "Modus Pahat"
 
@@ -6741,6 +6705,34 @@ msgstr "Hapus"
 
 msgid "Adaptive Domain"
 msgstr "Tambah Baru"
+
+
+msgid "Development"
+msgstr "Pengembangan"
+
+
+msgid "Theme Space"
+msgstr "Tekstur"
+
+
+msgid "Theme Space List"
+msgstr "Tekstur"
+
+
+msgid "Panel Colors"
+msgstr "Warna Standar"
+
+
+msgid "Text Style"
+msgstr "Adegan"
+
+
+msgid "3D View"
+msgstr "Tampilan 3D"
+
+
+msgid "Gradient Colors"
+msgstr "Warna Standar"
 
 
 msgid "Unselected F-Curve Visibility"

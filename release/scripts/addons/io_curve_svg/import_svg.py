@@ -1224,6 +1224,7 @@ class SVGGeometryPATH(SVGGeometry):
 
         if self._styles['useFill']:
             cu.dimensions = '2D'
+            cu.fill_mode = 'BOTH'
             cu.materials.append(self._styles['fill'])
         else:
             cu.dimensions = '3D'
@@ -1452,6 +1453,7 @@ class SVGGeometryRECT(SVGGeometry):
 
         if self._styles['useFill']:
             cu.dimensions = '2D'
+            cu.fill_mode = 'BOTH'
             cu.materials.append(self._styles['fill'])
         else:
             cu.dimensions = '3D'
@@ -1564,6 +1566,7 @@ class SVGGeometryELLIPSE(SVGGeometry):
 
         if self._styles['useFill']:
             cu.dimensions = '2D'
+            cu.fill_mode = 'BOTH'
             cu.materials.append(self._styles['fill'])
         else:
             cu.dimensions = '3D'
@@ -1751,6 +1754,7 @@ class SVGGeometryPOLY(SVGGeometry):
 
         if self._closed and self._styles['useFill']:
             cu.dimensions = '2D'
+            cu.fill_mode = 'BOTH'
             cu.materials.append(self._styles['fill'])
         else:
             cu.dimensions = '3D'

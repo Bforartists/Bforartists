@@ -26,6 +26,17 @@ from .common_utilities import (
 
 
 class SnapNavigation():
+    __slots__ = (
+        'use_ndof',
+        '_rotate',
+        '_move',
+        '_zoom',
+        '_ndof_all',
+        '_ndof_orbit',
+        '_ndof_orbit_zoom',
+        '_ndof_pan')
+
+
     @staticmethod
     def debug_key(key):
         for member in dir(key):
@@ -93,10 +104,13 @@ class SnapNavigation():
 
         for key in self._zoom:
             if evkey == key[0:3]:
-                if snap_location and key[3]:
-                    bpy.ops.view3d.zoom_custom_target('INVOKE_DEFAULT', delta=key[3], target=snap_location)
+                if key[3]:
+                    if snap_location:
+                        bpy.ops.view3d.zoom_custom_target('INVOKE_DEFAULT', delta=key[3], target=snap_location)
+                    else:
+                        bpy.ops.view3d.zoom('INVOKE_DEFAULT', delta=key[3])
                 else:
-                    bpy.ops.view3d.zoom('INVOKE_DEFAULT', delta=key[3])
+                    bpy.ops.view3d.zoom('INVOKE_DEFAULT')
                 return True
 
         if self.use_ndof:
@@ -118,6 +132,13 @@ class SnapNavigation():
 
 
 class CharMap:
+    __slots__ = (
+        'unit_system',
+        'uinfo',
+        'length_entered',
+        'length_entered_value',
+        'line_pos')
+
     ascii = {
         ".", ",", "-", "+", "1", "2", "3",
         "4", "5", "6", "7", "8", "9", "0",
@@ -194,16 +215,26 @@ class CharMap:
 
 
 class SnapUtilities:
-#    __slots__ = (
-#        "sctx",
-#        "draw_cache",
-#        "outer_verts",
-#        "snap_face",
-#        "snap_to_grid",
-#        "unit_system",
-#        "rd",
-#        "incremental",
-#    )
+    """
+    __slots__ = (
+        "sctx",
+        "draw_cache",
+        "outer_verts",
+        "unit_system",
+        "rd",
+        "obj",
+        "bm",
+        "geom",
+        "type",
+        "location",
+        "preferences",
+        "normal",
+        "snap_vert",
+        "snap_edge",
+        "snap_face",
+        "incremental",
+    )
+    """
 
     constrain_keys = {
         'X': Vector((1,0,0)),

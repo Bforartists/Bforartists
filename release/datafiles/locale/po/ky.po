@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -107,10 +107,6 @@ msgstr "Касиеттери"
 
 msgid "File Browser"
 msgstr "Файлдарды көрүү"
-
-
-msgid "Default"
-msgstr "Жарыяланбас"
 
 
 msgid "Width"
@@ -275,6 +271,14 @@ msgstr "Бурч"
 
 msgid "Mode"
 msgstr "Режим"
+
+
+msgid "Default"
+msgstr "Жарыяланбас"
+
+
+msgid "Resolution"
+msgstr "Чечим"
 
 
 msgid "Simplify"
@@ -458,12 +462,12 @@ msgid "Influence"
 msgstr "Таасир"
 
 
-msgid "Floor"
-msgstr "Пол"
-
-
 msgid "Armature"
 msgstr "Скелет"
+
+
+msgid "Floor"
+msgstr "Пол"
 
 
 msgid "Target"
@@ -588,10 +592,6 @@ msgstr "Файл форматы"
 
 msgid "OpenEXR"
 msgstr "OpenEXR"
-
-
-msgid "Resolution"
-msgstr "Чечим"
 
 
 msgid "UV Texture"
@@ -1154,14 +1154,6 @@ msgstr "Скульптинг режими"
 
 msgid "Proxy"
 msgstr "Прокси"
-
-
-msgid "Animate"
-msgstr "Анимация"
-
-
-msgid "Age"
-msgstr "Жаш"
 
 
 msgid "Draw Size"
@@ -1987,6 +1979,10 @@ msgid "Path Mode"
 msgstr "Жол режими"
 
 
+msgid "Hierarchy"
+msgstr "Иерархия"
+
+
 msgid "Delete selected files"
 msgstr "Тандалган файлдарды өчүрүү"
 
@@ -2397,10 +2393,6 @@ msgstr "Сахнага текст объектин кошуу"
 
 msgid "All Groups"
 msgstr "Бардык топтор"
-
-
-msgid "Hierarchy"
-msgstr "Иерархия"
 
 
 msgid "Reload"
@@ -2854,22 +2846,6 @@ msgid "New World"
 msgstr "Жаңы дүйнө"
 
 
-msgid "Styles"
-msgstr "Стилдер"
-
-
-msgid "Panel Colors"
-msgstr "Панель түстөрү"
-
-
-msgid "3D View"
-msgstr "3D-көрүнүш"
-
-
-msgid "Development"
-msgstr "Иштетүү"
-
-
 msgid "Solve"
 msgstr "Чечим"
 
@@ -2958,16 +2934,28 @@ msgid "Find"
 msgstr "Табуу"
 
 
+msgid "Development"
+msgstr "Иштетүү"
+
+
 msgid "Themes"
 msgstr "Темалар"
 
 
+msgid "Panel Colors"
+msgstr "Панель түстөрү"
+
+
+msgid "Styles"
+msgstr "Стилдер"
+
+
+msgid "3D View"
+msgstr "3D-көрүнүш"
+
+
 msgid "Print3D"
 msgstr "3D-басма"
-
-
-msgid "No"
-msgstr "Жок"
 
 
 msgid "Editing"

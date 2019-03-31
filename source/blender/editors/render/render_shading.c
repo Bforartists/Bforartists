@@ -559,11 +559,6 @@ static int new_material_exec(bContext *C, wmOperator *UNUSED(op))
 		Material *new_ma = NULL;
 		BKE_id_copy_ex(bmain, &ma->id, (ID **)&new_ma, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
 		ma = new_ma;
-
-		if (ob != NULL && ob->type == OB_GPENCIL) {
-			BKE_brush_update_material(bmain, new_ma, NULL);
-		}
-
 	}
 	else {
 		const char *name = DATA_("Material");
@@ -846,7 +841,7 @@ static int light_cache_bake_exec(bContext *C, wmOperator *op)
 	G.is_break = false;
 
 	/* TODO abort if selected engine is not eevee. */
-	void *rj = EEVEE_lightbake_job_data_alloc(bmain, view_layer, scene, false);
+	void *rj = EEVEE_lightbake_job_data_alloc(bmain, view_layer, scene, false, scene->r.cfra);
 
 	light_cache_bake_tag_cache(scene, op);
 
@@ -871,7 +866,7 @@ static int light_cache_bake_invoke(bContext *C, wmOperator *op, const wmEvent *U
 	Scene *scene = CTX_data_scene(C);
 	int delay = RNA_int_get(op->ptr, "delay");
 
-	wmJob *wm_job = EEVEE_lightbake_job_create(wm, win, bmain, view_layer, scene, delay);
+	wmJob *wm_job = EEVEE_lightbake_job_create(wm, win, bmain, view_layer, scene, delay, scene->r.cfra);
 
 	if (!wm_job) {
 		return OPERATOR_CANCELLED;

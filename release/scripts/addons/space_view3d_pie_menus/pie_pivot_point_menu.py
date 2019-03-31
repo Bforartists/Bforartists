@@ -36,7 +36,7 @@ from bpy.types import Menu
 
 class VIEW3D_PIE_pivot(Menu):
     bl_label = "Pivot"
-    bl_idname = "pie.pivot"
+    bl_idname = "PIE_MT_pivot"
 
     def draw(self, context):
         layout = self.layout
@@ -63,7 +63,7 @@ def register():
         # Pivot Point
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'PERIOD', 'PRESS')
-        kmi.properties.name = "pie.pivot"
+        kmi.properties.name = "PIE_MT_pivot"
         addon_keymaps.append((km, kmi))
 
 

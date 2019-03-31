@@ -93,8 +93,9 @@ static PyObject *pyop_poll(PyObject *UNUSED(self), PyObject *args)
 		return NULL;
 	}
 
-	if (!PyArg_ParseTuple(args, "s|Os:_bpy.ops.poll", &opname, &context_dict, &context_str))
+	if (!PyArg_ParseTuple(args, "s|Os:_bpy.ops.poll", &opname, &context_dict, &context_str)) {
 		return NULL;
+	}
 
 	ot = WM_operatortype_find(opname, true);
 
@@ -262,10 +263,7 @@ static PyObject *pyop_call(PyObject *UNUSED(self), PyObject *args)
 
 			/* operator output is nice to have in the terminal/console too */
 			if (!BLI_listbase_is_empty(&reports->list)) {
-				Report *report;
-				for (report = reports->list.first; report; report = report->next) {
-					PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
-				}
+				BPy_reports_write_stdout(reports, NULL);
 			}
 
 			BKE_reports_clear(reports);
@@ -365,8 +363,9 @@ static PyObject *pyop_as_string(PyObject *UNUSED(self), PyObject *args)
 		error_val = pyrna_pydict_to_props(&ptr, kw, false, "Converting py args to operator properties: ");
 	}
 
-	if (error_val == 0)
+	if (error_val == 0) {
 		buf = WM_operator_pystring_ex(C, NULL, all_args, macro_args, ot, &ptr);
+	}
 
 	WM_operator_properties_free(&ptr);
 

@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Snap_Utilities_Line",
     "author": "Germano Cavalcante",
-    "version": (5, 9, 6),
+    "version": (5, 9, 9),
     "blender": (2, 80, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
@@ -35,11 +35,13 @@ if "bpy" in locals():
     importlib.reload(widgets)
     importlib.reload(preferences)
     importlib.reload(op_line)
+    importlib.reload(keys)
 else:
     from . import navigation_ops
     from . import widgets
     from . import preferences
     from . import op_line
+    from . import keys
 
 import bpy
 from bpy.utils.toolsystem import ToolDef
@@ -65,7 +67,8 @@ def tool_line():
     icons_dir = os.path.join(os.path.dirname(__file__), "icons")
 
     return dict(
-        text="Make Line",
+        idname="snap_utilities.line",
+        label="Make Line",
         description=(
             "Make Lines\n"
             "Connect them to split faces"
@@ -73,23 +76,13 @@ def tool_line():
         icon=os.path.join(icons_dir, "ops.mesh.snap_utilities_line"),
         widget="MESH_GGT_snap_point",
         #operator="mesh.snap_utilities_line",
-        keymap="3D View Tool: Edit Mesh, Make Line",
+        keymap=keys.km_tool_snap_utilities_line,
         draw_settings=draw_settings,
     )
 
 
 # -----------------------------------------------------------------------------
 # Tool Registraion
-
-def km_3d_view_snap_tools(tool_mouse = 'LEFTMOUSE'):
-    return [(
-        tool_line.keymap[0],
-        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": [
-            ("mesh.snap_utilities_line", {"type": tool_mouse, "value": 'CLICK'},
-             {"properties": [("wait_for_input", False)]}),
-        ]},
-    )]
 
 
 def get_tool_list(space_type, context_mode):
@@ -102,23 +95,12 @@ def register_snap_tools():
     tools = get_tool_list('VIEW_3D', 'EDIT_MESH')
 
     for index, tool in enumerate(tools, 1):
-        if isinstance(tool, ToolDef) and tool.text == "Measure":
+        if isinstance(tool, ToolDef) and tool.label == "Measure":
             break
 
     tools[:index] += None, tool_line
 
-    del tools, index
-
-    keyconfigs = bpy.context.window_manager.keyconfigs
-    kc_defaultconf = keyconfigs.get("blender")
-    kc_addonconf   = keyconfigs.get("blender addon")
-
-    keyconfig_data = km_3d_view_snap_tools()
-
-    # TODO: find the user defined tool_mouse.
-    from bl_keymap_utils.io import keyconfig_init_from_data
-    keyconfig_init_from_data(kc_defaultconf, keyconfig_data)
-    keyconfig_init_from_data(kc_addonconf, keyconfig_data)
+    del tools
 
 
 def unregister_snap_tools():
@@ -128,16 +110,35 @@ def unregister_snap_tools():
     tools.pop(index)
     tools.remove(tool_line)
 
-    del tools, index
+    del tools
+    del index
 
+
+def register_keymaps():
+    keyconfigs = bpy.context.window_manager.keyconfigs
+    kc_defaultconf = keyconfigs.default
+    kc_addonconf   = keyconfigs.addon
+
+    # TODO: find the user defined tool_mouse.
+    from bl_keymap_utils.io import keyconfig_init_from_data
+    keyconfig_init_from_data(kc_defaultconf, keys.generate_empty_snap_utilities_tools_keymaps())
+    keyconfig_init_from_data(kc_addonconf, keys.generate_snap_utilities_keymaps())
+
+    #snap_modalkeymap = kc_addonconf.keymaps.find(keys.km_snap_utilities_modal_keymap)
+    #snap_modalkeymap.assign("MESH_OT_snap_utilities_line")
+
+
+def unregister_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
     defaultmap = keyconfigs.get("blender").keymaps
     addonmap   = keyconfigs.get("blender addon").keymaps
 
-    for keyconfig_data in km_3d_view_snap_tools():
+    for keyconfig_data in keys.generate_snap_utilities_keymaps():
         km_name, km_args, km_content = keyconfig_data
-
         addonmap.remove(addonmap.find(km_name, **km_args))
+
+    for keyconfig_data in keys.generate_empty_snap_utilities_tools_keymaps():
+        km_name, km_args, km_content = keyconfig_data
         defaultmap.remove(defaultmap.find(km_name, **km_args))
 
 
@@ -158,9 +159,11 @@ def register():
         bpy.utils.register_class(cls)
 
     register_snap_tools()
+    register_keymaps()
 
 
 def unregister():
+    unregister_keymaps()
     unregister_snap_tools()
 
     for cls in reversed(classes):

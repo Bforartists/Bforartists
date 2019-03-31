@@ -792,18 +792,20 @@ static void draw_matrices_model_prepare(DRWCallState *st)
 	if (st->matflag & DRW_CALL_MODELVIEWPROJECTION) {
 		mul_m4_m4m4(st->modelviewprojection, DST.view_data.matstate.mat[DRW_MAT_PERS], st->model);
 	}
-	if (st->matflag & (DRW_CALL_NORMALVIEW | DRW_CALL_EYEVEC)) {
+	if (st->matflag & (DRW_CALL_NORMALVIEW | DRW_CALL_NORMALVIEWINVERSE | DRW_CALL_EYEVEC)) {
 		copy_m3_m4(st->normalview, st->modelview);
 		invert_m3(st->normalview);
 		transpose_m3(st->normalview);
 	}
+	if (st->matflag & (DRW_CALL_NORMALVIEWINVERSE | DRW_CALL_EYEVEC)) {
+		invert_m3_m3(st->normalviewinverse, st->normalview);
+	}
+	/* TODO remove eye vec (unused) */
 	if (st->matflag & DRW_CALL_EYEVEC) {
 		/* Used by orthographic wires */
-		float tmp[3][3];
 		copy_v3_fl3(st->eyevec, 0.0f, 0.0f, 1.0f);
-		invert_m3_m3(tmp, st->normalview);
 		/* set eye vector, transformed to object coords */
-		mul_m3_v3(tmp, st->eyevec);
+		mul_m3_v3(st->normalviewinverse, st->eyevec);
 	}
 	/* Non view dependent */
 	if (st->matflag & DRW_CALL_MODELINVERSE) {
@@ -823,10 +825,11 @@ static void draw_geometry_prepare(DRWShadingGroup *shgroup, DRWCall *call)
 	/* step 1 : bind object dependent matrices */
 	if (call != NULL) {
 		DRWCallState *state = call->state;
-		float objectinfo[3];
+		float objectinfo[4];
 		objectinfo[0] = state->objectinfo[0];
 		objectinfo[1] = call->single.ma_index; /* WATCH this is only valid for single drawcalls. */
 		objectinfo[2] = state->objectinfo[1];
+		objectinfo[3] = (state->flag & DRW_CALL_NEGSCALE) ? -1.0f : 1.0f;
 
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->model, 16, 1, (float *)state->model);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelinverse, 16, 1, (float *)state->modelinverse);
@@ -834,8 +837,9 @@ static void draw_geometry_prepare(DRWShadingGroup *shgroup, DRWCall *call)
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelviewinverse, 16, 1, (float *)state->modelviewinverse);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelviewprojection, 16, 1, (float *)state->modelviewprojection);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->normalview, 9, 1, (float *)state->normalview);
+		GPU_shader_uniform_vector(shgroup->shader, shgroup->normalviewinverse, 9, 1, (float *)state->normalviewinverse);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->normalworld, 9, 1, (float *)state->normalworld);
-		GPU_shader_uniform_vector(shgroup->shader, shgroup->objectinfo, 3, 1, (float *)objectinfo);
+		GPU_shader_uniform_vector(shgroup->shader, shgroup->objectinfo, 4, 1, (float *)objectinfo);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->orcotexfac, 3, 2, (float *)state->orcotexfac);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->eye, 3, 1, (float *)state->eyevec);
 	}
@@ -849,7 +853,7 @@ static void draw_geometry_prepare(DRWShadingGroup *shgroup, DRWCall *call)
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelview, 16, 1, (float *)DST.view_data.matstate.mat[DRW_MAT_VIEW]);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelviewinverse, 16, 1, (float *)DST.view_data.matstate.mat[DRW_MAT_VIEWINV]);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->modelviewprojection, 16, 1, (float *)DST.view_data.matstate.mat[DRW_MAT_PERS]);
-		GPU_shader_uniform_vector(shgroup->shader, shgroup->objectinfo, 3, 1, (float *)unitmat);
+		GPU_shader_uniform_vector(shgroup->shader, shgroup->objectinfo, 4, 1, (float *)unitmat);
 		GPU_shader_uniform_vector(shgroup->shader, shgroup->orcotexfac, 3, 2, (float *)shgroup->instance_orcofac);
 	}
 }
@@ -1035,7 +1039,9 @@ static void draw_shgroup(DRWShadingGroup *shgroup, DRWState pass_state)
 	bool use_tfeedback = false;
 
 	if (shader_changed) {
-		if (DST.shader) GPU_shader_unbind();
+		if (DST.shader) {
+			GPU_shader_unbind();
+		}
 		GPU_shader_bind(shgroup->shader);
 		DST.shader = shgroup->shader;
 	}

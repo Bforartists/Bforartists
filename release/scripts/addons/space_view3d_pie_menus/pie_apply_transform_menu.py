@@ -40,7 +40,7 @@ from bpy.props import EnumProperty
 
 # Pie Apply Transforms - Ctrl + A
 class PieApplyTransforms(Menu):
-    bl_idname = "pie.applytransforms"
+    bl_idname = "PIE_MT_applytransforms"
     bl_label = "Pie Apply Transforms"
 
     def draw(self, context):
@@ -61,7 +61,7 @@ class PieApplyTransforms(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("object.visual_transform_apply", text="Visual Transforms")
         # 3 - BOTTOM - RIGHT
-        pie.menu("clear.menu", text="Clear Transform Menu")
+        pie.menu("PIE_MT_clear_menu", text="Clear Transform Menu")
 
 
 # Apply Transforms
@@ -104,7 +104,7 @@ class ApplyTransformAll(Operator):
 
 # Clear Menu
 class ClearMenu(Menu):
-    bl_idname = "clear.menu"
+    bl_idname = "PIE_MT_clear_menu"
     bl_label = "Clear Menu"
 
     def draw(self, context):
@@ -149,7 +149,7 @@ def register():
         # Apply Transform
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS', ctrl=True)
-        kmi.properties.name = "pie.applytransforms"
+        kmi.properties.name = "PIE_MT_applytransforms"
         addon_keymaps.append((km, kmi))
 
 

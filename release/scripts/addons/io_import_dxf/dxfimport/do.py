@@ -395,7 +395,7 @@ class Do:
             b[i].handle_left_type = 'AUTO'
             b[i].handle_right_type = 'AUTO'
 
-        vc = self.proj(en.center)
+        vc = Vector(en.center)
         clockwise = Matrix(((0, -1, 0), (1, 0, 0), (0, 0, 1)))
 
         r = major

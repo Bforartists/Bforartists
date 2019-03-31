@@ -723,13 +723,27 @@ struct GPUMaterial *EEVEE_material_mesh_get(
 	const void *engine = &DRW_engine_viewport_eevee_type;
 	int options = VAR_MAT_MESH;
 
-	if (use_blend) options |= VAR_MAT_BLEND;
-	if (use_multiply) options |= VAR_MAT_MULT;
-	if (use_refract) options |= VAR_MAT_REFRACT;
-	if (use_sss) options |= VAR_MAT_SSS;
-	if (use_sss && effects->sss_separate_albedo) options |= VAR_MAT_SSSALBED;
-	if (use_translucency) options |= VAR_MAT_TRANSLUC;
-	if (((effects->enabled_effects & EFFECT_VOLUMETRIC) != 0) && use_blend) options |= VAR_MAT_VOLUME;
+	if (use_blend) {
+		options |= VAR_MAT_BLEND;
+	}
+	if (use_multiply) {
+		options |= VAR_MAT_MULT;
+	}
+	if (use_refract) {
+		options |= VAR_MAT_REFRACT;
+	}
+	if (use_sss) {
+		options |= VAR_MAT_SSS;
+	}
+	if (use_sss && effects->sss_separate_albedo) {
+		options |= VAR_MAT_SSSALBED;
+	}
+	if (use_translucency) {
+		options |= VAR_MAT_TRANSLUC;
+	}
+	if (((effects->enabled_effects & EFFECT_VOLUMETRIC) != 0) && use_blend) {
+		options |= VAR_MAT_VOLUME;
+	}
 
 	options |= eevee_material_shadow_option(shadow_method);
 
@@ -852,10 +866,18 @@ static struct DRWShadingGroup *EEVEE_default_shading_group_create(
 	ssr_id = (use_ssr) ? 1 : -1;
 	int options = VAR_MAT_MESH;
 
-	if (is_hair) options |= VAR_MAT_HAIR;
-	if (is_flat_normal) options |= VAR_MAT_FLAT;
-	if (use_blend) options |= VAR_MAT_BLEND;
-	if (((effects->enabled_effects & EFFECT_VOLUMETRIC) != 0) && use_blend) options |= VAR_MAT_VOLUME;
+	if (is_hair) {
+		options |= VAR_MAT_HAIR;
+	}
+	if (is_flat_normal) {
+		options |= VAR_MAT_FLAT;
+	}
+	if (use_blend) {
+		options |= VAR_MAT_BLEND;
+	}
+	if (((effects->enabled_effects & EFFECT_VOLUMETRIC) != 0) && use_blend) {
+		options |= VAR_MAT_VOLUME;
+	}
 
 	options |= eevee_material_shadow_option(shadow_method);
 
@@ -883,8 +905,12 @@ static struct DRWShadingGroup *EEVEE_default_shading_group_get(
 
 	BLI_assert(!is_hair || (ob && psys && md));
 
-	if (is_hair) options |= VAR_MAT_HAIR;
-	if (is_flat_normal) options |= VAR_MAT_FLAT;
+	if (is_hair) {
+		options |= VAR_MAT_HAIR;
+	}
+	if (is_flat_normal) {
+		options |= VAR_MAT_FLAT;
+	}
 
 	options |= eevee_material_shadow_option(shadow_method);
 
@@ -1598,34 +1624,28 @@ void EEVEE_materials_cache_populate(EEVEE_Data *vedata, EEVEE_ViewLayerData *sld
 					}
 
 					/* Shadow Pass */
-					if (ma->use_nodes && ma->nodetree && (ma->blend_method != MA_BM_SOLID)) {
-						struct GPUMaterial *gpumat;
-						switch (ma->blend_shadow) {
-							case MA_BS_SOLID:
-								EEVEE_lights_cache_shcaster_add(
-								        sldata, stl, mat_geom[i], ob);
-								*cast_shadow = true;
-								break;
-							case MA_BS_CLIP:
-								gpumat = EEVEE_material_mesh_depth_get(scene, ma, false, true);
-								EEVEE_lights_cache_shcaster_material_add(
-								        sldata, psl, gpumat, mat_geom[i], ob, &ma->alpha_threshold);
-								*cast_shadow = true;
-								break;
-							case MA_BS_HASHED:
-								gpumat = EEVEE_material_mesh_depth_get(scene, ma, true, true);
-								EEVEE_lights_cache_shcaster_material_add(
-								        sldata, psl, gpumat, mat_geom[i], ob, NULL);
-								*cast_shadow = true;
-								break;
-							case MA_BS_NONE:
-							default:
-								break;
-						}
-					}
-					else {
-						EEVEE_lights_cache_shcaster_add(sldata, stl, mat_geom[i], ob);
-						*cast_shadow = true;
+					struct GPUMaterial *gpumat;
+					switch (ma->blend_shadow) {
+						case MA_BS_SOLID:
+							EEVEE_lights_cache_shcaster_add(
+							        sldata, stl, mat_geom[i], ob);
+							*cast_shadow = true;
+							break;
+						case MA_BS_CLIP:
+							gpumat = EEVEE_material_mesh_depth_get(scene, ma, false, true);
+							EEVEE_lights_cache_shcaster_material_add(
+							        sldata, psl, gpumat, mat_geom[i], ob, &ma->alpha_threshold);
+							*cast_shadow = true;
+							break;
+						case MA_BS_HASHED:
+							gpumat = EEVEE_material_mesh_depth_get(scene, ma, true, true);
+							EEVEE_lights_cache_shcaster_material_add(
+							        sldata, psl, gpumat, mat_geom[i], ob, NULL);
+							*cast_shadow = true;
+							break;
+						case MA_BS_NONE:
+						default:
+							break;
 					}
 				}
 			}

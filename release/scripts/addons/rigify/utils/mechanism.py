@@ -78,21 +78,40 @@ def make_constraint(
 # Custom property creation utilities
 #=============================================
 
-def make_property(owner, name, default=0.0, min=0.0, max=1.0, soft_min=None, soft_max=None, description=None):
+def make_property(owner, name, default, min=0.0, max=1.0, soft_min=None, soft_max=None, description=None, overridable=True):
     """
     Creates and initializes a custom property of owner.
 
     The soft_min and soft_max parameters default to min and max.
+    Description defaults to the property name.
     """
     owner[name] = default
 
     prop = rna_idprop_ui_prop_get(owner, name, create=True)
-    prop["min"] = min
-    prop["soft_min"] = soft_min if soft_min is not None else min
-    prop["max"] = max
-    prop["soft_max"] = soft_max if soft_max is not None else max
-    if description:
-        prop["description"] = description
+
+    if soft_min is None:
+        soft_min = min
+    if soft_max is None:
+        soft_max = max
+
+    proptype = type(default)
+
+    if proptype in {int, float}:
+        prop["min"] = proptype(min)
+        prop["soft_min"] = proptype(soft_min)
+        prop["max"] = proptype(max)
+        prop["soft_max"] = proptype(soft_max)
+
+        if default != 0:
+            prop["default"] = default
+
+    elif proptype is bool:
+        prop["min"] = prop["soft_min"] = False
+        prop["max"] = prop["soft_max"] = True
+
+    prop["description"] = description or name
+
+    owner.property_overridable_static_set('["%s"]' % (name), overridable)
 
     return prop
 
@@ -255,9 +274,9 @@ class MechanismUtilityMixin(object):
         assert(self.obj.mode == 'OBJECT')
         return make_constraint(self.obj.pose.bones[bone], type, self.obj, subtarget, **args)
 
-    def make_property(self, bone, name, **args):
+    def make_property(self, bone, name, default, **args):
         assert(self.obj.mode == 'OBJECT')
-        return make_property(self.obj.pose.bones[bone], name, **args)
+        return make_property(self.obj.pose.bones[bone], name, default, **args)
 
     def make_driver(self, owner, prop, **args):
         assert(self.obj.mode == 'OBJECT')
