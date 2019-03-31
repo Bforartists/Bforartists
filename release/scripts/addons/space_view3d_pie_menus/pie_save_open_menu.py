@@ -39,7 +39,7 @@ import os
 
 
 class PieSaveOpen(Menu):
-    bl_idname = "pie.saveopen"
+    bl_idname = "PIE_MT_saveopen"
     bl_label = "Pie Save/Open"
 
     def draw(self, context):
@@ -48,9 +48,9 @@ class PieSaveOpen(Menu):
         # 4 - LEFT
         pie.operator("wm.read_homefile", text="New", icon='FILE_NEW')
         # 6 - RIGHT
-        pie.menu("pie.link", text="Link", icon='LINK_BLEND')
+        pie.menu("PIE_MT_link", text="Link", icon='LINK_BLEND')
         # 2 - BOTTOM
-        pie.menu("pie.fileio", text="Import/Export Menu", icon='IMPORT')
+        pie.menu("PIE_MT_fileio", text="Import/Export Menu", icon='IMPORT')
         # 8 - TOP
         pie.operator("file.save_incremental", text="Incremental Save", icon='NONE')
         # 7 - TOP - LEFT
@@ -60,11 +60,11 @@ class PieSaveOpen(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("wm.open_mainfile", text="Open file", icon='FILE_FOLDER')
         # 3 - BOTTOM - RIGHT
-        pie.menu("pie.recover", text="Recovery Menu", icon='RECOVER_LAST')
+        pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')
 
 
 class pie_link(Menu):
-    bl_idname = "pie.link"
+    bl_idname = "PIE_MT_link"
     bl_label = "Link"
 
     def draw(self, context):
@@ -73,11 +73,11 @@ class pie_link(Menu):
         box = pie.split().column()
         box.operator("wm.link", text="Link", icon='LINK_BLEND')
         box.operator("wm.append", text="Append", icon='APPEND_BLEND')
-        box.menu("external.data", text="External Data")
+        box.menu("EXTERNAL_MT_data", text="External Data")
 
 
 class pie_recover(Menu):
-    bl_idname = "pie.recover"
+    bl_idname = "PIE_MT_recover"
     bl_label = "Recovery"
 
     def draw(self, context):
@@ -90,7 +90,7 @@ class pie_recover(Menu):
 
 
 class pie_fileio(Menu):
-    bl_idname = "pie.fileio"
+    bl_idname = "PIE_MT_fileio"
     bl_label = "Import/Export"
 
     def draw(self, context):
@@ -103,7 +103,7 @@ class pie_fileio(Menu):
 
 
 class ExternalData(Menu):
-    bl_idname = "external.data"
+    bl_idname = "EXTERNAL_MT_data"
     bl_label = "External Data"
 
     def draw(self, context):
@@ -193,7 +193,7 @@ def register():
         # Save/Open/...
         km = wm.keyconfigs.addon.keymaps.new(name='Window')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', ctrl=True)
-        kmi.properties.name = "pie.saveopen"
+        kmi.properties.name = "PIE_MT_saveopen"
         addon_keymaps.append((km, kmi))
 
 

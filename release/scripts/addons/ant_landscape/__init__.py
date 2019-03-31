@@ -24,7 +24,7 @@ bl_info = {
     "author": "Jimmy Hazevoet",
     "version": (0, 1, 8),
     "blender": (2, 80, 0),
-    "location": "View3D > Tool Shelf",
+    "location": "View3D > Sidebar",
     "description": "Another Noise Tool: Landscape and Displace",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -76,7 +76,7 @@ def menu_func_landscape(self, context):
 
 # Landscape Add Panel
 class AntLandscapeAddPanel(bpy.types.Panel):
-    bl_category = "A.N.T. Landscape"
+    bl_category = "Create"
     bl_label = "Landscape"
     bl_idname = "ANTLANDSCAPE_PT_add"
     bl_space_type = "VIEW_3D"
@@ -90,7 +90,7 @@ class AntLandscapeAddPanel(bpy.types.Panel):
 
 # Landscape Tools:
 class AntLandscapeToolsPanel(bpy.types.Panel):
-    bl_category = "A.N.T. Landscape"
+    bl_category = "Create"
     bl_label = "Landscape Tools"
     bl_idname = "ANTLANDSCAPE_PT_tools"
     bl_space_type = "VIEW_3D"
@@ -115,7 +115,7 @@ class AntLandscapeToolsPanel(bpy.types.Panel):
 
 # Landscape Main Settings
 class AntMainSettingsPanel(bpy.types.Panel):
-    bl_category = "A.N.T. Landscape"
+    bl_category = "Create"
     bl_label = "Landscape Main"
     bl_idname = "ANTLANDSCAPE_PT_main"
     bl_space_type = "VIEW_3D"
@@ -157,7 +157,7 @@ class AntMainSettingsPanel(bpy.types.Panel):
 
 # Landscape Noise Settings
 class AntNoiseSettingsPanel(bpy.types.Panel):
-    bl_category = "A.N.T. Landscape"
+    bl_category = "Create"
     bl_label = "Landscape Noise"
     bl_idname = "ANTLANDSCAPE_PT_noise"
     bl_space_type = "VIEW_3D"
@@ -355,7 +355,7 @@ class AntNoiseSettingsPanel(bpy.types.Panel):
 
 # Landscape Displace Settings
 class AntDisplaceSettingsPanel(bpy.types.Panel):
-    bl_category = "A.N.T. Landscape"
+    bl_category = "Create"
     bl_label = "Landscape Displace"
     bl_idname = "ANTLANDSCAPE_PT_disp"
     bl_space_type = "VIEW_3D"

@@ -50,7 +50,7 @@ class SculptSculptDraw(Operator):
 
 # Pie Sculp Pie Menus - W
 class PieSculptPie(Menu):
-    bl_idname = "pie.sculpt"
+    bl_idname = "PIE_MT_sculpt"
     bl_label = "Pie Sculpt"
 
     def draw(self, context):
@@ -84,7 +84,7 @@ class PieSculptPie(Menu):
 
 # Pie Sculpt 2
 class PieSculpttwo(Menu):
-    bl_idname = "pie.sculpttwo"
+    bl_idname = "PIE_MT_sculpttwo"
     bl_label = "Pie Sculpt 2"
 
     def draw(self, context):
@@ -108,7 +108,7 @@ class PieSculpttwo(Menu):
 
 # Pie Sculpt Three
 class PieSculptthree(Menu):
-    bl_idname = "pie.sculptthree"
+    bl_idname = "PIE_MT_sculptthree"
     bl_label = "Pie Sculpt 3"
 
     def draw(self, context):
@@ -145,7 +145,7 @@ def register():
         # Sculpt Pie Menu
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS')
-        kmi.properties.name = "pie.sculpt"
+        kmi.properties.name = "PIE_MT_sculpt"
         addon_keymaps.append((km, kmi))
 
 

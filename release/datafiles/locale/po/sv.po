@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -343,10 +343,6 @@ msgstr "Info"
 
 msgid "Properties"
 msgstr "Egenskaper"
-
-
-msgid "Default"
-msgstr "Förval"
 
 
 msgid "Width"
@@ -957,12 +953,16 @@ msgid "Stroke"
 msgstr "Penselavtryck"
 
 
+msgid "Default"
+msgstr "Förval"
+
+
 msgid "Strokes"
 msgstr "Penselavtryck"
 
 
-msgid "Control"
-msgstr "Hastighetsstyrning"
+msgid "Resolution"
+msgstr "Upplösning"
 
 
 msgid "Simplify"
@@ -1646,16 +1646,16 @@ msgid "Track To"
 msgstr "Skapa Spår"
 
 
+msgid "Armature"
+msgstr "Armatur"
+
+
 msgid "Follow Path"
 msgstr "Rensa Förälder"
 
 
 msgid "Shrinkwrap"
 msgstr "Krympa/Förtjocka"
-
-
-msgid "Armature"
-msgstr "Armatur"
 
 
 msgid "Action Constraint"
@@ -3198,10 +3198,6 @@ msgid "Directory to save the textures"
 msgstr "Riktning"
 
 
-msgid "Resolution"
-msgstr "Upplösning"
-
-
 msgid "Output image resolution"
 msgstr "Markera Länkad"
 
@@ -4061,6 +4057,10 @@ msgstr "Markera Länkad"
 
 msgid "Object removes fluid from the simulation"
 msgstr "Markera Länkad"
+
+
+msgid "Control"
+msgstr "Hastighetsstyrning"
 
 
 msgid "Control Fluid Simulation Settings"
@@ -6883,50 +6883,6 @@ msgid "Effect Children"
 msgstr "Dotterförskjutning"
 
 
-msgid "Align to"
-msgstr "Duplicera"
-
-
-msgid "Animate"
-msgstr "Animerad"
-
-
-msgid "Age"
-msgstr "Vinkel"
-
-
-msgid "Billboard Object"
-msgstr "Speglingsobjekt:"
-
-
-msgid "Billboard Offset"
-msgstr "Ram Markering"
-
-
-msgid "Billboard Scale"
-msgstr "Rensa Förälder"
-
-
-msgid "Tilt of the billboards"
-msgstr "Ange färg for banden"
-
-
-msgid "Random Tilt"
-msgstr "Slumpmässig"
-
-
-msgid "UV Split"
-msgstr "Dela"
-
-
-msgid "Billboard Velocity Head"
-msgstr "Rotationshastighet:"
-
-
-msgid "Billboard Velocity Tail"
-msgstr "Rotationshastighet:"
-
-
 msgid "Length of child paths"
 msgstr "Längd i antal rutor:"
 
@@ -7169,10 +7125,6 @@ msgstr "Slumpmässig"
 
 msgid "Life span of the particles"
 msgstr "Materialets volym-inställningar"
-
-
-msgid "Lock Billboard"
-msgstr "Skala"
 
 
 msgid "Constrain boids to a surface"
@@ -13118,10 +13070,6 @@ msgid "Lasso Select"
 msgstr "Markera Rad"
 
 
-msgid "Deselect rather than select items"
-msgstr "Markera Länkad"
-
-
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Höger"
@@ -13323,6 +13271,10 @@ msgstr "Växla markering av samtliga animationskanaler"
 
 
 msgid "Select all animation channels within the specified region"
+msgstr "Markera Länkad"
+
+
+msgid "Deselect rather than select items"
 msgstr "Markera Länkad"
 
 
@@ -15713,6 +15665,14 @@ msgstr "Inkludera:"
 
 msgid "Polygroups"
 msgstr "Markera Rad"
+
+
+msgid "Compress"
+msgstr "Kompression"
+
+
+msgid "Hierarchy"
+msgstr "Visa"
 
 
 msgctxt "Operator"
@@ -20425,10 +20385,6 @@ msgid "Clear Drivers"
 msgstr "Markera Rad"
 
 
-msgid "Hierarchy"
-msgstr "Visa"
-
-
 msgctxt "Operator"
 msgid "Outliner Data Operation"
 msgstr "Duplicera"
@@ -24578,10 +24534,6 @@ msgid "Save As Blender File"
 msgstr "Öppna ett Blenderdokument"
 
 
-msgid "Compress"
-msgstr "Kompression"
-
-
 msgid "Write compressed .blend file"
 msgstr "Packa in i .blend-filen"
 
@@ -24751,76 +24703,12 @@ msgid "Restrict"
 msgstr "Starta Spel"
 
 
-msgid "Camera Presets"
-msgstr "Bildfrekvens-förinställningar"
-
-
-msgid "Color Presets"
-msgstr "Tygförinställningar"
-
-
-msgid "Tracking Presets"
-msgstr "Skapa Spår"
-
-
-msgid "Cloth Presets"
-msgstr "Tygförinställningar"
-
-
-msgid "Integrator Presets"
-msgstr "Operatorinställning"
-
-
-msgid "Fluid Presets"
-msgstr "Vätskeegenskaper:"
-
-
-msgid "FFMPEG Presets"
-msgstr "FFMPEG-förinställningar"
-
-
-msgid "Render Presets"
-msgstr "Lägg till renderingsförinställning"
-
-
-msgid "Bone Color Sets"
-msgstr "Rensa Förälder"
-
-
-msgid "Styles"
-msgstr "Markera Länkad"
-
-
-msgid "Text Style"
-msgstr "Markera Länkad"
-
-
-msgid "User Interface"
-msgstr "Yta"
-
-
-msgid "Theme Space"
-msgstr "Text"
-
-
-msgid "Theme Space List"
-msgstr "Starta rendering av sekvens"
-
-
-msgid "Panel Colors"
-msgstr "Markera Rad"
-
-
-msgid "3D View"
-msgstr "Visa"
-
-
-msgid "Gradient Colors"
-msgstr "Markera Rad"
-
-
 msgid "Bone Constraints"
 msgstr "Benbegränsningar"
+
+
+msgid "Camera Presets"
+msgstr "Bildfrekvens-förinställningar"
 
 
 msgid "Active Point"
@@ -24855,12 +24743,24 @@ msgid "Clean up"
 msgstr "Rensa"
 
 
+msgid "Color Presets"
+msgstr "Tygförinställningar"
+
+
 msgid "Tracking Settings"
 msgstr "Flytta Till Lager"
 
 
 msgid "Lens"
 msgstr "Lins"
+
+
+msgid "Tracking Presets"
+msgstr "Skapa Spår"
+
+
+msgid "Cloth Presets"
+msgstr "Tygförinställningar"
 
 
 msgid "Depth of Field"
@@ -24877,6 +24777,10 @@ msgstr "Rensa Rotation"
 
 msgid "Ray Visibility"
 msgstr "Växla synlighet"
+
+
+msgid "Integrator Presets"
+msgstr "Operatorinställning"
 
 
 msgid "Pixel Filter"
@@ -24959,6 +24863,10 @@ msgid "System"
 msgstr "System"
 
 
+msgid "Fluid Presets"
+msgstr "Vätskeegenskaper:"
+
+
 msgid "Scopes"
 msgstr "Instrument"
 
@@ -24969,6 +24877,10 @@ msgstr "Samplinglinje"
 
 msgid "Appearance"
 msgstr "Infoga"
+
+
+msgid "2D Cursor"
+msgstr "Markera Länkad"
 
 
 msgid "UV Sculpt"
@@ -25067,6 +24979,14 @@ msgid "Audio"
 msgstr "Duplicera"
 
 
+msgid "FFMPEG Presets"
+msgstr "FFMPEG-förinställningar"
+
+
+msgid "Render Presets"
+msgstr "Lägg till renderingsförinställning"
+
+
 msgid "Edit Strip"
 msgstr "Redigera remsa"
 
@@ -25087,6 +25007,42 @@ msgid "Playback"
 msgstr "Uppspelning"
 
 
+msgid "Bone Color Sets"
+msgstr "Rensa Förälder"
+
+
+msgid "Theme Space"
+msgstr "Text"
+
+
+msgid "Theme Space List"
+msgstr "Starta rendering av sekvens"
+
+
+msgid "Panel Colors"
+msgstr "Markera Rad"
+
+
+msgid "Styles"
+msgstr "Markera Länkad"
+
+
+msgid "Text Style"
+msgstr "Markera Länkad"
+
+
+msgid "User Interface"
+msgstr "Yta"
+
+
+msgid "3D View"
+msgstr "Visa"
+
+
+msgid "Gradient Colors"
+msgstr "Markera Rad"
+
+
 msgid "Motion Tracking"
 msgstr "Rensa Rotation"
 
@@ -25101,10 +25057,6 @@ msgstr "Rensa Rotation"
 
 msgid "Pose Options"
 msgstr "Rensa Rotation"
-
-
-msgid "Project Paint"
-msgstr "Redigera egenskap"
 
 
 msgid "Transform Orientations"
@@ -25593,10 +25545,6 @@ msgstr "Partikelsystem"
 
 msgid "Cache Compression"
 msgstr "Kompression"
-
-
-msgid "No"
-msgstr "Anteckning"
 
 
 msgid "No compression"
@@ -27933,10 +27881,6 @@ msgstr "Vitt"
 
 msgid "Length of displaying path, in frames"
 msgstr "Längd i antal rutor:"
-
-
-msgid "2D Cursor"
-msgstr "Markera Länkad"
 
 
 msgid "Median Point"
@@ -30378,6 +30322,10 @@ msgid "UnLock All"
 msgstr "Lägg till Stripp"
 
 
+msgid "Before"
+msgstr "Innan"
+
+
 msgctxt "Operator"
 msgid "Assign to Active Group"
 msgstr "Tilldela ny grupp"
@@ -30767,10 +30715,6 @@ msgid "Cursor to Grid"
 msgstr "Markör till jämna pixlar"
 
 
-msgid "Before"
-msgstr "Innan"
-
-
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Duplicera"
@@ -30916,10 +30860,6 @@ msgstr "Aktivera fysik för:"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Kraftfält:"
-
-
-msgid "Use Lib Path"
-msgstr "Ange biblioteks-ID"
 
 
 msgctxt "Operator"
@@ -31726,6 +31666,10 @@ msgid "Sub Level"
 msgstr "Nivå"
 
 
+msgid "Align to"
+msgstr "Duplicera"
+
+
 msgid "Manhattan Distance"
 msgstr "Visa inställningar för kant"
 
@@ -32056,10 +32000,6 @@ msgstr "Spara kopia…"
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Rensa Placering"
-
-
-msgid "Make Links..."
-msgstr "Spara som"
 
 
 msgctxt "Operator"

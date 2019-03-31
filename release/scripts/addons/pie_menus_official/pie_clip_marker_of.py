@@ -34,7 +34,7 @@ import bpy
 from bpy.types import Menu
 
 
-class CLIP_PIE_refine_pie(Menu):
+class CLIP_MT_refine_pie(Menu):
     # Refinement Options
     bl_label = "Refine Intrinsics"
 
@@ -53,7 +53,7 @@ class CLIP_PIE_refine_pie(Menu):
         pie.prop(settings, "refine_intrinsics", expand=True)
 
 
-class CLIP_PIE_geometry_reconstruction(Menu):
+class CLIP_MT_geometry_reconstruction(Menu):
     # Geometry Reconstruction
     bl_label = "Reconstruction"
 
@@ -65,7 +65,7 @@ class CLIP_PIE_geometry_reconstruction(Menu):
         pie.operator("clip.track_to_empty", icon='EMPTY_DATA')
 
 
-class CLIP_PIE_proxy_pie(Menu):
+class CLIP_MT_proxy_pie(Menu):
     # Proxy Controls
     bl_label = "Proxy Size"
 
@@ -84,7 +84,7 @@ class CLIP_PIE_proxy_pie(Menu):
         pie.prop(space.clip_user, "proxy_render_size", expand=True)
 
 
-class CLIP_PIE_display_pie(Menu):
+class CLIP_MT_display_pie(Menu):
     # Display Options
     bl_label = "Marker Display"
 
@@ -100,7 +100,7 @@ class CLIP_PIE_display_pie(Menu):
         pie.prop(space, "show_marker_pattern", text="Display Pattern Area", icon='BORDERMOVE')
 
 
-class CLIP_PIE_marker_pie(Menu):
+class CLIP_MT_marker_pie(Menu):
     # Settings for the individual markers
     bl_label = "Marker Settings"
 
@@ -137,7 +137,7 @@ class CLIP_PIE_marker_pie(Menu):
                 prop.value = 'PREV_FRAME'
 
 
-class CLIP_PIE_tracking_pie(Menu):
+class CLIP_MT_tracking_pie(Menu):
     # Tracking Operators
     bl_label = "Tracking"
 
@@ -162,7 +162,7 @@ class CLIP_PIE_tracking_pie(Menu):
         pie.operator("clip.refine_markers", icon='LOOP_FORWARDS').backwards = False
 
 
-class CLIP_PIE_clipsetup_pie(Menu):
+class CLIP_MT_clipsetup_pie(Menu):
     # Setup the clip display options
     bl_label = "Clip and Display Setup"
 
@@ -178,15 +178,15 @@ class CLIP_PIE_clipsetup_pie(Menu):
         pie.prop(space, "use_mute_footage", text="Mute Footage", icon='MUTE_IPO_ON')
         pie.prop(space.clip_user, "use_render_undistorted", text="Render Undistorted")
         pie.operator("clip.set_scene_frames", text="Set Scene Frames", icon='SCENE_DATA')
-        pie.operator("wm.call_menu_pie", text="Marker Display", icon='PLUS').name = "CLIP_PIE_display_pie"
+        pie.operator("wm.call_menu_pie", text="Marker Display", icon='PLUS').name = "CLIP_MT_display_pie"
         pie.operator("clip.set_active_clip", icon='CLIP')
 
         pie_proxy = layout.menu_pie()
         pie_proxy.enabled = space.clip is not None
-        pie_proxy.operator("wm.call_menu_pie", text="Proxy", icon='PLUS').name = "CLIP_PIE_proxy_pie"
+        pie_proxy.operator("wm.call_menu_pie", text="Proxy", icon='PLUS').name = "CLIP_MT_proxy_pie"
 
 
-class CLIP_PIE_solver_pie(Menu):
+class CLIP_MT_solver_pie(Menu):
     # Operators to solve the scene
     bl_label = "Solving"
 
@@ -202,7 +202,7 @@ class CLIP_PIE_solver_pie(Menu):
 
         if settings:
             pie.operator("wm.call_menu_pie", text="Refinement",
-                        icon='CAMERA_DATA').name = "CLIP_PIE_refine_pie"
+                        icon='CAMERA_DATA').name = "CLIP_MT_refine_pie"
             pie.prop(settings, "use_tripod_solver", text="Tripod Solver")
 
         pie.operator("clip.set_solver_keyframe", text="Set Keyframe A",
@@ -216,7 +216,7 @@ class CLIP_PIE_solver_pie(Menu):
         prop.error = 2
 
 
-class CLIP_PIE_reconstruction_pie(Menu):
+class CLIP_MT_reconstruction_pie(Menu):
     # Scene Reconstruction
     bl_label = "Reconstruction"
 
@@ -235,10 +235,10 @@ class CLIP_PIE_reconstruction_pie(Menu):
 
         pie.operator("clip.set_scale", text="Set Scale", icon='ARROW_LEFTRIGHT')
         pie.operator("wm.call_menu_pie", text="Reconstruction",
-                    icon='MESH_DATA').name = "CLIP_PIE_geometry_reconstruction"
+                    icon='MESH_DATA').name = "CLIP_MT_geometry_reconstruction"
 
 
-class CLIP_PIE_timecontrol_pie(Menu):
+class CLIP_MT_timecontrol_pie(Menu):
     # Time Controls
     bl_label = "Time Control"
 
@@ -262,16 +262,16 @@ class CLIP_PIE_timecontrol_pie(Menu):
 addon_keymaps = []
 
 classes = (
-    CLIP_PIE_geometry_reconstruction,
-    CLIP_PIE_tracking_pie,
-    CLIP_PIE_display_pie,
-    CLIP_PIE_proxy_pie,
-    CLIP_PIE_marker_pie,
-    CLIP_PIE_solver_pie,
-    CLIP_PIE_refine_pie,
-    CLIP_PIE_reconstruction_pie,
-    CLIP_PIE_clipsetup_pie,
-    CLIP_PIE_timecontrol_pie,
+    CLIP_MT_geometry_reconstruction,
+    CLIP_MT_tracking_pie,
+    CLIP_MT_display_pie,
+    CLIP_MT_proxy_pie,
+    CLIP_MT_marker_pie,
+    CLIP_MT_solver_pie,
+    CLIP_MT_refine_pie,
+    CLIP_MT_reconstruction_pie,
+    CLIP_MT_clipsetup_pie,
+    CLIP_MT_timecontrol_pie,
     )
 
 
@@ -287,27 +287,27 @@ def register():
         km = wm.keyconfigs.addon.keymaps.new(name="Clip", space_type='CLIP_EDITOR')
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'Q', 'PRESS')
-        kmi.properties.name = "CLIP_PIE_marker_pie"
+        kmi.properties.name = "CLIP_MT_marker_pie"
         addon_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'W', 'PRESS')
-        kmi.properties.name = "CLIP_PIE_clipsetup_pie"
+        kmi.properties.name = "CLIP_MT_clipsetup_pie"
         addon_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'E', 'PRESS')
-        kmi.properties.name = "CLIP_PIE_tracking_pie"
+        kmi.properties.name = "CLIP_MT_tracking_pie"
         addon_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'S', 'PRESS', shift=True)
-        kmi.properties.name = "CLIP_PIE_solver_pie"
+        kmi.properties.name = "CLIP_MT_solver_pie"
         addon_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'W', 'PRESS', shift=True)
-        kmi.properties.name = "CLIP_PIE_reconstruction_pie"
+        kmi.properties.name = "CLIP_MT_reconstruction_pie"
         addon_keymaps.append((km, kmi))
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'A', 'PRESS', shift=True)
-        kmi.properties.name = "CLIP_PIE_timecontrol_pie"
+        kmi.properties.name = "CLIP_MT_timecontrol_pie"
         addon_keymaps.append((km, kmi))
 
 

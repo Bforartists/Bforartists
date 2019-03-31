@@ -21,7 +21,7 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 14, 4),
+    "version": (4, 14, 5),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
@@ -190,17 +190,13 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
     def draw(self, context):
         layout = self.layout
 
-    def draw(self, context):
-        layout = self.layout
-
         layout.prop(self, "ui_tab", expand=True)
         if self.ui_tab == 'MAIN':
-            layout.prop(self, "use_manual_orientation"),          
-            #sub.enabled = self.use_manual_orientation # bfa - made the props hidden instead of deactivated.
-            if self.use_manual_orientation: 
-                sub = layout.column()
-                sub.prop(self, "axis_forward")
-                sub.prop(self, "axis_up")
+            layout.prop(self, "use_manual_orientation"),
+            sub = layout.column()
+            sub.enabled = self.use_manual_orientation
+            sub.prop(self, "axis_forward")
+            sub.prop(self, "axis_up")
             layout.prop(self, "global_scale")
             layout.prop(self, "bake_space_transform")
 
