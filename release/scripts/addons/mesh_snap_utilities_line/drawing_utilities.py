@@ -20,6 +20,24 @@ from mathutils import Vector
 
 
 class SnapDrawn():
+    __slots__ = (
+        'out_color',
+        'face_color',
+        'edge_color',
+        'vert_color',
+        'center_color',
+        'perpendicular_color',
+        'constrain_shift_color',
+        'axis_x_color',
+        'axis_y_color',
+        'axis_z_color',
+        '_format_pos',
+        '_format_pos_and_color',
+        '_program_unif_col',
+        '_program_smooth_col',
+        '_batch_point',
+    )
+
     def __init__(self, out_color, face_color,
                  edge_color, vert_color, center_color,
                  perpendicular_color, constrain_shift_color,

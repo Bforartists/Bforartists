@@ -221,7 +221,7 @@ class convert():
 convert = convert()
 
 
-class ToolsPanel(bpy.types.Panel):
+class VIEW3D_PT_rigify_rot_mode(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'View'
@@ -309,7 +309,7 @@ class CONVERT_OT_quat2eu_all_actions(bpy.types.Operator):
 ### Registering ###
 
 classes = (
-    ToolsPanel,
+    VIEW3D_PT_rigify_rot_mode,
     CONVERT_OT_quat2eu_current_action,
     CONVERT_OT_quat2eu_all_actions,
 )

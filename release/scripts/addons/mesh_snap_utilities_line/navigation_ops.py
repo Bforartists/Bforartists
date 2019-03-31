@@ -23,6 +23,8 @@ class VIEW3D_OT_rotate_custom_pivot(bpy.types.Operator):
     bl_label = "Rotate the view"
     bl_options = {'BLOCKING', 'GRAB_CURSOR'}
 
+    __slots__ = 'rv3d', 'init_coord', 'pos1', 'view_rot'
+
     pivot: bpy.props.FloatVectorProperty("Pivot", subtype='XYZ')
     g_up_axis: bpy.props.FloatVectorProperty("up_axis", default=(0.0, 0.0, 1.0), subtype='XYZ')
     sensitivity: bpy.props.FloatProperty("sensitivity", default=0.007)
@@ -63,6 +65,8 @@ class VIEW3D_OT_zoom_custom_target(bpy.types.Operator):
     bl_idname = "view3d.zoom_custom_target"
     bl_label = "Zoom the view"
     bl_options = {'BLOCKING', 'GRAB_CURSOR'}
+
+    __slots__ = 'rv3d', 'init_dist', 'delta', 'init_loc'
 
     target: bpy.props.FloatVectorProperty("target", subtype='XYZ')
     delta: bpy.props.IntProperty("delta", default=0)

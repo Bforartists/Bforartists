@@ -24,6 +24,7 @@ import bpy
 import os.path
 from bpy_extras.io_utils import ImportHelper
 from bpy_extras import object_utils
+from bpy.utils import register_class
 from math import atan, pi, degrees, sqrt, cos, sin
 
 
@@ -1915,3 +1916,47 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                 # track.up_axis = "UP_Y"
                 # obj.location = (0,0,0)
         return {'FINISHED'}
+
+classes = (
+    POVRAY_OT_lathe_add,
+    POVRAY_OT_superellipsoid_add,
+    POVRAY_OT_superellipsoid_update,
+    POVRAY_OT_supertorus_add,
+    POVRAY_OT_supertorus_update,
+    POVRAY_OT_loft_add,
+    POVRAY_OT_plane_add,
+    POVRAY_OT_box_add,
+    POVRAY_OT_cylinder_add,
+    POVRAY_OT_cylinder_update,
+    POVRAY_OT_sphere_add,
+    POVRAY_OT_sphere_update,
+    POVRAY_OT_cone_add,
+    POVRAY_OT_cone_update,
+    POVRAY_OT_isosurface_box_add,
+    POVRAY_OT_isosurface_sphere_add,
+    POVRAY_OT_sphere_sweep_add,
+    POVRAY_OT_blob_add,
+    POVRAY_OT_rainbow_add,
+    POVRAY_OT_height_field_add,
+    POVRAY_OT_torus_add,
+    POVRAY_OT_torus_update,
+    POVRAY_OT_prism_add,
+    POVRAY_OT_parametric_add,
+    POVRAY_OT_parametric_update,
+    POVRAY_OT_shape_polygon_to_circle_add,
+    ImportPOV,
+)
+
+
+def register():
+    #from bpy.utils import register_class
+
+    for cls in classes:
+        register_class(cls)
+
+
+def unregister():
+    from bpy.utils import unregister_class
+
+    for cls in classes:
+        unregister_class(cls)

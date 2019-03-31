@@ -412,6 +412,22 @@ def warning_lineonly(fn, id_, message, line):
 # ------------------------------------------------------------------
 # Own Blender rules here!
 
+def blender_expects_brace_but_not_found(index):
+    i = index + 1
+    missing_brace = True
+    while True:
+        if tokens[i].type in Token.Comment:
+            pass
+        elif tokens[i].type in Token.Punctuation:
+            if tokens[i].text == ";":
+                break
+            elif tokens[i].text == "{":
+                missing_brace = False
+                break
+        i += 1
+    return missing_brace
+
+
 def blender_check_kw_if(fn, index_kw_start, index_kw, index_kw_end):
 
     # check if we have: 'if('
@@ -502,6 +518,23 @@ def blender_check_kw_if(fn, index_kw_start, index_kw, index_kw_end):
                                 tokens[index_kw].text, index_kw, index_end)
                     del ws_kw, ws_end
                 del index_end
+
+    # Check we use braces:
+    # note, this is a new requirement so other checks above handle correct use of non-brace case.
+    if tokens[index_kw].text in {"if", "for", "while", "else"}:
+        has_brace = False
+
+        # Could make a function 'is_while_trailing'
+        i_prev = -1
+        if tokens[index_kw].text == "while":
+            i_prev = tk_advance_no_ws(index_kw, -1)
+            if tokens[i_prev].text == "}":
+                has_brace = True
+
+        if not has_brace:
+            if blender_expects_brace_but_not_found(index_kw_end):
+                warning(fn, "E118", "missing brace '%s (...)'" %
+                        tokens[index_kw].text, index_kw, index_kw_end)
 
     # multi-line statement
     if (tokens[index_kw].line != tokens[index_kw_end].line):
@@ -657,6 +690,12 @@ def blender_check_kw_else(fn, index_kw):
     if tokens[i_prev].type == Token.Punctuation and tokens[i_prev].text == "}":
         if tokens[index_kw].line == tokens[i_prev].line:
             warning(fn, "E116", "else has no newline before the brace '} else'", i_prev, index_kw)
+
+
+    if tokens[index_kw].text == "else" and tokens[i_next].text != "if":
+        if blender_expects_brace_but_not_found(index_kw):
+            warning(fn, "E118", "missing brace '%s (...)'" %
+                    tokens[index_kw].text, index_kw, index_kw + 1)
 
 
 def blender_check_kw_switch(fn, index_kw_start, index_kw, index_kw_end):

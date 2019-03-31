@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -484,10 +484,6 @@ msgstr "Eigenschaften"
 
 msgid "File Browser"
 msgstr "Dateibrowser"
-
-
-msgid "Default"
-msgstr "Vorgabe"
 
 
 msgid "Width"
@@ -1570,16 +1566,16 @@ msgid "Stroke"
 msgstr "Pinselstrich"
 
 
+msgid "Default"
+msgstr "Vorgabe"
+
+
 msgid "Strokes"
 msgstr "Striche"
 
 
-msgid "Control"
-msgstr "Kontrollieren"
-
-
-msgid "Both"
-msgstr "Beides"
+msgid "Resolution"
+msgstr "Auflösung"
 
 
 msgid "Simplify"
@@ -2407,6 +2403,10 @@ msgid "Track To"
 msgstr "Verfolgen an"
 
 
+msgid "Armature"
+msgstr "Skelett"
+
+
 msgid "Child Of"
 msgstr "Kind von"
 
@@ -2421,10 +2421,6 @@ msgstr "Pfad folgen"
 
 msgid "Shrinkwrap"
 msgstr "Schrumpfen/Umhüllen"
-
-
-msgid "Armature"
-msgstr "Skelett"
 
 
 msgid "Action Constraint"
@@ -4147,10 +4143,6 @@ msgid "Output Path"
 msgstr "Ausgabepfad"
 
 
-msgid "Resolution"
-msgstr "Auflösung"
-
-
 msgid "Output image resolution"
 msgstr "Ausgabe-Bildauflösung"
 
@@ -5432,6 +5424,10 @@ msgid "Particle"
 msgstr "Partikel"
 
 
+msgid "Control"
+msgstr "Kontrollieren"
+
+
 msgid "Object is made a fluid control mesh, which influences the fluid"
 msgstr "Objekt erzeugt ein Flüssigkeitskontroll-Mesh, welches die Flüssigkeit beeinflusst"
 
@@ -5642,6 +5638,10 @@ msgstr "Hülle"
 
 msgid "Use only the outer shell of the mesh"
 msgstr "Nur die äußere Hülle des Meshes verwenden"
+
+
+msgid "Both"
+msgstr "Beides"
 
 
 msgid "Use both the inner volume and the outer shell of the mesh"
@@ -9101,54 +9101,6 @@ msgid "Effect Children"
 msgstr "Kinder"
 
 
-msgid "Align to"
-msgstr "Ausrichten an"
-
-
-msgid "Animate"
-msgstr "Animieren"
-
-
-msgid "Age"
-msgstr "Alter"
-
-
-msgid "Billboard Object"
-msgstr "Plakatwand-Objekt"
-
-
-msgid "Billboards face this object (default is active camera)"
-msgstr "Plakatwände sind diesem Objekt zugewendet (Standard ist die aktive Kamera)"
-
-
-msgid "Billboard Offset"
-msgstr "Zeitversatz:"
-
-
-msgid "Scale billboards relative to particle size"
-msgstr "Plakatwände relativ zu Partikelgröße skalieren"
-
-
-msgid "Tilt of the billboards"
-msgstr "Titel für den Dateibrowser"
-
-
-msgid "Random Tilt"
-msgstr "Zufällige Neigung"
-
-
-msgid "UV Split"
-msgstr "UV aufteilen"
-
-
-msgid "Billboard Velocity Head"
-msgstr "Winkelgeschwindigkeit"
-
-
-msgid "Billboard Velocity Tail"
-msgstr "Winkelgeschwindigkeit"
-
-
 msgid "Children Per Parent"
 msgstr "Kinder pro Elternteil"
 
@@ -9369,10 +9321,6 @@ msgid "Give the particle life a random variation"
 msgstr "Dem Partikel-Leben eine zufällige Variation geben"
 
 
-msgid "Lock the billboards align axis"
-msgstr "Plakatwand-Ausrichtungsachse sperren"
-
-
 msgid "Constrain boids to a surface"
 msgstr "Beschränkung"
 
@@ -9431,10 +9379,6 @@ msgstr "Wie Partikel gerendert werden"
 
 msgid "Halo"
 msgstr "Schein"
-
-
-msgid "Billboard"
-msgstr "Billboard"
 
 
 msgid "Rendered Children"
@@ -16045,10 +15989,6 @@ msgid "Lasso Select"
 msgstr "Lasso-Auswahl"
 
 
-msgid "Extend selection instead of deselecting everything first"
-msgstr "Auswahl ausweiten, anstatt zuerst alles abzuwählen"
-
-
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Links/Rechts auswählen"
@@ -16207,6 +16147,10 @@ msgstr "Nach Unten"
 msgctxt "Operator"
 msgid "Rename Channels"
 msgstr "Kanäle umbenennen"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "Auswahl ausweiten, anstatt zuerst alles abzuwählen"
 
 
 msgctxt "Operator"
@@ -18319,6 +18263,14 @@ msgstr "Kanten einschließen"
 
 msgid "Include UVs"
 msgstr "UV's einschließen"
+
+
+msgid "Compress"
+msgstr "Komprimieren"
+
+
+msgid "Hierarchy"
+msgstr "Hierarchie"
 
 
 msgctxt "Operator"
@@ -22639,10 +22591,6 @@ msgid "Clear Drivers"
 msgstr "Treiber löschen"
 
 
-msgid "Hierarchy"
-msgstr "Hierarchie"
-
-
 msgctxt "Operator"
 msgid "Outliner Data Operation"
 msgstr "Outliner Datenoperation"
@@ -26267,10 +26215,6 @@ msgid "Save the current file in the desired location"
 msgstr "Aktuelle Datei an gewünschten Ort speichern"
 
 
-msgid "Compress"
-msgstr "Komprimieren"
-
-
 msgid "Write compressed .blend file"
 msgstr "Komprimierte .blend-Datei schreiben"
 
@@ -26464,96 +26408,12 @@ msgid "Restrict"
 msgstr "Beschränken"
 
 
-msgid "Camera Presets"
-msgstr "Kamera-Voreinstellungen"
-
-
-msgid "Color Presets"
-msgstr "Farb-Voreinstellungen"
-
-
-msgid "Tracking Presets"
-msgstr "Verfolger-Voreinstellungen"
-
-
-msgid "Cloth Presets"
-msgstr "Kleidung-Voreinstellungen"
-
-
-msgid "Integrator Presets"
-msgstr "Integrator-Voreinstellungen"
-
-
-msgid "Sampling Presets"
-msgstr "Abtastung-Voreinstellungen"
-
-
-msgid "Fluid Presets"
-msgstr "Flüssigkeits-Voreinstellungen"
-
-
-msgid "FFMPEG Presets"
-msgstr "FFMPEG-Voreinstellungen"
-
-
-msgid "Render Presets"
-msgstr "Render-Voreinstellungen"
-
-
-msgid "Timeline"
-msgstr "Zeitleiste"
-
-
-msgid "Auto Run Python Scripts"
-msgstr "Python-Skripte automatisch ausführen"
-
-
-msgid "Bone Color Sets"
-msgstr "Knochen-Farbpalette"
-
-
-msgid "Styles"
-msgstr "Stile"
-
-
-msgid "Text Style"
-msgstr "Stil setzen"
-
-
-msgid "User Interface"
-msgstr "Benutzeroberfläche"
-
-
-msgid "Theme Space"
-msgstr "Texturraum"
-
-
-msgid "Theme Space List"
-msgstr "Raumlisten-Thema"
-
-
-msgid "Panel Colors"
-msgstr "Panel Farben"
-
-
-msgid "Video Sequence Editor"
-msgstr "Video Sequenzeditor"
-
-
-msgid "3D View"
-msgstr "3D Ansicht"
-
-
-msgid "Gradient Colors"
-msgstr "Malfarbe"
-
-
-msgid "Development"
-msgstr "Entwicklung"
-
-
 msgid "Bone Constraints"
 msgstr "Knochen-Beschränkungen"
+
+
+msgid "Camera Presets"
+msgstr "Kamera-Voreinstellungen"
 
 
 msgid "Active Point"
@@ -26588,12 +26448,24 @@ msgid "Clean up"
 msgstr "Aufräumen"
 
 
+msgid "Color Presets"
+msgstr "Farb-Voreinstellungen"
+
+
 msgid "Tracking Settings"
 msgstr "Verfolgungseinstellungen"
 
 
 msgid "Lens"
 msgstr "Linse"
+
+
+msgid "Tracking Presets"
+msgstr "Verfolger-Voreinstellungen"
+
+
+msgid "Cloth Presets"
+msgstr "Kleidung-Voreinstellungen"
 
 
 msgid "Depth of Field"
@@ -26612,8 +26484,16 @@ msgid "Ray Visibility"
 msgstr "Strahlensichtbarkeit"
 
 
+msgid "Integrator Presets"
+msgstr "Integrator-Voreinstellungen"
+
+
 msgid "Post Processing"
 msgstr "Nachbearbeitung"
+
+
+msgid "Sampling Presets"
+msgstr "Abtastung-Voreinstellungen"
 
 
 msgid "Film"
@@ -26708,6 +26588,10 @@ msgid "System"
 msgstr "System"
 
 
+msgid "Fluid Presets"
+msgstr "Flüssigkeits-Voreinstellungen"
+
+
 msgid "Scopes"
 msgstr "Diagramme"
 
@@ -26722,6 +26606,10 @@ msgstr "Aussehen"
 
 msgid "Texture Mask"
 msgstr "Texturmaske"
+
+
+msgid "2D Cursor"
+msgstr "2D Cursor"
 
 
 msgid "UV Sculpt"
@@ -26816,6 +26704,14 @@ msgid "Audio"
 msgstr "Audio"
 
 
+msgid "FFMPEG Presets"
+msgstr "FFMPEG-Voreinstellungen"
+
+
+msgid "Render Presets"
+msgstr "Render-Voreinstellungen"
+
+
 msgid "Note"
 msgstr "Notiz"
 
@@ -26840,8 +26736,60 @@ msgid "Playback"
 msgstr "Wiedergabe"
 
 
+msgid "Timeline"
+msgstr "Zeitleiste"
+
+
+msgid "Development"
+msgstr "Entwicklung"
+
+
+msgid "Auto Run Python Scripts"
+msgstr "Python-Skripte automatisch ausführen"
+
+
 msgid "Themes"
 msgstr "Themen"
+
+
+msgid "Bone Color Sets"
+msgstr "Knochen-Farbpalette"
+
+
+msgid "Theme Space"
+msgstr "Texturraum"
+
+
+msgid "Theme Space List"
+msgstr "Raumlisten-Thema"
+
+
+msgid "Panel Colors"
+msgstr "Panel Farben"
+
+
+msgid "Styles"
+msgstr "Stile"
+
+
+msgid "Video Sequence Editor"
+msgstr "Video Sequenzeditor"
+
+
+msgid "Text Style"
+msgstr "Stil setzen"
+
+
+msgid "User Interface"
+msgstr "Benutzeroberfläche"
+
+
+msgid "3D View"
+msgstr "3D Ansicht"
+
+
+msgid "Gradient Colors"
+msgstr "Malfarbe"
 
 
 msgid "Motion Tracking"
@@ -26858,10 +26806,6 @@ msgstr "Mesh-Optionen"
 
 msgid "Pose Options"
 msgstr "Posen-Optionen"
-
-
-msgid "Project Paint"
-msgstr "Projektion:"
 
 
 msgid "Transform Orientations"
@@ -30678,10 +30622,6 @@ msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Drehpunkt um die Mitte des Begrenzungsrahmen von ausgewählten Objekten"
 
 
-msgid "2D Cursor"
-msgstr "2D Cursor"
-
-
 msgid "Pivot around the 2D cursor"
 msgstr "Drehpunkt um den 2D-Cursor"
 
@@ -33588,6 +33528,10 @@ msgid "UnLock All"
 msgstr "Alle entsperren"
 
 
+msgid "Before"
+msgstr "Davor"
+
+
 msgctxt "Operator"
 msgid "Assign to Active Group"
 msgstr "Der aktiven Gruppe zuweisen"
@@ -33979,10 +33923,6 @@ msgid "Cursor to Grid"
 msgstr "Cursor an Raster"
 
 
-msgid "Before"
-msgstr "Davor"
-
-
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Zeichnen"
@@ -34120,10 +34060,6 @@ msgstr "Physik aktivieren für:"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Kraftfeld"
-
-
-msgid "Use Lib Path"
-msgstr "Verwende Bibliothekspfad"
 
 
 msgctxt "Operator"
@@ -34871,6 +34807,10 @@ msgid "New Data"
 msgstr "Neue Daten"
 
 
+msgid "Align to"
+msgstr "Ausrichten an"
+
+
 msgid "Manhattan Distance"
 msgstr "Manhattan-Entfernung"
 
@@ -35240,10 +35180,6 @@ msgstr "Proxy erzeugen..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Lokal machen"
-
-
-msgid "Make Links..."
-msgstr "Verbindungen erzeugen..."
 
 
 msgctxt "Operator"

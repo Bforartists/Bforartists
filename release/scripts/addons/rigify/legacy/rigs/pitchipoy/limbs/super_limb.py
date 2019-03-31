@@ -10,10 +10,10 @@ from   ....utils       import strip_org, make_deformer_name, create_widget
 from   ....utils       import create_circle_widget, create_sphere_widget
 from   ....utils       import MetarigError, make_mechanism_name, org
 from   ....utils       import create_limb_widget, connected_children_names
-from   rna_prop_ui     import rna_idprop_ui_prop_get
 from   ..super_widgets import create_ikarrow_widget
 from   math            import trunc
 
+from .....utils.mechanism import make_property
 
 class Rig:
 
@@ -79,14 +79,7 @@ class Rig:
 
         name = 'FK_limb_follow'
 
-        pb[ mch ][ name ] = 0.0
-        prop = rna_idprop_ui_prop_get( pb[ mch ], name, create = True )
-
-        prop["min"]         = 0.0
-        prop["max"]         = 1.0
-        prop["soft_min"]    = 0.0
-        prop["soft_max"]    = 1.0
-        prop["description"] = name
+        make_property(pb[ mch ], name, 0.0)
 
         drv = pb[ mch ].constraints[ 0 ].driver_add("influence").driver
 
@@ -335,17 +328,11 @@ class Rig:
             name = 'rubber_tweak'
 
             if i == trunc( len( tweaks[1:-1] ) / 2 ):
-                pb[t][name] = 0.0
+                defval = 0.0
             else:
-                pb[t][name] = 1.0
+                defval = 1.0
 
-            prop = rna_idprop_ui_prop_get( pb[t], name, create=True )
-
-            prop["min"]         = 0.0
-            prop["max"]         = 2.0
-            prop["soft_min"]    = 0.0
-            prop["soft_max"]    = 1.0
-            prop["description"] = name
+            make_property(pb[t], name, defval, max=2.0, soft_max=1.0)
 
         for j,d in enumerate(def_bones[:-1]):
             drvs = {}
@@ -498,13 +485,7 @@ class Rig:
         pb_parent = pb[ parent ]
 
         # Create ik/fk switch property
-        pb_parent['IK/FK']  = 0.0
-        prop = rna_idprop_ui_prop_get( pb_parent, 'IK/FK', create=True )
-        prop["min"]         = 0.0
-        prop["max"]         = 1.0
-        prop["soft_min"]    = 0.0
-        prop["soft_max"]    = 1.0
-        prop["description"] = 'IK/FK Switch'
+        prop = make_property(pb_parent, 'IK/FK', 0.0, description='IK/FK Switch')
 
         # Constrain org to IK and FK bones
         iks =  [ ik['ctrl']['limb'] ]

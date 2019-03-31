@@ -132,27 +132,25 @@ class VIEW3D_HT_header(Header):
         # Orientation
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
             orient_slot = scene.transform_orientation_slots[0]
-            trans_name, trans_icon = orient_slot.ui_info()
-
             row = layout.row(align=True)
 
             sub = row.row()
             sub.ui_units_x = 4
-            sub.popover(
+            sub.prop_with_popover(
+                orient_slot,
+                "type",
+                text="",
                 panel="VIEW3D_PT_transform_orientations",
-                text=trans_name,
-                icon_value=trans_icon,
             )
 
         # Pivot
         if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'} or has_pose_mode:
-            pivot_point = tool_settings.transform_pivot_point
-            act_pivot_point = bpy.types.ToolSettings.bl_rna.properties["transform_pivot_point"].enum_items[pivot_point]
-            row = layout.row(align=True)
-            row.popover(
-                panel="VIEW3D_PT_pivot_point",
-                icon=act_pivot_point.icon,
+            layout.prop_with_popover(
+                tool_settings,
+                "transform_pivot_point",
                 text="",
+                icon_only=True,
+                panel="VIEW3D_PT_pivot_point",
             )
 
         # Snap
@@ -225,29 +223,19 @@ class VIEW3D_HT_header(Header):
 
         # grease pencil
         if object_mode == 'PAINT_GPENCIL':
-            origin = tool_settings.gpencil_stroke_placement_view3d
-            gp_origin = tool_settings.bl_rna.properties["gpencil_stroke_placement_view3d"].enum_items[origin]
-
-            or_icon = getattr(gp_origin, "icon", "BLANK1")
-            or_name = getattr(gp_origin, "name", "Stroke Placement")
-            layout.popover(
+            layout.prop_with_popover(
+                tool_settings,
+                "gpencil_stroke_placement_view3d",
+                text="",
                 panel="VIEW3D_PT_gpencil_origin",
-                text=or_name,
-                icon=or_icon,
             )
 
         if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
-            lock = tool_settings.gpencil_sculpt.lock_axis
-            gp_lock = tool_settings.gpencil_sculpt.bl_rna.properties["lock_axis"].enum_items[lock]
-
-            lk_icon = getattr(gp_lock, "icon", "BLANK1")
-            lk_name = getattr(gp_lock, "name", "None")
-            row = layout.row()
-            row.enabled = tool_settings.gpencil_stroke_placement_view3d in {'ORIGIN', 'CURSOR'}
-            row.popover(
+            layout.prop_with_popover(
+                tool_settings.gpencil_sculpt,
+                "lock_axis",
+                text="",
                 panel="VIEW3D_PT_gpencil_lock",
-                text=lk_name,
-                icon=lk_icon,
             )
 
         if object_mode == 'PAINT_GPENCIL':
@@ -310,7 +298,6 @@ class ALL_MT_editormenu(Menu):
 
 
 class VIEW3D_MT_editor_menus(Menu):
-    bl_space_type = 'VIEW3D_MT_editor_menus'
     bl_label = ""
 
     def draw(self, context):
@@ -2317,6 +2304,8 @@ class VIEW3D_MT_object_context_menu(Menu):
             if selected_objects_len > 1:
                 layout.operator("object.join")
 
+            layout.separator()
+
         elif obj.type == 'CAMERA':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -2347,6 +2336,8 @@ class VIEW3D_MT_object_context_menu(Menu):
                     props.input_scale = 0.02
                     props.header_text = "DOF Distance: %.3f"
 
+            layout.separator()
+
         elif obj.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -2362,9 +2353,12 @@ class VIEW3D_MT_object_context_menu(Menu):
             props.input_scale = 0.01
             props.header_text = "Width Size: %.3f"
 
-            layout.operator("object.convert", text="Convert to Mesh").target = 'MESH'
+            layout.separator()
 
+            layout.operator("object.convert", text="Convert to Mesh").target = 'MESH'
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
+
+            layout.separator()
 
         elif obj.type == 'GPENCIL':
             layout.operator("gpencil.convert", text="Convert to Path").type = 'PATH'
@@ -2372,6 +2366,8 @@ class VIEW3D_MT_object_context_menu(Menu):
             layout.operator("gpencil.convert", text="Convert to Mesh").type = 'POLY'
 
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
+
+            layout.separator()
 
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -2381,6 +2377,8 @@ class VIEW3D_MT_object_context_menu(Menu):
             props.data_path_item = "empty_display_size"
             props.input_scale = 0.01
             props.header_text = "Empty Draw Size: %.3f"
+
+            layout.separator()
 
         elif obj.type == 'LIGHT':
             light = obj.data
@@ -2444,7 +2442,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
 
-        layout.separator()
+            layout.separator()
 
         layout.operator("view3d.copybuffer", text="Copy Objects", icon='COPYDOWN')
         layout.operator("view3d.pastebuffer", text="Paste Objects", icon='PASTEDOWN')
@@ -2453,6 +2451,12 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.operator("object.duplicate_move", icon='DUPLICATE')
         layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
+
+        layout.separator()
+
+        props = layout.operator("wm.call_panel", text="Rename Active Object...")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
 
         layout.separator()
 
@@ -3592,6 +3596,12 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
+        props = layout.operator("wm.call_panel", text="Rename Active Bone...")
+        props.name = "TOPBAR_PT_name"
+        props.keep_open = False
+
+        layout.separator()
+
         layout.operator("pose.paths_calculate", text="Calculate")
         layout.operator("pose.paths_clear", text="Clear")
 
@@ -3603,8 +3613,8 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.paths_calculate")
-        layout.operator("pose.paths_clear")
+        layout.operator("pose.paths_calculate", text="Calculate Motion Paths")
+        layout.operator("pose.paths_clear", text="Clear Motion Paths")
 
         layout.separator()
 

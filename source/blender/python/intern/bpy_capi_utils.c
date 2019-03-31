@@ -48,8 +48,9 @@ char *BPy_enum_as_string(const EnumPropertyItem *item)
 	char *cstring;
 
 	for (e = item; item->identifier; item++) {
-		if (item->identifier[0])
+		if (item->identifier[0]) {
 			BLI_dynstr_appendf(dynstr, (e == item) ? "'%s'" : ", '%s'", item->identifier);
+		}
 	}
 
 	cstring = BLI_dynstr_get_cstring(dynstr);
@@ -75,13 +76,27 @@ short BPy_reports_to_error(ReportList *reports, PyObject *exception, const bool 
 	return (report_str == NULL) ? 0 : -1;
 }
 
+/**
+ * A version of #BKE_report_write_file_fp that uses Python's stdout.
+ */
+void BPy_reports_write_stdout(const ReportList *reports, const char *header)
+{
+	if (header) {
+		PySys_WriteStdout("%s\n", header);
+	}
+
+	for (const Report *report = reports->list.first; report; report = report->next) {
+		PySys_WriteStdout("%s: %s\n", report->typestr, report->message);
+	}
+}
 
 bool BPy_errors_to_report_ex(ReportList *reports, const bool use_full, const bool use_location)
 {
 	PyObject *pystring;
 
-	if (!PyErr_Occurred())
+	if (!PyErr_Occurred()) {
 		return 1;
+	}
 
 	/* less hassle if we allow NULL */
 	if (reports == NULL) {

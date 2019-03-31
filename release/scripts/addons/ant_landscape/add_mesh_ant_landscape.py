@@ -597,6 +597,10 @@ class AntAddLandscape(bpy.types.Operator):
         undo = bpy.context.preferences.edit.use_global_undo
         bpy.context.preferences.edit.use_global_undo = False
 
+        # turn off 'Enter Edit Mode'
+        use_enter_edit_mode = bpy.context.preferences.edit.use_enter_edit_mode
+        bpy.context.preferences.edit.use_enter_edit_mode = False
+
         # deselect all objects when in object mode
         if bpy.ops.object.select_all.poll():
             bpy.ops.object.select_all(action='DESELECT')
@@ -778,7 +782,8 @@ class AntAddLandscape(bpy.types.Operator):
         if self.auto_refresh is False:
             self.refresh = False
 
-        # restore pre operator undo state
+        # restore pre operator state
         context.preferences.edit.use_global_undo = undo
+        bpy.context.preferences.edit.use_enter_edit_mode = use_enter_edit_mode
 
         return {'FINISHED'}

@@ -23,7 +23,7 @@ bl_info = {
     "author": "Campbell Barton, Silvio Falcinelli, Maurice Raybaud, "
               "Constantin Rahn, Bastien Montagne, Leonid Desyatkov",
     "version": (0, 1, 0),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "Render > Engine > POV-Ray 3.7",
     "description": "Basic POV-Ray 3.7 integration for blender",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -40,6 +40,7 @@ if "bpy" in locals():
 
 else:
     import bpy
+    from bpy.utils import register_class
     #import addon_utils # To use some other addons
     import nodeitems_utils #for Nodes
     from nodeitems_utils import NodeCategory, NodeItem #for Nodes
@@ -2224,8 +2225,64 @@ class RenderPovSettingsCamera(PropertyGroup):
                         "it points at. camera {} expected",
             default="")
 
+###############################################################################
+# World POV properties.
+###############################################################################
+class RenderPovSettingsWorld(PropertyGroup):
+    use_sky_blend: BoolProperty(
+            name="Blend Sky", description="Render background with natural progression from horizon to zenith",
+            default=False)
+    use_sky_paper: BoolProperty(
+            name="Blend Sky", description="Flatten blend or texture coordinates",
+            default=False)
+    use_sky_real: BoolProperty(
+            name="Blend Sky", description="Render background with a real horizon, relative to the camera angle",
+            default=False)
+            
+    horizon_color: FloatVectorProperty(
+            name="Horizon Color",
+            description="Color at the horizon",
+            precision=4, step=0.01, min=0, soft_max=1,
+            default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR',
+    )
+    zenith_color: FloatVectorProperty(
+            name="Zenith Color",
+            description="Color at the zenith",
+            precision=4, step=0.01, min=0, soft_max=1,
+            default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR',
+    )
+    ambient_color: FloatVectorProperty(
+            name="Ambient Color",
+            description="Ambient color of the world",
+            precision=4, step=0.01, min=0, soft_max=1,
+            default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR',
+    )
+'''
+class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
+    bl_label = "World"
+    #COMPAT_ENGINES = {'BLENDER_RENDER'}
 
+    def draw(self, context):
+        layout = self.layout
 
+        world = context.world
+
+        row = layout.row()
+        row.prop(world, "use_sky_paper")
+        row.prop(world, "use_sky_blend")
+        row.prop(world, "use_sky_real")
+
+        row = layout.row()
+        row.column().prop(world, "horizon_color")
+        col = row.column()
+        col.prop(world, "zenith_color")
+        col.active = world.use_sky_blend
+        row.column().prop(world, "ambient_color")
+
+        row = layout.row()
+        row.prop(world, "exposure")
+        row.prop(world, "color_range")
+'''
 ###############################################################################
 # Text POV properties.
 ###############################################################################
@@ -2273,19 +2330,35 @@ class PovrayPreferences(AddonPreferences):
 
 
 def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.VIEW3D_MT_add.prepend(ui.menu_func_add)
-    bpy.types.TOPBAR_MT_file_import.append(ui.menu_func_import)
-    bpy.types.TEXT_MT_templates.append(ui.menu_func_templates)
-    bpy.types.RENDER_PT_povray_radiosity.prepend(ui.rad_panel_func)
-    bpy.types.LIGHT_PT_POV_light.prepend(ui.light_panel_func)
-    bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)
-    # was used for parametric objects but made the other addon unreachable on
-    # unregister for other tools to use created a user action call instead
-    #addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
 
-    #bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_povray_type)
+    #bpy.utils.register_module(__name__) #DEPRECATED Now imported from bpy.utils import register_class
+    
+    render.register()
+    ui.register()
+    primitives.register()
+    nodes.register()
+    
+    register_class(PovrayPreferences)
+    register_class(RenderPovSettingsCamera)
+    register_class(RenderPovSettingsWorld)
+    register_class(RenderPovSettingsMaterial)
+    register_class(RenderPovSettingsObject)
+    register_class(RenderPovSettingsScene)
+    register_class(RenderPovSettingsText)
+    register_class(RenderPovSettingsTexture)
+    '''    
+        bpy.types.VIEW3D_MT_add.prepend(ui.menu_func_add)
+        bpy.types.TOPBAR_MT_file_import.append(ui.menu_func_import)
+        bpy.types.TEXT_MT_templates.append(ui.menu_func_templates)
+        bpy.types.RENDER_PT_povray_radiosity.prepend(ui.rad_panel_func)
+        bpy.types.LIGHT_PT_POV_light.prepend(ui.light_panel_func)
+        bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)
+        # was used for parametric objects but made the other addon unreachable on
+        # unregister for other tools to use created a user action call instead
+        #addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
 
+        #bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_povray_type)
+    '''
     bpy.types.NODE_HT_header.append(ui.menu_func_nodes)
     nodeitems_utils.register_node_categories("POVRAYNODES", node_categories)
     bpy.types.Scene.pov = PointerProperty(type=RenderPovSettingsScene)
@@ -2294,6 +2367,7 @@ def register():
     bpy.types.Texture.pov = PointerProperty(type=RenderPovSettingsTexture)
     bpy.types.Object.pov = PointerProperty(type=RenderPovSettingsObject)
     bpy.types.Camera.pov = PointerProperty(type=RenderPovSettingsCamera)
+    bpy.types.World.pov = PointerProperty(type=RenderPovSettingsWorld)
     bpy.types.Text.pov = PointerProperty(type=RenderPovSettingsText)
 
 
@@ -2305,19 +2379,21 @@ def unregister():
     del bpy.types.Texture.pov
     del bpy.types.Object.pov
     del bpy.types.Camera.pov
+    del bpy.types.World.pov    
     del bpy.types.Text.pov
     nodeitems_utils.unregister_node_categories("POVRAYNODES")
     bpy.types.NODE_HT_header.remove(ui.menu_func_nodes)
-
+    '''
     #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_povray_type)
     #addon_utils.disable("add_mesh_extra_objects", default_set=False)
-    bpy.types.WORLD_PT_world.remove(ui.world_panel_func)
+    bpy.types.WORLD_PT_POV_world.remove(ui.world_panel_func)
     bpy.types.LIGHT_PT_POV_light.remove(ui.light_panel_func)
     bpy.types.RENDER_PT_povray_radiosity.remove(ui.rad_panel_func)
     bpy.types.TEXT_MT_templates.remove(ui.menu_func_templates)
     bpy.types.TOPBAR_MT_file_import.remove(ui.menu_func_import)
     bpy.types.VIEW3D_MT_add.remove(ui.menu_func_add)
-    bpy.utils.unregister_module(__name__)
+    '''
+    #bpy.utils.unregister_module(__name__)
 
 
 if __name__ == "__main__":

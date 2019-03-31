@@ -15,7 +15,7 @@ from bpy.types import Menu
 
 
 # Pie View Mode - Q
-class VIEW3D_PIE_view_more_of(Menu):
+class VIEW3D_MT_view_more_of(Menu):
     bl_label = "More"
 
     def draw(self, context):
@@ -30,21 +30,21 @@ class VIEW3D_PIE_view_more_of(Menu):
         pie.operator("SCREEN_OT_region_quadview")
 
 
-class VIEW3D_PIE_view_of(Menu):
+class VIEW3D_MT_view_of(Menu):
     bl_label = "View"
-    bl_idname = "pie.view_of"
 
     def draw(self, context):
         layout = self.layout
 
         pie = layout.menu_pie()
         pie.operator_enum("VIEW3D_OT_view_axis", "type")
-        pie.operator("wm.call_menu_pie", text="More", icon='PLUS').name = "VIEW3D_PIE_view_more_of"
+        props = pie.operator("wm.call_menu_pie", text="More", icon='PLUS')
+        props.name = VIEW3D_MT_view_more_of.__name__
 
 
 classes = (
-    VIEW3D_PIE_view_more_of,
-    VIEW3D_PIE_view_of,
+    VIEW3D_MT_view_more_of,
+    VIEW3D_MT_view_of,
 )
 
 addon_keymaps = []
@@ -60,7 +60,7 @@ def register():
         # Align
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'Q', 'PRESS')
-        kmi.properties.name = "pie.view_of"
+        kmi.properties.name = VIEW3D_MT_view_of.__name__
         addon_keymaps.append((km, kmi))
 
 

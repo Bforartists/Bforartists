@@ -256,6 +256,8 @@ class OUTLINER_MT_collection(Menu):
         layout.operator("outliner.collection_new", text="New Nested", icon='GROUP').nested = True
         layout.operator("outliner.collection_duplicate", text="Duplicate Collection", icon = "DUPLICATE")
         layout.operator("outliner.collection_duplicate_linked", text="Duplicate Linked", icon = "DUPLICATE")
+        layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
@@ -296,6 +298,7 @@ class OUTLINER_MT_collection_new(Menu):
 
         layout.operator("outliner.collection_new", text="New", icon='GROUP')
         layout.operator("outliner.collection_new", text="New Nested", icon='GROUP').nested = True
+        layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
 
 
 class OUTLINER_MT_object(Menu):
@@ -307,6 +310,11 @@ class OUTLINER_MT_object(Menu):
         space = context.space_data
         obj = context.active_object
         object_mode = 'OBJECT' if obj is None else obj.mode
+
+        layout.operator("outliner.id_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
+
+        layout.separator()
 
         layout.operator("outliner.object_operation", text="Delete", icon="DELETE").type = 'DELETE'
 

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -284,10 +284,6 @@ msgstr "Özellikler"
 
 msgid "File Browser"
 msgstr "Dosya Gezgini "
-
-
-msgid "Default"
-msgstr "Varsayılan"
 
 
 msgid "Width"
@@ -798,12 +794,12 @@ msgid "Stroke"
 msgstr "Kontur Metodu:"
 
 
-msgid "Control"
-msgstr "Kontrol"
+msgid "Default"
+msgstr "Varsayılan"
 
 
-msgid "Both"
-msgstr "İkisi de"
+msgid "Resolution"
+msgstr "Çözünürlük"
 
 
 msgid "Marker"
@@ -1299,16 +1295,16 @@ msgid "Track To"
 msgstr "Kenardan Kenara"
 
 
+msgid "Armature"
+msgstr "Armatür"
+
+
 msgid "Floor"
 msgstr "Izgara Zemini"
 
 
 msgid "Follow Path"
 msgstr "Dosya yolu"
-
-
-msgid "Armature"
-msgstr "Armatür"
 
 
 msgid "Action Constraint"
@@ -2535,10 +2531,6 @@ msgid "Directory to save the textures"
 msgstr "Doku için aranacak varsayılan dizin"
 
 
-msgid "Resolution"
-msgstr "Çözünürlük"
-
-
 msgid "Output image resolution"
 msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
@@ -3352,6 +3344,10 @@ msgid "Particle"
 msgstr "Parçacık"
 
 
+msgid "Control"
+msgstr "Kontrol"
+
+
 msgid "Control Fluid Simulation Settings"
 msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
 
@@ -3510,6 +3506,10 @@ msgstr "Nesne, Simülasyona Sürekli Akış Ekler"
 
 msgid "Export Animated Mesh"
 msgstr "Mesh Gölgesini Çiz"
+
+
+msgid "Both"
+msgstr "İkisi de"
 
 
 msgid "Inflow Fluid Simulation Settings"
@@ -5596,26 +5596,6 @@ msgid "Effect Children"
 msgstr "Çocuk (nesne) Ekle"
 
 
-msgid "Align to"
-msgstr "Görüntüyü Seçili Olana Hizala"
-
-
-msgid "Billboard Object"
-msgstr "Nesne Kısıtlamaları"
-
-
-msgid "Billboard Scale"
-msgstr "Döndürme & Ölçek"
-
-
-msgid "Random Tilt"
-msgstr "Rasgele Bozulma"
-
-
-msgid "UV Split"
-msgstr "Alanı Böl"
-
-
 msgid "Children Per Parent"
 msgstr "Ebeveyn Nokta Oluştur"
 
@@ -5754,10 +5734,6 @@ msgstr "Satır numaralarını göster"
 
 msgid "Length of the line's tail"
 msgstr "Satır numaralarını göster"
-
-
-msgid "Lock Billboard"
-msgstr "Caps Lock Pasif"
 
 
 msgid "Constrain boids to a surface"
@@ -12337,6 +12313,14 @@ msgid "Triangulate Faces"
 msgstr "Yüzeyleri Vurgula"
 
 
+msgid "Compress"
+msgstr "Dosyayı Sıkıştır"
+
+
+msgid "Hierarchy"
+msgstr "Hiyerarşiyi Göster"
+
+
 msgid "Frames Per Second"
 msgstr "Saniyede kare sayısı"
 
@@ -16022,10 +16006,6 @@ msgid "Clear Drivers"
 msgstr "Kısıtlamaları sil"
 
 
-msgid "Hierarchy"
-msgstr "Hiyerarşiyi Göster"
-
-
 msgctxt "Operator"
 msgid "Outliner Data Operation"
 msgstr "Bağlama verileri eksik."
@@ -19174,10 +19154,6 @@ msgid "Save As Blender File"
 msgstr "Blender Dosyasını Farklı Kaydet"
 
 
-msgid "Compress"
-msgstr "Dosyayı Sıkıştır"
-
-
 msgid "Save Copy"
 msgstr "Kopyasını Kaydet"
 
@@ -19275,68 +19251,12 @@ msgid "UV Sculpting"
 msgstr "UV "
 
 
-msgid "Camera Presets"
-msgstr "Aktif Kamera"
-
-
-msgid "Color Presets"
-msgstr "Ekran Rengi:"
-
-
-msgid "Fluid Presets"
-msgstr "Akışkan Simülasyonu"
-
-
-msgid "FFMPEG Presets"
-msgstr "Kaydet FFMpeg"
-
-
-msgid "Render Presets"
-msgstr "Blender Sunum"
-
-
-msgid "Timeline"
-msgstr "Zaman Çizelgesi"
-
-
-msgid "Bone Color Sets"
-msgstr "Nesnenin genel rengi."
-
-
-msgid "Text Style"
-msgstr "Özellik Seti"
-
-
-msgid "User Interface"
-msgstr "Arabirim yazıtipi:"
-
-
-msgid "Theme Space"
-msgstr "Space Handler Scripts"
-
-
-msgid "Theme Space List"
-msgstr "Space Handler Scripts"
-
-
-msgid "Panel Colors"
-msgstr "Panel Hizalama"
-
-
-msgid "Video Sequence Editor"
-msgstr "Video Sıra Editörü"
-
-
-msgid "3D View"
-msgstr "3D Görünüm "
-
-
-msgid "Gradient Colors"
-msgstr "Ekran Rengi:"
-
-
 msgid "Bone Constraints"
 msgstr "Kemik Kısıtlamaları"
+
+
+msgid "Camera Presets"
+msgstr "Aktif Kamera"
 
 
 msgid "Active Point"
@@ -19361,6 +19281,10 @@ msgstr "Ekran Rengi:"
 
 msgid "Clean up"
 msgstr "Yukarı Taşı"
+
+
+msgid "Color Presets"
+msgstr "Ekran Rengi:"
 
 
 msgid "Tracking Settings"
@@ -19439,8 +19363,16 @@ msgid "System"
 msgstr "Sistem"
 
 
+msgid "Fluid Presets"
+msgstr "Akışkan Simülasyonu"
+
+
 msgid "Sample Line"
 msgstr "Tam Doğrultu"
+
+
+msgid "2D Cursor"
+msgstr "3D İmleç "
 
 
 msgid "UV Sculpt"
@@ -19495,6 +19427,14 @@ msgid "Audio"
 msgstr "Ses:"
 
 
+msgid "FFMPEG Presets"
+msgstr "Kaydet FFMpeg"
+
+
+msgid "Render Presets"
+msgstr "Blender Sunum"
+
+
 msgid "Note"
 msgstr "Not"
 
@@ -19519,8 +19459,48 @@ msgid "Playback"
 msgstr "Animasyonu Oynat"
 
 
+msgid "Timeline"
+msgstr "Zaman Çizelgesi"
+
+
 msgid "Themes"
 msgstr "Temalar"
+
+
+msgid "Bone Color Sets"
+msgstr "Nesnenin genel rengi."
+
+
+msgid "Theme Space"
+msgstr "Space Handler Scripts"
+
+
+msgid "Theme Space List"
+msgstr "Space Handler Scripts"
+
+
+msgid "Panel Colors"
+msgstr "Panel Hizalama"
+
+
+msgid "Video Sequence Editor"
+msgstr "Video Sıra Editörü"
+
+
+msgid "Text Style"
+msgstr "Özellik Seti"
+
+
+msgid "User Interface"
+msgstr "Arabirim yazıtipi:"
+
+
+msgid "3D View"
+msgstr "3D Görünüm "
+
+
+msgid "Gradient Colors"
+msgstr "Ekran Rengi:"
 
 
 msgid "Motion Tracking"
@@ -19537,10 +19517,6 @@ msgstr "Kırpma Seçenekleri"
 
 msgid "Pose Options"
 msgstr "Kırpma Seçenekleri"
-
-
-msgid "Project Paint"
-msgstr "Çoklu-Boyama"
 
 
 msgid "Transform Orientations"
@@ -19731,14 +19707,6 @@ msgid "Active Particle Target"
 msgstr "Hedef değişkeni sil"
 
 
-msgid "Billboard Normal UV"
-msgstr "DörtgenYüzey Küre Ekle"
-
-
-msgid "Billboard Split UV"
-msgstr "DörtgenYüzey Küre Ekle"
-
-
 msgid "Vertex Group Clump Negate"
 msgstr "Yeni bir nokta grubu oluşturur"
 
@@ -19925,10 +19893,6 @@ msgstr "Hedef değişkeni sil"
 
 msgid "Cache Compression"
 msgstr "Dosya sıkıştırmayı etkinleştir"
-
-
-msgid "No"
-msgstr "Hayır"
 
 
 msgid "No compression"
@@ -22159,10 +22123,6 @@ msgid "Bounding Box Center"
 msgstr "Kutusal Sınır Merkezi "
 
 
-msgid "2D Cursor"
-msgstr "3D İmleç "
-
-
 msgid "Individual Origins"
 msgstr "Bireysel Merkezler "
 
@@ -24242,6 +24202,10 @@ msgid "UnLock All"
 msgstr "Tümünü Normalleştir"
 
 
+msgid "Before"
+msgstr "Önce"
+
+
 msgctxt "Operator"
 msgid "Assign to Active Group"
 msgstr "Aktif Gruba Ata"
@@ -24589,10 +24553,6 @@ msgid "Cursor to Grid"
 msgstr "İmleci Izgaraya"
 
 
-msgid "Before"
-msgstr "Önce"
-
-
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Çiz:"
@@ -24715,10 +24675,6 @@ msgstr "Geçerli Kareyi Ortala"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Küçük Harf Yap"
-
-
-msgid "Use Lib Path"
-msgstr "Arkaplan Resmi Kullan"
 
 
 msgctxt "Operator"
@@ -25426,6 +25382,10 @@ msgid "Sub Level"
 msgstr "Alt Seviye"
 
 
+msgid "Align to"
+msgstr "Görüntüyü Seçili Olana Hizala"
+
+
 msgid "Manhattan Distance"
 msgstr "Manhattan Uzaklığı"
 
@@ -25732,10 +25692,6 @@ msgstr "Vekil Yap..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Yerel Yap..."
-
-
-msgid "Make Links..."
-msgstr "Bağlantı Yap..."
 
 
 msgctxt "Operator"

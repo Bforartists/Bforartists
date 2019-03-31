@@ -11,7 +11,7 @@ from ...utils       import create_limb_widget, connected_children_names
 from ...utils       import align_bone_x_axis, align_bone_z_axis
 from ...rig_ui_template import UTILITIES_RIG_ARM, REGISTER_RIG_ARM
 from ...utils       import ControlLayersOption
-from rna_prop_ui import rna_idprop_ui_prop_get
+from ...utils.mechanism import make_property
 from ..widgets import create_ikarrow_widget
 from math import trunc, pi
 
@@ -121,14 +121,7 @@ class Rig:
 
         # pb[ mch ][ name ] = 0.0
         # prop = rna_idprop_ui_prop_get( pb[ mch ], name, create = True )
-        pb[main_parent][name] = 0.0
-        prop = rna_idprop_ui_prop_get(pb[main_parent], name, create=True)
-
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
-        prop["description"] = name
+        make_property(pb[main_parent], name, 0.0)
 
         drv = pb[mch].constraints[0].driver_add("influence").driver
 
@@ -332,17 +325,11 @@ class Rig:
             name = 'rubber_tweak'
 
             if i == trunc( len( tweaks[1:-1] ) / 2 ):
-                pb[t][name] = 0.0
+                defval = 0.0
             else:
-                pb[t][name] = 1.0
+                defval = 1.0
 
-            prop = rna_idprop_ui_prop_get( pb[t], name, create=True )
-
-            prop["min"]         = 0.0
-            prop["max"]         = 2.0
-            prop["soft_min"]    = 0.0
-            prop["soft_max"]    = 1.0
-            prop["description"] = name
+            make_property(pb[t], name, defval, max=2.0, soft_max=1.0)
 
         for j,d in enumerate(def_bones[:-1]):
             drvs = {}
@@ -557,13 +544,7 @@ class Rig:
         pb_parent = pb[parent]
 
         # Create ik/fk switch property
-        pb_parent['IK_FK'] = 0.0
-        prop = rna_idprop_ui_prop_get(pb_parent, 'IK_FK', create=True)
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
-        prop["description"] = 'IK/FK Switch'
+        prop = make_property(pb_parent, 'IK_FK', 0.0, description='IK/FK Switch')
 
         # Constrain org to IK and FK bones
         iks = [ik['ctrl']['limb']]
@@ -713,13 +694,7 @@ class Rig:
         for b in bones['tweak']['ctrl']:
             pb[b].rotation_mode = 'ZXY'
 
-        pb_parent['IK_Stretch'] = 1.0
-        prop = rna_idprop_ui_prop_get(pb_parent, 'IK_Stretch', create=True)
-        prop["min"] = 0.0
-        prop["max"] = 1.0
-        prop["soft_min"] = 0.0
-        prop["soft_max"] = 1.0
-        prop["description"] = 'IK Stretch'
+        prop = make_property(pb_parent, 'IK_Stretch', 1.0, description='IK Stretch')
 
         # Add driver to limit scale constraint influence
         b = bones['ik']['mch_str']
@@ -767,11 +742,7 @@ class Rig:
         for prop in props:
 
             if prop == 'pole_vector':
-                owner[prop] = False
-                pole_prop = rna_idprop_ui_prop_get(owner, prop, create=True)
-                pole_prop["min"] = False
-                pole_prop["max"] = True
-                pole_prop["description"] = prop
+                make_property(owner, prop, False)
                 mch_ik = pb[bones['ik']['mch_ik']]
 
                 # ik target hide driver
@@ -855,11 +826,7 @@ class Rig:
 
             elif prop == 'IK_follow':
 
-                owner[prop] = True
-                rna_prop = rna_idprop_ui_prop_get(owner, prop, create=True)
-                rna_prop["min"] = False
-                rna_prop["max"] = True
-                rna_prop["description"] = prop
+                make_property(owner, prop, True)
 
                 drv = ctrl.constraints[0].driver_add("mute").driver
                 drv.type = 'AVERAGE'
@@ -933,13 +900,7 @@ class Rig:
 
             elif prop == 'root/parent':
                 if len(ctrl.constraints) > 1:
-                    owner[prop] = 0.0
-                    rna_prop = rna_idprop_ui_prop_get(owner, prop, create=True)
-                    rna_prop["min"] = 0.0
-                    rna_prop["max"] = 1.0
-                    rna_prop["soft_min"] = 0.0
-                    rna_prop["soft_max"] = 1.0
-                    rna_prop["description"] = prop
+                    make_property(owner, prop, 0.0)
 
                     drv = ctrl.constraints[1].driver_add("influence").driver
                     drv.type = 'AVERAGE'
@@ -953,13 +914,7 @@ class Rig:
 
             elif prop == 'pole_follow':
                 if len(ctrl_pole.constraints) > 1:
-                    owner[prop] = 0.0
-                    rna_prop = rna_idprop_ui_prop_get(owner, prop, create=True)
-                    rna_prop["min"] = 0.0
-                    rna_prop["max"] = 1.0
-                    rna_prop["soft_min"] = 0.0
-                    rna_prop["soft_max"] = 1.0
-                    rna_prop["description"] = prop
+                    make_property(owner, prop, 0.0)
 
                     drv = ctrl_pole.constraints[1].driver_add("influence").driver
                     drv.type = 'AVERAGE'

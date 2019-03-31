@@ -36,7 +36,7 @@ from bpy.types import Menu
 
 # Pie Shading - Z
 class PieShadingView(Menu):
-    bl_idname = "pie.shadingview"
+    bl_idname = "PIE_MT_shadingview"
     bl_label = "Pie Shading"
 
     def draw(self, context):
@@ -70,7 +70,7 @@ def register():
         # Shading
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'Z', 'PRESS')
-        kmi.properties.name = "pie.shadingview"
+        kmi.properties.name = "PIE_MT_shadingview"
         addon_keymaps.append((km, kmi))
 
 
