@@ -57,11 +57,12 @@
 
 #include "BIF_glutil.h"
 
+#include "GPU_context.h"
 #include "GPU_matrix.h"
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
-#include "GPU_context.h"
 #include "GPU_init_exit.h"
+#include "GPU_state.h"
 
 #include "DNA_scene_types.h"
 #include "ED_datafiles.h" /* for fonts */
@@ -228,7 +229,7 @@ static void playanim_event_qual_update(void)
 
 typedef struct PlayAnimPict {
 	struct PlayAnimPict *next, *prev;
-	char *mem;
+	uchar *mem;
 	int size;
 	const char *name;
 	struct ImBuf *ibuf;
@@ -311,7 +312,7 @@ static void playanim_toscreen(PlayState *ps, PlayAnimPict *picture, struct ImBuf
 
 	/* checkerboard for case alpha */
 	if (ibuf->planes == 32) {
-		glEnable(GL_BLEND);
+		GPU_blend(true);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		imm_draw_box_checker_2d(offs_x, offs_y, offs_x + span_x, offs_y + span_y);
@@ -329,7 +330,7 @@ static void playanim_toscreen(PlayState *ps, PlayAnimPict *picture, struct ImBuf
 	        ((ps->draw_flip[1] ? -1.0f : 1.0f)) * (ps->zoom / (float)ps->win_y),
 	        NULL);
 
-	glDisable(GL_BLEND);
+	GPU_blend(false);
 
 	pupdate_time();
 
@@ -380,7 +381,8 @@ static void playanim_toscreen(PlayState *ps, PlayAnimPict *picture, struct ImBuf
 
 static void build_pict_list_ex(PlayState *ps, const char *first, int totframes, int fstep, int fontid)
 {
-	char *mem, filepath[FILE_MAX];
+	char filepath[FILE_MAX];
+	uchar *mem;
 //	short val;
 	PlayAnimPict *picture = NULL;
 	struct ImBuf *ibuf = NULL;
@@ -465,7 +467,7 @@ static void build_pict_list_ex(PlayState *ps, const char *first, int totframes, 
 			picture->IB_flags = IB_rect;
 
 			if (fromdisk == false) {
-				mem = (char *)MEM_mallocN(size, "build pic list");
+				mem = MEM_mallocN(size, "build pic list");
 				if (mem == NULL) {
 					printf("Couldn't get memory\n");
 					close(file);
@@ -497,7 +499,7 @@ static void build_pict_list_ex(PlayState *ps, const char *first, int totframes, 
 			if (ptottime > 1.0) {
 				/* OCIO_TODO: support different input color space */
 				if (picture->mem) {
-					ibuf = IMB_ibImageFromMemory((unsigned char *)picture->mem, picture->size,
+					ibuf = IMB_ibImageFromMemory(picture->mem, picture->size,
 					                             picture->IB_flags, NULL, picture->name);
 				}
 				else {
@@ -1377,7 +1379,7 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 			}
 			else if (ps.picture->mem) {
 				/* use correct colorspace here */
-				ibuf = IMB_ibImageFromMemory((unsigned char *) ps.picture->mem, ps.picture->size,
+				ibuf = IMB_ibImageFromMemory(ps.picture->mem, ps.picture->size,
 				                             ps.picture->IB_flags, NULL, ps.picture->name);
 			}
 			else {

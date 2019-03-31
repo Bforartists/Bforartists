@@ -31,6 +31,7 @@ import subprocess#
 import tempfile #generate temporary files with random names
 from bpy.types import(Operator)
 from imghdr import what #imghdr is a python lib to identify image file types
+from bpy.utils import register_class
 
 from . import df3 # for smoke rendering
 from . import shading # for BI POV haders emulation
@@ -4400,3 +4401,24 @@ class RunPovTextRender(Operator):
         #empty text name property engain
         scene.pov.text_block = ""
         return {'FINISHED'}
+
+        
+classes = (
+    PovrayRender,
+    RenderPovTexturePreview,
+    RunPovTextRender,
+)
+
+
+def register():
+    #from bpy.utils import register_class
+
+    for cls in classes:
+        register_class(cls)
+
+
+def unregister():
+    from bpy.utils import unregister_class
+
+    for cls in classes:
+        unregister_class(cls)

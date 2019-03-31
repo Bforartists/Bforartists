@@ -16,9 +16,8 @@ from bpy.types import Menu
 
 
 # Pie Pivot Mode - . key
-class VIEW3D_PIE_pivot_of(Menu):
+class VIEW3D_MT_pivot_of(Menu):
     bl_label = "Pivot"
-    bl_idname = "view3d.pivot_of"
 
     def draw(self, context):
         layout = self.layout
@@ -30,8 +29,8 @@ class VIEW3D_PIE_pivot_of(Menu):
 
 
 classes = (
-    VIEW3D_PIE_pivot_of,
-    )
+    VIEW3D_MT_pivot_of,
+)
 
 addon_keymaps = []
 
@@ -45,7 +44,7 @@ def register():
         # Align
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'PERIOD', 'PRESS')
-        kmi.properties.name = "view3d.pivot_of"
+        kmi.properties.name = VIEW3D_MT_pivot_of.__name__
         addon_keymaps.append((km, kmi))
 
 

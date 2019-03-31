@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -372,10 +372,6 @@ msgid "File Browser"
 msgstr "ﻞﯾﺎﻓ ﺮﮔﺭﻭﺮﻣ"
 
 
-msgid "Default"
-msgstr "ﺽﺮﻓ ﺶﯿﭘ"
-
-
 msgid "Width"
 msgstr "ﺎﻨﻬﭘ"
 
@@ -704,8 +700,8 @@ msgid "Mode"
 msgstr "ﺖﻟﺎﺣ"
 
 
-msgid "Both"
-msgstr "ﻭﺩ ﺮﻫ"
+msgid "Default"
+msgstr "ﺽﺮﻓ ﺶﯿﭘ"
 
 
 msgid "Marker"
@@ -1253,12 +1249,12 @@ msgid "Clamp To"
 msgstr "ﻪﺑ ﻩﺮﯿﮔ"
 
 
-msgid "Follow Path"
-msgstr "ﺮﯿﺴﻣ ﻩﺪﻨﻨﮐ ﻝﺎﺒﻧﺩ"
-
-
 msgid "Armature"
 msgstr "ﺮﭽﯿﻣﺭﺁ"
+
+
+msgid "Follow Path"
+msgstr "ﺮﯿﺴﻣ ﻩﺪﻨﻨﮐ ﻝﺎﺒﻧﺩ"
 
 
 msgid "Action Constraint"
@@ -2434,6 +2430,10 @@ msgid "Remove air bubbles"
 msgstr "ﺎﻫ‌ﺖﻔﺟ ﻑﺬﺣ"
 
 
+msgid "Both"
+msgstr "ﻭﺩ ﺮﻫ"
+
+
 msgid "Alpha Influence"
 msgstr "ﺭﺍﺩﺮﮐ ﺮﯿﺛﺎﺗ"
 
@@ -3580,18 +3580,6 @@ msgstr "(ﯽﻧﺎﻬﺟ)"
 
 msgid "Global Z"
 msgstr "(ﯽﻧﺎﻬﺟ)"
-
-
-msgid "Animate"
-msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺮﯿﻠﭘ"
-
-
-msgid "Billboard Offset"
-msgstr "X ﺖﺴﻓﺍ"
-
-
-msgid "Random Tilt"
-msgstr "ﯽﻓﺩﺎﺼﺗ"
 
 
 msgid "Parting Maximum"
@@ -12355,56 +12343,12 @@ msgid "Restrict"
 msgstr "ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
 
 
-msgid "Camera Presets"
-msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻪﯾﻭﺍﺯ"
-
-
-msgid "Color Presets"
-msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
-msgid "Tracking Presets"
-msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Integrator Presets"
-msgstr "ﻡﺎﻏﺩﺍ"
-
-
-msgid "Fluid Presets"
-msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
-msgid "Timeline"
-msgstr "ﻥﺎﻣﺯ ﺭﻮﺤﻣ"
-
-
-msgid "Text Style"
-msgstr "ﺖﻟﺎﺣ"
-
-
-msgid "Theme Space"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
-
-
-msgid "Theme Space List"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
-
-
-msgid "Panel Colors"
-msgstr "ﻞﻨﭘ ﮓﻧﺭ"
-
-
-msgid "3D View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
-
-
-msgid "Gradient Colors"
-msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
-
-
 msgid "Bone Constraints"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
+
+
+msgid "Camera Presets"
+msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻪﯾﻭﺍﺯ"
 
 
 msgid "Active Point"
@@ -12431,8 +12375,16 @@ msgid "Clean up"
 msgstr "ﻥﺩﺮﮐ ﮎﺎﭘ"
 
 
+msgid "Color Presets"
+msgstr "ﺎﻫ‌ﮓﻧﺭ:"
+
+
 msgid "Tracking Settings"
 msgstr "ﺏﺎﯾﺩﺭ ﺕﺎﻤﯿﻈﻨﺗ"
+
+
+msgid "Tracking Presets"
+msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
 msgid "Performance"
@@ -12441,6 +12393,10 @@ msgstr "ﺩﺮﮑﻠﻤﻋ"
 
 msgid "Ray Visibility"
 msgstr "ﻪﻌﺷﺍ ﺪﯾﺩ"
+
+
+msgid "Integrator Presets"
+msgstr "ﻡﺎﻏﺩﺍ"
 
 
 msgid "Post Processing"
@@ -12481,6 +12437,10 @@ msgstr "ﺎﻫ‌ﻪﻧﺎﺸﻧ"
 
 msgid "System"
 msgstr "ﻢﺘﺴﯿﺳ"
+
+
+msgid "Fluid Presets"
+msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
 msgid "UV Sculpt"
@@ -12543,8 +12503,36 @@ msgid "Playback"
 msgstr "ﺶﺨﭘ"
 
 
+msgid "Timeline"
+msgstr "ﻥﺎﻣﺯ ﺭﻮﺤﻣ"
+
+
 msgid "Themes"
 msgstr "ﺎﻫ ﻢﺗ"
+
+
+msgid "Theme Space"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgid "Theme Space List"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgid "Panel Colors"
+msgstr "ﻞﻨﭘ ﮓﻧﺭ"
+
+
+msgid "Text Style"
+msgstr "ﺖﻟﺎﺣ"
+
+
+msgid "3D View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
+
+
+msgid "Gradient Colors"
+msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 
 msgid "Motion Tracking"
@@ -12557,10 +12545,6 @@ msgstr "ﺶﻣ ﯼﺎﻫ‌ﻪﻨﯾﺰﮔ"
 
 msgid "Pose Options"
 msgstr "ﺖﺳﮊ ﯼﺎﻫ‌ﻪﻨﯾﺰﮔ"
-
-
-msgid "Project Paint"
-msgstr "ﻥﺪﻨﮑﻓﺍ ﮓﻧﺭ"
 
 
 msgid "Transform Orientations"
@@ -14892,10 +14876,6 @@ msgstr "ﯽﺴﮐﻭﺮﭘ ﻦﺘﺧﺎﺳ..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "ﺯﺎﺴﺑ ﯽﻠﺤﻣ..."
-
-
-msgid "Make Links..."
-msgstr "ﺎﻫﺪﻧﻮﯿﭘ ﺩﺎﺠﯾﺍ..."
 
 
 msgctxt "Operator"

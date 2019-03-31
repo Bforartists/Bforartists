@@ -5,7 +5,7 @@ from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import create_chain_widget
 from ...utils import make_mechanism_name, create_cube_widget
 from ...utils import ControlLayersOption
-from rna_prop_ui import rna_idprop_ui_prop_get
+from ...utils.mechanism import make_property
 from ..limbs.limb_utils import get_bone_name
 
 
@@ -464,16 +464,11 @@ class Rig:
 
         for prop in props:
             if prop == 'neck_follow':
-                torso[prop] = 0.5
+                defval = 0.5
             else:
-                torso[prop] = 0.0
+                defval = 0.0
 
-            prop = rna_idprop_ui_prop_get(torso, prop, create=True)
-            prop["min"] = 0.0
-            prop["max"] = 1.0
-            prop["soft_min"] = 0.0
-            prop["soft_max"] = 1.0
-            prop["description"] = prop
+            make_property(torso, prop, defval)
 
         # driving the follow rotation switches for neck and head
         for bone, prop, in zip(owners, props):

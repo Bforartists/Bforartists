@@ -25,6 +25,8 @@ from rna_prop_ui     import rna_idprop_ui_prop_get
 from ..super_widgets import create_foot_widget, create_ballsocket_widget
 from .limb_utils     import *
 
+from .....utils.mechanism import make_property
+
 def create_paw( cls, bones ):
     org_bones = list(
         [cls.org_bones[0]] + connected_children_names(cls.obj, cls.org_bones[0])
@@ -105,13 +107,7 @@ def create_paw( cls, bones ):
     # Create ik/fk switch property
     pb_parent = pb[ bones['parent'] ]
 
-    pb_parent['IK_Strertch'] = 1.0
-    prop = rna_idprop_ui_prop_get( pb_parent, 'IK_Strertch', create=True )
-    prop["min"]         = 0.0
-    prop["max"]         = 1.0
-    prop["soft_min"]    = 0.0
-    prop["soft_max"]    = 1.0
-    prop["description"] = 'IK Stretch'
+    prop = make_property(pb_parent, 'IK_Strertch', 1.0, description='IK Stretch')
 
     # Add driver to limit scale constraint influence
     b        = bones['ik']['mch_str']

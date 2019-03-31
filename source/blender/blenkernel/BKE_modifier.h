@@ -28,7 +28,6 @@ struct BMEditMesh;
 struct CustomData_MeshMasks;
 struct DepsNodeHandle;
 struct Depsgraph;
-struct DerivedMesh;
 struct ID;
 struct ListBase;
 struct Main;
@@ -154,17 +153,6 @@ typedef struct ModifierTypeInfo {
 	 */
 	void (*copyData)(const struct ModifierData *md, struct ModifierData *target, const int flag);
 
-
-	/********************* Deform modifier functions *********************/ /* DEPRECATED */
-
-	void (*deformVerts_DM_removed)(void);
-	void (*deformMatrices_DM_removed)(void);
-	void (*deformVertsEM_DM_removed)(void);
-	void (*deformMatricesEM_DM_removed)(void);
-
-	/********************* Non-deform modifier functions *********************/ /* DEPRECATED */
-
-	void (*applyModifier_DM_removed)(void);
 
 	/********************* Deform modifier functions *********************/
 
@@ -430,14 +418,6 @@ void modwrap_deformVertsEM(
         ModifierData *md, const struct ModifierEvalContext *ctx,
         struct BMEditMesh *em, struct Mesh *me,
         float (*vertexCos)[3], int numVerts);
-
-/* wrappers for modifier callbacks that accept Mesh and select the proper implementation
- * depending on if the modifier has been ported to Mesh or is still using DerivedMesh
- */
-
-struct DerivedMesh *modifier_applyModifier_DM_deprecated(
-        struct ModifierData *md, const struct ModifierEvalContext *ctx,
-        struct DerivedMesh *dm);
 
 struct Mesh *BKE_modifier_get_evaluated_mesh_from_evaluated_object(
         struct Object *ob_eval, const bool get_cage_mesh);

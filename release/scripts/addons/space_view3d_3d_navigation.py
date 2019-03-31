@@ -25,9 +25,9 @@
 bl_info = {
     "name": "3D Navigation",
     "author": "Demohero, uriel",
-    "version": (1, 2, 3),
+    "version": (1, 2, 4),
     "blender": (2, 80, 0),
-    "location": "View3D > Tool Shelf > Display Tab",
+    "location": "View3D > Sidebar > Display Tab",
     "description": "Navigate the Camera & 3D View from the Toolshelf",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -217,10 +217,10 @@ class BottomViewpoint1(Operator):
 
 # Panel class of this toolbar
 class VIEW3D_PT_3dnavigationPanel(Panel):
-    bl_category = "Display"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "3D Nav"
+    bl_category = "Display"
 
     def draw(self, context):
         layout = self.layout
@@ -259,11 +259,10 @@ class VIEW3D_PT_3dnavigationPanel(Panel):
         col.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
 
 
-class VIEW3D_PT_pan_navigation1(Panel):
-    bl_idname = "pan.navigation1"
-    bl_label = "Pan Orbit Zoom Roll"
+class VIEW3D_PT_3dnavigationPanel2(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
+    bl_label = "Pan Orbit Zoom Roll"
     bl_category = "Display"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -314,7 +313,7 @@ class VIEW3D_PT_pan_navigation1(Panel):
 # Define Panel classes for updating
 panels = (
         VIEW3D_PT_3dnavigationPanel,
-        VIEW3D_PT_pan_navigation1,
+        VIEW3D_PT_3dnavigationPanel2,
         )
 
 
@@ -357,7 +356,7 @@ class NavAddonPreferences(AddonPreferences):
 
 classes = (
     VIEW3D_PT_3dnavigationPanel,
-    VIEW3D_PT_pan_navigation1,
+    VIEW3D_PT_3dnavigationPanel2,
     OrbitUpView1,
     OrbitLeftView1,
     OrbitRightView1,

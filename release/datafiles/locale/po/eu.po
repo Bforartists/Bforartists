@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -225,10 +225,6 @@ msgid "File Browser"
 msgstr "Fitxategi Bilatzailea"
 
 
-msgid "Default"
-msgstr "Lehenetsia"
-
-
 msgid "+X"
 msgstr "+X"
 
@@ -291,6 +287,10 @@ msgstr "Gurasoa"
 
 msgid "Stroke"
 msgstr "Trazua"
+
+
+msgid "Default"
+msgstr "Lehenetsia"
 
 
 msgid "Material"
@@ -929,6 +929,10 @@ msgstr "Esportatu OBJ"
 
 msgid "Include UVs"
 msgstr "Gehitu UVs"
+
+
+msgid "Hierarchy"
+msgstr "Hierarkia"
 
 
 msgctxt "Operator"
@@ -1624,10 +1628,6 @@ msgid "Child"
 msgstr "Umea"
 
 
-msgid "Hierarchy"
-msgstr "Hierarkia"
-
-
 msgctxt "Operator"
 msgid "Show Active"
 msgstr "Aktiboa Bistaratu"
@@ -1829,8 +1829,20 @@ msgid "Save System Info"
 msgstr "Sistemaren Informazioa Gorde"
 
 
+msgid "Physics"
+msgstr "Fisikak"
+
+
+msgid "Dynamics"
+msgstr "Dinamikak"
+
+
 msgid "Timeline"
 msgstr "Denbora-lerroa"
+
+
+msgid "Development"
+msgstr "Garapena"
 
 
 msgid "Video Sequence Editor"
@@ -1839,18 +1851,6 @@ msgstr "Bideo Sekuentzia Editorea"
 
 msgid "3D View"
 msgstr "3D Bista"
-
-
-msgid "Development"
-msgstr "Garapena"
-
-
-msgid "Physics"
-msgstr "Fisikak"
-
-
-msgid "Dynamics"
-msgstr "Dinamikak"
 
 
 msgid "Image Editor"

@@ -273,7 +273,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
             if self.rv3d.view_matrix != self.rotMat:
                 self.rotMat = self.rv3d.view_matrix.copy()
                 self.bool_update = True
-                snap_utilities.edge_cache.snp_obj = None # hack for snap edge elemens update
+                snap_utilities.cache.clear()
             else:
                 self.bool_update = False
 
@@ -329,13 +329,13 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
                 else:
                     if event.shift:
                         if isinstance(self.geom, bmesh.types.BMEdge):
+                            mat = self.main_snap_obj.mat
+                            verts_co = [mat @ v.co for v in self.geom.verts]
                             if is_making_lines:
                                 loc = self.list_verts_co[-1]
-                                self.vector_constrain = (loc, loc + self.geom.verts[1].co -
-                                                         self.geom.verts[0].co, event.type)
+                                self.vector_constrain = (loc, loc + verts_co[1] - verts_co[0], event.type)
                             else:
-                                self.vector_constrain = [self.main_snap_obj.mat @ v.co for
-                                                         v in self.geom.verts] + [event.type]
+                                self.vector_constrain = verts_co + [event.type]
                     else:
                         if is_making_lines:
                             loc = self.list_verts_co[-1]
@@ -378,7 +378,7 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
                     self._exit(context)
                     return {'FINISHED'}
                 else:
-                    snap_utilities.edge_cache.snp_obj = None # hack for snap edge elemens update
+                    snap_utilities.cache.clear()
                     self.vector_constrain = None
                     self.list_edges = []
                     self.list_verts = []

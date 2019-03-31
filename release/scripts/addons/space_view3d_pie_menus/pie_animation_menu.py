@@ -40,7 +40,7 @@ from bpy.types import (
 
 
 class PieAnimation(Menu):
-    bl_idname = "pie.animation"
+    bl_idname = "PIE_MT_animation"
     bl_label = "Pie Animation"
 
     def draw(self, context):
@@ -103,7 +103,7 @@ def register():
         # Animation
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS', alt=True)
-        kmi.properties.name = "pie.animation"
+        kmi.properties.name = "PIE_MT_animation"
         addon_keymaps.append((km, kmi))
 
 

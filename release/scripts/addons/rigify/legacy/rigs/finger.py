@@ -21,7 +21,6 @@
 import re
 
 import bpy
-from rna_prop_ui import rna_idprop_ui_prop_get
 from mathutils import Vector
 
 from ..utils import MetarigError
@@ -30,6 +29,7 @@ from ..utils import connected_children_names
 from ..utils import strip_org, make_mechanism_name, make_deformer_name
 from ..utils import create_widget, create_limb_widget
 
+from ...utils.mechanism import make_property
 
 class Rig:
     """ A finger rig.  It takes a single chain of bones.
@@ -187,15 +187,12 @@ class Rig:
         for bone in helpers:
             # Add custom prop
             prop_name = "bend_%02d" % i
-            prop = rna_idprop_ui_prop_get(pb[ctrl], prop_name, create=True)
-            prop["min"] = 0.0
-            prop["max"] = 1.0
-            prop["soft_min"] = 0.0
-            prop["soft_max"] = 1.0
             if i == 1:
-                pb[ctrl][prop_name] = 0.0
+                propval = 0.0
             else:
-                pb[ctrl][prop_name] = val
+                propval = val
+
+            make_property(pb[ctrl], prop_name, propval)
 
             # Add driver
             if 'X' in self.primary_rotation_axis:

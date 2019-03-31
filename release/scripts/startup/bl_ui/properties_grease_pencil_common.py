@@ -651,8 +651,7 @@ class GPENCIL_UL_annotation_layer(UIList):
             split.prop(gpl, "info", text="", emboss=False)
 
             row = layout.row(align=True)
-            # row.prop(gpl, "lock", text="", emboss=False)
-            row.prop(gpl, "hide", text="", emboss=False)
+            row.prop(gpl, "annotation_hide", text="", emboss=False)
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
             layout.label(text="", icon_value=icon)
@@ -833,6 +832,11 @@ class GreasePencilMaterialsPanel:
         layout = self.layout
         show_full_ui = (self.bl_space_type == 'PROPERTIES')
 
+        is_view3d = (self.bl_space_type == 'VIEW_3D')
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+
         ob = context.object
         row = layout.row()
 
@@ -841,6 +845,12 @@ class GreasePencilMaterialsPanel:
             rows = 7
 
             row.template_list("GPENCIL_UL_matslots", "", ob, "material_slots", ob, "active_material_index", rows=rows)
+
+            # if topbar popover and brush pinned, disable
+            if is_view3d and brush is not None:
+                gp_settings = brush.gpencil_settings
+                if gp_settings.use_material_pin:
+                    row.enabled = False
 
             col = row.column(align=True)
             if show_full_ui:

@@ -20,9 +20,8 @@
 
 import bpy
 
+from bpy.utils import register_class
 from bpy.types import Node, ShaderNodeTree, CompositorNodeTree, TextureNodeTree#, NodeSocket
-
-
 from bpy.props import (
         StringProperty,
         BoolProperty,
@@ -1305,3 +1304,59 @@ class UpdatePreviewKey(bpy.types.Operator):
         map = conf.keymaps[mapstr]
         map.keymap_items.new("node.updatepreview",type='RIGHTMOUSE',value="PRESS")
         return {'FINISHED'}
+
+classes = (
+    ObjectNodeTree,
+    PovrayOutputNode,
+    PovrayTextureNode,
+    PovrayFinishNode,
+    PovrayDiffuseNode,
+    PovrayPhongNode,
+    PovraySpecularNode,
+    PovrayMirrorNode,
+    PovrayAmbientNode,
+    PovrayIridescenceNode,
+    PovraySubsurfaceNode,
+    PovrayMappingNode,
+    PovrayMultiplyNode,
+    PovrayTransformNode,
+    PovrayValueNode,
+    PovrayModifierNode,
+    PovrayPigmentNode,
+    PovrayColorImageNode,
+    PovrayBumpMapNode,
+    PovrayImagePatternNode,
+    ShaderPatternNode,
+    ShaderTextureMapNode,
+    ShaderNormalMapNode,
+    ShaderNormalMapEntryNode,
+    IsoPropsNode,
+    PovrayFogNode,
+    PovraySlopeNode,
+    TextureOutputNode,
+    NODE_OT_iso_add,
+    NODE_OT_map_create,
+    NODE_OT_povray_node_texture_map_add,
+    NODE_OT_povray_node_output_add,
+    NODE_OT_povray_node_layered_add,
+    NODE_OT_povray_input_add,
+    NODE_OT_povray_input_remove,
+    NODE_OT_povray_image_open,
+    PovrayPatternNode,
+    UpdatePreviewMaterial,
+    UpdatePreviewKey,
+)
+
+
+def register():
+    #from bpy.utils import register_class
+
+    for cls in classes:
+        register_class(cls)
+
+
+def unregister():
+    from bpy.utils import unregister_class
+
+    for cls in classes:
+        unregister_class(cls)

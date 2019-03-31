@@ -39,7 +39,7 @@ from bpy.types import (
 
 # Pie Snap - Shift + Tab
 class PieSnaping(Menu):
-    bl_idname = "pie.snapping"
+    bl_idname = "PIE_MT_snapping"
     bl_label = "Pie Snapping"
 
     def draw(self, context):
@@ -60,7 +60,7 @@ class PieSnaping(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("snap.alignrotation", text="Align rotation", icon='SNAP_NORMAL')
         # 3 - BOTTOM - RIGHT
-        pie.operator("wm.call_menu_pie", text="Snap Target", icon='NONE').name = "snap.targetmenu"
+        pie.operator("wm.call_menu_pie", text="Snap Target", icon='NONE').name = "SNAP_MT_targetmenu"
 
 
 class SnapActive(Operator):
@@ -201,7 +201,7 @@ class SnapTargetVariable(Operator):
 
 
 class SnapTargetMenu(Menu):
-    bl_idname = "snap.targetmenu"
+    bl_idname = "SNAP_MT_targetmenu"
     bl_label = "Snap Target Menu"
 
     def draw(self, context):
@@ -248,7 +248,7 @@ def register():
         # Snapping
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS', ctrl=True, shift=True)
-        kmi.properties.name = "pie.snapping"
+        kmi.properties.name = "PIE_MT_snapping"
         addon_keymaps.append((km, kmi))
 
 

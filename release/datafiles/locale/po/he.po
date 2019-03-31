@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,10 +29,6 @@ msgstr "ביתנ"
 
 msgid "Add"
 msgstr "ףסוה"
-
-
-msgid "Default"
-msgstr "לדחמ תרירב"
 
 
 msgid "Width"
@@ -63,8 +59,8 @@ msgid "Random"
 msgstr "יארקא"
 
 
-msgid "Both"
-msgstr "םהינש"
+msgid "Default"
+msgstr "לדחמ תרירב"
 
 
 msgid "Smooth"
@@ -169,6 +165,10 @@ msgstr "תופיפצ"
 
 msgid "Environment"
 msgstr "הביבס"
+
+
+msgid "Both"
+msgstr "םהינש"
 
 
 msgid "End"
@@ -513,16 +513,16 @@ msgid "Show Diffuse Color"
 msgstr "חתפמ עבצ"
 
 
-msgid "Text Style"
-msgstr "האבה הבכש"
-
-
 msgid "System"
 msgstr "תכרעמ"
 
 
 msgid "Color Management"
 msgstr "עבצ לוהינ"
+
+
+msgid "Text Style"
+msgstr "האבה הבכש"
 
 
 msgid "Tile Order"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 47) (b'f3c6b0bf4f6b')\n"
+"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 11:46:22\n"
+"POT-Creation-Date: 2019-03-18 13:57:24\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -756,10 +756,6 @@ msgstr "Esplora files e risorse"
 
 msgid "Edit persistent configuration settings"
 msgstr "Modifica impostazioni di configurazione persistenti"
-
-
-msgid "Default"
-msgstr "Predefinito"
 
 
 msgid "Width"
@@ -2634,16 +2630,16 @@ msgid "Stroke"
 msgstr "Tratto"
 
 
+msgid "Default"
+msgstr "Predefinito"
+
+
 msgid "Strokes"
 msgstr "Pennellate"
 
 
-msgid "Control"
-msgstr "Controllo"
-
-
-msgid "Both"
-msgstr "Entrambi"
+msgid "Resolution"
+msgstr "Risoluzione"
 
 
 msgid "Simplify"
@@ -4007,6 +4003,10 @@ msgid "Legacy tracking constraint prone to twisting artifacts"
 msgstr "Il vecchio vincolo di tracciamento che tende a torcere gli artefatti"
 
 
+msgid "Armature"
+msgstr "Armatura"
+
+
 msgid "Child Of"
 msgstr "Figlio Di"
 
@@ -4041,10 +4041,6 @@ msgstr "Stringi e Avvolgi"
 
 msgid "Restrict movements to surface of target mesh"
 msgstr "Limita i movimenti alla superficie della mesh obiettivo"
-
-
-msgid "Armature"
-msgstr "Armatura"
 
 
 msgid "Action Constraint"
@@ -6722,10 +6718,6 @@ msgid "Directory to save the textures"
 msgstr "Directory dove salvare le texture"
 
 
-msgid "Resolution"
-msgstr "Risoluzione"
-
-
 msgid "Output image resolution"
 msgstr "Risoluzione immagine in uscita"
 
@@ -8907,6 +8899,10 @@ msgid "Particle"
 msgstr "Particella"
 
 
+msgid "Control"
+msgstr "Controllo"
+
+
 msgid "Object is made a fluid control mesh, which influences the fluid"
 msgstr "L'oggetto è fatto da una mesh di tipo fluido di controllo, che influenza il fluido stesso"
 
@@ -9201,6 +9197,10 @@ msgstr "Guscio"
 
 msgid "Use only the outer shell of the mesh"
 msgstr "Utilizzare solo l'involucro esterno della mesh"
+
+
+msgid "Both"
+msgstr "Entrambi"
 
 
 msgid "Inflow Fluid Simulation Settings"
@@ -14218,78 +14218,6 @@ msgid "Random stiffness of hairs"
 msgstr "Rigidità casuale dei capelli"
 
 
-msgid "Align to"
-msgstr "Allinea a"
-
-
-msgid "In respect to what the billboards are aligned"
-msgstr "Rispetto a cosa viene allineato il tabellone"
-
-
-msgid "Animate"
-msgstr "Animato"
-
-
-msgid "How to animate billboard textures"
-msgstr "Come animare le textures del tabellone"
-
-
-msgid "Age"
-msgstr "Età"
-
-
-msgid "Billboard Object"
-msgstr "Oggetto Tabellone"
-
-
-msgid "Billboards face this object (default is active camera)"
-msgstr "I cartelloni guardano questo oggetto (di default è attiva la camera)"
-
-
-msgid "Billboard Offset"
-msgstr "Scostamento Tabellone"
-
-
-msgid "How to offset billboard textures"
-msgstr "Come scostare le texture del tabellone"
-
-
-msgid "Billboard Scale"
-msgstr "Scala Tabellone"
-
-
-msgid "Scale billboards relative to particle size"
-msgstr "Scala i tabelloni relativamente alla dimensione della particella"
-
-
-msgid "Tilt of the billboards"
-msgstr "Inclinazione dei tabelloni"
-
-
-msgid "Random Tilt"
-msgstr "Inclinazione Casuale"
-
-
-msgid "Random tilt of the billboards"
-msgstr "Inclinazione casuale dei tabelloni"
-
-
-msgid "UV Split"
-msgstr "Dividi UV"
-
-
-msgid "Billboard Velocity Head"
-msgstr "Velocità Testa Tabellone"
-
-
-msgid "Scale billboards by velocity"
-msgstr "Scala i tabelloni in base alla velocità"
-
-
-msgid "Billboard Velocity Tail"
-msgstr "Velocità Coda Tabellone"
-
-
 msgid "Brownian"
 msgstr "Browniano"
 
@@ -14666,14 +14594,6 @@ msgid "Length of the line's tail"
 msgstr "Lunghezza della coda della linea"
 
 
-msgid "Lock Billboard"
-msgstr "Blocca Tabellone"
-
-
-msgid "Lock the billboards align axis"
-msgstr "Blocca l'asse di allineamento del tabellone"
-
-
 msgid "Boids 2D"
 msgstr "Boid 2D"
 
@@ -14792,10 +14712,6 @@ msgstr "Come le particelle sono renderizzate"
 
 msgid "Halo"
 msgstr "Alone"
-
-
-msgid "Billboard"
-msgstr "Tabellone"
 
 
 msgid "Rendered Children"
@@ -26617,14 +26533,6 @@ msgid "Select keyframe points using lasso selection"
 msgstr "Seleziona i fotogrammi chiave usando la selezione a lazo"
 
 
-msgid "Deselect rather than select items"
-msgstr "Deseleziona gli elementi invece di selezionarli"
-
-
-msgid "Extend selection instead of deselecting everything first"
-msgstr "Estendere la selezione invece di deselezionare tutto prima"
-
-
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Seleziona Sinistra/Destra"
@@ -26930,6 +26838,14 @@ msgstr "Alterna la selezione di tutti i canali di animazione"
 
 msgid "Select all animation channels within the specified region"
 msgstr "Seleziona tutti i canali di animazione all'interno di un'area specifica"
+
+
+msgid "Deselect rather than select items"
+msgstr "Deseleziona gli elementi invece di selezionarli"
+
+
+msgid "Extend selection instead of deselecting everything first"
+msgstr "Estendere la selezione invece di deselezionare tutto prima"
 
 
 msgctxt "Operator"
@@ -30361,10 +30277,6 @@ msgid "Apply modifiers"
 msgstr "Applica modificatori"
 
 
-msgid "Use Modifiers Render Settings"
-msgstr "Usa impostazioni di renderizzazione dei modificatori"
-
-
 msgid "Write Normals"
 msgstr "Scrivi Normali"
 
@@ -30395,6 +30307,14 @@ msgstr "Esporta le coordinate UV attive"
 
 msgid "Polygroups"
 msgstr "Gruppi Multipli"
+
+
+msgid "Compress"
+msgstr "Comprimi"
+
+
+msgid "Hierarchy"
+msgstr "Gerarchia"
 
 
 msgctxt "Operator"
@@ -38066,10 +37986,6 @@ msgid "Clear Drivers"
 msgstr "Pulisce i drivers"
 
 
-msgid "Hierarchy"
-msgstr "Gerarchia"
-
-
 msgctxt "Operator"
 msgid "Outliner Constraint Operation"
 msgstr "Struttura - Operazione Vincoli"
@@ -41362,10 +41278,6 @@ msgid "Lock Strips"
 msgstr "Blocca Spezzoni"
 
 
-msgid "Lock the active strip so that it can't be transformed"
-msgstr "Blocca lo spezzone attivo in modo che non possa essere modificato"
-
-
 msgctxt "Operator"
 msgid "Add Mask Strip"
 msgstr "Agg. Spezzone Maschera"
@@ -41780,10 +41692,6 @@ msgstr "Scambia Ingressi"
 
 msgid "Swap the first two inputs for the effect strip"
 msgstr "Scambia i primi due ingressi per lo spezzone effetto"
-
-
-msgid "Unlock the active strip so that it can't be transformed"
-msgstr "Sblocca lo spezzone attivo così non può essere trasformato (??)"
 
 
 msgid "Unmute (un)selected strips"
@@ -45084,10 +44992,6 @@ msgid "Save the current file in the desired location"
 msgstr "Salva il file corrente nella posizione desiderata"
 
 
-msgid "Compress"
-msgstr "Comprimi"
-
-
 msgid "Write compressed .blend file"
 msgstr "Scrive un file .blend compresso"
 
@@ -45102,10 +45006,6 @@ msgstr "Salva una copia dello stato di lavoro attuale, ma non rende il file salv
 
 msgid "Remap Relative"
 msgstr "Rimappa Relativo"
-
-
-msgid "Remap relative paths when saving in a different directory"
-msgstr "Rimappa il percorso relativo quando salva in una cartella differente"
 
 
 msgctxt "Operator"
@@ -45631,120 +45531,16 @@ msgid "Pin"
 msgstr "Appunta"
 
 
-msgid "Camera Presets"
-msgstr "Preimpostazioni Camera"
-
-
-msgid "Color Presets"
-msgstr "Preimpostazioni Colore"
-
-
-msgid "Predefined tracking settings"
-msgstr "Impostazioni predefinite del tracciamento"
-
-
-msgid "Tracking Presets"
-msgstr "Preimpostazioni Tracciamento"
-
-
-msgid "Cloth Presets"
-msgstr "Preimpostazioni Stoffa"
-
-
-msgid "Integrator Presets"
-msgstr "Preimpostazioni Integratore"
-
-
-msgid "Sampling Presets"
-msgstr "Preimpostazioni Campionatura"
-
-
-msgid "Fluid Presets"
-msgstr "Preimpostazioni Fluido"
-
-
-msgid "Predefined node color"
-msgstr "Colore nodo predefinito"
-
-
-msgid "Hair Dynamics Presets"
-msgstr "Preimpostazioni Dinamiche Capelli"
-
-
-msgid "FFMPEG Presets"
-msgstr "Preimpostazioni FFMPEG"
-
-
-msgid "Render Presets"
-msgstr "Preimpostazioni Render"
-
-
-msgid "Timeline"
-msgstr "Linea Temporale"
-
-
-msgid "Walk"
-msgstr "Cammina"
-
-
-msgid "Auto Run Python Scripts"
-msgstr "Avvio Automatico Script Python "
-
-
-msgid "Bone Color Sets"
-msgstr "Colore Gruppi Ossa"
-
-
-msgid "Styles"
-msgstr "Stili"
-
-
-msgid "Text Style"
-msgstr "Stile Testo"
-
-
-msgid "User Interface"
-msgstr "Interfaccia Utente"
-
-
-msgid "Pie Menu"
-msgstr "Menù Radiale"
-
-
-msgid "Theme Space"
-msgstr "Tema Spazio"
-
-
-msgid "Theme Space List"
-msgstr " Tema Lista Spazio"
-
-
-msgid "Panel Colors"
-msgstr "Colori Pannello"
-
-
-msgid "Video Sequence Editor"
-msgstr "Editor Sequenze Video"
-
-
-msgid "3D View"
-msgstr "Vista 3D"
-
-
-msgid "Gradient Colors"
-msgstr "Colori Gradiente"
-
-
-msgid "Development"
-msgstr "Sviluppo"
-
-
 msgid "Bone Constraints"
 msgstr "Vincoli Osso"
 
 
 msgid "Bendy Bones"
 msgstr "Ossa Flessibili"
+
+
+msgid "Camera Presets"
+msgstr "Preimpostazioni Camera"
 
 
 msgid "Active Point"
@@ -45792,12 +45588,28 @@ msgid "Scene Setup"
 msgstr "Impostazioni Scena"
 
 
+msgid "Color Presets"
+msgstr "Preimpostazioni Colore"
+
+
 msgid "Tracking Settings"
 msgstr "Impostazioni Tracciamento"
 
 
 msgid "Lens"
 msgstr "Focale"
+
+
+msgid "Predefined tracking settings"
+msgstr "Impostazioni predefinite del tracciamento"
+
+
+msgid "Tracking Presets"
+msgstr "Preimpostazioni Tracciamento"
+
+
+msgid "Cloth Presets"
+msgstr "Preimpostazioni Stoffa"
 
 
 msgid "Depth of Field"
@@ -45820,8 +45632,16 @@ msgid "Ray Visibility"
 msgstr "Visibilità Raggio"
 
 
+msgid "Integrator Presets"
+msgstr "Preimpostazioni Integratore"
+
+
 msgid "Post Processing"
 msgstr "Post Elaborazione"
+
+
+msgid "Sampling Presets"
+msgstr "Preimpostazioni Campionatura"
 
 
 msgid "Denoising"
@@ -45940,6 +45760,10 @@ msgid "System"
 msgstr "Sistema"
 
 
+msgid "Fluid Presets"
+msgstr "Preimpostazioni Fluido"
+
+
 msgid "Scopes"
 msgstr "Grafici"
 
@@ -45958,6 +45782,10 @@ msgstr "Tassellatura"
 
 msgid "Texture Mask"
 msgstr "Maschera Texture"
+
+
+msgid "2D Cursor"
+msgstr "Cursore 2D"
 
 
 msgid "UV Sculpt"
@@ -45988,6 +45816,10 @@ msgid "Backdrop"
 msgstr "Sfondo"
 
 
+msgid "Predefined node color"
+msgstr "Colore nodo predefinito"
+
+
 msgid "Delta Transform"
 msgstr "Trasformazione Delta"
 
@@ -46010,6 +45842,10 @@ msgstr "Impostazioni Campo Forza"
 
 msgid "Hair Dynamics"
 msgstr "Dinamiche Capelli"
+
+
+msgid "Hair Dynamics Presets"
+msgstr "Preimpostazioni Dinamiche Capelli"
 
 
 msgid "Structure"
@@ -46076,12 +45912,20 @@ msgid "Audio"
 msgstr "Audio"
 
 
+msgid "FFMPEG Presets"
+msgstr "Preimpostazioni FFMPEG"
+
+
 msgid "Freestyle"
 msgstr "Disegno al Tratto (Freestyle)"
 
 
 msgid "Views"
 msgstr "Viste"
+
+
+msgid "Render Presets"
+msgstr "Preimpostazioni Render"
 
 
 msgid "Metadata"
@@ -46120,8 +45964,68 @@ msgid "Add-ons"
 msgstr "Add-ons"
 
 
+msgid "Timeline"
+msgstr "Linea Temporale"
+
+
+msgid "Development"
+msgstr "Sviluppo"
+
+
+msgid "Walk"
+msgstr "Cammina"
+
+
+msgid "Auto Run Python Scripts"
+msgstr "Avvio Automatico Script Python "
+
+
 msgid "Themes"
 msgstr "Temi"
+
+
+msgid "Bone Color Sets"
+msgstr "Colore Gruppi Ossa"
+
+
+msgid "Theme Space"
+msgstr "Tema Spazio"
+
+
+msgid "Theme Space List"
+msgstr " Tema Lista Spazio"
+
+
+msgid "Panel Colors"
+msgstr "Colori Pannello"
+
+
+msgid "Styles"
+msgstr "Stili"
+
+
+msgid "Pie Menu"
+msgstr "Menù Radiale"
+
+
+msgid "Video Sequence Editor"
+msgstr "Editor Sequenze Video"
+
+
+msgid "Text Style"
+msgstr "Stile Testo"
+
+
+msgid "User Interface"
+msgstr "Interfaccia Utente"
+
+
+msgid "3D View"
+msgstr "Vista 3D"
+
+
+msgid "Gradient Colors"
+msgstr "Colori Gradiente"
 
 
 msgid "Motion Tracking"
@@ -46166,10 +46070,6 @@ msgstr "Strumenti di default per il modo particelle"
 
 msgid "Pose Options"
 msgstr "Opzioni Posa"
-
-
-msgid "Project Paint"
-msgstr "Pittura Proiettata"
 
 
 msgid "Transform Orientations"
@@ -46450,30 +46350,6 @@ msgstr "Sistema particellare in un oggetto"
 
 msgid "Active Particle Target"
 msgstr "Obiettivo Particella Attiva"
-
-
-msgid "Billboard Normal UV"
-msgstr "UV Normale Tabellone"
-
-
-msgid "UV map to control billboard normals"
-msgstr "Mappa UV per controllare le normali del tabellone"
-
-
-msgid "Billboard Split UV"
-msgstr "UV Dividi Tabellone"
-
-
-msgid "UV map to control billboard splitting"
-msgstr "Mappa UV per controllare la divisione del tabellone"
-
-
-msgid "Billboard Time Index UV"
-msgstr "UV Indice Temporale Tabellone"
-
-
-msgid "UV map to control billboard time index (X-Y)"
-msgstr "Mappa UV per controllare l'indice temporale del tabellone (X-Y)"
 
 
 msgid "Child Particles"
@@ -46798,10 +46674,6 @@ msgstr "Compressione Cache"
 
 msgid "Compression method to be used"
 msgstr "Metodo di compressione da usare"
-
-
-msgid "No"
-msgstr "No"
 
 
 msgid "No compression"
@@ -49018,10 +48890,6 @@ msgstr "Tipo Dispositivo OpenCL"
 
 msgid "Accelerator"
 msgstr "Accelerazione"
-
-
-msgid "Single Program"
-msgstr "Singolo Programma"
 
 
 msgid "OpenCL Kernel Type"
@@ -52621,10 +52489,6 @@ msgstr "Centro Casella Delimitazione"
 
 msgid "Pivot around bounding box center of selected object(s)"
 msgstr "Pivot attorno al centro della casella di delimitazione dell'oggetto/i selezionato/i"
-
-
-msgid "2D Cursor"
-msgstr "Cursore 2D"
 
 
 msgid "Pivot around the 2D cursor"
@@ -57139,10 +57003,6 @@ msgid "Position:"
 msgstr "Posizione:"
 
 
-msgid "Object %r can't be written into a 3DS file"
-msgstr "L'ggetto %r non può essere incluso nel file 3DS"
-
-
 msgid "ASCII FBX files are not supported %r"
 msgstr "I file ASCII FBX non sono supportati %r"
 
@@ -57752,6 +57612,10 @@ msgstr "Blocca Tutto"
 msgctxt "Operator"
 msgid "UnLock All"
 msgstr "Sblocca Tutto"
+
+
+msgid "Before"
+msgstr "Prima"
 
 
 msgctxt "Operator"
@@ -58462,10 +58326,6 @@ msgid "Cursor to Grid"
 msgstr "Cursore alla Griglia"
 
 
-msgid "Before"
-msgstr "Prima"
-
-
 msgid "Enable Editing"
 msgstr "Abilita Modifica"
 
@@ -58674,10 +58534,6 @@ msgid "Date"
 msgstr "Data"
 
 
-msgid "Draw Labels"
-msgstr "Aggiungi Etichette"
-
-
 msgid "Buffer"
 msgstr "Buffer"
 
@@ -58815,10 +58671,6 @@ msgstr "Cache Corrente da Precalcolare"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Campo Forza"
-
-
-msgid "Use Lib Path"
-msgstr "Usa Percorso Libreria"
 
 
 msgctxt "Operator"
@@ -60085,6 +59937,10 @@ msgid "Sub Level"
 msgstr "Livello Inferiore"
 
 
+msgid "Align to"
+msgstr "Allinea a"
+
+
 msgid "Manhattan Distance"
 msgstr "Distanza Manhattan"
 
@@ -60563,10 +60419,6 @@ msgstr "Crea Proxy..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "Rendi Locale..."
-
-
-msgid "Make Links..."
-msgstr "Crea Collegamenti..."
 
 
 msgctxt "Operator"

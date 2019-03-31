@@ -16,9 +16,8 @@ from bpy.types import Menu
 
 
 # Pie Shade Mode - Z
-class VIEW3D_PIE_shade_of(Menu):
+class VIEW3D_MT_shade_of(Menu):
     bl_label = "Shade"
-    bl_idname = "pie.shade_of"
 
     def draw(self, context):
         layout = self.layout
@@ -36,8 +35,8 @@ class VIEW3D_PIE_shade_of(Menu):
 
 
 classes = (
-    VIEW3D_PIE_shade_of,
-    )
+    VIEW3D_MT_shade_of,
+)
 
 addon_keymaps = []
 
@@ -51,7 +50,7 @@ def register():
         # Align
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'Z', 'PRESS')
-        kmi.properties.name = "pie.shade_of"
+        kmi.properties.name = VIEW3D_MT_shade_of.__name__
         addon_keymaps.append((km, kmi))
 
 

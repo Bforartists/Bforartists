@@ -871,7 +871,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         # this won't work in edit mode
         editmode = context.preferences.edit.use_enter_edit_mode
         context.preferences.edit.use_enter_edit_mode = False
-        if context.active_object and context.active_object.mode == 'EDIT':
+        if context.active_object and context.active_object.mode != 'OBJECT':
             bpy.ops.object.mode_set(mode='OBJECT')
 
         self.import_images(context)

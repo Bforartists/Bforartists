@@ -2908,9 +2908,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 		}
 	}
 
-	{
-		/* Versioning code until next subversion bump goes here. */
-
+	if (!MAIN_VERSION_ATLEAST(bmain, 280, 52)) {
 		LISTBASE_FOREACH (ParticleSettings *, part, &bmain->particles) {
 			/* Replace deprecated PART_DRAW_BB by PART_DRAW_NOT */
 			if (part->ren_as == PART_DRAW_BB) {
@@ -2931,5 +2929,32 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				}
 			}
 		}
+
+		FOREACH_NODETREE_BEGIN(bmain, ntree, id) {
+			if (ntree->type == NTREE_SHADER) {
+				for (bNode *node = ntree->nodes.first; node; node = node->next) {
+					/* Fix missing version patching from earlier changes. */
+					if (STREQ(node->idname, "ShaderNodeOutputLamp")) {
+						STRNCPY(node->idname, "ShaderNodeOutputLight");
+					}
+					if (node->type == SH_NODE_BSDF_PRINCIPLED && node->custom2 == 0) {
+						node->custom2 = SHD_SUBSURFACE_BURLEY;
+					}
+				}
+			}
+		} FOREACH_NODETREE_END;
+	}
+
+	if (!MAIN_VERSION_ATLEAST(bmain, 280, 53)) {
+		for (Material *mat = bmain->materials.first; mat; mat = mat->id.next) {
+			/* Eevee: Keep material appearance consistent with previous behavior. */
+			if (!mat->use_nodes || !mat->nodetree || mat->blend_method == MA_BM_SOLID) {
+				mat->blend_shadow = MA_BS_SOLID;
+			}
+		}
+	}
+
+	{
+		/* Versioning code until next subversion bump goes here. */
 	}
 }

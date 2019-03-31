@@ -22,7 +22,7 @@ bl_info = {
     "author": "Antonio Osprite, Liero, Atom, Jimmy Hazevoet",
     "version": (0, 2, 2),
     "blender": (2, 80, 0),
-    "location": "Toolshelf > Create Tab",
+    "location": "Sidebar > Create Tab",
     "description": "SpiroFit, BounceSpline and Catenary adds "
                    "splines to selected mesh or objects",
     "warning": "",
@@ -965,7 +965,7 @@ class SplinePanel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_context = "objectmode"
-    bl_category = "Spline"
+    bl_category = "Create"
     #bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
