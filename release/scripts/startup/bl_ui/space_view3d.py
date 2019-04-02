@@ -3805,7 +3805,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.vert_slide", text="Slide Vertices")
             col.operator("transform.vertex_random", text="Randomize Vertices")
             col.operator("mesh.vertices_smooth", text="Smooth Vertices")
-            col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian")
+            col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
             col.separator()
 
@@ -4039,7 +4039,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.operator("transform.vert_slide", text="Slide Vertices", icon = 'SLIDE_VERTEX')
         layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = 'SMOOTH_VERTEX')
-        layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian")
+        layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
 
         layout.separator()
 
@@ -4118,11 +4118,11 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.loopcut_slide")
-        layout.operator("mesh.offset_edge_loops_slide")
-        layout.operator("mesh.knife_tool")
-        layout.operator("mesh.bisect")
-        layout.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops")
+        layout.operator("mesh.loopcut_slide", icon = "LOOP_CUT_AND_SLIDE")
+        layout.operator("mesh.offset_edge_loops_slide", icon = "OFFSET_EDGE_SLIDE")
+        layout.operator("mesh.knife_tool", icon = "KNIFE")
+        layout.operator("mesh.bisect", icon = "BISECT")
+        layout.operator("mesh.bridge_edge_loops", text="Bridge Edge Loops", icon = "BRIDGE_EDGELOOPS")
 
         layout.separator()
 
@@ -4198,7 +4198,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator("mesh.inset", icon='INSET_FACES')
         layout.operator("mesh.poke", icon = "POKEFACES")
-        layout.operator("mesh.bridge_edge_loops", text="Bridge Faces")
+        layout.operator("mesh.bridge_edge_loops", text="Bridge Faces", icon = "BRIDGE_EDGELOOPS")
 
         layout.separator()
 
