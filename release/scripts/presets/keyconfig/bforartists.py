@@ -4197,7 +4197,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("view3d.select_or_deselect_all", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
+    ("view3d.select", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
     ("view3d.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
      {"properties":
