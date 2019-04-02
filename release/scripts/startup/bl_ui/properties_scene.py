@@ -306,6 +306,25 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
         col.separator()
 
+        layout.operator("sound.bake_animation")
+
+class SCENE_PT_audio_options(SceneButtonsPanel, Panel):
+    bl_label = "Audio Options"
+    bl_parent_id = "SCENE_PT_audio"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        scene = context.scene
+        rd = context.scene.render
+        ffmpeg = rd.ffmpeg
+
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
+
+        col = flow.column()
+
         col.prop(scene, "audio_distance_model")
         col.prop(ffmpeg, "audio_channels")
 
@@ -320,9 +339,6 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
         col.prop(scene, "audio_doppler_speed", text="Doppler Speed")
         col.prop(scene, "audio_doppler_factor", text="Doppler Factor")
 
-        col.separator()
-
-        layout.operator("sound.bake_animation")
 
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
@@ -444,6 +460,7 @@ classes = (
     SCENE_PT_keying_set_paths,
     SCENE_PT_keyframing_settings,
     SCENE_PT_audio,
+    SCENE_PT_audio_options,
     SCENE_PT_rigid_body_world,
     SCENE_PT_rigid_body_world_settings,
     SCENE_PT_rigid_body_cache,
