@@ -137,11 +137,22 @@ class IMAGE_MT_view_zoom(Menu):
 class IMAGE_MT_select_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Inverse"         # display name in the interface.
+    bl_label = "Select Inverse"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.uv.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+# Workaround to separate the tooltips
+class IMAGE_MT_select_none(bpy.types.Operator):
+    """None\nDeselects everything """         # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_all_none"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select None"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_all(action = 'DESELECT')
         return {'FINISHED'}
 
 # Workaround to separate the tooltips
@@ -174,7 +185,7 @@ class IMAGE_MT_select(Menu):
         layout = self.layout
 
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("uv.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
+        layout.operator("uv.select_all_none", text="None", icon = 'SELECT_NONE') # bfa - separated tooltip
         layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE') # bfa - separated tooltip
 
         layout.separator()
@@ -1660,6 +1671,7 @@ classes = (
     IMAGE_MT_select_linked_pick_extend,
     IMAGE_MT_select_linked_extend,
     IMAGE_MT_select_inverse,
+    IMAGE_MT_select_none,
     IMAGE_MT_select,
     IMAGE_MT_brush,
     IMAGE_MT_image,
