@@ -393,6 +393,27 @@ class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.select_leftright(extend = False, mode = 'RIGHT')
 
+# Workaround to separate the tooltips
+class DOPESHEET_MT_select_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "action.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.action.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+# Workaround to separate the tooltips
+class DOPESHEET_MT_select_none(bpy.types.Operator):
+    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "action.select_all_none"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select None"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.action.select_all(action = 'DESELECT')
+        return {'FINISHED'}
 
 class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
@@ -401,8 +422,8 @@ class DOPESHEET_MT_select(Menu):
         layout = self.layout
 
         layout.operator("action.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("action.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
-        layout.operator("action.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+        layout.operator("action.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
+        layout.operator("action.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
         layout.operator("action.select_box", icon='BORDER_RECT').axis_range = False
@@ -754,6 +775,8 @@ classes = (
     DOPESHEET_MT_view,
     DOPESHEET_MT_select_before_current_frame,
     DOPESHEET_MT_select_after_current_frame,
+    DOPESHEET_MT_select_inverse,
+    DOPESHEET_MT_select_none,
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
