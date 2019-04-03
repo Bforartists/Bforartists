@@ -183,6 +183,29 @@ class GRAPH_MT_view(Menu):
         layout.menu("INFO_MT_area")
 
 
+# Workaround to separate the tooltips
+class GRAPH_MT_select_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "graph.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.graph.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+# Workaround to separate the tooltips
+class GRAPH_MT_select_none(bpy.types.Operator):
+    """None\nDeselects everything """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "graph.select_all_none"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select None"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.graph.select_all(action = 'DESELECT')
+        return {'FINISHED'}
+
+
 class GRAPH_MT_select(Menu):
     bl_label = "Select"
 
@@ -190,8 +213,8 @@ class GRAPH_MT_select(Menu):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("graph.select_all", text="None", icon = 'SELECT_NONE').action = 'DESELECT'
-        layout.operator("graph.select_all", text="Invert", icon = 'INVERSE').action = 'INVERT'
+        layout.operator("graph.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
+        layout.operator("graph.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -555,6 +578,8 @@ classes = (
     GRAPH_HT_header,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
+    GRAPH_MT_select_inverse,
+    GRAPH_MT_select_none,
     GRAPH_MT_select,
     GRAPH_MT_marker,
     GRAPH_MT_channel_hide_unselected_curves,

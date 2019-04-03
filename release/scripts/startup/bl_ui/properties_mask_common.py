@@ -312,6 +312,29 @@ class MASK_MT_animation(Menu):
         layout.operator("mask.shape_key_rekey", icon = 'KEY_HLT')
 
 
+# Workaround to separate the tooltips
+class MASK_MT_select_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mask.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mask.select_all(action = 'INVERT')
+        return {'FINISHED'}
+
+# Workaround to separate the tooltips
+class MASK_MT_select_none(bpy.types.Operator):
+    """None\nDeselects everything """       # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mask.select_all_none"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Select None"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mask.select_all(action = 'DESELECT')
+        return {'FINISHED'}
+
+
 class MASK_MT_select(Menu):
     bl_label = "Select"
 
@@ -323,8 +346,12 @@ class MASK_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("mask.select_all", icon = 'SELECT_ALL').action = 'TOGGLE'
-        layout.operator("mask.select_all", text = "Inverse", icon='INVERSE').action = 'INVERT'
+        layout.operator("mask.select_all", icon = 'SELECT_ALL').action = 'SELECT'
+        layout.operator("mask.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
+        layout.operator("mask.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        
+        layout.separator()
+
         layout.operator("mask.select_linked", text = "Select Linked", icon = "LINKED")
 
         layout.separator()
@@ -339,7 +366,9 @@ classes = (
     MASK_MT_mask,
     MASK_MT_visibility,
     MASK_MT_transform,
-    MASK_MT_animation,
+    MASK_MT_animation,  
+    MASK_MT_select_inverse,
+    MASK_MT_select_none,
     MASK_MT_select,
 )
 
