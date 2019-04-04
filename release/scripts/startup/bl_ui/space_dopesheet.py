@@ -183,6 +183,7 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
 
         dopesheet = context.space_data.dopesheet
         ds_mode = context.space_data.mode
+        st = context.space_data
 
         layout.prop(dopesheet, "show_summary", text="Summary")
 
@@ -197,6 +198,8 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         if ds_mode == 'DOPESHEET':
             layout.separator()
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
+
+            layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-word Match Search")
 
 
 #######################################
@@ -334,42 +337,27 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
-        layout.operator("action.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.separator()
 
-        layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-word Match Search")
-
-        layout.separator()
-
-        layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_frame_indicator")
-        layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "show_interpolation")
-        layout.prop(st, "show_extremes")
-        layout.prop(st, "show_marker_lines")
-        layout.prop(st, "use_auto_merge_keyframes")
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.separator()
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("action.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
+
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_selected", icon = "VIEW_SELECTED")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
 
         # Add this to show key-binding (reverse action in dope-sheet).
         layout.separator()
+
         props = layout.operator("wm.context_set_enum", text="Toggle Graph Editor", icon='GRAPH')
         props.data_path = "area.type"
         props.value = 'GRAPH_EDITOR'
 
         layout.separator()
+
         layout.menu("INFO_MT_area")
 
 # Workaround to separate the tooltips
@@ -586,6 +574,29 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean_channels", text="Clean Channels", icon = "CLEAN_CHANNELS") # bfa -  separated tooltips
         layout.operator("action.sample", icon = "SAMPLE_KEYFRAMES")
 
+class DOPESHEET_PT_view_view_options(bpy.types.Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+
+        layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_frame_indicator")
+        layout.prop(st, "show_sliders")
+        layout.prop(st, "show_group_colors")
+        layout.prop(st, "show_interpolation")
+        layout.prop(st, "show_extremes")
+        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "use_auto_merge_keyframes")
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
 
 class DOPESHEET_MT_key_transform(Menu):
     bl_label = "Transform"
@@ -783,6 +794,7 @@ classes = (
     DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key_clean_channels,
     DOPESHEET_MT_key,
+    DOPESHEET_PT_view_view_options,
     DOPESHEET_MT_key_transform,
     DOPESHEET_MT_key_mirror,
     DOPESHEET_MT_key_snap,
