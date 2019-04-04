@@ -271,13 +271,8 @@ class DOPESHEET_HT_editor_buttons(Header):
 
         layout.separator_spacer()
 
-        if st.mode == 'DOPESHEET':
-            dopesheet_filter(layout, context)
-        elif st.mode == 'ACTION':
-            # 'generic_filters_only' limits the options to only the relevant 'generic' subset of
-            # filters which will work here and are useful (especially for character animation)
-            dopesheet_filter(layout, context, generic_filters_only=True)
-        elif st.mode == 'GPENCIL':
+
+        if st.mode == 'GPENCIL':
             row = layout.row(align=True)
             row.prop(st.dopesheet, "show_gpencil_3d_only", text="Active Only")
 
@@ -286,14 +281,7 @@ class DOPESHEET_HT_editor_buttons(Header):
                 row.prop(st.dopesheet, "show_only_selected", text="")
                 row.prop(st.dopesheet, "show_hidden", text="")
 
-            row = layout.row(align=True)
-            row.prop(st.dopesheet, "filter_text", text="")
-
-        layout.popover(
-            panel="DOPESHEET_PT_filters",
-            text="",
-            icon='FILTER',
-        )
+        layout.popover(panel="DOPESHEET_PT_filters", text="", icon='FILTER')
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != 'GPENCIL':
