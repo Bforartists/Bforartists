@@ -50,8 +50,6 @@ class GRAPH_HT_header(Header):
 
         layout.separator_spacer()
 
-        dopesheet_filter(layout, context)
-
         row = layout.row(align=True)
         if st.has_ghost_curves:
             row.operator("graph.ghost_curves_clear", text="", icon='GHOST_DISABLED')
