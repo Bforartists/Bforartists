@@ -40,8 +40,6 @@ class NLA_HT_header(Header):
 
         layout.separator_spacer()
 
-        dopesheet_filter(layout, context)
-
         layout.popover(
             panel="NLA_PT_filters",
             text="",
