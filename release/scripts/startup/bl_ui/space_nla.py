@@ -101,6 +101,32 @@ class NLA_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("nla.previewrange_set", icon='BORDER_RECT')
+
+        layout.separator()
+
+        layout.operator("nla.view_all", icon = "VIEWALL")
+        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
+
+        layout.separator()
+        layout.menu("INFO_MT_area")
+
+
+class NLA_PT_view_view_options(Panel):
+    bl_label = "View Options"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'UI'
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+
+        layout.separator()
+
         layout.prop(st, "use_realtime_update")
         layout.prop(st, "show_frame_indicator")
 
@@ -110,19 +136,6 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_strip_curves")
         layout.prop(st, "show_local_markers")
         layout.prop(st, "show_marker_lines")
-
-        layout.separator()
-        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
-        layout.operator("anim.previewrange_clear", icon = "CLEAR")
-        layout.operator("nla.previewrange_set", icon='BORDER_RECT')
-
-        layout.separator()
-        layout.operator("nla.view_all", icon = "VIEWALL")
-        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
-        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
-
-        layout.separator()
-        layout.menu("INFO_MT_area")
 
 
 # Workaround to separate the tooltips
@@ -287,6 +300,7 @@ classes = (
     NLA_MT_edit,
     NLA_MT_editor_menus,
     NLA_MT_view,
+    NLA_PT_view_view_options,
     NLA_MT_select_inverse,
     NLA_MT_select_none,
     NLA_MT_select,
