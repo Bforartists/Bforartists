@@ -562,6 +562,18 @@ class VIEW3D_MT_snap(Menu):
         layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
 
 
+# Tooltip and operator for Clear Seam.
+class VIEW3D_MT_uv_map_clear_seam(bpy.types.Operator):
+    """Clear Seam\nClears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.clear_seam"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Clear seam"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.mark_seam(clear=True)
+        return {'FINISHED'}
+
+
 class VIEW3D_MT_uv_map(Menu):
     bl_label = "UV Mapping"
 
@@ -594,7 +606,7 @@ class VIEW3D_MT_uv_map(Menu):
         layout.separator()
 
         layout.operator("mesh.mark_seam", icon = "MARK_SEAM").clear = False
-        layout.operator("mesh.mark_seam", text="Clear Seam", icon = "CLEAR_SEAM").clear = True
+        layout.operator("mesh.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
 
         layout.separator()
 
@@ -7178,6 +7190,7 @@ classes = (
     VIEW3D_MT_transform_armature,
     VIEW3D_MT_mirror,
     VIEW3D_MT_snap,
+    VIEW3D_MT_uv_map_clear_seam,
     VIEW3D_MT_uv_map,
     VIEW3D_MT_view_view_selected_all_regions,
     VIEW3D_MT_view_all_all_regions,
