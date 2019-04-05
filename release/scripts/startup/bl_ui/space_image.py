@@ -435,6 +435,18 @@ class IMAGE_MT_uvs_weldalign(Menu):
         layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
 
 
+# Tooltip and operator for Clear Seam.
+class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
+    """Clear Seam\nClears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.clear_seam"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Clear seam"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.mark_seam(clear=True)
+        return {'FINISHED'}  
+
+
 class IMAGE_MT_uvs(Menu):
     bl_label = "UV"
 
@@ -467,7 +479,7 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
-        layout.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
+        layout.operator("uv.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
         layout.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
 
         layout.separator()
@@ -1676,6 +1688,7 @@ classes = (
     IMAGE_MT_brush,
     IMAGE_MT_image,
     IMAGE_MT_image_invert,
+    IMAGE_MT_uvs_clear_seam,
     IMAGE_MT_uvs,
     IMAGE_MT_uvs_showhide,
     IMAGE_MT_uvs_proportional,
