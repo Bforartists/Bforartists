@@ -668,17 +668,17 @@ class IMAGE_HT_header(Header):
             row.prop(uv, "pixel_snap_mode", icon_only=True)
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
-            row.prop(tool_settings, "snap_uv_element", icon_only=True)
-            if tool_settings.snap_uv_element != 'INCREMENT':
-                row.prop(tool_settings, "snap_target", text="")
+            if tool_settings.use_snap:
+                row.prop(tool_settings, "snap_uv_element", icon_only=True)
+                if tool_settings.snap_uv_element != 'INCREMENT':
+                    row.prop(tool_settings, "snap_target", text="")
 
             # Proportional Editing
             row = layout.row(align=True)
             row.prop(tool_settings, "proportional_edit", icon_only=True)
-            # if tool_settings.proportional_edit != 'DISABLED':
-            sub = row.row(align=True)
-            sub.active = tool_settings.proportional_edit != 'DISABLED'
-            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+            if tool_settings.proportional_edit != 'DISABLED':
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
         row = layout.row()
         row.popover(
