@@ -289,9 +289,9 @@ class DOPESHEET_HT_editor_buttons(Header):
 
         row = layout.row(align=True)
         row.prop(tool_settings, "use_proportional_action", text="", icon_only=True)
-        sub = row.row(align=True)
-        sub.active = tool_settings.use_proportional_action
-        sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
+        if tool_settings.use_proportional_action:
+            sub = row.row(align=True)
+            sub.prop(tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
 
 class DOPESHEET_MT_editor_menus(Menu):
