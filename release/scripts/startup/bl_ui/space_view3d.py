@@ -188,38 +188,37 @@ class VIEW3D_HT_header(Header):
 
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
-
-            sub = row.row(align=True)
-            sub.popover(
-                panel="VIEW3D_PT_snapping",
-                icon=icon,
-                text=text,
-            )
+            
+            if tool_settings.use_snap:
+                sub = row.row(align=True)
+                sub.popover(panel="VIEW3D_PT_snapping", icon=icon,text=text)
 
         # Proportional editing
         gpd = context.gpencil_data
         if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
             row = layout.row(align=True)
             row.prop(tool_settings, "proportional_edit", icon_only=True)
-            sub = row.row(align=True)
-            sub.active = tool_settings.proportional_edit != 'DISABLED'
-            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+            if tool_settings.proportional_edit != 'DISABLED':
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
         elif object_mode == 'OBJECT':
             row = layout.row(align=True)
             row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
-            sub = row.row(align=True)
-            sub.active = tool_settings.use_proportional_edit_objects
-            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+            if tool_settings.use_proportional_edit_objects:
+                sub = row.row(align=True)
+                sub.active = tool_settings.use_proportional_edit_objects
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
         elif gpd is not None and obj.type == 'GPENCIL':
             if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
                 row = layout.row(align=True)
                 row.prop(tool_settings, "proportional_edit", icon_only=True)
 
-                sub = row.row(align=True)
-                sub.active = tool_settings.proportional_edit != 'DISABLED'
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+                if tool_settings.proportional_edit:
+                    sub = row.row(align=True)
+                    sub.active = tool_settings.proportional_edit != 'DISABLED'
+                    sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
         # grease pencil
         if object_mode == 'PAINT_GPENCIL':
