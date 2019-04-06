@@ -19,7 +19,7 @@ import blf
 bl_info = {
     "name": "Important Hotkeys BFA",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (2, 80, 0),
     "location": "3D View > Properties Sidebar > Important Hotkeys",
     "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
@@ -130,17 +130,19 @@ def draw_modetext(self, context, obj):
             # ------------- Separate
             elif item == 'mesh.separate':
                 self.mesh_separate = handle_keys(km, self.mesh_separate)
-                
-            elif item == 'mesh.mark_seam':
-                # ------------- Mark Seam
-                if km.properties.clear == False:
-                    self.mesh_mark_seam = handle_keys(km, self.mesh_mark_seam)
-                ## ------------- Clear Seam  - not longer valid, made new class for tooltip in bfa. See below
-                #elif km.properties.clear == True:
-                #    self.mesh_clear_seam = handle_keys(km, self.mesh_clear_seam)
 
-            elif item == 'mesh.clear_seam':
-                self.clear_seam = handle_keys(km, self.clear_seam)
+            #Doesn't work in Blender 2.80
+                
+            #elif item == 'mesh.mark_seam':
+            #    # ------------- Mark Seam
+            #    if km.properties.clear == False:
+            #        self.mesh_mark_seam = handle_keys(km, self.mesh_mark_seam)
+            #    ## ------------- Clear Seam  - not longer valid, made new class for tooltip in bfa. See below
+            #    #elif km.properties.clear == True:
+            #    #    self.mesh_clear_seam = handle_keys(km, self.mesh_clear_seam)
+
+            #elif item == 'mesh.clear_seam':
+            #    self.clear_seam = handle_keys(km, self.clear_seam)
 
             elif item == 'mesh.loop_select':
                 # ------------- Loop select
@@ -276,31 +278,31 @@ def draw_modetext(self, context, obj):
                 elif km.properties.data_path_primary == "tool_settings.weight_paint.brush.weight" and km.properties.data_path_secondary == "tool_settings.unified_paint_settings.weight" and km.properties.use_secondary == "tool_settings.unified_paint_settings.use_unified_weight" and km.properties.rotation_path == "tool_settings.weight_paint.brush.texture_slot.angle" and km.properties.color_path == "tool_settings.weight_paint.brush.cursor_color_add" and km.properties.image_id == "tool_settings.weight_paint.brush":
                     self.weightpaint_brush_weight = handle_keys(km, self.weightpaint_brush_weight)
                 
-        
-            elif item == 'brush.stencil_control':
-                # ------------- Stencil Brush control Translation
-                if km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_translate = handle_keys(km, self.weightpaint_stencil_control_translate)
+            # No stencil maps in weightpaint anymore        
+            #elif item == 'brush.stencil_control':
+            #    # ------------- Stencil Brush control Translation
+            #    if km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'PRIMARY':
+            #        self.weightpaint_stencil_control_translate = handle_keys(km, self.weightpaint_stencil_control_translate)
                 
-                # ------------- Stencil Brush control Scale
-                elif km.properties.mode == 'SCALE' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_scale = handle_keys(km, self.weightpaint_stencil_control_scale)
+            #    # ------------- Stencil Brush control Scale
+            #    elif km.properties.mode == 'SCALE' and km.properties.texmode == 'PRIMARY':
+            #        self.weightpaint_stencil_control_scale = handle_keys(km, self.weightpaint_stencil_control_scale)
                     
-                # ------------- Stencil Brush control Rotation
-                elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'PRIMARY':
-                    self.weightpaint_stencil_control_rotate = handle_keys(km, self.weightpaint_stencil_control_rotate)
+            #    # ------------- Stencil Brush control Rotation
+            #    elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'PRIMARY':
+            #        self.weightpaint_stencil_control_rotate = handle_keys(km, self.weightpaint_stencil_control_rotate)
                     
-                # ------------- Stencil Brush control Translation Secondary
-                elif km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_translate_sec = handle_keys(km, self.weightpaint_stencil_control_translate_sec)
+            #    # ------------- Stencil Brush control Translation Secondary
+            #    elif km.properties.mode == 'TRANSLATION' and km.properties.texmode == 'SECONDARY':
+            #        self.weightpaint_stencil_control_translate_sec = handle_keys(km, self.weightpaint_stencil_control_translate_sec)
                     
-                # ------------- Stencil Brush control Scale Secondary
-                elif km.properties.mode == 'SCALE' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_scale_sec = handle_keys(km, self.weightpaint_stencil_control_scale_sec)
+            #    # ------------- Stencil Brush control Scale Secondary
+            #    elif km.properties.mode == 'SCALE' and km.properties.texmode == 'SECONDARY':
+            #        self.weightpaint_stencil_control_scale_sec = handle_keys(km, self.weightpaint_stencil_control_scale_sec)
 
-                 # ------------- Stencil Brush control Rotation Secondary
-                elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
-                    self.weightpaint_stencil_control_rotate_sec = handle_keys(km, self.weightpaint_stencil_control_rotate_sec)
+            #     # ------------- Stencil Brush control Rotation Secondary
+            #    elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
+            #        self.weightpaint_stencil_control_rotate_sec = handle_keys(km, self.weightpaint_stencil_control_rotate_sec)
 
       # ----------------------------------------- Paint Curve section -------------------------------------    
     keymaps_PAINTCURVE = wm.keyconfigs.default.keymaps['Paint Curve']
@@ -502,8 +504,8 @@ def draw_modetext(self, context, obj):
                 "Add Edgeloop to selection - " + self.mesh_loop_select_add,
                 "Select Edgering - " + self.mesh_edgering_select,
                 "Add Edgering to selection - " + self.mesh_edgering_select_add,
-                "Mark Seam - " + self.mesh_mark_seam,
-                "Clear Seam - " + self.clear_seam,
+                #"Mark Seam - " + self.mesh_mark_seam, # doesn't work in blender 2.80
+                #"Clear Seam - " + self.clear_seam, # doesn't work in blender 2.80
                 ]))
         elif obj.type == 'CURVE':
             texts.append(([
@@ -617,14 +619,15 @@ def draw_modetext(self, context, obj):
             "Radius - " + self.weightpaint_brush_size,
             "Strength -  " + self.weightpaint_brush_strength,
             "Weight - " + self.weightpaint_brush_weight,
-            "------",
-            "Texture, Brush Mapping in Stencil mode:", 
-            "Move - " + self.weightpaint_stencil_control_translate,
-            "Rotate - " + self.weightpaint_stencil_control_rotate,
-            "Scale - " + self.weightpaint_stencil_control_scale,
-            "Move secondary - " + self.weightpaint_stencil_control_translate_sec,
-            "Rotate secondary - " + self.weightpaint_stencil_control_rotate_sec,
-            "Scale secondary - " + self.weightpaint_stencil_control_scale_sec
+            # No stencil maps in weightpaint anymore   
+            #"------",
+            #"Texture, Brush Mapping in Stencil mode:", 
+            #"Move - " + self.weightpaint_stencil_control_translate,
+            #"Rotate - " + self.weightpaint_stencil_control_rotate,
+            #"Scale - " + self.weightpaint_stencil_control_scale,
+            #"Move secondary - " + self.weightpaint_stencil_control_translate_sec,
+            #"Rotate secondary - " + self.weightpaint_stencil_control_rotate_sec,
+            #"Scale secondary - " + self.weightpaint_stencil_control_scale_sec
             ]))
     elif mode == 'TEXTURE_PAINT':
         texts.append(([
@@ -705,11 +708,12 @@ def draw_maintext(self, context):
                 self.zoom_view_string = handle_keys(km, self.zoom_view_string)
                 
             # Reset 3D View is a plugin, and might not be installed.
-            elif item == 'view.reset_3d_view':
-                self.resetview_string = handle_keys(km, self.resetview_string)
+            # doesn't work in 2.80
+            #elif item == 'view3d.reset_3d_view':
+            #    self.resetview_string = handle_keys(km, self.resetview_string)
                 
             # Switch to camera
-            elif item == 'view3d.viewnumpad' and km.properties.type == 'CAMERA':
+            elif item == 'view3d.view_camera':
                 self.switch_to_camera = handle_keys(km, self.switch_to_camera)
                 
             # Set 3d cursor
@@ -793,7 +797,7 @@ def draw_maintext(self, context):
         "Move view - "+ self.move_view_string,
         "Rotate view - "+ self.rotate_view_string,
         "Zoom view - " + self.zoom_view_string,
-        "Reset 3D view - " + self.resetview_string,
+        #"Reset 3D view - " + self.resetview_string, # doesn't work in 2.80
         "Set 3D Cursor - " + self.set_3d_cursor,
         "Search Menu - " + self.search_menu,
         "------",
@@ -875,7 +879,7 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
         self.move_view_string = "Not found"
         self.rotate_view_string = "Not found"
         self.zoom_view_string = "Not found"
-        self.resetview_string = "Not found" # plugin reset 3d view
+        #self.resetview_string = "Not found" # plugin reset 3d view - doesn't work in 2.80
         self.set_3d_cursor = "Not found" # plugin reset 3d view
         # Window
         self.search_menu = "Not found" # plugin reset 3d view
@@ -907,8 +911,8 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
         self.mesh_loop_select_add = "Not found"
         self.mesh_edgering_select = "Not found"
         self.mesh_edgering_select_add = "Not found"
-        self.mesh_mark_seam = "Not found"
-        self.clear_seam = "Not found"
+        #self.mesh_mark_seam = "Not found" # doesn't work in blender 2.80
+        #self.clear_seam = "Not found" # doesn't work in blender 2.80
         # Pose
         self.pose_parent_set = "Not found"
         # Sculpt
@@ -934,12 +938,13 @@ class IH_OT_ModalDrawOperator(bpy.types.Operator):
         self.weightpaint_brush_size = "Not found"
         self.weightpaint_brush_strength = "Not found"
         self.weightpaint_brush_weight = "Not found"
-        self.weightpaint_stencil_control_translate = "Not found"
-        self.weightpaint_stencil_control_rotate = "Not found"
-        self.weightpaint_stencil_control_scale = "Not found"
-        self.weightpaint_stencil_control_translate_sec = "Not found"
-        self.weightpaint_stencil_control_rotate_sec = "Not found"
-        self.weightpaint_stencil_control_scale_sec = "Not found"
+        # No stencil maps in weightpaint anymore   
+        #self.weightpaint_stencil_control_translate = "Not found"
+        #self.weightpaint_stencil_control_rotate = "Not found"
+        #self.weightpaint_stencil_control_scale = "Not found"
+        #self.weightpaint_stencil_control_translate_sec = "Not found"
+        #self.weightpaint_stencil_control_rotate_sec = "Not found"
+        #self.weightpaint_stencil_control_scale_sec = "Not found"
         # Texturepaint
         self.texturepaint_brush_size = "Not found"
         self.texturepaint_brush_strength = "Not found"
