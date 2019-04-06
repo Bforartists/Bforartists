@@ -3006,7 +3006,6 @@ class VIEW3D_MT_brush(Menu):
 
 
         elif context.weight_paint_object:
-            layout.prop_menu_enum(brush, "weight_tool")
 
             #radial control button brush size
             myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
