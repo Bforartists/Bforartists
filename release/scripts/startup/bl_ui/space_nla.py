@@ -259,7 +259,7 @@ class NLA_MT_add(Menu):
 
         layout.separator()
         layout.operator("nla.meta_add", icon = "ADD_METASTRIP")
-        layout.operator("nla.meta_remove", icon = "REMOVE_MTEASTRIP")
+        layout.operator("nla.meta_remove", icon = "REMOVE_METASTRIP")
 
         layout.separator()
         layout.operator("nla.tracks_add", icon = "ADD_TRACK").above_selected = False
