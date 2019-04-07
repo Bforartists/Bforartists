@@ -681,7 +681,7 @@ class ModelUploadOperator(Operator):
         # and is used for linking to scene
         metadata_only = self.metadata_only
         if props.name_changed:
-            print('has to reupload whole data, name has changed.')
+            # print('has to reupload whole data, name has changed.')
             self.metadata_only = False
             props.name_changed = False
 

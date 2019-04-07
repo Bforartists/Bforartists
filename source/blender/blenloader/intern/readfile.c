@@ -45,10 +45,6 @@
 
 /* allow readfile to use deprecated functionality */
 #define DNA_DEPRECATED_ALLOW
-/* Allow using DNA struct members that are marked as private for read/write.
- * Note: Each header that uses this needs to define its own way of handling
- * it. There's no generic implementation, direct use does nothing. */
-#define DNA_PRIVATE_READ_WRITE_ALLOW
 
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
@@ -5789,10 +5785,6 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
 					}
 				}
 			}
-		}
-		else if (md->type == eModifierType_Multires) {
-			MultiresModifierData *mmd = (MultiresModifierData *)md;
-			mmd->subdiv = NULL;
 		}
 	}
 }

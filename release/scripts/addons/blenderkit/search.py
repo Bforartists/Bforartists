@@ -227,7 +227,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                 props.report = error
                 props.search_error = True
 
-            print('finished search thread')
+            # print('finished search thread')
             mt('preview loading finished')
     return .2
 
@@ -272,7 +272,7 @@ def load_previews():
                     img.reload()
 
             i += 1
-    print('previews loaded')
+    # print('previews loaded')
 
 
 #  line splitting for longer texts...
@@ -594,7 +594,7 @@ class Searcher(threading.Thread):
                 nresults.append(d)
         rdata['results'] = nresults
 
-        print('number of results: ', len(rdata.get('results', [])))
+        # print('number of results: ', len(rdata.get('results', [])))
         if self.stopped():
             print('stopping search : ' + query['keywords'])
             return
@@ -671,7 +671,7 @@ class Searcher(threading.Thread):
                                 thread.join()
                                 # print(x)
                                 del (thumb_sml_download_threads[tk])
-                                print('fetched thumbnail ', i)
+                                # print('fetched thumbnail ', i)
                                 i += 1
         if self.stopped():
             print('stopping search : ' + query['keywords'])
@@ -908,7 +908,7 @@ def search(own=False, category='', get_next=False, free_only=False):
     if category != '':
         query['category'] = category
 
-    print('searching')
+    # print('searching')
     props.is_searching = True
 
     params = {

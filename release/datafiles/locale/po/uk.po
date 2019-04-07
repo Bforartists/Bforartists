@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2019-02-08 13:58+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -9679,14 +9679,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "Параметри поля для об'єкта при моделюванні фізики"
 
 
-msgid "Effect particles' location"
-msgstr "Розташування частинок ефекту"
-
-
-msgid "Effect particles' dynamic rotation"
-msgstr "Динамічний оберт частинок ефекту"
-
-
 msgid "Maximum Distance"
 msgstr "Найбільша відстань"
 
@@ -14848,14 +14840,6 @@ msgid "Lighter pressure causes more smoothing to be applied"
 msgstr "Менший тиск викликає більше згладжування"
 
 
-msgid "Use Blender Units"
-msgstr "Вжити одиниці Blender"
-
-
-msgid "When locked brush stays same size relative to object; when unlocked brush size is given in pixels"
-msgstr "Якщо заблоковано, то пензель залишається того ж розміру відносно об'єкта; коли розблоковано, розмір пензля задається у пікселях"
-
-
 msgid "Plane Offset Pressure"
 msgstr "Тиск на площину зміщення"
 
@@ -14998,10 +14982,6 @@ msgstr "Зладити штрих"
 
 msgid "Brush lags behind mouse and follows a smoother path"
 msgstr "Пензель відстає від миші і залишає більш плавний слід"
-
-
-msgid "Use Automatic Strength Adjustment"
-msgstr "Вжити автоматичне регулювання сили"
 
 
 msgid "Automatically adjust strength to give consistent results for different spacings"
@@ -15252,24 +15232,8 @@ msgid "Display reference images behind objects in the 3D View"
 msgstr "Показати фонові зображення за об'єктами у 3D-вікні"
 
 
-msgid "Composition Guides"
-msgstr "Напрямні композиції"
-
-
-msgid "Display overlay"
-msgstr "Показ перекривання"
-
-
 msgid "Center Diagonal"
 msgstr "Центр діагоналей"
-
-
-msgid "Thirds"
-msgstr "Третини"
-
-
-msgid "Golden"
-msgstr "Золотий перетин"
 
 
 msgid "Golden Triangle A"
@@ -15286,6 +15250,10 @@ msgstr "Гармонійний трикутник A"
 
 msgid "Harmonious Triangle B"
 msgstr "Гармонійний трикутник B"
+
+
+msgid "Thirds"
+msgstr "Третини"
 
 
 msgid "Show Limits"
@@ -35317,8 +35285,8 @@ msgstr "Перевертає (і виправляє) осьові суфікси
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "Приховати вибрані кістки"
+msgid "Hide Selected"
+msgstr "Приховати вибране"
 
 
 msgid "Tag selected bones to not be visible in Edit Mode"
@@ -35406,8 +35374,8 @@ msgstr "Зберегти зсув"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Показати кістки"
+msgid "Reveal Hidden"
+msgstr "Показати приховані"
 
 
 msgid "Reveal all bones hidden in Edit Mode"
@@ -37606,11 +37574,6 @@ msgid "Toggle Free/Align"
 msgstr "Перемкнути вільна/вирівняна"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Приховати вибране"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Приховати (не)вибрані керувальні точки"
 
@@ -37722,11 +37685,6 @@ msgstr "Встановити радіус кривої"
 
 msgid "Set per-point radius which is used for bevel tapering"
 msgstr "Встановити точкові радіуси, що використовуються для конічних скосів"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Показати приховані"
 
 
 msgid "Reveal hidden control points"
@@ -39852,15 +39810,6 @@ msgid "Add new Grease Pencil data-block"
 msgstr "Додати новий блок даних нарисного олівця"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Відв'язати нарисний олівець"
-
-
-msgid "Unlink active Grease Pencil data-block"
-msgstr "Від'єднати активний блок даних нарисного олівця"
-
-
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
 msgstr "Видалити виділені штрихи Нарисного Олівця, вершини або кадри"
 
@@ -40208,11 +40157,6 @@ msgstr "Вибрати усі точки подібні до вибраних н
 
 msgid "Grow sets of selected Grease Pencil points"
 msgstr "Розширити набори вибраних точок Нарисного олівця"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Приховати вибране"
 
 
 msgid "Hide/Unhide selected points for Grease Pencil strokes setting alpha factor"
@@ -41957,18 +41901,8 @@ msgid "Duplicate Metaelements"
 msgstr "Дублювати метаелементи"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Приховати"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "Приховати (не)вибрані метаелементи"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Показати"
 
 
 msgid "Reveal all hidden metaelements"
@@ -45001,6 +44935,11 @@ msgid "Toggle unused node socket display"
 msgstr "Перемкнути показ невикористаних роз'ємів вузла"
 
 
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Приховати"
+
+
 msgid "Toggle hiding of selected nodes"
 msgstr "Перемкнути приховування вибраних вузлів"
 
@@ -47627,10 +47566,6 @@ msgid "Make Local"
 msgstr "Зробити локальним"
 
 
-msgid "WARNING: no undo"
-msgstr "УВАГА: без касувань"
-
-
 msgid "Remap Users"
 msgstr "Перерозкласти користувачів"
 
@@ -48704,6 +48639,11 @@ msgstr "Кількість ключів"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Вилучити вибрані частинки, досить близькі до інших"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Показати"
 
 
 msgid "Show hidden particles"
@@ -53958,15 +53898,6 @@ msgstr "Зчистити межі зображування та вимкнути
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "Скопіювати вибране до буфера"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Вибрані об'єкти збережено до тимчасового файлу"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Встановити 3D-курсор"
 
@@ -54062,11 +53993,6 @@ msgid "Interactively navigate around the scene (uses the mode (walk/fly) prefere
 msgstr "Інтерактивне переміщення сценою (у режимі ходьби або польоту)"
 
 
-msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Зсунути вигляд 3D-маніп."
-
-
 msgid "Pan and rotate the view with the 3D mouse"
 msgstr "Панорамувати і повертати вигляд за допомогою 3D-маніпулятора"
 
@@ -54089,6 +54015,11 @@ msgid "Orbit and zoom the view using the 3D mouse"
 msgstr "Облітати та зумувати огляд 3D-маніпулятором"
 
 
+msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "Зсунути вигляд 3D-маніп."
+
+
 msgid "Pan the view with the 3D mouse"
 msgstr "Панорамувати вигляд 3D-маніпулятором"
 
@@ -54100,15 +54031,6 @@ msgstr "Задати активний об'єкт як камеру"
 
 msgid "Set the active object as the active camera for this view or scene"
 msgstr "Задати активний об'єкт як активну камеру для цього вигляду або сцени"
-
-
-msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "Вставити вибране з буферу"
-
-
-msgid "Contents of copy buffer gets pasted"
-msgstr "Вставляється вміст буферу копіювання"
 
 
 msgid "Select pasted objects"
@@ -54167,15 +54089,6 @@ msgstr "Назва об'єкту"
 
 msgid "Toggle selection instead of deselecting everything first"
 msgstr "Перемкнути вибір замість того, щоб спочатку зняти вибір з усього"
-
-
-msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "Вибрати все або зняти вибір"
-
-
-msgid "Select element under the mouse, deselect everything is there's nothing under the mouse"
-msgstr "Вибрати елемент під вказівником, зняти вибір з усього, якщо під вказівником немає нічого"
 
 
 msgctxt "Operator"
@@ -56608,6 +56521,10 @@ msgid "Area Shape"
 msgstr "Форма ділянки"
 
 
+msgid "Composition Guides"
+msgstr "Напрямні композиції"
+
+
 msgid "Passepartout"
 msgstr "Затінювальна маска"
 
@@ -56680,6 +56597,10 @@ msgid "Fluid Presets"
 msgstr "Передустановки рідини"
 
 
+msgid "Clone from Image/UV Map"
+msgstr "Клонувати із зображення/UV карти"
+
+
 msgid "Scopes"
 msgstr "Аналіз"
 
@@ -56688,8 +56609,14 @@ msgid "Sample Line"
 msgstr "Вибірка лінії"
 
 
-msgid "Appearance"
-msgstr "Вигляд"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Малювання"
+
+
+msgctxt "Operator"
+msgid "Mask"
+msgstr "Маска"
 
 
 msgid "Tiling"
@@ -56730,6 +56657,10 @@ msgstr "Лінія Freestyle"
 
 msgid "Backdrop"
 msgstr "Тло"
+
+
+msgid "Slot"
+msgstr "Гніздо"
 
 
 msgid "Predefined node color"
@@ -56968,12 +56899,47 @@ msgid "Dyntopo"
 msgstr "Динамічна топологія"
 
 
-msgid "Symmetry/Lock"
-msgstr "Симетрія/блокування"
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Масштаб"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Додати"
+
+
+msgctxt "Operator"
+msgid "Box Mask"
+msgstr "Прямокутна маска"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Витерти"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Рядок"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Коло"
+
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "Товщина"
 
 
 msgid "Armature Options"
 msgstr "Параметри арматури"
+
+
+msgid "Clone from Paint Slot"
+msgstr "Клонувати з гнізда малювання"
 
 
 msgid "Curve Stroke"
@@ -56982,10 +56948,6 @@ msgstr "Штрих кривої"
 
 msgid "Sculpt Strokes"
 msgstr "Ліпка штрихів"
-
-
-msgid "Mesh Options"
-msgstr "Опції сіті"
 
 
 msgid "Default tools for particle mode"
@@ -57178,14 +57140,6 @@ msgstr "Об'єкт форми"
 
 msgid "Outer shape to use for tools"
 msgstr "Зовнішня форма, використовувана для інструментів"
-
-
-msgid "Draw Particles"
-msgstr "Малювати частинки"
-
-
-msgid "Draw actual particles"
-msgstr "Малювати реальні частинки"
 
 
 msgid "Comb"
@@ -71131,11 +71085,6 @@ msgstr "Спотворення"
 
 
 msgctxt "Operator"
-msgid "Thickness"
-msgstr "Товщина"
-
-
-msgctxt "Operator"
 msgid "Edge Sharp"
 msgstr "Гострі ребра"
 
@@ -71352,11 +71301,6 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Додати"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -71561,6 +71505,11 @@ msgstr "Blender 2.6 ще не підтримує Python-примуси."
 
 
 msgctxt "Operator"
+msgid "Add Object Constraint"
+msgstr "Додати примус об'єкта"
+
+
+msgctxt "Operator"
 msgid "Add Bone Constraint"
 msgstr "Додати примус кістки"
 
@@ -71597,26 +71546,12 @@ msgid "Pivot Offset"
 msgstr "Зсув опорної точки"
 
 
-msgid "Constraints for active bone do not live here"
-msgstr "Примуси активної кістки тут не діють"
-
-
-msgctxt "Operator"
-msgid "Add Object Constraint"
-msgstr "Додати примус об'єкта"
-
-
 msgid "Relative Pivot Point"
 msgstr "Відносна опорна точка"
 
 
 msgid "Absolute Pivot Point"
 msgstr "Абсолютна опорна точка"
-
-
-msgctxt "Operator"
-msgid "Go to Bone Constraints tab..."
-msgstr "Перейти до вкладки примусів кісток..."
 
 
 msgid "Head/Tail:"
@@ -72417,21 +72352,6 @@ msgstr "Пропорційне змінення:"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Малювання"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Витерти"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Рядок"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Полі"
 
@@ -72447,11 +72367,6 @@ msgstr "Виділення:"
 msgctxt "Operator"
 msgid "Paste & Merge"
 msgstr "Вставити і об'єднати"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Масштаб"
 
 
 msgctxt "Operator"
@@ -72579,11 +72494,6 @@ msgid "Transform:"
 msgstr "Трансформація:"
 
 
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Показати приховане"
-
-
 msgid "Holes"
 msgstr "Отвори"
 
@@ -72624,26 +72534,6 @@ msgid "Buffer"
 msgstr "Буфер"
 
 
-msgid "File Suffix:"
-msgstr "Суфікс файлу:"
-
-
-msgid "Camera Suffix:"
-msgstr "Суфікс камери:"
-
-
-msgid "Mask Value"
-msgstr "Значення маски"
-
-
-msgid "Clone from Paint Slot"
-msgstr "Клонувати з гнізда малювання"
-
-
-msgid "Clone from Image/UV Map"
-msgstr "Клонувати із зображення/UV карти"
-
-
 msgid "Source Clone Slot"
 msgstr "Гніздо клонування джерела"
 
@@ -72654,6 +72544,10 @@ msgstr "Зображення джерела клонування"
 
 msgid "Source Clone UV Map"
 msgstr "UV-карта джерела клонування"
+
+
+msgid "Mask Value"
+msgstr "Значення маски"
 
 
 msgctxt "Operator"
@@ -72692,11 +72586,6 @@ msgstr "Шорсткість - кінець"
 
 msgid "Strand Shape"
 msgstr "Форма пасма"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Новий"
 
 
 msgid "Iterations: %d .. %d (avg. %d)"
@@ -73251,6 +73140,11 @@ msgstr "Єдиний колір"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Новий"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Відкрити..."
 
@@ -73267,18 +73161,6 @@ msgstr "Інвертувати кольори зображення"
 
 msgid "Falloff:"
 msgstr "Спад:"
-
-
-msgid "Curve:"
-msgstr "Крива:"
-
-
-msgid "Mask Texture:"
-msgstr "Текстура маски:"
-
-
-msgid "Stroke Method:"
-msgstr "Метод штриха:"
 
 
 msgid "Show Same Material"
@@ -73385,10 +73267,6 @@ msgstr "Пропорції"
 
 msgid "Edge To Edge"
 msgstr "Ребро до ребра"
-
-
-msgid "Brush Unset"
-msgstr "Скинути пензель"
 
 
 msgctxt "Operator"
@@ -73855,11 +73733,6 @@ msgid "Clip"
 msgstr "Кліп"
 
 
-msgctxt "Operator"
-msgid "Mask"
-msgstr "Маска"
-
-
 msgid "Default fade"
 msgstr "Типове згасання"
 
@@ -74239,21 +74112,6 @@ msgstr "Інтерактивне дзеркалення"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "Глобальна X"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Глобальна Y"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Глобальна Z"
-
-
-msgctxt "Operator"
 msgid "Selection to Active"
 msgstr "Вибране до активного"
 
@@ -74441,11 +74299,6 @@ msgstr "Площина"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Куб"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Коло"
 
 
 msgctxt "Operator"
@@ -74706,11 +74559,6 @@ msgstr "Зчистити маску"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "Прямокутна маска"
-
-
-msgctxt "Operator"
 msgid "Lasso Mask"
 msgstr "Довільна маска"
 
@@ -74867,21 +74715,6 @@ msgstr "Простір масштабування текстури"
 msgctxt "Operator"
 msgid "Align to Transform Orientation"
 msgstr "Орієнтація Вирівнення за Трансформацією"
-
-
-msgctxt "Operator"
-msgid "X Local"
-msgstr "Локальна X"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Локальна Y"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Локальна Z"
 
 
 msgctxt "Operator"
@@ -75292,14 +75125,6 @@ msgid "Apply Camera Image"
 msgstr "Застосувати зображення камери"
 
 
-msgid "Keep:"
-msgstr "Лишити:"
-
-
-msgid "Lengths"
-msgstr "Довжина"
-
-
 msgid "Path Steps"
 msgstr "Кроки шляху"
 
@@ -75324,16 +75149,8 @@ msgid "in memory to enable editing!"
 msgstr "у пам'ять, щоб дозволити редагування!"
 
 
-msgid "Correct:"
-msgstr "Виправити:"
-
-
 msgid "Front Faces Only"
 msgstr "Лише передні грані"
-
-
-msgid "Trim"
-msgstr "Обрізати"
 
 
 msgid "Auto Normalize"
@@ -77912,6 +77729,10 @@ msgid "Not implemented"
 msgstr "Не реалізовано"
 
 
+msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
+msgstr "Конвертувати деякі пов'язані об'єкти/дані об'єктів, встановивши параметр 'Зберегти оригінал'"
+
+
 msgid "Object not found"
 msgstr "Об'єкта не знайдено"
 
@@ -77930,10 +77751,6 @@ msgstr "Неможливо видалити непрямо прив'язаний
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "Неможу видалити об'єкт '%s' зі сцени '%s', непрямо використані об'єкти повинні мати хоча б одного користувача"
-
-
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Конвертувати деякі пов'язані об'єкти/дані об'єктів, встановивши параметр 'Зберегти оригінал'"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -79581,10 +79398,6 @@ msgid ", Frame: %d"
 msgstr ", кадр: %d"
 
 
-msgid "Slot"
-msgstr "Гніздо"
-
-
 msgid "Slot %d"
 msgstr "Гніздо %d"
 
@@ -80493,18 +80306,6 @@ msgstr "Вибір ребер - Shift-клацок для вибору кіль�
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Вибір граней - Shift-клацнути для декількох режимів, Ctrl-клацнути - розширити вибір"
-
-
-msgid "Copied selected objects to buffer"
-msgstr "Вибрані об'єкти скопійовано до буфера"
-
-
-msgid "Objects pasted from buffer"
-msgstr "Об'єкти вставлено з буфера"
-
-
-msgid "No buffer to paste from"
-msgstr "Немає буфера, з якого можна вставити"
 
 
 msgid "No active element found!"
@@ -81493,6 +81294,14 @@ msgid "DeformGroup '%s' not in object '%s'"
 msgstr "Група деформації '%s' відсутня у об'єкта '%s'"
 
 
+msgid "ShapeKey not found"
+msgstr "Ключ форми не знайдено"
+
+
+msgid "Could not remove ShapeKey"
+msgstr "Неможливо вилучити ключ форми"
+
+
 msgid "Object should be of mesh type"
 msgstr "Об'єкт має бути за типом сіттю"
 
@@ -81519,14 +81328,6 @@ msgstr "'to_space' '%s' недопустимий, якщо не задано п�
 
 msgid "Object '%s' does not support shapes"
 msgstr "Об'єкт '%s' не підтримує форм"
-
-
-msgid "ShapeKey not found"
-msgstr "Ключ форми не знайдено"
-
-
-msgid "Could not remove ShapeKey"
-msgstr "Неможливо вилучити ключ форми"
 
 
 msgid "Object '%s' could not create internal data for finding nearest point"
@@ -81742,6 +81543,10 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "Набір ключів '%s' неможливо вилучити"
 
 
+msgid "Area type does not support gizmos"
+msgstr "Тип ділянки не підтримує гізмо"
+
+
 msgid "Registering gizmo class: '%s' is too long, maximum length is %d"
 msgstr "Реєстрація класу гізмо: назва '%s' задовга, найбільша довжина - %d"
 
@@ -81752,10 +81557,6 @@ msgstr "Тип гізмо '%s' невідомий"
 
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"
 msgstr "Реєстрація класу групи гізмо: назва '%s' задовга, найбільша довжина - %d"
-
-
-msgid "Area type does not support gizmos"
-msgstr "Тип ділянки не підтримує гізмо"
 
 
 msgid "Gizmo group '%s' not found!"

@@ -249,8 +249,14 @@ def load_ply_mesh(filepath, ply_name):
             uvindices = (el.index(b's'), el.index(b't'))
             if -1 in uvindices:
                 uvindices = None
-            colindices = el.index(b'red'), el.index(b'green'), el.index(b'blue'), el.index(b'alpha')
+            # ignore alpha if not present
+            if el.index(b'alpha') == -1:
+                colindices = el.index(b'red'), el.index(b'green'), el.index(b'blue')
+            else:
+                colindices = el.index(b'red'), el.index(b'green'), el.index(b'blue'), el.index(b'alpha')
             if -1 in colindices:
+                if any(idx > -1 for idx in colindices):
+                    print("Warning: At least one obligatory color channel is missing, ignoring vertex colors.")
                 colindices = None
             else:  # if not a float assume uchar
                 colmultiply = [1.0 if el.properties[i].numeric_type in {'f', 'd'} else (1.0 / 255.0) for i in colindices]
@@ -271,15 +277,26 @@ def load_ply_mesh(filepath, ply_name):
         if uvindices:
             mesh_uvs.extend([(vertices[index][uvindices[0]], vertices[index][uvindices[1]]) for index in indices])
         if colindices:
-            mesh_colors.extend([
-                (
-                    vertices[index][colindices[0]] * colmultiply[0],
-                    vertices[index][colindices[1]] * colmultiply[1],
-                    vertices[index][colindices[2]] * colmultiply[2],
-                    vertices[index][colindices[3]] * colmultiply[3],
-                )
-                for index in indices
-            ])
+            if len(colindices) == 3:
+                mesh_colors.extend([
+                    (
+                       vertices[index][colindices[0]] * colmultiply[0],
+                       vertices[index][colindices[1]] * colmultiply[1],
+                       vertices[index][colindices[2]] * colmultiply[2],
+                       1.0
+                    )
+                    for index in indices
+                ])
+            elif len(colindices) == 4:
+                mesh_colors.extend([
+                    (
+                       vertices[index][colindices[0]] * colmultiply[0],
+                       vertices[index][colindices[1]] * colmultiply[1],
+                       vertices[index][colindices[2]] * colmultiply[2],
+                       vertices[index][colindices[3]] * colmultiply[3],
+                    )
+                    for index in indices
+                ])
 
     if uvindices or colindices:
         # If we have Cols or UVs then we need to check the face order.
