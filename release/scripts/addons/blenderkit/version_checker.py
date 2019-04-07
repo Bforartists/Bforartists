@@ -60,7 +60,7 @@ def compare_versions(module):
         ver_online = data['addonVersion2.8'].split('.')
         ver_online_float = int(ver_online[0]) + .01 * int(ver_online[1]) + .0001 * int(ver_online[2])
 
-        print('versions: installed-%s, online-%s' % (str(ver_local_float), str(ver_online_float)))
+        # print('versions: installed-%s, online-%s' % (str(ver_local_float), str(ver_online_float)))
         if ver_online_float > ver_local_float:
             return True
     except:

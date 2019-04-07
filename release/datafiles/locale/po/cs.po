@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -4305,10 +4305,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "První frame animace"
 
 
-msgid "Effect particles' location"
-msgstr "Umístění prostoru textury"
-
-
 msgid "Maximum Distance"
 msgstr "Maximální vzdálenost"
 
@@ -5925,10 +5921,6 @@ msgid "Use Gradient"
 msgstr "Gradient"
 
 
-msgid "Use Blender Units"
-msgstr "Webové stránky"
-
-
 msgid "Plane Offset Pressure"
 msgstr "Načíst:"
 
@@ -6159,10 +6151,6 @@ msgstr "Zobrazit obrázky na pozadí"
 
 msgid "Display reference images behind objects in the 3D View"
 msgstr "Zobrazit obrázek na pozadí pohledu do 3D"
-
-
-msgid "Composition Guides"
-msgstr "Kompoziční uzly"
 
 
 msgid "Center Diagonal"
@@ -14970,8 +14958,8 @@ msgstr "Zobrazit jméno"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "Označené kosti"
+msgid "Hide Selected"
+msgstr "Skrýt označené"
 
 
 msgid "Tag selected bones to not be visible in Edit Mode"
@@ -15047,8 +15035,8 @@ msgstr "Kompenzace:"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Odkrýt"
+msgid "Reveal Hidden"
+msgstr "Odkryje označené plošky"
 
 
 msgctxt "Operator"
@@ -16435,11 +16423,6 @@ msgid "Toggle Free/Align"
 msgstr "Zachytit obrazovku"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Skrýt označené"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Skrýt označené plošky"
 
@@ -16518,11 +16501,6 @@ msgstr "Sestaví cestu"
 msgctxt "Operator"
 msgid "Set Curve Radius"
 msgstr "Nastavit poloměr "
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Odkryje označené plošky"
 
 
 msgid "(De)select all control points"
@@ -17673,11 +17651,6 @@ msgstr "Přidat novou skicovací tužku"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "odpojit skicovací tužku"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Kresba skicovací tužkou"
 
@@ -17713,11 +17686,6 @@ msgstr "Původni pozice"
 
 msgid "Shared layers"
 msgstr "Objekty na sdílené vrstvě"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Skrýt označené"
 
 
 msgctxt "Operator"
@@ -18617,18 +18585,8 @@ msgid "Duplicate selected metaelement(s)"
 msgstr "Odstranit označené Objekt(y)"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Skrýt"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "Skrýt označené plošky"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Odkrýt"
 
 
 msgid "Reveal all hidden metaelements"
@@ -20220,6 +20178,11 @@ msgstr "Skrýt/odkrýt socket"
 
 msgid "Toggle unused node socket display"
 msgstr "Přesunout do vrstvy"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Skrýt"
 
 
 msgid "Toggle hiding of selected nodes"
@@ -22420,6 +22383,11 @@ msgstr "Počet dělení:"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Zobrazit a vybrat klíče"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Odkrýt"
 
 
 msgid "Show hidden particles"
@@ -25271,15 +25239,6 @@ msgstr "Zarovná kameru tak, aby byly zobrazeny vyrbané objekty"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "Přichytit výběr ke kurzoru"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Vybrané objekty a data"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Nastavit 3D kurzor"
 
@@ -25334,11 +25293,6 @@ msgstr "Hladké "
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Posunoout pohled"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Obíhá pohled"
 
@@ -25349,21 +25303,17 @@ msgstr "Obíhá pohled"
 
 
 msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "Posunoout pohled"
+
+
+msgctxt "Operator"
 msgid "Set Active Object as Camera"
 msgstr "Nastavit aktivní objekt jako kameru"
 
 
 msgid "Set the active object as the active camera for this view or scene"
 msgstr "Nastaví aktivní objekt jako aktivní kameru pro tento pohled nebo scénu"
-
-
-msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "Vložit pózu z bufferu"
-
-
-msgid "Contents of copy buffer gets pasted"
-msgstr "Přejmenovat Datablock"
 
 
 msgctxt "Operator"
@@ -26405,6 +26355,10 @@ msgid "Area Shape"
 msgstr "Tvar"
 
 
+msgid "Composition Guides"
+msgstr "Kompoziční uzly"
+
+
 msgid "Passepartout"
 msgstr "Paspart"
 
@@ -26461,8 +26415,9 @@ msgid "Sample Line"
 msgstr "Vzorky"
 
 
-msgid "Appearance"
-msgstr "Přidat"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Kreslit"
 
 
 msgid "2D Cursor"
@@ -26645,11 +26600,32 @@ msgid "Motion Tracking"
 msgstr "Cesta pro otáčení"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Změnit velikost"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Přidat"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Smazat"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Řádek"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Kruh"
+
+
 msgid "Armature Options"
-msgstr "Možnosti deformace"
-
-
-msgid "Mesh Options"
 msgstr "Možnosti deformace"
 
 
@@ -26791,14 +26767,6 @@ msgstr "Bodový mód výběru"
 
 msgid "Tip select mode"
 msgstr "Seskupený objekt"
-
-
-msgid "Draw Particles"
-msgstr "Mřížka"
-
-
-msgid "Draw actual particles"
-msgstr "Vzbrat vše podle typu"
 
 
 msgid "Comb"
@@ -32467,11 +32435,6 @@ msgstr "Vybrat cestu"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Přidat"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Upravit"
 
@@ -33098,28 +33061,8 @@ msgstr "Kurzor k mřížce"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Kreslit"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Smazat"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Řádek"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Přehrát"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Změnit velikost"
 
 
 msgctxt "Operator"
@@ -33143,11 +33086,6 @@ msgstr "Rodič:"
 
 msgid "Transform:"
 msgstr "Transformace:"
-
-
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Zobrazit skryté"
 
 
 msgctxt "Operator"
@@ -33196,11 +33134,6 @@ msgstr "Vyhladit"
 
 msgid "Strand Shape"
 msgstr "Velikost fontu:   8"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nový"
 
 
 msgid "Endpoint"
@@ -33546,6 +33479,11 @@ msgstr "Síla: "
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Nový"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Otevřít..."
 
@@ -33557,14 +33495,6 @@ msgstr "Barvy vertexů "
 
 msgid "Falloff:"
 msgstr "Útlum: "
-
-
-msgid "Curve:"
-msgstr "Křivka:"
-
-
-msgid "Stroke Method:"
-msgstr "Editační metody"
 
 
 msgctxt "Operator"
@@ -33652,10 +33582,6 @@ msgstr "Aktivovat materiálové uzly"
 
 msgid "Edge To Edge"
 msgstr "Hrana k hraně"
-
-
-msgid "Brush Unset"
-msgstr "Štětec"
 
 
 msgctxt "Operator"
@@ -34097,21 +34023,6 @@ msgstr "Interaktivní zrcadlení"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "X Globální"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Y Globální"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Z Globální"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "Kurzor k aktivnímu"
 
@@ -34254,11 +34165,6 @@ msgstr "Plocha"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Krychle"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Kruh"
 
 
 msgctxt "Operator"
@@ -34558,21 +34464,6 @@ msgstr "Zarovnat k orientaci transformací"
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "X Lokální"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "X Lokální"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "X Lokální"
-
-
-msgctxt "Operator"
 msgid "Project from View (Bounds)"
 msgstr "Promítnout z pohledu (ohraničení)"
 
@@ -34790,14 +34681,6 @@ msgid "Apply Camera Image"
 msgstr "Použít obrázek kamery"
 
 
-msgid "Keep:"
-msgstr "Volný:"
-
-
-msgid "Lengths"
-msgstr "Délky"
-
-
 msgid "Path Steps"
 msgstr "Fyzika "
 
@@ -34810,16 +34693,8 @@ msgid "in memory to enable editing!"
 msgstr "Typ filtru"
 
 
-msgid "Correct:"
-msgstr "Odznačit spojené"
-
-
 msgid "Front Faces Only"
 msgstr "Pouze přední plošky"
-
-
-msgid "Trim"
-msgstr "Zpoždění"
 
 
 msgid "Auto Normalize"

@@ -95,7 +95,7 @@ def get_math_data():
 
     variables = {}
     for key, var in locals.items():
-        if key[0] == "_" or not var:
+        if len(key)==0 or key[0] == "_" or not var:
             continue
         if type(var) in {Matrix, Vector, Quaternion, Euler} or \
            type(var) in {tuple, list} and is_display_list(var):

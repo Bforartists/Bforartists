@@ -46,7 +46,7 @@ def append_material(file_name, matname=None, link=False, fake_user=True):
         for m in data_from.materials:
             if m == matname or matname is None:
                 data_to.materials = [m]
-                print(m, type(m))
+                # print(m, type(m))
                 matname = m
                 break;
 
@@ -133,10 +133,7 @@ def append_particle_system(file_name, obnames=[], location=(0, 0, 0), link=False
                 count = max(2, int(count / ratio))
             ps.display_percentage = min(ps.display_percentage, max(1, int(100 * threshold / total_count)))
 
-            print('count', count)
-            print('total count', total_count)
             ps.count = count
-            print('got here')
             bpy.ops.object.particle_system_add()
             target_object.particle_systems[-1].settings = ps
 
