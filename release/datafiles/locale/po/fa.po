@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
 "Last-Translator: Amin Babaeipanah <translate@leomoon.com>\n"
 "Language-Team: LeoMoon Studios <blender@leomoon.com>\n"
@@ -2800,10 +2800,6 @@ msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
 
 msgid "Use Gradient"
 msgstr "ﻥﺯﻭ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Use Blender Units"
-msgstr "ﺭﺪﻨﻠﺑ ﺖﯾﺎﺳ ﺏﻭ"
 
 
 msgid "Use Texture"
@@ -6849,8 +6845,8 @@ msgstr "ﺱﻮﮑﻌﻣ ﻥﺎﻣﺯ"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "ﺐﺨﺘﻨﻣ ﯼﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ ﺮﺑ ﻂﻘﻓ"
+msgid "Hide Selected"
+msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ:"
 
 
 msgctxt "Operator"
@@ -7565,11 +7561,6 @@ msgid "Set Handle Type"
 msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "ﻪﺒﻟ ﺏﺎﺨﺘﻧﺍ ﺖﻟﺎﺣ:"
-
-
 msgid "Hide (un)selected control points"
 msgstr "ﺐﺨﺘﻨﻣ ﯼﺎﻫ‌ﻥﺍﻮﺨﺘﺳﺍ ﺮﺑ ﻂﻘﻓ"
 
@@ -8096,11 +8087,6 @@ msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ ﯽﮔﺪﻨﮐﺍﺮﭘ"
 
@@ -8124,11 +8110,6 @@ msgstr "ﻪﯾﻻ﻿"
 
 msgid "Mouse location"
 msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
 
 
 msgctxt "Operator"
@@ -8673,11 +8654,6 @@ msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
 
 msgid "Duplicate selected metaelement(s)"
 msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Hide"
-msgstr "ﻥﺎﻬﻨﭘ"
 
 
 msgid "Angle limit"
@@ -9509,6 +9485,11 @@ msgstr "ﻩﻭﺮﮔ"
 msgctxt "Operator"
 msgid "Toggle Hidden Node Sockets"
 msgstr "ﺎﻫ‌ﺖﻔﺟ ﻑﺬﺣ"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "ﻥﺎﻬﻨﭘ"
 
 
 msgctxt "Operator"
@@ -11862,15 +11843,6 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "ﺖﻓﺎﺑ + ﺩﺍﻮﻣ ﻭ ﻩﺩﺍﺩ ﻭ ءﯽﺷ"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "ﯼﺪﻌﺑ 3 ﯼﺎﻤﻧ ﻥﺎﮑﻣ ﻢﯿﻈﻨﺗ"
 
@@ -11886,11 +11858,6 @@ msgstr "ﯽﻠﺤﻣ ﺲﮑﯾﺮﺗﺎﻣ"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "ﯽﺿﺎﯾﺭ ﺶﯾﺎﻤﻧ"
 
@@ -11901,13 +11868,13 @@ msgstr "ﯽﺿﺎﯾﺭ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
-msgid "Set Active Object as Camera"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+msgid "NDOF Pan View"
+msgstr "ﯼﺪﻌﺑ ﻪﺳ ﺪﯾﺩ"
 
 
 msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺏﺎﺨﺘﻧﺍ"
+msgid "Set Active Object as Camera"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
 msgctxt "Operator"
@@ -12443,6 +12410,11 @@ msgid "Fluid Presets"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
 
+msgctxt "Operator"
+msgid "Draw"
+msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
+
+
 msgid "UV Sculpt"
 msgstr "UV ﯼﺭﺎﺠﺣ"
 
@@ -12539,8 +12511,29 @@ msgid "Motion Tracking"
 msgstr "ﺖﮐﺮﺣ ﯽﺑﺎﯾﺩﺭ"
 
 
-msgid "Mesh Options"
-msgstr "ﺶﻣ ﯼﺎﻫ‌ﻪﻨﯾﺰﮔ"
+msgctxt "Operator"
+msgid "Scale"
+msgstr "ﺲﻧﺎﺠﺗ"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "ﻥﺩﺮﮐ‌ﮎﺎﭘ"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "ﯽﻄﺧ"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "ﻩﺮﯾﺍﺩ"
 
 
 msgid "Pose Options"
@@ -13717,11 +13710,6 @@ msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "ﺶﯾﺍﺮﯾﻭ"
 
@@ -13993,28 +13981,8 @@ msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "ﺩﺍﺯﺁ ﯽﺷﺎﻘﻧ"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "ﯽﻄﺧ"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "ﯼﺍ ﻪﺷﻮﮔ"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "ﺲﻧﺎﺠﺗ"
 
 
 msgctxt "Operator"
@@ -14073,11 +14041,6 @@ msgstr "ﯼﺮﺑﺯ ﻥﺎﯾﺎﭘ"
 
 msgid "Strand Shape"
 msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "ﺪﯾﺪﺟ"
 
 
 msgid "Endpoint"
@@ -14295,16 +14258,13 @@ msgstr "ﺪﺤﺘﻣ ﺖﻣﻭﺎﻘﻣ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "ﺪﯾﺪﺟ"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "ﻥﺩﺮﮐ ﺯﺎﺑ..."
-
-
-msgid "Curve:"
-msgstr "ﯽﻨﺤﻨﻣ:"
-
-
-msgid "Stroke Method:"
-msgstr "ﻥﺪﯿﺸﮐ ﺵﻭﺭ:"
 
 
 msgctxt "Operator"
@@ -14659,21 +14619,6 @@ msgstr "ﯽﻠﻣﺎﻌﺗ ﻪﻨﯾﺁ"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "X ﯽﻧﺎﻬﺟ"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Y ﯽﻧﺎﻬﺟ"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Z ﯽﻧﺎﻬﺟ"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "ﻝﺎﻌﻓ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
@@ -14806,11 +14751,6 @@ msgstr "ﻪﺤﻔﺻ"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "ﺐﻌﮑﻣ"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "ﻩﺮﯾﺍﺩ"
 
 
 msgctxt "Operator"
@@ -15080,21 +15020,6 @@ msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "X ﯽﻠﺤﻣ"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Y ﯽﻠﺤﻣ"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Z ﯽﻠﺤﻣ"
-
-
-msgctxt "Operator"
 msgid "Non Manifold"
 msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺏﺎﺨﺘﻧﺍ"
 
@@ -15238,14 +15163,6 @@ msgid "Apply Camera Image"
 msgstr "ﻦﯿﺑﺭﻭﺩ ﺮﯾﻮﺼﺗ ﻝﺎﻤﻋﺍ"
 
 
-msgid "Keep:"
-msgstr "ﻦﺘﺷﺍﺩ ﻪﮕﻧ:"
-
-
-msgid "Lengths"
-msgstr "ﺍﺯﺍﺭﺩ"
-
-
 msgid "Point cache must be baked"
 msgstr "ﺩﻮﺷ ﻪﺘﺨﭘ ﺪﯾﺎﺑ ﻥﺎﻬﻧ ﻪﻈﻓﺎﺣ ﻪﻄﻘﻧ"
 
@@ -15254,16 +15171,8 @@ msgid "in memory to enable editing!"
 msgstr "ﺶﯾﺍﺮﯾﻭ ﻥﺩﺮﮐ‌ﻝﺎﻌﻓ ﯼﺍﺮﺑ ﻪﻈﻓﺎﺣ ﺭﺩ!"
 
 
-msgid "Correct:"
-msgstr "ﺢﯿﺤﺻ:"
-
-
 msgid "Front Faces Only"
 msgstr "ﻂﻘﻓ ﻮﻠﺟ ﺢﻄﺳ"
-
-
-msgid "Trim"
-msgstr "ﺡﻼ﻿ﺻﺍ"
 
 
 msgid "Auto Normalize"

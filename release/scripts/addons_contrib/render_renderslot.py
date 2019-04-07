@@ -27,7 +27,7 @@ bl_info = {
     "name": "KTX RenderSlot",
     "description": "Display/select renderslot in the render tab",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 3, 1),
+    "version": (1, 3, 4),
     "blender": (2, 80, 0),
     "location": "Properties Editor > Render > Render",
     "warning": "",
@@ -43,7 +43,7 @@ class OccupiedSlots:
     data = '00000000'
 
 
-class KTX_Renderslot_Prefs(bpy.types.AddonPreferences):
+class KTXRENDERSLOT_Prefs(bpy.types.AddonPreferences):
     bl_idname = __name__
 
     advanced_mode : bpy.props.BoolProperty(
@@ -56,9 +56,9 @@ class KTX_Renderslot_Prefs(bpy.types.AddonPreferences):
         layout.prop(self, "advanced_mode")
 
 
-class KTX_RenderSlot(Operator):
+class KTXRENDERSLOT_OT_Select(Operator):
     bl_label = "Select Render Slot"
-    bl_idname = "ktx.renderslot"
+    bl_idname = "ktxrenderslot.select"
     bl_description = ("Select Render Slot\n"
                       "Note: Dot next to number means slot has image data\n"
                       "[x] is active slot")
@@ -76,7 +76,7 @@ def checkslots(scene):
     img = bpy.data.images['Render Result']
     active = img.render_slots.active_index
     slots = ''
-    for i in range(8):
+    for i in range(0,len(img.render_slots)):
         img.render_slots.active_index = i
         try:
             img.save_render(nullpath)
@@ -84,11 +84,13 @@ def checkslots(scene):
         except RuntimeError:
             slots = slots + '0'
 
-    scene.ktx_occupied_render_slots.data = slots
     if scene.ktx_auto_advance_slot:
         active += 1
-        if active == 8:
-            active = 0
+        if active == len(img.render_slots):
+            img.render_slots.new()
+            slots = slots + '0'
+
+    scene.ktx_occupied_render_slots.data = slots
     img.render_slots.active_index = active
 
 
@@ -97,26 +99,29 @@ def ui(self, context):
     layout = self.layout
     row = layout.row(align=True)
     row.alignment = 'LEFT'
-    try:
-        active = bpy.data.images['Render Result'].render_slots.active_index
-        if bpy.context.preferences.addons[__name__].preferences.advanced_mode:
-            row.prop(scn, 'ktx_auto_advance_slot', text='Auto Advance')
-        row = layout.row(align=True)
-        row.alignment = 'EXPAND'
-        for i in range(8):
-            is_active = bool(i == active)
-            test_active = bool(scn.ktx_occupied_render_slots.data[i] == '1')
-            icons = "LAYER_ACTIVE" if test_active else "BLANK1"
-            label = "[{}]".format(str(i + 1)) if is_active else str(i + 1)
-            row.operator('ktx.renderslot', text=label, icon=icons).number = i
-    except:
-        scn.ktx_occupied_render_slots.data = '00000000'
-        row.label(text="No Render Slots available yet", icon="INFO")
+    img = bpy.data.images['Render Result']
+    active = img.render_slots.active_index
+    if bpy.context.preferences.addons[__name__].preferences.advanced_mode:
+        row.prop(scn, 'ktx_auto_advance_slot', text='Auto Advance')
+    items = 0
+    row = layout.row(align=True)
+    row.alignment = 'EXPAND'
+    for i in range(0,len(img.render_slots)):
+        is_active = bool(i == active)
+        test_active = bool(scn.ktx_occupied_render_slots.data[i] == '1')
+        icons = "LAYER_ACTIVE" if test_active else "BLANK1"
+        label = "[{}]".format(str(i + 1)) if is_active else str(i + 1)
+        row.operator('ktxrenderslot.select', text=label, icon=icons).number = i
+        items+=1
+        if items == 8:
+            items=0
+            row = layout.row(align=True)
+            row.alignment = 'EXPAND'
 
 
 classes = (
-    KTX_RenderSlot,
-    KTX_Renderslot_Prefs
+    KTXRENDERSLOT_OT_Select,
+    KTXRENDERSLOT_Prefs
 )
 
 

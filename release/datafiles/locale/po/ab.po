@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -190,6 +190,14 @@ msgid "Monkey"
 msgstr "Амаамын"
 
 
+msgid "Roughness"
+msgstr "Аџьаџьара"
+
+
+msgid "Specular"
+msgstr "Ацырцырра"
+
+
 msgid "Circle"
 msgstr "Аицыгьежь"
 
@@ -330,6 +338,11 @@ msgid "Playback"
 msgstr "Арҳәара"
 
 
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Аицыгьежь"
+
+
 msgctxt "Sequence"
 msgid "Image"
 msgstr "Асахьанҵа"
@@ -387,11 +400,6 @@ msgstr "Аҟьаҟьа"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Акуб"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Аицыгьежь"
 
 
 msgctxt "Operator"

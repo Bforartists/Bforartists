@@ -25,7 +25,7 @@ bl_info = {
     "name": "KTX Selectbuffer",
     "description": "Enable boolean operations on selections",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 4, 0),
+    "version": (1, 4, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Properties",
     "warning": "",
@@ -38,9 +38,9 @@ class Oldbuffer:
     data = []
 
 
-class KTX_Selectbuffer_Mutate(bpy.types.Operator):
+class KTXSELECTBUFFER_OT_Mutate(bpy.types.Operator):
     bl_label = "select buffer mutate"
-    bl_idname = "ktx.selectbuffer_mutate"
+    bl_idname = "ktxselectbuffer.mutate"
     bl_description = ("A.union(B) elements from both A and B\n"
                       "A.difference(B) elements in A but not in B\n"
                       "A.symmetric_difference(B) elements in either A or B but not both\n"
@@ -91,9 +91,9 @@ class KTX_Selectbuffer_Mutate(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class KTX_Selectbuffer(bpy.types.Panel):
+class KTXSELECTBUFFER_PT_Panel(bpy.types.Panel):
     bl_label = "KTX Selectbuffer"
-    bl_idname = "ktx.selectbuffer"
+    bl_idname = "KTXSELECTBUFFER_PT_Panel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
 
@@ -108,12 +108,12 @@ class KTX_Selectbuffer(bpy.types.Panel):
             if obj.type == 'MESH':
                 c_mode = bpy.context.object.mode
                 if c_mode == 'EDIT':
-                    col.operator("ktx.selectbuffer_mutate", text="Set").operation = 'set'
-                    col.operator("ktx.selectbuffer_mutate", text="Clear").operation = 'clear'
-                    col.operator("ktx.selectbuffer_mutate", text="Union").operation = 'union'
-                    col.operator("ktx.selectbuffer_mutate", text="Difference").operation = 'difference'
-                    col.operator("ktx.selectbuffer_mutate", text="Symmetric Difference").operation = 'sym_difference'
-                    col.operator("ktx.selectbuffer_mutate", text="Intersection").operation = 'intersection'
+                    col.operator("ktxselectbuffer.mutate", text="Set").operation = 'set'
+                    col.operator("ktxselectbuffer.mutate", text="Clear").operation = 'clear'
+                    col.operator("ktxselectbuffer.mutate", text="Union").operation = 'union'
+                    col.operator("ktxselectbuffer.mutate", text="Difference").operation = 'difference'
+                    col.operator("ktxselectbuffer.mutate", text="Symmetric Difference").operation = 'sym_difference'
+                    col.operator("ktxselectbuffer.mutate", text="Intersection").operation = 'intersection'
                 else:
                     col.label(text='Enter EDIT Mode to use')
             else:
@@ -121,8 +121,8 @@ class KTX_Selectbuffer(bpy.types.Panel):
 
 
 classes = (
-    KTX_Selectbuffer,
-    KTX_Selectbuffer_Mutate
+    KTXSELECTBUFFER_OT_Mutate,
+    KTXSELECTBUFFER_PT_Panel
 )
 
 

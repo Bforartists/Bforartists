@@ -2278,48 +2278,58 @@ typedef struct RegionMoveData {
 
 } RegionMoveData;
 
-
 static int area_max_regionsize(ScrArea *sa, ARegion *scalear, AZEdge edge)
 {
 	ARegion *ar;
 	int dist;
 
-	if (edge == AE_RIGHT_TO_TOPLEFT || edge == AE_LEFT_TO_TOPRIGHT) {
-		dist = BLI_rcti_size_x(&sa->totrct);
-	}
-	else {  /* AE_BOTTOM_TO_TOPLEFT, AE_TOP_TO_BOTTOMRIGHT */
-		dist = BLI_rcti_size_y(&sa->totrct);
-	}
+	/* regions in regions. */
+	if (scalear->alignment & RGN_SPLIT_PREV) {
+		const int align = scalear->alignment & RGN_ALIGN_ENUM_MASK;
 
-	/* subtractwidth of regions on opposite side
-	 * prevents dragging regions into other opposite regions */
-	for (ar = sa->regionbase.first; ar; ar = ar->next) {
-		if (ar == scalear)
-			continue;
-
-		if (scalear->alignment == RGN_ALIGN_TOP && ar->alignment == RGN_ALIGN_BOTTOM)
-			dist -= ar->winy;
-		else if (scalear->alignment == RGN_ALIGN_BOTTOM && ar->alignment == RGN_ALIGN_TOP)
-			dist -= ar->winy;
-		else if (scalear->alignment == RGN_ALIGN_LEFT && ar->alignment == RGN_ALIGN_RIGHT)
-			dist -= ar->winx;
-		else if (scalear->alignment == RGN_ALIGN_RIGHT && ar->alignment == RGN_ALIGN_LEFT)
-			dist -= ar->winx;
-
-		/* case of regions in regions, like operator properties panel */
-		/* these can sit on top of other regions such as headers, so account for this */
-		else if (edge == AE_BOTTOM_TO_TOPLEFT && scalear->alignment & RGN_ALIGN_TOP &&
-		         ar->alignment == RGN_ALIGN_TOP && ar->regiontype == RGN_TYPE_HEADER)
-		{
-			dist -= ar->winy;
+		if (ELEM(align, RGN_ALIGN_TOP, RGN_ALIGN_BOTTOM)) {
+			ar = scalear->prev;
+			dist = ar->winy + scalear->winy - U.pixelsize;
 		}
-		else if (edge == AE_TOP_TO_BOTTOMRIGHT && scalear->alignment & RGN_ALIGN_BOTTOM &&
-		         ar->alignment == RGN_ALIGN_BOTTOM && ar->regiontype == RGN_TYPE_HEADER)
-		{
-			dist -= ar->winy;
+		else if (ELEM(align, RGN_ALIGN_LEFT, RGN_ALIGN_RIGHT)) {
+			ar = scalear->prev;
+			dist = ar->winx + scalear->winx - U.pixelsize;
 		}
 	}
+	else {
+		if (edge == AE_RIGHT_TO_TOPLEFT || edge == AE_LEFT_TO_TOPRIGHT) {
+			dist = BLI_rcti_size_x(&sa->totrct);
+		}
+		else {  /* AE_BOTTOM_TO_TOPLEFT, AE_TOP_TO_BOTTOMRIGHT */
+			dist = BLI_rcti_size_y(&sa->totrct);
+		}
 
+		/* subtractwidth of regions on opposite side
+		 * prevents dragging regions into other opposite regions */
+		for (ar = sa->regionbase.first; ar; ar = ar->next) {
+			if (ar == scalear)
+				continue;
+
+			if (scalear->alignment == RGN_ALIGN_LEFT && ar->alignment == RGN_ALIGN_RIGHT) {
+				dist -= ar->winx;
+			}
+			else if (scalear->alignment == RGN_ALIGN_RIGHT && ar->alignment == RGN_ALIGN_LEFT) {
+				dist -= ar->winx;
+			}
+			else if (scalear->alignment == RGN_ALIGN_TOP &&
+			         (ar->alignment == RGN_ALIGN_BOTTOM || ELEM(ar->regiontype, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)))
+			{
+				dist -= ar->winy;
+			}
+			else if (scalear->alignment == RGN_ALIGN_BOTTOM &&
+			         (ar->alignment == RGN_ALIGN_TOP || ELEM(ar->regiontype, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)))
+			{
+				dist -= ar->winy;
+			}
+		}
+	}
+
+	dist /= UI_DPI_FAC;
 	return dist;
 }
 
@@ -2337,7 +2347,6 @@ static int region_scale_invoke(bContext *C, wmOperator *op, const wmEvent *event
 
 	if (az->ar) {
 		RegionMoveData *rmd = MEM_callocN(sizeof(RegionMoveData), "RegionMoveData");
-		int maxsize;
 
 		op->customdata = rmd;
 
@@ -2363,13 +2372,7 @@ static int region_scale_invoke(bContext *C, wmOperator *op, const wmEvent *event
 			rmd->origval = rmd->ar->sizey;
 		}
 
-		/* limit headers to standard height for now */
-		if (rmd->ar->regiontype == RGN_TYPE_HEADER)
-			maxsize = ED_area_headersize();
-		else
-			maxsize = 1000;
-
-		CLAMP(rmd->maxsize, 0, maxsize);
+		CLAMP(rmd->maxsize, 0, 1000);
 
 		/* add temp handler */
 		WM_event_add_modal_handler(C, op);
@@ -2378,24 +2381,6 @@ static int region_scale_invoke(bContext *C, wmOperator *op, const wmEvent *event
 	}
 
 	return OPERATOR_FINISHED;
-}
-
-static int region_scale_get_maxsize(RegionMoveData *rmd)
-{
-	int maxsize = 0;
-
-	if (rmd->edge == AE_LEFT_TO_TOPRIGHT || rmd->edge == AE_RIGHT_TO_TOPLEFT) {
-		return  (int) ( (rmd->sa->winx / UI_DPI_FAC) - UI_UNIT_X);
-	}
-
-	if (rmd->ar->regiontype == RGN_TYPE_TOOL_PROPS) {
-		/* this calculation seems overly verbose
-		 * can someone explain why this method is necessary? - campbell */
-		const bool top_header = ED_area_header_alignment(rmd->sa) == RGN_ALIGN_TOP;
-		maxsize = rmd->maxsize - ((top_header) ? UI_UNIT_Y * 2 : UI_UNIT_Y) - (UI_UNIT_Y / 4);
-	}
-
-	return maxsize;
 }
 
 static void region_scale_validate_size(RegionMoveData *rmd)
@@ -2409,7 +2394,7 @@ static void region_scale_validate_size(RegionMoveData *rmd)
 		else
 			size = &rmd->ar->sizey;
 
-		maxsize = region_scale_get_maxsize(rmd);
+		maxsize = rmd->maxsize - (UI_UNIT_Y / UI_DPI_FAC);
 
 		if (*size > maxsize && maxsize > 0)
 			*size = maxsize;
@@ -2469,7 +2454,6 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				}
 			}
 			else {
-				int maxsize = region_scale_get_maxsize(rmd);
 				delta = event->y - rmd->origy;
 				if (rmd->edge == AE_BOTTOM_TO_TOPLEFT) delta = -delta;
 
@@ -2486,16 +2470,13 @@ static int region_scale_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				}
 				CLAMP(rmd->ar->sizey, 0, rmd->maxsize);
 
-				/* note, 'UI_UNIT_Y/4' means you need to drag the header almost
-				 * all the way down for it to become hidden, this is done
+				/* note, 'UI_UNIT_Y/4' means you need to drag the footer and execute region
+				 * almost all the way down for it to become hidden, this is done
 				 * otherwise its too easy to do this by accident */
 				if (rmd->ar->sizey < UI_UNIT_Y / 4) {
 					rmd->ar->sizey = rmd->origval;
 					if (!(rmd->ar->flag & RGN_FLAG_HIDDEN))
 						region_scale_toggle_hidden(C, rmd);
-				}
-				else if (maxsize > 0 && (rmd->ar->sizey > maxsize)) {
-					rmd->ar->sizey = maxsize;
 				}
 				else if (rmd->ar->flag & RGN_FLAG_HIDDEN) {
 					region_scale_toggle_hidden(C, rmd);
@@ -4183,6 +4164,103 @@ static void SCREEN_OT_header_context_menu(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
+/** \name Footer Toggle Operator
+ * \{ */
+
+static int footer_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ARegion *ar = screen_find_region_type(C, RGN_TYPE_FOOTER);
+
+	if (ar == NULL) {
+		return OPERATOR_CANCELLED;
+	}
+
+	ar->flag ^= RGN_FLAG_HIDDEN;
+
+	ED_area_tag_redraw(CTX_wm_area(C));
+
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+
+static void SCREEN_OT_footer(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toggle Footer";
+	ot->description = "Toggle footer display";
+	ot->idname = "SCREEN_OT_footer";
+
+	/* api callbacks */
+	ot->exec = footer_exec;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Footer Tools Operator
+ * \{ */
+
+static bool footer_context_menu_poll(bContext *C)
+{
+	ScrArea *sa = CTX_wm_area(C);
+	return sa;
+}
+
+void ED_screens_footer_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
+{
+	ScrArea *sa = CTX_wm_area(C);
+	ARegion *ar = CTX_wm_region(C);
+	const char *but_flip_str = (ar->alignment == RGN_ALIGN_TOP) ? IFACE_("Flip to Bottom") : IFACE_("Flip to Top");
+
+	uiItemO(layout, IFACE_("Toggle Footer"), ICON_NONE, "SCREEN_OT_footer");
+
+	/* default is WM_OP_INVOKE_REGION_WIN, which we don't want here. */
+	uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+
+	uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
+
+
+	/* file browser should be fullscreen all the time, topbar should
+	 * never be. But other regions can be maximized/restored... */
+	if (!ELEM(sa->spacetype, SPACE_FILE, SPACE_TOPBAR)) {
+		uiItemS(layout);
+
+		const char *but_str = sa->full ? IFACE_("Tile Area") : IFACE_("Maximize Area");
+		uiItemO(layout, but_str, ICON_NONE, "SCREEN_OT_screen_full_area");
+	}
+}
+
+static int footer_context_menu_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
+{
+	uiPopupMenu *pup;
+	uiLayout *layout;
+
+	pup = UI_popup_menu_begin(C, IFACE_("Footer"), ICON_NONE);
+	layout = UI_popup_menu_layout(pup);
+
+	ED_screens_footer_tools_menu_create(C, layout, NULL);
+
+	UI_popup_menu_end(C, pup);
+
+	return OPERATOR_INTERFACE;
+}
+
+static void SCREEN_OT_footer_context_menu(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Footer Context Menu";
+	ot->description = "Display footer region context menu";
+	ot->idname = "SCREEN_OT_footer_context_menu";
+
+	/* api callbacks */
+	ot->poll = footer_context_menu_poll;
+	ot->invoke = footer_context_menu_invoke;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Navigation Bar Tools Menu
  * \{ */
 
@@ -5311,6 +5389,8 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toolbar_misc); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu in the toolbar editor
 	WM_operatortype_append(SCREEN_OT_header_context_menu);
+	WM_operatortype_append(SCREEN_OT_footer);
+	WM_operatortype_append(SCREEN_OT_footer_context_menu);
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
 	WM_operatortype_append(SCREEN_OT_back_to_previous);

@@ -60,7 +60,7 @@ def check_missing():
         if not os.path.exists(fp) and l.get('asset_data') is not None:
             missing.append(l)
 
-    print('missing libraries', missing)
+    # print('missing libraries', missing)
 
     for l in missing:
         asset_data = l['asset_data']
@@ -153,10 +153,10 @@ def scene_load(context):
     # check for group users that have been deleted, remove the groups /files from the file...
     # TODO scenes fixing part... download the assets not present on drive,
     # and erase from scene linked files that aren't used in the scene.
-    print('continue downlaods ', time.time() - t)
+    # print('continue downlaods ', time.time() - t)
     t = time.time()
     check_missing()
-    print('missing check', time.time() - t)
+    # print('missing check', time.time() - t)
 
 
 def get_scene_id():

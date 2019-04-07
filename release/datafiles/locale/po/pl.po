@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6860,6 +6860,10 @@ msgid "Performance"
 msgstr "Wydajność"
 
 
+msgid "Slot"
+msgstr "Otwór"
+
+
 msgid "Dynamics"
 msgstr "Dynamika"
 
@@ -6882,6 +6886,11 @@ msgstr "Edytor Sekwencji Wideo"
 
 msgid "3D View"
 msgstr "Widok 3D"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Skaluj"
 
 
 msgid "Continue"
@@ -6935,11 +6944,6 @@ msgstr "Warstwa:"
 
 msgid "Priority"
 msgstr "Priorytet"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Skaluj"
 
 
 msgctxt "Operator"
@@ -10513,10 +10517,6 @@ msgid ", Frame: %d"
 msgstr ", Klatka: %d"
 
 
-msgid "Slot"
-msgstr "Otwór"
-
-
 msgid "Slot %d"
 msgstr "Otwór %d"
 
@@ -11293,18 +11293,6 @@ msgstr "Zaznaczanie krawędzi - Shift-klik dla trybów mieszanych, Ctrl-klik roz
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
-
-
-msgid "Copied selected objects to buffer"
-msgstr "Zaznaczone obiekty skopiowane do bufora"
-
-
-msgid "Objects pasted from buffer"
-msgstr "Obiekty wklejone z bufora"
-
-
-msgid "No buffer to paste from"
-msgstr "Brak bufora, z którego można wkleić"
 
 
 msgid "No active camera"

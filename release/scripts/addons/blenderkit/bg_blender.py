@@ -180,14 +180,14 @@ class KillBgProcess(bpy.types.Operator):
         if self.process_type == 'THUMBNAILER':
             props.is_generating_thumbnail = False
         global blenderkit_bg_process
-        print('killing', self.process_source, self.process_type)
+        # print('killing', self.process_source, self.process_type)
         # then go kill the process. this wasn't working for unsetting props and that was the reason for changing to the method above.
 
         processes = bg_processes
         for p in processes:
 
             tcom = p[1]
-            print(tcom.process_type, self.process_type)
+            # print(tcom.process_type, self.process_type)
             if tcom.process_type == self.process_type:
                 source = eval(tcom.eval_path)
                 print(source.bl_rna.name, self.process_source)

@@ -248,6 +248,7 @@ class IV_PT_icons(bpy.types.Panel):
     bl_space_type = "TEXT_EDITOR"
     bl_region_type = "UI"
     bl_label = "Icon Viewer"
+    bl_category = "Icon Viewer"
 
     @staticmethod
     def tag_redraw():

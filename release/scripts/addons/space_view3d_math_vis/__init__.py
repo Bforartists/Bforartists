@@ -63,7 +63,7 @@ class PanelConsoleVars(Panel):
     bl_region_type = 'WINDOW'
     bl_context = 'scene'
     bl_label = "Math Vis Console"
-    bl_idname = "mathvis.panel_console_vars"
+    bl_idname = "MATHVIS_PT_panel_console_vars"
     bl_category = "Math Vis"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -88,6 +88,7 @@ class PanelConsoleVars(Panel):
         col = layout.column()
         col.prop(bpy.context.window_manager.MathVisProp, "name_hide")
         col.prop(bpy.context.window_manager.MathVisProp, "bbox_hide")
+        col.prop(bpy.context.window_manager.MathVisProp, "in_front")
         col.prop(bpy.context.window_manager.MathVisProp, "bbox_scale")
         col.operator("mathvis.cleanup_console")
 
@@ -182,6 +183,7 @@ class MathVisStateProp(PropertyGroup):
 
 
 class MathVisVarList(UIList):
+    bl_idname = "MATHVIS_UL_MathVisVarList"
 
     def draw_item(self,
                   context,
@@ -241,6 +243,12 @@ class MathVis(PropertyGroup):
         "lines for the display of Matrix items"
     )
 
+    in_front: BoolProperty(
+        name="Always In Front",
+        default=True,
+        description="Draw Points and lines alwasy in front",
+        update=call_console_hook
+    )
 
 classes = (
     PanelConsoleVars,
