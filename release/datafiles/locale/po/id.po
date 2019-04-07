@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1033,10 +1033,6 @@ msgstr "Tampilkan kursor di viewport"
 
 msgid "Use Gradient"
 msgstr "Kamera"
-
-
-msgid "Use Blender Units"
-msgstr "Situs Blender"
 
 
 msgid "Use Texture"
@@ -3112,7 +3108,7 @@ msgstr "Nama"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
+msgid "Hide Selected"
 msgstr "Modus Sunting"
 
 
@@ -3635,11 +3631,6 @@ msgid "Set Handle Type"
 msgstr "Tekstur"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Modus Sunting"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Modus Sunting"
 
@@ -3936,11 +3927,6 @@ msgstr "Warna Standar"
 msgctxt "Operator"
 msgid "Add New Layer"
 msgstr "Lapisan"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Modus Sunting"
 
 
 msgctxt "Operator"
@@ -4348,11 +4334,6 @@ msgstr "Hapus Titik"
 
 msgid "Duplicate selected metaelement(s)"
 msgstr "Hapus Titik"
-
-
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Sembunyikan"
 
 
 msgid "Angle limit"
@@ -4911,6 +4892,11 @@ msgstr "Hapus Titik"
 msgctxt "Operator"
 msgid "Ungroup"
 msgstr "Grup"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Sembunyikan"
 
 
 msgctxt "Operator"
@@ -6373,18 +6359,9 @@ msgid "Background image index to remove"
 msgstr "Tampilkan Gambar Latar pada tampilan atas"
 
 
-msgid "Selected objects are saved in a temp file"
-msgstr "Bahan"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "Semua Tampilan"
-
-
-msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Tampilan 3D"
 
 
 msgctxt "Operator"
@@ -6394,6 +6371,11 @@ msgstr "Tampilan 3D"
 
 msgctxt "Operator"
 msgid "NDOF Orbit View with Zoom"
+msgstr "Tampilan 3D"
+
+
+msgctxt "Operator"
+msgid "NDOF Pan View"
 msgstr "Tampilan 3D"
 
 
@@ -6733,6 +6715,26 @@ msgstr "Tampilan 3D"
 
 msgid "Gradient Colors"
 msgstr "Warna Standar"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Adegan"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Baru"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Hapus"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Konsol Python"
 
 
 msgid "Unselected F-Curve Visibility"
@@ -7351,11 +7353,6 @@ msgstr "Seleksi"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Baru"
-
-
-msgctxt "Operator"
 msgid "Update Paths"
 msgstr "Kamera"
 
@@ -7462,23 +7459,8 @@ msgstr "lokasi"
 
 
 msgctxt "Operator"
-msgid "Erase"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Konsol Python"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Putar"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Adegan"
 
 
 msgctxt "Operator"
@@ -7503,11 +7485,6 @@ msgstr "Modus Sunting"
 
 msgid "Strand Shape"
 msgstr "Partikel"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Baru"
 
 
 msgid "Use Particle's Radius"
@@ -7618,6 +7595,11 @@ msgstr "Ukurang"
 
 msgid "Unified Strength"
 msgstr "Partikel"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Baru"
 
 
 msgctxt "Operator"

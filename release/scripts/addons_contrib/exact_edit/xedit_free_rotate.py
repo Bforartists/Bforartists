@@ -1054,9 +1054,9 @@ def get_reg_overlap():
     return rtoolsw
 
 
-class XEditFreeRotate(bpy.types.Operator):
+class XEDIT_OT_free_rotate(bpy.types.Operator):
     bl_idname = "view3d.xedit_free_rotate_op"
-    bl_label = "XEdit Free Rotate"
+    bl_label = "Exact Edit Free Rotate"
 
     # Only launch Add-On from OBJECT or EDIT modes
     @classmethod

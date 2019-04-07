@@ -644,18 +644,7 @@ static void drw_viewport_var_init(void)
 	}
 
 	/* Alloc array of texture reference. */
-	if (DST.RST.bound_texs == NULL) {
-		DST.RST.bound_texs = MEM_callocN(sizeof(GPUTexture *) * GPU_max_textures(), "Bound GPUTexture refs");
-	}
-	if (DST.RST.bound_tex_slots == NULL) {
-		DST.RST.bound_tex_slots = MEM_callocN(sizeof(char) * GPU_max_textures(), "Bound Texture Slots");
-	}
-	if (DST.RST.bound_ubos == NULL) {
-		DST.RST.bound_ubos = MEM_callocN(sizeof(GPUUniformBuffer *) * GPU_max_ubo_binds(), "Bound GPUUniformBuffer refs");
-	}
-	if (DST.RST.bound_ubo_slots == NULL) {
-		DST.RST.bound_ubo_slots = MEM_callocN(sizeof(char) * GPU_max_ubo_binds(), "Bound Ubo Slots");
-	}
+	memset(&DST.RST, 0x0, sizeof(DST.RST));
 
 	if (G_draw.view_ubo == NULL) {
 		G_draw.view_ubo = DRW_uniformbuffer_create(sizeof(ViewUboStorage), NULL);
@@ -1716,7 +1705,7 @@ bool DRW_render_check_grease_pencil(Depsgraph *depsgraph)
 			}
 		}
 	}
-	DEG_OBJECT_ITER_FOR_RENDER_ENGINE_END
+	DEG_OBJECT_ITER_FOR_RENDER_ENGINE_END;
 
 	return false;
 }
@@ -1959,7 +1948,7 @@ void DRW_render_object_iter(
 			drw_batch_cache_generate_requested(ob);
 		}
 	}
-	DEG_OBJECT_ITER_END
+	DEG_OBJECT_ITER_END;
 }
 
 /* Assume a valid gl context is bound (and that the gl_context_mutex has been acquired).
@@ -2561,13 +2550,21 @@ void DRW_framebuffer_select_id_read(const rcti *rect, uint *r_buf)
 	};
 
 	rcti rect_clamp = *rect;
-	BLI_rcti_isect(&r, rect, &rect_clamp);
+	if (BLI_rcti_isect(&r, &rect_clamp, &rect_clamp)) {
+		GPU_texture_read_rect(
+		        g_select_buffer.texture_u32,
+		        GPU_DATA_UNSIGNED_INT, &rect_clamp, r_buf);
 
-	GPU_texture_read_rect(
-	        g_select_buffer.texture_u32, GPU_DATA_UNSIGNED_INT, &rect_clamp, r_buf);
+		if (!BLI_rcti_compare(rect, &rect_clamp)) {
+			GPU_select_buffer_stride_realign(rect, &rect_clamp, r_buf);
+		}
+	}
+	else {
+		size_t buf_size = BLI_rcti_size_x(rect) *
+		                  BLI_rcti_size_y(rect) *
+		                  sizeof(*r_buf);
 
-	if (!BLI_rcti_compare(rect, &rect_clamp)) {
-		GPU_select_buffer_stride_realign(rect, &rect_clamp, r_buf);
+		memset(r_buf, 0, buf_size);
 	}
 }
 
@@ -2787,11 +2784,6 @@ void DRW_engines_free(void)
 	DRW_TEXTURE_FREE_SAFE(G_draw.ramp);
 	DRW_TEXTURE_FREE_SAFE(G_draw.weight_ramp);
 	MEM_SAFE_FREE(g_pos_format);
-
-	MEM_SAFE_FREE(DST.RST.bound_texs);
-	MEM_SAFE_FREE(DST.RST.bound_tex_slots);
-	MEM_SAFE_FREE(DST.RST.bound_ubos);
-	MEM_SAFE_FREE(DST.RST.bound_ubo_slots);
 
 	MEM_SAFE_FREE(DST.uniform_names.buffer);
 

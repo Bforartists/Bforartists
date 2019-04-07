@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -8915,14 +8915,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "Réglages de champ (de force) pour un objet, dans les simulations physiques"
 
 
-msgid "Effect particles' location"
-msgstr "Position des particules d’effet"
-
-
-msgid "Effect particles' dynamic rotation"
-msgstr "Rotation dynamique des particules d’effet"
-
-
 msgid "Maximum Distance"
 msgstr "Distance maximum"
 
@@ -12954,14 +12946,6 @@ msgid "Lighter pressure causes more smoothing to be applied"
 msgstr "Une pression plus légère fait que plus d’adoucissement est appliqué"
 
 
-msgid "Use Blender Units"
-msgstr "Utiliser unités Blender"
-
-
-msgid "When locked brush stays same size relative to object; when unlocked brush size is given in pixels"
-msgstr "Quand verrouillé, la brosse conserve la même taille relativement à l’objet; quand déverrouillé, la taille de la brosse est donnée en pixels"
-
-
 msgid "Plane Offset Pressure"
 msgstr "Pression décalage de plan"
 
@@ -13100,10 +13084,6 @@ msgstr "Traits doux"
 
 msgid "Brush lags behind mouse and follows a smoother path"
 msgstr "La brosse traîne derrière la souris et suit un chemin plus lissé"
-
-
-msgid "Use Automatic Strength Adjustment"
-msgstr "Utiliser l’ajustement de force automatique"
 
 
 msgid "Automatically adjust strength to give consistent results for different spacings"
@@ -13354,20 +13334,8 @@ msgid "Display reference images behind objects in the 3D View"
 msgstr "Afficher des images de référence derrière les objets dans la vue 3D"
 
 
-msgid "Composition Guides"
-msgstr "Guides de composition"
-
-
 msgid "Center Diagonal"
 msgstr "Centre diagonal"
-
-
-msgid "Thirds"
-msgstr "Tiers"
-
-
-msgid "Golden"
-msgstr "D’or"
 
 
 msgid "Golden Triangle A"
@@ -13384,6 +13352,10 @@ msgstr "Triangle harmonieux A"
 
 msgid "Harmonious Triangle B"
 msgstr "Triangle harmonieux B"
+
+
+msgid "Thirds"
+msgstr "Tiers"
 
 
 msgid "Show Limits"
@@ -33147,8 +33119,8 @@ msgstr "Inverse (et corrige) les suffixes d’axe des noms des os sélectionnés
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "Cacher os sélectionnés"
+msgid "Hide Selected"
+msgstr "Cacher sélectionnée"
 
 
 msgid "Tag selected bones to not be visible in Edit Mode"
@@ -33236,8 +33208,8 @@ msgstr "Conserver décalage"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Révéler os"
+msgid "Reveal Hidden"
+msgstr "Révéler cachés"
 
 
 msgid "Reveal all bones hidden in Edit Mode"
@@ -35436,11 +35408,6 @@ msgid "Toggle Free/Align"
 msgstr "Alterner libres/aligné"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Cacher sélectionnée"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Cacher les points de contrôle (non-)sélectionnés"
 
@@ -35552,11 +35519,6 @@ msgstr "Définir rayon de courbe"
 
 msgid "Set per-point radius which is used for bevel tapering"
 msgstr "Définir le rayon utilisé pour la taille d’extrusion, pour chaque point"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Révéler cachés"
 
 
 msgid "Reveal hidden control points"
@@ -37665,15 +37627,6 @@ msgid "Add new Grease Pencil data-block"
 msgstr "Ajouter un nouveau bloc de données crayon gras"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Délier crayon gras"
-
-
-msgid "Unlink active Grease Pencil data-block"
-msgstr "Délier le bloc de données crayon gras actif"
-
-
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
 msgstr "Supprimer les traits, vertices ou images de crayon gras sélectionnés"
 
@@ -38029,11 +37982,6 @@ msgstr "Sélectionner tous les points dans les mêmes traits que ceux déjà sé
 
 msgid "Grow sets of selected Grease Pencil points"
 msgstr "Agrandir l’ensemble de points de crayon gras sélectionnés"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Cacher sélection"
 
 
 msgid "Hide/Unhide selected points for Grease Pencil strokes setting alpha factor"
@@ -39778,18 +39726,8 @@ msgid "Duplicate Metaelements"
 msgstr "Dupliquer méta-éléments"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Cacher"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "Cacher méta-élément(s) (non-)sélectionné(s)"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Révéler"
 
 
 msgid "Reveal all hidden metaelements"
@@ -42822,6 +42760,11 @@ msgid "Toggle unused node socket display"
 msgstr "(Dés)activer l’affichage des prises de nœud inutilisées"
 
 
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Cacher"
+
+
 msgid "Toggle hiding of selected nodes"
 msgstr "(Dés)activer dissimulation des nœuds sélectionnés"
 
@@ -45448,10 +45391,6 @@ msgid "Make Local"
 msgstr "Rendre local"
 
 
-msgid "WARNING: no undo"
-msgstr "ATTENTION : pas d’annulation"
-
-
 msgid "Remap Users"
 msgstr "Réaffecter utilisateurs"
 
@@ -46525,6 +46464,11 @@ msgstr "Nombre de clés"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Enlever les particules sélectionnées suffisamment proches d’autres"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Révéler"
 
 
 msgid "Show hidden particles"
@@ -51779,15 +51723,6 @@ msgstr "Effacer les limites du rendu partiel et désactiver ce dernier"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "Copier sélection dans tampon"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Les objets sélectionnés sont enregistrés dans un fichier temporaire"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Définir curseur 3D"
 
@@ -51883,11 +51818,6 @@ msgid "Interactively navigate around the scene (uses the mode (walk/fly) prefere
 msgstr "Se déplacer interactivement dans le scène (utiliser la préférence de mode (marche/vol))"
 
 
-msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "NDOF déplacer la vue"
-
-
 msgid "Pan and rotate the view with the 3D mouse"
 msgstr "Faire défiler et tourner la vue avec la souris 3D"
 
@@ -51910,6 +51840,11 @@ msgid "Orbit and zoom the view using the 3D mouse"
 msgstr "Faire tourner et zoomer la vue avec la souris 3D"
 
 
+msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "NDOF déplacer la vue"
+
+
 msgid "Pan the view with the 3D mouse"
 msgstr "Faire défiler la vue avec la souris 3D"
 
@@ -51921,15 +51856,6 @@ msgstr "Définir objet actif comme caméra"
 
 msgid "Set the active object as the active camera for this view or scene"
 msgstr "Définir l’objet actif comme la caméra active, pour cette vue ou pour la scène"
-
-
-msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "Coller sélection depuis tampon"
-
-
-msgid "Contents of copy buffer gets pasted"
-msgstr "Le contenu de tampon de copie est collé"
 
 
 msgid "Select pasted objects"
@@ -51988,15 +51914,6 @@ msgstr "Nom d’objet"
 
 msgid "Toggle selection instead of deselecting everything first"
 msgstr "Inverser la sélection au lieu de tout dé-sélectionner d’abord"
-
-
-msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "(Dé)sélectionner tous"
-
-
-msgid "Select element under the mouse, deselect everything is there's nothing under the mouse"
-msgstr "Sélectionner l’élément sous la souris, tout désélectionner s’il n’y a rien sous la souris"
 
 
 msgctxt "Operator"
@@ -54453,6 +54370,10 @@ msgid "Area Shape"
 msgstr "Forme d’area"
 
 
+msgid "Composition Guides"
+msgstr "Guides de composition"
+
+
 msgid "Passepartout"
 msgstr "Passe-partout"
 
@@ -54529,6 +54450,10 @@ msgid "Fluid Presets"
 msgstr "Pré-réglages de fluide"
 
 
+msgid "Clone from Image/UV Map"
+msgstr "Cloner depuis image/carte UV"
+
+
 msgid "Scopes"
 msgstr "Graphiques"
 
@@ -54537,8 +54462,14 @@ msgid "Sample Line"
 msgstr "Ligne échantillon"
 
 
-msgid "Appearance"
-msgstr "Apparence"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Dessiner"
+
+
+msgctxt "Operator"
+msgid "Mask"
+msgstr "Masquer"
 
 
 msgid "Tiling"
@@ -54583,6 +54514,10 @@ msgstr "Ligne Freestyle"
 
 msgid "Backdrop"
 msgstr "Fond"
+
+
+msgid "Slot"
+msgstr "Prise"
 
 
 msgid "Predefined node color"
@@ -54905,12 +54840,47 @@ msgid "Dyntopo"
 msgstr "Dyntopo"
 
 
-msgid "Symmetry/Lock"
-msgstr "Symétrie/Verrouillage"
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Redimensionner"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Ajouter"
+
+
+msgctxt "Operator"
+msgid "Box Mask"
+msgstr "Masquer par boîte"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Effacer"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Ligne"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cercle"
+
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "Épaisseur"
 
 
 msgid "Armature Options"
 msgstr "Options d’armature"
+
+
+msgid "Clone from Paint Slot"
+msgstr "Cloner depuis emplacement de peinture"
 
 
 msgid "Curve Stroke"
@@ -54919,10 +54889,6 @@ msgstr "Trait de courbe"
 
 msgid "Sculpt Strokes"
 msgstr "Sculpture des traits"
-
-
-msgid "Mesh Options"
-msgstr "Options de mesh"
 
 
 msgid "Default tools for particle mode"
@@ -55115,14 +55081,6 @@ msgstr "Objet forme"
 
 msgid "Outer shape to use for tools"
 msgstr "Forme englobante à utiliser pour les outils"
-
-
-msgid "Draw Particles"
-msgstr "Afficher particules"
-
-
-msgid "Draw actual particles"
-msgstr "Afficher les vraies particules"
 
 
 msgid "Comb"
@@ -68966,11 +68924,6 @@ msgstr "Distordues"
 
 
 msgctxt "Operator"
-msgid "Thickness"
-msgstr "Épaisseur"
-
-
-msgctxt "Operator"
 msgid "Edge Sharp"
 msgstr "Dureté d’arête"
 
@@ -69187,11 +69140,6 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Ajouter"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Éditer"
 
@@ -69396,6 +69344,11 @@ msgstr "Blender 2.6 ne supporte pas encore les py-contraintes"
 
 
 msgctxt "Operator"
+msgid "Add Object Constraint"
+msgstr "Ajouter contrainte objet"
+
+
+msgctxt "Operator"
 msgid "Add Bone Constraint"
 msgstr "Ajouter contrainte os"
 
@@ -69436,26 +69389,12 @@ msgid "Pivot Offset"
 msgstr "Décalage pivot"
 
 
-msgid "Constraints for active bone do not live here"
-msgstr "Les contraintes pour l’os actif ne résident pas ici"
-
-
-msgctxt "Operator"
-msgid "Add Object Constraint"
-msgstr "Ajouter contrainte objet"
-
-
 msgid "Relative Pivot Point"
 msgstr "Point pivot relatif"
 
 
 msgid "Absolute Pivot Point"
 msgstr "Point pivot absolu"
-
-
-msgctxt "Operator"
-msgid "Go to Bone Constraints tab..."
-msgstr "Aller à l’onglet des Contraintes d’os…"
 
 
 msgid "Head/Tail:"
@@ -70280,21 +70219,6 @@ msgstr "Édition proportionnelle :"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Dessiner"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Effacer"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Ligne"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Poly"
 
@@ -70310,11 +70234,6 @@ msgstr "Sélectionner :"
 msgctxt "Operator"
 msgid "Paste & Merge"
 msgstr "Coller & fusionner"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Redimensionner"
 
 
 msgctxt "Operator"
@@ -70447,11 +70366,6 @@ msgid "Transform:"
 msgstr "Transformation :"
 
 
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Afficher cachés"
-
-
 msgid "Holes"
 msgstr "Trous"
 
@@ -70496,32 +70410,12 @@ msgid "Buffer"
 msgstr "Mémoire tampon"
 
 
-msgid "File Suffix:"
-msgstr "Suffixe de fichier :"
-
-
-msgid "Camera Suffix:"
-msgstr "Suffixe de caméra :"
-
-
 msgid "Mask Mapping"
 msgstr "Correspondance de masque"
 
 
 msgid "Sample Bias"
 msgstr "Échantillon de biais"
-
-
-msgid "Mask Value"
-msgstr "Valeur de masque"
-
-
-msgid "Clone from Paint Slot"
-msgstr "Cloner depuis emplacement de peinture"
-
-
-msgid "Clone from Image/UV Map"
-msgstr "Cloner depuis image/carte UV"
 
 
 msgid "Source Clone Slot"
@@ -70534,6 +70428,10 @@ msgstr "Image source de clonage"
 
 msgid "Source Clone UV Map"
 msgstr "Carte UV source de clonage"
+
+
+msgid "Mask Value"
+msgstr "Valeur de masque"
 
 
 msgctxt "Operator"
@@ -70576,11 +70474,6 @@ msgstr "Rugosité finale"
 
 msgid "Strand Shape"
 msgstr "Forme de fibre"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nouveau"
 
 
 msgid "Iterations: %d .. %d (avg. %d)"
@@ -71195,6 +71088,11 @@ msgstr "Couleur unifiée"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Nouveau"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Ouvrir…"
 
@@ -71211,18 +71109,6 @@ msgstr "Inverser couleurs image"
 
 msgid "Falloff:"
 msgstr "Atténuation :"
-
-
-msgid "Curve:"
-msgstr "Courbe :"
-
-
-msgid "Mask Texture:"
-msgstr "Texture masque :"
-
-
-msgid "Stroke Method:"
-msgstr "Méthode de trait :"
 
 
 msgid "Show Same Material"
@@ -71329,10 +71215,6 @@ msgstr "Proportions"
 
 msgid "Edge To Edge"
 msgstr "Arête à arête"
-
-
-msgid "Brush Unset"
-msgstr "Enlever brosse"
 
 
 msgctxt "Operator"
@@ -71808,11 +71690,6 @@ msgid "Clip"
 msgstr "Clip"
 
 
-msgctxt "Operator"
-msgid "Mask"
-msgstr "Masquer"
-
-
 msgid "Default fade"
 msgstr "Fondu par défaut"
 
@@ -72229,21 +72106,6 @@ msgstr "Miroir interactif"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "X global"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Y global"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Z global"
-
-
-msgctxt "Operator"
 msgid "Selection to Active"
 msgstr "Sélection vers actif"
 
@@ -72431,11 +72293,6 @@ msgstr "Plan"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Cube"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Cercle"
 
 
 msgctxt "Operator"
@@ -72696,11 +72553,6 @@ msgstr "Effacer masque"
 
 
 msgctxt "Operator"
-msgid "Box Mask"
-msgstr "Masquer par boîte"
-
-
-msgctxt "Operator"
 msgid "Lasso Mask"
 msgstr "Masquer par lasso"
 
@@ -72861,21 +72713,6 @@ msgstr "Redimensionner espace texture"
 msgctxt "Operator"
 msgid "Align to Transform Orientation"
 msgstr "Aligner sur orientation de transformation"
-
-
-msgctxt "Operator"
-msgid "X Local"
-msgstr "X local"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Y local"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Z local"
 
 
 msgctxt "Operator"
@@ -73314,14 +73151,6 @@ msgid "Apply Camera Image"
 msgstr "Appliquer image caméra"
 
 
-msgid "Keep:"
-msgstr "Conserver :"
-
-
-msgid "Lengths"
-msgstr "Longueurs"
-
-
 msgid "Path Steps"
 msgstr "Étapes/pas de chemin"
 
@@ -73346,16 +73175,8 @@ msgid "in memory to enable editing!"
 msgstr "en mémoire pour permettre l’édition !"
 
 
-msgid "Correct:"
-msgstr "Corriger :"
-
-
 msgid "Front Faces Only"
 msgstr "Faces avant uniquement"
-
-
-msgid "Trim"
-msgstr "Compenser"
 
 
 msgid "Auto Normalize"
@@ -75938,6 +75759,10 @@ msgid "Not implemented"
 msgstr "Pas implémenté"
 
 
+msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
+msgstr "Conversion d’objets/données d’objet liés, option “Conserver original” forcée à Vrai"
+
+
 msgid "Object not found"
 msgstr "Objet introuvable"
 
@@ -75956,10 +75781,6 @@ msgstr "Impossible de supprimer l’objet lié indirectement “%s”"
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "Impossible de supprimer l’objet “%s” de la scène “%s”, les objets utilisés indirectement doivent avoir au moins un utilisateur"
-
-
-msgid "Converting some linked object/object data, enforcing 'Keep Original' option to True"
-msgstr "Conversion d’objets/données d’objet liés, option “Conserver original” forcée à Vrai"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -77619,10 +77440,6 @@ msgid ", Frame: %d"
 msgstr ", Frame : %d"
 
 
-msgid "Slot"
-msgstr "Prise"
-
-
 msgid "Slot %d"
 msgstr "Prise %d"
 
@@ -78535,18 +78352,6 @@ msgstr "Sélection d’arêtes – maj-cliquer pour activer plusieurs modes, ct
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Sélection de faces – maj-cliquer pour activer plusieurs modes, ctrl-cliquer pour étendre la sélection"
-
-
-msgid "Copied selected objects to buffer"
-msgstr "Objets sélectionnés copiés dans le tampon"
-
-
-msgid "Objects pasted from buffer"
-msgstr "Objets collés depuis le tampon"
-
-
-msgid "No buffer to paste from"
-msgstr "Pas de tampon duquel coller"
 
 
 msgid "No active element found!"
@@ -79543,6 +79348,14 @@ msgid "DeformGroup '%s' not in object '%s'"
 msgstr "Le groupe de déformation “%s” n’est pas présent dans l’objet “%s”"
 
 
+msgid "ShapeKey not found"
+msgstr "Clé de forme non trouvée"
+
+
+msgid "Could not remove ShapeKey"
+msgstr "Impossible de supprimer la clé de forme"
+
+
 msgid "Object should be of mesh type"
 msgstr "L’objet devrait être de type mesh"
 
@@ -79573,14 +79386,6 @@ msgstr "“to_space” “%s“ n’est pas valide quand aucun os de pose n’es
 
 msgid "Object '%s' does not support shapes"
 msgstr "L’objet “%s” ne supporte pas les clés de forme"
-
-
-msgid "ShapeKey not found"
-msgstr "Clé de forme non trouvée"
-
-
-msgid "Could not remove ShapeKey"
-msgstr "Impossible de supprimer la clé de forme"
 
 
 msgid "Object '%s' could not create internal data for finding nearest point"

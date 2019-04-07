@@ -2751,9 +2751,10 @@ static const float staticSine[16] = {
 	0.994521895368f, 1.0f,
 };
 
-#define set_vert(a, b, quarter) \
-        copy_v2_fl2(pos, (quarter % 2 == 0) ? -(a) : (a), (quarter < 2) ? -(b) : (b)); \
-        GPU_vertbuf_attr_set(vbo, attr_id.pos, v++, pos);
+#define set_vert(a, b, quarter) { \
+		copy_v2_fl2(pos, (quarter % 2 == 0) ? -(a) : (a), (quarter < 2) ? -(b) : (b)); \
+		GPU_vertbuf_attr_set(vbo, attr_id.pos, v++, pos); \
+	} ((void)0)
 
 GPUBatch *DRW_cache_bone_dof_sphere_get(void)
 {
@@ -3226,7 +3227,8 @@ GPUBatch *DRW_cache_mball_surface_get(Object *ob)
 	return DRW_metaball_batch_cache_get_triangles_with_normals(ob);
 }
 
-GPUBatch *DRW_cache_mball_edge_detection_get(Object *ob, bool *r_is_manifold) {
+GPUBatch *DRW_cache_mball_edge_detection_get(Object *ob, bool *r_is_manifold)
+{
 	BLI_assert(ob->type == OB_MBALL);
 	return DRW_metaball_batch_cache_get_edge_detection(ob, r_is_manifold);
 }

@@ -129,8 +129,6 @@ def check_render_engine(props, obs):
         props.engine = 'BLENDER_GAME'
 
     # write to object properties.
-    print(materials)
-    print(shaders)
     props.materials = ''
     props.shaders = ''
     for m in materials:
@@ -141,7 +139,6 @@ def check_render_engine(props, obs):
         s = s.lower()
         s = s.replace('_', ' ')
         props.shaders += (s + ', ')
-    print(props.shaders)
 
 
 def check_printable(props, obs):
@@ -164,9 +161,7 @@ def check_printable(props, obs):
 
         printable = True
         for item in info:
-            print(item)
             passed = item[0].endswith(' 0')
-            print('passed', passed)
             if not passed:
                 print(item[0])
                 printable = False
@@ -274,7 +269,6 @@ def countObs(props, obs):
     for ob in obs:
         otype = ob.type.lower()
         ob_types[otype] = ob_types.get(otype, 0) + 1
-    print(count, ob_types)
     props.object_count = count
 
 
@@ -295,7 +289,6 @@ def check_modifiers(props, obs):
                     smt = m.flow_settings.smoke_flow_type
                     if smt == 'BOTH' or smt == 'FIRE':
                         modifiers.append('fire')
-            print(mtype)
 
     # for mt in modifiers:
     effectmodifiers = ['soft body', 'fluid simulation', 'particle system', 'collision', 'smoke', 'cloth',

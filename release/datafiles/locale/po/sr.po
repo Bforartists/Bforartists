@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -4121,10 +4121,6 @@ msgid "Index"
 msgstr "Индекс"
 
 
-msgid "Effect particles' dynamic rotation"
-msgstr "Подешавање динамичких особина"
-
-
 msgid "Maximum Distance"
 msgstr "Максимална удаљеност"
 
@@ -5722,10 +5718,6 @@ msgid "Use Gradient"
 msgstr "Користи прелаз"
 
 
-msgid "Use Blender Units"
-msgstr "Блендер"
-
-
 msgid "Original Normal"
 msgstr "Избриши тежишну тачку"
 
@@ -5914,16 +5906,8 @@ msgid "Display reference images behind objects in the 3D View"
 msgstr "Прикажи референтну слику иза објеката у 3D погледу"
 
 
-msgid "Composition Guides"
-msgstr "Вођице слагања"
-
-
 msgid "Center Diagonal"
 msgstr "Средиште дијагонале"
-
-
-msgid "Golden"
-msgstr "Златни"
 
 
 msgid "Golden Triangle A"
@@ -13583,6 +13567,11 @@ msgstr "Избриши тачке"
 
 
 msgctxt "Operator"
+msgid "Hide Selected"
+msgstr "Сакриј изабрано"
+
+
+msgctxt "Operator"
 msgid "Show All Layers"
 msgstr "Прикажи све слојеве"
 
@@ -13635,8 +13624,8 @@ msgstr "Тип родитељске везе"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Откри"
+msgid "Reveal Hidden"
+msgstr "Открива сакривено"
 
 
 msgctxt "Operator"
@@ -14754,11 +14743,6 @@ msgstr "Врста криве"
 
 
 msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Сакриј изабрано"
-
-
-msgctxt "Operator"
 msgid "Make Segment"
 msgstr "Формирај сегмент"
 
@@ -14841,11 +14825,6 @@ msgstr "Формира путању"
 msgctxt "Operator"
 msgid "Set Curve Radius"
 msgstr "Подеси полупречник криве"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Открива сакривено"
 
 
 msgctxt "Operator"
@@ -15844,11 +15823,6 @@ msgid "Grease Pencil Add New"
 msgstr "Нова скица"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Раскачи скицу"
-
-
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
 msgstr "Брише изабране потезе, тачке или кадрове скице"
 
@@ -16686,16 +16660,6 @@ msgstr "Дуплирај метаелементе"
 
 msgid "Duplicate Metaelements"
 msgstr "Дуплирај метаелементе"
-
-
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Сакриј"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Откриј"
 
 
 msgid "Reveal all hidden metaelements"
@@ -18030,6 +17994,11 @@ msgstr "Разгрупиши"
 
 msgid "Ungroup selected nodes"
 msgstr "Разгрупише изабране чворове"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Сакриј"
 
 
 msgid "Toggle hiding of selected nodes"
@@ -19485,6 +19454,11 @@ msgstr "Додаје нову мету честица"
 
 msgid "Number of Keys"
 msgstr "Број кључева"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Откриј"
 
 
 msgid "Show hidden particles"
@@ -21797,10 +21771,6 @@ msgid "Align Camera To View"
 msgstr "Поравнај камеру са погледом"
 
 
-msgid "Selected objects are saved in a temp file"
-msgstr "Изабрани објекти су сачувани у привременој датотеци"
-
-
 msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Подеси 3D курсор"
@@ -21858,11 +21828,6 @@ msgstr "Навигација погледа"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "NDOF померање погледа"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "NDOF окретање погледа"
 
@@ -21870,6 +21835,11 @@ msgstr "NDOF окретање погледа"
 msgctxt "Operator"
 msgid "NDOF Orbit View with Zoom"
 msgstr "NDOF окретање погледа"
+
+
+msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "NDOF померање погледа"
 
 
 msgctxt "Operator"
@@ -21905,11 +21875,6 @@ msgstr "Мени извора"
 
 msgid "Object Name"
 msgstr "Име објекта"
-
-
-msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "Изабери све/ништа"
 
 
 msgctxt "Operator"
@@ -22782,6 +22747,10 @@ msgid "Mist Pass"
 msgstr "Пролаз магле"
 
 
+msgid "Composition Guides"
+msgstr "Вођице слагања"
+
+
 msgid "Passepartout"
 msgstr "Паспарту"
 
@@ -22842,8 +22811,9 @@ msgid "Fluid Presets"
 msgstr "Својства течности:"
 
 
-msgid "Appearance"
-msgstr "Изглед"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Цртај"
 
 
 msgid "Texture Mask"
@@ -22872,6 +22842,10 @@ msgstr "Вектороскоп"
 
 msgid "Waveform"
 msgstr "Таласни облик"
+
+
+msgid "Slot"
+msgstr "Слот"
 
 
 msgid "Delta Transform"
@@ -23030,12 +23004,38 @@ msgid "Dyntopo"
 msgstr "Динамичко вајање"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Повећај/смањи"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Додај"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Обриши"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Линија"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Круг"
+
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "Дебљина"
+
+
 msgid "Armature Options"
 msgstr "Опције костура"
-
-
-msgid "Mesh Options"
-msgstr "Опције меша"
 
 
 msgid "Pose Options"
@@ -23172,14 +23172,6 @@ msgstr "Избор тачака"
 
 msgid "Tip select mode"
 msgstr "Избор врхова"
-
-
-msgid "Draw Particles"
-msgstr "Приказуј честице"
-
-
-msgid "Draw actual particles"
-msgstr "Приказује конкретне честице"
 
 
 msgid "Comb"
@@ -27742,11 +27734,6 @@ msgstr "Пресеци"
 
 
 msgctxt "Operator"
-msgid "Thickness"
-msgstr "Дебљина"
-
-
-msgctxt "Operator"
 msgid "Edge Sharp"
 msgstr "Оштра ивица"
 
@@ -27858,11 +27845,6 @@ msgstr "Обрни избор"
 
 msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "Додај"
 
 
 msgctxt "Operator"
@@ -28549,21 +28531,6 @@ msgstr "Пропорционална измена:"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Цртај"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Обриши"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Линија"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Полигон"
 
@@ -28574,11 +28541,6 @@ msgstr "Извор података:"
 
 msgid "Select:"
 msgstr "Изабери:"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Повећај/смањи"
 
 
 msgctxt "Operator"
@@ -28602,11 +28564,6 @@ msgstr "Родитељ:"
 
 msgid "Transform:"
 msgstr "Трансформација:"
-
-
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Прикажи сакривено"
 
 
 msgctxt "Operator"
@@ -28645,11 +28602,6 @@ msgstr "Крајња храпавост"
 
 msgid "Strand Shape"
 msgstr "Облик нити"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Ново"
 
 
 msgid "Endpoint"
@@ -28928,24 +28880,17 @@ msgstr "Јединствена јачина"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Ново"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Отвори..."
 
 
 msgid "Falloff:"
 msgstr "Опадање:"
-
-
-msgid "Curve:"
-msgstr "Крива:"
-
-
-msgid "Mask Texture:"
-msgstr "Текстура маске:"
-
-
-msgid "Stroke Method:"
-msgstr "Налин исцртавања:"
 
 
 msgctxt "Operator"
@@ -29450,21 +29395,6 @@ msgstr "Интерактивно огледало"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "X опште"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Y опште"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Z опште"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "Курсор на активно"
 
@@ -29607,11 +29537,6 @@ msgstr "Плоча"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Коцка"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Круг"
 
 
 msgctxt "Operator"
@@ -29922,21 +29847,6 @@ msgstr "Поравнај са трансформисаном оријентац�
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "X локално"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Y локално"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Z локално"
-
-
-msgctxt "Operator"
 msgid "Project from View (Bounds)"
 msgstr "Пројектуј из погледа"
 
@@ -30124,14 +30034,6 @@ msgid "Apply Camera Image"
 msgstr "Примени слику камере"
 
 
-msgid "Keep:"
-msgstr "Задржи:"
-
-
-msgid "Lengths"
-msgstr "Дужине"
-
-
 msgid "Path Steps"
 msgstr "Кораци путање"
 
@@ -30144,16 +30046,8 @@ msgid "in memory to enable editing!"
 msgstr "у меморији како би омогућили уређивање!"
 
 
-msgid "Correct:"
-msgstr "Исправка:"
-
-
 msgid "Front Faces Only"
 msgstr "Само предње странице"
-
-
-msgid "Trim"
-msgstr "Скрати"
 
 
 msgid "Auto Normalize"
@@ -31497,10 +31391,6 @@ msgstr " + Z"
 
 msgid ", Frame: %d"
 msgstr ", кадар: %d"
-
-
-msgid "Slot"
-msgstr "Слот"
 
 
 msgid "Slot %d"

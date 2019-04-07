@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -1467,11 +1467,6 @@ msgstr "Geruza partekatuak"
 
 
 msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Hautaketa Ezkutatu"
-
-
-msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Geruza guztiak ireki"
 
@@ -1801,11 +1796,6 @@ msgid "Object Name"
 msgstr "Objectuaren Izena"
 
 
-msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "Guztia Hautatu edo Ez-hautatu"
-
-
 msgid "Play"
 msgstr "Erreproduzitu"
 
@@ -1851,6 +1841,16 @@ msgstr "Bideo Sekuentzia Editorea"
 
 msgid "3D View"
 msgstr "3D Bista"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Eskalatu"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Zirkulua"
 
 
 msgid "Image Editor"
@@ -2036,18 +2036,8 @@ msgstr "Lehentasuna"
 
 
 msgctxt "Operator"
-msgid "Scale"
-msgstr "Eskalatu"
-
-
-msgctxt "Operator"
 msgid "Delete..."
 msgstr "Ezabatu..."
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Berria"
 
 
 msgid "Refraction"
@@ -2062,6 +2052,11 @@ msgstr "Ondoren Garbitu"
 msgctxt "Operator"
 msgid "Clear Before"
 msgstr "Aurretik Garbitu"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Berria"
 
 
 msgctxt "Operator"
@@ -2185,11 +2180,6 @@ msgstr "Planoa"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kuboa"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Zirkulua"
 
 
 msgctxt "Operator"

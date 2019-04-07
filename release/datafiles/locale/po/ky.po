@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -908,20 +908,16 @@ msgid "Millimeters"
 msgstr "Миллиметрлер"
 
 
-msgid "Thirds"
-msgstr "Үчтүн бирлери"
-
-
-msgid "Golden"
-msgstr "Алтын кесилиш"
-
-
 msgid "Golden Triangle A"
 msgstr "Алтын үч бурчтук A"
 
 
 msgid "Golden Triangle B"
 msgstr "Алтын үч бурчтук B"
+
+
+msgid "Thirds"
+msgstr "Үчтүн бирлери"
 
 
 msgid "Camera types"
@@ -1726,6 +1722,11 @@ msgid "Move"
 msgstr "Ташуу"
 
 
+msgctxt "Operator"
+msgid "Hide Selected"
+msgstr "Тандалганын жашыруу"
+
+
 msgctxt "Curve"
 msgid "Mode"
 msgstr "Режим"
@@ -1896,11 +1897,6 @@ msgstr "B-салмак"
 
 msgid "Align"
 msgstr "Түздөө"
-
-
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Тандалганын жашыруу"
 
 
 msgctxt "Operator"
@@ -2165,11 +2161,6 @@ msgstr "Материалды коюу"
 
 
 msgctxt "Operator"
-msgid "Hide"
-msgstr "Жашыруу"
-
-
-msgctxt "Operator"
 msgid "Fill"
 msgstr "Толтуруу"
 
@@ -2246,6 +2237,11 @@ msgstr "Мурунку"
 
 msgid "Exit"
 msgstr "Чыгуу"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Жашыруу"
 
 
 msgctxt "Operator"
@@ -2906,6 +2902,11 @@ msgid "System"
 msgstr "Система"
 
 
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Тартуу"
+
+
 msgid "Histogram"
 msgstr "Гистограмма"
 
@@ -2956,6 +2957,26 @@ msgstr "3D-көрүнүш"
 
 msgid "Print3D"
 msgstr "3D-басма"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Масштаб"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Кошуу"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Түз сызык"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Тегерек"
 
 
 msgid "Editing"
@@ -3428,11 +3449,6 @@ msgstr "[{}]: \"{}\" ({})"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Кошуу"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Оңдоо"
 
@@ -3524,21 +3540,6 @@ msgstr "Тартуу:"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Тартуу"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Түз сызык"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Масштаб"
-
-
-msgctxt "Operator"
 msgid "Delete..."
 msgstr "Өчүрүү..."
 
@@ -3550,11 +3551,6 @@ msgstr "Өзгөртүү:"
 msgctxt "Operator"
 msgid "All"
 msgstr "Баары"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Жаңы"
 
 
 msgctxt "Operator"
@@ -3588,6 +3584,11 @@ msgstr "Пол"
 msgctxt "Operator"
 msgid "Wall"
 msgstr "Дубал"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Жаңы"
 
 
 msgctxt "Operator"
@@ -3807,11 +3808,6 @@ msgstr "Тегиздик"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Куб"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Тегерек"
 
 
 msgctxt "Operator"
