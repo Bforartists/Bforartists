@@ -509,11 +509,11 @@ static void gp_brush_jitter(
 static void gp_brush_angle(bGPdata *gpd, Brush *brush, tGPspoint *pt, const float mval[2])
 {
 	float mvec[2];
-	float sen = brush->gpencil_settings->draw_angle_factor; /* sensitivity */;
+	float sen = brush->gpencil_settings->draw_angle_factor; /* sensitivity */
 	float fac;
 	float mpressure;
 
-	/* default angle of brush in radians */;
+	/* default angle of brush in radians */
 	float angle = brush->gpencil_settings->draw_angle;
 	/* angle vector of the brush with full thickness */
 	float v0[2] = { cos(angle), sin(angle) };
@@ -1363,11 +1363,10 @@ static void gp_free_stroke(bGPdata *gpd, bGPDframe *gpf, bGPDstroke *gps)
  * to avoid that segments gets the end points rounded.
  * The round caps breaks the artistic effect.
  */
-static void gp_stroke_soft_refine(bGPDstroke *gps, const float cull_thresh)
+static void gp_stroke_soft_refine(bGPDstroke *gps)
 {
 	bGPDspoint *pt = NULL;
-	bGPDspoint *pt_before = NULL;
-	bGPDspoint *pt_after = NULL;
+	bGPDspoint *pt2 = NULL;
 	int i;
 
 	/* check if enough points*/
@@ -1375,54 +1374,25 @@ static void gp_stroke_soft_refine(bGPDstroke *gps, const float cull_thresh)
 		return;
 	}
 
-	/* loop all points from second to last minus one
-	 * to untag any point that is not surrounded by tagged points
-	 */
+	/* loop all points to untag any point that next is not tagged */
 	pt = gps->points;
 	for (i = 1; i < gps->totpoints - 1; i++, pt++) {
 		if (pt->flag & GP_SPOINT_TAG) {
-			pt_before = &gps->points[i - 1];
-			pt_after = &gps->points[i + 1];
-
-			/* if any of the side points are not tagged, mark to keep */
-			if (((pt_before->flag & GP_SPOINT_TAG) == 0) ||
-			    ((pt_after->flag & GP_SPOINT_TAG) == 0))
-			{
-				if (pt->pressure > cull_thresh) {
-					pt->flag |= GP_SPOINT_TEMP_TAG;
-				}
-			}
-			else {
-				/* reduce opacity of extreme points */
-				if ((pt_before->flag & GP_SPOINT_TAG) == 0) {
-					pt_before->strength *= 0.5f;
-				}
-				if ((pt_after->flag & GP_SPOINT_TAG) == 0) {
-					pt_after->strength *= 0.5f;
-				}
+			pt2 = &gps->points[i + 1];
+			if ((pt2->flag & GP_SPOINT_TAG) == 0) {
+				pt->flag &= ~GP_SPOINT_TAG;
 			}
 		}
 	}
 
-	/* last point special case to get smoother transition */
+	/* loop reverse all points to untag any point that previous is not tagged */
 	pt = &gps->points[gps->totpoints - 1];
-	pt_before = &gps->points[gps->totpoints - 2];
-	if (pt->flag & GP_SPOINT_TAG) {
-		pt->flag &= ~GP_SPOINT_TAG;
-		pt->flag &= ~GP_SPOINT_TEMP_TAG;
-		pt->strength = 0.0f;
-
-		pt_before->flag &= ~GP_SPOINT_TAG;
-		pt_before->flag &= ~GP_SPOINT_TEMP_TAG;
-		pt_before->strength *= 0.5f;
-	}
-
-	/* now untag temp tagged */
-	pt = gps->points;
-	for (i = 1; i < gps->totpoints - 1; i++, pt++) {
-		if (pt->flag & GP_SPOINT_TEMP_TAG) {
-			pt->flag &= ~GP_SPOINT_TAG;
-			pt->flag &= ~GP_SPOINT_TEMP_TAG;
+	for (i = gps->totpoints - 1; i > 0; i--, pt--) {
+		if (pt->flag & GP_SPOINT_TAG) {
+			pt2 = &gps->points[i - 1];
+			if ((pt2->flag & GP_SPOINT_TAG) == 0) {
+				pt->flag &= ~GP_SPOINT_TAG;
+			}
 		}
 	}
 }
@@ -1632,7 +1602,7 @@ static void gp_stroke_eraser_dostroke(tGPsdata *p,
 			/* if soft eraser, must analyze points to be sure the stroke ends
 			 * don't get rounded */
 			if (eraser->gpencil_settings->eraser_mode == GP_BRUSH_ERASER_SOFT) {
-				gp_stroke_soft_refine(gps, cull_thresh);
+				gp_stroke_soft_refine(gps);
 			}
 
 			gp_stroke_delete_tagged_points(gpf, gps, gps->next, GP_SPOINT_TAG, false, 0);
@@ -1738,6 +1708,9 @@ static void gp_session_validatebuffer(tGPsdata *p)
 	/* reset flags */
 	gpd->runtime.sbuffer_sflag = 0;
 
+	/* reset region */
+	gpd->runtime.ar = NULL;
+
 	/* reset inittime */
 	p->inittime = 0.0;
 
@@ -1814,11 +1787,12 @@ static void gp_init_drawing_brush(bContext *C, tGPsdata *p)
 	ToolSettings *ts = CTX_data_tool_settings(C);
 
 	Paint *paint = &ts->gp_paint->paint;
-
+	bool changed = false;
 	/* if not exist, create a new one */
 	if (paint->brush == NULL) {
 		/* create new brushes */
 		BKE_brush_gpencil_presets(C);
+		changed = true;
 	}
 	/* be sure curves are initializated */
 	curvemapping_initialize(paint->brush->gpencil_settings->curve_sensitivity);
@@ -1843,7 +1817,9 @@ static void gp_init_drawing_brush(bContext *C, tGPsdata *p)
 	 * Maybe this update can be removed when the new tool system
 	 * will be in place, but while, we need this to keep drawing working.
 	 */
-	DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+	if (changed) {
+		DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
+	}
 }
 
 
@@ -1976,13 +1952,6 @@ static bool gp_session_initdata(bContext *C, wmOperator *op, tGPsdata *p)
 		p->gpd = *gpd_ptr;
 	}
 
-	if (ED_gpencil_session_active() == 0) {
-		/* initialize undo stack,
-		 * also, existing undo stack would make buffer drawn
-		 */
-		gpencil_undo_init(p->gpd);
-	}
-
 	/* clear out buffer (stored in gp-data), in case something contaminated it */
 	gp_session_validatebuffer(p);
 
@@ -1991,6 +1960,9 @@ static bool gp_session_initdata(bContext *C, wmOperator *op, tGPsdata *p)
 
 	/* setup active color */
 	if (curarea->spacetype == SPACE_VIEW3D) {
+		/* region where paint was originated */
+		p->gpd->runtime.ar = CTX_wm_region(C);
+
 		/* NOTE: This is only done for 3D view, as Materials aren't used for
 		 *       annotations in 2D editors
 		 */
@@ -2013,9 +1985,6 @@ static bool gp_session_initdata(bContext *C, wmOperator *op, tGPsdata *p)
 	else {
 		p->lock_axis = 0;
 	}
-
-	/* region where paint was originated */
-	p->gpd->runtime.ar = CTX_wm_region(C);
 
 	return 1;
 }
@@ -2164,8 +2133,6 @@ static void gp_paint_initstroke(tGPsdata *p, eGPencil_PaintModes paintmode, Deps
 			add_frame_mode = GP_GETFRAME_ADD_NEW;
 
 		p->gpf = BKE_gpencil_layer_getframe(p->gpl, cfra_eval, add_frame_mode);
-		/* set as dirty draw manager cache */
-		gp_update_cache(p->gpd);
 
 		if (p->gpf == NULL) {
 			p->status = GP_STATUS_ERROR;

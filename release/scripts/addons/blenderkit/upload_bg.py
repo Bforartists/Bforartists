@@ -97,8 +97,8 @@ def upload_files(filepath, upload_data, files):
                     upload_response = requests.put(upload['s3UploadUrl'],
                                                    data=upload_in_chunks(f['file_path'], chunk_size, f['type']),
                                                    stream=True, verify=True)
-                    print('upload response')
-                    print(upload_response.text)
+                    # print('upload response')
+                    # print(upload_response.text)
                     uploaded = True
                 except Exception as e:
                     bg_blender.progress('Upload %s failed, retrying' % f['type'])

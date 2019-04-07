@@ -176,7 +176,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 					else if (theme_regionid == RGN_TYPE_CHANNELS) {
 						cp = ts->list;
 					}
-					else if (theme_regionid == RGN_TYPE_HEADER) {
+					else if (ELEM(theme_regionid, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)) {
 						cp = ts->header;
 					}
 					else if (theme_regionid == RGN_TYPE_NAV_BAR) {
@@ -210,7 +210,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 					else if (theme_regionid == RGN_TYPE_CHANNELS) {
 						cp = ts->list_text;
 					}
-					else if (theme_regionid == RGN_TYPE_HEADER) {
+					else if (ELEM(theme_regionid, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)) {
 						cp = ts->header_text;
 					}
 					else {
@@ -224,7 +224,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 					else if (theme_regionid == RGN_TYPE_CHANNELS) {
 						cp = ts->list_text_hi;
 					}
-					else if (theme_regionid == RGN_TYPE_HEADER) {
+					else if (ELEM(theme_regionid, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)) {
 						cp = ts->header_text_hi;
 					}
 					else {
@@ -238,7 +238,7 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
 					else if (theme_regionid == RGN_TYPE_CHANNELS) {
 						cp = ts->list_title;
 					}
-					else if (theme_regionid == RGN_TYPE_HEADER) {
+					else if (ELEM(theme_regionid, RGN_TYPE_HEADER, RGN_TYPE_FOOTER)) {
 						cp = ts->header_title;
 					}
 					else {

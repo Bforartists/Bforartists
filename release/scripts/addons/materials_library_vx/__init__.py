@@ -22,8 +22,7 @@ bl_info = {
   "name": "Material Library",
   "author": "Mackraken (mackraken2023@hotmail.com)",
   "version": (0, 5, 8),
-  "blender": (2, 78, 0),
-  "api": 60995,
+  "blender": (2, 80, 0),
   "location": "Properties > Material",
   "description": "Material Library VX",
   "warning": "",
@@ -42,10 +41,11 @@ from bpy.props import (
 )
 from bpy.types import (
     Panel, Menu, AddonPreferences, Operator,
-    PropertyGroup,
+    PropertyGroup, UIList,
     Scene
 )
 
+from rna_prop_ui import PropertyPanel
 
 dev = False
 
@@ -727,9 +727,9 @@ bpy.ops.wm.save_mainfile(filepath="%s", check_existing=False, compress=True)''' 
       except:
         me = bpy.data.meshes.new(dummy_mesh)
       dummy = bpy.data.objects.new(dummy_name, me)
-      scn.objects.link(dummy)
+      context.collection.objects.link(dummy)
 
-    dummy.hide = True
+    dummy.hide_set(True)
     dummy.hide_render = True
     dummy.hide_select = True
     return dummy
@@ -1140,9 +1140,9 @@ class MATLIB_PT_vxPanel(Panel):
       text = "Select a Library"
 
     row.menu("MATLIB_MT_LibsMenu",text=text)
-    row.operator("matlib.operator", icon="ZOOMIN", text="").cmd = "LIBRARY_ADD"
+    row.operator("matlib.operator", icon="ADD", text="").cmd = "LIBRARY_ADD"
     if matlib.active_material:
-      row.label(matlib.active_material.category)
+      row.label(text = matlib.active_material.category)
     else:
       row.label(text="")
 #
@@ -1158,12 +1158,12 @@ class MATLIB_PT_vxPanel(Panel):
     row = layout.row()
 
       #operators
-    col.operator("matlib.add", icon="ZOOMIN", text="")
-    col.operator("matlib.remove", icon="ZOOMOUT", text="")
-    col.operator("matlib.reload", icon="FILE_REFRESH", text="")
-    col.operator("matlib.apply", icon="MATERIAL", text="")
-    col.operator("matlib.preview", icon="COLOR", text="")
-    col.operator("matlib.flush", icon="GHOST_DISABLED", text="")
+    col.operator("matlib.operator", icon="ADD", text="").cmd="ADD"
+    col.operator("matlib.operator", icon="REMOVE", text="").cmd="REMOVE"
+    col.operator("matlib.operator", icon="FILE_REFRESH", text="").cmd="RELOAD"
+    col.operator("matlib.operator", icon="MATERIAL", text="").cmd="APPLY"
+    col.operator("matlib.operator", icon="COLOR", text="").cmd="PREVIEW"
+    col.operator("matlib.operator", icon="GHOST_DISABLED", text="").cmd="FLUSH"
     col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
 
     #categories
@@ -1173,8 +1173,8 @@ class MATLIB_PT_vxPanel(Panel):
     row.menu("MATLIB_MT_CatsMenu",text=text)
     row.prop(matlib, "filter", icon="FILTER", text="")
     row.operator("matlib.operator", icon="FILE_PARENT", text="").cmd="FILTER_SET"
-    row.operator("matlib.operator", icon="ZOOMIN", text="").cmd="FILTER_ADD"
-    row.operator("matlib.operator", icon="ZOOMOUT", text="").cmd="FILTER_REMOVE"
+    row.operator("matlib.operator", icon="ADD", text="").cmd="FILTER_ADD"
+    row.operator("matlib.operator", icon="REMOVE", text="").cmd="FILTER_REMOVE"
 
     #prefs
     if matlib.show_prefs:
@@ -1192,10 +1192,18 @@ class MATLIB_PT_vxPanel(Panel):
 #        row.label(matlib.current_library.name)
 #      else:
 #        row.label("Library not found!.")
-
-#classes = [MATLIB_PT_vxPanel, MATLIB_OT_operator, MATLIB_MT_LibsMenu, MATLIB_MT_CatsMenu]
+"""
+classes = [
+matlibMaterials,
+matlibProperties,
+EmptyGroup,
+MATLIB_PT_vxPanel, 
+MATLIB_OT_operator, 
+MATLIB_MT_LibsMenu, 
+MATLIB_MT_CatsMenu
+]
 #print(bpy.context.scene)
-
+"""
 
 @persistent
 def refresh_libs(dummy=None):
@@ -1221,12 +1229,41 @@ class matlibvxPref(AddonPreferences):
         layout = self.layout
         layout.prop(self, "matlib_path")
 
-
+classes = [
+matlibMaterials,
+EmptyGroup,
+MATLIB_PT_vxPanel, 
+MATLIB_OT_operator,
+MATLIB_MT_LibsMenu, 
+MATLIB_MT_CatsMenu,
+matlibProperties,
+]
+        
+"""
+classes = [
+matlibProperties,
+EmptyGroup,
+matlibMaterials,
+Categories,
+Library,
+MATLIB_MT_LibsMenu,
+MATLIB_MT_CatsMenu,
+MATLIB_OT_add,
+MATLIB_OT_remove,
+MATLIB_OT_remove,
+MATLIB_OT_apply,
+MATLIB_OT_preview,
+MATLIB_OT_flush,
+MATLIB_OT_operator,
+MATLIB_PT_vxPanel,
+matlibvxPref
+]
+"""
 def register():
     global libraries
-    bpy.utils.register_module(__name__)
-    #  for c in classes:
-    #    bpy.utils.register_class(c)
+    #bpy.utils.register_module(__name__)
+    for c in classes:
+        bpy.utils.register_class(c)
     Scene.matlib_categories = CollectionProperty(type=EmptyGroup)
     Scene.matlib = PointerProperty(type = matlibProperties)
     bpy.app.handlers.load_post.append(refresh_libs)
@@ -1235,7 +1272,7 @@ def register():
 
 def unregister():
     global libraries
-    bpy.utils.unregister_module(__name__)
+    #bpy.utils.unregister_module(__name__)
     try:
         # raise ValueError list.remove(x): x not in list
         del Scene.matlib_categories
@@ -1244,8 +1281,8 @@ def unregister():
     del Scene.matlib
     libraries.clear()
     bpy.app.handlers.load_post.remove(refresh_libs)
-    # for c in classes:
-    #   bpy.utils.unregister_class(c)
+    for c in classes:
+       bpy.utils.unregister_class(c)
 
 
 if __name__ == "__main__":

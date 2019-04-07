@@ -42,6 +42,9 @@ from mathutils import Vector
 import time
 import os
 
+handler_2d = None
+handler_3d = None
+
 mappingdict = {
     'MODEL': 'model',
     'SCENE': 'scene',
@@ -939,7 +942,7 @@ class AssetBarOperator(bpy.types.Operator):
             return {'CANCELLED'}
 
         if self.area not in areas or self.area.type != 'VIEW_3D':
-            print('search areas')
+            # print('search areas')
             # stopping here model by now - because of:
             #   switching layouts or maximizing area now fails to assign new area throwing the bug
             #   internal error: modal gizmo-map handler has invalid area
@@ -1132,7 +1135,7 @@ class AssetBarOperator(bpy.types.Operator):
                 if ui_props.has_hit and ui_props.asset_type == 'MODEL':
                     # this condition is here to fix a bug for a scene submitted by a user, so this situation shouldn't
                     # happen anymore, but there might exists scenes which have this problem for some reason.
-                    if ui_props.active_index<len(sr) and ui_props.active_index>-1:
+                    if ui_props.active_index < len(sr) and ui_props.active_index > -1:
                         ui_props.draw_snapped_bounds = True
                         active_mod = sr[ui_props.active_index]
                         ui_props.snapped_bbox_min = Vector(active_mod['bbox_min'])
@@ -1225,7 +1228,6 @@ class AssetBarOperator(bpy.types.Operator):
                             utils.selection_set(sel)
 
                         if not ui_props.has_hit:
-                            print('select fun')
                             return {'RUNNING_MODAL'}
 
                         else:
@@ -1339,7 +1341,7 @@ class AssetBarOperator(bpy.types.Operator):
                 pass
             return {'FINISHED'}
 
-        ui_props.dragging = False #only for cases where assetbar ended with an error.
+        ui_props.dragging = False  # only for cases where assetbar ended with an error.
         ui_props.assetbar_on = True
         ui_props.turn_off = False
 
@@ -1384,12 +1386,15 @@ addon_keymaps = []
 
 
 def register_ui():
+    global handler_2d, handler_3d
+
     for c in classess:
         bpy.utils.register_class(c)
 
     args = (None, bpy.context)
-    bpy.types.SpaceView3D.draw_handler_add(draw_callback_2d_progress, args, 'WINDOW', 'POST_PIXEL')
-    bpy.types.SpaceView3D.draw_handler_add(draw_callback_3d_progress, args, 'WINDOW', 'POST_VIEW')
+
+    handler_2d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_2d_progress, args, 'WINDOW', 'POST_PIXEL')
+    handler_3d = bpy.types.SpaceView3D.draw_handler_add(draw_callback_3d_progress, args, 'WINDOW', 'POST_VIEW')
 
     wm = bpy.context.window_manager
 
@@ -1405,16 +1410,17 @@ def register_ui():
 
 
 def unregister_ui():
+    global handler_2d, handler_3d
+
+    bpy.types.SpaceView3D.draw_handler_remove(handler_2d, 'WINDOW')
+    bpy.types.SpaceView3D.draw_handler_remove(handler_3d, 'WINDOW')
+
     for c in classess:
         bpy.utils.unregister_class(c)
 
     args = (None, bpy.context)
 
-    try:
-        bpy.types.SpaceView3D.draw_handler_remove(draw_callback_2d_progress, args, 'WINDOW', 'POST_PIXEL')
-        bpy.types.SpaceView3D.draw_handler_remove(draw_callback_3d_progress, args, 'WINDOW', 'POST_VIEW')
-    except:
-        print('handlers allready removed')
+
     wm = bpy.context.window_manager
     if not wm.keyconfigs.addon:
         return

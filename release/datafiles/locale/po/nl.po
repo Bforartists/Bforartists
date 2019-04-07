@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1824,11 +1824,6 @@ msgstr "Namen Omdraaien"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "Verberg Geselecteerde Botten"
-
-
-msgctxt "Operator"
 msgid "Show All Layers"
 msgstr "Toon Alle Lagen"
 
@@ -1850,11 +1845,6 @@ msgstr "Maak Ouder Schoon"
 msgctxt "Operator"
 msgid "Make Parent"
 msgstr "Maak Ouder"
-
-
-msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Toon Botten"
 
 
 msgctxt "Operator"
@@ -2483,11 +2473,6 @@ msgid "Grease Pencil Add New"
 msgstr "Voeg Nieuwe Vetkrijt Toe"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Ontkoppel"
-
-
 msgid "Delete selected strokes"
 msgstr "Verwijder geselecteerde strepen"
 
@@ -2562,11 +2547,6 @@ msgstr "Vergrendel Alle Lagen"
 msgctxt "Operator"
 msgid "Paste Strokes"
 msgstr "Plak Strepen"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Verberg Selectie"
 
 
 msgctxt "Operator"
@@ -4401,6 +4381,11 @@ msgid "System Bookmarks"
 msgstr "Systeem Boekenleggers"
 
 
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Tekenen"
+
+
 msgid "Springs"
 msgstr "Veren"
 
@@ -4427,6 +4412,31 @@ msgstr "Tijdslijn"
 
 msgid "Development"
 msgstr "Ontwikkeling"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Schaal"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Toevoegen"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Gummen"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Lijn"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cirkel"
 
 
 msgid "Custom Object"
@@ -4889,11 +4899,6 @@ msgstr "Laden"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Toevoegen"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Bewerken"
 
@@ -4914,13 +4919,13 @@ msgstr "Animeer Pad"
 
 
 msgctxt "Operator"
-msgid "Add Bone Constraint"
-msgstr "Voeg Beperking voor Botten Toe"
+msgid "Add Object Constraint"
+msgstr "Voeg Beperking voor Objecten Toe"
 
 
 msgctxt "Operator"
-msgid "Add Object Constraint"
-msgstr "Voeg Beperking voor Objecten Toe"
+msgid "Add Bone Constraint"
+msgstr "Voeg Beperking voor Botten Toe"
 
 
 msgctxt "Operator"
@@ -5106,28 +5111,8 @@ msgid "Convert..."
 msgstr "Converteer..."
 
 
-msgctxt "Operator"
-msgid "Draw"
-msgstr "Tekenen"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Gummen"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Lijn"
-
-
 msgid "Select:"
 msgstr "Selecteer:"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Schaal"
 
 
 msgctxt "Operator"
@@ -5166,11 +5151,6 @@ msgstr "Meer..."
 
 
 msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Toon Niet Zichtbaar"
-
-
-msgctxt "Operator"
 msgid "Scale Feather"
 msgstr "Schaal Veer"
 
@@ -5182,11 +5162,6 @@ msgstr "Verberg niet Geselecteerd"
 
 msgid "Old"
 msgstr "Oud"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nieuw"
 
 
 msgid "Endpoint"
@@ -5289,6 +5264,11 @@ msgstr "Minder"
 msgctxt "Operator"
 msgid "More"
 msgstr "Meer"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Nieuw"
 
 
 msgctxt "Operator"
@@ -5429,21 +5409,6 @@ msgstr "Auteur:"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "X Globaal"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Y Globaal"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Z Globaal"
-
-
-msgctxt "Operator"
 msgid "Active Camera"
 msgstr "Actieve Camera"
 
@@ -5526,11 +5491,6 @@ msgstr "Vlak"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kubus"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Cirkel"
 
 
 msgctxt "Operator"
@@ -5711,21 +5671,6 @@ msgstr "Maak"
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Scherp"
-
-
-msgctxt "Operator"
-msgid "X Local"
-msgstr "X Lokaal"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Y Lokaal"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Z Lokaal"
 
 
 msgctxt "Operator"

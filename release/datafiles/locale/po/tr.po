@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -3024,10 +3024,6 @@ msgid "Field Settings"
 msgstr "Kemik Ayarları"
 
 
-msgid "Effect particles' location"
-msgstr "Varsayılan ses konumu seçin"
-
-
 msgid "Maximum Distance"
 msgstr "Falloff Mesafesi"
 
@@ -4182,10 +4178,6 @@ msgstr "Ağırlık Boyama"
 
 msgid "Inverse Smooth Pressure"
 msgstr "Eğrileri yumuşat"
-
-
-msgid "Use Blender Units"
-msgstr "Blender Materyallerini Kullan"
 
 
 msgid "Plane Offset Pressure"
@@ -10770,8 +10762,8 @@ msgstr "Normale Çevir "
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "Seçili İşaretler arasında"
+msgid "Hide Selected"
+msgstr "Seçileni Gizle"
 
 
 msgid "Unselected"
@@ -10807,6 +10799,11 @@ msgstr "Kesme Biçimi "
 
 msgid "Keep Offset"
 msgstr "Orijinali Koru"
+
+
+msgctxt "Operator"
+msgid "Reveal Hidden"
+msgstr "Gizlileri Göster"
 
 
 msgctxt "Operator"
@@ -11837,11 +11834,6 @@ msgid "Toggle Free/Align"
 msgstr "Küçük Harf Yap"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Seçileni Gizle"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Menüyü Göster/Gizle"
 
@@ -11912,11 +11904,6 @@ msgstr "Dosya yolu"
 msgctxt "Operator"
 msgid "Set Curve Radius"
 msgstr "Eğriyi buna Çevir"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Gizlileri Göster"
 
 
 msgid "(De)select all control points"
@@ -12828,11 +12815,6 @@ msgstr "Yeni Ekle (Şimdiki Kareye)"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Resim bloğunu bağlama (Sil)"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Mesh Gölgesini Çiz"
 
@@ -12868,11 +12850,6 @@ msgstr "Konum Kısıtlamaları"
 
 msgid "Shared layers"
 msgstr "Katmandaki tüm nesneler"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Seçim Çevresi"
 
 
 msgctxt "Operator"
@@ -13595,16 +13572,6 @@ msgstr "Bağlantılı Çoğalt"
 
 msgid "Duplicate selected metaelement(s)"
 msgstr "Seçili İşaretler arasında"
-
-
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Gizle"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Göster"
 
 
 msgid "Randomly select metaelements"
@@ -14754,6 +14721,11 @@ msgstr "Grupsuz"
 
 msgid "Ungroup selected nodes"
 msgstr "Seçili İşaretler arasında"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Gizle"
 
 
 msgctxt "Operator"
@@ -16415,6 +16387,11 @@ msgstr "Anahtarları Ters Çevir"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Parçacık Sistemleri bağına gözat"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Göster"
 
 
 msgid "Show hidden particles"
@@ -18477,15 +18454,6 @@ msgstr "Aktif Kamerayı Seçilene Hizala"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "İmleci Merkez al"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Seçili Nesne ve Bilgileri"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "3D İmlecin X koordinatı"
 
@@ -18518,11 +18486,6 @@ msgstr "Görünüşü Sıfırla"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Görüntü çevirme metodu:"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Görüntü çevirme metodu:"
 
@@ -18533,13 +18496,13 @@ msgstr "Görüntü çevirme metodu:"
 
 
 msgctxt "Operator"
-msgid "Set Active Object as Camera"
-msgstr "Seçili Kamerayı Aktif Yap"
+msgid "NDOF Pan View"
+msgstr "Görüntü çevirme metodu:"
 
 
 msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "İmleci Merkez al"
+msgid "Set Active Object as Camera"
+msgstr "Seçili Kamerayı Aktif Yap"
 
 
 msgctxt "Operator"
@@ -19371,6 +19334,11 @@ msgid "Sample Line"
 msgstr "Tam Doğrultu"
 
 
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Çiz:"
+
+
 msgid "2D Cursor"
 msgstr "3D İmleç "
 
@@ -19507,11 +19475,32 @@ msgid "Motion Tracking"
 msgstr "Parçacık Hareketi"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Ölçekle"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Ekle"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Sil "
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Tam Doğrultu"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Çember"
+
+
 msgid "Armature Options"
-msgstr "Kırpma Seçenekleri"
-
-
-msgid "Mesh Options"
 msgstr "Kırpma Seçenekleri"
 
 
@@ -19625,14 +19614,6 @@ msgstr "Kenar Seçme Modu:"
 
 msgid "Tip select mode"
 msgstr "Kenar Seçme Modu:"
-
-
-msgid "Draw Particles"
-msgstr "Kenarları Vurgula"
-
-
-msgid "Draw actual particles"
-msgstr "Mesh Gölgesini Çiz"
 
 
 msgid "Smooth hairs"
@@ -23993,11 +23974,6 @@ msgstr "Seçim Çevresi"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Ekle"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -24554,28 +24530,8 @@ msgstr "İmleci Izgaraya"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Çiz:"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Sil "
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Tam Doğrultu"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Oynat"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Ölçekle"
 
 
 msgctxt "Operator"
@@ -24599,11 +24555,6 @@ msgstr "Ebeveyn Nesne"
 
 msgid "Transform:"
 msgstr "Dönüştür:"
-
-
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Gizlileri Göster"
 
 
 msgctxt "Operator"
@@ -24640,11 +24591,6 @@ msgstr "Bitiş Zamanı"
 
 msgid "Strand Shape"
 msgstr "Şekil Anahtarı Ekle"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Yeni"
 
 
 msgid "Settings used for fluid"
@@ -24959,6 +24905,11 @@ msgstr "Tümleşik Boyut"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Yeni"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Aç..."
 
@@ -24970,14 +24921,6 @@ msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
 msgid "Falloff:"
 msgstr "Bozulma Profili: "
-
-
-msgid "Curve:"
-msgstr "Eğri:"
-
-
-msgid "Stroke Method:"
-msgstr "Kontur Metodu:"
 
 
 msgctxt "Operator"
@@ -25460,21 +25403,6 @@ msgstr "Etkileşimli Aynala"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "Genel X"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Genel Y"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Genel Z"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "İmleci Aktif Olana"
 
@@ -25612,11 +25540,6 @@ msgstr "Düzlem"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Küp"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Çember"
 
 
 msgctxt "Operator"
@@ -25917,21 +25840,6 @@ msgstr "Dönüşüm Konumlarını Hizala"
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "X Lokal"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Y Lokal"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Z Lokal"
-
-
-msgctxt "Operator"
 msgid "Center Cursor and View All"
 msgstr "İmleci Ortala ve Tümünü Göster"
 
@@ -26114,28 +26022,12 @@ msgid "Apply Camera Image"
 msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
 
-msgid "Keep:"
-msgstr "Sakla:"
-
-
-msgid "Lengths"
-msgstr "Uzunluklar"
-
-
 msgid "Path Steps"
 msgstr "Yol Adımları"
 
 
-msgid "Correct:"
-msgstr "Doğru:"
-
-
 msgid "Front Faces Only"
 msgstr "Yalnızca Ön Yüz"
-
-
-msgid "Trim"
-msgstr "Kırp"
 
 
 msgid "Auto Normalize"

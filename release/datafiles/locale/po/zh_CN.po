@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: \n"
 "Last-Translator: congcong009 <congcong009@gmail.com>\n"
 "Language-Team: \n"
@@ -7562,14 +7562,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "物体仿真的物体力场设置"
 
 
-msgid "Effect particles' location"
-msgstr "影响粒子的位置"
-
-
-msgid "Effect particles' dynamic rotation"
-msgstr "粒子的动态转动效果"
-
-
 msgid "Maximum Distance"
 msgstr "最大距离"
 
@@ -7991,7 +7983,7 @@ msgstr "小"
 
 
 msgid "Regular"
-msgstr "常规字体"
+msgstr "常规"
 
 
 msgid "Large"
@@ -10880,14 +10872,6 @@ msgid "Lighter pressure causes more smoothing to be applied"
 msgstr "压力越轻, 则越平滑"
 
 
-msgid "Use Blender Units"
-msgstr "使用 Blender 单位"
-
-
-msgid "When locked brush stays same size relative to object; when unlocked brush size is given in pixels"
-msgstr "当锁定的笔刷相对于物体保持同一尺寸时, 当以像素值来指定未锁定的笔刷尺寸时"
-
-
 msgid "Plane Offset Pressure"
 msgstr "平面位移压感"
 
@@ -11010,10 +10994,6 @@ msgstr "平滑笔画"
 
 msgid "Brush lags behind mouse and follows a smoother path"
 msgstr "笔刷会在鼠标轨迹之后沿平滑轨迹产生滞后跟随效果"
-
-
-msgid "Use Automatic Strength Adjustment"
-msgstr "使用自动力度调节"
 
 
 msgid "Automatically adjust strength to give consistent results for different spacings"
@@ -11224,20 +11204,8 @@ msgid "Display reference images behind objects in the 3D View"
 msgstr "在 3D 视图的物体后方显示参考图"
 
 
-msgid "Composition Guides"
-msgstr "构图辅助线"
-
-
 msgid "Center Diagonal"
 msgstr "对角中分"
-
-
-msgid "Thirds"
-msgstr "九宫分割"
-
-
-msgid "Golden"
-msgstr "黄金分割"
 
 
 msgid "Golden Triangle A"
@@ -11254,6 +11222,10 @@ msgstr "均衡三角切A"
 
 msgid "Harmonious Triangle B"
 msgstr "均衡三角切B"
+
+
+msgid "Thirds"
+msgstr "九宫分割"
 
 
 msgid "Show Limits"
@@ -15510,6 +15482,10 @@ msgstr "标记自定义标记"
 
 msgid "User defined note for the render stamping"
 msgstr "为渲染戳记使用默认的注释信息"
+
+
+msgid "View Layers"
+msgstr "查看层"
 
 
 msgid "View Settings"
@@ -21227,7 +21203,7 @@ msgstr "生成新的表面, 使用跟随输入网格形态的常规拓扑"
 
 
 msgid "Blocks"
-msgstr "区块"
+msgstr "块状"
 
 
 msgid "Output a blocky surface with no smoothing"
@@ -27731,8 +27707,8 @@ msgstr "翻转(并纠正)所选骨骼名称的轴向后缀"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
-msgstr "因此所选骨骼"
+msgid "Hide Selected"
+msgstr "隐藏选中项"
 
 
 msgid "Tag selected bones to not be visible in Edit Mode"
@@ -27820,8 +27796,8 @@ msgstr "保持偏移量"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "显示隐藏的骨骼"
+msgid "Reveal Hidden"
+msgstr "恢复显示隐藏项"
 
 
 msgctxt "Operator"
@@ -29867,11 +29843,6 @@ msgid "Toggle Free/Align"
 msgstr "切换自由 / 对齐"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "隐藏选中项"
-
-
 msgid "Hide (un)selected control points"
 msgstr "隐藏(未)选定的控制点"
 
@@ -29979,11 +29950,6 @@ msgstr "设置曲率半径"
 
 msgid "Set per-point radius which is used for bevel tapering"
 msgstr "设置用作椎状倒角的每点半径"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "恢复显示隐藏项"
 
 
 msgid "Reveal hidden control points"
@@ -31694,11 +31660,6 @@ msgstr "新增蜡笔"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "取消关联蜡笔"
-
-
-msgctxt "Operator"
 msgid "Dissolve"
 msgstr "消融"
 
@@ -31826,11 +31787,6 @@ msgstr "用套索选择笔触"
 
 msgid "Select Grease Pencil strokes using lasso selection"
 msgstr "用套索选择蜡笔笔触"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "隐藏所选项"
 
 
 msgctxt "Operator"
@@ -33192,18 +33148,8 @@ msgid "Duplicate Metaelements"
 msgstr "复制复合元素"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "隐藏"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "隐藏(未)选定的相关元素"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "取消全部隐藏"
 
 
 msgid "Reveal all hidden metaelements"
@@ -35950,6 +35896,11 @@ msgid "Toggle unused node socket display"
 msgstr "切换显示节点上未用的接口"
 
 
+msgctxt "Operator"
+msgid "Hide"
+msgstr "隐藏"
+
+
 msgid "Toggle hiding of selected nodes"
 msgstr "切换隐藏的已选节点"
 
@@ -38204,6 +38155,86 @@ msgid "Clear Drivers"
 msgstr "清除驱动器"
 
 
+msgctxt "Operator"
+msgid "Enable Collection"
+msgstr "开启集合"
+
+
+msgid "Enable viewport drawing in the view layers"
+msgstr "在视图层启用视图绘制"
+
+
+msgctxt "Operator"
+msgid "Enable Collection in Render"
+msgstr "在渲染中启用集合"
+
+
+msgid "Render the collection"
+msgstr "渲染该集合"
+
+
+msgctxt "Operator"
+msgid "Clear Exclude"
+msgstr "清理排除"
+
+
+msgid "Include collection in the active view layer"
+msgstr "将该集合加入活动视图层"
+
+
+msgctxt "Operator"
+msgid "Set Exclude"
+msgstr "设为排除"
+
+
+msgid "Exclude collection from the active view layer"
+msgstr "在活动视图层中排除该集合"
+
+
+msgid "Hide the collection in this view layer"
+msgstr "在活动视图层中隐藏该集合"
+
+
+msgctxt "Operator"
+msgid "Hide Inside Collection"
+msgstr "隐藏内部集合"
+
+
+msgctxt "Operator"
+msgid "Clear Holdout"
+msgstr "清理阻隔"
+
+
+msgctxt "Operator"
+msgid "Set Holdout"
+msgstr "设为阻隔"
+
+
+msgctxt "Operator"
+msgid "Clear Indirect Only"
+msgstr "清理仅间接作用"
+
+
+msgctxt "Operator"
+msgid "Set Indirect Only"
+msgstr "设为仅间接作用"
+
+
+msgctxt "Operator"
+msgid "Instance Collection"
+msgstr "实例集合"
+
+
+msgctxt "Operator"
+msgid "Isolate Collection"
+msgstr "隔离集合"
+
+
+msgctxt "Operator"
+msgid "Link Collection"
+msgstr "关联集合"
+
+
 msgid "Add a new collection inside selected collection"
 msgstr "在选中的集中内部添加新的集合"
 
@@ -39022,6 +39053,11 @@ msgstr "关键帧数量"
 
 msgid "Remove selected particles close enough of others"
 msgstr "移除选择中过于靠近的粒子"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "取消全部隐藏"
 
 
 msgid "Show hidden particles"
@@ -43533,12 +43569,8 @@ msgstr "清除渲染框并禁用区块渲染"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "将选中项复制到缓存"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "选中的物体被保存到临时文件中"
+msgid "Copy Objects"
+msgstr "复制物体"
 
 
 msgctxt "Operator"
@@ -43609,11 +43641,6 @@ msgstr "浏览飞行模式"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "NDOF 平移视图"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "NDOF 轨迹视图"
 
@@ -43621,6 +43648,11 @@ msgstr "NDOF 轨迹视图"
 msgctxt "Operator"
 msgid "NDOF Orbit View with Zoom"
 msgstr "NDOF轨迹视图, 带缩放"
+
+
+msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "NDOF 平移视图"
 
 
 msgctxt "Operator"
@@ -43633,12 +43665,8 @@ msgstr "设置活动物体为当前视图或场景的激活摄像机"
 
 
 msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "粘贴缓存中的选中项"
-
-
-msgid "Contents of copy buffer gets pasted"
-msgstr "复制的缓存内容已粘贴"
+msgid "Paste Objects"
+msgstr "粘贴物体"
 
 
 msgid "Set the boundaries of the border render and enable border render"
@@ -43693,11 +43721,6 @@ msgstr "物体名称"
 
 msgid "Toggle selection instead of deselecting everything first"
 msgstr "切换选区, 而不是首先取消全选"
-
-
-msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "选择或者取消全选"
 
 
 msgctxt "Operator"
@@ -45730,6 +45753,10 @@ msgid "Area Shape"
 msgstr "面形状"
 
 
+msgid "Composition Guides"
+msgstr "构图辅助线"
+
+
 msgid "Passepartout"
 msgstr "外边框"
 
@@ -45814,8 +45841,14 @@ msgid "Sample Line"
 msgstr "采样线"
 
 
-msgid "Appearance"
-msgstr "外观"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "自由线"
+
+
+msgctxt "Operator"
+msgid "Mask"
+msgstr "遮罩"
 
 
 msgid "Tiling"
@@ -45864,6 +45897,10 @@ msgstr "蜡笔材质槽"
 
 msgid "Backdrop"
 msgstr "背景图"
+
+
+msgid "Slot"
+msgstr "槽"
 
 
 msgid "Predefined node color"
@@ -46226,8 +46263,39 @@ msgid "Dyntopo"
 msgstr "动态拓扑"
 
 
-msgid "Symmetry/Lock"
-msgstr "对称 / 锁定"
+msgctxt "Operator"
+msgid "Scale"
+msgstr "缩放"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "添加"
+
+
+msgctxt "Operator"
+msgid "Box Mask"
+msgstr "框选遮罩"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "擦除"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "直线"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "圆环"
+
+
+msgctxt "Operator"
+msgid "Thickness"
+msgstr "厚度"
 
 
 msgid "Armature Options"
@@ -46240,10 +46308,6 @@ msgstr "曲线笔画"
 
 msgid "Sculpt Strokes"
 msgstr "雕刻笔画"
-
-
-msgid "Mesh Options"
-msgstr "网格选项"
 
 
 msgid "Default tools for particle mode"
@@ -46436,14 +46500,6 @@ msgstr "尖端选择模式"
 
 msgid "Shape Object"
 msgstr "外型物体"
-
-
-msgid "Draw Particles"
-msgstr "绘制粒子"
-
-
-msgid "Draw actual particles"
-msgstr "绘制实际粒子"
 
 
 msgid "Comb"
@@ -57089,6 +57145,10 @@ msgid "Method to display/shade objects in the 3D View"
 msgstr "显示方式 / 3D 视图中的物体着色类型"
 
 
+msgid "View layer"
+msgstr "视图层"
+
+
 msgid "Alpha Threshold"
 msgstr "Alpha 阈值"
 
@@ -57847,11 +57907,6 @@ msgstr "已畸变"
 
 
 msgctxt "Operator"
-msgid "Thickness"
-msgstr "厚度"
-
-
-msgctxt "Operator"
 msgid "Edge Sharp"
 msgstr "锐边"
 
@@ -58039,11 +58094,6 @@ msgstr "反选"
 
 msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "添加"
 
 
 msgctxt "Operator"
@@ -58251,6 +58301,11 @@ msgstr "Blender 2.6 尚未支持 Python 约束"
 
 
 msgctxt "Operator"
+msgid "Add Object Constraint"
+msgstr "添加物体约束"
+
+
+msgctxt "Operator"
 msgid "Add Bone Constraint"
 msgstr "添加骨骼约束"
 
@@ -58281,11 +58336,6 @@ msgstr "Z 向角度"
 
 msgid "Pivot Offset"
 msgstr "轴心偏移"
-
-
-msgctxt "Operator"
-msgid "Add Object Constraint"
-msgstr "添加物体约束"
 
 
 msgid "Relative Pivot Point"
@@ -59046,21 +59096,6 @@ msgstr "衰减编辑"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "自由线"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "擦除"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "直线"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "多段线"
 
@@ -59076,11 +59111,6 @@ msgstr "选择"
 msgctxt "Operator"
 msgid "Paste & Merge"
 msgstr "粘贴 & 合并"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "缩放"
 
 
 msgctxt "Operator"
@@ -59196,11 +59226,6 @@ msgid "Transform:"
 msgstr "变换操作:"
 
 
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "恢复显示已隐藏项"
-
-
 msgid "Holes"
 msgstr "孔洞"
 
@@ -59245,16 +59270,16 @@ msgid "Sample Bias"
 msgstr "采样偏移量"
 
 
-msgid "Mask Value"
-msgstr "遮罩值"
-
-
 msgid "Source Clone Image"
 msgstr "图像克隆源"
 
 
 msgid "Source Clone UV Map"
 msgstr "UV 贴图克隆源"
+
+
+msgid "Mask Value"
+msgstr "遮罩值"
 
 
 msgid "Roughness 1"
@@ -59271,11 +59296,6 @@ msgstr "表面糙度末端"
 
 msgid "Strand Shape"
 msgstr "发股形状"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "新建"
 
 
 msgid "Spacing: %g"
@@ -59851,6 +59871,11 @@ msgstr "统一力度"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "新建"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "打开..."
 
@@ -59867,18 +59892,6 @@ msgstr "反转图像颜色"
 
 msgid "Falloff:"
 msgstr "衰减:"
-
-
-msgid "Curve:"
-msgstr "曲线:"
-
-
-msgid "Mask Texture:"
-msgstr "遮罩纹理:"
-
-
-msgid "Stroke Method:"
-msgstr "绘制方式:"
 
 
 msgctxt "Operator"
@@ -59981,10 +59994,6 @@ msgstr "宽高比"
 
 msgid "Edge To Edge"
 msgstr "边到边"
-
-
-msgid "Brush Unset"
-msgstr "笔刷序号"
 
 
 msgctxt "Operator"
@@ -60420,11 +60429,6 @@ msgstr "场景"
 msgctxt "Operator"
 msgid "Clip"
 msgstr "剪辑"
-
-
-msgctxt "Operator"
-msgid "Mask"
-msgstr "遮罩"
 
 
 msgid "Default fade"
@@ -60933,21 +60937,6 @@ msgstr "交互镜像"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "全局 X"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "全局 Y"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "全局 Z"
-
-
-msgctxt "Operator"
 msgid "Selection to Active"
 msgstr "选中项 -> 活动项"
 
@@ -61128,11 +61117,6 @@ msgstr "立方体"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "圆环"
-
-
-msgctxt "Operator"
 msgid "UV Sphere"
 msgstr "经纬球"
 
@@ -61235,16 +61219,6 @@ msgstr "生成代理..."
 msgctxt "Operator"
 msgid "Make Local..."
 msgstr "转为本地项..."
-
-
-msgctxt "Operator"
-msgid "Copy Objects"
-msgstr "复制物体"
-
-
-msgctxt "Operator"
-msgid "Paste Objects"
-msgstr "粘贴物体"
 
 
 msgctxt "Operator"
@@ -61402,11 +61376,6 @@ msgstr "填充遮罩"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "清除遮罩"
-
-
-msgctxt "Operator"
-msgid "Box Mask"
-msgstr "框选遮罩"
 
 
 msgctxt "Operator"
@@ -61601,21 +61570,6 @@ msgstr "缩放纹理空间"
 msgctxt "Operator"
 msgid "Align to Transform Orientation"
 msgstr "对齐到变换参照坐标系"
-
-
-msgctxt "Operator"
-msgid "X Local"
-msgstr "自身 X 轴"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "自身 Y 轴"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "自身 Z 轴"
 
 
 msgctxt "Operator"
@@ -62083,14 +62037,6 @@ msgid "Apply Camera Image"
 msgstr "应用摄像机图像"
 
 
-msgid "Keep:"
-msgstr "保持:"
-
-
-msgid "Lengths"
-msgstr "长度"
-
-
 msgid "Path Steps"
 msgstr "路径步长"
 
@@ -62111,16 +62057,8 @@ msgid "in memory to enable editing!"
 msgstr "在内存中开启编辑!"
 
 
-msgid "Correct:"
-msgstr "校正:"
-
-
 msgid "Front Faces Only"
 msgstr "仅前面的面"
-
-
-msgid "Trim"
-msgstr "裁剪"
 
 
 msgid "Auto Normalize"
@@ -65451,10 +65389,6 @@ msgstr " + Z"
 
 msgid ", Frame: %d"
 msgstr ", 帧: %d"
-
-
-msgid "Slot"
-msgstr "槽"
 
 
 msgid "Slot %d"
