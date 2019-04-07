@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -487,11 +487,6 @@ msgstr "תופקתשה"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "רחבנל קתעה"
-
-
-msgctxt "Operator"
 msgid "Rotate View"
 msgstr "בוביס"
 
@@ -523,6 +518,11 @@ msgstr "עבצ לוהינ"
 
 msgid "Text Style"
 msgstr "האבה הבכש"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "ףסוה"
 
 
 msgid "Tile Order"
@@ -579,11 +579,6 @@ msgstr "עקר"
 
 msgid "Default Layout"
 msgstr "לדחמ תרירב"
-
-
-msgctxt "Operator"
-msgid "Add"
-msgstr "ףסוה"
 
 
 msgid "Location:"

@@ -27,7 +27,7 @@ bl_info = {
     "name": "KTX Mesh Versions",
     "description": "Keep multiple mesh versions of an object",
     "author": "Roel Koster, @koelooptiemanna, irc:kostex",
-    "version": (1, 5, 2),
+    "version": (1, 5, 3),
     "blender": (2, 80, 0),
     "location": "View3D > Properties",
     "warning": "",
@@ -36,9 +36,9 @@ bl_info = {
     "category": "Object"}
 
 
-class KTX_MeshInit(bpy.types.Operator):
+class KTXMESHVERSIONS_OT_Init(bpy.types.Operator):
     bl_label = "Initialise Mesh Versioning"
-    bl_idname = "ktx.meshversions_init"
+    bl_idname = "ktxmeshversions.init"
     bl_description = "Initialise the current object to support versioning"
 
     def execute(self, context):
@@ -47,9 +47,9 @@ class KTX_MeshInit(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class KTX_MeshSelect(bpy.types.Operator):
+class KTXMESHVERSIONS_OT_Select(bpy.types.Operator):
     bl_label = "Select Mesh"
-    bl_idname = "ktx.meshversions_select"
+    bl_idname = "ktxmeshversions.select"
     bl_description = "Link the selected mesh to the current object"
 
     m_index : StringProperty()
@@ -64,9 +64,9 @@ class KTX_MeshSelect(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class KTX_MeshRemove(bpy.types.Operator):
+class KTXMESHVERSIONS_OT_Remove(bpy.types.Operator):
     bl_label = "Remove Mesh"
-    bl_idname = "ktx.meshversions_remove"
+    bl_idname = "ktxmeshversions.remove"
     bl_description = "Remove/Delete the selected mesh"
 
     m_index : StringProperty()
@@ -76,21 +76,21 @@ class KTX_MeshRemove(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class KTX_Cleanup(bpy.types.Operator):
+class KTXMESHVERSIONS_OT_Cleanup(bpy.types.Operator):
     bl_label = "Cleanup Mode"
-    bl_idname = "ktx.cleanup"
+    bl_idname = "ktxmeshversions.cleanup"
     bl_description = "Cleanup Mode"
 
     def execute(self, context):
         for o in bpy.data.objects:
-            o.select_set(False)
-        context.view_layer.objects.active = None
+            o.select = False
+        context.scene.objects.active = None
         return {'FINISHED'}
 
 
-class KTX_MeshCreate(bpy.types.Operator):
+class KTXMESHVERSIONS_OT_Create(bpy.types.Operator):
     bl_label = "Create Mesh Version"
-    bl_idname = "ktx.meshversions_create"
+    bl_idname = "ktxmeshversions.create"
     bl_description = ("Create a copy of the mesh data of the current object\n"
                       "and set it as active")
 
@@ -109,9 +109,9 @@ class KTX_MeshCreate(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class KTX_Mesh_Versions(bpy.types.Panel):
+class KTXMESHVERSIONS_PT_mainPanel(bpy.types.Panel):
     bl_label = "KTX Mesh Versions"
-    bl_idname = "ktx.meshversions"
+    bl_idname = "KTXMESHVERSIONS_PT_mainPanel"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
 
@@ -128,7 +128,7 @@ class KTX_Mesh_Versions(bpy.types.Panel):
                         icon = 'PINNED' if scene.ktx_defpin else 'UNPINNED'
                         row = layout.row(align=True)
                         row.prop(scene, "ktx_defpin", text="", icon=icon)
-                        row.operator("ktx.meshversions_create")
+                        row.operator("ktxmeshversions.create")
                         box = layout.box()
                         box.scale_y = 1.0
                         box.label(text="Currently active mesh: " + obj.data.name)
@@ -136,20 +136,20 @@ class KTX_Mesh_Versions(bpy.types.Panel):
                             if m.ktx_mesh_id == obj.ktx_object_id:
                                 mesh_name = m.name
                                 row = box.row(align=True)
-                                row.operator("ktx.meshversions_select", text="", icon='RIGHTARROW').m_index = mesh_name
+                                row.operator("ktxmeshversions.select", text="", icon='RIGHTARROW').m_index = mesh_name
                                 row.prop(m, "name", text="", icon='MESH_DATA')
                                 if m.users == 0:
-                                    row.operator("ktx.meshversions_remove", text="", icon="X").m_index = mesh_name
+                                    row.operator("ktxmeshversions.remove", text="", icon="X").m_index = mesh_name
                                 icon = 'PINNED' if m.use_fake_user else 'UNPINNED'
                                 row.prop(m, "use_fake_user", text="", icon=icon)
                         box.label(text="")
                         row = layout.row(align=True)
-                        row.operator("ktx.cleanup", text="Cleanup Mode")
+                        row.operator("ktxmeshversions.cleanup", text="Cleanup Mode")
                     else:
-                        layout.operator("ktx.meshversions_init")
+                        layout.operator("ktxmeshversions.init")
                 else:
                     layout.label(text="Select a Mesh Object")
-                    layout.operator("ktx.cleanup", text="Cleanup Mode")
+                    layout.operator("ktxmeshversions.cleanup", text="Cleanup Mode")
 
             else:
                 layout.label(text="All Meshes (Cleanup/Pin):")
@@ -160,7 +160,7 @@ class KTX_Mesh_Versions(bpy.types.Panel):
                     row = box.row(align=True)
                     row.prop(m, "name", text="", icon='MESH_DATA')
                     if m.users == 0:
-                        row.operator("ktx.meshversions_remove", text="", icon="X").m_index = mesh_name
+                        row.operator("ktxmeshversions.remove", text="", icon="X").m_index = mesh_name
                     icon = 'PINNED' if m.use_fake_user else 'UNPINNED'
                     row.prop(m, "use_fake_user", text="", icon=icon)
                 box.label(text="")
@@ -169,18 +169,18 @@ class KTX_Mesh_Versions(bpy.types.Panel):
 
 
 classes = (
-    KTX_Mesh_Versions,
-    KTX_MeshInit,
-    KTX_MeshCreate,
-    KTX_MeshRemove,
-    KTX_MeshSelect,
-    KTX_Cleanup
+    KTXMESHVERSIONS_PT_mainPanel,
+    KTXMESHVERSIONS_OT_Init,
+    KTXMESHVERSIONS_OT_Create,
+    KTXMESHVERSIONS_OT_Remove,
+    KTXMESHVERSIONS_OT_Select,
+    KTXMESHVERSIONS_OT_Cleanup
 )
 
 
 def register():
     from bpy.utils import register_class
-
+    
     bpy.types.Object.ktx_object_id = bpy.props.StringProperty(name="KTX Object ID", description="Unique ID to 'link' one object to multiple meshes")
     bpy.types.Mesh.ktx_mesh_id = bpy.props.StringProperty(name="KTX Mesh ID", description="Unique ID to 'link' multiple meshes to one object")
     bpy.types.Scene.ktx_defpin = bpy.props.BoolProperty(name="Auto Pinning", description="When creating a new version, set pinning to ON automatically (FAKE_USER=TRUE)", default=False)

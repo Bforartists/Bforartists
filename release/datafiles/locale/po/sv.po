@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -3791,10 +3791,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "Starta rendering av sekvens"
 
 
-msgid "Effect particles' location"
-msgstr "Bild Displist"
-
-
 msgid "Maximum Distance"
 msgstr "Visa inställningar för kant"
 
@@ -5155,10 +5151,6 @@ msgid "Use Gradient"
 msgstr "Vektor Måla"
 
 
-msgid "Use Blender Units"
-msgstr "Rendera"
-
-
 msgid "Plane Offset Pressure"
 msgstr "Rendera"
 
@@ -5345,10 +5337,6 @@ msgstr "Förskjutning:"
 
 msgid "Display Background Images"
 msgstr "Visa bakgrundsbilder"
-
-
-msgid "Composition Guides"
-msgstr "Komponering"
 
 
 msgid "Center Diagonal"
@@ -13652,7 +13640,7 @@ msgstr "Arkiv"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
+msgid "Hide Selected"
 msgstr "Göm Markerad"
 
 
@@ -13721,8 +13709,8 @@ msgstr "Spel"
 
 
 msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Böjda ben:"
+msgid "Reveal Hidden"
+msgstr "Visa inställningar för kant"
 
 
 msgctxt "Operator"
@@ -15082,11 +15070,6 @@ msgid "Toggle Free/Align"
 msgstr "Växla fri/upprätad"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Göm Markerad"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Göm Markerad"
 
@@ -15165,11 +15148,6 @@ msgstr "Rensa Förälder"
 msgctxt "Operator"
 msgid "Set Curve Radius"
 msgstr "RGB-radie"
-
-
-msgctxt "Operator"
-msgid "Reveal Hidden"
-msgstr "Visa inställningar för kant"
 
 
 msgid "(De)select all control points"
@@ -16271,11 +16249,6 @@ msgstr "Starta Spel"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Starta Spel"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Starta Spel"
 
@@ -16303,11 +16276,6 @@ msgstr "Rensa Placering"
 
 msgid "Shared layers"
 msgstr "Flytta Till Lager"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Göm Markerad"
 
 
 msgctxt "Operator"
@@ -17187,18 +17155,8 @@ msgid "Duplicate selected metaelement(s)"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Göm"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "Göm Markerad"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Böjda ben:"
 
 
 msgid "Reveal all hidden metaelements"
@@ -18746,6 +18704,11 @@ msgstr "Visa/göm osynliga .-filer"
 
 msgid "Toggle unused node socket display"
 msgstr "Visa/göm verktygslådan"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Göm"
 
 
 msgid "Toggle hiding of selected nodes"
@@ -20918,6 +20881,11 @@ msgstr "Antal klyvningar"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Markera Länkad"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Böjda ben:"
 
 
 msgid "Show hidden particles"
@@ -23786,15 +23754,6 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "Markerade till markör"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Packa Data"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Markera Länkad"
 
@@ -23845,11 +23804,6 @@ msgstr "Göm Markerad"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Visa"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Visa"
 
@@ -23860,17 +23814,17 @@ msgstr "Visa"
 
 
 msgctxt "Operator"
+msgid "NDOF Pan View"
+msgstr "Visa"
+
+
+msgctxt "Operator"
 msgid "Set Active Object as Camera"
 msgstr "Flytta Till Lager"
 
 
 msgid "Set the active object as the active camera for this view or scene"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "Beräkna benbanor från svans"
 
 
 msgctxt "Operator"
@@ -24819,6 +24773,10 @@ msgid "Area Shape"
 msgstr "Flytta Till Lager"
 
 
+msgid "Composition Guides"
+msgstr "Komponering"
+
+
 msgid "Passepartout"
 msgstr "Passepartout"
 
@@ -24875,8 +24833,9 @@ msgid "Sample Line"
 msgstr "Samplinglinje"
 
 
-msgid "Appearance"
-msgstr "Infoga"
+msgctxt "Operator"
+msgid "Draw"
+msgstr "Duplicera"
 
 
 msgid "2D Cursor"
@@ -25047,11 +25006,32 @@ msgid "Motion Tracking"
 msgstr "Rensa Rotation"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Skala"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Ny"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Lägg till Stripp"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Linje"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cirkel"
+
+
 msgid "Armature Options"
-msgstr "Rensa Rotation"
-
-
-msgid "Mesh Options"
 msgstr "Rensa Rotation"
 
 
@@ -25177,14 +25157,6 @@ msgstr "UV-markeringsläge"
 
 msgid "Tip select mode"
 msgstr "UV-markeringsläge"
-
-
-msgid "Draw Particles"
-msgstr "Arkiv"
-
-
-msgid "Draw actual particles"
-msgstr "Markera Länkad"
 
 
 msgid "Smooth hairs"
@@ -30065,11 +30037,6 @@ msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Ny"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Redigera"
 
@@ -30716,28 +30683,8 @@ msgstr "Markör till jämna pixlar"
 
 
 msgctxt "Operator"
-msgid "Draw"
-msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Erase"
-msgstr "Lägg till Stripp"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Linje"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Renderings Fönster"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Skala"
 
 
 msgctxt "Operator"
@@ -30761,11 +30708,6 @@ msgstr "Förälder"
 
 msgid "Transform:"
 msgstr "Transformera"
-
-
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Visa"
 
 
 msgctxt "Operator"
@@ -30818,11 +30760,6 @@ msgstr "Grovhet 1"
 
 msgid "Strand Shape"
 msgstr "Beräkna Normaler"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Ny"
 
 
 msgid "Endpoint"
@@ -31188,6 +31125,11 @@ msgstr "Styrka"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Ny"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Öppna…"
 
@@ -31199,14 +31141,6 @@ msgstr "Vertexfärger"
 
 msgid "Falloff:"
 msgstr "Avtagande:"
-
-
-msgid "Curve:"
-msgstr "Bana"
-
-
-msgid "Stroke Method:"
-msgstr "Packa Data"
 
 
 msgctxt "Operator"
@@ -31294,10 +31228,6 @@ msgstr "Storleksförhållande"
 
 msgid "Edge To Edge"
 msgstr "Redigerings Läge"
-
-
-msgid "Brush Unset"
-msgstr "Bild Displist"
 
 
 msgctxt "Operator"
@@ -31768,21 +31698,6 @@ msgstr "Markera Rad"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "Markör till markerade"
 
@@ -31920,11 +31835,6 @@ msgstr "Plan"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Kub"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Cirkel"
 
 
 msgctxt "Operator"
@@ -32224,21 +32134,6 @@ msgstr "Rensa Rotation"
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "Rensa Placering"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Rensa Placering"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Rensa Placering"
-
-
-msgctxt "Operator"
 msgid "Non Manifold"
 msgstr "Markera Rad"
 
@@ -32442,20 +32337,12 @@ msgid "Apply Camera Image"
 msgstr "Rendera"
 
 
-msgid "Lengths"
-msgstr "Längd"
-
-
 msgid "Path Steps"
 msgstr "Cachenamn"
 
 
 msgid "Point cache must be baked"
 msgstr "Punktcache-lista"
-
-
-msgid "Correct:"
-msgstr "Markera Länkad"
 
 
 msgid "Front Faces Only"

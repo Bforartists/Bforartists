@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: 2019-03-10 16:59+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -2462,11 +2462,6 @@ msgstr "หมุนมุมมอง"
 
 
 msgctxt "Operator"
-msgid "Select or Deselect All"
-msgstr "เลือก หรือ ไม่เลือกทั้งหมด"
-
-
-msgctxt "Operator"
 msgid "Pan View Direction"
 msgstr "เลื่อนทิศทางมุมมอง"
 
@@ -2611,6 +2606,16 @@ msgstr "ธีม"
 
 msgid "3D View"
 msgstr "มุมมองสามมิติ"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "เพิ่ม"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "วงกลม"
 
 
 msgid "View Lock"
@@ -3046,11 +3051,6 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
-msgctxt "Operator"
-msgid "Add"
-msgstr "เพิ่ม"
-
-
 msgid "Frame Numbers"
 msgstr "หมายเลขเฟรม"
 
@@ -3127,11 +3127,6 @@ msgstr "เรนเดอร์เป็น"
 
 
 msgctxt "Operator"
-msgid "New"
-msgstr "ใหม่"
-
-
-msgctxt "Operator"
 msgid "Add Canvas"
 msgstr "เพิ่มภาพ"
 
@@ -3145,8 +3140,17 @@ msgstr "%s: %s"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "ใหม่"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "เปิด..."
+
+
+msgid "Texture Alpha"
+msgstr "แอลฟาพื้นผิว"
 
 
 msgctxt "Operator"
@@ -3495,11 +3499,6 @@ msgstr "ขยายลูก"
 
 
 msgctxt "Operator"
-msgid "Circle"
-msgstr "วงกลม"
-
-
-msgctxt "Operator"
 msgid "Monkey"
 msgstr "ลิง"
 
@@ -3511,10 +3510,6 @@ msgstr "วัตถุ"
 
 msgid "X-Ray"
 msgstr "มองผ่าน"
-
-
-msgid "Texture Alpha"
-msgstr "แอลฟาพื้นผิว"
 
 
 msgctxt "Operator"

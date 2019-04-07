@@ -88,7 +88,7 @@ def upload_rating(asset):
     asset_data = asset['asset_data']
 
     bkit_ratings = asset.bkit_ratings
-    print('rating asset', asset_data['name'], asset_data['asset_base_id'])
+    # print('rating asset', asset_data['name'], asset_data['asset_base_id'])
     url = paths.get_bkit_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
 
     ratings = [

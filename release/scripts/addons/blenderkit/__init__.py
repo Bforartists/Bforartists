@@ -135,7 +135,7 @@ engines = (
     ('GODOT', 'Godot', 'Godot engine'),
     ('3D-PRINT', '3d printer', 'object can be 3d printed'),
     ('OTHER', 'Other', 'any other engine'),
-    ('NONE', 'None', 'no more engine block.'),
+    ('NONE', 'None', 'no more engine block'),
 )
 pbr_types = (
     ('METALLIC', 'Metallic-Roughness', 'Metallic/Roughness PBR material type'),
@@ -413,7 +413,7 @@ class BlenderKitCommonUploadProps(object):
 
     description: StringProperty(
         name="Description",
-        description="Description of the asset.",
+        description="Description of the asset",
         default="")
     tags: StringProperty(
         name="Tags",
@@ -428,7 +428,7 @@ class BlenderKitCommonUploadProps(object):
 
     pbr: BoolProperty(name="Pure PBR Compatible",
                       description="Is compatible with PBR standard. This means only image textures are used with no"
-                                  " procedurals and no color correction, only pbr shader is used.",
+                                  " procedurals and no color correction, only pbr shader is used",
                       default=False)
 
     pbr_type: EnumProperty(
@@ -444,7 +444,7 @@ class BlenderKitCommonUploadProps(object):
     )
 
     is_free: BoolProperty(name="Free for Everyone",
-                          description="You consent you want to release this asset as free for everyone.",
+                          description="You consent you want to release this asset as free for everyone",
                           default=False)
 
     uploading: BoolProperty(name="Uploading",
@@ -494,7 +494,7 @@ class BlenderKitRatingProps(PropertyGroup):
                                         default=0, min=0, max=10000)
     rating_problems: StringProperty(
         name="Problems",
-        description="Problems found/ why did you take points down - this will be available for the author."
+        description="Problems found/ why did you take points down - this will be available for the author"
                     " As short as possible",
         default="",
     )
@@ -698,7 +698,7 @@ class BlenderKitModelUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         default='FINISHED',
         description='Production state of the asset, \n also template should be actually finished, \n'
                     'just the nature of it can be a template, like a thumbnailer scene, \n '
-                    'finished mesh topology as start for modelling or similar.',
+                    'finished mesh topology as start for modelling or similar',
     )
 
     engine_other: StringProperty(
@@ -728,25 +728,25 @@ class BlenderKitModelUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
 
     manufacturer: StringProperty(
         name="Manufacturer",
-        description="Manufacturer, company making a design peace or product.",
+        description="Manufacturer, company making a design peace or product",
         default="",
     )
 
     designer: StringProperty(
         name="Designer",
-        description="Author of the original design piece depicted.",
+        description="Author of the original design piece depicted",
         default="",
     )
 
     design_collection: StringProperty(
         name="Design Collection",
-        description="Fill if this piece is part of a design collection.",
+        description="Fill if this piece is part of a design collection",
         default="",
     )
 
     design_variant: StringProperty(
         name="Variant",
-        description="Colour or material variant of the product.",
+        description="Colour or material variant of the product",
         default="",
     )
 
@@ -901,7 +901,7 @@ class BlenderKitSceneUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         default='FINISHED',
         description='Production state of the asset, \n also template should be actually finished, \n'
                     'just the nature of it can be a template, like a thumbnailer scene, \n '
-                    'finished mesh topology as start for modelling or similar.',
+                    'finished mesh topology as start for modelling or similar',
     )
 
     engine_other: StringProperty(
@@ -1214,7 +1214,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     api_key: StringProperty(
         name="BlenderKit API Key",
-        description="Your blenderkit API Key. Get it from your page on the website.",
+        description="Your blenderkit API Key. Get it from your page on the website",
         default="",
         subtype="PASSWORD",
         update=utils.save_prefs
@@ -1222,7 +1222,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     global_dir: StringProperty(
         name="Global Files Directory",
-        description="Global storage for your assets, will use subdirectories for the contents.",
+        description="Global storage for your assets, will use subdirectories for the contents",
         subtype='DIR_PATH',
         default=default_global_dict,
         update=utils.save_prefs
@@ -1230,7 +1230,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     project_subdir: StringProperty(
         name="Project Assets Subdirectory",
-        description="where data will be stored for individual projects.",
+        description="where data will be stored for individual projects",
         subtype='DIR_PATH',
         default="//assets",
     )
@@ -1240,7 +1240,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
         items=(
             ('BOTH', 'Global and subdir',
              'store files both in global lib and subdirectory of current project. '
-             'Warning - each file can be many times on your harddrive, but helps you keep your projects in one piece.'),
+             'Warning - each file can be many times on your harddrive, but helps you keep your projects in one piece'),
             ('GLOBAL', 'Global',
              "store downloaded files only in global directory. \n "
              "This can bring problems when moving your projects, \n"
@@ -1255,7 +1255,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
     )
     thumbnail_use_gpu: BoolProperty(
         name="Use GPU for Thumbnails Rendering",
-        description="By default this is off so you can continue your work without any lag.",
+        description="By default this is off so you can continue your work without any lag",
         default=True
     )
 
@@ -1284,7 +1284,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
     #     name="allow proximity data reports",
     #     description="This sends anonymized proximity data \n \
     #             and allows us to make relations between database objects \n \
-    #              without user interaction.",
+    #              without user interaction",
     #     default=False
     # )
 
@@ -1385,8 +1385,17 @@ def register():
 
 
 def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+
+    ui.unregister_ui()
+    search.unregister_search()
+    asset_inspector.unregister_asset_inspector()
+    download.unregister_download()
+    upload.unregister_upload()
+    ratings.unregister_ratings()
+    autothumb.unregister_thumbnailer()
+    ui_panels.unregister_ui_panels()
+    bg_blender.unregister()
+    overrides.unregister_overrides()
 
     del bpy.types.Scene.blenderkit_models
     del bpy.types.Scene.blenderkit_scene
@@ -1398,13 +1407,5 @@ def unregister():
     del bpy.types.Material.blenderkit
     del bpy.types.Brush.blenderkit
 
-    search.unregister_search()
-    asset_inspector.unregister_asset_inspector()
-    download.unregister_download()
-    upload.unregister_upload()
-    ratings.unregister_ratings()
-    autothumb.unregister_thumbnailer()
-    ui.unregister_ui()
-    ui_panels.unregister_ui_panels()
-    bg_blender.unregister()
-    overrides.unregister_overrides()
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 50) (b'2b79f274e38b')\n"
+"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-18 13:57:24\n"
+"POT-Creation-Date: 2019-03-31 18:50:25\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -3300,10 +3300,6 @@ msgid "Field settings for an object in physics simulation"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Effect particles' location"
-msgstr "Image Displist"
-
-
 msgid "Maximum Distance"
 msgstr "Mostrar propietats de les arestes"
 
@@ -4476,10 +4472,6 @@ msgid "Use Gradient"
 msgstr "Pintura Vectorial"
 
 
-msgid "Use Blender Units"
-msgstr "Render"
-
-
 msgid "Plane Offset Pressure"
 msgstr "Render"
 
@@ -4626,10 +4618,6 @@ msgstr "Dreta"
 
 msgid "Shift Y"
 msgstr "Dreta"
-
-
-msgid "Composition Guides"
-msgstr "Afegir Tira"
 
 
 msgid "Center Diagonal"
@@ -11875,7 +11863,7 @@ msgstr "Arxiu"
 
 
 msgctxt "Operator"
-msgid "Hide Selected Bones"
+msgid "Hide Selected"
 msgstr "Amagar Seleccionats"
 
 
@@ -11933,11 +11921,6 @@ msgstr "Seleccionar fila"
 
 msgid "Keep Offset"
 msgstr "Joc"
-
-
-msgctxt "Operator"
-msgid "Reveal Bones"
-msgstr "Comprimir Dades"
 
 
 msgctxt "Operator"
@@ -13102,11 +13085,6 @@ msgid "Toggle Free/Align"
 msgstr "Cíclic"
 
 
-msgctxt "Operator"
-msgid "Hide Selected"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Hide (un)selected control points"
 msgstr "Amagar Seleccionats"
 
@@ -14090,11 +14068,6 @@ msgstr "Començar Joc"
 
 
 msgctxt "Operator"
-msgid "Grease Pencil Unlink"
-msgstr "Començar Joc"
-
-
-msgctxt "Operator"
 msgid "Grease Pencil Draw"
 msgstr "Començar Joc"
 
@@ -14126,11 +14099,6 @@ msgstr "Esborrar Posició"
 
 msgid "Shared layers"
 msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
-msgid "Hide Selection"
-msgstr "Amagar Seleccionats"
 
 
 msgctxt "Operator"
@@ -14892,18 +14860,8 @@ msgid "Duplicate selected metaelement(s)"
 msgstr "Seleccionar connectats"
 
 
-msgctxt "Operator"
-msgid "Hide"
-msgstr "Mostrar"
-
-
 msgid "Hide (un)selected metaelement(s)"
 msgstr "Amagar Seleccionats"
-
-
-msgctxt "Operator"
-msgid "Reveal"
-msgstr "Revelar"
 
 
 msgid "Change selection of all meta elements"
@@ -16310,6 +16268,11 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Toggle Hidden Node Sockets"
 msgstr "Seleccionar fila"
+
+
+msgctxt "Operator"
+msgid "Hide"
+msgstr "Mostrar"
 
 
 msgid "Toggle hiding of selected nodes"
@@ -18160,6 +18123,11 @@ msgstr "Image Displist"
 
 msgid "Remove selected particles close enough of others"
 msgstr "Seleccionar connectats"
+
+
+msgctxt "Operator"
+msgid "Reveal"
+msgstr "Revelar"
 
 
 msgid "Show hidden particles"
@@ -20426,15 +20394,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Copy Selection to Buffer"
-msgstr "Seleccionar connectats"
-
-
-msgid "Selected objects are saved in a temp file"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Seleccionar connectats"
 
@@ -20472,11 +20431,6 @@ msgstr "Moure la vista"
 
 
 msgctxt "Operator"
-msgid "NDOF Pan View"
-msgstr "Vista"
-
-
-msgctxt "Operator"
 msgid "NDOF Orbit View"
 msgstr "Vista"
 
@@ -20487,13 +20441,13 @@ msgstr "Vista"
 
 
 msgctxt "Operator"
-msgid "Set Active Object as Camera"
-msgstr "Duplicar"
+msgid "NDOF Pan View"
+msgstr "Vista"
 
 
 msgctxt "Operator"
-msgid "Paste Selection from Buffer"
-msgstr "Seleccionar connectats"
+msgid "Set Active Object as Camera"
+msgstr "Duplicar"
 
 
 msgctxt "Operator"
@@ -21267,6 +21221,10 @@ msgid "Area Shape"
 msgstr "Moure a Capa"
 
 
+msgid "Composition Guides"
+msgstr "Afegir Tira"
+
+
 msgid "Texture Space"
 msgstr "Texte"
 
@@ -21321,10 +21279,6 @@ msgstr "Àmbits"
 
 msgid "Sample Line"
 msgstr "Partir"
-
-
-msgid "Appearance"
-msgstr "Afegir"
 
 
 msgid "2D Cursor"
@@ -21459,11 +21413,32 @@ msgid "Motion Tracking"
 msgstr "Esborrar Rotació"
 
 
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Escalar"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Afegir"
+
+
+msgctxt "Operator"
+msgid "Erase"
+msgstr "Esborrar"
+
+
+msgctxt "Operator"
+msgid "Line"
+msgstr "Moure a Capa"
+
+
+msgctxt "Operator"
+msgid "Circle"
+msgstr "Cercle"
+
+
 msgid "Armature Options"
-msgstr "Esborrar Rotació"
-
-
-msgid "Mesh Options"
 msgstr "Esborrar Rotació"
 
 
@@ -21589,14 +21564,6 @@ msgstr "Seleccionar fila"
 
 msgid "Tip select mode"
 msgstr "Seleccionar fila"
-
-
-msgid "Draw Particles"
-msgstr "Duplicar"
-
-
-msgid "Draw actual particles"
-msgstr "Seleccionar connectats"
 
 
 msgid "Smooth hairs"
@@ -26188,11 +26155,6 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "Afegir"
-
-
-msgctxt "Operator"
 msgid "Edit"
 msgstr "Editar"
 
@@ -26701,23 +26663,8 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Erase"
-msgstr "Esborrar"
-
-
-msgctxt "Operator"
-msgid "Line"
-msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
 msgid "Poly"
 msgstr "Finestra de Render"
-
-
-msgctxt "Operator"
-msgid "Scale"
-msgstr "Escalar"
 
 
 msgctxt "Operator"
@@ -26737,11 +26684,6 @@ msgstr "Esborrar"
 
 msgid "Parent:"
 msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Show Hidden"
-msgstr "Mostrar"
 
 
 msgctxt "Operator"
@@ -26769,11 +26711,6 @@ msgstr "Buffer Z"
 
 msgid "Strand Shape"
 msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nou"
 
 
 msgid "Jittering Amount"
@@ -27068,6 +27005,11 @@ msgstr "Guardar preferències"
 
 
 msgctxt "Operator"
+msgid "New"
+msgstr "Nou"
+
+
+msgctxt "Operator"
 msgid "Open..."
 msgstr "Obrir"
 
@@ -27079,14 +27021,6 @@ msgstr "Separar"
 
 msgid "Falloff:"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Curve:"
-msgstr "Corba"
-
-
-msgid "Stroke Method:"
-msgstr "Comprimir Dades"
 
 
 msgctxt "Operator"
@@ -27169,10 +27103,6 @@ msgstr "Moure a Capa"
 
 msgid "Edge To Edge"
 msgstr "Seleccionar fila"
-
-
-msgid "Brush Unset"
-msgstr "Image Displist"
 
 
 msgctxt "Operator"
@@ -27488,21 +27418,6 @@ msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
-msgid "X Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
-msgid "Y Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
-msgid "Z Global"
-msgstr "Global"
-
-
-msgctxt "Operator"
 msgid "Cursor to Active"
 msgstr "Seleccionar connectats"
 
@@ -27630,11 +27545,6 @@ msgstr "Pla"
 msgctxt "Operator"
 msgid "Cube"
 msgstr "Cub"
-
-
-msgctxt "Operator"
-msgid "Circle"
-msgstr "Cercle"
 
 
 msgctxt "Operator"
@@ -27897,21 +27807,6 @@ msgstr "Esborrar Rotació"
 
 
 msgctxt "Operator"
-msgid "X Local"
-msgstr "Esborrar Posició"
-
-
-msgctxt "Operator"
-msgid "Y Local"
-msgstr "Esborrar Posició"
-
-
-msgctxt "Operator"
-msgid "Z Local"
-msgstr "Esborrar Posició"
-
-
-msgctxt "Operator"
 msgid "Non Manifold"
 msgstr "Seleccionar fila"
 
@@ -28081,16 +27976,8 @@ msgid "Apply Camera Image"
 msgstr "Render"
 
 
-msgid "Lengths"
-msgstr "Esborrar Origen"
-
-
 msgid "Path Steps"
 msgstr "Finestra de Render"
-
-
-msgid "Correct:"
-msgstr "Seleccionar connectats"
 
 
 msgid "Front Faces Only"

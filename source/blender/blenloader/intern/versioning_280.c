@@ -1434,7 +1434,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 							scene->eevee.flag &= ~_flag; \
 						} \
 					} \
-				}
+				} ((void)0)
 
 #define EEVEE_GET_INT(_props, _name) \
 				{ \
@@ -1442,7 +1442,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					if (_idprop != NULL) { \
 						scene->eevee._name = IDP_Int(_idprop); \
 					} \
-				}
+				} ((void)0)
 
 #define EEVEE_GET_FLOAT(_props, _name) \
 				{ \
@@ -1450,7 +1450,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 					if (_idprop != NULL) { \
 						scene->eevee._name = IDP_Float(_idprop); \
 					} \
-				}
+				} ((void)0)
 
 #define EEVEE_GET_FLOAT_ARRAY(_props, _name, _length) \
 				{ \
@@ -1461,7 +1461,7 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 							scene->eevee._name [_i] = _values[_i]; \
 						} \
 					} \
-				}
+				} ((void)0)
 
 				IDProperty *props = IDP_GetPropertyFromGroup(scene->layer_properties, RE_engine_id_BLENDER_EEVEE);
 				EEVEE_GET_BOOL(props, volumetric_enable, SCE_EEVEE_VOLUMETRIC_ENABLED);
@@ -2952,9 +2952,74 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 				mat->blend_shadow = MA_BS_SOLID;
 			}
 		}
+
+		/* grease pencil default animation channel color */
+		{
+			for (bGPdata *gpd = bmain->gpencils.first; gpd; gpd = gpd->id.next) {
+				if (gpd->flag & GP_DATA_ANNOTATIONS) {
+					continue;
+				}
+				for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+					/* default channel color */
+					ARRAY_SET_ITEMS(gpl->color, 0.2f, 0.2f, 0.2f);
+				}
+			}
+		}
+	}
+
+	if (!MAIN_VERSION_ATLEAST(bmain, 280, 54)) {
+		for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
+			bool is_first_subdiv = true;
+			for (ModifierData *md = ob->modifiers.first; md; md = md->next) {
+				if (md->type == eModifierType_Subsurf) {
+					SubsurfModifierData *smd = (SubsurfModifierData *)md;
+					if (is_first_subdiv) {
+						smd->flags |= eSubsurfModifierFlag_UseCrease;
+					}
+					else {
+						smd->flags &= ~eSubsurfModifierFlag_UseCrease;
+					}
+					is_first_subdiv = false;
+				}
+				else if (md->type == eModifierType_Multires) {
+					MultiresModifierData *mmd = (MultiresModifierData *)md;
+					if (is_first_subdiv) {
+						mmd->flags |= eMultiresModifierFlag_UseCrease;
+					}
+					else {
+						mmd->flags &= ~eMultiresModifierFlag_UseCrease;
+					}
+					is_first_subdiv = false;
+				}
+			}
+		}
 	}
 
 	{
 		/* Versioning code until next subversion bump goes here. */
+
+		for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
+			for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
+				for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
+					if (sl->spacetype == SPACE_TEXT) {
+						ListBase *regionbase = (sl == sa->spacedata.first) ? &sa->regionbase : &sl->regionbase;
+						ARegion *ar = MEM_callocN(sizeof(ARegion), "footer for text");
+						ARegion *ar_header = NULL;
+
+						for (ar_header = regionbase->first; ar_header; ar_header = ar_header->next) {
+							if (ar_header->regiontype == RGN_TYPE_HEADER) {
+								break;
+							}
+						}
+						BLI_assert(ar_header);
+
+						BLI_insertlinkafter(regionbase, ar_header, ar);
+
+						ar->regiontype = RGN_TYPE_FOOTER;
+						ar->alignment = (U.uiflag & USER_HEADER_BOTTOM) ? RGN_ALIGN_TOP : RGN_ALIGN_BOTTOM;
+					}
+				}
+			}
+		}
 	}
 }

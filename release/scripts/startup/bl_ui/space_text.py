@@ -66,6 +66,17 @@ class TEXT_HT_header(Header):
                 row = layout.row()
                 row.operator("text.run_script")
 
+
+class TEXT_HT_footer(Header):
+    bl_space_type = 'TEXT_EDITOR'
+    bl_region_type = 'FOOTER'
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+        text = st.text
+        if text:
             row = layout.row()
             if text.filepath:
                 if text.is_dirty:
@@ -391,6 +402,7 @@ class TEXT_MT_toolbox(Menu):
 classes = (
     ALL_MT_editormenu,
     TEXT_HT_header,
+    TEXT_HT_footer,
     TEXT_MT_editor_menus,
     TEXT_PT_properties,
     TEXT_PT_find,

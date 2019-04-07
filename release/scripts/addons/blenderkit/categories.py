@@ -50,7 +50,7 @@ def copy_categories():
     categories_filepath = os.path.join(tempdir, 'categories.json')
     if not os.path.exists(categories_filepath):
         source_path = paths.get_addon_file(subpath='data' + os.sep + 'categories.json')
-        print('attempt to copy categories from: %s to %s' % (categories_filepath, source_path))
+        # print('attempt to copy categories from: %s to %s' % (categories_filepath, source_path))
         try:
             shutil.copy(source_path, categories_filepath)
         except:
@@ -78,7 +78,7 @@ def fetch_categories(API_key):
         with open(categories_filepath, 'w') as s:
             json.dump(categories, s, indent=4)
     except:
-        print('category fetching failed')
+        # print('category fetching failed')
         if not os.path.exists(categories_filepath):
             source_path = paths.get_addon_file(subpath='data' + os.sep + 'categories.json')
             shutil.copy(source_path, categories_filepath)
