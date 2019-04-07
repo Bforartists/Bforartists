@@ -349,6 +349,10 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
+        layout.menu("TEXT_MT_edit_delete")
+
+        layout.separator()
+
         layout.operator("text.select_all", icon = "SELECT_ALL")
         layout.operator("text.select_line", icon = "SELECT_LINE")
 
@@ -398,6 +402,17 @@ class TEXT_MT_toolbox(Menu):
 
         layout.operator("text.run_script")
 
+class TEXT_MT_edit_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("text.delete", text = "Next Character", icon = "DELETE").type = 'NEXT_CHARACTER'
+        layout.operator("text.delete", text = "Previous Character", icon = "DELETE").type = 'PREVIOUS_CHARACTER'
+        layout.operator("text.delete", text = "Next Word", icon = "DELETE").type = 'NEXT_WORD'
+        layout.operator("text.delete", text = "Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
+
 
 classes = (
     ALL_MT_editormenu,
@@ -417,6 +432,7 @@ classes = (
     TEXT_MT_edit,
     TEXT_MT_edit_move_select,
     TEXT_MT_toolbox,
+    TEXT_MT_edit_delete,
 )
 
 if __name__ == "__main__":  # only for live edit.
