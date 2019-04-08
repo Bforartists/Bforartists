@@ -1879,7 +1879,7 @@ static void widget_draw_text(const uiFontStyle *fstyle, const uiWidgetColors *wc
 		align = UI_STYLE_TEXT_LEFT;
 	}
 	else if (but->drawflag & UI_BUT_TEXT_RIGHT) {
-		align = UI_STYLE_TEXT_RIGHT;
+		align = UI_STYLE_TEXT_LEFT; /* bfa align text in splitted props left */
 	}
 	else {
 		align = UI_STYLE_TEXT_CENTER;
