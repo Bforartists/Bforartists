@@ -52,17 +52,22 @@ class UnifiedPaintPanel:
         flow = parent.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(ups, "use_unified_size", text="Size")
         col = flow.column()
+        col.use_property_split = False
         col.prop(ups, "use_unified_strength", text="Strength")
         if context.weight_paint_object:
             col = flow.column()
+            col.use_property_split = False
             col.prop(ups, "use_unified_weight", text="Weight")
         elif context.vertex_paint_object or context.image_paint_object:
             col = flow.column()
+            col.use_property_split = False
             col.prop(ups, "use_unified_color", text="Color")
         else:
             col = flow.column()
+            col.use_property_split = False
             col.prop(ups, "use_unified_color", text="Color")
 
     @staticmethod
@@ -232,6 +237,7 @@ def brush_texture_settings(layout, brush, sculpt):
         col = layout.column()
         col.prop(tex_slot, "angle", text="Angle")
         if tex_slot.has_texture_angle_source:
+            col.use_property_split = False
             col.prop(tex_slot, "use_rake", text="Rake")
 
             if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
@@ -423,7 +429,8 @@ def brush_basic_gpencil_sculpt_settings(layout, context, brush, *, compact=False
     row = layout.row(align=True)
     row.prop(brush, "strength", slider=True)
     row.prop(brush, "use_pressure_strength", text="")
-
+    
+    layout.use_property_split = False
     layout.prop(brush, "use_falloff")
 
     if compact:
@@ -452,10 +459,12 @@ def brush_basic_gpencil_weight_settings(layout, context, brush, *, compact=False
     row = layout.row(align=True)
     row.prop(brush, "strength", slider=True)
     row.prop(brush, "use_pressure_strength", text="")
-
+    layout.prop(brush, "weight", slider=True)
+    
+    layout.use_property_split = False
     layout.prop(brush, "use_falloff")
 
-    layout.prop(brush, "weight", slider=True)
+    
 
 
 classes = (
