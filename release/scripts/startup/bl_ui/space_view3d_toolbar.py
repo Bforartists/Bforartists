@@ -101,7 +101,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         ob = context.active_object
@@ -118,7 +118,8 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
         layout.prop(tool_settings, "use_edge_path_live_unwrap")
         layout.prop(tool_settings, "use_mesh_automerge")
-
+        
+        layout.use_property_split = True
         layout.prop(tool_settings, "double_threshold")
         layout.prop(tool_settings, "edge_path_mode")
 
@@ -517,7 +518,7 @@ class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
         brush = settings.brush
         capabilities = brush.sculpt_capabilities
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         col = layout.column()
@@ -526,15 +527,18 @@ class VIEW3D_PT_tools_brush_options(Panel, View3DPaintPanel):
             brush_texpaint_common_options(self, context, layout, brush, settings, True)
 
         elif context.sculpt_object and brush:
-            if capabilities.has_accumulate:
+            if capabilities.has_accumulate:               
                 col.prop(brush, "use_accumulate")
-
+            col.use_property_split = True
             UnifiedPaintPanel.prop_unified_size(col, context, brush, "use_locked_size")
 
             if capabilities.has_sculpt_plane:
+                col.use_property_split = True
                 col.prop(brush, "sculpt_plane")
+                col.use_property_split = False
                 col.prop(brush, "use_original_normal")
-
+                
+            col.use_property_split = False
             col.prop(brush, "use_frontface", text="Front Faces Only")
             col.prop(brush, "use_projected")
 
@@ -1057,6 +1061,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_refine_method", text="Refine Method")
         sub.prop(sculpt, "detail_type_method", text="Detailing")
 
+        col.use_property_split = False
         col.prop(sculpt, "use_smooth_shading")
 
 
@@ -1104,7 +1109,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         tool_settings = context.tool_settings
@@ -1223,9 +1228,12 @@ class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
-        layout.prop(sculpt, "use_symmetry_feather", text="Feather")
+
         layout.column().prop(sculpt, "radial_symmetry", text="Radial")
         layout.column().prop(sculpt, "tile_offset", text="Tile Offset")
+        
+        layout.use_property_split = False
+        layout.prop(sculpt, "use_symmetry_feather", text="Feather")
 
 
 class VIEW3D_PT_tools_brush_display_show_brush(Panel, View3DPaintPanel):
@@ -1311,7 +1319,7 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
     def draw(self, context):
         layout = self.layout
 
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         tool_settings = context.tool_settings
@@ -1459,9 +1467,11 @@ class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(ipaint, "use_occlude")
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(ipaint, "use_backface_culling", text="Backface Culling")
 
 
