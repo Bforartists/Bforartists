@@ -145,6 +145,8 @@ class RENDER_PT_eevee_ambient_occlusion(RenderButtonsPanel, Panel):
         col.prop(props, "gtao_distance")
         col.prop(props, "gtao_factor")
         col.prop(props, "gtao_quality")
+        
+        col.use_property_split = False
         col.prop(props, "use_gtao_bent_normals")
         col.prop(props, "use_gtao_bounce")
 
@@ -334,6 +336,7 @@ class RENDER_PT_eevee_subsurface_scattering(RenderButtonsPanel, Panel):
         col = layout.column()
         col.prop(props, "sss_samples")
         col.prop(props, "sss_jitter_threshold")
+        col.use_property_split = False
         col.prop(props, "use_sss_separate_albedo")
 
 
@@ -353,7 +356,7 @@ class RENDER_PT_eevee_screen_space_reflections(RenderButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         scene = context.scene
         props = scene.eevee
@@ -362,6 +365,7 @@ class RENDER_PT_eevee_screen_space_reflections(RenderButtonsPanel, Panel):
         col.active = props.use_ssr
         col.prop(props, "use_ssr_refraction", text="Refraction")
         col.prop(props, "use_ssr_halfres")
+        col.use_property_split = True
         col.prop(props, "ssr_quality")
         col.prop(props, "ssr_max_roughness")
         col.prop(props, "ssr_thickness")
@@ -389,9 +393,11 @@ class RENDER_PT_eevee_shadows(RenderButtonsPanel, Panel):
         col.prop(props, "shadow_method")
         col.prop(props, "shadow_cube_size", text="Cube Size")
         col.prop(props, "shadow_cascade_size", text="Cascade Size")
+        col.prop(props, "light_threshold")
+        col.use_property_split = False
         col.prop(props, "use_shadow_high_bitdepth")
         col.prop(props, "use_soft_shadows")
-        col.prop(props, "light_threshold")
+        
 
 
 class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):
@@ -413,6 +419,9 @@ class RENDER_PT_eevee_sampling(RenderButtonsPanel, Panel):
         col = layout.column()
         col.prop(props, "taa_render_samples", text="Render")
         col.prop(props, "taa_samples", text="Viewport")
+        
+        col = layout.column()
+        col.use_property_split = False
         col.prop(props, "use_taa_reprojection")
 
 
@@ -441,9 +450,11 @@ class RENDER_PT_eevee_indirect_lighting(RenderButtonsPanel, Panel):
         cache_info = scene.eevee.gi_cache_info
         if cache_info:
             col.label(text=cache_info)
-
+            
+        col.use_property_split = False
         col.prop(props, "gi_auto_bake")
-
+        
+        col.use_property_split = True
         col.prop(props, "gi_diffuse_bounces")
         col.prop(props, "gi_cubemap_resolution")
         col.prop(props, "gi_visibility_resolution", text="Diffuse Occlusion")
@@ -549,13 +560,14 @@ class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         rd = context.scene.render
 
         layout.prop(rd, "use_antialiasing")
-
+        
+        layout.use_property_split = True
         layout.prop(rd, "antialiasing_samples")
         layout.prop(rd, "alpha_mode")
 
@@ -668,7 +680,7 @@ class RENDER_PT_simplify_greasepencil(RenderButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         rd = context.scene.render
