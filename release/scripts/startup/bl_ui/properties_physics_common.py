@@ -190,9 +190,11 @@ def point_cache_ui(self, context, cache, enabled, cachetype):
             flow.enabled = enabled and is_saved
 
             col = flow.column(align=True)
+            col.use_property_split = False
             col.prop(cache, "use_disk_cache")
 
             subcol = col.column()
+            subcol.use_property_split = False
             subcol.active = cache.use_disk_cache
             subcol.prop(cache, "use_library_path", text="Use Library Path")
 
