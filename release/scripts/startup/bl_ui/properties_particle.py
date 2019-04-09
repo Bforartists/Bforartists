@@ -314,8 +314,10 @@ class PARTICLE_PT_emission_source(ParticleButtonsPanel, Panel):
             col.prop(part, "invert_grid")
             col.prop(part, "hexagonal_grid")
         else:
+            col.use_property_split = False
             col.prop(part, "use_emit_random")
             col.prop(part, "use_even_distribution")
+            col.use_property_split = True
 
         if part.emit_from == 'FACE' or part.emit_from == 'VOLUME':
 
@@ -601,6 +603,7 @@ class PARTICLE_PT_rotation(ParticleButtonsPanel, Panel):
         col.prop(part, "phase_factor_random", text="Randomize Phase ", slider=True)
 
         if part.type != 'HAIR':
+            col.use_property_split = False
             col.prop(part, "use_dynamic_rotation")
 
 
@@ -662,7 +665,9 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
         if part.physics_type != 'NO':
             col = col.column()
             col.prop(part, "mass")
+            col.use_property_split = False
             col.prop(part, "use_multiply_size_mass", text="Multiply Mass with Size")
+            col.use_property_split = True
 
         if part.physics_type == 'FLUID':
             fluid = part.fluid
@@ -1045,8 +1050,10 @@ class PARTICLE_PT_physics_deflection(ParticleButtonsPanel, Panel):
         layout.enabled = particle_panel_enabled(context, psys)
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(part, "use_size_deflect")
         col.prop(part, "use_die_on_collision")
+        col.use_property_split = True
 
         col.prop(part, "collision_collection")
 
