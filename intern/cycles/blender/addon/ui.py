@@ -231,7 +231,9 @@ class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
         row.prop(cscene, "use_animated_seed", text="", icon='TIME')
 
         layout.prop(cscene, "sampling_pattern", text="Pattern")
-
+        
+        col = layout.column()
+        layout.use_property_split = False
         layout.prop(cscene, "use_square_samples")
 
         layout.separator()
@@ -361,8 +363,12 @@ class CYCLES_RENDER_PT_hair(CyclesButtonsPanel, Panel):
         col.prop(ccscene, "minimum_width", text="Min Pixels")
         col.prop(ccscene, "maximum_width", text="Max Extension")
         col.prop(ccscene, "shape", text="Shape")
-        if not (ccscene.primitive in {'CURVE_SEGMENTS', 'LINE_SEGMENTS'} and ccscene.shape == 'RIBBONS'):
+        if not (ccscene.primitive in {'CURVE_SEGMENTS', 'LINE_SEGMENTS'} and ccscene.shape == 'RIBBONS'):         
+            col = layout.column()
+            col.use_property_split = False
             col.prop(ccscene, "cull_backfacing", text="Cull back-faces")
+            col.use_property_split = True
+            
         col.prop(ccscene, "primitive", text="Primitive")
 
         if ccscene.primitive == 'TRIANGLES' and ccscene.shape == 'THICK':
@@ -453,6 +459,8 @@ class CYCLES_RENDER_PT_light_paths_caustics(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(cscene, "blur_glossy")
+        
+        col.use_property_split = False
         col.prop(cscene, "caustics_reflective")
         col.prop(cscene, "caustics_refractive")
 
@@ -628,6 +636,7 @@ class CYCLES_RENDER_PT_performance_tiles(CyclesButtonsPanel, Panel):
         for view_layer in scene.view_layers:
             if view_layer.cycles.use_denoising:
                 sub.active = False
+        sub.use_property_split = False
         sub.prop(cscene, "use_progressive_refine")
 
 
@@ -651,11 +660,13 @@ class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Pa
             row = col.row()
             row.active = use_cpu(context)
             row.prop(cscene, "use_bvh_embree")
+        col.use_property_split = False
         col.prop(cscene, "debug_use_spatial_splits")
         sub = col.column()
         sub.active = not cscene.use_bvh_embree or not _cycles.with_embree
         sub.prop(cscene, "debug_use_hair_bvh")
         sub = col.column()
+        sub.use_property_split = True
         sub.active = not cscene.debug_use_spatial_splits and not cscene.use_bvh_embree
         sub.prop(cscene, "debug_bvh_time_steps")
 
@@ -666,7 +677,7 @@ class CYCLES_RENDER_PT_performance_final_render(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        #layout.use_property_split = True
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -1755,7 +1766,7 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         scene = context.scene
@@ -1766,11 +1777,13 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
         if rd.use_bake_multires:
             layout.operator("object.bake_image", icon='RENDER_STILL')
             layout.prop(rd, "use_bake_multires")
+            layout.use_property_split = True
             layout.prop(rd, "bake_type")
 
         else:
             layout.operator("object.bake", icon='RENDER_STILL').type = cscene.bake_type
             layout.prop(rd, "use_bake_multires")
+            layout.use_property_split = True
             layout.prop(cscene, "bake_type")
 
 
@@ -1817,6 +1830,7 @@ class CYCLES_RENDER_PT_bake_influence(CyclesButtonsPanel, Panel):
             flow = col.grid_flow(row_major=False, columns=0, even_columns=False, even_rows=False, align=True)
 
             flow.active = cbk.use_pass_direct or cbk.use_pass_indirect
+            flow.use_property_split = False
             flow.prop(cbk, "use_pass_diffuse")
             flow.prop(cbk, "use_pass_glossy")
             flow.prop(cbk, "use_pass_transmission")
@@ -1862,8 +1876,9 @@ class CYCLES_RENDER_PT_bake_selected_to_active(CyclesButtonsPanel, Panel):
 
         layout.active = cbk.use_selected_to_active
         col = layout.column()
-
+        col.use_property_split = False
         col.prop(cbk, "use_cage", text="Cage")
+        col.use_property_split = True
         if cbk.use_cage:
             col.prop(cbk, "cage_extrusion", text="Extrusion")
             col.prop(cbk, "cage_object", text="Cage Object")
@@ -1896,6 +1911,7 @@ class CYCLES_RENDER_PT_bake_output(CyclesButtonsPanel, Panel):
         else:
 
             layout.prop(cbk, "margin")
+            layout.use_property_split = False
             layout.prop(cbk, "use_clear", text="Clear Image")
 
 
@@ -1984,6 +2000,9 @@ class CYCLES_RENDER_PT_simplify_viewport(CyclesButtonsPanel, Panel):
         col.prop(rd, "simplify_child_particles", text="Child Particles")
         col.prop(cscene, "texture_limit", text="Texture Limit")
         col.prop(cscene, "ao_bounces", text="AO Bounces")
+        
+        col = layout.column()
+        col.use_property_split = False
         col.prop(rd, "use_simplify_smoke_highres")
 
 class CYCLES_RENDER_PT_simplify_render(CyclesButtonsPanel, Panel):
@@ -2030,14 +2049,18 @@ class CYCLES_RENDER_PT_simplify_culling(CyclesButtonsPanel, Panel):
         layout.active = rd.use_simplify
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(cscene, "use_camera_cull")
         sub = col.column()
+        sub.use_property_split = True
         sub.active = cscene.use_camera_cull
         sub.prop(cscene, "camera_cull_margin")
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(cscene, "use_distance_cull")
         sub = col.column()
+        sub.use_property_split = True
         sub.active = cscene.use_distance_cull
         sub.prop(cscene, "distance_cull_margin", text="Distance")
 
@@ -2063,6 +2086,8 @@ def draw_device(self, context):
 
         from . import engine
         if engine.with_osl() and use_cpu(context):
+            col = layout.column()
+            col.use_property_split = False
             col.prop(cscene, "shading_system")
 
 
