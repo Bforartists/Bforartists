@@ -122,18 +122,10 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(rd, "pixel_aspect_x", text="Aspect X")
         col.prop(rd, "pixel_aspect_y", text="Y")
-
-#        col = layout.column(align=True)
-#        col.prop(rd, "use_border")
-#        sub = col.column(align=True)
-#        sub.active = rd.use_border
-#        sub.prop(rd, "use_crop_to_border")
-
             
         row = layout.row(align=False)
-        row.alignment = 'RIGHT' # bfa - FOR NOW!
-        row.prop(rd, "use_border")
-        
+        row.use_property_split = False
+        row.prop(rd, "use_border")     
         if rd.use_border:
             row.prop(rd, "use_crop_to_border")
 
@@ -193,7 +185,7 @@ class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False  # No animation.
 
         rd = context.scene.render
@@ -313,8 +305,6 @@ class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
 
         rd = context.scene.render
         image_settings = rd.image_settings
-
-        layout.use_property_split = True
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 

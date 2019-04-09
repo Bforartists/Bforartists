@@ -90,6 +90,8 @@ class SCENE_PT_unit(SceneButtonsPanel, Panel):
         col = layout.column()
         col.enabled = unit.system != 'NONE'
         col.prop(unit, "scale_length")
+        
+        col.use_property_split = False
         col.prop(unit, "use_separate")
 
         col = layout.column()
