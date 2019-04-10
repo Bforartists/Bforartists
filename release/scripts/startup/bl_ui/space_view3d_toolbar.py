@@ -1811,6 +1811,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_settings(View3DPanel, Panel):
         col.prop(gp_settings, "random_subdiv", text="Randomness", slider=True)
 
         col = layout.column(align=True)
+        col.use_property_split = False
         col.prop(gp_settings, "trim")
 
 
