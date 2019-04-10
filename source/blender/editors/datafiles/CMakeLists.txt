@@ -216,7 +216,7 @@ set(ICON_NAMES
 	decorate_animate
 	decorate_driver
 	#decorate_linked
-	decorate_library_override
+	#decorate_library_override
 	decorate_unlocked
 	decorate_locked
 	decorate_override
