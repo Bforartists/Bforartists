@@ -5570,8 +5570,8 @@ class VIEW3D_PT_view3d_properties(Panel):
         subcol.prop(view, "lens", text="Focal Length")
 
         subcol = col.column(align=True)
-        subcol.prop(view, "clip_start", text="Clip Start")
-        subcol.prop(view, "clip_end", text="End")
+        subcol.prop(view, "clip_start", text="Clip Near")
+        subcol.prop(view, "clip_end", text="Clip Far")
 
         subcol.separator()
 
@@ -5580,15 +5580,14 @@ class VIEW3D_PT_view3d_properties(Panel):
         subcol = col.column()
         subcol.use_property_split = False
         subcol.prop(view, "use_local_camera")
-
-        subcol = col.column()
-        subcol.enabled = view.use_local_camera
-        subcol.prop(view, "camera", text="Local Camera")
-
-        subcol = col.column(align=True)
+        
+        if view.use_local_camera:
+            subcol = col.column()
+            subcol.use_property_split = True
+            subcol.prop(view, "camera", text="Local Cam")
+            
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
-        subcol.active = view.region_3d.view_perspective != 'CAMERA'
 
 
 class VIEW3D_PT_view3d_camera_lock(Panel):
