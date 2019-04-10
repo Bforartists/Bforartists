@@ -882,7 +882,7 @@ class IMAGE_PT_view_display(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         sima = context.space_data
         ima = sima.image
@@ -894,7 +894,9 @@ class IMAGE_PT_view_display(Panel):
         col = layout.column()
 
         if ima:
+            col.use_property_split = True
             col.prop(ima, "display_aspect", text="Aspect Ratio")
+            col.use_property_split = False
             col.prop(sima, "show_repeat", text="Repeat Image")
 
         if show_uvedit:
@@ -915,7 +917,7 @@ class IMAGE_PT_view_display_uv_edit_overlays(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         sima = context.space_data
         uvedit = sima.uv_editor
@@ -947,7 +949,7 @@ class IMAGE_PT_view_display_uv_edit_overlays_advanced(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         sima = context.space_data
         uvedit = sima.uv_editor
@@ -957,6 +959,7 @@ class IMAGE_PT_view_display_uv_edit_overlays_advanced(Panel):
 
         sub = col.column()
         sub.active = uvedit.show_stretch
+        sub.use_property_split = True
         sub.prop(uvedit, "display_stretch_type", text="Type")
 
 
