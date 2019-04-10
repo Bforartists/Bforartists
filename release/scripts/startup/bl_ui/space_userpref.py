@@ -136,6 +136,7 @@ class USERPREF_PT_interface_display(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(view, "show_splash", text="Splash Screen")
         flow.prop(view, "show_tooltips")
         flow.prop(view, "show_tooltips_python")
@@ -158,11 +159,14 @@ class USERPREF_PT_interface_text(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(view, "use_text_antialiasing", text="Anti-aliasing")
         sub = flow.column()
+        sub.use_property_split = True
         sub.active = view.use_text_antialiasing
         sub.prop(view, "text_hinting", text="Hinting")
 
+        flow.use_property_split = True
         flow.prop(view, "font_path_ui")
         flow.prop(view, "font_path_ui_mono")
 
@@ -191,6 +195,7 @@ class USERPREF_PT_interface_translation(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(view, "use_translate_tooltips", text="Tooltips")
         flow.prop(view, "use_translate_interface", text="Interface")
         flow.prop(view, "use_translate_new_dataname", text="New Data")
@@ -211,8 +216,10 @@ class USERPREF_PT_interface_editors(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_layout_ui", text="Corner Splitting")
+        flow.use_property_split = True
         flow.prop(view, "color_picker_type")
         flow.row().prop(view, "header_align")
         flow.prop(view, "factor_display_type")
@@ -309,6 +316,7 @@ class USERPREF_PT_edit_objects_duplicate_data(PreferencePanel, Panel):
     def draw_props(self, context, layout):
         prefs = context.preferences
         edit = prefs.edit
+        layout.use_property_split = False
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=True)
 
@@ -343,6 +351,7 @@ class USERPREF_PT_edit_cursor(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(edit, "use_mouse_depth_cursor")
         flow.prop(edit, "use_cursor_lock_adjust")
 
@@ -382,6 +391,7 @@ class USERPREF_PT_edit_annotations(PreferencePanel, Panel):
 
         flow.prop(edit, "grease_pencil_default_color", text="Default Color")
         flow.prop(edit, "grease_pencil_eraser_radius", text="Eraser Radius")
+        flow.use_property_split = False
         flow.prop(edit, "use_grease_pencil_simplify_stroke", text="Simplify Stroke")
 
 
@@ -398,7 +408,9 @@ class USERPREF_PT_edit_weight_paint(PreferencePanel, Panel):
         prefs = context.preferences
         view = prefs.view
 
+        layout.use_property_split = False
         layout.prop(view, "use_weight_color_range", text="Use Custom Colors")
+        layout.use_property_split = True
 
         col = layout.column()
         col.active = view.use_weight_color_range
@@ -438,7 +450,9 @@ class USERPREF_PT_animation_timeline(PreferencePanel, Panel):
         edit = prefs.edit
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        flow.use_property_split = False
         flow.prop(edit, "use_negative_frames")
+        flow.use_property_split = True
 
         layout.separator()
 
@@ -467,6 +481,7 @@ class USERPREF_PT_animation_keyframes(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(edit, "use_visual_keying")
         flow.prop(edit, "use_keyframe_insert_needed", text="Only Insert Needed")
 
@@ -481,6 +496,7 @@ class USERPREF_PT_animation_autokey(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(edit, "use_auto_keying_warning", text="Show Warning")
         flow.prop(edit, "use_keyframe_insert_available", text="Only Insert Available")
         flow.prop(edit, "use_auto_keying", text="Enable in New Scenes")
@@ -503,6 +519,7 @@ class USERPREF_PT_animation_fcurves(PreferencePanel, Panel):
         flow.prop(edit, "fcurve_unselected_alpha", text="F-Curve Visibility")
         flow.prop(edit, "keyframe_new_interpolation_type", text="Default Interpolation")
         flow.prop(edit, "keyframe_new_handle_type", text="Default Handles")
+        flow.use_property_split = False
         flow.prop(edit, "use_insertkey_xyz_to_rgb", text="XYZ to RGB")
 
 
@@ -569,6 +586,7 @@ class USERPREF_PT_viewport_display(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(view, "show_object_info", text="Object Info")
         flow.prop(view, "show_view_name", text="View Name")
         flow.prop(view, "show_playback_fps", text="Playback FPS")
@@ -611,6 +629,7 @@ class USERPREF_PT_viewport_quality(PreferencePanel, Panel):
         flow.prop(system, "gpu_viewport_quality")
         flow.prop(system, "multi_sample", text="Multisampling")
         flow.prop(system, "gpencil_multi_sample", text="Grease Pencil Multisampling")
+        flow.use_property_split = False
         flow.prop(system, "use_edit_mode_smooth_wire")
 
 
@@ -649,6 +668,7 @@ class USERPREF_PT_viewport_selection(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(system, "use_select_pick_depth")
 
 
@@ -669,7 +689,10 @@ class USERPREF_PT_system_memory(PreferencePanel, Panel):
 
         flow.prop(edit, "undo_steps", text="Undo Steps")
         flow.prop(edit, "undo_memory_limit", text="Undo Memory Limit")
+        
+        flow.use_property_split = False
         flow.prop(edit, "use_global_undo")
+        flow.use_property_split = True
 
         layout.separator()
 
@@ -1251,6 +1274,7 @@ class USERPREF_PT_saveload_blend(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(paths, "use_relative_paths")
         flow.prop(paths, "use_file_compression")
         flow.prop(paths, "use_load_ui")
@@ -1262,6 +1286,7 @@ class USERPREF_PT_saveload_blend(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = True
         flow.prop(paths, "save_version")
         flow.prop(paths, "recent_files")
 
@@ -1296,6 +1321,7 @@ class USERPREF_PT_saveload_file_browser(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(paths, "use_filter_files")
         flow.prop(paths, "show_hidden_files_datablocks")
         flow.prop(paths, "hide_recent_locations")
@@ -1361,6 +1387,8 @@ class USERPREF_PT_input_keyboard(PreferencePanel, Panel):
     def draw_props(self, context, layout):
         prefs = context.preferences
         inputs = prefs.inputs
+        
+        layout.use_property_split = False
 
         layout.prop(inputs, "use_emulate_numpad")
         layout.prop(inputs, "use_numeric_input_advanced")
@@ -1380,9 +1408,11 @@ class USERPREF_PT_input_mouse(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(inputs, "use_mouse_emulate_3_button")
         flow.prop(inputs, "use_mouse_continuous")
         flow.prop(inputs, "use_drag_immediately")
+        flow.use_property_split = True
         flow.prop(inputs, "drag_threshold")
         flow.prop(inputs, "move_threshold")
         flow.prop(inputs, "mouse_double_click_time", text="Double Click Speed")
@@ -1405,6 +1435,7 @@ class USERPREF_PT_navigation_orbit(PreferencePanel, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.row().prop(inputs, "view_rotate_method", expand=True)
+        flow.use_property_split = False
         flow.prop(inputs, "use_rotate_around_active")
         flow.prop(inputs, "use_auto_perspective")
         flow.prop(inputs, "use_mouse_depth_navigate")
@@ -1413,6 +1444,7 @@ class USERPREF_PT_navigation_orbit(PreferencePanel, Panel):
 
         flow.separator()
 
+        flow.use_property_split = True
         flow.prop(view, "smooth_view")
         flow.prop(view, "rotation_angle")
 
@@ -1456,6 +1488,7 @@ class USERPREF_PT_navigation_fly_walk(PreferencePanel, Panel):
         layout.row().prop(inputs, "navigation_mode", expand=True)
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+        flow.use_property_split = False
         flow.prop(inputs, "use_camera_lock_parent")
 
 
@@ -1476,7 +1509,9 @@ class USERPREF_PT_navigation_fly_walk_navigation(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.use_property_split = False
         flow.prop(walk, "use_mouse_reverse")
+        flow.use_property_split = True
         flow.prop(walk, "mouse_speed")
         flow.prop(walk, "teleport_time")
 
@@ -1964,7 +1999,9 @@ class USERPREF_PT_studiolight_light_editor(Panel):
         col = layout.column()
         col.active = light.use
 
+        col.use_property_split = False
         col.prop(light, "use", text="Use Light")
+        col.use_property_split = True
         col.prop(light, "diffuse_color", text="Diffuse")
         col.prop(light, "specular_color", text="Specular")
         col.prop(light, "smooth")
