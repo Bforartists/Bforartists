@@ -5578,6 +5578,7 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = flow.column()
 
         subcol = col.column()
+        subcol.use_property_split = False
         subcol.prop(view, "use_local_camera")
 
         subcol = col.column()
@@ -5585,6 +5586,7 @@ class VIEW3D_PT_view3d_properties(Panel):
         subcol.prop(view, "camera", text="Local Camera")
 
         subcol = col.column(align=True)
+        subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
         subcol.active = view.region_3d.view_perspective != 'CAMERA'
 
@@ -5619,8 +5621,9 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
                     text=""
                 )
         else:
+            subcol.use_property_split = False
             subcol.prop(view, "lock_cursor", text="Lock to 3D Cursor")
-
+        col.use_property_split = False
         col.prop(view, "lock_camera")
 
 
