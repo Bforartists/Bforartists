@@ -5924,27 +5924,24 @@ class VIEW3D_PT_shading_options(Panel):
         row = col.row()
 
         if shading.type == 'WIREFRAME':
-            row.prop(shading, "show_xray_wireframe", text="")
+            row.prop(shading, "show_xray_wireframe")
             sub = row.row()
             sub.active = shading.show_xray_wireframe
             sub.prop(shading, "xray_alpha_wireframe", text="X-Ray")
         elif shading.type == 'SOLID':
-            row.prop(shading, "show_xray", text="")
+            row.prop(shading, "show_xray", text="X-Ray")
             sub = row.row()
             sub.active = shading.show_xray
-            sub.prop(shading, "xray_alpha", text="X-Ray")
+            sub.prop(shading, "xray_alpha", text="")
 
             row = col.row()
-            row.prop(shading, "show_shadows", text="")
+            row.prop(shading, "show_shadows")
             row.active = not shading.show_xray
+            
             sub = row.row(align=True)
             sub.active = shading.show_shadows
-            sub.prop(shading, "shadow_intensity", text="Shadow")
-            sub.popover(
-                panel="VIEW3D_PT_shading_options_shadow",
-                icon='PREFERENCES',
-                text=""
-            )
+            sub.prop(shading, "shadow_intensity", text="")
+            sub.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
 
             col = layout.column()
 
@@ -5956,10 +5953,10 @@ class VIEW3D_PT_shading_options(Panel):
                 row.prop(shading, "cavity_type", text="Type")
 
                 if shading.cavity_type in {'WORLD', 'BOTH'}:
-                    col.label(text="World Space")
+                    col.label(text="World Space - Ridge / Valley")
                     sub = col.row(align=True)
-                    sub.prop(shading, "cavity_ridge_factor", text="Ridge")
-                    sub.prop(shading, "cavity_valley_factor", text="Valley")
+                    sub.prop(shading, "cavity_ridge_factor", text="")
+                    sub.prop(shading, "cavity_valley_factor", text="")
                     sub.popover(
                         panel="VIEW3D_PT_shading_options_ssao",
                         icon='PREFERENCES',
@@ -5967,10 +5964,10 @@ class VIEW3D_PT_shading_options(Panel):
                     )
 
                 if shading.cavity_type in {'SCREEN', 'BOTH'}:
-                    col.label(text="Screen Space")
+                    col.label(text="Screen Space - Ridge / Valley")
                     sub = col.row(align=True)
-                    sub.prop(shading, "curvature_ridge_factor", text="Ridge")
-                    sub.prop(shading, "curvature_valley_factor", text="Valley")
+                    sub.prop(shading, "curvature_ridge_factor", text="")
+                    sub.prop(shading, "curvature_valley_factor", text="")
 
         if shading.type in {'WIREFRAME', 'SOLID'}:
             row = layout.split()
