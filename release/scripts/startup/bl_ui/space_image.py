@@ -926,6 +926,7 @@ class IMAGE_PT_view_display_uv_edit_overlays(Panel):
 
         split = col.split(factor=0.6)
         split.prop(uvedit, "show_edges", text="Edges")
+        split.active = uvedit.show_edges
         split.prop(uvedit, "edge_display_type", text="")
 
         col.prop(uvedit, "show_faces", text="Faces")
@@ -955,12 +956,10 @@ class IMAGE_PT_view_display_uv_edit_overlays_advanced(Panel):
         uvedit = sima.uv_editor
 
         col = layout.column()
-        col.prop(uvedit, "show_stretch", text="Stretch")
-
-        sub = col.column()
-        sub.active = uvedit.show_stretch
-        sub.use_property_split = True
-        sub.prop(uvedit, "display_stretch_type", text="Type")
+        split = col.split(factor=0.6)
+        split.prop(uvedit, "show_stretch", text="Stretch")
+        split.active = uvedit.show_stretch
+        split.prop(uvedit, "display_stretch_type", text = "")
 
 
 class IMAGE_UL_render_slots(UIList):
