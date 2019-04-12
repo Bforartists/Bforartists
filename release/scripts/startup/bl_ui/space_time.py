@@ -128,6 +128,10 @@ class TIME_MT_view(Menu):
         scene = context.scene
         st = context.space_data
 
+        layout.operator("action.properties", text = "Sidebar", icon='MENU_PANEL')
+
+        layout.separator()
+
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
 
