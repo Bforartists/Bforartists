@@ -67,6 +67,10 @@ class OUTLINER_HT_header(Header):
         scene = context.scene
         ks = context.scene.keying_sets.active
 
+        # addon prefs for the show search prop
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         row = layout.row(align=True)
@@ -77,10 +81,13 @@ class OUTLINER_HT_header(Header):
 
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout) # Collapsing everything in OUTLINER_MT_editor_menus when ticking collapse menus checkbox
 
-        layout.separator_spacer()
+        #layout.separator_spacer()
 
         row = layout.row(align=True)
-        row.prop(space, "filter_text", icon='VIEWZOOM', text="")
+
+        row.prop(addon_prefs,"outliner_show_search", icon='VIEWZOOM', text = "") # show search text prop
+        if addon_prefs.outliner_show_search:
+            row.prop(space, "filter_text", text="")
 
         layout.separator_spacer()
 
@@ -184,6 +191,8 @@ class OUTLINER_MT_view(Menu):
 
     def draw(self, context):
         layout = self.layout
+        
+        space = context.space_data
 
         layout.operator("outliner.show_active", icon = "CENTER")
 
@@ -207,6 +216,12 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+        
+        layout.separator()
+        
+        layout.prop(space, "filter_text", icon='VIEWZOOM', text="")
+        
+        layout.operator("outliner.search_menu", text="", icon='VIEWZOOM')
 
 
 
