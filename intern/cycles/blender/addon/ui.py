@@ -665,10 +665,11 @@ class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Pa
         sub = col.column()
         sub.active = not cscene.use_bvh_embree or not _cycles.with_embree
         sub.prop(cscene, "debug_use_hair_bvh")
-        sub = col.column()
-        sub.use_property_split = True
-        sub.active = not cscene.debug_use_spatial_splits and not cscene.use_bvh_embree
-        sub.prop(cscene, "debug_bvh_time_steps")
+
+        if not cscene.debug_use_spatial_splits and not cscene.use_bvh_embree:
+            sub = col.column()
+            sub.use_property_split = True
+            sub.prop(cscene, "debug_bvh_time_steps")
 
 
 class CYCLES_RENDER_PT_performance_final_render(CyclesButtonsPanel, Panel):
