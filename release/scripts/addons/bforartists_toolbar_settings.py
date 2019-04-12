@@ -143,6 +143,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     Node_text_or_icon : BoolProperty(name="Icon / Text Buttons", default = False, description = "Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state")
 
+    # Outliner, show search prop
+
+    outliner_show_search : BoolProperty(name="Show search", default = False, description = "Show the search form")
+
 
     def draw(self, context):
         layout = self.layout
@@ -298,6 +302,14 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = layout.row()
         row.prop(self, "Node_text_or_icon")
+
+
+    # Outliner, show search prop
+
+        layout.label(text="The show hide prop for the outliner.")
+
+        row = layout.row()
+        row.prop(self, "outliner_show_search")
 
 
 class BFA_OT_toolbar_prefs(Operator):
