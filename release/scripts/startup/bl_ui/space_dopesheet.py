@@ -325,6 +325,8 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
+        layout.operator("action.properties", text = "Sidebar", icon='MENU_PANEL')
+
         layout.separator()
 
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
