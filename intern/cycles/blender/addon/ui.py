@@ -2049,21 +2049,21 @@ class CYCLES_RENDER_PT_simplify_culling(CyclesButtonsPanel, Panel):
 
         layout.active = rd.use_simplify
 
-        col = layout.column()
-        col.use_property_split = False
-        col.prop(cscene, "use_camera_cull")
-        sub = col.column()
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(cscene, "use_camera_cull")
+        sub = row.row()
         sub.use_property_split = True
         sub.active = cscene.use_camera_cull
-        sub.prop(cscene, "camera_cull_margin")
+        sub.prop(cscene, "camera_cull_margin", text = "")
 
-        col = layout.column()
-        col.use_property_split = False
-        col.prop(cscene, "use_distance_cull")
-        sub = col.column()
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(cscene, "use_distance_cull")
+        sub = row.row()
         sub.use_property_split = True
         sub.active = cscene.use_distance_cull
-        sub.prop(cscene, "distance_cull_margin", text="Distance")
+        sub.prop(cscene, "distance_cull_margin", text="")
 
 
 def draw_device(self, context):
