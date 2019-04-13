@@ -640,7 +640,7 @@ class IMAGE_HT_header(Header):
 
         MASK_MT_editor_menus.draw_collapsible(context, layout)    
 
-        layout.separator_spacer()
+        #layout.separator_spacer()
 
         layout.template_ID(sima, "image", new="image.new", open="image.open")
 
