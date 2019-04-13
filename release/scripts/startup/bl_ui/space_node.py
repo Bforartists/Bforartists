@@ -65,13 +65,6 @@ class NODE_HT_header(Header):
 
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-                # No shader nodes for Eevee lights
-                if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
-                    row = layout.row()
-                    row.prop(snode_id, "use_nodes")
-
-                layout.separator_spacer()
-
                 types_that_support_material = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META', 'GPENCIL'}
                 # disable material slot buttons when pinned, cannot find correct slot within id_from (#36589)
                 # disable also when the selected object does not support materials
@@ -96,12 +89,6 @@ class NODE_HT_header(Header):
             if snode.shader_type == 'WORLD':
                 NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-                if snode_id:
-                    row = layout.row()
-                    row.prop(snode_id, "use_nodes")
-
-                layout.separator_spacer()
-
                 row = layout.row()
                 row.enabled = not snode.pin
                 row.template_ID(scene, "world", new="world.new")
@@ -113,12 +100,6 @@ class NODE_HT_header(Header):
                 if lineset is not None:
                     NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-                    if snode_id:
-                        row = layout.row()
-                        row.prop(snode_id, "use_nodes")
-
-                    layout.separator_spacer()
-
                     row = layout.row()
                     row.enabled = not snode.pin
                     row.template_ID(lineset, "linestyle", new="scene.freestyle_linestyle_new")
@@ -127,11 +108,6 @@ class NODE_HT_header(Header):
             layout.prop(snode, "texture_type", text="")
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
-
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
-            layout.separator_spacer()
 
             if id_from:
                 if snode.texture_type == 'BRUSH':
@@ -143,9 +119,6 @@ class NODE_HT_header(Header):
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-            if snode_id:
-                layout.prop(snode_id, "use_nodes")
-
             layout.prop(snode, "use_auto_render")
             layout.prop(snode, "show_backdrop")
             if snode.show_backdrop:
@@ -156,15 +129,56 @@ class NODE_HT_header(Header):
             # Custom node tree is edited as independent ID block
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-            layout.separator_spacer()
-
             layout.template_ID(snode, "node_tree", new="node.new_node_tree")
 
-        layout.prop(snode, "pin", text="")
+        #################### options at the right ###################################
+
         layout.separator_spacer()
 
         layout.template_running_jobs()
 
+        # -------------------- use nodes ---------------------------
+
+        if snode.tree_type == 'ShaderNodeTree':
+
+            if snode.shader_type == 'OBJECT' and ob:
+
+                # No shader nodes for Eevee lights
+                if snode_id and not (context.engine == 'BLENDER_EEVEE' and ob_type == 'LIGHT'):
+                    row = layout.row()
+                    row.prop(snode_id, "use_nodes")
+
+            if snode.shader_type == 'WORLD':
+
+                if snode_id:
+                    row = layout.row()
+                    row.prop(snode_id, "use_nodes")
+
+            if snode.shader_type == 'LINESTYLE':
+
+                if lineset is not None:
+
+                    if snode_id:
+                        row = layout.row()
+                        row.prop(snode_id, "use_nodes")
+
+
+        elif snode.tree_type == 'TextureNodeTree':
+
+            if snode_id:
+                layout.prop(snode_id, "use_nodes")
+
+
+        elif snode.tree_type == 'CompositorNodeTree':
+
+            if snode_id:
+                layout.prop(snode_id, "use_nodes")
+
+
+        # ----------------- rest of the options
+        
+
+        layout.prop(snode, "pin", text="")   
         layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
 
         # Snap
