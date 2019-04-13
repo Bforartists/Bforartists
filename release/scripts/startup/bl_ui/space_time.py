@@ -60,8 +60,6 @@ class TIME_HT_editor_buttons(Header):
         row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
 
-        #layout.separator_spacer()
-
         row = layout.row()
         row.scale_x = 0.95
         if scene.show_subframe:
@@ -79,7 +77,11 @@ class TIME_HT_editor_buttons(Header):
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
+                       
+        layout.separator_spacer()
 
+        layout.popover(panel="TIME_PT_playback", text="Playback")
+        layout.popover(panel="TIME_PT_keyframing_settings", text="Keying")
 
 class TIME_MT_editor_menus(Menu):
     bl_idname = "TIME_MT_editor_menus"
@@ -87,21 +89,13 @@ class TIME_MT_editor_menus(Menu):
 
     def draw(self, context):
         layout = self.layout
+        
         horizontal = (layout.direction == 'VERTICAL')
         if horizontal:
             row = layout.row()
             sub = row.row(align=True)
         else:
             sub = layout
-
-        sub.popover(
-            panel="TIME_PT_playback",
-            text="Playback",
-        )
-        sub.popover(
-            panel="TIME_PT_keyframing_settings",
-            text="Keying",
-        )
 
         if horizontal:
             sub = row.row(align=True)
