@@ -60,7 +60,7 @@ class TIME_HT_editor_buttons(Header):
         row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
 
-        layout.separator_spacer()
+        #layout.separator_spacer()
 
         row = layout.row()
         row.scale_x = 0.95
