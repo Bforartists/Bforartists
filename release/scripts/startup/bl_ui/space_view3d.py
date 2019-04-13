@@ -251,7 +251,7 @@ class VIEW3D_HT_header(Header):
                     text="Guides"
                 )
 
-        layout.separator_spacer()
+        #layout.separator_spacer()
 
         # Collection Visibility
         # layout.popover(panel="VIEW3D_PT_collections", icon='GROUP', text="")
