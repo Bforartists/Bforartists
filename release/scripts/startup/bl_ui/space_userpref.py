@@ -1460,17 +1460,18 @@ class USERPREF_PT_navigation_zoom(PreferencePanel, Panel):
     def draw_props(self, context, layout):
         prefs = context.preferences
         inputs = prefs.inputs
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
-        flow.row().prop(inputs, "view_zoom_method", text="Zoom Method", expand=True)
+        
+        layout.row().prop(inputs, "view_zoom_method", text="Zoom Method", expand=True)
+        
         if inputs.view_zoom_method in {'DOLLY', 'CONTINUE'}:
-            flow.row().prop(inputs, "view_zoom_axis", expand=True)
-            flow.prop(inputs, "invert_mouse_zoom", text="Invert Mouse Zoom Direction")
-
-        flow.prop(inputs, "invert_zoom_wheel", text="Invert Wheel Zoom Direction")
-        # sub.prop(view, "wheel_scroll_lines", text="Scroll Lines")
-        flow.prop(inputs, "use_zoom_to_mouse")
+            
+            layout.row().prop(inputs, "view_zoom_axis", expand=True)
+            layout.use_property_split = False
+            layout.prop(inputs, "invert_mouse_zoom", text="Invert Mouse Zoom Direction")
+            
+        layout.use_property_split = False
+        layout.prop(inputs, "invert_zoom_wheel", text="Invert Wheel Zoom Direction")
+        layout.prop(inputs, "use_zoom_to_mouse")
 
 
 class USERPREF_PT_navigation_fly_walk(PreferencePanel, Panel):
