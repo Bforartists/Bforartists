@@ -138,7 +138,7 @@ class CLIP_HT_header(Header):
 
         CLIP_MT_tracking_editor_menus.draw_collapsible(context, layout)
 
-        layout.separator_spacer()
+        #layout.separator_spacer()
 
         row = layout.row()
         if sc.view == 'CLIP':
