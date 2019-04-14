@@ -38,6 +38,7 @@
 #include "DNA_modifier_types.h"
 #include "DNA_node_types.h"
 
+#include "ED_view3d.h"
 
 #include "GPU_shader.h"
 #include "GPU_texture.h"
@@ -381,7 +382,7 @@ void workbench_forward_engine_init(WORKBENCH_Data *vedata)
 
 	/* TODO(campbell): displays but masks geometry,
 	 * only use with wire or solid-without-xray for now. */
-	if (((wpd->shading.type != OB_WIRE && XRAY_FLAG(wpd) == 0)) &&
+	if ((wpd->shading.type != OB_WIRE && !XRAY_FLAG_ENABLED(wpd)) &&
 	    (draw_ctx->rv3d && (draw_ctx->rv3d->rflag & RV3D_CLIPPING) && draw_ctx->rv3d->clipbb))
 	{
 		psl->background_pass = DRW_pass_create(
@@ -407,7 +408,7 @@ void workbench_forward_engine_init(WORKBENCH_Data *vedata)
 			noise_offset = fmodf(noise_offset + 1.0f / 8.0f, 1.0f);
 		}
 
-		if (wpd->shading.flag & XRAY_FLAG(wpd)) {
+		if (XRAY_FLAG_ENABLED(wpd)) {
 			blend_threshold = 1.0f - XRAY_ALPHA(wpd) * 0.9f;
 		}
 

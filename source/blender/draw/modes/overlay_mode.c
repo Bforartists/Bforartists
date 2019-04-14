@@ -34,6 +34,8 @@
 #include "GPU_shader.h"
 #include "DRW_render.h"
 
+#include "ED_view3d.h"
+
 #include "draw_mode_engines.h"
 
 #ifdef __APPLE__
@@ -421,7 +423,7 @@ static void overlay_cache_finish(void *vedata)
 	View3D *v3d = ctx->v3d;
 
 	/* only in solid mode */
-	if (v3d->shading.type == OB_SOLID && (v3d->shading.flag & XRAY_FLAG(v3d)) == 0) {
+	if (v3d->shading.type == OB_SOLID && !XRAY_FLAG_ENABLED(v3d)) {
 		if (stl->g_data->ghost_stencil_test) {
 			DRW_pass_state_add(psl->face_wireframe_pass, DRW_STATE_STENCIL_EQUAL);
 		}
