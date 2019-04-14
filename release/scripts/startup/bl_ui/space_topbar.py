@@ -20,6 +20,7 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 
+
 class TOPBAR_HT_upper_bar(Header):
     bl_space_type = 'TOPBAR'
 
@@ -59,7 +60,6 @@ class TOPBAR_HT_upper_bar(Header):
     def draw_right(self, context):
         layout = self.layout
 
-        # bfa not sure if longer needed. 
         window = context.window
         screen = context.screen
         scene = window.scene
@@ -68,6 +68,16 @@ class TOPBAR_HT_upper_bar(Header):
         if not screen.show_statusbar:
             layout.template_reports_banner()
             layout.template_running_jobs()
+
+        # Active workspace view-layer is retrieved through window, not through workspace.
+        layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
+
+        row = layout.row(align=True)
+        row.template_search(
+            window, "view_layer",
+            scene, "view_layers",
+            new="scene.view_layer_add",
+            unlink="scene.view_layer_remove")
 
 
 class TOPBAR_HT_lower_bar(Header):
@@ -334,7 +344,7 @@ class _draw_left_context_mode:
             settings = tool_settings.gpencil_paint
             row.template_ID_preview(settings, "brush", rows=3, cols=8, hide_buttons=True)
 
-            if brush.gpencil_tool in {'FILL', 'DRAW'}:
+            if context.object and brush.gpencil_tool in {'FILL', 'DRAW'}:
                 draw_color_selector()
 
             from .properties_paint_common import (
@@ -351,7 +361,7 @@ class _draw_left_context_mode:
                 sub.active = settings.use_thickness_curve
                 sub.popover(
                     panel="TOPBAR_PT_gpencil_primitive",
-                    text="Thickness Profile"
+                    text="Thickness Profile",
                 )
 
             if brush.gpencil_tool == 'FILL':
@@ -360,7 +370,7 @@ class _draw_left_context_mode:
                 sub = row.row(align=True)
                 sub.popover(
                     panel="TOPBAR_PT_gpencil_fill",
-                    text="Fill Options"
+                    text="Fill Options",
                 )
 
         @staticmethod
@@ -557,7 +567,7 @@ class TOPBAR_MT_file(Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.menu("TOPBAR_MT_file_new", text="New")
+        layout.menu("TOPBAR_MT_file_new", text="New", icon='FILE_NEW')
         layout.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
         layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
@@ -988,7 +998,6 @@ class TOPBAR_PT_gpencil_primitive(Panel):
     bl_region_type = 'HEADER'
     bl_label = "Primitives"
 
-    @staticmethod
     def draw(self, context):
         settings = context.tool_settings.gpencil_sculpt
 
@@ -1051,10 +1060,10 @@ class TOPBAR_PT_name(Panel):
             item = getattr(scene.sequence_editor, "active_strip")
             if item:
                 row = row_with_icon(layout, 'SEQUENCE')
-                row.prop(item, "name", text="")
+                row.prop(item, "label", text="")
                 found = True
         elif space_type == 'NODE_EDITOR':
-            layout.label(text="Node Name")
+            layout.label(text="Node Label")
             item = context.active_node
             if item:
                 row = row_with_icon(layout, 'NODE')
