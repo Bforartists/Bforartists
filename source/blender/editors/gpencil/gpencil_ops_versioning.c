@@ -48,6 +48,9 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "RNA_access.h"
+#include "RNA_define.h"
+
 #include "ED_object.h"
 #include "ED_gpencil.h"
 
@@ -94,25 +97,26 @@ static bool gpencil_convert_old_files_poll(bContext *C)
 	return (int) (scene->gpd != NULL);
 }
 
-static int gpencil_convert_old_files_exec(bContext *C, wmOperator *UNUSED(op))
+static int gpencil_convert_old_files_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	ViewLayer *view_layer = CTX_data_view_layer(C);
+	const bool is_annotation = RNA_boolean_get(op->ptr, "annotation");
+	bGPdata *gpd = scene->gpd;
 
 	/* Convert grease pencil scene datablock to GP object */
-	if ((scene->gpd) && (view_layer != NULL)) {
+	if ((!is_annotation) && (view_layer != NULL)) {
 		Object *ob;
 		ob = BKE_object_add_for_data(bmain, view_layer, OB_GPENCIL, "GP_Scene", &scene->gpd->id, false);
 		zero_v3(ob->loc);
 
 		/* convert grease pencil palettes (version >= 2.78)  to materials and weights */
-		bGPdata *gpd = scene->gpd;
 		for (const bGPDpalette *palette = gpd->palettes.first; palette; palette = palette->next) {
 			for (bGPDpalettecolor *palcolor = palette->colors.first; palcolor; palcolor = palcolor->next) {
 
 				/* create material slot */
-				Material *ma = BKE_gpencil_handle_new_material(bmain, ob, palcolor->info, NULL);
+				Material *ma = BKE_gpencil_object_material_new(bmain, ob, palcolor->info, NULL);
 
 				/* copy color settings */
 				MaterialGPencilStyle *gp_style = ma->gp_style;
@@ -161,35 +165,32 @@ static int gpencil_convert_old_files_exec(bContext *C, wmOperator *UNUSED(op))
 		scene->gpd = NULL;
 	}
 
-#if 0 /* GPXX */
-	/* Handle object-linked grease pencil datablocks */
-	for (Object *ob = bmain->objects.first; ob; ob = ob->id.next) {
-		if (ob->gpd) {
-			if (ob->type == OB_GPENCIL) {
-				/* GP Object - remap the links */
-				ob->data = ob->gpd;
-				ob->gpd = NULL;
-			}
-			else if (ob->type == OB_EMPTY) {
-				/* Empty with GP data - This should be able to be converted
-				 * to a GP object with little data loss
-				 */
-				ob->data = ob->gpd;
-				ob->gpd = NULL;
-				ob->type = OB_GPENCIL;
-			}
-			else {
-				/* FIXME: What to do in this case?
-				 *
-				 * We cannot create new objects for these, as we don't have a scene & scene layer
-				 * to put them into from here...
-				 */
-				printf("WARNING: Old Grease Pencil data ('%s') still exists on Object '%s'\n",
-				       ob->gpd->id.name + 2, ob->id.name + 2);
+	if (is_annotation) {
+		for (const bGPDpalette *palette = gpd->palettes.first; palette; palette = palette->next) {
+			for (bGPDpalettecolor *palcolor = palette->colors.first; palcolor; palcolor = palcolor->next) {
+				/* fix layers */
+				for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+					/* unlock/unhide layer */
+					gpl->flag &= ~GP_LAYER_LOCKED;
+					gpl->flag &= ~GP_LAYER_HIDE;
+					/* set opacity to 1 */
+					gpl->opacity = 1.0f;
+					/* disable tint */
+					gpl->tintcolor[3] = 0.0f;
+					for (bGPDframe *gpf = gpl->frames.first; gpf; gpf = gpf->next) {
+						for (bGPDstroke *gps = gpf->strokes.first; gps; gps = gps->next) {
+							if ((gps->colorname[0] != '\0') &&
+							    (STREQ(gps->colorname, palcolor->info)))
+							{
+								/* copy color settings */
+								copy_v4_v4(gpl->color, palcolor->color);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
-#endif
 
 	/* notifiers */
 	WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
@@ -200,9 +201,9 @@ static int gpencil_convert_old_files_exec(bContext *C, wmOperator *UNUSED(op))
 void GPENCIL_OT_convert_old_files(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Convert 2.7 Grease Pencil File";
+	ot->name = "Convert Grease Pencil";
 	ot->idname = "GPENCIL_OT_convert_old_files";
-	ot->description = "Convert 2.7x grease pencil files to 2.8";
+	ot->description = "Convert 2.7x grease pencil files to 2.80";
 
 	/* callbacks */
 	ot->exec = gpencil_convert_old_files_exec;
@@ -210,4 +211,7 @@ void GPENCIL_OT_convert_old_files(wmOperatorType *ot)
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	/* props */
+	ot->prop = RNA_def_boolean(ot->srna, "annotation", 0, "Annotation", "Convert to Annotations");
 }
