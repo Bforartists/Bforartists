@@ -618,7 +618,7 @@ static ARegion *screen_find_region_type(bContext *C, int type)
  *
  * functions:
  *
- * apply() set actionzone event
+ * apply() set action-zone event
  *
  * exit()	free customdata
  *
@@ -826,7 +826,7 @@ static AZone *area_actionzone_refresh_xy(ScrArea *sa, const int xy[2], const boo
 	return az;
 }
 
-/* Finds an actionzone by position in entire screen so azones can overlap */
+/* Finds an action-zone by position in entire screen so azones can overlap. */
 static AZone *screen_actionzone_find_xy(bScreen *sc, const int xy[2])
 {
 	for (ScrArea *sa = sc->areabase.first; sa; sa = sa->next) {
@@ -904,7 +904,7 @@ static int actionzone_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 	if (az == NULL || ELEM(az->type, AZONE_REGION_SCROLL))
 		return OPERATOR_PASS_THROUGH;
 
-	/* ok we do the actionzone */
+	/* ok we do the action-zone */
 	sad = op->customdata = MEM_callocN(sizeof(sActionzoneData), "sActionzoneData");
 	sad->sa1 = screen_actionzone_area(sc, az);
 	sad->az = az;
@@ -1054,7 +1054,7 @@ static void SCREEN_OT_actionzone(wmOperatorType *ot)
  *
  * functions:
  *
- * init()   set custom data for operator, based on actionzone event custom data
+ * init()   set custom data for operator, based on action-zone event custom data
  *
  * cancel() cancel the operator
  *
@@ -1062,7 +1062,7 @@ static void SCREEN_OT_actionzone(wmOperatorType *ot)
  *
  * callbacks:
  *
- * invoke() gets called on shift+lmb drag in actionzone
+ * invoke() gets called on shift+lmb drag in action-zone
  * call init(), add handler
  *
  * modal()  accept modal events while doing it

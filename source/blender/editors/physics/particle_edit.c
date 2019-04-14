@@ -446,7 +446,7 @@ static void PE_set_view3d_data(bContext *C, PEData *data)
 
 	ED_view3d_viewcontext_init(C, &data->vc);
 
-	if (V3D_IS_ZBUF(data->vc.v3d)) {
+	if (!XRAY_ENABLED(data->vc.v3d)) {
 		if (data->vc.v3d->flag & V3D_INVALID_BACKBUF) {
 			/* needed or else the draw matrix can be incorrect */
 			view3d_operator_needs_opengl(C);
@@ -503,7 +503,7 @@ static bool key_test_depth(const PEData *data, const float co[3], const int scre
 	float depth;
 
 	/* nothing to do */
-	if (!V3D_IS_ZBUF(v3d))
+	if (XRAY_ENABLED(v3d))
 		return true;
 
 	/* used to calculate here but all callers have  the screen_co already, so pass as arg */
@@ -3965,7 +3965,7 @@ static int brush_add(const bContext *C, PEData *data, short number)
 	}
 	BLI_assert(mesh);
 
-	/* Calculate positions of new particles to add, based on brush interseciton
+	/* Calculate positions of new particles to add, based on brush intersection
 	 * with object. New particle data is assigned to a corresponding to check
 	 * index element of add_pars array. This means, that add_pars is a sparse
 	 * array.
@@ -3993,7 +3993,7 @@ static int brush_add(const bContext *C, PEData *data, short number)
 	BLI_task_parallel_range(0, number, &iter_data, brush_add_count_iter, &settings);
 
 	/* Convert add_parse to a dense array, where all new particles are in the
-	 * beginnign of the array.
+	 * beginning of the array.
 	 */
 	n = iter_data.num_added;
 	for (int current_iter = 0, new_index = 0; current_iter < number; current_iter++) {
