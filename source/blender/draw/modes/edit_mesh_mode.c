@@ -43,6 +43,8 @@
 #include "BLI_dynstr.h"
 #include "BLI_string_utils.h"
 
+#include "ED_view3d.h"
+
 extern char datatoc_paint_weight_vert_glsl[];
 extern char datatoc_paint_weight_frag_glsl[];
 
@@ -385,7 +387,7 @@ static void EDIT_MESH_cache_init(void *vedata)
 	stl->g_data->do_faces = true;
 	stl->g_data->do_edges = true;
 
-	stl->g_data->do_zbufclip = ((v3d)->shading.flag & XRAY_FLAG(v3d)) != 0;
+	stl->g_data->do_zbufclip = XRAY_FLAG_ENABLED(v3d);
 
 	stl->g_data->data_mask[0] = 0xFF; /* Face Flag */
 	stl->g_data->data_mask[1] = 0xFF; /* Edge Flag */
@@ -740,7 +742,7 @@ static void EDIT_MESH_draw_scene(void *vedata)
 		DRW_draw_pass(psl->normals);
 		DRW_draw_pass(psl->edit_face_overlay);
 
-		if (v3d->shading.type == OB_SOLID && (v3d->shading.flag & XRAY_FLAG(v3d)) == 0 &&
+		if (v3d->shading.type == OB_SOLID && !XRAY_FLAG_ENABLED(v3d) &&
 		    stl->g_data->ghost_ob == 1 && stl->g_data->edit_ob == 1)
 		{
 			/* In the case of single ghost object edit (common case for retopology):
