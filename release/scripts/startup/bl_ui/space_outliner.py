@@ -207,12 +207,6 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-        
-        layout.separator()
-        
-        layout.prop(space, "filter_text", icon='VIEWZOOM', text="")
-        
-        layout.operator("outliner.search_menu", text="", icon='VIEWZOOM')
 
 
 
