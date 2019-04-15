@@ -2333,7 +2333,8 @@ class VIEW3D_MT_object_convert(Menu):
 
         layout.operator_enum("object.convert", "target")
 
-        if obj.type == 'GPENCIL':
+        # check if object exists at all.
+        if obj is not None and obj.type == 'GPENCIL':
 
             layout.separator()
 
