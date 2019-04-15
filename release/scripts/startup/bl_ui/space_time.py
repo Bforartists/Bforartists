@@ -37,8 +37,6 @@ class TIME_HT_editor_buttons(Header):
 
         layout.separator_spacer()
 
-        layout.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
-
         row = layout.row(align=True)
         row.operator("screen.frame_jump", text="", icon='REW').end = False
         row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
@@ -77,8 +75,18 @@ class TIME_HT_editor_buttons(Header):
         else:
             sub.prop(scene, "frame_preview_start", text="Start")
             sub.prop(scene, "frame_preview_end", text="End")
-                       
+
+        row.separator()
+
+        row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
+        row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+
         layout.separator_spacer()
+            
+        row = layout.row(align=True)
+
+        row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)           
+        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")   
 
         layout.popover(panel="TIME_PT_playback", text="Playback")
         layout.popover(panel="TIME_PT_keyframing_settings", text="Keying")
@@ -293,13 +301,6 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         prefs = context.preferences
 
         col = layout.column(align=True)
-        col.label(text="Active Keying Set:")
-        row = col.row(align=True)
-        row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
-        row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
-        row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
-
-        col = layout.column(align=True)
         col.label(text="New Keyframe Type:")
         col.prop(tool_settings, "keyframe_type", text="")
 
@@ -308,8 +309,9 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         row = col.row()
         row.prop(tool_settings, "auto_keying_mode", text="")
         row.prop(tool_settings, "use_keyframe_insert_keyingset", text="")
+
         if not prefs.edit.use_keyframe_insert_available:
-            col.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
+            layout.prop(tool_settings, "use_record_with_nla", text="Layered Recording")
 
         layout.prop(tool_settings, "use_keyframe_cycle_aware")
 
