@@ -449,7 +449,6 @@ class DOPESHEET_MT_marker(Menu):
             if st.show_pose_markers is False:
                 layout.operator("action.markers_make_local")
 
-        layout.prop(st, "use_marker_sync")
 
 #######################################
 # Keyframe Editing
@@ -564,11 +563,50 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean_channels", text="Clean Channels", icon = "CLEAN_CHANNELS") # bfa -  separated tooltips
         layout.operator("action.sample", icon = "SAMPLE_KEYFRAMES")
 
+
+class DOPESHEET_PT_view_marker_options(Panel):
+    bl_label = "Marker Options"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'View'
+
+    # dopesheet and timeline is a wild mix. We need to separate them by the following two defs
+    @staticmethod
+    def in_dopesheet(context):
+        return context.space_data.mode != 'TIMELINE' # dopesheet, not timeline
+
+    @classmethod
+    def poll(cls, context):
+        # only for dopesheet editor
+        return cls.in_dopesheet(context)
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        st = context.space_data
+
+        layout.prop(tool_settings, "lock_markers")
+
+
+        layout.prop(st, "use_marker_sync")
+
+
 class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'DOPESHEET_EDITOR'
     bl_region_type = 'UI'
+
+    # dopesheet and timeline is a wild mix. We need to separate them by the following two defs
+    @staticmethod
+    def in_dopesheet(context):
+        return context.space_data.mode != 'TIMELINE' # dopesheet, not timeline
+
+    @classmethod
+    def poll(cls, context):
+        # only for dopesheet editor
+        return cls.in_dopesheet(context)
     
     def draw(self, context):
         sc = context.scene
@@ -577,15 +615,23 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_marker_lines")
         layout.prop(st, "show_frame_indicator")
+
+        layout.separator()
+
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
+        layout.separator()
+
         layout.prop(st, "show_sliders")
         layout.prop(st, "show_group_colors")
         layout.prop(st, "show_interpolation")
-        layout.prop(st, "show_extremes")
-        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "show_extremes")       
         layout.prop(st, "use_auto_merge_keyframes")
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
+
+
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -784,6 +830,7 @@ classes = (
     DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key_clean_channels,
     DOPESHEET_MT_key,
+    DOPESHEET_PT_view_marker_options,
     DOPESHEET_PT_view_view_options,
     DOPESHEET_MT_key_transform,
     DOPESHEET_MT_key_mirror,
