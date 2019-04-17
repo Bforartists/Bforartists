@@ -5583,6 +5583,19 @@ class VIEW3D_PT_view3d_properties(Panel):
             
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
+        
+class VIEW3D_PT_view3d_properties_edit(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = "View"
+    bl_label = "Edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        
+        tool_settings = context.tool_settings
+        layout.prop(tool_settings, "lock_object_mode")
 
 
 class VIEW3D_PT_view3d_camera_lock(Panel):
@@ -7376,6 +7389,7 @@ classes = (
     VIEW3D_MT_orientations_pie,
     VIEW3D_MT_proportional_editing_falloff_pie,
     VIEW3D_PT_view3d_properties,
+    VIEW3D_PT_view3d_properties_edit,
     VIEW3D_PT_view3d_camera_lock,
     VIEW3D_PT_view3d_cursor,
     VIEW3D_PT_collections,

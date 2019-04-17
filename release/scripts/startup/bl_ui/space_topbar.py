@@ -813,12 +813,6 @@ class TOPBAR_MT_edit(Menu):
         props.keep_open = False
 
         layout.separator()
-
-        # Should move elsewhere (impacts outliner & 3D view).
-        tool_settings = context.tool_settings
-        layout.prop(tool_settings, "lock_object_mode")
-
-        layout.separator()
        
         layout.operator("preferences.app_template_install", text="Install Application Template", icon = "APPTEMPLATE")
 
