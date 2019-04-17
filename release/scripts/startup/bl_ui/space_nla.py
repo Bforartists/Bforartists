@@ -115,6 +115,19 @@ class NLA_MT_view(Menu):
         layout.separator()
         layout.menu("INFO_MT_area")
 
+class NLA_PT_view_marker_options(Panel):
+    bl_label = "Marker Options"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'View'
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+
+        layout.prop(tool_settings, "lock_markers")
+        
 
 class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
@@ -129,15 +142,21 @@ class NLA_PT_view_view_options(Panel):
 
         layout.separator()
 
-        layout.prop(st, "use_realtime_update")
+        
+        layout.prop(st, "show_marker_lines")
         layout.prop(st, "show_frame_indicator")
+        
+        layout.separator()
 
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
+        
+        layout.separator()
 
         layout.prop(st, "show_strip_curves")
         layout.prop(st, "show_local_markers")
-        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "use_realtime_update")
+        
 
 
 # Workaround to separate the tooltips
@@ -302,6 +321,7 @@ classes = (
     NLA_MT_edit,
     NLA_MT_editor_menus,
     NLA_MT_view,
+    NLA_PT_view_marker_options,
     NLA_PT_view_view_options,
     NLA_MT_select_inverse,
     NLA_MT_select_none,

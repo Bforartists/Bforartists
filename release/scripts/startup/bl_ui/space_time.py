@@ -134,21 +134,6 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.separator()
-
-        layout.prop(st, "show_marker_lines")
-        layout.prop(st, "show_frame_indicator")
-        layout.prop(scene, "show_keys_from_selected_only")
-
-        layout.separator()
-
-        layout.menu("TIME_MT_cache")
-
-        layout.separator()
-
         # NOTE: "action" now, since timeline is in the dopesheet editor, instead of as own editor
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
@@ -157,27 +142,6 @@ class TIME_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
 
-
-class TIME_MT_cache(Menu):
-    bl_label = "Cache"
-
-    def draw(self, context):
-        layout = self.layout
-
-        st = context.space_data
-
-        layout.prop(st, "show_cache")
-
-        layout.separator()
-
-        col = layout.column()
-        col.enabled = st.show_cache
-        col.prop(st, "cache_softbody")
-        col.prop(st, "cache_particles")
-        col.prop(st, "cache_cloth")
-        col.prop(st, "cache_smoke")
-        col.prop(st, "cache_dynamicpaint")
-        col.prop(st, "cache_rigidbody")
 
 
 # Workaround to separate the tooltips
@@ -221,10 +185,6 @@ def marker_menu_generic(layout, context):
 
     layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
     layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
-
-    layout.separator()
-    tool_settings = context.tool_settings
-    layout.prop(tool_settings, "lock_markers")
 
     layout.separator()
 
@@ -316,6 +276,87 @@ class TIME_PT_keyframing_settings(TimelinePanelButtons, Panel):
         layout.prop(tool_settings, "use_keyframe_cycle_aware")
 
 
+############# Panels in sidebar #########################
+
+
+class TIME_PT_view_marker_options(TimelinePanelButtons, Panel):
+    bl_label = "Marker Options"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'View'
+
+    @classmethod
+    def poll(cls, context):
+        # only for timeline editor
+        return cls.has_timeline(context)
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        st = context.space_data
+
+        layout.prop(tool_settings, "lock_markers")
+
+
+class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+
+    @classmethod
+    def poll(cls, context):
+        # only for timeline editor
+        return cls.has_timeline(context)
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+        scene = context.scene
+
+        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "show_frame_indicator")
+        layout.prop(scene, "show_keys_from_selected_only")
+
+        layout.separator()
+
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
+class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
+    bl_label = "Cache"
+    bl_category = "Cache"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+
+    @classmethod
+    def poll(cls, context):
+        # only for timeline editor
+        return cls.has_timeline(context)
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+
+        layout.prop(st, "show_cache")
+
+        layout.separator()
+
+        col = layout.column()
+        col.enabled = st.show_cache
+        col.prop(st, "cache_softbody")
+        col.prop(st, "cache_particles")
+        col.prop(st, "cache_cloth")
+        col.prop(st, "cache_smoke")
+        col.prop(st, "cache_dynamicpaint")
+        col.prop(st, "cache_rigidbody")
+
+
 ###################################
 
 classes = (
@@ -323,10 +364,12 @@ classes = (
     TIME_MT_editor_menus,
     TIME_MT_marker,
     TIME_MT_view,
-    TIME_MT_cache,
     TIME_MT_marker_jump_previous,
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
+    TIME_PT_view_marker_options,
+    TIME_PT_view_view_options,
+    TIME_PT_view_view_cache,
 )
 
 if __name__ == "__main__":  # only for live edit.
