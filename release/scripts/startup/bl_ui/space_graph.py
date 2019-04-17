@@ -100,6 +100,20 @@ class GRAPH_PT_filters(DopesheetFilterPopoverBase, Panel):
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
 
+class GRAPH_PT_properties_Marker_options(Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+
+        layout = self.layout
+        tool_settings = context.tool_settings
+
+        layout.prop(tool_settings, "lock_markers")
+
+
 class GRAPH_PT_properties_view_options(Panel):
     bl_label = "View Options"
     bl_category = "View"
@@ -113,25 +127,27 @@ class GRAPH_PT_properties_view_options(Panel):
         st = context.space_data
 
         layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_marker_lines")
         layout.prop(st, "show_frame_indicator")
+        
+        layout.separator()
+        
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+        
+        layout.separator()
+        
         layout.prop(st, "show_cursor")
         layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "show_marker_lines")
+        layout.prop(st, "show_group_colors")        
         layout.prop(st, "use_auto_merge_keyframes")
-
-        layout.separator()
-
         layout.prop(st, "use_beauty_drawing")
 
         layout.separator()
 
         layout.prop(st, "show_handles")
-
         layout.prop(st, "use_only_selected_curves_handles")
-        layout.prop(st, "use_only_selected_keyframe_handles")
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
+        layout.prop(st, "use_only_selected_keyframe_handles")    
 
 
 class GRAPH_MT_editor_menus(Menu):
@@ -574,6 +590,8 @@ class GRAPH_MT_channel_context_menu(Menu):
 classes = (
     ALL_MT_editormenu,
     GRAPH_HT_header,
+    GRAPH_PT_properties_Marker_options,
+    GRAPH_PT_properties_view_options,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
     GRAPH_MT_select_inverse,
@@ -595,7 +613,6 @@ classes = (
     GRAPH_MT_pivot_pie,
     GRAPH_MT_snap_pie,
     GRAPH_PT_filters,
-    GRAPH_PT_properties_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
