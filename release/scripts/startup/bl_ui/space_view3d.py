@@ -1432,7 +1432,6 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.operator("font.select_all", icon = "SELECT_ALL")
 
-        layout.menu("VIEW3D_MT_edit_font")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
@@ -4788,9 +4787,6 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
 
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_text_chars")
 
 
 # move_select submenu
