@@ -1398,11 +1398,6 @@ class CLIP_MT_track(Menu):
         layout.menu("CLIP_MT_track_visibility")
         layout.menu("CLIP_MT_track_transform")
 
-
-        layout.separator()
-        layout.menu("CLIP_MT_track_visibility")
-        layout.menu("CLIP_MT_track_transform")
-
         layout.separator()
 
         layout.menu("CLIP_MT_reconstruction")
