@@ -317,9 +317,6 @@ class SEQUENCER_MT_marker(Menu):
         from .space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-        if is_sequencer_view:
-            layout.prop(st, "use_marker_sync")
-
 
 class SEQUENCER_MT_change(Menu):
     bl_label = "Change"
@@ -1445,6 +1442,22 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     bl_category = "Strip"
 
 
+class Sequencer_PT_marker_options(Panel):
+    bl_label = "Marker Options"
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = 'View'
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        st = context.space_data
+
+        layout.prop(tool_settings, "lock_markers")
+        layout.prop(st, "use_marker_sync")
+
+
 classes = (
     ALL_MT_editormenu,
     SEQUENCER_MT_change,
@@ -1482,6 +1495,7 @@ classes = (
     SEQUENCER_PT_annotation_onion,
     SEQUENCER_PT_grease_pencil_tools,
     SEQUENCER_PT_custom_props,
+    Sequencer_PT_marker_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
