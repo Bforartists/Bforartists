@@ -220,23 +220,6 @@ class SEQUENCER_MT_view(Menu):
             # # XXX, invokes in the header view
             # layout.operator("sequencer.view_ghost_border", text="Overlay Border")
 
-        if is_sequencer_view:
-            layout.prop(st, "show_seconds")
-            layout.prop(st, "show_frame_indicator")
-            layout.prop(st, "show_strip_offset")
-            layout.prop(st, "show_marker_lines")
-
-            layout.prop_menu_enum(st, "waveform_display_type")
-
-        if is_preview:
-            if st.display_mode == 'IMAGE':
-                layout.prop(st, "show_safe_areas")
-                layout.prop(st, "show_metadata")
-            elif st.display_mode == 'WAVEFORM':
-                layout.prop(st, "show_separate_color")
-
-        layout.separator()
-
         layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
         props.animation = True
@@ -1442,7 +1425,7 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     bl_category = "Strip"
 
 
-class Sequencer_PT_marker_options(Panel):
+class SEQUENCER_PT_marker_options(Panel):
     bl_label = "Marker Options"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
@@ -1456,6 +1439,37 @@ class Sequencer_PT_marker_options(Panel):
 
         layout.prop(tool_settings, "lock_markers")
         layout.prop(st, "use_marker_sync")
+
+class SEQUENCER_PT_view_options(bpy.types.Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+        is_preview = st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}
+        is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+
+        if is_sequencer_view:
+            layout.prop(st, "show_seconds")
+            layout.prop(st, "show_frame_indicator")
+            layout.prop(st, "show_strip_offset")
+            layout.prop(st, "show_marker_lines")
+            layout.prop(st, "show_seconds")
+
+            layout.use_property_split = True
+            layout.prop(st, "waveform_display_type")
+
+        if is_preview:
+            layout.use_property_split = False
+            if st.display_mode == 'IMAGE':
+                layout.prop(st, "show_safe_areas")
+                layout.prop(st, "show_metadata")
+            elif st.display_mode == 'WAVEFORM':
+                layout.prop(st, "show_separate_color")
 
 
 classes = (
@@ -1495,7 +1509,8 @@ classes = (
     SEQUENCER_PT_annotation_onion,
     SEQUENCER_PT_grease_pencil_tools,
     SEQUENCER_PT_custom_props,
-    Sequencer_PT_marker_options,
+    SEQUENCER_PT_marker_options,
+    SEQUENCER_PT_view_options
 )
 
 if __name__ == "__main__":  # only for live edit.
