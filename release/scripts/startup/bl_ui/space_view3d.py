@@ -2951,7 +2951,6 @@ class VIEW3D_MT_brush(Menu):
                 myvar.secondary_tex = True
 
         elif context.vertex_paint_object:
-            layout.prop_menu_enum(brush, "vertex_tool")
 
             #radial control button brush size
             myvar = layout.operator("wm.radial_control", text = "Brush Radius", icon = "BRUSHSIZE")
