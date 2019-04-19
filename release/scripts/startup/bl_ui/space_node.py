@@ -237,15 +237,8 @@ class NODE_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
-        snode = context.space_data
-
         layout.operator("node.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.operator("node.toolbar", text = "Tool Shelf", icon='MENU_PANEL')
-
-        layout.separator()
-
-        # Auto-offset nodes (called "insert_offset" in code)
-        layout.prop(snode, "use_insert_offset")
 
         layout.separator()
 
@@ -760,6 +753,26 @@ def node_panel(cls):
 
     return node_cls
 
+class NODE_PT_view(bpy.types.Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Node"
+    bl_label = "View"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        snode = context.space_data
+        return snode.tree_type in ('CompositorNodeTree', 'TextureNodeTree')
+
+    def draw(self, context):
+        layout = self.layout
+
+        snode = context.space_data
+
+        # Auto-offset nodes (called "insert_offset" in code)
+        layout.prop(snode, "use_insert_offset")
+
 classes = (
     ALL_MT_editormenu,
     NODE_HT_header,
@@ -791,6 +804,7 @@ classes = (
     node_panel(DATA_PT_light),
     node_panel(DATA_PT_EEVEE_light),
     NODE_MT_exit_edit_group, # BFA - Draise
+    NODE_PT_view,
 )
 
 
