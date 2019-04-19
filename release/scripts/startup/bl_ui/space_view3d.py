@@ -4577,8 +4577,9 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.operator_menu_enum("curve.handle_type_set", "type")
-    layout.operator("curve.normals_make_consistent")
+    layout.menu("VIEW3D_MT_edit_curve_handle_type_set")
+   
+    layout.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
 
     layout.separator()
 
