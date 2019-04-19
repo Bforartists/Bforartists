@@ -3067,29 +3067,6 @@ class VIEW3D_MT_brush(Menu):
             layout.operator("brush.stencil_reset_transform", text = "Reset Stencil Mask Texture position", icon = "RESET").mask = True
 
 
-        # TODO: still missing a lot of brush options here
-
-        # sculpt options
-        if context.sculpt_object:
-
-            sculpt_tool = brush.sculpt_tool
-
-            layout.separator()
-
-            layout.menu("VIEW3D_MT_brush_curve_presets")
-
-            layout.separator()
-
-            if sculpt_tool != 'GRAB':
-                layout.prop_menu_enum(brush, "stroke_method")
-
-                if sculpt_tool in {'DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY'}:
-                    layout.prop_menu_enum(brush, "direction")
-
-                if sculpt_tool == 'LAYER':
-                    layout.prop(brush, "use_persistent")
-                    layout.operator("sculpt.set_persistent_base")  
-
         # If face selection masking for painting is active
         if mesh.use_paint_mask:
 
