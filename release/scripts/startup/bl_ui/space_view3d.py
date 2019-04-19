@@ -2883,9 +2883,7 @@ class VIEW3D_MT_brush(Menu):
                 myvar.image_id = 'tool_settings.sculpt.brush'
                 myvar.secondary_tex = False
 
-
         elif context.image_paint_object:
-            layout.prop_menu_enum(brush, "image_tool")
 
             if not brush:
                 return
