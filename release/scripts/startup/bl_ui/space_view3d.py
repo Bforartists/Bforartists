@@ -902,20 +902,22 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
+        layout.menu ("VIEW3D_MT_select_grouped")
+        layout.menu ("VIEW3D_MT_select_linked")
         layout.menu ("VIEW3D_MT_select_by_type")
+
+        layout.separator()
+        layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")      
+        layout.operator("object.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
+
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
         layout.operator("object.select_camera", text="Active Camera", icon = "CAMERA_DATA")
-        layout.operator("object.select_mirror", text="Selection", icon = "TRANSFORM_MIRROR")
-        layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_select_object_more_less")
 
-        layout.separator()
-
-        layout.menu ("VIEW3D_MT_select_grouped")
-        layout.menu ("VIEW3D_MT_select_linked")
-        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
+        
 
 class VIEW3D_MT_select_by_type(Menu):
     bl_label = "All by Type"
@@ -982,33 +984,6 @@ class VIEW3D_MT_select_linked(Menu):
         layout.operator("object.select_linked", text= "Library (Object Data)", icon = "LIBRARY_OBJECT").type = 'LIBRARY_OBDATA'
 
 
-class VIEW3D_MT_select_pose_more_less(Menu):
-    bl_label = "More/Less"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout = self.layout
-
-        props = layout.operator("pose.select_hierarchy", text="Parent", icon = "PARENT")
-        props.extend = False
-        props.direction = 'PARENT'
-
-        props = layout.operator("pose.select_hierarchy", text="Child", icon = "CHILD")
-        props.extend = False
-        props.direction = 'CHILD'
-
-        layout.separator()
-
-        props = layout.operator("pose.select_hierarchy", text="Extend Parent", icon = "PARENT")
-        props.extend = True
-        props.direction = 'PARENT'
-
-        props = layout.operator("pose.select_hierarchy", text="Extend Child", icon = "CHILD")
-        props.extend = True
-        props.direction = 'CHILD'
-
-
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -1050,21 +1025,37 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.separator()
 
+        layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
+        layout.operator("pose.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
+
+        layout.separator()
+
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
+
+        layout.separator()
+
         layout.operator("pose.select_mirror", text="Flip Active", icon = "FLIP")
 
         layout.separator()
 
-        layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
-        layout.operator("pose.select_linked", text="Linked", icon = "LINKED")
+        props = layout.operator("pose.select_hierarchy", text="Parent", icon = "PARENT")
+        props.extend = False
+        props.direction = 'PARENT'
+
+        props = layout.operator("pose.select_hierarchy", text="Child", icon = "CHILD")
+        props.extend = False
+        props.direction = 'CHILD'
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_pose_more_less")
+        props = layout.operator("pose.select_hierarchy", text="Extend Parent", icon = "PARENT")
+        props.extend = True
+        props.direction = 'PARENT'
 
-        layout.separator()
-
-        layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
+        props = layout.operator("pose.select_hierarchy", text="Extend Child", icon = "CHILD")
+        props.extend = True
+        props.direction = 'CHILD'
 
 
 # Workaround to separate the tooltips
@@ -1230,19 +1221,32 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        # numeric
-        layout.operator("mesh.select_random", text="Random", icon = "RANDOMIZE")
-        layout.operator("mesh.select_nth", icon = "CHECKER_DESELECT")
-
-        layout.separator()
-
-        # geometric
-        layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon = "SELECT_SHARPEDGES")
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
 
         layout.separator()
 
         # other
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
+
+        layout.separator()
+
+        # numeric
+        layout.operator("mesh.select_random", text="Random", icon = "RANDOMIZE")
+        layout.operator("mesh.select_nth", icon = "CHECKER_DESELECT")
+
+        layout.separator()
+       
+        layout.operator("mesh.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
+        layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+
+        layout.separator()
+
+        # geometric
+        layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon = "SELECT_SHARPEDGES")
 
         layout.separator()
 
@@ -1256,14 +1260,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
-
-        layout.separator()
-
         # loops
         layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
         layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
@@ -1272,19 +1268,12 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
-        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+        layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
 
-        layout.separator()
-
-        layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
-        layout.operator("mesh.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
@@ -1327,12 +1316,19 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
-        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
+
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
+
+        layout.separator()
+
+        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
@@ -1376,10 +1372,14 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
-        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
+
+        layout.separator()
+
+        layout.operator("curve.select_random", text= "Random", icon = "RANDOMIZE")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
+
 
         layout.separator()
 
@@ -1474,11 +1474,12 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems", text = "Random", icon = "RANDOMIZE")
+        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
+        layout.operator("mball.select_random_metaelems", text = "Random", icon = "RANDOMIZE")
+
 
 class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
     bl_label = "Similar"
@@ -1555,12 +1556,12 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_more", text = "More", icon = "SELECTMORE")
-        layout.operator("lattice.select_less", text = "Less", icon = "SELECTLESS")
+        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
-        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
+        layout.operator("lattice.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("lattice.select_less", text = "Less", icon = "SELECTLESS")
 
 
 # Workaround to separate the tooltips
@@ -1604,12 +1605,12 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR").extend = False
+        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
 
         layout.separator()
-
-        layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
-        layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
+        
+        layout.operator("armature.select_mirror", text="Mirror Selection", icon = "TRANSFORM_MIRROR").extend = False
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
@@ -1631,8 +1632,10 @@ class VIEW3D_MT_select_edit_armature(Menu):
         props.extend = True
         props.direction = 'CHILD'
 
-        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
-        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
+        layout.separator()
+
+        layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
 
 
 # Workaround to separate the tooltips
@@ -7186,7 +7189,6 @@ classes = (
     VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose_none,
     VIEW3D_MT_select_pose,
-    VIEW3D_MT_select_pose_more_less,
     VIEW3D_MT_select_particle_inverse,
     VIEW3D_MT_select_particle_none,
     VIEW3D_MT_select_particle,
