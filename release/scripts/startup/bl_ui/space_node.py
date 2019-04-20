@@ -237,9 +237,9 @@ class NODE_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.operator("node.toolbar", text = "Tool Shelf", icon='MENU_PANEL')
-
+        layout.operator("node.properties", text = "Sidebar", icon='MENU_PANEL')
+        
         layout.separator()
 
         layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
