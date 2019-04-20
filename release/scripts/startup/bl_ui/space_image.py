@@ -77,8 +77,8 @@ class IMAGE_MT_view(Menu):
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
-        layout.operator("image.properties", text = "Sidebar", icon='MENU_PANEL')
         layout.operator("image.toolshelf", text = "Tool Shelf", icon='MENU_PANEL')
+        layout.operator("image.properties", text = "Sidebar", icon='MENU_PANEL')
 
         layout.separator()
 
