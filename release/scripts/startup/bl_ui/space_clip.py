@@ -1462,15 +1462,15 @@ class CLIP_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("clip.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
+        layout.operator("clip.select_all_none", text = "None", icon = 'SELECT_NONE') # bfa - separated tooltip
+        layout.operator("clip.select_all_inverse", text = "Inverse", icon = 'INVERSE') # bfa - separated tooltip
+        
+        layout.separator()
+
         layout.operator("clip.select_box", icon = 'BORDER_RECT')
         layout.operator("clip.select_circle", icon = 'CIRCLE_SELECT')
 
-        layout.separator()
-
-        layout.operator("clip.select_all", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("clip.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("clip.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-        
         layout.separator()
 
         layout.menu("CLIP_MT_select_grouped")

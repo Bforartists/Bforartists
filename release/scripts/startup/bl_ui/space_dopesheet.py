@@ -418,6 +418,11 @@ class DOPESHEET_MT_select(Menu):
 
         layout.separator()
 
+        if context.space_data.mode != 'GPENCIL':
+            layout.operator("action.select_linked", text = "Linked", icon = "CONNECTED")
+
+            layout.separator()
+
         layout.operator("action.select_leftright_before", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME") # bfa - the separated tooltip
         layout.operator("action.select_leftright_after", text="After Current Frame", icon = "AFTER_CURRENT_FRAME") # bfa - the separated tooltip
 
@@ -427,8 +432,6 @@ class DOPESHEET_MT_select(Menu):
             layout.operator("action.select_more",text = "More", icon = "SELECTMORE")
             layout.operator("action.select_less",text = "Less", icon = "SELECTLESS")
 
-            layout.separator()
-            layout.operator("action.select_linked", text = "Linked", icon = "CONNECTED")
 
 
 class DOPESHEET_MT_marker(Menu):
