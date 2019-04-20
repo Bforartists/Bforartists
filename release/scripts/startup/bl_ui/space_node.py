@@ -294,13 +294,14 @@ class NODE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.select_box", icon = 'BORDER_RECT').tweak = False
-        layout.operator("node.select_circle", icon = 'CIRCLE_SELECT')
-
-        layout.separator()
-        layout.operator("node.select_all", icon = 'SELECT_ALL').action = 'SELECT'
+        layout.operator("node.select_all",text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("node.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("node.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+
+        layout.separator()
+
+        layout.operator("node.select_box", icon = 'BORDER_RECT').tweak = False
+        layout.operator("node.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
