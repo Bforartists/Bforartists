@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -186,10 +186,6 @@ msgid "Cube"
 msgstr "Акуб"
 
 
-msgid "Monkey"
-msgstr "Амаамын"
-
-
 msgid "Roughness"
 msgstr "Аџьаџьара"
 
@@ -313,6 +309,10 @@ msgstr "Ацҵара Абаҩ"
 msgctxt "Operator"
 msgid "Add Camera"
 msgstr "Ацҵара Акамера"
+
+
+msgid "Monkey"
+msgstr "Амаамын"
 
 
 msgctxt "Operator"

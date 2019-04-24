@@ -444,9 +444,9 @@ def write_pov(filename, scene=None, info_callback=None):
         #if material and material.transparency_method == 'RAYTRACE':
         if material:
             # But there can be only one!
-            if material.subsurface_scattering.use:  # SSS IOR get highest priority
+            if material.pov_subsurface_scattering.use:  # SSS IOR get highest priority
                 tabWrite("interior {\n")
-                tabWrite("ior %.6f\n" % material.subsurface_scattering.ior)
+                tabWrite("ior %.6f\n" % material.pov_subsurface_scattering.ior)
             # Then the raytrace IOR taken from raytrace transparency properties and used for
             # reflections if IOR Mirror option is checked.
             elif material.pov.mirror_use_IOR:
@@ -2678,7 +2678,7 @@ def write_pov(filename, scene=None, info_callback=None):
                         tabWrite("#declare %s =sphere {<0, 0, 0>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n" % povdataname)
 
                     try:
-                        me = ob.to_mesh(scene, True, 'RENDER')
+                        me = ob.to_mesh(bpy.context.depsgraph, True, 'RENDER')
 
                     #XXX Here? identify the specific exception for mesh object with no data
                     #XXX So that we can write something for the dataname !
@@ -2832,8 +2832,8 @@ def write_pov(filename, scene=None, info_callback=None):
                             else:
                                 if material:
                                     # Multiply diffuse with SSS Color
-                                    if material.subsurface_scattering.use:
-                                        diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
+                                    if material.pov_subsurface_scattering.use:
+                                        diffuse_color = [i * j for i, j in zip(material.pov_subsurface_scattering.color[:], material.diffuse_color[:])]
                                         key = diffuse_color[0], diffuse_color[1], diffuse_color[2], \
                                               material_index
                                         vertCols[key] = [-1]
@@ -2878,8 +2878,8 @@ def write_pov(filename, scene=None, info_callback=None):
                                     ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
                                 else:
                                     # Color per material - flat material color
-                                    if material.subsurface_scattering.use:
-                                        diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
+                                    if material.pov_subsurface_scattering.use:
+                                        diffuse_color = [i * j for i, j in zip(material.pov_subsurface_scattering.color[:], material.diffuse_color[:])]
                                     else:
                                         diffuse_color = material.diffuse_color[:]
                                     ci1 = ci2 = ci3 = vertCols[diffuse_color[0], diffuse_color[1], \
@@ -2992,8 +2992,8 @@ def write_pov(filename, scene=None, info_callback=None):
 
                             if material and material.pov.material_use_nodes == False:  # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 # Multiply diffuse with SSS Color
-                                if material.subsurface_scattering.use:
-                                    diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
+                                if material.pov_subsurface_scattering.use:
+                                    diffuse_color = [i * j for i, j in zip(material.pov_subsurface_scattering.color[:], material.diffuse_color[:])]
                                     key = diffuse_color[0], diffuse_color[1], diffuse_color[2], i  # i == f.mat
                                     vertCols[key] = [-1]
                                 else:
@@ -3104,9 +3104,9 @@ def write_pov(filename, scene=None, info_callback=None):
                                     ci1 = ci2 = ci3 = 0
                                 else:
                                     # Color per material - flat material color
-                                    if material.subsurface_scattering.use:
+                                    if material.pov_subsurface_scattering.use:
                                         diffuse_color = [i * j for i, j in
-                                            zip(material.subsurface_scattering.color[:],
+                                            zip(material.pov_subsurface_scattering.color[:],
                                                 material.diffuse_color[:])]
                                     else:
                                         diffuse_color = material.diffuse_color[:]
@@ -3292,14 +3292,14 @@ def write_pov(filename, scene=None, info_callback=None):
                 # display issue:
                 if render.alpha_mode == 'TRANSPARENT':
                     tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0.75>}\n" % \
-                             (world.horizon_color[:]))
+                             (world.color[:]))
                 #Currently using no alpha with Sky option:
                 elif render.alpha_mode == 'SKY':
-                    tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0>}\n" % (world.horizon_color[:]))
+                    tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0>}\n" % (world.color[:]))
                 #StraightAlpha:
                 # XXX Does not exists anymore
                 #else:
-                    #tabWrite("background {rgbt<%.3g, %.3g, %.3g, 1>}\n" % (world.horizon_color[:]))
+                    #tabWrite("background {rgbt<%.3g, %.3g, %.3g, 1>}\n" % (world.color[:]))
 
             worldTexCount = 0
             #For Background image textures
@@ -3382,14 +3382,14 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("color_map {\n")
                     # XXX Does not exists anymore
                     #if render.alpha_mode == 'STRAIGHT':
-                        #tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.horizon_color[:]))
+                        #tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.color[:]))
                         #tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.zenith_color[:]))
                     if render.alpha_mode == 'TRANSPARENT':
-                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.horizon_color[:]))
+                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.color[:]))
                         # aa premult not solved with transmit 1
                         tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.zenith_color[:]))
                     else:
-                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.horizon_color[:]))
+                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.color[:]))
                         tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.zenith_color[:]))
                     tabWrite("}\n")
                     tabWrite("}\n")
@@ -3418,7 +3418,7 @@ def write_pov(filename, scene=None, info_callback=None):
             elif mist.falloff=='INVERSE_QUADRATIC':    # n**2 or squrt(n)?
                 tabWrite("distance %.6f\n" % ((mist.start+mist.depth)**2*0.368))
             tabWrite("color rgbt<%.3g, %.3g, %.3g, %.3g>\n" % \
-                     (*world.horizon_color, 1.0 - mist.intensity))
+                     (*world.color, 1.0 - mist.intensity))
             #tabWrite("fog_offset %.6f\n" % mist.start) #create a pov property to prepend
             #tabWrite("fog_alt %.6f\n" % mist.height) #XXX right?
             #tabWrite("turbulence 0.2\n")
@@ -3480,17 +3480,17 @@ def write_pov(filename, scene=None, info_callback=None):
         onceAmbient = 1
         oncePhotons = 1
         for material in bpy.data.materials:
-            if material.subsurface_scattering.use and onceSss:
+            if material.pov_subsurface_scattering.use and onceSss:
                 # In pov, the scale has reversed influence compared to blender. these number
                 # should correct that
                 tabWrite("mm_per_unit %.6f\n" % \
-                         (material.subsurface_scattering.scale * 1000.0))
+                         (material.pov_subsurface_scattering.scale * 1000.0))
                          # 1000 rather than scale * (-100.0) + 15.0))
 
                 # In POV-Ray, the scale factor for all subsurface shaders needs to be the same
 
                 # formerly sslt_samples were multiplied by 100 instead of 10
-                sslt_samples = (11 - material.subsurface_scattering.error_threshold) * 10
+                sslt_samples = (11 - material.pov_subsurface_scattering.error_threshold) * 10
 
                 tabWrite("subsurface { samples %d, %d }\n" % (sslt_samples, sslt_samples / 10))
                 onceSss = 0
@@ -3670,6 +3670,7 @@ def write_pov_ini(scene, filename_ini, filename_log, filename_pov, filename_imag
     feature_set = bpy.context.preferences.addons[__package__].preferences.branch_feature_set_povray
     using_uberpov = (feature_set=='uberpov')
     #scene = bpy.data.scenes[0]
+    scene = bpy.context.scene
     render = scene.render
 
     x = int(render.resolution_x * render.resolution_percentage * 0.01)
@@ -3795,9 +3796,10 @@ class PovrayRender(bpy.types.RenderEngine):
                 return pov_binary
         return ""
 
-    def _export(self, scene, povPath, renderImagePath):
+    def _export(self, depsgraph, povPath, renderImagePath):
         import tempfile
-
+        scene = bpy.context.scene
+        
         if scene.pov.tempfiles_enable:
             self._temp_file_in = tempfile.NamedTemporaryFile(suffix=".pov", delete=False).name
             # PNG with POV 3.7, can show the background color with alpha. In the long run using the
@@ -3833,7 +3835,7 @@ class PovrayRender(bpy.types.RenderEngine):
             write_pov(self._temp_file_in, scene, info_callback)
         else:
             pass
-    def _render(self, scene):
+    def _render(self, depsgraph):
         try:
             os.remove(self._temp_file_out)  # so as not to load the old file
         except OSError:
@@ -3901,8 +3903,9 @@ class PovrayRender(bpy.types.RenderEngine):
                     # Wait a bit before retrying file might be still in use by Blender,
                     # and Windows does not know how to delete a file in use!
                     time.sleep(self.DELAY)
-    def render(self, scene):
+    def render(self, depsgraph):
         import tempfile
+        scene = bpy.context.scene
         r = scene.render
         x = int(r.resolution_x * r.resolution_percentage * 0.01)
         y = int(r.resolution_y * r.resolution_percentage * 0.01)
@@ -3933,7 +3936,7 @@ class PovrayRender(bpy.types.RenderEngine):
 
             return True
 
-        if scene.pov.text_block !="":
+        if bpy.context.scene.pov.text_block !="":
             if scene.pov.tempfiles_enable:
                 self._temp_file_in = tempfile.NamedTemporaryFile(suffix=".pov", delete=False).name
                 self._temp_file_out = tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
@@ -4147,10 +4150,10 @@ class PovrayRender(bpy.types.RenderEngine):
 
             # start export
             self.update_stats("", "POV-Ray 3.7: Exporting data from Blender")
-            self._export(scene, povPath, renderImagePath)
+            self._export(depsgraph, povPath, renderImagePath)
             self.update_stats("", "POV-Ray 3.7: Parsing File")
 
-            if not self._render(scene):
+            if not self._render(depsgraph):
                 self.update_stats("", "POV-Ray 3.7: Not found")
                 #return
 
@@ -4420,5 +4423,5 @@ def register():
 def unregister():
     from bpy.utils import unregister_class
 
-    for cls in classes:
+    for cls in reversed(classes):
         unregister_class(cls)

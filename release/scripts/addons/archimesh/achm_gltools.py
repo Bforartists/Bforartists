@@ -38,7 +38,7 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR') if not bpy.app.background else None
 
 # -------------------------------------------------------------
 # Handle all draw routines (OpenGL main entry point)

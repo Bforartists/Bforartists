@@ -81,7 +81,7 @@ class NLA_MT_editor_menus(Menu):
     bl_idname = "NLA_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.menu("NLA_MT_view")
         layout.menu("NLA_MT_select")
@@ -98,7 +98,7 @@ class NLA_MT_view(Menu):
 
         st = context.space_data
 
-        layout.operator("nla.properties", text = "Sidebar", icon='MENU_PANEL')
+        layout.prop(st, "show_region_ui")
 
         layout.separator()
 
@@ -185,7 +185,7 @@ class NLA_MT_select_none(bpy.types.Operator):
 class NLA_MT_select(Menu):
     bl_label = "Select"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("nla.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -271,7 +271,7 @@ class NLA_MT_edit(Menu):
 class NLA_MT_add(Menu):
     bl_label = "Add"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("nla.actionclip_add", icon = "ADD_STRIP")
@@ -293,7 +293,7 @@ class NLA_MT_add(Menu):
 class NLA_MT_edit_transform(Menu):
     bl_label = "Transform"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("transform.translate", text="Grab/Move", icon = "TRANSFORM_MOVE")
@@ -304,7 +304,7 @@ class NLA_MT_edit_transform(Menu):
 class NLA_MT_snap_pie(Menu):
     bl_label = "Snap"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         pie = layout.menu_pie()
 

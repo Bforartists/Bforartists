@@ -38,4 +38,4 @@ set(SRC
 	space_toolbar.c
 )
  
-blender_add_lib(bf_editor_space_toolbar "${SRC}" "${INC}" "${INC_SYS}")
+blender_add_lib(bf_editor_space_toolbar "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

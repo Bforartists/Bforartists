@@ -213,7 +213,7 @@ class OUTLINER_MT_view(Menu):
 class OUTLINER_MT_edit_datablocks(Menu):
     bl_label = "Edit"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("outliner.keyingset_add_selected", icon = "KEYINGSET")
@@ -245,7 +245,7 @@ class OUTLINER_MT_collection_view_layer(Menu):
 class OUTLINER_MT_collection_visibility(Menu):
     bl_label = "Visibility"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("outliner.collection_isolate", text="Isolate")

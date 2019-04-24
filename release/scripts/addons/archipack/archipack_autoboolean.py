@@ -554,7 +554,7 @@ class ARCHIPACK_OT_single_boolean(Operator):
     @classmethod
     def poll(cls, context):
         w = context.active_object
-        return (w.data is not None and
+        return (w is not None and w.data is not None and
             ("archipack_wall2" in w.data or
             "archipack_wall" in w.data or
             "archipack_roof" in w.data) and

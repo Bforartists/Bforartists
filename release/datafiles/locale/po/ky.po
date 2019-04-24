@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -1064,16 +1064,12 @@ msgid "Opaque"
 msgstr "Күңүрттүк"
 
 
-msgid "Monkey"
-msgstr "Маймыл"
-
-
 msgid "Hair"
 msgstr "Чач"
 
 
-msgid "World Sphere"
-msgstr "Дүйнө сферасы"
+msgid "Cloth"
+msgstr "Кездеме"
 
 
 msgid "Update"
@@ -1500,10 +1496,6 @@ msgstr "Триангуляция"
 
 msgid "Cast"
 msgstr "Өтүш"
-
-
-msgid "Cloth"
-msgstr "Кездеме"
 
 
 msgid "Explode"
@@ -2289,6 +2281,10 @@ msgid "Duplicate Objects"
 msgstr "Дубликаттоо"
 
 
+msgid "Monkey"
+msgstr "Маймыл"
+
+
 msgid "Object Data"
 msgstr "Объект маалыматтары"
 
@@ -2429,10 +2425,6 @@ msgstr "Жаңы сахна"
 
 msgid "Add new scene by type"
 msgstr "Жаңы сахнаны түрү боюнча кошуу"
-
-
-msgid "Add new scene"
-msgstr "Жаңы сахнаны кошуу"
 
 
 msgid "Copy Settings"

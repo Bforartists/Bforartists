@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2"
+"X-Generator: Poedit 2.2.1"
 
 
 msgid "Action F-Curves"
@@ -374,6 +374,14 @@ msgid "Replace"
 msgstr "Remplacer"
 
 
+msgid "The strip values replace the accumulated results by amount specified by influence"
+msgstr "Les valeurs de la piste remplacent les résultats accumulés, au niveau spécifié par l’influence"
+
+
+msgid "Combine"
+msgstr "Combiner"
+
+
 msgid "Add"
 msgstr "Ajouter"
 
@@ -682,6 +690,10 @@ msgid "Empty"
 msgstr "Empty"
 
 
+msgid "3D Viewport"
+msgstr "Vue 3D"
+
+
 msgid "Manipulate objects in a 3D environment"
 msgstr "Manipuler des objects dans un environnement 3D"
 
@@ -700,6 +712,10 @@ msgstr "Éditeur de nœuds"
 
 msgid "Editor for node-based shading and compositing tools"
 msgstr "Éditeur pour les outils d’ombrage et de compositing nodaux"
+
+
+msgid "Video Sequencer"
+msgstr "Séquenceur vidéo"
 
 
 msgid "Video editing tools"
@@ -768,6 +784,10 @@ msgstr "Barre supérieure"
 
 msgid "Global bar at the top of the screen for global per-window settings"
 msgstr "Barre globale en haut de l’écran pour les réglages globaux par fenêtre"
+
+
+msgid "Status Bar"
+msgstr "Barre de statut"
 
 
 msgid "Global bar at the bottom of the screen for general status information"
@@ -1314,6 +1334,14 @@ msgid "Camera data-blocks"
 msgstr "Blocs de données caméra"
 
 
+msgid "Collections"
+msgstr "Collections"
+
+
+msgid "Collection data-blocks"
+msgstr "Blocs de données collection"
+
+
 msgid "Curves"
 msgstr "Courbes"
 
@@ -1396,6 +1424,10 @@ msgstr "Bloc de données SondeLumière"
 
 msgid "Lights"
 msgstr "Lumières"
+
+
+msgid "Light data-blocks"
+msgstr "Blocs de données lumière"
 
 
 msgid "Line Styles"
@@ -1570,6 +1602,10 @@ msgid "Workspaces"
 msgstr "Espaces de travail"
 
 
+msgid "Workspace data-blocks"
+msgstr "Blocs de données espace de travail"
+
+
 msgid "Worlds"
 msgstr "Mondes"
 
@@ -1618,6 +1654,14 @@ msgid "Collection of cameras"
 msgstr "Collection de caméras"
 
 
+msgid "Main Collections"
+msgstr "Collections du Main"
+
+
+msgid "Collection of collections"
+msgstr "Collection de collections"
+
+
 msgid "Main Curves"
 msgstr "Courbes du Main"
 
@@ -1664,6 +1708,14 @@ msgstr "Bibliothèques du Main"
 
 msgid "Collection of libraries"
 msgstr "Collection de bibliothèques"
+
+
+msgid "Main Lights"
+msgstr "Lumières du Main"
+
+
+msgid "Collection of lights"
+msgstr "Collection de lumières"
 
 
 msgid "Main Line Styles"
@@ -1758,6 +1810,10 @@ msgid "Main Light Probes"
 msgstr "Sondes lumière du Main"
 
 
+msgid "Collection of light probes"
+msgstr "Collection de sondes de lumière"
+
+
 msgid "Main Scenes"
 msgstr "Scènes du Main"
 
@@ -1802,6 +1858,10 @@ msgid "Main Textures"
 msgstr "Textures du Main"
 
 
+msgid "Collection of textures"
+msgstr "Collection de textures"
+
+
 msgid "Main Window Managers"
 msgstr "Gestionnaires de fenêtre du Main"
 
@@ -1812,6 +1872,10 @@ msgstr "Collection de gestionnaires de fenêtres"
 
 msgid "Main Workspaces"
 msgstr "Espaces de travail du Main"
+
+
+msgid "Collection of workspaces"
+msgstr "Collection d’espaces de travail"
 
 
 msgid "Main Worlds"
@@ -2374,6 +2438,10 @@ msgid "Length of second Bezier Handle (for B-Bones only)"
 msgstr "Longueur de la seconde poignée de Bézier (Seulement pour les B-Bones)"
 
 
+msgid "B-Bone End Handle Type"
+msgstr "Type de poignée finale de B-os"
+
+
 msgid "Selects how the end handle of the B-Bone is computed"
 msgstr "Sélectionner comment la poignée finale du B-os est calculée"
 
@@ -2404,6 +2472,10 @@ msgstr "Utiliser le décalage à la pose de repos de l’os spécifié pour calc
 
 msgid "Use the orientation of the specified bone to compute the handle, ignoring the location"
 msgstr "Utiliser l’orientation de l’os spécifié pour calculer la poignée, sans tenir compte de sa position"
+
+
+msgid "B-Bone Start Handle Type"
+msgstr "Type de poignée initiale de B-os"
 
 
 msgid "Selects how the start handle of the B-Bone is computed"
@@ -2566,6 +2638,10 @@ msgid "Select Tail"
 msgstr "Sélectionner queue"
 
 
+msgid "Display Wire"
+msgstr "Afficher fil-de-fer"
+
+
 msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
 msgstr "L’os est toujours dessiné en fil de fer, quel que soit le mode d’affichage de la vue 3D (utile pour des formes d’os personnalisées non-obstructives)"
 
@@ -2726,6 +2802,10 @@ msgid "Has Accumulate"
 msgstr "A accumuler"
 
 
+msgid "Has Color"
+msgstr "A couleur"
+
+
 msgid "Has Radius"
 msgstr "A rayon"
 
@@ -2744,6 +2824,10 @@ msgstr "Indications en lecture seule de quelles opérations de brosse sont suppo
 
 msgid "Has Auto Smooth"
 msgstr "A auto-lisser"
+
+
+msgid "Has Direction"
+msgstr "A direction"
 
 
 msgid "Has Gravity"
@@ -2790,8 +2874,28 @@ msgid "Has Strength Pressure"
 msgstr "A force de pression"
 
 
+msgid "Vertex Paint Capabilities"
+msgstr "Capacités de peinture de vertex"
+
+
+msgid "Weight Paint Capabilities"
+msgstr "Capacités de peinture de poids"
+
+
+msgid "Has Weight"
+msgstr "A poids"
+
+
+msgid "Grease Pencil Brush Settings"
+msgstr "Réglages de brosse de crayon gras"
+
+
 msgid "Settings for grease pencil brush"
 msgstr "Réglages de brosse de crayon gras"
+
+
+msgid "Active Smooth"
+msgstr "Adoucissement actif"
 
 
 msgid "Amount of smoothing while drawing "
@@ -2870,8 +2974,16 @@ msgid "Use stroke eraser"
 msgstr "Utiliser gomme de trait"
 
 
+msgid "Affect Stroke Strength"
+msgstr "Affecte force du trait"
+
+
 msgid "Amount of erasing for strength "
 msgstr "Intensité d’effacement"
+
+
+msgid "Affect Stroke Thickness"
+msgstr "Affecte épaisseur du trait"
 
 
 msgid "Amount of erasing for thickness "
@@ -2886,12 +2998,24 @@ msgid "Default"
 msgstr "Par défaut"
 
 
+msgid "Use both visible strokes and edit lines as fill boundary limits"
+msgstr "Utiliser les traits visibles et les lignes d’édition pour déterminer les limites"
+
+
 msgid "Strokes"
 msgstr "Traits"
 
 
 msgid "Use visible strokes as fill boundary limits"
 msgstr "Utiliser les traits visibles pour déterminer les limites"
+
+
+msgid "Edit Lines"
+msgstr "Lignes d’édition"
+
+
+msgid "Use edit lines as fill boundary limits"
+msgstr "Utiliser les lignes d’édition pour déterminer les limites"
 
 
 msgid "Resolution"
@@ -2922,8 +3046,28 @@ msgid "Threshold to consider color transparent for filling"
 msgstr "Limite pour considérer la couleur comme transparente, pour le remplissage"
 
 
+msgid "Grease Pencil Icon"
+msgstr "Icône de crayon gras"
+
+
+msgid "Pencil"
+msgstr "Crayon"
+
+
+msgid "Pen"
+msgstr "Stylo"
+
+
+msgid "Ink"
+msgstr "Encre"
+
+
 msgid "Ink Noise"
 msgstr "Bruit d’encre"
+
+
+msgid "Block"
+msgstr "Bloc"
 
 
 msgid "Marker"
@@ -2936,6 +3080,18 @@ msgstr "Remplir"
 
 msgid "Eraser Soft"
 msgstr "Gomme douce"
+
+
+msgid "Eraser Hard"
+msgstr "Gomme dure"
+
+
+msgid "Eraser Stroke"
+msgstr "Gomme trait"
+
+
+msgid "Aspect Ratio"
+msgstr "Proportions"
 
 
 msgid "Input Samples"
@@ -2974,6 +3130,10 @@ msgid "Smooth"
 msgstr "Adoucir"
 
 
+msgid "Amount of smoothing to apply after finish newly created strokes, to reduce jitter/noise"
+msgstr "Quantité d’adoucissement à appliquer aux nouveaux traits, pour réduire les tremblements et le bruit"
+
+
 msgid "Iterations"
 msgstr "Itérations"
 
@@ -2994,16 +3154,36 @@ msgid "Number of times to subdivide newly created strokes, for less jagged strok
 msgstr "Nombre de fois à subdiviser les nouveaux traits, pour réduire l’effet anguleux"
 
 
+msgid "Smooth Thickness"
+msgstr "Lisser épaisseur"
+
+
+msgid "Amount of thickness smoothing to apply after finish newly created strokes, to reduce jitter/noise"
+msgstr "Quantité de lissage d’épaisseur à appliquer aux nouveaux traits, pour réduire les tremblements et le bruit"
+
+
 msgid "Iterations Thickness"
 msgstr "Épaisseur d’itérations"
+
+
+msgid "Number of times to smooth thickness for newly created strokes"
+msgstr "Nombre de fois à lisser l’épaisseur des traits nouvellement créés"
 
 
 msgid "Pressure Randomness"
 msgstr "Niveau de pression aléatoire"
 
 
+msgid "Randomness factor for pressure in new strokes"
+msgstr "Facteur aléatoire pour la pression des nouveaux traits"
+
+
 msgid "Strength Randomness"
 msgstr "Niveau de force aléatoire"
+
+
+msgid "Randomness factor strength in new strokes"
+msgstr "Facteur aléatoire pour la force des nouveaux traits"
 
 
 msgid "Random Subdivision"
@@ -3014,8 +3194,16 @@ msgid "Randomness factor for new strokes after subdivision"
 msgstr "Facteur aléatoire pour les nouveaux traits après sub-division"
 
 
+msgid "Show Fill"
+msgstr "Afficher remplissage"
+
+
 msgid "Show transparent lines to use as boundary for filling"
 msgstr "Afficher des lignes transparentes à utiliser comme limites pour le remplissage."
+
+
+msgid "Show Lines"
+msgstr "Afficher lignes"
 
 
 msgid "Show help lines for filling to see boundaries"
@@ -3030,8 +3218,16 @@ msgid "Do not draw fill color while drawing the stroke"
 msgstr "Ne pas afficher la couleur de remplissage durant le dessin du trait"
 
 
+msgid "Enable Cursor"
+msgstr "Activer curseur"
+
+
 msgid "Enable cursor on screen"
 msgstr "Activer le curseur à l’écran"
+
+
+msgid "Default Eraser"
+msgstr "Gomme par défaut"
 
 
 msgid "Use this brush when enable eraser with fast switch key"
@@ -3044,6 +3240,10 @@ msgstr "Utiliser agitation de pression"
 
 msgid "Use tablet pressure for jitter"
 msgstr "Utiliser une valeur aléatoire pour la pression"
+
+
+msgid "Pin Material"
+msgstr "Épingler matériau"
 
 
 msgid "Keep material assigned to brush"
@@ -3074,6 +3274,10 @@ msgid "Additional post processing options for new strokes"
 msgstr "Options de post-processing additionnels pour les nouveaux traits"
 
 
+msgid "Random Settings"
+msgstr "Réglages d’aléatoire"
+
+
 msgid "Random brush settings"
 msgstr "Réglages de brosse aléatoire"
 
@@ -3092,6 +3296,10 @@ msgstr "Utiliser pression de force"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Utiliser la pression de la tablette pour la force de couleur"
+
+
+msgid "UV Random"
+msgstr "UV aléatoire"
 
 
 msgid "Random factor for autogenerated UV rotation"
@@ -3132,6 +3340,10 @@ msgstr "Paramètres définissant quel frame du clip vidéo est affichée"
 
 msgid "Depth"
 msgstr "Profondeur"
+
+
+msgid "Display under or over everything"
+msgstr "Afficher sous ou par-dessus tout le reste"
 
 
 msgid "Back"
@@ -3390,6 +3602,10 @@ msgid "Collision Collection"
 msgstr "Collection de collision"
 
 
+msgid "Limit colliders to this Collection"
+msgstr "Limiter les collisionneurs à cette collection"
+
+
 msgid "Collision Quality"
 msgstr "Qualité de collision"
 
@@ -3408,6 +3624,10 @@ msgstr "Quantité de vitesse perdue à la collision"
 
 msgid "Minimum Distance"
 msgstr "Distance minimum"
+
+
+msgid "Minimum distance between collision objects before collision response takes effect"
+msgstr "Distance minimum entre objets collisionneurs avant que la réponse de collision n’ait lieu"
 
 
 msgid "Friction"
@@ -3430,8 +3650,16 @@ msgid "Self Minimum Distance"
 msgstr "Auto-distance minimum"
 
 
+msgid "Minimum distance between cloth faces before collision response takes effect"
+msgstr "Distance minimum entre faces de tissu avant que la réponse de collision n’ait lieu"
+
+
 msgid "Self Friction"
 msgstr "Auto-friction"
+
+
+msgid "Friction with self contact"
+msgstr "Friction des auto-contacts"
 
 
 msgid "Enable Collision"
@@ -3482,6 +3710,10 @@ msgid "Amount of damping in bending behavior"
 msgstr "Quantité d’amortissement dans le comportement de flexion"
 
 
+msgid "Bending Model"
+msgstr "Modèle de ploiement"
+
+
 msgid "Physical model for simulating bending forces"
 msgstr "Modèle physique pour simuler les forces de flexion"
 
@@ -3520,6 +3752,10 @@ msgstr "Valeur maximale de la raideur de ploiement"
 
 msgid "Collider Friction"
 msgstr "Friction de collisionneur"
+
+
+msgid "Maximum compression stiffness value"
+msgstr "Valeur maximale de la raideur de compression"
 
 
 msgid "Target Density Strength"
@@ -3634,8 +3870,16 @@ msgid "Maximum sewing force"
 msgstr "Force de couture maximum"
 
 
+msgid "Shear Spring Damping"
+msgstr "Amortissement du ressort de cisaillement"
+
+
 msgid "Shear Stiffness"
 msgstr "Raideur de cisaillement"
+
+
+msgid "Shear Stiffness Maximum"
+msgstr "Raideur de cisaillement maximale"
 
 
 msgid "Shrink Factor Max"
@@ -3644,6 +3888,26 @@ msgstr "Facteur de contraction max"
 
 msgid "Max amount to shrink cloth by"
 msgstr "Quantité maximum de contraction du tissu"
+
+
+msgid "Shrink Factor"
+msgstr "Facteur de contraction"
+
+
+msgid "Tension Spring Damping"
+msgstr "Amortissement du ressort de tension"
+
+
+msgid "Tension Stiffness"
+msgstr "Raideur de tension"
+
+
+msgid "Tension Stiffness Maximum"
+msgstr "Raideur de tension maximale"
+
+
+msgid "Maximum tension stiffness value"
+msgstr "Valeur maximale de la raideur de tension"
 
 
 msgid "Cloth speed is multiplied by this value"
@@ -3680,6 +3944,14 @@ msgstr "Groupe de vertices de masse"
 
 msgid "Vertex Group for pinning of vertices"
 msgstr "Groupe de vertices pour l’épinglage des vertices"
+
+
+msgid "Shear Stiffness Vertex Group"
+msgstr "Groupe de vertices de raideur de cisaillement"
+
+
+msgid "Vertex group for fine control over shear stiffness"
+msgstr "Groupe de vertices pour contrôler précisément la raideur de cisaillement"
 
 
 msgid "Shrink Vertex Group"
@@ -3802,6 +4074,18 @@ msgid "The inputs are invalid, or the algorithm has been improperly called"
 msgstr "Les données d’entrée sont invalides, ou l’algorithme n’a pas été invoqué correctement"
 
 
+msgid "Collection of child collections"
+msgstr "Collection de collections enfant"
+
+
+msgid "Collection Objects"
+msgstr "Objets de collection"
+
+
+msgid "Collection of collection objects"
+msgstr "Collection d’objets de collection"
+
+
 msgid "Collision Settings"
 msgstr "Réglages de collision"
 
@@ -3896,6 +4180,14 @@ msgstr "Activé"
 
 msgid "Enable this objects as a collider for physics systems"
 msgstr "Activer cet objet comme collisionneur dans les systèmes de physiques"
+
+
+msgid "Single Sided"
+msgstr "Un seul côté"
+
+
+msgid "Override Normals"
+msgstr "Remplacer normales"
 
 
 msgid "Kill Particles"
@@ -4275,10 +4567,6 @@ msgid "Active"
 msgstr "Actif"
 
 
-msgid "Constraint is the one being edited "
-msgstr "La contrainte est celle éditée "
-
-
 msgid "Lin error"
 msgstr "Erreur linéaire"
 
@@ -4359,10 +4647,6 @@ msgid "Local With Parent"
 msgstr "Local avec parent"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "La contrainte est appliquée relativement au système de coordonnées local de l’objet, avec les transformation du parent comprises"
-
-
 msgid "Local Space"
 msgstr "Espace local"
 
@@ -4389,10 +4673,6 @@ msgstr "La transformation de la cible est évaluée relativement au système de 
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "La transformation de la cible est seulement évaluée dans l'espace Pose, la transformation de l'objet cible de l'armature est ignoré"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "La transformation l'os cible est évaluée en fonction de son système de coordonnées locales, avec la transformation du parent additionnée"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -4699,8 +4979,20 @@ msgid "Bones only: apply the object's transformation channels of the action to t
 msgstr "Os uniquement : appliquer les canaux de transformation objet de l’action à l’os contraint, au lieu de ceux de l’os"
 
 
+msgid "Armature Constraint"
+msgstr "Contrainte armature"
+
+
 msgid "Targets"
 msgstr "Cibles"
+
+
+msgid "Target Bones"
+msgstr "Os cible"
+
+
+msgid "Use Envelopes"
+msgstr "Utiliser enveloppes"
 
 
 msgid "Preserve Volume"
@@ -4983,6 +5275,10 @@ msgid "Additive"
 msgstr "Additif"
 
 
+msgid "Combine original scale with copied scale"
+msgstr "Combiner la taille originale à la taille copiée"
+
+
 msgid "Copy the target's X scale"
 msgstr "Copier la taille/échelle X de la cible"
 
@@ -5081,6 +5377,10 @@ msgstr "Facteur de décalage"
 
 msgid "Percentage value defining target position along length of curve"
 msgstr "Pourcentage définissant la position de la cible le long de la courbe"
+
+
+msgid "Target Curve object"
+msgstr "Objet courbe cible"
 
 
 msgid "Up Axis"
@@ -5735,6 +6035,26 @@ msgid "Shrink the location to the nearest target vertex"
 msgstr "Contracter la position au vertex de la cible le plus proche"
 
 
+msgid "Target Mesh object"
+msgstr "Objet mesh cible"
+
+
+msgid "Align Axis To Normal"
+msgstr "Aligner axe avec normale"
+
+
+msgid "Snap Mode"
+msgstr "Mode d’aimantation"
+
+
+msgid "Outside Surface"
+msgstr "Surface extérieure"
+
+
+msgid "Above Surface"
+msgstr "Au-dessus de la surface"
+
+
 msgid "Spline IK Constraint"
 msgstr "Contrainte IK Courbe"
 
@@ -6115,6 +6435,14 @@ msgid "Target object for multi-target constraints"
 msgstr "Objet cible, pour les contraintes multi-cibles"
 
 
+msgid "Constraint Target Bone"
+msgstr "Os cible de contrainte"
+
+
+msgid "Target bone for multi-target constraints"
+msgstr "Os cible, pour les contraintes multi-cibles"
+
+
 msgid "Blend Weight"
 msgstr "Poids de fusion"
 
@@ -6213,6 +6541,10 @@ msgstr "Min X troncature"
 
 msgid "Clip Min Y"
 msgstr "Min Y troncature"
+
+
+msgid "Tone"
+msgstr "Ton"
 
 
 msgid "Standard"
@@ -6339,12 +6671,24 @@ msgid "Normal/View"
 msgstr "Normale/Vue"
 
 
+msgid "Display perpendicular to the surface"
+msgstr "Afficher perpendiculairement à la surface"
+
+
 msgid "Normal/Surface"
 msgstr "Normale/Surface"
 
 
+msgid "Display aligned to the surface"
+msgstr "Afficher aligné avec la surface"
+
+
 msgid "View"
 msgstr "Vue"
+
+
+msgid "Display aligned to the viewport"
+msgstr "Afficher aligné avec la vue"
 
 
 msgid "Detect Corners"
@@ -6395,6 +6739,14 @@ msgid "Dependency Graph"
 msgstr "Graphe de dépendance"
 
 
+msgid "IDs"
+msgstr "IDs"
+
+
+msgid "Evaluation mode"
+msgstr "Mode d’évaluation"
+
+
 msgid "Viewport"
 msgstr "Vues 3D"
 
@@ -6403,8 +6755,24 @@ msgid "Render"
 msgstr "Rendu"
 
 
+msgid "Object Instances"
+msgstr "Instances d’objet"
+
+
 msgid "Scene"
 msgstr "Scène"
+
+
+msgid "Updates"
+msgstr "Rafraîchissements"
+
+
+msgid "View Layer"
+msgstr "Calque de vue"
+
+
+msgid "Is Instance"
+msgstr "Est instance"
 
 
 msgid "Generated Coordinates"
@@ -6417,6 +6785,10 @@ msgstr "Coordonnées générées en espace objet parent"
 
 msgid "Particle System"
 msgstr "Système de particules"
+
+
+msgid "Evaluated particle system that this object was instanced from"
+msgstr "Système de particules évalué depuis lequel cet objet dupli a été instancié"
 
 
 msgid "Persistent ID"
@@ -6443,6 +6815,10 @@ msgid "UV coordinates in parent object space"
 msgstr "Coordonnées UV en espace objet parent"
 
 
+msgid "Dependency Graph Update"
+msgstr "Rafraîchissement graphe de dépendance"
+
+
 msgid "ID"
 msgstr "ID"
 
@@ -6457,6 +6833,10 @@ msgstr "Transformer"
 
 msgid "Safe Areas"
 msgstr "Aires sûres"
+
+
+msgid "Safe areas used in 3D view and the sequencer"
+msgstr "Zones de sécurité utilisées dans les vues 3D et le séquenceur"
 
 
 msgid "Action Safe Margins"
@@ -6495,6 +6875,10 @@ msgid "Settings for filtering the channels shown in animation editors"
 msgstr "Réglages de filtrage des canaux montrés dans les éditeurs d’animation"
 
 
+msgid "Collection that included object should be a member of"
+msgstr "Collection dont l’objet inclu devrait être membre"
+
+
 msgid "F-Curve Name Filter"
 msgstr "Filtre de nom de F-courbe"
 
@@ -6517,6 +6901,14 @@ msgstr "Afficher armature"
 
 msgid "Include visualization of armature related animation data"
 msgstr "Inclure la visualisation des données d’animation relatives aux armatures"
+
+
+msgid "Display Cache Files"
+msgstr "Afficher fichiers cache"
+
+
+msgid "Include visualization of cache file related animation data"
+msgstr "Inclure la visualisation des données d’animation relatives au fichier cache"
 
 
 msgid "Display Camera"
@@ -6581,6 +6973,14 @@ msgstr "Afficher lattices"
 
 msgid "Include visualization of lattice related animation data"
 msgstr "Inclure la visualisation de données d’animation relatives aux lattices"
+
+
+msgid "Display Light"
+msgstr "Afficher lumière"
+
+
+msgid "Include visualization of light related animation data"
+msgstr "Inclure la visualisation des données d’animation relatives à la lumière"
 
 
 msgid "Display Line Style"
@@ -6755,6 +7155,10 @@ msgid "Expression to use for Scripted Expression"
 msgstr "Expression à utiliser pour Expression scriptée"
 
 
+msgid "Simple Expression"
+msgstr "Expression simple"
+
+
 msgid "Invalid"
 msgstr "Invalide"
 
@@ -6881,6 +7285,11 @@ msgstr "Crayon gras"
 
 
 msgctxt "ID"
+msgid "Collection"
+msgstr "Collection"
+
+
+msgctxt "ID"
 msgid "Image"
 msgstr "Image"
 
@@ -6888,6 +7297,11 @@ msgstr "Image"
 msgctxt "ID"
 msgid "Key"
 msgstr "Clé"
+
+
+msgctxt "ID"
+msgid "Light"
+msgstr "Lumière"
 
 
 msgctxt "ID"
@@ -7346,6 +7760,10 @@ msgid "A canvas surface layer"
 msgstr "Un calque de surface de canevas"
 
 
+msgid "Only use brush objects from this collection"
+msgstr "N’utiliser que les objets brosses de cette collection"
+
+
 msgid "Influence Scale"
 msgstr "Taille d’influence"
 
@@ -7402,6 +7820,10 @@ msgid "Displacement"
 msgstr "Déplacement"
 
 
+msgid "Dissolve Time"
+msgstr "Temps de dissolution"
+
+
 msgid "Approximately in how many frames should dissolve happen"
 msgstr "En combien de frames approximativement devrait se passer la dissolution"
 
@@ -7420,6 +7842,10 @@ msgstr "Vitesse"
 
 msgid "How much surface velocity affects dripping"
 msgstr "À quel point la vélocité de surface affecte l’égouttement"
+
+
+msgid "Dry Time"
+msgstr "Temps de séchage"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -7830,6 +8256,10 @@ msgid "Charge effector weight"
 msgstr "Poids effecteur Charge"
 
 
+msgid "Limit effectors to this collection"
+msgstr "Limiter les effecteurs à cette collection"
+
+
 msgid "Curve Guide"
 msgstr "Guide courbe"
 
@@ -8218,6 +8648,10 @@ msgid "FFmpeg audio codec to use"
 msgstr "Codec FFMpeg audio à utiliser"
 
 
+msgid "No Audio"
+msgstr "Pas d’audio"
+
+
 msgid "Vorbis"
 msgstr "Vorbis"
 
@@ -8275,6 +8709,10 @@ msgid "MPEG-2"
 msgstr "MPEG-2"
 
 
+msgid "MPEG-4 (divx)"
+msgstr "MPEG-4 (divx)"
+
+
 msgid "QT rle / QT Animation"
 msgstr "QT rle / Animation QT"
 
@@ -8289,6 +8727,14 @@ msgstr "Qualité sortie"
 
 msgid "Constant Rate Factor (CRF); tradeoff between video quality and file size"
 msgstr "Facteur de débit constant (CRF), compromis entre la qualité vidéo et la taille du fichier"
+
+
+msgid "Constant Bitrate"
+msgstr "Débit constant"
+
+
+msgid "Configure constant bit rate, rather than constant output quality"
+msgstr "Utiliser un débit constant, plutôt qu’une qualité constante"
 
 
 msgid "Lossless"
@@ -8325,6 +8771,14 @@ msgstr "Vitesse d’encodage"
 
 msgid "Tradeoff between encoding speed and compression ratio"
 msgstr "Compromis entre vitesse d’encodage et efficacité de compression"
+
+
+msgid "Slowest"
+msgstr "Le plus lent"
+
+
+msgid "Good"
+msgstr "Bon"
 
 
 msgid "Realtime"
@@ -8903,8 +9357,44 @@ msgid "Lower bound of envelope at this control-point"
 msgstr "Limite inférieure de l’enveloppe à ce point de contrôle"
 
 
+msgid "Face Map"
+msgstr "Carte de face"
+
+
 msgid "Index"
 msgstr "Indice"
+
+
+msgid "Index number of the face map"
+msgstr "Numéro d’indice de la carte de face"
+
+
+msgid "Face map name"
+msgstr "Nom de la carte de face"
+
+
+msgid "Face Maps"
+msgstr "Cartes de face"
+
+
+msgid "Collection of face maps"
+msgstr "Collection de cartes de face"
+
+
+msgid "Active Face Map"
+msgstr "Carte de face active"
+
+
+msgid "Face maps of the object"
+msgstr "Cartes de face de l’objet"
+
+
+msgid "Active Face Map Index"
+msgstr "Indice de carte de face active"
+
+
+msgid "Active index in face map array"
+msgstr "Indice actif dans le tableau des cartes de face"
 
 
 msgid "Field Settings"
@@ -8913,6 +9403,14 @@ msgstr "Réglages de champ"
 
 msgid "Field settings for an object in physics simulation"
 msgstr "Réglages de champ (de force) pour un objet, dans les simulations physiques"
+
+
+msgid "Affect particle's location"
+msgstr "Affecte la position de la particule"
+
+
+msgid "Affect particle's dynamic rotation"
+msgstr "Affecte la rotation dynamique de la particule"
 
 
 msgid "Maximum Distance"
@@ -9443,8 +9941,16 @@ msgid "Show/hide Grease pencil data-blocks"
 msgstr "Afficher/cacher les blocs de données crayon gras"
 
 
+msgid "Show/hide Collection data-blocks"
+msgstr "Afficher/cacher les blocs de données collection"
+
+
 msgid "Show/hide Image data-blocks"
 msgstr "Afficher/cacher les blocs de données image"
+
+
+msgid "Show/hide Light data-blocks"
+msgstr "Afficher/cacher les blocs de données lumière"
 
 
 msgid "Freestyle Linestyles"
@@ -9507,6 +10013,10 @@ msgid "Show/hide Paint Curve data-blocks"
 msgstr "Afficher/cacher les blocs de données courbes de peinture"
 
 
+msgid "Show/hide Light Probe data-blocks"
+msgstr "Afficher/cacher les blocs de données sonde de lumière"
+
+
 msgid "Show/hide Scene data-blocks"
 msgstr "Afficher/cacher les blocs de données scène"
 
@@ -9537,6 +10047,10 @@ msgstr "Afficher/cacher les blocs de données fontes"
 
 msgid "Show/hide World data-blocks"
 msgstr "Afficher/cacher les blocs de données monde"
+
+
+msgid "Show/hide workspace data-blocks"
+msgstr "Afficher/cacher les blocs de données espace de travail"
 
 
 msgid "Filter ID categories"
@@ -9585,6 +10099,10 @@ msgstr "Afficher/cacher les images, clips vidéo, sons et masques"
 
 msgid "Environment"
 msgstr "Environnement"
+
+
+msgid "Show/hide worlds, lights, cameras and speakers"
+msgstr "Afficher/cacher les mondes, lumières, caméras et haut-parleurs"
 
 
 msgid "Miscellaneous"
@@ -10327,6 +10845,22 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Ensemble de lignes pour associer des lignes à des paramètres de style"
 
 
+msgid "Collection"
+msgstr "Collection"
+
+
+msgid "A collection of objects based on which feature edges are selected"
+msgstr "Une collection d’objets à parti de laquelle les arêtes-traits sont sélectionnées"
+
+
+msgid "Collection Negation"
+msgstr "Négation de collection"
+
+
+msgid "Specify either inclusion or exclusion of feature edges belonging to a collection of objects"
+msgstr "Spécifier soit l’inclusion soit l’exclusion des arêtes-traits appartenant à une collection d’objets"
+
+
 msgid "Inclusive"
 msgstr "Inclusif"
 
@@ -10531,6 +11065,10 @@ msgid "Select border edges (open mesh edges)"
 msgstr "Sélectionner les arêtes de bordures (arêtes de mesh ouvert)"
 
 
+msgid "Select feature edges based on a collection of objects"
+msgstr "Sélectionner les arêtes-traits d’après une collection d’objets"
+
+
 msgid "Selection by Edge Types"
 msgstr "Sélection par types d’arêtes"
 
@@ -10665,6 +11203,10 @@ msgstr "Une liste de modules de style (à appliquer de haut en bas)"
 
 msgid "Freestyle Settings"
 msgstr "Réglages Freestyle"
+
+
+msgid "Freestyle settings for a ViewLayer data-block"
+msgstr "Réglages de Freestyle pour un bloc de données calque de vue"
 
 
 msgid "Crease Angle"
@@ -11131,6 +11673,10 @@ msgid "Frame currently being displayed for this layer"
 msgstr "Frame actuellement affichée pour ce calque"
 
 
+msgid "Set annotation Visibility"
+msgstr "Définir visibilité d’annotation"
+
+
 msgid "After Color"
 msgstr "Couleur après"
 
@@ -11156,6 +11702,10 @@ msgstr "Images avant"
 
 
 msgid "Blend Mode"
+msgstr "Mode de mélange"
+
+
+msgid "Blend mode"
 msgstr "Mode de mélange"
 
 
@@ -11207,6 +11757,10 @@ msgid "Lock current frame displayed by layer"
 msgstr "Verrouiller la frame actuellement affichée par le calque"
 
 
+msgid "Lock Material"
+msgstr "Verrouiller matériau"
+
+
 msgid "Parent inverse transformation matrix"
 msgstr "Matrice de transformation inverse du parent"
 
@@ -11251,8 +11805,16 @@ msgid "Pass Index"
 msgstr "Indice de passe"
 
 
+msgid "Index number for the \"Layer Index\" pass"
+msgstr "Numéro d’indice pour la passe “Indice de calque”"
+
+
 msgid "Layer is selected for editing in the Dope Sheet"
 msgstr "Le calque est sélectionné pour l'édition dans la Dope Sheet"
+
+
+msgid "In Front"
+msgstr "En avant"
 
 
 msgid "Make the layer draw in front of objects"
@@ -11291,12 +11853,32 @@ msgid "Onion Skinning"
 msgstr "Peau d’oignon"
 
 
+msgid "Solo Mode"
+msgstr "Mode solo"
+
+
+msgid "ViewLayer"
+msgstr "Calque de vue"
+
+
 msgid "GPencil Sculpt Brush"
 msgstr "Brosse de sculpture crayon gras"
 
 
 msgid "Stroke editing brush"
 msgstr "Brosse d’édition des traits"
+
+
+msgid "Cursor Add"
+msgstr "Curseur addition"
+
+
+msgid "Cursor Sub"
+msgstr "Curseur substration"
+
+
+msgid "Color for the cursor for subtraction"
+msgstr "Couleur du curseur en soustraction"
 
 
 msgid "Direction"
@@ -11337,6 +11919,14 @@ msgstr "Utiliser atténuation"
 
 msgid "Strength of brush decays with distance from cursor"
 msgstr "La force de la brosse décroît avec la distance au curseur"
+
+
+msgid "Radius Pressure"
+msgstr "Pression de rayon"
+
+
+msgid "Enable tablet pressure sensitivity for radius"
+msgstr "Activer la pression de la tablette pour le rayon"
 
 
 msgid "Strength Pressure"
@@ -15438,10 +16028,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "Numéro d’indice pour la passe de rendu “Indice de matériau”"
 
 
-msgid "Preview render type"
-msgstr "Type de rendu de prévisualisation"
-
-
 msgid "Type of preview render"
 msgstr "Type de rendu de prévisualisation"
 
@@ -15454,10 +16040,6 @@ msgid "Cube"
 msgstr "Cube"
 
 
-msgid "Monkey"
-msgstr "Singe"
-
-
 msgid "Hair"
 msgstr "Cheveux"
 
@@ -15466,12 +16048,8 @@ msgid "Hair strands"
 msgstr "Fibres de cheveux"
 
 
-msgid "World Sphere"
-msgstr "Sphère dans le monde"
-
-
-msgid "Large sphere with sky"
-msgstr "Grande sphère avec ciel"
+msgid "Cloth"
+msgstr "Tissu"
 
 
 msgid "Roughness"
@@ -23917,10 +24495,6 @@ msgstr "Déformation de surface"
 
 msgid "Warp"
 msgstr "Déformer (gauchir)"
-
-
-msgid "Cloth"
-msgstr "Tissu"
 
 
 msgid "Dynamic Paint"
@@ -43585,6 +44159,10 @@ msgid "Toggle object's force field"
 msgstr "(Dés)activer le champ de force de l’objet"
 
 
+msgid "Monkey"
+msgstr "Singe"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Appliquer modificateur"
@@ -48131,32 +48709,8 @@ msgid "Add new scene by type"
 msgstr "Ajouter une nouvelle scène par type"
 
 
-msgid "Add new scene"
-msgstr "Ajouter nouvelle scène"
-
-
 msgid "Copy Settings"
 msgstr "Copier réglages"
-
-
-msgid "Make a copy without any objects"
-msgstr "Créer une copie sans aucun objet"
-
-
-msgid "Link Objects"
-msgstr "Lier objets"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Lier vers les objets de la scène courante"
-
-
-msgid "Link Object Data"
-msgstr "Lier données d’objet"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Copier les objets, mais liés aux données de la scène courante"
 
 
 msgid "Full Copy"
@@ -56165,10 +56719,6 @@ msgstr "Matériau lié à"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Alterner entre matériau lié aux données de l’objet, ou au bloc objet"
-
-
-msgid "ObData"
-msgstr "Données d’objet"
 
 
 msgid "Auto-offset Margin"
@@ -71209,10 +71759,6 @@ msgid "Image*"
 msgstr "Image*"
 
 
-msgid "Aspect Ratio"
-msgstr "Proportions"
-
-
 msgid "Edge To Edge"
 msgstr "Arête à arête"
 
@@ -74145,16 +74691,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Pas de bloc ID et/ou de données d’animation d’où supprimer des images clé"
 
 
-msgid "No active keying set"
-msgstr "Pas d’ensemble de clés actif"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Pas d‘infos de contexte valides pour l’ensemble de clés actif"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "L’ensemble de clés n’a pu insérer aucune image clé"
+
+
+msgid "No active keying set"
+msgstr "Pas d’ensemble de clés actif"
 
 
 msgid "No active Keying Set"
@@ -79557,6 +80103,10 @@ msgid "Font not packed"
 msgstr "Police non-empaquetée"
 
 
+msgid "Registering key-config preferences class: '%s' is too long, maximum length is %d"
+msgstr "Enregistrement de la classe de préférences de configuration clavier : “%s” est trop long, longueur maximum de %d"
+
+
 msgid "Registering operator class: '%s' is too long, maximum length is %d"
 msgstr "Enregistrement de la classe d’opérateur : “%s” est trop long, longueur maximum de %d"
 
@@ -79585,12 +80135,28 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "Impossible d’enlever la configuration clavier “%s”"
 
 
+msgid "Registering gizmo class: '%s' is too long, maximum length is %d"
+msgstr "Enregistrement de la classe de gizmo : “%s” est trop long, longueur maximum de %d"
+
+
+msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"
+msgstr "Enregistrement de la classe de groupe gizmo : “%s” est trop long, longueur maximum de %d"
+
+
+msgid "%s '%s'"
+msgstr "%s '%s'"
+
+
 msgid "Operator '%s' not found!"
 msgstr "Opérateur “%s” introuvable !"
 
 
 msgid "Gizmo group '%s' not found!"
 msgstr "Groupe de gizmo “%s” introuvable !"
+
+
+msgid "Enable 'Auto Smooth' option in mesh settings for hardening"
+msgstr "Activer l’option “Auto-lisser” dans les réglages de mesh pour durcir"
 
 
 msgid "Cannot execute boolean operation"
@@ -79729,6 +80295,10 @@ msgid "Convertor"
 msgstr "Convertisseur"
 
 
+msgid "Compositor"
+msgstr "Compositeur"
+
+
 msgid "Fac"
 msgstr "Fac"
 
@@ -79759,6 +80329,10 @@ msgstr "Inférieur gauche"
 
 msgid "Lower Right"
 msgstr "Inférieur droit"
+
+
+msgid "Pick"
+msgstr "Choisir"
 
 
 msgid "Image 1"
@@ -79833,6 +80407,10 @@ msgid "Missing Data-Block"
 msgstr "Bloc de données manquant"
 
 
+msgid "Shader Editor"
+msgstr "Éditeur de shader"
+
+
 msgid "Temperature"
 msgstr "Températures "
 
@@ -79855,6 +80433,22 @@ msgstr "RugositéU"
 
 msgid "RoughnessV"
 msgstr "RugositéV"
+
+
+msgid "Absorption Coefficient"
+msgstr "Coefficients d’absorption"
+
+
+msgid "Coat"
+msgstr "Vernis"
+
+
+msgid "Random Color"
+msgstr "Couleur aléatoire"
+
+
+msgid "Random Roughness"
+msgstr "Rugosité aléatoire"
 
 
 msgid "Subsurface Radius"
@@ -79911,6 +80505,22 @@ msgstr "Profondeur Z vue"
 
 msgid "View Distance"
 msgstr "Distance vue"
+
+
+msgid "Emissive Color"
+msgstr "Couleur d’émission"
+
+
+msgid "Clear Coat"
+msgstr "Vernis"
+
+
+msgid "Clear Coat Roughness"
+msgstr "Rugosité de vernis"
+
+
+msgid "Clear Coat Normal"
+msgstr "Normale de vernis"
 
 
 msgid "True Normal"
@@ -80053,12 +80663,28 @@ msgid "Detail Scale"
 msgstr "Échelle de détail"
 
 
+msgid "Color Attribute"
+msgstr "Attribut de couleur"
+
+
+msgid "Absorption Color"
+msgstr "Couleur d’absorption"
+
+
 msgid "Emission Color"
 msgstr "Couleur d’émission"
 
 
+msgid "Blackbody Tint"
+msgstr "Teinte de corps noir"
+
+
 msgid "Patterns"
 msgstr "Motifs"
+
+
+msgid "Texture Node Editor"
+msgstr "Éditeur de nœuds texture"
 
 
 msgid "Bricks 1"
@@ -80285,6 +80911,10 @@ msgid "Can't read alternative start-up file: '%s'"
 msgstr "Impossible de lire le fichier de démarrage alternatif : “%s”"
 
 
+msgid "Saved \"%s\""
+msgstr "Enregistré \"%s\""
+
+
 msgid "Not a library"
 msgstr "Pas une bibliothèque"
 
@@ -80452,6 +81082,10 @@ msgstr "Le mode de stéréo 3D nécessite que la fenêtre soit en plein écran"
 
 msgid "Blender Render"
 msgstr "Rendu Blender"
+
+
+msgid "Blender Preferences"
+msgstr "Préférences de Blender"
 
 
 msgid "Blender File View"
