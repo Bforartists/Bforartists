@@ -29,11 +29,14 @@ set(INC_SYS
 )
 
 set(SRC
-	minilzo/minilzo.c
+  minilzo/minilzo.c
 
-	minilzo/lzoconf.h
-	minilzo/lzodefs.h
-	minilzo/minilzo.h
+  minilzo/lzoconf.h
+  minilzo/lzodefs.h
+  minilzo/minilzo.h
 )
 
-blender_add_lib(extern_minilzo "${SRC}" "${INC}" "${INC_SYS}")
+set(LIB
+)
+
+blender_add_lib(extern_minilzo "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

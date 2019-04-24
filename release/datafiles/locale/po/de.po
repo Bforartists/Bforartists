@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -1592,6 +1592,10 @@ msgstr "Markierung"
 
 msgid "Fill"
 msgstr "Füllen"
+
+
+msgid "Aspect Ratio"
+msgstr "Seitenverhältnis"
 
 
 msgid "Input Samples"
@@ -8293,10 +8297,6 @@ msgid "Diffuse color of the material"
 msgstr "Diffuse Farbe dieses Materials"
 
 
-msgid "Preview render type"
-msgstr "Vorschaubereich Typ"
-
-
 msgid "Type of preview render"
 msgstr "Typ der Rendervorschau"
 
@@ -8309,10 +8309,6 @@ msgid "Cube"
 msgstr "Würfel"
 
 
-msgid "Monkey"
-msgstr "Affe"
-
-
 msgid "Hair"
 msgstr "Haar"
 
@@ -8321,12 +8317,8 @@ msgid "Hair strands"
 msgstr "Haarstränen"
 
 
-msgid "World Sphere"
-msgstr "Weltkugel"
-
-
-msgid "Large sphere with sky"
-msgstr "Große Kugel mit Himmel"
+msgid "Cloth"
+msgstr "Stoff"
 
 
 msgid "Roughness"
@@ -11859,10 +11851,6 @@ msgstr "Einfach deformieren"
 
 msgid "Warp"
 msgstr "Wölben"
-
-
-msgid "Cloth"
-msgstr "Stoff"
 
 
 msgid "Dynamic Paint"
@@ -21634,6 +21622,10 @@ msgid "Toggle object's force field"
 msgstr "Kraftfeld des Objekts aktivieren/deaktivieren"
 
 
+msgid "Monkey"
+msgstr "Affe"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Modifikator anwenden"
@@ -23682,32 +23674,8 @@ msgid "Add new scene by type"
 msgstr "Neue Szene eines Typs hinzufügen"
 
 
-msgid "Add new scene"
-msgstr "Neue Szene hinzufügen"
-
-
 msgid "Copy Settings"
 msgstr "Einstellungen kopieren"
-
-
-msgid "Make a copy without any objects"
-msgstr "Kopie ohne Objekte erstellen"
-
-
-msgid "Link Objects"
-msgstr "Objekte verknüpfen"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Mit Objekten aus der aktuellen Szene verknüpfen"
-
-
-msgid "Link Object Data"
-msgstr "Objektdaten verknüpfen"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Objekte kopieren und mit Daten aus der aktuellen Szene verknüpfen"
 
 
 msgid "Full Copy"
@@ -27285,10 +27253,6 @@ msgstr "Anfassertyp, um neue Schlüsselbilder anzufasssen"
 
 msgid "Material Link To"
 msgstr "Material verknüpfen mit"
-
-
-msgid "ObData"
-msgstr "ObjDaten"
 
 
 msgid "Align Object To"
@@ -34410,10 +34374,6 @@ msgid "Image*"
 msgstr "Bild*"
 
 
-msgid "Aspect Ratio"
-msgstr "Seitenverhältnis"
-
-
 msgid "Edge To Edge"
 msgstr "Kante an Kante"
 
@@ -35993,12 +35953,12 @@ msgid "<Missing ID block>"
 msgstr "<Fehlender ID Block>"
 
 
-msgid "No active keying set"
-msgstr "Kein aktiver Schlüsselbildsatz"
-
-
 msgid "Keying set failed to insert any keyframes"
 msgstr "Schlüsselbildsatz konnte keine Schlüsselbilder einfügen"
+
+
+msgid "No active keying set"
+msgstr "Kein aktiver Schlüsselbildsatz"
 
 
 msgid "No active Keying Set"

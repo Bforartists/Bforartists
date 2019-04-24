@@ -102,7 +102,7 @@ class ALL_MT_editormenu(Menu):
         row.template_header() # editor type menus
 
 class FILEBROWSER_UL_dir(UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, active_propname, _index):
         direntry = item
         # space = context.space_data
         icon = 'NONE'
@@ -168,7 +168,7 @@ class FILEBROWSER_PT_system_bookmarks(Panel):
 class FILEBROWSER_MT_bookmarks_context_menu(Menu):
     bl_label = "Bookmarks Specials"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.operator("file.bookmark_cleanup", icon='X', text="Cleanup")
 
@@ -262,7 +262,7 @@ class FILEBROWSER_MT_view(Menu):
         st = context.space_data
         params = st.params
 
-        layout.operator("file.bookmark_toggle", text = "Tool Shelf", icon='MENU_PANEL')
+        layout.operator("file.bookmark_toggle", text = "Tool Shelf")
 
         layout.separator()
 

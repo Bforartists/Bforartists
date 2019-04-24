@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -2793,6 +2793,10 @@ msgid "Fill"
 msgstr "Preencher"
 
 
+msgid "Aspect Ratio"
+msgstr "Proporção de aspecto"
+
+
 msgid "Input Samples"
 msgstr "Amostras de entrada"
 
@@ -4010,10 +4014,6 @@ msgid "Active"
 msgstr "Ativo(a)"
 
 
-msgid "Constraint is the one being edited "
-msgstr "Restrição é a que está sendo editada."
-
-
 msgid "Lin error"
 msgstr "Erro linear"
 
@@ -4094,10 +4094,6 @@ msgid "Local With Parent"
 msgstr "Local com parente"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "A restrição é aplicada em relação ao sistema de coordenadas locais do objeto, com as transformações dos parentes superiores adicionadas."
-
-
 msgid "Local Space"
 msgstr "Espaço local"
 
@@ -4124,10 +4120,6 @@ msgstr "As transformações do alvo são avaliadas em relação ao sistema de co
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "As transformações do alvo somente são avaliadas no espaço de pose, as transformações do objeto de armação alvo são ignoradas."
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "As transformações do osso alvo são avaliadas em relação a seu sistema de coordenadas locais, com as transformações do parente superior adicionadas."
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -15121,10 +15113,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "Número de índice de material para o passo de renderização."
 
 
-msgid "Preview render type"
-msgstr "Tipo de previsão de renderização."
-
-
 msgid "Type of preview render"
 msgstr "Mostra o tipo de previsão de renderização."
 
@@ -15137,10 +15125,6 @@ msgid "Cube"
 msgstr "Cubo"
 
 
-msgid "Monkey"
-msgstr "Macaco"
-
-
 msgid "Hair"
 msgstr "Cabelo"
 
@@ -15149,12 +15133,8 @@ msgid "Hair strands"
 msgstr "Vertentes de cabelo."
 
 
-msgid "World Sphere"
-msgstr "Abóbada do ambiente (mundo)"
-
-
-msgid "Large sphere with sky"
-msgstr "Grande abóbada (esfera) com o céu."
+msgid "Cloth"
+msgstr "Tecido"
 
 
 msgid "Roughness"
@@ -23560,10 +23540,6 @@ msgstr "Deformação de superfície"
 
 msgid "Warp"
 msgstr "Conformar em curva"
-
-
-msgid "Cloth"
-msgstr "Tecido"
 
 
 msgid "Dynamic Paint"
@@ -43034,6 +43010,10 @@ msgid "Toggle object's force field"
 msgstr "Alterna o campo de força do objeto."
 
 
+msgid "Monkey"
+msgstr "Macaco"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Aplicar modificador"
@@ -47559,32 +47539,8 @@ msgid "Add new scene by type"
 msgstr "Adiciona uma nova cena por tipo."
 
 
-msgid "Add new scene"
-msgstr "Permite adicionar uma nova cena apresentando opções de vínculos e duplicação."
-
-
 msgid "Copy Settings"
 msgstr "Copiar definições"
-
-
-msgid "Make a copy without any objects"
-msgstr "Cria uma cópia da cena sem quaisquer objetos, usando as mesmas definições de ambiente (mundo) ."
-
-
-msgid "Link Objects"
-msgstr "Vincular objetos"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Vincula aos objetos a partir da cena atual."
-
-
-msgid "Link Object Data"
-msgstr "Vincular dados dos objetos"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Copia os objetos vinculados aos dados da cena atual."
 
 
 msgid "Full Copy"
@@ -55394,10 +55350,6 @@ msgstr "Vinculação dos materiais"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Alterna se o material está vinculado ao objeto ou ao bloco de dados do objeto."
-
-
-msgid "ObData"
-msgstr "Dados de objeto"
 
 
 msgid "Auto-offset Margin"
@@ -70058,10 +70010,6 @@ msgid "Image*"
 msgstr "Imagem*"
 
 
-msgid "Aspect Ratio"
-msgstr "Proporção de aspecto"
-
-
 msgid "Edge To Edge"
 msgstr "De aresta para aresta"
 
@@ -72801,16 +72749,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Sem identificador de bloco e / ou dados de animação a partir dos quais apagar o fotograma chave."
 
 
-msgid "No active keying set"
-msgstr "Sem conjunto de inserção de chaves ativo."
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Sem informação de contexto adequado para o conjunto de inserção de chaves ativo."
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Conjunto de inserção de chaves falhou ao inserir quaisquer fotogramas chave."
+
+
+msgid "No active keying set"
+msgstr "Sem conjunto de inserção de chaves ativo."
 
 
 msgid "No active Keying Set"

@@ -52,11 +52,24 @@ def sort_cmake_file_lists(fn, data_src):
 
     def can_sort(l):
         l = l.split("#", 1)[0].strip()
+        # Source files.
         if l.endswith(SOURCE_EXT):
             if "(" not in l and ')' not in l:
                 return True
+        # Libs.
+        if l.startswith(("bf_", "extern_")) and "." not in l and "/" not in l:
+            return True
 
     def can_sort_compat(a, b):
+        # Strip comments.
+        a = a.split("#", 1)[0]
+        b = b.split("#", 1)[0]
+
+        # Compare leading whitespace.
+        if a[:-(len(a.lstrip()))] != b[:-(len(b.lstrip()))]:
+            return False
+
+        # Compare loading paths.
         a = a.split("/")
         b = b.split("/")
         if len(a) == 1 and len(b) == 1:
@@ -87,4 +100,5 @@ run(
     directories=[os.path.join(SOURCE_DIR, d) for d in SOURCE_DIRS],
     is_text=lambda fn: fn.endswith("CMakeLists.txt"),
     text_operation=sort_cmake_file_lists,
+    use_multiprocess=True,
 )

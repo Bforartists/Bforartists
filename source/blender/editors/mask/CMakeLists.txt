@@ -18,35 +18,38 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	../include
-	../../blenkernel
-	../../blenlib
-	../../depsgraph
-	../../gpu
-	../../makesdna
-	../../makesrna
-	../../windowmanager
-	../../../../intern/guardedalloc
-	../../../../intern/glew-mx
+  ../include
+  ../../blenkernel
+  ../../blenlib
+  ../../depsgraph
+  ../../gpu
+  ../../makesdna
+  ../../makesrna
+  ../../windowmanager
+  ../../../../intern/guardedalloc
+  ../../../../intern/glew-mx
 )
 
 set(INC_SYS
-	${GLEW_INCLUDE_PATH}
+  ${GLEW_INCLUDE_PATH}
 )
 
 set(SRC
-	mask_add.c
-	mask_draw.c
-	mask_edit.c
-	mask_editaction.c
-	mask_ops.c
-	mask_relationships.c
-	mask_select.c
-	mask_shapekey.c
+  mask_add.c
+  mask_draw.c
+  mask_edit.c
+  mask_editaction.c
+  mask_ops.c
+  mask_relationships.c
+  mask_select.c
+  mask_shapekey.c
 
-	mask_intern.h
+  mask_intern.h
+)
+
+set(LIB
 )
 
 add_definitions(${GL_DEFINITIONS})
 
-blender_add_lib(bf_editor_mask "${SRC}" "${INC}" "${INC_SYS}")
+blender_add_lib(bf_editor_mask "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

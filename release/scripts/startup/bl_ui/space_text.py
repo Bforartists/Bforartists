@@ -36,9 +36,9 @@ class TEXT_HT_header(Header):
 
         row = layout.row(align=True)
         if text and text.is_modified:
-            sub = row.row(align=True)
-            sub.alert = True
-            sub.operator("text.resolve_conflict", text="", icon='HELP')
+            row = layout.row(align=True)
+            row.alert = True
+            row.operator("text.resolve_conflict", text="", icon='HELP')
 
         #layout.separator_spacer()
 
@@ -198,7 +198,9 @@ class TEXT_MT_view(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.properties", text = "Sidebar", icon='MENU_PANEL')
+        st = context.space_data
+
+        layout.prop(st, "show_region_ui")
 
         layout.separator()
 
@@ -265,7 +267,7 @@ class TEXT_MT_text(Menu):
 class TEXT_MT_templates_py(Menu):
     bl_label = "Python"
 
-    def draw(self, context):
+    def draw(self, _context):
         self.path_menu(
             bpy.utils.script_paths("templates_py"),
             "text.open",
@@ -276,7 +278,7 @@ class TEXT_MT_templates_py(Menu):
 class TEXT_MT_templates_osl(Menu):
     bl_label = "Open Shading Language"
 
-    def draw(self, context):
+    def draw(self, _context):
         self.path_menu(
             bpy.utils.script_paths("templates_osl"),
             "text.open",
@@ -287,7 +289,7 @@ class TEXT_MT_templates_osl(Menu):
 class TEXT_MT_templates(Menu):
     bl_label = "Templates"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.menu("TEXT_MT_templates_py")
         layout.menu("TEXT_MT_templates_osl")
@@ -296,7 +298,7 @@ class TEXT_MT_templates(Menu):
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("text.indent", icon = "INDENT")
@@ -316,7 +318,7 @@ class TEXT_MT_format(Menu):
 class TEXT_MT_edit_to3d(Menu):
     bl_label = "Text To 3D Object"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("text.to_3d_object", text="One Object", icon = "OUTLINER_OB_FONT").split_lines = False
@@ -327,7 +329,7 @@ class TEXT_MT_edit(Menu):
     bl_label = "Edit"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         return (context.space_data.text)
 
     def draw(self, context):
@@ -389,7 +391,7 @@ class TEXT_MT_edit_move_select(Menu):
 class TEXT_MT_toolbox(Menu):
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_DEFAULT'

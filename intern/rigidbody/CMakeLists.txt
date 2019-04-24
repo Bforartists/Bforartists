@@ -19,17 +19,20 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	.
+  .
 )
 
 set(INC_SYS
-	${BULLET_INCLUDE_DIRS}
+  ${BULLET_INCLUDE_DIRS}
 )
 
 set(SRC
-	rb_bullet_api.cpp
+  rb_bullet_api.cpp
 
-	RBI_api.h
+  RBI_api.h
 )
 
-blender_add_lib(bf_intern_rigidbody "${SRC}" "${INC}" "${INC_SYS}")
+set(LIB
+)
+
+blender_add_lib(bf_intern_rigidbody "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

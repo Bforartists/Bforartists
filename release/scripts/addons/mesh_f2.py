@@ -367,13 +367,15 @@ def register():
     if kcfg:
         km = kcfg.keymaps.new(name='Mesh', space_type='EMPTY')
         kmi = km.keymap_items.new("mesh.f2", 'F', 'PRESS')
-        addon_keymaps.append((km, kmi))
+        addon_keymaps.append((km, kmi.idname))
 
 
 def unregister():
     # remove keymap entry
-    for km, kmi in addon_keymaps:
-        km.keymap_items.remove(kmi)
+    for km, kmi_idname in addon_keymaps:
+        for kmi in km.keymap_items:
+            if kmi.idname == kmi_idname:
+                km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
     # remove operator and preferences

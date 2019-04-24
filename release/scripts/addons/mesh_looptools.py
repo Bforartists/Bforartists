@@ -2661,8 +2661,8 @@ def gstretch_calculate_verts(loop, stroke, object, bm_mod, method):
                 v1 = bm_mod.verts[v1]
                 v2 = bm_mod.verts[v2]
                 if v1.select + v2.select == 1 and not v1.hide and not v2.hide:
-                    vec1 = object.matrix_world * v1.co
-                    vec2 = object.matrix_world * v2.co
+                    vec1 = object.matrix_world @ v1.co
+                    vec2 = object.matrix_world @ v2.co
                     intersection = intersect_line_stroke(vec1, vec2, stroke)
                     if intersection:
                         break
@@ -2671,7 +2671,7 @@ def gstretch_calculate_verts(loop, stroke, object, bm_mod, method):
                 intersection = intersect_line_stroke(v.co, v.co + v.normal,
                     stroke)
             if intersection:
-                move.append([v_index, matrix_inverse * intersection])
+                move.append([v_index, matrix_inverse @ intersection])
 
     else:
         if method == 'irregular':
@@ -2713,7 +2713,7 @@ conversion_distance, conversion_max, conversion_min, conversion_vertices):
         if conversion == 'distance':
             method = 'project'
             prev_point = stroke.points[0]
-            stroke_verts[-1][1].append(bm_mod.verts.new(mat_world * prev_point.co))
+            stroke_verts[-1][1].append(bm_mod.verts.new(mat_world @ prev_point.co))
             distance = 0
             limit = conversion_distance
             for point in stroke.points:
@@ -2732,12 +2732,12 @@ conversion_distance, conversion_max, conversion_min, conversion_vertices):
         else:
             # add vertices at stroke points
             for point in stroke.points[:end_point]:
-                stroke_verts[-1][1].append(bm_mod.verts.new(mat_world * point.co))
+                stroke_verts[-1][1].append(bm_mod.verts.new(mat_world @ point.co))
             # add more vertices, beyond the points that are available
             if min_end_point > min(len(stroke.points), end_point):
                 for i in range(min_end_point -
                 (min(len(stroke.points), end_point))):
-                    stroke_verts[-1][1].append(bm_mod.verts.new(mat_world * point.co))
+                    stroke_verts[-1][1].append(bm_mod.verts.new(mat_world @ point.co))
                 # force even spreading of points, so they are placed on stroke
                 method = 'regular'
     bm_mod.verts.ensure_lookup_table()
@@ -2791,8 +2791,8 @@ def gstretch_erase_stroke(stroke, context):
     erase_stroke = [sp(p.co, context) for p in stroke.points]
     if erase_stroke:
         erase_stroke[0]['is_start'] = True
-    bpy.ops.gpencil.draw(mode='ERASER', stroke=erase_stroke)
-
+    #bpy.ops.gpencil.draw(mode='ERASER', stroke=erase_stroke)
+    bpy.ops.gpencil.layer_remove()
 
 # get point on stroke, given by relative distance (0.0 - 1.0)
 def gstretch_eval_stroke(stroke, distance, stroke_lengths_cache=False):
@@ -2899,8 +2899,8 @@ def gstretch_match_single_verts(bm_mod, strokes, mat_world):
     # calculate stroke endpoints in object space
     endpoints = []
     for stroke in strokes:
-        endpoints.append((mat_world * stroke.points[0].co, stroke, 0))
-        endpoints.append((mat_world * stroke.points[-1].co, stroke, -1))
+        endpoints.append((mat_world @ stroke.points[0].co, stroke, 0))
+        endpoints.append((mat_world @ stroke.points[-1].co, stroke, -1))
 
     distances = []
     # find single vertices (not connected to other selected verts)

@@ -19,20 +19,23 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	.
-	..
-	${GLOG_INCLUDE_DIRS}
-	${GFLAGS_INCLUDE_DIRS}
-	../../../extern/gtest/include
+  .
+  ..
+  ${GLOG_INCLUDE_DIRS}
+  ${GFLAGS_INCLUDE_DIRS}
+  ../../../extern/gtest/include
 )
 
 set(INC_SYS
 )
 
 set(SRC
-	testing_main.cc
+  testing_main.cc
 
-	testing.h
+  testing.h
 )
 
-blender_add_lib(bf_testing_main "${SRC}" "${INC}" "${INC_SYS}")
+set(LIB
+)
+
+blender_add_lib(bf_testing_main "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2254,12 +2254,12 @@ msgid "Cube"
 msgstr "घन"
 
 
-msgid "Monkey"
-msgstr "बंदर"
-
-
 msgid "Hair"
 msgstr "बाल"
+
+
+msgid "Cloth"
+msgstr "कपड़ा"
 
 
 msgid "Edges"
@@ -3178,10 +3178,6 @@ msgstr "त्वचा"
 
 msgid "Warp"
 msgstr "विकृति"
-
-
-msgid "Cloth"
-msgstr "कपड़ा"
 
 
 msgid "Dynamic Paint"
@@ -4354,6 +4350,10 @@ msgstr "बंद/बुझ संपादन रूप"
 msgctxt "Operator"
 msgid "Add Empty"
 msgstr "खाली जोड़ें"
+
+
+msgid "Monkey"
+msgstr "बंदर"
 
 
 msgctxt "Operator"

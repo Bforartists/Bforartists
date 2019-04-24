@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Align Tools",
     "author": "gabhead, Lell, Anfeo",
-    "version": (0, 3, 2),
-    "blender": (2, 77, 0),
+    "version": (0, 3, 3),
+    "blender": (2, 80, 0),
     "location": "View3D > Tool Shelf > Tools",
     "description": "Align Selected Objects to Active Object",
     "warning": "",
@@ -148,18 +148,18 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             if obj.type == 'MESH' and len(me.vertices) > 0:
                 ok = True
                 for p in me.vertices:
-                    co_list.append((obj_mtx * p.co))
+                    co_list.append((obj_mtx @ p.co))
 
             elif obj.type == 'SURFACE' and len(me.splines) > 0:
                 ok = True
                 for s in me.splines:
                     for p in s.points:
-                        co_list.append((obj_mtx * p.co))
+                        co_list.append((obj_mtx @ p.co))
             elif obj.type == 'FONT' and len(me.splines) > 0:
                 ok = True
                 for s in me.splines:
                     for p in s.bezier_points:
-                        co_list.append((obj_mtx * p.co))
+                        co_list.append((obj_mtx @ p.co))
 
         elif space == "local":
             ok = False
@@ -365,7 +365,7 @@ def align_function(subject, active_too, consistent, self_or_active, loc_x, loc_y
             pivot = obj.location
             pivot += move_pivot
 
-            nm = obj_mtx.inverted() * Matrix.Translation(-move_pivot) * obj_mtx
+            nm = obj_mtx.inverted() * Matrix.Translation(-move_pivot) @ obj_mtx
 
             # Transform the mesh now
             me.transform(nm)
@@ -748,7 +748,7 @@ class OBJECT_OT_align_tools(Operator):
             row1b.prop(self, 'consistent')
 
         row2 = layout.row()
-        row2.label(icon='MAN_TRANS', text="Align Location:")
+        row2.label(text="Align Location:")
 
         # Align Location:
         row3 = layout.row()
@@ -789,7 +789,7 @@ class OBJECT_OT_align_tools(Operator):
 
         if self.subject == "0":
             row12 = layout.row()
-            row12.label(icon='MAN_ROT', text='Align Rotation:')
+            row12.label(text='Align Rotation:')
             row13 = layout.row(align=True)
             row13.prop(self, 'rot_x', text='X', toggle=True)
             row13.prop(self, 'rot_y', text='Y', toggle=True)
@@ -800,7 +800,7 @@ class OBJECT_OT_align_tools(Operator):
                 row13b.prop(self, 'rot_offset', text='')
 
             row14 = layout.row()
-            row14.label(icon='MAN_SCALE', text='Match Scale:')
+            row14.label(text='Match Scale:')
             row15 = layout.row(align=True)
             row15.prop(self, 'scale_x', text='X', toggle=True)
             row15.prop(self, 'scale_y', text='Y', toggle=True)
@@ -811,7 +811,7 @@ class OBJECT_OT_align_tools(Operator):
                 row15b.prop(self, 'scale_offset', text='')
 
             row10 = layout.row()
-            row10.label(icon='MAN_SCALE', text='Fit Dimensions:')
+            row10.label(text='Fit Dimensions:')
             row11 = layout.row(align=True)
             row11.prop(self, 'fit_x', text='X', toggle=True)
             row11.prop(self, 'fit_y', text='Y', toggle=True)
@@ -1030,9 +1030,9 @@ class AlignScaleZOperator(Operator):
 
 # Interface Panel
 
-class AlignUi(Panel):
+class VIEW3D_PT_AlignUi(Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_label = "Align Tools"
     bl_context = "objectmode"
     bl_category = 'Tools'
@@ -1049,13 +1049,13 @@ class AlignUi(Panel):
             box.label(text=obj.name, icon='EDITMODE_HLT')
 
         col = layout.column()
-        col.label(text="Align Loc + Rot:", icon='MANIPUL')
+        col.label(text="Align Loc + Rot:")
 
         col = layout.column(align=False)
         col.operator("object.align", text="XYZ")
 
         col = layout.column()
-        col.label(text="Align Location:", icon='MAN_TRANS')
+        col.label(text="Align Location:")
 
         col = layout.column_flow(columns=4, align=True)
         col.operator("object.align_location_x", text="X")
@@ -1064,7 +1064,7 @@ class AlignUi(Panel):
         col.operator("object.align_location_all", text="All")
 
         col = layout.column()
-        col.label(text="Align Rotation:", icon='MAN_ROT')
+        col.label(text="Align Rotation:")
 
         col = layout.column_flow(columns=4, align=True)
         col.operator("object.align_rotation_x", text="X")
@@ -1073,7 +1073,7 @@ class AlignUi(Panel):
         col.operator("object.align_rotation_all", text="All")
 
         col = layout.column()
-        col.label(text="Align Scale:", icon='MAN_SCALE')
+        col.label(text="Align Scale:")
 
         col = layout.column_flow(columns=4, align=True)
         col.operator("object.align_objects_scale_x", text="X")
@@ -1092,7 +1092,7 @@ class AlignUi(Panel):
 
 # Define Panel classes for updating
 panels = (
-        AlignUi,
+        VIEW3D_PT_AlignUi,
         )
 
 
@@ -1135,7 +1135,7 @@ class AlignAddonPreferences(AddonPreferences):
 
 # Class List
 classes = (
-    AlignUi,
+    VIEW3D_PT_AlignUi,
     AlignOperator,
     AlignLocationOperator,
     AlignLocationXOperator,

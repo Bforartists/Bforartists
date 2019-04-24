@@ -342,17 +342,17 @@ class PovrayMultiplyNode(Node, ObjectNodeTree):
     bl_label = 'Multiply'
     bl_icon = 'SOUND'
 
-    amount_x = FloatProperty(
+    amount_x : FloatProperty(
             name="X",
             description="Number of repeats",
             min=1.0, max=10000.0, default=1.0)
 
-    amount_y = FloatProperty(
+    amount_y : FloatProperty(
             name="Y",
             description="Number of repeats",
             min=1.0, max=10000.0, default=1.0)
 
-    amount_z = FloatProperty(
+    amount_z : FloatProperty(
             name="Z",
             description="Number of repeats",
             min=1.0, max=10000.0, default=1.0)
@@ -552,7 +552,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
     bl_label = 'Bump map'
     bl_icon = 'SOUND'
 
-    map_type = bpy.props.EnumProperty(
+    map_type : bpy.props.EnumProperty(
             name="Map type",
             description="",
             items=(
@@ -563,8 +563,8 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
                 ('5', "Torroidal", "Torus or donut shaped mapping")
             ),
             default='0')
-    image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
-    interpolate = EnumProperty(
+    image : StringProperty(maxlen=1024) # , subtype="FILE_PATH"
+    interpolate : EnumProperty(
             name="Interpolate",
             description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
             items=(
@@ -572,7 +572,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
                 ('4', "Normalized", "Gives normalized distance"),
             ),
             default='2')
-    once = BoolProperty(description="Not to repeat", default=False)
+    once : BoolProperty(description="Not to repeat", default=False)
 
     def init(self, context):
 
@@ -703,7 +703,7 @@ class ShaderPatternNode(Node, ObjectNodeTree):
     bl_idname = 'ShaderPatternNode'
     bl_label = 'Other patterns'
 
-    pattern = EnumProperty(
+    pattern : EnumProperty(
             name="Pattern",
             description="Agate, Crackle, Gradient, Pavement, Spiral, Tiling",
             items=(('agate', "Agate", ""),('crackle', "Crackle", ""),('gradient', "Gradient", ""),
@@ -713,47 +713,47 @@ class ShaderPatternNode(Node, ObjectNodeTree):
                    ('tiling', "Tiling", "")),
             default='agate')
 
-    agate_turb = FloatProperty(
+    agate_turb : FloatProperty(
             name="Agate turb",
             description="Agate turbulence",
             min=0.0, max=100.0, default=0.5)
 
-    crackle_form_x = FloatProperty(
+    crackle_form_x : FloatProperty(
             name="X",
             description="Form vector X",
             min=-150.0, max=150.0, default=-1)
 
-    crackle_form_y = FloatProperty(
+    crackle_form_y : FloatProperty(
             name="Y",
             description="Form vector Y",
             min=-150.0, max=150.0, default=1)
 
-    crackle_form_z = FloatProperty(
+    crackle_form_z : FloatProperty(
             name="Z",
             description="Form vector Z",
             min=-150.0, max=150.0, default=0)
 
-    crackle_metric = FloatProperty(
+    crackle_metric : FloatProperty(
             name="Metric",
             description="Crackle metric",
             min=0.0, max=150.0, default=1)
 
-    crackle_solid = BoolProperty(
+    crackle_solid : BoolProperty(
             name="Solid",
             description="Crackle solid",
             default=False)
 
-    spiral_arms = FloatProperty(
+    spiral_arms : FloatProperty(
             name="Number",
             description="",
             min=0.0, max=256.0, default=2.0)
 
-    tiling_number = IntProperty(
+    tiling_number : IntProperty(
             name="Number",
             description="",
             min=1, max=27, default=1)
 
-    gradient_orient = EnumProperty(
+    gradient_orient : EnumProperty(
             name="Orient",
             description="",
             items=(('x', "X", ""),
@@ -856,22 +856,22 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
     bl_idname = 'ShaderNormalMapNode'
     bl_label = 'Normal map'
 
-    brick_size_x = FloatProperty(
+    brick_size_x : FloatProperty(
             name="X",
             description="",
             min=0.0000, max=1.0000, default=0.2500)
 
-    brick_size_y = FloatProperty(
+    brick_size_y : FloatProperty(
             name="Y",
             description="",
             min=0.0000, max=1.0000, default=0.0525)
 
-    brick_size_z = FloatProperty(
+    brick_size_z : FloatProperty(
             name="Z",
             description="",
             min=0.0000, max=1.0000, default=0.1250)
 
-    brick_mortar = FloatProperty(
+    brick_mortar : FloatProperty(
             name="Mortar",
             description="Mortar",
             min=0.000, max=1.500, default=0.01)
@@ -922,7 +922,7 @@ class IsoPropsNode(Node, CompositorNodeTree):
     '''ISO Props'''
     bl_idname = 'IsoPropsNode'
     bl_label = 'Iso'
-    node_label = StringProperty(maxlen=1024)
+    node_label : StringProperty(maxlen=1024)
     def init(self, context):
         ob = bpy.context.object
         self.node_label = ob.name

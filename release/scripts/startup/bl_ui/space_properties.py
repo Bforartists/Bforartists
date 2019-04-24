@@ -24,10 +24,10 @@ from bpy.types import Header, Panel, Menu
 class PROPERTIES_HT_header(Header):
     bl_space_type = 'PROPERTIES'
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(_context, layout) # bfa - show hide the editormenu
 
         # bfa - The tabs to switch between the four animation editors. The classes are in the space_outliner.py
         row = layout.row(align=True)
