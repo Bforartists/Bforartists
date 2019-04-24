@@ -25,7 +25,8 @@ class BlenderGlTF():
     @staticmethod
     def create(gltf):
         """Create glTF main method."""
-        bpy.context.scene.render.engine = 'BLENDER_EEVEE'
+        if bpy.context.scene.render.engine not in ['CYCLES', 'BLENDER_EEVEE']:
+            bpy.context.scene.render.engine = 'BLENDER_EEVEE'
         BlenderGlTF.pre_compute(gltf)
 
         if gltf.data.scenes is not None:
@@ -167,6 +168,11 @@ class BlenderGlTF():
 
                     if 'glossinessFactor' not in material.extensions['KHR_materials_pbrSpecularGlossiness'].keys():
                         material.extensions['KHR_materials_pbrSpecularGlossiness']['glossinessFactor'] = 1.0
+
+        # images
+        if gltf.data.images is not None:
+            for img in gltf.data.images:
+                img.blender_image_name = None
 
         if gltf.data.nodes is None:
             # Something is wrong in file, there is no nodes

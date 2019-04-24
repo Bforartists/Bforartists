@@ -55,6 +55,8 @@ C_SOURCE_HEADER = r'''/*
 
 #include "BLO_readfile.h"
 
+/* clang-format off */
+
 #ifdef __LITTLE_ENDIAN__
 #  define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
 #  define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
@@ -310,6 +312,8 @@ def convert_data(blend, theme, f):
     write_member(fw, 1, blend, theme, ls)
 
     fw('};\n')
+    fw('\n')
+    fw('/* clang-format on */\n')
 
 
 def file_remove_empty_braces(source_dst):

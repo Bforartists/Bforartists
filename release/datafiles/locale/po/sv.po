@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -981,6 +981,10 @@ msgid "Fill"
 msgstr "Fyll"
 
 
+msgid "Aspect Ratio"
+msgstr "Storleksförhållande"
+
+
 msgid "Input Samples"
 msgstr "Samplar"
 
@@ -1508,10 +1512,6 @@ msgstr "Spegel"
 
 msgid "Active"
 msgstr "Flytta Till Lager"
-
-
-msgid "Constraint is the one being edited "
-msgstr "Göm Markerad"
 
 
 msgid "Lin error"
@@ -6119,10 +6119,6 @@ msgid "Diffuse color of the material"
 msgstr "Ange färg for banden"
 
 
-msgid "Preview render type"
-msgstr "Rendera"
-
-
 msgid "Type of preview render"
 msgstr "Bild Displist"
 
@@ -6135,16 +6131,12 @@ msgid "Cube"
 msgstr "Kub"
 
 
-msgid "Monkey"
-msgstr "Apa"
-
-
 msgid "Hair strands"
 msgstr "Lägg till Stripp"
 
 
-msgid "World Sphere"
-msgstr "Världs-rum"
+msgid "Cloth"
+msgstr "Tyg"
 
 
 msgid "Roughness"
@@ -9424,10 +9416,6 @@ msgstr "Radera"
 
 msgid "Warp"
 msgstr "Warp/Böj"
-
-
-msgid "Cloth"
-msgstr "Tyg"
 
 
 msgid "Dynamic Paint"
@@ -19206,6 +19194,10 @@ msgid "Toggle object's force field"
 msgstr "Växla redigeringsläge för objekt"
 
 
+msgid "Monkey"
+msgstr "Apa"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Radera Allt"
@@ -21666,32 +21658,8 @@ msgid "New Scene"
 msgstr "Flytta Till Lager"
 
 
-msgid "Add new scene"
-msgstr "Flytta Till Lager"
-
-
 msgid "Copy Settings"
 msgstr "Verktyg"
-
-
-msgid "Make a copy without any objects"
-msgstr "Spara som"
-
-
-msgid "Link Objects"
-msgstr "Duplicera"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Markera Länkad"
-
-
-msgid "Link Object Data"
-msgstr "Packa Data"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Markera Länkad"
 
 
 msgid "Full Copy"
@@ -25729,10 +25697,6 @@ msgstr "Spara som"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Växla om materialet länkas till objektdata eller till objektets block"
-
-
-msgid "ObData"
-msgstr "Packa Data"
 
 
 msgid "Align Object To"
@@ -31222,10 +31186,6 @@ msgid "Image*"
 msgstr "Bild*"
 
 
-msgid "Aspect Ratio"
-msgstr "Storleksförhållande"
-
-
 msgid "Edge To Edge"
 msgstr "Redigerings Läge"
 
@@ -32525,16 +32485,16 @@ msgid "No F-Curve to add keyframes to"
 msgstr "Radera"
 
 
-msgid "No active keying set"
-msgstr "Byta Stripp"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Renderings Fönster"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Radera"
+
+
+msgid "No active keying set"
+msgstr "Byta Stripp"
 
 
 msgid "No active Keying Set"

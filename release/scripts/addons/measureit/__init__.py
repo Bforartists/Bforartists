@@ -28,8 +28,8 @@
 bl_info = {
     "name": "MeasureIt",
     "author": "Antonio Vazquez (antonioya)",
-    "location": "View3D > Tools Panel /Properties panel",
-    "version": (1, 8, 0),
+    "location": "View3D > Sidebar",
+    "version": (1, 8, 1),
     "blender": (2, 80, 0),
     "description": "Tools for measuring objects.",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"

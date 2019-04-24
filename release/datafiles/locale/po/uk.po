@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2019-02-08 13:58+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -3050,6 +3050,10 @@ msgid "Eraser Stroke"
 msgstr "Штрихова гумка"
 
 
+msgid "Aspect Ratio"
+msgstr "Пропорції"
+
+
 msgid "Input Samples"
 msgstr "Вибірки вводу"
 
@@ -4583,10 +4587,6 @@ msgid "Active"
 msgstr "Активний"
 
 
-msgid "Constraint is the one being edited "
-msgstr "Буде редагований лише примус"
-
-
 msgid "Lin error"
 msgstr "Лін. помилка"
 
@@ -4667,10 +4667,6 @@ msgid "Local With Parent"
 msgstr "Локально з предком"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "Примус застосовується відносно локальної системи координат об'єкта з додаванням предківських трансформацій"
-
-
 msgid "Local Space"
 msgstr "Локальний простір"
 
@@ -4697,10 +4693,6 @@ msgstr "Трансформування цілі розраховується в�
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "Трансформування цілі розраховується лише у просторі пози; трансформації цільової арматури ігнорується"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "Трансформування цільової кістки розраховується в її локальній системі координат з додаванням батьківських трансформацій"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -17620,10 +17612,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "Номер індексу для проходу зображування \"Material Index\""
 
 
-msgid "Preview render type"
-msgstr "Тип перегляду вималюваного"
-
-
 msgid "Type of preview render"
 msgstr "Тип перегляду"
 
@@ -17636,10 +17624,6 @@ msgid "Cube"
 msgstr "Куб"
 
 
-msgid "Monkey"
-msgstr "Мавпочка"
-
-
 msgid "Hair"
 msgstr "Волосся"
 
@@ -17648,12 +17632,8 @@ msgid "Hair strands"
 msgstr "Пасма волосся"
 
 
-msgid "World Sphere"
-msgstr "Небесна сфера"
-
-
-msgid "Large sphere with sky"
-msgstr "Велика сфера з небом"
+msgid "Cloth"
+msgstr "Тканина"
 
 
 msgid "Roughness"
@@ -26091,10 +26071,6 @@ msgstr "Деформація за поверхнею"
 
 msgid "Warp"
 msgstr "Деформація"
-
-
-msgid "Cloth"
-msgstr "Тканина"
 
 
 msgid "Dynamic Paint"
@@ -45760,6 +45736,10 @@ msgid "Toggle object's force field"
 msgstr "Перемкнути силове поле об'єкта"
 
 
+msgid "Monkey"
+msgstr "Мавпочка"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Застосувати модифікатор"
@@ -50306,32 +50286,8 @@ msgid "Add new scene by type"
 msgstr "Додати нову сцену за типом"
 
 
-msgid "Add new scene"
-msgstr "Додати нову сцену"
-
-
 msgid "Copy Settings"
 msgstr "Копіювати параметри"
-
-
-msgid "Make a copy without any objects"
-msgstr "Зробити копію без будь-яких об'єктів"
-
-
-msgid "Link Objects"
-msgstr "Пов'язати об'єкти"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Пов'язати з об'єктами з поточної сцени"
-
-
-msgid "Link Object Data"
-msgstr "Пов'язати дані об'єктів"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Копіювати об'єкти, пов'язані з даними з поточної сцени"
 
 
 msgid "Full Copy"
@@ -58224,10 +58180,6 @@ msgstr "Матеріал пов'язаний із"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Перемкнути пов'язання матеріалу до даних об'єкта чи до блока об'єкта"
-
-
-msgid "ObData"
-msgstr "Дані об'єкта"
 
 
 msgid "Auto-offset Margin"
@@ -69098,10 +69050,6 @@ msgid "Changing edges seam re-calculates UV unwrap"
 msgstr "Зміна ребер шва переобчислює UV-розгортку"
 
 
-msgid "Gizmo Mode"
-msgstr "Режим гізмо"
-
-
 msgid "Use Additive Drawing"
 msgstr "Вжити докладальне рисування"
 
@@ -73261,10 +73209,6 @@ msgid "Image*"
 msgstr "Зображення*"
 
 
-msgid "Aspect Ratio"
-msgstr "Пропорції"
-
-
 msgid "Edge To Edge"
 msgstr "Ребро до ребра"
 
@@ -73849,10 +73793,6 @@ msgstr "Перейти до попередньої мітки "
 
 msgid "Auto Keyframing:"
 msgstr "Автостворення ключ.кадрів:"
-
-
-msgid "Gizmos:"
-msgstr "Гізмо:"
 
 
 msgctxt "Operator"
@@ -76119,16 +76059,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Немає ID блока та/або даних анімації, з яких слід видалити ключовий кадр"
 
 
-msgid "No active keying set"
-msgstr "Немає активного набору ключів"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Немає інформації про контекст, придатної для активного набору ключів"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Помилка вставляння ключових кадрів до набору ключів"
+
+
+msgid "No active keying set"
+msgstr "Немає активного набору ключів"
 
 
 msgid "No active Keying Set"

@@ -17,14 +17,17 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	.
+  .
 )
 
 set(SRC
-	range_tree.h
-	intern/generic_alloc_impl.h
+  range_tree.h
+  intern/generic_alloc_impl.h
 
-	intern/range_tree.c
+  intern/range_tree.c
 )
 
-blender_add_lib(extern_rangetree "${SRC}" "${INC}" "")
+set(LIB
+)
+
+blender_add_lib(extern_rangetree "${SRC}" "${INC}" "" "${LIB}")

@@ -392,7 +392,7 @@ class ARCHIMESH_PT_Main(Panel):
     bl_label = "Archimesh"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "View"
+    bl_category = "Create"
     bl_context = "objectmode"
 
     # ------------------------------
