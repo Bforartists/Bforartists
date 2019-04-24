@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -808,6 +808,10 @@ msgstr "İşaret"
 
 msgid "Fill"
 msgstr "Doldur"
+
+
+msgid "Aspect Ratio"
+msgstr "En/Boy oranı(Yatay eksen)"
 
 
 msgid "Input Samples"
@@ -4992,10 +4996,6 @@ msgid "Diffuse color of the material"
 msgstr "Nesnenin genel rengi."
 
 
-msgid "Preview render type"
-msgstr "Önizleme Biçimi: Küp"
-
-
 msgid "Type of preview render"
 msgstr "Önizleme Biçimi: Küp"
 
@@ -5008,20 +5008,8 @@ msgid "Cube"
 msgstr "Küp"
 
 
-msgid "Monkey"
-msgstr "Maymun"
-
-
 msgid "Hair strands"
 msgstr "Önizleme Biçimi: Saç-Tel-İplik"
-
-
-msgid "World Sphere"
-msgstr "NURBS Küre"
-
-
-msgid "Large sphere with sky"
-msgstr "Önizleme Biçimi: Arkaplan gökyüzü"
 
 
 msgid "Specular Color"
@@ -15088,6 +15076,10 @@ msgid "Toggle Force Field"
 msgstr "Küçük Harf Yap"
 
 
+msgid "Monkey"
+msgstr "Maymun"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Değiştirici Ekle"
@@ -16935,20 +16927,8 @@ msgid "New Scene"
 msgstr "Yeni Sahne"
 
 
-msgid "Add new scene"
-msgstr "Yeni bir değiştirici ekle"
-
-
 msgid "Copy Settings"
 msgstr "Kemik Ayarları"
-
-
-msgid "Link Objects"
-msgstr "Nesneleri Birleştir"
-
-
-msgid "Link Object Data"
-msgstr "Nesne & NsVeri & Malzeme+Doku"
 
 
 msgid "Full Copy"
@@ -20006,10 +19986,6 @@ msgstr "Nesne Tipini Değiştir..."
 
 msgid "Material Link To"
 msgstr "Malzemeleri"
-
-
-msgid "ObData"
-msgstr "Nesne Verisi"
 
 
 msgid "Align Object To"
@@ -25002,10 +24978,6 @@ msgid "Image*"
 msgstr "Görüntü*"
 
 
-msgid "Aspect Ratio"
-msgstr "En/Boy oranı(Yatay eksen)"
-
-
 msgid "Edge To Edge"
 msgstr "Kenardan Kenara"
 
@@ -26222,12 +26194,12 @@ msgid "<Missing ID block>"
 msgstr "Bağlama verileri eksik."
 
 
-msgid "No active keying set"
-msgstr "Aktif katmana ayarla"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Aktif Grubu Sil"
+
+
+msgid "No active keying set"
+msgstr "Aktif katmana ayarla"
 
 
 msgid "No active Keying Set"

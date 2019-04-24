@@ -14,8 +14,8 @@
 
 bl_info = {
     'name': 'glTF 2.0 format',
-    'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein',
-    "version": (0, 0, 1),
+    'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
+    "version": (0, 9, 2),
     'blender': (2, 80, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -26,6 +26,8 @@ bl_info = {
     'category': 'Import-Export',
 }
 
+def get_version_string():
+    return str(bl_info['version'][0]) + '.' + str(bl_info['version'][1]) + '.' + str(bl_info['version'][2])
 
 #
 # Script reloading (if the user calls 'Reload Scripts' from Blender)
@@ -105,6 +107,22 @@ class ExportGLTF2_Base:
         name='Copyright',
         description='Legal rights and conditions for the model',
         default=''
+    )
+
+    export_image_format: EnumProperty(
+        name='Images',
+        items=(('NAME', 'Automatic',
+                'Determine the image format from the blender image name'),
+                ('JPEG', 'JPEG Format (.jpg)',
+                'Encode and save textures as .jpg files. Be aware of a possible loss in quality'),
+               ('PNG', 'PNG Format (.png)',
+                'Encode and save textures as .png files')
+               ),
+        description=(
+            'Output format for images. PNG is lossless and generally preferred, but JPEG might be preferable for web '
+            'applications due to the smaller file size'
+        ),
+        default='NAME'
     )
 
     export_texcoords: BoolProperty(
@@ -348,6 +366,7 @@ class ExportGLTF2_Base:
         export_settings['gltf_filedirectory'] = os.path.dirname(export_settings['gltf_filepath']) + '/'
 
         export_settings['gltf_format'] = self.export_format
+        export_settings['gltf_image_format'] = self.export_image_format
         export_settings['gltf_copyright'] = self.export_copyright
         export_settings['gltf_texcoords'] = self.export_texcoords
         export_settings['gltf_normals'] = self.export_normals
@@ -437,6 +456,8 @@ class ExportGLTF2_Base:
             col.prop(self, 'export_tangents')
         col.prop(self, 'export_colors')
         col.prop(self, 'export_materials')
+        if self.export_materials:
+            col.prop(self, 'export_image_format')
 
         # Add Draco compression option only if the DLL could be found.
         if self.is_draco_available:
@@ -484,7 +505,7 @@ class ExportGLTF2(bpy.types.Operator, ExportGLTF2_Base, ExportHelper):
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon = 'SAVE_GITF')
+    self.layout.operator(ExportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)')
 
 
 class ImportGLTF2(Operator, ImportHelper):
@@ -562,7 +583,7 @@ class ImportGLTF2(Operator, ImportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)', icon = 'LOAD_GITF')
+    self.layout.operator(ImportGLTF2.bl_idname, text='glTF 2.0 (.glb/.gltf)')
 
 
 classes = (

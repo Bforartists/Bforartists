@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -826,6 +826,10 @@ msgid "Fill"
 msgstr "Omplir"
 
 
+msgid "Aspect Ratio"
+msgstr "Moure a Capa"
+
+
 msgid "Input Samples"
 msgstr "Esborrar"
 
@@ -1233,10 +1237,6 @@ msgstr "Seleccionar fila"
 
 msgid "Active"
 msgstr "Moure a Capa"
-
-
-msgid "Constraint is the one being edited "
-msgstr "Amagar Seleccionats"
 
 
 msgid "Lin error"
@@ -5264,10 +5264,6 @@ msgid "Amount of mirror reflection for raytrace"
 msgstr "Seleccionar connectats"
 
 
-msgid "Preview render type"
-msgstr "Render"
-
-
 msgid "Type of preview render"
 msgstr "Image Displist"
 
@@ -5280,16 +5276,8 @@ msgid "Cube"
 msgstr "Cub"
 
 
-msgid "Monkey"
-msgstr "&gt;Mona"
-
-
 msgid "Hair strands"
 msgstr "Afegir Tira"
-
-
-msgid "World Sphere"
-msgstr "Calcular Normals"
 
 
 msgid "Roughness"
@@ -16686,6 +16674,10 @@ msgid "Toggle Force Field"
 msgstr "Guardar com"
 
 
+msgid "Monkey"
+msgstr "&gt;Mona"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Esborrar tot"
@@ -18719,20 +18711,8 @@ msgid "New Scene"
 msgstr "Moure a Capa"
 
 
-msgid "Add new scene"
-msgstr "Afegir una nova escena"
-
-
 msgid "Copy Settings"
 msgstr "Eines"
-
-
-msgid "Link Objects"
-msgstr "Duplicar"
-
-
-msgid "Link Object Data"
-msgstr "Comprimir Dades"
 
 
 msgid "Full Copy"
@@ -22056,10 +22036,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Material Link To"
 msgstr "Guardar com"
-
-
-msgid "ObData"
-msgstr "Comprimir Dades"
 
 
 msgid "Align Object To"
@@ -27097,10 +27073,6 @@ msgid "Image*"
 msgstr "Zoom d'Imatge"
 
 
-msgid "Aspect Ratio"
-msgstr "Moure a Capa"
-
-
 msgid "Edge To Edge"
 msgstr "Seleccionar fila"
 
@@ -28144,16 +28116,16 @@ msgid "No F-Curve to add keyframes to"
 msgstr "Esborrar"
 
 
-msgid "No active keying set"
-msgstr "Canviar Str"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Canviar Str"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Esborrar"
+
+
+msgid "No active keying set"
+msgstr "Canviar Str"
 
 
 msgid "No active Keying Set"

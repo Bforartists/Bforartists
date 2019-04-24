@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Gabriel Gazzan <gabcorreo@gmail.com>\n"
 "Language-Team: Español <gabcorreo@gmail.com>\n"
@@ -3090,6 +3090,10 @@ msgid "Eraser Stroke"
 msgstr "Borrador suave"
 
 
+msgid "Aspect Ratio"
+msgstr "Proporción"
+
+
 msgid "Input Samples"
 msgstr "Muestras a considerar"
 
@@ -4631,10 +4635,6 @@ msgid "Active"
 msgstr "Activo"
 
 
-msgid "Constraint is the one being edited "
-msgstr "La restricción es la que se está editando "
-
-
 msgid "Lin error"
 msgstr "Error Lineal"
 
@@ -4715,10 +4715,6 @@ msgid "Local With Parent"
 msgstr "Local con superior"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "La restricción fue aplicada relativa al sistema de coordenadas local del objeto, agregándose las transformaciones del superior"
-
-
 msgid "Local Space"
 msgstr "Espacio local"
 
@@ -4745,10 +4741,6 @@ msgstr "Las transformaciones del objetivo son evaluadas relativas al sistema de 
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "Las transformaciones del objetivo son evaluadas sólo en el espacio de pose, las transformaciones del esqueleto objetivo son ignoradas"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "Las transformaciones del hueso objetivo son evaluadas relativas a su sistema local de coordenadas, con las transformaciones del superior agregadas"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -18250,10 +18242,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "Nº de índice del material en la pasada \"Índice de materiales\""
 
 
-msgid "Preview render type"
-msgstr "Tipo de previsualización"
-
-
 msgid "Type of preview render"
 msgstr "Tipo de vista previa de procesamiento"
 
@@ -18266,10 +18254,6 @@ msgid "Cube"
 msgstr "Cubo"
 
 
-msgid "Monkey"
-msgstr "Mona"
-
-
 msgid "Hair"
 msgstr "Pelo"
 
@@ -18278,12 +18262,8 @@ msgid "Hair strands"
 msgstr "Hebras de pelo"
 
 
-msgid "World Sphere"
-msgstr "Esfera con entorno"
-
-
-msgid "Large sphere with sky"
-msgstr "Gran esfera con entorno de cielo"
+msgid "Cloth"
+msgstr "Ropa"
 
 
 msgid "Refraction Depth"
@@ -19220,10 +19200,6 @@ msgstr "Mapas de caras del objeto"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Opciones para usar el objeto como un campo en simulaciones dinámicas"
-
-
-msgid "Grease Pencil data-block (deprecated)"
-msgstr "Bloque de datos de lápiz de cera (depreciado)"
 
 
 msgid "Grease Pencil Modifiers"
@@ -27958,10 +27934,6 @@ msgstr "Deformar superficie"
 
 msgid "Warp"
 msgstr "Deformar"
-
-
-msgid "Cloth"
-msgstr "Ropa"
 
 
 msgid "Dynamic Paint"
@@ -42691,13 +42663,8 @@ msgid "Whether the converted Grease Pencil layer has valid timing data (internal
 msgstr "Si la capa de lápiz de cera convertida contiene datos válidos de temporización (uso interno)"
 
 
-msgctxt "Operator"
-msgid "Convert 2.7 Grease Pencil File"
-msgstr "Convertir archivo de lápiz de cera de 2.7"
-
-
-msgid "Convert 2.7x grease pencil files to 2.8"
-msgstr "Convierte archivos de lápiz de cera de la versión 2.7x a la 2.8"
+msgid "Annotation"
+msgstr "Anotación"
 
 
 msgctxt "Operator"
@@ -50060,6 +50027,10 @@ msgid "Create a simple stroke with basic colors"
 msgstr "Crea un objeto de lápiz de cera con un trazo simple"
 
 
+msgid "Monkey"
+msgstr "Mona"
+
+
 msgid "Construct a Suzanne grease pencil object"
 msgstr "Crea un objeto de lápiz de cera de Suzanne"
 
@@ -55404,32 +55375,8 @@ msgid "Add new scene by type"
 msgstr "Agregar nueva escena por tipo"
 
 
-msgid "Add new scene"
-msgstr "Agrega una nueva escena"
-
-
 msgid "Copy Settings"
 msgstr "Copiar opciones"
-
-
-msgid "Make a copy without any objects"
-msgstr "Hace una copia sin ningún objeto"
-
-
-msgid "Link Objects"
-msgstr "Vincular objetos"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Vincula a los objetos de la escena actual"
-
-
-msgid "Link Object Data"
-msgstr "Vincular datos del objeto"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Copia los objetos vinculados a los datos de la escena actual"
 
 
 msgid "Full Copy"
@@ -57592,11 +57539,6 @@ msgstr "Limitar dentro de la extensión de los bordes"
 
 msgid "Make the edge loop match the shape of the adjacent edge loop"
 msgstr "Permite hacer que el bucle de bordes coincida con la forma del bucle adyacente"
-
-
-msgctxt "Operator"
-msgid "Transform From Gizmo"
-msgstr "Transformar a partir del manipulador"
 
 
 msgid "Mirror selected items around one or more axes"
@@ -62334,10 +62276,6 @@ msgid "Footage Settings"
 msgstr "Opciones de la película"
 
 
-msgid "Annotation"
-msgstr "Anotación"
-
-
 msgid "Marker Display"
 msgstr "Visualización de marcadores"
 
@@ -63307,6 +63245,10 @@ msgid "Collections Visibility"
 msgstr "Visibilidad de colecciones"
 
 
+msgid "Gizmo"
+msgstr "Manipulador"
+
+
 msgid "Brush Presets"
 msgstr "Ajustes de pincel"
 
@@ -63353,10 +63295,6 @@ msgstr "Desarrollador"
 
 msgid "Measurement"
 msgstr "Medida"
-
-
-msgid "Gizmo"
-msgstr "Manipulador"
 
 
 msgid "Motion Tracking"
@@ -64790,10 +64728,6 @@ msgstr "Los materiales se vinculan a"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Alterna el vínculo del material a los datos o al bloque del objeto"
-
-
-msgid "ObData"
-msgstr "Datos del objeto"
 
 
 msgid "Auto-offset Margin"
@@ -77881,10 +77815,6 @@ msgid "Changing edges seam re-calculates UV unwrap"
 msgstr "Cambiar los bordes de costura recalcula el despliegue UV"
 
 
-msgid "Gizmo Mode"
-msgstr "Modo del gizmo"
-
-
 msgid "Use Additive Drawing"
 msgstr "Dibujar aditivamente"
 
@@ -79876,11 +79806,6 @@ msgstr "3D View Tool: Seleccionar laso"
 msgctxt "WindowManager"
 msgid "3D View Tool: Cursor"
 msgstr "3D View Tool: Cursor"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Transform"
-msgstr "3D View Tool: Transformar"
 
 
 msgctxt "WindowManager"
@@ -83364,10 +83289,6 @@ msgid "Minimum Size"
 msgstr "Tamaño mínimo"
 
 
-msgid "Projection X"
-msgstr "Proyección en X"
-
-
 msgid "Second Basis"
 msgstr "Base secundaria"
 
@@ -84019,10 +83940,6 @@ msgid "Image*"
 msgstr "Imagen*"
 
 
-msgid "Aspect Ratio"
-msgstr "Proporción"
-
-
 msgid "Repeat Image"
 msgstr "Repetir imagen"
 
@@ -84148,6 +84065,10 @@ msgstr "Unir en un nuevo marco"
 msgctxt "Operator"
 msgid "Remove from Frame"
 msgstr "Eliminar del marco"
+
+
+msgid "Projection X"
+msgstr "Proyección en X"
 
 
 msgctxt "Operator"
@@ -84854,10 +84775,6 @@ msgstr "Eje de la vista:"
 
 msgid "Annotation:"
 msgstr "Anotación:"
-
-
-msgid "Gizmos:"
-msgstr "Manipuladores:"
 
 
 msgctxt "Operator"
@@ -88093,16 +88010,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Ningún bloque de ID y/o datos de animación de donde borrar fotogramas clave"
 
 
-msgid "No active keying set"
-msgstr "Ningún conjunto de claves activo"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "No hay información de contexto apropiada para el conjunto de claves activo"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Falla al insertar fotogramas en el conjunto de claves"
+
+
+msgid "No active keying set"
+msgstr "Ningún conjunto de claves activo"
 
 
 msgid "No active Keying Set"
@@ -94568,10 +94485,6 @@ msgid "Cannot get mesh from cage object"
 msgstr "No es posible obtener una malla a partir del objeto jaula"
 
 
-msgid "Trying to bind inside of depsgraph evaluation"
-msgstr "Intentando enlazar dentro la evaluación de la gráfica de dependencias"
-
-
 msgid "Verts changed from %d to %d"
 msgstr "Vértices cambiados de %d a %d"
 
@@ -94622,10 +94535,6 @@ msgstr "El objetivo contiene vértices solapados"
 
 msgid "Target contains invalid polygons"
 msgstr "El objetivo contiene polígonos inválidos"
-
-
-msgid "Trying to unbind inside of depsgraph evaluation"
-msgstr "Intentando desenlazar dentro de la evaluación de la gráfica de dependencias"
 
 
 msgid "No valid target mesh"

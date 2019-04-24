@@ -16,13 +16,13 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	../include
-	../../blenkernel
-	../../blenlib
-	../../makesdna
-	../../makesrna
-	../../windowmanager
-	../../../../intern/guardedalloc
+  ../include
+  ../../blenkernel
+  ../../blenlib
+  ../../makesdna
+  ../../makesrna
+  ../../windowmanager
+  ../../../../intern/guardedalloc
 )
 
 set(INC_SYS
@@ -30,10 +30,13 @@ set(INC_SYS
 )
 
 set(SRC
-	space_userpref.c
-	userpref_ops.c
+  space_userpref.c
+  userpref_ops.c
 
-	userpref_intern.h
+  userpref_intern.h
 )
 
-blender_add_lib(bf_editor_space_userpref "${SRC}" "${INC}" "${INC_SYS}")
+set(LIB
+)
+
+blender_add_lib(bf_editor_space_userpref "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

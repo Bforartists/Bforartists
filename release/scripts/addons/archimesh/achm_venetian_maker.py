@@ -381,7 +381,7 @@ class ARCHIMESH_PT_VenetianObjectgenerator(Panel):
     bl_label = "Venetian"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Create'
 
     # -----------------------------------------------------
     # Verify if visible

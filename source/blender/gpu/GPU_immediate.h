@@ -124,8 +124,10 @@ void immUniformColor3ubv(const unsigned char rgb[3]);
 void immUniformColor3ubvAlpha(const unsigned char rgb[3], unsigned char a);
 void immUniformColor4ubv(const unsigned char rgba[4]);
 
-/* Extend immBindProgram to use Blender’s library of built-in shader programs.
- * Use immUnbindProgram() when done. */
+/**
+ * Extend #immBindProgram to use Blender’s library of built-in shader programs.
+ * Use #immUnbindProgram() when done.
+ */
 void immBindBuiltinProgram(eGPUBuiltinShader shader_id);
 
 /* Extend immUniformColor to take Blender's themes */
@@ -143,4 +145,4 @@ void immActivate(void);
 void immDeactivate(void);
 void immDestroy(void);
 
-#endif  /* __GPU_IMMEDIATE_H__ */
+#endif /* __GPU_IMMEDIATE_H__ */

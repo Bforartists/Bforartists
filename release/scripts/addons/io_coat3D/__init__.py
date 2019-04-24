@@ -31,7 +31,6 @@ bl_info = {
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(coat)
     importlib.reload(tex)
 else:
     from . import tex
@@ -1717,13 +1716,13 @@ class SceneCoat3D(PropertyGroup):
 class MeshCoat3D(PropertyGroup):
     applink_address: StringProperty(
         name="ApplinkAddress",
-        subtype="APPLINK_ADDRESS",
+        # subtype="APPLINK_ADDRESS",
     )
 
 class MaterialCoat3D(PropertyGroup):
     name: BoolProperty(
         name="ApplinkAddress",
-        subtype="APPLINK_ADDRESS",
+        # subtype="APPLINK_ADDRESS",
         default=True
     )
     bring_diffuse: BoolProperty(

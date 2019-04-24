@@ -29,8 +29,8 @@ from .properties_grease_pencil_common import (
 
 
 class CLIP_UL_tracking_objects(UIList):
-    def draw_item(self, context, layout, data, item, icon,
-                  active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, _icon,
+                  _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.MovieTrackingObject)
         tobj = item
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
@@ -277,6 +277,8 @@ class CLIP_HT_header(Header):
             self._draw_tracking(context)
         else:
             self._draw_masking(context)
+
+
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""
@@ -289,6 +291,7 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header() # editor type menus
+
 
 class CLIP_MT_tracking_editor_menus(Menu):
     bl_idname = "CLIP_MT_tracking_editor_menus"
@@ -448,7 +451,7 @@ class CLIP_PT_tools_clip(Panel):
     bl_category = "Track"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         sc = context.space_data
         clip = sc.clip
 
@@ -468,7 +471,7 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
     bl_category = "Track"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         col = layout.column(align=True)
@@ -492,7 +495,7 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
     bl_label = "Tracking Settings"
     bl_category = "Track"
 
-    def draw_header_preset(self, context):
+    def draw_header_preset(self, _context):
         CLIP_PT_tracking_settings_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
@@ -559,7 +562,7 @@ class CLIP_PT_tools_tracking(CLIP_PT_tracking_panel, Panel):
     bl_category = "Track"
     bl_options = {'DEFAULT_CLOSED'}
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         row = layout.row(align=True)
@@ -614,7 +617,7 @@ class CLIP_PT_tools_plane_tracking(CLIP_PT_tracking_panel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = "Solve"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.operator("clip.create_plane_track", icon = "PLANETRACK")
 
@@ -690,7 +693,7 @@ class CLIP_PT_tools_geometry(CLIP_PT_tracking_panel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     bl_category = "Solve"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.bundles_to_mesh", text = "  3D Markers to Mesh",  icon = "MARKER_TO_MESH")
@@ -953,7 +956,7 @@ class CLIP_PT_tracking_camera(Panel):
 
         return False
 
-    def draw_header_preset(self, context):
+    def draw_header_preset(self, _context):
         CLIP_PT_camera_presets.draw_panel_header(self.layout)
 
     def draw(self, context):
@@ -1278,7 +1281,7 @@ class CLIP_PT_tools_scenesetup(Panel):
     bl_category = "Solve"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         sc = context.space_data
         clip = sc.clip
 
@@ -1318,8 +1321,10 @@ class CLIP_MT_view(Menu):
         sc = context.space_data
 
         if sc.view == 'CLIP':
-            layout.operator("clip.tools", text = "Tool Shelf", icon='MENU_PANEL')
-            layout.operator("clip.properties", text = "Sidebar", icon='MENU_PANEL')
+
+            layout.prop(sc, "show_region_ui")
+            layout.prop(sc, "show_region_toolbar")
+            layout.prop(sc, "show_region_hud")
             
             layout.separator()
 
@@ -1374,7 +1379,7 @@ class CLIP_MT_clip(Menu):
 class CLIP_MT_track(Menu):
     bl_label = "Track"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.clear_solution", icon = "CLEAN_CHANNELS")
@@ -1407,7 +1412,7 @@ class CLIP_MT_track(Menu):
 class CLIP_MT_reconstruction(Menu):
     bl_label = "Reconstruction"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.label(text = "Menu remains for addon compability")
@@ -1416,7 +1421,7 @@ class CLIP_MT_reconstruction(Menu):
 class CLIP_MT_track_visibility(Menu):
     bl_label = "Show/Hide"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.hide_tracks_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
@@ -1460,7 +1465,7 @@ class CLIP_MT_select_none(bpy.types.Operator):
 class CLIP_MT_select(Menu):
     bl_label = "Select"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
@@ -1480,7 +1485,7 @@ class CLIP_MT_select(Menu):
 class CLIP_MT_select_grouped(Menu):
     bl_label = "Select Grouped"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.select_grouped", text = "Keyframed", icon = "HAND").group = 'KEYFRAMED'
@@ -1496,7 +1501,7 @@ class CLIP_MT_tracking_context_menu(Menu):
     bl_label = "Specials"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         return context.space_data.clip
 
     def draw(self, context):
@@ -1547,7 +1552,7 @@ class CLIP_PT_tracking_settings_presets(PresetPanel, Panel):
 class CLIP_MT_stabilize_2d_context_menu(Menu):
     bl_label = "Translation Track Specials"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.stabilize_2d_select")
@@ -1556,7 +1561,7 @@ class CLIP_MT_stabilize_2d_context_menu(Menu):
 class CLIP_MT_stabilize_2d_rotation_context_menu(Menu):
     bl_label = "Rotation Track Specials"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("clip.stabilize_2d_rotation_select")

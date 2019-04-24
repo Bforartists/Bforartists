@@ -154,7 +154,7 @@ class GRAPH_MT_editor_menus(Menu):
     bl_idname = "GRAPH_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
@@ -171,7 +171,7 @@ class GRAPH_MT_view(Menu):
 
         st = context.space_data
 
-        layout.operator("graph.properties", text = "Sidebar", icon='MENU_PANEL')
+        layout.prop(st, "show_region_ui")
 
         layout.separator()
 
@@ -223,7 +223,7 @@ class GRAPH_MT_select_none(bpy.types.Operator):
 class GRAPH_MT_select(Menu):
     bl_label = "Select"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -394,7 +394,7 @@ class GRAPH_MT_channel_move(Menu):
 class GRAPH_MT_key(Menu):
     bl_label = "Key"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
@@ -467,7 +467,7 @@ class GRAPH_MT_key_snap(Menu):
 class GRAPH_MT_key_transform(Menu):
     bl_label = "Transform"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("transform.translate", text="Grab/Move", icon = "TRANSFORM_MOVE")
@@ -479,7 +479,7 @@ class GRAPH_MT_key_transform(Menu):
 class GRAPH_MT_delete(Menu):
     bl_label = "Delete"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("graph.delete", icon = "DELETE")
@@ -493,7 +493,7 @@ class GRAPH_MT_delete(Menu):
 class GRAPH_MT_context_menu(Menu):
     bl_label = "F-Curve Context Menu"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("graph.copy", text="Copy")
@@ -534,7 +534,7 @@ class GRAPH_MT_pivot_pie(Menu):
 class GRAPH_MT_snap_pie(Menu):
     bl_label = "Snap"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         pie = layout.menu_pie()
 

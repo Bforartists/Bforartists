@@ -327,8 +327,8 @@ class MEASUREIT_PT_Edit(Panel):
     bl_label = "Items"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'View'
-    bl_parent_id = 'measureit_main_panel'
+    bl_category= 'Display'
+    bl_parent_id = 'MEASUREIT_PT_Main'
 
     # -----------------------------------------------------
     # Verify if visible
@@ -608,11 +608,11 @@ def add_item(box, idx, segment):
 # Define panel class for main functions.
 # ------------------------------------------------------------------
 class MEASUREIT_PT_Main(Panel):
-    bl_idname = "measureit_main_panel"
+    bl_idname = "MEASUREIT_PT_Main"
     bl_label = "MeasureIt Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'View'
+    bl_category= 'Display'
 
     # ------------------------------
     # Draw UI
@@ -734,12 +734,12 @@ class MEASUREIT_PT_Main(Panel):
 # Define panel class for conf functions.
 # ------------------------------------------------------------------
 class MEASUREIT_PT_Conf(Panel):
-    bl_idname = "measureit_conf_panel"
+    bl_idname = "MEASUREIT_PT_Conf"
     bl_label = "Configuration"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'View'
-    bl_parent_id = 'measureit_main_panel'
+    bl_category= 'Display'
+    bl_parent_id = 'MEASUREIT_PT_Main'
     bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------
@@ -776,12 +776,12 @@ class MEASUREIT_PT_Conf(Panel):
 # Define panel class for render functions.
 # ------------------------------------------------------------------
 class MEASUREIT_PT_Render(Panel):
-    bl_idname = "measureit_render_panel"
+    bl_idname = "MEASUREIT_PT_Render"
     bl_label = "Render"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category= 'View'
-    bl_parent_id = 'measureit_main_panel'
+    bl_category= 'Display'
+    bl_parent_id = 'MEASUREIT_PT_Main'
     bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------

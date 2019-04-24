@@ -1620,7 +1620,7 @@ class ARCHIMESH_PT_RoomGenerator(Panel):
     bl_label = "Room"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'View'
+    bl_category = 'Create'
 
     # -----------------------------------------------------
     # Verify if visible

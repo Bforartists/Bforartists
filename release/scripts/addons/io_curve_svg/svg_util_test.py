@@ -20,7 +20,7 @@
 
 # <pep8 compliant>
 
-from svg_util import parse_array_of_floats
+from .svg_util import parse_array_of_floats
 import unittest
 
 

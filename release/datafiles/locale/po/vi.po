@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
 "Last-Translator: HỒ NHỰT CHÂU <su_huynh@yahoo.com>\n"
 "Language-Team: Tỉnh An Giang, Đình Bình Phú\n"
@@ -3054,6 +3054,10 @@ msgid "Eraser Stroke"
 msgstr "Nét Cục Gồm"
 
 
+msgid "Aspect Ratio"
+msgstr "Tỉ Số Cạnh"
+
+
 msgid "Input Samples"
 msgstr "Mẫu Vật Ngõ Vào"
 
@@ -4587,10 +4591,6 @@ msgid "Active"
 msgstr "Hoạt Động"
 
 
-msgid "Constraint is the one being edited "
-msgstr "Ràng buộc đang bị chỉnh sửa"
-
-
 msgid "Lin error"
 msgstr "Sai lầm vị trít"
 
@@ -4671,10 +4671,6 @@ msgid "Local With Parent"
 msgstr "Địa Phương Với Phụ Huynh"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "Áp dụng ràng buộc tương đối với hệ thống tọa độ địa phương của vật thể và kèm theo biến hóa của phụ huynh nữa"
-
-
 msgid "Local Space"
 msgstr "Không Gian Địa Phương"
 
@@ -4701,10 +4697,6 @@ msgstr "Biến hóa của mục tiêu sẽ được tính toán tương đối v
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "Biến hóa của mục tiêu chỉ tính toán trong không gian Dạng Đứng, nó không quan tâm biến hóa vật thể cốt của mục tiêu"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "Biến hóa của xương mục tiếu được tính toán tương đối với hệ tọa độ địa phương, và biến hóa của phụ huynh được cộng thêm"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -17968,10 +17960,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "Chỉ số cho vòng kết xuất  \"Chỉ Số Vật Liệu\""
 
 
-msgid "Preview render type"
-msgstr "Loại kết xuất dự khán"
-
-
 msgid "Type of preview render"
 msgstr "Loại kết xuất cho dự khán"
 
@@ -17984,10 +17972,6 @@ msgid "Cube"
 msgstr "Lập Phương"
 
 
-msgid "Monkey"
-msgstr "Đầu Kỷ"
-
-
 msgid "Hair"
 msgstr "Tóc"
 
@@ -17996,12 +17980,8 @@ msgid "Hair strands"
 msgstr "Sợi Tóc"
 
 
-msgid "World Sphere"
-msgstr "Hình Cầu Thế Giới"
-
-
-msgid "Large sphere with sky"
-msgstr "Hình cầu lớn với bầu trời"
+msgid "Cloth"
+msgstr "Vải"
 
 
 msgid "Refraction Depth"
@@ -18934,10 +18914,6 @@ msgstr "Bản đồ mặt của vật thể"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Cài đặt cho sử dụng vật thể này như một trường trong mô phỏng vật lý"
-
-
-msgid "Grease Pencil data-block (deprecated)"
-msgstr "Cục dữ liệu Bút Sáp (lỗi thời)"
 
 
 msgid "Grease Pencil Modifiers"
@@ -27602,10 +27578,6 @@ msgstr "Méo Hóa Bề Mặt"
 
 msgid "Warp"
 msgstr "Bể Cong"
-
-
-msgid "Cloth"
-msgstr "Vải"
 
 
 msgid "Dynamic Paint"
@@ -42193,13 +42165,8 @@ msgid "Whether the converted Grease Pencil layer has valid timing data (internal
 msgstr "Lớp Bút Sáp biến đổi có dữ liệu thời tự hợp lệ hay không (dùng nội bộ)"
 
 
-msgctxt "Operator"
-msgid "Convert 2.7 Grease Pencil File"
-msgstr "Biến Đổi Tệp Bút Sáp 2.7"
-
-
-msgid "Convert 2.7x grease pencil files to 2.8"
-msgstr "Biến đổi tệp bút sáp 2.7x sang 2.8"
+msgid "Annotation"
+msgstr "Lời Ghi Chú"
 
 
 msgctxt "Operator"
@@ -49372,6 +49339,10 @@ msgid "Create a simple stroke with basic colors"
 msgstr "Chế tạo một nét đơn giản có màu cơ bản"
 
 
+msgid "Monkey"
+msgstr "Đầu Kỷ"
+
+
 msgid "Construct a Suzanne grease pencil object"
 msgstr "Xây dựng một vật thể bút sáp con khỉ"
 
@@ -54525,32 +54496,8 @@ msgid "Add new scene by type"
 msgstr "Thêm cảnh mới tùy loại"
 
 
-msgid "Add new scene"
-msgstr "Thêm cảnh mới"
-
-
 msgid "Copy Settings"
 msgstr "Chép Cài Đặt"
-
-
-msgid "Make a copy without any objects"
-msgstr "Chép mà không có vật thể nào"
-
-
-msgid "Link Objects"
-msgstr "Liên Kết Vật Thể"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Liên kết vật thể từ cảnh hiện tại"
-
-
-msgid "Link Object Data"
-msgstr "Liên Kết Dữ Liệu Vật Thể"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Chép vật thể liên kết với dữ liệu từ cảnh hiện tại"
 
 
 msgid "Full Copy"
@@ -56699,11 +56646,6 @@ msgstr "Kẹp lại trong hạn của cạnh"
 
 msgid "Make the edge loop match the shape of the adjacent edge loop"
 msgstr "Làm vòng cạnh theo hình dạng của vòng cạnh kề"
-
-
-msgctxt "Operator"
-msgid "Transform From Gizmo"
-msgstr "Biến Hóa Từ Đồ Đạc"
 
 
 msgid "Mirror selected items around one or more axes"
@@ -61366,10 +61308,6 @@ msgid "Footage Settings"
 msgstr "Cài Đặt Đoạn Phim"
 
 
-msgid "Annotation"
-msgstr "Lời Ghi Chú"
-
-
 msgid "Marker Display"
 msgstr "Hiển Thị Ký Hiệu"
 
@@ -62167,6 +62105,10 @@ msgid "Collections Visibility"
 msgstr "Sự Hiển Thị Sưu Tập"
 
 
+msgid "Gizmo"
+msgstr "Đồ Đạc"
+
+
 msgid "Brush Presets"
 msgstr "Đặt Sẵn Bút"
 
@@ -62205,10 +62147,6 @@ msgstr "Người Phát Triển"
 
 msgid "Measurement"
 msgstr "Đo"
-
-
-msgid "Gizmo"
-msgstr "Đồ Đạc"
 
 
 msgid "Motion Tracking"
@@ -63624,10 +63562,6 @@ msgstr "Liên Kết Vật Liệu Với"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Bật/tắt vật liệu được liên kết với dữ liệu vật thể hay cục vật thể"
-
-
-msgid "ObData"
-msgstr "DữLiệuVậtThể"
 
 
 msgid "Auto-offset Margin"
@@ -76406,10 +76340,6 @@ msgid "Changing edges seam re-calculates UV unwrap"
 msgstr "Đổi cạnh vết sẹo sẽ tính lại gở gói UV"
 
 
-msgid "Gizmo Mode"
-msgstr "Chế Độ Đồ Đạc"
-
-
 msgid "Use Additive Drawing"
 msgstr "Dùng Vẽ Cộng Lên"
 
@@ -78360,11 +78290,6 @@ msgstr "Dụng Cụ Màn 3D: Chọn Dây Trói"
 msgctxt "WindowManager"
 msgid "3D View Tool: Cursor"
 msgstr "Dụng Cụ Màn 3D: Con Trỏ"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Transform"
-msgstr "Dụng Cụ Màn 3D: Biến Hóa"
 
 
 msgctxt "WindowManager"
@@ -81733,10 +81658,6 @@ msgid "Minimum Size"
 msgstr "Kích Cỡ Cực Tiểu"
 
 
-msgid "Projection X"
-msgstr "Phép Chiếu X"
-
-
 msgid "Second Basis"
 msgstr "Cơ Sở Thứ Hai"
 
@@ -82388,10 +82309,6 @@ msgid "Image*"
 msgstr "Ảnh*"
 
 
-msgid "Aspect Ratio"
-msgstr "Tỉ Số Cạnh"
-
-
 msgid "Repeat Image"
 msgstr "Lặp Lại Ảnh"
 
@@ -82517,6 +82434,10 @@ msgstr "Tham gia trong Bức Ảnh Mới"
 msgctxt "Operator"
 msgid "Remove from Frame"
 msgstr "Xóa Từ Bức Ảnh"
+
+
+msgid "Projection X"
+msgstr "Phép Chiếu X"
 
 
 msgctxt "Operator"
@@ -83178,10 +83099,6 @@ msgstr "Trục Màn:"
 
 msgid "Annotation:"
 msgstr "Lời Ghi Chú:"
-
-
-msgid "Gizmos:"
-msgstr "Đồ Đạc:"
 
 
 msgctxt "Operator"
@@ -86231,16 +86148,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Không có cục ID và/hay dữ liệu hoạt hình để xóa bức ảnh mẫu"
 
 
-msgid "No active keying set"
-msgstr "Không có tập bức ảnh mẫu hoạt động"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Không có định nghĩa phù hợp cho tập bức ảnh mẫu đang hoạt động"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Tập bức ảnh mẫu chèn bức ảnh mẫu không thành cộng"
+
+
+msgid "No active keying set"
+msgstr "Không có tập bức ảnh mẫu hoạt động"
 
 
 msgid "No active Keying Set"
@@ -92539,10 +92456,6 @@ msgid "Cannot get mesh from cage object"
 msgstr "Không lấy được mạng lưới từ vật thể lồng"
 
 
-msgid "Trying to bind inside of depsgraph evaluation"
-msgstr "Đang thử trói ở trong sự tính toán biểu đồ"
-
-
 msgid "Verts changed from %d to %d"
 msgstr "Đỉnh đổi từ %d đến %d"
 
@@ -92593,10 +92506,6 @@ msgstr "Mục đích có đa giác nằm trên nhau"
 
 msgid "Target contains invalid polygons"
 msgstr "Mục đích có đa giác không hợp lệ"
-
-
-msgid "Trying to unbind inside of depsgraph evaluation"
-msgstr "Đang thử gỡ trói ở trong sự tính toán biểu đồ"
 
 
 msgid "No valid target mesh"
