@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2018-09-23 13:23+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
@@ -2248,6 +2248,10 @@ msgid "Fill"
 msgstr "充填"
 
 
+msgid "Aspect Ratio"
+msgstr "長寬比"
+
+
 msgid "Input Samples"
 msgstr "輸入樣本"
 
@@ -3333,10 +3337,6 @@ msgid "Active"
 msgstr "作用中"
 
 
-msgid "Constraint is the one being edited "
-msgstr "約束目標為編輯中物體"
-
-
 msgid "Lin error"
 msgstr "連結錯誤"
 
@@ -3417,10 +3417,6 @@ msgid "Local With Parent"
 msgstr "區域加親代"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "約束以相對方式套用於物體的區域座標系統，再加上親代的變換"
-
-
 msgid "Local Space"
 msgstr "區域空間"
 
@@ -3447,10 +3443,6 @@ msgstr "目標的變換會以相對於世界座標系統的方式評估"
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "目標的變換只在姿勢空間中評估，目標骨架物體變換會被忽略"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "目標骨骼的變換會以相對於其區域座標系統的方式評估，再加上親代變換"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -13222,10 +13214,6 @@ msgid "Index of clone texture paint slot"
 msgstr "拓製紋理繪製槽的索引"
 
 
-msgid "Preview render type"
-msgstr "預覽算繪類型"
-
-
 msgid "Type of preview render"
 msgstr "預覽算繪的類型"
 
@@ -13238,10 +13226,6 @@ msgid "Cube"
 msgstr "立方"
 
 
-msgid "Monkey"
-msgstr "猴頭"
-
-
 msgid "Hair"
 msgstr "毛髮"
 
@@ -13250,12 +13234,8 @@ msgid "Hair strands"
 msgstr "毛髮線股"
 
 
-msgid "World Sphere"
-msgstr "世界球體"
-
-
-msgid "Large sphere with sky"
-msgstr "有天空的大型球體"
+msgid "Cloth"
+msgstr "布料"
 
 
 msgid "Roughness"
@@ -19605,10 +19585,6 @@ msgstr "簡單變形"
 
 msgid "Warp"
 msgstr "彎繞"
-
-
-msgid "Cloth"
-msgstr "布料"
 
 
 msgid "Dynamic Paint"
@@ -35979,6 +35955,10 @@ msgid "Toggle object's force field"
 msgstr "切換物體的力場"
 
 
+msgid "Monkey"
+msgstr "猴頭"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "套用修改器"
@@ -39764,32 +39744,8 @@ msgid "Add new scene by type"
 msgstr "依類型添加新場景"
 
 
-msgid "Add new scene"
-msgstr "添加新場景"
-
-
 msgid "Copy Settings"
 msgstr "複製設定"
-
-
-msgid "Make a copy without any objects"
-msgstr "建立一個副本，不帶任何物體"
-
-
-msgid "Link Objects"
-msgstr "連結物體"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "連結至來自目前場景的物體"
-
-
-msgid "Link Object Data"
-msgstr "連結物體資料"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "複製連結至目前場景的資料的物體"
 
 
 msgid "Full Copy"
@@ -46361,10 +46317,6 @@ msgstr "材質連結至"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "切換材質是與物體資料或物體塊連結"
-
-
-msgid "ObData"
-msgstr "物體資料"
 
 
 msgid "Align Object To"
@@ -58281,10 +58233,6 @@ msgid "Image*"
 msgstr "影像*"
 
 
-msgid "Aspect Ratio"
-msgstr "長寬比"
-
-
 msgid "Edge To Edge"
 msgstr "邊線至邊線"
 
@@ -60550,16 +60498,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "無 ID 塊與/或動畫資料可供刪除鍵幀"
 
 
-msgid "No active keying set"
-msgstr "無作用中鍵處理集"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "無適當情境資料可供作用中的鍵處理集使用"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "鍵處理集無法插入任何鍵幀"
+
+
+msgid "No active keying set"
+msgstr "無作用中鍵處理集"
 
 
 msgid "No active Keying Set"

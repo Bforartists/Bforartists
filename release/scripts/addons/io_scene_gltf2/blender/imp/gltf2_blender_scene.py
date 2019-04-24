@@ -41,7 +41,8 @@ class BlenderScene():
                 scene = bpy.context.scene
                 if bpy.context.collection.name in bpy.data.collections: # avoid master collection
                     gltf.blender_active_collection = bpy.context.collection.name
-                scene.render.engine = "BLENDER_EEVEE"
+                if scene.render.engine not in ['CYCLES', 'BLENDER_EEVEE']:
+                    scene.render.engine = "BLENDER_EEVEE"
 
                 gltf.blender_scene = scene.name
             else:
@@ -55,7 +56,8 @@ class BlenderScene():
         else:
             # No scene in glTF file, create all objects in current scene
             scene = bpy.context.scene
-            scene.render.engine = "BLENDER_EEVEE"
+            if scene.render.engine not in ['CYCLES', 'BLENDER_EEVEE']:
+                scene.render.engine = "BLENDER_EEVEE"
             if bpy.context.collection.name in bpy.data.collections: # avoid master collection
                 gltf.blender_active_collection = bpy.context.collection.name
             gltf.blender_scene = scene.name

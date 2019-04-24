@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -1183,6 +1183,10 @@ msgid "Fill"
 msgstr "Vyplnit"
 
 
+msgid "Aspect Ratio"
+msgstr "Aktivovat materiálové uzly"
+
+
 msgid "Input Samples"
 msgstr "Změna velikosti"
 
@@ -1770,10 +1774,6 @@ msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 msgid "Active"
 msgstr "Aktivní"
-
-
-msgid "Constraint is the one being edited "
-msgstr "Vše označené"
 
 
 msgid "Lin error"
@@ -6957,10 +6957,6 @@ msgid "Amount of mirror reflection for raytrace"
 msgstr "Množství modré barvy použité při kreslení."
 
 
-msgid "Preview render type"
-msgstr "Načíst uložené Render Hladiny"
-
-
 msgid "Type of preview render"
 msgstr "Typ události"
 
@@ -6973,20 +6969,12 @@ msgid "Cube"
 msgstr "Krychle"
 
 
-msgid "Monkey"
-msgstr "Opice"
-
-
 msgid "Hair"
 msgstr "Záhlaví"
 
 
 msgid "Hair strands"
 msgstr "Zrušit vazby"
-
-
-msgid "World Sphere"
-msgstr "Normály "
 
 
 msgid "Roughness"
@@ -20688,6 +20676,10 @@ msgid "Toggle object's force field"
 msgstr "Přepíní objekty silového pole"
 
 
+msgid "Monkey"
+msgstr "Opice"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Aplikovat modifikátor"
@@ -23171,24 +23163,8 @@ msgid "Add new scene by type"
 msgstr "Přidá novou scénu podle typu"
 
 
-msgid "Add new scene"
-msgstr "Přidat novou scénu"
-
-
 msgid "Copy Settings"
 msgstr "Kopírovat nastavení"
-
-
-msgid "Make a copy without any objects"
-msgstr "Vytvořit rodiče bez inverze"
-
-
-msgid "Link Objects"
-msgstr "Spojit objekty"
-
-
-msgid "Link Object Data"
-msgstr "Objekt & Data objektu"
 
 
 msgid "Full Copy"
@@ -27443,10 +27419,6 @@ msgstr "Mód Interpolace"
 
 msgid "Material Link To"
 msgstr "Materiál"
-
-
-msgid "ObData"
-msgstr "Data Objektu"
 
 
 msgid "Align Object To"
@@ -33576,10 +33548,6 @@ msgid "Image*"
 msgstr "Obrázek*"
 
 
-msgid "Aspect Ratio"
-msgstr "Aktivovat materiálové uzly"
-
-
 msgid "Edge To Edge"
 msgstr "Hrana k hraně"
 
@@ -34905,16 +34873,16 @@ msgid "No F-Curve to add keyframes to"
 msgstr "Krok Snímku"
 
 
-msgid "No active keying set"
-msgstr "Nastavit aktivní klíčovací sestavu"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Nastavit aktivní klíčovací sestavu"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Krok Snímku"
+
+
+msgid "No active keying set"
+msgstr "Nastavit aktivní klíčovací sestavu"
 
 
 msgid "No active Keying Set"

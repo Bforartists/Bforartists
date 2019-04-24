@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -2919,10 +2919,6 @@ msgid "Active"
 msgstr "Aktywny"
 
 
-msgid "Constraint is the one being edited "
-msgstr "Ogranicznik jest tym, który jest właśnie edytowany"
-
-
 msgid "Lin error"
 msgstr "Błąd położenia"
 
@@ -3003,10 +2999,6 @@ msgid "Local With Parent"
 msgstr "Lokalnie z rodzicem"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "Ogranicznik jest obliczany względem lokalnego układu współrzędnych obiektu z dodanymi transformacjami od obiektu nadrzędnego"
-
-
 msgid "Local Space"
 msgstr "Przestrzeń lokalna"
 
@@ -3033,10 +3025,6 @@ msgstr "Przekształcenia obiektu docelowego są obliczane względem systemu wsp�
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "Przekształcenia obiektu docelowego są obliczane jedynie w przestrzeni pozy, a transformacje na poziomie obiektu dla szkieletu docelowego są ignorowane"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "Transformacje kości docelowej są obliczane w jej lokalnym systemie współrzędnych z dodaną transformacją rodzica"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -7688,16 +7676,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "Brak bloku ID i/lub AnimData, z którego można usunąć klatki kluczowe"
 
 
-msgid "No active keying set"
-msgstr "Brak aktywnego zestawu kluczowania"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "Brak pasującej informacji kontekstu dla aktywnego zestawu kluczowania"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "Zestaw Kluczowania nie zdołał wstawić żadnych klatek kluczowych"
+
+
+msgid "No active keying set"
+msgstr "Brak aktywnego zestawu kluczowania"
 
 
 msgid "No active Keying Set"

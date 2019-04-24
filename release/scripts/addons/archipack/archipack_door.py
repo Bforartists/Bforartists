@@ -1749,6 +1749,7 @@ class ARCHIPACK_OT_door_draw(ArchipackDrawTool, Operator):
 
             if event.type in {'LEFTMOUSE', 'RET', 'NUMPAD_ENTER', 'SPACE'}:
                 if wall is not None:
+                    o.select_set(state=True)
                     context.view_layer.objects.active = wall
                     wall.select_set(state=True)
                     if bpy.ops.archipack.single_boolean.poll():

@@ -16,27 +16,30 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	../include
-	../../blenkernel
-	../../blenlib
-	../../blenloader
-	../../blentranslation
-	../../gpu
-	../../makesdna
-	../../makesrna
-	../../windowmanager
-	../../../../intern/guardedalloc
-	../../../../intern/glew-mx
+  ../include
+  ../../blenkernel
+  ../../blenlib
+  ../../blenloader
+  ../../blentranslation
+  ../../gpu
+  ../../makesdna
+  ../../makesrna
+  ../../windowmanager
+  ../../../../intern/guardedalloc
+  ../../../../intern/glew-mx
 )
 
 set(INC_SYS
-	${GLEW_INCLUDE_PATH}
+  ${GLEW_INCLUDE_PATH}
 )
 
 set(SRC
-	space_topbar.c
+  space_topbar.c
+)
+
+set(LIB
 )
 
 add_definitions(${GL_DEFINITIONS})
 
-blender_add_lib(bf_editor_space_topbar "${SRC}" "${INC}" "${INC_SYS}")
+blender_add_lib(bf_editor_space_topbar "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

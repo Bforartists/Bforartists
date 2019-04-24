@@ -80,7 +80,7 @@ from bpy.types import (
         Mesh,
         Material,
         Action,
-        Group,
+        Collection,
         UIList,
         )
 from bpy.app import (
@@ -1740,7 +1740,7 @@ def inject_properties():
     Bone.ms3d = PointerProperty(type=Ms3dJointProperties)
     Material.ms3d = PointerProperty(type=Ms3dMaterialProperties)
     Action.ms3d = PointerProperty(type=Ms3dArmatureProperties)
-    Group.ms3d = PointerProperty(type=Ms3dGroupProperties)
+    Collection.ms3d = PointerProperty(type=Ms3dGroupProperties)
 
 def delete_properties():
     del Mesh.ms3d
@@ -1748,7 +1748,7 @@ def delete_properties():
     del Bone.ms3d
     del Material.ms3d
     del Action.ms3d
-    del Group.ms3d
+    del Collection.ms3d
 
 ###############################################################################
 

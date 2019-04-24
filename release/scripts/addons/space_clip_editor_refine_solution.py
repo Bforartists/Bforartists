@@ -24,7 +24,7 @@ bl_info = {
     "name": "Refine tracking solution",
     "author": "Stephen Leger",
     "license": "GPL",
-    "version": (1, 1, 4),
+    "version": (1, 1, 5),
     "blender": (2, 80, 0),
     "location": "Clip Editor > Tools > Solve > Refine Solution",
     "description": "Refine motion solution by setting track weight according"
@@ -52,7 +52,10 @@ class TRACKING_OP_refine_solution(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.area.spaces.active.clip is not None)
+        return (context.area and context.area.spaces and
+                hasattr(context.area.spaces.active, 'clip') and
+                context.area.spaces.active.clip is not None
+        )
 
     def execute(self, context):
         error = context.window_manager.TrackingTargetError

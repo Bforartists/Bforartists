@@ -84,10 +84,6 @@ class AnnotationDrawingToolsPanel:
     bl_category = "Annotation"
     bl_region_type = 'TOOLS'
 
-    @classmethod
-    def poll(cls, context):
-        return True
-
     def draw(self, context):
         layout = self.layout
 
@@ -514,7 +510,7 @@ class GPENCIL_MT_pie_tools_more(Menu):
         gpd = context.gpencil_data
         return bool(gpd and gpd.use_stroke_edit_mode and context.editable_gpencil_strokes)
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         pie = layout.menu_pie()
@@ -590,7 +586,7 @@ class GPENCIL_MT_pie_sculpt(Menu):
 class GPENCIL_MT_snap(Menu):
     bl_label = "Snap"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("gpencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
@@ -607,7 +603,7 @@ class GPENCIL_MT_snap(Menu):
 class GPENCIL_MT_separate(Menu):
     bl_label = "Separate"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.operator("gpencil.stroke_separate", text="Selected Points", icon = "SEPARATE").mode = 'POINT'
         layout.operator("gpencil.stroke_separate", text="Selected Strokes", icon = "SEPARATE").mode = 'STROKE'
@@ -617,7 +613,7 @@ class GPENCIL_MT_separate(Menu):
 class GPENCIL_MT_gpencil_draw_delete(Menu):
     bl_label = "GPencil Draw Delete"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
@@ -628,7 +624,7 @@ class GPENCIL_MT_gpencil_draw_delete(Menu):
 class GPENCIL_MT_cleanup(Menu):
     bl_label = "Clean Up"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.operator("gpencil.frame_clean_loose", text="Loose Points", icon = "DELETE_LOOSE")
         layout.separator()
@@ -641,7 +637,7 @@ class GPENCIL_MT_cleanup(Menu):
 
 
 class GPENCIL_UL_annotation_layer(UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.GPencilLayer)
         gpl = item
 
@@ -896,7 +892,7 @@ class GreasePencilMaterialsPanel:
 
 
 class GPENCIL_UL_layer(UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+    def draw_item(self, _context, layout, _data, item, icon, _active_data, _active_propname, _index):
         # assert(isinstance(item, bpy.types.GPencilLayer)
         gpl = item
 
