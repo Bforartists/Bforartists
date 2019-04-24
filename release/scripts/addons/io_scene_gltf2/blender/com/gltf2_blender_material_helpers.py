@@ -57,3 +57,6 @@ def get_base_color_node(node_tree):
 
     return None
 
+def get_gltf_node_name():
+    return "glTF Settings"
+

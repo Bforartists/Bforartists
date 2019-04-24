@@ -4,26 +4,45 @@ import os
 import subprocess
 import sys
 
-format_commit = '<clang-format-commit>' # TODO: update with actual commit that applies formatting
-pre_format_commit = format_commit + '~1'
+# We unfortunately ended with three commits instead of a single one to be handled as
+# 'clang-format' commit, we are handling them as a single 'block'.
+format_commits = (
+    'e12c08e8d170b7ca40f204a5b0423c23a9fbc2c1',
+    '91a9cd0a94000047248598394c41ac30f893f147',
+    '3076d95ba441cd32706a27d18922a30f8fd28b8a',
+    )
+pre_format_commit = format_commits[0] + '~1'
 
 def get_string(cmd):
     return subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf8').strip()
 
 # Parse arguments.
 mode = None
-if len(sys.argv) == 2:
+base_branch = 'master'
+if len(sys.argv) >= 2:
+    # Note that recursive conflict resolution strategy has to reversed in rebase compared to merge.
+    # See https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt--m
     if sys.argv[1] == '--rebase':
         mode = 'rebase'
+        recursive_format_commit_merge_options = '-Xignore-all-space -Xtheirs'
     elif sys.argv[1] == '--merge':
         mode = 'merge'
+        recursive_format_commit_merge_options = '-Xignore-all-space -Xours'
+    if len(sys.argv) == 4:
+        if sys.argv[2] == '--base_branch':
+            base_branch = sys.argv[3]
 
 if mode == None:
-    print("Merge or rebase Blender master into a branch in 3 steps,")
+    print("Merge or rebase Blender master (or another base branch) into a branch in 3 steps,")
     print("to automatically merge clang-format changes.")
     print("")
     print("  --rebase     Perform equivalent of 'git rebase master'")
     print("  --merge      Perform equivalent of 'git merge master'")
+    print("")
+    print("Optional arguments:")
+    print("  --base_branch <branch name>  Use given branch instead of master")
+    print("                               (assuming that base branch has already been updated")
+    print("                                and has the initial clang-format commit).")
     sys.exit(0)
 
 # Verify we are in the right directory.
@@ -53,7 +72,7 @@ if mode == 'rebase':
     mode_cmd = 'rebase'
 else:
     branch = get_string(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
-    mode_cmd = 'merge --no-edit -m "Merge \'master\' into \'' + branch + '\'"';
+    mode_cmd = 'merge --no-edit -m "Merge \'' + base_branch + '\' into \'' + branch + '\'"';
 
 # Rebase up to the clang-format commit.
 code = os.system('git merge-base --is-ancestor ' + pre_format_commit + ' HEAD')
@@ -64,12 +83,17 @@ if code != 0:
         sys.exit(code)
 
 # Rebase clang-format commit.
-code = os.system('git merge-base --is-ancestor ' + format_commit + ' HEAD')
+code = os.system('git merge-base --is-ancestor ' + format_commits[-1] + ' HEAD')
 if code != 0:
-    os.system('git ' + mode_cmd + ' -Xignore-all-space -Xours ' + format_commit )
-    os.system('make format')
+    os.system('git ' + mode_cmd + ' ' + recursive_format_commit_merge_options + ' ' + format_commits[-1])
+    paths = get_string(('git', '--no-pager', 'diff', '--name-only', format_commits[-1])).replace('\n', ' ')
+    if sys.platform == 'win32' and len(paths) > 8000:
+        # Windows commandline does not accept more than 8191 chars...
+        os.system('make format')
+    else:
+        os.system('make format PATHS="' + paths + '"')
     os.system('git add -u')
-    count = int(get_string(['git', 'rev-list', '--count', '' + format_commit + '..HEAD']))
+    count = int(get_string(['git', 'rev-list', '--count', '' + format_commits[-1] + '..HEAD']))
     if count == 1 or mode == 'merge':
         # Amend if we just have a single commit or are merging.
         os.system('git commit --amend --no-edit')
@@ -78,7 +102,7 @@ if code != 0:
         os.system('git commit -m "Cleanup: apply clang format"')
 
 # Rebase remaning commits
-code = os.system('git ' + mode_cmd + ' master')
+code = os.system('git ' + mode_cmd + ' ' + base_branch)
 if code != 0:
     print("BLENDER MERGE: resolve conflicts, complete " + mode + " and you're done")
 else:

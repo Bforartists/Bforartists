@@ -15,12 +15,32 @@
 import bpy
 from mathutils import Vector, Matrix
 
+from ..com.gltf2_blender_material_helpers import get_gltf_node_name
 from ...blender.com.gltf2_blender_conversion import texture_transform_blender_to_gltf
 from io_scene_gltf2.io.com import gltf2_io_debug
 
 
 def get_animation_target(action_group: bpy.types.ActionGroup):
     return action_group.channels[0].data_path.split('.')[-1]
+
+
+def get_object_from_datapath(blender_object, data_path: str):
+    if "." in data_path:
+        # gives us: ('modifiers["Subsurf"]', 'levels')
+        path_prop, path_attr = data_path.rsplit(".", 1)
+
+        # same as: prop = obj.modifiers["Subsurf"]
+        if path_attr in ["rotation", "scale", "location",
+                         "rotation_axis_angle", "rotation_euler", "rotation_quaternion"]:
+            prop = blender_object.path_resolve(path_prop)
+        else:
+            prop = blender_object.path_resolve(data_path)
+    else:
+        prop = blender_object
+        # single attribute such as name, location... etc
+        # path_attr = data_path
+
+    return prop
 
 
 def get_socket_or_texture_slot(blender_material: bpy.types.Material, name: str):
@@ -54,16 +74,17 @@ def get_socket_or_texture_slot(blender_material: bpy.types.Material, name: str):
 
 def get_socket_or_texture_slot_old(blender_material: bpy.types.Material, name: str):
     """
-    For a given material input name, retrieve the corresponding node tree socket in the special glTF Metallic Roughness nodes (which might be deprecated?).
+    For a given material input name, retrieve the corresponding node tree socket in the special glTF node group.
 
     :param blender_material: a blender material for which to get the socket/slot
     :param name: the name of the socket/slot
     :return: either a blender NodeSocket, if the material is a node tree or a blender Texture otherwise
     """
+    gltf_node_group_name = get_gltf_node_name().lower()
     if blender_material.node_tree and blender_material.use_nodes:
         nodes = [n for n in blender_material.node_tree.nodes if \
             isinstance(n, bpy.types.ShaderNodeGroup) and \
-            n.node_tree.name.startswith('glTF Metallic Roughness')]
+            (n.node_tree.name.startswith('glTF Metallic Roughness') or n.node_tree.name.lower() == gltf_node_group_name)]
         inputs = sum([[input for input in node.inputs if input.name == name] for node in nodes], [])
         if inputs:
             return inputs[0]

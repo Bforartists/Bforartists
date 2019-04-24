@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2018-01-09 04:30+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -2799,6 +2799,10 @@ msgid "Fill"
 msgstr "채우기"
 
 
+msgid "Aspect Ratio"
+msgstr "측면 비율"
+
+
 msgid "Input Samples"
 msgstr "입력 샘플"
 
@@ -4016,10 +4020,6 @@ msgid "Active"
 msgstr "활성"
 
 
-msgid "Constraint is the one being edited "
-msgstr "제약은 편집중인 하나입니다 "
-
-
 msgid "Lin error"
 msgstr "린 오류"
 
@@ -4100,10 +4100,6 @@ msgid "Local With Parent"
 msgstr "로컬과 부모"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "제약은 오브젝트의 로컬 좌표 시스템에 상대적으로 적용됨, 부모 변환 추가와 함께"
-
-
 msgid "Local Space"
 msgstr "로컬 공간"
 
@@ -4130,10 +4126,6 @@ msgstr "대상의 변환은 월드 좌표 시스템에 상대적으로 평가됩
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "대상의 변환은 포즈 공간에서만 평가되고 대상 아마튜어 오브젝트변환은 무시됩니다"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "대상 본의 변환은 로컬 좌표 시스템을 기준으로 평가되며 부모 변환이 추가됩니다"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -15171,10 +15163,6 @@ msgid "Index number for the \"Material Index\" render pass"
 msgstr "\"매트리얼 인덱스\" 렌더링 패스에 대한 인덱스 번호"
 
 
-msgid "Preview render type"
-msgstr "미리보기 렌더 유형"
-
-
 msgid "Type of preview render"
 msgstr "미리보기 렌더의 유형"
 
@@ -15187,10 +15175,6 @@ msgid "Cube"
 msgstr "큐브"
 
 
-msgid "Monkey"
-msgstr "원숭이"
-
-
 msgid "Hair"
 msgstr "해어"
 
@@ -15199,12 +15183,8 @@ msgid "Hair strands"
 msgstr "헤어 가닥"
 
 
-msgid "World Sphere"
-msgstr "월드 구체"
-
-
-msgid "Large sphere with sky"
-msgstr "하늘과 함께 큰 구체"
+msgid "Cloth"
+msgstr "옷감"
 
 
 msgid "Roughness"
@@ -23628,10 +23608,6 @@ msgstr "표면 변형"
 
 msgid "Warp"
 msgstr "왜곡"
-
-
-msgid "Cloth"
-msgstr "옷감"
 
 
 msgid "Dynamic Paint"
@@ -43215,6 +43191,10 @@ msgid "Toggle object's force field"
 msgstr "오브젝트의 포스 필드를 전환"
 
 
+msgid "Monkey"
+msgstr "원숭이"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "모디파이어를 적용"
@@ -47761,32 +47741,8 @@ msgid "Add new scene by type"
 msgstr "유형으로 새로운 장면을 추가"
 
 
-msgid "Add new scene"
-msgstr "새로운 장면을 추가"
-
-
 msgid "Copy Settings"
 msgstr "설정을 복사 "
-
-
-msgid "Make a copy without any objects"
-msgstr "오브젝트 없이 복사본을 만듬"
-
-
-msgid "Link Objects"
-msgstr "오브젝트를 연결"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "현재 장면에서 오브젝트로 연결"
-
-
-msgid "Link Object Data"
-msgstr "오브젝트를 데이터 연결"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "현재 장면에서 데이터에 연결된 오브젝트를 복사"
 
 
 msgid "Full Copy"
@@ -55635,10 +55591,6 @@ msgstr "다음으로 매트리얼 연결"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "매트리얼이 오브젝트 데이터 또는 오브젝트 블록에 연결되는지 여부를 전환합니다"
-
-
-msgid "ObData"
-msgstr "오브젝트 데이터"
 
 
 msgid "Auto-offset Margin"
@@ -70404,10 +70356,6 @@ msgid "Image*"
 msgstr "이미지*"
 
 
-msgid "Aspect Ratio"
-msgstr "측면 비율"
-
-
 msgid "Edge To Edge"
 msgstr "에지에서 에지"
 
@@ -73258,16 +73206,16 @@ msgid "No ID block and/or AnimData to delete keyframe from"
 msgstr "다음에서 키 프레임을 삭제하는 ID 블록 및/또는 AnimData가 없음"
 
 
-msgid "No active keying set"
-msgstr "활성 키잉 설정이 없음"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "활성 키잉 설정에 대한 적절한 컨텍스트 정보 없음"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "모든 키 프레임을 삽입에 실패한 키잉 세트"
+
+
+msgid "No active keying set"
+msgstr "활성 키잉 설정이 없음"
 
 
 msgid "No active Keying Set"

@@ -102,7 +102,7 @@ DEF_ICON_COLOR(IMAGE_ASPECT)
 DEF_ICON_COLOR(BRUSHSIZE)
 
 /* ------------------------- Row 2 --------------------------*/
-	
+
 DEF_ICON_COLOR(FULLSCREEN)
 DEF_ICON_COLOR(SPLITSCREEN)
 DEF_ICON_COLOR(RIGHTARROW_THIN)
@@ -159,10 +159,10 @@ DEF_ICON_COLOR(HUECORRECT)
 DEF_ICON_COLOR(PARTICLEBRUSH_NONE)
 
 /* ------------------------- Row 3 --------------------------*/
-	
+
 DEF_ICON_COLOR(HELP)
 DEF_ICON_COLOR(GHOST_ENABLED)
-DEF_ICON_COLOR(COLOR)  /* see COLOR_RED/GREEN/BLUE */
+DEF_ICON_COLOR(COLOR) /* see COLOR_RED/GREEN/BLUE */
 DEF_ICON_COLOR(LINKED)
 DEF_ICON_COLOR(UNLINKED)
 DEF_ICON_COLOR(HAND)
@@ -187,7 +187,7 @@ DEF_ICON_COLOR(RECOVER_LAST)
 DEF_ICON_COLOR(DUPLICATE)
 DEF_ICON_COLOR(FULLSCREEN_ENTER)
 DEF_ICON_COLOR(FULLSCREEN_EXIT)
-DEF_ICON_COLOR(BLANK1)	// Not actually blank - this is used all over the place
+DEF_ICON_COLOR(BLANK1)  // Not actually blank - this is used all over the place
 DEF_ICON_COLOR(LOAD_GITF)
 DEF_ICON_COLOR(SAVE_GITF)
 DEF_ICON_COLOR(STUCCI_TEX)
@@ -216,7 +216,7 @@ DEF_ICON_COLOR(ALEMBIC)
 DEF_ICON_COLOR(ALIGN_CENTER)
 
 /* ------------------------- Row 4 --------------------------*/
-	
+
 DEF_ICON_COLOR(LAMP)
 DEF_ICON_COLOR(MATERIAL)
 DEF_ICON_COLOR(TEXTURE)
@@ -275,19 +275,19 @@ DEF_ICON_COLOR(DECORATE_DRIVER)
 /* ------------------------- Row 5 --------------------------*/
 
 DEF_ICON_COLOR(VIEW3D)
-DEF_ICON_COLOR(IPO) // Graph Editor
-DEF_ICON_COLOR(OOPS) // Outliner
-DEF_ICON_COLOR(BUTS) // Properties
+DEF_ICON_COLOR(IPO)   // Graph Editor
+DEF_ICON_COLOR(OOPS)  // Outliner
+DEF_ICON_COLOR(BUTS)  // Properties
 DEF_ICON_COLOR(DISSOLVE_BETWEEN)
 DEF_ICON_COLOR(DISSOLVE_UNSELECTED)
-DEF_ICON_COLOR(INFO) // Info Editor
-DEF_ICON_COLOR(SEQUENCE) // Sequencer
-DEF_ICON_COLOR(TEXT) // Text 
-DEF_ICON_COLOR(IMASEL) // Image Selector? Not an editor!
+DEF_ICON_COLOR(INFO)      // Info Editor
+DEF_ICON_COLOR(SEQUENCE)  // Sequencer
+DEF_ICON_COLOR(TEXT)      // Text
+DEF_ICON_COLOR(IMASEL)    // Image Selector? Not an editor!
 
-DEF_ICON_COLOR(SOUND) // Sound? Deprecated?
+DEF_ICON_COLOR(SOUND)   // Sound? Deprecated?
 DEF_ICON_COLOR(ACTION)  // Dope Sheet
-DEF_ICON_COLOR(NLA) // NLA Editor
+DEF_ICON_COLOR(NLA)     // NLA Editor
 DEF_ICON_COLOR(SCRIPTWIN)
 DEF_ICON_COLOR(TIME)
 DEF_ICON_COLOR(NODETREE)
@@ -297,7 +297,7 @@ DEF_ICON_COLOR(PREFERENCES)
 DEF_ICON_COLOR(CLIP)
 
 DEF_ICON_COLOR(ASSET_MANAGER)
-DEF_ICON_COLOR(TOOLBAR) // The toolbar editor
+DEF_ICON_COLOR(TOOLBAR)  // The toolbar editor
 DEF_ICON_COLOR(CIRCLE_SELECT)
 DEF_ICON_COLOR(INVERSE)
 DEF_ICON_COLOR(SELECT_ALL)
@@ -353,8 +353,8 @@ DEF_ICON_COLOR(VERTEXCONNECTPATH)
 DEF_ICON_COLOR(VERTEXCONNECT)
 DEF_ICON_COLOR(MARKSHARPEDGES)
 
-DEF_ICON_COLOR(BUTS_ACTIVE) // Properties
-DEF_ICON_COLOR(OOPS_ACTIVE) // Outliner
+DEF_ICON_COLOR(BUTS_ACTIVE)  // Properties
+DEF_ICON_COLOR(OOPS_ACTIVE)  // Outliner
 DEF_ICON_COLOR(NLA_ACTIVE)
 DEF_ICON_COLOR(DOPESHEET_ACTIVE)
 DEF_ICON_COLOR(GRAPH_ACTIVE)
@@ -500,7 +500,6 @@ DEF_ICON_COLOR(NODE_TOP)
 DEF_ICON_COLOR(NORMALS_FACE)
 DEF_ICON_COLOR(NORMALS_VERTEX)
 
-
 /* ------------------------- Row 9 --------------------------*/
 
 DEF_ICON_COLOR(CLEARSHARPEDGES)
@@ -558,9 +557,8 @@ DEF_ICON_COLOR(ORIENTATION_VIEW)
 DEF_ICON_COLOR(ORPHAN_DATA)
 DEF_ICON_COLOR(OUTLINER)
 
-
 /* ------------------------- Row 10 --------------------------*/
-	
+
 DEF_ICON_COLOR(OUTLINER_OB_EMPTY)
 DEF_ICON_COLOR(OUTLINER_OB_MESH)
 DEF_ICON_COLOR(OUTLINER_OB_CURVE)
@@ -673,10 +671,9 @@ DEF_ICON_COLOR(SHADING_BBOX)
 DEF_ICON_COLOR(SHADING_RENDERED)
 DEF_ICON_COLOR(SHADING_SOLID)
 
-
 /* ------------------------- Row 12 --------------------------*/
-	
-	/* PRIMITIVES */
+
+/* PRIMITIVES */
 DEF_ICON_COLOR(MESH_PLANE)
 DEF_ICON_COLOR(MESH_CUBE)
 DEF_ICON_COLOR(MESH_CIRCLE)
@@ -733,8 +730,8 @@ DEF_ICON_COLOR(TRACKING_BACKWARDS)
 DEF_ICON_COLOR(TRACKING_BACKWARDS_SINGLE)
 
 /* ------------------------- Row 13 --------------------------*/
-	
-	/* PRIMITIVES */
+
+/* PRIMITIVES */
 DEF_ICON_COLOR(SURFACE_NCURVE)
 DEF_ICON_COLOR(SURFACE_NCIRCLE)
 DEF_ICON_COLOR(SURFACE_NSURFACE)
@@ -792,7 +789,7 @@ DEF_ICON_COLOR(VIEW_ORTHO)
 
 /* ------------------------- Row 14 --------------------------*/
 
-	/* EMPTY */
+/* EMPTY */
 DEF_ICON_COLOR(FORCE_FORCE)
 DEF_ICON_COLOR(FORCE_WIND)
 DEF_ICON_COLOR(FORCE_VORTEX)
@@ -1078,7 +1075,7 @@ DEF_ICON_COLOR(ORIENTATION_GLOBAL)
 
 /* ------------------------- Row 19 --------------------------*/
 
-	/* MODIFIERS */
+/* MODIFIERS */
 DEF_ICON_COLOR(MOD_CLOTH)
 DEF_ICON_COLOR(MOD_EXPLODE)
 DEF_ICON_COLOR(MOD_FLUIDSIM)
@@ -1131,11 +1128,11 @@ DEF_ICON_COLOR(SPHERE)
 DEF_ICON_COLOR(STROKE)
 DEF_ICON_BLANK(1131)
 DEF_ICON_COLOR(UV)
-DEF_ICON_COLOR(WINDOW)	
+DEF_ICON_COLOR(WINDOW)
 DEF_ICON_BLANK(1134)
 
 /* ------------------------- Row 20 --------------------------*/
-	
+
 DEF_ICON_COLOR(REC)
 DEF_ICON_COLOR(PLAY)
 DEF_ICON_COLOR(FF)
@@ -1237,13 +1234,13 @@ DEF_ICON_COLOR(NODE_MOVIE)
 DEF_ICON_COLOR(NODE_MOVIEDISTORT)
 DEF_ICON_COLOR(NODE_MUSGRAVE)
 
-DEF_ICON_COLOR(MOUSE_LMB)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MMB)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_RMB)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MOVE)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_LMB_DRAG)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_MMB_DRAG)/*bfa- don't change the order of the mouse icons*/
-DEF_ICON_COLOR(MOUSE_RMB_DRAG)/*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_LMB)      /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_MMB)      /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_RMB)      /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_MOVE)     /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_LMB_DRAG) /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_MMB_DRAG) /*bfa- don't change the order of the mouse icons*/
+DEF_ICON_COLOR(MOUSE_RMB_DRAG) /*bfa- don't change the order of the mouse icons*/
 DEF_ICON_BLANK(1247)
 DEF_ICON_BLANK(1248)
 DEF_ICON_BLANK(1249)
@@ -1306,7 +1303,7 @@ DEF_ICON_BLANK(1305)
 DEF_ICON_BLANK(1306)
 
 /* ------------------------- Row 23 --------------------------*/
-	
+
 DEF_ICON_COLOR(MAN_TRANS)
 DEF_ICON_COLOR(MAN_ROT)
 DEF_ICON_COLOR(MAN_SCALE)
@@ -1648,7 +1645,7 @@ DEF_ICON_BLANK(1647)
 DEF_ICON_BLANK(1648)
 
 /* ------------------------- Row 29 --------------------------*/
-	
+
 DEF_ICON_COLOR(MATPLANE)
 DEF_ICON_COLOR(MATSPHERE)
 DEF_ICON_COLOR(MATCUBE)
@@ -1704,7 +1701,7 @@ DEF_ICON_BLANK(1703)
 DEF_ICON_BLANK(1704)
 DEF_ICON_BLANK(1705)
 
-	/* ------------------------- Row 30 --------------------------*/
+/* ------------------------- Row 30 --------------------------*/
 
 DEF_ICON_COLOR(SEQ_SEQUENCER)
 DEF_ICON_COLOR(SEQ_PREVIEW)

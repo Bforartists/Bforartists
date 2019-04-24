@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: \n"
 "Last-Translator: blend-it <https://developer.blender.org/T42765>\n"
 "Language-Team: blend-it <https://developer.blender.org/T42765>\n"
@@ -2658,6 +2658,10 @@ msgid "Fill"
 msgstr "Riempi"
 
 
+msgid "Aspect Ratio"
+msgstr "Proporzioni"
+
+
 msgid "Input Samples"
 msgstr "Campioni Ingresso"
 
@@ -3723,10 +3727,6 @@ msgid "Active"
 msgstr "Attivo"
 
 
-msgid "Constraint is the one being edited "
-msgstr "Vincolo che è in corso di modifica "
-
-
 msgid "Lin error"
 msgstr "Errore lineare"
 
@@ -3807,10 +3807,6 @@ msgid "Local With Parent"
 msgstr "Locale Con Genitore"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "Il vincolo si applica relativamente al sistema di coordinate locali dell'oggetto, con l'aggiunta della trasformazione del genitore"
-
-
 msgid "Local Space"
 msgstr "Spazio Locale"
 
@@ -3837,10 +3833,6 @@ msgstr "La trasformazione dell'obiettivo è valutata rispetto al sistema di coor
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "La trasformazione dell'obiettivo è valutata solo rispetto allo Spazio Posa, le trasformazioni dell'oggetto armatura obiettivo è ignorata"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "La trasformazione dell'osso obiettivo è valutata relativamente al suo sistema di coordinate locali, con la trasformazione del genitore aggiunta"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -13118,10 +13110,6 @@ msgid "Active Paint Texture Index"
 msgstr "Indice Pittura Texture Attiva"
 
 
-msgid "Preview render type"
-msgstr "Tipo anteprima render"
-
-
 msgid "Type of preview render"
 msgstr "Tipo di render anteprima"
 
@@ -13134,10 +13122,6 @@ msgid "Cube"
 msgstr "Cubo"
 
 
-msgid "Monkey"
-msgstr "Scimmia"
-
-
 msgid "Hair"
 msgstr "Capelli"
 
@@ -13146,12 +13130,8 @@ msgid "Hair strands"
 msgstr "Filamenti Capelli"
 
 
-msgid "World Sphere"
-msgstr "Sfera Mondo"
-
-
-msgid "Large sphere with sky"
-msgstr "Grande sfera con cielo"
+msgid "Cloth"
+msgstr "Stoffa"
 
 
 msgid "Roughness"
@@ -19971,10 +19951,6 @@ msgstr "Deforma Superficie"
 
 msgid "Warp"
 msgstr "Distorci"
-
-
-msgid "Cloth"
-msgstr "Stoffa"
 
 
 msgid "Dynamic Paint"
@@ -36295,6 +36271,10 @@ msgid "Toggle object's force field"
 msgstr "Commuta il campo di forza dell'oggetto"
 
 
+msgid "Monkey"
+msgstr "Scimmia"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Applica Modificatore"
@@ -40421,32 +40401,8 @@ msgid "Add new scene by type"
 msgstr "Aggiunge una nuova scena per tipo"
 
 
-msgid "Add new scene"
-msgstr "Aggiunge una nuova scena"
-
-
 msgid "Copy Settings"
 msgstr "Copia Impostazioni"
-
-
-msgid "Make a copy without any objects"
-msgstr "Crea una copia senza alcun oggetto"
-
-
-msgid "Link Objects"
-msgstr "Collega Oggetti"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "Collega agli oggetti della scena corrente"
-
-
-msgid "Link Object Data"
-msgstr "Collega Dati Oggetto"
-
-
-msgid "Copy objects linked to data from the current scene"
-msgstr "Copia gli oggetti collegati ai dati della scena corrente"
 
 
 msgid "Full Copy"
@@ -47072,10 +47028,6 @@ msgstr "Materiale Collegato A"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "Attiva o disattiva il materiale collegato ai dati dell'oggetto o al blocco dell'oggetto"
-
-
-msgid "ObData"
-msgstr "ObData"
 
 
 msgid "Auto-offset Margin"
@@ -59169,10 +59121,6 @@ msgstr "Isola"
 
 msgid "Image*"
 msgstr "Immagine*"
-
-
-msgid "Aspect Ratio"
-msgstr "Proporzioni"
 
 
 msgid "Edge To Edge"

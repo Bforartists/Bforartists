@@ -69,7 +69,7 @@ class PARTICLE_MT_context_menu(Menu):
     bl_label = "Particle Specials"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         props = layout.operator(
@@ -122,7 +122,7 @@ def find_modifier(ob, psys):
 
 class PARTICLE_UL_particle_systems(bpy.types.UIList):
 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
+    def draw_item(self, _context, layout, data, item, icon, _active_data, _active_propname, _index, _flt_flag):
         ob = data
         psys = item
 
@@ -490,7 +490,7 @@ class PARTICLE_PT_cache(ParticleButtonsPanel, Panel):
         if psys.settings.is_fluid:
             return False
         phystype = psys.settings.physics_type
-        if phystype == 'NO' or phystype == 'KEYED':
+        if phystype in {'NO', 'KEYED'}:
             return False
         return (
             psys.settings.type in {'EMITTER', 'REACTOR'} or (
@@ -502,7 +502,7 @@ class PARTICLE_PT_cache(ParticleButtonsPanel, Panel):
     def draw(self, context):
         psys = context.particle_system
 
-        point_cache_ui(self, context, psys.point_cache, True, 'HAIR' if (psys.settings.type == 'HAIR') else 'PSYS')
+        point_cache_ui(self, psys.point_cache, True, 'HAIR' if (psys.settings.type == 'HAIR') else 'PSYS')
 
 
 class PARTICLE_PT_velocity(ParticleButtonsPanel, Panel):
@@ -696,10 +696,7 @@ class PARTICLE_PT_physics_fluid_advanced(ParticleButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         part = particle_get_settings(context)
-        if part.physics_type == 'FLUID':
-            return True
-        else:
-            return False
+        return part.physics_type == 'FLUID'
 
     def draw(self, context):
         layout = self.layout
@@ -745,10 +742,7 @@ class PARTICLE_PT_physics_fluid_springs(ParticleButtonsPanel, Panel):
     def poll(cls, context):
         part = particle_get_settings(context)
         fluid = part.fluid
-        if part.physics_type == 'FLUID' and fluid.solver == 'DDR':
-            return True
-        else:
-            return False
+        return part.physics_type == 'FLUID' and fluid.solver == 'DDR'
 
     def draw(self, context):
         layout = self.layout
@@ -772,10 +766,7 @@ class PARTICLE_PT_physics_fluid_springs_viscoelastic(ParticleButtonsPanel, Panel
     def poll(cls, context):
         part = particle_get_settings(context)
         fluid = part.fluid
-        if part.physics_type == 'FLUID' and fluid.solver == 'DDR':
-            return True
-        else:
-            return False
+        return part.physics_type == 'FLUID' and fluid.solver == 'DDR'
 
     def draw_header(self, context):
         part = particle_get_settings(context)
@@ -811,10 +802,7 @@ class PARTICLE_PT_physics_fluid_springs_advanced(ParticleButtonsPanel, Panel):
     def poll(cls, context):
         part = particle_get_settings(context)
         fluid = part.fluid
-        if part.physics_type == 'FLUID' and fluid.solver == 'DDR':
-            return True
-        else:
-            return False
+        return part.physics_type == 'FLUID' and fluid.solver == 'DDR'
 
     def draw(self, context):
         layout = self.layout
@@ -1820,7 +1808,7 @@ class PARTICLE_PT_field_weights(ParticleButtonsPanel, Panel):
 
     def draw(self, context):
         part = particle_get_settings(context)
-        effector_weights_ui(self, context, part.effector_weights, 'PSYS')
+        effector_weights_ui(self, part.effector_weights, 'PSYS')
 
         if part.type == 'HAIR':
             row = self.layout.row()
@@ -1859,7 +1847,7 @@ class PARTICLE_PT_force_fields_type1(ParticleButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(part.force_field_1, "type", text="Type 1")
-        basic_force_field_settings_ui(self, context, part.force_field_1)
+        basic_force_field_settings_ui(self, part.force_field_1)
 
 
 class PARTICLE_PT_force_fields_type2(ParticleButtonsPanel, Panel):
@@ -1875,7 +1863,7 @@ class PARTICLE_PT_force_fields_type2(ParticleButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(part.force_field_2, "type", text="Type 2")
-        basic_force_field_settings_ui(self, context, part.force_field_2)
+        basic_force_field_settings_ui(self, part.force_field_2)
 
 
 class PARTICLE_PT_force_fields_type1_falloff(ParticleButtonsPanel, Panel):
@@ -1890,7 +1878,7 @@ class PARTICLE_PT_force_fields_type1_falloff(ParticleButtonsPanel, Panel):
 
         part = particle_get_settings(context)
 
-        basic_force_field_falloff_ui(self, context, part.force_field_1)
+        basic_force_field_falloff_ui(self, part.force_field_1)
 
 
 class PARTICLE_PT_force_fields_type2_falloff(ParticleButtonsPanel, Panel):
@@ -1905,7 +1893,7 @@ class PARTICLE_PT_force_fields_type2_falloff(ParticleButtonsPanel, Panel):
 
         part = particle_get_settings(context)
 
-        basic_force_field_falloff_ui(self, context, part.force_field_2)
+        basic_force_field_falloff_ui(self, part.force_field_2)
 
 
 class PARTICLE_PT_vertexgroups(ParticleButtonsPanel, Panel):

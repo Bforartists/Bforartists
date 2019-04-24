@@ -49,7 +49,7 @@ class CONSOLE_MT_editor_menus(Menu):
     bl_idname = "CONSOLE_MT_editor_menus"
     bl_label = ""
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.menu("CONSOLE_MT_console")
         layout.menu("CONSOLE_MT_edit")
@@ -58,7 +58,7 @@ class CONSOLE_MT_editor_menus(Menu):
 class CONSOLE_MT_console(Menu):
     bl_label = "Console"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         
         layout.operator("console.execute", icon = "PLAY").interactive = True
@@ -123,7 +123,7 @@ class CONSOLE_MT_edit(Menu):
 class CONSOLE_MT_language(Menu):
     bl_label = "Languages..."
 
-    def draw(self, context):
+    def draw(self, _context):
         import sys
 
         layout = self.layout

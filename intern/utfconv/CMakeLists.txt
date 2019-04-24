@@ -17,7 +17,7 @@
 # ***** END GPL LICENSE BLOCK *****
 
 set(INC
-	.
+  .
 )
 
 set(INC_SYS
@@ -25,19 +25,22 @@ set(INC_SYS
 )
 
 set(SRC
-	utfconv.c
+  utfconv.c
 
-	utfconv.h
+  utfconv.h
+)
+
+set(LIB
 )
 
 # This is odd but leave it for now...
 # Why have win32 check here? - this is only used for windows.
 # ... because one day we might want to use it on other platforms.
 if(WIN32)
-	list(APPEND SRC
-		utf_winfunc.c
-		utf_winfunc.h
-	)
+  list(APPEND SRC
+    utf_winfunc.c
+    utf_winfunc.h
+  )
 endif()
 
-blender_add_lib(bf_intern_utfconv "${SRC}" "${INC}" "${INC_SYS}")
+blender_add_lib(bf_intern_utfconv "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

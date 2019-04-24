@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 53) (b'700346d377dd')\n"
+"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-31 18:50:25\n"
+"POT-Creation-Date: 2019-04-15 15:28:38\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -2043,6 +2043,10 @@ msgid "Fill"
 msgstr "ﺔﺌﺒﻌﺗ"
 
 
+msgid "Aspect Ratio"
+msgstr "ﺔﺒﺴﻨﻟﺍ ﻝﺪﻌﻣ"
+
+
 msgid "Input Samples"
 msgstr "ﻞﺧﺪﻟﺍ ﺕﺎﻨﻴﻋ"
 
@@ -3116,10 +3120,6 @@ msgid "Active"
 msgstr "ﻝﺎﻌﻓ"
 
 
-msgid "Constraint is the one being edited "
-msgstr "ﻩﺮﻳﺮﺤﺗ ﻢﺘﻳ ﻱﺬﻟﺍ ﺪﻴﻘﻟﺍ"
-
-
 msgid "Lin error"
 msgstr "ﻲﻠﺧﺍﺩ ﺄﻄﺧ"
 
@@ -3200,10 +3200,6 @@ msgid "Local With Parent"
 msgstr "ﻞﺻﻻ﻿ﺍ ﻊﻣ ﻲﻠﺤﻣ"
 
 
-msgid "The constraint is applied relative to the local coordinate system of the object, with the parent transformation added"
-msgstr "ﻞﺻﻷ﻿ﺍ ﺕﻻ﻿ﻮﺤﺗ ﺔﻓﺎﺿﺇ ﻊﻣ ,ﻦﺋﺎﻜﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﻹ﻿ ﻲﻠﺤﻤﻟﺍ ﻡﺎﻈﻨﻠﻟ ﺎﻴﺒﺴﻧ ﺪﻴﻘﻟﺍ ﻖﺒﻃ"
-
-
 msgid "Local Space"
 msgstr "ﻲﻠﺤﻤﻟﺍ ءﺎﻀﻔﻟﺍ"
 
@@ -3230,10 +3226,6 @@ msgstr "ﻢﻟﺎﻌﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﺇ ﻡﺎﻈﻨﻟ ﺎﻴﺒﺴ
 
 msgid "The transformation of the target is only evaluated in the Pose Space, the target armature object transformation is ignored"
 msgstr "ﻞﻫﺎﺠﺘﻣ ﻞﻜﻴﻬﻟﺍ ﻦﺋﺎﻛ ﺕﻻ﻿ﻮﺤﺗ ﻑﺪﻫ ,ﺔﻔﻗﻮﻟﺍ ءﺎﻀﻓ ﻲﻓ ﻂﻘﻓ ﻑﺪﻬﻟﺍ ﻝﻮﺤﺗ ﻢﻴﻘﻳ"
-
-
-msgid "The transformation of the target bone is evaluated relative its local coordinate system, with the parent transformation added"
-msgstr "ﻞﺻﻻ﻿ﺍ ﺕﻻ﻿ﻮﺤﺗ ﺔﻓﺎﺿﺇ ﻊﻣ ,ﻲﻠﺤﻤﻟﺍ ﺎﻬﺗﺎﻴﺛﺍﺪﺣﺇ ﻡﺎﻈﻨﻟ ﺎﻴﺒﺴﻧ ﻑﺪﻬﻟﺍ ﺔﻤﻈﻌﻟﺍ ﻢﻴﻘﺗ"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -12895,10 +12887,6 @@ msgid "Index of clone texture paint slot"
 msgstr "ﺦﺴﻨﻟﺍ ﻢﺳﺭ ﺞﻴﺴﻧ ﺔﺤﺘﻓ ﻞﻴﻟﺩ"
 
 
-msgid "Preview render type"
-msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻉﻮﻧ ﻦﻳﺎﻋ"
-
-
 msgid "Type of preview render"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﺮﻴﻴﺼﺗ ﻉﻮﻧ"
 
@@ -12911,10 +12899,6 @@ msgid "Cube"
 msgstr "ﺐﻌﻜﻣ"
 
 
-msgid "Monkey"
-msgstr "ﺩﺮﻗ"
-
-
 msgid "Hair"
 msgstr "ﺮﻌﺷ"
 
@@ -12923,12 +12907,8 @@ msgid "Hair strands"
 msgstr "ﺮﻌﺸﻟﺍ ﻝﺎﺒﺣ"
 
 
-msgid "World Sphere"
-msgstr "ﻢﻟﺎﻌﻟﺍ ﻂﻴﺤﻣ"
-
-
-msgid "Large sphere with sky"
-msgstr "ءﺎﻤﺳ ﻊﻣ ﺓﺮﻴﺒﻛ ﺓﺮﻛ"
+msgid "Cloth"
+msgstr "ﺵﺎﻤﻗ"
 
 
 msgid "Roughness"
@@ -19361,10 +19341,6 @@ msgstr "ﻂﻴﺴﺑ ﻞﻳﻮﺤﺗ"
 
 msgid "Warp"
 msgstr "ﻞﺘﻓﺇ"
-
-
-msgid "Cloth"
-msgstr "ﺵﺎﻤﻗ"
 
 
 msgid "Dynamic Paint"
@@ -28884,6 +28860,10 @@ msgid "Toggle Force Field"
 msgstr "ﺓﻮﻘﻟﺍ ﻞﻘﺣ ﺐﻠﻗﺍ"
 
 
+msgid "Monkey"
+msgstr "ﺩﺮﻗ"
+
+
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "ﺮﻴﻐﻤﻟﺍ ﻖﺒﻃ"
@@ -30943,10 +30923,6 @@ msgstr "ﺮﻴّﻐﻤﻟﺍ ﻙﺮّﺣ"
 msgctxt "Operator"
 msgid "New Scene"
 msgstr "ﺪﻳﺪﺟ ﺪﻬﺸﻣ"
-
-
-msgid "Link to the objects from the current scene"
-msgstr "ﻲﻟﺎﺤﻟﺍ ﺪﻬﺸﻤﻟﺍ ﻦﻣ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻰﻟﺇ ﻂﺑﺭﺇ"
 
 
 msgid "Full Copy"
@@ -35042,10 +35018,6 @@ msgstr " ﻰﻟﺇ ﺔﻟﻮﺻﻮﻣ ﺔﻣﺎﺧ"
 
 msgid "Toggle whether the material is linked to object data or the object block"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺔﻠﺘﻛ ﻭﺃ ﻦﺋﺎﻜﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻰﻟﺇ ﺔﻟﻮﺻﻮﻣ ﺔﻣﺎﺨﻟﺍ ﺖﻧﺎﻛ ﺍﺫﺇ ﺎﻣ ﻦﻴﺑ ﻝﺪّﺑ"
-
-
-msgid "ObData"
-msgstr "ﻦﺋﺎﻛ ﺕﺎﻧﺎﻴﺑ"
 
 
 msgid "Align Object To"
@@ -42878,10 +42850,6 @@ msgid "Image*"
 msgstr "*ﺓﺭﻮﺻ"
 
 
-msgid "Aspect Ratio"
-msgstr "ﺔﺒﺴﻨﻟﺍ ﻝﺪﻌﻣ"
-
-
 msgid "Edge To Edge"
 msgstr "ﺔﻓﺎﺣ ﻰﻟﺇ ﺔﻓﺎﺣ"
 
@@ -44579,16 +44547,16 @@ msgid "<Missing ID block>"
 msgstr "ﺓﺩﻮﻘﻔﻣ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺔﻠﺘﻛ"
 
 
-msgid "No active keying set"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "No suitable context info for active keying set"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻰﻟﺍ ﻒﺿﺍ"
 
 
 msgid "Keying set failed to insert any keyframes"
 msgstr "ﺎﻌﻣ ﻞﺠﺴﺗ ﻲﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺮﻌﺘﻟ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺍﺭﺎﺴﻣ"
+
+
+msgid "No active keying set"
+msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
 
 msgid "No active Keying Set"

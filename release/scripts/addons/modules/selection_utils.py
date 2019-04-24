@@ -78,4 +78,4 @@ class SelectionOrder(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-bpy.utils.register_module(__name__)
+bpy.utils.register_class(SelectionOrder)
