@@ -302,8 +302,6 @@ class VIEW3D_HT_tool_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        layout.row(align=True).template_header()
-
         # mode_string = context.mode
         obj = context.active_object
         tool_settings = context.tool_settings
