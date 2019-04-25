@@ -605,8 +605,6 @@ class IMAGE_HT_tool_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        layout.template_header()
-
         self.draw_tool_settings(context)
 
         sima = context.space_data
