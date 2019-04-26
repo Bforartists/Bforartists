@@ -151,8 +151,8 @@ classes = (
 def menu_func(self, context):
     self.layout.menu("CIC_MT_createisocammenu")
 
-# store keymaps here to access after registration
-addon_keymaps = []
+## store keymaps here to access after registration
+#addon_keymaps = []
 
 def register():
     from bpy.utils import register_class
@@ -161,16 +161,16 @@ def register():
 
     bpy.types.VIEW3D_MT_add.append(menu_func)
 
-	    # handle the keymap
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
+	   # # handle the keymap
+    #wm = bpy.context.window_manager
+    #km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
 
-    kmi = km.keymap_items.new(CIC_OT_createtrueisocam.bl_idname, 'ONE', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(CIC_OT_creategameisocam.bl_idname, 'TWO', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(CIC_OT_creategameisocam4to3.bl_idname, 'THREE', 'PRESS', ctrl=True, shift=True, alt=True)
-    kmi = km.keymap_items.new(CIC_OT_creategroundplane.bl_idname, 'FOUR', 'PRESS', ctrl=True, shift=True, alt=True)
+    #kmi = km.keymap_items.new(CIC_OT_createtrueisocam.bl_idname, 'ONE', 'PRESS', ctrl=True, shift=True, alt=True)
+    #kmi = km.keymap_items.new(CIC_OT_creategameisocam.bl_idname, 'TWO', 'PRESS', ctrl=True, shift=True, alt=True)
+    #kmi = km.keymap_items.new(CIC_OT_creategameisocam4to3.bl_idname, 'THREE', 'PRESS', ctrl=True, shift=True, alt=True)
+    #kmi = km.keymap_items.new(CIC_OT_creategroundplane.bl_idname, 'FOUR', 'PRESS', ctrl=True, shift=True, alt=True)
 
-    addon_keymaps.append(km)
+    #addon_keymaps.append(km)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -179,11 +179,11 @@ def unregister():
 
     bpy.types.VIEW3D_MT_add.remove(menu_func)
 
-	    # handle the keymap
-    wm = bpy.context.window_manager
-    for km in addon_keymaps:
-        wm.keyconfigs.addon.keymaps.remove(km)
-    # clear the list
-    del addon_keymaps[:]
+	   # # handle the keymap
+    #wm = bpy.context.window_manager
+    #for km in addon_keymaps:
+    #    wm.keyconfigs.addon.keymaps.remove(km)
+    ## clear the list
+    #del addon_keymaps[:]
 
             
