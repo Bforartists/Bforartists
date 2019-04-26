@@ -1275,7 +1275,7 @@ class TOOLBAR_MT_animation(Menu):
             row = layout.row(align=True)
 
             row.prop(scene, "use_preview_range", text="", toggle=True)
-            row.prop(scene, "lock_frame_selection_to_range", text="", toggle=True)
+            row.prop(scene, "lock_frame_selection_to_range", text="", icon = "LOCKED", toggle=True)
 
             row = layout.row(align=True)
             if not scene.use_preview_range:
