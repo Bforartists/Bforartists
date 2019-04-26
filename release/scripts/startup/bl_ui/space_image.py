@@ -622,19 +622,18 @@ class IMAGE_HT_tool_header(Header):
             # Snap.
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap", text="")
-            row.prop(tool_settings, "snap_uv_element", icon_only=True)
-            if tool_settings.snap_uv_element != 'INCREMENT':
-                row.prop(tool_settings, "snap_target", text="")
+            
+            if tool_settings.use_snap:
+                row.prop(tool_settings, "snap_uv_element", icon_only=True)
+                if tool_settings.snap_uv_element != 'INCREMENT':
+                    row.prop(tool_settings, "snap_target", text="")
 
             # Proportional Editing
             row = layout.row(align=True)
             row.prop(tool_settings, "proportional_edit", icon_only=True)
-            # if tool_settings.proportional_edit != 'DISABLED':
-            sub = row.row(align=True)
-            sub.active = tool_settings.proportional_edit != 'DISABLED'
-            sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        layout.separator_spacer()
+            if tool_settings.proportional_edit != 'DISABLED':
+                sub = row.row(align=True)
+                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
 
         self.draw_mode_settings(context)
 
