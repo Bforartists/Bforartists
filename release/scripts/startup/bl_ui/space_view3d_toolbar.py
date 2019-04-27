@@ -2018,6 +2018,34 @@ class VIEW3D_PT_tools_grease_pencil_weight_appearance(GreasePencilAppearancePane
     bl_label = "Display"
 
 
+# grease pencil subpanel for custom icon in paint mode
+class VIEW3D_PT_tools_gppaint_custom_icon(Panel, View3DPaintPanel):
+    bl_context = ".paint_common"  # dot on purpose (access from topbar)
+    bl_label = "Custom Icon"
+    bl_parent_id = "VIEW3D_PT_tools_grease_pencil_paint_appearance"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_header(self, context):
+
+        tool_settings = context.tool_settings
+        brush = tool_settings.gpencil_paint.brush
+
+        self.layout.prop(brush, "use_custom_icon", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        tool_settings = context.tool_settings
+        brush = tool_settings.gpencil_paint.brush
+
+        col = layout.column()
+        col.active = brush.use_custom_icon
+        col.prop(brush, "icon_filepath", text="")
+
+
 class VIEW3D_PT_gpencil_brush_presets(PresetPanel, Panel):
     """Brush settings"""
     bl_label = "Brush Presets"
@@ -2089,6 +2117,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_sculpt_options,
     VIEW3D_PT_tools_grease_pencil_sculpt_appearance,
     VIEW3D_PT_tools_grease_pencil_weight_appearance,
+    VIEW3D_PT_tools_gppaint_custom_icon,
     VIEW3D_PT_tools_grease_pencil_interpolate,
 )
 
