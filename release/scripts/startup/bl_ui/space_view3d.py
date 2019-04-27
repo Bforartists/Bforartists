@@ -913,7 +913,7 @@ class VIEW3D_MT_mirror(Menu):
         props.constraint_axis = (False, False, True)
         props.orient_type = 'GLOBAL'
 
-        if context.edit_object:
+        if _context.edit_object:
             layout.separator()
 
             props = layout.operator("transform.mirror", text="X Local", icon = "MIRROR_X")
@@ -3043,10 +3043,10 @@ class VIEW3D_MT_object_apply(Menu):
         props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
 
-        props = layout.operator("object.transform_apply", text="All Transforms", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="All Transforms", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
         props.location, props.rotation, props.scale = True, True, True
 
-        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
+        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
         props.location, props.rotation, props.scale = False, True, True
 
         layout.separator()
