@@ -312,12 +312,6 @@ class GreasePencilAppearancePanel:
             sub = layout.column(align=True)
             sub.enabled = not brush.use_custom_icon
             sub.prop(gp_settings, "gp_icon", text="Icon")
-            
-            layout.use_property_split = False
-            layout.prop(brush, "use_custom_icon")
-            sub = layout.column()
-            sub.active = brush.use_custom_icon
-            sub.prop(brush, "icon_filepath", text="")
 
             layout.prop(gp_settings, "use_cursor", text="Show Brush")
 
