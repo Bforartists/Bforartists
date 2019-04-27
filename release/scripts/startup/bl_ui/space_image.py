@@ -409,7 +409,7 @@ class IMAGE_MT_uvs_mirror(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("mesh.faces_mirror_uv")
+        layout.operator("mesh.faces_mirror_uv", icon = "COPYMIRRORED")
 
         layout.separator()
 
@@ -460,7 +460,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-        layout.operator("uv.follow_active_quads")
+        layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
         layout.operator("uv.pin", text="Unpin", icon = "PINNED").clear = True
         layout.operator("uv.pin", icon = "UNPINNED").clear = False
 
