@@ -1204,11 +1204,11 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "animation_keyframes")
-        layout.prop(addon_prefs, "animation_range")
         layout.prop(addon_prefs, "animation_play")
+        layout.prop(addon_prefs, "animation_range")
+        layout.prop(addon_prefs, "animation_keyframetype") 
         layout.prop(addon_prefs, "animation_sync")
         layout.prop(addon_prefs, "animation_keyingset")
-        layout.prop(addon_prefs, "animation_keyframetype")
         
          
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1270,28 +1270,7 @@ class TOOLBAR_MT_animation(Menu):
                     row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
                     row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
 
-        if addon_prefs.animation_range: 
-
-            row = layout.row(align=True)
-
-            row.prop(scene, "use_preview_range", text="", toggle=True)
-            row.prop(scene, "lock_frame_selection_to_range", text="", icon = "LOCKED", toggle=True)
-
-            row = layout.row(align=True)
-            if not scene.use_preview_range:
-                row.prop(scene, "frame_start", text="Start")
-                row.prop(scene, "frame_end", text="End")
-            else:
-                row.prop(scene, "frame_preview_start", text="Start")
-                row.prop(scene, "frame_preview_end", text="End")
-
         if addon_prefs.animation_play: 
-
-            row = layout.row(align=True)
-
-            layout.prop(scene, "frame_current", text="")
-
-            layout.separator()
 
             row = layout.row(align=True)
             row.operator("screen.frame_jump", text="", icon='REW').end = False
@@ -1314,6 +1293,38 @@ class TOOLBAR_MT_animation(Menu):
                 sub.operator("screen.animation_play", text="", icon='PAUSE')
             row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
             row.operator("screen.frame_jump", text="", icon='FF').end = True
+            
+            row = layout.row(align=True)
+
+            row.prop(scene, "frame_current", text="")
+
+        if addon_prefs.animation_range: 
+
+            row = layout.row(align=True)
+
+            row.prop(scene, "use_preview_range", text="", toggle=True)
+            row.prop(scene, "lock_frame_selection_to_range", text="", icon = "LOCKED", toggle=True)
+
+            row = layout.row(align=True)
+            if not scene.use_preview_range:
+                row.prop(scene, "frame_start", text="Start")
+                row.prop(scene, "frame_end", text="End")
+            else:
+                row.prop(scene, "frame_preview_start", text="Start")
+                row.prop(scene, "frame_preview_end", text="End")
+
+        if addon_prefs.animation_keyingset: 
+
+            row = layout.row(align=True)
+
+            row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
+            row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+
+            row = layout.row(align=True)
+
+            row.prop(toolsettings, "use_keyframe_insert_auto", text="", toggle=True)
+
+            row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
 
         if addon_prefs.animation_sync: 
@@ -1327,24 +1338,7 @@ class TOOLBAR_MT_animation(Menu):
             row = layout.row(align=True)
 
             layout.prop(toolsettings, "keyframe_type", text="", icon_only=True)
-
-        if addon_prefs.animation_keyingset: 
-
-            row = layout.row(align=True)
-
-            row.prop(toolsettings, "use_keyframe_insert_auto", text="", toggle=True)
-            if toolsettings.use_keyframe_insert_auto:
-                row.prop(toolsettings, "use_keyframe_insert_keyingset", text="", toggle=True)
-
-                if screen.is_animation_playing and not userprefs.edit.use_keyframe_insert_available:
-                    subsub = row.row(align=True)
-                    subsub.prop(toolsettings, "use_record_with_nla", toggle=True)
-
-            row = layout.row(align=True)
-            row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
-            row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
-            row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
-
+            
 
 ######################################## Edit toolbars ##############################################
 
