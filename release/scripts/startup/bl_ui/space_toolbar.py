@@ -1492,7 +1492,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("3dview.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
                     row.operator("3dview.tb_apply_rotate", text="", icon = "APPLYROTATE")
                     row.operator("3dview.tb_apply_scale", text="", icon = "APPLYSCALE")
-                    row.operator("3dview.tb_apply_rotscale", text="", icon = "APPLYALL")
+                    row.operator("3dview.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                     row = layout.row(align=True)
 
