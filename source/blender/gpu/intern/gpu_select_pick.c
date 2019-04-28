@@ -318,7 +318,8 @@ void gpu_select_pick_begin(uint (*buffer)[4], uint bufsize, const rcti *input, c
     if (mode == GPU_SELECT_PICK_ALL) {
       /* Note that other depth settings (such as #GL_LEQUAL) work too,
        * since the depth is always cleared.
-       * Noting this for cases when depth picking is used where drawing calls change depth settings. */
+       * Noting this for cases when depth picking is used where
+       * drawing calls change depth settings. */
       glDepthFunc(GL_ALWAYS);
     }
     else {
@@ -475,10 +476,17 @@ static void gpu_select_load_id_pass_nearest(const DepthBufCache *rect_prev,
   }
 }
 
-bool gpu_select_pick_load_id(uint id)
+bool gpu_select_pick_load_id(uint id, bool end)
 {
   GPUPickState *ps = &g_pick_state;
+
   if (ps->gl.is_init) {
+    if (id == ps->gl.prev_id && !end) {
+      /* No need to read if we are still drawing for the same id since
+       * all these depths will be merged / deduplicated in the end. */
+      return true;
+    }
+
     const uint rect_len = ps->src.rect_len;
     glReadPixels(UNPACK4(ps->gl.clip_readpixels),
                  GL_DEPTH_COMPONENT,
@@ -535,7 +543,7 @@ uint gpu_select_pick_end(void)
   if (ps->is_cached == false) {
     if (ps->gl.is_init) {
       /* force finishing last pass */
-      gpu_select_pick_load_id(ps->gl.prev_id);
+      gpu_select_pick_load_id(ps->gl.prev_id, true);
     }
     gpuPopAttr();
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

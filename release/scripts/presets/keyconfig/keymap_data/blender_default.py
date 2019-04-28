@@ -326,7 +326,7 @@ def km_window(params):
     if params.apple:
         # Apple standard shortcuts. Cmd+F for search since F-keys are not easy to use.
         items.extend([
-            ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "oskey": True}, None),
+            op_menu("TOPBAR_MT_file_new", {"type": 'N', "value": 'PRESS', "oskey": True}),
             op_menu("TOPBAR_MT_file_open_recent", {"type": 'O', "value": 'PRESS', "shift": True, "oskey": True}),
             ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "oskey": True}, None),
             ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "oskey": True}, None),
@@ -356,7 +356,7 @@ def km_window(params):
 
     items.extend([
         # File operations
-        ("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
+        op_menu("TOPBAR_MT_file_new", {"type": 'N', "value": 'PRESS', "ctrl": True}),
         op_menu("TOPBAR_MT_file_open_recent", {"type": 'O', "value": 'PRESS', "shift": True, "ctrl": True}),
         ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
         ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True}, None),
@@ -1740,7 +1740,11 @@ def km_info(params):
     )
 
     items.extend([
-        ("info.select_pick", {"type": params.select_mouse, "value": 'PRESS'}, None),
+        ("info.select_pick", {"type": 'LEFTMOUSE', "value": 'CLICK'}, None),
+        ("info.select_pick", {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
+         {"properties": [("extend", True)]}),
+        ("info.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'},
+         {"properties": [("wait_for_input", False)]}),
         *_template_items_select_actions(params, "info.select_all"),
         ("info.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("info.report_replay", {"type": 'R', "value": 'PRESS'}, None),
@@ -2575,8 +2579,11 @@ def km_clip(_params):
          {"properties": [("backwards", True), ("sequence", True)]}),
         ("wm.context_toggle_enum", {"type": 'TAB', "value": 'PRESS'},
          {"properties": [("data_path", 'space_data.mode'), ("value_1", 'TRACKING'), ("value_2", 'MASK')]}),
-        ("clip.solve_camera", {"type": 'S', "value": 'PRESS', "shift": True}, None),
         ("clip.prefetch", {"type": 'P', "value": 'PRESS'}, None),
+        op_menu_pie("CLIP_MT_tracking_pie", {"type": 'E', "value": 'PRESS'}),
+        op_menu_pie("CLIP_MT_solving_pie", {"type": 'S', "value": 'PRESS', "shift": True}),
+        op_menu_pie("CLIP_MT_marker_pie", {"type": 'E', "value": 'PRESS', "shift": True}),
+        op_menu_pie("CLIP_MT_reconstruction_pie", {"type": 'W', "value": 'PRESS', "shift": True}),
     ])
 
     return keymap
@@ -5364,16 +5371,6 @@ def km_3d_view_tool_select_lasso(params):
     )
 
 
-def km_3d_view_tool_transform(params):
-    return (
-        "3D View Tool: Transform",
-        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
-        {"items": [
-            ("transform.from_gizmo", {"type": params.tool_tweak, "value": 'ANY'}, None),
-        ]},
-    )
-
-
 def km_3d_view_tool_move(params):
     return (
         "3D View Tool: Move",
@@ -6253,7 +6250,6 @@ def generate_keymaps(params=None):
         km_3d_view_tool_select_box(params),
         km_3d_view_tool_select_circle(params),
         km_3d_view_tool_select_lasso(params),
-        km_3d_view_tool_transform(params),
         km_3d_view_tool_move(params),
         km_3d_view_tool_rotate(params),
         km_3d_view_tool_scale(params),

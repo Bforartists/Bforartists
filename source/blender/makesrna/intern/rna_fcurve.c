@@ -318,7 +318,8 @@ static void rna_DriverTarget_RnaPath_set(PointerRNA *ptr, const char *value)
 {
   DriverTarget *dtar = (DriverTarget *)ptr->data;
 
-  /* XXX in this case we need to be very careful, as this will require some new dependencies to be added! */
+  /* XXX in this case we need to be very careful,
+   * as this will require some new dependencies to be added! */
   if (dtar->rna_path)
     MEM_freeN(dtar->rna_path);
 
@@ -474,7 +475,8 @@ static void rna_FCurve_group_set(PointerRNA *ptr, PointerRNA value)
   }
 
   if (GS(pid->name) == ID_AC && GS(vid->name) == ID_AC) {
-    /* the ID given is the action already - usually when F-Curve is obtained from an action's pointer */
+    /* The ID given is the action already -
+     * usually when F-Curve is obtained from an action's pointer. */
     act = (bAction *)pid;
   }
   else {
@@ -514,7 +516,8 @@ static void rna_FCurve_group_set(PointerRNA *ptr, PointerRNA value)
     action_groups_add_channel(act, value.data, fcu);
   }
   else {
-    /* need to add this back, but it can only go at the end of the list (or else will corrupt groups) */
+    /* Need to add this back, but it can only go at the end of the list
+     * (or else will corrupt groups). */
     BLI_addtail(&act->curves, fcu);
   }
 }
@@ -546,8 +549,8 @@ static void rna_FCurve_update_data_relations(Main *bmain,
   DEG_relations_tag_update(bmain);
 }
 
-/* RNA update callback for F-Curves to indicate that there are copy-on-write tagging/flushing needed
- * (e.g. for properties that affect how animation gets evaluated)
+/* RNA update callback for F-Curves to indicate that there are copy-on-write tagging/flushing
+ * needed (e.g. for properties that affect how animation gets evaluated).
  */
 static void rna_FCurve_update_eval(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
@@ -800,7 +803,8 @@ static void rna_FModifierLimits_minx_range(PointerRNA *UNUSED(ptr),
   // FModifier *fcm = (FModifier *)ptr->data;
   // FMod_Limits *data = fcm->data;
 
-  /* no soft-limits on lower bound - it's too confusing when you can't easily use the slider to set things here */
+  /* No soft-limits on lower bound -
+   * it's too confusing when you can't easily use the slider to set things here. */
   *min = MINAFRAMEF;
   *max = MAXFRAMEF;
 }
@@ -827,7 +831,8 @@ static void rna_FModifierLimits_miny_range(PointerRNA *UNUSED(ptr),
   // FModifier *fcm = (FModifier *)ptr->data;
   // FMod_Limits *data = fcm->data;
 
-  /* no soft-limits on lower bound - it's too confusing when you can't easily use the slider to set things here */
+  /* No soft-limits on lower bound -
+   * it's too confusing when you can't easily use the slider to set things here. */
   *min = -FLT_MAX;
   *max = FLT_MAX;
 }

@@ -67,8 +67,9 @@
 /* Depending on the channel that was clicked on, the mouse click will activate whichever
  * part of the channel is relevant.
  *
- * NOTE: eventually, this should probably be phased out when many of these things are replaced with buttons
- * --> Most channels are now selection only...
+ * NOTE: eventually,
+ * this should probably be phased out when many of these things are replaced with buttons
+ * --> Most channels are now selection only.
  */
 
 static int mouse_nla_channels(
@@ -90,9 +91,10 @@ static int mouse_nla_channels(
   ale = BLI_findlink(&anim_data, channel_index);
   if (ale == NULL) {
     /* channel not found */
-    if (G.debug & G_DEBUG)
+    if (G.debug & G_DEBUG) {
       printf("Error: animation channel (index = %d) not found in mouse_anim_channels()\n",
              channel_index);
+    }
 
     ANIM_animdata_freelist(&anim_data);
     return 0;
@@ -109,13 +111,15 @@ static int mouse_nla_channels(
       if (selectmode == SELECT_INVERT) {
         /* swap select */
         sce->flag ^= SCE_DS_SELECTED;
-        if (adt)
+        if (adt) {
           adt->flag ^= ADT_UI_SELECTED;
+        }
       }
       else {
         sce->flag |= SCE_DS_SELECTED;
-        if (adt)
+        if (adt) {
           adt->flag |= ADT_UI_SELECTED;
+        }
       }
 
       notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
@@ -134,8 +138,9 @@ static int mouse_nla_channels(
           ED_object_base_select(base, BA_INVERT);
           BKE_scene_object_base_flag_sync_from_base(base);
 
-          if (adt)
+          if (adt) {
             adt->flag ^= ADT_UI_SELECTED;
+          }
         }
         else {
           /* deselect all */
@@ -143,22 +148,25 @@ static int mouse_nla_channels(
           for (Base *b = view_layer->object_bases.first; b; b = b->next) {
             ED_object_base_select(b, BA_DESELECT);
             BKE_scene_object_base_flag_sync_from_base(b);
-            if (b->object->adt)
+            if (b->object->adt) {
               b->object->adt->flag &= ~(ADT_UI_SELECTED | ADT_UI_ACTIVE);
+            }
           }
 
           /* select object now */
           ED_object_base_select(base, BA_SELECT);
           BKE_scene_object_base_flag_sync_from_base(base);
-          if (adt)
+          if (adt) {
             adt->flag |= ADT_UI_SELECTED;
+          }
         }
 
         /* change active object - regardless of whether it is now selected [T37883] */
         ED_object_base_activate(C, base); /* adds notifier */
 
-        if ((adt) && (adt->flag & ADT_UI_SELECTED))
+        if ((adt) && (adt->flag & ADT_UI_SELECTED)) {
           adt->flag |= ADT_UI_ACTIVE;
+        }
 
         /* notifiers - channel was selected */
         notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
@@ -198,8 +206,9 @@ static int mouse_nla_channels(
         }
 
         /* set active? */
-        if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED))
+        if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
           ale->adt->flag |= ADT_UI_ACTIVE;
+        }
       }
 
       notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
@@ -213,13 +222,16 @@ static int mouse_nla_channels(
       /* offset for start of channel (on LHS of channel-list) */
       if (ale->id) {
         /* special exception for materials and particles */
-        if (ELEM(GS(ale->id->name), ID_MA, ID_PA))
+        if (ELEM(GS(ale->id->name), ID_MA, ID_PA)) {
           offset = 21 + NLACHANNEL_BUTTON_WIDTH;
-        else
+        }
+        else {
           offset = 14;
+        }
       }
-      else
+      else {
         offset = 0;
+      }
 
       if (x >= (v2d->cur.xmax - NLACHANNEL_BUTTON_WIDTH)) {
         /* toggle protection (only if there's a toggle there) */
@@ -258,8 +270,9 @@ static int mouse_nla_channels(
 
         /* if NLA-Track is selected now,
          * make NLA-Track the 'active' one in the visible list */
-        if (nlt->flag & NLATRACK_SELECTED)
+        if (nlt->flag & NLATRACK_SELECTED) {
           ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, nlt, ANIMTYPE_NLATRACK);
+        }
 
         /* notifier flags - channel was selected */
         notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
@@ -318,8 +331,9 @@ static int mouse_nla_channels(
           }
 
           /* set active? */
-          if (adt->flag & ADT_UI_SELECTED)
+          if (adt->flag & ADT_UI_SELECTED) {
             adt->flag |= ADT_UI_ACTIVE;
+          }
 
           notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
         }
@@ -327,8 +341,9 @@ static int mouse_nla_channels(
       break;
     }
     default:
-      if (G.debug & G_DEBUG)
+      if (G.debug & G_DEBUG) {
         printf("Error: Invalid channel type in mouse_nla_channels()\n");
+      }
       break;
   }
 
@@ -355,8 +370,9 @@ static int nlachannels_mouseclick_invoke(bContext *C, wmOperator *op, const wmEv
   float x, y;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* get useful pointers from animation context data */
   snla = (SpaceNla *)ac.sl;
@@ -364,15 +380,19 @@ static int nlachannels_mouseclick_invoke(bContext *C, wmOperator *op, const wmEv
   v2d = &ar->v2d;
 
   /* select mode is either replace (deselect all, then add) or add/extend */
-  if (RNA_boolean_get(op->ptr, "extend"))
+  if (RNA_boolean_get(op->ptr, "extend")) {
     selectmode = SELECT_INVERT;
-  else
+  }
+  else {
     selectmode = SELECT_REPLACE;
+  }
 
-  /* figure out which channel user clicked in
-   * Note: although channels technically start at y= NLACHANNEL_FIRST, we need to adjust by half a channel's height
-   *      so that the tops of channels get caught ok. Since NLACHANNEL_FIRST is really NLACHANNEL_HEIGHT, we simply use
-   *      NLACHANNEL_HEIGHT_HALF.
+  /**
+   * Figure out which channel user clicked in:
+   *
+   * \note Although channels technically start at y= NLACHANNEL_FIRST,
+   * we need to adjust by half a channel's height so that the tops of channels get caught ok.
+   * Since NLACHANNEL_FIRST is really NLACHANNEL_HEIGHT, we simply use NLACHANNEL_HEIGHT_HALF.
    */
   UI_view2d_region_to_view(v2d, event->mval[0], event->mval[1], &x, &y);
   UI_view2d_listview_view_to_cell(v2d,
@@ -428,8 +448,9 @@ static int nlachannels_pushdown_exec(bContext *C, wmOperator *op)
   int channel_index = RNA_int_get(op->ptr, "channel_index");
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* get anim-channel to use (or more specifically, the animdata block behind it) */
   if (channel_index == -1) {
@@ -556,13 +577,15 @@ static int nla_action_unlink_exec(bContext *C, wmOperator *op)
   AnimData *adt;
 
   /* check context and also validity of pointer */
-  if (!nla_panel_context(C, &adt_ptr, NULL, NULL))
+  if (!nla_panel_context(C, &adt_ptr, NULL, NULL)) {
     return OPERATOR_CANCELLED;
+  }
 
   /* get animdata */
   adt = adt_ptr.data;
-  if (adt == NULL)
+  if (adt == NULL) {
     return OPERATOR_CANCELLED;
+  }
 
   /* do unlinking */
   if (adt && adt->action) {
@@ -700,8 +723,9 @@ static int nlaedit_add_tracks_exec(bContext *C, wmOperator *op)
   bool op_done = false;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* perform adding in two passes - existing first so that we don't double up for empty */
   op_done |= nlaedit_add_tracks_existing(&ac, above_sel);
@@ -761,8 +785,9 @@ static int nlaedit_delete_tracks_exec(bContext *C, wmOperator *UNUSED(op))
   int filter;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* get a list of the AnimData blocks being shown in the NLA */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_SEL |
@@ -778,8 +803,9 @@ static int nlaedit_delete_tracks_exec(bContext *C, wmOperator *UNUSED(op))
       /* if track is currently 'solo', then AnimData should have its
        * 'has solo' flag disabled
        */
-      if (nlt->flag & NLATRACK_SOLO)
+      if (nlt->flag & NLATRACK_SOLO) {
         adt->flag &= ~ADT_NLA_SOLO_TRACK;
+      }
 
       /* call delete on this track - deletes all strips too */
       BKE_nlatrack_free(&adt->nla_tracks, nlt, true);
@@ -832,8 +858,9 @@ static int nlaedit_objects_add_exec(bContext *C, wmOperator *UNUSED(op))
   SpaceNla *snla;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* ensure that filters are set so that the effect will be immediately visible */
   snla = (SpaceNla *)ac.sl;

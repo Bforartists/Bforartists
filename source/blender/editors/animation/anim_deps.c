@@ -63,8 +63,9 @@ void ANIM_list_elem_update(Main *bmain, Scene *scene, bAnimListElem *ale)
   AnimData *adt;
 
   id = ale->id;
-  if (!id)
+  if (!id) {
     return;
+  }
 
   /* tag AnimData for refresh so that other views will update in realtime with these changes */
   adt = BKE_animdata_from_id(id);
@@ -97,8 +98,9 @@ void ANIM_list_elem_update(Main *bmain, Scene *scene, bAnimListElem *ale)
 
     RNA_id_pointer_create(id, &id_ptr);
 
-    if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop))
+    if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop)) {
       RNA_property_update_main(bmain, scene, &ptr, prop);
+    }
   }
   else {
     /* in other case we do standard depsgraph update, ideally
@@ -141,15 +143,17 @@ static void animchan_sync_group(bAnimContext *ac, bAnimListElem *ale, bActionGro
   /* major priority is selection status
    * so we need both a group and an owner
    */
-  if (ELEM(NULL, agrp, owner_id))
+  if (ELEM(NULL, agrp, owner_id)) {
     return;
+  }
 
   /* for standard Objects, check if group is the name of some bone */
   if (GS(owner_id->name) == ID_OB) {
     Object *ob = (Object *)owner_id;
 
     /* check if there are bones, and whether the name matches any
-     * NOTE: this feature will only really work if groups by default contain the F-Curves for a single bone
+     * NOTE: this feature will only really work if groups by default contain the F-Curves
+     * for a single bone.
      */
     if (ob->pose) {
       bPoseChannel *pchan = BKE_pose_channel_find_name(ob->pose, agrp->name);
@@ -159,10 +163,12 @@ static void animchan_sync_group(bAnimContext *ac, bAnimListElem *ale, bActionGro
         bActionGroup *bgrp;
 
         /* if one matches, sync the selection status */
-        if ((pchan->bone) && (pchan->bone->flag & BONE_SELECTED))
+        if ((pchan->bone) && (pchan->bone->flag & BONE_SELECTED)) {
           agrp->flag |= AGRP_SELECTED;
-        else
+        }
+        else {
           agrp->flag &= ~AGRP_SELECTED;
+        }
 
         /* also sync active group status */
         if ((ob == ac->obact) && (pchan->bone == arm->act_bone)) {
@@ -203,8 +209,9 @@ static void animchan_sync_fcurve(bAnimContext *UNUSED(ac),
   /* major priority is selection status, so refer to the checks done in anim_filter.c
    * skip_fcurve_selected_data() for reference about what's going on here...
    */
-  if (ELEM(NULL, fcu, fcu->rna_path, owner_id))
+  if (ELEM(NULL, fcu, fcu->rna_path, owner_id)) {
     return;
+  }
 
   if (GS(owner_id->name) == ID_SCE) {
     Scene *scene = (Scene *)owner_id;
@@ -218,15 +225,18 @@ static void animchan_sync_fcurve(bAnimContext *UNUSED(ac),
       /* get strip name, and check if this strip is selected */
       seq_name = BLI_str_quoted_substrN(fcu->rna_path, "sequences_all[");
       seq = BKE_sequence_get_by_name(ed->seqbasep, seq_name, false);
-      if (seq_name)
+      if (seq_name) {
         MEM_freeN(seq_name);
+      }
 
       /* update selection status */
       if (seq) {
-        if (seq->flag & SELECT)
+        if (seq->flag & SELECT) {
           fcu->flag |= FCURVE_SELECTED;
-        else
+        }
+        else {
           fcu->flag &= ~FCURVE_SELECTED;
+        }
       }
     }
   }
@@ -241,16 +251,19 @@ static void animchan_sync_fcurve(bAnimContext *UNUSED(ac),
       /* get strip name, and check if this strip is selected */
       node_name = BLI_str_quoted_substrN(fcu->rna_path, "nodes[");
       node = nodeFindNodebyName(ntree, node_name);
-      if (node_name)
+      if (node_name) {
         MEM_freeN(node_name);
+      }
 
       /* update selection/active status */
       if (node) {
         /* update selection status */
-        if (node->flag & NODE_SELECT)
+        if (node->flag & NODE_SELECT) {
           fcu->flag |= FCURVE_SELECTED;
-        else
+        }
+        else {
           fcu->flag &= ~FCURVE_SELECTED;
+        }
 
         /* update active status */
         /* XXX: this may interfere with setting bones as active if both exist at once;
@@ -310,12 +323,15 @@ void ANIM_sync_animchannels_to_data(const bContext *C)
   FCurve *active_fcurve = NULL;
 
   /* get animation context info for filtering the channels */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return;
+  }
 
   /* filter data */
-  /* NOTE: we want all channels, since we want to be able to set selection status on some of them even when collapsed
-   *       However, don't include duplicates so that selection statuses don't override each other
+
+  /* NOTE: we want all channels, since we want to be able to set selection status on some of them
+   * even when collapsed... however,
+   * don't include duplicates so that selection statuses don't override each other.
    */
   filter = ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_CHANNELS | ANIMFILTER_NODUPLIS;
   ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
@@ -379,14 +395,16 @@ void ANIM_animdata_update(bAnimContext *ac, ListBase *anim_data)
 
       if (ale->update & ANIM_UPDATE_ORDER) {
         ale->update &= ~ANIM_UPDATE_ORDER;
-        if (fcu)
+        if (fcu) {
           sort_time_fcurve(fcu);
+        }
       }
 
       if (ale->update & ANIM_UPDATE_HANDLES) {
         ale->update &= ~ANIM_UPDATE_HANDLES;
-        if (fcu)
+        if (fcu) {
           calchandles_fcurve(fcu);
+        }
       }
 
       if (ale->update & ANIM_UPDATE_DEPS) {

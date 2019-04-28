@@ -3819,7 +3819,7 @@ const EnumPropertyItem *RNA_scene_without_active_itemf(bContext *C,
                       ptr,
                       r_free,
                       C ? (ID *)CTX_data_main(C)->scenes.first : NULL,
-                      true,
+                      false,
                       rna_id_enum_filter_single,
                       scene_active);
 }
