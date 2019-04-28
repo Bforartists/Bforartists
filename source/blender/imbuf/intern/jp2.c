@@ -435,17 +435,20 @@ static ImBuf *imb_load_jp2_stream(opj_stream_t *stream,
   }
 
   i = image->numcomps;
-  if (i > 4)
+  if (i > 4) {
     i = 4;
+  }
 
   while (i) {
     i--;
 
-    if (image->comps[i].prec > 8)
+    if (image->comps[i].prec > 8) {
       use_float = true;
+    }
 
-    if (image->comps[i].sgnd)
+    if (image->comps[i].sgnd) {
       signed_offsets[i] = 1 << (image->comps[i].prec - 1);
+    }
 
     /* only needed for float images but dosnt hurt to calc this */
     float_divs[i] = (1 << image->comps[i].prec) - 1;
@@ -588,10 +591,15 @@ finally:
   return ibuf;
 }
 
-//static opj_image_t* rawtoimage(const char *filename, opj_cparameters_t *parameters, raw_cparameters_t *raw_cp)
+#if 0
+static opj_image_t *rawtoimage(const char *filename,
+                               opj_cparameters_t *parameters,
+                               raw_cparameters_t *raw_cp)
+#endif
 /* prec can be 8, 12, 16 */
 
-/* use inline because the float passed can be a function call that would end up being called many times */
+/* Use inline because the float passed can be a function call
+ * that would end up being called many times. */
 #if 0
 #  define UPSAMPLE_8_TO_12(_val) ((_val << 4) | (_val & ((1 << 4) - 1)))
 #  define UPSAMPLE_8_TO_16(_val) ((_val << 8) + _val)
@@ -628,7 +636,8 @@ BLI_INLINE int DOWNSAMPLE_FLOAT_TO_16BIT(const float _val)
 #endif
 
 /*
- * 2048x1080 (2K) at 24 fps or 48 fps, or 4096x2160 (4K) at 24 fps; 3x12 bits per pixel, XYZ color space
+ * 2048x1080 (2K) at 24 fps or 48 fps, or 4096x2160 (4K) at 24 fps;
+ * 3x12 bits per pixel, XYZ color space
  *
  * - In 2K, for Scope (2.39:1) presentation 2048x858  pixels of the image is used
  * - In 2K, for Flat  (1.85:1) presentation 1998x1080 pixels of the image is used
@@ -844,8 +853,9 @@ static opj_image_t *ibuftoimage(ImBuf *ibuf, opj_cparameters_t *parameters)
 
   if (ibuf->foptions.flag & JP2_CINE) {
 
-    if (ibuf->x == 4096 || ibuf->y == 2160)
+    if (ibuf->x == 4096 || ibuf->y == 2160) {
       parameters->cp_cinema = OPJ_CINEMA4K_24;
+    }
     else {
       if (ibuf->foptions.flag & JP2_CINE_48FPS) {
         parameters->cp_cinema = OPJ_CINEMA2K_48;
@@ -870,12 +880,15 @@ static opj_image_t *ibuftoimage(ImBuf *ibuf, opj_cparameters_t *parameters)
     /* Get settings from the imbuf */
     color_space = (ibuf->foptions.flag & JP2_YCC) ? OPJ_CLRSPC_SYCC : OPJ_CLRSPC_SRGB;
 
-    if (ibuf->foptions.flag & JP2_16BIT)
+    if (ibuf->foptions.flag & JP2_16BIT) {
       prec = 16;
-    else if (ibuf->foptions.flag & JP2_12BIT)
+    }
+    else if (ibuf->foptions.flag & JP2_12BIT) {
       prec = 12;
-    else
+    }
+    else {
       prec = 8;
+    }
 
     /* 32bit images == alpha channel */
     /* grayscale not supported yet */
@@ -1175,8 +1188,9 @@ static opj_image_t *ibuftoimage(ImBuf *ibuf, opj_cparameters_t *parameters)
     cinema_setup_encoder(parameters, image, &img_fol);
   }
 
-  if (img_fol.rates)
+  if (img_fol.rates) {
     MEM_freeN(img_fol.rates);
+  }
 
   return image;
 }

@@ -397,7 +397,8 @@ static void pose_slide_apply_val(tPoseSlideOp *pso, FCurve *fcu, Object *ob, flo
     }
     case POSESLIDE_BREAKDOWN: /* make the current pose slide around between the endpoints */
     {
-      /* perform simple linear interpolation - coefficient for start must come from pso->percentage... */
+      /* Perform simple linear interpolation -
+       * coefficient for start must come from pso->percentage. */
       /* TODO: make this use some kind of spline interpolation instead? */
       (*val) = ((sVal * w2) + (eVal * w1));
       break;
@@ -458,8 +459,9 @@ static void pose_slide_apply_props(tPoseSlideOp *pso,
     FCurve *fcu = (FCurve *)ld->data;
     const char *bPtr, *pPtr;
 
-    if (fcu->rna_path == NULL)
+    if (fcu->rna_path == NULL) {
       continue;
+    }
 
     /* do we have a match?
      * - bPtr is the RNA Path with the standard part chopped off
@@ -583,7 +585,8 @@ static void pose_slide_apply_quat(tPoseSlideOp *pso, tPChanFCurveLink *pfl)
 
     /* perform blending */
     if (pso->mode == POSESLIDE_BREAKDOWN) {
-      /* just perform the interpol between quat_prev and quat_next using pso->percentage as a guide */
+      /* Just perform the interpol between quat_prev and
+       * quat_next using pso->percentage as a guide. */
       interp_qt_qtqt(quat_final, quat_prev, quat_next, pso->percentage);
     }
     else if (pso->mode == POSESLIDE_PUSH) {
@@ -1113,7 +1116,8 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
     }
   }
 
-  /* perform pose updates - in response to some user action (e.g. pressing a key or moving the mouse) */
+  /* Perform pose updates - in response to some user action
+   * (e.g. pressing a key or moving the mouse). */
   if (do_pose_update) {
     /* update percentage indicator in header */
     pose_slide_draw_status(pso);
@@ -1210,8 +1214,9 @@ static int pose_slide_push_invoke(bContext *C, wmOperator *op, const wmEvent *ev
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* initialise percentage so that it won't pop on first mouse move */
   pose_slide_mouse_update_percentage(pso, op, event);
@@ -1230,8 +1235,9 @@ static int pose_slide_push_exec(bContext *C, wmOperator *op)
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* do common exec work */
   return pose_slide_exec_common(C, op, pso);
@@ -1270,8 +1276,9 @@ static int pose_slide_relax_invoke(bContext *C, wmOperator *op, const wmEvent *e
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* initialise percentage so that it won't pop on first mouse move */
   pose_slide_mouse_update_percentage(pso, op, event);
@@ -1290,8 +1297,9 @@ static int pose_slide_relax_exec(bContext *C, wmOperator *op)
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* do common exec work */
   return pose_slide_exec_common(C, op, pso);
@@ -1330,8 +1338,9 @@ static int pose_slide_breakdown_invoke(bContext *C, wmOperator *op, const wmEven
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* initialise percentage so that it won't pop on first mouse move */
   pose_slide_mouse_update_percentage(pso, op, event);
@@ -1350,8 +1359,9 @@ static int pose_slide_breakdown_exec(bContext *C, wmOperator *op)
     pose_slide_exit(op);
     return OPERATOR_CANCELLED;
   }
-  else
+  else {
     pso = op->customdata;
+  }
 
   /* do common exec work */
   return pose_slide_exec_common(C, op, pso);
@@ -1400,7 +1410,8 @@ typedef enum ePosePropagate_Termination {
   POSE_PROPAGATE_SELECTED_MARKERS,
 } ePosePropagate_Termination;
 
-/* termination data needed for some modes - assumes only one of these entries will be needed at a time */
+/* Termination data needed for some modes -
+ * assumes only one of these entries will be needed at a time. */
 typedef union tPosePropagate_ModeData {
   /* smart holds + before frame: frame number to stop on */
   float end_frame;
@@ -1565,15 +1576,17 @@ static void pose_propagate_fcurve(
   short first = 1;
 
   /* skip if no keyframes to edit */
-  if ((fcu->bezt == NULL) || (fcu->totvert < 2))
+  if ((fcu->bezt == NULL) || (fcu->totvert < 2)) {
     return;
+  }
 
   /* find the reference value from bones directly, which means that the user
    * doesn't need to firstly keyframe the pose (though this doesn't mean that
    * they can't either)
    */
-  if (!pose_propagate_get_refVal(ob, fcu, &refVal))
+  if (!pose_propagate_get_refVal(ob, fcu, &refVal)) {
     return;
+  }
 
   /* find the first keyframe to start propagating from
    * - if there's a keyframe on the current frame, we probably want to save this value there too
@@ -1585,10 +1598,12 @@ static void pose_propagate_fcurve(
   if (mode != POSE_PROPAGATE_SELECTED_KEYS) {
     match = binarysearch_bezt_index(fcu->bezt, startFrame, fcu->totvert, &keyExists);
 
-    if (fcu->bezt[match].vec[1][0] < startFrame)
+    if (fcu->bezt[match].vec[1][0] < startFrame) {
       i = match + 1;
-    else
+    }
+    else {
       i = match;
+    }
   }
   else {
     /* selected - start from first keyframe */
@@ -1599,18 +1614,21 @@ static void pose_propagate_fcurve(
     /* additional termination conditions based on the operator 'mode' property go here... */
     if (ELEM(mode, POSE_PROPAGATE_BEFORE_FRAME, POSE_PROPAGATE_SMART_HOLDS)) {
       /* stop if keyframe is outside the accepted range */
-      if (bezt->vec[1][0] > modeData.end_frame)
+      if (bezt->vec[1][0] > modeData.end_frame) {
         break;
+      }
     }
     else if (mode == POSE_PROPAGATE_NEXT_KEY) {
       /* stop after the first keyframe has been processed */
-      if (first == 0)
+      if (first == 0) {
         break;
+      }
     }
     else if (mode == POSE_PROPAGATE_LAST_KEY) {
       /* only affect this frame if it will be the last one */
-      if (i != (fcu->totvert - 1))
+      if (i != (fcu->totvert - 1)) {
         continue;
+      }
     }
     else if (mode == POSE_PROPAGATE_SELECTED_MARKERS) {
       /* only allow if there's a marker on this frame */
@@ -1618,18 +1636,21 @@ static void pose_propagate_fcurve(
 
       /* stop on matching marker if there is one */
       for (ce = modeData.sel_markers.first; ce; ce = ce->next) {
-        if (ce->cfra == round_fl_to_int(bezt->vec[1][0]))
+        if (ce->cfra == round_fl_to_int(bezt->vec[1][0])) {
           break;
+        }
       }
 
       /* skip this keyframe if no marker */
-      if (ce == NULL)
+      if (ce == NULL) {
         continue;
+      }
     }
     else if (mode == POSE_PROPAGATE_SELECTED_KEYS) {
       /* only allow if this keyframe is already selected - skip otherwise */
-      if (BEZT_ISSEL_ANY(bezt) == 0)
+      if (BEZT_ISSEL_ANY(bezt) == 0) {
         continue;
+      }
     }
 
     /* just flatten handles, since values will now be the same either side... */
@@ -1660,7 +1681,8 @@ static int pose_propagate_exec(bContext *C, wmOperator *op)
   poseAnim_mapping_get(C, &pflinks);
 
   if (BLI_listbase_is_empty(&pflinks)) {
-    /* There is a change the reason the list is empty is that there is no valid object to propagate poses for.
+    /* There is a change the reason the list is empty is
+     * that there is no valid object to propagate poses for.
      * This is very unlikely though, so we focus on the most likely issue. */
     BKE_report(op->reports, RPT_ERROR, "No keyframed poses to propagate to");
     return OPERATOR_CANCELLED;
@@ -1697,8 +1719,9 @@ static int pose_propagate_exec(bContext *C, wmOperator *op)
   /* free temp data */
   poseAnim_mapping_free(&pflinks);
 
-  if (mode == POSE_PROPAGATE_SELECTED_MARKERS)
+  if (mode == POSE_PROPAGATE_SELECTED_MARKERS) {
     BLI_freelistN(&modeData.sel_markers);
+  }
 
   /* updates + notifiers */
   FOREACH_OBJECT_IN_MODE_BEGIN (view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {

@@ -1192,20 +1192,6 @@ class CyclesCurveRenderSettings(bpy.types.PropertyGroup):
         min=3, max=64,
         default=3,
     )
-    minimum_width: FloatProperty(
-        name="Minimal width",
-        description="Minimal width\nMinimal pixel width for strands (0 - deactivated)",
-        min=0.0, max=100.0,
-        default=0.0,
-        subtype='PIXEL'
-    )
-    maximum_width: FloatProperty(
-        name="Maximal width",
-        description="Maximal width\nMaximum extension that strand radius can be increased by",
-        min=0.0, max=100.0,
-        default=0.1,
-        subtype='PIXEL'
-    )
     subdivisions: IntProperty(
         name="Subdivisions",
         description="Subdivisions\nNumber of subdivisions used in Cardinal curve intersection (power of 2)",
@@ -1504,7 +1490,9 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 break
 
         if not found_device:
-            box.label(text="No compatible GPUs found", icon='INFO')
+            col = box.column(align=True);
+            col.label(text="No compatible GPUs found for path tracing", icon='INFO')
+            col.label(text="Cycles will render on the CPU", icon='BLANK1')
             return
 
         for device in devices:

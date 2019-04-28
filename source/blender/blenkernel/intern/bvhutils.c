@@ -204,10 +204,12 @@ static void mesh_faces_spherecast(void *userdata,
 
   do {
     float dist;
-    if (ray->radius == 0.0f)
+    if (ray->radius == 0.0f) {
       dist = bvhtree_ray_tri_intersection(ray, hit->dist, t0, t1, t2);
-    else
+    }
+    else {
       dist = bvhtree_sphereray_tri_intersection(ray, ray->radius, hit->dist, t0, t1, t2);
+    }
 
     if (dist >= 0 && dist < hit->dist) {
       hit->index = index;
@@ -239,10 +241,12 @@ static void mesh_looptri_spherecast(void *userdata,
   };
   float dist;
 
-  if (ray->radius == 0.0f)
+  if (ray->radius == 0.0f) {
     dist = bvhtree_ray_tri_intersection(ray, hit->dist, UNPACK3(vtri_co));
-  else
+  }
+  else {
     dist = bvhtree_sphereray_tri_intersection(ray, ray->radius, hit->dist, UNPACK3(vtri_co));
+  }
 
   if (dist >= 0 && dist < hit->dist) {
     hit->index = index;
@@ -269,10 +273,12 @@ static void editmesh_looptri_spherecast(void *userdata,
 
   {
     float dist;
-    if (ray->radius == 0.0f)
+    if (ray->radius == 0.0f) {
       dist = bvhtree_ray_tri_intersection(ray, hit->dist, t0, t1, t2);
-    else
+    }
+    else {
       dist = bvhtree_sphereray_tri_intersection(ray, ray->radius, hit->dist, t0, t1, t2);
+    }
 
     if (dist >= 0 && dist < hit->dist) {
       hit->index = index;
@@ -562,7 +568,8 @@ BVHTree *bvhtree_from_editmesh_verts(BVHTreeFromEditMesh *data,
  * Builds a bvh tree where nodes are the given vertices (note: does not copy given mverts!).
  * \param vert_allocated: if true, vert freeing will be done when freeing data.
  * \param verts_mask: if not null, true elements give which vert to add to BVH tree.
- * \param verts_num_active: if >= 0, number of active verts to add to BVH tree (else will be computed from mask).
+ * \param verts_num_active: if >= 0, number of active verts to add to BVH tree
+ * (else will be computed from mask).
  */
 BVHTree *bvhtree_from_mesh_verts_ex(BVHTreeFromMesh *data,
                                     const MVert *vert,
@@ -752,7 +759,8 @@ BVHTree *bvhtree_from_editmesh_edges(BVHTreeFromEditMesh *data,
  * \param vert, vert_allocated: if true, elem freeing will be done when freeing data.
  * \param edge, edge_allocated: if true, elem freeing will be done when freeing data.
  * \param edges_mask: if not null, true elements give which vert to add to BVH tree.
- * \param edges_num_active: if >= 0, number of active edges to add to BVH tree (else will be computed from mask).
+ * \param edges_num_active: if >= 0, number of active edges to add to BVH tree
+ * (else will be computed from mask).
  */
 BVHTree *bvhtree_from_mesh_edges_ex(BVHTreeFromMesh *data,
                                     const MVert *vert,
@@ -816,8 +824,9 @@ static BVHTree *bvhtree_from_mesh_faces_create_tree(float epsilon,
           copy_v3_v3(co[0], vert[face[i].v1].co);
           copy_v3_v3(co[1], vert[face[i].v2].co);
           copy_v3_v3(co[2], vert[face[i].v3].co);
-          if (face[i].v4)
+          if (face[i].v4) {
             copy_v3_v3(co[3], vert[face[i].v4].co);
+          }
 
           BLI_bvhtree_insert(tree, i, co[0], face[i].v4 ? 4 : 3);
         }
@@ -853,11 +862,13 @@ static void bvhtree_from_mesh_faces_setup_data(BVHTreeFromMesh *data,
 }
 
 /**
- * Builds a bvh tree where nodes are the given tessellated faces (note: does not copy given mfaces!).
+ * Builds a bvh tree where nodes are the given tessellated faces
+ * (note: does not copy given mfaces!).
  * \param vert_allocated: if true, vert freeing will be done when freeing data.
  * \param face_allocated: if true, face freeing will be done when freeing data.
  * \param faces_mask: if not null, true elements give which faces to add to BVH tree.
- * \param faces_num_active: if >= 0, number of active faces to add to BVH tree (else will be computed from mask).
+ * \param faces_num_active: if >= 0, number of active faces to add to BVH tree
+ * (else will be computed from mask).
  */
 BVHTree *bvhtree_from_mesh_faces_ex(BVHTreeFromMesh *data,
                                     const MVert *vert,

@@ -30,6 +30,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "DNA_anim_types.h"
 #include "DNA_object_types.h"
 #include "DNA_camera_types.h"
 #include "DNA_cloth_types.h"
@@ -56,11 +57,13 @@
 #include "DNA_text_types.h"
 
 #include "BKE_action.h"
+#include "BKE_animsys.h"
 #include "BKE_cloth.h"
 #include "BKE_collection.h"
 #include "BKE_constraint.h"
 #include "BKE_colortools.h"
 #include "BKE_customdata.h"
+#include "BKE_fcurve.h"
 #include "BKE_freestyle.h"
 #include "BKE_gpencil.h"
 #include "BKE_idprop.h"
@@ -98,7 +101,8 @@
 
 static bScreen *screen_parent_find(const bScreen *screen)
 {
-  /* can avoid lookup if screen state isn't maximized/full (parent and child store the same state) */
+  /* Can avoid lookup if screen state isn't maximized/full
+   * (parent and child store the same state). */
   if (ELEM(screen->state, SCREENMAXIMIZED, SCREENFULL)) {
     for (const ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
       if (sa->full && sa->full != screen) {
@@ -173,7 +177,8 @@ static void do_version_area_change_space_to_space_action(ScrArea *area, const Sc
  * - Active scene isn't stored in screen anymore, but in window.
  * - Create workspace instance hook for each window.
  *
- * \note Some of the created workspaces might be deleted again in case of reading the default startup.blend.
+ * \note Some of the created workspaces might be deleted again
+ * in case of reading the default `startup.blend`.
  */
 static void do_version_workspaces_after_lib_link(Main *bmain)
 {
@@ -187,7 +192,8 @@ static void do_version_workspaces_after_lib_link(Main *bmain)
       bScreen *screen = screen_parent ? screen_parent : win->screen;
 
       if (screen->temp) {
-        /* We do not generate a new workspace for those screens... still need to set some data in win. */
+        /* We do not generate a new workspace for those screens...
+         * still need to set some data in win. */
         win->workspace_hook = BKE_workspace_instance_hook_create(bmain);
         win->scene = screen->scene;
         /* Deprecated from now on! */
@@ -509,7 +515,8 @@ static void do_version_layers_to_collections(Main *bmain, Scene *scene)
   if (have_override || need_default_renderlayer) {
     ViewLayer *view_layer = BKE_view_layer_add(scene, "Viewport");
 
-    /* If we ported all the original render layers, we don't need to make the viewport layer renderable. */
+    /* If we ported all the original render layers,
+     * we don't need to make the viewport layer renderable. */
     if (!BLI_listbase_is_single(&scene->view_layers)) {
       view_layer->flag &= ~VIEW_LAYER_RENDER;
     }
@@ -617,6 +624,74 @@ static ARegion *do_versions_add_region(int regiontype, const char *name)
   return ar;
 }
 
+static void do_version_bones_split_bbone_scale(ListBase *lb)
+{
+  for (Bone *bone = lb->first; bone; bone = bone->next) {
+    bone->scale_in_y = bone->scale_in_x;
+    bone->scale_out_y = bone->scale_out_x;
+
+    do_version_bones_split_bbone_scale(&bone->childbase);
+  }
+}
+
+static bool replace_bbone_scale_rnapath(char **p_old_path)
+{
+  char *old_path = *p_old_path;
+
+  if (old_path == NULL) {
+    return false;
+  }
+
+  if (BLI_str_endswith(old_path, "bbone_scalein") ||
+      BLI_str_endswith(old_path, "bbone_scaleout")) {
+    *p_old_path = BLI_strdupcat(old_path, "x");
+
+    MEM_freeN(old_path);
+    return true;
+  }
+
+  return false;
+}
+
+static void do_version_bbone_scale_fcurve_fix(ListBase *curves, FCurve *fcu)
+{
+  /* Update driver variable paths. */
+  if (fcu->driver) {
+    LISTBASE_FOREACH (DriverVar *, dvar, &fcu->driver->variables) {
+      DRIVER_TARGETS_LOOPER_BEGIN (dvar) {
+        replace_bbone_scale_rnapath(&dtar->rna_path);
+      }
+      DRIVER_TARGETS_LOOPER_END;
+    }
+  }
+
+  /* Update F-Curve's path. */
+  if (replace_bbone_scale_rnapath(&fcu->rna_path)) {
+    /* If matched, duplicate the curve and tweak name. */
+    FCurve *second = copy_fcurve(fcu);
+
+    second->rna_path[strlen(second->rna_path) - 1] = 'y';
+
+    BLI_insertlinkafter(curves, fcu, second);
+
+    /* Add to the curve group. */
+    second->grp = fcu->grp;
+
+    if (fcu->grp != NULL && fcu->grp->channels.last == fcu) {
+      fcu->grp->channels.last = second;
+    }
+  }
+}
+
+static void do_version_bbone_scale_animdata_cb(ID *UNUSED(id),
+                                               AnimData *adt,
+                                               void *UNUSED(wrapper_data))
+{
+  LISTBASE_FOREACH_MUTABLE (FCurve *, fcu, &adt->drivers) {
+    do_version_bbone_scale_fcurve_fix(&adt->drivers, fcu);
+  }
+}
+
 void do_versions_after_linking_280(Main *bmain)
 {
   bool use_collection_compat_28 = true;
@@ -665,9 +740,11 @@ void do_versions_after_linking_280(Main *bmain)
       }
     }
 
-    /* We need to assign lib pointer to generated hidden collections *after* all have been created, otherwise we'll
-     * end up with several datablocks sharing same name/library, which is FORBIDDEN!
-     * Note: we need this to be recursive, since a child collection may be sorted before its parent in bmain... */
+    /* We need to assign lib pointer to generated hidden collections *after* all have been created,
+     * otherwise we'll end up with several datablocks sharing same name/library,
+     * which is FORBIDDEN!
+     * Note: we need this to be recursive,
+     * since a child collection may be sorted before its parent in bmain. */
     for (Collection *collection = bmain->collections.first; collection != NULL;
          collection = collection->id.next) {
       do_version_collection_propagate_lib_to_children(collection);
@@ -758,8 +835,9 @@ void do_versions_after_linking_280(Main *bmain)
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 280, 3)) {
-    /* Due to several changes to particle RNA and draw code particles from older files may no longer
-     * be visible. Here we correct this by setting a default draw size for those files. */
+    /* Due to several changes to particle RNA and draw code particles from older files may
+     * no longer be visible.
+     * Here we correct this by setting a default draw size for those files. */
     for (Object *object = bmain->objects.first; object; object = object->id.next) {
       for (ParticleSystem *psys = object->particlesystem.first; psys; psys = psys->next) {
         if (psys->part->draw_size == 0.0f) {
@@ -846,8 +924,9 @@ void do_versions_after_linking_280(Main *bmain)
   /* Update Curve object Shape Key data layout to include the Radius property */
   if (!MAIN_VERSION_ATLEAST(bmain, 280, 23)) {
     for (Curve *cu = bmain->curves.first; cu; cu = cu->id.next) {
-      if (!cu->key || cu->key->elemsize != sizeof(float[4]))
+      if (!cu->key || cu->key->elemsize != sizeof(float[4])) {
         continue;
+      }
 
       cu->key->elemstr[0] = 3; /*KEYELEM_ELEM_SIZE_CURVE*/
       cu->key->elemsize = sizeof(float[3]);
@@ -858,8 +937,9 @@ void do_versions_after_linking_280(Main *bmain)
         int old_count = block->totelem;
         void *old_data = block->data;
 
-        if (!old_data || old_count <= 0)
+        if (!old_data || old_count <= 0) {
           continue;
+        }
 
         block->totelem = new_count;
         block->data = MEM_callocN(sizeof(float[3]) * new_count, __func__);
@@ -983,8 +1063,10 @@ void do_versions_after_linking_280(Main *bmain)
   }
 }
 
-/* NOTE: this version patch is intended for versions < 2.52.2, but was initially introduced in 2.27 already.
- *       But in 2.79 another case generating non-unique names was discovered (see T55668, involving Meta strips)... */
+/* NOTE: This version patch is intended for versions < 2.52.2,
+ * but was initially introduced in 2.27 already.
+ * But in 2.79 another case generating non-unique names was discovered
+ * (see T55668, involving Meta strips). */
 static void do_versions_seq_unique_name_all_strips(Scene *sce, ListBase *seqbasep)
 {
   for (Sequence *seq = seqbasep->first; seq != NULL; seq = seq->next) {
@@ -1811,7 +1893,8 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
           for (SpaceLink *sl = sa->spacedata.first; sl; sl = sl->next) {
             if (sl->spacetype == SPACE_ACTION) {
               SpaceAction *saction = (SpaceAction *)sl;
-              /* "Dopesheet" should be default here, unless it looks like the Action Editor was active instead */
+              /* "Dopesheet" should be default here,
+               * unless it looks like the Action Editor was active instead. */
               if ((saction->mode_prev == 0) && (saction->action == NULL)) {
                 saction->mode_prev = SACTCONT_DOPESHEET;
               }
@@ -3189,6 +3272,32 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
           }
         }
       }
+    }
+
+    /* Split bbone_scalein/bbone_scaleout into x and y fields. */
+    if (!DNA_struct_elem_find(fd->filesdna, "bPoseChannel", "float", "scale_out_y")) {
+      /* Update armature data and pose channels. */
+      LISTBASE_FOREACH (bArmature *, arm, &bmain->armatures) {
+        do_version_bones_split_bbone_scale(&arm->bonebase);
+      }
+
+      LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+        if (ob->pose) {
+          LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
+            pchan->scale_in_y = pchan->scale_in_x;
+            pchan->scale_out_y = pchan->scale_out_x;
+          }
+        }
+      }
+
+      /* Update action curves and drivers. */
+      LISTBASE_FOREACH (bAction *, act, &bmain->actions) {
+        LISTBASE_FOREACH_MUTABLE (FCurve *, fcu, &act->curves) {
+          do_version_bbone_scale_fcurve_fix(&act->curves, fcu);
+        }
+      }
+
+      BKE_animdata_main_cb(bmain, do_version_bbone_scale_animdata_cb, NULL);
     }
 
     /* Versioning code until next subversion bump goes here. */

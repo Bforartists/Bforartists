@@ -375,13 +375,15 @@ static void shrinkwrap_calc_nearest_vertex_cb_ex(void *__restrict userdata,
 
   /* Use local proximity heuristics (to reduce the nearest search)
    *
-   * If we already had an hit before.. we assume this vertex is going to have a close hit to that other vertex
-   * so we can initiate the "nearest.dist" with the expected value to that last hit.
+   * If we already had an hit before.. we assume this vertex is going to have a close hit to that
+   * other vertex so we can initiate the "nearest.dist" with the expected value to that last hit.
    * This will lead in pruning of the search tree. */
-  if (nearest->index != -1)
+  if (nearest->index != -1) {
     nearest->dist_sq = len_squared_v3v3(tmp_co, nearest->co);
-  else
+  }
+  else {
     nearest->dist_sq = FLT_MAX;
+  }
 
   BLI_bvhtree_find_nearest(treeData->tree, tmp_co, nearest, treeData->nearest_callback, treeData);
 
@@ -536,8 +538,9 @@ static void shrinkwrap_calc_normal_projection_cb_ex(void *__restrict userdata,
 
   if (calc->vert != NULL && calc->smd->projAxis == MOD_SHRINKWRAP_PROJECT_OVER_NORMAL) {
     /* calc->vert contains verts from evaluated mesh.  */
-    /* These coordinates are deformed by vertexCos only for normal projection (to get correct normals) */
-    /* for other cases calc->verts contains undeformed coordinates and vertexCos should be used */
+    /* These coordinates are deformed by vertexCos only for normal projection
+     * (to get correct normals) for other cases calc->verts contains undeformed coordinates and
+     * vertexCos should be used */
     copy_v3_v3(tmp_co, calc->vert[i].co);
     normal_short_to_float_v3(tmp_no, calc->vert[i].no);
   }
@@ -547,8 +550,9 @@ static void shrinkwrap_calc_normal_projection_cb_ex(void *__restrict userdata,
   }
 
   hit->index = -1;
-  hit->dist =
-      BVH_RAYCAST_DIST_MAX; /* TODO: we should use FLT_MAX here, but sweepsphere code isn't prepared for that */
+
+  /* TODO: we should use FLT_MAX here, but sweepsphere code isn't prepared for that */
+  hit->dist = BVH_RAYCAST_DIST_MAX;
 
   bool is_aux = false;
 
@@ -647,23 +651,28 @@ static void shrinkwrap_calc_normal_projection(ShrinkwrapCalcData *calc)
   /* If the user doesn't allows to project in any direction of projection axis
    * then there's nothing todo. */
   if ((calc->smd->shrinkOpts &
-       (MOD_SHRINKWRAP_PROJECT_ALLOW_POS_DIR | MOD_SHRINKWRAP_PROJECT_ALLOW_NEG_DIR)) == 0)
+       (MOD_SHRINKWRAP_PROJECT_ALLOW_POS_DIR | MOD_SHRINKWRAP_PROJECT_ALLOW_NEG_DIR)) == 0) {
     return;
+  }
 
   /* Prepare data to retrieve the direction in which we should project each vertex */
   if (calc->smd->projAxis == MOD_SHRINKWRAP_PROJECT_OVER_NORMAL) {
-    if (calc->vert == NULL)
+    if (calc->vert == NULL) {
       return;
+    }
   }
   else {
     /* The code supports any axis that is a combination of X,Y,Z
      * although currently UI only allows to set the 3 different axis */
-    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_X_AXIS)
+    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_X_AXIS) {
       proj_axis[0] = 1.0f;
-    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Y_AXIS)
+    }
+    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Y_AXIS) {
       proj_axis[1] = 1.0f;
-    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Z_AXIS)
+    }
+    if (calc->smd->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Z_AXIS) {
       proj_axis[2] = 1.0f;
+    }
 
     normalize_v3(proj_axis);
 
@@ -675,8 +684,9 @@ static void shrinkwrap_calc_normal_projection(ShrinkwrapCalcData *calc)
 
   if (calc->aux_target) {
     auxMesh = BKE_modifier_get_evaluated_mesh_from_evaluated_object(calc->aux_target, false);
-    if (!auxMesh)
+    if (!auxMesh) {
       return;
+    }
     BLI_SPACE_TRANSFORM_SETUP(&local2aux, calc->ob, calc->aux_target);
   }
 
@@ -930,7 +940,8 @@ static bool update_hit(BVHTreeNearest *nearest,
   return false;
 }
 
-/* Target projection on a non-manifold boundary edge - treats it like an infinitely thin cylinder. */
+/* Target projection on a non-manifold boundary edge -
+ * treats it like an infinitely thin cylinder. */
 static void target_project_edge(const ShrinkwrapTreeData *tree,
                                 int index,
                                 const float co[3],
@@ -1036,8 +1047,9 @@ static void mesh_looptri_target_project(void *userdata,
          nearest->dist_sq);
 #endif
 
-  if (dist_sq >= nearest->dist_sq)
+  if (dist_sq >= nearest->dist_sq) {
     return;
+  }
 
   /* Decode normals */
   normal_short_to_float_v3(vtri_no[0], vtri[0]->no);
@@ -1133,8 +1145,8 @@ static void shrinkwrap_calc_nearest_surface_point_cb_ex(void *__restrict userdat
 
   /* Use local proximity heuristics (to reduce the nearest search)
    *
-   * If we already had an hit before.. we assume this vertex is going to have a close hit to that other vertex
-   * so we can initiate the "nearest.dist" with the expected value to that last hit.
+   * If we already had an hit before.. we assume this vertex is going to have a close hit to that
+   * other vertex so we can initiate the "nearest.dist" with the expected value to that last hit.
    * This will lead in pruning of the search tree. */
   if (nearest->index != -1) {
     if (calc->smd->shrinkType == MOD_SHRINKWRAP_TARGET_PROJECT) {
@@ -1146,8 +1158,9 @@ static void shrinkwrap_calc_nearest_surface_point_cb_ex(void *__restrict userdat
       nearest->dist_sq = len_squared_v3v3(tmp_co, nearest->co);
     }
   }
-  else
+  else {
     nearest->dist_sq = FLT_MAX;
+  }
 
   BKE_shrinkwrap_find_nearest_surface(data->tree, nearest, tmp_co, calc->smd->shrinkType);
 
@@ -1375,10 +1388,12 @@ void shrinkwrapModifier_deform(ShrinkwrapModifierData *smd,
   ShrinkwrapCalcData calc = NULL_ShrinkwrapCalcData;
 
   /* remove loop dependencies on derived meshes (TODO should this be done elsewhere?) */
-  if (smd->target == ob)
+  if (smd->target == ob) {
     smd->target = NULL;
-  if (smd->auxTarget == ob)
+  }
+  if (smd->auxTarget == ob) {
     smd->auxTarget = NULL;
+  }
 
   /* Configure Shrinkwrap calc data */
   calc.smd = smd;
@@ -1461,6 +1476,7 @@ void shrinkwrapModifier_deform(ShrinkwrapModifierData *smd,
   }
 
   /* free memory */
-  if (ss_mesh)
+  if (ss_mesh) {
     ss_mesh->release(ss_mesh);
+  }
 }

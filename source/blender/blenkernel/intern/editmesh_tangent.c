@@ -276,7 +276,8 @@ static void emDM_calc_loop_tangents_thread(TaskPool *__restrict UNUSED(pool),
 /**
  * \see #BKE_mesh_calc_loop_tangent, same logic but used arrays instead of #BMesh data.
  *
- * \note This function is not so normal, its using `bm->ldata` as input, but output's to `dm->loopData`.
+ * \note This function is not so normal, its using `bm->ldata` as input,
+ * but output's to `dm->loopData`.
  * This is done because #CD_TANGENT is cache data used only for drawing.
  */
 void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
@@ -322,15 +323,18 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
       }
     }
     if ((tangent_mask & DM_TANGENT_MASK_ORCO) &&
-        CustomData_get_named_layer_index(loopdata_out, CD_TANGENT, "") == -1)
+        CustomData_get_named_layer_index(loopdata_out, CD_TANGENT, "") == -1) {
       CustomData_add_layer_named(
           loopdata_out, CD_TANGENT, CD_CALLOC, NULL, (int)loopdata_out_len, "");
-    if (calc_act && act_uv_name[0])
+    }
+    if (calc_act && act_uv_name[0]) {
       BKE_mesh_add_loop_tangent_named_layer_for_uv(
           &bm->ldata, loopdata_out, (int)loopdata_out_len, act_uv_name);
-    if (calc_ren && ren_uv_name[0])
+    }
+    if (calc_ren && ren_uv_name[0]) {
       BKE_mesh_add_loop_tangent_named_layer_for_uv(
           &bm->ldata, loopdata_out, (int)loopdata_out_len, ren_uv_name);
+    }
     int totface = em->tottri;
 #ifdef USE_LOOPTRI_DETECT_QUADS
     int num_face_as_quad_map;
@@ -379,9 +383,8 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
         mesh2tangent->num_face_as_quad_map = num_face_as_quad_map;
 #endif
         mesh2tangent->precomputedFaceNormals = poly_normals;
-        /* Note, we assume we do have tessellated loop normals at this point (in case it is object-enabled),
-         * have to check this is valid...
-         */
+        /* Note, we assume we do have tessellated loop normals at this point
+         * (in case it is object-enabled), have to check this is valid. */
         mesh2tangent->precomputedLoopNormals = loop_normals;
         mesh2tangent->cd_loop_uv_offset = CustomData_get_n_offset(&bm->ldata, CD_MLOOPUV, n);
 
@@ -389,8 +392,9 @@ void BKE_editmesh_loop_tangent_calc(BMEditMesh *em,
         int htype_index = BM_LOOP;
         if (mesh2tangent->cd_loop_uv_offset == -1) {
           mesh2tangent->orco = vert_orco;
-          if (!mesh2tangent->orco)
+          if (!mesh2tangent->orco) {
             continue;
+          }
           /* needed for orco lookups */
           htype_index |= BM_VERT;
           tangent_mask_curr |= DM_TANGENT_MASK_ORCO;

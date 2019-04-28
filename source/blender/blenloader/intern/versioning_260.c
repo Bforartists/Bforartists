@@ -67,6 +67,7 @@
 
 #include "IMB_imbuf.h"  // for proxy / timecode versioning stuff
 
+#include "NOD_common.h"
 #include "NOD_texture.h"
 
 #include "BLO_readfile.h"
@@ -106,7 +107,8 @@ static void do_versions_nodetree_convert_angle(bNodeTree *ntree)
     else if (node->type == CMP_NODE_DEFOCUS) {
       /* Convert degrees to radians. */
       NodeDefocus *nqd = node->storage;
-      /* XXX DNA char to float conversion seems to map the char value into the [0.0f, 1.0f] range... */
+      /* XXX DNA char to float conversion seems to map the char value
+       * into the [0.0f, 1.0f] range. */
       nqd->rotation = DEG2RADF(nqd->rotation * 255.0f);
     }
     else if (node->type == CMP_NODE_CHROMA_MATTE) {
@@ -118,7 +120,8 @@ static void do_versions_nodetree_convert_angle(bNodeTree *ntree)
     else if (node->type == CMP_NODE_GLARE) {
       /* Convert degrees to radians. */
       NodeGlare *ndg = node->storage;
-      /* XXX DNA char to float conversion seems to map the char value into the [0.0f, 1.0f] range... */
+      /* XXX DNA char to float conversion seems to map the char value
+       * into the [0.0f, 1.0f] range. */
       ndg->angle_ofs = DEG2RADF(ndg->angle_ofs * 255.0f);
     }
     /* XXX TexMapping struct is used by other nodes too (at least node_composite_mapValue),
@@ -203,15 +206,19 @@ static void do_versions_nodetree_socket_use_flags_2_62(bNodeTree *ntree)
   bNodeLink *link;
 
   for (node = ntree->nodes.first; node; node = node->next) {
-    for (sock = node->inputs.first; sock; sock = sock->next)
+    for (sock = node->inputs.first; sock; sock = sock->next) {
       sock->flag &= ~SOCK_IN_USE;
-    for (sock = node->outputs.first; sock; sock = sock->next)
+    }
+    for (sock = node->outputs.first; sock; sock = sock->next) {
       sock->flag &= ~SOCK_IN_USE;
+    }
   }
-  for (sock = ntree->inputs.first; sock; sock = sock->next)
+  for (sock = ntree->inputs.first; sock; sock = sock->next) {
     sock->flag &= ~SOCK_IN_USE;
-  for (sock = ntree->outputs.first; sock; sock = sock->next)
+  }
+  for (sock = ntree->outputs.first; sock; sock = sock->next) {
     sock->flag &= ~SOCK_IN_USE;
+  }
 
   for (link = ntree->links.first; link; link = link->next) {
     link->fromsock->flag |= SOCK_IN_USE;
@@ -233,7 +240,8 @@ static void do_versions_nodetree_multi_file_output_format_2_62_1(Scene *sce, bNo
       bNodeSocket *sock;
       char filename[FILE_MAXFILE];
 
-      /* ugly, need to remove the old inputs list to avoid bad pointer checks when adding new sockets.
+      /* ugly, need to remove the old inputs list to avoid bad pointer
+       * checks when adding new sockets.
        * sock->storage is expected to contain path info in ntreeCompositOutputFileAddSocket.
        */
       BLI_listbase_clear(&node->inputs);
@@ -293,8 +301,9 @@ static void do_versions_nodetree_multi_file_output_format_2_62_1(Scene *sce, bNo
 
       nodeRemoveSocket(ntree, node, old_image);
       nodeRemoveSocket(ntree, node, old_z);
-      if (old_data)
+      if (old_data) {
         MEM_freeN(old_data);
+      }
     }
     else if (node->type == CMP_NODE_OUTPUT_MULTI_FILE__DEPRECATED) {
       NodeImageMultiFile *nimf = node->storage;
@@ -304,8 +313,9 @@ static void do_versions_nodetree_multi_file_output_format_2_62_1(Scene *sce, bNo
       node->type = CMP_NODE_OUTPUT_FILE;
 
       /* initialize the node-wide image format from render data, if available */
-      if (sce)
+      if (sce) {
         nimf->format = sce->r.im_format;
+      }
 
       /* transfer render format toggle to node format toggle */
       for (sock = node->inputs.first; sock; sock = sock->next) {
@@ -457,7 +467,8 @@ static const char *node_get_static_idname(int type, int treetype)
   case ID: \
     return #Category #StructName;
 
-  /* XXX hack, group types share a single static integer identifier, but are registered as separate types */
+  /* XXX hack, group types share a single static integer identifier,
+   * but are registered as separate types */
   if (type == NODE_GROUP) {
     switch (treetype) {
       case NTREE_COMPOSIT:
@@ -539,16 +550,20 @@ static void do_versions_nodetree_customnodes(bNodeTree *ntree, int UNUSED(is_gro
       node->flag |= NODE_INIT;
 
       /* sockets idname */
-      for (sock = node->inputs.first; sock; sock = sock->next)
+      for (sock = node->inputs.first; sock; sock = sock->next) {
         BLI_strncpy(sock->idname, node_socket_get_static_idname(sock), sizeof(sock->idname));
-      for (sock = node->outputs.first; sock; sock = sock->next)
+      }
+      for (sock = node->outputs.first; sock; sock = sock->next) {
         BLI_strncpy(sock->idname, node_socket_get_static_idname(sock), sizeof(sock->idname));
+      }
     }
     /* tree sockets idname */
-    for (sock = ntree->inputs.first; sock; sock = sock->next)
+    for (sock = ntree->inputs.first; sock; sock = sock->next) {
       BLI_strncpy(sock->idname, node_socket_get_static_idname(sock), sizeof(sock->idname));
-    for (sock = ntree->outputs.first; sock; sock = sock->next)
+    }
+    for (sock = ntree->outputs.first; sock; sock = sock->next) {
       BLI_strncpy(sock->idname, node_socket_get_static_idname(sock), sizeof(sock->idname));
+    }
   }
 
   /* initialize socket in_out values */
@@ -557,15 +572,19 @@ static void do_versions_nodetree_customnodes(bNodeTree *ntree, int UNUSED(is_gro
     bNodeSocket *sock;
 
     for (node = ntree->nodes.first; node; node = node->next) {
-      for (sock = node->inputs.first; sock; sock = sock->next)
+      for (sock = node->inputs.first; sock; sock = sock->next) {
         sock->in_out = SOCK_IN;
-      for (sock = node->outputs.first; sock; sock = sock->next)
+      }
+      for (sock = node->outputs.first; sock; sock = sock->next) {
         sock->in_out = SOCK_OUT;
+      }
     }
-    for (sock = ntree->inputs.first; sock; sock = sock->next)
+    for (sock = ntree->inputs.first; sock; sock = sock->next) {
       sock->in_out = SOCK_IN;
-    for (sock = ntree->outputs.first; sock; sock = sock->next)
+    }
+    for (sock = ntree->outputs.first; sock; sock = sock->next) {
       sock->in_out = SOCK_OUT;
+    }
   }
 
   /* initialize socket identifier strings */
@@ -625,15 +644,18 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
         /* there are files with invalid audio_channels value, the real cause
          * is unknown, but we fix it here anyway to avoid crashes */
-        if (sce->r.ffcodecdata.audio_channels == 0)
+        if (sce->r.ffcodecdata.audio_channels == 0) {
           sce->r.ffcodecdata.audio_channels = 2;
+        }
 
-        if (sce->nodetree)
+        if (sce->nodetree) {
           do_versions_nodetree_image_default_alpha_output(sce->nodetree);
+        }
       }
 
-      for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next)
+      for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
         do_versions_nodetree_image_default_alpha_output(ntree);
+      }
     }
 
     {
@@ -644,8 +666,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         if (ELEM(part->ren_as, PART_DRAW_OB, PART_DRAW_GR)) {
           part->draw |= PART_DRAW_ROTATE_OB;
 
-          if (part->rotmode == 0)
+          if (part->rotmode == 0) {
             part->rotmode = PART_ROT_VEL;
+          }
         }
       }
     }
@@ -661,11 +684,13 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     {
       Camera *cam;
       for (cam = bmain->cameras.first; cam; cam = cam->id.next) {
-        if (cam->sensor_x < 0.01f)
+        if (cam->sensor_x < 0.01f) {
           cam->sensor_x = DEFAULT_SENSOR_WIDTH;
+        }
 
-        if (cam->sensor_y < 0.01f)
+        if (cam->sensor_y < 0.01f) {
           cam->sensor_y = DEFAULT_SENSOR_HEIGHT;
+        }
       }
     }
   }
@@ -697,17 +722,20 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       bNodeTree *ntree;
 
       for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
-        if (sce->nodetree)
+        if (sce->nodetree) {
           do_versions_nodetree_convert_angle(sce->nodetree);
+        }
       }
 
       for (mat = bmain->materials.first; mat; mat = mat->id.next) {
-        if (mat->nodetree)
+        if (mat->nodetree) {
           do_versions_nodetree_convert_angle(mat->nodetree);
+        }
       }
 
-      for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next)
+      for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
         do_versions_nodetree_convert_angle(ntree);
+      }
     }
 
     {
@@ -727,13 +755,15 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
                 v3d->flag2 |= V3D_SHOW_RECONSTRUCTION;
               }
 
-              if (v3d->bundle_drawtype == 0)
+              if (v3d->bundle_drawtype == 0) {
                 v3d->bundle_drawtype = OB_PLAINAXES;
+              }
             }
             else if (sl->spacetype == SPACE_CLIP) {
               SpaceClip *sclip = (SpaceClip *)sl;
-              if (sclip->scopes.track_preview_height == 0)
+              if (sclip->scopes.track_preview_height == 0) {
                 sclip->scopes.track_preview_height = 120;
+              }
             }
           }
         }
@@ -750,19 +780,23 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         clip->proxy.build_tc_flag = IMB_TC_RECORD_RUN | IMB_TC_FREE_RUN |
                                     IMB_TC_INTERPOLATED_REC_DATE_FREE_RUN;
 
-        if (clip->proxy.build_size_flag == 0)
+        if (clip->proxy.build_size_flag == 0) {
           clip->proxy.build_size_flag = IMB_PROXY_25;
+        }
 
-        if (clip->proxy.quality == 0)
+        if (clip->proxy.quality == 0) {
           clip->proxy.quality = 90;
+        }
 
-        if (clip->tracking.camera.pixel_aspect < 0.01f)
+        if (clip->tracking.camera.pixel_aspect < 0.01f) {
           clip->tracking.camera.pixel_aspect = 1.0f;
+        }
 
         track = clip->tracking.tracks.first;
         while (track) {
-          if (track->minimum_correlation == 0.0f)
+          if (track->minimum_correlation == 0.0f) {
             track->minimum_correlation = 0.75f;
+          }
 
           track = track->next;
         }
@@ -824,8 +858,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     Brush *brush;
 
     for (brush = bmain->brushes.first; brush; brush = brush->id.next) {
-      if (brush->sculpt_tool == SCULPT_TOOL_ROTATE)
+      if (brush->sculpt_tool == SCULPT_TOOL_ROTATE) {
         brush->alpha = 1.0f;
+      }
     }
   }
 
@@ -839,28 +874,33 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       bNodeTree *ntree;
 
       for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
-        if (sce->nodetree)
+        if (sce->nodetree) {
           do_versions_nodetree_socket_use_flags_2_62(sce->nodetree);
+        }
       }
 
       for (mat = bmain->materials.first; mat; mat = mat->id.next) {
-        if (mat->nodetree)
+        if (mat->nodetree) {
           do_versions_nodetree_socket_use_flags_2_62(mat->nodetree);
+        }
       }
 
       for (tex = bmain->textures.first; tex; tex = tex->id.next) {
-        if (tex->nodetree)
+        if (tex->nodetree) {
           do_versions_nodetree_socket_use_flags_2_62(tex->nodetree);
+        }
       }
 
       for (Light *la = bmain->lights.first; la; la = la->id.next) {
-        if (la->nodetree)
+        if (la->nodetree) {
           do_versions_nodetree_socket_use_flags_2_62(la->nodetree);
+        }
       }
 
       for (world = bmain->worlds.first; world; world = world->id.next) {
-        if (world->nodetree)
+        if (world->nodetree) {
           do_versions_nodetree_socket_use_flags_2_62(world->nodetree);
+        }
       }
 
       for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
@@ -877,15 +917,18 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
         clip->proxy.build_tc_flag |= IMB_TC_RECORD_RUN_NO_GAPS;
 
-        if (!tracking->settings.object_distance)
+        if (!tracking->settings.object_distance) {
           tracking->settings.object_distance = 1.0f;
+        }
 
-        if (BLI_listbase_is_empty(&tracking->objects))
+        if (BLI_listbase_is_empty(&tracking->objects)) {
           BKE_tracking_object_add(tracking, "Camera");
+        }
 
         while (tracking_object) {
-          if (!tracking_object->scale)
+          if (!tracking_object->scale) {
             tracking_object->scale = 1.0f;
+          }
 
           tracking_object = tracking_object->next;
         }
@@ -897,8 +940,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
           if (con->type == CONSTRAINT_TYPE_OBJECTSOLVER) {
             bObjectSolverConstraint *data = (bObjectSolverConstraint *)con->data;
 
-            if (data->invmat[3][3] == 0.0f)
+            if (data->invmat[3][3] == 0.0f) {
               unit_m4(data->invmat);
+            }
           }
         }
       }
@@ -934,8 +978,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
             tl->len += added;
 
             /* reset cursor position if line was changed */
-            if (added && tl == text->curl)
+            if (added && tl == text->curl) {
               text->curc = 0;
+            }
           }
         }
       }
@@ -971,8 +1016,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (md = ob->modifiers.first; md; md = md->next) {
         if (md->type == eModifierType_Cloth) {
           ClothModifierData *clmd = (ClothModifierData *)md;
-          if (clmd->sim_parms)
+          if (clmd->sim_parms) {
             clmd->sim_parms->vel_damping = 1.0f;
+          }
         }
       }
     }
@@ -988,8 +1034,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (md = ob->modifiers.first; md; md = md->next) {
         if (md->type == eModifierType_Fluidsim) {
           FluidsimModifierData *fmd = (FluidsimModifierData *)md;
-          if (fmd->fss->animRate == 0.0f)
+          if (fmd->fss->animRate == 0.0f) {
             fmd->fss->animRate = 1.0f;
+          }
         }
       }
     }
@@ -1001,13 +1048,15 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     bNodeTree *ntree;
 
     for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
-      if (sce->nodetree)
+      if (sce->nodetree) {
         do_versions_nodetree_multi_file_output_format_2_62_1(sce, sce->nodetree);
+      }
     }
 
     /* XXX can't associate with scene for group nodes, image format will stay uninitialized */
-    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next)
+    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
       do_versions_nodetree_multi_file_output_format_2_62_1(NULL, ntree);
+    }
   }
 
   /* only swap for pre-release bmesh merge which had MLoopCol red/blue swap */
@@ -1026,8 +1075,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
       KeyingSet *ks;
       for (ks = scene->keyingsets.first; ks; ks = ks->next) {
-        if (!ks->idname[0])
+        if (!ks->idname[0]) {
           BLI_strncpy(ks->idname, ks->name, sizeof(ks->idname));
+        }
       }
     }
   }
@@ -1081,11 +1131,14 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     Scene *sce;
     bNodeTree *ntree;
 
-    for (sce = bmain->scenes.first; sce; sce = sce->id.next)
-      if (sce->nodetree)
+    for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
+      if (sce->nodetree) {
         do_versions_nodetree_multi_file_output_path_2_63_1(sce->nodetree);
-    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next)
+      }
+    }
+    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
       do_versions_nodetree_multi_file_output_path_2_63_1(ntree);
+    }
   }
 
   if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 3)) {
@@ -1190,28 +1243,39 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     World *world;
     bNodeTree *ntree;
 
-    for (sce = bmain->scenes.first; sce; sce = sce->id.next)
-      if (sce->nodetree)
+    for (sce = bmain->scenes.first; sce; sce = sce->id.next) {
+      if (sce->nodetree) {
         do_versions_nodetree_frame_2_64_6(sce->nodetree);
+      }
+    }
 
-    for (mat = bmain->materials.first; mat; mat = mat->id.next)
-      if (mat->nodetree)
+    for (mat = bmain->materials.first; mat; mat = mat->id.next) {
+      if (mat->nodetree) {
         do_versions_nodetree_frame_2_64_6(mat->nodetree);
+      }
+    }
 
-    for (tex = bmain->textures.first; tex; tex = tex->id.next)
-      if (tex->nodetree)
+    for (tex = bmain->textures.first; tex; tex = tex->id.next) {
+      if (tex->nodetree) {
         do_versions_nodetree_frame_2_64_6(tex->nodetree);
+      }
+    }
 
-    for (Light *la = bmain->lights.first; la; la = la->id.next)
-      if (la->nodetree)
+    for (Light *la = bmain->lights.first; la; la = la->id.next) {
+      if (la->nodetree) {
         do_versions_nodetree_frame_2_64_6(la->nodetree);
+      }
+    }
 
-    for (world = bmain->worlds.first; world; world = world->id.next)
-      if (world->nodetree)
+    for (world = bmain->worlds.first; world; world = world->id.next) {
+      if (world->nodetree) {
         do_versions_nodetree_frame_2_64_6(world->nodetree);
+      }
+    }
 
-    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next)
+    for (ntree = bmain->nodetrees.first; ntree; ntree = ntree->id.next) {
       do_versions_nodetree_frame_2_64_6(ntree);
+    }
   }
 
   if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 7)) {
@@ -1362,10 +1426,13 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     FOREACH_NODETREE_END;
 
     /* keep compatibility for dupliobject particle size */
-    for (part = bmain->particles.first; part; part = part->id.next)
-      if (ELEM(part->ren_as, PART_DRAW_OB, PART_DRAW_GR))
-        if ((part->draw & PART_DRAW_ROTATE_OB) == 0)
+    for (part = bmain->particles.first; part; part = part->id.next) {
+      if (ELEM(part->ren_as, PART_DRAW_OB, PART_DRAW_GR)) {
+        if ((part->draw & PART_DRAW_ROTATE_OB) == 0) {
           part->draw |= PART_DRAW_NO_SCALE_OB;
+        }
+      }
+    }
   }
 
   if (bmain->versionfile < 263 || (bmain->versionfile == 263 && bmain->subversionfile < 17)) {
@@ -1450,13 +1517,12 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         ima->flag |= IMA_VIEW_AS_RENDER;
       }
       else if (colormanagement_disabled) {
-        /* if colormanagement not used, set image's color space to raw, so no sRGB->linear conversion
-         * would happen on display and render
-         * there's no clear way to check whether color management is enabled or not in render engine
-         * so set all images to raw if there's at least one scene with color management disabled
-         * this would still behave incorrect in cases when color management was used for only some
-         * of scenes, but such a setup is crazy anyway and think it's fair enough to break compatibility
-         * in that cases
+        /* if color-management not used, set image's color space to raw, so no sRGB->linear
+         * conversion would happen on display and render there's no clear way to check whether
+         * color management is enabled or not in render engine so set all images to raw if there's
+         * at least one scene with color management disabled this would still behave incorrect in
+         * cases when color management was used for only some of scenes, but such a setup is
+         * crazy anyway and think it's fair enough to break compatibility in that cases.
          */
 
         BLI_strncpy(ima->colorspace_settings.name, "Raw", sizeof(ima->colorspace_settings.name));
@@ -1501,9 +1567,11 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
       if (ntree->type == NTREE_SHADER) {
         bNode *node;
-        for (node = ntree->nodes.first; node; node = node->next)
-          if (node->type == SH_NODE_TEX_COORD)
+        for (node = ntree->nodes.first; node; node = node->next) {
+          if (node->type == SH_NODE_TEX_COORD) {
             node->flag |= NODE_OPTIONS;
+          }
+        }
       }
     }
     FOREACH_NODETREE_END;
@@ -1721,8 +1789,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
       SEQ_END;
 
-      if (scene->r.bake_samples == 0)
+      if (scene->r.bake_samples == 0) {
         scene->r.bake_samples = 256;
+      }
     }
 
     for (Image *image = bmain->images.first; image; image = image->id.next) {
@@ -1738,8 +1807,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       if (tex->type == TEX_IMAGE && (tex->imaflag & TEX_USEALPHA) == 0) {
         Image *image = blo_do_versions_newlibadr(fd, tex->id.lib, tex->ima);
 
-        if (image && (image->flag & IMA_DO_PREMUL) == 0)
+        if (image && (image->flag & IMA_DO_PREMUL) == 0) {
           image->flag |= IMA_IGNORE_ALPHA;
+        }
       }
     }
 
@@ -1751,8 +1821,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
             Image *image = blo_do_versions_newlibadr(fd, ntree->id.lib, node->id);
 
             if (image) {
-              if ((image->flag & IMA_DO_PREMUL) == 0 && image->alpha_mode == IMA_ALPHA_STRAIGHT)
+              if ((image->flag & IMA_DO_PREMUL) == 0 && image->alpha_mode == IMA_ALPHA_STRAIGHT) {
                 node->custom1 |= CMP_NODE_IMAGE_USE_STRAIGHT_OUTPUT;
+              }
             }
           }
         }
@@ -1765,9 +1836,11 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
      * for compatibility all textures assumed it to be enabled */
     Tex *tex;
 
-    for (tex = bmain->textures.first; tex; tex = tex->id.next)
-      if (tex->type == TEX_IMAGE)
+    for (tex = bmain->textures.first; tex; tex = tex->id.next) {
+      if (tex->type == TEX_IMAGE) {
         tex->imaflag |= TEX_USEALPHA;
+      }
+    }
   }
 
   if (bmain->versionfile < 265 || (bmain->versionfile == 265 && bmain->subversionfile < 7)) {
@@ -1877,26 +1950,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
-  /* Set flag for delayed do_versions in lib_verify_nodetree. It needs valid typeinfo pointers ... */
-  {
-    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
-      /* XXX This should be kept without version check for now!
-       * As long as USE_NODE_COMPAT_CUSTOMNODES is active, files will write links
-       * to tree interface sockets for forward compatibility. These links need to be removed again
-       * on file load in new versions.
-       * Once forward compatibility is not required any longer, make a subversion bump
-       * and only execute this for older versions.
-       */
-      ntree->flag |= NTREE_DO_VERSIONS_CUSTOMNODES_GROUP;
-
-      /* Only add interface nodes once.
-       * In old Blender versions they will be removed automatically due to undefined type */
-      if (MAIN_VERSION_OLDER(bmain, 266, 2))
-        ntree->flag |= NTREE_DO_VERSIONS_CUSTOMNODES_GROUP_CREATE_INTERFACE;
-    }
-    FOREACH_NODETREE_END;
-  }
-
   if (MAIN_VERSION_OLDER(bmain, 266, 3)) {
     {
       /* Fix for a very old issue:
@@ -1907,11 +1960,13 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
        */
       bNode *node;
       FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
-        if (id == &ntree->id)
+        if (id == &ntree->id) {
           continue; /* already fixed for node groups */
+        }
 
-        for (node = ntree->nodes.first; node; node = node->next)
+        for (node = ntree->nodes.first; node; node = node->next) {
           nodeUniqueName(ntree, node);
+        }
       }
       FOREACH_NODETREE_END;
     }
@@ -1934,8 +1989,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
     for (brush = bmain->brushes.first; brush; brush = brush->id.next) {
       brush->overlay_flags = 0;
-      if (brush->flag & BRUSH_TEXTURE_OVERLAY)
+      if (brush->flag & BRUSH_TEXTURE_OVERLAY) {
         brush->overlay_flags |= (BRUSH_OVERLAY_PRIMARY | BRUSH_OVERLAY_CURSOR);
+      }
     }
 #undef BRUSH_TEXTURE_OVERLAY
   }
@@ -1979,8 +2035,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         sce->r.unit_line_thickness = 1.0f;
       }
       for (srl = sce->r.layers.first; srl; srl = srl->next) {
-        if (srl->freestyleConfig.mode == 0)
+        if (srl->freestyleConfig.mode == 0) {
           srl->freestyleConfig.mode = FREESTYLE_CONTROL_EDITOR_MODE;
+        }
         if (srl->freestyleConfig.raycasting_algorithm ==
                 FREESTYLE_ALGO_CULLED_ADAPTIVE_CUMULATIVE ||
             srl->freestyleConfig.raycasting_algorithm ==
@@ -2020,10 +2077,12 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         linestyle->thickness_position = LS_THICKNESS_CENTER;
         linestyle->thickness_ratio = 0.5f;
       }
-      if (linestyle->chaining == 0)
+      if (linestyle->chaining == 0) {
         linestyle->chaining = LS_CHAINING_PLAIN;
-      if (linestyle->rounds == 0)
+      }
+      if (linestyle->rounds == 0) {
         linestyle->rounds = 3;
+      }
     }
   }
 
@@ -2041,24 +2100,28 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
           if (sl->spacetype == SPACE_NODE) {
             SpaceNode *snode = (SpaceNode *)sl;
             bNodeTreePath *path = snode->treepath.last;
-            if (!path)
+            if (!path) {
               continue;
+            }
 
             active_viewer_key = path->parent_key;
             break;
           }
         }
-        if (active_viewer_key.value != 0)
+        if (active_viewer_key.value != 0) {
           break;
+        }
       }
-      if (active_viewer_key.value != 0)
+      if (active_viewer_key.value != 0) {
         break;
+      }
     }
 
     for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
       /* NB: scene->nodetree is a local ID block, has been direct_link'ed */
-      if (scene->nodetree)
+      if (scene->nodetree) {
         scene->nodetree->active_viewer_key = active_viewer_key;
+      }
     }
   }
 
@@ -2096,12 +2159,15 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     for (brush = bmain->brushes.first; brush; brush = brush->id.next) {
       brush->flag &= ~BRUSH_FIXED;
 
-      if (brush->cursor_overlay_alpha < 2)
+      if (brush->cursor_overlay_alpha < 2) {
         brush->cursor_overlay_alpha = 33;
-      if (brush->texture_overlay_alpha < 2)
+      }
+      if (brush->texture_overlay_alpha < 2) {
         brush->texture_overlay_alpha = 33;
-      if (brush->mask_overlay_alpha < 2)
+      }
+      if (brush->mask_overlay_alpha < 2) {
         brush->mask_overlay_alpha = 33;
+      }
     }
 #undef BRUSH_FIXED
   }
@@ -2115,12 +2181,15 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (con = ob->constraints.first; con; con = con->next) {
         if (con->type == CONSTRAINT_TYPE_SHRINKWRAP) {
           bShrinkwrapConstraint *data = (bShrinkwrapConstraint *)con->data;
-          if (data->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_X_AXIS)
+          if (data->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_X_AXIS) {
             data->projAxis = OB_POSX;
-          else if (data->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Y_AXIS)
+          }
+          else if (data->projAxis & MOD_SHRINKWRAP_PROJECT_OVER_Y_AXIS) {
             data->projAxis = OB_POSY;
-          else
+          }
+          else {
             data->projAxis = OB_POSZ;
+          }
           data->projAxisSpace = CONSTRAINT_SPACE_LOCAL;
         }
       }
@@ -2173,15 +2242,17 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         if (sa->spacetype == SPACE_NODE) {
           ar = BKE_area_find_region_type(sa, RGN_TYPE_TOOLS);
 
-          if (ar)
+          if (ar) {
             continue;
+          }
 
           /* add subdiv level; after header */
           ar = BKE_area_find_region_type(sa, RGN_TYPE_HEADER);
 
           /* is error! */
-          if (ar == NULL)
+          if (ar == NULL) {
             continue;
+          }
 
           arnew = MEM_callocN(sizeof(ARegion), "node tools");
 
@@ -2300,12 +2371,14 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
     for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
       /* this can now be turned off */
       ToolSettings *ts = scene->toolsettings;
-      if (ts->sculpt)
+      if (ts->sculpt) {
         ts->sculpt->flags |= SCULPT_DYNTOPO_SUBDIVIDE;
+      }
 
       /* 'Increment' mode disabled for nodes, use true grid snapping instead */
-      if (scene->toolsettings->snap_node_mode == SCE_SNAP_MODE_INCREMENT)
+      if (scene->toolsettings->snap_node_mode == SCE_SNAP_MODE_INCREMENT) {
         scene->toolsettings->snap_node_mode = SCE_SNAP_MODE_GRID;
+      }
 
 #ifdef WITH_FFMPEG
       /* Update for removed "sound-only" option in FFMPEG export settings. */
@@ -2400,14 +2473,18 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         };
         int symmetry_flags = sd->flags & 7;
 
-        if (symmetry_flags & SCULPT_SYMM_X)
+        if (symmetry_flags & SCULPT_SYMM_X) {
           sd->paint.symmetry_flags |= PAINT_SYMM_X;
-        if (symmetry_flags & SCULPT_SYMM_Y)
+        }
+        if (symmetry_flags & SCULPT_SYMM_Y) {
           sd->paint.symmetry_flags |= PAINT_SYMM_Y;
-        if (symmetry_flags & SCULPT_SYMM_Z)
+        }
+        if (symmetry_flags & SCULPT_SYMM_Z) {
           sd->paint.symmetry_flags |= PAINT_SYMM_Z;
-        if (symmetry_flags & SCULPT_SYMMETRY_FEATHER)
+        }
+        if (symmetry_flags & SCULPT_SYMMETRY_FEATHER) {
           sd->paint.symmetry_flags |= PAINT_SYMMETRY_FEATHER;
+        }
       }
     }
   }
@@ -2471,5 +2548,128 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         }
       }
     }
+  }
+}
+
+void do_versions_after_linking_260(Main *bmain)
+{
+  /* Convert the previously used ntree->inputs/ntree->outputs lists to interface nodes.
+   * Pre 2.56.2 node trees automatically have all unlinked sockets exposed already,
+   * see do_versions_after_linking_250.
+   *
+   * This assumes valid typeinfo pointers, as set in lib_link_ntree.
+   *
+   * Note: theoretically only needed in node groups (main->nodetree),
+   * but due to a temporary bug such links could have been added in all trees,
+   * so have to clean up all of them ...
+   *
+   * Note: this always runs, without it links with NULL fromnode and tonode remain
+   * which causes problems.
+   */
+  if (!MAIN_VERSION_ATLEAST(bmain, 266, 3)) {
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      bNode *input_node = NULL, *output_node = NULL;
+      int num_inputs = 0, num_outputs = 0;
+      bNodeLink *link, *next_link;
+      /* Only create new interface nodes for actual older files.
+       * New file versions already have input/output nodes with duplicate links,
+       * in that case just remove the invalid links.
+       */
+      const bool create_io_nodes = MAIN_VERSION_OLDER(bmain, 266, 2);
+
+      float input_locx = 1000000.0f, input_locy = 0.0f;
+      float output_locx = -1000000.0f, output_locy = 0.0f;
+      /* rough guess, not nice but we don't have access to UI constants here ... */
+      static const float offsetx = 42 + 3 * 20 + 20;
+      /*static const float offsety = 0.0f;*/
+
+      if (create_io_nodes) {
+        if (ntree->inputs.first) {
+          input_node = nodeAddStaticNode(NULL, ntree, NODE_GROUP_INPUT);
+        }
+
+        if (ntree->outputs.first) {
+          output_node = nodeAddStaticNode(NULL, ntree, NODE_GROUP_OUTPUT);
+        }
+      }
+
+      /* Redirect links from/to the node tree interface to input/output node.
+       * If the fromnode/tonode pointers are NULL, this means a link from/to
+       * the ntree interface sockets, which need to be redirected to new interface nodes.
+       */
+      for (link = ntree->links.first; link; link = next_link) {
+        bool free_link = false;
+        next_link = link->next;
+
+        if (link->fromnode == NULL) {
+          if (input_node) {
+            link->fromnode = input_node;
+            link->fromsock = node_group_input_find_socket(input_node, link->fromsock->identifier);
+            ++num_inputs;
+
+            if (link->tonode) {
+              if (input_locx > link->tonode->locx - offsetx) {
+                input_locx = link->tonode->locx - offsetx;
+              }
+              input_locy += link->tonode->locy;
+            }
+          }
+          else {
+            free_link = true;
+          }
+        }
+
+        if (link->tonode == NULL) {
+          if (output_node) {
+            link->tonode = output_node;
+            link->tosock = node_group_output_find_socket(output_node, link->tosock->identifier);
+            ++num_outputs;
+
+            if (link->fromnode) {
+              if (output_locx < link->fromnode->locx + offsetx) {
+                output_locx = link->fromnode->locx + offsetx;
+              }
+              output_locy += link->fromnode->locy;
+            }
+          }
+          else {
+            free_link = true;
+          }
+        }
+
+        if (free_link) {
+          nodeRemLink(ntree, link);
+        }
+      }
+
+      if (num_inputs > 0) {
+        input_locy /= num_inputs;
+        input_node->locx = input_locx;
+        input_node->locy = input_locy;
+      }
+      if (num_outputs > 0) {
+        output_locy /= num_outputs;
+        output_node->locx = output_locx;
+        output_node->locy = output_locy;
+      }
+    }
+    FOREACH_NODETREE_END;
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 280, 60)) {
+    /* From this point we no longer write incomplete links for forward
+     * compatibility with 2.66, we have to clean them up for all previous
+     * versions. */
+    FOREACH_NODETREE_BEGIN (bmain, ntree, id) {
+      bNodeLink *link, *next_link;
+
+      for (link = ntree->links.first; link; link = next_link) {
+        next_link = link->next;
+        if (link->fromnode == NULL || link->tonode == NULL) {
+          nodeRemLink(ntree, link);
+        }
+      }
+    }
+    FOREACH_NODETREE_END;
   }
 }

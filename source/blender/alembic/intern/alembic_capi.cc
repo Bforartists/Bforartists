@@ -290,8 +290,9 @@ static void export_endjob(void *customdata)
     BLI_delete(data->filename, false, false);
   }
 
-  if (!data->settings.logger.empty()) {
-    std::cerr << data->settings.logger;
+  std::string log = data->settings.logger.str();
+  if (!log.empty()) {
+    std::cerr << log;
     WM_report(RPT_ERROR, "Errors occurred during the export, look in the console to know more...");
   }
 
@@ -787,8 +788,9 @@ static void import_endjob(void *user_data)
 
       /* It's possible that cancellation occurred between the creation of
        * the reader and the creation of the Blender object. */
-      if (ob == NULL)
+      if (ob == NULL) {
         continue;
+      }
 
       BKE_id_free_us(data->bmain, ob);
     }
