@@ -328,7 +328,13 @@ def draw_tooltip(x, y, text, img):
     y -= 2 * ttipmargin
 
     width = isizex + 2 * ttipmargin
-    x = min(x + width, region.width) - width
+
+    properties_width = 0
+    for r in bpy.context.area.regions:
+        if r.type == 'UI':
+            properties_width = r.width
+
+    x = min(x + width, region.width - properties_width) - width
 
     bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
     textcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
@@ -567,7 +573,7 @@ def draw_callback_2d_search(self, context):
                     # object type icons - just a test..., adds clutter/ not so userfull:
                     # icons = ('type_finished.png', 'type_template.png', 'type_particle_system.png')
 
-                    if not result.get('can_download', True) == True or user_preferences.api_key == '':
+                    if (result.get('can_download', True)) == 0:
                         img = utils.get_thumbnail('locked.png')
                         ui_bgl.draw_image(x + 2, y + 2, 24, 24, img, 1)
 
@@ -577,7 +583,7 @@ def draw_callback_2d_search(self, context):
                         ui_bgl.draw_image(x + ui_props.thumb_size - 26, y + 2, 24, 24, img, 1)
 
             if user_preferences.api_key == '':
-                report = 'Please register on BlenderKit website to use the free content.'
+                report = 'Register on BlenderKit website to upload your own assets.'
                 ui_bgl.draw_text(report, ui_props.bar_x + ui_props.margin,
                                  ui_props.bar_y - 25 - ui_props.margin - ui_props.bar_height, 15)
             elif len(search_results) == 0:
@@ -1419,7 +1425,6 @@ def unregister_ui():
         bpy.utils.unregister_class(c)
 
     args = (None, bpy.context)
-
 
     wm = bpy.context.window_manager
     if not wm.keyconfigs.addon:

@@ -174,20 +174,27 @@ def load_prefs():
             user_preferences.api_key = prefs['API_key']
             user_preferences.global_dir = prefs['global_dir']
 
-
 def save_prefs(self, context):
-    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.api_key != '':
-        prefs = {
-            'API_key': user_preferences.api_key,
-            'global_dir': user_preferences.global_dir,
-        }
-        # user_preferences.api_key = user_preferences.api_key.strip()
-        fpath = paths.BLENDERKIT_SETTINGS_FILENAME
-        f = open(fpath, 'w')
-        with open(fpath, 'w') as s:
-            json.dump(prefs, s)
-
+    # print(type(context),type(bpy.context))
+    if not bpy.app.background and hasattr(bpy.context, 'view_layer'):
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        if user_preferences.api_key != '':
+            if len(user_preferences.api_key)>35:
+                prefs = {
+                    'API_key': user_preferences.api_key,
+                    'global_dir': user_preferences.global_dir,
+                }
+                # user_preferences.api_key = user_preferences.api_key.strip()
+                fpath = paths.BLENDERKIT_SETTINGS_FILENAME
+                f = open(fpath, 'w')
+                with open(fpath, 'w') as s:
+                    json.dump(prefs, s)
+                bpy.ops.wm.save_userpref()
+            else:
+                # reset the api key in case the user writes some nonsense, e.g. a search string instead of the Key
+                user_preferences.api_key = ''
+                props = get_search_props()
+                props.report = 'Please paste a correct API Key.'
 
 def load_categories():
     categories.copy_categories()
@@ -363,6 +370,15 @@ def get_dimensions(obs):
 
 def requests_post_thread(url, json, headers):
     r = requests.post(url, json=json, verify=True, headers=headers)
+
+
+def get_headers(api_key):
+    headers = {
+        "accept": "application/json",
+    }
+    if api_key != '':
+        headers["Authorization"] = "Bearer %s" % api_key
+    return headers
 
 
 # map uv cubic and switch of auto tex space and set it to 1,1,1
