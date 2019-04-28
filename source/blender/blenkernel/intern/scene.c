@@ -225,8 +225,10 @@ void BKE_toolsettings_free(ToolSettings *toolsettings)
 }
 
 /**
- * Only copy internal data of Scene ID from source to already allocated/initialized destination.
- * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
+ * Only copy internal data of Scene ID from source
+ * to already allocated/initialized destination.
+ * You probably never want to use that directly,
+ * use #BKE_id_copy or #BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -355,8 +357,9 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
     sce_copy->eevee.light_cache = NULL;
     sce_copy->eevee.light_cache_info[0] = '\0';
 
-    if (sce->id.properties)
+    if (sce->id.properties) {
       sce_copy->id.properties = IDP_CopyProperty(sce->id.properties);
+    }
 
     MEM_freeN(sce_copy->toolsettings);
     BKE_sound_destroy_scene(sce_copy);
@@ -411,7 +414,7 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
     id_us_min(&sce_copy->id);
     id_us_ensure_real(&sce_copy->id);
 
-    /* Extra actions, most notably SCE_FULL_COPY also duplicates several 'children' datablocks... */
+    /* Extra actions, most notably SCE_FULL_COPY also duplicates several 'children' datablocks. */
 
     if (type == SCE_COPY_FULL) {
       /* Copy Freestyle LineStyle datablocks. */
@@ -455,8 +458,9 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 
 void BKE_scene_groups_relink(Scene *sce)
 {
-  if (sce->rigidbody_world)
+  if (sce->rigidbody_world) {
     BKE_rigidbody_world_groups_relink(sce->rigidbody_world);
+  }
 }
 
 void BKE_scene_make_local(Main *bmain, Scene *sce, const bool lib_local)
@@ -765,7 +769,8 @@ void BKE_scene_init(Scene *sce)
   BLI_rctf_init(&sce->r.safety, 0.1f, 0.9f, 0.1f, 0.9f);
   sce->r.osa = 8;
 
-  /* note; in header_info.c the scene copy happens..., if you add more to renderdata it has to be checked there */
+  /* Note; in header_info.c the scene copy happens...,
+   * if you add more to renderdata it has to be checked there. */
 
   /* multiview - stereo */
   BKE_scene_add_render_view(sce, STEREO_LEFT_NAME);
@@ -1004,7 +1009,8 @@ Object *BKE_scene_object_find_by_name(Scene *scene, const char *name)
 }
 
 /**
- * Sets the active scene, mainly used when running in background mode (``--scene`` command line argument).
+ * Sets the active scene, mainly used when running in background mode
+ * (``--scene`` command line argument).
  * This is also called to set the scene directly, bypassing windowing code.
  * Otherwise #WM_window_set_active_scene is used when changing scenes by the user.
  */
@@ -1016,8 +1022,9 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
   BKE_scene_validate_setscene(bmain, scene);
 
   /* deselect objects (for dataselect) */
-  for (ob = bmain->objects.first; ob; ob = ob->id.next)
+  for (ob = bmain->objects.first; ob; ob = ob->id.next) {
     ob->flag &= ~SELECT;
+  }
 
   /* copy layers and flags from bases to objects */
   for (ViewLayer *view_layer = scene->view_layers.first; view_layer;
@@ -1028,7 +1035,8 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
       BKE_scene_object_base_flag_sync_from_base(base);
     }
   }
-  /* no full animation update, this to enable render code to work (render code calls own animation updates) */
+  /* No full animation update, this to enable render code to work
+   * (render code calls own animation updates). */
 }
 
 /* called from creator_args.c */
@@ -1045,7 +1053,8 @@ Scene *BKE_scene_set_name(Main *bmain, const char *name)
   return NULL;
 }
 
-/* Used by metaballs, return *all* objects (including duplis) existing in the scene (including scene's sets) */
+/* Used by metaballs, return *all* objects (including duplis)
+ * existing in the scene (including scene's sets). */
 int BKE_scene_base_iter_next(
     Depsgraph *depsgraph, SceneBaseIter *iter, Scene **scene, int val, Base **base, Object **ob)
 {
@@ -1204,8 +1213,9 @@ Object *BKE_scene_camera_switch_find(Scene *scene)
         camera = m->camera;
         frame = m->frame;
 
-        if (frame == cfra)
+        if (frame == cfra) {
           break;
+        }
       }
 
       if (m->frame < min_frame) {
@@ -1249,14 +1259,17 @@ char *BKE_scene_find_marker_name(Scene *scene, int frame)
 
   /* search through markers for match */
   for (m1 = markers->first, m2 = markers->last; m1 && m2; m1 = m1->next, m2 = m2->prev) {
-    if (m1->frame == frame)
+    if (m1->frame == frame) {
       return m1->name;
+    }
 
-    if (m1 == m2)
+    if (m1 == m2) {
       break;
+    }
 
-    if (m2->frame == frame)
+    if (m2->frame == frame) {
       return m2->name;
+    }
   }
 
   return NULL;
@@ -1295,11 +1308,13 @@ int BKE_scene_frame_snap_by_seconds(Scene *scene, double interval_in_seconds, in
 void BKE_scene_remove_rigidbody_object(struct Main *bmain, Scene *scene, Object *ob)
 {
   /* remove rigid body constraint from world before removing object */
-  if (ob->rigidbody_constraint)
+  if (ob->rigidbody_constraint) {
     BKE_rigidbody_remove_constraint(scene, ob);
+  }
   /* remove rigid body object from world before removing object */
-  if (ob->rigidbody_object)
+  if (ob->rigidbody_object) {
     BKE_rigidbody_remove_object(bmain, scene, ob);
+  }
 }
 
 /* checks for cycle, returns 1 if it's all OK */
@@ -1308,8 +1323,9 @@ bool BKE_scene_validate_setscene(Main *bmain, Scene *sce)
   Scene *sce_iter;
   int a, totscene;
 
-  if (sce->set == NULL)
+  if (sce->set == NULL) {
     return true;
+  }
   totscene = BLI_listbase_count(&bmain->scenes);
 
   for (a = 0, sce_iter = sce; sce_iter->set; sce_iter = sce_iter->set, a++) {
@@ -1324,8 +1340,10 @@ bool BKE_scene_validate_setscene(Main *bmain, Scene *sce)
   return true;
 }
 
-/* This function is needed to cope with fractional frames - including two Blender rendering features
- * mblur (motion blur that renders 'subframes' and blurs them together), and fields rendering.
+/**
+ * This function is needed to cope with fractional frames - including two Blender rendering
+ * features mblur (motion blur that renders 'subframes' and blurs them together),
+ * and fields rendering.
  */
 float BKE_scene_frame_get(const Scene *scene)
 {
@@ -1575,8 +1593,8 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
 
 /** Ensures given scene/view_layer pair has a valid, up-to-date depsgraph.
  *
- * \warning Sets matching depsgraph as active, so should only be called from the active editing context
- *          (usually, from operators).
+ * \warning Sets matching depsgraph as active,
+ * so should only be called from the active editing context (usually, from operators).
  */
 void BKE_scene_view_layer_graph_evaluated_ensure(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
@@ -1590,8 +1608,9 @@ SceneRenderView *BKE_scene_add_render_view(Scene *sce, const char *name)
 {
   SceneRenderView *srv;
 
-  if (!name)
+  if (!name) {
     name = DATA_("RenderView");
+  }
 
   srv = MEM_callocN(sizeof(SceneRenderView), "new render view");
   BLI_strncpy(srv->name, name, sizeof(srv->name));
@@ -1631,10 +1650,12 @@ bool BKE_scene_remove_render_view(Scene *scene, SceneRenderView *srv)
 int get_render_subsurf_level(const RenderData *r, int lvl, bool for_render)
 {
   if (r->mode & R_SIMPLIFY) {
-    if (for_render)
+    if (for_render) {
       return min_ii(r->simplify_subsurf_render, lvl);
-    else
+    }
+    else {
       return min_ii(r->simplify_subsurf, lvl);
+    }
   }
   else {
     return lvl;
@@ -1644,10 +1665,12 @@ int get_render_subsurf_level(const RenderData *r, int lvl, bool for_render)
 int get_render_child_particle_number(const RenderData *r, int num, bool for_render)
 {
   if (r->mode & R_SIMPLIFY) {
-    if (for_render)
+    if (for_render) {
       return (int)(r->simplify_particles_render * num);
-    else
+    }
+    else {
       return (int)(r->simplify_particles * num);
+    }
   }
   else {
     return num;
@@ -1793,14 +1816,17 @@ int BKE_render_num_threads(const RenderData *rd)
   /* override set from command line? */
   threads = BLI_system_num_threads_override_get();
 
-  if (threads > 0)
+  if (threads > 0) {
     return threads;
+  }
 
   /* fixed number of threads specified in scene? */
-  if (rd->mode & R_FIXED_THREADS)
+  if (rd->mode & R_FIXED_THREADS) {
     threads = rd->threads;
-  else
+  }
+  else {
     threads = BLI_system_thread_count();
+  }
 
   return max_ii(threads, 1);
 }
@@ -1818,8 +1844,9 @@ int BKE_render_preview_pixel_size(const RenderData *r)
   return r->preview_pixel_size;
 }
 
-/* Apply the needed correction factor to value, based on unit_type (only length-related are affected currently)
- * and unit->scale_length.
+/**
+ * Apply the needed correction factor to value, based on unit_type
+ * (only length-related are affected currently) and unit->scale_length.
  */
 double BKE_scene_unit_scale(const UnitSettings *unit, const int unit_type, double value)
 {
@@ -1851,8 +1878,9 @@ int BKE_scene_multiview_num_views_get(const RenderData *rd)
   SceneRenderView *srv;
   int totviews = 0;
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return 1;
+  }
 
   if (rd->views_format == SCE_VIEWS_FORMAT_STEREO_3D) {
     srv = BLI_findstring(&rd->views, STEREO_LEFT_NAME, offsetof(SceneRenderView, name));
@@ -1879,8 +1907,9 @@ bool BKE_scene_multiview_is_stereo3d(const RenderData *rd)
 {
   SceneRenderView *srv[2];
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return false;
+  }
 
   srv[0] = (SceneRenderView *)BLI_findstring(
       &rd->views, STEREO_LEFT_NAME, offsetof(SceneRenderView, name));
@@ -1894,17 +1923,21 @@ bool BKE_scene_multiview_is_stereo3d(const RenderData *rd)
 /* return whether to render this SceneRenderView */
 bool BKE_scene_multiview_is_render_view_active(const RenderData *rd, const SceneRenderView *srv)
 {
-  if (srv == NULL)
+  if (srv == NULL) {
     return false;
+  }
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return false;
+  }
 
-  if ((srv->viewflag & SCE_VIEW_DISABLE))
+  if ((srv->viewflag & SCE_VIEW_DISABLE)) {
     return false;
+  }
 
-  if (rd->views_format == SCE_VIEWS_FORMAT_MULTIVIEW)
+  if (rd->views_format == SCE_VIEWS_FORMAT_MULTIVIEW) {
     return true;
+  }
 
   /* SCE_VIEWS_SETUP_BASIC */
   if (STREQ(srv->name, STEREO_LEFT_NAME) || STREQ(srv->name, STEREO_RIGHT_NAME)) {
@@ -1919,11 +1952,13 @@ bool BKE_scene_multiview_is_render_view_first(const RenderData *rd, const char *
 {
   SceneRenderView *srv;
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return true;
+  }
 
-  if ((!viewname) || (!viewname[0]))
+  if ((!viewname) || (!viewname[0])) {
     return true;
+  }
 
   for (srv = rd->views.first; srv; srv = srv->next) {
     if (BKE_scene_multiview_is_render_view_active(rd, srv)) {
@@ -1939,11 +1974,13 @@ bool BKE_scene_multiview_is_render_view_last(const RenderData *rd, const char *v
 {
   SceneRenderView *srv;
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return true;
+  }
 
-  if ((!viewname) || (!viewname[0]))
+  if ((!viewname) || (!viewname[0])) {
     return true;
+  }
 
   for (srv = rd->views.last; srv; srv = srv->prev) {
     if (BKE_scene_multiview_is_render_view_active(rd, srv)) {
@@ -1959,13 +1996,15 @@ SceneRenderView *BKE_scene_multiview_render_view_findindex(const RenderData *rd,
   SceneRenderView *srv;
   size_t nr;
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return NULL;
+  }
 
   for (srv = rd->views.first, nr = 0; srv; srv = srv->next) {
     if (BKE_scene_multiview_is_render_view_active(rd, srv)) {
-      if (nr++ == view_id)
+      if (nr++ == view_id) {
         return srv;
+      }
     }
   }
   return srv;
@@ -1975,10 +2014,12 @@ const char *BKE_scene_multiview_render_view_name_get(const RenderData *rd, const
 {
   SceneRenderView *srv = BKE_scene_multiview_render_view_findindex(rd, view_id);
 
-  if (srv)
+  if (srv) {
     return srv->name;
-  else
+  }
+  else {
     return "";
+  }
 }
 
 int BKE_scene_multiview_view_id_get(const RenderData *rd, const char *viewname)
@@ -1986,11 +2027,13 @@ int BKE_scene_multiview_view_id_get(const RenderData *rd, const char *viewname)
   SceneRenderView *srv;
   size_t nr;
 
-  if ((!rd) || ((rd->scemode & R_MULTIVIEW) == 0))
+  if ((!rd) || ((rd->scemode & R_MULTIVIEW) == 0)) {
     return 0;
+  }
 
-  if ((!viewname) || (!viewname[0]))
+  if ((!viewname) || (!viewname[0])) {
     return 0;
+  }
 
   for (srv = rd->views.first, nr = 0; srv; srv = srv->next) {
     if (BKE_scene_multiview_is_render_view_active(rd, srv)) {
@@ -2027,10 +2070,12 @@ void BKE_scene_multiview_view_filepath_get(const RenderData *rd,
   char suffix[FILE_MAX];
 
   srv = BLI_findstring(&rd->views, viewname, offsetof(SceneRenderView, name));
-  if (srv)
+  if (srv) {
     BLI_strncpy(suffix, srv->suffix, sizeof(suffix));
-  else
+  }
+  else {
     BLI_strncpy(suffix, viewname, sizeof(suffix));
+  }
 
   BLI_strncpy(r_filepath, filepath, FILE_MAX);
   BLI_path_suffix(r_filepath, FILE_MAX, suffix, "");
@@ -2040,14 +2085,17 @@ const char *BKE_scene_multiview_view_suffix_get(const RenderData *rd, const char
 {
   SceneRenderView *srv;
 
-  if ((viewname == NULL) || (viewname[0] == '\0'))
+  if ((viewname == NULL) || (viewname[0] == '\0')) {
     return viewname;
+  }
 
   srv = BLI_findstring(&rd->views, viewname, offsetof(SceneRenderView, name));
-  if (srv)
+  if (srv) {
     return srv->suffix;
-  else
+  }
+  else {
     return viewname;
+  }
 }
 
 const char *BKE_scene_multiview_view_id_suffix_get(const RenderData *rd, const int view_id)
@@ -2075,8 +2123,9 @@ void BKE_scene_multiview_view_prefix_get(Scene *scene,
 
   /* begin of extension */
   index_act = BLI_str_rpartition(name, delims, rext, &suf_act);
-  if (*rext == NULL)
+  if (*rext == NULL) {
     return;
+  }
   BLI_assert(index_act > 0);
   UNUSED_VARS_NDEBUG(index_act);
 
@@ -2113,11 +2162,13 @@ void BKE_scene_multiview_videos_dimensions_get(const RenderData *rd,
 
 int BKE_scene_multiview_num_videos_get(const RenderData *rd)
 {
-  if (BKE_imtype_is_movie(rd->im_format.imtype) == false)
+  if (BKE_imtype_is_movie(rd->im_format.imtype) == false) {
     return 0;
+  }
 
-  if ((rd->scemode & R_MULTIVIEW) == 0)
+  if ((rd->scemode & R_MULTIVIEW) == 0) {
     return 1;
+  }
 
   if (rd->im_format.views_format == R_IMF_VIEWS_STEREO_3D) {
     return 1;
@@ -2256,7 +2307,8 @@ TransformOrientation *BKE_scene_transform_orientation_find(const Scene *scene, c
 }
 
 /**
- * \return the index that \a orientation has within \a scene's transform-orientation list or -1 if not found.
+ * \return the index that \a orientation has within \a scene's transform-orientation list
+ * or -1 if not found.
  */
 int BKE_scene_transform_orientation_get_index(const Scene *scene,
                                               const TransformOrientation *orientation)

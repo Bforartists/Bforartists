@@ -127,10 +127,12 @@ static bAction *action_create_new(bContext *C, bAction *oldact)
   if (sa->spacetype == SPACE_ACTION) {
     SpaceAction *saction = (SpaceAction *)sa->spacedata.first;
 
-    if (saction->mode == SACTCONT_SHAPEKEY)
+    if (saction->mode == SACTCONT_SHAPEKEY) {
       action->idroot = ID_KE;
-    else
+    }
+    else {
       action->idroot = ID_OB;
+    }
   }
 
   return action;
@@ -170,7 +172,8 @@ static bool action_new_poll(bContext *C)
   Scene *scene = CTX_data_scene(C);
 
   /* Check tweakmode is off (as you don't want to be tampering with the action in that case) */
-  /* NOTE: unlike for pushdown, this operator needs to be run when creating an action from nothing... */
+  /* NOTE: unlike for pushdown,
+   * this operator needs to be run when creating an action from nothing... */
   if (ED_operator_action_active(C)) {
     SpaceAction *saction = (SpaceAction *)CTX_wm_space_data(C);
     Object *ob = CTX_data_active_object(C);
@@ -179,15 +182,17 @@ static bool action_new_poll(bContext *C)
     if (saction->mode == SACTCONT_ACTION) {
       /* XXX: This assumes that actions are assigned to the active object in this mode */
       if (ob) {
-        if ((ob->adt == NULL) || (ob->adt->flag & ADT_NLA_EDIT_ON) == 0)
+        if ((ob->adt == NULL) || (ob->adt->flag & ADT_NLA_EDIT_ON) == 0) {
           return true;
+        }
       }
     }
     else if (saction->mode == SACTCONT_SHAPEKEY) {
       Key *key = BKE_key_from_object(ob);
       if (key) {
-        if ((key->adt == NULL) || (key->adt->flag & ADT_NLA_EDIT_ON) == 0)
+        if ((key->adt == NULL) || (key->adt->flag & ADT_NLA_EDIT_ON) == 0) {
           return true;
+        }
       }
     }
   }
@@ -242,7 +247,10 @@ static int action_new_exec(bContext *C, wmOperator *UNUSED(op))
         }
       }
       else {
-        //printf("WARNING: Failed to stash %s. It may already exist in the NLA stack though\n", oldact->id.name);
+#if 0
+        printf("WARNING: Failed to stash %s. It may already exist in the NLA stack though\n",
+               oldact->id.name);
+#endif
       }
     }
 
@@ -296,8 +304,9 @@ static bool action_pushdown_poll(bContext *C)
       /* NOTE: We check this for the AnimData block in question and not the global flag,
        *       as the global flag may be left dirty by some of the browsing ops here.
        */
-      if (!(adt->flag & ADT_NLA_EDIT_ON))
+      if (!(adt->flag & ADT_NLA_EDIT_ON)) {
         return true;
+      }
     }
   }
 
@@ -426,10 +435,12 @@ static bool action_stash_create_poll(bContext *C)
     AnimData *adt = ED_actedit_animdata_from_context(C);
 
     /* Check tweakmode is off (as you don't want to be tampering with the action in that case) */
-    /* NOTE: unlike for pushdown, this operator needs to be run when creating an action from nothing... */
+    /* NOTE: unlike for pushdown,
+     * this operator needs to be run when creating an action from nothing... */
     if (adt) {
-      if (!(adt->flag & ADT_NLA_EDIT_ON))
+      if (!(adt->flag & ADT_NLA_EDIT_ON)) {
         return true;
+      }
     }
     else {
       /* There may not be any action/animdata yet, so, just fallback to the global setting
@@ -473,7 +484,8 @@ static int action_stash_create_exec(bContext *C, wmOperator *op)
       if (BKE_nla_action_stash(adt)) {
         bAction *new_action = NULL;
 
-        /* create new action not based on the old one (since the "new" operator already does that) */
+        /* Create new action not based on the old one
+         * (since the "new" operator already does that). */
         new_action = action_create_new(C, NULL);
 
         /* The stash operation will remove the user already,
@@ -623,8 +635,9 @@ static bool action_unlink_poll(bContext *C)
     AnimData *adt = ED_actedit_animdata_from_context(C);
 
     /* Only when there's an active action, in the right modes... */
-    if (saction->action && adt)
+    if (saction->action && adt) {
       return true;
+    }
   }
 
   /* something failed... */
@@ -645,7 +658,8 @@ static int action_unlink_exec(bContext *C, wmOperator *op)
 
 static int action_unlink_invoke(bContext *C, wmOperator *op, const wmEvent *evt)
 {
-  /* NOTE: this is hardcoded to match the behavior for the unlink button (in interface_templates.c) */
+  /* NOTE: this is hardcoded to match the behavior for the unlink button
+   * (in interface_templates.c). */
   RNA_boolean_set(op->ptr, "force_delete", evt->shift != 0);
   return action_unlink_exec(C, op);
 }

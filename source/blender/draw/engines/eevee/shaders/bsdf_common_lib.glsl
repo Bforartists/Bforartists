@@ -837,9 +837,16 @@ Closure closure_mix(Closure cl1, Closure cl2, float fac)
 #  ifdef USE_SSS
   cl.sss_data.rgb = mix(cl1.sss_data.rgb, cl2.sss_data.rgb, fac);
   cl.sss_data.a = (cl1.sss_data.a > 0.0) ? cl1.sss_data.a : cl2.sss_data.a;
+
 #    ifdef USE_SSS_ALBEDO
   /* TODO Find a solution to this. Dither? */
   cl.sss_albedo = (cl1.sss_data.a > 0.0) ? cl1.sss_albedo : cl2.sss_albedo;
+  /* Add radiance that was supposed to be filtered but was rejected. */
+  cl.radiance += (cl1.sss_data.a > 0.0) ? cl2.sss_data.rgb * cl2.sss_albedo :
+                                          cl1.sss_data.rgb * cl1.sss_albedo;
+#    else
+  /* Add radiance that was supposed to be filtered but was rejected. */
+  cl.radiance += (cl1.sss_data.a > 0.0) ? cl2.sss_data.rgb : cl1.sss_data.rgb;
 #    endif
 #  endif
 
@@ -870,8 +877,10 @@ Closure closure_emission(vec3 rgb)
   return cl;
 }
 
-#  if defined(MESH_SHADER) && !defined(USE_ALPHA_HASH) && !defined(USE_ALPHA_CLIP) && \
-      !defined(SHADOW_SHADER) && !defined(USE_MULTIPLY)
+/* Breaking this across multiple lines causes issues for some older GLSL compilers. */
+/* clang-format off */
+#  if defined(MESH_SHADER) && !defined(USE_ALPHA_HASH) && !defined(USE_ALPHA_CLIP) && !defined(SHADOW_SHADER) && !defined(USE_MULTIPLY)
+/* clang-format on */
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 ssrNormals;
 layout(location = 2) out vec4 ssrData;
@@ -918,10 +927,19 @@ void main()
 
   /* For Probe capture */
 #    ifdef USE_SSS
+  float fac = float(!sssToggle);
+
+#      ifdef USE_REFRACTION
+  /* SSRefraction pass is done after the SSS pass.
+   * In order to not loose the diffuse light totally we
+   * need to merge the SSS radiance to the main radiance. */
+  fac = 1.0;
+#      endif
+
 #      ifdef USE_SSS_ALBEDO
-  fragColor.rgb += cl.sss_data.rgb * cl.sss_albedo.rgb * float(!sssToggle);
+  fragColor.rgb += cl.sss_data.rgb * cl.sss_albedo.rgb * fac;
 #      else
-  fragColor.rgb += cl.sss_data.rgb * float(!sssToggle);
+  fragColor.rgb += cl.sss_data.rgb * fac;
 #      endif
 #    endif
 }

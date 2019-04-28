@@ -312,16 +312,20 @@ static uint vpaint_blend(const VPaint *vp,
 
     for (a = 0; a < 4; a++) {
       if (ct[a] < co[a]) {
-        if (cp[a] < ct[a])
+        if (cp[a] < ct[a]) {
           cp[a] = ct[a];
-        else if (cp[a] > co[a])
+        }
+        else if (cp[a] > co[a]) {
           cp[a] = co[a];
+        }
       }
       else {
-        if (cp[a] < co[a])
+        if (cp[a] < co[a]) {
           cp[a] = co[a];
-        else if (cp[a] > ct[a])
+        }
+        else if (cp[a] > ct[a]) {
           cp[a] = ct[a];
+        }
       }
     }
   }
@@ -400,12 +404,15 @@ static float wpaint_blend(const VPaint *wp,
 
 static float wpaint_clamp_monotonic(float oldval, float curval, float newval)
 {
-  if (newval < oldval)
+  if (newval < oldval) {
     return MIN2(newval, curval);
-  else if (newval > oldval)
+  }
+  else if (newval > oldval) {
     return MAX2(newval, curval);
-  else
+  }
+  else {
     return newval;
+  }
 }
 
 /* ----------------------------------------------------- */
@@ -553,7 +560,8 @@ static void do_weight_paint_normalize_all_locked_try_active(MDeformVert *dvert,
 
   if (!success) {
     /**
-     * Locks prevented the first pass from full completion, so remove restriction on active group; e.g:
+     * Locks prevented the first pass from full completion,
+     * so remove restriction on active group; e.g:
      *
      * - With 1.0 weight painted into active:
      *   nonzero locked weight; first pass zeroed out unlocked weight; scale 1 down to fit.
@@ -845,15 +853,15 @@ static void do_weight_paint_vertex_single(
               dv_mirr, wpi->defbase_tot, wpi->vgroup_validmap, wpi->lock_flags, wpi->mirror.lock);
         }
         else {
-          /* this case accounts for...
-           * - painting onto a center vertex of a mesh
-           * - x mirror is enabled
-           * - auto normalize is enabled
-           * - the group you are painting onto has a L / R version
+          /* This case accounts for:
+           * - Painting onto a center vertex of a mesh.
+           * - X-mirror is enabled.
+           * - Auto normalize is enabled.
+           * - The group you are painting onto has a L / R version.
            *
            * We want L/R vgroups to have the same weight but this cant be if both are over 0.5,
-           * We _could_ have special check for that, but this would need its own normalize function which
-           * holds 2 groups from changing at once.
+           * We _could_ have special check for that, but this would need its own
+           * normalize function which holds 2 groups from changing at once.
            *
            * So! just balance out the 2 weights, it keeps them equal and everything normalized.
            *
@@ -1289,7 +1297,8 @@ static int wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
     BKE_paint_toolslots_brush_validate(bmain, &ts->wpaint->paint);
   }
 
-  /* When locked, it's almost impossible to select the pose then the object to enter weight paint mode.
+  /* When locked, it's almost impossible to select the pose
+   * then the object to enter weight paint mode.
    * In this case move our pose object in/out of pose mode.
    * This is in fits with the convention of selecting multiple objects and entering a mode. */
   if (scene->toolsettings->object_flag & SCE_OBJECT_MODE_LOCK) {
@@ -1324,12 +1333,15 @@ static int wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
 static bool paint_poll_test(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
-  if (ob == NULL || ob->type != OB_MESH)
+  if (ob == NULL || ob->type != OB_MESH) {
     return 0;
-  if (!ob->data || ID_IS_LINKED(ob->data))
+  }
+  if (!ob->data || ID_IS_LINKED(ob->data)) {
     return 0;
-  if (CTX_data_edit_object(C))
+  }
+  if (CTX_data_edit_object(C)) {
     return 0;
+  }
   return 1;
 }
 
@@ -1397,20 +1409,24 @@ static void vwpaint_update_cache_invariants(
   }
 
   /* Initial mouse location */
-  if (mouse)
+  if (mouse) {
     copy_v2_v2(cache->initial_mouse, mouse);
-  else
+  }
+  else {
     zero_v2(cache->initial_mouse);
+  }
 
   mode = RNA_enum_get(op->ptr, "mode");
   cache->invert = mode == BRUSH_STROKE_INVERT;
   cache->alt_smooth = mode == BRUSH_STROKE_SMOOTH;
   /* not very nice, but with current events system implementation
    * we can't handle brush appearance inversion hotkey separately (sergey) */
-  if (cache->invert)
+  if (cache->invert) {
     ups->draw_inverted = true;
-  else
+  }
+  else {
     ups->draw_inverted = false;
+  }
 
   copy_v2_v2(cache->mouse, cache->initial_mouse);
   /* Truly temporary data that isn't stored in properties */
@@ -1667,8 +1683,9 @@ static void do_wpaint_precompute_weight_cb_ex(void *__restrict userdata,
 static void precompute_weight_values(
     bContext *C, Object *ob, Brush *brush, struct WPaintData *wpd, WeightPaintInfo *wpi, Mesh *me)
 {
-  if (wpd->precomputed_weight_ready && !brush_use_accumulate_ex(brush, ob->mode))
+  if (wpd->precomputed_weight_ready && !brush_use_accumulate_ex(brush, ob->mode)) {
     return;
+  }
 
   /* threaded loop over vertices */
   SculptThreadedTaskData data = {
@@ -1874,8 +1891,9 @@ static void do_wpaint_brush_smear_task_cb_ex(void *__restrict userdata,
               const float final_alpha = brush_fade * brush_strength * grid_alpha *
                                         brush_alpha_pressure;
 
-              if (final_alpha <= 0.0f)
+              if (final_alpha <= 0.0f) {
                 continue;
+              }
 
               do_weight_paint_vertex(
                   data->vp, data->ob, data->wpi, v_index, final_alpha, (float)weight_final);
@@ -2158,8 +2176,9 @@ static void wpaint_do_paint(bContext *C,
 
   wpaint_paint_leaves(C, ob, sd, wp, wpd, wpi, me, nodes, totnode);
 
-  if (nodes)
+  if (nodes) {
     MEM_freeN(nodes);
+  }
 }
 
 static void wpaint_do_radial_symmetry(bContext *C,
@@ -2308,8 +2327,9 @@ static void wpaint_stroke_update_step(bContext *C, struct PaintStroke *stroke, P
     /* previous is not set in the current cache else
      * the partial rect will always grow */
     if (ss->cache) {
-      if (!BLI_rcti_is_empty(&ss->cache->previous_r))
+      if (!BLI_rcti_is_empty(&ss->cache->previous_r)) {
         BLI_rcti_union(&r, &ss->cache->previous_r);
+      }
     }
 
     r.xmin += vc->ar->winrct.xmin - 2;
@@ -2328,18 +2348,24 @@ static void wpaint_stroke_done(const bContext *C, struct PaintStroke *stroke)
   struct WPaintData *wpd = paint_stroke_mode_data(stroke);
 
   if (wpd) {
-    if (wpd->defbase_sel)
+    if (wpd->defbase_sel) {
       MEM_freeN((void *)wpd->defbase_sel);
-    if (wpd->vgroup_validmap)
+    }
+    if (wpd->vgroup_validmap) {
       MEM_freeN((void *)wpd->vgroup_validmap);
-    if (wpd->lock_flags)
+    }
+    if (wpd->lock_flags) {
       MEM_freeN((void *)wpd->lock_flags);
-    if (wpd->active.lock)
+    }
+    if (wpd->active.lock) {
       MEM_freeN((void *)wpd->active.lock);
-    if (wpd->mirror.lock)
+    }
+    if (wpd->mirror.lock) {
       MEM_freeN((void *)wpd->mirror.lock);
-    if (wpd->precomputed_weight)
+    }
+    if (wpd->precomputed_weight) {
       MEM_freeN(wpd->precomputed_weight);
+    }
 
     MEM_freeN(wpd);
   }
@@ -2570,12 +2596,14 @@ static bool vpaint_stroke_test_start(bContext *C, struct wmOperator *op, const f
 
   /* context checks could be a poll() */
   me = BKE_mesh_from_object(ob);
-  if (me == NULL || me->totpoly == 0)
+  if (me == NULL || me->totpoly == 0) {
     return false;
+  }
 
   ED_mesh_color_ensure(me, NULL);
-  if (me->mloopcol == NULL)
+  if (me->mloopcol == NULL) {
     return false;
+  }
 
   /* make mode data storage */
   vpd = MEM_callocN(sizeof(*vpd), "VPaintData");
@@ -3280,12 +3308,15 @@ static void vpaint_stroke_done(const bContext *C, struct PaintStroke *stroke)
     ED_vpaint_proj_handle_free(vpd->vp_handle);
   }
 
-  if (vpd->mlooptag)
+  if (vpd->mlooptag) {
     MEM_freeN(vpd->mlooptag);
-  if (vpd->smear.color_prev)
+  }
+  if (vpd->smear.color_prev) {
     MEM_freeN(vpd->smear.color_prev);
-  if (vpd->smear.color_curr)
+  }
+  if (vpd->smear.color_curr) {
     MEM_freeN(vpd->smear.color_curr);
+  }
 
   WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
 

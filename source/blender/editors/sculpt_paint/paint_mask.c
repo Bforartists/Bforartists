@@ -121,8 +121,9 @@ static void mask_flood_fill_task_cb(void *__restrict userdata,
   BKE_pbvh_vertex_iter_end;
 
   BKE_pbvh_node_mark_redraw(node);
-  if (data->multires)
+  if (data->multires) {
     BKE_pbvh_node_mark_normals_update(node);
+  }
 }
 
 static int mask_flood_fill_exec(bContext *C, wmOperator *op)
@@ -166,13 +167,15 @@ static int mask_flood_fill_exec(bContext *C, wmOperator *op)
 
       0, totnode, &data, mask_flood_fill_task_cb, &settings);
 
-  if (multires)
+  if (multires) {
     multires_mark_as_modified(ob, MULTIRES_COORDS_MODIFIED);
+  }
 
   sculpt_undo_push_end();
 
-  if (nodes)
+  if (nodes) {
     MEM_freeN(nodes);
+  }
 
   ED_region_tag_redraw(ar);
 
@@ -218,18 +221,24 @@ static bool is_effected(float planes[4][4], const float co[3])
 
 static void flip_plane(float out[4], const float in[4], const char symm)
 {
-  if (symm & PAINT_SYMM_X)
+  if (symm & PAINT_SYMM_X) {
     out[0] = -in[0];
-  else
+  }
+  else {
     out[0] = in[0];
-  if (symm & PAINT_SYMM_Y)
+  }
+  if (symm & PAINT_SYMM_Y) {
     out[1] = -in[1];
-  else
+  }
+  else {
     out[1] = in[1];
-  if (symm & PAINT_SYMM_Z)
+  }
+  if (symm & PAINT_SYMM_Z) {
     out[2] = -in[2];
-  else
+  }
+  else {
     out[2] = in[2];
+  }
 
   out[3] = in[3];
 }
@@ -258,8 +267,9 @@ static void mask_box_select_task_cb(void *__restrict userdata,
         sculpt_undo_push_node(data->ob, node, SCULPT_UNDO_MASK);
 
         BKE_pbvh_node_mark_redraw(node);
-        if (data->multires)
+        if (data->multires) {
           BKE_pbvh_node_mark_normals_update(node);
+        }
       }
       mask_flood_fill_set_elem(vi.mask, mode, value);
     }
@@ -327,13 +337,15 @@ bool ED_sculpt_mask_box_select(struct bContext *C, ViewContext *vc, const rcti *
                                 totnode > SCULPT_THREADED_LIMIT);
       BLI_task_parallel_range(0, totnode, &data, mask_box_select_task_cb, &settings);
 
-      if (nodes)
+      if (nodes) {
         MEM_freeN(nodes);
+      }
     }
   }
 
-  if (multires)
+  if (multires) {
     multires_mark_as_modified(ob, MULTIRES_COORDS_MODIFIED);
+  }
 
   sculpt_undo_push_end();
 
@@ -355,9 +367,10 @@ typedef struct LassoMaskData {
   MaskTaskData task_data;
 } LassoMaskData;
 
-/* Lasso select. This could be defined as part of VIEW3D_OT_select_lasso, still the shortcuts conflict,
- * so we will use a separate operator */
-
+/**
+ * Lasso select. This could be defined as part of #VIEW3D_OT_select_lasso,
+ * still the shortcuts conflict, so we will use a separate operator.
+ */
 static bool is_effected_lasso(LassoMaskData *data, float co[3])
 {
   float scr_co_f[2];
@@ -417,8 +430,9 @@ static void mask_gesture_lasso_task_cb(void *__restrict userdata,
         sculpt_undo_push_node(data->ob, node, SCULPT_UNDO_MASK);
 
         BKE_pbvh_node_mark_redraw(node);
-        if (data->multires)
+        if (data->multires) {
           BKE_pbvh_node_mark_normals_update(node);
+        }
       }
 
       mask_flood_fill_set_elem(vi.mask, mode, value);
@@ -511,13 +525,15 @@ static int paint_mask_gesture_lasso_exec(bContext *C, wmOperator *op)
                                   (totnode > SCULPT_THREADED_LIMIT));
         BLI_task_parallel_range(0, totnode, &data, mask_gesture_lasso_task_cb, &settings);
 
-        if (nodes)
+        if (nodes) {
           MEM_freeN(nodes);
+        }
       }
     }
 
-    if (multires)
+    if (multires) {
       multires_mark_as_modified(ob, MULTIRES_COORDS_MODIFIED);
+    }
 
     sculpt_undo_push_end();
 

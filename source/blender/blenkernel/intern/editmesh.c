@@ -115,8 +115,9 @@ static void editmesh_tessface_calc_intern(BMEditMesh *em)
     looptris = em->looptris;
   }
   else {
-    if (em->looptris)
+    if (em->looptris) {
       MEM_freeN(em->looptris);
+    }
     looptris = MEM_mallocN(sizeof(*looptris) * looptris_tot, __func__);
   }
 
@@ -160,19 +161,23 @@ void BKE_editmesh_free(BMEditMesh *em)
 
   BKE_editmesh_color_free(em);
 
-  if (em->looptris)
+  if (em->looptris) {
     MEM_freeN(em->looptris);
+  }
 
-  if (em->bm)
+  if (em->bm) {
     BM_mesh_free(em->bm);
+  }
 }
 
 void BKE_editmesh_color_free(BMEditMesh *em)
 {
-  if (em->derivedVertColor)
+  if (em->derivedVertColor) {
     MEM_freeN(em->derivedVertColor);
-  if (em->derivedFaceColor)
+  }
+  if (em->derivedFaceColor) {
     MEM_freeN(em->derivedFaceColor);
+  }
   em->derivedVertColor = NULL;
   em->derivedFaceColor = NULL;
 
@@ -228,11 +233,11 @@ void BKE_editmesh_lnorspace_update(BMEditMesh *em)
   BMesh *bm = em->bm;
 
   /* We need to create clnors data if none exist yet, otherwise there is no way to edit them.
-   * Similar code to MESH_OT_customdata_custom_splitnormals_add operator, we want to keep same shading
-   * in case we were using autosmooth so far...
-   * Note: there is a problem here, which is that if someone starts a normal editing operation on previously
-   * autosmooth-ed mesh, and cancel that operation, generated clnors data remain, with related sharp edges
-   * (and hence autosmooth is 'lost').
+   * Similar code to MESH_OT_customdata_custom_splitnormals_add operator,
+   * we want to keep same shading in case we were using autosmooth so far.
+   * Note: there is a problem here, which is that if someone starts a normal editing operation on
+   * previously autosmooth-ed mesh, and cancel that operation, generated clnors data remain,
+   * with related sharp edges (and hence autosmooth is 'lost').
    * Not sure how critical this is, and how to fix that issue? */
   if (!CustomData_has_layer(&bm->ldata, CD_CUSTOMLOOPNORMAL)) {
     Mesh *me = em->ob->data;

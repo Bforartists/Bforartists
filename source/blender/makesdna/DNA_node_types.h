@@ -42,12 +42,6 @@ struct bNodeTreeExec;
 struct bNodeType;
 struct uiBlock;
 
-/* In writefile.c: write deprecated DNA data,
- * to ensure forward compatibility in 2.6x versions.
- * Will be removed eventually.
- */
-#define USE_NODE_COMPAT_CUSTOMNODES
-
 #define NODE_MAXSTR 64
 
 typedef struct bNodeStack {
@@ -264,13 +258,14 @@ typedef struct bNode {
   rctf butr;
   /** Optional preview area. */
   rctf prvr;
-  /* XXX TODO
+  /**
+   * XXX TODO
    * Node totr size depends on the prvr size, which in turn is determined from preview size.
    * In earlier versions bNodePreview was stored directly in nodes, but since now there can be
-   * multiple instances using different preview images it is possible that required node size varies between instances.
-   * preview_xsize, preview_ysize defines a common reserved size for preview rect for now,
-   * could be replaced by more accurate node instance drawing, but that requires removing totr from DNA
-   * and replacing all uses with per-instance data.
+   * multiple instances using different preview images it is possible that required node size
+   * varies between instances. preview_xsize, preview_ysize defines a common reserved size for
+   * preview rect for now, could be replaced by more accurate node instance drawing,
+   * but that requires removing totr from DNA and replacing all uses with per-instance data.
    */
   /** Reserved size of the preview rect. */
   short preview_xsize, preview_ysize;
@@ -466,10 +461,12 @@ typedef struct bNodeTree {
   bNodeInstanceKey active_viewer_key;
   char _pad[4];
 
-  /* execution data */
-  /* XXX It would be preferable to completely move this data out of the underlying node tree,
-   * so node tree execution could finally run independent of the tree itself. This would allow node trees
-   * to be merely linked by other data (materials, textures, etc.), as ID data is supposed to.
+  /** Execution data.
+   *
+   * XXX It would be preferable to completely move this data out of the underlying node tree,
+   * so node tree execution could finally run independent of the tree itself.
+   * This would allow node trees to be merely linked by other data (materials, textures, etc.),
+   * as ID data is supposed to.
    * Execution data is generated from the tree once at execution start and can then be used
    * as long as necessary, even while the tree is being modified.
    */
@@ -506,17 +503,6 @@ typedef struct bNodeTree {
 
 /* tree is localized copy, free when deleting node groups */
 /* #define NTREE_IS_LOCALIZED           (1 << 5) */
-
-/* XXX not nice, but needed as a temporary flags
- * for group updates after library linking.
- */
-
-/* changes from r35033 */
-#define NTREE_DO_VERSIONS_GROUP_EXPOSE_2_56_2 (1 << 10)
-/* custom_nodes branch: remove links to node tree sockets */
-#define NTREE_DO_VERSIONS_CUSTOMNODES_GROUP (1 << 11)
-/* custom_nodes branch: create group input/output nodes */
-#define NTREE_DO_VERSIONS_CUSTOMNODES_GROUP_CREATE_INTERFACE (1 << 12)
 
 /* ntree->update */
 typedef enum eNodeTreeUpdate {

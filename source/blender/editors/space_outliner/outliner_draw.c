@@ -333,7 +333,7 @@ static void hidebutton_base_flag_cb(bContext *C, void *poin, void *poin2)
 
   if (depsgraph_changed) {
     BKE_main_collection_sync_remap(bmain);
-    DEG_id_tag_update(&ob->id, LIB_TAG_COPIED_ON_WRITE);
+    DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
     DEG_relations_tag_update(bmain);
     WM_main_add_notifier(NC_OBJECT | ND_DRAW, &ob->id);
   }
@@ -627,6 +627,10 @@ static void outliner_draw_restrictbuts(uiBlock *block,
         UI_but_flag_enable(bt, UI_BUT_DRAG_LOCK);
         UI_but_drawflag_enable(bt, UI_BUT_ICON_REVERSE);
       }
+      else if ((tselem->type == 0 && te->idcode == ID_OB) &&
+               (te->flag & TE_CHILD_NOT_IN_COLLECTION)) {
+        /* Don't show restrict columns for children that are not directly inside the collection. */
+      }
       else if (tselem->type == 0 && te->idcode == ID_OB) {
         PointerRNA ptr;
         Object *ob = (Object *)tselem->id;
@@ -898,7 +902,7 @@ static void outliner_draw_restrictbuts(uiBlock *block,
                                                                         ICON_HIDE_OFF;
             }
             bt = uiDefIconBut(block,
-                              UI_BTYPE_TOGGLE,
+                              UI_BTYPE_ICON_TOGGLE,
                               0,
                               icon,
                               (int)(ar->v2d.cur.xmax - OL_TOG_RESTRICT_VIEWX),
@@ -1010,7 +1014,7 @@ static void outliner_draw_userbuts(uiBlock *block, ARegion *ar, SpaceOutliner *s
           tip = TIP_("Data-block has no users and will be deleted");
         }
         bt = uiDefIconButBitS(block,
-                              UI_BTYPE_TOGGLE,
+                              UI_BTYPE_ICON_TOGGLE,
                               LIB_FAKEUSER,
                               1,
                               icon,
@@ -1045,7 +1049,7 @@ static void outliner_draw_userbuts(uiBlock *block, ARegion *ar, SpaceOutliner *s
         UI_but_flag_enable(bt, but_flag);
 
         bt = uiDefButBitS(block,
-                          UI_BTYPE_TOGGLE,
+                          UI_BTYPE_ICON_TOGGLE,
                           LIB_FAKEUSER,
                           1,
                           (id->flag & LIB_FAKEUSER) ? "F" : " ",
@@ -1561,7 +1565,8 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
         data.icon = ICON_GROUP;
         break;
       }
-      /* Removed the icons from outliner. Need a better structure with Layers, Palettes and Colors */
+      /* Removed the icons from outliner.
+       * Need a better structure with Layers, Palettes and Colors. */
       case TSE_GP_LAYER: {
         /* indicate whether layer is active */
         bGPDlayer *gpl = te->directdata;
@@ -2073,7 +2078,10 @@ static void outliner_draw_tree_element(bContext *C,
   tselem = TREESTORE(te);
 
   if (*starty + 2 * UI_UNIT_Y >= ar->v2d.cur.ymin && *starty <= ar->v2d.cur.ymax) {
-    const float alpha_fac = ((te->flag & TE_DISABLED) || draw_grayed_out) ? 0.5f : 1.0f;
+    const float alpha_fac = ((te->flag & TE_DISABLED) || (te->flag & TE_CHILD_NOT_IN_COLLECTION) ||
+                             draw_grayed_out) ?
+                                0.5f :
+                                1.0f;
     const float alpha = 0.5f * alpha_fac;
     int xmax = ar->v2d.cur.xmax;
 
@@ -2099,7 +2107,8 @@ static void outliner_draw_tree_element(bContext *C,
       }
       else if (te->idcode == ID_OB) {
         Object *ob = (Object *)tselem->id;
-        Base *base = BKE_view_layer_base_find(view_layer, ob);
+        Base *base = (te->directdata) ? (Base *)te->directdata :
+                                        BKE_view_layer_base_find(view_layer, ob);
         const bool is_selected = (base != NULL) && ((base->flag & BASE_SELECTED) != 0);
 
         if (ob == obact || is_selected) {
@@ -2337,17 +2346,28 @@ static void outliner_draw_hierarchy_lines_recursive(unsigned pos,
                                                     bool draw_grayed_out,
                                                     int *starty)
 {
-  TreeElement *te, *te_vertical_line_last = NULL;
-  int y1, y2;
+  TreeElement *te, *te_vertical_line_last = NULL, *te_vertical_line_last_dashed = NULL;
+  int y1, y2, y1_dashed, y2_dashed;
 
   if (BLI_listbase_is_empty(lb)) {
     return;
   }
 
+  struct {
+    int steps_num;
+    int step_len;
+    int gap_len;
+  } dash = {
+      .steps_num = 4,
+  };
+
+  dash.step_len = UI_UNIT_X / dash.steps_num;
+  dash.gap_len = dash.step_len / 2;
+
   const unsigned char grayed_alpha = col[3] / 2;
 
   /* For vertical lines between objects. */
-  y1 = y2 = *starty;
+  y1 = y2 = y1_dashed = y2_dashed = *starty;
   for (te = lb->first; te; te = te->next) {
     bool draw_childs_grayed_out = draw_grayed_out || (te->flag & TE_DRAGGING);
     TreeStoreElem *tselem = TREESTORE(te);
@@ -2359,15 +2379,30 @@ static void outliner_draw_hierarchy_lines_recursive(unsigned pos,
       immUniformColor4ubv(col);
     }
 
-    /* Horizontal Line? */
-    if (tselem->type == 0 && (te->idcode == ID_OB || te->idcode == ID_SCE)) {
-      immRecti(pos, startx, *starty, startx + UI_UNIT_X, *starty - 1);
+    if ((te->flag & TE_CHILD_NOT_IN_COLLECTION) == 0) {
+      /* Horizontal Line? */
+      if (tselem->type == 0 && (te->idcode == ID_OB || te->idcode == ID_SCE)) {
+        immRecti(pos, startx, *starty, startx + UI_UNIT_X, *starty - 1);
 
-      /* Vertical Line? */
-      if (te->idcode == ID_OB) {
-        te_vertical_line_last = te;
-        y2 = *starty;
+        /* Vertical Line? */
+        if (te->idcode == ID_OB) {
+          te_vertical_line_last = te;
+          y2 = *starty;
+        }
+        y1_dashed = *starty - UI_UNIT_Y;
       }
+    }
+    else {
+      BLI_assert(te->idcode == ID_OB);
+      /* Horizontal line - dashed. */
+      int start = startx;
+      for (int i = 0; i < dash.steps_num; i++) {
+        immRecti(pos, start, *starty, start + dash.step_len - dash.gap_len, *starty - 1);
+        start += dash.step_len;
+      }
+
+      te_vertical_line_last_dashed = te;
+      y2_dashed = *starty;
     }
 
     *starty -= UI_UNIT_Y;
@@ -2389,6 +2424,18 @@ static void outliner_draw_hierarchy_lines_recursive(unsigned pos,
   te = te_vertical_line_last;
   if ((te != NULL) && (te->parent || lb->first != lb->last)) {
     immRecti(pos, startx, y1 + UI_UNIT_Y, startx + 1, y2);
+  }
+
+  /* Children that are not in the collection are always in the end of the subtree.
+   * This way we can draw their own dashed vertical lines. */
+  te = te_vertical_line_last_dashed;
+  if ((te != NULL) && (te->parent || lb->first != lb->last)) {
+    const int steps_num = ((y1_dashed + UI_UNIT_Y) - y2_dashed) / dash.step_len;
+    int start = y1_dashed + UI_UNIT_Y;
+    for (int i = 0; i < steps_num; i++) {
+      immRecti(pos, startx, start, startx + 1, start - dash.step_len + dash.gap_len);
+      start -= dash.step_len;
+    }
   }
 }
 

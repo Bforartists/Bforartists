@@ -43,24 +43,32 @@
 
 /* ----------------------- Getter functions ----------------------- */
 
-/* Write into "name" buffer, the name of the property (retrieved using RNA from the curve's settings),
+/**
+ * Write into "name" buffer, the name of the property
+ * (retrieved using RNA from the curve's settings),
  * and return the icon used for the struct that this property refers to
- * WARNING: name buffer we're writing to cannot exceed 256 chars (check anim_channels_defines.c for details)
+ *
+ * \warning name buffer we're writing to cannot exceed 256 chars
+ * (check anim_channels_defines.c for details).
  */
 int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
 {
   int icon = 0;
 
   /* sanity checks */
-  if (name == NULL)
+  if (name == NULL) {
     return icon;
+  }
   else if (ELEM(NULL, id, fcu, fcu->rna_path)) {
-    if (fcu == NULL)
+    if (fcu == NULL) {
       strcpy(name, IFACE_("<invalid>"));
-    else if (fcu->rna_path == NULL)
+    }
+    else if (fcu->rna_path == NULL) {
       strcpy(name, IFACE_("<no path>"));
-    else /* id == NULL */
+    }
+    else { /* id == NULL */
       BLI_snprintf(name, 256, "%s[%d]", fcu->rna_path, fcu->array_index);
+    }
   }
   else {
     PointerRNA id_ptr, ptr;
@@ -83,17 +91,19 @@ int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
        * 2) <array-index> <property-name> (<struct name>)
        *     i.e. X Location (Bone1), or X Location (Object)
        *
-       * Currently, option 2 is in use, to try and make it easier to quickly identify F-Curves (it does have
-       * problems with looking rather odd though). Option 1 is better in terms of revealing a consistent sense of
-       * hierarchy though, which isn't so clear with option 2.
+       * Currently, option 2 is in use, to try and make it easier to quickly identify F-Curves
+       * (it does have problems with looking rather odd though).
+       * Option 1 is better in terms of revealing a consistent sense of hierarchy though,
+       * which isn't so clear with option 2.
        */
 
-      /* for structname
-       * - as base, we use a custom name from the structs if one is available
-       * - however, if we're showing subdata of bones (probably there will be other exceptions later)
-       *   need to include that info too since it gets confusing otherwise
-       * - if a pointer just refers to the ID-block, then don't repeat this info
-       *   since this just introduces clutter
+      /* For structname:
+       * - As base, we use a custom name from the structs if one is available
+       * - However, if we're showing subdata of bones
+       *   (probably there will be other exceptions later).
+       *   need to include that info too since it gets confusing otherwise.
+       * - If a pointer just refers to the ID-block, then don't repeat this info
+       *   since this just introduces clutter.
        */
       if (strstr(fcu->rna_path, "bones") && strstr(fcu->rna_path, "constraints")) {
         /* perform string 'chopping' to get "Bone Name : Constraint Name" */
@@ -105,10 +115,12 @@ int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
         free_structname = 1;
 
         /* free the temp names */
-        if (pchanName)
+        if (pchanName) {
           MEM_freeN(pchanName);
-        if (constName)
+        }
+        if (constName) {
           MEM_freeN(constName);
+        }
       }
       else if (ptr.data != ptr.id.data) {
         PropertyRNA *nameprop = RNA_struct_name_property(ptr.type);
@@ -117,8 +129,9 @@ int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
           structname = RNA_property_string_get_alloc(&ptr, nameprop, NULL, 0, NULL);
           free_structname = 1;
         }
-        else
+        else {
           structname = RNA_struct_ui_name(ptr.type);
+        }
       }
 
       /* Property Name is straightforward */
@@ -129,10 +142,12 @@ int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
         char c = RNA_property_array_item_char(prop, fcu->array_index);
 
         /* we need to write the index to a temp buffer (in py syntax) */
-        if (c)
+        if (c) {
           BLI_snprintf(arrayindbuf, sizeof(arrayindbuf), "%c ", c);
-        else
+        }
+        else {
           BLI_snprintf(arrayindbuf, sizeof(arrayindbuf), "[%d]", fcu->array_index);
+        }
 
         arrayname = &arrayindbuf[0];
       }
@@ -144,14 +159,17 @@ int getname_anim_fcurve(char *name, ID *id, FCurve *fcu)
       /* putting this all together into the buffer */
       /* XXX we need to check for invalid names...
        * XXX the name length limit needs to be passed in or as some define */
-      if (structname)
+      if (structname) {
         BLI_snprintf(name, 256, "%s%s (%s)", arrayname, propname, structname);
-      else
+      }
+      else {
         BLI_snprintf(name, 256, "%s%s", arrayname, propname);
+      }
 
       /* free temp name if nameprop is set */
-      if (free_structname)
+      if (free_structname) {
         MEM_freeN((void *)structname);
+      }
 
       /* Icon for this property's owner:
        * use the struct's icon if it is set
@@ -210,8 +228,9 @@ void getcolor_fcurve_rainbow(int cur, int tot, float out[3])
 
   /* the base color can get offset a bit so that the colors aren't so identical */
   hsv[0] += fac * HSV_BANDWIDTH;
-  if (hsv[0] > 1.0f)
+  if (hsv[0] > 1.0f) {
     hsv[0] = fmod(hsv[0], 1.0f);
+  }
 
   /* saturation adjustments for more visible range */
   hsv[1] = ((hsv[0] > 0.5f) && (hsv[0] < 0.8f)) ? 0.5f : 0.6f;

@@ -81,10 +81,12 @@ void BLO_memfile_merge(MemFile *first, MemFile *second)
         fc->is_identical = true;
       }
     }
-    if (fc)
+    if (fc) {
       fc = fc->next;
-    if (sc)
+    }
+    if (sc) {
       sc = sc->next;
+    }
   }
 
   BLO_memfile_free(first);
@@ -149,8 +151,10 @@ bool BLO_memfile_write_file(struct MemFile *memfile, const char *filename)
   MemFileChunk *chunk;
   int file, oflags;
 
-  /* note: This is currently used for autosave and 'quit.blend', where _not_ following symlinks is OK,
-   * however if this is ever executed explicitly by the user, we may want to allow writing to symlinks.
+  /* note: This is currently used for autosave and 'quit.blend',
+   * where _not_ following symlinks is OK,
+   * however if this is ever executed explicitly by the user,
+   * we may want to allow writing to symlinks.
    */
 
   oflags = O_BINARY | O_WRONLY | O_CREAT | O_TRUNC;

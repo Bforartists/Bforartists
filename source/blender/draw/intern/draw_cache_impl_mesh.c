@@ -1911,6 +1911,7 @@ typedef struct MeshBatchCache {
     GPUVertBuf *loop_data;
     GPUVertBuf *loop_lnor;
     GPUVertBuf *facedots_pos_nor_data;
+    GPUVertBuf *loop_mesh_analysis;
     /* UV data without modifier applied.
      * Vertex count is always the one of the cage. */
     GPUVertBuf *loop_uv;
@@ -1958,6 +1959,7 @@ typedef struct MeshBatchCache {
     GPUBatch *edit_edges;
     GPUBatch *edit_lnor;
     GPUBatch *edit_facedots;
+    GPUBatch *edit_mesh_analysis;
     /* Edit UVs */
     GPUBatch *edituv_faces_strech_area;
     GPUBatch *edituv_faces_strech_angle;
@@ -2169,6 +2171,7 @@ void DRW_mesh_batch_cache_dirty_tag(Mesh *me, int mode)
       GPU_BATCH_DISCARD_SAFE(cache->batch.edit_vertices);
       GPU_BATCH_DISCARD_SAFE(cache->batch.edit_edges);
       GPU_BATCH_DISCARD_SAFE(cache->batch.edit_facedots);
+      GPU_BATCH_DISCARD_SAFE(cache->batch.edit_mesh_analysis);
       /* Paint mode selection */
       /* TODO only do that in paint mode. */
       GPU_VERTBUF_DISCARD_SAFE(cache->ordered.loop_pos_nor);
@@ -3383,6 +3386,71 @@ static void mesh_create_edit_facedots(MeshRenderData *rdata, GPUVertBuf *vbo_fac
   }
 }
 
+static void mesh_create_edit_mesh_analysis(MeshRenderData *rdata, GPUVertBuf *vbo_mesh_analysis)
+{
+  const MeshStatVis *mesh_stat_vis = &rdata->toolsettings->statvis;
+
+  int mesh_analysis_len_used = 0;
+
+  const uint loops_len = mesh_render_data_loops_len_get(rdata);
+  BMesh *bm = rdata->edit_bmesh->bm;
+  BMIter iter_efa, iter_loop;
+  BMFace *efa;
+  BMLoop *loop;
+
+  static struct {
+    uint weight;
+  } attr_id;
+  static GPUVertFormat mesh_analysis_format = {0};
+  if (mesh_analysis_format.attr_len == 0) {
+    attr_id.weight = GPU_vertformat_attr_add(
+        &mesh_analysis_format, "weight_color", GPU_COMP_U8, 4, GPU_FETCH_INT_TO_FLOAT_UNIT);
+  }
+
+  /* TODO(jbakker): Maybe move data generation to mesh_render_data_create() */
+  BKE_editmesh_statvis_calc(rdata->edit_bmesh, rdata->edit_data, mesh_stat_vis);
+
+  if (DRW_TEST_ASSIGN_VBO(vbo_mesh_analysis)) {
+    GPU_vertbuf_init_with_format(vbo_mesh_analysis, &mesh_analysis_format);
+    GPU_vertbuf_data_alloc(vbo_mesh_analysis, loops_len);
+  }
+
+  const bool is_vertex_data = mesh_stat_vis->type == SCE_STATVIS_SHARP;
+  if (is_vertex_data) {
+    BM_ITER_MESH (efa, &iter_efa, bm, BM_FACES_OF_MESH) {
+      BM_ITER_ELEM (loop, &iter_loop, efa, BM_LOOPS_OF_FACE) {
+        uint vertex_index = BM_elem_index_get(loop->v);
+        GPU_vertbuf_attr_set(vbo_mesh_analysis,
+                             attr_id.weight,
+                             mesh_analysis_len_used,
+                             &rdata->edit_bmesh->derivedVertColor[vertex_index]);
+        mesh_analysis_len_used += 1;
+      }
+    }
+  }
+  else {
+    uint face_index;
+    BM_ITER_MESH_INDEX (efa, &iter_efa, bm, BM_FACES_OF_MESH, face_index) {
+      BM_ITER_ELEM (loop, &iter_loop, efa, BM_LOOPS_OF_FACE) {
+        GPU_vertbuf_attr_set(vbo_mesh_analysis,
+                             attr_id.weight,
+                             mesh_analysis_len_used,
+                             &rdata->edit_bmesh->derivedFaceColor[face_index]);
+        mesh_analysis_len_used += 1;
+      }
+    }
+  }
+
+  // Free temp data in edit bmesh
+  BKE_editmesh_color_free(rdata->edit_bmesh);
+
+  /* Resize & Finish */
+  if (mesh_analysis_len_used != loops_len) {
+    if (vbo_mesh_analysis != NULL) {
+      GPU_vertbuf_data_resize(vbo_mesh_analysis, mesh_analysis_len_used);
+    }
+  }
+}
 /* Indices */
 
 #define NO_EDGE INT_MAX
@@ -4195,6 +4263,12 @@ GPUBatch *DRW_mesh_batch_cache_get_wireframes_face(Mesh *me)
   return DRW_batch_request(&cache->batch.wire_edges);
 }
 
+GPUBatch *DRW_mesh_batch_cache_get_edit_mesh_analysis(Mesh *me)
+{
+  MeshBatchCache *cache = mesh_batch_cache_get(me);
+  return DRW_batch_request(&cache->batch.edit_mesh_analysis);
+}
+
 GPUBatch **DRW_mesh_batch_cache_get_surface_shaded(Mesh *me,
                                                    struct GPUMaterial **gpumat_array,
                                                    uint gpumat_array_len,
@@ -4520,11 +4594,21 @@ static void uvedit_fill_buffer_data(MeshRenderData *rdata,
       }
 
       /* Skip hidden faces. */
-      if (elb_face && face_visible) {
-        for (i = 0; i < efa->len; ++i) {
-          GPU_indexbuf_add_generic_vert(elb_face, vidx + i);
-          GPU_indexbuf_add_generic_vert(elb_vert, vidx + i);
-          GPU_indexbuf_add_line_verts(elb_edge, vidx + i, vidx + (i + 1) % efa->len);
+      if (face_visible) {
+        if (elb_face) {
+          for (i = 0; i < efa->len; ++i) {
+            GPU_indexbuf_add_generic_vert(elb_face, vidx + i);
+          }
+        }
+        if (elb_vert) {
+          for (i = 0; i < efa->len; ++i) {
+            GPU_indexbuf_add_generic_vert(elb_vert, vidx + i);
+          }
+        }
+        if (elb_edge) {
+          for (i = 0; i < efa->len; ++i) {
+            GPU_indexbuf_add_line_verts(elb_edge, vidx + i, vidx + (i + 1) % efa->len);
+          }
         }
       }
 
@@ -4588,18 +4672,24 @@ static void uvedit_fill_buffer_data(MeshRenderData *rdata,
         GPU_vertbuf_attr_set(vbo_fdots_data, uv_attr_id.fdots_flag, fdot_idx, &face_flag);
       }
       /* Skip hidden faces. */
-      if (elb_face && face_visible) {
-        for (i = 0; i < mpoly->totloop; ++i) {
-          GPU_indexbuf_add_generic_vert(elb_face, vidx + i);
-          if (e_origindex[l[i].e] != ORIGINDEX_NONE) {
+      if (face_visible) {
+        if (elb_face) {
+          for (i = 0; i < mpoly->totloop; ++i) {
+            GPU_indexbuf_add_generic_vert(elb_face, vidx + i);
+          }
+          GPU_indexbuf_add_generic_vert(elb_face, vidx);
+          GPU_indexbuf_add_primitive_restart(elb_face);
+        }
+        if (elb_edge && e_origindex[l[i].e] != ORIGINDEX_NONE) {
+          for (i = 0; i < mpoly->totloop; ++i) {
             GPU_indexbuf_add_line_verts(elb_edge, vidx + i, vidx + (i + 1) % mpoly->totloop);
           }
-          if (v_origindex[l[i].v] != ORIGINDEX_NONE) {
+        }
+        if (elb_vert && v_origindex[l[i].v] != ORIGINDEX_NONE) {
+          for (i = 0; i < mpoly->totloop; ++i) {
             GPU_indexbuf_add_generic_vert(elb_vert, vidx + i);
           }
         }
-        GPU_indexbuf_add_generic_vert(elb_face, vidx);
-        GPU_indexbuf_add_primitive_restart(elb_face);
       }
       for (i = 0; i < mpoly->totloop; i++, l++) {
         /* TODO support stretch. */
@@ -4731,8 +4821,9 @@ void DRW_mesh_batch_cache_free_old(Mesh *me, int ctime)
 {
   MeshBatchCache *cache = me->runtime.batch_cache;
 
-  if (cache == NULL)
+  if (cache == NULL) {
     return;
+  }
 
   if (mesh_cd_layers_type_equal(cache->cd_used_over_time, cache->cd_used)) {
     cache->lastmatch = ctime;
@@ -4897,6 +4988,13 @@ void DRW_mesh_batch_cache_create_requested(
     DRW_vbo_request(cache->batch.edit_facedots, &cache->edit.facedots_pos_nor_data);
   }
 
+  /* Mesh Analysis */
+  if (DRW_batch_requested(cache->batch.edit_mesh_analysis, GPU_PRIM_TRIS)) {
+    DRW_ibo_request(cache->batch.edit_mesh_analysis, &cache->ibo.edit_loops_tris);
+    DRW_vbo_request(cache->batch.edit_mesh_analysis, &cache->edit.loop_pos_nor);
+    DRW_vbo_request(cache->batch.edit_mesh_analysis, &cache->edit.loop_mesh_analysis);
+  }
+
   /* Edit UV */
   if (DRW_batch_requested(cache->batch.edituv_faces, GPU_PRIM_TRI_FAN)) {
     DRW_ibo_request(cache->batch.edituv_faces, &cache->ibo.edituv_loops_tri_fans);
@@ -5049,6 +5147,9 @@ void DRW_mesh_batch_cache_create_requested(
                                 cache->edit.facedots_pos_nor_data,
                                 MR_DATATYPE_VERT | MR_DATATYPE_LOOP | MR_DATATYPE_POLY |
                                     MR_DATATYPE_OVERLAY);
+  DRW_ADD_FLAG_FROM_VBO_REQUEST(mr_edit_flag,
+                                cache->edit.loop_mesh_analysis,
+                                MR_DATATYPE_VERT | MR_DATATYPE_LOOP | MR_DATATYPE_POLY);
   DRW_ADD_FLAG_FROM_VBO_REQUEST(mr_edit_flag, cache->edit.loop_stretch_angle, combined_edit_flag);
   DRW_ADD_FLAG_FROM_VBO_REQUEST(mr_edit_flag, cache->edit.loop_stretch_area, combined_edit_flag);
   DRW_ADD_FLAG_FROM_VBO_REQUEST(
@@ -5175,6 +5276,9 @@ void DRW_mesh_batch_cache_create_requested(
   }
   if (DRW_ibo_requested(cache->ibo.edit_loops_tris)) {
     mesh_create_edit_loops_tris(rdata, cache->ibo.edit_loops_tris);
+  }
+  if (DRW_vbo_requested(cache->edit.loop_mesh_analysis)) {
+    mesh_create_edit_mesh_analysis(rdata, cache->edit.loop_mesh_analysis);
   }
 
   /* UV editor */
