@@ -274,7 +274,8 @@ static void gp_calc_stroke_text_coordinates(
   }
 }
 
-/* Triangulate stroke for high quality fill (this is done only if cache is null or stroke was modified) */
+/* Triangulate stroke for high quality fill
+ * (this is done only if cache is null or stroke was modified). */
 static void gp_triangulate_stroke_fill(bGPDstroke *gps)
 {
   BLI_assert(gps->totpoints >= 3);
@@ -324,8 +325,9 @@ static void gp_triangulate_stroke_fill(bGPDstroke *gps)
   }
   else {
     /* No triangles needed - Free anything allocated previously */
-    if (gps->triangles)
+    if (gps->triangles) {
       MEM_freeN(gps->triangles);
+    }
 
     gps->triangles = NULL;
   }
@@ -643,8 +645,8 @@ static void gp_draw_stroke_2d(const bGPDspoint *points,
 
   /* TODO: fancy++ with the magic of shaders */
 
-  /* tessellation code - draw stroke as series of connected quads (triangle strips in fact) with connection
-   * edges rotated to minimize shrinking artifacts, and rounded endcaps
+  /* tessellation code - draw stroke as series of connected quads (triangle strips in fact)
+   * with connection edges rotated to minimize shrinking artifacts, and rounded endcaps.
    */
   {
     const bGPDspoint *pt1, *pt2;
@@ -675,7 +677,8 @@ static void gp_draw_stroke_2d(const bGPDspoint *points,
       float mt[2], sc[2]; /* gradient for thickness, point for end-cap */
       float pthick;       /* thickness at segment point */
 
-      /* get x and y coordinates from point2 (point1 has already been computed in previous iteration). */
+      /* Get x and y coordinates from point2
+       * (point1 has already been computed in previous iteration). */
       mul_v3_m4v3(fpt, diff_mat, &pt2->x);
       gp_calc_2d_stroke_fxy(fpt, sflag, offsx, offsy, winx, winy, s1);
 
@@ -816,26 +819,33 @@ static bool gp_can_draw_stroke(const bGPDstroke *gps, const int dflag)
 {
   /* skip stroke if it isn't in the right display space for this drawing context */
   /* 1) 3D Strokes */
-  if ((dflag & GP_DRAWDATA_ONLY3D) && !(gps->flag & GP_STROKE_3DSPACE))
+  if ((dflag & GP_DRAWDATA_ONLY3D) && !(gps->flag & GP_STROKE_3DSPACE)) {
     return false;
-  if (!(dflag & GP_DRAWDATA_ONLY3D) && (gps->flag & GP_STROKE_3DSPACE))
+  }
+  if (!(dflag & GP_DRAWDATA_ONLY3D) && (gps->flag & GP_STROKE_3DSPACE)) {
     return false;
+  }
 
   /* 2) Screen Space 2D Strokes */
-  if ((dflag & GP_DRAWDATA_ONLYV2D) && !(gps->flag & GP_STROKE_2DSPACE))
+  if ((dflag & GP_DRAWDATA_ONLYV2D) && !(gps->flag & GP_STROKE_2DSPACE)) {
     return false;
-  if (!(dflag & GP_DRAWDATA_ONLYV2D) && (gps->flag & GP_STROKE_2DSPACE))
+  }
+  if (!(dflag & GP_DRAWDATA_ONLYV2D) && (gps->flag & GP_STROKE_2DSPACE)) {
     return false;
+  }
 
   /* 3) Image Space (2D) */
-  if ((dflag & GP_DRAWDATA_ONLYI2D) && !(gps->flag & GP_STROKE_2DIMAGE))
+  if ((dflag & GP_DRAWDATA_ONLYI2D) && !(gps->flag & GP_STROKE_2DIMAGE)) {
     return false;
-  if (!(dflag & GP_DRAWDATA_ONLYI2D) && (gps->flag & GP_STROKE_2DIMAGE))
+  }
+  if (!(dflag & GP_DRAWDATA_ONLYI2D) && (gps->flag & GP_STROKE_2DIMAGE)) {
     return false;
+  }
 
   /* skip stroke if it doesn't have any valid data */
-  if ((gps->points == NULL) || (gps->totpoints < 1))
+  if ((gps->points == NULL) || (gps->totpoints < 1)) {
     return false;
+  }
 
   /* stroke can be drawn */
   return true;
@@ -1141,8 +1151,9 @@ static void UNUSED_FUNCTION(gp_draw_status_text)(const bGPdata *gpd, ARegion *ar
   rcti rect;
 
   /* Cannot draw any status text when drawing OpenGL Renders */
-  if (G.f & G_FLAG_RENDER_VIEWPORT)
+  if (G.f & G_FLAG_RENDER_VIEWPORT) {
     return;
+  }
 
   /* Get bounds of region - Necessary to avoid problems with region overlap */
   ED_region_visible_rect(ar, &rect);

@@ -658,8 +658,9 @@ static float studiolight_spherical_harmonics_lambda_get(float *sh, float max_lap
 
 static void studiolight_spherical_harmonics_apply_windowing(float (*sh)[3], float max_laplacian)
 {
-  if (max_laplacian <= 0.0f)
+  if (max_laplacian <= 0.0f) {
     return;
+  }
 
   float sh_r[STUDIOLIGHT_SH_COEFS_LEN];
   float sh_g[STUDIOLIGHT_SH_COEFS_LEN];
@@ -1282,7 +1283,8 @@ void BKE_studiolight_init(void)
   BLI_addtail(&studiolights, sl);
 
   /* go over the preset folder and add a studiolight for every image with its path */
-  /* for portable installs (where USER and SYSTEM paths are the same), only go over LOCAL datafiles once */
+  /* for portable installs (where USER and SYSTEM paths are the same),
+   * only go over LOCAL datafiles once */
   /* Also reserve icon space for it. */
   if (!BKE_appdir_app_is_portable_install()) {
     studiolight_add_files_from_datafolder(BLENDER_USER_DATAFILES,

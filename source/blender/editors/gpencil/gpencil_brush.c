@@ -302,7 +302,8 @@ static float gp_brush_influence_calc(tGP_BrushEditData *gso, const int radius, c
 /* ----------------------------------------------- */
 /* Smooth Brush */
 
-/* A simple (but slower + inaccurate) smooth-brush implementation to test the algorithm for stroke smoothing */
+/* A simple (but slower + inaccurate)
+ * smooth-brush implementation to test the algorithm for stroke smoothing. */
 static bool gp_brush_smooth_apply(
     tGP_BrushEditData *gso, bGPDstroke *gps, int pt_index, const int radius, const int co[2])
 {
@@ -351,7 +352,8 @@ static bool gp_brush_thickness_apply(
   inf = gp_brush_influence_calc(gso, radius, co) / 10.0f;
 
   /* apply */
-  // XXX: this is much too strong, and it should probably do some smoothing with the surrounding stuff
+  /* XXX: this is much too strong,
+   * and it should probably do some smoothing with the surrounding stuff. */
   if (gp_brush_invert_check(gso)) {
     /* make line thinner - reduce stroke pressure */
     pt->pressure -= inf;
@@ -366,8 +368,9 @@ static bool gp_brush_thickness_apply(
    * the upper end of this range. Therefore, we don't actually clamp
    * down on the upper end.
    */
-  if (pt->pressure < 0.0f)
+  if (pt->pressure < 0.0f) {
     pt->pressure = 0.0f;
+  }
 
   return true;
 }
@@ -801,7 +804,16 @@ static bool gp_brush_randomize_apply(
       mul_v2_fl(svec, fac);
     }
 
-    //printf("%f %f (%f), nco = {%f %f}, co = %d %d\n", svec[0], svec[1], fac, nco[0], nco[1], co[0], co[1]);
+#if 0
+    printf("%f %f (%f), nco = {%f %f}, co = %d %d\n",
+           svec[0],
+           svec[1],
+           fac,
+           nco[0],
+           nco[1],
+           co[0],
+           co[1]);
+#endif
 
     /* convert to dataspace */
     if (gps->flag & GP_STROKE_3DSPACE) {
@@ -926,8 +938,9 @@ static bool gp_brush_weight_apply(
   }
 
   /* weight should stay within [0.0, 1.0] */
-  if (pt->pressure < 0.0f)
+  if (pt->pressure < 0.0f) {
     pt->pressure = 0.0f;
+  }
 
   return true;
 }
@@ -1106,7 +1119,8 @@ static void gp_brush_clone_adjust(tGP_BrushEditData *gso)
   gp_brush_grab_calc_dvec(gso);
 
   /* For each of the stored strokes, apply the offset to each point */
-  /* NOTE: Again this assumes that in the 3D view, we only have 3d space and not screenspace strokes... */
+  /* NOTE: Again this assumes that in the 3D view,
+   * we only have 3d space and not screenspace strokes... */
   for (snum = 0; snum < data->totitems; snum++) {
     bGPDstroke *gps = data->new_strokes[snum];
     bGPDspoint *pt;
@@ -1382,8 +1396,9 @@ static void gpsculpt_brush_init_stroke(tGP_BrushEditData *gso)
   int cfra_eval = (int)DEG_get_ctime(gso->depsgraph);
 
   /* only try to add a new frame if this is the first stroke, or the frame has changed */
-  if ((gpd == NULL) || (cfra_eval == gso->cfra))
+  if ((gpd == NULL) || (cfra_eval == gso->cfra)) {
     return;
+  }
 
   /* go through each layer, and ensure that we've got a valid frame to use */
   for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
@@ -1453,7 +1468,8 @@ static bool gpsculpt_brush_do_stroke(tGP_BrushEditData *gso,
       pt1 = gps->points + i;
       pt2 = gps->points + i + 1;
 
-      /* Skip if neither one is selected (and we are only allowed to edit/consider selected points) */
+      /* Skip if neither one is selected
+       * (and we are only allowed to edit/consider selected points) */
       if (gso->settings->flag & GP_SCULPT_SETT_FLAG_SELECT_MASK) {
         if (!(pt1->flag & GP_SPOINT_SELECT) && !(pt2->flag & GP_SPOINT_SELECT)) {
           include_last = false;
@@ -1501,9 +1517,10 @@ static bool gpsculpt_brush_do_stroke(tGP_BrushEditData *gso,
           changed |= ok;
         }
         else if (include_last) {
-          /* This case is for cases where for whatever reason the second vert (1st here) doesn't get included
-           * because the whole edge isn't in bounds, but it would've qualified since it did with the
-           * previous step (but wasn't added then, to avoid double-ups)
+          /* This case is for cases where for whatever reason the second vert (1st here)
+           * doesn't get included because the whole edge isn't in bounds,
+           * but it would've qualified since it did with the previous step
+           * (but wasn't added then, to avoid double-ups).
            */
           changed |= apply(gso, gps, i, radius, pc1);
           include_last = false;
@@ -1721,10 +1738,12 @@ static void gpsculpt_brush_apply(bContext *C, wmOperator *op, PointerRNA *itempt
 
   gso->pressure = RNA_float_get(itemptr, "pressure");
 
-  if (RNA_boolean_get(itemptr, "pen_flip"))
+  if (RNA_boolean_get(itemptr, "pen_flip")) {
     gso->flag |= GP_SCULPT_FLAG_INVERT;
-  else
+  }
+  else {
     gso->flag &= ~GP_SCULPT_FLAG_INVERT;
+  }
 
   /* Store coordinates as reference, if operator just started running */
   if (gso->first) {
@@ -1824,8 +1843,9 @@ static void gpsculpt_brush_apply_event(bContext *C, wmOperator *op, const wmEven
 /* reapply */
 static int gpsculpt_brush_exec(bContext *C, wmOperator *op)
 {
-  if (!gpsculpt_brush_init(C, op))
+  if (!gpsculpt_brush_init(C, op)) {
     return OPERATOR_CANCELLED;
+  }
 
   RNA_BEGIN (op->ptr, itemptr, "stroke") {
     gpsculpt_brush_apply(C, op, &itemptr);
@@ -1854,8 +1874,9 @@ static int gpsculpt_brush_invoke(bContext *C, wmOperator *op, const wmEvent *eve
   }
 
   /* init painting data */
-  if (!gpsculpt_brush_init(C, op))
+  if (!gpsculpt_brush_init(C, op)) {
     return OPERATOR_CANCELLED;
+  }
 
   gso = op->customdata;
 

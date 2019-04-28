@@ -70,17 +70,20 @@
 void delete_fcurve_key(FCurve *fcu, int index, bool do_recalc)
 {
   /* sanity check */
-  if (fcu == NULL)
+  if (fcu == NULL) {
     return;
+  }
 
   /* verify the index:
    * 1) cannot be greater than the number of available keyframes
    * 2) negative indices are for specifying a value from the end of the array
    */
-  if (abs(index) >= fcu->totvert)
+  if (abs(index) >= fcu->totvert) {
     return;
-  else if (index < 0)
+  }
+  else if (index < 0) {
     index += fcu->totvert;
+  }
 
   /* Delete this keyframe */
   memmove(
@@ -88,14 +91,16 @@ void delete_fcurve_key(FCurve *fcu, int index, bool do_recalc)
   fcu->totvert--;
 
   if (fcu->totvert == 0) {
-    if (fcu->bezt)
+    if (fcu->bezt) {
       MEM_freeN(fcu->bezt);
+    }
     fcu->bezt = NULL;
   }
 
   /* recalc handles - only if it won't cause problems */
-  if (do_recalc)
+  if (do_recalc) {
     calchandles_fcurve(fcu);
+  }
 }
 
 /* Delete selected keyframes in given F-Curve */
@@ -104,8 +109,9 @@ bool delete_fcurve_keys(FCurve *fcu)
   int i;
   bool changed = false;
 
-  if (fcu->bezt == NULL) /* ignore baked curves */
+  if (fcu->bezt == NULL) { /* ignore baked curves */
     return false;
+  }
 
   /* Delete selected BezTriples */
   for (i = 0; i < fcu->totvert; i++) {
@@ -118,16 +124,18 @@ bool delete_fcurve_keys(FCurve *fcu)
   }
 
   /* Free the array of BezTriples if there are not keyframes */
-  if (fcu->totvert == 0)
+  if (fcu->totvert == 0) {
     clear_fcurve_keys(fcu);
+  }
 
   return changed;
 }
 
 void clear_fcurve_keys(FCurve *fcu)
 {
-  if (fcu->bezt)
+  if (fcu->bezt) {
     MEM_freeN(fcu->bezt);
+  }
   fcu->bezt = NULL;
 
   fcu->totvert = 0;
@@ -142,8 +150,9 @@ void duplicate_fcurve_keys(FCurve *fcu)
   int i;
 
   /* this can only work when there is an F-Curve, and also when there are some BezTriples */
-  if (ELEM(NULL, fcu, fcu->bezt))
+  if (ELEM(NULL, fcu, fcu->bezt)) {
     return;
+  }
 
   for (i = 0; i < fcu->totvert; i++) {
     /* If a key is selected */
@@ -173,8 +182,9 @@ void duplicate_fcurve_keys(FCurve *fcu)
 /* **************************************************** */
 /* Various Tools */
 
-/* Basic F-Curve 'cleanup' function that removes 'double points' and unnecessary keyframes on linear-segments only
- * optionally clears up curve if one keyframe with default value remains
+/**
+ * Basic F-Curve 'cleanup' function that removes 'double points' and unnecessary keyframes on
+ * linear-segments only optionally clears up curve if one keyframe with default value remains.
  */
 void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, bool cleardefault)
 {
@@ -282,8 +292,9 @@ void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, boo
   }
 
   /* now free the memory used by the old BezTriples */
-  if (old_bezts)
+  if (old_bezts) {
     MEM_freeN(old_bezts);
+  }
 
   /* final step, if there is just one key in fcurve, check if it's
    * the default value and if is, remove fcurve completely. */
@@ -295,8 +306,9 @@ void clean_fcurve(struct bAnimContext *ac, bAnimListElem *ale, float thresh, boo
 
     /* get property to read from, and get value as appropriate */
     if (RNA_path_resolve_property(&id_ptr, fcu->rna_path, &ptr, &prop)) {
-      if (RNA_property_type(prop) == PROP_FLOAT)
+      if (RNA_property_type(prop) == PROP_FLOAT) {
         default_value = RNA_property_float_get_default_index(&ptr, prop, fcu->array_index);
+      }
     }
 
     if (fcu->bezt->vec[1][1] == default_value) {
@@ -335,8 +347,9 @@ void smooth_fcurve(FCurve *fcu)
   /* first loop through - count how many verts are selected */
   bezt = fcu->bezt;
   for (i = 0; i < fcu->totvert; i++, bezt++) {
-    if (BEZT_ISSEL_ANY(bezt))
+    if (BEZT_ISSEL_ANY(bezt)) {
       totSel++;
+    }
   }
 
   /* if any points were selected, allocate tSmooth_Bezt points to work on */
@@ -356,10 +369,12 @@ void smooth_fcurve(FCurve *fcu)
         tsb->h3 = &bezt->vec[2][1];
 
         /* advance to the next tsb to populate */
-        if (x < totSel - 1)
+        if (x < totSel - 1) {
           tsb++;
-        else
+        }
+        else {
           break;
+        }
       }
     }
 
@@ -373,7 +388,8 @@ void smooth_fcurve(FCurve *fcu)
     /* round 1: calculate smoothing deltas and new values */
     tsb = tarray;
     for (i = 0; i < totSel; i++, tsb++) {
-      /* don't touch end points (otherwise, curves slowly explode, as we don't have enough data there) */
+      /* Don't touch end points (otherwise, curves slowly explode,
+       * as we don't have enough data there). */
       if (ELEM(i, 0, (totSel - 1)) == 0) {
         const tSmooth_Bezt *tP1 = tsb - 1;
         const tSmooth_Bezt *tP2 = (i - 2 > 0) ? (tsb - 2) : (NULL);
@@ -431,8 +447,9 @@ void sample_fcurve(FCurve *fcu)
   int sfra, range;
   int i, n;
 
-  if (fcu->bezt == NULL) /* ignore baked */
+  if (fcu->bezt == NULL) { /* ignore baked */
     return;
+  }
 
   /* find selected keyframes... once pair has been found, add keyframes  */
   for (i = 0, bezt = fcu->bezt; i < fcu->totvert; i++, bezt++) {
@@ -500,11 +517,12 @@ void sample_fcurve(FCurve *fcu)
 }
 
 /* **************************************************** */
-/* Copy/Paste Tools */
-/* - The copy/paste buffer currently stores a set of temporary F-Curves containing only the keyframes
- *   that were selected in each of the original F-Curves
- * - All pasted frames are offset by the same amount. This is calculated as the difference in the times of
- *   the current frame and the 'first keyframe' (i.e. the earliest one in all channels).
+/* Copy/Paste Tools:
+ * - The copy/paste buffer currently stores a set of temporary F-Curves containing only the
+ *   keyframes that were selected in each of the original F-Curves.
+ * - All pasted frames are offset by the same amount.
+ *   This is calculated as the difference in the times of the current frame and the
+ *   'first keyframe' (i.e. the earliest one in all channels).
  * - The earliest frame is calculated per copy operation.
  */
 
@@ -540,12 +558,14 @@ void ANIM_fcurves_copybuf_free(void)
     acn = aci->next;
 
     /* free keyframes */
-    if (aci->bezt)
+    if (aci->bezt) {
       MEM_freeN(aci->bezt);
+    }
 
     /* free RNA-path */
-    if (aci->rna_path)
+    if (aci->rna_path) {
       MEM_freeN(aci->rna_path);
+    }
 
     /* free ourself */
     BLI_freelinkN(&animcopybuf, aci);
@@ -580,8 +600,9 @@ short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
      * - this check should also eliminate any problems associated with using sample-data
      */
     if (ANIM_fcurve_keyframes_loop(
-            NULL, fcu, NULL, ANIM_editkeyframes_ok(BEZT_OK_SELECTED), NULL) == 0)
+            NULL, fcu, NULL, ANIM_editkeyframes_ok(BEZT_OK_SELECTED), NULL) == 0) {
       continue;
+    }
 
     /* init copybuf item info */
     aci = MEM_callocN(sizeof(tAnimCopybufItem), "AnimCopybufItem");
@@ -591,8 +612,9 @@ short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
     aci->rna_path = MEM_dupallocN(fcu->rna_path);
     aci->array_index = fcu->array_index;
 
-    /* detect if this is a bone. We do that here rather than during pasting because ID pointers will get invalidated if we undo.
-     * storing the relevant information here helps avoiding crashes if we undo-repaste */
+    /* Detect if this is a bone. We do that here rather than during pasting because ID pointers
+     * will get invalidated if we undo.
+     * Storing the relevant information here helps avoiding crashes if we undo-repaste. */
     if ((aci->id_type == ID_OB) && (((Object *)aci->id)->type == OB_ARMATURE) && aci->rna_path) {
       Object *ob = (Object *)aci->id;
       bPoseChannel *pchan;
@@ -603,8 +625,9 @@ short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
       if (pchan) {
         aci->is_bone = true;
       }
-      if (bone_name)
+      if (bone_name) {
         MEM_freeN(bone_name);
+      }
     }
 
     BLI_addtail(&animcopybuf, aci);
@@ -618,8 +641,9 @@ short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
         newbuf = MEM_callocN(sizeof(BezTriple) * (aci->totvert + 1), "copybuf beztriple");
 
         /* assume that since we are just re-sizing the array, just copy all existing data across */
-        if (aci->bezt)
+        if (aci->bezt) {
           memcpy(newbuf, aci->bezt, sizeof(BezTriple) * (aci->totvert));
+        }
 
         /* copy current beztriple across too */
         nbezt = &newbuf[aci->totvert];
@@ -629,23 +653,27 @@ short copy_animedit_keys(bAnimContext *ac, ListBase *anim_data)
         BEZT_SEL_ALL(nbezt);
 
         /* free old array and set the new */
-        if (aci->bezt)
+        if (aci->bezt) {
           MEM_freeN(aci->bezt);
+        }
         aci->bezt = newbuf;
         aci->totvert++;
 
         /* check if this is the earliest frame encountered so far */
-        if (bezt->vec[1][0] < animcopy_firstframe)
+        if (bezt->vec[1][0] < animcopy_firstframe) {
           animcopy_firstframe = bezt->vec[1][0];
-        if (bezt->vec[1][0] > animcopy_lastframe)
+        }
+        if (bezt->vec[1][0] > animcopy_lastframe) {
           animcopy_lastframe = bezt->vec[1][0];
+        }
       }
     }
   }
 
   /* check if anything ended up in the buffer */
-  if (ELEM(NULL, animcopybuf.first, animcopybuf.last))
+  if (ELEM(NULL, animcopybuf.first, animcopybuf.last)) {
     return -1;
+  }
 
   /* in case 'relative' paste method is used */
   animcopy_cfra = CFRA;
@@ -758,8 +786,9 @@ static tAnimCopybufItem *pastebuf_match_path_property(Main *bmain,
           if (len_id <= len_path) {
             /* note, paths which end with "] will fail with this test - Animated ID Props */
             if (STREQ(identifier, fcu->rna_path + (len_path - len_id))) {
-              if ((from_single) || (aci->array_index == fcu->array_index))
+              if ((from_single) || (aci->array_index == fcu->array_index)) {
                 break;
+              }
             }
           }
         }
@@ -799,17 +828,21 @@ static void do_curve_mirror_flippping(tAnimCopybufItem *aci, BezTriple *bezt)
   if (aci->is_bone) {
     const size_t slength = strlen(aci->rna_path);
     bool flip = false;
-    if (BLI_strn_endswith(aci->rna_path, "location", slength) && aci->array_index == 0)
+    if (BLI_strn_endswith(aci->rna_path, "location", slength) && aci->array_index == 0) {
       flip = true;
+    }
     else if (BLI_strn_endswith(aci->rna_path, "rotation_quaternion", slength) &&
-             ELEM(aci->array_index, 2, 3))
+             ELEM(aci->array_index, 2, 3)) {
       flip = true;
+    }
     else if (BLI_strn_endswith(aci->rna_path, "rotation_euler", slength) &&
-             ELEM(aci->array_index, 1, 2))
+             ELEM(aci->array_index, 1, 2)) {
       flip = true;
+    }
     else if (BLI_strn_endswith(aci->rna_path, "rotation_axis_angle", slength) &&
-             ELEM(aci->array_index, 2, 3))
+             ELEM(aci->array_index, 2, 3)) {
       flip = true;
+    }
 
     if (flip) {
       bezt->vec[0][1] = -bezt->vec[0][1];
@@ -875,8 +908,9 @@ static void paste_animedit_keys_fcurve(
   /* just start pasting, with the first keyframe on the current frame, and so on */
   for (i = 0, bezt = aci->bezt; i < aci->totvert; i++, bezt++) {
     /* temporarily apply offset to src beztriple while copying */
-    if (flip)
+    if (flip) {
       do_curve_mirror_flippping(aci, bezt);
+    }
 
     bezt->vec[0][0] += offset;
     bezt->vec[1][0] += offset;
@@ -893,8 +927,9 @@ static void paste_animedit_keys_fcurve(
     bezt->vec[1][0] -= offset;
     bezt->vec[2][0] -= offset;
 
-    if (flip)
+    if (flip) {
       do_curve_mirror_flippping(aci, bezt);
+    }
   }
 
   /* recalculate F-Curve's handles? */
@@ -1005,10 +1040,11 @@ short paste_animedit_keys(bAnimContext *ac,
       unsigned int totmatch = 0;
 
       for (ale = anim_data->first; ale; ale = ale->next) {
-        /* find buffer item to paste from
-         * - if names don't matter (i.e. only 1 channel in buffer), don't check id/group
-         * - if names do matter, only check if id-type is ok for now (group check is not that important)
-         * - most importantly, rna-paths should match (array indices are unimportant for now)
+        /* Find buffer item to paste from:
+         * - If names don't matter (i.e. only 1 channel in buffer), don't check id/group
+         * - If names do matter, only check if id-type is ok for now
+         *   (group check is not that important).
+         * - Most importantly, rna-paths should match (array indices are unimportant for now)
          */
         AnimData *adt = ANIM_nla_mapping_get(ac, ale);
         FCurve *fcu = (FCurve *)ale->data; /* destination F-Curve */
@@ -1049,8 +1085,9 @@ short paste_animedit_keys(bAnimContext *ac,
       }
 
       /* don't continue if some fcurves were pasted */
-      if (totmatch)
+      if (totmatch) {
         break;
+      }
     }
   }
 

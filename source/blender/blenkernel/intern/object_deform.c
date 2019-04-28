@@ -116,8 +116,9 @@ bDeformGroup *BKE_object_defgroup_add_name(Object *ob, const char *name)
 {
   bDeformGroup *defgroup;
 
-  if (!ob || !OB_TYPE_SUPPORT_VGROUP(ob->type))
+  if (!ob || !OB_TYPE_SUPPORT_VGROUP(ob->type)) {
     return NULL;
+  }
 
   defgroup = BKE_defgroup_new(ob, name);
 
@@ -283,8 +284,9 @@ static void object_defgroup_remove_common(Object *ob, bDeformGroup *dg, const in
   BLI_freelinkN(&ob->defbase, dg);
 
   /* Update the active deform index if necessary */
-  if (ob->actdef > def_nr)
+  if (ob->actdef > def_nr) {
     ob->actdef--;
+  }
 
   /* remove all dverts */
   if (BLI_listbase_is_empty(&ob->defbase)) {
@@ -345,7 +347,8 @@ static void object_defgroup_remove_edit_mode(Object *ob, bDeformGroup *dg)
 
   BLI_assert(def_nr != -1);
 
-  /* Make sure that no verts are using this group - if none were removed, we can skip next per-vert update. */
+  /* Make sure that no verts are using this group - if none were removed,
+   * we can skip next per-vert update. */
   if (!BKE_object_defgroup_clear(ob, dg, false)) {
     /* Nothing to do. */
   }
@@ -401,10 +404,12 @@ void BKE_object_defgroup_remove(Object *ob, bDeformGroup *defgroup)
     BKE_gpencil_vgroup_remove(ob, defgroup);
   }
   else {
-    if (BKE_object_is_in_editmode_vgroup(ob))
+    if (BKE_object_is_in_editmode_vgroup(ob)) {
       object_defgroup_remove_edit_mode(ob, defgroup);
-    else
+    }
+    else {
       object_defgroup_remove_object_mode(ob, defgroup);
+    }
 
     BKE_object_batch_cache_dirty_tag(ob);
   }
@@ -424,10 +429,12 @@ void BKE_object_defgroup_remove_all_ex(struct Object *ob, bool only_unlocked)
       bDeformGroup *next_dg = dg->next;
 
       if (!only_unlocked || (dg->flag & DG_LOCK_WEIGHT) == 0) {
-        if (edit_mode)
+        if (edit_mode) {
           object_defgroup_remove_edit_mode(ob, dg);
-        else
+        }
+        else {
           object_defgroup_remove_object_mode(ob, dg);
+        }
       }
 
       dg = next_dg;
@@ -615,8 +622,9 @@ bool *BKE_object_defgroup_validmap_get(Object *ob, const int defbase_tot)
   for (md = ob->modifiers.first; md; md = !md->next && step1 ? (step1 = 0),
       modifiers_getVirtualModifierList(ob, &virtualModifierData) :
                                      md->next) {
-    if (!(md->mode & (eModifierMode_Realtime | eModifierMode_Virtual)))
+    if (!(md->mode & (eModifierMode_Realtime | eModifierMode_Virtual))) {
       continue;
+    }
 
     if (md->type == eModifierType_Armature) {
       ArmatureModifierData *amd = (ArmatureModifierData *)md;
@@ -627,8 +635,9 @@ bool *BKE_object_defgroup_validmap_get(Object *ob, const int defbase_tot)
 
         for (chan = pose->chanbase.first; chan; chan = chan->next) {
           void **val_p;
-          if (chan->bone->flag & BONE_NO_DEFORM)
+          if (chan->bone->flag & BONE_NO_DEFORM) {
             continue;
+          }
 
           val_p = BLI_ghash_lookup_p(gh, chan->name);
           if (val_p) {
@@ -684,7 +693,9 @@ bool *BKE_object_defgroup_selected_get(Object *ob, int defbase_tot, int *r_dg_fl
   return dg_selection;
 }
 
-/* Marks mirror vgroups in output and counts them. Output and counter assumed to be already initialized.
+/**
+ * Marks mirror vgroups in output and counts them.
+ * Output and counter assumed to be already initialized.
  * Designed to be usable after BKE_object_defgroup_selected_get to extend selection to mirror.
  */
 void BKE_object_defgroup_mirror_selection(struct Object *ob,

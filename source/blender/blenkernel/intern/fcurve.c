@@ -81,8 +81,9 @@ static CLG_LogRef LOG = {"bke.fcurve"};
 /* Frees the F-Curve itself too, so make sure BLI_remlink is called before calling this... */
 void free_fcurve(FCurve *fcu)
 {
-  if (fcu == NULL)
+  if (fcu == NULL) {
     return;
+  }
 
   /* free curve data */
   MEM_SAFE_FREE(fcu->bezt);
@@ -105,8 +106,9 @@ void free_fcurves(ListBase *list)
   FCurve *fcu, *fcn;
 
   /* sanity check */
-  if (list == NULL)
+  if (list == NULL) {
     return;
+  }
 
   /* free data - no need to call remlink before freeing each curve,
    * as we store reference to next, and freeing only touches the curve
@@ -129,8 +131,9 @@ FCurve *copy_fcurve(const FCurve *fcu)
   FCurve *fcu_d;
 
   /* sanity check */
-  if (fcu == NULL)
+  if (fcu == NULL) {
     return NULL;
+  }
 
   /* make a copy */
   fcu_d = MEM_dupallocN(fcu);
@@ -161,8 +164,9 @@ void copy_fcurves(ListBase *dst, ListBase *src)
   FCurve *dfcu, *sfcu;
 
   /* sanity checks */
-  if (ELEM(NULL, dst, src))
+  if (ELEM(NULL, dst, src)) {
     return;
+  }
 
   /* clear destination list first */
   BLI_listbase_clear(dst);
@@ -189,12 +193,14 @@ FCurve *id_data_find_fcurve(
   PropertyRNA *prop;
   char *path;
 
-  if (r_driven)
+  if (r_driven) {
     *r_driven = false;
+  }
 
   /* only use the current action ??? */
-  if (ELEM(NULL, adt, adt->action))
+  if (ELEM(NULL, adt, adt->action)) {
     return NULL;
+  }
 
   RNA_pointer_create(id, type, data, &ptr);
   prop = RNA_struct_find_property(&ptr, prop_name);
@@ -204,14 +210,16 @@ FCurve *id_data_find_fcurve(
 
     if (path) {
       /* animation takes priority over drivers */
-      if ((adt->action) && (adt->action->curves.first))
+      if ((adt->action) && (adt->action->curves.first)) {
         fcu = list_find_fcurve(&adt->action->curves, path, index);
+      }
 
       /* if not animated, check if driven */
       if ((fcu == NULL) && (adt->drivers.first)) {
         fcu = list_find_fcurve(&adt->drivers, path, index);
-        if (fcu && r_driven)
+        if (fcu && r_driven) {
           *r_driven = true;
+        }
         fcu = NULL;
       }
 
@@ -222,22 +230,25 @@ FCurve *id_data_find_fcurve(
   return fcu;
 }
 
-/* Find the F-Curve affecting the given RNA-access path + index, in the list of F-Curves provided */
+/* Find the F-Curve affecting the given RNA-access path + index,
+ * in the list of F-Curves provided. */
 FCurve *list_find_fcurve(ListBase *list, const char rna_path[], const int array_index)
 {
   FCurve *fcu;
 
   /* sanity checks */
-  if (ELEM(NULL, list, rna_path) || (array_index < 0))
+  if (ELEM(NULL, list, rna_path) || (array_index < 0)) {
     return NULL;
+  }
 
   /* check paths of curves, then array indices... */
   for (fcu = list->first; fcu; fcu = fcu->next) {
     /* simple string-compare (this assumes that they have the same root...) */
     if (fcu->rna_path && STREQ(fcu->rna_path, rna_path)) {
       /* now check indices */
-      if (fcu->array_index == array_index)
+      if (fcu->array_index == array_index) {
         return fcu;
+      }
     }
   }
 
@@ -251,8 +262,9 @@ FCurve *iter_step_fcurve(FCurve *fcu_iter, const char rna_path[])
   FCurve *fcu;
 
   /* sanity checks */
-  if (ELEM(NULL, fcu_iter, rna_path))
+  if (ELEM(NULL, fcu_iter, rna_path)) {
     return NULL;
+  }
 
   /* check paths of curves, then array indices... */
   for (fcu = fcu_iter; fcu; fcu = fcu->next) {
@@ -266,7 +278,10 @@ FCurve *iter_step_fcurve(FCurve *fcu_iter, const char rna_path[])
   return NULL;
 }
 
-/* Get list of LinkData's containing pointers to the F-Curves which control the types of data indicated
+/**
+ * Get list of LinkData's containing pointers to the F-Curves
+ * which control the types of data indicated.
+ *
  * Lists...
  * - dst: list of LinkData's matching the criteria returned.
  *   List must be freed after use, and is assumed to be empty when passed.
@@ -284,10 +299,12 @@ int list_find_data_fcurves(ListBase *dst,
   int matches = 0;
 
   /* sanity checks */
-  if (ELEM(NULL, dst, src, dataPrefix, dataName))
+  if (ELEM(NULL, dst, src, dataPrefix, dataName)) {
     return 0;
-  else if ((dataPrefix[0] == 0) || (dataName[0] == 0))
+  }
+  else if ((dataPrefix[0] == 0) || (dataName[0] == 0)) {
     return 0;
+  }
 
   /* search each F-Curve one by one */
   for (fcu = src->first; fcu; fcu = fcu->next) {
@@ -343,10 +360,12 @@ FCurve *rna_get_fcurve_context_ui(bContext *C,
   *r_driven = false;
   *r_special = false;
 
-  if (r_animdata)
+  if (r_animdata) {
     *r_animdata = NULL;
-  if (r_action)
+  }
+  if (r_action) {
     *r_action = NULL;
+  }
 
   /* Special case for NLA Control Curves... */
   if (BKE_nlastrip_has_curves_for_property(ptr, prop)) {
@@ -365,9 +384,9 @@ FCurve *rna_get_fcurve_context_ui(bContext *C,
   /* there must be some RNA-pointer + property combon */
   if (prop && tptr.id.data && RNA_property_animateable(&tptr, prop)) {
     AnimData *adt = BKE_animdata_from_id(tptr.id.data);
-    int step =
-        C ? 2 :
-            1; /* Always 1 in case we have no context (can't check in 'ancestors' of given RNA ptr). */
+    int step = (
+        /* Always 1 in case we have no context (can't check in 'ancestors' of given RNA ptr). */
+        C ? 2 : 1);
     char *path = NULL;
 
     if (!adt && C) {
@@ -390,8 +409,9 @@ FCurve *rna_get_fcurve_context_ui(bContext *C,
           if (adt->action && adt->action->curves.first) {
             fcu = list_find_fcurve(&adt->action->curves, path, rnaindex);
 
-            if (fcu && r_action)
+            if (fcu && r_action) {
               *r_action = adt->action;
+            }
           }
 
           /* if not animated, check if driven */
@@ -399,15 +419,17 @@ FCurve *rna_get_fcurve_context_ui(bContext *C,
             fcu = list_find_fcurve(&adt->drivers, path, rnaindex);
 
             if (fcu) {
-              if (r_animdata)
+              if (r_animdata) {
                 *r_animdata = adt;
+              }
               *r_driven = true;
             }
           }
 
           if (fcu && r_action) {
-            if (r_animdata)
+            if (r_animdata) {
               *r_animdata = adt;
+            }
             *r_action = adt->action;
             break;
           }
@@ -433,7 +455,8 @@ FCurve *rna_get_fcurve_context_ui(bContext *C,
 
 /* ----------------- Finding Keyframes/Extents -------------------------- */
 
-/* Binary search algorithm for finding where to insert BezTriple, with optional argument for precision required.
+/* Binary search algorithm for finding where to insert BezTriple,
+ * with optional argument for precision required.
  * Returns the index to insert at (data already at that index will be offset if replace is 0)
  */
 static int binarysearch_bezt_index_ex(
@@ -463,8 +486,9 @@ static int binarysearch_bezt_index_ex(
       *r_replace = true;
       return 0;
     }
-    else if (frame < framenum)
+    else if (frame < framenum) {
       return 0;
+    }
 
     /* 'Last' Keyframe */
     framenum = array[(arraylen - 1)].vec[1][0];
@@ -472,8 +496,9 @@ static int binarysearch_bezt_index_ex(
       *r_replace = true;
       return (arraylen - 1);
     }
-    else if (frame > framenum)
+    else if (frame > framenum) {
       return arraylen;
+    }
   }
 
   /* most of the time, this loop is just to find where to put it
@@ -492,10 +517,12 @@ static int binarysearch_bezt_index_ex(
     }
 
     /* repeat in upper/lower half */
-    if (frame > midfra)
+    if (frame > midfra) {
       start = mid + 1;
-    else if (frame < midfra)
+    }
+    else if (frame < midfra) {
       end = mid - 1;
+    }
   }
 
   /* print error if loop-limit exceeded */
@@ -539,8 +566,9 @@ static short get_fcurve_end_keyframes(FCurve *fcu,
   *last = NULL;
 
   /* sanity checks */
-  if (fcu->bezt == NULL)
+  if (fcu->bezt == NULL) {
     return found;
+  }
 
   /* only include selected items? */
   if (do_sel_only) {
@@ -625,8 +653,8 @@ bool calc_fcurve_bounds(FCurve *fcu,
 
             if (include_handles) {
               /* left handle - only if applicable
-               * NOTE: for the very first keyframe, the left handle actually has no bearings on anything
-               */
+               * NOTE: for the very first keyframe,
+               * the left handle actually has no bearings on anything. */
               if (prevbezt && (prevbezt->ipo == BEZT_IPO_BEZ)) {
                 yminv = min_ff(yminv, bezt->vec[0][1]);
                 ymaxv = max_ff(ymaxv, bezt->vec[0][1]);
@@ -656,10 +684,12 @@ bool calc_fcurve_bounds(FCurve *fcu,
         FPoint *fpt;
 
         for (fpt = fcu->fpt, i = 0; i < fcu->totvert; fpt++, i++) {
-          if (fpt->vec[1] < yminv)
+          if (fpt->vec[1] < yminv) {
             yminv = fpt->vec[1];
-          if (fpt->vec[1] > ymaxv)
+          }
+          if (fpt->vec[1] > ymaxv) {
             ymaxv = fpt->vec[1];
+          }
 
           foundvert = true;
         }
@@ -668,29 +698,38 @@ bool calc_fcurve_bounds(FCurve *fcu,
   }
 
   if (foundvert) {
-    if (xmin)
+    if (xmin) {
       *xmin = xminv;
-    if (xmax)
+    }
+    if (xmax) {
       *xmax = xmaxv;
+    }
 
-    if (ymin)
+    if (ymin) {
       *ymin = yminv;
-    if (ymax)
+    }
+    if (ymax) {
       *ymax = ymaxv;
+    }
   }
   else {
-    if (G.debug & G_DEBUG)
+    if (G.debug & G_DEBUG) {
       printf("F-Curve calc bounds didn't find anything, so assuming minimum bounds of 1.0\n");
+    }
 
-    if (xmin)
+    if (xmin) {
       *xmin = 0.0f;
-    if (xmax)
+    }
+    if (xmax) {
       *xmax = 1.0f;
+    }
 
-    if (ymin)
+    if (ymin) {
       *ymin = 0.0f;
-    if (ymax)
+    }
+    if (ymax) {
       *ymax = 1.0f;
+    }
   }
 
   return foundvert;
@@ -753,12 +792,14 @@ bool calc_fcurve_range(
 bool fcurve_are_keyframes_usable(FCurve *fcu)
 {
   /* F-Curve must exist */
-  if (fcu == NULL)
+  if (fcu == NULL) {
     return false;
+  }
 
   /* F-Curve must not have samples - samples are mutually exclusive of keyframes */
-  if (fcu->fpt)
+  if (fcu->fpt) {
     return false;
+  }
 
   /* if it has modifiers, none of these should "drastically" alter the curve */
   if (fcu->modifiers.first) {
@@ -768,8 +809,9 @@ bool fcurve_are_keyframes_usable(FCurve *fcu)
     /* TODO: optionally, only check modifier if it is the active one... */
     for (fcm = fcu->modifiers.last; fcm; fcm = fcm->prev) {
       /* ignore if muted/disabled */
-      if (fcm->flag & (FMODIFIER_FLAG_DISABLED | FMODIFIER_FLAG_MUTED))
+      if (fcm->flag & (FMODIFIER_FLAG_DISABLED | FMODIFIER_FLAG_MUTED)) {
         continue;
+      }
 
       /* type checks */
       switch (fcm->type) {
@@ -783,15 +825,17 @@ bool fcurve_are_keyframes_usable(FCurve *fcu)
         case FMODIFIER_TYPE_GENERATOR: {
           FMod_Generator *data = (FMod_Generator *)fcm->data;
 
-          if ((data->flag & FCM_GENERATOR_ADDITIVE) == 0)
+          if ((data->flag & FCM_GENERATOR_ADDITIVE) == 0) {
             return false;
+          }
           break;
         }
         case FMODIFIER_TYPE_FN_GENERATOR: {
           FMod_FunctionGenerator *data = (FMod_FunctionGenerator *)fcm->data;
 
-          if ((data->flag & FCM_GENERATOR_ADDITIVE) == 0)
+          if ((data->flag & FCM_GENERATOR_ADDITIVE) == 0) {
             return false;
+          }
           break;
         }
         /* always harmful - cannot allow */
@@ -816,12 +860,14 @@ bool BKE_fcurve_is_protected(FCurve *fcu)
 bool fcurve_is_keyframable(FCurve *fcu)
 {
   /* F-Curve's keyframes must be "usable" (i.e. visible + have an effect on final result) */
-  if (fcurve_are_keyframes_usable(fcu) == 0)
+  if (fcurve_are_keyframes_usable(fcu) == 0) {
     return false;
+  }
 
   /* F-Curve must currently be editable too */
-  if (BKE_fcurve_is_protected(fcu))
+  if (BKE_fcurve_is_protected(fcu)) {
     return false;
+  }
 
   /* F-Curve is keyframable */
   return true;
@@ -837,21 +883,25 @@ void bezt_add_to_cfra_elem(ListBase *lb, BezTriple *bezt)
   for (ce = lb->first; ce; ce = ce->next) {
     /* double key? */
     if (IS_EQT(ce->cfra, bezt->vec[1][0], BEZT_BINARYSEARCH_THRESH)) {
-      if (bezt->f2 & SELECT)
+      if (bezt->f2 & SELECT) {
         ce->sel = bezt->f2;
+      }
       return;
     }
     /* should key be inserted before this column? */
-    else if (ce->cfra > bezt->vec[1][0])
+    else if (ce->cfra > bezt->vec[1][0]) {
       break;
+    }
   }
 
   /* create a new column */
   cen = MEM_callocN(sizeof(CfraElem), "add_to_cfra_elem");
-  if (ce)
+  if (ce) {
     BLI_insertlinkbefore(lb, ce, cen);
-  else
+  }
+  else {
     BLI_addtail(lb, cen);
+  }
 
   cen->cfra = bezt->vec[1][0];
   cen->sel = bezt->f2;
@@ -901,10 +951,12 @@ void fcurve_store_samples(FCurve *fcu, void *data, int start, int end, FcuSample
   }
 
   /* free any existing sample/keyframe data on curve  */
-  if (fcu->bezt)
+  if (fcu->bezt) {
     MEM_freeN(fcu->bezt);
-  if (fcu->fpt)
+  }
+  if (fcu->fpt) {
     MEM_freeN(fcu->fpt);
+  }
 
   /* store the samples */
   fcu->bezt = NULL;
@@ -952,28 +1004,32 @@ eFCU_Cycle_Type BKE_fcurve_get_cycle_type(FCurve *fcu)
   return FCU_CYCLE_NONE;
 }
 
-/* Checks if the F-Curve has a Cycles modifier with simple settings that warrant transition smoothing */
+/* Checks if the F-Curve has a Cycles modifier with simple settings
+ * that warrant transition smoothing. */
 bool BKE_fcurve_is_cyclic(FCurve *fcu)
 {
   return BKE_fcurve_get_cycle_type(fcu) != FCU_CYCLE_NONE;
 }
 
-/* Shifts 'in' by the difference in coordinates between 'to' and 'from', using 'out' as the output buffer.
+/* Shifts 'in' by the difference in coordinates between 'to' and 'from',
+ * using 'out' as the output buffer.
  * When 'to' and 'from' are end points of the loop, this moves the 'in' point one loop cycle.
  */
 static BezTriple *cycle_offset_triple(
     bool cycle, BezTriple *out, const BezTriple *in, const BezTriple *from, const BezTriple *to)
 {
-  if (!cycle)
+  if (!cycle) {
     return NULL;
+  }
 
   memcpy(out, in, sizeof(BezTriple));
 
   float delta[3];
   sub_v3_v3v3(delta, to->vec[1], from->vec[1]);
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++) {
     add_v3_v3(out->vec[i], delta);
+  }
 
   return out;
 }
@@ -991,8 +1047,9 @@ void calchandles_fcurve(FCurve *fcu)
    * - need bezier keys
    * - only bezier-interpolation has handles (for now)
    */
-  if (ELEM(NULL, fcu, fcu->bezt) || (a < 2) /*|| ELEM(fcu->ipo, BEZT_IPO_CONST, BEZT_IPO_LIN)*/)
+  if (ELEM(NULL, fcu, fcu->bezt) || (a < 2) /*|| ELEM(fcu->ipo, BEZT_IPO_CONST, BEZT_IPO_LIN)*/) {
     return;
+  }
 
   /* if the first modifier is Cycles, smooth the curve through the cycle */
   BezTriple *first = &fcu->bezt[0], *last = &fcu->bezt[fcu->totvert - 1];
@@ -1008,10 +1065,12 @@ void calchandles_fcurve(FCurve *fcu)
   /* loop over all beztriples, adjusting handles */
   while (a--) {
     /* clamp timing of handles to be on either side of beztriple */
-    if (bezt->vec[0][0] > bezt->vec[1][0])
+    if (bezt->vec[0][0] > bezt->vec[1][0]) {
       bezt->vec[0][0] = bezt->vec[1][0];
-    if (bezt->vec[2][0] < bezt->vec[1][0])
+    }
+    if (bezt->vec[2][0] < bezt->vec[1][0]) {
       bezt->vec[2][0] = bezt->vec[1][0];
+    }
 
     /* calculate auto-handles */
     BKE_nurb_handle_calc(bezt, prev, next, true, fcu->auto_smoothing);
@@ -1066,8 +1125,9 @@ void testhandles_fcurve(FCurve *fcu, const bool use_handle)
   unsigned int a;
 
   /* only beztriples have handles (bpoints don't though) */
-  if (ELEM(NULL, fcu, fcu->bezt))
+  if (ELEM(NULL, fcu, fcu->bezt)) {
     return;
+  }
 
   /* loop over beztriples */
   for (a = 0, bezt = fcu->bezt; a < fcu->totvert; a++, bezt++) {
@@ -1126,8 +1186,9 @@ short test_time_fcurve(FCurve *fcu)
   unsigned int a;
 
   /* sanity checks */
-  if (fcu == NULL)
+  if (fcu == NULL) {
     return 0;
+  }
 
   /* currently, only need to test beztriples */
   if (fcu->bezt) {
@@ -1135,8 +1196,9 @@ short test_time_fcurve(FCurve *fcu)
 
     /* loop through all BezTriples, stopping when one exceeds the one after it */
     for (a = 0, bezt = fcu->bezt; a < (fcu->totvert - 1); a++, bezt++) {
-      if (bezt->vec[1][0] > (bezt + 1)->vec[1][0])
+      if (bezt->vec[1][0] > (bezt + 1)->vec[1][0]) {
         return 1;
+      }
     }
   }
   else if (fcu->fpt) {
@@ -1144,8 +1206,9 @@ short test_time_fcurve(FCurve *fcu)
 
     /* loop through all FPoints, stopping when one exceeds the one after it */
     for (a = 0, fpt = fcu->fpt; a < (fcu->totvert - 1); a++, fpt++) {
-      if (fpt->vec[0] > (fpt + 1)->vec[0])
+      if (fpt->vec[0] > (fpt + 1)->vec[0]) {
         return 1;
+      }
     }
   }
 
@@ -1178,12 +1241,16 @@ typedef struct DriverVarTypeInfo {
 
 static ID *dtar_id_ensure_proxy_from(ID *id)
 {
-  if (id && GS(id->name) == ID_OB && ((Object *)id)->proxy_from)
+  if (id && GS(id->name) == ID_OB && ((Object *)id)->proxy_from) {
     return (ID *)(((Object *)id)->proxy_from);
+  }
   return id;
 }
 
-/* Helper function to obtain a value using RNA from the specified source (for evaluating drivers) */
+/**
+ * Helper function to obtain a value using RNA from the specified source
+ * (for evaluating drivers).
+ */
 static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
 {
   PointerRNA id_ptr, ptr;
@@ -1193,8 +1260,9 @@ static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
   float value = 0.0f;
 
   /* sanity check */
-  if (ELEM(NULL, driver, dtar))
+  if (ELEM(NULL, driver, dtar)) {
     return 0.0f;
+  }
 
   id = dtar_id_ensure_proxy_from(dtar->id);
 
@@ -1301,8 +1369,9 @@ bool driver_get_variable_property(ChannelDriver *driver,
   int index = -1;
 
   /* sanity check */
-  if (ELEM(NULL, driver, dtar))
+  if (ELEM(NULL, driver, dtar)) {
     return false;
+  }
 
   id = dtar_id_ensure_proxy_from(dtar->id);
 
@@ -1703,10 +1772,12 @@ static DriverVarTypeInfo dvar_types[MAX_DVAR_TYPES] = {
 static const DriverVarTypeInfo *get_dvar_typeinfo(int type)
 {
   /* check if valid type */
-  if ((type >= 0) && (type < MAX_DVAR_TYPES))
+  if ((type >= 0) && (type < MAX_DVAR_TYPES)) {
     return &dvar_types[type];
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
 /* Driver API --------------------------------- */
@@ -1715,8 +1786,9 @@ static const DriverVarTypeInfo *get_dvar_typeinfo(int type)
 void driver_free_variable(ListBase *variables, DriverVar *dvar)
 {
   /* sanity checks */
-  if (dvar == NULL)
+  if (dvar == NULL) {
     return;
+  }
 
   /* free target vars
    * - need to go over all of them, not just up to the ones that are used
@@ -1725,8 +1797,9 @@ void driver_free_variable(ListBase *variables, DriverVar *dvar)
    */
   DRIVER_TARGETS_LOOPER_BEGIN (dvar) {
     /* free RNA path if applicable */
-    if (dtar->rna_path)
+    if (dtar->rna_path) {
       MEM_freeN(dtar->rna_path);
+    }
   }
   DRIVER_TARGETS_LOOPER_END;
 
@@ -1754,8 +1827,9 @@ void driver_variables_copy(ListBase *dst_vars, const ListBase *src_vars)
     /* need to go over all targets so that we don't leave any dangling paths */
     DRIVER_TARGETS_LOOPER_BEGIN (dvar) {
       /* make a copy of target's rna path if available */
-      if (dtar->rna_path)
+      if (dtar->rna_path) {
         dtar->rna_path = MEM_dupallocN(dtar->rna_path);
+      }
     }
     DRIVER_TARGETS_LOOPER_END;
   }
@@ -1767,8 +1841,9 @@ void driver_change_variable_type(DriverVar *dvar, int type)
   const DriverVarTypeInfo *dvti = get_dvar_typeinfo(type);
 
   /* sanity check */
-  if (ELEM(NULL, dvar, dvti))
+  if (ELEM(NULL, dvar, dvti)) {
     return;
+  }
 
   /* set the new settings */
   dvar->type = type;
@@ -1784,8 +1859,9 @@ void driver_change_variable_type(DriverVar *dvar, int type)
     dtar->flag = flags;
 
     /* object ID types only, or idtype not yet initialized */
-    if ((flags & DTAR_FLAG_ID_OB_ONLY) || (dtar->idtype == 0))
+    if ((flags & DTAR_FLAG_ID_OB_ONLY) || (dtar->idtype == 0)) {
       dtar->idtype = ID_OB;
+    }
   }
   DRIVER_TARGETS_LOOPER_END;
 }
@@ -1800,8 +1876,9 @@ void driver_variable_name_validate(DriverVar *dvar)
   };
 
   /* sanity checks */
-  if (dvar == NULL)
+  if (dvar == NULL) {
     return;
+  }
 
   /* clear all invalid-name flags */
   dvar->flag &= ~DVAR_ALL_INVALID_FLAGS;
@@ -1812,12 +1889,14 @@ void driver_variable_name_validate(DriverVar *dvar)
   }
 
   /* 1) Must start with a letter */
-  /* XXX: We assume that valid unicode letters in other languages are ok too, hence the blacklisting */
+  /* XXX: We assume that valid unicode letters in other languages are ok too,
+   * hence the blacklisting. */
   if (IN_RANGE_INCL(dvar->name[0], '0', '9')) {
     dvar->flag |= DVAR_FLAG_INVALID_START_NUM;
   }
   else if (dvar->name[0] == '_') {
-    /* NOTE: We don't allow names to start with underscores (i.e. it helps when ruling out security risks) */
+    /* NOTE: We don't allow names to start with underscores
+     * (i.e. it helps when ruling out security risks) */
     dvar->flag |= DVAR_FLAG_INVALID_START_CHAR;
   }
 
@@ -1833,10 +1912,12 @@ void driver_variable_name_validate(DriverVar *dvar)
   for (int i = 0; i < sizeof(special_char_blacklist); i++) {
     char *match = strchr(dvar->name, special_char_blacklist[i]);
 
-    if (match == dvar->name)
+    if (match == dvar->name) {
       dvar->flag |= DVAR_FLAG_INVALID_START_CHAR;
-    else if (match != NULL)
+    }
+    else if (match != NULL) {
       dvar->flag |= DVAR_FLAG_INVALID_HAS_SPECIAL;
+    }
   }
 
   /* 4) Check if the name is a reserved keyword
@@ -1850,8 +1931,9 @@ void driver_variable_name_validate(DriverVar *dvar)
 #endif
 
   /* If any these conditions match, the name is invalid */
-  if (dvar->flag & DVAR_ALL_INVALID_FLAGS)
+  if (dvar->flag & DVAR_ALL_INVALID_FLAGS) {
     dvar->flag |= DVAR_FLAG_INVALID_NAME;
+  }
 }
 
 /* Add a new driver variable */
@@ -1860,8 +1942,9 @@ DriverVar *driver_add_new_variable(ChannelDriver *driver)
   DriverVar *dvar;
 
   /* sanity checks */
-  if (driver == NULL)
+  if (driver == NULL) {
     return NULL;
+  }
 
   /* make a new variable */
   dvar = MEM_callocN(sizeof(DriverVar), "DriverVar");
@@ -1893,8 +1976,9 @@ void fcurve_free_driver(FCurve *fcu)
   DriverVar *dvar, *dvarn;
 
   /* sanity checks */
-  if (ELEM(NULL, fcu, fcu->driver))
+  if (ELEM(NULL, fcu, fcu->driver)) {
     return;
+  }
   driver = fcu->driver;
 
   /* free driver targets */
@@ -1905,13 +1989,15 @@ void fcurve_free_driver(FCurve *fcu)
 
 #ifdef WITH_PYTHON
   /* free compiled driver expression */
-  if (driver->expr_comp)
+  if (driver->expr_comp) {
     BPY_DECREF(driver->expr_comp);
+  }
 #endif
 
   BLI_expr_pylike_free(driver->expr_simple);
 
-  /* free driver itself, then set F-Curve's point to this to NULL (as the curve may still be used) */
+  /* Free driver itself, then set F-Curve's point to this to NULL
+   * (as the curve may still be used). */
   MEM_freeN(driver);
   fcu->driver = NULL;
 }
@@ -1922,8 +2008,9 @@ ChannelDriver *fcurve_copy_driver(const ChannelDriver *driver)
   ChannelDriver *ndriver;
 
   /* sanity checks */
-  if (driver == NULL)
+  if (driver == NULL) {
     return NULL;
+  }
 
   /* copy all data */
   ndriver = MEM_dupallocN(driver);
@@ -1931,9 +2018,9 @@ ChannelDriver *fcurve_copy_driver(const ChannelDriver *driver)
   ndriver->expr_simple = NULL;
 
   /* copy variables */
-  BLI_listbase_clear(
-      &ndriver
-           ->variables); /* to get rid of refs to non-copied data (that's still used on original) */
+
+  /* to get rid of refs to non-copied data (that's still used on original) */
+  BLI_listbase_clear(&ndriver->variables);
   driver_variables_copy(&ndriver->variables, &driver->variables);
 
   /* return the new driver */
@@ -2074,8 +2161,9 @@ float driver_get_variable_value(ChannelDriver *driver, DriverVar *dvar)
   const DriverVarTypeInfo *dvti;
 
   /* sanity check */
-  if (ELEM(NULL, driver, dvar))
+  if (ELEM(NULL, driver, dvar)) {
     return 0.0f;
+  }
 
   /* call the relevant callbacks to get the variable value
    * using the variable type info, storing the obtained value
@@ -2083,10 +2171,12 @@ float driver_get_variable_value(ChannelDriver *driver, DriverVar *dvar)
    */
   dvti = get_dvar_typeinfo(dvar->type);
 
-  if (dvti && dvti->get_value)
+  if (dvti && dvti->get_value) {
     dvar->curval = dvti->get_value(driver, dvar);
-  else
+  }
+  else {
     dvar->curval = 0.0f;
+  }
 
   return dvar->curval;
 }
@@ -2104,8 +2194,9 @@ float evaluate_driver(PathResolvedRNA *anim_rna,
   DriverVar *dvar;
 
   /* check if driver can be evaluated */
-  if (driver_orig->flag & DRIVER_FLAG_INVALID)
+  if (driver_orig->flag & DRIVER_FLAG_INVALID) {
     return 0.0f;
+  }
 
   switch (driver->type) {
     case DRIVER_TYPE_AVERAGE: /* average values of driver targets */
@@ -2129,10 +2220,12 @@ float evaluate_driver(PathResolvedRNA *anim_rna,
         }
 
         /* perform operations on the total if appropriate */
-        if (driver->type == DRIVER_TYPE_AVERAGE)
+        if (driver->type == DRIVER_TYPE_AVERAGE) {
           driver->curval = tot ? (value / (float)tot) : 0.0f;
-        else
+        }
+        else {
           driver->curval = value;
+        }
       }
       break;
     }
@@ -2151,13 +2244,15 @@ float evaluate_driver(PathResolvedRNA *anim_rna,
           /* check if greater/smaller than the baseline */
           if (driver->type == DRIVER_TYPE_MAX) {
             /* max? */
-            if (tmp_val > value)
+            if (tmp_val > value) {
               value = tmp_val;
+            }
           }
           else {
             /* min? */
-            if (tmp_val < value)
+            if (tmp_val < value) {
               value = tmp_val;
+            }
           }
         }
         else {
@@ -2232,8 +2327,9 @@ void correct_bezpart(float v1[2], float v2[2], float v3[2], float v4[2])
   len2 = fabsf(h2[0]);
 
   /* if the handles have no length, no need to do any corrections */
-  if ((len1 + len2) == 0.0f)
+  if ((len1 + len2) == 0.0f) {
     return;
+  }
 
   /* the two handles cross over each other, so force them
    * apart using the proportion they overlap
@@ -2274,23 +2370,28 @@ static int findzero(float x, float q0, float q1, float q2, float q3, float *o)
       t = sqrt(d);
       o[0] = (float)(sqrt3d(-q + t) + sqrt3d(-q - t) - a);
 
-      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
         return 1;
-      else
+      }
+      else {
         return 0;
+      }
     }
     else if (d == 0.0) {
       t = sqrt3d(-q);
       o[0] = (float)(2 * t - a);
 
-      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
         nr++;
+      }
       o[nr] = (float)(-t - a);
 
-      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f))
+      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f)) {
         return nr + 1;
-      else
+      }
+      else {
         return nr;
+      }
     }
     else {
       phi = acos(-q / sqrt(-(p * p * p)));
@@ -2299,18 +2400,22 @@ static int findzero(float x, float q0, float q1, float q2, float q3, float *o)
       q = sqrt(3 - 3 * p * p);
       o[0] = (float)(2 * t * p - a);
 
-      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
         nr++;
+      }
       o[nr] = (float)(-t * (p + q) - a);
 
-      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f))
+      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f)) {
         nr++;
+      }
       o[nr] = (float)(-t * (p - q) - a);
 
-      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f))
+      if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f)) {
         return nr + 1;
-      else
+      }
+      else {
         return nr;
+      }
     }
   }
   else {
@@ -2326,30 +2431,37 @@ static int findzero(float x, float q0, float q1, float q2, float q3, float *o)
         p = sqrt(p);
         o[0] = (float)((-b - p) / (2 * a));
 
-        if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+        if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
           nr++;
+        }
         o[nr] = (float)((-b + p) / (2 * a));
 
-        if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f))
+        if ((o[nr] >= (float)SMALL) && (o[nr] <= 1.000001f)) {
           return nr + 1;
-        else
+        }
+        else {
           return nr;
+        }
       }
       else if (p == 0) {
         o[0] = (float)(-b / (2 * a));
-        if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+        if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
           return 1;
-        else
+        }
+        else {
           return 0;
+        }
       }
     }
     else if (b != 0.0) {
       o[0] = (float)(-c / b);
 
-      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f))
+      if ((o[0] >= (float)SMALL) && (o[0] <= 1.000001f)) {
         return 1;
-      else
+      }
+      else {
         return 0;
+      }
     }
     else if (c == 0.0) {
       o[0] = 0.0;
@@ -2504,14 +2616,14 @@ static float fcurve_eval_keyframes(FCurve *fcu, BezTriple *bezts, float evaltime
     /* Use binary search to find appropriate keyframes...
      *
      * The threshold here has the following constraints:
-     *    - 0.001   is too coarse   -> We get artifacts with 2cm driver movements at 1BU = 1m (see T40332)
-     *    - 0.00001 is too fine     -> Weird errors, like selecting the wrong keyframe range (see T39207), occur.
-     *                                 This lower bound was established in b888a32eee8147b028464336ad2404d8155c64dd
+     * - 0.001 is too coarse:
+     *   We get artifacts with 2cm driver movements at 1BU = 1m (see T40332)
+     *
+     * - 0.00001 is too fine:
+     *   Weird errors, like selecting the wrong keyframe range (see T39207), occur.
+     *   This lower bound was established in b888a32eee8147b028464336ad2404d8155c64dd.
      */
     a = binarysearch_bezt_index_ex(bezts, evaltime, fcu->totvert, 0.0001, &exact);
-    if (G.debug & G_DEBUG)
-      printf(
-          "eval fcurve '%s' - %f => %u/%u, %d\n", fcu->rna_path, evaltime, a, fcu->totvert, exact);
 
     if (exact) {
       /* index returned must be interpreted differently when it sits on top of an existing keyframe
@@ -2528,7 +2640,8 @@ static float fcurve_eval_keyframes(FCurve *fcu, BezTriple *bezts, float evaltime
       prevbezt = (a > 0) ? (bezt - 1) : bezt;
     }
 
-    /* use if the key is directly on the frame, rare cases this is needed else we get 0.0 instead. */
+    /* use if the key is directly on the frame,
+     * rare cases this is needed else we get 0.0 instead. */
     /* XXX: consult T39207 for examples of files where failure of these checks can cause issues */
     if (exact) {
       cvalue = prevbezt->vec[1][1];
@@ -2586,13 +2699,14 @@ static float fcurve_eval_keyframes(FCurve *fcu, BezTriple *bezts, float evaltime
                 /* break; */
               }
               else {
-                if (G.debug & G_DEBUG)
+                if (G.debug & G_DEBUG) {
                   printf("    ERROR: findzero() failed at %f with %f %f %f %f\n",
                          evaltime,
                          v1[0],
                          v2[0],
                          v3[0],
                          v4[0]);
+                }
               }
             }
             break;
@@ -2795,12 +2909,13 @@ static float fcurve_eval_keyframes(FCurve *fcu, BezTriple *bezts, float evaltime
       }
     }
     else {
-      if (G.debug & G_DEBUG)
+      if (G.debug & G_DEBUG) {
         printf("   ERROR: failed eval - p=%f b=%f, t=%f (%f)\n",
                prevbezt->vec[1][0],
                bezt->vec[1][0],
                evaltime,
                fabsf(bezt->vec[1][0] - evaltime));
+      }
     }
   }
 
@@ -2834,10 +2949,12 @@ static float fcurve_eval_samples(FCurve *fcu, FPoint *fpts, float evaltime)
     fpt = prevfpt + ((int)evaltime - (int)prevfpt->vec[0]);
 
     /* if not exactly on the frame, perform linear interpolation with the next one */
-    if ((t != 0.0f) && (t < 1.0f))
+    if ((t != 0.0f) && (t < 1.0f)) {
       cvalue = interpf(fpt->vec[1], (fpt + 1)->vec[1], 1.0f - t);
-    else
+    }
+    else {
       cvalue = fpt->vec[1];
+    }
   }
 
   /* return value */
@@ -2865,10 +2982,12 @@ static float evaluate_fcurve_ex(FCurve *fcu, float evaltime, float cvalue)
    * - 'devaltime' instead of 'evaltime', as this is the time that the last time-modifying
    *   F-Curve modifier on the stack requested the curve to be evaluated at
    */
-  if (fcu->bezt)
+  if (fcu->bezt) {
     cvalue = fcurve_eval_keyframes(fcu, fcu->bezt, devaltime);
-  else if (fcu->fpt)
+  }
+  else if (fcu->fpt) {
     cvalue = fcurve_eval_samples(fcu, fcu->fpt, devaltime);
+  }
 
   /* evaluate modifiers */
   evaluate_value_fmodifiers(&storage, &fcu->modifiers, fcu, &cvalue, devaltime);
@@ -2876,8 +2995,9 @@ static float evaluate_fcurve_ex(FCurve *fcu, float evaltime, float cvalue)
   /* if curve can only have integral values, perform truncation (i.e. drop the decimal part)
    * here so that the curve can be sampled correctly
    */
-  if (fcu->flag & FCURVE_INT_VALUES)
+  if (fcu->flag & FCURVE_INT_VALUES) {
     cvalue = floorf(cvalue + 0.5f);
+  }
 
   /* return evaluated value */
   return cvalue;
@@ -2906,9 +3026,9 @@ float evaluate_fcurve_driver(PathResolvedRNA *anim_rna,
   BLI_assert(fcu->driver != NULL);
   float cvalue = 0.0f;
 
-  /* if there is a driver (only if this F-Curve is acting as 'driver'), evaluate it to find value to use as "evaltime"
-   * since drivers essentially act as alternative input (i.e. in place of 'time') for F-Curves
-   */
+  /* If there is a driver (only if this F-Curve is acting as 'driver'),
+   * evaluate it to find value to use as "evaltime" since drivers essentially act as alternative
+   * input (i.e. in place of 'time') for F-Curves. */
   if (fcu->driver) {
     /* evaltime now serves as input for the curve */
     evaltime = evaluate_driver(anim_rna, fcu->driver, driver_orig, evaltime);
@@ -2925,12 +3045,12 @@ float evaluate_fcurve_driver(PathResolvedRNA *anim_rna,
         /* if there are range-restrictions, we must definitely block [#36950] */
         if ((fcm->flag & FMODIFIER_FLAG_RANGERESTRICT) == 0 ||
             ((fcm->sfra <= evaltime) && (fcm->efra >= evaltime))) {
-          /* within range: here it probably doesn't matter, though we'd want to check on additive... */
+          /* Within range: here it probably doesn't matter,
+           * though we'd want to check on additive. */
         }
         else {
-          /* outside range: modifier shouldn't contribute to the curve here, though it does in other areas,
-           * so neither should the driver!
-           */
+          /* Outside range: modifier shouldn't contribute to the curve here,
+           * though it does in other areas, so neither should the driver! */
           do_linear = false;
         }
       }

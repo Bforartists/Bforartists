@@ -30,7 +30,8 @@
  * - Changes here only change generated code for `makesdna.c` and `makesrna.c`
  *   without impacting Blender's run-time, besides allowing us to use the new names.
  *
- * - Renaming something that has already been renamed can be done by editing the existing rename macro.
+ * - Renaming something that has already been renamed can be done
+ *   by editing the existing rename macro.
  *   All references to the previous destination name can be removed since they're
  *   never written to disk.
  *
@@ -57,6 +58,12 @@ DNA_STRUCT_RENAME(SpaceIpo, SpaceGraph)
 DNA_STRUCT_RENAME(SpaceOops, SpaceOutliner)
 DNA_STRUCT_RENAME_ELEM(BPoint, alfa, tilt)
 DNA_STRUCT_RENAME_ELEM(BezTriple, alfa, tilt)
+DNA_STRUCT_RENAME_ELEM(Bone, scaleIn, scale_in_x)
+DNA_STRUCT_RENAME_ELEM(Bone, scaleOut, scale_out_x)
+DNA_STRUCT_RENAME_ELEM(Bone, curveInX, curve_in_x)
+DNA_STRUCT_RENAME_ELEM(Bone, curveInY, curve_in_y)
+DNA_STRUCT_RENAME_ELEM(Bone, curveOutX, curve_out_x)
+DNA_STRUCT_RENAME_ELEM(Bone, curveOutY, curve_out_y)
 DNA_STRUCT_RENAME_ELEM(Camera, YF_dofdist, dof_distance)
 DNA_STRUCT_RENAME_ELEM(Camera, clipend, clip_end)
 DNA_STRUCT_RENAME_ELEM(Camera, clipsta, clip_start)
@@ -70,6 +77,12 @@ DNA_STRUCT_RENAME_ELEM(ParticleSettings, dup_ob, instance_object)
 DNA_STRUCT_RENAME_ELEM(ParticleSettings, dupliweights, instance_weights)
 DNA_STRUCT_RENAME_ELEM(View3D, far, clip_end)
 DNA_STRUCT_RENAME_ELEM(View3D, near, clip_start)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, scaleIn, scale_in_x)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, scaleOut, scale_out_x)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, curveInX, curve_in_x)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, curveInY, curve_in_y)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, curveOutX, curve_out_x)
+DNA_STRUCT_RENAME_ELEM(bPoseChannel, curveOutY, curve_out_y)
 DNA_STRUCT_RENAME_ELEM(bTheme, tact, space_action)
 DNA_STRUCT_RENAME_ELEM(bTheme, tbuts, space_properties)
 DNA_STRUCT_RENAME_ELEM(bTheme, tclip, space_clip)

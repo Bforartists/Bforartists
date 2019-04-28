@@ -69,7 +69,8 @@ static GPUSelectState g_select_state = {0};
 void GPU_select_begin(uint *buffer, uint bufsize, const rcti *input, char mode, int oldhits)
 {
   if (mode == GPU_SELECT_NEAREST_SECOND_PASS) {
-    /* In the case hits was '-1', don't start the second pass since it's not going to give useful results.
+    /* In the case hits was '-1',
+     * don't start the second pass since it's not going to give useful results.
      * As well as buffer overflow in 'gpu_select_query_load_id'. */
     BLI_assert(oldhits != -1);
   }
@@ -99,7 +100,8 @@ void GPU_select_begin(uint *buffer, uint bufsize, const rcti *input, char mode, 
 }
 
 /**
- * loads a new selection id and ends previous query, if any. In second pass of selection it also returns
+ * loads a new selection id and ends previous query, if any.
+ * In second pass of selection it also returns
  * if id has been hit on the first pass already.
  * Thus we can skip drawing un-hit objects.
  *
@@ -108,8 +110,9 @@ void GPU_select_begin(uint *buffer, uint bufsize, const rcti *input, char mode, 
 bool GPU_select_load_id(uint id)
 {
   /* if no selection mode active, ignore */
-  if (!g_select_state.select_is_active)
+  if (!g_select_state.select_is_active) {
     return true;
+  }
 
   switch (g_select_state.algorithm) {
     case ALGO_GL_QUERY: {
@@ -117,7 +120,7 @@ bool GPU_select_load_id(uint id)
     }
     default: /* ALGO_GL_PICK */
     {
-      return gpu_select_pick_load_id(id);
+      return gpu_select_pick_load_id(id, false);
     }
   }
 }

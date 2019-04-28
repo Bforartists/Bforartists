@@ -144,8 +144,9 @@ static Brush *uv_sculpt_brush(bContext *C)
   Scene *scene = CTX_data_scene(C);
   ToolSettings *settings = scene->toolsettings;
 
-  if (!settings->uvsculpt)
+  if (!settings->uvsculpt) {
     return NULL;
+  }
   return BKE_paint_brush(&settings->uvsculpt->paint);
 }
 
@@ -306,8 +307,9 @@ static void HC_relaxation_iteration_uv(BMEditMesh *em,
 
   for (i = 0; i < sculptdata->totalUniqueUvs; i++) {
     float dist;
-    /* This is supposed to happen only if "Pin Edges" is on, since we have initialization on stroke start
-     * If ever uv brushes get their own mode we should check for toolsettings option too */
+    /* This is supposed to happen only if "Pin Edges" is on,
+     * since we have initialization on stroke start.
+     * If ever uv brushes get their own mode we should check for toolsettings option too. */
     if ((sculptdata->uv[i].flag & MARK_BOUNDARY)) {
       continue;
     }
@@ -334,8 +336,9 @@ static void HC_relaxation_iteration_uv(BMEditMesh *em,
         MLoopUV *luv;
         BMLoop *l;
 
-        if (element->separate && element != sculptdata->uv[i].element)
+        if (element->separate && element != sculptdata->uv[i].element) {
           break;
+        }
 
         l = element->l;
         luv = CustomData_bmesh_get(&em->bm->ldata, l->head.data, CD_MLOOPUV);
@@ -375,8 +378,8 @@ static void laplacian_relaxation_iteration_uv(BMEditMesh *em,
     add_v2_v2(tmp_uvdata[tmpedge->uv1].sum_co, sculptdata->uv[tmpedge->uv2].uv);
   }
 
-  /* Original Lacplacian algorithm included removal of normal component of translation. here it is not
-   * needed since we translate along the UV plane always.*/
+  /* Original Lacplacian algorithm included removal of normal component of translation.
+   * here it is not needed since we translate along the UV plane always. */
   for (i = 0; i < sculptdata->totalUniqueUvs; i++) {
     copy_v2_v2(tmp_uvdata[i].p, tmp_uvdata[i].sum_co);
     mul_v2_fl(tmp_uvdata[i].p, 1.f / tmp_uvdata[i].ncounter);
@@ -384,8 +387,9 @@ static void laplacian_relaxation_iteration_uv(BMEditMesh *em,
 
   for (i = 0; i < sculptdata->totalUniqueUvs; i++) {
     float dist;
-    /* This is supposed to happen only if "Pin Edges" is on, since we have initialization on stroke start
-     * If ever uv brushes get their own mode we should check for toolsettings option too */
+    /* This is supposed to happen only if "Pin Edges" is on,
+     * since we have initialization on stroke start.
+     * If ever uv brushes get their own mode we should check for toolsettings option too. */
     if ((sculptdata->uv[i].flag & MARK_BOUNDARY)) {
       continue;
     }
@@ -406,8 +410,9 @@ static void laplacian_relaxation_iteration_uv(BMEditMesh *em,
         MLoopUV *luv;
         BMLoop *l;
 
-        if (element->separate && element != sculptdata->uv[i].element)
+        if (element->separate && element != sculptdata->uv[i].element) {
           break;
+        }
 
         l = element->l;
         luv = CustomData_bmesh_get(&em->bm->ldata, l->head.data, CD_MLOOPUV);
@@ -463,8 +468,9 @@ static void uv_sculpt_stroke_apply(bContext *C,
     alpha *= invert;
     for (i = 0; i < sculptdata->totalUniqueUvs; i++) {
       float dist, diff[2];
-      /* This is supposed to happen only if "Lock Borders" is on, since we have initialization on stroke start
-       * If ever uv brushes get their own mode we should check for toolsettings option too */
+      /* This is supposed to happen only if "Lock Borders" is on,
+       * since we have initialization on stroke start.
+       * If ever uv brushes get their own mode we should check for toolsettings option too. */
       if (sculptdata->uv[i].flag & MARK_BOUNDARY) {
         continue;
       }
@@ -484,8 +490,9 @@ static void uv_sculpt_stroke_apply(bContext *C,
           MLoopUV *luv;
           BMLoop *l;
 
-          if (element->separate && element != sculptdata->uv[i].element)
+          if (element->separate && element != sculptdata->uv[i].element) {
             break;
+          }
 
           l = element->l;
           luv = CustomData_bmesh_get(&em->bm->ldata, l->head.data, CD_MLOOPUV);
@@ -529,8 +536,9 @@ static void uv_sculpt_stroke_apply(bContext *C,
         MLoopUV *luv;
         BMLoop *l;
 
-        if (element->separate && element != sculptdata->uv[uvindex].element)
+        if (element->separate && element != sculptdata->uv[uvindex].element) {
           break;
+        }
 
         l = element->l;
         luv = CustomData_bmesh_get(&em->bm->ldata, l->head.data, CD_MLOOPUV);
@@ -705,8 +713,9 @@ static UvSculptData *uv_sculpt_stroke_init(bContext *C, wmOperator *op, const wm
         if (element->separate) {
           if (do_island_optimization && (element->island != island_index)) {
             /* skip this uv if not on the active island */
-            for (; element->next && !(element->next->separate); element = element->next)
+            for (; element->next && !(element->next->separate); element = element->next) {
               ;
+            }
             continue;
           }
 
@@ -734,8 +743,9 @@ static UvSculptData *uv_sculpt_stroke_init(bContext *C, wmOperator *op, const wm
         char *flag;
 
         /* Skip edge if not found(unlikely) or not on valid island */
-        if (itmp1 == -1 || itmp2 == -1)
+        if (itmp1 == -1 || itmp2 == -1) {
           continue;
+        }
 
         offset1 = uniqueUv[itmp1];
         offset2 = uniqueUv[itmp2];
@@ -902,8 +912,9 @@ static int uv_sculpt_stroke_modal(bContext *C, wmOperator *op, const wmEvent *ev
       uv_sculpt_stroke_apply(C, op, event, obedit);
       break;
     case TIMER:
-      if (event->customdata == data->timer)
+      if (event->customdata == data->timer) {
         uv_sculpt_stroke_apply(C, op, event, obedit);
+      }
       break;
     default:
       return OPERATOR_RUNNING_MODAL;

@@ -96,8 +96,10 @@ Light *BKE_light_add(Main *bmain, const char *name)
 }
 
 /**
- * Only copy internal data of Light ID from source to already allocated/initialized destination.
- * You probably never want to use that directly, use BKE_id_copy or BKE_id_copy_ex for typical needs.
+ * Only copy internal data of Light ID from source
+ * to already allocated/initialized destination.
+ * You probably never want to use that directly,
+ * use #BKE_id_copy or #BKE_id_copy_ex for typical needs.
  *
  * WARNING! This function will not handle ID user count!
  *
@@ -144,8 +146,9 @@ Light *BKE_light_localize(Light *la)
 
   lan->curfalloff = curvemapping_copy(la->curfalloff);
 
-  if (la->nodetree)
+  if (la->nodetree) {
     lan->nodetree = ntreeLocalize(la->nodetree);
+  }
 
   lan->preview = NULL;
 

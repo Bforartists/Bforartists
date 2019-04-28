@@ -99,8 +99,9 @@ static bool get_thumb_dir(char *dir, ThumbSize size)
 #  else
   const char *home = BLI_getenv("HOME");
 #  endif
-  if (!home)
+  if (!home) {
     return 0;
+  }
   s += BLI_strncpy_rlen(s, home, FILE_MAX);
 
 #  ifdef USE_FREEDESKTOP
@@ -452,8 +453,9 @@ static ImBuf *thumb_create_ex(const char *file_path,
     }
     if (size == THB_FAIL) {
       img = IMB_allocImBuf(1, 1, 32, IB_rect | IB_metadata);
-      if (!img)
+      if (!img) {
         return NULL;
+      }
     }
     else {
       if (ELEM(source, THB_SOURCE_IMAGE, THB_SOURCE_BLEND, THB_SOURCE_FONT)) {
@@ -500,8 +502,9 @@ static ImBuf *thumb_create_ex(const char *file_path,
           BLI_snprintf(mtime, sizeof(mtime), "%ld", (long int)info.st_mtime);
         }
       }
-      if (!img)
+      if (!img) {
         return NULL;
+      }
 
       if (img->x > img->y) {
         scaledx = (float)tsize;
@@ -734,7 +737,8 @@ ImBuf *IMB_thumb_manage(const char *org_path, ThumbSize size, ThumbSource source
     }
   }
 
-  /* Our imbuf **must** have a valid rect (i.e. 8-bits/channels) data, we rely on this in draw code.
+  /* Our imbuf **must** have a valid rect (i.e. 8-bits/channels)
+   * data, we rely on this in draw code.
    * However, in some cases we may end loading 16bits PNGs, which generated float buffers.
    * This should be taken care of in generation step, but add also a safeguard here! */
   if (img) {
