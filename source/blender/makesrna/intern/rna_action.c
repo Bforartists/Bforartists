@@ -247,7 +247,8 @@ static void rna_Action_frame_range_get(PointerRNA *ptr, float *values)
   calc_action_range(ptr->id.data, values, values + 1, false);
 }
 
-/* used to check if an action (value pointer) is suitable to be assigned to the ID-block that is ptr */
+/* Used to check if an action (value pointer)
+ * is suitable to be assigned to the ID-block that is ptr. */
 bool rna_Action_id_poll(PointerRNA *ptr, PointerRNA value)
 {
   ID *srcId = (ID *)ptr->id.data;
@@ -267,7 +268,8 @@ bool rna_Action_id_poll(PointerRNA *ptr, PointerRNA value)
   return 0;
 }
 
-/* used to check if an action (value pointer) can be assigned to Action Editor given current mode */
+/* Used to check if an action (value pointer)
+ * can be assigned to Action Editor given current mode. */
 bool rna_Action_actedit_assign_poll(PointerRNA *ptr, PointerRNA value)
 {
   SpaceAction *saction = (SpaceAction *)ptr->data;
@@ -615,7 +617,14 @@ static void rna_def_action_group(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_expanded", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", AGRP_EXPANDED);
-  RNA_def_property_ui_text(prop, "Expanded", "Action group is expanded");
+  RNA_def_property_ui_text(prop, "Expanded", "Action group is expanded except in graph editor");
+  RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, NULL);
+
+  prop = RNA_def_property(srna, "show_expanded_graph", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_NO_DEG_UPDATE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", AGRP_EXPANDED_G);
+  RNA_def_property_ui_text(
+      prop, "Expanded in Graph Editor", "Action group is expanded in graph editor");
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, NULL);
 
   /* color set */
@@ -769,7 +778,8 @@ static void rna_def_action(BlenderRNA *brna)
   prop = RNA_def_property(srna, "pose_markers", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "markers", NULL);
   RNA_def_property_struct_type(prop, "TimelineMarker");
-  /* Use lib exception so the list isn't grayed out; adding/removing is still banned though, see T45689 */
+  /* Use lib exception so the list isn't grayed out;
+   * adding/removing is still banned though, see T45689. */
   RNA_def_property_flag(prop, PROP_LIB_EXCEPTION);
   RNA_def_property_ui_text(
       prop, "Pose Markers", "Markers specific to this action, for labeling poses");

@@ -17,19 +17,22 @@
 /** \file
  * \ingroup render
  *
- * \brief The API itself is simple. Blender sends a populated array of BakePixels to the renderer, and gets back an
- * array of floats with the result.
+ * \brief The API itself is simple.
+ * Blender sends a populated array of BakePixels to the renderer,
+ * and gets back an array of floats with the result.
  *
  * \section bake_api Development Notes for External Engines
  *
- * The Bake API is fully implemented with Python rna functions. The operator expects/call a function:
+ * The Bake API is fully implemented with Python rna functions.
+ * The operator expects/call a function:
  *
  * ``def bake(scene, object, pass_type, object_id, pixel_array, num_pixels, depth, result)``
  * - scene: current scene (Python object)
  * - object: object to render (Python object)
  * - pass_type: pass to render (string, e.g., "COMBINED", "AO", "NORMAL", ...)
  * - object_id: index of object to bake (to use with the pixel_array)
- * - pixel_array: list of primitive ids and barycentric coordinates to bake(Python object, see bake_pixel)
+ * - pixel_array: list of primitive ids and barycentric coordinates to
+ *   `bake(Python object, see bake_pixel)`.
  * - num_pixels: size of pixel_array, number of pixels to bake (int)
  * - depth: depth of pixels to return (int, assuming always 4 now)
  * - result: array to be populated by the engine (float array, PyLong_AsVoidPtr)
@@ -136,8 +139,9 @@ static void store_bake_pixel(void *handle, int x, int y, float u, float v)
 void RE_bake_mask_fill(const BakePixel pixel_array[], const size_t num_pixels, char *mask)
 {
   size_t i;
-  if (!mask)
+  if (!mask) {
     return;
+  }
 
   /* only extend to pixels outside the mask area */
   for (i = 0; i < num_pixels; i++) {
@@ -152,14 +156,17 @@ void RE_bake_margin(ImBuf *ibuf, char *mask, const int margin)
   /* margin */
   IMB_filter_extend(ibuf, mask, margin);
 
-  if (ibuf->planes != R_IMF_PLANES_RGBA)
+  if (ibuf->planes != R_IMF_PLANES_RGBA) {
     /* clear alpha added by filtering */
     IMB_rectfill_alpha(ibuf, 1.0f);
+  }
 }
 
 /**
- * This function returns the coordinate and normal of a barycentric u,v for a face defined by the primitive_id index.
- * The returned normal is actually the direction from the same barycentric coordinate in the cage to the base mesh
+ * This function returns the coordinate and normal of a barycentric u,v
+ * for a face defined by the primitive_id index.
+ * The returned normal is actually the direction from the same barycentric coordinate
+ * in the cage to the base mesh
  * The returned coordinate is the point in the cage mesh
  */
 static void calc_point_from_barycentric_cage(TriTessFace *triangles_low,
@@ -201,7 +208,8 @@ static void calc_point_from_barycentric_cage(TriTessFace *triangles_low,
 }
 
 /**
- * This function returns the coordinate and normal of a barycentric u,v for a face defined by the primitive_id index.
+ * This function returns the coordinate and normal of a barycentric u,v
+ * for a face defined by the primitive_id index.
  * The returned coordinate is extruded along the normal by cage_extrusion
  */
 static void calc_point_from_barycentric_extrusion(TriTessFace *triangles,
@@ -684,8 +692,9 @@ void RE_bake_pixels_populate(Mesh *me,
     mloopuv = CustomData_get_layer_n(&me->ldata, CD_MTFACE, uv_id);
   }
 
-  if (mloopuv == NULL)
+  if (mloopuv == NULL) {
     return;
+  }
 
   bd.pixel_array = pixel_array;
   bd.zspan = MEM_callocN(sizeof(ZSpan) * bake_images->size, "bake zspan");
@@ -722,8 +731,8 @@ void RE_bake_pixels_populate(Mesh *me,
     for (a = 0; a < 3; a++) {
       const float *uv = mloopuv[lt->tri[a]].uv;
 
-      /* Note, workaround for pixel aligned UVs which are common and can screw up our intersection tests
-       * where a pixel gets in between 2 faces or the middle of a quad,
+      /* Note, workaround for pixel aligned UVs which are common and can screw up our
+       * intersection tests where a pixel gets in between 2 faces or the middle of a quad,
        * camera aligned quads also have this problem but they are less common.
        * Add a small offset to the UVs, fixes bug #18685 - Campbell */
       vec[a][0] = uv[0] * (float)bd.bk_image->width - (0.5f + 0.001f);
@@ -751,8 +760,9 @@ void RE_bake_pixels_populate(Mesh *me,
 static void normal_uncompress(float out[3], const float in[3])
 {
   int i;
-  for (i = 0; i < 3; i++)
+  for (i = 0; i < 3; i++) {
     out[i] = 2.0f * in[i] - 1.0f;
+  }
 }
 
 static void normal_compress(float out[3],
@@ -796,7 +806,8 @@ static void normal_compress(float out[3],
 }
 
 /**
- * This function converts an object space normal map to a tangent space normal map for a given low poly mesh
+ * This function converts an object space normal map
+ * to a tangent space normal map for a given low poly mesh.
  */
 void RE_bake_normal_world_to_tangent(const BakePixel pixel_array[],
                                      const size_t num_pixels,
@@ -842,10 +853,12 @@ void RE_bake_normal_world_to_tangent(const BakePixel pixel_array[],
     offset = i * depth;
 
     if (primitive_id == -1) {
-      if (depth == 4)
+      if (depth == 4) {
         copy_v4_fl4(&result[offset], 0.5f, 0.5f, 1.0f, 1.0f);
-      else
+      }
+      else {
         copy_v3_fl3(&result[offset], 0.5f, 0.5f, 1.0f);
+      }
       continue;
     }
 
@@ -855,10 +868,12 @@ void RE_bake_normal_world_to_tangent(const BakePixel pixel_array[],
     for (j = 0; j < 3; j++) {
       const TSpace *ts;
 
-      if (is_smooth)
+      if (is_smooth) {
         normal_short_to_float_v3(normals[j], triangle->mverts[j]->no);
-      else
+      }
+      else {
         normal[j] = triangle->normal[j];
+      }
 
       ts = triangle->tspace[j];
       copy_v3_v3(tangents[j], ts->tangent);
@@ -870,8 +885,9 @@ void RE_bake_normal_world_to_tangent(const BakePixel pixel_array[],
     w = 1.0f - u - v;
 
     /* normal */
-    if (is_smooth)
+    if (is_smooth) {
       interp_barycentric_tri_v3(normals, u, v, normal);
+    }
 
     /* tangent */
     interp_barycentric_tri_v3(tangents, u, v, tangent);
@@ -929,8 +945,9 @@ void RE_bake_normal_world_to_object(const BakePixel pixel_array[],
     size_t offset;
     float nor[3];
 
-    if (pixel_array[i].primitive_id == -1)
+    if (pixel_array[i].primitive_id == -1) {
       continue;
+    }
 
     offset = i * depth;
     normal_uncompress(nor, &result[offset]);
@@ -956,8 +973,9 @@ void RE_bake_normal_world_to_world(const BakePixel pixel_array[],
     size_t offset;
     float nor[3];
 
-    if (pixel_array[i].primitive_id == -1)
+    if (pixel_array[i].primitive_id == -1) {
       continue;
+    }
 
     offset = i * depth;
     normal_uncompress(nor, &result[offset]);
@@ -980,10 +998,12 @@ void RE_bake_ibuf_clear(Image *image, const bool is_tangent)
   ibuf = BKE_image_acquire_ibuf(image, NULL, &lock);
   BLI_assert(ibuf);
 
-  if (is_tangent)
+  if (is_tangent) {
     IMB_rectfill(ibuf, (ibuf->planes == R_IMF_PLANES_RGBA) ? nor_alpha : nor_solid);
-  else
+  }
+  else {
     IMB_rectfill(ibuf, (ibuf->planes == R_IMF_PLANES_RGBA) ? vec_alpha : vec_solid);
+  }
 
   BKE_image_release_ibuf(image, ibuf, lock);
 }

@@ -75,7 +75,9 @@ void BKE_blender_free(void)
 {
   /* samples are in a global list..., also sets G_MAIN->sound->sample NULL */
 
-  BKE_studiolight_free(); /* needs to run before main free as wm is still referenced for icons preview jobs */
+  /* Needs to run before main free as wm is still referenced for icons preview jobs. */
+  BKE_studiolight_free();
+
   BKE_main_free(G_MAIN);
   G_MAIN = NULL;
 
@@ -156,8 +158,9 @@ static void keymap_item_free(wmKeyMapItem *kmi)
     IDP_FreeProperty(kmi->properties);
     MEM_freeN(kmi->properties);
   }
-  if (kmi->ptr)
+  if (kmi->ptr) {
     MEM_freeN(kmi->ptr);
+  }
 }
 
 void BKE_blender_userdef_data_swap(UserDef *userdef_a, UserDef *userdef_b)

@@ -56,12 +56,14 @@ bool nlaop_poll_tweakmode_off(bContext *C)
    *    but not all AnimData blocks will be in tweakmode for
    *    various reasons
    */
-  if (ED_operator_nla_active(C) == 0)
+  if (ED_operator_nla_active(C) == 0) {
     return 0;
+  }
 
   scene = CTX_data_scene(C);
-  if ((scene == NULL) || (scene->flag & SCE_NLA_EDIT_ON))
+  if ((scene == NULL) || (scene->flag & SCE_NLA_EDIT_ON)) {
     return 0;
+  }
 
   return 1;
 }
@@ -78,12 +80,14 @@ bool nlaop_poll_tweakmode_on(bContext *C)
    *    but not all AnimData blocks will be in tweakmode for
    *    various reasons
    */
-  if (ED_operator_nla_active(C) == 0)
+  if (ED_operator_nla_active(C) == 0) {
     return 0;
+  }
 
   scene = CTX_data_scene(C);
-  if ((scene == NULL) || !(scene->flag & SCE_NLA_EDIT_ON))
+  if ((scene == NULL) || !(scene->flag & SCE_NLA_EDIT_ON)) {
     return 0;
+  }
 
   return 1;
 }
@@ -91,8 +95,9 @@ bool nlaop_poll_tweakmode_on(bContext *C)
 /* is tweakmode enabled - for use in NLA operator code */
 bool nlaedit_is_tweakmode_on(bAnimContext *ac)
 {
-  if (ac && ac->scene)
+  if (ac && ac->scene) {
     return (ac->scene->flag & SCE_NLA_EDIT_ON) != 0;
+  }
   return 0;
 }
 
@@ -167,9 +172,10 @@ void nla_keymap(wmKeyConfig *keyconf)
   WM_keymap_ensure(keyconf, "NLA Generic", SPACE_NLA, 0);
 
   /* channels ---------------------------------------------------------- */
-  /* Channels are not directly handled by the NLA Editor module, but are inherited from the Animation module.
-   * Most of the relevant operations, keymaps, drawing, etc. can therefore all
-   * be found in that module instead, as there are many similarities with the other Animation Editors.
+  /* Channels are not directly handled by the NLA Editor module, but are inherited from the
+   * animation module. Most of the relevant operations, keymaps, drawing, etc. can therefore all
+   * be found in that module instead, as there are many similarities with the other
+   * animation editors.
    *
    * However, those operations which involve clicking on channels and/or
    * the placement of them in the view are implemented here instead

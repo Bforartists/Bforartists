@@ -334,8 +334,9 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
         if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
           float cursor_rel[3];
           sub_v3_v3v3(cursor_rel, cursor_local, ebone->head);
-          if (axis_flip)
+          if (axis_flip) {
             negate_v3(cursor_rel);
+          }
           if (normalize_v3(cursor_rel) != 0.0f) {
             ebone->roll = ED_armature_ebone_roll_to_vector(ebone, cursor_rel, axis_only);
             changed = true;
@@ -375,8 +376,9 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
                      (ebone_other = ebone_other->parent));
 
             if (!is_vec_zero) {
-              if (axis_flip)
+              if (axis_flip) {
                 negate_v3(vec);
+              }
 
               if (is_edit) {
                 ebone->roll = ED_armature_ebone_roll_to_vector(ebone, vec, axis_only);
@@ -424,16 +426,19 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
       }
       else { /* Axis */
         assert(type <= 5);
-        if (type < 3)
+        if (type < 3) {
           vec[type] = 1.0f;
-        else
+        }
+        else {
           vec[type - 2] = -1.0f;
+        }
         mul_m3_v3(imat, vec);
         normalize_v3(vec);
       }
 
-      if (axis_flip)
+      if (axis_flip) {
         negate_v3(vec);
+      }
 
       for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
         if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
@@ -591,12 +596,14 @@ static void chains_find_tips(ListBase *edbo, ListBase *list)
         }
       }
 
-      if (stop)
+      if (stop) {
         break;
+      }
     }
     /* skip current bone if it is part of an existing chain */
-    if (stop)
+    if (stop) {
       continue;
+    }
 
     /* is any existing chain part of the chain formed by this bone? */
     stop = 0;
@@ -609,12 +616,14 @@ static void chains_find_tips(ListBase *edbo, ListBase *list)
         }
       }
 
-      if (stop)
+      if (stop) {
         break;
+      }
     }
     /* current bone has already been added to a chain? */
-    if (stop)
+    if (stop) {
       continue;
+    }
 
     /* add current bone to a new chain */
     ld = MEM_callocN(sizeof(LinkData), "BoneChain");
@@ -817,17 +826,21 @@ static int armature_fill_bones_exec(bContext *C, wmOperator *op)
       /* do parenting (will need to set connected flag too) */
       if (headtail == 2) {
         /* ebp tail or head - tail gets priority */
-        if (ebp_a->tail_owner)
+        if (ebp_a->tail_owner) {
           newbone->parent = ebp_a->tail_owner;
-        else
+        }
+        else {
           newbone->parent = ebp_a->head_owner;
+        }
       }
       else {
         /* ebp_b tail or head - tail gets priority */
-        if (ebp_b->tail_owner)
+        if (ebp_b->tail_owner) {
           newbone->parent = ebp_b->tail_owner;
-        else
+        }
+        else {
           newbone->parent = ebp_b->head_owner;
+        }
       }
 
       /* don't set for bone connecting two head points of bones */
@@ -917,17 +930,17 @@ static void bones_merge(
   newbone->flag = start->flag & (BONE_HINGE | BONE_NO_DEFORM | BONE_NO_SCALE |
                                  BONE_NO_CYCLICOFFSET | BONE_NO_LOCAL_LOCATION | BONE_DONE);
 
-  /* step 2a: reparent any side chains which may be parented to any bone in the chain of bones to merge
-   * - potentially several tips for side chains leading to some tree exist...
+  /* Step 2a: reparent any side chains which may be parented to any bone in the chain
+   * of bones to merge - potentially several tips for side chains leading to some tree exist.
    */
   for (chain = chains->first; chain; chain = chain->next) {
-    /* traverse down chain until we hit the bottom or if we run into the tip of the chain of bones we're
-     * merging (need to stop in this case to avoid corrupting this chain too!)
+    /* Traverse down chain until we hit the bottom or if we run into the tip of the chain of bones
+     * we're merging (need to stop in this case to avoid corrupting this chain too!).
      */
     for (ebone = chain->data; (ebone) && (ebone != end); ebone = ebone->parent) {
       short found = 0;
 
-      /* check if this bone is parented to one in the merging chain
+      /* Check if this bone is parented to one in the merging chain
        * ! WATCHIT: must only go check until end of checking chain
        */
       for (ebo = end; (ebo) && (ebo != start->parent); ebo = ebo->parent) {
@@ -940,14 +953,16 @@ static void bones_merge(
       }
 
       /* carry on to the next tip now  */
-      if (found)
+      if (found) {
         break;
+      }
     }
   }
 
   /* step 2b: parent child of end to newbone (child from this chain) */
-  if (endchild)
+  if (endchild) {
     endchild->parent = newbone;
+  }
 
   /* step 3: delete all bones between and including start and end */
   for (ebo = end; ebo; ebo = ebone) {
@@ -1006,13 +1021,15 @@ static int armature_merge_exec(bContext *C, wmOperator *op)
               bend = ebo;
               bchild = child;
             }
-            else
+            else {
               bstart = ebo;
+            }
           }
           else {
             /* chain is broken... merge any continuous segments then clear */
-            if (bstart && bend)
+            if (bstart && bend) {
               bones_merge(obedit, bstart, bend, bchild, &chains);
+            }
 
             bstart = NULL;
             bend = NULL;
@@ -1021,8 +1038,9 @@ static int armature_merge_exec(bContext *C, wmOperator *op)
         }
 
         /* merge from bstart to bend if something not merged */
-        if (bstart && bend)
+        if (bstart && bend) {
           bones_merge(obedit, bstart, bend, bchild, &chains);
+        }
 
         /* put back link */
         BLI_insertlinkbefore(&chains, nchain, chain);
@@ -1137,10 +1155,12 @@ static int armature_switch_direction_exec(bContext *C, wmOperator *UNUSED(op))
              * - connected flag is only set if points are coincidental
              */
             ebo->parent = child;
-            if ((child) && equals_v3v3(ebo->head, child->tail))
+            if ((child) && equals_v3v3(ebo->head, child->tail)) {
               ebo->flag |= BONE_CONNECTED;
-            else
+            }
+            else {
               ebo->flag &= ~BONE_CONNECTED;
+            }
 
             /* get next bones
              * - child will become the new parent of next bone
@@ -1209,8 +1229,9 @@ static void fix_connected_bone(EditBone *ebone)
   float diff[3];
 
   if (!(ebone->parent) || !(ebone->flag & BONE_CONNECTED) ||
-      equals_v3v3(ebone->parent->tail, ebone->head))
+      equals_v3v3(ebone->parent->tail, ebone->head)) {
     return;
+  }
 
   /* if the parent has moved we translate child's head and tail accordingly */
   sub_v3_v3v3(diff, ebone->parent->tail, ebone->head);
@@ -1273,8 +1294,9 @@ static int armature_align_bones_exec(bContext *C, wmOperator *op)
      *   then just use actbone. Useful when doing upper arm to spine.
      */
     actmirb = ED_armature_ebone_get_mirrored(arm->edbo, actbone);
-    if (actmirb == NULL)
+    if (actmirb == NULL) {
       actmirb = actbone;
+    }
   }
 
   /* if there is only 1 selected bone, we assume that that is the active bone,
@@ -1288,8 +1310,9 @@ static int armature_align_bones_exec(bContext *C, wmOperator *op)
     if (actbone->parent) {
       bone_align_to_bone(arm->edbo, actbone, actbone->parent);
 
-      if ((arm->flag & ARM_MIRROR_EDIT) && (actmirb->parent))
+      if ((arm->flag & ARM_MIRROR_EDIT) && (actmirb->parent)) {
         bone_align_to_bone(arm->edbo, actmirb, actmirb->parent);
+      }
 
       BKE_reportf(op->reports, RPT_INFO, "Aligned bone '%s' to parent", actbone->name);
     }
@@ -1306,10 +1329,12 @@ static int armature_align_bones_exec(bContext *C, wmOperator *op)
     /* align selected bones to the active one */
     CTX_DATA_BEGIN (C, EditBone *, ebone, selected_editable_bones) {
       if (ELEM(ebone, actbone, actmirb) == 0) {
-        if (ebone->flag & BONE_SELECTED)
+        if (ebone->flag & BONE_SELECTED) {
           bone_align_to_bone(arm->edbo, ebone, actbone);
-        else
+        }
+        else {
           bone_align_to_bone(arm->edbo, ebone, actmirb);
+        }
       }
     }
     CTX_DATA_END;
@@ -1403,8 +1428,9 @@ static int armature_delete_selected_exec(bContext *C, wmOperator *UNUSED(op))
   bool changed_multi = false;
 
   /* cancel if nothing selected */
-  if (CTX_DATA_COUNT(C, selected_bones) == 0)
+  if (CTX_DATA_COUNT(C, selected_bones) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   ViewLayer *view_layer = CTX_data_view_layer(C);
   uint objects_len = 0;
@@ -1423,8 +1449,9 @@ static int armature_delete_selected_exec(bContext *C, wmOperator *UNUSED(op))
       ebone_next = curBone->next;
       if (arm->layer & curBone->layer) {
         if (curBone->flag & BONE_SELECTED) {
-          if (curBone == arm->act_edbone)
+          if (curBone == arm->act_edbone) {
             arm->act_edbone = NULL;
+          }
           ED_armature_ebone_remove(arm, curBone);
           changed = true;
         }
@@ -1645,8 +1672,9 @@ static int armature_hide_exec(bContext *C, wmOperator *op)
   const int invert = RNA_boolean_get(op->ptr, "unselected") ? BONE_SELECTED : 0;
 
   /* cancel if nothing selected */
-  if (CTX_DATA_COUNT(C, selected_bones) == 0)
+  if (CTX_DATA_COUNT(C, selected_bones) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   uint objects_len = 0;
   Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(

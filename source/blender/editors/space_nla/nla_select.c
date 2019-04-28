@@ -119,8 +119,9 @@ static void deselect_nla_strips(bAnimContext *ac, short test, short sel)
         }
       }
 
-      if (sel == SELECT_SUBTRACT)
+      if (sel == SELECT_SUBTRACT) {
         break;
+      }
     }
   }
 
@@ -135,11 +136,13 @@ static void deselect_nla_strips(bAnimContext *ac, short test, short sel)
     /* apply same selection to all strips */
     for (strip = nlt->strips.first; strip; strip = strip->next) {
       /* set selection */
-      if (test != DESELECT_STRIPS_CLEARACTIVE)
+      if (test != DESELECT_STRIPS_CLEARACTIVE) {
         ACHANNEL_SET_FLAG(strip, smode, NLASTRIP_FLAG_SELECT);
+      }
 
       /* clear active flag */
-      // TODO: for clear active, do we want to limit this to only doing this on a certain set of tracks though?
+      /* TODO: for clear active,
+       * do we want to limit this to only doing this on a certain set of tracks though? */
       strip->flag &= ~NLASTRIP_FLAG_ACTIVE;
     }
   }
@@ -155,8 +158,9 @@ static int nlaedit_deselectall_exec(bContext *C, wmOperator *op)
   bAnimContext ac;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* 'standard' behavior - check if selected, then apply relevant selection */
   const int action = RNA_enum_get(op->ptr, "action");
@@ -203,11 +207,13 @@ void NLA_OT_select_all(wmOperatorType *ot)
 }
 
 /* ******************** Box Select Operator **************************** */
-/* This operator currently works in one of three ways:
- *  -> BKEY     - 1) all strips within region are selected (NLAEDIT_BORDERSEL_ALLSTRIPS)
- *  -> ALT-BKEY - depending on which axis of the region was larger...
- *      -> 2) x-axis, so select all frames within frame range (NLAEDIT_BORDERSEL_FRAMERANGE)
- *      -> 3) y-axis, so select all frames within channels that region included (NLAEDIT_BORDERSEL_CHANNELS)
+/**
+ * This operator currently works in one of three ways:
+ * - BKEY     - 1: all strips within region are selected #NLAEDIT_BOX_ALLSTRIPS.
+ * - ALT-BKEY - depending on which axis of the region was larger.
+ *   - 2: x-axis, so select all frames within frame range #NLAEDIT_BOXSEL_FRAMERANGE.
+ *   - 3: y-axis, so select all frames within channels that region included
+ *     #NLAEDIT_BOXSEL_CHANNELS.
  */
 
 /* defines for box_select mode */
@@ -281,8 +287,9 @@ static int nlaedit_box_select_exec(bContext *C, wmOperator *op)
   short mode = 0;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   const eSelectOp sel_op = RNA_enum_get(op->ptr, "mode");
   const int selectmode = (sel_op != SEL_OP_SUB) ? SELECT_ADD : SELECT_SUBTRACT;
@@ -295,18 +302,23 @@ static int nlaedit_box_select_exec(bContext *C, wmOperator *op)
 
   /* selection 'mode' depends on whether box_select region only matters on one axis */
   if (RNA_boolean_get(op->ptr, "axis_range")) {
-    /* mode depends on which axis of the range is larger to determine which axis to use
-     * - checking this in region-space is fine, as it's fundamentally still going to be a different rect size
-     * - the frame-range select option is favored over the channel one (x over y), as frame-range one is often
-     *   used for tweaking timing when "blocking", while channels is not that useful...
+    /* mode depends on which axis of the range is larger to determine which axis to use.
+     * - Checking this in region-space is fine,
+     *   as it's fundamentally still going to be a different rect size.
+     * - The frame-range select option is favored over the channel one (x over y),
+     *   as frame-range one is often.
+     *   Used for tweaking timing when "blocking", while channels is not that useful.
      */
-    if (BLI_rcti_size_x(&rect) >= BLI_rcti_size_y(&rect))
+    if (BLI_rcti_size_x(&rect) >= BLI_rcti_size_y(&rect)) {
       mode = NLA_BOXSEL_FRAMERANGE;
-    else
+    }
+    else {
       mode = NLA_BOXSEL_CHANNELS;
+    }
   }
-  else
+  else {
     mode = NLA_BOXSEL_ALLSTRIPS;
+  }
 
   /* apply box_select action */
   box_select_nla_strips(&ac, rect, mode, selectmode);
@@ -368,8 +380,9 @@ static void nlaedit_select_leftright(bContext *C,
   float xmin, xmax;
 
   /* if currently in tweakmode, exit tweakmode first */
-  if (scene->flag & SCE_NLA_EDIT_ON)
+  if (scene->flag & SCE_NLA_EDIT_ON) {
     WM_operator_name_call(C, "NLA_OT_tweakmode_exit", WM_OP_EXEC_DEFAULT, NULL);
+  }
 
   /* if select mode is replace, deselect all keyframes (and channels) first */
   if (select_mode == SELECT_REPLACE) {
@@ -423,18 +436,22 @@ static int nlaedit_select_leftright_exec(bContext *C, wmOperator *op)
   short selectmode;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* select mode is either replace (deselect all, then add) or add/extend */
-  if (RNA_boolean_get(op->ptr, "extend"))
+  if (RNA_boolean_get(op->ptr, "extend")) {
     selectmode = SELECT_INVERT;
-  else
+  }
+  else {
     selectmode = SELECT_REPLACE;
+  }
 
   /* if "test" mode is set, we don't have any info to set this with */
-  if (leftright == NLAEDIT_LRSEL_TEST)
+  if (leftright == NLAEDIT_LRSEL_TEST) {
     return OPERATOR_CANCELLED;
+  }
 
   /* do the selecting now */
   nlaedit_select_leftright(C, &ac, leftright, selectmode);
@@ -452,8 +469,9 @@ static int nlaedit_select_leftright_invoke(bContext *C, wmOperator *op, const wm
   short leftright = RNA_enum_get(op->ptr, "mode");
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* handle mode-based testing */
   if (leftright == NLAEDIT_LRSEL_TEST) {
@@ -464,10 +482,12 @@ static int nlaedit_select_leftright_invoke(bContext *C, wmOperator *op, const wm
 
     /* determine which side of the current frame mouse is on */
     x = UI_view2d_region_to_view_x(v2d, event->mval[0]);
-    if (x < CFRA)
+    if (x < CFRA) {
       RNA_enum_set(op->ptr, "mode", NLAEDIT_LRSEL_LEFT);
-    else
+    }
+    else {
       RNA_enum_set(op->ptr, "mode", NLAEDIT_LRSEL_RIGHT);
+    }
   }
 
   /* perform selection */
@@ -558,8 +578,9 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
       /* loop over NLA-strips in this track,
        * trying to find one which occurs in the necessary bounds */
       for (strip = nlt->strips.first; strip; strip = strip->next) {
-        if (BKE_nlastrip_within_bounds(strip, xmin, xmax))
+        if (BKE_nlastrip_within_bounds(strip, xmin, xmax)) {
           break;
+        }
       }
     }
 
@@ -574,8 +595,9 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
   /* if currently in tweakmode, exit tweakmode before changing selection states
    * now that we've found our target...
    */
-  if (scene->flag & SCE_NLA_EDIT_ON)
+  if (scene->flag & SCE_NLA_EDIT_ON) {
     WM_operator_name_call(C, "NLA_OT_tweakmode_exit", WM_OP_EXEC_DEFAULT, NULL);
+  }
 
   /* for replacing selection, firstly need to clear existing selection */
   if (select_mode == SELECT_REPLACE) {
@@ -632,8 +654,9 @@ static int nlaedit_clickselect_invoke(bContext *C, wmOperator *op, const wmEvent
   short selectmode;
 
   /* get editor data */
-  if (ANIM_animdata_get_context(C, &ac) == 0)
+  if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
+  }
 
   /* get useful pointers from animation context data */
   /* scene= ac.scene; */ /* UNUSED */
@@ -641,10 +664,12 @@ static int nlaedit_clickselect_invoke(bContext *C, wmOperator *op, const wmEvent
   // v2d= &ar->v2d;
 
   /* select mode is either replace (deselect all, then add) or add/extend */
-  if (RNA_boolean_get(op->ptr, "extend"))
+  if (RNA_boolean_get(op->ptr, "extend")) {
     selectmode = SELECT_INVERT;
-  else
+  }
+  else {
     selectmode = SELECT_REPLACE;
+  }
 
   /* select strips based upon mouse position */
   mouse_nla_strips(C, &ac, event->mval, selectmode);

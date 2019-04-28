@@ -92,8 +92,9 @@ static void joined_armature_fix_links_constraints(
         }
       }
 
-      if (cti->flush_constraint_targets)
+      if (cti->flush_constraint_targets) {
         cti->flush_constraint_targets(con, &targets, 0);
+      }
     }
 
     /* action constraint? (pose constraints only) */
@@ -116,9 +117,10 @@ typedef struct tJoinArmature_AdtFixData {
   GHash *names_map;
 } tJoinArmature_AdtFixData;
 
-/* Callback to pass to BKE_animdata_main_cb() for fixing driver ID's to point to the new ID */
-/* FIXME: For now, we only care about drivers here. When editing rigs, it's very rare to have animation
- *        on the rigs being edited already, so it should be safe to skip these.
+/* Callback to pass to BKE_animdata_main_cb() for fixing driver ID's to point to the new ID. */
+/* FIXME: For now, we only care about drivers here.
+ *        When editing rigs, it's very rare to have animation on the rigs being edited already,
+ *        so it should be safe to skip these.
  */
 static void joined_armature_fix_animdata_cb(ID *id, FCurve *fcu, void *user_data)
 {
@@ -247,10 +249,12 @@ int join_armature_exec(bContext *C, wmOperator *op)
   bool ok = false;
 
   /*  Ensure we're not in editmode and that the active object is an armature*/
-  if (!ob_active || ob_active->type != OB_ARMATURE)
+  if (!ob_active || ob_active->type != OB_ARMATURE) {
     return OPERATOR_CANCELLED;
-  if (!arm || arm->edbo)
+  }
+  if (!arm || arm->edbo) {
     return OPERATOR_CANCELLED;
+  }
 
   CTX_DATA_BEGIN (C, Object *, ob_iter, selected_editable_objects) {
     if (ob_iter == ob_active) {
@@ -591,12 +595,13 @@ static int separate_armature_exec(bContext *C, wmOperator *op)
     Object *oldob, *newob;
     Base *oldbase, *newbase;
 
-    /* we are going to do this as follows (unlike every other instance of separate):
-     * 1. exit editmode +posemode for active armature/base. Take note of what this is.
-     * 2. duplicate base - BASACT is the new one now
-     * 3. for each of the two armatures, enter editmode -> remove appropriate bones -> exit editmode + recalc
-     * 4. fix constraint links
-     * 5. make original armature active and enter editmode
+    /* We are going to do this as follows (unlike every other instance of separate):
+     * 1. Exit editmode +posemode for active armature/base. Take note of what this is.
+     * 2. Duplicate base - BASACT is the new one now
+     * 3. For each of the two armatures,
+     *    enter editmode -> remove appropriate bones -> exit editmode + recalc.
+     * 4. Fix constraint links
+     * 5. Make original armature active and enter editmode
      */
 
     /* 1) only edit-base selected */
@@ -672,7 +677,7 @@ void ARMATURE_OT_separate(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************************************** Parenting ************************************************* */
+/* ********************************* Parenting ************************************************* */
 
 /* armature parenting options */
 #define ARM_PAR_CONNECT 1
@@ -694,8 +699,9 @@ static void bone_connect_to_new_parent(ListBase *edbo,
   EditBone *ebone;
   float offset[3];
 
-  if ((selbone->parent) && (selbone->flag & BONE_CONNECTED))
+  if ((selbone->parent) && (selbone->flag & BONE_CONNECTED)) {
     selbone->parent->flag &= ~(BONE_TIPSEL);
+  }
 
   /* make actbone the parent of selbone */
   selbone->parent = actbone;
@@ -765,8 +771,9 @@ static int armature_parent_set_exec(bContext *C, wmOperator *op)
      *   then just use actbone. Useful when doing upper arm to spine.
      */
     actmirb = ED_armature_ebone_get_mirrored(arm->edbo, actbone);
-    if (actmirb == NULL)
+    if (actmirb == NULL) {
       actmirb = actbone;
+    }
   }
 
   /* if there is only 1 selected bone, we assume that that is the active bone,
@@ -779,8 +786,9 @@ static int armature_parent_set_exec(bContext *C, wmOperator *op)
     if (actbone->parent) {
       bone_connect_to_existing_parent(actbone);
 
-      if ((arm->flag & ARM_MIRROR_EDIT) && (actmirb->parent))
+      if ((arm->flag & ARM_MIRROR_EDIT) && (actmirb->parent)) {
         bone_connect_to_existing_parent(actmirb);
+      }
     }
   }
   else {
@@ -795,10 +803,12 @@ static int armature_parent_set_exec(bContext *C, wmOperator *op)
     /* parent selected bones to the active one */
     CTX_DATA_BEGIN (C, EditBone *, ebone, selected_editable_bones) {
       if (ELEM(ebone, actbone, actmirb) == 0) {
-        if (ebone->flag & BONE_SELECTED)
+        if (ebone->flag & BONE_SELECTED) {
           bone_connect_to_new_parent(arm->edbo, ebone, actbone, val);
-        else
+        }
+        else {
           bone_connect_to_new_parent(arm->edbo, ebone, actmirb, val);
+        }
       }
     }
     CTX_DATA_END;
@@ -822,8 +832,9 @@ static int armature_parent_set_invoke(bContext *C,
 
   CTX_DATA_BEGIN (C, EditBone *, ebone, selected_editable_bones) {
     if (ebone != actbone) {
-      if (ebone->parent != actbone)
+      if (ebone->parent != actbone) {
         allchildbones = 1;
+      }
     }
   }
   CTX_DATA_END;
@@ -831,8 +842,9 @@ static int armature_parent_set_invoke(bContext *C,
   uiItemEnumO(layout, "ARMATURE_OT_parent_set", NULL, 0, "type", ARM_PAR_CONNECT);
 
   /* ob becomes parent, make the associated menus */
-  if (allchildbones)
+  if (allchildbones) {
     uiItemEnumO(layout, "ARMATURE_OT_parent_set", NULL, 0, "type", ARM_PAR_OFFSET);
+  }
 
   UI_popup_menu_end(C, pup);
 
@@ -871,8 +883,9 @@ static void editbone_clear_parent(EditBone *ebone, int mode)
     ebone->parent->flag &= ~(BONE_TIPSEL);
   }
 
-  if (mode == 1)
+  if (mode == 1) {
     ebone->parent = NULL;
+  }
   ebone->flag &= ~BONE_CONNECTED;
 }
 

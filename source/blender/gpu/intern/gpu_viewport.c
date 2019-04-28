@@ -265,7 +265,8 @@ void GPU_viewport_size_get(const GPUViewport *viewport, int size[2])
 
 /**
  * Special case, this is needed for when we have a viewport without a frame-buffer output
- * (occlusion queries for eg) but still need to set the size since it may be used for other calculations.
+ * (occlusion queries for eg)
+ * but still need to set the size since it may be used for other calculations.
  */
 void GPU_viewport_size_set(GPUViewport *viewport, const int size[2])
 {
@@ -499,8 +500,9 @@ void GPU_viewport_draw_to_screen(GPUViewport *viewport, const rcti *rect)
 {
   DefaultFramebufferList *dfbl = viewport->fbl;
 
-  if (dfbl->default_fb == NULL)
+  if (dfbl->default_fb == NULL) {
     return;
+  }
 
   DefaultTextureList *dtxl = viewport->txl;
 
@@ -629,6 +631,15 @@ void GPU_viewport_free(GPUViewport *viewport)
   }
   if (viewport->vmempool.passes != NULL) {
     BLI_mempool_destroy(viewport->vmempool.passes);
+  }
+  if (viewport->vmempool.images != NULL) {
+    BLI_mempool_iter iter;
+    GPUTexture **tex;
+    BLI_mempool_iternew(viewport->vmempool.images, &iter);
+    while ((tex = BLI_mempool_iterstep(&iter))) {
+      GPU_texture_free(*tex);
+    }
+    BLI_mempool_destroy(viewport->vmempool.images);
   }
 
   DRW_instance_data_list_free(viewport->idatalist);
