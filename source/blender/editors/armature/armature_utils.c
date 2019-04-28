@@ -56,16 +56,20 @@ void ED_armature_edit_sync_selection(ListBase *edbo)
     /* if bone is not selectable, we shouldn't alter this setting... */
     if ((ebo->flag & BONE_UNSELECTABLE) == 0) {
       if ((ebo->flag & BONE_CONNECTED) && (ebo->parent)) {
-        if (ebo->parent->flag & BONE_TIPSEL)
+        if (ebo->parent->flag & BONE_TIPSEL) {
           ebo->flag |= BONE_ROOTSEL;
-        else
+        }
+        else {
           ebo->flag &= ~BONE_ROOTSEL;
+        }
       }
 
-      if ((ebo->flag & BONE_TIPSEL) && (ebo->flag & BONE_ROOTSEL))
+      if ((ebo->flag & BONE_TIPSEL) && (ebo->flag & BONE_ROOTSEL)) {
         ebo->flag |= BONE_SELECTED;
-      else
+      }
+      else {
         ebo->flag &= ~BONE_SELECTED;
+      }
     }
   }
 }
@@ -75,8 +79,9 @@ void ED_armature_edit_validate_active(struct bArmature *arm)
   EditBone *ebone = arm->act_edbone;
 
   if (ebone) {
-    if (ebone->flag & BONE_HIDDEN_A)
+    if (ebone->flag & BONE_HIDDEN_A) {
       arm->act_edbone = NULL;
+    }
   }
 }
 
@@ -116,8 +121,9 @@ int bone_looper(Object *ob, Bone *bone, void *data, int (*bone_func)(Object *, B
 
 void bone_free(bArmature *arm, EditBone *bone)
 {
-  if (arm->act_edbone == bone)
+  if (arm->act_edbone == bone) {
     arm->act_edbone = NULL;
+  }
 
   if (bone->prop) {
     IDP_FreeProperty(bone->prop);
@@ -165,8 +171,9 @@ void ED_armature_ebone_remove(bArmature *arm, EditBone *exBone)
 bool ED_armature_ebone_is_child_recursive(EditBone *ebone_parent, EditBone *ebone_child)
 {
   for (ebone_child = ebone_child->parent; ebone_child; ebone_child = ebone_child->parent) {
-    if (ebone_child == ebone_parent)
+    if (ebone_child == ebone_parent) {
       return true;
+    }
   }
   return false;
 }
@@ -274,8 +281,9 @@ EditBone *ED_armature_ebone_get_mirrored(const ListBase *edbo, EditBone *ebo)
 {
   char name_flip[MAXBONENAME];
 
-  if (ebo == NULL)
+  if (ebo == NULL) {
     return NULL;
+  }
 
   BLI_string_flip_side_name(name_flip, ebo->name, false, sizeof(name_flip));
 
@@ -301,8 +309,9 @@ void armature_select_mirrored_ex(bArmature *arm, const int flag)
       if (arm->layer & curBone->layer) {
         if (curBone->flag & flag) {
           ebone_mirr = ED_armature_ebone_get_mirrored(arm->edbo, curBone);
-          if (ebone_mirr)
+          if (ebone_mirr) {
             ebone_mirr->flag |= (curBone->flag & flag);
+          }
         }
       }
     }
@@ -381,7 +390,7 @@ void ED_armature_edit_transform_mirror_update(Object *obedit)
           eboflip->tail[2] = ebo->tail[2];
           eboflip->rad_tail = ebo->rad_tail;
           eboflip->roll = -ebo->roll;
-          eboflip->curveOutX = -ebo->curveOutX;
+          eboflip->curve_out_x = -ebo->curve_out_x;
           eboflip->roll2 = -ebo->roll2;
 
           /* Also move connected children, in case children's name aren't mirrored properly */
@@ -398,7 +407,7 @@ void ED_armature_edit_transform_mirror_update(Object *obedit)
           eboflip->head[2] = ebo->head[2];
           eboflip->rad_head = ebo->rad_head;
           eboflip->roll = -ebo->roll;
-          eboflip->curveInX = -ebo->curveInX;
+          eboflip->curve_in_x = -ebo->curve_in_x;
           eboflip->roll1 = -ebo->roll1;
 
           /* Also move connected parent, in case parent's name isn't mirrored properly */
@@ -414,8 +423,8 @@ void ED_armature_edit_transform_mirror_update(Object *obedit)
           eboflip->xwidth = ebo->xwidth;
           eboflip->zwidth = ebo->zwidth;
 
-          eboflip->curveInX = -ebo->curveInX;
-          eboflip->curveOutX = -ebo->curveOutX;
+          eboflip->curve_in_x = -ebo->curve_in_x;
+          eboflip->curve_out_x = -ebo->curve_out_x;
           eboflip->roll1 = -ebo->roll1;
           eboflip->roll2 = -ebo->roll2;
         }
@@ -487,32 +496,37 @@ static EditBone *make_boneList_rec(ListBase *edbo,
     /* Bendy-Bone parameters */
     eBone->roll1 = curBone->roll1;
     eBone->roll2 = curBone->roll2;
-    eBone->curveInX = curBone->curveInX;
-    eBone->curveInY = curBone->curveInY;
-    eBone->curveOutX = curBone->curveOutX;
-    eBone->curveOutY = curBone->curveOutY;
+    eBone->curve_in_x = curBone->curve_in_x;
+    eBone->curve_in_y = curBone->curve_in_y;
+    eBone->curve_out_x = curBone->curve_out_x;
+    eBone->curve_out_y = curBone->curve_out_y;
     eBone->ease1 = curBone->ease1;
     eBone->ease2 = curBone->ease2;
-    eBone->scaleIn = curBone->scaleIn;
-    eBone->scaleOut = curBone->scaleOut;
+    eBone->scale_in_x = curBone->scale_in_x;
+    eBone->scale_in_y = curBone->scale_in_y;
+    eBone->scale_out_x = curBone->scale_out_x;
+    eBone->scale_out_y = curBone->scale_out_y;
 
     eBone->bbone_prev_type = curBone->bbone_prev_type;
     eBone->bbone_next_type = curBone->bbone_next_type;
 
-    if (curBone->prop)
+    if (curBone->prop) {
       eBone->prop = IDP_CopyProperty(curBone->prop);
+    }
 
     BLI_addtail(edbo, eBone);
 
     /*  Add children if necessary */
     if (curBone->childbase.first) {
       eBoneTest = make_boneList_rec(edbo, &curBone->childbase, eBone, actBone);
-      if (eBoneTest)
+      if (eBoneTest) {
         eBoneAct = eBoneTest;
+      }
     }
 
-    if (curBone == actBone)
+    if (curBone == actBone) {
       eBoneAct = eBone;
+    }
   }
 
   return eBoneAct;
@@ -551,9 +565,11 @@ EditBone *make_boneList(ListBase *edbo, ListBase *bones, struct Bone *actBone)
 /**
  * This function:
  * - Sets local head/tail rest locations using parent bone's arm_mat.
- * - Calls #BKE_armature_where_is_bone() which uses parent's transform (arm_mat) to define this bone's transform.
+ * - Calls #BKE_armature_where_is_bone() which uses parent's transform (arm_mat)
+ *   to define this bone's transform.
  * - Fixes (converts) EditBone roll into Bone roll.
- * - Calls again #BKE_armature_where_is_bone(), since roll fiddling may have changed things for our bone...
+ * - Calls again #BKE_armature_where_is_bone(),
+ *   since roll fiddling may have changed things for our bone.
  *
  * \note The order is crucial here, we can only handle child
  * if all its parents in chain have already been handled (this is ensured by recursive process).
@@ -565,8 +581,8 @@ static void armature_finalize_restpose(ListBase *bonelist, ListBase *editbonelis
 
   for (curBone = bonelist->first; curBone; curBone = curBone->next) {
     /* Set bone's local head/tail.
-     * Note that it's important to use final parent's restpose (arm_mat) here, instead of setting those values
-     * from editbone's matrix (see T46010). */
+     * Note that it's important to use final parent's restpose (arm_mat) here,
+     * instead of setting those values from editbone's matrix (see T46010). */
     if (curBone->parent) {
       float parmat_inv[4][4];
 
@@ -646,11 +662,13 @@ void ED_armature_from_edit(Main *bmain, bArmature *arm)
 
       /* Find any bones that refer to this bone */
       for (fBone = arm->edbo->first; fBone; fBone = fBone->next) {
-        if (fBone->parent == eBone)
+        if (fBone->parent == eBone) {
           fBone->parent = eBone->parent;
+        }
       }
-      if (G.debug & G_DEBUG)
+      if (G.debug & G_DEBUG) {
         printf("Warning: removed zero sized bone: %s\n", eBone->name);
+      }
       bone_free(arm, eBone);
     }
   }
@@ -690,20 +708,23 @@ void ED_armature_from_edit(Main *bmain, bArmature *arm)
     /* Bendy-Bone parameters */
     newBone->roll1 = eBone->roll1;
     newBone->roll2 = eBone->roll2;
-    newBone->curveInX = eBone->curveInX;
-    newBone->curveInY = eBone->curveInY;
-    newBone->curveOutX = eBone->curveOutX;
-    newBone->curveOutY = eBone->curveOutY;
+    newBone->curve_in_x = eBone->curve_in_x;
+    newBone->curve_in_y = eBone->curve_in_y;
+    newBone->curve_out_x = eBone->curve_out_x;
+    newBone->curve_out_y = eBone->curve_out_y;
     newBone->ease1 = eBone->ease1;
     newBone->ease2 = eBone->ease2;
-    newBone->scaleIn = eBone->scaleIn;
-    newBone->scaleOut = eBone->scaleOut;
+    newBone->scale_in_x = eBone->scale_in_x;
+    newBone->scale_in_y = eBone->scale_in_y;
+    newBone->scale_out_x = eBone->scale_out_x;
+    newBone->scale_out_y = eBone->scale_out_y;
 
     newBone->bbone_prev_type = eBone->bbone_prev_type;
     newBone->bbone_next_type = eBone->bbone_next_type;
 
-    if (eBone->prop)
+    if (eBone->prop) {
       newBone->prop = IDP_CopyProperty(eBone->prop);
+    }
   }
 
   /* Fix parenting in a separate pass to ensure ebone->bone connections are valid at this point.

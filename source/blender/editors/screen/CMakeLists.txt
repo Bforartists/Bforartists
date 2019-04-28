@@ -29,8 +29,8 @@ set(INC
   ../../makesdna
   ../../makesrna
   ../../windowmanager
-  ../../../../intern/guardedalloc
   ../../../../intern/glew-mx
+  ../../../../intern/guardedalloc
 )
 
 set(INC_SYS
@@ -39,6 +39,7 @@ set(INC_SYS
 
 set(SRC
   area.c
+  area_query.c
   area_utils.c
   glutil.c
   screen_context.c

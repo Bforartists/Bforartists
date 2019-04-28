@@ -886,8 +886,9 @@ static void edbm_add_edge_face_exec__tricky_finalize_sel(BMesh *bm, BMElem *ele_
   BM_select_history_clear(bm);
 
   /* Notes on hidden geometry:
-   * - un-hide the face since its possible hidden was copied when copying surrounding face attributes.
-   * - un-hide before adding to select history
+   * - Un-hide the face since its possible hidden was copied when copying
+   *   surrounding face attributes.
+   * - Un-hide before adding to select history
    *   since we may extend into an existing, hidden vert/edge.
    */
 
@@ -947,8 +948,8 @@ static int edbm_add_edge_face_exec(bContext *C, wmOperator *op)
     BMElem *ele_desel;
     BMFace *ele_desel_face;
 
-    /* be extra clever, figure out if a partial selection should be extended so we can create geometry
-     * with single vert or single edge selection */
+    /* be extra clever, figure out if a partial selection should be extended so we can create
+     * geometry with single vert or single edge selection. */
     ele_desel = edbm_add_edge_face_exec__tricky_extend_sel(em->bm);
 #endif
     if (!EDBM_op_init(em,
@@ -981,7 +982,8 @@ static int edbm_add_edge_face_exec(bContext *C, wmOperator *op)
       /* Newly created faces may include existing hidden edges,
        * copying face data from surrounding, may have copied hidden face flag too.
        *
-       * Important that faces use flushing since 'edges.out' wont include hidden edges that already existed.
+       * Important that faces use flushing since 'edges.out'
+       * wont include hidden edges that already existed.
        */
       BMO_slot_buffer_hflag_disable(
           em->bm, bmop.slots_out, "faces.out", BM_FACE, BM_ELEM_HIDDEN, true);
@@ -2278,12 +2280,15 @@ static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
         MirrorModifierData *mmd = (MirrorModifierData *)md;
 
         if (mmd->flag & MOD_MIR_CLIPPING) {
-          if (mmd->flag & MOD_MIR_AXIS_X)
+          if (mmd->flag & MOD_MIR_AXIS_X) {
             mirrx = true;
-          if (mmd->flag & MOD_MIR_AXIS_Y)
+          }
+          if (mmd->flag & MOD_MIR_AXIS_Y) {
             mirry = true;
-          if (mmd->flag & MOD_MIR_AXIS_Z)
+          }
+          if (mmd->flag & MOD_MIR_AXIS_Z) {
             mirrz = true;
+          }
 
           clip_dist = mmd->tolerance;
         }
@@ -2503,8 +2508,9 @@ static void mesh_set_smooth_faces(BMEditMesh *em, short smooth)
   BMIter iter;
   BMFace *efa;
 
-  if (em == NULL)
+  if (em == NULL) {
     return;
+  }
 
   BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
     if (BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
@@ -2842,31 +2848,37 @@ static bool merge_firstlast(BMEditMesh *em,
 
   /* do sanity check in mergemenu in edit.c ?*/
   if (use_first == false) {
-    if (!em->bm->selected.last || ((BMEditSelection *)em->bm->selected.last)->htype != BM_VERT)
+    if (!em->bm->selected.last || ((BMEditSelection *)em->bm->selected.last)->htype != BM_VERT) {
       return false;
+    }
 
     ese = em->bm->selected.last;
     mergevert = (BMVert *)ese->ele;
   }
   else {
-    if (!em->bm->selected.first || ((BMEditSelection *)em->bm->selected.first)->htype != BM_VERT)
+    if (!em->bm->selected.first || ((BMEditSelection *)em->bm->selected.first)->htype != BM_VERT) {
       return false;
+    }
 
     ese = em->bm->selected.first;
     mergevert = (BMVert *)ese->ele;
   }
 
-  if (!BM_elem_flag_test(mergevert, BM_ELEM_SELECT))
+  if (!BM_elem_flag_test(mergevert, BM_ELEM_SELECT)) {
     return false;
+  }
 
   if (use_uvmerge) {
     if (!EDBM_op_callf(
-            em, wmop, "pointmerge_facedata verts=%hv vert_snap=%e", BM_ELEM_SELECT, mergevert))
+            em, wmop, "pointmerge_facedata verts=%hv vert_snap=%e", BM_ELEM_SELECT, mergevert)) {
       return false;
+    }
   }
 
-  if (!EDBM_op_callf(em, wmop, "pointmerge verts=%hv merge_co=%v", BM_ELEM_SELECT, mergevert->co))
+  if (!EDBM_op_callf(
+          em, wmop, "pointmerge verts=%hv merge_co=%v", BM_ELEM_SELECT, mergevert->co)) {
     return false;
+  }
 
   return true;
 }
@@ -2893,14 +2905,16 @@ static bool merge_target(BMEditMesh *em,
     float fac;
     int i = 0;
     BM_ITER_MESH (v, &iter, em->bm, BM_VERTS_OF_MESH) {
-      if (!BM_elem_flag_test(v, BM_ELEM_SELECT))
+      if (!BM_elem_flag_test(v, BM_ELEM_SELECT)) {
         continue;
+      }
       add_v3_v3(cent, v->co);
       i++;
     }
 
-    if (!i)
+    if (!i) {
       return false;
+    }
 
     fac = 1.0f / (float)i;
     mul_v3_fl(cent, fac);
@@ -2908,16 +2922,19 @@ static bool merge_target(BMEditMesh *em,
     vco = co;
   }
 
-  if (!vco)
+  if (!vco) {
     return false;
-
-  if (use_uvmerge) {
-    if (!EDBM_op_callf(em, wmop, "average_vert_facedata verts=%hv", BM_ELEM_SELECT))
-      return false;
   }
 
-  if (!EDBM_op_callf(em, wmop, "pointmerge verts=%hv merge_co=%v", BM_ELEM_SELECT, co))
+  if (use_uvmerge) {
+    if (!EDBM_op_callf(em, wmop, "average_vert_facedata verts=%hv", BM_ELEM_SELECT)) {
+      return false;
+    }
+  }
+
+  if (!EDBM_op_callf(em, wmop, "pointmerge verts=%hv merge_co=%v", BM_ELEM_SELECT, co)) {
     return false;
+  }
 
   return true;
 }
@@ -3001,8 +3018,9 @@ static const EnumPropertyItem *merge_type_itemf(bContext *C,
   EnumPropertyItem *item = NULL;
   int totitem = 0;
 
-  if (!C) /* needed for docs */
+  if (!C) { /* needed for docs */
     return merge_type_items;
+  }
 
   obedit = CTX_data_edit_object(C);
   if (obedit && obedit->type == OB_MESH) {
@@ -3099,12 +3117,15 @@ static int edbm_remove_doubles_exec(bContext *C, wmOperator *op)
 
     /* avoid losing selection state (select -> tags) */
     char htype_select;
-    if (em->selectmode & SCE_SELECT_VERTEX)
+    if (em->selectmode & SCE_SELECT_VERTEX) {
       htype_select = BM_VERT;
-    else if (em->selectmode & SCE_SELECT_EDGE)
+    }
+    else if (em->selectmode & SCE_SELECT_EDGE) {
       htype_select = BM_EDGE;
-    else
+    }
+    else {
       htype_select = BM_FACE;
+    }
 
     /* store selection as tags */
     BM_mesh_elem_hflag_enable_test(em->bm, htype_select, BM_ELEM_TAG, true, true, BM_ELEM_SELECT);
@@ -3337,8 +3358,9 @@ static int edbm_blend_from_shape_exec(bContext *C, wmOperator *op)
     if (kb) {
       /* Perform blending on selected vertices. */
       BM_ITER_MESH (eve, &iter, em->bm, BM_VERTS_OF_MESH) {
-        if (!BM_elem_flag_test(eve, BM_ELEM_SELECT) || BM_elem_flag_test(eve, BM_ELEM_HIDDEN))
+        if (!BM_elem_flag_test(eve, BM_ELEM_SELECT) || BM_elem_flag_test(eve, BM_ELEM_HIDDEN)) {
           continue;
+        }
 
         /* Get coordinates of shapekey we're blending from. */
         sco = CustomData_bmesh_get_n(&em->bm->vdata, eve->head.data, CD_SHAPEKEY, shape);
@@ -3388,8 +3410,9 @@ static const EnumPropertyItem *shape_itemf(bContext *C,
     int a;
 
     for (a = 0; a < em->bm->vdata.totlayer; a++) {
-      if (em->bm->vdata.layers[a].type != CD_SHAPEKEY)
+      if (em->bm->vdata.layers[a].type != CD_SHAPEKEY) {
         continue;
+      }
 
       tmp.value = totitem;
       tmp.identifier = em->bm->vdata.layers[a].name;
@@ -3623,11 +3646,13 @@ static float bm_edge_seg_isect(const float sco_a[2],
       /* sqrt(m2 * m2 + 1); Only looking for change in sign.  Skip extra math .*/
       dist = (y12 - m2 * x12 - b2);
     }
-    else
+    else {
       dist = x22 - x12;
+    }
 
-    if (i == 0)
+    if (i == 0) {
       lastdist = dist;
+    }
 
     /* if dist changes sign, and intersect point in edge's Bound Box */
     if ((lastdist * dist) <= 0) {
@@ -3688,10 +3713,12 @@ static float bm_edge_seg_isect(const float sco_a[2],
             }
           }
         }
-        if ((m2 <= 1.0f) && (m2 >= -1.0f))
+        if ((m2 <= 1.0f) && (m2 >= -1.0f)) {
           perc = (xi - x21) / (x22 - x21);
-        else
+        }
+        else {
           perc = (yi - y21) / (y22 - y21); /* lower slope more accurate */
+        }
         //isect = 32768.0 * (perc + 0.0000153); /* Percentage in 1 / 32768ths */
 
         break;
@@ -3724,8 +3751,9 @@ static int edbm_knife_cut_exec(bContext *C, wmOperator *op)
   float(*screen_vert_coords)[2], (*sco)[2], (*mouse_path)[2];
 
   /* edit-object needed for matrix, and ar->regiondata for projections to work */
-  if (ELEM(NULL, obedit, ar, ar->regiondata))
+  if (ELEM(NULL, obedit, ar, ar->regiondata)) {
     return OPERATOR_CANCELLED;
+  }
 
   if (bm->totvertsel < 2) {
     BKE_report(op->reports, RPT_ERROR, "No edges are selected to operate on");
@@ -3801,8 +3829,9 @@ static int edbm_knife_cut_exec(bContext *C, wmOperator *op)
 
   BMO_slot_buffer_from_enabled_flag(bm, &bmop, bmop.slots_in, "edges", BM_EDGE, ELE_EDGE_CUT);
 
-  if (mode == KNIFE_MIDPOINT)
+  if (mode == KNIFE_MIDPOINT) {
     numcuts = 1;
+  }
   BMO_slot_int_set(bmop.slots_in, "cuts", numcuts);
 
   BMO_slot_int_set(bmop.slots_in, "quad_corner_type", SUBD_CORNER_STRAIGHT_CUT);
@@ -5970,15 +5999,19 @@ static void sort_bmelem_flag(bContext *C,
   int affected[3] = {0, 0, 0};
   int i, j;
 
-  if (!(types && flag && action))
+  if (!(types && flag && action)) {
     return;
+  }
 
-  if (types & BM_VERT)
+  if (types & BM_VERT) {
     totelem[0] = em->bm->totvert;
-  if (types & BM_EDGE)
+  }
+  if (types & BM_EDGE) {
     totelem[1] = em->bm->totedge;
-  if (types & BM_FACE)
+  }
+  if (types & BM_FACE) {
     totelem[2] = em->bm->totface;
+  }
 
   if (ELEM(action, SRT_VIEW_ZAXIS, SRT_VIEW_XAXIS)) {
     float mat[4][4];
@@ -6190,8 +6223,9 @@ static void sort_bmelem_flag(bContext *C,
       int aff = affected[j];
       tb = tbuf[j];
       mp = map[j];
-      if (!(tb && mp))
+      if (!(tb && mp)) {
         continue;
+      }
       if (ELEM(aff, 0, tot)) {
         MEM_freeN(tb);
         MEM_freeN(mp);
@@ -6332,12 +6366,15 @@ static void sort_bmelem_flag(bContext *C,
   /*  printf("%d faces: %d to be affected...\n", totelem[2], affected[2]);*/
   if (affected[0] == 0 && affected[1] == 0 && affected[2] == 0) {
     for (j = 3; j--;) {
-      if (pblock[j])
+      if (pblock[j]) {
         MEM_freeN(pblock[j]);
-      if (sblock[j])
+      }
+      if (sblock[j]) {
         MEM_freeN(sblock[j]);
-      if (map[j])
+      }
+      if (map[j]) {
         MEM_freeN(map[j]);
+      }
     }
     return;
   }
@@ -6367,10 +6404,12 @@ static void sort_bmelem_flag(bContext *C,
         }
       }
     }
-    if (pb)
+    if (pb) {
       MEM_freeN(pb);
-    if (sb)
+    }
+    if (sb) {
       MEM_freeN(sb);
+    }
   }
 
   BM_mesh_remap(em->bm, map[0], map[1], map[2]);
@@ -6378,8 +6417,9 @@ static void sort_bmelem_flag(bContext *C,
   WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 
   for (j = 3; j--;) {
-    if (map[j])
+    if (map[j]) {
       MEM_freeN(map[j]);
+    }
   }
 }
 
@@ -6411,12 +6451,15 @@ static int edbm_sort_elements_exec(bContext *C, wmOperator *op)
   }
   else {
     BMEditMesh *em = BKE_editmesh_from_object(ob_active);
-    if (em->selectmode & SCE_SELECT_VERTEX)
+    if (em->selectmode & SCE_SELECT_VERTEX) {
       elem_types |= BM_VERT;
-    if (em->selectmode & SCE_SELECT_EDGE)
+    }
+    if (em->selectmode & SCE_SELECT_EDGE) {
       elem_types |= BM_EDGE;
-    if (em->selectmode & SCE_SELECT_FACE)
+    }
+    if (em->selectmode & SCE_SELECT_FACE) {
       elem_types |= BM_FACE;
+    }
     RNA_enum_set(op->ptr, "elements", elem_types);
   }
 
@@ -6458,18 +6501,22 @@ static bool edbm_sort_elements_poll_property(const bContext *UNUSED(C),
 
   /* Only show seed for randomize action! */
   if (STREQ(prop_id, "seed")) {
-    if (action == SRT_RANDOMIZE)
+    if (action == SRT_RANDOMIZE) {
       return true;
-    else
+    }
+    else {
       return false;
+    }
   }
 
   /* Hide seed for reverse and randomize actions! */
   if (STREQ(prop_id, "reverse")) {
-    if (ELEM(action, SRT_RANDOMIZE, SRT_REVERSE))
+    if (ELEM(action, SRT_RANDOMIZE, SRT_REVERSE)) {
       return false;
-    else
+    }
+    else {
       return true;
+    }
   }
 
   return true;
@@ -7609,8 +7656,9 @@ wmKeyMap *point_normals_modal_keymap(wmKeyConfig *keyconf)
   wmKeyMap *keymap = WM_modalkeymap_get(keyconf, keymap_name);
 
   /* We only need to add map once */
-  if (keymap && keymap->modal_items)
+  if (keymap && keymap->modal_items) {
     return NULL;
+  }
 
   keymap = WM_modalkeymap_add(keyconf, keymap_name, modal_items);
 
@@ -7741,7 +7789,8 @@ static void point_normals_apply(bContext *C, wmOperator *op, float target[3], co
       copy_v3_v3(lnor_ed->nloc, lnor_ed->niloc);
     }
     else if (do_spherize) {
-      /* Note that this is *not* real spherical interpolation. Probably good enough in this case though? */
+      /* Note that this is *not* real spherical interpolation.
+       * Probably good enough in this case though? */
       const float strength = RNA_float_get(op->ptr, "spherize_strength");
       float spherized_normal[3];
 
@@ -8821,12 +8870,13 @@ static int edbm_smoothen_normals_exec(bContext *C, wmOperator *op)
 
   float(*smooth_normal)[3] = MEM_callocN(sizeof(*smooth_normal) * lnors_ed_arr->totloop, __func__);
 
-  /* This is weird choice of operation, taking all loops of faces of current vertex... Could lead to some rather
-   * far away loops weighting as much as very close ones (topologically speaking), with complex polygons.
-   * Using topological distance here (rather than geometrical one) makes sense imho, but would rather go with
-   * a more consistent and flexible code, we could even add max topological distance to take into account,
-   * and a weighting curve...
-   * Would do that later though, think for now we can live with that choice. --mont29 */
+  /* This is weird choice of operation, taking all loops of faces of current vertex.
+   * Could lead to some rather far away loops weighting as much as very close ones
+   * (topologically speaking), with complex polygons.
+   * Using topological distance here (rather than geometrical one)
+   * makes sense imho, but would rather go with a more consistent and flexible code,
+   * we could even add max topological distance to take into account, * and a weighting curve.
+   * Would do that later though, think for now we can live with that choice. --mont29. */
   BMLoopNorEditData *lnor_ed = lnors_ed_arr->lnor_editdata;
   for (int i = 0; i < lnors_ed_arr->totloop; i++, lnor_ed++) {
     l = lnor_ed->loop;

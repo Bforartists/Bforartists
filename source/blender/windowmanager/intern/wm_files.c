@@ -1846,22 +1846,15 @@ static int wm_homefile_read_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int wm_homefile_read_invoke(bContext *C,
-                                   wmOperator *UNUSED(op),
-                                   const wmEvent *UNUSED(event))
+static int wm_homefile_read_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
-  /* Draw menu which includes default startup and application templates. */
-  uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("New File"), ICON_FILE_NEW);
-  uiLayout *layout = UI_popup_menu_layout(pup);
-
-  MenuType *mt = WM_menutype_find("TOPBAR_MT_file_new", false);
-  if (mt) {
-    UI_menutype_draw(C, mt, layout);
+  wmWindowManager *wm = CTX_wm_manager(C);
+  if (U.uiflag & USER_SAVE_PROMPT && !wm->file_saved) {
+    return WM_operator_confirm_message(C, op, "Changes in current file will be lost. Continue?");
   }
-
-  UI_popup_menu_end(C, pup);
-
-  return OPERATOR_INTERFACE;
+  else {
+    return wm_homefile_read_exec(C, op);
+  }
 }
 
 void WM_OT_read_homefile(wmOperatorType *ot)

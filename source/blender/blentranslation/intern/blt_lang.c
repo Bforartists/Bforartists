@@ -108,8 +108,9 @@ static void fill_locales(void)
       continue; /* Comment or void... */
     }
     t = atoi(str);
-    if (t >= num_locales)
+    if (t >= num_locales) {
       num_locales = t + 1;
+    }
     num_locales_menu++;
     line = line->next;
   }
@@ -118,7 +119,8 @@ static void fill_locales(void)
   /* And now, build locales and locale_menu! */
   locales_menu = MEM_callocN(num_locales_menu * sizeof(EnumPropertyItem), __func__);
   line = lines;
-  /* Do not allocate locales with zero-sized mem, as LOCALE macro uses NULL locales as invalid marker! */
+  /* Do not allocate locales with zero-sized mem,
+   * as LOCALE macro uses NULL locales as invalid marker! */
   if (num_locales > 0) {
     locales = MEM_callocN(num_locales * sizeof(char *), __func__);
     while (line) {
@@ -155,7 +157,8 @@ static void fill_locales(void)
             /* The DEFAULT/Automatic item... */
             if (BLI_strnlen(loc, 2)) {
               locales[id] = "";
-              /* Keep this tip in sync with the one in rna_userdef (rna_enum_language_default_items). */
+              /* Keep this tip in sync with the one in rna_userdef
+               * (rna_enum_language_default_items). */
               locales_menu[idx].description = BLI_strdup(
                   "Automatically choose system's defined language "
                   "if available, or fall-back to English");
@@ -259,8 +262,9 @@ void BLT_lang_set(const char *str)
   const char *short_locale = str ? str : LOCALE(ulang);
   const char *short_locale_utf8 = NULL;
 
-  if ((U.transopts & USER_DOTRANSLATE) == 0)
+  if ((U.transopts & USER_DOTRANSLATE) == 0) {
     return;
+  }
 
   /* We want to avoid locales like '.UTF-8'! */
   if (short_locale[0]) {
@@ -307,10 +311,12 @@ const char *BLT_lang_get(void)
 #undef LOCALE
 #undef ULANGUAGE
 
-/* Get locale's elements (if relevant pointer is not NULL and element actually exists, e.g. if there is no variant,
+/* Get locale's elements (if relevant pointer is not NULL and element actually exists, e.g.
+ * if there is no variant,
  * *variant and *language_variant will always be NULL).
  * Non-null elements are always MEM_mallocN'ed, it's the caller's responsibility to free them.
- * NOTE: Keep that one always available, you never know, may become useful even in no-WITH_INTERNATIONAL context...
+ * NOTE: Keep that one always available, you never know,
+ * may become useful even in no-WITH_INTERNATIONAL context...
  */
 void BLT_lang_locale_explode(const char *locale,
                              char **language,
@@ -327,36 +333,45 @@ void BLT_lang_locale_explode(const char *locale,
   if (language || language_variant) {
     if (m1 || m2) {
       _t = m1 ? BLI_strdupn(locale, m1 - locale) : BLI_strdupn(locale, m2 - locale);
-      if (language)
+      if (language) {
         *language = _t;
+      }
     }
     else if (language) {
       *language = BLI_strdup(locale);
     }
   }
   if (country) {
-    if (m1)
+    if (m1) {
       *country = m2 ? BLI_strdupn(m1 + 1, m2 - (m1 + 1)) : BLI_strdup(m1 + 1);
-    else
+    }
+    else {
       *country = NULL;
+    }
   }
   if (variant) {
-    if (m2)
+    if (m2) {
       *variant = BLI_strdup(m2 + 1);
-    else
+    }
+    else {
       *variant = NULL;
+    }
   }
   if (language_country) {
-    if (m1)
+    if (m1) {
       *language_country = m2 ? BLI_strdupn(locale, m2 - locale) : BLI_strdup(locale);
-    else
+    }
+    else {
       *language_country = NULL;
+    }
   }
   if (language_variant) {
-    if (m2)
+    if (m2) {
       *language_variant = m1 ? BLI_strdupcat(_t, m2) : BLI_strdup(locale);
-    else
+    }
+    else {
       *language_variant = NULL;
+    }
   }
   if (_t && !language) {
     MEM_freeN(_t);

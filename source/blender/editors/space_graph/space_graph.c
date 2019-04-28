@@ -186,7 +186,7 @@ static void graph_main_region_init(wmWindowManager *wm, ARegion *ar)
 
   /* own keymap */
   keymap = WM_keymap_ensure(wm->defaultconf, "Graph Editor", SPACE_GRAPH, 0);
-  WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
+  WM_event_add_keymap_handler_v2d_mask(&ar->handlers, keymap);
   keymap = WM_keymap_ensure(wm->defaultconf, "Graph Editor Generic", SPACE_GRAPH, 0);
   WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
@@ -297,8 +297,9 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 
   if (sipo->mode != SIPO_MODE_DRIVERS) {
     /* current frame */
-    if (sipo->flag & SIPO_DRAWTIME)
+    if (sipo->flag & SIPO_DRAWTIME) {
       cfra_flag |= DRAWCFRA_UNIT_SECONDS;
+    }
     ANIM_draw_cfra(C, v2d, cfra_flag);
   }
 
@@ -352,7 +353,7 @@ static void graph_channel_region_init(wmWindowManager *wm, ARegion *ar)
 
   /* own keymap */
   keymap = WM_keymap_ensure(wm->defaultconf, "Animation Channels", 0, 0);
-  WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
+  WM_event_add_keymap_handler_v2d_mask(&ar->handlers, keymap);
   keymap = WM_keymap_ensure(wm->defaultconf, "Graph Editor Generic", SPACE_GRAPH, 0);
   WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
@@ -405,7 +406,7 @@ static void graph_buttons_region_init(wmWindowManager *wm, ARegion *ar)
   ED_region_panels_init(wm, ar);
 
   keymap = WM_keymap_ensure(wm->defaultconf, "Graph Editor Generic", SPACE_GRAPH, 0);
-  WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
+  WM_event_add_keymap_handler_v2d_mask(&ar->handlers, keymap);
 }
 
 static void graph_buttons_region_draw(const bContext *C, ARegion *ar)
@@ -434,8 +435,9 @@ static void graph_region_listener(wmWindow *UNUSED(win),
           ED_region_tag_redraw(ar);
           break;
         case ND_SEQUENCER:
-          if (wmn->action == NA_SELECTED)
+          if (wmn->action == NA_SELECTED) {
             ED_region_tag_redraw(ar);
+          }
           break;
       }
       break;
@@ -447,8 +449,9 @@ static void graph_region_listener(wmWindow *UNUSED(win),
           ED_region_tag_redraw(ar);
           break;
         case ND_MODIFIER:
-          if (wmn->action == NA_RENAME)
+          if (wmn->action == NA_RENAME) {
             ED_region_tag_redraw(ar);
+          }
           break;
       }
       break;
@@ -461,8 +464,9 @@ static void graph_region_listener(wmWindow *UNUSED(win),
       }
       break;
     case NC_ID:
-      if (wmn->action == NA_RENAME)
+      if (wmn->action == NA_RENAME) {
         ED_region_tag_redraw(ar);
+      }
       break;
     case NC_SCREEN:
       if (ELEM(wmn->data, ND_LAYER)) {
@@ -470,8 +474,9 @@ static void graph_region_listener(wmWindow *UNUSED(win),
       }
       break;
     default:
-      if (wmn->data == ND_KEYS)
+      if (wmn->data == ND_KEYS) {
         ED_region_tag_redraw(ar);
+      }
       break;
   }
 }
@@ -564,10 +569,12 @@ static void graph_listener(wmWindow *UNUSED(win),
     case NC_ANIMATION:
       /* for selection changes of animation data, we can just redraw...
        * otherwise autocolor might need to be done again */
-      if (ELEM(wmn->data, ND_KEYFRAME, ND_ANIMCHAN) && (wmn->action == NA_SELECTED))
+      if (ELEM(wmn->data, ND_KEYFRAME, ND_ANIMCHAN) && (wmn->action == NA_SELECTED)) {
         ED_area_tag_redraw(sa);
-      else
+      }
+      else {
         ED_area_tag_refresh(sa);
+      }
       break;
     case NC_SCENE:
       switch (wmn->data) {
@@ -607,8 +614,9 @@ static void graph_listener(wmWindow *UNUSED(win),
       }
       break;
     case NC_SPACE:
-      if (wmn->data == ND_SPACE_GRAPH)
+      if (wmn->data == ND_SPACE_GRAPH) {
         ED_area_tag_redraw(sa);
+      }
       break;
     case NC_WINDOW:
       if (sipo->runtime.flag &
@@ -636,8 +644,9 @@ static void graph_refresh_fcurve_colors(const bContext *C)
   int filter;
   int i;
 
-  if (ANIM_animdata_get_context(C, &ac) == false)
+  if (ANIM_animdata_get_context(C, &ac) == false) {
     return;
+  }
 
   UI_SetTheme(SPACE_GRAPH, RGN_TYPE_WINDOW);
 
@@ -655,13 +664,15 @@ static void graph_refresh_fcurve_colors(const bContext *C)
     /* set color of curve here */
     switch (fcu->color_mode) {
       case FCURVE_COLOR_CUSTOM: {
-        /* User has defined a custom color for this curve already (we assume it's not going to cause clashes with text colors),
+        /* User has defined a custom color for this curve already
+         * (we assume it's not going to cause clashes with text colors),
          * which should be left alone... Nothing needs to be done here.
          */
         break;
       }
       case FCURVE_COLOR_AUTO_RGB: {
-        /* F-Curve's array index is automatically mapped to RGB values. This works best of 3-value vectors.
+        /* F-Curve's array index is automatically mapped to RGB values.
+         * This works best of 3-value vectors.
          * TODO: find a way to module the hue so that not all curves have same color...
          */
         float *col = fcu->color;
@@ -765,9 +776,9 @@ static void graph_refresh(const bContext *C, ScrArea *sa)
   /* region updates? */
   // XXX re-sizing y-extents of tot should go here?
 
-  /* update the state of the animchannels in response to changes from the data they represent
-   * NOTE: the temp flag is used to indicate when this needs to be done, and will be cleared once handled
-   */
+  /* Update the state of the animchannels in response to changes from the data they represent
+   * NOTE: the temp flag is used to indicate when this needs to be done,
+   * and will be cleared once handled. */
   if (sipo->runtime.flag & SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC) {
     ANIM_sync_animchannels_to_data(C);
     sipo->runtime.flag &= ~SIPO_RUNTIME_FLAG_NEED_CHAN_SYNC;

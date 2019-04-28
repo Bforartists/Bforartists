@@ -139,8 +139,9 @@ const char *folderlist_peeklastdir(ListBase *folderlist)
 {
   struct FolderList *folder;
 
-  if (!folderlist->last)
+  if (!folderlist->last) {
     return NULL;
+  }
 
   folder = folderlist->last;
   return folder->foldername;
@@ -151,14 +152,16 @@ int folderlist_clear_next(struct SpaceFile *sfile)
   struct FolderList *folder;
 
   /* if there is no folder_next there is nothing we can clear */
-  if (!sfile->folders_next)
+  if (!sfile->folders_next) {
     return 0;
+  }
 
   /* if previous_folder, next_folder or refresh_folder operators are executed
    * it doesn't clear folder_next */
   folder = sfile->folders_prev->last;
-  if ((!folder) || (BLI_path_cmp(folder->foldername, sfile->params->dir) == 0))
+  if ((!folder) || (BLI_path_cmp(folder->foldername, sfile->params->dir) == 0)) {
     return 0;
+  }
 
   /* eventually clear flist->folders_next */
   return 1;
@@ -169,8 +172,9 @@ void folderlist_free(ListBase *folderlist)
 {
   if (folderlist) {
     FolderList *folder;
-    for (folder = folderlist->first; folder; folder = folder->next)
+    for (folder = folderlist->first; folder; folder = folder->next) {
       MEM_freeN(folder->foldername);
+    }
     BLI_freelistN(folderlist);
   }
 }
@@ -293,9 +297,11 @@ typedef struct FileList {
 
   struct FileListEntryCache filelist_cache;
 
-  /* We need to keep those info outside of actual filelist items, because those are no more persistent
+  /* We need to keep those info outside of actual filelist items,
+   * because those are no more persistent
    * (only generated on demand, and freed as soon as possible).
-   * Persistent part (mere list of paths + stat info) is kept as small as possible, and filebrowser-agnostic.
+   * Persistent part (mere list of paths + stat info)
+   * is kept as small as possible, and filebrowser-agnostic.
    */
   GHash *selection_state;
 
@@ -304,7 +310,8 @@ typedef struct FileList {
 
   struct BlendHandle *libfiledata;
 
-  /* Set given path as root directory, if last bool is true may change given string in place to a valid value.
+  /* Set given path as root directory,
+   * if last bool is true may change given string in place to a valid value.
    * Returns True if valid dir. */
   bool (*checkdirf)(struct FileList *, char *, const bool);
 
@@ -397,14 +404,18 @@ static int compare_direntry_generic(const FileListInternEntry *entry1,
   }
 
   /* make sure "." and ".." are always first */
-  if (FILENAME_IS_CURRENT(entry1->relpath))
+  if (FILENAME_IS_CURRENT(entry1->relpath)) {
     return -1;
-  if (FILENAME_IS_CURRENT(entry2->relpath))
+  }
+  if (FILENAME_IS_CURRENT(entry2->relpath)) {
     return 1;
-  if (FILENAME_IS_PARENT(entry1->relpath))
+  }
+  if (FILENAME_IS_PARENT(entry1->relpath)) {
     return -1;
-  if (FILENAME_IS_PARENT(entry2->relpath))
+  }
+  if (FILENAME_IS_PARENT(entry2->relpath)) {
     return 1;
+  }
 
   return 0;
 }
@@ -440,10 +451,12 @@ static int compare_date(void *UNUSED(user_data), const void *a1, const void *a2)
 
   time1 = (int64_t)entry1->st.st_mtime;
   time2 = (int64_t)entry2->st.st_mtime;
-  if (time1 < time2)
+  if (time1 < time2) {
     return 1;
-  if (time1 > time2)
+  }
+  if (time1 > time2) {
     return -1;
+  }
 
   name1 = entry1->name;
   name2 = entry2->name;
@@ -465,10 +478,12 @@ static int compare_size(void *UNUSED(user_data), const void *a1, const void *a2)
 
   size1 = entry1->st.st_size;
   size2 = entry2->st.st_size;
-  if (size1 < size2)
+  if (size1 < size2) {
     return 1;
-  if (size1 > size2)
+  }
+  if (size1 > size2) {
     return -1;
+  }
 
   name1 = entry1->name;
   name2 = entry2->name;
@@ -487,31 +502,41 @@ static int compare_extension(void *UNUSED(user_data), const void *a1, const void
     return ret;
   }
 
-  if ((entry1->typeflag & FILE_TYPE_BLENDERLIB) && !(entry2->typeflag & FILE_TYPE_BLENDERLIB))
+  if ((entry1->typeflag & FILE_TYPE_BLENDERLIB) && !(entry2->typeflag & FILE_TYPE_BLENDERLIB)) {
     return -1;
-  if (!(entry1->typeflag & FILE_TYPE_BLENDERLIB) && (entry2->typeflag & FILE_TYPE_BLENDERLIB))
+  }
+  if (!(entry1->typeflag & FILE_TYPE_BLENDERLIB) && (entry2->typeflag & FILE_TYPE_BLENDERLIB)) {
     return 1;
+  }
   if ((entry1->typeflag & FILE_TYPE_BLENDERLIB) && (entry2->typeflag & FILE_TYPE_BLENDERLIB)) {
-    if ((entry1->typeflag & FILE_TYPE_DIR) && !(entry2->typeflag & FILE_TYPE_DIR))
+    if ((entry1->typeflag & FILE_TYPE_DIR) && !(entry2->typeflag & FILE_TYPE_DIR)) {
       return 1;
-    if (!(entry1->typeflag & FILE_TYPE_DIR) && (entry2->typeflag & FILE_TYPE_DIR))
+    }
+    if (!(entry1->typeflag & FILE_TYPE_DIR) && (entry2->typeflag & FILE_TYPE_DIR)) {
       return -1;
-    if (entry1->blentype < entry2->blentype)
+    }
+    if (entry1->blentype < entry2->blentype) {
       return -1;
-    if (entry1->blentype > entry2->blentype)
+    }
+    if (entry1->blentype > entry2->blentype) {
       return 1;
+    }
   }
   else {
     const char *sufix1, *sufix2;
 
-    if (!(sufix1 = strstr(entry1->relpath, ".blend.gz")))
+    if (!(sufix1 = strstr(entry1->relpath, ".blend.gz"))) {
       sufix1 = strrchr(entry1->relpath, '.');
-    if (!(sufix2 = strstr(entry2->relpath, ".blend.gz")))
+    }
+    if (!(sufix2 = strstr(entry2->relpath, ".blend.gz"))) {
       sufix2 = strrchr(entry2->relpath, '.');
-    if (!sufix1)
+    }
+    if (!sufix1) {
       sufix1 = "";
-    if (!sufix2)
+    }
+    if (!sufix2) {
       sufix2 = "";
+    }
 
     if ((ret = BLI_strcasecmp(sufix1, sufix2))) {
       return ret;
@@ -951,28 +976,39 @@ static int filelist_geticon_ex(const int typeflag,
     }
   }
 
-  if (typeflag & FILE_TYPE_BLENDER)
+  if (typeflag & FILE_TYPE_BLENDER) {
     return ICON_FILE_BLEND;
-  else if (typeflag & FILE_TYPE_BLENDER_BACKUP)
+  }
+  else if (typeflag & FILE_TYPE_BLENDER_BACKUP) {
     return ICON_FILE_BACKUP;
-  else if (typeflag & FILE_TYPE_IMAGE)
+  }
+  else if (typeflag & FILE_TYPE_IMAGE) {
     return ICON_FILE_IMAGE;
-  else if (typeflag & FILE_TYPE_MOVIE)
+  }
+  else if (typeflag & FILE_TYPE_MOVIE) {
     return ICON_FILE_MOVIE;
-  else if (typeflag & FILE_TYPE_PYSCRIPT)
+  }
+  else if (typeflag & FILE_TYPE_PYSCRIPT) {
     return ICON_FILE_SCRIPT;
-  else if (typeflag & FILE_TYPE_SOUND)
+  }
+  else if (typeflag & FILE_TYPE_SOUND) {
     return ICON_FILE_SOUND;
-  else if (typeflag & FILE_TYPE_FTFONT)
+  }
+  else if (typeflag & FILE_TYPE_FTFONT) {
     return ICON_FILE_FONT;
-  else if (typeflag & FILE_TYPE_BTX)
+  }
+  else if (typeflag & FILE_TYPE_BTX) {
     return ICON_FILE_BLANK;
-  else if (typeflag & FILE_TYPE_COLLADA)
+  }
+  else if (typeflag & FILE_TYPE_COLLADA) {
     return ICON_FILE_BLANK;
-  else if (typeflag & FILE_TYPE_ALEMBIC)
+  }
+  else if (typeflag & FILE_TYPE_ALEMBIC) {
     return ICON_FILE_BLANK;
-  else if (typeflag & FILE_TYPE_TEXT)
+  }
+  else if (typeflag & FILE_TYPE_TEXT) {
     return ICON_FILE_TEXT;
+  }
   else if (typeflag & FILE_TYPE_BLENDERLIB) {
     const int ret = UI_idcode_icon_get(blentype);
     if (ret != ICON_NONE) {
@@ -1177,8 +1213,8 @@ static void filelist_cache_preview_freef(TaskPool *__restrict UNUSED(pool),
 {
   FileListEntryPreview *preview = taskdata;
 
-  /* If preview->flag is empty, it means that preview has already been generated and added to done queue,
-   * we do not own it anymore. */
+  /* If preview->flag is empty, it means that preview has already been generated and
+   * added to done queue, we do not own it anymore. */
   if (preview->flags) {
     if (preview->img) {
       IMB_freeImBuf(preview->img);
@@ -1207,7 +1243,7 @@ static void filelist_cache_previews_clear(FileListEntryCache *cache)
     BLI_task_pool_cancel(cache->previews_pool);
 
     while ((preview = BLI_thread_queue_pop_timeout(cache->previews_done, 0))) {
-      //          printf("%s: DONE %d - %s - %p\n", __func__, preview->index, preview->path, preview->img);
+      // printf("%s: DONE %d - %s - %p\n", __func__, preview->index, preview->path, preview->img);
       if (preview->img) {
         IMB_freeImBuf(preview->img);
       }
@@ -1421,8 +1457,9 @@ void filelist_free(struct FileList *filelist)
 
 void filelist_freelib(struct FileList *filelist)
 {
-  if (filelist->libfiledata)
+  if (filelist->libfiledata) {
     BLO_blendhandle_close(filelist->libfiledata);
+  }
   filelist->libfiledata = NULL;
 }
 
@@ -1514,8 +1551,10 @@ bool filelist_pending(struct FileList *filelist)
 }
 
 /**
- * Limited version of full update done by space_file's file_refresh(), to be used by operators and such.
- * Ensures given filelist is ready to be used (i.e. it is filtered and sorted), unless it is tagged for a full refresh.
+ * Limited version of full update done by space_file's file_refresh(),
+ * to be used by operators and such.
+ * Ensures given filelist is ready to be used (i.e. it is filtered and sorted),
+ * unless it is tagged for a full refresh.
  */
 int filelist_files_ensure(FileList *filelist)
 {
@@ -1717,7 +1756,11 @@ static void filelist_file_cache_block_release(struct FileList *filelist,
 
     for (i = 0; i < size; i++, cursor++) {
       FileDirEntry *entry = cache->block_entries[cursor];
-      //          printf("%s: release cacheidx %d (%%p %%s)\n", __func__, cursor/*, cache->block_entries[cursor], cache->block_entries[cursor]->relpath*/);
+#if 0
+      printf("%s: release cacheidx %d (%%p %%s)\n",
+             __func__,
+             cursor /*, cache->block_entries[cursor], cache->block_entries[cursor]->relpath*/);
+#endif
       BLI_ghash_remove(cache->uuids, entry->uuid, NULL, NULL);
       filelist_file_release_entry(filelist, entry);
 #ifndef NDEBUG
@@ -1828,8 +1871,12 @@ bool filelist_file_cache_block(struct FileList *filelist, const int index)
         int size2 = 0;
         int idx1, idx2 = 0;
 
-        //              printf("\tcache releasing: [%d:%d] (%d)\n",
-        //                     cache->block_end_index - size1, cache->block_end_index, cache->block_cursor);
+#if 0
+        printf("\tcache releasing: [%d:%d] (%d)\n",
+               cache->block_end_index - size1,
+               cache->block_end_index,
+               cache->block_cursor);
+#endif
 
         idx1 = (cache->block_cursor + end_index - cache->block_start_index) % cache_size;
         if (idx1 + size1 > cache_size) {
@@ -1988,8 +2035,8 @@ bool filelist_cache_previews_update(FileList *filelist)
     //      printf("%s: %d - %s - %p\n", __func__, preview->index, preview->path, preview->img);
 
     if (preview->img) {
-      /* Due to asynchronous process, a preview for a given image may be generated several times, i.e.
-       * entry->image may already be set at this point. */
+      /* Due to asynchronous process, a preview for a given image may be generated several times,
+       * i.e. entry->image may already be set at this point. */
       if (entry && !entry->image) {
         entry->image = preview->img;
         changed = true;
@@ -2031,14 +2078,16 @@ static bool file_is_blend_backup(const char *str)
   else {
     const char *loc;
 
-    if (a > b + 1)
+    if (a > b + 1) {
       b++;
+    }
 
     /* allow .blend1 .blend2 .blend32 */
     loc = BLI_strcasestr(str + a - b, ".blend");
 
-    if (loc)
+    if (loc) {
       retval = 1;
+    }
   }
 
   return (retval);
@@ -2261,8 +2310,9 @@ static int groupname_to_code(const char *group)
 
   BLI_strncpy(buf, group, sizeof(buf));
   lslash = (char *)BLI_last_slash(buf);
-  if (lslash)
+  if (lslash) {
     lslash[0] = '\0';
+  }
 
   return buf[0] ? BKE_idcode_from_name(buf) : 0;
 }
@@ -2275,7 +2325,8 @@ static unsigned int groupname_to_filter_id(const char *group)
 }
 
 /**
- * From here, we are in 'Job Context', i.e. have to be careful about sharing stuff between background working thread
+ * From here, we are in 'Job Context',
+ * i.e. have to be careful about sharing stuff between background working thread.
  * and main one (used by UI among other things).
  */
 typedef struct TodoDir {
@@ -2519,10 +2570,14 @@ static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
 #  if 0 /* XXX TODO show the selection status of the objects */
           if (!filelist->has_func) { /* F4 DATA BROWSE */
             if (idcode == ID_OB) {
-              if ( ((Object *)id)->flag & SELECT) files->entry->selflag |= FILE_SEL_SELECTED;
+              if ( ((Object *)id)->flag & SELECT) {
+                files->entry->selflag |= FILE_SEL_SELECTED;
+              }
             }
             else if (idcode == ID_SCE) {
-              if ( ((Scene *)id)->r.scemode & R_BG_RENDER) files->entry->selflag |= FILE_SEL_SELECTED;
+              if ( ((Scene *)id)->r.scemode & R_BG_RENDER) {
+                files->entry->selflag |= FILE_SEL_SELECTED;
+              }
             }
           }
 #  endif
@@ -2533,10 +2588,20 @@ static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
               idcode == ID_IM) {
             files->typeflag |= FILE_TYPE_IMAGE;
           }
-          //                  if      (id->lib && fake) BLI_snprintf(files->extra, sizeof(files->entry->extra), "LF %d",    id->us);
-          //                  else if (id->lib)         BLI_snprintf(files->extra, sizeof(files->entry->extra), "L    %d",  id->us);
-          //                  else if (fake)            BLI_snprintf(files->extra, sizeof(files->entry->extra), "F    %d",  id->us);
-          //                  else                      BLI_snprintf(files->extra, sizeof(files->entry->extra), "      %d", id->us);
+#  if 0
+          if (id->lib && fake) {
+            BLI_snprintf(files->extra, sizeof(files->entry->extra), "LF %d", id->us);
+          }
+          else if (id->lib) {
+            BLI_snprintf(files->extra, sizeof(files->entry->extra), "L    %d", id->us);
+          }
+          else if (fake) {
+            BLI_snprintf(files->extra, sizeof(files->entry->extra), "F    %d", id->us);
+          }
+          else {
+            BLI_snprintf(files->extra, sizeof(files->entry->extra), "      %d", id->us);
+          }
+#  endif
 
           if (id->lib) {
             if (totlib == 0)

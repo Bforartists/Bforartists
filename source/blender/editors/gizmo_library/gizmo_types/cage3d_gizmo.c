@@ -470,7 +470,8 @@ static int gizmo_cage3d_modal(bContext *C,
   }
   /* For transform logic to be manageable we operate in -0.5..0.5 2D space,
    * no matter the size of the rectangle, mouse coords are scaled to unit space.
-   * The mouse coords have been projected into the matrix so we don't need to worry about axis alignment.
+   * The mouse coords have been projected into the matrix
+   * so we don't need to worry about axis alignment.
    *
    * - The cursor offset are multiplied by 'dims'.
    * - Matrix translation is also multiplied by 'dims'.
@@ -615,8 +616,9 @@ static void gizmo_cage3d_exit(bContext *C, wmGizmo *gz, const bool cancel)
 {
   RectTransformInteraction *data = gz->interaction_data;
 
-  if (!cancel)
+  if (!cancel) {
     return;
+  }
 
   wmGizmoProperty *gz_prop;
 

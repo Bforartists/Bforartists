@@ -196,10 +196,12 @@ static void node_shader_update_principled(bNodeTree *UNUSED(ntree), bNode *node)
 
   for (sock = node->inputs.first; sock; sock = sock->next) {
     if (STREQ(sock->name, "Transmission Roughness")) {
-      if (distribution == SHD_GLOSSY_GGX)
+      if (distribution == SHD_GLOSSY_GGX) {
         sock->flag &= ~SOCK_UNAVAIL;
-      else
+      }
+      else {
         sock->flag |= SOCK_UNAVAIL;
+      }
     }
   }
 }
@@ -215,7 +217,7 @@ void register_node_type_sh_bsdf_principled(void)
   node_type_init(&ntype, node_shader_init_principled);
   node_type_storage(&ntype, "", NULL, NULL);
   node_type_gpu(&ntype, node_shader_gpu_bsdf_principled);
-  node_type_update(&ntype, node_shader_update_principled, NULL);
+  node_type_update(&ntype, node_shader_update_principled);
 
   nodeRegisterType(&ntype);
 }
