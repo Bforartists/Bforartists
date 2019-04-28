@@ -1153,7 +1153,12 @@ class MaterialRaytraceMirror(PropertyGroup):
                         "sampling is stopped)",
             min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=0.005, precision=3)
 
-    
+    mirror_color: FloatVectorProperty(
+            name="Mirror color",
+            description=("Mirror color of the material"),
+            precision=4, step=0.01,
+            default=(1.0,1.0,1.0), options={'ANIMATABLE'}, subtype='COLOR')
+            
     reflect_factor: FloatProperty(
             name="Reflectivity",
             description="Amount of mirror reflection for raytrace",
@@ -3563,10 +3568,10 @@ class RenderPovSettingsWorld(PropertyGroup):
             name="Blend Sky", description="Render background with natural progression from horizon to zenith",
             default=False)
     use_sky_paper: BoolProperty(
-            name="Blend Sky", description="Flatten blend or texture coordinates",
+            name="Paper Sky", description="Flatten blend or texture coordinates",
             default=False)
     use_sky_real: BoolProperty(
-            name="Blend Sky", description="Render background with a real horizon, relative to the camera angle",
+            name="Real Sky", description="Render background with a real horizon, relative to the camera angle",
             default=False)
             
     horizon_color: FloatVectorProperty(
@@ -3690,6 +3695,8 @@ def register():
 def unregister():
     del bpy.types.Scene.pov
     del bpy.types.Material.pov
+    del bpy.types.Material.pov_subsurface_scattering
+    del bpy.types.Material.pov_raytrace_mirror
     #del bpy.types.Modifier.pov
     del bpy.types.Texture.pov
     del bpy.types.Object.pov

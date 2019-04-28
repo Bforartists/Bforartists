@@ -22,11 +22,11 @@
 bl_info = {
     "name": "Snap_Utilities_Line",
     "author": "Germano Cavalcante",
-    "version": (5, 9, 9),
+    "version": (5, 9, 12),
     "blender": (2, 80, 0),
     "location": "View3D > TOOLS > Line Tool",
     "description": "Extends Blender Snap controls",
-    "wiki_url" : "http://blenderartists.org/forum/showthread.php?363859-Addon-CAD-Snap-Utilities",
+    "wiki_url" : "https://blenderartists.org/t/cad-snap-utilities",
     "category": "Mesh"}
 
 if "bpy" in locals():
