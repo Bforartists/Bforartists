@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from blenderkit import paths
+from blenderkit import paths,utils
 import shutil
 import threading
 
@@ -62,10 +62,8 @@ def fetch_categories(API_key):
 
     url = paths.get_bkit_url() + 'categories/'
 
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer %s" % API_key
-    }
+    headers = utils.get_headers(API_key)
+
     tempdir = paths.get_temp_dir()
     categories_filepath = os.path.join(tempdir, 'categories.json')
 

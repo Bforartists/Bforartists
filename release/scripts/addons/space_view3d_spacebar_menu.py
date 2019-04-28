@@ -55,7 +55,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
         settings = context.tool_settings
         layout.operator_context = 'INVOKE_REGION_WIN'
         obj = context.active_object
-
+        view = context.space_data
 # No Object Selected #
         if not obj:
 
@@ -72,8 +72,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                             text="Cursor to Grid")
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
             if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
                 layout.menu("VIEW3D_MT_Edit_Gpencil", icon='GREASEPENCIL')
 
@@ -107,10 +107,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.operator("object.delete", text="Delete Object", icon='X')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Mesh Edit Mode #
         if obj and obj.type == 'MESH' and obj.mode in {'EDIT'}:
@@ -129,7 +129,7 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_EditCursorMenu", icon='PIVOT_CURSOR')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UV_Map", icon='MOD_UVPROJECT')
-            layout.menu("VIEW3D_MT_edit_mesh_context_menu", icon='SOLO_OFF')
+            layout.menu("VIEW3D_MT_edit_mesh_context_menu",  text="Specials", icon='SOLO_OFF')
             layout.menu("VIEW3D_MT_edit_mesh_extrude", icon='XRAY')
             UseSeparator(self, context)
             layout.operator_menu_enum("object.modifier_add", "type", icon='MODIFIER')
@@ -139,10 +139,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_edit_mesh_delete", icon='X')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Sculpt Mode #
         if obj and obj.type == 'MESH' and obj.mode in {'SCULPT'}:
@@ -159,10 +159,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_Sculpt_Specials", icon='SOLO_OFF')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Vertex Paint #
         if obj and obj.type == 'MESH' and obj.mode in {'VERTEX_PAINT'}:
@@ -173,14 +173,14 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
 #            layout.menu("VIEW3D_MT_Brush_Settings", icon='BRUSH_DATA')
             layout.menu("VIEW3D_MT_Brush_Selection",
-                        text="Vertex Paint Tool", icon='BRUSH_VERTEXDRAW')
+                        text="Vertex Paint Tool")
             layout.menu("VIEW3D_MT_Vertex_Colors", icon='GROUP_VCOL')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Weight Paint Menu #
         if obj and obj.type == 'MESH' and obj.mode in {'WEIGHT_PAINT'}:
@@ -195,10 +195,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                         text="Weight Paint Tool", icon='BRUSH_TEXMASK')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Texture Paint #
         if obj and obj.type == 'MESH' and obj.mode in {'TEXTURE_PAINT'}:
@@ -211,10 +211,10 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
                         text="Texture Paint Tool", icon='SCULPTMODE_HLT')
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
-            layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='EDITMODE_HLT')
+            layout.menu("VIEW3D_MT_InteractiveMode", icon='EDITMODE_HLT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Curve Object Mode #
         if obj and obj.type == 'CURVE' and obj.mode in {'OBJECT'}:
@@ -247,8 +247,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Edit Curve #
         if obj and obj.type == 'CURVE' and obj.mode in {'EDIT'}:
@@ -277,8 +277,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Surface Object Mode #
         if obj and obj.type == 'SURFACE' and obj.mode in {'OBJECT'}:
@@ -310,8 +310,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Edit Surface #
         if obj and obj.type == 'SURFACE' and obj.mode in {'EDIT'}:
@@ -340,8 +340,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Metaball Object Mode #
         if obj and obj.type == 'META' and obj.mode in {'OBJECT'}:
@@ -372,8 +372,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Edit Metaball #
         if obj and obj.type == 'META' and obj.mode in {'EDIT'}:
@@ -401,8 +401,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Text Object Mode #
         if obj and obj.type == 'FONT' and obj.mode in {'OBJECT'}:
@@ -436,8 +436,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             # New Entry For Switching to Editmode
             layout.operator("view3d.interactive_mode_text", icon='VIEW3D')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Text Edit Mode #
         # To Do: Space is already reserved for the typing tool
@@ -454,8 +454,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.operator("object.editmode_toggle", text="Enter Object Mode",
                             icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Camera Object Mode #
         if obj and obj.type == 'CAMERA' and obj.mode in {'OBJECT'}:
@@ -485,8 +485,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Lamp Object Mode #
         if obj and obj.type == 'LIGHT' and obj.mode in {'OBJECT'}:
@@ -516,8 +516,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Armature Object Mode #
         if obj and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
@@ -549,8 +549,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Armature Edit #
         if obj and obj.type == 'ARMATURE' and obj.mode in {'EDIT'}:
@@ -582,8 +582,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Armature Pose #
         if obj and obj.type == 'ARMATURE' and obj.mode in {'POSE'}:
@@ -618,8 +618,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Armature", icon='VIEW3D')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Lattice Object Mode #
         if obj and obj.type == 'LATTICE' and obj.mode in {'OBJECT'}:
@@ -652,8 +652,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Edit Lattice #
         if obj and obj.type == 'LATTICE' and obj.mode in {'EDIT'}:
@@ -678,8 +678,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Other", icon='OBJECT_DATA')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Empty Object Mode #
         if obj and obj.type == 'EMPTY' and obj.mode in {'OBJECT'}:
@@ -710,8 +710,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Speaker Object Mode #
         if obj and obj.type == 'SPEAKER' and obj.mode in {'OBJECT'}:
@@ -738,8 +738,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             UseSeparator(self, context)
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 # Particle Menu #
         if obj and context.mode == 'PARTICLE':
@@ -769,8 +769,8 @@ class VIEW3D_MT_Space_Dynamic_Menu(Menu):
             layout.menu("VIEW3D_MT_UndoS", icon='ARROW_LEFTRIGHT')
             layout.menu("VIEW3D_MT_Object_Interactive_Mode", icon='VIEW3D')
             UseSeparator(self, context)
-            layout.operator("view3d.toolshelf", icon='MENU_PANEL')
-            layout.operator("view3d.properties", icon='MENU_PANEL')
+            layout.prop(view, "show_region_toolbar", icon='MENU_PANEL')
+            layout.prop(view, "show_region_ui", icon='MENU_PANEL')
 
 
 # Object Menus #
@@ -931,7 +931,7 @@ class VIEW3D_MT_CursorMenu(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("VIEW3D_Snap_Origin")
+        layout.menu("VIEW3D_MT_Snap_Origin")
 #        layout.menu("VIEW3D_Snap_Context")
         UseSeparator(self, context)
         layout.operator("view3d.snap_cursor_to_selected",
@@ -982,7 +982,6 @@ class VIEW3D_MT_CursorMenuLite(Menu):
 
 # ********** Object Interactive Mode **********
 class VIEW3D_MT_InteractiveMode(Menu):
-    bl_idname = "VIEW3D_MT_Object_Interactive_Mode"
     bl_label = "Interactive Mode"
     bl_description = "Menu of objects' interactive modes (Window Types)"
 
@@ -992,14 +991,14 @@ class VIEW3D_MT_InteractiveMode(Menu):
         psys = hasattr(obj, "particle_systems")
         psys_items = len(obj.particle_systems.items()) > 0 if psys else False
 
-        layout.operator(SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
-        layout.operator(SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
-        layout.operator(SetObjectMode.bl_idname, text="Sculpt", icon="SCULPTMODE_HLT").mode = "SCULPT"
-        layout.operator(SetObjectMode.bl_idname, text="Vertex Paint", icon="VPAINT_HLT").mode = "VERTEX_PAINT"
-        layout.operator(SetObjectMode.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_PAINT"
-        layout.operator(SetObjectMode.bl_idname, text="Texture Paint", icon="TPAINT_HLT").mode = "TEXTURE_PAINT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Sculpt", icon="SCULPTMODE_HLT").mode = "SCULPT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Vertex Paint", icon="VPAINT_HLT").mode = "VERTEX_PAINT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Weight Paint", icon="WPAINT_HLT").mode = "WEIGHT_PAINT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Texture Paint", icon="TPAINT_HLT").mode = "TEXTURE_PAINT"
         if obj and psys_items:
-            layout.operator(SetObjectMode.bl_idname, text="Particle Edit",
+            layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Particle Edit",
                             icon="PARTICLEMODE").mode = "PARTICLE_EDIT"
         if context.gpencil_data:
             layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
@@ -1014,9 +1013,9 @@ class VIEW3D_MT_InteractiveModeArmature(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator(SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
-        layout.operator(SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
-        layout.operator(SetObjectMode.bl_idname, text="Pose", icon="POSE_HLT").mode = "POSE"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Object", icon="OBJECT_DATAMODE").mode = "OBJECT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Edit", icon="EDITMODE_HLT").mode = "EDIT"
+        layout.operator(VIEW3D_OT_SetObjectMode.bl_idname, text="Pose", icon="POSE_HLT").mode = "POSE"
         if context.gpencil_data:
             layout.operator("view3d.interactive_mode_grease_pencil", icon="GREASEPENCIL")
 
@@ -1253,7 +1252,7 @@ class VIEW3D_MT_Edit_Mesh(Menu):
 
         layout.prop(toolsettings, "use_mesh_automerge")
         # Double Threshold - two tab spaces to align it with the rest of the menu
-        layout.prop(toolsettings, "double_threshold", text="       Double Threshold")
+        layout.prop(toolsettings, "double_threshold", text="Double Threshold")
 
         UseSeparator(self, context)
         layout.menu("VIEW3D_MT_edit_mesh_showhide")
@@ -1349,8 +1348,8 @@ class VIEW3D_MT_EditCursorMenu(Menu):
         layout.operator("object.setorigintoselected",
                         text="Origin to Selected V/F/E")
         UseSeparator(self, context)
-        layout.menu("VIEW3D_Snap_Origin")
-        layout.menu("VIEW3D_Snap_Context")
+        layout.menu("VIEW3D_MT_Snap_Origin")
+        layout.menu("VIEW3D_MT_Snap_Context")
         UseSeparator(self, context)
         layout.operator("view3d.snap_cursor_to_selected",
                         text="Cursor to Selected")
@@ -1652,8 +1651,7 @@ class VIEW3D_MT_Sculpt_Specials(Menu):
             UseSeparator(self, context)
             layout.prop(settings.sculpt, "use_smooth_shading", "Smooth")
         else:
-            layout.operator("sculpt.dynamic_topology_toggle",
-                            icon='SCULPT_DYNTOPO', text="Enable Dyntopo")
+            layout.operator("sculpt.dynamic_topology_toggle", text="Enable Dyntopo")
 
 
 # Display Wire (Thanks to marvin.k.breuer) #
@@ -2969,7 +2967,7 @@ classes = (
     VIEW3D_MT_Vertex_Colors,
     VIEW3D_MT_Paint_Weights,
     VIEW3D_OT_Interactive_Mode_Grease_Pencil,
-    VIEW3D_MT_Edit_Gpencil
+    VIEW3D_MT_Edit_Gpencil,
 )
 
 

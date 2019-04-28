@@ -24,6 +24,7 @@ if "bpy" in locals():
     imp.reload(utils)
     imp.reload(bg_blender)
     imp.reload(autothumb)
+    imp.reload(version_checker)
 else:
     from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker
 
@@ -465,7 +466,9 @@ def mark_for_validation(self, context, asset_type):
     }
 
     url = paths.get_bkit_url() + 'assets/'
-    headers = {"accept": "application/json", "Authorization": "Bearer %s" % user_preferences.api_key}
+
+    headers = utils.get_headers(user_preferences.api_key)
+
     url += props.id + '/'
 
     try:
@@ -557,7 +560,9 @@ def start_upload(self, context, asset_type, as_new, metadata_only):
 
     # first upload metadata to server, so it can be saved inside the current file
     url = paths.get_bkit_url() + 'assets/'
-    headers = {"accept": "application/json", "Authorization": "Bearer %s" % upload_data['token']}
+
+    headers = utils.get_headers(upload_data['token'])
+
     # upload_data['license'] = 'ovejajojo'
     json_metadata = upload_data  # json.dumps(upload_data, ensure_ascii=False).encode('utf8')
     global reports

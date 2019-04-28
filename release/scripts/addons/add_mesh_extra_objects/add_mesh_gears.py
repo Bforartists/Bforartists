@@ -10,8 +10,14 @@ from math import (
 from bpy.props import (
         FloatProperty,
         IntProperty,
+        BoolProperty,
+        StringProperty,
+        FloatVectorProperty
         )
-
+from mathutils import (
+        Vector,
+        Matrix,
+        )
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
@@ -547,12 +553,67 @@ def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
 
     return verts, faces, vgroup_top, vgroup_valley
 
+#### Delete object
+def ObjectDelete(self, context, delete):
+
+    bpy.context.scene.update()
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+    bpy.ops.object.delete()
+    bpy.context.scene.update()
+
+    return
+    
+##------------------------------------------------------------
+# calculates the matrix for the new object
+# depending on user pref
+def align_matrix(context, location):
+
+    loc = Matrix.Translation(location)
+    obj_align = context.preferences.edit.object_align
+    if (context.space_data.type == 'VIEW_3D'
+        and obj_align == 'VIEW'):
+        rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
+    else:
+        rot = Matrix()
+    align_matrix = loc @ rot
+
+    return align_matrix
 
 class AddGear(Operator):
     bl_idname = "mesh.primitive_gear"
     bl_label = "Add Gear"
     bl_description = "Construct a gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+    
+    # align_matrix for the invoke
+    align_matrix : Matrix()
+
+    Gear : BoolProperty(name = "Gear",
+                default = True,
+                description = "Gear")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change Gear")
+
+    delete : StringProperty(name = "Delete",
+                    description = "Delete Gear")
+
+    startlocation : FloatVectorProperty(name = "",
+                description = "Start location",
+                default = (0.0, 0.0, 0.0),
+                subtype = 'XYZ')
+
+    rotation_euler : FloatVectorProperty(
+            name="",
+            description="Rotation",
+            default=(0.0, 0.0, 0.0),
+            subtype='EULER'
+            )
 
     number_of_teeth: IntProperty(name="Number of Teeth",
             description="Number of teeth on the gear",
@@ -645,7 +706,18 @@ class AddGear(Operator):
         box.prop(self, 'conangle')
         box.prop(self, 'crown')
 
+        box = layout.box()
+        box.label(text="Location:")
+        box.prop(self, "startlocation")
+        box = layout.box()
+        box.label(text="Rotation:")
+        box.prop(self, "rotation_euler")
+
     def execute(self, context):
+
+        if self.change:
+            ObjectDelete(self, context, self.delete)
+
         verts, faces, verts_tip, verts_valley = add_gear(
             self.number_of_teeth,
             self.radius,
@@ -661,6 +733,11 @@ class AddGear(Operator):
 
         # Actually create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "Gear")
+        
+        self.align_matrix = align_matrix(context, self.startlocation)
+        
+        obj.matrix_world = self.align_matrix  # apply matrix
+        obj.rotation_euler = self.rotation_euler
 
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
@@ -671,14 +748,70 @@ class AddGear(Operator):
             valleyGroup = obj.vertex_groups.new(name='Valleys')
             valleyGroup.add(verts_valley, 1.0, 'ADD')
 
+        obj["Gear"] = True
+        obj["change"] = False
+        obj["number_of_teeth"] = self.number_of_teeth
+        obj["radius"] = self.radius
+        obj["addendum"] = self.addendum
+        obj["dedendum"] = self.dedendum
+        obj["base"] = self.base
+        obj["angle"] = self.angle
+        obj["width"] = self.width
+        obj["skew"] = self.skew
+        obj["conangle"] = self.conangle
+        obj["crown"] = self.crown
+
         return {'FINISHED'}
 
+    ##### INVOKE #####
+    def invoke(self, context, event):
+        bpy.context.scene.update()
+        if self.change:
+            bpy.context.scene.cursor.location = self.startlocation
+        else:
+            self.startlocation = bpy.context.scene.cursor.location
+        
+        self.align_matrix = align_matrix(context, self.startlocation)
+
+        self.execute(context)
+
+        return {'FINISHED'}
 
 class AddWormGear(Operator):
     bl_idname = "mesh.primitive_worm_gear"
     bl_label = "Add Worm Gear"
     bl_description = "Construct a worm gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+
+    # align_matrix for the invoke
+    align_matrix : Matrix()
+
+    WormGear : BoolProperty(name = "WormGear",
+                default = True,
+                description = "WormGear")
+
+    #### change properties
+    name : StringProperty(name = "Name",
+                    description = "Name")
+
+    change : BoolProperty(name = "Change",
+                default = False,
+                description = "change WormGear")
+
+    delete : StringProperty(name = "Delete",
+                    description = "Delete WormGear")
+
+    startlocation : FloatVectorProperty(name = "",
+                description = "Start location",
+                default = (0.0, 0.0, 0.0),
+                subtype = 'XYZ')
+
+    rotation_euler : FloatVectorProperty(
+            name="",
+            description="Rotation",
+            default=(0.0, 0.0, 0.0),
+            subtype='EULER'
+            )
 
     number_of_teeth: IntProperty(
             name="Number of Teeth",
@@ -768,8 +901,18 @@ class AddWormGear(Operator):
         box.prop(self, "skew")
         box.prop(self, "crown")
 
+        box = layout.box()
+        box.label(text="Location:")
+        box.prop(self, "startlocation")
+        box = layout.box()
+        box.label(text="Rotation:")
+        box.prop(self, "rotation_euler")
+
     def execute(self, context):
 
+        if self.change:
+            ObjectDelete(self, context, self.delete)
+        
         verts, faces, verts_tip, verts_valley = add_worm(
             self.number_of_teeth,
             self.number_of_rows,
@@ -784,6 +927,11 @@ class AddWormGear(Operator):
 
         # Actually create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "Worm Gear")
+        
+        self.align_matrix = align_matrix(context, self.startlocation)
+        
+        obj.matrix_world = self.align_matrix  # apply matrix
+        obj.rotation_euler = self.rotation_euler
 
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
@@ -793,5 +941,33 @@ class AddWormGear(Operator):
 
             valleyGroup = obj.vertex_groups.new(name = 'Valleys')
             valleyGroup.add(verts_valley, 1.0, 'ADD')
+        
+        self.align_matrix = align_matrix(context, self.startlocation)
+        
+        obj["WormGear"] = True
+        obj["change"] = False
+        obj["number_of_teeth"] = self.number_of_teeth
+        obj["number_of_rows"] = self.number_of_rows
+        obj["radius"] = self.radius
+        obj["addendum"] = self.addendum
+        obj["dedendum"] = self.dedendum
+        obj["angle"] = self.angle
+        obj["row_height"] = self.row_height
+        obj["skew"] = self.skew
+        obj["crown"] = self.crown
+
+        return {'FINISHED'}
+
+    ##### INVOKE #####
+    def invoke(self, context, event):
+        bpy.context.scene.update()
+        if self.change:
+            bpy.context.scene.cursor.location = self.startlocation
+        else:
+            self.startlocation = bpy.context.scene.cursor.location
+        
+        self.align_matrix = align_matrix(context, self.startlocation)
+
+        self.execute(context)
 
         return {'FINISHED'}

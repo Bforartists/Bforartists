@@ -21,8 +21,12 @@ if "bpy" in locals():
 
     imp.reload(paths)
     imp.reload(utils)
+    imp.reload(categories)
+    imp.reload(ui)
+    imp.reload(version_checker)
 else:
     from blenderkit import paths, utils, categories, ui, version_checker
+
 import blenderkit
 from bpy.app.handlers import persistent
 
@@ -57,6 +61,9 @@ prev_time = 0
 def check_errors(rdata):
     if rdata.get('statusCode') == 401:
         if rdata.get('detail') == 'Invalid token.':
+            # reset the api key, so it can be requested again.
+            user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+            user_preferences.api_key = ''
             return False, 'Missing or wrong api_key in addon preferences'
     return True, ''
 
@@ -81,7 +88,7 @@ def fetch_server_data():
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     url = paths.BLENDERKIT_ADDON_URL
     api_key = user_preferences.api_key
-    version_checker.check_version_thread(url, api_key, blenderkit)
+    # version_checker.check_version_thread(url, api_key, blenderkit)
     categories.fetch_categories_thread(api_key)
 
 
@@ -510,17 +517,8 @@ class Searcher(threading.Thread):
         tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
         json_filepath = os.path.join(tempdir, '%s_searchresult.json' % query['asset_type'])
 
-        if query['token'] != '':
-            headers = {
-                "accept": "application/json",
-                "Authorization": "Bearer %s" % query['token'],
-                # "Content-Type": "application/json",
-            }
-        else:
-            headers = {
-                "accept": "application/json",
-                # "Content-Type": "application/json",
-            }
+        headers = utils.get_headers(query['token'])
+
         rdata = {}
         rdata['results'] = []
 

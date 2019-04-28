@@ -83,7 +83,8 @@ def uplaod_review_thread(url, reviews, headers):
 def upload_rating(asset):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
-    headers = {"accept": "application/json", "Authorization": "Bearer %s" % api_key}
+    headers = utils.get_headers(api_key)
+
 
     asset_data = asset['asset_data']
 
