@@ -414,7 +414,7 @@ class ExportXanim(bpy.types.Operator, ExportHelper):
             icon = 'ERROR'
 
         col = layout.column(align=True)
-        col.label(text="Armature: %s" % armature_info, icon)
+        col.label(text="Armature: %s" % armature_info, icon=icon)
 
         col = layout.column(align=True)
         col.prop(self, "use_selection", "Selection only (%i bones)" % bones_selected)

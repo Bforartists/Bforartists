@@ -29,6 +29,7 @@ if "bpy" in locals():
 
     imp.reload(paths)
     imp.reload(append_link)
+    imp.reload(utils)
 
 else:
     from blenderkit import paths, append_link, utils
@@ -105,8 +106,9 @@ def check_unused():
 def scene_save(context):
     ''' does cleanup of blenderkit props and sends a message to the server about assets used.'''
     # TODO this can be optimized by merging these 2 functions, since both iterate over all objects.
-    check_unused()
-    report_usages()
+    if not bpy.app.background:
+        check_unused()
+        report_usages()
 
 
 @persistent
@@ -171,7 +173,7 @@ def report_usages():
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
     sid = get_scene_id()
-    headers = {"accept": "application/json", "Authorization": "Bearer %s" % api_key}
+    headers = utils.get_headers(api_key)
     url = paths.get_bkit_url() + paths.BLENDERKIT_REPORT_URL
 
     assets = {}
@@ -284,6 +286,11 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
     id = asset_data['asset_base_id']
     scene['assets rated'][id] = scene['assets rated'].get(id, False)
+
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+    if user_preferences.api_key == '':
+        user_preferences.asset_counter+=1
 
     if asset_data['asset_type'] == 'scene':
         scene = append_link.append_scene(file_names[0], link=False, fake_user=False)
@@ -521,8 +528,7 @@ def main_thread(asset_data, tcom, scene_id, api_key):
 
     with open(file_name, "wb") as f:
         print("Downloading %s" % file_name)
-        headers = {"accept": "application/json",
-                   "Authorization": "Bearer %s" % api_key}
+        headers = utils.get_headers(api_key)
 
         response = requests.get(asset_data['url'], stream=True)
         total_length = response.headers.get('Content-Length')
@@ -555,10 +561,7 @@ def download(asset_data, **kwargs):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
     scene_id = get_scene_id()
-    if api_key == '':
-        props = utils.get_search_props()
-        props.report = 'Register online to use the free library.'
-        return
+
     tcom = ThreadCom()
 
     tcom.passargs = kwargs
@@ -675,17 +678,15 @@ def fprint(text):
 def get_download_url(asset_data, scene_id, api_key, tcom=None):
     ''''retrieves the download url. The server checks if user can download the item.'''
     mt = time.time()
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer %s" % api_key,
-    }
+
+    headers = utils.get_headers(api_key)
+
     data = {
         'scene_uuid': scene_id
     }
     r = None
     try:
         r = requests.get(asset_data['download_url'], params=data, headers=headers)
-        fprint(r.text)
     except Exception as e:
         print(e)
         if tcom is not None:

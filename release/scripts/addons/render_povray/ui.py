@@ -103,12 +103,6 @@ class AddPresetWorld(AddPresetBase, bpy.types.Operator):
     # where to store the preset
     preset_subdir = "pov/world"
 
-
-classes = (
-    POV_WORLD_MT_presets,
-    AddPresetWorld,
-    )
-
 # Example of wrapping every class 'as is'
 from bl_ui import properties_texture
 from bl_ui.properties_texture import context_tex_datablock
@@ -259,7 +253,7 @@ del properties_particle
 def check_material(mat):
     if mat is not None:
         if mat.use_nodes:
-            if not mat.nodetree: #FORMERLY : #mat.active_node_material is not None: 
+            if not mat.node_tree: #FORMERLY : #mat.active_node_material is not None: 
                 return True
             return False
         return True
@@ -336,7 +330,7 @@ class MaterialButtonsPanel():
     def poll(cls, context):
         mat = context.material
         rd = context.scene.render
-        return mat (rd.engine in cls.COMPAT_ENGINES)
+        return mat and (rd.engine in cls.COMPAT_ENGINES)
 
 
 class TextureButtonsPanel():
@@ -558,7 +552,7 @@ class AddPresetLamp(AddPresetBase, bpy.types.Operator):
 
 
 
-# Draw into an existing panel
+# Draw into the existing light panel
 def light_panel_func(self, context):
     layout = self.layout
 
@@ -567,11 +561,6 @@ def light_panel_func(self, context):
     row.operator(AddPresetLamp.bl_idname, text="", icon='ADD')
     row.operator(AddPresetLamp.bl_idname, text="", icon='REMOVE').remove_active = True
 
-
-classes = (
-    POV_LIGHT_MT_presets,
-    AddPresetLamp,
-    )
 '''#TORECREATE##DEPRECATED#
 class LIGHT_PT_POV_sunsky(PovLampButtonsPanel, bpy.types.Panel):
     bl_label = properties_data_light.DATA_PT_sunsky.bl_label
@@ -1000,13 +989,6 @@ def rad_panel_func(self, context):
     row.operator(AddPresetRadiosity.bl_idname, text="", icon='ADD')
     row.operator(AddPresetRadiosity.bl_idname, text="", icon='REMOVE').remove_active = True
 
-
-classes = (
-    POV_RADIOSITY_MT_presets,
-    AddPresetRadiosity,
-    )
-
-
 class RENDER_PT_povray_media(WorldButtonsPanel, bpy.types.Panel):
     bl_label = "Atmosphere Media"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1085,6 +1067,33 @@ class MODIFIERS_PT_povray_modifiers(ModifierButtonsPanel, bpy.types.Panel):
                         # Inside Vector for CSG
                         col.prop(ob.pov, "inside_vector")
 
+class MATERIAL_MT_POV_sss_presets(bpy.types.Menu):
+    bl_label = "SSS Presets"
+    preset_subdir = "pov/material/sss"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
+
+class AddPresetSSS(AddPresetBase, bpy.types.Operator):
+    '''Add an SSS Preset'''
+    bl_idname = "material.sss_preset_add"
+    bl_label = "Add SSS Preset"
+    preset_menu = "MATERIAL_MT_POV_sss_presets"
+
+    # variable used for all preset values
+    preset_defines = [
+        "material = bpy.context.material"
+        ]
+
+    # properties to store in the preset
+    preset_values = [
+        "material.pov_subsurface_scattering.radius",
+        "material.pov_subsurface_scattering.color",
+        ]
+
+    # where to store the preset
+    preset_subdir = "pov/material/sss"
+
+    
 class MATERIAL_PT_POV_sss(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Subsurface Scattering"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1112,10 +1121,10 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, bpy.types.Panel):
         layout.active = (sss.use) and (not mat.pov.use_shadeless)
 
         row = layout.row().split()
-        sub = row.row(align=True).split(align=True, percentage=0.75)
-        sub.menu("MATERIAL_MT_sss_presets", text=bpy.types.MATERIAL_MT_sss_presets.bl_label)
-        sub.operator("material.sss_preset_add", text="", icon='ADD')
-        sub.operator("material.sss_preset_add", text="", icon='REMOVE').remove_active = True
+        sub = row.row(align=True).split(align=True, factor=0.75)
+        sub.menu(MATERIAL_MT_POV_sss_presets.__name__, text=MATERIAL_MT_POV_sss_presets.bl_label)
+        sub.operator(AddPresetSSS.bl_idname, text="", icon='ADD')
+        sub.operator(AddPresetSSS.bl_idname, text="", icon='REMOVE').remove_active = True
 
         split = layout.split()
 
@@ -1237,7 +1246,7 @@ class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, bpy.types.Panel):
 
         col = split.column()
         col.prop(raym, "reflect_factor")
-        col.prop(mat, "mirror_color", text="")
+        col.prop(raym, "mirror_color", text="")
 
         col = split.column()
         col.prop(raym, "fresnel")
@@ -2367,6 +2376,8 @@ classes = (
     RENDER_PT_povray_media,
     MODIFIERS_PT_povray_modifiers,
     MATERIAL_PT_POV_sss,
+    MATERIAL_MT_POV_sss_presets,
+    AddPresetSSS,
     MATERIAL_PT_povray_activate_node,
     MATERIAL_PT_povray_active_node,
     MATERIAL_PT_POV_mirror,
