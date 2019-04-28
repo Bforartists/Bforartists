@@ -1265,13 +1265,13 @@ class UpdatePreviewMaterial(bpy.types.Operator):
     bl_label = "Update preview"
 
     def execute(self, context):
-        scene=context.scene
+        scene=context.view_layer
         ob=context.object
         for obj in scene.objects:
             if obj != ob:
-                scene.objects.active=obj
+                scene.objects.active = ob
                 break
-        scene.objects.active=ob
+        scene.objects.active = ob
 
     def modal(self, context, event):
         if event.type == 'RIGHTMOUSE':

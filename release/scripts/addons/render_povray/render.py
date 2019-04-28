@@ -190,7 +190,7 @@ def safety(name, Level):
 csg_list = []
 
 def is_renderable(scene, ob):
-    return (ob.is_visible(scene) and not ob.hide_render and ob not in csg_list)
+    return (not ob.hide_render and ob not in csg_list)
 
 
 def renderable_objects(scene):
@@ -518,7 +518,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
         # DH disabled for now, this isn't the correct context
         active_object = None  # bpy.context.active_object # does not always work  MR
-        matrix = global_matrix * camera.matrix_world
+        matrix = global_matrix @ camera.matrix_world
         focal_point = camera.data.dof_distance
 
         # compute resolution
@@ -554,7 +554,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 tabWrite("confidence %.3g\n" % camera.data.pov.dof_confidence)
                 if camera.data.dof_object:
                     focalOb = scene.objects[camera.data.dof_object.name]
-                    matrixBlur = global_matrix * focalOb.matrix_world
+                    matrixBlur = global_matrix @ focalOb.matrix_world
                     tabWrite("focal_point <%.4f,%.4f,%.4f>\n"% matrixBlur.translation[:])
                 else:
                     tabWrite("focal_point <0, 0, %f>\n" % focal_point)
@@ -577,7 +577,7 @@ def write_pov(filename, scene=None, info_callback=None):
         for ob in lamps:
             lamp = ob.data
 
-            matrix = global_matrix * ob.matrix_world
+            matrix = global_matrix @ ob.matrix_world
 
             # Color is modified by energy #multiplied by 2 for a better match --Maurice
             color = tuple([c * (lamp.energy) for c in lamp.color])
@@ -653,14 +653,14 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("adaptive 1\n")
                     tabWrite("jitter\n")
 
-            # HEMI never has any shadow_method attribute
-            if(not scene.render.use_shadows or lamp.type == 'HEMI' or
-               (lamp.type != 'HEMI' and lamp.shadow_method == 'NOSHADOW')):
+            # No shadow checked either at global or light level:
+            if(not scene.render.use_shadows or
+               (lamp.shadow_method == 'NOSHADOW')):
                 tabWrite("shadowless\n")
 
-            # Sun shouldn't be attenuated. Hemi and area lights have no falloff attribute so they
+            # Sun shouldn't be attenuated. Area lights have no falloff attribute so they
             # are put to type 2 attenuation a little higher above.
-            if lamp.type not in {'SUN', 'AREA', 'HEMI'}:
+            if lamp.type not in {'SUN', 'AREA'}:
                 if lamp.falloff_type == 'INVERSE_SQUARE':
                     tabWrite("fade_distance %.6f\n" % (sqrt(lamp.distance/2.0)))
                     tabWrite("fade_power %d\n" % 2)  # Use blenders lamp quad equivalent
@@ -707,7 +707,7 @@ def write_pov(filename, scene=None, info_callback=None):
                         # ob.rotation_euler.x, ob.rotation_euler.y, ob.rotation_euler.z))
 
             direction = (ob.location.x,ob.location.y,ob.location.z) # not taking matrix into account
-            rmatrix = global_matrix * ob.matrix_world
+            rmatrix = global_matrix @ ob.matrix_world
 
             #ob.rotation_euler.to_matrix().to_4x4() * mathutils.Vector((0,0,1))
             # XXX Is result of the below offset by 90 degrees?
@@ -748,7 +748,7 @@ def write_pov(filename, scene=None, info_callback=None):
             #tabWrite("texture {%s}\n"%povMatName)
             write_object_modifiers(scene,ob,file)
             #tabWrite("rotate x*90\n")
-            #matrix = global_matrix * ob.matrix_world
+            #matrix = global_matrix @ ob.matrix_world
             #writeMatrix(matrix)
             tabWrite("}\n")
             #continue #Don't render proxy mesh, skip to next object
@@ -762,7 +762,7 @@ def write_pov(filename, scene=None, info_callback=None):
         dataname = string_strip_hyphen(bpy.path.clean_name(dataname_orig))
 
         global_matrix = mathutils.Matrix.Rotation(-pi / 2.0, 4, 'X')
-        matrix=global_matrix*ob.matrix_world
+        matrix = global_matrix @ ob.matrix_world
         bezier_sweep = False
         if ob.pov.curveshape == 'sphere_sweep':
             #inlined spheresweep macro, which itself calls Shapes.inc:
@@ -1654,14 +1654,14 @@ def write_pov(filename, scene=None, info_callback=None):
                             if elem.type == 'BALL':
                                 tabWrite("sphere { <%.6g, %.6g, %.6g>, %.4g, %.4g " %
                                          (loc.x, loc.y, loc.z, elem.radius, stiffness))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
                             elif elem.type == 'ELLIPSOID':
                                 tabWrite("sphere{ <%.6g, %.6g, %.6g>,%.4g,%.4g " %
                                          (loc.x / elem.size_x, loc.y / elem.size_y, loc.z / elem.size_z,
                                           elem.radius, stiffness))
                                 tabWrite("scale <%.6g, %.6g, %.6g>" % (elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
                             elif elem.type == 'CAPSULE':
                                 tabWrite("cylinder{ <%.6g, %.6g, %.6g>,<%.6g, %.6g, %.6g>,%.4g,%.4g " %
@@ -1669,26 +1669,26 @@ def write_pov(filename, scene=None, info_callback=None):
                                           (loc.x + elem.size_x), (loc.y), (loc.z),
                                           elem.radius, stiffness))
                                 #tabWrite("scale <%.6g, %.6g, %.6g>" % (elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
 
                             elif elem.type == 'CUBE':
                                 tabWrite("cylinder { -x*8, +x*8,%.4g,%.4g translate<%.6g,%.6g,%.6g> scale  <1/4,1,1> scale <%.6g, %.6g, %.6g>\n" % (elem.radius*2.0, stiffness/4.0, loc.x, loc.y, loc.z, elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
                                 tabWrite("cylinder { -y*8, +y*8,%.4g,%.4g translate<%.6g,%.6g,%.6g> scale <1,1/4,1> scale <%.6g, %.6g, %.6g>\n" % (elem.radius*2.0, stiffness/4.0, loc.x, loc.y, loc.z, elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
                                 tabWrite("cylinder { -z*8, +z*8,%.4g,%.4g translate<%.6g,%.6g,%.6g> scale <1,1,1/4> scale <%.6g, %.6g, %.6g>\n" % (elem.radius*2.0, stiffness/4.0, loc.x, loc.y, loc.z, elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
 
                             elif elem.type == 'PLANE':
                                 tabWrite("cylinder { -x*8, +x*8,%.4g,%.4g translate<%.6g,%.6g,%.6g> scale  <1/4,1,1> scale <%.6g, %.6g, %.6g>\n" % (elem.radius*2.0, stiffness/4.0, loc.x, loc.y, loc.z, elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
                                 tabWrite("cylinder { -y*8, +y*8,%.4g,%.4g translate<%.6g,%.6g,%.6g> scale <1,1/4,1> scale <%.6g, %.6g, %.6g>\n" % (elem.radius*2.0, stiffness/4.0, loc.x, loc.y, loc.z, elem.size_x, elem.size_y, elem.size_z))
-                                writeMatrix(global_matrix * elems[1].matrix_world)
+                                writeMatrix(global_matrix @ elems[1].matrix_world)
                                 tabWrite("}\n")
 
                         try:
@@ -1783,7 +1783,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                 writeObjectMaterial(material, elems[1])
 
-                writeMatrix(global_matrix * ob.matrix_world)
+                writeMatrix(global_matrix @ ob.matrix_world)
                 # Importance for radiosity sampling added here
                 tabWrite("radiosity { \n")
                 # importance > ob.pov.importance_value
@@ -2050,7 +2050,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                 # We apply object's transformations to get final loc/rot/size in world space!
                 # Note: we could combine the two previous transformations with this matrix directly...
-                writeMatrix(global_matrix * smoke_obj.matrix_world)
+                writeMatrix(global_matrix @ smoke_obj.matrix_world)
 
                 # END OF TRANSFORMATIONS
 
@@ -2246,7 +2246,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                 file.write('    #local I = I + HairStep;\n')
                                 file.write('  #end\n')
 
-                                writeMatrix(global_matrix * ob.matrix_world)
+                                writeMatrix(global_matrix @ ob.matrix_world)
 
 
                                 file.write('}')
@@ -2298,7 +2298,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 #    continue
                 # me = ob.data
 
-                matrix = global_matrix * ob.matrix_world
+                matrix = global_matrix @ ob.matrix_world
                 povdataname = store(scene, ob, name, dataname, matrix)
                 if povdataname is None:
                     print("This is an instance of " + name)
@@ -3216,7 +3216,7 @@ def write_pov(filename, scene=None, info_callback=None):
         if csg:
             duplidata_ref = []
             for ob in sel:
-                #matrix = global_matrix * ob.matrix_world
+                #matrix = global_matrix @ ob.matrix_world
                 if ob.is_instancer:
                     tabWrite("\n//--DupliObjects in %s--\n\n"% ob.name)
                     ob.dupli_list_create(scene)
@@ -3258,7 +3258,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                     else:
                                         operation = mod.operation.lower()
                                     mod_ob_name = string_strip_hyphen(bpy.path.clean_name(mod.object.name))
-                                    mod_matrix = global_matrix * mod.object.matrix_world
+                                    mod_matrix = global_matrix @ mod.object.matrix_world
                                     mod_ob_matrix = MatrixAsPovString(mod_matrix)
                                     tabWrite("%s { \n"%operation)
                                     tabWrite("object { \n")
@@ -3280,26 +3280,26 @@ def write_pov(filename, scene=None, info_callback=None):
     def exportWorld(world):
         render = scene.render
         camera = scene.camera
-        matrix = global_matrix * camera.matrix_world
+        matrix = global_matrix @ camera.matrix_world
         if not world:
             return
         #############Maurice####################################
         #These lines added to get sky gradient (visible with PNG output)
         if world:
             #For simple flat background:
-            if not world.use_sky_blend:
+            if not world.pov.use_sky_blend:
                 # Non fully transparent background could premultiply alpha and avoid anti-aliasing
                 # display issue:
                 if render.alpha_mode == 'TRANSPARENT':
                     tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0.75>}\n" % \
-                             (world.color[:]))
+                             (world.pov.horizon_color[:]))
                 #Currently using no alpha with Sky option:
                 elif render.alpha_mode == 'SKY':
-                    tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0>}\n" % (world.color[:]))
+                    tabWrite("background {rgbt<%.3g, %.3g, %.3g, 0>}\n" % (world.pov.horizon_color[:]))
                 #StraightAlpha:
                 # XXX Does not exists anymore
                 #else:
-                    #tabWrite("background {rgbt<%.3g, %.3g, %.3g, 1>}\n" % (world.color[:]))
+                    #tabWrite("background {rgbt<%.3g, %.3g, %.3g, 1>}\n" % (world.pov.horizon_color[:]))
 
             worldTexCount = 0
             #For Background image textures
@@ -3373,7 +3373,7 @@ def write_pov(filename, scene=None, info_callback=None):
             #For only Background gradient
 
             if worldTexCount == 0:
-                if world.use_sky_blend:
+                if world.pov.use_sky_blend:
                     tabWrite("sky_sphere {\n")
                     tabWrite("pigment {\n")
                     # maybe Should follow the advice of POV doc about replacing gradient
@@ -3382,27 +3382,27 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("color_map {\n")
                     # XXX Does not exists anymore
                     #if render.alpha_mode == 'STRAIGHT':
-                        #tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.color[:]))
-                        #tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.zenith_color[:]))
+                        #tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.horizon_color[:]))
+                        #tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 1>]\n" % (world.pov.zenith_color[:]))
                     if render.alpha_mode == 'TRANSPARENT':
-                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.color[:]))
+                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.horizon_color[:]))
                         # aa premult not solved with transmit 1
-                        tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.zenith_color[:]))
+                        tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0.99>]\n" % (world.pov.zenith_color[:]))
                     else:
-                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.color[:]))
-                        tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.zenith_color[:]))
+                        tabWrite("[0.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.horizon_color[:]))
+                        tabWrite("[1.0 rgbt<%.3g, %.3g, %.3g, 0>]\n" % (world.pov.zenith_color[:]))
                     tabWrite("}\n")
                     tabWrite("}\n")
                     tabWrite("}\n")
                     # Sky_sphere alpha (transmit) is not translating into image alpha the same
                     # way as 'background'
 
-            #if world.light_settings.use_indirect_light:
+            #if world.pov.light_settings.use_indirect_light:
             #    scene.pov.radio_enable=1
 
             # Maybe change the above to a function copyInternalRenderer settings when
             # user pushes a button, then:
-            #scene.pov.radio_enable = world.light_settings.use_indirect_light
+            #scene.pov.radio_enable = world.pov.light_settings.use_indirect_light
             # and other such translations but maybe this would not be allowed either?
 
         ###############################################################
@@ -3418,7 +3418,7 @@ def write_pov(filename, scene=None, info_callback=None):
             elif mist.falloff=='INVERSE_QUADRATIC':    # n**2 or squrt(n)?
                 tabWrite("distance %.6f\n" % ((mist.start+mist.depth)**2*0.368))
             tabWrite("color rgbt<%.3g, %.3g, %.3g, %.3g>\n" % \
-                     (*world.color, 1.0 - mist.intensity))
+                     (*world.pov.horizon_color, 1.0 - mist.intensity))
             #tabWrite("fog_offset %.6f\n" % mist.start) #create a pov property to prepend
             #tabWrite("fog_alt %.6f\n" % mist.height) #XXX right?
             #tabWrite("turbulence 0.2\n")
@@ -3496,7 +3496,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 onceSss = 0
 
             if world and onceAmbient:
-                tabWrite("ambient_light rgb<%.3g, %.3g, %.3g>\n" % world.ambient_color[:])
+                tabWrite("ambient_light rgb<%.3g, %.3g, %.3g>\n" % world.pov.ambient_color[:])
                 onceAmbient = 0
 
             if scene.pov.photon_enable:
@@ -3547,7 +3547,8 @@ def write_pov(filename, scene=None, info_callback=None):
                    "//--Exported with POV-Ray exporter for Blender--\n" \
                    "//----------------------------------------------\n\n")
     file.write("#version 3.7;\n")
-
+    file.write("#declare Default_texture = texture{pigment {rgb 0.8} "
+               "finish {brilliance 3.8} }\n\n")
     if comments:
         file.write("\n//--Global settings--\n\n")
 
@@ -4405,7 +4406,6 @@ class RunPovTextRender(Operator):
         scene.pov.text_block = ""
         return {'FINISHED'}
 
-        
 classes = (
     PovrayRender,
     RenderPovTexturePreview,

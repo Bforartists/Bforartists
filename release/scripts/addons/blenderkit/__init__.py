@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "Blender Kit",
+    "name": "BlenderKit Asset Library",
     "author": "Vilem Duha",
     "version": (1, 0, 22),
     "blender": (2, 80, 0),
@@ -1279,6 +1279,13 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                    default=1,
                                    min=0,
                                    max=20)
+
+    asset_counter:  IntProperty(name="Usage Counter",
+                                   description="Counts usages so it asks for registration only after reaching a limit",
+                                   default=0,
+                                   min=0,
+                                   max=20000)
+
 
     # allow_proximity : BoolProperty(
     #     name="allow proximity data reports",
