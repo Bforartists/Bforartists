@@ -22,7 +22,7 @@ import logging
 
 import bpy
 import addon_utils
-from blenderkit import paths, append_link, bg_blender
+from blenderkit import paths, append_link, bg_blender, utils
 
 BLENDERKIT_EXPORT_DATA = sys.argv[-1]
 
@@ -65,7 +65,8 @@ class upload_in_chunks(object):
 
 
 def upload_files(filepath, upload_data, files):
-    headers = {"accept": "application/json", "Authorization": "Bearer %s" % upload_data['token']}
+    headers = utils.get_headers(upload_data['token'])
+
     version_id = upload_data['id']
     for f in files:
         bg_blender.progress('uploading %s' % f['type'])
@@ -79,13 +80,13 @@ def upload_files(filepath, upload_data, files):
         upload = requests.post(upload_create_url, json=upload_info, headers=headers, verify=True)
         upload = upload.json()
 
-        upheaders = {
-            "accept": "application/json",
-            "Authorization": "Bearer %s" % upload_data['token'],
-            "Content-Type": "multipart/form-data",
-            "Content-Disposition": 'form-data; name="file"; filename=%s' % f['file_path']
-
-        }
+        # upheaders = {
+        #     "accept": "application/json",
+        #     "Authorization": "Bearer %s" % upload_data['token'],
+        #     "Content-Type": "multipart/form-data",
+        #     "Content-Disposition": 'form-data; name="file"; filename=%s' % f['file_path']
+        #
+        # }
         chunk_size = 1024 * 256
 
         # file gets uploaded here:
@@ -97,9 +98,11 @@ def upload_files(filepath, upload_data, files):
                     upload_response = requests.put(upload['s3UploadUrl'],
                                                    data=upload_in_chunks(f['file_path'], chunk_size, f['type']),
                                                    stream=True, verify=True)
-                    # print('upload response')
-                    # print(upload_response.text)
-                    uploaded = True
+
+                    if upload_response.status_code == 200:
+                        uploaded = True
+                    else:
+                        bg_blender.progress('Upload failed, retry.')
                 except Exception as e:
                     bg_blender.progress('Upload %s failed, retrying' % f['type'])
                     time.sleep(1)
@@ -185,7 +188,9 @@ if __name__ == "__main__":
         }
 
         url = paths.get_bkit_url() + 'assets/'
-        headers = {"accept": "application/json", "Authorization": "Bearer %s" % upload_data['token']}
+
+        headers = utils.get_headers(upload_data['token'])
+
         url += upload_data["id"] + '/'
 
         r = requests.patch(url, json=confirm_data, headers=headers, verify=True)  # files = files,

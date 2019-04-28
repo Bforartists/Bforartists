@@ -48,6 +48,7 @@ SOURCE_EXT = (
 )
 
 def sort_cmake_file_lists(fn, data_src):
+    fn_dir = os.path.dirname(fn)
     lines = data_src.splitlines(keepends=True)
 
     def can_sort(l):
@@ -56,6 +57,9 @@ def sort_cmake_file_lists(fn, data_src):
         if l.endswith(SOURCE_EXT):
             if "(" not in l and ')' not in l:
                 return True
+        # Headers.
+        if l and os.path.isdir(os.path.join(fn_dir, l)):
+            return True
         # Libs.
         if l.startswith(("bf_", "extern_")) and "." not in l and "/" not in l:
             return True
@@ -66,15 +70,20 @@ def sort_cmake_file_lists(fn, data_src):
         b = b.split("#", 1)[0]
 
         # Compare leading whitespace.
-        if a[:-(len(a.lstrip()))] != b[:-(len(b.lstrip()))]:
-            return False
+        if a[:-(len(a.lstrip()))] == b[:-(len(b.lstrip()))]:
+            # return False
 
-        # Compare loading paths.
-        a = a.split("/")
-        b = b.split("/")
-        if len(a) == 1 and len(b) == 1:
-            return True
-        return a[:-1] == b[:-1]
+            # Compare loading paths.
+            a = a.split("/")
+            b = b.split("/")
+            if len(a) == 1 and len(b) == 1:
+                return True
+            if len(a) == len(b):
+                if len(a) == 1:
+                    return True
+                if a[:-1] == b[:-1]:
+                    return True
+        return False
 
     i = 0
     while i < len(lines):

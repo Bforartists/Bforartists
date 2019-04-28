@@ -20,7 +20,7 @@
 
 import bpy
 
-from rna_prop_ui import rna_idprop_ui_prop_get
+from rna_prop_ui import rna_idprop_ui_create
 
 #=============================================
 # Constraint creation utilities
@@ -33,7 +33,7 @@ _TRACK_AXIS_MAP =  {
 }
 
 def make_constraint(
-        owner, type, target=None, subtarget=None,
+        owner, type, target=None, subtarget=None, *,
         space=None, track_axis=None, use_xyz=None,
         **options):
     """
@@ -78,42 +78,21 @@ def make_constraint(
 # Custom property creation utilities
 #=============================================
 
-def make_property(owner, name, default, min=0.0, max=1.0, soft_min=None, soft_max=None, description=None, overridable=True):
+def make_property(owner, name, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None, description=None, overridable=True):
     """
     Creates and initializes a custom property of owner.
 
     The soft_min and soft_max parameters default to min and max.
     Description defaults to the property name.
     """
-    owner[name] = default
 
-    prop = rna_idprop_ui_prop_get(owner, name, create=True)
-
-    if soft_min is None:
-        soft_min = min
-    if soft_max is None:
-        soft_max = max
-
-    proptype = type(default)
-
-    if proptype in {int, float}:
-        prop["min"] = proptype(min)
-        prop["soft_min"] = proptype(soft_min)
-        prop["max"] = proptype(max)
-        prop["soft_max"] = proptype(soft_max)
-
-        if default != 0:
-            prop["default"] = default
-
-    elif proptype is bool:
-        prop["min"] = prop["soft_min"] = False
-        prop["max"] = prop["soft_max"] = True
-
-    prop["description"] = description or name
-
-    owner.property_overridable_static_set('["%s"]' % (name), overridable)
-
-    return prop
+    # Some keyword argument defaults differ
+    return rna_idprop_ui_create(
+        owner, name, default = default,
+        min = min, max = max, soft_min = soft_min, soft_max = soft_max,
+        description = description or name,
+        overridable = overridable,
+    )
 
 #=============================================
 # Driver creation utilities
@@ -183,7 +162,7 @@ def _add_driver_variable(drv, var_name, var_info, target_id):
             elif p != 'type':
                 setattr(var, p, v)
 
-def make_driver(owner, prop, index=-1, type='SUM', expression=None, variables={}, polynomial=None, target_id=None):
+def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables={}, polynomial=None, target_id=None):
     """
     Creates and initializes a driver for the 'prop' property of owner.
 

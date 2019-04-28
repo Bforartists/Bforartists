@@ -585,7 +585,7 @@ class POVRAY_OT_loft_add(bpy.types.Operator):
         ob = bpy.data.objects.new('Loft_shape', loftData)
         scn = bpy.context.scene
         scn.objects.link(ob)
-        scn.objects.active = ob
+        context.view_layer.objects.active = ob
         ob.select_set(True)
         ob.pov.curveshape = "loft"
         return {'FINISHED'}
@@ -1296,7 +1296,7 @@ class POVRAY_OT_prism_add(bpy.types.Operator):
         ob = bpy.data.objects.new('Prism_shape', loftData)
         scn = bpy.context.scene
         scn.objects.link(ob)
-        scn.objects.active = ob
+        context.view_layer.objects.active = ob
         ob.select_set(True)
         ob.pov.curveshape = "prism"
         ob.name = ob.data.name = "Prism"
@@ -1908,7 +1908,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                                     # ob.data.materials.append(bpy.data.materials[matNames[i]])
 
         ##To keep Avogadro Camera angle:
-        # for obj in bpy.context.scene.objects:
+        # for obj in bpy.context.view_layer.objects:
             # if obj.type == "CAMERA":
                 # track = obj.constraints.new(type = "TRACK_TO")
                 # track.target = ob

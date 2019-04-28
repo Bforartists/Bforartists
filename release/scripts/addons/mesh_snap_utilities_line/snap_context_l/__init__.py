@@ -118,7 +118,7 @@ class _SnapOffscreen():
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, self.buf_color[0])
         bgl.glTexImage2D(
                 bgl.GL_TEXTURE_2D, 0, bgl.GL_R32UI, self.width, self.height,
-                0, bgl.GL_RED_INTEGER, bgl.GL_UNSIGNED_INT, NULL)
+                0, bgl.GL_RED_INTEGER, bgl.GL_UNSIGNED_INT, None)
         del NULL
 
         bgl.glTexParameteri(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_NEAREST)
@@ -265,6 +265,24 @@ class SnapContext():
                 if index < data.first_index + data.get_tot_elems():
                     return snap_obj
         return None
+
+    def _read_buffer(self, mval):
+        xmin = int(mval[0]) - self._dist_px
+        ymin = int(mval[1]) - self._dist_px
+        size_x = size_y = self.threshold
+
+        if xmin < 0:
+            #size_x += xmin
+            xmin = 0
+
+        if ymin < 0:
+            #size_y += ymin
+            ymin = 0
+
+        bgl.glReadBuffer(bgl.GL_COLOR_ATTACHMENT0)
+        bgl.glReadPixels(
+                xmin, ymin, size_x, size_y,
+                bgl.GL_RED_INTEGER, bgl.GL_UNSIGNED_INT, self._snap_buffer)
 
     def _get_nearest_index(self):
         r_snap_obj = None
@@ -507,7 +525,7 @@ class SnapContext():
 
             if bbmin != bbmax:
                 MVP = proj_mat @ snap_obj.mat
-                mat_inv = snap_obj.mat.inverted()
+                mat_inv = snap_obj.mat.inverted_safe()
                 ray_orig_local = mat_inv @ ray_orig
                 ray_dir_local = mat_inv.to_3x3() @ ray_dir
                 in_threshold = _Internal.intersect_boundbox_threshold(
@@ -542,13 +560,7 @@ class SnapContext():
 
                 self.drawn_count += 1
 
-        bgl.glReadBuffer(bgl.GL_COLOR_ATTACHMENT0)
-
-        bgl.glReadPixels(
-                int(self.mval[0]) - self._dist_px, int(self.mval[1]) - self._dist_px,
-                self.threshold, self.threshold, bgl.GL_RED_INTEGER, bgl.GL_UNSIGNED_INT, self._snap_buffer)
-
-        #bgl.glReadBuffer(bgl.GL_BACK)
+        self._read_buffer(mval)
         #import numpy as np
         #a = np.array(self._snap_buffer)
         #print(a)

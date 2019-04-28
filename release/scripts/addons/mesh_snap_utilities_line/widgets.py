@@ -145,9 +145,9 @@ class SnapPointWidget(SnapWidgetCommon):
 
 
 def context_mode_check(context, widget_group):
-    workspace = context.workspace
-    mode = workspace.tools_mode
-    for tool in workspace.tools:
+    tools = context.workspace.tools
+    mode = context.mode
+    for tool in tools:
         if (tool.widget == widget_group) and (tool.mode == mode):
             break
     else:
