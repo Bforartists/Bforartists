@@ -54,6 +54,9 @@
 
 #include "armature_intern.h"
 
+#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define EBONE_PREV_FLAG_GET(ebone) ((void)0, (ebone)->temp.i)
 #define EBONE_PREV_FLAG_SET(ebone, val) ((ebone)->temp.i = val)
@@ -1210,17 +1213,18 @@ enum {
   SIMEDBONE_SHAPE,
 };
 
+/*bfa - added icons. see header, includes. UI_interface.h and UI_resources.h*/
 static const EnumPropertyItem prop_similar_types[] = {
-    {SIMEDBONE_CHILDREN, "CHILDREN", 0, "Children", ""},
-    {SIMEDBONE_CHILDREN_IMMEDIATE, "CHILDREN_IMMEDIATE", 0, "Immediate children", ""},
-    {SIMEDBONE_SIBLINGS, "SIBLINGS", 0, "Siblings", ""},
-    {SIMEDBONE_LENGTH, "LENGTH", 0, "Length", ""},
-    {SIMEDBONE_DIRECTION, "DIRECTION", 0, "Direction (Y axis)", ""},
-    {SIMEDBONE_PREFIX, "PREFIX", 0, "Prefix", ""},
-    {SIMEDBONE_SUFFIX, "SUFFIX", 0, "Suffix", ""},
-    {SIMEDBONE_LAYER, "LAYER", 0, "Layer", ""},
-    {SIMEDBONE_GROUP, "GROUP", 0, "Group", ""},
-    {SIMEDBONE_SHAPE, "SHAPE", 0, "Shape", ""},
+    {SIMEDBONE_CHILDREN, "CHILDREN", ICON_CHILD, "Children", ""},
+    {SIMEDBONE_CHILDREN_IMMEDIATE, "CHILDREN_IMMEDIATE", ICON_CHILD, "Immediate children", ""},
+    {SIMEDBONE_SIBLINGS, "SIBLINGS", ICON_SIBLINGS, "Siblings", ""},
+    {SIMEDBONE_LENGTH, "LENGTH", ICON_RULER, "Length", ""},
+    {SIMEDBONE_DIRECTION, "DIRECTION", ICON_SWITCH_DIRECTION, "Direction (Y axis)", ""},
+    {SIMEDBONE_PREFIX, "PREFIX", ICON_PREFIX, "Prefix", ""},
+    {SIMEDBONE_SUFFIX, "SUFFIX", ICON_SUFFIX, "Suffix", ""},
+    {SIMEDBONE_LAYER, "LAYER", ICON_LAYER, "Layer", ""},
+    {SIMEDBONE_GROUP, "GROUP", ICON_GROUP, "Group", ""},
+    {SIMEDBONE_SHAPE, "SHAPE", ICON_SHAPE, "Shape", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
