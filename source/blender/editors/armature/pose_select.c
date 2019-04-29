@@ -59,6 +59,9 @@
 
 #include "armature_intern.h"
 
+#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define PBONE_PREV_FLAG_GET(pchan) ((void)0, (POINTER_AS_INT((pchan)->temp)))
 #define PBONE_PREV_FLAG_SET(pchan, val) ((pchan)->temp = POINTER_FROM_INT(val))
@@ -1034,12 +1037,13 @@ static int pose_select_grouped_exec(bContext *C, wmOperator *op)
 
 void POSE_OT_select_grouped(wmOperatorType *ot)
 {
+  /*bfa - added icons. see header, includes. UI_interface.h and UI_resources.h*/
   static const EnumPropertyItem prop_select_grouped_types[] = {
-      {POSE_SEL_SAME_LAYER, "LAYER", 0, "Layer", "Shared layers"},
-      {POSE_SEL_SAME_GROUP, "GROUP", 0, "Group", "Shared group"},
+      {POSE_SEL_SAME_LAYER, "LAYER", ICON_LAYER, "Layer", "Shared layers"}, 
+      {POSE_SEL_SAME_GROUP, "GROUP", ICON_GROUP, "Group", "Shared group"},
       {POSE_SEL_SAME_KEYINGSET,
        "KEYINGSET",
-       0,
+       ICON_KEYINGSET,
        "Keying Set",
        "All bones affected by active Keying Set"},
       {0, NULL, 0, NULL, NULL},
