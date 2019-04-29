@@ -1372,10 +1372,20 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
         bpy.ops.object.transform_apply(location=True, rotation=False, scale=True)
         return {'FINISHED'}
 
+class VIEW3D_MT_object_apply_all(bpy.types.Operator):
+    """Apply All\nApplies the current location, rotation and scale"""
+    bl_idname = "3dview.tb_apply_all"
+    bl_label = "Apply All"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        return {'FINISHED'}
+
 class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
     """Apply Rotation & Scale\nApplies the current rotation and scale"""
     bl_idname = "3dview.tb_apply_rotscale"
-    bl_label = "Apply All"
+    bl_label = "Apply Rotate Scale"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -1492,6 +1502,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("3dview.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
                     row.operator("3dview.tb_apply_rotate", text="", icon = "APPLYROTATE")
                     row.operator("3dview.tb_apply_scale", text="", icon = "APPLYSCALE")
+                    row.operator("3dview.tb_apply_all", text="", icon = "APPLYALL")
                     row.operator("3dview.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                     row = layout.row(align=True)
@@ -1653,6 +1664,7 @@ classes = (
     VIEW3D_MT_object_apply_location,
     VIEW3D_MT_object_apply_rotate,
     VIEW3D_MT_object_apply_scale,
+    VIEW3D_MT_object_apply_all,
     VIEW3D_MT_object_apply_rotscale,
     TOOLBAR_MT_menu_animation,
     TOOLBAR_MT_toolbars_animation_menu,
