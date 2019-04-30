@@ -318,23 +318,23 @@ class GPENCIL_MT_gpencil_vertex_group(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.vertex_group_add")
+        layout.operator("object.vertex_group_add", icon = "GROUP_VERTEX")
 
         ob = context.active_object
         if ob.vertex_groups.active:
             layout.separator()
 
-            layout.operator("gpencil.vertex_group_assign", text="Assign to Active Group")
-            layout.operator("gpencil.vertex_group_remove_from", text="Remove from Active Group")
+            layout.operator("gpencil.vertex_group_assign", text="Assign to Active Group", icon = "ADD_TO_ACTIVE")
+            layout.operator("gpencil.vertex_group_remove_from", text="Remove from Active Group", icon = "REMOVE_SELECTED_FROM_ACTIVE_GROUP")
 
             layout.separator()
             layout.operator_menu_enum("object.vertex_group_set_active", "group", text="Set Active Group")
-            layout.operator("object.vertex_group_remove", text="Remove Active Group").all = False
-            layout.operator("object.vertex_group_remove", text="Remove All Groups").all = True
+            layout.operator("object.vertex_group_remove", text="Remove Active Group", icon = "REMOVE_ACTIVE_GROUP").all = False
+            layout.operator("object.vertex_group_remove", text="Remove All Groups", icon = "REMOVE_ALL_GROUPS").all = True
 
             layout.separator()
-            layout.operator("gpencil.vertex_group_select", text="Select Points")
-            layout.operator("gpencil.vertex_group_deselect", text="Deselect Points")
+            layout.operator("gpencil.vertex_group_select", text="Select Points", icon = "SELECT_ALL")
+            layout.operator("gpencil.vertex_group_deselect", text="Deselect Points", icon = "SELECT_NONE")
 
 
 class GPENCIL_UL_vgroups(UIList):
