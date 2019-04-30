@@ -2976,10 +2976,14 @@ static int gp_stroke_caps_set_exec(bContext *C, wmOperator *op)
 void GPENCIL_OT_stroke_caps_set(wmOperatorType *ot)
 {
   static const EnumPropertyItem toggle_type[] = {
-      {GP_STROKE_CAPS_TOGGLE_BOTH, "TOGGLE", 0, "Both", ""},
-      {GP_STROKE_CAPS_TOGGLE_START, "START", 0, "Start", ""},
-      {GP_STROKE_CAPS_TOGGLE_END, "END", 0, "End", ""},
-      {GP_STROKE_CAPS_TOGGLE_DEFAULT, "TOGGLE", 0, "Default", "Set as default rounded"},
+      {GP_STROKE_CAPS_TOGGLE_BOTH, "TOGGLE", ICON_TOGGLECAPS_BOTH, "Both", ""},
+      {GP_STROKE_CAPS_TOGGLE_START, "START", ICON_TOGGLECAPS_START, "Start", ""},
+      {GP_STROKE_CAPS_TOGGLE_END, "END", ICON_TOGGLECAPS_END, "End", ""},
+      {GP_STROKE_CAPS_TOGGLE_DEFAULT,
+       "TOGGLE",
+       ICON_TOGGLECAPS_DEFAULT,
+       "Default",
+       "Set as default rounded"},
       {0, NULL, 0, NULL, NULL},
   };
 
