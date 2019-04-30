@@ -3576,16 +3576,16 @@ class VIEW3D_MT_vertex_group(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.vertex_group_assign_new")
+        layout.operator("object.vertex_group_assign_new", icon = "GROUP_VERTEX")
 
         ob = context.active_object
         if ob.mode == 'EDIT' or (ob.mode == 'WEIGHT_PAINT' and ob.type == 'MESH' and ob.data.use_paint_mask_vertex):
             if ob.vertex_groups.active:
                 layout.separator()
 
-                layout.operator("object.vertex_group_assign", text="Assign to Active Group")
-                layout.operator("object.vertex_group_remove_from", text="Remove from Active Group",).use_all_groups = False
-                layout.operator("object.vertex_group_remove_from", text="Remove from All").use_all_groups = True
+                layout.operator("object.vertex_group_assign", text="Assign to Active Group", icon = "ADD_TO_ACTIVE")
+                layout.operator("object.vertex_group_remove_from", text="Remove from Active Group", icon = "REMOVE_SELECTED_FROM_ACTIVE_GROUP").use_all_groups = False
+                layout.operator("object.vertex_group_remove_from", text="Remove from All", icon = "REMOVE_FROM_ALL_GROUPS").use_all_groups = True
 
         if ob.vertex_groups.active:
             layout.separator()
