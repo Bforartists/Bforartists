@@ -5611,7 +5611,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.menu("VIEW3D_MT_gpencil_copy_layer")
         layout.menu("VIEW3D_MT_gpencil_simplify")
-        layout.operator("gpencil.stroke_trim", text="Trim")
+        layout.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
 
         layout.separator()
 
