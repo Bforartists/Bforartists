@@ -7636,7 +7636,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Lock Frame Selection",
-      "Lock Frame Selection\nDon't allow frame to be selected with mouse outside of frame range");
+      "Limit Playhead to Frame Range\nDon't allow frame to be selected with mouse outside of frame range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Preview Range (frame-range for UI playback) */
@@ -7673,7 +7673,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_boolean_sdna(prop, NULL, "r.flag", SCER_SHOW_SUBFRAME);
   RNA_def_property_ui_text(
-      prop, "Show Subframe", "Show Subframe\nShow current scene subframe and allow set it using interface tools");
+      prop, "Show Subframe", "Subframes\nShow current scene subframe and allow set it using interface tools");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_show_subframe_update");
 
   /* Timeline / Time Navigation settings */
@@ -7844,7 +7844,7 @@ void RNA_def_scene(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_audio", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_Scene_use_audio_get", "rna_Scene_use_audio_set");
   RNA_def_property_ui_text(
-      prop, "Audio Muted", "Audio Muted\nPlay back of audio from Sequence Editor will be muted");
+      prop, "Audio Muted", "Mute Audio\nPlayback of audio from Sequence Editor will be muted");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 
 #  if 0 /* XXX: Is this actually needed? */
