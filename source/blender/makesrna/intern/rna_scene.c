@@ -7553,7 +7553,7 @@ void RNA_def_scene(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "objects", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_struct_type(prop, "Object");
-  RNA_def_property_ui_text(prop, "Objects", "");
+  RNA_def_property_ui_text(prop, "Objects", "Objects");
   RNA_def_property_collection_funcs(prop,
                                     "rna_Scene_objects_begin",
                                     "rna_Scene_objects_next",
@@ -7574,19 +7574,19 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Current Frame",
-      "Current Frame, to update animation data from python frame_set() instead");
+      "Current Frame\nCurrent Frame, to update animation data from python frame_set() instead");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_frame_update");
 
   prop = RNA_def_property(srna, "frame_subframe", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, NULL, "r.subframe");
-  RNA_def_property_ui_text(prop, "Current Sub-Frame", "");
+  RNA_def_property_ui_text(prop, "Current Sub-Frame", "Current Sub-Frame");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.01, 2);
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_frame_update");
 
   prop = RNA_def_property(srna, "frame_float", PROP_FLOAT, PROP_TIME);
-  RNA_def_property_ui_text(prop, "Current Sub-Frame", "");
+  RNA_def_property_ui_text(prop, "Current Sub-Frame", "Current Sub-Frame");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
   RNA_def_property_ui_range(prop, MINAFRAME, MAXFRAME, 0.1, 2);
@@ -7600,7 +7600,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_start_frame_set", NULL);
   RNA_def_property_range(prop, MINFRAME, MAXFRAME);
   RNA_def_property_int_default(prop, 1);
-  RNA_def_property_ui_text(prop, "Start Frame", "First frame of the playback/rendering range");
+  RNA_def_property_ui_text(prop, "Start Frame", "Start Frame\nFirst frame of the playback/rendering range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME_RANGE, NULL);
 
   prop = RNA_def_property(srna, "frame_end", PROP_INT, PROP_TIME);
@@ -7609,7 +7609,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_end_frame_set", NULL);
   RNA_def_property_range(prop, MINFRAME, MAXFRAME);
   RNA_def_property_int_default(prop, 250);
-  RNA_def_property_ui_text(prop, "End Frame", "Final frame of the playback/rendering range");
+  RNA_def_property_ui_text(prop, "End Frame", "End Frame\nFinal frame of the playback/rendering range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME_RANGE, NULL);
 
   prop = RNA_def_property(srna, "frame_step", PROP_INT, PROP_TIME);
@@ -7620,7 +7620,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Frame Step",
-      "Number of frames to skip forward while rendering/playing back each frame");
+      "Frame Step\nNumber of frames to skip forward while rendering/playing back each frame");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   prop = RNA_def_property(srna, "frame_current_final", PROP_FLOAT, PROP_TIME);
@@ -7628,7 +7628,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
   RNA_def_property_float_funcs(prop, "rna_Scene_frame_current_final_get", NULL, NULL);
   RNA_def_property_ui_text(
-      prop, "Current Frame Final", "Current frame with subframe and time remapping applied");
+      prop, "Current Frame Final", "Current Frame Final\nCurrent frame with subframe and time remapping applied");
 
   prop = RNA_def_property(srna, "lock_frame_selection_to_range", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -7647,7 +7647,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Use Preview Range",
-      "Use an alternative start/end frame range for animation playback and "
+      "Use Preview Range\nUse an alternative start/end frame range for animation playback and "
       "OpenGL renders instead of the Render properties start/end frame range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
   RNA_def_property_ui_icon(prop, ICON_PREVIEW_RANGE, 0);
@@ -7657,7 +7657,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, NULL, "r.psfra");
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_preview_range_start_frame_set", NULL);
   RNA_def_property_ui_text(
-      prop, "Preview Range Start Frame", "Alternative start frame for UI playback");
+      prop, "Preview Range Start Frame", "Preview Range Start Frame\nAlternative start frame for UI playback");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   prop = RNA_def_property(srna, "frame_preview_end", PROP_INT, PROP_TIME);
@@ -7665,7 +7665,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, NULL, "r.pefra");
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_preview_range_end_frame_set", NULL);
   RNA_def_property_ui_text(
-      prop, "Preview Range End Frame", "Alternative end frame for UI playback");
+      prop, "Preview Range End Frame", "Preview Range End Frame\nAlternative end frame for UI playback");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Subframe for moblur debug. */
@@ -7673,7 +7673,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_boolean_sdna(prop, NULL, "r.flag", SCER_SHOW_SUBFRAME);
   RNA_def_property_ui_text(
-      prop, "Show Subframe", "Show current scene subframe and allow set it using interface tools");
+      prop, "Show Subframe", "Show Subframe\nShow current scene subframe and allow set it using interface tools");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_show_subframe_update");
 
   /* Timeline / Time Navigation settings */
@@ -7681,14 +7681,14 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SCE_KEYS_NO_SELONLY);
   RNA_def_property_ui_text(prop,
                            "Only Keyframes from Selected Channels",
-                           "Consider keyframes for active Object and/or its selected bones only "
+                           "Only Keyframes from Selected Channels\nConsider keyframes for active Object and/or its selected bones only "
                            "(in timeline and when jumping between keyframes)");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Stamp */
   prop = RNA_def_property(srna, "use_stamp_note", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, NULL, "r.stamp_udata");
-  RNA_def_property_ui_text(prop, "Stamp Note", "User defined note for the render stamping");
+  RNA_def_property_ui_text(prop, "Stamp Note", "Stamp Note\nUser defined note for the render stamping");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   /* Animation Data (for Scene) */
@@ -7702,14 +7702,14 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "NLA TweakMode",
-      "Whether there is any action referenced by NLA being edited (strictly read-only)");
+      "NLA TweakMode\nWhether there is any action referenced by NLA being edited (strictly read-only)");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
 
   /* Frame dropping flag for playback and sync enum */
 #  if 0 /* XXX: Is this actually needed? */
   prop = RNA_def_property(srna, "use_frame_drop", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SCE_FRAME_DROP);
-  RNA_def_property_ui_text(prop, "Frame Dropping", "Play back dropping frames if frame display is too slow");
+  RNA_def_property_ui_text(prop, "Frame Dropping", "Frame Dropping\nPlay back dropping frames if frame display is too slow");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 #  endif
 
@@ -7717,31 +7717,31 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_enum_funcs(prop, "rna_Scene_sync_mode_get", "rna_Scene_sync_mode_set", NULL);
   RNA_def_property_enum_items(prop, sync_mode_items);
   RNA_def_property_enum_default(prop, AUDIO_SYNC);
-  RNA_def_property_ui_text(prop, "Sync Mode", "How to sync playback");
+  RNA_def_property_ui_text(prop, "Sync Mode", "Sync Mode\nHow to sync playback");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 
   /* Nodes (Compositing) */
   prop = RNA_def_property(srna, "node_tree", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "nodetree");
-  RNA_def_property_ui_text(prop, "Node Tree", "Compositing node tree");
+  RNA_def_property_ui_text(prop, "Node Tree", "Node Tree\nCompositing node tree");
 
   prop = RNA_def_property(srna, "use_nodes", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "use_nodes", 1);
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
-  RNA_def_property_ui_text(prop, "Use Nodes", "Enable the compositing node tree");
+  RNA_def_property_ui_text(prop, "Use Nodes", "Use Nodes\nEnable the compositing node tree");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, "rna_Scene_use_nodes_update");
 
   /* Sequencer */
   prop = RNA_def_property(srna, "sequence_editor", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "ed");
   RNA_def_property_struct_type(prop, "SequenceEditor");
-  RNA_def_property_ui_text(prop, "Sequence Editor", "");
+  RNA_def_property_ui_text(prop, "Sequence Editor", "Sequence Editor");
 
   /* Keying Sets */
   prop = RNA_def_property(srna, "keying_sets", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "keyingsets", NULL);
   RNA_def_property_struct_type(prop, "KeyingSet");
-  RNA_def_property_ui_text(prop, "Absolute Keying Sets", "Absolute Keying Sets for this Scene");
+  RNA_def_property_ui_text(prop, "Absolute Keying Sets", "Absolute Keying Sets\nAbsolute Keying Sets for this Scene");
   RNA_def_property_update(prop, NC_SCENE | ND_KEYINGSET, NULL);
   rna_def_scene_keying_sets(brna, prop);
 
@@ -7759,7 +7759,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "All Keying Sets",
-      "All Keying Sets available for use (Builtins and Absolute Keying Sets for this Scene)");
+      "All Keying Sets\nAll Keying Sets available for use (Builtins and Absolute Keying Sets for this Scene)");
   RNA_def_property_update(prop, NC_SCENE | ND_KEYINGSET, NULL);
   rna_def_scene_keying_sets_all(brna, prop);
 
@@ -7767,7 +7767,7 @@ void RNA_def_scene(BlenderRNA *brna)
   prop = RNA_def_property(srna, "rigidbody_world", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "rigidbody_world");
   RNA_def_property_struct_type(prop, "RigidBodyWorld");
-  RNA_def_property_ui_text(prop, "Rigid Body World", "");
+  RNA_def_property_ui_text(prop, "Rigid Body World", "Rigid Body World");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 
   /* Tool Settings */
@@ -7775,26 +7775,26 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_pointer_sdna(prop, NULL, "toolsettings");
   RNA_def_property_struct_type(prop, "ToolSettings");
-  RNA_def_property_ui_text(prop, "Tool Settings", "");
+  RNA_def_property_ui_text(prop, "Tool Settings", "Tool Settings");
 
   /* Unit Settings */
   prop = RNA_def_property(srna, "unit_settings", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_pointer_sdna(prop, NULL, "unit");
   RNA_def_property_struct_type(prop, "UnitSettings");
-  RNA_def_property_ui_text(prop, "Unit Settings", "Unit editing settings");
+  RNA_def_property_ui_text(prop, "Unit Settings", "Unit Settings\nUnit editing settings");
 
   /* Physics Settings */
   prop = RNA_def_property(srna, "gravity", PROP_FLOAT, PROP_ACCELERATION);
   RNA_def_property_float_sdna(prop, NULL, "physics_settings.gravity");
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_range(prop, -200.0f, 200.0f, 1, 2);
-  RNA_def_property_ui_text(prop, "Gravity", "Constant acceleration in a given direction");
+  RNA_def_property_ui_text(prop, "Gravity", "Gravity\nConstant acceleration in a given direction");
   RNA_def_property_update(prop, 0, "rna_Physics_update");
 
   prop = RNA_def_property(srna, "use_gravity", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "physics_settings.flag", PHYS_GLOBAL_GRAVITY);
-  RNA_def_property_ui_text(prop, "Global Gravity", "Use global gravity for all dynamics");
+  RNA_def_property_ui_text(prop, "Global Gravity", "Global Gravity\nUse global gravity for all dynamics");
   RNA_def_property_update(prop, 0, "rna_Physics_update");
 
   /* Render Data */
@@ -7802,21 +7802,21 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_pointer_sdna(prop, NULL, "r");
   RNA_def_property_struct_type(prop, "RenderSettings");
-  RNA_def_property_ui_text(prop, "Render Data", "");
+  RNA_def_property_ui_text(prop, "Render Data", "Render Data");
 
   /* Safe Areas */
   prop = RNA_def_property(srna, "safe_areas", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "safe_areas");
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "DisplaySafeAreas");
-  RNA_def_property_ui_text(prop, "Safe Areas", "");
+  RNA_def_property_ui_text(prop, "Safe Areas", "Safe Areas");
 
   /* Markers */
   prop = RNA_def_property(srna, "timeline_markers", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "markers", NULL);
   RNA_def_property_struct_type(prop, "TimelineMarker");
   RNA_def_property_ui_text(
-      prop, "Timeline Markers", "Markers used in all timelines for the current scene");
+      prop, "Timeline Markers", "Timeline Markers\nMarkers used in all timelines for the current scene");
   rna_def_timeline_markers(brna, prop);
 
   /* Transform Orientations */
@@ -7831,20 +7831,20 @@ void RNA_def_scene(BlenderRNA *brna)
                                     NULL,
                                     NULL);
   RNA_def_property_struct_type(prop, "TransformOrientationSlot");
-  RNA_def_property_ui_text(prop, "Transform Orientation Slots", "");
+  RNA_def_property_ui_text(prop, "Transform Orientation Slots", "Transform Orientation Slots");
 
   /* 3D View Cursor */
   prop = RNA_def_property(srna, "cursor", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_pointer_sdna(prop, NULL, "cursor");
   RNA_def_property_struct_type(prop, "View3DCursor");
-  RNA_def_property_ui_text(prop, "3D Cursor", "");
+  RNA_def_property_ui_text(prop, "3D Cursor", "3D Cursor");
 
   /* Audio Settings */
   prop = RNA_def_property(srna, "use_audio", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_Scene_use_audio_get", "rna_Scene_use_audio_set");
   RNA_def_property_ui_text(
-      prop, "Audio Muted", "Play back of audio from Sequence Editor will be muted");
+      prop, "Audio Muted", "Audio Muted\nPlay back of audio from Sequence Editor will be muted");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 
 #  if 0 /* XXX: Is this actually needed? */
@@ -7853,14 +7853,14 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Audio Sync",
-      "Play back and sync with audio clock, dropping frames if frame display is too slow");
+      "Audio Sync\nPlay back and sync with audio clock, dropping frames if frame display is too slow");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 #  endif
 
   prop = RNA_def_property(srna, "use_audio_scrub", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "audio.flag", AUDIO_SCRUB);
   RNA_def_property_ui_text(
-      prop, "Audio Scrubbing", "Play audio from Sequence Editor while scrubbing");
+      prop, "Audio Scrubbing", "Audio Scrubbing\nPlay audio from Sequence Editor while scrubbing");
   RNA_def_property_update(prop, NC_SCENE, NULL);
 
   prop = RNA_def_property(srna, "audio_doppler_speed", PROP_FLOAT, PROP_NONE);
@@ -7868,14 +7868,14 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0.01f, FLT_MAX);
   RNA_def_property_ui_text(
-      prop, "Speed of Sound", "Speed of sound for Doppler effect calculation");
+      prop, "Speed of Sound", "Speed of SoundnSpeed of sound for Doppler effect calculation");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
   prop = RNA_def_property(srna, "audio_doppler_factor", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "audio.doppler_factor");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0.0, FLT_MAX);
-  RNA_def_property_ui_text(prop, "Doppler Factor", "Pitch factor for Doppler effect calculation");
+  RNA_def_property_ui_text(prop, "Doppler Factor", "Doppler Factor\nPitch factor for Doppler effect calculation");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
   prop = RNA_def_property(srna, "audio_distance_model", PROP_ENUM, PROP_NONE);
@@ -7883,13 +7883,13 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_enum_items(prop, audio_distance_model_items);
   RNA_def_property_ui_text(
-      prop, "Distance Model", "Distance model for distance attenuation calculation");
+      prop, "Distance Model", "Distance Model\nDistance model for distance attenuation calculation");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
   prop = RNA_def_property(srna, "audio_volume", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "audio.volume");
   RNA_def_property_range(prop, 0.0f, 100.0f);
-  RNA_def_property_ui_text(prop, "Volume", "Audio volume");
+  RNA_def_property_ui_text(prop, "Volume", "Volume\nAudio volume");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_SOUND);
   RNA_def_property_update(prop, NC_SCENE, NULL);
   RNA_def_property_float_funcs(prop, NULL, "rna_Scene_volume_set", NULL);
@@ -7910,7 +7910,7 @@ void RNA_def_scene(BlenderRNA *brna)
       prop, NULL, NULL, NULL, "rna_GPencil_datablocks_annotations_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_ui_text(
-      prop, "Annotations", "Grease Pencil data-block used for annotations in the 3D view");
+      prop, "Annotations", "Annotations\nGrease Pencil data-block used for annotations in the 3D view");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
   /* active MovieClip */
@@ -7919,7 +7919,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_struct_type(prop, "MovieClip");
   RNA_def_property_ui_text(
-      prop, "Active Movie Clip", "Active movie clip used for constraints and viewport drawing");
+      prop, "Active Movie Clip", "Active Movie Clip\nActive movie clip used for constraints and viewport drawing");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   /* color management */
@@ -7927,25 +7927,25 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, NULL, "view_settings");
   RNA_def_property_struct_type(prop, "ColorManagedViewSettings");
   RNA_def_property_ui_text(
-      prop, "View Settings", "Color management settings applied on image before saving");
+      prop, "View Settings", "View Settings\nColor management settings applied on image before saving");
 
   prop = RNA_def_property(srna, "display_settings", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "display_settings");
   RNA_def_property_struct_type(prop, "ColorManagedDisplaySettings");
   RNA_def_property_ui_text(
-      prop, "Display Settings", "Settings of device saved image would be displayed on");
+      prop, "Display Settings", "Display Settings\nSettings of device saved image would be displayed on");
 
   prop = RNA_def_property(srna, "sequencer_colorspace_settings", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "sequencer_colorspace_settings");
   RNA_def_property_struct_type(prop, "ColorManagedSequencerColorspaceSettings");
   RNA_def_property_ui_text(
-      prop, "Sequencer Color Space Settings", "Settings of color space sequencer is working in");
+      prop, "Sequencer Color Space Settings", "Sequencer Color Space Settings\nSettings of color space sequencer is working in");
 
   /* Layer and Collections */
   prop = RNA_def_property(srna, "view_layers", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "view_layers", NULL);
   RNA_def_property_struct_type(prop, "ViewLayer");
-  RNA_def_property_ui_text(prop, "View Layers", "");
+  RNA_def_property_ui_text(prop, "View Layers", "View Layers");
   rna_def_view_layers(brna, prop);
 
   prop = RNA_def_property(srna, "collection", PROP_POINTER, PROP_NONE);
@@ -7955,18 +7955,18 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Collection",
-      "Scene master collection that objects and other collections in the scene");
+      "Collection\nScene master collection that objects and other collections in the scene");
 
   /* Scene Display */
   prop = RNA_def_property(srna, "display", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "display");
   RNA_def_property_struct_type(prop, "SceneDisplay");
-  RNA_def_property_ui_text(prop, "Scene Display", "Scene display settings for 3d viewport");
+  RNA_def_property_ui_text(prop, "Scene Display", "Scene Display\nScene display settings for 3d viewport");
 
   /* EEVEE */
   prop = RNA_def_property(srna, "eevee", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "SceneEEVEE");
-  RNA_def_property_ui_text(prop, "EEVEE", "EEVEE settings for the scene");
+  RNA_def_property_ui_text(prop, "EEVEE", "EEVEE\nEEVEE settings for the scene");
 
   /* Nestled Data  */
   /* *** Non-Animated *** */
