@@ -339,7 +339,7 @@ static void ANIM_OT_start_frame_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set Start Frame";
   ot->idname = "ANIM_OT_start_frame_set";
-  ot->description = "Set the current frame as the preview or scene start frame";
+  ot->description = "Set Start Frame\nSet the current frame as the preview or scene start frame";
 
   /* api callbacks */
   ot->exec = anim_set_sfra_exec;
@@ -387,7 +387,7 @@ static void ANIM_OT_end_frame_set(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Set End Frame";
   ot->idname = "ANIM_OT_end_frame_set";
-  ot->description = "Set the current frame as the preview or scene end frame";
+  ot->description = "Set End Frame\nSet the current frame as the preview or scene end frame";
 
   /* api callbacks */
   ot->exec = anim_set_efra_exec;
