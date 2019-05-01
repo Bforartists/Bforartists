@@ -8,6 +8,8 @@
 
 #include "BLO_readfile.h"
 
+/* clang-format off */
+
 #ifdef __LITTLE_ENDIAN__
 #  define RGBA(c) {((c) >> 24) & 0xff, ((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
 #  define RGB(c)  {((c) >> 16) & 0xff, ((c) >> 8) & 0xff, (c) & 0xff}
@@ -444,11 +446,11 @@ const bTheme U_theme_default = {
 		.handle_sel_auto_clamped = RGBA(0xf0af90ff),
 		.ds_channel = RGBA(0x52606eff),
 		.ds_subchannel = RGBA(0x7c8996ff),
-		.vertex_size = 3,
+		.vertex_size = 6,
 		.outline_width = 1,
 		.facedot_size = 4,
 		.handle_vertex_select = RGBA(0xff8500ff),
-		.handle_vertex_size = 3,
+		.handle_vertex_size = 6,
 		.anim_preview_range = RGBA(0xa14d0066),
 	},
 	.space_info = {
@@ -1152,3 +1154,5 @@ const bTheme U_theme_default = {
 		},
 	},
 };
+
+/* clang-format on */
