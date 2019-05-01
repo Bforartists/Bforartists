@@ -604,7 +604,7 @@ static void rna_def_screen(BlenderRNA *brna)
   /* Define Anim Playback Areas */
   prop = RNA_def_property(srna, "use_play_top_left_3d_editor", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_REGION);
-  RNA_def_property_ui_text(prop, "Top-Left 3D Editor", "Top-Left 3D Editor\nPlay animation in Active Editor only");
+  RNA_def_property_ui_text(prop, "Top-Left 3D Editor", "Active Editor Only\nPlay animation in Active Editor only");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_3d_editors", PROP_BOOLEAN, PROP_NONE);
@@ -614,7 +614,7 @@ static void rna_def_screen(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_follow", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "redraws_flag", TIME_FOLLOW);
-  RNA_def_property_ui_text(prop, "Follow", "Follow\nFollow current frame in editors");
+  RNA_def_property_ui_text(prop, "Follow", "Follow Playhead\nFollow current frame in editors");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Screen_redraw_update");
 
   prop = RNA_def_property(srna, "use_play_animation_editors", PROP_BOOLEAN, PROP_NONE);
