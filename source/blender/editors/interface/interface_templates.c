@@ -839,7 +839,7 @@ static void template_ID(bContext *C,
                            0,
                            0,
                            0,
-                           TIP_("Indirect library data-block, cannot change"));
+                           TIP_("Indirect data-block\nIndirect library data-block, cannot change"));
         UI_but_flag_enable(but, UI_BUT_DISABLED);
       }
       else {
@@ -859,9 +859,9 @@ static void template_ID(bContext *C,
                            0,
                            0,
                            BKE_override_static_is_enabled() ?
-                               TIP_("Direct linked library data-block, click to make local, "
+                               TIP_("Direct data-block\nDirect linked library data-block, click to make local, "
                                     "Shift + Click to create a static override") :
-                               TIP_("Direct linked library data-block, click to make local"));
+                               TIP_("Direct data-block\nDirect linked library data-block, click to make local"));
         if (disabled) {
           UI_but_flag_enable(but, UI_BUT_DISABLED);
         }
@@ -886,7 +886,7 @@ static void template_ID(bContext *C,
           0,
           0,
           0,
-          TIP_("Static override of linked library data-block, click to make fully local"));
+          TIP_("Static override\nStatic override of linked library data-block, click to make fully local"));
       UI_but_funcN_set(
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_OVERRIDE));
     }
@@ -911,7 +911,7 @@ static void template_ID(bContext *C,
           0,
           0,
           0,
-          TIP_("Display number of users of this data (click to make a single-user copy)"));
+          TIP_("Number of Users\nDisplay number of users of this data (click to make a single-user copy)"));
       but->flag |= UI_BUT_UNDO;
 
       UI_but_funcN_set(
@@ -965,7 +965,7 @@ static void template_ID(bContext *C,
                         0,
                         UI_UNIT_X,
                         UI_UNIT_Y,
-                        TIP_("Packed File, click to unpack"));
+                        TIP_("Packed File\nPacked File, click to unpack"));
     UI_but_operator_ptr_get(but);
 
     RNA_string_set(but->opptr, "id_name", id->name + 2);
@@ -1050,7 +1050,7 @@ static void template_ID(bContext *C,
             0,
             0,
             0,
-            TIP_("Unlink data-block "
+            TIP_("Unlink data-block\nUnlink data-block "
                  "(Shift + Click to set users to zero, data will then not be saved)"));
         UI_but_funcN_set(
             but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_DELETE));
@@ -1849,7 +1849,7 @@ static uiLayout *draw_modifier(uiLayout *layout,
                    0.0,
                    0.0,
                    0.0,
-                   TIP_("Convert virtual modifier to a real modifier"));
+                   TIP_("Make Real\nConvert virtual modifier to a real modifier"));
     UI_but_func_set(but, modifiers_convertToReal, ob, md);
   }
   else {
@@ -3140,7 +3140,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                         0,
                         0,
                         0,
-                        TIP_("Add a new color stop to the color ramp"));
+                        TIP_("Add Color Stop\nAdd a new color stop to the color ramp"));
   UI_but_funcN_set(bt, colorband_add_cb, MEM_dupallocN(cb), coba);
 
   bt = uiDefIconTextBut(block,
@@ -3157,7 +3157,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                         0,
                         0,
                         0,
-                        TIP_("Delete the active position"));
+                        TIP_("Delete Color Stop\nDelete the active position"));
   UI_but_funcN_set(bt, colorband_del_cb, MEM_dupallocN(cb), coba);
 
   bt = uiDefIconBlockBut(block,
@@ -3229,7 +3229,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                 (float)(MAX2(0, coba->tot - 1)),
                 0,
                 0,
-                TIP_("Choose active color stop"));
+                TIP_("Choose Color Stop\nChoose active color stop"));
       row = uiLayoutRow(split, false);
       uiItemR(row, &ptr, "position", 0, IFACE_("Pos"), ICON_NONE);
       bt = block->buttons.last;
@@ -3259,7 +3259,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                 (float)(MAX2(0, coba->tot - 1)),
                 0,
                 0,
-                TIP_("Choose active color stop"));
+                TIP_("Choose Color Stop\nChoose active color stop"));
       row = uiLayoutRow(subsplit, false);
       uiItemR(row, &ptr, "position", UI_ITEM_R_SLIDER, IFACE_("Pos"), ICON_NONE);
       bt = block->buttons.last;
@@ -4364,7 +4364,7 @@ static void curvemap_buttons_layout(uiLayout *layout,
                   0.0f,
                   0,
                   0,
-                  TIP_("Reset Black/White point and curves"));
+                  TIP_("Reset\nReset Black/White point and curves"));
     UI_but_funcN_set(bt, curvemap_buttons_reset, MEM_dupallocN(cb), cumap);
   }
 
@@ -5436,7 +5436,7 @@ void uiTemplateList(uiLayout *layout,
                                org_i,
                                0,
                                0,
-                               TIP_("Double click to rename"));
+                               TIP_("Rename\nDouble click to rename"));
           if ((dyntip_data = uilist_item_use_dynamic_tooltip(itemptr, item_dyntip_propname))) {
             UI_but_func_tooltip_set(but, uilist_item_tooltip_func, dyntip_data);
           }
@@ -5669,7 +5669,7 @@ void uiTemplateList(uiLayout *layout,
                              0,
                              0,
                              0,
-                             TIP_("Hide filtering options"));
+                             TIP_("Hide\nHide filtering options"));
       UI_but_flag_disable(but, UI_BUT_UNDO); /* skip undo on screen buttons */
 
       but = uiDefIconButI(subblock,
@@ -5724,7 +5724,7 @@ void uiTemplateList(uiLayout *layout,
                              0,
                              0,
                              0,
-                             TIP_("Show filtering options"));
+                             TIP_("Show\nShow filtering options"));
       UI_but_flag_disable(but, UI_BUT_UNDO); /* skip undo on screen buttons */
 
       but = uiDefIconButI(subblock,
@@ -6001,7 +6001,7 @@ eAutoPropButsReturn uiTemplateOperatorPropertyButs(const bContext *C,
                            0.0,
                            0.0,
                            0.0,
-                           TIP_("Reset operator defaults"));
+                           TIP_("Reset\nReset operator defaults"));
     UI_but_func_set(but, ui_layout_operator_buts__reset_cb, op, NULL);
   }
 #endif
@@ -6269,7 +6269,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                        0.0f,
                        0,
                        0,
-                       TIP_("Stop this job"));
+                       TIP_("Stop\nStop this job"));
     }
   }
 
@@ -6288,7 +6288,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                      0.0f,
                      0,
                      0,
-                     TIP_("Stop animation playback"));
+                     TIP_("Stop\nStop animation playback"));
   }
 }
 
@@ -6369,7 +6369,7 @@ void uiTemplateReportsBanner(uiLayout *layout, bContext *C)
                   0,
                   UI_UNIT_X,
                   UI_UNIT_Y,
-                  TIP_("Click to see the remaining reports in text block: 'Recent Reports'"));
+                  TIP_("Recent Reports\nClick to see the remaining reports in text block: 'Recent Reports'"));
   }
   else {
     uiDefIconBut(
