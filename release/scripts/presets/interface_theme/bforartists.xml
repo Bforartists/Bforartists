@@ -86,10 +86,10 @@
           <ThemeWidgetColors
             outline="#252525"
             inner="#595959ff"
-            inner_sel="#5680c2ff"
-            item="#394c66ff"
+            inner_sel="#999999ff"
+            item="#e6e6e6ff"
             text="#cccccc"
-            text_sel="#ffffff"
+            text_sel="#000000"
             show_shaded="FALSE"
             shadetop="0"
             shadedown="25"
@@ -100,7 +100,7 @@
         <wcol_option>
           <ThemeWidgetColors
             outline="#252525"
-            inner="#394c66ff"
+            inner="#808080ff"
             inner_sel="#5680c2ff"
             item="#b3ffb3ff"
             text="#cccccc"
@@ -461,7 +461,7 @@
         preview_range="#a14d0066"
         vertex="#000000"
         vertex_select="#ff8500"
-        vertex_size="3"
+        vertex_size="6"
         vertex_bevel="#000000"
         vertex_unreferenced="#000000"
         handle_free="#000000"
@@ -477,7 +477,7 @@
         lastsel_point="#000000"
         handle_vertex="#000000"
         handle_vertex_select="#ff8500"
-        handle_vertex_size="3"
+        handle_vertex_size="6"
         >
         <space>
           <ThemeSpaceGeneric
