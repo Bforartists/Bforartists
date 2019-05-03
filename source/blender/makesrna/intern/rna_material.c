@@ -692,9 +692,9 @@ void RNA_def_material(BlenderRNA *brna)
       {MA_SPHERE, "SPHERE", ICON_MATSPHERE, "Sphere", "Sphere"},
       {MA_CUBE, "CUBE", ICON_MATCUBE, "Cube", "Cube"},
       {MA_HAIR, "HAIR", ICON_HAIR, "Hair", "Hair strands"},
-      {MA_SHADERBALL, "SHADERBALL", 0, "Shader Ball", "Shader Ball"},
-      {MA_CLOTH, "CLOTH", 0, "Cloth", "Cloth"},
-      {MA_FLUID, "FLUID", 0, "Fluid", "Fluid"},
+      {MA_SHADERBALL, "SHADERBALL", ICON_MATSHADERBALL, "Shader Ball", "Shader Ball"},
+      {MA_CLOTH, "CLOTH", ICON_MATCLOTH, "Cloth", "Cloth"},
+      {MA_FLUID, "FLUID", ICON_MATFLUID, "Fluid", "Fluid"},
       {0, NULL, 0, NULL, NULL},
   };
 
