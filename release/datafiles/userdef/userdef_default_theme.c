@@ -73,7 +73,7 @@ const bTheme U_theme_default = {
 		},
 		.wcol_option = {
 			.outline = RGBA(0x252525ff),
-			.inner = RGBA(0x394c66ff),
+			.inner = RGBA(0x808080ff),
 			.inner_sel = RGBA(0x5680c2ff),
 			.item = RGBA(0xb3ffb3ff),
 			.text = RGBA(0xccccccff),
