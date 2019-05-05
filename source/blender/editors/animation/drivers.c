@@ -1142,7 +1142,7 @@ void ANIM_OT_driver_button_remove(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = remove_driver_button_exec;
-  //op->poll = ??? // TODO: need to have some driver to be able to do this...
+  // op->poll = ??? // TODO: need to have some driver to be able to do this...
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
@@ -1179,7 +1179,7 @@ void ANIM_OT_driver_button_edit(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = edit_driver_button_exec;
-  //op->poll = ??? // TODO: need to have some driver to be able to do this...
+  // op->poll = ??? // TODO: need to have some driver to be able to do this...
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
@@ -1223,7 +1223,7 @@ void ANIM_OT_copy_driver_button(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = copy_driver_button_exec;
-  //op->poll = ??? // TODO: need to have some driver to be able to do this...
+  // op->poll = ??? // TODO: need to have some driver to be able to do this...
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
@@ -1273,7 +1273,7 @@ void ANIM_OT_paste_driver_button(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = paste_driver_button_exec;
-  //op->poll = ??? // TODO: need to have some driver to be able to do this...
+  // op->poll = ??? // TODO: need to have some driver to be able to do this...
 
   /* flags */
   ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;

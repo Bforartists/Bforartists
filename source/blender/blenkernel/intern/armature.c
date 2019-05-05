@@ -169,6 +169,28 @@ static void copy_bonechildren(Bone *bone_dst,
   }
 }
 
+static void copy_bonechildren_custom_handles(Bone *bone_dst, bArmature *arm_dst, GHash **bone_hash)
+{
+  Bone *bone_dst_child;
+
+  /* Lazily create the name -> bone hashtable. */
+  if ((bone_dst->bbone_prev || bone_dst->bbone_next) && *bone_hash == NULL) {
+    *bone_hash = BKE_armature_bone_from_name_map(arm_dst);
+  }
+
+  if (bone_dst->bbone_prev) {
+    bone_dst->bbone_prev = BLI_ghash_lookup(*bone_hash, bone_dst->bbone_prev->name);
+  }
+  if (bone_dst->bbone_next) {
+    bone_dst->bbone_next = BLI_ghash_lookup(*bone_hash, bone_dst->bbone_next->name);
+  }
+
+  for (bone_dst_child = bone_dst->childbase.first; bone_dst_child;
+       bone_dst_child = bone_dst_child->next) {
+    copy_bonechildren_custom_handles(bone_dst_child, arm_dst, bone_hash);
+  }
+}
+
 /**
  * Only copy internal data of Armature ID from source
  * to already allocated/initialized destination.
@@ -201,6 +223,17 @@ void BKE_armature_copy_data(Main *UNUSED(bmain),
   }
 
   arm_dst->act_bone = bone_dst_act;
+
+  /* Fix custom handle references. */
+  GHash *bone_hash = NULL; /* lazily created */
+
+  for (bone_dst = arm_dst->bonebase.first; bone_dst; bone_dst = bone_dst->next) {
+    copy_bonechildren_custom_handles(bone_dst, arm_dst, &bone_hash);
+  }
+
+  if (bone_hash) {
+    BLI_ghash_free(bone_hash, NULL, NULL);
+  }
 
   arm_dst->edbo = NULL;
   arm_dst->act_edbone = NULL;
@@ -1260,6 +1293,211 @@ static void pchan_bone_deform(bPoseChannel *pchan,
   (*contrib) += weight;
 }
 
+typedef struct ArmatureUserdata {
+  Object *armOb;
+  Object *target;
+  const Mesh *mesh;
+  float (*vertexCos)[3];
+  float (*defMats)[3][3];
+  float (*prevCos)[3];
+
+  bool use_envelope;
+  bool use_quaternion;
+  bool invert_vgroup;
+  bool use_dverts;
+
+  int armature_def_nr;
+
+  int target_totvert;
+  MDeformVert *dverts;
+
+  int defbase_tot;
+  bPoseChannel **defnrToPC;
+
+  float premat[4][4];
+  float postmat[4][4];
+} ArmatureUserdata;
+
+static void armature_vert_task(void *__restrict userdata,
+                               const int i,
+                               const ParallelRangeTLS *__restrict UNUSED(tls))
+{
+  const ArmatureUserdata *data = userdata;
+  float(*const vertexCos)[3] = data->vertexCos;
+  float(*const defMats)[3][3] = data->defMats;
+  float(*const prevCos)[3] = data->prevCos;
+  const bool use_envelope = data->use_envelope;
+  const bool use_quaternion = data->use_quaternion;
+  const bool use_dverts = data->use_dverts;
+  const int armature_def_nr = data->armature_def_nr;
+
+  MDeformVert *dvert;
+  DualQuat sumdq, *dq = NULL;
+  bPoseChannel *pchan;
+  float *co, dco[3];
+  float sumvec[3], summat[3][3];
+  float *vec = NULL, (*smat)[3] = NULL;
+  float contrib = 0.0f;
+  float armature_weight = 1.0f; /* default to 1 if no overall def group */
+  float prevco_weight = 1.0f;   /* weight for optional cached vertexcos */
+
+  if (use_quaternion) {
+    memset(&sumdq, 0, sizeof(DualQuat));
+    dq = &sumdq;
+  }
+  else {
+    sumvec[0] = sumvec[1] = sumvec[2] = 0.0f;
+    vec = sumvec;
+
+    if (defMats) {
+      zero_m3(summat);
+      smat = summat;
+    }
+  }
+
+  if (use_dverts || armature_def_nr != -1) {
+    if (data->mesh) {
+      BLI_assert(i < data->mesh->totvert);
+      dvert = data->mesh->dvert + i;
+    }
+    else if (data->dverts && i < data->target_totvert) {
+      dvert = data->dverts + i;
+    }
+    else {
+      dvert = NULL;
+    }
+  }
+  else {
+    dvert = NULL;
+  }
+
+  if (armature_def_nr != -1 && dvert) {
+    armature_weight = defvert_find_weight(dvert, armature_def_nr);
+
+    if (data->invert_vgroup) {
+      armature_weight = 1.0f - armature_weight;
+    }
+
+    /* hackish: the blending factor can be used for blending with prevCos too */
+    if (prevCos) {
+      prevco_weight = armature_weight;
+      armature_weight = 1.0f;
+    }
+  }
+
+  /* check if there's any  point in calculating for this vert */
+  if (armature_weight == 0.0f) {
+    return;
+  }
+
+  /* get the coord we work on */
+  co = prevCos ? prevCos[i] : vertexCos[i];
+
+  /* Apply the object's matrix */
+  mul_m4_v3(data->premat, co);
+
+  if (use_dverts && dvert && dvert->totweight) { /* use weight groups ? */
+    MDeformWeight *dw = dvert->dw;
+    int deformed = 0;
+    unsigned int j;
+    float acum_weight = 0;
+    for (j = dvert->totweight; j != 0; j--, dw++) {
+      const int index = dw->def_nr;
+      if (index >= 0 && index < data->defbase_tot && (pchan = data->defnrToPC[index])) {
+        float weight = dw->weight;
+        Bone *bone = pchan->bone;
+
+        deformed = 1;
+
+        if (bone && bone->flag & BONE_MULT_VG_ENV) {
+          weight *= distfactor_to_bone(
+              co, bone->arm_head, bone->arm_tail, bone->rad_head, bone->rad_tail, bone->dist);
+        }
+
+        /* check limit of weight */
+        if (data->target->type == OB_GPENCIL) {
+          if (acum_weight + weight >= 1.0f) {
+            weight = 1.0f - acum_weight;
+          }
+          acum_weight += weight;
+        }
+
+        pchan_bone_deform(pchan, weight, vec, dq, smat, co, &contrib);
+
+        /* if acumulated weight limit exceed, exit loop */
+        if ((data->target->type == OB_GPENCIL) && (acum_weight >= 1.0f)) {
+          break;
+        }
+      }
+    }
+    /* if there are vertexgroups but not groups with bones
+     * (like for softbody groups) */
+    if (deformed == 0 && use_envelope) {
+      for (pchan = data->armOb->pose->chanbase.first; pchan; pchan = pchan->next) {
+        if (!(pchan->bone->flag & BONE_NO_DEFORM)) {
+          contrib += dist_bone_deform(pchan, vec, dq, smat, co);
+        }
+      }
+    }
+  }
+  else if (use_envelope) {
+    for (pchan = data->armOb->pose->chanbase.first; pchan; pchan = pchan->next) {
+      if (!(pchan->bone->flag & BONE_NO_DEFORM)) {
+        contrib += dist_bone_deform(pchan, vec, dq, smat, co);
+      }
+    }
+  }
+
+  /* actually should be EPSILON? weight values and contrib can be like 10e-39 small */
+  if (contrib > 0.0001f) {
+    if (use_quaternion) {
+      normalize_dq(dq, contrib);
+
+      if (armature_weight != 1.0f) {
+        copy_v3_v3(dco, co);
+        mul_v3m3_dq(dco, (defMats) ? summat : NULL, dq);
+        sub_v3_v3(dco, co);
+        mul_v3_fl(dco, armature_weight);
+        add_v3_v3(co, dco);
+      }
+      else {
+        mul_v3m3_dq(co, (defMats) ? summat : NULL, dq);
+      }
+
+      smat = summat;
+    }
+    else {
+      mul_v3_fl(vec, armature_weight / contrib);
+      add_v3_v3v3(co, vec, co);
+    }
+
+    if (defMats) {
+      float pre[3][3], post[3][3], tmpmat[3][3];
+
+      copy_m3_m4(pre, data->premat);
+      copy_m3_m4(post, data->postmat);
+      copy_m3_m3(tmpmat, defMats[i]);
+
+      if (!use_quaternion) { /* quaternion already is scale corrected */
+        mul_m3_fl(smat, armature_weight / contrib);
+      }
+
+      mul_m3_series(defMats[i], post, smat, pre, tmpmat);
+    }
+  }
+
+  /* always, check above code */
+  mul_m4_v3(data->postmat, co);
+
+  /* interpolate with previous modifier position using weight group */
+  if (prevCos) {
+    float mw = 1.0f - prevco_weight;
+    vertexCos[i][0] = prevco_weight * vertexCos[i][0] + mw * co[0];
+    vertexCos[i][1] = prevco_weight * vertexCos[i][1] + mw * co[1];
+    vertexCos[i][2] = prevco_weight * vertexCos[i][2] + mw * co[2];
+  }
+}
+
 void armature_deform_verts(Object *armOb,
                            Object *target,
                            const Mesh *mesh,
@@ -1272,10 +1510,9 @@ void armature_deform_verts(Object *armOb,
                            bGPDstroke *gps)
 {
   bArmature *arm = armOb->data;
-  bPoseChannel *pchan, **defnrToPC = NULL;
+  bPoseChannel **defnrToPC = NULL;
   MDeformVert *dverts = NULL;
   bDeformGroup *dg;
-  float obinv[4][4], premat[4][4], postmat[4][4];
   const bool use_envelope = (deformflag & ARM_DEF_ENVELOPE) != 0;
   const bool use_quaternion = (deformflag & ARM_DEF_QUATERNION) != 0;
   const bool invert_vgroup = (deformflag & ARM_DEF_INVERT_VGROUP) != 0;
@@ -1295,11 +1532,6 @@ void armature_deform_verts(Object *armOb,
                armOb->id.name);
     BLI_assert(0);
   }
-
-  invert_m4_m4(obinv, target->obmat);
-  copy_m4_m4(premat, target->obmat);
-  mul_m4_m4m4(postmat, obinv, armOb->obmat);
-  invert_m4_m4(premat, postmat);
 
   /* get the def_nr for the overall armature vertex group if present */
   armature_def_nr = defgroup_name_index(target, defgrp_name);
@@ -1359,172 +1591,32 @@ void armature_deform_verts(Object *armOb,
     }
   }
 
-  for (i = 0; i < numVerts; i++) {
-    MDeformVert *dvert;
-    DualQuat sumdq, *dq = NULL;
-    float *co, dco[3];
-    float sumvec[3], summat[3][3];
-    float *vec = NULL, (*smat)[3] = NULL;
-    float contrib = 0.0f;
-    float armature_weight = 1.0f; /* default to 1 if no overall def group */
-    float prevco_weight = 1.0f;   /* weight for optional cached vertexcos */
+  ArmatureUserdata data = {.armOb = armOb,
+                           .target = target,
+                           .mesh = mesh,
+                           .vertexCos = vertexCos,
+                           .defMats = defMats,
+                           .prevCos = prevCos,
+                           .use_envelope = use_envelope,
+                           .use_quaternion = use_quaternion,
+                           .invert_vgroup = invert_vgroup,
+                           .use_dverts = use_dverts,
+                           .armature_def_nr = armature_def_nr,
+                           .target_totvert = target_totvert,
+                           .dverts = dverts,
+                           .defbase_tot = defbase_tot,
+                           .defnrToPC = defnrToPC};
 
-    if (use_quaternion) {
-      memset(&sumdq, 0, sizeof(DualQuat));
-      dq = &sumdq;
-    }
-    else {
-      sumvec[0] = sumvec[1] = sumvec[2] = 0.0f;
-      vec = sumvec;
+  float obinv[4][4];
+  invert_m4_m4(obinv, target->obmat);
 
-      if (defMats) {
-        zero_m3(summat);
-        smat = summat;
-      }
-    }
+  mul_m4_m4m4(data.postmat, obinv, armOb->obmat);
+  invert_m4_m4(data.premat, data.postmat);
 
-    if (use_dverts || armature_def_nr != -1) {
-      if (mesh) {
-        BLI_assert(i < mesh->totvert);
-        dvert = mesh->dvert + i;
-      }
-      else if (dverts && i < target_totvert) {
-        dvert = dverts + i;
-      }
-      else {
-        dvert = NULL;
-      }
-    }
-    else {
-      dvert = NULL;
-    }
-
-    if (armature_def_nr != -1 && dvert) {
-      armature_weight = defvert_find_weight(dvert, armature_def_nr);
-
-      if (invert_vgroup) {
-        armature_weight = 1.0f - armature_weight;
-      }
-
-      /* hackish: the blending factor can be used for blending with prevCos too */
-      if (prevCos) {
-        prevco_weight = armature_weight;
-        armature_weight = 1.0f;
-      }
-    }
-
-    /* check if there's any  point in calculating for this vert */
-    if (armature_weight == 0.0f) {
-      continue;
-    }
-
-    /* get the coord we work on */
-    co = prevCos ? prevCos[i] : vertexCos[i];
-
-    /* Apply the object's matrix */
-    mul_m4_v3(premat, co);
-
-    if (use_dverts && dvert && dvert->totweight) { /* use weight groups ? */
-      MDeformWeight *dw = dvert->dw;
-      int deformed = 0;
-      unsigned int j;
-      float acum_weight = 0;
-      for (j = dvert->totweight; j != 0; j--, dw++) {
-        const int index = dw->def_nr;
-        if (index >= 0 && index < defbase_tot && (pchan = defnrToPC[index])) {
-          float weight = dw->weight;
-          Bone *bone = pchan->bone;
-
-          deformed = 1;
-
-          if (bone && bone->flag & BONE_MULT_VG_ENV) {
-            weight *= distfactor_to_bone(
-                co, bone->arm_head, bone->arm_tail, bone->rad_head, bone->rad_tail, bone->dist);
-          }
-
-          /* check limit of weight */
-          if (target->type == OB_GPENCIL) {
-            if (acum_weight + weight >= 1.0f) {
-              weight = 1.0f - acum_weight;
-            }
-            acum_weight += weight;
-          }
-
-          pchan_bone_deform(pchan, weight, vec, dq, smat, co, &contrib);
-
-          /* if acumulated weight limit exceed, exit loop */
-          if ((target->type == OB_GPENCIL) && (acum_weight >= 1.0f)) {
-            break;
-          }
-        }
-      }
-      /* if there are vertexgroups but not groups with bones
-       * (like for softbody groups) */
-      if (deformed == 0 && use_envelope) {
-        for (pchan = armOb->pose->chanbase.first; pchan; pchan = pchan->next) {
-          if (!(pchan->bone->flag & BONE_NO_DEFORM)) {
-            contrib += dist_bone_deform(pchan, vec, dq, smat, co);
-          }
-        }
-      }
-    }
-    else if (use_envelope) {
-      for (pchan = armOb->pose->chanbase.first; pchan; pchan = pchan->next) {
-        if (!(pchan->bone->flag & BONE_NO_DEFORM)) {
-          contrib += dist_bone_deform(pchan, vec, dq, smat, co);
-        }
-      }
-    }
-
-    /* actually should be EPSILON? weight values and contrib can be like 10e-39 small */
-    if (contrib > 0.0001f) {
-      if (use_quaternion) {
-        normalize_dq(dq, contrib);
-
-        if (armature_weight != 1.0f) {
-          copy_v3_v3(dco, co);
-          mul_v3m3_dq(dco, (defMats) ? summat : NULL, dq);
-          sub_v3_v3(dco, co);
-          mul_v3_fl(dco, armature_weight);
-          add_v3_v3(co, dco);
-        }
-        else {
-          mul_v3m3_dq(co, (defMats) ? summat : NULL, dq);
-        }
-
-        smat = summat;
-      }
-      else {
-        mul_v3_fl(vec, armature_weight / contrib);
-        add_v3_v3v3(co, vec, co);
-      }
-
-      if (defMats) {
-        float pre[3][3], post[3][3], tmpmat[3][3];
-
-        copy_m3_m4(pre, premat);
-        copy_m3_m4(post, postmat);
-        copy_m3_m3(tmpmat, defMats[i]);
-
-        if (!use_quaternion) { /* quaternion already is scale corrected */
-          mul_m3_fl(smat, armature_weight / contrib);
-        }
-
-        mul_m3_series(defMats[i], post, smat, pre, tmpmat);
-      }
-    }
-
-    /* always, check above code */
-    mul_m4_v3(postmat, co);
-
-    /* interpolate with previous modifier position using weight group */
-    if (prevCos) {
-      float mw = 1.0f - prevco_weight;
-      vertexCos[i][0] = prevco_weight * vertexCos[i][0] + mw * co[0];
-      vertexCos[i][1] = prevco_weight * vertexCos[i][1] + mw * co[1];
-      vertexCos[i][2] = prevco_weight * vertexCos[i][2] + mw * co[2];
-    }
-  }
+  ParallelRangeSettings settings;
+  BLI_parallel_range_settings_defaults(&settings);
+  settings.min_iter_per_thread = 32;
+  BLI_task_parallel_range(0, numVerts, &data, armature_vert_task, &settings);
 
   if (defnrToPC) {
     MEM_freeN(defnrToPC);
@@ -1836,6 +1928,33 @@ void BKE_pchan_mat3_to_rot(bPoseChannel *pchan, float mat[3][3], bool use_compat
         mat3_normalized_to_eulO(pchan->eul, pchan->rotmode, mat);
       }
       break;
+  }
+}
+
+/**
+ * Same as #BKE_object_rot_to_mat3().
+ */
+void BKE_pchan_rot_to_mat3(const bPoseChannel *pchan, float mat[3][3])
+{
+  /* rotations may either be quats, eulers (with various rotation orders), or axis-angle */
+  if (pchan->rotmode > 0) {
+    /* euler rotations (will cause gimble lock,
+     * but this can be alleviated a bit with rotation orders) */
+    eulO_to_mat3(mat, pchan->eul, pchan->rotmode);
+  }
+  else if (pchan->rotmode == ROT_MODE_AXISANGLE) {
+    /* axis-angle - not really that great for 3D-changing orientations */
+    axis_angle_to_mat3(mat, pchan->rotAxis, pchan->rotAngle);
+  }
+  else {
+    /* quats are normalized before use to eliminate scaling issues */
+    float quat[4];
+
+    /* NOTE: we now don't normalize the stored values anymore,
+     * since this was kindof evil in some cases but if this proves to be too problematic,
+     * switch back to the old system of operating directly on the stored copy. */
+    normalize_qt_qt(quat, pchan->quat);
+    quat_to_mat3(mat, quat);
   }
 }
 
@@ -2435,7 +2554,7 @@ void BKE_pose_rebuild(Main *bmain, Object *ob, bArmature *arm, const bool do_id_
 /* ********************** THE POSE SOLVER ******************* */
 
 /* loc/rot/size to given mat4 */
-void BKE_pchan_to_mat4(bPoseChannel *pchan, float chan_mat[4][4])
+void BKE_pchan_to_mat4(const bPoseChannel *pchan, float chan_mat[4][4])
 {
   float smat[3][3];
   float rmat[3][3];
@@ -2444,26 +2563,8 @@ void BKE_pchan_to_mat4(bPoseChannel *pchan, float chan_mat[4][4])
   /* get scaling matrix */
   size_to_mat3(smat, pchan->size);
 
-  /* rotations may either be quats, eulers (with various rotation orders), or axis-angle */
-  if (pchan->rotmode > 0) {
-    /* euler rotations (will cause gimble lock,
-     * but this can be alleviated a bit with rotation orders) */
-    eulO_to_mat3(rmat, pchan->eul, pchan->rotmode);
-  }
-  else if (pchan->rotmode == ROT_MODE_AXISANGLE) {
-    /* axis-angle - not really that great for 3D-changing orientations */
-    axis_angle_to_mat3(rmat, pchan->rotAxis, pchan->rotAngle);
-  }
-  else {
-    /* quats are normalized before use to eliminate scaling issues */
-    float quat[4];
-
-    /* NOTE: we now don't normalize the stored values anymore,
-     * since this was kindof evil in some cases but if this proves to be too problematic,
-     * switch back to the old system of operating directly on the stored copy. */
-    normalize_qt_qt(quat, pchan->quat);
-    quat_to_mat3(rmat, quat);
-  }
+  /* get rotation matrix */
+  BKE_pchan_rot_to_mat3(pchan, rmat);
 
   /* calculate matrix of bone (as 3x3 matrix, but then copy the 4x4) */
   mul_m3_m3m3(tmat, rmat, smat);

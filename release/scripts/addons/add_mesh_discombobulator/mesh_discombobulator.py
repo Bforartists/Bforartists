@@ -666,13 +666,13 @@ class discombob_help(Menu):
         layout.label(text="In object mode, still needs a selection in Edit Mode")
         layout.separator()
         layout.label(text="Doodads - additional objects layered on the mesh surface")
-        layout.label("(Similar to dupliverts - but as one separate object)")
+        layout.label(text="(Similar to dupliverts - but as one separate object)")
         layout.separator()
         layout.label(text="Limitations:", icon="MOD_EXPLODE")
         layout.label(text="Be careful with the repeat protusions setting")
-        layout.label("(Runs reqursively)")
+        layout.label(text="(Runs reqursively)")
         layout.label(text="If possible, avoid using on a high polycount base mesh")
-        layout.label("(It can run out of memory and take a long time to compute)")
+        layout.label(text="(It can run out of memory and take a long time to compute)")
 
 class VIEW3D_OT_tools_discombobulate(Operator):
     bl_idname = "discombobulate.ops"

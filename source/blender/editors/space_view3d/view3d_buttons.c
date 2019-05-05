@@ -1066,7 +1066,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
              0,
              "");
     UI_block_align_begin(block);
-    const float lim = 10000;
+    const float lim = FLT_MAX;
     for (int i = 0; i < 3; i++) {
       uiBut *but;
       char text[3] = {'X' + i, ':', '\0'};
@@ -1605,7 +1605,7 @@ void view3d_buttons_register(ARegionType *art)
   pt = MEM_callocN(sizeof(PanelType), "spacetype view3d panel object");
   strcpy(pt->idname, "VIEW3D_PT_transform");
   strcpy(pt->label, N_("Transform")); /* XXX C panels unavailable through RNA bpy.types! */
-  strcpy(pt->category, "View");
+  strcpy(pt->category, "Item");
   strcpy(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
   pt->draw = view3d_panel_transform;
   pt->poll = view3d_panel_transform_poll;
@@ -1614,7 +1614,7 @@ void view3d_buttons_register(ARegionType *art)
   pt = MEM_callocN(sizeof(PanelType), "spacetype view3d panel vgroup");
   strcpy(pt->idname, "VIEW3D_PT_vgroup");
   strcpy(pt->label, N_("Vertex Weights")); /* XXX C panels unavailable through RNA bpy.types! */
-  strcpy(pt->category, "View");
+  strcpy(pt->category, "Item");
   strcpy(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
   pt->draw = view3d_panel_vgroup;
   pt->poll = view3d_panel_vgroup_poll;

@@ -347,7 +347,7 @@ uint ED_view3d_select_id_read_nearest(struct ViewContext *UNUSED(vc),
                                       uint *r_dist)
 {
   /* Create region around mouse cursor. This must be square and have an odd
-   * width, the spiralling algorithm does not work with arbitrary rectangles. */
+   * width, the spiraling algorithm does not work with arbitrary rectangles. */
   rcti rect;
   BLI_rcti_init_pt_radius(&rect, mval, *r_dist);
   rect.xmax += 1;
@@ -995,8 +995,8 @@ void ED_scene_draw_fps(Scene *scene, int xoffset, int *yoffset)
   if (tot) {
     fpsi->redrawtime_index = (fpsi->redrawtime_index + 1) % REDRAW_FRAME_AVERAGE;
 
-    //fpsi->redrawtime_index++;
-    //if (fpsi->redrawtime >= REDRAW_FRAME_AVERAGE) {
+    // fpsi->redrawtime_index++;
+    // if (fpsi->redrawtime >= REDRAW_FRAME_AVERAGE) {
     //  fpsi->redrawtime = 0;
     //}
 

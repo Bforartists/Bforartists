@@ -83,7 +83,7 @@ static void FHT(fREAL *data, unsigned int M, unsigned int inverse)
     n2 = n >> 1;
     if (n > 2) {
       fc = dc = cos(a);
-      fs = ds = sqrt(1.0 - fc * fc);  //sin(a);
+      fs = ds = sqrt(1.0 - fc * fc);  // sin(a);
       bd = n - 2;
       for (bl = 1; bl < n2; bl++) {
         fREAL *data_nbd = &data_n[bd];
@@ -154,7 +154,7 @@ static void FHT2D(
     for (i = 0; stm > 0; i++) {
 #define PRED(k) (((k & Nym) << Mx) + (k >> My))
       for (j = PRED(i); j > i; j = PRED(j)) {
-        ;
+        /* pass */
       }
       if (j < i) {
         continue;
@@ -431,7 +431,7 @@ void GlareFogGlowOperation::generateGlare(float *data,
       fcol[1] = expf(d * cs_g);
       fcol[2] = expf(d * cs_b);
       // linear window good enough here, visual result counts, not scientific analysis
-      //w = (1.0f-fabs(u))*(1.0f-fabs(v));
+      // w = (1.0f-fabs(u))*(1.0f-fabs(v));
       // actually, Hanning window is ok, cos^2 for some reason is slower
       w = (0.5f + 0.5f * cosf(u * (float)M_PI)) * (0.5f + 0.5f * cosf(v * (float)M_PI));
       mul_v3_fl(fcol, w);

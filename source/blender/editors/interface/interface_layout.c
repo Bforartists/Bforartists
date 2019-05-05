@@ -304,10 +304,14 @@ static int ui_text_icon_width(uiLayout *layout, const char *name, int icon, bool
       layout->item.flag |= UI_ITEM_MIN;
     }
     const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
-    /* it may seem odd that the icon only adds (unit_x / 4)
-     * but taking margins into account its fine */
-    return (UI_fontstyle_string_width(fstyle, name) +
-            (unit_x * ((compact ? 1.25f : 1.50f) + (icon ? 0.25f : 0.0f))));
+    float margin = compact ? 1.25 : 1.50;
+    if (icon) {
+      /* It may seem odd that the icon only adds (unit_x / 4)
+       * but taking margins into account its fine, except
+       * in compact mode a bit more margin is required. */
+      margin += compact ? 0.35 : 0.25;
+    }
+    return UI_fontstyle_string_width(fstyle, name) + (unit_x * margin);
   }
   else {
     return unit_x * 10;
@@ -840,7 +844,7 @@ static void ui_item_enum_expand_exec(uiLayout *layout,
       /* Separate items, potentially with a label. */
       if (next_item->identifier) {
         /* Item without identifier but with name:
-        * Add group label for the following items. */
+         * Add group label for the following items. */
         if (item->name) {
           if (!is_first) {
             uiItemS(block->curlayout);

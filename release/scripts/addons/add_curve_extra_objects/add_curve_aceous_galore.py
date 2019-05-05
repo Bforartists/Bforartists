@@ -776,6 +776,7 @@ def createCurve(context, vertArray, self, align_matrix):
 
         # set curveOptions
         newCurve.dimensions = self.shape
+        newCurve.use_path = True
         
         # create object with newCurve
         SimpleCurve = object_utils.object_data_add(context, newCurve, operator=self)  # place in active scene

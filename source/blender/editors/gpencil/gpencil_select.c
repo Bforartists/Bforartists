@@ -295,7 +295,7 @@ typedef enum eGP_SelectGrouped {
 
   /* TODO: All with same prefix -
    * Useful for isolating all layers for a particular character for instance. */
-  /* TODO: All with same appearance - colour/opacity/volumetric/fills ? */
+  /* TODO: All with same appearance - color/opacity/volumetric/fills ? */
 } eGP_SelectGrouped;
 
 /* ----------------------------------- */
@@ -1299,6 +1299,7 @@ static int gpencil_select_exec(bContext *C, wmOperator *op)
   bool deselect = RNA_boolean_get(op->ptr, "deselect");
   bool toggle = RNA_boolean_get(op->ptr, "toggle");
   bool whole = RNA_boolean_get(op->ptr, "entire_strokes");
+  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
 
   int mval[2] = {0};
 
@@ -1361,15 +1362,18 @@ static int gpencil_select_exec(bContext *C, wmOperator *op)
 
   /* Abort if nothing hit... */
   if (ELEM(NULL, hit_stroke, hit_point)) {
+    if (deselect_all) {
+      /* since left mouse select change, deselect all if click outside any hit */
+      deselect_all_selected(C);
 
-    /* since left mouse select change, deselect all if click outside any hit */
-    deselect_all_selected(C);
+      /* copy on write tag is needed, or else no refresh happens */
+      DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
+      DEG_id_tag_update(&gpd->id, ID_RECALC_COPY_ON_WRITE);
+      WM_event_add_notifier(C, NC_GPENCIL | NA_SELECTED, NULL);
+      WM_event_add_notifier(C, NC_GEOM | ND_SELECT, NULL);
 
-    /* copy on write tag is needed, or else no refresh happens */
-    DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
-    DEG_id_tag_update(&gpd->id, ID_RECALC_COPY_ON_WRITE);
-    WM_event_add_notifier(C, NC_GPENCIL | NA_SELECTED, NULL);
-    WM_event_add_notifier(C, NC_GEOM | ND_SELECT, NULL);
+      return OPERATOR_FINISHED;
+    }
 
     return OPERATOR_CANCELLED;
   }

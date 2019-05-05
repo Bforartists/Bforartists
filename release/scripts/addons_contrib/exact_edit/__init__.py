@@ -43,7 +43,7 @@ import bpy
 class XEDIT_PT_ui_pan(bpy.types.Panel):
     # Creates a panel in the 3d view N Panel
     bl_label = 'Exact Edit'
-    bl_idname = 'xedit_base_panel'
+    bl_idname = 'XEDIT_PT_base_panel'
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     #bl_context = 'objectmode'
@@ -52,8 +52,8 @@ class XEDIT_PT_ui_pan(bpy.types.Panel):
     def draw(self, context):
         row = self.layout.row(align=True)
         col = row.column()
-        col.operator("view3d.xedit_set_meas_op", text="Set Measure", icon="EDIT")
-        col.operator("view3d.xedit_free_rotate_op", text="Free Rotate", icon="FORCE_MAGNETIC")
+        col.operator("view3d.xedit_set_meas_op", text="Set Measure")
+        col.operator("view3d.xedit_free_rotate_op", text="Free Rotate")
 
 
 classes = (

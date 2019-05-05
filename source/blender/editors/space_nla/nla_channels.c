@@ -136,7 +136,6 @@ static int mouse_nla_channels(
         if (selectmode == SELECT_INVERT) {
           /* swap select */
           ED_object_base_select(base, BA_INVERT);
-          BKE_scene_object_base_flag_sync_from_base(base);
 
           if (adt) {
             adt->flag ^= ADT_UI_SELECTED;
@@ -147,7 +146,6 @@ static int mouse_nla_channels(
           /* TODO: should this deselect all other types of channels too? */
           for (Base *b = view_layer->object_bases.first; b; b = b->next) {
             ED_object_base_select(b, BA_DESELECT);
-            BKE_scene_object_base_flag_sync_from_base(b);
             if (b->object->adt) {
               b->object->adt->flag &= ~(ADT_UI_SELECTED | ADT_UI_ACTIVE);
             }
@@ -155,7 +153,6 @@ static int mouse_nla_channels(
 
           /* select object now */
           ED_object_base_select(base, BA_SELECT);
-          BKE_scene_object_base_flag_sync_from_base(base);
           if (adt) {
             adt->flag |= ADT_UI_SELECTED;
           }
@@ -387,19 +384,12 @@ static int nlachannels_mouseclick_invoke(bContext *C, wmOperator *op, const wmEv
     selectmode = SELECT_REPLACE;
   }
 
-  /**
-   * Figure out which channel user clicked in:
-   *
-   * \note Although channels technically start at y= NLACHANNEL_FIRST,
-   * we need to adjust by half a channel's height so that the tops of channels get caught ok.
-   * Since NLACHANNEL_FIRST is really NLACHANNEL_HEIGHT, we simply use NLACHANNEL_HEIGHT_HALF.
-   */
+  /* Figure out which channel user clicked in. */
   UI_view2d_region_to_view(v2d, event->mval[0], event->mval[1], &x, &y);
-  UI_view2d_listview_view_to_cell(v2d,
-                                  NLACHANNEL_NAMEWIDTH,
+  UI_view2d_listview_view_to_cell(NLACHANNEL_NAMEWIDTH,
                                   NLACHANNEL_STEP(snla),
                                   0,
-                                  (float)NLACHANNEL_HEIGHT_HALF(snla),
+                                  NLACHANNEL_FIRST_TOP(snla),
                                   x,
                                   y,
                                   NULL,

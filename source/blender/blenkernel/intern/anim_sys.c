@@ -1832,25 +1832,42 @@ bool BKE_animsys_execute_fcurve(PointerRNA *ptr, FCurve *fcu, float curval)
   return ok;
 }
 
+static bool animsys_construct_orig_pointer_rna(const PointerRNA *ptr, PointerRNA *ptr_orig)
+{
+  *ptr_orig = *ptr;
+  /* NOTE: nlastrip_evaluate_controls() creates PointerRNA with ID of NULL. Technically, this is
+   * not a valid pointer, but there are exceptions in various places of this file which handles
+   * such pointers.
+   * We do special trickery here as well, to quickly go from evaluated to original NlaStrip. */
+  if (ptr->id.data == NULL) {
+    if (ptr->type != &RNA_NlaStrip) {
+      return false;
+    }
+    NlaStrip *strip = ((NlaStrip *)ptr_orig->data);
+    if (strip->orig_strip == NULL) {
+      return false;
+    }
+    ptr_orig->data = strip->orig_strip;
+  }
+  else {
+    ptr_orig->id.data = ((ID *)ptr_orig->id.data)->orig_id;
+    ptr_orig->data = ptr_orig->id.data;
+  }
+  return true;
+}
+
 static void animsys_write_orig_anim_rna(PointerRNA *ptr,
                                         const char *rna_path,
                                         int array_index,
                                         float value)
 {
-  /* Pointer is expected to be an ID pointer, if it's not -- we are doomed.
-   *
-   * NOTE: It is possible to have animation data on NLA strip, see T57360.
-   * TODO(sergey): Find solution for those cases.
-   */
-  if (ptr->id.data == NULL) {
+  PointerRNA ptr_orig;
+  if (!animsys_construct_orig_pointer_rna(ptr, &ptr_orig)) {
     return;
   }
-  PointerRNA orig_ptr = *ptr;
-  orig_ptr.id.data = ((ID *)orig_ptr.id.data)->orig_id;
-  orig_ptr.data = orig_ptr.id.data;
   PathResolvedRNA orig_anim_rna;
-  /* TODO(sergey): Is there a faster way to get anim_rna of original ID? */
-  if (animsys_store_rna_setting(&orig_ptr, rna_path, array_index, &orig_anim_rna)) {
+  /* TODO(sergey): Should be possible to cache resolved path in dependency graph somehow. */
+  if (animsys_store_rna_setting(&ptr_orig, rna_path, array_index, &orig_anim_rna)) {
     animsys_write_rna_setting(&orig_anim_rna, value);
   }
 }
@@ -3889,10 +3906,10 @@ void BKE_animsys_evaluate_all_animation(Main *main,
   }
 
   /* macros for less typing
-     * - only evaluate animation data for id if it has users (and not just fake ones)
-     * - whether animdata exists is checked for by the evaluation function, though taking
-     *   this outside of the function may make things slightly faster?
-     */
+   * - only evaluate animation data for id if it has users (and not just fake ones)
+   * - whether animdata exists is checked for by the evaluation function, though taking
+   *   this outside of the function may make things slightly faster?
+   */
 #define EVAL_ANIM_IDS(first, aflag) \
   for (id = first; id; id = id->next) { \
     if (ID_REAL_USERS(id) > 0) { \
@@ -3903,11 +3920,11 @@ void BKE_animsys_evaluate_all_animation(Main *main,
   (void)0
 
   /* another macro for the "embedded" nodetree cases
-     * - this is like EVAL_ANIM_IDS, but this handles the case "embedded nodetrees"
-     *   (i.e. scene/material/texture->nodetree) which we need a special exception
-     *   for, otherwise they'd get skipped
-     * - ntp = "node tree parent" = datablock where node tree stuff resides
-     */
+   * - this is like EVAL_ANIM_IDS, but this handles the case "embedded nodetrees"
+   *   (i.e. scene/material/texture->nodetree) which we need a special exception
+   *   for, otherwise they'd get skipped
+   * - ntp = "node tree parent" = datablock where node tree stuff resides
+   */
 #define EVAL_ANIM_NODETREE_IDS(first, NtId_Type, aflag) \
   for (id = first; id; id = id->next) { \
     if (ID_REAL_USERS(id) > 0) { \
@@ -4079,7 +4096,7 @@ void BKE_animsys_eval_driver(Depsgraph *depsgraph,
       /* evaluate this using values set already in other places
        * NOTE: for 'layering' option later on, we should check if we should remove old value before
        * adding new to only be done when drivers only changed */
-      //printf("\told val = %f\n", fcu->curval);
+      // printf("\told val = %f\n", fcu->curval);
 
       PathResolvedRNA anim_rna;
       if (animsys_store_rna_setting(&id_ptr, fcu->rna_path, fcu->array_index, &anim_rna)) {

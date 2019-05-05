@@ -64,6 +64,8 @@
 #  include <AUD_Sequence.h>
 #endif
 
+#include "DEG_depsgraph.h"
+
 /* own include */
 #include "sequencer_intern.h"
 
@@ -355,6 +357,7 @@ static int sequencer_add_scene_strip_exec(bContext *C, wmOperator *op)
   sequencer_add_apply_replace_sel(C, op, seq);
   sequencer_add_apply_overlap(C, op, seq);
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -442,6 +445,7 @@ static int sequencer_add_movieclip_strip_exec(bContext *C, wmOperator *op)
   sequencer_add_apply_replace_sel(C, op, seq);
   sequencer_add_apply_overlap(C, op, seq);
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -528,6 +532,7 @@ static int sequencer_add_mask_strip_exec(bContext *C, wmOperator *op)
   sequencer_add_apply_replace_sel(C, op, seq);
   sequencer_add_apply_overlap(C, op, seq);
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -642,6 +647,7 @@ static int sequencer_add_generic_strip_exec(bContext *C, wmOperator *op, SeqLoad
   BKE_sequencer_sort(scene);
   BKE_sequencer_update_muting(ed);
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -716,7 +722,7 @@ static int sequencer_add_movie_strip_invoke(bContext *C,
   WM_event_add_fileselect(C, op);
   return OPERATOR_RUNNING_MODAL;
 
-  //return sequencer_add_movie_strip_exec(C, op);
+  // return sequencer_add_movie_strip_exec(C, op);
 }
 
 static void sequencer_add_draw(bContext *UNUSED(C), wmOperator *op)
@@ -798,7 +804,7 @@ static int sequencer_add_sound_strip_invoke(bContext *C,
   WM_event_add_fileselect(C, op);
   return OPERATOR_RUNNING_MODAL;
 
-  //return sequencer_add_sound_strip_exec(C, op);
+  // return sequencer_add_sound_strip_exec(C, op);
 }
 
 void SEQUENCER_OT_sound_strip_add(struct wmOperatorType *ot)
@@ -969,6 +975,7 @@ static int sequencer_add_image_strip_exec(bContext *C, wmOperator *op)
     MEM_freeN(op->customdata);
   }
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;
@@ -1124,6 +1131,7 @@ static int sequencer_add_effect_strip_exec(bContext *C, wmOperator *op)
    * it was NOT called in blender 2.4x, but wont hurt */
   BKE_sequencer_sort(scene);
 
+  DEG_id_tag_update(&scene->id, ID_RECALC_SEQUENCER);
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER, scene);
 
   return OPERATOR_FINISHED;

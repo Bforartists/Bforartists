@@ -25,14 +25,22 @@ class Stats:
     def _gettime(self):
         """return the time in seconds used by the current process."""
         if psutil_available:
-            m=self.process.get_cpu_times()
+            """ Handle psutil API change. """
+            if hasattr(self.process, "get_cpu_times"):
+                m = self.process.get_cpu_times()
+            else:
+                m = self.process.cpu_times()
             return m.user + m.system
         return time()
 
     def _getmem(self):
         """return the resident set size in bytes used by the current process."""
         if psutil_available:
-            m = self.process.get_memory_info()
+            """ Handle psutil API change. """
+            if hasattr(self.process, "get_memory_info"):
+                m = self.process.get_memory_info()
+            else:
+                m = self.process.memory_info()
             return m.rss
         return 0
 

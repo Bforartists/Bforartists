@@ -508,7 +508,7 @@ typedef enum eDriver_Flags {
   DRIVER_FLAG_DEPRECATED = (1 << 1),
   /** Driver does replace value, but overrides (for layering of animation over driver) */
   // TODO: this needs to be implemented at some stage or left out...
-  //DRIVER_FLAG_LAYERING  = (1 << 2),
+  // DRIVER_FLAG_LAYERING  = (1 << 2),
   /** Use when the expression needs to be recompiled. */
   DRIVER_FLAG_RECOMPILE = (1 << 3),
   /** The names are cached so they don't need have python unicode versions created each time */
@@ -710,6 +710,11 @@ typedef struct NlaStrip {
   /** Settings. */
   int flag;
   char _pad2[4];
+
+  /* Pointer to an original NLA strip. */
+  struct NlaStrip *orig_strip;
+
+  void *_pad3;
 } NlaStrip;
 
 /* NLA Strip Blending Mode */
