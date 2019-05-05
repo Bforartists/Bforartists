@@ -930,8 +930,8 @@ class MATLIB_OT_operator(Operator):
         layout = self.layout
         #cmd = LIBRARY_ADD
         if self.cmd == "LIBRARY_ADD":
-            #layout.label("Select a blend file as library or")
-            #layout.label("Type a name to create a new library.")
+            #layout.label(text="Select a blend file as library or")
+            #layout.label(text="Type a name to create a new library.")
             layout.prop(self, "category", text="Library")
         elif self.cmd == "FILTER_ADD":
             layout.prop(self, "category")
@@ -1134,8 +1134,6 @@ class MATLIB_PT_vxPanel(Panel):
 
         #libraries
         row = layout.row(align=True)
-    
-        
         if matlib.current_library:
             text = matlib.current_library.shortname
         else:
@@ -1198,15 +1196,15 @@ class MATLIB_PT_vxPanel(Panel):
 #      if (matlib.current_library):
 #        row.label(matlib.current_library.name)
 #      else:
-#        row.label("Library not found!.")
+#        row.label(text="Library not found!.")
 """
 classes = [
 matlibMaterials,
 matlibProperties,
 EmptyGroup,
-MATLIB_PT_vxPanel, 
-MATLIB_OT_operator, 
-MATLIB_MT_LibsMenu, 
+MATLIB_PT_vxPanel,
+MATLIB_OT_operator,
+MATLIB_MT_LibsMenu,
 MATLIB_MT_CatsMenu
 ]
 #print(bpy.context.scene)

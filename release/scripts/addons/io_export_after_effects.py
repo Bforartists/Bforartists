@@ -738,7 +738,7 @@ class ExportJsx(bpy.types.Operator, ExportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label('Size fo AE Comp (pixels per 1 BU)')
+        box.label(text='Size fo AE Comp (pixels per 1 BU)')
         box.prop(self, 'ae_size')
         box.label(text='Animation:')
         box.prop(self, 'include_animation')

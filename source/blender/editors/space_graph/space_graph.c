@@ -198,10 +198,9 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   Scene *scene = CTX_data_scene(C);
   bAnimContext ac;
   View2D *v2d = &ar->v2d;
-  View2DGrid *grid;
   View2DScrollers *scrollers;
   float col[3];
-  short unitx = 0, unity = V2D_UNIT_VALUES, cfra_flag = 0;
+  short cfra_flag = 0;
 
   /* clear and setup matrix */
   UI_GetThemeColor3fv(TH_BACK, col);
@@ -211,18 +210,9 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_ortho(v2d);
 
   /* grid */
-  unitx = ((sipo->mode == SIPO_MODE_ANIMATION) && (sipo->flag & SIPO_DRAWTIME)) ?
-              V2D_UNIT_SECONDS :
-              V2D_UNIT_FRAMESCALE;
-  grid = UI_view2d_grid_calc(CTX_data_scene(C),
-                             v2d,
-                             unitx,
-                             V2D_GRID_NOCLAMP,
-                             unity,
-                             V2D_GRID_NOCLAMP,
-                             ar->winx,
-                             ar->winy);
-  UI_view2d_grid_draw(v2d, grid, V2D_GRIDLINES_ALL);
+  bool display_seconds = (sipo->mode == SIPO_MODE_ANIMATION) && (sipo->flag & SIPO_DRAWTIME);
+  UI_view2d_draw_lines_x__frames_or_seconds(v2d, scene, display_seconds);
+  UI_view2d_draw_lines_y__values(v2d);
 
   ED_region_draw_cb_draw(C, ar, REGION_DRAW_PRE_VIEW);
 
@@ -237,8 +227,8 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
     graph_draw_ghost_curves(&ac, sipo, ar);
 
     /* draw curves twice - unselected, then selected, so that the are fewer occlusion problems */
-    graph_draw_curves(&ac, sipo, ar, grid, 0);
-    graph_draw_curves(&ac, sipo, ar, grid, 1);
+    graph_draw_curves(&ac, sipo, ar, 0);
+    graph_draw_curves(&ac, sipo, ar, 1);
 
     /* XXX the slow way to set tot rect... but for nice sliders needed (ton) */
     get_graph_keyframe_extents(
@@ -247,9 +237,6 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
     v2d->tot.xmin -= 10.0f;
     v2d->tot.xmax += 10.0f;
   }
-
-  /* only free grid after drawing data, as we need to use it to determine sampling rate */
-  UI_view2d_grid_free(grid);
 
   if (((sipo->flag & SIPO_NODRAWCURSOR) == 0) || (sipo->mode == SIPO_MODE_DRIVERS)) {
     uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
@@ -324,10 +311,13 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
 
   /* scrollers */
   // FIXME: args for scrollers depend on the type of data being shown...
-  scrollers = UI_view2d_scrollers_calc(
-      C, v2d, NULL, unitx, V2D_GRID_NOCLAMP, unity, V2D_GRID_NOCLAMP);
-  UI_view2d_scrollers_draw(C, v2d, scrollers);
+  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
+  UI_view2d_scrollers_draw(v2d, scrollers);
   UI_view2d_scrollers_free(scrollers);
+
+  /* scale numbers */
+  UI_view2d_draw_scale_x__frames_or_seconds(ar, v2d, &v2d->hor, scene, display_seconds, TH_TEXT);
+  UI_view2d_draw_scale_y__values(ar, v2d, &v2d->vert, TH_TEXT);
 
   /* draw current frame number-indicator on top of scrollers */
   if ((sipo->mode != SIPO_MODE_DRIVERS) && ((sipo->flag & SIPO_NODRAWCFRANUM) == 0)) {
@@ -381,9 +371,8 @@ static void graph_channel_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_restore(C);
 
   /* scrollers */
-  scrollers = UI_view2d_scrollers_calc(
-      C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
-  UI_view2d_scrollers_draw(C, v2d, scrollers);
+  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
+  UI_view2d_scrollers_draw(v2d, scrollers);
   UI_view2d_scrollers_free(scrollers);
 }
 
@@ -627,7 +616,7 @@ static void graph_listener(wmWindow *UNUSED(win),
       break;
 
       // XXX: restore the case below if not enough updates occur...
-      //default:
+      // default:
       //  if (wmn->data == ND_KEYS)
       //      ED_area_tag_redraw(sa);
   }

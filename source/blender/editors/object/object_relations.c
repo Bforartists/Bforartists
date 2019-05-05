@@ -998,15 +998,13 @@ static int parent_set_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int parent_set_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
+static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 {
   Object *parent = ED_object_active_context(C);
   uiPopupMenu *pup = UI_popup_menu_begin(C, IFACE_("Set Parent To"), ICON_NONE);
   uiLayout *layout = UI_popup_menu_layout(pup);
 
-  wmOperatorType *ot = WM_operatortype_find("OBJECT_OT_parent_set", true);
   PointerRNA opptr;
-
 #if 0
   uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_OBJECT);
 #else
@@ -1075,6 +1073,14 @@ static int parent_set_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent 
   UI_popup_menu_end(C, pup);
 
   return OPERATOR_INTERFACE;
+}
+
+static int parent_set_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+  if (RNA_property_is_set(op->ptr, op->type->prop)) {
+    return parent_set_exec(C, op);
+  }
+  return parent_set_invoke_menu(C, op->type);
 }
 
 static bool parent_set_poll_property(const bContext *UNUSED(C),
@@ -2160,8 +2166,7 @@ static bool make_local_all__instance_indirect_unused(Main *bmain,
 
       BKE_collection_object_add(bmain, collection, ob);
       base = BKE_view_layer_base_find(view_layer, ob);
-      base->flag |= BASE_SELECTED;
-      BKE_scene_object_base_flag_sync_from_base(base);
+      ED_object_base_select(base, BA_SELECT);
       DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
 
       changed = true;

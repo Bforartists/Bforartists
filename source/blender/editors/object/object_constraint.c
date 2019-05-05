@@ -160,7 +160,7 @@ static void validate_pyconstraint_cb(Main *bmain, void *arg1, void *arg2)
   if (index) {
     /* innovative use of a for...loop to search */
     for (text = bmain->texts.first, i = 1; text && index != i; i++, text = text->id.next) {
-      ;
+      /* pass */
     }
   }
   data->text = text;
@@ -1832,9 +1832,8 @@ static bool get_new_constraint_target(
 
     /* transform cent to global coords for loc */
     if (pchanact) {
-      /* since by default, IK targets the tip of the last bone, use the tip of the active PoseChannel
-       * if adding a target for an IK Constraint
-       */
+      /* Since by default, IK targets the tip of the last bone,
+       * use the tip of the active PoseChannel if adding a target for an IK Constraint. */
       if (con_type == CONSTRAINT_TYPE_KINEMATIC) {
         mul_v3_m4v3(obt->loc, obact->obmat, pchanact->pose_tail);
       }
@@ -1848,7 +1847,7 @@ static bool get_new_constraint_target(
 
     /* restore, BKE_object_add sets active */
     BASACT(view_layer) = base;
-    base->flag |= BASE_SELECTED;
+    ED_object_base_select(base, BA_SELECT);
 
     /* make our new target the new object */
     *tar_ob = obt;
@@ -1881,14 +1880,6 @@ static int constraint_add_exec(
   }
   /* check if constraint to be added is valid for the given constraints stack */
   if (type == CONSTRAINT_TYPE_NULL) {
-    return OPERATOR_CANCELLED;
-  }
-  if ((type == CONSTRAINT_TYPE_KINEMATIC) && ((!pchan) || (list != &pchan->constraints))) {
-    BKE_report(op->reports, RPT_ERROR, "IK constraint can only be added to bones");
-    return OPERATOR_CANCELLED;
-  }
-  if ((type == CONSTRAINT_TYPE_SPLINEIK) && ((!pchan) || (list != &pchan->constraints))) {
-    BKE_report(op->reports, RPT_ERROR, "Spline IK constraint can only be added to bones");
     return OPERATOR_CANCELLED;
   }
 
@@ -2028,8 +2019,33 @@ static int pose_constraint_add_exec(bContext *C, wmOperator *op)
 
 /* ------------------ */
 
+/* Filters constraints that are only compatible with bones */
+static const EnumPropertyItem *object_constraint_add_itemf(bContext *UNUSED(C),
+                                                           PointerRNA *UNUSED(ptr),
+                                                           PropertyRNA *UNUSED(prop),
+                                                           bool *r_free)
+{
+  const EnumPropertyItem *item = rna_enum_constraint_type_items;
+  EnumPropertyItem *object_constraint_items = NULL;
+  int totitem = 0;
+
+  while(item->identifier) {
+    if((item->value != CONSTRAINT_TYPE_KINEMATIC) && (item->value != CONSTRAINT_TYPE_SPLINEIK)) {
+      RNA_enum_item_add(&object_constraint_items, &totitem, item);
+    }
+    item++;
+  }
+
+  RNA_enum_item_end(&object_constraint_items, &totitem);
+  *r_free = true;
+
+  return object_constraint_items;
+}
+
 void OBJECT_OT_constraint_add(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Add Constraint";
   ot->description = "Add Constraint\nAdd a constraint to the active object";
@@ -2044,11 +2060,15 @@ void OBJECT_OT_constraint_add(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
-  ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_constraint_type_items, 0, "Type", "");
+  prop = RNA_def_enum(ot->srna, "type", DummyRNA_NULL_items, 0, "Type", "");
+  RNA_def_enum_funcs(prop, object_constraint_add_itemf);
+  ot->prop = prop;
 }
 
 void OBJECT_OT_constraint_add_with_targets(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Add Constraint (with Targets)";
   ot->description =
@@ -2065,7 +2085,9 @@ void OBJECT_OT_constraint_add_with_targets(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
-  ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_constraint_type_items, 0, "Type", "");
+  prop = RNA_def_enum(ot->srna, "type", DummyRNA_NULL_items, 0, "Type", "");
+  RNA_def_enum_funcs(prop, object_constraint_add_itemf);
+  ot->prop = prop;
 }
 
 void POSE_OT_constraint_add(wmOperatorType *ot)
@@ -2219,7 +2241,8 @@ static int pose_ik_clear_exec(bContext *C, wmOperator *UNUSED(op))
   CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob) {
     bConstraint *con, *next;
 
-    /* TODO: should we be checking if these constraints were local before we try and remove them? */
+    /* TODO: should we be checking if these constraints were local
+     * before we try and remove them? */
     for (con = pchan->constraints.first; con; con = next) {
       next = con->next;
       if (con->type == CONSTRAINT_TYPE_KINEMATIC) {

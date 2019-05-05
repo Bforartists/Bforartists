@@ -3305,7 +3305,8 @@ static void direct_link_cachefile(FileData *fd, CacheFile *cache_file)
 {
   BLI_listbase_clear(&cache_file->object_paths);
   cache_file->handle = NULL;
-  cache_file->handle_mutex = NULL;
+  cache_file->handle_filepath[0] = '\0';
+  cache_file->handle_readers = NULL;
 
   /* relink animdata */
   cache_file->adt = newdataadr(fd, cache_file->adt);
@@ -3739,6 +3740,7 @@ static void direct_link_constraints(FileData *fd, ListBase *lb)
       case CONSTRAINT_TYPE_TRANSFORM_CACHE: {
         bTransformCacheConstraint *data = con->data;
         data->reader = NULL;
+        data->reader_object_path[0] = '\0';
       }
     }
   }
@@ -5745,6 +5747,7 @@ static void direct_link_modifiers(FileData *fd, ListBase *lb)
     else if (md->type == eModifierType_MeshSequenceCache) {
       MeshSeqCacheModifierData *msmcd = (MeshSeqCacheModifierData *)md;
       msmcd->reader = NULL;
+      msmcd->reader_object_path[0] = '\0';
     }
     else if (md->type == eModifierType_SurfaceDeform) {
       SurfaceDeformModifierData *smd = (SurfaceDeformModifierData *)md;
@@ -6462,9 +6465,7 @@ static void lib_link_scene(FileData *fd, Main *main)
         seq->scene_sound = NULL;
         if (seq->scene) {
           seq->scene = newlibadr(fd, sce->id.lib, seq->scene);
-          if (seq->scene) {
-            seq->scene_sound = BKE_sound_scene_add_scene_sound_defaults(sce, seq);
-          }
+          seq->scene_sound = NULL;
         }
         if (seq->clip) {
           seq->clip = newlibadr_us(fd, sce->id.lib, seq->clip);
@@ -6485,7 +6486,7 @@ static void lib_link_scene(FileData *fd, Main *main)
           }
           if (seq->sound) {
             id_us_plus_no_lib((ID *)seq->sound);
-            seq->scene_sound = BKE_sound_add_scene_sound_defaults(sce, seq);
+            seq->scene_sound = NULL;
           }
         }
         if (seq->type == SEQ_TYPE_TEXT) {
@@ -6503,9 +6504,6 @@ static void lib_link_scene(FileData *fd, Main *main)
           marker->camera = newlibadr(fd, sce->id.lib, marker->camera);
         }
       }
-
-      BKE_sequencer_update_muting(sce->ed);
-      BKE_sequencer_update_sound_bounds_all(sce);
 
       /* rigidbody world relies on it's linked collections */
       if (sce->rigidbody_world) {
@@ -6678,7 +6676,7 @@ static void direct_link_scene(FileData *fd, Scene *sce)
   memset(&sce->customdata_mask, 0, sizeof(sce->customdata_mask));
   memset(&sce->customdata_mask_modal, 0, sizeof(sce->customdata_mask_modal));
 
-  BKE_sound_create_scene(sce);
+  BKE_sound_reset_scene_runtime(sce);
 
   /* set users to one by default, not in lib-link, this will increase it for compo nodes */
   id_us_ensure_real(&sce->id);
@@ -6735,6 +6733,7 @@ static void direct_link_scene(FileData *fd, Scene *sce)
     ed = sce->ed = newdataadr(fd, sce->ed);
 
     ed->act_seq = newdataadr(fd, ed->act_seq);
+    ed->cache = NULL;
 
     /* recursive link sequences, lb will be correctly initialized */
     link_recurs_seq(fd, &ed->seqbase);
@@ -6862,6 +6861,11 @@ static void direct_link_scene(FileData *fd, Scene *sce)
       }
     }
   }
+
+#ifdef DURIAN_CAMERA_SWITCH
+  /* Runtime */
+  sce->r.mode &= ~R_NO_CAMERA_SWITCH;
+#endif
 
   sce->r.avicodecdata = newdataadr(fd, sce->r.avicodecdata);
   if (sce->r.avicodecdata) {
@@ -7361,7 +7365,7 @@ static void direct_link_area(FileData *fd, ScrArea *area)
       link_list(fd, &sconsole->scrollback);
       link_list(fd, &sconsole->history);
 
-      //for (cl= sconsole->scrollback.first; cl; cl= cl->next)
+      // for (cl= sconsole->scrollback.first; cl; cl= cl->next)
       //  cl->line= newdataadr(fd, cl->line);
 
       /* comma expressions, (e.g. expr1, expr2, expr3) evaluate each expression,
@@ -8049,7 +8053,8 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map,
 
             BLI_mempool_iternew(so->treestore, &iter);
             while ((tselem = BLI_mempool_iterstep(&iter))) {
-              /* Do not try to restore pointers to drivers/sequence/etc., can crash in undo case! */
+              /* Do not try to restore pointers to drivers/sequence/etc.,
+               * can crash in undo case! */
               if (TSE_IS_REAL_ID(tselem)) {
                 tselem->id = restore_pointer_by_name(id_map, tselem->id, USER_IGNORE);
               }
@@ -8396,10 +8401,9 @@ static void direct_link_sound(FileData *fd, bSound *sound)
     sound->waveform = NULL;
   }
 
-  if (sound->spinlock) {
-    sound->spinlock = MEM_mallocN(sizeof(SpinLock), "sound_spinlock");
-    BLI_spin_init(sound->spinlock);
-  }
+  sound->spinlock = MEM_mallocN(sizeof(SpinLock), "sound_spinlock");
+  BLI_spin_init(sound->spinlock);
+
   /* clear waveform loading flag */
   sound->tags &= ~SOUND_TAGS_WAVEFORM_LOADING;
 
@@ -8416,7 +8420,7 @@ static void lib_link_sound(FileData *fd, Main *main)
       sound->ipo = newlibadr_us(
           fd, sound->id.lib, sound->ipo);  // XXX deprecated - old animation system
 
-      BKE_sound_load(main, sound);
+      BKE_sound_reset_runtime(sound);
 
       sound->id.tag &= ~LIB_TAG_NEED_LINK;
     }
@@ -9723,7 +9727,8 @@ BlendFileData *blo_read_file_internal(FileData *fd, const char *filepath)
 
   BKE_main_id_tag_all(bfd->main, LIB_TAG_NEW, false);
 
-  /* Now that all our data-blocks are loaded, we can re-generate overrides from their references. */
+  /* Now that all our data-blocks are loaded,
+   * we can re-generate overrides from their references. */
   if (fd->memfile == NULL) {
     /* Do not apply in undo case! */
     BKE_main_override_static_update(bfd->main);

@@ -134,7 +134,7 @@ typedef struct Sequence {
   /** SEQ_NAME_MAXSTR - name, set by default and needs to be unique, for RNA paths. */
   char name[64];
 
-  /**fLags bitmap (see below) and the type of sequenc.e*/
+  /** Flags bitmap (see below) and the type of sequence. */
   int flag, type;
   /** The length of the contents of this strip - before handles are applied. */
   int len;
@@ -155,7 +155,7 @@ typedef struct Sequence {
   int startstill, endstill;
   /** Machine: the strip channel, depth the depth in the sequence when dealing with metastrips. */
   int machine, depth;
-  /** Starting and ending points of the strip in the sequenc.e*/
+  /** Starting and ending points of the strip in the sequence. */
   int startdisp, enddisp;
   float sat;
   float mul, handsize;
@@ -229,6 +229,12 @@ typedef struct Sequence {
 
   /* modifiers */
   ListBase modifiers;
+
+  int cache_flag;
+  int _pad2[3];
+
+  struct Sequence *orig_sequence;
+  void *_pad3;
 } Sequence;
 
 typedef struct MetaStack {
@@ -258,6 +264,12 @@ typedef struct Editing {
   int over_ofs, over_cfra;
   int over_flag, proxy_storage;
   rctf over_border;
+
+  struct SeqCache *cache;
+
+  /* Cache control */
+  float recycle_max_cost;
+  int cache_flag;
 } Editing;
 
 /* ************* Effect Variable Structs ********* */
@@ -633,6 +645,35 @@ enum {
   SEQUENCE_MASK_TIME_RELATIVE = 0,
   /* Global (scene) frame number will be used to access the mask. */
   SEQUENCE_MASK_TIME_ABSOLUTE = 1,
+};
+
+/* Sequence->cache_flag
+ * SEQ_CACHE_STORE_RAW
+ * SEQ_CACHE_STORE_PREPROCESSED
+ * SEQ_CACHE_STORE_COMPOSITE
+ * FINAL_OUT is ignored
+ *
+ * Editing->cache_flag
+ * all entries
+ */
+enum {
+  SEQ_CACHE_STORE_RAW = (1 << 0),
+  SEQ_CACHE_STORE_PREPROCESSED = (1 << 1),
+  SEQ_CACHE_STORE_COMPOSITE = (1 << 2),
+  SEQ_CACHE_STORE_FINAL_OUT = (1 << 3),
+
+  /* For lookup purposes */
+  SEQ_CACHE_ALL_TYPES = SEQ_CACHE_STORE_RAW | SEQ_CACHE_STORE_PREPROCESSED |
+                        SEQ_CACHE_STORE_COMPOSITE | SEQ_CACHE_STORE_FINAL_OUT,
+
+  SEQ_CACHE_OVERRIDE = (1 << 4),
+
+  /* enable cache visualization overlay in timeline UI */
+  SEQ_CACHE_VIEW_ENABLE = (1 << 5),
+  SEQ_CACHE_VIEW_RAW = (1 << 6),
+  SEQ_CACHE_VIEW_PREPROCESSED = (1 << 7),
+  SEQ_CACHE_VIEW_COMPOSITE = (1 << 8),
+  SEQ_CACHE_VIEW_FINAL_OUT = (1 << 9),
 };
 
 #endif /* __DNA_SEQUENCE_TYPES_H__ */

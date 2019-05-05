@@ -335,12 +335,6 @@ static void pose_slide_apply_val(tPoseSlideOp *pso, FCurve *fcu, Object *ob, flo
   /* next/end */
   eVal = evaluate_fcurve(fcu, nextFrameF);
 
-  /* if both values are equal, don't do anything */
-  if (IS_EQF(sVal, eVal)) {
-    (*val) = sVal;
-    return;
-  }
-
   /* calculate the relative weights of the endpoints */
   if (pso->mode == POSESLIDE_BREAKDOWN) {
     /* get weights from the percentage control */
@@ -362,9 +356,10 @@ static void pose_slide_apply_val(tPoseSlideOp *pso, FCurve *fcu, Object *ob, flo
     w2 = (w2 / wtot);
   }
 
-  /* depending on the mode, calculate the new value
-   * - in all of these, the start+end values are multiplied by w2 and w1 (respectively),
-   *   since multiplication in another order would decrease the value the current frame is closer to
+  /* Depending on the mode, calculate the new value:
+   * - In all of these, the start+end values are multiplied by w2 and w1 (respectively),
+   *   since multiplication in another order would decrease
+   *   the value the current frame is closer to.
    */
   switch (pso->mode) {
     case POSESLIDE_PUSH: /* make the current pose more pronounced */
@@ -509,7 +504,7 @@ static void pose_slide_apply_props(tPoseSlideOp *pso,
 
           default:
             /* cannot handle */
-            //printf("Cannot Pose Slide non-numerical property\n");
+            // printf("Cannot Pose Slide non-numerical property\n");
             break;
         }
       }
@@ -698,9 +693,8 @@ static void pose_slide_apply(bContext *C, tPoseSlideOp *pso)
     }
 
     if (ELEM(pso->channels, PS_TFM_ALL, PS_TFM_PROPS) && (pfl->oldprops)) {
-      /* not strictly a transform, but custom properties contribute to the pose produced in many rigs
-       * (e.g. the facial rigs used in Sintel)
-       */
+      /* Not strictly a transform, but custom properties contribute
+       * to the pose produced in many rigs (e.g. the facial rigs used in Sintel). */
       pose_slide_apply_props(pso, pfl, "[\""); /* dummy " for texteditor bugs */
     }
   }
@@ -986,35 +980,41 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
     case LEFTMOUSE: /* confirm */
     case RETKEY:
     case PADENTER: {
-      /* return to normal cursor and header status */
-      ED_area_status_text(pso->sa, NULL);
-      WM_cursor_modal_restore(win);
+      if (event->val == KM_PRESS) {
+        /* return to normal cursor and header status */
+        ED_area_status_text(pso->sa, NULL);
+        WM_cursor_modal_restore(win);
 
-      /* insert keyframes as required... */
-      pose_slide_autoKeyframe(C, pso);
-      pose_slide_exit(op);
+        /* insert keyframes as required... */
+        pose_slide_autoKeyframe(C, pso);
+        pose_slide_exit(op);
 
-      /* done! */
-      return OPERATOR_FINISHED;
+        /* done! */
+        return OPERATOR_FINISHED;
+      }
+      break;
     }
 
     case ESCKEY: /* cancel */
     case RIGHTMOUSE: {
-      /* return to normal cursor and header status */
-      ED_area_status_text(pso->sa, NULL);
-      WM_cursor_modal_restore(win);
+      if (event->val == KM_PRESS) {
+        /* return to normal cursor and header status */
+        ED_area_status_text(pso->sa, NULL);
+        WM_cursor_modal_restore(win);
 
-      /* reset transforms back to original state */
-      pose_slide_reset(pso);
+        /* reset transforms back to original state */
+        pose_slide_reset(pso);
 
-      /* depsgraph updates + redraws */
-      pose_slide_refresh(C, pso);
+        /* depsgraph updates + redraws */
+        pose_slide_refresh(C, pso);
 
-      /* clean up temp data */
-      pose_slide_exit(op);
+        /* clean up temp data */
+        pose_slide_exit(op);
 
-      /* canceled! */
-      return OPERATOR_CANCELLED;
+        /* canceled! */
+        return OPERATOR_CANCELLED;
+      }
+      break;
     }
 
     /* Percentage Chane... */
@@ -1166,8 +1166,8 @@ static void pose_slide_opdef_properties(wmOperatorType *ot)
                            1.0f,
                            "Percentage",
                            "Weighting factor for which keyframe is favored more",
-                           0.3,
-                           0.7);
+                           0.0,
+                           1.0);
 
   RNA_def_int(ot->srna,
               "prev_frame",
@@ -1258,7 +1258,7 @@ void POSE_OT_push(wmOperatorType *ot)
   ot->poll = ED_operator_posemode;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_USE_EVAL_DATA;
 
   /* Properties */
   pose_slide_opdef_properties(ot);
@@ -1320,7 +1320,7 @@ void POSE_OT_relax(wmOperatorType *ot)
   ot->poll = ED_operator_posemode;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_USE_EVAL_DATA;
 
   /* Properties */
   pose_slide_opdef_properties(ot);
@@ -1382,7 +1382,7 @@ void POSE_OT_breakdown(wmOperatorType *ot)
   ot->poll = ED_operator_posemode;
 
   /* flags */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING | OPTYPE_USE_EVAL_DATA;
 
   /* Properties */
   pose_slide_opdef_properties(ot);
@@ -1788,7 +1788,7 @@ void POSE_OT_propagate(wmOperatorType *ot)
   ot->poll = ED_operator_posemode; /* XXX: needs selected bones! */
 
   /* flag */
-  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_USE_EVAL_DATA;
 
   /* properties */
   /* TODO: add "fade out" control for tapering off amount of propagation as time goes by? */

@@ -145,6 +145,9 @@ class RigifyPreferences(AddonPreferences):
             print('Reloading external metarigs...')
             metarig_menu.get_external_metarigs(feature_sets_path)
 
+            # Re-register rig paramaters
+            register_rig_parameters()
+
     legacy_mode: BoolProperty(
         name='Rigify Legacy Mode',
         description='Select if you want to use Rigify in legacy mode',
@@ -474,6 +477,10 @@ def register():
     bpy.context.preferences.addons['rigify'].preferences.update_external_rigs()
 
     # Add rig parameters
+    register_rig_parameters()
+
+
+def register_rig_parameters():
     if bpy.context.preferences.addons['rigify'].preferences.legacy_mode:
         for rig in rig_lists.rig_list:
             r = utils.get_rig_type(rig)

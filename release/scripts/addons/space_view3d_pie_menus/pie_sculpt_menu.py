@@ -123,7 +123,7 @@ class PieSculptthree(Menu):
         layout.operator("paint.brush_select",
                         text='Snakehook', icon='BRUSH_SNAKE_HOOK').sculpt_tool = 'SNAKE_HOOK'
         layout.operator("paint.brush_select",
-                        text='Twist', icon='BRUSH_ROTATE').sculpt_tool = 'NONE'
+                        text='Rotate', icon='BRUSH_ROTATE').sculpt_tool = 'ROTATE'
 
 
 classes = (

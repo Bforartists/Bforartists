@@ -17,6 +17,7 @@
 #======================= END GPL LICENSE BLOCK ========================
 
 import os
+import traceback
 
 from . import utils
 
@@ -33,7 +34,11 @@ def get_rigs(base_path, path, feature_set='rigify'):
     rigs = {}
     impl_rigs = {}
 
-    files = os.listdir(os.path.join(base_path, path))
+    try:
+        files = os.listdir(os.path.join(base_path, path))
+    except FileNotFoundError:
+        files = []
+
     files.sort()
 
     for f in files:
@@ -84,7 +89,19 @@ def get_external_rigs(feature_sets_path):
     # Get external rigs
     for feature_set in os.listdir(feature_sets_path):
         if feature_set:
-            utils.get_resource(os.path.join(feature_set, '__init__'), feature_sets_path)
-            external_rigs, external_impl_rigs = get_rigs(feature_sets_path, os.path.join(feature_set, utils.RIG_DIR), feature_set)
+            try:
+                try:
+                    utils.get_resource(os.path.join(feature_set, '__init__'), feature_sets_path)
+                except FileNotFoundError:
+                    print("Rigify Error: Could not load feature set '%s': __init__.py not found.\n" % (feature_set))
+                    continue
+
+                external_rigs, external_impl_rigs = get_rigs(feature_sets_path, os.path.join(feature_set, utils.RIG_DIR), feature_set)
+            except Exception:
+                print("Rigify Error: Could not load feature set '%s' rigs: exception occurred.\n" % (feature_set))
+                traceback.print_exc()
+                print("")
+                continue
+
             rigs.update(external_rigs)
             implementation_rigs.update(external_impl_rigs)
