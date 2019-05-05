@@ -87,7 +87,7 @@ class PieViewallSelGlobEtc(Menu):
         # 8 - TOP
         layout.operator("view3d.localview", text="Local/Global")
         # 7 - TOP - LEFT
-        layout.operator("screen.region_quadview", text="Toggle Quad View", icon='SPLITSCREEN')
+        layout.operator("screen.region_quadview", text="Toggle Quad View", icon='NONE')
         # 1 - BOTTOM - LEFT
         layout.operator("wm.call_menu_pie", text="Previous Menu", icon='BACK').name = "PIE_MT_viewnumpad"
         # 9 - TOP - RIGHT

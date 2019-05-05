@@ -518,7 +518,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
 
         #
         row.prop(ui_props, 'down_up', expand=True, icon_only=True)
-        # row.label('')
+        # row.label(text='')
         row = row.split().row()
         row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
 

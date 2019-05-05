@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Hotkey: 'Alt A'",
+    "name": "Hotkey: 'Ctrl Shift Spacebar'",
     "description": "Pie menu for Timeline controls",
     "author": "pitiwazou, meta-androcto",
     "version": (0, 1, 1),
@@ -102,7 +102,7 @@ def register():
     if wm.keyconfigs.addon:
         # Animation
         km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'A', 'PRESS', alt=True)
+        kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', ctrl=True, shift=True)
         kmi.properties.name = "PIE_MT_animation"
         addon_keymaps.append((km, kmi))
 

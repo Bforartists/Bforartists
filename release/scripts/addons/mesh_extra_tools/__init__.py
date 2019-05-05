@@ -818,15 +818,15 @@ class mesh_extra_tools_pref(AddonPreferences):
         if self.show_info:
             box.label(text="Collection of various extra Mesh Edit Functions",
                       icon="LAYER_ACTIVE")
-            box.label("The majority of the tools can be found in"
+            box.label(text="The majority of the tools can be found in"
                       "Mesh Edit Mode Toolshelf or W key Specials Menu",
                       icon="LAYER_USED")
-            box.label("The Pen tool is a separate Panel in the Toolshelf",
+            box.label(text="The Pen tool is a separate Panel in the Toolshelf",
                       icon="LAYER_USED")
-            box.label("The Face Extrude tool is only available in Object Mode "
+            box.label(text="The Face Extrude tool is only available in Object Mode "
                       "as a separate panel in the Toolshelf",
                       icon="LAYER_USED")
-            box.label("Face Info / Select is a separate Panel located in Properties > Data Editor",
+            box.label(text="Face Info / Select is a separate Panel located in Properties > Data Editor",
                       icon="LAYER_USED")
 
         box.prop(self, "show_shortcuts", icon="KEYINGSET")
@@ -834,21 +834,21 @@ class mesh_extra_tools_pref(AddonPreferences):
             col = box.column()
             col.label(text="Double Right Click in Edit mode in the 3D Viewport",
                       icon="LAYER_ACTIVE")
-            col.label("Used for quick access to the Vertex, Edge and Face context menus",
+            col.label(text="Used for quick access to the Vertex, Edge and Face context menus",
                       icon="LAYER_USED")
             col.separator()
             col.label(text="W-key in Edit Mode in the 3D Viewport",
                       icon="LAYER_ACTIVE")
-            col.label("Tools are grouped into menus prepended to the Specials Menu",
+            col.label(text="Tools are grouped into menus prepended to the Specials Menu",
                       icon="LAYER_USED")
             col.separator()
             col.label(text="Ctrl+D in Edit Mode in the 3D Viewport",
                       icon="LAYER_ACTIVE")
-            col.label("Used by the Pen Tool to start drawing. When activated:",
+            col.label(text="Used by the Pen Tool to start drawing. When activated:",
                       icon="LAYER_USED")
-            col.label("Shift + Mouse Move is used to draw along the X axis",
+            col.label(text="Shift + Mouse Move is used to draw along the X axis",
                       icon="LAYER_USED")
-            col.label("Alt + Mouse Move is used to draw along the Y axis",
+            col.label(text="Alt + Mouse Move is used to draw along the Y axis",
                       icon="LAYER_USED")
             col.separator()
             col.label(text="Note: when using Fast Loop operator, press Esc twice to finish",

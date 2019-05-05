@@ -372,10 +372,10 @@ static bool gp_stroke_filtermval(tGPsdata *p, const float mval[2], float mvalo[2
     return true;
 
     /* Check if the distance since the last point is significant enough:
-   * - Prevents points being added too densely
-   * - Distance here doesn't use sqrt to prevent slowness.
-   *   We should still be safe from overflows though.
-   */
+     * - Prevents points being added too densely
+     * - Distance here doesn't use sqrt to prevent slowness.
+     *   We should still be safe from overflows though.
+     */
   }
   else if ((dx * dx + dy * dy) > MIN_EUCLIDEAN_PX * MIN_EUCLIDEAN_PX) {
     return true;
@@ -1205,10 +1205,9 @@ static void gp_stroke_newfrombuffer(tGPsdata *p)
       gp_randomize_stroke(gps, brush, p->rng);
     }
 
-    /* smooth stroke after subdiv - only if there's something to do
-     * for each iteration, the factor is reduced to get a better smoothing without changing too much
-     * the original stroke
-     */
+    /* Smooth stroke after subdiv - only if there's something to do for each iteration,
+     * the factor is reduced to get a better smoothing
+     * without changing too much the original stroke. */
     if ((brush->gpencil_settings->flag & GP_BRUSH_GROUP_SETTINGS) &&
         (brush->gpencil_settings->draw_smoothfac > 0.0f)) {
       float reduce = 0.0f;
@@ -2320,14 +2319,13 @@ static void gpencil_draw_eraser(bContext *UNUSED(C), int x, int y, void *p_ptr)
     immUniform1f("dash_width", 12.0f);
     immUniform1f("dash_factor", 0.5f);
 
-    imm_draw_circle_wire_2d(
-        shdr_pos,
-        x,
-        y,
-        p->radius,
-        /* XXX Dashed shader gives bad results with sets of small segments currently,
-         *     temp hack around the issue. :( */
-        max_ii(8, p->radius / 2)); /* was fixed 40 */
+    imm_draw_circle_wire_2d(shdr_pos,
+                            x,
+                            y,
+                            p->radius,
+                            /* XXX Dashed shader gives bad results with sets of small segments
+                             * currently, temp hack around the issue. :( */
+                            max_ii(8, p->radius / 2)); /* was fixed 40 */
 
     immUnbindProgram();
 
@@ -2718,6 +2716,8 @@ static void gpencil_draw_apply_event(
   PointerRNA itemptr;
   float mousef[2];
   int tablet = 0;
+  bool is_speed_guide = ((guide->use_guide) &&
+                         (p->brush && (p->brush->gpencil_tool == GPAINT_TOOL_DRAW)));
 
   /* convert from window-space to area-space mouse coordinates
    * add any x,y override position for fake events
@@ -2727,7 +2727,7 @@ static void gpencil_draw_apply_event(
   p->shift = event->shift;
 
   /* verify direction for straight lines */
-  if ((guide->use_guide) ||
+  if ((is_speed_guide) ||
       ((event->alt > 0) && (RNA_boolean_get(op->ptr, "disable_straight") == false))) {
     if (p->straight == 0) {
       int dx = (int)fabsf(p->mval[0] - p->mvali[0]);
@@ -2825,7 +2825,7 @@ static void gpencil_draw_apply_event(
     /* special exception for grid snapping
      * it requires direction which needs at least two points
      */
-    if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP) && guide->use_guide &&
+    if (!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP) && is_speed_guide &&
         guide->use_snapping && (guide->type == GP_GUIDE_GRID)) {
       p->flags |= GP_PAINTFLAG_REQ_VECTOR;
     }
@@ -2853,9 +2853,9 @@ static void gpencil_draw_apply_event(
   }
 
   /* check if stroke is straight or guided */
-  if ((p->paintmode != GP_PAINTMODE_ERASER) && ((p->straight) || (guide->use_guide))) {
+  if ((p->paintmode != GP_PAINTMODE_ERASER) && ((p->straight) || (is_speed_guide))) {
     /* guided stroke */
-    if (guide->use_guide) {
+    if (is_speed_guide) {
       switch (guide->type) {
         default:
         case GP_GUIDE_CIRCULAR: {
@@ -3474,7 +3474,8 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
     }
   }
 
-  /* we don't pass on key events, GP is used with key-modifiers - prevents Dkey to insert drivers */
+  /* We don't pass on key events, GP is used with key-modifiers -
+   * prevents Dkey to insert drivers. */
   if (ISKEYBOARD(event->type)) {
     if (ELEM(event->type, LEFTARROWKEY, DOWNARROWKEY, RIGHTARROWKEY, UPARROWKEY, ZKEY)) {
       /* allow some keys:
@@ -3506,10 +3507,12 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
     }
   }
 
-  //printf("\tGP - handle modal event...\n");
+  // printf("\tGP - handle modal event...\n");
 
-  /* exit painting mode (and/or end current stroke)
-   * NOTE: cannot do RIGHTMOUSE (as is standard for canceling) as that would break polyline [#32647]
+  /* Exit painting mode (and/or end current stroke).
+   *
+   * NOTE: cannot do RIGHTMOUSE (as is standard for canceling)
+   * as that would break polyline T32647.
    */
   /* if polyline and release shift must cancel */
   if ((ELEM(event->type, RETKEY, PADENTER, ESCKEY, SPACEKEY, EKEY)) ||
