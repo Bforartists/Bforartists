@@ -385,7 +385,7 @@ void TEXT_OT_open(wmOperatorType *ot)
                                  FILE_OPENFILE,
                                  WM_FILESEL_FILEPATH,
                                  FILE_DEFAULTDISPLAY,
-                                 FILE_SORT_ALPHA);  //XXX TODO, relative_path
+                                 FILE_SORT_ALPHA);  // XXX TODO, relative_path
   RNA_def_boolean(
       ot->srna, "internal", 0, "Make internal", "Make text file internal after loading");
 }
@@ -685,7 +685,7 @@ void TEXT_OT_save_as(wmOperatorType *ot)
                                  FILE_SAVE,
                                  WM_FILESEL_FILEPATH,
                                  FILE_DEFAULTDISPLAY,
-                                 FILE_SORT_ALPHA);  //XXX TODO, relative_path
+                                 FILE_SORT_ALPHA);  // XXX TODO, relative_path
 }
 
 /******************* run script operator *********************/
@@ -1268,7 +1268,7 @@ static int text_convert_whitespace_exec(bContext *C, wmOperator *op)
           for (j = 1;
                (j < tab_len) && (a + j < text_check_line_len) && (text_check_line[a + j] == ' ');
                j++) {
-            ;
+            /* pass */
           }
 
           if (j == tab_len) {

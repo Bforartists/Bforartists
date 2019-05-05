@@ -89,7 +89,7 @@ class PieSelectionsEM(Menu):
         pie.operator("view3d.select_box", text="Box Select",
                     icon='NONE')
         # 6 - RIGHT
-        pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu", icon='LOOPSEL')
+        pie.menu("OBJECT_MT_selectloopselection", text="Select Loop Menu", icon='NONE')
         # 2 - BOTTOM
         pie.operator("mesh.select_all", text="Select None",
                     icon='RESTRICT_SELECT_ON').action = 'DESELECT'
@@ -150,9 +150,9 @@ class SelectLoopSelection(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.loop_multi_select", text="Select Loop", icon='LOOPSEL').ring = False
-        layout.operator("mesh.loop_multi_select", text="Select Ring", icon='EDGESEL').ring = True
-        layout.operator("mesh.loop_to_region", text="Select Loop Inner Region", icon='FACESEL')
+        layout.operator("mesh.loop_multi_select", text="Select Loop", icon='NONE').ring = False
+        layout.operator("mesh.loop_multi_select", text="Select Ring", icon='NONE').ring = True
+        layout.operator("mesh.loop_to_region", text="Select Loop Inner Region", icon='NONE')
 
 
 classes = (

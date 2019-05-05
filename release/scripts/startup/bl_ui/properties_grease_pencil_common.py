@@ -384,7 +384,7 @@ class GPENCIL_MT_pie_tool_palette(Menu):
                 row.operator("transform.resize", text="Scale", icon='MAN_SCALE')
                 row = col.row(align=True)
                 row.label(text="Proportional Edit:")
-                row.prop(context.tool_settings, "proportional_edit", text="", icon_only=True)
+                row.prop(context.tool_settings, "use_proportional_edit", text="", icon_only=True)
                 row.prop(context.tool_settings, "proportional_edit_falloff", text="", icon_only=True)
 
                 # NW - Select (Non-Modal)
@@ -806,7 +806,7 @@ class GreasePencilToolsPanel:
 
         layout.label(text="Proportional Edit:")
         row = layout.row()
-        row.prop(context.tool_settings, "proportional_edit", text="")
+        row.prop(context.tool_settings, "use_proportional_edit", text="")
         row.prop(context.tool_settings, "proportional_edit_falloff", text="")
 
         layout.separator()
@@ -879,6 +879,22 @@ class GreasePencilMaterialsPanel:
                     row.operator("gpencil.stroke_change_color", text="Assign")
                     row.operator("gpencil.color_select", text="Select").deselect = False
                     row.operator("gpencil.color_select", text="Deselect").deselect = True
+        # stroke color
+            ma = None
+            if is_view3d and brush is not None:
+                gp_settings = brush.gpencil_settings
+                if gp_settings.use_material_pin is False:
+                    ma = ob.material_slots[ob.active_material_index].material
+                else:
+                    ma = gp_settings.material
+
+            if ma is not None and ma.grease_pencil is not None:
+                gpcolor = ma.grease_pencil
+                if gpcolor.stroke_style == 'SOLID' or \
+                    gpcolor.use_stroke_pattern is True or \
+                    gpcolor.use_stroke_texture_mix is True:
+                    row = layout.row()
+                    row.prop(gpcolor, "color", text="Stroke Color")
 
         else:
             space = context.space_data

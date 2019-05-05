@@ -4035,7 +4035,7 @@ class NWVertColMenu(bpy.types.Menu):
             for vcol in vcols:
                 l.operator(NWAddAttrNode.bl_idname, text=vcol).attr_name = vcol
         else:
-            l.label("No Vertex Color layers on objects with this material")
+            l.label(text="No Vertex Color layers on objects with this material")
 
 
 class NWSwitchNodeTypeMenu(Menu, NWBase):

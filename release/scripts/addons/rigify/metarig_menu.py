@@ -19,6 +19,8 @@
 # <pep8 compliant>
 
 import os
+import traceback
+
 from string import capwords
 
 import bpy
@@ -44,7 +46,11 @@ def get_metarigs(base_path, path, depth=0):
 
     metarigs = {}
 
-    files = os.listdir(os.path.join(base_path, path))
+    try:
+        files = os.listdir(os.path.join(base_path, path))
+    except FileNotFoundError:
+        files = []
+
     files.sort()
 
     for f in files:
@@ -216,9 +222,19 @@ def get_external_metarigs(feature_sets_path):
 
     for feature_set in os.listdir(feature_sets_path):
         if feature_set:
-            utils.get_resource(os.path.join(feature_set, '__init__'), base_path=feature_sets_path)
+            try:
+                try:
+                    utils.get_resource(os.path.join(feature_set, '__init__'), feature_sets_path)
+                except FileNotFoundError:
+                    print("Rigify Error: Could not load feature set '%s': __init__.py not found.\n" % (feature_set))
+                    continue
 
-            metarigs['external'].update(get_metarigs(feature_sets_path, os.path.join(feature_set, utils.METARIG_DIR)))
+                metarigs['external'].update(get_metarigs(feature_sets_path, os.path.join(feature_set, utils.METARIG_DIR)))
+            except Exception:
+                print("Rigify Error: Could not load feature set '%s' metarigs: exception occurred.\n" % (feature_set))
+                traceback.print_exc()
+                print("")
+                continue
 
     metarig_ops.clear()
     armature_submenus.clear()

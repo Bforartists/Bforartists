@@ -296,8 +296,8 @@ void fsmenu_insert_entry(struct FSMenu *fsmenu,
   fsm_iter->save = (flag & FS_INSERT_SAVE) != 0;
 
   if ((category == FS_CATEGORY_RECENT) && (!name || !name[0])) {
-    /* Special handling when adding new recent entry - check if dir exists in some other categories,
-     * and try to use name from there if so. */
+    /* Special handling when adding new recent entry - check if dir exists in
+     * some other categories, and try to use name from there if so. */
     FSMenuCategory cats[] = {
         FS_CATEGORY_SYSTEM, FS_CATEGORY_SYSTEM_BOOKMARKS, FS_CATEGORY_BOOKMARKS};
     int i = ARRAY_SIZE(cats);
@@ -522,7 +522,8 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
 #  ifdef __APPLE__
   {
     /* Get mounted volumes better method OSX 10.6 and higher, see:
-     * https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFURLRef/Reference/reference.html */
+     * https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFURLRef/Reference/reference.html
+     */
 
     /* We get all volumes sorted including network and do not relay
      * on user-defined finder visibility, less confusing. */

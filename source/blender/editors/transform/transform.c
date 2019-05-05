@@ -601,18 +601,18 @@ static void viewRedrawForce(const bContext *C, TransInfo *t)
     }
   }
   else if (t->spacetype == SPACE_ACTION) {
-    //SpaceAction *saction = (SpaceAction *)t->sa->spacedata.first;
+    // SpaceAction *saction = (SpaceAction *)t->sa->spacedata.first;
     WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
   }
   else if (t->spacetype == SPACE_GRAPH) {
-    //SpaceGraph *sipo = (SpaceGraph *)t->sa->spacedata.first;
+    // SpaceGraph *sipo = (SpaceGraph *)t->sa->spacedata.first;
     WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
   }
   else if (t->spacetype == SPACE_NLA) {
     WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_EDITED, NULL);
   }
   else if (t->spacetype == SPACE_NODE) {
-    //ED_area_tag_redraw(t->sa);
+    // ED_area_tag_redraw(t->sa);
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_NODE_VIEW, NULL);
   }
   else if (t->spacetype == SPACE_SEQ) {
@@ -2101,20 +2101,16 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     }
   }
 
-  /* convert flag to enum */
-  switch (t->flag & T_PROP_EDIT_ALL) {
-    case T_PROP_EDIT:
-      proportional = PROP_EDIT_ON;
-      break;
-    case (T_PROP_EDIT | T_PROP_CONNECTED):
-      proportional = PROP_EDIT_CONNECTED;
-      break;
-    case (T_PROP_EDIT | T_PROP_PROJECTED):
-      proportional = PROP_EDIT_PROJECTED;
-      break;
-    default:
-      proportional = PROP_EDIT_OFF;
-      break;
+  if (t->flag & T_PROP_EDIT_ALL) {
+    if (t->flag & T_PROP_EDIT) {
+      proportional |= PROP_EDIT_USE;
+    }
+    if (t->flag & T_PROP_CONNECTED) {
+      proportional |= PROP_EDIT_CONNECTED;
+    }
+    if (t->flag & T_PROP_PROJECTED) {
+      proportional |= PROP_EDIT_PROJECTED;
+    }
   }
 
   // If modal, save settings back in scene if not set as operator argument
@@ -2123,7 +2119,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 
     /* skip saving proportional edit if it was not actually used */
     if (!(t->options & CTX_NO_PET)) {
-      if ((prop = RNA_struct_find_property(op->ptr, "proportional")) &&
+      if ((prop = RNA_struct_find_property(op->ptr, "use_proportional_edit")) &&
           !RNA_property_is_set(op->ptr, prop)) {
         if (t->spacetype == SPACE_GRAPH) {
           ts->proportional_fcurve = proportional;
@@ -2132,13 +2128,13 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
           ts->proportional_action = proportional;
         }
         else if (t->obedit_type != -1) {
-          ts->proportional = proportional;
+          ts->proportional_edit = proportional;
         }
         else if (t->options & CTX_MASK) {
-          ts->proportional_mask = (proportional != PROP_EDIT_OFF);
+          ts->proportional_mask = proportional != 0;
         }
         else {
-          ts->proportional_objects = (proportional != PROP_EDIT_OFF);
+          ts->proportional_objects = proportional != 0;
         }
       }
 
@@ -2177,8 +2173,10 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     }
   }
 
-  if ((prop = RNA_struct_find_property(op->ptr, "proportional"))) {
-    RNA_property_enum_set(op->ptr, prop, proportional);
+  if ((prop = RNA_struct_find_property(op->ptr, "use_proportional_edit"))) {
+    RNA_property_boolean_set(op->ptr, prop, proportional & PROP_EDIT_USE);
+    RNA_boolean_set(op->ptr, "use_proportional_connected", proportional & PROP_EDIT_CONNECTED);
+    RNA_boolean_set(op->ptr, "use_proportional_projected", proportional & PROP_EDIT_PROJECTED);
     RNA_enum_set(op->ptr, "proportional_edit_falloff", t->prop_mode);
     RNA_float_set(op->ptr, "proportional_size", t->prop_size);
   }
@@ -3293,7 +3291,7 @@ static void initBend(TransInfo *t)
 
   t->flag |= T_NO_CONSTRAINT;
 
-  //copy_v3_v3(t->center, ED_view3d_cursor3d_get(t->scene, t->view));
+  // copy_v3_v3(t->center, ED_view3d_cursor3d_get(t->scene, t->view));
   if ((t->flag & T_OVERRIDE_CENTER) == 0) {
     calculateCenterCursor(t, t->center_global);
   }

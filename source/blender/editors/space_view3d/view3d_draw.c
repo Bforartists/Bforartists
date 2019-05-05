@@ -758,15 +758,12 @@ void ED_view3d_draw_depth(Depsgraph *depsgraph, ARegion *ar, View3D *v3d, bool a
 
   short flag = v3d->flag;
   float glalphaclip = U.glalphaclip;
-  int obcenter_dia = U.obcenter_dia;
   /* temp set drawtype to solid */
   /* Setting these temporarily is not nice */
   v3d->flag &= ~V3D_SELECT_OUTLINE;
 
   /* not that nice but means we wont zoom into billboards */
   U.glalphaclip = alphaoverride ? 0.5f : glalphaclip;
-
-  U.obcenter_dia = 0;
 
   /* Tools may request depth outside of regular drawing code. */
   UI_Theme_Store(&theme_state);
@@ -797,7 +794,6 @@ void ED_view3d_draw_depth(Depsgraph *depsgraph, ARegion *ar, View3D *v3d, bool a
 
   U.glalphaclip = glalphaclip;
   v3d->flag = flag;
-  U.obcenter_dia = obcenter_dia;
 
   UI_Theme_Restore(&theme_state);
 }
@@ -1824,6 +1820,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
  */
 ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
                                              Scene *scene,
+                                             View3DShading *shading_override,
                                              int drawtype,
                                              Object *camera,
                                              int width,
@@ -1846,21 +1843,24 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(Depsgraph *depsgraph,
   ar.regiontype = RGN_TYPE_WINDOW;
 
   v3d.camera = camera;
+  View3DShading *source_shading_settings = &scene->display.shading;
+  if (draw_flags & V3D_OFSDRAW_OVERRIDE_SCENE_SETTINGS && shading_override != NULL) {
+    source_shading_settings = shading_override;
+  }
+  memcpy(&v3d.shading, source_shading_settings, sizeof(View3DShading));
   v3d.shading.type = drawtype;
+
+  if (drawtype == OB_MATERIAL) {
+    v3d.shading.flag = V3D_SHADING_SCENE_WORLD | V3D_SHADING_SCENE_LIGHTS;
+  }
+
   v3d.flag2 = V3D_HIDE_OVERLAYS;
 
-  if (draw_flags & V3D_OFSDRAW_USE_GPENCIL) {
+  if (draw_flags & V3D_OFSDRAW_SHOW_ANNOTATION) {
     v3d.flag2 |= V3D_SHOW_ANNOTATION;
   }
 
   v3d.shading.background_type = V3D_SHADING_BACKGROUND_WORLD;
-
-  if (draw_flags & V3D_OFSDRAW_USE_CAMERA_DOF) {
-    if (camera->type == OB_CAMERA) {
-      v3d.fx_settings.dof = &((Camera *)camera->data)->gpu_dof;
-      v3d.fx_settings.fx_flag |= GPU_FX_FLAG_DOF;
-    }
-  }
 
   rv3d.persp = RV3D_CAMOB;
 
