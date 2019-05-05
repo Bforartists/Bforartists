@@ -1303,7 +1303,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                  icon='QUESTION')
             op.url = paths.BLENDERKIT_SIGNUP_URL
         layout.prop(self, "api_key", text='Your API Key')
-        # layout.label('After you paste API Key, categories are downloaded, so blender will freeze for a few seconds.')
+        # layout.label(text='After you paste API Key, categories are downloaded, so blender will freeze for a few seconds.')
         layout.prop(self, "global_dir")
         layout.prop(self, "project_subdir")
         # layout.prop(self, "temp_dir")

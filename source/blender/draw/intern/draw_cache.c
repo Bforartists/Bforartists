@@ -3017,7 +3017,8 @@ GPUBatch *DRW_cache_bone_dof_lines_get(void)
  * We could make these more generic functions.
  * although filling 1d lines is not common.
  *
- * \note Use x coordinate to identify the vertex the vertex shader take care to place it appropriately.
+ * \note Use x coordinate to identify the vertex the vertex shader take care to place it
+ * appropriately.
  */
 
 static const float camera_coords_frame_bounds[5] = {
@@ -3287,14 +3288,6 @@ GPUBatch *DRW_cache_mesh_surface_mesh_analysis_get(Object *ob)
 {
   BLI_assert(ob->type == OB_MESH);
   return DRW_mesh_batch_cache_get_edit_mesh_analysis(ob->data);
-}
-
-void DRW_cache_mesh_sculpt_coords_ensure(Object *ob)
-{
-  BLI_assert(ob->type == OB_MESH);
-
-  Mesh *me = ob->data;
-  DRW_mesh_cache_sculpt_coords_ensure(me);
 }
 
 /** \} */

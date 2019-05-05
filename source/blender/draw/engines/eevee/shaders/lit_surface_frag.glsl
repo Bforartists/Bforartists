@@ -13,13 +13,8 @@ uniform sampler2DArray utilTex;
 in vec3 worldPosition;
 in vec3 viewPosition;
 
-#ifdef USE_FLAT_NORMAL
-flat in vec3 worldNormal;
-flat in vec3 viewNormal;
-#else
 in vec3 worldNormal;
 in vec3 viewNormal;
-#endif
 
 #ifdef HAIR_SHADER
 in vec3 hairTangent; /* world space */
@@ -43,6 +38,14 @@ uniform int hairThicknessRes = 1;
 #define CLOSURE_DIFFUSE
 #define CLOSURE_GLOSSY
 #endif /* SURFACE_DEFAULT */
+
+#if !defined(SURFACE_DEFAULT_CLEARCOAT) && !defined(CLOSURE_NAME)
+#define SURFACE_DEFAULT_CLEARCOAT
+#define CLOSURE_NAME eevee_closure_default_clearcoat
+#define CLOSURE_DIFFUSE
+#define CLOSURE_GLOSSY
+#define CLOSURE_CLEARCOAT
+#endif /* SURFACE_DEFAULT_CLEARCOAT */
 
 #if !defined(SURFACE_PRINCIPLED) && !defined(CLOSURE_NAME)
 #define SURFACE_PRINCIPLED
@@ -274,7 +277,8 @@ void CLOSURE_NAME(vec3 N
   /* ---------------- SPECULAR ENVIRONMENT LIGHTING ----------------- */
   /* ---------------------------------------------------------------- */
 
-  /* Accumulate incoming light from all sources until accumulator is full. Then apply Occlusion and BRDF. */
+  /* Accumulate incoming light from all sources until accumulator is full. Then apply Occlusion and
+   * BRDF. */
 #ifdef CLOSURE_GLOSSY
   vec4 spec_accum = vec4(0.0);
 #endif

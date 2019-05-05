@@ -180,12 +180,13 @@ static void eevee_draw_background(void *vedata)
   /* Sort transparents before the loop. */
   DRW_pass_sort_shgroup_z(psl->transparent_pass);
 
-  /* Number of iteration: needed for all temporal effect (SSR, volumetrics)
-   * when using opengl render. */
-  int loop_len = (DRW_state_is_image_render() &&
-                  (stl->effects->enabled_effects & (EFFECT_VOLUMETRIC | EFFECT_SSR)) != 0) ?
-                     4 :
-                     1;
+  /* Number of iteration: Use viewport taa_samples when using viewport rendering */
+  int loop_len = 1;
+  if (DRW_state_is_image_render()) {
+    const DRWContextState *draw_ctx = DRW_context_state_get();
+    const Scene *scene = draw_ctx->scene;
+    loop_len = MAX2(1, scene->eevee.taa_samples);
+  }
 
   while (loop_len--) {
     float clear_col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -301,15 +302,14 @@ static void eevee_draw_background(void *vedata)
     }
   }
 
-  /* LookDev */
-  EEVEE_lookdev_draw_background(vedata);
-  /* END */
-
   /* Tonemapping and transfer result to default framebuffer. */
   bool use_render_settings = stl->g_data->use_color_render_settings;
 
   GPU_framebuffer_bind(dfbl->default_fb);
   DRW_transform_to_display(stl->effects->final_tx, true, use_render_settings);
+
+  /* Draw checkerboard with alpha under. */
+  EEVEE_draw_alpha_checker(vedata);
 
   /* Debug : Output buffer to view. */
   switch (G.debug_value) {
