@@ -1581,7 +1581,7 @@ static void rna_def_userdef_theme_spaces_vertex(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Vertex Select", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
-  prop = RNA_def_property(srna, "vertex_size", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "vertex_size", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, 32);
   RNA_def_property_ui_text(prop, "Vertex Size", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
@@ -1656,7 +1656,7 @@ static void rna_def_userdef_theme_spaces_face(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Face Dot Selected", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
-  prop = RNA_def_property(srna, "facedot_size", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "facedot_size", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, 10);
   RNA_def_property_ui_text(prop, "Face Dot Size", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
@@ -1803,7 +1803,7 @@ static void rna_def_userdef_theme_spaces_curves(
     RNA_def_property_ui_text(prop, "Handle Vertex Select", "");
     RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
-    prop = RNA_def_property(srna, "handle_vertex_size", PROP_INT, PROP_NONE);
+    prop = RNA_def_property(srna, "handle_vertex_size", PROP_INT, PROP_PIXEL);
     RNA_def_property_range(prop, 1, 100);
     RNA_def_property_ui_text(prop, "Handle Vertex Size", "");
     RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
@@ -1824,7 +1824,7 @@ static void rna_def_userdef_theme_spaces_gpencil(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Grease Pencil Vertex Select", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
-  prop = RNA_def_property(srna, "gp_vertex_size", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "gp_vertex_size", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, 10);
   RNA_def_property_ui_text(prop, "Grease Pencil Vertex Size", "");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
@@ -2027,9 +2027,16 @@ static void rna_def_userdef_theme_space_view3d(BlenderRNA *brna)
 
   rna_def_userdef_theme_spaces_paint_curves(srna);
 
-  prop = RNA_def_property(srna, "outline_width", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "outline_width", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, 5);
   RNA_def_property_ui_text(prop, "Outline Width", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "object_origin_size", PROP_INT, PROP_PIXEL);
+  RNA_def_property_int_sdna(prop, NULL, "obcenter_dia");
+  RNA_def_property_range(prop, 4, 10);
+  RNA_def_property_ui_text(
+      prop, "Object Origin Size", "Diameter in Pixels for Object/Light origin display");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 }
 
@@ -4064,7 +4071,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
                            "Mini Axes Type\nShow a small rotating 3D axes in the top right corner of the 3D View");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-  prop = RNA_def_property(srna, "mini_axis_size", PROP_INT, PROP_NONE);
+  prop = RNA_def_property(srna, "mini_axis_size", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "rvisize");
   RNA_def_property_range(prop, 10, 64);
   RNA_def_property_ui_text(prop, "Mini Axes Size", "Mini Axes Size\nThe axes icon's size");
@@ -4101,11 +4108,13 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Gizmo Size", "Gizmo Size\nDiameter of the gizmo");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
-  prop = RNA_def_property(srna, "object_origin_size", PROP_INT, PROP_PIXEL);
-  RNA_def_property_int_sdna(prop, NULL, "obcenter_dia");
-  RNA_def_property_range(prop, 4, 10);
+  /* Lookdev */
+  prop = RNA_def_property(srna, "lookdev_ball_size", PROP_INT, PROP_PIXEL);
+  RNA_def_property_int_sdna(prop, NULL, "lookdev_ball_size");
+  RNA_def_property_range(prop, 50, 400);
+  RNA_def_property_int_default(prop, 150);
   RNA_def_property_ui_text(
-      prop, "Object Origin Size", "Object Origin Size\nDiameter in Pixels for Object/Light origin display");
+      prop, "LookDev Balls Size", "LookDev Balls Size\nMaximum diameter of the LookDev balls size");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   /* View2D Grid Displays */
@@ -4470,7 +4479,17 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_duplicate_particle", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_PSYS);
   RNA_def_property_ui_text(
-      prop, "Duplicate Particle", "Duplicate Particle\nCauses particle systems to be duplicated with the object");
+      prop, "Duplicate Particle", "Causes particle systems to be duplicated with the object");
+
+  prop = RNA_def_property(srna, "use_duplicate_lightprobe", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_LIGHTPROBE);
+  RNA_def_property_ui_text(
+      prop, "Duplicate Light Probe", "Causes light probe data to be duplicated with the object");
+
+  prop = RNA_def_property(srna, "use_duplicate_grease_pencil", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_GPENCIL);
+  RNA_def_property_ui_text(
+      prop, "Duplicate GPencil", "Duplicate GPencil\nCauses grease pencil data to be duplicated with the object");
 
   /* Currently only used for insert offset (aka auto-offset),
    * maybe also be useful for later stuff though. */
@@ -5449,7 +5468,7 @@ void RNA_def_userdef(BlenderRNA *brna)
     {USER_SECTION_ANIMATION, "ANIMATION", 0, "Animation", ""},
     {0, "", 0, NULL, NULL},
     {USER_SECTION_ADDONS, "ADDONS", 0, "Add-ons", ""},
-#  if 0  //def WITH_USERDEF_WORKSPACES
+#  if 0  // def WITH_USERDEF_WORKSPACES
     {0, "", 0, NULL, NULL},
     {USER_SECTION_WORKSPACE_CONFIG, "WORKSPACE_CONFIG", 0, "Configuration File", ""},
     {USER_SECTION_WORKSPACE_ADDONS, "WORKSPACE_ADDONS", 0, "Add-on Overrides", ""},

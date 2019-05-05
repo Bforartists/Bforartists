@@ -31,12 +31,14 @@
 #include "DNA_scene_types.h"
 #include "DNA_userdef_types.h"
 
+#include "BLI_array.h"
 #include "BLI_utildefines.h"
 #include "BLI_link_utils.h"
 #include "BLI_rect.h"
 #include "BLI_math.h"
 #include "BLI_memarena.h"
 #include "BLI_timecode.h"
+#include "BLI_string.h"
 
 #include "BKE_context.h"
 #include "BKE_screen.h"
@@ -1117,7 +1119,7 @@ void UI_view2d_zoom_cache_reset(void)
 /* View Matrix Setup */
 
 /* mapping function to ensure 'cur' draws extended over the area where sliders are */
-static void view2d_map_cur_using_mask(View2D *v2d, rctf *r_curmasked)
+static void view2d_map_cur_using_mask(const View2D *v2d, rctf *r_curmasked)
 {
   *r_curmasked = v2d->cur;
 
@@ -1149,7 +1151,7 @@ static void view2d_map_cur_using_mask(View2D *v2d, rctf *r_curmasked)
 }
 
 /* Set view matrices to use 'cur' rect as viewing frame for View2D drawing */
-void UI_view2d_view_ortho(View2D *v2d)
+void UI_view2d_view_ortho(const View2D *v2d)
 {
   rctf curmasked;
   const int sizex = BLI_rcti_size_x(&v2d->mask);
@@ -1237,338 +1239,6 @@ void UI_view2d_view_restore(const bContext *C)
 
 /* *********************************************************************** */
 /* Gridlines */
-
-/* View2DGrid is typedef'd in UI_view2d.h */
-struct View2DGrid {
-  float dx, dy;         /* stepsize (in pixels) between gridlines */
-  float startx, starty; /* initial coordinates to start drawing grid from */
-  int powerx, powery;   /* step as power of 10 */
-};
-
-/* --------------- */
-
-/* try to write step as a power of 10 */
-static void step_to_grid(float *step, const int unit, int *r_power)
-{
-  const float loga = (float)log10(*step);
-  float rem;
-
-  int power = (int)(loga);
-
-  rem = loga - power;
-  rem = (float)pow(10.0, rem);
-
-  if (loga < 0.0f) {
-    if (rem < 0.2f) {
-      rem = 0.2f;
-    }
-    else if (rem < 0.5f) {
-      rem = 0.5f;
-    }
-    else {
-      rem = 1.0f;
-    }
-
-    *step = rem * (float)pow(10.0, power);
-
-    /* for frames, we want 1.0 frame intervals only */
-    if (unit == V2D_UNIT_FRAMES) {
-      rem = 1.0f;
-      /* use 2 since there are grid lines drawn in between,
-       * this way to get 1 line per frame */
-      *step = 2.0f;
-    }
-
-    /* prevents printing 1.0 2.0 3.0 etc */
-    if (rem == 1.0f) {
-      power++;
-    }
-  }
-  else {
-    if (rem < 2.0f) {
-      rem = 2.0f;
-    }
-    else if (rem < 5.0f) {
-      rem = 5.0f;
-    }
-    else {
-      rem = 10.0f;
-    }
-
-    *step = rem * (float)pow(10.0, power);
-
-    power++;
-    /* prevents printing 1.0, 2.0, 3.0, etc. */
-    if (rem == 10.0f) {
-      power++;
-    }
-  }
-
-  *r_power = power;
-}
-
-/**
- * Initialize settings necessary for drawing gridlines in a 2d-view
- *
- * - Currently, will return pointer to View2DGrid struct that needs to
- *   be freed with UI_view2d_grid_free()
- * - Is used for scrollbar drawing too (for units drawing)
- * - Units + clamping args will be checked, to make sure they are valid values that can be used
- *   so it is very possible that we won't return grid at all!
- *
- * - xunits,yunits = V2D_UNIT_*  grid steps in seconds or frames
- * - xclamp,yclamp = V2D_CLAMP_* only show whole-number intervals
- * - winx          = width of region we're drawing to, note: not used but keeping for completeness.
- * - winy          = height of region we're drawing into
- */
-View2DGrid *UI_view2d_grid_calc(Scene *scene,
-                                View2D *v2d,
-                                short xunits,
-                                short xclamp,
-                                short yunits,
-                                short yclamp,
-                                int UNUSED(winx),
-                                int winy)
-{
-
-  View2DGrid *grid;
-  float space, seconddiv;
-
-  /* check that there are at least some workable args */
-  if (ELEM(V2D_ARG_DUMMY, xunits, xclamp) && ELEM(V2D_ARG_DUMMY, yunits, yclamp)) {
-    return NULL;
-  }
-
-  /* grid here is allocated... */
-  grid = MEM_callocN(sizeof(View2DGrid), "View2DGrid");
-
-  /* rule: gridstep is minimal GRIDSTEP pixels */
-  if (xunits == V2D_UNIT_SECONDS) {
-    seconddiv = (float)(0.01 * FPS);
-  }
-  else {
-    seconddiv = 1.0f;
-  }
-
-  /* calculate x-axis grid scale (only if both args are valid) */
-  if (ELEM(V2D_ARG_DUMMY, xunits, xclamp) == 0) {
-    space = BLI_rctf_size_x(&v2d->cur);
-
-    if (space != 0.0f) {
-      const float pixels = (float)BLI_rcti_size_x(&v2d->mask);
-      if (pixels != 0.0f) {
-        grid->dx = (U.v2d_min_gridsize * UI_DPI_FAC * space) / (seconddiv * pixels);
-        step_to_grid(&grid->dx, xunits, &grid->powerx);
-        grid->dx *= seconddiv;
-      }
-    }
-
-    if (xclamp == V2D_GRID_CLAMP) {
-      CLAMP_MIN(grid->dx, 0.1f);
-      CLAMP_MIN(grid->powerx, 0);
-      grid->powerx -= 2;
-    }
-  }
-
-  /* calculate y-axis grid scale (only if both args are valid) */
-  if (ELEM(V2D_ARG_DUMMY, yunits, yclamp) == 0) {
-    space = BLI_rctf_size_y(&v2d->cur);
-    if (space != 0.0f) {
-      const float pixels = (float)winy;
-      if (pixels != 0.0f) {
-        grid->dy = U.v2d_min_gridsize * UI_DPI_FAC * space / pixels;
-        step_to_grid(&grid->dy, yunits, &grid->powery);
-      }
-    }
-
-    if (yclamp == V2D_GRID_CLAMP) {
-      CLAMP_MIN(grid->dy, 1.0f);
-      CLAMP_MIN(grid->powery, 1);
-    }
-  }
-
-  /* calculate start position */
-  if (ELEM(V2D_ARG_DUMMY, xunits, xclamp) == 0) {
-    grid->startx = seconddiv * (v2d->cur.xmin / seconddiv -
-                                (float)fmod(v2d->cur.xmin / seconddiv, grid->dx / seconddiv));
-    if (v2d->cur.xmin < 0.0f) {
-      grid->startx -= grid->dx;
-    }
-  }
-  else {
-    grid->startx = v2d->cur.xmin;
-  }
-
-  if (ELEM(V2D_ARG_DUMMY, yunits, yclamp) == 0) {
-    grid->starty = (v2d->cur.ymin - (float)fmod(v2d->cur.ymin, grid->dy));
-    if (v2d->cur.ymin < 0.0f) {
-      grid->starty -= grid->dy;
-    }
-  }
-  else {
-    grid->starty = v2d->cur.ymin;
-  }
-
-  return grid;
-}
-
-/* Draw gridlines in the given 2d-region */
-void UI_view2d_grid_draw(View2D *v2d, View2DGrid *grid, int flag)
-{
-  float vec1[2], vec2[2];
-  int a, step;
-  int vertical_minor_step = (BLI_rcti_size_x(&v2d->mask) + 1) / (U.v2d_min_gridsize * UI_DPI_FAC);
-  int horizontal_major_step = (BLI_rcti_size_y(&v2d->mask) + 1) /
-                              (U.v2d_min_gridsize * UI_DPI_FAC);
-  uchar grid_line_color[3];
-
-  /* check for grid first, as it may not exist */
-  if (grid == NULL) {
-    return;
-  }
-
-  /* Count the needed vertices for the gridlines */
-  unsigned vertex_count = 0;
-  if (flag & V2D_VERTICAL_LINES) {
-    /* vertical lines */
-    vertex_count += 2 * vertical_minor_step;       /* minor gridlines */
-    vertex_count += 2 * (vertical_minor_step + 2); /* major gridlines */
-  }
-  if (flag & V2D_HORIZONTAL_LINES) {
-    /* horizontal lines */
-    vertex_count += 2 * (horizontal_major_step + 1); /* major gridlines */
-
-    /* fine lines */
-    if (flag & V2D_HORIZONTAL_FINELINES) {
-      vertex_count += 2 * (horizontal_major_step + 1);
-    }
-  }
-  /* axes */
-  if (flag & V2D_HORIZONTAL_AXIS) {
-    vertex_count += 2;
-  }
-  if (flag & V2D_VERTICAL_AXIS) {
-    vertex_count += 2;
-  }
-
-  /* If there is nothing to render, exit early */
-  if (vertex_count == 0) {
-    return;
-  }
-
-  GPUVertFormat *format = immVertexFormat();
-  uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
-  uint color = GPU_vertformat_attr_add(
-      format, "color", GPU_COMP_U8, 3, GPU_FETCH_INT_TO_FLOAT_UNIT);
-
-  immBindBuiltinProgram(GPU_SHADER_2D_FLAT_COLOR);
-  immBegin(GPU_PRIM_LINES, vertex_count);
-
-  /* vertical lines */
-  if (flag & V2D_VERTICAL_LINES) {
-    /* initialize initial settings */
-    vec1[0] = vec2[0] = grid->startx;
-    vec1[1] = grid->starty;
-    vec2[1] = v2d->cur.ymax;
-
-    /* minor gridlines */
-    step = vertical_minor_step;
-    if (step != 0) {
-      UI_GetThemeColor3ubv(TH_GRID, grid_line_color);
-
-      for (a = 0; a < step; a++) {
-        immAttrSkip(color);
-        immVertex2fv(pos, vec1);
-        immAttr3ubv(color, grid_line_color);
-        immVertex2fv(pos, vec2);
-
-        vec2[0] = vec1[0] += grid->dx;
-      }
-    }
-
-    /* major gridlines */
-    vec2[0] = vec1[0] -= 0.5f * grid->dx;
-
-    UI_GetThemeColorShade3ubv(TH_GRID, 16, grid_line_color);
-
-    step++;
-    for (a = 0; a <= step; a++) {
-      immAttrSkip(color);
-      immVertex2fv(pos, vec1);
-      immAttr3ubv(color, grid_line_color);
-      immVertex2fv(pos, vec2);
-
-      vec2[0] = vec1[0] -= grid->dx;
-    }
-  }
-
-  /* horizontal lines */
-  if (flag & V2D_HORIZONTAL_LINES) {
-    /* only major gridlines */
-    vec1[1] = vec2[1] = grid->starty;
-    vec1[0] = grid->startx;
-    vec2[0] = v2d->cur.xmax;
-
-    step = horizontal_major_step;
-
-    UI_GetThemeColor3ubv(TH_GRID, grid_line_color);
-
-    for (a = 0; a <= step; a++) {
-      immAttrSkip(color);
-      immVertex2fv(pos, vec1);
-      immAttr3ubv(color, grid_line_color);
-      immVertex2fv(pos, vec2);
-
-      vec2[1] = vec1[1] += grid->dy;
-    }
-
-    /* fine grid lines */
-    vec2[1] = vec1[1] -= 0.5f * grid->dy;
-    step++;
-
-    if (flag & V2D_HORIZONTAL_FINELINES) {
-      UI_GetThemeColorShade3ubv(TH_GRID, 16, grid_line_color);
-      for (a = 0; a < step; a++) {
-        immAttrSkip(color);
-        immVertex2fv(pos, vec1);
-        immAttr3ubv(color, grid_line_color);
-        immVertex2fv(pos, vec2);
-
-        vec2[1] = vec1[1] -= grid->dy;
-      }
-    }
-  }
-
-  /* Axes are drawn as darker lines */
-  UI_GetThemeColorShade3ubv(TH_GRID, -50, grid_line_color);
-
-  /* horizontal axis */
-  if (flag & V2D_HORIZONTAL_AXIS) {
-    vec1[0] = v2d->cur.xmin;
-    vec2[0] = v2d->cur.xmax;
-    vec1[1] = vec2[1] = 0.0f;
-
-    immAttrSkip(color);
-    immVertex2fv(pos, vec1);
-    immAttr3ubv(color, grid_line_color);
-    immVertex2fv(pos, vec2);
-  }
-
-  /* vertical axis */
-  if (flag & V2D_VERTICAL_AXIS) {
-    vec1[1] = v2d->cur.ymin;
-    vec2[1] = v2d->cur.ymax;
-    vec1[0] = vec2[0] = 0.0f;
-
-    immAttrSkip(color);
-    immVertex2fv(pos, vec1);
-    immAttr3ubv(color, grid_line_color);
-    immVertex2fv(pos, vec2);
-  }
-
-  immEnd();
-  immUnbindProgram();
-}
 
 /* Draw a constant grid in given 2d-region */
 void UI_view2d_constant_grid_draw(View2D *v2d, float step)
@@ -1727,135 +1397,6 @@ void UI_view2d_multi_grid_draw(View2D *v2d, int colorid, float step, int level_s
   immUnbindProgram();
 }
 
-static void get_scale_indicator_text(
-    const Scene *scene, float value, int brevity_level, short unit, uint max_length, char *r_str)
-{
-  if (unit == V2D_UNIT_SECONDS) {
-    BLI_timecode_string_from_time(
-        r_str, max_length, brevity_level, value / (float)FPS, FPS, U.timecode_style);
-  }
-  else {
-    BLI_timecode_string_from_time_seconds(r_str, max_length, brevity_level, value);
-  }
-}
-
-void UI_view2d_grid_draw_numbers_horizontal(const Scene *scene,
-                                            const View2D *v2d,
-                                            const View2DGrid *grid,
-                                            const rcti *rect,
-                                            int unit,
-                                            bool whole_numbers_only)
-{
-  BLI_assert(grid);
-  float xstep = grid->dx * UI_view2d_scale_get_x(v2d);
-  if (xstep <= 0.0f) {
-    return;
-  }
-
-  float initial_xpos = UI_view2d_view_to_region_x(v2d, grid->startx);
-  float ypos = (float)rect->ymin + 2 * UI_DPI_FAC;
-  float initial_value = grid->startx;
-  float value_step = grid->dx;
-  int brevity_level = grid->powerx;
-
-  /* Make sure that the value_step is >= 1 when only whole numbers are displayed.
-   * Otherwise the same number could be displayed more than once. */
-  if (whole_numbers_only) {
-    while (value_step < 0.9999f) {
-      xstep *= 2.0f;
-      value_step *= 2.0f;
-    }
-  }
-
-  /* Skip first few steps if they don't intersect
-   * the rectangle that will contain the numbers. */
-  while (initial_xpos < rect->xmin) {
-    initial_xpos += xstep;
-    initial_value += value_step;
-  }
-
-  if (unit == V2D_UNIT_FRAMES) {
-    brevity_level = 1;
-  }
-
-  const int font_id = BLF_default();
-  UI_FontThemeColor(font_id, TH_TEXT);
-
-  BLF_batch_draw_begin();
-
-  for (float xpos = initial_xpos, value = initial_value; xpos < rect->xmax;
-       xpos += xstep, value += value_step) {
-    char text[32];
-    get_scale_indicator_text(scene, value, brevity_level, unit, sizeof(text), text);
-    float text_width = BLF_width(font_id, text, strlen(text));
-    BLF_draw_default_ascii(xpos - text_width / 2.0f, ypos, 0.0f, text, sizeof(text));
-  }
-
-  BLF_batch_draw_end();
-}
-
-void UI_view2d_grid_draw_numbers_vertical(const Scene *scene,
-                                          const View2D *v2d,
-                                          const View2DGrid *grid,
-                                          const rcti *rect,
-                                          int unit,
-                                          float text_offset)
-{
-  BLI_assert(grid);
-  float ystep = grid->dy * UI_view2d_scale_get_y(v2d);
-  if (ystep <= 0.0f) {
-    return;
-  }
-
-  const int font_id = BLF_default();
-  UI_FontThemeColor(font_id, TH_TEXT);
-
-  BLF_enable(font_id, BLF_ROTATION);
-  BLF_rotation(font_id, M_PI_2);
-
-  float initial_value = grid->starty;
-  float value_step = grid->dy;
-  float xpos = rect->xmax - 2.0f * UI_DPI_FAC;
-  float initial_ypos = UI_view2d_view_to_region_y(v2d, grid->starty);
-
-  /* Currently only used by the sequencer to display
-   * channel numbers in the center. */
-  initial_ypos += text_offset * ystep;
-
-  /* Skip first few steps if they don't intersect
-   * the rectangle that will contain the numbers. */
-  while (initial_ypos < rect->ymin) {
-    initial_ypos += ystep;
-    initial_value += value_step;
-  }
-
-  for (float ypos = initial_ypos, value = initial_value; ypos < rect->ymax;
-       ypos += ystep, value += value_step) {
-    char text[32];
-    get_scale_indicator_text(scene, value, grid->powery, unit, sizeof(text), text);
-    float text_width = BLF_width(font_id, text, sizeof(text));
-    BLF_draw_default_ascii(xpos, ypos - text_width / 2.0f, 0.0f, text, sizeof(text));
-  }
-
-  BLF_disable(font_id, BLF_ROTATION);
-}
-
-/* the price we pay for not exposting structs :( */
-void UI_view2d_grid_size(View2DGrid *grid, float *r_dx, float *r_dy)
-{
-  *r_dx = grid->dx;
-  *r_dy = grid->dy;
-}
-
-/* free temporary memory used for drawing grid */
-void UI_view2d_grid_free(View2DGrid *grid)
-{
-  /* only free if there's a grid */
-  if (grid) {
-    MEM_freeN(grid);
-  }
-}
-
 /* *********************************************************************** */
 /* Scrollers */
 
@@ -1872,21 +1413,10 @@ struct View2DScrollers {
 
   rcti hor, vert;        /* exact size of slider backdrop */
   int horfull, vertfull; /* set if sliders are full, we don't draw them */
-
-  /* scales */
-  View2DGrid *grid;     /* grid for coordinate drawing */
-  short xunits, xclamp; /* units and clamping options for x-axis */
-  short yunits, yclamp; /* units and clamping options for y-axis */
 };
 
 /* Calculate relevant scroller properties */
-View2DScrollers *UI_view2d_scrollers_calc(const bContext *C,
-                                          View2D *v2d,
-                                          const rcti *mask_custom,
-                                          short xunits,
-                                          short xclamp,
-                                          short yunits,
-                                          short yclamp)
+View2DScrollers *UI_view2d_scrollers_calc(View2D *v2d, const rcti *mask_custom)
 {
   View2DScrollers *scrollers;
   rcti vert, hor;
@@ -2014,30 +1544,11 @@ View2DScrollers *UI_view2d_scrollers_calc(const bContext *C,
     }
   }
 
-  /* grid markings on scrollbars */
-  if (scroll & (V2D_SCROLL_SCALE_HORIZONTAL | V2D_SCROLL_SCALE_VERTICAL)) {
-    /* store clamping */
-    scrollers->xclamp = xclamp;
-    scrollers->xunits = xunits;
-    scrollers->yclamp = yclamp;
-    scrollers->yunits = yunits;
-
-    scrollers->grid = UI_view2d_grid_calc(CTX_data_scene(C),
-                                          v2d,
-                                          xunits,
-                                          xclamp,
-                                          yunits,
-                                          yclamp,
-                                          BLI_rcti_size_x(&hor),
-                                          BLI_rcti_size_y(&vert));
-  }
-
-  /* return scrollers */
   return scrollers;
 }
 
 /* Draw scrollbars in the given 2d-region */
-void UI_view2d_scrollers_draw(const bContext *C, View2D *v2d, View2DScrollers *vs)
+void UI_view2d_scrollers_draw(View2D *v2d, View2DScrollers *vs)
 {
   bTheme *btheme = UI_GetTheme();
   rcti vert, hor;
@@ -2084,13 +1595,6 @@ void UI_view2d_scrollers_draw(const bContext *C, View2D *v2d, View2DScrollers *v
     }
 
     UI_draw_widget_scroll(&wcol, &hor, &slider, state);
-
-    {
-      if (scroll & V2D_SCROLL_SCALE_HORIZONTAL) {
-        UI_view2d_grid_draw_numbers_horizontal(
-            CTX_data_scene(C), v2d, vs->grid, &vs->hor, vs->xunits, vs->xclamp == V2D_GRID_CLAMP);
-      }
-    }
   }
 
   /* vertical scrollbar */
@@ -2125,17 +1629,6 @@ void UI_view2d_scrollers_draw(const bContext *C, View2D *v2d, View2DScrollers *v
     }
 
     UI_draw_widget_scroll(&wcol, &vert, &slider, state);
-
-    {
-      if (scroll & V2D_SCROLL_SCALE_VERTICAL) {
-        float text_offset = 0.0f;
-        if (vs->yclamp & V2D_GRID_CLAMP) {
-          text_offset = 0.5f;
-        }
-        UI_view2d_grid_draw_numbers_vertical(
-            CTX_data_scene(C), v2d, vs->grid, &vs->vert, vs->yunits, text_offset);
-      }
-    }
   }
 
   /* Was changed above, so reset. */
@@ -2145,68 +1638,11 @@ void UI_view2d_scrollers_draw(const bContext *C, View2D *v2d, View2DScrollers *v
 /* free temporary memory used for drawing scrollers */
 void UI_view2d_scrollers_free(View2DScrollers *scrollers)
 {
-  /* need to free grid as well... */
-  if (scrollers->grid) {
-    MEM_freeN(scrollers->grid);
-  }
   MEM_freeN(scrollers);
 }
 
 /* *********************************************************************** */
 /* List View Utilities */
-
-/** Get the view-coordinates of the nominated cell
- *
- * \param columnwidth, rowheight: size of each 'cell'
- * \param startx, starty: coordinates (in 'tot' rect space) that the list starts from.
- * This should be (0,0) for most views. However, for those where the starting row was offsetted
- * (like for Animation Editor channel lists, to make the first entry more visible), these will be
- * the min-coordinates of the first item.
- * \param column, row: The 2d-coordinates
- * (in 2D-view / 'tot' rect space) the cell exists at
- * \param rect:  coordinates of the cell
- * (passed as single var instead of 4 separate, as it's more useful this way)
- */
-void UI_view2d_listview_cell_to_view(View2D *v2d,
-                                     float columnwidth,
-                                     float rowheight,
-                                     float startx,
-                                     float starty,
-                                     int column,
-                                     int row,
-                                     rctf *rect)
-{
-  /* sanity checks */
-  if (ELEM(NULL, v2d, rect)) {
-    return;
-  }
-
-  if ((columnwidth <= 0) && (rowheight <= 0)) {
-    rect->xmin = rect->xmax = 0.0f;
-    rect->ymin = rect->ymax = 0.0f;
-    return;
-  }
-
-  /* x-coordinates */
-  rect->xmin = startx + (float)(columnwidth * column);
-  rect->xmax = startx + (float)(columnwidth * (column + 1));
-
-  if ((v2d->align & V2D_ALIGN_NO_POS_X) && !(v2d->align & V2D_ALIGN_NO_NEG_X)) {
-    /* simply negate the values for the coordinates if in negative half */
-    rect->xmin = -rect->xmin;
-    rect->xmax = -rect->xmax;
-  }
-
-  /* y-coordinates */
-  rect->ymin = starty + (float)(rowheight * row);
-  rect->ymax = starty + (float)(rowheight * (row + 1));
-
-  if ((v2d->align & V2D_ALIGN_NO_POS_Y) && !(v2d->align & V2D_ALIGN_NO_NEG_Y)) {
-    /* simply negate the values for the coordinates if in negative half */
-    rect->ymin = -rect->ymin;
-    rect->ymax = -rect->ymax;
-  }
-}
 
 /**
  * Get the 'cell' (row, column) that the given 2D-view coordinates
@@ -2220,8 +1656,7 @@ void UI_view2d_listview_cell_to_view(View2D *v2d,
  * \param viewx, viewy: 2D-coordinates (in 2D-view / 'tot' rect space) to get the cell for
  * \param r_column, r_row: the 'coordinates' of the relevant 'cell'
  */
-void UI_view2d_listview_view_to_cell(View2D *v2d,
-                                     float columnwidth,
+void UI_view2d_listview_view_to_cell(float columnwidth,
                                      float rowheight,
                                      float startx,
                                      float starty,
@@ -2230,80 +1665,24 @@ void UI_view2d_listview_view_to_cell(View2D *v2d,
                                      int *r_column,
                                      int *r_row)
 {
-  /* adjust view coordinates to be all positive ints, corrected for the start offset */
-  const int x = (int)(floorf(fabsf(viewx) + 0.5f) - startx);
-  const int y = (int)(floorf(fabsf(viewy) + 0.5f) - starty);
-
-  /* sizes must not be negative */
-  if ((v2d == NULL) || ((columnwidth <= 0) && (rowheight <= 0))) {
-    if (r_column) {
+  if (r_column) {
+    if (columnwidth > 0) {
+      /* Columns go from left to right (x increases). */
+      *r_column = floorf((viewx - startx) / columnwidth);
+    }
+    else {
       *r_column = 0;
     }
-    if (r_row) {
+  }
+
+  if (r_row) {
+    if (rowheight > 0) {
+      /* Rows got from top to bottom (y decreases). */
+      *r_row = floorf((starty - viewy) / rowheight);
+    }
+    else {
       *r_row = 0;
     }
-
-    return;
-  }
-
-  /* get column */
-  if ((r_column) && (columnwidth > 0)) {
-    *r_column = x / columnwidth;
-  }
-  else if (r_column) {
-    *r_column = 0;
-  }
-
-  /* get row */
-  if ((r_row) && (rowheight > 0)) {
-    *r_row = y / rowheight;
-  }
-  else if (r_row) {
-    *r_row = 0;
-  }
-}
-
-/**
- * Get the 'extreme' (min/max) column and row indices which are visible within the 'cur' rect
- *
- * \param columnwidth, rowheight: Size of each 'cell'
- * \param startx, starty: Coordinates that the list starts from,
- * which should be (0,0) for most views.
- * \param column_min, column_max, row_min, row_max: The starting and ending column/row indices
- */
-void UI_view2d_listview_visible_cells(View2D *v2d,
-                                      float columnwidth,
-                                      float rowheight,
-                                      float startx,
-                                      float starty,
-                                      int *column_min,
-                                      int *column_max,
-                                      int *row_min,
-                                      int *row_max)
-{
-  /* using 'cur' rect coordinates, call the cell-getting function to get the cells for this */
-  if (v2d) {
-    /* min */
-    UI_view2d_listview_view_to_cell(v2d,
-                                    columnwidth,
-                                    rowheight,
-                                    startx,
-                                    starty,
-                                    v2d->cur.xmin,
-                                    v2d->cur.ymin,
-                                    column_min,
-                                    row_min);
-
-    /* max*/
-    UI_view2d_listview_view_to_cell(v2d,
-                                    columnwidth,
-                                    rowheight,
-                                    startx,
-                                    starty,
-                                    v2d->cur.xmax,
-                                    v2d->cur.ymax,
-                                    column_max,
-                                    row_max);
   }
 }
 

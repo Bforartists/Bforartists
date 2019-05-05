@@ -1911,8 +1911,7 @@ static bool ed_object_select_pick(bContext *C,
                   }
                 }
 
-                basact->flag |= BASE_SELECTED;
-                BKE_scene_object_base_flag_sync_from_base(basact);
+                ED_object_base_select(basact, BA_SELECT);
 
                 retval = true;
 
@@ -1945,8 +1944,7 @@ static bool ed_object_select_pick(bContext *C,
 
           /* we make the armature selected:
            * not-selected active object in posemode won't work well for tools */
-          basact->flag |= BASE_SELECTED;
-          BKE_scene_object_base_flag_sync_from_base(basact);
+          ED_object_base_select(basact, BA_SELECT);
 
           retval = true;
           WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, basact->object);
@@ -2213,7 +2211,7 @@ static int view3d_select_exec(bContext *C, wmOperator *op)
     }
   }
 
-  /* passthrough allows tweaks
+  /* Pass-through allows tweaks
    * FINISHED to signal one operator worked
    * */
   if (retval) {
@@ -2251,9 +2249,6 @@ void VIEW3D_OT_select(wmOperatorType *ot)
 
   /* properties */
   WM_operator_properties_mouse_select(ot);
-  prop = RNA_def_boolean(
-      ot->srna, "deselect_all", 0, "Deselect", "Deselect all when nothing under the cursor");
-  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   prop = RNA_def_boolean(
       ot->srna,

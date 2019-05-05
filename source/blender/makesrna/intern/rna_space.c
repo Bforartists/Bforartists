@@ -2609,7 +2609,7 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   prop = RNA_def_property(srna, "edge_display_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "dt_uv");
   RNA_def_property_enum_items(prop, dt_uv_items);
-  RNA_def_property_ui_text(prop, "Edge Display Type", "Edge Display Type\nDisplay type for drawing UV edges");
+  RNA_def_property_ui_text(prop, "Display As", "Display As\nDisplay style for UV edges");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
 
   prop = RNA_def_property(srna, "show_smooth_edges", PROP_BOOLEAN, PROP_NONE);
@@ -3000,6 +3000,7 @@ static void rna_def_space_view3d_shading(BlenderRNA *brna)
   RNA_def_property_enum_items(prop, rna_enum_shading_color_type_items);
   RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_View3DShading_color_type_itemf");
   RNA_def_property_ui_text(prop, "Color", "Color\nColor Type");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "wireframe_color_type", PROP_ENUM, PROP_NONE);
