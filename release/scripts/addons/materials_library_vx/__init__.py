@@ -930,8 +930,8 @@ class MATLIB_OT_operator(Operator):
         layout = self.layout
         #cmd = LIBRARY_ADD
         if self.cmd == "LIBRARY_ADD":
-            #layout.label("Select a blend file as library or")
-            #layout.label("Type a name to create a new library.")
+            #layout.label(text="Select a blend file as library or")
+            #layout.label(text="Type a name to create a new library.")
             layout.prop(self, "category", text="Library")
         elif self.cmd == "FILTER_ADD":
             layout.prop(self, "category")
@@ -1150,6 +1150,13 @@ class MATLIB_PT_vxPanel(Panel):
         if not matlib.hide_search:
             row = layout.row(align=True)
             row.prop_search(matlib, "search", matlib, "materials", text="", icon="VIEWZOOM")
+            
+        self.layout.template_preview(context.material) # bfa - preview window
+        
+        row = layout.row()
+        row.scale_y = 1.5
+        row.operator("matlib.operator", icon="MATERIAL", text=" Apply").cmd="APPLY" # bfa - fat apply button for usability
+        row.operator("matlib.operator", icon="COLOR", text="Preview").cmd="PREVIEW" # bfa - fat preview button for usability
 
         #    #list
         row = layout.row()
@@ -1161,8 +1168,6 @@ class MATLIB_PT_vxPanel(Panel):
         col.operator("matlib.operator", icon="ADD", text="").cmd="ADD"
         col.operator("matlib.operator", icon="REMOVE", text="").cmd="REMOVE"
         col.operator("matlib.operator", icon="FILE_REFRESH", text="").cmd="RELOAD"
-        col.operator("matlib.operator", icon="MATERIAL", text="").cmd="APPLY"
-        col.operator("matlib.operator", icon="COLOR", text="").cmd="PREVIEW"
         col.operator("matlib.operator", icon="GHOST_DISABLED", text="").cmd="FLUSH"
         col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
 
@@ -1191,15 +1196,15 @@ class MATLIB_PT_vxPanel(Panel):
 #      if (matlib.current_library):
 #        row.label(matlib.current_library.name)
 #      else:
-#        row.label("Library not found!.")
+#        row.label(text="Library not found!.")
 """
 classes = [
 matlibMaterials,
 matlibProperties,
 EmptyGroup,
-MATLIB_PT_vxPanel, 
-MATLIB_OT_operator, 
-MATLIB_MT_LibsMenu, 
+MATLIB_PT_vxPanel,
+MATLIB_OT_operator,
+MATLIB_MT_LibsMenu,
 MATLIB_MT_CatsMenu
 ]
 #print(bpy.context.scene)

@@ -53,10 +53,10 @@ const bTheme U_theme_default = {
 		.wcol_text = {
 			.outline = RGBA(0x252525ff),
 			.inner = RGBA(0x595959ff),
-			.inner_sel = RGBA(0x5680c2ff),
-			.item = RGBA(0x394c66ff),
+			.inner_sel = RGBA(0x999999ff),
+			.item = RGBA(0xe6e6e6ff),
 			.text = RGBA(0xccccccff),
-			.text_sel = RGBA(0xffffffff),
+			.text_sel = RGBA(0x000000ff),
 			.shadedown = 25,
 			.roundness = 0.2f,
 		},
@@ -73,7 +73,7 @@ const bTheme U_theme_default = {
 		},
 		.wcol_option = {
 			.outline = RGBA(0x252525ff),
-			.inner = RGBA(0x394c66ff),
+			.inner = RGBA(0x808080ff),
 			.inner_sel = RGBA(0x5680c2ff),
 			.item = RGBA(0xb3ffb3ff),
 			.text = RGBA(0xccccccff),

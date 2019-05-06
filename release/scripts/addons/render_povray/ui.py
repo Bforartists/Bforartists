@@ -253,7 +253,7 @@ del properties_particle
 def check_material(mat):
     if mat is not None:
         if mat.use_nodes:
-            if not mat.node_tree: #FORMERLY : #mat.active_node_material is not None: 
+            if not mat.node_tree: #FORMERLY : #mat.active_node_material is not None:
                 return True
             return False
         return True
@@ -573,7 +573,7 @@ class LIGHT_PT_POV_sunsky(PovLampButtonsPanel, bpy.types.Panel):
 
     draw = properties_data_light.DATA_PT_sunsky.draw
 
-    
+
 class LIGHT_PT_POV_shadow(PovLampButtonsPanel, bpy.types.Panel):
     bl_label = properties_data_light.DATA_PT_shadow.bl_label
 
@@ -669,8 +669,8 @@ class WORLD_PT_POV_world(WorldButtonsPanel, bpy.types.Panel):
         row.menu(POV_WORLD_MT_presets.__name__, text=POV_WORLD_MT_presets.bl_label)
         row.operator(AddPresetWorld.bl_idname, text="", icon='ADD')
         row.operator(AddPresetWorld.bl_idname, text="", icon='REMOVE').remove_active = True
-        
-        row = layout.row()        
+
+        row = layout.row()
         row.prop(world, "use_sky_paper")
         row.prop(world, "use_sky_blend")
         row.prop(world, "use_sky_real")
@@ -1093,7 +1093,7 @@ class AddPresetSSS(AddPresetBase, bpy.types.Operator):
     # where to store the preset
     preset_subdir = "pov/material/sss"
 
-    
+
 class MATERIAL_PT_POV_sss(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Subsurface Scattering"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1144,7 +1144,7 @@ class MATERIAL_PT_POV_sss(MaterialButtonsPanel, bpy.types.Panel):
         sub.prop(sss, "back")
         col.separator()
         col.prop(sss, "error_threshold", text="Error")
-        
+
 class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Activate Node Settings"
     bl_context = "material"
@@ -1216,7 +1216,7 @@ class MATERIAL_PT_povray_active_node(MaterialButtonsPanel, bpy.types.Panel):
                                 socket.draw(context, row, node, socket.name)
                 else:
                     layout.label(text="No active nodes!")
-                    
+
 class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Mirror"
     bl_options = {'DEFAULT_CLOSED'}
@@ -2300,7 +2300,7 @@ class TEXT_PT_povray_custom_code(TextButtonsPanel, bpy.types.Panel):
 
         if text:
             box = layout.box()
-            box.label('Source to render:', icon='RENDER_STILL')
+            box.label(text='Source to render:', icon='RENDER_STILL')
             row = box.row()
             row.prop(text.pov, "custom_code",expand = True)
             if text.pov.custom_code in {'3dview'}:
@@ -2417,7 +2417,7 @@ def register():
 
     for cls in classes:
         register_class(cls)
-        
+
     bpy.types.VIEW3D_MT_add.prepend(menu_func_add)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TEXT_MT_templates.append(menu_func_templates)
@@ -2441,7 +2441,6 @@ def unregister():
     bpy.types.TEXT_MT_templates.remove(menu_func_templates)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.VIEW3D_MT_add.remove(menu_func_add)
-    
+
     for cls in reversed(classes):
         unregister_class(cls)
-    

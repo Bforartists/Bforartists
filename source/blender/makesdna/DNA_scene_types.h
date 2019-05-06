@@ -661,19 +661,15 @@ typedef struct RenderData {
    */
   int mode;
 
+  short frs_sec;
+
   /**
    * What to do with the sky/background.
    * Picks sky/premul blending for the background.
    */
-  short alphamode;
+  char alphamode;
 
-  /**
-   * The number of samples to use per pixel.
-   */
-  short osa;
-
-  short frs_sec;
-  char _pad[6];
+  char _pad0[1];
 
   /* safety, border and display rect */
   rctf safety, border;
@@ -802,11 +798,6 @@ typedef struct RenderProfile {
 /* ToolSettings.uv_sculpt_settings */
 #define UV_SCULPT_LOCK_BORDERS 1
 #define UV_SCULPT_ALL_ISLANDS 2
-
-/* ToolSettings.uv_sculpt_tool */
-#define UV_SCULPT_TOOL_PINCH 1
-#define UV_SCULPT_TOOL_RELAX 2
-#define UV_SCULPT_TOOL_GRAB 3
 
 /* ToolSettings.uv_relax_method */
 #define UV_SCULPT_TOOL_RELAX_LAPLACIAN 1
@@ -965,11 +956,11 @@ typedef struct Sculpt {
   Paint paint;
 
   /* For rotating around a pivot point */
-  //float pivot[3]; XXX not used?
+  // float pivot[3]; XXX not used?
   int flags;
 
   /* Control tablet input */
-  //char tablet_size, tablet_strength; XXX not used?
+  // char tablet_size, tablet_strength; XXX not used?
   int radial_symm[3];
 
   /* Maximum edge length for dynamic topology sculpting (in pixels) */
@@ -1467,7 +1458,7 @@ typedef struct ToolSettings {
   char snap_target;
   char snap_transform_mode_flag;
 
-  char proportional, prop_mode;
+  char proportional_edit, prop_mode;
   /** Proportional edit, object mode. */
   char proportional_objects;
   /** Proportional edit, mask editing. */
@@ -1479,7 +1470,7 @@ typedef struct ToolSettings {
   /** Lock marker editing. */
   char lock_markers;
 
-  /**aUto normalizing mode in wpain.t*/
+  /** Auto normalizing mode in wpaint. */
   char auto_normalize;
   /** Paint multiple bones in wpaint. */
   char multipaint;
@@ -1488,10 +1479,8 @@ typedef struct ToolSettings {
   char vgroupsubset;
 
   /* UV painting */
-  char _pad2[1];
-  char use_uv_sculpt;
+  char _pad2[3];
   char uv_sculpt_settings;
-  char uv_sculpt_tool;
   char uv_relax_method;
   /* XXX: these sculpt_paint_* fields are deprecated, use the
    * unified_paint_settings field instead! */
@@ -1573,6 +1562,11 @@ typedef struct SceneDisplay {
   float matcap_ssao_attenuation;
   int matcap_ssao_samples;
 
+  /** Method of AA for viewport rendering and image rendering */
+  char viewport_aa;
+  char render_aa;
+  char _pad[6];
+
   /** OpenGL render engine settings. */
   View3DShading shading;
 } SceneDisplay;
@@ -1647,7 +1641,7 @@ typedef struct TransformOrientationSlot {
   char _pad0[7];
 } TransformOrientationSlot;
 
-/* Indices when used in Scene.orientation. */
+/** Indices when used in #Scene.orientation_slots */
 enum {
   SCE_ORIENT_DEFAULT = 0,
   SCE_ORIENT_TRANSLATE = 1,
@@ -1730,7 +1724,7 @@ typedef struct Scene {
   /* Units */
   struct UnitSettings unit;
 
-  /* Grease Pencil - Annotations */
+  /** Grease Pencil - Annotations */
   struct bGPdata *gpd;
 
   /* Movie Tracking */
@@ -1771,15 +1765,15 @@ typedef struct Scene {
 
 /* **************** RENDERDATA ********************* */
 
-/* RenderData.flag */
+/** #RenderData.flag */
 /* use preview range */
 #define SCER_PRV_RANGE (1 << 0)
 #define SCER_LOCK_FRAME_SELECTION (1 << 1)
 /* show/use subframes (for checking motion blur) */
 #define SCER_SHOW_SUBFRAME (1 << 3)
 
-/* RenderData.mode */
-#define R_OSA (1 << 0)
+/** #RenderData.mode */
+#define R_MODE_UNUSED_0 (1 << 0) /* dirty */
 #define R_MODE_UNUSED_1 (1 << 1) /* cleared */
 #define R_MODE_UNUSED_2 (1 << 2) /* cleared */
 #define R_MODE_UNUSED_3 (1 << 3) /* cleared */
@@ -1811,23 +1805,24 @@ typedef struct Scene {
 #define R_PERSISTENT_DATA (1 << 26) /* keep data around for re-render */
 #define R_MODE_UNUSED_27 (1 << 27)  /* cleared */
 
-/* RenderData.seq_flag */
+/** #RenderData.seq_flag */
 enum {
   R_SEQ_UNUSED_0 = (1 << 0), /* cleared */
   R_SEQ_UNUSED_1 = (1 << 1), /* cleared */
   R_SEQ_UNUSED_2 = (1 << 2), /* cleared */
-  R_SEQ_SOLID_TEX = (1 << 3),
-  R_SEQ_CAMERA_DOF = (1 << 4),
+  R_SEQ_UNUSED_3 = (1 << 3), /* cleared */
+  R_SEQ_UNUSED_4 = (1 << 4), /* cleared */
+  R_SEQ_OVERRIDE_SCENE_SETTINGS = (1 << 5),
 };
 
-/* RenderData.displaymode */
+/** #RenderData.displaymode */
 #define R_OUTPUT_SCREEN 0
 #define R_OUTPUT_AREA 1
 #define R_OUTPUT_WINDOW 2
 #define R_OUTPUT_NONE 3
 /*#define R_OUTPUT_FORKED   4*/
 
-/* RenderData.filtertype (used for nodes) */
+/** #RenderData.filtertype (used for nodes) */
 #define R_FILTER_BOX 0
 #define R_FILTER_TENT 1
 #define R_FILTER_QUAD 2
@@ -1837,7 +1832,7 @@ enum {
 #define R_FILTER_MITCH 6
 #define R_FILTER_FAST_GAUSS 7
 
-/* RenderData.scemode */
+/** #RenderData.scemode */
 #define R_DOSEQ (1 << 0)
 #define R_BG_RENDER (1 << 1)
 /* passepartout is camera option now, keep this for backward compatibility */
@@ -1862,7 +1857,7 @@ enum {
 #define R_EXR_CACHE_FILE (1 << 20)
 #define R_MULTIVIEW (1 << 21)
 
-/* RenderData.stamp */
+/** #RenderData.stamp */
 #define R_STAMP_TIME (1 << 0)
 #define R_STAMP_FRAME (1 << 1)
 #define R_STAMP_DATE (1 << 2)
@@ -1887,10 +1882,12 @@ enum {
    R_STAMP_HOSTNAME)
 
 /** #RenderData.alphamode */
-#define R_ADDSKY 0
-#define R_ALPHAPREMUL 1
+enum {
+  R_ADDSKY = 0,
+  R_ALPHAPREMUL = 1,
+};
 
-/* RenderData.color_mgt_flag */
+/** #RenderData.color_mgt_flag */
 enum {
   /** deprecated, should only be used in versioning code only */
   R_COLOR_MANAGEMENT = (1 << 0),
@@ -2078,11 +2075,12 @@ enum {
 #define PROP_INVSQUARE 7
 #define PROP_MODE_MAX 8
 
-/* ToolSettings.proportional */
-#define PROP_EDIT_OFF 0
-#define PROP_EDIT_ON 1
-#define PROP_EDIT_CONNECTED 2
-#define PROP_EDIT_PROJECTED 3
+/** #ToolSettings.proportional_edit & similarly named members. */
+enum {
+  PROP_EDIT_USE = (1 << 0),
+  PROP_EDIT_CONNECTED = (1 << 1),
+  PROP_EDIT_PROJECTED = (1 << 2),
+};
 
 /* ToolSettings.weightuser */
 enum {
@@ -2400,6 +2398,17 @@ enum {
   SHADOW_ESM = 1,
   SHADOW_VSM = 2,
   SHADOW_METHOD_MAX = 3,
+};
+
+/* SceneDisplay->render_aa, SceneDisplay->viewport_aa */
+enum {
+  SCE_DISPLAY_AA_OFF = 0,
+  SCE_DISPLAY_AA_FXAA = 1,
+  SCE_DISPLAY_AA_SAMPLES_5 = 5,
+  SCE_DISPLAY_AA_SAMPLES_8 = 8,
+  SCE_DISPLAY_AA_SAMPLES_11 = 11,
+  SCE_DISPLAY_AA_SAMPLES_16 = 16,
+  SCE_DISPLAY_AA_SAMPLES_32 = 32,
 };
 
 #ifdef __cplusplus

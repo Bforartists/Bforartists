@@ -147,26 +147,25 @@ enum {
   VAR_MAT_MESH = (1 << 0),
   VAR_MAT_PROBE = (1 << 1),
   VAR_MAT_HAIR = (1 << 2),
-  VAR_MAT_FLAT = (1 << 3),
-  VAR_MAT_BLEND = (1 << 4),
-  VAR_MAT_VSM = (1 << 5),
-  VAR_MAT_ESM = (1 << 6),
-  VAR_MAT_VOLUME = (1 << 7),
-  VAR_MAT_LOOKDEV = (1 << 8),
+  VAR_MAT_BLEND = (1 << 3),
+  VAR_MAT_VSM = (1 << 4),
+  VAR_MAT_ESM = (1 << 5),
+  VAR_MAT_VOLUME = (1 << 6),
+  VAR_MAT_LOOKDEV = (1 << 7),
   /* Max number of variation */
   /* IMPORTANT : Leave it last and set
    * it's value accordingly. */
-  VAR_MAT_MAX = (1 << 9),
+  VAR_MAT_MAX = (1 << 8),
   /* These are options that are not counted in VAR_MAT_MAX
    * because they are not cumulative with the others above. */
-  VAR_MAT_CLIP = (1 << 10),
-  VAR_MAT_HASH = (1 << 11),
-  VAR_MAT_MULT = (1 << 12),
-  VAR_MAT_SHADOW = (1 << 13),
-  VAR_MAT_REFRACT = (1 << 14),
-  VAR_MAT_SSS = (1 << 15),
-  VAR_MAT_TRANSLUC = (1 << 16),
-  VAR_MAT_SSSALBED = (1 << 17),
+  VAR_MAT_CLIP = (1 << 9),
+  VAR_MAT_HASH = (1 << 10),
+  VAR_MAT_MULT = (1 << 11),
+  VAR_MAT_SHADOW = (1 << 12),
+  VAR_MAT_REFRACT = (1 << 13),
+  VAR_MAT_SSS = (1 << 14),
+  VAR_MAT_TRANSLUC = (1 << 15),
+  VAR_MAT_SSSALBED = (1 << 16),
 };
 
 /* ************ PROBE UBO ************* */
@@ -246,6 +245,7 @@ typedef struct EEVEE_PassList {
   struct DRWPass *color_downsample_cube_ps;
   struct DRWPass *velocity_resolve;
   struct DRWPass *taa_resolve;
+  struct DRWPass *alpha_checker;
 
   /* HiZ */
   struct DRWPass *minz_downlevel_ps;
@@ -275,7 +275,8 @@ typedef struct EEVEE_PassList {
   struct DRWPass *transparent_pass;
   struct DRWPass *background_pass;
   struct DRWPass *update_noise_pass;
-  struct DRWPass *lookdev_pass;
+  struct DRWPass *lookdev_glossy_pass;
+  struct DRWPass *lookdev_diffuse_pass;
 } EEVEE_PassList;
 
 typedef struct EEVEE_FramebufferList {
@@ -537,6 +538,7 @@ typedef enum EEVEE_EffectsFlag {
   EFFECT_VELOCITY_BUFFER = (1 << 12),     /* Not really an effect but a feature */
   EFFECT_TAA_REPROJECT = (1 << 13),       /* should be mutually exclusive with EFFECT_TAA */
   EFFECT_DEPTH_DOUBLE_BUFFER = (1 << 14), /* Not really an effect but a feature */
+  EFFECT_ALPHA_CHECKER = (1 << 15),       /* Not really an effect but a feature */
 } EEVEE_EffectsFlag;
 
 typedef struct EEVEE_EffectsInfo {
@@ -598,8 +600,14 @@ typedef struct EEVEE_EffectsInfo {
   struct GPUTexture *dof_coc;
   struct GPUTexture *dof_blur;
   struct GPUTexture *dof_blur_alpha;
+  /* Alpha Checker */
+  float color_checker_dark[4];
+  float color_checker_light[4];
   /* Other */
   float prev_persmat[4][4];
+  /* Lookdev */
+  int ball_size;
+  int anchor[2];
   /* Bloom */
   int bloom_iteration_len;
   float source_texel_size[2];
@@ -1044,6 +1052,9 @@ void EEVEE_mist_free(void);
 /* eevee_temporal_sampling.c */
 void EEVEE_temporal_sampling_reset(EEVEE_Data *vedata);
 int EEVEE_temporal_sampling_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata);
+void EEVEE_temporal_sampling_offset_calc(const double ht_point[2],
+                                         const float filter_size,
+                                         float r_offset[2]);
 void EEVEE_temporal_sampling_matrices_calc(EEVEE_EffectsInfo *effects,
                                            float viewmat[4][4],
                                            float persmat[4][4],
@@ -1073,6 +1084,7 @@ void EEVEE_effects_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata);
 void EEVEE_create_minmax_buffer(EEVEE_Data *vedata, struct GPUTexture *depth_src, int layer);
 void EEVEE_downsample_buffer(EEVEE_Data *vedata, struct GPUTexture *texture_src, int level);
 void EEVEE_downsample_cube_buffer(EEVEE_Data *vedata, struct GPUTexture *texture_src, int level);
+void EEVEE_draw_alpha_checker(EEVEE_Data *vedata);
 void EEVEE_draw_effects(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata);
 void EEVEE_effects_free(void);
 
@@ -1099,7 +1111,7 @@ void EEVEE_lookdev_cache_init(EEVEE_Data *vedata,
                               float background_alpha,
                               struct World *world,
                               EEVEE_LightProbesInfo *pinfo);
-void EEVEE_lookdev_draw_background(EEVEE_Data *vedata);
+void EEVEE_lookdev_draw(EEVEE_Data *vedata);
 
 /** eevee_engine.c */
 void EEVEE_cache_populate(void *vedata, Object *ob);
