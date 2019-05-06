@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Hotkey: 'Ctrl Alt S ",
     "description": "Switch Editor Type Menu",
-    "author": "saidenka",
+    "author": "saidenka, meta-androcto",
     "version": (0, 1, 0),
     "blender": (2, 80, 0),
     "location": "All Editors",
@@ -77,11 +77,11 @@ class AreaPieEditor(Menu):
         # 8 - TOP
         pie.operator(SetAreaType.bl_idname, text="3D View", icon="MESH_CUBE").types = "VIEW_3D"
         # 7 - TOP - LEFT
-        pie.operator(SetAreaType.bl_idname, text="UV/Image Editor", icon="NONE").types = "IMAGE_EDITOR"
+        pie.operator(SetAreaType.bl_idname, text="UV/Image Editor", icon="UV").types = "IMAGE_EDITOR"
         # 9 - TOP - RIGHT
         pie.operator(SetAreaType.bl_idname, text="Node Editor", icon="NODETREE").types = "NODE_EDITOR"
         # 1 - BOTTOM - LEFT
-        pie.operator(SetAreaType.bl_idname, text="Outliner", icon="NONE").types = "OUTLINER"
+        pie.operator(SetAreaType.bl_idname, text="Outliner", icon="OUTLINER").types = "OUTLINER"
         # 3 - BOTTOM - RIGHT
         pie.menu(AreaTypePieOther.bl_idname, text="More Editors", icon="QUESTION")
 
@@ -92,20 +92,11 @@ class AreaTypePieOther(Menu):
     bl_description = "Is pie menu change editor type (other)"
 
     def draw(self, context):
-        # 4 - LEFT
-        self.layout.operator(SetAreaType.bl_idname, text="Logic Editor", icon="LOGIC").types = "LOGIC_EDITOR"
-        # 6 - RIGHT
         self.layout.operator(SetAreaType.bl_idname, text="File Browser", icon="FILEBROWSER").types = "FILE_BROWSER"
-        # 2 - BOTTOM
         self.layout.operator(SetAreaType.bl_idname, text="Python Console", icon="CONSOLE").types = "CONSOLE"
-        # 8 - TOP
-        # 7 - TOP - LEFT
         self.layout.operator(SetAreaType.bl_idname, text="User Preferences",
                              icon="PREFERENCES").types = "USER_PREFERENCES"
-        # 9 - TOP - RIGHT
         self.layout.operator(SetAreaType.bl_idname, text="Info", icon="INFO").types = "INFO"
-        # 1 - BOTTOM - LEFT
-        # 3 - BOTTOM - RIGHT
 
 
 class SetAreaType(Operator):
@@ -127,23 +118,14 @@ class AreaTypePieAnim(Menu):
     bl_description = "Menu for changing editor type (animation related)"
 
     def draw(self, context):
-        # 4 - LEFT
         self.layout.operator(SetAreaType.bl_idname, text="NLA Editor", icon="NLA").types = "NLA_EDITOR"
-        # 6 - RIGHT
         self.layout.operator(SetAreaType.bl_idname, text="DopeSheet", icon="ACTION").types = "DOPESHEET_EDITOR"
-        # 2 - BOTTOM
-        self.layout.operator(SetAreaType.bl_idname, text="Graph Editor", icon="IPO").types = "GRAPH_EDITOR"
-        # 8 - TOP
+        self.layout.operator(SetAreaType.bl_idname, text="Graph Editor", icon="GRAPH").types = "GRAPH_EDITOR"
         self.layout.operator(SetAreaType.bl_idname, text="Timeline", icon="TIME").types = "TIMELINE"
-        # 7 - TOP - LEFT
         self.layout.operator(SetAreaType.bl_idname,
                              text="Video Sequence Editor", icon="SEQUENCE").types = "SEQUENCE_EDITOR"
-        # 9 - TOP - RIGHT
         self.layout.operator(SetAreaType.bl_idname,
                              text="Video Clip Editor", icon="RENDER_ANIMATION").types = "CLIP_EDITOR"
-        # 1 - BOTTOM - LEFT
-        self.layout.operator("wm.call_menu_pie", text="Back", icon="BACK").name = AreaPieEditor.bl_idname
-        # 3 - BOTTOM - RIGHT
 
 
 classes = (

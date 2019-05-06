@@ -377,7 +377,7 @@ void ANIM_OT_keyingset_button_add(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = add_keyingset_button_exec;
-  //op->poll = ???
+  // op->poll = ???
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -460,7 +460,7 @@ void ANIM_OT_keyingset_button_remove(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = remove_keyingset_button_exec;
-  //op->poll = ???
+  // op->poll = ???
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1022,8 +1022,10 @@ static short keyingset_apply_keying_flags(const short base_flags,
   return result;
 }
 
-/* Given a KeyingSet and context info (if required), modify keyframes for the channels specified
- * by the KeyingSet. This takes into account many of the different combinations of using KeyingSets.
+/**
+ * Given a KeyingSet and context info (if required),
+ * modify keyframes for the channels specified by the KeyingSet.
+ * This takes into account many of the different combinations of using KeyingSets.
  * Returns the number of channels that keyframes were added to
  */
 int ANIM_apply_keyingset(

@@ -295,7 +295,7 @@ class MocapPanel(bpy.types.Panel):
         enduser_obj = bpy.context.active_object
         performer_obj = [obj for obj in bpy.context.selected_objects if obj != enduser_obj]
         if enduser_obj is None or len(performer_obj) != 1:
-            layout.label("Select performer rig and target rig (as active)")
+            layout.label(text="Select performer rig and target rig (as active)")
         else:
             layout.operator("mocap.guessmapping", text="Guess Hierarchy Mapping")
             labelRow = layout.row(align=True)

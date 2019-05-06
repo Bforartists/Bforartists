@@ -60,8 +60,8 @@ static void select_surrounding_handles(Scene *scene, Sequence *test) /* XXX BRIN
 
   neighbor = find_neighboring_sequence(scene, test, SEQ_SIDE_LEFT, -1);
   if (neighbor) {
-    /* Only select neighbor handle if matching handle from test seq is also selected, or if neighbor
-     * was not selected at all up till now.
+    /* Only select neighbor handle if matching handle from test seq is also selected,
+     * or if neighbor was not selected at all up till now.
      * Otherwise, we get odd mismatch when shift-alt-rmb selecting neighbor strips... */
     if (!(neighbor->flag & SELECT) || (test->flag & SEQ_LEFTSEL)) {
       neighbor->flag |= SEQ_RIGHTSEL;
@@ -318,6 +318,7 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
   Scene *scene = CTX_data_scene(C);
   Editing *ed = BKE_sequencer_editing_get(scene, false);
   const bool extend = RNA_boolean_get(op->ptr, "extend");
+  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
   const bool linked_handle = RNA_boolean_get(op->ptr, "linked_handle");
   const bool linked_time = RNA_boolean_get(op->ptr, "linked_time");
   int left_right = RNA_enum_get(op->ptr, "left_right");
@@ -330,7 +331,7 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
     return OPERATOR_CANCELLED;
   }
 
-  marker = find_nearest_marker(SCE_MARKERS, 1);  //XXX - dummy function for now
+  marker = find_nearest_marker(SCE_MARKERS, 1);  // XXX - dummy function for now
 
   seq = find_nearest_seq(scene, v2d, &hand, event->mval);
 
@@ -401,15 +402,13 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
     }
   }
   else {
-    // seq = find_nearest_seq(scene, v2d, &hand, mval);
-
     act_orig = ed->act_seq;
 
-    if (extend == 0 && linked_handle == 0) {
-      ED_sequencer_deselect_all(scene);
-    }
-
     if (seq) {
+      if (!extend && !linked_handle) {
+        ED_sequencer_deselect_all(scene);
+      }
+
       BKE_sequencer_active_set(scene, seq);
 
       if ((seq->type == SEQ_TYPE_IMAGE) || (seq->type == SEQ_TYPE_MOVIE)) {
@@ -427,8 +426,8 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
       if (linked_handle) {
         if (!ELEM(hand, SEQ_SIDE_LEFT, SEQ_SIDE_RIGHT)) {
           /* First click selects the strip and its adjacent handles (if valid).
-           * Second click selects the strip, both of its handles and its adjacent handles (if valid).
-           */
+           * Second click selects the strip,
+           * both of its handles and its adjacent handles (if valid). */
           const bool is_striponly_selected = ((seq->flag & SEQ_ALLSEL) == SELECT);
 
           if (!extend) {
@@ -535,25 +534,10 @@ static int sequencer_select_invoke(bContext *C, wmOperator *op, const wmEvent *e
         select_linked_time(ed->seqbasep, seq);
       }
     }
-  }
-
-  /* marker transform */
-#if 0  // XXX probably need to redo this differently for 2.5
-  if (marker) {
-    int mval[2], xo, yo;
-    //      getmouseco_areawin(mval);
-    xo = mval[0];
-    yo = mval[1];
-
-    while (get_mbut()) {
-      //          getmouseco_areawin(mval);
-      if (abs(mval[0] - xo) + abs(mval[1] - yo) > 4) {
-        transform_markers('g', 0);
-        return;
-      }
+    else if (deselect_all) {
+      ED_sequencer_deselect_all(scene);
     }
   }
-#endif
 
   WM_event_add_notifier(C, NC_SCENE | ND_SEQUENCER | NA_SELECTED, scene);
 
@@ -584,7 +568,14 @@ void SEQUENCER_OT_select(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* properties */
+  PropertyRNA *prop;
   RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
+  prop = RNA_def_boolean(ot->srna,
+                         "deselect_all",
+                         false,
+                         "Deselect On Nothing",
+                         "Deselect all when nothing under the cursor");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   RNA_def_boolean(
       ot->srna, "linked_handle", 0, "Linked Handle", "Select handles next to the active strip");
   /* for animation this is an enum but atm having an enum isn't useful for us */

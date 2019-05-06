@@ -230,7 +230,6 @@ static void box_select_action(bAnimContext *ac, const rcti rect, short mode, sho
   KeyframeEditFunc ok_cb, select_cb;
   View2D *v2d = &ac->ar->v2d;
   rctf rectf;
-  float ymin = 0, ymax = (float)(-ACHANNEL_HEIGHT_HALF(ac));
 
   /* Convert mouse coordinates to frame ranges and channel
    * coordinates corrected for view pan/zoom. */
@@ -254,12 +253,14 @@ static void box_select_action(bAnimContext *ac, const rcti rect, short mode, sho
   /* init editing data */
   memset(&ked, 0, sizeof(KeyframeEditData));
 
+  float ymax = ACHANNEL_FIRST_TOP(ac);
+
   /* loop over data, doing box select */
-  for (ale = anim_data.first; ale; ale = ale->next) {
+  for (ale = anim_data.first; ale; ale = ale->next, ymax -= ACHANNEL_STEP(ac)) {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     /* get new vertical minimum extent of channel */
-    ymin = ymax - ACHANNEL_STEP(ac);
+    float ymin = ymax - ACHANNEL_STEP(ac);
 
     /* set horizontal range (if applicable) */
     if (ELEM(mode, ACTKEYS_BORDERSEL_FRAMERANGE, ACTKEYS_BORDERSEL_ALLKEYS)) {
@@ -314,9 +315,6 @@ static void box_select_action(bAnimContext *ac, const rcti rect, short mode, sho
         }
       }
     }
-
-    /* set minimum extent to be the maximum of the next channel */
-    ymax = ymin;
   }
 
   /* cleanup */
@@ -418,7 +416,6 @@ static void region_select_action_keys(
   KeyframeEditFunc ok_cb, select_cb;
   View2D *v2d = &ac->ar->v2d;
   rctf rectf, scaled_rectf;
-  float ymin = 0, ymax = (float)(-ACHANNEL_HEIGHT_HALF(ac));
 
   /* Convert mouse coordinates to frame ranges and channel
    * coordinates corrected for view pan/zoom. */
@@ -448,15 +445,17 @@ static void region_select_action_keys(
     ked.data = &scaled_rectf;
   }
 
+  float ymax = ACHANNEL_FIRST_TOP(ac);
+
   /* loop over data, doing region select */
-  for (ale = anim_data.first; ale; ale = ale->next) {
+  for (ale = anim_data.first; ale; ale = ale->next, ymax -= ACHANNEL_STEP(ac)) {
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     /* get new vertical minimum extent of channel */
-    ymin = ymax - ACHANNEL_STEP(ac);
+    float ymin = ymax - ACHANNEL_STEP(ac);
 
     /* compute midpoint of channel (used for testing if the key is in the region or not) */
-    ked.channel_y = ymin + ACHANNEL_HEIGHT_HALF(ac);
+    ked.channel_y = (ymin + ymax) / 2.0f;
 
     /* if channel is mapped in NLA, apply correction
      * - Apply to the bounds being checked, not all the keyframe points,
@@ -520,9 +519,6 @@ static void region_select_action_keys(
           break;
       }
     }
-
-    /* set minimum extent to be the maximum of the next channel */
-    ymax = ymin;
   }
 
   /* cleanup */
@@ -1425,8 +1421,12 @@ static void actkeys_mselect_channel_only(bAnimContext *ac, bAnimListElem *ale, s
 
 /* ------------------- */
 
-static void mouse_action_keys(
-    bAnimContext *ac, const int mval[2], short select_mode, bool column, bool same_channel)
+static void mouse_action_keys(bAnimContext *ac,
+                              const int mval[2],
+                              short select_mode,
+                              const bool deselect_all,
+                              const bool column,
+                              const bool same_channel)
 {
   ListBase anim_data = {NULL, NULL};
   DLRBT_Tree anim_keys;
@@ -1451,7 +1451,7 @@ static void mouse_action_keys(
   /* use View2D to determine the index of the channel (i.e a row in the list) where keyframe was */
   UI_view2d_region_to_view(v2d, mval[0], mval[1], &x, &y);
   UI_view2d_listview_view_to_cell(
-      v2d, 0, ACHANNEL_STEP(ac), 0, (float)ACHANNEL_HEIGHT_HALF(ac), x, y, NULL, &channel_index);
+      0, ACHANNEL_STEP(ac), 0, ACHANNEL_FIRST_TOP(ac), x, y, NULL, &channel_index);
 
   /* x-range to check is +/- 7px for standard keyframe under standard dpi/y-scale
    * (in screen/region-space), on either side of mouse click (size of keyframe icon).
@@ -1471,14 +1471,7 @@ static void mouse_action_keys(
 
   /* try to get channel */
   ale = BLI_findlink(&anim_data, channel_index);
-  if (ale == NULL) {
-    /* channel not found */
-    printf("Error: animation channel (index = %d) not found in mouse_action_keys()\n",
-           channel_index);
-    ANIM_animdata_freelist(&anim_data);
-    return;
-  }
-  else {
+  if (ale != NULL) {
     /* found match - must return here... */
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
     ActKeyColumn *ak, *akn = NULL;
@@ -1558,13 +1551,15 @@ static void mouse_action_keys(
 
     /* cleanup temporary lists */
     BLI_dlrbTree_free(&anim_keys);
-
-    /* free list of channels, since it's not used anymore */
-    ANIM_animdata_freelist(&anim_data);
   }
 
-  /* for replacing selection, firstly need to clear existing selection */
-  if (select_mode == SELECT_REPLACE) {
+  /* free list of channels, since it's not used anymore */
+  ANIM_animdata_freelist(&anim_data);
+
+  /* For replacing selection, if we have something to select, we have to clear existing selection.
+   * The same goes if we found nothing to select, and deselect_all is true
+   * (deselect on nothing behavior). */
+  if ((select_mode == SELECT_REPLACE && found) || (!found && deselect_all)) {
     /* reset selection mode for next steps */
     select_mode = SELECT_ADD;
 
@@ -1577,7 +1572,7 @@ static void mouse_action_keys(
       ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, 0, ACHANNEL_SETFLAG_CLEAR);
 
       /* Highlight Action-Group or F-Curve? */
-      if (ale && ale->data) {
+      if (ale != NULL && ale->data) {
         if (ale->type == ANIMTYPE_GROUP) {
           bActionGroup *agrp = ale->data;
 
@@ -1597,11 +1592,11 @@ static void mouse_action_keys(
       ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, 0, ACHANNEL_SETFLAG_CLEAR);
 
       /* Highlight GPencil Layer */
-      if ((ale && ale->data) && (ale->type == ANIMTYPE_GPLAYER)) {
+      if (ale != NULL && ale->data != NULL && ale->type == ANIMTYPE_GPLAYER) {
         bGPDlayer *gpl = ale->data;
 
         gpl->flag |= GP_LAYER_SELECT;
-        //gpencil_layer_setactive(gpd, gpl);
+        // gpencil_layer_setactive(gpd, gpl);
       }
     }
     else if (ac->datatype == ANIMCONT_MASK) {
@@ -1609,17 +1604,17 @@ static void mouse_action_keys(
       ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, 0, ACHANNEL_SETFLAG_CLEAR);
 
       /* Highlight GPencil Layer */
-      if ((ale && ale->data) && (ale->type == ANIMTYPE_MASKLAYER)) {
+      if (ale != NULL && ale->data != NULL && ale->type == ANIMTYPE_MASKLAYER) {
         MaskLayer *masklay = ale->data;
 
         masklay->flag |= MASK_LAYERFLAG_SELECT;
-        //gpencil_layer_setactive(gpd, gpl);
+        // gpencil_layer_setactive(gpd, gpl);
       }
     }
   }
 
   /* only select keyframes if we clicked on a valid channel and hit something */
-  if (ale) {
+  if (ale != NULL) {
     if (found) {
       /* apply selection to keyframes */
       if (column) {
@@ -1654,9 +1649,6 @@ static void mouse_action_keys(
 static int actkeys_clickselect_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   bAnimContext ac;
-  /* ARegion *ar; */ /* UNUSED */
-  short selectmode;
-  bool column, channel;
 
   /* get editor data */
   if (ANIM_animdata_get_context(C, &ac) == 0) {
@@ -1667,19 +1659,15 @@ static int actkeys_clickselect_invoke(bContext *C, wmOperator *op, const wmEvent
   /* ar = ac.ar; */ /* UNUSED */
 
   /* select mode is either replace (deselect all, then add) or add/extend */
-  if (RNA_boolean_get(op->ptr, "extend")) {
-    selectmode = SELECT_INVERT;
-  }
-  else {
-    selectmode = SELECT_REPLACE;
-  }
+  const short selectmode = RNA_boolean_get(op->ptr, "extend") ? SELECT_INVERT : SELECT_REPLACE;
+  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
 
   /* column selection */
-  column = RNA_boolean_get(op->ptr, "column");
-  channel = RNA_boolean_get(op->ptr, "channel");
+  const bool column = RNA_boolean_get(op->ptr, "column");
+  const bool channel = RNA_boolean_get(op->ptr, "channel");
 
   /* select keyframe(s) based upon mouse position*/
-  mouse_action_keys(&ac, event->mval, selectmode, column, channel);
+  mouse_action_keys(&ac, event->mval, selectmode, deselect_all, column, channel);
 
   /* set notifier that keyframe selection (and channels too) have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_SELECTED, NULL);
@@ -1712,6 +1700,13 @@ void ACTION_OT_clickselect(wmOperatorType *ot)
       0,
       "Extend Select",
       "Toggle keyframe selection instead of leaving newly selected keyframes only");  // SHIFTKEY
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  prop = RNA_def_boolean(ot->srna,
+                         "deselect_all",
+                         false,
+                         "Deselect On Nothing",
+                         "Deselect all when nothing under the cursor");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 
   prop = RNA_def_boolean(

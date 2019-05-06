@@ -39,6 +39,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_math.h"
 
+#include "BLF_api.h"
+
 #include "BKE_context.h"
 #include "BKE_idprop.h"
 #include "BKE_global.h"
@@ -61,8 +63,11 @@ struct wmKeyMapItemFind_Params {
   void *user_data;
 };
 
-/******************************* Keymap Item **********************************
- * Item in a keymap, that maps from an event to an operator or modal map item */
+/* -------------------------------------------------------------------- */
+/** \name Keymap Item
+ *
+ * Item in a keymap, that maps from an event to an operator or modal map item.
+ * \{ */
 
 static wmKeyMapItem *wm_keymap_item_copy(wmKeyMapItem *kmi)
 {
@@ -140,7 +145,7 @@ static void wm_keymap_item_properties_update_ot(wmKeyMapItem *kmi)
   }
 }
 
-static void wm_keyconfig_properties_update_ot(ListBase *km_lb)
+static void wm_keymap_item_properties_update_ot_from_list(ListBase *km_lb)
 {
   wmKeyMap *km;
   wmKeyMapItem *kmi;
@@ -179,7 +184,7 @@ static bool wm_keymap_item_equals(wmKeyMapItem *a, wmKeyMapItem *b)
 }
 
 /* properties can be NULL, otherwise the arg passed is used and ownership is given to the kmi */
-void WM_keymap_properties_reset(wmKeyMapItem *kmi, struct IDProperty *properties)
+void WM_keymap_item_properties_reset(wmKeyMapItem *kmi, struct IDProperty *properties)
 {
   if (LIKELY(kmi->ptr)) {
     WM_operator_properties_free(kmi->ptr);
@@ -193,7 +198,7 @@ void WM_keymap_properties_reset(wmKeyMapItem *kmi, struct IDProperty *properties
   wm_keymap_item_properties_set(kmi);
 }
 
-int WM_keymap_map_type_get(wmKeyMapItem *kmi)
+int WM_keymap_item_map_type_get(const wmKeyMapItem *kmi)
 {
   if (ISTIMER(kmi->type)) {
     return KMI_TYPE_TIMER;
@@ -219,8 +224,13 @@ int WM_keymap_map_type_get(wmKeyMapItem *kmi)
   return KMI_TYPE_KEYBOARD;
 }
 
-/**************************** Keymap Diff Item *********************************
- * Item in a diff keymap, used for saving diff of keymaps in user preferences */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Keymap Diff Item
+ *
+ * Item in a diff keymap, used for saving diff of keymaps in user preferences.
+ * \{ */
 
 static wmKeyMapDiffItem *wm_keymap_diff_item_copy(wmKeyMapDiffItem *kmdi)
 {
@@ -249,9 +259,15 @@ static void wm_keymap_diff_item_free(wmKeyMapDiffItem *kmdi)
   }
 }
 
-/***************************** Key Configuration ******************************
- * List of keymaps for all editors, modes, ... . There is a builtin default key
- * configuration, a user key configuration, and other preset configurations. */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Key Configuration
+ *
+ * List of keymaps for all editors, modes, etc.
+ * There is a builtin default key configuration,
+ * a user key configuration, and other preset configurations.
+ * \{ */
 
 wmKeyConfig *WM_keyconfig_new(wmWindowManager *wm, const char *idname, bool user_defined)
 {
@@ -349,8 +365,13 @@ void WM_keyconfig_set_active(wmWindowManager *wm, const char *idname)
   WM_keyconfig_update(wm);
 }
 
-/********************************** Keymap *************************************
- * List of keymap items for one editor, mode, modal operator, ... */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Keymap
+ *
+ * List of keymap items for one editor, mode, modal operator.
+ * \{ */
 
 static wmKeyMap *wm_keymap_new(const char *idname, int spaceid, int regionid)
 {
@@ -554,11 +575,16 @@ bool WM_keymap_remove_item(wmKeyMap *keymap, wmKeyMapItem *kmi)
   }
 }
 
-/************************** Keymap Diff and Patch ****************************
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Keymap Diff and Patch
+ *
  * Rather than saving the entire keymap for user preferences, we only save a
  * diff so that changes in the defaults get synced. This system is not perfect
  * but works better than overriding the keymap entirely when only few items
- * are changed. */
+ * are changed.
+ * \{ */
 
 static void wm_keymap_addon_add(wmKeyMap *keymap, wmKeyMap *addonmap)
 {
@@ -824,11 +850,16 @@ static void wm_keymap_diff_update(ListBase *lb,
   }
 }
 
-/* ****************** storage in WM ************ */
+/** \} */
 
-/* name id's are for storing general or multiple keymaps,
- * space/region ids are same as DNA_space_types.h */
-/* gets freed in wm.c */
+/* -------------------------------------------------------------------- */
+/** \name Storage in WM
+ *
+ * Name id's are for storing general or multiple keymaps.
+ *
+ * - Space/region ids are same as DNA_space_types.h
+ * - Gets freed in wm.c
+ * \{ */
 
 wmKeyMap *WM_keymap_list_find(ListBase *lb, const char *idname, int spaceid, int regionid)
 {
@@ -894,10 +925,14 @@ wmKeyMap *WM_keymap_find_all_spaceid_or_empty(const bContext *C,
   return WM_keymap_list_find_spaceid_or_empty(&wm->userconf->keymaps, idname, spaceid, regionid);
 }
 
-/* ****************** modal keymaps ************ */
+/** \} */
 
-/* Modal key-maps get linked to a running operator,
- * and filter the keys before sending to modal() callback. */
+/* -------------------------------------------------------------------- */
+/** \name Modal Keymaps
+ *
+ * Modal key-maps get linked to a running operator,
+ * and filter the keys before sending to #wmOperatorType.modal callback.
+ * \{ */
 
 wmKeyMap *WM_modalkeymap_add(wmKeyConfig *keyconf,
                              const char *idname,
@@ -1046,10 +1081,98 @@ static void wm_user_modal_keymap_set_items(wmWindowManager *wm, wmKeyMap *km)
   }
 }
 
-/* ***************** get string from key events **************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Text from Key Events
+ * \{ */
+
+static const char *key_event_icon_or_text(const int font_id, const char *text, const char *icon)
+{
+  BLI_assert(icon == NULL || (BLI_strlen_utf8(icon) == 1));
+  return (icon && BLF_has_glyph(font_id, BLI_str_utf8_as_unicode(icon))) ? icon : text;
+}
 
 const char *WM_key_event_string(const short type, const bool compact)
 {
+  if (compact) {
+    /* String storing a single unicode character or NULL. */
+    const char *icon_glyph = NULL;
+    int font_id = BLF_default();
+    const enum {
+      UNIX,
+      MACOS,
+      MSWIN,
+    } platform =
+
+#if defined(__APPLE__)
+        MACOS
+#elif defined(_WIN32)
+        MSWIN
+#else
+        UNIX
+#endif
+        ;
+
+    switch (type) {
+      case LEFTSHIFTKEY:
+      case RIGHTSHIFTKEY: {
+        if (platform == MACOS) {
+          icon_glyph = "\xe2\x87\xa7";
+        }
+        return key_event_icon_or_text(font_id, IFACE_("Shift"), icon_glyph);
+      }
+      case LEFTCTRLKEY:
+      case RIGHTCTRLKEY:
+        if (platform == MACOS) {
+          return "^";
+        }
+        return IFACE_("Ctrl");
+      case LEFTALTKEY:
+      case RIGHTALTKEY: {
+        if (platform == MACOS) {
+          icon_glyph = "\xe2\x8c\xa5";
+        }
+        return key_event_icon_or_text(font_id, IFACE_("Alt"), icon_glyph);
+      }
+      case OSKEY: {
+        if (platform == MACOS) {
+          return key_event_icon_or_text(font_id, IFACE_("Cmd"), "\xe2\x8c\x98");
+        }
+        else if (platform == MSWIN) {
+          return key_event_icon_or_text(font_id, IFACE_("Win"), "\xe2\x8a\x9e");
+        }
+        return IFACE_("OSkey");
+      } break;
+      case TABKEY: {
+        if (platform == MACOS) {
+          icon_glyph = "\xe2\x86\xb9";
+        }
+        return key_event_icon_or_text(font_id, IFACE_("Tab"), icon_glyph);
+      }
+      case BACKSPACEKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Bksp"), "\xe2\x8c\xab");
+      case ESCKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Esc"), NULL /* "\xe2\x8e\x8b" */);
+      case RETKEY: {
+        if (platform == MACOS) {
+          icon_glyph = "\xe2\x8f\x8e";
+        }
+        return key_event_icon_or_text(font_id, IFACE_("Enter"), icon_glyph);
+      }
+      case SPACEKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Space"), NULL /* "\xe2\x90\xa3" */);
+      case LEFTARROWKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Left"), "\xe2\x86\x90");
+      case UPARROWKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Up"), "\xe2\x86\x91");
+      case RIGHTARROWKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Right"), "\xe2\x86\x92");
+      case DOWNARROWKEY:
+        return key_event_icon_or_text(font_id, IFACE_("Down"), "\xe2\x86\x93");
+    }
+  }
+
   const EnumPropertyItem *it;
   const int i = RNA_enum_from_value(rna_enum_event_type_items, (int)type);
 
@@ -1097,22 +1220,22 @@ int WM_keymap_item_raw_to_string(const short shift,
   else {
     if (shift) {
       ADD_SEP;
-      p += BLI_strcpy_rlen(p, IFACE_("Shift"));
+      p += BLI_strcpy_rlen(p, WM_key_event_string(LEFTSHIFTKEY, true));
     }
 
     if (ctrl) {
       ADD_SEP;
-      p += BLI_strcpy_rlen(p, IFACE_("Ctrl"));
+      p += BLI_strcpy_rlen(p, WM_key_event_string(LEFTCTRLKEY, true));
     }
 
     if (alt) {
       ADD_SEP;
-      p += BLI_strcpy_rlen(p, IFACE_("Alt"));
+      p += BLI_strcpy_rlen(p, WM_key_event_string(LEFTALTKEY, true));
     }
 
     if (oskey) {
       ADD_SEP;
-      p += BLI_strcpy_rlen(p, IFACE_("Cmd"));
+      p += BLI_strcpy_rlen(p, WM_key_event_string(OSKEY, true));
     }
   }
 
@@ -1217,6 +1340,8 @@ char *WM_modalkeymap_operator_items_to_string_buf(wmOperatorType *ot,
 
   return ret;
 }
+
+/** \} */
 
 static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
                                                    const char *opname,
@@ -1645,10 +1770,15 @@ bool WM_keymap_item_compare(wmKeyMapItem *k1, wmKeyMapItem *k2)
   return 1;
 }
 
-/************************* Update Final Configuration *************************
- * On load or other changes, the final user key configuration is rebuilt from
- * the preset, addon and user preferences keymaps. We also test if the final
- * configuration changed and write the changes to the user preferences. */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Update Final Configuration
+ *
+ * On load or other changes, the final user key configuration is rebuilt from the preset,
+ * add-on and user preferences keymaps. We also test if the final configuration changed and write
+ * the changes to the user preferences.
+ * \{ */
 
 /* so operator removal can trigger update */
 enum {
@@ -1738,11 +1868,11 @@ void WM_keyconfig_update(wmWindowManager *wm)
     int i;
 
     for (i = 0; keymaps_lb[i]; i++) {
-      wm_keyconfig_properties_update_ot(keymaps_lb[i]);
+      wm_keymap_item_properties_update_ot_from_list(keymaps_lb[i]);
     }
 
     for (kc = wm->keyconfigs.first; kc; kc = kc->next) {
-      wm_keyconfig_properties_update_ot(&kc->keymaps);
+      wm_keymap_item_properties_update_ot_from_list(&kc->keymaps);
     }
 
     wm_keymap_update_flag &= ~WM_KEYMAP_UPDATE_OPERATORTYPE;
@@ -1818,10 +1948,14 @@ void WM_keyconfig_update(wmWindowManager *wm)
   }
 }
 
-/********************************* Event Handling *****************************
- * Handlers have pointers to the keymap in the default configuration. During
- * event handling this function is called to get the keymap from the final
- * configuration. */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Event Handling
+ *
+ * Handlers have pointers to the keymap in the default configuration.
+ * During event handling this function is called to get the keymap from the final configuration.
+ * \{ */
 
 wmKeyMap *WM_keymap_active(wmWindowManager *wm, wmKeyMap *keymap)
 {
@@ -1842,10 +1976,15 @@ wmKeyMap *WM_keymap_active(wmWindowManager *wm, wmKeyMap *keymap)
   return keymap;
 }
 
-/******************************* Keymap Editor ********************************
- * In the keymap editor the user key configuration is edited. */
+/** \} */
 
-void WM_keymap_restore_item_to_default(bContext *C, wmKeyMap *keymap, wmKeyMapItem *kmi)
+/* -------------------------------------------------------------------- */
+/** \name Keymap Editor
+ *
+ * In the keymap editor the user key configuration is edited.
+ * \{ */
+
+void WM_keymap_item_restore_to_default(bContext *C, wmKeyMap *keymap, wmKeyMapItem *kmi)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
   wmKeyMap *defaultmap, *addonmap;
@@ -1872,7 +2011,7 @@ void WM_keymap_restore_item_to_default(bContext *C, wmKeyMap *keymap, wmKeyMapIt
     /* restore to original */
     if (!STREQ(orig->idname, kmi->idname)) {
       BLI_strncpy(kmi->idname, orig->idname, sizeof(kmi->idname));
-      WM_keymap_properties_reset(kmi, NULL);
+      WM_keymap_item_properties_reset(kmi, NULL);
     }
 
     if (orig->properties) {
@@ -1941,3 +2080,5 @@ const char *WM_bool_as_string(bool test)
 {
   return test ? IFACE_("ON") : IFACE_("OFF");
 }
+
+/** \} */

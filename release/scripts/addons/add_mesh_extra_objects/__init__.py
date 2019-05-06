@@ -265,6 +265,7 @@ def Extras_contex_menu(self, context):
         props.change = True
         props.delete = obj.name
         props.startlocation = obj.location
+        props.rotation_euler = obj.rotation_euler
         props.number_of_teeth = obj["number_of_teeth"]
         props.radius = obj["radius"]
         props.addendum = obj["addendum"]
@@ -282,6 +283,7 @@ def Extras_contex_menu(self, context):
         props.change = True
         props.delete = obj.name
         props.startlocation = obj.location
+        props.rotation_euler = obj.rotation_euler
         props.number_of_teeth = obj["number_of_teeth"]
         props.number_of_rows = obj["number_of_rows"]
         props.radius = obj["radius"]

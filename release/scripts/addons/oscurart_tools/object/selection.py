@@ -59,7 +59,5 @@ class OSSELECTION_HT_OscSelection(bpy.types.Header):
         """
         layout = self.layout
         row = layout.row()
-        row.label("Sels: "+str(len(bpy.selection_osc)))
+        row.label(text="Sels: "+str(len(bpy.selection_osc)))
         """
- 
-

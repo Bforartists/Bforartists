@@ -128,7 +128,7 @@ static void BRUSH_OT_add_gpencil(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Drawing Brush";
-  ot->description = "Add brush for Grease Pencil";
+  ot->description = "Add Drawing Brush\nAdd brush for Grease Pencil";
   ot->idname = "BRUSH_OT_add_gpencil";
 
   /* api callbacks */
@@ -514,45 +514,14 @@ static void PAINT_OT_brush_select(wmOperatorType *ot)
   }
 
   prop = RNA_def_boolean(
-      ot->srna, "toggle", 0, "Toggle", "Toggle between two brushes rather than cycling");
+      ot->srna, "toggle", 0, "Toggle", "Toggle\nToggle between two brushes rather than cycling");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
   prop = RNA_def_boolean(ot->srna,
                          "create_missing",
                          0,
                          "Create Missing",
-                         "If the requested brush type does not exist, create a new brush");
+                         "Create Missing\nIf the requested brush type does not exist, create a new brush");
   RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
-}
-
-static int brush_uv_sculpt_tool_set_exec(bContext *C, wmOperator *op)
-{
-  Brush *brush;
-  Scene *scene = CTX_data_scene(C);
-  ToolSettings *ts = scene->toolsettings;
-  ts->uv_sculpt_tool = RNA_enum_get(op->ptr, "tool");
-  brush = ts->uvsculpt->paint.brush;
-  /* To update toolshelf */
-  WM_event_add_notifier(C, NC_BRUSH | NA_EDITED, brush);
-
-  return OPERATOR_FINISHED;
-}
-
-static void BRUSH_OT_uv_sculpt_tool_set(wmOperatorType *ot)
-{
-  /* identifiers */
-  ot->name = "UV Sculpt Tool Set";
-  ot->description = "UV Sculpt Tool Set\nSet the UV sculpt tool";
-  ot->idname = "BRUSH_OT_uv_sculpt_tool_set";
-
-  /* api callbacks */
-  ot->exec = brush_uv_sculpt_tool_set_exec;
-  ot->poll = uv_sculpt_poll;
-
-  /* flags */
-  ot->flag = 0;
-
-  /* props */
-  ot->prop = RNA_def_enum(ot->srna, "tool", rna_enum_uv_sculpt_tool_items, 0, "Tool", "");
 }
 
 /***** Stencil Control *****/
@@ -583,7 +552,8 @@ typedef struct {
   float area_size[2];
   StencilControlMode mode;
   StencilConstraint constrain_mode;
-  int mask; /* we are twaking mask or colour stencil */
+  /** We are tweaking mask or color stencil. */
+  int mask;
   Brush *br;
   float *dim_target;
   float *rot_target;
@@ -1016,7 +986,6 @@ void ED_operatortypes_paint(void)
 
   /* note, particle uses a different system, can be added with existing operators in wm.py */
   WM_operatortype_append(PAINT_OT_brush_select);
-  WM_operatortype_append(BRUSH_OT_uv_sculpt_tool_set);
 
   /* image */
   WM_operatortype_append(PAINT_OT_texture_paint_toggle);
@@ -1102,9 +1071,6 @@ void ED_keymap_paint(wmKeyConfig *keyconf)
   /* face-mask mode */
   keymap = WM_keymap_ensure(keyconf, "Face Mask", 0, 0);
   keymap->poll = facemask_paint_poll;
-
-  keymap = WM_keymap_ensure(keyconf, "UV Sculpt", 0, 0);
-  keymap->poll = uv_sculpt_keymap_poll;
 
   /* paint stroke */
   keymap = paint_stroke_modal_keymap(keyconf);

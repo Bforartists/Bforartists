@@ -61,9 +61,9 @@ looptools_cache = {}
 
 
 def get_grease_pencil(object, context):
-    gp = object.grease_pencil
+    gp = bpy.context.scene.objects['GPencil']
     if not gp:
-        gp = context.scene.grease_pencil
+        gp = context.view_layers.grease_pencils
     return gp
 
 
@@ -2792,7 +2792,9 @@ def gstretch_erase_stroke(stroke, context):
     if erase_stroke:
         erase_stroke[0]['is_start'] = True
     #bpy.ops.gpencil.draw(mode='ERASER', stroke=erase_stroke)
-    bpy.ops.gpencil.layer_remove()
+    bpy.ops.gpencil.data_unlink()
+
+
 
 # get point on stroke, given by relative distance (0.0 - 1.0)
 def gstretch_eval_stroke(stroke, distance, stroke_lengths_cache=False):
@@ -2841,10 +2843,10 @@ def gstretch_get_strokes(object, context):
     gp = get_grease_pencil(object, context)
     if not gp:
         return(None)
-    layer = gp.layers.active
+    layer = gp.data.layers[0]
     if not layer:
         return(None)
-    frame = layer.active_frame
+    frame = layer.frames[0]
     if not frame:
         return(None)
     strokes = frame.strokes
@@ -3826,8 +3828,15 @@ class RemoveGP(Operator):
 
     def execute(self, context):
 
-        if context.gpencil_data is not None:
-            bpy.ops.gpencil.data_unlink()
+        gp = bpy.context.scene.objects['GPencil']
+        if len(gp.data.layers[0].frames) is not 0:
+            bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
+            gp.select_set(True)
+            bpy.context.view_layer.objects.active = gp
+            bpy.ops.object.mode_set(mode='PAINT_GPENCIL')
+            bpy.ops.gpencil.active_frame_delete('INVOKE_REGION_WIN')
+            bpy.ops.object.mode_set(mode='OBJECT')
         else:
             self.report({'INFO'}, "No Grease Pencil data to Unlink")
             return {'CANCELLED'}

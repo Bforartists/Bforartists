@@ -1194,7 +1194,7 @@ class SCENE_PT_Main(bpy.types.Panel):
             row = layout.row()
             row.label(text="Applink didn't find your 3d-Coat/Exchange folder.")
             row = layout.row()
-            row.label("Please select it before using Applink.")
+            row.label(text="Please select it before using Applink.")
             row = layout.row()
             row.prop(coat3D,"exchangedir",text="")
             row = layout.row()

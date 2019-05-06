@@ -2008,7 +2008,7 @@ static Mesh *dynamicPaint_Modifier_apply(DynamicPaintModifierData *pmd, Object *
             MEM_freeN(fcolor);
 
             /* Mark tessellated CD layers as dirty. */
-            //result->dirty |= DM_DIRTY_TESS_CDLAYERS;
+            // result->dirty |= DM_DIRTY_TESS_CDLAYERS;
           }
           /* vertex group paint */
           else if (surface->type == MOD_DPAINT_SURFACE_T_WEIGHT) {
@@ -2066,7 +2066,7 @@ static Mesh *dynamicPaint_Modifier_apply(DynamicPaintModifierData *pmd, Object *
     }
 
     if (update_normals) {
-      //result->dirty |= DM_DIRTY_NORMALS;
+      // result->dirty |= DM_DIRTY_NORMALS;
     }
   }
   /* make a copy of mesh to use as brush data */
@@ -5393,7 +5393,7 @@ static void dynamic_paint_effect_drip_cb(void *__restrict userdata,
       const uint8_t epointlock_bitmask = 1 << (n_trgt & 7); /* 7 == 0b111 */
       while (atomic_fetch_and_or_uint8(&point_locks[epointlock_idx], epointlock_bitmask) &
              epointlock_bitmask) {
-        ;
+        /* pass */
       }
 
       PaintPoint *ePoint = &((PaintPoint *)sData->type_data)[n_trgt];
@@ -5440,7 +5440,7 @@ static void dynamic_paint_effect_drip_cb(void *__restrict userdata,
     const uint8_t ppointlock_bitmask = 1 << (index & 7); /* 7 == 0b111 */
     while (atomic_fetch_and_or_uint8(&point_locks[ppointlock_idx], ppointlock_bitmask) &
            ppointlock_bitmask) {
-      ;
+      /* pass */
     }
 
     pPoint->wetness -= ppoint_wetness_diff;

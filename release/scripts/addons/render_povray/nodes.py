@@ -364,7 +364,7 @@ class PovrayMultiplyNode(Node, ObjectNodeTree):
     def draw_buttons(self, context, layout):
 
         column=layout.column()
-        column.label("Amount")
+        column.label(text="Amount")
         row=column.row(align=True)
         row.prop(self,"amount_x")
         row.prop(self,"amount_y")
@@ -373,7 +373,7 @@ class PovrayMultiplyNode(Node, ObjectNodeTree):
     def draw_buttons_ext(self, context, layout):
 
         column=layout.column()
-        column.label("Amount")
+        column.label(text="Amount")
         row=column.row(align=True)
         row.prop(self,"amount_x")
         row.prop(self,"amount_y")
@@ -773,7 +773,7 @@ class ShaderPatternNode(Node, ObjectNodeTree):
         if self.pattern=='crackle':
             layout.prop(self, "crackle_metric")
             layout.prop(self, "crackle_solid")
-            layout.label("Form:")
+            layout.label(text="Form:")
             layout.prop(self, "crackle_form_x")
             layout.prop(self, "crackle_form_y")
             layout.prop(self, "crackle_form_z")
@@ -890,7 +890,7 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
 
         if self.inputs[0].default_value =='brick':
             layout.prop(self, "brick_mortar")
-            layout.label("Brick size:")
+            layout.label(text="Brick size:")
             layout.prop(self, "brick_size_x")
             layout.prop(self, "brick_size_y")
             layout.prop(self, "brick_size_z")
@@ -899,7 +899,7 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
 
         if self.inputs[0].default_value =='brick':
             layout.prop(self, "brick_mortar")
-            layout.label("Brick size:")
+            layout.label(text="Brick size:")
             layout.prop(self, "brick_size_x")
             layout.prop(self, "brick_size_y")
             layout.prop(self, "brick_size_z")
@@ -984,17 +984,17 @@ class PovraySlopeNode(Node, TextureNodeTree):
 
         layout.operator("pov.nodeinputadd")
         row = layout.row()
-        row.label('Value')
-        row.label('Height')
-        row.label('Slope')
+        row.label(text='Value')
+        row.label(text='Height')
+        row.label(text='Slope')
 
     def draw_buttons_ext(self, context, layout):
 
         layout.operator("pov.nodeinputadd")
         row = layout.row()
-        row.label('Value')
-        row.label('Height')
-        row.label('Slope')
+        row.label(text='Value')
+        row.label(text='Height')
+        row.label(text='Slope')
 
     def draw_label(self):
         return "Slope Map"
