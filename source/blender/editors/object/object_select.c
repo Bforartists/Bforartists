@@ -87,7 +87,7 @@
  * \{ */
 
 /**
- * simple API for object selection, rather than just using the flag
+ * Simple API for object selection, rather than just using the flag
  * this takes into account the 'restrict selection in 3d view' flag.
  * deselect works always, the restriction just prevents selection
  *
@@ -655,8 +655,8 @@ static int object_select_linked_exec(bContext *C, wmOperator *op)
 
   if (nr == OBJECT_SELECT_LINKED_IPO) {
     // XXX old animation system
-    //if (ob->ipo == 0) return OPERATOR_CANCELLED;
-    //object_select_all_by_ipo(C, ob->ipo)
+    // if (ob->ipo == 0) return OPERATOR_CANCELLED;
+    // object_select_all_by_ipo(C, ob->ipo)
     return OPERATOR_CANCELLED;
   }
   else if (nr == OBJECT_SELECT_LINKED_OBDATA) {

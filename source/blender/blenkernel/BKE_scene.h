@@ -102,7 +102,6 @@ int BKE_scene_base_iter_next(struct Depsgraph *depsgraph,
 
 void BKE_scene_base_flag_to_objects(struct ViewLayer *view_layer);
 void BKE_scene_object_base_flag_sync_from_base(struct Base *base);
-void BKE_scene_object_base_flag_sync_from_object(struct Base *base);
 
 void BKE_scene_set_background(struct Main *bmain, struct Scene *sce);
 struct Scene *BKE_scene_set_name(struct Main *bmain, const char *name);
@@ -240,6 +239,14 @@ void BKE_scene_cursor_rot_to_quat(const struct View3DCursor *cursor, float quat[
 void BKE_scene_cursor_quat_to_rot(struct View3DCursor *cursor,
                                   const float quat[4],
                                   bool use_compat);
+
+/* Dependency graph evaluation. */
+
+/* Evaluate parts of sequences which needs to be done as a part of a dependency graph evaluation.
+ * This does NOT include actual rendering of the strips, but rather makes them up-to-date for
+ * animation playback and makes them ready for the sequencer's rendering pipeline to render them.
+ */
+void BKE_scene_eval_sequencer_sequences(struct Depsgraph *depsgraph, struct Scene *scene);
 
 #ifdef __cplusplus
 }

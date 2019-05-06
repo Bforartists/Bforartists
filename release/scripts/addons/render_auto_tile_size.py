@@ -424,7 +424,7 @@ def ui_layout(engine, layout, context):
 
     if settings.use_advanced_ui:
         row = sub.row(align=True)
-        row.label("Target tile size:")
+        row.label(text="Target tile size:")
         row.separator()
         row.prop(settings, "target_type", expand=True)
 
@@ -432,7 +432,7 @@ def ui_layout(engine, layout, context):
         row.prop(settings, get_tilesize_prop(engine, device, userpref), expand=True)
         sub.prop(settings, "use_optimal", text="Calculate Optimal Size")
 
-        sub.label("Number of tiles: %s x %s (Total: %s)" %
+        sub.label(text="Number of tiles: %s x %s (Total: %s)" %
                  (settings.num_tiles[0], settings.num_tiles[1],
                  settings.num_tiles[0] * settings.num_tiles[1])
                  )

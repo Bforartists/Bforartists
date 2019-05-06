@@ -37,6 +37,142 @@ from bpy.app.translations import contexts as i18n_contexts
 class VIEW3D_HT_header(Header):
     bl_space_type = 'VIEW_3D'
 
+    @staticmethod
+    def draw_xform_template(layout, context):
+        obj = context.active_object
+        object_mode = 'OBJECT' if obj is None else obj.mode
+        has_pose_mode = (
+            (object_mode == 'POSE') or
+            (object_mode == 'WEIGHT_PAINT' and context.pose_object is not None)
+        )
+
+        tool_settings = context.tool_settings
+
+        # Mode & Transform Settings
+        scene = context.scene
+
+        # Orientation
+        if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
+            orient_slot = scene.transform_orientation_slots[0]
+            row = layout.row(align=True)
+
+            sub = row.row()
+            sub.ui_units_x = 4
+            sub.prop_with_popover(
+                orient_slot,
+                "type",
+                text="",
+                panel="VIEW3D_PT_transform_orientations",
+            )
+
+        # Pivot
+        if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'} or has_pose_mode:
+            layout.prop_with_popover(
+                tool_settings,
+                "transform_pivot_point",
+                text="",
+                icon_only=True,
+                panel="VIEW3D_PT_pivot_point",
+            )
+
+        # Snap
+        show_snap = False
+        if obj is None:
+            show_snap = True
+        else:
+            if (object_mode not in {
+                    'SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT',
+                    'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'
+            }) or has_pose_mode:
+                show_snap = True
+            else:
+
+                from .properties_paint_common import UnifiedPaintPanel
+                paint_settings = UnifiedPaintPanel.paint_settings(context)
+
+                if paint_settings:
+                    brush = paint_settings.brush
+                    if brush and brush.stroke_method == 'CURVE':
+                        show_snap = True
+        if show_snap:
+            snap_items = bpy.types.ToolSettings.bl_rna.properties["snap_elements"].enum_items
+            snap_elements = tool_settings.snap_elements
+            if len(snap_elements) == 1:
+                text = ""
+                for elem in snap_elements:
+                    icon = snap_items[elem].icon
+                    break
+            else:
+                text = "Mix"
+                icon = 'NONE'
+            del snap_items, snap_elements
+
+            row = layout.row(align=True)
+            row.prop(tool_settings, "use_snap", text="")
+
+            sub = row.row(align=True)
+            sub.popover(
+                panel="VIEW3D_PT_snapping",
+                icon=icon,
+                text=text,
+            )
+
+        # Proportional editing
+        if object_mode in {'EDIT', 'PARTICLE_EDIT', 'SCULPT_GPENCIL', 'EDIT_GPENCIL', 'OBJECT'}:
+            row = layout.row(align=True)
+            kw = {}
+            if object_mode == 'OBJECT':
+                attr = "use_proportional_edit_objects"
+            else:
+                attr = "use_proportional_edit"
+
+                if tool_settings.use_proportional_connected:
+                    kw["icon"] = 'PROP_CON'
+                elif tool_settings.use_proportional_projected:
+                    kw["icon"] = 'PROP_PROJECTED'
+
+            row.prop(tool_settings, attr, icon_only=True, **kw)
+            sub = row.row(align=True)
+            sub.active = getattr(tool_settings, attr)
+            sub.prop_with_popover(
+                tool_settings,
+                "proportional_edit_falloff",
+                text="",
+                icon_only=True,
+                panel="VIEW3D_PT_proportional_edit",
+            )
+
+        # grease pencil
+        if object_mode == 'PAINT_GPENCIL':
+            layout.prop_with_popover(
+                tool_settings,
+                "gpencil_stroke_placement_view3d",
+                text="",
+                panel="VIEW3D_PT_gpencil_origin",
+            )
+
+        if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
+            layout.prop_with_popover(
+                tool_settings.gpencil_sculpt,
+                "lock_axis",
+                text="",
+                panel="VIEW3D_PT_gpencil_lock",
+            )
+
+        if object_mode == 'PAINT_GPENCIL':
+            # FIXME: this is bad practice!
+            # Tool options are to be displayed in the topbar.
+            if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
+                settings = tool_settings.gpencil_sculpt.guide
+                row = layout.row(align=True)
+                row.prop(settings, "use_guide", text="", icon='GRID')
+                sub = row.row(align=True)
+                sub.active = settings.use_guide
+                sub.popover(
+                    panel="VIEW3D_PT_gpencil_guide",
+                    text="Guides",
+                )
+
     def draw(self, context):
         layout = self.layout
 
@@ -216,150 +352,23 @@ class VIEW3D_HT_tool_header(Header):
         obj = context.active_object
         tool_settings = context.tool_settings
 
-        object_mode = 'OBJECT' if obj is None else obj.mode
-        has_pose_mode = (
-            (object_mode == 'POSE') or
-            (object_mode == 'WEIGHT_PAINT' and context.pose_object is not None)
-        )
-
         self.draw_tool_settings(context)
 
         layout.separator_spacer()
 
-        # Mode & Transform Settings
-        scene = context.scene
-
-        # Orientation
-        if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL'} or has_pose_mode:
-            orient_slot = scene.transform_orientation_slots[0]
-            row = layout.row(align=True)
-
-            sub = row.row()
-            sub.ui_units_x = 4
-            sub.prop_with_popover(
-                orient_slot,
-                "type",
-                text="",
-                panel="VIEW3D_PT_transform_orientations",
-            )
-
-        # Pivot
-        if object_mode in {'OBJECT', 'EDIT', 'EDIT_GPENCIL', 'SCULPT_GPENCIL'} or has_pose_mode:
-            layout.prop_with_popover(
-                tool_settings,
-                "transform_pivot_point",
-                text="",
-                icon_only=True,
-                panel="VIEW3D_PT_pivot_point",
-            )
-
-        # Snap
-        show_snap = False
-        if obj is None:
-            show_snap = True
-        else:
-            if (object_mode not in {
-                    'SCULPT', 'VERTEX_PAINT', 'WEIGHT_PAINT', 'TEXTURE_PAINT',
-                    'PAINT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL'
-            }) or has_pose_mode:
-                show_snap = True
-            else:
-
-                from .properties_paint_common import UnifiedPaintPanel
-                paint_settings = UnifiedPaintPanel.paint_settings(context)
-
-                if paint_settings:
-                    brush = paint_settings.brush
-                    if brush and brush.stroke_method == 'CURVE':
-                        show_snap = True
-
-        if show_snap:
-            snap_items = bpy.types.ToolSettings.bl_rna.properties["snap_elements"].enum_items
-            snap_elements = tool_settings.snap_elements
-            if len(snap_elements) == 1:
-                text = ""
-                for elem in snap_elements:
-                    icon = snap_items[elem].icon
-                    break
-            else:
-                text = "Mix"
-                icon = 'NONE'
-            del snap_items, snap_elements
-
-            row = layout.row(align=True)
-            row.prop(tool_settings, "use_snap", text="")
-            
-            if tool_settings.use_snap:
-                sub = row.row(align=True)
-                sub.popover(panel="VIEW3D_PT_snapping", icon=icon,text=text)
-
-        # Proportional editing
-        gpd = context.gpencil_data
-        if object_mode in {'EDIT', 'PARTICLE_EDIT'}:
-            row = layout.row(align=True)
-            row.prop(tool_settings, "proportional_edit", icon_only=True)
-            if tool_settings.proportional_edit != 'DISABLED':
-                sub = row.row(align=True)
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        elif object_mode == 'OBJECT':
-            row = layout.row(align=True)
-            row.prop(tool_settings, "use_proportional_edit_objects", icon_only=True)
-            if tool_settings.use_proportional_edit_objects:
-                sub = row.row(align=True)
-                sub.active = tool_settings.use_proportional_edit_objects
-                sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        elif gpd is not None and obj.type == 'GPENCIL':
-            if gpd.use_stroke_edit_mode or gpd.is_stroke_sculpt_mode:
-                row = layout.row(align=True)
-                row.prop(tool_settings, "proportional_edit", icon_only=True)
-
-                if tool_settings.proportional_edit != 'DISABLED':
-                    sub = row.row(align=True)
-                    sub.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
-
-        # grease pencil
-        if object_mode == 'PAINT_GPENCIL':
-            layout.prop_with_popover(
-                tool_settings,
-                "gpencil_stroke_placement_view3d",
-                text="",
-                panel="VIEW3D_PT_gpencil_origin",
-            )
-
-        if object_mode in {'PAINT_GPENCIL', 'SCULPT_GPENCIL'}:
-            layout.prop_with_popover(
-                tool_settings.gpencil_sculpt,
-                "lock_axis",
-                text="",
-                panel="VIEW3D_PT_gpencil_lock",
-            )
-
-        if object_mode == 'PAINT_GPENCIL':
-            # FIXME: this is bad practice!
-            # Tool options are to be displayed in the topbar.
-            if context.workspace.tools.from_space_view3d_mode(object_mode).idname == "builtin_brush.Draw":
-                settings = tool_settings.gpencil_sculpt.guide
-                row = layout.row(align=True)
-                row.prop(settings, "use_guide", text="", icon='GRID')
-                sub = row.row(align=True)
-                sub.active = settings.use_guide
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_guide",
-                    text="Guides",
-                )
-
-        self.draw_mode_settings(context)
+        VIEW3D_HT_header.draw_xform_template(layout, context)
 
     def draw_tool_settings(self, context):
         layout = self.layout
+        tool_mode = context.mode
 
         # Active Tool
         # -----------
         from .space_toolsystem_common import ToolSelectPanelHelper
-        tool = ToolSelectPanelHelper.draw_active_tool_header(context, layout)
-        tool_mode = context.mode if tool is None else tool.mode
+        tool = ToolSelectPanelHelper.draw_active_tool_header(
+            context, layout,
+            tool_key=('VIEW_3D', tool_mode),
+        )
 
         # Object Mode Options
         # -------------------
@@ -4327,10 +4336,11 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Removal Operators
             if selected_verts_len > 1:
-                col.operator("mesh.merge", text="Merge Vertices")
-                col.operator("mesh.remove_doubles", text="Remove Double Vertices")
+                col.menu("VIEW3D_MT_edit_mesh_merge", text="Merge Vertices")
+            col.operator("mesh.split")
+            col.operator_menu_enum("mesh.separate", "type")
             col.operator("mesh.dissolve_verts")
-            col.operator("mesh.delete", text="Delete Vertices", icon = "DELETE").type = 'VERT'
+            col.operator("mesh.delete", text="Delete Vertices").type = 'VERT'
 
         if is_edge_mode:
             render = context.scene.render
@@ -4394,6 +4404,8 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Removal Operators
             col.operator("mesh.unsubdivide")
+            col.operator("mesh.split")
+            col.operator_menu_enum("mesh.separate", "type")
             col.operator("mesh.dissolve_edges")
             col.operator("mesh.delete", text="Delete Edges", icon = "DELETE").type = 'EDGE'
 
@@ -4438,6 +4450,8 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Removal Operators
             col.operator("mesh.unsubdivide")
+            col.operator("mesh.split")
+            col.operator_menu_enum("mesh.separate", "type")
             col.operator("mesh.dissolve_faces")
             col.operator("mesh.delete", text="Delete Faces", icon = "DELETE").type = 'FACE'
 
@@ -4560,7 +4574,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.separator()
 
         layout.operator("mesh.merge", text="Merge Vertices", icon = "MERGE")
-        layout.operator("mesh.remove_doubles", text="Remove Double Vertices", icon = 'REMOVE_DOUBLES')
 
         layout.separator()
 
@@ -4760,6 +4773,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
+        layout.operator("mesh.average_normals", text="Average")
 
         layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
         layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
@@ -4896,6 +4910,19 @@ class VIEW3D_mesh_hide_unselected(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.mesh.hide(unselected = True)
         return {'FINISHED'}
+
+
+class VIEW3D_MT_edit_mesh_merge(Menu):
+    bl_label = "Merge"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator_enum("mesh.merge", "type")
+
+        layout.separator()
+
+        layout.operator("mesh.remove_doubles", text="By Distance")
 
 
 class VIEW3D_MT_edit_mesh_show_hide(Menu):
@@ -5917,6 +5944,25 @@ class VIEW3D_MT_proportional_editing_falloff_pie(Menu):
 
 # ********** Panel **********
 
+class VIEW3D_PT_active_tool(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Active Tool"
+    bl_category = "Tool"
+    # bl_context = ".active_tool"  # dot on purpose (access from tool settings)
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Panel display of topbar tool settings.
+        # currently displays in tool settings, keep here since the same functionality is used for the topbar.
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        from .space_toolsystem_common import ToolSelectPanelHelper
+        ToolSelectPanelHelper.draw_active_tool_header(context, layout, show_tool_name=True)
+
 
 class VIEW3D_PT_view3d_properties(Panel):
     bl_space_type = 'VIEW_3D'
@@ -6037,7 +6083,7 @@ class VIEW3D_PT_collections(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "View"
-    bl_label = "Collections Visibility"
+    bl_label = "Collections"
     bl_options = {'DEFAULT_CLOSED'}
 
     def _draw_collection(self, layout, view_layer, collection, index):
@@ -6091,9 +6137,6 @@ class VIEW3D_PT_collections(Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = False
-
-        layout.label(text="Collections Visibility")
-        layout.column()
 
         view_layer = context.view_layer
         # We pass index 0 here beause the index is increased
@@ -7053,6 +7096,27 @@ class VIEW3D_PT_snapping(Panel):
         row.prop(tool_settings, "use_snap_scale", text="Scale", toggle=True)
 
 
+class VIEW3D_PT_proportional_edit(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Proportional Editing"
+    bl_ui_units_x = 8
+
+    def draw(self, context):
+        layout = self.layout
+        tool_settings = context.tool_settings
+        col = layout.column()
+
+        if context.mode != 'OBJECT':
+            col.prop(tool_settings, "use_proportional_connected")
+            sub = col.column()
+            sub.active = not tool_settings.use_proportional_connected
+            sub.prop(tool_settings, "use_proportional_projected")
+            col.separator()
+
+        col.prop(tool_settings, "proportional_edit_falloff", expand=True)
+
+
 class VIEW3D_PT_transform_orientations(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
@@ -7309,7 +7373,7 @@ class VIEW3D_PT_view3d_stereo(Panel):
 class VIEW3D_PT_context_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "View"
+    bl_category = "Item"
     bl_label = "Properties"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -7468,8 +7532,15 @@ class VIEW3D_PT_paint_vertex_context_menu(Panel):
 
     def draw(self, context):
         layout = self.layout
-
         brush = context.tool_settings.vertex_paint.brush
+        capabilities = brush.vertex_paint_capabilities
+
+        if capabilities.has_color:
+            split = layout.split(factor=0.1)
+            UnifiedPaintPanel.prop_unified_color(split, context, brush, "color", text="")
+            UnifiedPaintPanel.prop_unified_color_picker(split, context, brush, "color", value_slider=True)
+            layout.prop(brush, "blend", text="")
+
         UnifiedPaintPanel.prop_unified_size(layout, context, brush, "size", slider=True)
         UnifiedPaintPanel.prop_unified_strength(layout, context, brush, "strength")
 
@@ -7484,6 +7555,12 @@ class VIEW3D_PT_paint_texture_context_menu(Panel):
         layout = self.layout
         brush = context.tool_settings.image_paint.brush
         capabilities = brush.image_paint_capabilities
+
+        if capabilities.has_color:
+            split = layout.split(factor=0.1)
+            UnifiedPaintPanel.prop_unified_color(split, context, brush, "color", text="")
+            UnifiedPaintPanel.prop_unified_color_picker(split, context, brush, "color", value_slider=True)
+            layout.prop(brush, "blend", text="")
 
         if capabilities.has_radius:
             UnifiedPaintPanel.prop_unified_size(layout, context, brush, "size", slider=True)
@@ -7769,6 +7846,7 @@ classes = (
     VIEW3D_MT_edit_mesh_weights,
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
+    VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_dissolve,
     VIEW3D_mesh_hide_unselected,
     VIEW3D_curve_hide_unselected,
@@ -7816,6 +7894,7 @@ classes = (
     VIEW3D_MT_snap_pie,
     VIEW3D_MT_orientations_pie,
     VIEW3D_MT_proportional_editing_falloff_pie,
+    VIEW3D_PT_active_tool,
     VIEW3D_PT_view3d_properties,
     VIEW3D_PT_view3d_properties_edit,
     VIEW3D_PT_view3d_camera_lock,
@@ -7855,6 +7934,7 @@ classes = (
     VIEW3D_PT_overlay_sculpt,
     VIEW3D_PT_pivot_point,
     VIEW3D_PT_snapping,
+    VIEW3D_PT_proportional_edit,
     VIEW3D_PT_gpencil_origin,
     VIEW3D_PT_gpencil_lock,
     VIEW3D_PT_gpencil_guide,
