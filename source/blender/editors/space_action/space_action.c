@@ -179,11 +179,9 @@ static void action_main_region_draw(const bContext *C, ARegion *ar)
   Object *obact = CTX_data_active_object(C);
   bAnimContext ac;
   View2D *v2d = &ar->v2d;
-  View2DGrid *grid;
   View2DScrollers *scrollers;
   short marker_flag = 0;
   short cfra_flag = 0;
-  short unit = 0;
 
   /* clear and setup matrix */
   UI_ThemeClearColor(TH_BACK);
@@ -192,17 +190,7 @@ static void action_main_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_ortho(v2d);
 
   /* time grid */
-  unit = (saction->flag & SACTION_DRAWTIME) ? V2D_UNIT_SECONDS : V2D_UNIT_FRAMES;
-  grid = UI_view2d_grid_calc(CTX_data_scene(C),
-                             v2d,
-                             unit,
-                             V2D_GRID_CLAMP,
-                             V2D_ARG_DUMMY,
-                             V2D_ARG_DUMMY,
-                             ar->winx,
-                             ar->winy);
-  UI_view2d_grid_draw(v2d, grid, V2D_GRIDLINES_ALL);
-  UI_view2d_grid_free(grid);
+  UI_view2d_draw_lines_x__discrete_frames_or_seconds(v2d, scene, saction->flag & SACTION_DRAWTIME);
 
   ED_region_draw_cb_draw(C, ar, REGION_DRAW_PRE_VIEW);
 
@@ -247,10 +235,13 @@ static void action_main_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_restore(C);
 
   /* scrollers */
-  scrollers = UI_view2d_scrollers_calc(
-      C, v2d, NULL, unit, V2D_GRID_CLAMP, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
-  UI_view2d_scrollers_draw(C, v2d, scrollers);
+  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
+  UI_view2d_scrollers_draw(v2d, scrollers);
   UI_view2d_scrollers_free(scrollers);
+
+  /* frame numbers */
+  UI_view2d_draw_scale_x__discrete_frames_or_seconds(
+      ar, v2d, &v2d->hor, scene, saction->flag & SACTION_DRAWTIME, TH_TEXT);
 
   /* draw current frame number-indicator on top of scrollers */
   if ((saction->flag & SACTION_NODRAWCFRANUM) == 0) {
@@ -710,7 +701,7 @@ static void action_header_region_listener(
           break;
 
         case ND_KEYFRAME: /* new keyframed added -> active action may have changed */
-          //saction->flag |= SACTION_TEMP_NEEDCHANSYNC;
+          // saction->flag |= SACTION_TEMP_NEEDCHANSYNC;
           ED_region_tag_redraw(ar);
           break;
       }

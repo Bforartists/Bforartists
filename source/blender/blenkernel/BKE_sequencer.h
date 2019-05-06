@@ -100,9 +100,8 @@ typedef struct SeqRenderData {
 
   /* special case for OpenGL render */
   struct GPUOffScreen *gpu_offscreen;
-  struct GPUFX *gpu_fx;
-  int gpu_samples;
-  bool gpu_full_samples;
+  // int gpu_samples;
+  // bool gpu_full_samples;
 } SeqRenderData;
 
 void BKE_sequencer_new_render_data(struct Main *bmain,
@@ -302,46 +301,33 @@ void BKE_sequencer_proxy_set(struct Sequence *seq, bool value);
  * Sequencer memory cache management functions
  * ********************************************************************** */
 
-typedef enum {
-  SEQ_STRIPELEM_IBUF,
-  SEQ_STRIPELEM_IBUF_COMP,
-  SEQ_STRIPELEM_IBUF_STARTSTILL,
-  SEQ_STRIPELEM_IBUF_ENDSTILL,
-} eSeqStripElemIBuf;
+#define SEQ_CACHE_COST_MAX 10.0f
 
-void BKE_sequencer_cache_destruct(void);
-void BKE_sequencer_cache_cleanup(void);
-
-/* returned ImBuf is properly refed and has to be freed */
 struct ImBuf *BKE_sequencer_cache_get(const SeqRenderData *context,
                                       struct Sequence *seq,
                                       float cfra,
-                                      eSeqStripElemIBuf type);
-
-/* passed ImBuf is properly refed, so ownership is *not*
- * transferred to the cache.
- * you can pass the same ImBuf multiple times to the cache without problems.
- */
-
+                                      int type);
 void BKE_sequencer_cache_put(const SeqRenderData *context,
                              struct Sequence *seq,
                              float cfra,
-                             eSeqStripElemIBuf type,
-                             struct ImBuf *nval);
-
-void BKE_sequencer_cache_cleanup_sequence(struct Sequence *seq);
-
-struct ImBuf *BKE_sequencer_preprocessed_cache_get(const SeqRenderData *context,
-                                                   struct Sequence *seq,
-                                                   float cfra,
-                                                   eSeqStripElemIBuf type);
-void BKE_sequencer_preprocessed_cache_put(const SeqRenderData *context,
-                                          struct Sequence *seq,
-                                          float cfra,
-                                          eSeqStripElemIBuf type,
-                                          struct ImBuf *ibuf);
-void BKE_sequencer_preprocessed_cache_cleanup(void);
-void BKE_sequencer_preprocessed_cache_cleanup_sequence(struct Sequence *seq);
+                             int type,
+                             struct ImBuf *nval,
+                             float cost);
+bool BKE_sequencer_cache_put_if_possible(const SeqRenderData *context,
+                                         struct Sequence *seq,
+                                         float cfra,
+                                         int type,
+                                         struct ImBuf *nval,
+                                         float cost);
+void BKE_sequencer_cache_free_temp_cache(struct Scene *scene, short id, int cfra);
+void BKE_sequencer_cache_destruct(struct Scene *scene);
+void BKE_sequencer_cache_cleanup_all(struct Main *bmain);
+void BKE_sequencer_cache_cleanup(struct Scene *scene);
+void BKE_sequencer_cache_cleanup_sequence(struct Scene *scene, struct Sequence *seq);
+void BKE_sequencer_cache_iterate(
+    struct Scene *scene,
+    void *userdata,
+    bool callback(void *userdata, struct Sequence *seq, int cfra, int cache_type, float cost));
 
 /* **********************************************************************
  * seqeffects.c
@@ -500,19 +486,9 @@ struct Sequence *BKE_sequencer_add_movie_strip(struct bContext *C,
                                                ListBase *seqbasep,
                                                struct SeqLoadInfo *seq_load);
 
-/* view3d draw callback, run when not in background view */
-/* NOTE: Keep in sync with V3D_OFSDRAW_* flags. */
-enum {
-  SEQ_OFSDRAW_NONE = (0),
-  SEQ_OFSDRAW_USE_BACKGROUND = (1 << 0),
-  SEQ_OFSDRAW_USE_FULL_SAMPLE = (1 << 1),
-  SEQ_OFSDRAW_USE_GPENCIL = (1 << 2),
-  SEQ_OFSDRAW_USE_SOLID_TEX = (1 << 2),
-  SEQ_OFSDRAW_USE_CAMERA_DOF = (1 << 3),
-};
-
 typedef struct ImBuf *(*SequencerDrawView)(struct Depsgraph *depsgraph,
                                            struct Scene *scene,
+                                           struct View3DShading *shading_override,
                                            int drawtype,
                                            struct Object *camera,
                                            int width,
@@ -590,6 +566,6 @@ void BKE_sequencer_color_balance_apply(struct StripColorBalance *cb,
                                        bool make_float,
                                        struct ImBuf *mask_input);
 
-void BKE_sequencer_all_free_anim_ibufs(struct Main *bmain, int cfra);
+void BKE_sequencer_all_free_anim_ibufs(struct Scene *scene, int cfra);
 
 #endif /* __BKE_SEQUENCER_H__ */

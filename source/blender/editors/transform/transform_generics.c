@@ -1111,18 +1111,17 @@ static void recalcData_sequencer(TransInfo *t)
 
     if (seq != seq_prev) {
       if (BKE_sequence_tx_fullupdate_test(seq)) {
-        /* A few effect strip types need a complete recache on transform. */
         BKE_sequence_invalidate_cache(t->scene, seq);
       }
       else {
-        BKE_sequence_invalidate_dependent(t->scene, seq);
+        BKE_sequence_invalidate_cache(t->scene, seq);
       }
     }
 
     seq_prev = seq;
   }
 
-  BKE_sequencer_preprocessed_cache_cleanup();
+  DEG_id_tag_update(&t->scene->id, ID_RECALC_SEQUENCER);
 
   flushTransSeq(t);
 }
@@ -1242,16 +1241,17 @@ void resetTransRestrictions(TransInfo *t)
 
 static int initTransInfo_edit_pet_to_flag(const int proportional)
 {
-  switch (proportional) {
-    case PROP_EDIT_ON:
-      return T_PROP_EDIT;
-    case PROP_EDIT_CONNECTED:
-      return T_PROP_EDIT | T_PROP_CONNECTED;
-    case PROP_EDIT_PROJECTED:
-      return T_PROP_EDIT | T_PROP_PROJECTED;
-    default:
-      return 0;
+  int flag = 0;
+  if (proportional & PROP_EDIT_USE) {
+    flag |= T_PROP_EDIT;
   }
+  if (proportional & PROP_EDIT_CONNECTED) {
+    flag |= T_PROP_CONNECTED;
+  }
+  if (proportional & PROP_EDIT_PROJECTED) {
+    flag |= T_PROP_PROJECTED;
+  }
+  return flag;
 }
 
 void initTransDataContainers_FromObjectData(TransInfo *t,
@@ -1654,9 +1654,19 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
 
   /* setting PET flag only if property exist in operator. Otherwise, assume it's not supported */
-  if (op && (prop = RNA_struct_find_property(op->ptr, "proportional"))) {
+  if (op && (prop = RNA_struct_find_property(op->ptr, "use_proportional_edit"))) {
     if (RNA_property_is_set(op->ptr, prop)) {
-      t->flag |= initTransInfo_edit_pet_to_flag(RNA_property_enum_get(op->ptr, prop));
+      int proportional = 0;
+      if (RNA_property_boolean_get(op->ptr, prop)) {
+        proportional |= PROP_EDIT_USE;
+        if (RNA_boolean_get(op->ptr, "use_proportional_connected")) {
+          proportional |= PROP_EDIT_CONNECTED;
+        }
+        if (RNA_boolean_get(op->ptr, "use_proportional_projected")) {
+          proportional |= PROP_EDIT_PROJECTED;
+        }
+      }
+      t->flag |= initTransInfo_edit_pet_to_flag(proportional);
     }
     else {
       /* use settings from scene only if modal */
@@ -1669,16 +1679,16 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
             t->flag |= initTransInfo_edit_pet_to_flag(ts->proportional_action);
           }
           else if (t->obedit_type != -1) {
-            t->flag |= initTransInfo_edit_pet_to_flag(ts->proportional);
+            t->flag |= initTransInfo_edit_pet_to_flag(ts->proportional_edit);
           }
           else if (t->options & CTX_GPENCIL_STROKES) {
-            t->flag |= initTransInfo_edit_pet_to_flag(ts->proportional);
+            t->flag |= initTransInfo_edit_pet_to_flag(ts->proportional_edit);
           }
           else if (t->options & CTX_MASK) {
             if (ts->proportional_mask) {
               t->flag |= T_PROP_EDIT;
 
-              if (ts->proportional == PROP_EDIT_CONNECTED) {
+              if (ts->proportional_edit & PROP_EDIT_CONNECTED) {
                 t->flag |= T_PROP_CONNECTED;
               }
             }

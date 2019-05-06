@@ -241,6 +241,7 @@ def draw_curve(props, context, align_matrix):
 
         # set curveOptions
         newCurve.dimensions = props.shape
+        newCurve.use_path = True
         
         # create object with newCurve
         Curve = object_data_add(context, newCurve)  # place in active scene

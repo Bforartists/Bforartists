@@ -868,7 +868,7 @@ class AddTree(Operator):
         layout = self.layout
 
         # Branch specs
-        # layout.label('Tree Definition')
+        # layout.label(text='Tree Definition')
 
         layout.prop(self, 'chooseSet')
 

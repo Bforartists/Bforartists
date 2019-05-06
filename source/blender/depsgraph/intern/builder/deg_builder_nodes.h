@@ -32,6 +32,7 @@
 #include "DEG_depsgraph.h"
 
 struct Base;
+struct bSound;
 struct CacheFile;
 struct Camera;
 struct Collection;
@@ -69,6 +70,7 @@ namespace DEG {
 
 struct ComponentNode;
 struct Depsgraph;
+class DepsgraphBuilderCache;
 struct IDNode;
 struct Node;
 struct OperationNode;
@@ -76,7 +78,7 @@ struct TimeSourceNode;
 
 class DepsgraphNodeBuilder : public DepsgraphBuilder {
  public:
-  DepsgraphNodeBuilder(Main *bmain, Depsgraph *graph);
+  DepsgraphNodeBuilder(Main *bmain, Depsgraph *graph, DepsgraphBuilderCache *cache);
   ~DepsgraphNodeBuilder();
 
   /* For given original ID get ID which is created by CoW system. */
@@ -205,6 +207,9 @@ class DepsgraphNodeBuilder : public DepsgraphBuilder {
   void build_movieclip(MovieClip *clip);
   void build_lightprobe(LightProbe *probe);
   void build_speaker(Speaker *speaker);
+  void build_sound(bSound *sound);
+  void build_sequencer(Scene *scene);
+  void build_scene_audio(Scene *scene);
 
   /* Per-ID information about what was already in the dependency graph.
    * Allows to re-use certain values, to speed up following evaluation. */

@@ -524,7 +524,8 @@ void NLA_OT_select_leftright(wmOperatorType *ot)
 /* ******************** Mouse-Click Select Operator *********************** */
 
 /* select strip directly under mouse */
-static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], short select_mode)
+static void mouse_nla_strips(
+    bContext *C, bAnimContext *ac, const int mval[2], short select_mode, const bool deselect_all)
 {
   ListBase anim_data = {NULL, NULL};
   bAnimListElem *ale = NULL;
@@ -541,15 +542,8 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
   /* use View2D to determine the index of the channel
    * (i.e a row in the list) where keyframe was */
   UI_view2d_region_to_view(v2d, mval[0], mval[1], &x, &y);
-  UI_view2d_listview_view_to_cell(v2d,
-                                  0,
-                                  NLACHANNEL_STEP(snla),
-                                  0,
-                                  (float)NLACHANNEL_HEIGHT_HALF(snla),
-                                  x,
-                                  y,
-                                  NULL,
-                                  &channel_index);
+  UI_view2d_listview_view_to_cell(
+      0, NLACHANNEL_STEP(snla), 0, NLACHANNEL_FIRST_TOP(snla), x, y, NULL, &channel_index);
 
   /* x-range to check is +/- 7 (in screen/region-space) on either side of mouse click
    * (that is the size of keyframe icons, so user should be expecting similar tolerances)
@@ -563,14 +557,7 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
 
   /* try to get channel */
   ale = BLI_findlink(&anim_data, channel_index);
-  if (ale == NULL) {
-    /* channel not found */
-    printf("Error: animation channel (index = %d) not found in mouse_nla_strips()\n",
-           channel_index);
-    ANIM_animdata_freelist(&anim_data);
-    return;
-  }
-  else {
+  if (ale != NULL) {
     /* found some channel - we only really should do something when its an Nla-Track */
     if (ale->type == ANIMTYPE_NLATRACK) {
       NlaTrack *nlt = (NlaTrack *)ale->data;
@@ -587,10 +574,10 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
     /* remove active channel from list of channels for separate treatment
      * (since it's needed later on) */
     BLI_remlink(&anim_data, ale);
-
-    /* free list of channels, since it's not used anymore */
-    ANIM_animdata_freelist(&anim_data);
   }
+
+  /* free list of channels, since it's not used anymore */
+  ANIM_animdata_freelist(&anim_data);
 
   /* if currently in tweakmode, exit tweakmode before changing selection states
    * now that we've found our target...
@@ -599,8 +586,10 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
     WM_operator_name_call(C, "NLA_OT_tweakmode_exit", WM_OP_EXEC_DEFAULT, NULL);
   }
 
-  /* for replacing selection, firstly need to clear existing selection */
-  if (select_mode == SELECT_REPLACE) {
+  /* For replacing selection, if we have something to select, we have to clear existing selection.
+   * The same goes if we found nothing to select, and deselect_all is true
+   * (deselect on nothing behavior). */
+  if ((strip != NULL && select_mode == SELECT_REPLACE) || (strip == NULL && deselect_all)) {
     /* reset selection mode for next steps */
     select_mode = SELECT_ADD;
 
@@ -612,9 +601,9 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
   }
 
   /* only select strip if we clicked on a valid channel and hit something */
-  if (ale) {
+  if (ale != NULL) {
     /* select the strip accordingly (if a matching one was found) */
-    if (strip) {
+    if (strip != NULL) {
       select_mode = selmodes_to_flagmodes(select_mode);
       ACHANNEL_SET_FLAG(strip, select_mode, NLASTRIP_FLAG_SELECT);
 
@@ -648,31 +637,18 @@ static void mouse_nla_strips(bContext *C, bAnimContext *ac, const int mval[2], s
 static int nlaedit_clickselect_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   bAnimContext ac;
-  /* Scene *scene; */ /* UNUSED */
-  /* ARegion *ar; */  /* UNUSED */
-  // View2D *v2d; /*UNUSED*/
-  short selectmode;
 
   /* get editor data */
   if (ANIM_animdata_get_context(C, &ac) == 0) {
     return OPERATOR_CANCELLED;
   }
 
-  /* get useful pointers from animation context data */
-  /* scene= ac.scene; */ /* UNUSED */
-  /* ar= ac.ar; */       /* UNUSED */
-  // v2d= &ar->v2d;
-
   /* select mode is either replace (deselect all, then add) or add/extend */
-  if (RNA_boolean_get(op->ptr, "extend")) {
-    selectmode = SELECT_INVERT;
-  }
-  else {
-    selectmode = SELECT_REPLACE;
-  }
+  const short selectmode = RNA_boolean_get(op->ptr, "extend") ? SELECT_INVERT : SELECT_REPLACE;
+  const bool deselect_all = RNA_boolean_get(op->ptr, "deselect_all");
 
   /* select strips based upon mouse position */
-  mouse_nla_strips(C, &ac, event->mval, selectmode);
+  mouse_nla_strips(C, &ac, event->mval, selectmode, deselect_all);
 
   /* set notifier that things have changed */
   WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_SELECTED, NULL);
@@ -699,6 +675,13 @@ void NLA_OT_click_select(wmOperatorType *ot)
 
   /* properties */
   prop = RNA_def_boolean(ot->srna, "extend", 0, "Extend Select", "");  // SHIFTKEY
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+
+  prop = RNA_def_boolean(ot->srna,
+                         "deselect_all",
+                         false,
+                         "Deselect On Nothing",
+                         "Deselect all when nothing under the cursor");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 

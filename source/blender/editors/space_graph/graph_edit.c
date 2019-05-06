@@ -935,9 +935,15 @@ static short copy_graph_keys(bAnimContext *ac)
   /* clear buffer first */
   ANIM_fcurves_copybuf_free();
 
-  /* filter data */
+  /* filter data
+   * - First time we try to filter more strictly, allowing only selected channels
+   *   to allow copying animation between channels
+   */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
-  ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+
+  if (ANIM_animdata_filter(ac, &anim_data, filter | ANIMFILTER_SEL, ac->data, ac->datatype) == 0) {
+    ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+  }
 
   /* copy keyframes */
   ok = copy_animedit_keys(ac, &anim_data);
@@ -1282,7 +1288,7 @@ void GRAPH_OT_clean(wmOperatorType *ot)
       "keyframes in selected channels";
 
   /* api callbacks */
-  //ot->invoke =  // XXX we need that number popup for this!
+  // ot->invoke =  // XXX we need that number popup for this!
   ot->exec = graphkeys_clean_exec;
   ot->poll = graphop_editable_keyframes_poll;
 
@@ -1492,7 +1498,7 @@ static int graphkeys_sound_bake_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-#else  //WITH_AUDASPACE
+#else  // WITH_AUDASPACE
 
 static int graphkeys_sound_bake_exec(bContext *UNUSED(C), wmOperator *op)
 {
@@ -1501,7 +1507,7 @@ static int graphkeys_sound_bake_exec(bContext *UNUSED(C), wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
-#endif  //WITH_AUDASPACE
+#endif  // WITH_AUDASPACE
 
 static int graphkeys_sound_bake_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {

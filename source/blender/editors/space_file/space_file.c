@@ -83,6 +83,7 @@ static SpaceLink *file_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scen
   BLI_addtail(&sfile->regionbase, ar);
   ar->regiontype = RGN_TYPE_TOOL_PROPS;
   ar->alignment = RGN_ALIGN_BOTTOM | RGN_SPLIT_PREV;
+  ar->flag |= RGN_FLAG_DYNAMIC_SIZE;
 
   /* ui list region */
   ar = MEM_callocN(sizeof(ARegion), "ui region for file");
@@ -441,9 +442,8 @@ static void file_main_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_view_restore(C);
 
   /* scrollers */
-  scrollers = UI_view2d_scrollers_calc(
-      C, v2d, NULL, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY, V2D_ARG_DUMMY);
-  UI_view2d_scrollers_draw(C, v2d, scrollers);
+  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
+  UI_view2d_scrollers_draw(v2d, scrollers);
   UI_view2d_scrollers_free(scrollers);
 }
 

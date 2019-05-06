@@ -283,13 +283,22 @@ static void unlink_collection_cb(bContext *C,
 static void unlink_object_cb(bContext *C,
                              ReportList *UNUSED(reports),
                              Scene *UNUSED(scene),
-                             TreeElement *UNUSED(te),
+                             TreeElement *te,
                              TreeStoreElem *tsep,
                              TreeStoreElem *tselem,
                              void *UNUSED(user_data))
 {
   Main *bmain = CTX_data_main(C);
   Object *ob = (Object *)tselem->id;
+
+  if (GS(tsep->id->name) == ID_OB) {
+    /* Parented objects need to find which collection to unlink from. */
+    TreeElement *te_parent = te->parent;
+    while (tsep && GS(tsep->id->name) == ID_OB) {
+      te_parent = te_parent->parent;
+      tsep = te_parent ? TREESTORE(te_parent) : NULL;
+    }
+  }
 
   if (tsep) {
     if (GS(tsep->id->name) == ID_GR) {
@@ -452,8 +461,8 @@ static void object_select_cb(bContext *C,
   Object *ob = (Object *)tselem->id;
   Base *base = BKE_view_layer_base_find(view_layer, ob);
 
-  if (base && ((base->flag & BASE_VISIBLE) != 0)) {
-    base->flag |= BASE_SELECTED;
+  if (base) {
+    ED_object_base_select(base, BA_SELECT);
   }
 }
 
@@ -1837,8 +1846,8 @@ typedef enum eOutliner_AnimDataOps {
   OUTLINER_ANIMOP_REFRESH_DRV,
   OUTLINER_ANIMOP_CLEAR_DRV
 
-  //OUTLINER_ANIMOP_COPY_DRIVERS,
-  //OUTLINER_ANIMOP_PASTE_DRIVERS
+  // OUTLINER_ANIMOP_COPY_DRIVERS,
+  // OUTLINER_ANIMOP_PASTE_DRIVERS
 } eOutliner_AnimDataOps;
 
 static const EnumPropertyItem prop_animdata_op_types[] = {
@@ -1904,7 +1913,7 @@ static int outliner_animdata_operation_exec(bContext *C, wmOperator *op)
           soops, datalevel, event, &soops->tree, refreshdrivers_animdata_cb, NULL);
 
       WM_event_add_notifier(C, NC_ANIMATION | ND_ANIMCHAN, NULL);
-      //ED_undo_push(C, "Refresh Drivers"); /* no undo needed - shouldn't have any impact? */
+      // ED_undo_push(C, "Refresh Drivers"); /* no undo needed - shouldn't have any impact? */
       updateDeps = 1;
       break;
 

@@ -271,12 +271,10 @@ class PieObjectEditotherModes(Menu):
         box.operator("class.vertex", text="Vertex", icon='VERTEXSEL')
         box.operator("class.edge", text="Edge", icon='EDGESEL')
         box.operator("class.face", text="Face", icon='FACESEL')
-        box.operator("verts.faces", text="Vertex/Faces", icon='LOOPSEL')
+        box.operator("verts.faces", text="Vertex/Faces", icon='VERTEXSEL')
+        box.operator("verts.edges", text="Vertex/Edges", icon='EDGESEL')
         box.operator("edges.faces", text="Edges/Faces", icon='FACESEL')
-        box.operator("verts.edges", text="Vertex/Edges", icon='VERTEXSEL')
         box.operator("verts.edgesfaces", text="Vertex/Edges/Faces", icon='OBJECT_DATAMODE')
-        box.operator("wm.context_toggle", text="Limit to Visible",
-                     icon="NONE").data_path = "space_data.use_occlude_geometry"
 
 
 class PieObjectEditMode(Menu):
