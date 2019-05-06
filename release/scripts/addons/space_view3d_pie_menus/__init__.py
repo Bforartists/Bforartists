@@ -53,7 +53,6 @@ sub_modules_names = (
     "pie_snap_menu",
     "pie_orientation_menu",
     "pie_shading_menu",
-    "pie_pivot_point_menu",
     "pie_proportional_menu",
     "pie_align_menu",
     "pie_delete_menu",

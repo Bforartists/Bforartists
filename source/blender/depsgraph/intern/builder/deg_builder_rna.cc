@@ -45,6 +45,7 @@ extern "C" {
 #include "RNA_access.h"
 
 #include "intern/depsgraph.h"
+#include "intern/builder/deg_builder.h"
 #include "intern/node/deg_node.h"
 #include "intern/node/deg_node_component.h"
 #include "intern/node/deg_node_id.h"
@@ -130,8 +131,10 @@ void ghash_id_data_free_func(void *value)
 
 }  // namespace
 
-RNANodeQuery::RNANodeQuery(Depsgraph *depsgraph)
-    : depsgraph_(depsgraph), id_data_map_(BLI_ghash_ptr_new("rna node query id data hash"))
+RNANodeQuery::RNANodeQuery(Depsgraph *depsgraph, DepsgraphBuilder *builder)
+    : depsgraph_(depsgraph),
+      builder_(builder),
+      id_data_map_(BLI_ghash_ptr_new("rna node query id data hash"))
 {
 }
 
@@ -194,20 +197,20 @@ RNANodeIdentifier RNANodeQuery::construct_node_identifier(const PointerRNA *ptr,
       node_identifier.type = NodeType::BONE;
       node_identifier.component_name = pchan->name;
       /* But B-Bone properties should connect to the actual operation. */
-      if (!ELEM(NULL, pchan->bone, prop) && pchan->bone->segments > 1 &&
-          STRPREFIX(RNA_property_identifier(prop), "bbone_")) {
+      Object *object = reinterpret_cast<Object *>(node_identifier.id);
+      if (!ELEM(NULL, pchan->bone, prop) && STRPREFIX(RNA_property_identifier(prop), "bbone_") &&
+          builder_->check_pchan_has_bbone_segments(object, pchan)) {
         node_identifier.operation_code = OperationCode::BONE_SEGMENTS;
       }
     }
     return node_identifier;
   }
   else if (ptr->type == &RNA_Bone) {
-    const Bone *bone = static_cast<const Bone *>(ptr->data);
-    /* Armature-level bone, but it ends up going to bone component
-     * anyway. */
-    // NOTE: the ID in this case will end up being bArmature.
-    node_identifier.type = NodeType::BONE;
-    node_identifier.component_name = bone->name;
+    /* Armature-level bone mapped to Armature Eval, and thus Pose Init.
+     * Drivers have special code elsewhere that links them to the pose
+     * bone components, instead of using this generic code. */
+    node_identifier.type = NodeType::PARAMETERS;
+    node_identifier.operation_code = OperationCode::ARMATURE_EVAL;
     return node_identifier;
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_Constraint)) {

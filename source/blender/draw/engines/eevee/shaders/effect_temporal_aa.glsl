@@ -14,7 +14,8 @@ vec4 safe_color(vec4 c)
 
 /**
  * Adapted from https://casual-effects.com/g3d/G3D10/data-files/shader/Film/Film_temporalAA.pix
- * which is adapted from https://github.com/gokselgoktas/temporal-anti-aliasing/blob/master/Assets/Resources/Shaders/TemporalAntiAliasing.cginc
+ * which is adapted from
+ * https://github.com/gokselgoktas/temporal-anti-aliasing/blob/master/Assets/Resources/Shaders/TemporalAntiAliasing.cginc
  * which is adapted from https://github.com/playdeadgames/temporal
  * Optimization by Stubbesaurus and epsilon adjustment to avoid division by zero.
  *
@@ -38,7 +39,6 @@ vec3 clip_to_aabb(vec3 color, vec3 minimum, vec3 maximum, vec3 average)
 void main()
 {
   ivec2 texel = ivec2(gl_FragCoord.xy);
-  float depth = texelFetch(depthBuffer, texel, 0).r;
   vec2 motion = texelFetch(velocityBuffer, texel, 0).rg;
 
   /* Decode from unsigned normalized 16bit texture. */
@@ -95,6 +95,9 @@ void main()
   color_history = (out_of_view) ? color : color_history;
 
   FragColor = safe_color(color_history);
+  /* There is some ghost issue if we use the alpha
+   * in the viewport. Overwritting alpha fixes it. */
+  FragColor.a = color.a;
 }
 
 #else

@@ -1300,19 +1300,6 @@ static bool rna_SurfaceDeformModifier_is_bound_get(PointerRNA *ptr)
   return (((SurfaceDeformModifierData *)ptr->data)->verts != NULL);
 }
 
-static void rna_MeshSequenceCache_object_path_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-#  ifdef WITH_ALEMBIC
-  MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *)ptr->data;
-  Object *ob = (Object *)ptr->id.data;
-
-  mcmd->reader = CacheReader_open_alembic_object(
-      mcmd->cache_file->handle, mcmd->reader, ob, mcmd->object_path);
-#  endif
-
-  rna_Modifier_update(bmain, scene, ptr);
-}
-
 static bool rna_ParticleInstanceModifier_particle_system_poll(PointerRNA *ptr,
                                                               const PointerRNA value)
 {
@@ -2119,13 +2106,15 @@ static void rna_def_modifier_armature(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_bone_envelopes", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "deformflag", ARM_DEF_ENVELOPE);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Use Bone Envelopes", "Bind Bone envelopes to armature modifier");
-  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+  RNA_def_property_update(prop, 0, "rna_Modifier_dependency_update");
 
   prop = RNA_def_property(srna, "use_vertex_groups", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "deformflag", ARM_DEF_VGROUP);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_ui_text(prop, "Use Vertex Groups", "Bind vertex groups to armature modifier");
-  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+  RNA_def_property_update(prop, 0, "rna_Modifier_dependency_update");
 
   prop = RNA_def_property(srna, "use_deform_preserve_volume", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "deformflag", ARM_DEF_QUATERNION);
@@ -5105,7 +5094,7 @@ static void rna_def_modifier_meshseqcache(BlenderRNA *brna)
       prop,
       "Object Path",
       "Path to the object in the Alembic archive used to lookup geometric data");
-  RNA_def_property_update(prop, 0, "rna_MeshSequenceCache_object_path_update");
+  RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   static const EnumPropertyItem read_flag_items[] = {
       {MOD_MESHSEQ_READ_VERT, "VERT", 0, "Vertex", ""},

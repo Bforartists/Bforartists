@@ -182,7 +182,8 @@ finally : {
 }
 
 /**
- * \note with 'targetmap', multiple 'keys' are currently supported, though no callers should be using.
+ * \note with 'targetmap', multiple 'keys' are currently supported,
+ * though no callers should be using.
  * (because slot maps currently use GHash without the GHASH_FLAG_ALLOW_DUPES flag set)
  */
 void bmo_weld_verts_exec(BMesh *bm, BMOperator *op)
@@ -428,7 +429,7 @@ void bmo_pointmerge_exec(BMesh *bm, BMOperator *op)
 
   BMO_slot_vec_get(op->slots_in, "merge_co", vec);
 
-  //BMO_op_callf(bm, op->flag, "collapse_uvs edges=%s", op, "edges");
+  // BMO_op_callf(bm, op->flag, "collapse_uvs edges=%s", op, "edges");
   BMO_op_init(bm, &weldop, op->flag, "weld_verts");
 
   slot_targetmap = BMO_slot_get(weldop.slots_in, "targetmap");

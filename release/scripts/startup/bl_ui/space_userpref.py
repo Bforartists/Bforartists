@@ -326,6 +326,7 @@ class USERPREF_PT_edit_objects_duplicate_data(PreferencePanel, Panel):
         col.prop(edit, "use_duplicate_curve", text="Curve")
         # col.prop(edit, "use_duplicate_fcurve", text="F-Curve")
         col.prop(edit, "use_duplicate_light", text="Light")
+        col.prop(edit, "use_duplicate_lightprobe", text="Light Probe")
         col = flow.column()
         col.prop(edit, "use_duplicate_material", text="Material")
         col.prop(edit, "use_duplicate_mesh", text="Mesh")
@@ -335,6 +336,7 @@ class USERPREF_PT_edit_objects_duplicate_data(PreferencePanel, Panel):
         col.prop(edit, "use_duplicate_surface", text="Surface")
         col.prop(edit, "use_duplicate_text", text="Text")
         col.prop(edit, "use_duplicate_texture", text="Texture")
+        col.prop(edit, "use_duplicate_grease_pencil", text="Grease Pencil")
 
 
 class USERPREF_PT_edit_cursor(PreferencePanel, Panel):
@@ -596,9 +598,8 @@ class USERPREF_PT_viewport_display(PreferencePanel, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column()
-        col.prop(view, "gizmo_size", text="Gizmo Size")
-        col.prop(view, "object_origin_size")
-        col.separator()
+        col.prop(view, "gizmo_size")
+        col.prop(view, "lookdev_ball_size")
 
         flow.separator()
 

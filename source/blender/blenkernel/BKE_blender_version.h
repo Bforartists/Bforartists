@@ -27,7 +27,7 @@
  * \note Use #STRINGIFY() rather than defining with quotes.
  */
 #define BLENDER_VERSION 280
-#define BLENDER_SUBVERSION 59
+#define BLENDER_SUBVERSION 60
 /** Several breakages with 280, e.g. collections vs layers. */
 #define BLENDER_MINVERSION 280
 #define BLENDER_MINSUBVERSION 0
@@ -38,7 +38,7 @@
 /** alpha/beta/rc/release, docs use this. */
 #define BLENDER_VERSION_CYCLE beta
 
-#define BFORARTISTS_VERSION 020
+#define BFORARTISTS_VERSION 040
 
 /** Defined in from blender.c */
 extern char versionstr[];

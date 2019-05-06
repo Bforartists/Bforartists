@@ -179,11 +179,13 @@ def add_type2(self, context):
     scale_x = self.scale_x
     scale_y = self.scale_y
     verts = [
-            [-0.719632 * scale_x, -0.08781 * scale_y,
-            0.0, -0.605138 * scale_x, -0.31612 * scale_y,
-            0.0, -0.935392 * scale_x, 0.0, 0.0, 0.0, 0.0,
-            0.0, 0.935392 * scale_x, 0.0, 0.0, 0.605138 * scale_x,
-            -0.316119 * scale_y, 0.0, 0.719632 * scale_x, -0.08781 * scale_y, 0.0]
+            [-0.719632 * scale_x, -0.08781 * scale_y, 0.0,
+            -0.605138 * scale_x, -0.31612 * scale_y, 0.0,
+            -0.935392 * scale_x, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+            0.935392 * scale_x, 0.0, 0.0,
+            0.605138 * scale_x, -0.316119 * scale_y, 0.0,
+            0.719632 * scale_x, -0.08781 * scale_y, 0.0]
             ]
     lhandles = [
             [(-0.82125 * scale_x, -0.142999 * scale_y, 0.0),
@@ -380,26 +382,51 @@ def add_type1(self, context):
 def make_curve(self, context, verts, lh, rh):
 
     types = self.types
-    curve_data = bpy.data.curves.new(name='CurlyCurve', type='CURVE')
-    curve_data.dimensions = '3D'
 
-    for p in range(len(verts)):
-        c = 0
-        spline = curve_data.splines.new(type='BEZIER')
-        spline.bezier_points.add(len(verts[p]) / 3 - 1)
-        spline.bezier_points.foreach_set('co', verts[p])
+    # create object
+    if bpy.context.mode == 'EDIT_CURVE':
+        Curve = context.active_object
+        for p in range(len(verts)):
+            c = 0
+            newSpline = Curve.data.splines.new(type='BEZIER')          # newSpline
+            newSpline.bezier_points.add(len(verts[p]) / 3 - 1)
+            newSpline.bezier_points.foreach_set('co', verts[p])
 
-        for bp in spline.bezier_points:
-            bp.handle_left_type = 'ALIGNED'
-            bp.handle_right_type = 'ALIGNED'
-            bp.handle_left.xyz = lh[p][c]
-            bp.handle_right.xyz = rh[p][c]
-            c += 1
-        # something weird with this one
-        if types == 1 or types == 2 or types == 3:
-            spline.bezier_points[3].handle_left.xyz = lh[p][3]
-    object_data_add(context, curve_data, operator=self)
+            for bp in newSpline.bezier_points:
+                bp.handle_left_type = 'ALIGNED'
+                bp.handle_right_type = 'ALIGNED'
+                bp.handle_left.xyz = lh[p][c]
+                bp.handle_right.xyz = rh[p][c]
+                c += 1
+            # something weird with this one
+            if types == 1 or types == 2 or types == 3:
+                newSpline.bezier_points[3].handle_left.xyz = lh[p][3]
+    else:
+        # create curve
+        newCurve = bpy.data.curves.new(name='CurlyCurve', type='CURVE')  # curvedatablock
+        for p in range(len(verts)):
+            c = 0
+            newSpline = newCurve.splines.new(type='BEZIER')          # newSpline
+            newSpline.bezier_points.add(len(verts[p]) / 3 - 1)
+            newSpline.bezier_points.foreach_set('co', verts[p])
 
+            for bp in newSpline.bezier_points:
+                bp.handle_left_type = 'ALIGNED'
+                bp.handle_right_type = 'ALIGNED'
+                bp.handle_left.xyz = lh[p][c]
+                bp.handle_right.xyz = rh[p][c]
+                c += 1
+            # something weird with this one
+            if types == 1 or types == 2 or types == 3:
+                newSpline.bezier_points[3].handle_left.xyz = lh[p][3]        
+        
+        # create object with newCurve
+        Curve = object_data_add(context, newCurve, operator=self)  # place in active scene
+        Curve.select_set(True)
+
+    # set curveOptions
+    Curve.data.dimensions = '3D'
+    Curve.data.use_path = True
 
 class add_curlycurve(Operator, AddObjectHelper):
     bl_idname = "curve.curlycurve"
