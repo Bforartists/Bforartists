@@ -1,7 +1,7 @@
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
 set(PROJECT_DESCRIPTION  "Bforartists is the free and open source 3D creation suite software.")
-set(PROJECT_COPYRIGHT    "Copyright (C) 22016-${CURRENT_YEAR} Bforartists")
+set(PROJECT_COPYRIGHT    "Copyright (C) 2016-${CURRENT_YEAR} Bforartists")
 set(PROJECT_CONTACT      "reiner.prokein@posteo.de")
 set(PROJECT_VENDOR       "Bforartists")
 
@@ -80,8 +80,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.3.0")
-  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.3.0")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists 2 - 0.4.0")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists 2 - 0.4.0")
 
   set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
   set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
