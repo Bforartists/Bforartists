@@ -188,6 +188,15 @@ int BLF_default(void)
   return global_font_default;
 }
 
+bool BLF_has_glyph(int fontid, unsigned int unicode)
+{
+  FontBLF *font = blf_get(fontid);
+  if (font) {
+    return FT_Get_Char_Index(font->face, unicode) != 0;
+  }
+  return false;
+}
+
 int BLF_load(const char *name)
 {
   FontBLF *font;

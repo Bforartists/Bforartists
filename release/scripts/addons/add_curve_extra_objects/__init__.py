@@ -248,16 +248,13 @@ def menu_func(self, context):
 
     layout.operator_menu_enum("curve.curveaceous_galore", "ProfileType", icon='CURVE_DATA')
     layout.operator_menu_enum("curve.spirals", "spiral_type", icon='CURVE_DATA')
+    layout.separator()
+    layout.operator("curve.curlycurve", text="Curly Curve", icon='CURVE_DATA')
     if context.mode != 'OBJECT':
         # fix in D2142 will allow to work in EDIT_CURVE
         return None
     layout.separator()
-
     layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
-    layout.separator()
-    layout.operator("curve.curlycurve", text="Curly Curve", icon='CURVE_DATA')
-    #layout.menu(VIEW3D_MT_bevel_taper_curve_menu, text="Bevel/Taper", icon='CURVE_DATA')
-
 
 def menu_surface(self, context):
     self.layout.separator()
@@ -289,6 +286,7 @@ def register():
     add_curve_curly.register()
     add_curve_spirofit_bouncespline.register()
     add_surface_plane_cone.register()
+    beveltaper_curve.register()
     
     # Add "Extras" menu to the "Add Curve" menu
     bpy.types.VIEW3D_MT_curve_add.append(menu_func)
@@ -311,6 +309,7 @@ def unregister():
     add_curve_aceous_galore.unregister()
     add_curve_spirals.unregister()
     add_curve_simple.unregister()
+    beveltaper_curve.unregister()
     
     from bpy.utils import unregister_class
     for cls in reversed(classes):

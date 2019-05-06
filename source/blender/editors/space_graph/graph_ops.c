@@ -105,7 +105,7 @@ static void graphview_cursor_apply(bContext *C, wmOperator *op)
     }
 
     SUBFRA = 0.0f;
-    BKE_sound_seek_scene(bmain, scene);
+    BKE_sound_update_and_seek(bmain, CTX_data_depsgraph(C));
   }
 
   /* set the cursor value */
@@ -499,7 +499,7 @@ void ED_operatormacros_graph(void)
   WM_operatortype_macro_define(ot, "GRAPH_OT_duplicate");
   otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_transform");
   RNA_enum_set(otmacro->ptr, "mode", TFM_TIME_DUPLICATE);
-  RNA_enum_set(otmacro->ptr, "proportional", PROP_EDIT_OFF);
+  RNA_boolean_set(otmacro->ptr, "use_proportional_edit", false);
 }
 
 /* ************************** registration - keymaps **********************************/

@@ -1106,9 +1106,9 @@ def do_translation(new_co, old_co):
 # takes:  ref_pts (ReferencePoints), s_fac (float)
 def do_scale(ref_pts, s_fac):
     # back up settings before changing them
-    piv_back = deepcopy(bpy.context.space_data.pivot_point)
+    piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
     curs_back = bpy.context.scene.cursor.location.copy()
-    bpy.context.space_data.pivot_point = 'CURSOR'
+    bpy.context.tool_settings.transform_pivot_point = 'CURSOR'
     bpy.context.scene.cursor.location = ref_pts[1].co3d.copy()
     ax_multip, cnstrt_bls = (), ()
     if   RotDat.axis_lock is None:
@@ -1122,7 +1122,7 @@ def do_scale(ref_pts, s_fac):
     bpy.ops.transform.resize(value=ax_multip, constraint_axis=cnstrt_bls)
     # restore settings back to their pre "do_scale" state
     bpy.context.scene.cursor.location = curs_back.copy()
-    bpy.context.space_data.pivot_point = deepcopy(piv_back)
+    bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
 
 
 # end_a, piv_pt, and end_b are Vector based 3D coordinates
@@ -1243,9 +1243,9 @@ def prep_rotation_info(curr_ms_stor, new_ms_stor):
 # 3D cursor using RotDat's ang_diff_r radian value.
 def do_rotate(self):
     # back up settings before changing them
-    piv_back = deepcopy(bpy.context.space_data.pivot_point)
+    piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
     curs_back = bpy.context.scene.cursor.location.copy()
-    bpy.context.space_data.pivot_point = 'CURSOR'
+    bpy.context.tool_settings.transform_pivot_point = 'CURSOR'
     bpy.context.scene.cursor.location = self.pts[2].co3d.copy()
     
     axis_lock = RotDat.axis_lock
@@ -1266,7 +1266,7 @@ def do_rotate(self):
 
     # restore settings back to their pre "do_rotate" state
     bpy.context.scene.cursor.location = curs_back.copy()
-    bpy.context.space_data.pivot_point = deepcopy(piv_back)
+    bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
 
 
 # Updates lock points and changes curr_meas_stor to use measure based on
@@ -1458,20 +1458,6 @@ def draw_callback_px(self, context):
     lk_pts2d = None  # lock points 2D
     self.meas_btn.is_drawn = False  # todo : cleaner btn activation
 
-    # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
-    # popup_active, then run process_popup_input
-    # would prefer not to do pop-up check inside draw_callback, but not sure
-    # how else to check for input. need higher level "input handler" class?
-    if self.addon_mode == WAIT_FOR_POPUP:
-        global popup_active
-        if not popup_active:
-            process_popup_input(self)
-            set_help_text(self, "CLICK")
-        
-    elif self.addon_mode == GET_0_OR_180:
-        choose_0_or_180(RotDat.lock_pts[2], RotDat.rot_pt_pos,
-                RotDat.rot_pt_neg, RotDat.ang_diff_r, self.mouse_co)
-
     # note, can't chain above if-elif block in with one below as
     # it breaks axis lock drawing
     if self.grab_pt is not None:  # not enabled if mod_pt active
@@ -1582,9 +1568,9 @@ def get_reg_overlap():
     return rtoolsw
 
 
-class XEditSetMeas(bpy.types.Operator):
+class XEDIT_OT_set_meas(bpy.types.Operator):
     bl_idname = "view3d.xedit_set_meas_op"
-    bl_label = "XEdit Set Measaure"
+    bl_label = "Exact Edit Set Measure"
 
     # Only launch Add-On from OBJECT or EDIT modes
     @classmethod
@@ -1592,6 +1578,7 @@ class XEditSetMeas(bpy.types.Operator):
         return context.mode == 'OBJECT' or context.mode == 'EDIT_MESH'
 
     def modal(self, context, event):
+        global popup_active
         context.area.tag_redraw()
 
         if event.type in {'A', 'MIDDLEMOUSE', 'WHEELUPMOUSE',
@@ -1872,6 +1859,19 @@ class XEditSetMeas(bpy.types.Operator):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             exit_addon(self)
             return {'FINISHED'}
+
+        # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
+        # popup_active, then run process_popup_input
+        # would prefer not to do pop-up check inside draw_callback, but not sure
+        # how else to check for input. need higher level "input handler" class?
+        if self.addon_mode == WAIT_FOR_POPUP:
+            if not popup_active:
+                process_popup_input(self)
+                set_help_text(self, "CLICK")
+  
+        elif self.addon_mode == GET_0_OR_180:
+            choose_0_or_180(RotDat.lock_pts[2], RotDat.rot_pt_pos,
+                    RotDat.rot_pt_neg, RotDat.ang_diff_r, self.mouse_co)
 
         return {'RUNNING_MODAL'}
 

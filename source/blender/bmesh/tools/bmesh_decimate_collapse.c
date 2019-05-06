@@ -204,7 +204,7 @@ static bool bm_edge_collapse_is_degenerate_flip(BMEdge *e, const float optimize_
         /* use a small value rather then zero so we don't flip a face in multiple steps
          * (first making it zero area, then flipping again) */
         if (dot_v3v3(cross_exist, cross_optim) <= FLT_EPSILON) {
-          //printf("no flip\n");
+          // printf("no flip\n");
           return true;
         }
 #endif
@@ -690,7 +690,8 @@ static void bm_decim_triangulate_end(BMesh *bm, const int edges_tri_tot)
 static void bm_edge_collapse_loop_customdata(
     BMesh *bm, BMLoop *l, BMVert *v_clear, BMVert *v_other, const float customdata_fac)
 {
-  /* disable seam check - the seam check would have to be done per layer, its not really that important */
+  /* Disable seam check - the seam check would have to be done per layer,
+   * its not really that important. */
   //#define USE_SEAM
   /* these don't need to be updated, since they will get removed when the edge collapses */
   BMLoop *l_clear, *l_other;

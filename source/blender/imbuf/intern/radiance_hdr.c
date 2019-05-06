@@ -202,7 +202,7 @@ int imb_is_a_hdr(const unsigned char *buf)
   /* For recognition, Blender only loads first 32 bytes, so use #?RADIANCE id instead */
   /* update: actually, the 'RADIANCE' part is just an optional program name,
    * the magic word is really only the '#?' part */
-  //if (strstr((char *)buf, "#?RADIANCE")) return 1;
+  // if (strstr((char *)buf, "#?RADIANCE")) return 1;
   if (strstr((char *)buf, "#?")) {
     return 1;
   }
@@ -300,9 +300,9 @@ struct ImBuf *imb_loadhdr(const unsigned char *mem,
 
       return ibuf;
     }
-    //else printf("Data not found!\n");
+    // else printf("Data not found!\n");
   }
-  //else printf("Not a valid radiance HDR file!\n");
+  // else printf("Not a valid radiance HDR file!\n");
 
   return NULL;
 }
@@ -354,7 +354,7 @@ static int fwritecolrs(FILE *file, int width, int channels, unsigned char *ibufs
         for (cnt = 1; (cnt < 127) && ((beg + cnt) < width) &&
                       (rgbe_scan[beg + cnt][i] == rgbe_scan[beg][i]);
              cnt++) {
-          ;
+          /* pass */
         }
         if (cnt >= MINRUN) {
           break; /* long enough */

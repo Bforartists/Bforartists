@@ -451,7 +451,7 @@ class CLIP_PT_tools_clip(Panel):
     bl_category = "Track"
 
     @classmethod
-    def poll(cls, _context):
+    def poll(cls, context):
         sc = context.space_data
         clip = sc.clip
 
@@ -1281,7 +1281,7 @@ class CLIP_PT_tools_scenesetup(Panel):
     bl_category = "Solve"
 
     @classmethod
-    def poll(cls, _context):
+    def poll(cls, context):
         sc = context.space_data
         clip = sc.clip
 

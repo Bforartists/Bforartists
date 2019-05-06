@@ -3797,7 +3797,7 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
 #endif
 
   /* this makes adjacent blocks auto open from now on */
-  //if (but->block->auto_open == 0) {
+  // if (but->block->auto_open == 0) {
   //  but->block->auto_open = 1;
   //}
 }
@@ -3947,6 +3947,9 @@ static int ui_do_but_HOTKEYEVT(bContext *C,
   }
   else if (data->state == BUTTON_STATE_WAIT_KEY_EVENT) {
     if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
+      return WM_UI_HANDLER_CONTINUE;
+    }
+    else if (event->type == UNKNOWNKEY) {
       return WM_UI_HANDLER_CONTINUE;
     }
 
