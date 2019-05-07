@@ -511,9 +511,10 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQUENCER_SLIP_STRIP_CONTENTS")
 
         layout.separator()
-        # layout.operator_menu_enum("sequencer.swap", "side") - BFA, removed for task #843
-        layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQUENCER_SWAP_STRIP_LEFT").side = 'LEFT'
-        layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQUENCER_SWAP_STRIP_RIGHT").side = 'RIGHT'
+        layout.operator_menu_enum("sequencer.swap", "side")
+        # layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQUENCER_SWAP_STRIP_LEFT").side = 'LEFT' #BFA - removed for task #843
+        # layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQUENCER_SWAP_STRIP_RIGHT").side = 'RIGHT' #BFA - removed for task #843
+
 
         layout.separator()
         layout.operator("sequencer.gap_remove", icon = "SEQUENCER_REMOVE_GAPS").all = False
