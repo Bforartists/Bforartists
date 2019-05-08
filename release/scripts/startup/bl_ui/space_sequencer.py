@@ -511,9 +511,8 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
-        layout.operator_menu_enum("sequencer.swap", "side")
-        # layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT' #BFA - removed for task #843
-        # layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT' #BFA - removed for task #843
+        layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
+        layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
 
 
         layout.separator()
