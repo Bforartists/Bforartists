@@ -109,8 +109,8 @@ EnumPropertyItem prop_side_types[] = {
 };
 
 static const EnumPropertyItem prop_side_lr_types[] = {
-    {SEQ_SIDE_LEFT, "LEFT", ICON_SEQUENCER_SWAP_STRIP_LEFT, "Left", ""},
-    {SEQ_SIDE_RIGHT, "RIGHT", ICON_SEQUENCER_SWAP_STRIP_RIGHT, "Right", ""},
+    {SEQ_SIDE_LEFT, "LEFT", ICON_SEQ_SWAP_LEFT, "Left", ""},
+    {SEQ_SIDE_RIGHT, "RIGHT", ICON_SEQ_SWAP_RIGHT, "Right", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
