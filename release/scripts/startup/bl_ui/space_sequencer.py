@@ -507,18 +507,18 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout = self.layout
 
         layout.operator("transform.transform", text="Move", icon = "TRANSFORM_MOVE").mode = 'TRANSLATION'
-        layout.operator("transform.transform", text="Move/Extend from Frame", icon = "SEQUENCER_MOVE_EXTEND_FROM_FRAME").mode = 'TIME_EXTEND'
-        layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQUENCER_SLIP_STRIP_CONTENTS")
+        layout.operator("transform.transform", text="Move/Extend from Frame", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
+        layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
         layout.operator_menu_enum("sequencer.swap", "side")
-        # layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQUENCER_SWAP_STRIP_LEFT").side = 'LEFT' #BFA - removed for task #843
-        # layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQUENCER_SWAP_STRIP_RIGHT").side = 'RIGHT' #BFA - removed for task #843
+        # layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT' #BFA - removed for task #843
+        # layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT' #BFA - removed for task #843
 
 
         layout.separator()
-        layout.operator("sequencer.gap_remove", icon = "SEQUENCER_REMOVE_GAPS").all = False
-        layout.operator("sequencer.gap_insert", icon = "SEQUENCER_INSERT_GAPS")
+        layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
+        layout.operator("sequencer.gap_insert", icon = "SEQ_INSERT_GAPS")
 
 
 class SEQUENCER_MT_strip_input(Menu):
@@ -528,10 +528,10 @@ class SEQUENCER_MT_strip_input(Menu):
         layout = self.layout
         strip = act_strip(context)
 
-        layout.operator("sequencer.reload", text="Reload Strips", icon = "SEQUENCER_RELOAD_STRIPS")
-        layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "SEQUENCER_RELOAD_STRIPS_AND_ADJUST_LENGTH").adjust_length = True
+        layout.operator("sequencer.reload", text="Reload Strips", icon = "SEQ_RELOAD_STRIPS")
+        layout.operator("sequencer.reload", text="Reload Strips and Adjust Length", icon = "SEQ_RELOAD_ADJUST_LENGTH").adjust_length = True
         prop = layout.operator("sequencer.change_path", text="Change Path/Files", icon = "NODE_MOVIE")
-        layout.operator("sequencer.swap_data", text="Swap Data", icon = "SEQUENCER_SWAP_DATA")
+        layout.operator("sequencer.swap_data", text="Swap Data", icon = "SEQ_SWAP_DATA")
 
         if strip:
             stype = strip.type
@@ -570,8 +570,8 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_transform")
-        layout.operator("sequencer.snap", icon='SEQUENCER_SNAP_STRIP_TO_FRAME')
-        layout.operator("sequencer.offset_clear", icon='SEQUENCER_CLEAR_STRIP_OFFSET')
+        layout.operator("sequencer.snap", icon='SEQ_SNAP_TO_FRAME')
+        layout.operator("sequencer.offset_clear", icon='SEQ_CLEAR_OFFSET')
 
         layout.separator()
         layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
@@ -580,11 +580,11 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.delete", text="Delete...", icon='DELETE')
 
         layout.separator()
-        layout.operator("sequencer.cut", text="Cut (Hard) at frame", icon='SEQUENCER_CUT_HARD_AT_FRAME').type = 'HARD'
-        layout.operator("sequencer.cut", text="Cut (Soft) at frame", icon='SEQUENCER_CUT_SOFT_AT_FRAME').type = 'SOFT'
+        layout.operator("sequencer.cut", text="Cut (Hard) at frame", icon='SEQ_CUT_HARD_AT_FRAME').type = 'HARD'
+        layout.operator("sequencer.cut", text="Cut (Soft) at frame", icon='SEQ_CUT_SOFT_AT_FRAME').type = 'SOFT'
 
         layout.separator()
-        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQUENCER_DEINTERLACE')
+        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
         layout.operator("sequencer.rebuild_proxy", icon='FILE_REFRESH')
 
         strip = act_strip(context)
