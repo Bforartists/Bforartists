@@ -69,6 +69,9 @@
 /* own include */
 #include "sequencer_intern.h"
 
+#include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+#include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
+
 /* XXX */
 /* RNA Enums, used in multiple files */
 EnumPropertyItem sequencer_prop_effect_types[] = {
@@ -106,8 +109,8 @@ EnumPropertyItem prop_side_types[] = {
 };
 
 static const EnumPropertyItem prop_side_lr_types[] = {
-    {SEQ_SIDE_LEFT, "LEFT", 0, "Left", ""},
-    {SEQ_SIDE_RIGHT, "RIGHT", 0, "Right", ""},
+    {SEQ_SIDE_LEFT, "LEFT", ICON_SEQ_SWAP_LEFT, "Left", ""},
+    {SEQ_SIDE_RIGHT, "RIGHT", ICON_SEQ_SWAP_RIGHT, "Right", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
