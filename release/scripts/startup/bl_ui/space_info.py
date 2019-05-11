@@ -27,7 +27,7 @@ class INFO_HT_header(Header):
     def draw(self, _context):
         layout = self.layout
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(_context, layout) # bfa - show hide the editormenu
 
         # Empty for now until info editor gets turned into log editor
 
