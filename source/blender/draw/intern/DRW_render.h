@@ -105,7 +105,7 @@ typedef char DRWViewportEmptyList;
 /* Use of multisample framebuffers. */
 #define MULTISAMPLE_SYNC_ENABLE(dfbl, dtxl) \
   { \
-    if (dfbl->multisample_fb != NULL) { \
+    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
       DRW_stats_query_start("Multisample Blit"); \
       GPU_framebuffer_bind(dfbl->multisample_fb); \
       /* TODO clear only depth but need to do alpha to coverage for transparencies. */ \
@@ -117,7 +117,7 @@ typedef char DRWViewportEmptyList;
 
 #define MULTISAMPLE_SYNC_DISABLE(dfbl, dtxl) \
   { \
-    if (dfbl->multisample_fb != NULL) { \
+    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
       DRW_stats_query_start("Multisample Resolve"); \
       GPU_framebuffer_bind(dfbl->default_fb); \
       DRW_multisamples_resolve(dtxl->multisample_depth, dtxl->multisample_color, true); \
@@ -128,7 +128,7 @@ typedef char DRWViewportEmptyList;
 
 #define MULTISAMPLE_SYNC_DISABLE_NO_DEPTH(dfbl, dtxl) \
   { \
-    if (dfbl->multisample_fb != NULL) { \
+    if (dfbl->multisample_fb != NULL && DRW_state_is_fbo()) { \
       DRW_stats_query_start("Multisample Resolve"); \
       GPU_framebuffer_bind(dfbl->default_fb); \
       DRW_multisamples_resolve(dtxl->multisample_depth, dtxl->multisample_color, false); \
@@ -631,6 +631,7 @@ DrawData *DRW_drawdata_ensure(ID *id,
                               size_t size,
                               DrawDataInitCb init_cb,
                               DrawDataFreeCb free_cb);
+void **DRW_duplidata_get(void *vedata);
 
 /* Settings */
 bool DRW_object_is_renderable(const struct Object *ob);

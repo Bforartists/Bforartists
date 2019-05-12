@@ -432,7 +432,7 @@ static bool nla_channels_get_selected_extents(bAnimContext *ac, float *min, floa
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* loop through all channels, finding the first one that's selected */
-  float ymax = NLACHANNEL_FIRST_TOP(snla);
+  float ymax = NLACHANNEL_FIRST_TOP(ac);
 
   for (ale = anim_data.first; ale; ale = ale->next, ymax -= NLACHANNEL_STEP(snla)) {
     const bAnimChannelType *acf = ANIM_channel_get_typeinfo(ale);
@@ -2455,6 +2455,7 @@ void NLA_OT_fmodifier_add(wmOperatorType *ot)
 
   /* id-props */
   ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_fmodifier_type_items, 0, "Type", "");
+  RNA_def_property_translation_context(ot->prop, BLT_I18NCONTEXT_ID_ACTION);
   RNA_def_enum_funcs(ot->prop, nla_fmodifier_itemf);
 
   RNA_def_boolean(ot->srna,

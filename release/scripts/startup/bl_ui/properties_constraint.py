@@ -35,8 +35,18 @@ class ConstraintButtonsPanel:
             # match enum type to our functions, avoids a lookup table.
             getattr(self, con.type)(context, box, con)
 
-            if con.type not in {'RIGID_BODY_JOINT', 'NULL'}:
+            if con.type in {'RIGID_BODY_JOINT', 'NULL'}:
+                return
+
+            if con.type in {'IK', 'SPLINE_IK'}:
+                # constraint.disable_keep_transform doesn't work well
+                # for these constraints.
                 box.prop(con, "influence")
+            else:
+                row = box.row(align=True)
+                row.prop(con, "influence")
+                row.operator("constraint.disable_keep_transform",
+                    text='', icon='CANCEL')
 
     @staticmethod
     def space_template(layout, con, target=True, owner=True):
@@ -421,6 +431,8 @@ class ConstraintButtonsPanel:
         row.prop(con, "use_y", text="Y")
         row.prop(con, "use_z", text="Z")
 
+        layout.prop(con, "power")
+
         row = layout.row()
         row.prop(con, "use_offset")
         row = row.row()
@@ -430,6 +442,8 @@ class ConstraintButtonsPanel:
         self.space_template(layout, con)
 
     def MAINTAIN_VOLUME(self, _context, layout, con):
+
+        layout.prop(con, "mode")
 
         row = layout.row()
         row.label(text="Free:")
@@ -799,6 +813,9 @@ class ConstraintButtonsPanel:
 
         layout.prop(con, "y_scale_mode")
         layout.prop(con, "xz_scale_mode")
+
+        if con.xz_scale_mode in {'INVERSE_PRESERVE', 'VOLUME_PRESERVE'}:
+            layout.prop(con, "use_original_scale")
 
         if con.xz_scale_mode == 'VOLUME_PRESERVE':
             layout.prop(con, "bulge", text="Volume Variation")

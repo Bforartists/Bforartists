@@ -24,6 +24,7 @@ from bpy.types import (
     Panel,
 )
 from bpy.app.translations import pgettext_iface as iface_
+from bpy.app.translations import contexts as i18n_contexts
 
 
 class USERPREF_HT_header(Header):
@@ -173,6 +174,7 @@ class USERPREF_PT_interface_text(PreferencePanel, Panel):
 
 class USERPREF_PT_interface_translation(PreferencePanel, Panel):
     bl_label = "Translation"
+    bl_translation_context = i18n_contexts.id_windowmanager
 
     @classmethod
     def poll(cls, context):
@@ -599,7 +601,7 @@ class USERPREF_PT_viewport_display(PreferencePanel, Panel):
 
         col = flow.column()
         col.prop(view, "gizmo_size")
-        col.prop(view, "lookdev_ball_size")
+        col.prop(view, "lookdev_sphere_size")
 
         flow.separator()
 
@@ -627,7 +629,7 @@ class USERPREF_PT_viewport_quality(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(system, "gpu_viewport_quality")
+        flow.prop(system, "viewport_aa")
         flow.prop(system, "multi_sample", text="Multisampling")
         flow.prop(system, "gpencil_multi_sample", text="Grease Pencil Multisampling")
         flow.use_property_split = False
@@ -910,11 +912,13 @@ class USERPREF_PT_theme_interface_icons(PreferencePanel, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        flow.prop(ui, "icon_scene")
         flow.prop(ui, "icon_collection")
         flow.prop(ui, "icon_object")
         flow.prop(ui, "icon_object_data")
         flow.prop(ui, "icon_modifier")
         flow.prop(ui, "icon_shading")
+        flow.prop(ui, "icon_border_intensity")
 
 
 class USERPREF_PT_theme_text_style(PreferencePanel, Panel):
