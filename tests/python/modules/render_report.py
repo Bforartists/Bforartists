@@ -11,6 +11,8 @@ import subprocess
 import sys
 import time
 
+from . import global_report
+
 
 class COLORS_ANSI:
     RED = '\033[00;31m'
@@ -72,19 +74,16 @@ def test_get_images(output_dir, filepath, reference_dir):
 
     ref_dirpath = os.path.join(output_dir, os.path.basename(dirpath), "ref")
     ref_img = os.path.join(ref_dirpath, testname + ".png")
-    if not os.path.exists(ref_dirpath):
-        os.makedirs(ref_dirpath)
+    os.makedirs(ref_dirpath, exist_ok=True)
     if os.path.exists(old_img):
         shutil.copy(old_img, ref_img)
 
     new_dirpath = os.path.join(output_dir, os.path.basename(dirpath))
-    if not os.path.exists(new_dirpath):
-        os.makedirs(new_dirpath)
+    os.makedirs(new_dirpath, exist_ok=True)
     new_img = os.path.join(new_dirpath, testname + ".png")
 
     diff_dirpath = os.path.join(output_dir, os.path.basename(dirpath), "diff")
-    if not os.path.exists(diff_dirpath):
-        os.makedirs(diff_dirpath)
+    os.makedirs(diff_dirpath, exist_ok=True)
     diff_img = os.path.join(diff_dirpath, testname + ".diff.png")
 
     return old_img, ref_img, new_img, diff_img
@@ -124,8 +123,7 @@ class Report:
         self.passed_tests = ""
         self.compare_tests = ""
 
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        os.makedirs(output_dir, exist_ok=True)
 
     def set_pixelated(self, pixelated):
         self.pixelated = pixelated
@@ -149,8 +147,7 @@ class Report:
     def _write_data(self, dirname):
         # Write intermediate data for single test.
         outdir = os.path.join(self.output_dir, dirname)
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
+        os.makedirs(outdir, exist_ok=True)
 
         filepath = os.path.join(outdir, "failed.data")
         pathlib.Path(filepath).write_text(self.failed_tests)
@@ -189,7 +186,8 @@ class Report:
         else:
             image_rendering = 'auto'
 
-        if len(failed_tests) > 0:
+        failed = len(failed_tests) > 0
+        if failed:
             message = "<p>Run <tt>BLENDER_TEST_UPDATE=1 ctest</tt> to create or update reference images for failed tests.</p>"
         else:
             message = ""
@@ -258,6 +256,13 @@ class Report:
 
         print_message("Report saved to: " + pathlib.Path(filepath).as_uri())
 
+
+        # Update global report
+        link_name = "Renders" if not comparison else "Comparison"
+        global_output_dir = os.path.dirname(self.output_dir)
+        global_failed = failed if not comparison else None
+        global_report.add(global_output_dir, self.title, link_name, filepath, global_failed)
+
     def _relative_url(self, filepath):
         relpath = os.path.relpath(filepath, self.output_dir)
         return pathlib.Path(relpath).as_posix()
@@ -316,8 +321,7 @@ class Report:
 
         # Create reference render directory.
         old_dirpath = os.path.dirname(old_img)
-        if not os.path.exists(old_dirpath):
-            os.makedirs(old_dirpath)
+        os.makedirs(old_dirpath, exist_ok=True)
 
         # Copy temporary to new image.
         if os.path.exists(new_img):
@@ -370,41 +374,48 @@ class Report:
 
         return not failed
 
-    def _run_test(self, filepath, render_cb):
-        testname = test_get_name(filepath)
-        print_message(testname, 'SUCCESS', 'RUN')
-        time_start = time.time()
-        tmp_filepath = os.path.join(self.output_dir, "tmp_" + testname)
+    def _run_tests(self, filepaths, render_cb):
+        # Run all tests together for performance, since Blender
+        # startup time is a significant factor.
+        tmp_filepaths = []
+        for filepath in filepaths:
+            testname = test_get_name(filepath)
+            print_message(testname, 'SUCCESS', 'RUN')
+            tmp_filepaths.append(os.path.join(self.output_dir, "tmp_" + testname))
 
-        error = render_cb(filepath, tmp_filepath)
-        status = "FAIL"
-        if not error:
-            if not self._diff_output(filepath, tmp_filepath):
-                error = "VERIFY"
+        run_errors = render_cb(filepaths, tmp_filepaths)
+        errors = []
 
-        if os.path.exists(tmp_filepath):
-            os.remove(tmp_filepath)
+        for error, filepath, tmp_filepath in zip(run_errors, filepaths, tmp_filepaths):
+            if not error:
+                if os.path.getsize(tmp_filepath) == 0:
+                    error = "VERIFY"
+                elif not self._diff_output(filepath, tmp_filepath):
+                    error = "VERIFY"
 
-        time_end = time.time()
-        elapsed_ms = int((time_end - time_start) * 1000)
-        if not error:
-            print_message("{} ({} ms)" . format(testname, elapsed_ms),
-                          'SUCCESS', 'OK')
-        else:
-            if error == "NO_ENGINE":
-                print_message("Can't perform tests because the render engine failed to load!")
-                return error
-            elif error == "NO_START":
-                print_message('Can not perform tests because blender fails to start.',
-                              'Make sure INSTALL target was run.')
-                return error
-            elif error == 'VERIFY':
-                print_message("Rendered result is different from reference image")
+            if os.path.exists(tmp_filepath):
+                os.remove(tmp_filepath)
+
+            errors.append(error)
+
+            testname = test_get_name(filepath)
+            if not error:
+                print_message(testname, 'SUCCESS', 'OK')
             else:
-                print_message("Unknown error %r" % error)
-            print_message("{} ({} ms)" . format(testname, elapsed_ms),
-                          'FAILURE', 'FAILED')
-        return error
+                if error == "SKIPPED":
+                    print_message("Skipped after previous render caused error")
+                elif error == "NO_ENGINE":
+                    print_message("Can't perform tests because the render engine failed to load!")
+                elif error == "NO_START":
+                    print_message('Can not perform tests because blender fails to start.',
+                                  'Make sure INSTALL target was run.')
+                elif error == 'VERIFY':
+                    print_message("Rendered result is different from reference image")
+                else:
+                    print_message("Unknown error %r" % error)
+                print_message(testname, 'FAILURE', 'FAILED')
+
+        return errors
 
     def _run_all_tests(self, dirname, dirpath, render_cb):
         passed_tests = []
@@ -415,8 +426,8 @@ class Report:
                       format(len(all_files)),
                       'SUCCESS', "==========")
         time_start = time.time()
-        for filepath in all_files:
-            error = self._run_test(filepath, render_cb)
+        errors = self._run_tests(all_files, render_cb)
+        for filepath, error in zip(all_files, errors):
             testname = test_get_name(filepath)
             if error:
                 if error == "NO_ENGINE":

@@ -157,8 +157,8 @@ static SpaceLink *sequencer_new(const ScrArea *UNUSED(sa), const Scene *scene)
   ar->v2d.minzoom = 0.01f;
   ar->v2d.maxzoom = 100.0f;
 
-  ar->v2d.scroll |= (V2D_SCROLL_BOTTOM | V2D_SCROLL_SCALE_HORIZONTAL);
-  ar->v2d.scroll |= (V2D_SCROLL_LEFT | V2D_SCROLL_SCALE_VERTICAL);
+  ar->v2d.scroll |= (V2D_SCROLL_BOTTOM | V2D_SCROLL_HORIZONTAL_HANDLES);
+  ar->v2d.scroll |= (V2D_SCROLL_RIGHT | V2D_SCROLL_VERTICAL_HANDLES);
   ar->v2d.keepzoom = 0;
   ar->v2d.keeptot = 0;
   ar->v2d.align = V2D_ALIGN_NO_NEG_Y;
@@ -816,7 +816,7 @@ void ED_spacetype_sequencer(void)
   art->draw = sequencer_main_region_draw;
   art->listener = sequencer_main_region_listener;
   art->message_subscribe = sequencer_main_region_message_subscribe;
-  art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_FRAMES | ED_KEYMAP_ANIMATION;
+  art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_ANIMATION;
 
   BLI_addhead(&st->regiontypes, art);
 

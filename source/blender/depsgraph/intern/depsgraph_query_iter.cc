@@ -145,7 +145,6 @@ bool deg_objects_dupli_iterator_next(BLI_Iterator *iter)
     Object *dupli_parent = data->dupli_parent;
     Object *temp_dupli_object = &data->temp_dupli_object;
     *temp_dupli_object = *dob->ob;
-    temp_dupli_object->select_id = dupli_parent->select_id;
     temp_dupli_object->base_flag = dupli_parent->base_flag | BASE_FROM_DUPLI;
     temp_dupli_object->base_local_view_bits = dupli_parent->base_local_view_bits;
     temp_dupli_object->dt = MIN2(temp_dupli_object->dt, dupli_parent->dt);
@@ -159,7 +158,13 @@ bool deg_objects_dupli_iterator_next(BLI_Iterator *iter)
       continue;
     }
 
+    /* This could be avoided by refactoring make_dupli() in order to track all negative scaling
+     * recursively. */
+    bool is_neg_scale = is_negative_m4(dob->mat);
+    SET_FLAG_FROM_TEST(data->temp_dupli_object.transflag, is_neg_scale, OB_NEG_SCALE);
+
     copy_m4_m4(data->temp_dupli_object.obmat, dob->mat);
+    invert_m4_m4(data->temp_dupli_object.imat, data->temp_dupli_object.obmat);
     iter->current = &data->temp_dupli_object;
     BLI_assert(DEG::deg_validate_copy_on_write_datablock(&data->temp_dupli_object.id));
     return true;

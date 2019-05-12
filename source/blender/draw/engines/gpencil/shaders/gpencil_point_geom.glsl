@@ -1,4 +1,3 @@
-uniform mat4 ModelViewProjectionMatrix;
 uniform vec2 Viewport;
 uniform int xraymode;
 uniform int use_follow_path;
@@ -70,9 +69,11 @@ float getAngle(vec2 pt0, vec2 pt1)
     return 0.0;
   }
 
+  /* disable, but keep for future follow modes 	
   if (use_follow_path == FALSE) {
     return 0.0;
   }
+  */
 
   /* default horizontal line (x-axis) in screen space */
   vec2 v0 = vec2(1.0, 0.0);
