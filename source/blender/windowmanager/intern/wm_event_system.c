@@ -86,7 +86,6 @@
 #include "RNA_enum_types.h"
 
 #include "DEG_depsgraph.h"
-#include "DEG_depsgraph_query.h"
 
 /* Motion in pixels allowed before we don't consider single/double click,
  * or detect the start of a tweak event. */
@@ -3091,12 +3090,10 @@ void wm_event_do_handlers(bContext *C)
       wm_event_free_all(win);
     }
     else {
-      Depsgraph *depsgraph = CTX_data_depsgraph(C);
       Scene *scene = WM_window_get_active_scene(win);
-      Scene *scene_eval = DEG_get_evaluated_scene(depsgraph);
 
       if (scene) {
-        const int is_playing_sound = BKE_sound_scene_playing(scene_eval);
+        int is_playing_sound = BKE_sound_scene_playing(scene);
 
         if (is_playing_sound != -1) {
           bool is_playing_screen;
@@ -3116,6 +3113,7 @@ void wm_event_do_handlers(bContext *C)
               int ncfra = time * (float)FPS + 0.5f;
               if (ncfra != scene->r.cfra) {
                 scene->r.cfra = ncfra;
+                Depsgraph *depsgraph = CTX_data_depsgraph(C);
                 ED_update_for_newframe(CTX_data_main(C), depsgraph);
                 WM_event_add_notifier(C, NC_WINDOW, NULL);
               }

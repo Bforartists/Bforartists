@@ -1882,6 +1882,7 @@ static void sizelike_new_data(void *cdata)
   bSizeLikeConstraint *data = (bSizeLikeConstraint *)cdata;
 
   data->flag = SIZELIKE_X | SIZELIKE_Y | SIZELIKE_Z | SIZELIKE_MULTIPLY;
+  data->power = 1.0f;
 }
 
 static void sizelike_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)
@@ -1928,6 +1929,10 @@ static void sizelike_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *ta
 
     mat4_to_size(size, ct->matrix);
     mat4_to_size(obsize, cob->matrix);
+
+    for (int i = 0; i < 3; i++) {
+      size[i] = powf(size[i], data->power);
+    }
 
     if (data->flag & SIZELIKE_OFFSET) {
       /* Scale is a multiplicative quantity, so adding it makes no sense.
@@ -2037,7 +2042,7 @@ static void samevolume_new_data(void *cdata)
 {
   bSameVolumeConstraint *data = (bSameVolumeConstraint *)cdata;
 
-  data->flag = SAMEVOL_Y;
+  data->free_axis = SAMEVOL_Y;
   data->volume = 1.0f;
 }
 
@@ -2046,19 +2051,30 @@ static void samevolume_evaluate(bConstraint *con, bConstraintOb *cob, ListBase *
   bSameVolumeConstraint *data = con->data;
 
   float volume = data->volume;
-  float fac = 1.0f, total_scale;
+  float fac = 1.0f, total_scale = 1.0f;
   float obsize[3];
 
   mat4_to_size(obsize, cob->matrix);
 
   /* calculate normalizing scale factor for non-essential values */
-  total_scale = obsize[0] * obsize[1] * obsize[2];
+  switch (data->mode) {
+    case SAMEVOL_STRICT:
+      total_scale = obsize[0] * obsize[1] * obsize[2];
+      break;
+    case SAMEVOL_UNIFORM:
+      total_scale = pow3f(obsize[data->free_axis]);
+      break;
+    case SAMEVOL_SINGLE_AXIS:
+      total_scale = obsize[data->free_axis];
+      break;
+  }
+
   if (total_scale != 0) {
     fac = sqrtf(volume / total_scale);
   }
 
   /* apply scaling factor to the channels not being kept */
-  switch (data->flag) {
+  switch (data->free_axis) {
     case SAMEVOL_X:
       mul_v3_fl(cob->matrix[1], fac);
       mul_v3_fl(cob->matrix[2], fac);
@@ -4224,6 +4240,7 @@ static void splineik_new_data(void *cdata)
   data->bulge_min = 1.0f;
 
   data->yScaleMode = CONSTRAINT_SPLINEIK_YS_FIT_CURVE;
+  data->flag = CONSTRAINT_SPLINEIK_USE_ORIGINAL_SCALE;
 }
 
 static void splineik_id_looper(bConstraint *con, ConstraintIDFunc func, void *userdata)

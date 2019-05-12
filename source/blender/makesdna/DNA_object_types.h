@@ -136,6 +136,10 @@ typedef struct Object_Runtime {
   /** Only used for drawing the parent/child help-line. */
   float parent_display_origin[3];
 
+  /** Selection id of this object; only available in the original object */
+  int select_id;
+  char _pad1[4];
+
   /** Axis aligned boundbox (in localspace). */
   struct BoundBox *bb;
 
@@ -365,9 +369,7 @@ typedef struct Object {
   char empty_image_visibility_flag;
   char empty_image_depth;
   char empty_image_flag;
-  char _pad8[1];
-
-  int select_id;
+  char _pad8[5];
 
   /** Contains data for levels of detail. */
   ListBase lodlevels;
@@ -600,7 +602,7 @@ enum {
 
 /* ob->restrictflag */
 enum {
-  OB_RESTRICT_VIEW = 1 << 0,
+  OB_RESTRICT_INSTANCE = 1 << 0,
   OB_RESTRICT_SELECT = 1 << 1,
   OB_RESTRICT_RENDER = 1 << 2,
 };

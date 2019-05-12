@@ -765,12 +765,14 @@ void ui_draw_aligned_panel(uiStyle *style,
     panel_title_color_get(show_background, col_title);
 
     GPU_blend(true);
-    UI_icon_draw_aspect(headrect.xmax - ((PNL_ICON * 2.2f) / block->aspect),
-                        headrect.ymin + (5.0f / block->aspect),
-                        (panel->flag & PNL_PIN) ? ICON_PINNED : ICON_UNPINNED,
-                        (block->aspect / UI_DPI_FAC),
-                        1.0f,
-                        (const char *)col_title);
+    UI_icon_draw_ex(headrect.xmax - ((PNL_ICON * 2.2f) / block->aspect),
+                    headrect.ymin + (5.0f / block->aspect),
+                    (panel->flag & PNL_PIN) ? ICON_PINNED : ICON_UNPINNED,
+                    (block->aspect * U.inv_dpi_fac),
+                    1.0f,
+                    0.0f,
+                    (const char *)col_title,
+                    false);
     GPU_blend(false);
   }
 
@@ -2067,7 +2069,11 @@ void UI_panel_category_draw_all(ARegion *ar, const char *category_id_active)
   ui_fontscale(&fstyle_points, aspect / (U.pixelsize * 1.1f));
   BLF_size(fontid, fstyle_points, U.dpi);
 
-  BLI_assert(UI_panel_category_is_visible(ar));
+  /* Check the region type supports categories to avoid an assert
+   * for showing 3D view panels in the properties space. */
+  if ((1 << ar->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK) {
+    BLI_assert(UI_panel_category_is_visible(ar));
+  }
 
   /* calculate tab rect's and check if we need to scale down */
   for (pc_dyn = ar->panels_category.first; pc_dyn; pc_dyn = pc_dyn->next) {

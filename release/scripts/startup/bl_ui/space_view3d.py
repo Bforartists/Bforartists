@@ -126,10 +126,15 @@ class VIEW3D_HT_header(Header):
             else:
                 attr = "use_proportional_edit"
 
-                if tool_settings.use_proportional_connected:
-                    kw["icon"] = 'PROP_CON'
-                elif tool_settings.use_proportional_projected:
-                    kw["icon"] = 'PROP_PROJECTED'
+                if tool_settings.use_proportional_edit:
+                    if tool_settings.use_proportional_connected:
+                        kw["icon"] = 'PROP_CON'
+                    elif tool_settings.use_proportional_projected:
+                        kw["icon"] = 'PROP_PROJECTED'
+                    else:
+                        kw["icon"] = 'PROP_ON'
+                else:
+                    kw["icon"] = 'PROP_OFF'
 
             row.prop(tool_settings, attr, icon_only=True, **kw)
             sub = row.row(align=True)
@@ -309,7 +314,7 @@ class VIEW3D_HT_header(Header):
         # Gizmo toggle & popover.
         row = layout.row(align=True)
         # FIXME: place-holder icon.
-        row.prop(view, "show_gizmo", text="", toggle=True, icon='EMPTY_DATA')
+        row.prop(view, "show_gizmo", text="", toggle=True, icon='GIZMO')
         sub = row.row(align=True)
         sub.active = view.show_gizmo
         sub.popover(
@@ -1802,8 +1807,6 @@ class VIEW3D_MT_edit_text_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout = self.layout
-
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.operator("font.text_cut", text="Cut")
@@ -1816,7 +1819,7 @@ class VIEW3D_MT_edit_text_context_menu(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_font")
+        layout.menu("VIEW3D_MT_edit_text_chars")
 
 class VIEW3D_MT_select_edit_text(Menu):
     # intentional name mismatch
@@ -1825,6 +1828,11 @@ class VIEW3D_MT_select_edit_text(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.operator("ed.undo")
+        layout.operator("ed.redo")
+
+        layout.separator()
 
         layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_copy", text="Copy", icon='COPYDOWN')
@@ -3965,6 +3973,8 @@ class VIEW3D_MT_pose_slide(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.operator("pose.push_rest")
+        layout.operator("pose.relax_rest")
         layout.operator("pose.push", icon = 'PUSH_POSE')
         layout.operator("pose.relax", icon = 'RELAX_POSE')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
@@ -4764,6 +4774,55 @@ class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
+    bl_label = "Select by Face Strength"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Weak")
+        op.set = False
+        op.face_strength = 'WEAK'
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Medium")
+        op.set = False
+        op.face_strength = 'MEDIUM'
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Strong")
+        op.set = False
+        op.face_strength = 'STRONG'
+
+
+class VIEW3D_MT_edit_mesh_normals_set_strength(Menu):
+    bl_label = "Select by Face Strength"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Weak")
+        op.set = True
+        op.face_strength = 'WEAK'
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Medium")
+        op.set = True
+        op.face_strength = 'MEDIUM'
+
+        op = layout.operator("mesh.mod_weighted_strength", text="Strong")
+        op.set = True
+        op.face_strength = 'STRONG'
+
+
+class VIEW3D_MT_edit_mesh_normals_average(Menu):
+    bl_label = "Average"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("mesh.average_normals", text="Custom Normal").average_type = 'CUSTOM_NORMAL'
+        layout.operator("mesh.average_normals", text="Face Area").average_type = 'FACE_AREA'
+        layout.operator("mesh.average_normals", text="Corner Angle").average_type = 'CORNER_ANGLE'
+
+
 class VIEW3D_MT_edit_mesh_normals(Menu):
     bl_label = "Normals"
 
@@ -4773,8 +4832,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
         layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
         layout.operator("mesh.flip_normals", icon = 'FLIP_NORMALS')
-        layout.operator("mesh.average_normals", text="Average")
 
+        layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
         layout.menu("VIEW3D_MT_edit_mesh_normals_advanced")
         layout.menu("VIEW3D_MT_edit_mesh_normals_vector")
         layout.menu("VIEW3D_MT_edit_mesh_normals_facestrength")
@@ -4812,8 +4871,8 @@ class VIEW3D_MT_edit_mesh_normals_facestrength(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.mod_weighted_strength", text="Face Select", icon='FACESEL').set = False
-        layout.operator("mesh.mod_weighted_strength", text="Set Strength", icon='NORMAL_SETSTRENGTH').set = True
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", text="Select by Face Strength", icon='FACESEL')
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", text="Set Face Strength", icon='NORMAL_SETSTRENGTH')
 
 
 class VIEW3D_MT_edit_mesh_shading(Menu):
@@ -5953,6 +6012,7 @@ class VIEW3D_PT_active_tool(Panel):
 
     def draw(self, context):
         layout = self.layout
+        tool_mode = context.mode
 
         # Panel display of topbar tool settings.
         # currently displays in tool settings, keep here since the same functionality is used for the topbar.
@@ -5961,7 +6021,12 @@ class VIEW3D_PT_active_tool(Panel):
         layout.use_property_decorate = False
 
         from .space_toolsystem_common import ToolSelectPanelHelper
-        ToolSelectPanelHelper.draw_active_tool_header(context, layout, show_tool_name=True)
+        ToolSelectPanelHelper.draw_active_tool_header(
+            context,
+            layout,
+            show_tool_name=True,
+            tool_key=('VIEW_3D', tool_mode),
+        )
 
 
 class VIEW3D_PT_view3d_properties(Panel):
@@ -7839,6 +7904,9 @@ classes = (
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_MT_edit_mesh_normals,
+    VIEW3D_MT_edit_mesh_normals_select_strength,
+    VIEW3D_MT_edit_mesh_normals_set_strength,
+    VIEW3D_MT_edit_mesh_normals_average,
     VIEW3D_MT_edit_mesh_normals_advanced,
     VIEW3D_MT_edit_mesh_normals_vector,
     VIEW3D_MT_edit_mesh_normals_facestrength,

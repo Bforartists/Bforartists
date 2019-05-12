@@ -2853,7 +2853,7 @@ static void rna_def_object(BlenderRNA *brna)
 
   /* restrict */
   prop = RNA_def_property(srna, "hide_viewport", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", OB_RESTRICT_VIEW);
+  RNA_def_property_boolean_sdna(prop, NULL, "restrictflag", OB_RESTRICT_INSTANCE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_STATIC);
   RNA_def_property_ui_text(prop, "Disable View", "Disable View\nDisable object in the viewport");
   RNA_def_property_ui_icon(prop, ICON_RESTRICT_VIEW_OFF, -1);

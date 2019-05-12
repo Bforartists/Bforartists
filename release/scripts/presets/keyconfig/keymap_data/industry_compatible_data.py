@@ -284,16 +284,16 @@ def km_screen_editing(params):
     return keymap
 
 
-def km_header(_params):
+def km_screen_region_context_menu(_params):
     items = []
     keymap = (
-        "Header",
+        "Region Context Menu",
         {"space_type": 'EMPTY', "region_type": 'WINDOW'},
         {"items": items},
     )
 
     items.extend([
-        ("screen.header_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
+        ("screen.region_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -765,12 +765,9 @@ def km_markers(params):
 
     items.extend([
         ("wm.search_menu", {"type": 'TAB', "value": 'PRESS'}, None),
-        ("anim.change_frame", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
-        ("graph.cursor_set", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
         ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
         ("marker.move", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
         ("marker.duplicate", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
-
         ("marker.select", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
         ("marker.select", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True},
          {"properties": [("extend", True)]}),
@@ -1124,9 +1121,12 @@ def km_info(params):
          {"properties": [("extend", True)]}),
         ("info.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'},
          {"properties": [("wait_for_input", False)]}),
-        ("info.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("action", 'SELECT')]}),
-        ("info.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True, "shift": True}, None),
-        ("info.select_all", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+        ("info.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True},
+         {"properties": [("action", 'SELECT')]}),
+        ("info.select_all", {"type": 'A', "value": 'PRESS', "ctrl": True, "shift": True},
+         {"properties": [("action", 'DESELECT')]}),
+        ("info.select_all", {"type": 'I', "value": 'PRESS', "ctrl": True},
+         {"properties": [("action", 'INVERT')]}),
         ("info.select_box", {"type": 'Q', "value": 'PRESS'}, None),
         ("info.report_replay", {"type": 'R', "value": 'PRESS'}, None),
         ("info.report_delete", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
@@ -1409,6 +1409,7 @@ def km_nla_channels(params):
          {"properties": [("extend", True)]}),
         ("nla.tracks_delete", {"type": 'BACK_SPACE', "value": 'PRESS'}, None),
         ("nla.tracks_delete", {"type": 'DEL', "value": 'PRESS'}, None),
+        op_menu("NLA_MT_channel_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
     ])
 
     return keymap
@@ -1472,6 +1473,7 @@ def km_nla_editor(params):
          {"properties": [("mode", 'TIME_EXTEND')]}),
         ("transform.transform", {"type": 'R', "value": 'PRESS'},
          {"properties": [("mode", 'TIME_SCALE')]}),
+        op_menu("NLA_MT_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
         ("marker.rename", {"type": 'RET', "value": 'PRESS'}, None),
     ])
@@ -1764,6 +1766,7 @@ def km_sequencer(params):
         ("transform.seq_slide", {"type": 'EVT_TWEAK_M', "value": 'ANY'}, None),
         ("transform.transform", {"type": 'E', "value": 'PRESS'},
          {"properties": [("mode", 'TIME_EXTEND')]}),
+        op_menu("SEQUENCER_MT_context_menu", {"type": 'RIGHTMOUSE', "value": 'PRESS'}),
         ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
         ("marker.rename", {"type": 'RET', "value": 'PRESS'}, None),
     ])
@@ -3038,11 +3041,18 @@ def km_mesh(params):
     items.extend([
         # Selection
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
-         {"properties": [("extend", False), ("deselect", False), ("toggle", False)]}),
+         {"properties": [("extend", False), ("deselect", False), ("toggle", False), ("ring", False)]}),
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "shift": True},
-         {"properties": [("extend", True), ("deselect", False), ("toggle", False)]}),
+         {"properties": [("extend", True), ("deselect", False), ("toggle", False), ("ring", False)]}),
         ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "ctrl": True},
-         {"properties": [("extend", False), ("deselect", True), ("toggle", False)]}),
+         {"properties": [("extend", False), ("deselect", True), ("toggle", False), ("ring", False)]}),
+
+        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True},
+         {"properties": [("extend", False), ("deselect", False), ("toggle", False), ("ring", True)]}),
+        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "shift": True},
+         {"properties": [("extend", True), ("deselect", False), ("toggle", False), ("ring", True)]}),
+        ("mesh.loop_select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "alt": True, "ctrl": True},
+         {"properties": [("extend", False), ("deselect", True), ("toggle", False), ("ring", True)]}),
 
         ("mesh.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
          {"properties": [("use_fill", False)]}),
@@ -3397,11 +3407,10 @@ def km_knife_tool_modal_map(_params):
     items.extend([
         ("CANCEL", {"type": 'ESC', "value": 'PRESS', "any": True}, None),
         ("PANNING", {"type": 'LEFTMOUSE', "value": 'PRESS', "alt": True}, None),
-        ("ADD_CUT", {"type": 'LEFTMOUSE', "value": 'ANY', "any": True}, None),
-        ("CANCEL", {"type": 'RIGHTMOUSE', "value": 'PRESS', "any": True}, None),
         ("CONFIRM", {"type": 'RET', "value": 'PRESS', "any": True}, None),
         ("CONFIRM", {"type": 'NUMPAD_ENTER', "value": 'PRESS', "any": True}, None),
-        ("CONFIRM", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK', "any": True}, None),
+        ("CONFIRM", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+        ("ADD_CUT", {"type": 'LEFTMOUSE', "value": 'ANY'}, None),
         ("NEW_CUT", {"type": 'E', "value": 'PRESS'}, None),
         ("SNAP_MIDPOINTS_ON", {"type": 'LEFT_CTRL', "value": 'PRESS', "any": True}, None),
         ("SNAP_MIDPOINTS_OFF", {"type": 'LEFT_CTRL', "value": 'RELEASE', "any": True}, None),
@@ -3413,6 +3422,9 @@ def km_knife_tool_modal_map(_params):
         ("IGNORE_SNAP_OFF", {"type": 'RIGHT_SHIFT', "value": 'RELEASE', "any": True}, None),
         ("ANGLE_SNAP_TOGGLE", {"type": 'C', "value": 'PRESS'}, None),
         ("CUT_THROUGH_TOGGLE", {"type": 'X', "value": 'PRESS'}, None),
+        ("PANNING", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "alt": True}, None),
+        ("PANNING", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True}, None),
+        ("CONFIRM", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -3622,7 +3634,7 @@ def generate_keymaps(params=None):
         km_window(params),
         km_screen(params),
         km_screen_editing(params),
-        km_header(params),
+        km_screen_region_context_menu(params),
         km_view2d(params),
         km_view2d_buttons_list(params),
         km_user_interface(params),

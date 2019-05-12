@@ -233,6 +233,7 @@ extern char datatoc_armature_stick_frag_glsl[];
 extern char datatoc_armature_dof_vert_glsl[];
 
 extern char datatoc_common_globals_lib_glsl[];
+extern char datatoc_common_view_lib_glsl[];
 
 extern char datatoc_gpu_shader_flat_color_frag_glsl[];
 extern char datatoc_gpu_shader_3D_smooth_color_frag_glsl[];
@@ -826,8 +827,14 @@ DRWShadingGroup *shgroup_instance_bone_shape_outline(DRWPass *pass,
   if (sh_data->shape_outline == NULL) {
     const GPUShaderConfigData *sh_cfg_data = &GPU_shader_cfg_data[sh_cfg];
     sh_data->shape_outline = GPU_shader_create_from_arrays({
-        .vert = (const char *[]){sh_cfg_data->lib, datatoc_armature_shape_outline_vert_glsl, NULL},
-        .geom = (const char *[]){sh_cfg_data->lib, datatoc_armature_shape_outline_geom_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_armature_shape_outline_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_armature_shape_outline_geom_glsl,
+                                 NULL},
         .frag = (const char *[]){datatoc_gpu_shader_flat_color_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, NULL},
     });
@@ -857,7 +864,10 @@ DRWShadingGroup *shgroup_instance_bone_shape_solid(DRWPass *pass,
   if (sh_data->shape_solid == NULL) {
     const GPUShaderConfigData *sh_cfg_data = &GPU_shader_cfg_data[sh_cfg];
     sh_data->shape_solid = GPU_shader_create_from_arrays({
-        .vert = (const char *[]){sh_cfg_data->lib, datatoc_armature_shape_solid_vert_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_armature_shape_solid_vert_glsl,
+                                 NULL},
         .frag = (const char *[]){datatoc_armature_shape_solid_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, NULL},
     });
@@ -1028,18 +1038,23 @@ struct GPUShader *volume_velocity_shader_get(bool use_needle)
   COMMON_Shaders *sh_data = &g_shaders[GPU_SHADER_CFG_DEFAULT];
   if (use_needle) {
     if (sh_data->volume_velocity_needle_sh == NULL) {
-      sh_data->volume_velocity_needle_sh = DRW_shader_create(
+      sh_data->volume_velocity_needle_sh = DRW_shader_create_with_lib(
           datatoc_volume_velocity_vert_glsl,
           NULL,
           datatoc_gpu_shader_flat_color_frag_glsl,
+          datatoc_common_view_lib_glsl,
           "#define USE_NEEDLE");
     }
     return sh_data->volume_velocity_needle_sh;
   }
   else {
     if (sh_data->volume_velocity_sh == NULL) {
-      sh_data->volume_velocity_sh = DRW_shader_create(
-          datatoc_volume_velocity_vert_glsl, NULL, datatoc_gpu_shader_flat_color_frag_glsl, NULL);
+      sh_data->volume_velocity_sh = DRW_shader_create_with_lib(
+          datatoc_volume_velocity_vert_glsl,
+          NULL,
+          datatoc_gpu_shader_flat_color_frag_glsl,
+          datatoc_common_view_lib_glsl,
+          NULL);
     }
     return sh_data->volume_velocity_sh;
   }
@@ -1075,22 +1090,27 @@ int DRW_object_wire_theme_get(Object *ob, ViewLayer *view_layer, float **r_color
       theme_id = (active) ? TH_ACTIVE : TH_SELECT;
     }
     else {
-      if (ob->type == OB_LAMP) {
-        theme_id = TH_LIGHT;
+      switch (ob->type) {
+        case OB_LAMP:
+          theme_id = TH_LIGHT;
+          break;
+        case OB_SPEAKER:
+          theme_id = TH_SPEAKER;
+          break;
+        case OB_CAMERA:
+          theme_id = TH_CAMERA;
+          break;
+        case OB_EMPTY:
+          theme_id = TH_EMPTY;
+          break;
+        case OB_LIGHTPROBE:
+          /* TODO add lightprobe color */
+          theme_id = TH_EMPTY;
+          break;
+        default:
+          /* fallback to TH_WIRE */
+          break;
       }
-      else if (ob->type == OB_SPEAKER) {
-        theme_id = TH_SPEAKER;
-      }
-      else if (ob->type == OB_CAMERA) {
-        theme_id = TH_CAMERA;
-      }
-      else if (ob->type == OB_EMPTY) {
-        theme_id = TH_EMPTY;
-      }
-      else if (ob->type == OB_LIGHTPROBE) {
-        theme_id = TH_EMPTY;
-      } /* TODO add lightprobe color */
-      /* fallback to TH_WIRE */
     }
   }
 

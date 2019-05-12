@@ -1421,7 +1421,7 @@ static void widget_draw_preview(BIFIconID icon, float alpha, const rcti *rect)
     int x = rect->xmin + w / 2 - size / 2;
     int y = rect->ymin + h / 2 - size / 2;
 
-    UI_icon_draw_preview_aspect_size(x, y, icon, 1.0f, alpha, size);
+    UI_icon_draw_preview(x, y, icon, 1.0f, alpha, size);
   }
 }
 
@@ -1450,7 +1450,7 @@ static void widget_draw_icon(
     return;
   }
 
-  aspect = but->block->aspect / UI_DPI_FAC;
+  aspect = but->block->aspect * U.inv_dpi_fac;
   height = ICON_DEFAULT_HEIGHT / aspect;
 
   /* calculate blend color */
@@ -1506,18 +1506,27 @@ static void widget_draw_icon(
       ys = (int)(ys + 0.1f);
     }
 
+    /* Get theme color. */
+    char color[4] = {mono_color[0], mono_color[1], mono_color[2], mono_color[3]};
+    bool has_theme = UI_icon_get_theme_color(icon, (uchar *)color);
+
     /* to indicate draggable */
     if (but->dragpoin && (but->flag & UI_ACTIVE)) {
-      float rgb[3] = {1.25f, 1.25f, 1.25f};
-      UI_icon_draw_aspect_color(xs, ys, icon, aspect, rgb, mono_color);
+      UI_icon_draw_ex(xs, ys, icon, aspect, 1.25f, 0.0f, color, has_theme);
     }
-    else if ((but->flag & (UI_ACTIVE | UI_SELECT | UI_SELECT_DRAW)) || !UI_but_is_tool(but)) {
-      UI_icon_draw_aspect(xs, ys, icon, aspect, alpha, mono_color);
+    else if ((but->flag & (UI_ACTIVE | UI_SELECT | UI_SELECT_DRAW))) {
+      UI_icon_draw_ex(xs, ys, icon, aspect, alpha, 0.0f, color, has_theme);
+    }
+    else if (!UI_but_is_tool(but)) {
+      if (has_theme) {
+        alpha *= 0.8f;
+      }
+      UI_icon_draw_ex(xs, ys, icon, aspect, alpha, 0.0f, color, has_theme);
     }
     else {
       const bTheme *btheme = UI_GetTheme();
-      UI_icon_draw_desaturate(
-          xs, ys, icon, aspect, alpha, 1.0 - btheme->tui.icon_saturation, mono_color);
+      const float desaturate = 1.0 - btheme->tui.icon_saturation;
+      UI_icon_draw_ex(xs, ys, icon, aspect, alpha, desaturate, color, has_theme);
     }
   }
 
@@ -1528,7 +1537,7 @@ static void widget_draw_submenu_tria(const uiBut *but,
                                      const rcti *rect,
                                      const uiWidgetColors *wcol)
 {
-  const float aspect = but->block->aspect / UI_DPI_FAC;
+  const float aspect = but->block->aspect * U.inv_dpi_fac;
   const int tria_height = (int)(ICON_DEFAULT_HEIGHT / aspect);
   const int tria_width = (int)(ICON_DEFAULT_WIDTH / aspect) - 2 * U.pixelsize;
   const int xs = rect->xmax - tria_width;
@@ -1584,7 +1593,8 @@ static void ui_text_clip_right_ex(const uiFontStyle *fstyle,
   BLI_assert(str[0]);
 
   /* If the trailing ellipsis takes more than 20% of all available width, just cut the string
-   * (as using the ellipsis would remove even more useful chars, and we cannot show much already!).
+   * (as using the ellipsis would remove even more useful chars, and we cannot show much
+   * already!).
    */
   if (sep_strwidth / okwidth > 0.2f) {
     l_end = BLF_width_to_strlen(fstyle->uifont_id, str, max_len, okwidth, &tmp);
@@ -1699,7 +1709,8 @@ float UI_text_clip_middle_ex(const uiFontStyle *fstyle,
         /* Corner case, the str already takes all available mem,
          * and the ellipsis chars would actually add more chars.
          * Better to just trim one or two letters to the right in this case...
-         * Note: with a single-char ellipsis, this should never happen! But better be safe here...
+         * Note: with a single-char ellipsis, this should never happen! But better be safe
+         * here...
          */
         ui_text_clip_right_ex(
             fstyle, str, max_len, okwidth, sep, sep_len, sep_strwidth, &final_lpart_len);
@@ -2346,7 +2357,7 @@ static void widget_draw_text_icon(const uiFontStyle *fstyle,
 
     const BIFIconID icon = widget_icon_id(but);
     int icon_size_init = is_tool ? ICON_DEFAULT_HEIGHT_TOOLBAR : ICON_DEFAULT_HEIGHT;
-    const float icon_size = icon_size_init / (but->block->aspect / UI_DPI_FAC);
+    const float icon_size = icon_size_init / (but->block->aspect * U.inv_dpi_fac);
     const float icon_padding = 2 * UI_DPI_FAC;
 
 #ifdef USE_UI_TOOLBAR_HACK
@@ -3494,8 +3505,11 @@ void UI_draw_widget_scroll(uiWidgetColors *wcol, const rcti *rect, const rcti *s
       wcol->item[3] = 255;
 
       if (horizontal) {
-        shape_preset_init_scroll_circle(&wtb.tria1, slider, 0.6f, 'l');
-        shape_preset_init_scroll_circle(&wtb.tria2, slider, 0.6f, 'r');
+        rcti slider_inset = *slider;
+        slider_inset.xmin += 0.05 * U.widget_unit;
+        slider_inset.xmax -= 0.05 * U.widget_unit;
+        shape_preset_init_scroll_circle(&wtb.tria1, &slider_inset, 0.6f, 'l');
+        shape_preset_init_scroll_circle(&wtb.tria2, &slider_inset, 0.6f, 'r');
       }
       else {
         shape_preset_init_scroll_circle(&wtb.tria1, slider, 0.6f, 'b');
@@ -4655,6 +4669,9 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
         break;
 
       case UI_BTYPE_CURVE:
+        /* do not draw right to edge of rect */
+        rect->xmin += (0.2f * UI_UNIT_X);
+        rect->xmax -= (0.2f * UI_UNIT_X);
         ui_draw_but_CURVE(ar, but, &tui->wcol_regular, rect);
         break;
 
@@ -5198,7 +5215,7 @@ void ui_draw_menu_item(
 
     GPU_blend(true);
     /* XXX scale weak get from fstyle? */
-    UI_icon_draw_aspect(xs, ys, iconid, aspect, 1.0f, wt->wcol.text);
+    UI_icon_draw_ex(xs, ys, iconid, aspect, 1.0f, 0.0f, wt->wcol.text, false);
     GPU_blend(false);
   }
 }

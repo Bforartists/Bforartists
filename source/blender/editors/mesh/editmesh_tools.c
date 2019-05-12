@@ -336,7 +336,7 @@ void MESH_OT_subdivide_edgering(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Subdivide Edge-Ring";
-  ot->description = "Subdivide Edge-Ring\nSubdivide an Edge-Ring";
+  ot->description = "Subdivide Edge-Ring\nSubdivide perpendicular edges to the selected edge ring";
   ot->idname = "MESH_OT_subdivide_edgering";
 
   /* api callbacks */
@@ -6802,7 +6802,7 @@ void MESH_OT_bridge_edge_loops(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Bridge Edge Loops";
-  ot->description = "Bridge Edge Loops\nMake faces between two or more edge loops";
+  ot->description = "Bridge Edge Loops\nBridge faces between two or more edge loops";
   ot->idname = "MESH_OT_bridge_edge_loops";
 
   /* api callbacks */
@@ -8964,7 +8964,6 @@ void MESH_OT_smoothen_normals(struct wmOperatorType *ot)
 
 static int edbm_mod_weighted_strength_exec(bContext *C, wmOperator *op)
 {
-  Scene *scene = CTX_data_scene(C);
   Object *obedit = CTX_data_edit_object(C);
   BMEditMesh *em = BKE_editmesh_from_object(obedit);
   BMesh *bm = em->bm;
@@ -8983,7 +8982,7 @@ static int edbm_mod_weighted_strength_exec(bContext *C, wmOperator *op)
   const int cd_prop_int_offset = CustomData_get_n_offset(
       &bm->pdata, CD_PROP_INT, cd_prop_int_index);
 
-  const int face_strength = scene->toolsettings->face_strength;
+  const int face_strength = RNA_enum_get(op->ptr, "face_strength");
   const bool set = RNA_boolean_get(op->ptr, "set");
   BM_mesh_elem_index_ensure(bm, BM_FACE);
 
@@ -9012,11 +9011,18 @@ static int edbm_mod_weighted_strength_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static const EnumPropertyItem prop_mesh_face_strength_types[] = {
+    {FACE_STRENGTH_WEAK, "WEAK", 0, "Weak", ""},
+    {FACE_STRENGTH_MEDIUM, "MEDIUM", 0, "Medium", ""},
+    {FACE_STRENGTH_STRONG, "STRONG", 0, "Strong", ""},
+    {0, NULL, 0, NULL, NULL},
+};
+
 void MESH_OT_mod_weighted_strength(struct wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Face Normals Strength";
-  ot->description = "Set/Get strength of face (used in Weighted Normal modifier)";
+  ot->description = "Face Normals Strength\nSet/Get strength of face (used in Weighted Normal modifier)";
   ot->idname = "MESH_OT_mod_weighted_strength";
 
   /* api callbacks */
@@ -9027,5 +9033,12 @@ void MESH_OT_mod_weighted_strength(struct wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   ot->prop = RNA_def_boolean(ot->srna, "set", 0, "Set value", "Set Value of faces");
-  RNA_def_property_flag(ot->prop, PROP_HIDDEN);
+
+  ot->prop = RNA_def_enum(
+      ot->srna,
+      "face_strength",
+      prop_mesh_face_strength_types,
+      FACE_STRENGTH_MEDIUM,
+      "Face Strength",
+      "Strength to use for assigning or selecting face influence for weighted normal modifier");
 }
