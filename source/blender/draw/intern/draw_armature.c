@@ -37,6 +37,8 @@
 
 #include "BKE_armature.h"
 
+#include "DEG_depsgraph_query.h"
+
 #include "ED_armature.h"
 
 #include "UI_resources.h"
@@ -336,6 +338,7 @@ static void drw_shgroup_bone_envelope(const float (*bone_mat)[4],
 
 /* Custom (geometry) */
 
+extern void drw_batch_cache_validate(Object *custom);
 extern void drw_batch_cache_generate_requested(Object *custom);
 
 static void drw_shgroup_bone_custom_solid(const float (*bone_mat)[4],
@@ -345,6 +348,10 @@ static void drw_shgroup_bone_custom_solid(const float (*bone_mat)[4],
                                           const eGPUShaderConfig sh_cfg,
                                           Object *custom)
 {
+  /* TODO(fclem) arg... less than ideal but we never iter on this object
+   * to assure batch cache is valid. */
+  drw_batch_cache_validate(custom);
+
   struct GPUBatch *surf = DRW_cache_object_surface_get(custom);
   struct GPUBatch *edges = DRW_cache_object_edge_detection_get(custom, NULL);
   struct GPUBatch *ledges = DRW_cache_object_loose_edges_get(custom);
@@ -408,6 +415,10 @@ static void drw_shgroup_bone_custom_wire(const float (*bone_mat)[4],
                                          const float color[4],
                                          Object *custom)
 {
+  /* TODO(fclem) arg... less than ideal but we never iter on this object
+   * to assure batch cache is valid. */
+  drw_batch_cache_validate(custom);
+
   struct GPUBatch *geom = DRW_cache_object_all_edges_get(custom);
 
   if (geom) {
@@ -1839,7 +1850,9 @@ static void draw_armature_edit(Object *ob)
   const bool show_text = DRW_state_show_text();
   const bool show_relations = ((draw_ctx->v3d->flag & V3D_HIDE_HELPLINES) == 0);
 
-  for (eBone = arm->edbo->first, index = ob->select_id; eBone;
+  const Object *orig_object = DEG_get_original_object(ob);
+
+  for (eBone = arm->edbo->first, index = orig_object->runtime.select_id; eBone;
        eBone = eBone->next, index += 0x10000) {
     if (eBone->layer & arm->layer) {
       if ((eBone->flag & BONE_HIDDEN_A) == 0) {
@@ -1934,7 +1947,8 @@ static void draw_armature_pose(Object *ob, const float const_color[4])
     }
 
     if (arm->flag & ARM_POSEMODE) {
-      index = ob->select_id;
+      const Object *orig_object = DEG_get_original_object(ob);
+      index = orig_object->runtime.select_id;
     }
   }
 

@@ -46,6 +46,11 @@
 
 /* Structures */
 
+typedef struct OVERLAY_DupliData {
+  DRWShadingGroup *shgrp;
+  struct GPUBatch *geom;
+} OVERLAY_DupliData;
+
 typedef struct OVERLAY_StorageList {
   struct OVERLAY_PrivateData *g_data;
 } OVERLAY_StorageList;
@@ -95,6 +100,8 @@ extern char datatoc_overlay_face_wireframe_geom_glsl[];
 extern char datatoc_overlay_face_wireframe_frag_glsl[];
 extern char datatoc_gpu_shader_depth_only_frag_glsl[];
 
+extern char datatoc_common_view_lib_glsl[];
+
 /* Functions */
 static void overlay_engine_init(void *vedata)
 {
@@ -119,8 +126,10 @@ static void overlay_engine_init(void *vedata)
   if (!sh_data->face_orientation) {
     /* Face orientation */
     sh_data->face_orientation = GPU_shader_create_from_arrays({
-        .vert =
-            (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_orientation_vert_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_overlay_face_orientation_vert_glsl,
+                                 NULL},
         .frag = (const char *[]){datatoc_overlay_face_orientation_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, NULL},
     });
@@ -128,7 +137,10 @@ static void overlay_engine_init(void *vedata)
 
   if (!sh_data->face_wireframe) {
     sh_data->select_wireframe = GPU_shader_create_from_arrays({
-        .vert = (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_wireframe_vert_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_overlay_face_wireframe_vert_glsl,
+                                 NULL},
         .geom = (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_wireframe_geom_glsl, NULL},
         .frag = (const char *[]){datatoc_gpu_shader_depth_only_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, "#define SELECT_EDGES\n", NULL},
@@ -136,14 +148,20 @@ static void overlay_engine_init(void *vedata)
 #if USE_GEOM_SHADER_WORKAROUND
     /* Apple drivers does not support wide wires. Use geometry shader as a workaround. */
     sh_data->face_wireframe = GPU_shader_create_from_arrays({
-        .vert = (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_wireframe_vert_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_overlay_face_wireframe_vert_glsl,
+                                 NULL},
         .geom = (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_wireframe_geom_glsl, NULL},
         .frag = (const char *[]){datatoc_overlay_face_wireframe_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, "#define USE_GEOM\n", NULL},
     });
 #else
     sh_data->face_wireframe = GPU_shader_create_from_arrays({
-        .vert = (const char *[]){sh_cfg_data->lib, datatoc_overlay_face_wireframe_vert_glsl, NULL},
+        .vert = (const char *[]){sh_cfg_data->lib,
+                                 datatoc_common_view_lib_glsl,
+                                 datatoc_overlay_face_wireframe_vert_glsl,
+                                 NULL},
         .frag = (const char *[]){datatoc_overlay_face_wireframe_frag_glsl, NULL},
         .defs = (const char *[]){sh_cfg_data->def, NULL},
     });
@@ -337,12 +355,27 @@ static void overlay_cache_populate(void *vedata, Object *ob)
   if (DRW_object_is_renderable(ob) && pd->overlay.flag & V3D_OVERLAY_FACE_ORIENTATION) {
     struct GPUBatch *geom = DRW_cache_object_surface_get(ob);
     if (geom) {
-      DRW_shgroup_call_add(pd->face_orientation_shgrp, geom, ob->obmat);
+      DRW_shgroup_call_object_add(pd->face_orientation_shgrp, geom, ob);
     }
   }
 
   if ((pd->overlay.flag & V3D_OVERLAY_WIREFRAMES) || (v3d->shading.type == OB_WIRE) ||
       (ob->dtx & OB_DRAWWIRE) || (ob->dt == OB_WIRE)) {
+
+    /* Fast path for duplis. */
+    OVERLAY_DupliData **dupli_data = (OVERLAY_DupliData **)DRW_duplidata_get(vedata);
+    if (dupli_data) {
+      if (*dupli_data == NULL) {
+        *dupli_data = MEM_callocN(sizeof(OVERLAY_DupliData), "OVERLAY_DupliData");
+      }
+      else {
+        if ((*dupli_data)->shgrp && (*dupli_data)->geom) {
+          DRW_shgroup_call_object_add((*dupli_data)->shgrp, (*dupli_data)->geom, ob);
+        }
+        return;
+      }
+    }
+
     const bool is_edit_mode = BKE_object_is_in_editmode(ob);
     bool has_edit_mesh_cage = false;
     if (ob->type == OB_MESH) {
@@ -392,9 +425,15 @@ static void overlay_cache_populate(void *vedata, Object *ob)
           DRW_shgroup_call_sculpt_add(shgrp, ob, true, false, false);
         }
         else {
-          DRW_shgroup_call_add(shgrp, geom, ob->obmat);
+          DRW_shgroup_call_object_add(shgrp, geom, ob);
         }
       }
+
+      if (dupli_data) {
+        (*dupli_data)->shgrp = shgrp;
+        (*dupli_data)->geom = geom;
+      }
+
       if (is_wire && shgrp != NULL) {
         /* If object is wireframe, don't try to use stencil test. */
         DRW_shgroup_state_disable(shgrp, DRW_STATE_STENCIL_EQUAL);

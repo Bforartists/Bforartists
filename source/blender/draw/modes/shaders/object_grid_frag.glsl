@@ -8,10 +8,7 @@ in vec3 local_pos;
 
 out vec4 FragColor;
 
-uniform mat4 ProjectionMatrix;
-uniform vec3 cameraPos;
 uniform vec3 planeAxes;
-uniform vec3 eye;
 uniform vec4 gridSettings;
 uniform float meshSize;
 uniform float lineKernel = 0.0;
@@ -22,6 +19,8 @@ uniform sampler2D depthBuffer;
 #define gridResolution gridSettings.y
 #define gridScale gridSettings.z
 #define gridSubdiv gridSettings.w
+
+#define cameraPos (ViewMatrixInverse[3].xyz)
 
 uniform int gridFlag;
 
@@ -109,7 +108,7 @@ void main()
     dist = 1.0; /* avoid branch after */
 
     if ((gridFlag & PLANE_XY) != 0) {
-      float angle = 1.0 - abs(eye.z);
+      float angle = 1.0 - abs(ViewMatrixInverse[2].z);
       dist = 1.0 + angle * 2.0;
       angle *= angle;
       fade *= 1.0 - angle * angle;

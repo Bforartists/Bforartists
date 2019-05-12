@@ -19,7 +19,7 @@
  *
  * Version patch user preferences.
  */
-
+#define DNA_DEPRECATED_ALLOW
 #include <string.h>
 
 #include "BLI_math.h"
@@ -28,6 +28,7 @@
 #include "DNA_userdef_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_windowmanager_types.h"
+#include "DNA_scene_types.h"
 
 #include "BKE_addon.h"
 #include "BKE_colorband.h"
@@ -117,9 +118,23 @@ static void do_versions_theme(UserDef *userdef, bTheme *btheme)
    * Include next version bump.
    */
   {
+    FROM_DEFAULT_V4_UCHAR(tui.icon_scene);
+
     if (btheme->space_view3d.obcenter_dia == 0) {
       btheme->space_view3d.obcenter_dia = U_theme_default.space_view3d.obcenter_dia;
     }
+
+    FROM_DEFAULT_V4_UCHAR(space_graph.text);
+    FROM_DEFAULT_V4_UCHAR(space_action.text);
+    FROM_DEFAULT_V4_UCHAR(space_nla.text);
+    FROM_DEFAULT_V4_UCHAR(space_sequencer.text);
+    FROM_DEFAULT_V4_UCHAR(space_clip.text);
+
+    FROM_DEFAULT_V4_UCHAR(space_graph.scrubbing_background);
+    FROM_DEFAULT_V4_UCHAR(space_action.scrubbing_background);
+    FROM_DEFAULT_V4_UCHAR(space_nla.scrubbing_background);
+    FROM_DEFAULT_V4_UCHAR(space_sequencer.scrubbing_background);
+    FROM_DEFAULT_V4_UCHAR(space_clip.scrubbing_background);
   }
 
 #undef FROM_DEFAULT_V4_UCHAR
@@ -542,6 +557,29 @@ void BLO_version_defaults_userpref_blend(Main *bmain, UserDef *userdef)
     userdef->dupflag |= USER_DUP_GPENCIL;
   }
 
+  if (!USER_VERSION_ATLEAST(280, 60)) {
+    const float GPU_VIEWPORT_QUALITY_FXAA = 0.10f;
+    const float GPU_VIEWPORT_QUALITY_TAA8 = 0.25f;
+    const float GPU_VIEWPORT_QUALITY_TAA16 = 0.6f;
+    const float GPU_VIEWPORT_QUALITY_TAA32 = 0.8f;
+
+    if (userdef->gpu_viewport_quality < GPU_VIEWPORT_QUALITY_FXAA) {
+      userdef->viewport_aa = SCE_DISPLAY_AA_OFF;
+    }
+    else if (userdef->gpu_viewport_quality < GPU_VIEWPORT_QUALITY_TAA8) {
+      userdef->viewport_aa = SCE_DISPLAY_AA_FXAA;
+    }
+    else if (userdef->gpu_viewport_quality < GPU_VIEWPORT_QUALITY_TAA16) {
+      userdef->viewport_aa = SCE_DISPLAY_AA_SAMPLES_8;
+    }
+    else if (userdef->gpu_viewport_quality < GPU_VIEWPORT_QUALITY_TAA32) {
+      userdef->viewport_aa = SCE_DISPLAY_AA_SAMPLES_16;
+    }
+    else {
+      userdef->viewport_aa = SCE_DISPLAY_AA_SAMPLES_32;
+    }
+  }
+
   /**
    * Include next version bump.
    */
@@ -552,8 +590,8 @@ void BLO_version_defaults_userpref_blend(Main *bmain, UserDef *userdef)
       userdef->vbotimeout = 120;
     }
 
-    if (userdef->lookdev_ball_size == 0) {
-      userdef->lookdev_ball_size = 150;
+    if (userdef->lookdev_sphere_size == 0) {
+      userdef->lookdev_sphere_size = 150;
     }
   }
 

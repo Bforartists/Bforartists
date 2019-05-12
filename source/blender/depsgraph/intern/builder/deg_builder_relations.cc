@@ -58,7 +58,6 @@ extern "C" {
 #include "DNA_object_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
-#include "DNA_sequence_types.h"
 #include "DNA_sound_types.h"
 #include "DNA_speaker_types.h"
 #include "DNA_texture_types.h"
@@ -85,7 +84,6 @@ extern "C" {
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_rigidbody.h"
-#include "BKE_sequencer.h"
 #include "BKE_shader_fx.h"
 #include "BKE_shrinkwrap.h"
 #include "BKE_sound.h"
@@ -1327,25 +1325,47 @@ void DepsgraphRelationBuilder::build_driver(ID *id, FCurve *fcu)
 
 void DepsgraphRelationBuilder::build_driver_data(ID *id, FCurve *fcu)
 {
-  OperationKey driver_key(id,
-                          NodeType::PARAMETERS,
-                          OperationCode::DRIVER,
-                          fcu->rna_path ? fcu->rna_path : "",
-                          fcu->array_index);
-  const char *rna_path = fcu->rna_path ? fcu->rna_path : "";
-  if (GS(id->name) == ID_AR && STRPREFIX(rna_path, "bones[")) {
+  /* Validate the RNA path pointer just in case. */
+  const char *rna_path = fcu->rna_path;
+  if (rna_path == NULL || rna_path[0] == '\0') {
+    return;
+  }
+  /* Parse the RNA path to find the target property pointer. */
+  RNAPathKey property_entry_key(id, rna_path, RNAPointerSource::ENTRY);
+  if (RNA_pointer_is_null(&property_entry_key.ptr)) {
+    /* TODO(sergey): This would only mean that driver is broken.
+     * so we can't create relation anyway. However, we need to avoid
+     * adding drivers which are known to be buggy to a dependency
+     * graph, in order to save computational power. */
+    return;
+  }
+  OperationKey driver_key(
+      id, NodeType::PARAMETERS, OperationCode::DRIVER, rna_path, fcu->array_index);
+  /* If the target of the driver is a Bone property, find the Armature data,
+   * and then link the driver to all pose bone evaluation components that use
+   * it. This is necessary to provide more granular dependencies specifically for
+   * Bone objects, because the armature data doesn't have per-bone components,
+   * and generic add_relation can only add one link. */
+  ID *id_ptr = (ID *)property_entry_key.ptr.id.data;
+  bool is_bone = id_ptr && property_entry_key.ptr.type == &RNA_Bone;
+  /* If the Bone property is referenced via obj.pose.bones[].bone,
+   * the RNA pointer refers to the Object ID, so skip to data. */
+  if (is_bone && GS(id_ptr->name) == ID_OB) {
+    id_ptr = (ID *)((Object *)id_ptr)->data;
+  }
+  if (is_bone && GS(id_ptr->name) == ID_AR) {
     /* Drivers on armature-level bone settings (i.e. bbone stuff),
      * which will affect the evaluation of corresponding pose bones. */
-    char *bone_name = BLI_str_quoted_substrN(rna_path, "bones[");
-    if (bone_name != NULL) {
+    Bone *bone = (Bone *)property_entry_key.ptr.data;
+    if (bone != NULL) {
       /* Find objects which use this, and make their eval callbacks
        * depend on this. */
       for (IDNode *to_node : graph_->id_nodes) {
         if (GS(to_node->id_orig->name) == ID_OB) {
           Object *object = (Object *)to_node->id_orig;
           /* We only care about objects with pose data which use this. */
-          if (object->data == id && object->pose != NULL) {
-            bPoseChannel *pchan = BKE_pose_channel_find_name(object->pose, bone_name);
+          if (object->data == id_ptr && object->pose != NULL) {
+            bPoseChannel *pchan = BKE_pose_channel_find_name(object->pose, bone->name);
             if (pchan != NULL) {
               OperationKey bone_key(
                   &object->id, NodeType::BONE, pchan->name, OperationCode::BONE_LOCAL);
@@ -1354,23 +1374,18 @@ void DepsgraphRelationBuilder::build_driver_data(ID *id, FCurve *fcu)
           }
         }
       }
-      /* Free temp data. */
-      MEM_freeN(bone_name);
-      bone_name = NULL;
+      /* Make the driver depend on COW, similar to the generic case below. */
+      if (id_ptr != id) {
+        ComponentKey cow_key(id_ptr, NodeType::COPY_ON_WRITE);
+        add_relation(cow_key, driver_key, "Driven CoW -> Driver", RELATION_CHECK_BEFORE_ADD);
+      }
     }
     else {
       fprintf(stderr, "Couldn't find armature bone name for driver path - '%s'\n", rna_path);
     }
   }
-  else if (rna_path != NULL && rna_path[0] != '\0') {
-    RNAPathKey property_entry_key(id, rna_path, RNAPointerSource::ENTRY);
-    if (RNA_pointer_is_null(&property_entry_key.ptr)) {
-      /* TODO(sergey): This would only mean that driver is broken.
-       * so we can't create relation anyway. However, we need to avoid
-       * adding drivers which are known to be buggy to a dependency
-       * graph, in order to save computational power. */
-      return;
-    }
+  else {
+    /* If it's not a Bone, handle the generic single dependency case. */
     add_relation(driver_key, property_entry_key, "Driver -> Driven Property");
     /* Similar to the case with f-curves, driver might drive a nested
      * datablock, which means driver execution should wait for that
@@ -2299,35 +2314,6 @@ void DepsgraphRelationBuilder::build_sound(bSound *sound)
   build_parameters(&sound->id);
 }
 
-void DepsgraphRelationBuilder::build_sequencer(Scene *scene)
-{
-  if (scene->ed == NULL) {
-    return;
-  }
-  /* Make sure dependencies from sequences data goes to the sequencer evaluation. */
-  ComponentKey sequencer_key(&scene->id, NodeType::SEQUENCER);
-  Sequence *seq;
-  bool has_audio_strips = false;
-  SEQ_BEGIN (scene->ed, seq) {
-    if (seq->sound != NULL) {
-      build_sound(seq->sound);
-      ComponentKey sound_key(&seq->sound->id, NodeType::AUDIO);
-      add_relation(sound_key, sequencer_key, "Sound -> Sequencer");
-      has_audio_strips = true;
-    }
-    /* TODO(sergey): Movie clip, scene, camera, mask. */
-  }
-  SEQ_END;
-  if (has_audio_strips) {
-    ComponentKey scene_audio_key(&scene->id, NodeType::AUDIO);
-    add_relation(sequencer_key, scene_audio_key, "Sequencer -> Audio");
-  }
-}
-
-void DepsgraphRelationBuilder::build_scene_audio(Scene * /*scene*/)
-{
-}
-
 void DepsgraphRelationBuilder::build_copy_on_write_relations()
 {
   for (IDNode *id_node : graph_->id_nodes) {
@@ -2389,10 +2375,6 @@ void DepsgraphRelationBuilder::build_copy_on_write_relations(IDNode *id_node)
     int rel_flag = (RELATION_FLAG_NO_FLUSH | RELATION_FLAG_GODMODE);
     if ((id_type == ID_ME && comp_node->type == NodeType::GEOMETRY) ||
         (id_type == ID_CF && comp_node->type == NodeType::CACHE)) {
-      rel_flag &= ~RELATION_FLAG_NO_FLUSH;
-    }
-    /* TODO(sergey): Needs better solution for this. */
-    if (id_type == ID_SO) {
       rel_flag &= ~RELATION_FLAG_NO_FLUSH;
     }
     /* Notes on exceptions:
