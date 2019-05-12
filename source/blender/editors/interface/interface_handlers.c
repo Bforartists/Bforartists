@@ -5622,6 +5622,13 @@ static int ui_do_but_UNITVEC(
         }
       }
     }
+    else if (event->type == ESCKEY || event->type == RIGHTMOUSE) {
+      if (event->val == KM_PRESS) {
+        data->cancel = true;
+        data->escapecancel = true;
+        button_activate_state(C, but, BUTTON_STATE_EXIT);
+      }
+    }
     else if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
       button_activate_state(C, but, BUTTON_STATE_EXIT);
     }
@@ -7565,6 +7572,11 @@ static void button_activate_exit(
     /* popup menu memory */
     if (block->flag & UI_BLOCK_POPUP_MEMORY) {
       ui_popup_menu_memory_set(block, but);
+    }
+
+    /* Not very elegant, but ensures preference changes force re-save. */
+    if (but->rnaprop && (but->rnapoin.data == &U)) {
+      U.runtime.is_dirty = true;
     }
   }
 

@@ -42,6 +42,7 @@
 #include "ED_screen.h"
 #include "ED_anim_api.h"
 #include "ED_markers.h"
+#include "ED_scrubbing.h"
 
 #include "GPU_immediate.h"
 #include "GPU_state.h"
@@ -57,6 +58,7 @@
 
 #include "UI_resources.h"
 #include "UI_view2d.h"
+#include "UI_interface.h"
 
 #include "graph_intern.h"  // own include
 
@@ -79,7 +81,7 @@ static SpaceLink *graph_new(const ScrArea *UNUSED(sa), const Scene *scene)
 
   /* settings for making it easier by default to just see what you're interested in tweaking */
   sipo->ads->filterflag |= ADS_FILTER_ONLYSEL;
-  sipo->flag |= SIPO_SELVHANDLESONLY;
+  sipo->flag |= SIPO_SELVHANDLESONLY | SIPO_MARKER_LINES;
 
   /* header */
   ar = MEM_callocN(sizeof(ARegion), "header for graphedit");
@@ -124,8 +126,8 @@ static SpaceLink *graph_new(const ScrArea *UNUSED(sa), const Scene *scene)
   ar->v2d.max[0] = MAXFRAMEF;
   ar->v2d.max[1] = FLT_MAX;
 
-  ar->v2d.scroll = (V2D_SCROLL_BOTTOM | V2D_SCROLL_SCALE_HORIZONTAL);
-  ar->v2d.scroll |= (V2D_SCROLL_LEFT | V2D_SCROLL_SCALE_VERTICAL);
+  ar->v2d.scroll = (V2D_SCROLL_BOTTOM | V2D_SCROLL_HORIZONTAL_HANDLES);
+  ar->v2d.scroll |= (V2D_SCROLL_RIGHT | V2D_SCROLL_VERTICAL_HANDLES);
 
   ar->v2d.keeptot = 0;
 
@@ -309,6 +311,9 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   /* reset view matrix */
   UI_view2d_view_restore(C);
 
+  /* time-scrubbing */
+  ED_scrubbing_draw(ar, scene, display_seconds, false);
+
   /* scrollers */
   // FIXME: args for scrollers depend on the type of data being shown...
   scrollers = UI_view2d_scrollers_calc(v2d, NULL);
@@ -316,13 +321,14 @@ static void graph_main_region_draw(const bContext *C, ARegion *ar)
   UI_view2d_scrollers_free(scrollers);
 
   /* scale numbers */
-  UI_view2d_draw_scale_x__frames_or_seconds(ar, v2d, &v2d->hor, scene, display_seconds, TH_TEXT);
-  UI_view2d_draw_scale_y__values(ar, v2d, &v2d->vert, TH_TEXT);
-
-  /* draw current frame number-indicator on top of scrollers */
-  if ((sipo->mode != SIPO_MODE_DRIVERS) && ((sipo->flag & SIPO_NODRAWCFRANUM) == 0)) {
-    UI_view2d_view_orthoSpecial(ar, v2d, 1);
-    ANIM_draw_cfra_number(C, v2d, cfra_flag);
+  {
+    rcti rect;
+    BLI_rcti_init(&rect,
+                  0,
+                  15 * UI_DPI_FAC,
+                  15 * UI_DPI_FAC,
+                  UI_DPI_FAC * ar->sizey - UI_SCRUBBING_MARGIN_Y);
+    UI_view2d_draw_scale_y__values(ar, v2d, &rect, TH_SCROLL_TEXT);
   }
 }
 
@@ -366,6 +372,9 @@ static void graph_channel_region_draw(const bContext *C, ARegion *ar)
   if (ANIM_animdata_get_context(C, &ac)) {
     graph_draw_channel_names((bContext *)C, &ac, ar);
   }
+
+  /* channel filter next to scrubbing area */
+  ED_channel_search_draw(C, ar, ac.ads);
 
   /* reset view matrix */
   UI_view2d_view_restore(C);
@@ -849,7 +858,7 @@ void ED_spacetype_ipo(void)
   art->draw = graph_main_region_draw;
   art->listener = graph_region_listener;
   art->message_subscribe = graph_region_message_subscribe;
-  art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_ANIMATION | ED_KEYMAP_FRAMES;
+  art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_ANIMATION | ED_KEYMAP_FRAMES;
 
   BLI_addhead(&st->regiontypes, art);
 

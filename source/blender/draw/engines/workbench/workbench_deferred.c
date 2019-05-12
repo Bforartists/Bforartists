@@ -91,6 +91,7 @@ static struct {
 
 /* Shaders */
 extern char datatoc_common_hair_lib_glsl[];
+extern char datatoc_common_view_lib_glsl[];
 
 extern char datatoc_workbench_prepass_vert_glsl[];
 extern char datatoc_workbench_prepass_frag_glsl[];
@@ -119,6 +120,7 @@ static char *workbench_build_composite_frag(WORKBENCH_PrivateData *wpd)
 {
   DynStr *ds = BLI_dynstr_new();
 
+  BLI_dynstr_append(ds, datatoc_common_view_lib_glsl);
   BLI_dynstr_append(ds, datatoc_workbench_data_lib_glsl);
   BLI_dynstr_append(ds, datatoc_workbench_common_lib_glsl);
   BLI_dynstr_append(ds, datatoc_workbench_background_lib_glsl);
@@ -159,6 +161,7 @@ static char *workbench_build_prepass_vert(bool is_hair)
   if (is_hair) {
     BLI_dynstr_append(ds, datatoc_common_hair_lib_glsl);
   }
+  BLI_dynstr_append(ds, datatoc_common_view_lib_glsl);
   BLI_dynstr_append(ds, datatoc_workbench_prepass_vert_glsl);
   char *str = BLI_dynstr_get_cstring(ds);
   BLI_dynstr_free(ds);
@@ -382,33 +385,60 @@ void workbench_deferred_engine_init(WORKBENCH_Data *vedata)
     const char *shadow_frag = datatoc_gpu_shader_depth_only_frag_glsl;
 #endif
     /* TODO only compile on demand */
-    e_data.shadow_pass_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                              datatoc_workbench_shadow_geom_glsl,
-                                              shadow_frag,
-                                              "#define SHADOW_PASS\n"
-                                              "#define DOUBLE_MANIFOLD\n");
-    e_data.shadow_pass_manifold_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                                       datatoc_workbench_shadow_geom_glsl,
-                                                       shadow_frag,
-                                                       "#define SHADOW_PASS\n");
-    e_data.shadow_fail_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                              datatoc_workbench_shadow_geom_glsl,
-                                              shadow_frag,
-                                              "#define SHADOW_FAIL\n"
-                                              "#define DOUBLE_MANIFOLD\n");
-    e_data.shadow_fail_manifold_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                                       datatoc_workbench_shadow_geom_glsl,
-                                                       shadow_frag,
-                                                       "#define SHADOW_FAIL\n");
-    e_data.shadow_caps_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                              datatoc_workbench_shadow_caps_geom_glsl,
-                                              shadow_frag,
-                                              "#define SHADOW_FAIL\n"
-                                              "#define DOUBLE_MANIFOLD\n");
-    e_data.shadow_caps_manifold_sh = DRW_shader_create(datatoc_workbench_shadow_vert_glsl,
-                                                       datatoc_workbench_shadow_caps_geom_glsl,
-                                                       shadow_frag,
-                                                       "#define SHADOW_FAIL\n");
+    e_data.shadow_pass_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_PASS\n"
+                                 "#define DOUBLE_MANIFOLD\n",
+                                 NULL},
+    });
+    e_data.shadow_pass_manifold_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_PASS\n", NULL},
+    });
+    e_data.shadow_fail_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_FAIL\n"
+                                 "#define DOUBLE_MANIFOLD\n",
+                                 NULL},
+    });
+    e_data.shadow_fail_manifold_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_FAIL\n", NULL},
+    });
+    e_data.shadow_caps_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_caps_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_FAIL\n"
+                                 "#define DOUBLE_MANIFOLD\n",
+                                 NULL},
+    });
+    e_data.shadow_caps_manifold_sh = GPU_shader_create_from_arrays({
+        .vert = (const char *[]){datatoc_common_view_lib_glsl,
+                                 datatoc_workbench_shadow_vert_glsl,
+                                 NULL},
+        .geom = (const char *[]){datatoc_workbench_shadow_caps_geom_glsl, NULL},
+        .frag = (const char *[]){shadow_frag, NULL},
+        .defs = (const char *[]){"#define SHADOW_FAIL\n", NULL},
+    });
 
     e_data.ghost_resolve_sh = DRW_shader_create_fullscreen(
         datatoc_workbench_ghost_resolve_frag_glsl, NULL);
@@ -1072,7 +1102,6 @@ void workbench_deferred_solid_cache_populate(WORKBENCH_Data *vedata, Object *ob)
 
           if (studiolight_object_cast_visible_shadow(wpd, ob, engine_object_data)) {
 
-            invert_m4_m4(ob->imat, ob->obmat);
             mul_v3_mat3_m4v3(
                 engine_object_data->shadow_dir, ob->imat, e_data.display.light_direction);
 
