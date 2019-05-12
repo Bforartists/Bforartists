@@ -37,7 +37,6 @@
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
-#include "DNA_sound_types.h"
 #include "DNA_space_types.h"
 #include "DNA_view3d_types.h"
 #include "DNA_windowmanager_types.h"
@@ -309,7 +308,8 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
                                                             flag_subdata);
   }
 
-  BKE_sound_reset_scene_runtime(sce_dst);
+  /* before scene copy */
+  BKE_sound_create_scene(sce_dst);
 
   /* Copy sequencer, this is local data! */
   if (sce_src->ed) {
@@ -399,7 +399,8 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
       sce_copy->r.ffcodecdata.properties = IDP_CopyProperty(sce->r.ffcodecdata.properties);
     }
 
-    BKE_sound_reset_scene_runtime(sce_copy);
+    /* before scene copy */
+    BKE_sound_create_scene(sce_copy);
 
     /* grease pencil */
     sce_copy->gpd = NULL;
@@ -779,7 +780,7 @@ void BKE_scene_init(Scene *sce)
   srv = sce->r.views.last;
   BLI_strncpy(srv->suffix, STEREO_RIGHT_SUFFIX, sizeof(srv->suffix));
 
-  BKE_sound_reset_scene_runtime(sce);
+  BKE_sound_create_scene(sce);
 
   /* color management */
   colorspace_name = IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DEFAULT_SEQUENCER);
@@ -1507,13 +1508,6 @@ static void prepare_mesh_for_viewport_render(Main *bmain, const ViewLayer *view_
   }
 }
 
-static void scene_update_sound(Depsgraph *depsgraph, Main *bmain)
-{
-  Scene *scene = DEG_get_evaluated_scene(depsgraph);
-  BKE_sound_ensure_scene(scene);
-  BKE_sound_update_scene(bmain, scene);
-}
-
 /* TODO(sergey): This actually should become view_layer_graph or so.
  * Same applies to update_for_newframe.
  */
@@ -1542,9 +1536,10 @@ void BKE_scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain)
    * by depgraph or manual, no layer check here, gets correct flushed.
    */
   DEG_evaluate_on_refresh(depsgraph);
-  /* Update sound system. */
-  scene_update_sound(depsgraph, bmain);
-  /* Notify python about depsgraph update. */
+  /* Update sound system animation (TODO, move to depsgraph). */
+  BKE_sound_update_scene(bmain, scene);
+
+  /* Notify python about depsgraph update */
   if (run_callbacks) {
     BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_DEPSGRAPH_UPDATE_POST);
   }
@@ -1579,8 +1574,8 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
    * by depgraph or manual, no layer check here, gets correct flushed.
    */
   DEG_evaluate_on_framechange(bmain, depsgraph, ctime);
-  /* Update sound system animation. */
-  scene_update_sound(depsgraph, bmain);
+  /* Update sound system animation (TODO, move to depsgraph). */
+  BKE_sound_update_scene(bmain, scene);
   /* Notify editors and python about recalc. */
   BLI_callback_exec(bmain, &scene->id, BLI_CB_EVT_FRAME_CHANGE_POST);
   /* Inform editors about possible changes. */
@@ -2392,23 +2387,3 @@ void BKE_scene_cursor_quat_to_rot(View3DCursor *cursor, const float quat[4], boo
 }
 
 /** \} */
-
-/* Dependency graph evaluation. */
-
-void BKE_scene_eval_sequencer_sequences(Depsgraph *depsgraph, Scene *scene)
-{
-  DEG_debug_print_eval(depsgraph, __func__, scene->id.name, scene);
-  if (scene->ed == NULL) {
-    return;
-  }
-  BKE_sound_ensure_scene(scene);
-  Sequence *seq;
-  SEQ_BEGIN (scene->ed, seq) {
-    if (seq->sound != NULL && seq->scene_sound == NULL) {
-      seq->scene_sound = BKE_sound_add_scene_sound_defaults(scene, seq);
-    }
-  }
-  SEQ_END;
-  BKE_sequencer_update_muting(scene->ed);
-  BKE_sequencer_update_sound_bounds_all(scene);
-}

@@ -2789,7 +2789,8 @@ static void rna_def_tool_settings(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "uv_sculpt_all_islands", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "uv_sculpt_settings", UV_SCULPT_ALL_ISLANDS);
-  RNA_def_property_ui_text(prop, "Sculpt All Islands", "Sculpt All Islands\nBrush operates on all islands");
+  RNA_def_property_ui_text(
+      prop, "Sculpt All Islands", "Sculpt All Islands\nBrush operates on all islands");
 
   prop = RNA_def_property(srna, "uv_relax_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "uv_relax_method");
@@ -2806,27 +2807,32 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   /* Transform */
   prop = RNA_def_property(srna, "use_proportional_edit", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "proportional_edit", PROP_EDIT_USE);
-  RNA_def_property_ui_text(prop, "Proportional Editing", "Proportional Editing\nProportional edit mode");
+  RNA_def_property_ui_text(
+      prop, "Proportional Editing", "Proportional Editing\nProportional edit mode");
   RNA_def_property_ui_icon(prop, ICON_PROP_ON, 0);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
   prop = RNA_def_property(srna, "use_proportional_edit_objects", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "proportional_objects", 0);
-  RNA_def_property_ui_text(
-      prop, "Proportional Editing Objects", "Proportional Editing Objects\nProportional editing object mode");
+  RNA_def_property_ui_text(prop,
+                           "Proportional Editing Objects",
+                           "Proportional Editing Objects\nProportional editing object mode");
   RNA_def_property_ui_icon(prop, ICON_PROP_ON, 0);
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
   prop = RNA_def_property(srna, "use_proportional_projected", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "proportional_edit", PROP_EDIT_PROJECTED);
   RNA_def_property_ui_text(
-      prop, "Projected from View", "Projected from View\nProportional Editing using screen space locations");
+      prop,
+      "Projected from View",
+      "Projected from View\nProportional Editing using screen space locations");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
   prop = RNA_def_property(srna, "use_proportional_connected", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "proportional_edit", PROP_EDIT_CONNECTED);
-  RNA_def_property_ui_text(
-      prop, "Connected Only", "Connected Only\nProportional Editing using connected geometry only");
+  RNA_def_property_ui_text(prop,
+                           "Connected Only",
+                           "Connected Only\nProportional Editing using connected geometry only");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
   prop = RNA_def_property(srna, "use_proportional_edit_mask", PROP_BOOLEAN, PROP_NONE);
@@ -3643,7 +3649,7 @@ static void rna_def_unit_settings(BlenderRNA *brna)
   prop = RNA_def_property(srna, "system", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, unit_systems);
   RNA_def_property_ui_text(
-      prop, "Unit System", "Unit System\nThe unit system to use for button display");
+      prop, "Unit System", "Unit System\nThe unit system to use for user interface controls");
   RNA_def_property_update(prop, NC_WINDOW, "rna_UnitSettings_system_update");
 
   prop = RNA_def_property(srna, "system_rotation", PROP_ENUM, PROP_NONE);
@@ -6368,7 +6374,8 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "seq_flag", R_SEQ_OVERRIDE_SCENE_SETTINGS);
   RNA_def_property_ui_text(prop,
                            "Override Scene Settings",
-                           "Override Scene Settings\nUse workbench render settings from the sequencer scene, instead of "
+                           "Override Scene Settings\nUse workbench render settings from the "
+                           "sequencer scene, instead of "
                            "each individual scene used in the strip");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_SceneSequencer_update");
 
@@ -6483,7 +6490,9 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_simplify_smoke_highres", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "simplify_smoke_ignore_highres", 1);
   RNA_def_property_ui_text(
-      prop, "Use High-resolution Smoke", "Use High-resolution Smoke\nDisplay high-resolution smoke in the viewport");
+      prop,
+      "Use High-resolution Smoke",
+      "Use High-resolution Smoke\nDisplay high-resolution smoke in the viewport");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
 
   /* Grease Pencil - Simplify Options */
@@ -6841,13 +6850,18 @@ static void rna_def_scene_display(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "render_aa", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_scene_display_aa_methods);
-  RNA_def_property_ui_text(prop, "Render Anti-Aliasing", "Render Anti-Aliasing\nMethod of anti-aliasing when rendering");
+  RNA_def_property_ui_text(
+      prop,
+      "Render Anti-Aliasing",
+      "Render Anti-Aliasing\nMethod of anti-aliasing when rendering final image");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
   prop = RNA_def_property(srna, "viewport_aa", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, rna_enum_scene_display_aa_methods);
   RNA_def_property_ui_text(
-      prop, "Viewport Anti-Aliasing", "Viewport Anti-Aliasing\nMethod of anti-aliasing in 3d viewport");
+      prop,
+      "Viewport Anti-Aliasing",
+      "Viewport Anti-Aliasing\nMethod of anti-aliasing when rendering 3d viewport");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
   /* OpenGL render engine settings. */
@@ -7581,7 +7595,8 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_start_frame_set", NULL);
   RNA_def_property_range(prop, MINFRAME, MAXFRAME);
   RNA_def_property_int_default(prop, 1);
-  RNA_def_property_ui_text(prop, "Start Frame", "Start Frame\nFirst frame of the playback/rendering range");
+  RNA_def_property_ui_text(
+      prop, "Start Frame", "Start Frame\nFirst frame of the playback/rendering range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME_RANGE, NULL);
 
   prop = RNA_def_property(srna, "frame_end", PROP_INT, PROP_TIME);
@@ -7590,7 +7605,8 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_end_frame_set", NULL);
   RNA_def_property_range(prop, MINFRAME, MAXFRAME);
   RNA_def_property_int_default(prop, 250);
-  RNA_def_property_ui_text(prop, "End Frame", "End Frame\nFinal frame of the playback/rendering range");
+  RNA_def_property_ui_text(
+      prop, "End Frame", "End Frame\nFinal frame of the playback/rendering range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME_RANGE, NULL);
 
   prop = RNA_def_property(srna, "frame_step", PROP_INT, PROP_TIME);
@@ -7609,15 +7625,17 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
   RNA_def_property_float_funcs(prop, "rna_Scene_frame_current_final_get", NULL, NULL);
   RNA_def_property_ui_text(
-      prop, "Current Frame Final", "Current Frame Final\nCurrent frame with subframe and time remapping applied");
+      prop,
+      "Current Frame Final",
+      "Current Frame Final\nCurrent frame with subframe and time remapping applied");
 
   prop = RNA_def_property(srna, "lock_frame_selection_to_range", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_boolean_sdna(prop, NULL, "r.flag", SCER_LOCK_FRAME_SELECTION);
-  RNA_def_property_ui_text(
-      prop,
-      "Lock Frame Selection",
-      "Limit Playhead to Frame Range\nDon't allow frame to be selected with mouse outside of frame range");
+  RNA_def_property_ui_text(prop,
+                           "Lock Frame Selection",
+                           "Limit Playhead to Frame Range\nDon't allow frame to be selected with "
+                           "mouse outside of frame range");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Preview Range (frame-range for UI playback) */
@@ -7637,16 +7655,18 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_int_sdna(prop, NULL, "r.psfra");
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_preview_range_start_frame_set", NULL);
-  RNA_def_property_ui_text(
-      prop, "Preview Range Start Frame", "Preview Range Start Frame\nAlternative start frame for UI playback");
+  RNA_def_property_ui_text(prop,
+                           "Preview Range Start Frame",
+                           "Preview Range Start Frame\nAlternative start frame for UI playback");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   prop = RNA_def_property(srna, "frame_preview_end", PROP_INT, PROP_TIME);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_int_sdna(prop, NULL, "r.pefra");
   RNA_def_property_int_funcs(prop, NULL, "rna_Scene_preview_range_end_frame_set", NULL);
-  RNA_def_property_ui_text(
-      prop, "Preview Range End Frame", "Preview Range End Frame\nAlternative end frame for UI playback");
+  RNA_def_property_ui_text(prop,
+                           "Preview Range End Frame",
+                           "Preview Range End Frame\nAlternative end frame for UI playback");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Subframe for moblur debug. */
@@ -7654,7 +7674,9 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_boolean_sdna(prop, NULL, "r.flag", SCER_SHOW_SUBFRAME);
   RNA_def_property_ui_text(
-      prop, "Show Subframe", "Subframes\nShow current scene subframe and allow set it using interface tools");
+      prop,
+      "Show Subframe",
+      "Subframes\nShow current scene subframe and allow set it using interface tools");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, "rna_Scene_show_subframe_update");
 
   /* Timeline / Time Navigation settings */
@@ -7662,14 +7684,16 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SCE_KEYS_NO_SELONLY);
   RNA_def_property_ui_text(prop,
                            "Only Keyframes from Selected Channels",
-                           "Only Keyframes from Selected Channels\nConsider keyframes for active Object and/or its selected bones only "
+                           "Only Keyframes from Selected Channels\nConsider keyframes for active "
+                           "Object and/or its selected bones only "
                            "(in timeline and when jumping between keyframes)");
   RNA_def_property_update(prop, NC_SCENE | ND_FRAME, NULL);
 
   /* Stamp */
   prop = RNA_def_property(srna, "use_stamp_note", PROP_STRING, PROP_NONE);
   RNA_def_property_string_sdna(prop, NULL, "r.stamp_udata");
-  RNA_def_property_ui_text(prop, "Stamp Note", "Stamp Note\nUser defined note for the render stamping");
+  RNA_def_property_ui_text(
+      prop, "Stamp Note", "Stamp Note\nUser defined note for the render stamping");
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   /* Animation Data (for Scene) */
@@ -7680,10 +7704,10 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SCE_NLA_EDIT_ON);
   RNA_def_property_clear_flag(prop,
                               PROP_EDITABLE); /* DO NOT MAKE THIS EDITABLE, OR NLA EDITOR BREAKS */
-  RNA_def_property_ui_text(
-      prop,
-      "NLA TweakMode",
-      "NLA TweakMode\nWhether there is any action referenced by NLA being edited (strictly read-only)");
+  RNA_def_property_ui_text(prop,
+                           "NLA TweakMode",
+                           "NLA TweakMode\nWhether there is any action referenced by NLA being "
+                           "edited (strictly read-only)");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
 
   /* Frame dropping flag for playback and sync enum */
@@ -7722,7 +7746,8 @@ void RNA_def_scene(BlenderRNA *brna)
   prop = RNA_def_property(srna, "keying_sets", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "keyingsets", NULL);
   RNA_def_property_struct_type(prop, "KeyingSet");
-  RNA_def_property_ui_text(prop, "Absolute Keying Sets", "Absolute Keying Sets\nAbsolute Keying Sets for this Scene");
+  RNA_def_property_ui_text(
+      prop, "Absolute Keying Sets", "Absolute Keying Sets\nAbsolute Keying Sets for this Scene");
   RNA_def_property_update(prop, NC_SCENE | ND_KEYINGSET, NULL);
   rna_def_scene_keying_sets(brna, prop);
 
@@ -7737,10 +7762,10 @@ void RNA_def_scene(BlenderRNA *brna)
                                     NULL,
                                     NULL);
   RNA_def_property_struct_type(prop, "KeyingSet");
-  RNA_def_property_ui_text(
-      prop,
-      "All Keying Sets",
-      "All Keying Sets\nAll Keying Sets available for use (Builtins and Absolute Keying Sets for this Scene)");
+  RNA_def_property_ui_text(prop,
+                           "All Keying Sets",
+                           "All Keying Sets\nAll Keying Sets available for use (Builtins and "
+                           "Absolute Keying Sets for this Scene)");
   RNA_def_property_update(prop, NC_SCENE | ND_KEYINGSET, NULL);
   rna_def_scene_keying_sets_all(brna, prop);
 
@@ -7775,7 +7800,8 @@ void RNA_def_scene(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_gravity", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "physics_settings.flag", PHYS_GLOBAL_GRAVITY);
-  RNA_def_property_ui_text(prop, "Global Gravity", "Global Gravity\nUse global gravity for all dynamics");
+  RNA_def_property_ui_text(
+      prop, "Global Gravity", "Global Gravity\nUse global gravity for all dynamics");
   RNA_def_property_update(prop, 0, "rna_Physics_update");
 
   /* Render Data */
@@ -7797,7 +7823,9 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_collection_sdna(prop, NULL, "markers", NULL);
   RNA_def_property_struct_type(prop, "TimelineMarker");
   RNA_def_property_ui_text(
-      prop, "Timeline Markers", "Timeline Markers\nMarkers used in all timelines for the current scene");
+      prop,
+      "Timeline Markers",
+      "Timeline Markers\nMarkers used in all timelines for the current scene");
   rna_def_timeline_markers(brna, prop);
 
   /* Transform Orientations */
@@ -7856,15 +7884,17 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "audio.doppler_factor");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 0.0, FLT_MAX);
-  RNA_def_property_ui_text(prop, "Doppler Factor", "Doppler Factor\nPitch factor for Doppler effect calculation");
+  RNA_def_property_ui_text(
+      prop, "Doppler Factor", "Doppler Factor\nPitch factor for Doppler effect calculation");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
   prop = RNA_def_property(srna, "audio_distance_model", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, NULL, "audio.distance_model");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_enum_items(prop, audio_distance_model_items);
-  RNA_def_property_ui_text(
-      prop, "Distance Model", "Distance Model\nDistance model for distance attenuation calculation");
+  RNA_def_property_ui_text(prop,
+                           "Distance Model",
+                           "Distance Model\nDistance model for distance attenuation calculation");
   RNA_def_property_update(prop, NC_SCENE, "rna_Scene_listener_update");
 
   prop = RNA_def_property(srna, "audio_volume", PROP_FLOAT, PROP_NONE);
@@ -7891,7 +7921,9 @@ void RNA_def_scene(BlenderRNA *brna)
       prop, NULL, NULL, NULL, "rna_GPencil_datablocks_annotations_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_ui_text(
-      prop, "Annotations", "Annotations\nGrease Pencil data-block used for annotations in the 3D view");
+      prop,
+      "Annotations",
+      "Annotations\nGrease Pencil data-block used for annotations in the 3D view");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
   /* active MovieClip */
@@ -7900,7 +7932,9 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_struct_type(prop, "MovieClip");
   RNA_def_property_ui_text(
-      prop, "Active Movie Clip", "Active Movie Clip\nActive movie clip used for constraints and viewport drawing");
+      prop,
+      "Active Movie Clip",
+      "Active Movie Clip\nActive movie clip used for constraints and viewport drawing");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   /* color management */
@@ -7908,19 +7942,25 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, NULL, "view_settings");
   RNA_def_property_struct_type(prop, "ColorManagedViewSettings");
   RNA_def_property_ui_text(
-      prop, "View Settings", "View Settings\nColor management settings applied on image before saving");
+      prop,
+      "View Settings",
+      "View Settings\nColor management settings applied on image before saving");
 
   prop = RNA_def_property(srna, "display_settings", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "display_settings");
   RNA_def_property_struct_type(prop, "ColorManagedDisplaySettings");
   RNA_def_property_ui_text(
-      prop, "Display Settings", "Display Settings\nSettings of device saved image would be displayed on");
+      prop,
+      "Display Settings",
+      "Display Settings\nSettings of device saved image would be displayed on");
 
   prop = RNA_def_property(srna, "sequencer_colorspace_settings", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "sequencer_colorspace_settings");
   RNA_def_property_struct_type(prop, "ColorManagedSequencerColorspaceSettings");
   RNA_def_property_ui_text(
-      prop, "Sequencer Color Space Settings", "Sequencer Color Space Settings\nSettings of color space sequencer is working in");
+      prop,
+      "Sequencer Color Space Settings",
+      "Sequencer Color Space Settings\nSettings of color space sequencer is working in");
 
   /* Layer and Collections */
   prop = RNA_def_property(srna, "view_layers", PROP_COLLECTION, PROP_NONE);
@@ -7942,7 +7982,8 @@ void RNA_def_scene(BlenderRNA *brna)
   prop = RNA_def_property(srna, "display", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "display");
   RNA_def_property_struct_type(prop, "SceneDisplay");
-  RNA_def_property_ui_text(prop, "Scene Display", "Scene Display\nScene display settings for 3d viewport");
+  RNA_def_property_ui_text(
+      prop, "Scene Display", "Scene Display\nScene display settings for 3d viewport");
 
   /* EEVEE */
   prop = RNA_def_property(srna, "eevee", PROP_POINTER, PROP_NONE);

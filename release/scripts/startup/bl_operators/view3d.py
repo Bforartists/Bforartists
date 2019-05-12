@@ -20,11 +20,10 @@
 
 import bpy
 from bpy.types import Operator
-from bpy.props import BoolProperty
 
 
 class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
-    "Extrude Individual\nExtrude individual elements and move"
+    "Extrude Individual\nExtrude each individual face separately along local normals"
     bl_label = "Extrude Individual and Move"
     bl_idname = "view3d.edit_mesh_extrude_individual_move"
 
@@ -60,12 +59,12 @@ class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
         # and cause this one not to be freed. [#24671]
         return {'FINISHED'}
 
-    def invoke(self, context, event):
+    def invoke(self, context, _event):
         return self.execute(context)
 
 
 class VIEW3D_OT_edit_mesh_extrude_move(Operator):
-    "Extrude Region\nExtrude and move along normals\nHotkey Tool! Please use the hotkey to use this tool"
+    "Extrude Region\nExtrude region together along the average normal\nHotkey Tool! Please use the hotkey to use this tool"
     bl_label = "Extrude and Move on Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_normal"
 
@@ -118,12 +117,12 @@ class VIEW3D_OT_edit_mesh_extrude_move(Operator):
     def execute(self, context):
         return VIEW3D_OT_edit_mesh_extrude_move.extrude_region(context, False)
 
-    def invoke(self, context, event):
+    def invoke(self, context, _event):
         return self.execute(context)
 
 
 class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
-    "Extrude Region Vertex Normals\nExtrude and move along individual normals"
+    "Extrude Region Vertex Normals\nExtrude region together along local normalss"
     bl_label = "Extrude and Move on Individual Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_shrink_fatten"
 
@@ -135,7 +134,7 @@ class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
     def execute(self, context):
         return VIEW3D_OT_edit_mesh_extrude_move.extrude_region(context, True)
 
-    def invoke(self, context, event):
+    def invoke(self, context, _event):
         return self.execute(context)
 
 

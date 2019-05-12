@@ -37,6 +37,7 @@
 #include "BLI_hash.h"
 #include "BLI_link_utils.h"
 #include "BLI_mempool.h"
+#include "BLI_memblock.h"
 
 #include "GPU_buffers.h"
 
@@ -76,7 +77,7 @@ static void drw_shgroup_uniform_create_ex(DRWShadingGroup *shgroup,
                                           int length,
                                           int arraysize)
 {
-  DRWUniform *uni = BLI_mempool_alloc(DST.vmempool->uniforms);
+  DRWUniform *uni = BLI_memblock_alloc(DST.vmempool->uniforms);
   uni->location = loc;
   uni->type = type;
   uni->length = length;
@@ -370,12 +371,21 @@ static void drw_call_state_update_matflag(DRWCallState *state,
    * This is the opposite of what draw_matrices_model_prepare() does. */
   state->matflag |= shgroup->matflag;
 
+  if (new_flags & DRW_CALL_MODELINVERSE) {
+    if (ob) {
+      copy_m4_m4(state->modelinverse, ob->imat);
+    }
+    else {
+      invert_m4_m4(state->modelinverse, state->model);
+    }
+  }
+
   /* Orco factors: We compute this at creation to not have to save the *ob_data */
-  if ((new_flags & DRW_CALL_ORCOTEXFAC) != 0) {
+  if (new_flags & DRW_CALL_ORCOTEXFAC) {
     drw_call_calc_orco(ob, state->orcotexfac);
   }
 
-  if ((new_flags & DRW_CALL_OBJECTINFO) != 0) {
+  if (new_flags & DRW_CALL_OBJECTINFO) {
     state->objectinfo[0] = ob ? ob->index : 0;
     uint random;
     if (DST.dupli_source) {
@@ -390,17 +400,19 @@ static void drw_call_state_update_matflag(DRWCallState *state,
 
 static DRWCallState *drw_call_state_create(DRWShadingGroup *shgroup, float (*obmat)[4], Object *ob)
 {
-  DRWCallState *state = BLI_mempool_alloc(DST.vmempool->states);
+  DRWCallState *state = BLI_memblock_alloc(DST.vmempool->states);
   state->flag = 0;
   state->cache_id = 0;
   state->visibility_cb = NULL;
   state->matflag = 0;
 
+  drw_call_state_update_matflag(state, shgroup, ob);
+
   /* Matrices */
   if (obmat != NULL) {
     copy_m4_m4(state->model, obmat);
 
-    if (is_negative_m4(state->model)) {
+    if (ob && (ob->transflag & OB_NEG_SCALE)) {
       state->flag |= DRW_CALL_NEGSCALE;
     }
   }
@@ -421,8 +433,6 @@ static DRWCallState *drw_call_state_create(DRWShadingGroup *shgroup, float (*obm
     /* Bypass test. */
     state->bsphere.radius = -1.0f;
   }
-
-  drw_call_state_update_matflag(state, shgroup, ob);
 
   return state;
 }
@@ -445,15 +455,15 @@ void DRW_shgroup_call_add(DRWShadingGroup *shgroup, GPUBatch *geom, float (*obma
   BLI_assert(geom != NULL);
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_create(shgroup, obmat, NULL);
   call->type = DRW_CALL_SINGLE;
   call->single.geometry = geom;
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 void DRW_shgroup_call_range_add(
@@ -463,7 +473,9 @@ void DRW_shgroup_call_range_add(
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
   BLI_assert(v_count);
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_create(shgroup, obmat, NULL);
   call->type = DRW_CALL_RANGE;
   call->range.geometry = geom;
@@ -472,8 +484,6 @@ void DRW_shgroup_call_range_add(
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 static void drw_shgroup_call_procedural_add_ex(DRWShadingGroup *shgroup,
@@ -484,21 +494,16 @@ static void drw_shgroup_call_procedural_add_ex(DRWShadingGroup *shgroup,
 {
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
-  if (ob) {
-    call->state = drw_call_state_object(shgroup, ob->obmat, ob);
-  }
-  else {
-    call->state = drw_call_state_create(shgroup, obmat, NULL);
-  }
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
+  call->state = drw_call_state_object(shgroup, ob ? ob->obmat : obmat, ob);
   call->type = DRW_CALL_PROCEDURAL;
   call->procedural.prim_type = prim_type;
   call->procedural.vert_count = vert_count;
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 void DRW_shgroup_call_procedural_points_add(DRWShadingGroup *shgroup,
@@ -529,19 +534,18 @@ void DRW_shgroup_call_object_add_ex(
   BLI_assert(geom != NULL);
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_object(shgroup, ob->obmat, ob);
+  /* NOTE this will disable culling for the whole object. */
+  call->state->flag |= (bypass_culling) ? DRW_CALL_BYPASS_CULLING : 0;
   call->type = DRW_CALL_SINGLE;
   call->single.geometry = geom;
   call->single.ma_index = ma ? ma->index : 0;
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  /* NOTE this will disable culling for the whole object. */
-  call->state->flag |= (bypass_culling) ? DRW_CALL_BYPASS_CULLING : 0;
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 void DRW_shgroup_call_object_add_with_callback(DRWShadingGroup *shgroup,
@@ -554,7 +558,9 @@ void DRW_shgroup_call_object_add_with_callback(DRWShadingGroup *shgroup,
   BLI_assert(geom != NULL);
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_object(shgroup, ob->obmat, ob);
   call->state->visibility_cb = callback;
   call->state->user_data = user_data;
@@ -564,8 +570,6 @@ void DRW_shgroup_call_object_add_with_callback(DRWShadingGroup *shgroup,
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 void DRW_shgroup_call_instances_add(DRWShadingGroup *shgroup,
@@ -576,7 +580,9 @@ void DRW_shgroup_call_instances_add(DRWShadingGroup *shgroup,
   BLI_assert(geom != NULL);
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_create(shgroup, obmat, NULL);
   call->type = DRW_CALL_INSTANCES;
   call->instances.geometry = geom;
@@ -584,8 +590,6 @@ void DRW_shgroup_call_instances_add(DRWShadingGroup *shgroup,
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 /* These calls can be culled and are optimized for redraw */
@@ -597,7 +601,9 @@ void DRW_shgroup_call_object_instances_add(DRWShadingGroup *shgroup,
   BLI_assert(geom != NULL);
   BLI_assert(ELEM(shgroup->type, DRW_SHG_NORMAL, DRW_SHG_FEEDBACK_TRANSFORM));
 
-  DRWCall *call = BLI_mempool_alloc(DST.vmempool->calls);
+  DRWCall *call = BLI_memblock_alloc(DST.vmempool->calls);
+  BLI_LINKS_APPEND(&shgroup->calls, call);
+
   call->state = drw_call_state_object(shgroup, ob->obmat, ob);
   call->type = DRW_CALL_INSTANCES;
   call->instances.geometry = geom;
@@ -605,8 +611,6 @@ void DRW_shgroup_call_object_instances_add(DRWShadingGroup *shgroup,
 #ifdef USE_GPU_SELECT
   call->select_id = DST.select_id;
 #endif
-
-  BLI_LINKS_APPEND(&shgroup->calls, call);
 }
 
 // #define SCULPT_DEBUG_BUFFERS
@@ -833,13 +837,12 @@ static void drw_shgroup_init(DRWShadingGroup *shgroup, GPUShader *shader)
   shgroup->modelview = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_MODELVIEW);
   shgroup->modelviewinverse = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_MODELVIEW_INV);
   shgroup->modelviewprojection = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_MVP);
-  shgroup->normalview = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_NORMAL);
-  shgroup->normalviewinverse = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_NORMAL_INV);
-  shgroup->normalworld = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_WORLDNORMAL);
   shgroup->orcotexfac = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_ORCO);
   shgroup->objectinfo = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_OBJECT_INFO);
-  shgroup->eye = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_EYE);
   shgroup->callid = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_CALLID);
+
+  /* We do not support normal matrix anymore. */
+  BLI_assert(GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_NORMAL) == -1);
 
   shgroup->matflag = 0;
   if (shgroup->modelinverse > -1) {
@@ -854,23 +857,11 @@ static void drw_shgroup_init(DRWShadingGroup *shgroup, GPUShader *shader)
   if (shgroup->modelviewprojection > -1) {
     shgroup->matflag |= DRW_CALL_MODELVIEWPROJECTION;
   }
-  if (shgroup->normalview > -1) {
-    shgroup->matflag |= DRW_CALL_NORMALVIEW;
-  }
-  if (shgroup->normalviewinverse > -1) {
-    shgroup->matflag |= DRW_CALL_NORMALVIEWINVERSE;
-  }
-  if (shgroup->normalworld > -1) {
-    shgroup->matflag |= DRW_CALL_NORMALWORLD;
-  }
   if (shgroup->orcotexfac > -1) {
     shgroup->matflag |= DRW_CALL_ORCOTEXFAC;
   }
   if (shgroup->objectinfo > -1) {
     shgroup->matflag |= DRW_CALL_OBJECTINFO;
-  }
-  if (shgroup->eye > -1) {
-    shgroup->matflag |= DRW_CALL_EYEVEC;
   }
 }
 
@@ -963,7 +954,7 @@ static void drw_shgroup_batching_init(DRWShadingGroup *shgroup,
 
 static DRWShadingGroup *drw_shgroup_create_ex(struct GPUShader *shader, DRWPass *pass)
 {
-  DRWShadingGroup *shgroup = BLI_mempool_alloc(DST.vmempool->shgroups);
+  DRWShadingGroup *shgroup = BLI_memblock_alloc(DST.vmempool->shgroups);
 
   BLI_LINKS_APPEND(&pass->shgroups, shgroup);
 
@@ -1016,7 +1007,7 @@ static DRWShadingGroup *drw_shgroup_material_inputs(DRWShadingGroup *grp,
       GPUTexture *tex = NULL;
 
       if (input->ima) {
-        GPUTexture **tex_ref = BLI_mempool_alloc(DST.vmempool->images);
+        GPUTexture **tex_ref = BLI_memblock_alloc(DST.vmempool->images);
 
         *tex_ref = tex = GPU_texture_from_blender(
             input->ima, input->iuser, GL_TEXTURE_2D, input->image_isdata);
@@ -1214,6 +1205,7 @@ void DRW_shgroup_instance_batch(DRWShadingGroup *shgroup, struct GPUBatch *batch
   /* Note: This WILL break if batch->verts[0] is destroyed and reallocated
    * at the same address. Bindings/VAOs would remain obsolete. */
   // if (shgroup->instancing_geom->inst != batch->verts[0])
+  /* XXX FIXME: THIS IS BROKEN BECAUSE OVEWRITTEN BY DRW_instance_buffer_finish(). */
   GPU_batch_instbuf_set(shgroup->instance_geom, batch->verts[0], false);
 
 #ifdef USE_GPU_SELECT
@@ -1268,7 +1260,7 @@ DRWShadingGroup *DRW_shgroup_create_sub(DRWShadingGroup *shgroup)
   /* Remove this assertion if needed but implement the other cases first! */
   BLI_assert(shgroup->type == DRW_SHG_NORMAL);
 
-  DRWShadingGroup *shgroup_new = BLI_mempool_alloc(DST.vmempool->shgroups);
+  DRWShadingGroup *shgroup_new = BLI_memblock_alloc(DST.vmempool->shgroups);
 
   *shgroup_new = *shgroup;
   shgroup_new->uniforms = NULL;
@@ -1288,7 +1280,7 @@ DRWShadingGroup *DRW_shgroup_create_sub(DRWShadingGroup *shgroup)
 
 DRWPass *DRW_pass_create(const char *name, DRWState state)
 {
-  DRWPass *pass = BLI_mempool_alloc(DST.vmempool->passes);
+  DRWPass *pass = BLI_memblock_alloc(DST.vmempool->passes);
   pass->state = state;
   if (((G.debug_value > 20) && (G.debug_value < 30)) || (G.debug & G_DEBUG)) {
     BLI_strncpy(pass->name, name, MAX_PASS_NAME);
@@ -1323,12 +1315,6 @@ void DRW_pass_state_add(DRWPass *pass, DRWState state)
 void DRW_pass_state_remove(DRWPass *pass, DRWState state)
 {
   pass->state &= ~state;
-}
-
-void DRW_pass_free(DRWPass *pass)
-{
-  pass->shgroups.first = NULL;
-  pass->shgroups.last = NULL;
 }
 
 void DRW_pass_foreach_shgroup(DRWPass *pass,

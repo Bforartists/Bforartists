@@ -957,10 +957,10 @@ static bool change_frame_poll(bContext *C)
 {
   /* prevent changes during render */
   if (G.is_rendering) {
-    return 0;
+    return false;
   }
-
-  return ED_space_clip_poll(C);
+  SpaceClip *space_clip = CTX_wm_space_clip(C);
+  return space_clip != NULL;
 }
 
 static void change_frame_apply(bContext *C, wmOperator *op)
@@ -973,7 +973,7 @@ static void change_frame_apply(bContext *C, wmOperator *op)
   SUBFRA = 0.0f;
 
   /* do updates */
-  BKE_sound_update_and_seek(CTX_data_main(C), CTX_data_depsgraph(C));
+  BKE_sound_seek_scene(CTX_data_main(C), scene);
   WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
 }
 

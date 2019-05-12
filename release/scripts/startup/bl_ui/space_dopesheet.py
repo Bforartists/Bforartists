@@ -31,7 +31,7 @@ from bpy.types import (
 # used for DopeSheet, NLA, and Graph Editors
 
 
-def dopesheet_filter(layout, context, generic_filters_only=False):
+def dopesheet_filter(layout, context):
     dopesheet = context.space_data.dopesheet
     is_nla = context.area.type == 'NLA_EDITOR'
 
@@ -43,18 +43,6 @@ def dopesheet_filter(layout, context, generic_filters_only=False):
         row.prop(dopesheet, "show_missing_nla", text="")
     else:  # graph and dopesheet editors - F-Curves and drivers only
         row.prop(dopesheet, "show_only_errors", text="")
-
-    if not generic_filters_only:
-        if bpy.data.collections:
-            row = layout.row(align=True)
-            row.prop(dopesheet, "filter_collection", text="")
-
-    if not is_nla:
-        row = layout.row(align=True)
-        row.prop(dopesheet, "filter_fcurve_name", text="")
-    else:
-        row = layout.row(align=True)
-        row.prop(dopesheet, "filter_text", text="")
 
 #######################################
 # Dopesheet Filtering Popovers
@@ -91,7 +79,6 @@ class DopesheetFilterPopoverBase:
         is_nla = context.area.type == 'NLA_EDITOR'
 
         col = layout.column(align=True)
-        col.label(text="With Name:")
         if not is_nla:
             row = col.row(align=True)
             row.prop(dopesheet, "filter_fcurve_name", text="")
@@ -101,7 +88,6 @@ class DopesheetFilterPopoverBase:
 
         if (not generic_filters_only) and (bpy.data.collections):
             col = layout.column(align=True)
-            col.label(text="In Collection:")
             col.prop(dopesheet, "filter_collection", text="")
 
     # Standard = Present in all panels
@@ -751,9 +737,9 @@ class DOPESHEET_MT_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("action.copy", text="Copy")
-        layout.operator("action.paste", text="Paste")
-        layout.operator("action.paste", text="Paste Flipped").flipped = True
+        layout.operator("action.copy", text="Copy", icon='COPYDOWN')
+        layout.operator("action.paste", text="Paste", icon='PASTEDOWN')
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
 

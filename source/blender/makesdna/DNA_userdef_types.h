@@ -38,11 +38,6 @@ struct ColorBand;
 
 #define MAX_STYLE_NAME 64
 
-#define GPU_VIEWPORT_QUALITY_FXAA 0.10f
-#define GPU_VIEWPORT_QUALITY_TAA8 0.25f
-#define GPU_VIEWPORT_QUALITY_TAA16 0.6f
-#define GPU_VIEWPORT_QUALITY_TAA32 0.8f
-
 /** default offered by Blender.
  * #uiFont.uifont_id */
 typedef enum eUIFont_ID {
@@ -189,6 +184,8 @@ typedef struct ThemeUI {
   char gizmo_b[4];
 
   /* Icon Colors. */
+  /** Scene items. */
+  char icon_scene[4];
   /** Collection items. */
   char icon_collection[4];
   /** Object items. */
@@ -199,6 +196,9 @@ typedef struct ThemeUI {
   char icon_modifier[4];
   /** Shading related items. */
   char icon_shading[4];
+  /** Intensity of the border icons. >0 will render an border around themed
+   * icons. */
+  float icon_border_intensity;
 } ThemeUI;
 
 /* try to put them all in one, if needed a special struct can be created as well
@@ -283,6 +283,8 @@ typedef struct ThemeSpace {
   char cframe[4];
   char time_keyframe[4], time_gp_keyframe[4];
   char freestyle_edge_mark[4], freestyle_face_mark[4];
+  char scrubbing_background[4];
+  char _pad5[4];
 
   char nurb_uline[4], nurb_vline[4];
   char act_spline[4], nurb_sel_uline[4], nurb_sel_vline[4], lastsel_point[4];
@@ -536,6 +538,11 @@ typedef struct WalkNavigation {
   char _pad0[6];
 } WalkNavigation;
 
+typedef struct UserDef_Runtime {
+  char is_dirty;
+  char _pad0[7];
+} UserDef_Runtime;
+
 typedef struct UserDef {
   /* UserDef has separate do-version handling, and can be read from other files */
   int versionfile, subversionfile;
@@ -601,6 +608,7 @@ typedef struct UserDef {
   int dpi;
   /** Runtime, multiplier to scale UI elements based on DPI. */
   float dpi_fac;
+  float inv_dpi_fac;
   /** Runtime, line width and point size based on DPI. */
   float pixelsize;
   /** Deprecated, for forward compatibility. */
@@ -610,7 +618,7 @@ typedef struct UserDef {
   int scrollback;
   /** Node insert offset (aka auto-offset) margin, but might be useful for later stuff as well. */
   char node_margin;
-  char _pad2[5];
+  char _pad2[1];
   /** #eUserpref_Translation_Flags. */
   short transopts;
   short menuthreshold1, menuthreshold2;
@@ -634,7 +642,7 @@ typedef struct UserDef {
   short undosteps;
   char _pad1[2];
   int undomemory;
-  float gpu_viewport_quality;
+  float gpu_viewport_quality DNA_DEPRECATED;
   short gp_manhattendist, gp_euclideandist, gp_eraser;
   /** #eGP_UserdefSettings. */
   short gp_settings;
@@ -644,7 +652,7 @@ typedef struct UserDef {
   char _pad3[4];
   short gizmo_flag, gizmo_size;
   short edit_studio_light;
-  short lookdev_ball_size;
+  short lookdev_sphere_size;
   short vbotimeout, vbocollectrate;
   short textimeout, texcollectrate;
   int memcachelimit;
@@ -762,7 +770,12 @@ typedef struct UserDef {
 
   char factor_display_type;
 
-  char _pad5[3];
+  char viewport_aa;
+
+  char _pad5[2];
+
+  /** Runtime data (keep last). */
+  UserDef_Runtime runtime;
 } UserDef;
 
 /* from blenkernel blender.c */

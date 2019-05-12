@@ -1542,6 +1542,7 @@ static void rna_def_fmodifier(BlenderRNA *brna)
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_enum_items(prop, rna_enum_fmodifier_type_items);
+  RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ACTION);
   RNA_def_property_ui_text(prop, "Type", "F-Curve Modifier Type");
 
   /* settings */
@@ -1653,6 +1654,7 @@ static void rna_def_drivertarget(BlenderRNA *brna)
       {DTAR_TRANSCHAN_SCALEX, "SCALE_X", 0, "X Scale", ""},
       {DTAR_TRANSCHAN_SCALEY, "SCALE_Y", 0, "Y Scale", ""},
       {DTAR_TRANSCHAN_SCALEZ, "SCALE_Z", 0, "Z Scale", ""},
+      {DTAR_TRANSCHAN_SCALE_AVG, "SCALE_AVG", 0, "Average Scale", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
