@@ -262,9 +262,9 @@ keyconfig_data = \
       },
      ),
     ("wm.call_menu_pie",
-     {"type": 'E', "value": 'PRESS'},
+     {"type": 'S', "value": 'PRESS'},
      {"properties":
-      [("name", 'CLIP_PIE_tracking_pie'),
+      [("name", 'CLIP_MT_tracking_pie'),
        ],
       },
      ),
