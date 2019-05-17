@@ -208,13 +208,6 @@ keyconfig_data = \
       },
      ),
     ("object.gpencil_add", {"type": 'A', "value": 'PRESS', "shift": True}, None),
-    ("wm.call_menu",
-     {"type": 'G', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("name", 'GPENCIL_MT_gpencil_vertex_group'),
-       ],
-      },
-     ),
     ("gpencil.selectmode_toggle",
      {"type": 'X', "value": 'PRESS'},
      {"properties":
