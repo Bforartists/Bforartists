@@ -1,5 +1,13 @@
 keyconfig_data = \
-[("Object Mode",
+[("3D View Tool: Measure",
+  {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+  {"items":
+   [("view3d.ruler_add", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
+    ("view3d.ruler_remove", {"type": 'DEL', "value": 'PRESS'}, None),
+    ],
+   },
+  ),
+ ("Object Mode",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
    [("scene.cic_create_groundplane", {"type": 'FOUR', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True}, None),
