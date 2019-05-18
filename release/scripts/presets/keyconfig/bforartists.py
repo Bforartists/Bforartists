@@ -2,23 +2,7 @@ keyconfig_data = \
 [("Mesh",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("wm.call_menu",
-     {"type": 'C', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("name", 'MESH_MT_CopyFaceSettings'),
-       ],
-      },
-     ),
-    ("mesh.f2", {"type": 'F', "value": 'PRESS'}, None),
-    ("wm.call_menu",
-     {"type": 'C', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("name", 'MESH_MT_CopyFaceSettings'),
-       ],
-      },
-     ),
-    ("mesh.f2", {"type": 'F', "value": 'PRESS'}, None),
-    ("mesh.loopcut_slide",
+   [("mesh.loopcut_slide",
      {"type": 'R', "value": 'PRESS', "ctrl": True},
      {"properties":
       [("TRANSFORM_OT_edge_slide",
