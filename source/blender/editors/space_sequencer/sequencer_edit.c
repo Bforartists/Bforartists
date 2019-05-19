@@ -73,24 +73,24 @@
 /* XXX */
 /* RNA Enums, used in multiple files */
 EnumPropertyItem sequencer_prop_effect_types[] = {
-    {SEQ_TYPE_CROSS, "CROSS", 0, "Crossfade", "Crossfade effect strip type"},
-    {SEQ_TYPE_ADD, "ADD", 0, "Add", "Add effect strip type"},
-    {SEQ_TYPE_SUB, "SUBTRACT", 0, "Subtract", "Subtract effect strip type"},
-    {SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", 0, "Alpha Over", "Alpha Over effect strip type"},
-    {SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", 0, "Alpha Under", "Alpha Under effect strip type"},
-    {SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", 0, "Gamma Cross", "Gamma Cross effect strip type"},
-    {SEQ_TYPE_MUL, "MULTIPLY", 0, "Multiply", "Multiply effect strip type"},
-    {SEQ_TYPE_OVERDROP, "OVER_DROP", 0, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
-    {SEQ_TYPE_WIPE, "WIPE", 0, "Wipe", "Wipe effect strip type"},
-    {SEQ_TYPE_GLOW, "GLOW", 0, "Glow", "Glow effect strip type"},
-    {SEQ_TYPE_TRANSFORM, "TRANSFORM", 0, "Transform", "Transform effect strip type"},
-    {SEQ_TYPE_COLOR, "COLOR", 0, "Color", "Color effect strip type"},
-    {SEQ_TYPE_SPEED, "SPEED", 0, "Speed", "Color effect strip type"},
-    {SEQ_TYPE_MULTICAM, "MULTICAM", 0, "Multicam Selector", ""},
-    {SEQ_TYPE_ADJUSTMENT, "ADJUSTMENT", 0, "Adjustment Layer", ""},
-    {SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", 0, "Gaussian Blur", ""},
-    {SEQ_TYPE_TEXT, "TEXT", 0, "Text", ""},
-    {SEQ_TYPE_COLORMIX, "COLORMIX", 0, "Color Mix", ""},
+    {SEQ_TYPE_ADD, "ADD", ICON_SEQ_ADD, "Add", "Add effect strip type"},
+    {SEQ_TYPE_SUB, "SUBTRACT", ICON_NODE_INVERT, "Subtract", "Subtract effect strip type"},
+    {SEQ_TYPE_MUL, "MULTIPLY", ICON_SEQ_MULTIPLY, "Multiply", "Multiply effect strip type"},
+    {SEQ_TYPE_OVERDROP, "OVER_DROP", ICON_SEQ_ALPHA_OVER, "Alpha Over Drop", "Alpha Over Drop effect strip type"},
+    {SEQ_TYPE_ALPHAOVER, "ALPHA_OVER", ICON_NODE_ALPHA, "Alpha Over", "Alpha Over effect strip type"},
+    {SEQ_TYPE_ALPHAUNDER, "ALPHA_UNDER", ICON_NODE_HOLDOUTSHADER, "Alpha Under", "Alpha Under effect strip type"},
+    {SEQ_TYPE_COLORMIX, "COLORMIX", ICON_NODE_MIXRGB, "Color Mix", ""},
+    {SEQ_TYPE_MULTICAM, "MULTICAM", ICON_SEQ_MULTICAM, "Multicam Selector", ""},
+    {SEQ_TYPE_TRANSFORM, "TRANSFORM", ICON_NODE_MOVE, "Transform", "Transform effect strip type"},
+    {SEQ_TYPE_SPEED, "SPEED", ICON_NODE_CURVE_TIME, "Speed", "Color effect strip type"},
+    {SEQ_TYPE_GLOW, "GLOW", ICON_NODE_LAMP, "Glow", "Glow effect strip type"},
+    {SEQ_TYPE_GAUSSIAN_BLUR, "GAUSSIAN_BLUR", ICON_NODE_BLUR, "Gaussian Blur", ""},
+    {SEQ_TYPE_CROSS, "CROSS", ICON_NODE_VECTOR, "Crossfade", "Crossfade effect strip type"},
+    {SEQ_TYPE_GAMCROSS, "GAMMA_CROSS", ICON_NODE_GAMMA, "Gamma Cross", "Gamma Cross effect strip type"},
+    {SEQ_TYPE_WIPE, "WIPE", ICON_NODE_VECTOR_TRANSFORM, "Wipe", "Wipe effect strip type"},
+    {SEQ_TYPE_COLOR, "COLOR", ICON_NODE_COLOR, "Color", "Color effect strip type"},
+    {SEQ_TYPE_TEXT, "TEXT", ICON_SEQ_TEXT, "Text", ""},
+    {SEQ_TYPE_ADJUSTMENT, "ADJUSTMENT", ICON_NODE_DISPLACE, "Adjustment Layer", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -3777,9 +3777,9 @@ void SEQUENCER_OT_enable_proxies(wmOperatorType *ot)
 /* change ops */
 
 static const EnumPropertyItem prop_change_effect_input_types[] = {
-    {0, "A_B", 0, "A -> B", ""},
-    {1, "B_C", 0, "B -> C", ""},
-    {2, "A_C", 0, "A -> C", ""},
+    {0, "A_B", ICON_SWITCH_DIRECTION, "A -> B", ""},
+    {1, "B_C", ICON_SWITCH_DIRECTION, "B -> C", ""},
+    {2, "A_C", ICON_SWITCH_DIRECTION, "A -> C", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
