@@ -2,7 +2,7 @@ import bpy
 op = bpy.context.active_operator
 
 op.location = (0.0, 0.0, 0.0)
-op.view_align = False
+op.align = 'WORLD'
 op.rotation = (0.0, 0.0, 0.0)
 op.options_plus = False
 op.absolute_location = False

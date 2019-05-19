@@ -186,18 +186,12 @@ class RENDER_PT_eevee_depth_of_field(RenderButtonsPanel, Panel):
     def poll(cls, context):
         return (context.engine in cls.COMPAT_ENGINES)
 
-    def draw_header(self, context):
-        scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_dof", text="")
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
         scene = context.scene
         props = scene.eevee
 
-        layout.active = props.use_dof
         col = layout.column()
         col.prop(props, "bokeh_max_size")
         # Not supported yet
@@ -244,19 +238,12 @@ class RENDER_PT_eevee_volumetric(RenderButtonsPanel, Panel):
     def poll(cls, context):
         return (context.engine in cls.COMPAT_ENGINES)
 
-    def draw_header(self, context):
-        scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_volumetric", text="")
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
         scene = context.scene
         props = scene.eevee
-
-        layout.active = props.use_volumetric
 
         col = layout.column(align=True)
         col.prop(props, "volumetric_start")
@@ -319,19 +306,12 @@ class RENDER_PT_eevee_subsurface_scattering(RenderButtonsPanel, Panel):
     def poll(cls, context):
         return (context.engine in cls.COMPAT_ENGINES)
 
-    def draw_header(self, context):
-        scene = context.scene
-        props = scene.eevee
-        self.layout.prop(props, "use_sss", text="")
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
 
         scene = context.scene
         props = scene.eevee
-
-        layout.active = props.use_sss
 
         col = layout.column()
         col.prop(props, "sss_samples")
@@ -507,7 +487,7 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
-        col.prop(rd, "alpha_mode", text="Alpha")
+        col.prop(rd, "film_transparent", text="Transparent")
 
 
 class RENDER_PT_eevee_film_overscan(RenderButtonsPanel, Panel):
@@ -571,7 +551,7 @@ class RENDER_PT_opengl_sampling(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(props, "render_aa", text="Render")
-        col.prop(props, "viewport_aa", text="Viewport")
+        col.prop(props, "viewport_aa", text="Viewport Render")
 
 
 class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
@@ -585,7 +565,7 @@ class RENDER_PT_opengl_film(RenderButtonsPanel, Panel):
         layout.use_property_decorate = False  # No animation.
 
         rd = context.scene.render
-        layout.prop(rd, "alpha_mode")
+        layout.prop(rd, "film_transparent", text="Transparent")
 
 
 class RENDER_PT_opengl_lighting(RenderButtonsPanel, Panel):

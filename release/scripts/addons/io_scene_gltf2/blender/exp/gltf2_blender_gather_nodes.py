@@ -216,7 +216,7 @@ def __gather_mesh(blender_object, export_settings):
             edge_split.split_angle = blender_object.data.auto_smooth_angle
             edge_split.use_edge_angle = not blender_object.data.has_custom_normals
             blender_object.data.use_auto_smooth = False
-            bpy.context.scene.update()
+            bpy.context.view_layer.update()
 
         armature_modifiers = {}
         if export_settings[gltf2_blender_export_keys.SKINS]:
@@ -226,7 +226,9 @@ def __gather_mesh(blender_object, export_settings):
                     armature_modifiers[idx] = modifier.show_viewport
                     modifier.show_viewport = False
 
-        blender_mesh = blender_object.to_mesh(bpy.context.depsgraph, True)
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        blender_mesh_owner = blender_object.evaluated_get(depsgraph)
+        blender_mesh = blender_mesh_owner.to_mesh()
         for prop in blender_object.data.keys():
             blender_mesh[prop] = blender_object.data[prop]
         skip_filter = True
@@ -246,7 +248,7 @@ def __gather_mesh(blender_object, export_settings):
     result = gltf2_blender_gather_mesh.gather_mesh(blender_mesh, vertex_groups, modifiers, skip_filter, export_settings)
 
     if export_settings[gltf2_blender_export_keys.APPLY]:
-        bpy.data.meshes.remove(blender_mesh)
+        blender_mesh_owner.to_mesh_clear()
 
     return result
 
@@ -258,19 +260,23 @@ def __gather_name(blender_object, export_settings):
 
 
 def __gather_trans_rot_scale(blender_object, export_settings):
-    trans = gltf2_blender_extract.convert_swizzle_location(blender_object.location, export_settings)
+    if blender_object.matrix_parent_inverse == Matrix.Identity(4):
+        trans = blender_object.location
 
-    if blender_object.rotation_mode in ['QUATERNION', 'AXIS_ANGLE']:
-        rotation = blender_object.rotation_quaternion
+        if blender_object.rotation_mode in ['QUATERNION', 'AXIS_ANGLE']:
+            rot = blender_object.rotation_quaternion
+        else:
+            rot = blender_object.rotation_euler.to_quaternion()
+
+        sca = blender_object.scale
     else:
-        rotation = blender_object.rotation_euler.to_quaternion()
+        # matrix_local = matrix_parent_inverse*location*rotation*scale
+        # Decomposing matrix_local gives less accuracy, but is needed if matrix_parent_inverse is not the identity.
+        trans, rot, sca = gltf2_blender_extract.decompose_transition(blender_object.matrix_local, export_settings)
 
-    rotation = gltf2_blender_extract.convert_swizzle_rotation(rotation, export_settings)
-
-    # Put w at the end.
-    rot = Quaternion((rotation[1], rotation[2], rotation[3], rotation[0]))
-
-    sca = gltf2_blender_extract.convert_swizzle_scale(blender_object.scale, export_settings)
+    trans = gltf2_blender_extract.convert_swizzle_location(trans, export_settings)
+    rot = gltf2_blender_extract.convert_swizzle_rotation(rot, export_settings)
+    sca = gltf2_blender_extract.convert_swizzle_scale(sca, export_settings)
 
     if blender_object.instance_type == 'COLLECTION' and blender_object.instance_collection:
         trans = -gltf2_blender_extract.convert_swizzle_location(
@@ -278,14 +284,14 @@ def __gather_trans_rot_scale(blender_object, export_settings):
     translation, rotation, scale = (None, None, None)
     trans[0], trans[1], trans[2] = gltf2_blender_math.round_if_near(trans[0], 0.0), gltf2_blender_math.round_if_near(trans[1], 0.0), \
                                    gltf2_blender_math.round_if_near(trans[2], 0.0)
-    rot[0], rot[1], rot[2], rot[3] = gltf2_blender_math.round_if_near(rot[0], 0.0), gltf2_blender_math.round_if_near(rot[1], 0.0), \
-                                     gltf2_blender_math.round_if_near(rot[2], 0.0), gltf2_blender_math.round_if_near(rot[3], 1.0)
+    rot[0], rot[1], rot[2], rot[3] = gltf2_blender_math.round_if_near(rot[0], 1.0), gltf2_blender_math.round_if_near(rot[1], 0.0), \
+                                     gltf2_blender_math.round_if_near(rot[2], 0.0), gltf2_blender_math.round_if_near(rot[3], 0.0)
     sca[0], sca[1], sca[2] = gltf2_blender_math.round_if_near(sca[0], 1.0), gltf2_blender_math.round_if_near(sca[1], 1.0), \
                              gltf2_blender_math.round_if_near(sca[2], 1.0)
     if trans[0] != 0.0 or trans[1] != 0.0 or trans[2] != 0.0:
         translation = [trans[0], trans[1], trans[2]]
-    if rot[0] != 0.0 or rot[1] != 0.0 or rot[2] != 0.0 or rot[3] != 1.0:
-        rotation = [rot[0], rot[1], rot[2], rot[3]]
+    if rot[0] != 1.0 or rot[1] != 0.0 or rot[2] != 0.0 or rot[3] != 0.0:
+        rotation = [rot[1], rot[2], rot[3], rot[0]]
     if sca[0] != 1.0 or sca[1] != 1.0 or sca[2] != 1.0:
         scale = [sca[0], sca[1], sca[2]]
     return translation, rotation, scale
@@ -302,7 +308,9 @@ def __gather_skin(blender_object, export_settings):
         return None
 
     # check if any vertices in the mesh are part of a vertex group
-    blender_mesh = blender_object.to_mesh(bpy.context.depsgraph, True)
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    # XXX: ...
+    blender_mesh = blender_object.evaluated_get(depsgraph).to_mesh()
     if not any(vertex.groups is not None and len(vertex.groups) > 0 for vertex in blender_mesh.vertices):
         return None
 

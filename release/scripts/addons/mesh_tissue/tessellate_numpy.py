@@ -72,9 +72,15 @@ def tassellate(ob0, ob1, offset, zscale, gen_modifiers, com_modifiers, mode,
     random.seed(rand_seed)
     old_me0 = ob0.data      # Store generator mesh
 
+    if gen_modifiers or com_modifiers:
+        depsgraph = context.evaluated_depsgraph_get()
+    else:
+        depsgraph = None
+
+    me0_owner = None
     if gen_modifiers:       # Apply generator modifiers
-        me0 = ob0.to_mesh(bpy.context.scene, apply_modifiers=True,
-                          settings='PREVIEW')
+        me0_owner = ob0.evaluated_get(depsgraph)
+        me0 = me0_owner.to_mesh()
     else:
         me0 = ob0.data
     ob0.data = me0
@@ -91,9 +97,9 @@ def tassellate(ob0, ob1, offset, zscale, gen_modifiers, com_modifiers, mode,
         return 0
 
     # Apply component modifiers
+    me1_owner = ob1.evaluated_get(depsgraph)
     if com_modifiers:
-        me1 = ob1.to_mesh(bpy.context.scene, apply_modifiers=True,
-                          settings='PREVIEW')
+        me1 = me1_owner.to_mesh()
     else:
         me1 = ob1.data
 
@@ -407,6 +413,13 @@ def tassellate(ob0, ob1, offset, zscale, gen_modifiers, com_modifiers, mode,
                                                         new_vertex_group_np[i],
                                                         "ADD")
     ob0.data = old_me0
+
+    if me0_owner:
+        me0_owner.to_mesh_clear()
+
+    if me1_owner:
+        me1_owner.to_mesh_clear()
+
     return new_ob
 
 
@@ -666,14 +679,18 @@ class tessellate(Operator):
             col.prop(self, "object_name")
 
             # Count number of faces
+            if self.gen_modifiers or self.com_modifiers:
+                depsgraph = context.evaluated_depsgraph_get()
+            else:
+                depsgraph = None
             try:
                 polygons = 0
+                me_temp_owner = None
                 if self.gen_modifiers:
-                    me_temp = ob0.to_mesh(
-                                    bpy.context.scene,
-                                    apply_modifiers=True, settings='PREVIEW'
-                                    )
+                    me_temp_owner = ob0.evaluated_get(depsgraph)
+                    me_temp = me_temp_owner.to_mesh()
                 else:
+                    me_temp_owner = None
                     me_temp = ob0.data
 
                 for p in me_temp.polygons:
@@ -683,15 +700,18 @@ class tessellate(Operator):
                         else:
                             polygons += 1
 
+                if me_temp_owner:
+                    me_temp_owner.to_mesh_clear()
+
                 if self.com_modifiers:
-                    me_temp = bpy.data.objects[self.component].to_mesh(
-                                            bpy.context.scene,
-                                            apply_modifiers=True,
-                                            settings='PREVIEW'
-                                            )
+                    me_temp_owner = bpy.data.objects[self.component].evaluated_get(depsgraph)
+                    me_temp = me_temp_owner.to_mesh()
                 else:
+                    me_temp_owner = None
                     me_temp = bpy.data.objects[self.component].data
                 polygons *= len(me_temp.polygons)
+                if me_temp_owner:
+                    me_temp_owner.to_mesh_clear()
 
                 str_polygons = '{:0,.0f}'.format(polygons)
                 if polygons > 200000:
@@ -1233,16 +1253,18 @@ class settings_tessellate(Operator):
         row.prop(self, "bool_selection", text="On selected Faces")
         col.separator()
 
+        if self.gen_modifiers or self.com_modifiers:
+            depsgraph = context.evaluated_depsgraph_get()
+
         # Count number of faces
         try:
             polygons = 0
+            me_temp_owner = None
             if self.gen_modifiers:
-                me_temp = bpy.data.objects[self.generator].to_mesh(
-                                                    bpy.context.scene,
-                                                    apply_modifiers=True,
-                                                    settings='PREVIEW'
-                                                    )
+                me_temp_owner = bpy.data.objects[self.generator].evaluated_get(depsgraph)
+                me_temp = me_temp_owner.to_mesh()
             else:
+                me_temp_owner = None
                 me_temp = bpy.data.objects[self.generator].data
 
             for p in me_temp.polygons:
@@ -1252,15 +1274,19 @@ class settings_tessellate(Operator):
                     else:
                         polygons += 1
 
+            if me_temp_owner:
+                me_temp_owner.to_mesh_clear()
+
             if self.com_modifiers:
-                me_temp = bpy.data.objects[self.component].to_mesh(
-                                                    bpy.context.scene,
-                                                    apply_modifiers=True,
-                                                    settings='PREVIEW'
-                                                    )
+                me_temp_owner = bpy.data.objects[self.component].evaluated_get(depsgraph)
+                me_temp = me_temp_owner.to_mesh()
             else:
+                me_temp_owner = None
                 me_temp = bpy.data.objects[self.component].data
             polygons *= len(me_temp.polygons)
+
+            if me_temp_owner:
+                me_temp_owner.to_mesh_clear()
 
             str_polygons = '{:0,.0f}'.format(polygons)
             if polygons > 200000:

@@ -148,6 +148,9 @@ class TOPBAR_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+      
+        layout.menu("TOPBAR_MT_app")
+
         layout.menu("TOPBAR_MT_file")
         layout.menu("TOPBAR_MT_edit")
 
@@ -155,6 +158,58 @@ class TOPBAR_MT_editor_menus(Menu):
 
         layout.menu("TOPBAR_MT_window")
         layout.menu("TOPBAR_MT_help")
+
+
+class TOPBAR_MT_app(Menu):
+    bl_label = "Blender"
+
+    def draw(self, context):
+        layout = self.layout
+        prefs = context.preferences
+
+        layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
+
+        layout.separator()
+
+        layout.operator_context = 'INVOKE_AREA'
+
+        if any(bpy.utils.app_template_paths()):
+            app_template = prefs.app_template
+        else:
+            app_template = None
+
+        if app_template:
+            layout.label(text=bpy.path.display_name(app_template, has_ext=False))
+
+        layout.operator("wm.save_homefile")
+        props = layout.operator("wm.read_factory_settings")
+        if app_template:
+            props.app_template = app_template
+
+        if prefs.use_preferences_save:
+            props = layout.operator(
+                "wm.read_factory_settings",
+                text="Load Factory Settings (Temporary)"
+            )
+            if app_template:
+                props.app_template = app_template
+            props.use_temporary_preferences = True
+
+        layout.separator()
+
+        layout.operator("preferences.app_template_install", text="Install Application Template...")
+
+        layout.separator()
+
+        layout.operator("wm.splash")
+
+        layout.separator()
+
+        layout.operator_context = 'EXEC_AREA'
+        if bpy.data.is_dirty:
+            layout.operator_context = 'INVOKE_SCREEN'  # quit dialog
+        layout.operator("wm.quit_blender", text="Quit", icon='QUIT')
+
 
 
 class TOPBAR_MT_file(Menu):
@@ -168,6 +223,7 @@ class TOPBAR_MT_file(Menu):
         layout.operator("wm.open_mainfile", text="Open", icon='FILE_FOLDER')
         layout.menu("TOPBAR_MT_file_open_recent")
         layout.operator("wm.revert_mainfile", icon='FILE_REFRESH')
+        layout.menu("TOPBAR_MT_file_recover")
         layout.operator("wm.recover_last_session", icon='RECOVER_LAST')
         layout.operator("wm.recover_auto_save", text="Recover Auto Save", icon='RECOVER_AUTO')
 
@@ -200,8 +256,6 @@ class TOPBAR_MT_file(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        if bpy.data.is_dirty:
-            layout.operator_context = 'INVOKE_SCREEN'  # quit dialog
         layout.operator("wm.quit_blender", text="Quit", icon='QUIT')
 
 
@@ -226,6 +280,59 @@ class TOPBAR_MT_file_new(Menu):
                     app_templates.append(d)
 
         return sorted(app_templates)
+
+    @staticmethod
+    def draw_ex(layout, _context, *, use_splash=False, use_more=False):
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        # Limit number of templates in splash screen, spill over into more menu.
+        paths = TOPBAR_MT_file_new.app_template_paths()
+        splash_limit = 5
+
+        if use_splash:
+            icon = 'FILE_NEW'
+            show_more = len(paths) > (splash_limit - 1)
+            if show_more:
+                paths = paths[:splash_limit - 2]
+        elif use_more:
+            icon = 'FILE_NEW'
+            paths = paths[splash_limit - 2:]
+            show_more = False
+        else:
+            icon = 'NONE'
+            show_more = False
+
+        # Draw application templates.
+        if not use_more:
+            props = layout.operator("wm.read_homefile", text="General", icon=icon)
+            props.app_template = ""
+
+        for d in paths:
+            props = layout.operator(
+                "wm.read_homefile",
+                text=bpy.path.display_name(d),
+                icon=icon,
+            )
+            props.app_template = d
+
+        layout.operator_context = 'EXEC_DEFAULT'
+
+        if show_more:
+            layout.menu("TOPBAR_MT_templates_more", text="...")
+
+    def draw(self, context):
+        TOPBAR_MT_file_new.draw_ex(self.layout, context)
+
+
+class TOPBAR_MT_file_recover(Menu):
+    bl_label = "Recover"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("wm.recover_last_session", text="Last Session")
+        layout.operator("wm.recover_auto_save", text="Auto Save...")
+
 
     @staticmethod
     def draw_ex(layout, _context, *, use_splash=False, use_more=False):
@@ -564,32 +671,6 @@ class TOPBAR_MT_workspace_menu(Menu):
         props.direction = 'NEXT'
 
 
-class TOPBAR_PT_active_tool(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_category = ""
-    bl_context = ".active_tool"  # dot on purpose (access from tool settings)
-    bl_label = "Active Tool"
-    bl_options = {'HIDE_HEADER'}
-
-    def draw(self, context):
-        layout = self.layout
-        tool_mode = context.mode
-
-        # Panel display of topbar tool settings.
-        # currently displays in tool settings, keep here since the same functionality is used for the topbar.
-
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        from .space_toolsystem_common import ToolSelectPanelHelper
-        ToolSelectPanelHelper.draw_active_tool_header(
-            context,
-            layout,
-            show_tool_name=True,
-            tool_key=('VIEW_3D', tool_mode),
-        )
-
 
 # Grease Pencil Object - Primitive curve
 class TOPBAR_PT_gpencil_primitive(Panel):
@@ -696,8 +777,10 @@ classes = (
     TOPBAR_MT_file_context_menu,
     TOPBAR_MT_workspace_menu,
     TOPBAR_MT_editor_menus,
+    TOPBAR_MT_app,
     TOPBAR_MT_file,
     TOPBAR_MT_file_new,
+    TOPBAR_MT_file_recover,
     TOPBAR_MT_templates_more,
     TOPBAR_MT_file_import,
     TOPBAR_MT_file_export,
@@ -708,7 +791,6 @@ classes = (
     TOPBAR_MT_opengl_render,
     TOPBAR_MT_window,
     TOPBAR_MT_help,
-    TOPBAR_PT_active_tool,
     TOPBAR_PT_gpencil_layers,
     TOPBAR_PT_gpencil_primitive,
     TOPBAR_PT_gpencil_fill,

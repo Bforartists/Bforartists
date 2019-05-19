@@ -703,7 +703,7 @@ void ED_transform_calc_orientation_from_type_ex(const bContext *C,
       break;
     }
     case V3D_ORIENT_CURSOR: {
-      ED_view3d_cursor3d_calc_mat3(scene, r_mat);
+      BKE_scene_cursor_rot_to_mat3(&scene->cursor, r_mat);
       ok = true;
       break;
     }
@@ -1762,6 +1762,15 @@ static void WIDGETGROUP_gizmo_refresh(const bContext *C, wmGizmoGroup *gzgroup)
     }
   }
   MAN_ITER_AXES_END;
+
+  /* Ensure rotate disks don't overlap scale arrows, especially in ortho view. */
+  float rotate_select_bias = 0.0f;
+  if ((ggd->twtype & V3D_GIZMO_SHOW_OBJECT_SCALE) && ggd->twtype & V3D_GIZMO_SHOW_OBJECT_ROTATE) {
+    rotate_select_bias = -2.0f;
+  }
+  for (int i = MAN_AXIS_RANGE_ROT_START; i < MAN_AXIS_RANGE_ROT_END; i++) {
+    ggd->gizmos[i]->select_bias = rotate_select_bias;
+  }
 }
 
 static void WIDGETGROUP_gizmo_message_subscribe(const bContext *C,

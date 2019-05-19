@@ -647,7 +647,7 @@ class CurvesIntersector:
             for splineIntersection in intersectionsActive:
                 iPoint = splineIntersection.bezierSegmentIntersectionPoint.intersectionPoint
                 bpy.ops.object.empty_add(type='PLAIN_AXES',
-                                         view_align=False,
+                                         align='WORLD',
                                          location=(iPoint.x, iPoint.y, iPoint.z), rotation=(0, 0, 0))
                 nrActive += 1
 
@@ -655,7 +655,7 @@ class CurvesIntersector:
             for splineIntersection in intersectionsOther:
                 iPoint = splineIntersection.bezierSegmentIntersectionPoint.intersectionPoint
                 bpy.ops.object.empty_add(type='PLAIN_AXES',
-                                         view_align=False,
+                                         align='WORLD',
                                          location=(iPoint.x, iPoint.y, iPoint.z), rotation=(0, 0, 0))
                 nrOther += 1
 

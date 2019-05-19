@@ -29,13 +29,28 @@ class BlenderGlTF():
             bpy.context.scene.render.engine = 'BLENDER_EEVEE'
         BlenderGlTF.pre_compute(gltf)
 
+        gltf.display_current_node = 0
+        if gltf.data.nodes is not None:
+            gltf.display_total_nodes = len(gltf.data.nodes)
+        else:
+            gltf.display_total_nodes = "?"
+
+        active_object_name_at_end = None
         if gltf.data.scenes is not None:
             for scene_idx, scene in enumerate(gltf.data.scenes):
                 BlenderScene.create(gltf, scene_idx)
+            # keep active object name if needed (to be able to set as active object at end)
+            if gltf.data.scene is not None:
+                if scene_idx == gltf.data.scene:
+                    active_object_name_at_end = bpy.context.view_layer.objects.active.name
+            else:
+                if scene_idx == 0:
+                    active_object_name_at_end = bpy.context.view_layer.objects.active.name
         else:
             # special case where there is no scene in glTF file
             # generate all objects in current scene
             BlenderScene.create(gltf, None)
+            active_object_name_at_end = bpy.context.view_layer.objects.active.name
 
         # Armature correction
         # Try to detect bone chains, and set bone lengths
@@ -79,6 +94,10 @@ class BlenderGlTF():
                         parent.tail = save_parent_tail
 
             bpy.ops.object.mode_set(mode="OBJECT")
+
+        # Set active object
+        if active_object_name_at_end is not None:
+            bpy.context.view_layer.objects.active = bpy.data.objects[active_object_name_at_end]
 
     @staticmethod
     def pre_compute(gltf):

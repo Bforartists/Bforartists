@@ -60,12 +60,12 @@ from bpy.props import (
 looptools_cache = {}
 
 
-def get_grease_pencil(object, context):
-    gp = bpy.context.scene.objects['GPencil']
-    if not gp:
-        gp = context.view_layers.grease_pencils
-    return gp
-
+def get_annotation(self, context):
+    if 'Annotations' in bpy.data.grease_pencils.keys():
+        return True
+    else:
+        self.report({'WARNING'}, "Annotation not found")
+        return False
 
 # force a full recalculation next time
 def cache_delete(tool):
@@ -526,9 +526,11 @@ def get_derived_bmesh(object, bm):
                 mod.show_viewport = False
         # get derived mesh
         bm_mod = bmesh.new()
-        mesh_mod = object.to_mesh(bpy.context.depsgraph, True)
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        object_eval = object.evaluated_get(depsgraph)
+        mesh_mod = object_eval.to_mesh()
         bm_mod.from_mesh(mesh_mod)
-        bpy.context.blend_data.meshes.remove(mesh_mod)
+        object_eval.to_mesh_clear()
         # re-enable other modifiers
         for mod_name in show_viewport:
             object.modifiers[mod_name].show_viewport = True
@@ -2837,16 +2839,15 @@ def gstretch_get_fake_strokes(object, bm_mod, loops):
 
     return(strokes)
 
-
-# get grease pencil strokes for the active object
-def gstretch_get_strokes(object, context):
-    gp = get_grease_pencil(object, context)
+# get annotation strokes
+def gstretch_get_strokes(self, context):
+    gp = get_annotation(self, context)
     if not gp:
         return(None)
-    layer = gp.data.layers[0]
+    layer = bpy.data.grease_pencils["Annotations"].layers["Note"]
     if not layer:
         return(None)
-    frame = layer.frames[0]
+    frame = layer.active_frame
     if not frame:
         return(None)
     strokes = frame.strokes
@@ -2854,7 +2855,6 @@ def gstretch_get_strokes(object, context):
         return(None)
 
     return(strokes)
-
 
 # returns a list with loop-stroke pairs
 def gstretch_match_loops_strokes(loops, strokes, object, bm_mod):
@@ -3823,22 +3823,15 @@ class Flatten(Operator):
 class RemoveGP(Operator):
     bl_idname = "remove.gp"
     bl_label = "Remove GP"
-    bl_description = "Remove all Grease Pencil Strokes"
+    bl_description = "Remove all Annotation Strokes"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
 
-        gp = bpy.context.scene.objects['GPencil']
-        if len(gp.data.layers[0].frames) is not 0:
-            bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
-            gp.select_set(True)
-            bpy.context.view_layer.objects.active = gp
-            bpy.ops.object.mode_set(mode='PAINT_GPENCIL')
-            bpy.ops.gpencil.active_frame_delete('INVOKE_REGION_WIN')
-            bpy.ops.object.mode_set(mode='OBJECT')
+        if get_annotation(self, context):
+            bpy.data.grease_pencils["Annotations"].layers["Note"].clear()
         else:
-            self.report({'INFO'}, "No Grease Pencil data to Unlink")
+            self.report({'INFO'}, "No Annotation data to Unlink")
             return {'CANCELLED'}
 
         return{'FINISHED'}
@@ -3847,28 +3840,28 @@ class RemoveGP(Operator):
 class GStretch(Operator):
     bl_idname = "mesh.looptools_gstretch"
     bl_label = "Gstretch"
-    bl_description = "Stretch selected vertices to Grease Pencil stroke"
+    bl_description = "Stretch selected vertices to Annotation stroke"
     bl_options = {'REGISTER', 'UNDO'}
 
     conversion: EnumProperty(
         name="Conversion",
         items=(("distance", "Distance", "Set the distance between vertices "
-                "of the converted grease pencil stroke"),
+                "of the converted annotation stroke"),
                ("limit_vertices", "Limit vertices", "Set the minimum and maximum "
-                "number of vertices that converted GP strokes will have"),
+                "number of vertices that converted annotation strokes will have"),
                ("vertices", "Exact vertices", "Set the exact number of vertices "
-                "that converted grease pencil strokes will have. Short strokes "
+                "that converted annotation strokes will have. Short strokes "
                 "with few points may contain less vertices than this number."),
-               ("none", "No simplification", "Convert each grease pencil point "
+               ("none", "No simplification", "Convert each annotation point "
                 "to a vertex")),
-        description="If grease pencil strokes are converted to geometry, "
+        description="If annotation strokes are converted to geometry, "
                     "use this simplification method",
         default='limit_vertices'
         )
     conversion_distance: FloatProperty(
         name="Distance",
         description="Absolute distance between vertices along the converted "
-                    "grease pencil stroke",
+                    "annotation stroke",
         default=0.1,
         min=0.000001,
         soft_min=0.01,
@@ -3876,7 +3869,7 @@ class GStretch(Operator):
         )
     conversion_max: IntProperty(
         name="Max Vertices",
-        description="Maximum number of vertices grease pencil strokes will "
+        description="Maximum number of vertices annotation strokes will "
                     "have, when they are converted to geomtery",
         default=32,
         min=3,
@@ -3885,7 +3878,7 @@ class GStretch(Operator):
         )
     conversion_min: IntProperty(
         name="Min Vertices",
-        description="Minimum number of vertices grease pencil strokes will "
+        description="Minimum number of vertices annotation strokes will "
                     "have, when they are converted to geomtery",
         default=8,
         min=3,
@@ -3894,7 +3887,7 @@ class GStretch(Operator):
         )
     conversion_vertices: IntProperty(
         name="Vertices",
-        description="Number of vertices grease pencil strokes will "
+        description="Number of vertices annotation strokes will "
                     "have, when they are converted to geometry. If strokes have less "
                     "points than required, the 'Spread evenly' method is used",
         default=32,
@@ -3903,8 +3896,8 @@ class GStretch(Operator):
         )
     delete_strokes: BoolProperty(
         name="Delete strokes",
-        description="Remove Grease Pencil strokes if they have been used "
-                    "for Gstretch. WARNING: DOES NOT SUPPORT UNDO",
+        description="Remove annotation strokes if they have been used "
+                    "for Annotation. WARNING: DOES NOT SUPPORT UNDO",
         default=False
         )
     influence: FloatProperty(
@@ -3939,8 +3932,8 @@ class GStretch(Operator):
                 "stroke, retaining relative distances between the vertices"),
                 ("regular", "Spread evenly", "Distribute vertices at regular "
                 "distances along the full stroke")),
-        description="Method of distributing the vertices over the Grease "
-                    "Pencil stroke",
+        description="Method of distributing the vertices over the annotation "
+                    "stroke",
         default='regular'
         )
 
@@ -4007,8 +4000,8 @@ class GStretch(Operator):
             if safe_strokes:
                 strokes = gstretch_safe_to_true_strokes(safe_strokes)
             # cached strokes were flushed (see operator's invoke function)
-            elif get_grease_pencil(object, context):
-                strokes = gstretch_get_strokes(object, context)
+            elif get_annotation(self, context):
+                strokes = gstretch_get_strokes(self, context)
             else:
                 # straightening function (no GP) -> loops ignore modifiers
                 straightening = True
@@ -4022,13 +4015,13 @@ class GStretch(Operator):
                 derived, bm_mod = get_derived_bmesh(object, bm)
         else:
             # get loops and strokes
-            if get_grease_pencil(object, context):
+            if get_annotation(self, context):
                 # find loops
                 derived, bm_mod, loops = get_connected_input(object, bm, input='selected')
                 mapping = get_mapping(derived, bm, bm_mod, False, False, loops)
                 loops = check_loops(loops, mapping, bm_mod)
                 # get strokes
-                strokes = gstretch_get_strokes(object, context)
+                strokes = gstretch_get_strokes(self, context)
             else:
                 # straightening function (no GP) -> loops ignore modifiers
                 derived = False
@@ -4076,8 +4069,8 @@ class GStretch(Operator):
                 if self.delete_strokes:
                     if type(stroke) != bpy.types.GPencilStroke:
                         # in case of cached fake stroke, get the real one
-                        if get_grease_pencil(object, context):
-                            strokes = gstretch_get_strokes(object, context)
+                        if get_annotation(self, context):
+                            strokes = gstretch_get_strokes(self, context)
                             if loops and strokes:
                                 ls_pairs = gstretch_match_loops_strokes(loops,
                                     strokes, object, bm_mod)
@@ -4539,7 +4532,7 @@ class VIEW3D_PT_tools_looptools(Panel):
             else:
                 row.prop(lt, "gstretch_lock_z", text="Z", icon='UNLOCKED')
             col_move.prop(lt, "gstretch_influence")
-            box.operator("remove.gp", text="Delete GP Strokes")
+            box.operator("remove.gp", text="Delete Annotation Strokes")
 
         # loft - first line
         split = col.split(factor=0.15, align=True)
@@ -4891,22 +4884,22 @@ class LoopToolsProps(PropertyGroup):
     gstretch_conversion: EnumProperty(
         name="Conversion",
         items=(("distance", "Distance", "Set the distance between vertices "
-            "of the converted grease pencil stroke"),
+            "of the converted annotation stroke"),
             ("limit_vertices", "Limit vertices", "Set the minimum and maximum "
             "number of vertices that converted GP strokes will have"),
             ("vertices", "Exact vertices", "Set the exact number of vertices "
-            "that converted grease pencil strokes will have. Short strokes "
+            "that converted annotation strokes will have. Short strokes "
             "with few points may contain less vertices than this number."),
-            ("none", "No simplification", "Convert each grease pencil point "
+            ("none", "No simplification", "Convert each annotation point "
             "to a vertex")),
-        description="If grease pencil strokes are converted to geometry, "
+        description="If annotation strokes are converted to geometry, "
                     "use this simplification method",
         default='limit_vertices'
         )
     gstretch_conversion_distance: FloatProperty(
         name="Distance",
         description="Absolute distance between vertices along the converted "
-                    "grease pencil stroke",
+                    "annotation stroke",
         default=0.1,
         min=0.000001,
         soft_min=0.01,
@@ -4914,7 +4907,7 @@ class LoopToolsProps(PropertyGroup):
         )
     gstretch_conversion_max: IntProperty(
         name="Max Vertices",
-        description="Maximum number of vertices grease pencil strokes will "
+        description="Maximum number of vertices annotation strokes will "
                     "have, when they are converted to geomtery",
         default=32,
         min=3,
@@ -4923,7 +4916,7 @@ class LoopToolsProps(PropertyGroup):
         )
     gstretch_conversion_min: IntProperty(
         name="Min Vertices",
-        description="Minimum number of vertices grease pencil strokes will "
+        description="Minimum number of vertices annotation strokes will "
                     "have, when they are converted to geomtery",
         default=8,
         min=3,
@@ -4932,7 +4925,7 @@ class LoopToolsProps(PropertyGroup):
         )
     gstretch_conversion_vertices: IntProperty(
         name="Vertices",
-        description="Number of vertices grease pencil strokes will "
+        description="Number of vertices annotation strokes will "
                     "have, when they are converted to geometry. If strokes have less "
                     "points than required, the 'Spread evenly' method is used",
         default=32,

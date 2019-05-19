@@ -645,10 +645,13 @@ class MESH_OT_Print3D_Select_Report(Operator):
 
 def _scale(scale, report=None, report_suffix=""):
     if scale != 1.0:
-        bpy.ops.transform.resize(value=(scale,) * 3,
-                                 mirror=False, proportional='DISABLED',
-                                 snap=False,
-                                 texture_space=False)
+        bpy.ops.transform.resize(
+            value=(scale,) * 3,
+            mirror=False,
+            use_proportional_edit=False,
+            snap=False,
+            texture_space=False,
+        )
     if report is not None:
         report({'INFO'}, "Scaled by %s%s" % (clean_float("%.6f" % scale), report_suffix))
 

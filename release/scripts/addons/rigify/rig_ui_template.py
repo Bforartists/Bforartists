@@ -71,7 +71,7 @@ def tail_distance(angle,bone_ik,bone_fk):
     if rot_mod != 'AXIS_ANGLE':
         bone_ik.rotation_mode = 'AXIS_ANGLE'
     bone_ik.rotation_axis_angle[0] = angle
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     dv = (bone_fk.tail - bone_ik.tail).length
 
@@ -830,7 +830,7 @@ class RigUI(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_label = "Rig Main Properties"
     bl_idname = "VIEW3D_PT_rig_ui_" + rig_id
-    bl_category = 'View'
+    bl_category = 'Item'
 
     @classmethod
     def poll(self, context):
@@ -874,7 +874,7 @@ class RigLayers(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_label = "Rig Layers"
     bl_idname = "VIEW3D_PT_rig_layers_" + rig_id
-    bl_category = 'View'
+    bl_category = 'Item'
 
     @classmethod
     def poll(self, context):

@@ -20,14 +20,14 @@
 
 bl_info = {
     "name": "POV-3.7",
-    "author": "Campbell Barton, Silvio Falcinelli, Maurice Raybaud, "
-              "Constantin Rahn, Bastien Montagne, Leonid Desyatkov",
+    "author": "Campbell Barton, Maurice Raybaud, Leonid Desyatkov, "
+              "Bastien Montagne, Constantin Rahn, Silvio Falcinelli",
     "version": (0, 1, 0),
     "blender": (2, 80, 0),
     "location": "Render > Engine > POV-Ray 3.7",
-    "description": "Basic POV-Ray 3.7 integration for blender",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Render/POV-Ray",
+    "description": "POV-Ray 3.7 integration for blender",
+    "wiki_url": "https://archive.blender.org/wiki/index.php/"
+                "Extensions:2.6/Py/Scripts/Render/POV-Ray/",
     "category": "Render",
 }
 
@@ -68,8 +68,6 @@ else:
 
 def string_strip_hyphen(name):
     return name.replace("-", "")
-
-
 ###############################################################################
 # Scene POV properties.
 ###############################################################################
@@ -295,6 +293,18 @@ class RenderPovSettingsScene(PropertyGroup):
                         "sampling. Antialias Gamma sets the Gamma before "
                         "comparison",
             min=0.0, max=5.0, soft_min=0.01, soft_max=2.5, default=2.5)
+
+    alpha_mode: EnumProperty(
+            name="Alpha",
+            description="Representation of alpha information in the RGBA pixels",
+            items=(("SKY", "Sky", "Transparent pixels are filled with sky color"),
+                   ("TRANSPARENT", "Transparent", "Transparent, World background is transparent with premultiplied alpha")),
+            default="SKY")
+
+    use_shadows: BoolProperty(
+            name="Shadows",
+            description="Calculate shadows while rendering",
+            default=True)
 
     max_trace_level: IntProperty(
             name="Max Trace Level",
@@ -705,10 +715,10 @@ class RenderPovSettingsMaterial(PropertyGroup):
             description="How intense (bright) the specular reflection is",
             min=0.0, max=1.0, soft_min=0.0, soft_max=1.0, default=0.5, precision=3)
 
-    # specular_ior: FloatProperty(
-            # name="IOR",
-            # description="Specular index of refraction",
-            # min=-10.0, max=10.0, soft_min=0.0, soft_max=10.0, default=1.0, precision=3)
+    specular_ior: FloatProperty(
+            name="IOR",
+            description="Specular index of refraction",
+            min=-10.0, max=10.0, soft_min=0.0, soft_max=10.0, default=1.0, precision=3)
             
     # ior: FloatProperty(
             # name="IOR",
@@ -3559,7 +3569,16 @@ class RenderPovSettingsCamera(PropertyGroup):
             description="Type the declared name in custom POV code or an external .inc "
                         "it points at. camera {} expected",
             default="")
-
+###############################################################################
+# Light POV properties.
+###############################################################################
+class RenderPovSettingsLight(PropertyGroup):
+    shadow_method: EnumProperty(
+                name="Shadow",
+                description="",
+                items=(("NOSHADOW", "No Shadow", "No Shadow"),
+                       ("RAY_SHADOW", "Ray Shadow", "Ray Shadow, Use ray tracing for shadow")),
+                default="RAY_SHADOW")
 ###############################################################################
 # World POV properties.
 ###############################################################################
@@ -3592,6 +3611,79 @@ class RenderPovSettingsWorld(PropertyGroup):
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.0, 0.0, 0.0), options={'ANIMATABLE'}, subtype='COLOR',
     )
+    world_texture_list_index: IntProperty(
+            name = "Index for texture_slots",
+            default = 0)
+class WorldTextureSlot(PropertyGroup):
+    blend_factor: FloatProperty(
+                name="Blend",
+                description="Amount texture affects color progression of the "
+                            "background",
+                soft_min=0.0, soft_max=1.0, default=1.0)
+
+    horizon_factor: FloatProperty(
+                name="Horizon",
+                description="Amount texture affects color of the horizon"
+                            "",
+                soft_min=0.0, soft_max=1.0, default=1.0)
+
+    object: StringProperty(
+                name="Object",
+                description="Object to use for mapping with Object texture coordinates",
+                default="")
+
+    texture_coords: EnumProperty(
+                name="Coordinates",
+                description="Texture coordinates used to map the texture onto the background",
+                items=(("VIEW", "View", "Use view vector for the texture coordinates"),
+                       ("GLOBAL", "Global", "Use global coordinates for the texture coordinates (interior mist)"),
+                       ("ANGMAP", "AngMap", "Use 360 degree angular coordinates, e.g. for spherical light probes"),
+                       ("SPHERE", "Sphere", "For 360 degree panorama sky, spherical mapped, only top half"),
+                       ("EQUIRECT", "Equirectangular", "For 360 degree panorama sky, equirectangular mapping"),
+                       ("TUBE", "Tube", "For 360 degree panorama sky, cylindrical mapped, only top half"),
+                       ("OBJECT", "Object", "Use linked object’s coordinates for texture coordinates")),
+                default="VIEW")
+
+    use_map_blend: BoolProperty(
+                name="Blend Map", description="Affect the color progression of the background",
+                default=True)
+
+    use_map_horizon: BoolProperty(
+                name="Horizon Map", description="Affect the color of the horizon",
+                default=False)
+
+    use_map_zenith_down: BoolProperty(
+                name="", description="Affect the color of the zenith below",
+                default=False)
+
+    use_map_zenith_up: BoolProperty(
+                name="Zenith Up Map", description="Affect the color of the zenith above",
+                default=False)
+
+    zenith_down_factor: FloatProperty(
+                name="Zenith Down",
+                description="Amount texture affects color of the zenith below",
+                soft_min=0.0, soft_max=1.0, default=1.0)
+
+    zenith_up_factor: FloatProperty(
+                name="Zenith Up",
+                description="Amount texture affects color of the zenith above",
+                soft_min=0.0, soft_max=1.0, default=1.0)
+
+'''
+#class WORLD_TEXTURE_SLOTS_UL_layerlist(bpy.types.UIList):
+#    texture_slots:
+    
+class WorldTextureSlots(bpy.props.PropertyGroup):
+    index = bpy.prop.PropertyInt(name='index')
+    #foo  = random prop
+
+bpy.types.World.texture_slots = bpy.props.CollectionProperty(type=PropertyGroup)
+
+for i in range(18):  # length of world texture slots
+    world.texture_slots.add()
+'''
+
 
 ###############################################################################
 # Text POV properties.
@@ -3641,7 +3733,9 @@ class PovrayPreferences(AddonPreferences):
 classes = (
     PovrayPreferences,
     RenderPovSettingsCamera,
+    RenderPovSettingsLight,    
     RenderPovSettingsWorld,
+    WorldTextureSlot,
     RenderPovSettingsMaterial,
     MaterialRaytraceMirror, 
     MaterialSubsurfaceScattering,
@@ -3687,7 +3781,9 @@ def register():
     bpy.types.Texture.pov = PointerProperty(type=RenderPovSettingsTexture)
     bpy.types.Object.pov = PointerProperty(type=RenderPovSettingsObject)
     bpy.types.Camera.pov = PointerProperty(type=RenderPovSettingsCamera)
+    bpy.types.Light.pov = PointerProperty(type=RenderPovSettingsLight)
     bpy.types.World.pov = PointerProperty(type=RenderPovSettingsWorld)
+    bpy.types.World.texture_slots = CollectionProperty(type = WorldTextureSlot)
     bpy.types.Text.pov = PointerProperty(type=RenderPovSettingsText)
 
 
@@ -3701,6 +3797,7 @@ def unregister():
     del bpy.types.Texture.pov
     del bpy.types.Object.pov
     del bpy.types.Camera.pov
+    del bpy.types.Light.pov
     del bpy.types.World.pov    
     del bpy.types.Text.pov
     nodeitems_utils.unregister_node_categories("POVRAYNODES")

@@ -237,23 +237,6 @@ class add_mesh_bolt(Operator, AddObjectHelper):
             description='Flat distance of the Hex Nut'
             )
 
-        # generic transform props
-    view_align: BoolProperty(
-            name="Align to View",
-            default=False,
-            update=AddObjectHelper.view_align_update_callback,
-            )
-
-    location: FloatVectorProperty(
-            name="Location",
-            subtype='TRANSLATION',
-            )
-
-    rotation: FloatVectorProperty(
-            name="Rotation",
-            subtype='EULER',
-            )
-
     def draw(self, context):
         layout = self.layout
         col = layout.column()
@@ -314,7 +297,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
 
         # generic transform props
         col.separator()
-        col.prop(self, 'view_align')
+        col.prop(self, 'align')
         col.prop(self, 'location')
         col.prop(self, 'rotation')
 

@@ -136,7 +136,9 @@ void workbench_dof_engine_init(WORKBENCH_Data *vedata, Object *camera)
   WORKBENCH_PrivateData *wpd = stl->g_data;
   WORKBENCH_FramebufferList *fbl = vedata->fbl;
 
-  if ((wpd->shading.flag & V3D_SHADING_DEPTH_OF_FIELD) == 0 || (camera == NULL)) {
+  Camera *cam = camera != NULL ? camera->data : NULL;
+  if ((wpd->shading.flag & V3D_SHADING_DEPTH_OF_FIELD) == 0 || (cam == NULL) ||
+      ((cam->dof.flag & CAM_DOF_ENABLED) == 0)) {
     wpd->dof_enabled = false;
     return;
   }
@@ -231,11 +233,10 @@ void workbench_dof_engine_init(WORKBENCH_Data *vedata, Object *camera)
     const DRWContextState *draw_ctx = DRW_context_state_get();
     const Scene *scene_eval = DEG_get_evaluated_scene(draw_ctx->depsgraph);
     RegionView3D *rv3d = draw_ctx->rv3d;
-    Camera *cam = (Camera *)camera->data;
 
     /* Parameters */
     /* TODO UI Options */
-    float fstop = cam->gpu_dof.fstop;
+    float fstop = cam->dof.aperture_fstop;
     float sensor = BKE_camera_sensor_size(cam->sensor_fit, cam->sensor_x, cam->sensor_y);
     float focus_dist = BKE_camera_object_dof_distance(camera);
     float focal_len = cam->lens;
@@ -265,9 +266,9 @@ void workbench_dof_engine_init(WORKBENCH_Data *vedata, Object *camera)
     wpd->dof_near_far[0] = -cam->clip_start;
     wpd->dof_near_far[1] = -cam->clip_end;
 
-    float blades = cam->gpu_dof.num_blades;
-    float rotation = cam->gpu_dof.rotation;
-    float ratio = 1.0f / cam->gpu_dof.ratio;
+    float blades = cam->dof.aperture_blades;
+    float rotation = cam->dof.aperture_rotation;
+    float ratio = 1.0f / cam->dof.aperture_ratio;
 
     if (wpd->dof_ubo == NULL || blades != wpd->dof_blades || rotation != wpd->dof_rotation ||
         ratio != wpd->dof_ratio) {
@@ -314,37 +315,37 @@ void workbench_dof_create_pass(WORKBENCH_Data *vedata,
     DRW_shgroup_uniform_vec2(grp, "invertedViewportSize", DRW_viewport_invert_size_get(), 1);
     DRW_shgroup_uniform_vec3(grp, "dofParams", &wpd->dof_aperturesize, 1);
     DRW_shgroup_uniform_vec2(grp, "nearFar", wpd->dof_near_far, 1);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
 
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_downsample_sh, psl->dof_down2_ps);
     DRW_shgroup_uniform_texture(grp, "sceneColorTex", txl->dof_source_tx);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", txl->coc_halfres_tx);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
 #if 0
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_flatten_h_sh,
                                               psl->dof_flatten_h_ps);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", txl->coc_halfres_tx);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_flatten_v_sh,
                                               psl->dof_flatten_v_ps);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", wpd->coc_temp_tx);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_dilate_v_sh, psl->dof_dilate_v_ps);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", wpd->coc_tiles_tx[0]);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_dilate_h_sh, psl->dof_dilate_h_ps);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", wpd->coc_tiles_tx[1]);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
 #endif
   {
@@ -357,14 +358,14 @@ void workbench_dof_create_pass(WORKBENCH_Data *vedata,
     DRW_shgroup_uniform_texture(grp, "halfResColorTex", txl->dof_source_tx);
     DRW_shgroup_uniform_vec2(grp, "invertedViewportSize", DRW_viewport_invert_size_get(), 1);
     DRW_shgroup_uniform_float_copy(grp, "noiseOffset", offset);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_blur2_sh, psl->dof_blur2_ps);
     DRW_shgroup_uniform_texture(grp, "inputCocTex", txl->coc_halfres_tx);
     DRW_shgroup_uniform_texture(grp, "blurTex", wpd->dof_blur_tx);
     DRW_shgroup_uniform_vec2(grp, "invertedViewportSize", DRW_viewport_invert_size_get(), 1);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
   {
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.effect_dof_resolve_sh, psl->dof_resolve_ps);
@@ -373,7 +374,7 @@ void workbench_dof_create_pass(WORKBENCH_Data *vedata,
     DRW_shgroup_uniform_vec2(grp, "invertedViewportSize", DRW_viewport_invert_size_get(), 1);
     DRW_shgroup_uniform_vec3(grp, "dofParams", &wpd->dof_aperturesize, 1);
     DRW_shgroup_uniform_vec2(grp, "nearFar", wpd->dof_near_far, 1);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
 }
 

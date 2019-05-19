@@ -66,7 +66,7 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
         self.last_mval = None
 
         self.wm_operators = context.window_manager.operators
-        self.depsgraph = context.depsgraph
+        self.depsgraph = context.evaluated_depsgraph_get()
         bpy.app.handlers.depsgraph_update_post.append(self.handler)
         SnapWidgetCommon.snap_to_update = False
 
@@ -101,7 +101,7 @@ class SnapWidgetCommon(SnapUtilities, bpy.types.Gizmo):
 
         #print('test_select', mval)
         space = context.space_data
-        self.sctx.update_viewport_context(context.depsgraph, context.region, space, True)
+        self.sctx.update_viewport_context(context.evaluated_depsgraph_get(), context.region, space, True)
 
         shading = space.shading
         snap_face = not ((self.snap_vert or self.snap_edge) and

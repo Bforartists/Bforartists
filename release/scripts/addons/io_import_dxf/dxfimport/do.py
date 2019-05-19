@@ -635,10 +635,10 @@ class Do:
                 obj.location = transformation @ obj.location
                 obj.rotation_euler.rotate(transformation)
 
-    def _bbox(self, objects, scene):
+    def _bbox(self, objects):
         xmin = ymin = zmin = float('+inf')
         xmax = ymax = zmax = float('-inf')
-        scene.update()
+        bpy.context.view_layer.update()
 
         for obj in objects:
             om = obj.matrix_basis
@@ -672,8 +672,8 @@ class Do:
 
         return xmin, ymin, zmin, xmax, ymax, zmax
 
-    def _object_bbox(self, objects, scene, name, do_widgets=True):
-        xmin, ymin, zmin, xmax, ymax, zmax = self._bbox(objects, scene)
+    def _object_bbox(self, objects, name, do_widgets=True):
+        xmin, ymin, zmin, xmax, ymax, zmax = self._bbox(objects)
 
         # creating bbox geometry
         bm = bmesh.new()
@@ -879,7 +879,7 @@ class Do:
             # determining the main object o
             if len(objects) > 1 or len(insert_bounding_boxes) > 0:
                 if self.do_bounding_boxes:
-                    o = self._object_bbox(objects + insert_bounding_boxes, scene, name, recursion_level == 0)
+                    o = self._object_bbox(objects + insert_bounding_boxes, name, recursion_level == 0)
                     scene.collection.objects.link(o)
                 else:
                     o = bpy.data.objects.new(name, None)
@@ -986,7 +986,7 @@ class Do:
                 i = self.insert(INSERT, block_scene, None, block_group, invisible, recursion_level + 1, True)
                 inserts.append(i)
 
-            bbox = self._object_bbox(objects + inserts, block_scene, name, True)
+            bbox = self._object_bbox(objects + inserts, name, True)
 
             for i in inserts:
                 sub_group = i.instance_collection
@@ -1398,12 +1398,12 @@ class Do:
 
     def _recenter(self, scene, name):
         bpy.context.screen.scene = scene
-        scene.update()
+        bpy.context.view_layer.update()
         bpy.ops.object.select_all(action='DESELECT')
 
         recenter_objects = (o for o in scene.objects if "BEVEL" not in o.name and "TAPER" not in o.name
                             and o not in self.objects_before)
-        xmin, ymin, zmin, xmax, ymax, zmax = self._bbox(recenter_objects, scene)
+        xmin, ymin, zmin, xmax, ymax, zmax = self._bbox(recenter_objects)
         vmin = Vector((xmin, ymin, zmin))
         vmax = Vector((xmax, ymax, zmax))
         center = vmin + (vmax - vmin) / 2

@@ -55,7 +55,7 @@ def save_chan(context, filepath, y_up, rot_ord):
         # if the setting is proper use the rotation matrix
         # to flip the Z and Y axis
         if y_up:
-            mat = rot_mat * mat
+            mat = rot_mat @ mat
 
         # create the first component of a new line, the frame number
         fw("%i\t" % frame)

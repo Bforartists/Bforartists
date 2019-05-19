@@ -525,7 +525,7 @@ def build_dolly_rig(context):
     bpy.ops.object.mode_set(mode='OBJECT')
 
     bpy.ops.object.camera_add(
-        view_align=False, enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0))
+        align='WORLD', enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0))
     cam = bpy.context.active_object
 
     # this will name the Camera Object
@@ -711,7 +711,7 @@ def build_crane_rig(context):
     bpy.ops.object.mode_set(mode='OBJECT')
 
     bpy.ops.object.camera_add(
-        view_align=False, enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0))
+        align='WORLD', enter_editmode=False, location=(0, 0, 0), rotation=(0, 0, 0))
     cam = bpy.context.active_object
 
     # this will name the Camera Object

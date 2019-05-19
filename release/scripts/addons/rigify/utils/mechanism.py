@@ -52,8 +52,10 @@ def make_constraint(
     """
     con = owner.constraints.new(type)
 
-    if target is not None and subtarget is not None:
+    if target is not None and hasattr(con, 'target'):
         con.target = target
+
+    if subtarget is not None:
         con.subtarget = subtarget
 
     if space is not None:
@@ -130,10 +132,12 @@ def _init_driver_target(drv_target, var_info, target_id):
 
     else:
         # { 'id': ..., ... }
+        target_id = var_info.get('id', target_id)
+
         if target_id is not None:
             drv_target.id = target_id
 
-        for tp, tv in tdata.items():
+        for tp, tv in var_info.items():
             setattr(drv_target, tp, tv)
 
 
@@ -175,10 +179,10 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
 
     Specification format:
         If the variables argument is a dictionary, keys specify variable names.
-        Otherwise names are set to var0, var1... etc:
+        Otherwise names are set to var, var1, var2, ... etc:
 
           variables = [ ..., ..., ... ]
-          variables = { 'var0': ..., 'var1': ..., 'var2': ... }
+          variables = { 'var': ..., 'var1': ..., 'var2': ... }
 
         Variable specifications are constructed as nested dictionaries and lists that
         follow the property structure of the original Blender objects, but the most
@@ -222,7 +226,8 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
     if isinstance(variables, list):
         # variables = [ info, ... ]
         for i, var_info in enumerate(variables):
-            _add_driver_variable(drv, 'var'+str(i), var_info, target_id)
+            var_name = 'var' if i == 0 else 'var' + str(i)
+            _add_driver_variable(drv, var_name, var_info, target_id)
     else:
         # variables = { 'varname': info, ... }
         for var_name, var_info in variables.items():
@@ -236,6 +241,29 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
             drv_modifier.coefficients[i] = v
 
     return fcu
+
+
+def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD'):
+    """
+    Create a Transform Channel driver variable specification.
+
+    Usage:
+        make_driver(..., variables=[driver_var_transform(...)])
+    """
+
+    assert space in {'WORLD', 'TRANSFORM', 'LOCAL'}
+
+    target_map = {
+        'id': target,
+        'transform_type': type,
+        'transform_space': space + '_SPACE',
+    }
+
+    if bone is not None:
+        target_map['bone_target'] = bone
+
+    return { 'type': 'TRANSFORMS', 'targets': [ target_map ] }
+
 
 #=============================================
 # Utility mixin
@@ -259,4 +287,6 @@ class MechanismUtilityMixin(object):
 
     def make_driver(self, owner, prop, **args):
         assert(self.obj.mode == 'OBJECT')
+        if isinstance(owner, str):
+            owner = self.obj.pose.bones[owner]
         return make_driver(owner, prop, target_id=self.obj, **args)

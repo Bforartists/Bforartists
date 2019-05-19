@@ -53,7 +53,7 @@ def gather_primitives(
             extensions=None,
             extras=None,
             indices=__gather_indices(internal_primitive, blender_mesh, modifiers, export_settings),
-            material=__gather_materials(internal_primitive, blender_mesh, modifiers, export_settings),
+            material=__gather_materials(internal_primitive, modifiers, export_settings),
             mode=None,
             targets=__gather_targets(internal_primitive, blender_mesh, modifiers, export_settings)
         )
@@ -62,13 +62,13 @@ def gather_primitives(
     return primitives
 
 
-def __gather_materials(blender_primitive, blender_mesh, modifiers, export_settings):
+def __gather_materials(blender_primitive, modifiers, export_settings):
     if not blender_primitive['material']:
         # TODO: fix 'extract_primitives' so that the value of 'material' is None and not empty string
         return None
-    mesh_double_sided = blender_mesh.show_double_sided
     material = bpy.data.materials[blender_primitive['material']]
-    return gltf2_blender_gather_materials.gather_material(material, mesh_double_sided, export_settings)
+    material_double_sided = not material.use_backface_culling
+    return gltf2_blender_gather_materials.gather_material(material, material_double_sided, export_settings)
 
 
 def __gather_indices(blender_primitive, blender_mesh, modifiers, export_settings):

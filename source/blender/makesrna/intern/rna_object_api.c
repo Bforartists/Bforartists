@@ -375,18 +375,28 @@ static void rna_Object_camera_fit_coords(
 }
 
 /* copied from Mesh_getFromObject and adapted to RNA interface */
-/* settings: 0 - preview, 1 - render */
-static Mesh *rna_Object_to_mesh(Object *ob,
-                                bContext *C,
-                                ReportList *reports,
-                                Depsgraph *depsgraph,
-                                bool apply_modifiers,
-                                bool calc_undeformed)
+static Mesh *rna_Object_to_mesh(Object *object, ReportList *reports)
 {
-  Main *bmain = CTX_data_main(C);
+  /* TODO(sergey): Make it more re-usable function, de-duplicate with
+   * rna_Main_meshes_new_from_object. */
+  switch (object->type) {
+    case OB_FONT:
+    case OB_CURVE:
+    case OB_SURF:
+    case OB_MBALL:
+    case OB_MESH:
+      break;
+    default:
+      BKE_report(reports, RPT_ERROR, "Object does not have geometry data");
+      return NULL;
+  }
 
-  return rna_Main_meshes_new_from_object(
-      bmain, reports, depsgraph, ob, apply_modifiers, calc_undeformed);
+  return BKE_object_to_mesh(object);
+}
+
+static void rna_Object_to_mesh_clear(Object *object)
+{
+  BKE_object_to_mesh_clear(object);
 }
 
 static PointerRNA rna_Object_shape_key_add(
@@ -398,7 +408,7 @@ static PointerRNA rna_Object_shape_key_add(
   if ((kb = BKE_object_shapekey_insert(bmain, ob, name, from_mix))) {
     PointerRNA keyptr;
 
-    RNA_pointer_create((ID *)ob->data, &RNA_ShapeKey, kb, &keyptr);
+    RNA_pointer_create((ID *)BKE_key_from_object(ob), &RNA_ShapeKey, kb, &keyptr);
     WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
 
     return keyptr;
@@ -882,27 +892,17 @@ void RNA_api_object(StructRNA *srna)
 
   /* mesh */
   func = RNA_def_function(srna, "to_mesh", "rna_Object_to_mesh");
-  RNA_def_function_ui_description(func, "Create a Mesh data-block with modifiers applied");
-  RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
-  parm = RNA_def_pointer(func,
-                         "depsgraph",
-                         "Depsgraph",
-                         "Dependency Graph",
-                         "Evaluated dependency graph within which to evaluate modifiers");
-  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
-  parm = RNA_def_boolean(func, "apply_modifiers", 0, "", "Apply modifiers");
-  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "calc_undeformed",
-                  false,
-                  "Calculate Undeformed",
-                  "Calculate undeformed vertex coordinates");
-  parm = RNA_def_pointer(func,
-                         "mesh",
-                         "Mesh",
-                         "",
-                         "Mesh created from object, remove it if it is only used for export");
+  RNA_def_function_ui_description(
+      func,
+      "Create a Mesh data-block from the current state of the object. The object owns the "
+      "data-block. To force free it use to_mesh_clear(). "
+      "The result is temporary and can not be used by objects from the main database");
+  RNA_def_function_flag(func, FUNC_USE_REPORTS);
+  parm = RNA_def_pointer(func, "mesh", "Mesh", "", "Mesh created from object");
   RNA_def_function_return(func, parm);
+
+  func = RNA_def_function(srna, "to_mesh_clear", "rna_Object_to_mesh_clear");
+  RNA_def_function_ui_description(func, "Clears mesh data-block created by to_mesh()");
 
   /* Armature */
   func = RNA_def_function(srna, "find_armature", "modifiers_isDeformedByArmature");

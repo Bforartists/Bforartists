@@ -26,8 +26,8 @@
 bl_info = {
     "name": "Materials Utils Specials",
     "author": "Community",
-    "version": (1, 0, 5),
-    "blender": (2, 77, 0),
+    "version": (1, 0, 6),
+    "blender": (2, 79, 0),
     "location": "Materials Properties Specials > Shift Q",
     "description": "Materials Utils and Convertors",
     "warning": "",
@@ -38,13 +38,9 @@ bl_info = {
 
 if "bpy" in locals():
     import importlib
-    importlib.reload(material_converter)
-    importlib.reload(materials_cycles_converter)
     importlib.reload(texture_rename)
     importlib.reload(warning_messages_utils)
 else:
-    from . import material_converter
-    from . import materials_cycles_converter
     from . import texture_rename
     from . import warning_messages_utils
 
@@ -515,7 +511,7 @@ def assign_mat(matname="Default", operator=None):
     actob = bpy.context.active_object
 
     # is active object selected ?
-    selected = bool(actob.select)
+    selected = bool(actob.select_get)
     actob.select_set(True)
 
     # check if material exists, if it doesn't then create it
@@ -546,7 +542,7 @@ def assign_mat(matname="Default", operator=None):
         else:
             # set the active object to our object
             scn = bpy.context.scene
-            scn.objects.active = ob
+            scn.objects.select_get = ob
 
             if ob.type in {'CURVE', 'SURFACE', 'FONT', 'META'}:
                 found = False
@@ -595,7 +591,7 @@ def assign_mat(matname="Default", operator=None):
     bpy.context.view_layer.objects.active = actob
 
     # restore selection state
-    actob.select = selected
+    actob.select_set = selected
 
     if editmode:
         bpy.ops.object.mode_set(mode='EDIT')
@@ -1627,7 +1623,7 @@ class VIEW3D_UL_assign_material_popup_ui(UIList):
         if not mat:
             col.label(text="{} - is not available".format(item.name), icon="ERROR")
         else:
-            split = col.split(percentage=0.75, align=True)
+            split = col.split(factor=0.75, align=True)
             row = split.row(align=True)
             row.label(text=item.name, translate=False, icon="MATERIAL_DATA")
             subrow = split.row(align=True)
@@ -1654,10 +1650,10 @@ def draw_ui_list_popups(self, context, obj_data=False):
     col = box.column(align=True)
     col.label(text="{} {} {}".format(matcount, matgramma, matdata),
               icon="INFO")
-    sub_split = col.split(percentage=0.7, align=True)
+    sub_split = col.split(factor=0.7, align=True)
     sub_box_1 = sub_split.box()
     sub_box_1.label(text="Name")
-    sub_split_2 = sub_split.split(percentage=0.5, align=True)
+    sub_split_2 = sub_split.split(factor=0.5, align=True)
     sub_box_2 = sub_split_2.box()
     sub_box_2.label(text="Fake")
     sub_box_3 = sub_split_2.box()
@@ -1692,7 +1688,7 @@ class VIEW3D_MT_assign_material(Menu):
         mat_prop_name = context.scene.mat_context_menu.set_material_name
         add_new = layout.operator(
                         "view3d.assign_material",
-                        text="Add New", icon='ZOOMIN'
+                        text="Add New", icon='ZOOM_IN'
                         )
         add_new.matname = mat_prop_name
         add_new.is_existing = False
@@ -2377,7 +2373,7 @@ class VIEW3D_MT_material_utils_pref(AddonPreferences):
 
         box = col_m.box()
         box.label(text="Save Directory")
-        split = box.split(0.85)
+        split = box.split(factor=0.85)
         split.prop(sc.mat_context_menu, "conv_path", text="", icon="RENDER_RESULT")
         split.operator(
             "material.check_converter_path",
@@ -2657,17 +2653,56 @@ def converter_type(types='ALL'):
 
     return bool(set_exp_type in {'ALL'} or types == set_exp_type)
 
+# -----------------------------------------------------
+# Registration
+# ------------------------------------------------------
+classes = (
+    VIEW3D_OT_show_mat_preview,
+    VIEW3D_OT_copy_material_to_selected,
+    VIEW3D_OT_texface_to_material,
+    VIEW3D_OT_set_new_material_name,
+    VIEW3D_OT_assign_material,
+    VIEW3D_OT_clean_material_slots,
+    VIEW3D_OT_material_to_texface,
+    VIEW3D_OT_material_remove_slot,
+    VIEW3D_OT_material_remove_object,
+    VIEW3D_OT_material_remove_all,
+    VIEW3D_OT_select_material_by_name,
+    VIEW3D_OT_replace_material,
+    VIEW3D_OT_fake_user_set,
+    MATERIAL_OT_set_transparent_back_side,
+    MATERIAL_OT_move_slot_top,
+    MATERIAL_OT_move_slot_bottom,
+    MATERIAL_OT_link_to_base_names,
+    MATERIAL_OT_check_converter_path,
+    VIEW3D_UL_assign_material_popup_ui,
+    VIEW3D_MT_assign_material,
+    VIEW3D_MT_select_material,
+    VIEW3D_MT_remove_material,
+    VIEW3D_MT_master_material,
+    VIEW3D_MT_mat_special,
+    MATERIAL_MT_scenemassive_opt,
+    MATERIAL_PT_scenemassive,
+    MATERIAL_PT_xps_convert,
+    MATERIAL_MT_biconv_help,
+    MATERIAL_MT_nodeconv_help,
+    MATERIAL_OT_converter_report,
+    material_specials_scene_mats,
+    material_specials_scene_props,
+    VIEW3D_MT_material_utils_pref
+)
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     warning_messages_utils.MAT_SPEC_NAME = __name__
 
     # Register Scene Properties
-    bpy.types.Scene.mat_context_menu = PointerProperty(
+    bpy.types.Scene.mat_context_menu= PointerProperty(
         type=material_specials_scene_props
     )
-    bpy.types.Scene.mat_specials_mats = CollectionProperty(
+    bpy.types.Scene.mat_specials_mats= CollectionProperty(
         name="Material name",
         type=material_specials_scene_mats
     )
@@ -2698,7 +2733,8 @@ def unregister():
     del bpy.types.Scene.mat_context_menu
     del bpy.types.Scene.mat_specials_mats
 
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

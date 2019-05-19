@@ -12,7 +12,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
     if material:
         # If saturation(.s) is not zero, then color is not grey, and has a tint
-        colored_specular_found = ((material.specular_color.s > 0.0) and (material.diffuse_shader != 'MINNAERT'))
+        colored_specular_found = ((material.pov.specular_color.s > 0.0) and (material.pov.diffuse_shader != 'MINNAERT'))
 
     ##################
     # Several versions of the finish: Level conditions are variations for specular/Mirror
@@ -46,8 +46,8 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
         if material:
             # POV-Ray 3.7 now uses two diffuse values respectively for front and back shading
             # (the back diffuse is like blender translucency)
-            frontDiffuse = material.diffuse_intensity
-            backDiffuse = material.translucency
+            frontDiffuse = material.pov.diffuse_intensity
+            backDiffuse = material.pov.translucency
 
             if material.pov.conserve_energy:
 
@@ -66,7 +66,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                     frontDiffuse = min(frontDiffuse, (1.0 - backDiffuse))
 
             # map hardness between 0.0 and 1.0
-            roughness = ((1.0 - ((material.specular_hardness - 1.0) / 510.0)))
+            roughness = ((1.0 - ((material.pov.specular_hardness - 1.0) / 510.0)))
             ## scale from 0.0 to 0.1
             roughness *= 0.1
             # add a small value because 0.0 is invalid.
@@ -74,101 +74,101 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
             ################################Diffuse Shader######################################
             # Not used for Full spec (Level=3) of the shader.
-            if material.diffuse_shader == 'OREN_NAYAR' and Level != 3:
+            if material.pov.diffuse_shader == 'OREN_NAYAR' and Level != 3:
                 # Blender roughness is what is generally called oren nayar Sigma,
                 # and brilliance in POV-Ray.
                 tabWrite("brilliance %.3g\n" % (0.9 + material.roughness))
 
-            if material.diffuse_shader == 'TOON' and Level != 3:
+            if material.pov.diffuse_shader == 'TOON' and Level != 3:
                 tabWrite("brilliance %.3g\n" % (0.01 + material.diffuse_toon_smooth * 0.25))
                 # Lower diffuse and increase specular for toon effect seems to look better
                 # in POV-Ray.
                 frontDiffuse *= 0.5
 
-            if material.diffuse_shader == 'MINNAERT' and Level != 3:
+            if material.pov.diffuse_shader == 'MINNAERT' and Level != 3:
                 #tabWrite("aoi %.3g\n" % material.darkness)
                 pass  # let's keep things simple for now
-            if material.diffuse_shader == 'FRESNEL' and Level != 3:
+            if material.pov.diffuse_shader == 'FRESNEL' and Level != 3:
                 #tabWrite("aoi %.3g\n" % material.diffuse_fresnel_factor)
                 pass  # let's keep things simple for now
-            if material.diffuse_shader == 'LAMBERT' and Level != 3:
+            if material.pov.diffuse_shader == 'LAMBERT' and Level != 3:
                 # trying to best match lambert attenuation by that constant brilliance value
                 tabWrite("brilliance 1\n")
 
             if Level == 2:
                 ###########################Specular Shader######################################
                 # No difference between phong and cook torrence in blender HaHa!
-                if (material.specular_shader == 'COOKTORR' or
-                    material.specular_shader == 'PHONG'):
-                    tabWrite("phong %.3g\n" % (material.specular_intensity))
-                    tabWrite("phong_size %.3g\n" % (material.specular_hardness /3.14))
+                if (material.pov.specular_shader == 'COOKTORR' or
+                    material.pov.specular_shader == 'PHONG'):
+                    tabWrite("phong %.3g\n" % (material.pov.specular_intensity))
+                    tabWrite("phong_size %.3g\n" % (material.pov.specular_hardness /3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
-                elif material.specular_shader == 'BLINN':
+                elif material.pov.specular_shader == 'BLINN':
                     # Use blender Blinn's IOR just as some factor for spec intensity
-                    tabWrite("specular %.3g\n" % (material.specular_intensity *
-                                                  (material.specular_ior / 4.0)))
+                    tabWrite("specular %.3g\n" % (material.pov.specular_intensity *
+                                                  (material.pov.specular_ior / 4.0)))
                     tabWrite("roughness %.3g\n" % roughness)
                     #Could use brilliance 2(or varying around 2 depending on ior or factor) too.
 
-                elif material.specular_shader == 'TOON':
-                    tabWrite("phong %.3g\n" % (material.specular_intensity * 2.0))
+                elif material.pov.specular_shader == 'TOON':
+                    tabWrite("phong %.3g\n" % (material.pov.specular_intensity * 2.0))
                     # use extreme phong_size
-                    tabWrite("phong_size %.3g\n" % (0.1 + material.specular_toon_smooth / 2.0))
+                    tabWrite("phong_size %.3g\n" % (0.1 + material.pov.specular_toon_smooth / 2.0))
 
-                elif material.specular_shader == 'WARDISO':
+                elif material.pov.specular_shader == 'WARDISO':
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("specular %.3g\n" % (material.specular_intensity /
-                                                  (material.specular_slope + 0.0005)))
+                    tabWrite("specular %.3g\n" % (material.pov.specular_intensity /
+                                                  (material.pov.specular_slope + 0.0005)))
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("roughness %.4g\n" % (0.0005 + material.specular_slope / 10.0))
+                    tabWrite("roughness %.4g\n" % (0.0005 + material.pov.specular_slope / 10.0))
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("brilliance %.4g\n" % (1.8 - material.specular_slope * 1.8))
+                    tabWrite("brilliance %.4g\n" % (1.8 - material.pov.specular_slope * 1.8))
 
             ####################################################################################
             elif Level == 1:
-                if (material.specular_shader == 'COOKTORR' or
-                    material.specular_shader == 'PHONG'):
-                    tabWrite("phong %.3g\n" % (material.specular_intensity/5))
-                    tabWrite("phong_size %.3g\n" % (material.specular_hardness /3.14))
+                if (material.pov.specular_shader == 'COOKTORR' or
+                    material.pov.specular_shader == 'PHONG'):
+                    tabWrite("phong %.3g\n" % (material.pov.specular_intensity/5))
+                    tabWrite("phong_size %.3g\n" % (material.pov.specular_hardness /3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
-                elif material.specular_shader == 'BLINN':
+                elif material.pov.specular_shader == 'BLINN':
                     # Use blender Blinn's IOR just as some factor for spec intensity
-                    tabWrite("specular %.3g\n" % (material.specular_intensity *
-                                                  (material.specular_ior / 4.0)))
+                    tabWrite("specular %.3g\n" % (material.pov.specular_intensity *
+                                                  (material.pov.specular_ior / 4.0)))
                     tabWrite("roughness %.3g\n" % roughness)
                     #Could use brilliance 2(or varying around 2 depending on ior or factor) too.
 
-                elif material.specular_shader == 'TOON':
-                    tabWrite("phong %.3g\n" % (material.specular_intensity * 2.0))
+                elif material.pov.specular_shader == 'TOON':
+                    tabWrite("phong %.3g\n" % (material.pov.specular_intensity * 2.0))
                     # use extreme phong_size
-                    tabWrite("phong_size %.3g\n" % (0.1 + material.specular_toon_smooth / 2.0))
+                    tabWrite("phong_size %.3g\n" % (0.1 + material.pov.specular_toon_smooth / 2.0))
 
-                elif material.specular_shader == 'WARDISO':
+                elif material.pov.specular_shader == 'WARDISO':
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("specular %.3g\n" % (material.specular_intensity /
-                                                  (material.specular_slope + 0.0005)))
+                    tabWrite("specular %.3g\n" % (material.pov.specular_intensity /
+                                                  (material.pov.specular_slope + 0.0005)))
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("roughness %.4g\n" % (0.0005 + material.specular_slope / 10.0))
+                    tabWrite("roughness %.4g\n" % (0.0005 + material.pov.specular_slope / 10.0))
                     # find best suited default constant for brilliance Use both phong and
                     # specular for some values.
-                    tabWrite("brilliance %.4g\n" % (1.8 - material.specular_slope * 1.8))
+                    tabWrite("brilliance %.4g\n" % (1.8 - material.pov.specular_slope * 1.8))
             elif Level == 3:
-                tabWrite("specular %.3g\n" % ((material.specular_intensity*material.specular_color.v)*5))
-                tabWrite("roughness %.3g\n" % (1.1/material.specular_hardness))
+                tabWrite("specular %.3g\n" % ((material.pov.specular_intensity*material.pov.specular_color.v)*5))
+                tabWrite("roughness %.3g\n" % (1.1/material.pov.specular_hardness))
             tabWrite("diffuse %.3g %.3g\n" % (frontDiffuse, backDiffuse))
 
-            tabWrite("ambient %.3g\n" % material.ambient)
+            tabWrite("ambient %.3g\n" % material.pov.ambient)
             # POV-Ray blends the global value
             #tabWrite("ambient rgb <%.3g, %.3g, %.3g>\n" % \
-            #         tuple([c*material.ambient for c in world.ambient_color]))
-            tabWrite("emission %.3g\n" % material.emit)  # New in POV-Ray 3.7
+            #         tuple([c*material.pov.ambient for c in world.ambient_color]))
+            tabWrite("emission %.3g\n" % material.pov.emit)  # New in POV-Ray 3.7
 
             #POV-Ray just ignores roughness if there's no specular keyword
             #tabWrite("roughness %.3g\n" % roughness)
@@ -183,11 +183,11 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
             # 'phong 70.0 '
             if Level != 1:
-                if material.raytrace_mirror.use:
-                    raytrace_mirror = material.raytrace_mirror
+                if material.pov_raytrace_mirror.use:
+                    raytrace_mirror = material.pov_raytrace_mirror
                     if raytrace_mirror.reflect_factor:
                         tabWrite("reflection {\n")
-                        tabWrite("rgb <%.3g, %.3g, %.3g>\n" % material.mirror_color[:])
+                        tabWrite("rgb <%.3g, %.3g, %.3g>\n" % material.pov.mirror_color[:])
                         if material.pov.mirror_metallic:
                             tabWrite("metallic %.3g\n" % (raytrace_mirror.reflect_factor))
                         # Blurry reflections for UberPOV
@@ -203,8 +203,8 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                         tabWrite("falloff %.3g exponent %.3g} " % \
                                  (raytrace_mirror.fresnel, raytrace_mirror.fresnel_factor))
 
-            if material.subsurface_scattering.use:
-                subsurface_scattering = material.subsurface_scattering
+            if material.pov_subsurface_scattering.use:
+                subsurface_scattering = material.pov_subsurface_scattering
                 tabWrite("subsurface { translucency <%.3g, %.3g, %.3g> }\n" % (
                          (subsurface_scattering.radius[0]),
                          (subsurface_scattering.radius[1]),
@@ -225,7 +225,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
         # This is written into the object
         '''
-        if material and material.transparency_method=='RAYTRACE':
+        if material and material.pov.transparency_method=='RAYTRACE':
             'interior { ior %.3g} ' % material.raytrace_transparency.ior
         '''
 
@@ -233,7 +233,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
         #tabWrite("metallic %.6f\n" % material.spec)
         #tabWrite("phong %.6f\n" % material.spec)
         #tabWrite("phong_size %.6f\n" % material.spec)
-        #tabWrite("brilliance %.6f " % (material.specular_hardness/256.0) # Like hardness
+        #tabWrite("brilliance %.6f " % (material.pov.specular_hardness/256.0) # Like hardness
 
         tabWrite("}\n\n")
 

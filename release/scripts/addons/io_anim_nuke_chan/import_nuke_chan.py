@@ -72,12 +72,12 @@ def read_chan(context, filepath, z_up, rot_ord, sensor_width, sensor_height):
             mrot_mat.resize_4x4()
 
             # merge the rotation and translation
-            m_trans_mat = translation_mat * mrot_mat
+            m_trans_mat = translation_mat @ mrot_mat
 
             # correct the world space
             # (nuke's and blenders scene spaces are different)
             if z_up:
-                m_trans_mat = rot_mat * m_trans_mat
+                m_trans_mat = rot_mat @ m_trans_mat
 
             # break the matrix into a set of the coordinates
             trns = m_trans_mat.decompose()

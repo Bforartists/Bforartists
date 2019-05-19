@@ -534,25 +534,25 @@ def draw_obj(atom_shape, atom, new_material):
             segments=32,
             ring_count=32,
             radius=1,
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
     if atom_shape == '1b': #Sphere NURBS
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0.0, 0.0, 0.0))
     if atom_shape == '2': #Cube
         bpy.ops.mesh.primitive_cube_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0.0, 0.0, 0.0))
     if atom_shape == '3': #Plane
         bpy.ops.mesh.primitive_plane_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0.0, 0.0, 0.0))
@@ -561,13 +561,13 @@ def draw_obj(atom_shape, atom, new_material):
             vertices=32,
             radius=1,
             fill_type='NOTHING',
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
     if atom_shape == '4b': #Circle NURBS
         bpy.ops.surface.primitive_nurbs_surface_circle_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
@@ -576,7 +576,7 @@ def draw_obj(atom_shape, atom, new_material):
         bpy.ops.mesh.primitive_ico_sphere_add(
             subdivisions=int(index[atom_shape]),
             radius=1,
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
@@ -586,13 +586,13 @@ def draw_obj(atom_shape, atom, new_material):
             radius=1,
             depth=2,
             end_fill_type='NGON',
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
     if atom_shape == '6b': #Cylinder NURBS
         bpy.ops.surface.primitive_nurbs_surface_cylinder_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
@@ -603,7 +603,7 @@ def draw_obj(atom_shape, atom, new_material):
             radius2=0,
             depth=2,
             end_fill_type='NGON',
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
@@ -611,7 +611,7 @@ def draw_obj(atom_shape, atom, new_material):
         bpy.ops.mesh.primitive_torus_add(
             rotation=(0, 0, 0),
             location=atom.location,
-            view_align=False,
+            align='WORLD',
             major_radius=1,
             minor_radius=0.25,
             major_segments=48,
@@ -620,7 +620,7 @@ def draw_obj(atom_shape, atom, new_material):
             abso_minor_rad=0.5)
     if atom_shape == '8b': #Torus NURBS
         bpy.ops.surface.primitive_nurbs_surface_torus_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=atom.location,
             rotation=(0, 0, 0))
@@ -699,7 +699,7 @@ def draw_obj_special(atom_shape, atom):
     # F2+ center
     if atom_shape == '1':
         # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(view_align=False,
+        bpy.ops.mesh.primitive_cube_add(align='WORLD',
                                         enter_editmode=False,
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0))
@@ -763,7 +763,7 @@ def draw_obj_special(atom_shape, atom):
     # F+ center
     if atom_shape == '2':
         # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(view_align=False,
+        bpy.ops.mesh.primitive_cube_add(align='WORLD',
                                         enter_editmode=False,
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0))
@@ -790,7 +790,7 @@ def draw_obj_special(atom_shape, atom):
         # Create now an electron
         scale = atom.scale / 10.0
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                                        view_align=False,
+                                        align='WORLD',
                                         enter_editmode=False,
                                         location=(0.0, 0.0, 0.0),
                                         rotation=(0.0, 0.0, 0.0))
@@ -850,7 +850,7 @@ def draw_obj_special(atom_shape, atom):
     # F0 center
     if atom_shape == '3':
         # Create first a cube
-        bpy.ops.mesh.primitive_cube_add(view_align=False,
+        bpy.ops.mesh.primitive_cube_add(align='WORLD',
                                         enter_editmode=False,
                                         location=atom.location,
                                         rotation=(0.0, 0.0, 0.0))
@@ -877,7 +877,7 @@ def draw_obj_special(atom_shape, atom):
         # Create now two electrons
         scale = atom.scale / 10.0
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                                        view_align=False,
+                                        align='WORLD',
                                         enter_editmode=False,
                                         location=(scale[0]*1.5,0.0,0.0),
                                         rotation=(0.0, 0.0, 0.0))
@@ -886,7 +886,7 @@ def draw_obj_special(atom_shape, atom):
         electron1.name = atom.name + "_F0_electron1"
         electron1.parent = cube
         bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                                        view_align=False,
+                                        align='WORLD',
                                         enter_editmode=False,
                                         location=(-scale[0]*1.5,0.0,0.0),
                                         rotation=(0.0, 0.0, 0.0))
