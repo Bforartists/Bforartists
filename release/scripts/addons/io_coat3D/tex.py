@@ -543,17 +543,14 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
             tex_img_node = texture_tree.nodes.new('ShaderNodeTexImage')
 
-            if(type['colorspace'] == 'color' ):
-                tex_img_node.color_space = 'COLOR'
-            else:
-                tex_img_node.color_space = 'NONE'
-
-
             for ind, tex_index in enumerate(texcoat[type['name']]):
                 if(tex_index[0] == tile):
                     tex_img_node.image = bpy.data.images.load(texcoat[type['name']][ind][1])
                     break
             tex_img_node.location = tex_loc
+
+            if tex_img_node.image and type['colorspace'] != 'color':
+                tex_img_node.image.colorspace_settings.is_data = True
 
             tex_uv_node = texture_tree.nodes.new('ShaderNodeUVMap')
             tex_uv_node.location = uv_loc
@@ -689,8 +686,8 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
     if(tile_list == []):
         node.image = bpy.data.images.load(texcoat[type['name']][0])
-        if(type['colorspace'] == 'noncolor'):
-            node.color_space = 'NONE'
+        if node.image and type['colorspace'] == 'noncolor':
+            node.image.colorspace_settings.is_data = True
 
     if (coat3D.createnodes):
 

@@ -22,7 +22,7 @@ bl_info = {
     "name": "Nuke Animation Format (.chan)",
     "author": "Michael Krupa",
     "version": (1, 0),
-    "blender": (2, 61, 0),
+    "blender": (2, 80, 0),
     "location": "File > Import/Export > Nuke (.chan)",
     "description": "Import/Export object's animation with nuke",
     "warning": "",

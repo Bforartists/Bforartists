@@ -406,7 +406,8 @@ static void rna_Image_pixels_set(PointerRNA *ptr, const float *values)
         ((unsigned char *)ibuf->rect)[i] = unit_float_to_uchar_clamp(values[i]);
     }
 
-    ibuf->userflags |= IB_BITMAPDIRTY | IB_DISPLAY_BUFFER_INVALID | IB_MIPMAP_INVALID;
+    ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID | IB_MIPMAP_INVALID;
+    BKE_image_mark_dirty(ima, ibuf);
     if (!G.background) {
       GPU_free_image(ima);
     }
@@ -478,7 +479,9 @@ static PointerRNA rna_render_slots_active_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_RenderSlot, render_slot);
 }
 
-static void rna_render_slots_active_set(PointerRNA *ptr, PointerRNA value)
+static void rna_render_slots_active_set(struct ReportList *UNUSED(reports),
+                                        PointerRNA *ptr,
+                                        PointerRNA value)
 {
   Image *image = (Image *)ptr->id.data;
   if (value.id.data == image) {

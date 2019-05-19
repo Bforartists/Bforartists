@@ -336,7 +336,7 @@ class SnapUtilities:
         from .snap_context_l import global_snap_context_get
 
         #Create Snap Context
-        self.sctx = global_snap_context_get(context.depsgraph, context.region, context.space_data)
+        self.sctx = global_snap_context_get(context.evaluated_depsgraph_get(), context.region, context.space_data)
         self.sctx.set_pixel_dist(12)
         self.sctx.use_clip_planes(True)
 

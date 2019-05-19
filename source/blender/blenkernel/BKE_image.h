@@ -153,29 +153,6 @@ struct RenderData;
 struct RenderPass;
 struct RenderResult;
 
-/* ima->source; where image comes from */
-#define IMA_SRC_CHECK 0
-#define IMA_SRC_FILE 1
-#define IMA_SRC_SEQUENCE 2
-#define IMA_SRC_MOVIE 3
-#define IMA_SRC_GENERATED 4
-#define IMA_SRC_VIEWER 5
-
-/* ima->type, how to handle/generate it */
-#define IMA_TYPE_IMAGE 0
-#define IMA_TYPE_MULTILAYER 1
-/* generated */
-#define IMA_TYPE_UV_TEST 2
-/* viewers */
-#define IMA_TYPE_R_RESULT 4
-#define IMA_TYPE_COMPOSITE 5
-
-enum {
-  IMA_GENTYPE_BLANK = 0,
-  IMA_GENTYPE_GRID = 1,
-  IMA_GENTYPE_GRID_COLOR = 2,
-};
-
 /* ima->ok */
 #define IMA_OK 1
 #define IMA_OK_LOADED 2
@@ -340,12 +317,16 @@ void BKE_image_buf_fill_checker_color(unsigned char *rect,
 unsigned char *BKE_image_get_pixels_for_frame(struct Image *image, int frame);
 float *BKE_image_get_float_pixels_for_frame(struct Image *image, int frame);
 
+/* Image modifications */
+bool BKE_image_is_dirty(struct Image *image);
+void BKE_image_mark_dirty(struct Image *image, struct ImBuf *ibuf);
+
 /* Guess offset for the first frame in the sequence */
 int BKE_image_sequence_guess_offset(struct Image *image);
 bool BKE_image_has_anim(struct Image *image);
 bool BKE_image_has_packedfile(struct Image *image);
+bool BKE_image_has_filepath(struct Image *ima);
 bool BKE_image_is_animated(struct Image *image);
-bool BKE_image_is_dirty(struct Image *image);
 void BKE_image_file_format_set(struct Image *image,
                                int ftype,
                                const struct ImbFormatOptions *options);

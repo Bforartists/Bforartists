@@ -21,8 +21,8 @@ END GPL LICENSE BLOCK
 bl_info = {
     "name": "Exact Edit",
     "author": "nBurn",
-    "version": (0, 2, 0),
-    "blender": (2, 77, 0),
+    "version": (0, 3, 0),
+    "blender": (2, 80, 0),
     "location": "View3D",
     "description": "Tool for precisely setting distance, scale, and rotation",
     "wiki_url": "https://github.com/n-Burn/Exact_Edit/wiki",
@@ -32,10 +32,10 @@ bl_info = {
 if "bpy" in locals():
     import importlib
     importlib.reload(xedit_set_meas)
-    importlib.reload(xedit_free_rotate)
+    #importlib.reload(xedit_free_rotate)  # not working yet
 else:
     from . import xedit_set_meas
-    from . import xedit_free_rotate
+    #from . import xedit_free_rotate  # not working yet
 
 import bpy
 
@@ -53,14 +53,14 @@ class XEDIT_PT_ui_pan(bpy.types.Panel):
         row = self.layout.row(align=True)
         col = row.column()
         col.operator("view3d.xedit_set_meas_op", text="Set Measure")
-        col.operator("view3d.xedit_free_rotate_op", text="Free Rotate")
+        #col.operator("view3d.xedit_free_rotate_op", text="Free Rotate")  # not working yet
 
 
 classes = (
     xedit_set_meas.XEDIT_OT_store_meas_btn,
     xedit_set_meas.XEDIT_OT_meas_inp_dlg,
     xedit_set_meas.XEDIT_OT_set_meas,
-    xedit_free_rotate.XEDIT_OT_free_rotate,
+    #xedit_free_rotate.XEDIT_OT_free_rotate,  # not working yet
     XEDIT_PT_ui_pan
 )
 
@@ -68,26 +68,10 @@ classes = (
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    #
-    '''
-    bpy.utils.register_class(xedit_set_meas.XEditStoreMeasBtn)
-    bpy.utils.register_class(xedit_set_meas.XEditMeasureInputPanel)
-    bpy.utils.register_class(xedit_set_meas.XEditSetMeas)
-    bpy.utils.register_class(xedit_free_rotate.XEditFreeRotate)
-    bpy.utils.register_class(XEditPanel)
-    '''
 
 def unregister():
     for c in reversed(classes):
         bpy.utils.unregister_class(c)
-    #
-    '''
-    bpy.utils.unregister_class(xedit_set_meas.XEDIT_OT_store_meas_btn)
-    bpy.utils.unregister_class(xedit_set_meas.XEDIT_OT_meas_inp_dlg)
-    bpy.utils.unregister_class(xedit_set_meas.XEDIT_OT_set_meas)
-    bpy.utils.unregister_class(xedit_free_rotate.XEditFreeRotate)
-    bpy.utils.unregister_class(XEDIT_PT_ui_pan)
-    '''
 
 if __name__ == "__main__":
     register()

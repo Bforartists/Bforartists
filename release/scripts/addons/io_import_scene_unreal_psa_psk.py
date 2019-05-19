@@ -485,7 +485,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
                 else:
                     newbone.roll = math.radians(-90.0)
                 """
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     #==================================================================================================
     #END BONE DATA BUILD
@@ -698,7 +698,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     #bpy.context.scene.objects.active = ob_new
     me_ob.update()
     bpy.context.collection.objects.link(obmesh)
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
     obmesh.select_set(False)
     ob_new.select_set(False)
     obmesh.select_set(True)
@@ -959,7 +959,7 @@ def psaimport(filename,context):
         Group = raw_action[1]
         Totalbones = raw_action[2]
         NumRawFrames = raw_action[3]
-        context.scene.update()
+        context.view_layer.update()
         object = bpy.data.objects['ArmObject']
         object.animation_data_create()
         action = bpy.data.actions.new(name=Name)
@@ -995,7 +995,7 @@ def psaimport(filename,context):
                 bone.keyframe_insert("location")
 
             def whirlSingleBone(pose_bone,quat):
-                bpy.context.scene.update()
+                bpy.context.view_layer.update()
                 #record child's matrix and origin rotate
                 hymat = Quaternion((0.707, -0.707, 0, 0)).inverted().to_matrix().to_4x4()
                 children_infos = {}
@@ -1011,7 +1011,7 @@ def psaimport(filename,context):
                 pose_bone.matrix *= quat.to_matrix().to_4x4()
                 pose_bone.keyframe_insert("location")
                 pose_bone.keyframe_insert("rotation_quaternion")
-                bpy.context.scene.update()
+                bpy.context.view_layer.update()
                 #set back children bon to original position
                 #reverse whirl child bone by quat.inverse()
 

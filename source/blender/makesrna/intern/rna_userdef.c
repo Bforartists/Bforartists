@@ -184,6 +184,13 @@ static void rna_userdef_version_get(PointerRNA *ptr, int *value)
   value[2] = userdef->subversionfile;
 }
 
+static void rna_userdef_ui_update(Main *UNUSED(bmain),
+                                  Scene *UNUSED(scene),
+                                  PointerRNA *UNUSED(ptr))
+{
+  WM_main_add_notifier(NC_WINDOW, NULL);
+}
+
 static void rna_userdef_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *UNUSED(ptr))
 {
   /* We can't use 'ptr->data' because this update function
@@ -452,6 +459,7 @@ static bAddon *rna_userdef_addon_new(void)
   ListBase *addons_list = &U.addons;
   bAddon *addon = BKE_addon_new();
   BLI_addtail(addons_list, addon);
+  U.runtime.is_dirty = true;
   return addon;
 }
 
@@ -466,12 +474,14 @@ static void rna_userdef_addon_remove(ReportList *reports, PointerRNA *addon_ptr)
   BLI_remlink(addons_list, addon);
   BKE_addon_free(addon);
   RNA_POINTER_INVALIDATE(addon_ptr);
+  U.runtime.is_dirty = true;
 }
 
 static bPathCompare *rna_userdef_pathcompare_new(void)
 {
   bPathCompare *path_cmp = MEM_callocN(sizeof(bPathCompare), "bPathCompare");
   BLI_addtail(&U.autoexec_paths, path_cmp);
+  U.runtime.is_dirty = true;
   return path_cmp;
 }
 
@@ -485,6 +495,7 @@ static void rna_userdef_pathcompare_remove(ReportList *reports, PointerRNA *path
 
   BLI_freelinkN(&U.autoexec_paths, path_cmp);
   RNA_POINTER_INVALIDATE(path_cmp_ptr);
+  U.runtime.is_dirty = true;
 }
 
 static void rna_userdef_temp_update(Main *UNUSED(bmain),
@@ -2239,6 +2250,26 @@ static void rna_def_userdef_theme_space_outliner(BlenderRNA *brna)
   prop = RNA_def_property(srna, "selected_highlight", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_array(prop, 3);
   RNA_def_property_ui_text(prop, "Selected Highlight", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "selected_object", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Selected Objects", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "active_object", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_ui_text(prop, "Active Object", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "edited_object", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Edited Object", "");
+  RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
+
+  prop = RNA_def_property(srna, "row_alternate", PROP_FLOAT, PROP_COLOR_GAMMA);
+  RNA_def_property_array(prop, 4);
+  RNA_def_property_ui_text(prop, "Alternate Rows", "Overlay color on every other row");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 }
 
@@ -4144,26 +4175,25 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   /* pie menus */
   prop = RNA_def_property(srna, "pie_initial_timeout", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 0, 1000);
-  RNA_def_property_ui_text(prop,
-                           "Recenter Timeout",
-                           "Recenter Timeout\nPie menus will use the initial mouse position as "
-                           "center for this amount of time "
-                           "(in 1/100ths of sec)");
+  RNA_def_property_ui_text(
+      prop,
+      "Recenter Timeout",
+      "Pie menus will use the initial mouse position as center for this amount of time "
+      "(in 1/100ths of sec)");
 
   prop = RNA_def_property(srna, "pie_tap_timeout", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 0, 1000);
-  RNA_def_property_ui_text(
-      prop,
-      "Tap Key Timeout",
-      "Tap Key TimeoutnPie menu button held longer than this will dismiss menu on release."
-      "(in 1/100ths of sec)");
+  RNA_def_property_ui_text(prop,
+                           "Tap Key Timeout",
+                           "Tap Key Timeout\nPie menu button held longer than this will dismiss menu on release."
+                           "(in 1/100ths of sec)");
 
   prop = RNA_def_property(srna, "pie_animation_timeout", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 0, 1000);
-  RNA_def_property_ui_text(prop,
-                           "Animation Timeout",
-                           "Animation Timeout\nTime needed to fully animate the pie to unfolded "
-                           "state (in 1/100ths of sec)");
+  RNA_def_property_ui_text(
+      prop,
+      "Animation Timeout",
+      "Animation Timeout\nTime needed to fully animate the pie to unfolded state (in 1/100ths of sec)");
 
   prop = RNA_def_property(srna, "pie_menu_radius", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 0, 1000);
@@ -5906,6 +5936,16 @@ void RNA_def_userdef(BlenderRNA *brna)
                                     NULL,
                                     NULL);
   RNA_def_property_ui_text(prop, "Studio Lights", "");
+
+  /* Preferences Flags */
+  prop = RNA_def_property(srna, "use_preferences_save", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "pref_flag", USER_PREF_FLAG_SAVE);
+  RNA_def_property_ui_text(prop, "Save on Exit", "Save on ExitnSave modified preferences on exit");
+
+  prop = RNA_def_property(srna, "is_dirty", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "runtime.is_dirty", 0);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_ui_text(prop, "Dirty", "Dirty\nPreferences have changed");
 
   rna_def_userdef_view(brna);
   rna_def_userdef_edit(brna);

@@ -814,7 +814,9 @@ static PointerRNA rna_NodeTree_active_node_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_Node, node);
 }
 
-static void rna_NodeTree_active_node_set(PointerRNA *ptr, const PointerRNA value)
+static void rna_NodeTree_active_node_set(struct ReportList *UNUSED(reports),
+                                         PointerRNA *ptr,
+                                         const PointerRNA value)
 {
   bNodeTree *ntree = (bNodeTree *)ptr->data;
   bNode *node = (bNode *)value.data;
@@ -1608,7 +1610,9 @@ static IDProperty *rna_Node_idprops(PointerRNA *ptr, bool create)
   return node->prop;
 }
 
-static void rna_Node_parent_set(PointerRNA *ptr, PointerRNA value)
+static void rna_Node_parent_set(struct ReportList *UNUSED(reports),
+                                PointerRNA *ptr,
+                                PointerRNA value)
 {
   bNode *node = ptr->data;
   bNode *parent = value.data;
@@ -2683,7 +2687,9 @@ static void rna_NodeGroup_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *
   ED_node_tag_update_nodetree(bmain, ntree, node);
 }
 
-static void rna_NodeGroup_node_tree_set(PointerRNA *ptr, const PointerRNA value)
+static void rna_NodeGroup_node_tree_set(struct ReportList *UNUSED(reports),
+                                        PointerRNA *ptr,
+                                        const PointerRNA value)
 {
   bNodeTree *ntree = ptr->id.data;
   bNode *node = ptr->data;
@@ -2791,7 +2797,9 @@ static void rna_Matte_t2_set(PointerRNA *ptr, float value)
   chroma->t2 = value;
 }
 
-static void rna_Node_scene_set(PointerRNA *ptr, PointerRNA value)
+static void rna_Node_scene_set(struct ReportList *UNUSED(reports),
+                               PointerRNA *ptr,
+                               PointerRNA value)
 {
   bNode *node = (bNode *)ptr->data;
 
@@ -3345,7 +3353,9 @@ static PointerRNA rna_ShaderNodePointDensity_psys_get(PointerRNA *ptr)
   return value;
 }
 
-static void rna_ShaderNodePointDensity_psys_set(PointerRNA *ptr, PointerRNA value)
+static void rna_ShaderNodePointDensity_psys_set(struct ReportList *UNUSED(reports),
+                                                PointerRNA *ptr,
+                                                PointerRNA value)
 {
   bNode *node = ptr->data;
   NodeShaderTexPointDensity *shader_point_density = node->storage;
@@ -3987,21 +3997,6 @@ static void def_sh_tex_sky(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
-static const EnumPropertyItem sh_tex_prop_color_space_items[] = {
-    {SHD_COLORSPACE_COLOR,
-     "COLOR",
-     0,
-     "Color",
-     "Image contains color data, and will be converted to linear color for rendering"},
-    {SHD_COLORSPACE_NONE,
-     "NONE",
-     0,
-     "Non-Color Data",
-     "Image contains non-color data, for example a displacement or normal map, "
-     "and will not be converted"},
-    {0, NULL, 0, NULL, NULL},
-};
-
 static const EnumPropertyItem sh_tex_prop_interpolation_items[] = {
     {SHD_INTERP_LINEAR, "Linear", 0, "Linear", "Linear interpolation"},
     {SHD_INTERP_CLOSEST, "Closest", 0, "Closest", "No interpolation (sample closest texel)"},
@@ -4037,12 +4032,6 @@ static void def_sh_tex_environment(StructRNA *srna)
 
   RNA_def_struct_sdna_from(srna, "NodeTexEnvironment", "storage");
   def_sh_tex(srna);
-
-  prop = RNA_def_property(srna, "color_space", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, sh_tex_prop_color_space_items);
-  RNA_def_property_enum_default(prop, SHD_COLORSPACE_COLOR);
-  RNA_def_property_ui_text(prop, "Color Space", "Image file color space");
-  RNA_def_property_update(prop, 0, "rna_Node_update");
 
   prop = RNA_def_property(srna, "projection", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, prop_projection_items);
@@ -4121,12 +4110,6 @@ static void def_sh_tex_image(StructRNA *srna)
 
   RNA_def_struct_sdna_from(srna, "NodeTexImage", "storage");
   def_sh_tex(srna);
-
-  prop = RNA_def_property(srna, "color_space", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, sh_tex_prop_color_space_items);
-  RNA_def_property_enum_default(prop, SHD_COLORSPACE_COLOR);
-  RNA_def_property_ui_text(prop, "Color Space", "Image file color space");
-  RNA_def_property_update(prop, 0, "rna_Node_update");
 
   prop = RNA_def_property(srna, "projection", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, prop_projection_items);

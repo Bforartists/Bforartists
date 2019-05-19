@@ -37,7 +37,7 @@ def Add_Chain():
     # Adds Empty to scene
     bpy.ops.object.add(
             type='EMPTY',
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=(0, 0, 0),
             rotation=(0, 0, 0),
@@ -52,7 +52,7 @@ def Add_Chain():
 
     # Adds Curve Path to scene
     bpy.ops.curve.primitive_nurbs_path_add(
-            view_align=False,
+            align='WORLD',
             enter_editmode=False,
             location=(0, 0, 0),
             rotation=(0, 0, 0),

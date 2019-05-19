@@ -108,7 +108,7 @@ class add_cycles_scene(Operator):
 
             # Add plane
             bpy.ops.mesh.primitive_plane_add(
-                    radius=50, view_align=False,
+                    radius=50, align='WORLD',
                     enter_editmode=False, location=(0, 0, -1)
                     )
             bpy.ops.object.editmode_toggle()

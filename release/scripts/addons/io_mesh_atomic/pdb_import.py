@@ -386,8 +386,8 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
         if "CONECT" not in line:
             break
 
-        # Note 2019-03-16: in a PDB file the identifier for sticks is called 
-        # 'CONECT' and NOT 'CONNECT'! Please leave this as is, otherwise the 
+        # Note 2019-03-16: in a PDB file the identifier for sticks is called
+        # 'CONECT' and NOT 'CONNECT'! Please leave this as is, otherwise the
         # sticks are NOT correctly loaded.
 
         # The strings of the atom numbers do have a clear position in the file
@@ -428,7 +428,7 @@ def read_pdb_file_sticks(filepath_pdb, use_sticks_bonds, all_atoms):
 
                 if number == 2 or number == 3:
                     basis_list = list(set(atom_list[1:]))
-                    
+
                     if len(basis_list) > 1:
                         basis1 = (all_atoms[atom1-1].location
                                 - all_atoms[basis_list[0]-1].location)
@@ -530,7 +530,7 @@ def build_stick(radius, length, sectors, element_name):
     cylinder.from_pydata(vertices, [], faces1)
     cylinder.update()
     new_cylinder = bpy.data.objects.new(element_name+"_sticks_cylinder", cylinder)
-    # Attention: the linking will be done a few moments later, after this 
+    # Attention: the linking will be done a few moments later, after this
     # is done definition.
 
     # Build the mesh, Cups
@@ -538,9 +538,9 @@ def build_stick(radius, length, sectors, element_name):
     cups.from_pydata(vertices, [], faces2)
     cups.update()
     new_cups = bpy.data.objects.new(element_name+"_sticks_cup", cups)
-    # Attention: the linking will be done a few moments later, after this 
+    # Attention: the linking will be done a few moments later, after this
     # is done definition.
-    
+
     return (new_cylinder, new_cups)
 
 
@@ -555,12 +555,12 @@ def rotate_object(rot_mat, obj):
 
     orig_loc_mat   = Matrix.Translation(orig_loc)
     orig_rot_mat   = orig_rot.to_matrix().to_4x4()
-    orig_scale_mat = (Matrix.Scale(orig_scale[0],4,(1,0,0)) @ 
-                      Matrix.Scale(orig_scale[1],4,(0,1,0)) @ 
+    orig_scale_mat = (Matrix.Scale(orig_scale[0],4,(1,0,0)) @
+                      Matrix.Scale(orig_scale[1],4,(0,1,0)) @
                       Matrix.Scale(orig_scale[2],4,(0,0,1)))
 
     # Assemble the new matrix.
-    obj.matrix_world = orig_loc_mat @ rot_mat @ orig_rot_mat @ orig_scale_mat 
+    obj.matrix_world = orig_loc_mat @ rot_mat @ orig_rot_mat @ orig_scale_mat
 
 
 # Function, which puts a camera and light source into the 3D scene
@@ -607,8 +607,8 @@ def camera_light_source(use_camera,
         # camera position and view onto the object.
         bpy.ops.object.select_all(action='DESELECT')
         camera.select_set(True)
-        
-        # Rotate the camera around its axis 'object_camera_vec' by 90° such 
+
+        # Rotate the camera around its axis 'object_camera_vec' by 90° such
         # that we have a nice camera view onto the object.
         matrix_rotation = Matrix.Rotation(90/360*2*pi, 4, object_camera_vec)
         rotate_object(matrix_rotation, camera)
@@ -663,13 +663,13 @@ def draw_atoms_one_type(draw_all_atoms_type,
         # the whole object is translated back to 'object_center_vec'.
         atom_vertices.append(atom[2] - object_center_vec)
 
-    # IMPORTANT: First, we create a collection of the element, which contains 
+    # IMPORTANT: First, we create a collection of the element, which contains
     # the atoms (balls + mesh) AND the sticks! The definition dealing with the
-    # sticks will put the sticks inside this collection later on. 
+    # sticks will put the sticks inside this collection later on.
     coll_element_name = atom[0] # the element name
     # Create the new collection and ...
     coll_element = bpy.data.collections.new(coll_element_name)
-    # ... link it to the collection, which contains all parts of the 
+    # ... link it to the collection, which contains all parts of the
     # molecule.
     collection_molecule.children.link(coll_element)
 
@@ -678,7 +678,7 @@ def draw_atoms_one_type(draw_all_atoms_type,
     coll_atom_name = atom[0] + "_atom"
     # Create the new collection and ...
     coll_atom = bpy.data.collections.new(coll_atom_name)
-    # ... link it to the collection, which contains all parts of the 
+    # ... link it to the collection, which contains all parts of the
     # element (ball and mesh).
     coll_element.children.link(coll_atom)
 
@@ -694,24 +694,24 @@ def draw_atoms_one_type(draw_all_atoms_type,
     # Now, build a representative sphere (atom).
     if atom[0] == "Vacancy":
         bpy.ops.mesh.primitive_cube_add(
-                        view_align=False, enter_editmode=False,
+                        align='WORLD', enter_editmode=False,
                         location=(0.0, 0.0, 0.0),
                         rotation=(0.0, 0.0, 0.0))
     else:
         # NURBS balls
         if Ball_type == "0":
             bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                        view_align=False, enter_editmode=False,
+                        align='WORLD', enter_editmode=False,
                         location=(0,0,0), rotation=(0.0, 0.0, 0.0))
         # UV balls
         elif Ball_type == "1":
             bpy.ops.mesh.primitive_uv_sphere_add(
                         segments=Ball_azimuth, ring_count=Ball_zenith,
-                        view_align=False, enter_editmode=False,
+                        align='WORLD', enter_editmode=False,
                         location=(0,0,0), rotation=(0, 0, 0))
         # Meta balls
         elif Ball_type == "2":
-            bpy.ops.object.metaball_add(type='BALL', view_align=False,
+            bpy.ops.object.metaball_add(type='BALL', align='WORLD',
                         enter_editmode=False, location=(0, 0, 0),
                         rotation=(0, 0, 0))
 
@@ -728,7 +728,7 @@ def draw_atoms_one_type(draw_all_atoms_type,
     if atom[0] == "Vacancy":
         ball.name = atom[0] + "_cube"
     else:
-        ball.name = atom[0] + "_ball" 
+        ball.name = atom[0] + "_ball"
 
     ball.active_material = atom[1]
     ball.parent = new_atom_mesh
@@ -896,7 +896,7 @@ def draw_sticks_dupliverts(all_atoms,
         coll_name = stick[0][1:] + "_sticks"
         # Create the collection and ...
         coll = bpy.data.collections.new(coll_name)
-        # ... link it to the collection, which contains all parts of the 
+        # ... link it to the collection, which contains all parts of the
         # element. 'stick[0][1:]' contains the name of the element!
         for coll_element_from_list in list_coll_elements:
             if stick[0][1:] in coll_element_from_list.name:
@@ -913,16 +913,16 @@ def draw_sticks_dupliverts(all_atoms,
 
         # Build the object.
         # Get the cylinder from the 'build_stick' function.
-        object_stick = build_stick(Stick_diameter, 
-                                   dl, 
-                                   Stick_sectors, 
+        object_stick = build_stick(Stick_diameter,
+                                   dl,
+                                   Stick_sectors,
                                    stick[0][1:])
         # Link active object to the new collection
         coll.objects.link(object_stick[0])
         coll.objects.link(object_stick[1])
 
         # Hide these objects because their appearance has no meaning. They are
-        # just the representative objects. The cylinder and cups are visible at 
+        # just the representative objects. The cylinder and cups are visible at
         # the vertices of the mesh. Rememmber, this is a dupliverts construct!
         object_stick[0].hide_set(True)
         object_stick[1].hide_set(True)
@@ -931,7 +931,7 @@ def draw_sticks_dupliverts(all_atoms,
         stick_cylinder.active_material = stick[3]
         stick_cups = object_stick[1]
         stick_cups.active_material = stick[3]
-    
+
         # Smooth the cylinders.
         if use_sticks_smooth == True:
             bpy.ops.object.select_all(action='DESELECT')
@@ -1075,21 +1075,23 @@ def draw_sticks_skin(all_atoms,
     # This is somewhat a factor for the radius.
     r_f = 4.0
     # Apply operator 'skin_resize'.
-    bpy.ops.transform.skin_resize(value=(Stick_diameter*r_f,
-                                         Stick_diameter*r_f,
-                                         Stick_diameter*r_f),
-                             constraint_axis=(False, False, False),
-                             orient_type='GLOBAL',
-                             mirror=False,
-                             proportional='DISABLED',
-                             proportional_edit_falloff='SMOOTH',
-                             proportional_size=1,
-                             snap=False,
-                             snap_target='CLOSEST',
-                             snap_point=(0, 0, 0),
-                             snap_align=False,
-                             snap_normal=(0, 0, 0),
-                             release_confirm=False)
+    bpy.ops.transform.skin_resize(
+        value=(
+            Stick_diameter * r_f,
+            Stick_diameter * r_f,
+            Stick_diameter * r_f,
+        ),
+        constraint_axis=(False, False, False),
+        orient_type='GLOBAL',
+        mirror=False,
+        use_proportional_edit=False,
+        snap=False,
+        snap_target='CLOSEST',
+        snap_point=(0, 0, 0),
+        snap_align=False,
+        snap_normal=(0, 0, 0),
+        release_confirm=False,
+    )
     # Back to the OBJECT mode.
     bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
@@ -1139,7 +1141,7 @@ def draw_sticks_normal(all_atoms,
                                                     radius=Stick_diameter,
                                                     depth=v.length,
                                                     end_fill_type='NGON',
-                                                    view_align=False,
+                                                    align='WORLD',
                                                     enter_editmode=False,
                                                     location=location,
                                                     rotation=(0, 0, 0))
@@ -1199,17 +1201,17 @@ def draw_sticks_normal(all_atoms,
             coll_past = coll_all[0]
         else:
             coll_past = bpy.context.scene.collection
-            
+
         # Link the sticks with the collection of the molecule ...
         coll_molecule.objects.link(sticks)
         # ... and unlink them from the collection it has been before.
         coll_past.objects.unlink(sticks)
-                        
+
         return sticks
     else:
         # Here we use an empty ...
         bpy.ops.object.empty_add(type='ARROWS',
-                                  view_align=False,
+                                  align='WORLD',
                                   location=(0, 0, 0),
                                   rotation=(0, 0, 0))
         sticks_empty = bpy.context.view_layer.objects.active
@@ -1225,7 +1227,7 @@ def draw_sticks_normal(all_atoms,
         # ===========
         # Create a collection that will contain all sticks + the empty and ...
         coll = bpy.data.collections.new("Sticks")
-        # ... link it to the collection, which contains all parts of the 
+        # ... link it to the collection, which contains all parts of the
         # molecule.
         coll_molecule.children.link(coll)
         # Now, create a collection that only contains the sticks and ...
@@ -1242,7 +1244,7 @@ def draw_sticks_normal(all_atoms,
         # ... link the empty with the new collection  ...
         coll.objects.link(sticks_empty)
         # ... and unlink it from the old collection where it has been before.
-        coll_past.objects.unlink(sticks_empty) 
+        coll_past.objects.unlink(sticks_empty)
 
         # Note the collection where the cylinders were placed into, ...
         coll_all = list_group_sub[0].users_collection
@@ -1250,12 +1252,12 @@ def draw_sticks_normal(all_atoms,
             coll_past = coll_all[0]
         else:
             coll_past = bpy.context.scene.collection
-        
+
         for stick in list_group_sub:
             # ... link each stick with the new collection  ...
             coll_cylinder.objects.link(stick)
             # ... and unlink it from the old collection.
-            coll_past.objects.unlink(stick) 
+            coll_past.objects.unlink(stick)
 
         return sticks_empty
 
@@ -1285,7 +1287,7 @@ def import_pdb(Ball_type,
                use_camera,
                use_light,
                filepath_pdb):
-        
+
     # List of materials
     atom_material_list = []
 
@@ -1361,7 +1363,7 @@ def import_pdb(Ball_type,
                     mat_P_BSDF.inputs['Metallic'].default_value = 0.1
                     mat_P_BSDF.inputs['Roughness'].default_value = 0.2
                     mat_P_BSDF.inputs['Transmission'].default_value = 0.97
-                    mat_P_BSDF.inputs['IOR'].default_value = 0.8                                        
+                    mat_P_BSDF.inputs['IOR'].default_value = 0.8
                 # The atom gets its properties.
                 atom.material = material
 
@@ -1455,7 +1457,7 @@ def import_pdb(Ball_type,
     # ------------------------------------------------------------------------
     # COLLECTION
 
-    # Before we start to draw the atoms and sticks, we first create a 
+    # Before we start to draw the atoms and sticks, we first create a
     # collection for the molecule. All atoms (balls) and sticks (cylinders)
     # are put into this collection.
     coll_molecule_name = os.path.basename(filepath_pdb)

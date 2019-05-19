@@ -37,6 +37,10 @@ def strip_trailing_number(s):
     return s[0:-4] if m else s
 
 
+def strip_prefix(name):
+    return re.sub(r'^(?:ORG|MCH|DEF)-', '', name)
+
+
 def unique_name(collection, base_name):
     base_name = strip_trailing_number(base_name)
     count = 1
@@ -116,11 +120,27 @@ def deformer(name):
 make_deformer_name = deformer
 
 
+_prefix_functions = { 'org': org, 'mch': mch, 'def': deformer, 'ctrl': lambda x: x }
+
+
 def insert_before_lr(name, text):
-    if name[-1] in ['l', 'L', 'r', 'R'] and name[-2] in ['.', '-', '_']:
-        return name[:-2] + text + name[-2:]
-    else:
-        return name + text
+    name_parts = re.match(r'^(.*?)((?:[._-][lLrR](?:\.\d+)?)?)$', name)
+    name_base, name_suffix = name_parts.groups()
+    return name_base + text + name_suffix
+
+
+def make_derived_name(name, subtype, suffix=None):
+    """ Replaces the name prefix, and optionally adds the suffix (before .LR if found).
+    """
+    assert(subtype in _prefix_functions)
+
+    name = strip_prefix(name)
+
+    if suffix:
+        name = insert_before_lr(name, suffix)
+
+    return _prefix_functions[subtype](name)
+
 
 def random_id(length=8):
     """ Generates a random alphanumeric id string.

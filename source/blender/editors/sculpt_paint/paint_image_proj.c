@@ -1837,7 +1837,7 @@ static int project_paint_undo_subtiles(const TileInfo *tinf, int tx, int ty)
                                       false);
     }
 
-    pjIma->ibuf->userflags |= IB_BITMAPDIRTY;
+    BKE_image_mark_dirty(pjIma->ima, pjIma->ibuf);
     /* tile ready, publish */
     if (tinf->lock) {
       BLI_spin_lock(tinf->lock);
@@ -6395,7 +6395,7 @@ static const EnumPropertyItem layer_type_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
-static Image *proj_paint_image_create(wmOperator *op, Main *bmain)
+static Image *proj_paint_image_create(wmOperator *op, Main *bmain, bool is_data)
 {
   Image *ima;
   float color[4] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -6417,6 +6417,11 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain)
   }
   ima = BKE_image_add_generated(
       bmain, width, height, imagename, alpha ? 32 : 24, use_float, gen_type, color, false);
+
+  if (is_data) {
+    STRNCPY(ima->colorspace_settings.name,
+            IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_DATA));
+  }
 
   return ima;
 }
@@ -6488,6 +6493,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
   if (ma) {
     Main *bmain = CTX_data_main(C);
     int type = RNA_enum_get(op->ptr, "type");
+    bool is_data = (type > LAYER_BASE_COLOR);
 
     bNode *imanode;
     bNodeTree *ntree = ma->nodetree;
@@ -6502,7 +6508,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
     /* try to add an image node */
     imanode = nodeAddStaticNode(C, ntree, SH_NODE_TEX_IMAGE);
 
-    ima = proj_paint_image_create(op, bmain);
+    ima = proj_paint_image_create(op, bmain, is_data);
     imanode->id = &ima->id;
 
     nodeSetActive(ntree, imanode);
@@ -6552,12 +6558,6 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
         else {
           in_sock = NULL;
         }
-      }
-
-      if (type > LAYER_BASE_COLOR) {
-        /* This is a "non color data" image */
-        NodeTexImage *tex = imanode->storage;
-        tex->color_space = SHD_COLORSPACE_NONE;
       }
 
       /* Check if the socket in already connected to something */

@@ -37,7 +37,7 @@ def create_lamp(context, loc):
     bpy.ops.object.light_add(
         type='POINT',
         radius=1,
-        view_align=False,
+        align='WORLD',
         location=loc)
     lamp = context.active_object
     lamp.data.use_nodes = True
@@ -47,7 +47,7 @@ def create_lamp(context, loc):
 
 def create_camera(context, loc, rot):
     bpy.ops.object.camera_add(
-        view_align=True,
+        align='VIEW',
         enter_editmode=False,
         location=loc,
         rotation=rot)
@@ -159,7 +159,7 @@ def generateThumb(context, cls, preset, engine):
     # add plane
     bpy.ops.mesh.primitive_plane_add(
         size=1000,
-        view_align=False,
+        align='WORLD',
         enter_editmode=False,
         location=(0, 0, 0)
     )

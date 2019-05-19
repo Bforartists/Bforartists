@@ -207,9 +207,8 @@ static void EDIT_CURVE_cache_init(void *vedata)
     DRWShadingGroup *grp;
 
     /* Center-Line (wire) */
-    psl->wire_pass = DRW_pass_create("Curve Wire",
-                                     DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                         DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WIRE);
+    psl->wire_pass = DRW_pass_create(
+        "Curve Wire", DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL);
     EDIT_CURVE_wire_shgrp_create(sh_data,
                                  v3d,
                                  rv3d,
@@ -217,9 +216,8 @@ static void EDIT_CURVE_cache_init(void *vedata)
                                  &stl->g_data->wire_shgrp,
                                  &stl->g_data->wire_normals_shgrp);
 
-    psl->wire_pass_xray = DRW_pass_create("Curve Wire Xray",
-                                          DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                              DRW_STATE_DEPTH_ALWAYS | DRW_STATE_WIRE);
+    psl->wire_pass_xray = DRW_pass_create(
+        "Curve Wire Xray", DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_ALWAYS);
     EDIT_CURVE_wire_shgrp_create(sh_data,
                                  v3d,
                                  rv3d,
@@ -239,8 +237,7 @@ static void EDIT_CURVE_cache_init(void *vedata)
     }
     stl->g_data->overlay_edge_shgrp = grp;
 
-    psl->overlay_vert_pass = DRW_pass_create("Curve Vert Overlay",
-                                             DRW_STATE_WRITE_COLOR | DRW_STATE_POINT);
+    psl->overlay_vert_pass = DRW_pass_create("Curve Vert Overlay", DRW_STATE_WRITE_COLOR);
 
     grp = DRW_shgroup_create(sh_data->overlay_vert_sh, psl->overlay_vert_pass);
     DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
@@ -276,31 +273,30 @@ static void EDIT_CURVE_cache_populate(void *vedata, Object *ob)
       }
 
       geom = DRW_cache_curve_edge_wire_get(ob);
-      DRW_shgroup_call_add(wire_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(wire_shgrp, geom, ob->obmat);
 
       if ((cu->flag & CU_3D) && (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_CU_NORMALS) != 0) {
-        static uint instance_len = 2;
         geom = DRW_cache_curve_edge_normal_get(ob);
-        DRW_shgroup_call_instances_add(wire_normals_shgrp, geom, ob->obmat, &instance_len);
+        DRW_shgroup_call_instances(wire_normals_shgrp, geom, ob->obmat, 2);
       }
 
       geom = DRW_cache_curve_edge_overlay_get(ob);
       if (geom) {
-        DRW_shgroup_call_add(stl->g_data->overlay_edge_shgrp, geom, ob->obmat);
+        DRW_shgroup_call(stl->g_data->overlay_edge_shgrp, geom, ob->obmat);
       }
 
       geom = DRW_cache_curve_vert_overlay_get(ob, stl->g_data->show_handles);
-      DRW_shgroup_call_add(stl->g_data->overlay_vert_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->overlay_vert_shgrp, geom, ob->obmat);
     }
   }
 
   if (ob->type == OB_SURF) {
     if (BKE_object_is_in_editmode(ob)) {
       struct GPUBatch *geom = DRW_cache_curve_edge_overlay_get(ob);
-      DRW_shgroup_call_add(stl->g_data->overlay_edge_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->overlay_edge_shgrp, geom, ob->obmat);
 
       geom = DRW_cache_curve_vert_overlay_get(ob, false);
-      DRW_shgroup_call_add(stl->g_data->overlay_vert_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->overlay_vert_shgrp, geom, ob->obmat);
     }
   }
 }

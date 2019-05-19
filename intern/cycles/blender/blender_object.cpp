@@ -149,7 +149,7 @@ void BlenderSync::sync_light(BL::Object &b_parent,
     // }
     case BL::Light::type_SUN: {
       BL::SunLight b_sun_light(b_light);
-      light->size = b_sun_light.shadow_soft_size();
+      light->angle = b_sun_light.angle();
       light->type = LIGHT_DISTANT;
       break;
     }
@@ -181,6 +181,10 @@ void BlenderSync::sync_light(BL::Object &b_parent,
       break;
     }
   }
+
+  /* strength */
+  light->strength = get_float3(b_light.color());
+  light->strength *= BL::PointLight(b_light).energy();
 
   /* location and (inverted!) direction */
   light->co = transform_get_column(&tfm, 3);

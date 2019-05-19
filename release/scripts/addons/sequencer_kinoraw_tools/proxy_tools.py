@@ -175,8 +175,8 @@ class CreateProxyOperator(Operator):
             commands = create_proxy(context, strip, self.size, res)
 
             if commands is None:
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
                 newstrip = context.scene.sequence_editor.active_strip
 
                 # deselect all other strips
@@ -184,8 +184,8 @@ class CreateProxyOperator(Operator):
                     if i.name != newstrip.name:
                         i.select = False
 
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
             else:
                 create_proxy_scripts(proxy_scripts_path, commands, strip.name)
 

@@ -521,7 +521,7 @@ def bvh_node_dict2armature(
         # Quats default
         pass
 
-    context.scene.update()
+    context.view_layer.update()
 
     arm_ob.animation_data_create()
     action = bpy.data.actions.new(name=bvh_name)

@@ -26,7 +26,7 @@ import bmesh
 import bgl
 import blf
 import gpu
-from mathutils import geometry, Euler, Quaternion, Vector
+from mathutils import geometry, Euler, Matrix, Quaternion, Vector
 from bpy_extras import view3d_utils
 from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d_to_reg2d
 from bpy_extras.view3d_utils import region_2d_to_vector_3d as reg2d_to_vec3d
@@ -167,7 +167,7 @@ class MenuHandler:
         self.reg = reg  # region
         self.active = False
 
-        view_offset = 36, 45  # box left top start
+        self.view_offset = 20, 95  # box left top start
         self.box_y_pad = 8  # vertical space between boxes
 
         fontid = 0
@@ -175,18 +175,19 @@ class MenuHandler:
         lcase_wid, lcase_hgt = blf.dimensions(fontid, "n")
         ucase_wid, ucase_hgt = blf.dimensions(fontid, "N")
         bot_space = blf.dimensions(fontid, "gp")[1] - lcase_hgt
-        self.full_hgt = blf.dimensions(fontid, "NTgp")[1]
+        self.full_txt_hgt = blf.dimensions(fontid, "NTgp")[1]
 
         arr_wid, arr_hgt = 12, 16
         arrow_base = (0, 0), (0, arr_hgt), (arr_wid, arr_hgt/2)
-        aw_adj, ah_adj = arr_wid * 1.5, (arr_hgt - ucase_hgt) / 2
+        aw_adj, ah_adj = arr_wid * 0.50, (arr_hgt - ucase_hgt) / 2
         self.arrow_pts = []
         for a in arrow_base:
             self.arrow_pts.append((a[0] - aw_adj, a[1] - ah_adj))
 
-        self.blef = view_offset[0] + toolwid  # box left start
-        self.titlco = self.blef // 2, self.reg.height - view_offset[1]
-        self.btop = self.titlco[1] - (self.full_hgt // 1.5)
+        self.blef = self.view_offset[0] + toolwid  # box left start
+        #self.titlco = self.blef // 2, self.reg.height - self.view_offset[1]
+        self.titlco = self.blef, self.reg.height - self.view_offset[1]
+        self.btop = self.titlco[1] - (self.full_txt_hgt // 1.5)
         self.txt_y_pad = bot_space * 2
 
     def add_menu(self, strings):
@@ -198,8 +199,8 @@ class MenuHandler:
         for i in range(new.cnt):
             new.txtcolrs.append(self.dis_colr)
             new.texts.append(strings[i])
-            bbot = btop - self.full_hgt
-            new.tcoords.append((tlef, bbot))
+            bbot = btop - self.full_txt_hgt
+            new.tcoords.append((tlef + self.view_offset[0], bbot))
             btop = bbot - self.box_y_pad
             new.arrows.append((
                 (self.arrow_pts[0][0] + tlef, self.arrow_pts[0][1] + bbot),
@@ -1242,12 +1243,69 @@ def prep_rotation_info(curr_ms_stor, new_ms_stor):
 # Then rotates selected objects or selected vertices around the
 # 3D cursor using RotDat's ang_diff_r radian value.
 def do_rotate(self):
+    #print("def do_rotate(self):")
+
+    axis_lock = RotDat.axis_lock
+    pivot = self.pts[2].co3d.copy()
+    mode = bpy.context.mode
+    if axis_lock is None:
+        rot_matr = Matrix.Rotation(RotDat.ang_diff_r, 4, RotDat.piv_norm)
+
+        if mode == "EDIT_MESH":
+            bm = bmesh.from_edit_mesh(bpy.context.edit_object.data)
+            if hasattr(bm.verts, "ensure_lookup_table"):
+                bm.verts.ensure_lookup_table()
+            for v in bm.verts:
+                if v.select:
+                    v.co = pivot + (rot_matr @ (v.co - pivot))
+
+            bmesh.update_edit_mesh(bpy.context.edit_object.data)
+
+        elif mode == "OBJECT":
+            for ob in bpy.context.selected_objects:
+                ob_loc, ob_rot, ob_scale = ob.matrix_world.decompose()
+                ob_loc = pivot + (rot_matr @ (ob_loc - pivot))
+                ob_loc_mat   = Matrix.Translation(ob_loc)
+                ob_rot_mat   = ob_rot.to_matrix().to_4x4()
+                ob_scale_mat = (Matrix.Scale(ob_scale[0],4,(1,0,0)) @ 
+                                Matrix.Scale(ob_scale[1],4,(0,1,0)) @ 
+                                Matrix.Scale(ob_scale[2],4,(0,0,1)))
+
+                ob.matrix_world = ob_loc_mat @ rot_matr @ ob_rot_mat @ ob_scale_mat
+
+    else:
+        const_ax = False, False, False
+
+        # back up settings before changing them
+        piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
+        bpy.context.tool_settings.transform_pivot_point = 'CURSOR'
+        curs_loc_back = bpy.context.scene.cursor.location.copy()
+        bpy.context.scene.cursor.location = pivot.copy()
+        '''
+        if   axis_lock == 'X':  const_ax = True, False, False
+        elif axis_lock == 'Y':  const_ax = False, True, False
+        elif axis_lock == 'Z':  const_ax = False, False, True
+        '''
+        bpy.ops.transform.rotate(value=-RotDat.ang_diff_r, orient_axis=axis_lock,
+            center_override=pivot.copy(), constraint_axis=const_ax)
+
+        # restore settings back to their pre "do_rotate" state
+        bpy.context.scene.cursor.location = curs_loc_back.copy()
+        bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
+
+    editmode_refresh()
+
+        
+# Uses axis_lock or piv_norm from RotDat to obtain rotation axis.
+# Then rotates selected objects or selected vertices around the
+# 3D cursor using RotDat's ang_diff_r radian value.
+def do_rotate_old(self):
     # back up settings before changing them
     piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
     curs_back = bpy.context.scene.cursor.location.copy()
     bpy.context.tool_settings.transform_pivot_point = 'CURSOR'
     bpy.context.scene.cursor.location = self.pts[2].co3d.copy()
-    
+
     axis_lock = RotDat.axis_lock
     ops_lock = ()  # axis lock data for bpy.ops.transform
     if   axis_lock is None: ops_lock = RotDat.piv_norm
@@ -1255,14 +1313,10 @@ def do_rotate(self):
     elif axis_lock == 'Y':  ops_lock = 0, 1, 0
     elif axis_lock == 'Z':  ops_lock = 0, 0, 1
 
-    if bpy.context.mode == "OBJECT":
-        bpy.ops.transform.rotate(value=RotDat.ang_diff_r, axis=ops_lock,
-                constraint_axis=(False, False, False))
+    bpy.ops.transform.rotate(value=RotDat.ang_diff_r, axis=ops_lock,
+            constraint_axis=(False, False, False))
 
-    elif bpy.context.mode == "EDIT_MESH":
-        bpy.ops.transform.rotate(value=RotDat.ang_diff_r, axis=ops_lock,
-                constraint_axis=(False, False, False))
-        editmode_refresh()
+    editmode_refresh()
 
     # restore settings back to their pre "do_rotate" state
     bpy.context.scene.cursor.location = curs_back.copy()
@@ -1544,7 +1598,7 @@ def draw_callback_px(self, context):
 
 def exit_addon(self):
     restore_blender_settings(self.settings_backup)
-    bpy.context.area.header_text_set(text='')
+    bpy.context.area.header_text_set(None)
     # todo : reset openGL settings?
     #bgl.glColor4f()
     #blf.size()
@@ -1643,7 +1697,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
             elif self.meas_btn.is_drawn and self.meas_btn.ms_over:
                 #print("\nMeas Button Clicked")
                 if can_transf(self):
-                    global popup_active
+                    #global popup_active
                     self.addon_mode = WAIT_FOR_POPUP
                     popup_active = True
                     set_help_text(self, "POPUP")
