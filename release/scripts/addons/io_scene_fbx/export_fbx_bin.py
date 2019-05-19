@@ -1130,7 +1130,9 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     # Face's materials.
     me_fbxmaterials_idx = scene_data.mesh_material_indices.get(me)
     if me_fbxmaterials_idx is not None:
-        me_blmaterials = me.materials
+        # Mapping to indices is done using original material pointers, so need to go from evaluated
+        # to original (this is for the case mesh is a result of evaluated modifier stack).
+        me_blmaterials = [material.original for material in  me.materials]
         if me_fbxmaterials_idx and me_blmaterials:
             lay_ma = elem_data_single_int32(geom, b"LayerElementMaterial", 0)
             elem_data_single_int32(lay_ma, b"Version", FBX_GEOMETRY_MATERIAL_VERSION)
@@ -1257,9 +1259,20 @@ def fbx_data_material_elements(root, ma, scene_data):
     # Not in Principled BSDF, so assuming always 0
     elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
     elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", 0.0)
-    elem_props_template_set(tmpl, props, "p_color", b"TransparentColor", ma_wrap.base_color)
-    elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor", ma_wrap.transmission)
-    elem_props_template_set(tmpl, props, "p_number", b"Opacity", 1.0 - ma_wrap.transmission)
+    # Sweetness... Looks like we are not the only ones to not know exactly how FBX is supposed to work (see T59850).
+    # According to one of its developers, Unity uses that formula to extract alpha value:
+    #
+    #   alpha = 1 - TransparencyFactor
+    #   if (alpha == 1 or alpha == 0):
+    #       alpha = 1 - TransparentColor.r
+    #
+    # Until further info, let's assume this is correct way to do, hence the following code for TransparentColor.
+    if ma_wrap.alpha < 1.0e-5 or ma_wrap.alpha > (1.0 - 1.0e-5):
+        elem_props_template_set(tmpl, props, "p_color", b"TransparentColor", (1.0 - ma_wrap.alpha,) * 3)
+    else:
+        elem_props_template_set(tmpl, props, "p_color", b"TransparentColor", ma_wrap.base_color)
+    elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor", 1.0 - ma_wrap.alpha)
+    elem_props_template_set(tmpl, props, "p_number", b"Opacity", ma_wrap.alpha)
     elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
     # Not sure about those...
     """
@@ -1737,7 +1750,7 @@ def fbx_data_animation_elements(root, scene_data):
 PRINCIPLED_TEXTURE_SOCKETS_TO_FBX = (
     # ("diffuse", "diffuse", b"DiffuseFactor"),
     ("base_color_texture", b"DiffuseColor"),
-    ("transmission_texture", b"TransparencyFactor"),
+    ("alpha_texture", b"TransparencyFactor"),  # Will be inverted in fact, not much we can do really...
     # ("base_color_texture", b"TransparentColor"),  # Uses diffuse color in Blender!
     # ("emit", "emit", b"EmissiveFactor"),
     # ("diffuse", "diffuse", b"EmissiveColor"),  # Uses diffuse color in Blender!
@@ -2193,27 +2206,39 @@ def fbx_data_from_scene(scene, depsgraph, settings):
         if settings.use_mesh_modifiers or ob.type in BLENDER_OTHER_OBJECT_TYPES or is_ob_material:
             # We cannot use default mesh in that case, or material would not be the right ones...
             use_org_data = not (is_ob_material or ob.type in BLENDER_OTHER_OBJECT_TYPES)
-            tmp_mods = []
+            backup_pose_positions = []
             if use_org_data and ob.type == 'MESH':
                 # No need to create a new mesh in this case, if no modifier is active!
                 for mod in ob.modifiers:
                     # For meshes, when armature export is enabled, disable Armature modifiers here!
                     # XXX Temp hacks here since currently we only have access to a viewport depsgraph...
+                    #
+                    # NOTE: We put armature to the rest pose instead of disabling it so we still
+                    # have vertex groups in the evaluated mesh.
                     if mod.type == 'ARMATURE' and 'ARMATURE' in settings.object_types:
-                        tmp_mods.append((mod, mod.show_render, mod.show_viewport))
-                        mod.show_render = False
-                        mod.show_viewport = False
+                        object = mod.object
+                        if object and object.type == 'ARMATURE':
+                            armature = object.data
+                            backup_pose_positions.append((armature, armature.pose_position))
+                            armature.pose_position = 'REST'
                     if mod.show_render or mod.show_viewport:
                         use_org_data = False
             if not use_org_data:
-                tmp_me = ob.to_mesh(
-                    depsgraph,
-                    apply_modifiers=settings.use_mesh_modifiers)
+                # If modifiers has been altered need to update dependency graph.
+                if backup_pose_positions:
+                    depsgraph.update()
+                ob_to_convert = ob.evaluated_get(depsgraph) if settings.use_mesh_modifiers else ob
+                # NOTE: The dependency graph might be re-evaluating multiple times, which could
+                # potentially free the mesh created early on. So we put those meshes to bmain and
+                # free them afterwards. Not ideal but ensures correct ownerwhip.
+                tmp_me = bpy.data.meshes.new_from_object(ob_to_convert)
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
-            # Re-enable temporary disabled modifiers.
-            for mod, show_render, show_viewport in tmp_mods:
-                mod.show_render = show_render
-                mod.show_viewport = show_viewport
+            # Change armatures back.
+            for armature, pose_position in backup_pose_positions:
+                print((armature, pose_position))
+                armature.pose_position = pose_position
+                # Update now, so we don't leave modified state after last object was exported.
+                depsgraph.update()
         if use_org_data:
             data_meshes[ob_obj] = (get_blenderID_key(ob.data), ob.data, False)
 
@@ -3089,7 +3114,8 @@ def save(operator, context,
                 ctx_objects = context.view_layer.objects
         kwargs_mod["context_objects"] = ctx_objects
 
-        ret = save_single(operator, context.scene, context.depsgraph, filepath, **kwargs_mod)
+        depsgraph = context.evaluated_depsgraph_get()
+        ret = save_single(operator, context.scene, depsgraph, filepath, **kwargs_mod)
     else:
         # XXX We need a way to generate a depsgraph for inactive view_layers first...
         # XXX Also, what to do in case of batch-exporting scenes, when there is more than one view layer?
@@ -3156,7 +3182,8 @@ def save(operator, context,
                 scene.unit_settings.system_rotation = best_src_scene.unit_settings.system_rotation
                 scene.unit_settings.scale_length = best_src_scene.unit_settings.scale_length
 
-                scene.update()
+                # new scene [only one viewlayer to update]
+                scene.view_layers[0].update()
                 # TODO - BUMMER! Armatures not in the group wont animate the mesh
             else:
                 scene = data

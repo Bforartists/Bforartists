@@ -551,6 +551,32 @@ static bool ui_but_dragedit_update_mval(uiHandleButtonData *data, int mx)
   return true;
 }
 
+static void ui_but_update_preferences_dirty(uiBut *but)
+{
+  /* Not very elegant, but ensures preference changes force re-save. */
+  bool tag = false;
+  if (but->rnaprop) {
+    if (but->rnapoin.data == &U) {
+      /* Exclude navigation from setting dirty. */
+      extern PropertyRNA rna_Preferences_active_section;
+      if (!ELEM(but->rnaprop, &rna_Preferences_active_section)) {
+        tag = true;
+      }
+    }
+    else {
+      StructRNA *base = RNA_struct_base(but->rnapoin.type);
+      if (ELEM(base, &RNA_AddonPreferences, &RNA_KeyConfigPreferences)) {
+        tag = true;
+      }
+    }
+  }
+
+  if (tag) {
+    U.runtime.is_dirty = true;
+    WM_main_add_notifier(NC_WINDOW, NULL);
+  }
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -1334,6 +1360,9 @@ static bool ui_drag_toggle_set_xy_xy(
               if (do_check) {
                 ui_but_update_edited(but);
               }
+              if (U.runtime.is_dirty == false) {
+                ui_but_update_preferences_dirty(but);
+              }
               changed = true;
             }
           }
@@ -1715,7 +1744,7 @@ static void ui_selectcontext_apply(bContext *C,
       }
       else if (rna_type == PROP_POINTER) {
         const PointerRNA other_value = delta.p;
-        RNA_property_pointer_set(&lptr, lprop, other_value);
+        RNA_property_pointer_set(NULL, &lptr, lprop, other_value);
       }
 
       RNA_property_update(C, &lptr, prop);
@@ -3769,7 +3798,7 @@ static void ui_block_open_begin(bContext *C, uiBut *but, uiHandleButtonData *dat
   }
 
   if (func || handlefunc) {
-    data->menu = ui_popup_block_create(C, data->region, but, func, handlefunc, arg);
+    data->menu = ui_popup_block_create(C, data->region, but, func, handlefunc, arg, NULL);
     if (but->block->handle) {
       data->menu->popup = but->block->handle->popup;
     }
@@ -7574,9 +7603,8 @@ static void button_activate_exit(
       ui_popup_menu_memory_set(block, but);
     }
 
-    /* Not very elegant, but ensures preference changes force re-save. */
-    if (but->rnaprop && (but->rnapoin.data == &U)) {
-      U.runtime.is_dirty = true;
+    if (U.runtime.is_dirty == false) {
+      ui_but_update_preferences_dirty(but);
     }
   }
 

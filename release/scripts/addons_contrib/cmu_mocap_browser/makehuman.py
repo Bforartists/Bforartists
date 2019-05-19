@@ -215,7 +215,7 @@ class CMUMocapTransferer(bpy.types.Operator):
             self.dst.pose.bones[db].matrix = S * self.inverses[db]
             self.dst.pose.bones[db].keyframe_insert('rotation_quaternion', -1, frame, db)
             self.dst.pose.bones[db].keyframe_insert('location', -1, frame, db)
-            bpy.context.scene.update()  # recalculate constraints
+            bpy.context.view_layer.update()  # recalculate constraints
         # get locrot of fk bones and locally set them
         # ... TODO
 #        bpy.ops.anim.keyframe_insert_menu(type='BUILTIN_KSI_LocRot')

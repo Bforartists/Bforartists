@@ -21,7 +21,7 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (4, 14, 5),
+    "version": (4, 14, 8),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
@@ -220,10 +220,9 @@ class ImportFBX(bpy.types.Operator, ImportHelper):
             layout.prop(self, "force_connect_children"),
             layout.prop(self, "automatic_bone_orientation"),
             sub = layout.column()
-            # sub.enabled = not self.automatic_bone_orientation # bfa - made the props hidden instead of deactivated.
-            if not self.automatic_bone_orientation:
-                sub.prop(self, "primary_bone_axis")
-                sub.prop(self, "secondary_bone_axis")
+            sub.enabled = not self.automatic_bone_orientation
+            sub.prop(self, "primary_bone_axis")
+            sub.prop(self, "secondary_bone_axis")
 
     def execute(self, context):
         keywords = self.as_keywords(ignore=("filter_glob", "directory", "ui_tab"))

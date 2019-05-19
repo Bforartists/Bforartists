@@ -68,11 +68,6 @@ enum_filter_types = (
     ('BLACKMAN_HARRIS', "Blackman-Harris", "Blackman-Harris filter"),
 )
 
-enum_aperture_types = (
-    ('RADIUS', "Radius", "Directly change the size of the aperture"),
-    ('FSTOP', "F-stop", "Change the size of the aperture by f-stop"),
-)
-
 enum_panorama_types = (
     ('EQUIRECTANGULAR', "Equirectangular", "Render the scene with a spherical camera, also known as Lat Long panorama"),
     ('FISHEYE_EQUIDISTANT', "Fisheye Equidistant", "Ideal for fulldomes, ignore the sensor dimensions"),
@@ -417,11 +412,6 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         min=0.0, max=10.0,
         default=1.0,
     )
-    film_transparent: BoolProperty(
-        name="Transparent",
-        description="Transparent\nWorld background is transparent, for compositing the render over another background",
-        default=False,
-    )
     film_transparent_glass: BoolProperty(
         name="Transparent Glass",
         description="Transparent Glass\nRender transmissive surfaces as transparent, for compositing glass over another background",
@@ -747,49 +737,6 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
 
 class CyclesCameraSettings(bpy.types.PropertyGroup):
 
-    aperture_type: EnumProperty(
-        name="Aperture Type",
-        description="Aperture Type\nUse f-stop number or aperture radius",
-        items=enum_aperture_types,
-        default='RADIUS',
-    )
-    aperture_fstop: FloatProperty(
-        name="Aperture f-stop",
-        description="Aperture f-stop\nF-stop ratio (lower numbers give more defocus, higher numbers give a sharper image)",
-        min=0.0, soft_min=0.1, soft_max=64.0,
-        default=5.6,
-        step=10,
-        precision=1,
-    )
-    aperture_size: FloatProperty(
-        name="Aperture Size",
-        description="Aperture Size\nRadius of the aperture for depth of field (higher values give more defocus)",
-        min=0.0, soft_max=10.0,
-        default=0.0,
-        step=1,
-        precision=4,
-        subtype='DISTANCE',
-    )
-    aperture_blades: IntProperty(
-        name="Aperture Blades",
-        description="Aperture Blades\nNumber of blades in aperture for polygonal bokeh (at least 3)",
-        min=0, max=100,
-        default=0,
-    )
-    aperture_rotation: FloatProperty(
-        name="Aperture Rotation",
-        description="Aperture Rotation\nRotation of blades in aperture",
-        soft_min=-pi, soft_max=pi,
-        subtype='ANGLE',
-        default=0,
-    )
-    aperture_ratio: FloatProperty(
-        name="Aperture Ratio",
-        description="Aperture Ratio\nDistortion to simulate anamorphic lens bokeh",
-        min=0.01, soft_min=1.0, soft_max=2.0,
-        default=1.0,
-        precision=4,
-    )
     panorama_type: EnumProperty(
         name="Panorama Type",
         description="Panorama Type\nDistortion to use for the calculation",
@@ -1490,7 +1437,7 @@ class CyclesPreferences(bpy.types.AddonPreferences):
                 break
 
         if not found_device:
-            col = box.column(align=True);
+            col = box.column(align=True)
             col.label(text="No compatible GPUs found for path tracing", icon='INFO')
             col.label(text="Cycles will render on the CPU", icon='BLANK1')
             return

@@ -152,9 +152,10 @@ class ExportUVLayout(bpy.types.Operator):
         return {'FINISHED'}
 
     def iter_meshes_to_export(self, context):
+        depsgraph = context.evaluated_depsgraph_get()
         for obj in self.iter_objects_to_export(context):
             if self.modified:
-                yield obj.to_mesh(context.depsgraph, apply_modifiers=True)
+                yield obj.evaluated_get(depsgraph).to_mesh()
             else:
                 yield obj.data
 
@@ -230,7 +231,7 @@ class ExportUVLayout(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(ExportUVLayout.bl_idname, icon = "FILE_TICK")
+    self.layout.operator(ExportUVLayout.bl_idname)
 
 
 def register():

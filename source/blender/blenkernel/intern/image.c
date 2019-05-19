@@ -470,7 +470,7 @@ bool BKE_image_scale(Image *image, int width, int height)
 
   if (ibuf) {
     IMB_scaleImBuf(ibuf, width, height);
-    ibuf->userflags |= IB_BITMAPDIRTY;
+    BKE_image_mark_dirty(image, ibuf);
   }
 
   BKE_image_release_ibuf(image, ibuf, lock);
@@ -646,7 +646,6 @@ static ImBuf *add_ibuf_size(unsigned int width,
   }
 
   STRNCPY(ibuf->name, name);
-  ibuf->userflags |= IB_BITMAPDIRTY;
 
   switch (gen_type) {
     case IMA_GENTYPE_GRID:
@@ -5081,12 +5080,20 @@ bool BKE_image_has_packedfile(Image *ima)
   return (BLI_listbase_is_empty(&ima->packedfiles) == false);
 }
 
+bool BKE_image_has_filepath(Image *ima)
+{
+  /* This could be improved to detect cases like //../../, currently path
+   * remapping empty file paths empty. */
+  return ima->name[0] != '\0';
+}
+
 /* Checks the image buffer changes with time (not keyframed values). */
 bool BKE_image_is_animated(Image *image)
 {
   return ELEM(image->source, IMA_SRC_MOVIE, IMA_SRC_SEQUENCE);
 }
 
+/* Image modifications */
 bool BKE_image_is_dirty(Image *image)
 {
   bool is_dirty = false;
@@ -5108,6 +5115,11 @@ bool BKE_image_is_dirty(Image *image)
   BLI_spin_unlock(&image_spin);
 
   return is_dirty;
+}
+
+void BKE_image_mark_dirty(Image *UNUSED(image), ImBuf *ibuf)
+{
+  ibuf->userflags |= IB_BITMAPDIRTY;
 }
 
 void BKE_image_file_format_set(Image *image, int ftype, const ImbFormatOptions *options)

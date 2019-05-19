@@ -310,6 +310,7 @@ bool WM_keyconfig_remove(wmWindowManager *wm, wmKeyConfig *keyconf)
   if (BLI_findindex(&wm->keyconfigs, keyconf) != -1) {
     if (STREQLEN(U.keyconfigstr, keyconf->idname, sizeof(U.keyconfigstr))) {
       BLI_strncpy(U.keyconfigstr, wm->defaultconf->idname, sizeof(U.keyconfigstr));
+      U.runtime.is_dirty = true;
       WM_keyconfig_update_tag(NULL, NULL);
     }
 
@@ -360,6 +361,9 @@ void WM_keyconfig_set_active(wmWindowManager *wm, const char *idname)
   WM_keyconfig_update(wm);
 
   BLI_strncpy(U.keyconfigstr, idname, sizeof(U.keyconfigstr));
+  if (wm->initialized & WM_KEYCONFIG_IS_INITIALIZED) {
+    U.runtime.is_dirty = true;
+  }
 
   WM_keyconfig_update_tag(NULL, NULL);
   WM_keyconfig_update(wm);
@@ -1120,7 +1124,8 @@ const char *WM_key_event_string(const short type, const bool compact)
         if (platform == MACOS) {
           icon_glyph = "\xe2\x87\xa7";
         }
-        return key_event_icon_or_text(font_id, IFACE_("Shift"), icon_glyph);
+        return key_event_icon_or_text(
+            font_id, CTX_IFACE_(BLT_I18NCONTEXT_ID_WINDOWMANAGER, "Shift"), icon_glyph);
       }
       case LEFTCTRLKEY:
       case RIGHTCTRLKEY:
@@ -1407,7 +1412,6 @@ static wmKeyMapItem *wm_keymap_item_find_in_keymap(wmKeyMap *keymap,
               }
 
               IDP_FreeProperty(properties_default);
-              MEM_freeN(properties_default);
             }
           }
         }
@@ -1581,7 +1585,6 @@ static wmKeyMapItem *wm_keymap_item_find(const bContext *C,
       }
 
       IDP_FreeProperty(properties_temp);
-      MEM_freeN(properties_temp);
     }
   }
 
@@ -1620,7 +1623,6 @@ static wmKeyMapItem *wm_keymap_item_find(const bContext *C,
         }
 
         IDP_FreeProperty(properties_default);
-        MEM_freeN(properties_default);
       }
     }
   }
@@ -2017,7 +2019,6 @@ void WM_keymap_item_restore_to_default(bContext *C, wmKeyMap *keymap, wmKeyMapIt
     if (orig->properties) {
       if (kmi->properties) {
         IDP_FreeProperty(kmi->properties);
-        MEM_freeN(kmi->properties);
         kmi->properties = NULL;
       }
 

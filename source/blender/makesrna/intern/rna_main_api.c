@@ -125,6 +125,14 @@ static void rna_Main_ID_remove(Main *bmain,
                                bool do_ui_user)
 {
   ID *id = id_ptr->data;
+  if (id->tag & LIB_TAG_NO_MAIN) {
+    BKE_reportf(reports,
+                RPT_ERROR,
+                "%s '%s' is outside of main database and can not be removed from it",
+                BKE_idcode_to_name(GS(id->name)),
+                id->name + 2);
+    return;
+  }
   if (do_unlink) {
     BKE_id_delete(bmain, id);
     RNA_POINTER_INVALIDATE(id_ptr);
@@ -200,6 +208,13 @@ static void rna_Main_scenes_remove(
 
 static Object *rna_Main_objects_new(Main *bmain, ReportList *reports, const char *name, ID *data)
 {
+  if (data != NULL && (data->tag & LIB_TAG_NO_MAIN)) {
+    BKE_report(reports,
+               RPT_ERROR,
+               "Can not create object in main database with an evaluated data data-block");
+    return NULL;
+  }
+
   char safe_name[MAX_ID_NAME - 2];
   rna_idname_validate(name, safe_name);
 
@@ -317,16 +332,9 @@ static Mesh *rna_Main_meshes_new(Main *bmain, const char *name)
 }
 
 /* copied from Mesh_getFromObject and adapted to RNA interface */
-Mesh *rna_Main_meshes_new_from_object(Main *bmain,
-                                      ReportList *reports,
-                                      Depsgraph *depsgraph,
-                                      Object *ob,
-                                      bool apply_modifiers,
-                                      bool calc_undeformed)
+static Mesh *rna_Main_meshes_new_from_object(Main *bmain, ReportList *reports, Object *object)
 {
-  Scene *sce = DEG_get_evaluated_scene(depsgraph);
-
-  switch (ob->type) {
+  switch (object->type) {
     case OB_FONT:
     case OB_CURVE:
     case OB_SURF:
@@ -338,7 +346,7 @@ Mesh *rna_Main_meshes_new_from_object(Main *bmain,
       return NULL;
   }
 
-  return BKE_mesh_new_from_object(depsgraph, bmain, sce, ob, apply_modifiers, calc_undeformed);
+  return BKE_mesh_new_from_object_to_bmain(bmain, object);
 }
 
 static Light *rna_Main_lights_new(Main *bmain, const char *name, int type)
@@ -951,24 +959,13 @@ void RNA_def_main_meshes(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "new_from_object", "rna_Main_meshes_new_from_object");
-  RNA_def_function_ui_description(func,
-                                  "Add a new mesh created from object with modifiers applied");
+  RNA_def_function_ui_description(
+      func,
+      "Add a new mesh created from given object (undeformed geometry if object is original, and "
+      "final evaluated geometry, with all modifiers etc., if object is evaluated)");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
-  parm = RNA_def_pointer(func,
-                         "depsgraph",
-                         "Depsgraph",
-                         "Dependency Graph",
-                         "Evaluated dependency graph within which to evaluate modifiers");
-  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
   parm = RNA_def_pointer(func, "object", "Object", "", "Object to create mesh from");
   RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
-  parm = RNA_def_boolean(func, "apply_modifiers", 0, "", "Apply modifiers");
-  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "calc_undeformed",
-                  false,
-                  "Calculate Undeformed",
-                  "Calculate undeformed vertex coordinates");
   parm = RNA_def_pointer(func,
                          "mesh",
                          "Mesh",

@@ -25,8 +25,8 @@
 bl_info = {
     "name": "Display Tools",
     "author": "Jordi Vall-llovera Medina, Jhon Wallace",
-    "version": (1, 6, 4),
-    "blender": (2, 70, 0),
+    "version": (1, 6, 6),
+    "blender": (2, 79, 0),
     "location": "Toolshelf",
     "description": "Display tools for fast navigation/interaction with the viewport",
     "warning": "",
@@ -45,7 +45,7 @@ if "bpy" in locals():
     importlib.reload(shading_menu)
     importlib.reload(select_tools)
     importlib.reload(useless_tools)
-    importlib.reload(selection_restrictor)
+#    importlib.reload(selection_restrictor)
 
 else:
     from . import display
@@ -55,7 +55,7 @@ else:
     from . import shading_menu
     from . import select_tools
     from . import useless_tools
-    from . import selection_restrictor
+#    from . import selection_restrictor
 
 import bpy
 from bpy.types import (
@@ -73,18 +73,18 @@ from bpy.props import (
         )
 
 
-class DisplayToolsPanel(Panel):
+class DISPLAY_PT_ToolsPanel(Panel):
     bl_label = "Display Tools"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_category = "Display"
     bl_options = {'DEFAULT_CLOSED'}
 
     display_type_icons = {
-            'BOUNDS': 'BBOX',
-            'WIRE': 'WIRE',
-            'SOLID': 'SOLID',
-            'TEXTURED': 'POTATO'
+            'BOUNDS': 'SHADING_BBOX',
+            'WIRE': 'SHADING_WIRE',
+            'SOLID': 'SHADING_SOLID',
+            'TEXTURED': 'SHADING_RENDERED'
             }
     bounds_icons = {
             'BOX': 'MESH_CUBE',
@@ -98,7 +98,6 @@ class DisplayToolsPanel(Panel):
         display_tools = scene.display_tools
         render = scene.render
         view = context.space_data
-        gs = scene.game_settings
         obj = context.object
         obj_type = obj.type if obj else None
         fx_settings = view.fx_settings
@@ -127,9 +126,9 @@ class DisplayToolsPanel(Panel):
 
         if not SCENEDROP:
             if obj:
-                row.prop(obj, "show_texture_space", text="", icon="FACESEL_HLT")
-                row.prop(obj, "show_name", text="", icon="SORTALPHA")
-                row.prop(obj, "show_axis", text="", icon="AXIS_TOP")
+                row.prop(obj, "show_texture_space", text="", icon="UV_DATA")
+                row.prop(obj, "show_name", text="", icon="OUTLINER_OB_FONT")
+                row.prop(obj, "show_axis", text="", icon="OBJECT_ORIGIN")
         else:
             col = layout.column()
             col.prop(view, "show_manipulator")
@@ -148,7 +147,7 @@ class DisplayToolsPanel(Panel):
                 col.prop(obj, "show_transparent", text="Transparency", toggle=True)
 
             col = layout.column()
-            col.prop(render, "use_simplify", "Simplify", toggle=True)
+            col.prop(render, "use_simplify", text ="Simplify", toggle=True)
 
             if render.use_simplify is True:
                 col = layout.column(align=True)
@@ -165,7 +164,7 @@ class DisplayToolsPanel(Panel):
         row.prop(display_tools, "UiTabDrop", index=0, text="Draw Type", icon=icon_active_0)
 
         if not DISPLAYDROP:
-            hide_wires = row.operator("ut.wire_show_hide", icon="MATSPHERE", text="")
+            hide_wires = row.operator("ut.wire_show_hide", icon="MESH_CIRCLE", text="")
             hide_wires.show = False
             hide_wires.selected = False
             show_wires = row.operator("ut.wire_show_hide", icon="MESH_UVSPHERE", text="")
@@ -184,7 +183,7 @@ class DisplayToolsPanel(Panel):
             col.label(text="Selected Object(s):")
             row = col.row(align=True)
             row.operator("view3d.display_draw_change", text="Wire",
-                         icon='WIRE').drawing = 'WIRE'
+                         icon='SHADING_WIRE').drawing = 'WIRE'
             row.operator("view3d.display_draw_change", text="Solid",
                         icon='SOLID').drawing = 'SOLID'
             row = col.row()
@@ -252,7 +251,7 @@ class DisplayToolsPanel(Panel):
             col.alignment = 'EXPAND'
 
             if not scene.render.use_shading_nodes:
-                col.prop(gs, "material_mode", text="", toggle=True)
+                col.prop("material_mode", text="", toggle=True)
 
             if view.viewport_shade == 'SOLID':
                 col.prop(view, "show_textured_solid", toggle=True)
@@ -260,7 +259,7 @@ class DisplayToolsPanel(Panel):
                 if view.use_matcap:
                     col.template_icon_view(view, "matcap_icon")
             if view.viewport_shade == 'TEXTURED' or context.mode == 'PAINT_TEXTURE':
-                if scene.render.use_shading_nodes or gs.material_mode != 'GLSL':
+                if scene.render.use_shading_nodes:
                     col.prop(view, "show_textured_shadeless", toggle=True)
 
             col.prop(view, "show_backface_culling", toggle=True)
@@ -566,7 +565,7 @@ class display_tools_scene_props(PropertyGroup):
                         "Changed values will take effect on the next run",
             )
     # Define the UI drop down prop
-    UiTabDrop = BoolVectorProperty(
+    UiTabDrop: BoolVectorProperty(
             name="Tab",
             description="Expand/Collapse UI elements",
             default=(False,) * 6,
@@ -583,7 +582,7 @@ class display_tools_scene_props(PropertyGroup):
 # Addons Preferences Update Panel
 # Define Panels for updating
 panels = (
-    DisplayToolsPanel,
+    DISPLAY_PT_ToolsPanel, 
     )
 
 
@@ -633,23 +632,34 @@ def DRAW_hide_by_type_MENU(self, context):
         "type", text="Show By Type"
         )
 
+# Register
+classes = [
+    DISPLAY_PT_ToolsPanel,
+    display_tools_scene_props,
+    DisplayToolsPreferences
+]
 
 # register the classes and props
 def register():
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
     bpy.types.VIEW3D_MT_object_showhide.append(DRAW_hide_by_type_MENU)
     # Register Scene Properties
     bpy.types.Scene.display_tools = PointerProperty(
                                         type=display_tools_scene_props
                                         )
     update_panel(None, bpy.context)
-    selection_restrictor.register()
+#    selection_restrictor.register()
 
 
 def unregister():
-    selection_restrictor.unregister()
+#    selection_restrictor.unregister()
     bpy.types.VIEW3D_MT_object_showhide.remove(DRAW_hide_by_type_MENU)
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
     del bpy.types.Scene.display_tools
 
 

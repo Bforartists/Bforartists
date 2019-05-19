@@ -666,24 +666,24 @@ def import_xyz(Ball_type,
         # Now, build a representative sphere (atom)
         if atom.name == "Vacancy":
             bpy.ops.mesh.primitive_cube_add(
-                            view_align=False, enter_editmode=False,
+                            align='WORLD', enter_editmode=False,
                             location=(0.0, 0.0, 0.0),
                             rotation=(0.0, 0.0, 0.0))
         else:
             # NURBS balls
             if Ball_type == "0":
                 bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                            view_align=False, enter_editmode=False,
+                            align='WORLD', enter_editmode=False,
                             location=(0,0,0), rotation=(0.0, 0.0, 0.0))
             # UV balls
             elif Ball_type == "1":
                 bpy.ops.mesh.primitive_uv_sphere_add(
                             segments=Ball_azimuth, ring_count=Ball_zenith,
-                            view_align=False, enter_editmode=False,
+                            align='WORLD', enter_editmode=False,
                             location=(0,0,0), rotation=(0, 0, 0))
             # Meta balls
             elif Ball_type == "2":
-                bpy.ops.object.metaball_add(type='BALL', view_align=False,
+                bpy.ops.object.metaball_add(type='BALL', align='WORLD',
                             enter_editmode=False, location=(0, 0, 0),
                             rotation=(0, 0, 0))
 

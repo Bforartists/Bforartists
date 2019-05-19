@@ -201,11 +201,14 @@ def save(
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT')
 
+    mesh_owner_object = None
     if use_mesh_modifiers and obj.modifiers:
-        mesh = obj.to_mesh(context.depsgraph, True)
-
+        depsgraph = context.evaluated_depsgraph_get()
+        mesh_owner_object = obj.evaluated_get(depsgraph)
+        mesh = mesh_owner_object.to_mesh()
     else:
-        mesh = obj.data.copy()
+        mesh_owner_object = obj
+        mesh = mesh_owner_object.to_mesh()
 
     if not mesh:
         raise Exception("Error, could not get mesh data from active object")
@@ -220,6 +223,6 @@ def save(
                     use_colors=use_colors,
                     )
 
-    bpy.data.meshes.remove(mesh)
+    mesh_owner_object.to_mesh_clear()
 
     return ret

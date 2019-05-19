@@ -674,7 +674,7 @@ class RefreshRestrictors(Operator):
         return{'FINISHED'}
 
 
-class RestrictorSelection(Menu):
+class RS_MT_RestrictorSelection(Menu):
     """Restrict Selection"""
     bl_label = "Selection"
     bl_idname = "RestrictorSelection"
@@ -719,7 +719,7 @@ def view3d_select_menu(self, context):
 
 def register():
     bpy.types.VIEW3D_HT_header.append(view3d_select_menu)
-
+    bpy.utils.register_class(RefreshRestrictors)
 
 def unregister():
     bpy.types.VIEW3D_HT_header.remove(view3d_select_menu)
@@ -734,4 +734,4 @@ if __name__ == "__main__":
 # I don't know what does "updating scene data" mean
 # But I've added it here to refresh icons while switching scenes
 bpy.app.handlers.load_post.append(check_restrictors)
-bpy.app.handlers.scene_update_post.append(check_restrictors)
+bpy.app.handlers.depsgraph_update_post.append(check_restrictors)

@@ -302,7 +302,7 @@ static IDProperty *rna_idproperty_ui_ensure(PointerRNA *ptr, PropertyRNA *prop, 
       idprop = IDP_New(IDP_GROUP, &dummy, RNA_IDP_UI);
 
       if (!IDP_AddToGroup(props, idprop)) {
-        IDP_FreeProperty(idprop);
+        IDP_FreePropertyContent(idprop);
         return NULL;
       }
     }
@@ -316,7 +316,7 @@ static IDProperty *rna_idproperty_ui_ensure(PointerRNA *ptr, PropertyRNA *prop, 
       rv = IDP_New(IDP_GROUP, &dummy, name);
 
       if (!IDP_AddToGroup(idprop, rv)) {
-        IDP_FreeProperty(rv);
+        IDP_FreePropertyContent(rv);
         return NULL;
       }
     }
@@ -370,7 +370,7 @@ static bool rna_idproperty_ui_set_default(PointerRNA *ptr,
       item = IDP_New(type, value, "default");
 
       if (!IDP_AddToGroup(idp_ui, item)) {
-        IDP_FreeProperty(item);
+        IDP_FreePropertyContent(item);
         return false;
       }
     }
@@ -3733,24 +3733,29 @@ PointerRNA RNA_property_pointer_get(PointerRNA *ptr, PropertyRNA *prop)
   }
 }
 
-void RNA_property_pointer_set(PointerRNA *ptr, PropertyRNA *prop, PointerRNA ptr_value)
+void RNA_property_pointer_set(ReportList *reports,
+                              PointerRNA *ptr,
+                              PropertyRNA *prop,
+                              PointerRNA ptr_value)
 {
   PointerPropertyRNA *pprop = (PointerPropertyRNA *)prop;
   BLI_assert(RNA_property_type(prop) == PROP_POINTER);
 
   /* Check types */
   if (ptr_value.type != NULL && !RNA_struct_is_a(ptr_value.type, pprop->type)) {
-    printf("%s: expected %s type, not %s.\n",
-           __func__,
-           pprop->type->identifier,
-           ptr_value.type->identifier);
+    BKE_reportf(reports,
+                RPT_ERROR,
+                "%s: expected %s type, not %s.\n",
+                __func__,
+                pprop->type->identifier,
+                ptr_value.type->identifier);
     return;
   }
 
   /* RNA */
   if (pprop->set && !((prop->flag & PROP_NEVER_NULL) && ptr_value.data == NULL) &&
       !((prop->flag & PROP_ID_SELF_CHECK) && ptr->id.data == ptr_value.id.data)) {
-    pprop->set(ptr, ptr_value);
+    pprop->set(reports, ptr, ptr_value);
   }
   /* IDProperty */
   else if (prop->flag & PROP_EDITABLE) {
@@ -3961,7 +3966,7 @@ void RNA_property_collection_add(PointerRNA *ptr, PropertyRNA *prop, PointerRNA 
     item = IDP_New(IDP_GROUP, &val, "");
     IDP_AppendArray(idprop, item);
     /* IDP_AppendArray does a shallow copy (memcpy), only free memory  */
-    /* IDP_FreeProperty(item); */
+    /* IDP_FreePropertyContent(item); */
     MEM_freeN(item);
     rna_idproperty_touch(idprop);
   }
@@ -3977,7 +3982,7 @@ void RNA_property_collection_add(PointerRNA *ptr, PropertyRNA *prop, PointerRNA 
       item = IDP_New(IDP_GROUP, &val, "");
       IDP_AppendArray(idprop, item);
       /* IDP_AppendArray does a shallow copy (memcpy), only free memory */
-      /* IDP_FreeProperty(item); */
+      /* IDP_FreePropertyContent(item); */
       MEM_freeN(item);
     }
   }
@@ -6422,7 +6427,7 @@ void RNA_pointer_set(PointerRNA *ptr, const char *name, PointerRNA ptr_value)
   PropertyRNA *prop = RNA_struct_find_property(ptr, name);
 
   if (prop) {
-    RNA_property_pointer_set(ptr, prop, ptr_value);
+    RNA_property_pointer_set(NULL, ptr, prop, ptr_value);
   }
   else {
     printf("%s: %s.%s not found.\n", __func__, ptr->type->identifier, name);
@@ -7971,7 +7976,7 @@ bool RNA_property_reset(PointerRNA *ptr, PropertyRNA *prop, int index)
 
     case PROP_POINTER: {
       PointerRNA value = RNA_property_pointer_get_default(ptr, prop);
-      RNA_property_pointer_set(ptr, prop, value);
+      RNA_property_pointer_set(NULL, ptr, prop, value);
       return true;
     }
 

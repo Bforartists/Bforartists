@@ -24,7 +24,10 @@ import os #really import here and in render.py?
 from os.path import isfile
 from bl_operators.presets import AddPresetBase
 from bpy.utils import register_class, unregister_class
-
+from bpy.types import (
+        Operator,
+        UIList        
+        )
 # Example of wrapping every class 'as is'
 from bl_ui import properties_output
 for member in dir(properties_output):
@@ -69,7 +72,7 @@ class POV_WORLD_MT_presets(bpy.types.Menu):
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetWorld(AddPresetBase, bpy.types.Operator):
+class AddPresetWorld(AddPresetBase, Operator):
     '''Add a World Preset'''
     bl_idname = "object.world_preset_add"
     bl_label = "Add World Preset"
@@ -528,7 +531,7 @@ class POV_LIGHT_MT_presets(bpy.types.Menu):
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetLamp(AddPresetBase, bpy.types.Operator):
+class AddPresetLamp(AddPresetBase, Operator):
     '''Add a Lamp Preset'''
     bl_idname = "object.light_preset_add"
     bl_label = "Add Lamp Preset"
@@ -573,13 +576,122 @@ class LIGHT_PT_POV_sunsky(PovLampButtonsPanel, bpy.types.Panel):
 
     draw = properties_data_light.DATA_PT_sunsky.draw
 
-
-class LIGHT_PT_POV_shadow(PovLampButtonsPanel, bpy.types.Panel):
-    bl_label = properties_data_light.DATA_PT_shadow.bl_label
-
-    draw = properties_data_light.DATA_PT_shadow.draw
-
 '''
+class LIGHT_PT_POV_shadow(PovLampButtonsPanel, bpy.types.Panel):
+    bl_label =  "Shadow"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    
+    @classmethod
+    def poll(cls, context):
+        lamp = context.lamp
+        engine = context.scene.render.engine
+        return lamp and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        lamp = context.lamp
+
+        layout.row().prop(lamp, "shadow_method", expand=True)
+'''
+        if lamp.shadow_method == 'NOSHADOW' and lamp.type == 'AREA':
+            split = layout.split()
+
+            col = split.column()
+            col.label(text="Form factor sampling:")
+
+            sub = col.row(align=True)
+
+            if lamp.shape == 'SQUARE':
+                sub.prop(lamp, "shadow_ray_samples_x", text="Samples")
+            elif lamp.shape == 'RECTANGLE':
+                sub.prop(lamp, "shadow_ray_samples_x", text="Samples X")
+                sub.prop(lamp, "shadow_ray_samples_y", text="Samples Y")
+
+        if lamp.shadow_method != 'NOSHADOW':
+            split = layout.split()
+
+            col = split.column()
+            col.prop(lamp, "shadow_color", text="")
+
+            col = split.column()
+            col.prop(lamp, "use_shadow_layer", text="This Layer Only")
+            col.prop(lamp, "use_only_shadow")
+
+        if lamp.shadow_method == 'RAY_SHADOW':
+            split = layout.split()
+
+            col = split.column()
+            col.label(text="Sampling:")
+
+            if lamp.type in {'POINT', 'SUN', 'SPOT'}:
+                sub = col.row()
+
+                sub.prop(lamp, "shadow_ray_samples", text="Samples")
+                sub.prop(lamp, "shadow_soft_size", text="Soft Size")
+
+            elif lamp.type == 'AREA':
+                sub = col.row(align=True)
+
+                if lamp.shape == 'SQUARE':
+                    sub.prop(lamp, "shadow_ray_samples_x", text="Samples")
+                elif lamp.shape == 'RECTANGLE':
+                    sub.prop(lamp, "shadow_ray_samples_x", text="Samples X")
+                    sub.prop(lamp, "shadow_ray_samples_y", text="Samples Y")
+
+            col.row().prop(lamp, "shadow_ray_sample_method", expand=True)
+
+            if lamp.shadow_ray_sample_method == 'ADAPTIVE_QMC':
+                layout.prop(lamp, "shadow_adaptive_threshold", text="Threshold")
+
+            if lamp.type == 'AREA' and lamp.shadow_ray_sample_method == 'CONSTANT_JITTERED':
+                row = layout.row()
+                row.prop(lamp, "use_umbra")
+                row.prop(lamp, "use_dither")
+                row.prop(lamp, "use_jitter")
+
+        elif lamp.shadow_method == 'BUFFER_SHADOW':
+            col = layout.column()
+            col.label(text="Buffer Type:")
+            col.row().prop(lamp, "shadow_buffer_type", expand=True)
+
+            if lamp.shadow_buffer_type in {'REGULAR', 'HALFWAY', 'DEEP'}:
+                split = layout.split()
+
+                col = split.column()
+                col.label(text="Filter Type:")
+                col.prop(lamp, "shadow_filter_type", text="")
+                sub = col.column(align=True)
+                sub.prop(lamp, "shadow_buffer_soft", text="Soft")
+                sub.prop(lamp, "shadow_buffer_bias", text="Bias")
+
+                col = split.column()
+                col.label(text="Sample Buffers:")
+                col.prop(lamp, "shadow_sample_buffers", text="")
+                sub = col.column(align=True)
+                sub.prop(lamp, "shadow_buffer_size", text="Size")
+                sub.prop(lamp, "shadow_buffer_samples", text="Samples")
+                if lamp.shadow_buffer_type == 'DEEP':
+                    col.prop(lamp, "compression_threshold")
+
+            elif lamp.shadow_buffer_type == 'IRREGULAR':
+                layout.prop(lamp, "shadow_buffer_bias", text="Bias")
+
+            split = layout.split()
+
+            col = split.column()
+            col.prop(lamp, "use_auto_clip_start", text="Autoclip Start")
+            sub = col.column()
+            sub.active = not lamp.use_auto_clip_start
+            sub.prop(lamp, "shadow_buffer_clip_start", text="Clip Start")
+
+            col = split.column()
+            col.prop(lamp, "use_auto_clip_end", text="Autoclip End")
+            sub = col.column()
+            sub.active = not lamp.use_auto_clip_end
+            sub.prop(lamp, "shadow_buffer_clip_end", text=" Clip End")
+'''
+
 class LIGHT_PT_POV_area(PovLampButtonsPanel, bpy.types.Panel):
     bl_label = properties_data_light.DATA_PT_area.bl_label
 
@@ -749,19 +861,18 @@ class RENDER_PT_povray_render_settings(RenderButtonsPanel, bpy.types.Panel):
         layout = self.layout
 
         scene = context.scene
+        rd = context.scene.render
         #layout.active = (scene.pov.max_trace_level != 0)
 
         if sys.platform[:3] != "win":
             layout.prop(scene.pov, "sdl_window_enable", text="POV-Ray SDL Window")
-
+   
         col = layout.column()
-
         col.label(text="Global Settings:")
         col.prop(scene.pov, "max_trace_level", text="Ray Depth")
-
+        align = True   
         layout.active = scene.pov.global_settings_advanced
         layout.prop(scene.pov,"charset")
-        align = True
         row = layout.row(align = align)
         row.prop(scene.pov,"adc_bailout")
         row = layout.row(align = align)
@@ -774,7 +885,15 @@ class RENDER_PT_povray_render_settings(RenderButtonsPanel, bpy.types.Panel):
         row.prop(scene.pov,"number_of_waves")
         row = layout.row(align = align)
         row.prop(scene.pov,"noise_generator")
-
+        
+        split = layout.split()
+        split.label(text="Shading:")
+        split = layout.split()
+    
+        row = split.row(align = align)
+        row.prop(scene.pov, "use_shadows")
+        row.prop(scene.pov, "alpha_mode") 
+        
 class RENDER_PT_povray_photons(RenderButtonsPanel, bpy.types.Panel):
     bl_label = "Photons"
     bl_options = {'DEFAULT_CLOSED'}
@@ -941,7 +1060,7 @@ class POV_RADIOSITY_MT_presets(bpy.types.Menu):
     draw = bpy.types.Menu.draw_preset
 
 
-class AddPresetRadiosity(AddPresetBase, bpy.types.Operator):
+class AddPresetRadiosity(AddPresetBase, Operator):
     '''Add a Radiosity Preset'''
     bl_idname = "scene.radiosity_preset_add"
     bl_label = "Add Radiosity Preset"
@@ -1073,7 +1192,7 @@ class MATERIAL_MT_POV_sss_presets(bpy.types.Menu):
     preset_operator = "script.execute_preset"
     draw = bpy.types.Menu.draw_preset
 
-class AddPresetSSS(AddPresetBase, bpy.types.Operator):
+class AddPresetSSS(AddPresetBase, Operator):
     '''Add an SSS Preset'''
     bl_idname = "material.sss_preset_add"
     bl_label = "Add SSS Preset"
@@ -1398,6 +1517,28 @@ class MATERIAL_PT_povray_replacement_text(MaterialButtonsPanel, bpy.types.Panel)
         col.label(text="Replace properties with:")
         col.prop(mat.pov, "replacement_text", text="")
 
+class WORLD_TEXTURE_SLOTS_UL_List(UIList):
+    """Texture Slots UIList."""
+
+
+    def draw_item(self, context, layout, world, item, icon, active_data,
+                  world_texture_list_index, index):
+        world = context.world#.pov
+        active_data = world.pov
+        #tex = context.texture #may be needed later?
+        
+        
+        # We could write some code to decide which icon to use here...
+        custom_icon = 'TEXTURE'
+
+        # Make sure your code supports all 3 layout types
+        if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            layout.label(item.name, icon = custom_icon)
+
+        elif self.layout_type in {'GRID'}:
+            layout.alignment = 'CENTER'
+            layout.label("", icon = custom_icon)
+
 class TEXTURE_PT_povray_type(TextureButtonsPanel, bpy.types.Panel):
     bl_label = "POV-ray Textures"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1412,6 +1553,11 @@ class TEXTURE_PT_povray_type(TextureButtonsPanel, bpy.types.Panel):
         split.label(text="POV:")
         split.prop(tex.pov, "tex_pattern_type", text="")
 
+        row = layout.row()
+        row.template_list("WORLD_TEXTURE_SLOTS_UL_List", "The_List", world,
+                          "texture_slots", world, "world_texture_list_index")
+        
+        
 class TEXTURE_PT_povray_preview(TextureButtonsPanel, bpy.types.Panel):
     bl_label = "Preview"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -2229,7 +2375,7 @@ class CAMERA_PT_povray_replacement_text(CameraDataButtonsPanel, bpy.types.Panel)
 # Text Povray Settings
 ###############################################################################
 
-class TEXT_OT_povray_insert(bpy.types.Operator):
+class TEXT_OT_povray_insert(Operator):
     """Tooltip"""
     bl_idname = "text.povray_insert"
     bl_label = "Insert"
@@ -2339,11 +2485,11 @@ def menu_func_templates(self, context):
     # Do not depend on POV-Ray being active renderer here...
     self.layout.menu("TEXT_MT_templates_pov")
 
-
 classes = (
     WORLD_PT_POV_world,
     POV_WORLD_MT_presets,
     AddPresetWorld,
+    WORLD_TEXTURE_SLOTS_UL_List,
     #RenderButtonsPanel,
     #ModifierButtonsPanel,
     #MaterialButtonsPanel,

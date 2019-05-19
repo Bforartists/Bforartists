@@ -97,7 +97,7 @@ def draw_callback1_px(self, context):
                     if self.shader is not None:
                         ob.data.materials.append(self.shader)
             bpy.context.view_layer.objects.active = acob
-            #bpy.context.scene.update()
+            #bpy.context.view_layer.update()
             np_print('040')
 
     elif mode == 5:

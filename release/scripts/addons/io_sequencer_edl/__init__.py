@@ -300,7 +300,7 @@ class SEQUENCER_PT_import_edl(bpy.types.Panel):
             col.prop(reel, "frame_offset")
 
         if reel is None:
-            box.label("Empty (No EDL Data)")
+            box.label(text="Empty (No EDL Data)")
 
         box.operator(FindReelsEDL.bl_idname, icon='EXTERNAL_DATA')
 

@@ -157,7 +157,7 @@ class add_BI_scene(Operator):
 
             # Add plane
             bpy.ops.mesh.primitive_plane_add(
-                            radius=50, view_align=False, enter_editmode=False, location=(0, 0, -1)
+                            radius=50, align='WORLD', enter_editmode=False, location=(0, 0, -1)
                             )
             bpy.ops.object.editmode_toggle()
             bpy.ops.transform.rotate(

@@ -116,7 +116,6 @@ static void shortcut_free_operator_property(IDProperty *prop)
 {
   if (prop) {
     IDP_FreeProperty(prop);
-    MEM_freeN(prop);
   }
 }
 
@@ -164,6 +163,8 @@ static uiBlock *menu_change_shortcut(bContext *C, ARegion *ar, void *arg)
                               EVT_TYPE_MASK_HOTKEY_INCLUDE,
                               EVT_TYPE_MASK_HOTKEY_EXCLUDE,
                               &km);
+  U.runtime.is_dirty = true;
+
   BLI_assert(kmi != NULL);
 
   RNA_pointer_create(&wm->id, &RNA_KeyMapItem, kmi, &ptr);
@@ -213,6 +214,7 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *ar, void *arg)
 
   /* update and get pointers again */
   WM_keyconfig_update(wm);
+  U.runtime.is_dirty = true;
 
   km = WM_keymap_guess_opname(C, idname);
   kmi = WM_keymap_item_find_id(km, kmi_id);
@@ -232,6 +234,7 @@ static uiBlock *menu_add_shortcut(bContext *C, ARegion *ar, void *arg)
 #ifdef USE_KEYMAP_ADD_HACK
   g_kmi_id_hack = kmi_id;
 #endif
+
   return block;
 }
 
@@ -262,7 +265,7 @@ static void menu_add_shortcut_cancel(struct bContext *C, void *arg1)
 static void popup_change_shortcut_func(bContext *C, void *arg1, void *UNUSED(arg2))
 {
   uiBut *but = (uiBut *)arg1;
-  UI_popup_block_invoke(C, menu_change_shortcut, but);
+  UI_popup_block_invoke(C, menu_change_shortcut, but, NULL);
 }
 
 static void remove_shortcut_func(bContext *C, void *arg1, void *UNUSED(arg2))
@@ -283,6 +286,7 @@ static void remove_shortcut_func(bContext *C, void *arg1, void *UNUSED(arg2))
   BLI_assert(kmi != NULL);
 
   WM_keymap_remove_item(km, kmi);
+  U.runtime.is_dirty = true;
 
   shortcut_free_operator_property(prop);
   but_shortcut_name_func(C, but, 0);
@@ -387,6 +391,7 @@ static void popup_user_menu_add_or_replace_func(bContext *C, void *arg1, void *U
 {
   uiBut *but = arg1;
   bUserMenu *um = ED_screen_user_menu_ensure(C);
+  U.runtime.is_dirty = true;
   ui_but_user_menu_add(C, but, um);
 }
 
@@ -394,6 +399,7 @@ static void popup_user_menu_remove_func(bContext *UNUSED(C), void *arg1, void *a
 {
   bUserMenu *um = arg1;
   bUserMenuItem *umi = arg2;
+  U.runtime.is_dirty = true;
   ED_screen_user_menu_item_remove(&um->items, umi);
 }
 
@@ -1172,6 +1178,9 @@ void ui_popup_context_menu_for_panel(bContext *C, ARegion *ar, Panel *pa)
   uiLayout *layout;
 
   if (!any_item_visible) {
+    return;
+  }
+  if (pa->type->parent != NULL) {
     return;
   }
 

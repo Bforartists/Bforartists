@@ -527,7 +527,7 @@ def discombobulate(self, minHeight, maxHeight, minTaper, maxTaper, sf1, sf2, sf3
 
     bpy.ops.object.select_pattern(pattern=object1.name, extend=False)
     bpy.context.view_layer.objects.active = bpy.data.objects[object1.name]
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     # translate, scale and rotate discombobulated results
     object1.location = to_translate

@@ -722,7 +722,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
                 if id_data is None:
                     continue
 
-                # Create new action if needed (should always be needed!
+                # Create new action if needed (should always be needed, except for keyblocks from shapekeys cases).
                 key = (as_uuid, al_uuid, id_data)
                 action = actions.get(key)
                 if action is None:
@@ -1332,6 +1332,7 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     ma = bpy.data.materials.new(name=elem_name_utf8)
 
     const_color_white = 1.0, 1.0, 1.0
+    const_color_black = 0.0, 0.0, 0.0
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
@@ -1345,7 +1346,18 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     #     (from 1.0 - 0.0 Principled BSDF range to 0.0 - 100.0 FBX shininess range)...
     fbx_shininess = elem_props_get_number(fbx_props, b'Shininess', 20.0)
     ma_wrap.roughness = 1.0 - (sqrt(fbx_shininess) / 10.0)
-    ma_wrap.transmission = 1.0 - elem_props_get_number(fbx_props, b'Opacity', 1.0)
+    # Sweetness... Looks like we are not the only ones to not know exactly how FBX is supposed to work (see T59850).
+    # According to one of its developers, Unity uses that formula to extract alpha value:
+    #
+    #   alpha = 1 - TransparencyFactor
+    #   if (alpha == 1 or alpha == 0):
+    #       alpha = 1 - TransparentColor.r
+    #
+    # Until further info, let's assume this is correct way to do, hence the following code for TransparentColor.
+    alpha = 1.0 - elem_props_get_number(fbx_props, b'TransparencyFactor', 0.0)
+    if (alpha == 1.0 or alpha == 0.0):
+        alpha = 1.0 - elem_props_get_color_rgb(fbx_props, b'TransparentColor', const_color_black)[0]
+    ma_wrap.alpha = alpha
     ma_wrap.metallic = elem_props_get_number(fbx_props, b'ReflectionFactor', 0.0)
     # We have no metallic (a.k.a. reflection) color...
     # elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
@@ -2989,9 +3001,8 @@ def load(operator, context, filepath="",
                         ma_wrap.metallic_texture.image = image
                         texture_mapping_set(fbx_lnk, ma_wrap.metallic_texture)
                     elif lnk_type in {b'TransparentColor', b'TransparentFactor'}:
-                        # Transparency... sort of...
-                        ma_wrap.transmission_texture.image = image
-                        texture_mapping_set(fbx_lnk, ma_wrap.transmission_texture)
+                        ma_wrap.alpha_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.alpha_texture)
                         if use_alpha_decals:
                             material_decals.add(material)
                     elif lnk_type == b'ShininessExponent':
@@ -3027,8 +3038,8 @@ def load(operator, context, filepath="",
                     material_decals.add(material)
 
                 ma_wrap = nodal_material_wrap_map[material]
-                ma_wrap.transmission_texture.use_alpha = True
-                ma_wrap.transmission_texture.copy_from(ma_wrap.base_color_texture)
+                ma_wrap.alpha_texture.use_alpha = True
+                ma_wrap.alpha_texture.copy_from(ma_wrap.base_color_texture)
 
             # Propagate mapping from diffuse to all other channels which have none defined.
             # XXX Commenting for now, I do not really understand the logic here, why should diffuse mapping

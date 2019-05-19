@@ -1,7 +1,10 @@
 # GPL # "author": "Kayo Phoenix"
 
 import bpy
-from bpy_extras import object_utils
+from bpy_extras.object_utils import (
+        AddObjectHelper,
+        object_data_add,
+        )
 from math import (
         pi, sin,
         cos,
@@ -207,7 +210,7 @@ def edge_max(diam):
     return diam * sin(pi / 3)
 
 
-class add_mesh_honeycomb(bpy.types.Operator):
+class add_mesh_honeycomb(bpy.types.Operator, AddObjectHelper):
     bl_idname = "mesh.honeycomb_add"
     bl_label = "Add HoneyComb"
     bl_description = "Simple honeycomb mesh generator"
@@ -248,19 +251,6 @@ class add_mesh_honeycomb(bpy.types.Operator):
             min=0.0, update=fix_edge,
             description='Width of the edge'
             )
-    # generic transform props
-    view_align: BoolProperty(
-            name="Align to View",
-            default=False
-            )
-    location: FloatVectorProperty(
-            name="Location",
-            subtype='TRANSLATION'
-            )
-    rotation: FloatVectorProperty(
-            name="Rotation",
-            subtype='EULER'
-            )
 
     @classmethod
     def poll(cls, context):
@@ -275,6 +265,6 @@ class add_mesh_honeycomb(bpy.types.Operator):
         mesh.from_pydata(vertices=verts, edges=[], faces=faces)
         mesh.update()
 
-        object_utils.object_data_add(context, mesh, operator=self)
+        object_data_add(context, mesh, operator=self)
 
         return {'FINISHED'}

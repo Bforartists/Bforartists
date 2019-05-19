@@ -1241,9 +1241,11 @@ class AssetBarOperator(bpy.types.Operator):
                             if object is not None and not object.is_library_indirect:
                                 target_object = object.name
                                 # create final mesh to extract correct material slot
-                                temp_mesh = object.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=True,
-                                                           calc_undeformed=False)
+                                depsgraph = bpy.context.evaluated_depsgraph_get()
+                                object_eval = object.evaluated_get(depsgraph)
+                                temp_mesh = object_eval.to_mesh()
                                 target_slot = temp_mesh.polygons[face_index].material_index
+                                object_eval.to_mesh_clear()
                             else:
                                 self.report({'WARNING'}, "Invalid or library object as input:")
                                 target_object = ''
