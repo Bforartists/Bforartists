@@ -123,33 +123,6 @@ class DisplayBoundsSwitch(Operator, BasePollCheck):
         return {'FINISHED'}
 
 
-# Double Sided switch
-class DisplayDoubleSidedSwitch(Operator, BasePollCheck):
-    bl_idname = "view3d.display_double_sided_switch"
-    bl_label = "On/Off"
-    bl_description = "Turn on/off face double shaded mode"
-
-    double_side: BoolProperty(default=False)
-
-    def execute(self, context):
-        try:
-            selection = bpy.context.selected_objects
-
-            if not selection:
-                for mesh in bpy.data.meshes:
-                    mesh.show_double_sided = self.double_side
-            else:
-                for sel in selection:
-                    if sel.type == 'MESH':
-                        mesh = sel.data
-                        mesh.show_double_sided = self.double_side
-        except:
-            self.report({'ERROR'}, "Turn on/off face double shaded mode failed")
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
-
-
 # XRay switch
 class DisplayXRayOn(Operator, BasePollCheck):
     bl_idname = "view3d.display_x_ray_switch"

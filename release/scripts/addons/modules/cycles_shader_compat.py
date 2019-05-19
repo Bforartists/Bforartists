@@ -469,7 +469,8 @@ class CyclesShaderWrapper():
         node = self.node_normalmap
         self.node_image_normalmap = (
             self._image_create_helper(image, node, (node.inputs["Color"],)))
-        self.node_image_normalmap.color_space = 'NONE'
+        if self.node_image_normalmap.image:
+            self.node_image_normalmap.image.colorspace_settings.is_data = True
 
     def normal_mapping_set(self, coords='UV',
                            translation=None, rotation=None, scale=None, clamp=None):

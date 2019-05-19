@@ -63,7 +63,12 @@ def do_export(context, props, filepath):
     end = props.range_end
     sampling = float(props.sampling)
     apply_modifiers = props.apply_modifiers
-    me = ob.to_mesh(context.depsgraph, apply_modifiers)
+    depsgraph = None
+    if apply_modifiers:
+        depsgraph = context.evaluated_depsgraph_get()
+        me = ob.evaluated_get(depsgraph).to_mesh()
+    else:
+        me = ob.to_mesh()
     vertCount = len(me.vertices)
     sampletimes = get_sampled_frames(start, end, sampling)
     sampleCount = len(sampletimes)
@@ -79,7 +84,10 @@ def do_export(context, props, filepath):
     for frame in sampletimes:
         # stupid modf() gives decimal part first!
         sc.frame_set(int(frame[1]), subframe=frame[0])
-        me = ob.to_mesh(context.depsgraph, apply_modifiers)
+        if apply_modifiers:
+            me = ob.evaluated_get(depsgraph).to_mesh()
+        else:
+            me = ob.to_mesh()
 
         if len(me.vertices) != vertCount:
             bpy.data.meshes.remove(me, do_unlink=True)
@@ -104,7 +112,10 @@ def do_export(context, props, filepath):
                                      float(v.co[2]))
             file.write(thisVertex)
 
-        bpy.data.meshes.remove(me, do_unlink=True)
+    if apply_modifiers:
+        ob.evaluated_get(depsgraph).to_mesh_clear()
+    else:
+        me = ob.to_mesh_clear()
 
     file.flush()
     file.close()

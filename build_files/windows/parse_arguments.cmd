@@ -16,7 +16,9 @@ if NOT "%1" == "" (
 		set BUILD_DIR_OVERRRIDE="%BLENDER_DIR%..\%2"
 		shift /1
 	) else if "%1" == "with_tests" (
-		set TESTS_CMAKE_ARGS=-DWITH_GTESTS=On
+		set TESTS_CMAKE_ARGS=%TESTS_CMAKE_ARGS% -DWITH_GTESTS=On
+	) else if "%1" == "with_opengl_tests" (
+		set TESTS_CMAKE_ARGS=%TESTS_CMAKE_ARGS% -DWITH_OPENGL_DRAW_TESTS=On -DWITH_OPENGL_RENDER_TESTS=On
 	) else if "%1" == "full" (
 		set TARGET=Full
 		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% ^
@@ -75,6 +77,12 @@ if NOT "%1" == "" (
 	REM Non-Build Commands
 	) else if "%1" == "update" (
 		SET BUILD_UPDATE=1
+		set BUILD_UPDATE_SVN=1
+		set BUILD_UPDATE_GIT=1
+	) else if "%1" == "code_update" (
+		SET BUILD_UPDATE=1
+		set BUILD_UPDATE_SVN=0
+		set BUILD_UPDATE_GIT=1
 	) else if "%1" == "ninja" (
 		SET BUILD_WITH_NINJA=1
 	) else if "%1" == "clean" (

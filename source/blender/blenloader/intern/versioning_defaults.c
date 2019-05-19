@@ -24,6 +24,7 @@
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_string.h"
+#include "BLI_system.h"
 
 #include "DNA_gpencil_types.h"
 #include "DNA_mesh_types.h"
@@ -79,7 +80,6 @@ void BLO_update_defaults_userpref_blend(void)
 
     if (addon->prop) {
       IDP_FreeProperty(addon->prop);
-      MEM_freeN(addon->prop);
       addon->prop = NULL;
     }
   }
@@ -94,10 +94,13 @@ void BLO_update_defaults_userpref_blend(void)
   /* Leave temp directory empty, will then get appropriate value per OS. */
   U.tempdir[0] = '\0';
 
+  /* System-specific fonts directory. */
+  BKE_appdir_font_folder_default(U.fontdir);
+
   /* Only enable tooltips translation by default,
    * without actually enabling translation itself, for now. */
   U.transopts = USER_TR_TOOLTIPS;
-  U.memcachelimit = 4096;
+  U.memcachelimit = min_ii(BLI_system_memory_max_in_megabytes_int() / 2, 4096);
 
   /* Auto perspective. */
   U.uiflag |= USER_AUTOPERSP;

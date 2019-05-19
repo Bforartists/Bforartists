@@ -2760,7 +2760,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                 img = bpy.data.images.load(self.directory+sname[2])
                 disp_texture.image = img
                 disp_texture.label = 'Displacement'
-                disp_texture.color_space = 'NONE'
+                if disp_texture.image:
+                    disp_texture.image.colorspace_settings.is_data = True
 
                 # Add displacement offset nodes
                 disp_node = nodes.new(type='ShaderNodeDisplacement')
@@ -2825,8 +2826,8 @@ class NWAddPrincipledSetup(Operator, NWBase, ImportHelper):
                     link = links.new(active_node.inputs[sname[0]], texture_node.outputs[0])
 
                 # Use non-color for all but 'Base Color' Textures
-                if not sname[0] in ['Base Color']:
-                    texture_node.color_space = 'NONE'
+                if not sname[0] in ['Base Color'] and texture_node.image:
+                    texture_node.image.colorspace_settings.is_data = True
 
             else:
                 # If already texture connected. add to node list for alignment

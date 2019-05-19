@@ -883,10 +883,11 @@ static char *code_generate_fragment(GPUMaterial *material,
     BLI_dynstr_append(ds, "\t#define viewinv ViewMatrixInverse\n");
   }
   if (builtins & GPU_LOC_TO_VIEW_MATRIX) {
-    BLI_dynstr_append(ds, "\t#define localtoviewmat ModelViewMatrix\n");
+    BLI_dynstr_append(ds, "\t#define localtoviewmat (ViewMatrix * ModelMatrix)\n");
   }
   if (builtins & GPU_INVERSE_LOC_TO_VIEW_MATRIX) {
-    BLI_dynstr_append(ds, "\t#define invlocaltoviewmat ModelViewMatrixInverse\n");
+    BLI_dynstr_append(ds,
+                      "\t#define invlocaltoviewmat (ModelMatrixInverse * ViewMatrixInverse)\n");
   }
   if (builtins & GPU_VIEW_NORMAL) {
     BLI_dynstr_append(ds, "#ifdef HAIR_SHADER\n");
@@ -1034,12 +1035,39 @@ static char *code_generate_vertex(ListBase *nodes, const char *vert_code, bool u
     BLI_dynstr_append(ds, "out vec3 barycentricPosg;\n");
   }
 
+  BLI_dynstr_append(ds, "\n#define USE_ATTR\n");
+
+  /* Prototype, defined later (this is because of matrices definition). */
+  BLI_dynstr_append(ds, "void pass_attr(in vec3 position);\n");
+
+  BLI_dynstr_append(ds, "\n");
+
+  if (use_geom) {
+    /* XXX HACK: Eevee specific. */
+    char *vert_new, *vert_new2;
+    vert_new = BLI_str_replaceN(vert_code, "worldPosition", "worldPositiong");
+    vert_new2 = vert_new;
+    vert_new = BLI_str_replaceN(vert_new2, "viewPosition", "viewPositiong");
+    MEM_freeN(vert_new2);
+    vert_new2 = vert_new;
+    vert_new = BLI_str_replaceN(vert_new2, "worldNormal", "worldNormalg");
+    MEM_freeN(vert_new2);
+    vert_new2 = vert_new;
+    vert_new = BLI_str_replaceN(vert_new2, "viewNormal", "viewNormalg");
+    MEM_freeN(vert_new2);
+
+    BLI_dynstr_append(ds, vert_new);
+
+    MEM_freeN(vert_new);
+  }
+  else {
+    BLI_dynstr_append(ds, vert_code);
+  }
+
   BLI_dynstr_append(ds, "\n");
 
   BLI_dynstr_append(ds,
                     "#define USE_ATTR\n"
-                    "uniform mat4 ModelMatrixInverse;\n"
-                    "uniform mat4 ModelMatrix;\n"
                     "vec3 srgb_to_linear_attr(vec3 c) {\n"
                     "\tc = max(c, vec3(0.0));\n"
                     "\tvec3 c1 = c * (1.0 / 12.92);\n"
@@ -1175,28 +1203,6 @@ static char *code_generate_vertex(ListBase *nodes, const char *vert_code, bool u
   BLI_dynstr_append(ds, "#endif /* HAIR_SHADER */\n");
 
   BLI_dynstr_append(ds, "}\n");
-
-  if (use_geom) {
-    /* XXX HACK: Eevee specific. */
-    char *vert_new, *vert_new2;
-    vert_new = BLI_str_replaceN(vert_code, "worldPosition", "worldPositiong");
-    vert_new2 = vert_new;
-    vert_new = BLI_str_replaceN(vert_new2, "viewPosition", "viewPositiong");
-    MEM_freeN(vert_new2);
-    vert_new2 = vert_new;
-    vert_new = BLI_str_replaceN(vert_new2, "worldNormal", "worldNormalg");
-    MEM_freeN(vert_new2);
-    vert_new2 = vert_new;
-    vert_new = BLI_str_replaceN(vert_new2, "viewNormal", "viewNormalg");
-    MEM_freeN(vert_new2);
-
-    BLI_dynstr_append(ds, vert_new);
-
-    MEM_freeN(vert_new);
-  }
-  else {
-    BLI_dynstr_append(ds, vert_code);
-  }
 
   code = BLI_dynstr_get_cstring(ds);
 
@@ -1503,7 +1509,6 @@ static void gpu_node_input_link(GPUNode *node, GPUNodeLink *link, const eGPUType
       input->source = GPU_SOURCE_TEX;
       input->ima = link->ima;
       input->iuser = link->iuser;
-      input->image_isdata = link->image_isdata;
       break;
     case GPU_NODE_LINK_ATTR:
       input->source = GPU_SOURCE_ATTR;
@@ -1748,13 +1753,12 @@ GPUNodeLink *GPU_uniform(float *num)
   return link;
 }
 
-GPUNodeLink *GPU_image(Image *ima, ImageUser *iuser, bool is_data)
+GPUNodeLink *GPU_image(Image *ima, ImageUser *iuser)
 {
   GPUNodeLink *link = GPU_node_link_create();
   link->link_type = GPU_NODE_LINK_IMAGE_BLENDER;
   link->ima = ima;
   link->iuser = iuser;
-  link->image_isdata = is_data;
   return link;
 }
 

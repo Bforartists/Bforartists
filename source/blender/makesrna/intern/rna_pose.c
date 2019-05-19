@@ -289,6 +289,18 @@ static void rna_PoseChannel_name_set(PointerRNA *ptr, const char *value)
   ED_armature_bone_rename(G_MAIN, ob->data, oldname, newname);
 }
 
+static PointerRNA rna_PoseChannel_bone_get(PointerRNA *ptr)
+{
+  Object *ob = (Object *)ptr->id.data;
+  bPoseChannel *pchan = (bPoseChannel *)ptr->data;
+  PointerRNA tmp_ptr = *ptr;
+
+  /* Replace the id_data pointer with the Armature ID. */
+  tmp_ptr.id.data = ob->data;
+
+  return rna_pointer_inherit_refine(&tmp_ptr, &RNA_Bone, pchan->bone);
+}
+
 static bool rna_PoseChannel_has_ik_get(PointerRNA *ptr)
 {
   Object *ob = (Object *)ptr->id.data;
@@ -361,7 +373,9 @@ static void rna_Itasc_update_rebuild(Main *bmain, Scene *scene, PointerRNA *ptr)
   rna_Itasc_update(bmain, scene, ptr);
 }
 
-static void rna_PoseChannel_bone_custom_set(PointerRNA *ptr, PointerRNA value)
+static void rna_PoseChannel_bone_custom_set(struct ReportList *UNUSED(reports),
+                                            PointerRNA *ptr,
+                                            PointerRNA value)
 {
   bPoseChannel *pchan = (bPoseChannel *)ptr->data;
 
@@ -390,7 +404,9 @@ static PointerRNA rna_PoseChannel_bone_group_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_BoneGroup, grp);
 }
 
-static void rna_PoseChannel_bone_group_set(PointerRNA *ptr, PointerRNA value)
+static void rna_PoseChannel_bone_group_set(struct ReportList *UNUSED(reports),
+                                           PointerRNA *ptr,
+                                           PointerRNA value)
 {
   Object *ob = (Object *)ptr->id.data;
   bPose *pose = (ob) ? ob->pose : NULL;
@@ -431,7 +447,9 @@ static PointerRNA rna_Pose_active_bone_group_get(PointerRNA *ptr)
       ptr, &RNA_BoneGroup, BLI_findlink(&pose->agroups, pose->active_group - 1));
 }
 
-static void rna_Pose_active_bone_group_set(PointerRNA *ptr, PointerRNA value)
+static void rna_Pose_active_bone_group_set(struct ReportList *UNUSED(reports),
+                                           PointerRNA *ptr,
+                                           PointerRNA value)
 {
   bPose *pose = (bPose *)ptr->data;
   pose->active_group = BLI_findindex(&pose->agroups, value.data) + 1;
@@ -520,7 +538,9 @@ static PointerRNA rna_PoseChannel_active_constraint_get(PointerRNA *ptr)
   return rna_pointer_inherit_refine(ptr, &RNA_Constraint, con);
 }
 
-static void rna_PoseChannel_active_constraint_set(PointerRNA *ptr, PointerRNA value)
+static void rna_PoseChannel_active_constraint_set(struct ReportList *UNUSED(reports),
+                                                  PointerRNA *ptr,
+                                                  PointerRNA value)
 {
   bPoseChannel *pchan = (bPoseChannel *)ptr->data;
   BKE_constraints_active_set(&pchan->constraints, (bConstraint *)value.data);
@@ -758,7 +778,9 @@ static bPoseChannel *rna_PoseChannel_ensure_own_pchan(Object *ob,
   return ref_pchan;
 }
 
-static void rna_PoseChannel_custom_shape_transform_set(PointerRNA *ptr, PointerRNA value)
+static void rna_PoseChannel_custom_shape_transform_set(struct ReportList *UNUSED(reports),
+                                                       PointerRNA *ptr,
+                                                       PointerRNA value)
 {
   bPoseChannel *pchan = (bPoseChannel *)ptr->data;
   Object *ob = (Object *)ptr->id.data;
@@ -916,6 +938,7 @@ static void rna_def_pose_channel(BlenderRNA *brna)
   prop = RNA_def_property(srna, "bone", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_NEVER_NULL);
   RNA_def_property_struct_type(prop, "Bone");
+  RNA_def_property_pointer_funcs(prop, "rna_PoseChannel_bone_get", NULL, NULL, NULL);
   RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(prop, "Bone", "Bone associated with this PoseBone");

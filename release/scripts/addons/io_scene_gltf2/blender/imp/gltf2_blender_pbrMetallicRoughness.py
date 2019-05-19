@@ -237,7 +237,8 @@ class BlenderPbr():
                 metallic_text.image = bpy.data.images[gltf.data.images[
                     gltf.data.textures[pypbr.metallic_roughness_texture.index].source
                 ].blender_image_name]
-                metallic_text.color_space = 'NONE'
+                if metallic_text.image:
+                    metallic_text.image.colorspace_settings.is_data = True
                 metallic_text.label = 'METALLIC ROUGHNESS'
                 metallic_text.location = -500, 0
 
@@ -270,7 +271,8 @@ class BlenderPbr():
                 metallic_text.image = bpy.data.images[gltf.data.images[
                     gltf.data.textures[pypbr.metallic_roughness_texture.index].source
                 ].blender_image_name]
-                metallic_text.color_space = 'NONE'
+                if metallic_text.image:
+                    metallic_text.image.colorspace_settings.is_data = True
                 metallic_text.label = 'METALLIC ROUGHNESS'
                 metallic_text.location = -1000, 0
 

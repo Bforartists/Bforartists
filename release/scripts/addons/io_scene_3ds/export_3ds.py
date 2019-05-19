@@ -1021,6 +1021,7 @@ def save(operator,
     mesh_objects = []
 
     scene = context.scene
+    depsgraph = context.evaluated_depsgraph_get()
 
     if use_selection:
         objects = (ob for ob in scene.objects if ob.is_visible(scene) and ob.select)
@@ -1038,8 +1039,9 @@ def save(operator,
             if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
                 continue
 
+            ob_derived_eval = ob_derived.evaluated_get(depsgraph)
             try:
-                data = ob_derived.to_mesh(scene, True, 'PREVIEW')
+                data = ob_derived_eval.to_mesh()
             except:
                 data = None
 
@@ -1078,6 +1080,8 @@ def save(operator,
                     for f in data.tessfaces:
                         if f.material_index >= mat_ls_len:
                             f.material_index = 0
+
+                ob_derived_eval.to_mesh_clear()
 
         if free:
             free_derived_objects(ob)

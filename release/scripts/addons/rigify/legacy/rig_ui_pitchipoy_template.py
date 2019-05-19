@@ -67,7 +67,7 @@ def tail_distance(angle,bone_ik,bone_fk):
     if rot_mod != 'AXIS_ANGLE':
         bone_ik.rotation_mode = 'AXIS_ANGLE'
     bone_ik.rotation_axis_angle[0] = angle
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     dv = (bone_fk.tail - bone_ik.tail).length
 

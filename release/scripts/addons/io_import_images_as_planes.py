@@ -598,7 +598,7 @@ def setup_compositing(context, plane, img_spec):
             axis_fcurve.is_valid = True
             driver.expression = "%s" % driver.expression
 
-    scene.update()
+    context.view_layer.update()
 
 
 # -----------------------------------------------------------------------------
@@ -893,7 +893,7 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
         # Create individual planes
         planes = [self.single_image_spec_to_plane(context, img_spec) for img_spec in images]
 
-        context.scene.update()
+        context.view_layer.update()
 
         # Align planes relative to each other
         if self.offset:

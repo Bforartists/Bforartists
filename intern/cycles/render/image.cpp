@@ -186,6 +186,15 @@ void ImageManager::metadata_detect_colorspace(ImageMetaData &metadata, const cha
      * due to quantization in common cases. */
     metadata.compress_as_srgb = (metadata.type == IMAGE_DATA_TYPE_BYTE ||
                                  metadata.type == IMAGE_DATA_TYPE_BYTE4);
+
+    /* If colorspace conversion needed, use half instead of short so we can
+     * represent HDR values that might result from conversion. */
+    if (metadata.type == IMAGE_DATA_TYPE_USHORT) {
+      metadata.type = IMAGE_DATA_TYPE_HALF;
+    }
+    else if (metadata.type == IMAGE_DATA_TYPE_USHORT4) {
+      metadata.type = IMAGE_DATA_TYPE_HALF4;
+    }
   }
 }
 
@@ -401,6 +410,17 @@ int ImageManager::add_image(const string &filename,
   need_update = true;
 
   return type_index_to_flattened_slot(slot, type);
+}
+
+void ImageManager::add_image_user(int flat_slot)
+{
+  ImageDataType type;
+  int slot = flattened_slot_to_type_index(flat_slot, &type);
+
+  Image *image = images[type][slot];
+  assert(image && image->users >= 1);
+
+  image->users++;
 }
 
 void ImageManager::remove_image(int flat_slot)

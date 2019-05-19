@@ -373,7 +373,8 @@ int WM_operator_confirm_message_ex(struct bContext *C,
                                    struct wmOperator *op,
                                    const char *title,
                                    const int icon,
-                                   const char *message);
+                                   const char *message,
+                                   const short opcontext);
 int WM_operator_confirm_message(struct bContext *C, struct wmOperator *op, const char *message);
 
 /* operator api */
@@ -400,6 +401,10 @@ int WM_operator_name_call(struct bContext *C,
                           const char *opstring,
                           short context,
                           struct PointerRNA *properties);
+int WM_operator_name_call_with_properties(struct bContext *C,
+                                          const char *opstring,
+                                          short context,
+                                          struct IDProperty *properties);
 int WM_operator_call_py(struct bContext *C,
                         struct wmOperatorType *ot,
                         short context,
@@ -660,6 +665,7 @@ enum {
   WM_JOB_TYPE_SHADER_COMPILATION,
   WM_JOB_TYPE_STUDIOLIGHT,
   WM_JOB_TYPE_LIGHT_BAKE,
+  WM_JOB_TYPE_FSMENU_BOOKMARK_VALIDATE,
   /* add as needed, screencast, seq proxy build
    * if having hard coded values is a problem */
 };

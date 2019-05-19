@@ -34,8 +34,10 @@
 
 #include "MEM_guardedalloc.h"
 
-#include "BLI_math.h"
 #include "BLI_blenlib.h"
+#include "BLI_ghash.h"
+#include "BLI_math.h"
+#include "BLI_string.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -179,31 +181,59 @@ static void sima_zoom_set_from_bounds(SpaceImage *sima, ARegion *ar, const rctf 
   sima_zoom_set(sima, ar, size, NULL);
 }
 
-#if 0  // currently unused
-static bool image_poll(bContext *C)
+static Image *image_from_context(const bContext *C)
 {
-  return (CTX_data_edit_image(C) != NULL);
-}
-#endif
+  /* Edit image is set by templates used throughout the interface, so image
+   * operations work outside the image editor. */
+  Image *ima = CTX_data_pointer_get_type(C, "edit_image", &RNA_Image).data;
 
-static bool space_image_buffer_exists_poll(bContext *C)
-{
-  SpaceImage *sima = CTX_wm_space_image(C);
-  if (sima && ED_space_image_has_buffer(sima)) {
-    return true;
+  if (ima) {
+    return ima;
   }
-  return false;
+  else {
+    /* Image editor. */
+    SpaceImage *sima = CTX_wm_space_image(C);
+    return (sima) ? sima->image : NULL;
+  }
+}
+
+static ImageUser *image_user_from_context(const bContext *C)
+{
+  /* Edit image user is set by templates used throughout the interface, so
+   * image operations work outside the image editor. */
+  ImageUser *iuser = CTX_data_pointer_get_type(C, "edit_image_user", &RNA_ImageUser).data;
+
+  if (iuser) {
+    return iuser;
+  }
+  else {
+    /* Image editor. */
+    SpaceImage *sima = CTX_wm_space_image(C);
+    return (sima) ? &sima->iuser : NULL;
+  }
+}
+
+static bool image_buffer_exists_from_context(bContext *C)
+{
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
+
+  if (ima == NULL) {
+    return false;
+  }
+
+  void *lock;
+  ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
+  const bool has_buffer = (ibuf && (ibuf->rect || ibuf->rect_float));
+  BKE_image_release_ibuf(ima, ibuf, lock);
+  return has_buffer;
 }
 
 static bool image_not_packed_poll(bContext *C)
 {
-  SpaceImage *sima = CTX_wm_space_image(C);
-
   /* Do not run 'replace' on packed images, it does not give user expected results at all. */
-  if (sima && sima->image && BLI_listbase_is_empty(&sima->image->packedfiles)) {
-    return true;
-  }
-  return false;
+  Image *ima = image_from_context(C);
+  return (ima && BLI_listbase_is_empty(&ima->packedfiles));
 }
 
 static bool imbuf_format_writeable(const ImBuf *ibuf)
@@ -213,52 +243,6 @@ static bool imbuf_format_writeable(const ImBuf *ibuf)
   BKE_imbuf_to_image_format(&im_format, ibuf);
   return (BKE_image_imtype_to_ftype(im_format.imtype, &options_dummy) == ibuf->ftype);
 }
-
-static bool space_image_file_exists_poll(bContext *C)
-{
-  if (space_image_buffer_exists_poll(C)) {
-    Main *bmain = CTX_data_main(C);
-    SpaceImage *sima = CTX_wm_space_image(C);
-    ImBuf *ibuf;
-    void *lock;
-    bool ret = false;
-    char name[FILE_MAX];
-
-    ibuf = ED_space_image_acquire_buffer(sima, &lock);
-    if (ibuf) {
-      BLI_strncpy(name, ibuf->name, FILE_MAX);
-      BLI_path_abs(name, BKE_main_blendfile_path(bmain));
-
-      if (BLI_exists(name) == false) {
-        CTX_wm_operator_poll_msg_set(C, "image file not found");
-      }
-      else if (!BLI_file_is_writable(name)) {
-        CTX_wm_operator_poll_msg_set(C, "image path can't be written to");
-      }
-      else if (!imbuf_format_writeable(ibuf)) {
-        CTX_wm_operator_poll_msg_set(C, "image format is read-only");
-      }
-      else {
-        ret = true;
-      }
-    }
-    ED_space_image_release_buffer(sima, ibuf, lock);
-
-    return ret;
-  }
-  return false;
-}
-
-#if 0 /* UNUSED */
-static bool space_image_poll(bContext *C)
-{
-  SpaceImage *sima = CTX_wm_space_image(C);
-  if (sima && sima->image) {
-    return true;
-  }
-  return false;
-}
-#endif
 
 bool space_image_main_region_poll(bContext *C)
 {
@@ -288,24 +272,23 @@ static bool space_image_main_area_not_uv_brush_poll(bContext *C)
 static bool image_sample_poll(bContext *C)
 {
   SpaceImage *sima = CTX_wm_space_image(C);
-  if (sima) {
-    Object *obedit = CTX_data_edit_object(C);
-    if (obedit) {
-      /* Disable when UV editing so it doesn't swallow all click events
-       * (use for setting cursor). */
-      if (ED_space_image_show_uvedit(sima, obedit)) {
-        return false;
-      }
-    }
-    else if (sima->mode != SI_MODE_VIEW) {
-      return false;
-    }
-
-    return space_image_main_region_poll(C);
-  }
-  else {
+  if (sima == NULL) {
     return false;
   }
+
+  Object *obedit = CTX_data_edit_object(C);
+  if (obedit) {
+    /* Disable when UV editing so it doesn't swallow all click events
+     * (use for setting cursor). */
+    if (ED_space_image_show_uvedit(sima, obedit)) {
+      return false;
+    }
+  }
+  else if (sima->mode != SI_MODE_VIEW) {
+    return false;
+  }
+
+  return true;
 }
 /********************** view pan operator *********************/
 
@@ -1339,7 +1322,7 @@ static int image_open_exec(bContext *C, wmOperator *op)
 
     PointerRNA imaptr;
     RNA_id_pointer_create(&ima->id, &imaptr);
-    RNA_property_pointer_set(&iod->pprop.ptr, iod->pprop.prop, imaptr);
+    RNA_property_pointer_set(NULL, &iod->pprop.ptr, iod->pprop.prop, imaptr);
     RNA_property_update(C, &iod->pprop.ptr, iod->pprop.prop);
   }
 
@@ -1524,20 +1507,15 @@ void IMAGE_OT_open(wmOperatorType *ot)
 static int image_match_len_exec(bContext *C, wmOperator *UNUSED(op))
 {
   Scene *scene = CTX_data_scene(C);
-  Image *ima = CTX_data_pointer_get_type(C, "edit_image", &RNA_Image).data;
-  ImageUser *iuser = CTX_data_pointer_get_type(C, "edit_image_user", &RNA_ImageUser).data;
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
 
   if (!ima || !iuser) {
     /* Try to get a Texture, or a SpaceImage from context... */
-    SpaceImage *sima = CTX_wm_space_image(C);
     Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
     if (tex && tex->type == TEX_IMAGE) {
       ima = tex->ima;
       iuser = &tex->iuser;
-    }
-    else if (sima) {
-      ima = sima->image;
-      iuser = &sima->iuser;
     }
   }
 
@@ -1813,14 +1791,11 @@ static void image_save_options_to_op(ImageSaveOptions *opts, wmOperator *op)
   RNA_string_set(op->ptr, "filepath", opts->filepath);
 }
 
-static bool save_image_op(const bContext *C,
-                          SpaceImage *sima,
-                          wmOperator *op,
-                          ImageSaveOptions *opts)
+static bool save_image_op(const bContext *C, wmOperator *op, ImageSaveOptions *opts)
 {
   Main *bmain = CTX_data_main(C);
-  Image *ima = ED_space_image(sima);
-  ImageUser *iuser = &sima->iuser;
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
 
   opts->relative = (RNA_struct_find_property(op->ptr, "relative_path") &&
                     RNA_boolean_get(op->ptr, "relative_path"));
@@ -1858,21 +1833,27 @@ static int image_save_as_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
+  Image *image = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
   ImageSaveOptions opts;
 
   BKE_image_save_options_init(&opts, bmain, scene);
 
   /* just in case to initialize values,
    * these should be set on invoke or by the caller. */
-  image_save_options_init(bmain, &opts, sima->image, &sima->iuser, false, false);
+  image_save_options_init(bmain, &opts, image, iuser, false, false);
 
   image_save_options_from_op(bmain, &opts, op);
   opts.do_newpath = true;
 
-  save_image_op(C, sima, op, &opts);
+  save_image_op(C, op, &opts);
+
+  if (opts.save_copy == false) {
+    BKE_image_free_packedfiles(image);
+  }
 
   image_save_as_free(op);
+
   return OPERATOR_FINISHED;
 }
 
@@ -1885,8 +1866,8 @@ static bool image_save_as_check(bContext *UNUSED(C), wmOperator *op)
 static int image_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
   Main *bmain = CTX_data_main(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = ED_space_image(sima);
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
   Scene *scene = CTX_data_scene(C);
   ImageSaveOptions opts;
   PropertyRNA *prop;
@@ -1899,7 +1880,7 @@ static int image_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
 
   BKE_image_save_options_init(&opts, bmain, scene);
 
-  if (image_save_options_init(bmain, &opts, ima, &sima->iuser, true, save_as_render) == 0) {
+  if (image_save_options_init(bmain, &opts, ima, iuser, true, save_as_render) == 0) {
     return OPERATOR_CANCELLED;
   }
   image_save_options_to_op(&opts, op);
@@ -1967,20 +1948,21 @@ static void image_save_as_draw(bContext *UNUSED(C), wmOperator *op)
 
 static bool image_save_as_poll(bContext *C)
 {
-  if (space_image_buffer_exists_poll(C)) {
-    if (G.is_rendering) {
-      /* no need to NULL check here */
-      SpaceImage *sima = CTX_wm_space_image(C);
-      Image *ima = ED_space_image(sima);
-
-      if (ima->source == IMA_SRC_VIEWER) {
-        CTX_wm_operator_poll_msg_set(C, "can't save image while rendering");
-        return false;
-      }
-    }
-    return true;
+  if (!image_buffer_exists_from_context(C)) {
+    return false;
   }
-  return false;
+
+  if (G.is_rendering) {
+    /* no need to NULL check here */
+    Image *ima = image_from_context(C);
+
+    if (ima->source == IMA_SRC_VIEWER) {
+      CTX_wm_operator_poll_msg_set(C, "can't save image while rendering");
+      return false;
+    }
+  }
+
+  return true;
 }
 
 void IMAGE_OT_save_as(wmOperatorType *ot)
@@ -2026,21 +2008,83 @@ void IMAGE_OT_save_as(wmOperatorType *ot)
 
 /******************** save image operator ********************/
 
+static bool image_file_path_saveable(bContext *C, Image *ima, ImageUser *iuser)
+{
+  /* Can always repack images. */
+  if (BKE_image_has_packedfile(ima)) {
+    return true;
+  }
+
+  /* Test for valid filepath. */
+  void *lock;
+  ImBuf *ibuf = BKE_image_acquire_ibuf(ima, iuser, &lock);
+  bool ret = false;
+
+  if (ibuf) {
+    Main *bmain = CTX_data_main(C);
+    char name[FILE_MAX];
+    BLI_strncpy(name, ibuf->name, FILE_MAX);
+    BLI_path_abs(name, BKE_main_blendfile_path(bmain));
+
+    if (BLI_exists(name) == false) {
+      CTX_wm_operator_poll_msg_set(C, "image file not found");
+    }
+    else if (!BLI_file_is_writable(name)) {
+      CTX_wm_operator_poll_msg_set(C, "image path can't be written to");
+    }
+    else if (!imbuf_format_writeable(ibuf)) {
+      CTX_wm_operator_poll_msg_set(C, "image format is read-only");
+    }
+    else {
+      ret = true;
+    }
+  }
+
+  BKE_image_release_ibuf(ima, ibuf, lock);
+  return ret;
+}
+
+static bool image_save_poll(bContext *C)
+{
+  /* Can't save if there are no pixels. */
+  if (image_buffer_exists_from_context(C) == false) {
+    return false;
+  }
+
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
+
+  /* Images without a filepath will go to save as. */
+  if (!BKE_image_has_filepath(ima)) {
+    return true;
+  }
+
+  /* Check if there is a valid file path and image format we can write. */
+  return image_file_path_saveable(C, ima, iuser);
+}
+
 static int image_save_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
+  Image *image = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
   Scene *scene = CTX_data_scene(C);
   ImageSaveOptions opts;
 
+  if (BKE_image_has_packedfile(image)) {
+    /* Save packed files to memory. */
+    BKE_image_memorypack(image);
+    return OPERATOR_FINISHED;
+  }
+
   BKE_image_save_options_init(&opts, bmain, scene);
-  if (image_save_options_init(bmain, &opts, sima->image, &sima->iuser, false, false) == 0) {
+  if (image_save_options_init(bmain, &opts, image, iuser, false, false) == 0) {
     return OPERATOR_CANCELLED;
   }
   image_save_options_from_op(bmain, &opts, op);
 
   if (BLI_exists(opts.filepath) && BLI_file_is_writable(opts.filepath)) {
-    if (save_image_op(C, sima, op, &opts)) {
+    if (save_image_op(C, op, &opts)) {
       /* report since this can be called from key-shortcuts */
       BKE_reportf(op->reports, RPT_INFO, "Saved Image '%s'", opts.filepath);
     }
@@ -2054,6 +2098,19 @@ static int image_save_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static int image_save_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+  Image *ima = image_from_context(C);
+
+  if (!BKE_image_has_packedfile(ima) && !BKE_image_has_filepath(ima)) {
+    WM_operator_name_call(C, "IMAGE_OT_save_as", WM_OP_INVOKE_DEFAULT, NULL);
+    return OPERATOR_CANCELLED;
+  }
+  else {
+    return image_save_exec(C, op);
+  }
+}
+
 void IMAGE_OT_save(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2063,7 +2120,8 @@ void IMAGE_OT_save(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = image_save_exec;
-  ot->poll = space_image_file_exists_poll;
+  ot->invoke = image_save_invoke;
+  ot->poll = image_save_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -2074,30 +2132,30 @@ void IMAGE_OT_save(wmOperatorType *ot)
 static int image_save_sequence_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
+  Image *image = image_from_context(C);
   ImBuf *ibuf, *first_ibuf = NULL;
   int tot = 0;
   char di[FILE_MAX];
   struct MovieCacheIter *iter;
 
-  if (sima->image == NULL) {
+  if (image == NULL) {
     return OPERATOR_CANCELLED;
   }
 
-  if (sima->image->source != IMA_SRC_SEQUENCE) {
+  if (image->source != IMA_SRC_SEQUENCE) {
     BKE_report(op->reports, RPT_ERROR, "Can only save sequence on image sequences");
     return OPERATOR_CANCELLED;
   }
 
-  if (sima->image->type == IMA_TYPE_MULTILAYER) {
+  if (image->type == IMA_TYPE_MULTILAYER) {
     BKE_report(op->reports, RPT_ERROR, "Cannot save multilayer sequences");
     return OPERATOR_CANCELLED;
   }
 
   /* get total dirty buffers and first dirty buffer which is used for menu */
   ibuf = NULL;
-  if (sima->image->cache != NULL) {
-    iter = IMB_moviecacheIter_new(sima->image->cache);
+  if (image->cache != NULL) {
+    iter = IMB_moviecacheIter_new(image->cache);
     while (!IMB_moviecacheIter_done(iter)) {
       ibuf = IMB_moviecacheIter_getImBuf(iter);
       if (ibuf->userflags & IB_BITMAPDIRTY) {
@@ -2120,7 +2178,7 @@ static int image_save_sequence_exec(bContext *C, wmOperator *op)
   BLI_split_dir_part(first_ibuf->name, di, sizeof(di));
   BKE_reportf(op->reports, RPT_INFO, "%d image(s) will be saved in %s", tot, di);
 
-  iter = IMB_moviecacheIter_new(sima->image->cache);
+  iter = IMB_moviecacheIter_new(image->cache);
   while (!IMB_moviecacheIter_done(iter)) {
     ibuf = IMB_moviecacheIter_getImBuf(iter);
 
@@ -2155,7 +2213,139 @@ void IMAGE_OT_save_sequence(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = image_save_sequence_exec;
-  ot->poll = space_image_buffer_exists_poll;
+  ot->poll = image_buffer_exists_from_context;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/********************** save all operator **********************/
+
+static bool image_should_be_saved_when_modified(Image *ima)
+{
+  return !ELEM(ima->type, IMA_TYPE_R_RESULT, IMA_TYPE_COMPOSITE);
+}
+
+static bool image_should_be_saved(Image *ima)
+{
+  if (BKE_image_is_dirty(ima) &&
+      (ima->source == IMA_SRC_FILE || ima->source == IMA_SRC_GENERATED)) {
+    return image_should_be_saved_when_modified(ima);
+  }
+  else {
+    return false;
+  }
+}
+
+static bool image_has_valid_path(Image *ima)
+{
+  return strchr(ima->name, '\\') || strchr(ima->name, '/');
+}
+
+bool ED_image_should_save_modified(const bContext *C)
+{
+  return ED_image_save_all_modified_info(C, NULL) > 0;
+}
+
+int ED_image_save_all_modified_info(const bContext *C, ReportList *reports)
+{
+  Main *bmain = CTX_data_main(C);
+  GSet *unique_paths = BLI_gset_str_new(__func__);
+
+  int num_saveable_images = 0;
+
+  for (Image *ima = bmain->images.first; ima; ima = ima->id.next) {
+    if (image_should_be_saved(ima)) {
+      if (BKE_image_has_packedfile(ima) || (ima->source == IMA_SRC_GENERATED)) {
+        if (ima->id.lib == NULL) {
+          num_saveable_images++;
+        }
+        else {
+          BKE_reportf(reports,
+                      RPT_WARNING,
+                      "Packed library image: %s from library %s can't be saved",
+                      ima->id.name,
+                      ima->id.lib->name);
+        }
+      }
+      else {
+        if (image_has_valid_path(ima)) {
+          num_saveable_images++;
+          if (BLI_gset_haskey(unique_paths, ima->name)) {
+            BKE_reportf(reports,
+                        RPT_WARNING,
+                        "File path used by more than one saved image: %s",
+                        ima->name);
+          }
+          else {
+            BLI_gset_insert(unique_paths, BLI_strdup(ima->name));
+          }
+        }
+        else {
+          BKE_reportf(reports,
+                      RPT_WARNING,
+                      "Image %s can't be saved, no valid file path: %s",
+                      ima->id.name,
+                      ima->name);
+        }
+      }
+    }
+  }
+
+  BLI_gset_free(unique_paths, MEM_freeN);
+  return num_saveable_images;
+}
+
+bool ED_image_save_all_modified(const bContext *C, ReportList *reports)
+{
+  ED_image_save_all_modified_info(C, reports);
+
+  Main *bmain = CTX_data_main(C);
+  bool ok = true;
+
+  for (Image *ima = bmain->images.first; ima; ima = ima->id.next) {
+    if (image_should_be_saved(ima)) {
+      if (BKE_image_has_packedfile(ima) || (ima->source == IMA_SRC_GENERATED)) {
+        BKE_image_memorypack(ima);
+      }
+      else {
+        if (image_has_valid_path(ima)) {
+          ImageSaveOptions opts;
+          Scene *scene = CTX_data_scene(C);
+          BKE_image_save_options_init(&opts, bmain, scene);
+          if (image_save_options_init(bmain, &opts, ima, NULL, false, false)) {
+            bool saved_successfully = BKE_image_save(reports, bmain, ima, NULL, &opts);
+            ok = ok && saved_successfully;
+          }
+        }
+      }
+    }
+  }
+  return ok;
+}
+
+static bool image_save_all_modified_poll(bContext *C)
+{
+  int num_files = ED_image_save_all_modified_info(C, NULL);
+  return num_files > 0;
+}
+
+static int image_save_all_modified_exec(bContext *C, wmOperator *op)
+{
+  ED_image_save_all_modified(C, op->reports);
+  return OPERATOR_FINISHED;
+}
+
+void IMAGE_OT_save_all_modified(wmOperatorType *ot)
+{
+  /* identifiers */
+  ot->name = "Save All Modified";
+  ot->idname = "IMAGE_OT_save_all_modified";
+  ot->description = "Save all modified images";
+
+  /* api callbacks */
+  ot->exec = image_save_all_modified_exec;
+  ot->poll = image_save_all_modified_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -2166,8 +2356,8 @@ void IMAGE_OT_save_sequence(wmOperatorType *ot)
 static int image_reload_exec(bContext *C, wmOperator *UNUSED(op))
 {
   Main *bmain = CTX_data_main(C);
-  Image *ima = CTX_data_edit_image(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
+  Image *ima = image_from_context(C);
+  ImageUser *iuser = image_user_from_context(C);
 
   if (!ima) {
     return OPERATOR_CANCELLED;
@@ -2176,7 +2366,7 @@ static int image_reload_exec(bContext *C, wmOperator *UNUSED(op))
   /* XXX unpackImage frees image buffers */
   ED_preview_kill_jobs(CTX_wm_manager(C), CTX_data_main(C));
 
-  BKE_image_signal(bmain, ima, (sima) ? &sima->iuser : NULL, IMA_SIGNAL_RELOAD);
+  BKE_image_signal(bmain, ima, iuser, IMA_SIGNAL_RELOAD);
   DEG_id_tag_update(&ima->id, 0);
 
   WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
@@ -2288,7 +2478,7 @@ static int image_new_exec(bContext *C, wmOperator *op)
 
     PointerRNA imaptr;
     RNA_id_pointer_create(&ima->id, &imaptr);
-    RNA_property_pointer_set(&data->pprop.ptr, data->pprop.prop, imaptr);
+    RNA_property_pointer_set(NULL, &data->pprop.ptr, data->pprop.prop, imaptr);
     RNA_property_update(C, &data->pprop.ptr, data->pprop.prop);
   }
   else if (sima) {
@@ -2418,14 +2608,14 @@ void IMAGE_OT_new(wmOperatorType *ot)
 
 static bool image_invert_poll(bContext *C)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   return BKE_image_has_ibuf(ima, NULL);
 }
 
 static int image_invert_exec(bContext *C, wmOperator *op)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
   ImBuf *ibuf = BKE_image_acquire_ibuf(ima, NULL, NULL);
   SpaceImage *sima = CTX_wm_space_image(C);
   /* undo is supported only on image paint mode currently */
@@ -2498,7 +2688,8 @@ static int image_invert_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  ibuf->userflags |= IB_BITMAPDIRTY | IB_DISPLAY_BUFFER_INVALID;
+  ibuf->userflags |= IB_DISPLAY_BUFFER_INVALID;
+  BKE_image_mark_dirty(ima, ibuf);
 
   if (ibuf->mipmap[0]) {
     ibuf->userflags |= IB_MIPMAP_INVALID;
@@ -2549,7 +2740,7 @@ void IMAGE_OT_invert(wmOperatorType *ot)
 
 static bool image_pack_test(bContext *C, wmOperator *op)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   if (!ima) {
     return 0;
@@ -2566,7 +2757,7 @@ static bool image_pack_test(bContext *C, wmOperator *op)
 static int image_pack_exec(bContext *C, wmOperator *op)
 {
   struct Main *bmain = CTX_data_main(C);
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   if (!image_pack_test(C, op)) {
     return OPERATOR_CANCELLED;
@@ -2602,7 +2793,7 @@ void IMAGE_OT_pack(wmOperatorType *ot)
 
 static int image_unpack_exec(bContext *C, wmOperator *op)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
   int method = RNA_enum_get(op->ptr, "method");
 
   /* find the suppplied image by name */
@@ -2611,7 +2802,7 @@ static int image_unpack_exec(bContext *C, wmOperator *op)
     RNA_string_get(op->ptr, "id", imaname);
     ima = BLI_findstring(&CTX_data_main(C)->images, imaname, offsetof(ID, name) + 2);
     if (!ima) {
-      ima = CTX_data_edit_image(C);
+      ima = image_from_context(C);
     }
   }
 
@@ -2642,7 +2833,7 @@ static int image_unpack_exec(bContext *C, wmOperator *op)
 
 static int image_unpack_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   if (RNA_struct_property_is_set(op->ptr, "id")) {
     return image_unpack_exec(C, op);
@@ -3229,176 +3420,18 @@ void IMAGE_OT_curves_point_set(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-#if 0 /* Not ported to 2.5x yet */
-/******************** record composite operator *********************/
-
-typedef struct RecordCompositeData {
-  wmTimer *timer;
-  int old_cfra;
-  int sfra, efra;
-} RecordCompositeData;
-
-static int image_record_composite_apply(bContext *C, wmOperator *op)
-{
-  SpaceImage *sima = CTX_wm_space_image(C);
-  RecordCompositeData *rcd = op->customdata;
-  Scene *scene = CTX_data_scene(C);
-  ImBuf *ibuf;
-
-  WM_cursor_time(CTX_wm_window(C), scene->r.cfra);
-
-  // XXX scene->nodetree->test_break = BKE_blender_test_break;
-  // XXX scene->nodetree->test_break = NULL;
-
-  BKE_image_all_free_anim_ibufs(scene->r.cfra);
-  ntreeCompositExecTree(scene->nodetree,
-                        &scene->r,
-                        0,
-                        scene->r.cfra != rcd->old_cfra,
-                        &scene->view_settings,
-                        &scene->display_settings); /* 1 is no previews */
-
-  ED_area_tag_redraw(CTX_wm_area(C));
-
-  ibuf = BKE_image_acquire_ibuf(sima->image, &sima->iuser, NULL);
-  /* save memory in flipbooks */
-  if (ibuf)
-    imb_freerectfloatImBuf(ibuf);
-
-  BKE_image_release_ibuf(sima->image, ibuf, NULL);
-
-  scene->r.cfra++;
-
-  return (scene->r.cfra <= rcd->efra);
-}
-
-static int image_record_composite_init(bContext *C, wmOperator *op)
-{
-  SpaceImage *sima = CTX_wm_space_image(C);
-  Scene *scene = CTX_data_scene(C);
-  RecordCompositeData *rcd;
-
-  if (sima->iuser.frames < 2)
-    return 0;
-  if (scene->nodetree == NULL)
-    return 0;
-
-  op->customdata = rcd = MEM_callocN(sizeof(RecordCompositeData), "ImageRecordCompositeData");
-
-  rcd->old_cfra = scene->r.cfra;
-  rcd->sfra = sima->iuser.sfra;
-  rcd->efra = sima->iuser.sfra + sima->iuser.frames - 1;
-  scene->r.cfra = rcd->sfra;
-
-  return 1;
-}
-
-static void image_record_composite_exit(bContext *C, wmOperator *op)
-{
-  Scene *scene = CTX_data_scene(C);
-  SpaceImage *sima = CTX_wm_space_image(C);
-  RecordCompositeData *rcd = op->customdata;
-
-  scene->r.cfra = rcd->old_cfra;
-
-  WM_cursor_modal_restore(CTX_wm_window(C));
-
-  if (rcd->timer)
-    WM_event_remove_timer(CTX_wm_manager(C), CTX_wm_window(C), rcd->timer);
-
-  WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, sima->image);
-
-  // XXX play_anim(0);
-  // XXX allqueue(REDRAWNODE, 1);
-
-  MEM_freeN(rcd);
-}
-
-static int image_record_composite_exec(bContext *C, wmOperator *op)
-{
-  if (!image_record_composite_init(C, op))
-    return OPERATOR_CANCELLED;
-
-  while (image_record_composite_apply(C, op)) {
-  }
-
-  image_record_composite_exit(C, op);
-
-  return OPERATOR_FINISHED;
-}
-
-static int image_record_composite_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
-{
-  RecordCompositeData *rcd;
-
-  if (!image_record_composite_init(C, op))
-    return OPERATOR_CANCELLED;
-
-  rcd = op->customdata;
-  rcd->timer = WM_event_add_timer(CTX_wm_manager(C), CTX_wm_window(C), TIMER, 0.0f);
-  WM_event_add_modal_handler(C, op);
-
-  if (!image_record_composite_apply(C, op))
-    return OPERATOR_FINISHED;
-
-  return OPERATOR_RUNNING_MODAL;
-}
-
-static int image_record_composite_modal(bContext *C, wmOperator *op, const wmEvent *event)
-{
-  RecordCompositeData *rcd = op->customdata;
-
-  switch (event->type) {
-    case TIMER:
-      if (rcd->timer == event->customdata) {
-        if (!image_record_composite_apply(C, op)) {
-          image_record_composite_exit(C, op);
-          return OPERATOR_FINISHED;
-        }
-      }
-      break;
-    case ESCKEY:
-      image_record_composite_exit(C, op);
-      return OPERATOR_FINISHED;
-  }
-
-  return OPERATOR_RUNNING_MODAL;
-}
-
-static void image_record_composite_cancel(bContext *C, wmOperator *op)
-{
-  image_record_composite_exit(C, op);
-  return OPERATOR_CANCELLED;
-}
-
-void IMAGE_OT_record_composite(wmOperatorType *ot)
-{
-  /* identifiers */
-  ot->name = "Record Composite";
-  ot->idname = "IMAGE_OT_record_composite";
-
-  /* api callbacks */
-  ot->exec = image_record_composite_exec;
-  ot->invoke = image_record_composite_invoke;
-  ot->modal = image_record_composite_modal;
-  ot->cancel = image_record_composite_cancel;
-  ot->poll = space_image_buffer_exists_poll;
-}
-
-#endif
-
 /********************* cycle render slot operator *********************/
 
 static bool image_cycle_render_slot_poll(bContext *C)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   return (ima && ima->type == IMA_TYPE_R_RESULT);
 }
 
 static int image_cycle_render_slot_exec(bContext *C, wmOperator *op)
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
   const int direction = RNA_boolean_get(op->ptr, "reverse") ? -1 : 1;
 
   if (!ED_image_slot_cycle(ima, direction)) {
@@ -3438,7 +3471,7 @@ void IMAGE_OT_cycle_render_slot(wmOperatorType *ot)
 static int image_clear_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
 {
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   if (!BKE_image_clear_renderslot(ima, &sima->iuser, ima->render_slot)) {
     return OPERATOR_CANCELLED;
@@ -3468,7 +3501,7 @@ void IMAGE_OT_clear_render_slot(wmOperatorType *ot)
 
 static int image_add_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
 {
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   RenderSlot *slot = BKE_image_add_renderslot(ima, NULL);
   ima->render_slot = BLI_findindex(&ima->renderslots, slot);
@@ -3498,7 +3531,7 @@ void IMAGE_OT_add_render_slot(wmOperatorType *ot)
 static int image_remove_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
 {
   SpaceImage *sima = CTX_wm_space_image(C);
-  Image *ima = CTX_data_edit_image(C);
+  Image *ima = image_from_context(C);
 
   if (!BKE_image_remove_renderslot(ima, &sima->iuser, ima->render_slot)) {
     return OPERATOR_CANCELLED;

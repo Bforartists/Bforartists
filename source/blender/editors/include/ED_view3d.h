@@ -42,6 +42,7 @@ struct GPUFX;
 struct GPUFXSettings;
 struct GPUOffScreen;
 struct GPUViewport;
+struct ID;
 struct ImBuf;
 struct MVert;
 struct Main;
@@ -108,8 +109,6 @@ enum eV3DCursorOrient {
 void ED_view3d_background_color_get(const struct Scene *scene,
                                     const struct View3D *v3d,
                                     float r_color[3]);
-void ED_view3d_cursor3d_calc_mat3(const struct Scene *scene, float mat[3][3]);
-void ED_view3d_cursor3d_calc_mat4(const struct Scene *scene, float mat[4][4]);
 void ED_view3d_cursor3d_position(struct bContext *C,
                                  const int mval[2],
                                  const bool use_depth,
@@ -454,11 +453,8 @@ void ED_view3d_select_id_validate(struct ViewContext *vc);
 void ED_view3d_select_id_validate_with_select_mode(struct ViewContext *vc, short select_mode);
 
 uint ED_view3d_select_id_sample(struct ViewContext *vc, int x, int y);
-uint *ED_view3d_select_id_read(
-    struct ViewContext *vc, int xmin, int ymin, int xmax, int ymax, uint *r_buf_len);
-uint *ED_view3d_select_id_read_rect(struct ViewContext *vc,
-                                    const struct rcti *rect,
-                                    uint *r_buf_len);
+uint *ED_view3d_select_id_read(int xmin, int ymin, int xmax, int ymax, uint *r_buf_len);
+uint *ED_view3d_select_id_read_rect(const struct rcti *rect, uint *r_buf_len);
 uint ED_view3d_select_id_read_nearest(
     struct ViewContext *vc, const int mval[2], const uint min, const uint max, uint *r_dist);
 
@@ -572,7 +568,6 @@ void ED_view3d_draw_offscreen(struct Depsgraph *depsgraph,
                               bool do_sky,
                               bool is_persp,
                               const char *viewname,
-                              struct GPUFXSettings *fx_settings,
                               const bool do_color_managment,
                               struct GPUOffScreen *ofs,
                               struct GPUViewport *viewport);

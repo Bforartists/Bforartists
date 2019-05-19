@@ -195,7 +195,7 @@ def add_type1(self, context):
 def make_path(self, context, verts):
     target = bpy.context.view_layer.objects.active
     bpy.ops.curve.primitive_nurbs_path_add(
-            view_align=False, enter_editmode=False, location=(0, 0, 0)
+            align='WORLD', enter_editmode=False, location=(0, 0, 0)
             )
     target.data.taper_object = bpy.context.view_layer.objects.active
     taper = bpy.context.view_layer.objects.active
@@ -359,7 +359,7 @@ class add_bevelcurve(Operator, AddObjectHelper):
 
         col = layout.column(align=True)
         # AddObjectHelper props
-        col.prop(self, "view_align")
+        col.prop(self, "align")
         col.prop(self, "location")
         col.prop(self, "rotation")
 

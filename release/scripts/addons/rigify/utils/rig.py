@@ -272,22 +272,6 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
 
         code.append("\n    arm.layers = [(x in " + str(active_layers) + ") for x in range(" + str(len(arm.layers)) + ")]")
 
-    if func_name == "create":
-        active_template = arm.rigify_active_template
-        template_name = arm.rigify_templates[active_template].name
-        code.append("\n    # Select proper UI template")
-        code.append("    template_name = '{}'".format(template_name))
-        code.append("    arm_templates = arm.rigify_templates.items()")
-        code.append("    template_index = None")
-        code.append("    for i, template in enumerate(arm_templates):")
-        code.append("        if template[0] == template_name:")
-        code.append("            template_index = i")
-        code.append("            break")
-        code.append("    if template_index is None:")
-        code.append("        template_index = 0 # Default to something...")
-        code.append("    else:")
-        code.append("        arm.rigify_active_template = template_index")
-
     code.append('\nif __name__ == "__main__":')
     code.append("    " + func_name + "(bpy.context.active_object)\n")
 

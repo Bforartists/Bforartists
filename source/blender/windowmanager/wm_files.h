@@ -33,16 +33,30 @@ void wm_homefile_read(struct bContext *C,
                       struct ReportList *reports,
                       bool use_factory_settings,
                       bool use_empty_data,
+                      bool use_data,
                       bool use_userdef,
                       const char *filepath_startup_override,
                       const char *app_template_override,
                       bool *r_is_factory_startup);
 void wm_file_read_report(bContext *C, struct Main *bmain);
 
+typedef struct wmGenericCallback {
+  void (*exec)(bContext *C, void *user_data);
+  void *user_data;
+  void (*free_user_data)(void *user_data);
+} wmGenericCallback;
+
+wmGenericCallback *wm_generic_callback_steal(wmGenericCallback *callback);
+void wm_generic_callback_free(wmGenericCallback *callback);
+void wm_close_file_dialog(bContext *C, wmGenericCallback *post_action);
+bool wm_file_or_image_is_modified(const struct bContext *C);
+
 void WM_OT_save_homefile(struct wmOperatorType *ot);
 void WM_OT_userpref_autoexec_path_add(struct wmOperatorType *ot);
 void WM_OT_userpref_autoexec_path_remove(struct wmOperatorType *ot);
 void WM_OT_save_userpref(struct wmOperatorType *ot);
+void WM_OT_read_userpref(struct wmOperatorType *ot);
+void WM_OT_read_factory_userpref(struct wmOperatorType *ot);
 void WM_OT_read_history(struct wmOperatorType *ot);
 void WM_OT_read_homefile(struct wmOperatorType *ot);
 void WM_OT_read_factory_settings(struct wmOperatorType *ot);

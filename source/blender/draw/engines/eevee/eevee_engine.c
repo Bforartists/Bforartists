@@ -154,9 +154,13 @@ static void eevee_cache_finish(void *vedata)
 {
   EEVEE_ViewLayerData *sldata = EEVEE_view_layer_data_ensure();
 
-  EEVEE_materials_cache_finish(vedata);
+  EEVEE_volumes_cache_finish(sldata, vedata);
+  EEVEE_materials_cache_finish(sldata, vedata);
   EEVEE_lights_cache_finish(sldata, vedata);
   EEVEE_lightprobes_cache_finish(sldata, vedata);
+
+  EEVEE_effects_draw_init(sldata, vedata);
+  EEVEE_volumes_draw_init(sldata, vedata);
 }
 
 /* As renders in an HDR offscreen buffer, we need draw everything once
@@ -219,6 +223,14 @@ static void eevee_draw_background(void *vedata)
       DRW_viewport_matrix_override_set(stl->effects->overide_wininv, DRW_MAT_WININV);
     }
 
+    /* when doing viewport rendering the overrides needs to be recalculated for
+     * every loop as this normally happens once inside
+     * `EEVEE_temporal_sampling_init` */
+    else if (((stl->effects->enabled_effects & EFFECT_TAA) != 0) &&
+             (stl->effects->taa_current_sample > 1) && DRW_state_is_image_render()) {
+      EEVEE_temporal_sampling_update_matrices(vedata);
+    }
+
     /* Refresh Probes */
     DRW_stats_group_start("Probes Refresh");
     EEVEE_lightprobes_refresh(sldata, vedata);
@@ -241,8 +253,8 @@ static void eevee_draw_background(void *vedata)
 
     GPU_framebuffer_bind(fbl->main_fb);
     eGPUFrameBufferBits clear_bits = GPU_DEPTH_BIT;
-    clear_bits |= (DRW_state_draw_background()) ? 0 : GPU_COLOR_BIT;
-    clear_bits |= ((stl->effects->enabled_effects & EFFECT_SSS) != 0) ? GPU_STENCIL_BIT : 0;
+    SET_FLAG_FROM_TEST(clear_bits, !DRW_state_draw_background(), GPU_COLOR_BIT);
+    SET_FLAG_FROM_TEST(clear_bits, (stl->effects->enabled_effects & EFFECT_SSS), GPU_STENCIL_BIT);
     GPU_framebuffer_clear(fbl->main_fb, clear_bits, clear_col, clear_depth, clear_stencil);
 
     /* Depth prepass */
@@ -297,7 +309,7 @@ static void eevee_draw_background(void *vedata)
     EEVEE_draw_effects(sldata, vedata);
     DRW_stats_group_end();
 
-    if ((stl->effects->taa_current_sample > 1) && !DRW_state_is_image_render()) {
+    if ((stl->effects->taa_current_sample > 1)) {
       DRW_viewport_matrix_override_unset_all();
     }
   }

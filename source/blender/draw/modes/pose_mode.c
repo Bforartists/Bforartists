@@ -138,7 +138,7 @@ static void POSE_cache_init(void *vedata)
     psl->bone_envelope[i] = DRW_pass_create("Bone Envelope Outline Pass", state);
 
     state = DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL |
-            DRW_STATE_BLEND | DRW_STATE_WIRE;
+            DRW_STATE_BLEND;
     psl->relationship[i] = DRW_pass_create("Bone Relationship Pass", state);
 
     ppd->custom_shapes[i] = BLI_ghash_ptr_new(__func__);
@@ -226,10 +226,10 @@ static void POSE_cache_populate(void *vedata, Object *ob)
     struct GPUBatch *geom = DRW_cache_object_surface_get(ob);
     if (geom) {
       if (POSE_is_driven_by_active_armature(ob)) {
-        DRW_shgroup_call_object_add(ppd->bone_selection_shgrp, geom, ob);
+        DRW_shgroup_call_object(ppd->bone_selection_shgrp, geom, ob);
       }
       else {
-        DRW_shgroup_call_object_add(ppd->bone_selection_invert_shgrp, geom, ob);
+        DRW_shgroup_call_object(ppd->bone_selection_invert_shgrp, geom, ob);
       }
     }
   }

@@ -224,6 +224,7 @@ static void image_operatortypes(void)
   WM_operatortype_append(IMAGE_OT_save);
   WM_operatortype_append(IMAGE_OT_save_as);
   WM_operatortype_append(IMAGE_OT_save_sequence);
+  WM_operatortype_append(IMAGE_OT_save_all_modified);
   WM_operatortype_append(IMAGE_OT_pack);
   WM_operatortype_append(IMAGE_OT_unpack);
 
@@ -1033,7 +1034,7 @@ void ED_spacetype_image(void)
   /* regions: listview/buttons/scopes */
   art = MEM_callocN(sizeof(ARegionType), "spacetype image region");
   art->regionid = RGN_TYPE_UI;
-  art->prefsizex = 220;  // XXX
+  art->prefsizex = UI_SIDEBAR_PANEL_WIDTH;
   art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
   art->listener = image_buttons_region_listener;
   art->message_subscribe = ED_area_do_mgs_subscribe_for_tool_ui;

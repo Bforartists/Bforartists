@@ -67,7 +67,9 @@ def save(context, filepath="", frame_start=1, frame_end=300, fps=25.0, use_rest_
 
     orig_frame = scene.frame_current
     scene.frame_set(frame_start)
-    me = obj.to_mesh(context.depsgraph, True)
+    depsgraph = context.evaluated_depsgraph_get()
+    obj_eval = obj.evaluated_get
+    me = obj_eval.to_mesh()
 
     #Flip y and z
     '''
@@ -102,7 +104,8 @@ def save(context, filepath="", frame_start=1, frame_end=300, fps=25.0, use_rest_
 
     for frame in range(frame_start, frame_end + 1):  # in order to start at desired frame
         scene.frame_set(frame)
-        me = obj.to_mesh(context.depsgraph, True)
+        depsgraph = context.evaluated_depsgraph_get()
+        me = obj.evaluated_get(depsgraph).to_mesh()
         check_vertcount(me, numverts)
         me.transform(mat_flip @ obj.matrix_world)
 
@@ -115,5 +118,7 @@ def save(context, filepath="", frame_start=1, frame_end=300, fps=25.0, use_rest_
 
     print('MDD Exported: %r frames:%d\n' % (filepath, numframes - 1))
     scene.frame_set(orig_frame)
+
+    obj_eval.to_mesh_clear()
 
     return {'FINISHED'}

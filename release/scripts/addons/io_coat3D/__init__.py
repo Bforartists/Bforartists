@@ -1695,7 +1695,7 @@ class MaterialCoat3D(PropertyGroup):
     name: StringProperty(
         name="ApplinkAddress",
         # subtype="APPLINK_ADDRESS",
-        default=True
+        default=''
     )
     bring_diffuse: BoolProperty(
         name="Import diffuse texture",
@@ -1829,7 +1829,7 @@ def unregister():
 
     kc = bpy.context.window_manager.keyconfigs.addon
     if kc:
-        km = kc.keymaps.get('Object Mode')
+        km = kc.keymaps.get('3D View')
         for kmi in km.keymap_items:
             if kmi.idname == 'wm.call_menu':
                 if kmi.properties.name == "VIEW3D_MT_Coat_Dynamic_Menu":

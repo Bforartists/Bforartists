@@ -945,7 +945,7 @@ def load_3ds(filepath,
             ob.sel = 1
     """
 
-    context.scene.update()
+    context.view_layer.update()
 
     axis_min = [1000000000] * 3
     axis_max = [-1000000000] * 3

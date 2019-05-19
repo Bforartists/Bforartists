@@ -12,32 +12,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * The Original Code is Copyright (C) 2019 Blender Foundation.
- * All rights reserved.
  */
 
 /** \file
  * \ingroup editors
  */
 
-#ifndef __ED_SCRUBBING_H__
-#define __ED_SCRUBBING_H__
+#ifndef __ED_SELECT_BUFFER_UTILS_H__
+#define __ED_SELECT_BUFFER_UTILS_H__
 
-struct bContext;
-struct View2DGrid;
-struct bDopeSheet;
-struct wmEvent;
+struct rcti;
 
-void ED_scrubbing_draw(const struct ARegion *ar,
-                       const struct Scene *scene,
-                       bool display_seconds,
-                       bool discrete_frames);
+uint *ED_select_buffer_bitmap_from_rect(const uint bitmap_len, const struct rcti *rect);
+uint *ED_select_buffer_bitmap_from_circle(const uint bitmap_len,
+                                          const int center[2],
+                                          const int radius);
+uint *ED_select_buffer_bitmap_from_poly(const uint bitmap_len,
+                                        const int poly[][2],
+                                        const int poly_len,
+                                        const rcti *rect);
 
-bool ED_event_in_scrubbing_region(const struct ARegion *ar, const struct wmEvent *event);
-
-void ED_channel_search_draw(const struct bContext *C,
-                            struct ARegion *ar,
-                            struct bDopeSheet *dopesheet);
-
-#endif /* __ED_SCRUBBING_H__ */
+#endif /* __ED_SELECT_BUFFER_UTILS_H__ */

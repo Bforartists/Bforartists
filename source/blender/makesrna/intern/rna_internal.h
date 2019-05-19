@@ -277,7 +277,9 @@ int rna_object_shapekey_index_set(struct ID *id, PointerRNA value, int current);
 /* ViewLayer related functions defined in rna_scene.c but required in rna_layer.c */
 void rna_def_freestyle_settings(struct BlenderRNA *brna);
 struct PointerRNA rna_FreestyleLineSet_linestyle_get(struct PointerRNA *ptr);
-void rna_FreestyleLineSet_linestyle_set(struct PointerRNA *ptr, struct PointerRNA value);
+void rna_FreestyleLineSet_linestyle_set(struct ReportList *reports,
+                                        struct PointerRNA *ptr,
+                                        struct PointerRNA value);
 struct FreestyleLineSet *rna_FreestyleSettings_lineset_add(struct ID *id,
                                                            struct FreestyleSettings *config,
                                                            struct Main *bmain,
@@ -342,6 +344,7 @@ char *rna_Node_ImageUser_path(struct PointerRNA *ptr);
 /* API functions */
 
 void RNA_api_action(StructRNA *srna);
+void RNA_api_animdata(struct StructRNA *srna);
 void RNA_api_armature_edit_bone(StructRNA *srna);
 void RNA_api_bone(StructRNA *srna);
 void RNA_api_camera(StructRNA *srna);
@@ -546,13 +549,6 @@ PointerRNA rna_pointer_inherit_refine(struct PointerRNA *ptr, struct StructRNA *
 /* Functions */
 
 int rna_parameter_size(struct PropertyRNA *parm);
-
-struct Mesh *rna_Main_meshes_new_from_object(struct Main *bmain,
-                                             struct ReportList *reports,
-                                             struct Depsgraph *depsgraph,
-                                             struct Object *ob,
-                                             bool apply_modifiers,
-                                             bool calc_undeformed);
 
 /* XXX, these should not need to be defined here~! */
 struct MTex *rna_mtex_texture_slots_add(struct ID *self,

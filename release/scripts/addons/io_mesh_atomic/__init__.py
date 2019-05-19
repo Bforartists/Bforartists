@@ -22,7 +22,7 @@
 #  Start of project                  : 2011-08-31 by CB
 #  First publication in Blender      : 2011-11-11 by CB
 #  Fusion of the PDB, XYZ and Panel  : 2019-03-22 by CB
-#  Last modified                     : 2019-03-28
+#  Last modified                     : 2019-05-17
 #
 #  Contributing authors
 #  ====================
@@ -93,19 +93,19 @@ class AddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    bool_pdb = BoolProperty(
+    bool_pdb : BoolProperty(
                name="PDB import/export",
                default=True,
                description="Import/export PDB",
                )
-    bool_xyz = BoolProperty(
+    bool_xyz : BoolProperty(
                name="XYZ import/export",
                default=True,
                description="Import/export XYZ",
                )
     # This boolean is checked in the poll function in PANEL_PT_prepare 
     # (see utility.py).
-    bool_utility = BoolProperty(
+    bool_utility : BoolProperty(
                    name="Utility panel",
                    default=False,
                    description=("Panel with functionalities for modifying " \

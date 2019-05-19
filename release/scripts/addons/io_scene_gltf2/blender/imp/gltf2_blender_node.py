@@ -34,6 +34,10 @@ class BlenderNode():
         pynode.blender_object = ""
         pynode.parent = parent
 
+        gltf.display_current_node += 1
+        if bpy.app.debug_value == 101:
+            gltf.log.critical("Node " + str(gltf.display_current_node) + " of " + str(gltf.display_total_nodes) + " (idx " + str(node_idx) + ")")
+
         if pynode.mesh is not None:
 
             instance = False
@@ -185,7 +189,7 @@ class BlenderNode():
                     obj.select_set(True)
                     bpy.data.objects[node.blender_armature_name].select_set(True)
                     bpy.context.view_layer.objects.active = bpy.data.objects[node.blender_armature_name]
-                    bpy.context.scene.update()
+                    bpy.context.view_layer.update()
                     bpy.ops.object.parent_set(type='BONE_RELATIVE', keep_transform=True)
                     # From world transform to local (-armature transform -bone transform)
                     bone_trans = bpy.data.objects[node.blender_armature_name] \

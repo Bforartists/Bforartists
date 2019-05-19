@@ -1207,7 +1207,7 @@ def build_objects(object_layers, object_surfs, object_tags, object_name, add_sub
             ob_dict[ob_key][0].parent= parent_ob[0]
             ob_dict[ob_key][0].location-= parent_ob[0].location
 
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     print("Done Importing LWO File")
 

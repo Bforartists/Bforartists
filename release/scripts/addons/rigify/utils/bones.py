@@ -24,7 +24,7 @@ from mathutils import Vector, Matrix, Color
 from rna_prop_ui import rna_idprop_ui_prop_get
 
 from .errors import MetarigError
-from .naming import strip_org, make_mechanism_name, insert_before_lr
+from .naming import make_derived_name
 
 #=======================
 # Bone collection
@@ -256,8 +256,8 @@ def make_nonscaling_child(obj, bone_name, location, child_name_postfix=""):
 
     if obj == bpy.context.active_object and bpy.context.mode == 'EDIT_ARMATURE':
         # Create desired names for bones
-        name1 = make_mechanism_name(strip_org(insert_before_lr(bone_name, child_name_postfix + "_ns_ch")))
-        name2 = make_mechanism_name(strip_org(insert_before_lr(bone_name, child_name_postfix + "_ns_intr")))
+        name1 = make_derived_name(bone_name, 'mch', child_name_postfix + "_ns_ch")
+        name2 = make_derived_name(bone_name, 'mch', child_name_postfix + "_ns_intr")
 
         # Create bones
         child = copy_bone(obj, bone_name, name1)

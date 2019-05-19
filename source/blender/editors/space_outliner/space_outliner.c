@@ -302,8 +302,7 @@ static SpaceLink *outliner_new(const ScrArea *UNUSED(area), const Scene *UNUSED(
   soutliner = MEM_callocN(sizeof(SpaceOutliner), "initoutliner");
   soutliner->spacetype = SPACE_OUTLINER;
   soutliner->filter_id_type = ID_GR;
-  soutliner->show_restrict_flags = SO_RESTRICT_ENABLE | SO_RESTRICT_SELECTABLE |
-                                   SO_RESTRICT_VIEWPORT;
+  soutliner->show_restrict_flags = SO_RESTRICT_ENABLE | SO_RESTRICT_HIDE;
 
   /* header */
   ar = MEM_callocN(sizeof(ARegion), "header for outliner");
@@ -385,6 +384,14 @@ static void outliner_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id,
   }
 }
 
+static void outliner_deactivate(struct ScrArea *sa)
+{
+  /* Remove hover highlights */
+  SpaceOutliner *soops = sa->spacedata.first;
+  outliner_flag_set(&soops->tree, TSE_HIGHLIGHTED, false);
+  ED_region_tag_redraw(BKE_area_find_region_type(sa, RGN_TYPE_WINDOW));
+}
+
 /* only called once, from space_api/spacetypes.c */
 void ED_spacetype_outliner(void)
 {
@@ -402,6 +409,7 @@ void ED_spacetype_outliner(void)
   st->keymap = outliner_keymap;
   st->dropboxes = outliner_dropboxes;
   st->id_remap = outliner_id_remap;
+  st->deactivate = outliner_deactivate;
 
   /* regions: main window */
   art = MEM_callocN(sizeof(ARegionType), "spacetype outliner region");
