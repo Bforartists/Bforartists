@@ -8,6 +8,8 @@
 - Log which Blender ID instance is communicated with.
 - Show which Blender ID instance is communicated with in the addon preferences,
   if it was overridden by setting the BLENDER_ID_ENDPOINT environment variable.
+- Automatically retry failed connections to Blender ID for more stability.
+- Include Blender and add-on version in User-Agent header when communicating with Blender ID.
 
 
 # Version 1.5 (released 2018-07-03)

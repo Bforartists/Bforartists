@@ -1419,7 +1419,7 @@ class FptImporter():
 
         blender_object.select_set(True)
         self.__view_layer.objects.active = blender_object
-        self.__scene.update()
+        self.__view_layer.update()
         if ops.object.convert.poll():
             ops.object.convert()
 
@@ -1649,7 +1649,7 @@ class FptImporter():
             cu.texspace_size = Vector((self.__table_width / 2.0, self.__table_length / 2.0, 0))
         else:
             cu.use_auto_texspace = False
-            self.__scene.update()
+            self.__view_layer.update()
             cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
             cu.texspace_size = Vector(obj.dimensions / 2.0)
 
@@ -1819,7 +1819,7 @@ class FptImporter():
             cu.texspace_size = Vector((self.__table_width / 2.0, self.__table_length / 2.0, 0))
         else:
             cu.use_auto_texspace = False
-            self.__scene.update()
+            self.__view_layer.update()
             cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
             cu.texspace_size = Vector(obj.dimensions / 2.0)
 
@@ -1873,14 +1873,14 @@ class FptImporter():
                 cu.texspace_size = Vector((self.__table_width / 2.0, self.__table_length / 2.0, 0))
             else:
                 cu.use_auto_texspace = False
-                self.__scene.update()
+                self.__view_layer.update()
                 cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
                 cu.texspace_size = Vector(obj.dimensions / 2.0)
         else:
             self.append_texture_material(obj, DEFAULT_LAMP_TEXTURE, light_on=True)
             cu.use_auto_texspace = False
             #obj.update_from_editmode()
-            self.__scene.update()
+            self.__view_layer.update()
             cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
             size = max(obj.dimensions)
             cu.texspace_size = (size, size, 0)
@@ -1919,14 +1919,14 @@ class FptImporter():
                 cu.texspace_size = Vector((self.__table_width / 2.0, self.__table_length / 2.0, 0))
             else:
                 cu.use_auto_texspace = False
-                self.__scene.update()
+                self.__view_layer.update()
                 cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
                 cu.texspace_size = Vector(obj.dimensions / 2.0)
         else:
             self.append_texture_material(obj, DEFAULT_LAMP_TEXTURE, light_on=True)
             cu.use_auto_texspace = False
             #obj.update_from_editmode()
-            self.__scene.update()
+            self.__view_layer.update()
             cu.texspace_location = Vector(obj.bound_box[0]) + (obj.dimensions / 2.0)
             size = max(obj.dimensions)
             cu.texspace_size = (size, size, 0)
@@ -3159,7 +3159,7 @@ def adjust_position(blender_context, blender_scene, fpx_model, fpx_model_type=No
     if blender_location:
         blender_view_layer.objects.active = blender_parent
         blender_view_layer.objects.active.location = blender_location
-        blender_scene.update()
+        blender_view_layer.update()
 
 def remove_material(blender_context):
     if not blender_context.active_object:

@@ -3,7 +3,7 @@ op = bpy.context.active_operator
 
 op.rotation = (0.0, 0.0, 0.0)
 op.location = (0.0, 0.0, 0.0)
-op.view_align = False
+op.align = 'WORLD'
 op.options_plus = True
 op.absolute_location = False
 op.use_colors = True

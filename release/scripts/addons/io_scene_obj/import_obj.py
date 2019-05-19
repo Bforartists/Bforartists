@@ -176,7 +176,7 @@ def create_materials(filepath, relpath,
             _generic_tex_set(mat_wrap.normalmap_texture, image, 'UV', map_offset, map_scale)
 
         elif type == 'D':
-            _generic_tex_set(mat_wrap.transmission_texture, image, 'UV', map_offset, map_scale)
+            _generic_tex_set(mat_wrap.alpha_texture, image, 'UV', map_offset, map_scale)
 
         elif type == 'disp':
             # XXX Not supported?
@@ -245,8 +245,8 @@ def create_materials(filepath, relpath,
             if do_transparency:
                 if "ior" not in context_material_vars:
                     context_mat_wrap.ior = 1.0
-                if "transmission" not in context_material_vars:
-                    context_mat_wrap.transmission = 1.0
+                if "alpha" not in context_material_vars:
+                    context_mat_wrap.alpha = 1.0
                 # EEVEE only
                 context_material.blend_method = 'BLEND'
 
@@ -341,8 +341,8 @@ def create_materials(filepath, relpath,
                         context_mat_wrap.ior = float_func(line_split[1])
                         context_material_vars.add("ior")
                     elif line_id == b'd':  # dissolve (transparency)
-                        context_mat_wrap.transmission = 1.0 - float_func(line_split[1])
-                        context_material_vars.add("transmission")
+                        context_mat_wrap.alpha = float_func(line_split[1])
+                        context_material_vars.add("alpha")
                     elif line_id == b'tr':  # translucency
                         print("WARNING, currently unsupported 'tr' translucency option, skipped.")
                     elif line_id == b'tf':
@@ -1243,7 +1243,7 @@ def load(context,
             # we could apply this anywhere before scaling.
             obj.matrix_world = global_matrix
 
-        scene.update()
+        view_layer.update()
 
         axis_min = [1000000000] * 3
         axis_max = [-1000000000] * 3

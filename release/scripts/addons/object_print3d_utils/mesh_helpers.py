@@ -32,10 +32,12 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
 
     if apply_modifiers and obj.modifiers:
         import bpy
-        me = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=True)
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        obj_eval = obj.evaluated_get(depsgraph)
+        me = obj_eval.to_mesh()
         bm = bmesh.new()
         bm.from_mesh(me)
-        bpy.data.meshes.remove(me)
+        obj_eval.to_mesh_clear()
         del bpy
     else:
         me = obj.data
@@ -156,7 +158,6 @@ def bmesh_check_thick_object(obj, thickness):
 
     # Create a real mesh (lame!)
     context = bpy.context
-    scene = context.scene
     layer = context.view_layer
     layer_collection = context.layer_collection or layer.active_layer_collection
     scene_collection = layer_collection.collection
@@ -179,7 +180,7 @@ def bmesh_check_thick_object(obj, thickness):
         base.layers_from_view(context.space_data)
     '''
 
-    scene.update()
+    layer.update()
     ray_cast = obj_tmp.ray_cast
 
     EPS_BIAS = 0.0001
@@ -215,7 +216,7 @@ def bmesh_check_thick_object(obj, thickness):
     bpy.data.objects.remove(obj_tmp)
     bpy.data.meshes.remove(me_tmp)
 
-    scene.update()
+    layer.update()
 
     return array.array('i', faces_error)
 
@@ -251,16 +252,16 @@ def object_merge(context, objects):
     layer.objects.active = obj_base
     obj_base.select_set(True)
 
+    depsgraph = context.evaluated_depsgraph_get()
+
     # loop over all meshes
     for obj in objects:
         if obj.type != 'MESH':
             continue
 
         # convert each to a mesh
-        mesh_new = obj.to_mesh(
-            depsgraph=context.depsgraph,
-            apply_modifiers=True,
-        )
+        obj_eval = obj.evaluated_get(depsgraph)
+        mesh_new = obj_eval.to_mesh()
 
         # remove non-active uvs/vcols
         cd_remove_all_but_active(mesh_new.vertex_colors)
@@ -282,9 +283,9 @@ def object_merge(context, objects):
         # scene_collection.objects.unlink(obj_new)
         # bpy.data.objects.remove(obj_new)
 
-        bpy.data.meshes.remove(mesh_new)
+        obj_eval.to_mesh_clear()
 
-    scene.update()
+    layer.update()
 
     # return new object
     return obj_base

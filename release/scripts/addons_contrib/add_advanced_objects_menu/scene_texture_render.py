@@ -39,7 +39,7 @@ class add_texture_scene(Operator):
             # add camera
             bpy.ops.view3d.viewnumpad(type='TOP')
             bpy.ops.object.camera_add(
-                    location=(0, 0, 2.1850), rotation=(0, 0, 0), view_align=True
+                    location=(0, 0, 2.1850), rotation=(0, 0, 0), align='VIEW'
                     )
             cam = bpy.context.active_object.data
             cam.lens = 35

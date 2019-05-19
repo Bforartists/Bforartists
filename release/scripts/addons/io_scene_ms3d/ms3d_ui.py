@@ -409,7 +409,7 @@ class Ms3dImportOperator(Operator, ImportHelper):
                         self.filepath
                         )
         if finished:
-            blender_context.scene.update()
+            blender_context.view_layer.update()
             return {"FINISHED"}
         return {"CANCELLED"}
 
@@ -618,7 +618,7 @@ class Ms3dExportOperator(Operator, ExportHelper):
                         self.filepath
                         )
         if finished:
-            blender_context.scene.update()
+            blender_context.view_layer.update()
             return {"FINISHED"}
         return {"CANCELLED"}
 

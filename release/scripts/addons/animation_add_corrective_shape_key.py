@@ -70,7 +70,9 @@ def extract_vert_coords(ob, verts):
 def extract_mapped_coords(ob, shape_verts):
     totvert = len(shape_verts)
 
-    mesh = ob.to_mesh(bpy.context.scene, True, 'PREVIEW')
+    depsgraph = context.evaluated_depsgraph_get()
+    ob_eval = ob.evaluated_get(depsgraph)
+    mesh = ob_eval.to_mesh()
 
     # cheating, the original mapped verts happen
     # to be at the end of the vertex array
@@ -78,7 +80,7 @@ def extract_mapped_coords(ob, shape_verts):
     arr = [verts[i].co.copy() for i in range(len(verts) - totvert, len(verts))]
 
     mesh.user_clear()
-    bpy.data.meshes.remove(mesh)
+    ob_eval.to_mesh_clear()
 
     return arr
 
@@ -201,7 +203,8 @@ class add_corrective_pose_shape(bpy.types.Operator):
 
 
 def func_object_duplicate_flatten_modifiers(context, obj):
-    mesh = obj.to_mesh(context.scene, True, 'PREVIEW')
+    depsgraph = context.evaluated_depsgraph_get()
+    mesh = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph))
     name = obj.name + "_clean"
     new_object = bpy.data.objects.new(name, mesh)
     new_object.data = mesh

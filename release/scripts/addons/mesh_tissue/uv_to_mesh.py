@@ -85,8 +85,11 @@ class uv_to_mesh(Operator):
             bpy.ops.object.convert(target='MESH')
         ob0 = bpy.context.object
 
-        me0 = ob0.to_mesh(bpy.context.scene,
-                    apply_modifiers=self.apply_modifiers, settings='PREVIEW')
+        if self.apply_modifiers:
+            depsgraph = context.evaluated_depsgraph_get()
+            me0 = bpy.data.meshes.new_from_object(ob0.evaluated_get(depsgraph))
+        else:
+            me0 = bpy.data.new_from_meshed(ob0)
         area = 0
 
         verts = []

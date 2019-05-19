@@ -269,30 +269,6 @@ class UTAllEdges(Operator):
         return {'FINISHED'}
 
 
-class UTDoubleSided(Operator):
-    bl_idname = "ut.double_sided"
-    bl_label = "Double Sided Normals"
-    bl_description = "Disables Double Sided Normals for all objects"
-
-    on: BoolProperty(
-            default=False
-            )
-
-    def execute(self, context):
-        errors = []
-        for e in bpy.data.meshes:
-            try:
-                e.show_double_sided = self.on
-            except Exception as k:
-                name = getattr(e, "name", "Nameless")
-                errors.append(
-                    "Applying Double Sided Normals on {} \nError: {}".format(name, k))
-        if errors:
-            error_handlers(self, "ut.double_sided", errors, "Double Sided Normals")
-
-        return {'FINISHED'}
-
-
 # Register
 def register():
     bpy.utils.register_module(__name__)

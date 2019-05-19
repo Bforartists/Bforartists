@@ -137,7 +137,7 @@ class OBJECT_OT_create_lightfield_rig(Operator):
     def createCameraAnimated(self):
         scene = bpy.context.scene
 
-        bpy.ops.object.camera_add(view_align=False)
+        bpy.ops.object.camera_add(align='WORLD')
         cam = bpy.context.active_object
         cam.name = "light_field_camera"
 
@@ -176,7 +176,7 @@ class OBJECT_OT_create_lightfield_rig(Operator):
 
         for cam_idx, vert in enumerate(self.verts):
             # add and name camera
-            bpy.ops.object.camera_add(view_align=False)
+            bpy.ops.object.camera_add(align='WORLD')
             cam = bpy.context.active_object
             cam.name = "light_field_cam_" + str(cam_idx)
 

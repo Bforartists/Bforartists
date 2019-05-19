@@ -326,7 +326,7 @@ class OBJECT_OT_Metapaste(Operator):  # Operator paste source in/out
         bpy.ops.sequencer.snap(frame=scene.frame_current)
         strips = context.selected_editable_sequences
         context.scene.sequence_editor.active_strip = strips[0]
-        context.scene.update()
+        context.view_layer.update()
 
         return {'FINISHED'}
 

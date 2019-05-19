@@ -183,14 +183,14 @@ static void EDIT_LATTICE_cache_init(void *vedata)
   {
     psl->wire_pass = DRW_pass_create("Lattice Wire",
                                      DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH |
-                                         DRW_STATE_DEPTH_LESS_EQUAL | DRW_STATE_WIRE);
+                                         DRW_STATE_DEPTH_LESS_EQUAL);
     stl->g_data->wire_shgrp = DRW_shgroup_create(sh_data->wire, psl->wire_pass);
     if (rv3d->rflag & RV3D_CLIPPING) {
       DRW_shgroup_world_clip_planes_from_rv3d(stl->g_data->wire_shgrp, rv3d);
     }
 
-    psl->vert_pass = DRW_pass_create(
-        "Lattice Verts", DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_POINT);
+    psl->vert_pass = DRW_pass_create("Lattice Verts",
+                                     DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH);
     stl->g_data->vert_shgrp = DRW_shgroup_create(sh_data->overlay_vert, psl->vert_pass);
     DRW_shgroup_uniform_block(stl->g_data->vert_shgrp, "globalsBlock", G_draw.block_ubo);
     if (rv3d->rflag & RV3D_CLIPPING) {
@@ -214,10 +214,10 @@ static void EDIT_LATTICE_cache_populate(void *vedata, Object *ob)
       struct GPUBatch *geom;
 
       geom = DRW_cache_lattice_wire_get(ob, true);
-      DRW_shgroup_call_add(stl->g_data->wire_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->wire_shgrp, geom, ob->obmat);
 
       geom = DRW_cache_lattice_vert_overlay_get(ob);
-      DRW_shgroup_call_add(stl->g_data->vert_shgrp, geom, ob->obmat);
+      DRW_shgroup_call(stl->g_data->vert_shgrp, geom, ob->obmat);
     }
   }
 }

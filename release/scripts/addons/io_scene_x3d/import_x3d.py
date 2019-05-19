@@ -3585,7 +3585,7 @@ def load_web3d(
                 c.parent = parent
 
         # update deps
-        bpyscene.update()
+        bpycontext.view_layer.update()
         del child_dict
 
 

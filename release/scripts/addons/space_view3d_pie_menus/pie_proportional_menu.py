@@ -175,11 +175,7 @@ class ProportionalEditEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-
-        if ts.proportional_edit != ('DISABLED'):
-            ts.proportional_edit = 'DISABLED'
-        elif ts.proportional_edit != ('ENABLED'):
-            ts.proportional_edit = 'ENABLED'
+        ts.use_proportional_edit ^= 1
         return {'FINISHED'}
 
 
@@ -190,8 +186,7 @@ class ProportionalConnectedEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit != ('CONNECTED'):
-            ts.proportional_edit = 'CONNECTED'
+        ts.use_proportional_connected = True
         return {'FINISHED'}
 
 
@@ -203,8 +198,8 @@ class ProportionalProjectedEdt(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.proportional_edit != ('PROJECTED'):
-            ts.proportional_edit = 'PROJECTED'
+        ts = context.tool_settings
+        ts.use_proportional_projected = True
         return {'FINISHED'}
 
 
@@ -215,12 +210,8 @@ class ProportionalSmoothEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'SMOOTH'
-
-        if ts.proportional_edit_falloff != 'SMOOTH':
-            ts.proportional_edit_falloff = 'SMOOTH'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'SMOOTH'
         return {'FINISHED'}
 
 
@@ -231,12 +222,8 @@ class ProportionalSphereEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'SPHERE'
-
-        if ts.proportional_edit_falloff != 'SPHERE':
-            ts.proportional_edit_falloff = 'SPHERE'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'SPHERE'
         return {'FINISHED'}
 
 
@@ -247,12 +234,8 @@ class ProportionalRootEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'ROOT'
-
-        if ts.proportional_edit_falloff != 'ROOT':
-            ts.proportional_edit_falloff = 'ROOT'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'ROOT'
         return {'FINISHED'}
 
 
@@ -263,12 +246,8 @@ class ProportionalSharpEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'SHARP'
-
-        if ts.proportional_edit_falloff != 'SHARP':
-            ts.proportional_edit_falloff = 'SHARP'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'SHARP'
         return {'FINISHED'}
 
 
@@ -279,12 +258,8 @@ class ProportionalLinearEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'LINEAR'
-
-        if ts.proportional_edit_falloff != 'LINEAR':
-            ts.proportional_edit_falloff = 'LINEAR'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'LINEAR'
         return {'FINISHED'}
 
 
@@ -295,12 +270,8 @@ class ProportionalConstantEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'CONSTANT'
-
-        if ts.proportional_edit_falloff != 'CONSTANT':
-            ts.proportional_edit_falloff = 'CONSTANT'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'CONSTANT'
         return {'FINISHED'}
 
 
@@ -311,12 +282,8 @@ class ProportionalRandomEdt(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.proportional_edit == 'DISABLED':
-            ts.proportional_edit = 'ENABLED'
-            ts.proportional_edit_falloff = 'RANDOM'
-
-        if ts.proportional_edit_falloff != 'RANDOM':
-            ts.proportional_edit_falloff = 'RANDOM'
+        ts.use_proportional_edit = True
+        ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
 
 

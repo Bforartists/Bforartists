@@ -60,13 +60,13 @@
 
 #include "BLT_translation.h"
 
-#include "IMB_imbuf_types.h"
-#include "IMB_imbuf.h"
+#include "IMB_colormanagement.h"
 
 #include "RE_pipeline.h"
 #include "RE_shader_ext.h"
 
 #include "GPU_material.h"
+#include "GPU_texture.h"
 #include "GPU_uniformbuffer.h"
 
 bool sh_node_poll_default(struct bNodeType *ntype, struct bNodeTree *ntree);

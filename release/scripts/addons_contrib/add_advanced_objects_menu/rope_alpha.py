@@ -158,7 +158,7 @@ def obtener_coords_vertex_seleccionados():
 
 def crear_locator(pos):
     bpy.ops.object.empty_add(
-            type='PLAIN_AXES', radius=1, view_align=False,
+            type='PLAIN_AXES', radius=1, align='WORLD',
             location=(pos[0], pos[1], pos[2]),
             layers=(True, False, False, False, False, False, False,
                     False, False, False, False, False, False, False,
@@ -262,7 +262,7 @@ class ClothRope(Operator):
 
         # create an empty that will be the parent of everything
         bpy.ops.object.empty_add(
-                type='SPHERE', radius=1, view_align=False, location=(0, 0, 0),
+                type='SPHERE', radius=1, align='WORLD', location=(0, 0, 0),
                 layers=(True, False, False, False, False, False, False, False,
                         False, False, False, False, False, False, False, False,
                         False, False, False, False)
@@ -275,7 +275,7 @@ class ClothRope(Operator):
 
         # create a plane and delete it
         bpy.ops.mesh.primitive_plane_add(
-                radius=1, view_align=False, enter_editmode=False, location=(0, 0, 0),
+                radius=1, align='WORLD', enter_editmode=False, location=(0, 0, 0),
                 layers=(True, False, False, False, False, False, False, False, False,
                         False, False, False, False, False, False, False, False,
                         False, False, False)
@@ -588,7 +588,7 @@ class BallRope(Operator):
                            obj.type == "EMPTY" and "Constraint" in obj.name]
         # floor:
         bpy.ops.mesh.primitive_cube_add(
-                radius=1, view_align=False, enter_editmode=False, location=(0, 0, 0),
+                radius=1, align='WORLD', enter_editmode=False, location=(0, 0, 0),
                 layers=(True, False, False, False, False, False, False, False, False,
                         False, False, False, False, False, False, False, False,
                         False, False, False)
@@ -613,7 +613,7 @@ class BallRope(Operator):
                 i = i + offset_del_suelo
             separacion = longitud * 2 / segmentos  # distance between linked cubes
             bpy.ops.mesh.primitive_cube_add(
-                    radius=1, view_align=False, enter_editmode=False,
+                    radius=1, align='WORLD', enter_editmode=False,
                     location=(0, 0, i * separacion),
                     layers=(True, False, False, False, False, False, False, False,
                             False, False, False, False, False, False, False, False,
@@ -655,7 +655,7 @@ class BallRope(Operator):
 
         # create a Bezier curve:
         bpy.ops.curve.primitive_bezier_curve_add(
-                radius=1, view_align=False, enter_editmode=False, location=(0, 0, 0),
+                radius=1, align='WORLD', enter_editmode=False, location=(0, 0, 0),
                 layers=(True, False, False, False, False, False, False, False, False,
                 False, False, False, False, False, False, False, False, False, False, False)
                 )
@@ -714,7 +714,7 @@ class BallRope(Operator):
         z = cuboslink[0].scale.z + longitud / 2
         bpy.ops.view3d.snap_cursor_to_selected()
         bpy.ops.mesh.primitive_uv_sphere_add(
-                view_align=False, enter_editmode=False,
+                align='WORLD', enter_editmode=False,
                 layers=(True, False, False, False, False, False, False,
                         False, False, False, False, False, False, False,
                         False, False, False, False, False, False)

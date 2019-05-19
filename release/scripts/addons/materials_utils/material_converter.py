@@ -342,7 +342,8 @@ def createNormalNodes(cmat, texCoordNode, mainShader, materialOutput):
 
             # Place the texture node
             renameNode(texNode, '{} Texture'.format(groupName), texCount, textureIdx)
-            texNode.color_space = 'NONE'
+            if texNode.image.image:
+                texNode.image.colorspace_settings.is_data = True
             links.new(normalMapping.outputs['Vector'], texNode.inputs['Vector'])
 
             # Add multiply node
@@ -528,7 +529,8 @@ def createEmissionNodes(cmat, texCoordNode, mainShader, materialOutput):
 
             # Place the texture node
             renameNode(texNode, '{} Texture'.format(groupName), texCount, textureIdx)
-            texNode.color_space = 'NONE'
+            if texNode.image.image:
+                texNode.image.colorspace_settings.is_data = True
             links.new(emissionMapping.outputs['Vector'], texNode.inputs['Vector'])
 
             # Add multiply node

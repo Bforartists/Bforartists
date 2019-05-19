@@ -88,6 +88,11 @@
 
 static int outliner_highlight_update(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
 {
+  /* stop highlighting if out of area */
+  if (!ED_screen_area_active(C)) {
+    return OPERATOR_PASS_THROUGH;
+  }
+
   /* Drag and drop does own highlighting. */
   wmWindowManager *wm = CTX_wm_manager(C);
   if (wm->drags.first) {
@@ -1025,8 +1030,8 @@ int common_restrict_check(bContext *C, Object *ob)
   Object *obedit = CTX_data_edit_object(C);
   if (obedit && obedit == ob) {
     /* found object is hidden, reset */
-    if (ob->restrictflag & OB_RESTRICT_INSTANCE) {
-      ob->restrictflag &= ~OB_RESTRICT_INSTANCE;
+    if (ob->restrictflag & OB_RESTRICT_VIEWPORT) {
+      ob->restrictflag &= ~OB_RESTRICT_VIEWPORT;
     }
     /* found object is unselectable, reset */
     if (ob->restrictflag & OB_RESTRICT_SELECT) {

@@ -3,6 +3,12 @@
 # This file is distributed under the MIT License. See the LICENSE.md for more details.
 
 import bpy
+
+from bpy_extras.object_utils import (
+        AddObjectHelper,
+        object_data_add,
+        )
+
 from bpy.props import (
         IntProperty,
         BoolProperty,
@@ -138,7 +144,7 @@ class MengerSponge(object):
                         depth - 1)
 
 
-class AddMengerSponge(bpy.types.Operator):
+class AddMengerSponge(bpy.types.Operator, AddObjectHelper):
     bl_idname = "mesh.menger_sponge_add"
     bl_label = "Menger Sponge"
     bl_description = "Construct a menger sponge mesh"
@@ -155,19 +161,6 @@ class AddMengerSponge(bpy.types.Operator):
             description="Sponge Radius",
             min=0.01, max=100.0,
             default=1.0,
-            )
-    # generic transform props
-    view_align: BoolProperty(
-            name="Align to View",
-            default=False,
-            )
-    location: FloatVectorProperty(
-            name="Location",
-            subtype='TRANSLATION',
-            )
-    rotation: FloatVectorProperty(
-            name="Rotation",
-            subtype='EULER',
             )
     layers: BoolVectorProperty(
             name="Layers",
@@ -188,7 +181,6 @@ class AddMengerSponge(bpy.types.Operator):
         for i, uvloop in enumerate(mesh.uv_layers.active.data):
             uvloop.uv = uvs[i % 4]
 
-        from bpy_extras import object_utils
-        object_utils.object_data_add(context, mesh, operator=self)
+        object_data_add(context, mesh, operator=self)
 
         return {'FINISHED'}

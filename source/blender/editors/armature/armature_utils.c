@@ -127,7 +127,6 @@ void bone_free(bArmature *arm, EditBone *bone)
 
   if (bone->prop) {
     IDP_FreeProperty(bone->prop);
-    MEM_freeN(bone->prop);
   }
 
   /* Clear references from other edit bones. */
@@ -650,6 +649,7 @@ void ED_armature_from_edit(Main *bmain, bArmature *arm)
   Object *obt;
 
   /* armature bones */
+  BKE_armature_bone_hash_free(arm);
   BKE_armature_bonelist_free(&arm->bonebase);
   arm->act_bone = NULL;
 
@@ -754,6 +754,8 @@ void ED_armature_from_edit(Main *bmain, bArmature *arm)
   /* Finalize definition of restpose data (roll, bone_mat, arm_mat, head/tail...). */
   armature_finalize_restpose(&arm->bonebase, arm->edbo);
 
+  BKE_armature_bone_hash_make(arm);
+
   /* so all users of this armature should get rebuilt */
   for (obt = bmain->objects.first; obt; obt = obt->id.next) {
     if (obt->data == arm) {
@@ -774,7 +776,6 @@ void ED_armature_edit_free(struct bArmature *arm)
       for (eBone = arm->edbo->first; eBone; eBone = eBone->next) {
         if (eBone->prop) {
           IDP_FreeProperty(eBone->prop);
-          MEM_freeN(eBone->prop);
         }
       }
 
@@ -808,7 +809,6 @@ void ED_armature_ebone_listbase_free(ListBase *lb)
 
     if (ebone->prop) {
       IDP_FreeProperty(ebone->prop);
-      MEM_freeN(ebone->prop);
     }
 
     MEM_freeN(ebone);

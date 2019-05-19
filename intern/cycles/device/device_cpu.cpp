@@ -43,7 +43,6 @@
 #include "render/buffers.h"
 #include "render/coverage.h"
 
-#include "util/util_aligned_malloc.h"
 #include "util/util_debug.h"
 #include "util/util_foreach.h"
 #include "util/util_function.h"
@@ -166,7 +165,7 @@ class CPUDevice : public Device {
   bool need_texture_info;
 
 #ifdef WITH_OSL
-  OSLGlobals *osl_globals;
+  OSLGlobals osl_globals;
 #endif
 
   bool use_split_kernel;
@@ -283,9 +282,7 @@ class CPUDevice : public Device {
     }
 
 #ifdef WITH_OSL
-    /* Must use aligned malloc due to concurrent hash map. */
-    osl_globals = util_aligned_new<OSLGlobals>();
-    kernel_globals.osl = osl_globals;
+    kernel_globals.osl = &osl_globals;
 #endif
     use_split_kernel = DebugFlags().cpu.split_kernel;
     if (use_split_kernel) {
@@ -320,9 +317,6 @@ class CPUDevice : public Device {
 
   ~CPUDevice()
   {
-#ifdef WITH_OSL
-    util_aligned_delete(osl_globals);
-#endif
     task_pool.stop();
     texture_info.free();
   }
@@ -338,9 +332,11 @@ class CPUDevice : public Device {
     if (DebugFlags().cpu.has_sse2() && system_cpu_support_sse2()) {
       bvh_layout_mask |= BVH_LAYOUT_BVH4;
     }
+#if defined(__x86_64__) || defined(_M_X64)
     if (DebugFlags().cpu.has_avx2() && system_cpu_support_avx2()) {
       bvh_layout_mask |= BVH_LAYOUT_BVH8;
     }
+#endif
 #ifdef WITH_EMBREE
     bvh_layout_mask |= BVH_LAYOUT_EMBREE;
 #endif /* WITH_EMBREE */
@@ -498,7 +494,7 @@ class CPUDevice : public Device {
   void *osl_memory()
   {
 #ifdef WITH_OSL
-    return osl_globals;
+    return &osl_globals;
 #else
     return NULL;
 #endif
@@ -987,7 +983,7 @@ class CPUDevice : public Device {
     KernelGlobals kg = kernel_globals;
 
 #ifdef WITH_OSL
-    OSLShader::thread_init(&kg, &kernel_globals, osl_globals);
+    OSLShader::thread_init(&kg, &kernel_globals, &osl_globals);
 #endif
     for (int sample = 0; sample < task.num_samples; sample++) {
       for (int x = task.shader_x; x < task.shader_x + task.shader_w; x++)
@@ -1059,7 +1055,7 @@ class CPUDevice : public Device {
     kg.decoupled_volume_steps_index = 0;
     kg.coverage_asset = kg.coverage_object = kg.coverage_material = NULL;
 #ifdef WITH_OSL
-    OSLShader::thread_init(&kg, &kernel_globals, osl_globals);
+    OSLShader::thread_init(&kg, &kernel_globals, &osl_globals);
 #endif
     return kg;
   }

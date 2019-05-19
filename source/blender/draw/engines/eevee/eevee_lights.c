@@ -263,7 +263,7 @@ static DRWPass *eevee_lights_cube_store_pass_get(EEVEE_PassList *psl,
     DRW_shgroup_uniform_texture_ref(grp, "shadowTexture", &sldata->shadow_cube_blur);
     DRW_shgroup_uniform_block(grp, "shadow_render_block", sldata->shadow_render_ubo);
     DRW_shgroup_uniform_float(grp, "shadowFilterSize", &linfo->filter_size, 1);
-    DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
+    DRW_shgroup_call(grp, DRW_cache_fullscreen_quad_get(), NULL);
   }
   return *pass;
 }
@@ -285,7 +285,7 @@ static DRWPass *eevee_lights_cascade_store_pass_get(EEVEE_PassList *psl,
     DRW_shgroup_uniform_block(grp, "shadow_render_block", sldata->shadow_render_ubo);
     DRW_shgroup_uniform_int(grp, "cascadeId", &linfo->current_shadow_cascade, 1);
     DRW_shgroup_uniform_float(grp, "shadowFilterSize", &linfo->filter_size, 1);
-    DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
+    DRW_shgroup_call(grp, DRW_cache_fullscreen_quad_get(), NULL);
   }
   return *pass;
 }
@@ -319,7 +319,7 @@ void EEVEE_lights_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
   psl->shadow_cascade_store_high_pass = NULL;
 
   {
-    psl->shadow_cube_copy_pass = DRW_pass_create("Shadow Copy Pass", DRW_STATE_WRITE_COLOR);
+    DRW_PASS_CREATE(psl->shadow_cube_copy_pass, DRW_STATE_WRITE_COLOR);
 
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.shadow_copy_cube_sh[linfo->shadow_method],
                                               psl->shadow_cube_copy_pass);
@@ -327,12 +327,11 @@ void EEVEE_lights_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
     DRW_shgroup_uniform_block(grp, "shadow_render_block", sldata->shadow_render_ubo);
     DRW_shgroup_uniform_float(grp, "shadowFilterSize", &linfo->filter_size, 1);
     DRW_shgroup_uniform_int(grp, "faceId", &linfo->current_shadow_face, 1);
-    DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
+    DRW_shgroup_call(grp, DRW_cache_fullscreen_quad_get(), NULL);
   }
 
   {
-    psl->shadow_cascade_copy_pass = DRW_pass_create("Shadow Cascade Copy Pass",
-                                                    DRW_STATE_WRITE_COLOR);
+    DRW_PASS_CREATE(psl->shadow_cascade_copy_pass, DRW_STATE_WRITE_COLOR);
 
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.shadow_copy_cascade_sh[linfo->shadow_method],
                                               psl->shadow_cascade_copy_pass);
@@ -340,12 +339,12 @@ void EEVEE_lights_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
     DRW_shgroup_uniform_block(grp, "shadow_render_block", sldata->shadow_render_ubo);
     DRW_shgroup_uniform_float(grp, "shadowFilterSize", &linfo->filter_size, 1);
     DRW_shgroup_uniform_int(grp, "cascadeId", &linfo->current_shadow_cascade, 1);
-    DRW_shgroup_call_add(grp, DRW_cache_fullscreen_quad_get(), NULL);
+    DRW_shgroup_call(grp, DRW_cache_fullscreen_quad_get(), NULL);
   }
 
   {
     DRWState state = DRW_STATE_WRITE_COLOR | DRW_STATE_WRITE_DEPTH | DRW_STATE_DEPTH_LESS_EQUAL;
-    psl->shadow_pass = DRW_pass_create("Shadow Pass", state);
+    DRW_PASS_CREATE(psl->shadow_pass, state);
 
     stl->g_data->shadow_shgrp = DRW_shgroup_create(e_data.shadow_sh, psl->shadow_pass);
   }
@@ -454,7 +453,7 @@ void EEVEE_lights_cache_shcaster_add(EEVEE_ViewLayerData *UNUSED(sldata),
                                      struct GPUBatch *geom,
                                      Object *ob)
 {
-  DRW_shgroup_call_object_add(stl->g_data->shadow_shgrp, geom, ob);
+  DRW_shgroup_call_object(stl->g_data->shadow_shgrp, geom, ob);
 }
 
 void EEVEE_lights_cache_shcaster_material_add(EEVEE_ViewLayerData *sldata,
@@ -484,7 +483,7 @@ void EEVEE_lights_cache_shcaster_material_add(EEVEE_ViewLayerData *sldata,
     DRW_shgroup_uniform_float(grp, "alphaThreshold", alpha_threshold, 1);
   }
 
-  DRW_shgroup_call_object_add(grp, geom, ob);
+  DRW_shgroup_call_object(grp, geom, ob);
 }
 
 /* Make that object update shadow casting lights inside its influence bounding box. */
@@ -645,7 +644,7 @@ float light_attenuation_radius_get(Light *la, float light_threshold)
 
   /* Compute max light power. */
   float power = max_fff(la->r, la->g, la->b);
-  power *= fabsf(la->energy);
+  power *= fabsf(la->energy / 100.0f);
   power *= max_ff(1.0f, la->spec_fac);
   /* Compute the distance (using the inverse square law)
    * at which the light power reaches the light_threshold. */
@@ -672,6 +671,9 @@ static void light_shape_parameters_set(EEVEE_Light *evli, const Light *la, float
       evli->sizey = max_ff(0.003f, la->area_size * scale[1] * 0.5f);
     }
   }
+  else if (la->type == LA_SUN) {
+    evli->radius = max_ff(0.001f, tanf(la->sun_angle / 2.0f));
+  }
   else {
     evli->radius = max_ff(0.001f, la->area_size);
   }
@@ -683,7 +685,7 @@ static float light_shape_power_get(const Light *la, const EEVEE_Light *evli)
   /* Make illumination power constant */
   if (la->type == LA_AREA) {
     power = 1.0f / (evli->sizex * evli->sizey * 4.0f * M_PI) * /* 1/(w*h*Pi) */
-            80.0f; /* XXX : Empirical, Fit cycles power */
+            0.8f; /* XXX : Empirical, Fit cycles power */
     if (ELEM(la->area_shape, LA_AREA_DISK, LA_AREA_ELLIPSE)) {
       /* Scale power to account for the lower area of the ellipse compared to the surrounding
        * rectangle. */
@@ -691,8 +693,7 @@ static float light_shape_power_get(const Light *la, const EEVEE_Light *evli)
     }
   }
   else if (la->type == LA_SPOT || la->type == LA_LOCAL) {
-    power = 1.0f / (4.0f * evli->radius * evli->radius * M_PI * M_PI) * /* 1/(4*r²*Pi²) */
-            M_PI * M_PI * 10.0; /* XXX : Empirical, Fit cycles power */
+    power = 1.0f / (4.0f * evli->radius * evli->radius * M_PI * M_PI); /* 1/(4*r²*Pi²) */
 
     /* for point lights (a.k.a radius == 0.0) */
     // power = M_PI * M_PI * 0.78; /* XXX : Empirical, Fit cycles power */

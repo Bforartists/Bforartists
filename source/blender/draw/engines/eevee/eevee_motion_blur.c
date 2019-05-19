@@ -195,7 +195,7 @@ void EEVEE_motion_blur_cache_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Dat
   struct GPUBatch *quad = DRW_cache_fullscreen_quad_get();
 
   if ((effects->enabled_effects & EFFECT_MOTION_BLUR) != 0) {
-    psl->motion_blur = DRW_pass_create("Motion Blur", DRW_STATE_WRITE_COLOR);
+    DRW_PASS_CREATE(psl->motion_blur, DRW_STATE_WRITE_COLOR);
 
     DRWShadingGroup *grp = DRW_shgroup_create(e_data.motion_blur_sh, psl->motion_blur);
     DRW_shgroup_uniform_int(grp, "samples", &effects->motion_blur_samples, 1);
@@ -203,7 +203,7 @@ void EEVEE_motion_blur_cache_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Dat
     DRW_shgroup_uniform_mat4(grp, "pastViewProjMatrix", effects->past_world_to_ndc);
     DRW_shgroup_uniform_texture_ref(grp, "colorBuffer", &effects->source_buffer);
     DRW_shgroup_uniform_texture_ref(grp, "depthBuffer", &dtxl->depth);
-    DRW_shgroup_call_add(grp, quad, NULL);
+    DRW_shgroup_call(grp, quad, NULL);
   }
 }
 

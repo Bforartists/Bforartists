@@ -22,7 +22,7 @@ bl_info = {
     "name": "Cloud Generator",
     "author": "Nick Keeline(nrk)",
     "version": (1, 0, 2),
-    "blender": (2, 78, 5),
+    "blender": (2, 79, 0),
     "location": "Tool Shelf > Create Tab",
     "description": "Creates Volumetric Clouds",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -443,7 +443,7 @@ def getActionToDo(obj):
 
 class VIEW3D_PT_tools_cloud(Panel):
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
     bl_category = 'Create'
     bl_label = "Cloud Generator"
     bl_context = "objectmode"
@@ -499,10 +499,10 @@ class GenerateCloud(Operator):
         # Prevent unsupported Execution in Local View modes
         space_data = bpy.context.space_data
 
-        if True in space_data.layers_local_view:
-            self.report({'INFO'},
-                        "Works with Global Perspective modes only. Operation Cancelled")
-            return {'CANCELLED'}
+#        if True in space_data.layers_local_view:
+#            self.report({'INFO'},
+#                        "Works with Global Perspective modes only. Operation Cancelled")
+#            return {'CANCELLED'}
 
         # Make variable that is the active object selected by user
         active_object = context.active_object
@@ -920,8 +920,8 @@ class GenerateCloud(Operator):
                 cloudTexGroup.inputs['Scale'].default_value = noiseCloudScale
 
                 # to cloud to view in cycles in render mode we need to hide geometry meshes...
-                firstObject.hide = True
-                cloud.hide = True
+                firstObject.hide_viewport = True
+                cloud.hide_viewport = True
 
             # Select the object.
             bounds.select_set(True)
@@ -945,9 +945,16 @@ class GenerateCloud(Operator):
 
         return {'FINISHED'}
 
+# List The Classes #
+
+classes = (
+    VIEW3D_PT_tools_cloud,
+    GenerateCloud
+    )
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     bpy.types.Scene.cloudparticles = BoolProperty(
             name="Particles",
@@ -972,7 +979,8 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.cloudparticles
     del bpy.types.Scene.cloudsmoothing

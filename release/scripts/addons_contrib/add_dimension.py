@@ -1472,7 +1472,7 @@ def setBezierHandles(obj, mode = 'VECTOR'):
     bpy.ops.curve.select_all(action = 'SELECT')
     bpy.ops.curve.handle_type_set(type = mode)
     bpy.ops.object.mode_set(mode = 'OBJECT', toggle = True)
-    bpy.context.scene.update()
+    view_layer.update()
 
 ##------------------------------------------------------------
 #### Add units
@@ -1767,13 +1767,13 @@ def createCurve(vertArray, self, align_matrix):
         const =  DimensionCurve.constraints.new(type='CHILD_OF')
         const.target =  bpy.data.objects[self.Dimension_parent]
         const.inverse_matrix = bpy.data.objects[self.Dimension_parent].matrix_world.inverted()
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
 
     bpy.ops.object.select_all(action='DESELECT')
     DimensionCurve.select_set(True)
     DimensionText.select_set(True)
     bpy.context.view_layer.objects.active = DimensionCurve
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     DimensionCurve["Dimension_Name"] = self.Dimension_Name
     DimensionCurve["Dimension_Type"] = self.Dimension_Type
@@ -2063,12 +2063,12 @@ def main(self, align_matrix):
 #### Delete dimension group
 def DimensionDelete(self, context):
 
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
     bpy.ops.object.mode_set(mode = 'OBJECT')
 
     bpy.ops.object.select_grouped(extend=True, type='CHILDREN_RECURSIVE')
     bpy.ops.object.delete()
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     return
 
@@ -2653,7 +2653,7 @@ class Dimension(bpy.types.Operator):
         #go to object mode
         if bpy.ops.object.mode_set.poll():
             bpy.ops.object.mode_set(mode = 'OBJECT')
-            bpy.context.scene.update()
+            bpy.context.view_layer.update()
 
         # turn off undo
         undo = bpy.context.preferences.edit.use_global_undo
@@ -2670,7 +2670,7 @@ class Dimension(bpy.types.Operator):
 
     ##### INVOKE #####
     def invoke(self, context, event):
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
         if self.Dimension_Change:
             bpy.context.scene.cursor.location = self.Dimension_startlocation
         else:

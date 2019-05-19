@@ -556,10 +556,10 @@ def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
 #### Delete object
 def ObjectDelete(self, context, delete):
 
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.ops.object.delete()
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     return
     
@@ -765,7 +765,7 @@ class AddGear(Operator):
 
     ##### INVOKE #####
     def invoke(self, context, event):
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
         if self.change:
             bpy.context.scene.cursor.location = self.startlocation
         else:
@@ -960,7 +960,7 @@ class AddWormGear(Operator):
 
     ##### INVOKE #####
     def invoke(self, context, event):
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
         if self.change:
             bpy.context.scene.cursor.location = self.startlocation
         else:

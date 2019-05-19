@@ -35,7 +35,7 @@ class PhysicButtonsPanel:
         return (context.object) and context.engine in cls.COMPAT_ENGINES
 
 
-def physics_add(layout, md, name, type, _typeicon, toggles):
+def physics_add(layout, md, name, type, typeicon, toggles):
     row = layout.row(align=True)
     if md:
         row.context_pointer_set("modifier", md)
@@ -53,16 +53,16 @@ def physics_add(layout, md, name, type, _typeicon, toggles):
             "object.modifier_add",
             text=name,
             text_ctxt=i18n_contexts.default,
-            icon='BLANK1',
+            icon=typeicon,
         ).type = type
 
 
-def physics_add_special(layout, data, name, addop, removeop, _typeicon):
+def physics_add_special(layout, data, name, addop, removeop, typeicon):
     row = layout.row(align=True)
     if data:
         row.operator(removeop, text=name, text_ctxt=i18n_contexts.default, icon='X')
     else:
-        row.operator(addop, text=name, text_ctxt=i18n_contexts.default, icon='BLANK1')
+        row.operator(addop, text=name, text_ctxt=i18n_contexts.default, icon=typeicon)
 
 
 class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
@@ -84,7 +84,7 @@ class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
         col = flow.column()
 
         if obj.field.type == 'NONE':
-            col.operator("object.forcefield_toggle", text="Force Field", icon='BLANK1')
+            col.operator("object.forcefield_toggle", text="Force Field", icon='FORCE_FORCE')
         else:
             col.operator("object.forcefield_toggle", text="Force Field", icon='X')
 
@@ -106,16 +106,16 @@ class PHYSICS_PT_add(PhysicButtonsPanel, Panel):
                 col, obj.rigid_body, "Rigid Body",
                 "rigidbody.object_add",
                 "rigidbody.object_remove",
-                'MESH_ICOSPHERE'
-            )  # XXX: need dedicated icon.
+                'RIGID_BODY'
+            )
 
         # all types of objects can have rigid body constraint.
         physics_add_special(
             col, obj.rigid_body_constraint, "Rigid Body Constraint",
             "rigidbody.constraint_add",
             "rigidbody.constraint_remove",
-            'CONSTRAINT'
-        )  # RB_TODO needs better icon.
+            'RIGID_BODY_CONSTRAINT'
+        )
 
 
 # cache-type can be 'PSYS' 'HAIR' 'SMOKE' etc.

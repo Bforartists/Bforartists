@@ -115,8 +115,8 @@ class ExtractWavOperator(Operator):
                         cache=False
                         )
 
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
 
                 newstrip = context.scene.sequence_editor.active_strip
 
@@ -125,8 +125,8 @@ class ExtractWavOperator(Operator):
                     if i.name != newstrip.name:
                         i.select = False
 
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
 
                 # Match the original clip's length
                 newstrip.frame_start = strip.frame_start - strip.animation_offset_start
@@ -249,8 +249,8 @@ class ExternalAudioReloadOperator(Operator):
                         cache=False
                         )
 
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
 
                 newstrip = context.scene.sequence_editor.active_strip
 
@@ -259,8 +259,8 @@ class ExternalAudioReloadOperator(Operator):
                     if i.name != newstrip.name:
                         i.select = False
 
-                # Update scene
-                context.scene.update()
+                # Update view_layer
+                context.view_layer.update()
 
                 # trim sound strip like original one
                 functions.triminout(newstrip,

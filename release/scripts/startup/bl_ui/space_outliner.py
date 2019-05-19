@@ -96,7 +96,7 @@ class OUTLINER_HT_header(Header):
             sub.prop(space, "filter_id_type", text="", icon_only=True)
 
         if display_mode == 'VIEW_LAYER':
-            layout.operator("outliner.collection_new", text="", icon='GROUP')
+            layout.operator("outliner.collection_new", text="", icon='COLLECTION_NEW')
 
         elif display_mode == 'ORPHAN_DATA':
             layout.operator("outliner.orphans_purge", text="Purge")
@@ -383,8 +383,8 @@ class OUTLINER_PT_filter(Panel):
             layout.label(text="Restriction Toggles:")
             row = layout.row(align=True)
             row.prop(space, "show_restrict_column_enable", text="")
-            row.prop(space, "show_restrict_column_selectable", text="")
-            row.prop(space, "show_restrict_column_instance", text="")
+            row.prop(space, "show_restrict_column_select", text="")
+            row.prop(space, "show_restrict_column_hide", text="")
             row.prop(space, "show_restrict_column_viewport", text="")
             row.prop(space, "show_restrict_column_render", text="")
             row.prop(space, "show_restrict_column_holdout", text="")
@@ -393,8 +393,8 @@ class OUTLINER_PT_filter(Panel):
         elif display_mode == 'SCENES':
             layout.label(text="Restriction Toggles:")
             row = layout.row(align=True)
-            row.prop(space, "show_restrict_column_selectable", text="")
-            row.prop(space, "show_restrict_column_instance", text="")
+            row.prop(space, "show_restrict_column_select", text="")
+            row.prop(space, "show_restrict_column_hide", text="")
             row.prop(space, "show_restrict_column_viewport", text="")
             row.prop(space, "show_restrict_column_render", text="")
             layout.separator()
