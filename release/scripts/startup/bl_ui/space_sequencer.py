@@ -600,18 +600,18 @@ class SEQUENCER_MT_strip(Menu):
                 layout.separator()
                 layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                 layout.operator_menu_enum("sequencer.change_effect_type", "type")
-                layout.operator("sequencer.reassign_inputs")
-                layout.operator("sequencer.swap_inputs")
+                layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
+                layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
             elif stype in {'IMAGE', 'MOVIE'}:
                 layout.separator()
-                layout.operator("sequencer.rendersize")
-                layout.operator("sequencer.images_separate")
+                layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+                layout.operator("sequencer.images_separate", icon='SEPARATE')
             elif stype == 'SOUND':
                 layout.separator()
-                layout.operator("sequencer.crossfade_sounds")
+                layout.operator("sequencer.crossfade_sounds", icon='SPEAKER')
             elif stype == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_separate")
+                layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
 
         layout.separator()
         layout.operator("sequencer.meta_make", icon='ADD_METASTRIP')
@@ -663,18 +663,18 @@ class SEQUENCER_MT_context_menu(Menu):
                 layout.separator()
                 layout.operator_menu_enum("sequencer.change_effect_input", "swap")
                 layout.operator_menu_enum("sequencer.change_effect_type", "type")
-                layout.operator("sequencer.reassign_inputs")
-                layout.operator("sequencer.swap_inputs")
+                layout.operator("sequencer.reassign_inputs", icon='RANDOMIZE_TRANSFORM')
+                layout.operator("sequencer.swap_inputs", icon='RANDOMIZE')
             elif stype in {'IMAGE', 'MOVIE'}:
                 layout.separator()
-                layout.operator("sequencer.rendersize")
-                layout.operator("sequencer.images_separate")
+                layout.operator("sequencer.rendersize", icon='RENDER_REGION')
+                layout.operator("sequencer.images_separate", icon='SEPARATE')
             elif stype == 'SOUND':
                 layout.separator()
-                layout.operator("sequencer.crossfade_sounds")
+                layout.operator("sequencer.crossfade_sounds", icon='SPEAKER')
             elif stype == 'META':
                 layout.separator()
-                layout.operator("sequencer.meta_separate")
+                layout.operator("sequencer.meta_separate", icon='REMOVE_METASTRIP')
 
         layout.separator()
 
