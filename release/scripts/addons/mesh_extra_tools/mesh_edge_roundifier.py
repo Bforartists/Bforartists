@@ -788,10 +788,12 @@ class EdgeRoundifier(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         old_location = self.obj.location.copy()
         bpy.ops.transform.translate(
-                            value=-old_location, constraint_axis=(False, False, False),
-                            orient_type='GLOBAL', mirror=False, proportional='DISABLED',
-                            proportional_edit_falloff='SMOOTH', proportional_size=1
-                            )
+            value=-old_location,
+            constraint_axis=(False, False, False),
+            orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.object.mode_set(mode='EDIT')
         adjust_matrix = self.obj.matrix_parent_inverse
         bm = bmesh.from_edit_mesh(self.obj.data)
@@ -819,10 +821,12 @@ class EdgeRoundifier(Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         # PKHG>INFO move origin object back print("old location = " , old_location)
         bpy.ops.transform.translate(
-                        value=old_location, constraint_axis=(False, False, False),
-                        orient_type='GLOBAL', mirror=False, proportional='DISABLED',
-                        proportional_edit_falloff='SMOOTH', proportional_size=1
-                        )
+            value=old_location,
+            constraint_axis=(False, False, False),
+            orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.object.mode_set(mode='EDIT')
 
     def makeElliptic(self, bm, mesh, arcVertices, parameters):

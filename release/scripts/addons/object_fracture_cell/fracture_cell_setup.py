@@ -65,17 +65,17 @@ def _points_from_object(obj, source):
             matrix = obj.matrix_world.copy()
             points.extend([matrix * v.co for v in mesh.vertices])
         else:
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            ob_eval = ob.evaluated_get(depsgraph)
             try:
-                mesh = ob.to_mesh(scene=bpy.context.scene,
-                                  apply_modifiers=True,
-                                  settings='PREVIEW')
+                mesh = ob_eval.to_mesh()
             except:
                 mesh = None
 
             if mesh is not None:
                 matrix = obj.matrix_world.copy()
                 points.extend([matrix * v.co for v in mesh.vertices])
-                bpy.data.meshes.remove(mesh)
+                ob_eval.to_mesh_clear()
 
     def points_from_particles(obj):
         points.extend([p.location.copy()
@@ -138,7 +138,7 @@ def cell_fracture_objects(context, obj,
 
     from . import fracture_cell_calc
     collection = context.collection
-    scene = context.scene
+    view_layer = context.view_layer
 
     # -------------------------------------------------------------------------
     # GET POINTS
@@ -296,10 +296,10 @@ def cell_fracture_objects(context, obj,
                 slot_dst.material = slot_src.material
 
         if use_debug_redraw:
-            scene.update()
+            view_layer.update()
             _redraw_yasiamevil()
 
-    scene.update()
+    view_layer.update()
 
     # move this elsewhere...
     for obj_cell in objects:
@@ -324,6 +324,7 @@ def cell_fracture_boolean(context, obj, objects,
     objects_boolean = []
     collection = context.collection
     scene = context.scene
+    depsgraph = context.evaluated_depsgraph_get()
 
     if use_interior_hide and level == 0:
         # only set for level 0
@@ -339,9 +340,8 @@ def cell_fracture_boolean(context, obj, objects,
             if use_interior_hide:
                 obj_cell.data.polygons.foreach_set("hide", [True] * len(obj_cell.data.polygons))
 
-            mesh_new = obj_cell.to_mesh(scene,
-                                        apply_modifiers=True,
-                                        settings='PREVIEW')
+            obj_cell_eval = obj_cell.evaluated_get(depsgraph)
+            mesh_new = bpy.data.meshes.new_from_object(obj_cell_eval)
             mesh_old = obj_cell.data
             obj_cell.data = mesh_new
             obj_cell.modifiers.remove(mod)
@@ -404,7 +404,7 @@ def cell_fracture_boolean(context, obj, objects,
 
         objects_boolean[:] = [obj_cell for obj_cell in scene.objects if obj_cell.select]
 
-    scene.update()
+    context.view_layer.update()
 
     return objects_boolean
 

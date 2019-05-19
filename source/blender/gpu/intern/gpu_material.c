@@ -36,6 +36,7 @@
 #include "BLI_listbase.h"
 #include "BLI_utildefines.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 
 #include "BKE_main.h"
 #include "BKE_node.h"
@@ -125,7 +126,6 @@ struct GPUMaterial {
 enum {
   GPU_DOMAIN_SURFACE = (1 << 0),
   GPU_DOMAIN_VOLUME = (1 << 1),
-  GPU_DOMAIN_SSS = (1 << 2),
 };
 
 /* Functions */
@@ -229,6 +229,12 @@ GPUPass *GPU_material_get_pass(GPUMaterial *material)
 ListBase *GPU_material_get_inputs(GPUMaterial *material)
 {
   return &material->inputs;
+}
+
+/* Return can be NULL if it's a world material. */
+Material *GPU_material_get_material(GPUMaterial *material)
+{
+  return material->ma;
 }
 
 GPUUniformBuffer *GPU_material_uniform_buffer_get(GPUMaterial *material)
@@ -597,15 +603,6 @@ eGPUMaterialStatus GPU_material_status(GPUMaterial *mat)
 
 /* Code generation */
 
-bool GPU_material_do_color_management(GPUMaterial *mat)
-{
-  if (!BKE_scene_check_color_management_enabled(mat->scene)) {
-    return false;
-  }
-
-  return true;
-}
-
 bool GPU_material_use_domain_surface(GPUMaterial *mat)
 {
   return (mat->domain & GPU_DOMAIN_SURFACE);
@@ -646,6 +643,7 @@ GPUMaterial *GPU_material_from_nodetree_find(ListBase *gpumaterials,
  * so only do this when they are needed.
  */
 GPUMaterial *GPU_material_from_nodetree(Scene *scene,
+                                        struct Material *ma,
                                         struct bNodeTree *ntree,
                                         ListBase *gpumaterials,
                                         const void *engine_type,
@@ -664,6 +662,7 @@ GPUMaterial *GPU_material_from_nodetree(Scene *scene,
 
   /* allocate material */
   GPUMaterial *mat = MEM_callocN(sizeof(GPUMaterial), "GPUMaterial");
+  mat->ma = ma;
   mat->scene = scene;
   mat->engine_type = engine_type;
   mat->options = options;
@@ -679,14 +678,14 @@ GPUMaterial *GPU_material_from_nodetree(Scene *scene,
 
   gpu_material_ramp_texture_build(mat);
 
-  if (has_surface_output) {
-    mat->domain |= GPU_DOMAIN_SURFACE;
-  }
-  if (has_volume_output) {
-    mat->domain |= GPU_DOMAIN_VOLUME;
-  }
+  SET_FLAG_FROM_TEST(mat->domain, has_surface_output, GPU_DOMAIN_SURFACE);
+  SET_FLAG_FROM_TEST(mat->domain, has_volume_output, GPU_DOMAIN_VOLUME);
 
   if (mat->outlink) {
+    /* HACK: this is only for eevee. We add the define here after the nodetree evaluation. */
+    if (GPU_material_flag_get(mat, GPU_MATFLAG_SSS)) {
+      defines = BLI_string_joinN(defines, "#define USE_SSS\n");
+    }
     /* Prune the unused nodes and extract attributes before compiling so the
      * generated VBOs are ready to accept the future shader. */
     GPU_nodes_prune(&mat->nodes, mat->outlink);
@@ -701,6 +700,10 @@ GPUMaterial *GPU_material_from_nodetree(Scene *scene,
                                   geom_code,
                                   frag_lib,
                                   defines);
+
+    if (GPU_material_flag_get(mat, GPU_MATFLAG_SSS)) {
+      MEM_freeN((char *)defines);
+    }
 
     if (mat->pass == NULL) {
       /* We had a cache hit and the shader has already failed to compile. */

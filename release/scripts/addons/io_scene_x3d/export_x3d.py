@@ -217,6 +217,7 @@ def h3d_is_object_view(scene, obj):
 
 def export(file,
            global_matrix,
+           depsgraph,
            scene,
            view_layer,
            use_mesh_modifiers=False,
@@ -1421,8 +1422,9 @@ def export(file,
 
             elif obj_type in {'MESH', 'CURVE', 'SURFACE', 'FONT'}:
                 if (obj_type != 'MESH') or (use_mesh_modifiers and obj.is_modified(scene, 'PREVIEW')):
+                    obj_for_mesh = obj.evaluated_get(depsgraph) if use_mesh_modifiers else obj
                     try:
-                        me = obj.to_mesh(scene, use_mesh_modifiers, 'PREVIEW')
+                        me = obj_for_mesh.to_mesh()
                     except:
                         me = None
                     do_remove = True
@@ -1449,7 +1451,7 @@ def export(file,
 
                     # free mesh created with create_mesh()
                     if do_remove:
-                        bpy.data.meshes.remove(me)
+                        obj_for_mesh.to_mesh_clear()
 
             elif obj_type == 'LIGHT':
                 data = obj.data
@@ -1588,6 +1590,7 @@ def save(context,
 
     export(file,
            global_matrix,
+           context.evaluated_depsgraph_get(),
            context.scene,
            context.view_layer,
            use_mesh_modifiers=use_mesh_modifiers,

@@ -856,7 +856,7 @@ static int collection_view_layer_exec(bContext *C, wmOperator *op)
 void OUTLINER_OT_collection_exclude_set(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Set Exclude";
+  ot->name = "Disable from View Layer";
   ot->idname = "OUTLINER_OT_collection_exclude_set";
   ot->description = "Set Exclude\nExclude collection from the active view layer";
 
@@ -871,7 +871,7 @@ void OUTLINER_OT_collection_exclude_set(wmOperatorType *ot)
 void OUTLINER_OT_collection_exclude_clear(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Clear Exclude";
+  ot->name = "Enable in View Layer";
   ot->idname = "OUTLINER_OT_collection_exclude_clear";
   ot->description = "Clear Exclude\nInclude collection in the active view layer";
 
@@ -967,8 +967,8 @@ static int collection_isolate_exec(bContext *C, wmOperator *op)
     LayerCollection *lc_master = view_layer->layer_collections.first;
     for (LayerCollection *lc_iter = lc_master->layer_collections.first; lc_iter;
          lc_iter = lc_iter->next) {
-      lc_iter->flag |= LAYER_COLLECTION_RESTRICT_VIEW;
-      layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_RESTRICT_VIEW);
+      lc_iter->flag |= LAYER_COLLECTION_HIDE;
+      layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_HIDE);
     }
   }
 
@@ -1025,12 +1025,12 @@ void OUTLINER_OT_collection_isolate(wmOperatorType *ot)
 
 static bool collection_show_poll(bContext *C)
 {
-  return collections_view_layer_poll(C, true, LAYER_COLLECTION_RESTRICT_VIEW);
+  return collections_view_layer_poll(C, true, LAYER_COLLECTION_HIDE);
 }
 
 static bool collection_hide_poll(bContext *C)
 {
-  return collections_view_layer_poll(C, false, LAYER_COLLECTION_RESTRICT_VIEW);
+  return collections_view_layer_poll(C, false, LAYER_COLLECTION_HIDE);
 }
 
 static bool collection_inside_poll(bContext *C)
@@ -1167,12 +1167,12 @@ static bool collection_flag_poll(bContext *C, bool clear, int flag)
 
 static bool collection_enable_poll(bContext *C)
 {
-  return collection_flag_poll(C, true, COLLECTION_RESTRICT_INSTANCE);
+  return collection_flag_poll(C, true, COLLECTION_RESTRICT_VIEWPORT);
 }
 
 static bool collection_disable_poll(bContext *C)
 {
-  return collection_flag_poll(C, false, COLLECTION_RESTRICT_INSTANCE);
+  return collection_flag_poll(C, false, COLLECTION_RESTRICT_VIEWPORT);
 }
 
 static bool collection_enable_render_poll(bContext *C)
@@ -1192,7 +1192,7 @@ static int collection_flag_exec(bContext *C, wmOperator *op)
   SpaceOutliner *soops = CTX_wm_space_outliner(C);
   const bool is_render = strstr(op->idname, "render");
   const bool clear = strstr(op->idname, "show") || strstr(op->idname, "enable");
-  int flag = is_render ? COLLECTION_RESTRICT_RENDER : COLLECTION_RESTRICT_INSTANCE;
+  int flag = is_render ? COLLECTION_RESTRICT_RENDER : COLLECTION_RESTRICT_VIEWPORT;
   struct CollectionEditData data = {
       .scene = scene,
       .soops = soops,
@@ -1219,7 +1219,7 @@ static int collection_flag_exec(bContext *C, wmOperator *op)
 
       /* Make sure (at least for this view layer) the collection is visible. */
       if (clear && !is_render) {
-        layer_collection->flag &= ~LAYER_COLLECTION_RESTRICT_VIEW;
+        layer_collection->flag &= ~LAYER_COLLECTION_HIDE;
       }
     }
     BLI_gset_free(data.collections_to_edit, NULL);
@@ -1412,8 +1412,8 @@ static int outliner_unhide_all_exec(bContext *C, wmOperator *UNUSED(op))
   LayerCollection *lc_master = view_layer->layer_collections.first;
   for (LayerCollection *lc_iter = lc_master->layer_collections.first; lc_iter;
        lc_iter = lc_iter->next) {
-    lc_iter->flag &= ~LAYER_COLLECTION_RESTRICT_VIEW;
-    layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_RESTRICT_VIEW);
+    lc_iter->flag &= ~LAYER_COLLECTION_HIDE;
+    layer_collection_flag_recursive_set(lc_iter, LAYER_COLLECTION_HIDE);
   }
 
   /* Unhide all objects. */

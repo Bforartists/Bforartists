@@ -446,12 +446,14 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
     # calculate optimal thickness for defaults
     bpy.ops.object.skin_root_mark(override)
-    bpy.ops.transform.skin_resize(override,
-            value=(1 * thickness * (size / 10), 1 * thickness * (size / 10), 1 * thickness * (size / 10)),
-            constraint_axis=(False, False, False), orient_type='GLOBAL',
-            mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
-            proportional_size=1
-            )
+    bpy.ops.transform.skin_resize(
+        override,
+        value=(1 * thickness * (size / 10), 1 * thickness * (size / 10), 1 * thickness * (size / 10)),
+        constraint_axis=(False, False, False),
+        orient_type='GLOBAL',
+        mirror=False,
+        use_proportional_edit=False,
+    )
     shape_object.modifiers["Skin"].use_smooth_shade = True
     shape_object.modifiers["Skin"].use_x_symmetry = True
 
@@ -461,12 +463,13 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
         bpy.ops.object.skin_loose_mark_clear(override, action='MARK')
         # by default set fingers thickness to 25 percent of body thickness
-        bpy.ops.transform.skin_resize(override,
-                    value=(finger_thickness, finger_thickness, finger_thickness),
-                    constraint_axis=(False, False, False), orient_type='GLOBAL',
-                    mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
-                    proportional_size=1
-                    )
+        bpy.ops.transform.skin_resize(
+            override,
+            value=(finger_thickness, finger_thickness, finger_thickness),
+            constraint_axis=(False, False, False), orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         # make loose hands only for better topology
 
     # bpy.ops.mesh.select_all(action='DESELECT')
@@ -490,12 +493,13 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
         select_vertices(shape_object, merge_idx)
         bpy.ops.mesh.merge(type='CENTER')
-        bpy.ops.transform.skin_resize(override,
-                value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), orient_type='GLOBAL',
-                mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
-                proportional_size=1
-                )
+        bpy.ops.transform.skin_resize(
+            override,
+            value=(corrective_thickness, corrective_thickness, corrective_thickness),
+            constraint_axis=(False, False, False), orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.mesh.select_all(action='DESELECT')
 
         # right hand verts
@@ -503,12 +507,13 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
         select_vertices(shape_object, merge_idx)
         bpy.ops.mesh.merge(type='CENTER')
-        bpy.ops.transform.skin_resize(override,
-                value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), orient_type='GLOBAL',
-                mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
-                proportional_size=1
-                )
+        bpy.ops.transform.skin_resize(
+            override,
+            value=(corrective_thickness, corrective_thickness, corrective_thickness),
+            constraint_axis=(False, False, False), orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
 
         # making hands even more pretty
         bpy.ops.mesh.select_all(action='DESELECT')
@@ -517,12 +522,13 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
         select_vertices(shape_object, hands_idx)
         # change the thickness to make hands look less blocky and more sexy
         corrective_thickness = 0.7
-        bpy.ops.transform.skin_resize(override,
-                value=(corrective_thickness, corrective_thickness, corrective_thickness),
-                constraint_axis=(False, False, False), orient_type='GLOBAL',
-                mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
-                proportional_size=1
-                )
+        bpy.ops.transform.skin_resize(
+            override,
+            value=(corrective_thickness, corrective_thickness, corrective_thickness),
+            constraint_axis=(False, False, False), orient_type='GLOBAL',
+            mirror=False,
+            use_proportional_edit=False,
+        )
         bpy.ops.mesh.select_all(action='DESELECT')
 
     # todo optionally take root from rig's hip tail or head depending on scenario

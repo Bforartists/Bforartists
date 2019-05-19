@@ -43,6 +43,7 @@ struct DerivedMesh;
 struct FluidsimSettings;
 struct GpencilBatchCache;
 struct Ipo;
+struct Mesh;
 struct Material;
 struct Object;
 struct PartDeflect;
@@ -160,11 +161,17 @@ typedef struct Object_Runtime {
    */
   struct Mesh *mesh_deform_eval;
 
+  /* This is a mesh representation of corresponding object.
+   * It created when Python calls `object.to_mesh()`. */
+  struct Mesh *object_as_temp_mesh;
+
   /** Runtime evaluated curve-specific data, not stored in the file. */
   struct CurveCache *curve_cache;
 
   /** Runtime grease pencil drawing data */
   struct GpencilBatchCache *gpencil_cache;
+
+  void *_pad2; /* Padding is here for win32s unconventional stuct alignment rules. */
 } Object_Runtime;
 
 typedef struct Object {
@@ -602,7 +609,7 @@ enum {
 
 /* ob->restrictflag */
 enum {
-  OB_RESTRICT_INSTANCE = 1 << 0,
+  OB_RESTRICT_VIEWPORT = 1 << 0,
   OB_RESTRICT_SELECT = 1 << 1,
   OB_RESTRICT_RENDER = 1 << 2,
 };

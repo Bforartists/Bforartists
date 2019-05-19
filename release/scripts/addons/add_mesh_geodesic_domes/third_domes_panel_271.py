@@ -50,10 +50,10 @@ def align_matrix(context, location):
 #### Delete object
 def ObjectDelete(self, context, delete):
 
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
     bpy.ops.object.mode_set(mode = 'OBJECT')
     bpy.ops.object.delete()
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
 
     return
 
@@ -1563,7 +1563,7 @@ class GenerateGeodesicDome(Operator):
         #bpy.ops.view3d.snap_cursor_to_center()
         if geodesic_not_yet_called:
             geodesic_not_yet_called = False
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
         if self.change:
             bpy.context.scene.cursor.location = self.startlocation
         else:

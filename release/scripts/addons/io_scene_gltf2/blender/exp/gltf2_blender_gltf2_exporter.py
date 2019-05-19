@@ -212,13 +212,13 @@ class GlTF2Exporter:
     def __add_image(self, image: gltf2_io_image_data.ImageData):
         name = image.adjusted_name()
         count = 1
-        regex = re.compile(r"\d+$")
-        regex_found = re.findall(regex, name)
+        regex = re.compile(r"-\d+$")
         while name in self.__images.keys():
+            regex_found = re.findall(regex, name)
             if regex_found:
-                name = re.sub(regex, str(count), name)
+                name = re.sub(regex, "-" + str(count), name)
             else:
-                name += " " + str(count)
+                name += "-" + str(count)
 
             count += 1
         # TODO: we need to know the image url at this point already --> maybe add all options to the constructor of the
@@ -229,7 +229,7 @@ class GlTF2Exporter:
         return name + image.file_extension
 
     @classmethod
-    def __get_key_path(cls, d: dict, keypath: List[str], default=[]):
+    def __get_key_path(cls, d: dict, keypath: List[str], default):
         """Create if necessary and get the element at key path from a dict"""
         key = keypath.pop(0)
 
@@ -302,7 +302,7 @@ class GlTF2Exporter:
             # extensions that lie in the root of the glTF.
             # They need to be converted to a reference at place of occurrence
             if isinstance(node, gltf2_io_extensions.ChildOfRootExtension):
-                root_extension_list = self.__get_key_path(self.__gltf.extensions, [node.name] + node.path)
+                root_extension_list = self.__get_key_path(self.__gltf.extensions, [node.name] + node.path, [])
                 idx = self.__append_unique_and_get_index(root_extension_list, extension)
                 return idx
 

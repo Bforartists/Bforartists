@@ -740,7 +740,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
                 ardict[ob][2] = count
             NP020PA.fit_type = ar.fit_type
             NP020PA.count = count
-            bpy.context.scene.update()
+            bpy.context.view_layer.update()
 
         elif event.ctrl and event.type == 'WHEELDOWNMOUSE' or event.type == 'DOWN_ARROW' and event.value == 'PRESS':
             for ob in arob:
@@ -761,7 +761,7 @@ class NPPAArrayTranslate(bpy.types.Operator):
                 ardict[ob][2] = count
             NP020PA.fit_type = ar.fit_type
             NP020PA.count = count
-            bpy.context.scene.update()
+            bpy.context.view_layer.update()
 
         elif event.type in ('RET', 'NUMPAD_ENTER') and event.value == 'PRESS':
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')

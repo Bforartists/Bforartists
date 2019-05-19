@@ -371,21 +371,24 @@ class MeshExportObject(ExportObject):
                 for Modifier in DeactivatedModifierList:
                     Modifier.show_viewport = False
 
-                Mesh = self.BlenderObject.to_mesh(self.Exporter.context.scene,
-                    True, 'PREVIEW')
+                depsgraph = self.Exporter.context.evaluated_depsgraph_get()
+                Mesh = self.BlenderObject.evaluated_get(depsgraph).to_mesh()
 
                 # Restore the deactivated modifiers
                 for Modifier in DeactivatedModifierList:
                     Modifier.show_viewport = True
             else:
-                Mesh = self.BlenderObject.to_mesh(self.Exporter.context.scene,
-                    False, 'PREVIEW')
+                Mesh = self.BlenderObject.to_mesh()
             self.Exporter.Log("Done")
 
             self.__WriteMesh(Mesh)
 
             # Cleanup
-            bpy.data.meshes.remove(Mesh)
+            if self.Config.ApplyModifiers:
+                depsgraph = self.Exporter.context.evaluated_depsgraph_get()
+                self.BlenderObject.evaluated_get(depsgraph).to_mesh_clear()
+            else:
+                self.BlenderObject.to_mesh_clear()
 
         self.Exporter.Log("Writing children of {}".format(self))
         self._WriteChildren()

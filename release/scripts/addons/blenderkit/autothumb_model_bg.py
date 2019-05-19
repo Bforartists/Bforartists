@@ -45,7 +45,7 @@ def center_obs_for_thumbnail(obs):
         parent = parent.parent
     # reset parent rotation, so we see how it really snaps.
     parent.rotation_euler = (0, 0, 0)
-    bpy.context.scene.update()
+    bpy.context.view_layer.update()
     minx, miny, minz, maxx, maxy, maxz = utils.get_bounds_worldspace(obs)
 
     cx = (maxx - minx) / 2 + minx
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         main_object, allobs = append_link.append_objects(file_name=BLENDERKIT_EXPORT_FILE_INPUT,
                                                          obnames=obnames,
                                                          link=True)
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
 
         camdict = {
             'GROUND': 'camera ground',
@@ -128,7 +128,7 @@ if __name__ == "__main__":
             = data['thumbnail_background_lightness']
         s.cycles.samples = data['thumbnail_samples']
         bpy.context.view_layer.cycles.use_denoising = data['thumbnail_denoising']
-        bpy.context.scene.update()
+        bpy.context.view_layer.update()
 
         # import blender's HDR here
         hdr_path = Path('datafiles/studiolights/world/interior.exr')

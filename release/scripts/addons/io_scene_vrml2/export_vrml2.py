@@ -150,7 +150,7 @@ def save_bmesh(fw, bm,
 
 
 def save_object(fw, global_matrix,
-                scene, obj,
+                depsgraph, scene, obj,
                 use_mesh_modifiers,
                 use_color, color_type,
                 use_uv,
@@ -163,9 +163,11 @@ def save_object(fw, global_matrix,
         if is_editmode:
             bpy.ops.object.editmode_toggle()
 
-        me = obj.to_mesh(scene, True, 'PREVIEW')
+        obj_eval = obj.evaluated_get(depsgraph)
+        me = obj_eval.to_mesh()
         bm = bmesh.new()
         bm.from_mesh(me)
+        obj_eval.to_mesh_clear()
 
         if is_editmode:
             bpy.ops.object.editmode_toggle()
@@ -227,6 +229,7 @@ def save(operator,
          path_mode='AUTO'):
 
     scene = context.scene
+    depsgraph = context.evaluated_depsgraph_get()
 
     # store files to copy
     copy_set = set()
@@ -245,7 +248,7 @@ def save(operator,
         if obj.type == 'MESH':
             fw("\n# %r\n" % obj.name)
             save_object(fw, global_matrix,
-                        scene, obj,
+                        depsgraph, scene, obj,
                         use_mesh_modifiers,
                         use_color, color_type,
                         use_uv,

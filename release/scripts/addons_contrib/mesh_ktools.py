@@ -143,7 +143,7 @@ class lattice_to_selection(bpy.types.Operator):
                     tmp_obj = bpy.context.object.name
 
                     # create the lattice object with the lattice_loc and rot
-                    bpy.ops.object.add(radius=1, type='LATTICE', view_align=False, enter_editmode=False, location=lattice_loc, rotation=lattice_rot)
+                    bpy.ops.object.add(radius=1, type='LATTICE', align='WORLD', enter_editmode=False, location=lattice_loc, rotation=lattice_rot)
 
                     lattice_obj = bpy.context.object
 
@@ -239,7 +239,7 @@ class lattice_to_selection(bpy.types.Operator):
                     tmp_obj = bpy.context.object.name
 
 
-                    bpy.ops.object.add(radius=1, type='LATTICE', view_align=False, enter_editmode=False, location=lattice_loc, rotation=lattice_rot)
+                    bpy.ops.object.add(radius=1, type='LATTICE', align='WORLD', enter_editmode=False, location=lattice_loc, rotation=lattice_rot)
 
                     lattice_obj = bpy.context.object
 
@@ -955,7 +955,7 @@ class shrinkwrapSmooth(bpy.types.Operator):
 
                 # Create intermediate object
                 bpy.ops.object.mode_set(mode = 'OBJECT', toggle = False)
-                bpy.ops.mesh.primitive_plane_add(radius=1, view_align=False, enter_editmode=False)
+                bpy.ops.mesh.primitive_plane_add(radius=1, align='WORLD', enter_editmode=False)
                 bpy.context.object.data = bpy.data.meshes[data]
                 tmp_ob = bpy.context.object.name
 

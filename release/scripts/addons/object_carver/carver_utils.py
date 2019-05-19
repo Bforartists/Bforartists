@@ -399,7 +399,7 @@ def Picking(context, event):
 	ray_target = ray_origin + view_vector
 
 	def visible_objects_and_duplis():
-		depsgraph = context.depsgraph
+		depsgraph = context.evaluated_depsgraph_get()
 		for dup in depsgraph.object_instances:
 			if dup.is_instance:  # Real dupli instance
 				obj = dup.instance_object.original

@@ -36,9 +36,16 @@ def obj_to_bone(obj, rig, bone_name):
     if bpy.context.mode == 'EDIT_ARMATURE':
         raise MetarigError("obj_to_bone(): does not work while in edit mode")
 
-    bone = rig.data.bones[bone_name]
+    bone = rig.pose.bones[bone_name]
+    scale = bone.custom_shape_scale
 
-    mat = rig.matrix_world @ bone.matrix_local
+    if bone.use_custom_shape_bone_size:
+        scale *= bone.length
+
+    if bone.custom_shape_transform:
+        bone = bone.custom_shape_transform
+
+    mat = rig.matrix_world @ bone.bone.matrix_local
 
     obj.location = mat.to_translation()
 
@@ -47,7 +54,7 @@ def obj_to_bone(obj, rig, bone_name):
 
     scl = mat.to_scale()
     scl_avg = (scl[0] + scl[1] + scl[2]) / 3
-    obj.scale = (bone.length * scl_avg), (bone.length * scl_avg), (bone.length * scl_avg)
+    obj.scale = (scale * scl_avg), (scale * scl_avg), (scale * scl_avg)
 
 
 def create_widget(rig, bone_name, bone_transform_name=None):
@@ -133,28 +140,28 @@ def write_widget(obj):
     script += "    if obj != None:\n"
 
     # Vertices
-    if len(obj.data.vertices) > 0:
-        script += "        verts = ["
-        for v in obj.data.vertices:
-            script += "(" + str(v.co[0]) + "*size, " + str(v.co[1]) + "*size, " + str(v.co[2]) + "*size), "
-        script += "]\n"
+    script += "        verts = ["
+    for v in obj.data.vertices:
+        script += "(" + str(v.co[0]) + "*size, " + str(v.co[1]) + "*size, " + str(v.co[2]) + "*size),"
+        script += "\n                 "
+    script += "]\n"
 
     # Edges
-    if len(obj.data.edges) > 0:
-        script += "        edges = ["
-        for e in obj.data.edges:
-            script += "(" + str(e.vertices[0]) + ", " + str(e.vertices[1]) + "), "
-        script += "]\n"
+    script += "        edges = ["
+    for i, e in enumerate(obj.data.edges):
+        script += "(" + str(e.vertices[0]) + ", " + str(e.vertices[1]) + "),"
+        script += "\n                 " if i % 10 == 9 else " "
+    script += "]\n"
 
     # Faces
-    if len(obj.data.polygons) > 0:
-        script += "        faces = ["
-        for f in obj.data.polygons:
-            script += "("
-            for v in f.vertices:
-                script += str(v) + ", "
-            script += "), "
-        script += "]\n"
+    script += "        faces = ["
+    for i, f in enumerate(obj.data.polygons):
+        script += "("
+        for v in f.vertices:
+            script += str(v) + ", "
+        script += "),"
+        script += "\n                 " if i % 10 == 9 else " "
+    script += "]\n"
 
     # Build mesh
     script += "\n        mesh = obj.data\n"

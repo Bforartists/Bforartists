@@ -654,8 +654,8 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("jitter\n")
 
             # No shadow checked either at global or light level:
-            if(not scene.render.use_shadows or
-               (lamp.shadow_method == 'NOSHADOW')):
+            if(not scene.pov.use_shadows or
+               (lamp.pov.shadow_method == 'NOSHADOW')):
                 tabWrite("shadowless\n")
 
             # Sun shouldn't be attenuated. Area lights have no falloff attribute so they
@@ -2677,8 +2677,12 @@ def write_pov(filename, scene=None, info_callback=None):
                         tabWrite("\n//dummy sphere to represent Empty location\n")
                         tabWrite("#declare %s =sphere {<0, 0, 0>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n" % povdataname)
 
+                    # TODO(sergey): PovRay is a render engine, so should be using dependency graph
+                    # which was given to it via render engine API.
+                    depsgraph = bpy.context.evaluated_depsgraph_get()
+                    ob_eval = ob.evaluated_get(depsgraph)
                     try:
-                        me = ob.to_mesh(bpy.context.depsgraph, True, 'RENDER')
+                        me = ob_eval.to_mesh()
 
                     #XXX Here? identify the specific exception for mesh object with no data
                     #XXX So that we can write something for the dataname !
@@ -3211,7 +3215,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
 
 
-                    bpy.data.meshes.remove(me)
+                    ob_eval.to_mesh_clear()
 
         if csg:
             duplidata_ref = []
@@ -3278,7 +3282,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                 tabWrite("}\n")
 
     def exportWorld(world):
-        render = scene.render
+        render = scene.pov
         camera = scene.camera
         matrix = global_matrix @ camera.matrix_world
         if not world:

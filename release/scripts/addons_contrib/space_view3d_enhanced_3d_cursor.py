@@ -3198,7 +3198,7 @@ class MeshCache:
         # Make Blender recognize object as having geometry
         # (is there a simpler way to do this?)
         self.collection.objects.link(tmp_obj)
-        self.scene.update()
+        bpy.context.view_layer.update()
         # We don't need this object in scene
         self.collection.objects.unlink(tmp_obj)
 

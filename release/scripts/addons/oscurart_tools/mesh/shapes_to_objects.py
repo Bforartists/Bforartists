@@ -44,11 +44,13 @@ class ShapeToObjects(Operator):
         OBJACT = bpy.context.view_layer.objects.active
         has_keys = hasattr(getattr(OBJACT.data, "shape_keys", None), "key_blocks")
         if has_keys:
+            depsgraph = bpy.context.evaluated_depsgraph_get()
             for SHAPE in OBJACT.data.shape_keys.key_blocks[:]:
                 print(SHAPE.name)
                 bpy.ops.object.shape_key_clear()
                 SHAPE.value = 1
-                mesh = OBJACT.to_mesh(bpy.context.depsgraph, True, calc_undeformed=False)
+                OBJACT_eval = OBJACT.evaluated_get(depsgraph)
+                mesh = bpy.data.meshes.new_from_object(OBJACT_eval)
                 object = bpy.data.objects.new(SHAPE.name, mesh)
                 bpy.context.scene.collection.objects.link(object)
         else:

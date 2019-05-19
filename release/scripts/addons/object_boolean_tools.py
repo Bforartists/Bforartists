@@ -1312,67 +1312,69 @@ def register():
         pass
 
     wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
 
     # create the boolean menu hotkey
-    km = wm.keyconfigs.addon.keymaps.new(name="Object Mode")
+    if kc is not None:
+        km = kc.keymaps.new(name="Object Mode")
 
-    kmi = km.keymap_items.new("wm.call_menu", "B", "PRESS", ctrl=True, shift=True)
-    kmi.properties.name = "VIEW3D_MT_booltool_menu"
-    addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new("wm.call_menu", "B", "PRESS", ctrl=True, shift=True)
+        kmi.properties.name = "VIEW3D_MT_booltool_menu"
+        addon_keymaps.append((km, kmi))
 
-    # Brush Operators
-    kmi = km.keymap_items.new(BTool_Union.bl_idname, "NUMPAD_PLUS", "PRESS", ctrl=True)
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(BTool_Diff.bl_idname, "NUMPAD_MINUS", "PRESS", ctrl=True)
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(BTool_Inters.bl_idname, "NUMPAD_ASTERIX", "PRESS", ctrl=True)
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(BTool_Slice.bl_idname, "NUMPAD_SLASH", "PRESS", ctrl=True)
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(BTool_BrushToMesh.bl_idname, "NUMPAD_ENTER", "PRESS", ctrl=True)
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(
-        BTool_AllBrushToMesh.bl_idname,
-        "NUMPAD_ENTER",
-        "PRESS",
-        ctrl=True,
-        shift=True,
-    )
-    addon_keymaps.append((km, kmi))
+        # Brush Operators
+        kmi = km.keymap_items.new(BTool_Union.bl_idname, "NUMPAD_PLUS", "PRESS", ctrl=True)
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(BTool_Diff.bl_idname, "NUMPAD_MINUS", "PRESS", ctrl=True)
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(BTool_Inters.bl_idname, "NUMPAD_ASTERIX", "PRESS", ctrl=True)
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(BTool_Slice.bl_idname, "NUMPAD_SLASH", "PRESS", ctrl=True)
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(BTool_BrushToMesh.bl_idname, "NUMPAD_ENTER", "PRESS", ctrl=True)
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(
+            BTool_AllBrushToMesh.bl_idname,
+            "NUMPAD_ENTER",
+            "PRESS",
+            ctrl=True,
+            shift=True,
+        )
+        addon_keymaps.append((km, kmi))
 
-    # Auto Operators
-    kmi = km.keymap_items.new(
-        OBJECT_OT_BoolTool_Auto_Union.bl_idname,
-        "NUMPAD_PLUS",
-        "PRESS",
-        ctrl=True,
-        shift=True,
-    )
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(
-        OBJECT_OT_BoolTool_Auto_Difference.bl_idname,
-        "NUMPAD_MINUS",
-        "PRESS",
-        ctrl=True,
-        shift=True,
-    )
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(
-        OBJECT_OT_BoolTool_Auto_Intersect.bl_idname,
-        "NUMPAD_ASTERIX",
-        "PRESS",
-        ctrl=True,
-        shift=True,
-    )
-    addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(
-        OBJECT_OT_BoolTool_Auto_Slice.bl_idname,
-        "NUMPAD_SLASH",
-        "PRESS",
-        ctrl=True,
-        shift=True,
-    )
-    addon_keymaps.append((km, kmi))
+        # Auto Operators
+        kmi = km.keymap_items.new(
+            OBJECT_OT_BoolTool_Auto_Union.bl_idname,
+            "NUMPAD_PLUS",
+            "PRESS",
+            ctrl=True,
+            shift=True,
+        )
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(
+            OBJECT_OT_BoolTool_Auto_Difference.bl_idname,
+            "NUMPAD_MINUS",
+            "PRESS",
+            ctrl=True,
+            shift=True,
+        )
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(
+            OBJECT_OT_BoolTool_Auto_Intersect.bl_idname,
+            "NUMPAD_ASTERIX",
+            "PRESS",
+            ctrl=True,
+            shift=True,
+        )
+        addon_keymaps.append((km, kmi))
+        kmi = km.keymap_items.new(
+            OBJECT_OT_BoolTool_Auto_Slice.bl_idname,
+            "NUMPAD_SLASH",
+            "PRESS",
+            ctrl=True,
+            shift=True,
+        )
+        addon_keymaps.append((km, kmi))
 
 
 def unregister():
@@ -1380,7 +1382,7 @@ def unregister():
     # remove keymaps when add-on is deactivated
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
-    if kc:
+    if kc is not None:
         for km, kmi in addon_keymaps:
             km.keymap_items.remove(kmi)
 

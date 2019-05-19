@@ -79,7 +79,7 @@ def is_not_gpencil_edit_mode(context):
 
 
 class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
     bl_label = "Options"
 
@@ -116,7 +116,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
 
 class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".curve_edit"  # dot on purpose (access from topbar)
     bl_label = "Curve Stroke"
 
@@ -173,9 +173,9 @@ class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
 
 
 class VIEW3D_PT_tools_armatureedit_options(View3DPanel, Panel):
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".armature_edit"  # dot on purpose (access from topbar)
-    bl_label = "Armature Options"
+    bl_label = "Options"
 
     def draw(self, context):
         arm = context.active_object.data
@@ -186,7 +186,7 @@ class VIEW3D_PT_tools_armatureedit_options(View3DPanel, Panel):
 # ********** default tools for pose-mode ****************
 
 class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".posemode"  # dot on purpose (access from topbar)
     bl_label = "Pose Options"
 
@@ -649,7 +649,7 @@ class VIEW3D_PT_slots_projectpaint(View3DPanel, Panel):
             split.operator("paint.add_simple_uvs", icon='ADD', text="Add Simple UVs")
         elif have_image:
             layout.separator()
-            layout.operator("image.save_dirty", text="Save All Images", icon='FILE_TICK')
+            layout.operator("image.save_all_modified", text="Save All Images", icon='FILE_TICK')
 
 # TODO, move to space_view3d.py
 
@@ -1538,7 +1538,7 @@ class VIEW3D_MT_tools_projectpaint_stencil(Menu):
 # TODO, move to space_view3d.py
 class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
     """Default tools for particle mode"""
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".particlemode"
     bl_label = "Options"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1588,7 +1588,7 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_particlemode_options_shapecut(View3DPanel, Panel):
     """Default tools for particle mode"""
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_parent_id = "VIEW3D_PT_tools_particlemode_options"
     bl_label = "Cut Particles to Shape"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1608,7 +1608,7 @@ class VIEW3D_PT_tools_particlemode_options_shapecut(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_particlemode_options_display(View3DPanel, Panel):
     """Default tools for particle mode"""
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_parent_id = "VIEW3D_PT_tools_particlemode_options"
     bl_label = "Viewport Display"
 
@@ -1635,7 +1635,7 @@ class VIEW3D_PT_tools_particlemode_options_display(View3DPanel, Panel):
 
 
 class VIEW3D_PT_tools_meshedit_normal(View3DPanel, Panel):
-    bl_category = "Options"
+    bl_category = "Tool"
     bl_context = ".mesh_edit"
     bl_label = "Normals"
     bl_options = {'DEFAULT_CLOSED'}

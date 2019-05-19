@@ -306,6 +306,7 @@ class lattice_along_surface(Operator):
         if len(bpy.context.selected_objects) != 2:
             self.report({'ERROR'}, "Please, select two objects")
             return {'CANCELLED'}
+        depsgraph = context.evaluated_depsgraph_get()
         grid_obj = bpy.context.active_object
         if grid_obj.type not in ('MESH', 'CURVE', 'SURFACE'):
             self.report({'ERROR'}, "The surface object is not valid. Only Mesh,"
@@ -318,12 +319,10 @@ class lattice_along_surface(Operator):
                 obj = o
                 o.select_set(False)
                 break
+        obj_eval = obj.evaluated_get(depsgraph)
         try:
             obj_dim = obj.dimensions
-            obj_me = obj.to_mesh(
-                            bpy.context.scene, apply_modifiers=True,
-                            settings='PREVIEW'
-                            )
+            obj_me = obj_eval.to_mesh()
         except:
             self.report({'ERROR'}, "The object to deform is not valid. Only "
                         "Mesh, Curve, Surface and Font objects are allowed.")
@@ -333,8 +332,7 @@ class lattice_along_surface(Operator):
         grid_obj = bpy.context.active_object
         bpy.ops.object.convert(target='MESH')
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        grid_mesh = grid_obj.to_mesh(bpy.context.scene, apply_modifiers=True,
-                                     settings='PREVIEW')
+        grid_mesh = grid_obj.evaluated_get(depsgraph).to_mesh()
 
         if len(grid_mesh.polygons) > 64 * 64:
             bpy.ops.object.delete(use_global=False)
@@ -363,9 +361,11 @@ class lattice_along_surface(Operator):
                 max[2] = vert[2]
             first = False
 
+        obj_eval.to_mesh_clear()
+
         bb = max - min
         lattice_loc = (max + min) / 2
-        bpy.ops.object.add(type='LATTICE', view_align=False,
+        bpy.ops.object.add(type='LATTICE', align='WORLD',
                            enter_editmode=False)
         lattice = bpy.context.active_object
         lattice.location = lattice_loc

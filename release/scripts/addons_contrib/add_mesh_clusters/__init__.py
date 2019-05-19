@@ -331,7 +331,7 @@ def DEF_atom_draw_atoms(prop_element,
     coll_atom.objects.link(new_atom_mesh)
 
     bpy.ops.surface.primitive_nurbs_surface_sphere_add(
-                            view_align=False, enter_editmode=False,
+                            align='WORLD', enter_editmode=False,
                             location=(0,0,0), rotation=(0.0, 0.0, 0.0))
 
     ball = bpy.context.view_layer.objects.active

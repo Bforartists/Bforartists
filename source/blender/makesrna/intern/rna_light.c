@@ -205,7 +205,7 @@ static void rna_def_light_energy(StructRNA *srna, bool distant)
      * scene unit scale. */
     prop = RNA_def_property(srna, "energy", PROP_FLOAT, PROP_POWER);
     RNA_def_property_float_default(prop, 10.0f);
-    RNA_def_property_ui_range(prop, 0.0f, 1000000.0f, 1, 5);
+    RNA_def_property_ui_range(prop, 0.0f, 1000000.0f, 10, 5);
     RNA_def_property_ui_text(prop, "Power", "Amount of light emitted");
     RNA_def_property_update(prop, 0, "rna_Light_draw_update");
   }
@@ -545,11 +545,19 @@ static void rna_def_spot_light(BlenderRNA *brna)
 static void rna_def_sun_light(BlenderRNA *brna)
 {
   StructRNA *srna;
+  PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "SunLight", "Light");
   RNA_def_struct_sdna(srna, "Light");
   RNA_def_struct_ui_text(srna, "Sun Light", "Constant direction parallel ray Light");
   RNA_def_struct_ui_icon(srna, ICON_LIGHT_SUN);
+
+  prop = RNA_def_property(srna, "angle", PROP_FLOAT, PROP_ANGLE);
+  RNA_def_property_float_sdna(prop, NULL, "sun_angle");
+  RNA_def_property_float_default(prop, DEG2RADF(0.526f));
+  RNA_def_property_range(prop, DEG2RADF(0.0f), DEG2RADF(180.0f));
+  RNA_def_property_ui_text(prop, "Angle", "Angular diameter of the Sun as seen from the Earth");
+  RNA_def_property_update(prop, 0, "rna_Light_update");
 
   rna_def_light_energy(srna, true);
   rna_def_light_shadow(srna, true);

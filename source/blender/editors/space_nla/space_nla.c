@@ -40,7 +40,7 @@
 #include "ED_anim_api.h"
 #include "ED_markers.h"
 #include "ED_screen.h"
-#include "ED_scrubbing.h"
+#include "ED_time_scrub_ui.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -48,6 +48,7 @@
 
 #include "RNA_access.h"
 
+#include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
@@ -642,7 +643,7 @@ void ED_spacetype_nla(void)
   /* regions: UI buttons */
   art = MEM_callocN(sizeof(ARegionType), "spacetype nla region");
   art->regionid = RGN_TYPE_UI;
-  art->prefsizex = 200;
+  art->prefsizex = UI_SIDEBAR_PANEL_WIDTH;
   art->keymapflag = ED_KEYMAP_UI;
   art->listener = nla_region_listener;
   art->init = nla_buttons_region_init;

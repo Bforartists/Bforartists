@@ -497,7 +497,6 @@ void BKE_scene_free_ex(Scene *sce, const bool do_id_user)
   }
   if (sce->r.ffcodecdata.properties) {
     IDP_FreeProperty(sce->r.ffcodecdata.properties);
-    MEM_freeN(sce->r.ffcodecdata.properties);
     sce->r.ffcodecdata.properties = NULL;
   }
 
@@ -2384,6 +2383,22 @@ void BKE_scene_cursor_quat_to_rot(View3DCursor *cursor, const float quat[4], boo
       break;
     }
   }
+}
+
+void BKE_scene_cursor_to_mat4(const View3DCursor *cursor, float mat[4][4])
+{
+  float mat3[3][3];
+  BKE_scene_cursor_rot_to_mat3(cursor, mat3);
+  copy_m4_m3(mat, mat3);
+  copy_v3_v3(mat[3], cursor->location);
+}
+
+void BKE_scene_cursor_from_mat4(View3DCursor *cursor, const float mat[4][4], bool use_compat)
+{
+  float mat3[3][3];
+  copy_m3_m4(mat3, mat);
+  BKE_scene_cursor_mat3_to_rot(cursor, mat3, use_compat);
+  copy_v3_v3(cursor->location, mat[3]);
 }
 
 /** \} */

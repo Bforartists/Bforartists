@@ -456,7 +456,7 @@ class add_curlycurve(Operator, AddObjectHelper):
 
         col = layout.column(align=True)
         # AddObjectHelper props
-        col.prop(self, "view_align")
+        col.prop(self, "align")
         col.prop(self, "location")
         col.prop(self, "rotation")
 

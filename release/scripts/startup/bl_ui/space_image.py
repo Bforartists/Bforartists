@@ -37,6 +37,10 @@ from .properties_paint_common import (
 from .properties_grease_pencil_common import (
     AnnotationDataPanel,
 )
+from .space_toolsystem_common import (
+    ToolActivePanelHelper,
+)
+
 from bpy.app.translations import pgettext_iface as iface_
 
 
@@ -55,23 +59,10 @@ class BrushButtonsPanel(UnifiedPaintPanel):
         return tool_settings.brush
 
 
-class IMAGE_PT_active_tool(Panel):
+class IMAGE_PT_active_tool(ToolActivePanelHelper, Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
-    bl_label = "Active Tool"
     bl_category = "Tool"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # Panel display of topbar tool settings.
-        # currently displays in tool settings, keep here since the same functionality is used for the topbar.
-
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        from .space_toolsystem_common import ToolSelectPanelHelper
-        ToolSelectPanelHelper.draw_active_tool_header(context, layout, show_tool_name=True)
 
 
 # Workaround to separate the tooltips for Toggle Maximize Area
@@ -329,19 +320,21 @@ class IMAGE_MT_image(Menu):
         if ima and ima.source == 'SEQUENCE':
             layout.operator("image.save_sequence", icon='SAVE_All')
 
-        layout.operator("image.save_dirty", text="Save All Images", icon = "SAVE_ALL")
+        layout.operator("image.save_all_modified", text="Save All Images", icon = "SAVE_ALL")
 
         if ima:
             layout.separator()
 
             layout.menu("IMAGE_MT_image_invert")
 
-            if not show_render:
+        if ima and not show_render:
+            if ima.packed_file:
+                if len(ima.filepath):
+                    layout.separator()
+                    layout.operator("image.unpack", text="Unpack")
+            else:
                 layout.separator()
-                if ima.packed_file:
-                    layout.operator("image.pack", text="Repack")
-                else:
-                    layout.operator("image.pack", text="Pack")
+                layout.operator("image.pack", text="Pack")
 
 
 class IMAGE_MT_image_invert(Menu):

@@ -391,7 +391,8 @@ class FpmImportOperator(Operator, ImportHelper):
 
         for scene in blender_context.blend_data.scenes:
             scene.layers = (True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-            scene.update()
+            for view_layer in scene.view_layers:
+                view_layer.update()
 
         return {"FINISHED"}
 
@@ -602,7 +603,8 @@ class FplImportOperator(Operator, ImportHelper):
 
         for scene in blender_context.blend_data.scenes:
             scene.layers = (True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-            scene.update()
+            for view_layer in scene.view_layers:
+                view_layer.update()
 
         return {"FINISHED"}
 
@@ -914,7 +916,8 @@ class FptImportOperator(Operator, ImportHelper):
 
         for scene in blender_context.blend_data.scenes:
             scene.layers = (True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-            scene.update()
+            for view_layer in scene.view_layers:
+                view_layer.update()
 
         return {"FINISHED"}
 
