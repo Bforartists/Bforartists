@@ -490,17 +490,40 @@ class TOPBAR_MT_edit(Menu):
 
         if app_template:
             layout.label(text= "-- Template: " + bpy.path.display_name(app_template, has_ext=False)+" --")
-            layout.operator("wm.save_homefile", icon='SAVE_PREFS')
-            layout.operator("wm.read_factory_settings", text="Load Factory Settings", icon='LOAD_FACTORY').app_template = app_template
-        else:
-            layout.operator("wm.save_homefile", icon='SAVE_PREFS')
-            layout.operator("wm.read_factory_settings", icon='LOAD_FACTORY')
+        layout.operator("wm.save_homefile", icon='SAVE_PREFS')
+        layout.menu("TOPBAR_MT_factorydefaults")
 
         layout.separator()
 
         layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
 
-        
+
+class TOPBAR_MT_factorydefaults(Menu):
+    bl_label = "Load Factory Settings"
+
+    def draw(self, context):
+        layout = self.layout
+        prefs = context.preferences
+
+        layout.operator_context = 'INVOKE_AREA'
+
+        if any(bpy.utils.app_template_paths()):
+            app_template = prefs.app_template
+        else:
+            app_template = None
+
+        if app_template:
+            layout.label(text= "-- Template: " + bpy.path.display_name(app_template, has_ext=False)+" --")
+
+        props = layout.operator("wm.read_factory_settings", text = "Load Factory Settings and Save", icon='LOAD_FACTORY')
+        if app_template:
+            props.app_template = app_template
+
+        if prefs.use_preferences_save:
+            props = layout.operator("wm.read_factory_settings", text="Load Factory Settings (Temporary)", icon='LOAD_FACTORY')
+            if app_template:
+                props.app_template = app_template
+            props.use_temporary_preferences = True 
 
 
 class TOPBAR_MT_window(Menu):
@@ -734,6 +757,7 @@ classes = (
     TOPBAR_MT_edit,
     TOPBAR_MT_render,
     TOPBAR_MT_opengl_render,
+    TOPBAR_MT_factorydefaults,
     TOPBAR_MT_window,
     TOPBAR_MT_help,
     TOPBAR_PT_gpencil_layers,
