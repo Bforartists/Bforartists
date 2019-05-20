@@ -148,8 +148,6 @@ class TOPBAR_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
-      
-        layout.menu("TOPBAR_MT_app")
 
         layout.menu("TOPBAR_MT_file")
         layout.menu("TOPBAR_MT_edit")
@@ -158,58 +156,6 @@ class TOPBAR_MT_editor_menus(Menu):
 
         layout.menu("TOPBAR_MT_window")
         layout.menu("TOPBAR_MT_help")
-
-
-class TOPBAR_MT_app(Menu):
-    bl_label = "Blender"
-
-    def draw(self, context):
-        layout = self.layout
-        prefs = context.preferences
-
-        layout.operator("screen.userpref_show", text="Preferences...", icon='PREFERENCES')
-
-        layout.separator()
-
-        layout.operator_context = 'INVOKE_AREA'
-
-        if any(bpy.utils.app_template_paths()):
-            app_template = prefs.app_template
-        else:
-            app_template = None
-
-        if app_template:
-            layout.label(text=bpy.path.display_name(app_template, has_ext=False))
-
-        layout.operator("wm.save_homefile")
-        props = layout.operator("wm.read_factory_settings")
-        if app_template:
-            props.app_template = app_template
-
-        if prefs.use_preferences_save:
-            props = layout.operator(
-                "wm.read_factory_settings",
-                text="Load Factory Settings (Temporary)"
-            )
-            if app_template:
-                props.app_template = app_template
-            props.use_temporary_preferences = True
-
-        layout.separator()
-
-        layout.operator("preferences.app_template_install", text="Install Application Template...")
-
-        layout.separator()
-
-        layout.operator("wm.splash")
-
-        layout.separator()
-
-        layout.operator_context = 'EXEC_AREA'
-        if bpy.data.is_dirty:
-            layout.operator_context = 'INVOKE_SCREEN'  # quit dialog
-        layout.operator("wm.quit_blender", text="Quit", icon='QUIT')
-
 
 
 class TOPBAR_MT_file(Menu):
@@ -777,7 +723,6 @@ classes = (
     TOPBAR_MT_file_context_menu,
     TOPBAR_MT_workspace_menu,
     TOPBAR_MT_editor_menus,
-    TOPBAR_MT_app,
     TOPBAR_MT_file,
     TOPBAR_MT_file_new,
     TOPBAR_MT_file_recover,
