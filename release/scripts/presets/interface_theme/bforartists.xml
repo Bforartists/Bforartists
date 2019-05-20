@@ -16,11 +16,13 @@
         gizmo_secondary="#63ffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
+        icon_scene="#00000000"
         icon_collection="#ccccccff"
         icon_object="#cc986eff"
         icon_object_data="#98cc98ff"
         icon_modifier="#6e98ccff"
         icon_shading="#cc6e6eff"
+        icon_border_intensity="0"
         >
         <wcol_regular>
           <ThemeWidgetColors
@@ -408,6 +410,7 @@
         paint_curve_handle="#7fff7f7f"
         paint_curve_pivot="#ff7f7f7f"
         outline_width="1"
+        object_origin_size="0"
         >
         <space>
           <ThemeSpaceGradient
@@ -452,6 +455,7 @@
       <ThemeGraphEditor
         grid="#5e5e5e"
         frame_current="#60c040"
+        scrubbing_background="#00000000"
         window_sliders="#969696"
         channels_region="#707070"
         dopesheet_channel="#52606e"
@@ -576,6 +580,7 @@
         keyframe_border="#000000ff"
         keyframe_border_selected="#000000ff"
         frame_current="#60c040"
+        scrubbing_background="#00000000"
         >
         <space>
           <ThemeSpaceGeneric
@@ -622,6 +627,7 @@
       <ThemeDopeSheet
         grid="#5e5e5e"
         frame_current="#60c040"
+        scrubbing_background="#00000000"
         value_sliders="#000000"
         view_sliders="#969696"
         dopesheet_channel="#52606e24"
@@ -783,6 +789,7 @@
         meta_strip="#6d9183"
         text_strip="#a29700"
         frame_current="#60c040"
+        scrubbing_background="#00000000"
         keyframe="#ff8500"
         draw_action="#50c8ff"
         preview_back="#000000"
@@ -903,39 +910,39 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
-        gp_vertex="#000000"
+        gp_vertex="#979797"
         gp_vertex_select="#ff8500"
         gp_vertex_size="3"
         node_selected="#f15800"
-        node_active="#ffaa40"
-        wire="#000000"
+        node_active="#eefcff"
+        wire="#808080"
         wire_inner="#737373"
         wire_select="#ffffff"
         selected_text="#7f7070"
-        node_backdrop="#9b9b9ba0"
-        converter_node="#686a75"
-        color_node="#6f6a64"
-        group_node="#69756eff"
-        group_socket_node="#dfca35"
-        frame_node="#9b9b9ba0"
-        matte_node="#977474"
+        node_backdrop="#4d4d4dff"
+        converter_node="#66c4ff"
+        color_node="#ccb83d"
+        group_node="#426628bf"
+        group_socket_node="#1a1a1a"
+        frame_node="#1a1a1acc"
+        matte_node="#975b5b"
         distor_node="#749797"
         noodle_curving="5"
-        input_node="#646464"
-        output_node="#646464"
-        filter_node="#6f6a64"
-        vector_node="#6f6a64"
-        texture_node="#6f6a64"
-        shader_node="#6f6a64"
-        script_node="#6f6a64"
-        pattern_node="#6f6a64"
+        input_node="#e64555"
+        output_node="#b33641"
+        filter_node="#584d80"
+        vector_node="#9b80ff"
+        texture_node="#e68745"
+        shader_node="#39c884"
+        script_node="#084d4d"
+        pattern_node="#6c696f"
         layout_node="#6f6a64"
         >
         <space>
           <ThemeSpaceGeneric
-            back="#4d4d4d"
+            back="#404040"
             title="#ffffff"
-            text="#000000"
+            text="#ffffff"
             text_hi="#ffffff"
             header="#333333ff"
             header_text="#cccccc"
@@ -976,6 +983,10 @@
       <ThemeOutliner
         match="#337f33"
         selected_highlight="#82878c"
+        selected_object="#e96a00"
+        active_object="#ffaf29"
+        edited_object="#00806200"
+        row_alternate="#ffffff06"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1143,6 +1154,7 @@
         path_before="#ff0000"
         path_after="#0000ff"
         frame_current="#60c040"
+        scrubbing_background="#00000000"
         strips="#0c0a0a"
         strips_selected="#ff8c00"
         metadatabg="#000000"
@@ -1392,7 +1404,7 @@
         normal="#000000"
         select="#000000"
         active="#000000"
-        show_colored_constraints="FALSE"
+        show_colored_constraints="TRUE"
         >
       </ThemeBoneColorSet>
       <ThemeBoneColorSet
