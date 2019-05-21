@@ -72,7 +72,7 @@ void BLO_update_defaults_userpref_blend(void)
   /* Transform tweak with single click and drag. */
   U.flag |= USER_RELEASECONFIRM;
 
-  U.flag &= ~(USER_DEVELOPER_UI | USER_TOOLTIPS_PYTHON);
+  /*U.flag &= ~(USER_DEVELOPER_UI | USER_TOOLTIPS_PYTHON);*/ // bfa uncommented to make the two items ticked in the preferences again
 
   /* Clear addon preferences. */
   for (bAddon *addon = U.addons.first, *addon_next; addon != NULL; addon = addon_next) {
