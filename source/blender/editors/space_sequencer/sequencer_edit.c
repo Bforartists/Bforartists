@@ -3913,8 +3913,6 @@ void SEQUENCER_OT_change_effect_type(struct wmOperatorType *ot)
                           "Sequencer effect type");
 }
 
-
-
 static int sequencer_change_path_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
