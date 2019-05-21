@@ -546,7 +546,8 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.offset_clear")
 
         layout.separator()
-        layout.operator_menu_enum("sequencer.swap", "side")
+        layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
+        layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
 
         layout.separator()
         layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
