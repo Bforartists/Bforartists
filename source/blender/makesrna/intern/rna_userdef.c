@@ -5342,7 +5342,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   RNA_def_property_ui_range(prop, 0, 10, 1, -1);
   RNA_def_property_ui_text(prop,
                            "Motion Threshold",
-                           "Motion Threshold\nNumber of pixels you have to before the cursor is "
+                           "Motion Threshold\nNumber of pixels you have to move before the cursor is "
                            "considered to have moved "
                            "(used for cycling selected items on successive clicks)");
 
@@ -5354,7 +5354,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Max Threshold",
-      "Max Threshold\nRaw input pressure value that is interpreted as 100% by Blender");
+      "Max Threshold\nRaw input pressure value that is interpreted as 100% pressure");
 
   prop = RNA_def_property(srna, "pressure_softness", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, -FLT_MAX, FLT_MAX);
