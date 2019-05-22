@@ -1853,6 +1853,8 @@ classes = (
     SEQUENCER_MT_view,
     SEQUENCER_MT_view_cache,
     SEQUENCER_MT_view_toggle,
+    SEQUENCER_MT_select_inverse,
+    SEQUENCER_MT_select_none,
     SEQUENCER_MT_select,
     SEQUENCER_MT_marker,
     SEQUENCER_MT_navigation,
