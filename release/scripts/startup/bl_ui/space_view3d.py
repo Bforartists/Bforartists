@@ -193,6 +193,11 @@ class VIEW3D_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
+        show_region_tool_header = view.show_region_tool_header
+
+        if not show_region_tool_header:
+            layout.row(align=True).template_header()
+
         object_mode = 'OBJECT' if obj is None else obj.mode
         has_pose_mode = (
             (object_mode == 'POSE') or
@@ -269,6 +274,9 @@ class VIEW3D_HT_header(Header):
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.separator_spacer()
+
+        if not show_region_tool_header:
+            VIEW3D_HT_header.draw_xform_template(layout, context)
 
         # Mode & Transform Settings
         scene = context.scene
