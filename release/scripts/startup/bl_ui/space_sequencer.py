@@ -455,7 +455,7 @@ class SEQUENCER_MT_add(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='COLOR').type = 'ADJUSTMENT'
+        layout.operator("sequencer.effect_strip_add", text="Adjustment Layer", icon='NODE_DISPLACE').type = 'ADJUSTMENT'
 
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.menu("SEQUENCER_MT_add_effect")
@@ -483,16 +483,16 @@ class SEQUENCER_MT_add_transitions(Menu):
 
         col = layout.column()
 
-        col.operator("sequencer.crossfade_sounds", text="Sound Crossfade")
+        col.operator("sequencer.crossfade_sounds", text="Sound Crossfade", icon='SPEAKER')
 
         col.separator()
 
-        col.operator("sequencer.effect_strip_add", text="Cross").type = 'CROSS'
-        col.operator("sequencer.effect_strip_add", text="Gamma Cross").type = 'GAMMA_CROSS'
+        col.operator("sequencer.effect_strip_add", text="Cross", icon='NODE_VECTOR').type = 'CROSS'
+        col.operator("sequencer.effect_strip_add", text="Gamma Cross", icon='NODE_GAMMA').type = 'GAMMA_CROSS'
 
         col.separator()
 
-        col.operator("sequencer.effect_strip_add", text="Wipe").type = 'WIPE'
+        col.operator("sequencer.effect_strip_add", text="Wipe", icon='NODE_VECTOR_TRANSFORM').type = 'WIPE'
         col.enabled = selected_sequences_len(context) >= 2
 
 
@@ -505,29 +505,29 @@ class SEQUENCER_MT_add_effect(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Add").type = 'ADD'
-        col.operator("sequencer.effect_strip_add", text="Subtract").type = 'SUBTRACT'
-        col.operator("sequencer.effect_strip_add", text="Multiply").type = 'MULTIPLY'
-        col.operator("sequencer.effect_strip_add", text="Over Drop").type = 'OVER_DROP'
-        col.operator("sequencer.effect_strip_add", text="Alpha Over").type = 'ALPHA_OVER'
-        col.operator("sequencer.effect_strip_add", text="Alpha Under").type = 'ALPHA_UNDER'
-        col.operator("sequencer.effect_strip_add", text="Color Mix").type = 'COLORMIX'
+        col.operator("sequencer.effect_strip_add", text="Add", icon='SEQ_ADD').type = 'ADD'
+        col.operator("sequencer.effect_strip_add", text="Subtract", icon='NODE_INVERT').type = 'SUBTRACT'
+        col.operator("sequencer.effect_strip_add", text="Multiply", icon='SEQ_MULTIPLY').type = 'MULTIPLY'
+        col.operator("sequencer.effect_strip_add", text="Over Drop", icon='SEQ_ALPHA_OVER').type = 'OVER_DROP'
+        col.operator("sequencer.effect_strip_add", text="Alpha Over", icon='NODE_ALPHA').type = 'ALPHA_OVER'
+        col.operator("sequencer.effect_strip_add", text="Alpha Under", icon='NODE_HOLDOUTSHADER').type = 'ALPHA_UNDER'
+        col.operator("sequencer.effect_strip_add", text="Color Mix", icon='NODE_MIXRGB').type = 'COLORMIX'
         col.enabled = selected_sequences_len(context) >= 2
 
         layout.separator()
 
-        layout.operator("sequencer.effect_strip_add", text="Multicam Selector").type = 'MULTICAM'
+        layout.operator("sequencer.effect_strip_add", text="Multicam Selector", icon='SEQ_MULTICAM').type = 'MULTICAM'
 
         layout.separator()
 
         col = layout.column()
-        col.operator("sequencer.effect_strip_add", text="Transform").type = 'TRANSFORM'
-        col.operator("sequencer.effect_strip_add", text="Speed Control").type = 'SPEED'
+        col.operator("sequencer.effect_strip_add", text="Transform", icon='NODE_MOVE').type = 'TRANSFORM'
+        col.operator("sequencer.effect_strip_add", text="Speed Control", icon='NODE_CURVE_TIME').type = 'SPEED'
 
         col.separator()
 
-        col.operator("sequencer.effect_strip_add", text="Glow").type = 'GLOW'
-        col.operator("sequencer.effect_strip_add", text="Gaussian Blur").type = 'GAUSSIAN_BLUR'
+        col.operator("sequencer.effect_strip_add", text="Glow", icon='NODE_LAMP').type = 'GLOW'
+        col.operator("sequencer.effect_strip_add", text="Gaussian Blur", icon='NODE_BLUR').type = 'GAUSSIAN_BLUR'
         col.enabled = selected_sequences_len(context) != 0
 
 
@@ -546,7 +546,8 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout.operator("sequencer.offset_clear")
 
         layout.separator()
-        layout.operator_menu_enum("sequencer.swap", "side")
+        layout.operator("sequencer.swap", text="Swap Strip Left", icon = "SEQ_SWAP_LEFT").side = 'LEFT'
+        layout.operator("sequencer.swap", text="Swap Strip Right", icon = "SEQ_SWAP_RIGHT").side = 'RIGHT'
 
         layout.separator()
         layout.operator("sequencer.gap_remove", icon = "SEQ_REMOVE_GAPS").all = False
@@ -668,13 +669,13 @@ class SEQUENCER_MT_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.duplicate_move")
-        layout.operator("sequencer.delete", text="Delete...")
+        layout.operator("sequencer.duplicate_move", icon='DUPLICATE')
+        layout.operator("sequencer.delete", text="Delete...", icon='DELETE')
 
         layout.separator()
 
-        layout.operator("sequencer.cut", text="Cut (Hard) at frame").type = 'HARD'
-        layout.operator("sequencer.cut", text="Cut (Soft) at frame").type = 'SOFT'
+        layout.operator("sequencer.cut", text="Cut (Hard) at frame", icon='SEQ_CUT_HARD_AT_FRAME').type = 'HARD'
+        layout.operator("sequencer.cut", text="Cut (Soft) at frame", icon='SEQ_CUT_SOFT_AT_FRAME').type = 'SOFT'
 
         layout.separator()
 
