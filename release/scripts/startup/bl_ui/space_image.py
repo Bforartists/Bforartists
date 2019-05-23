@@ -752,8 +752,6 @@ class IMAGE_HT_header(Header):
                 layout.prop(tool_settings, "uv_select_mode", text="", expand=True)
                 layout.prop(uvedit, "sticky_select_mode", icon_only=True)
 
-            layout.prop(tool_settings, "use_uv_sculpt", text = "", icon = "SCULPTMODE_HLT")
-
         MASK_MT_editor_menus.draw_collapsible(context, layout)    
 
         #layout.separator_spacer()
