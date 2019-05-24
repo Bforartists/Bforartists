@@ -5045,7 +5045,11 @@ def draw_curve(self, _context):
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_show_hide")
+
+    layout.separator()
+
     layout.menu("VIEW3D_MT_edit_curve_delete")
+    layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
 
 class VIEW3D_MT_edit_curve(Menu):
@@ -5183,10 +5187,6 @@ class VIEW3D_MT_edit_curve_delete(Menu):
 
         layout.operator("curve.delete", text="Vertices", icon = "DELETE").type = 'VERT'
         layout.operator("curve.delete", text="Segment", icon = "DELETE").type = 'SEGMENT'
-
-        layout.separator()
-
-        layout.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
 
 # Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
