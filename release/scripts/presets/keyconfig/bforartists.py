@@ -1967,13 +1967,6 @@ keyconfig_data = \
       },
      ),
     ("object.mode_set",
-     {"type": 'SEVEN', "value": 'PRESS'},
-     {"properties":
-      [("mode", 'OBJECT'),
-       ],
-      },
-     ),
-    ("object.mode_set",
      {"type": 'TWO', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'POSE'),
