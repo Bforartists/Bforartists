@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -1350,7 +1350,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
 
             elif context.space_data.shader_type == 'WORLD':
         
-                props = col.operator("node.add_node", text=" World Output    ", icon = "NODE_WORLDOUTPUT")
+                props = col.operator("node.add_node", text=" World Output    ", icon = "WORLD")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputWorld"
 

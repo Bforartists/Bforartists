@@ -2310,7 +2310,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_SHAPEKEY_DATA;
           break;
         case ID_WO:
-          data.icon = ICON_WORLD_DATA;
+          data.icon = ICON_WORLD;
           break;
         case ID_AC:
           data.icon = ICON_ACTION;

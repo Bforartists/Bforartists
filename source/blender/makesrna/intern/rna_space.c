@@ -5494,7 +5494,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
        "Textures\nShow/hide Texture data-blocks"},
       {FILTER_ID_TXT, "TEXT", ICON_TEXT, "Texts", "Texts\nShow/hide Text data-blocks"},
       {FILTER_ID_VF, "FONT", ICON_FONT_DATA, "Fonts", "Fonts\nShow/hide Font data-blocks"},
-      {FILTER_ID_WO, "WORLD", ICON_WORLD_DATA, "Worlds", "Worlds\nShow/hide World data-blocks"},
+      {FILTER_ID_WO, "WORLD", ICON_WORLD, "Worlds", "Worlds\nShow/hide World data-blocks"},
       {FILTER_ID_WS,
        "WORK_SPACE",
        ICON_NONE,
@@ -5532,7 +5532,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
        "Images & Sounds\nShow/hide images, movie clips, sounds and masks"},
       {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_SPK | FILTER_ID_WO | FILTER_ID_WS,
        "ENVIRONMENT",
-       ICON_WORLD_DATA,
+       ICON_WORLD,
        "Environment",
        "Environment\nShow/hide worlds, lights, cameras and speakers"},
       {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
@@ -6030,7 +6030,7 @@ static void rna_def_space_node(BlenderRNA *brna)
   PropertyRNA *prop;
 
   static const EnumPropertyItem texture_id_type_items[] = {
-      {SNODE_TEX_WORLD, "WORLD", ICON_WORLD_DATA, "World", "Edit texture nodes from World"},
+      {SNODE_TEX_WORLD, "WORLD", ICON_WORLD, "World", "Edit texture nodes from World"},
       {SNODE_TEX_BRUSH, "BRUSH", ICON_BRUSH_DATA, "Brush", "Edit texture nodes from Brush"},
 #  ifdef WITH_FREESTYLE
       {SNODE_TEX_LINESTYLE,
@@ -6044,7 +6044,7 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   static const EnumPropertyItem shader_type_items[] = {
       {SNODE_SHADER_OBJECT, "OBJECT", ICON_OBJECT_DATA, "Object", "Edit shader nodes from Object"},
-      {SNODE_SHADER_WORLD, "WORLD", ICON_WORLD_DATA, "World", "Edit shader nodes from World"},
+      {SNODE_SHADER_WORLD, "WORLD", ICON_WORLD, "World", "Edit shader nodes from World"},
 #  ifdef WITH_FREESTYLE
       {SNODE_SHADER_LINESTYLE,
        "LINESTYLE",

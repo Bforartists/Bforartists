@@ -578,7 +578,7 @@ class SUNGEO_PT_lamp_settings(Panel):
         row.prop(geosunproperties, "longt")
 
         row = layout.row(align=True)
-        row.operator("object.set_geographical_sun_pos", icon="WORLD_DATA")
+        row.operator("object.set_geographical_sun_pos", icon="WORLD") # bfa - removed icon WORLD_DATA
         row.operator("object.set_geographical_sun_now", icon="PREVIEW_RANGE")
 
 
