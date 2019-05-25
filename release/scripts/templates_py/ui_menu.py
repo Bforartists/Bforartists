@@ -13,7 +13,7 @@ class CustomMenu(bpy.types.Menu):
 
         layout.operator("object.shade_smooth")
 
-        layout.label(text="Hello world!", icon='WORLD_DATA')
+        layout.label(text="Hello world!", icon='WORLD') # bfa - removed icon WORLD_DATA
 
         # use an operator enum property to populate a sub-menu
         layout.operator_menu_enum("object.select_by_type",
