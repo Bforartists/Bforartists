@@ -2039,7 +2039,7 @@ static bAnimChannelType ACF_DSSKEY = {
 // TODO: just get this from RNA?
 static int acf_dswor_icon(bAnimListElem *UNUSED(ale))
 {
-  return ICON_WORLD_DATA;
+  return ICON_WORLD;
 }
 
 /* get the appropriate flag(s) for the setting when it is valid  */

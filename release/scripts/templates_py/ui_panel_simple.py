@@ -15,7 +15,7 @@ class HelloWorldPanel(bpy.types.Panel):
         obj = context.object
 
         row = layout.row()
-        row.label(text="Hello world!", icon='WORLD_DATA')
+        row.label(text="Hello world!", icon='WORLD') # bfa - removed icon WORLD_DATA
 
         row = layout.row()
         row.label(text="Active object is: " + obj.name)

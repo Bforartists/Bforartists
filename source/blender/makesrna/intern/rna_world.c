@@ -205,7 +205,7 @@ void RNA_def_world(BlenderRNA *brna)
       srna,
       "World",
       "World data-block describing the environment and ambient lighting of a scene");
-  RNA_def_struct_ui_icon(srna, ICON_WORLD_DATA);
+  RNA_def_struct_ui_icon(srna, ICON_WORLD);
 
   rna_def_animdata_common(srna);
 

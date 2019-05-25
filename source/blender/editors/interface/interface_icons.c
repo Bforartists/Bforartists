@@ -2233,7 +2233,7 @@ int UI_idcode_icon_get(const int idcode)
     case ID_VF:
       return ICON_FONT_DATA;
     case ID_WO:
-      return ICON_WORLD_DATA;
+      return ICON_WORLD;
     default:
       return ICON_NONE;
   }
