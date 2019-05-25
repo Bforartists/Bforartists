@@ -1619,7 +1619,7 @@ static bAnimChannelType ACF_DSLIGHT = {
 // TODO: just get this from RNA?
 static int acf_dstex_icon(bAnimListElem *UNUSED(ale))
 {
-  return ICON_TEXTURE_DATA;
+  return ICON_TEXTURE;
 }
 
 /* offset for texture expanders */
