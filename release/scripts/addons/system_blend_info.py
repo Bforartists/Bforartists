@@ -186,7 +186,7 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
         row = db_cols[0].row()
         num = len(bpy.data.textures)
         row.label(text=quantity_string(num, "Texture", "Textures"),
-            icon='TEXTURE_DATA')
+            icon='TEXTURE')
 
         row = db_cols[1].row()
         num = len(bpy.data.images)
