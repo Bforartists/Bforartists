@@ -612,7 +612,7 @@ static void rna_def_mtex(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna, "Texture Slot", "Texture slot defining the mapping and influence of a texture");
   RNA_def_struct_path_func(srna, "rna_TextureSlot_path");
-  RNA_def_struct_ui_icon(srna, ICON_TEXTURE_DATA);
+  RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
 
   prop = RNA_def_property(srna, "texture", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "tex");
@@ -1532,7 +1532,7 @@ static void rna_def_texture(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "Tex");
   RNA_def_struct_ui_text(
       srna, "Texture", "Texture data-block used by materials, lights, worlds and brushes");
-  RNA_def_struct_ui_icon(srna, ICON_TEXTURE_DATA);
+  RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
   RNA_def_struct_refine_func(srna, "rna_Texture_refine");
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

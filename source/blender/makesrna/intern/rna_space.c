@@ -5489,7 +5489,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
       {FILTER_ID_SO, "SOUND", ICON_SOUND, "Sounds", "Sounds\nShow/hide Sound data-blocks"},
       {FILTER_ID_TE,
        "TEXTURE",
-       ICON_TEXTURE_DATA,
+       ICON_TEXTURE,
        "Textures",
        "Textures\nShow/hide Texture data-blocks"},
       {FILTER_ID_TXT, "TEXT", ICON_TEXT, "Texts", "Texts\nShow/hide Text data-blocks"},
