@@ -2291,7 +2291,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_MATERIAL_DATA;
           break;
         case ID_TE:
-          data.icon = ICON_TEXTURE_DATA;
+          data.icon = ICON_TEXTURE;
           break;
         case ID_IM:
           data.icon = ICON_IMAGE_DATA;

@@ -188,7 +188,7 @@ class NODES_PT_Input_input_comp(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeImage"
 
-            props = col.operator("node.add_node", text=" Texture             ", icon = "NODE_TEXTURE")
+            props = col.operator("node.add_node", text=" Texture             ", icon = "TEXTURE")
             props.use_transform = True
             props.type = "CompositorNodeTexture"
 
@@ -228,7 +228,7 @@ class NODES_PT_Input_input_comp(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeImage"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_TEXTURE")
+            props = row.operator("node.add_node", text = "", icon = "TEXTURE")
             props.use_transform = True
             props.type = "CompositorNodeTexture"
 
@@ -291,7 +291,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeImage"
 
-            props = col.operator("node.add_node", text=" Texture             ", icon = "NODE_TEXTURE")
+            props = col.operator("node.add_node", text=" Texture             ", icon = "TEXTURE")
             props.use_transform = True
             props.type = "TextureNodeTexture"
 
@@ -307,7 +307,7 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeImage"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_TEXTURE")
+            props = row.operator("node.add_node", text="", icon = "TEXTURE")
             props.use_transform = True
             props.type = "TextureNodeTexture"
 

@@ -290,7 +290,7 @@ static void uiCollada_exportSettings(uiLayout *layout, PointerRNA *imfptr)
     /* Texture options */
     box = uiLayoutBox(layout);
     row = uiLayoutRow(box, false);
-    uiItemL(row, IFACE_("Texture Options:"), ICON_TEXTURE_DATA);
+    uiItemL(row, IFACE_("Texture Options:"), ICON_TEXTURE);
 
     row = uiLayoutRow(box, false);
     uiItemR(row, imfptr, "active_uv_only", 0, NULL, ICON_NONE);
