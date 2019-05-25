@@ -246,7 +246,7 @@ class BlenderIdPreferences(AddonPreferences):
                     msg = 'You are logged in as %s at %s.' % (active_profile.username, endpoint)
 
                 col = layout.column(align=True)
-                col.label(text=msg, icon='WORLD_DATA')
+                col.label(text=msg, icon='WORLD') # bfa - removed icon WORLD_DATA
                 if time_left.days < 14:
                     col.label(text='Your token will expire %s. Please log out and log in again '
                                    'to refresh it.' % exp_str, icon='PREVIEW_RANGE')
