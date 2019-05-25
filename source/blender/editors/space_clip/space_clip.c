@@ -599,7 +599,7 @@ static bool clip_drop_poll(bContext *UNUSED(C),
 {
   if (drag->type == WM_DRAG_PATH) {
     /* rule might not work? */
-    if (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE, ICON_FILE_BLANK)) {
+    if (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE, ICON_FILE)) {
       return true;
     }
   }

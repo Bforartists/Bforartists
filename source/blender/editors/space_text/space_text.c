@@ -326,7 +326,7 @@ static bool text_drop_poll(bContext *UNUSED(C),
 {
   if (drag->type == WM_DRAG_PATH) {
     /* rule might not work? */
-    if (ELEM(drag->icon, ICON_FILE_SCRIPT, ICON_FILE_TEXT, ICON_FILE_BLANK)) {
+    if (ELEM(drag->icon, ICON_FILE_SCRIPT, ICON_FILE_TEXT, ICON_FILE)) {
       return true;
     }
   }
