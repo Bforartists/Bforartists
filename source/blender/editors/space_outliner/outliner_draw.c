@@ -2304,7 +2304,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_OUTLINER_DATA_ARMATURE;
           break;
         case ID_CA:
-          data.icon = ICON_OUTLINER_DATA_CAMERA;
+          data.icon = ICON_CAMERA_DATA;
           break;
         case ID_KE:
           data.icon = ICON_SHAPEKEY_DATA;

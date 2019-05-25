@@ -284,7 +284,7 @@ class CAMERATURN_PT_ui(Panel):
             if context.active_object.type != 'CAMERA':
                 buf = context.active_object.name
                 row = layout.row(align=True)
-                row.operator("object.rotate_around", icon='OUTLINER_DATA_CAMERA')
+                row.operator("object.rotate_around", icon='CAMERA_DATA') #bfa - removed the OUTLINER_DATA_CAMERA icon
                 box = row.box()
                 box.scale_y = 0.5
                 box.label(text=buf, icon='MESH_DATA')
