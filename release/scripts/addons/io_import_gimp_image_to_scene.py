@@ -614,7 +614,7 @@ class GIMPImageToScene(bpy.types.Operator):
 
         box = layout.box()
         box.label(text='3D Layers:', icon='SORTSIZE')
-        box.prop(self, 'SetCamera', icon='OUTLINER_DATA_CAMERA')
+        box.prop(self, 'SetCamera', icon='CAMERA_DATA') #bfa - removed the OUTLINER_DATA_CAMERA icon
         box.prop(self, 'OpacityMode', icon='GHOST')
         if self.OpacityMode == 'COMPO' and self.SetupCompo == False:
             box.label(text='Tip: Enable Node Compositing', icon='INFO')
