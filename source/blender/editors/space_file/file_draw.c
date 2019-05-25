@@ -324,7 +324,7 @@ static void file_draw_icon(
   x = sx;
   y = sy - height;
 
-  /*if (icon == ICON_FILE_BLANK) alpha = 0.375f;*/
+  /*if (icon == ICON_FILE) alpha = 0.375f;*/
 
   but = uiDefIconBut(
       block, UI_BTYPE_LABEL, 0, icon, x, y, width, height, NULL, 0.0f, 0.0f, 0.0f, 0.0f, NULL);
