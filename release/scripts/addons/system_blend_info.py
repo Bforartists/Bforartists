@@ -181,7 +181,7 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
         row = db_cols[1].row()
         num = len(bpy.data.worlds)
         row.label(text=quantity_string(num, "World", "Worlds"),
-            icon='WORLD_DATA')
+            icon='WORLD') # bfa - removed icon WORLD_DATA
 
         row = db_cols[0].row()
         num = len(bpy.data.textures)
