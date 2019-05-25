@@ -2227,7 +2227,7 @@ int UI_idcode_icon_get(const int idcode)
     case ID_SO:
       return ICON_SOUND;
     case ID_TE:
-      return ICON_TEXTURE_DATA;
+      return ICON_TEXTURE;
     case ID_TXT:
       return ICON_TEXT;
     case ID_VF:

@@ -3198,7 +3198,7 @@ void ED_node_init_butfuncs(void)
   /* tree type icons */
   ntreeType_Composite->ui_icon = ICON_NODE_COMPOSITING;
   ntreeType_Shader->ui_icon = ICON_NODE_MATERIAL;
-  ntreeType_Texture->ui_icon = ICON_NODE_TEXTURE;
+  ntreeType_Texture->ui_icon = ICON_TEXTURE;
 }
 
 void ED_init_custom_node_type(bNodeType *ntype)
