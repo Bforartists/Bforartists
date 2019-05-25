@@ -352,7 +352,7 @@ static bool image_drop_poll(bContext *C,
   int hand;
 
   if (drag->type == WM_DRAG_PATH) {
-    if (ELEM(drag->icon, ICON_FILE_IMAGE, ICON_FILE_BLANK)) { /* rule might not work? */
+    if (ELEM(drag->icon, ICON_FILE_IMAGE, ICON_FILE)) { /* rule might not work? */
       if (find_nearest_seq(scene, &ar->v2d, &hand, event->mval) == NULL) {
         return 1;
       }
@@ -372,7 +372,7 @@ static bool movie_drop_poll(bContext *C,
   int hand;
 
   if (drag->type == WM_DRAG_PATH) {
-    if (ELEM(drag->icon, 0, ICON_FILE_MOVIE, ICON_FILE_BLANK)) { /* rule might not work? */
+    if (ELEM(drag->icon, 0, ICON_FILE_MOVIE, ICON_FILE)) { /* rule might not work? */
       if (find_nearest_seq(scene, &ar->v2d, &hand, event->mval) == NULL) {
         return 1;
       }
@@ -391,7 +391,7 @@ static bool sound_drop_poll(bContext *C,
   int hand;
 
   if (drag->type == WM_DRAG_PATH) {
-    if (ELEM(drag->icon, ICON_FILE_SOUND, ICON_FILE_BLANK)) { /* rule might not work? */
+    if (ELEM(drag->icon, ICON_FILE_SOUND, ICON_FILE)) { /* rule might not work? */
       if (find_nearest_seq(scene, &ar->v2d, &hand, event->mval) == NULL) {
         return 1;
       }

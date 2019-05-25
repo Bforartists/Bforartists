@@ -998,13 +998,13 @@ static int filelist_geticon_ex(const int typeflag,
     return ICON_FILE_FONT;
   }
   else if (typeflag & FILE_TYPE_BTX) {
-    return ICON_FILE_BLANK;
+    return ICON_FILE;
   }
   else if (typeflag & FILE_TYPE_COLLADA) {
-    return ICON_FILE_BLANK;
+    return ICON_FILE;
   }
   else if (typeflag & FILE_TYPE_ALEMBIC) {
-    return ICON_FILE_BLANK;
+    return ICON_FILE;
   }
   else if (typeflag & FILE_TYPE_TEXT) {
     return ICON_FILE_TEXT;
@@ -1015,7 +1015,7 @@ static int filelist_geticon_ex(const int typeflag,
       return ret;
     }
   }
-  return is_main ? ICON_FILE_BLANK : ICON_NONE;
+  return is_main ? ICON_FILE : ICON_NONE;
 }
 
 int filelist_geticon(struct FileList *filelist, const int index, const bool is_main)
@@ -2172,15 +2172,15 @@ int ED_file_extension_icon(const char *path)
     case FILE_TYPE_FTFONT:
       return ICON_FILE_FONT;
     case FILE_TYPE_BTX:
-      return ICON_FILE_BLANK;
+      return ICON_FILE;
     case FILE_TYPE_COLLADA:
-      return ICON_FILE_BLANK;
+      return ICON_FILE;
     case FILE_TYPE_ALEMBIC:
-      return ICON_FILE_BLANK;
+      return ICON_FILE;
     case FILE_TYPE_TEXT:
       return ICON_FILE_TEXT;
     default:
-      return ICON_FILE_BLANK;
+      return ICON_FILE;
   }
 }
 
