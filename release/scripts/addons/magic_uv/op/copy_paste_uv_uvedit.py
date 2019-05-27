@@ -20,8 +20,8 @@
 
 __author__ = "imdjs, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import math
 from math import atan2, sin, cos
@@ -80,7 +80,7 @@ class MUV_OT_CopyPasteUVUVEdit_CopyUV(bpy.types.Operator):
     Operation class: Copy UV coordinate on UV/Image Editor
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_uvedit_copy_uv"
+    bl_idname = "uv.muv_copy_paste_uv_uvedit_copy_uv"
     bl_label = "Copy UV (UV/Image Editor)"
     bl_description = "Copy UV coordinate (only selected in UV/Image Editor)"
     bl_options = {'REGISTER', 'UNDO'}
@@ -122,7 +122,7 @@ class MUV_OT_CopyPasteUVUVEdit_PasteUV(bpy.types.Operator):
     Operation class: Paste UV coordinate on UV/Image Editor
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_uvedit_paste_uv"
+    bl_idname = "uv.muv_copy_paste_uv_uvedit_paste_uv"
     bl_label = "Paste UV (UV/Image Editor)"
     bl_description = "Paste UV coordinate (only selected in UV/Image Editor)"
     bl_options = {'REGISTER', 'UNDO'}

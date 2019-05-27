@@ -73,7 +73,7 @@ def tassellate(ob0, ob1, offset, zscale, gen_modifiers, com_modifiers, mode,
     old_me0 = ob0.data      # Store generator mesh
 
     if gen_modifiers or com_modifiers:
-        depsgraph = context.evaluated_depsgraph_get()
+        depsgraph = bpy.context.evaluated_depsgraph_get()
     else:
         depsgraph = None
 

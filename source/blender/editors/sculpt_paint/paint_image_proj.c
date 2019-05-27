@@ -6189,7 +6189,6 @@ static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
                                         w,
                                         h,
                                         IB_rect,
-                                        V3D_OFSDRAW_NONE,
                                         R_ALPHAPREMUL,
                                         0,
                                         NULL,

@@ -53,6 +53,8 @@ void EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   EEVEE_ViewLayerData *sldata = EEVEE_view_layer_data_ensure();
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   const float *size_orig = DRW_viewport_size_get();
+  float size_final[2];
+  float camtexcofac[4];
 
   /* Init default FB and render targets:
    * In render mode the default framebuffer is not generated
@@ -73,10 +75,20 @@ void EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   if (scene->eevee.flag & SCE_EEVEE_OVERSCAN) {
     g_data->overscan = scene->eevee.overscan / 100.0f;
     g_data->overscan_pixels = roundf(max_ff(size_orig[0], size_orig[1]) * g_data->overscan);
+
+    madd_v2_v2v2fl(size_final, size_orig, (float[2]){2.0f, 2.0f}, g_data->overscan_pixels);
+
+    camtexcofac[0] = size_final[0] / size_orig[0];
+    camtexcofac[1] = size_final[1] / size_orig[1];
+
+    camtexcofac[2] = -camtexcofac[0] * g_data->overscan_pixels / size_final[0];
+    camtexcofac[3] = -camtexcofac[1] * g_data->overscan_pixels / size_final[1];
   }
   else {
+    copy_v2_v2(size_final, size_orig);
     g_data->overscan = 0.0f;
     g_data->overscan_pixels = 0.0f;
+    copy_v4_fl4(camtexcofac, 1.0f, 1.0f, 0.0f, 0.0f);
   }
 
   /* XXX overiding viewport size. Simplify things but is not really 100% safe. */
@@ -100,30 +112,23 @@ void EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
     sldata->common_ubo = DRW_uniformbuffer_create(sizeof(sldata->common_data),
                                                   &sldata->common_data);
   }
-  if (sldata->clip_ubo == NULL) {
-    sldata->clip_ubo = DRW_uniformbuffer_create(sizeof(sldata->clip_data), &sldata->clip_data);
-  }
 
   /* Set the pers & view matrix. */
+  float winmat[4][4], viewmat[4][4], viewinv[4][4];
   /* TODO(sergey): Shall render hold pointer to an evaluated camera instead? */
   struct Object *ob_camera_eval = DEG_get_evaluated_object(depsgraph, RE_GetCamera(engine->re));
   float frame = BKE_scene_frame_get(scene);
-  RE_GetCameraWindow(engine->re, ob_camera_eval, frame, g_data->winmat);
-  RE_GetCameraModelMatrix(engine->re, ob_camera_eval, g_data->viewinv);
 
-  RE_GetCameraWindowWithOverscan(engine->re, g_data->winmat, g_data->overscan);
+  RE_GetCameraWindow(engine->re, ob_camera_eval, frame, winmat);
+  RE_GetCameraWindowWithOverscan(engine->re, winmat, g_data->overscan);
+  RE_GetCameraModelMatrix(engine->re, ob_camera_eval, viewinv);
 
-  invert_m4_m4(g_data->viewmat, g_data->viewinv);
-  mul_m4_m4m4(g_data->persmat, g_data->winmat, g_data->viewmat);
-  invert_m4_m4(g_data->persinv, g_data->persmat);
-  invert_m4_m4(g_data->wininv, g_data->winmat);
+  invert_m4_m4(viewmat, viewinv);
 
-  DRW_viewport_matrix_override_set(g_data->persmat, DRW_MAT_PERS);
-  DRW_viewport_matrix_override_set(g_data->persinv, DRW_MAT_PERSINV);
-  DRW_viewport_matrix_override_set(g_data->winmat, DRW_MAT_WIN);
-  DRW_viewport_matrix_override_set(g_data->wininv, DRW_MAT_WININV);
-  DRW_viewport_matrix_override_set(g_data->viewmat, DRW_MAT_VIEW);
-  DRW_viewport_matrix_override_set(g_data->viewinv, DRW_MAT_VIEWINV);
+  DRWView *view = DRW_view_create(viewmat, winmat, NULL, NULL, NULL);
+  DRW_view_camtexco_set(view, camtexcofac);
+  DRW_view_default_set(view);
+  DRW_view_set_active(view);
 
   /* EEVEE_effects_init needs to go first for TAA */
   EEVEE_effects_init(sldata, vedata, ob_camera_eval, false);
@@ -304,6 +309,9 @@ static void eevee_render_result_normal(RenderLayer *rl,
                                1,
                                rp->rect);
 
+    float viewinv[4][4];
+    DRW_view_viewmat_get(NULL, viewinv, true);
+
     /* Convert Eevee encoded normals to Blender normals. */
     for (int i = 0; i < rp->rectx * rp->recty * 3; i += 3) {
       if (rp->rect[i] == 0.0f && rp->rect[i + 1] == 0.0f) {
@@ -322,7 +330,7 @@ static void eevee_render_result_normal(RenderLayer *rl,
       rp->rect[i + 1] = fenc[1] * g;
       rp->rect[i + 2] = 1.0f - f / 2.0f;
 
-      mul_mat3_m4_v3(g_data->viewinv, &rp->rect[i]);
+      mul_mat3_m4_v3(viewinv, &rp->rect[i]);
     }
   }
 }
@@ -355,7 +363,10 @@ static void eevee_render_result_z(RenderLayer *rl,
                                BLI_rcti_size_y(rect),
                                rp->rect);
 
-    bool is_persp = DRW_viewport_is_persp_get();
+    bool is_persp = DRW_view_is_persp_get(NULL);
+
+    float viewmat[4][4];
+    DRW_view_viewmat_get(NULL, viewmat, false);
 
     /* Convert ogl depth [0..1] to view Z [near..far] */
     for (int i = 0; i < rp->rectx * rp->recty; ++i) {
@@ -365,7 +376,7 @@ static void eevee_render_result_z(RenderLayer *rl,
       else {
         if (is_persp) {
           rp->rect[i] = rp->rect[i] * 2.0f - 1.0f;
-          rp->rect[i] = g_data->winmat[3][2] / (rp->rect[i] + g_data->winmat[2][2]);
+          rp->rect[i] = viewmat[3][2] / (rp->rect[i] + viewmat[2][2]);
         }
         else {
           rp->rect[i] = -common_data->view_vecs[0][2] +
@@ -533,24 +544,14 @@ void EEVEE_render_draw(EEVEE_Data *vedata, RenderEngine *engine, RenderLayer *rl
     double offset[3] = {0.0, 0.0, 0.0};
     double r[3];
 
-    /* Restore winmat before jittering again. */
-    copy_m4_m4(stl->effects->overide_winmat, g_data->winmat);
     /* Copy previous persmat to UBO data */
     copy_m4_m4(sldata->common_data.prev_persmat, stl->effects->prev_persmat);
 
     BLI_halton_3d(primes, offset, stl->effects->taa_current_sample, r);
     EEVEE_update_noise(psl, fbl, r);
-    EEVEE_temporal_sampling_matrices_calc(stl->effects, g_data->viewmat, g_data->persmat, r);
+    EEVEE_temporal_sampling_matrices_calc(stl->effects, r);
     EEVEE_volumes_set_jitter(sldata, stl->effects->taa_current_sample - 1);
     EEVEE_materials_init(sldata, stl, fbl);
-
-    /* Set matrices. */
-    DRW_viewport_matrix_override_set(stl->effects->overide_persmat, DRW_MAT_PERS);
-    DRW_viewport_matrix_override_set(stl->effects->overide_persinv, DRW_MAT_PERSINV);
-    DRW_viewport_matrix_override_set(stl->effects->overide_winmat, DRW_MAT_WIN);
-    DRW_viewport_matrix_override_set(stl->effects->overide_wininv, DRW_MAT_WININV);
-    DRW_viewport_matrix_override_set(g_data->viewmat, DRW_MAT_VIEW);
-    DRW_viewport_matrix_override_set(g_data->viewinv, DRW_MAT_VIEWINV);
 
     /* Refresh Probes */
     EEVEE_lightprobes_refresh(sldata, vedata);
@@ -566,7 +567,10 @@ void EEVEE_render_draw(EEVEE_Data *vedata, RenderEngine *engine, RenderLayer *rl
 
     /* Refresh Shadows */
     EEVEE_lights_update(sldata, vedata);
-    EEVEE_draw_shadows(sldata, vedata);
+    EEVEE_draw_shadows(sldata, vedata, stl->effects->taa_view);
+
+    /* Set matrices. */
+    DRW_view_set_active(stl->effects->taa_view);
 
     /* Set ray type. */
     sldata->common_data.ray_type = EEVEE_RAY_CAMERA;

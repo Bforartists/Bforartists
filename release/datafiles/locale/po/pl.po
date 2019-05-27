@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 15:28:38\n"
+"POT-Creation-Date: 2019-05-20 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -160,10 +160,6 @@ msgstr "Grupa akcji jest zaznaczona"
 
 msgid "Expanded"
 msgstr "Rozszerzony"
-
-
-msgid "Action group is expanded"
-msgstr "Grupa akcji jest rozwinięta"
 
 
 msgid "Add-on"
@@ -624,10 +620,6 @@ msgstr "Interaktywna konsola programistyczna dla zaawansowanej edycji i tworzeni
 
 msgid "Info"
 msgstr "Informacja"
-
-
-msgid "Main menu bar and list of error messages (drag down to expand and display)"
-msgstr "Główny pasek menu oraz lista komunikatów błędu (ściągnij za krawędź aby rozszerzyć panel i wyświetlić komunikaty)"
 
 
 msgid "Outliner"
@@ -4415,14 +4407,6 @@ msgid "Ignore the relative lengths of the bones when fitting to the curve"
 msgstr "Ignoruj względne długości kości gdy dopasowujesz je do krzywej"
 
 
-msgid "Y Stretch"
-msgstr "Rozciąganie Y"
-
-
-msgid "Stretch the Y axis of the bones to fit the curve"
-msgstr "Rozciągaj oś Y kości aby dopasować je do krzywej"
-
-
 msgid "XZ Scale Mode"
 msgstr "Tryb skalowania XZ"
 
@@ -6000,56 +5984,28 @@ msgid "F-Curve Modifier Type"
 msgstr "Rodzaj modyfikatora krzywej-F"
 
 
-msgid "Generator"
-msgstr "Generator"
-
-
 msgid "Generate a curve using a factorized or expanded polynomial"
 msgstr "Generuje krzywą używając wielomianu"
-
-
-msgid "Built-In Function"
-msgstr "Funkcja wbudowana"
 
 
 msgid "Generate a curve using standard math functions such as sin and cos"
 msgstr "Generuje krzywą używając standardowych funkcji matematycznych takich jak sin lub cos"
 
 
-msgid "Envelope"
-msgstr "Obwiednia"
-
-
 msgid "Reshape F-Curve values - e.g. change amplitude of movements"
 msgstr "Zmienia kształt krzywej-F za pomocą przeskalowania lub przesunięcia"
-
-
-msgid "Cycles"
-msgstr "Cykle"
 
 
 msgid "Cyclic extend/repeat keyframe sequence"
 msgstr "Cyklicznie rozszerza/powtarza sekwencję klatek kluczowych"
 
 
-msgid "Noise"
-msgstr "Szum"
-
-
 msgid "Add pseudo-random noise on top of F-Curves"
 msgstr "Dodaje pseudolosowy szum do obecnej krzywej-F"
 
 
-msgid "Limits"
-msgstr "Ograniczenia"
-
-
 msgid "Restrict maximum and minimum values of F-Curve"
 msgstr "Ogranicza maksymalne i minimalna zakresy krzywej-F"
-
-
-msgid "Stepped Interpolation"
-msgstr "Interpolacja schodkowa"
 
 
 msgid "Snap values to nearest grid-step - e.g. for a stop-motion look"
@@ -6328,6 +6284,10 @@ msgid "Axis"
 msgstr "Oś/Kierunek"
 
 
+msgid "Noise"
+msgstr "Szum"
+
+
 msgid "Seed"
 msgstr "Zarodek"
 
@@ -6418,6 +6378,10 @@ msgstr "Stałe"
 
 msgid "Library"
 msgstr "Biblioteka"
+
+
+msgid "Envelope"
+msgstr "Obwiednia"
 
 
 msgid "Mask"
@@ -6633,6 +6597,10 @@ msgid "Smooth Shading"
 msgstr "Gładkie Cieniowanie"
 
 
+msgid "Limits"
+msgstr "Ograniczenia"
+
+
 msgid "Target Object"
 msgstr "Obiekt docelowy"
 
@@ -6691,6 +6659,10 @@ msgstr "Oś Y"
 
 msgid "Layer Weight"
 msgstr "Waga warstwy"
+
+
+msgid "Cycles"
+msgstr "Cykle"
 
 
 msgid "X axis"
@@ -6934,6 +6906,10 @@ msgid "Priority"
 msgstr "Priorytet"
 
 
+msgid "Unpack"
+msgstr "Rozpakuj"
+
+
 msgctxt "Operator"
 msgid "Quit"
 msgstr "Wyjdź"
@@ -7070,12 +7046,24 @@ msgid "var"
 msgstr "var"
 
 
+msgid "Generator"
+msgstr "Generator"
+
+
+msgid "Built-In Function"
+msgstr "Funkcja wbudowana"
+
+
 msgid "Stepped"
 msgstr "Krokowy"
 
 
 msgid "GP_Layer"
 msgstr "GP_Layer"
+
+
+msgid "Did not write, no Multilayer Image"
+msgstr "Nie zapisano, brak Obrazu Multilayer"
 
 
 msgid "Key %d"
@@ -7486,10 +7474,6 @@ msgstr "Pierścienie Krawędzi nie są połączone"
 msgctxt "Action"
 msgid "Group"
 msgstr "Grupa"
-
-
-msgid "Dope Sheet Summary"
-msgstr "Streszczenie Edytora Kluczy"
 
 
 msgid "F-Curve is visible in Graph Editor for editing"
@@ -9237,14 +9221,6 @@ msgid "No active pose bone to add a constraint to"
 msgstr "Brak aktywnej kości pozy do której można dodać ogranicznik"
 
 
-msgid "IK constraint can only be added to bones"
-msgstr "Ogranicznik IK może być dodany tylko do kości"
-
-
-msgid "Spline IK constraint can only be added to bones"
-msgstr "Ogranicznik Splajn IK może być dodany tylko do kości"
-
-
 msgid "No active object to add constraint to"
 msgstr "Brak aktywnego obiektu, do którego można dodać ogranicznik"
 
@@ -9913,10 +9889,6 @@ msgid "Flip to Top"
 msgstr "Przerzuć na górę"
 
 
-msgid "Collapse Menus"
-msgstr "Zwiń Manu"
-
-
 msgid "Tile Area"
 msgstr "Obszar Kafla"
 
@@ -10465,16 +10437,16 @@ msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%
 msgstr "Brakujące komponenty %s%s%s rotacji eulera dla ID='%s' i RNA-Path='%s'"
 
 
+msgid "Slot %d"
+msgstr "Otwór %d"
+
+
+msgid "Hard coded Non-Linear, Gamma:1.7"
+msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
+
+
 msgid "Can't Load Image"
 msgstr "Nie można załadować obrazu"
-
-
-msgid " %d frs"
-msgstr " %d klt"
-
-
-msgid ": size %d x %d,"
-msgstr ": rozmiar %d x %d"
 
 
 msgid "%d float channel(s)"
@@ -10501,22 +10473,6 @@ msgid " + Z"
 msgstr " + Z"
 
 
-msgid ", Frame: %d"
-msgstr ", Klatka: %d"
-
-
-msgid "Slot %d"
-msgstr "Otwór %d"
-
-
-msgid "(%d) Frames"
-msgstr "(%d) Klatek"
-
-
-msgid "Hard coded Non-Linear, Gamma:1.7"
-msgstr "Twardo zakodowane nieliniowo, Gamma 1.7"
-
-
 msgid "Select Slot"
 msgstr "Zaznacz otwór"
 
@@ -10529,16 +10485,8 @@ msgid "Select Pass"
 msgstr "Zaznacz Pass"
 
 
-msgid "Can't pack edited image from disk, pack as internal PNG?"
-msgstr "Nie można pakować edytowanego obrazu z dysku, spakować jako wewnętrzny PNG?"
-
-
 msgid "unsupported image format"
 msgstr "Nie obsługiwany format obrazu"
-
-
-msgid "Did not write, no Multilayer Image"
-msgstr "Nie zapisano, brak Obrazu Multilayer"
 
 
 msgid "Can only save sequence on image sequences"
@@ -10555,10 +10503,6 @@ msgstr "Żaden obraz nie został zmieniony"
 
 msgid "Packing movies or image sequences not supported"
 msgstr "Pakowanie filmów lub sekwencji obrazów nie obsługiwane"
-
-
-msgid "Cannot pack edited image from disk, only as internal PNG"
-msgstr "Nie można spakować edytowanego obrazu z dysku, tylko jako wewnętrzny PNG"
 
 
 msgid "Unpacking movies or image sequences not supported"
@@ -10585,6 +10529,10 @@ msgid "Saved %s"
 msgstr "Zapisano %s"
 
 
+msgid "can't save image while rendering"
+msgstr "Nie można zapisać obrazu podczas renderowania"
+
+
 msgid "image file not found"
 msgstr "Nie odnaleziono pliku obrazu"
 
@@ -10593,20 +10541,12 @@ msgid "image path can't be written to"
 msgstr "Nie można zapisać we wskazanej ścieżce"
 
 
-msgid "can't save image while rendering"
-msgstr "Nie można zapisać obrazu podczas renderowania"
-
-
 msgid "Unpack 1 File"
 msgstr "Rozpakuj 1 plik"
 
 
 msgid "Unpack %d Files"
 msgstr "Rozpakuj %d plików"
-
-
-msgid "Unpack"
-msgstr "Rozpakuj"
 
 
 msgid "No packed files to unpack"
@@ -10903,18 +10843,6 @@ msgstr "Odłącz nody przyłączone do tego wejścia"
 
 msgid "Can't edit library linked object"
 msgstr "Nie można edytować obiektu z linkowanej biblioteki"
-
-
-msgid "Restrict/Allow visibility in the 3D View"
-msgstr "Ogranicz/Zezwól widoczność w widoku 3D"
-
-
-msgid "Restrict/Allow selection in the 3D View"
-msgstr "Ogranicz/Zezwól zaznaczanie w widoku 3D"
-
-
-msgid "Restrict/Allow editing of strokes and keyframes in this layer"
-msgstr "Ogranicz/Pozwól edytować kreski i klatki kluczowe w tej warstwie"
 
 
 msgid "Library path '%s' does not exist, correct this before saving"

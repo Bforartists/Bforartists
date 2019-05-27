@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bmesh
 import bpy
@@ -103,7 +103,7 @@ class MUV_OT_CopyPasteUVObject_CopyUV(bpy.types.Operator):
     Operation class: Copy UV coordinate among objects
     """
 
-    bl_idname = "object.muv_ot_copy_paste_uv_object_copy_uv"
+    bl_idname = "object.muv_copy_paste_uv_object_copy_uv"
     bl_label = "Copy UV (Among Objects)"
     bl_description = "Copy UV coordinate (Among Objects)"
     bl_options = {'REGISTER', 'UNDO'}
@@ -147,7 +147,7 @@ class MUV_MT_CopyPasteUVObject_CopyUV(bpy.types.Menu):
     Menu class: Copy UV coordinate among objects
     """
 
-    bl_idname = "object.muv_mt_copy_paste_uv_object_copy_uv"
+    bl_idname = "MUV_MT_CopyPasteUVObject_CopyUV"
     bl_label = "Copy UV (Among Objects) (Menu)"
     bl_description = "Menu of Copy UV coordinate (Among Objects)"
 
@@ -181,7 +181,7 @@ class MUV_OT_CopyPasteUVObject_PasteUV(bpy.types.Operator):
     Operation class: Paste UV coordinate among objects
     """
 
-    bl_idname = "object.muv_ot_copy_paste_uv_object_paste_uv"
+    bl_idname = "object.muv_copy_paste_uv_object_paste_uv"
     bl_label = "Paste UV (Among Objects)"
     bl_description = "Paste UV coordinate (Among Objects)"
     bl_options = {'REGISTER', 'UNDO'}
@@ -260,7 +260,7 @@ class MUV_MT_CopyPasteUVObject_PasteUV(bpy.types.Menu):
     Menu class: Paste UV coordinate among objects
     """
 
-    bl_idname = "object.muv_mt_copy_paste_uv_object_paste_uv"
+    bl_idname = "MUV_MT_CopyPasteUVObject_PasteUV"
     bl_label = "Paste UV (Among Objects) (Menu)"
     bl_description = "Menu of Paste UV coordinate (Among Objects)"
 

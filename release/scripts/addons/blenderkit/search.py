@@ -24,8 +24,10 @@ if "bpy" in locals():
     imp.reload(categories)
     imp.reload(ui)
     imp.reload(version_checker)
+    imp.reload(bkit_oauth)
+    imp.reload(tasks_queue)
 else:
-    from blenderkit import paths, utils, categories, ui, version_checker
+    from blenderkit import paths, utils, categories, ui, bkit_oauth, version_checker, tasks_queue
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -61,9 +63,10 @@ prev_time = 0
 def check_errors(rdata):
     if rdata.get('statusCode') == 401:
         if rdata.get('detail') == 'Invalid token.':
-            # reset the api key, so it can be requested again.
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-            user_preferences.api_key = ''
+            if user_preferences.api_key != '':
+                bkit_oauth.refresh_token_thread()
+                return False, "You've been logged out. Logging in...."
             return False, 'Missing or wrong api_key in addon preferences'
     return True, ''
 
@@ -74,13 +77,23 @@ thumb_full_download_threads = {}
 reports = ''
 
 
+def refresh_token_timer():
+    ''' this timer gets run every 20 hours. It refreshes tokens and categories.'''
+    print('refresh timer')
+    fetch_server_data()
+    categories.load_categories()
+    return 72000
+
+
 @persistent
 def scene_load(context):
     wm = bpy.context.window_manager
     fetch_server_data()
     # following doesn't necessarilly happen if version isn't checked yet or similar, first run.
-    wm['bkit_update'] = version_checker.compare_versions(blenderkit)
-    utils.load_categories()
+    # wm['bkit_update'] = version_checker.compare_versions(blenderkit)
+    categories.load_categories()
+    if not bpy.app.timers.is_registered(refresh_token_timer):
+        bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=72000)
 
 
 def fetch_server_data():
@@ -89,6 +102,8 @@ def fetch_server_data():
     url = paths.BLENDERKIT_ADDON_URL
     api_key = user_preferences.api_key
     # version_checker.check_version_thread(url, api_key, blenderkit)
+    bkit_oauth.refresh_token_thread()
+    get_profile()
     categories.fetch_categories_thread(api_key)
 
 
@@ -175,7 +190,9 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                                               'tooltip': tooltip,
                                               'tags': r['tags'],
                                               'can_download': r.get('canDownload', True),
-                                              'verification_status': r['verificationStatus']
+                                              'verification_status': r['verificationStatus'],
+                                              'author_id': str(r['author']['id'])
+                                              # 'author': r['author']['firstName'] + ' ' + r['author']['lastName']
                                               # 'description': r['description'],
                                               # 'author': r['description'],
                                               }
@@ -215,6 +232,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff.
                                 # results = rdata['results']
                 s[search_name] = result_field
                 s['search results'] = result_field
+                s[search_name + ' orig'] = rdata
                 s['search results orig'] = rdata
                 load_previews()
                 ui_props = bpy.context.scene.blenderkitUI
@@ -277,7 +295,7 @@ def load_previews():
                         img.unpack(method='USE_ORIGINAL')
                     img.filepath = tpath
                     img.reload()
-
+                img.colorspace_settings.name = 'Linear'
             i += 1
     # print('previews loaded')
 
@@ -324,6 +342,8 @@ def writeblockm(tooltip, mdata, key='', pretext=None):  # for longer texts
         intext = mdata[key]
         if type(intext) == list:
             intext = list_to_str(intext)
+        if type(intext) == float:
+            intext = round(intext, 3)
         intext = str(intext)
         if intext.rstrip() == '':
             return tooltip
@@ -412,7 +432,7 @@ def generate_tooltip(mdata):
     # t = writeblockm(t, mparams, key='shaders')
 
     if has(mparams, 'textureSizeMeters'):
-        t = writeblockm(t, mparams, key='textureSizeMeters', pretext='texture size in meters')
+        t += 'texture size: %s\n' % fmt_length(mparams['textureSizeMeters'])
 
     if has(mparams, 'textureResolutionMax') and mparams['textureResolutionMax'] > 0:
         if mparams['textureResolutionMin'] == mparams['textureResolutionMax']:
@@ -430,17 +450,39 @@ def generate_tooltip(mdata):
     # generator is for both upload preview and search, this is only after search
     if mdata.get('versionNumber'):
         # t = writeblockm(t, mdata, key='versionNumber', pretext='version')
+        a_id = mdata['author'].get('id')
+        if a_id != None:
+            adata = bpy.context.window_manager['bkit authors'].get(str(a_id))
+            if adata != None:
+                t += generate_author_textblock(adata)
 
-        t += 'author: %s %s\n' % (mdata['author']['firstName'], mdata['author']['lastName'])
-        # t += '\n'
-
-    at = mdata['assetType']
     t += '\n'
+    t += get_random_tip(mdata)
+    return t
+
+
+def get_random_tip(mdata):
+    at = mdata['assetType']
+    t = ''
     if at == 'brush' or at == 'texture':
         t += 'click to link %s' % mdata['assetType']
     if at == 'model' or at == 'material':
-        t += 'click or drag in scene to link/append %s' % mdata['assetType']
+        tips = ['Click or drag in scene to link/append %s' % mdata['assetType'],
+                "'A' key to search assets by same author",
+                "'W' key to open Authors webpage",
+                ]
+        tip = 'Tip: ' + random.choice(tips)
+        t = writeblock(t, tip)
+    return t
 
+
+def generate_author_textblock(adata):
+    t = ''
+    if adata not in (None, ''):
+        t += 'author: %s %s\n' % (adata['firstName'], adata['lastName'])
+        t = writeblockm(t, adata, key='aboutMe', pretext='about me')
+        t += '\n'
+        t = writeblockm(t, adata, key='aboutMeUrl', pretext='')
     return t
 
 
@@ -490,6 +532,86 @@ class ThumbDownloader(threading.Thread):
             #         f.write(chunk)
 
 
+def write_author(a_id, adata):
+    # utils.p('writing author back')
+    authors = bpy.context.window_manager['bkit authors']
+    if authors.get(a_id) in (None, ''):
+        adata['tooltip'] = generate_author_textblock(adata)
+        authors[a_id] = adata
+
+
+def fetch_author(a_id, api_key):
+    utils.p('fetch author')
+    try:
+        a_url = paths.get_api_url() + 'accounts/' + a_id + '/'
+        headers = utils.get_headers(api_key)
+        r = requests.get(a_url, headers=headers)
+        adata = r.json()
+        if not hasattr(adata, 'id'):
+            utils.p(adata)
+        # utils.p(adata)
+        tasks_queue.add_task((write_author, (a_id, adata)))
+    except Exception as e:
+        utils.p(e)
+    utils.p('finish fetch')
+
+
+def get_author(r):
+    a_id = str(r['author']['id'])
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    authors = bpy.context.window_manager.get('bkit authors', {})
+    if authors == {}:
+        bpy.context.window_manager['bkit authors'] = authors
+    a = authors.get(a_id)
+    if a is None or a is '':
+        authors[a_id] = ''
+        thread = threading.Thread(target=fetch_author, args=(a_id, preferences.api_key), daemon=True)
+        thread.start()
+    return a
+
+
+def write_profile(adata):
+    utils.p('writing profile')
+    user = adata['user']
+    # we have to convert to MB here, numbers too big for python int type
+    if user.get('sumAssetFilesSize') is not None:
+        user['sumAssetFilesSize'] /= (1024 * 1024)
+        user['sumPrivateAssetFilesSize'] /= (1024 * 1024)
+        user['remainingPrivateQuota'] /= (1024 * 1024)
+
+    bpy.context.window_manager['bkit profile'] = adata
+
+
+def request_profile(api_key):
+    a_url = paths.get_api_url() + 'me/'
+    headers = utils.get_headers(api_key)
+    r = requests.get(a_url, headers=headers)
+    adata = r.json()
+    if adata.get('user') is None:
+        utils.p(adata)
+        utils.p('getting profile failed')
+        return None
+    return adata
+
+
+def fetch_profile(api_key):
+    utils.p('fetch profile')
+    try:
+        adata = request_profile(api_key)
+        if adata is not None:
+            tasks_queue.add_task((write_profile, (adata,)))
+    except Exception as e:
+        utils.p(e)
+
+
+def get_profile():
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    a = bpy.context.window_manager.get('bkit profile')
+    thread = threading.Thread(target=fetch_profile, args=(preferences.api_key,), daemon=True)
+    thread.start()
+    return a
+
+
 class Searcher(threading.Thread):
     query = None
 
@@ -517,7 +639,7 @@ class Searcher(threading.Thread):
         tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
         json_filepath = os.path.join(tempdir, '%s_searchresult.json' % query['asset_type'])
 
-        headers = utils.get_headers(query['token'])
+        headers = utils.get_headers(params['api_key'])
 
         rdata = {}
         rdata['results'] = []
@@ -534,22 +656,15 @@ class Searcher(threading.Thread):
                     params['get_next'] = False
         if not params['get_next']:
             # build a new request
-            url = paths.get_bkit_url() + 'search/'
-
-            nquery = {
-                # 'tags': query['keywords'],
-                'asset_type': query['asset_type'],
-            }
-            if query.get('category'):
-                nquery['category_subtree'] = query['category']
+            url = paths.get_api_url() + 'search/'
 
             # build request manually
             # TODO use real queries
             requeststring = '?query=' + query['keywords'].lower() + '+'
             #
-            for i, q in enumerate(nquery):
-                requeststring += q + ':' + str(nquery[q])
-                if i < len(nquery) - 1:
+            for i, q in enumerate(query):
+                requeststring += q + ':' + str(query[q]).lower()
+                if i < len(query) - 1:
                     requeststring += '+'
 
             requeststring += '&addon_version=%s' % params['addon_version']
@@ -559,10 +674,10 @@ class Searcher(threading.Thread):
             urlquery = url + requeststring
 
         try:
-            # print(urlquery)
+            utils.p(urlquery)
             r = requests.get(urlquery, headers=headers)
             reports = ''
-            # print(r.text)
+            # utils.p(r.text)
         except requests.exceptions.RequestException as e:
             print(e)
             reports = e
@@ -594,7 +709,7 @@ class Searcher(threading.Thread):
 
         # print('number of results: ', len(rdata.get('results', [])))
         if self.stopped():
-            print('stopping search : ' + query['keywords'])
+            utils.p('stopping search : ' + query['keywords'])
             return
 
         mt('search finished')
@@ -605,7 +720,12 @@ class Searcher(threading.Thread):
         thumb_full_urls = []
         thumb_full_filepaths = []
         # END OF PARSING
+        getting_authors = {}
         for d in rdata.get('results', []):
+            if getting_authors.get(d['author']['id']) is None:
+                get_author(d)
+                getting_authors[d['author']['id']] = True
+
             for f in d['files']:
                 # TODO move validation of published assets to server, too manmy checks here.
                 if f['fileType'] == 'thumbnail' and f['fileThumbnail'] != None and f['fileThumbnailLarge'] != None:
@@ -648,7 +768,7 @@ class Searcher(threading.Thread):
         # TODO do the killing/ stopping here! remember threads might have finished inbetween!
 
         if self.stopped():
-            print('stopping search : ' + query['keywords'])
+            utils.p('stopping search : ' + query['keywords'])
             return
 
         # this loop handles downloading of small thumbnails
@@ -667,12 +787,12 @@ class Searcher(threading.Thread):
                         for tk, thread in threads_copy.items():
                             if not thread.is_alive():
                                 thread.join()
-                                # print(x)
+                                # utils.p(x)
                                 del (thumb_sml_download_threads[tk])
-                                # print('fetched thumbnail ', i)
+                                # utils.p('fetched thumbnail ', i)
                                 i += 1
         if self.stopped():
-            print('stopping search : ' + query['keywords'])
+            utils.p('stopping search : ' + query['keywords'])
             return
         idx = 0
         while len(thumb_sml_download_threads) > 0:
@@ -684,7 +804,7 @@ class Searcher(threading.Thread):
                     i += 1
 
         if self.stopped():
-            print('stopping search : ' + query['keywords'])
+            utils.p('stopping search : ' + query['keywords'])
             return
 
         # start downloading full thumbs in the end
@@ -699,9 +819,7 @@ class Searcher(threading.Thread):
 
 
 def build_query_common(query, props):
-    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     query_common = {
-        "token": user_preferences.api_key,
         "keywords": props.search_keywords
     }
     query.update(query_common)
@@ -715,14 +833,18 @@ def build_query_model():
     props = bpy.context.scene.blenderkit_models
     query = {
         "asset_type": 'model',
-        "engine": props.search_engine,
-        "adult": props.search_adult,
+        # "engine": props.search_engine,
+        # "adult": props.search_adult,
     }
     if props.search_style != 'ANY':
         if props.search_style != 'OTHER':
-            query["style"] = props.search_style
+            query["model_style"] = props.search_style
         else:
-            query["style"] = props.search_style_other
+            query["model_style"] = props.search_style_other
+
+    if props.free_only:
+        query["is_free"] = True
+
     if props.search_advanced:
         if props.search_condition != 'UNSPECIFIED':
             query["condition"] = props.search_condition
@@ -737,26 +859,6 @@ def build_query_model():
             query["textureResolutionMax"] = props.search_texture_resolution_max
 
     build_query_common(query, props)
-    # query = {
-    #     "query": {
-    #         "exists": {"field": "faceCount"},
-    #
-    #         "range": {
-    #
-    #             "faceCount": {
-    #                 "gte": query["polyCountMin"],
-    #                 "lte": query["polyCountMax"],
-    #                 "boost": 2.0
-    #             }
-    #
-    #         },
-    #
-    #          "match": {
-    #              "asset_type": 'model',
-    #          }
-    #
-    #     }
-    # }
 
     return query
 
@@ -767,7 +869,7 @@ def build_query_scene():
     props = bpy.context.scene.blenderkit_scene
     query = {
         "asset_type": 'scene',
-        "engine": props.search_engine,
+        # "engine": props.search_engine,
         # "adult": props.search_adult,
     }
     build_query_common(query, props)
@@ -780,12 +882,12 @@ def build_query_material():
         "asset_type": 'material',
 
     }
-    if props.search_engine == 'NONE':
-        query["engine"] = ''
-    if props.search_engine != 'OTHER':
-        query["engine"] = props.search_engine
-    else:
-        query["engine"] = props.search_engine_other
+    # if props.search_engine == 'NONE':
+    #     query["engine"] = ''
+    # if props.search_engine != 'OTHER':
+    #     query["engine"] = props.search_engine
+    # else:
+    #     query["engine"] = props.search_engine_other
     if props.search_style != 'ANY':
         if props.search_style != 'OTHER':
             query["style"] = props.search_style
@@ -840,7 +942,7 @@ def mt(text):
     alltime = time.time() - search_start_time
     since_last = time.time() - prev_time
     prev_time = time.time()
-    print(text, alltime, since_last)
+    utils.p(text, alltime, since_last)
 
 
 def add_search_process(query, params):
@@ -853,7 +955,6 @@ def add_search_process(query, params):
 
     tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
     thread = Searcher(query, params)
-    # thread = threading.Thread(target=Searcher, args=([query]), daemon=True)
     thread.start()
 
     search_threads.append([thread, tempdir, query['asset_type']])
@@ -861,9 +962,10 @@ def add_search_process(query, params):
     mt('thread started')
 
 
-def search(own=False, category='', get_next=False, free_only=False):
+def search(category='', get_next=False, author_id=''):
     ''' initialize searching'''
     global search_start_time
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     search_start_time = time.time()
     mt('start')
@@ -902,27 +1004,32 @@ def search(own=False, category='', get_next=False, free_only=False):
 
     if props.is_searching and get_next == True:
         return;
-    query['own'] = own
-    if category != '':
-        query['category'] = category
 
-    # print('searching')
+    if category != '':
+        query['category_subtree'] = category
+
+    if author_id != '' and user_preferences.enable_author_search:
+        query['author_id'] = author_id
+
+    # utils.p('searching')
     props.is_searching = True
 
     params = {
         'scene_uuid': bpy.context.scene.get('uuid', None),
         'addon_version': version_checker.get_addon_version(),
+        'api_key': user_preferences.api_key,
         'get_next': get_next
     }
 
-    if free_only:
-        query['keywords'] += '+is_free:true'
+    # if free_only:
+    #     query['keywords'] += '+is_free:true'
 
     add_search_process(query, params)
     props.report = 'BlenderKit searching....'
 
 
 def search_update(self, context):
+    utils.p('search updater')
     if self.search_keywords != '':
         search()
 
@@ -940,6 +1047,11 @@ class SearchOperator(Operator):
         description="search only subtree of this category",
         default="")
 
+    author_id: StringProperty(
+        name="Author ID",
+        description="Author ID - search only assets by this author",
+        default="")
+
     get_next: BoolProperty(name="next page",
                            description="get next page from previous search",
                            default=False)
@@ -949,7 +1061,7 @@ class SearchOperator(Operator):
         return True
 
     def execute(self, context):
-        search(own=self.own, category=self.category, get_next=self.get_next)
+        search(own=self.own, category=self.category, get_next=self.get_next, author_id=self.author_id)
         bpy.ops.view3d.blenderkit_asset_bar()
 
         return {'FINISHED'}
@@ -968,7 +1080,7 @@ def register_search():
 
     # bpy.app.timers.register(timer_update, persistent = True)
 
-    utils.load_categories()
+    categories.load_categories()
 
 
 def unregister_search():

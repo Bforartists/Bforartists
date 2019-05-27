@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Jace Priester"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bmesh
 import bpy.utils
@@ -326,7 +326,7 @@ class MUV_OT_CopyPasteUV_CopyUV(bpy.types.Operator):
     Operation class: Copy UV coordinate
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_copy_uv"
+    bl_idname = "uv.muv_copy_paste_uv_copy_uv"
     bl_label = "Copy UV"
     bl_description = "Copy UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}
@@ -368,7 +368,7 @@ class MUV_MT_CopyPasteUV_CopyUV(bpy.types.Menu):
     Menu class: Copy UV coordinate
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv_copy_uv"
+    bl_idname = "MUV_MT_CopyPasteUV_CopyUV"
     bl_label = "Copy UV (Menu)"
     bl_description = "Menu of Copy UV coordinate"
 
@@ -403,7 +403,7 @@ class MUV_OT_CopyPasteUV_PasteUV(bpy.types.Operator):
     Operation class: Paste UV coordinate
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_paste_uv"
+    bl_idname = "uv.muv_copy_paste_uv_paste_uv"
     bl_label = "Paste UV"
     bl_description = "Paste UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}
@@ -491,7 +491,7 @@ class MUV_MT_CopyPasteUV_PasteUV(bpy.types.Menu):
     Menu class: Paste UV coordinate
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv_paste_uv"
+    bl_idname = "MUV_MT_CopyPasteUV_PasteUV"
     bl_label = "Paste UV (Menu)"
     bl_description = "Menu of Paste UV coordinate"
 
@@ -543,7 +543,7 @@ class MUV_OT_CopyPasteUV_SelSeqCopyUV(bpy.types.Operator):
     Operation class: Copy UV coordinate by selection sequence
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_selseq_copy_uv"
+    bl_idname = "uv.muv_copy_paste_uv_selseq_copy_uv"
     bl_label = "Copy UV (Selection Sequence)"
     bl_description = "Copy UV data by selection sequence"
     bl_options = {'REGISTER', 'UNDO'}
@@ -585,7 +585,7 @@ class MUV_MT_CopyPasteUV_SelSeqCopyUV(bpy.types.Menu):
     Menu class: Copy UV coordinate by selection sequence
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv_selseq_copy_uv"
+    bl_idname = "MUV_MT_CopyPasteUV_SelSeqCopyUV"
     bl_label = "Copy UV (Selection Sequence) (Menu)"
     bl_description = "Menu of Copy UV coordinate by selection sequence"
 
@@ -620,7 +620,7 @@ class MUV_OT_CopyPasteUV_SelSeqPasteUV(bpy.types.Operator):
     Operation class: Paste UV coordinate by selection sequence
     """
 
-    bl_idname = "uv.muv_ot_copy_paste_uv_selseq_paste_uv"
+    bl_idname = "uv.muv_copy_paste_uv_selseq_paste_uv"
     bl_label = "Paste UV (Selection Sequence)"
     bl_description = "Paste UV coordinate by selection sequence"
     bl_options = {'REGISTER', 'UNDO'}
@@ -709,7 +709,7 @@ class MUV_MT_CopyPasteUV_SelSeqPasteUV(bpy.types.Menu):
     Menu class: Paste UV coordinate by selection sequence
     """
 
-    bl_idname = "uv.muv_mt_copy_paste_uv_selseq_paste_uv"
+    bl_idname = "MUV_MT_CopyPasteUV_SelSeqPasteUV"
     bl_label = "Paste UV (Selection Sequence) (Menu)"
     bl_description = "Menu of Paste UV coordinate by selection sequence"
 

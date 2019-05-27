@@ -23,8 +23,8 @@
 bl_info = {
     "name": "Scene Information",
     "author": "uselessdreamer",
-    "version": (0,3),
-    "blender": (2, 59, 0),
+    "version": (0, 3, 1),
+    "blender": (2, 80, 0),
     "location": "Properties > Scene > Blend Info Panel",
     "description": "Show information about the .blend",
     "warning": "",
@@ -181,12 +181,12 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
         row = db_cols[1].row()
         num = len(bpy.data.worlds)
         row.label(text=quantity_string(num, "World", "Worlds"),
-            icon='WORLD') # bfa - removed icon WORLD_DATA
+            icon='WORLD_DATA')
 
         row = db_cols[0].row()
         num = len(bpy.data.textures)
         row.label(text=quantity_string(num, "Texture", "Textures"),
-            icon='TEXTURE')
+            icon='TEXTURE_DATA')
 
         row = db_cols[1].row()
         num = len(bpy.data.images)
@@ -198,16 +198,21 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
         row.label(text=quantity_string(num, "Text", "Texts"),
             icon='TEXT')
 
+# Register
+classes = [
+    OBJECT_PT_blendinfo
+]
 
 def register():
-    bpy.utils.register_module(__name__)
-
-    pass
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
-    pass
 
 if __name__ == "__main__":
     register()

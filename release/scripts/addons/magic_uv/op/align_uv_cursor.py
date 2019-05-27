@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from mathutils import Vector
@@ -60,7 +60,7 @@ class _Properties:
                 bd_size = common.get_uvimg_editor_board_size(area)
             else:
                 bd_size = [1.0, 1.0]
-            loc = space.cursor.location
+            loc = space.cursor_location
 
             if bd_size[0] < 0.000001:
                 cx = 0.0
@@ -84,7 +84,7 @@ class _Properties:
                 bd_size = [1.0, 1.0]
             cx = bd_size[0] * value[0]
             cy = bd_size[1] * value[1]
-            space.cursor.location = Vector((cx, cy))
+            space.cursor_location = Vector((cx, cy))
 
         scene.muv_align_uv_cursor_enabled = BoolProperty(
             name="Align UV Cursor Enabled",
@@ -133,7 +133,7 @@ class _Properties:
 @compat.make_annotations
 class MUV_OT_AlignUVCursor(bpy.types.Operator):
 
-    bl_idname = "uv.muv_ot_align_uv_cursor"
+    bl_idname = "uv.muv_align_uv_cursor"
     bl_label = "Align UV Cursor"
     bl_description = "Align cursor to the center of UV island"
     bl_options = {'REGISTER', 'UNDO'}
@@ -264,6 +264,6 @@ class MUV_OT_AlignUVCursor(bpy.types.Operator):
         cx = cx * bd_size[0]
         cy = cy * bd_size[1]
 
-        space.cursor.location = Vector((cx, cy))
+        space.cursor_location = Vector((cx, cy))
 
         return {'FINISHED'}

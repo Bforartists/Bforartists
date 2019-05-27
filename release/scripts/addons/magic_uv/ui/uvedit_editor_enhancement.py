@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 
@@ -48,7 +48,6 @@ class MUV_PT_UVEdit_EditorEnhancement(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_label = "Editor Enhancement"
     bl_category = "Magic UV"
-    bl_context = 'mesh_edit'
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, _):

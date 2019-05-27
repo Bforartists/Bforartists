@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from math import pi, cos, tan, sin
 
@@ -96,7 +96,7 @@ class _Properties:
             pass
 
         def update_func(_, __):
-            bpy.ops.uv.muv_ot_uv_sculpt('INVOKE_REGION_WIN')
+            bpy.ops.uv.muv_uv_sculpt('INVOKE_REGION_WIN')
 
         scene.muv_uv_sculpt_enabled = BoolProperty(
             name="UV Sculpt",
@@ -174,7 +174,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
     Operation class: UV Sculpt in View3D
     """
 
-    bl_idname = "uv.muv_ot_uv_sculpt"
+    bl_idname = "uv.muv_uv_sculpt"
     bl_label = "UV Sculpt"
     bl_description = "UV Sculpt in View3D"
     bl_options = {'REGISTER'}

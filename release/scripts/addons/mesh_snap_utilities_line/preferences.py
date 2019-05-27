@@ -191,7 +191,11 @@ class SnapUtilitiesPreferences(bpy.types.AddonPreferences):
 
     def draw_snap_utilities_help(self, layout):
         layout.operator(
-            "wm.url_open", text="Download Page", icon='HELP',
+            "wm.url_open", text="Gumroad Page", icon='HELP',
+        ).url = "https://gum.co/IaqQf"
+
+        layout.operator(
+            "wm.url_open", text="Blender Market Page", icon='HELP',
         ).url = "https://blendermarket.com/products/snap-utilities"
 
         layout.operator(

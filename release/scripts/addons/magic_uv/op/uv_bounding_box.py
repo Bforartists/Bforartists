@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from enum import IntEnum
 import math
@@ -88,7 +88,7 @@ class _Properties:
             pass
 
         def update_func(_, __):
-            bpy.ops.uv.muv_ot_uv_bounding_box('INVOKE_REGION_WIN')
+            bpy.ops.uv.muv_uv_bounding_box('INVOKE_REGION_WIN')
 
         scene.muv_uv_bounding_box_enabled = BoolProperty(
             name="UV Bounding Box Enabled",
@@ -612,7 +612,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
     Operation class: UV Bounding Box
     """
 
-    bl_idname = "uv.muv_ot_uv_bounding_box"
+    bl_idname = "uv.muv_uv_bounding_box"
     bl_label = "UV Bounding Box"
     bl_description = "Internal operation for UV Bounding Box"
     bl_options = {'REGISTER', 'UNDO'}

@@ -1443,8 +1443,9 @@ typedef struct ToolSettings {
   /* Multires */
   char multires_subdiv_type;
 
-  /* Alt+RMB option */
+  /* Edge tagging, store operator settings (no UI access). */
   char edge_mode;
+
   char edge_mode_live_unwrap;
 
   char _pad1[1];
@@ -1499,7 +1500,7 @@ typedef struct ToolSettings {
 
   /* Normal Editing */
   float normal_vector[3];
-  int face_strength;
+  char _pad6[4];
 } ToolSettings;
 
 /* *************************************************************** */
@@ -2089,13 +2090,6 @@ enum {
   OB_DRAW_GROUPUSER_ALL = 2,
 };
 
-/* toolsettings->face_strength */
-enum {
-  FACE_STRENGTH_WEAK = -16384,
-  FACE_STRENGTH_MEDIUM = 0,
-  FACE_STRENGTH_STRONG = 16384,
-};
-
 /* object_vgroup.c */
 /* ToolSettings.vgroupsubset */
 typedef enum eVGroupSelect {
@@ -2246,14 +2240,6 @@ enum {
 #define UV_SELECT_EDGE 2
 #define UV_SELECT_FACE 4
 #define UV_SELECT_ISLAND 8
-
-/* ToolSettings.edge_mode */
-#define EDGE_MODE_SELECT 0
-#define EDGE_MODE_TAG_SEAM 1
-#define EDGE_MODE_TAG_SHARP 2
-#define EDGE_MODE_TAG_CREASE 3
-#define EDGE_MODE_TAG_BEVEL 4
-#define EDGE_MODE_TAG_FREESTYLE 5
 
 /* ToolSettings.gpencil_flags */
 typedef enum eGPencil_Flags {

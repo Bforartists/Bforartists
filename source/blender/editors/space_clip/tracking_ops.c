@@ -1467,6 +1467,7 @@ static int join_tracks_exec(bContext *C, wmOperator *op)
   }
 
   BLI_gset_free(point_tracks, NULL);
+  DEG_id_tag_update(&clip->id, 0);
 
   WM_event_add_notifier(C, NC_MOVIECLIP | NA_EDITED, clip);
 
@@ -1626,6 +1627,7 @@ static int track_copy_color_exec(bContext *C, wmOperator *UNUSED(op))
     }
   }
 
+  DEG_id_tag_update(&clip->id, 0);
   WM_event_add_notifier(C, NC_MOVIECLIP | ND_DISPLAY, clip);
 
   return OPERATOR_FINISHED;
@@ -1807,6 +1809,7 @@ static int clean_tracks_exec(bContext *C, wmOperator *op)
     }
   }
 
+  DEG_id_tag_update(&clip->id, 0);
   BKE_tracking_dopesheet_tag_update(tracking);
 
   WM_event_add_notifier(C, NC_MOVIECLIP | ND_SELECT, clip);

@@ -54,6 +54,7 @@ class NODE_HT_header(Header):
         snode_id = snode.id
         id_from = snode.id_from
         tool_settings = context.tool_settings
+        is_compositor = snode.tree_type == 'CompositorNodeTree'
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
@@ -123,11 +124,8 @@ class NODE_HT_header(Header):
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
-            layout.prop(snode, "use_auto_render")
-            layout.prop(snode, "show_backdrop")
-            if snode.show_backdrop:
-                row = layout.row(align=True)
-                row.prop(snode, "backdrop_channels", text="", expand=True)
+            if snode_id:
+                layout.prop(snode_id, "use_nodes")
 
         else:
             # Custom node tree is edited as independent ID block
@@ -139,7 +137,9 @@ class NODE_HT_header(Header):
 
         layout.separator_spacer()
 
-        layout.template_running_jobs()
+        # Put pin on the right for Compositing
+        if is_compositor:
+            layout.prop(snode, "pin", text="", emboss=False)
 
         # -------------------- use nodes ---------------------------
 
@@ -182,8 +182,19 @@ class NODE_HT_header(Header):
         # ----------------- rest of the options
         
 
-        layout.prop(snode, "pin", text="")   
+        # Put pin next to ID block
+        if not is_compositor:
+            layout.prop(snode, "pin", text="", emboss=False)
+
         layout.operator("node.tree_path_parent", text="", icon='FILE_PARENT')
+
+        # Backdrop
+        if is_compositor:
+            row=layout.row(align=True)
+            row.prop(snode, "show_backdrop", toggle=True)
+            sub=row.row(align=True)
+            sub.active = snode.show_backdrop
+            sub.prop(snode, "backdrop_channels", icon_only=True, text="", expand=True)
 
         # Snap
         row = layout.row(align=True)
@@ -402,7 +413,7 @@ class NODE_PT_active_tool(ToolActivePanelHelper, Panel):
 
 
 class NODE_PT_material_slots(Panel):
-    bl_space_type = "NODE_EDITOR"
+    bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'HEADER'
     bl_label = "Slot"
     bl_ui_units_x = 8
@@ -561,7 +572,6 @@ class NODE_PT_active_node_properties(Panel):
     bl_category = "Item"
     bl_label = "Properties"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_parent_id = 'NODE_PT_active_node_generic'
 
     @classmethod
     def poll(cls, context):
@@ -645,6 +655,7 @@ class NODE_PT_backdrop(Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.use_property_decorate = False
 
         snode = context.space_data
         layout.active = snode.show_backdrop
@@ -676,6 +687,7 @@ class NODE_PT_quality(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
+        layout.use_property_decorate = False
 
         snode = context.space_data
         tree = snode.node_tree
@@ -690,6 +702,8 @@ class NODE_PT_quality(bpy.types.Panel):
         col.prop(tree, "use_groupnode_buffer")
         col.prop(tree, "use_two_pass")
         col.prop(tree, "use_viewer_border")
+        col.separator()
+        col.prop(snode, "use_auto_render")
 
 
 class NODE_UL_interface_sockets(bpy.types.UIList):

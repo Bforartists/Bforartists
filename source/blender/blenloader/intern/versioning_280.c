@@ -715,6 +715,23 @@ static void do_version_constraints_copy_scale_power(ListBase *lb)
   }
 }
 
+static void do_versions_seq_alloc_transform_and_crop(ListBase *seqbase)
+{
+  for (Sequence *seq = seqbase->first; seq != NULL; seq = seq->next) {
+    if (seq->strip->transform == NULL) {
+      seq->strip->transform = MEM_callocN(sizeof(struct StripTransform), "StripTransform");
+    }
+
+    if (seq->strip->crop == NULL) {
+      seq->strip->crop = MEM_callocN(sizeof(struct StripCrop), "StripCrop");
+    }
+
+    if (seq->seqbase.first != NULL) {
+      do_versions_seq_alloc_transform_and_crop(&seq->seqbase);
+    }
+  }
+}
+
 void do_versions_after_linking_280(Main *bmain)
 {
   bool use_collection_compat_28 = true;
@@ -3446,6 +3463,51 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
     if (!DNA_struct_elem_find(fd->filesdna, "Light", "float", "sun_angle")) {
       LISTBASE_FOREACH (Light *, light, &bmain->lights) {
         light->sun_angle = 2.0f * atanf(light->area_size);
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 280, 70)) {
+    /* New image alpha modes. */
+    LISTBASE_FOREACH (Image *, image, &bmain->images) {
+      const int IMA_IGNORE_ALPHA = (1 << 12);
+      if (image->flag & IMA_IGNORE_ALPHA) {
+        image->alpha_mode = IMA_ALPHA_IGNORE;
+        image->flag &= ~IMA_IGNORE_ALPHA;
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 280, 71)) {
+    /* This assumes the Blender builtin config. Depending on the OCIO
+     * environment variable for versioning is weak, and these deprecated view
+     * transforms and look names don't seem to exist in other commonly used
+     * OCIO configs so .blend files created for those would be unaffected. */
+    for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+      ColorManagedViewSettings *view_settings;
+      view_settings = &scene->view_settings;
+
+      if (STREQ(view_settings->view_transform, "Default")) {
+        STRNCPY(view_settings->view_transform, "Standard");
+      }
+      else if (STREQ(view_settings->view_transform, "RRT") ||
+               STREQ(view_settings->view_transform, "Film")) {
+        STRNCPY(view_settings->view_transform, "Filmic");
+      }
+      else if (STREQ(view_settings->view_transform, "Log")) {
+        STRNCPY(view_settings->view_transform, "Filmic Log");
+      }
+
+      if (STREQ(view_settings->look, "Filmic - Base Contrast")) {
+        STRNCPY(view_settings->look, "None");
+      }
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 280, 72)) {
+    for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+      if (scene->ed != NULL) {
+        do_versions_seq_alloc_transform_and_crop(&scene->ed->seqbase);
       }
     }
   }

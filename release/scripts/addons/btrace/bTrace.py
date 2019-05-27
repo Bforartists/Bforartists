@@ -20,7 +20,7 @@
 # Add more options to curve radius/modulation plus cyclic/connect curve option
 
 import bpy
-import selection_utils
+# import selection_utils
 from bpy.types import Operator
 from random import (
         choice as rand_choice,
@@ -29,6 +29,63 @@ from random import (
         uniform as rand_uniform,
         )
 
+# Selection Module: Contributors: Mackraken, Andrew Hale (TrumanBlending)
+# Adapted from Mackraken's "Tools for Curves" addon
+
+
+selected = []
+
+
+class SelectionOrder(bpy.types.Operator):
+    """Store the object names in the order they are selected, """ \
+    """use RETURN key to confirm selection, ESCAPE key to cancel"""
+    bl_idname = "object.select_order"
+    bl_label = "Select with Order"
+    bl_options = {'UNDO'}
+
+    num_selected = 0
+
+    @classmethod
+    def poll(self, context):
+        return bpy.context.mode == 'OBJECT'
+
+    def update(self, context):
+        # Get the currently selected objects
+        sel = context.selected_objects
+        num = len(sel)
+
+        if num == 0:
+            # Reset the list
+            del selected[:]
+        elif num > self.num_selected:
+            # Get all the newly selected objects and add
+            new = [ob.name for ob in sel if ob.name not in selected]
+            selected.extend(new)
+        elif num < self.num_selected:
+            # Get the selected objects and remove from list
+            curnames = {ob.name for ob in sel}
+            selected[:] = [name for name in selected if name in curnames]
+
+        # Set the number of currently select objects
+        self.num_selected = len(selected)
+
+    def modal(self, context, event):
+        if event.type == 'RET':
+            # If return is pressed, finish the operator
+            return {'FINISHED'}
+        elif event.type == 'ESC':
+            # If escape is pressed, cancel the operator
+            return {'CANCELLED'}
+
+        # Update selection if we need to
+        self.update(context)
+        return {'PASS_THROUGH'}
+
+    def invoke(self, context, event):
+        self.update(context)
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
 
 def error_handlers(self, op_name, error, reports="ERROR", func=False):
     if self and reports:
@@ -115,9 +172,10 @@ class OBJECT_OT_objectconnect(Operator):
             if curve_handle == 'AUTOMATIC':  # hackish because of naming conflict in api
                 curve_handle = 'AUTO'
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.collections.keys()
-            if 'Btrace' not in bgroup:
-                bpy.ops.collections.create(name="Btrace")
+            bcollection = bpy.data.collections.keys()
+            if 'Btrace' not in bcollection:
+                mycol=bpy.data.collections.new(name="Btrace")
+                bpy.context.scene.collection.children.link(mycol)
             #  check if noise
             if Btrace.connect_noise:
                 bpy.ops.object.btfcnoise()
@@ -181,7 +239,9 @@ class OBJECT_OT_objectconnect(Operator):
             if Btrace.animate:   # Add Curve Grow it?
                 bpy.ops.curve.btgrow()
 
-            bpy.ops.object.collection_link(group="Btrace")  # add to Btrace group
+            bpy.data.collections["Btrace"].objects.link(curve) # add to Btrace collection
+            
+            # Check if we add grow curve
             if Btrace.animate:
                 bpy.ops.curve.btgrow()  # Add grow curve
 
@@ -213,10 +273,9 @@ def curvetracer(curvename, splinename):
     tracer.bevel_resolution = Btrace.curve_resolution
     tracer.bevel_depth = Btrace.curve_depth
     tracer.resolution_u = Btrace.curve_u
-
     return tracer, curve
 
-
+# Particle Trace
 class OBJECT_OT_particletrace(Operator):
     bl_idname = "particles.particletrace"
     bl_label = "Btrace: Particle Trace"
@@ -231,9 +290,10 @@ class OBJECT_OT_particletrace(Operator):
 
     def execute(self, context):
         try:
-            Btrace = context.window_manager.curve_tracer
+            Btrace = bpy.context.window_manager.curve_tracer
             particle_step = Btrace.particle_step    # step size in frames
             obj = bpy.context.object
+            obj = bpy.context.depsgraph.objects.get(ob.name, None)
             ps = obj.particle_systems.active
             curvelist = []
             curve_handle = Btrace.curve_handle
@@ -245,20 +305,24 @@ class OBJECT_OT_particletrace(Operator):
                 curve_handle = 'FREE'
 
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.collections.keys()
-            if 'Btrace' not in bgroup:
-                bpy.ops.collection.create(name="Btrace")
+            bcollection = bpy.data.collections.keys()
+            if 'Btrace' not in bcollection:
+                mycol=bpy.data.collections.new(name="Btrace")
+                bpy.context.scene.collection.children.link(mycol)
 
             if Btrace.curve_join:
                 tracer = curvetracer('Tracer', 'Splines')
+            
             for x in ps.particles:
                 if not Btrace.curve_join:
                     tracer = curvetracer('Tracer.000', 'Spline.000')
                 spline = tracer[0].splines.new('BEZIER')
+
                 # add point to spline based on step size
                 spline.bezier_points.add((x.lifetime - 1) // particle_step)
                 for t in list(range(int(x.lifetime))):
                     bpy.context.scene.frame_set(t + x.birth_time)
+                    
                     if not t % particle_step:
                         p = spline.bezier_points[t // particle_step]
                         p.co = x.location
@@ -266,12 +330,13 @@ class OBJECT_OT_particletrace(Operator):
                         p.handle_left_type = curve_handle
                 particlecurve = tracer[1]
                 curvelist.append(particlecurve)
+
             # add to group
             bpy.ops.object.select_all(action='DESELECT')
             for curveobject in curvelist:
                 curveobject.select_set(True)
                 bpy.context.view_layer.objects.active = curveobject
-                bpy.ops.object.collection_link(group="Btrace")
+                bpy.data.collections["Btrace"].objects.link(curveobject)
                 # Materials
                 trace_mats = addtracemat(curveobject.data)
                 if not trace_mats and check_materials is True:
@@ -310,6 +375,7 @@ class OBJECT_OT_traceallparticles(Operator):
     def execute(self, context):
         try:
             obj = context.object
+            eval_ob = bpy.context.depsgraph.objects.get(obj.name, None)
             ps = obj.particle_systems.active
             setting = ps.settings
 
@@ -336,7 +402,8 @@ class OBJECT_OT_traceallparticles(Operator):
             # Create new object with settings listed above
             curve = bpy.data.objects.new('Tracer', tracer)
             # Link newly created object to the scene
-            bpy.context.collection.objects.link(curve)
+            # bpy.context.view_layer.objects.link(curve)
+            bpy.context.scene.collection.objects.link(curve)
             # add a new Bezier point in the new curve
             spline = tracer.splines.new('BEZIER')
             spline.bezier_points.add(setting.count - 1)
@@ -666,11 +733,11 @@ class OBJECT_OT_meshfollow(Operator):
                         followed_item = meshobjs[objindex]
                         if drawmethod == 'VERTS':
                             # find Vert vector
-                            g_co = obj.matrix_local * followed_item.co
+                            g_co = obj.matrix_local @ followed_item.co
 
                         if drawmethod == 'FACES':
                             # find Face vector
-                            g_co = obj.matrix_local * followed_item.normal
+                            g_co = obj.matrix_local @ followed_item.normal
 
                         if drawmethod == 'EDGES':
                             v1 = followed_item.vertices[0]
@@ -678,7 +745,7 @@ class OBJECT_OT_meshfollow(Operator):
                             co1 = bpy.context.object.data.vertices[v1]
                             co2 = bpy.context.object.data.vertices[v2]
                             localcenter = co1.co.lerp(co2.co, 0.5)
-                            g_co = obj.matrix_world * localcenter
+                            g_co = obj.matrix_world @ localcenter
 
                     if drawmethod == 'OBJECT':
                         g_co = objindex.location.copy()
@@ -696,7 +763,7 @@ class OBJECT_OT_meshfollow(Operator):
                 spline = tracer.splines.new('BEZIER')
                 spline.bezier_points.add(len(co_list) - 1)
                 curve = bpy.data.objects.new('curve', tracer)
-                scn.objects.link(curve)
+                scn.collection.objects.link(curve)
                 curvelist.append(curve)
                 # render ready curve
                 tracer.resolution_u = Btrace.curve_u
@@ -721,9 +788,10 @@ class OBJECT_OT_meshfollow(Operator):
 
             # Run methods
             # Check if Btrace group exists, if not create
-            bgroup = bpy.data.collections.keys()
-            if 'Btrace' not in bgroup:
-                bpy.ops.collection.create(name="Btrace")
+            bcollection = bpy.data.collections.keys()
+            if 'Btrace' not in bcollection:
+                mycol=bpy.data.collections.new(name="Btrace")
+                bpy.context.scene.collection.children.link(mycol)
 
             Btrace = bpy.context.window_manager.curve_tracer
             sel = getsel_option()  # Get selection
@@ -735,15 +803,20 @@ class OBJECT_OT_meshfollow(Operator):
                 curvelist.append(make_curve(vector_list))
             else:
                 for i in sel:
+                    print(i)
                     vector_list = get_coord(i)
-                    curvelist.append(make_curve(vector_list))
+                    make_curve(vector_list)
+                    # curvelist.append(make_curve(vector_list)) # append happens in function
             # Select new curves and add to group
             bpy.ops.object.select_all(action='DESELECT')
             for curveobject in curvelist:
                 if curveobject.type == 'CURVE':
                     curveobject.select_set(True)
-                    context.view_layer.objects.active = curveobject
-                    bpy.ops.object.collection_link(group="Btrace")
+                    bpy.context.view_layer.objects.active = curveobject
+                    
+                    bpy.data.collections["Btrace"].objects.link(curveobject) #2.8 link obj to collection
+                    bpy.context.scene.collection.objects.unlink(curveobject) # unlink from scene collection
+                    # bpy.ops.object.group_link(group="Btrace")
                     # Materials
                     trace_mats = addtracemat(curveobject.data)
                     if not trace_mats and check_materials is True:
@@ -779,7 +852,7 @@ def addtracemat(matobj):
         matslots = bpy.context.object.data.materials.items()
 
         if len(matslots) < 1:  # Make sure there is only one material slot
-            engine = bpy.context.scene.render.engine
+            
             Btrace = bpy.context.window_manager.curve_tracer
 
             # Check if color blender is to be run
@@ -836,16 +909,14 @@ def addtracemat(matobj):
                     mat_color = Btrace.trace_mat_color
 
                 TraceMat = bpy.data.materials.new('TraceMat')
-                # add cycles or BI render material options
-                if engine == 'CYCLES':
-                    TraceMat.use_nodes = True
-                    Diffuse_BSDF = TraceMat.node_tree.nodes['Diffuse BSDF']
-                    r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                    Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                    TraceMat.diffuse_color = mat_color
-                else:
-                    TraceMat.diffuse_color = mat_color
-                    TraceMat.specular_intensity = 0.5
+                
+                TraceMat.use_nodes = True 
+                BSDF = TraceMat.node_tree.nodes[1]
+                r, g, b = mat_color[0], mat_color[1], mat_color[2]
+                BSDF.inputs[0].default_value = [r, g, b, 1] # change node color
+                TraceMat.diffuse_color = [r, g, b, 1] # change viewport color
+                
+               
                 # Add material to object
                 matobj.materials.append(bpy.data.materials.get(TraceMat.name))
 
@@ -900,7 +971,7 @@ class OBJECT_OT_materialChango(Operator):
                 theObj = i
                 # Check to see if object has materials
                 checkMaterials = len(theObj.data.materials)
-                if engine == 'CYCLES':
+                if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
                     materialName = "colorblendMaterial"
                     madMat = bpy.data.materials.new(materialName)
                     madMat.use_nodes = True
@@ -924,67 +995,67 @@ class OBJECT_OT_materialChango(Operator):
 
                 # Random material function
                 def colorblenderRandom():
-                    randomRGB = (rand_random(), rand_random(), rand_random())
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    randomRGB = (rand_random(), rand_random(), rand_random(), 1)
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = randomRGB
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = randomRGB
 
                 def colorblenderCustom():
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = rand_choice(customColors)
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = rand_choice(customColors)
 
                 # Black and white color
                 def colorblenderBW():
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = rand_choice(bwColors)
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = rand_choice(bwColors)
 
                 # Bright colors
                 def colorblenderBright():
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = rand_choice(brightColors)
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = rand_choice(brightColors)
 
                 # Earth Tones
                 def colorblenderEarth():
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = rand_choice(earthColors)
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = rand_choice(earthColors)
 
                 # Green to Blue Tones
                 def colorblenderGreenBlue():
-                    if engine == 'CYCLES':
-                        Diffuse_BSDF = madMat.node_tree.nodes['Diffuse BSDF']
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
+                        Principled_BSDF = madMat.node_tree.nodes[1]
                         mat_color = rand_choice(greenblueColors)
                         r, g, b = mat_color[0], mat_color[1], mat_color[2]
-                        Diffuse_BSDF.inputs[0].default_value = [r, g, b, 1]
-                        madMat.diffuse_color = mat_color
+                        Principled_BSDF.inputs[0].default_value = [r, g, b, 1]
+                        madMat.diffuse_color = mat_color[0], mat_color[1], mat_color[2], 1
                     else:
                         madMat.diffuse_color = rand_choice(greenblueColors)
 
@@ -1014,9 +1085,9 @@ class OBJECT_OT_materialChango(Operator):
                         pass
 
                     # Add keyframe to material
-                    if engine == 'CYCLES':
+                    if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
                         madMat.node_tree.nodes[
-                                'Diffuse BSDF'].inputs[0].keyframe_insert('default_value')
+                                1].inputs[0].keyframe_insert('default_value')
                         # not sure if this is need, it's viewport color only
                         madMat.keyframe_insert('diffuse_color')
                     else:
@@ -1061,9 +1132,9 @@ class OBJECT_OT_clearColorblender(Operator):
                 while start <= (end + 100):
                     context.scene.frame_set(frame=start)
                     try:
-                        if engine == 'CYCLES':
+                        if engine == 'CYCLES' or engine == 'BLENDER_EEVEE':
                             matCl.node_tree.nodes[
-                                'Diffuse BSDF'].inputs[0].keyframe_delete('default_value')
+                                1].inputs[0].keyframe_delete('default_value')
                         elif engine == 'BLENDER_RENDER':
                             matCl.keyframe_delete('diffuse_color')
                     except:

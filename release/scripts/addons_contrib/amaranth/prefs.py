@@ -75,7 +75,7 @@ class AmaranthToolsetPreferences(bpy.types.AddonPreferences):
             text="Here you can enable or disable specific tools, "
                  "in case they interfere with others or are just plain annoying")
 
-        split = layout.split(percentage=0.25)
+        split = layout.split(factor=0.25)
 
         col = split.column()
         sub = col.column(align=True)

@@ -189,8 +189,7 @@ def pov_superellipsoid_define(context, op, ob):
         mesh = pov_define_mesh(mesh, verts, [], faces, "SuperEllipsoid")
 
         if not ob:
-            ob_base = object_utils.object_data_add(context, mesh, operator=None)
-            ob = ob_base.object
+            ob = object_utils.object_data_add(context, mesh, operator=None)
             #engine = context.scene.render.engine what for?
             ob = context.object
             ob.name =  ob.data.name = "PovSuperellipsoid"
@@ -395,9 +394,7 @@ def pov_supertorus_define(context, op, ob):
                                   st_n2)
         mesh = pov_define_mesh(mesh, verts, [], faces, "PovSuperTorus", True)
         if not ob:
-            ob_base = object_utils.object_data_add(context, mesh, operator=None)
-
-            ob = ob_base.object
+            ob = object_utils.object_data_add(context, mesh, operator=None)
             ob.pov.object_as = 'SUPERTORUS'
             ob.pov.st_major_radius = st_R
             ob.pov.st_minor_radius = st_r
@@ -896,8 +893,7 @@ def pov_cone_define(context, op, ob):
 
     mesh = pov_define_mesh(mesh, verts, [], faces, "PovCone", True)
     if not ob:
-        ob_base = object_utils.object_data_add(context, mesh, operator=None)
-        ob = ob_base.object
+        ob = object_utils.object_data_add(context, mesh, operator=None)
         ob.pov.object_as = "CONE"
         ob.pov.cone_base_radius = base
         ob.pov.cone_cap_radius = cap
@@ -1822,8 +1818,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                                     materials.append((int(cache[m0]),int(cache[m1]),int(cache[m2])))
                                     faces.append((int(cache[v0]),int(cache[v1]),int(cache[v2])))
                             #mesh = pov_define_mesh(None, verts, [], faces, name, hide_geometry=False)
-                            #ob_base = object_utils.object_data_add(context, mesh, operator=None)
-                            #ob = ob_base.object
+                            #ob = object_utils.object_data_add(context, mesh, operator=None)
 
                             me = bpy.data.meshes.new(name) ########
                             ob = bpy.data.objects.new(name, me) ##########

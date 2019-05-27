@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Property Chart",
     "author": "Campbell Barton (ideasman42)",
-    "version": (0, 1),
-    "blender": (2, 57, 0),
+    "version": (0, 1, 1),
+    "blender": (2, 80, 0),
     "location": "Tool Shelf",
     "description": ("Edit arbitrary selected properties for "
                     "objects/sequence strips of the same type"),
@@ -189,7 +189,7 @@ class View3DEditProps(Panel):
     bl_idname = "SYSPROP_CHART_PT_view3d"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-
+    bl_category = "Item"
     bl_label = "Property Chart"
     bl_context = "objectmode"
 
@@ -208,7 +208,7 @@ class SequencerEditProps(Panel):
     bl_idname = "SYSPROP_CHART_PT_sequencer"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
-
+    bl_category = "Item"
     bl_label = "Property Chart"
 
     _PROP_STORAGE_ID = "sequencer_edit_props"
@@ -267,9 +267,19 @@ class CopyPropertyChart(Operator):
 
         return {'FINISHED'}
 
+# List The Classes #
+
+classes = (
+    AddPresetProperties,
+    SCENE_MT_properties_presets,
+    View3DEditProps,
+    SequencerEditProps,
+    CopyPropertyChart
+)
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     Scene = bpy.types.Scene
 
@@ -286,7 +296,8 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
     Scene = bpy.types.Scene
 

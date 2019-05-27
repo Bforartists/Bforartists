@@ -2655,16 +2655,9 @@ class Dimension(bpy.types.Operator):
             bpy.ops.object.mode_set(mode = 'OBJECT')
             bpy.context.view_layer.update()
 
-        # turn off undo
-        undo = bpy.context.preferences.edit.use_global_undo
-        bpy.context.preferences.edit.use_global_undo = False
-
         # main function
         self.align_matrix = align_matrix(context, self.Dimension_startlocation)
         main(self, self.align_matrix)
-
-        # restore pre operator undo state
-        bpy.context.preferences.edit.use_global_undo = undo
 
         return {'FINISHED'}
 
