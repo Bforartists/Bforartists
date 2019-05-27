@@ -1175,7 +1175,7 @@ class SCENE_PT_Main(bpy.types.Panel):
     bl_label = "3D-Coat Applink"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = 'View'
+    bl_category = '3D-Coat'
 
     @classmethod
     def poll(cls, context):

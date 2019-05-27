@@ -10,11 +10,10 @@ import bpy
 import os
 
 class AdjustableOperatorFromTexture(bpy.types.Operator):
-
-    """This operator generates adjustable materials from textures in Cycles.
-
-This is a subclass from bpy.types.Operator.
-"""
+    """
+    This operator generates adjustable materials from textures in Cycles.
+    This is a subclass from bpy.types.Operator.
+    """
 
     # Metadata of the operator
 
@@ -24,18 +23,18 @@ This is a subclass from bpy.types.Operator.
 
     # Variables used for storing the filepath given by blender's file manager
 
-    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
-    filename = bpy.props.StringProperty()
-    directory = bpy.props.StringProperty(subtype="FILE_PATH")
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
+    filename: bpy.props.StringProperty()
+    directory: bpy.props.StringProperty(subtype="FILE_PATH")
 
 
 
 
     def execute(self, context):
-
-        """This is the main runnable method of the operator.
-
-This creates all the node setup."""
+        """
+        This is the main runnable method of the operator.
+        This creates all the node setup.
+        """
 
         # Create the material
 
@@ -104,10 +103,11 @@ This creates all the node setup."""
         return {"FINISHED"}
 
     def invoke(self, context, event):
-
-        """This method opens the file browser. After that, the
-execute(...) method gets ran, creating the node setup.
-It also checks that the render engine is Cycles.  """
+        """
+        This method opens the file browser. After that, the
+        execute(...) method gets ran, creating the node setup.
+        It also checks that the render engine is Cycles.
+        """
 
         if bpy.context.scene.render.engine == 'CYCLES':
             self.filename = ""

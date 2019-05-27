@@ -20,8 +20,8 @@
 
 __author__ = "McBuff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 from math import sqrt
 
@@ -31,6 +31,7 @@ from bpy.props import (
     FloatProperty,
     IntVectorProperty,
     BoolProperty,
+    StringProperty,
 )
 import bmesh
 from mathutils import Vector
@@ -62,9 +63,9 @@ def _is_valid_context(context):
     return True
 
 
-def _measure_wsuv_info(obj, tex_size=None):
+def _measure_wsuv_info(obj, method='FIRST', tex_size=None):
     mesh_area = common.measure_mesh_area(obj)
-    uv_area = common.measure_uv_area(obj, tex_size)
+    uv_area = common.measure_uv_area(obj, method, tex_size)
 
     if not uv_area:
         return None, mesh_area, None
@@ -177,6 +178,16 @@ def _apply(obj, origin, factor):
     bmesh.update_edit_mesh(obj.data)
 
 
+def _get_target_textures(_, __):
+    images = common.find_images(bpy.context.active_object)
+    items = []
+    items.append(("[Average]", "[Average]", "Average of all textures"))
+    items.append(("[Max]", "[Max]", "Max of all textures"))
+    items.append(("[Min]", "[Min]", "Min of all textures"))
+    items.extend([(img.name, img.name, "") for img in images])
+    return items
+
+
 @PropertyClassRegistry()
 class _Properties:
     idname = "world_scale_uv"
@@ -254,7 +265,17 @@ class _Properties:
                 ('RIGHT_BOTTOM', "Right Bottom", "Right Bottom")
 
             ],
-            default='CENTER'
+            default='CENTER',
+        )
+        scene.muv_world_scale_uv_measure_tgt_texture = EnumProperty(
+            name="Texture",
+            description="Texture to be measured",
+            items=_get_target_textures
+        )
+        scene.muv_world_scale_uv_apply_tgt_texture = EnumProperty(
+            name="Texture",
+            description="Texture to be applied",
+            items=_get_target_textures
         )
 
     @classmethod
@@ -267,18 +288,27 @@ class _Properties:
         del scene.muv_world_scale_uv_tgt_scaling_factor
         del scene.muv_world_scale_uv_mode
         del scene.muv_world_scale_uv_origin
+        del scene.muv_world_scale_uv_measure_tgt_texture
+        del scene.muv_world_scale_uv_apply_tgt_texture
 
 
 @BlClassRegistry()
+@compat.make_annotations
 class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
     """
     Operation class: Measure face size
     """
 
-    bl_idname = "uv.muv_ot_world_scale_uv_measure"
+    bl_idname = "uv.muv_world_scale_uv_measure"
     bl_label = "Measure World Scale UV"
     bl_description = "Measure face size for scale calculation"
     bl_options = {'REGISTER', 'UNDO'}
+
+    tgt_texture = StringProperty(
+        name="Texture",
+        description="Texture to be measured",
+        default="[Average]"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -291,7 +321,16 @@ class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
         sc = context.scene
         obj = context.active_object
 
-        uv_area, mesh_area, density = _measure_wsuv_info(obj)
+        if self.tgt_texture == "[Average]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'AVERAGE')
+        elif self.tgt_texture == "[Max]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MAX')
+        elif self.tgt_texture == "[Min]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MIN')
+        else:
+            texture = bpy.data.images[self.tgt_texture]
+            uv_area, mesh_area, density = _measure_wsuv_info(
+                obj, 'USER_SPECIFIED', texture.size)
         if not uv_area:
             self.report({'WARNING'},
                         "Object must have more than one UV map and texture")
@@ -315,7 +354,7 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
     Operation class: Apply scaled UV (Manual)
     """
 
-    bl_idname = "uv.muv_ot_world_scale_uv_apply_manual"
+    bl_idname = "uv.muv_world_scale_uv_apply_manual"
     bl_label = "Apply World Scale UV (Manual)"
     bl_description = "Apply scaled UV based on user specification"
     bl_options = {'REGISTER', 'UNDO'}
@@ -373,7 +412,8 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
             bm.faces.ensure_lookup_table()
 
         tex_size = self.tgt_texture_size
-        uv_area, _, density = _measure_wsuv_info(obj, tex_size)
+        uv_area, _, density = _measure_wsuv_info(obj, 'USER_SPECIFIED',
+                                                 tex_size)
         if not uv_area:
             self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
@@ -413,7 +453,7 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
     Operation class: Apply scaled UV (Scaling Density)
     """
 
-    bl_idname = "uv.muv_ot_world_scale_uv_apply_scaling_density"
+    bl_idname = "uv.muv_world_scale_uv_apply_scaling_density"
     bl_label = "Apply World Scale UV (Scaling Density)"
     bl_description = "Apply scaled UV with scaling density"
     bl_options = {'REGISTER', 'UNDO'}
@@ -460,6 +500,11 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
         default=True,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
+    tgt_texture = StringProperty(
+        name="Texture",
+        description="Texture to be applied",
+        default="[Average]"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -476,7 +521,16 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
 
-        uv_area, _, density = _measure_wsuv_info(obj)
+        if self.tgt_texture == "[Average]":
+            uv_area, _, density = _measure_wsuv_info(obj, 'AVERAGE')
+        elif self.tgt_texture == "[Max]":
+            uv_area, _, density = _measure_wsuv_info(obj, 'MAX')
+        elif self.tgt_texture == "[Min]":
+            uv_area, _, density = _measure_wsuv_info(obj, 'MIN')
+        else:
+            tgt_texture = bpy.data.images[self.tgt_texture]
+            uv_area, _, density = _measure_wsuv_info(obj, 'USER_SPECIFIED',
+                                                     tgt_texture.size)
         if not uv_area:
             self.report({'WARNING'},
                         "Object must have more than one UV map and texture")
@@ -537,7 +591,7 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
     Operation class: Apply scaled UV (Proportional to mesh)
     """
 
-    bl_idname = "uv.muv_ot_world_scale_uv_apply_proportional_to_mesh"
+    bl_idname = "uv.muv_world_scale_uv_apply_proportional_to_mesh"
     bl_label = "Apply World Scale UV (Proportional to mesh)"
     bl_description = "Apply scaled UV proportionaled to mesh"
     bl_options = {'REGISTER', 'UNDO'}
@@ -586,6 +640,11 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
         default=True,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
+    tgt_texture = StringProperty(
+        name="Texture",
+        description="Texture to be applied",
+        default="[Average]"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -602,7 +661,16 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
 
-        uv_area, mesh_area, density = _measure_wsuv_info(obj)
+        if self.tgt_texture == "[Average]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'AVERAGE')
+        elif self.tgt_texture == "[Max]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MAX')
+        elif self.tgt_texture == "[Min]":
+            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MIN')
+        else:
+            tgt_texture = bpy.data.images[self.tgt_texture]
+            uv_area, mesh_area, density = _measure_wsuv_info(
+                obj, 'USER_SPECIFIED', tgt_texture.size)
         if not uv_area:
             self.report({'WARNING'},
                         "Object must have more than one UV map and texture")

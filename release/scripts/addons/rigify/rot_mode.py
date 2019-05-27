@@ -259,7 +259,7 @@ class CONVERT_OT_quat2eu_current_action(bpy.types.Operator):
     bl_label = 'Convert Current Action'
     bl_idname = 'rigify_quat2eu.current'
     bl_description = 'Converts bones in current Action'
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # on mouse up:
     def invoke(self, context, event):
@@ -285,7 +285,7 @@ class CONVERT_OT_quat2eu_all_actions(bpy.types.Operator):
     bl_label = 'Convert All Actions'
     bl_idname = 'rigify_quat2eu.all'
     bl_description = 'Converts bones in every Action'
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # on mouse up:
     def invoke(self, context, event):

@@ -340,7 +340,7 @@ class ME_OT_MExtrude(Operator):
                     nf.normal_update()
                     no = nf.normal.copy()
 
-                    # face/obj coördinates
+                    # face/obj coordinates
                     if self.opt1 is True:
                         ce = nf.calc_center_bounds()
                     else:

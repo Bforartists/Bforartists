@@ -66,19 +66,19 @@ def ui_color_management_presets(self, context):
     row = layout.row(align=True)
     row.menu("AMTH_SCENE_MT_color_management_presets",
              text=bpy.types.AMTH_SCENE_MT_color_management_presets.bl_label)
-    row.operator("scene.color_management_preset_add", text="", icon="ZOOMIN")
+    row.operator("scene.color_management_preset_add", text="", icon="ZOOM_IN")
     row.operator("scene.color_management_preset_add",
-                 text="", icon="ZOOMOUT").remove_active = True
+                 text="", icon="ZOOM_OUT").remove_active = True
     layout.separator()
 
 
 def register():
     bpy.utils.register_class(AMTH_AddPresetColorManagement)
     bpy.utils.register_class(AMTH_SCENE_MT_color_management_presets)
-    bpy.types.SCENE_PT_color_management.prepend(ui_color_management_presets)
+    bpy.types.RENDER_PT_color_management.prepend(ui_color_management_presets)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_AddPresetColorManagement)
     bpy.utils.unregister_class(AMTH_SCENE_MT_color_management_presets)
-    bpy.types.SCENE_PT_color_management.remove(ui_color_management_presets)
+    bpy.types.RENDER_PT_color_management.remove(ui_color_management_presets)

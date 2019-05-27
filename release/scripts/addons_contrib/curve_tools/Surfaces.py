@@ -20,8 +20,8 @@ class LoftedSplineSurface:
         #deltaPar = 1.0 / float(self.resolution - 1)
 
         par = 0.0
-        pointA = worldMatrixA * self.splineA.CalcPoint(par)
-        pointO = worldMatrixO * self.splineO.CalcPoint(par)
+        pointA = worldMatrixA @ self.splineA.CalcPoint(par)
+        pointO = worldMatrixO @ self.splineO.CalcPoint(par)
         self.bMesh.verts[self.vert0Index].co = pointA
         self.bMesh.verts[self.vert0Index + 1].co = pointO
 
@@ -29,8 +29,8 @@ class LoftedSplineSurface:
         for i in range(1, self.resolution):
             par = float(i) / fltResm1
 
-            pointA = worldMatrixA * self.splineA.CalcPoint(par)
-            pointO = worldMatrixO * self.splineO.CalcPoint(par)
+            pointA = worldMatrixA @ self.splineA.CalcPoint(par)
+            pointO = worldMatrixO @ self.splineO.CalcPoint(par)
             self.bMesh.verts[self.vert0Index + 2 * i].co = pointA
             self.bMesh.verts[self.vert0Index + 2 * i + 1].co = pointO
 
@@ -151,7 +151,7 @@ class SweptSplineSurface:
             par = float(i) / fltResOm1
 
             pointO = self.splineO.CalcPoint(par)
-            worldPointsO.append(worldMatrixO * pointO)
+            worldPointsO.append(worldMatrixO @ pointO)
 
             derivativeO = self.splineO.CalcDerivative(par)
             localDerivativesO.append(derivativeO)
@@ -164,12 +164,12 @@ class SweptSplineSurface:
             currDerivativeO = localDerivativesO[iO]
             localRotMatO = Math.CalcRotationMatrix(prevDerivativeO, currDerivativeO)
 
-            currLocalAToLocalO = worldMatrixOInv * currWorldMatrixA
+            currLocalAToLocalO = worldMatrixOInv @ currWorldMatrixA
             worldPointsA = []
             for iA in range(self.resolutionA):
-                pointALocalToO = currLocalAToLocalO * localPointsA[iA]
-                rotatedPointA = localRotMatO * pointALocalToO
-                worldPointsA.append(worldMatrixO * rotatedPointA)
+                pointALocalToO = currLocalAToLocalO @ localPointsA[iA]
+                rotatedPointA = localRotMatO @ pointALocalToO
+                worldPointsA.append(worldMatrixO @ rotatedPointA)
 
             worldOffsetsA = []
             worldPoint0A = worldPointsA[0]
@@ -182,7 +182,7 @@ class SweptSplineSurface:
                 self.bMesh.verts[iVert].co = currVert
 
             prevDerivativeO = currDerivativeO
-            currWorldMatrixA = worldMatrixO * localRotMatO * currLocalAToLocalO
+            currWorldMatrixA = worldMatrixO @ localRotMatO @ currLocalAToLocalO
 
 
     def AddFaces(self):
@@ -301,13 +301,13 @@ class BirailedSplineSurface:
             par = float(i) / fltResRailsm1
 
             pointRail1 = self.rail1Spline.CalcPoint(par)
-            worldPointsRail1.append(worldMatrixRail1 * pointRail1)
+            worldPointsRail1.append(worldMatrixRail1 @ pointRail1)
 
             derivativeRail1 = self.rail1Spline.CalcDerivative(par)
             localDerivativesRail1.append(derivativeRail1)
 
             pointRail2 = self.rail2Spline.CalcPoint(par)
-            worldPointsRail2.append(worldMatrixRail2 * pointRail2)
+            worldPointsRail2.append(worldMatrixRail2 @ pointRail2)
 
 
         currWorldMatrixProfile = worldMatrixProfile
@@ -317,12 +317,12 @@ class BirailedSplineSurface:
             currDerivativeRail1 = localDerivativesRail1[iRail]
             localRotMatRail1 = Math.CalcRotationMatrix(prevDerivativeRail1, currDerivativeRail1)
 
-            currLocalProfileToLocalRail1 = worldMatrixRail1Inv * currWorldMatrixProfile
+            currLocalProfileToLocalRail1 = worldMatrixRail1Inv @ currWorldMatrixProfile
             worldPointsProfileRail1 = []
             for iProfile in range(self.resolutionProfile):
-                pointProfileLocalToRail1 = currLocalProfileToLocalRail1 * localPointsProfile[iProfile]
-                rotatedPointProfile = localRotMatRail1 * pointProfileLocalToRail1
-                worldPointsProfileRail1.append(worldMatrixRail1 * rotatedPointProfile)
+                pointProfileLocalToRail1 = currLocalProfileToLocalRail1 @ localPointsProfile[iProfile]
+                rotatedPointProfile = localRotMatRail1 @ pointProfileLocalToRail1
+                worldPointsProfileRail1.append(worldMatrixRail1 @ rotatedPointProfile)
 
             worldOffsetsProfileRail1 = []
             worldPoint0ProfileRail1 = worldPointsProfileRail1[0]
@@ -332,13 +332,16 @@ class BirailedSplineSurface:
             worldEndPointProfileRail1 = worldStartPointProfileRail1 + worldOffsetsProfileRail1[-1]
             v3From = worldEndPointProfileRail1 - worldStartPointProfileRail1
             v3To = worldPointsRail2[iRail] - worldStartPointProfileRail1
-            scaleFactorRail2 = v3To.magnitude / v3From.magnitude
+            if not v3From.magnitude == 0:
+                scaleFactorRail2 = v3To.magnitude / v3From.magnitude
+            else:
+                scaleFactorRail2 = 1
             rotMatRail2 = Math.CalcRotationMatrix(v3From, v3To)
 
             worldOffsetsProfileRail2 = []
             for iProfile in range(self.resolutionProfile):
                 offsetProfileRail1 = worldOffsetsProfileRail1[iProfile]
-                worldOffsetsProfileRail2.append(rotMatRail2 * (offsetProfileRail1 * scaleFactorRail2))
+                worldOffsetsProfileRail2.append(rotMatRail2 @ (offsetProfileRail1 * scaleFactorRail2))
 
 
             for iProfile in range(self.resolutionProfile):
@@ -347,7 +350,7 @@ class BirailedSplineSurface:
                 self.bMesh.verts[iVert].co = currVert
 
             prevDerivativeRail1 = currDerivativeRail1
-            currWorldMatrixProfile = worldMatrixRail1 * localRotMatRail1 * currLocalProfileToLocalRail1
+            currWorldMatrixProfile = worldMatrixRail1 @ localRotMatRail1 @ currLocalProfileToLocalRail1
 
 
     def AddFaces(self):

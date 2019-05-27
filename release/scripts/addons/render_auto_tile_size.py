@@ -20,8 +20,8 @@ bl_info = {
     "name": "Auto Tile Size",
     "description": "Estimate and set the tile size that will render the fastest",
     "author": "Greg Zaal",
-    "version": (3, 1, 2),
-    "blender": (2, 74, 0),
+    "version": (3, 1, 3),
+    "blender": (2, 80, 0),
     "location": "Render Settings > Performance",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php?title=Extensions:2.6/Py/"
@@ -156,7 +156,7 @@ class AutoTileSizeSettings(PropertyGroup):
     threads_error: BoolProperty(
             options={'HIDDEN'}
             )
-    num_tiles = IntVectorProperty(
+    num_tiles: IntVectorProperty(
             default=(0, 0),
             size=2,
             options={'HIDDEN'}
@@ -173,7 +173,7 @@ class AutoTileSizeSettings(PropertyGroup):
             default='',
             options={'HIDDEN'}
             )
-    prev_res = IntVectorProperty(
+    prev_res: IntVectorProperty(
             default=(0, 0),
             size=2,
             options={'HIDDEN'}
@@ -187,7 +187,7 @@ class AutoTileSizeSettings(PropertyGroup):
             size=4,
             options={'HIDDEN'}
             )
-    prev_actual_tile_size = IntVectorProperty(
+    prev_actual_tile_size: IntVectorProperty(
             default=(0, 0),
             size=2,
             options={'HIDDEN'}
@@ -460,14 +460,16 @@ def menu_func_cycles(self, context):
     ui_layout('CYCLES', self.layout, context)
 
 
-def menu_func_bi(self, context):
-    ui_layout('BLENDER_RENDER', self.layout, context)
-
-
 # ##### REGISTRATION #####
 
+classes = (
+    AutoTileSizeSettings,
+    SetTileSize
+)
+
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     bpy.types.Scene.ats_settings = PointerProperty(
                                         type=AutoTileSizeSettings
@@ -479,13 +481,11 @@ def register():
     if cycles_panel is not None:
         cycles_panel.append(menu_func_cycles)
 
-    bpy.types.RENDER_PT_performance.append(menu_func_bi)
-    bpy.app.handlers.scene_update_post.append(on_scene_update)
+    bpy.app.handlers.depsgraph_update_post.append(on_scene_update)
 
 
 def unregister():
-    bpy.app.handlers.scene_update_post.remove(on_scene_update)
-    bpy.types.RENDER_PT_performance.remove(menu_func_bi)
+    bpy.app.handlers.depsgraph_update_post.remove(on_scene_update)
 
     cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_performance", None)
     if cycles_panel is not None:
@@ -493,7 +493,8 @@ def unregister():
 
     del bpy.types.Scene.ats_settings
 
-    bpy.utils.unregister_module(__name__)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

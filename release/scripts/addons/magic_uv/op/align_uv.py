@@ -20,8 +20,8 @@
 
 __author__ = "imdjs, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import math
 from math import atan2, tan, sin, cos
@@ -356,7 +356,7 @@ class _Properties:
 @compat.make_annotations
 class MUV_OT_AlignUV_Circle(bpy.types.Operator):
 
-    bl_idname = "uv.muv_ot_align_uv_circle"
+    bl_idname = "uv.muv_align_uv_circle"
     bl_label = "Align UV (Circle)"
     bl_description = "Align UV coordinates to Circle"
     bl_options = {'REGISTER', 'UNDO'}
@@ -397,22 +397,39 @@ class MUV_OT_AlignUV_Circle(bpy.types.Operator):
         c, r = _get_circle(uvs[0:3])
         new_uvs = _calc_v_on_circle(uvs, c, r)
 
-        # check center UV of circle
+        # check if center is identical
+        center_is_identical = False
         center = loop_seqs[0][-1][0].vert
-        for hseq in loop_seqs[1:]:
-            if len(hseq[-1]) != 1:
-                self.report({'WARNING'}, "Last face must be triangle")
-                return {'CANCELLED'}
-            if hseq[-1][0].vert != center:
-                self.report({'WARNING'}, "Center must be identical")
-                return {'CANCELLED'}
+        if (len(loop_seqs[0][-1]) == 1) and loop_seqs[0][-1][0].vert == center:
+            center_is_identical = True
+
+        # check if topology is correct
+        if center_is_identical:
+            for hseq in loop_seqs[1:]:
+                if len(hseq[-1]) != 1:
+                    self.report({'WARNING'}, "Last face must be triangle")
+                    return {'CANCELLED'}
+                if hseq[-1][0].vert != center:
+                    self.report({'WARNING'}, "Center must be identical")
+                    return {'CANCELLED'}
+        else:
+            for hseq in loop_seqs[1:]:
+                if len(hseq[-1]) == 1:
+                    self.report({'WARNING'}, "Last face must not be triangle")
+                    return {'CANCELLED'}
+                if hseq[-1][0].vert == center:
+                    self.report({'WARNING'}, "Center must not be identical")
+                    return {'CANCELLED'}
 
         # align to circle
         if self.transmission:
             for hidx, hseq in enumerate(loop_seqs):
                 for vidx, pair in enumerate(hseq):
                     all_ = int((len(hseq) + 1) / 2)
-                    r = (all_ - int((vidx + 1) / 2)) / all_
+                    if center_is_identical:
+                        r = (all_ - int((vidx + 1) / 2)) / all_
+                    else:
+                        r = (1 + all_ - int((vidx + 1) / 2)) / all_
                     pair[0][uv_layer].uv = c + (new_uvs[hidx] - c) * r
                     if self.select:
                         pair[0][uv_layer].select = True
@@ -442,7 +459,7 @@ class MUV_OT_AlignUV_Circle(bpy.types.Operator):
 @compat.make_annotations
 class MUV_OT_AlignUV_Straighten(bpy.types.Operator):
 
-    bl_idname = "uv.muv_ot_align_uv_straighten"
+    bl_idname = "uv.muv_align_uv_straighten"
     bl_label = "Align UV (Straighten)"
     bl_description = "Straighten UV coordinates"
     bl_options = {'REGISTER', 'UNDO'}
@@ -594,7 +611,7 @@ class MUV_OT_AlignUV_Straighten(bpy.types.Operator):
 @compat.make_annotations
 class MUV_OT_AlignUV_Axis(bpy.types.Operator):
 
-    bl_idname = "uv.muv_ot_align_uv_axis"
+    bl_idname = "uv.muv_align_uv_axis"
     bl_label = "Align UV (XY-Axis)"
     bl_description = "Align UV to XY-axis"
     bl_options = {'REGISTER', 'UNDO'}

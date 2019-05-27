@@ -20,29 +20,30 @@
 bl_info = {
     "name": "Btrace",
     "author": "liero, crazycourier, Atom, Meta-Androcto, MacKracken",
-    "version": (1, 2, 1),
-    "blender": (2, 78, 0),
-    "location": "View3D > Tools",
+    "version": (1, 2, 2),
+    "blender": (2, 80, 0),
+    "location": "View3D",
     "description": "Tools for converting/animating objects/particles into curves",
-    "warning": "",
+    "warning": "Particle Tracers not working",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Btrace",
     "category": "Add Curve"}
 
-if "bpy" in locals():
-    import importlib
-    importlib.reload(bTrace_props)
-    importlib.reload(bTrace)
-else:
-    from . import bTrace_props
-    from . import bTrace
-
 import bpy
+
+# if "bpy" in locals():
+#     import importlib
+#     importlib.reload(bTrace_props)
+#     importlib.reload(bTrace)
+# else:
+#     from . import bTrace_props
+#     from . import bTrace
+from . import bTrace_props
+from . import bTrace
+
 from bpy.types import AddonPreferences
-from .bTrace_props import (
-    TracerProperties,
-    addTracerObjectPanel,
-)
-from .bTrace import (
+from . bTrace_props import TracerProperties
+
+from . bTrace import (
     OBJECT_OT_convertcurve,
     OBJECT_OT_objecttrace,
     OBJECT_OT_objectconnect,
@@ -56,6 +57,8 @@ from .bTrace import (
     OBJECT_OT_materialChango,
     OBJECT_OT_clearColorblender,
 )
+
+from . bTrace_panel import addTracerObjectPanel
 from bpy.props import (
     EnumProperty,
     PointerProperty,
@@ -104,21 +107,21 @@ classes = (
     OBJECT_OT_meshfollow,
     OBJECT_OT_materialChango,
     OBJECT_OT_clearColorblender,
-    btrace_preferences,
+    btrace_preferences
     )
 
 
+
+# register, unregister = bpy.utils.register_classes_factory(classes)
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.WindowManager.curve_tracer = PointerProperty(type=TracerProperties)
-
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     del bpy.types.WindowManager.curve_tracer
 
-
-if __name__ == "__main__":
-    register()
+# if __name__ == "__main__":
+#     register()

@@ -20,8 +20,8 @@
 
 __author__ = "kgeogeo, mem, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.0"
-__date__ = "26 Jan 2019"
+__version__ = "6.1"
+__date__ = "19 May 2019"
 
 import bpy
 from bpy.props import BoolProperty
@@ -91,7 +91,7 @@ class MUV_OT_MoveUV(bpy.types.Operator):
     Operator class: Move UV
     """
 
-    bl_idname = "uv.muv_ot_move_uv"
+    bl_idname = "uv.muv_move_uv"
     bl_label = "Move UV"
     bl_options = {'REGISTER', 'UNDO'}
 

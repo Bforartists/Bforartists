@@ -81,8 +81,14 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     ob.update_from_editmode()
 
     # get the modifiers
+    if use_mesh_modifiers:
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        mesh_owner = ob.evaluated_get(depsgraph)
+    else:
+        mesh_owner = ob
+
     try:
-        mesh = ob.to_mesh(bpy.context.depsgraph, use_mesh_modifiers)
+        mesh = mesh_owner.to_mesh()
     except RuntimeError:
         return
 
@@ -97,4 +103,4 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False):
     for tri in mesh.loop_triangles:
         yield [vertices[index].co.copy() for index in tri.vertices]
 
-    bpy.data.meshes.remove(mesh)
+    mesh_owner.to_mesh_clear()

@@ -44,7 +44,7 @@ def label_multiline(layout, text='', icon='NONE', width=-1):
     else:
         threshold = 35
     maxlines = 3
-    li =0
+    li = 0
     for l in lines:
         while len(l) > threshold:
             i = l.rfind(' ', 0, threshold)
@@ -54,10 +54,10 @@ def label_multiline(layout, text='', icon='NONE', width=-1):
             layout.label(text=l1, icon=icon)
             icon = 'NONE'
             l = l[i:]
-            li+=1
+            li += 1
             if li > maxlines:
                 break;
-        if li>maxlines:
+        if li > maxlines:
             break;
         layout.label(text=l, icon=icon)
         icon = 'NONE'
@@ -128,13 +128,15 @@ def draw_upload_common(layout, props, asset_type, context):
             row = layout.row()
 
             row.prop(props, 'asset_base_id', icon='FILE_TICK')
-        layout.operator("object.blenderkit_mark_for_validation", icon='EXPORT')
+        # layout.operator("object.blenderkit_mark_for_validation", icon='EXPORT')
 
     layout.prop(props, 'category')
     if asset_type == 'MODEL' and props.subcategory != '':  # by now block this for other asset types.
         layout.prop(props, 'subcategory')
 
-    layout.prop(props, 'license')
+    layout.prop(props, 'is_private')
+    if not props.is_private:
+        layout.prop(props, 'license')
 
 
 def poll_local_panels():
@@ -277,7 +279,8 @@ def draw_panel_model_search(self, context):
     if props.report == 'Available only in higher plans.':
         layout.operator("wm.url_open", text="Check plans", icon='URL').url = paths.BLENDERKIT_PLANS
 
-    # layout.prop(props, "search_style")
+    layout.prop(props, "search_style")
+    layout.prop(props, "free_only")
     # if props.search_style == 'OTHER':
     #     layout.prop(props, "search_style_other")
     # layout.prop(props, "search_engine")
@@ -348,7 +351,7 @@ def draw_panel_scene_search(self, context):
     # layout.prop(props, "search_style")
     # if props.search_style == 'OTHER':
     #     layout.prop(props, "search_style_other")
-    #layout.prop(props, "search_engine")
+    # layout.prop(props, "search_engine")
     layout.separator()
     draw_panel_categories(self, context)
 
@@ -380,6 +383,51 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
 
         layout.operator('object.blenderkit_bring_to_scene', text='Bring to scene')
         # layout.operator('object.blenderkit_color_corrector')
+
+
+class VIEW3D_PT_blenderkit_profile(Panel):
+    bl_category = "BlenderKit"
+    bl_idname = "VIEW3D_PT_blenderkit_profile"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Profile"
+
+    @classmethod
+    def poll(cls, context):
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        if user_preferences.enable_oauth:
+            return True
+        return False
+
+    def draw(self, context):
+        # draw asset properties here
+        layout = self.layout
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+        if user_preferences.login_attempt:
+            layout.label(text='Login through browser')
+            layout.label(text='in progress.')
+            layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+            return
+
+        if len(user_preferences.api_key) < 20:
+            layout.operator("wm.blenderkit_login", text="Login/ Sign up",
+                            icon='URL')
+
+        else:
+            me = bpy.context.window_manager.get('bkit profile')
+            if me is not None:
+                me = me['user']
+                layout.label(text='User: %s %s' % (me['firstName'], me['lastName']))
+                layout.label(text='Email: %s' % (me['email']))
+                if me.get('sumAssetFilesSize') is not None:  # TODO remove this when production server has these too.
+                    layout.label(text='Public assets: %i Mb' % (me['sumAssetFilesSize']))
+                    layout.label(text='Private assets: %i Mb' % (me['sumPrivateAssetFilesSize']))
+                    layout.label(text='Remaining private storage: %i Mb' % (me['remainingPrivateQuota']))
+            layout.operator("wm.url_open", text="See my uploads",
+                            icon='URL').url = paths.BLENDERKIT_USER_ASSETS
+            layout.operator("wm.blenderkit_logout", text="Logout",
+                            icon='URL')
 
 
 def draw_panel_model_rating(self, context):
@@ -523,16 +571,24 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
 
         w = context.region.width
+        if user_preferences.login_attempt:
+            layout.label(text='Login through browser')
+            layout.label(text='in progress.')
+            layout.operator("wm.blenderkit_login_cancel", text="Cancel", icon='CANCEL')
+            return
 
-        if len(user_preferences.api_key) < 35 and user_preferences.asset_counter >25:
-            op = layout.operator("wm.url_open", text="Register online",
-                                 icon='QUESTION')
-            op.url = paths.BLENDERKIT_SIGNUP_URL
-            layout.label(text='Paste your API Key:')
-            layout.prop(user_preferences, 'api_key', text='')
+        if len(user_preferences.api_key) < 20 and user_preferences.asset_counter > 20:
+            if user_preferences.enable_oauth:
+                layout.operator("wm.blenderkit_login", text="Login/ Sign up",
+                                icon='URL')
+            else:
+                op = layout.operator("wm.url_open", text="Get your API Key",
+                                     icon='QUESTION')
+                op.url = paths.BLENDERKIT_SIGNUP_URL
+                layout.label(text='Paste your API Key:')
+                layout.prop(user_preferences, 'api_key', text='')
             layout.separator()
-        elif bpy.data.filepath == '':
-
+        if bpy.data.filepath == '':
             label_multiline(layout, text="It's better to save the file first.", width=w)
             layout.separator()
         if wm.get('bkit_update'):
@@ -578,9 +634,7 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                     label_multiline(layout, text='switch to paint or sculpt mode.', width=context.region.width)
                     return
 
-            # blocking this now. It became terribly slow.
-            layout.operator("wm.url_open", text="See my uploads",
-                            icon='URL').url = paths.BLENDERKIT_USER_ASSETS
+
         elif ui_props.down_up == 'UPLOAD':
             if not ui_props.assetbar_on:
                 text = 'Show asset preview - ;'
@@ -696,9 +750,9 @@ def draw_panel_categories(self, context):
             op.category = ''
     cats = categories.get_category(wm['bkit_categories'], cat_path=acat)
     # draw freebies only in models parent category
-    if ui_props.asset_type == 'MODEL' and len(acat) == 1:
-        op = col.operator('view3d.blenderkit_asset_bar', text='freebies')
-        op.free_only = True
+    # if ui_props.asset_type == 'MODEL' and len(acat) == 1:
+    #     op = col.operator('view3d.blenderkit_asset_bar', text='freebies')
+    #     op.free_only = True
 
     for c in cats['children']:
         if c['assetCount'] > 0:
@@ -747,6 +801,13 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
             row = layout.row()
             row.label(text=asset_data['name'])
             row.label(text=str(int(tcom.progress)) + ' %')
+            row.operator('scene.blenderkit_download_kill', text='', icon='CANCEL')
+            if tcom.passargs.get('retry_counter',0)>0:
+                row = layout.row()
+                row.label(text = 'failed. retrying ... ', icon='ERROR')
+                row.label(text = str(tcom.passargs["retry_counter"]))
+                
+                layout.separator()
 
 
 classess = (
@@ -755,7 +816,7 @@ classess = (
     VIEW3D_PT_blenderkit_unified,
     VIEW3D_PT_blenderkit_model_properties,
     VIEW3D_PT_blenderkit_downloads,
-
+    VIEW3D_PT_blenderkit_profile
 )
 
 

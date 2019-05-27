@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.80 (sub 57) (b'bcefceb20058')\n"
+"Project-Id-Version: Blender 2.80 (sub 70) (b'bb88485a1693')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-15 15:28:38\n"
+"POT-Creation-Date: 2019-05-20 00:00:00\n"
 "PO-Revision-Date: 2019-03-10 16:59+0700\n"
 "Last-Translator: gongpha <gongpha@gmail.com>\n"
 "Language-Team: Thai Translation Team <gongpha@gmail.com>\n"
@@ -156,10 +156,6 @@ msgstr "กลุ่มการกระทำถูกเลือก"
 
 msgid "Expanded"
 msgstr "ขยาย"
-
-
-msgid "Action group is expanded"
-msgstr "กลุ่มการกระทำถูกขยาย"
 
 
 msgid "Action Groups"
@@ -490,6 +486,10 @@ msgid "Scale"
 msgstr "ขนาด"
 
 
+msgid "Ratio"
+msgstr "อัตราส่วน"
+
+
 msgid "Left"
 msgstr "ซ้าย"
 
@@ -813,10 +813,6 @@ msgid "Texture"
 msgstr "พื้นผิว"
 
 
-msgid "Preview"
-msgstr "ดูตัวอย่าง"
-
-
 msgid "Vertex"
 msgstr "จุดยอด"
 
@@ -885,6 +881,10 @@ msgid "Particle"
 msgstr "อนุภาค"
 
 
+msgid "Preview"
+msgstr "ดูตัวอย่าง"
+
+
 msgid "Border"
 msgstr "เส้นขอบ"
 
@@ -907,14 +907,6 @@ msgstr "ใช้"
 
 msgid "Advanced Options"
 msgstr "การตั้งค่าขั้นสูง"
-
-
-msgid "Ratio"
-msgstr "อัตราส่วน"
-
-
-msgid "Depth Of Field"
-msgstr "ระยะชัดลึก"
 
 
 msgid "Samples"
@@ -1076,6 +1068,10 @@ msgid "Weight Paint Tool"
 msgstr "เครื่องวาดน้ำหนัก"
 
 
+msgid "Depth Of Field"
+msgstr "ระยะชัดลึก"
+
+
 msgid "Segments"
 msgstr "ส่วน"
 
@@ -1134,6 +1130,14 @@ msgstr "แผง"
 
 msgid "Grid Settings"
 msgstr "การตั้งค่าตะแกรง"
+
+
+msgid "Keyframe"
+msgstr "คีย์เฟรม"
+
+
+msgid "Normal keyframe - e.g. for key poses"
+msgstr "คีย์เฟรมเริ่มต้น"
 
 
 msgid "Alpha Mode"
@@ -1508,14 +1512,6 @@ msgid "Mouse"
 msgstr "เมาส์"
 
 
-msgid "Keyframe"
-msgstr "คีย์เฟรม"
-
-
-msgid "Normal keyframe - e.g. for key poses"
-msgstr "คีย์เฟรมเริ่มต้น"
-
-
 msgid "Paths"
 msgstr "เส้นทาง"
 
@@ -1556,8 +1552,9 @@ msgid "Snap"
 msgstr "ยึดติด"
 
 
-msgid "Proportional Editing"
-msgstr "แก้ไขโดยสัดส่วน"
+msgctxt "Operator"
+msgid "Add"
+msgstr "เพิ่ม"
 
 
 msgid "Edit"
@@ -1566,6 +1563,10 @@ msgstr "แก้ไข"
 
 msgid "Node"
 msgstr "โนด"
+
+
+msgid "Navigation"
+msgstr "การนำทาง"
 
 
 msgid "Text"
@@ -1592,6 +1593,10 @@ msgid "Help"
 msgstr "ช่วยเหลือ"
 
 
+msgid "Save & Load"
+msgstr "บันทึกและโหลด"
+
+
 msgid "Names"
 msgstr "ชื่อ"
 
@@ -1606,6 +1611,10 @@ msgstr "ขอบ"
 
 msgid "Face"
 msgstr "ด้าน"
+
+
+msgid "Merge"
+msgstr "ผสาน"
 
 
 msgid "Metaball"
@@ -1626,10 +1635,6 @@ msgstr "นำไปใช้"
 
 msgid "Proportional Editing Falloff"
 msgstr "แก้ไข"
-
-
-msgid "Navigation"
-msgstr "การนำทาง"
 
 
 msgid "Intersect"
@@ -1998,10 +2003,6 @@ msgid "Add New Layer"
 msgstr "เพิ่มชั้นใหม่"
 
 
-msgid "Merge"
-msgstr "ผสาน"
-
-
 msgid "Join"
 msgstr "เชื่อมโยง"
 
@@ -2076,26 +2077,6 @@ msgid "Add Normal"
 msgstr "เพิ่มแนวฉาก"
 
 
-msgid "Proportional Editing disabled"
-msgstr "การแก้ไขโดยสัดส่วนถูกปิดการใช้งาน"
-
-
-msgid "Proportional Editing enabled"
-msgstr "การแก้ไขโดยสัดส่วนถูกเปิดการใช้งาน"
-
-
-msgid "Projected (2D)"
-msgstr "แบบฉาย (สองมิติ)"
-
-
-msgid "Proportional Editing using screen space locations"
-msgstr "แก้ไขโดยสัดส่วนด้วยการใช้ตำแหน่งปริภูมิของจอภาพ"
-
-
-msgid "Proportional Editing using connected geometry only"
-msgstr "การแก้ไขโดยสัดส่วนสามารถใช้งานกับรูปทรงที่เชื่อมต่อกันได้เท่านั้น"
-
-
 msgid "Falloff type for proportional editing mode"
 msgstr "ชนิดการลอยตัวของการแก้ไขโดยสัดส่วน"
 
@@ -2106,6 +2087,14 @@ msgstr "ลอยแบบคงตัว"
 
 msgid "Random falloff"
 msgstr "ลอยแบบสุ่ม"
+
+
+msgid "Proportional Editing"
+msgstr "แก้ไขโดยสัดส่วน"
+
+
+msgid "Projected (2D)"
+msgstr "แบบฉาย (สองมิติ)"
 
 
 msgid "Construct a circle mesh"
@@ -2536,6 +2525,10 @@ msgid "Lens"
 msgstr "เลนส์"
 
 
+msgid "Transparent"
+msgstr "โปร่งใส"
+
+
 msgid "Filters"
 msgstr "ตัวกรอง"
 
@@ -2609,11 +2602,6 @@ msgstr "มุมมองสามมิติ"
 
 
 msgctxt "Operator"
-msgid "Add"
-msgstr "เพิ่ม"
-
-
-msgctxt "Operator"
 msgid "Circle"
 msgstr "วงกลม"
 
@@ -2624,10 +2612,6 @@ msgstr "ล็อคมุมมอง"
 
 msgid "Editing"
 msgstr "การแก้ไข"
-
-
-msgid "Save & Load"
-msgstr "บันทึกและโหลด"
 
 
 msgid "Enter Edit Mode"
@@ -2668,10 +2652,6 @@ msgstr "แปลอินเตอร์เฟส"
 
 msgid "Panorama Type"
 msgstr "ชนิดทัศนียภาพ"
-
-
-msgid "Transparent"
-msgstr "โปร่งใส"
 
 
 msgid "View layer name"
@@ -2866,10 +2846,6 @@ msgid "Type of keyframes to create when inserting keyframes"
 msgstr "ชนิดของคีย์เฟรมที่จะสร้างเมื่อแทรกคีย์เฟรม"
 
 
-msgid "Proportional Editing mode, allows transforms with distance fall-off"
-msgstr "การแก้ไขโดยสัดส่วน เปิดใช้งานการแปลงวัตถุแบบลอยภายในระยะ"
-
-
 msgid "Snap Element"
 msgstr "ยึดตามส่วนประกอบ"
 
@@ -2914,12 +2890,20 @@ msgid "Automatically merge vertices moved to the same location"
 msgstr "ผสานจุดยอดที่อยู่ ณ จุดเดียวกันโดยอัตโนมัติ"
 
 
+msgid "Proportional Editing using connected geometry only"
+msgstr "การแก้ไขโดยสัดส่วนสามารถใช้งานกับรูปทรงที่เชื่อมต่อกันได้เท่านั้น"
+
+
 msgid "Proportional Editing Objects"
 msgstr "แก้ไขวัตถุโดยสัดส่วน"
 
 
 msgid "Proportional editing object mode"
 msgstr "โหมดแก้ไขวัตถุโดยสัดส่วน"
+
+
+msgid "Proportional Editing using screen space locations"
+msgstr "แก้ไขโดยสัดส่วนด้วยการใช้ตำแหน่งปริภูมิของจอภาพ"
 
 
 msgid "Snap during transform"
@@ -3186,10 +3170,6 @@ msgid "Movie"
 msgstr "ภาพยนตร์"
 
 
-msgid "Path:"
-msgstr "ตำแหน่ง:"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "ฉาก"
@@ -3200,13 +3180,18 @@ msgstr "แกนมุมมอง:"
 
 
 msgctxt "Operator"
-msgid "Recover Auto Save..."
-msgstr "กู้การบันทึกอัตโนมัติ..."
+msgid "Preferences..."
+msgstr "การตั้งค่า..."
 
 
 msgctxt "Operator"
 msgid "Install Application Template..."
 msgstr "ติดตั้งแม่แบบแอปพลิเคชั่น..."
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "ออก"
 
 
 msgctxt "Operator"
@@ -3217,11 +3202,6 @@ msgstr "เชื่อมโยง..."
 msgctxt "Operator"
 msgid "Append..."
 msgstr "ผนวก..."
-
-
-msgctxt "Operator"
-msgid "Quit"
-msgstr "ออก"
 
 
 msgctxt "Operator"
@@ -3265,11 +3245,6 @@ msgstr "ค้นหาตัวดำเนินการ..."
 
 
 msgctxt "Operator"
-msgid "Preferences..."
-msgstr "การตั้งค่า..."
-
-
-msgctxt "Operator"
 msgid "Reorder to Front"
 msgstr "เรียงใหม่ไปหน้า"
 
@@ -3305,6 +3280,31 @@ msgstr "ทั่วไป"
 
 
 msgctxt "Operator"
+msgid "Release Notes"
+msgstr "บันทึกการปล่อยออกให้ใช้งาน"
+
+
+msgctxt "Operator"
+msgid "Blender Website"
+msgstr "เว็บไซต์ Blender"
+
+
+msgctxt "Operator"
+msgid "Credits"
+msgstr "เครดิต"
+
+
+msgctxt "Operator"
+msgid "Development Fund"
+msgstr "กองทุนผู้พัฒนา"
+
+
+msgctxt "Operator"
+msgid "Blender Store"
+msgstr "ร้านค้า Blender"
+
+
+msgctxt "Operator"
 msgid "Collada (Default) (.dae)"
 msgstr "Collada (ค่าเริ่มต้น) (.dae)"
 
@@ -3325,11 +3325,6 @@ msgstr "ด้วยตนเอง"
 
 
 msgctxt "Operator"
-msgid "Report a Bug"
-msgstr "รายงานข้อผิดพลาด"
-
-
-msgctxt "Operator"
 msgid "User Communities"
 msgstr "ชุมชนผู้ใช้"
 
@@ -3340,33 +3335,8 @@ msgstr "ชุมชนผู้พัฒนา"
 
 
 msgctxt "Operator"
-msgid "Blender Website"
-msgstr "เว็บไซต์ Blender"
-
-
-msgctxt "Operator"
-msgid "Release Notes"
-msgstr "บันทึกการปล่อยออกให้ใช้งาน"
-
-
-msgctxt "Operator"
-msgid "Credits"
-msgstr "เครดิต"
-
-
-msgctxt "Operator"
-msgid "Blender Store"
-msgstr "ร้านค้า Blender"
-
-
-msgctxt "Operator"
-msgid "Development Fund"
-msgstr "กองทุนผู้พัฒนา"
-
-
-msgctxt "Operator"
-msgid "Donate"
-msgstr "บริจาค"
+msgid "Report a Bug"
+msgstr "รายงานข้อผิดพลาด"
 
 
 msgid "Resolution Scale"
@@ -3822,14 +3792,6 @@ msgid "Add Modifier"
 msgstr "เพิ่มการปรับแต่ง"
 
 
-msgid " %d frs"
-msgstr " %d frs"
-
-
-msgid ": size %d x %d,"
-msgstr ": ขนาด %d x %d,"
-
-
 msgid " RGBA float"
 msgstr " ทศนิยม RGBA"
 
@@ -3848,14 +3810,6 @@ msgstr " ไบต์ RGB"
 
 msgid " + Z"
 msgstr " + Z"
-
-
-msgid ", Frame: %d"
-msgstr ", เฟรม: %d"
-
-
-msgid "(%d) Frames"
-msgstr "(%d) เฟรม"
 
 
 msgid " | Mem: %s"
@@ -3884,6 +3838,10 @@ msgstr "จุดยอด:%s/%s"
 
 msgid "Verts:%s | Faces:%s | Tris:%s | Objects:%s/%s%s%s"
 msgstr "จุดยอด:%s | ด้าน:%s | ส่วนแบ่งสามส่วน:%s | วัตถุ:%s/%s%s%s"
+
+
+msgid "Path:"
+msgstr "ตำแหน่ง:"
 
 
 msgid "). Click here to proceed..."
@@ -4041,10 +3999,6 @@ msgstr "ปิด"
 
 msgid "%s '%s' not found"
 msgstr "ไม่พบ %s '%s'"
-
-
-msgid "Save & Quit"
-msgstr "บันทึกและออก"
 
 
 msgid "Blender Render"
